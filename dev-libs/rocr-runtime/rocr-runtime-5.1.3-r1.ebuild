@@ -58,9 +58,6 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
 	fi
 	rocm_src_prepare
-	sed -i -e "s|/usr/amdgcn/bitcode|/usr/$(get_libdir)/amdgcn/bitcode|g" \
-		"image/blit_src/README.md" \
-		|| die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

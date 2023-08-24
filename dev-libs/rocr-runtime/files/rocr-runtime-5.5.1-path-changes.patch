@@ -1,7 +1,7 @@
 diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
---- src.orig/CMakeLists.txt	2022-09-30 11:31:23.000000000 -0700
-+++ src/CMakeLists.txt	2023-08-24 09:58:20.211439804 -0700
-@@ -127,8 +127,8 @@ target_include_directories( ${CORE_RUNTI
+--- src.orig/CMakeLists.txt	2023-04-24 06:29:07.000000000 -0700
++++ src/CMakeLists.txt	2023-08-24 10:07:56.751454108 -0700
+@@ -125,8 +125,8 @@ target_include_directories( ${CORE_RUNTI
    ${CMAKE_CURRENT_SOURCE_DIR}/libamdhsacode
    ${CMAKE_CURRENT_BINARY_DIR}/core/runtime/trap_handler)
  
@@ -12,9 +12,10 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  
  ## ------------------------- Linux Compiler and Linker options -------------------------
  set ( HSA_CXX_FLAGS ${HSA_COMMON_CXX_FLAGS} -fexceptions -fno-rtti -fvisibility=hidden -Wno-error=missing-braces -Wno-error=sign-compare -Wno-sign-compare -Wno-write-strings -Wno-conversion-null -fno-math-errno -fno-threadsafe-statics -fmerge-all-constants -fms-extensions -Wno-error=comment -Wno-comment -Wno-error=pointer-arith -Wno-pointer-arith -Wno-error=unused-variable -Wno-error=unused-function )
+Only in src: CMakeLists.txt.orig
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
---- src.orig/cmake_modules/FindLibElf.cmake	2022-09-30 11:31:23.000000000 -0700
-+++ src/cmake_modules/FindLibElf.cmake	2023-08-24 09:58:20.211439804 -0700
+--- src.orig/cmake_modules/FindLibElf.cmake	2023-04-24 06:29:07.000000000 -0700
++++ src/cmake_modules/FindLibElf.cmake	2023-08-24 10:07:56.751454108 -0700
 @@ -35,9 +35,9 @@ find_library (LIBELF_LIBRARIES
    NAMES
      elf
@@ -29,8 +30,8 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH)
 diff -urp src.orig/hsa-backward-compat.cmake src/hsa-backward-compat.cmake
---- src.orig/hsa-backward-compat.cmake	2022-09-30 11:31:23.000000000 -0700
-+++ src/hsa-backward-compat.cmake	2023-08-24 09:58:20.211439804 -0700
+--- src.orig/hsa-backward-compat.cmake	2023-04-24 06:29:07.000000000 -0700
++++ src/hsa-backward-compat.cmake	2023-08-24 10:07:56.751454108 -0700
 @@ -19,7 +19,7 @@
  
  set(HSA_WRAPPER_DIR ${CMAKE_CURRENT_BINARY_DIR}/wrapper_dir)
@@ -41,20 +42,20 @@ diff -urp src.orig/hsa-backward-compat.cmake src/hsa-backward-compat.cmake
  #Function to generate header template file
  function(create_header_template)
 diff -urp src.orig/image/blit_src/CMakeLists.txt src/image/blit_src/CMakeLists.txt
---- src.orig/image/blit_src/CMakeLists.txt	2022-09-30 11:31:23.000000000 -0700
-+++ src/image/blit_src/CMakeLists.txt	2023-08-24 09:58:20.211439804 -0700
+--- src.orig/image/blit_src/CMakeLists.txt	2023-04-24 06:29:07.000000000 -0700
++++ src/image/blit_src/CMakeLists.txt	2023-08-24 10:07:56.751454108 -0700
 @@ -66,7 +66,7 @@ endif()
  function(gen_kernel_bc TARGET_ID INPUT_FILE OUTPUT_FILE)
  
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
 -    "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
 +    "--rocm-path=/usr/@LIBDIR@/ -O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
-     -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}")
+     -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -mcode-object-version=4
+     -o ${OUTPUT_FILE} ${INPUT_FILE}")
  
-   ## Add custom command to produce a code object file.
 diff -urp src.orig/image/blit_src/README.md src/image/blit_src/README.md
---- src.orig/image/blit_src/README.md	2022-09-30 11:31:23.000000000 -0700
-+++ src/image/blit_src/README.md	2023-08-24 09:59:04.115440893 -0700
+--- src.orig/image/blit_src/README.md	2023-04-24 06:29:07.000000000 -0700
++++ src/image/blit_src/README.md	2023-08-24 10:07:56.755454108 -0700
 @@ -46,9 +46,9 @@ There are several variables are required
  object file.  All of them have default values, and defined as following:
  
@@ -68,8 +69,8 @@ diff -urp src.orig/image/blit_src/README.md src/image/blit_src/README.md
                     executables
                     (Default: ${PROJECT_BUILD_DIR}/../lightning/bin)
 diff -urp src.orig/README.md src/README.md
---- src.orig/README.md	2022-09-30 11:31:23.000000000 -0700
-+++ src/README.md	2023-08-24 09:58:58.275440748 -0700
+--- src.orig/README.md	2023-04-24 06:29:07.000000000 -0700
++++ src/README.md	2023-08-24 10:08:26.751454853 -0700
 @@ -74,7 +74,7 @@ ROCm packages installed, execute the fol
  
      mkdir build
@@ -93,3 +94,5 @@ diff -urp src.orig/README.md src/README.md
  
      find_package(hsa-runtime64 1.0 REQUIRED)
      ...
+Only in src: README.md.orig
+Only in src: README.md.rej

@@ -48,7 +48,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 )
 
 pkg_setup() {
@@ -61,9 +61,6 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
 	fi
 	rocm_src_prepare
-	sed -i -e "s|/usr/amdgcn/bitcode|/usr/$(get_libdir)/amdgcn/bitcode|g" \
-		"image/blit_src/README.md" \
-		|| die
 }
 
 src_configure() {
