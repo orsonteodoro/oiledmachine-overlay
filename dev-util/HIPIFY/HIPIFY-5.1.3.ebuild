@@ -27,8 +27,8 @@ gen_llvm_rdepend() {
 	local s="${1}"
 	echo "
 		(
-			=sys-devel/llvm-${s}
-			=sys-devel/clang-${s}
+			~sys-devel/llvm-${s}
+			~sys-devel/clang-${s}
 		)
 	"
 }
