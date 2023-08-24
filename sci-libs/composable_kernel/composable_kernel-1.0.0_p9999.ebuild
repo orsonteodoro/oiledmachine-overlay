@@ -16,10 +16,10 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-
 CMAKE_MAKEFILE_GENERATOR="emake"
-ROCM_VERSION="9999"
 LLVM_MAX_SLOT=16
+ROCM_VERSION="9999"
+
 inherit cmake flag-o-matic llvm rocm
 
 if [[ ${PV} =~ 9999 ]] ; then
@@ -86,6 +86,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
+	"${FILESDIR}/${PN}-1.0.0_p9999-path-changes.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
@@ -98,7 +99,15 @@ else
 fi
 
 pkg_setup() {
+	if has_version "~dev-util/hip-5.6.0" ; then
+		LLVM_MAX_SLOT=16
+	elif has_version "~dev-util/hip-5.5.1" ; then
+		LLVM_MAX_SLOT=16
+	elif has_version "~dev-util/hip-5.4.3" ; then
+		LLVM_MAX_SLOT=15
+	fi
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
 }
 
 src_unpack() {
@@ -118,6 +127,7 @@ src_unpack() {
 src_prepare() {
 	cmake_src_prepare
 
+	[[ -e "/usr/$(get_libdir)/cmake/hip/hip-config.cmake" ]] || die "emerge hip"
 	# Disallow newer clang versions when producing .o files.
 	local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/usr/lib/llvm" \
 			"/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
@@ -135,6 +145,7 @@ src_prepare() {
 	einfo "PATH=${PATH} (after)"
 
 #	hipconfig --help >/dev/null || die
+	rocm_src_prepare
 }
 
 src_configure() {

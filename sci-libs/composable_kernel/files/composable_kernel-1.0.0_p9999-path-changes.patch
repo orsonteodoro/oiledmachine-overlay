@@ -1,0 +1,268 @@
+diff -urp composable_kernel-1.0.0_p9999.orig/client_example/CMakeLists.txt composable_kernel-1.0.0_p9999/client_example/CMakeLists.txt
+--- composable_kernel-1.0.0_p9999.orig/client_example/CMakeLists.txt	2023-08-24 02:31:11.102774153 -0700
++++ composable_kernel-1.0.0_p9999/client_example/CMakeLists.txt	2023-08-24 09:38:06.475409690 -0700
+@@ -28,7 +28,7 @@ else()
+ endif()
+ 
+ find_package(composable_kernel 1.0.0 COMPONENTS device_operations)
+-find_package(hip REQUIRED PATHS /opt/rocm)
++find_package(hip REQUIRED PATHS /usr)
+ message(STATUS "Build with HIP ${hip_VERSION}")
+ 
+ # add all example subdir
+diff -urp composable_kernel-1.0.0_p9999.orig/client_example/README.md composable_kernel-1.0.0_p9999/client_example/README.md
+--- composable_kernel-1.0.0_p9999.orig/client_example/README.md	2023-08-24 02:31:11.102774153 -0700
++++ composable_kernel-1.0.0_p9999/client_example/README.md	2023-08-24 09:38:14.779409896 -0700
+@@ -10,8 +10,8 @@ cd client_example/build
+ 
+ ```bash
+ cmake                                                                 \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                             \
+--D CMAKE_PREFIX_PATH="/opt/rocm;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
++-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                             \
++-D CMAKE_PREFIX_PATH="/usr;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
+ ..
+ ```
+ 
+diff -urp composable_kernel-1.0.0_p9999.orig/cmake/ClangTidy.cmake composable_kernel-1.0.0_p9999/cmake/ClangTidy.cmake
+--- composable_kernel-1.0.0_p9999.orig/cmake/ClangTidy.cmake	2023-08-24 02:31:11.102774153 -0700
++++ composable_kernel-1.0.0_p9999/cmake/ClangTidy.cmake	2023-08-24 09:37:45.707409175 -0700
+@@ -43,9 +43,8 @@ find_program(CLANG_TIDY_EXE
+     PATH_SUFFIXES
+         compiler/bin
+     PATHS
+-        /opt/rocm/llvm/bin
+-        /opt/rocm/hcc
+-        /usr/local/opt/llvm/bin
++        /usr/lib/llvm/@LLVM_SLOT@/bin
++        /usr/hcc
+ )
+ 
+ function(find_clang_tidy_version VAR)
+diff -urp composable_kernel-1.0.0_p9999.orig/cmake/CppCheck.cmake composable_kernel-1.0.0_p9999/cmake/CppCheck.cmake
+--- composable_kernel-1.0.0_p9999.orig/cmake/CppCheck.cmake	2023-08-24 02:31:11.102774153 -0700
++++ composable_kernel-1.0.0_p9999/cmake/CppCheck.cmake	2023-08-24 09:37:59.771409524 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        /usr/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+diff -urp composable_kernel-1.0.0_p9999.orig/CMakeLists.txt composable_kernel-1.0.0_p9999/CMakeLists.txt
+--- composable_kernel-1.0.0_p9999.orig/CMakeLists.txt	2023-08-24 02:31:11.094774153 -0700
++++ composable_kernel-1.0.0_p9999/CMakeLists.txt	2023-08-24 09:45:08.443420160 -0700
+@@ -33,7 +33,7 @@ endif()
+ enable_testing()
+ 
+ set(ROCM_SYMLINK_LIBS OFF)
+-find_package(ROCM REQUIRED PATHS /opt/rocm)
++find_package(ROCM REQUIRED PATHS /usr)
+ 
+ include(ROCMInstallTargets)
+ include(ROCMPackageConfigHelpers)
+@@ -44,7 +44,7 @@ include(CheckCXXCompilerFlag)
+ include(ROCMCheckTargetIds)
+ rocm_setup_version(VERSION 0.2.0)
+ include(TargetFlags)
+-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_INSTALL_PREFIX}/hip /opt/rocm /opt/rocm/llvm /opt/rocm/hip)
++list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/lib/llvm/@LLVM_SLOT@ ${CMAKE_INSTALL_PREFIX}/hip /usr /usr/lib/llvm/@LLVM_SLOT@ /usr/hip)
+ 
+ message("GPU_TARGETS= ${GPU_TARGETS}")
+ 
+@@ -272,8 +272,8 @@ enable_cppcheck(
+         __linux__=1
+ )
+ 
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+ 
+ include_directories(BEFORE
+diff -urp composable_kernel-1.0.0_p9999.orig/docs/dockerhub.rst composable_kernel-1.0.0_p9999/docs/dockerhub.rst
+--- composable_kernel-1.0.0_p9999.orig/docs/dockerhub.rst	2023-08-24 02:31:11.122774153 -0700
++++ composable_kernel-1.0.0_p9999/docs/dockerhub.rst	2023-08-24 09:38:42.171410576 -0700
+@@ -38,8 +38,8 @@ and build the CK::
+     mkdir build && cd build
+     # Need to specify target ID, example below is for gfx908 and gfx90a
+     cmake                                                                                             \
+-    -D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+-    -D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++    -D CMAKE_PREFIX_PATH=/usr                                                                         \
++    -D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                              \
+     -D CMAKE_CXX_FLAGS="-O3"                                                                          \
+     -D CMAKE_BUILD_TYPE=Release                                                                       \
+     -D GPU_TARGETS="gfx908;gfx90a"                                                                    \
+diff -urp composable_kernel-1.0.0_p9999.orig/docs/tutorial_hello_world.rst composable_kernel-1.0.0_p9999/docs/tutorial_hello_world.rst
+--- composable_kernel-1.0.0_p9999.orig/docs/tutorial_hello_world.rst	2023-08-24 02:31:11.122774153 -0700
++++ composable_kernel-1.0.0_p9999/docs/tutorial_hello_world.rst	2023-08-24 09:38:26.427410185 -0700
+@@ -80,8 +80,8 @@ Create and go to the "build" directory::
+ In the previous section we talked about target GPU architecture. Once you decide which one is right for you, run cmake using the right GPU_TARGETS flag::
+ 
+     cmake  \
+-    -D CMAKE_PREFIX_PATH=/opt/rocm  \
+-    -D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc  \
++    -D CMAKE_PREFIX_PATH=/usr  \
++    -D CMAKE_CXX_COMPILER=/usr/bin/hipcc  \
+     -D CMAKE_CXX_FLAGS="-O3"  \
+     -D CMAKE_BUILD_TYPE=Release  \
+     -D BUILD_DEV=OFF  \
+diff -urp composable_kernel-1.0.0_p9999.orig/library/src/tensor_operation_instance/gpu/CMakeLists.txt composable_kernel-1.0.0_p9999/library/src/tensor_operation_instance/gpu/CMakeLists.txt
+--- composable_kernel-1.0.0_p9999.orig/library/src/tensor_operation_instance/gpu/CMakeLists.txt	2023-08-24 02:31:11.254774157 -0700
++++ composable_kernel-1.0.0_p9999/library/src/tensor_operation_instance/gpu/CMakeLists.txt	2023-08-24 09:48:07.051424591 -0700
+@@ -88,7 +88,7 @@ target_compile_options(device_operations
+     --offload-arch=gfx90a
+ )
+ 
+-# install(TARGETS device_operations LIBRARY DESTINATION lib)
++# install(TARGETS device_operations LIBRARY DESTINATION @LIBDIR@)
+ rocm_install(TARGETS device_operations
+         EXPORT device_operationsTargets)
+ 
+diff -urp composable_kernel-1.0.0_p9999.orig/README.md composable_kernel-1.0.0_p9999/README.md
+--- composable_kernel-1.0.0_p9999.orig/README.md	2023-08-24 02:31:11.094774153 -0700
++++ composable_kernel-1.0.0_p9999/README.md	2023-08-24 09:42:52.027416775 -0700
+@@ -74,8 +74,8 @@ mkdir build && cd build
+ # Need to specify target ID, example below is for gfx908 and gfx90a
+ 
+ cmake                                                                                             \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++-D CMAKE_PREFIX_PATH=/usr                                                                         \
++-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                              \
+ -D CMAKE_CXX_FLAGS="-O3"                                                                          \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D GPU_TARGETS="gfx908;gfx90a"                                                                    \
+diff -urp composable_kernel-1.0.0_p9999.orig/script/cmake-ck-dev.sh composable_kernel-1.0.0_p9999/script/cmake-ck-dev.sh
+--- composable_kernel-1.0.0_p9999.orig/script/cmake-ck-dev.sh	2023-08-24 02:31:11.326774158 -0700
++++ composable_kernel-1.0.0_p9999/script/cmake-ck-dev.sh	2023-08-24 09:40:50.907413770 -0700
+@@ -6,8 +6,8 @@ rm -rf CMakeFiles
+ MY_PROJECT_SOURCE=$1
+ 
+ cmake                                                                                             \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++-D CMAKE_PREFIX_PATH=/usr                                                                         \
++-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                              \
+ -D CMAKE_CXX_FLAGS="-std=c++17 -O3 -ftemplate-backtrace-limit=0  -fPIE  -Wno-gnu-line-marker      \
+ -save-temps=$PWD"                                                                                 \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+diff -urp composable_kernel-1.0.0_p9999.orig/script/cmake-ck-release.sh composable_kernel-1.0.0_p9999/script/cmake-ck-release.sh
+--- composable_kernel-1.0.0_p9999.orig/script/cmake-ck-release.sh	2023-08-24 02:31:11.326774158 -0700
++++ composable_kernel-1.0.0_p9999/script/cmake-ck-release.sh	2023-08-24 09:41:45.387415122 -0700
+@@ -6,8 +6,8 @@ rm -rf CMakeFiles
+ MY_PROJECT_SOURCE=$1
+ 
+ cmake                                                                                             \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++-D CMAKE_PREFIX_PATH=/usr                                                                         \
++-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                              \
+ -D CMAKE_CXX_FLAGS="-O3"                                                                          \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D BUILD_DEV=OFF                                                                                  \
+diff -urp composable_kernel-1.0.0_p9999.orig/script/hipclang_opt.sh composable_kernel-1.0.0_p9999/script/hipclang_opt.sh
+--- composable_kernel-1.0.0_p9999.orig/script/hipclang_opt.sh	2023-08-24 02:31:11.326774158 -0700
++++ composable_kernel-1.0.0_p9999/script/hipclang_opt.sh	2023-08-24 09:42:32.699416295 -0700
+@@ -2,24 +2,24 @@ rm *.ll *.s
+ 
+ BC_FILE=$1
+ 
+-/opt/rocm/llvm/bin/llvm-dis $BC_FILE -o original.ll
+-/opt/rocm/llvm/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
+-/opt/rocm/llvm/bin/opt -S -sroa inline.ll > sroa.ll
+-/opt/rocm/llvm/bin/opt -S -O3 sroa.ll > o3.ll
++/usr/llvm/@LLVM_SLOT@/bin/llvm-dis $BC_FILE -o original.ll
++/usr/llvm/@LLVM_SLOT@/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
++/usr/llvm/@LLVM_SLOT@/bin/opt -S -sroa inline.ll > sroa.ll
++/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 sroa.ll > o3.ll
+ 
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 original.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 inline.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 sroa.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 o3.ll
++/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 original.ll
++/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 inline.ll
++/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 sroa.ll
++/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 o3.ll
+ 
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa inline.ll > o3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
++#/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa inline.ll > o3.ll
++#/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
++#/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
++#/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
+ 
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 opt.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 inline.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_2.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_4.ll
++#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 opt.ll
++#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 inline.ll
++#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3.ll
++#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_2.ll
++#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_3.ll
++#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_4.ll
+diff -urp composable_kernel-1.0.0_p9999.orig/script/parse_perf_data.py composable_kernel-1.0.0_p9999/script/parse_perf_data.py
+--- composable_kernel-1.0.0_p9999.orig/script/parse_perf_data.py	2023-08-24 02:31:11.326774158 -0700
++++ composable_kernel-1.0.0_p9999/script/parse_perf_data.py	2023-08-24 09:39:40.955412034 -0700
+@@ -69,7 +69,7 @@ def main():
+                 compute_units=lst[2]
+             if 'InstalledDir' in line:
+                 lst=line.split()
+-                rocm_vers=lst[1][lst[1].find('/opt/rocm-')+len('/opt/rocm-'):lst[1].rfind('/llvm/bin')]
++                rocm_vers=lst[1][lst[1].find('/usr')+len('/usr'):lst[1].rfind('/lib/llvm/@LLVM_SLOT@/bin')]
+     print("Branch name:",branch_name)
+     print("Node name:",node_id)
+     print("GPU_arch:",gpu_arch)
+@@ -287,4 +287,4 @@ def main():
+     return regression
+ 
+ if __name__ == '__main__':
+-    main()
+\ No newline at end of file
++    main()
+diff -urp composable_kernel-1.0.0_p9999.orig/script/process_perf_data.py composable_kernel-1.0.0_p9999/script/process_perf_data.py
+--- composable_kernel-1.0.0_p9999.orig/script/process_perf_data.py	2023-08-24 02:31:11.326774158 -0700
++++ composable_kernel-1.0.0_p9999/script/process_perf_data.py	2023-08-24 09:41:07.771414188 -0700
+@@ -64,7 +64,7 @@ def get_log_params(logfile):
+             environment=lst[2]
+         if 'InstalledDir' in line:
+             lst=line.split()
+-            rocm_vers=lst[1][lst[1].find('/opt/rocm-')+len('/opt/rocm-'):lst[1].rfind('/llvm/bin')]
++            rocm_vers=lst[1][lst[1].find('/usr')+len('/usr'):lst[1].rfind('lib/llvm/@LLVM_SLOT@/bin')]
+     return branch_name, node_id, gpu_arch, compute_units, rocm_vers, hip_vers, environment
+ 
+ def parse_logfile(logfile):
+diff -urp composable_kernel-1.0.0_p9999.orig/script/run_full_performance_tests.sh composable_kernel-1.0.0_p9999/script/run_full_performance_tests.sh
+--- composable_kernel-1.0.0_p9999.orig/script/run_full_performance_tests.sh	2023-08-24 02:31:11.326774158 -0700
++++ composable_kernel-1.0.0_p9999/script/run_full_performance_tests.sh	2023-08-24 09:40:33.371413335 -0700
+@@ -31,7 +31,7 @@ function print_log_header(){
+ 	rocminfo | grep "Compute Unit:" >> $1;
+ 	hipcc --version | grep -e 'HIP version'  >> $1;
+ 	echo 'Environment type: ' $2 >> $1;
+-	/opt/rocm/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
++	/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ --version | grep -e 'InstalledDir' >> $1;
+ }
+ 
+ #run gemm tests
+diff -urp composable_kernel-1.0.0_p9999.orig/script/run_performance_tests.sh composable_kernel-1.0.0_p9999/script/run_performance_tests.sh
+--- composable_kernel-1.0.0_p9999.orig/script/run_performance_tests.sh	2023-08-24 02:31:11.326774158 -0700
++++ composable_kernel-1.0.0_p9999/script/run_performance_tests.sh	2023-08-24 09:41:27.259414672 -0700
+@@ -28,7 +28,7 @@ function print_log_header(){
+ 	rocminfo | grep "Compute Unit:" >> $1;
+ 	hipcc --version | grep -e 'HIP version'  >> $1;
+ 	echo 'Environment type: ' $2 >> $1;
+-	/opt/rocm/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
++	/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ --version | grep -e 'InstalledDir' >> $1;
+ }
+ 
+ #run gemm tests
