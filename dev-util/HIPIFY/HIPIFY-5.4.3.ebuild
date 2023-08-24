@@ -23,24 +23,53 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
+gen_llvm_rdepend() {
+	local s="${1}"
+	echo "
+		(
+			=sys-devel/llvm-${s}
+			=sys-devel/clang-${s}
+		)
+	"
+}
+CDEPEND="
+	|| (
+		(
+			=dev-util/nvidia-cuda-toolkit-11.8*:=
+			|| (
+				$(gen_llvm_rdepend 15.0.4)
+				$(gen_llvm_rdepend 15.0.3)
+				$(gen_llvm_rdepend 15.0.2)
+				$(gen_llvm_rdepend 15.0.1)
+				$(gen_llvm_rdepend 15.0.0)
+				$(gen_llvm_rdepend 14.0.6)
+				$(gen_llvm_rdepend 14.0.5)
+			)
+		)
+	)
+"
 RDEPEND="
-	sys-devel/llvm:${LLVM_MAX_SLOT}
-	sys-devel/clang:${LLVM_MAX_SLOT}
+	${CDEPEND}
 "
 DEPEND="
-	${RDEPEND}
+	${CDEPEND}
 "
 BDEPEND="
+	${CDEPEND}
 	>=dev-util/cmake-3.16.8
-	sys-devel/clang:${LLVM_MAX_SLOT}
 "
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/HIPIFY-5.6.0-llvm-dynlib-on.patch"
-	"${FILESDIR}/HIPIFY-5.1.3-bin-install-path.patch"
+	"${FILESDIR}/HIPIFY-5.4.3-path-changes.patch"
 )
 
 pkg_setup() {
+	if has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-15*" && has_version "=sys-devel/llvm-15*" ; then
+		LLVM_MAX_VERSION=15
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
+		LLVM_MAX_VERSION=14
+	fi
 	llvm_pkg_setup
 }
 

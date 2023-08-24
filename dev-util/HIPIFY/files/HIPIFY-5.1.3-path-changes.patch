@@ -1,0 +1,257 @@
+diff -urp HIPIFY-rocm-5.1.3.orig/CMakeLists.txt HIPIFY-rocm-5.1.3/CMakeLists.txt
+--- HIPIFY-rocm-5.1.3.orig/CMakeLists.txt	2023-08-23 14:32:56.509704943 -0700
++++ HIPIFY-rocm-5.1.3/CMakeLists.txt	2023-08-23 14:33:16.789705446 -0700
+@@ -64,10 +64,10 @@ endif()
+ 
+ set(HIPIFY_INSTALL_PATH ${CMAKE_INSTALL_PREFIX})
+ 
+-install(TARGETS hipify-clang DESTINATION ${CMAKE_INSTALL_PREFIX})
++install(TARGETS hipify-clang DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+ install(
+     DIRECTORY ${CMAKE_SOURCE_DIR}/bin/
+-    DESTINATION ${CMAKE_INSTALL_PREFIX}
++    DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+     USE_SOURCE_PERMISSIONS
+     PATTERN "hipify-perl"
+     PATTERN "*.sh")
+diff -urp HIPIFY-rocm-5.1.3.orig/README.md HIPIFY-rocm-5.1.3/README.md
+--- HIPIFY-rocm-5.1.3.orig/README.md	2022-03-16 15:20:37.000000000 -0700
++++ HIPIFY-rocm-5.1.3/README.md	2023-08-23 14:34:18.673706981 -0700
+@@ -43,7 +43,7 @@ After applying all the matchers, the out
+ 
+ `hipify-clang` requires:
+ 
+-1. [**LLVM+CLANG**](http://releases.llvm.org) of at least version [3.8.0](http://releases.llvm.org/download.html#3.8.0); the latest stable and recommended release: [**13.0.1**](https://github.com/llvm/llvm-project/releases/tag/llvmorg-13.0.1).
++1. [**LLVM+CLANG**](http://releases.llvm.org) of at least version [3.8.0](http://releases.llvm.org/download.html#3.8.0); the latest stable and recommended release: [**13.0.1**](https://github.com/llvm/llvm-project/releases/tag/llvmorg-13.0.1).
+ 
+ 2. [**CUDA**](https://developer.nvidia.com/cuda-downloads) of at least version [7.0](https://developer.nvidia.com/cuda-toolkit-70), the latest supported version is [**11.5.1**](https://developer.nvidia.com/cuda-downloads).
+ 
+@@ -149,7 +149,7 @@ After applying all the matchers, the out
+       <td bgcolor="eefaeb"><a href="https://github.com/llvm/llvm-project/releases/tag/llvmorg-12.0.0">12.0.0</a>,
+                            <a href="https://github.com/llvm/llvm-project/releases/tag/llvmorg-12.0.1">12.0.1</a>,<br>
+                            <a href="https://github.com/llvm/llvm-project/releases/tag/llvmorg-13.0.0">13.0.0</a>,
+-                           <b><a href="https://github.com/llvm/llvm-project/releases/tag/llvmorg-13.0.1">13.0.1</a></b>
++                           <b><a href="https://github.com/llvm/llvm-project/releases/tag/llvmorg-13.0.1">13.0.1</a></b>
+       <td bgcolor="eefaeb"><a href="https://developer.nvidia.com/cuda-11-5-1-download-archive"><b>11.5.1</b></a></td>
+       <td colspan=2 bgcolor="eefaeb"><font color="green"><b>LATEST STABLE CONFIG</b></font></td>
+     </tr>
+@@ -165,7 +166,7 @@ After applying all the matchers, the out
+ In most cases, you can get a suitable version of `LLVM+CLANG` with your package manager.
+ 
+ Failing that or having multiple versions of `LLVM`, you can [download a release archive](http://releases.llvm.org/), build or install it, and set
+-[CMAKE_PREFIX_PATH](https://cmake.org/cmake/help/v3.5/variable/CMAKE_PREFIX_PATH.html) so `cmake` can find it; for instance: `-DCMAKE_PREFIX_PATH=d:\LLVM\13.0.1\dist`
++[CMAKE_PREFIX_PATH](https://cmake.org/cmake/help/v3.5/variable/CMAKE_PREFIX_PATH.html) so `cmake` can find it; for instance: `-DCMAKE_PREFIX_PATH=d:\LLVM\13.0.1\dist`
+ 
+ ### <a name="hipify-clang-usage"></a> hipify-clang: usage
+ 
+@@ -174,14 +175,14 @@ To process a file, `hipify-clang` needs
+ For example:
+ 
+ ```shell
+-./hipify-clang square.cu --cuda-path=/usr/local/cuda-11.5 -I /usr/local/cuda-11.5/samples/common/inc
++./hipify-clang square.cu --cuda-path=/opt/cuda -I /opt/cuda/samples/common/inc
+ ```
+ 
+ `hipify-clang` arguments are given first, followed by a separator `'--'`, and then the arguments you'd pass to `clang` if you
+ were compiling the input file. For example:
+ 
+ ```bash
+-./hipify-clang cpp17.cu --cuda-path=/usr/local/cuda-11.5 -- -std=c++17
++./hipify-clang cpp17.cu --cuda-path=/opt/cuda -- -std=c++17
+ ```
+ 
+ The [Clang manual for compiling CUDA](https://llvm.org/docs/CompileCudaWithLLVM.html#compiling-cuda-code) may be useful.
+@@ -226,63 +227,21 @@ The binary can then be found at `./dist/
+ 
+ `LLVM+CLANG` should be built from sources, pre-built binaries are not exhaustive for testing. Before building ensure that the [software required for building](https://releases.llvm.org/11.0.0/docs/GettingStarted.html#software) is of an appropriate version.
+ 
+-**LLVM <= 9.0.1:**
++**LLVM == 13.0.1:**
+ 
+-1. download [`LLVM`](https://github.com/llvm/llvm-project/releases/download/llvmorg-9.0.1/llvm-9.0.1.src.tar.xz)+[`CLANG`](https://github.com/llvm/llvm-project/releases/download/llvmorg-9.0.1/clang-9.0.1.src.tar.xz) sources; 
+-2. build [`LLVM+CLANG`](http://releases.llvm.org/9.0.0/docs/CMake.html):
+-
+-```bash
+-     cd .. \
+-     mkdir build dist \
+-     cd build
+-```
+-
+- **Linux**:
+-   ```bash
+-        cmake \
+-         -DCMAKE_INSTALL_PREFIX=../dist \
+-         -DLLVM_SOURCE_DIR=../llvm \
+-         -DLLVM_TARGETS_TO_BUILD="X86;NVPTX" \
+-         -DCMAKE_BUILD_TYPE=Release \
+-         ../llvm
+-        make -j install
+-   ```
+- **Windows**:
+-   ```shell
+-        cmake \
+-         -G "Visual Studio 16 2019" \
+-         -A x64 \
+-         -Thost=x64 \
+-         -DCMAKE_INSTALL_PREFIX=../dist \
+-         -DLLVM_SOURCE_DIR=../llvm \
+-         -DLLVM_TARGETS_TO_BUILD="NVPTX" \
+-         -DCMAKE_BUILD_TYPE=Release \
+-         ../llvm
+-   ```
+-Run `Visual Studio 16 2019`, open the generated `LLVM.sln`, build all, build project `INSTALL`.
+-
+-**LLVM >= 10.0.0:**
+-
+-1. download [`LLVM project`](https://github.com/llvm/llvm-project/releases/tag/llvmorg-13.0.1) sources;
++1. download [`LLVM project`](https://github.com/llvm/llvm-project/releases/tag/llvmorg-13.0.1) sources;
+ 2. build [`LLVM project`](http://llvm.org/docs/CMake.html):
+ 
+-```bash
+-      cd .. \
+-      mkdir build dist \
+-      cd build
+-```
+-
+  **Linux**:
+    ```bash
+-        cmake \
+-         -DCMAKE_INSTALL_PREFIX=../dist \
+-         -DLLVM_TARGETS_TO_BUILD="X86;NVPTX" \
+-         -DLLVM_ENABLE_PROJECTS="clang" \
+-         -DCMAKE_BUILD_TYPE=Release \
+-         ../llvm-project/llvm
+-        make -j install
++        emerge -1 =llvm-13*[llvm_targets_X86,llvm_targets_NVPTX]
+    ```
+  **Windows**:
++  ```bash
++       cd .. \
++       mkdir build dist \
++       cd build
++   ```
+    ```shell
+         cmake \
+          -G "Visual Studio 16 2019" \
+@@ -328,27 +287,27 @@ Run `Visual Studio 16 2019`, open the ge
+ 
+     * Install `lit` into `python`:
+ 
+-        - ***Linux***: `python /usr/llvm/13.0.1/llvm-project/llvm/utils/lit/setup.py install`
++        - ***Linux***: `emerge lit`
+ 
+-        - ***Windows***: `python d:/LLVM/13.0.1/llvm-project/llvm/utils/lit/setup.py install`
++        - ***Windows***: `python d:/LLVM/13.0.1/llvm-project/llvm/utils/lit/setup.py install`
+ 
+-    * Starting with LLVM 6.0.1 path to `llvm-lit` python script should be specified by the `LLVM_EXTERNAL_LIT` option:
++    * Starting with LLVM 6.0.1 path to `lit` python script should be specified by the `LLVM_EXTERNAL_LIT` option:
+ 
+-        - ***Linux***: `-DLLVM_EXTERNAL_LIT=/usr/llvm/13.0.1/build/bin/llvm-lit`
++        - ***Linux***: `-DLLVM_EXTERNAL_LIT=/usr/bin/lit`
+ 
+-        - ***Windows***: `-DLLVM_EXTERNAL_LIT=d:/LLVM/13.0.1/build/Release/bin/llvm-lit.py`
++        - ***Windows***: `-DLLVM_EXTERNAL_LIT=d:/LLVM/13.0.1/build/Release/bin/llvm-lit.py`
+ 
+     * `FileCheck`:
+ 
+-        - ***Linux***: copy from `/usr/llvm/13.0.1/build/bin/` to `CMAKE_INSTALL_PREFIX/dist/bin`
++        - ***Linux***: copy from `/usr/lib/llvm/13/bin/` to `CMAKE_INSTALL_PREFIX/dist/bin`
+ 
+-        - ***Windows***: copy from `d:/LLVM/13.0.1/build/Release/bin` to `CMAKE_INSTALL_PREFIX/dist/bin`
++        - ***Windows***: copy from `d:/LLVM/13.0.1/build/Release/bin` to `CMAKE_INSTALL_PREFIX/dist/bin`
+ 
+         - Or specify the path to `FileCheck` in `CMAKE_INSTALL_PREFIX` option
+ 
+ 8. To run OpenGL tests successfully on:
+ 
+-        - ***Linux***: install at least essential GL headers (on Ubuntu by `sudo apt-get install mesa-common-dev`)
++        - ***Linux***: install at least essential GL headers (by `emerge mesa`)
+ 
+         - ***Windows***: nothing to do: all the required headers are shipped with Windows SDK
+ 
+@@ -381,11 +340,11 @@ cmake
+  -DHIPIFY_CLANG_TESTS=1 \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=../dist \
+- -DCMAKE_PREFIX_PATH=/usr/llvm/13.0.1/dist \
+- -DCUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda \
+- -DCUDA_DNN_ROOT_DIR=/usr/local/cuda \
++ -DCMAKE_PREFIX_PATH=/usr/llvm/13.0.1 \
++ -DCUDA_TOOLKIT_ROOT_DIR=/opt/cuda \
++ -DCUDA_DNN_ROOT_DIR=/opt/cuda \
+  -DCUDA_CUB_ROOT_DIR=/usr/CUB \
+- -DLLVM_EXTERNAL_LIT=/usr/llvm/13.0.1/build/bin/llvm-lit \
++ -DLLVM_EXTERNAL_LIT=/usr/bin/lit \
+  ../hipify
+ ```
+ *A corresponding successful output:*
+@@ -402,21 +361,21 @@ cmake
+ -- Check for working CXX compiler: /usr/bin/c++ - skipped
+ -- Detecting CXX compile features
+ -- Detecting CXX compile features - done
+--- Found ZLIB: /usr/lib/x86_64-linux-gnu/libz.so (found version "1.2.11")
+--- Found LLVM 13.0.1:
+---    - CMake module path: /usr/llvm/13.0.1/dist/lib/cmake/llvm
+---    - Include path     : /usr/llvm/13.0.1/dist/include
+---    - Binary path      : /usr/llvm/13.0.1/dist/bin
++-- Found ZLIB: /usr/@LIBDIR@/libz.so (found version "1.2.11")
++-- Found LLVM 13.0.1:
++--    - CMake module path: /usr/lib/llvm/13/@LIBDIR@/cmake/llvm
++--    - Include path     : /usr/lib/llvm/13/include
++--    - Binary path      : /usr/lib/llvm/13/bin
+ -- Linker detection: GNU ld
+ -- Found PythonInterp: /usr/bin/python (found suitable version "3.9.7", minimum required is "2.7") 
+--- Found lit: /usr/local/bin/lit
+--- Found FileCheck: /usr/llvm/13.0.1/dist/bin/FileCheck
++-- Found lit: /usr/bin/lit
++-- Found FileCheck: /usr/lib/llvm/13/bin/FileCheck
+ -- Looking for pthread.h
+ -- Looking for pthread.h - found
+ -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+ -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+ -- Found Threads: TRUE
+--- Found CUDA: /usr/local/cuda (found version "11.5")
++-- Found CUDA: /opt/cuda (found version "11.5")
+ -- Configuring done
+ -- Generating done
+ -- Build files have been written to: /usr/hipify/build
+@@ -429,7 +388,7 @@ make test-hipify
+ Running HIPify regression tests
+ ========================================
+ CUDA 11.5 - will be used for testing
+-LLVM 13.0.1 - will be used for testing
++LLVM 13.0.1 - will be used for testing
+ x86_64 - Platform architecture
+ Linux 5.13.0-21-generic - Platform OS
+ 64 - hipify-clang binary bitness
+@@ -543,23 +502,23 @@ cmake
+  -DHIPIFY_CLANG_TESTS=1 \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX=../dist \
+- -DCMAKE_PREFIX_PATH=d:/LLVM/13.0.1/dist \
++ -DCMAKE_PREFIX_PATH=d:/LLVM/13.0.1/dist \
+  -DCUDA_TOOLKIT_ROOT_DIR="c:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5" \
+  -DCUDA_SDK_ROOT_DIR="c:/ProgramData/NVIDIA Corporation/CUDA Samples/v11.5" \
+  -DCUDA_DNN_ROOT_DIR=d:/CUDNN/cudnn-11.5-windows-x64-v8.3.2 \
+  -DCUDA_CUB_ROOT_DIR=d:/GIT/cub \
+- -DLLVM_EXTERNAL_LIT=d:/LLVM/13.0.1/build/Release/bin/llvm-lit.py \
++ -DLLVM_EXTERNAL_LIT=d:/LLVM/13.0.1/build/Release/bin/llvm-lit.py \
+  ../hipify
+ ```
+ *A corresponding successful output:*
+ ```shell
+--- Found LLVM 13.0.1:
+---    - CMake module path: d:/LLVM/13.0.1/dist/lib/cmake/llvm
+---    - Include path     : d:/LLVM/13.0.1/dist/include
+---    - Binary path      : d:/LLVM/13.0.1/dist/bin
++-- Found LLVM 13.0.1:
++--    - CMake module path: d:/LLVM/13.0.1/dist/@LIBDIR@/cmake/llvm
++--    - Include path     : d:/LLVM/13.0.1/dist/include
++--    - Binary path      : d:/LLVM/13.0.1/dist/bin
+ -- Found PythonInterp: c:/Program Files/Python39/python.exe (found suitable version "3.9.5", minimum required is "3.6")
+ -- Found lit: c:/Program Files/Python39/Scripts/lit.exe
+--- Found FileCheck: d:/LLVM/13.0.1/dist/bin/FileCheck.exe
++-- Found FileCheck: d:/LLVM/13.0.1/dist/bin/FileCheck.exe
+ -- Found CUDA: c:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.5 (found version "11.5")
+ -- Configuring done
+ -- Generating done
