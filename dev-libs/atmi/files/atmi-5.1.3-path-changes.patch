@@ -53,23 +53,6 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  endif()
  set ( CPACK_GENERATOR "RPM;DEB" CACHE STRING "CPACK Generator to use, e.g. DEB;RPM")
  
-@@ -175,3 +176,14 @@ set ( CPACK_COMPONENTS_ALL_IN_ONE_PACKAG
- 
- ## Include packaging
- include ( CPack )
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
-Only in src: CMakeLists.txt.orig
-Only in src: CMakeLists.txt.rej
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
 --- src.orig/cmake_modules/FindLibElf.cmake	2022-05-17 08:16:19.000000000 -0700
 +++ src/cmake_modules/FindLibElf.cmake	2023-08-24 14:33:28.367849384 -0700
