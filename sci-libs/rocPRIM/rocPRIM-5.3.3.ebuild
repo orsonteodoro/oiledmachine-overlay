@@ -72,27 +72,21 @@ RESTRICT="
 	)
 "
 S="${WORKDIR}/rocPRIM-rocm-${PV}"
+PATCHES=(
+	"${FILESDIR}/rocPRIM-5.4.3-path-changes.patch"
+)
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
 }
 
 src_prepare() {
-	# "hcc" is depcreated, new platform ist "rocclr"
+	# "hcc" is deprecated.  The new platform is "rocclr".
 	sed \
 		-e "/HIP_PLATFORM STREQUAL/s,hcc,rocclr," \
 		-i \
 		cmake/VerifyCompiler.cmake \
-		|| die
-
-	# Install according to FHS
-	sed \
-		-e "/PREFIX rocprim/d" \
-		-e "/INSTALL_INTERFACE/s,rocprim/include,include/rocprim," \
-		-e "/DESTINATION/s,rocprim/include,include," \
-		-e "/rocm_install_symlink_subdir(rocprim)/d" \
-		-i \
-		rocprim/CMakeLists.txt \
 		|| die
 
 	# Disable downloading googletest and googlebenchmark
@@ -119,8 +113,8 @@ src_prepare() {
 			|| die
 	fi
 
-	eapply_user
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {

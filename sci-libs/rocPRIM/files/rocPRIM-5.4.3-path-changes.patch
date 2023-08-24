@@ -1,0 +1,176 @@
+diff -urp rocPRIM-rocm-5.4.3.orig/cmake/Dependencies.cmake rocPRIM-rocm-5.4.3/cmake/Dependencies.cmake
+--- rocPRIM-rocm-5.4.3.orig/cmake/Dependencies.cmake	2023-08-23 22:38:11.714427313 -0700
++++ rocPRIM-rocm-5.4.3/cmake/Dependencies.cmake	2023-08-23 22:38:50.414428274 -0700
+@@ -97,13 +97,13 @@ endif()
+ 
+ set(PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern)
+ 
+-# By default, rocm software stack is expected at /opt/rocm
++# By default, rocm software stack is expected at /usr
+ # set environment variable ROCM_PATH to change location
+ if(NOT ROCM_PATH)
+-  set(ROCM_PATH /opt/rocm)
++  set(ROCM_PATH /usr)
+ endif()
+ 
+-find_package(ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH} /opt/rocm)
++find_package(ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH} /usr)
+ if(NOT ROCM_FOUND)
+   set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
+   set(rocm_cmake_url "https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip")
+Only in rocPRIM-rocm-5.4.3/cmake: Dependencies.cmake.orig
+Only in rocPRIM-rocm-5.4.3/cmake: Dependencies.cmake.rej
+diff -urp rocPRIM-rocm-5.4.3.orig/cmake/VerifyCompiler.cmake rocPRIM-rocm-5.4.3/cmake/VerifyCompiler.cmake
+--- rocPRIM-rocm-5.4.3.orig/cmake/VerifyCompiler.cmake	2023-08-23 22:38:11.710427313 -0700
++++ rocPRIM-rocm-5.4.3/cmake/VerifyCompiler.cmake	2023-08-23 22:38:27.374427702 -0700
+@@ -21,8 +21,8 @@
+ # SOFTWARE.
+ 
+ 
+-list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip ${ROCM_PATH}/llvm /opt/rocm/llvm /opt/rocm /opt/rocm/hip)
+-find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ /usr/lib/llvm/@LLVM_SLOT@ /usr /usr/hip)
++find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr)
+ 
+ if(HIP_COMPILER STREQUAL "clang")
+     if(NOT (HIP_CXX_COMPILER MATCHES ".*hipcc" OR HIP_CXX_COMPILER MATCHES ".*clang\\+\\+"))
+diff -urp rocPRIM-rocm-5.4.3.orig/CMakeLists.txt rocPRIM-rocm-5.4.3/CMakeLists.txt
+--- rocPRIM-rocm-5.4.3.orig/CMakeLists.txt	2023-01-30 10:17:36.000000000 -0800
++++ rocPRIM-rocm-5.4.3/CMakeLists.txt	2023-08-23 22:38:27.374427702 -0700
+@@ -24,13 +24,13 @@ cmake_minimum_required(VERSION 3.16 FATA
+ cmake_policy(VERSION 3.16...3.21)
+ 
+ # Install prefix
+-set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
++set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
+ 
+ # rocPRIM project
+ project(rocprim LANGUAGES CXX)
+ 
+ #Adding CMAKE_PREFIX_PATH
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH /usr)
+ 
+ # Build options
+ option(BUILD_TEST "Build tests (requires googletest)" OFF)
+@@ -44,7 +44,7 @@ option(BUILD_CODE_COVERAGE "Build with c
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+   ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+-  ${ROCM_PATH}/lib/cmake/hip ${HIP_PATH}/cmake /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake # FindHIP.cmake
++  ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake /usr/@LIBDIR@/cmake/hip /usr/hip/cmake # FindHIP.cmake
+ )
+ 
+ # Set a default build type if none was specified
+@@ -80,8 +80,8 @@ if(NOT USE_HIP_CPU)
+   if (NOT WIN32)
+     include(cmake/VerifyCompiler.cmake)
+   endif()
+-  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip ${ROCM_PATH}/llvm /opt/rocm/llvm /opt/rocm /opt/rocm/hip)
+-  find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm)
++  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ /usr/lib/llvm/@LLVM_SLOT@ /usr /usr/hip)
++  find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr)
+ endif()
+ 
+ # FOR HANDLING ENABLE/DISABLE OPTIONAL BACKWARD COMPATIBILITY for FILE/FOLDER REORG
+@@ -178,7 +178,7 @@ if(BUILD_CODE_COVERAGE)
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec /usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+     )
+ 
+Only in rocPRIM-rocm-5.4.3: CMakeLists.txt.orig
+diff -urp rocPRIM-rocm-5.4.3.orig/install rocPRIM-rocm-5.4.3/install
+--- rocPRIM-rocm-5.4.3.orig/install	2023-01-30 10:17:36.000000000 -0800
++++ rocPRIM-rocm-5.4.3/install	2023-08-23 22:38:27.374427702 -0700
+@@ -38,7 +38,7 @@ build_type=Release
+ build_hip_clang=false
+ run_tests=false
+ build_benchmark=false
+-rocm_path=/opt/rocm
++rocm_path=/usr
+ build_relocatable=false
+ build_address_sanitizer=false
+ build_freorg_bkwdcomp=true
+@@ -191,7 +191,7 @@ if [[ "${build_relocatable}" == true ]];
+        -DCMAKE_INSTALL_PREFIX=${rocm_path} -DBUILD_BENCHMARK=${benchmark} \
+        -DCMAKE_PREFIX_PATH="${rocm_path}  ${rocm_path}/hip" \
+        -DBUILD_BENCHMARK=${benchmark} -DBUILD_TEST=${clients} \
+-       -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" ../../.     # or cmake-gui ../.
++       -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip" ../../.     # or cmake-gui ../.
+ else
+     CXX=${rocm_path}/bin/${compiler} ${cmake_executable} ${cmake_common_options} -DBUILD_BENCHMARK=${benchmark} \
+        -DBUILD_TEST=${clients} -DCMAKE_BUILD_TYPE=${build_type} -DBUILD_CODE_COVERAGE=${codecoverage}  ../../. # or cmake-gui ../.
+diff -urp rocPRIM-rocm-5.4.3.orig/README.md rocPRIM-rocm-5.4.3/README.md
+--- rocPRIM-rocm-5.4.3.orig/README.md	2023-01-30 10:17:36.000000000 -0800
++++ rocPRIM-rocm-5.4.3/README.md	2023-08-23 22:38:27.374427702 -0700
+@@ -93,8 +93,8 @@ Recommended way of including rocPRIM int
+ configuration files. rocPRIM package name is `rocprim`.
+ 
+ ```cmake
+-# "/opt/rocm" - default install prefix
+-find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
++# "/usr" - default install prefix
++find_package(rocprim REQUIRED CONFIG PATHS "/usr/rocprim")
+ 
+ ...
+ 
+diff -urp rocPRIM-rocm-5.4.3.orig/rmake.py rocPRIM-rocm-5.4.3/rmake.py
+--- rocPRIM-rocm-5.4.3.orig/rmake.py	2023-01-30 10:17:36.000000000 -0800
++++ rocPRIM-rocm-5.4.3/rmake.py	2023-08-23 22:39:54.382429861 -0700
+@@ -105,7 +105,7 @@ def config_cmd():
+         # "-G \"Visual Studio 16 2019\" -A x64"  #  -G NMake ")  #
+         cmake_options.append( generator )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
+         if (OS_info["ID"] in ['centos', 'rhel']):
+           cmake_executable = "cmake3"
+         else:
+@@ -172,7 +172,7 @@ def config_cmd():
+ 
+ #   case "${ID}" in
+ #     centos|rhel)
+-#     cmake_options="${cmake_options} -DCMAKE_FIND_ROOT_PATH=/usr/lib64/llvm7.0/lib/cmake/"
++#     cmake_options="${cmake_options} -DCMAKE_FIND_ROOT_PATH=/usr/lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/"
+ #     ;;
+ #     windows)
+ #     cmake_options="${cmake_options} -DWIN32=ON -DROCM_PATH=${rocm_path} -DROCM_DIR:PATH=${rocm_path} -DCMAKE_PREFIX_PATH:PATH=${rocm_path}"
+Only in rocPRIM-rocm-5.4.3: rmake.py.orig
+Only in rocPRIM-rocm-5.4.3: rmake.py.rej
+diff -urp rocPRIM-rocm-5.4.3.orig/test/extra/CMakeLists.txt rocPRIM-rocm-5.4.3/test/extra/CMakeLists.txt
+--- rocPRIM-rocm-5.4.3.orig/test/extra/CMakeLists.txt	2023-01-30 10:17:36.000000000 -0800
++++ rocPRIM-rocm-5.4.3/test/extra/CMakeLists.txt	2023-08-23 22:38:27.374427702 -0700
+@@ -29,7 +29,7 @@ project(rocprim_package_install_test CXX
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
+-  ${HIP_PATH}/lib/cmake/hip ${HIP_PATH}/cmake /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake /usr/@LIBDIR@/cmake/hip /usr/hip/cmake # FindHIP.cmake
+ )
+ 
+ # Use target ID syntax if supported for AMDGPU_TARGETS
+@@ -43,7 +43,7 @@ endif()
+ include(VerifyCompiler)
+ 
+ # Find rocPRIM
+-find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "/usr/rocprim")
+ 
+ # Build CXX flags
+ set(CMAKE_CXX_STANDARD 14)
+diff -urp rocPRIM-rocm-5.4.3.orig/toolchain-linux.cmake rocPRIM-rocm-5.4.3/toolchain-linux.cmake
+--- rocPRIM-rocm-5.4.3.orig/toolchain-linux.cmake	2023-01-30 10:17:36.000000000 -0800
++++ rocPRIM-rocm-5.4.3/toolchain-linux.cmake	2023-08-23 22:38:27.374427702 -0700
+@@ -6,7 +6,7 @@
+ if (DEFINED ENV{ROCM_PATH})
+   set(rocm_bin "$ENV{ROCM_PATH}/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/bin")
++  set(rocm_bin "/usr/bin")
+ endif()
+ 
+ 
