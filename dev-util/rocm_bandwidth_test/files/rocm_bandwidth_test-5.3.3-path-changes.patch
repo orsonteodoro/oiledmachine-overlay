@@ -1,0 +1,102 @@
+diff -urp rocm_bandwidth_test-rocm-5.3.3.orig/CMakeLists.txt rocm_bandwidth_test-rocm-5.3.3/CMakeLists.txt
+--- rocm_bandwidth_test-rocm-5.3.3.orig/CMakeLists.txt	2022-07-28 12:15:25.000000000 -0700
++++ rocm_bandwidth_test-rocm-5.3.3/CMakeLists.txt	2023-08-24 15:51:54.207966140 -0700
+@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.6.3)
+ #
+ #     export CMAKE_PREFIX_PATH="Path to ROCr Header and ROCr libraries"
+ #
+-#       e.g. export CMAKE_PREFIX_PATH=/opt/rocm/
++#       e.g. export CMAKE_PREFIX_PATH=/usr
+ #       e.g. export CMAKE_PREFIX_PATH=${HOME}/git/compute/out/ubuntu-16.04/16.04/
+ #
+ #  2) Make an new folder called build under root folder
+@@ -39,7 +39,7 @@ if(WIN32)
+ endif()
+ 
+ # Flag to enable / disable verbose output.
+-SET(CMAKE_VERBOSE_MAKEFILE on)
++#_cmake_modify_IGNORE SET(CMAKE_VERBOSE_MAKEFILE on)
+ 
+ # Compiler Preprocessor definitions.
+ add_definitions(-D__linux__)
+@@ -73,7 +73,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-threadsafe-statics")
+ 
+ # CLANG options
+-if("$ENV{CXX}" STREQUAL "/usr/bin/clang++")
++if("$ENV{CXX}" MATCHES "clang++" OR "$ENV{CXX}" MATCHES "hipcc")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ferror-limit=1000000")
+ endif()
+ 
+@@ -95,7 +95,7 @@ endif ()
+ # Check Env vars
+ if(NOT DEFINED CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "")
+   if(DEFINED ENV{CMAKE_BUILD_TYPE})
+-    set(CMAKE_BUILD_TYPE $ENV{CMAKE_BUILD_TYPE})
++#_cmake_modify_IGNORE     set(CMAKE_BUILD_TYPE $ENV{CMAKE_BUILD_TYPE})
+   endif()
+ endif()
+ 
+@@ -103,9 +103,9 @@ endif()
+ string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
+ if("${CMAKE_BUILD_TYPE}" STREQUAL debug)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+-  set(CMAKE_BUILD_TYPE "debug")
++#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE "debug")
+ else()
+-  set(CMAKE_BUILD_TYPE "release")
++#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE "release")
+ endif()
+ 
+ # Extend Compiler flags based on Processor architecture
+@@ -133,7 +133,7 @@ include(utils)
+ # Using find_package(has-runtime64 to find required header and library files
+ # This scheme could fail when using older builds of ROCm. In such a case the
+ # build system relies on user defined locations to find header and library files
+-find_package(hsa-runtime64 PATHS /opt/rocm )
++find_package(hsa-runtime64 PATHS /usr )
+ if(${hsa-runtime64_FOUND})
+   # hsa-runtime config files will provide the include path via INSTALL_INTERFACE
+   message("hsa-runtime64 found @  ${hsa-runtime64_DIR} ")
+@@ -141,8 +141,8 @@ if(${hsa-runtime64_FOUND})
+   set(RBT_HSA_VERSION_MIN ${hsa-runtime64_VERSION_MINOR} )
+   set(RBT_HSA_VERSION_PATCH ${hsa-runtime64_VERSION_PATCH} )
+   # With file reorg changes
+-  # Actual header files  /opt/rocm-ver/include/hsa/
+-  # Wrapper header file  /opt/rocm-ver/hsa/include/hsa/
++  # Actual header files  /usr/include/hsa/
++  # Wrapper header file  /usr/hsa/include/hsa/
+   # Rocm 5.3.0 will have Hsa file reorg changes. Corresponding Hsa package version is 1056300
+   # If hsa package version greater than or equal to file reorg version,use hsa/hsa.h else use hsa.h
+   math(EXPR RBT_HSA_VERSION_FILEREORG "1056300")
+@@ -163,11 +163,11 @@ else()
+ 
+   # Search for ROCr header file in user defined locations
+   # Since the search is for hsa/hsa.h and the default include is "hsa/hsa.h", this will support all version of rocm
+-  find_path(ROCR_HDR hsa/hsa.h PATHS ${ROCR_INC_DIR} "/opt/rocm" PATH_SUFFIXES include REQUIRED)
++  find_path(ROCR_HDR hsa/hsa.h PATHS ${ROCR_INC_DIR} "/usr" PATH_SUFFIXES include REQUIRED)
+   INCLUDE_DIRECTORIES(${ROCR_HDR})
+ 
+   # Search for ROCr library file in user defined locations
+-  find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm" PATH_SUFFIXES lib lib64 REQUIRED)
++  find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/usr" PATH_SUFFIXES @LIBDIR@ REQUIRED)
+ endif()
+ 
+ #
+Only in rocm_bandwidth_test-rocm-5.3.3: CMakeLists.txt.orig
+Only in rocm_bandwidth_test-rocm-5.3.3: CMakeLists.txt.rej
+diff -urp rocm_bandwidth_test-rocm-5.3.3.orig/Readme.md rocm_bandwidth_test-rocm-5.3.3/Readme.md
+--- rocm_bandwidth_test-rocm-5.3.3.orig/Readme.md	2022-07-28 12:15:25.000000000 -0700
++++ rocm_bandwidth_test-rocm-5.3.3/Readme.md	2023-08-24 15:52:23.883966876 -0700
+@@ -32,9 +32,9 @@ The following simply lists the steps to
+     test suite
+ 
+         // Assume that Roc Runtime has its libraries & headers are located in the path :
+-        // libraries : _ABSOLUTE_PATH_TO_ROCR_LIBS_/lib
++        // libraries : _ABSOLUTE_PATH_TO_ROCR_LIBS_/@LIBDIR@
+         // headers   : _ABSOLUTE_PATH_TO_ROCR_LIBS_/include/hsa
+-        // Note : Observe that both include & lib folder are under common path (_ABSOLUTE_PATH_TO_ROCR_LIBS_)
++        // Note : Observe that both include & @LIBDIR@ folder are under common path (_ABSOLUTE_PATH_TO_ROCR_LIBS_)
+ 
+         // Builds Debug version
+         // Assumes pwd is _ABSOLUTE_PATH_TO_RBT/roc_bandwidth_test/build
