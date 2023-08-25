@@ -5,6 +5,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
 inherit cmake llvm python-r1
 
