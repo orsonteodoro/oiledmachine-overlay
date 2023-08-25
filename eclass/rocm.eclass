@@ -364,6 +364,18 @@ eerror
 		$(grep -r -l -e "@CLANG_SLOT@" "${WORKDIR}") \
 		2>/dev/null || true
 
+	sed \
+		-i \
+		-e "s|@ROCM_VERSION@|${PV}|g" \
+		$(grep -r -l -e "@ROCM_VERSION@" "${WORKDIR}") \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@PV@|${PV}|g" \
+		$(grep -r -l -e "@PV@" "${WORKDIR}") \
+		2>/dev/null || true
+
 	IFS=$' \t\n'
 einfo "CLANG_SLOT:  ${clang_slot}"
 einfo "LLVM_SLOT:  ${LLVM_SLOT}"
