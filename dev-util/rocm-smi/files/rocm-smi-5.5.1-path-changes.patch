@@ -1,0 +1,294 @@
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/CMakeLists.txt rocm_smi_lib-rocm-5.5.1/CMakeLists.txt
+--- rocm_smi_lib-rocm-5.5.1.orig/CMakeLists.txt	2023-08-26 11:43:30.911883679 -0700
++++ rocm_smi_lib-rocm-5.5.1/CMakeLists.txt	2023-08-26 11:43:45.207884034 -0700
+@@ -46,7 +46,7 @@ set(PKG_VERSION_NUM_COMMIT 0)
+ 
+ ## Define default variable and variables for the optional build target
+ ##  rocm_smi_lib-dev
+-set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE STRING "Default installation directory.")
++#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "/usr" CACHE STRING "Default installation directory.")
+ set(COMMON_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Location source code common root.")
+ set(ROCM_SMI_PACKAGE rocm-smi-lib)
+ 
+@@ -56,7 +56,7 @@ include(GNUInstallDirs)
+ set(COMMON_PROJ_ROOT ${PROJECT_SOURCE_DIR})
+ 
+ ## Verbose output.
+-set(CMAKE_VERBOSE_MAKEFILE on)
++#_cmake_modify_IGNORE set(CMAKE_VERBOSE_MAKEFILE on)
+ 
+ if (CMAKE_COMPILER_IS_GNUCC AND
+                          CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.4.0)
+@@ -198,7 +198,7 @@ set(CPACK_RPM_PACKAGE_LICENSE "NCSA")
+ # Packaging directives
+ ###########################
+ set(CPACK_GENERATOR "DEB;RPM"  CACHE STRING "Default packaging generators.")
+-set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE STRING "Default packaging prefix.")
++set(CPACK_PACKAGING_INSTALL_PREFIX "/usr" CACHE STRING "Default packaging prefix.")
+ set ( ENABLE_LDCONFIG ON CACHE BOOL "Set library links and caches using ldconfig.")
+ set(CPACK_PACKAGE_NAME ${ROCM_SMI_PACKAGE})
+ set(CPACK_PACKAGE_VENDOR "Advanced Micro Devices, Inc.")
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/DEBIAN/x86_64-librocm_smi_lib.conf rocm_smi_lib-rocm-5.5.1/DEBIAN/x86_64-librocm_smi_lib.conf
+--- rocm_smi_lib-rocm-5.5.1.orig/DEBIAN/x86_64-librocm_smi_lib.conf	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/DEBIAN/x86_64-librocm_smi_lib.conf	2023-08-26 11:43:45.207884034 -0700
+@@ -1 +1 @@
+-/opt/rocm/lib
++/usr/@LIBIDR@
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/oam/CMakeLists.txt rocm_smi_lib-rocm-5.5.1/oam/CMakeLists.txt
+--- rocm_smi_lib-rocm-5.5.1.orig/oam/CMakeLists.txt	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/oam/CMakeLists.txt	2023-08-26 11:43:45.207884034 -0700
+@@ -7,7 +7,7 @@ message("                    CMake OAM (
+ message("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+ 
+ ## Verbose output.
+-set(CMAKE_VERBOSE_MAKEFILE on)
++#_cmake_modify_IGNORE set(CMAKE_VERBOSE_MAKEFILE on)
+ 
+ # Required Defines first:
+ 
+@@ -18,7 +18,7 @@ message("Build Configuration:")
+ # message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ # message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-# message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++# message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ # message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ # message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ # message("--------RSMI Inc Dir: " ${OAM_INC_DIR})
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/python_smi_tools/README.md rocm_smi_lib-rocm-5.5.1/python_smi_tools/README.md
+--- rocm_smi_lib-rocm-5.5.1.orig/python_smi_tools/README.md	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/python_smi_tools/README.md	2023-08-26 11:43:45.207884034 -0700
+@@ -30,7 +30,7 @@ $(uname -a) | cut -d ' ' -f 3)
+ 
+ For detailed and up to date usage information, we recommend consulting the help:
+ ```shell
+-/opt/rocm/bin/rocm-smi -h
++/usr/bin/rocm-smi -h
+ ```
+ 
+ For convenience purposes, following is the output from the -h flag:
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/python_smi_tools/rocm_smi.py rocm_smi_lib-rocm-5.5.1/python_smi_tools/rocm_smi.py
+--- rocm_smi_lib-rocm-5.5.1.orig/python_smi_tools/rocm_smi.py	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/python_smi_tools/rocm_smi.py	2023-08-26 11:43:45.207884034 -0700
+@@ -66,7 +66,7 @@ def driverInitialized():
+     """
+     driverInitialized = ''
+     try:
+-        driverInitialized = str(subprocess.check_output("cat /sys/module/amdgpu/initstate |grep live", shell=True))
++        driverInitialized = str(subprocess.check_output("test -d /sys/module/amdgpu", shell=True))
+     except subprocess.CalledProcessError:
+         pass
+     if len(driverInitialized) > 0:
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/python_smi_tools/rsmiBindings.py rocm_smi_lib-rocm-5.5.1/python_smi_tools/rsmiBindings.py
+--- rocm_smi_lib-rocm-5.5.1.orig/python_smi_tools/rsmiBindings.py	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/python_smi_tools/rsmiBindings.py	2023-08-26 11:43:45.207884034 -0700
+@@ -10,18 +10,9 @@ from enum import Enum
+ import os
+ 
+ # Use ROCm installation path if running from standard installation
+-# With File Reorg rsmiBindings.py will be installed in  /opt/rocm/libexec/rocm_smi.
++# With File Reorg rsmiBindings.py will be installed in  /usr/libexec/rocm_smi.
+ # relative path changed accordingly
+-path_librocm = os.path.dirname(os.path.realpath(__file__)) + '/../../lib/librocm_smi64.so'
+-if not os.path.isfile(path_librocm):
+-    print('Unable to find %s . Trying /opt/rocm*' % path_librocm)
+-    for root, dirs, files in os.walk('/opt', followlinks=True):
+-        if 'librocm_smi64.so' in files:
+-            path_librocm = os.path.join(os.path.realpath(root), 'librocm_smi64.so')
+-    if os.path.isfile(path_librocm):
+-        print('Using lib from %s' % path_librocm)
+-    else:
+-        print('Unable to find librocm_smi64.so')
++path_librocm = '/usr/@LIBDIR@/librocm_smi64.so'
+ 
+ # ----------> TODO: Support static libs as well as SO
+ 
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/README.md rocm_smi_lib-rocm-5.5.1/README.md
+--- rocm_smi_lib-rocm-5.5.1.orig/README.md	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/README.md	2023-08-26 11:43:45.211884034 -0700
+@@ -29,7 +29,7 @@ After the ROCm SMI library git repositor
+ ##### ```$ cd build```
+ ##### ```$ cmake <location of root of ROCm SMI library CMakeLists.txt>```
+ ##### ```$ make```
+-##### ```# Install library file and header; default location is /opt/rocm```
++##### ```# Install library file and header; default location is /usr```
+ ##### ```$ make install```
+ The built library will appear in the `build` folder.
+ 
+@@ -43,7 +43,7 @@ The reference manual, `refman.pdf` will
+ In order to verify the build and capability of ROCm SMI on your system and to see an example of how ROCm SMI can be used, you may build and run the tests that are available in the repo. To build the tests, follow these steps:
+ 
+ ##### ```# Set environment variables used in CMakeLists.txt file```
+-##### ```$ ROCM_DIR=<parent dir. to lib/ and inc/, containing RSMI library and header>```
++##### ```$ ROCM_DIR=<parent dir. to @LIBDIR@/ and inc/, containing RSMI library and header>```
+ ##### ```$ mkdir <location for test build>```
+ ##### ```$ cd <location for test build>```
+ ##### ```$ cmake -DROCM_DIR=$ROCM_DIR <ROCm SMI source root>/tests/rocm_smi_test```
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/rocm_smi/CMakeLists.txt rocm_smi_lib-rocm-5.5.1/rocm_smi/CMakeLists.txt
+--- rocm_smi_lib-rocm-5.5.1.orig/rocm_smi/CMakeLists.txt	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/rocm_smi/CMakeLists.txt	2023-08-26 11:43:45.211884034 -0700
+@@ -7,7 +7,7 @@ message("                    CMake ROCm
+ message("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+ 
+ ## Verbose output.
+-set(CMAKE_VERBOSE_MAKEFILE on)
++#_cmake_modify_IGNORE set(CMAKE_VERBOSE_MAKEFILE on)
+ 
+ # Required Defines first:
+ 
+@@ -18,7 +18,7 @@ message("Build Configuration:")
+ # message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ # message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-# message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++# message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ # message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ # message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ # message("--------RSMI Inc Dir: " ${RSMI_INC_DIR})
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/rocm_smi-backward-compat.cmake rocm_smi_lib-rocm-5.5.1/rocm_smi-backward-compat.cmake
+--- rocm_smi_lib-rocm-5.5.1.orig/rocm_smi-backward-compat.cmake	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/rocm_smi-backward-compat.cmake	2023-08-26 11:44:07.543884588 -0700
+@@ -24,8 +24,8 @@ set(RSMI_WRAPPER_DIR ${RSMI_BUILD_DIR}/w
+ set(RSMI_WRAPPER_INC_DIR ${RSMI_WRAPPER_DIR}/include/${ROCM_SMI})
+ set(OAM_TARGET_NAME "oam")
+ set(OAM_WRAPPER_INC_DIR ${RSMI_WRAPPER_DIR}/include/${OAM_TARGET_NAME})
+-set(RSMI_WRAPPER_LIB_DIR ${RSMI_WRAPPER_DIR}/${ROCM_SMI}/lib)
+-set(OAM_WRAPPER_LIB_DIR ${RSMI_WRAPPER_DIR}/${OAM_TARGET_NAME}/lib)
++set(RSMI_WRAPPER_LIB_DIR ${RSMI_WRAPPER_DIR}/${ROCM_SMI}/@LIBDIR@)
++set(OAM_WRAPPER_LIB_DIR ${RSMI_WRAPPER_DIR}/${OAM_TARGET_NAME}/@LIBDIR@)
+ ## package headers
+ set(PUBLIC_RSMI_HEADERS
+     rocm_smi.h
+@@ -63,9 +63,9 @@ function(create_header_template)
+ #define @include_guard@
+ 
+ #if defined(__GNUC__)
+-#warning \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with @prefix_name@\"
++#warning \"This file is deprecated. Use file from include path /usr/include/ and prefix with @prefix_name@\"
+ #else
+-#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with @prefix_name@\")
++#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with @prefix_name@\")
+ #endif
+ 
+ @include_statements@
+Only in rocm_smi_lib-rocm-5.5.1: rocm_smi-backward-compat.cmake.orig
+Only in rocm_smi_lib-rocm-5.5.1: rocm_smi-backward-compat.cmake.rej
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/tests/rocm_smi_test/CMakeLists.txt rocm_smi_lib-rocm-5.5.1/tests/rocm_smi_test/CMakeLists.txt
+--- rocm_smi_lib-rocm-5.5.1.orig/tests/rocm_smi_test/CMakeLists.txt	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/tests/rocm_smi_test/CMakeLists.txt	2023-08-26 11:43:45.211884034 -0700
+@@ -48,7 +48,7 @@ endif()
+ # Required Defines first:
+ 
+ set(RSMI_INC_DIR ${ROCM_DIR}/include)
+-set(RSMI_LIB_DIR ${ROCM_DIR}/lib)
++set(RSMI_LIB_DIR ${ROCM_DIR}/@LIBDIR@)
+ #
+ # Determine RSMI Header files are present
+ #  (no external source dependencies)
+@@ -101,7 +101,7 @@ message("------------Compiler: " ${CMAKE
+ message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ message("")
+@@ -109,11 +109,11 @@ message("")
+ #
+ # Set the build type based on user input
+ #
+-set(CMAKE_BUILD_TYPE ${BUILD_TYPE})
++#_cmake_modify_IGNORE set(CMAKE_BUILD_TYPE ${BUILD_TYPE})
+ #
+ # Flag to enable / disable verbose output.
+ #
+-set(CMAKE_VERBOSE_MAKEFILE on)
++#_cmake_modify_IGNORE set(CMAKE_VERBOSE_MAKEFILE on)
+ #
+ # Compiler pre-processor definitions.
+ #
+@@ -220,7 +220,7 @@ add_executable(${RSMITST} ${rsmitstSourc
+ target_link_libraries(${RSMITST} ${RSMITST_LIBS} c stdc++ pthread)
+ 
+ install(TARGETS ${RSMITST}
+-        ARCHIVE DESTINATION ${PROJECT_BINARY_DIR}/lib
+-        LIBRARY DESTINATION ${PROJECT_BINARY_DIR}/lib
++        ARCHIVE DESTINATION ${PROJECT_BINARY_DIR}/@LIBDIR@
++        LIBRARY DESTINATION ${PROJECT_BINARY_DIR}/@LIBDIR@
+         RUNTIME DESTINATION ${PROJECT_BINARY_DIR}/bin)
+ 
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/tests/rocm_smi_test/gtest/docs/pkgconfig.md rocm_smi_lib-rocm-5.5.1/tests/rocm_smi_test/gtest/docs/pkgconfig.md
+--- rocm_smi_lib-rocm-5.5.1.orig/tests/rocm_smi_test/gtest/docs/pkgconfig.md	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/tests/rocm_smi_test/gtest/docs/pkgconfig.md	2023-08-26 11:43:45.211884034 -0700
+@@ -61,10 +61,10 @@ These failures are common if you install
+ sourced it from a distro or other package manager. If so, you need to tell
+ pkg-config where it can find the `.pc` files containing the information. Say you
+ installed GoogleTest to `/usr/local`, then it might be that the `.pc` files are
+-installed under `/usr/local/lib64/pkgconfig`. If you set
++installed under `/usr/@LIBDIR@/pkgconfig`. If you set
+ 
+ ```
+-export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
++export PKG_CONFIG_PATH=/usr/@LIBDIR@/pkgconfig
+ ```
+ 
+ pkg-config will also try to look in `PKG_CONFIG_PATH` to find `gtest_main.pc`.
+@@ -100,7 +100,7 @@ reasons why this stripping needs to occu
+ If you look at the generated pkg-config file, it will look something like
+ 
+ ```
+-libdir=/usr/lib64
++libdir=/usr/@LIBDIR@
+ includedir=/usr/include
+ 
+ Name: gtest
+@@ -113,14 +113,14 @@ Cflags: -I${includedir} -DGTEST_HAS_PTHR
+ 
+ Notice that the sysroot is not included in `libdir` and `includedir`! If you try
+ to run `pkg-config` with the correct
+-`PKG_CONFIG_LIBDIR=/home/MYUSER/sysroot/usr/lib64/pkgconfig` against this `.pc`
++`PKG_CONFIG_LIBDIR=/home/MYUSER/sysroot/usr/@LIBDIR@/pkgconfig` against this `.pc`
+ file, you will get
+ 
+ ```
+ $ pkg-config --cflags gtest
+ -DGTEST_HAS_PTHREAD=1 -lpthread -I/usr/include
+ $ pkg-config --libs gtest
+--L/usr/lib64 -lgtest -lpthread
++-L/usr/@LIBDIR@ -lgtest -lpthread
+ ```
+ 
+ which is obviously wrong and points to the `CBUILD` and not `CHOST` root. In
+@@ -131,7 +131,7 @@ pkg-config about the actual sysroot
+ ```
+ export PKG_CONFIG_DIR=
+ export PKG_CONFIG_SYSROOT_DIR=/home/MYUSER/sysroot
+-export PKG_CONFIG_LIBDIR=${PKG_CONFIG_SYSROOT_DIR}/usr/lib64/pkgconfig
++export PKG_CONFIG_LIBDIR=${PKG_CONFIG_SYSROOT_DIR}/usr/@LIBDIR@/pkgconfig
+ ```
+ 
+ and running `pkg-config` again we get
+@@ -140,7 +140,7 @@ and running `pkg-config` again we get
+ $ pkg-config --cflags gtest
+ -DGTEST_HAS_PTHREAD=1 -lpthread -I/home/MYUSER/sysroot/usr/include
+ $ pkg-config --libs gtest
+--L/home/MYUSER/sysroot/usr/lib64 -lgtest -lpthread
++-L/home/MYUSER/sysroot/usr/@LIBDIR@ -lgtest -lpthread
+ ```
+ 
+ which contains the correct sysroot now. For a more comprehensive guide to also
+diff -urp rocm_smi_lib-rocm-5.5.1.orig/tests/rocm_smi_test/gtest/googletest/cmake/internal_utils.cmake rocm_smi_lib-rocm-5.5.1/tests/rocm_smi_test/gtest/googletest/cmake/internal_utils.cmake
+--- rocm_smi_lib-rocm-5.5.1.orig/tests/rocm_smi_test/gtest/googletest/cmake/internal_utils.cmake	2023-03-06 12:21:53.000000000 -0800
++++ rocm_smi_lib-rocm-5.5.1/tests/rocm_smi_test/gtest/googletest/cmake/internal_utils.cmake	2023-08-26 11:43:45.211884034 -0700
+@@ -159,8 +159,8 @@ function(cxx_library_with_type name type
+     PROPERTIES
+     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtest/googlemock/gtest"
+-    # LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
++    # LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/@LIBDIR@"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/@LIBDIR@"
+     PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+   # make PDBs match library name
+   get_target_property(pdb_debug_postfix ${name} DEBUG_POSTFIX)

@@ -40,8 +40,7 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.4.2-detect-builtin-amdgpu.patch"
-	"${FILESDIR}/${PN}-5.6.0-install-destination-fix.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
@@ -49,52 +48,16 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed -i \
-		-e "/find_program (GIT/d" \
+	sed \
+		-i \
+		-e "/LICENSE.txt/d" \
 		"CMakeLists.txt" \
 		|| die
 	sed \
-		-e "/LICENSE.txt/d" \
 		-i \
-		CMakeLists.txt \
+		-e "/find_program (GIT/d" \
+		"CMakeLists.txt" \
 		|| die
-	sed \
-		-e "/^path_librocm = /c\path_librocm = '${EPREFIX}/usr/$(get_libdir)/librocm_smi64.so'" \
-		-i \
-		python_smi_tools/rsmiBindings.py \
-		|| die
-	IFS=$'\n'
-		sed \
-			-i \
-			-e "s|{ROCM_DIR}/lib|{ROCM_DIR}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{ROCM_DIR}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s|{PROJECT_BINARY_DIR}/lib|{PROJECT_BINARY_DIR}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{PROJECT_BINARY_DIR}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s|{OAM_TARGET_NAME}/lib|{OAM_TARGET_NAME}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{OAM_TARGET_NAME}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s|{ROCM_SMI}/lib|{ROCM_SMI}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{ROCM_SMI}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s|{CMAKE_BINARY_DIR}/lib|{CMAKE_BINARY_DIR}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{CMAKE_BINARY_DIR}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s| lib/| $(get_libdir)/|g" \
-			$(grep -r -l -F -e " lib/" "README.md") \
-			|| die
-	IFS=$' \t\n'
 	cmake_src_prepare
 	rocm_src_prepare
 }

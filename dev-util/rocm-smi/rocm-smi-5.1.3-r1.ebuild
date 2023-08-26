@@ -41,7 +41,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-gcc12-memcpy.patch"
-	"${FILESDIR}/${PN}-5.1.3-detect-builtin-amdgpu.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -50,63 +50,10 @@ pkg_setup() {
 
 src_prepare() {
 	sed \
-		-e "/DESTINATION/s,\${OAM_NAME}/lib,$(get_libdir)," \
-		-e "/DESTINATION/s,oam/include/oam,include/oam," \
 		-i \
-		oam/CMakeLists.txt \
-		|| die
-	sed \
-		-e "/link DESTINATION/,+1d" \
-		-e "/DESTINATION/s,\${ROCM_SMI}/lib,$(get_libdir)," \
-		-e "/bindings_link/,+3d" \
-		-e "/rsmiBindings.py/,+1d" \
-		-e "/DESTINATION/s,rocm_smi/include/rocm_smi,include/rocm_smi," \
-		-i \
-		rocm_smi/CMakeLists.txt \
-		|| die
-	sed \
 		-e "/LICENSE.txt/d" \
-		-e "s,\${ROCM_SMI}/lib/cmake,$(get_libdir)/cmake,g" \
-		-i \
-		CMakeLists.txt \
+		"CMakeLists.txt" \
 		|| die
-	sed \
-		-e "/^path_librocm = /c\path_librocm = '${EPREFIX}/usr/$(get_libdir)/librocm_smi64.so'" \
-		-i \
-		python_smi_tools/rsmiBindings.py \
-		|| die
-	IFS=$'\n'
-		sed \
-			-i \
-			-e "s|{ROCM_DIR}/lib|{ROCM_DIR}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{ROCM_DIR}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s|{PROJECT_BINARY_DIR}/lib|{PROJECT_BINARY_DIR}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{PROJECT_BINARY_DIR}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s|{OAM_TARGET_NAME}/lib|{OAM_TARGET_NAME}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{OAM_TARGET_NAME}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s|{ROCM_SMI}/lib|{ROCM_SMI}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{ROCM_SMI}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s|{CMAKE_BINARY_DIR}/lib|{CMAKE_BINARY_DIR}/$(get_libdir)|g" \
-			$(grep -r -l -F -e "{CMAKE_BINARY_DIR}/lib" "${WORKDIR}") \
-			|| die
-		sed \
-			-i \
-			-e "s| lib/| $(get_libdir)/|g" \
-			$(grep -r -l -F -e " lib/" "README.md") \
-			|| die
-	IFS=$' \t\n'
 	cmake_src_prepare
 	rocm_src_prepare
 }
