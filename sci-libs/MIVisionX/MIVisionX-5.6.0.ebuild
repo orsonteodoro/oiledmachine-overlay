@@ -236,7 +236,7 @@ eerror
 		IFS=$'\n'
 		sed \
 			-i \
-			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}/usr' --rocm-device-lib-path='${ESYSROOT}/usr/lib/amdgcn/bitcode'|g" \
+			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}/usr' --rocm-device-lib-path='${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode'|g" \
 			$(grep -l -r -e "-DNDEBUG -fPIC" "${WORKDIR}") \
 			|| die
 		IFS=$' \t\n'
