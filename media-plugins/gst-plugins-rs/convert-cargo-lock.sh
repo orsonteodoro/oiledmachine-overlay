@@ -6,7 +6,7 @@
 CATEGORY="media-plugins"
 PN="gst-plugins-rs"
 PV="${1}"
-MY_PV="${1}"
+MY_PV="${2}"
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
