@@ -44,7 +44,6 @@ BDEPEND="
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
-	"${FILESDIR}/${PN}-5.0.2-gentoo-location.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
 	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
@@ -61,12 +60,7 @@ pkg_setup() {
 
 src_prepare() {
 	sed \
-		-e "s,\${DEST_NAME}/lib,$(get_libdir),g" \
-		-e "s,\${DEST_NAME}/include,include/\${DEST_NAME},g" \
-		-e "s,\${DEST_NAME}/bin,bin,g" \
-		-e "/ctrl DESTINATION/s,\${DEST_NAME}/tool,bin,g" \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
-		-e "/libtool.so DESTINATION/s,\${DEST_NAME}/tool,$(get_libdir),g" \
 		-i \
 		CMakeLists.txt \
 		|| die

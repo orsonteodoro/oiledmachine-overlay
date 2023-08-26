@@ -49,7 +49,6 @@ BDEPEND="
 RESTRICT="test"
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-gentoo-location.patch"
 	"${FILESDIR}/${PN}-5.6.0-toggle-aqlprofile.patch"
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
@@ -93,12 +92,6 @@ ewarn
 		-i \
 		-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
 		"cmake_modules/env.cmake" \
-		|| die
-
-	sed \
-		-i \
-		-e "s|-O2|-O2 --rocm-device-lib-path=${ESYSROOT}/usr/lib/amdgcn/bitcode|" \
-		tests/featuretests/profiler/CMakeLists.txt \
 		|| die
 
 	rocm_src_prepare

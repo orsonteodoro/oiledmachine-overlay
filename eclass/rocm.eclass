@@ -93,7 +93,7 @@ esac
 if [[ ! ${_ROCM_ECLASS} ]]; then
 _ROCM_ECLASS=1
 
-inherit llvm
+inherit llvm toolchain-funcs
 
 # @ECLASS_VARIABLE: ROCM_VERSION
 # @REQUIRED
@@ -375,6 +375,18 @@ eerror
 		-e "s|@PV@|${PV}|g" \
 		$(grep -r -l -e "@PV@" "${WORKDIR}") \
 		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|@CHOST@|${CHOST}|g" \
+		$(grep -r -l -e "@PV@" "${WORKDIR}") \
+		2>/dev/null || true
+	local gcc_slot=$(gcc-major-version)
+	sed \
+		-i \
+		-e "s|@GCC_SLOT@|${gcc_slot}|g" \
+		$(grep -r -l -e "@PV@" "${WORKDIR}") \
+		2>/dev/null || true
+
 
 	IFS=$' \t\n'
 einfo "CLANG_SLOT:  ${clang_slot}"

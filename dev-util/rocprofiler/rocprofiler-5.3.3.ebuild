@@ -45,7 +45,6 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-nostrip.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-Werror.patch"
-	"${FILESDIR}/${PN}-5.3.3-gentoo-location.patch"
 	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 

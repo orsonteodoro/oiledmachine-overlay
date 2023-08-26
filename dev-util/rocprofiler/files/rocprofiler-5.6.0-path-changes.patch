@@ -1,12 +1,12 @@
 diff -urp rocprofiler-rocm-5.6.0.orig/bin/build_kernel.sh rocprofiler-rocm-5.6.0/bin/build_kernel.sh
 --- rocprofiler-rocm-5.6.0.orig/bin/build_kernel.sh	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/bin/build_kernel.sh	2023-08-22 21:25:50.700175959 -0700
++++ rocprofiler-rocm-5.6.0/bin/build_kernel.sh	2023-08-26 13:54:44.580079031 -0700
 @@ -18,7 +18,7 @@ if [ -z "$DST_DIR" ] ; then
  fi
  
  if [ -z "$ROCM_DIR" ] ; then
 -  ROCM_DIR=/opt/rocm
-+  ROCM_DIR=@EPREFIX@/usr
++  ROCM_DIR=/usr
  fi
  
  if [ -z "$TGT_LIST" ] ; then
@@ -40,7 +40,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/bin/build_kernel.sh rocprofiler-rocm-5.6.0
    exit 1
 diff -urp rocprofiler-rocm-5.6.0.orig/bin/rocprofv2 rocprofiler-rocm-5.6.0/bin/rocprofv2
 --- rocprofiler-rocm-5.6.0.orig/bin/rocprofv2	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/bin/rocprofv2	2023-08-22 21:43:03.100201573 -0700
++++ rocprofiler-rocm-5.6.0/bin/rocprofv2	2023-08-26 13:54:44.580079031 -0700
 @@ -119,8 +119,8 @@ while [ 1 ] ; do
        eval $ROCM_DIR/build/src/tools/ctrl
      else
@@ -69,9 +69,101 @@ diff -urp rocprofiler-rocm-5.6.0.orig/bin/rocprofv2 rocprofiler-rocm-5.6.0/bin/r
    fi
  fi
  
+diff -urp rocprofiler-rocm-5.6.0.orig/bin/rpl_run.sh rocprofiler-rocm-5.6.0/bin/rpl_run.sh
+--- rocprofiler-rocm-5.6.0.orig/bin/rpl_run.sh	2023-06-20 08:14:39.000000000 -0700
++++ rocprofiler-rocm-5.6.0/bin/rpl_run.sh	2023-08-26 13:54:44.580079031 -0700
+@@ -29,11 +29,12 @@ RUN_DIR=`pwd`
+ TMP_DIR="/tmp"
+ DATA_DIR="rpl_data_${time_stamp}_$$"
+ 
+-RPL_PATH=$ROOT_DIR/lib
+-TLIB_PATH=$RPL_PATH/rocprofiler
+-TTLIB_PATH=$ROOT_DIR/lib/roctracer
+-ROCM_LIB_PATH=$ROOT_DIR/lib
+-PROF_BIN_DIR=$ROOT_DIR/libexec/rocprofiler
++RPL_PATH=$ROOT_DIR/@LIBDIR@
++TLIB_PATH=$RPL_PATH
++TTLIB_PATH=$ROOT_DIR/@LIBDIR@
++ROCM_LIB_PATH=$ROOT_DIR/@LIBDIR@
++PROF_BIN_DIR=$ROOT_DIR/bin
++PROF_LIBEXEC_DIR=$ROOT_DIR/libexec/rocprofiler
+ 
+ if [ -z "$ROCP_PYTHON_VERSION" ] ; then
+   ROCP_PYTHON_VERSION=python3
+@@ -69,7 +70,7 @@ export ROCP_HSA_INTERCEPT=1
+ # Disabling internal ROC Profiler proxy queue (simple version supported for testing purposes)
+ unset ROCP_PROXY_QUEUE
+ # ROC Profiler metrics definition
+-export ROCP_METRICS=$TLIB_PATH/metrics.xml
++export ROCP_METRICS=$ROOT_DIR/share/rocprofiler/metrics.xml
+ # Disable AQL-profile read API
+ export AQLPROFILE_READ_API=0
+ # ROC Profiler package path
+@@ -103,7 +104,7 @@ usage() {
+   bin_name=`basename $0`
+   echo "ROCm Profiling Library (RPL) run script, a part of ROCprofiler library package."
+   echo "Full path: $BIN_DIR/$bin_name"
+-  echo "Metrics definition: $TLIB_PATH/metrics.xml"
++  echo "Metrics definition: $ROOT_DIR/share/rocprofiler/metrics.xml"
+   echo ""
+   echo "Usage:"
+   echo "  $bin_name [-h] [--list-basic] [--list-derived] [-i <input .txt/.xml file>] [-o <output CSV file>] <app command line>"
+@@ -211,7 +212,7 @@ fi
+ # setting ROCM_LIB_PATH
+ set_rocm_lib_path() {
+ 
+-  for ROCM_LIB_PATH in "$ROOT_DIR/lib" "$ROOT_DIR/lib64" ; do
++  for ROCM_LIB_PATH in $TLIB_PATH ; do
+      if [ -d "$ROCM_LIB_PATH" ]; then
+         return 0
+      fi
+@@ -225,7 +226,7 @@ set_rocm_lib_path() {
+ OUTPUT_LIST=""
+ run() {
+   if ! set_rocm_lib_path ; then
+-     echo " Fatal could not find ROCm lib directory "
++     echo " Fatal could not find ROCm @LIBDIR@ directory "
+      fatal
+   fi
+   export ROCP_INPUT="$1"
+@@ -385,11 +386,11 @@ while [ 1 ] ; do
+     export ROCP_METRICS="$2"
+   elif [ "$1" = "--list-basic" ] ; then
+     export ROCP_INFO=b
+-    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$TLIB_PATH/rocprof-ctrl"
++    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$PROF_BIN_DIR/rocprof-ctrl"
+     exit 1
+   elif [ "$1" = "--list-derived" ] ; then
+     export ROCP_INFO=d
+-    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$TLIB_PATH/rocprof-ctrl"
++    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$PROF_BIN_DIR/rocprof-ctrl"
+     exit 1
+   elif [ "$1" = "--basenames" ] ; then
+     if [ "$2" = "on" ] ; then
+@@ -550,7 +551,7 @@ elif [ "$input_type" = "txt" -o "$input_
+   mkdir -p $RES_DIR
+   echo "RPL: output dir '$RES_DIR'"
+   if [ "$input_type" = "txt" ] ; then
+-    $PROF_BIN_DIR/txt2xml.sh $INPUT_FILE $RES_DIR
++    $PROF_LIBEXEC_DIR/txt2xml.sh $INPUT_FILE $RES_DIR
+   else
+     echo "<metric></metric>" > $RES_DIR/input.xml
+   fi
+@@ -582,9 +583,9 @@ if [ -n "$csv_output" ] ; then
+   merge_output $OUTPUT_LIST
+   if [ "$GEN_STATS" = "1" ] ; then
+     db_output=$(echo $csv_output | sed "s/\.csv/.db/")
+-    $ROCP_PYTHON_VERSION $PROF_BIN_DIR/tblextr.py $db_output $OUTPUT_LIST
++    $ROCP_PYTHON_VERSION $PROF_LIBEXEC_DIR/tblextr.py $db_output $OUTPUT_LIST
+   else
+-    $ROCP_PYTHON_VERSION $PROF_BIN_DIR/tblextr.py $csv_output $OUTPUT_LIST
++    $ROCP_PYTHON_VERSION $PROF_LIBEXEC_DIR/tblextr.py $csv_output $OUTPUT_LIST
+   fi
+   if [ "$?" -ne 0 ] ; then
+     echo "Profiling data corrupted: '$OUTPUT_LIST'" | tee "$ROCPROFILER_SESS/error"
 diff -urp rocprofiler-rocm-5.6.0.orig/build.sh rocprofiler-rocm-5.6.0/build.sh
 --- rocprofiler-rocm-5.6.0.orig/build.sh	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/build.sh	2023-08-22 21:40:46.636198187 -0700
++++ rocprofiler-rocm-5.6.0/build.sh	2023-08-26 13:54:44.580079031 -0700
 @@ -24,8 +24,8 @@
  
  SRC_DIR=$(dirname "$0")
@@ -85,16 +177,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/build.sh rocprofiler-rocm-5.6.0/build.sh
    echo -e "ROCProfiler Build Script Usage:"
 diff -urp rocprofiler-rocm-5.6.0.orig/CHANGELOG.md rocprofiler-rocm-5.6.0/CHANGELOG.md
 --- rocprofiler-rocm-5.6.0.orig/CHANGELOG.md	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/CHANGELOG.md	2023-08-22 21:47:57.996208890 -0700
-@@ -17,7 +17,7 @@ In ROCm 5.4 the naming of the ROCm Profi
-   |-----------------|-------------------------------------|---------------------------------|
-   | **Tool script** | `bin/rocprof`                       | `bin/rocsight`                  |
-   | **API include** | `include/rocprofiler/rocprofiler.h` | `include/rocmtools/rocmtools.h` |
--  | **API library** | `lib/librocprofiler64.so.1`         | `lib/librocmtools.so.1`         |
-+  | **API library** | `@LIBDIR@/librocprofiler64.so.1`    | `@LIBDIR@/librocmtools.so.1`    |
- 
- The ROCm Profiler Tool that uses `rocprofilerV1` can be invoked using the
- following command:
++++ rocprofiler-rocm-5.6.0/CHANGELOG.md	2023-08-26 13:54:44.580079031 -0700
 @@ -40,11 +40,11 @@ int main() {
  This can be built in the following manner:
  
@@ -122,15 +205,6 @@ diff -urp rocprofiler-rocm-5.6.0.orig/CHANGELOG.md rocprofiler-rocm-5.6.0/CHANGE
  
  ## ROCprofiler for rocm 5.5.0
  
-@@ -82,7 +82,7 @@ available in ROCm 5.5 but is deprecated
-   |-----------------|-------------------------------------|-------------------------------------|---------------------------------|
-   | **Tool script** | `bin/rocprof`                       | `bin/rocprofv2`                     | `bin/rocsight`                  |
-   | **API include** | `include/rocprofiler/rocprofiler.h` | `include/rocprofiler/rocprofiler.h` | `include/rocmtools/rocmtools.h` |
--  | **API library** | `lib/librocprofiler64.so.1`         | `lib/librocprofiler64.so.1`         | `lib/librocmtools.so.1`         |
-+  | **API library** | `@LIBDIR@/librocprofiler64.so.1`    | `@LIBDIR@/librocprofiler64.so.1`    | `@LIBDIR@/librocmtools.so.1`    |
- 
- 
- The ROCm Profiler Tool that uses `rocprofilerV1` can be invoked using the
 @@ -108,11 +108,11 @@ int main() {
  This can be built in the following manner:
  
@@ -159,15 +233,6 @@ diff -urp rocprofiler-rocm-5.6.0.orig/CHANGELOG.md rocprofiler-rocm-5.6.0/CHANGE
  
  ## ROCprofiler for rocm 5.6.0
  
-@@ -151,7 +151,7 @@ deprecated in ROCm 5.5 have been removed
-   |-----------------|-------------------------------------|----------------------------------------|
-   | **Tool script** | `bin/rocprof`                       | `bin/rocprofv2`                        |
-   | **API include** | `include/rocprofiler/rocprofiler.h` | `include/rocprofiler/v2/rocprofiler.h` |
--  | **API library** | `lib/librocprofiler.so.1`           | `lib/librocprofiler.so.2`              |
-+  | **API library** | `@LIBDIR@/librocprofiler.so.1`      | `@LIBDIR@/librocprofiler.so.2`         |
- 
- The ROCm Profiler Tool that uses `rocprofilerV1` can be invoked using the
- following command:
 @@ -174,11 +174,11 @@ int main() {
  This can be built in the following manner:
  
@@ -197,8 +262,8 @@ diff -urp rocprofiler-rocm-5.6.0.orig/CHANGELOG.md rocprofiler-rocm-5.6.0/CHANGE
  ### Optimized
  - Improved Test Suite
 diff -urp rocprofiler-rocm-5.6.0.orig/CMakeLists.txt rocprofiler-rocm-5.6.0/CMakeLists.txt
---- rocprofiler-rocm-5.6.0.orig/CMakeLists.txt	2023-08-22 21:17:39.800163779 -0700
-+++ rocprofiler-rocm-5.6.0/CMakeLists.txt	2023-08-22 21:47:01.372207485 -0700
+--- rocprofiler-rocm-5.6.0.orig/CMakeLists.txt	2023-08-26 13:54:29.284078652 -0700
++++ rocprofiler-rocm-5.6.0/CMakeLists.txt	2023-08-26 13:54:44.580079031 -0700
 @@ -38,7 +38,7 @@ include(GNUInstallDirs)
  # set default ROCM_PATH
  if(NOT DEFINED ROCM_PATH)
@@ -226,9 +291,38 @@ diff -urp rocprofiler-rocm-5.6.0.orig/CMakeLists.txt rocprofiler-rocm-5.6.0/CMak
      PATH_SUFFIXES roctracer/ext)
    if(NOT PROF_API_HEADER_DIR)
      message(
+@@ -238,23 +238,23 @@ install(
+ install(
+   FILES ${CMAKE_CURRENT_SOURCE_DIR}/test/tool/metrics.xml
+         ${CMAKE_CURRENT_SOURCE_DIR}/test/tool/gfx_metrics.xml
+-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}
++  DESTINATION ${CMAKE_INSTALL_DATADIR}/${ROCPROFILER_NAME}
+   COMPONENT runtime)
+ 
+ # librocprof-tool.so
+ install(
+   FILES ${PROJECT_BINARY_DIR}/test/librocprof-tool.so
+-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   COMPONENT runtime)
+ 
+ install(
+   FILES ${PROJECT_BINARY_DIR}/test/librocprof-tool.so
+-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}
++  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+   COMPONENT asan)
+ 
+ install(
+   FILES ${PROJECT_BINARY_DIR}/test/rocprof-ctrl
+-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}
++  DESTINATION ${CMAKE_INSTALL_BINDIR}
+   PERMISSIONS
+     OWNER_READ
+     OWNER_WRITE
+Only in rocprofiler-rocm-5.6.0: CMakeLists.txt.orig
 diff -urp rocprofiler-rocm-5.6.0.orig/cmake_modules/env.cmake rocprofiler-rocm-5.6.0/cmake_modules/env.cmake
---- rocprofiler-rocm-5.6.0.orig/cmake_modules/env.cmake	2023-08-22 21:17:39.804163779 -0700
-+++ rocprofiler-rocm-5.6.0/cmake_modules/env.cmake	2023-08-22 21:48:35.564209822 -0700
+--- rocprofiler-rocm-5.6.0.orig/cmake_modules/env.cmake	2023-08-26 13:54:29.284078652 -0700
++++ rocprofiler-rocm-5.6.0/cmake_modules/env.cmake	2023-08-26 13:54:44.580079031 -0700
 @@ -46,18 +46,18 @@ if ( DEFINED ENV{CMAKE_LD_AQLPROFILE} )
  endif()
  
@@ -254,7 +348,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/cmake_modules/env.cmake rocprofiler-rocm-5
  ## Basic Tool Chain Information
 diff -urp rocprofiler-rocm-5.6.0.orig/cmake_modules/FindLibDw.cmake rocprofiler-rocm-5.6.0/cmake_modules/FindLibDw.cmake
 --- rocprofiler-rocm-5.6.0.orig/cmake_modules/FindLibDw.cmake	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/cmake_modules/FindLibDw.cmake	2023-08-22 21:45:25.804205114 -0700
++++ rocprofiler-rocm-5.6.0/cmake_modules/FindLibDw.cmake	2023-08-26 13:54:44.580079031 -0700
 @@ -16,8 +16,8 @@ find_library(FIND_LIBDW_LIBRARIES
    NAMES
      dw
@@ -268,7 +362,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/cmake_modules/FindLibDw.cmake rocprofiler-
  find_package_handle_standard_args(LibDw DEFAULT_MSG
 diff -urp rocprofiler-rocm-5.6.0.orig/cmake_modules/FindLibElf.cmake rocprofiler-rocm-5.6.0/cmake_modules/FindLibElf.cmake
 --- rocprofiler-rocm-5.6.0.orig/cmake_modules/FindLibElf.cmake	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/cmake_modules/FindLibElf.cmake	2023-08-22 21:45:44.184205570 -0700
++++ rocprofiler-rocm-5.6.0/cmake_modules/FindLibElf.cmake	2023-08-26 13:54:44.580079031 -0700
 @@ -18,8 +18,8 @@ find_library(FIND_LIBELF_LIBRARIES
    NAMES
      elf
@@ -282,7 +376,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/cmake_modules/FindLibElf.cmake rocprofiler
  find_package_handle_standard_args(LibElf DEFAULT_MSG
 diff -urp rocprofiler-rocm-5.6.0.orig/doc/rocprof_tool.md rocprofiler-rocm-5.6.0/doc/rocprof_tool.md
 --- rocprofiler-rocm-5.6.0.orig/doc/rocprof_tool.md	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/doc/rocprof_tool.md	2023-08-22 21:48:58.444210390 -0700
++++ rocprofiler-rocm-5.6.0/doc/rocprof_tool.md	2023-08-26 13:54:44.580079031 -0700
 @@ -72,7 +72,7 @@ Available counters and metrics can be qu
  Examples:
  ```
@@ -320,13 +414,13 @@ diff -urp rocprofiler-rocm-5.6.0.orig/doc/rocprof_tool.md rocprofiler-rocm-5.6.0
 -Full path: /opt/rocm/rocprofiler/bin/rocprof
 -Metrics definition: /opt/rocm/rocprofiler/lib/metrics.xml
 +Full path: /usr/rocprofiler/bin/rocprof
-+Metrics definition: /usr/rocprofiler/lib/metrics.xml 
++Metrics definition: /usr/share/rocprofiler/metrics.xml
  
  Usage:
    rocprof [-h] [--list-basic] [--list-derived] [-i <input .txt/.xml file>] [-o <output CSV file>] <app command line>
 diff -urp rocprofiler-rocm-5.6.0.orig/plugin/att/att.py rocprofiler-rocm-5.6.0/plugin/att/att.py
 --- rocprofiler-rocm-5.6.0.orig/plugin/att/att.py	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/plugin/att/att.py	2023-08-22 21:30:32.172182942 -0700
++++ rocprofiler-rocm-5.6.0/plugin/att/att.py	2023-08-26 13:54:44.580079031 -0700
 @@ -107,7 +107,7 @@ try: # For build dir
      path_to_parser = os.path.abspath(rocprofv2_att_lib)
      SO = CDLL(path_to_parser)
@@ -338,7 +432,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/plugin/att/att.py rocprofiler-rocm-5.6.0/p
  SO.AnalyseBinary.restype = ReturnInfo
 diff -urp rocprofiler-rocm-5.6.0.orig/README.md rocprofiler-rocm-5.6.0/README.md
 --- rocprofiler-rocm-5.6.0.orig/README.md	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/README.md	2023-08-22 21:33:22.668187172 -0700
++++ rocprofiler-rocm-5.6.0/README.md	2023-08-26 13:54:44.580079031 -0700
 @@ -36,7 +36,7 @@ $ export CMAKE_DEBUG_TRACE=1 # 1 to enab
  To build with the current installed ROCM:
   ```bash
@@ -368,7 +462,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/README.md rocprofiler-rocm-5.6.0/README.md
     ```
 diff -urp rocprofiler-rocm-5.6.0.orig/rocprofiler-backward-compat.cmake rocprofiler-rocm-5.6.0/rocprofiler-backward-compat.cmake
 --- rocprofiler-rocm-5.6.0.orig/rocprofiler-backward-compat.cmake	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/rocprofiler-backward-compat.cmake	2023-08-22 21:42:10.252200262 -0700
++++ rocprofiler-rocm-5.6.0/rocprofiler-backward-compat.cmake	2023-08-26 14:03:11.288091603 -0700
 @@ -23,7 +23,7 @@ set(ROCPROF_BUILD_DIR ${CMAKE_CURRENT_BI
  set(ROCPROF_WRAPPER_DIR ${ROCPROF_BUILD_DIR}/wrapper_dir)
  set(ROCPROF_WRAPPER_INC_DIR ${ROCPROF_WRAPPER_DIR}/include)
@@ -394,6 +488,39 @@ diff -urp rocprofiler-rocm-5.6.0.orig/rocprofiler-backward-compat.cmake rocprofi
  #endif
  #endif /* ROCM_HEADER_WRAPPER_WERROR */
  
+@@ -132,27 +132,27 @@ function(create_library_symlink)
+   add_custom_target(link_${LIB_TOOL} ALL
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                    COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                   ../../${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}/${LIB_ROCPROFTOOL} ${ROCPROF_WRAPPER_TOOL_DIR}/${LIB_TOOL})
++                   ../../${CMAKE_INSTALL_LIBDIR}/${LIB_ROCPROFTOOL} ${ROCPROF_WRAPPER_TOOL_DIR}/${LIB_TOOL})
+   #create symlink to test binary
+-  #since its saved in lib folder , the code for the same is added here
++  #since its saved in @LIBDIR@ folder , the code for the same is added here
+   # With File reorg ,binary name changed from ctrl to rocprof-ctrl
+   set(TEST_CTRL "ctrl")
+   set(TEST_ROCPROFCTRL "rocprof-ctrl")
+   add_custom_target(link_${TEST_CTRL} ALL
+                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                     COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                    ../../${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}/${TEST_ROCPROFCTRL} ${ROCPROF_WRAPPER_TOOL_DIR}/${TEST_CTRL})
++                    ../../${CMAKE_INSTALL_BINDIR}/${TEST_ROCPROFCTRL} ${ROCPROF_WRAPPER_TOOL_DIR}/${TEST_CTRL})
+   set(METRICS "metrics.xml")
+   add_custom_target(link_metrics ALL
+                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                     COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                    ../../${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}/${METRICS} ${ROCPROF_WRAPPER_LIB_DIR}/${METRICS})
++                    ../../${CMAKE_INSTALL_DATADIR}/${ROCPROFILER_NAME}/${METRICS} ${ROCPROF_WRAPPER_LIB_DIR}/${METRICS})
+ 
+   set(GFX_METRICS "gfx_metrics.xml")
+   add_custom_target(link_gfx_metrics ALL
+                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                     COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                    ../../${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}/${GFX_METRICS} ${ROCPROF_WRAPPER_LIB_DIR}/${GFX_METRICS})
++                    ../../${CMAKE_INSTALL_DATADIR}/${ROCPROFILER_NAME}/${GFX_METRICS} ${ROCPROF_WRAPPER_LIB_DIR}/${GFX_METRICS})
+ endfunction()
+ 
+ #Creater a template for header file
 @@ -167,7 +167,7 @@ create_library_symlink()
  install(DIRECTORY ${ROCPROF_WRAPPER_LIB_DIR} DESTINATION ${ROCPROFILER_NAME}
          COMPONENT runtime
@@ -405,7 +532,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/rocprofiler-backward-compat.cmake rocprofi
  install(DIRECTORY ${ROCPROF_WRAPPER_TOOL_DIR} DESTINATION ${ROCPROFILER_NAME} COMPONENT runtime)
 diff -urp rocprofiler-rocm-5.6.0.orig/samples/CMakeLists.txt rocprofiler-rocm-5.6.0/samples/CMakeLists.txt
 --- rocprofiler-rocm-5.6.0.orig/samples/CMakeLists.txt	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/samples/CMakeLists.txt	2023-08-22 21:41:38.812199482 -0700
++++ rocprofiler-rocm-5.6.0/samples/CMakeLists.txt	2023-08-26 13:54:44.580079031 -0700
 @@ -18,15 +18,15 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
  set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP})
  set(CMAKE_EXECUTABLE_RPATH_LINK_HIP_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG})
@@ -418,7 +545,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/samples/CMakeLists.txt rocprofiler-rocm-5.
  find_package(Clang REQUIRED CONFIG
               PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATH_SUFFIXES "lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/clang")
++             PATH_SUFFIXES "lib/llvm/@LIBDIR@/cmake/clang")
  
 -set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules" "${ROCM_PATH}/lib/cmake/hip")
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules" "${ROCM_PATH}/@LIBDIR@/cmake/hip")
@@ -427,7 +554,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/samples/CMakeLists.txt rocprofiler-rocm-5.
  
 diff -urp rocprofiler-rocm-5.6.0.orig/samples/Makefile rocprofiler-rocm-5.6.0/samples/Makefile
 --- rocprofiler-rocm-5.6.0.orig/samples/Makefile	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/samples/Makefile	2023-08-22 21:41:19.980199015 -0700
++++ rocprofiler-rocm-5.6.0/samples/Makefile	2023-08-26 13:54:44.580079031 -0700
 @@ -1,5 +1,5 @@
 -ROCM_PATH ?=/opt/rocm
 -ROCPROFILER_LIBS_PATH ?=$(ROCM_PATH)/lib
@@ -438,7 +565,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/samples/Makefile rocprofiler-rocm-5.6.0/sa
  
 diff -urp rocprofiler-rocm-5.6.0.orig/samples/pcsampler/code_printing_sample/Makefile rocprofiler-rocm-5.6.0/samples/pcsampler/code_printing_sample/Makefile
 --- rocprofiler-rocm-5.6.0.orig/samples/pcsampler/code_printing_sample/Makefile	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/samples/pcsampler/code_printing_sample/Makefile	2023-08-22 21:41:46.332199668 -0700
++++ rocprofiler-rocm-5.6.0/samples/pcsampler/code_printing_sample/Makefile	2023-08-26 13:54:44.580079031 -0700
 @@ -1,6 +1,6 @@
  # -*- makefile-gmake -*-
  
@@ -458,7 +585,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/samples/pcsampler/code_printing_sample/Mak
  
 diff -urp rocprofiler-rocm-5.6.0.orig/samples/pcsampler/code_printing_sample/README.md rocprofiler-rocm-5.6.0/samples/pcsampler/code_printing_sample/README.md
 --- rocprofiler-rocm-5.6.0.orig/samples/pcsampler/code_printing_sample/README.md	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/samples/pcsampler/code_printing_sample/README.md	2023-08-22 21:32:32.236185921 -0700
++++ rocprofiler-rocm-5.6.0/samples/pcsampler/code_printing_sample/README.md	2023-08-26 13:54:44.580079031 -0700
 @@ -15,7 +15,7 @@ build the demo program are:
  * libdw (**not** libdwarf)
  * libelf
@@ -470,14 +597,14 @@ diff -urp rocprofiler-rocm-5.6.0.orig/samples/pcsampler/code_printing_sample/REA
  the location of the ROCProfiler source repo before running `make`.
 diff -urp rocprofiler-rocm-5.6.0.orig/samples/README.md rocprofiler-rocm-5.6.0/samples/README.md
 --- rocprofiler-rocm-5.6.0.orig/samples/README.md	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/samples/README.md	2023-08-22 21:33:02.476186671 -0700
++++ rocprofiler-rocm-5.6.0/samples/README.md	2023-08-26 13:54:44.580079031 -0700
 @@ -48,8 +48,8 @@ This code sample demonstrates how to use
  
  
  ## How to compile
 -In order to get the samples to compile, make sure to copy rocprofiler binaries into /opt/rocm/lib
 -Running 'make install' inside the rocprofiler/build folder will copy the binaries to /opt/rocm/lib
-+In order to get the samples to compile, make sure to copy rocprofiler binaries into /usr/@LIBDIR@
++In order to get the samples to compile, make sure to copy rocprofiler binaries into /usr/@LIBIDR@
 +Running 'make install' inside the rocprofiler/build folder will copy the binaries to /usr/@LIBDIR@
  
  Alternately, change the 'ROCPROFILER_LIBS_PATH' variable in the Makefile to point to the rocprofiler/build folder. 
@@ -502,9 +629,23 @@ diff -urp rocprofiler-rocm-5.6.0.orig/samples/README.md rocprofiler-rocm-5.6.0/s
 -See [PC-Sampler README](pcsampler/code_printing_sample/README.md)
 \ No newline at end of file
 +See [PC-Sampler README](pcsampler/code_printing_sample/README.md)
+diff -urp rocprofiler-rocm-5.6.0.orig/src/api/CMakeLists.txt rocprofiler-rocm-5.6.0/src/api/CMakeLists.txt
+--- rocprofiler-rocm-5.6.0.orig/src/api/CMakeLists.txt	2023-08-26 13:54:29.284078652 -0700
++++ rocprofiler-rocm-5.6.0/src/api/CMakeLists.txt	2023-08-26 13:55:14.688079778 -0700
+@@ -39,7 +39,7 @@ get_filename_component(HSA_RUNTIME_INC_P
+ 
+ if(AQLPROFILE)
+   add_definitions(-DUSE_AQLPROFILE)
+-  find_library(AQLPROFILE_LIB "libhsa-amd-aqlprofile64.so" HINTS ${CMAKE_PREFIX_PATH} PATHS ${ROCM_PATH} PATH_SUFFIXES lib)
++  find_library(AQLPROFILE_LIB "libhsa-amd-aqlprofile64.so" HINTS ${CMAKE_PREFIX_PATH} PATHS ${ROCM_PATH} PATH_SUFFIXES @LIBDIR@)
+ 
+   if(NOT AQLPROFILE_LIB)
+     message(FATAL_ERROR "AQL_PROFILE not installed. Please install hsa-amd-aqlprofile!")
+Only in rocprofiler-rocm-5.6.0/src/api: CMakeLists.txt.orig
+Only in rocprofiler-rocm-5.6.0/src/api: CMakeLists.txt.rej
 diff -urp rocprofiler-rocm-5.6.0.orig/src/tools/amdsys/amdsys.cpp rocprofiler-rocm-5.6.0/src/tools/amdsys/amdsys.cpp
 --- rocprofiler-rocm-5.6.0.orig/src/tools/amdsys/amdsys.cpp	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/src/tools/amdsys/amdsys.cpp	2023-08-22 21:33:29.692187346 -0700
++++ rocprofiler-rocm-5.6.0/src/tools/amdsys/amdsys.cpp	2023-08-26 13:54:44.580079031 -0700
 @@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
    if (Dl_info dl_info; dladdr(reinterpret_cast<void*>(main), &dl_info) != 0) {
      bin_path = fs::path(dl_info.dli_fname).remove_filename();
@@ -514,15 +655,29 @@ diff -urp rocprofiler-rocm-5.6.0.orig/src/tools/amdsys/amdsys.cpp rocprofiler-ro
    }
  
    std::string session_name = "default_session_roctracer";
+diff -urp rocprofiler-rocm-5.6.0.orig/src/tools/rocprofv2/CMakeLists.txt rocprofiler-rocm-5.6.0/src/tools/rocprofv2/CMakeLists.txt
+--- rocprofiler-rocm-5.6.0.orig/src/tools/rocprofv2/CMakeLists.txt	2023-08-26 13:54:29.292078652 -0700
++++ rocprofiler-rocm-5.6.0/src/tools/rocprofv2/CMakeLists.txt	2023-08-26 13:55:35.312080290 -0700
+@@ -6,7 +6,7 @@ get_property(HSA_RUNTIME_INCLUDE_DIRECTO
+ 
+ if(AQLPROFILE)
+   add_definitions(-DUSE_AQLPROFILE)
+-  find_library(AQLPROFILE_LIB "libhsa-amd-aqlprofile64.so" HINTS ${CMAKE_PREFIX_PATH} PATHS ${ROCM_PATH} PATH_SUFFIXES lib)
++  find_library(AQLPROFILE_LIB "libhsa-amd-aqlprofile64.so" HINTS ${CMAKE_PREFIX_PATH} PATHS ${ROCM_PATH} PATH_SUFFIXES @LIBDIR@)
+   if(NOT AQLPROFILE_LIB)
+     message(FATAL_ERROR "AQL_PROFILE not installed. Please install hsa-amd-aqlprofile!")
+   endif()
+Only in rocprofiler-rocm-5.6.0/src/tools/rocprofv2: CMakeLists.txt.orig
+Only in rocprofiler-rocm-5.6.0/src/tools/rocprofv2: CMakeLists.txt.rej
 diff -urp rocprofiler-rocm-5.6.0.orig/src/tools/rocprofv2/rocprofv2.cpp rocprofiler-rocm-5.6.0/src/tools/rocprofv2/rocprofv2.cpp
 --- rocprofiler-rocm-5.6.0.orig/src/tools/rocprofv2/rocprofv2.cpp	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/src/tools/rocprofv2/rocprofv2.cpp	2023-08-22 21:45:02.476204535 -0700
++++ rocprofiler-rocm-5.6.0/src/tools/rocprofv2/rocprofv2.cpp	2023-08-26 13:54:44.580079031 -0700
 @@ -71,7 +71,7 @@ void runMemCheck(fs::path bin_path) {
    log_path = log_path.replace_filename("memleaks.log");
  
    std::cout << "Running Memory Leaks Check...." << std::endl;
 -  std::string run_command = "LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.6:" + pathenv +
-+  std::string run_command = "LD_PRELOAD=@EPREFIX@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so.6:" + pathenv +
++  std::string run_command = "LD_PRELOAD=/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so:" + pathenv +
        " ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=" + suppr_path.string() +
        " COUNTERS_PATH=" + counter_path.string() + " " + app_path.string() +
        " > /tmp/rocprofv2-temp 2> " + log_path.string();
@@ -531,7 +686,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/src/tools/rocprofv2/rocprofv2.cpp rocprofi
      } else if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--asan") == 0) {
        std::string current_ld_preload{getenv("LD_PRELOAD")};
 -      std::string ld_preload = "/usr/lib/x86_64-linux-gnu/libasan.so.6";
-+      std::string ld_preload = "@EPREFIX@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so.6";
++      std::string ld_preload = "/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so";
        if (!current_ld_preload.empty()) ld_preload = current_ld_preload + ":" + ld_preload;
  
        std::cout << ld_preload << std::endl;
@@ -553,7 +708,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/src/tools/rocprofv2/rocprofv2.cpp rocprofi
 +}
 diff -urp rocprofiler-rocm-5.6.0.orig/test/run.sh rocprofiler-rocm-5.6.0/test/run.sh
 --- rocprofiler-rocm-5.6.0.orig/test/run.sh	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/test/run.sh	2023-08-22 21:32:01.564185160 -0700
++++ rocprofiler-rocm-5.6.0/test/run.sh	2023-08-26 13:54:44.580079031 -0700
 @@ -57,7 +57,7 @@ eval_test() {
  }
  
@@ -565,7 +720,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/test/run.sh rocprofiler-rocm-5.6.0/test/ru
  export HSA_TOOLS_REPORT_LOAD_FAILURE=1
 diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/apps/mpi_run.sh rocprofiler-rocm-5.6.0/tests/featuretests/profiler/apps/mpi_run.sh
 --- rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/apps/mpi_run.sh	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/tests/featuretests/profiler/apps/mpi_run.sh	2023-08-22 21:36:54.300192423 -0700
++++ rocprofiler-rocm-5.6.0/tests/featuretests/profiler/apps/mpi_run.sh	2023-08-26 13:54:44.580079031 -0700
 @@ -19,13 +19,13 @@ MPIRUN=mpirun
  if ! command -v $MPIRUN &> /dev/null
  then
@@ -586,13 +741,13 @@ diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/apps/mpi_run.s
              exit
 diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/CMakeLists.txt rocprofiler-rocm-5.6.0/tests/featuretests/profiler/CMakeLists.txt
 --- rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/CMakeLists.txt	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/tests/featuretests/profiler/CMakeLists.txt	2023-08-22 21:36:33.164191899 -0700
++++ rocprofiler-rocm-5.6.0/tests/featuretests/profiler/CMakeLists.txt	2023-08-26 13:54:44.580079031 -0700
 @@ -16,7 +16,7 @@ include_directories(${PROJECT_SOURCE_DIR
  
  find_package(Clang REQUIRED CONFIG
               PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATH_SUFFIXES "lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/clang")
++             PATH_SUFFIXES "lib/llvm/@LIBDIR@/cmake/clang")
  
  # Set the HIP language runtime link flags as FindHIP does not set them.
  set(CMAKE_INSTALL_TESTDIR test/${PROJECT_NAME})
@@ -605,19 +760,23 @@ diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/CMakeLists.txt
  set(CMAKE_HIP_ARCHITECTURES OFF)
  find_package(HIP REQUIRED MODULE)
  
+@@ -125,6 +125,7 @@ add_dependencies(tests multithreaded_tes
+ function(generate_hsaco TARGET_ID INPUT_FILE OUTPUT_FILE)
+   separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
+     "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0 -Wl,--build-id=sha1
++    --rocm-device-lib-path=${ESYSROOT}/usr/@LIBDIR@/amdgcn/bitcode
+     -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}")
+   add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/tests/featuretests/profiler/${OUTPUT_FILE}
+     COMMAND clang ${CLANG_ARG_LIST}
 diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/profiler_gtest.cpp rocprofiler-rocm-5.6.0/tests/featuretests/profiler/profiler_gtest.cpp
 --- rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/profiler_gtest.cpp	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/tests/featuretests/profiler/profiler_gtest.cpp	2023-08-22 21:46:31.260206738 -0700
-@@ -45,10 +45,10 @@ std::string binary_path;
- static void init_test_path() {
-   if (is_installed_path()) {
-     running_path = "share/rocprofiler/tests/runFeatureTests";
--    lib_path = "lib/librocprofiler_tool.so";
-+    lib_path = "@LIBDIR@/librocprofiler_tool.so";
++++ rocprofiler-rocm-5.6.0/tests/featuretests/profiler/profiler_gtest.cpp	2023-08-26 14:01:30.460089101 -0700
+@@ -48,7 +48,7 @@ static void init_test_path() {
+     lib_path = "lib/librocprofiler_tool.so";
      golden_trace_path = "share/rocprofiler/tests/featuretests/profiler/apps/goldentraces/";
      test_app_path = "share/rocprofiler/tests/featuretests/profiler/apps/";
 -    metrics_path = "lib/rocprofiler/gfx_metrics.xml";
-+    metrics_path = "@LIBDIR@/rocprofiler/gfx_metrics.xml";
++    metrics_path = "share/rocprofiler/gfx_metrics.xml";
      binary_path = "bin/rocprofv2";
    } else {
      running_path = "tests/featuretests/profiler/runFeatureTests";
@@ -630,7 +789,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/profiler_gtest
 +}
 diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/tracer/CMakeLists.txt rocprofiler-rocm-5.6.0/tests/featuretests/tracer/CMakeLists.txt
 --- rocprofiler-rocm-5.6.0.orig/tests/featuretests/tracer/CMakeLists.txt	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/tests/featuretests/tracer/CMakeLists.txt	2023-08-22 21:36:23.596191661 -0700
++++ rocprofiler-rocm-5.6.0/tests/featuretests/tracer/CMakeLists.txt	2023-08-26 13:54:44.580079031 -0700
 @@ -4,7 +4,7 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
  set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP})
  set(CMAKE_EXECUTABLE_RPATH_LINK_HIP_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG})
@@ -642,18 +801,18 @@ diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/tracer/CMakeLists.txt r
  
 diff -urp rocprofiler-rocm-5.6.0.orig/tests/memorytests/run_asan_tests.sh rocprofiler-rocm-5.6.0/tests/memorytests/run_asan_tests.sh
 --- rocprofiler-rocm-5.6.0.orig/tests/memorytests/run_asan_tests.sh	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/tests/memorytests/run_asan_tests.sh	2023-08-22 21:40:18.892197499 -0700
++++ rocprofiler-rocm-5.6.0/tests/memorytests/run_asan_tests.sh	2023-08-26 13:54:44.580079031 -0700
 @@ -4,6 +4,6 @@ CURRENT_DIR="$( dirname -- "$0"; )";
  export PATH=$rocmtoolsdir:$PATH
  
  echo -e "Running Memory Leaks Check From ${CURRENT_DIR}"
 -LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.6 ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=$CURRENT_DIR/suppr.txt ${CURRENT_DIR}/../../rocprofv2 -i $CURRENT_DIR/input.txt $1 > /tmp/rocprofv2-temp 2> $2
-+LD_PRELOAD=@EPREFIX@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so.6 ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=$CURRENT_DIR/suppr.txt ${CURRENT_DIR}/../../rocprofv2 -i $CURRENT_DIR/input.txt $1 > /tmp/rocprofv2-temp 2> $2
++LD_PRELOAD=/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=$CURRENT_DIR/suppr.txt ${CURRENT_DIR}/../../rocprofv2 -i $CURRENT_DIR/input.txt $1 > /tmp/rocprofv2-temp 2> $2
  echo -e "Log with all detected leaks is available at build/memleaks.log"
  eval python3 $CURRENT_DIR/test_mem.py $2
 diff -urp rocprofiler-rocm-5.6.0.orig/tests/microbenchmarks/CMakeLists.txt rocprofiler-rocm-5.6.0/tests/microbenchmarks/CMakeLists.txt
 --- rocprofiler-rocm-5.6.0.orig/tests/microbenchmarks/CMakeLists.txt	2023-06-20 08:14:39.000000000 -0700
-+++ rocprofiler-rocm-5.6.0/tests/microbenchmarks/CMakeLists.txt	2023-08-22 21:40:35.340197907 -0700
++++ rocprofiler-rocm-5.6.0/tests/microbenchmarks/CMakeLists.txt	2023-08-26 13:54:44.584079031 -0700
 @@ -4,7 +4,7 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
  set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP})
  set(CMAKE_EXECUTABLE_RPATH_LINK_HIP_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG})
