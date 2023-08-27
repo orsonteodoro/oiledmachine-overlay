@@ -24,7 +24,7 @@ diff -urp rocm_bandwidth_test-rocm-5.3.3.orig/CMakeLists.txt rocm_bandwidth_test
  
  # CLANG options
 -if("$ENV{CXX}" STREQUAL "/usr/bin/clang++")
-+if("$ENV{CXX}" MATCHES "clang++" OR "$ENV{CXX}" MATCHES "hipcc")
++if("$ENV{CXX}" MATCHES "clang[+][+]$" OR "$ENV{CXX}" MATCHES "hipcc$")
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ferror-limit=1000000")
  endif()
  
