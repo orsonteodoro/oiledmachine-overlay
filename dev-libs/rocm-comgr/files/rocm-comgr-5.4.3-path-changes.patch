@@ -1,0 +1,132 @@
+diff -urp comgr.orig/cmake/opencl_pch.cmake comgr/cmake/opencl_pch.cmake
+--- comgr.orig/cmake/opencl_pch.cmake	2022-11-15 10:37:50.000000000 -0800
++++ comgr/cmake/opencl_pch.cmake	2023-08-26 17:31:01.164400990 -0700
+@@ -1,26 +1,8 @@
+ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+   find_package(Clang REQUIRED CONFIG)
+-
+-  # FIXME: CLANG_CMAKE_DIR seems like the most stable way to find this, but
+-  # really there is no way to reliably discover this header.
+-  #
+-  # We effectively back up to the Clang output directory (for the case of a build
+-  # tree) or install prefix (for the case of an installed copy), and then search
+-  # for a file named opencl-c.h anywhere below that. We take the first result in
+-  # the case where there are multiple (e.g. if there is an installed copy nested
+-  # in a build directory). This is a bit imprecise, but it covers cases like MSVC
+-  # adding some additional configuration-specific subdirectories to the build
+-  # tree but not to an installed copy.
+-  file(GLOB_RECURSE OPENCL_C_H_LIST "${CLANG_CMAKE_DIR}/../../../*/opencl-c.h")
+-
+-  list(GET OPENCL_C_H_LIST 0 OPENCL_C_H)
+-
+-  if (NOT EXISTS "${OPENCL_C_H}" OR IS_DIRECTORY "${OPENCL_C_H}")
+-    message(FATAL_ERROR "Unable to locate opencl-c.h from the supplied Clang. The path '${CLANG_CMAKE_DIR}/../../../*' was searched.")
+-  endif()
+-else()
+-  get_target_property(clang_build_header_dir clang-resource-headers RUNTIME_OUTPUT_DIRECTORY)
+-  set(OPENCL_C_H "${clang_build_header_dir}/opencl-c.h")
++  execute_process(COMMAND "${CLANG_CMAKE_DIR}/../../../bin/clang" -print-resource-dir OUTPUT_VARIABLE CLANG_RESOURCE_DIR)
++  string(STRIP ${CLANG_RESOURCE_DIR} CLANG_RESOURCE_DIR)
++  set(OPENCL_C_H "${CLANG_RESOURCE_DIR}/include/opencl-c.h")
+ endif()
+ 
+ # Macro to create and install a custom target for generating PCH for given
+diff -urp comgr.orig/README.md comgr/README.md
+--- comgr.orig/README.md	2022-11-15 10:37:50.000000000 -0800
++++ comgr/README.md	2023-08-26 17:33:24.268404541 -0700
+@@ -21,7 +21,7 @@ An example `bash` session to build Comgr
+ 
+     $ LLVM_PROJECT=~/llvm-project
+     $ DEVICE_LIBS=~/device-libs
+-    $ COMGR=~/support/lib/comgr
++    $ COMGR=~/support/@LIBDIR@/comgr
+     $ mkdir -p "$LLVM_PROJECT/build"
+     $ cd "$LLVM_PROJECT/build"
+     $ cmake \
+@@ -116,7 +116,7 @@ These include:
+ * `LLVM_PATH`: If this is set it is used as an absolute path to the root of the
+   LLVM installation, which is currently used for HIP compilation to locate
+   certain runtime headers. If this is not set, it has a default value of
+-  "${ROCM_PATH}/llvm".
++  "${ROCM_PATH}/llvm/llvm/@LLVM_SLOT@".
+ 
+ Comgr also supports some environment variables to aid in debugging. These
+ include:
+diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
+--- comgr.orig/src/comgr-compiler.cpp	2022-11-15 10:37:50.000000000 -0800
++++ comgr/src/comgr-compiler.cpp	2023-08-26 17:31:01.172400990 -0700
+@@ -658,7 +658,7 @@ AMDGPUCompiler::executeInProcessDriver(A
+   IntrusiveRefCntPtr<DiagnosticIDs> DiagID(new DiagnosticIDs);
+   DiagnosticsEngine Diags(DiagID, &*DiagOpts, DiagClient);
+   ProcessWarningOptions(Diags, *DiagOpts, /*ReportDiags=*/false);
+-  Driver TheDriver("", "", Diags);
++  Driver TheDriver((Twine(env::getLLVMPath()) + "/bin/clang").str(), "", Diags);
+   TheDriver.setTitle("AMDGPU Code Object Manager");
+   TheDriver.setCheckInputsExist(false);
+ 
+@@ -996,11 +996,6 @@ amd_comgr_status_t AMDGPUCompiler::addCo
+   HIPIncludePath = (Twine(env::getHIPPath()) + "/include").str();
+   // HIP headers depend on hsa.h which is in ROCM_DIR/include.
+   ROCMIncludePath = (Twine(env::getROCMPath()) + "/include").str();
+-  ClangIncludePath =
+-      (Twine(env::getLLVMPath()) + "/lib/clang/" + CLANG_VERSION_STRING).str();
+-  ClangIncludePath2 = (Twine(env::getLLVMPath()) + "/lib/clang/" +
+-                       CLANG_VERSION_STRING + "/include")
+-                          .str();
+ 
+   Args.push_back("-x");
+ 
+@@ -1022,14 +1017,6 @@ amd_comgr_status_t AMDGPUCompiler::addCo
+     Args.push_back("x86_64-unknown-linux-gnu");
+     Args.push_back("--cuda-device-only");
+     Args.push_back("-nogpulib");
+-    Args.push_back("-isystem");
+-    Args.push_back(ROCMIncludePath.c_str());
+-    Args.push_back("-isystem");
+-    Args.push_back(HIPIncludePath.c_str());
+-    Args.push_back("-isystem");
+-    Args.push_back(ClangIncludePath.c_str());
+-    Args.push_back("-isystem");
+-    Args.push_back(ClangIncludePath2.c_str());
+     break;
+   default:
+     return AMD_COMGR_STATUS_ERROR_INVALID_ARGUMENT;
+@@ -1106,6 +1093,10 @@ amd_comgr_status_t AMDGPUCompiler::compi
+       }
+     }
+   }
++  else {
++    llvm::SmallString<128> RealRocmDir = env::getLLVMPath();
++    Args.push_back(Saver.save(Twine("--rocm-path=") + RealRocmDir).data());
++  }
+ 
+   return processFiles(AMD_COMGR_DATA_KIND_BC, ".bc");
+ }
+diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
+--- comgr.orig/src/comgr-env.cpp	2022-11-15 10:37:50.000000000 -0800
++++ comgr/src/comgr-env.cpp	2023-08-26 17:31:58.988402425 -0700
+@@ -148,12 +148,12 @@ public:
+     SmallString<128> LLVMPath = getROCmPath();
+     sys::path::append(LLVMPath, "llvm");
+ 
+-    return LLVMPath;
++    return llvm::SmallString<128>("/usr/lib/llvm/@LIBDIR@");
+   }
+ 
+   virtual SmallString<128> getHIPPathImpl() {
+     SmallString<128> HIPPath = getROCmPath();
+-    sys::path::append(HIPPath, "hip");
++    sys::path::append(HIPPath, "");
+ 
+     return HIPPath;
+   }
+@@ -247,6 +247,9 @@ InstallationDetector *getDetectorImpl()
+   if (EnvROCMPath) {
+     ROCmInstallPath = EnvROCMPath;
+   }
++  else {
++	ROCmInstallPath = "/usr";
++  }
+ 
+   InstallationDetector *Detector;
+   if (ROCmInstallPath == "") {

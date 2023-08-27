@@ -45,13 +45,10 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
-	"${FILESDIR}/${PN}-5.1.3-rocm-path.patch"
-	"${FILESDIR}/0001-Specify-clang-exe-path-in-Driver-Creation.patch"
-	"${FILESDIR}/0001-Find-CLANG_RESOURCE_DIR-using-clang-print-resource-d.patch"
-	"${FILESDIR}/${PN}-5.3.3-HIPIncludePath-not-needed.patch"
 	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.3.3-remove-h-option.patch"
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
@@ -60,18 +57,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e '/sys::path::append(HIPPath/s,"hip","",' \
-		-i \
-		"src/comgr-env.cpp" \
-		|| die
-	local llvm_prefix=$(get_llvm_prefix ${LLVM_MAX_SLOT})
-	sed \
-		-e "/return LLVMPath;/s,LLVMPath,llvm::SmallString<128>(\"${llvm_prefix}\")," \
-		-i \
-		"src/comgr-env.cpp" \
-		|| die
-	eapply $(prefixify_ro "${FILESDIR}/${PN}-5.0-rocm_path.patch")
 	cmake_src_prepare
 	rocm_src_prepare
 }

@@ -40,7 +40,6 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-4.5.2-dependencies.patch"
-	"${FILESDIR}/${PN}-5.1.3-Find-CLANG_RESOURCE_DIR.patch"
 	"${FILESDIR}/${PN}-5.1.3-clang-link.patch"
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
 	"${FILESDIR}/${PN}-5.1.3-rocm-path.patch"
@@ -48,6 +47,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-5.1.3-llvm-15-remove-zlib-gnu"
 #	"${FILESDIR}/${PN}-5.1.3-llvm-15-args-changed"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
@@ -56,32 +56,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e '/sys::path::append(HIPPath/s,"hip","",' \
-		-i \
-		"src/comgr-env.cpp" \
-		|| die
-	local llvm_prefix=$(get_llvm_prefix ${LLVM_MAX_SLOT})
-	sed \
-		-e "/return LLVMPath;/s,LLVMPath,llvm::SmallString<128>(\"${llvm_prefix}\")," \
-		-i \
-		"src/comgr-env.cpp" \
-		|| die
-	sed \
-		-e '/Args.push_back(HIPIncludePath/,+1d' \
-		-i \
-		"src/comgr-compiler.cpp" \
-		|| die
-
-	# ROCM and HIPIncludePath is now in /usr, which disturbs the include
-	# order.
-	sed \
-		-e '/Args.push_back(ROCMIncludePath/,+1d' \
-		-i \
-		"src/comgr-compiler.cpp" \
-		|| die
-
-	eapply $(prefixify_ro "${FILESDIR}/${PN}-5.0-rocm_path.patch")
 	cmake_src_prepare
 	rocm_src_prepare
 }
