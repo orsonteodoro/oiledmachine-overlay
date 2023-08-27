@@ -144,6 +144,15 @@ inherit llvm toolchain-funcs
 # and @...@ symbol placeholder-replacement instead and save changes as
 # patch file(s).
 
+# @ECLASS_VARIABLE: ROCM_SKIP_COMMON_PATHS_PATCHES
+# @DESCRIPTION:
+# Prevent replacing @...@ symbols that other build tools may reference.
+#
+# Acceptable values:
+# =1    - do not replace @...@
+# =0    - auto replace @...@
+# unset - auto replace @...@
+
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
@@ -253,7 +262,21 @@ eerror
 
 # @FUNCTION:  _rocm_change_common_paths
 # @DESCRIPTION:
-# Patch common paths
+# Patch common paths or symbols.
+#
+# Supported symbol replacements with expanded possibilities:
+#
+# @CHOST@        - x86_64-pc-linux-gnu, or whatever is produced by `gcc -dumpmachine`
+# @CLANG_SLOT@   - 13.0.1, 14.0.6, 15.0.1, 15.0.5, 15.0.6, 15.0.7, 16
+# @EPREFIX@      - /home/<USER>/blah, "", or any path
+# @ESYSROOT@     - /usr/x86_64-pc-linux-gnu, "", or any path.
+# @GCC_SLOT@     - 10, 11, 12 [based on folders contained in /usr/lib/gcc/]
+# @LIBDIR@       - lib or lib64
+# @LLVM_SLOT@    - 13, 14, 15, or 16
+# @PV@           - x.y.z
+# @ROCM_VERSION@ - 5.1.3, 5.3.3, 5.4.3, 5.5.1, 5.6.0
+#
+
 _rocm_change_common_paths() {
 	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
 	if [[ -z "${LLVM_SLOT}" ]] ; then
@@ -325,6 +348,7 @@ eerror
 			$(grep -r -l -e "/opt/rocm" "${WORKDIR}") \
 			2>/dev/null || true
 	fi
+
 	sed \
 		-i \
 		-e "s|@EPREFIX@|${EPREFIX}|g" \
