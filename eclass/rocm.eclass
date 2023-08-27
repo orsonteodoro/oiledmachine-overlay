@@ -140,6 +140,9 @@ inherit llvm toolchain-funcs
 #   /usr/llvm -> /usr/lib/llvm/@LLVM_SLOT@ -> /usr/lib/llvm/16
 #   lib/cmake -> @LIBDIR@/cmake -> lib64/cmake
 #
+# This is deprecated.  The preferred method is to use manual inspection
+# and @...@ symbol placeholder-replacement instead and save changes as
+# patch file(s).
 
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
