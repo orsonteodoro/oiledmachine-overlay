@@ -109,21 +109,6 @@ diff -urp roctracer-rocm-5.1.3.orig/CMakeLists.txt roctracer-rocm-5.1.3/CMakeLis
  
  ## Packaging directives
  set ( CPACK_GENERATOR "DEB" "RPM" "TGZ" CACHE STRING "CPACK GENERATOR DEB;RPM")
-@@ -240,3 +230,14 @@ set ( CPACK_RPM_POST_UNINSTALL_SCRIPT_FI
- include ( CPack )
- 
- endif()
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp roctracer-rocm-5.1.3.orig/cmake_modules/env.cmake roctracer-rocm-5.1.3/cmake_modules/env.cmake
 --- roctracer-rocm-5.1.3.orig/cmake_modules/env.cmake	2022-04-18 06:49:13.000000000 -0700
 +++ roctracer-rocm-5.1.3/cmake_modules/env.cmake	2023-08-23 09:19:04.717237711 -0700

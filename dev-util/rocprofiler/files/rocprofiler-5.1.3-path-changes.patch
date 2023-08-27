@@ -219,23 +219,6 @@ diff -urp rocprofiler-rocm-5.1.3.orig/CMakeLists.txt rocprofiler-rocm-5.1.3/CMak
  #install ( FILES ${PROJECT_BINARY_DIR}/inc-link DESTINATION include RENAME ${DEST_NAME} )
  install ( FILES ${PROJECT_BINARY_DIR}/rocprof-link DESTINATION bin
            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-@@ -246,3 +246,14 @@ if(NOT ROCM_DEP_ROCMCORE)
- endif()
- 
- include ( CPack )
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
-Only in rocprofiler-rocm-5.1.3: CMakeLists.txt.orig
-Only in rocprofiler-rocm-5.1.3: CMakeLists.txt.rej
 diff -urp rocprofiler-rocm-5.1.3.orig/cmake_modules/env.cmake rocprofiler-rocm-5.1.3/cmake_modules/env.cmake
 --- rocprofiler-rocm-5.1.3.orig/cmake_modules/env.cmake	2023-08-26 12:47:22.831978752 -0700
 +++ rocprofiler-rocm-5.1.3/cmake_modules/env.cmake	2023-08-26 12:47:40.551979192 -0700

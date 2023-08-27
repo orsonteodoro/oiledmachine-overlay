@@ -211,21 +211,6 @@ diff -urp rocprofiler-rocm-5.4.3.orig/CMakeLists.txt rocprofiler-rocm-5.4.3/CMak
            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )
  
  # File reorg Backward compatibility
-@@ -241,3 +241,14 @@ if(NOT ROCM_DEP_ROCMCORE)
- endif()
- 
- include ( CPack )
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp rocprofiler-rocm-5.4.3.orig/cmake_modules/env.cmake rocprofiler-rocm-5.4.3/cmake_modules/env.cmake
 --- rocprofiler-rocm-5.4.3.orig/cmake_modules/env.cmake	2023-08-26 14:14:30.536108456 -0700
 +++ rocprofiler-rocm-5.4.3/cmake_modules/env.cmake	2023-08-26 14:14:48.096108891 -0700
