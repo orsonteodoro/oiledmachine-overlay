@@ -130,6 +130,17 @@ inherit llvm toolchain-funcs
 # DEPEND="sci-libs/rocBLAS[${ROCM_USEDEP}]"
 # @CODE
 
+# @ECLASS_VARIABLE: ROCM_AUTO_PATH_CHANGES
+# @DESCRIPTION:
+# Peform path replacement for literals so they conform to distro.  Affects
+# build files, documentation, source code, headers.  Some examples:
+#
+#   /opt/rocm -> @EPREFIX@/usr -> /usr
+#   /usr/lib$ -> /usr/@LIBDIR@ -> /usr/lib64
+#   /usr/llvm -> /usr/lib/llvm/@LLVM_SLOT@ -> /usr/lib/llvm/16
+#   lib/cmake -> @LIBDIR@/cmake -> lib64/cmake
+#
+
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
@@ -249,66 +260,68 @@ eerror
 		die
 	fi
 	IFS=$'\n'
-	sed \
-		-i \
-		-e "s|CMAKE_INSTALL_LIBDIR \"lib\"|CMAKE_INSTALL_LIBDIR \"$(get_libdir)\"|g" \
-		$(grep -r -F -l -e "CMAKE_INSTALL_LIBDIR \"lib\"" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|}/lib/cmake|}/$(get_libdir)/cmake|g" \
-		$(grep -r -F -l -e "}/lib/cmake" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|@/llvm/share/man1|@/lib/llvm/@LLVM_SLOT@/share/man/man1|g" \
-		$(grep -r -F -l -e "@/llvm/share/man1" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|/usr/lib$|/usr/$(get_libdir)|g" \
-		$(grep -r -E -l -e "/usr/lib$" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|--rocm-path=/usr/lib/ |--rocm-path=/usr/$(get_libdir)/ |g" \
-		$(grep -r -F -l -e "--rocm-path=/usr/lib/ " "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|}/llvm |}/lib/llvm/@LLVM_SLOT@ |g" \
-		$(grep -r -F -l -e "}/llvm " "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|}/llvm/lib|}/lib/llvm/@LLVM_SLOT@/lib|g" \
-		$(grep -r -F -l -e "}/llvm/lib" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|}/llvm/bin|}/lib/llvm/@LLVM_SLOT@/bin|g" \
-		$(grep -r -F -l -e "}/llvm/bin" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|/usr/bin/clang++|@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
-		$(grep -r -F -l -e "/usr/bin/clang++" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|/opt/rocm/llvm/bin/clang++|@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
-		$(grep -r -F -l -e "/opt/rocm/llvm/bin/clang++" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|/opt/rocm-ver|@EPREFIX@/usr|g" \
-		$(grep -r -l -e "/opt/rocm-ver" "${WORKDIR}") \
-		2>/dev/null || true
-	sed \
-		-i \
-		-e "s|/opt/rocm|@EPREFIX@/usr|g" \
-		$(grep -r -l -e "/opt/rocm" "${WORKDIR}") \
-		2>/dev/null || true
+	if [[ "${ROCM_AUTO_PATH_CHANGES}" == "1" ]] ; then
+		sed \
+			-i \
+			-e "s|CMAKE_INSTALL_LIBDIR \"lib\"|CMAKE_INSTALL_LIBDIR \"$(get_libdir)\"|g" \
+			$(grep -r -F -l -e "CMAKE_INSTALL_LIBDIR \"lib\"" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|}/lib/cmake|}/$(get_libdir)/cmake|g" \
+			$(grep -r -F -l -e "}/lib/cmake" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|@/llvm/share/man1|@/lib/llvm/@LLVM_SLOT@/share/man/man1|g" \
+			$(grep -r -F -l -e "@/llvm/share/man1" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|/usr/lib$|/usr/$(get_libdir)|g" \
+			$(grep -r -E -l -e "/usr/lib$" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|--rocm-path=/usr/lib/ |--rocm-path=/usr/$(get_libdir)/ |g" \
+			$(grep -r -F -l -e "--rocm-path=/usr/lib/ " "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|}/llvm |}/lib/llvm/@LLVM_SLOT@ |g" \
+			$(grep -r -F -l -e "}/llvm " "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|}/llvm/lib|}/lib/llvm/@LLVM_SLOT@/lib|g" \
+			$(grep -r -F -l -e "}/llvm/lib" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|}/llvm/bin|}/lib/llvm/@LLVM_SLOT@/bin|g" \
+			$(grep -r -F -l -e "}/llvm/bin" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|/usr/bin/clang++|@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
+			$(grep -r -F -l -e "/usr/bin/clang++" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+				-e "s|/opt/rocm/llvm/bin/clang++|@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++|g" \
+			$(grep -r -F -l -e "/opt/rocm/llvm/bin/clang++" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|/opt/rocm-ver|@EPREFIX@/usr|g" \
+			$(grep -r -l -e "/opt/rocm-ver" "${WORKDIR}") \
+			2>/dev/null || true
+		sed \
+			-i \
+			-e "s|/opt/rocm|@EPREFIX@/usr|g" \
+			$(grep -r -l -e "/opt/rocm" "${WORKDIR}") \
+			2>/dev/null || true
+	fi
 	sed \
 		-i \
 		-e "s|@EPREFIX@|${EPREFIX}|g" \
@@ -325,24 +338,26 @@ eerror
 		$(grep -r -l -e "@LIBDIR@" "${WORKDIR}") \
 		2>/dev/null || true
 
-	# /opt/rocm/llvm -> @EPREFIX@/usr/llvm -> /usr/llvm
-	sed \
-		-i \
-		-e "s|/usr/llvm|/usr/lib/llvm/@LLVM_SLOT@|g" \
-		$(grep -r -F -l -e "/usr/llvm" "${WORKDIR}") \
-		2>/dev/null || true
-	# /opt/rocm/lib/cmake/hsa-runtime64 -> /usr/lib/cmake/hsa-runtime64
-	sed \
-		-i \
-		-e "s|/usr/lib/cmake/hsa-runtime64|/usr/$(get_libdir)/cmake/hsa-runtime64|g" \
-		$(grep -r -F -l -e "/usr/lib/cmake/hsa-runtime64" "${WORKDIR}") \
-		2>/dev/null || true
-	# /opt/rocm/lib -> /usr/lib -> /usr/lib64
-	sed \
-		-i \
-		-e "s| /usr/lib | /usr/$(get_libdir) |g" \
-		$(grep -r -F -l -e " /usr/lib " $(find "${WORKDIR}" -name "CMakeLists.txt" -o -name "*.cmake")) \
-		2>/dev/null || true
+	if [[ "${ROCM_AUTO_PATH_CHANGES}" == "1" ]] ; then
+		# /opt/rocm/llvm -> @EPREFIX@/usr/llvm -> /usr/llvm
+		sed \
+			-i \
+			-e "s|/usr/llvm|/usr/lib/llvm/@LLVM_SLOT@|g" \
+			$(grep -r -F -l -e "/usr/llvm" "${WORKDIR}") \
+			2>/dev/null || true
+		# /opt/rocm/lib/cmake/hsa-runtime64 -> /usr/lib/cmake/hsa-runtime64
+		sed \
+			-i \
+			-e "s|/usr/lib/cmake/hsa-runtime64|/usr/$(get_libdir)/cmake/hsa-runtime64|g" \
+			$(grep -r -F -l -e "/usr/lib/cmake/hsa-runtime64" "${WORKDIR}") \
+			2>/dev/null || true
+		# /opt/rocm/lib -> /usr/lib -> /usr/lib64
+		sed \
+			-i \
+			-e "s| /usr/lib | /usr/$(get_libdir) |g" \
+			$(grep -r -F -l -e " /usr/lib " $(find "${WORKDIR}" -name "CMakeLists.txt" -o -name "*.cmake")) \
+			2>/dev/null || true
+	fi
 
 	sed \
 		-i \
