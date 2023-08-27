@@ -1,6 +1,6 @@
 diff -urp comgr.orig/cmake/opencl_pch.cmake comgr/cmake/opencl_pch.cmake
 --- comgr.orig/cmake/opencl_pch.cmake	2022-01-31 10:11:11.000000000 -0800
-+++ comgr/cmake/opencl_pch.cmake	2023-08-26 16:55:16.556347781 -0700
++++ comgr/cmake/opencl_pch.cmake	2023-08-26 18:29:52.280488600 -0700
 @@ -1,26 +1,8 @@
  if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
    find_package(Clang REQUIRED CONFIG)
@@ -32,8 +32,8 @@ diff -urp comgr.orig/cmake/opencl_pch.cmake comgr/cmake/opencl_pch.cmake
  
  # Macro to create and install a custom target for generating PCH for given
 diff -urp comgr.orig/CMakeLists.txt comgr/CMakeLists.txt
---- comgr.orig/CMakeLists.txt	2022-01-31 10:11:11.000000000 -0800
-+++ comgr/CMakeLists.txt	2023-08-26 16:27:51.896306976 -0700
+--- comgr.orig/CMakeLists.txt	2023-08-26 18:29:29.956488046 -0700
++++ comgr/CMakeLists.txt	2023-08-26 18:29:52.280488600 -0700
 @@ -209,7 +209,7 @@ target_include_directories(amd_comgr
  set(AMD_COMGR_CONFIG_NAME amd_comgr-config.cmake)
  set(AMD_COMGR_TARGETS_NAME amd_comgr-targets.cmake)
@@ -45,7 +45,7 @@ diff -urp comgr.orig/CMakeLists.txt comgr/CMakeLists.txt
  set(AMD_COMGR_PREFIX_CODE)
 diff -urp comgr.orig/README.md comgr/README.md
 --- comgr.orig/README.md	2022-01-31 10:11:11.000000000 -0800
-+++ comgr/README.md	2023-08-26 16:45:17.008332906 -0700
++++ comgr/README.md	2023-08-26 18:29:52.280488600 -0700
 @@ -21,7 +21,7 @@ An example `bash` session to build Comgr
  
      $ LLVM_PROJECT=~/llvm-project
@@ -65,8 +65,8 @@ diff -urp comgr.orig/README.md comgr/README.md
  Comgr also supports some environment variables to aid in debugging. These
  include:
 diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
---- comgr.orig/src/comgr-compiler.cpp	2022-01-31 10:11:11.000000000 -0800
-+++ comgr/src/comgr-compiler.cpp	2023-08-26 17:07:26.616365894 -0700
+--- comgr.orig/src/comgr-compiler.cpp	2023-08-26 18:29:29.980488047 -0700
++++ comgr/src/comgr-compiler.cpp	2023-08-26 18:30:42.900489856 -0700
 @@ -42,6 +42,7 @@
  #include "lld/Common/Driver.h"
  #include "clang/Basic/Version.h"
@@ -75,7 +75,7 @@ diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
  #include "clang/Driver/Compilation.h"
  #include "clang/Driver/DriverDiagnostic.h"
  #include "clang/Driver/Job.h"
-@@ -988,11 +989,8 @@ amd_comgr_status_t AMDGPUCompiler::addCo
+@@ -991,11 +992,8 @@ amd_comgr_status_t AMDGPUCompiler::addCo
    HIPIncludePath = (Twine(env::getHIPPath()) + "/include").str();
    // HIP headers depend on hsa.h which is in ROCM_DIR/include.
    ROCMIncludePath = (Twine(env::getROCMPath()) + "/include").str();
@@ -89,7 +89,7 @@ diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
  
    Args.push_back("-x");
  
-@@ -1015,10 +1013,6 @@ amd_comgr_status_t AMDGPUCompiler::addCo
+@@ -1018,10 +1016,6 @@ amd_comgr_status_t AMDGPUCompiler::addCo
      Args.push_back("--cuda-device-only");
      Args.push_back("-nogpulib");
      Args.push_back("-isystem");
@@ -100,9 +100,21 @@ diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
      Args.push_back(ClangIncludePath.c_str());
      Args.push_back("-isystem");
      Args.push_back(ClangIncludePath2.c_str());
+@@ -1101,6 +1095,10 @@ amd_comgr_status_t AMDGPUCompiler::compi
+       }
+     }
+   }
++  else {
++    llvm::SmallString<128> RealRocmDir = env::getLLVMPath();
++    Args.push_back(Saver.save(Twine("--rocm-path=") + RealRocmDir).data());
++  }
+ 
+   return processFiles(AMD_COMGR_DATA_KIND_BC, ".bc");
+ }
+Only in comgr/src: comgr-compiler.cpp.orig
 diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
 --- comgr.orig/src/comgr-env.cpp	2022-01-31 10:11:11.000000000 -0800
-+++ comgr/src/comgr-env.cpp	2023-08-26 16:28:48.856308389 -0700
++++ comgr/src/comgr-env.cpp	2023-08-26 18:29:52.280488600 -0700
 @@ -148,12 +148,12 @@ public:
      SmallString<128> LLVMPath = getROCmPath();
      sys::path::append(LLVMPath, "llvm");
