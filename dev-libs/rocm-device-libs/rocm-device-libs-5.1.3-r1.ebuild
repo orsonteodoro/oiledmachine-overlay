@@ -24,7 +24,7 @@ DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test r3"
+IUSE="test r4"
 RDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 "

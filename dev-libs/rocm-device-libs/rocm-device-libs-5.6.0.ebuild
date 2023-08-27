@@ -24,7 +24,7 @@ DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test r2"
+IUSE="test r4"
 RDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 "
@@ -44,6 +44,8 @@ RESTRICT="
 PATCHES=(
 # https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94
 	"${FILESDIR}/${PN}-5.5.1-llvm-link.patch"
+
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
