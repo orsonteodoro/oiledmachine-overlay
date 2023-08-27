@@ -84,8 +84,8 @@ diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
 -  ClangIncludePath2 = (Twine(env::getLLVMPath()) + "/lib/clang/" +
 -                       CLANG_VERSION_STRING + "/include")
 -                          .str();
-+  ClangIncludePath = string("@EPREFIX@/lib/clang/@CLANG_SLOT@");
-+  ClangIncludePath2 = string("@EPREFIX@/lib/clang/@CLANG_SLOT@/include");
++  ClangIncludePath = std::string("@EPREFIX@/usr/lib/clang/@CLANG_SLOT@");
++  ClangIncludePath2 = std::string("@EPREFIX@/usr/lib/clang/@CLANG_SLOT@/include");
  
    Args.push_back("-x");
  

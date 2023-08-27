@@ -25,7 +25,7 @@ diff -urp comgr.orig/cmake/opencl_pch.cmake comgr/cmake/opencl_pch.cmake
 -else()
 -  get_target_property(clang_build_header_dir clang-resource-headers RUNTIME_OUTPUT_DIRECTORY)
 -  set(OPENCL_C_H "${clang_build_header_dir}/opencl-c.h")
-+  execute_process(COMMAND "${CLANG_CMAKE_DIR}/../../../bin/clang" -print-resource-dir OUTPUT_VARIABLE CLANG_RESOURCE_DIR)
++  set(CLANG_RESOURCE_DIR "@EPREFIX@/usr/lib/clang/@CLANG_SLOT@")
 +  string(STRIP ${CLANG_RESOURCE_DIR} CLANG_RESOURCE_DIR)
 +  set(OPENCL_C_H "${CLANG_RESOURCE_DIR}/include/opencl-c.h")
  endif()
