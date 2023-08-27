@@ -1,0 +1,138 @@
+diff -urp rocm-cmake-rocm-5.1.3.orig/CMakeLists.txt rocm-cmake-rocm-5.1.3/CMakeLists.txt
+--- rocm-cmake-rocm-5.1.3.orig/CMakeLists.txt	2022-02-14 04:52:21.000000000 -0800
++++ rocm-cmake-rocm-5.1.3/CMakeLists.txt	2023-08-27 11:35:01.134014682 -0700
+@@ -4,7 +4,7 @@
+ 
+ cmake_minimum_required (VERSION 3.6)
+ 
+-set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
++#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "")
+ 
+ project(rocm-cmake)
+ 
+diff -urp rocm-cmake-rocm-5.1.3.orig/share/rocm/cmake/ROCMClangTidy.cmake rocm-cmake-rocm-5.1.3/share/rocm/cmake/ROCMClangTidy.cmake
+--- rocm-cmake-rocm-5.1.3.orig/share/rocm/cmake/ROCMClangTidy.cmake	2022-02-14 04:52:21.000000000 -0800
++++ rocm-cmake-rocm-5.1.3/share/rocm/cmake/ROCMClangTidy.cmake	2023-08-27 11:35:01.138014682 -0700
+@@ -22,7 +22,7 @@ find_program(
+           clang-tidy-3.5
+     HINTS ${CLANG_TIDY_EXE_HINT}
+     PATH_SUFFIXES compiler/bin bin
+-    PATHS /opt/rocm/llvm/bin /opt/rocm/hcc /usr/local/opt/llvm/bin)
++    PATHS /usr/lib/llvm/@LLVM_SLOT@/bin /usr/hcc)
+ 
+ execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE CLANG_TIDY_COMPILER_VERSION_OUTPUT)
+ function(rocm_find_clang_tidy_version VAR)
+diff -urp rocm-cmake-rocm-5.1.3.orig/share/rocm/cmake/ROCMCppCheck.cmake rocm-cmake-rocm-5.1.3/share/rocm/cmake/ROCMCppCheck.cmake
+--- rocm-cmake-rocm-5.1.3.orig/share/rocm/cmake/ROCMCppCheck.cmake	2022-02-14 04:52:21.000000000 -0800
++++ rocm-cmake-rocm-5.1.3/share/rocm/cmake/ROCMCppCheck.cmake	2023-08-27 11:35:01.138014682 -0700
+@@ -9,7 +9,7 @@ include(ROCMAnalyzers)
+ find_program(
+     CPPCHECK_EXE
+     NAMES cppcheck
+-    PATHS /opt/rocm/bin)
++    PATHS /usr/bin)
+ 
+ function(rocm_find_cppcheck_version VAR)
+     execute_process(COMMAND ${CPPCHECK_EXE} --version OUTPUT_VARIABLE VERSION_OUTPUT)
+diff -urp rocm-cmake-rocm-5.1.3.orig/share/rocm/cmake/ROCMCreatePackage.cmake rocm-cmake-rocm-5.1.3/share/rocm/cmake/ROCMCreatePackage.cmake
+--- rocm-cmake-rocm-5.1.3.orig/share/rocm/cmake/ROCMCreatePackage.cmake	2023-08-27 11:34:38.242014114 -0700
++++ rocm-cmake-rocm-5.1.3/share/rocm/cmake/ROCMCreatePackage.cmake	2023-08-27 11:35:01.138014682 -0700
+@@ -134,7 +134,7 @@ endmacro()
+ 
+ function(rocm_parse_python_syspath DIR_PATH PKG_NAME)
+     set(PYTHON_SITE_PACKAGES
+-        "/usr/lib/python3/dist-packages;/usr/lib/python2.7/dist-packages"
++        "@PYTHON_SITEDIRS@"
+         CACHE STRING "The site packages used for packaging")
+     #Group the statements to function
+     file(APPEND ${PROJECT_BINARY_DIR}/debian/postinst
+diff -urp rocm-cmake-rocm-5.1.3.orig/share/rocm/cmake/ROCMInstallTargets.cmake rocm-cmake-rocm-5.1.3/share/rocm/cmake/ROCMInstallTargets.cmake
+--- rocm-cmake-rocm-5.1.3.orig/share/rocm/cmake/ROCMInstallTargets.cmake	2022-02-14 04:52:21.000000000 -0800
++++ rocm-cmake-rocm-5.1.3/share/rocm/cmake/ROCMInstallTargets.cmake	2023-08-27 11:35:01.138014682 -0700
+@@ -8,7 +8,7 @@ include(CMakeParseArguments)
+ include(GNUInstallDirs)
+ include(ROCMPackageConfigHelpers)
+ 
+-set(ROCM_INSTALL_LIBDIR lib)
++set(ROCM_INSTALL_LIBDIR @LIBDIR@)
+ if(WIN32)
+     set(ROCM_USE_DEV_COMPONENT OFF CACHE BOOL "Generate a devel package?")
+ else()
+diff -urp rocm-cmake-rocm-5.1.3.orig/test/libheaderonly/CMakeLists.txt rocm-cmake-rocm-5.1.3/test/libheaderonly/CMakeLists.txt
+--- rocm-cmake-rocm-5.1.3.orig/test/libheaderonly/CMakeLists.txt	2022-02-14 04:52:21.000000000 -0800
++++ rocm-cmake-rocm-5.1.3/test/libheaderonly/CMakeLists.txt	2023-08-27 11:35:27.194015329 -0700
+@@ -33,8 +33,8 @@ rocm_create_package(
+     HEADER_ONLY)
+ endif()
+ 
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+ 
+ add_library(headeronly INTERFACE)
+Only in rocm-cmake-rocm-5.1.3/test/libheaderonly: CMakeLists.txt.orig
+Only in rocm-cmake-rocm-5.1.3/test/libheaderonly: CMakeLists.txt.rej
+diff -urp rocm-cmake-rocm-5.1.3.orig/test/libsimple/CMakeLists.txt rocm-cmake-rocm-5.1.3/test/libsimple/CMakeLists.txt
+--- rocm-cmake-rocm-5.1.3.orig/test/libsimple/CMakeLists.txt	2022-02-14 04:52:21.000000000 -0800
++++ rocm-cmake-rocm-5.1.3/test/libsimple/CMakeLists.txt	2023-08-27 11:35:46.138015799 -0700
+@@ -31,8 +31,8 @@ rocm_create_package(
+     LDCONFIG)
+ endif()
+ 
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+ 
+ add_library(simple simple.cpp)
+Only in rocm-cmake-rocm-5.1.3/test/libsimple: CMakeLists.txt.orig
+Only in rocm-cmake-rocm-5.1.3/test/libsimple: CMakeLists.txt.rej
+diff -urp rocm-cmake-rocm-5.1.3.orig/test/pass/simple-soversion.cmake rocm-cmake-rocm-5.1.3/test/pass/simple-soversion.cmake
+--- rocm-cmake-rocm-5.1.3.orig/test/pass/simple-soversion.cmake	2022-02-14 04:52:21.000000000 -0800
++++ rocm-cmake-rocm-5.1.3/test/pass/simple-soversion.cmake	2023-08-27 11:36:14.362016499 -0700
+@@ -10,12 +10,12 @@ endfunction()
+ 
+ install_dir(${TEST_DIR}/libsimple CMAKE_ARGS -DBUILD_SHARED_LIBS=On -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=On)
+ if(NOT WIN32 AND NOT APPLE)
+-    test_expect_file(${PREFIX}/lib/libsimple.so)
+-    test_expect_file(${PREFIX}/lib/libsimple.so.1)
+-    test_expect_file(${PREFIX}/lib/libsimple.so.1.1.2)
++    test_expect_file(${PREFIX}/@LIBDIR@/libsimple.so)
++    test_expect_file(${PREFIX}/@LIBDIR@/libsimple.so.1)
++    test_expect_file(${PREFIX}/@LIBDIR@/libsimple.so.1.1.2)
+ 
+-    test_expect_realpath(${PREFIX}/lib/libsimple.so ${PREFIX}/lib/libsimple.so.1.1.2)
+-    test_expect_realpath(${PREFIX}/lib/libsimple.so.1 ${PREFIX}/lib/libsimple.so.1.1.2)
++    test_expect_realpath(${PREFIX}/@LIBDIR@/libsimple.so ${PREFIX}/@LIBDIR@/libsimple.so.1.1.2)
++    test_expect_realpath(${PREFIX}/@LIBDIR@/libsimple.so.1 ${PREFIX}/@LIBDIR@/libsimple.so.1.1.2)
+ 
+     test_exec(COMMAND ldd ${PREFIX}/bin/simple-main OUTPUT_VARIABLE LIBS)
+     test_expect_matches("${LIBS}" "libsimple.so.1 =>")
+Only in rocm-cmake-rocm-5.1.3/test/pass: simple-soversion.cmake.orig
+Only in rocm-cmake-rocm-5.1.3/test/pass: simple-soversion.cmake.rej
+diff -urp rocm-cmake-rocm-5.1.3.orig/test/pass/simple-soversion-env.cmake rocm-cmake-rocm-5.1.3/test/pass/simple-soversion-env.cmake
+--- rocm-cmake-rocm-5.1.3.orig/test/pass/simple-soversion-env.cmake	2022-02-14 04:52:21.000000000 -0800
++++ rocm-cmake-rocm-5.1.3/test/pass/simple-soversion-env.cmake	2023-08-27 11:37:23.978018226 -0700
+@@ -12,12 +12,12 @@ set(ENV{ROCM_LIBPATCH_VERSION} "21001")
+ install_dir(${TEST_DIR}/libsimple CMAKE_ARGS -DBUILD_SHARED_LIBS=On -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=On)
+ 
+ if(NOT WIN32 AND NOT APPLE)
+-    test_expect_file(${PREFIX}/lib/libsimple.so)
+-    test_expect_file(${PREFIX}/lib/libsimple.so.1)
+-    test_expect_file(${PREFIX}/lib/libsimple.so.1.1.2.$ENV{ROCM_LIBPATCH_VERSION})
++    test_expect_file(${PREFIX}/@LIBDIR@/libsimple.so)
++    test_expect_file(${PREFIX}/@LIBDIR@/libsimple.so.1)
++    test_expect_file(${PREFIX}/@LIBDIR@/libsimple.so.1.1.2.$ENV{ROCM_LIBPATCH_VERSION})
+ 
+-    test_expect_realpath(${PREFIX}/lib/libsimple.so ${PREFIX}/lib/libsimple.so.1.1.2.$ENV{ROCM_LIBPATCH_VERSION})
+-    test_expect_realpath(${PREFIX}/lib/libsimple.so.1 ${PREFIX}/lib/libsimple.so.1.1.2.$ENV{ROCM_LIBPATCH_VERSION})
++    test_expect_realpath(${PREFIX}/@LIBDIR@/libsimple.so ${PREFIX}/@LIBDIR@/libsimple.so.1.1.2.$ENV{ROCM_LIBPATCH_VERSION})
++    test_expect_realpath(${PREFIX}/@LIBDIR@/libsimple.so.1 ${PREFIX}/@LIBDIR@/libsimple.so.1.1.2.$ENV{ROCM_LIBPATCH_VERSION})
+ 
+     test_exec(COMMAND ldd ${PREFIX}/bin/simple-main OUTPUT_VARIABLE LIBS)
+     test_expect_matches("${LIBS}" "libsimple.so.1 =>")
+Only in rocm-cmake-rocm-5.1.3/test/pass: simple-soversion-env.cmake.orig
+Only in rocm-cmake-rocm-5.1.3/test/pass: simple-soversion-env.cmake.rej

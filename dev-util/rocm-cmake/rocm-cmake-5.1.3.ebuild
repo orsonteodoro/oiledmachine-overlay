@@ -30,6 +30,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-license.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -37,38 +38,14 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e "/ROCM_INSTALL_LIBDIR/s:lib:$(get_libdir):" \
-		-i \
-		"${S}/share/rocm/cmake/ROCMInstallTargets.cmake" \
-		|| die
-	local old_site_dirs="/usr/lib/python3/dist-packages;/usr/lib/python2.7/dist-packages"
 	local new_site_dirs=$(realpath "${EPREFIX}/usr/$(get_libdir)/python"*"/site-packages" \
 		| tr "\n" ";" \
 		| sed -e "s|;$||g")
 	sed \
 		-i \
-		-e "s|${old_site_dirs}|${new_site_dirs}|g" \
+		-e "s|@PYTHON_SITEDIRS@|${new_site_dirs}|g" \
 		"${S}/share/rocm/cmake/ROCMCreatePackage.cmake" \
 		|| die
-	IFS=$'\n'
-	sed \
-		-i \
-		-e "s|{CMAKE_CURRENT_BINARY_DIR}/lib|{CMAKE_CURRENT_BINARY_DIR}/$(get_libdir)|g" \
-		$(grep -r -l -F "{CMAKE_CURRENT_BINARY_DIR}/lib" "${WORKDIR}") \
-		|| die
-	sed \
-		-i \
-		-e "s|{PREFIX}/lib/|{PREFIX}/$(get_libdir)/|g" \
-		$(grep -r -l -F "{PREFIX}/lib/" "${WORKDIR}") \
-		|| die
-	sed \
-		-i \
-		-e "s|\"lib\"|\"$(get_libdir)\"|" \
-		"share/rocm/cmake/ROCMCreatePackage.cmake" \
-		"share/rocm/cmake/ROCMInstallTargets.cmake" \
-		|| die
-	IFS=$' \t\n'
 	cmake_src_prepare
 	rocm_src_prepare
 }
