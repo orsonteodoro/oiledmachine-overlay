@@ -1,6 +1,6 @@
 diff -urp rccl-rocm-5.1.3.orig/cmake/Dependencies.cmake rccl-rocm-5.1.3/cmake/Dependencies.cmake
 --- rccl-rocm-5.1.3.orig/cmake/Dependencies.cmake	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/cmake/Dependencies.cmake	2023-08-28 09:08:30.909401429 -0700
++++ rccl-rocm-5.1.3/cmake/Dependencies.cmake	2023-08-28 09:53:38.893434734 -0700
 @@ -60,10 +60,8 @@ if(NOT GTest_FOUND AND BUILD_TESTS OR IN
                       UPDATE_DISCONNECTED TRUE
      )
@@ -24,20 +24,40 @@ diff -urp rccl-rocm-5.1.3.orig/cmake/Dependencies.cmake rccl-rocm-5.1.3/cmake/De
      set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
      file(
 diff -urp rccl-rocm-5.1.3.orig/CMakeLists.txt rccl-rocm-5.1.3/CMakeLists.txt
---- rccl-rocm-5.1.3.orig/CMakeLists.txt	2023-08-28 09:04:14.973398281 -0700
-+++ rccl-rocm-5.1.3/CMakeLists.txt	2023-08-28 09:04:33.821398513 -0700
-@@ -263,7 +263,7 @@ if("${HIP_COMPILER}" MATCHES "hcc")
+--- rccl-rocm-5.1.3.orig/CMakeLists.txt	2023-08-28 09:53:18.485434483 -0700
++++ rccl-rocm-5.1.3/CMakeLists.txt	2023-08-28 09:55:22.361436007 -0700
+@@ -219,7 +219,7 @@ if(COLLTRACE)
+   add_definitions(-DENABLE_COLLTRACE)
  endif()
  
- target_include_directories(rccl PRIVATE ${ROCM_PATH}/rocm_smi/include)
+-CHECK_INCLUDE_FILE_CXX("${ROCM_PATH}/rocm_smi/include/rocm_smi/rocm_smi64Config.h" HAVE_ROCM_SMI64CONFIG)
++CHECK_INCLUDE_FILE_CXX("${ROCM_PATH}/include/rocm_smi/rocm_smi64Config.h" HAVE_ROCM_SMI64CONFIG)
+ IF(HAVE_ROCM_SMI64CONFIG)
+   add_definitions(-DUSE_ROCM_SMI64CONFIG)
+ ENDIF()
+@@ -234,7 +234,7 @@ if("${HIP_COMPILER}" MATCHES "clang")
+     target_compile_options(rccl PRIVATE -fgpu-rdc)
+   endforeach()
+   target_link_libraries(rccl PRIVATE -fgpu-rdc)
+-  target_include_directories(rccl PRIVATE ${ROCM_PATH}/hsa/include)
++  target_include_directories(rccl PRIVATE ${ROCM_PATH}/include/hsa)
+   find_program( hipcc_executable hipcc )
+   execute_process(COMMAND bash "-c" "${hipcc_executable} -help | grep 'parallel-jobs'" OUTPUT_VARIABLE hipcc_parallel_jobs)
+   if("${hipcc_parallel_jobs}" MATCHES "parallel-jobs")
+@@ -262,8 +262,8 @@ if("${HIP_COMPILER}" MATCHES "hcc")
+   endif()
+ endif()
+ 
+-target_include_directories(rccl PRIVATE ${ROCM_PATH}/rocm_smi/include)
 -target_link_libraries(rccl PRIVATE hip::device dl -lrocm_smi64 -L${ROCM_PATH}/rocm_smi/lib)
++target_include_directories(rccl PRIVATE ${ROCM_PATH}/include/rocm_smi)
 +target_link_libraries(rccl PRIVATE hip::device dl -lrocm_smi64 -L${ROCM_PATH}/@LIBDIR@)
  target_link_libraries(rccl INTERFACE hip::host)
  
  #Setup librccl.so version
 diff -urp rccl-rocm-5.1.3.orig/ext-net/dummy/Makefile rccl-rocm-5.1.3/ext-net/dummy/Makefile
 --- rccl-rocm-5.1.3.orig/ext-net/dummy/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/ext-net/dummy/Makefile	2023-08-28 09:14:58.941406201 -0700
++++ rccl-rocm-5.1.3/ext-net/dummy/Makefile	2023-08-28 09:53:38.893434734 -0700
 @@ -4,7 +4,7 @@
  # See LICENSE.txt for license information
  #
@@ -49,7 +69,7 @@ diff -urp rccl-rocm-5.1.3.orig/ext-net/dummy/Makefile rccl-rocm-5.1.3/ext-net/du
  
 diff -urp rccl-rocm-5.1.3.orig/ext-net/google-fastsocket/Makefile rccl-rocm-5.1.3/ext-net/google-fastsocket/Makefile
 --- rccl-rocm-5.1.3.orig/ext-net/google-fastsocket/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/ext-net/google-fastsocket/Makefile	2023-08-28 09:12:25.949404320 -0700
++++ rccl-rocm-5.1.3/ext-net/google-fastsocket/Makefile	2023-08-28 09:53:38.893434734 -0700
 @@ -1,4 +1,4 @@
 -CUDA_HOME?=/usr/local/cuda
 +CUDA_HOME?=/opt/cuda
@@ -73,7 +93,7 @@ diff -urp rccl-rocm-5.1.3.orig/ext-net/google-fastsocket/Makefile rccl-rocm-5.1.
  clean:
 diff -urp rccl-rocm-5.1.3.orig/install.sh rccl-rocm-5.1.3/install.sh
 --- rccl-rocm-5.1.3.orig/install.sh	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/install.sh	2023-08-28 09:08:32.221401445 -0700
++++ rccl-rocm-5.1.3/install.sh	2023-08-28 09:53:38.893434734 -0700
 @@ -17,7 +17,7 @@ function display_help()
      echo "    [-s|--static] Build RCCL as a static library instead of shared library."
      echo "    [--run_tests_all] Run all unit tests (must be built already.)"
@@ -94,7 +114,7 @@ diff -urp rccl-rocm-5.1.3.orig/install.sh rccl-rocm-5.1.3/install.sh
  run_tests_all=false
 diff -urp rccl-rocm-5.1.3.orig/makefiles/common.mk rccl-rocm-5.1.3/makefiles/common.mk
 --- rccl-rocm-5.1.3.orig/makefiles/common.mk	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/makefiles/common.mk	2023-08-28 09:10:05.885402597 -0700
++++ rccl-rocm-5.1.3/makefiles/common.mk	2023-08-28 09:53:38.893434734 -0700
 @@ -4,7 +4,7 @@
  # See LICENSE.txt for license information
  #
@@ -115,7 +135,7 @@ diff -urp rccl-rocm-5.1.3.orig/makefiles/common.mk rccl-rocm-5.1.3/makefiles/com
  #CUDA_VERSION ?= $(shell ls $(CUDA_LIB)/libcudart.so.* | head -1 | rev | cut -d "." -f -2 | rev)
 diff -urp rccl-rocm-5.1.3.orig/pkg/debian/libnccl2.install.in rccl-rocm-5.1.3/pkg/debian/libnccl2.install.in
 --- rccl-rocm-5.1.3.orig/pkg/debian/libnccl2.install.in	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/pkg/debian/libnccl2.install.in	2023-08-28 09:11:19.773403506 -0700
++++ rccl-rocm-5.1.3/pkg/debian/libnccl2.install.in	2023-08-28 09:53:38.893434734 -0700
 @@ -1,2 +1,2 @@
 -lib/libnccl.so.${nccl:Major} /usr/lib/${pkg:MultiArch}
 -lib/libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} /usr/lib/${pkg:MultiArch}
@@ -123,7 +143,7 @@ diff -urp rccl-rocm-5.1.3.orig/pkg/debian/libnccl2.install.in rccl-rocm-5.1.3/pk
 +@LIBDIR@/libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} /usr/@LIBDIR@/${pkg:MultiArch}
 diff -urp rccl-rocm-5.1.3.orig/pkg/debian/libnccl-dev.install.in rccl-rocm-5.1.3/pkg/debian/libnccl-dev.install.in
 --- rccl-rocm-5.1.3.orig/pkg/debian/libnccl-dev.install.in	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/pkg/debian/libnccl-dev.install.in	2023-08-28 09:10:59.821403260 -0700
++++ rccl-rocm-5.1.3/pkg/debian/libnccl-dev.install.in	2023-08-28 09:53:38.893434734 -0700
 @@ -1,4 +1,4 @@
  include/nccl.h /usr/include
  include/nccl_net.h /usr/include
@@ -133,7 +153,7 @@ diff -urp rccl-rocm-5.1.3.orig/pkg/debian/libnccl-dev.install.in rccl-rocm-5.1.3
 +@LIBDIR@/libnccl_static.a /usr/@LIBDIR@/${pkg:MultiArch}
 diff -urp rccl-rocm-5.1.3.orig/pkg/redhat/nccl.spec.in rccl-rocm-5.1.3/pkg/redhat/nccl.spec.in
 --- rccl-rocm-5.1.3.orig/pkg/redhat/nccl.spec.in	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/pkg/redhat/nccl.spec.in	2023-08-28 09:11:36.541403712 -0700
++++ rccl-rocm-5.1.3/pkg/redhat/nccl.spec.in	2023-08-28 09:53:38.893434734 -0700
 @@ -40,7 +40,7 @@ NCCL static library
  rm -rf $RPM_BUILD_ROOT
  install -m 755 -d $RPM_BUILD_ROOT
@@ -154,7 +174,7 @@ diff -urp rccl-rocm-5.1.3.orig/pkg/redhat/nccl.spec.in rccl-rocm-5.1.3/pkg/redha
  %postun -p /sbin/ldconfig
 diff -urp rccl-rocm-5.1.3.orig/pkg/txz/create_txz.sh.in rccl-rocm-5.1.3/pkg/txz/create_txz.sh.in
 --- rccl-rocm-5.1.3.orig/pkg/txz/create_txz.sh.in	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/pkg/txz/create_txz.sh.in	2023-08-28 09:12:37.373404460 -0700
++++ rccl-rocm-5.1.3/pkg/txz/create_txz.sh.in	2023-08-28 09:53:38.893434734 -0700
 @@ -21,4 +21,4 @@ PKG_ARCH=${pkg:Arch}
  
  NCCLNAME="nccl_${NCCL_MAJOR}.${NCCL_MINOR}.${NCCL_PATCH}${NCCL_SUFFIX}-${PKG_REVISION}+cuda${CUDA_MAJOR}.${CUDA_MINOR}_${PKG_ARCH}"
@@ -163,7 +183,7 @@ diff -urp rccl-rocm-5.1.3.orig/pkg/txz/create_txz.sh.in rccl-rocm-5.1.3/pkg/txz/
 +tar --transform "s/^$BUILDDIR/$NCCLNAME/" -Jcf $NCCLNAME.txz --owner=0 --group=0 $BUILDDIR/include $BUILDDIR/@LIBDIR@ $BUILDDIR/*.txt
 diff -urp rccl-rocm-5.1.3.orig/README.md rccl-rocm-5.1.3/README.md
 --- rccl-rocm-5.1.3.orig/README.md	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/README.md	2023-08-28 09:06:25.133399882 -0700
++++ rccl-rocm-5.1.3/README.md	2023-08-28 09:53:38.893434734 -0700
 @@ -21,7 +21,7 @@ For ROCm installation instructions, see
  The root of this repository has a helper script 'install.sh' to build and install RCCL on Ubuntu with a single command.  It does not take a lot of options and hard-codes configuration that can be specified through invoking cmake directly, but it's a great way to get started quickly and can serve as an example of how to build/install.
  
@@ -208,7 +228,7 @@ diff -urp rccl-rocm-5.1.3.orig/README.md rccl-rocm-5.1.3/README.md
  In order to enable peer-to-peer access on machines with PCIe-connected GPUs, the HSA environment variable HSA_FORCE_FINE_GRAIN_PCIE=1 is required to be set, on top of requiring GPUs that support peer-to-peer access and proper large BAR addressing support.
 diff -urp rccl-rocm-5.1.3.orig/src/Makefile rccl-rocm-5.1.3/src/Makefile
 --- rccl-rocm-5.1.3.orig/src/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/src/Makefile	2023-08-28 09:12:15.933404196 -0700
++++ rccl-rocm-5.1.3/src/Makefile	2023-08-28 09:53:38.893434734 -0700
 @@ -23,9 +23,9 @@ PKGCONFIGFILE := nccl.pc
  ##### dirs
  BUILDDIR ?= $(abspath ../build)
@@ -239,7 +259,7 @@ diff -urp rccl-rocm-5.1.3.orig/src/Makefile rccl-rocm-5.1.3/src/Makefile
  FILESTOFORMAT := $(shell find . -name ".\#*" -prune -o \( -name "*.cc" -o -name "*.h" \) -print | grep -v -E 'ibvwrap.h|nvmlwrap.h|gdrwrap.h|nccl.h')
 diff -urp rccl-rocm-5.1.3.orig/src/nccl.pc.in rccl-rocm-5.1.3/src/nccl.pc.in
 --- rccl-rocm-5.1.3.orig/src/nccl.pc.in	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/src/nccl.pc.in	2023-08-28 09:13:25.069405047 -0700
++++ rccl-rocm-5.1.3/src/nccl.pc.in	2023-08-28 09:53:38.893434734 -0700
 @@ -1,6 +1,6 @@
  prefix=${nccl:Prefix}
  exec_prefix=${prefix}
@@ -249,8 +269,8 @@ diff -urp rccl-rocm-5.1.3.orig/src/nccl.pc.in rccl-rocm-5.1.3/src/nccl.pc.in
  
  Name: nccl
 diff -urp rccl-rocm-5.1.3.orig/test/CMakeLists.txt rccl-rocm-5.1.3/test/CMakeLists.txt
---- rccl-rocm-5.1.3.orig/test/CMakeLists.txt	2023-08-28 09:04:14.977398281 -0700
-+++ rccl-rocm-5.1.3/test/CMakeLists.txt	2023-08-28 09:08:41.005401553 -0700
+--- rccl-rocm-5.1.3.orig/test/CMakeLists.txt	2023-08-28 09:53:18.493434483 -0700
++++ rccl-rocm-5.1.3/test/CMakeLists.txt	2023-08-28 09:53:38.893434734 -0700
 @@ -73,14 +73,14 @@ if(BUILD_TESTS)
    # through -l and -L instead of command line input.
    if(BUILD_STATIC)
@@ -271,7 +291,7 @@ diff -urp rccl-rocm-5.1.3.orig/test/CMakeLists.txt rccl-rocm-5.1.3/test/CMakeLis
  else()
 diff -urp rccl-rocm-5.1.3.orig/tools/HelloRccl/Makefile rccl-rocm-5.1.3/tools/HelloRccl/Makefile
 --- rccl-rocm-5.1.3.orig/tools/HelloRccl/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/HelloRccl/Makefile	2023-08-28 09:07:14.205400485 -0700
++++ rccl-rocm-5.1.3/tools/HelloRccl/Makefile	2023-08-28 09:53:38.893434734 -0700
 @@ -3,7 +3,7 @@
  # Set to where RCCL is installed
  RCCL_INSTALL=../../build/release
@@ -283,7 +303,7 @@ diff -urp rccl-rocm-5.1.3.orig/tools/HelloRccl/Makefile rccl-rocm-5.1.3/tools/He
  endif
 diff -urp rccl-rocm-5.1.3.orig/tools/ib-test/Makefile rccl-rocm-5.1.3/tools/ib-test/Makefile
 --- rccl-rocm-5.1.3.orig/tools/ib-test/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/ib-test/Makefile	2023-08-28 09:08:38.909401527 -0700
++++ rccl-rocm-5.1.3/tools/ib-test/Makefile	2023-08-28 09:53:38.893434734 -0700
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH ?= $(wildcard /opt/rocm/hip)
@@ -293,7 +313,7 @@ diff -urp rccl-rocm-5.1.3.orig/tools/ib-test/Makefile rccl-rocm-5.1.3/tools/ib-t
  endif
 diff -urp rccl-rocm-5.1.3.orig/tools/rccl-prim-test/Makefile rccl-rocm-5.1.3/tools/rccl-prim-test/Makefile
 --- rccl-rocm-5.1.3.orig/tools/rccl-prim-test/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/rccl-prim-test/Makefile	2023-08-28 09:08:35.773401489 -0700
++++ rccl-rocm-5.1.3/tools/rccl-prim-test/Makefile	2023-08-28 09:53:38.893434734 -0700
 @@ -1,12 +1,12 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH?= $(wildcard /opt/rocm/hip)
@@ -311,7 +331,7 @@ diff -urp rccl-rocm-5.1.3.orig/tools/rccl-prim-test/Makefile rccl-rocm-5.1.3/too
  
 diff -urp rccl-rocm-5.1.3.orig/tools/topo_expl/Makefile rccl-rocm-5.1.3/tools/topo_expl/Makefile
 --- rccl-rocm-5.1.3.orig/tools/topo_expl/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/topo_expl/Makefile	2023-08-28 09:07:59.981401048 -0700
++++ rccl-rocm-5.1.3/tools/topo_expl/Makefile	2023-08-28 09:53:38.893434734 -0700
 @@ -1,12 +1,12 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH ?= $(wildcard /opt/rocm/hip)
@@ -329,7 +349,7 @@ diff -urp rccl-rocm-5.1.3.orig/tools/topo_expl/Makefile rccl-rocm-5.1.3/tools/to
  	../../src/graph/search.cc ../../src/graph/connect.cc ../../src/graph/tuning.cc ../../src/graph/xml.cc ../../src/misc/nvmlwrap_stub.cc ../../src/graph/rome_models.cc
 diff -urp rccl-rocm-5.1.3.orig/tools/TransferBench/Makefile rccl-rocm-5.1.3/tools/TransferBench/Makefile
 --- rccl-rocm-5.1.3.orig/tools/TransferBench/Makefile	2022-04-27 08:36:16.000000000 -0700
-+++ rccl-rocm-5.1.3/tools/TransferBench/Makefile	2023-08-28 09:13:13.501404904 -0700
++++ rccl-rocm-5.1.3/tools/TransferBench/Makefile	2023-08-28 09:53:38.893434734 -0700
 @@ -1,12 +1,12 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH?= $(wildcard /opt/rocm/hip)

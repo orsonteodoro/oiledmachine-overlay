@@ -1,6 +1,6 @@
 diff -urp rccl-rocm-5.6.0.orig/cmake/Dependencies.cmake rccl-rocm-5.6.0/cmake/Dependencies.cmake
 --- rccl-rocm-5.6.0.orig/cmake/Dependencies.cmake	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/cmake/Dependencies.cmake	2023-08-28 09:28:55.917416495 -0700
++++ rccl-rocm-5.6.0/cmake/Dependencies.cmake	2023-08-28 10:04:51.965443012 -0700
 @@ -60,10 +60,8 @@ if(NOT GTest_FOUND AND BUILD_TESTS OR IN
                       UPDATE_DISCONNECTED TRUE
      )
@@ -25,8 +25,8 @@ diff -urp rccl-rocm-5.6.0.orig/cmake/Dependencies.cmake rccl-rocm-5.6.0/cmake/De
      file(
 diff -urp rccl-rocm-5.6.0.orig/CMakeLists.txt rccl-rocm-5.6.0/CMakeLists.txt
 --- rccl-rocm-5.6.0.orig/CMakeLists.txt	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/CMakeLists.txt	2023-08-28 09:32:17.885418979 -0700
-@@ -444,14 +444,14 @@ if (HAVE_BFD)
++++ rccl-rocm-5.6.0/CMakeLists.txt	2023-08-28 10:05:16.633443316 -0700
+@@ -444,16 +444,16 @@ if (HAVE_BFD)
    endif()
  endif()
  
@@ -39,11 +39,14 @@ diff -urp rccl-rocm-5.6.0.orig/CMakeLists.txt rccl-rocm-5.6.0/CMakeLists.txt
    message ("-- Checking old include directory structure for rocm_smi")
 -  set(ROCM_SMI_INCLUDE_DIR "${ROCM_PATH}/rocm_smi/include")
 -  set(ROCM_SMI_LIB_DIR "${ROCM_PATH}/rocm_smi/lib")
-+  set(ROCM_SMI_INCLUDE_DIR "${ROCM_PATH}/rocm_smi/include")
++  set(ROCM_SMI_INCLUDE_DIR "${ROCM_PATH}/include/rocm_smi")
 +  set(ROCM_SMI_LIB_DIR "${ROCM_PATH}/@LIBDIR@")
    set(ROCM_SMI_LIBRARIES rocm_smi64)
-   CHECK_INCLUDE_FILE_CXX("${ROCM_SMI_INCLUDE_DIR}/rocm_smi/rocm_smi64Config.h" HAVE_ROCM_SMI64CONFIG)
+-  CHECK_INCLUDE_FILE_CXX("${ROCM_SMI_INCLUDE_DIR}/rocm_smi/rocm_smi64Config.h" HAVE_ROCM_SMI64CONFIG)
++  CHECK_INCLUDE_FILE_CXX("${ROCM_SMI_INCLUDE_DIR}/rocm_smi64Config.h" HAVE_ROCM_SMI64CONFIG)
  endif()
+ IF(HAVE_ROCM_SMI64CONFIG)
+   add_definitions(-DUSE_ROCM_SMI64CONFIG)
 @@ -511,7 +511,7 @@ target_link_libraries(rccl INTERFACE hip
  
  if(HAVE_BFD)
@@ -55,7 +58,7 @@ diff -urp rccl-rocm-5.6.0.orig/CMakeLists.txt rccl-rocm-5.6.0/CMakeLists.txt
      message("iberty found @  ${HAVE_IBERTY} ")
 diff -urp rccl-rocm-5.6.0.orig/ext-net/example/Makefile rccl-rocm-5.6.0/ext-net/example/Makefile
 --- rccl-rocm-5.6.0.orig/ext-net/example/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/ext-net/example/Makefile	2023-08-28 09:28:15.245415995 -0700
++++ rccl-rocm-5.6.0/ext-net/example/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -4,7 +4,7 @@
  # See LICENSE.txt for license information
  #
@@ -67,7 +70,7 @@ diff -urp rccl-rocm-5.6.0.orig/ext-net/example/Makefile rccl-rocm-5.6.0/ext-net/
  
 diff -urp rccl-rocm-5.6.0.orig/ext-net/google-fastsocket/Makefile rccl-rocm-5.6.0/ext-net/google-fastsocket/Makefile
 --- rccl-rocm-5.6.0.orig/ext-net/google-fastsocket/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/ext-net/google-fastsocket/Makefile	2023-08-28 09:31:54.525418692 -0700
++++ rccl-rocm-5.6.0/ext-net/google-fastsocket/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -1,4 +1,4 @@
 -CUDA_HOME?=/usr/local/cuda
 +CUDA_HOME?=/opt/cuda
@@ -91,7 +94,7 @@ diff -urp rccl-rocm-5.6.0.orig/ext-net/google-fastsocket/Makefile rccl-rocm-5.6.
  clean:
 diff -urp rccl-rocm-5.6.0.orig/install.sh rccl-rocm-5.6.0/install.sh
 --- rccl-rocm-5.6.0.orig/install.sh	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/install.sh	2023-08-28 09:29:03.357416587 -0700
++++ rccl-rocm-5.6.0/install.sh	2023-08-28 10:04:51.965443012 -0700
 @@ -17,7 +17,7 @@ function display_help()
      echo "    [-s|--static] Build RCCL as a static library instead of shared library."
      echo "    [--run_tests_all] Run all rccl unit tests (must be built already.)"
@@ -112,7 +115,7 @@ diff -urp rccl-rocm-5.6.0.orig/install.sh rccl-rocm-5.6.0/install.sh
  run_tests_all=false
 diff -urp rccl-rocm-5.6.0.orig/makefiles/common.mk rccl-rocm-5.6.0/makefiles/common.mk
 --- rccl-rocm-5.6.0.orig/makefiles/common.mk	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/makefiles/common.mk	2023-08-28 09:30:13.357417448 -0700
++++ rccl-rocm-5.6.0/makefiles/common.mk	2023-08-28 10:04:51.965443012 -0700
 @@ -4,7 +4,7 @@
  # See LICENSE.txt for license information
  #
@@ -133,7 +136,7 @@ diff -urp rccl-rocm-5.6.0.orig/makefiles/common.mk rccl-rocm-5.6.0/makefiles/com
  #CUDA_VERSION ?= $(shell ls $(CUDA_LIB)/libcudart.so.* | head -1 | rev | cut -d "." -f -2 | rev)
 diff -urp rccl-rocm-5.6.0.orig/pkg/debian/libnccl2.install.in rccl-rocm-5.6.0/pkg/debian/libnccl2.install.in
 --- rccl-rocm-5.6.0.orig/pkg/debian/libnccl2.install.in	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/pkg/debian/libnccl2.install.in	2023-08-28 09:31:01.421418039 -0700
++++ rccl-rocm-5.6.0/pkg/debian/libnccl2.install.in	2023-08-28 10:04:51.965443012 -0700
 @@ -1,2 +1,2 @@
 -lib/libnccl.so.${nccl:Major} /usr/lib/${pkg:MultiArch}
 -lib/libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} /usr/lib/${pkg:MultiArch}
@@ -141,7 +144,7 @@ diff -urp rccl-rocm-5.6.0.orig/pkg/debian/libnccl2.install.in rccl-rocm-5.6.0/pk
 +@LIBDIR@/libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} /usr/@LIBDIR@/${pkg:MultiArch}
 diff -urp rccl-rocm-5.6.0.orig/pkg/debian/libnccl-dev.install.in rccl-rocm-5.6.0/pkg/debian/libnccl-dev.install.in
 --- rccl-rocm-5.6.0.orig/pkg/debian/libnccl-dev.install.in	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/pkg/debian/libnccl-dev.install.in	2023-08-28 09:30:47.997417874 -0700
++++ rccl-rocm-5.6.0/pkg/debian/libnccl-dev.install.in	2023-08-28 10:04:51.965443012 -0700
 @@ -1,4 +1,4 @@
  include/nccl.h /usr/include
  include/nccl_net.h /usr/include
@@ -151,7 +154,7 @@ diff -urp rccl-rocm-5.6.0.orig/pkg/debian/libnccl-dev.install.in rccl-rocm-5.6.0
 +@LIBDIR@/libnccl_static.a /usr/@LIBDIR@/${pkg:MultiArch}
 diff -urp rccl-rocm-5.6.0.orig/pkg/redhat/nccl.spec.in rccl-rocm-5.6.0/pkg/redhat/nccl.spec.in
 --- rccl-rocm-5.6.0.orig/pkg/redhat/nccl.spec.in	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/pkg/redhat/nccl.spec.in	2023-08-28 09:31:10.941418156 -0700
++++ rccl-rocm-5.6.0/pkg/redhat/nccl.spec.in	2023-08-28 10:04:51.965443012 -0700
 @@ -40,7 +40,7 @@ NCCL static library
  rm -rf $RPM_BUILD_ROOT
  install -m 755 -d $RPM_BUILD_ROOT
@@ -172,7 +175,7 @@ diff -urp rccl-rocm-5.6.0.orig/pkg/redhat/nccl.spec.in rccl-rocm-5.6.0/pkg/redha
  %postun -p /sbin/ldconfig
 diff -urp rccl-rocm-5.6.0.orig/pkg/txz/create_txz.sh.in rccl-rocm-5.6.0/pkg/txz/create_txz.sh.in
 --- rccl-rocm-5.6.0.orig/pkg/txz/create_txz.sh.in	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/pkg/txz/create_txz.sh.in	2023-08-28 09:33:25.485419811 -0700
++++ rccl-rocm-5.6.0/pkg/txz/create_txz.sh.in	2023-08-28 10:04:51.965443012 -0700
 @@ -21,4 +21,4 @@ PKG_ARCH=${pkg:Arch}
  
  NCCLNAME="nccl_${NCCL_MAJOR}.${NCCL_MINOR}.${NCCL_PATCH}${NCCL_SUFFIX}-${PKG_REVISION}+cuda${CUDA_MAJOR}.${CUDA_MINOR}_${PKG_ARCH}"
@@ -181,7 +184,7 @@ diff -urp rccl-rocm-5.6.0.orig/pkg/txz/create_txz.sh.in rccl-rocm-5.6.0/pkg/txz/
 +tar --transform "s/^$BUILDDIR/$NCCLNAME/" -Jcf $NCCLNAME.txz --owner=0 --group=0 $BUILDDIR/include $BUILDDIR/@LIBDIR@ $BUILDDIR/*.txt
 diff -urp rccl-rocm-5.6.0.orig/README.md rccl-rocm-5.6.0/README.md
 --- rccl-rocm-5.6.0.orig/README.md	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/README.md	2023-08-28 09:29:29.341416906 -0700
++++ rccl-rocm-5.6.0/README.md	2023-08-28 10:04:51.965443012 -0700
 @@ -21,7 +21,7 @@ For ROCm installation instructions, see
  The root of this repository has a helper script 'install.sh' to build and install RCCL on Ubuntu with a single command.  It does not take a lot of options and hard-codes configuration that can be specified through invoking cmake directly, but it's a great way to get started quickly and can serve as an example of how to build/install.
  
@@ -226,7 +229,7 @@ diff -urp rccl-rocm-5.6.0.orig/README.md rccl-rocm-5.6.0/README.md
  
 diff -urp rccl-rocm-5.6.0.orig/src/Makefile rccl-rocm-5.6.0/src/Makefile
 --- rccl-rocm-5.6.0.orig/src/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/src/Makefile	2023-08-28 09:34:10.397420363 -0700
++++ rccl-rocm-5.6.0/src/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -24,9 +24,9 @@ PKGCONFIGFILE := nccl.pc
  ##### dirs
  BUILDDIR ?= $(abspath ../build)
@@ -257,7 +260,7 @@ diff -urp rccl-rocm-5.6.0.orig/src/Makefile rccl-rocm-5.6.0/src/Makefile
  FILESTOFORMAT := $(shell find . -name ".\#*" -prune -o \( -name "*.cc" -o -name "*.h" \) -print | grep -v -E 'ibvwrap.h|nvmlwrap.h|gdrwrap.h|nccl.h')
 diff -urp rccl-rocm-5.6.0.orig/src/nccl.pc.in rccl-rocm-5.6.0/src/nccl.pc.in
 --- rccl-rocm-5.6.0.orig/src/nccl.pc.in	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/src/nccl.pc.in	2023-08-28 09:34:16.413420437 -0700
++++ rccl-rocm-5.6.0/src/nccl.pc.in	2023-08-28 10:04:51.965443012 -0700
 @@ -1,6 +1,6 @@
  prefix=${nccl:Prefix}
  exec_prefix=${prefix}
@@ -267,8 +270,8 @@ diff -urp rccl-rocm-5.6.0.orig/src/nccl.pc.in rccl-rocm-5.6.0/src/nccl.pc.in
  
  Name: nccl
 diff -urp rccl-rocm-5.6.0.orig/test/CMakeLists.txt rccl-rocm-5.6.0/test/CMakeLists.txt
---- rccl-rocm-5.6.0.orig/test/CMakeLists.txt	2023-08-28 09:27:36.693415521 -0700
-+++ rccl-rocm-5.6.0/test/CMakeLists.txt	2023-08-28 09:33:17.229419709 -0700
+--- rccl-rocm-5.6.0.orig/test/CMakeLists.txt	2023-08-28 10:04:37.289442832 -0700
++++ rccl-rocm-5.6.0/test/CMakeLists.txt	2023-08-28 10:04:51.965443012 -0700
 @@ -12,7 +12,7 @@ if(BUILD_TESTS)
    #    message(FATAL_ERROR "chrpath is required for rccl-UnitTests. Please install (e.g. sudo apt-get install chrpath)")
    #endif()
@@ -322,7 +325,7 @@ diff -urp rccl-rocm-5.6.0.orig/test/CMakeLists.txt rccl-rocm-5.6.0/test/CMakeLis
    message("Not building rccl unit tests")
 diff -urp rccl-rocm-5.6.0.orig/tools/GraphBench/Makefile rccl-rocm-5.6.0/tools/GraphBench/Makefile
 --- rccl-rocm-5.6.0.orig/tools/GraphBench/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/tools/GraphBench/Makefile	2023-08-28 09:29:53.485417203 -0700
++++ rccl-rocm-5.6.0/tools/GraphBench/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -3,7 +3,7 @@
  # Set to where RCCL is installed
  RCCL_INSTALL=../../build/release
@@ -334,7 +337,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/GraphBench/Makefile rccl-rocm-5.6.0/tools/G
  endif
 diff -urp rccl-rocm-5.6.0.orig/tools/HelloRccl/Makefile rccl-rocm-5.6.0/tools/HelloRccl/Makefile
 --- rccl-rocm-5.6.0.orig/tools/HelloRccl/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/tools/HelloRccl/Makefile	2023-08-28 09:29:45.949417110 -0700
++++ rccl-rocm-5.6.0/tools/HelloRccl/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -3,7 +3,7 @@
  # Set to where RCCL is installed
  RCCL_INSTALL=../../build/release
@@ -346,7 +349,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/HelloRccl/Makefile rccl-rocm-5.6.0/tools/He
  endif
 diff -urp rccl-rocm-5.6.0.orig/tools/ib-test/Makefile rccl-rocm-5.6.0/tools/ib-test/Makefile
 --- rccl-rocm-5.6.0.orig/tools/ib-test/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/tools/ib-test/Makefile	2023-08-28 09:29:57.229417249 -0700
++++ rccl-rocm-5.6.0/tools/ib-test/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH ?= $(wildcard /opt/rocm)
@@ -356,7 +359,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/ib-test/Makefile rccl-rocm-5.6.0/tools/ib-t
  endif
 diff -urp rccl-rocm-5.6.0.orig/tools/MultiRank/Makefile rccl-rocm-5.6.0/tools/MultiRank/Makefile
 --- rccl-rocm-5.6.0.orig/tools/MultiRank/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/tools/MultiRank/Makefile	2023-08-28 09:29:37.213417003 -0700
++++ rccl-rocm-5.6.0/tools/MultiRank/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -3,7 +3,7 @@
  # Set to where RCCL is installed
  RCCL_INSTALL=../../build/release
@@ -368,7 +371,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/MultiRank/Makefile rccl-rocm-5.6.0/tools/Mu
  endif
 diff -urp rccl-rocm-5.6.0.orig/tools/MultiRank/README.mpi rccl-rocm-5.6.0/tools/MultiRank/README.mpi
 --- rccl-rocm-5.6.0.orig/tools/MultiRank/README.mpi	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/tools/MultiRank/README.mpi	2023-08-28 09:33:59.981420235 -0700
++++ rccl-rocm-5.6.0/tools/MultiRank/README.mpi	2023-08-28 10:04:51.965443012 -0700
 @@ -9,9 +9,9 @@ export MPI_INSTALL_PATH=
  export RCCL_INSTALL_PATH=
  export ROCM_INSTALL_PATH=
@@ -383,7 +386,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/MultiRank/README.mpi rccl-rocm-5.6.0/tools/
  export GPU_MAX_HW_QUEUES=16
 diff -urp rccl-rocm-5.6.0.orig/tools/rccl-prim-test/Makefile rccl-rocm-5.6.0/tools/rccl-prim-test/Makefile
 --- rccl-rocm-5.6.0.orig/tools/rccl-prim-test/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/tools/rccl-prim-test/Makefile	2023-08-28 09:29:41.309417053 -0700
++++ rccl-rocm-5.6.0/tools/rccl-prim-test/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH?= $(wildcard /opt/rocm)
@@ -393,7 +396,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/rccl-prim-test/Makefile rccl-rocm-5.6.0/too
  endif
 diff -urp rccl-rocm-5.6.0.orig/tools/topo_expl/Makefile rccl-rocm-5.6.0/tools/topo_expl/Makefile
 --- rccl-rocm-5.6.0.orig/tools/topo_expl/Makefile	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/tools/topo_expl/Makefile	2023-08-28 09:29:49.741417157 -0700
++++ rccl-rocm-5.6.0/tools/topo_expl/Makefile	2023-08-28 10:04:51.965443012 -0700
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH ?= $(wildcard /opt/rocm)

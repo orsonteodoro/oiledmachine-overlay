@@ -95,6 +95,7 @@ src_configure() {
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
+		-DROCM_PATH="${EPREFIX}/usr"
 		-DSKIP_RPATH=ON
 		-Wno-dev
 	)
