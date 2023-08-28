@@ -28,7 +28,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r10"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r11"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -189,6 +189,19 @@ src_prepare() {
 		"/usr" \
 		"${HIP_S}")
 
+	# Faster
+	local LLVM_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}"
+	local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+		| sed -e "s|sys-devel/clang-||g" \
+	)
+	local clang_slot=""
+	if (( ${clang_pv%%.*} -ge 16 )) ; then
+		clang_slot="${LLVM_VERSION}"
+	else
+		clang_slot=$(ver_cut 1-3 "${clang_pv}")
+	fi
+	local CLANG_RESOURCE_DIR="${EPREFIX}/usr/lib/clang/${clang_slot}"
+
 	cp \
 		$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
 		"bin/hipvars.pm" \
@@ -198,6 +211,7 @@ src_prepare() {
 		-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
 		-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
 		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
+		-e "s,@CLANG_RESOURCE_DIR@,${CLANG_RESOURCE_DIR}," \
 		-i \
 		bin/hipvars.pm \
 		|| die
