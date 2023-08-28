@@ -7,7 +7,7 @@ LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_VERSION="${PV}"
 
-inherit cmake llvm prefix python-any-r1 rocm
+inherit cmake flag-o-matic llvm prefix python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
@@ -83,6 +83,14 @@ eerror "  source /etc/profile"
 eerror
 		die
 	fi
+
+	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
+	export CXX="${HIP_CXX:-hipcc}"
+
+	if [[ "${CXX}" =~ "hipcc" ]] ; then
+		append-flags --rocm-path="${ESYSROOT}/usr"
+	fi
+
 	hipconfig --help >/dev/null || die
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 	export HIP_PLATFORM="amd"
@@ -95,7 +103,6 @@ eerror
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 

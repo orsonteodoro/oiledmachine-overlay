@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
 
-inherit cmake llvm prefix python-any-r1 rocm
+inherit cmake flag-o-matic llvm prefix python-any-r1 rocm
 
 HSA_CLASS_COMMIT="f8b387043b9f510afdf2e72e38a011900360d6ab"
 SRC_URI="
@@ -127,6 +127,14 @@ eerror
 	if use aqlprofile ; then
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing"
 	fi
+
+	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
+	export CXX="${HIP_CXX:-hipcc}"
+
+	if [[ "${CXX}" =~ "hipcc" ]] ; then
+		append-flags --rocm-path="${ESYSROOT}/usr"
+	fi
+
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"
 	export HIP_PATH="$(hipconfig -p)"
@@ -136,7 +144,6 @@ eerror
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 
