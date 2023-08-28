@@ -1,6 +1,6 @@
 diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
 --- src.orig/atmi-backward-compat.cmake	2023-05-09 09:40:57.000000000 -0700
-+++ src/atmi-backward-compat.cmake	2023-08-24 15:02:14.455892210 -0700
++++ src/atmi-backward-compat.cmake	2023-08-27 22:21:50.292924221 -0700
 @@ -24,10 +24,10 @@ set(ATMI_WRAPPER_DIR ${ATMI_BUILD_DIR}/w
  set(ATMI_WRAPPER_INC_DIR ${ATMI_WRAPPER_DIR}/include)
  set(ATMI_WRAPPER_BIN_DIR ${ATMI_WRAPPER_DIR}/bin)
@@ -31,11 +31,9 @@ diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
  #endif
  #endif  /* ROCM_HEADER_WRAPPER_WERROR */
  
-Only in src: atmi-backward-compat.cmake.orig
-Only in src: atmi-backward-compat.cmake.rej
 diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
 --- src.orig/CMakeLists.txt	2023-05-09 09:40:57.000000000 -0700
-+++ src/CMakeLists.txt	2023-08-24 15:01:51.895891650 -0700
++++ src/CMakeLists.txt	2023-08-27 22:21:50.292924221 -0700
 @@ -32,7 +32,8 @@ set (atmi_VERSION_MINOR 5)
  ################################################################################
  if ( NOT DEFINED CMAKE_INSTALL_PREFIX )
@@ -66,7 +64,7 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
 --- src.orig/cmake_modules/FindLibElf.cmake	2023-05-09 09:40:57.000000000 -0700
-+++ src/cmake_modules/FindLibElf.cmake	2023-08-24 15:01:51.895891650 -0700
++++ src/cmake_modules/FindLibElf.cmake	2023-08-27 22:21:50.292924221 -0700
 @@ -23,8 +23,8 @@ find_library (LIBELF_LIBRARIES
      elf
      PATHS
@@ -80,7 +78,7 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
  
 diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 --- src.orig/cmake_modules/FindROCm.cmake	2023-05-09 09:40:57.000000000 -0700
-+++ src/cmake_modules/FindROCm.cmake	2023-08-24 15:01:51.895891650 -0700
++++ src/cmake_modules/FindROCm.cmake	2023-08-27 22:21:50.292924221 -0700
 @@ -20,7 +20,7 @@ find_path(
    HINTS
      ${ROC_DIR}/include
@@ -150,7 +148,7 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
  #   endif()
 diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
 --- src.orig/compiler/CMakeLists.txt	2023-05-09 09:40:57.000000000 -0700
-+++ src/compiler/CMakeLists.txt	2023-08-24 15:01:51.895891650 -0700
++++ src/compiler/CMakeLists.txt	2023-08-27 22:21:50.292924221 -0700
 @@ -65,9 +65,9 @@ if(ROCM_FOUND)
              include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
              include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../include)
@@ -174,8 +172,16 @@ diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
         else()
 diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
 --- src.orig/device_runtime/bc.cmake	2023-05-09 09:40:57.000000000 -0700
-+++ src/device_runtime/bc.cmake	2023-08-24 15:01:51.895891650 -0700
-@@ -190,7 +190,7 @@ macro(add_bc_library name dir)
++++ src/device_runtime/bc.cmake	2023-08-27 22:22:37.264924798 -0700
+@@ -70,6 +70,7 @@ macro(add_ocl_bc_library name dir)
+     -I${CMAKE_CURRENT_SOURCE_DIR}/include
+     -I${CMAKE_CURRENT_SOURCE_DIR}/../../include
+     -I${CMAKE_CURRENT_SOURCE_DIR}/../runtime/include
++    --rocm-device-lib-path=/usr/@LIBDIR@/amdgcn/bitcode
+     ${CLANG_OPTIONS_APPEND})
+ 
+   set(ll_files)
+@@ -190,7 +191,7 @@ macro(add_bc_library name dir)
  
    add_custom_command(
      OUTPUT ${name}-${mcpu}.bc
@@ -186,7 +192,7 @@ diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
    add_custom_target(${name}-${mcpu} ALL DEPENDS ${name}-${mcpu}.bc)
 diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.txt
 --- src.orig/device_runtime/CMakeLists.txt	2023-05-09 09:40:57.000000000 -0700
-+++ src/device_runtime/CMakeLists.txt	2023-08-24 15:01:51.895891650 -0700
++++ src/device_runtime/CMakeLists.txt	2023-08-27 22:21:50.292924221 -0700
 @@ -32,7 +32,7 @@ if(LLVM_FOUND)
    if (CLANG_INSTALL_PREFIX)
      set(CLANG_BINDIR ${CLANG_INSTALL_PREFIX}/bin)
@@ -196,7 +202,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
      set(AMDLLVM ${CLANG_INSTALL_PREFIX})
    else()
      set(CLANG_BINDIR ${LLVM_BUILD_BINARY_DIR}/bin)
-@@ -68,9 +68,10 @@ find_path(ATMI_DE_DEP_LIBHSA_LIBRARIES
+@@ -68,9 +68,11 @@ find_path(ATMI_DE_DEP_LIBHSA_LIBRARIES
      "ockl.bc"
      "ockl.amdgcn.bc"
    PATHS
@@ -206,10 +212,11 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
 -    "${AMD_DEVICE_LIBS_PREFIX}/lib"
 +    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@/bitcode"
 +    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@"
++    "/usr/@LIBDIR@/amdgcn/bitcode"
    NO_DEFAULT_PATH)
  
  get_filename_component (ATMI_DE_DEP_LIBHSA_LIBRARIES_DIRS ${ATMI_DE_DEP_LIBHSA_LIBRARIES} DIRECTORY)
-@@ -116,7 +117,7 @@ add_custom_target(device_header ALL DEPE
+@@ -116,7 +118,7 @@ add_custom_target(device_header ALL DEPE
  # append to the configure file
  file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "AMDLLVM=${AMDLLVM}\n")
  file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "AMDGPU_TARGET_TRIPLE=${AMDGPU_TARGET_TRIPLE}\n")
@@ -218,7 +225,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
  file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "ROCM_DEVICE_PATH=${ROCM_DEVICE_PATH}/amdgcn/bitcode\n")
  
  target_sources(atmi_runtime PRIVATE
-@@ -133,7 +134,7 @@ foreach(mcpu ${mcpus})
+@@ -133,7 +135,7 @@ foreach(mcpu ${mcpus})
    set(optimization_level 2)
  
    # set output dir for .bc files
@@ -227,7 +234,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
  
    # create output dir for include files
    execute_process(COMMAND "/bin/mkdir" "-p" "${OUTPUTDIR}")
-@@ -153,7 +154,7 @@ foreach(mcpu ${mcpus})
+@@ -153,7 +155,7 @@ foreach(mcpu ${mcpus})
    if(CMAKE_BUILD_TYPE MATCHES Debug)
      install(FILES
        ${OUTPUTDIR}/atmi-${mcpu}.bc
@@ -238,7 +245,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
      install(FILES
 diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
 --- src.orig/runtime/core/CMakeLists.txt	2023-05-09 09:40:57.000000000 -0700
-+++ src/runtime/core/CMakeLists.txt	2023-08-24 15:01:51.895891650 -0700
++++ src/runtime/core/CMakeLists.txt	2023-08-27 22:21:50.292924221 -0700
 @@ -44,7 +44,7 @@ add_definitions(-DROCM_VERSION_MINOR=${R
  add_definitions(-fpic)
  

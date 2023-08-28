@@ -1,6 +1,6 @@
 diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
 --- src.orig/atmi-backward-compat.cmake	2022-05-17 08:16:19.000000000 -0700
-+++ src/atmi-backward-compat.cmake	2023-08-24 14:41:54.231861935 -0700
++++ src/atmi-backward-compat.cmake	2023-08-27 22:18:01.076921401 -0700
 @@ -24,9 +24,9 @@ set(ATMI_WRAPPER_DIR ${ATMI_BUILD_DIR}/w
  set(ATMI_WRAPPER_INC_DIR ${ATMI_WRAPPER_DIR}/include)
  set(ATMI_WRAPPER_BIN_DIR ${ATMI_WRAPPER_DIR}/bin)
@@ -24,7 +24,7 @@ diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
  #use header template file and generate wrapper header files
 diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
 --- src.orig/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
-+++ src/CMakeLists.txt	2023-08-24 14:41:22.503861148 -0700
++++ src/CMakeLists.txt	2023-08-27 22:18:01.076921401 -0700
 @@ -31,7 +31,8 @@ set (atmi_VERSION_MINOR 5)
  ################################################################################
  if ( NOT DEFINED CMAKE_INSTALL_PREFIX )
@@ -55,7 +55,7 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
 --- src.orig/cmake_modules/FindLibElf.cmake	2022-05-17 08:16:19.000000000 -0700
-+++ src/cmake_modules/FindLibElf.cmake	2023-08-24 14:33:28.367849384 -0700
++++ src/cmake_modules/FindLibElf.cmake	2023-08-27 22:18:01.076921401 -0700
 @@ -23,8 +23,8 @@ find_library (LIBELF_LIBRARIES
      elf
      PATHS
@@ -67,11 +67,9 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH)
  
-Only in src/cmake_modules: FindLibElf.cmake.orig
-Only in src/cmake_modules: FindLibElf.cmake.rej
 diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 --- src.orig/cmake_modules/FindROCm.cmake	2022-05-17 08:16:19.000000000 -0700
-+++ src/cmake_modules/FindROCm.cmake	2023-08-24 14:34:25.071850791 -0700
++++ src/cmake_modules/FindROCm.cmake	2023-08-27 22:18:01.076921401 -0700
 @@ -29,8 +29,8 @@ find_path(
      ${ROCR_DIR}/hsa/include
      ${ROCR_DIR}/hsa/include/hsa
@@ -145,11 +143,9 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
  #   else()
  #     set(ROCM_VERSION "0.0.0" CACHE STRING "Version of ROCm set to default")
  #   endif()
-Only in src/cmake_modules: FindROCm.cmake.orig
-Only in src/cmake_modules: FindROCm.cmake.rej
 diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
 --- src.orig/compiler/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
-+++ src/compiler/CMakeLists.txt	2023-08-24 14:38:27.051856795 -0700
++++ src/compiler/CMakeLists.txt	2023-08-27 22:18:01.076921401 -0700
 @@ -65,11 +65,11 @@ if(ROCM_FOUND)
              include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
              include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../include)
@@ -176,8 +172,16 @@ diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
         else()
 diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
 --- src.orig/device_runtime/bc.cmake	2022-05-17 08:16:19.000000000 -0700
-+++ src/device_runtime/bc.cmake	2023-08-24 14:38:28.235856824 -0700
-@@ -190,7 +190,7 @@ macro(add_bc_library name dir)
++++ src/device_runtime/bc.cmake	2023-08-27 22:18:55.856922075 -0700
+@@ -70,6 +70,7 @@ macro(add_ocl_bc_library name dir)
+     -I${CMAKE_CURRENT_SOURCE_DIR}/include
+     -I${CMAKE_CURRENT_SOURCE_DIR}/../../include
+     -I${CMAKE_CURRENT_SOURCE_DIR}/../runtime/include
++    --rocm-device-lib-path=/usr/@LIBDIR@/amdgcn/bitcode
+     ${CLANG_OPTIONS_APPEND})
+ 
+   set(ll_files)
+@@ -190,7 +191,7 @@ macro(add_bc_library name dir)
  
    add_custom_command(
      OUTPUT ${name}-${mcpu}.bc
@@ -188,7 +192,7 @@ diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
    add_custom_target(${name}-${mcpu} ALL DEPENDS ${name}-${mcpu}.bc)
 diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.txt
 --- src.orig/device_runtime/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
-+++ src/device_runtime/CMakeLists.txt	2023-08-24 14:35:36.463852562 -0700
++++ src/device_runtime/CMakeLists.txt	2023-08-27 22:18:01.076921401 -0700
 @@ -32,7 +32,7 @@ if(LLVM_FOUND)
    if (CLANG_INSTALL_PREFIX)
      set(CLANG_BINDIR ${CLANG_INSTALL_PREFIX}/bin)
@@ -198,7 +202,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
      set(AMDLLVM ${CLANG_INSTALL_PREFIX})
    else()
      set(CLANG_BINDIR ${LLVM_BUILD_BINARY_DIR}/bin)
-@@ -68,9 +68,10 @@ find_path(ATMI_DE_DEP_LIBHSA_LIBRARIES
+@@ -68,9 +68,11 @@ find_path(ATMI_DE_DEP_LIBHSA_LIBRARIES
      "ockl.bc"
      "ockl.amdgcn.bc"
    PATHS
@@ -208,10 +212,11 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
 -    "${AMD_DEVICE_LIBS_PREFIX}/lib"
 +    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@/bitcode"
 +    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@"
++    "/usr/@LIBDIR@/amdgcn/bitcode"
    NO_DEFAULT_PATH)
  
  get_filename_component (ATMI_DE_DEP_LIBHSA_LIBRARIES_DIRS ${ATMI_DE_DEP_LIBHSA_LIBRARIES} DIRECTORY)
-@@ -116,7 +117,7 @@ add_custom_target(device_header ALL DEPE
+@@ -116,7 +118,7 @@ add_custom_target(device_header ALL DEPE
  # append to the configure file
  file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "AMDLLVM=${AMDLLVM}\n")
  file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "AMDGPU_TARGET_TRIPLE=${AMDGPU_TARGET_TRIPLE}\n")
@@ -220,7 +225,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
  file(APPEND ${ATMI_RUNTIME_PATH}/atmi-config.mak "ROCM_DEVICE_PATH=${ROCM_DEVICE_PATH}/amdgcn/bitcode\n")
  
  target_sources(atmi_runtime PRIVATE
-@@ -133,7 +134,7 @@ foreach(mcpu ${mcpus})
+@@ -133,7 +135,7 @@ foreach(mcpu ${mcpus})
    set(optimization_level 2)
  
    # set output dir for .bc files
@@ -229,7 +234,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
  
    # create output dir for include files
    execute_process(COMMAND "/bin/mkdir" "-p" "${OUTPUTDIR}")
-@@ -153,12 +154,12 @@ foreach(mcpu ${mcpus})
+@@ -153,12 +155,12 @@ foreach(mcpu ${mcpus})
    if(CMAKE_BUILD_TYPE MATCHES Debug)
      install(FILES
        ${OUTPUTDIR}/atmi-${mcpu}.bc
@@ -244,11 +249,9 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
        )
    endif()
  endforeach()
-Only in src/device_runtime: CMakeLists.txt.orig
-Only in src/device_runtime: CMakeLists.txt.rej
 diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
 --- src.orig/runtime/core/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
-+++ src/runtime/core/CMakeLists.txt	2023-08-24 14:41:40.375861591 -0700
++++ src/runtime/core/CMakeLists.txt	2023-08-27 22:18:01.076921401 -0700
 @@ -23,7 +23,6 @@ find_path (amd_comgr_INCLUDE_DIRS
      ${ROC_DIR}
      ${ROC_COMGR_INCLUDE_DIR}
