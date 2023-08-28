@@ -23,7 +23,7 @@ LICENSE="
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile r1"
+IUSE=" +aqlprofile r2"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/roctracer-${PV}:${SLOT}
@@ -64,14 +64,14 @@ src_prepare() {
 	if ! use aqlprofile ; then
 		eapply "${FILESDIR}/${PN}-4.3.0-no-aqlprofile.patch"
 		eapply "${FILESDIR}/${PN}-5.3.3-remove-aql-in-cmake.patch"
-	fi
 
-	# Caused by commit 071379b
-	sed \
-		-i \
-		-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
-		"cmake_modules/env.cmake" \
-		|| die
+		# Caused by commit 071379b
+		sed \
+			-i \
+			-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
+			"cmake_modules/env.cmake" \
+			|| die
+	fi
 
 	rocm_src_prepare
 }

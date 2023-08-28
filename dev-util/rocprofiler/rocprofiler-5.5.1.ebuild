@@ -25,7 +25,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile r1"
+IUSE=" +aqlprofile r2"
 RDEPEND="
 	dev-python/barectf
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
@@ -70,27 +70,27 @@ ewarn
 ewarn "You are enabling an experimental patch."
 ewarn "For production, set USE=aqlprofile ON."
 ewarn
+
+		# Caused by commit e80f7cb
+		sed \
+			-i \
+			-e "s|NOT AQLPROFILE_LIB|FALSE|g" \
+			"src/api/CMakeLists.txt" \
+			|| die
+		# Caused by commit e80f7cb
+		sed \
+			-i \
+			-e "s|NOT AQLPROFILE_LIB|FALSE|g" \
+			"src/tools/rocprofv2/CMakeLists.txt" \
+			|| die
+
+		# Caused by commit 071379b
+		sed \
+			-i \
+			-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
+			"cmake_modules/env.cmake" \
+			|| die
 	fi
-
-	# Caused by commit e80f7cb
-	sed \
-		-i \
-		-e "s|NOT AQLPROFILE_LIB|FALSE|g" \
-		"src/api/CMakeLists.txt" \
-		|| die
-	# Caused by commit e80f7cb
-	sed \
-		-i \
-		-e "s|NOT AQLPROFILE_LIB|FALSE|g" \
-		"src/tools/rocprofv2/CMakeLists.txt" \
-		|| die
-
-	# Caused by commit 071379b
-	sed \
-		-i \
-		-e "s|NOT FIND_AQL_PROFILE_LIB|FALSE|g" \
-		"cmake_modules/env.cmake" \
-		|| die
 
 	rocm_src_prepare
 }
