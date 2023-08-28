@@ -58,7 +58,7 @@ BDEPEND="
 	sys-devel/make
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-patch-changes.patch"
+	"${FILESDIR}/${PN}-5.1.3-patch-changes.patch"
 )
 DOCS=( README-ROCM.md )
 

@@ -1,0 +1,63 @@
+diff -urp ROCgdb-rocm-5.1.3.orig/gdb/configure.ac ROCgdb-rocm-5.1.3/gdb/configure.ac
+--- ROCgdb-rocm-5.1.3.orig/gdb/configure.ac	2022-02-17 09:32:06.000000000 -0800
++++ ROCgdb-rocm-5.1.3/gdb/configure.ac	2023-08-27 17:27:50.632707271 -0700
+@@ -263,7 +263,7 @@ fi
+ AC_ARG_WITH(rocm-dbgapi,
+ AS_HELP_STRING([--with-rocm-dbgapi=PATH],
+                [specify prefix directory for installed ROCm-dbgapi package]),,
+-  [with_rocm_dbgapi=/opt/rocm])
++  [with_rocm_dbgapi=/usr])
+ 
+ save_CPPFLAGS=${CPPFLAGS}
+ CPPFLAGS="${CPPFLAGS} -I$with_rocm_dbgapi/include"
+@@ -290,7 +290,7 @@ CPPFLAGS=${save_CPPFLAGS}
+ 
+ save_LIBS=${LIBS}
+ save_LDFLAGS=${LDFLAGS}
+-LDFLAGS="${LDFLAGS} -L$with_rocm_dbgapi/lib"
++LDFLAGS="${LDFLAGS} -L$with_rocm_dbgapi/@LIBDIR@"
+ AC_CHECK_LIB(rocm-dbgapi,amd_dbgapi_initialize)
+ LDFLAGS=${save_LDFLAGS}
+ LIBS=${save_LIBS}
+@@ -303,7 +303,7 @@ if test x"$ac_cv_header_amd_dbgapi_h" =
+   fi
+ 
+   CPPFLAGS="${CPPFLAGS} -I$with_rocm_dbgapi/include"
+-  ROCM_DBGAPI_LIBS="-Wl,--rpath,\$\${LD_RUN_PATH:-$with_rocm_dbgapi/lib} $with_rocm_dbgapi/lib/librocm-dbgapi.so"
++  ROCM_DBGAPI_LIBS="-Wl,--rpath,\$\${LD_RUN_PATH:-$with_rocm_dbgapi/@LIBDIR@} $with_rocm_dbgapi/@LIBDIR@/librocm-dbgapi.so"
+   AC_SUBST(ROCM_DBGAPI_LIBS)
+ else
+   if test x"$require_rocm_dbgapi" = xyes; then
+diff -urp ROCgdb-rocm-5.1.3.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.1.3/gdb/testsuite/lib/rocm.exp
+--- ROCgdb-rocm-5.1.3.orig/gdb/testsuite/lib/rocm.exp	2022-02-17 09:32:06.000000000 -0800
++++ ROCgdb-rocm-5.1.3/gdb/testsuite/lib/rocm.exp	2023-08-27 17:26:47.992706500 -0700
+@@ -30,7 +30,7 @@ proc skip_hipcc_tests { } {
+ if {[info exists env(ROCM_PATH)]} {
+     set rocm_path $env(ROCM_PATH)
+ } else {
+-    set rocm_path "/opt/rocm"
++    set rocm_path "/usr"
+ }
+ 
+ # Get the gpu target to be passed to e.g., -mcpu=.
+@@ -127,7 +127,7 @@ proc rocm_assemble {source dest {options
+ 
+     # Bundle device and host objects.
+     set res [remote_exec host \
+-		 "${rocm_path}/llvm/bin/clang-offload-bundler\
++		 "${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler\
+ 				-type=o\
+ 				-targets=hip-amdgcn-amd-amdhsa-${gpu_target},host-x86_64-unknown-linux-gnu\
+ 				-outputs=$dest\
+@@ -280,8 +280,8 @@ proc gdb_compile_ocl {source dest type o
+ 
+     # Override the host compiler with a rocm one.
+     save_vars {CC_FOR_TARGET CXX_FOR_TARGET} {
+-	set CC_FOR_TARGET ${rocm_path}/llvm/bin/clang
+-	set CXX_FOR_TARGET ${rocm_path}/llvm/bin/clang
++	set CC_FOR_TARGET ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
++	set CXX_FOR_TARGET ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
+ 
+ 	# target_compile always adds -lm which is not supported for
+ 	# kernel compilation.
+Only in ROCgdb-rocm-5.1.3/gdb/testsuite/lib: rocm.exp.orig
