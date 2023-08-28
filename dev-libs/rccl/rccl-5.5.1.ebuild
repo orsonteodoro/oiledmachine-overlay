@@ -54,7 +54,7 @@ RESTRICT="
 S="${WORKDIR}/rccl-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-remove-chrpath.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 )
 
 pkg_setup() {
@@ -73,6 +73,9 @@ src_configure() {
 	which hipify-perl || die
 
 	replace-flags '-O0' '-O1'
+
+	# Configure test issues
+	append-flags --rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(

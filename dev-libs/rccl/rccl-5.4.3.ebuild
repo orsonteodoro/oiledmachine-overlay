@@ -52,7 +52,7 @@ RESTRICT="
 S="${WORKDIR}/rccl-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-remove-chrpath.patch"
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -69,6 +69,9 @@ src_configure() {
 	addpredict /dev/dri/
 
 	replace-flags '-O0' '-O1'
+
+	# Configure test issues
+	append-flags --rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(

@@ -67,6 +67,9 @@ src_configure() {
 
 	replace-flags '-O0' '-O1'
 
+	# Configure test issues
+	append-flags --rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
+
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
