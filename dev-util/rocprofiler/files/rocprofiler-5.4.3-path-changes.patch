@@ -1,4 +1,4 @@
-diff -urp rocprofiler-rocm-5.4.3.orig/bin/build_kernel.sh rocprofiler-rocm-5.4.3/bin/build_kernel.sh
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/bin/build_kernel.sh	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/bin/build_kernel.sh	2023-08-26 14:14:48.096108891 -0700
 @@ -18,7 +18,7 @@ if [ -z "$DST_DIR" ] ; then
@@ -38,7 +38,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/bin/build_kernel.sh rocprofiler-rocm-5.4.3
  else
    echo "Error: Cannot find amdgcn bitcode directory"
    exit 1
-diff -urp rocprofiler-rocm-5.4.3.orig/bin/merge_traces.sh rocprofiler-rocm-5.4.3/bin/merge_traces.sh
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/bin/merge_traces.sh	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/bin/merge_traces.sh	2023-08-26 14:14:48.096108891 -0700
 @@ -25,7 +25,7 @@
@@ -50,7 +50,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/bin/merge_traces.sh rocprofiler-rocm-5.4.3
  
  bin_name=`basename $0`
  
-diff -urp rocprofiler-rocm-5.4.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.4.3/bin/rpl_run.sh
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/bin/rpl_run.sh	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/bin/rpl_run.sh	2023-08-26 14:14:48.096108891 -0700
 @@ -29,11 +29,12 @@ RUN_DIR=`pwd`
@@ -142,7 +142,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.4.3/bin/
    fi
    if [ "$?" -ne 0 ] ; then
      echo "Profiling data corrupted: '$OUTPUT_LIST'" | tee "$ROCPROFILER_SESS/error"
-diff -urp rocprofiler-rocm-5.4.3.orig/build.sh rocprofiler-rocm-5.4.3/build.sh
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/build.sh	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/build.sh	2023-08-26 14:14:48.096108891 -0700
 @@ -25,8 +25,8 @@
@@ -156,7 +156,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/build.sh rocprofiler-rocm-5.4.3/build.sh
  
  if [ -z "$ROCPROFILER_ROOT" ]; then ROCPROFILER_ROOT=$SRC_DIR; fi
  if [ -z "$BUILD_DIR" ] ; then BUILD_DIR=$SRC_DIR/build; fi
-diff -urp rocprofiler-rocm-5.4.3.orig/CMakeLists.txt rocprofiler-rocm-5.4.3/CMakeLists.txt
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/CMakeLists.txt	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/CMakeLists.txt	2023-08-26 14:14:48.096108891 -0700
 @@ -23,7 +23,7 @@
@@ -211,10 +211,10 @@ diff -urp rocprofiler-rocm-5.4.3.orig/CMakeLists.txt rocprofiler-rocm-5.4.3/CMak
            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )
  
  # File reorg Backward compatibility
-diff -urp rocprofiler-rocm-5.4.3.orig/cmake_modules/env.cmake rocprofiler-rocm-5.4.3/cmake_modules/env.cmake
---- rocprofiler-rocm-5.4.3.orig/cmake_modules/env.cmake	2023-08-26 14:14:30.536108456 -0700
-+++ rocprofiler-rocm-5.4.3/cmake_modules/env.cmake	2023-08-26 14:14:48.096108891 -0700
-@@ -91,10 +91,10 @@ if ( "${CMAKE_BUILD_TYPE}" STREQUAL debu
+diff -u rocprofiler-rocm-5.4.3/cmake_modules/env.cmake rocprofiler-rocm-5.4.3/cmake_modules/env.cmake
+--- rocprofiler-rocm-5.4.3/cmake_modules/env.cmake	2023-08-26 14:14:48.096108891 -0700
++++ rocprofiler-rocm-5.4.3/cmake_modules/env.cmake	2023-08-28 14:15:16.273627796 -0700
+@@ -91,10 +91,10 @@
  endif ()
  
  ## Find hsa-runtime
@@ -227,8 +227,16 @@ diff -urp rocprofiler-rocm-5.4.3.orig/cmake_modules/env.cmake rocprofiler-rocm-5
  
  ## Find ROCm
  find_library ( HSA_KMT_LIB "libhsakmt.so" )
-Only in rocprofiler-rocm-5.4.3/cmake_modules: env.cmake.orig
-diff -urp rocprofiler-rocm-5.4.3.orig/Readme.txt rocprofiler-rocm-5.4.3/Readme.txt
+@@ -117,7 +117,7 @@
+   message ( FATAL_ERROR "ROCM_ROOT_DIR is not found." )
+ endif ()
+ 
+-find_library ( FIND_AQL_PROFILE_LIB "libhsa-amd-aqlprofile64.so" HINTS ${CMAKE_INSTALL_PREFIX} PATHS ${ROCM_ROOT_DIR})
++find_library ( FIND_AQL_PROFILE_LIB "libhsa-amd-aqlprofile64.so" PATH_SUFFIXES lib HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm-@ROCM_VERSION@)
+ if (  NOT FIND_AQL_PROFILE_LIB )
+   message ( FATAL_ERROR "AQL_PROFILE not installed. Please install AQL_PROFILE" )
+ endif()
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/Readme.txt	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/Readme.txt	2023-08-26 14:14:48.096108891 -0700
 @@ -26,7 +26,7 @@ $ export CMAKE_DEBUG_TRACE=1 # 1 to enab
@@ -240,7 +248,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/Readme.txt rocprofiler-rocm-5.4.3/Readme.t
  $ mkdir build
  $ cd build
  $ cmake ..
-diff -urp rocprofiler-rocm-5.4.3.orig/rocprofiler-backward-compat.cmake rocprofiler-rocm-5.4.3/rocprofiler-backward-compat.cmake
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/rocprofiler-backward-compat.cmake	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/rocprofiler-backward-compat.cmake	2023-08-26 14:16:09.168110903 -0700
 @@ -23,7 +23,7 @@ set(ROCPROF_BUILD_DIR ${CMAKE_CURRENT_BI
@@ -285,7 +293,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/rocprofiler-backward-compat.cmake rocprofi
  endfunction()
  
  #Creater a template for header file
-diff -urp rocprofiler-rocm-5.4.3.orig/test/CMakeLists.txt rocprofiler-rocm-5.4.3/test/CMakeLists.txt
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/test/CMakeLists.txt	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/test/CMakeLists.txt	2023-08-26 14:14:48.096108891 -0700
 @@ -21,7 +21,7 @@
@@ -297,7 +305,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/test/CMakeLists.txt rocprofiler-rocm-5.4.3
  
  set ( EXE_NAME "rocprof-ctrl" )
  
-diff -urp rocprofiler-rocm-5.4.3.orig/test/run.sh rocprofiler-rocm-5.4.3/test/run.sh
+unchanged:
 --- rocprofiler-rocm-5.4.3.orig/test/run.sh	2022-11-21 11:06:50.000000000 -0800
 +++ rocprofiler-rocm-5.4.3/test/run.sh	2023-08-26 14:14:48.096108891 -0700
 @@ -57,7 +57,7 @@ eval_test() {
