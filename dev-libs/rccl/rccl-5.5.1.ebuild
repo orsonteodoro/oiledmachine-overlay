@@ -74,8 +74,15 @@ src_configure() {
 
 	replace-flags '-O0' '-O1'
 
-	# Configure test issues
-	append-flags --rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
+	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
+	export CXX="${HIP_CXX:-hipcc}"
+
+	if [[ "${CXX}" =~ "hipcc" ]] ; then
+		# Prevent configure test issues
+		append-flags \
+			--rocm-path="${ESYSROOT}/usr" \
+			--rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
+	fi
 
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
@@ -89,7 +96,6 @@ src_configure() {
 		-Wno-dev
 	)
 
-	CXX="${HIP_CXX:-hipcc}" \
 	cmake_src_configure
 }
 
