@@ -1,0 +1,87 @@
+diff -urp rocm-core-rocm-5.5.1.orig/CMakeLists.txt rocm-core-rocm-5.5.1/CMakeLists.txt
+--- rocm-core-rocm-5.5.1.orig/CMakeLists.txt	2023-08-28 16:19:51.977719740 -0700
++++ rocm-core-rocm-5.5.1/CMakeLists.txt	2023-08-28 16:20:07.161719926 -0700
+@@ -39,7 +39,7 @@ include( GNUInstallDirs )
+ message( STATUS "ROCM_VERSION = ${ROCM_VERSION}" )
+ parse_rocm_version( ${ROCM_VERSION} )
+ 
+-set( CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE PATH "default cpack directory" )
++set( CPACK_PACKAGING_INSTALL_PREFIX "/usr" CACHE PATH "default cpack directory" )
+ set( BUILD_SHARED_LIBS ON CACHE BOOL "Build shared library (.so) or not." )
+ set( CPACK_GENERATOR "TGZ;DEB;RPM" CACHE STRING "package types to be produced " )
+ set( COPYRIGHT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/copyright"  )
+diff -urp rocm-core-rocm-5.5.1.orig/README.txt rocm-core-rocm-5.5.1/README.txt
+--- rocm-core-rocm-5.5.1.orig/README.txt	2023-02-22 10:47:36.000000000 -0800
++++ rocm-core-rocm-5.5.1/README.txt	2023-08-28 16:20:07.161719926 -0700
+@@ -55,21 +55,20 @@ $dpkg -I rocm-core_1.0.0-local_amd64.deb
+ 
+ 
+ $dpkg -c rocm-core_1.0.0-local_amd64.deb
+-drwxrwxr-x root/root         0 2022-11-09 09:02 ./opt/
+-drwxrwxr-x root/root         0 2022-11-09 09:02 ./opt/rocm/
+-drwxrwxr-x root/root         0 2022-11-09 09:02 ./opt/rocm/include/
+--rw-r--r-- root/root      2970 2022-11-09 09:02 ./opt/rocm/include/rocm_version.h
+-drwxrwxr-x root/root         0 2022-11-09 09:02 ./opt/rocm/lib/
+-lrwxrwxrwx root/root         0 2022-11-09 09:02 ./opt/rocm/lib/librocm-core.so -> librocm-core.so.1
+-lrwxrwxrwx root/root         0 2022-11-09 09:02 ./opt/rocm/lib/librocm-core.so.1 -> librocm-core.so.1.0.0.
+--rwxr-xr-x root/root     17096 2022-11-09 09:02 ./opt/rocm/lib/librocm-core.so.1.0.0.
+--rw-r--r-- root/root       420 2022-11-09 09:02 ./opt/rocm/lib/rocmmod
++drwxrwxr-x root/root         0 2022-11-09 09:02 ./usr/
++drwxrwxr-x root/root         0 2022-11-09 09:02 ./usr/include/
++-rw-r--r-- root/root      2970 2022-11-09 09:02 ./usr/include/rocm_version.h
++drwxrwxr-x root/root         0 2022-11-09 09:02 ./usr/@LIBDIR@/
++lrwxrwxrwx root/root         0 2022-11-09 09:02 ./usr/@LIBDIR@/librocm-core.so -> librocm-core.so.1
++lrwxrwxrwx root/root         0 2022-11-09 09:02 ./usr/@LIBDIR@/librocm-core.so.1 -> librocm-core.so.1.0.0.
++-rwxr-xr-x root/root     17096 2022-11-09 09:02 ./usr/@LIBDIR@/librocm-core.so.1.0.0.
++-rw-r--r-- root/root       420 2022-11-09 09:02 ./usr/@LIBDIR@/rocmmod
+ 
+ 
+ 
+ The flags for the lib would the following :
+ 
+-$readelf -d ./opt/rocm/lib/librocm-core.so.1.0.0.
++$readelf -d /usr/@LIBDIR@/librocm-core.so.1.0.0.
+ 
+ Dynamic section at offset 0x2de0 contains 28 entries:
+   Tag        Type                         Name/Value
+diff -urp rocm-core-rocm-5.5.1.orig/rocm-core.postinst rocm-core-rocm-5.5.1/rocm-core.postinst
+--- rocm-core-rocm-5.5.1.orig/rocm-core.postinst	2023-02-22 10:47:36.000000000 -0800
++++ rocm-core-rocm-5.5.1/rocm-core.postinst	2023-08-28 16:20:07.161719926 -0700
+@@ -33,8 +33,8 @@ do_update_alternatives(){
+ 
+     altscore=$((altscore*1000000+(now-1600000000)/60))
+ 
+-    # Update the /opt/rocm symlink
+-    update-alternatives --install "/opt/rocm" "rocm" "@CPACK_PACKAGING_INSTALL_PREFIX@" "$altscore"
++    # Update the /usr symlink
++    update-alternatives --install "/usr" "rocm" "@CPACK_PACKAGING_INSTALL_PREFIX@" "$altscore"
+     for loc in "/usr/share/modules/modulefiles" "/usr/local/Modules/modulefiles" "/usr/share/Modules/modulefiles"
+     do
+        if [ -d "$loc" ]
+diff -urp rocm-core-rocm-5.5.1.orig/rocm-core.prerm rocm-core-rocm-5.5.1/rocm-core.prerm
+--- rocm-core-rocm-5.5.1.orig/rocm-core.prerm	2023-02-22 10:47:36.000000000 -0800
++++ rocm-core-rocm-5.5.1/rocm-core.prerm	2023-08-28 16:20:07.161719926 -0700
+@@ -3,7 +3,7 @@
+ do_update_alternatives(){
+     # skip update if program doesn't exist
+     command -v update-alternatives >/dev/null || return 0
+-    # Update the /opt/rocm symlink
++    # Update the /usr symlink
+     update-alternatives --remove "rocm" "@CPACK_PACKAGING_INSTALL_PREFIX@"
+     update-alternatives --remove "rocmmod@ROCM_VERSION@" "@CPACK_PACKAGING_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/rocmmod"|| true
+ }
+Only in rocm-core-rocm-5.5.1: rocm-core.prerm.orig
+diff -urp rocm-core-rocm-5.5.1.orig/rocmmod.in rocm-core-rocm-5.5.1/rocmmod.in
+--- rocm-core-rocm-5.5.1.orig/rocmmod.in	2023-02-22 10:47:36.000000000 -0800
++++ rocm-core-rocm-5.5.1/rocmmod.in	2023-08-28 16:20:32.241720235 -0700
+@@ -10,7 +10,7 @@ proc ModulesHelp { } {
+ }
+ 
+ 
+-prepend-path PATH "@CPACK_PACKAGING_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@:@CPACK_PACKAGING_INSTALL_PREFIX@/llvm/bin"
++prepend-path PATH "@CPACK_PACKAGING_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@:@CPACK_PACKAGING_INSTALL_PREFIX@/lib/llvm/@LIBDIR@/bin"
+ prepend-path CMAKE_PREFIX_PATH "@CPACK_PACKAGING_INSTALL_PREFIX@"
+ setenv ROCM_PATH "@CPACK_PACKAGING_INSTALL_PREFIX@"
+ setenv HIP_PATH "@CPACK_PACKAGING_INSTALL_PREFIX@"
+Only in rocm-core-rocm-5.5.1: rocmmod.in.orig
+Only in rocm-core-rocm-5.5.1: rocmmod.in.rej

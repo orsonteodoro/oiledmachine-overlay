@@ -33,6 +33,7 @@ BDEPEND="
 	>=dev-util/cmake-3.16
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
@@ -41,11 +42,6 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	sed \
-		-i \
-		-e "s|@/llvm/bin|@/lib/llvm/@LLVM_SLOT@/bin|" \
-		"rocmmod.in" \
-		|| die
 	rocm_src_prepare
 }
 
