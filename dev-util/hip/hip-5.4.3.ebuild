@@ -28,7 +28,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r11"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r13"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -165,7 +165,7 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-5.4.3-clang-include.patch"
 	eapply "${FILESDIR}/0003-SWDEV-352878-Removed-relative-path-based-CLANG-inclu.patch"
 	eapply "${FILESDIR}/${PN}-5.4.3-fix-HIP_CLANG_PATH-detection.patch"
-	eapply "${FILESDIR}/${PN}-5.5.1-path-changes.patch"
+	eapply "${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 
 	# Changed --hip-device-lib-path to "/usr/$(get_libdir)/amdgcn/bitcode".
 	# It must align with "dev-libs/rocm-device-libs".

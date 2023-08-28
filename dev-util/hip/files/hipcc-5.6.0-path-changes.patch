@@ -1,6 +1,6 @@
 diff -urp HIPCC-rocm-5.6.0.orig/bin/hipcc.pl HIPCC-rocm-5.6.0/bin/hipcc.pl
---- HIPCC-rocm-5.6.0.orig/bin/hipcc.pl	2023-08-22 14:47:21.979582765 -0700
-+++ HIPCC-rocm-5.6.0/bin/hipcc.pl	2023-08-22 14:49:18.207585648 -0700
+--- HIPCC-rocm-5.6.0.orig/bin/hipcc.pl	2023-08-28 08:40:02.489380417 -0700
++++ HIPCC-rocm-5.6.0/bin/hipcc.pl	2023-08-28 08:41:37.325381583 -0700
 @@ -39,10 +39,10 @@ use Cwd 'abs_path';
  # If HIP_PLATFORM is not set hipcc will attempt auto-detect based on if nvcc is found.
  #
@@ -88,8 +88,16 @@ diff -urp HIPCC-rocm-5.6.0.orig/bin/hipcc.pl HIPCC-rocm-5.6.0/bin/hipcc.pl
      }
 diff -urp HIPCC-rocm-5.6.0.orig/bin/hipconfig.pl HIPCC-rocm-5.6.0/bin/hipconfig.pl
 --- HIPCC-rocm-5.6.0.orig/bin/hipconfig.pl	2023-06-01 07:32:59.000000000 -0700
-+++ HIPCC-rocm-5.6.0/bin/hipconfig.pl	2023-08-22 14:47:52.563583523 -0700
-@@ -76,7 +76,7 @@ if ($HIP_COMPILER eq "clang") {
++++ HIPCC-rocm-5.6.0/bin/hipconfig.pl	2023-08-28 08:42:08.413381966 -0700
+@@ -46,6 +46,7 @@ $CUDA_PATH      =   $hipvars::CUDA_PATH;
+ $HIP_PATH       =   $hipvars::HIP_PATH;
+ $ROCM_PATH      =   $hipvars::ROCM_PATH;
+ $HIP_VERSION    =   $hipvars::HIP_VERSION;
++$CLANG_RESOURCE_DIR = $hipvars::CLANG_RESOURCE_DIR;
+ 
+ Getopt::Long::Configure ( qw{bundling no_ignore_case});
+ GetOptions(
+@@ -76,7 +77,7 @@ if ($HIP_COMPILER eq "clang") {
      $CPP_CONFIG = " -D__HIP_PLATFORM_HCC__= -D__HIP_PLATFORM_AMD__=";
  
      $HIP_PATH_INCLUDE = $HIP_PATH."/include";
@@ -98,7 +106,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/bin/hipconfig.pl HIPCC-rocm-5.6.0/bin/hipconfig.
      if($isWindows) {
          $CPP_CONFIG .= " -I\"$HIP_PATH_INCLUDE\" -I\"$HIP_CLANG_INCLUDE\"";
      } else {
-@@ -90,7 +90,7 @@ if ($HIP_PLATFORM eq "nvidia") {
+@@ -90,7 +91,7 @@ if ($HIP_PLATFORM eq "nvidia") {
  if ($p_help) {
      print "usage: hipconfig [OPTIONS]\n";
      print "  --path,  -p        : print HIP_PATH (use env var if set, else determine from hipconfig path)\n";
@@ -108,8 +116,8 @@ diff -urp HIPCC-rocm-5.6.0.orig/bin/hipconfig.pl HIPCC-rocm-5.6.0/bin/hipconfig.
      print "  --compiler, -c     : print compiler (clang or nvcc)\n";
      print "  --platform, -P     : print platform (amd or nvidia)\n";
 diff -urp HIPCC-rocm-5.6.0.orig/bin/hipvars.pm HIPCC-rocm-5.6.0/bin/hipvars.pm
---- HIPCC-rocm-5.6.0.orig/bin/hipvars.pm	2023-08-22 14:47:21.987582765 -0700
-+++ HIPCC-rocm-5.6.0/bin/hipvars.pm	2023-08-22 14:47:52.563583523 -0700
+--- HIPCC-rocm-5.6.0.orig/bin/hipvars.pm	2023-08-28 08:40:02.497380417 -0700
++++ HIPCC-rocm-5.6.0/bin/hipvars.pm	2023-08-28 08:41:37.325381583 -0700
 @@ -67,11 +67,11 @@ $isWindows =  ($^O eq 'MSWin32' or $^O e
  #
  # Since this hipcc script gets installed at two uneven hierarchical levels,
@@ -147,7 +155,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/bin/hipvars.pm HIPCC-rocm-5.6.0/bin/hipvars.pm
          $HIP_ROCCLR_HOME = $HIP_PATH; # use HIP_PATH
 diff -urp HIPCC-rocm-5.6.0.orig/docs/build.md HIPCC-rocm-5.6.0/docs/build.md
 --- HIPCC-rocm-5.6.0.orig/docs/build.md	2023-06-01 07:32:59.000000000 -0700
-+++ HIPCC-rocm-5.6.0/docs/build.md	2023-08-22 14:47:52.563583523 -0700
++++ HIPCC-rocm-5.6.0/docs/build.md	2023-08-28 08:41:37.325381583 -0700
 @@ -9,4 +9,4 @@ cmake ..
  make -j
  ```
@@ -156,7 +164,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/docs/build.md HIPCC-rocm-5.6.0/docs/build.md
 +The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /usr/hip/bin folder location. Packaging and installing will be handled in future releases.
 diff -urp HIPCC-rocm-5.6.0.orig/docs/env.md HIPCC-rocm-5.6.0/docs/env.md
 --- HIPCC-rocm-5.6.0.orig/docs/env.md	2023-06-01 07:32:59.000000000 -0700
-+++ HIPCC-rocm-5.6.0/docs/env.md	2023-08-22 14:47:52.563583523 -0700
++++ HIPCC-rocm-5.6.0/docs/env.md	2023-08-28 08:41:37.325381583 -0700
 @@ -5,7 +5,7 @@ The environment variable HIP_PLATFORM ma
  - If HIP_PLATFORM is not set, then hipcc will attempt to auto-detect based on if nvcc is found.
  
@@ -171,7 +179,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/docs/env.md HIPCC-rocm-5.6.0/docs/env.md
 +- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin relative to hipcc's abs_path). Used on AMD platforms only.
 diff -urp HIPCC-rocm-5.6.0.orig/README.md HIPCC-rocm-5.6.0/README.md
 --- HIPCC-rocm-5.6.0.orig/README.md	2023-06-01 07:32:59.000000000 -0700
-+++ HIPCC-rocm-5.6.0/README.md	2023-08-22 14:47:52.563583523 -0700
++++ HIPCC-rocm-5.6.0/README.md	2023-08-28 08:41:37.325381583 -0700
 @@ -56,7 +56,7 @@ Example:
  ./hipconfig --full
  ```
@@ -192,7 +200,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/README.md HIPCC-rocm-5.6.0/README.md
  
 diff -urp HIPCC-rocm-5.6.0.orig/src/hipBin_amd.h HIPCC-rocm-5.6.0/src/hipBin_amd.h
 --- HIPCC-rocm-5.6.0.orig/src/hipBin_amd.h	2023-06-01 07:32:59.000000000 -0700
-+++ HIPCC-rocm-5.6.0/src/hipBin_amd.h	2023-08-22 14:47:52.563583523 -0700
++++ HIPCC-rocm-5.6.0/src/hipBin_amd.h	2023-08-28 08:41:37.325381583 -0700
 @@ -94,7 +94,7 @@ void HipBinAmd::constructRocclrHomePath(
    fs::path bitcode = hipvars_dir;
    string rocclrHomePath = getEnvVariables().hipRocclrPathEnv_;
@@ -268,7 +276,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/src/hipBin_amd.h HIPCC-rocm-5.6.0/src/hipBin_amd
      HIPCXXFLAGS += " " + var.hipccCompileFlagsAppendEnv_ + " ";
 diff -urp HIPCC-rocm-5.6.0.orig/src/hipBin_base.h HIPCC-rocm-5.6.0/src/hipBin_base.h
 --- HIPCC-rocm-5.6.0.orig/src/hipBin_base.h	2023-06-01 07:32:59.000000000 -0700
-+++ HIPCC-rocm-5.6.0/src/hipBin_base.h	2023-08-22 14:47:52.563583523 -0700
++++ HIPCC-rocm-5.6.0/src/hipBin_base.h	2023-08-28 08:41:37.325381583 -0700
 @@ -344,7 +344,7 @@ void HipBinBase::constructRoccmPath() {
      fs::path rocm_agent_enumerator_file(roccm_path);
      rocm_agent_enumerator_file /= "bin/rocm_agent_enumerator";
@@ -289,7 +297,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/src/hipBin_base.h HIPCC-rocm-5.6.0/src/hipBin_ba
    cout << "  --platform, -P     : print platform (amd or nvidia)\n";
 diff -urp HIPCC-rocm-5.6.0.orig/src/hipBin_nvidia.h HIPCC-rocm-5.6.0/src/hipBin_nvidia.h
 --- HIPCC-rocm-5.6.0.orig/src/hipBin_nvidia.h	2023-06-01 07:32:59.000000000 -0700
-+++ HIPCC-rocm-5.6.0/src/hipBin_nvidia.h	2023-08-22 14:47:52.563583523 -0700
++++ HIPCC-rocm-5.6.0/src/hipBin_nvidia.h	2023-08-28 08:41:37.325381583 -0700
 @@ -177,7 +177,7 @@ void HipBinNvidia::initializeHipLdFlags(
    string hipLdFlags;
    const string& cudaPath = getCompilerPath();
