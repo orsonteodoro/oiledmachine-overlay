@@ -1,6 +1,18 @@
+diff -urp ROCgdb-rocm-5.1.3.orig/gdb/configure ROCgdb-rocm-5.1.3/gdb/configure
+--- ROCgdb-rocm-5.1.3.orig/gdb/configure	2022-02-17 09:32:06.000000000 -0800
++++ ROCgdb-rocm-5.1.3/gdb/configure	2023-08-28 11:44:28.477516517 -0700
+@@ -6896,7 +6896,7 @@ if test x"$ac_cv_header_amd_dbgapi_h" =
+   fi
+ 
+   CPPFLAGS="${CPPFLAGS} -I$with_rocm_dbgapi/include"
+-  ROCM_DBGAPI_LIBS="-Wl,--rpath,\$\${LD_RUN_PATH:-$with_rocm_dbgapi/lib} $with_rocm_dbgapi/lib/librocm-dbgapi.so"
++  ROCM_DBGAPI_LIBS="-Wl,--rpath,\$\${LD_RUN_PATH:-$with_rocm_dbgapi/lib} $with_rocm_dbgapi/@LIBDIR@/librocm-dbgapi.so"
+ 
+ else
+   if test x"$require_rocm_dbgapi" = xyes; then
 diff -urp ROCgdb-rocm-5.1.3.orig/gdb/configure.ac ROCgdb-rocm-5.1.3/gdb/configure.ac
 --- ROCgdb-rocm-5.1.3.orig/gdb/configure.ac	2022-02-17 09:32:06.000000000 -0800
-+++ ROCgdb-rocm-5.1.3/gdb/configure.ac	2023-08-27 17:27:50.632707271 -0700
++++ ROCgdb-rocm-5.1.3/gdb/configure.ac	2023-08-28 11:42:52.457515336 -0700
 @@ -263,7 +263,7 @@ fi
  AC_ARG_WITH(rocm-dbgapi,
  AS_HELP_STRING([--with-rocm-dbgapi=PATH],
@@ -30,7 +42,7 @@ diff -urp ROCgdb-rocm-5.1.3.orig/gdb/configure.ac ROCgdb-rocm-5.1.3/gdb/configur
    if test x"$require_rocm_dbgapi" = xyes; then
 diff -urp ROCgdb-rocm-5.1.3.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.1.3/gdb/testsuite/lib/rocm.exp
 --- ROCgdb-rocm-5.1.3.orig/gdb/testsuite/lib/rocm.exp	2022-02-17 09:32:06.000000000 -0800
-+++ ROCgdb-rocm-5.1.3/gdb/testsuite/lib/rocm.exp	2023-08-27 17:26:47.992706500 -0700
++++ ROCgdb-rocm-5.1.3/gdb/testsuite/lib/rocm.exp	2023-08-28 11:42:52.457515336 -0700
 @@ -30,7 +30,7 @@ proc skip_hipcc_tests { } {
  if {[info exists env(ROCM_PATH)]} {
      set rocm_path $env(ROCM_PATH)
@@ -60,4 +72,3 @@ diff -urp ROCgdb-rocm-5.1.3.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.1.3/gd
  
  	# target_compile always adds -lm which is not supported for
  	# kernel compilation.
-Only in ROCgdb-rocm-5.1.3/gdb/testsuite/lib: rocm.exp.orig
