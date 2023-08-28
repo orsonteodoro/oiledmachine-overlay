@@ -7,7 +7,7 @@ EAPI=8
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm python-any-r1 rocm
+inherit cmake flag-o-matic llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
@@ -25,7 +25,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile r2"
+IUSE=" +aqlprofile r3"
 RDEPEND="
 	dev-python/barectf
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
@@ -99,6 +99,7 @@ src_configure() {
 	if use aqlprofile ; then
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] || die "Missing" # For e80f7cb
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
+		append-ldflags -Wl,-rpath="/opt/rocm-${PV}/lib"
 	fi
 	export CMAKE_BUILD_TYPE="debug"
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"

@@ -7,7 +7,7 @@ EAPI=8
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
 
-inherit cmake llvm python-any-r1 rocm
+inherit cmake flag-o-matic llvm python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
@@ -23,7 +23,7 @@ LICENSE="
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile r2"
+IUSE=" +aqlprofile r3"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/roctracer-${PV}:${SLOT}
@@ -77,6 +77,7 @@ src_prepare() {
 src_configure() {
 	if use aqlprofile ; then
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
+		append-ldflags -Wl,-rpath="/opt/rocm-${PV}/lib"
 	fi
 	local gpu_targets=$(get_amdgpu_flags \
 		| tr ";" " ")
