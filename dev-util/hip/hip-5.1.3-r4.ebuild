@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test r11"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test r12"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -212,6 +212,7 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-5.1.3-clang-include-path.patch"
 	eapply "${FILESDIR}/${PN}-5.0.2-correct-ldflag.patch"
 	eapply "${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
+	eapply "${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 
 	# Changed --hip-device-lib-path to "/usr/$(get_libdir)/amdgcn/bitcode".
 	# It must align with "dev-libs/rocm-device-libs".
