@@ -12,7 +12,10 @@ inherit cmake flag-o-matic llvm prefix python-any-r1 rocm
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
 	-> rocm-tracer-${PV}.tar.gz
+https://github.com/ROCm-Developer-Tools/roctracer/commit/c95d5dd96fa50a567b7b203029652bb036ecd3f4.patch
+	-> roctracer-c95d5dd.patch
 "
+# c95d5dd - Fix a build error when compiling with clang
 
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
@@ -48,6 +51,7 @@ PATCHES=(
 	"${FILESDIR}/roctracer-5.3.3-do-not-install-test-files.patch"
 	"${FILESDIR}/roctracer-5.3.3-Werror.patch"
 	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+	"${DISTDIR}/${PN}-c95d5dd.patch"
 )
 
 python_check_deps() {
@@ -111,5 +115,5 @@ src_test() {
 	bash run.sh || die
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
