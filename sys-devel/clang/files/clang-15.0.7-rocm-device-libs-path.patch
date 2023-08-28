@@ -10,7 +10,7 @@
      // - ${ROCM_ROOT}/lib/bitcode/*
      // so try to detect these layouts.
      static constexpr std::array<const char *, 2> SubDirsList[] = {
-+        {"@LIBDIR@", "amdgcn", "bitcode"},
++        {"@LIBDIR@/amdgcn", "bitcode"},
          {"amdgcn", "bitcode"},
          {"lib", ""},
          {"lib", "bitcode"},
