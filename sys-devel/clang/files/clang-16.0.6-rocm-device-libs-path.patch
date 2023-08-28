@@ -1,0 +1,23 @@
+--- a/lib/Driver/ToolChains/AMDGPU.cpp.orig	2023-08-27 22:37:21.608935675 -0700
++++ b/lib/Driver/ToolChains/AMDGPU.cpp	2023-08-27 22:39:51.664937520 -0700
+@@ -409,9 +409,9 @@ void RocmInstallationDetector::detectDev
+     return true;
+   };
+ 
+-  // Find device libraries in <LLVM_DIR>/lib/clang/<ver>/lib/amdgcn/bitcode
++  // Find device libraries in <LLVM_DIR>/lib/clang/<ver>/@LIBDIR@/amdgcn/bitcode
+   LibDevicePath = D.ResourceDir;
+-  llvm::sys::path::append(LibDevicePath, CLANG_INSTALL_LIBDIR_BASENAME,
++  llvm::sys::path::append(LibDevicePath, "@LIBDIR@",
+                           "amdgcn", "bitcode");
+   HasDeviceLibrary = CheckDeviceLib(LibDevicePath, true);
+   if (HasDeviceLibrary)
+@@ -422,7 +422,7 @@ void RocmInstallationDetector::detectDev
+   auto &ROCmDirs = getInstallationPathCandidates();
+   for (const auto &Candidate : ROCmDirs) {
+     LibDevicePath = Candidate.Path;
+-    llvm::sys::path::append(LibDevicePath, "amdgcn", "bitcode");
++    llvm::sys::path::append(LibDevicePath, "@LIBDIR@", "amdgcn", "bitcode");
+     HasDeviceLibrary = CheckDeviceLib(LibDevicePath, Candidate.StrictChecking);
+     if (HasDeviceLibrary)
+       return;
