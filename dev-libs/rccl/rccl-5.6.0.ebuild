@@ -15,6 +15,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+CHECKREQS_MEMORY=23G # 22G observed
 LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
@@ -58,6 +59,10 @@ PATCHES=(
 )
 
 pkg_setup() {
+	# It randomly crashes at 20G total memory
+ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check at your own risk"
+	check-reqs_pkg_setup
+
 	rocm_pkg_setup
 }
 
@@ -83,6 +88,10 @@ src_configure() {
 
 # XXXXXXXXXXX is omitted
 	replace-flags '-O0' '-O1'
+
+# Linker memory
+	append-ldflags \
+		-Wl,--threads=1
 
 	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
 	export CXX="${HIP_CXX:-hipcc}"
