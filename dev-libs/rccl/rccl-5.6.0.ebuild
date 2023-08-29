@@ -93,10 +93,6 @@ src_configure() {
 # XXXXXXXXXXX is omitted
 	replace-flags '-O0' '-O1'
 
-# Linker memory
-	append-ldflags \
-		-Wl,--threads=1
-
 	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
 	export CXX="${HIP_CXX:-hipcc}"
 
