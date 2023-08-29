@@ -77,6 +77,8 @@ src_configure() {
 	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
 	export CXX="${HIP_CXX:-hipcc}"
 
+	"${CC}" --version || die
+
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		# Prevent configure test issues
 		append-flags \
