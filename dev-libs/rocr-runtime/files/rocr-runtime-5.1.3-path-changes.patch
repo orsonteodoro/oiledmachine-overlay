@@ -1,6 +1,15 @@
 diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
 --- src.orig/CMakeLists.txt	2022-05-20 11:40:46.000000000 -0700
-+++ src/CMakeLists.txt	2023-08-24 09:54:50.647434604 -0700
++++ src/CMakeLists.txt	2023-08-28 16:58:31.197748264 -0700
+@@ -94,7 +94,7 @@ set ( PACKAGE_VERSION_STRING "${VERSION_
+ 
+ ## Find external dependencies.
+ find_package(LibElf REQUIRED)
+-find_package(hsakmt 1.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsakmt 1.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr)
+ 
+ ## Create the rocr target.
+ add_library( ${CORE_RUNTIME_TARGET} "" )
 @@ -122,8 +122,8 @@ target_include_directories( ${CORE_RUNTI
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/libamdhsacode )
@@ -94,7 +103,7 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
 --- src.orig/cmake_modules/FindLibElf.cmake	2022-05-20 11:40:46.000000000 -0700
-+++ src/cmake_modules/FindLibElf.cmake	2023-08-24 09:54:50.647434604 -0700
++++ src/cmake_modules/FindLibElf.cmake	2023-08-28 16:58:08.321747982 -0700
 @@ -35,9 +35,9 @@ find_library (LIBELF_LIBRARIES
    NAMES
      elf
@@ -110,7 +119,7 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
      ENV LD_LIBRARY_PATH)
 diff -urp src.orig/image/blit_src/CMakeLists.txt src/image/blit_src/CMakeLists.txt
 --- src.orig/image/blit_src/CMakeLists.txt	2022-05-20 11:40:46.000000000 -0700
-+++ src/image/blit_src/CMakeLists.txt	2023-08-24 09:54:50.647434604 -0700
++++ src/image/blit_src/CMakeLists.txt	2023-08-28 17:00:49.053749959 -0700
 @@ -46,11 +46,11 @@ cmake_minimum_required ( VERSION 3.7 )
  set (QUIT 0)
  
@@ -125,24 +134,39 @@ diff -urp src.orig/image/blit_src/CMakeLists.txt src/image/blit_src/CMakeLists.t
    foreach(path ${CMAKE_PREFIX_PATH})
      string(APPEND path ${hint})
      list(APPEND PREFIX_HINTS ${path})
-@@ -59,12 +59,12 @@ endforeach(hint)
+@@ -59,15 +59,13 @@ endforeach(hint)
  
  get_include_path(BITCODE_DIR "Bitcode library path" RESULT FOUND NAMES "opencl.bc" "opencl.amdgcn.bc"
    HINTS
 -    "${CMAKE_INSTALL_PREFIX}/amdgcn/bitcode"
+-    "${CMAKE_INSTALL_PREFIX}/lib/bitcode"
+-    "${CMAKE_INSTALL_PREFIX}/lib/x86_64/bitcode"
 +    "${CMAKE_INSTALL_PREFIX}/@LIBDIR@/amdgcn/bitcode"
-     "${CMAKE_INSTALL_PREFIX}/lib/bitcode"
-     "${CMAKE_INSTALL_PREFIX}/lib/x86_64/bitcode"
++    "${CMAKE_INSTALL_PREFIX}/@LIBDIR@/bitcode"
      "${PREFIX_HINTS}"
    PATHS
 -    "/opt/rocm/amdgcn/bitcode"
+-    "/opt/rocm/lib/bitcode"
+-    "/opt/rocm/lib"
+-    "/opt/rocm/lib/x86_64/bitcode")
 +    "/usr/@LIBDIR@/amdgcn/bitcode"
-     "/opt/rocm/lib/bitcode"
-     "/opt/rocm/lib"
-     "/opt/rocm/lib/x86_64/bitcode")
++    "/usr/@LIBDIR@/bitcode"
++    "/usr/@LIBDIR@")
+ if (NOT ${FOUND})
+   set (QUIT 1)
+ endif()
+@@ -122,7 +120,7 @@ function(gen_kernel_bc TARGET_ID INPUT_F
+   endif()
+ 
+   separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
+-    "-O2 -x cl -cl-denorms-are-zero -cl-std=CL2.0 -target amdgcn-amd-amdhsa
++    "--rocm-path=/usr --rocm-device-lib-path=/usr/@LIBDIR@/amdgcn/bitcode -O2 -x cl -cl-denorms-are-zero -cl-std=CL2.0 -target amdgcn-amd-amdhsa
+     -Xclang -finclude-default-header -mcpu=${TARGET_ID}
+     ${BITCODE_ARGS} -o ${OUTPUT_FILE} ${INPUT_FILE}")
+ 
 diff -urp src.orig/image/blit_src/README.md src/image/blit_src/README.md
 --- src.orig/image/blit_src/README.md	2022-05-20 11:40:46.000000000 -0700
-+++ src/image/blit_src/README.md	2023-08-24 09:56:00.243436331 -0700
++++ src/image/blit_src/README.md	2023-08-28 16:58:08.321747982 -0700
 @@ -46,9 +46,9 @@ There are several variables are required
  object file.  All of them have default values, and defined as following:
  
@@ -151,13 +175,13 @@ diff -urp src.orig/image/blit_src/README.md src/image/blit_src/README.md
 +                   (Default: /usr/opencl)
       BITCODE_DIR - the directory contains the bitcode library
 -                   (Default: /opt/rocm/amdgcn/bitcode)
-+                   (Default: /usr/@LLVM_DIR@/amdgcn/bitcode)
++                   (Default: /usr/@LIBDIR@/amdgcn/bitcode)
          LLVM_DIR - the directory contains the clang, llvm-link and llvm-dis
                     executables
                     (Default: ${PROJECT_BUILD_DIR}/../lightning/bin)
 diff -urp src.orig/README.md src/README.md
 --- src.orig/README.md	2022-05-20 11:40:46.000000000 -0700
-+++ src/README.md	2023-08-24 09:56:22.243436877 -0700
++++ src/README.md	2023-08-28 16:58:08.321747982 -0700
 @@ -74,7 +74,7 @@ ROCm packages installed, execute the fol
  
      mkdir build

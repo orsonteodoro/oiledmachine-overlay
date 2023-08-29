@@ -1,20 +1,20 @@
 diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
 --- src.orig/CMakeLists.txt	2022-09-30 11:31:23.000000000 -0700
-+++ src/CMakeLists.txt	2023-08-24 09:58:20.211439804 -0700
++++ src/CMakeLists.txt	2023-08-28 17:08:46.405755830 -0700
 @@ -127,8 +127,8 @@ target_include_directories( ${CORE_RUNTI
    ${CMAKE_CURRENT_SOURCE_DIR}/libamdhsacode
    ${CMAKE_CURRENT_BINARY_DIR}/core/runtime/trap_handler)
  
 -## Set RUNPATH - ../../lib covers use of the legacy symlink in /hsa/lib/
 -set_property(TARGET ${CORE_RUNTIME_TARGET} PROPERTY INSTALL_RPATH "$ORIGIN;$ORIGIN/../../lib;$ORIGIN/../../lib64;$ORIGIN/../lib64" )
-+## Set RUNPATH - ../../@LIBDIR@ covers use of the legacy symlink in /hsa/lib/
++## Set RUNPATH - ../../@LIBDIR@ covers use of the legacy symlink in /hsa/@LIBDIR@/
 +set_property(TARGET ${CORE_RUNTIME_TARGET} PROPERTY INSTALL_RPATH "$ORIGIN;$ORIGIN/../../@LIBDIR@;$ORIGIN/../@LIBDIR@" )
  
  ## ------------------------- Linux Compiler and Linker options -------------------------
  set ( HSA_CXX_FLAGS ${HSA_COMMON_CXX_FLAGS} -fexceptions -fno-rtti -fvisibility=hidden -Wno-error=missing-braces -Wno-error=sign-compare -Wno-sign-compare -Wno-write-strings -Wno-conversion-null -fno-math-errno -fno-threadsafe-statics -fmerge-all-constants -fms-extensions -Wno-error=comment -Wno-comment -Wno-error=pointer-arith -Wno-pointer-arith -Wno-error=unused-variable -Wno-error=unused-function )
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
 --- src.orig/cmake_modules/FindLibElf.cmake	2022-09-30 11:31:23.000000000 -0700
-+++ src/cmake_modules/FindLibElf.cmake	2023-08-24 09:58:20.211439804 -0700
++++ src/cmake_modules/FindLibElf.cmake	2023-08-28 17:07:10.153754646 -0700
 @@ -35,9 +35,9 @@ find_library (LIBELF_LIBRARIES
    NAMES
      elf
@@ -28,9 +28,23 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
      /sw/lib
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH)
+diff -urp src.orig/core/runtime/trap_handler/CMakeLists.txt src/core/runtime/trap_handler/CMakeLists.txt
+--- src.orig/core/runtime/trap_handler/CMakeLists.txt	2022-09-30 11:31:23.000000000 -0700
++++ src/core/runtime/trap_handler/CMakeLists.txt	2023-08-28 17:07:35.717754961 -0700
+@@ -43,8 +43,8 @@
+ cmake_minimum_required ( VERSION 3.7 )
+ 
+ # Import target 'clang' and 'llvm-objcopy'
+-find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
+-find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
++find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /usr/lib/llvm/@LLVM_SLOT@ )
++find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /usr/lib/llvm/@LLVM_SLOT@ )
+ 
+ set (TARGET_DEVS "gfx900;gfx1010;gfx1030;gfx1100")
+ set (POSTFIX "9;1010;10;11")
 diff -urp src.orig/hsa-backward-compat.cmake src/hsa-backward-compat.cmake
 --- src.orig/hsa-backward-compat.cmake	2022-09-30 11:31:23.000000000 -0700
-+++ src/hsa-backward-compat.cmake	2023-08-24 09:58:20.211439804 -0700
++++ src/hsa-backward-compat.cmake	2023-08-28 17:07:10.153754646 -0700
 @@ -19,7 +19,7 @@
  
  set(HSA_WRAPPER_DIR ${CMAKE_CURRENT_BINARY_DIR}/wrapper_dir)
@@ -42,19 +56,28 @@ diff -urp src.orig/hsa-backward-compat.cmake src/hsa-backward-compat.cmake
  function(create_header_template)
 diff -urp src.orig/image/blit_src/CMakeLists.txt src/image/blit_src/CMakeLists.txt
 --- src.orig/image/blit_src/CMakeLists.txt	2022-09-30 11:31:23.000000000 -0700
-+++ src/image/blit_src/CMakeLists.txt	2023-08-24 09:58:20.211439804 -0700
++++ src/image/blit_src/CMakeLists.txt	2023-08-28 17:07:50.053755137 -0700
+@@ -43,7 +43,7 @@
+ cmake_minimum_required ( VERSION 3.7 )
+ 
+ # Import target 'clang'
+-find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
++find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /usr/lib/llvm/@LLVM_SLOT@ )
+ 
+ # Determine the target devices if not specified
+ if (NOT DEFINED TARGET_DEVICES)
 @@ -66,7 +66,7 @@ endif()
  function(gen_kernel_bc TARGET_ID INPUT_FILE OUTPUT_FILE)
  
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
 -    "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
-+    "--rocm-path=/usr/@LIBDIR@/ -O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
++    "--rocm-path=/usr --rocm-device-lib-path=/usr/@LIBDIR@/amdgcn/bitcode -O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
      -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}")
  
    ## Add custom command to produce a code object file.
 diff -urp src.orig/image/blit_src/README.md src/image/blit_src/README.md
 --- src.orig/image/blit_src/README.md	2022-09-30 11:31:23.000000000 -0700
-+++ src/image/blit_src/README.md	2023-08-24 09:59:04.115440893 -0700
++++ src/image/blit_src/README.md	2023-08-28 17:07:10.153754646 -0700
 @@ -46,9 +46,9 @@ There are several variables are required
  object file.  All of them have default values, and defined as following:
  
@@ -69,7 +92,7 @@ diff -urp src.orig/image/blit_src/README.md src/image/blit_src/README.md
                     (Default: ${PROJECT_BUILD_DIR}/../lightning/bin)
 diff -urp src.orig/README.md src/README.md
 --- src.orig/README.md	2022-09-30 11:31:23.000000000 -0700
-+++ src/README.md	2023-08-24 09:58:58.275440748 -0700
++++ src/README.md	2023-08-28 17:07:10.153754646 -0700
 @@ -74,7 +74,7 @@ ROCm packages installed, execute the fol
  
      mkdir build
