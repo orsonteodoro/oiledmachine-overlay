@@ -760,6 +760,7 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_MAX_SLOT=${s}
 	llvm_pkg_setup
+	rocm_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
 }
@@ -1026,6 +1027,7 @@ einfo "Preventing stall.  Removing -Os."
 	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
 	rm third_party/gpus/find_rocm_config.py.gz.base64 || die
 	eapply "${WORKDIR}/patches/"*".patch"
+	rocm_pkg_setup
 	pushd third_party/gpus || die
 		pigz -z -k find_rocm_config.py || die
 		mv find_rocm_config.py.zz find_rocm_config.py.gz || die
@@ -1045,14 +1047,6 @@ einfo "Preventing stall.  Removing -Os."
 
 	sed -i -e "s|@TENSORFLOW_PV@|${PV}|g" \
 		"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
-		|| die
-
-	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
-		"${S}/tensorflow/compiler/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
-		|| die
-	sed -i -e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		"${S}/tensorflow/compiler/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
-		"${S}/tensorflow/compiler/xla/stream_executor/gpu/asm_compiler.cc" \
 		|| die
 
 	gen_gcc_ar

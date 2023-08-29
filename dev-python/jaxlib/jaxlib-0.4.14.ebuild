@@ -560,6 +560,7 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_MAX_SLOT=${s}
 	llvm_pkg_setup
+	rocm_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
 }
@@ -713,6 +714,7 @@ ewarn
 
 	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
 	eapply -p1 "${FILESDIR}/xla/"*
+	rocm_src_prepare
 
 	cd "${S}" || die
 
@@ -744,14 +746,6 @@ ewarn
 	sed -i -e "s|@JAXLIB_PV@|${PV}|g" \
 		"third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
 		"third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl" \
-		|| die
-
-	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
-		"xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
-		|| die
-	sed -i -e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		"xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc" \
-		"xla/stream_executor/gpu/asm_compiler.cc" \
 		|| die
 
 	gen_gcc_ar

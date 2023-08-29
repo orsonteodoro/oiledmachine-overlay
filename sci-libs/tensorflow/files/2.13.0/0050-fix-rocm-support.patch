@@ -188,7 +188,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
 +        make_copy_dir_rule(
 +            repository_ctx,
 +            name = "rocblas-hsaco",
-+            src_dir = rocm_toolkit_path + "/lib64/rocblas/library",
++            src_dir = rocm_toolkit_path + "/@LIBDIR@/rocblas/library",
 +            out_dir = "rocm/lib/rocblas/lib/library",
 +        ),
 +        make_copy_dir_rule(
@@ -349,10 +349,10 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
              "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/hip/bin/hipcc",
              "%{hipcc_env}": _hipcc_env(repository_ctx),
 -            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/lib",
-+            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/lib64",  # oteodoro:  changed for distro
++            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/@LIBDIR@",  # oteodoro:  changed for distro
              "%{rocr_runtime_library}": "hsa-runtime64",
 -            "%{hip_runtime_path}": rocm_config.rocm_toolkit_path + "/hip/lib",
-+            "%{hip_runtime_path}": rocm_config.rocm_toolkit_path + "/lib64",   # oteodoro:  changed for distro
++            "%{hip_runtime_path}": rocm_config.rocm_toolkit_path + "/@LIBDIR@",   # oteodoro:  changed for distro
              "%{hip_runtime_library}": "amdhip64",
              "%{crosstool_verbose}": _crosstool_verbose(repository_ctx),
              "%{gcc_host_compiler_path}": str(cc),
