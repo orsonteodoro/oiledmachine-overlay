@@ -58,9 +58,13 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
-pkg_setup() {
+pkg_pretend() {
 	# It randomly crashes at 20G total memory
 ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check at your own risk"
+	check-reqs_pkg_pretend
+}
+
+pkg_setup() {
 	check-reqs_pkg_setup
 
 	rocm_pkg_setup
