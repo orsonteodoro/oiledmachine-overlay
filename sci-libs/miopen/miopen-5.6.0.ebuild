@@ -241,7 +241,7 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 	append-cxxflags "--rocm-path=$(hipconfig -R)"
-	append-cxxflags "--hip-device-lib-path=${EPREFIX}/usr/lib/amdgcn/bitcode"
+	append-cxxflags "--hip-device-lib-path=${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode"
 
 	# Fix for both
 	# lld: error: undefined symbol: __stack_chk_fail ; if fail try append-flags "-fno-stack-protector"
