@@ -133,7 +133,7 @@ src_prepare() {
 		|| die
 
 	sed \
-		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/lib/amdgcn/bitcode:" \
+		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode:" \
 		-i cmake/hip-config.cmake \
 		|| die
 
