@@ -19,7 +19,7 @@ CHECKREQS_MEMORY=23G # 22G observed
 LLVM_MAX_SLOT=16
 ROCM_VERSION="${PV}"
 
-inherit cmake edo flag-o-matic llvm rocm
+inherit check-reqs cmake edo flag-o-matic llvm rocm
 
 DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"
