@@ -97,5 +97,4 @@ src_test() {
 	LD_LIBRARY_PATH="${BUILD_DIR}" edob test/UnitTests
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

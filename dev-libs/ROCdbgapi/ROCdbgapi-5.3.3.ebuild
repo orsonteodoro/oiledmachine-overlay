@@ -67,5 +67,4 @@ src_prepare() {
 	rocm_src_prepare
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
