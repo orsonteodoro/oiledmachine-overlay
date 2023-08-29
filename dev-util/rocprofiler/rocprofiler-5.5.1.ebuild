@@ -50,6 +50,7 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-toggle-aqlprofile.patch"
 	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
+	"${FILESDIR}/${PN}-5.5.1-multithreaded_test-header.patch"
 )
 
 python_check_deps() {
@@ -124,5 +125,4 @@ src_configure() {
 	cmake_src_configure
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
