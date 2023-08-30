@@ -30,7 +30,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r13"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r14"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -166,6 +166,35 @@ src_prepare() {
 	eapply "${FILESDIR}/hipcc-5.6.0-fix-version.patch"
 	eapply "${FILESDIR}/hipcc-5.6.0-path-changes.patch"
 
+	# Faster
+	local LLVM_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}"
+	local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+		| sed -e "s|sys-devel/clang-||g" \
+	)
+	local clang_slot=""
+	if (( ${clang_pv%%.*} -ge 16 )) ; then
+		clang_slot="${LLVM_VERSION}"
+	else
+		clang_slot=$(ver_cut 1-3 "${clang_pv}")
+	fi
+	local CLANG_RESOURCE_DIR="${EPREFIX}/usr/lib/clang/${clang_slot}"
+
+	cp \
+		$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
+		"bin/hipvars.pm" \
+		|| die "failed to replace hipvars.pm"
+	sed \
+		-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
+		-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
+		-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
+		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
+		-e "s,@CLANG_RESOURCE_DIR@,${CLANG_RESOURCE_DIR}," \
+		-i \
+		bin/hipvars.pm \
+		|| die
+
+	popd || die
+
 	pushd "${HIP_S}" || die
 #	eapply "${FILESDIR}/${PN}-5.4.3-correct-ldflag.patch"
 #	eapply "${FILESDIR}/${PN}-5.4.3-clang-version.patch"
@@ -196,32 +225,6 @@ src_prepare() {
 		"/usr" \
 		"${HIP_S}")
 
-	# Faster
-	local LLVM_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}"
-	local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-		| sed -e "s|sys-devel/clang-||g" \
-	)
-	local clang_slot=""
-	if (( ${clang_pv%%.*} -ge 16 )) ; then
-		clang_slot="${LLVM_VERSION}"
-	else
-		clang_slot=$(ver_cut 1-3 "${clang_pv}")
-	fi
-	local CLANG_RESOURCE_DIR="${EPREFIX}/usr/lib/clang/${clang_slot}"
-
-	cp \
-		$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
-		"bin/hipvars.pm" \
-		|| die "failed to replace hipvars.pm"
-	sed \
-		-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
-		-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
-		-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
-		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
-		-e "s,@CLANG_RESOURCE_DIR@,${CLANG_RESOURCE_DIR}," \
-		-i \
-		bin/hipvars.pm \
-		|| die
 	popd || die
 
 	if use rocm ; then
