@@ -135,7 +135,7 @@ diff -urp HIP-rocm-5.5.1.orig/bin/hipvars.pm HIP-rocm-5.5.1/bin/hipvars.pm
  # Since this hipcc script gets installed at two uneven hierarchical levels,
  # linked by symlink, the absolute path of this script should be used to
 -# derive HIP_PATH, as dirname $0 could be /opt/rocm/bin or /opt/rocm/hip/bin
-+# derive HIP_PATH, as dirname $0 could be /usr/bin or /usr/hip/bin
++# derive HIP_PATH, as dirname $0 could be /usr/bin or /usr/bin
  # depending on how it gets invoked.
  # ROCM_PATH which points to <rocm_install_dir> is determined based on whether
  # we find bin/rocm_agent_enumerator in the parent of HIP_PATH or not. If it is found,
@@ -436,7 +436,7 @@ diff -urp HIP-rocm-5.5.1.orig/INSTALL.md HIP-rocm-5.5.1/INSTALL.md
  HIP is part of ROCM packages, it will be automatically installed following the ROCm Installation Guide on AMD public documentation site (https://docs.amd.com/) for the coresponding ROCm release.
  
 -By default, HIP is installed into /opt/rocm/hip.
-+By default, HIP is installed into /usr/hip.
++By default, HIP is installed into /usr.
  
  
  ## NVIDIA Platform
@@ -581,9 +581,9 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/square/README.md HIP-rocm-5.5.1/sa
 -/opt/rocm/hip/bin/hipify-perl square.cu > square.cpp
 -/opt/rocm/hip/bin/hipcc  square.cpp -o square.out
 -/opt/rocm/hip/bin/hipcc  square.cpp -o square.out
-+/usr/hip/bin/hipify-perl square.cu > square.cpp
-+/usr/hip/bin/hipcc  square.cpp -o square.out
-+/usr/hip/bin/hipcc  square.cpp -o square.out
++/usr/bin/hipify-perl square.cu > square.cpp
++/usr/bin/hipcc  square.cpp -o square.out
++/usr/bin/hipcc  square.cpp -o square.out
  ```
  - Execute file
  ```
@@ -791,7 +791,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  The simplest approach is to use
  ```
 -set(CMAKE_MODULE_PATH "/opt/rocm/hip/cmake" ${CMAKE_MODULE_PATH})
-+set(CMAKE_MODULE_PATH "/usr/hip/cmake" ${CMAKE_MODULE_PATH})
++set(CMAKE_MODULE_PATH "/usr/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH})
  find_package(HIP)
  ```
  
@@ -800,7 +800,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  if(NOT DEFINED HIP_PATH)
      if(NOT DEFINED ENV{HIP_PATH})
 -        set(HIP_PATH "/opt/rocm/hip" CACHE PATH "Path to which HIP has been installed")
-+        set(HIP_PATH "/usr/hip" CACHE PATH "Path to which HIP has been installed")
++        set(HIP_PATH "/usr" CACHE PATH "Path to which HIP has been installed")
      else()
          set(HIP_PATH $ENV{HIP_PATH} CACHE PATH "Path to which HIP has been installed")
      endif()
@@ -1174,7 +1174,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/23_cmake_hiprtc/README.md HIP-r
  I. Build
  mkdir -p build; cd build
 -rm -rf *; CXX=amdclang++ cmake -DCMAKE_PREFIX_PATH=/opt/rocm/hip ..
-+rm -rf *; CXX=amdclang++ cmake -DCMAKE_PREFIX_PATH=/usr/hip ..
++rm -rf *; CXX=amdclang++ cmake -DCMAKE_PREFIX_PATH=/usr ..
  make
  
  II. Test

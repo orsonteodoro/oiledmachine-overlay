@@ -126,7 +126,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/bin/hipvars.pm HIPCC-rocm-5.6.0/bin/hipvars.pm
  # Since this hipcc script gets installed at two uneven hierarchical levels,
  # linked by symlink, the absolute path of this script should be used to
 -# derive HIP_PATH, as dirname $0 could be /opt/rocm/bin or /opt/rocm/hip/bin
-+# derive HIP_PATH, as dirname $0 could be /usr/bin or /usr/hip/bin
++# derive HIP_PATH, as dirname $0 could be /usr/bin
  # depending on how it gets invoked.
  # ROCM_PATH which points to <rocm_install_dir> is determined based on whether
  # we find bin/rocm_agent_enumerator in the parent of HIP_PATH or not. If it is found,
@@ -164,7 +164,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/docs/build.md HIPCC-rocm-5.6.0/docs/build.md
  ```
  
 -The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /opt/rocm/hip/bin folder location. Packaging and installing will be handled in future releases.
-+The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /usr/hip/bin folder location. Packaging and installing will be handled in future releases.
++The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /usr/bin folder location. Packaging and installing will be handled in future releases.
 diff -urp HIPCC-rocm-5.6.0.orig/docs/env.md HIPCC-rocm-5.6.0/docs/env.md
 --- HIPCC-rocm-5.6.0.orig/docs/env.md	2023-06-01 07:32:59.000000000 -0700
 +++ HIPCC-rocm-5.6.0/docs/env.md	2023-08-30 15:04:53.382796613 -0700
@@ -205,7 +205,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/README.md HIPCC-rocm-5.6.0/README.md
  ```
  
 -when the excutables are copied to /opt/rocm/hip/bin or <anyfolder>hip/bin. 
-+when the excutables are copied to /usr/hip/bin or <anyfolder>hip/bin. 
++when the excutables are copied to /usr/bin. 
  The ./ is not required as the HIP path is added to the envirnoment variables list.
  
  ### <a name="building"></a> hipcc: building
@@ -214,7 +214,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/README.md HIPCC-rocm-5.6.0/README.md
  ```
  
 -The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /opt/rocm/hip/bin folder location. Packaging and installing will be handled in future releases.
-+The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /usr/hip/bin folder location. Packaging and installing will be handled in future releases.
++The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /usr/bin folder location. Packaging and installing will be handled in future releases.
  
  ### <a name="testing"></a> hipcc: testing
  

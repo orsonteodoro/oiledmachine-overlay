@@ -95,7 +95,7 @@ diff -urp hipamd-rocm-5.6.0.orig/hip-backward-compat.cmake hipamd-rocm-5.6.0/hip
  #use header template file and generate wrapper header files
  function(generate_wrapper_header)
 -#create respecitve folder in /opt/rocm/hip
-+#create respecitve folder in /usr/hip
++#create respecitve folder in /usr
    file(MAKE_DIRECTORY ${HIP_WRAPPER_INC_DIR}/amd_detail)
    file(MAKE_DIRECTORY ${HIP_WRAPPER_INC_DIR}/nvidia_detail)
  

@@ -239,7 +239,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/install.md HIP-rocm-5.6.0/docs/
  HIP is part of ROCM packages, it will be automatically installed following the ROCm Installation Guide on AMD public documentation site (https://docs.amd.com/) for the coresponding ROCm release.
  
 -By default, HIP is installed into /opt/rocm/hip.
-+By default, HIP is installed into /usr/hip.
++By default, HIP is installed into /usr.
  
  
  ## NVIDIA Platform
