@@ -544,7 +544,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/samples/CMakeLists.txt rocprofiler-rocm-5.
  find_package(Clang REQUIRED CONFIG
               PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATH_SUFFIXES "lib/llvm/@LIBDIR@/cmake/clang")
++             PATH_SUFFIXES "lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/clang")
  
 -set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules" "${ROCM_PATH}/lib/cmake/hip")
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules" "${ROCM_PATH}/@LIBDIR@/cmake/hip")
@@ -722,7 +722,7 @@ diff -urp rocprofiler-rocm-5.6.0.orig/tests/featuretests/profiler/CMakeLists.txt
  find_package(Clang REQUIRED CONFIG
               PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATH_SUFFIXES "lib/llvm/@LIBDIR@/cmake/clang")
++             PATH_SUFFIXES "lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/clang")
  
  # Set the HIP language runtime link flags as FindHIP does not set them.
  set(CMAKE_INSTALL_TESTDIR test/${PROJECT_NAME})

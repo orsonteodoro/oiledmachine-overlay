@@ -120,7 +120,7 @@ diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
      sys::path::append(LLVMPath, "llvm");
  
 -    return LLVMPath;
-+    return llvm::SmallString<128>("/usr/lib/llvm/@LIBDIR@");
++    return llvm::SmallString<128>("/usr/lib/llvm/@LLVM_SLOT@");
    }
  
    virtual SmallString<128> getHIPPathImpl() {

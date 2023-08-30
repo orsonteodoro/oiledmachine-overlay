@@ -24,6 +24,7 @@ DESCRIPTION="rocm-core is a utility which can be used to get ROCm release versio
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-core"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
+IUSE="r1"
 RDEPEND="
 "
 DEPEND="

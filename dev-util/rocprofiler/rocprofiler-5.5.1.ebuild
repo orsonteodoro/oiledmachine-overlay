@@ -25,7 +25,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile r3"
+IUSE=" +aqlprofile r4"
 RDEPEND="
 	dev-python/barectf
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
