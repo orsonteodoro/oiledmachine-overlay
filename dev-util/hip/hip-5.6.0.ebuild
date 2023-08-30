@@ -30,7 +30,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r14"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r15"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -172,7 +172,7 @@ src_prepare() {
 		| sed -e "s|sys-devel/clang-||g" \
 	)
 	local clang_slot=""
-	if (( ${clang_pv%%.*} -ge 16 )) ; then
+	if ver_test ${clang_pv%%.*} -ge 16 ; then
 		clang_slot="${LLVM_VERSION}"
 	else
 		clang_slot=$(ver_cut 1-3 "${clang_pv}")
