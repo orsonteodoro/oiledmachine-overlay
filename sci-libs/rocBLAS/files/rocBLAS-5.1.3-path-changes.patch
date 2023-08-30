@@ -96,7 +96,7 @@ diff -urp rocBLAS-rocm-5.1.3.orig/CMakeLists.txt rocBLAS-rocm-5.1.3/CMakeLists.t
  
  # NOTE:  workaround until llvm & hip cmake modules fixes symlink logic in their config files; remove when fixed
 -list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/llvm ${ROCM_PATH}/hip /opt/rocm/llvm /opt/rocm/hip )
-+list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/llvm ${ROCM_PATH}/hip /usr/lib/llvm/@LLVM_SLOT@ /usr/hip )
++list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ ${ROCM_PATH}/hip /usr/lib/llvm/@LLVM_SLOT@ /usr/hip )
  
  option( BUILD_VERBOSE "Output additional build information" OFF )
  

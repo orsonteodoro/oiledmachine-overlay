@@ -82,7 +82,7 @@ diff -urp rocBLAS-rocm-5.5.1.orig/CMakeLists.txt rocBLAS-rocm-5.5.1/CMakeLists.t
  # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
  # NOTE:  workaround until llvm & hip cmake modules fixes symlink logic in their config files; remove when fixed
 -list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/llvm ${ROCM_PATH} ${ROCM_PATH}/hip /opt/rocm/llvm /opt/rocm /opt/rocm/hip )
-+list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/llvm ${ROCM_PATH} ${ROCM_PATH}/hip /usr/lib/llvm/@LLVM_SLOT@ /usr /usr/hip )
++list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ ${ROCM_PATH} ${ROCM_PATH}/hip /usr/lib/llvm/@LLVM_SLOT@ /usr /usr/hip )
  
  
  # gpu arch configuration
