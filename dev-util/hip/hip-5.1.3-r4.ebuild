@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test r15"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test r16"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -112,20 +112,31 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-util/cmake-3.16.8
 "
-PATCHES=(
+CLR_PATCHES=(
+	"${FILESDIR}/rocclr-5.1.3-path-changes.patch"
+)
+HIP_PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
+)
+HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.0.1-DisableTest.patch"
-	"${FILESDIR}/${PN}-4.2.0-config-cmake-in.patch"
 	"${FILESDIR}/${PN}-5.0.1-hip_vector_types.patch"
 	"${FILESDIR}/${PN}-4.2.0-cancel-hcc-header-removal.patch"
 	"${FILESDIR}/${PN}-5.0.2-set-build-id.patch"
 	"${FILESDIR}/${PN}-5.1.3-fix-hip_prof_gen.patch"
-	"${FILESDIR}/${PN}-5.1.3-correct-sample-install-location.patch"
 	"${FILESDIR}/${PN}-5.1.3-remove-cmake-doxygen-commands.patch"
 	"${FILESDIR}/0001-SWDEV-316128-HIP-surface-API-support.patch"
 	"${FILESDIR}/${PN}-5.1.3-llvm-15-noinline-keyword.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-5.1.3-path-changes.patch"
+)
+OCL_PATCHES=(
+	"${FILESDIR}/rocm-opencl-runtime-5.1.3-path-changes.patch"
+)
+RTC_PATCHES=(
+	"${FILESDIR}/roctracer-5.1.3-path-changes.patch"
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
@@ -149,59 +160,27 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	eapply "${HIPAMD_PATCHES[@]}"
 	use profile && eapply "${WORKDIR}/${P}-update-header.patch"
 
 	eapply_user
 
-	# Use Gentoo slot number, otherwise git hash is attempted in vain.
+	# Use the ebuild slot number, otherwise git hash is attempted in vain.
 	sed \
 		-e "/set (HIP_LIB_VERSION_STRING/cset (HIP_LIB_VERSION_STRING ${SLOT#*/})" \
 		-i \
 		CMakeLists.txt \
 		|| die
 
-	# disable PCH, because it results in a build error in ROCm 4.0.0
+	# Disable PCH, because it results in a build error in ROCm 4.0.0.
 	sed \
 		-e "s:option(__HIP_ENABLE_PCH:#option(__HIP_ENABLE_PCH:" \
 		-i \
 		CMakeLists.txt \
 		|| die
 
-	# Faster
-	local LLVM_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}"
-	local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-		| sed -e "s|sys-devel/clang-||g" \
-	)
-	local clang_slot=""
-	if ver_test ${clang_pv%%.*} -ge 16 ; then
-		clang_slot="${LLVM_VERSION}"
-	else
-		clang_slot=$(ver_cut 1-3 "${clang_pv}")
-	fi
-	local CLANG_RESOURCE_DIR="${EPREFIX}/usr/lib/clang/${clang_slot}"
-
-	sed \
-		-e "/set(HIP_CLANG_ROOT/s:\"\${ROCM_PATH}/llvm\":${LLVM_PREFIX}:" \
-		-i \
-		hip-config.cmake.in \
-		|| die
-
-	# correct libs and cmake install dir
-	sed \
-		-e "/LIB_INSTALL_DIR/s:PREFIX}/lib:PREFIX}/$(get_libdir):" \
-		-e "/\${HIP_COMMON_DIR}/s:cmake DESTINATION .):cmake/ DESTINATION share/cmake/Modules):" \
-		-i \
-		CMakeLists.txt \
-		|| die
-	sed \
-		-e "/LIBRARY DESTINATION/s:lib:$(get_libdir):" \
-		-i \
-		src/CMakeLists.txt \
-		|| die
-
 	sed \
 		-e "/\.hip/d" \
-		-e "s,DESTINATION lib,DESTINATION $(get_libdir),g" \
 		-e "/cmake DESTINATION/d" \
 		-e "/CPACK_RESOURCE_FILE_LICENSE/d" \
 		-i \
@@ -209,72 +188,32 @@ src_prepare() {
 		|| die
 
 	pushd "${HIP_S}" || die
-	eapply "${FILESDIR}/${PN}-5.1.3-clang-include-path.patch"
-	eapply "${FILESDIR}/${PN}-5.0.2-correct-ldflag.patch"
-	eapply "${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
-	eapply "${FILESDIR}/${PN}-5.1.3-path-changes.patch"
-
-	# Changed --hip-device-lib-path to "/usr/$(get_libdir)/amdgcn/bitcode".
-	# It must align with "dev-libs/rocm-device-libs".
-	sed \
-		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode:" \
-		-i \
-		"${S}/hip-config.cmake.in" \
-		|| die
-
-	einfo "prefixing hipcc and its utils..."
-	hprefixify $(grep \
-		-rl \
-		--exclude-dir="build/" \
-		--exclude="hip-config.cmake.in" \
-		"/usr" \
-		"${S}")
-	hprefixify $(grep \
-		-rl \
-		--exclude-dir="build/" \
-		--exclude="hipcc.pl" \
-		"/usr" \
-		"${HIP_S}")
-
-	cp \
-		$(prefixify_ro "${FILESDIR}/hipvars-5.1.3.pm") \
-		"${S}/bin/hipvars.pm" \
-		|| die "failed to replace hipvars.pm"
-	sed \
-		-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
-		-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
-		-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
-		-e "s,@CLANG_INCLUDE_PATH@,${CLANG_RESOURCE_DIR}/include," \
-		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
-		-e "s,@CLANG_RESOURCE_DIR@,${CLANG_RESOURCE_DIR}," \
-		-i \
-		"${S}/bin/hipvars.pm" \
-		|| die
-
-	sed \
-		-e "/HIP_CLANG_INCLUDE_SEARCH_PATHS/s,\${_IMPORT_PREFIX}.*/include,${CLANG_RESOURCE_DIR}/include," \
-		-i \
-		hip-lang-config.cmake.in \
-		|| die
+		eapply "${HIP_PATCHES[@]}"
+		cp \
+			$(prefixify_ro "${FILESDIR}/hipvars-5.1.3.pm") \
+			"${HIP_S}/bin/hipvars.pm" \
+			|| die "failed to replace hipvars.pm"
+		sed \
+			-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
+			-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
+			-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
+			-i \
+			"${HIP_S}/bin/hipvars.pm" \
+			|| die
 	popd || die
-	sed \
-		-e "/HIP_CLANG_INCLUDE_SEARCH_PATHS/s,\${HIP_CLANG_ROOT}.*/include,${CLANG_RESOURCE_DIR}/include," \
-		-i \
-		hip-config.cmake.in \
-		|| die
 
 	if use rocm ; then
 		pushd "${OCL_S}" || die
-			eapply "${FILESDIR}/rocm-opencl-runtime-5.1.3-path-changes.patch"
+			eapply "${OCL_PATCHES[@]}"
 		popd || die
 		pushd "${CLR_S}" || die
-			eapply "${FILESDIR}/rocclr-5.1.3-path-changes.patch"
+			eapply "${CLR_PATCHES[@]}"
 		popd || die
 	fi
 
 	if use profile ; then
 		pushd "${RTC_S}" || die
-			eapply "${FILESDIR}/roctracer-5.1.3.patch"
+			eapply "${RTC_PATCHES[@]}"
 		popd || die
 	fi
 	rocm_src_prepare

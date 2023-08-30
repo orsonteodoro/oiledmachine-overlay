@@ -1,7 +1,13 @@
 diff -urp HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake HIP-rocm-5.6.0/cmake/FindHIP.cmake
---- HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake	2023-08-22 20:28:57.396091272 -0700
-+++ HIP-rocm-5.6.0/cmake/FindHIP.cmake	2023-08-22 20:29:30.172092085 -0700
-@@ -260,22 +260,24 @@ elseif("${HIP_COMPILER}" STREQUAL "clang
+--- HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake	2023-06-12 13:47:00.000000000 -0700
++++ HIP-rocm-5.6.0/cmake/FindHIP.cmake	2023-08-30 15:02:32.070793767 -0700
+@@ -255,27 +255,29 @@ elseif("${HIP_COMPILER}" STREQUAL "clang
+     if("x${HIP_CLANG_PATH}" STREQUAL "x")
+       # IF HIP_CLANG_INSTALL_DIR is Found
+       if( HIP_CLANG_INSTALL_DIR )
+-        set(HIP_CLANG_PATH ${HIP_CLANG_INSTALL_DIR})
++        set(HIP_CLANG_PATH "${HIP_CLANG_INSTALL_DIR}/bin")
+       else() # IF HIP_CLANG_INSTALL_DIR is not found
          if(DEFINED ENV{HIP_CLANG_PATH})
              set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
          elseif(DEFINED ENV{ROCM_PATH})
@@ -69,7 +75,7 @@ diff -urp HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake HIP-rocm-5.6.0/cmake/FindHIP.c
              endif()
 diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/build.md HIP-rocm-5.6.0/docs/developer_guide/build.md
 --- HIP-rocm-5.6.0.orig/docs/developer_guide/build.md	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/docs/developer_guide/build.md	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/docs/developer_guide/build.md	2023-08-30 15:03:04.130794413 -0700
 @@ -34,7 +34,7 @@ export ROCM_BRANCH=rocm-5.6.x
  ```
  Similiar format for future branches.
@@ -88,6 +94,21 @@ diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/build.md HIP-rocm-5.6.0/docs/
  
  make -j$(nproc)
  sudo make install
+@@ -86,10 +86,10 @@ By default, release version of HIP is bu
+ 
+ ### Default paths and environment variables
+ 
+-   * By default HIP looks for HSA in `<ROCM_PATH>/hsa` (can be overridden by setting `HSA_PATH` environment variable).
+-   * By default HIP is installed into `<ROCM_PATH>/hip` (can be overridden by setting HIP_PATH environment variable).
+-   * By default HIP looks for clang in `<ROCM_PATH>/llvm/bin` (can be overridden by setting `HIP_CLANG_PATH` environment variable)
+-   * By default HIP looks for device library in `<ROCM_PATH>/lib` (can be overridden by setting `DEVICE_LIB_PATH` environment variable).
++   * By default HIP looks for HSA in `<ROCM_PATH>` (can be overridden by setting `HSA_PATH` environment variable).
++   * By default HIP is installed into `<ROCM_PATH>` (can be overridden by setting HIP_PATH environment variable).
++   * By default HIP looks for clang in `<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin` (can be overridden by setting `HIP_CLANG_PATH` environment variable)
++   * By default HIP looks for device library in `<ROCM_PATH>/@LIBDIR@/amdgcn/bitcode` (can be overridden by setting `DEVICE_LIB_PATH` environment variable).
+    * Optionally, consider adding `<ROCM_PATH>/bin` to your `PATH` to make it easier to use the tools.
+    * Optionally, set `HIPCC_VERBOSE=7` to output the command line for compilation.
+ 
 @@ -168,7 +168,7 @@ git clone -b "$ROCM_BRANCH" https://gith
  export HIPTESTS_DIR="$(readlink -f hip-tests)"
  cd "$HIPTESTS_DIR"
@@ -99,7 +120,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/build.md HIP-rocm-5.6.0/docs/
  ctest # run tests
 diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/contributing.md HIP-rocm-5.6.0/docs/developer_guide/contributing.md
 --- HIP-rocm-5.6.0.orig/docs/developer_guide/contributing.md	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/docs/developer_guide/contributing.md	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/docs/developer_guide/contributing.md	2023-08-30 15:02:32.070793767 -0700
 @@ -1,7 +1,7 @@
  # Contributor Guidelines
  
@@ -134,7 +155,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/contributing.md HIP-rocm-5.6.
  - **CUDA_PATH* : On nvcc system, this points to root of CUDA installation.
 diff -urp HIP-rocm-5.6.0.orig/docs/gen_clang_option_doc.sh HIP-rocm-5.6.0/docs/gen_clang_option_doc.sh
 --- HIP-rocm-5.6.0.orig/docs/gen_clang_option_doc.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/docs/gen_clang_option_doc.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/docs/gen_clang_option_doc.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -21,7 +21,7 @@
  
  ## generates documentation about clang options.
@@ -146,7 +167,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/gen_clang_option_doc.sh HIP-rocm-5.6.0/docs/g
  
 diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/debugging.md HIP-rocm-5.6.0/docs/how_to_guides/debugging.md
 --- HIP-rocm-5.6.0.orig/docs/how_to_guides/debugging.md	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/docs/how_to_guides/debugging.md	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/docs/how_to_guides/debugging.md	2023-08-30 15:02:32.070793767 -0700
 @@ -81,10 +81,10 @@ HIP developers on ROCm can use AMD's ROC
  ROCgdb is the ROCm source-level debugger for Linux, based on GDB, the GNU source-level debugger, equivalent of cuda-gdb, can be used with debugger frontends, such as eclipse, vscode, or gdb-dashboard.
  For details, see (https://github.com/ROCm-Developer-Tools/ROCgdb).
@@ -212,7 +233,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/debugging.md HIP-rocm-5.6.0/doc
  #0  0x000000000020f78e in simpleTest2<float> (numElements=4194304, usePinnedHost=true)
 diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/install.md HIP-rocm-5.6.0/docs/how_to_guides/install.md
 --- HIP-rocm-5.6.0.orig/docs/how_to_guides/install.md	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/docs/how_to_guides/install.md	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/docs/how_to_guides/install.md	2023-08-30 15:02:32.070793767 -0700
 @@ -13,7 +13,7 @@ On NVIDIA platform, check system require
  
  HIP is part of ROCM packages, it will be automatically installed following the ROCm Installation Guide on AMD public documentation site (https://docs.amd.com/) for the coresponding ROCm release.
@@ -230,7 +251,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/install.md HIP-rocm-5.6.0/docs/
 -   * By default HIP is installed into /opt/rocm/hip.
 -   * Optionally, consider adding /opt/rocm/bin to your path to make it easier to use the tools.
 +   * By default HIP looks for CUDA SDK in /opt/cuda.
-+   * By default HIP is installed into /usr/hip.
++   * By default HIP is installed into /usr.
 +   * Optionally, consider adding /usr/bin to your path to make it easier to use the tools.
  
  
@@ -245,7 +266,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/install.md HIP-rocm-5.6.0/docs/
  # How to build HIP from source
 diff -urp HIP-rocm-5.6.0.orig/docs/user_guide/programming_manual.md HIP-rocm-5.6.0/docs/user_guide/programming_manual.md
 --- HIP-rocm-5.6.0.orig/docs/user_guide/programming_manual.md	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/docs/user_guide/programming_manual.md	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/docs/user_guide/programming_manual.md	2023-08-30 15:02:32.070793767 -0700
 @@ -184,7 +184,7 @@ Here is an example to create and use sta
  - Type 1 using --emit-static-lib:
      ```
@@ -257,7 +278,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/user_guide/programming_manual.md HIP-rocm-5.6
      ```
 diff -urp HIP-rocm-5.6.0.orig/hip-lang-config.cmake.in HIP-rocm-5.6.0/hip-lang-config.cmake.in
 --- HIP-rocm-5.6.0.orig/hip-lang-config.cmake.in	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/hip-lang-config.cmake.in	2023-08-22 20:31:26.252094965 -0700
++++ HIP-rocm-5.6.0/hip-lang-config.cmake.in	2023-08-30 15:02:32.070793767 -0700
 @@ -65,11 +65,7 @@ find_dependency(amd_comgr)
  
  include( "${CMAKE_CURRENT_LIST_DIR}/hip-lang-targets.cmake" )
@@ -273,7 +294,7 @@ diff -urp HIP-rocm-5.6.0.orig/hip-lang-config.cmake.in HIP-rocm-5.6.0/hip-lang-c
  set_target_properties(hip-lang::device PROPERTIES
 diff -urp HIP-rocm-5.6.0.orig/tests/hit/HIT.cmake HIP-rocm-5.6.0/tests/hit/HIT.cmake
 --- HIP-rocm-5.6.0.orig/tests/hit/HIT.cmake	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/hit/HIT.cmake	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/hit/HIT.cmake	2023-08-30 15:02:32.070793767 -0700
 @@ -326,7 +326,7 @@ endmacro()
  #-------------------------------------------------------------------------------
  
@@ -294,7 +315,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/hit/HIT.cmake HIP-rocm-5.6.0/tests/hit/HIT.c
                  foreach(_dependency ${_depends})
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gapi.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/gapi.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gapi.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/gapi.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/gapi.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,9 +1,9 @@
  #!/bin/bash
  
@@ -310,7 +331,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gapi.sh HIP-rocm-5
  
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/ghipapi.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/ghipapi.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/ghipapi.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/ghipapi.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/ghipapi.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,8 +1,8 @@
  #!/bin/bash
  
@@ -324,7 +345,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/ghipapi.sh HIP-roc
  
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gxxapi.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/gxxapi.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gxxapi.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/gxxapi.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/gxxapi.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,8 +1,8 @@
  #!/bin/bash
  
@@ -339,7 +360,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gxxapi.sh HIP-rocm
  
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gxxhipapi.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/gxxhipapi.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gxxhipapi.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/gxxhipapi.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/gxxhipapi.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,8 +1,8 @@
  #!/bin/bash
  
@@ -353,7 +374,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/gxxhipapi.sh HIP-r
  
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipapig.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipapig.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipapig.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipapig.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipapig.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,3 +1,3 @@
  #!/bin/bash
  
@@ -361,7 +382,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipapig.sh HIP-roc
 +gcc -D__HIP_PLATFORM_AMD__= -I${HIP_PATH}/include -I${HCC_HOME}/include gApi.c ${HIP_PATH}/@LIBDIR@/device_util.cpp.o ${HIP_PATH}/@LIBDIR@/hip_device.cpp.o ${HIP_PATH}/@LIBDIR@/hip_error.cpp.o ${HIP_PATH}/@LIBDIR@/hip_event.cpp.o ${HIP_PATH}/@LIBDIR@/hip_hcc.cpp.o ${HIP_PATH}/@LIBDIR@/hip_memory.cpp.o ${HIP_PATH}/@LIBDIR@/hip_peer.cpp.o ${HIP_PATH}/@LIBDIR@/hip_stream.cpp.o ${HIP_PATH}/@LIBDIR@/unpinned_copy_engine.cpp.o -L${HCC_HOME}/@LIBDIR@ -lhc_am -L${HSA_PATH}/@LIBDIR@ -lhsa-runtime64 -lc++ -lmcwamp -ldl -lm -o gApi
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipapigxx.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipapigxx.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipapigxx.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipapigxx.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipapigxx.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,3 +1,3 @@
  #!/bin/bash
  
@@ -369,7 +390,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipapigxx.sh HIP-r
 +g++ -D__HIP_PLATFORM_AMD__= -I${HIP_PATH}/include -I${HCC_HOME}/include gxxApi.cpp ${HIP_PATH}/@LIBDIR@/device_util.cpp.o ${HIP_PATH}/@LIBDIR@/hip_device.cpp.o ${HIP_PATH}/@LIBDIR@/hip_error.cpp.o ${HIP_PATH}/@LIBDIR@/hip_event.cpp.o ${HIP_PATH}/@LIBDIR@/hip_hcc.cpp.o ${HIP_PATH}/@LIBDIR@/hip_memory.cpp.o ${HIP_PATH}/@LIBDIR@/hip_peer.cpp.o ${HIP_PATH}/@LIBDIR@/hip_stream.cpp.o ${HIP_PATH}/@LIBDIR@/unpinned_copy_engine.cpp.o -L${HCC_HOME}/@LIBDIR@ -lhc_am -L${HSA_PATH}/@LIBDIR@ -lhsa-runtime64 -lc++ -lmcwamp -ldl -o gxxApi
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgapi.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgapi.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgapi.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgapi.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgapi.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
@@ -380,7 +401,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgapi.sh HIP-roc
  
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipg.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipg.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipg.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipg.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipg.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
@@ -391,7 +412,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipg.sh HIP-rocm-5
  
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgxxapi.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgxxapi.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgxxapi.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgxxapi.sh	2023-08-22 20:29:30.172092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgxxapi.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
@@ -402,7 +423,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgxxapi.sh HIP-r
  
 diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgxx.sh HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgxx.sh
 --- HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgxx.sh	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgxx.sh	2023-08-22 20:29:30.176092085 -0700
++++ HIP-rocm-5.6.0/tests/src/experimental/xcompile/hipgxx.sh	2023-08-30 15:02:32.070793767 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
@@ -413,7 +434,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/experimental/xcompile/hipgxx.sh HIP-rocm
  
 diff -urp HIP-rocm-5.6.0.orig/tests/src/g++/hipMalloc.cpp HIP-rocm-5.6.0/tests/src/g++/hipMalloc.cpp
 --- HIP-rocm-5.6.0.orig/tests/src/g++/hipMalloc.cpp	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/g++/hipMalloc.cpp	2023-08-22 20:29:30.176092085 -0700
++++ HIP-rocm-5.6.0/tests/src/g++/hipMalloc.cpp	2023-08-30 15:02:32.070793767 -0700
 @@ -18,8 +18,8 @@
   * */
  
@@ -427,7 +448,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/g++/hipMalloc.cpp HIP-rocm-5.6.0/tests/s
   * HIT_END
 diff -urp HIP-rocm-5.6.0.orig/tests/src/gcc/hipMalloc.c HIP-rocm-5.6.0/tests/src/gcc/hipMalloc.c
 --- HIP-rocm-5.6.0.orig/tests/src/gcc/hipMalloc.c	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/gcc/hipMalloc.c	2023-08-22 20:29:30.176092085 -0700
++++ HIP-rocm-5.6.0/tests/src/gcc/hipMalloc.c	2023-08-30 15:02:32.070793767 -0700
 @@ -18,8 +18,8 @@
   * */
  
@@ -441,7 +462,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/gcc/hipMalloc.c HIP-rocm-5.6.0/tests/src
   * HIT_END
 diff -urp HIP-rocm-5.6.0.orig/tests/src/gcc/LaunchKernel.c HIP-rocm-5.6.0/tests/src/gcc/LaunchKernel.c
 --- HIP-rocm-5.6.0.orig/tests/src/gcc/LaunchKernel.c	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/gcc/LaunchKernel.c	2023-08-22 20:29:30.176092085 -0700
++++ HIP-rocm-5.6.0/tests/src/gcc/LaunchKernel.c	2023-08-30 15:02:32.070793767 -0700
 @@ -21,7 +21,7 @@
  /* HIT_START
   * BUILD_CMD: gpu.o %hc -I%hip-path/include -g -c %S/gpu.cpp -o %T/gpu.o EXCLUDE_HIP_PLATFORM nvidia EXCLUDE_HIP_LIB_TYPE static
@@ -453,7 +474,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/gcc/LaunchKernel.c HIP-rocm-5.6.0/tests/
   */
 diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipModule.cpp HIP-rocm-5.6.0/tests/src/runtimeApi/module/hipModule.cpp
 --- HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipModule.cpp	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/runtimeApi/module/hipModule.cpp	2023-08-22 20:29:30.176092085 -0700
++++ HIP-rocm-5.6.0/tests/src/runtimeApi/module/hipModule.cpp	2023-08-30 15:02:32.070793767 -0700
 @@ -153,7 +153,7 @@ bool testMultiTargArchCodeObj() {
    if (isRocmPathSet()) {
      hipcc_path = "$ROCM_PATH/bin/hipcc";
@@ -465,7 +486,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipModule.cpp HIP-rocm
      literal length in order to avoid multiline string literal cpplint warning
 diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HIP-rocm-5.6.0/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp
 --- HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp	2023-08-22 20:32:55.388097177 -0700
++++ HIP-rocm-5.6.0/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp	2023-08-30 15:02:32.070793767 -0700
 @@ -130,11 +130,11 @@ int getV3TargetIdFeature(char* feature,
    char command[COMMAND_LEN] = "";
    const char *rocmpath = nullptr;
@@ -503,7 +524,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    strncat(command, command_temp, COMMAND_LEN);
 diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp HIP-rocm-5.6.0/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp
 --- HIP-rocm-5.6.0.orig/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp	2023-06-12 13:47:00.000000000 -0700
-+++ HIP-rocm-5.6.0/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp	2023-08-22 20:29:30.176092085 -0700
++++ HIP-rocm-5.6.0/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp	2023-08-30 15:02:32.070793767 -0700
 @@ -21,7 +21,7 @@ THE SOFTWARE.
  */
  

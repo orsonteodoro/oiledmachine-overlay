@@ -1,0 +1,299 @@
+diff -urp ROCclr-rocm-5.3.3.orig/cmake/ROCclrHSA.cmake ROCclr-rocm-5.3.3/cmake/ROCclrHSA.cmake
+--- ROCclr-rocm-5.3.3.orig/cmake/ROCclrHSA.cmake	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/cmake/ROCclrHSA.cmake	2023-08-30 13:01:11.338647149 -0700
+@@ -20,11 +20,10 @@
+ 
+ find_package(hsa-runtime64 1.6 REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    /usr/
+   PATH_SUFFIXES
+     cmake/hsa-runtime64
+-    lib/cmake/hsa-runtime64
+-    lib64/cmake/hsa-runtime64)
++    @LIBDIR@/cmake/hsa-runtime64)
+ target_link_libraries(rocclr PUBLIC hsa-runtime64::hsa-runtime64)
+ 
+ find_package(NUMA)
+diff -urp ROCclr-rocm-5.3.3.orig/cmake/ROCclrLC.cmake ROCclr-rocm-5.3.3/cmake/ROCclrLC.cmake
+--- ROCclr-rocm-5.3.3.orig/cmake/ROCclrLC.cmake	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/cmake/ROCclrLC.cmake	2023-08-30 13:01:03.594646993 -0700
+@@ -20,10 +20,10 @@
+ 
+ find_package(amd_comgr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    /usr/
+   PATH_SUFFIXES
+     cmake/amd_comgr
+-    lib/cmake/amd_comgr)
++    @LIBDIR@/cmake/amd_comgr)
+ 
+ target_compile_definitions(rocclr PUBLIC WITH_LIGHTNING_COMPILER USE_COMGR_LIBRARY)
+ if(BUILD_SHARED_LIBS)
+diff -urp ROCclr-rocm-5.3.3.orig/device/comgrctx.hpp ROCclr-rocm-5.3.3/device/comgrctx.hpp
+--- ROCclr-rocm-5.3.3.orig/device/comgrctx.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/comgrctx.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -23,7 +23,7 @@
+ #include <mutex>
+ #if defined(USE_COMGR_LIBRARY)
+ #include "top.hpp"
+-#include "amd_comgr.h"
++#include "amd_comgr/amd_comgr.h"
+ 
+ namespace amd {
+ typedef void (*t_amd_comgr_get_version)(size_t *major, size_t *minor);
+diff -urp ROCclr-rocm-5.3.3.orig/device/devkernel.hpp ROCclr-rocm-5.3.3/device/devkernel.hpp
+--- ROCclr-rocm-5.3.3.orig/device/devkernel.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/devkernel.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -105,7 +105,7 @@ struct RuntimeHandle {
+   uint32_t group_segment_size;        //!< From GROUP_SEGMENT_FIXED_SIZE
+ };
+ 
+-#include "amd_comgr.h"
++#include "amd_comgr/amd_comgr.h"
+ 
+ //  for Code Object V3
+ enum class ArgField : uint8_t {
+diff -urp ROCclr-rocm-5.3.3.orig/device/devprogram.hpp ROCclr-rocm-5.3.3/device/devprogram.hpp
+--- ROCclr-rocm-5.3.3.orig/device/devprogram.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/devprogram.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -29,7 +29,7 @@
+ #include "devwavelimiter.hpp"
+ 
+ #if defined(USE_COMGR_LIBRARY)
+-#include "amd_comgr.h"
++#include "amd_comgr/amd_comgr.h"
+ #endif  // defined(USE_COMGR_LIBRARY)
+ 
+ namespace amd {
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/pro/prodevice.cpp ROCclr-rocm-5.3.3/device/rocm/pro/prodevice.cpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/pro/prodevice.cpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/pro/prodevice.cpp	2023-08-30 12:59:44.218645395 -0700
+@@ -20,7 +20,7 @@
+ 
+ #ifndef WITHOUT_HSA_BACKEND
+ 
+-#include "hsa_ext_amd.h"
++#include "hsa/hsa_ext_amd.h"
+ #include "lnxheaders.h"
+ #include "prodevice.hpp"
+ #include "amdgpu_drm.h"
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/pro/prodriver.hpp ROCclr-rocm-5.3.3/device/rocm/pro/prodriver.hpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/pro/prodriver.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/pro/prodriver.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -23,7 +23,7 @@
+ #ifndef WITHOUT_HSA_BACKEND
+ 
+ #include "top.hpp"
+-#include "hsa.h"
++#include "hsa/hsa.h"
+ 
+ /*! \addtogroup HSA
+  *  @{
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/roccounters.hpp ROCclr-rocm-5.3.3/device/rocm/roccounters.hpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/roccounters.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/roccounters.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -24,7 +24,7 @@
+ #include "top.hpp"
+ #include "device/device.hpp"
+ #include "device/rocm/rocdevice.hpp"
+-#include "hsa_ven_amd_aqlprofile.h"
++#include "hsa/hsa_ven_amd_aqlprofile.h"
+ 
+ namespace roc {
+ 
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/rocdevice.hpp ROCclr-rocm-5.3.3/device/rocm/rocdevice.hpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/rocdevice.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/rocdevice.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -40,10 +40,10 @@
+ #include "device/rocm/rocprintf.hpp"
+ #include "device/rocm/rocglinterop.hpp"
+ 
+-#include "hsa.h"
+-#include "hsa_ext_image.h"
+-#include "hsa_ext_amd.h"
+-#include "hsa_ven_amd_loader.h"
++#include "hsa/hsa.h"
++#include "hsa/hsa_ext_image.h"
++#include "hsa/hsa_ext_amd.h"
++#include "hsa/hsa_ven_amd_loader.h"
+ 
+ #include <atomic>
+ #include <iostream>
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/rocglinterop.hpp ROCclr-rocm-5.3.3/device/rocm/rocglinterop.hpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/rocglinterop.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/rocglinterop.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -34,7 +34,7 @@ typedef __GLXcontextRec* GLXContext;
+ 
+ #include "device/rocm/mesa_glinterop.h"
+ #include "device/rocm/rocregisters.hpp"
+-#include "hsa_ext_amd.h"
++#include "hsa/hsa_ext_amd.h"
+ 
+ namespace roc {
+ 
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/rockernel.cpp ROCclr-rocm-5.3.3/device/rocm/rockernel.cpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/rockernel.cpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/rockernel.cpp	2023-08-30 12:59:44.218645395 -0700
+@@ -19,7 +19,7 @@
+  THE SOFTWARE. */
+ 
+ #include "rockernel.hpp"
+-#include "amd_hsa_kernel_code.h"
++#include "hsa/amd_hsa_kernel_code.h"
+ 
+ #include <algorithm>
+ 
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/rocprogram.cpp ROCclr-rocm-5.3.3/device/rocm/rocprogram.cpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/rocprogram.cpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/rocprogram.cpp	2023-08-30 12:59:44.218645395 -0700
+@@ -25,7 +25,7 @@
+ #include "utils/options.hpp"
+ #include "rockernel.hpp"
+ 
+-#include "amd_hsa_kernel_code.h"
++#include "hsa/amd_hsa_kernel_code.h"
+ 
+ #include <string>
+ #include <vector>
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/rocsignal.hpp ROCclr-rocm-5.3.3/device/rocm/rocsignal.hpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/rocsignal.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/rocsignal.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -22,7 +22,7 @@
+ 
+ #include "device/devsignal.hpp"
+ 
+-#include <hsa.h>
++#include "hsa/hsa.h"
+ 
+ namespace roc {
+ 
+@@ -44,4 +44,4 @@ public:
+   }
+ };
+ 
+-};
+\ No newline at end of file
++};
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/rocvirtual.cpp ROCclr-rocm-5.3.3/device/rocm/rocvirtual.cpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/rocvirtual.cpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/rocvirtual.cpp	2023-08-30 12:59:44.218645395 -0700
+@@ -34,8 +34,8 @@
+ #include "platform/sampler.hpp"
+ #include "utils/debug.hpp"
+ #include "os/os.hpp"
+-#include "amd_hsa_kernel_code.h"
+-#include "amd_hsa_queue.h"
++#include "hsa/amd_hsa_kernel_code.h"
++#include "hsa/amd_hsa_queue.h"
+ 
+ #include <fstream>
+ #include <limits>
+diff -urp ROCclr-rocm-5.3.3.orig/device/rocm/rocvirtual.hpp ROCclr-rocm-5.3.3/device/rocm/rocvirtual.hpp
+--- ROCclr-rocm-5.3.3.orig/device/rocm/rocvirtual.hpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/device/rocm/rocvirtual.hpp	2023-08-30 12:59:44.218645395 -0700
+@@ -24,11 +24,11 @@
+ #include "rocdefs.hpp"
+ #include "rocdevice.hpp"
+ #include "utils/util.hpp"
+-#include "hsa.h"
+-#include "hsa_ext_image.h"
+-#include "hsa_ext_amd.h"
++#include "hsa/hsa.h"
++#include "hsa/hsa_ext_image.h"
++#include "hsa/hsa_ext_amd.h"
+ #include "rocprintf.hpp"
+-#include "hsa_ven_amd_aqlprofile.h"
++#include "hsa/hsa_ven_amd_aqlprofile.h"
+ #include "rocsched.hpp"
+ 
+ namespace roc {
+diff -urp ROCclr-rocm-5.3.3.orig/elf/test/CMakeLists.txt ROCclr-rocm-5.3.3/elf/test/CMakeLists.txt
+--- ROCclr-rocm-5.3.3.orig/elf/test/CMakeLists.txt	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/elf/test/CMakeLists.txt	2023-08-30 13:00:35.786646433 -0700
+@@ -26,24 +26,24 @@ cmake_minimum_required(VERSION 3.5.1)
+ 
+ find_package(amd_comgr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    /usr/
+   PATH_SUFFIXES
+     cmake/amd_comgr
+-    lib/cmake/amd_comgr)
++    @LIBDIR@/cmake/amd_comgr)
+ 
+ find_package(hsa-runtime64 REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    /usr/
+   PATH_SUFFIXES
+-    cmake/hsa-runtime64)
++    @LIBDIR@/cmake/hsa-runtime64)
+ 
+ find_package(Threads REQUIRED)
+ 
+ # Look for ROCclr which contains elfio
+ find_package(ROCclr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm
+-    /opt/rocm/rocclr)
++    /usr/
++    /usr/rocclr)
+ 
+ add_executable(elf_test main.cpp)
+ set_target_properties(
+@@ -60,4 +60,4 @@ add_definitions(-DUSE_COMGR_LIBRARY -DCO
+ 
+ target_link_libraries(elf_test PRIVATE amdrocclr_static)
+ 
+-#-------------------------------------elf_test--------------------------------------#
+\ No newline at end of file
++#-------------------------------------elf_test--------------------------------------#
+diff -urp ROCclr-rocm-5.3.3.orig/elf/test/main.cpp ROCclr-rocm-5.3.3/elf/test/main.cpp
+--- ROCclr-rocm-5.3.3.orig/elf/test/main.cpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/elf/test/main.cpp	2023-08-30 13:00:55.546646831 -0700
+@@ -45,8 +45,8 @@ static constexpr size_t rodataSymbolInfo
+ 
+ // Elf::COMMENT,        ".comment",        1, SHT_PROGBITS, 0,
+ static const amd::Elf::SymbolInfo commentSymbolInfos_[] = {
+-    { ".comment", nullptr, 0, "compile", "-g -I/opt/include",  strlen("-g -I/opt/include") + 1 },
+-    { ".comment", nullptr, 0, "link",    "-g -l/opt/rocm/lib", strlen("-g -l/opt/rocm/lib") + 1 },
++    { ".comment", nullptr, 0, "compile", "-g -I/usr/include",  strlen("-g -I/usr/include") + 1 },
++    { ".comment", nullptr, 0, "link",    "-g -l/usr/@LIBDIR@", strlen("-g -l/usr/@LIBDIR@") + 1 },
+   };
+ static constexpr size_t commentSymbolInfosSize_ = sizeof(commentSymbolInfos_)
+     / sizeof(commentSymbolInfos_[0]);
+diff -urp ROCclr-rocm-5.3.3.orig/os/os_posix.cpp ROCclr-rocm-5.3.3/os/os_posix.cpp
+--- ROCclr-rocm-5.3.3.orig/os/os_posix.cpp	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/os/os_posix.cpp	2023-08-30 13:03:29.054649922 -0700
+@@ -444,7 +444,7 @@ uint64_t Os::timerResolutionNanos() {
+ 
+ const char* Os::libraryExtension() { return MACOS_SWITCH(".dylib", ".so"); }
+ 
+-const char* Os::libraryPrefix() { return "lib"; }
++const char* Os::libraryPrefix() { return "@LIBDIR@"; }
+ 
+ const char* Os::objectExtension() { return ".o"; }
+ 
+diff -urp ROCclr-rocm-5.3.3.orig/README.md ROCclr-rocm-5.3.3/README.md
+--- ROCclr-rocm-5.3.3.orig/README.md	2022-10-12 21:06:19.000000000 -0700
++++ ROCclr-rocm-5.3.3/README.md	2023-08-30 13:00:19.658646108 -0700
+@@ -42,7 +42,7 @@ Here is command to build ROCclr:
+ ```bash
+ cd "$ROCclr_DIR"
+ mkdir -p build; cd build
+-cmake -DOPENCL_DIR="$OPENCL_DIR" -DCMAKE_INSTALL_PREFIX=/opt/rocm/rocclr ..
++cmake -DOPENCL_DIR="$OPENCL_DIR" -DCMAKE_INSTALL_PREFIX=/usr/rocclr ..
+ make -j$(nproc)
+ sudo make install
+ ```
+@@ -55,7 +55,7 @@ git clone -b main https://github.com/ROC
+ export HIP_DIR="$(readlink -f HIP)"
+ cd "$HIP_DIR"
+ mkdir -p build; cd build
+-cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
++cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/usr/" ..
+ make -j$(nproc)
+ ```
+ 

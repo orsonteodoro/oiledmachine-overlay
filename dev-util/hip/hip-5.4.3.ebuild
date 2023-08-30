@@ -28,7 +28,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r15"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r16"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -97,16 +97,26 @@ BDEPEND="
 		)
 	)
 "
-PATCHES=(
+CLR_PATCHES=(
+	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+	"${FILESDIR}/rocclr-5.1.3-path-changes.patch"
+)
+HIP_PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+)
+HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-DisableTest.patch"
 	"${FILESDIR}/${PN}-5.0.1-hip_vector_types.patch"
 	"${FILESDIR}/${PN}-5.0.2-set-build-id.patch"
 	"${FILESDIR}/${PN}-5.3.3-remove-cmake-doxygen-commands.patch"
 	"${FILESDIR}/${PN}-5.3.3-disable-Werror.patch"
-	"${FILESDIR}/0001-SWDEV-352878-LLVM-pkg-search-directly-using-find_dep.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-5.6.0-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-5.4.3-path-changes.patch"
+)
+OCL_PATCHES=(
+	"${FILESDIR}/rocm-opencl-runtime-5.3.3-path-changes.patch"
 )
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
@@ -126,27 +136,13 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	eapply "${HIPAMD_PATCHES[@]}"
 
 	eapply_user
 
-	# Use Gentoo slot number, otherwise git hash is attempted in vain.
+	# Use the ebuild slot number, otherwise git hash is attempted in vain.
 	sed \
 		-e "/set (HIP_LIB_VERSION_STRING/cset (HIP_LIB_VERSION_STRING ${SLOT#*/})" \
-		-i \
-		CMakeLists.txt \
-		|| die
-
-	# correctly find HIP_CLANG_INCLUDE_PATH using cmake
-	local LLVM_PREFIX="$(get_llvm_prefix "${LLVM_MAX_SLOT}")"
-	sed \
-		-e "/set(HIP_CLANG_ROOT/s:\"\${ROCM_PATH}/llvm\":${LLVM_PREFIX}:" \
-		-i \
-		hip-config.cmake.in \
-		|| die
-
-	# correct libs and cmake install dir
-	sed \
-		-e "/\${HIP_COMMON_DIR}/s:cmake DESTINATION .):cmake/ DESTINATION share/cmake/Modules):" \
 		-i \
 		CMakeLists.txt \
 		|| die
@@ -159,73 +155,27 @@ src_prepare() {
 		|| die
 
 	pushd "${HIP_S}" || die
-	eapply "${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"
-	eapply "${FILESDIR}/${PN}-5.4.3-correct-ldflag.patch"
-	eapply "${FILESDIR}/${PN}-5.4.3-clang-version.patch"
-	eapply "${FILESDIR}/${PN}-5.4.3-clang-include.patch"
-	eapply "${FILESDIR}/0003-SWDEV-352878-Removed-relative-path-based-CLANG-inclu.patch"
-	eapply "${FILESDIR}/${PN}-5.4.3-fix-HIP_CLANG_PATH-detection.patch"
-	eapply "${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+		eapply "${HIP_PATCHES[@]}"
 
-	# Changed --hip-device-lib-path to "/usr/$(get_libdir)/amdgcn/bitcode".
-	# It must align with "dev-libs/rocm-device-libs".
-	sed \
-		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode:" \
-		-i \
-		"${S}/hip-config.cmake.in" \
-		|| die
-
-	einfo "prefixing hipcc and its utils..."
-	hprefixify $(grep \
-		-rl \
-		--exclude-dir="build/" \
-		--exclude="hip-config.cmake.in" \
-		"/usr" \
-		"${S}")
-	hprefixify $(grep \
-		-rl \
-		--exclude-dir="build/" \
-		--exclude="hipcc.pl" \
-		"/usr" \
-		"${HIP_S}")
-
-	# Faster
-	local LLVM_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}"
-	local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-		| sed -e "s|sys-devel/clang-||g" \
-	)
-	local clang_slot=""
-	if ver_test ${clang_pv%%.*} -ge 16 ; then
-		clang_slot="${LLVM_VERSION}"
-	else
-		clang_slot=$(ver_cut 1-3 "${clang_pv}")
-	fi
-	local CLANG_RESOURCE_DIR="${EPREFIX}/usr/lib/clang/${clang_slot}"
-
-	cp \
-		$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
-		"${S}/bin/hipvars.pm" \
-		|| die "failed to replace hipvars.pm"
-	sed \
-		-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
-		-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
-		-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
-		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
-		-e "s,@CLANG_RESOURCE_DIR@,${CLANG_RESOURCE_DIR}," \
-		-i \
-		"${S}/bin/hipvars.pm" \
-		|| die
+		cp \
+			$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
+			"${HIP_S}/bin/hipvars.pm" \
+			|| die "failed to replace hipvars.pm"
+		sed \
+			-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
+			-e "s,@HIP_BASE_VERSION_MINOR@,$(ver_cut 2)," \
+			-e "s,@HIP_VERSION_PATCH@,$(ver_cut 3)," \
+			-i \
+			"${HIP_S}/bin/hipvars.pm" \
+			|| die
 	popd || die
 
 	if use rocm ; then
-		cd "${CLR_S}" || die
-		eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
-
 		pushd "${OCL_S}" || die
-			eapply "${FILESDIR}/rocm-opencl-runtime-5.3.3-path-changes.patch"
+			eapply "${OCL_PATCHES[@]}"
 		popd || die
 		pushd "${CLR_S}" || die
-			eapply "${FILESDIR}/rocclr-5.1.3-path-changes.patch"
+			eapply "${CLR_PATCHES[@]}"
 		popd || die
 	fi
 
