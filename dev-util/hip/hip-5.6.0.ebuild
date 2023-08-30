@@ -190,7 +190,7 @@ src_prepare() {
 		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
 		-e "s,@CLANG_RESOURCE_DIR@,${CLANG_RESOURCE_DIR}," \
 		-i \
-		bin/hipvars.pm \
+		"${HIPCC_S}/bin/hipvars.pm" \
 		|| die
 
 	popd || die

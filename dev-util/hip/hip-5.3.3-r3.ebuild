@@ -204,7 +204,7 @@ src_prepare() {
 
 	cp \
 		$(prefixify_ro "${FILESDIR}/hipvars-5.3.3.pm") \
-		"bin/hipvars.pm" \
+		"${S}/bin/hipvars.pm" \
 		|| die "failed to replace hipvars.pm"
 	sed \
 		-e "s,@HIP_BASE_VERSION_MAJOR@,$(ver_cut 1)," \
@@ -213,7 +213,7 @@ src_prepare() {
 		-e "s,@CLANG_PATH@,${LLVM_PREFIX}/bin," \
 		-e "s,@CLANG_RESOURCE_DIR@,${CLANG_RESOURCE_DIR}," \
 		-i \
-		bin/hipvars.pm \
+		"${S}/bin/hipvars.pm" \
 		|| die
 	popd || die
 
