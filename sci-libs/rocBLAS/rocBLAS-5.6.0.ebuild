@@ -139,6 +139,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-unbundle-Tensile.patch"
 	"${FILESDIR}/${PN}-5.4.2-add-missing-header.patch"
 	"${FILESDIR}/${PN}-5.4.2-link-cblas.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
 
@@ -155,11 +156,7 @@ src_prepare() {
 			"library/src/blas3/Tensile/Logic/" \
 			|| die
 	fi
-	sed \
-		-e "s:,-rpath=.*\":\":" \
-		-i \
-		clients/CMakeLists.txt \
-		|| die
+	rocm_src_prepare
 }
 
 src_configure() {

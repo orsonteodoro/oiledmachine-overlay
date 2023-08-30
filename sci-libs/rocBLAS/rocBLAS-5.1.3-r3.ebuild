@@ -123,9 +123,9 @@ RESTRICT="
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-fix-glibc-2.32-and-above.patch"
-	"${FILESDIR}/${PN}-5.0.2-change-default-Tensile-library-dir.patch"
 	"${FILESDIR}/${PN}-5.0.2-cpp_lib_filesystem.patch"
 	"${FILESDIR}/${PN}-5.0.2-unbundle-Tensile.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -141,25 +141,7 @@ src_prepare() {
 			"library/src/blas3/Tensile/Logic/" \
 			|| die
 	fi
-	# Fit for Gentoo FHS rule
-	sed \
-		-e "/PREFIX rocblas/d" \
-		-e "/<INSTALL_INTERFACE/s:include:include/rocblas:" \
-		-e "s:rocblas/include:include/rocblas:" \
-		-e "s:\\\\\${CPACK_PACKAGING_INSTALL_PREFIX}rocblas/lib:${EPREFIX}/usr/$(get_libdir)/rocblas:" \
-		-e "s:share/doc/rocBLAS:share/doc/${P}:" \
-		-e "/rocm_install_symlink_subdir( rocblas )/d" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-
-	sed \
-		-e "s:,-rpath=.*\":\":" \
-		-i \
-		clients/CMakeLists.txt \
-		|| die
-
-	eprefixify library/src/tensile_host.cpp
+	rocm_src_prepare
 }
 
 src_configure() {
