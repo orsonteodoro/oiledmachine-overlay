@@ -263,6 +263,10 @@ eerror
 	done
 }
 
+src_prepare() {
+	default
+}
+
 src_install() {
 	insinto "/opt/rocm-${MY_PV}/share/miopen/db"
 	local f
