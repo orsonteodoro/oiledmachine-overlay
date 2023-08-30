@@ -33,7 +33,7 @@ https://github.com/littlewu2508/littlewu2508.github.io/raw/main/gentoo-distfiles
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="client openmp r1"
+IUSE="client openmp r4"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}

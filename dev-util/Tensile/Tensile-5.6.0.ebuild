@@ -36,7 +36,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="client openmp r3"
+IUSE="client openmp r4"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -74,7 +74,7 @@ BDEPEND="
 RESTRICT="test"
 S="${WORKDIR}/${PN}-rocm-${PV}"
 _PATCHES=(
-#	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
+	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
 	"${FILESDIR}/${PN}-5.6.0-output-commands.patch"
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"

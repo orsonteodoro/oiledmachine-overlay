@@ -32,7 +32,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="client openmp r1"
+IUSE="client openmp r4"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
