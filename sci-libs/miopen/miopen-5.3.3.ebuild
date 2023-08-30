@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="comgr debug hiprtc kernels opencl +rocm test r1"
+IUSE="comgr debug hiprtc kernels mlir opencl +rocm test r1"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -109,33 +109,24 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # See also pr #1830
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
+
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
+}
 
 src_prepare() {
 	cmake_src_prepare
 
 	hipconfig --help >/dev/null || die
 	sed \
-		-e "s:/opt/rocm/llvm:$(get_llvm_prefix ${LLVM_MAX_SLOT}) NO_DEFAULT_PATH:" \
-		-e "s:/opt/rocm/hip:$(hipconfig -p) NO_DEFAULT_PATH:" \
-		-e '/set( MIOPEN_INSTALL_DIR/s:miopen:${CMAKE_INSTALL_PREFIX}:' \
 		-e '/MIOPEN_TIDY_ERRORS ALL/d' \
 		-i CMakeLists.txt \
 		|| die
 
-	sed \
-		-e "/rocm_install_symlink_subdir(\${MIOPEN_INSTALL_DIR})/d" \
-		-i src/CMakeLists.txt \
-		|| die
-	sed \
-		-e "/add_test/s:--build \${CMAKE_CURRENT_BINARY_DIR}:--build ${BUILD_DIR}:" \
-		-i test/CMakeLists.txt \
-		|| die
-
-	sed \
-		-e "s:\${AMD_DEVICE_LIBS_PREFIX}/lib:${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode:" \
-		-i cmake/hip-config.cmake \
-		|| die
+	rocm_src_prepare
 
 	# This plus avoid-metadata-error-for-vanilla-clang.patch fix bug mentioned
 	# in https://github.com/ROCmSoftwarePlatform/MIOpen/issues/1731

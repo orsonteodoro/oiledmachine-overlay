@@ -1,0 +1,697 @@
+diff -urp MIOpen-rocm-5.6.0.orig/cmake/ClangTidy.cmake MIOpen-rocm-5.6.0/cmake/ClangTidy.cmake
+--- MIOpen-rocm-5.6.0.orig/cmake/ClangTidy.cmake	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/cmake/ClangTidy.cmake	2023-08-29 21:47:43.629543438 -0700
+@@ -43,7 +43,7 @@ find_program(CLANG_TIDY_EXE
+     PATH_SUFFIXES
+         compiler/bin
+     PATHS
+-        /opt/rocm/llvm/bin
++        /usr/lib/llvm/@LLVM_SLOT@/bin
+         /usr/local/opt/llvm/bin
+ )
+ 
+@@ -127,7 +127,7 @@ macro(enable_clang_tidy)
+         ${CLANG_TIDY_ANALYZE_TEMPORARY_DTORS}
+         -header-filter='${CLANG_TIDY_HEADER_FILTER}'
+         # Uncomment next line to save fixts in the fixits/ directory under the build directory.
+-        # You can apply them by /opt/rocm/llvm/bin/clang-apply-replacements fixits/
++        # You can apply them by /usr/llvm/bin/clang-apply-replacements fixits/
+         # -fix-errors
+     )
+     add_custom_target(tidy ${CLANG_TIDY_ALL})
+diff -urp MIOpen-rocm-5.6.0.orig/cmake/CppCheck.cmake MIOpen-rocm-5.6.0/cmake/CppCheck.cmake
+--- MIOpen-rocm-5.6.0.orig/cmake/CppCheck.cmake	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/cmake/CppCheck.cmake	2023-08-29 21:46:36.357542083 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        /usr/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+diff -urp MIOpen-rocm-5.6.0.orig/cmake/FindOpenCL.cmake MIOpen-rocm-5.6.0/cmake/FindOpenCL.cmake
+--- MIOpen-rocm-5.6.0.orig/cmake/FindOpenCL.cmake	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/cmake/FindOpenCL.cmake	2023-08-29 21:46:36.357542083 -0700
+@@ -34,7 +34,7 @@ find_path(OPENCL_INCLUDE_DIRS
+     /usr/local/include
+     /usr/local/cuda/include
+     /opt/cuda/include
+-    /opt/rocm/opencl/include
++    /usr/opencl/include
+     ${CMAKE_INSTALL_PREFIX}/opencl/include
+     DOC "OpenCL header file path"
+     )
+@@ -44,32 +44,32 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+     find_library( OPENCL_LIBRARIES
+         NAMES OpenCL
+         HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        $ENV{CUDA_PATH}/lib
++        ${OPENCL_ROOT}/@LIBDIR@
++        $ENV{AMDAPPSDKROOT}/@LIBDIR@
++        $ENV{CUDA_PATH}/@LIBDIR@
+         DOC "OpenCL dynamic library path"
+         PATH_SUFFIXES x86_64 x64 x86_64/sdk
+         PATHS
+-        /usr/lib
+-        /usr/local/cuda/lib
+-        /opt/cuda/lib
+-        /opt/rocm/opencl/lib
+-        ${CMAKE_INSTALL_PREFIX}/opencl/lib
++        /usr/@LIBDIR@
++        /usr/local/cuda/@LIBDIR@
++        /opt/cuda/@LIBDIR@
++        /usr/opencl/@LIBDIR@
++        ${CMAKE_INSTALL_PREFIX}/opencl/@LIBDIR@
+         )
+ else( )
+     find_library( OPENCL_LIBRARIES
+         NAMES OpenCL
+         HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        $ENV{CUDA_PATH}/lib
++        ${OPENCL_ROOT}/@LIBDIR@
++        $ENV{AMDAPPSDKROOT}/@LIBDIR@
++        $ENV{CUDA_PATH}/@LIBDIR@
+         DOC "OpenCL dynamic library path"
+         PATH_SUFFIXES x86 Win32
+ 
+         PATHS
+-        /usr/lib
+-        /usr/local/cuda/lib
+-        /opt/cuda/lib
++        /usr/@LIBDIR@
++        /usr/local/cuda/@LIBDIR@
++        /opt/cuda/@LIBDIR@
+         )
+ endif( )
+ mark_as_advanced( OPENCL_LIBRARIES )
+diff -urp MIOpen-rocm-5.6.0.orig/cmake/hip-config.cmake MIOpen-rocm-5.6.0/cmake/hip-config.cmake
+--- MIOpen-rocm-5.6.0.orig/cmake/hip-config.cmake	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/cmake/hip-config.cmake	2023-08-29 21:46:36.357542083 -0700
+@@ -63,7 +63,7 @@ set(HIP_RUNTIME "VDI")
+ 
+ set_and_check( hip_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/include" )
+ set_and_check( hip_INCLUDE_DIRS "${hip_INCLUDE_DIR}" )
+-set_and_check( hip_LIB_INSTALL_DIR "${PACKAGE_PREFIX_DIR}/lib" )
++set_and_check( hip_LIB_INSTALL_DIR "${PACKAGE_PREFIX_DIR}/@LIBDIR@" )
+ set_and_check( hip_BIN_INSTALL_DIR "${PACKAGE_PREFIX_DIR}/bin" )
+ 
+ set_and_check(hip_HIPCC_EXECUTABLE "${hip_BIN_INSTALL_DIR}/hipcc")
+@@ -71,7 +71,7 @@ set_and_check(hip_HIPCONFIG_EXECUTABLE "
+ 
+ get_filename_component(HIP_CLANG_ROOT "${CMAKE_CXX_COMPILER}" PATH)
+ get_filename_component(HIP_CLANG_ROOT "${HIP_CLANG_ROOT}" PATH)
+-file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/*/include)
++file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/@CLANG_SLOT@/include)
+ find_path(HIP_CLANG_INCLUDE_PATH stddef.h
+     HINTS
+         ${HIP_CLANG_INCLUDE_SEARCH_PATHS}
+@@ -85,11 +85,11 @@ set(GPU_TARGETS "${AMDGPU_TARGETS}" CACH
+ include( "${CMAKE_CURRENT_LIST_DIR}/hip-targets.cmake" )
+ 
+ set_property(TARGET hip::device APPEND PROPERTY 
+-  INTERFACE_COMPILE_OPTIONS -x hip --hip-device-lib-path=${AMD_DEVICE_LIBS_PREFIX}/lib
++  INTERFACE_COMPILE_OPTIONS -x hip --hip-device-lib-path=/usr/@LIBDIR@/amdgcn/bitcode
+ )
+ 
+ set_property(TARGET hip::device APPEND PROPERTY 
+-  INTERFACE_LINK_LIBRARIES --hip-device-lib-path=${AMD_DEVICE_LIBS_PREFIX}/lib --hip-link
++  INTERFACE_LINK_LIBRARIES --hip-device-lib-path=/usr/@LIBDIR@/amdgcn/bitcode --hip-link
+ )
+ 
+ set_property(TARGET hip::device APPEND PROPERTY 
+diff -urp MIOpen-rocm-5.6.0.orig/cmake/rocm-path.cmake MIOpen-rocm-5.6.0/cmake/rocm-path.cmake
+--- MIOpen-rocm-5.6.0.orig/cmake/rocm-path.cmake	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/cmake/rocm-path.cmake	2023-08-29 21:46:36.357542083 -0700
+@@ -25,5 +25,5 @@
+ ################################################################################
+ 
+ # Find the compiler path when building rocBLAS
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH /usr)
+ 
+diff -urp MIOpen-rocm-5.6.0.orig/CMakeLists.txt MIOpen-rocm-5.6.0/CMakeLists.txt
+--- MIOpen-rocm-5.6.0.orig/CMakeLists.txt	2023-08-29 21:46:14.509541643 -0700
++++ MIOpen-rocm-5.6.0/CMakeLists.txt	2023-08-29 21:46:36.357542083 -0700
+@@ -45,16 +45,16 @@ endif()
+ 
+ # Default installation path
+ if(WIN32)
+-    set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "")
++#_cmake_modify_IGNORE    set(CMAKE_INSTALL_PREFIX "/usr/x86_64-w64-mingw32" CACHE PATH "")
+ else()
+-    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
++#_cmake_modify_IGNORE    set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "")
+ endif()
+ 
+ project ( MIOpen C CXX )
+ 
+ enable_testing()
+ 
+-find_package(ROCM 0.7.3 REQUIRED PATHS /opt/rocm)
++find_package(ROCM 0.7.3 REQUIRED PATHS /usr)
+ 
+ include(ROCMInstallTargets)
+ include(ROCMPackageConfigHelpers)
+@@ -119,7 +119,7 @@ else()
+     set(WINE_CMD)
+ endif()
+ 
+-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_INSTALL_PREFIX}/hip /opt/rocm /opt/rocm/llvm /opt/rocm/hip)
++list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/lib/llvm/@LLVM_SLOT@ ${CMAKE_INSTALL_PREFIX}/hip /usr /usr/lib/llvm/@LLVM_SLOT@ NO_DEFAULT_PATH /usr NO_DEFAULT_PATH)
+ 
+ option(ENABLE_HIP_WORKAROUNDS Off)
+ set(MIOPEN_INSTALL_CXX_HEADERS Off CACHE BOOL "Install MIOpen's C++ header interface")
+@@ -167,7 +167,7 @@ if( MIOPEN_BACKEND STREQUAL "OpenCL")
+     find_program(MIOPEN_HIP_COMPILER clang++
+         PATH_SUFFIXES bin
+         PATHS
+-            /opt/rocm/llvm
++            /usr/lib/llvm/@LLVM_SLOT@ NO_DEFAULT_PATH
+             ${CMAKE_INSTALL_PREFIX}/llvm
+     )
+     if(MIOPEN_HIP_COMPILER)
+@@ -192,7 +192,7 @@ endif()
+ 
+ 
+ # HIP is always required
+-find_package(hip REQUIRED PATHS /opt/rocm)
++find_package(hip REQUIRED PATHS /usr)
+ message(STATUS "Build with HIP ${hip_VERSION}")
+ target_flags(HIP_COMPILER_FLAGS hip::device)
+ # Remove cuda arch flags
+@@ -265,7 +265,7 @@ if( MIOPEN_BACKEND STREQUAL "HIP" OR MIO
+     find_program(HIP_OC_COMPILER clang
+         PATH_SUFFIXES bin
+         PATHS
+-            /opt/rocm
++            /usr
+             ${CMAKE_INSTALL_PREFIX}
+     )
+     if(HIP_OC_COMPILER)
+@@ -283,7 +283,7 @@ if( MIOPEN_BACKEND STREQUAL "HIP" OR MIO
+     # rocblas
+     set(MIOPEN_USE_ROCBLAS ON CACHE BOOL "")
+     if(MIOPEN_USE_ROCBLAS)
+-        find_package(rocblas REQUIRED PATHS /opt/rocm)
++        find_package(rocblas REQUIRED PATHS /usr)
+         message(STATUS "Build with rocblas ${rocblas_VERSION}")
+     else()
+         message(STATUS "Build without rocblas")
+@@ -302,7 +302,7 @@ if(MIOPEN_HIP_COMPILER MATCHES ".*clang\
+     find_program(MIOPEN_OFFLOADBUNDLER_BIN clang-offload-bundler
+         PATH_SUFFIXES bin
+         PATHS
+-            /opt/rocm/llvm
++            /usr/lib/llvm/@LLVM_SLOT@ NO_DEFAULT_PATH
+             ${CMAKE_INSTALL_PREFIX}/llvm
+     )
+ endif()
+@@ -350,10 +350,10 @@ find_program(MIOPEN_AMDGCN_ASSEMBLER
+     NAMES clang
+     PATHS
+         ${MIOPEN_AMDGCN_ASSEMBLER_PATH}
+-        /opt/rocm
+-        /opt/rocm/llvm
++        /usr
++        /usr/lib/llvm/@LLVM_SLOT@ NO_DEFAULT_PATH
+         ${CMAKE_INSTALL_PREFIX}
+-        ${CMAKE_INSTALL_PREFIX}/llvm
++        ${CMAKE_INSTALL_PREFIX}/lib/llvm/@LLVM_SLOT@
+     PATH_SUFFIXES
+         /opencl/bin/x86_64
+         /opencl/bin
+@@ -371,7 +371,7 @@ endif()
+ 
+ # miopengemm
+ if(MIOPEN_USE_MIOPENGEMM)
+-    find_package(miopengemm PATHS /opt/rocm)
++    find_package(miopengemm PATHS /usr)
+     if(NOT miopengemm_FOUND)
+         set(MIOPEN_USE_MIOPENGEMM 0)
+     endif()
+@@ -412,7 +412,7 @@ option( MIOPEN_DEBUG_FIND_DB_CACHING "Us
+ # FOR HANDLING ENABLE/DISABLE OPTIONAL BACKWARD COMPATIBILITY for FILE/FOLDER REORG
+ option(BUILD_FILE_REORG_BACKWARD_COMPATIBILITY "Build with file/folder reorg with backward compatibility enabled" ON)
+ 
+-set( MIOPEN_INSTALL_DIR miopen)
++set( MIOPEN_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+ set( DATA_INSTALL_DIR ${CMAKE_INSTALL_DATAROOTDIR}/miopen )
+ 
+ set(MIOPEN_GPU_SYNC Off CACHE BOOL "")
+@@ -776,8 +776,8 @@ enable_cppcheck(
+ )
+ 
+ 
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+ 
+ add_subdirectory(addkernels)
+@@ -794,3 +794,14 @@ add_subdirectory(utils)
+ if(MIOPEN_ENABLE_FIN)
+ add_subdirectory(fin)
+ endif()
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+Only in MIOpen-rocm-5.6.0: CMakeLists.txt.orig
+Only in MIOpen-rocm-5.6.0: CMakeLists.txt.rej
+diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
+--- MIOpen-rocm-5.6.0.orig/docs/embed.md	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/docs/embed.md	2023-08-29 21:48:32.897544430 -0700
+@@ -18,13 +18,13 @@ mkdir build; cd build;
+ ### Configuring for an embedded build
+ Minimal static build configuration line without embedded precompiled kernels package, or Find-Db:
+ ```
+-CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
+ ```
+ 
+ To enable HIP kernels in MIOpen while using embedded builds add: `-DMIOPEN_USE_HIP_KERNELS=On` to the configure line.
+ For example:
+ ```
+-CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_USE_HIP_KERNELS=On -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_USE_HIP_KERNELS=On -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
+ ```
+ 
+ 
+@@ -33,7 +33,7 @@ The Find-db provides a database of known
+ 
+ Example:
+ ```
+-CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 ..
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 ..
+ ```
+ 
+ This will configure the build directory for embedding not just the find-db, but also the performance database. 
+@@ -60,33 +60,33 @@ The script `utils/install_precompiled_ke
+ To embed the precompiled kernels package, configure cmake using the `MIOPEN_BINCACHE_PATH`
+ Example:
+ ```
+-CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On .. 
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On .. 
+ ```
+ 
+ #### Using the URL to a kernels binary 
+ Alternatively, the flag `MIOPEN_BINCACHE_PATH` can be used with a URL that contains the binary.
+ Example:
+ ```
+-CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/URL/to/binary -DMIOPEN_EMBED_BUILD=On .. 
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/URL/to/binary -DMIOPEN_EMBED_BUILD=On .. 
+ ```
+ 
+-Precompiled kernels packages are installed in `/opt/rocm/miopen/share/miopen/db`.
++Precompiled kernels packages are installed in `/usr/miopen/share/miopen/db`.
+ An example with the architecture gfx900 with 56 compute units:
+ ```
+-CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/opt/rocm/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/usr/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
+ ```
+ 
+ 
+ As of ROCm 3.8 / MIOpen 2.7 precompiled kernels binaries are located at [repo.radeon.com](http://repo.radeon.com/rocm/miopen-kernel/)
+ For example for the architecture gfx906 with 64 compute units:
+ ```
+-CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=http://repo.radeon.com/rocm/miopen-kernel/rel-3.8/gfx906_60.kdb -DMIOPEN_EMBED_BUILD=On .. 
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=http://repo.radeon.com/rocm/miopen-kernel/rel-3.8/gfx906_60.kdb -DMIOPEN_EMBED_BUILD=On .. 
+ ```
+ 
+ ### Full configuration line:
+ Putting it all together, building MIOpen statically, and embedding the performance database, find-db, and the precompiled kernels binary:
+ ```
+-CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 .. 
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 .. 
+ ```
+ 
+ After configuration is complete, run:
+diff -urp MIOpen-rocm-5.6.0.orig/install_deps.cmake MIOpen-rocm-5.6.0/install_deps.cmake
+--- MIOpen-rocm-5.6.0.orig/install_deps.cmake	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/install_deps.cmake	2023-08-29 21:46:45.757542273 -0700
+@@ -68,8 +68,8 @@ virtualenv_install(cget)
+ if(NOT DEFINED ENV{CXX} AND NOT DEFINED CMAKE_CXX_COMPILER AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+     find_program(CLANGXX clang++
+         PATHS
+-            /opt/rocm/llvm
+-            /opt/rocm
++            /usr/lib/llvm/@LLVM_SLOT@
++            /usr
+         PATH_SUFFIXES
+             bin
+     )
+@@ -84,8 +84,8 @@ endif()
+ if(NOT DEFINED ENV{CC} AND NOT DEFINED CMAKE_C_COMPILER AND NOT DEFINED CMAKE_TOOLCHAIN_FILE) 
+     find_program(CLANGC clang
+         PATHS
+-            /opt/rocm/llvm
+-            /opt/rocm
++            /usr/lib/llvm/@LLVM_SLOT@
++            /usr
+         PATH_SUFFIXES
+             bin
+     )
+@@ -109,7 +109,7 @@ if(DEFINED CMAKE_TOOLCHAIN_FILE)
+     set(TOOLCHAIN_FLAG -t ${CMAKE_TOOLCHAIN_FILE})
+ endif()
+ # Initialize directory
+-cget(init ${TOOLCHAIN_FLAG} -DCMAKE_INSTALL_RPATH=${PREFIX}/lib ${PARSE_UNPARSED_ARGUMENTS})
++cget(init ${TOOLCHAIN_FLAG} -DCMAKE_INSTALL_RPATH=${PREFIX}/@LIBDIR@ ${PARSE_UNPARSED_ARGUMENTS})
+ cget(ignore pcre)
+ 
+ # Install dependencies
+diff -urp MIOpen-rocm-5.6.0.orig/rbuild.ini MIOpen-rocm-5.6.0/rbuild.ini
+--- MIOpen-rocm-5.6.0.orig/rbuild.ini	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/rbuild.ini	2023-08-29 21:46:45.757542273 -0700
+@@ -1,14 +1,14 @@
+ [main]
+-cxx = ${rocm_path}/llvm/bin/clang++
+-cc = ${rocm_path}/llvm/bin/clang
++cxx = ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang++
++cc = ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
+ ignore = pcre
+ deps =
+     ROCmSoftwarePlatform/rocm-recipes
+     -f requirements.txt
+ 
+ [develop]
+-cxx = ${rocm_path}/llvm/bin/clang++
+-cc = ${rocm_path}/llvm/bin/clang
++cxx = ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang++
++cc = ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
+ ignore = pcre
+ deps =
+     -f dev-requirements.txt
+@@ -16,8 +16,8 @@ define =
+     BUILD_DEV=On
+ 
+ [fin]
+-cxx = ${rocm_path}/llvm/bin/clang++
+-cc = ${rocm_path}/llvm/bin/clang
++cxx = ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang++
++cc = ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
+ ignore = pcre
+ deps =
+     ROCmSoftwarePlatform/rocm-recipes
+diff -urp MIOpen-rocm-5.6.0.orig/README.md MIOpen-rocm-5.6.0/README.md
+--- MIOpen-rocm-5.6.0.orig/README.md	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/README.md	2023-08-29 21:46:45.757542273 -0700
+@@ -123,8 +123,8 @@ cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFI
+ 
+ An example cmake step can be:
+ ```
+-export CXX=/opt/rocm/llvm/bin/clang++ && \
+-cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFIX_PATH="/opt/rocm/;/opt/rocm/hip;/root/MIOpen/install_dir" ..
++export CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ && \
++cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFIX_PATH="/usr/;/usr/hip;/root/MIOpen/install_dir" ..
+ ```
+ 
+ Note: When specifying the path for the `CMAKE_PREFIX_PATH` variable, **do not** use the `~` shorthand for the user home directory.
+@@ -143,11 +143,11 @@ cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_H
+ 
+ And an example setting the dependency path for an envirnment in ROCm 3.5 and later:
+ ```
+-cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_HIP_COMPILER=/opt/rocm/llvm/bin/clang++ -DCMAKE_PREFIX_PATH="/opt/rocm/;/opt/rocm/hip;/root/MIOpen/install_dir" ..
++cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_HIP_COMPILER=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ -DCMAKE_PREFIX_PATH="/usr/;/usr/hip;/root/MIOpen/install_dir" ..
+ ```
+ ### Setting Up Locations
+ 
+-By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '/usr', this can be set by using `CMAKE_INSTALL_PREFIX`:
+ 
+ ```
+ cmake -DMIOPEN_BACKEND=OpenCL -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..
+Only in MIOpen-rocm-5.6.0: README.md.orig
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/ClangTidy.cmake MIOpen-rocm-5.6.0/src/composable_kernel/cmake/ClangTidy.cmake
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/ClangTidy.cmake	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/cmake/ClangTidy.cmake	2023-08-29 21:46:45.757542273 -0700
+@@ -43,8 +43,8 @@ find_program(CLANG_TIDY_EXE
+     PATH_SUFFIXES
+         compiler/bin
+     PATHS
+-        /opt/rocm/llvm/bin
+-        /opt/rocm/hcc
++        /usr/lib/llvm/@LLVM_SLOT@/bin
++        /usr/hcc
+         /usr/local/opt/llvm/bin
+ )
+ 
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/CppCheck.cmake MIOpen-rocm-5.6.0/src/composable_kernel/cmake/CppCheck.cmake
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/CppCheck.cmake	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/cmake/CppCheck.cmake	2023-08-29 21:46:45.757542273 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        /usr/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/array.hpp MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/array.hpp
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/array.hpp	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/array.hpp	2023-08-29 21:46:45.757542273 -0700
+@@ -10,7 +10,7 @@
+ /// (this is against the Standard, but it doesn't matter in this case).
+ /// But <type_traits> also defines std::true_type, per Standard.
+ /// However the latter definition conflicts with
+-/// /opt/rocm/include/hip/amd_detail/amd_hip_vector_types.h,
++/// /usr/include/hip/amd_detail/amd_hip_vector_types.h,
+ /// which defines std::true_type as well (which is wrong).
+ 
+ namespace std {
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/data_type.hpp MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/data_type.hpp
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/data_type.hpp	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/data_type.hpp	2023-08-29 21:46:45.757542273 -0700
+@@ -6,7 +6,7 @@
+ #ifdef __HIPCC_RTC__
+ #ifdef WORKAROUND_ISSUE_HIPRTC_TRUE_TYPE
+ /// Definitions from <cstdint>, <cmath> conflict with
+-/// /opt/rocm/include/hip/amd_detail/amd_hip_vector_types.h.
++/// /usr/include/hip/amd_detail/amd_hip_vector_types.h.
+ 
+ typedef signed char int8_t;
+ typedef signed short int16_t;
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/type.hpp MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/type.hpp
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/type.hpp	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/type.hpp	2023-08-29 21:46:45.757542273 -0700
+@@ -9,7 +9,7 @@
+ /// We need <type_traits> for std::remove_reference and std::remove_cv.
+ /// But <type_traits> also defines std::true_type, per Standard.
+ /// However the latter definition conflicts with
+-/// /opt/rocm/include/hip/amd_detail/amd_hip_vector_types.h,
++/// /usr/include/hip/amd_detail/amd_hip_vector_types.h,
+ /// which defines std::true_type as well (which is wrong).
+ 
+ namespace std {
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/host/host_tensor/CMakeLists.txt MIOpen-rocm-5.6.0/src/composable_kernel/host/host_tensor/CMakeLists.txt
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/host/host_tensor/CMakeLists.txt	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/host/host_tensor/CMakeLists.txt	2023-08-29 21:46:45.761542273 -0700
+@@ -18,4 +18,4 @@ target_link_libraries(host_tensor INTERF
+ target_compile_features(host_tensor PUBLIC)
+ set_target_properties(host_tensor PROPERTIES POSITION_INDEPENDENT_CODE ON)
+ 
+-install(TARGETS host_tensor LIBRARY DESTINATION lib) 
++install(TARGETS host_tensor LIBRARY DESTINATION @LIBDIR@) 
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/README.md MIOpen-rocm-5.6.0/src/composable_kernel/README.md
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/README.md	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/README.md	2023-08-29 21:46:45.761542273 -0700
+@@ -20,7 +20,7 @@ https://www.boost.org/doc/libs/1_66_0/mo
+ # Build
+ Add path of Boost
+ ```
+- export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
++ export LD_LIBRARY_PATH=/usr/local/@LIBDIR@:$LD_LIBRARY_PATH
+ ```
+ 
+ ```
+@@ -33,8 +33,8 @@ cmake
+ -D CMAKE_BUILD_TYPE=Release                                                                                                                    \
+ -D CMAKE_CXX_FLAGS="-DCK_AMD_GPU_GFX908 -O3 --amdgpu-target=gfx908 -mllvm --amdgpu-spill-vgpr-to-agpr=0 -gline-tables-only -save-temps=$PWD"   \
+ -D HIP_ONLINE_COMPILER_FLAGS="-DCK_AMD_GPU_GFX908"                                                                                             \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                                                                      \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                                                                 \
++-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                                                                      \
++-D CMAKE_PREFIX_PATH=/usr                                                                                                                 \
+ -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON                                                                                                              \
+ ..
+ ```
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/cmake-rocm.sh MIOpen-rocm-5.6.0/src/composable_kernel/script/cmake-rocm.sh
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/cmake-rocm.sh	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/script/cmake-rocm.sh	2023-08-29 21:46:45.761542273 -0700
+@@ -12,7 +12,7 @@ cmake
+ -D BUILD_DEV=ON                                                                                                                                \
+ -D CMAKE_BUILD_TYPE=Release                                                                                                                    \
+ -D CMAKE_CXX_FLAGS="-DCK_AMD_GPU_GFX908 -O3 --amdgpu-target=gfx908 -mllvm --amdgpu-spill-vgpr-to-agpr=0 -gline-tables-only -save-temps=$PWD"   \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                                                                      \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                                                                 \
++-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                                                                      \
++-D CMAKE_PREFIX_PATH=/usr                                                                                                                 \
+ -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON                                                                                                              \
+ ${MY_PROJECT_SOURCE}
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/hipclang_opt.sh MIOpen-rocm-5.6.0/src/composable_kernel/script/hipclang_opt.sh
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/hipclang_opt.sh	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/script/hipclang_opt.sh	2023-08-29 21:46:45.761542273 -0700
+@@ -2,24 +2,24 @@ rm *.ll *.s
+ 
+ BC_FILE=$1
+ 
+-/opt/rocm/llvm/bin/llvm-dis $BC_FILE -o original.ll
+-/opt/rocm/llvm/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
+-/opt/rocm/llvm/bin/opt -S -sroa inline.ll > sroa.ll
+-/opt/rocm/llvm/bin/opt -S -O3 sroa.ll > o3.ll
++/usr/lib/llvm/@LLVM_SLOT@/bin/llvm-dis $BC_FILE -o original.ll
++/usr/lib/llvm/@LLVM_SLOT@/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
++/usr/lib/llvm/@LLVM_SLOT@/bin/opt -S -sroa inline.ll > sroa.ll
++/usr/lib/llvm/@LLVM_SLOT@/bin/opt -S -O3 sroa.ll > o3.ll
+ 
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 original.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 inline.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 sroa.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 o3.ll
++/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 original.ll
++/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 inline.ll
++/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 sroa.ll
++/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 o3.ll
+ 
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa inline.ll > o3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa inline.ll > o3.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
+ 
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 opt.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 inline.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_2.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_4.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 opt.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 inline.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_2.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_3.ll
++#/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_4.ll
+diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/run.sh MIOpen-rocm-5.6.0/src/composable_kernel/script/run.sh
+--- MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/run.sh	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/script/run.sh	2023-08-29 21:46:45.761542273 -0700
+@@ -5,7 +5,7 @@
+  export GPU_DEVICE_ORDINAL=0
+ 
+ ## Boost
+- export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
++ export LD_LIBRARY_PATH=/usr/local/@LIBDIR@:$LD_LIBRARY_PATH
+ 
+ ## Compiling
+ #export OLC_DEBUG_HIP_VERBOSE=1
+diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp MIOpen-rocm-5.6.0/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp
+--- MIOpen-rocm-5.6.0.orig/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp	2023-08-29 21:46:45.761542273 -0700
+@@ -27,7 +27,7 @@
+ #ifdef __HIPCC_RTC__
+ #ifdef WORKAROUND_ISSUE_HIPRTC_TRUE_TYPE
+ /// Definitions from <cstdint>, <cmath> conflict with
+-/// /opt/rocm/include/hip/amd_detail/amd_hip_vector_types.h.
++/// /usr/include/hip/amd_detail/amd_hip_vector_types.h.
+ 
+ typedef signed char int8_t;
+ typedef signed short int16_t;
+diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/gpu_reference_kernel/naive_conv.cpp MIOpen-rocm-5.6.0/src/kernels/gpu_reference_kernel/naive_conv.cpp
+--- MIOpen-rocm-5.6.0.orig/src/kernels/gpu_reference_kernel/naive_conv.cpp	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/kernels/gpu_reference_kernel/naive_conv.cpp	2023-08-29 21:46:45.761542273 -0700
+@@ -31,7 +31,7 @@
+ #ifdef __HIPCC_RTC__
+ #ifdef WORKAROUND_ISSUE_HIPRTC_TRUE_TYPE
+ /// Definitions from <cstdint>, <cmath> conflict with
+-/// /opt/rocm/include/hip/amd_detail/amd_hip_vector_types.h.
++/// /usr/include/hip/amd_detail/amd_hip_vector_types.h.
+ 
+ typedef signed char int8_t;
+ typedef signed short int16_t;
+diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp
+--- MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp	2023-08-29 21:46:45.761542273 -0700
+@@ -8,7 +8,7 @@
+ /// We need <type_traits> for std::remove_reference and std::remove_cv.
+ /// But <type_traits> also defines std::true_type, per Standard.
+ /// However the latter definition conflicts with
+-/// /opt/rocm/include/hip/amd_detail/amd_hip_vector_types.h,
++/// /usr/include/hip/amd_detail/amd_hip_vector_types.h,
+ /// which defines std::true_type as well (which is wrong).
+ 
+ namespace std {
+diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp
+--- MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp	2023-08-29 21:46:45.761542273 -0700
+@@ -11,7 +11,7 @@
+ /// (this is against the Standard, but it doesn't matter in this case).
+ /// But <type_traits> also defines std::true_type, per Standard.
+ /// However the latter definition conflicts with
+-/// /opt/rocm/include/hip/amd_detail/amd_hip_vector_types.h,
++/// /usr/include/hip/amd_detail/amd_hip_vector_types.h,
+ /// which defines std::true_type as well (which is wrong).
+ 
+ namespace std {
+diff -urp MIOpen-rocm-5.6.0.orig/test/CMakeLists.txt MIOpen-rocm-5.6.0/test/CMakeLists.txt
+--- MIOpen-rocm-5.6.0.orig/test/CMakeLists.txt	2023-08-29 21:46:14.493541643 -0700
++++ MIOpen-rocm-5.6.0/test/CMakeLists.txt	2023-08-29 21:46:45.761542273 -0700
+@@ -97,7 +97,7 @@ if(NOT (MIOPEN_TEST_GFX900 OR MIOPEN_TES
+     find_program(ROCMINFO
+         NAMES rocminfo
+         PATHS
+-            /opt/rocm
++            /usr
+             ${CMAKE_INSTALL_PREFIX}
+         PATH_SUFFIXES
+             /bin
+@@ -623,7 +623,7 @@ function(add_custom_test NAME)
+ 
+ 
+     add_custom_target(${NAME} ${PARSE_UNPARSED_ARGUMENTS})
+-    add_test(NAME ${NAME} COMMAND ${CMAKE_COMMAND} --build ${CMAKE_CURRENT_BINARY_DIR} --target ${NAME})
++    add_test(NAME ${NAME} COMMAND ${CMAKE_COMMAND} --build /var/tmp/portage/sci-libs/miopen-5.1.3-r1/work/MIOpen-rocm-5.1.3_build --target ${NAME})
+ 
+     # The tests often change the contents of the user databases, which may affect performance after testing.
+     # For example, MIOPEN_DEBUG_FIND_ONLY_SOLVER results in non-optimal records in user-find-db.
+Only in MIOpen-rocm-5.6.0/test: CMakeLists.txt.orig
+diff -urp MIOpen-rocm-5.6.0.orig/test/test_perf.py MIOpen-rocm-5.6.0/test/test_perf.py
+--- MIOpen-rocm-5.6.0.orig/test/test_perf.py	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/test/test_perf.py	2023-08-29 21:49:00.273544982 -0700
+@@ -83,7 +83,7 @@ def run_driver_cmds(filename, install_pa
+         try:
+           idx = line.index('MIOpenDriver')
+           driver_cmd = line[idx:-1]
+-          cmd = f"export LD_LIBRARY_PATH={install_path}/lib && export MIOPEN_LOG_LEVEL=6 && "\
++          cmd = f"export LD_LIBRARY_PATH={install_path}/@LIBDIR@ && export MIOPEN_LOG_LEVEL=6 && "\
+                 f"{install_path}/bin/{driver_cmd} -V 0 -i 1 -w 1 -t 1"
+           print(f'Running cm: {cmd}')
+           proc = subprocess.Popen(cmd,
+diff -urp MIOpen-rocm-5.6.0.orig/utils/install_precompiled_kernels.sh MIOpen-rocm-5.6.0/utils/install_precompiled_kernels.sh
+--- MIOpen-rocm-5.6.0.orig/utils/install_precompiled_kernels.sh	2023-06-07 21:56:47.000000000 -0700
++++ MIOpen-rocm-5.6.0/utils/install_precompiled_kernels.sh	2023-08-29 21:46:45.761542273 -0700
+@@ -3,7 +3,7 @@ ROCMINFO=$(which rocminfo)
+ SUDO=$(which sudo)
+ if [ -z "$ROCMINFO" ];
+ then
+-    ROCMINFO=/opt/rocm/bin/rocminfo;
++    ROCMINFO=/usr/bin/rocminfo;
+ fi
+ 
+ if [ -f $ROCMINFO ];
