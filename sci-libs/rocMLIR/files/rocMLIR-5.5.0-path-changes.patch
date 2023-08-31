@@ -1,0 +1,346 @@
+diff -urp rocMLIR-rocm-5.5.0.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.5.0/cmake/llvm-project.cmake
+--- rocMLIR-rocm-5.5.0.orig/cmake/llvm-project.cmake	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/cmake/llvm-project.cmake	2023-08-31 00:04:21.905815619 -0700
+@@ -3,7 +3,7 @@ message(STATUS "Adding LLVM git-submodul
+ # Passed to lit.site.cfg.py.so that the out of tree Standalone dialect test
+ # can find MLIR's CMake configuration
+ set(MLIR_CMAKE_CONFIG_DIR
+-   "${CMAKE_BINARY_DIR}/lib${LLVM_LIBDIR_SUFFIX}/cmake/mlir")
++   "${CMAKE_BINARY_DIR}/lib${LLVM_LIBDIR_SUFFIX}/cmake/mlir") # oteodoro:  review
+ 
+ # MLIR settings
+ set(MLIR_TABLEGEN_EXE mlir-tblgen)
+@@ -19,7 +19,7 @@ set(LLVM_PROJ_SRC "${CMAKE_SOURCE_DIR}/e
+ # Configure ROCm support.
+ if (NOT DEFINED ROCM_PATH)
+   if (NOT DEFINED ENV{ROCM_PATH})
+-    set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
++    set(ROCM_PATH "/usr" CACHE PATH "Path to which ROCm has been installed") # oteodoro:  edited
+   else()
+     set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
+   endif()
+@@ -28,13 +28,16 @@ message(STATUS "ROCM_PATH: ${ROCM_PATH}"
+ 
+ # Cmake module paths
+ list(APPEND CMAKE_MODULE_PATH
+-  "${ROCM_PATH}/hip/cmake"
++  "${ROCM_PATH}/@LIBDIR@/cmake/hip" # oteodoro:  edited
+ )
+ list(APPEND CMAKE_MODULE_PATH
+-  "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/mlir"
++  "${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/mlir/cmake/modules" # oteodoro:  added
++  #"${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@/cmake/mlir" # oteodoro:  edited.  Using @LIBDIR@ breaks AddMLIR cmake detect.
+ )
+ list(APPEND CMAKE_MODULE_PATH
+-  "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib/cmake/llvm/"
++  "${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/mlir/cmake/modules" # oteodoro:  added
++  "${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/llvm/cmake/modules" # oteodoro:  added
++  #"${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/@LIBDIR@/cmake/llvm/" # oteodoro:  edited.  Using @LIBDIR@ breaks TableGen, AddLLVM, LLVMDistributionSupport, HandleLLVMOptions cmake detection
+ )
+ 
+ # Include dirs for MLIR and LLVM
+@@ -48,7 +51,7 @@ list(APPEND LLVM_INCLUDE_DIRS
+ )
+ 
+ # Linker flags
+-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib")
++set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/@LIBDIR@") # oteodoro:  edited
+ 
+ add_subdirectory("${LLVM_PROJ_SRC}/llvm" "external/llvm-project/llvm" EXCLUDE_FROM_ALL)
+ 
+Only in rocMLIR-rocm-5.5.0/cmake: llvm-project.cmake.orig
+diff -urp rocMLIR-rocm-5.5.0.orig/CMakeLists.txt rocMLIR-rocm-5.5.0/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/CMakeLists.txt	2023-08-31 00:04:21.937815618 -0700
+@@ -41,9 +41,9 @@ set(LLVM_TARGETS_TO_BUILD "X86;AMDGPU" C
+ # Pointers to: 1) external LLVM bins/libs, and 2) Rock Dialect bins/libs
+ set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/llvm" CACHE PATH "Path to LLVM sources")
+ set(LLVM_EXTERNAL_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/bin" CACHE PATH "")
+-set(LLVM_EXTERNAL_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib" CACHE PATH "")
++set(LLVM_EXTERNAL_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/@LIBDIR@" CACHE PATH "") # oteodoro:  edited
+ set(ROCMLIR_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin" CACHE PATH "")
+-set(ROCMLIR_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/lib" CACHE PATH "")
++set(ROCMLIR_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@" CACHE PATH "") # oteodoro:  edited
+ message(STATUS "LLVM_EXTERNAL_BIN_DIR: ${LLVM_EXTERNAL_BIN_DIR}")
+ message(STATUS "ROCMLIR_BIN_DIR: ${ROCMLIR_BIN_DIR}")
+ 
+@@ -66,7 +66,7 @@ if( BUILD_FAT_LIBROCKCOMPILER )
+   # rocm-runner is not supported with static libraries
+   set(MLIR_ENABLE_ROCM_RUNNER 0 CACHE BOOL "")
+   set(MLIR_INCLUDE_INTEGRATION_TESTS OFF CACHE BOOL "")
+-  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE STRING "")
++  set(CMAKE_INSTALL_PREFIX "/usr" CACHE STRING "") # oteodoro: edited
+   set(ROCMLIR_DRIVER_PR_E2E_TEST_ENABLED 0 CACHE BOOL "Enable build PR-triggered E2E tests for Rock driver")
+   # Note, this is a hack to ignore Pytorch added conda path
+   list(APPEND CMAKE_IGNORE_PATH /opt/conda)
+diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp rocMLIR-rocm-5.5.0/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp
+--- rocMLIR-rocm-5.5.0.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-08-31 00:04:21.965815617 -0700
+@@ -238,8 +238,8 @@ RocmInstallationDetector::getInstallatio
+       }
+     }
+ 
+-    // Some versions of the rocm llvm package install to /opt/rocm/llvm/bin
+-    // Some versions of the aomp package install to /opt/rocm/aomp/bin
++    // Some versions of the rocm llvm package install to /usr/lib/llvm/@LLVM_SLOT@/bin  // oteodoro: edited
++    // Some versions of the aomp package install to /opt/aomp/@LLVM_SLOT@/bin           // oteodoro: edited
+     if (ParentName == "llvm" || ParentName.startswith("aomp"))
+       ParentDir = llvm::sys::path::parent_path(ParentDir);
+ 
+@@ -267,9 +267,11 @@ RocmInstallationDetector::getInstallatio
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
+ 
+-  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
++  ROCmSearchDirs.emplace_back(D.SysRoot + "/usr", // oteodoro:  edited
+                               /*StrictChecking=*/true);
+ 
++// oteodoro:  disabled
++#if 0
+   // Find the latest /opt/rocm-{release} directory.
+   std::error_code EC;
+   std::string LatestROCm;
+@@ -305,6 +307,7 @@ RocmInstallationDetector::getInstallatio
+   if (!LatestROCm.empty())
+     ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/" + LatestROCm,
+                                 /*StrictChecking=*/true);
++#endif
+ 
+   DoPrintROCmSearchDirs();
+   return ROCmSearchDirs;
+@@ -411,11 +414,13 @@ void RocmInstallationDetector::detectDev
+     };
+ 
+     // The possible structures are:
++    // - ${ROCM_ROOT}/@LIBDIR@/amdgcn/bitcode/* // oteodoro:  added
+     // - ${ROCM_ROOT}/amdgcn/bitcode/*
+     // - ${ROCM_ROOT}/lib/*
+     // - ${ROCM_ROOT}/lib/bitcode/*
+     // so try to detect these layouts.
+     static constexpr std::array<const char *, 2> SubDirsList[] = {
++        {"@LIBDIR@/amdgcn", "bitcode"}, // oteodoro:  edited
+         {"amdgcn", "bitcode"},
+         {"lib", ""},
+         {"lib", "bitcode"},
+diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt rocMLIR-rocm-5.5.0/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-08-31 00:04:21.977815617 -0700
+@@ -6,7 +6,7 @@
+ # //
+ # //===----------------------------------------------------------------------===//
+ 
+-find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr) # oteodoro:  edited
+ if (NOT ${hsa-runtime64_FOUND})
+   message(STATUS "Not building amdgpu-arch: hsa-runtime64 not found")
+   return()
+diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt rocMLIR-rocm-5.5.0/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-08-31 00:04:21.977815617 -0700
+@@ -133,7 +133,7 @@ if(MLIR_ENABLE_ROCM_CONVERSIONS)
+       "LLD is not enabled, please reconfigure llvm build")
+   endif()
+ 
+-  set(DEFAULT_ROCM_PATH "/opt/rocm" CACHE PATH "Fallback path to search for ROCm installs")
++  set(DEFAULT_ROCM_PATH "/usr" CACHE PATH "Fallback path to search for ROCm installs") # oteodoro:  edited
+   target_compile_definitions(obj.MLIRGPUTransforms
+     PRIVATE
+     __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"
+diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt rocMLIR-rocm-5.5.0/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-08-31 00:04:21.977815617 -0700
+@@ -192,12 +192,12 @@ if(MLIR_ENABLE_ROCM_RUNNER)
+   # Configure ROCm support.
+   if (NOT DEFINED ROCM_PATH)
+     if (NOT DEFINED ENV{ROCM_PATH})
+-      set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
++      set(ROCM_PATH "/usr" CACHE PATH "Path to which ROCm has been installed") # oteodoro:  edited
+     else()
+       set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
+     endif()
+   endif()
+-  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/hip")
++  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/@LIBDIR@/cmake/hip")
+   find_package(hip REQUIRED)
+ 
+   if (NOT DEFINED ROCM_TEST_CHIPSET)
+diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt rocMLIR-rocm-5.5.0/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-08-31 00:04:21.977815617 -0700
+@@ -20,7 +20,7 @@ if (NOT LIBOMPTARGET_BUILD_AMDGPU_PLUGIN
+ endif()
+ 
+ # as of rocm-3.7, hsa is installed with cmake packages and kmt is found via hsa
+-find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr) # oteodoro:  edited
+ 
+ if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(ppc64le)|(aarch64)$" AND CMAKE_SYSTEM_NAME MATCHES "Linux")
+   libomptarget_say("Not building AMDGPU plugin: only support AMDGPU in Linux x86_64, ppc64le, or aarch64 hosts")
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/CMakeLists.txt	2023-08-31 00:04:53.489814605 -0700
+@@ -4,7 +4,7 @@ message(STATUS "LLVM_BUILD_LIBRARY_DIR:
+ message(STATUS "LLVM_DEFINITIONS: ${LLVM_DEFINITIONS}")
+ 
+ set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/bin)
+-set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/lib)
++set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/@LIBDIR@) # oteodoro:  edited
+ set(MLIR_BINARY_DIR ${CMAKE_BINARY_DIR})
+ set(MLIR_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+ 
+Only in rocMLIR-rocm-5.5.0/mlir: CMakeLists.txt.orig
+Only in rocMLIR-rocm-5.5.0/mlir: CMakeLists.txt.rej
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Tuning/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Tuning/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Tuning/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Tuning/CMakeLists.txt	2023-08-31 00:04:21.977815617 -0700
+@@ -22,7 +22,7 @@ if (ROCMLIR_SQLITE_ENABLED)
+   if (SQLITE3_FOUND)
+     set(MIOPEN_PATH ${ROCM_PATH}/miopen)
+     if (NOT MIOPEN_SYSTEM_DB_PATH)
+-      set(MIOPEN_SYSTEM_DB_PATH "${MIOPEN_PATH}/share/miopen/db/miopen.db")
++      set(MIOPEN_SYSTEM_DB_PATH "/usr/share/miopen/db/miopen.db") # oteodoro:  edited
+     endif()
+     if (EXISTS "${MIOPEN_SYSTEM_DB_PATH}")
+       message(STATUS "miopen system perfdb path: ${MIOPEN_SYSTEM_DB_PATH}")
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Tuning/SqliteDb.cpp rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Tuning/SqliteDb.cpp
+--- rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Tuning/SqliteDb.cpp	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/lib/Dialect/Rock/Tuning/SqliteDb.cpp	2023-08-31 00:04:21.977815617 -0700
+@@ -152,7 +152,7 @@ SQLitePerfDb::SQLitePerfDb(const std::st
+ }
+ 
+ SQLitePerfDb mlir::getDb(const llvm::SmallString<8> &arch, std::size_t num_cu) {
+-  // DB path: "/opt/rocm/rock/share/rock/db/rock.db"
++  // DB path: "/usr/share/rock/db/rock.db" // oteodoro:  edited
+   return {ROCK_SYSTEM_DB_PATH, true, std::string(arch), num_cu};
+ }
+ 
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-lib/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-lib/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/tools/rocmlir-lib/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/tools/rocmlir-lib/CMakeLists.txt	2023-08-31 00:04:21.977815617 -0700
+@@ -117,9 +117,9 @@ if(BUILD_FAT_LIBROCKCOMPILER)
+     set(pkg_config_file ${package_name}Config.cmake)
+     set(pkg_version_file ${package_name}ConfigVersion.cmake)
+     set(INCLUDE_DIR include/${package_name}/)
+-    set(LIB_CMAKE_DIR lib/cmake/${package_name}/)
++    set(LIB_CMAKE_DIR @LIBDIR@/cmake/${package_name}/) # oteodoro:  edited
+ 
+-    # Install lib${lib_name}.a to ${CMAKE_INSTALL_PREFIX}/lib/${package_name}/
++    # Install lib${lib_name}.a to ${CMAKE_INSTALL_PREFIX}/@LIBDIR@/${package_name}/ # oteodoro:  edited
+     # and group it into the ${export-set}
+     # The INTERFACE_INCLUDE_DIRECTORIES will be set as the property of the exported library
+     # so that when comsumer libraries (Rock) link in lib${LIBRARY_NAME}, ${INCLUDE_DIR} is
+@@ -130,7 +130,7 @@ if(BUILD_FAT_LIBROCKCOMPILER)
+     endif()
+     install(TARGETS ${lib_name}
+       EXPORT ${export_set}
+-      ARCHIVE DESTINATION lib/${package_name}
++      ARCHIVE DESTINATION @LIBDIR@/${package_name} # oteodoro:  edited
+       COMPONENT ${component_name}
+       INCLUDES DESTINATION ${INCLUDE_DIR} ${EXTRA_INCLUDES}
+     )
+@@ -145,7 +145,7 @@ if(BUILD_FAT_LIBROCKCOMPILER)
+ 
+     configure_package_config_file(cmake/${pkg_config_file}.in
+       "${CMAKE_CURRENT_BINARY_DIR}/${pkg_config_file}"
+-      INSTALL_DESTINATION lib/cmake/${package_name}
++      INSTALL_DESTINATION @LIBDIR@/cmake/${package_name} # oteodoro:  edited
+       PATH_VARS LIB_CMAKE_DIR
+       NO_SET_AND_CHECK_MACRO
+       NO_CHECK_REQUIRED_COMPONENTS_MACRO
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/parameterSweeps.py rocMLIR-rocm-5.5.0/mlir/utils/performance/parameterSweeps.py
+--- rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/parameterSweeps.py	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/utils/performance/parameterSweeps.py	2023-08-31 00:04:21.977815617 -0700
+@@ -363,13 +363,13 @@ async def runConfig(paramIter: Iterable[
+     return len(failures) == 0
+ 
+ def getArch():
+-    p = subprocess.run(["/opt/rocm/bin/rocm_agent_enumerator", "-name"], check=True,
++    p = subprocess.run(["/usr/bin/rocm_agent_enumerator", "-name"], check=True, # oteodoro:  edited
+                        stdout=subprocess.PIPE)
+     agents = set(x.decode("utf-8") for x in p.stdout.split())
+     if not agents:
+         # TODO: Remove this workaround for a bug in rocm_agent_enumerator -name
+         # Once https://github.com/RadeonOpenCompute/rocminfo/pull/59 lands
+-        q = subprocess.run(["/opt/rocm/bin/rocm_agent_enumerator"],
++        q = subprocess.run(["/usr/bin/rocm_agent_enumerator"], # oteodoro:  edited
+                               check=True, stdout=subprocess.PIPE)
+         agents = set(x.decode("utf-8") for x in q.stdout.split() if x != b"gfx000")
+     return agents
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/perfRunner.py rocMLIR-rocm-5.5.0/mlir/utils/performance/perfRunner.py
+--- rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/perfRunner.py	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/utils/performance/perfRunner.py	2023-08-31 00:04:21.981815617 -0700
+@@ -24,7 +24,7 @@ from dataclasses import dataclass
+ from typing import Optional
+ 
+ # global variables.
+-ROCPROF = '/opt/rocm/bin/rocprof'
++ROCPROF = '/usr/bin/rocprof' # oteodoro:  edited
+ BENCHMARKING_RESULT_FILE_NAME = 'results.stats.csv'
+ DIRECTIONS = ['-F 1', '-F 2', '-F 4']
+ DATA_TYPES = ['conv', 'convfp16', 'convint8']
+@@ -128,7 +128,7 @@ def create_paths(config_file_path, mlir_
+         rocblas_benchmark_driver_location = mlir_bin_dir_path / 'rocblas-benchmark-driver'
+         llvm_bin_dir = str((Path(mlir_build_dir_path) / 'external/llvm-project/llvm/bin').resolve())
+         mlir_lib_dir = str((Path(mlir_build_dir_path) / 'lib').resolve())
+-        llvm_lib_dir = str((Path(mlir_build_dir_path) / 'external/llvm-project/llvm/lib').resolve())
++        llvm_lib_dir = str((Path(mlir_build_dir_path) / 'external/llvm-project/llvm/@LIBDIR@').resolve()) # oteodoro:  edited
+         mlir_paths = MLIRPaths(rocmlir_gen_path = mlir_bin_dir + '/rocmlir-gen',
+             rocmlir_driver_path = mlir_bin_dir + '/rocmlir-driver',
+             cpu_runner_path = llvm_bin_dir + '/mlir-cpu-runner',
+@@ -695,19 +695,19 @@ def is_xdlops_present() -> bool:
+     xdlop_supported_gpus_str = xdlop_supported_gpus[0]
+     for gpu in xdlop_supported_gpus[1:]:
+         xdlop_supported_gpus_str += '|' + gpu
+-    r = subprocess.run(f"/opt/rocm/bin/rocm_agent_enumerator -t GPU | grep -q -E '{xdlop_supported_gpus_str}'", shell=True)
++    r = subprocess.run(f"/usr/bin/rocm_agent_enumerator -t GPU | grep -q -E '{xdlop_supported_gpus_str}'", shell=True) # oteodoro:  edited
+     if r.returncode == 0:
+         return True
+     return False
+ 
+ def getArch():
+-    p = subprocess.run(["/opt/rocm/bin/rocm_agent_enumerator", "-name"], check=True,
++    p = subprocess.run(["/usr/bin/rocm_agent_enumerator", "-name"], check=True, # oteodoro:  edited
+                        stdout=subprocess.PIPE)
+     agents = set(x.decode("utf-8") for x in p.stdout.split())
+     if not agents:
+         # TODO: Remove this workaround for a bug in rocm_agent_enumerator -name
+         # Once https://github.com/RadeonOpenCompute/rocminfo/pull/59 lands
+-        q = subprocess.run(["/opt/rocm/bin/rocm_agent_enumerator"],
++        q = subprocess.run(["/usr/bin/rocm_agent_enumerator"], # oteodoro:  edited
+                               check=True, stdout=subprocess.PIPE)
+         agents = set(x.decode("utf-8") for x in q.stdout.split() if x != b"gfx000")
+     return agents
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt rocMLIR-rocm-5.5.0/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt
+--- rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt	2023-08-31 00:04:21.981815617 -0700
+@@ -1,4 +1,4 @@
+-find_package(rocblas CONFIG HINTS /opt/rocm)
++find_package(rocblas CONFIG HINTS /usr) # oteodoro:  edited
+ if(NOT rocblas_FOUND)
+   message(WARNING "Could not find rocBLAS, not building a rocBLAS benchmark driver")
+ endif()
+diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/widgets/tune_MLIR_kernels.sh rocMLIR-rocm-5.5.0/mlir/utils/widgets/tune_MLIR_kernels.sh
+--- rocMLIR-rocm-5.5.0.orig/mlir/utils/widgets/tune_MLIR_kernels.sh	2023-01-04 06:20:51.000000000 -0800
++++ rocMLIR-rocm-5.5.0/mlir/utils/widgets/tune_MLIR_kernels.sh	2023-08-31 00:04:21.981815617 -0700
+@@ -70,9 +70,10 @@ buildlibrockCompiler() {
+ buildMIOpenWithlibrockCompiler() {
+     echo ">>> build MIOpenDriver with librockCompiler"
+     cd ${MIOPEN_DIR}
++# oteodoro:  edited
+     cmake . -G "Unix Makefiles" -B build -DCMAKE_BUILD_TYPE=Release \
+-          -DCMAKE_CXX_COMPILER=/opt/rocm/llvm/bin/clang++ \
+-          -DCMAKE_C_COMPILER=/opt/rocm/llvm/bin/clang \
++          -DCMAKE_CXX_COMPILER=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ \
++          -DCMAKE_C_COMPILER=/usr/lib/llvm/@LLVM_SLOT@/bin/clang \
+           -DMIOPEN_USE_MLIR=On \
+           -DMIOPEN_USE_COMPOSABLEKERNEL=Off \
+           -DMIOPEN_BACKEND=HIP \
+@@ -138,7 +139,7 @@ run_a_single_test() {
+         *) echo "$0: Unsupported direction flag $DIRECTION"; exit 2
+     esac
+ 
+-    case $(/opt/rocm/bin/rocm_agent_enumerator) in
++    case $(/usr/bin/rocm_agent_enumerator) in # oteodoro:  edited
+         *gfx908*|*gfx90a*)           XDLOPS=1 ;;
+         *gfx906*|*gfx900*|*gfx1030*) XDLOPS=0 ;;
+         *)                           echo "No useful GPU found." ; exit 2 ;;

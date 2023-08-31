@@ -5,9 +5,8 @@ EAPI=8
 
 LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..11} )
-ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
-inherit cmake llvm python-r1
+inherit cmake llvm python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/rocMLIR/"
@@ -50,6 +49,9 @@ BDEPEND="
 	virtual/pkgconfig
 "
 RESTRICT="test"
+PATCHES=(
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+)
 
 ccmake() {
 einfo "Running:  cmake ${@}"
@@ -68,6 +70,7 @@ einfo "Running:  emake $@"
 
 pkg_setup() {
 	python_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -75,6 +78,39 @@ src_prepare() {
 		external/llvm-project/llvm/CMakeLists.txt \
 		|| die
 	cmake_src_prepare
+
+        IFS=$'\n'
+        sed \
+                -i \
+                -e "s|/lib64)|/@LIBDIR@)|g" \
+                -e "s|BINARY_DIR}/lib/|BINARY_DIR}/@LIBDIR@/|g" \
+                -e "s|BINARY_DIR}/lib64/|BINARY_DIR}/@LIBDIR@/|g" \
+                -e "s|DESTINATION lib/|DESTINATION @LIBDIR@/|g" \
+                -e "s|DESTINATION lib64/|DESTINATION @LIBDIR@/|g" \
+		-e "s|INSTALL_PATH}/lib$|INSTALL_PATH}/@LIBDIR@$|g" \
+                $(find . \
+			\( \
+				   -name "CMakeLists.txt" \
+				-o -name "*.cmake" \
+			\) \
+		) \
+                || true
+        sed \
+                -i \
+		-e "s|/lib)|/@LIBDIR@)|g" \
+                $(find . \
+			\( \
+				\( \
+					   -name "CMakeLists.txt" \
+					-o -name "*.cmake" \
+				\) \
+				-a -not -path "*/external/llvm-project/clang-tools-extra/include-cleaner/unittests/CMakeLists.txt" \
+			\) \
+		) \
+                || true
+        IFS=$' \t\n'
+
+	rocm_src_prepare
 }
 
 # DO NOT REMOVE/CHANGE
@@ -93,6 +129,8 @@ build_rocmlir() {
 		["emake"]="Unix Makefiles"
 	        ["ninja"]="Ninja"
 	)
+	local libdir_suffix=$(get_libdir)
+	libdir_suffix="${libdir_suffix/lib}"
 	local mycmakeargs=(
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
 		-DBUILD_FAT_LIBROCKCOMPILER=ON # DO NOT CHANGE.  Static produces rocMLIR folder while shared does not.
@@ -112,13 +150,10 @@ build_rocmlir() {
 		-DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF
 
 		-DELLVM_VERSION_SUFFIX=roc
-		-DCMAKE_MODULE_PATH="${staging_prefix}/${EPREFIX}/usr/$(get_libdir)/${PN}/external/llvm-project/llvm/lib/cmake"
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
+		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 	)
-	export CXX="${HIP_CXX:-g++}"
-	if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
-ewarn "Using clang may result in symbol error."
-	fi
+	export CXX="${HIP_CXX:-clang++}"
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
@@ -161,18 +196,6 @@ sanitize_permissions() {
 	IFS=$' \t\n'
 }
 
-fix_rpath() {
-	IFS=$'\n'
-	for path in $(find "${ED}") ; do
-		if file "${path}" | grep -q "ELF 64-bit .* shared object" ; then
-			patchelf --set-rpath "\$ORIGIN/../$(get_libdir)" "${path}" || die
-		elif file "${path}" | grep -q "ELF 64-bit .* executable" ; then
-			patchelf --set-rpath "\$ORIGIN/../$(get_libdir)" "${path}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
 src_install() {
 	local staging_prefix="${PWD}/install"
 	mv \
@@ -180,16 +203,7 @@ src_install() {
 		"${ED}" \
 		|| die
 	cd "${ED}/usr" || die
-	mv \
-		"lib" \
-		"$(get_libdir)" \
-		|| die
 	sanitize_permissions
-	fix_rpath
-	sed -i -e "s|/lib/|/$(get_libdir)/|g" \
-		"${ED}/usr/$(get_libdir)/cmake/rocMLIR/rocMLIRTargets-release.cmake" \
-		"${ED}/usr/$(get_libdir)/cmake/rocMLIR/rocMLIRConfig.cmake" \
-		|| die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

@@ -412,6 +412,13 @@ eerror
 		$(grep -r -l -e "@ROCM_VERSION@" "${WORKDIR}") \
 		2>/dev/null || true
 
+	local libdir_suffix="$(get_libdir)"
+	libdir_suffix="${libdir_suffix/lib}"
+	sed \
+		-i \
+		-e "s|@LIBDIR_SUFFIX@|${libdir_suffix}|g" \
+		$(grep -r -l -e "@LIBDIR_SUFFIX@" "${WORKDIR}") \
+		2>/dev/null || true
 	sed \
 		-i \
 		-e "s|@PV@|${PV}|g" \
