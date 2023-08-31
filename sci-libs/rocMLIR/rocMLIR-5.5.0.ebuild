@@ -37,6 +37,7 @@ RDEPEND="
 	>=dev-db/sqlite-3:3
 	>=dev-python/pybind11-2.8[${PYTHON_USEDEP}]
 	media-libs/vulkan-loader
+	virtual/libc
 	|| (
 		(
 			~dev-util/hip-${PV}:${SLOT}
@@ -163,7 +164,7 @@ build_rocmlir() {
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 	)
-	export CXX="${HIP_CXX:-clang++}"
+	export CXX="${HIP_CXX:-clang++-${LLVM_MAX_SLOT}}"
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..

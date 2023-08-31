@@ -1,6 +1,6 @@
 diff -urp rocMLIR-rocm-5.1.3.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.1.3/cmake/llvm-project.cmake
 --- rocMLIR-rocm-5.1.3.orig/cmake/llvm-project.cmake	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/cmake/llvm-project.cmake	2023-08-31 01:14:05.641681236 -0700
++++ rocMLIR-rocm-5.1.3/cmake/llvm-project.cmake	2023-08-31 12:38:52.760361509 -0700
 @@ -3,7 +3,7 @@ message(STATUS "Adding LLVM git-submodul
  # Passed to lit.site.cfg.py.so that the out of tree Standalone dialect test
  # can find MLIR's CMake configuration
@@ -48,10 +48,9 @@ diff -urp rocMLIR-rocm-5.1.3.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.1.3/cm
  )
  
  add_subdirectory("${LLVM_PROJ_SRC}/llvm" "external/llvm-project/llvm" EXCLUDE_FROM_ALL)
-Only in rocMLIR-rocm-5.1.3/cmake: llvm-project.cmake.orig
 diff -urp rocMLIR-rocm-5.1.3.orig/CMakeLists.txt rocMLIR-rocm-5.1.3/CMakeLists.txt
 --- rocMLIR-rocm-5.1.3.orig/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/CMakeLists.txt	2023-08-31 01:14:27.829680524 -0700
++++ rocMLIR-rocm-5.1.3/CMakeLists.txt	2023-08-31 12:38:52.772361508 -0700
 @@ -51,9 +51,9 @@ add_definitions(-DMLIR_ROCM_CONVERSIONS_
  
  # Pointers to: 1) external LLVM bins/libs, and 2) MIOpen Dialect bins/libs
@@ -73,11 +72,9 @@ diff -urp rocMLIR-rocm-5.1.3.orig/CMakeLists.txt rocMLIR-rocm-5.1.3/CMakeLists.t
  else()
    set(BUILD_SHARED_LIBS ON CACHE BOOL "")
    set(LLVM_BUILD_LLVM_DYLIB ON CACHE BOOL "")
-Only in rocMLIR-rocm-5.1.3: CMakeLists.txt.orig
-Only in rocMLIR-rocm-5.1.3: CMakeLists.txt.rej
 diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp rocMLIR-rocm-5.1.3/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp
 --- rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-08-31 01:14:05.661681236 -0700
++++ rocMLIR-rocm-5.1.3/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-08-31 12:38:52.780361508 -0700
 @@ -231,8 +231,8 @@ RocmInstallationDetector::getInstallatio
        }
      }
@@ -124,10 +121,9 @@ diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/lib/Driver/ToolCha
          {"amdgcn", "bitcode"},
          {"lib", ""},
          {"lib", "bitcode"},
-Only in rocMLIR-rocm-5.1.3/external/llvm-project/clang/lib/Driver/ToolChains: AMDGPU.cpp.orig
 diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt rocMLIR-rocm-5.1.3/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt
 --- rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-08-31 01:14:05.673681235 -0700
++++ rocMLIR-rocm-5.1.3/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-08-31 12:38:52.792361508 -0700
 @@ -6,7 +6,7 @@
  # //
  # //===----------------------------------------------------------------------===//
@@ -139,7 +135,7 @@ diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/tools/amdgpu-arch/
    return()
 diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt
 --- rocMLIR-rocm-5.1.3.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-08-31 01:14:53.941679685 -0700
++++ rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-08-31 12:38:52.792361508 -0700
 @@ -128,7 +128,7 @@ if(MLIR_ENABLE_ROCM_RUNNER)
      message(SEND_ERROR "lld is not enabled. Please revise LLVM_ENABLE_PROJECTS")
    endif()
@@ -149,12 +145,10 @@ diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMa
  
    target_compile_definitions(obj.MLIRGPUTransforms
      PRIVATE
-Only in rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/Dialect/GPU: CMakeLists.txt.orig
-Only in rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/Dialect/GPU: CMakeLists.txt.rej
 diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt
 --- rocMLIR-rocm-5.1.3.orig/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-08-31 01:14:05.673681235 -0700
-@@ -142,13 +142,13 @@ if(MLIR_ENABLE_ROCM_RUNNER)
++++ rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-08-31 12:44:14.672351169 -0700
+@@ -142,23 +142,27 @@ if(MLIR_ENABLE_ROCM_RUNNER)
    # Configure ROCm support.
    if (NOT DEFINED ROCM_PATH)
      if (NOT DEFINED ENV{ROCM_PATH})
@@ -167,14 +161,31 @@ diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/mlir/lib/ExecutionEngine
 +    set(HIP_PATH "${ROCM_PATH}" CACHE PATH "Path to which HIP has been installed") # oteodoro:  edited
    endif()
 -  set(CMAKE_MODULE_PATH "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
-+  set(CMAKE_MODULE_PATH "${HIP_PATH}/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH}) # oteodoro:  edited
-   find_package(HIP)
-   if (NOT HIP_FOUND)
+-  find_package(HIP)
++  set(CMAKE_MODULE_PATH "${ROCM_PATH}/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH}) # oteodoro:  edited
++  find_package(hip) # oteodoro:  edited
+-  if (NOT HIP_FOUND)
++  if (NOT hip_FOUND) # oteodoro:  edited
      message(SEND_ERROR "Building mlir with ROCm support requires a working ROCm and HIP install")
+   else()
+     message(STATUS "ROCm HIP version: ${HIP_VERSION}")
+   endif()
+ 
++  if (NOT DEFINED HIP_ROOT_DIR)
++    set(HIP_ROOT_DIR "/usr") # oteodoro:  added
++  endif()
++
+   # Locate HIP runtime library.
+   find_library(ROCM_RUNTIME_LIBRARY amdhip64
+-               PATHS "${HIP_ROOT_DIR}/lib")
++               PATHS "${HIP_ROOT_DIR}/@LIBDIR@") # oteodoro:  edited
+   if (NOT ROCM_RUNTIME_LIBRARY)
+     message(SEND_ERROR "Could not locate ROCm HIP runtime library")
+   else()
 Only in rocMLIR-rocm-5.1.3/external/llvm-project/mlir/lib/ExecutionEngine: CMakeLists.txt.orig
 diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt rocMLIR-rocm-5.1.3/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
 --- rocMLIR-rocm-5.1.3.orig/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-08-31 01:14:05.673681235 -0700
++++ rocMLIR-rocm-5.1.3/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-08-31 12:38:52.792361508 -0700
 @@ -14,7 +14,7 @@
  ################################################################################
  
@@ -184,10 +195,9 @@ diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/openmp/libomptarget/plug
  
  if(NOT LIBOMPTARGET_DEP_LIBELF_FOUND)
    libomptarget_say("Not building AMDGPU plugin: LIBELF not found")
-Only in rocMLIR-rocm-5.1.3/external/llvm-project/openmp/libomptarget/plugins/amdgpu: CMakeLists.txt.orig
 diff -urp rocMLIR-rocm-5.1.3.orig/mlir/CMakeLists.txt rocMLIR-rocm-5.1.3/mlir/CMakeLists.txt
 --- rocMLIR-rocm-5.1.3.orig/mlir/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/mlir/CMakeLists.txt	2023-08-31 01:14:05.673681235 -0700
++++ rocMLIR-rocm-5.1.3/mlir/CMakeLists.txt	2023-08-31 12:38:52.792361508 -0700
 @@ -4,7 +4,7 @@ message(STATUS "LLVM_BUILD_LIBRARY_DIR:
  message(STATUS "LLVM_DEFINITIONS: ${LLVM_DEFINITIONS}")
  
@@ -199,7 +209,7 @@ diff -urp rocMLIR-rocm-5.1.3.orig/mlir/CMakeLists.txt rocMLIR-rocm-5.1.3/mlir/CM
  
 diff -urp rocMLIR-rocm-5.1.3.orig/mlir/lib/Dialect/MIOpen/CMakeLists.txt rocMLIR-rocm-5.1.3/mlir/lib/Dialect/MIOpen/CMakeLists.txt
 --- rocMLIR-rocm-5.1.3.orig/mlir/lib/Dialect/MIOpen/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/mlir/lib/Dialect/MIOpen/CMakeLists.txt	2023-08-31 01:14:05.677681235 -0700
++++ rocMLIR-rocm-5.1.3/mlir/lib/Dialect/MIOpen/CMakeLists.txt	2023-08-31 12:38:52.792361508 -0700
 @@ -1,7 +1,7 @@
  # Configure ROCm support.
  if (NOT DEFINED ROCM_PATH)
@@ -211,7 +221,7 @@ diff -urp rocMLIR-rocm-5.1.3.orig/mlir/lib/Dialect/MIOpen/CMakeLists.txt rocMLIR
    endif()
 diff -urp rocMLIR-rocm-5.1.3.orig/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt rocMLIR-rocm-5.1.3/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt
 --- rocMLIR-rocm-5.1.3.orig/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
-+++ rocMLIR-rocm-5.1.3/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt	2023-08-31 01:14:05.677681235 -0700
++++ rocMLIR-rocm-5.1.3/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt	2023-08-31 12:38:52.796361508 -0700
 @@ -17,7 +17,7 @@ if (MLIR_MIOPEN_SQLITE_ENABLED)
    if (SQLITE3_FOUND)
      set(MIOPEN_PATH ${ROCM_PATH}/miopen)
@@ -221,4 +231,32 @@ diff -urp rocMLIR-rocm-5.1.3.orig/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt 
      endif()
      if (EXISTS "${MIOPEN_SYSTEM_DB_PATH}")
        message(STATUS "miopen system perfdb path: ${MIOPEN_SYSTEM_DB_PATH}")
-Only in rocMLIR-rocm-5.1.3/mlir/lib/Dialect/MIOpen/Tuning: CMakeLists.txt.orig
+diff -urp rocMLIR-rocm-5.1.3.orig/mlir/lib/ExecutionEngine/ROCm/CMakeLists.txt rocMLIR-rocm-5.1.3/mlir/lib/ExecutionEngine/ROCm/CMakeLists.txt
+--- rocMLIR-rocm-5.1.3.orig/mlir/lib/ExecutionEngine/ROCm/CMakeLists.txt	2022-01-20 11:34:11.000000000 -0800
++++ rocMLIR-rocm-5.1.3/mlir/lib/ExecutionEngine/ROCm/CMakeLists.txt	2023-08-31 12:44:00.720351617 -0700
+@@ -22,9 +22,12 @@ add_definitions(-D__ROCM_PATH__="${ROCM_
+ 
+ add_definitions(-D__USE_ROCM_4_4_OR_OLDER__=${USE_ROCM_4_4_OR_OLDER})
+ 
+-set(HIP_PATH "${ROCM_PATH}/hip" CACHE PATH " Path to which HIP has been installed")
+-set(CMAKE_MODULE_PATH "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
+-find_package(HIP)
++if(NOT DEFINED ROCM_PATH) # oteodoro:  added
++  set(ROCM_PATH "/usr")
++endif()
++set(HIP_PATH "${ROCM_PATH}" CACHE PATH " Path to which HIP has been installed") # oteodoro:  edited
++set(CMAKE_MODULE_PATH "${HIP_PATH}/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH}) # oteodoro:  edited
++find_package(hip) # oteodoro:  edited
+-if (NOT HIP_FOUND)
++if (NOT hip_FOUND)
+   message(SEND_ERROR "Build the mlir rocm runner requires a working ROCm and HIP install")
+ else()
+@@ -33,7 +33,7 @@ endif()
+ 
+ # Locate HIP runtime library.
+ find_library(ROCM_RUNTIME_LIBRARY amdhip64
+-             PATHS "${HIP_PATH}/lib")
++             PATHS "${ROCM_PATH}/@LIBDIR@") # oteodoro:  edited
+ if (NOT ROCM_RUNTIME_LIBRARY)
+   message(SEND_ERROR "Could not locate ROCm HIP runtime library")
+ else()

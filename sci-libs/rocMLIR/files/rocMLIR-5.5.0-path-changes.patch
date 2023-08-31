@@ -160,7 +160,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/mlir/lib/ExecutionEngine
      endif()
    endif()
 -  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/hip")
-+  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/@LIBDIR@/cmake/hip")
++  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/@LIBDIR@/cmake/hip") # oteodoro:  edited
    find_package(hip REQUIRED)
  
    if (NOT DEFINED ROCM_TEST_CHIPSET)

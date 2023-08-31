@@ -36,6 +36,7 @@ RDEPEND="
 	>=dev-db/sqlite-3:3
 	>=dev-python/pybind11-2.6[${PYTHON_USEDEP}]
 	media-libs/vulkan-loader
+	virtual/libc
 	~dev-util/hip-${PV}:${SLOT}
 "
 DEPEND="
@@ -74,6 +75,10 @@ pkg_setup() {
 }
 
 src_prepare() {
+	sed -i -e "s|FATAL_ERROR|WARNING|g" \
+		external/llvm-project/llvm/cmake/modules/CheckCompilerVersion.cmake \
+		external/llvm-project/llvm/cmake/modules/CheckAtomic.cmake \
+		|| die
 	sed -i -e "s|LLVM_VERSION_SUFFIX git|LLVM_VERSION_SUFFIX roc|g" \
 		external/llvm-project/llvm/CMakeLists.txt \
 		|| die
@@ -152,8 +157,14 @@ build_rocmlir() {
 		-DELLVM_VERSION_SUFFIX=roc
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
+
+		-DCMAKE_THREAD_LIBS_INIT="-lpthread"
+		-DCMAKE_HAVE_THREADS_LIBRARY=1
+		-DCMAKE_USE_PTHREADS_INIT=1
+		-DCMAKE_USE_WIN32_THREADS_INIT=0
+		-DTHREADS_PREFER_PTHREAD_FLAG=ON
 	)
-	export CXX="${HIP_CXX:-clang++}"
+	export CXX="${HIP_CXX:-clang++-${LLVM_MAX_SLOT}}"
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
