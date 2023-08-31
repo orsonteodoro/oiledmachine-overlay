@@ -145,7 +145,7 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipcc.pl HIP-rocm-5.3.3/bin/hipcc.pl
  
      if ($hasHIP) {
 -        if ($DEVICE_LIB_PATH ne "$ROCM_PATH/amdgcn/bitcode") {
-+        if ($DEVICE_LIB_PATH ne "$ROCM_PATH/@LIBDIR@/amdgcn/bitcode" or 1) {
++        if ($DEVICE_LIB_PATH ne "$ROCM_PATH/@LIBDIR@/amdgcn/bitcode") {
 +            $HIPCXXFLAGS .= " --rocm-path=\"$ROCM_PATH\"" ;
              $HIPCXXFLAGS .= " --hip-device-lib-path=\"$DEVICE_LIB_PATH\"";
          }
