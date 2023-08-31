@@ -162,14 +162,14 @@ build_rocmlir() {
 }
 
 src_compile() {
-	# Removed all clangs
+	# Removed all clangs except max
 	einfo "LLVM_SLOT=${LLVM_SLOT}"
 	einfo "PATH=${PATH} (before)"
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -E -e "/llvm\/[0-9]+/d" \
 		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:${PWD}/install/bin|g")
+		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
 	einfo "PATH=${PATH} (after)"
 
 	local staging_prefix="${PWD}/install"
