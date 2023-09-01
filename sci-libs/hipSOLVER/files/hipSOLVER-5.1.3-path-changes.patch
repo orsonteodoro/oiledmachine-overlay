@@ -1,0 +1,299 @@
+diff -urp hipSOLVER-rocm-5.1.3.orig/clients/benchmarks/CMakeLists.txt hipSOLVER-rocm-5.1.3/clients/benchmarks/CMakeLists.txt
+--- hipSOLVER-rocm-5.1.3.orig/clients/benchmarks/CMakeLists.txt	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/clients/benchmarks/CMakeLists.txt	2023-09-01 15:44:46.177577131 -0700
+@@ -9,7 +9,7 @@ find_package( Threads REQUIRED )
+ find_package( cblas REQUIRED CONFIG )
+ 
+ if( NOT TARGET hipsolver )
+-  find_package( hipsolver REQUIRED CONFIG PATHS /opt/rocm/hipsolver )
++  find_package( hipsolver REQUIRED CONFIG PATHS /usr/hipsolver )
+ endif( )
+ 
+ set(hipsolver_benchmark_common
+diff -urp hipSOLVER-rocm-5.1.3.orig/clients/CMakeLists.txt hipSOLVER-rocm-5.1.3/clients/CMakeLists.txt
+--- hipSOLVER-rocm-5.1.3.orig/clients/CMakeLists.txt	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/clients/CMakeLists.txt	2023-09-01 15:44:46.177577131 -0700
+@@ -5,15 +5,15 @@
+ # Consider removing this in the future
+ # This should appear before the project command, because it does not use FORCE
+ if( WIN32 )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ # This project may compile dependencies for clients
+diff -urp hipSOLVER-rocm-5.1.3.orig/clients/gtest/CMakeLists.txt hipSOLVER-rocm-5.1.3/clients/gtest/CMakeLists.txt
+--- hipSOLVER-rocm-5.1.3.orig/clients/gtest/CMakeLists.txt	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/clients/gtest/CMakeLists.txt	2023-09-01 15:44:46.177577131 -0700
+@@ -6,7 +6,7 @@
+ find_package( cblas REQUIRED CONFIG )
+ 
+ if( NOT TARGET hipsolver )
+-  find_package( hipsolver REQUIRED CONFIG PATHS /opt/rocm/hipsolver )
++  find_package( hipsolver REQUIRED CONFIG PATHS /usr/hipsolver )
+ endif( )
+ 
+ find_package( GTest REQUIRED )
+diff -urp hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt hipSOLVER-rocm-5.1.3/CMakeLists.txt
+--- hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/CMakeLists.txt	2023-09-01 15:44:46.177577131 -0700
+@@ -11,15 +11,15 @@ set( CMAKE_CXX_STANDARD 14 )
+ # Consider removing this in the future
+ # This should appear before the project command, because it does not use FORCE
+ if( WIN32 )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ if ( NOT DEFINED CMAKE_Fortran_COMPILER AND NOT DEFINED ENV{FC} )
+@@ -34,7 +34,7 @@ endif( )
+ # This finds the rocm-cmake project, and installs it if not found
+ # rocm-cmake contains common cmake code for rocm projects to help setup and install
+ set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
+-find_package( ROCM CONFIG QUIET PATHS /opt/rocm )
++find_package( ROCM CONFIG QUIET PATHS /usr )
+ if( NOT ROCM_FOUND )
+   set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
+   file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
+@@ -56,7 +56,7 @@ set ( VERSION_STRING "1.3.0" )
+ rocm_setup_version( VERSION ${VERSION_STRING} )
+ 
+ if( NOT DEFINED ENV{HIP_PATH})
+-    set( HIP_PATH "/opt/rocm/hip" )
++    set( HIP_PATH "/usr/hip" )
+ else( )
+     set (HIP_PATH $ENV{HIP_PATH} )
+ endif( )
+@@ -66,7 +66,7 @@ endif( )
+ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${HIP_PATH}/cmake )
+ 
+ # NOTE:  workaround until hip cmake modules fixes symlink logic in their config files; remove when fixed
+-list( APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/llvm /opt/rocm/hip )
++list( APPEND CMAKE_PREFIX_PATH /usr /usr/lib/llvm/@LLVM_SLOT@ /usr/hip )
+ 
+ option( BUILD_VERBOSE "Output additional build information" OFF )
+ 
+@@ -105,7 +105,7 @@ endif()
+ if( USE_CUDA)
+     find_package( HIP MODULE REQUIRED )
+ else( )
+-    find_package( hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} /opt/rocm )
++    find_package( hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} /usr )
+ endif( )
+ 
+ if( USE_CUDA )
+@@ -177,7 +177,7 @@ add_custom_target(coverage_output
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec /usr/lib/llvm/@LLVM@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+     )
+ 
+diff -urp hipSOLVER-rocm-5.1.3.orig/deps/CMakeLists.txt hipSOLVER-rocm-5.1.3/deps/CMakeLists.txt
+--- hipSOLVER-rocm-5.1.3.orig/deps/CMakeLists.txt	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/deps/CMakeLists.txt	2023-09-01 15:44:46.177577131 -0700
+@@ -12,13 +12,13 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
+ # Consider removing this in the future
+ # It can be annoying for visual studio developers to build a project that tries to install into 'program files'
+ if( WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ if( NOT DEFINED CMAKE_Fortran_COMPILER AND NOT DEFINED ENV{FC} )
+diff -urp hipSOLVER-rocm-5.1.3.orig/deps/external-gtest.cmake hipSOLVER-rocm-5.1.3/deps/external-gtest.cmake
+--- hipSOLVER-rocm-5.1.3.orig/deps/external-gtest.cmake	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/deps/external-gtest.cmake	2023-09-01 15:44:46.177577131 -0700
+@@ -72,11 +72,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
+diff -urp hipSOLVER-rocm-5.1.3.orig/docs/source/userguide_install.rst hipSOLVER-rocm-5.1.3/docs/source/userguide_install.rst
+--- hipSOLVER-rocm-5.1.3.orig/docs/source/userguide_install.rst	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/docs/source/userguide_install.rst	2023-09-01 15:44:46.177577131 -0700
+@@ -46,11 +46,11 @@ For a standard library installation, fol
+ 
+     mkdir -p <HIPSOLVER_BUILD_DIR_PATH>/release
+     cd <HIPSOLVER_BUILD_DIR_PATH>/release
+-    CXX=/opt/rocm/bin/hipcc cmake <HIPSOLVER_SOURCE_DIR_PATH>
++    CXX=/usr/bin/hipcc cmake <HIPSOLVER_SOURCE_DIR_PATH>
+     make -j$(nproc)
+     sudo make install
+ 
+-sudo is required if installing into a system directory such as /opt/rocm, which is the default option.
++sudo is required if installing into a system directory such as /usr, which is the default option.
+ 
+ * Use ``-DCMAKE_INSTALL_PREFIX=<other_path>`` to specify a different install directory.
+ * Use ``-DCMAKE_BUILD_TYPE=<other_configuration>`` to specify a build configuration, such as 'Debug'. The default build configuration is 'Release'.
+@@ -92,6 +92,6 @@ to help find them.
+ 
+ .. code-block:: bash
+ 
+-    CXX=/opt/rocm/bin/hcc cmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPSOLVER_SOURCE]
++    CXX=/usr/bin/hcc cmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPSOLVER_SOURCE]
+     make -j$(nproc)
+-    sudo make install   # sudo required if installing into system directory such as /opt/rocm
++    sudo make install   # sudo required if installing into system directory such as /usr
+diff -urp hipSOLVER-rocm-5.1.3.orig/install.sh hipSOLVER-rocm-5.1.3/install.sh
+--- hipSOLVER-rocm-5.1.3.orig/install.sh	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/install.sh	2023-09-01 15:45:15.777577902 -0700
+@@ -303,8 +303,8 @@ build_cuda=false
+ build_hip_clang=true
+ build_release=true
+ build_relocatable=false
+-cmake_prefix_path=/opt/rocm
+-rocm_path=/opt/rocm
++cmake_prefix_path=/usr
++rocm_path=/usr
+ compiler=g++
+ build_static=false
+ build_release_debug=false
+@@ -419,7 +419,7 @@ if [[ "${build_relocatable}" == true ]];
+         rocm_path=${ROCM_PATH}
+     fi
+ 
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+@@ -476,7 +476,7 @@ if [[ "${install_dependencies}" == true
+ 
+ # We append customary rocm path; if user provides custom rocm path in ${path}, our
+ # hard-coded path has lesser priority
+-# export PATH=${PATH}:/opt/rocm/bin
++# export PATH=${PATH}:/usr/bin
+ pushd .
+   # #################################################
+   # configure & build
+@@ -547,9 +547,9 @@ pushd .
+   # Build library
+   if [[ "${build_relocatable}" == true ]]; then
+     CXX=${compiler} ${cmake_executable} ${cmake_common_options[@]} ${cmake_client_options[@]} -DCPACK_SET_DESTDIR=OFF -DCMAKE_INSTALL_PREFIX="${rocm_path}" \
+-    -DCMAKE_PREFIX_PATH="${rocm_path};${rocm_path}/hcc;${rocm_path}/hip;$(pwd)/../deps/deps-install;/usr/local/cuda;${cmake_prefix_path}" \
++    -DCMAKE_PREFIX_PATH="${rocm_path};${rocm_path}/hcc;${rocm_path}/hip;$(pwd)/../deps/deps-install;/opt/cuda;${cmake_prefix_path}" \
+     -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
+-    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64" \
++    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/@LIBDIR@" \
+     -DROCM_DISABLE_LDCONFIG=ON \
+     -DROCM_PATH="${rocm_path}" ../..
+   else
+diff -urp hipSOLVER-rocm-5.1.3.orig/library/CMakeLists.txt hipSOLVER-rocm-5.1.3/library/CMakeLists.txt
+--- hipSOLVER-rocm-5.1.3.orig/library/CMakeLists.txt	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/library/CMakeLists.txt	2023-09-01 15:44:46.181577131 -0700
+@@ -90,7 +90,7 @@ else()
+   endif()
+ endif()
+ 
+-set( CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "\${CPACK_PACKAGING_INSTALL_PREFIX}" "\${CPACK_PACKAGING_INSTALL_PREFIX}/include" "\${CPACK_PACKAGING_INSTALL_PREFIX}/lib" )
++set( CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "\${CPACK_PACKAGING_INSTALL_PREFIX}" "\${CPACK_PACKAGING_INSTALL_PREFIX}/include" "\${CPACK_PACKAGING_INSTALL_PREFIX}/@LIBDIR@" )
+ 
+ # Give hipsolver compiled for CUDA backend a different name
+ if( NOT USE_CUDA )
+diff -urp hipSOLVER-rocm-5.1.3.orig/library/src/CMakeLists.txt hipSOLVER-rocm-5.1.3/library/src/CMakeLists.txt
+--- hipSOLVER-rocm-5.1.3.orig/library/src/CMakeLists.txt	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/library/src/CMakeLists.txt	2023-09-01 15:44:46.181577131 -0700
+@@ -84,7 +84,7 @@ if( NOT USE_CUDA )
+       set ( ENV{rocblas_DIR} ${CUSTOM_ROCBLAS})
+       find_package( rocblas REQUIRED CONFIG NO_CMAKE_PATH )
+     else( )
+-      find_package( rocblas REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocblas )
++      find_package( rocblas REQUIRED CONFIG PATHS /usr /usr/rocblas )
+     endif( )
+   endif( )
+ 
+@@ -93,7 +93,7 @@ if( NOT USE_CUDA )
+       set ( ENV{rocsolver_DIR} ${CUSTOM_ROCSOLVER})
+       find_package( rocsolver REQUIRED CONFIG NO_CMAKE_PATH )
+     else( )
+-      find_package( rocsolver REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocsolver /usr/local/rocsolver )
++      find_package( rocsolver REQUIRED CONFIG PATHS /usr /usr/rocsolver /usr/local/rocsolver )
+     endif( )
+   endif( )
+ 
+@@ -137,9 +137,9 @@ include( GenerateExportHeader )
+ set_target_properties( hipsolver PROPERTIES CXX_VISIBILITY_PRESET "hidden" VISIBILITY_INLINES_HIDDEN ON )
+ generate_export_header( hipsolver EXPORT_FILE_NAME ${PROJECT_BINARY_DIR}/include/internal/hipsolver-export.h )
+ 
+-# Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
++# Following Boost conventions of prefixing '@LIBDIR@' on static built libraries, across all platforms
+ if( NOT BUILD_SHARED_LIBS )
+-  set_target_properties( hipsolver PROPERTIES PREFIX "lib" )
++  set_target_properties( hipsolver PROPERTIES PREFIX "@LIBDIR@" )
+ endif( )
+ 
+ ############################################################
+diff -urp hipSOLVER-rocm-5.1.3.orig/README.md hipSOLVER-rocm-5.1.3/README.md
+--- hipSOLVER-rocm-5.1.3.orig/README.md	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/README.md	2023-09-01 15:44:46.181577131 -0700
+@@ -11,7 +11,7 @@ To download the hipSOLVER source code, c
+ 
+     git clone https://github.com/ROCmSoftwarePlatform/hipSOLVER.git
+ 
+-hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `/opt/rocm/hipsolver`:
++hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `/usr/hipsolver`:
+ 
+     cd hipSOLVER
+     ./install.sh -i
+diff -urp hipSOLVER-rocm-5.1.3.orig/rmake.py hipSOLVER-rocm-5.1.3/rmake.py
+--- hipSOLVER-rocm-5.1.3.orig/rmake.py	2022-03-16 09:47:37.000000000 -0700
++++ hipSOLVER-rocm-5.1.3/rmake.py	2023-09-01 15:44:46.181577131 -0700
+@@ -37,9 +37,9 @@ def parse_args():
+                         help='Verbose build (optional, default: False)')
+     # hipsolver
+     parser.add_argument(     '--rocblas-path', dest='rocblas_path', type=str, required=False, default = "",
+-                        help='Set specific path to custom built rocblas (optional, default: /opt/rocm/rocblas)')
++                        help='Set specific path to custom built rocblas (optional, default: /usr/rocblas)')
+     parser.add_argument(     '--rocsolver-path', dest='rocsolver_path', type=str, required=False, default = "",
+-                        help='Set specific path to custom built rocsolver (optional, default: /opt/rocm/rocsolver)')
++                        help='Set specific path to custom built rocsolver (optional, default: /usr/rocsolver)')
+ 
+     return parser.parse_args()
+ 
+@@ -112,7 +112,7 @@ def config_cmd():
+         cmake_options.append("-DCMAKE_SHARED_LIBRARY_PREFIX=")
+         cmake_options.append("-G Ninja")
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
+         cmake_executable = "cmake"
+         cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
+         cmake_platform_opts.append("-DCMAKE_INSTALL_PREFIX=hipsolver-install")

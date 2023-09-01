@@ -57,24 +57,17 @@ BDEPEND="
 "
 S="${WORKDIR}/hipSOLVER-rocm-${PV}"
 PATCHES=(
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
+}
+
 src_prepare() {
-	sed \
-		-e "s/PREFIX hipsolver//" \
-		-e "/<INSTALL_INTERFACE/s,include,include/hipsolver," \
-		-e "s:rocm_install_symlink_subdir( hipsolver ):#rocm_install_symlink_subdir( hipsolver ):" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-
 	cmake_src_prepare
-
-	# Fixed the install path.
-	sed -i \
-		-e "s.set(CMAKE_INSTALL_LIBDIR.#set(CMAKE_INSTALL_LIBDIR." \
-		CMakeLists.txt \
-		|| die
+	rocm_src_prepare
 }
 
 src_configure() {
