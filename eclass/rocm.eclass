@@ -433,9 +433,24 @@ eerror
 	sed \
 		-i \
 		-e "s|@GCC_SLOT@|${gcc_slot}|g" \
-		$(grep -r -l -e "@PV@" "${WORKDIR}") \
+		$(grep -r -l -e "@GCC_SLOT@" "${WORKDIR}") \
 		2>/dev/null || true
 
+	if [[ -n "${EPYTHON}" ]] ; then
+		sed \
+			-i \
+			-e "s|@EPYTHON@|${EPYTHON}|g" \
+			$(grep -r -l -e "@EPYTHON@" "${WORKDIR}") \
+			2>/dev/null || true
+	fi
+
+	if [[ -n "${PYTHON}" ]] ; then
+		sed \
+			-i \
+			-e "s|@PYTHON@|${PYTHON}|g" \
+			$(grep -r -l -e "@PYTHON@" "${WORKDIR}") \
+			2>/dev/null || true
+	fi
 
 	IFS=$' \t\n'
 einfo "CLANG_SLOT:  ${clang_slot}"

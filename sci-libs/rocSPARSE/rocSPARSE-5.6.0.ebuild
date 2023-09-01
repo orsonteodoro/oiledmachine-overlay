@@ -115,9 +115,9 @@ RESTRICT="
 S="${WORKDIR}/rocSPARSE-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-remove-matrices-unpacking.patch"
-	"${FILESDIR}/${PN}-5.3.3-change-cmake-path.patch"
 	"${FILESDIR}/${PN}-5.6.0-includes.patch"
 	"${FILESDIR}/${PN}-5.6.0-fma-fix.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 python_check_deps() {
@@ -129,37 +129,15 @@ python_check_deps() {
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
-	sed \
-		-e "s/PREFIX rocsparse//" \
-		-e "/<INSTALL_INTERFACE/s,include,include/rocsparse," \
-		-e "/rocm_install_symlink_subdir(rocsparse)/d" \
-		-e "s:rocsparse/include:include/rocsparse:" \
-		-i \
-		"${S}/library/CMakeLists.txt" \
-		|| die
-
 	# Removing the GIT dependency.
 	sed \
 		-e "/find_package(Git/d" \
 		-i \
 		cmake/Dependencies.cmake \
-		|| die
-
-	# Fixing the install path.
-	sed \
-		-i \
-		-e "s.set(CMAKE_INSTALL_LIBDIR.#set(CMAKE_INSTALL_LIBDIR." \
-		CMakeLists.txt \
-		|| die
-
-	# Using the python interpreter specifyied by python-any-r1.
-	sed \
-		-e "/COMMAND ..\/common\/rocsparse_gentest.py/s,COMMAND ,COMMAND ${EPYTHON} ," \
-		-i \
-		clients/tests/CMakeLists.txt \
 		|| die
 
 	cmake_src_prepare
@@ -193,6 +171,7 @@ src_prepare() {
 			eend $?
 		done
 	fi
+	rocm_src_prepare
 }
 
 src_configure() {
