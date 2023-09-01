@@ -189,7 +189,6 @@ src_compile() {
 	export PATH=$(echo "${PATH}" \
 		| tr ":" "\n" \
 		| sed -E -e "/llvm\/[0-9]+/d" \
-		| sed -E -e "/ccache/d" \
 		| tr "\n" ":" \
 		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
 	einfo "PATH=${PATH} (after)"
