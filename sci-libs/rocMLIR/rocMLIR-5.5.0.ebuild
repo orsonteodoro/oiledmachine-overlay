@@ -31,7 +31,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="0/$(ver_cut 1-2)"
-IUSE="r4"
+IUSE="r5"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -62,6 +62,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.5.0-fix-so-suffix.patch"
 )
 
 ccmake() {
@@ -85,6 +86,7 @@ pkg_setup() {
 }
 
 src_prepare() {
+ewarn "Patching may take a long time.  Please wait..."
 	sed -i -e "s|LLVM_VERSION_SUFFIX git|LLVM_VERSION_SUFFIX roc|g" \
 		external/llvm-project/llvm/CMakeLists.txt \
 		|| die
@@ -218,3 +220,4 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# works

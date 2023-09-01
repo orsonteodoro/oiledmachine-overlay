@@ -30,7 +30,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="0/$(ver_cut 1-2)"
-IUSE="r4"
+IUSE="r5"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -52,6 +52,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.3.3-fix-so-suffix.patch"
 )
 
 ccmake() {
@@ -75,6 +76,7 @@ pkg_setup() {
 }
 
 src_prepare() {
+ewarn "Patching may take a long time.  Please wait..."
 	sed -i -e "s|FATAL_ERROR|WARNING|g" \
 		external/llvm-project/llvm/cmake/modules/CheckCompilerVersion.cmake \
 		external/llvm-project/llvm/cmake/modules/CheckAtomic.cmake \
@@ -138,7 +140,7 @@ build_rocmlir() {
 	libdir_suffix="${libdir_suffix/lib}"
 	local mycmakeargs=(
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
-		-DBUILD_FAT_LIBROCKCOMPILER=ON # DO NOT CHANGE.  Static produces rocMLIR folder while shared does not.
+		-DBUILD_FAT_LIBMLIRMIOPEN=ON # DO NOT CHANGE.  Static produces rocMLIR folder while shared does not.
 
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
@@ -163,7 +165,10 @@ build_rocmlir() {
 		-DCMAKE_USE_PTHREADS_INIT=1
 		-DCMAKE_USE_WIN32_THREADS_INIT=0
 		-DTHREADS_PREFER_PTHREAD_FLAG=ON
+
+		-DHAVE_SYSEXITS_H=1
 	)
+
 	export CXX="${HIP_CXX:-clang++-${LLVM_MAX_SLOT}}"
 	ccmake \
 		"${mycmakeargs[@]}" \
@@ -219,3 +224,4 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# no works

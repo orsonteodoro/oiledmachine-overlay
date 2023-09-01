@@ -39,13 +39,13 @@ diff -urp rocMLIR-rocm-5.3.3.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.3.3/cm
  )
  
  # Include dirs for MLIR and LLVM
-@@ -49,7 +52,7 @@ list(APPEND LLVM_INCLUDE_DIRS
+@@ -49,7 +52,5 @@ list(APPEND LLVM_INCLUDE_DIRS
  
  # Linker flags
- list(APPEND CMAKE_EXE_LINKER_FLAGS
+-list(APPEND CMAKE_EXE_LINKER_FLAGS
 -  " -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib"
-+  " -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/@LIBDIR@" # oteodoro:  edited
- )
+-)
++set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/@LIBDIR@") # oteodoro - backport from 5.4.3
  
  add_subdirectory("${LLVM_PROJ_SRC}/llvm" "external/llvm-project/llvm" EXCLUDE_FROM_ALL)
 diff -urp rocMLIR-rocm-5.3.3.orig/CMakeLists.txt rocMLIR-rocm-5.3.3/CMakeLists.txt

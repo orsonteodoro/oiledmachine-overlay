@@ -1,0 +1,31 @@
+From b04649647791f7eb0c20021699642f4ec2b518d4 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Torsten=20Ke=C3=9Fler?= <t.kessler@posteo.de>
+Date: Thu, 29 Dec 2022 15:11:23 +0100
+Subject: [PATCH] Define the LLVM version for MLIR
+
+---
+ mlir/CMakeLists.txt | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+oteodoro:  modified patch for distro.
+diff --git a/mlir/CMakeLists.txt b/mlir/CMakeLists.txt
+index 98c46c3d5287..5367be3649d0 100644
+--- a/mlir/CMakeLists.txt
++++ b/mlir/CMakeLists.txt
+@@ -1,3 +1,16 @@
++if(NOT DEFINED LLVM_VERSION_MAJOR)
++  set(LLVM_VERSION_MAJOR 14)
++endif()
++if(NOT DEFINED LLVM_VERSION_MINOR)
++  set(LLVM_VERSION_MINOR 0)
++endif()
++if(NOT DEFINED LLVM_VERSION_PATCH)
++  set(LLVM_VERSION_PATCH 0)
++endif()
++if(NOT DEFINED LLVM_VERSION_SUFFIX)
++  set(LLVM_VERSION_SUFFIX roc)
++endif()
++
+ message(STATUS "LLVM_INCLUDE_DIRS: ${LLVM_INCLUDE_DIRS}")
+ message(STATUS "MLIR_INCLUDE_DIRS: ${MLIR_INCLUDE_DIRS}")
+ message(STATUS "LLVM_BUILD_LIBRARY_DIR: ${LLVM_BUILD_LIBRARY_DIR}")
