@@ -54,6 +54,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-add-stdint-header.patch"
 	"${FILESDIR}/${PN}-5.0.2-libfmt8.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 RESTRICT="
@@ -65,26 +66,12 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
 }
 
 src_prepare() {
-	sed \
-		-e "s: PREFIX rocsolver:# PREFIX rocsolver:" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-	sed \
-		-e "s:\$<INSTALL_INTERFACE\:include>:\$<INSTALL_INTERFACE\:include/rocsolver>:" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-	sed \
-		-e "s:rocm_install_symlink_subdir( rocsolver ):#rocm_install_symlink_subdir( rocsolver ):" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {

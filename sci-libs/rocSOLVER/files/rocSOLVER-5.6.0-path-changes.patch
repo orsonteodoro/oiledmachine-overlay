@@ -1,0 +1,200 @@
+diff -urp rocSOLVER-rocm-5.6.0.orig/clients/CMakeLists.txt rocSOLVER-rocm-5.6.0/clients/CMakeLists.txt
+--- rocSOLVER-rocm-5.6.0.orig/clients/CMakeLists.txt	2023-06-13 12:58:39.000000000 -0700
++++ rocSOLVER-rocm-5.6.0/clients/CMakeLists.txt	2023-09-01 12:13:35.101247106 -0700
+@@ -13,7 +13,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PR
+ # The rocsolver target will exist if the library is being built along with the clients,
+ # but if this is a clients-only build, we'll have to search for it.
+ if(NOT TARGET rocsolver)
+-  find_package(rocsolver REQUIRED CONFIG PATHS ${ROCM_PATH}/rocsolver /opt/rocm/rocsolver)
++  find_package(rocsolver REQUIRED CONFIG PATHS ${ROCM_PATH}/rocsolver /usr/rocsolver)
+   get_imported_target_location(location roc::rocsolver)
+   message(STATUS "Found rocSOLVER: ${location}")
+ endif()
+diff -urp rocSOLVER-rocm-5.6.0.orig/cmake/get-rocm-cmake.cmake rocSOLVER-rocm-5.6.0/cmake/get-rocm-cmake.cmake
+--- rocSOLVER-rocm-5.6.0.orig/cmake/get-rocm-cmake.cmake	2023-06-13 12:58:39.000000000 -0700
++++ rocSOLVER-rocm-5.6.0/cmake/get-rocm-cmake.cmake	2023-09-01 12:13:35.101247106 -0700
+@@ -2,10 +2,10 @@
+ # rocm-cmake contains common cmake code for rocm projects to help setup and install
+ set(PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern)
+ 
+-# By default, rocm software stack is expected at /opt/rocm
++# By default, rocm software stack is expected at /usr
+ # set environment variable ROCM_PATH to change location
+ if(NOT ROCM_PATH)
+-  set(ROCM_PATH /opt/rocm)
++  set(ROCM_PATH /usr)
+ endif()
+ 
+ find_package(ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH})
+diff -urp rocSOLVER-rocm-5.6.0.orig/CMakeLists.txt rocSOLVER-rocm-5.6.0/CMakeLists.txt
+--- rocSOLVER-rocm-5.6.0.orig/CMakeLists.txt	2023-06-13 12:58:39.000000000 -0700
++++ rocSOLVER-rocm-5.6.0/CMakeLists.txt	2023-09-01 12:13:35.101247106 -0700
+@@ -70,11 +70,11 @@ rocm_setup_version(VERSION ${VERSION_STR
+ # Workaround until llvm and hip CMake modules fix symlink logic in their config files
+ list(APPEND CMAKE_PREFIX_PATH
+   ${ROCM_PATH}
+-  ${ROCM_PATH}/llvm
++  ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@
+   ${ROCM_PATH}/hip
+-  /opt/rocm
+-  /opt/rocm/llvm
+-  /opt/rocm/hip
++  /usr
++  /usr/lib/llvm/@LLVM_SLOT@
++  /usr/hip
+ )
+ 
+ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+@@ -147,7 +147,7 @@ set(AMDGPU_TARGETS "gfx803;gfx900;gfx906
+   CACHE STRING "List of specific machine types for library to target")
+ 
+ # Find HIP dependencies
+-find_package(hip REQUIRED CONFIG PATHS ${ROCM_PATH} /opt/rocm)
++find_package(hip REQUIRED CONFIG PATHS ${ROCM_PATH} /usr)
+ 
+ find_package(rocblas REQUIRED CONFIG PATHS ${ROCM_PATH})
+ get_imported_target_location(location roc::rocblas)
+@@ -253,7 +253,7 @@ if(BUILD_CODE_COVERAGE)
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec /usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+   )
+ 
+Only in rocSOLVER-rocm-5.6.0: CMakeLists.txt.orig
+diff -urp rocSOLVER-rocm-5.6.0.orig/docs/userguide/examples.rst rocSOLVER-rocm-5.6.0/docs/userguide/examples.rst
+--- rocSOLVER-rocm-5.6.0.orig/docs/userguide/examples.rst	2023-06-13 12:58:39.000000000 -0700
++++ rocSOLVER-rocm-5.6.0/docs/userguide/examples.rst	2023-09-01 12:15:58.973250853 -0700
+@@ -28,8 +28,8 @@ system environment, but here is a typica
+ 
+ .. code-block:: bash
+ 
+-    /opt/rocm/bin/hipcc -I/opt/rocm/include -c example.c
+-    /opt/rocm/bin/hipcc -o example -L/opt/rocm/lib -lrocsolver -lrocblas example.o
++    /usr/bin/hipcc -I/usr/include -c example.c
++    /usr/bin/hipcc -o example -L/usr/@LIBDIR@ -lrocsolver -lrocblas example.o
+ 
+ 
+ QR factorization of a batch of matrices
+diff -urp rocSOLVER-rocm-5.6.0.orig/install.sh rocSOLVER-rocm-5.6.0/install.sh
+--- rocSOLVER-rocm-5.6.0.orig/install.sh	2023-06-13 12:58:39.000000000 -0700
++++ rocSOLVER-rocm-5.6.0/install.sh	2023-09-01 12:17:03.965252546 -0700
+@@ -27,7 +27,7 @@ Options:
+ 
+   --install_dir <installdir>  Specify path to the directory where the library package
+                               (when generated) will be installed. Use only absolute paths.
+-                              (Default is /opt/rocm)
++                              (Default is /usr)
+ 
+   --rocblas_dir <blasdir>     Specify path to an existing rocBLAS install directory.
+                               (e.g. /src/rocBLAS/build/release/rocblas-install)
+@@ -306,7 +306,7 @@ supported_distro
+ # #################################################
+ # global variables
+ # #################################################
+-rocm_path=/opt/rocm
++rocm_path=/usr
+ if ! [ -z ${ROCM_PATH+x} ]; then
+   rocm_path=${ROCM_PATH}
+ fi
+@@ -489,7 +489,7 @@ esac
+ export CXX="hipcc"
+ export CC="clang"
+ export FC="gfortran"
+-export PATH="${rocm_path}/bin:${rocm_path}/hip/bin:${rocm_path}/llvm/bin:${PATH}"
++export PATH="${rocm_path}/bin:${rocm_path}/hip/bin:${rocm_path}/lib/llvm/@LLVM_SLOT@/bin:${PATH}"
+ 
+ # #################################################
+ # dependencies
+@@ -556,15 +556,15 @@ cmake_common_options+=(
+ )
+ 
+ if [[ -n "${rocblas_dir+x}" ]]; then
+-  cmake_common_options+=("-Drocblas_DIR=${rocblas_dir}/lib/cmake/rocblas")
++  cmake_common_options+=("-Drocblas_DIR=${rocblas_dir}/@LIBDIR@/cmake/rocblas")
+ fi
+ 
+ if [[ -n "${rocsolver_dir+x}" ]]; then
+-  cmake_common_options+=("-Drocsolver_DIR=${rocsolver_dir}/lib/cmake/rocsolver")
++  cmake_common_options+=("-Drocsolver_DIR=${rocsolver_dir}/@LIBDIR@/cmake/rocsolver")
+ fi
+ 
+ if [[ -n "${rocsparse_dir+x}" ]]; then
+-  cmake_common_options+=("-Drocsparse_DIR=${rocsparse_dir}/lib/cmake/rocsparse")
++  cmake_common_options+=("-Drocsparse_DIR=${rocsparse_dir}/@LIBDIR@/cmake/rocsparse")
+ fi
+ 
+ if [[ "${static_lib}" == true ]]; then
+@@ -604,7 +604,7 @@ fi
+ 
+ rocm_rpath=""
+ if [[ "${build_relocatable}" == true ]]; then
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+Only in rocSOLVER-rocm-5.6.0: install.sh.orig
+diff -urp rocSOLVER-rocm-5.6.0.orig/library/src/CMakeLists.txt rocSOLVER-rocm-5.6.0/library/src/CMakeLists.txt
+--- rocSOLVER-rocm-5.6.0.orig/library/src/CMakeLists.txt	2023-06-13 12:58:39.000000000 -0700
++++ rocSOLVER-rocm-5.6.0/library/src/CMakeLists.txt	2023-09-01 12:13:37.117247158 -0700
+@@ -318,7 +318,7 @@ endif( )
+ 
+ # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
+ if(NOT BUILD_SHARED_LIBS)
+-  set_target_properties(rocsolver PROPERTIES PREFIX "lib")
++  set_target_properties(rocsolver PROPERTIES PREFIX "@LIBDIR@")
+ endif()
+ 
+ if(OPTIMAL)
+Only in rocSOLVER-rocm-5.6.0/library/src: CMakeLists.txt.orig
+diff -urp rocSOLVER-rocm-5.6.0.orig/README.md rocSOLVER-rocm-5.6.0/README.md
+--- rocSOLVER-rocm-5.6.0.orig/README.md	2023-06-13 12:58:39.000000000 -0700
++++ rocSOLVER-rocm-5.6.0/README.md	2023-09-01 12:13:37.117247158 -0700
+@@ -31,7 +31,7 @@ more information about rocBLAS and how t
+ [rocBLAS documentation][4].
+ 
+ After a standard installation of rocBLAS, the following commands will build
+-rocSOLVER and install to `/opt/rocm`:
++rocSOLVER and install to `/usr`:
+ 
+     cd rocSOLVER
+     ./install.sh -i
+@@ -107,8 +107,8 @@ int main() {
+ The exact command used to compile the example above may vary depending on the
+ system environment, but here is a typical example:
+ 
+-    /opt/rocm/bin/hipcc -I/opt/rocm/include -c example.cpp
+-    /opt/rocm/bin/hipcc -o example -L/opt/rocm/lib -lrocsolver -lrocblas example.o
++    /usr/bin/hipcc -I/usr/include -c example.cpp
++    /usr/bin/hipcc -o example -L/usr/@LIBDIR@ -lrocsolver -lrocblas example.o
+ 
+ 
+ [1]: https://www.netlib.org/lapack/
+Only in rocSOLVER-rocm-5.6.0: README.md.orig
+diff -urp rocSOLVER-rocm-5.6.0.orig/rmake.py rocSOLVER-rocm-5.6.0/rmake.py
+--- rocSOLVER-rocm-5.6.0.orig/rmake.py	2023-06-13 12:58:39.000000000 -0700
++++ rocSOLVER-rocm-5.6.0/rmake.py	2023-09-01 12:13:37.117247158 -0700
+@@ -41,9 +41,9 @@ def parse_args():
+     parser.add_argument(     '--clients-only', dest='clients_only', required=False, default = False, action='store_true',
+                         help='Build only clients with a pre-built library')
+     parser.add_argument(     '--rocblas_dir', dest='rocblas_dir', type=str, required=False, default = "",
+-                        help='Specify path to an existing rocBLAS install directory (optional, default: /opt/rocm/rocblas)')
++                        help='Specify path to an existing rocBLAS install directory (optional, default: /usr/rocblas)')
+     parser.add_argument(     '--rocsolver_dir', dest='rocsolver_dir', type=str, required=False, default = "",
+-                        help='Specify path to an existing rocSOLVER install directory (optional, default: /opt/rocm/rocsolver)')
++                        help='Specify path to an existing rocSOLVER install directory (optional, default: /usr/rocsolver)')
+     parser.add_argument('-a', '--architecture', dest='gpu_architecture', type=str, required=False, default=None,
+                         help='Set GPU architectures to build for (optional)')
+ 
+@@ -127,7 +127,7 @@ def config_cmd():
+         cmake_options.append("-DCMAKE_SHARED_LIBRARY_PREFIX=")
+         cmake_options.append("-G Ninja")
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
+         cmake_executable = "cmake"
+         cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
+         cmake_platform_opts.append("-DCMAKE_INSTALL_PREFIX=rocsolver-install")

@@ -55,6 +55,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 RESTRICT="
@@ -64,24 +65,14 @@ RESTRICT="
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 
-src_prepare() {
-	sed \
-		-e "s: PREFIX rocsolver:# PREFIX rocsolver:" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-	sed \
-		-e "s:\$<INSTALL_INTERFACE\:include>:\$<INSTALL_INTERFACE\:include/rocsolver>:" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-	sed \
-		-e "s:rocm_install_symlink_subdir( rocsolver ):#rocm_install_symlink_subdir( rocsolver ):" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
+}
 
+src_prepare() {
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
