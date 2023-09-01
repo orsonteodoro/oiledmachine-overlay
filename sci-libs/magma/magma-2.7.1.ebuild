@@ -291,46 +291,46 @@ replace_symbols() {
 	if (( ${aomp_slot} > 0 )) ; then
 einfo "Using AOMP (multislot)"
 		sed -i -e "s|@AOMP_SLOT@|${aomp_slot}|g" \
-			$(grep -l -e "@AOMP_SLOT@" "${WORKDIR}") \
+			$(grep -r -l -e "@AOMP_SLOT@" "${WORKDIR}") \
 			|| true
 	elif (( ${aomp_slot} == 0 )) ; then
 einfo "Using AOMP (unislot)"
 		# Assumes install in @EPREFIX@/usr/lib/aomp
 		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I/usr/aomp/include|g" \
-			$(grep -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
+			$(grep -r -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
 			|| true
 		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@|-L/usr/aomp/@LIBDIR@|g" \
-			$(grep -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
+			$(grep -r -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
 			|| true
 	elif (( ${llvm_slot} > 0 )) ; then
 einfo "Using LLVM only"
 		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I/usr/lib/llvm/@LLVM_SLOT@/include|g" \
-			$(grep -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
+			$(grep -r -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
 			|| true
 		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@|-L/usr/lib/llvm/@LLVM_SLOT@/@LIBDIR@|g" \
-			$(grep -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
+			$(grep -r -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
 			|| true
 		sed -i -e "s|@LLVM_SLOT@|${llvm_slot}|g" \
-			$(grep -l -e "@LLVM_SLOT@" "${WORKDIR}") \
+			$(grep -r -l -e "@LLVM_SLOT@" "${WORKDIR}") \
 			|| true
 	else
 einfo "Removing AOMP references"
 		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include||g" \
-			$(grep -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
+			$(grep -r -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
 			|| true
 		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@||g" \
-			$(grep -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
+			$(grep -r -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
 			|| true
 	fi
 
 	sed -i -e "s|@LIBDIR@|$(get_libdir)|g" \
-		$(grep -l -e "@LIBDIR@" "${WORKDIR}") \
+		$(grep -r -l -e "@LIBDIR@" "${WORKDIR}") \
 		|| true
 	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
-		$(grep -l -e "@EPREFIX@" "${WORKDIR}") \
+		$(grep -r -l -e "@EPREFIX@" "${WORKDIR}") \
 		|| true
 	sed -i -e "s|@ESYSROOT@|${ESYSROOT}|g" \
-		$(grep -l -e "@ESYSROOT@" "${WORKDIR}") \
+		$(grep -r -l -e "@ESYSROOT@" "${WORKDIR}") \
 		|| true
 
 	IFS=$' \t\n'
