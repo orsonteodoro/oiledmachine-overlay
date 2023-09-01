@@ -1,6 +1,6 @@
 diff -urp hipBLAS-rocm-5.4.3.orig/clients/benchmarks/CMakeLists.txt hipBLAS-rocm-5.4.3/clients/benchmarks/CMakeLists.txt
 --- hipBLAS-rocm-5.4.3.orig/clients/benchmarks/CMakeLists.txt	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/clients/benchmarks/CMakeLists.txt	2023-09-01 11:06:09.617141739 -0700
++++ hipBLAS-rocm-5.4.3/clients/benchmarks/CMakeLists.txt	2023-09-01 14:40:14.229476284 -0700
 @@ -34,11 +34,11 @@ endif()
  if(LINK_BLIS)
      if (NOT WIN32)
@@ -38,10 +38,9 @@ diff -urp hipBLAS-rocm-5.4.3.orig/clients/benchmarks/CMakeLists.txt hipBLAS-rocm
                        REQUIRED
                        NO_DEFAULT_PATH
                    )
-Only in hipBLAS-rocm-5.4.3/clients/benchmarks: CMakeLists.txt.orig
 diff -urp hipBLAS-rocm-5.4.3.orig/clients/CMakeLists.txt hipBLAS-rocm-5.4.3/clients/CMakeLists.txt
 --- hipBLAS-rocm-5.4.3.orig/clients/CMakeLists.txt	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/clients/CMakeLists.txt	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/clients/CMakeLists.txt	2023-09-01 14:40:14.229476284 -0700
 @@ -25,15 +25,15 @@ cmake_minimum_required( VERSION 3.5 )
  # Consider removing this in the future
  # This should appear before the project command, because it does not use FORCE
@@ -61,11 +60,9 @@ diff -urp hipBLAS-rocm-5.4.3.orig/clients/CMakeLists.txt hipBLAS-rocm-5.4.3/clie
  endif()
  
  # This project may compile dependencies for clients
-Only in hipBLAS-rocm-5.4.3/clients: CMakeLists.txt.orig
-Only in hipBLAS-rocm-5.4.3/clients: CMakeLists.txt.rej
 diff -urp hipBLAS-rocm-5.4.3.orig/clients/gtest/CMakeLists.txt hipBLAS-rocm-5.4.3/clients/gtest/CMakeLists.txt
 --- hipBLAS-rocm-5.4.3.orig/clients/gtest/CMakeLists.txt	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/clients/gtest/CMakeLists.txt	2023-09-01 11:02:38.737136246 -0700
++++ hipBLAS-rocm-5.4.3/clients/gtest/CMakeLists.txt	2023-09-01 14:40:14.229476284 -0700
 @@ -26,7 +26,7 @@ endif()
  find_package( cblas REQUIRED CONFIG PATHS ${LAPACK_DIR} )
  
@@ -89,11 +86,9 @@ diff -urp hipBLAS-rocm-5.4.3.orig/clients/gtest/CMakeLists.txt hipBLAS-rocm-5.4.
                        REQUIRED
                        NO_DEFAULT_PATH
                    )
-Only in hipBLAS-rocm-5.4.3/clients/gtest: CMakeLists.txt.orig
-Only in hipBLAS-rocm-5.4.3/clients/gtest: CMakeLists.txt.rej
 diff -urp hipBLAS-rocm-5.4.3.orig/CMakeLists.txt hipBLAS-rocm-5.4.3/CMakeLists.txt
 --- hipBLAS-rocm-5.4.3.orig/CMakeLists.txt	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/CMakeLists.txt	2023-09-01 11:03:28.801137550 -0700
++++ hipBLAS-rocm-5.4.3/CMakeLists.txt	2023-09-01 14:40:14.229476284 -0700
 @@ -32,15 +32,15 @@ endif()
  # Consider removing this in the future
  # This should appear before the project command, because it does not use FORCE
@@ -172,7 +167,7 @@ diff -urp hipBLAS-rocm-5.4.3.orig/CMakeLists.txt hipBLAS-rocm-5.4.3/CMakeLists.t
  
 diff -urp hipBLAS-rocm-5.4.3.orig/deps/CMakeLists.txt hipBLAS-rocm-5.4.3/deps/CMakeLists.txt
 --- hipBLAS-rocm-5.4.3.orig/deps/CMakeLists.txt	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/deps/CMakeLists.txt	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/deps/CMakeLists.txt	2023-09-01 14:40:14.229476284 -0700
 @@ -29,13 +29,13 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
  # Consider removing this in the future
  # It can be annoying for visual studio developers to build a project that tries to install into 'program files'
@@ -189,9 +184,25 @@ diff -urp hipBLAS-rocm-5.4.3.orig/deps/CMakeLists.txt hipBLAS-rocm-5.4.3/deps/CM
  endif()
  
  # The superbuild does not build anything itself; all compiling is done in external projects
+diff -urp hipBLAS-rocm-5.4.3.orig/deps/external-gtest.cmake hipBLAS-rocm-5.4.3/deps/external-gtest.cmake
+--- hipBLAS-rocm-5.4.3.orig/deps/external-gtest.cmake	2022-11-01 10:51:38.000000000 -0700
++++ hipBLAS-rocm-5.4.3/deps/external-gtest.cmake	2023-09-01 14:40:33.041476774 -0700
+@@ -89,11 +89,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
 diff -urp hipBLAS-rocm-5.4.3.orig/docs/source/contributing.rst hipBLAS-rocm-5.4.3/docs/source/contributing.rst
 --- hipBLAS-rocm-5.4.3.orig/docs/source/contributing.rst	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/docs/source/contributing.rst	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/docs/source/contributing.rst	2023-09-01 14:40:14.229476284 -0700
 @@ -33,7 +33,7 @@ Format
  ------
  
@@ -220,7 +231,7 @@ diff -urp hipBLAS-rocm-5.4.3.orig/docs/source/contributing.rst hipBLAS-rocm-5.4.
  
 diff -urp hipBLAS-rocm-5.4.3.orig/docs/source/install.rst hipBLAS-rocm-5.4.3/docs/source/install.rst
 --- hipBLAS-rocm-5.4.3.orig/docs/source/install.rst	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/docs/source/install.rst	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/docs/source/install.rst	2023-09-01 14:40:14.229476284 -0700
 @@ -61,7 +61,7 @@ in the table below.
  | ``./install.sh -i``                       | Build library, then      |
  |                                           | build and install        |
@@ -258,7 +269,7 @@ diff -urp hipBLAS-rocm-5.4.3.orig/docs/source/install.rst hipBLAS-rocm-5.4.3/doc
 +   sudo make install   # sudo required if installing into system directory such as /usr
 diff -urp hipBLAS-rocm-5.4.3.orig/install.sh hipBLAS-rocm-5.4.3/install.sh
 --- hipBLAS-rocm-5.4.3.orig/install.sh	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/install.sh	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/install.sh	2023-09-01 14:40:14.229476284 -0700
 @@ -48,7 +48,7 @@ cat <<EOF
  
      --cuda, --use-cuda            Build library for CUDA backend.
@@ -310,7 +321,7 @@ diff -urp hipBLAS-rocm-5.4.3.orig/install.sh hipBLAS-rocm-5.4.3/install.sh
    else
 diff -urp hipBLAS-rocm-5.4.3.orig/library/src/CMakeLists.txt hipBLAS-rocm-5.4.3/library/src/CMakeLists.txt
 --- hipBLAS-rocm-5.4.3.orig/library/src/CMakeLists.txt	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/library/src/CMakeLists.txt	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/library/src/CMakeLists.txt	2023-09-01 14:40:14.229476284 -0700
 @@ -79,7 +79,7 @@ if( NOT USE_CUDA )
      elseif( WIN32 )
          find_package( rocblas REQUIRED CONFIG PATHS ${ROCBLAS_PATH})
@@ -349,7 +360,7 @@ diff -urp hipBLAS-rocm-5.4.3.orig/library/src/CMakeLists.txt hipBLAS-rocm-5.4.3/
            execute_process(COMMAND ln -sfr \${INPUT_FILE} \${LOCATION})
 diff -urp hipBLAS-rocm-5.4.3.orig/README.md hipBLAS-rocm-5.4.3/README.md
 --- hipBLAS-rocm-5.4.3.orig/README.md	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/README.md	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/README.md	2023-09-01 14:40:14.229476284 -0700
 @@ -18,7 +18,7 @@ To download the **hipBLAS** source code,
  
  **hipBLAS** requires specific version of **rocBLAS** & **rocSOLVER** to be installed on the system. The required **rocBLAS** and **rocSOLVER** versions to build **hipBLAS** is provided [here](https://github.com/ROCmSoftwarePlatform/hipBLAS/blob/develop/library/CMakeLists.txt).
@@ -361,7 +372,7 @@ diff -urp hipBLAS-rocm-5.4.3.orig/README.md hipBLAS-rocm-5.4.3/README.md
      cd hipblas
 diff -urp hipBLAS-rocm-5.4.3.orig/rmake.py hipBLAS-rocm-5.4.3/rmake.py
 --- hipBLAS-rocm-5.4.3.orig/rmake.py	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/rmake.py	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/rmake.py	2023-09-01 14:40:14.229476284 -0700
 @@ -138,7 +138,7 @@ def config_cmd():
          cmake_options.append( generator )
          toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
@@ -371,11 +382,9 @@ diff -urp hipBLAS-rocm-5.4.3.orig/rmake.py hipBLAS-rocm-5.4.3/rmake.py
          if (OS_info["ID"] in ['centos', 'rhel']):
            cmake_executable = "cmake" # was cmake3 but now we built cmake
          else:
-Only in hipBLAS-rocm-5.4.3: rmake.py.orig
-Only in hipBLAS-rocm-5.4.3: rmake.py.rej
 diff -urp hipBLAS-rocm-5.4.3.orig/scripts/performance/blas/commandrunner.py hipBLAS-rocm-5.4.3/scripts/performance/blas/commandrunner.py
 --- hipBLAS-rocm-5.4.3.orig/scripts/performance/blas/commandrunner.py	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/scripts/performance/blas/commandrunner.py	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/scripts/performance/blas/commandrunner.py	2023-09-01 14:40:14.229476284 -0700
 @@ -124,7 +124,7 @@ def import_rocm_smi(install_path):
              import rocm_smi
              smi = rocm_smi
@@ -396,7 +405,7 @@ diff -urp hipBLAS-rocm-5.4.3.orig/scripts/performance/blas/commandrunner.py hipB
  
 diff -urp hipBLAS-rocm-5.4.3.orig/scripts/performance/blas/getspecs.py hipBLAS-rocm-5.4.3/scripts/performance/blas/getspecs.py
 --- hipBLAS-rocm-5.4.3.orig/scripts/performance/blas/getspecs.py	2022-11-01 10:51:38.000000000 -0700
-+++ hipBLAS-rocm-5.4.3/scripts/performance/blas/getspecs.py	2023-09-01 11:01:21.957134247 -0700
++++ hipBLAS-rocm-5.4.3/scripts/performance/blas/getspecs.py	2023-09-01 14:40:14.229476284 -0700
 @@ -42,13 +42,13 @@ def get_smi_exec(cuda):
      if cuda:
          return "nvidia-smi"
