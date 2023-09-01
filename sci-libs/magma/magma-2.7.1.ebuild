@@ -129,9 +129,9 @@ gen_rocm_rdepend() {
 		local slot="0/${pv%.*}"
 		echo "
 			(
-				~dev-util/hip-${PV}:${slot}
-				~sci-libs/hipBLAS-${PV}:${slot}
-				~sci-libs/hipSPARSE-${PV}:${slot}
+				~dev-util/hip-${pv}:${slot}
+				~sci-libs/hipBLAS-${pv}:${slot}
+				~sci-libs/hipSPARSE-${pv}:${slot}
 			)
 		"
 	done
