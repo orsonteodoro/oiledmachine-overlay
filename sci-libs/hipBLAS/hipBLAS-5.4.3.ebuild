@@ -5,7 +5,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=15
 
-inherit cmake flag-o-matic llvm
+inherit cmake flag-o-matic llvm rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipBLAS/archive/rocm-${PV}.tar.gz
@@ -40,31 +40,19 @@ DEPEND="
 BDEPEND="
 "
 S="${WORKDIR}/hipBLAS-rocm-${PV}"
+PATCHES=(
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+)
+
+pkg_setup() {
+	llvm_pkg_setup
+	rocm_pkg_setup
+}
 
 src_prepare() {
-	sed \
-		-e "s:<INSTALL_INTERFACE\:include:<INSTALL_INTERFACE\:include/hipblas/:" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-	sed \
-		-e "/PREFIX hipblas/d" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-	sed \
-		-e "/rocm_install_symlink_subdir( hipblas )/d" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-	sed \
-		-e "s:hipblas/include:include/hipblas:" \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-
 	eapply_user
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {

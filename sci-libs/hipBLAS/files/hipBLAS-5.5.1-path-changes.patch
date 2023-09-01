@@ -1,0 +1,427 @@
+diff -urp hipBLAS-rocm-5.5.1.orig/clients/benchmarks/CMakeLists.txt hipBLAS-rocm-5.5.1/clients/benchmarks/CMakeLists.txt
+--- hipBLAS-rocm-5.5.1.orig/clients/benchmarks/CMakeLists.txt	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/clients/benchmarks/CMakeLists.txt	2023-09-01 10:55:19.501124806 -0700
+@@ -28,7 +28,7 @@ enable_language( Fortran )
+ set(hipblas_bench_source client.cpp)
+ 
+ if( NOT TARGET hipblas )
+-  find_package( hipblas REQUIRED CONFIG PATHS /opt/rocm/hipblas )
++  find_package( hipblas REQUIRED CONFIG PATHS /usr/hipblas )
+ endif( )
+ 
+ set( hipblas_benchmark_common
+diff -urp hipBLAS-rocm-5.5.1.orig/clients/CMakeLists.txt hipBLAS-rocm-5.5.1/clients/CMakeLists.txt
+--- hipBLAS-rocm-5.5.1.orig/clients/CMakeLists.txt	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/clients/CMakeLists.txt	2023-09-01 10:55:19.501124806 -0700
+@@ -25,15 +25,15 @@ cmake_minimum_required( VERSION 3.5 )
+ # Consider removing this in the future
+ # This should appear before the project command, because it does not use FORCE
+ if( WIN32 )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ # This project may compile dependencies for clients
+@@ -80,14 +80,14 @@ if( BUILD_CLIENTS_BENCHMARKS OR BUILD_CL
+     if (LINK_BLIS)
+       set( BLIS_INCLUDE_DIR ${BUILD_DIR}/deps/blis/include/blis )
+       set( BLIS_CPP ../common/blis_interface.cpp )
+-      set( BLAS_LIBRARY ${BUILD_DIR}/deps/blis/lib/libblis.so )
++      set( BLAS_LIBRARY ${BUILD_DIR}/deps/blis/@LIBDIR@/libblis.so )
+     else()
+       set( BLAS_LIBRARY "blas" )
+     endif()
+   else() # WIN32
+     set( BLAS_INCLUDE_DIR ${OPENBLAS_DIR}/include CACHE PATH "OpenBLAS library include path" )
+     find_library( BLAS_LIBRARY libopenblas
+-                  PATHS ${OPENBLAS_DIR}/lib
++                  PATHS ${OPENBLAS_DIR}/@LIBDIR@
+                   REQUIRED
+                   NO_DEFAULT_PATH
+                 )
+Only in hipBLAS-rocm-5.5.1/clients: CMakeLists.txt.orig
+diff -urp hipBLAS-rocm-5.5.1.orig/clients/gtest/CMakeLists.txt hipBLAS-rocm-5.5.1/clients/gtest/CMakeLists.txt
+--- hipBLAS-rocm-5.5.1.orig/clients/gtest/CMakeLists.txt	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/clients/gtest/CMakeLists.txt	2023-09-01 10:55:19.501124806 -0700
+@@ -28,7 +28,7 @@ if(NOT WIN32)
+ endif()
+ 
+ if( NOT TARGET hipblas )
+-  find_package( hipblas REQUIRED CONFIG PATHS /opt/rocm/hipblas )
++  find_package( hipblas REQUIRED CONFIG PATHS /usr/hipblas )
+ endif( )
+ 
+ find_package( GTest REQUIRED )
+@@ -137,7 +137,7 @@ add_executable( hipblas-test ${hipblas_f
+ 
+ if(LINK_BLIS)
+     set( BLIS_INCLUDE_DIR ${BUILD_DIR}/deps/blis/include/blis )
+-    set( BLIS_LIBRARY ${BUILD_DIR}/deps/blis/lib/libblis.so )
++    set( BLIS_LIBRARY ${BUILD_DIR}/deps/blis/@LIBDIR@/libblis.so )
+ endif()
+ 
+ target_include_directories( hipblas-test
+diff -urp hipBLAS-rocm-5.5.1.orig/CMakeLists.txt hipBLAS-rocm-5.5.1/CMakeLists.txt
+--- hipBLAS-rocm-5.5.1.orig/CMakeLists.txt	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/CMakeLists.txt	2023-09-01 10:55:19.501124806 -0700
+@@ -32,15 +32,15 @@ endif()
+ # Consider removing this in the future
+ # This should appear before the project command, because it does not use FORCE
+ if( WIN32 )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ if (NOT WIN32)
+@@ -55,7 +55,7 @@ project( hipblas LANGUAGES CXX ${fortran
+ # This finds the rocm-cmake project, and installs it if not found
+ # rocm-cmake contains common cmake code for rocm projects to help setup and install
+ set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
+-find_package( ROCM 0.7.3 CONFIG QUIET PATHS /opt/rocm )
++find_package( ROCM 0.7.3 CONFIG QUIET PATHS /usr )
+ if( NOT ROCM_FOUND )
+   set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
+   file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
+@@ -84,10 +84,10 @@ rocm_setup_version( VERSION ${VERSION_ST
+ 
+ # Append our library helper cmake path and the cmake path for hip (for convenience)
+ # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
+-list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip ${HIP_DIR}/cmake )
++list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/@LIBDIR@/cmake/hip /usr/@LIBDIR@/cmake/hip ${HIP_DIR}/cmake )
+ 
+ # NOTE:  workaround until hip cmake modules fixes symlink logic in their config files; remove when fixed
+-list( APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/llvm /opt/rocm/hip )
++list( APPEND CMAKE_PREFIX_PATH /usr /usr/lib/llvm/@LLVM_SLOT@ /usr/hip )
+ 
+ option( BUILD_VERBOSE "Output additional build information" OFF )
+ 
+@@ -110,7 +110,7 @@ endif()
+ if( USE_CUDA)
+     find_package( HIP MODULE REQUIRED )
+ else( )
+-    find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm)
++    find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr)
+ endif( )
+ 
+ if( USE_CUDA )
+@@ -200,7 +200,7 @@ set( CPACK_RESOURCE_FILE_LICENSE "${CMAK
+ set( CPACK_RPM_PACKAGE_LICENSE "MIT")
+ 
+ if (WIN32)
+-  SET( CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE )
++#_cmake_modify_IGNORE   SET( CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE )
+   SET( INSTALL_PREFIX "C:/hipSDK" )
+   SET( CPACK_SET_DESTDIR FALSE )
+   SET( CPACK_PACKAGE_INSTALL_DIRECTORY "C:/hipSDK" )
+@@ -269,7 +269,7 @@ if(BUILD_CODE_COVERAGE)
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec /usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+     )
+ 
+diff -urp hipBLAS-rocm-5.5.1.orig/deps/CMakeLists.txt hipBLAS-rocm-5.5.1/deps/CMakeLists.txt
+--- hipBLAS-rocm-5.5.1.orig/deps/CMakeLists.txt	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/deps/CMakeLists.txt	2023-09-01 10:55:19.501124806 -0700
+@@ -29,13 +29,13 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
+ # Consider removing this in the future
+ # It can be annoying for visual studio developers to build a project that tries to install into 'program files'
+ if( WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ # The superbuild does not build anything itself; all compiling is done in external projects
+diff -urp hipBLAS-rocm-5.5.1.orig/docs/source/contributing.rst hipBLAS-rocm-5.5.1/docs/source/contributing.rst
+--- hipBLAS-rocm-5.5.1.orig/docs/source/contributing.rst	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/docs/source/contributing.rst	2023-09-01 10:58:35.729129917 -0700
+@@ -33,7 +33,7 @@ Format
+ ------
+ 
+ C and C++ code is formatted using ``clang-format``. To run clang-format
+-use the version in the ``/opt/rocm/llvm/bin`` directory. Please do not use your
++use the version in the ``/usr/lib/llvm/@LLVM_SLOT@/bin`` directory. Please do not use your
+ system's built-in ``clang-format``, as this may be an older version that
+ will result in different results.
+ 
+@@ -41,14 +41,14 @@ To format a file, use:
+ 
+ ::
+ 
+-    /opt/rocm/llvm/bin/clang-format -style=file -i <path-to-source-file>
++    /usr/lib/llvm/@LLVM_SLOT@/bin/clang-format -style=file -i <path-to-source-file>
+ 
+ To format all files, run the following script in rocBLAS directory:
+ 
+ ::
+ 
+     #!/bin/bash
+-    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /opt/rocm/llvm/bin/clang-format -style=file -i
++    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /usr/lib/llvm/@LLVM_SLOT@/bin/clang-format -style=file -i
+ 
+ Also, githooks can be installed to format the code per-commit:
+ 
+diff -urp hipBLAS-rocm-5.5.1.orig/docs/source/install.rst hipBLAS-rocm-5.5.1/docs/source/install.rst
+--- hipBLAS-rocm-5.5.1.orig/docs/source/install.rst	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/docs/source/install.rst	2023-09-01 10:56:23.829126482 -0700
+@@ -61,7 +61,7 @@ in the table below.
+ | ``./install.sh -i``                       | Build library, then      |
+ |                                           | build and install        |
+ |                                           | hipBLAS package in       |
+-|                                           | `/opt/rocm/hipblas`. You |
++|                                           | `/usr/hipblas`. You |
+ |                                           | will be prompted for     |
+ |                                           | sudo access. This will   |
+ |                                           | install for all users.   |
+@@ -162,11 +162,11 @@ Build Library Using Individual Commands
+ .. code-block::bash
+    mkdir -p [HIPBLAS_BUILD_DIR]/release
+    cd [HIPBLAS_BUILD_DIR]/release
+-   # Default install location is in /opt/rocm, define -DCMAKE_INSTALL_PREFIX=<path> to specify other
++   # Default install location is in /usr, define -DCMAKE_INSTALL_PREFIX=<path> to specify other
+    # Default build config is 'Release', define -DCMAKE_BUILD_TYPE=<config> to specify other
+-   CXX=/opt/rocm/bin/hipcc ccmake [HIPBLAS_SOURCE]
++   CXX=/usr/bin/hipcc ccmake [HIPBLAS_SOURCE]
+    make -j$(nproc)
+-   sudo make install # sudo required if installing into system directory such as /opt/rocm
++   sudo make install # sudo required if installing into system directory such as /usr
+ 
+ 
+ Build Library + Tests + Benchmarks + Samples Using Individual Commands
+@@ -197,7 +197,7 @@ Once dependencies are available on the s
+ .. code-block::bash
+ 
+    -DCMAKE_PREFIX_PATH="<semicolon separated paths>"
+-   # Default install location is in /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to specify other
+-   CXX=/opt/rocm/bin/hipcc ccmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPBLAS_SOURCE]
++   # Default install location is in /usr, use -DCMAKE_INSTALL_PREFIX=<path> to specify other
++   CXX=/usr/bin/hipcc ccmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPBLAS_SOURCE]
+    make -j$(nproc)
+-   sudo make install   # sudo required if installing into system directory such as /opt/rocm
++   sudo make install   # sudo required if installing into system directory such as /usr
+diff -urp hipBLAS-rocm-5.5.1.orig/install.sh hipBLAS-rocm-5.5.1/install.sh
+--- hipBLAS-rocm-5.5.1.orig/install.sh	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/install.sh	2023-09-01 10:55:21.525124859 -0700
+@@ -48,7 +48,7 @@ cat <<EOF
+ 
+     --cuda, --use-cuda            Build library for CUDA backend.
+ 
+-    --cudapath <cudadir>          Specify path of CUDA install (default /usr/local/cuda).
++    --cudapath <cudadir>          Specify path of CUDA install (default /opt/cuda).
+ 
+     --cmake-arg                   Forward the given argument to CMake when configuring the build.
+ 
+@@ -433,9 +433,9 @@ build_relocatable=false
+ build_address_sanitizer=false
+ install_cuda=false
+ cuda_version_install=default
+-cuda_path=/usr/local/cuda
+-cmake_prefix_path=/opt/rocm
+-rocm_path=/opt/rocm
++cuda_path=/opt/cuda
++cmake_prefix_path=/usr
++rocm_path=/usr
+ compiler=g++
+ build_static=false
+ build_release_debug=false
+@@ -567,7 +567,7 @@ if [[ "${build_relocatable}" == true ]];
+         rocm_path=${ROCM_PATH}
+     fi
+ 
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+@@ -642,7 +642,7 @@ fi
+ 
+ # We append customary rocm path; if user provides custom rocm path in ${path}, our
+ # hard-coded path has lesser priority
+-# export PATH=${PATH}:/opt/rocm/bin
++# export PATH=${PATH}:/usr/bin
+ pushd .
+   # #################################################
+   # configure & build
+@@ -726,7 +726,7 @@ pushd .
+     CXX=${compiler} ${cmake_executable} ${cmake_common_options[@]} ${cmake_client_options[@]} -DCPACK_SET_DESTDIR=OFF -DCMAKE_INSTALL_PREFIX="${rocm_path}" \
+     -DCMAKE_PREFIX_PATH="${rocm_path};${rocm_path}/hip;$(pwd)/../deps/deps-install;${cuda_path};${cmake_prefix_path}" \
+     -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
+-    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64" \
++    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/@LIBDIR@" \
+     -DROCM_DISABLE_LDCONFIG=ON \
+     -DROCM_PATH="${rocm_path}" ../..
+   else
+diff -urp hipBLAS-rocm-5.5.1.orig/library/src/CMakeLists.txt hipBLAS-rocm-5.5.1/library/src/CMakeLists.txt
+--- hipBLAS-rocm-5.5.1.orig/library/src/CMakeLists.txt	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/library/src/CMakeLists.txt	2023-09-01 10:55:21.525124859 -0700
+@@ -79,7 +79,7 @@ if( NOT USE_CUDA )
+     elseif( WIN32 )
+         find_package( rocblas REQUIRED CONFIG PATHS ${ROCBLAS_PATH})
+     else()
+-      find_package( rocblas REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocblas )
++      find_package( rocblas REQUIRED CONFIG PATHS /usr /usr/rocblas )
+     endif( )
+   endif( )
+ 
+@@ -94,7 +94,7 @@ if( NOT USE_CUDA )
+       elseif(WIN32)
+         find_package( rocsolver REQUIRED CONFIG PATHS ${ROCSOLVER_PATH} )
+       else()
+-        find_package( rocsolver REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocsolver /usr/local/rocsolver )
++        find_package( rocsolver REQUIRED CONFIG PATHS /usr /usr/rocsolver /usr/local/rocsolver )
+       endif()
+     endif( )
+     target_link_libraries( hipblas PRIVATE roc::rocsolver )
+@@ -155,7 +155,7 @@ endif( )
+ 
+ # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
+ if( NOT BUILD_SHARED_LIBS )
+-  set_target_properties( hipblas PROPERTIES PREFIX "lib" )
++  set_target_properties( hipblas PROPERTIES PREFIX "@LIBDIR@" )
+ endif( )
+ 
+ ############################################################
+@@ -199,7 +199,7 @@ if(BUILD_FILE_REORG_BACKWARD_COMPATIBILI
+       CODE "
+         set(PREFIX \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})
+ 	set(INPUT_FILE \${PREFIX}/include/hipblas/hipblas_module.f90)
+-        set(SYMLINK_LOCATIONS \${PREFIX}/hipblas/include \${PREFIX}/include)
++        set(SYMLINK_LOCATIONS \${PREFIX}/include/hipblas \${PREFIX}/include)
+         foreach(LOCATION IN LISTS SYMLINK_LOCATIONS)
+           file(MAKE_DIRECTORY \${LOCATION})
+           execute_process(COMMAND ln -sfr \${INPUT_FILE} \${LOCATION})
+diff -urp hipBLAS-rocm-5.5.1.orig/README.md hipBLAS-rocm-5.5.1/README.md
+--- hipBLAS-rocm-5.5.1.orig/README.md	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/README.md	2023-09-01 10:55:21.525124859 -0700
+@@ -18,7 +18,7 @@ To download the **hipBLAS** source code,
+ 
+ **hipBLAS** requires specific version of **rocBLAS** & **rocSOLVER** to be installed on the system. The required **rocBLAS** and **rocSOLVER** versions to build **hipBLAS** is provided [here](https://github.com/ROCmSoftwarePlatform/hipBLAS/blob/develop/library/CMakeLists.txt).
+ 
+-Once the dependent libraries are installed, the following command will build hipBLAS and install to `/opt/rocm/hipblas`:
++Once the dependent libraries are installed, the following command will build hipBLAS and install to `/usr/hipblas`:
+ 
+ ```bash
+     cd hipblas
+Only in hipBLAS-rocm-5.5.1: README.md.orig
+diff -urp hipBLAS-rocm-5.5.1.orig/rmake.py hipBLAS-rocm-5.5.1/rmake.py
+--- hipBLAS-rocm-5.5.1.orig/rmake.py	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/rmake.py	2023-09-01 10:55:21.525124859 -0700
+@@ -151,7 +151,7 @@ def config_cmd():
+         cmake_platform_opts.append( f"-DCMAKE_INSTALL_PREFIX=\"C:/hipSDK\"" )
+         toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
+         if (OS_info["ID"] in ['centos', 'rhel']):
+           cmake_executable = "cmake" # was cmake3 but now we built cmake
+         else:
+@@ -214,7 +214,7 @@ def config_cmd():
+         cmake_options.append( f"-DBUILD_SHARED_LIBS=OFF" )
+ 
+     if args.relocatable:
+-        rocm_rpath = os.getenv( 'ROCM_RPATH', "/opt/rocm/lib:/opt/rocm/lib64")
++        rocm_rpath = os.getenv( 'ROCM_RPATH', "/usr/@LIBDIR@")
+         cmake_options.append( f'-DCMAKE_SHARED_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,{rocm_rpath}"' )
+ 
+     if args.skip_ld_conf_entry or args.relocatable:
+diff -urp hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/commandrunner.py hipBLAS-rocm-5.5.1/scripts/performance/blas/commandrunner.py
+--- hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/commandrunner.py	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/scripts/performance/blas/commandrunner.py	2023-09-01 10:55:21.525124859 -0700
+@@ -124,7 +124,7 @@ def import_rocm_smi(install_path):
+             import rocm_smi
+             smi = rocm_smi
+ 
+-            # The following is needed to call rsmi_init() before other calls as documented in /opt/rocm/rocm_smi/docs/README.md
++            # The following is needed to call rsmi_init() before other calls as documented in /usr/rocm_smi/docs/README.md
+             smi.initializeRsmi()
+         except ImportError:
+             print('WARNING - rocm_smi.py not found!')
+@@ -1427,7 +1427,7 @@ def parse_input_arguments(parser):
+                         help='Output directory for the summary documentation.')
+     parser.add_argument('-d', '--device-num', default=0, type=int,
+                         help='Device number to run on.')
+-    parser.add_argument('--install-path', default='/opt/rocm', help='Top directory of driver installation.')
++    parser.add_argument('--install-path', default='/usr', help='Top directory of driver installation.')
+     parser.add_argument('--surface-plot', default=False, action='store_true', help='Adds a surface plot instead of a normal plot.')
+     return parser.parse_args()
+ 
+diff -urp hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py hipBLAS-rocm-5.5.1/scripts/performance/blas/getspecs.py
+--- hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/scripts/performance/blas/getspecs.py	2023-09-01 10:55:21.525124859 -0700
+@@ -42,13 +42,13 @@ def get_smi_exec(cuda):
+     if cuda:
+         return "nvidia-smi"
+     else:
+-        return "/opt/rocm/bin/rocm-smi"
++        return "/usr/bin/rocm-smi"
+ 
+ def getgfx(devicenum, cuda):
+     if cuda:
+         return "N/A"
+     else:
+-        cmd = ["/opt/rocm/bin/rocm_agent_enumerator"]
++        cmd = ["/usr/bin/rocm_agent_enumerator"]
+         success, cout = _subprocess_helper(cmd)
+         if not success:
+             return "N/A"
+@@ -408,7 +408,7 @@ def validmemtypes(cuda, smi=None):
+     if cuda:
+         return ["vram"]
+     elif smi is not None:
+-        # Hardcoded in /opt/rocm/rocm_smi/bindings/rsmiBindings.py
++        # Hardcoded in /usr/rocm_smi/bindings/rsmiBindings.py
+         return ["VRAM", "VIS_VRAM", "GTT"]
+ 
+ def getmeminfo(devicenum, mem_type, cuda, smi=None):
+@@ -429,8 +429,8 @@ def getmeminfo(devicenum, mem_type, cuda
+         return smi.getMemInfo(devicenum, mem_type)
+ 
+ def validversioncomponents(cuda, smi=None):
+-    # currently only driver according to /opt/rocm/bin/rocm_smi.py
+-    # driver corresponds to 0 in /opt/rocm/bin/rocm_smi.py
++    # currently only driver according to /usr/bin/rocm_smi.py
++    # driver corresponds to 0 in /usr/bin/rocm_smi.py
+     if cuda:
+         return ['driver']
+     else:
+diff -urp hipBLAS-rocm-5.5.1.orig/toolchain-linux.cmake hipBLAS-rocm-5.5.1/toolchain-linux.cmake
+--- hipBLAS-rocm-5.5.1.orig/toolchain-linux.cmake	2022-12-14 17:49:02.000000000 -0800
++++ hipBLAS-rocm-5.5.1/toolchain-linux.cmake	2023-09-01 10:55:21.525124859 -0700
+@@ -6,7 +6,7 @@ endif()
+ if (DEFINED ENV{ROCM_PATH})
+   set(rocm_bin "$ENV{ROCM_PATH}/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/bin")
++  set(rocm_bin "/usr/bin")
+ endif()
+ 
+ # relying on env and path for backward compatibility with external recipes
