@@ -1,0 +1,936 @@
+diff -urp magma-2.7.1.orig/CMakeLists.txt magma-2.7.1/CMakeLists.txt
+--- magma-2.7.1.orig/CMakeLists.txt	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/CMakeLists.txt	2023-09-01 02:09:47.792303545 -0700
+@@ -323,7 +323,7 @@ endif()
+ 
+ if (MAGMA_ENABLE_HIP)
+   set( GPU_TARGET "gfx900" CACHE STRING "HIP architectures to compile for" )
+-  list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/hip)
++  list(APPEND CMAKE_PREFIX_PATH /usr /usr)
+   find_package( HIP )
+   if (HIP_FOUND)
+     message( STATUS "Found HIP ${HIP_VERSION}" )
+@@ -459,9 +459,9 @@ endif()
+ 
+ 
+ # ----------------------------------------
+-# save magma.lib, magma_sparse.lib, etc. in lib/
+-set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY lib )
+-set( CMAKE_LIBRARY_OUTPUT_DIRECTORY lib )
++# save magma.lib, magma_sparse.lib, etc. in @LIBDIR@/
++set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY @LIBDIR@ )
++set( CMAKE_LIBRARY_OUTPUT_DIRECTORY @LIBDIR@ )
+ 
+ 
+ # ----------------------------------------
+@@ -711,7 +711,7 @@ add_custom_target( sparse-lib DEPENDS ma
+ # compile each tester
+ 
+ # save testers to testing/
+-# save tester lib files to testing_lib/ to avoid cluttering lib/
++# save tester lib files to testing_lib/ to avoid cluttering @LIBDIR@/
+ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY testing )
+ set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY testing_lib )
+ set( CMAKE_LIBRARY_OUTPUT_DIRECTORY testing_lib )
+@@ -760,8 +760,8 @@ add_custom_target( sparse-testing DEPEND
+ # what to install
+ install( TARGETS magma magma_sparse ${blas_fix}
+          RUNTIME DESTINATION bin
+-         LIBRARY DESTINATION lib
+-         ARCHIVE DESTINATION lib )
++         LIBRARY DESTINATION @LIBDIR@
++         ARCHIVE DESTINATION @LIBDIR@ )
+ if (MAGMA_ENABLE_CUDA)
+   file( GLOB headers include/*.h sparse/include/*.h "${CMAKE_BINARY_DIR}/include/*.h" )
+ else()
+@@ -781,7 +781,7 @@ foreach(dir ${MAGMA_INCLUDE})
+     string(APPEND INCLUDE_COMPILER_STRING "-I${dir} ")
+ endforeach()
+ set( MAGMA_INCLUDE "${INCLUDE_COMPILER_STRING}" )
+-set( pkgconfig lib/pkgconfig/magma.pc )
++set( pkgconfig @LIBDIR@/pkgconfig/magma.pc )
+ message( STATUS "pkgconfig ${pkgconfig}" )
+ set( INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" )
+ set( CFLAGS "${CMAKE_C_FLAGS}" )
+@@ -799,7 +799,7 @@ endif()
+ set( MAGMA_REQUIRED "" )
+ configure_file( "${pkgconfig}.in" "${pkgconfig}" @ONLY )
+ install( FILES "${CMAKE_BINARY_DIR}/${pkgconfig}"
+-         DESTINATION lib/pkgconfig )
++         DESTINATION @LIBDIR@/pkgconfig )
+ 
+ # ----------------------------------------
+ get_directory_property( compile_definitions COMPILE_DEFINITIONS )
+diff -urp magma-2.7.1.orig/docs/documentation.txt magma-2.7.1/docs/documentation.txt
+--- magma-2.7.1.orig/docs/documentation.txt	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/docs/documentation.txt	2023-09-01 02:07:37.408300149 -0700
+@@ -78,7 +78,7 @@ For bash (sh), put in `~/.bashrc` (with
+ 
+ For csh/tcsh, put in `~/.cshrc`:
+ 
+-    setenv CUDADIR /usr/local/cuda
++    setenv CUDADIR /opt/cuda
+ 
+ MAGMA is tested with CUDA >= 7.5. Some functionality requires a newer version.
+ 
+@@ -130,11 +130,11 @@ For csh/tcsh, put in ~/.cshrc:
+ The OpenBLAS `make.inc` file assumes `$OPENBLASDIR` is set in your environment.
+ For bash (sh), put in ~/.bashrc (with your system's path):
+ 
+-    export OPENBLASDIR=/opt/openblas
++    export OPENBLASDIR=/usr
+ 
+ For csh/tcsh, put in ~/.cshrc:
+ 
+-    setenv OPENBLASDIR /opt/openblas
++    setenv OPENBLASDIR /usr
+ 
+ Some bugs exist with OpenBLAS 0.2.19; see BUGS.txt.
+ 
+@@ -146,7 +146,7 @@ and `clange` -- return a double precisio
+ with our C/C++ headers and with the Fortran code used in our testers. The fix is
+ to substitute reference implementations of these functions, found in
+ `magma/blas_fix`. Setting `blas_fix = 1` in `make.inc` will compile these into
+-`magma/lib/libblas_fix.a`, with which your application should link.
++`/usr/@LIBDIR@/libblas_fix.a`, with which your application should link.
+ 
+ 
+ Linking to BLAS
+@@ -261,13 +261,13 @@ or
+ 
+ will create shared libraries:
+ 
+-    lib/libmagma.so
+-    lib/libmagma_sparse.so
++    @LIBDIR@/libmagma.so
++    @LIBDIR@/libmagma_sparse.so
+ 
+ and static libraries:
+ 
+-    lib/libmagma.a
+-    lib/libmagma_sparse.a
++    @LIBDIR@/libmagma.a
++    @LIBDIR@/libmagma_sparse.a
+ 
+ and testing drivers in `testing` and `sparse-iter/testing`.
+ 
+@@ -285,8 +285,8 @@ static library. Then, running:
+ 
+ will create static libraries:
+ 
+-    lib/libmagma.a
+-    lib/libmagma_sparse.a
++    @LIBDIR@/libmagma.a
++    @LIBDIR@/libmagma_sparse.a
+ 
+ and testing drivers in `testing` and `sparse-iter/testing`.
+ 
+@@ -299,9 +299,9 @@ To install libraries and include files i
+ 
+ The default prefix is `/usr/local/magma`. You can also set `prefix` in `make.inc`.
+ This installs
+-MAGMA libraries in `${prefix}/lib`,
++MAGMA libraries in `${prefix}/@LIBDIR@`,
+ MAGMA header files in `${prefix}/include`, and
+-`${prefix}/lib/pkgconfig/magma.pc` for `pkg-config`.
++`${prefix}/@LIBDIR@/pkgconfig/magma.pc` for `pkg-config`.
+ 
+ 
+ Tuning
+diff -urp magma-2.7.1.orig/example/Makefile magma-2.7.1/example/Makefile
+--- magma-2.7.1.orig/example/Makefile	2023-02-22 12:18:56.000000000 -0800
++++ magma-2.7.1/example/Makefile	2023-09-01 00:45:28.972171785 -0700
+@@ -7,8 +7,8 @@
+ # MAGMADIR can be .. to test without installing.
+ #MAGMADIR     ?= ..
+ MAGMADIR     ?= /usr/local/magma
+-CUDADIR      ?= /usr/local/cuda
+-OPENBLASDIR  ?= /usr/local/openblas
++CUDADIR      ?= /opt/cuda
++OPENBLASDIR  ?= /usr
+ 
+ CC            = gcc
+ FORT          = gfortran
+@@ -28,10 +28,10 @@ LDFLAGS       = -Wall #-fopenmp
+ # MAGMA_F90FLAGS   := -Dmagma_devptr_t="integer(kind=8)" \
+ #                     -I$(MAGMADIR)/include
+ # 
+-# # may be lib instead of lib64 on some systems
+-# MAGMA_LIBS       := -L$(MAGMADIR)/lib -lmagma_sparse -lmagma \
+-#                     -L$(CUDADIR)/lib64 -lcublas -lcudart -lcusparse \
+-#                     -L$(OPENBLASDIR)/lib -lopenblas
++# # may be lib instead of @LIBDIR@ on some systems
++# MAGMA_LIBS       := -L$(MAGMADIR)/@LIBDIR@ -lmagma_sparse -lmagma \
++#                     -L$(CUDADIR)/@LIBDIR@ -lcublas -lcudart -lcusparse \
++#                     -L$(OPENBLASDIR)/@LIBDIR@ -lopenblas
+ 
+ 
+ # ----------------------------------------
+diff -urp magma-2.7.1.orig/example/README.txt magma-2.7.1/example/README.txt
+--- magma-2.7.1.orig/example/README.txt	2023-02-22 12:18:56.000000000 -0800
++++ magma-2.7.1/example/README.txt	2023-09-01 02:07:02.640299243 -0700
+@@ -39,7 +39,7 @@ make.inc for how Fortran functions are n
+ common is ADD_, where Fortran adds an underscore after the function. Usually,
+ you can tell the convention by using nm to examine your BLAS library:
+ 
+-    nm /mnt/scratch/openblas/lib/libopenblas.a | grep -i dnrm2
++    nm /usr/@LIBDIR@/libopenblas.a | grep -i dnrm2
+     dnrm2.o:
+     0000000000000000 T dnrm2_
+                      U dnrm2_k
+@@ -59,9 +59,9 @@ To link, add the library paths and neces
+ -lmagma should be before -lcublas and your BLAS/LAPACK libraries.
+ For example with OpenBLAS:
+ 
+-    gcc -L$MAGMADIR/lib    -lmagma_sparse -lmagma \
+-        -L$CUDADIR/lib64   -lcublas -lcudart -lcusparse \
+-        -L$OPENBLASDIR/lib -lopenblas \
++    gcc -L$MAGMADIR/@LIBDIR@    -lmagma_sparse -lmagma \
++        -L$CUDADIR/@LIBDIR@   -lcublas -lcudart -lcusparse \
++        -L$OPENBLASDIR/@LIBDIR@ -lopenblas \
+         -o example example.o
+ 
+ If you are not using MAGMA sparse routines, you can omit -lmagma_sparse.
+@@ -76,11 +76,11 @@ If it cannot find the shared libraries:
+ you may need to add these paths to your LD_LIBRARY_PATH. For instance, with
+ sh/bash:
+ 
+-    LD_LIBRARY_PATH=$MAGMADIR/lib:$CUDADIR/lib64:$OPENBLASDIR/lib
++    LD_LIBRARY_PATH=$MAGMADIR/@LIBDIR@:$CUDADIR/@LIBDIR@:$OPENBLASDIR/@LIBDIR@
+ 
+ or with csh/tcsh:
+ 
+-    setenv LD_LIBRARY_PATH $MAGMADIR/lib:$CUDADIR/lib64:$OPENBLASDIR/lib
++    setenv LD_LIBRARY_PATH $MAGMADIR/@LIBDIR@:$CUDADIR/@LIBDIR@:$OPENBLASDIR/@LIBDIR@
+ 
+ ----------------------------------------
+ Fortran example
+@@ -110,9 +110,9 @@ Here is compiling the example, compiling
+              -I$CUDADIR/include \
+              -c -o fortran.o $CUDADIR/src/fortran.c
+ 
+-    gfortran -L$MAGMADIR/lib    -lmagma_sparse -lmagma \
+-             -L$CUDADIR/lib64   -lcublas -lcudart -lcusparse \
+-             -L$OPENBLASDIR/lib -lopenblas \
++    gfortran -L$MAGMADIR/@LIBDIR@    -lmagma_sparse -lmagma \
++             -L$CUDADIR/@LIBDIR@   -lcublas -lcudart -lcusparse \
++             -L$OPENBLASDIR/@LIBDIR@ -lopenblas \
+              -o example_f example_f.o fortran.o
+ 
+ 
+@@ -127,7 +127,7 @@ Alternatively, you can use pkg-config to
+ automatically. To use pkg-config, install MAGMA with 'make install', add MAGMA
+ to $PKG_CONFIG_PATH, e.g. with csh,
+ 
+-    setenv PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/local/magma/lib/pkgconfig
++    setenv PKG_CONFIG_PATH ${PKG_CONFIG_PATH}:/usr/@LIBDIR@/pkgconfig
+ 
+ then use 'pkg-config --cflags magma' and 'pkg-config --libs magma' as shown in
+ the Makefile.
+diff -urp magma-2.7.1.orig/fortran/Makefile magma-2.7.1/fortran/Makefile
+--- magma-2.7.1.orig/fortran/Makefile	2023-02-22 12:19:10.000000000 -0800
++++ magma-2.7.1/fortran/Makefile	2023-09-01 01:37:25.000252944 -0700
+@@ -14,7 +14,7 @@ CFLAGS     = -Wall -I$(MAGMADIR)/include
+ CXXFLAGS   = -Wall -I$(MAGMADIR)/include -I$(CUDADIR)/include
+ FCFLAGS    = -Wall -Wno-unused-function
+ LDFLAGS    =
+-LIBS       = -L$(MAGMADIR)/lib -lmagma -Wl,-rpath,$(MAGMADIR)/lib
++LIBS       = -L$(MAGMADIR)/@LIBDIR@ -lmagma -Wl,-rpath,$(MAGMADIR)/@LIBDIR@
+ 
+ # BLAS and LAPACK libraries
+ # framework Accelerate is for MacOS
+diff -urp magma-2.7.1.orig/include/magma_types.h magma-2.7.1/include/magma_types.h
+--- magma-2.7.1.orig/include/magma_types.h	2023-02-22 12:18:51.000000000 -0800
++++ magma-2.7.1/include/magma_types.h	2023-09-01 00:28:37.620145444 -0700
+@@ -176,7 +176,7 @@ typedef double real_Double_t;
+      *
+      * To generate a list of these, first remove all these macro definitions, run a `make clean`
+      * to clear caches, and then start running:
+-     * $ make lib/libmagma.so -j64 2>&1 \
++     * $ make @LIBDIR@/libmagma.so -j64 2>&1 \
+      *     | grep "use of undeclared identifier" \
+      *     | awk '{gsub("'"'"'", "", $7) ; gsub(";", "", $7) ; print $7}'
+      *
+diff -urp magma-2.7.1.orig/lib/pkgconfig/magma.pc.in magma-2.7.1/lib/pkgconfig/magma.pc.in
+--- magma-2.7.1.orig/lib/pkgconfig/magma.pc.in	2023-02-22 12:19:10.000000000 -0800
++++ magma-2.7.1/lib/pkgconfig/magma.pc.in	2023-09-01 01:37:13.384252641 -0700
+@@ -1,6 +1,6 @@
+ prefix=@INSTALL_PREFIX@
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=${exec_prefix}/@LIBDIR@
+ includedir=${prefix}/include
+ 
+ Name: magma
+diff -urp magma-2.7.1.orig/make.check-cuda magma-2.7.1/make.check-cuda
+--- magma-2.7.1.orig/make.check-cuda	2023-02-22 12:19:10.000000000 -0800
++++ magma-2.7.1/make.check-cuda	2023-09-01 00:15:20.692124687 -0700
+@@ -2,11 +2,11 @@
+ ifeq ($(CUDADIR),)
+     cuda := $(shell which nvcc | perl -pe 's|/bin/nvcc||')
+     ifeq ($(cuda),)
+-        cuda := /usr/local/cuda
++        cuda := /opt/cuda
+     endif
+ $(error Set $$CUDADIR, preferably in your environment, e.g., run "export CUDADIR=$(cuda)" in ~/.bashrc, or "setenv CUDADIR $(cuda)" in ~/.cshrc)
+ endif
+ 
+ ifeq ($(wildcard $(CUDADIR)),)
+-$(error $$CUDADIR=$(CUDADIR) does not exist. Please set $$CUDADIR to where CUDA is installed. (normally in /usr/local/cuda))
++$(error $$CUDADIR=$(CUDADIR) does not exist. Please set $$CUDADIR to where CUDA is installed. (normally in /opt/cuda))
+ endif
+diff -urp magma-2.7.1.orig/make.check-hip magma-2.7.1/make.check-hip
+--- magma-2.7.1.orig/make.check-hip	2023-02-22 12:19:10.000000000 -0800
++++ magma-2.7.1/make.check-hip	2023-09-01 00:16:23.424126321 -0700
+@@ -2,13 +2,13 @@
+ ifeq ($(HIPDIR),)
+     hip := $(shell which hipcc | perl -pe 's|/bin/hipcc||')
+     ifeq ($(hip),)
+-        hip := /opt/rocm/hip
++        hip := /usr
+     endif
+     $(error Set $$HIPDIR, preferably in your environment, e.g., run "export HIPDIR=$(hip)" in ~/.bashrc, or "setenv HIPDIR $(hip)" in ~/.cshrc)
+ endif
+ 
+ ifeq ($(wildcard $(HIPDIR)),)
+-$(error $$HIPDIR=$(HIPDIR) does not exist. Please set $$HIPDIR to where HIP is installed. (normally in /opt/rocm/hip))
++$(error $$HIPDIR=$(HIPDIR) does not exist. Please set $$HIPDIR to where HIP is installed. (normally in /usr))
+ endif
+ 
+ # don't compile HIP platfo
+diff -urp magma-2.7.1.orig/make.check-openblas magma-2.7.1/make.check-openblas
+--- magma-2.7.1.orig/make.check-openblas	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.check-openblas	2023-09-01 00:45:52.968172410 -0700
+@@ -3,7 +3,7 @@
+ # this assumes LAPACK is part of OpenBLAS library.
+ 
+ ifeq ($(OPENBLASDIR),)
+-$(error Set $$OPENBLASDIR, preferably in your environment, e.g., run "export OPENBLASDIR=/opt/openblas" in ~/.bashrc, or "setenv OPENBLASDIR /opt/openblas" in ~/.cshrc)
++$(error Set $$OPENBLASDIR, preferably in your environment, e.g., run "export OPENBLASDIR=/usr" in ~/.bashrc, or "setenv OPENBLASDIR /usr" in ~/.cshrc)
+ endif
+ 
+ ifeq ($(wildcard $(OPENBLASDIR)),)
+diff -urp magma-2.7.1.orig/Makefile magma-2.7.1/Makefile
+--- magma-2.7.1.orig/Makefile	2023-02-22 12:22:44.000000000 -0800
++++ magma-2.7.1/Makefile	2023-09-01 02:06:41.728298699 -0700
+@@ -21,8 +21,8 @@ include make.inc
+ BACKEND     ?= cuda
+ 
+ # set these to their real paths
+-CUDADIR     ?= /usr/local/cuda
+-HIPDIR      ?= /opt/rocm/hip
++CUDADIR     ?= /opt/cuda
++HIPDIR      ?= /usr
+ 
+ # require either hip or cuda
+ ifeq (,$(findstring $(BACKEND),"hip cuda"))
+@@ -117,7 +117,7 @@ LIBS       = $(LIBDIR) $(LIB)
+ CPPFLAGS   = $(INC) $(MAGMA_INC)
+ 
+ # where testers look for MAGMA libraries
+-RPATH      = -Wl,-rpath,${abspath ./lib}
++RPATH      = -Wl,-rpath,${abspath ./@LIBDIR@}
+ 
+ codegen    = ./tools/codegen.py
+ 
+@@ -513,13 +513,13 @@ test_headers: $(header_gch)
+ 
+ 
+ # ----- libraries
+-libmagma_a      := lib/libmagma.a
+-libmagma_so     := lib/libmagma.so
+-libblas_fix_a   := lib/libblas_fix.a
++libmagma_a      := @LIBDIR@/libmagma.a
++libmagma_so     := @LIBDIR@/libmagma.so
++libblas_fix_a   := @LIBDIR@/libblas_fix.a
+ libtest_a       := testing/libtest.a
+ liblapacktest_a := testing/lin/liblapacktest.a
+-libsparse_a     := lib/libmagma_sparse.a
+-libsparse_so    := lib/libmagma_sparse.so
++libsparse_a     := @LIBDIR@/libmagma_sparse.a
++libsparse_so    := @LIBDIR@/libmagma_sparse.so
+ 
+ 
+ # static libraries
+@@ -788,7 +788,7 @@ testing/clean: testing/lin/clean
+ testing/lin/clean:
+ 	-rm -f $(liblapacktest_a) $(liblapacktest_obj)
+ 
+-# hmm... what should lib/clean do? just the libraries, not objects?
++# hmm... what should @LIBDIR@/clean do? just the libraries, not objects?
+ lib/clean: blas_fix/clean sparse/clean
+ 	-rm -f $(libmagma_a) $(libmagma_so) $(libmagma_obj)
+ 
+@@ -925,7 +925,7 @@ ifneq ($(have_fpic),)
+ 	@echo "===== shared library $@"
+ 	$(CXX) $(LDFLAGS) -shared -o $@ \
+ 		$^ \
+-		-L./lib $(LIBS)
++		-L./@LIBDIR@ $(LIBS)
+ 	@echo
+ 
+     # Can't add -Llib -lmagma to LIBS, because that would apply to libsparse_so's
+@@ -935,7 +935,7 @@ ifneq ($(have_fpic),)
+ 	@echo "===== shared library $@"
+ 	$(CXX) $(LDFLAGS) -shared -o $@ \
+ 		$^ \
+-		-L./lib $(LIBS) -lmagma
++		-L./@LIBDIR@ $(LIBS) -lmagma
+ 	@echo
+ else
+     # missing -fPIC: "make shared" prints warning
+@@ -951,7 +951,7 @@ $(testers): %: %.$(o_ext)
+ 	$(CXX) $(LDFLAGS) $(RPATH) \
+ 	-o $@ $< \
+ 	-L./testing -ltest \
+-	-L./lib -lmagma \
++	-L./@LIBDIR@ -lmagma \
+ 	-L./testing/lin -llapacktest \
+ 	$(LIBS)
+ 
+@@ -961,7 +961,7 @@ $(testers_f): %: %.$(o_ext)
+ 	-o $@ $< \
+ 	-L./testing -ltest \
+ 	-L./testing/lin -llapacktest \
+-	-L./lib -lmagma \
++	-L./@LIBDIR@ -lmagma \
+ 	$(LIBS)
+ 
+ # link sparse testing_foo from testing_foo.o
+@@ -969,7 +969,7 @@ $(sparse_testers): %: %.$(o_ext)
+ 	$(CXX) $(LDFLAGS) $(RPATH) \
+ 	-o $@ $< \
+ 	-L./testing -ltest \
+-	-L./lib -lmagma_sparse -lmagma \
++	-L./@LIBDIR@ -lmagma_sparse -lmagma \
+ 	$(LIBS)
+ 
+ 
+@@ -1003,7 +1003,7 @@ install: lib sparse-lib install_dirs
+ pkgconfig:
+         # pkgconfig
+ 	mkdir -p $(DESTDIR)$(prefix)/lib$(LIB_SUFFIX)/pkgconfig
+-	cat lib/pkgconfig/magma.pc.in                   | \
++	cat @LIBDIR@/pkgconfig/magma.pc.in                   | \
+ 	sed -e s:@INSTALL_PREFIX@:"$(prefix)":          | \
+ 	sed -e s:@CFLAGS@:"$(INSTALL_FLAGS) $(INC)":    | \
+ 	sed -e s:@LIBS@:"$(INSTALL_LDFLAGS) $(LIBS)":   | \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.acml magma-2.7.1/make.inc-examples/make.inc.acml
+--- magma-2.7.1.orig/make.inc-examples/make.inc.acml	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.acml	2023-09-01 00:47:39.104175174 -0700
+@@ -74,12 +74,12 @@ LIB      += -lcublas -lcusparse -lcudart
+ 
+ # define library directories preferably in your environment, or here.
+ #ACMLDIR  ?= /opt/acml
+-#CUDADIR  ?= /usr/local/cuda
++#CUDADIR  ?= /opt/cuda
+ -include make.check-acml
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
+-            -L$(ACMLDIR)/gfortran64_mp/lib
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++            -L$(ACMLDIR)/gfortran64_mp/@LIBDIR@
+ 
+ INC       = -I$(CUDADIR)/include \
+             -I$(ACMLDIR)/gfortran64_mp/include
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.atlas magma-2.7.1/make.inc-examples/make.inc.atlas
+--- magma-2.7.1.orig/make.inc-examples/make.inc.atlas	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.atlas	2023-09-01 00:47:39.104175174 -0700
+@@ -75,12 +75,12 @@ LIB      += -lcublas -lcusparse -lcudart
+ # define library directories preferably in your environment, or here.
+ #LAPACKDIR ?= /opt/lapack
+ #ATLASDIR  ?= /opt/atlas
+-#CUDADIR   ?= /usr/local/cuda
++#CUDADIR   ?= /opt/cuda
+ -include make.check-atlas
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(LAPACKDIR) \
+-            -L$(ATLASDIR)/lib
++            -L$(ATLASDIR)/@LIBDIR@
+ 
+ INC       = -I$(CUDADIR)/include
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.1/make.inc-examples/make.inc.hip-gcc-mkl
+--- magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-mkl	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.hip-gcc-mkl	2023-09-01 02:04:17.136294933 -0700
+@@ -33,8 +33,8 @@
+ BACKEND      = hip
+ 
+ # set these to their real paths
+-HIPDIR  ?= /opt/rocm/hip
+-CUDADIR ?= /usr/local/cuda
++HIPDIR  ?= /usr
++CUDADIR ?= /opt/cuda
+ 
+ # require either hip or cuda
+ ifeq (,$(findstring $(BACKEND),hip cuda))
+@@ -92,7 +92,7 @@ FPIC        = -fPIC
+ #   the compiler sometimes, so we need to add -L here too if there are problems
+ FOPENMP     = -fopenmp
+ #FOPENMP     =
+-#FOPENMP     = -fopenmp -L$(HIPDIR)/../aomp/lib -I$(HIPDIR)/../aomp/include
++#FOPENMP     = -fopenmp -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -I/opt/aomp/@AOMP_SLOT@/include
+ 
+ # now, generate our flags
+ CFLAGS      = -O3 $(FPIC) $(FOPENMP) -DNDEBUG -DADD_ -Wall -std=c99
+@@ -141,10 +141,10 @@ endif
+ #   folders
+ ifeq ($(BACKEND),cuda)
+     INC    += -I$(CUDADIR)/include
+-    LIBDIR += -L$(CUDADIR)/lib64 -L$(MKLROOT)/lib/intel64
++    LIBDIR += -L$(CUDADIR)/@LIBDIR@ -L$(MKLROOT)/lib/intel64
+ else ifeq ($(BACKEND),hip)
+-    INC    += -I$(HIPDIR)/../include
+-    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib -L$(MKLROOT)/lib/intel64
++    INC    += -I$(HIPDIR)/include
++    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L/usr/@LIBDIR@ -L/usr/@LIBDIR@ -L$(MKLROOT)/lib/intel64
+ endif
+ 
+ 
+@@ -153,8 +153,8 @@ endif
+ 
+ # check for MKL
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
+ -include make.check-mkl
+ 
+ # checks for the specified backend
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7.1/make.inc-examples/make.inc.hip-gcc-openblas
+--- magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-openblas	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.hip-gcc-openblas	2023-09-01 02:04:32.560295334 -0700
+@@ -33,9 +33,9 @@
+ BACKEND      = hip
+ 
+ # set these to their real paths
+-OPENBLASDIR ?= /usr/local/openblas
+-HIPDIR      ?= /opt/rocm/hip
+-CUDADIR     ?= /usr/local/cuda
++OPENBLASDIR ?= /usr
++HIPDIR      ?= /usr
++CUDADIR     ?= /opt/cuda
+ 
+ # require either hip or cuda
+ ifeq (,$(findstring $(BACKEND),hip cuda))
+@@ -96,7 +96,7 @@ FPIC        = -fPIC
+ #   the compiler sometimes, so we need to add -L here too if there are problems
+ FOPENMP     = -fopenmp
+ #FOPENMP     =
+-#FOPENMP     = -fopenmp -L$(HIPDIR)/../aomp/lib -I$(HIPDIR)/../aomp/include
++#FOPENMP     = -fopenmp -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -I/opt/aomp/@AOMP_SLOT@/include
+ 
+ # now, generate our flags
+ CFLAGS      = -O3 $(FPIC) $(FOPENMP) -DNDEBUG -DADD_ -Wall -std=c99
+@@ -140,7 +140,7 @@ endif
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-LIBDIR    += -L$(OPENBLASDIR)/lib
++LIBDIR    += -L$(OPENBLASDIR)/@LIBDIR@
+ 
+ # include each's directories
+ # note: we don't need to include the library directories, since nvcc or hipcc
+@@ -148,10 +148,10 @@ LIBDIR    += -L$(OPENBLASDIR)/lib
+ #   folders
+ ifeq ($(BACKEND),cuda)
+     INC    += -I$(CUDADIR)/include
+-    LIBDIR += -L$(CUDADIR)/lib64
++    LIBDIR += -L$(CUDADIR)/@LIBDIR@
+ else ifeq ($(BACKEND),hip)
+-    INC    += -I$(HIPDIR)/../include
+-    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib
++    INC    += -I$(HIPDIR)/include
++    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L/usr/@LIBDIR@
+ endif
+ 
+ 
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos magma-2.7.1/make.inc-examples/make.inc.macos
+--- magma-2.7.1.orig/make.inc-examples/make.inc.macos	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.macos	2023-09-01 00:47:39.104175174 -0700
+@@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-#CUDADIR ?= /usr/local/cuda
++#CUDADIR ?= /opt/cuda
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@
+ 
+ INC       = -I$(CUDADIR)/include
+ 
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-debug magma-2.7.1/make.inc-examples/make.inc.macos-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.macos-debug	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.macos-debug	2023-09-01 00:47:39.104175174 -0700
+@@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-#CUDADIR ?= /usr/local/cuda
++#CUDADIR ?= /opt/cuda
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@
+ 
+ INC       = -I$(CUDADIR)/include
+ 
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-mkl magma-2.7.1/make.inc-examples/make.inc.macos-mkl
+--- magma-2.7.1.orig/make.inc-examples/make.inc.macos-mkl	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.macos-mkl	2023-09-01 00:47:39.104175174 -0700
+@@ -75,10 +75,10 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-#CUDADIR ?= /usr/local/cuda
++#CUDADIR ?= /opt/cuda
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib \
+-            -L$(MKLROOT)/lib
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++            -L$(MKLROOT)/@LIBDIR@
+ 
+ INC       = -I$(CUDADIR)/include
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-openmp magma-2.7.1/make.inc-examples/make.inc.macos-openmp
+--- magma-2.7.1.orig/make.inc-examples/make.inc.macos-openmp	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.macos-openmp	2023-09-01 00:47:39.104175174 -0700
+@@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-#CUDADIR ?= /usr/local/cuda
++#CUDADIR ?= /opt/cuda
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@
+ 
+ INC       = -I$(CUDADIR)/include
+ 
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc magma-2.7.1/make.inc-examples/make.inc.mkl-gcc
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc	2023-09-01 00:58:34.036192232 -0700
+@@ -71,13 +71,13 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
+-#CUDADIR ?= /usr/local/cuda
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
++#CUDADIR ?= /opt/cuda
+ -include make.check-mkl
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(MKLROOT)/lib/intel64
+ 
+ INC       = -I$(CUDADIR)/include \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-debug	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-debug	2023-09-01 00:58:34.032192232 -0700
+@@ -71,13 +71,13 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
+-#CUDADIR ?= /usr/local/cuda
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
++#CUDADIR ?= /opt/cuda
+ -include make.check-mkl
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(MKLROOT)/lib/intel64
+ 
+ INC       = -I$(CUDADIR)/include \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64	2023-09-01 00:58:34.032192232 -0700
+@@ -87,13 +87,13 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
+-#CUDADIR ?= /usr/local/cuda
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
++#CUDADIR ?= /opt/cuda
+ -include make.check-mkl
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(MKLROOT)/lib/intel64
+ 
+ INC       = -I$(CUDADIR)/include \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2023-09-01 00:58:34.032192232 -0700
+@@ -87,13 +87,13 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
+-#CUDADIR ?= /usr/local/cuda
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
++#CUDADIR ?= /opt/cuda
+ -include make.check-mkl
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(MKLROOT)/lib/intel64
+ 
+ INC       = -I$(CUDADIR)/include \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc magma-2.7.1/make.inc-examples/make.inc.mkl-icc
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc	2023-09-01 00:58:34.032192232 -0700
+@@ -66,13 +66,13 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
+-#CUDADIR ?= /usr/local/cuda
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
++#CUDADIR ?= /opt/cuda
+ -include make.check-mkl
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(MKLROOT)/lib/intel64
+ 
+ INC       = -I$(CUDADIR)/include \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.7.1/make.inc-examples/make.inc.mkl-icc-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-debug	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-debug	2023-09-01 00:58:34.032192232 -0700
+@@ -66,13 +66,13 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
+-#CUDADIR ?= /usr/local/cuda
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
++#CUDADIR ?= /opt/cuda
+ -include make.check-mkl
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(MKLROOT)/lib/intel64
+ 
+ INC       = -I$(CUDADIR)/include \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64	2023-09-01 00:58:34.032192232 -0700
+@@ -82,13 +82,13 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
+-#CUDADIR ?= /usr/local/cuda
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
++#CUDADIR ?= /opt/cuda
+ -include make.check-mkl
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(MKLROOT)/lib/intel64
+ 
+ INC       = -I$(CUDADIR)/include \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2023-09-01 00:58:34.036192232 -0700
+@@ -82,13 +82,13 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-# for MKL run, e.g.: source /opt/intel/composerxe/mkl/bin/mklvars.sh intel64
+-#MKLROOT ?= /opt/intel/composerxe/mkl
+-#CUDADIR ?= /usr/local/cuda
++# for MKL run, e.g.: source /opt/intel/oneapi/mkl/latest/bin/mklvars.sh intel64
++#MKLROOT ?= /opt/intel/oneapi/mkl/latest
++#CUDADIR ?= /opt/cuda
+ -include make.check-mkl
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
+             -L$(MKLROOT)/lib/intel64
+ 
+ INC       = -I$(CUDADIR)/include \
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.openblas magma-2.7.1/make.inc-examples/make.inc.openblas
+--- magma-2.7.1.orig/make.inc-examples/make.inc.openblas	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.openblas	2023-09-01 02:04:24.560295126 -0700
+@@ -16,9 +16,9 @@
+ BACKEND     ?= cuda
+ 
+ # set these to their real paths
+-OPENBLASDIR ?= /usr/local/openblas
+-CUDADIR     ?= /usr/local/cuda
+-HIPDIR      ?= /opt/rocm/hip
++OPENBLASDIR ?= /usr
++CUDADIR     ?= /opt/cuda
++HIPDIR      ?= /usr
+ 
+ # require either hip or cuda
+ ifeq (,$(findstring $(BACKEND),hip cuda))
+@@ -85,7 +85,7 @@ LIB       += -lopenblas
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-LIBDIR    += -L$(OPENBLASDIR)/lib
++LIBDIR    += -L$(OPENBLASDIR)/@LIBDIR@
+ INC       +=
+ 
+ 
+@@ -107,7 +107,7 @@ ifeq ($(BACKEND),cuda)
+ 
+     # link with cuda specific libraries
+     INC    += -I$(CUDADIR)/include
+-    LIBDIR += -L$(CUDADIR)/lib64
++    LIBDIR += -L$(CUDADIR)/@LIBDIR@
+     LIB    += -lcublas -lcusparse -lcudart -lcudadevrt
+ endif
+ 
+@@ -117,8 +117,8 @@ ifeq ($(BACKEND),hip)
+ 
+     DEVCCFLAGS += $(FPIC) -std=c++11
+ 
+-    INC    += -I$(HIPDIR)/../include
+-    LIBDIR += -L$(HIPDIR)/../aomp/lib -L$(HIPDIR)/../hipblas/lib -L$(HIPDIR)/../hipsparse/lib
++    INC    += -I$(HIPDIR)/include
++    LIBDIR += -L/opt/aomp/@AOMP_SLOT@/@LIBDIR@ -L/usr/@LIBDIR@
+     LIB    += -lhipblas -lhipsparse
+ endif
+ 
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.openblas-debug magma-2.7.1/make.inc-examples/make.inc.openblas-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.openblas-debug	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.openblas-debug	2023-09-01 00:47:39.104175174 -0700
+@@ -65,12 +65,12 @@ LIB      += -lcublas -lcusparse -lcudart
+ # directories
+ 
+ # define library directories preferably in your environment, or here.
+-#OPENBLASDIR ?= /usr/local/openblas
+-#CUDADIR ?= /usr/local/cuda
++#OPENBLASDIR ?= /usr
++#CUDADIR ?= /opt/cuda
+ -include make.check-openblas
+ -include make.check-cuda
+ 
+-LIBDIR    = -L$(CUDADIR)/lib64 \
+-            -L$(OPENBLASDIR)/lib
++LIBDIR    = -L$(CUDADIR)/@LIBDIR@ \
++            -L$(OPENBLASDIR)/@LIBDIR@
+ 
+ INC       = -I$(CUDADIR)/include
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.power9-essl magma-2.7.1/make.inc-examples/make.inc.power9-essl
+--- magma-2.7.1.orig/make.inc-examples/make.inc.power9-essl	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/make.inc-examples/make.inc.power9-essl	2023-09-01 00:19:33.936131283 -0700
+@@ -65,12 +65,12 @@ LIB      += -lcublas -lcusparse -lcudart
+ 
+ # define library directories preferably in your environment, or here.
+ #OLCF_ESSL_ROOT ?= /opt/essl
+-#OLCF_CUDA_ROOT ?= /usr/local/cuda
++#OLCF_CUDA_ROOT ?= /opt/cuda
+ #-include make.check-cuda
+ #OLCF_NETLIB_LAPACK_ROOT ?= /opt/netlib-lapack
+ 
+-LIBDIR    = -L$(OLCF_CUDA_ROOT)/lib64 \
+-            -L$(OLCF_ESSL_ROOT)/lib64 -L$(OLCF_NETLIB_LAPACK_ROOT)/lib64
++LIBDIR    = -L$(OLCF_CUDA_ROOT)/@LIBDIR@ \
++            -L$(OLCF_ESSL_ROOT)/@LIBDIR@ -L$(OLCF_NETLIB_LAPACK_ROOT)/@LIBDIR@
+ 
+ INC       = -I$(OLCF_CUDA_ROOT)/include \
+             -I$(OLCF_ESSL_ROOT)/include -I$(OLCF_NETLIB_LAPACK_ROOT)/include
+diff -urp magma-2.7.1.orig/testing/lin/Makefile.src magma-2.7.1/testing/lin/Makefile.src
+--- magma-2.7.1.orig/testing/lin/Makefile.src	2023-02-22 12:19:04.000000000 -0800
++++ magma-2.7.1/testing/lin/Makefile.src	2023-09-01 00:27:50.732144222 -0700
+@@ -277,28 +277,28 @@ xlintsts : $(ALINTST) $(SLINTST) $(SCLNT
+ 	$(FORT) $(ALINTST) $(SCLNTST) $(SLINTST) \
+ 	$(TMGLIB) -o xlintsts \
+ 	testing/fortran.$(o_ext) \
+-	$(LDFLAGS) -L$(MAGMA_DIR)/lib -lmagma \
++	$(LDFLAGS) -L$(MAGMA_DIR)/@LIBDIR@ -lmagma \
+ 	$(LIBDIR) $(LIB)
+ 
+ xlintstc : $(ALINTST) $(CLINTST) $(SCLNTST) testing/fortran.$(o_ext) $(TMGLIB)
+ 	$(FORT) $(ALINTST) $(SCLNTST) $(CLINTST) \
+ 	$(TMGLIB) -o xlintstc \
+ 	testing/fortran.$(o_ext) \
+-	$(LDFLAGS) -L$(MAGMA_DIR)/lib -lmagma \
++	$(LDFLAGS) -L$(MAGMA_DIR)/@LIBDIR@ -lmagma \
+ 	$(LIBDIR) $(LIB)
+  
+ xlintstd : $(ALINTST) $(DLINTST) $(DZLNTST) testing/fortran.$(o_ext) $(TMGLIB)
+ 	$(FORT) $(ALINTST) $(DLINTST) $(DZLNTST) \
+ 	$(TMGLIB) -o xlintstd \
+ 	testing/fortran.$(o_ext) \
+-	$(LDFLAGS) -L$(MAGMA_DIR)/lib -lmagma \
++	$(LDFLAGS) -L$(MAGMA_DIR)/@LIBDIR@ -lmagma \
+ 	$(LIBDIR) $(LIB)
+  
+ xlintstz : $(ALINTST) $(ZLINTST) $(DZLNTST) testing/fortran.$(o_ext) $(TMGLIB)
+ 	$(FORT) $(ALINTST) $(DZLNTST) $(ZLINTST) \
+ 	$(TMGLIB) -o xlintstz \
+ 	testing/fortran.$(o_ext) \
+-	$(LDFLAGS) -L$(MAGMA_DIR)/lib -lmagma \
++	$(LDFLAGS) -L$(MAGMA_DIR)/@LIBDIR@ -lmagma \
+ 	$(LIBDIR) $(LIB)
+  
+ $(ALINTST): $(FRC)
+diff -urp magma-2.7.1.orig/testing/testing_veclib.cpp magma-2.7.1/testing/testing_veclib.cpp
+--- magma-2.7.1.orig/testing/testing_veclib.cpp	2023-02-22 12:18:58.000000000 -0800
++++ magma-2.7.1/testing/testing_veclib.cpp	2023-09-01 01:33:14.344246415 -0700
+@@ -14,7 +14,7 @@
+ // Oddly, with -m32 both return float and double for single precision functions works.
+ // This is essentially a bug from an old f2c version of lapack (clapack).
+ //
+-// We work around this bug by putting replacement routines in the magma/lib/libblas_fix.a library.
++// We work around this bug by putting replacement routines in magma's /usr/@LIBDIR@/libblas_fix.a library.
+ // These correctly return float for the single precision functions that had issues.
+ 
+ #include <stdio.h>
+diff -urp magma-2.7.1.orig/tools/build.sh magma-2.7.1/tools/build.sh
+--- magma-2.7.1.orig/tools/build.sh	2023-02-22 12:19:07.000000000 -0800
++++ magma-2.7.1/tools/build.sh	2023-09-01 02:08:36.032301676 -0700
+@@ -155,14 +155,14 @@ for config in $@; do
+         echo "SKIPPING SPARSE"
+     fi
+ 
+-    mkdir $builds/$config/lib
++    mkdir $builds/$config/@LIBDIR@
+     mkdir $builds/$config/testing
+ 
+     mkdir $builds/$config/sparse
+     mkdir $builds/$config/sparse/testing
+ 
+     # link libraries
+-    ln lib/lib*       $builds/$config/lib
++    ln lib/lib*       $builds/$config/lib # todo review
+ 
+     # link testers
+     ln `find testing        -maxdepth 1 -perm -u+x -type f -not -name '*.py' -not -name '*.pl' -not -name '*.sh' -not -name '*.csh'` $builds/$config/testing

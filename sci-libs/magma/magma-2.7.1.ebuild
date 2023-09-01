@@ -46,8 +46,9 @@ CUDA_TARGETS_COMPAT=(
 FORTRAN_STANDARD="77 90"
 MY_PV=$(ver_rs 3 '-')
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
-inherit cmake fortran-2 rocm python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic fortran-2 python-any-r1 rocm toolchain-funcs
 
 SRC_URI="https://icl.cs.utk.edu/projectsfiles/${PN}/downloads/${PN}-${MY_PV}.tar.gz"
 
@@ -213,6 +214,9 @@ RESTRICT="
 		test
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-2.7.1-path-changes.patch"
+)
 
 pkg_setup() {
 	fortran-2_pkg_setup
@@ -237,6 +241,101 @@ Requires: $(usex openblas "openblas" "blas lapack")
 EOF
 }
 
+replace_symbols() {
+	IFS=$'\n'
+
+	local llvm_slot
+	if has_version "~dev-util/hip-5.6.0" ; then
+		llvm_slot=16
+	elif has_version "~dev-util/hip-5.5.1" ; then
+		llvm_slot=16
+	elif has_version "~dev-util/hip-5.4.3"; then
+		llvm_slot=15
+	elif has_version "~dev-util/hip-5.3.3" ; then
+		llvm_slot=15
+	elif has_version "~dev-util/hip-5.1.3" ; then
+		llvm_slot=14
+	else
+		# Not installed or disable
+		llvm_slot=-1
+	fi
+
+	# For GPU
+	# /opt/aomp/@AOMP_SLOT@/ for multislotted aomp
+	local aomp_slot # If 0, then unislot.
+	if has_version "=sys-devel/aomp-16*:16" && has_version "~dev-util/hip-5.6.0" ; then
+		aomp_slot=16
+	elif has_version "=sys-devel/aomp-16*:16" && has_version "~dev-util/hip-5.5.1" ; then
+		aomp_slot=16
+	elif has_version "=sys-devel/aomp-15*:15" && has_version "~dev-util/hip-5.4.3"; then
+		aomp_slot=15
+	elif has_version "=sys-devel/aomp-15*:16" && has_version "~dev-util/hip-5.3.3" ; then
+		aomp_slot=15
+	elif has_version "=sys-devel/aomp-14*:14" && has_version "~dev-util/hip-5.1.3" ; then
+		aomp_slot=14
+	elif has_version "=sys-devel/aomp-16*:0" && has_version "~dev-util/hip-5.6.0" ; then
+		aomp_slot=0
+	elif has_version "=sys-devel/aomp-16*:0" && has_version "~dev-util/hip-5.5.1" ; then
+		aomp_slot=0
+	elif has_version "=sys-devel/aomp-15*:0" && has_version "~dev-util/hip-5.4.3"; then
+		aomp_slot=0
+	elif has_version "=sys-devel/aomp-15*:0" && has_version "~dev-util/hip-5.3.3" ; then
+		aomp_slot=0
+	elif has_version "=sys-devel/aomp-14*:0" && has_version "~dev-util/hip-5.1.3" ; then
+		aomp_slot=0
+	else
+		# Not installed or disable
+		aomp_slot=-1
+	fi
+
+	if (( ${aomp_slot} > 0 )) ; then
+einfo "Using AOMP (multislot)"
+		sed -i -e "s|@AOMP_SLOT@|${aomp_slot}|g" \
+			$(grep -l -e "@AOMP_SLOT@" "${WORKDIR}") \
+			|| true
+	elif (( ${aomp_slot} == 0 )) ; then
+einfo "Using AOMP (unislot)"
+		# Assumes install in @EPREFIX@/usr/lib/aomp
+		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I/usr/aomp/include|g" \
+			$(grep -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
+			|| true
+		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@|-L/usr/aomp/@LIBDIR@|g" \
+			$(grep -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
+			|| true
+	elif (( ${llvm_slot} > 0 )) ; then
+einfo "Using LLVM only"
+		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I/usr/lib/llvm/@LLVM_SLOT@/include|g" \
+			$(grep -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
+			|| true
+		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@|-L/usr/lib/llvm/@LLVM_SLOT@/@LIBDIR@|g" \
+			$(grep -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
+			|| true
+		sed -i -e "s|@LLVM_SLOT@|${llvm_slot}|g" \
+			$(grep -l -e "@LLVM_SLOT@" "${WORKDIR}") \
+			|| true
+	else
+einfo "Removing AOMP references"
+		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include||g" \
+			$(grep -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
+			|| true
+		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@||g" \
+			$(grep -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
+			|| true
+	fi
+
+	sed -i -e "s|@LIBDIR@|$(get_libdir)|g" \
+		$(grep -l -e "@LIBDIR@" "${WORKDIR}") \
+		|| true
+	sed -i -e "s|@EPREFIX@|${EPREFIX}|g" \
+		$(grep -l -e "@EPREFIX@" "${WORKDIR}") \
+		|| true
+	sed -i -e "s|@ESYSROOT@|${ESYSROOT}|g" \
+		$(grep -l -e "@ESYSROOT@" "${WORKDIR}") \
+		|| true
+
+	IFS=$' \t\n'
+}
+
 src_prepare() {
 	export gpu="$(get_amdgpu_flags)"
 
@@ -254,6 +353,8 @@ src_prepare() {
 	rm -r blas_fix || die
 
 	cmake_src_prepare
+
+	replace_symbols
 }
 
 get_cuda_flags() {
@@ -288,6 +389,9 @@ src_configure() {
 		)
 	fi
 	if use rocm ; then
+#		append-flags \
+#			--rocm-path="${ESYSROOT}/usr" \
+#			--rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
 		export CXX="${HIP_CXX:-hipcc}"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
