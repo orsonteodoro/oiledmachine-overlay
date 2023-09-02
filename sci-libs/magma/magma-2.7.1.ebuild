@@ -370,6 +370,7 @@ get_cuda_flags() {
 }
 
 src_configure() {
+	replace-flags '-O0' '-O1'
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DMAGMA_ENABLE_CUDA=$(usex cuda ON OFF)
