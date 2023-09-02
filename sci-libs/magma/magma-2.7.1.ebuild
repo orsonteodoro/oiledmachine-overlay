@@ -404,6 +404,13 @@ eerror
 		-e "s|@GPU_TARGET_OVERRIDE@|GPU_TARGET = ${gpu}|g" \
 		$(realpath make.inc) \
 		|| die
+
+	# Already generated
+	sed -i \
+		-e "/make.gen.hipMAGMA/d" \
+		"Makefile" \
+		|| die
+
 	emake generate
 }
 
