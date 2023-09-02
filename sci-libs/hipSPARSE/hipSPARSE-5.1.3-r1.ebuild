@@ -96,17 +96,15 @@ BDEPEND="
 S="${WORKDIR}/hipSPARSE-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-remove-matrices-unpacking.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
-src_prepare() {
-	sed \
-		-e "s/PREFIX hipsparse//" \
-		-e "/<INSTALL_INTERFACE/s,include,include/hipsparse," \
-		-e "s:rocm_install_symlink_subdir(hipsparse):#rocm_install_symlink_subdir(hipsparse):" \
-		-i \
-		library/CMakeLists.txt \
-		|| die
+pkg_setup() {
+	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
+}
 
+src_prepare() {
 	cmake_src_prepare
 
 	# Removed the GIT dependency.
@@ -114,12 +112,6 @@ src_prepare() {
 		-e "/find_package(Git/d" \
 		-i \
 		cmake/Dependencies.cmake \
-		|| die
-
-	# Fixed the install path.
-	sed -i \
-		-e "s.set(CMAKE_INSTALL_LIBDIR.#set(CMAKE_INSTALL_LIBDIR." \
-		CMakeLists.txt \
 		|| die
 
 	if use test; then
@@ -141,6 +133,8 @@ src_prepare() {
 			eend $?
 		done
 	fi
+
+	rocm_src_prepare
 }
 
 src_configure() {
