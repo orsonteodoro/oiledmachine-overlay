@@ -88,13 +88,12 @@ gen_rocm_required_use() {
 	done
 }
 REQUIRED_USE="
-	$(gen_cuda_required_use)
-	$(gen_rocm_required_use)
 	^^ (
 		cuda
 		rocm
 	)
 	cuda? (
+		$(gen_cuda_required_use)
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
@@ -115,8 +114,11 @@ REQUIRED_USE="
 			)
 		)
 	)
-	|| (
-		${ROCM_REQUIRED_USE}
+	rocm? (
+		$(gen_rocm_required_use)
+		|| (
+			${ROCM_REQUIRED_USE}
+		)
 	)
 "
 ROCM_SLOTS=(
@@ -339,17 +341,31 @@ einfo "Removing AOMP references"
 }
 
 src_prepare() {
-	export gpu="$(get_amdgpu_flags)"
 
 	gen_pc_file
 
 	if use cuda ; then
 		echo -e 'BACKEND = cuda' > make.inc || die
+		export gpu="$(get_cuda_flags)"
+		echo -e "GPU_TARGET = ${gpu}" >> make.inc || die
+		local gcc_slot=11
+		local gcc_current_profile=$(gcc-config -c)
+		local gcc_current_profile_slot=${gcc_current_profile##*-}
+		if [[ "${gcc_current_profile_slot}" -ne "${gcc_slot}" ]] ; then
+eerror
+eerror "You must switch to == GCC ${gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+			die
+		fi
 	elif use rocm ; then
 		echo -e 'BACKEND = hip' > make.inc || die
+		export gpu="$(get_amdgpu_flags)"
+		echo -e "GPU_TARGET = ${gpu}" >> make.inc || die
 	fi
 	echo -e 'FORT = true' >> make.inc || die
-	echo -e "GPU_TARGET = ${gpu}" >> make.inc || die
 	emake generate
 
 	rm -r blas_fix || die

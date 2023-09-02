@@ -145,7 +145,7 @@ src_configure() {
 eerror
 eerror "You must switch to >= GCC ${gcc_slot}.  Do"
 eerror
-eerror "  eselect gcc set ${CMAKE}-${gcc_slot}"
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
 eerror "  source /etc/profile"
 eerror
 		die
