@@ -1,8 +1,10 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-
 EAPI=8
+
+#50200000
+#5.623356
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -371,6 +373,7 @@ get_cuda_flags() {
 
 src_configure() {
 	replace-flags '-O0' '-O1'
+
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DMAGMA_ENABLE_CUDA=$(usex cuda ON OFF)
@@ -390,9 +393,22 @@ src_configure() {
 		)
 	fi
 	if use rocm ; then
-#		append-flags \
-#			--rocm-path="${ESYSROOT}/usr" \
-#			--rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
+		local a
+		local b
+		local c
+		local hip_pv=$(grep -r -e "set(PACKAGE_VERSION" \
+			"${ESYSROOT}/usr/$(get_libdir)/cmake/hip/hip-config-version.cmake" \
+			| head -n 1 \
+			| cut -f 2 -d " " \
+			| cut -f 2 -d '"')
+		if [[ -n "${hip_pv}" ]] ; then
+			# a.b.c : 5.6.23356 : a=5, b=6, c=23356
+			a=$(ver_cut 1 ${hip_pv})
+			b=$(ver_cut 2 ${hip_pv})
+			c=$(ver_cut 3 ${hip_pv})
+			append-cppflags -DHIP_VERSION=$(printf "%d%02d%5d" ${a} ${b} ${c})
+		fi
+
 		export CXX="${HIP_CXX:-hipcc}"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
