@@ -50,7 +50,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply_user
 	cmake_src_prepare
 	rocm_src_prepare
 }
