@@ -465,7 +465,7 @@ src_configure() {
 		local gcc_slot=12
 		local gcc_current_profile=$(gcc-config -c)
 		local gcc_current_profile_slot=${gcc_current_profile##*-}
-		if [[ "${gcc_current_profile_slot}" -ge "${gcc_slot}" ]] ; then
+		if [[ "${gcc_current_profile_slot}" -lt "${gcc_slot}" ]] ; then
 eerror
 eerror "You must switch to >= GCC ${gcc_slot}.  Do"
 eerror
