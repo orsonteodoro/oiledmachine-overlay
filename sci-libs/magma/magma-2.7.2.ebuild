@@ -381,6 +381,7 @@ eerror
 	fi
 
 	if use cuda ; then
+		export CUDADIR="/opt/cuda"
 		export gpu="$(get_cuda_flags)"
 		local gcc_slot=11
 		local gcc_current_profile=$(gcc-config -c)
@@ -448,11 +449,31 @@ src_configure() {
 		-DUSE_FORTRAN=ON
 	)
 
-	if use mkl ; then
+	if use cuda && use mkl ; then
 		mycmakeargs+=(
 			-DBLA_VENDOR="Intel10_64lp"
-			-DLAPACK_LIBRARIES="mkl_core"
+			-DLAPACK_LIBRARIES="-lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core"
 		)
+	elif use rocm && use mkl ; then
+		mycmakeargs+=(
+			-DBLA_VENDOR="Intel10_64lp"
+			-DLAPACK_LIBRARIES="-lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core"
+		)
+
+# librocblas.so.3: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
+		export gpu="$(get_cuda_flags)"
+		local gcc_slot=12
+		local gcc_current_profile=$(gcc-config -c)
+		local gcc_current_profile_slot=${gcc_current_profile##*-}
+		if [[ "${gcc_current_profile_slot}" -ge "${gcc_slot}" ]] ; then
+eerror
+eerror "You must switch to >= GCC ${gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+			die
+		fi
 	fi
 
 	if use openblas ; then
