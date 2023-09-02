@@ -1,4 +1,54 @@
-diff -urp magma-2.7.1.orig/CMakeLists.txt magma-2.7.1/CMakeLists.txt
+unchanged:
+--- magma-2.7.1.orig/sparse_hip/include/magmasparse_types.h	2023-02-22 12:19:12.000000000 -0800
++++ magma-2.7.1/sparse_hip/include/magmasparse_types.h	2023-09-01 21:27:15.062112339 -0700
+@@ -21,7 +21,11 @@
+ #endif
+ 
+ // includes CUDA
++#if HIP_VERSION >= 50200000
++#include <hipsparse/hipsparse.h>
++#else
+ #include <hipsparse.h>
++#endif
+ 
+ /* (author: Cade Brown <cbrow216@vols.utk.edu>
+  *
+unchanged:
+--- magma-2.7.1.orig/sparse_hip/testing/testing_zparilu.cpp	2023-02-22 12:19:12.000000000 -0800
++++ magma-2.7.1/sparse_hip/testing/testing_zparilu.cpp	2023-09-01 21:26:59.302111928 -0700
+@@ -17,8 +17,13 @@
+ 
+ // includes CUDA
+ #include <hip/hip_runtime_api.h>
++#if HIP_VERSION >= 50200000
++#include <hipblas/hipblas.h>
++#include <hipsparse/hipsparse.h>
++#else
+ #include <hipblas.h>
+ #include <hipsparse.h>
++#endif
+ #include <hip/hip_profile.h>
+ 
+ // includes, project
+unchanged:
+--- magma-2.7.1.orig/sparse_hip/testing/testing_zparilu_weight.cpp	2023-02-22 12:19:12.000000000 -0800
++++ magma-2.7.1/sparse_hip/testing/testing_zparilu_weight.cpp	2023-09-01 21:26:37.702111366 -0700
+@@ -18,8 +18,13 @@
+ 
+ // includes CUDA
+ #include <hip/hip_runtime_api.h>
++#if HIP_VERSION >= 50200000
++#include <hipblas/hipblas.h>
++#include <hipsparse/hipsparse.h>
++#else
+ #include <hipblas.h>
+ #include <hipsparse.h>
++#endif
+ #include <hip/hip_profile.h>
+ 
+ // includes, project
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/CMakeLists.txt	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/CMakeLists.txt	2023-09-01 18:58:49.393880386 -0700
 @@ -323,7 +323,7 @@ endif()
@@ -69,7 +119,8 @@ diff -urp magma-2.7.1.orig/CMakeLists.txt magma-2.7.1/CMakeLists.txt
  
  # ----------------------------------------
  get_directory_property( compile_definitions COMPILE_DEFINITIONS )
-diff -urp magma-2.7.1.orig/docs/documentation.txt magma-2.7.1/docs/documentation.txt
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/docs/documentation.txt	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/docs/documentation.txt	2023-09-01 18:54:55.457874293 -0700
 @@ -78,7 +78,7 @@ For bash (sh), put in `~/.bashrc` (with
@@ -145,7 +196,8 @@ diff -urp magma-2.7.1.orig/docs/documentation.txt magma-2.7.1/docs/documentation
  
  
  Tuning
-diff -urp magma-2.7.1.orig/example/Makefile magma-2.7.1/example/Makefile
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/example/Makefile	2023-02-22 12:18:56.000000000 -0800
 +++ magma-2.7.1/example/Makefile	2023-09-01 18:54:55.457874293 -0700
 @@ -7,8 +7,8 @@
@@ -174,7 +226,8 @@ diff -urp magma-2.7.1.orig/example/Makefile magma-2.7.1/example/Makefile
  
  
  # ----------------------------------------
-diff -urp magma-2.7.1.orig/example/README.txt magma-2.7.1/example/README.txt
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/example/README.txt	2023-02-22 12:18:56.000000000 -0800
 +++ magma-2.7.1/example/README.txt	2023-09-01 18:54:55.457874293 -0700
 @@ -39,7 +39,7 @@ make.inc for how Fortran functions are n
@@ -235,7 +288,8 @@ diff -urp magma-2.7.1.orig/example/README.txt magma-2.7.1/example/README.txt
  
  then use 'pkg-config --cflags magma' and 'pkg-config --libs magma' as shown in
  the Makefile.
-diff -urp magma-2.7.1.orig/fortran/Makefile magma-2.7.1/fortran/Makefile
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/fortran/Makefile	2023-02-22 12:19:10.000000000 -0800
 +++ magma-2.7.1/fortran/Makefile	2023-09-01 18:54:55.457874293 -0700
 @@ -14,7 +14,7 @@ CFLAGS     = -Wall -I$(MAGMADIR)/include
@@ -247,7 +301,8 @@ diff -urp magma-2.7.1.orig/fortran/Makefile magma-2.7.1/fortran/Makefile
  
  # BLAS and LAPACK libraries
  # framework Accelerate is for MacOS
-diff -urp magma-2.7.1.orig/include/magma_types.h magma-2.7.1/include/magma_types.h
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/include/magma_types.h	2023-02-22 12:18:51.000000000 -0800
 +++ magma-2.7.1/include/magma_types.h	2023-09-01 18:54:55.457874293 -0700
 @@ -176,7 +176,7 @@ typedef double real_Double_t;
@@ -259,7 +314,8 @@ diff -urp magma-2.7.1.orig/include/magma_types.h magma-2.7.1/include/magma_types
       *     | grep "use of undeclared identifier" \
       *     | awk '{gsub("'"'"'", "", $7) ; gsub(";", "", $7) ; print $7}'
       *
-diff -urp magma-2.7.1.orig/lib/pkgconfig/magma.pc.in magma-2.7.1/lib/pkgconfig/magma.pc.in
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/lib/pkgconfig/magma.pc.in	2023-02-22 12:19:10.000000000 -0800
 +++ magma-2.7.1/lib/pkgconfig/magma.pc.in	2023-09-01 18:54:55.457874293 -0700
 @@ -1,6 +1,6 @@
@@ -270,7 +326,8 @@ diff -urp magma-2.7.1.orig/lib/pkgconfig/magma.pc.in magma-2.7.1/lib/pkgconfig/m
  includedir=${prefix}/include
  
  Name: magma
-diff -urp magma-2.7.1.orig/make.check-cuda magma-2.7.1/make.check-cuda
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.check-cuda	2023-02-22 12:19:10.000000000 -0800
 +++ magma-2.7.1/make.check-cuda	2023-09-01 18:54:55.457874293 -0700
 @@ -2,11 +2,11 @@
@@ -287,7 +344,8 @@ diff -urp magma-2.7.1.orig/make.check-cuda magma-2.7.1/make.check-cuda
 -$(error $$CUDADIR=$(CUDADIR) does not exist. Please set $$CUDADIR to where CUDA is installed. (normally in /usr/local/cuda))
 +$(error $$CUDADIR=$(CUDADIR) does not exist. Please set $$CUDADIR to where CUDA is installed. (normally in /opt/cuda))
  endif
-diff -urp magma-2.7.1.orig/make.check-hip magma-2.7.1/make.check-hip
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.check-hip	2023-02-22 12:19:10.000000000 -0800
 +++ magma-2.7.1/make.check-hip	2023-09-01 18:54:55.457874293 -0700
 @@ -2,13 +2,13 @@
@@ -306,7 +364,8 @@ diff -urp magma-2.7.1.orig/make.check-hip magma-2.7.1/make.check-hip
  endif
  
  # don't compile HIP platfo
-diff -urp magma-2.7.1.orig/make.check-openblas magma-2.7.1/make.check-openblas
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.check-openblas	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.check-openblas	2023-09-01 18:54:55.457874293 -0700
 @@ -3,7 +3,7 @@
@@ -318,7 +377,8 @@ diff -urp magma-2.7.1.orig/make.check-openblas magma-2.7.1/make.check-openblas
  endif
  
  ifeq ($(wildcard $(OPENBLASDIR)),)
-diff -urp magma-2.7.1.orig/Makefile magma-2.7.1/Makefile
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/Makefile	2023-02-22 12:22:44.000000000 -0800
 +++ magma-2.7.1/Makefile	2023-09-01 18:54:55.461874293 -0700
 @@ -21,8 +21,8 @@ include make.inc
@@ -414,7 +474,8 @@ diff -urp magma-2.7.1.orig/Makefile magma-2.7.1/Makefile
  	$(LIBS)
  
  
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.acml magma-2.7.1/make.inc-examples/make.inc.acml
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.acml	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.acml	2023-09-01 18:54:55.461874293 -0700
 @@ -74,12 +74,12 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -433,7 +494,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.acml magma-2.7.1/make.inc-
  
  INC       = -I$(CUDADIR)/include \
              -I$(ACMLDIR)/gfortran64_mp/include
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.atlas magma-2.7.1/make.inc-examples/make.inc.atlas
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.atlas	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.atlas	2023-09-01 18:54:55.461874293 -0700
 @@ -75,12 +75,12 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -452,7 +514,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.atlas magma-2.7.1/make.inc
 +            -L$(ATLASDIR)/@LIBDIR@
  
  INC       = -I$(CUDADIR)/include
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.1/make.inc-examples/make.inc.hip-gcc-mkl
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-mkl	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.hip-gcc-mkl	2023-09-01 18:54:55.461874293 -0700
 @@ -33,8 +33,8 @@
@@ -500,7 +563,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.1/ma
  -include make.check-mkl
  
  # checks for the specified backend
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7.1/make.inc-examples/make.inc.hip-gcc-openblas
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-openblas	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.hip-gcc-openblas	2023-09-01 18:54:55.461874293 -0700
 @@ -33,9 +33,9 @@
@@ -548,7 +612,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7
  endif
  
  
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos magma-2.7.1/make.inc-examples/make.inc.macos
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.macos	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.macos	2023-09-01 18:54:55.461874293 -0700
 @@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -564,7 +629,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos magma-2.7.1/make.inc
  
  INC       = -I$(CUDADIR)/include
  
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-debug magma-2.7.1/make.inc-examples/make.inc.macos-debug
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.macos-debug	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.macos-debug	2023-09-01 18:54:55.461874293 -0700
 @@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -580,7 +646,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-debug magma-2.7.1/ma
  
  INC       = -I$(CUDADIR)/include
  
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-mkl magma-2.7.1/make.inc-examples/make.inc.macos-mkl
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.macos-mkl	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.macos-mkl	2023-09-01 18:54:55.461874293 -0700
 @@ -75,10 +75,10 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -597,7 +664,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-mkl magma-2.7.1/make
 +            -L$(MKLROOT)/@LIBDIR@
  
  INC       = -I$(CUDADIR)/include
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-openmp magma-2.7.1/make.inc-examples/make.inc.macos-openmp
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.macos-openmp	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.macos-openmp	2023-09-01 18:54:55.461874293 -0700
 @@ -83,10 +83,10 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -613,7 +681,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-openmp magma-2.7.1/m
  
  INC       = -I$(CUDADIR)/include
  
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc magma-2.7.1/make.inc-examples/make.inc.mkl-gcc
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc	2023-09-01 18:54:55.461874293 -0700
 @@ -71,13 +71,13 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -634,7 +703,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc magma-2.7.1/make.i
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-debug
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-debug	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-debug	2023-09-01 18:54:55.461874293 -0700
 @@ -71,13 +71,13 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -655,7 +725,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.7.1/
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64	2023-09-01 18:54:55.461874293 -0700
 @@ -87,13 +87,13 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -676,7 +747,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.7.1/
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64-debug
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2023-09-01 18:54:55.461874293 -0700
 @@ -87,13 +87,13 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -697,7 +769,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc magma-2.7.1/make.inc-examples/make.inc.mkl-icc
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc	2023-09-01 18:54:55.461874293 -0700
 @@ -66,13 +66,13 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -718,7 +791,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc magma-2.7.1/make.i
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.7.1/make.inc-examples/make.inc.mkl-icc-debug
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-debug	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-debug	2023-09-01 18:54:55.461874293 -0700
 @@ -66,13 +66,13 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -739,7 +813,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.7.1/
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64	2023-09-01 18:54:55.461874293 -0700
 @@ -82,13 +82,13 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -760,7 +835,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.7.1/
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64-debug
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2023-09-01 18:54:55.461874293 -0700
 @@ -82,13 +82,13 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -781,7 +857,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-
              -L$(MKLROOT)/lib/intel64
  
  INC       = -I$(CUDADIR)/include \
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.openblas magma-2.7.1/make.inc-examples/make.inc.openblas
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.openblas	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.openblas	2023-09-01 18:54:55.461874293 -0700
 @@ -16,9 +16,9 @@
@@ -826,7 +903,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.openblas magma-2.7.1/make.
      LIB    += -lhipblas -lhipsparse
  endif
  
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.openblas-debug magma-2.7.1/make.inc-examples/make.inc.openblas-debug
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.openblas-debug	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.openblas-debug	2023-09-01 18:54:55.461874293 -0700
 @@ -65,12 +65,12 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -846,7 +924,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.openblas-debug magma-2.7.1
 +            -L$(OPENBLASDIR)/@LIBDIR@
  
  INC       = -I$(CUDADIR)/include
-diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.power9-essl magma-2.7.1/make.inc-examples/make.inc.power9-essl
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/make.inc-examples/make.inc.power9-essl	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/make.inc-examples/make.inc.power9-essl	2023-09-01 18:54:55.461874293 -0700
 @@ -65,12 +65,12 @@ LIB      += -lcublas -lcusparse -lcudart
@@ -865,7 +944,8 @@ diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.power9-essl magma-2.7.1/ma
  
  INC       = -I$(OLCF_CUDA_ROOT)/include \
              -I$(OLCF_ESSL_ROOT)/include -I$(OLCF_NETLIB_LAPACK_ROOT)/include
-diff -urp magma-2.7.1.orig/testing/lin/Makefile.src magma-2.7.1/testing/lin/Makefile.src
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/testing/lin/Makefile.src	2023-02-22 12:19:04.000000000 -0800
 +++ magma-2.7.1/testing/lin/Makefile.src	2023-09-01 18:54:55.461874293 -0700
 @@ -277,28 +277,28 @@ xlintsts : $(ALINTST) $(SLINTST) $(SCLNT
@@ -901,7 +981,8 @@ diff -urp magma-2.7.1.orig/testing/lin/Makefile.src magma-2.7.1/testing/lin/Make
  	$(LIBDIR) $(LIB)
   
  $(ALINTST): $(FRC)
-diff -urp magma-2.7.1.orig/testing/testing_veclib.cpp magma-2.7.1/testing/testing_veclib.cpp
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/testing/testing_veclib.cpp	2023-02-22 12:18:58.000000000 -0800
 +++ magma-2.7.1/testing/testing_veclib.cpp	2023-09-01 18:54:55.461874293 -0700
 @@ -14,7 +14,7 @@
@@ -913,7 +994,8 @@ diff -urp magma-2.7.1.orig/testing/testing_veclib.cpp magma-2.7.1/testing/testin
  // These correctly return float for the single precision functions that had issues.
  
  #include <stdio.h>
-diff -urp magma-2.7.1.orig/tools/build.sh magma-2.7.1/tools/build.sh
+only in patch2:
+unchanged:
 --- magma-2.7.1.orig/tools/build.sh	2023-02-22 12:19:07.000000000 -0800
 +++ magma-2.7.1/tools/build.sh	2023-09-01 18:54:55.461874293 -0700
 @@ -155,14 +155,14 @@ for config in $@; do
