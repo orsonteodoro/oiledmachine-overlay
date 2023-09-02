@@ -417,6 +417,11 @@ src_prepare() {
 	unset CC
 	unset CXX
 
+	sed -i \
+		-e "/{LIB} does not exist/d" \
+		CMakeLists.txt \
+		|| die
+
 	cmake_src_prepare
 	replace_symbols
 
