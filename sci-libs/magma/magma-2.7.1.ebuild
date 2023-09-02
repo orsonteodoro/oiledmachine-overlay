@@ -65,7 +65,7 @@ KEYWORDS="~amd64"
 IUSE="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-doc cuda rocm openblas examples test
+cuda doc examples mkl openblas rocm test
 "
 gen_cuda_required_use() {
 	local x
@@ -91,6 +91,10 @@ REQUIRED_USE="
 	^^ (
 		cuda
 		rocm
+	)
+	^^ (
+		openblas
+		mkl
 	)
 	cuda? (
 		$(gen_cuda_required_use)
@@ -148,6 +152,7 @@ RDEPEND="
 		virtual/lapack
 	)
 	sci-libs/hipBLAS
+	sys-devel/gcc[fortran]
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-7.5:=
 		cuda_targets_sm_35? (
@@ -193,7 +198,11 @@ RDEPEND="
 			)
 		)
 	)
+	mkl? (
+		sci-libs/mkl
+	)
 	openblas? (
+		sci-libs/lapack
 		sci-libs/openblas
 	)
 	rocm? (
@@ -220,12 +229,16 @@ RESTRICT="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.7.1-path-changes.patch"
+	"${FILESDIR}/${PN}-2.7.1-make-inc.patch"
 )
 
 pkg_setup() {
 	fortran-2_pkg_setup
 	python-any-r1_pkg_setup
 	tc-check-openmp || die "Need OpenMP to compile ${P}"
+	if use mkl ; then
+		source "/opt/intel/oneapi/mkl/latest/env/vars.sh"
+	fi
 }
 
 gen_pc_file() {
@@ -307,7 +320,7 @@ einfo "Using AOMP (unislot)"
 			$(grep -r -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
 			|| true
 	elif (( ${llvm_slot} > 0 )) ; then
-einfo "Using LLVM only"
+einfo "Using LLVM proper"
 		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I/usr/lib/llvm/@LLVM_SLOT@/include|g" \
 			$(grep -r -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
 			|| true
@@ -340,14 +353,38 @@ einfo "Removing AOMP references"
 	IFS=$' \t\n'
 }
 
-src_prepare() {
+generate_precisions() {
+	local inc_file
+	if use cuda && use mkl ; then
+		inc_file="make.inc.mkl-gcc"
+	elif use cuda && use openblas ; then
+		inc_file="make.inc.openblas"
+	elif use rocm && use mkl ; then
+		inc_file="make.inc.hip-gcc-mkl"
+	elif use rocm && use openblas ; then
+		inc_file="make.inc.hip-gcc-openblas"
+	else
+eerror
+eerror "You must choose one of the following USE flags per row:"
+eerror
+eerror "GPU target:  cuda rocm"
+eerror "CPU target:  mkl openblas"
+eerror
+		die
+	fi
 
-	gen_pc_file
+	rm -f make.inc || true
+	ln -s \
+		"make.inc-examples/${inc_file}" \
+		"make.inc" \
+		|| die
+
+	if use openblas ; then
+		export OPENBLASDIR="/usr"
+	fi
 
 	if use cuda ; then
-		echo -e 'BACKEND = cuda' > make.inc || die
 		export gpu="$(get_cuda_flags)"
-		echo -e "GPU_TARGET = ${gpu}" >> make.inc || die
 		local gcc_slot=11
 		local gcc_current_profile=$(gcc-config -c)
 		local gcc_current_profile_slot=${gcc_current_profile##*-}
@@ -361,18 +398,28 @@ eerror
 			die
 		fi
 	elif use rocm ; then
-		echo -e 'BACKEND = hip' > make.inc || die
 		export gpu="$(get_amdgpu_flags)"
-		echo -e "GPU_TARGET = ${gpu}" >> make.inc || die
 	fi
-	echo -e 'FORT = true' >> make.inc || die
+	sed -i \
+		-e "s|@GPU_TARGET_OVERRIDE@|GPU_TARGET = ${gpu}|g" \
+		$(realpath make.inc) \
+		|| die
 	emake generate
+}
 
-	rm -r blas_fix || die
+src_prepare() {
+	# Let build script handle it.
+	unset CC
+	unset CXX
 
 	cmake_src_prepare
-
 	replace_symbols
+
+	gen_pc_file
+
+	generate_precisions
+
+	rm -r blas_fix || die
 }
 
 get_cuda_flags() {
@@ -396,6 +443,13 @@ src_configure() {
 		-DMAGMA_ENABLE_HIP=$(usex rocm ON OFF)
 		-DUSE_FORTRAN=ON
 	)
+
+	if use mkl ; then
+		mycmakeargs+=(
+			-DBLA_VENDOR="Intel10_64lp"
+			-DLAPACK_LIBRARIES="mkl_core"
+		)
+	fi
 
 	if use openblas ; then
 		mycmakeargs+=(

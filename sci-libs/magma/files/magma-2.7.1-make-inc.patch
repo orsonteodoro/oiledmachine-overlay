@@ -1,0 +1,224 @@
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.acml magma-2.7.1/make.inc-examples/make.inc.acml
+--- magma-2.7.1.orig/make.inc-examples/make.inc.acml	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.acml	2023-09-02 07:52:40.829767843 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.atlas magma-2.7.1/make.inc-examples/make.inc.atlas
+--- magma-2.7.1.orig/make.inc-examples/make.inc.atlas	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.atlas	2023-09-02 07:52:41.597767867 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.1/make.inc-examples/make.inc.hip-gcc-mkl
+--- magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-mkl	2023-09-02 07:16:54.525701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.hip-gcc-mkl	2023-09-02 07:52:42.861767906 -0700
+@@ -81,6 +81,7 @@ else ifeq ($(BACKEND),hip)
+     # not specific enough. TODO: find better link?
+     GPU_TARGET ?= gfx900 gfx906 gfx908
+ endif
++@GPU_TARGET_OVERRIDE@
+ 
+ # Use -fPIC to make shared (.so) and static (.a) library;
+ # can be commented out if making only static library.
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7.1/make.inc-examples/make.inc.hip-gcc-openblas
+--- magma-2.7.1.orig/make.inc-examples/make.inc.hip-gcc-openblas	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.hip-gcc-openblas	2023-09-02 07:52:45.277767982 -0700
+@@ -76,7 +76,7 @@ RANLIB      ?= ranlib
+ ifeq ($(BACKEND),cuda)
+     # See a full table: https://nouveau.freedesktop.org/wiki/CodeNames/
+     # note: provided by freedesktop, which is reliable, but not from the vendor
+-    GPU_TARGET = Volta Turing Ampere
++    GPU_TARGET ?= Volta Turing Ampere
+ else ifeq ($(BACKEND),hip)
+     # See a full table:
+     #   https://llvm.org/docs/AMDGPUUsage.html#amdgpu-processor-table
+@@ -85,6 +85,7 @@ else ifeq ($(BACKEND),hip)
+     # not specific enough. TODO: find better link?
+     GPU_TARGET ?= gfx900 gfx906 gfx908
+ endif
++@GPU_TARGET_OVERRIDE@
+ 
+ # Use -fPIC to make shared (.so) and static (.a) library;
+ # can be commented out if making only static library.
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos magma-2.7.1/make.inc-examples/make.inc.macos
+--- magma-2.7.1.orig/make.inc-examples/make.inc.macos	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.macos	2023-09-02 07:52:46.589768022 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-debug magma-2.7.1/make.inc-examples/make.inc.macos-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.macos-debug	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.macos-debug	2023-09-02 07:52:47.613768054 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-mkl magma-2.7.1/make.inc-examples/make.inc.macos-mkl
+--- magma-2.7.1.orig/make.inc-examples/make.inc.macos-mkl	2023-09-02 07:16:54.525701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.macos-mkl	2023-09-02 07:52:48.589768084 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.macos-openmp magma-2.7.1/make.inc-examples/make.inc.macos-openmp
+--- magma-2.7.1.orig/make.inc-examples/make.inc.macos-openmp	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.macos-openmp	2023-09-02 07:52:49.517768113 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc magma-2.7.1/make.inc-examples/make.inc.mkl-gcc
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc	2023-09-02 07:52:50.429768142 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-debug magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-debug	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-debug	2023-09-02 07:52:51.341768170 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64 magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64	2023-09-02 07:52:52.221768197 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-gcc-ilp64-debug	2023-09-02 07:52:53.197768228 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc magma-2.7.1/make.inc-examples/make.inc.mkl-icc
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc	2023-09-02 07:16:54.525701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc	2023-09-02 07:52:54.637768272 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-debug magma-2.7.1/make.inc-examples/make.inc.mkl-icc-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-debug	2023-09-02 07:16:54.525701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-debug	2023-09-02 07:52:55.741768307 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64 magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64	2023-09-02 07:52:56.621768334 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.mkl-icc-ilp64-debug	2023-09-02 07:52:57.485768361 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.openblas magma-2.7.1/make.inc-examples/make.inc.openblas
+--- magma-2.7.1.orig/make.inc-examples/make.inc.openblas	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.openblas	2023-09-02 07:52:58.701768399 -0700
+@@ -54,10 +54,11 @@ RANLIB    = ranlib
+ 
+ # set our GPU targets
+ ifeq ($(BACKEND),cuda)
+-    GPU_TARGET = Volta Turing Ampere
++    GPU_TARGET ?= Volta Turing Ampere
+ else ifeq ($(BACKEND),hip)
+-    GPU_TARGET = gfx900 gfx906 gfx908
++    GPU_TARGET ?= gfx900 gfx906 gfx908
+ endif
++@GPU_TARGET_OVERRIDE@
+ 
+ # Use -fPIC to make shared (.so) and static (.a) library;
+ # can be commented out if making only static library.
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.openblas-debug magma-2.7.1/make.inc-examples/make.inc.openblas-debug
+--- magma-2.7.1.orig/make.inc-examples/make.inc.openblas-debug	2023-09-02 07:16:54.525701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.openblas-debug	2023-09-02 07:52:38.937767785 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
+diff -urp magma-2.7.1.orig/make.inc-examples/make.inc.power9-essl magma-2.7.1/make.inc-examples/make.inc.power9-essl
+--- magma-2.7.1.orig/make.inc-examples/make.inc.power9-essl	2023-09-02 07:16:54.529701165 -0700
++++ magma-2.7.1/make.inc-examples/make.inc.power9-essl	2023-09-02 07:52:39.933767816 -0700
+@@ -20,6 +20,7 @@
+ # See http://developer.nvidia.com/cuda-gpus
+ #
+ #GPU_TARGET ?= Volta Turing Ampere
++@GPU_TARGET_OVERRIDE@
+ 
+ # --------------------
+ # programs
