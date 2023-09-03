@@ -57,7 +57,7 @@ diff -urp ROCdbgapi-rocm-5.1.3.orig/CMakeLists.txt ROCdbgapi-rocm-5.1.3/CMakeLis
  install(FILES
    "LICENSE.txt"
 -  DESTINATION share/doc/amd-dbgapi)
-+  DESTINATION share/doc/amd-dbgapi-5.1.3)
++  DESTINATION share/doc/amd-dbgapi-@PV@)
  
  # Generate the install-tree package.
  set(AMD_DBGAPI_PREFIX_CODE "

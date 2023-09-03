@@ -17,7 +17,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE=" r1"
+IUSE=" r2"
 RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
 "
