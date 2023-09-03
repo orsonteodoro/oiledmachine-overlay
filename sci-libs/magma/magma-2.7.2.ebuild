@@ -140,9 +140,6 @@ gen_rocm_rdepend() {
 		local slot="0/${pv%.*}"
 		echo "
 			(
-				mkl? (
-					>=sys-libs/libomp-${ROCM_PV_TO_LLVM_MAX_SLOT[${pv}]}
-				)
 				~dev-util/hip-${pv}:${slot}
 				~sci-libs/hipBLAS-${pv}:${slot}
 				~sci-libs/hipSPARSE-${pv}:${slot}
@@ -471,20 +468,9 @@ src_configure() {
 		)
 	elif use rocm && use mkl ; then
 		mycmakeargs+=(
-			-DBLA_VENDOR="Intel10_64lp_seq"
-			-DLAPACK_LIBRARIES="-lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core"
-			-DOpenMP_CXX_FLAGS=" -fopenmp=libomp"
-			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="omp"
+			-DBLA_VENDOR="Intel10_64lp"
+			-DLAPACK_LIBRARIES="-lmkl_gf_lp64 -lmkl_intel_thread -lmkl_core"
 		)
-
-# FIXME:
-#
-# From gcc:12 use gcc:11 to avoid error
-#omp.h:308:45: error: '__malloc__' attribute takes no arguments
-#  __GOMP_NOTHROW __attribute__((__malloc__, __malloc__ (omp_free)
-#
-		export gpu="$(get_cuda_flags)"
 	fi
 
 	if use openblas ; then
