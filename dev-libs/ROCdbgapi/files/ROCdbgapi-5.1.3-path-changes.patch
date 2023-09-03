@@ -1,0 +1,99 @@
+diff -urp ROCdbgapi-rocm-5.1.3.orig/amd-dbgapi.pc.in ROCdbgapi-rocm-5.1.3/amd-dbgapi.pc.in
+--- ROCdbgapi-rocm-5.1.3.orig/amd-dbgapi.pc.in	2022-03-08 09:04:05.000000000 -0800
++++ ROCdbgapi-rocm-5.1.3/amd-dbgapi.pc.in	2023-09-03 14:33:07.460726314 -0700
+@@ -1,6 +1,6 @@
+ prefix=@CPACK_PACKAGING_INSTALL_PREFIX@
+ exec_prefix=${prefix}
+-libdir=${prefix}/lib
++libdir=${prefix}/@LIBDIR@
+ includedir=${prefix}/include
+ 
+ Name: amd-dbgapi
+diff -urp ROCdbgapi-rocm-5.1.3.orig/CMakeLists.txt ROCdbgapi-rocm-5.1.3/CMakeLists.txt
+--- ROCdbgapi-rocm-5.1.3.orig/CMakeLists.txt	2022-03-08 09:04:05.000000000 -0800
++++ ROCdbgapi-rocm-5.1.3/CMakeLists.txt	2023-09-03 14:33:30.660726004 -0700
+@@ -85,7 +85,7 @@ set_target_properties(amd-dbgapi PROPERT
+   CXX_EXTENSIONS ON
+   CXX_VISIBILITY_PRESET hidden
+   OUTPUT_NAME "rocm-dbgapi"
+-  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
++  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/@LIBDIR@
+   DEFINE_SYMBOL "AMD_DBGAPI_EXPORTS"
+   VERSION ${AMD_DBGAPI_VERSION}
+   SOVERSION ${AMD_DBGAPI_VERSION_MAJOR})
+@@ -114,10 +114,10 @@ endif()
+ 
+ find_package(amd_comgr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    /usr/
+   PATH_SUFFIXES
+     cmake/amd_comgr
+-    lib/cmake/amd_comgr
++    lib64/cmake/amd_comgr
+ )
+ MESSAGE(STATUS "Code Object Manager found at ${amd_comgr_DIR}.")
+ 
+@@ -165,7 +165,7 @@ target_link_libraries(amd-dbgapi
+ 
+ set(AMD_DBGAPI_CONFIG_NAME amd-dbgapi-config.cmake)
+ set(AMD_DBGAPI_TARGETS_NAME amd-dbgapi-targets.cmake)
+-set(AMD_DBGAPI_PACKAGE_PREFIX lib/cmake/amd-dbgapi)
++set(AMD_DBGAPI_PACKAGE_PREFIX @LIBDIR@/cmake/amd-dbgapi)
+ 
+ # Generate the build-tree package.
+ set(AMD_DBGAPI_PREFIX_CODE)
+@@ -179,7 +179,7 @@ configure_file("cmake/${AMD_DBGAPI_CONFI
+ 
+ install(TARGETS amd-dbgapi
+   EXPORT amd-dbgapi-export
+-  DESTINATION lib)
++  DESTINATION lib64)
+ 
+ install(FILES
+   "${CMAKE_CURRENT_BINARY_DIR}/include/amd-dbgapi.h"
+@@ -191,7 +191,7 @@ install (FILES
+ 
+ install(FILES
+   "LICENSE.txt"
+-  DESTINATION share/doc/amd-dbgapi)
++  DESTINATION share/doc/amd-dbgapi-5.1.3)
+ 
+ # Generate the install-tree package.
+ set(AMD_DBGAPI_PREFIX_CODE "
+@@ -303,7 +303,7 @@ if(DOXYGEN_FOUND)
+ 
+   install(FILES
+     "${CMAKE_CURRENT_BINARY_DIR}/doc/latex/refman.pdf"
+-    DESTINATION share/doc/amd-dbgapi
++    DESTINATION share/doc/amd-dbgapi-5.1.3
+     RENAME "amd-dbgapi.pdf"
+     OPTIONAL)
+ 
+@@ -313,3 +313,14 @@ if(DOXYGEN_FOUND)
+     OPTIONAL)
+ 
+ endif()
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+diff -urp ROCdbgapi-rocm-5.1.3.orig/README.md ROCdbgapi-rocm-5.1.3/README.md
+--- ROCdbgapi-rocm-5.1.3.orig/README.md	2022-03-08 09:04:05.000000000 -0800
++++ ROCdbgapi-rocm-5.1.3/README.md	2023-09-03 14:33:18.596726165 -0700
+@@ -95,7 +95,7 @@ make install
+ The installed ROCdbgapi library and documentation will be placed in:
+ 
+ - ``../install/include/amd-dbgapi.h``
+-- ``../install/lib/librocm-dbgapi.so*``
++- ``../install/@LIBDIR@/librocm-dbgapi.so*``
+ - ``../install/share/amd-dbgapi/LICENSE.txt``
+ - ``../install/share/amd-dbgapi/README.md``
+ - ``../install/share/html/amd-dbgapi/index.html``

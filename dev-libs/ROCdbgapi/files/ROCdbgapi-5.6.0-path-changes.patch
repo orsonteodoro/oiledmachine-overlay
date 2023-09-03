@@ -1,0 +1,60 @@
+diff -urp ROCdbgapi-rocm-5.6.0.orig/CMakeLists.txt ROCdbgapi-rocm-5.6.0/CMakeLists.txt
+--- ROCdbgapi-rocm-5.6.0.orig/CMakeLists.txt	2023-03-16 15:07:44.000000000 -0700
++++ ROCdbgapi-rocm-5.6.0/CMakeLists.txt	2023-09-03 14:26:47.520731387 -0700
+@@ -86,7 +86,7 @@ set_target_properties(amd-dbgapi PROPERT
+   CXX_EXTENSIONS ON
+   CXX_VISIBILITY_PRESET hidden
+   OUTPUT_NAME "rocm-dbgapi"
+-  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
++  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/@LIB64@
+   DEFINE_SYMBOL "AMD_DBGAPI_EXPORTS"
+   VERSION ${PROJECT_VERSION}
+   SOVERSION ${PROJECT_VERSION_MAJOR})
+@@ -136,9 +136,9 @@ set_source_files_properties(
+ 
+ find_package(amd_comgr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    /usr/
+   PATH_SUFFIXES
+-    lib/cmake/amd_comgr
++    @LIB64@/cmake/amd_comgr
+ )
+ MESSAGE(STATUS "Code Object Manager found at ${amd_comgr_DIR}.")
+ 
+@@ -178,7 +178,7 @@ set_source_files_properties(src/versioni
+ 
+ # We are using the HSA runtime headers, but not the runtime library. Get the HSA runtime
+ # include directories from the hsa-runtime64::hsa-runtime64 interface.
+-find_package(hsa-runtime64 REQUIRED CONFIG PATHS "/opt/rocm")
++find_package(hsa-runtime64 REQUIRED CONFIG PATHS "/usr")
+ get_property(HSA_RUNTIME_INCLUDE_DIRECTORIES TARGET hsa-runtime64::hsa-runtime64 PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+ 
+ target_include_directories(amd-dbgapi
+@@ -341,3 +341,14 @@ if(DOXYGEN_FOUND)
+     OPTIONAL)
+ 
+ endif()
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+diff -urp ROCdbgapi-rocm-5.6.0.orig/README.md ROCdbgapi-rocm-5.6.0/README.md
+--- ROCdbgapi-rocm-5.6.0.orig/README.md	2023-03-16 15:07:44.000000000 -0700
++++ ROCdbgapi-rocm-5.6.0/README.md	2023-09-03 14:26:49.040731367 -0700
+@@ -95,7 +95,7 @@ make install
+ The installed ROCdbgapi library and documentation will be placed in:
+ 
+ - ``../install/include/amd-dbgapi.h``
+-- ``../install/lib/librocm-dbgapi.so*``
++- ``../install/@LIB64@/librocm-dbgapi.so*``
+ - ``../install/share/amd-dbgapi/LICENSE.txt``
+ - ``../install/share/amd-dbgapi/README.md``
+ - ``../install/share/html/amd-dbgapi/index.html``

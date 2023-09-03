@@ -28,6 +28,7 @@ BDEPEND="
 "
 S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -35,37 +36,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e "s:DESTINATION lib:DESTINATION $(get_libdir):" \
-		-i \
-		"CMakeLists.txt" \
-		|| die
-	sed \
-		-e "s:DESTINATION share/doc/amd-dbgapi:DESTINATION share/doc/amd-dbgapi-${PV}:" \
-		-i \
-		"CMakeLists.txt" \
-		|| die
-	sed \
-		-i \
-		-e "s|/opt/rocm|/usr|g" \
-		"CMakeLists.txt" \
-		|| die
-	sed \
-		-i \
-		-e "s|lib/cmake/amd_comgr|$(get_libdir)/cmake/amd_comgr|g" \
-		"CMakeLists.txt" \
-		|| die
-	sed \
-		-i \
-		-e "s|}/lib$|}/$(get_libdir)|g" \
-		"CMakeLists.txt" \
-		|| die
-	sed \
-		-i \
-		-e "s|/lib/|/$(get_libdir)/|g" \
-		"README.md" \
-		|| die
-
 	local mycmakeargs=(
 	)
 	cmake_src_prepare
