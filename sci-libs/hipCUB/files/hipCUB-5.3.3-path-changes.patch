@@ -1,0 +1,220 @@
+diff -urp hipCUB-rocm-5.3.3.orig/cmake/Dependencies.cmake hipCUB-rocm-5.3.3/cmake/Dependencies.cmake
+--- hipCUB-rocm-5.3.3.orig/cmake/Dependencies.cmake	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/cmake/Dependencies.cmake	2023-09-03 12:38:37.852818049 -0700
+@@ -102,7 +102,7 @@ else()
+       GIT_TAG             develop
+       GIT_SHALLOW         TRUE
+       INSTALL_DIR         ${CMAKE_CURRENT_BINARY_DIR}/deps/rocprim
+-      CMAKE_ARGS          -DBUILD_TEST=OFF -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> -DCMAKE_PREFIX_PATH=/opt/rocm
++      CMAKE_ARGS          -DBUILD_TEST=OFF -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR> -DCMAKE_PREFIX_PATH=/usr
+       LOG_DOWNLOAD        TRUE
+       LOG_CONFIGURE       TRUE
+       LOG_BUILD           TRUE
+diff -urp hipCUB-rocm-5.3.3.orig/cmake/RocmCmakeDependence.cmake hipCUB-rocm-5.3.3/cmake/RocmCmakeDependence.cmake
+--- hipCUB-rocm-5.3.3.orig/cmake/RocmCmakeDependence.cmake	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/cmake/RocmCmakeDependence.cmake	2023-09-03 12:38:37.852818049 -0700
+@@ -21,7 +21,7 @@
+ # SOFTWARE.
+ 
+ # Find or download/install rocm-cmake project
+-find_package(ROCM 0.7.3 QUIET CONFIG PATHS /opt/rocm)
++find_package(ROCM 0.7.3 QUIET CONFIG PATHS /usr)
+ if(NOT ROCM_FOUND)
+     set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
+     file(
+diff -urp hipCUB-rocm-5.3.3.orig/cmake/ROCMExportTargetsHeaderOnly.cmake hipCUB-rocm-5.3.3/cmake/ROCMExportTargetsHeaderOnly.cmake
+--- hipCUB-rocm-5.3.3.orig/cmake/ROCMExportTargetsHeaderOnly.cmake	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-09-03 12:38:37.852818049 -0700
+@@ -67,11 +67,11 @@ function(rocm_export_targets_header_only
+         set(PREFIX_DIR ${PARSE_PREFIX})
+         set(PREFIX_ARG PREFIX ${PREFIX_DIR})
+         set(BIN_INSTALL_DIR ${PREFIX_DIR}/${CMAKE_INSTALL_BINDIR})
+-        set(LIB_INSTALL_DIR ${PREFIX_DIR}/${ROCM_INSTALL_LIBDIR})
++        set(LIB_INSTALL_DIR ${PREFIX_DIR}/${CMAKE_INSTALL_LIBDIR})
+         set(INCLUDE_INSTALL_DIR ${PREFIX_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
+     else()
+         set(BIN_INSTALL_DIR ${CMAKE_INSTALL_BINDIR})
+-        set(LIB_INSTALL_DIR ${ROCM_INSTALL_LIBDIR})
++        set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+         set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR})
+     endif()
+     set(CONFIG_PACKAGE_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/${PACKAGE_NAME_LOWER})
+diff -urp hipCUB-rocm-5.3.3.orig/cmake/VerifyCompiler.cmake hipCUB-rocm-5.3.3/cmake/VerifyCompiler.cmake
+--- hipCUB-rocm-5.3.3.orig/cmake/VerifyCompiler.cmake	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/cmake/VerifyCompiler.cmake	2023-09-03 12:38:37.852818049 -0700
+@@ -20,10 +20,10 @@
+ # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ # SOFTWARE.
+ 
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/hip)
++list(APPEND CMAKE_PREFIX_PATH /usr /usr/hip)
+ if(CMAKE_CXX_COMPILER MATCHES ".*nvcc$" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+-    list(APPEND CMAKE_MODULE_PATH /opt/rocm/hip/cmake)
+-    find_package(hip QUIET CONFIG PATHS /opt/rocm)
++    list(APPEND CMAKE_MODULE_PATH /usr/hip/cmake)
++    find_package(hip QUIET CONFIG PATHS /usr)
+     if(NOT hip_FOUND)
+         find_package(HIP REQUIRED)
+     endif()
+@@ -32,7 +32,7 @@ if(CMAKE_CXX_COMPILER MATCHES ".*nvcc$"
+        set(HIP_COMPILER "nvcc" CACHE STRING "HIP Compiler" FORCE)
+     endif()
+ else()
+-  find_package(hip REQUIRED CONFIG PATHS /opt/rocm)
++  find_package(hip REQUIRED CONFIG PATHS /usr)
+ endif()
+ 
+ if(HIP_COMPILER STREQUAL "nvcc")
+diff -urp hipCUB-rocm-5.3.3.orig/CMakeLists.txt hipCUB-rocm-5.3.3/CMakeLists.txt
+--- hipCUB-rocm-5.3.3.orig/CMakeLists.txt	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/CMakeLists.txt	2023-09-03 12:38:37.852818049 -0700
+@@ -24,28 +24,28 @@ cmake_minimum_required(VERSION 3.16 FATA
+ cmake_policy(VERSION 3.16...3.21)
+ 
+ # Install prefix
+-set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
+ 
+ #Adding CMAKE_PREFIX_PATH
+-list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm ${ROCM_PATH})
++list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr ${ROCM_PATH})
+ 
+ # hipCUB project
+ project(hipcub LANGUAGES CXX)
+ 
+ #Adding CMAKE_PREFIX_PATH
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH /usr)
+ 
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+   ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+-  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
+-  ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip # FindHIP.cmake
++  ${HIP_PATH}/cmake /usr/hip/cmake # FindHIP.cmake
++  ${ROCM_PATH}/@LIBDIR@/cmake/hip /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
+ )
+ 
+ # Set a default build type if none was specified
+ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+   message(STATUS "Setting build type to 'Release' as none was specified.")
+-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+ endif()
+ 
+@@ -187,3 +187,14 @@ else()
+     HEADER_ONLY
+   )
+ endif()
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+diff -urp hipCUB-rocm-5.3.3.orig/hipcub/CMakeLists.txt hipCUB-rocm-5.3.3/hipcub/CMakeLists.txt
+--- hipCUB-rocm-5.3.3.orig/hipcub/CMakeLists.txt	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/hipcub/CMakeLists.txt	2023-09-03 12:39:50.348817081 -0700
+@@ -91,7 +91,7 @@ rocm_install(
+ )
+ 
+ # Install the wrapper to hipcub folder. 
+-# Wrappers would be in /opt/rocm-xxx/hipcub/include/hipcub
++# Wrappers would be in /usr/hipcub/include/hipcub
+ if (BUILD_FILE_REORG_BACKWARD_COMPATIBILITY)
+   rocm_install(
+     DIRECTORY
+Only in hipCUB-rocm-5.3.3/hipcub: CMakeLists.txt.orig
+Only in hipCUB-rocm-5.3.3/hipcub: CMakeLists.txt.rej
+diff -urp hipCUB-rocm-5.3.3.orig/install hipCUB-rocm-5.3.3/install
+--- hipCUB-rocm-5.3.3.orig/install	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/install	2023-09-03 12:38:37.852818049 -0700
+@@ -31,7 +31,7 @@ build_clients=false
+ build_release=true
+ build_hip_clang=false
+ run_tests=false
+-rocm_path=/opt/rocm
++rocm_path=/usr
+ build_relocatable=false
+ build_address_sanitizer=false
+ build_freorg_bkwdcomp=true
+@@ -160,7 +160,7 @@ if [[ "${build_relocatable}" == true ]];
+     CXX=$rocm_path/bin/${compiler} ${cmake_executable} \
+         -DCMAKE_INSTALL_PREFIX=${rocm_path} \
+         -DCMAKE_PREFIX_PATH="${rocm_path} ${rocm_path}/hcc ${rocm_path}/hip" \
+-        -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
++        -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip ${rocm_path}/hip/cmake" \
+         -Drocprim_DIR=${rocm_path}/rocprim \
+         ${cmake_common_options} \
+         ${build_tests} ${build_type} ../../. # or cmake-gui ../.
+Only in hipCUB-rocm-5.3.3: install.orig
+diff -urp hipCUB-rocm-5.3.3.orig/README.md hipCUB-rocm-5.3.3/README.md
+--- hipCUB-rocm-5.3.3.orig/README.md	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/README.md	2023-09-03 12:38:37.852818049 -0700
+@@ -96,10 +96,10 @@ configuration files.
+ 
+ ```cmake
+ # On ROCm hipCUB requires rocPRIM
+-find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "/usr/rocprim")
+ 
+-# "/opt/rocm" - default install prefix
+-find_package(hipcub REQUIRED CONFIG PATHS "/opt/rocm/hipcub")
++# "/usr" - default install prefix
++find_package(hipcub REQUIRED CONFIG PATHS "/usr/hipcub")
+ 
+ ...
+ # On ROCm: includes hipCUB headers and roc::rocprim_hip target
+Only in hipCUB-rocm-5.3.3: README.md.orig
+diff -urp hipCUB-rocm-5.3.3.orig/rmake.py hipCUB-rocm-5.3.3/rmake.py
+--- hipCUB-rocm-5.3.3.orig/rmake.py	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/rmake.py	2023-09-03 12:38:37.852818049 -0700
+@@ -95,7 +95,7 @@ def config_cmd():
+         # "-G \"Visual Studio 16 2019\" -A x64"  #  -G NMake ")  #
+         cmake_options.append( generator )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
+         if (OS_info["ID"] in ['centos', 'rhel']):
+           cmake_executable = "cmake3"
+         else:
+Only in hipCUB-rocm-5.3.3: rmake.py.orig
+diff -urp hipCUB-rocm-5.3.3.orig/test/extra/CMakeLists.txt hipCUB-rocm-5.3.3/test/extra/CMakeLists.txt
+--- hipCUB-rocm-5.3.3.orig/test/extra/CMakeLists.txt	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/test/extra/CMakeLists.txt	2023-09-03 12:38:37.852818049 -0700
+@@ -30,7 +30,7 @@ project(hipCUB_package_install_test CXX)
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
+-  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/cmake /usr/hip/cmake # FindHIP.cmake
+ )
+ 
+ # Verify that hip-clang is used on ROCM platform
+@@ -113,7 +113,7 @@ if(HIP_COMPILER STREQUAL "clang")
+ endif()
+ 
+ # Find hipCUB
+-find_package(hipcub REQUIRED CONFIG HINTS ${hipcub_DIR} PATHS "/opt/rocm")
++find_package(hipcub REQUIRED CONFIG HINTS ${hipcub_DIR} PATHS "/usr")
+ 
+ # Build CXX flags
+ set(CMAKE_CXX_STANDARD 14)
+diff -urp hipCUB-rocm-5.3.3.orig/toolchain-linux.cmake hipCUB-rocm-5.3.3/toolchain-linux.cmake
+--- hipCUB-rocm-5.3.3.orig/toolchain-linux.cmake	2022-08-29 14:09:25.000000000 -0700
++++ hipCUB-rocm-5.3.3/toolchain-linux.cmake	2023-09-03 12:38:37.852818049 -0700
+@@ -6,7 +6,7 @@
+ if (DEFINED ENV{ROCM_PATH})
+   set(rocm_bin "$ENV{ROCM_PATH}/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/bin")
++  set(rocm_bin "/usr/bin")
+ endif()
+ 
+ 

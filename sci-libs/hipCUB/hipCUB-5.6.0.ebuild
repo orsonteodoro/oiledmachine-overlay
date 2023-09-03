@@ -109,28 +109,15 @@ BDEPEND="
 S="${WORKDIR}/hipCUB-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-add-memory-header.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
 	llvm_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
-	sed \
-		-e "/PREFIX hipcub/d" \
-		-e "/DESTINATION/s:hipcub/include/:include/:" \
-		-e "/rocm_install_symlink_subdir(hipcub)/d" \
-		-e "/<INSTALL_INTERFACE/s:hipcub/include/:include/hipcub/:" \
-		-i \
-		hipcub/CMakeLists.txt \
-		|| die
-
-	sed	\
-		-e "s:\${ROCM_INSTALL_LIBDIR}:\${CMAKE_INSTALL_LIBDIR}:" \
-		-i \
-		cmake/ROCMExportTargetsHeaderOnly.cmake \
-		|| die
-
 	# Disabled downloading googletest and googlebenchmark
 	sed -r \
 		-e '/Downloading/{:a;N;/\n *\)$/!ba; d}' \
@@ -154,8 +141,8 @@ src_prepare() {
 			|| die
 	fi
 
-	eapply_user
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 get_nvgpu_targets() {
