@@ -146,25 +146,6 @@ diff -urp rocBLAS-rocm-5.3.3.orig/deps/external-gtest.cmake rocBLAS-rocm-5.3.3/d
  
    set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
    ExternalProject_Add_Step( googletest createPackage
-diff -urp rocBLAS-rocm-5.3.3.orig/deps/external-lapack.cmake rocBLAS-rocm-5.3.3/deps/external-lapack.cmake
---- rocBLAS-rocm-5.3.3.orig/deps/external-lapack.cmake	2022-10-31 08:03:54.000000000 -0700
-+++ rocBLAS-rocm-5.3.3/deps/external-lapack.cmake	2023-08-29 19:25:46.205371915 -0700
-@@ -38,11 +38,11 @@ enable_language( Fortran )
- include( GNUInstallDirs )
- 
- # lapack cmake exports has a bug on debian architectures, they do not take into account the
--# lib/<machine> paths
-+# @LIBDIR@/<machine> paths
- # if CMAKE_INSTALL_LIBDIR is of the form above, strip the machine
--# Match against a '/' in CMAKE_INSTALL_LIBDIR, i.e. lib/x86_64-linux-gnu
--if( ${CMAKE_INSTALL_LIBDIR} MATCHES "lib/.*" )
--  list( APPEND lapack_cmake_args "-DCMAKE_INSTALL_LIBDIR=lib" )
-+# Match against a '/' in CMAKE_INSTALL_LIBDIR, i.e. @LIBDIR@
-+if( ${CMAKE_INSTALL_LIBDIR} MATCHES "@LIBDIR@" )
-+  list( APPEND lapack_cmake_args "-DCMAKE_INSTALL_LIBDIR=@LIBDIR@" )
- endif( )
- 
- ExternalProject_Add(
 diff -urp rocBLAS-rocm-5.3.3.orig/docs/source/Linux_Install_Guide.rst rocBLAS-rocm-5.3.3/docs/source/Linux_Install_Guide.rst
 --- rocBLAS-rocm-5.3.3.orig/docs/source/Linux_Install_Guide.rst	2022-10-31 08:03:54.000000000 -0700
 +++ rocBLAS-rocm-5.3.3/docs/source/Linux_Install_Guide.rst	2023-08-29 19:25:46.205371915 -0700

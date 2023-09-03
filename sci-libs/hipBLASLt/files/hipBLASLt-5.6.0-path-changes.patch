@@ -1,6 +1,6 @@
 diff -urp hipBLASLt-rocm-5.6.0.orig/clients/CMakeLists.txt hipBLASLt-rocm-5.6.0/clients/CMakeLists.txt
 --- hipBLASLt-rocm-5.6.0.orig/clients/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/clients/CMakeLists.txt	2023-08-21 17:26:48.589676469 -0700
++++ hipBLASLt-rocm-5.6.0/clients/CMakeLists.txt	2023-09-03 16:13:23.180645981 -0700
 @@ -49,7 +49,7 @@ find_package(OpenMP)
  
  if (TARGET OpenMP::OpenMP_CXX)
@@ -35,7 +35,7 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/clients/CMakeLists.txt hipBLASLt-rocm-5.6.0/
    endif()
 diff -urp hipBLASLt-rocm-5.6.0.orig/cmake/Dependencies.cmake hipBLASLt-rocm-5.6.0/cmake/Dependencies.cmake
 --- hipBLASLt-rocm-5.6.0.orig/cmake/Dependencies.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/cmake/Dependencies.cmake	2023-08-21 17:26:50.861676525 -0700
++++ hipBLASLt-rocm-5.6.0/cmake/Dependencies.cmake	2023-09-03 16:13:23.180645981 -0700
 @@ -28,7 +28,7 @@ find_package(Git REQUIRED)
  
  # Workaround until hcc & hip cmake modules fixes symlink logic in their config files.
@@ -46,8 +46,8 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/cmake/Dependencies.cmake hipBLASLt-rocm-5.6.
  # ROCm cmake package
  find_package(ROCM 0.6 QUIET CONFIG PATHS ${CMAKE_PREFIX_PATH})
 diff -urp hipBLASLt-rocm-5.6.0.orig/CMakeLists.txt hipBLASLt-rocm-5.6.0/CMakeLists.txt
---- hipBLASLt-rocm-5.6.0.orig/CMakeLists.txt	2023-08-21 17:13:26.697656573 -0700
-+++ hipBLASLt-rocm-5.6.0/CMakeLists.txt	2023-08-21 17:30:06.857681388 -0700
+--- hipBLASLt-rocm-5.6.0.orig/CMakeLists.txt	2023-09-03 16:12:27.244646728 -0700
++++ hipBLASLt-rocm-5.6.0/CMakeLists.txt	2023-09-03 16:13:23.180645981 -0700
 @@ -35,16 +35,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
  if(WIN32)
    set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
@@ -135,7 +135,7 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/CMakeLists.txt hipBLASLt-rocm-5.6.0/CMakeLis
  
 diff -urp hipBLASLt-rocm-5.6.0.orig/deps/external-gtest.cmake hipBLASLt-rocm-5.6.0/deps/external-gtest.cmake
 --- hipBLASLt-rocm-5.6.0.orig/deps/external-gtest.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/deps/external-gtest.cmake	2023-08-21 17:26:55.133676631 -0700
++++ hipBLASLt-rocm-5.6.0/deps/external-gtest.cmake	2023-09-03 16:13:23.180645981 -0700
 @@ -91,11 +91,7 @@ ExternalProject_Get_Property( googletest
  set( package_dir "${PREFIX_GTEST}" )
  if( CMAKE_CONFIGURATION_TYPES )
@@ -149,23 +149,9 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/deps/external-gtest.cmake hipBLASLt-rocm-5.6
  
    set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
    ExternalProject_Add_Step( googletest createPackage
-diff -urp hipBLASLt-rocm-5.6.0.orig/deps/external-lapack.cmake hipBLASLt-rocm-5.6.0/deps/external-lapack.cmake
---- hipBLASLt-rocm-5.6.0.orig/deps/external-lapack.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/deps/external-lapack.cmake	2023-08-21 17:13:44.413657013 -0700
-@@ -40,8 +40,8 @@ include( GNUInstallDirs )
- # lib/<machine> paths
- # if CMAKE_INSTALL_LIBDIR is of the form above, strip the machine
- # Match against a '/' in CMAKE_INSTALL_LIBDIR, i.e. lib/x86_64-linux-gnu
--if( ${CMAKE_INSTALL_LIBDIR} MATCHES "lib/.*" )
--  list( APPEND lapack_cmake_args "-DCMAKE_INSTALL_LIBDIR=lib" )
-+if( ${CMAKE_INSTALL_LIBDIR} MATCHES "@LIBDIR@/.*" )
-+  list( APPEND lapack_cmake_args "-DCMAKE_INSTALL_LIBDIR=@LIBDIR@" )
- endif( )
- 
- ExternalProject_Add(
 diff -urp hipBLASLt-rocm-5.6.0.orig/library/CMakeLists.txt hipBLASLt-rocm-5.6.0/library/CMakeLists.txt
 --- hipBLASLt-rocm-5.6.0.orig/library/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/library/CMakeLists.txt	2023-08-21 17:20:54.273667678 -0700
++++ hipBLASLt-rocm-5.6.0/library/CMakeLists.txt	2023-09-03 16:13:23.180645981 -0700
 @@ -163,7 +163,7 @@ set_target_propertieS(hipblaslt PROPERTI
  # TODO ??
  # Following boost conventions of prefixing 'lib' on static built libraries
@@ -177,7 +163,7 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/library/CMakeLists.txt hipBLASLt-rocm-5.6.0/
  # Generate export header
 diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/cmake/TensileConfig.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/cmake/TensileConfig.cmake
 --- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-08-21 17:26:52.781676573 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-09-03 16:13:23.180645981 -0700
 @@ -35,8 +35,8 @@ if(NOT DEFINED Tensile_ROOT)
          execute_process(COMMAND "${Tensile_PREFIX}/bin/TensileGetPath" OUTPUT_VARIABLE Tensile_ROOT)
      endif()
@@ -211,7 +197,7 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/cmake/TensileConfig.cmak
    message(STATUS "Tensile script: ${Script}")
 diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake
 --- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2023-08-21 17:20:49.121667550 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/cmake/FindROCmSMI.cmake	2023-09-03 16:13:23.180645981 -0700
 @@ -24,7 +24,7 @@
  
  if(NOT ROCM_ROOT)
@@ -232,7 +218,7 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI
  include( FindPackageHandleStandardArgs )
 diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/CMakeLists.txt hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/CMakeLists.txt
 --- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/CMakeLists.txt	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/CMakeLists.txt	2023-08-21 17:20:47.313667505 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/CMakeLists.txt	2023-09-03 16:13:23.180645981 -0700
 @@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.13)
  
  # Override all paths arguments as they do not work properly
@@ -253,7 +239,7 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/CMakeLists.txt hi
  if(TENSILE_USE_OPENMP)
 diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindHIP.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindHIP.cmake
 --- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindHIP.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindHIP.cmake	2023-08-21 17:20:50.369667581 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindHIP.cmake	2023-09-03 16:13:23.180645981 -0700
 @@ -79,7 +79,7 @@ else()
          hip/hip_runtime.h
        PATHS
@@ -274,7 +260,7 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindHIP.cmake hip
        )
 diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindOpenCL.cmake hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindOpenCL.cmake
 --- hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindOpenCL.cmake	2023-05-28 21:19:48.000000000 -0700
-+++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindOpenCL.cmake	2023-08-21 17:23:18.961671268 -0700
++++ hipBLASLt-rocm-5.6.0/tensilelite/Tensile/Source/FindOpenCL.cmake	2023-09-03 16:16:11.976643727 -0700
 @@ -71,8 +71,8 @@ find_path(OPENCL_INCLUDE_DIRS
    PATHS
      /usr/include
@@ -286,8 +272,15 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindOpenCL.cmake 
    DOC "OpenCL header file path"
  )
  mark_as_advanced( OPENCL_INCLUDE_DIRS )
-@@ -118,37 +118,20 @@ else( )
+@@ -113,42 +113,27 @@ cmake_pop_check_state( )
+ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+   set(LIB64 ON)
+   message( STATUS "FindOpenCL searching for 64-bit libraries" )
++  set(_PATH_SUFFIX "x86_64 x64")
+ else( )
+   set(LIB64 OFF)
    message( STATUS "FindOpenCL searching for 32-bit libraries" )
++  set(_PATH_SUFFIX "x86 Win32")
  endif( )
  
 -if( LIB64 )
@@ -329,7 +322,7 @@ diff -urp hipBLASLt-rocm-5.6.0.orig/tensilelite/Tensile/Source/FindOpenCL.cmake 
 +    $ENV{AMDAPPSDKROOT}/@LIBDIR@
 +    $ENV{CUDA_PATH}/@LIBDIR@
 +  DOC "OpenCL dynamic library path"
-+  PATH_SUFFIXES x86_64 x64
++  PATH_SUFFIXES ${_PATH_SUFFIX}
 +  PATHS
 +  /usr/@LIBDIR@
 +  /opt/cuda/@LIBDIR@
