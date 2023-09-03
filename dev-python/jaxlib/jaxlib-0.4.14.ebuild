@@ -307,7 +307,6 @@ gen_llvm_bdepend() {
 }
 BDEPEND+="
 	>=dev-util/bazel-6.1.2
-	sys-devel/gcc-config
 	clang? (
 		|| (
 			$(gen_llvm_bdepend)
@@ -957,22 +956,6 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 
 	# The docs hasn't been updated, but latest point release of jax/jaxlib
 	# is the same source for xla.  No override needed.
-
-		local gcc_slot=$(gcc-major-version)
-		local gcc_current_profile=$(gcc-config -c)
-		local gcc_current_profile_slot=${gcc_current_profile##*-}
-		if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
-eerror
-eerror "libcxxabi must be ${gcc_slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
-eerror "  source /etc/profile"
-eerror
-eerror "libstdcxx slot:     ${gcc_current_profile_slot}"
-eerror "GCC compiler slot:  ${gcc_slot}"
-eerror
-			die
-		fi
 
 	# See
 	# https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus

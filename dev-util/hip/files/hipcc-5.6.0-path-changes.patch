@@ -84,7 +84,7 @@ diff -urp HIPCC-rocm-5.6.0.orig/bin/hipcc.pl HIPCC-rocm-5.6.0/bin/hipcc.pl
  
      if ($hasHIP) {
 -        if (defined $DEVICE_LIB_PATH) {
-+        if (defined $DEVICE_LIB_PATH) {
++        if (defined $DEVICE_LIB_PATH or 1) {
 +            $HIPCXXFLAGS .= " --rocm-path=\"$ROCM_PATH\"" ;
              $HIPCXXFLAGS .= " --hip-device-lib-path=\"$DEVICE_LIB_PATH\"";
          }

@@ -25,7 +25,6 @@ SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE=" +aqlprofile test"
 RDEPEND="
-	>=sys-devel/gcc-12
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
 	aqlprofile? (
@@ -42,8 +41,6 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-2.8.12
-	>=sys-devel/gcc-12
-	sys-devel/gcc-config
 "
 RESTRICT="test"
 S="${WORKDIR}/roctracer-rocm-${PV}"
@@ -112,18 +109,6 @@ src_prepare() {
 }
 
 src_configure() {
-	local gcc_slot=12
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	if ver_test ${gcc_current_profile_slot} -lt ${gcc_slot} ; then
-eerror
-eerror "GCC ${gcc_slot}+ required.  Do"
-eerror
-eerror "  eselect set ${CHOST}-${gcc_slot}"
-eerror "  source /etc/profile"
-eerror
-		die
-	fi
 	if use aqlprofile ; then
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing"
 	fi

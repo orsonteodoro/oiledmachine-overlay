@@ -28,7 +28,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r19"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r20"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -72,6 +72,7 @@ RDEPEND="
 	virtual/opengl
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
+		sys-devel/gcc:11
 	)
 	lc? (
 		~dev-libs/rocm-comgr-${PV}:${SLOT}

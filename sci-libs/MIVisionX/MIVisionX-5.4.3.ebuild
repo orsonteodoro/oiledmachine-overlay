@@ -63,7 +63,6 @@ RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/pybind11-2.4[${PYTHON_USEDEP}]
 	')
-	>=sys-devel/gcc-12
 	dev-libs/openssl
 	~dev-util/hip-${PV}:${SLOT}
 	ffmpeg? (
@@ -106,7 +105,6 @@ BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-util/cmake-3.5
 	dev-util/patchelf
-	sys-devel/gcc-config
 	virtual/pkgconfig
 "
 PATCHES=(
@@ -152,19 +150,6 @@ src_configure() {
 	)
 
 	export CXX="${HIP_CXX:-clang++}"
-
-	local gcc_slot=12
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	if [[ "${gcc_current_profile_slot}" -lt "${gcc_slot}" ]] ; then
-eerror
-eerror "You must switch to >= GCC ${gcc_slot}.  Do"
-eerror
-eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
-eerror "  source /etc/profile"
-eerror
-		die
-	fi
 
 	if use opencl ; then
 		mycmakeargs+=(

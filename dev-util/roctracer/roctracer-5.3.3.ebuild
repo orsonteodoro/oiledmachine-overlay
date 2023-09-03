@@ -24,7 +24,6 @@ SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64"
 IUSE=" test"
 RDEPEND="
-	>=sys-devel/gcc-12
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
 "
@@ -37,8 +36,6 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-3.18.0
-	>=sys-devel/gcc-12
-	sys-devel/gcc-config
 "
 RESTRICT="
 	!test? (
@@ -73,19 +70,6 @@ src_prepare() {
 }
 
 src_configure() {
-	local gcc_slot=12
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	if ver_test ${gcc_current_profile_slot} -lt ${gcc_slot} ; then
-eerror
-eerror "GCC ${gcc_slot}+ required.  Do"
-eerror
-eerror "  eselect set ${CHOST}-${gcc_slot}"
-eerror "  source /etc/profile"
-eerror
-		die
-	fi
-
 	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
 	export CXX="${HIP_CXX:-hipcc}"
 
