@@ -22,8 +22,9 @@
     </flag>
     <flag name="ilp64">
       Use ILP64 for MKL.  Otherwise fallback to LP64 data model.
-      [Do not use unless a dependency requires ILP64.  ILP64 allows for larger
-      indexing for larger data sets.]
+      [Do not use unless a dependency requires ILP64.  ILP64 allows for 64-bit
+      maximum array indexing for larger data sets and Fortran int8 (64-bit
+      integer) use.]
     </flag>
     <flag name="mkl">
       Use MKL as the BLAS vendor for CPU.
