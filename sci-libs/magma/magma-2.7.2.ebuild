@@ -477,12 +477,17 @@ src_configure() {
 			-DOpenMP_libomp_LIBRARY="omp"
 		)
 
+# From gcc:12 use gcc:11
+#omp.h:308:45: error: '__malloc__' attribute takes no arguments
+#  __GOMP_NOTHROW __attribute__((__malloc__, __malloc__ (omp_free)
+#
+# From gcc:11 use gcc:12
 # librocblas.so.3: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
 		export gpu="$(get_cuda_flags)"
-		local gcc_slot=12
+		local gcc_slot=11
 		local gcc_current_profile=$(gcc-config -c)
 		local gcc_current_profile_slot=${gcc_current_profile##*-}
-		if [[ "${gcc_current_profile_slot}" -lt "${gcc_slot}" ]] ; then
+		if [[ "${gcc_current_profile_slot}" -ne "${gcc_slot}" ]] ; then
 eerror
 eerror "You must switch to >= GCC ${gcc_slot}.  Do"
 eerror
