@@ -39,6 +39,9 @@ RESTRICT="
 	test
 "
 S="${WORKDIR}/rocr_debug_agent-rocm-${PV}"
+PATCHES=(
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
+)
 
 pkg_setup() {
 	linux-info_pkg_setup
@@ -46,12 +49,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e "s:/opt/rocm/hip/cmake:/usr/$(get_libdir)/cmake/hip/:" \
-		-i \
-		"${S}/test/CMakeLists.txt" \
-		|| die
-
 	sed \
 		-e "s:enable_testing:#enable_testing:" \
 		-i \
@@ -61,29 +58,6 @@ src_prepare() {
 		-e "s:add_subdirectory(test):#add_subdirectory(test):" \
 		-i \
 		"${S}/CMakeLists.txt" \
-		|| die
-
-	sed \
-		-e \
-		"s:DESTINATION lib:DESTINATION $(get_libdir):" \
-		-i \
-		"${S}/CMakeLists.txt" \
-		|| die
-	sed \
-		-e "s:DESTINATION share/doc/rocm-debug-agent:DESTINATION share/doc/rocm-debug-agent-${PV}:" \
-		-i \
-		"${S}/CMakeLists.txt" \
-		|| die
-
-	sed \
-		-i \
-		-e "s|lib/cmake/amd-dbgapi|$(get_libdir)/cmake/amd-dbgapi|g" \
-		"${S}/CMakeLists.txt" \
-		|| die
-	sed \
-		-i \
-		-e "s|/lib/|/$(get_libdir)/|g" \
-		"${S}/README.md" \
 		|| die
 
 	cmake_src_prepare
