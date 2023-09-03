@@ -246,6 +246,7 @@ RESTRICT="
 PATCHES=(
 	"${FILESDIR}/${PN}-2.7.1-path-changes.patch"
 	"${FILESDIR}/${PN}-2.7.1-make-inc.patch"
+	"${FILESDIR}/${PN}-2.7.1-mkl.patch"
 )
 
 pkg_setup() {
@@ -371,10 +372,14 @@ einfo "Removing AOMP references"
 
 generate_precisions() {
 	local inc_file
-	if use cuda && use mkl ; then
+	if use cuda && use mkl && use ilp64 ; then
+		inc_file="make.inc.mkl-gcc-ilp64"
+	elif use cuda && use mkl ; then
 		inc_file="make.inc.mkl-gcc"
 	elif use cuda && use openblas ; then
 		inc_file="make.inc.openblas"
+	elif use rocm && use mkl && use ilp64 ; then
+		inc_file="make.inc.hip-gcc-mkl-ilp64"
 	elif use rocm && use mkl ; then
 		inc_file="make.inc.hip-gcc-mkl"
 	elif use rocm && use openblas ; then

@@ -10,34 +10,6 @@ diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
    find_package( HIP )
    if (HIP_FOUND)
      message( STATUS "Found HIP ${HIP_VERSION}" )
-@@ -423,6 +423,7 @@ set_property(CACHE BLA_VENDOR PROPERTY S
-     "Generic")
- 
- set( LAPACK_LIBRARIES "" CACHE STRING "Libraries for LAPACK and BLAS, to manually override search" )
-+set( LAPACK_CXXFLAGS "" CACHE STRING "CXXFLAGS for LAPACK and BLAS" )
- if (LAPACK_LIBRARIES STREQUAL "")
-     message( STATUS "Searching for BLAS and LAPACK. To override, set LAPACK_LIBRARIES using ccmake." )
-     find_package( LAPACK )
-@@ -430,14 +431,11 @@ if (LAPACK_LIBRARIES STREQUAL "")
-     set( LAPACK_LIBRARIES ${LAPACK_LIBRARIES} CACHE STRING "Libraries for LAPACK and BLAS, to manually override search" FORCE )
- else()
-     message( STATUS "User set LAPACK_LIBRARIES. To change, edit LAPACK_LIBRARIES using ccmake (set to empty to enable search)." )
--    # Check either -lname syntax or file existence
--    foreach( LIB ${LAPACK_LIBRARIES} )
--        if (NOT LIB MATCHES "^-l[a-zA-Z0-9_-]+$")
--        if (NOT EXISTS ${LIB})
--            message( WARNING "\n      Warning: file ${LIB} does not exist.\n" )
--        endif()
--        endif()
--    endforeach()
-+endif()
-+
-+if (DEFINED LAPACK_CXXFLAGS)
-+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${LAPACK_CXXFLAGS}")
-+    message( CMAKE_CXX_FLAGS "LAPACK_CXXFLAGS:  ${LAPACK_CXXFLAGS}" )
- endif()
- 
- # If using MKL, add it to includes and define MAGMA_WITH_MKL
 @@ -451,7 +449,9 @@ if (LAPACK_LIBRARIES MATCHES mkl_core)
          if (NOT EXISTS ${MKLROOT})
              message( FATAL_ERROR "MKLROOT ${MKLROOT} directory does not exist." )
