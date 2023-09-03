@@ -1,0 +1,215 @@
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindCLBlast.cmake MIOpenGEMM-rocm-5.5.0/cmake/FindCLBlast.cmake
+--- MIOpenGEMM-rocm-5.5.0.orig/cmake/FindCLBlast.cmake	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/cmake/FindCLBlast.cmake	2023-09-03 15:34:10.824677394 -0700
+@@ -9,18 +9,13 @@ SET(CLBLAST_INCLUDE_SEARCH_PATHS
+   /usr/local/include/clblast
+   /opt/isaac/include
+   /usr/local/include  
+-  /home/james/nugteren/clblast/install/include
+ )
+ 
+ SET(CLBLAST_LIB_SEARCH_PATHS
+-        /lib/
+-        /lib64/
+-        /usr/lib
+-        /usr/lib/clblast
+-        /usr/lib64
+-        /usr/local/lib
+-        /usr/local/lib64
+-        /home/james/nugteren/clblast/install/lib
++        /@LIBDIR@/
++        /usr/@LIBDIR@
++        /usr/@LIBDIR@/clblast
++        /usr/local/@LIBDIR@
+ )
+ 
+ FIND_PATH(CLBLAST_INCLUDE_DIR NAMES clblast.h PATHS ${CLBLAST_INCLUDE_SEARCH_PATHS})
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindIsaac.cmake MIOpenGEMM-rocm-5.5.0/cmake/FindIsaac.cmake
+--- MIOpenGEMM-rocm-5.5.0.orig/cmake/FindIsaac.cmake	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/cmake/FindIsaac.cmake	2023-09-03 15:39:41.784672974 -0700
+@@ -12,13 +12,10 @@ SET(ISAAC_INCLUDE_SEARCH_PATHS
+ )
+ 
+ SET(ISAAC_LIB_SEARCH_PATHS
+-        /lib/
+-        /lib64/
+-        /usr/lib
+-        /usr/lib/isaac
+-        /usr/lib64
+-        /usr/local/lib
+-        /usr/local/lib64
++        /@LIBDIR@/
++        /usr/@LIBDIR@
++        /usr/@LIBDIR@/isaac
++        /usr/local/@LIBDIR@
+  )
+ 
+ 
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindOpenBLAS.cmake MIOpenGEMM-rocm-5.5.0/cmake/FindOpenBLAS.cmake
+--- MIOpenGEMM-rocm-5.5.0.orig/cmake/FindOpenBLAS.cmake	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/cmake/FindOpenBLAS.cmake	2023-09-03 15:33:52.152677643 -0700
+@@ -17,19 +17,16 @@ SET(Open_BLAS_INCLUDE_SEARCH_PATHS
+ )
+ 
+ SET(Open_BLAS_LIB_SEARCH_PATHS
+-        /opt/OpenBLAS/lib
++        /opt/OpenBLAS/@LIBDIR@
+         $ENV{OpenBLAS}cd
+-        $ENV{OpenBLAS}/lib
++        $ENV{OpenBLAS}/@LIBDIR@
+         $ENV{OpenBLAS_HOME}
+-        $ENV{OpenBLAS_HOME}/lib
+-        /lib/
+-        /lib/openblas-base
+-        /lib64/
+-        /usr/lib
+-        /usr/lib/openblas-base
+-        /usr/lib64
+-        /usr/local/lib
+-        /usr/local/lib64
++        $ENV{OpenBLAS_HOME}/@LIBDIR@
++        /@LIBDIR@/
++        /@LIBDIR@/openblas-base
++        /usr/@LIBDIR@
++        /usr/@LIBDIR@/openblas-base
++        /usr/local/@LIBDIR@
+  )
+ 
+ FIND_PATH(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${Open_BLAS_INCLUDE_SEARCH_PATHS})
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindOpenCL.cmake MIOpenGEMM-rocm-5.5.0/cmake/FindOpenCL.cmake
+--- MIOpenGEMM-rocm-5.5.0.orig/cmake/FindOpenCL.cmake	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/cmake/FindOpenCL.cmake	2023-09-03 15:39:29.928673133 -0700
+@@ -13,42 +13,30 @@ find_path(OPENCL_INCLUDE_DIRS
+ 	/usr/local/include
+ 	/usr/local/cuda/include
+ 	/opt/cuda/include
+-	/opt/rocm/opencl/include
++	/usr/opencl/include
+ 	DOC "OpenCL header file path"
+ 	)
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-	find_library( OPENCL_LIBRARIES
+-		NAMES OpenCL
+-		HINTS
+-		${OPENCL_ROOT}/lib
+-		$ENV{AMDAPPSDKROOT}/lib
+-		$ENV{CUDA_PATH}/lib
+-		DOC "OpenCL dynamic library path"
+-		PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-		PATHS
+-		/usr/lib
+-		/usr/local/cuda/lib
+-		/opt/cuda/lib
+-		/opt/rocm/opencl/lib
+-		)
+-else( )
+-	find_library( OPENCL_LIBRARIES
+-		NAMES OpenCL
+-		HINTS
+-		${OPENCL_ROOT}/lib
+-		$ENV{AMDAPPSDKROOT}/lib
+-		$ENV{CUDA_PATH}/lib
+-		DOC "OpenCL dynamic library path"
+-		PATH_SUFFIXES x86 Win32
+-
+-		PATHS
+-		/usr/lib
+-		/usr/local/cuda/lib
+-		/opt/cuda/lib
+-		)
+-endif( )
++	set(_PATH_SUFFIX "x86_64 x64 x86_64/sdk")
++else()
++	set(_PATH_SUFFIX "x86 Win32")
++endif()
++find_library( OPENCL_LIBRARIES
++	NAMES OpenCL
++	HINTS
++	${OPENCL_ROOT}/@LIBDIR@
++	$ENV{AMDAPPSDKROOT}/@LIBDIR@
++	$ENV{CUDA_PATH}/@LIBDIR@
++	DOC "OpenCL dynamic library path"
++	PATH_SUFFIXES ${_PATH_SUFFIX}
++	PATHS
++	/usr/@LIBDIR@
++	/usr/local/cuda/@LIBDIR@
++	/opt/cuda/@LIBDIR@
++	/usr/opencl/@LIBDIR@
++	)
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ include( FindPackageHandleStandardArgs )
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/CMakeLists.txt MIOpenGEMM-rocm-5.5.0/CMakeLists.txt
+--- MIOpenGEMM-rocm-5.5.0.orig/CMakeLists.txt	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/CMakeLists.txt	2023-09-03 15:32:21.144678859 -0700
+@@ -6,16 +6,16 @@ cmake_minimum_required(VERSION 3.0)
+ 
+ # Default installation path
+ if(WIN32)
+-    set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "Installation path")
++    set(CMAKE_INSTALL_PREFIX "/usr/x86_64-w64-mingw32" CACHE PATH "Installation path")
+ else()
+-    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Installation path")
++    set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Installation path")
+ endif()
+ 
+ project(miopengemm)
+ 
+-#find_package(ROCM REQUIRED PATHS /opt/rocm)
++#find_package(ROCM REQUIRED PATHS /usr)
+ #Update Required ROCM-CMAKE Path for wrapper support
+-find_package(ROCM 0.7.3 CONFIG QUIET PATHS /opt/rocm ${ROCM_PATH})
++find_package(ROCM 0.7.3 CONFIG QUIET PATHS /usr ${ROCM_PATH})
+ if(NOT ROCM_FOUND)
+   set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
+   set(rocm_cmake_url "https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip")
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/doc/README.md MIOpenGEMM-rocm-5.5.0/doc/README.md
+--- MIOpenGEMM-rocm-5.5.0.orig/doc/README.md	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/doc/README.md	2023-09-03 15:32:24.616678812 -0700
+@@ -26,7 +26,7 @@ cmake -DOPENCL_LIBRARIES=<opencl-library
+ ```
+ 
+ 
+-By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '/usr', this can be set by using `CMAKE_INSTALL_PREFIX`:
+ 
+ ```
+ cmake -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/doc/src/install.md MIOpenGEMM-rocm-5.5.0/doc/src/install.md
+--- MIOpenGEMM-rocm-5.5.0.orig/doc/src/install.md	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/doc/src/install.md	2023-09-03 15:32:19.800678877 -0700
+@@ -26,7 +26,7 @@ cmake -DOPENCL_LIBRARIES=<opencl-library
+ ```
+ 
+ 
+-By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '/usr', this can be set by using `CMAKE_INSTALL_PREFIX`:
+ 
+ ```
+ cmake -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/miopengemm/src/oclutil.cpp MIOpenGEMM-rocm-5.5.0/miopengemm/src/oclutil.cpp
+--- MIOpenGEMM-rocm-5.5.0.orig/miopengemm/src/oclutil.cpp	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/miopengemm/src/oclutil.cpp	2023-09-03 15:32:22.984678834 -0700
+@@ -116,7 +116,7 @@ Result cl_set_command_queue(cl_command_q
+ {
+   cl_int errcode_ret;
+ 
+-// CL_VERSION_2_0 is defined on line 198 /opt/rocm/opencl/include/CL/cl.h.
++// CL_VERSION_2_0 is defined on line 198 /usr/opencl/include/CL/cl.h.
+ #if (CL_VERSION_2_0 == 1)
+   std::vector<cl_queue_properties> props = {CL_QUEUE_PROPERTIES, properties, 0};
+   a_cl_command_queue =
+diff -urp MIOpenGEMM-rocm-5.5.0.orig/README.md MIOpenGEMM-rocm-5.5.0/README.md
+--- MIOpenGEMM-rocm-5.5.0.orig/README.md	2022-08-04 08:55:47.000000000 -0700
++++ MIOpenGEMM-rocm-5.5.0/README.md	2023-09-03 15:32:23.816678823 -0700
+@@ -25,7 +25,7 @@ cmake -DOPENCL_LIBRARIES=<opencl-library
+ ```
+ 
+ 
+-By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '/usr', this can be set by using `CMAKE_INSTALL_PREFIX`:
+ 
+ ```
+ cmake -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..

@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake flag-o-matic
+LLVM_MAX_SLOT=14
+
+inherit cmake flag-o-matic rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpenGEMM/archive/rocm-${PV}.tar.gz
@@ -29,22 +31,18 @@ BDEPEND="
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/miopengemm-v4.3.0-gentoo-rocm-overlay-fixes.patch"
+	"${FILESDIR}/${PN}-v4.3.0-gentoo-rocm-overlay-fixes.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 S="${WORKDIR}/MIOpenGEMM-rocm-${PV}"
 
+pkg_setup() {
+	rocm_pkg_setup
+}
+
 src_prepare() {
-	sed \
-		-e "s:set( miopengemm_INSTALL_DIR miopengemm):set( miopengemm_INSTALL_DIR \"\"):" \
-		-i \
-		"${S}/miopengemm/CMakeLists.txt" \
-		|| die
-	sed \
-		-e "s:rocm_install_symlink_subdir(\${miopengemm_INSTALL_DIR}):#rocm_install_symlink_subdir(\${miopengemm_INSTALL_DIR}):" \
-		-i \
-		"${S}/miopengemm/CMakeLists.txt" \
-		|| die
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
