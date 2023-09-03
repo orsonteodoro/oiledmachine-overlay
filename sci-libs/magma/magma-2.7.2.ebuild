@@ -62,7 +62,7 @@ KEYWORDS="~amd64"
 IUSE="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda doc examples mkl openblas rocm test
+cuda doc examples -ilp64 mkl openblas rocm tbb openmp test
 "
 gen_cuda_required_use() {
 	local x
@@ -115,11 +115,20 @@ REQUIRED_USE="
 			)
 		)
 	)
+	ilp64? (
+		mkl
+	)
+	openmp? (
+		mkl
+	)
 	rocm? (
 		$(gen_rocm_required_use)
 		|| (
 			${ROCM_REQUIRED_USE}
 		)
+	)
+	tbb? (
+		mkl
 	)
 "
 ROCM_SLOTS=(
@@ -213,6 +222,9 @@ RDEPEND="
 		|| (
 			$(gen_rocm_rdepend)
 		)
+	)
+	tbb? (
+		dev-cpp/tbb
 	)
 "
 DEPEND="
@@ -461,16 +473,56 @@ src_configure() {
 		-DUSE_FORTRAN=ON
 	)
 
+	local mkl_data_model
+	local mkl_data_model_vendor
+	if use ilp64 ; then
+# TODO:  Remove ilp64 USE flag.
+# TODO:  Resolve install location for ilp64, lp64 implementations.
+ewarn "Support or install location may change for ilp64 in the future."
+		mkl_data_model_vendor="Intel10_64lp"
+		mkl_data_model="-lmkl_intel_lp64"
+	else
+		mkl_data_model_vendor="Intel10_64ilp"
+		mkl_data_model="-lmkl_gf_lp64"
+	fi
+
 	if use cuda && use mkl ; then
-		mycmakeargs+=(
-			-DBLA_VENDOR="Intel10_64lp"
-			-DLAPACK_LIBRARIES="-lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core"
-		)
+		if use tbb ; then
+			mycmakeargs+=(
+				-DBLA_VENDOR="${mkl_data_model_vendor}"
+				-DLAPACK_LIBRARIES="${mkl_data_model} -lmkl_tbb_thread -lmkl_core"
+			)
+		elif use openmp ; then
+			mycmakeargs+=(
+				-DBLA_VENDOR="${mkl_data_model_vendor}"
+				-DLAPACK_LIBRARIES="${mkl_data_model} -lmkl_gnu_thread -lmkl_core"
+			)
+		else
+ewarn
+ewarn "Either the tbb or openmp USE flag is recommended for threading.  Falling"
+ewarn "back to sequential."
+ewarn
+			mycmakeargs+=(
+				-DBLA_VENDOR="${mkl_data_model_vendor}_seq"
+				-DLAPACK_LIBRARIES="${mkl_data_model} -lmkl_sequential -lmkl_core"
+			)
+		fi
 	elif use rocm && use mkl ; then
-		mycmakeargs+=(
-			-DBLA_VENDOR="Intel10_64lp"
-			-DLAPACK_LIBRARIES="-lmkl_gf_lp64 -lmkl_intel_thread -lmkl_core"
-		)
+		if use tbb ; then
+			mycmakeargs+=(
+				-DBLA_VENDOR="${mkl_data_model_vendor}"
+				-DLAPACK_LIBRARIES="${mkl_data_model} -lmkl_tbb_thread -lmkl_core"
+			)
+		else
+ewarn
+ewarn "Either the tbb or openmp USE flag is recommended for threading.  Falling"
+ewarn "back to sequential."
+ewarn
+			mycmakeargs+=(
+				-DBLA_VENDOR="${mkl_data_model_vendor}_seq"
+				-DLAPACK_LIBRARIES="${mkl_data_model} -lmkl_sequential -lmkl_core"
+			)
+		fi
 	fi
 
 	if use openblas ; then

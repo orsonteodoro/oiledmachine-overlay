@@ -17,8 +17,29 @@
     <remote-id type="bitbucket">icl/magma</remote-id>
   </upstream>
   <use>
+    <flag name="cuda">
+      Use CUDA as the BLAS vendor for GPU.
+    </flag>
+    <flag name="ilp64">
+      Use ILP64 for MKL.  Otherwise fallback to LP64 data model.
+      [Do not use unless a dependency requires ILP64.  ILP64 allows for larger
+      indexing for larger data sets.]
+    </flag>
+    <flag name="mkl">
+      Use MKL as the BLAS vendor for CPU.
+    </flag>
     <flag name="openblas">
-      Use OpenBLAS as the BLAS vendor
+      Use OpenBLAS as the BLAS vendor for CPU.
+    </flag>
+    <flag name="openmp">
+      Use OpenMP for MKL threading.
+    </flag>
+    <flag name="rocm">
+      Use ROCm as the BLAS vendor for GPU.
+    </flag>
+    <flag name="tbb">
+      Use TBB for MKL threading.
+      [TBB avoids oversubscription across processes.]
     </flag>
   </use>
 </pkgmetadata>
