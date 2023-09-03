@@ -85,6 +85,7 @@ RDEPEND="
 		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 		=sys-libs/compiler-rt-${LLVM_MAX_SLOT}*:=
 		~dev-libs/rocr-runtime-${PV}:${SLOT}
+		~dev-util/rocminfo-${PV}:${SLOT}
 	)
 "
 DEPEND="
