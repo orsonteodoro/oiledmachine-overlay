@@ -17,7 +17,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE=" r1"
+IUSE=" r3"
 RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
@@ -30,7 +30,7 @@ BDEPEND="
 "
 S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 )
 
 pkg_setup() {
