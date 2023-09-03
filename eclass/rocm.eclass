@@ -264,12 +264,12 @@ check_libstdcxx_version() {
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
 	if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
 eerror
-eerror "GCC ${gcc_slot} required to build this package.  Do"
+eerror "GCC ${gcc_slot} is required to build this package.  Do"
 eerror
 eerror "  eselect gcc set ${CHOST}-${gcc_slot}"
 eerror "  source /etc/profile"
 eerror
-eerror "to change to gcc-${gcc_slot}"
+eerror "to change to gcc-${gcc_slot}."
 eerror
 eerror "All ROCm/HIP packages need to be built with libcxxabi from gcc:11 to"
 eerror "avoid omp errors or for ABI compatibility.  You may use"
