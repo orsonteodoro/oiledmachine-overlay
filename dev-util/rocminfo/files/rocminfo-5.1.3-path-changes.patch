@@ -1,0 +1,38 @@
+diff -urp rocminfo-rocm-5.1.3.orig/CMakeLists.txt rocminfo-rocm-5.1.3/CMakeLists.txt
+--- rocminfo-rocm-5.1.3.orig/CMakeLists.txt	2022-02-16 14:05:21.000000000 -0800
++++ rocminfo-rocm-5.1.3/CMakeLists.txt	2023-09-03 14:50:05.492712719 -0700
+@@ -102,7 +102,7 @@ message("------------Compiler: " ${CMAKE
+ message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("")
+ 
+@@ -110,11 +110,11 @@ message("")
+ #
+ # Set the build type based on user input
+ #
+-set(CMAKE_BUILD_TYPE ${BUILD_TYPE})
++#_cmake_modify_IGNORE set(CMAKE_BUILD_TYPE ${BUILD_TYPE})
+ #
+ # Flag to enable / disable verbose output.
+ #
+-SET( CMAKE_VERBOSE_MAKEFILE on )
++#_cmake_modify_IGNORE SET( CMAKE_VERBOSE_MAKEFILE on )
+ #
+ # Compiler pre-processor definitions.
+ #
+diff -urp rocminfo-rocm-5.1.3.orig/README.md rocminfo-rocm-5.1.3/README.md
+--- rocminfo-rocm-5.1.3.orig/README.md	2022-02-16 14:05:21.000000000 -0800
++++ rocminfo-rocm-5.1.3/README.md	2023-09-03 14:49:52.372712894 -0700
+@@ -18,7 +18,7 @@ mkdir -p build
+ 
+ cd build
+ 
+-cmake -DCMAKE_PREFIX_PATH=/opt/rocm ..
++cmake -DCMAKE_PREFIX_PATH=/usr ..
+ 
+ make
+ 

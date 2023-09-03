@@ -34,6 +34,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-detect-builtin-amdgpu.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -52,11 +53,6 @@ src_prepare() {
 		-e "/num_change_since_prev_pkg(/cset(NUM_COMMITS 0)" \
 		-i \
 		cmake_modules/utils.cmake \
-		|| die
-	sed \
-		-i \
-		-e "s|{PROJECT_BINARY_DIR}/lib|{PROJECT_BINARY_DIR}/$(get_libdir)|" \
-		"CMakeLists.txt" \
 		|| die
 	cmake_src_prepare
 	rocm_src_prepare

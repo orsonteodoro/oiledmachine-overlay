@@ -33,6 +33,7 @@ BDEPEND="
 	>=dev-util/cmake-3.6.3
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
@@ -50,11 +51,6 @@ src_prepare() {
 		-i \
 		cmake_modules/utils.cmake \
 		|| die # Fix QA issue on "git not found"
-	sed \
-		-i \
-		-e "s|{PROJECT_BINARY_DIR}/lib|{PROJECT_BINARY_DIR}/$(get_libdir)|" \
-		"CMakeLists.txt" \
-		|| die
 	cmake_src_prepare
 	rocm_src_prepare
 }
