@@ -517,9 +517,11 @@ ewarn
 				-DLAPACK_LIBRARIES:STRING="$(pkg-config --libs mkl-dynamic-${mkl_data_model}-tbb)"
 				-DLAPACK_CXXFLAGS:STRING="$(pkg-config --cflags mkl-dynamic-${mkl_data_model}-tbb)"
 			)
+# Cannot use OpenMP due to bug below between gcc-12 (/usr/lib/gcc/${CHOST}/12/include/omp.h) and libomp (/usr/include/omp.h).
+# __GOMP_NOTHROW __attribute__((__malloc__, __malloc__ (omp_free), error: '__malloc__' attribute takes no arguments
 		else
 ewarn
-ewarn "Either the tbb or openmp USE flag is recommended for threading.  Falling"
+ewarn "Either the tbb USE flag is recommended for threading.  Falling"
 ewarn "back to sequential."
 ewarn
 			mycmakeargs+=(
