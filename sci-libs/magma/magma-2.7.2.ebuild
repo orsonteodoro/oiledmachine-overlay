@@ -474,11 +474,11 @@ src_configure() {
 # TODO:  Remove ilp64 USE flag.
 # TODO:  Resolve install location for ilp64, lp64 implementations.
 ewarn "Support or install location may change for ilp64 in the future."
-		mkl_data_model_vendor="Intel10_64lp"
-		mkl_data_model="lp64"
-	else
 		mkl_data_model_vendor="Intel10_64ilp"
 		mkl_data_model="ilp64"
+	else
+		mkl_data_model_vendor="Intel10_64lp"
+		mkl_data_model="lp64"
 	fi
 
 	if use cuda && use mkl ; then
