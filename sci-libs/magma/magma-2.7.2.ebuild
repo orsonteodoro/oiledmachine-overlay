@@ -471,9 +471,9 @@ src_configure() {
 		)
 	elif use rocm && use mkl ; then
 		mycmakeargs+=(
-			-DBLA_VENDOR="Intel10_64lp"
+			-DBLA_VENDOR="Intel10_64lp_seq"
 			-DLAPACK_LIBRARIES="-lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core"
-			-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
+			-DOpenMP_CXX_FLAGS=" -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
 			-DOpenMP_libomp_LIBRARY="omp"
 		)
@@ -515,6 +515,7 @@ src_configure() {
 			append-cppflags -DHIP_VERSION=$(printf "%d%02d%5d" ${a} ${b} ${c})
 		fi
 
+		export CC="${HIP_CC:-hipcc}"
 		export CXX="${HIP_CXX:-hipcc}"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(

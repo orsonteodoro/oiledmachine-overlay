@@ -51,6 +51,7 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 
 pkg_setup() {
 	llvm_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -75,7 +76,8 @@ src_configure() {
 		-DROCWMMA_BUILD_TESTS=OFF
 	)
 
-	CXX="${HIP_CXX:-hipcc}" \
+	export CC="${HIP_CC:-hipcc}"
+	export CXX="${HIP_CXX:-hipcc}"
 	cmake_src_configure
 }
 

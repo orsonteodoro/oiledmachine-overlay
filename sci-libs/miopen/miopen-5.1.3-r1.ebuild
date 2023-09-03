@@ -208,7 +208,8 @@ src_configure() {
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
-	CXX="$(get_llvm_prefix ${LLVM_MAX_SLOT})/bin/clang++" \
+	export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
+	export CXX="${CHOST}-clang++${LLVM_MAX_SLOT}"
 	cmake_src_configure
 }
 

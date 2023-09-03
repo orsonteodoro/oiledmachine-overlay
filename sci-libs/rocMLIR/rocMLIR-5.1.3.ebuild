@@ -174,7 +174,8 @@ build_rocmlir() {
 		-DHAVE_SYSEXITS_H=1
 	)
 
-	export CXX="${HIP_CXX:-clang++-${LLVM_MAX_SLOT}}"
+	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
+	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..

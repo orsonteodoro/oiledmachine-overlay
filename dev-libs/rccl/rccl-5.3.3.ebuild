@@ -67,7 +67,7 @@ src_configure() {
 
 	replace-flags '-O0' '-O1'
 
-	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
+	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then

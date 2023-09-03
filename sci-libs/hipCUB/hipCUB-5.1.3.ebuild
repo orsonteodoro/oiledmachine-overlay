@@ -212,7 +212,8 @@ src_configure() {
 		)
 	fi
 
-	CXX="${HIP_CXX:-hipcc}" \
+	export CC="${HIP_CC:-hipcc}"
+	export CXX="${HIP_CXX:-hipcc}"
 	cmake_src_configure
 }
 

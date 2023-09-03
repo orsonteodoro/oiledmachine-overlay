@@ -81,14 +81,12 @@ RDEPEND="
 		>=dev-libs/protobuf-${PROTOBUF_PV}
 		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		media-libs/libjpeg-turbo
-		sys-devel/gcc[openmp]
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
 	)
 	rocm? (
 		>=sys-libs/libomp-${LLVM_MAX_SLOT}
-		sys-devel/gcc[openmp]
 		~sci-libs/rocBLAS-${PV}:${SLOT}
 	)
 	rpp? (
@@ -134,7 +132,8 @@ src_configure() {
 		-DROCAL=$(usex rocal ON OFF)
 	)
 
-	export CXX="${HIP_CXX:-clang++}"
+	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
+	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
 
 	if use opencl ; then
 		mycmakeargs+=(

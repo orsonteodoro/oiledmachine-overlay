@@ -113,7 +113,7 @@ src_configure() {
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing"
 	fi
 
-	export CC="${HIP_CC:-clang-${LLVM_MAX_SLOT}}"
+	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then

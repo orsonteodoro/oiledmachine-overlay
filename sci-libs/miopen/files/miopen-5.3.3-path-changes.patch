@@ -319,11 +319,11 @@ diff -urp MIOpen-rocm-5.3.3.orig/doc/src/embed.md MIOpen-rocm-5.3.3/doc/src/embe
  ```
  
 -Precompiled kernels packages are installed in `/opt/rocm/miopen/share/miopen/db`.
-+Precompiled kernels packages are installed in `/usr/miopen/share/miopen/db`.
++Precompiled kernels packages are installed in `/usr/share/miopen/db`.
  An example with the architecture gfx900 with 56 compute units:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/opt/rocm/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/usr/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/usr/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
  

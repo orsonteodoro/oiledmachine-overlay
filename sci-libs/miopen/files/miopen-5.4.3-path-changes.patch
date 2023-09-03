@@ -318,11 +318,11 @@ diff -urp MIOpen-rocm-5.4.3.orig/doc/src/embed.md MIOpen-rocm-5.4.3/doc/src/embe
  ```
  
 -Precompiled kernels packages are installed in `/opt/rocm/miopen/share/miopen/db`.
-+Precompiled kernels packages are installed in `/usr/miopen/share/miopen/db`.
++Precompiled kernels packages are installed in `/usr/share/miopen/db`.
  An example with the architecture gfx900 with 56 compute units:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/opt/rocm/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/usr/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
++CXX=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/usr/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
  
@@ -599,7 +599,7 @@ diff -urp MIOpen-rocm-5.4.3.orig/fin/src/include/conv_fin.hpp MIOpen-rocm-5.4.3/
  
      // to fetch the kdb folder location
 -    // ex:  /opt/rocm/miopen/share/miopen/db
-+    // ex:  /usr/miopen/share/miopen/db
++    // ex:  /usr/share/miopen/db
      auto pathstr = miopen::GetCachePath(true);
  
      // append the json input arch and numcu values to file

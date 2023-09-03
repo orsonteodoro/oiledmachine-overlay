@@ -89,6 +89,8 @@ src_configure() {
 		-DPROF_API_HEADER_PATH="${EPREFIX}/usr/include/roctracer/ext"
 		-DUSE_PROF_API=1
 	)
+	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
+	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
 	cmake_src_configure
 }
 

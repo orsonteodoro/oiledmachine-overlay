@@ -156,9 +156,9 @@ einfo "PWD: ${PWD}"
 }
 
 src_configure() {
+	export CC="${HIP_CC:-hipcc}"
+	export CXX="${HIP_CXX:-hipcc}"
 	if use openmp ; then
-		export CC="${CHOST}-gcc"
-		export CXX="${CHOST}-g++"
 		append-flags -fuse-ld=lld
 	fi
 
@@ -180,7 +180,6 @@ src_configure() {
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
-		CXX="hipcc" \
 		cmake_src_configure
 	fi
 }

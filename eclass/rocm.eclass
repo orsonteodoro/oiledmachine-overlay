@@ -95,17 +95,6 @@ _ROCM_ECLASS=1
 
 inherit llvm toolchain-funcs
 
-RDEPEND+="
-        sys-devel/gcc:12
-"
-DEPEND+="
-        sys-devel/gcc:12
-"
-BDEPEND+="
-        sys-devel/gcc:12
-        sys-devel/gcc-config
-"
-
 # @ECLASS_VARIABLE: ROCM_VERSION
 # @REQUIRED
 # @PRE_INHERIT
@@ -257,29 +246,6 @@ unset -f _rocm_set_globals_override
 unset -f _rocm_set_globals_default
 unset -f _rocm_set_globals
 
-check_libstdcxx_version() {
-# Force same gcc to avoid problems with libomp, magma, etc.
-# Should match the libstdcxx that was used to build /usr/lib/llvm/@LLVM_SLOT@/lib64/libLLVM-@LLVM_SLOT@.so
-	local gcc_slot=12
-	local gcc_current_profile=$(gcc-config -c)
-	local gcc_current_profile_slot=${gcc_current_profile##*-}
-	if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
-ewarn
-ewarn "GCC ${gcc_slot} is required to build this package.  Do"
-ewarn
-ewarn "  eselect gcc set ${CHOST}-${gcc_slot}"
-ewarn "  source /etc/profile"
-ewarn
-ewarn "to change to gcc-${gcc_slot}."
-ewarn
-ewarn "All ROCm/HIP packages need to be built with libcxxabi from gcc:11 to"
-ewarn "avoid omp errors or for ABI compatibility.  You may use"
-ewarn "ROCM_CHECK_LIBSTDCXX=0 to disable this check."
-ewarn
-#		die
-	fi
-}
-
 # @FUNCTION:  rocm_pkg_setup
 # @DESCRIPTION:
 # Init paths
@@ -292,9 +258,6 @@ eerror
 		die
 	fi
 	llvm_pkg_setup # Init LLVM_SLOT
-	if [[ "${ROCM_CHECK_LIBSTDCXX:-1}" == "1" ]] ; then
-		check_libstdcxx_version
-	fi
 }
 
 # @FUNCTION:  _rocm_change_common_paths

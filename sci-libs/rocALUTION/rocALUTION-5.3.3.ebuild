@@ -124,6 +124,7 @@ src_configure() {
 		-DSUPPORT_OMP=$(usex openmp ON OFF)
 	)
 
+	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
 	if [[ "${CXX}" =~ (^|-)"g++" ]] ; then

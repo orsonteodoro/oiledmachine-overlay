@@ -57,9 +57,6 @@ REQUIRED_USE="
 		cpu
 	)
 "
-# gcc:11 (libstdc++) is required to avoid:
-#/usr/lib/gcc/${CHOST}/12/include/omp.h:308:45: error: '__malloc__' attribute takes no arguments
-#  __GOMP_NOTHROW __attribute__((__malloc__, __malloc__ (omp_free),
 
 RDEPEND="
 	>=dev-libs/boost-1.72:=
@@ -130,6 +127,7 @@ src_configure() {
 		-DROCM_PATH="${ESYSROOT}/usr"
 	)
 
+	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
 ewarn

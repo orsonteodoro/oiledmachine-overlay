@@ -123,6 +123,7 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
+	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
 	local mycmakeargs=(
@@ -138,6 +139,7 @@ src_configure() {
 			-DBUILD_HIPRAND=OFF
 			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
 		)
+		export CC="gcc"
 		export CXX="g++"
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"

@@ -166,7 +166,9 @@ build_rocmlir() {
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 	)
-	export CXX="${HIP_CXX:-clang++-${LLVM_MAX_SLOT}}"
+
+	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
+	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
