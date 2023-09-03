@@ -224,7 +224,7 @@ RDEPEND="
 		)
 	)
 	tbb? (
-		dev-cpp/tbb
+		dev-cpp/tbb:0
 	)
 "
 DEPEND="
