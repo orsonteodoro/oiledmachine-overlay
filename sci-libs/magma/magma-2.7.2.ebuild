@@ -128,12 +128,21 @@ ROCM_SLOTS=(
 	"5.4.3"
 	"5.3.3"
 )
+declare -A ROCM_PV_TO_LLVM_MAX_SLOT=(
+	["5.6.0"]="16"
+	["5.5.1"]="16"
+	["5.4.3"]="15"
+	["5.3.3"]="15"
+)
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
 		local slot="0/${pv%.*}"
 		echo "
 			(
+				mkl? (
+					>=sys-libs/libomp-${ROCM_PV_TO_LLVM_MAX_SLOT[${pv}]}
+				)
 				~dev-util/hip-${pv}:${slot}
 				~sci-libs/hipBLAS-${pv}:${slot}
 				~sci-libs/hipSPARSE-${pv}:${slot}
@@ -463,6 +472,9 @@ src_configure() {
 		mycmakeargs+=(
 			-DBLA_VENDOR="Intel10_64lp"
 			-DLAPACK_LIBRARIES="-lmkl_gf_lp64 -lmkl_gnu_thread -lmkl_core"
+			-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+			-DOpenMP_libomp_LIBRARY="omp"
 		)
 
 # librocblas.so.3: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
