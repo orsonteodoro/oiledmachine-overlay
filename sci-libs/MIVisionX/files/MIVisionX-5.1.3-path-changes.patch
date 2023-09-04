@@ -991,21 +991,6 @@ diff -urp MIVisionX-rocm-5.1.3.orig/CMakeLists.txt MIVisionX-rocm-5.1.3/CMakeLis
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
-@@ -195,3 +195,14 @@ else()
- endif()
- 
- include(CPack)
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-centos7.dockerfile MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-centos7.dockerfile
 --- MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-centos7.dockerfile	2022-05-19 14:27:37.000000000 -0700
 +++ MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-centos7.dockerfile	2023-09-04 11:24:33.627723628 -0700

@@ -1126,21 +1126,6 @@ diff -urp MIVisionX-rocm-5.5.1.orig/CMakeLists.txt MIVisionX-rocm-5.5.1/CMakeLis
    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
  endif()
  if(CMAKE_BUILD_TYPE MATCHES Debug)
-@@ -226,3 +226,14 @@ else()
- endif()
- 
- include(CPack)
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp MIVisionX-rocm-5.5.1.orig/docker/conformance/openvx-1-3-on-centos7.dockerfile MIVisionX-rocm-5.5.1/docker/conformance/openvx-1-3-on-centos7.dockerfile
 --- MIVisionX-rocm-5.5.1.orig/docker/conformance/openvx-1-3-on-centos7.dockerfile	2023-02-23 15:45:15.000000000 -0800
 +++ MIVisionX-rocm-5.5.1/docker/conformance/openvx-1-3-on-centos7.dockerfile	2023-09-04 10:34:52.063763444 -0700
