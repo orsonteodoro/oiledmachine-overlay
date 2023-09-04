@@ -118,6 +118,7 @@ pkg_setup() {
 }
 
 src_prepare() {
+ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
 
 	hipconfig --help >/dev/null || die

@@ -128,6 +128,7 @@ pkg_setup() {
 }
 
 src_prepare() {
+ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
 
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"

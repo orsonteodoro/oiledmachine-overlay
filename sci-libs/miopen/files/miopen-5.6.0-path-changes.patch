@@ -1,6 +1,6 @@
 diff -urp MIOpen-rocm-5.6.0.orig/cmake/ClangTidy.cmake MIOpen-rocm-5.6.0/cmake/ClangTidy.cmake
 --- MIOpen-rocm-5.6.0.orig/cmake/ClangTidy.cmake	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/cmake/ClangTidy.cmake	2023-08-29 21:47:43.629543438 -0700
++++ MIOpen-rocm-5.6.0/cmake/ClangTidy.cmake	2023-09-03 16:36:35.592627387 -0700
 @@ -43,7 +43,7 @@ find_program(CLANG_TIDY_EXE
      PATH_SUFFIXES
          compiler/bin
@@ -21,7 +21,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/cmake/ClangTidy.cmake MIOpen-rocm-5.6.0/cmake/C
      add_custom_target(tidy ${CLANG_TIDY_ALL})
 diff -urp MIOpen-rocm-5.6.0.orig/cmake/CppCheck.cmake MIOpen-rocm-5.6.0/cmake/CppCheck.cmake
 --- MIOpen-rocm-5.6.0.orig/cmake/CppCheck.cmake	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/cmake/CppCheck.cmake	2023-08-29 21:46:36.357542083 -0700
++++ MIOpen-rocm-5.6.0/cmake/CppCheck.cmake	2023-09-03 16:36:35.592627387 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -33,8 +33,8 @@ diff -urp MIOpen-rocm-5.6.0.orig/cmake/CppCheck.cmake MIOpen-rocm-5.6.0/cmake/Cp
  ProcessorCount(CPPCHECK_JOBS)
 diff -urp MIOpen-rocm-5.6.0.orig/cmake/FindOpenCL.cmake MIOpen-rocm-5.6.0/cmake/FindOpenCL.cmake
 --- MIOpen-rocm-5.6.0.orig/cmake/FindOpenCL.cmake	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/cmake/FindOpenCL.cmake	2023-08-29 21:46:36.357542083 -0700
-@@ -34,7 +34,7 @@ find_path(OPENCL_INCLUDE_DIRS
++++ MIOpen-rocm-5.6.0/cmake/FindOpenCL.cmake	2023-09-03 16:43:07.180622158 -0700
+@@ -34,44 +34,32 @@ find_path(OPENCL_INCLUDE_DIRS
      /usr/local/include
      /usr/local/cuda/include
      /opt/cuda/include
@@ -43,56 +43,65 @@ diff -urp MIOpen-rocm-5.6.0.orig/cmake/FindOpenCL.cmake MIOpen-rocm-5.6.0/cmake/
      ${CMAKE_INSTALL_PREFIX}/opencl/include
      DOC "OpenCL header file path"
      )
-@@ -44,32 +44,32 @@ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
-     find_library( OPENCL_LIBRARIES
-         NAMES OpenCL
-         HINTS
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
 -        ${OPENCL_ROOT}/lib
 -        $ENV{AMDAPPSDKROOT}/lib
 -        $ENV{CUDA_PATH}/lib
-+        ${OPENCL_ROOT}/@LIBDIR@
-+        $ENV{AMDAPPSDKROOT}/@LIBDIR@
-+        $ENV{CUDA_PATH}/@LIBDIR@
-         DOC "OpenCL dynamic library path"
-         PATH_SUFFIXES x86_64 x64 x86_64/sdk
-         PATHS
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-        PATHS
 -        /usr/lib
 -        /usr/local/cuda/lib
 -        /opt/cuda/lib
 -        /opt/rocm/opencl/lib
 -        ${CMAKE_INSTALL_PREFIX}/opencl/lib
-+        /usr/@LIBDIR@
-+        /usr/local/cuda/@LIBDIR@
-+        /opt/cuda/@LIBDIR@
-+        /usr/opencl/@LIBDIR@
-+        ${CMAKE_INSTALL_PREFIX}/opencl/@LIBDIR@
-         )
- else( )
-     find_library( OPENCL_LIBRARIES
-         NAMES OpenCL
-         HINTS
+-        )
+-else( )
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
 -        ${OPENCL_ROOT}/lib
 -        $ENV{AMDAPPSDKROOT}/lib
 -        $ENV{CUDA_PATH}/lib
-+        ${OPENCL_ROOT}/@LIBDIR@
-+        $ENV{AMDAPPSDKROOT}/@LIBDIR@
-+        $ENV{CUDA_PATH}/@LIBDIR@
-         DOC "OpenCL dynamic library path"
-         PATH_SUFFIXES x86 Win32
- 
-         PATHS
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86 Win32
+-
+-        PATHS
 -        /usr/lib
 -        /usr/local/cuda/lib
 -        /opt/cuda/lib
-+        /usr/@LIBDIR@
-+        /usr/local/cuda/@LIBDIR@
-+        /opt/cuda/@LIBDIR@
-         )
- endif( )
+-        )
+-endif( )
++    set(_PATH_SUFFIXES "x86_64 x64 x86_64/sdk")
++else()
++    set(_PATH_SUFFIXES "x86 Win32")
++endif()
++find_library( OPENCL_LIBRARIES
++    NAMES OpenCL
++    HINTS
++    ${OPENCL_ROOT}/@LIBDIR@
++    $ENV{AMDAPPSDKROOT}/@LIBDIR@
++    $ENV{CUDA_PATH}/@LIBDIR@
++    DOC "OpenCL dynamic library path"
++    PATH_SUFFIXES ${_PATH_SUFFIXES}
++    PATHS
++    /usr/@LIBDIR@
++    /usr/local/cuda/@LIBDIR@
++    /opt/cuda/@LIBDIR@
++    /usr/opencl/@LIBDIR@
++    ${CMAKE_INSTALL_PREFIX}/opencl/@LIBDIR@
++    )
  mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ include( FindPackageHandleStandardArgs )
 diff -urp MIOpen-rocm-5.6.0.orig/cmake/hip-config.cmake MIOpen-rocm-5.6.0/cmake/hip-config.cmake
 --- MIOpen-rocm-5.6.0.orig/cmake/hip-config.cmake	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/cmake/hip-config.cmake	2023-08-29 21:46:36.357542083 -0700
++++ MIOpen-rocm-5.6.0/cmake/hip-config.cmake	2023-09-03 16:36:35.592627387 -0700
 @@ -63,7 +63,7 @@ set(HIP_RUNTIME "VDI")
  
  set_and_check( hip_INCLUDE_DIR "${PACKAGE_PREFIX_DIR}/include" )
@@ -127,7 +136,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/cmake/hip-config.cmake MIOpen-rocm-5.6.0/cmake/
  set_property(TARGET hip::device APPEND PROPERTY 
 diff -urp MIOpen-rocm-5.6.0.orig/cmake/rocm-path.cmake MIOpen-rocm-5.6.0/cmake/rocm-path.cmake
 --- MIOpen-rocm-5.6.0.orig/cmake/rocm-path.cmake	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/cmake/rocm-path.cmake	2023-08-29 21:46:36.357542083 -0700
++++ MIOpen-rocm-5.6.0/cmake/rocm-path.cmake	2023-09-03 16:36:35.592627387 -0700
 @@ -25,5 +25,5 @@
  ################################################################################
  
@@ -136,8 +145,8 @@ diff -urp MIOpen-rocm-5.6.0.orig/cmake/rocm-path.cmake MIOpen-rocm-5.6.0/cmake/r
 +list(APPEND CMAKE_PREFIX_PATH /usr)
  
 diff -urp MIOpen-rocm-5.6.0.orig/CMakeLists.txt MIOpen-rocm-5.6.0/CMakeLists.txt
---- MIOpen-rocm-5.6.0.orig/CMakeLists.txt	2023-08-29 21:46:14.509541643 -0700
-+++ MIOpen-rocm-5.6.0/CMakeLists.txt	2023-08-29 21:46:36.357542083 -0700
+--- MIOpen-rocm-5.6.0.orig/CMakeLists.txt	2023-09-03 16:35:55.828627918 -0700
++++ MIOpen-rocm-5.6.0/CMakeLists.txt	2023-09-03 16:36:35.612627387 -0700
 @@ -45,16 +45,16 @@ endif()
  
  # Default installation path
@@ -270,11 +279,9 @@ diff -urp MIOpen-rocm-5.6.0.orig/CMakeLists.txt MIOpen-rocm-5.6.0/CMakeLists.txt
 +Executable      ${CMAKE_EXE_LINKER_FLAGS}
 +Module          ${CMAKE_MODULE_LINKER_FLAGS}
 +Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
-Only in MIOpen-rocm-5.6.0: CMakeLists.txt.orig
-Only in MIOpen-rocm-5.6.0: CMakeLists.txt.rej
 diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
 --- MIOpen-rocm-5.6.0.orig/docs/embed.md	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/docs/embed.md	2023-08-29 21:48:32.897544430 -0700
++++ MIOpen-rocm-5.6.0/docs/embed.md	2023-09-03 16:36:35.628627387 -0700
 @@ -18,13 +18,13 @@ mkdir build; cd build;
  ### Configuring for an embedded build
  Minimal static build configuration line without embedded precompiled kernels package, or Find-Db:
@@ -342,7 +349,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
  After configuration is complete, run:
 diff -urp MIOpen-rocm-5.6.0.orig/install_deps.cmake MIOpen-rocm-5.6.0/install_deps.cmake
 --- MIOpen-rocm-5.6.0.orig/install_deps.cmake	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/install_deps.cmake	2023-08-29 21:46:45.757542273 -0700
++++ MIOpen-rocm-5.6.0/install_deps.cmake	2023-09-03 16:36:35.644627386 -0700
 @@ -68,8 +68,8 @@ virtualenv_install(cget)
  if(NOT DEFINED ENV{CXX} AND NOT DEFINED CMAKE_CXX_COMPILER AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
      find_program(CLANGXX clang++
@@ -376,7 +383,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/install_deps.cmake MIOpen-rocm-5.6.0/install_de
  # Install dependencies
 diff -urp MIOpen-rocm-5.6.0.orig/rbuild.ini MIOpen-rocm-5.6.0/rbuild.ini
 --- MIOpen-rocm-5.6.0.orig/rbuild.ini	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/rbuild.ini	2023-08-29 21:46:45.757542273 -0700
++++ MIOpen-rocm-5.6.0/rbuild.ini	2023-09-03 16:36:35.656627386 -0700
 @@ -1,14 +1,14 @@
  [main]
 -cxx = ${rocm_path}/llvm/bin/clang++
@@ -409,7 +416,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/rbuild.ini MIOpen-rocm-5.6.0/rbuild.ini
      ROCmSoftwarePlatform/rocm-recipes
 diff -urp MIOpen-rocm-5.6.0.orig/README.md MIOpen-rocm-5.6.0/README.md
 --- MIOpen-rocm-5.6.0.orig/README.md	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/README.md	2023-08-29 21:46:45.757542273 -0700
++++ MIOpen-rocm-5.6.0/README.md	2023-09-03 16:36:35.668627386 -0700
 @@ -123,8 +123,8 @@ cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFI
  
  An example cmake step can be:
@@ -435,10 +442,9 @@ diff -urp MIOpen-rocm-5.6.0.orig/README.md MIOpen-rocm-5.6.0/README.md
  
  ```
  cmake -DMIOPEN_BACKEND=OpenCL -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..
-Only in MIOpen-rocm-5.6.0: README.md.orig
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/ClangTidy.cmake MIOpen-rocm-5.6.0/src/composable_kernel/cmake/ClangTidy.cmake
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/ClangTidy.cmake	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/cmake/ClangTidy.cmake	2023-08-29 21:46:45.757542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/cmake/ClangTidy.cmake	2023-09-03 16:36:35.668627386 -0700
 @@ -43,8 +43,8 @@ find_program(CLANG_TIDY_EXE
      PATH_SUFFIXES
          compiler/bin
@@ -452,7 +458,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/ClangTidy.cmake MIO
  
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/CppCheck.cmake MIOpen-rocm-5.6.0/src/composable_kernel/cmake/CppCheck.cmake
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/CppCheck.cmake	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/cmake/CppCheck.cmake	2023-08-29 21:46:45.757542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/cmake/CppCheck.cmake	2023-09-03 16:36:35.680627386 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -464,7 +470,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/cmake/CppCheck.cmake MIOp
  ProcessorCount(CPPCHECK_JOBS)
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/array.hpp MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/array.hpp
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/array.hpp	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/array.hpp	2023-08-29 21:46:45.757542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/array.hpp	2023-09-03 16:36:35.688627386 -0700
 @@ -10,7 +10,7 @@
  /// (this is against the Standard, but it doesn't matter in this case).
  /// But <type_traits> also defines std::true_type, per Standard.
@@ -476,7 +482,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include
  namespace std {
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/data_type.hpp MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/data_type.hpp
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/data_type.hpp	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/data_type.hpp	2023-08-29 21:46:45.757542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/data_type.hpp	2023-09-03 16:36:35.688627386 -0700
 @@ -6,7 +6,7 @@
  #ifdef __HIPCC_RTC__
  #ifdef WORKAROUND_ISSUE_HIPRTC_TRUE_TYPE
@@ -488,7 +494,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include
  typedef signed short int16_t;
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/type.hpp MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/type.hpp
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include/utility/type.hpp	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/type.hpp	2023-08-29 21:46:45.757542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/composable_kernel/include/utility/type.hpp	2023-09-03 16:36:35.688627386 -0700
 @@ -9,7 +9,7 @@
  /// We need <type_traits> for std::remove_reference and std::remove_cv.
  /// But <type_traits> also defines std::true_type, per Standard.
@@ -500,7 +506,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/composable_kernel/include
  namespace std {
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/host/host_tensor/CMakeLists.txt MIOpen-rocm-5.6.0/src/composable_kernel/host/host_tensor/CMakeLists.txt
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/host/host_tensor/CMakeLists.txt	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/host/host_tensor/CMakeLists.txt	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/host/host_tensor/CMakeLists.txt	2023-09-03 16:36:35.712627385 -0700
 @@ -18,4 +18,4 @@ target_link_libraries(host_tensor INTERF
  target_compile_features(host_tensor PUBLIC)
  set_target_properties(host_tensor PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -509,7 +515,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/host/host_tensor/CMakeLis
 +install(TARGETS host_tensor LIBRARY DESTINATION @LIBDIR@) 
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/README.md MIOpen-rocm-5.6.0/src/composable_kernel/README.md
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/README.md	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/README.md	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/README.md	2023-09-03 16:36:35.724627385 -0700
 @@ -20,7 +20,7 @@ https://www.boost.org/doc/libs/1_66_0/mo
  # Build
  Add path of Boost
@@ -532,7 +538,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/README.md MIOpen-rocm-5.6
  ```
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/cmake-rocm.sh MIOpen-rocm-5.6.0/src/composable_kernel/script/cmake-rocm.sh
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/cmake-rocm.sh	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/script/cmake-rocm.sh	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/script/cmake-rocm.sh	2023-09-03 16:36:35.732627385 -0700
 @@ -12,7 +12,7 @@ cmake
  -D BUILD_DEV=ON                                                                                                                                \
  -D CMAKE_BUILD_TYPE=Release                                                                                                                    \
@@ -545,7 +551,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/cmake-rocm.sh MIOp
  ${MY_PROJECT_SOURCE}
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/hipclang_opt.sh MIOpen-rocm-5.6.0/src/composable_kernel/script/hipclang_opt.sh
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/hipclang_opt.sh	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/script/hipclang_opt.sh	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/script/hipclang_opt.sh	2023-09-03 16:36:35.732627385 -0700
 @@ -2,24 +2,24 @@ rm *.ll *.s
  
  BC_FILE=$1
@@ -591,7 +597,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/hipclang_opt.sh MI
 +#/usr/lib/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_4.ll
 diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/run.sh MIOpen-rocm-5.6.0/src/composable_kernel/script/run.sh
 --- MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/run.sh	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/composable_kernel/script/run.sh	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/composable_kernel/script/run.sh	2023-09-03 16:36:35.748627385 -0700
 @@ -5,7 +5,7 @@
   export GPU_DEVICE_ORDINAL=0
  
@@ -603,7 +609,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/script/run.sh MIOpen-rocm
  #export OLC_DEBUG_HIP_VERBOSE=1
 diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp MIOpen-rocm-5.6.0/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp
 --- MIOpen-rocm-5.6.0.orig/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/kernels/gpu_general_tensor_reorder_kernel/general_tensor_reorder_kernel_util.hpp	2023-09-03 16:36:35.748627385 -0700
 @@ -27,7 +27,7 @@
  #ifdef __HIPCC_RTC__
  #ifdef WORKAROUND_ISSUE_HIPRTC_TRUE_TYPE
@@ -615,7 +621,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/gpu_general_tensor_reorder_kernel/g
  typedef signed short int16_t;
 diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/gpu_reference_kernel/naive_conv.cpp MIOpen-rocm-5.6.0/src/kernels/gpu_reference_kernel/naive_conv.cpp
 --- MIOpen-rocm-5.6.0.orig/src/kernels/gpu_reference_kernel/naive_conv.cpp	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/kernels/gpu_reference_kernel/naive_conv.cpp	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/kernels/gpu_reference_kernel/naive_conv.cpp	2023-09-03 16:36:35.748627385 -0700
 @@ -31,7 +31,7 @@
  #ifdef __HIPCC_RTC__
  #ifdef WORKAROUND_ISSUE_HIPRTC_TRUE_TYPE
@@ -627,7 +633,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/gpu_reference_kernel/naive_conv.cpp
  typedef signed short int16_t;
 diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp
 --- MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_ck_utils_type.hpp	2023-09-03 16:36:35.752627385 -0700
 @@ -8,7 +8,7 @@
  /// We need <type_traits> for std::remove_reference and std::remove_cv.
  /// But <type_traits> also defines std::true_type, per Standard.
@@ -639,7 +645,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/ut
  namespace std {
 diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp
 --- MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/src/kernels/static_composable_kernel/include/utility/static_kernel_tuple.hpp	2023-09-03 16:36:35.752627385 -0700
 @@ -11,7 +11,7 @@
  /// (this is against the Standard, but it doesn't matter in this case).
  /// But <type_traits> also defines std::true_type, per Standard.
@@ -650,8 +656,8 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/kernels/static_composable_kernel/include/ut
  
  namespace std {
 diff -urp MIOpen-rocm-5.6.0.orig/test/CMakeLists.txt MIOpen-rocm-5.6.0/test/CMakeLists.txt
---- MIOpen-rocm-5.6.0.orig/test/CMakeLists.txt	2023-08-29 21:46:14.493541643 -0700
-+++ MIOpen-rocm-5.6.0/test/CMakeLists.txt	2023-08-29 21:46:45.761542273 -0700
+--- MIOpen-rocm-5.6.0.orig/test/CMakeLists.txt	2023-09-03 16:35:55.796627918 -0700
++++ MIOpen-rocm-5.6.0/test/CMakeLists.txt	2023-09-03 16:36:35.752627385 -0700
 @@ -97,7 +97,7 @@ if(NOT (MIOPEN_TEST_GFX900 OR MIOPEN_TES
      find_program(ROCMINFO
          NAMES rocminfo
@@ -670,10 +676,9 @@ diff -urp MIOpen-rocm-5.6.0.orig/test/CMakeLists.txt MIOpen-rocm-5.6.0/test/CMak
  
      # The tests often change the contents of the user databases, which may affect performance after testing.
      # For example, MIOPEN_DEBUG_FIND_ONLY_SOLVER results in non-optimal records in user-find-db.
-Only in MIOpen-rocm-5.6.0/test: CMakeLists.txt.orig
 diff -urp MIOpen-rocm-5.6.0.orig/test/test_perf.py MIOpen-rocm-5.6.0/test/test_perf.py
 --- MIOpen-rocm-5.6.0.orig/test/test_perf.py	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/test/test_perf.py	2023-08-29 21:49:00.273544982 -0700
++++ MIOpen-rocm-5.6.0/test/test_perf.py	2023-09-03 16:36:35.752627385 -0700
 @@ -83,7 +83,7 @@ def run_driver_cmds(filename, install_pa
          try:
            idx = line.index('MIOpenDriver')
@@ -685,7 +690,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/test/test_perf.py MIOpen-rocm-5.6.0/test/test_p
            proc = subprocess.Popen(cmd,
 diff -urp MIOpen-rocm-5.6.0.orig/utils/install_precompiled_kernels.sh MIOpen-rocm-5.6.0/utils/install_precompiled_kernels.sh
 --- MIOpen-rocm-5.6.0.orig/utils/install_precompiled_kernels.sh	2023-06-07 21:56:47.000000000 -0700
-+++ MIOpen-rocm-5.6.0/utils/install_precompiled_kernels.sh	2023-08-29 21:46:45.761542273 -0700
++++ MIOpen-rocm-5.6.0/utils/install_precompiled_kernels.sh	2023-09-03 16:36:35.752627385 -0700
 @@ -3,7 +3,7 @@ ROCMINFO=$(which rocminfo)
  SUDO=$(which sudo)
  if [ -z "$ROCMINFO" ];
