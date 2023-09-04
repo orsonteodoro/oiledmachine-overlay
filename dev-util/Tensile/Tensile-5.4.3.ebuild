@@ -70,7 +70,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-5.4.2-gfx1031.patch"
 	"${FILESDIR}/${PN}-5.4.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.4.2-use-ninja.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 
 CMAKE_USE_DIR="${S}/${PN}/Source"
@@ -84,64 +84,25 @@ pkg_setup() {
 src_prepare() {
 	eapply "${_PATCHES[@]}"
 	distutils-r1_src_prepare
-	sed \
-		-e "s,\@LLVM_PATH\@,$(get_llvm_prefix ${LLVM_MAX_SLOT}),g" \
-		"${FILESDIR}/${PN}-5.4.2-gentoopath.patch" \
-		> \
-		"${S}/gentoopath.patch" \
-		|| die
-
-	eapply $(prefixify_ro "${S}/gentoopath.patch")
 
 	pushd "${PN}" || die
-
-	sed \
-		-e "/ROCM_SMI_ROOT/s,lib,$(get_libdir)," \
-		-i \
-		"Source/cmake/FindROCmSMI.cmake" \
-		|| die
-	sed \
-		-r \
-		-e "/TENSILE_USE_LLVM/s/ON/OFF/" \
-		-i \
-		"Source/CMakeLists.txt" \
-		|| die
-	sed \
-		-e "/chmod 755/d" \
-		-i \
-		"Source/TensileCreateLibrary.cmake" \
-		|| die # remove chmod 755 on
-
-	# ${Tensile_ROOT}/bin does not exists; call command directly
-	sed \
-		-e "s,\${Tensile_ROOT}/bin/,,g" \
-		-i \
-		"Source/TensileCreateLibrary.cmake" \
-		"cmake/TensileConfig.cmake" \
-		|| die
-
-	local Tensile_share_dir="\"${EPREFIX}/usr/share/${PN}\""
-	hipconfig --help >/dev/null || die
-	sed \
-		-e "/HipClangVersion/s/0.0.0/$(hipconfig -v)/" \
-		-i \
-		"Common.py" \
-		|| die
-
-	sed \
-		-e "s,os.path.dirname(os.path.realpath(__file__)),${Tensile_share_dir},g" \
-		-i \
-		"ReplacementKernels.py" \
-		"Common.py" \
-		"${PN}.py" \
-		|| die
-
-	sed \
-		-e "s|os\.path\.dirname.*$|\"${EPREFIX}/usr/share/Tensile/Source\", end='')|" \
-		-i \
-		"__init__.py" \
-		|| die
-
+		sed \
+			-r \
+			-e "/TENSILE_USE_LLVM/s/ON/OFF/" \
+			-i \
+			"Source/CMakeLists.txt" \
+			|| die
+		sed \
+			-e "/chmod 755/d" \
+			-i \
+			"Source/TensileCreateLibrary.cmake" \
+			|| die # remove chmod 755 on
+		hipconfig --version || die
+		sed \
+			-e "/HipClangVersion/s/0.0.0/$(hipconfig -v)/" \
+			-i \
+			"Common.py" \
+			|| die
 	popd || die
 
 	sed \

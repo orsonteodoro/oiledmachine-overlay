@@ -1,8 +1,8 @@
-diff -urp Tensile-rocm-5.6.0.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5.6.0/HostLibraryTests/CMakeLists.txt
---- Tensile-rocm-5.6.0.orig/HostLibraryTests/CMakeLists.txt	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/HostLibraryTests/CMakeLists.txt	2023-09-03 20:37:24.184434444 -0700
+diff -urp Tensile-rocm-5.4.3.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5.4.3/HostLibraryTests/CMakeLists.txt
+--- Tensile-rocm-5.4.3.orig/HostLibraryTests/CMakeLists.txt	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/HostLibraryTests/CMakeLists.txt	2023-09-03 20:38:43.756433381 -0700
 @@ -29,7 +29,7 @@ project(TensileHostLibraryTest)
- set( CMAKE_CXX_STANDARD 17 )
+ set( CMAKE_CXX_STANDARD 14 )
  set( CMAKE_CXX_EXTENSIONS OFF )
  
 -list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} /opt/rocm)
@@ -19,18 +19,24 @@ diff -urp Tensile-rocm-5.6.0.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5
  endif()
  
  if(TENSILE_USE_OPENMP AND NOT TARGET custom_openmp_cxx)
-@@ -139,7 +139,7 @@ set(test_sources ${test_sources}
+@@ -139,13 +139,7 @@ set(test_sources ${test_sources}
  )
  
  if(TENSILE_USE_LLVM)
--    find_package(LLVM REQUIRED CONFIG)
+-    find_package(LLVM 13.0 QUIET CONFIG)
+-    if(NOT LLVM_FOUND)
+-        find_package(LLVM 12.0 QUIET CONFIG)
+-        if(NOT LLVM_FOUND)
+-            find_package(LLVM REQUIRED CONFIG)
+-        endif()
+-    endif()
 +    find_package(LLVM PATHS /usr/lib/llvm/@LLVM_SLOT@ REQUIRED CONFIG)
  
      set(test_sources ${test_sources}
          ContractionLibraryLoading_test.cpp
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/ClientWriter.py Tensile-rocm-5.6.0/Tensile/ClientWriter.py
---- Tensile-rocm-5.6.0.orig/Tensile/ClientWriter.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/ClientWriter.py	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/ClientWriter.py Tensile-rocm-5.4.3/Tensile/ClientWriter.py
+--- Tensile-rocm-5.4.3.orig/Tensile/ClientWriter.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/ClientWriter.py	2023-09-03 20:38:43.756433381 -0700
 @@ -180,7 +180,7 @@ def runClient(libraryLogicPath, forBench
  def getBuildClientLibraryScript(buildPath, libraryLogicPath):
    callCreateLibraryCmd = ["python"] if os.name == "nt" else []
@@ -40,10 +46,10 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/ClientWriter.py Tensile-rocm-5.6.0/Ten
  
    if globalParameters["MergeFiles"]:
      callCreateLibraryCmd += ["--merge-files"]
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/cmake/TensileConfig.cmake Tensile-rocm-5.6.0/Tensile/cmake/TensileConfig.cmake
---- Tensile-rocm-5.6.0.orig/Tensile/cmake/TensileConfig.cmake	2023-09-03 20:37:09.836434635 -0700
-+++ Tensile-rocm-5.6.0/Tensile/cmake/TensileConfig.cmake	2023-09-03 20:37:24.196434443 -0700
-@@ -156,7 +156,7 @@ function(TensileCreateLibraryFiles
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/cmake/TensileConfig.cmake Tensile-rocm-5.4.3/Tensile/cmake/TensileConfig.cmake
+--- Tensile-rocm-5.4.3.orig/Tensile/cmake/TensileConfig.cmake	2023-09-03 20:38:29.652433569 -0700
++++ Tensile-rocm-5.4.3/Tensile/cmake/TensileConfig.cmake	2023-09-03 20:38:43.756433381 -0700
+@@ -144,7 +144,7 @@ function(TensileCreateLibraryFiles
    if(Tensile_TENSILE_ROOT)
      set(Script "${Tensile_TENSILE_ROOT}/bin/TensileCreateLibrary")
    else()
@@ -52,10 +58,10 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/cmake/TensileConfig.cmake Tensile-rocm
    endif()
  
    message(STATUS "Tensile script: ${Script}")
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Common.py Tensile-rocm-5.6.0/Tensile/Common.py
---- Tensile-rocm-5.6.0.orig/Tensile/Common.py	2023-09-03 20:37:09.836434635 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Common.py	2023-09-03 20:37:44.956434166 -0700
-@@ -218,12 +218,12 @@ globalParameters["DictLibraryLogic"] = F
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Common.py Tensile-rocm-5.4.3/Tensile/Common.py
+--- Tensile-rocm-5.4.3.orig/Tensile/Common.py	2023-09-03 20:38:29.660433569 -0700
++++ Tensile-rocm-5.4.3/Tensile/Common.py	2023-09-03 20:39:04.652433102 -0700
+@@ -219,12 +219,12 @@ globalParameters["DictLibraryLogic"] = F
  
  # internal, i.e., gets set during startup
  globalParameters["CurrentISA"] = (0,0,0)
@@ -72,7 +78,7 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Common.py Tensile-rocm-5.6.0/Tensile/C
  globalParameters["SourcePath"] = os.path.join(globalParameters["ScriptPath"], "Source") # path to Tensile/Source/
  globalParameters["HipClangVersion"] = "0.0.0"
  
-@@ -256,7 +256,7 @@ globalParameters["MinKForGSU"] = 256 # m
+@@ -257,7 +257,7 @@ globalParameters["MinKForGSU"] = 256 # m
  globalParameters["GranularityThreshold"] = 0.0
  
  # directory where custom kernels are located
@@ -81,7 +87,7 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Common.py Tensile-rocm-5.6.0/Tensile/C
  
  globalParameters["PristineOnGPU"] = True # use Pristine memory on Tensile training verification or not
  
-@@ -1742,7 +1742,7 @@ def printExit(message):
+@@ -1689,7 +1689,7 @@ def printExit(message):
  ################################################################################
  def isExe( filePath ):
    return os.path.isfile(filePath) and os.access(filePath, os.X_OK)
@@ -90,7 +96,7 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Common.py Tensile-rocm-5.6.0/Tensile/C
    # look in defaultPath first
    exePath = os.path.join(defaultPath, exeName)
    if isExe(exePath):
-@@ -2026,7 +2026,7 @@ def assignGlobalParameters( config ):
+@@ -1950,7 +1950,7 @@ def assignGlobalParameters( config ):
      else:
        print2(" %24s: %8s (unspecified)" % (key, defaultValue))
  
@@ -99,7 +105,7 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Common.py Tensile-rocm-5.6.0/Tensile/C
    if "ROCM_PATH" in os.environ:
      globalParameters["ROCmPath"] = os.environ.get("ROCM_PATH")
    if "TENSILE_ROCM_PATH" in os.environ:
-@@ -2054,11 +2054,11 @@ def assignGlobalParameters( config ):
+@@ -1978,11 +1978,11 @@ def assignGlobalParameters( config ):
      if os.name == "nt":
        globalParameters["AssemblerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang++.exe")
      else:
@@ -113,7 +119,7 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Common.py Tensile-rocm-5.6.0/Tensile/C
  
    if "TENSILE_ROCM_OFFLOAD_BUNDLER_PATH" in os.environ:
      globalParameters["ClangOffloadBundlerPath"] = os.environ.get("TENSILE_ROCM_OFFLOAD_BUNDLER_PATH")
-@@ -2066,7 +2066,7 @@ def assignGlobalParameters( config ):
+@@ -1990,7 +1990,7 @@ def assignGlobalParameters( config ):
      if os.name == "nt":
        globalParameters["ClangOffloadBundlerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang-offload-bundler.exe")
      else:
@@ -122,9 +128,9 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Common.py Tensile-rocm-5.6.0/Tensile/C
  
    if "ROCmAgentEnumeratorPath" in config:
      globalParameters["ROCmAgentEnumeratorPath"] = config["ROCmAgentEnumeratorPath"]
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/GenerateSummations.py Tensile-rocm-5.6.0/Tensile/GenerateSummations.py
---- Tensile-rocm-5.6.0.orig/Tensile/GenerateSummations.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/GenerateSummations.py	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/GenerateSummations.py Tensile-rocm-5.4.3/Tensile/GenerateSummations.py
+--- Tensile-rocm-5.4.3.orig/Tensile/GenerateSummations.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/GenerateSummations.py	2023-09-03 20:38:43.760433381 -0700
 @@ -59,7 +59,7 @@ def createLibraryForBenchmark(logicPath,
      Selection.
      """
@@ -133,7 +139,7 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/GenerateSummations.py Tensile-rocm-5.6
 +    pythonExePath = "TensileCreateLibrary"
      args = [pythonExePath, \
          "--merge-files", "--new-client-only", "--no-short-file-names", "--no-library-print-debug", \
-         "--architecture=all", "--cxx-compiler=hipcc", "--library-format=yaml", \
+         "--architecture=all", "--code-object-version=V3", "--cxx-compiler=hipcc", "--library-format=yaml", \
 @@ -91,7 +91,7 @@ def GenerateSummations(userArgs):
  
          currentPath = ensurePath(os.path.join(outputPath, logicFileStem))
@@ -143,30 +149,30 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/GenerateSummations.py Tensile-rocm-5.6
          finalPath = ensurePath(os.path.join(currentPath, "final"))
          localLogicPath = ensurePath(os.path.join(currentPath, "logic"))
          localLogicFilePath = os.path.join(localLogicPath, logicFileBaseName)
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/__init__.py Tensile-rocm-5.6.0/Tensile/__init__.py
---- Tensile-rocm-5.6.0.orig/Tensile/__init__.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/__init__.py	2023-09-03 20:37:24.196434443 -0700
-@@ -31,4 +31,4 @@ __version__ = "4.37.0"
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/__init__.py Tensile-rocm-5.4.3/Tensile/__init__.py
+--- Tensile-rocm-5.4.3.orig/Tensile/__init__.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/__init__.py	2023-09-03 20:38:43.760433381 -0700
+@@ -31,4 +31,4 @@ __version__ = "4.35.0"
  def PrintTensileRoot():
      import os.path
  
 -    print(os.path.dirname(__file__), end='')
 +    print("@EPREFIX@/usr/share/Tensile/Source", end='')
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/ReplacementKernels.py Tensile-rocm-5.6.0/Tensile/ReplacementKernels.py
---- Tensile-rocm-5.6.0.orig/Tensile/ReplacementKernels.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/ReplacementKernels.py	2023-09-03 20:37:24.196434443 -0700
-@@ -79,7 +79,7 @@ class ReplacementKernels:
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/ReplacementKernels.py Tensile-rocm-5.4.3/Tensile/ReplacementKernels.py
+--- Tensile-rocm-5.4.3.orig/Tensile/ReplacementKernels.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/ReplacementKernels.py	2023-09-03 20:38:43.760433381 -0700
+@@ -81,7 +81,7 @@ class ReplacementKernels:
  
      @classmethod
      def Directory(cls):
 -        scriptDir = os.path.dirname(os.path.realpath(__file__))
 +        scriptDir = "@EPREFIX@/usr/share/Tensile"
-         dirName = 'ReplacementKernels-cov3'
- 
-         return os.path.join(scriptDir, dirName)
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/cmake/FindROCmSMI.cmake Tensile-rocm-5.6.0/Tensile/Source/cmake/FindROCmSMI.cmake
---- Tensile-rocm-5.6.0.orig/Tensile/Source/cmake/FindROCmSMI.cmake	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Source/cmake/FindROCmSMI.cmake	2023-09-03 20:37:24.196434443 -0700
+         dirName = 'ReplacementKernels'
+         if globalParameters['CodeObjectVersion'] == 'V3':
+             dirName += '-cov3'
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Source/cmake/FindROCmSMI.cmake Tensile-rocm-5.4.3/Tensile/Source/cmake/FindROCmSMI.cmake
+--- Tensile-rocm-5.4.3.orig/Tensile/Source/cmake/FindROCmSMI.cmake	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/Source/cmake/FindROCmSMI.cmake	2023-09-03 20:38:43.760433381 -0700
 @@ -24,7 +24,7 @@
  
  if(NOT ROCM_ROOT)
@@ -185,9 +191,9 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/cmake/FindROCmSMI.cmake Tensile
  mark_as_advanced(ROCM_SMI_LIBRARY)
  
  include( FindPackageHandleStandardArgs )
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/CMakeLists.txt Tensile-rocm-5.6.0/Tensile/Source/CMakeLists.txt
---- Tensile-rocm-5.6.0.orig/Tensile/Source/CMakeLists.txt	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Source/CMakeLists.txt	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Source/CMakeLists.txt Tensile-rocm-5.4.3/Tensile/Source/CMakeLists.txt
+--- Tensile-rocm-5.4.3.orig/Tensile/Source/CMakeLists.txt	2023-09-03 20:38:29.660433569 -0700
++++ Tensile-rocm-5.4.3/Tensile/Source/CMakeLists.txt	2023-09-03 20:38:43.760433381 -0700
 @@ -26,7 +26,7 @@ cmake_minimum_required(VERSION 3.13)
  
  # Override all paths arguments as they do not work properly
@@ -206,9 +212,9 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/CMakeLists.txt Tensile-rocm-5.6
  endif()
  
  if(TENSILE_USE_OPENMP)
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/FindHIP.cmake Tensile-rocm-5.6.0/Tensile/Source/FindHIP.cmake
---- Tensile-rocm-5.6.0.orig/Tensile/Source/FindHIP.cmake	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Source/FindHIP.cmake	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Source/FindHIP.cmake Tensile-rocm-5.4.3/Tensile/Source/FindHIP.cmake
+--- Tensile-rocm-5.4.3.orig/Tensile/Source/FindHIP.cmake	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/Source/FindHIP.cmake	2023-09-03 20:38:43.760433381 -0700
 @@ -79,7 +79,7 @@ else()
          hip/hip_runtime.h
        PATHS
@@ -227,9 +233,9 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/FindHIP.cmake Tensile-rocm-5.6.
      PATH_SUFFIXES
            /bin
        )
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/FindOpenCL.cmake Tensile-rocm-5.6.0/Tensile/Source/FindOpenCL.cmake
---- Tensile-rocm-5.6.0.orig/Tensile/Source/FindOpenCL.cmake	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Source/FindOpenCL.cmake	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Source/FindOpenCL.cmake Tensile-rocm-5.4.3/Tensile/Source/FindOpenCL.cmake
+--- Tensile-rocm-5.4.3.orig/Tensile/Source/FindOpenCL.cmake	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/Source/FindOpenCL.cmake	2023-09-03 20:38:43.760433381 -0700
 @@ -71,8 +71,8 @@ find_path(OPENCL_INCLUDE_DIRS
    PATHS
      /usr/include
@@ -300,22 +306,28 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/FindOpenCL.cmake Tensile-rocm-5
  mark_as_advanced( OPENCL_LIBRARIES )
  
  # If we asked for OpenCL 1.2, and we found a version installed greater than that, pass the 'use deprecated' flag
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Source/lib/CMakeLists.txt Tensile-rocm-5.6.0/Tensile/Source/lib/CMakeLists.txt
---- Tensile-rocm-5.6.0.orig/Tensile/Source/lib/CMakeLists.txt	2023-09-03 20:37:09.828434635 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Source/lib/CMakeLists.txt	2023-09-03 20:37:24.196434443 -0700
-@@ -51,7 +51,7 @@ set(tensile_sources  ${tensile_sources}
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Source/lib/CMakeLists.txt Tensile-rocm-5.4.3/Tensile/Source/lib/CMakeLists.txt
+--- Tensile-rocm-5.4.3.orig/Tensile/Source/lib/CMakeLists.txt	2023-09-03 20:38:29.644433569 -0700
++++ Tensile-rocm-5.4.3/Tensile/Source/lib/CMakeLists.txt	2023-09-03 20:38:43.760433381 -0700
+@@ -51,13 +51,7 @@ set(tensile_sources  ${tensile_sources}
      )
  
  if(TENSILE_USE_LLVM)
--    find_package(LLVM REQUIRED CONFIG)
+-    find_package(LLVM 13.0 QUIET CONFIG)
+-    if(NOT LLVM_FOUND)
+-        find_package(LLVM 12.0 QUIET CONFIG)
+-        if(NOT LLVM_FOUND)
+-            find_package(LLVM REQUIRED CONFIG)
+-        endif()
+-    endif()
 +    find_package(LLVM PATHS /usr/lib/llvm/@LLVM_SLOT@ REQUIRED CONFIG)
  
      set(tensile_sources ${tensile_sources}
          source/llvm/YAML.cpp
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/TensileCreateLibrary.py Tensile-rocm-5.6.0/Tensile/TensileCreateLibrary.py
---- Tensile-rocm-5.6.0.orig/Tensile/TensileCreateLibrary.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/TensileCreateLibrary.py	2023-09-03 20:37:24.196434443 -0700
-@@ -483,7 +483,7 @@ def writeSolutionsAndKernels(outputPath,
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/TensileCreateLibrary.py Tensile-rocm-5.4.3/Tensile/TensileCreateLibrary.py
+--- Tensile-rocm-5.4.3.orig/Tensile/TensileCreateLibrary.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/TensileCreateLibrary.py	2023-09-03 20:38:43.760433381 -0700
+@@ -462,7 +462,7 @@ def writeSolutionsAndKernels(outputPath,
    # Push working path into build_tmp folder because there may be more than
    # one process running this script. This is to avoid build directory clashing.
    # NOTE: file paths must not contain the lower case word 'kernel' or the
@@ -324,10 +336,10 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/TensileCreateLibrary.py Tensile-rocm-5
    # See buildSourceCodeObjectFile:167 for the call to this binary.
    Common.pushWorkingPath('build_tmp')
    Common.pushWorkingPath(os.path.basename(outputPath).upper())
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tensile.py Tensile-rocm-5.6.0/Tensile/Tensile.py
---- Tensile-rocm-5.6.0.orig/Tensile/Tensile.py	2023-09-03 20:37:09.844434635 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Tensile.py	2023-09-03 20:37:24.196434443 -0700
-@@ -293,11 +293,11 @@ def Tensile(userArgs):
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Tensile.py Tensile-rocm-5.4.3/Tensile/Tensile.py
+--- Tensile-rocm-5.4.3.orig/Tensile/Tensile.py	2023-09-03 20:38:29.672433569 -0700
++++ Tensile-rocm-5.4.3/Tensile/Tensile.py	2023-09-03 20:38:43.760433381 -0700
+@@ -295,11 +295,11 @@ def Tensile(userArgs):
  
  
  def TensileConfigPath(*args):
@@ -341,9 +353,9 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tensile.py Tensile-rocm-5.6.0/Tensile/
  
  
  ################################################################################
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py Tensile-rocm-5.6.0/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py
---- Tensile-rocm-5.6.0.orig/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py Tensile-rocm-5.4.3/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py
+--- Tensile-rocm-5.4.3.orig/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py	2023-09-03 20:38:43.760433381 -0700
 @@ -221,7 +221,7 @@ class YamlBuilder:
      @classmethod
      def findAvailableArchs(self):
@@ -353,9 +365,9 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/extended/convolution_config/Yaml
          if "ROCM_PATH" in os.environ:
              rocmpath = os.environ.get("ROCM_PATH")
          if "TENSILE_ROCM_PATH" in os.environ:
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/hipModuleLoad_timing/Makefile Tensile-rocm-5.6.0/Tensile/Tests/hipModuleLoad_timing/Makefile
---- Tensile-rocm-5.6.0.orig/Tensile/Tests/hipModuleLoad_timing/Makefile	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Tests/hipModuleLoad_timing/Makefile	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Tests/hipModuleLoad_timing/Makefile Tensile-rocm-5.4.3/Tensile/Tests/hipModuleLoad_timing/Makefile
+--- Tensile-rocm-5.4.3.orig/Tensile/Tests/hipModuleLoad_timing/Makefile	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/Tests/hipModuleLoad_timing/Makefile	2023-09-03 20:38:43.760433381 -0700
 @@ -22,10 +22,10 @@
  #
  ################################################################################
@@ -370,10 +382,10 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/hipModuleLoad_timing/Makefile Te
  
  hipModuleLoadTiming.out: hipModuleLoadTiming.o
  	$(CXX) -o $@ $(LIBFLAGS) $^
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/integration/test_integration.py Tensile-rocm-5.6.0/Tensile/Tests/integration/test_integration.py
---- Tensile-rocm-5.6.0.orig/Tensile/Tests/integration/test_integration.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Tests/integration/test_integration.py	2023-09-03 20:37:24.196434443 -0700
-@@ -137,7 +137,7 @@ def test_integration(useGlobalParameters
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Tests/integration/test_integration.py Tensile-rocm-5.4.3/Tensile/Tests/integration/test_integration.py
+--- Tensile-rocm-5.4.3.orig/Tensile/Tests/integration/test_integration.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/Tests/integration/test_integration.py	2023-09-03 20:38:43.760433381 -0700
+@@ -135,7 +135,7 @@ def test_integration(useGlobalParameters
      pytest.skip("only run pre_checkin test in certain combo")
  
    logicFileDir = os.path.join(getLogicFileDir, testYamls)
@@ -382,9 +394,9 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/integration/test_integration.py 
  
    with useGlobalParameters(OutputPath=outputDir,
                             WorkingPath=outputDir,
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/unit/test_TensileCreateLibrary.py Tensile-rocm-5.6.0/Tensile/Tests/unit/test_TensileCreateLibrary.py
---- Tensile-rocm-5.6.0.orig/Tensile/Tests/unit/test_TensileCreateLibrary.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Tests/unit/test_TensileCreateLibrary.py	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Tests/unit/test_TensileCreateLibrary.py Tensile-rocm-5.4.3/Tensile/Tests/unit/test_TensileCreateLibrary.py
+--- Tensile-rocm-5.4.3.orig/Tensile/Tests/unit/test_TensileCreateLibrary.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/Tests/unit/test_TensileCreateLibrary.py	2023-09-03 20:38:43.760433381 -0700
 @@ -85,7 +85,7 @@ def test_WriteClientLibraryFromSolutions
      Common.globalParameters["CxxCompiler"] = "hipcc"
      Common.assignGlobalParameters({})
@@ -394,9 +406,9 @@ diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/unit/test_TensileCreateLibrary.p
      buildWorkingPath = tmpdir.mkdir("build")
  
  
-diff -urp Tensile-rocm-5.6.0.orig/Tensile/Tests/yaml_only/test_config.py Tensile-rocm-5.6.0/Tensile/Tests/yaml_only/test_config.py
---- Tensile-rocm-5.6.0.orig/Tensile/Tests/yaml_only/test_config.py	2023-06-12 10:51:58.000000000 -0700
-+++ Tensile-rocm-5.6.0/Tensile/Tests/yaml_only/test_config.py	2023-09-03 20:37:24.196434443 -0700
+diff -urp Tensile-rocm-5.4.3.orig/Tensile/Tests/yaml_only/test_config.py Tensile-rocm-5.4.3/Tensile/Tests/yaml_only/test_config.py
+--- Tensile-rocm-5.4.3.orig/Tensile/Tests/yaml_only/test_config.py	2022-10-04 11:30:07.000000000 -0700
++++ Tensile-rocm-5.4.3/Tensile/Tests/yaml_only/test_config.py	2023-09-03 20:38:43.760433381 -0700
 @@ -37,7 +37,7 @@ from Tensile import DataType
  def isExe( filePath ):
    return os.path.isfile(filePath) and os.access(filePath, os.X_OK)
