@@ -20,7 +20,7 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="debug r3"
+IUSE="debug r4"
 RDEPEND="
 	|| (
 		>=sys-devel/gcc-7.5.0[fortran]
@@ -55,18 +55,6 @@ src_prepare() {
 		"${S}/CMakeLists.txt" \
 		|| die
 	cmake_src_prepare
-	IFS=$'\n'
-	sed \
-		-i \
-		-e "s|ROCM_PATH/lib/amdgcn/bitcode|ROCM_PATH/$(get_libdir)/amdgcn/bitcode|g" \
-		$(grep -l -r -F -e "ROCM_PATH/lib/amdgcn/bitcode" "${WORKDIR}") \
-		|| die
-	sed \
-		-i \
-		-e "s|ROCM_PATH/lib\"|ROCM_PATH/$(get_libdir)\"|g" \
-		$(grep -l -r -F -e "ROCM_PATH/lib\"" "${WORKDIR}") \
-		|| die
-	IFS=$' \t\n'
 	rocm_src_prepare
 }
 

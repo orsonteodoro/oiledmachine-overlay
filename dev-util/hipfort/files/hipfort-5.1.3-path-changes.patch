@@ -1,6 +1,6 @@
 diff -urp hipfort-rocm-5.1.3.orig/bin/hipfc hipfort-rocm-5.1.3/bin/hipfc
---- hipfort-rocm-5.1.3.orig/bin/hipfc	2023-08-19 02:13:33.812029666 -0700
-+++ hipfort-rocm-5.1.3/bin/hipfc	2023-08-19 02:16:33.676034128 -0700
+--- hipfort-rocm-5.1.3.orig/bin/hipfc	2023-09-03 19:29:11.808489092 -0700
++++ hipfort-rocm-5.1.3/bin/hipfc	2023-09-03 19:29:11.808489092 -0700
 @@ -61,8 +61,8 @@ function usage(){
     Options with values:       Defaults  
      -hipfort-compiler <bin>   $HIPFORT_COMPILER or gfortran
@@ -58,7 +58,7 @@ diff -urp hipfort-rocm-5.1.3.orig/bin/hipfc hipfort-rocm-5.1.3/bin/hipfc
 +     if [ -d $ROCM_PATH/@LIBDIR@/amdgcn/bitcode ] ; then
 +         HIPCC_ENV+=" DEVICE_LIB_PATH=$ROCM_PATH/@LIBDIR@/amdgcn/bitcode"
       else
-          HIPCC_ENV+=" DEVICE_LIB_PATH=$ROCM_PATH/lib"
+          HIPCC_ENV+=" DEVICE_LIB_PATH=$ROCM_PATH/@LIBDIR@"
       fi
 @@ -408,7 +408,7 @@ if [ $GEN_OBJECT_ONLY ]  ; then
     HIPCC_OPTS=" -c $HIPCC_OPTS"
@@ -69,3 +69,148 @@ diff -urp hipfort-rocm-5.1.3.orig/bin/hipfc hipfort-rocm-5.1.3/bin/hipfc
     for lib in $ROCM_LIBS; do
       addrocmlib $lib
     done
+diff -urp hipfort-rocm-5.1.3.orig/bin/Makefile.hipfort hipfort-rocm-5.1.3/bin/Makefile.hipfort
+--- hipfort-rocm-5.1.3.orig/bin/Makefile.hipfort	2022-02-21 09:50:16.000000000 -0800
++++ hipfort-rocm-5.1.3/bin/Makefile.hipfort	2023-09-03 19:34:29.160484854 -0700
+@@ -6,7 +6,7 @@
+ # This file is meant to be included by other Makefiles.  The includer must 
+ # set HIPFORT_HOME to the build or install location of HIPFORT.  For example:
+ #
+-#    HIPFORT_HOME ?= /opt/rocm/hipfort
++#    HIPFORT_HOME ?= /usr/hipfort
+ #    include $(HIPFORT_HOME)/bin/Makefile.hipfort
+ #  
+ # If the caller does not set HIPFORT_ARCHGPU, this Makefile will call 
+@@ -21,14 +21,14 @@
+ HIPFORT_ARCHGPU ?= $(shell $(HIPFORT_HOME)/bin/myarchgpu)
+ ARCH = $(firstword $(subst -, ,$(HIPFORT_ARCHGPU)))
+ HIPFORT_COMPILER ?= gfortran
+-CUDA_PATH=${CUDA_PATH:-/usr/local/cuda}
+-ROCM_PATH=${ROCM_PATH:-/opt/rocm}
+-DEVICE_LIB_PATH  ?= $(ROCM_PATH)/lib
+-HIP_CLANG_PATH   ?= $(ROCM_PATH)/llvm/bin
++CUDA_PATH=${CUDA_PATH:-/opt/cuda}
++ROCM_PATH=${ROCM_PATH:-/usr}
++DEVICE_LIB_PATH  ?= $(ROCM_PATH)/@LIBDIR@/amdgcn/bitcode
++HIP_CLANG_PATH   ?= $(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin
+ HIP_PLATFORM=${HIP_PLATFORM:-amd}
+ 
+ MOD_DIR  = $(HIPFORT_HOME)/include/$(ARCH)
+-LIB_DIR  = $(HIPFORT_HOME)/lib
++LIB_DIR  = $(HIPFORT_HOME)/@LIBDIR@
+ 
+ GPU = $(strip $(subst ., ,$(suffix $(subst -,.,$(HIPFORT_ARCHGPU)))))
+ ifeq (nvptx,$(findstring nvptx,$(HIPFORT_ARCHGPU)))
+@@ -37,7 +37,7 @@ ifeq (nvptx,$(findstring nvptx,$(HIPFORT
+   HIPCC_ENV  = HIP_PLATFORM=nvcc
+   HIPCC_OPTS = "--gpu-architecture=$(GPU)"
+ else
+-  LINKOPTS   = -L$(LIB_DIR) -lhipfort-$(ARCH) -L$(ROCM_PATH)/lib $(HIPCC_LIBS) -lamdhip64 -Wl,-rpath=$(ROCM_PATH)/lib
++  LINKOPTS   = -L$(LIB_DIR) -lhipfort-$(ARCH) -L$(ROCM_PATH)/@LIBDIR@ $(HIPCC_LIBS) -lamdhip64 -Wl,-rpath=$(ROCM_PATH)/@LIBDIR@
+   HIPCC_ENV  = HIP_PLATFORM=$(HIP_PLATFORM) DEVICE_LIB_PATH=$(DEVICE_LIB_PATH) HIP_CLANG_PATH=$(HIP_CLANG_PATH)
+   HIPCC_OPTS = -fno-gpu-rdc -fPIC --offload-arch=$(GPU)
+ endif
+diff -urp hipfort-rocm-5.1.3.orig/cmake/Modules/rocm-cmake.cmake hipfort-rocm-5.1.3/cmake/Modules/rocm-cmake.cmake
+--- hipfort-rocm-5.1.3.orig/cmake/Modules/rocm-cmake.cmake	2022-02-21 09:50:16.000000000 -0800
++++ hipfort-rocm-5.1.3/cmake/Modules/rocm-cmake.cmake	2023-09-03 19:35:06.632484354 -0700
+@@ -1,5 +1,5 @@
+ # Find or download/install rocm-cmake project
+-find_package(ROCM QUIET CONFIG PATHS /opt/rocm)
++find_package(ROCM QUIET CONFIG PATHS /usr)
+ if(NOT ROCM_FOUND)
+   set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
+   file(
+diff -urp hipfort-rocm-5.1.3.orig/CMakeLists.txt hipfort-rocm-5.1.3/CMakeLists.txt
+--- hipfort-rocm-5.1.3.orig/CMakeLists.txt	2022-02-21 09:50:16.000000000 -0800
++++ hipfort-rocm-5.1.3/CMakeLists.txt	2023-09-03 19:29:11.736489093 -0700
+@@ -17,7 +17,7 @@ IF(CMAKE_INSTALL_PREFIX)
+   set(HIPFORT_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
+ ELSE()
+   # Make CMAKE_INSTALL_PREFIX be the same as HIPFORT_INSTALL_PREFIX
+-  set(CMAKE_INSTALL_PREFIX ${HIPFORT_INSTALL_DIR})
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${HIPFORT_INSTALL_DIR})
+ ENDIF()
+ message("-- HIPFORT -------------  cmake START -------------------")
+ message("-- HIPFORT_COMPILER:       ${HIPFORT_COMPILER}")
+@@ -32,12 +32,12 @@ message("-- HIPFORT --------------------
+ set(CMAKE_Fortran_COMPILER_INIT ${HIPFORT_COMPILER})
+ PROJECT(hipfort Fortran C)
+ 
+-SET(CMAKE_BUILD_TYPE ${HIPFORT_BUILD_TYPE})
++#_cmake_modify_IGNORE SET(CMAKE_BUILD_TYPE ${HIPFORT_BUILD_TYPE})
+ SET(VERSION ${HIPFORT_VERSION})
+ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+ SET(CMAKE_AR ${HIPFORT_AR})
+ SET(CMAKE_RANLIB ${HIPFORT_RANLIB})
+-SET(CMAKE_INSTALL_PREFIX ${HIPFORT_INSTALL_DIR})
++#_cmake_modify_IGNORE SET(CMAKE_INSTALL_PREFIX ${HIPFORT_INSTALL_DIR})
+ message("-- CMAKE_INSTALL_PREFIX:${CMAKE_INSTALL_PREFIX}")
+ 
+ INCLUDE(FortranCInterface)
+@@ -147,3 +147,14 @@ rocm_create_package(
+ )
+ 
+ message("-- HIPFORT -------------  cmake DONE --------------------")
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+diff -urp hipfort-rocm-5.1.3.orig/lib/CMakeLists.txt hipfort-rocm-5.1.3/lib/CMakeLists.txt
+--- hipfort-rocm-5.1.3.orig/lib/CMakeLists.txt	2022-02-21 09:50:16.000000000 -0800
++++ hipfort-rocm-5.1.3/lib/CMakeLists.txt	2023-09-03 19:34:00.696485235 -0700
+@@ -21,8 +21,8 @@ set(HIPFORT_ARCH "amdgcn")
+     ENDIF(CMAKE_Fortran_COMPILER_SUPPORTS_F08)
+     target_compile_definitions(${HIPFORT_LIB} PRIVATE _HIPFORT_ARCH='${HIPFORT_ARCH}')
+     install(TARGETS ${HIPFORT_LIB} 
+-            ARCHIVE DESTINATION lib
+-            LIBRARY DESTINATION lib)
++            ARCHIVE DESTINATION @LIBDIR@
++            LIBRARY DESTINATION @LIBDIR@)
+ 
+ set(HIPFORT_ARCH "nvptx")
+     # nvptx
+@@ -39,10 +39,10 @@ set(HIPFORT_ARCH "nvptx")
+     target_compile_definitions(${HIPFORT_LIB} PRIVATE USE_CUDA_NAMES)
+     target_compile_definitions(${HIPFORT_LIB} PRIVATE _HIPFORT_ARCH='${HIPFORT_ARCH}')
+     install(TARGETS ${HIPFORT_LIB} 
+-            ARCHIVE DESTINATION lib
+-            LIBRARY DESTINATION lib)
++            ARCHIVE DESTINATION @LIBDIR@
++            LIBRARY DESTINATION @LIBDIR@)
+    
+-install(DIRECTORY ${CMAKE_BINARY_DIR}/include DESTINATION .)
++install(DIRECTORY ${CMAKE_BINARY_DIR}/include DESTINATION .) 
+ 
+ #   target_link_libraries(${HIPFORT_LIB} PUBLIC 
+-#   /usr/local/cuda/targets/x86_64-linux/lib/libcudart_static.a)
++#   /opt/cuda/targets/x86_64-linux/lib/libcudart_static.a)
+diff -urp hipfort-rocm-5.1.3.orig/README.md hipfort-rocm-5.1.3/README.md
+--- hipfort-rocm-5.1.3.orig/README.md	2022-02-21 09:50:16.000000000 -0800
++++ hipfort-rocm-5.1.3/README.md	2023-09-03 19:35:04.392484384 -0700
+@@ -131,8 +131,8 @@ Among the environment variables, the mos
+ | Variable | Description | Default |
+ |---|---|---|
+ | `HIP_PLATFORM` | The platform to compile for (either 'amd' or 'nvcc') | `amd` |
+-| `ROCM_PATH` | Path to ROCm installation | `/opt/rocm` |
+-| `CUDA_PATH` | Path to CUDA installation | `/usr/local/cuda` | 
++| `ROCM_PATH` | Path to ROCm installation | `/usr` |
++| `CUDA_PATH` | Path to CUDA installation | `/opt/cuda` | 
+ | `HIPFORT_COMPILER` | Fortran compiler to be used | `gfortran` | 
+ 
+ ## Examples and tests
+@@ -176,7 +176,7 @@ from the `test/` folder. The instruction
+ 
+ #### AMD devices
+ 
+-> **NOTE**: Running all tests as below requires that all ROCm math libraries can be found at `/opt/rocm`.
++> **NOTE**: Running all tests as below requires that all ROCm math libraries can be found at `/usr`.
+ Specify a different ROCm location via the `ROCM_PATH` environment variable.
+ 
+ > **NOTE**: When using older ROCm versions, you might need to manually set the environment variable `HIP_PLATFORM` to `hcc`
