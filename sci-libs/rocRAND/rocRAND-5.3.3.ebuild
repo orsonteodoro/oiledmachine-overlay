@@ -105,9 +105,13 @@ RESTRICT="
 	)
 "
 S="${WORKDIR}/rocRAND-rocm-${PV}"
+PATCHES=(
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+)
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -115,20 +119,6 @@ src_prepare() {
 	mv -v \
 		../hipRAND-${HIPRAND_COMMIT_HASH} \
 		hipRAND \
-		|| die
-	#
-	# Changed the installed include and lib dir, and avoided the symlink
-	# overwrite in  the installed headers.
-	#
-	# Avoided setting RPATH.
-	#
-	sed -r \
-		-e "s:(hip|roc)rand/lib:\${CMAKE_INSTALL_LIBDIR}:" \
-		-e "s:(hip|roc)rand/include:include/\1rand:" \
-		-e '/\$\{INSTALL_SYMLINK_COMMAND\}/d' \
-		-e "/INSTALL_RPATH/d" \
-		-i \
-		library/CMakeLists.txt \
 		|| die
 
 	# Removed the GIT dependency.
@@ -153,8 +143,8 @@ src_prepare() {
 		done
 	fi
 
-	eapply_user
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 get_nvgpu_targets() {

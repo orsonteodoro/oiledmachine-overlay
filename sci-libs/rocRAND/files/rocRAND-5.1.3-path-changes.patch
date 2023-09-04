@@ -1,0 +1,287 @@
+diff -urp rocRAND-rocm-5.1.3.orig/cmake/Modules/FindTestU01.cmake rocRAND-rocm-5.1.3/cmake/Modules/FindTestU01.cmake
+--- rocRAND-rocm-5.1.3.orig/cmake/Modules/FindTestU01.cmake	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/cmake/Modules/FindTestU01.cmake	2023-09-04 14:07:53.419592764 -0700
+@@ -1,12 +1,12 @@
+ if(NOT TESTU01_ROOT_DIR)
+     set(TESTU01_ROOT_DIR "/usr/local")
+-    FIND_LIBRARY(testu01 NAMES testu01 PATHS ${TESTU01_ROOT_DIR}/lib)
+-    FIND_LIBRARY(probdist NAMES probdist testu01probdist PATHS ${TESTU01_ROOT_DIR}/lib)
+-    FIND_LIBRARY(mylib NAMES mylib testu01mylib PATHS ${TESTU01_ROOT_DIR}/lib)
++    FIND_LIBRARY(testu01 NAMES testu01 PATHS ${TESTU01_ROOT_DIR}/@LIBDIR@)
++    FIND_LIBRARY(probdist NAMES probdist testu01probdist PATHS ${TESTU01_ROOT_DIR}/@LIBDIR@)
++    FIND_LIBRARY(mylib NAMES mylib testu01mylib PATHS ${TESTU01_ROOT_DIR}/@LIBDIR@)
+ else()
+-    FIND_LIBRARY(testu01 NAMES testu01 PATHS ${TESTU01_ROOT_DIR}/lib NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+-    FIND_LIBRARY(probdist NAMES probdist testu01probdist PATHS ${TESTU01_ROOT_DIR}/lib NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+-    FIND_LIBRARY(mylib NAMES mylib testu01mylib PATHS ${TESTU01_ROOT_DIR}/lib NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
++    FIND_LIBRARY(testu01 NAMES testu01 PATHS ${TESTU01_ROOT_DIR}/@LIBDIR@ NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
++    FIND_LIBRARY(probdist NAMES probdist testu01probdist PATHS ${TESTU01_ROOT_DIR}/@LIBDIR@ NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
++    FIND_LIBRARY(mylib NAMES mylib testu01mylib PATHS ${TESTU01_ROOT_DIR}/@LIBDIR@ NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
+ endif()
+ mark_as_advanced(TESTU01_ROOT_DIR)
+ 
+@@ -31,7 +31,7 @@ if(NOT TestU01_INCLUDE_DIRS)
+     set(TestU01_FOUND 0)
+     string(APPEND TestU01_ERROR_REASON "TestU01 headers not found")
+ endif()
+-set(TestU01_LIBRARY_DIRS ${TESTU01_ROOT_DIR}/lib)
++set(TestU01_LIBRARY_DIRS ${TESTU01_ROOT_DIR}/@LIBDIR@)
+ 
+ if(TestU01_FOUND)
+   set(TestU01_LIBRARIES ${testu01} ${probdist} ${mylib})
+diff -urp rocRAND-rocm-5.1.3.orig/CMakeLists.txt rocRAND-rocm-5.1.3/CMakeLists.txt
+--- rocRAND-rocm-5.1.3.orig/CMakeLists.txt	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/CMakeLists.txt	2023-09-04 14:07:53.419592764 -0700
+@@ -24,17 +24,17 @@ cmake_minimum_required(VERSION 3.16 FATA
+ 
+ # Install prefix
+ if (WIN32)
+-  SET( CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE )
++#_cmake_modify_IGNORE   SET( CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE )
+   SET( INSTALL_PREFIX "C:/hipSDK" )
+   SET( CPACK_SET_DESTDIR FALSE )
+   SET( CPACK_PACKAGE_INSTALL_DIRECTORY "C:/hipSDK" )
+   SET( CPACK_PACKAGING_INSTALL_PREFIX "" )
+   set( CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF )
+ else()
+-  set(CMAKE_INSTALL_PREFIX "$ENV{ROCM_PATH}" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "$ENV{ROCM_PATH}" CACHE PATH "Install path prefix, prepended onto install directories")
+ 
+   #Adding CMAKE_PREFIX_PATH
+-  list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH}/llvm $ENV{ROCM_PATH} )
++  list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@ $ENV{ROCM_PATH} )
+   if(NOT CPACK_PACKAGING_INSTALL_PREFIX)
+       set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+   endif()
+@@ -43,8 +43,8 @@ endif()
+ list(APPEND CMAKE_MODULE_PATH
+     ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules
+-    ${HIP_PATH}/cmake $ENV{ROCM_PATH}/hip/cmake # FindHIP.cmake
+-    $ENV{ROCM_PATH}/llvm
++    ${HIP_PATH}/@LIBDIR@/cmake $ENV{ROCM_PATH}/@LIBDIR@/cmake/hip # FindHIP.cmake
++    $ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@
+ )
+ 
+ #
+@@ -54,7 +54,7 @@ project(rocRAND CXX)
+ # Set a default build type if none was specified
+ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+     message(STATUS "Setting build type to 'Release' as none was specified.")
+-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
++#_cmake_modify_IGNORE     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+ endif()
+ 
+@@ -97,7 +97,7 @@ endif()
+ if (NOT WIN32)
+   include(cmake/VerifyCompiler.cmake)
+ else()
+-  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} $ENV{ROCM_PATH}/hip $ENV{ROCM_PATH}/llvm)
++  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} $ENV{ROCM_PATH}/hip $ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
+   find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} $ENV{ROCM_PATH})
+ endif()
+ 
+@@ -160,3 +160,14 @@ endif()
+ if (BUILD_BENCHMARK)
+     add_subdirectory(benchmark)
+ endif()
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+Only in rocRAND-rocm-5.1.3/hipRAND: CHANGELOG.md
+Only in rocRAND-rocm-5.1.3/hipRAND: cmake
+Only in rocRAND-rocm-5.1.3/hipRAND: CMakeLists.txt
+Only in rocRAND-rocm-5.1.3/hipRAND: conanfile.py
+Only in rocRAND-rocm-5.1.3/hipRAND: CONTRIBUTING.md
+Only in rocRAND-rocm-5.1.3/hipRAND: doc
+Only in rocRAND-rocm-5.1.3/hipRAND: .github
+Only in rocRAND-rocm-5.1.3/hipRAND: .gitignore
+Only in rocRAND-rocm-5.1.3/hipRAND: .gitignore.develop
+Only in rocRAND-rocm-5.1.3/hipRAND: .gitlab-ci-gputest.yml
+Only in rocRAND-rocm-5.1.3/hipRAND: .gitlab-ci.yml
+Only in rocRAND-rocm-5.1.3/hipRAND: install
+Only in rocRAND-rocm-5.1.3/hipRAND: .jenkins
+Only in rocRAND-rocm-5.1.3/hipRAND: library
+Only in rocRAND-rocm-5.1.3/hipRAND: LICENSE.txt
+Only in rocRAND-rocm-5.1.3/hipRAND: python
+Only in rocRAND-rocm-5.1.3/hipRAND: README.md
+Only in rocRAND-rocm-5.1.3/hipRAND: rmake.py
+Only in rocRAND-rocm-5.1.3/hipRAND: rtest.xml
+Only in rocRAND-rocm-5.1.3/hipRAND: test
+Only in rocRAND-rocm-5.1.3/hipRAND: toolchain-linux.cmake
+Only in rocRAND-rocm-5.1.3/hipRAND: toolchain-windows.cmake
+diff -urp rocRAND-rocm-5.1.3.orig/install rocRAND-rocm-5.1.3/install
+--- rocRAND-rocm-5.1.3.orig/install	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/install	2023-09-04 14:07:53.419592764 -0700
+@@ -30,7 +30,7 @@ build_clients=false
+ build_release=true
+ run_tests=false
+ build_hip_clang=false
+-rocm_path=/opt/rocm
++rocm_path=/usr
+ build_relocatable=false
+ install_dependencies=false
+ build_address_sanitizer=false
+@@ -111,7 +111,7 @@ if [[ "${build_relocatable}" == true ]];
+         rocm_path=${ROCM_PATH}
+     fi
+ 
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+diff -urp rocRAND-rocm-5.1.3.orig/library/CMakeLists.txt rocRAND-rocm-5.1.3/library/CMakeLists.txt
+--- rocRAND-rocm-5.1.3.orig/library/CMakeLists.txt	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/library/CMakeLists.txt	2023-09-04 14:07:53.419592764 -0700
+@@ -71,7 +71,7 @@ set(INSTALL_SYMLINK_COMMAND "
+     file(GLOB_RECURSE FILES RELATIVE \${SRC_DIR} \${SRC_DIR}/*)
+     foreach(FILE \${FILES})
+         set(SRC \${SRC_DIR}/\${FILE})
+-        set(DEST \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/rocrand/include/\${FILE})
++        set(DEST \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/include/rocrand/\${FILE})
+         get_filename_component(DEST_DIR \${DEST} DIRECTORY)
+         file(MAKE_DIRECTORY \${DEST_DIR})
+         file(RELATIVE_PATH SRC_REL \${DEST_DIR} \${SRC})
+@@ -79,7 +79,6 @@ set(INSTALL_SYMLINK_COMMAND "
+         ${SYMLINK_COMMAND}
+     endforeach()
+ ")
+-rocm_install(CODE "${INSTALL_SYMLINK_COMMAND}")
+ 
+ set(FORTRAN_SRCS_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/rocrand/src/fortran")
+ configure_file(
+@@ -120,7 +119,7 @@ endif()
+ if(WIN32)
+     set(CPACK_SOURCE_GENERATOR "ZIP")
+     set(CPACK_GENERATOR "ZIP")
+-    set(CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE)
++#_cmake_modify_IGNORE     set(CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE)
+     set(INSTALL_PREFIX "C:/hipSDK")
+     set(CPACK_SET_DESTDIR OFF)
+     set(CPACK_PACKAGE_INSTALL_DIRECTORY "C:/hipSDK")
+Only in rocRAND-rocm-5.1.3/library: CMakeLists.txt.rej
+diff -urp rocRAND-rocm-5.1.3.orig/library/src/fortran/CMakeLists.txt rocRAND-rocm-5.1.3/library/src/fortran/CMakeLists.txt
+--- rocRAND-rocm-5.1.3.orig/library/src/fortran/CMakeLists.txt	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/library/src/fortran/CMakeLists.txt	2023-09-04 14:07:53.419592764 -0700
+@@ -33,7 +33,7 @@ else()
+     target_link_libraries(rocrand_fortran
+         PRIVATE
+             rocrand
+-            "-L${HIP_ROOT_DIR}/lib -lhip_hcc -Wl,-rpath,${HIP_ROOT_DIR}/lib"
++            "-L${HIP_ROOT_DIR}/@LIBDIR@ -lhip_hcc -Wl,-rpath,${HIP_ROOT_DIR}/@LIBDIR@"
+     )
+ endif()
+ 
+diff -urp rocRAND-rocm-5.1.3.orig/library/src/fortran/README.md rocRAND-rocm-5.1.3/library/src/fortran/README.md
+--- rocRAND-rocm-5.1.3.orig/library/src/fortran/README.md	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/library/src/fortran/README.md	2023-09-04 14:07:53.419592764 -0700
+@@ -51,14 +51,14 @@ For rocRAND Fortran interface:
+ ```
+ gfortran <input-file>.f90 hip_m.f90 rocrand_m.f90  -lrocrand_fortran -lrocrand
+ # If compiling on a NVCC platform, link CUDA libraries (-lcuda -lcudart)
+-# If compiling on an AMD platform, link HIP library (-L${HIP_ROOT_DIR}/lib -lhip_hcc)
++# If compiling on an AMD platform, link HIP library (-L${HIP_ROOT_DIR}/@LIBDIR@ -lhip_hcc)
+ ```
+ 
+ For hipRAND Fortran interface:
+ ```
+ gfortran <input-file>.f90 hip_m.f90 hiprand_m.f90  -lhiprand_fortran -lhiprand
+ # If compiling on a NVCC platform, link CUDA and CURAND libraries (-lcuda -lcudart -lcurand)
+-# If compiling on an AMD platform, link HIP and rocRAND library (-lrocrand -L${HIP_ROOT_DIR}/lib -lhip_hcc)
++# If compiling on an AMD platform, link HIP and rocRAND library (-lrocrand -L${HIP_ROOT_DIR}/@LIBDIR@ -lhip_hcc)
+ ```
+ 
+ Note: `${HIP_ROOT_DIR}` points to the directory where HIP was installed.
+diff -urp rocRAND-rocm-5.1.3.orig/library/src/rocrand-fortran-config.cmake.in rocRAND-rocm-5.1.3/library/src/rocrand-fortran-config.cmake.in
+--- rocRAND-rocm-5.1.3.orig/library/src/rocrand-fortran-config.cmake.in	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/library/src/rocrand-fortran-config.cmake.in	2023-09-04 14:07:53.419592764 -0700
+@@ -29,7 +29,7 @@
+ #     [version] [EXACT]           # Minimum or EXACT version e.g. 0.5.0
+ #     [REQUIRED]                  # Fail with error if rocRAND is not found
+ #     CONFIG                      # Enable Config mode (might be required)
+-#     [PATHS path1 [path2 ... ]]  # Path to install dir (e.g. /opt/rocm/rocrand)
++#     [PATHS path1 [path2 ... ]]  # Path to install dir (e.g. /usr/rocrand)
+ #   )
+ #
+ # The following variables are defined when rocRAND is found:
+@@ -49,7 +49,7 @@
+ #
+ #    // First find and include HIP
+ #    // See https://github.com/ROCm-Developer-Tools/HIP
+-#    find_package(rocrand REQUIRED CONFIG PATHS "/opt/rocm/rocrand")
++#    find_package(rocrand REQUIRED CONFIG PATHS "/usr/rocrand")
+ #    add_executable(foo foo.cpp)
+ #    // Set HIP flags, add HIP includes
+ #    // Link foo against HIP or CUDA lib (see hipconfig)
+diff -urp rocRAND-rocm-5.1.3.orig/python/rocrand/rocrand/hip.py rocRAND-rocm-5.1.3/python/rocrand/rocrand/hip.py
+--- rocRAND-rocm-5.1.3.orig/python/rocrand/rocrand/hip.py	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/python/rocrand/rocrand/hip.py	2023-09-04 14:07:53.419592764 -0700
+@@ -58,8 +58,8 @@ hip = None
+ HIP_PATHS = [
+     os.getenv("ROCM_PATH"),
+     os.getenv("HIP_PATH"),
+-    "/opt/rocm",
+-    "/opt/rocm/hip"]
++    "/usr",
++    "/usr/hip"]
+ 
+ CUDA_PATHS = [
+     os.getenv("CUDA_PATH"),
+diff -urp rocRAND-rocm-5.1.3.orig/rmake.py rocRAND-rocm-5.1.3/rmake.py
+--- rocRAND-rocm-5.1.3.orig/rmake.py	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/rmake.py	2023-09-04 14:07:53.419592764 -0700
+@@ -98,7 +98,7 @@ def config_cmd():
+         # "-G \"Visual Studio 16 2019\" -A x64"  #  -G NMake ")  #
+         cmake_options.append( generator )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
+         if (OS_info["ID"] in ['centos', 'rhel']):
+           cmake_executable = "cmake3"
+         else:
+diff -urp rocRAND-rocm-5.1.3.orig/test/package/CMakeLists.txt rocRAND-rocm-5.1.3/test/package/CMakeLists.txt
+--- rocRAND-rocm-5.1.3.orig/test/package/CMakeLists.txt	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/test/package/CMakeLists.txt	2023-09-04 14:07:53.423592764 -0700
+@@ -6,7 +6,7 @@ project(rocrand_package_test CXX)
+ # CMake modules
+ list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} $ENV{ROCM_PATH}/hip)
+ list(APPEND CMAKE_MODULE_PATH
+-    ${HIP_PATH}/cmake $ENV{ROCM_PATH}/hip/cmake # FindHIP.cmake
++    ${HIP_PATH}/@LIBDIR@/cmake $ENV{ROCM_PATH}/@LIBDIR@/cmake/hip # FindHIP.cmake
+ )
+ 
+ # Find HIP
+@@ -97,7 +97,7 @@ foreach(test_src ${rocrand_pkg_TEST_SRCS
+         target_link_libraries(${test_name}
+             PRIVATE
+                 roc::rocrand
+-                "-L${HIP_ROOT_DIR}/lib -Wl,-rpath,${HIP_ROOT_DIR}/lib"
++                "-L${HIP_ROOT_DIR}/@LIBDIR@ -Wl,-rpath,${HIP_ROOT_DIR}/@LIBDIR@"
+         )
+     endif()
+     add_relative_test(${test_name} ${test_name})
+diff -urp rocRAND-rocm-5.1.3.orig/toolchain-linux.cmake rocRAND-rocm-5.1.3/toolchain-linux.cmake
+--- rocRAND-rocm-5.1.3.orig/toolchain-linux.cmake	2022-03-15 08:51:59.000000000 -0700
++++ rocRAND-rocm-5.1.3/toolchain-linux.cmake	2023-09-04 14:07:53.423592764 -0700
+@@ -4,9 +4,9 @@
+ #set(CMAKE_GENERATOR_PLATFORM x64)
+ 
+ if (DEFINED ENV{ROCM_PATH})
+-  set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
++  set(rocm_bin "$ENV{ROCM_PATH}/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/hip/bin")
++  set(rocm_bin "/usr/bin")
+ endif()
+ 
+ 
