@@ -51,7 +51,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/cmake/VerifyCompiler.cmake hipCUB-rocm-5.6.0/cm
  if(CMAKE_CXX_COMPILER MATCHES ".*nvcc$" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 -    list(APPEND CMAKE_MODULE_PATH /opt/rocm/hip/cmake)
 -    find_package(hip QUIET CONFIG PATHS /opt/rocm)
-+    list(APPEND CMAKE_MODULE_PATH /usr/hip/cmake)
++    list(APPEND CMAKE_MODULE_PATH /usr/@LIBDIR@/cmake/hip)
 +    find_package(hip QUIET CONFIG PATHS /usr)
      if(NOT hip_FOUND)
          find_package(HIP REQUIRED)
@@ -91,7 +91,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/CMakeLists.txt hipCUB-rocm-5.6.0/CMakeLists.txt
    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
 -  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
 -  ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip # FindHIP.cmake
-+  ${HIP_PATH}/cmake /usr/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake /usr/hip/cmake # FindHIP.cmake
 +  ${ROCM_PATH}/@LIBDIR@/cmake/hip /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
@@ -103,21 +103,6 @@ diff -urp hipCUB-rocm-5.6.0.orig/CMakeLists.txt hipCUB-rocm-5.6.0/CMakeLists.txt
    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
  endif()
  
-@@ -187,3 +187,14 @@ else()
-     HEADER_ONLY
-   )
- endif()
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp hipCUB-rocm-5.6.0.orig/hipcub/CMakeLists.txt hipCUB-rocm-5.6.0/hipcub/CMakeLists.txt
 --- hipCUB-rocm-5.6.0.orig/hipcub/CMakeLists.txt	2023-05-31 15:00:02.000000000 -0700
 +++ hipCUB-rocm-5.6.0/hipcub/CMakeLists.txt	2023-09-03 12:17:45.208834777 -0700
@@ -147,7 +132,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/install hipCUB-rocm-5.6.0/install
          -DCMAKE_INSTALL_PREFIX=${rocm_path} \
          -DCMAKE_PREFIX_PATH="${rocm_path} ${rocm_path}/hcc ${rocm_path}/hip" \
 -        -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
-+        -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip ${rocm_path}/hip/cmake" \
++        -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip" \
          -Drocprim_DIR=${rocm_path}/rocprim \
          ${cmake_common_options} \
          ${build_tests} ${build_benchmarks} ${build_type} ../../. # or cmake-gui ../.
@@ -188,7 +173,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/test/extra/CMakeLists.txt hipCUB-rocm-5.6.0/tes
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
 -  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/cmake /usr/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Verify that hip-clang is used on ROCM platform

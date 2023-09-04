@@ -375,10 +375,11 @@ diff -urp rocRAND-rocm-5.6.0.orig/hipRAND/toolchain-linux.cmake rocRAND-rocm-5.6
 +++ rocRAND-rocm-5.6.0/hipRAND/toolchain-linux.cmake	2023-09-04 12:29:03.619671949 -0700
 @@ -6,7 +6,7 @@
  if (DEFINED ENV{ROCM_PATH})
-   set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
+-  set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
++  set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/hip/bin")
-+  set(rocm_bin "/usr/hip/bin")
++  set(rocm_bin "/usr/bin")
  endif()
  
  

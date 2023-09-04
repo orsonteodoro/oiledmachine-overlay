@@ -104,7 +104,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/install.sh rocSOLVER-rocm-5.6.0/install.sh
  export CC="clang"
  export FC="gfortran"
 -export PATH="${rocm_path}/bin:${rocm_path}/hip/bin:${rocm_path}/llvm/bin:${PATH}"
-+export PATH="${rocm_path}/bin:${rocm_path}/hip/bin:${rocm_path}/lib/llvm/@LLVM_SLOT@/bin:${PATH}"
++export PATH="${rocm_path}/bin:${rocm_path}/lib/llvm/@LLVM_SLOT@/bin:${PATH}"
  
  # #################################################
  # dependencies

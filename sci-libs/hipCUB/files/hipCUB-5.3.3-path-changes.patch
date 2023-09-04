@@ -103,21 +103,6 @@ diff -urp hipCUB-rocm-5.3.3.orig/CMakeLists.txt hipCUB-rocm-5.3.3/CMakeLists.txt
    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
  endif()
  
-@@ -187,3 +187,14 @@ else()
-     HEADER_ONLY
-   )
- endif()
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp hipCUB-rocm-5.3.3.orig/hipcub/CMakeLists.txt hipCUB-rocm-5.3.3/hipcub/CMakeLists.txt
 --- hipCUB-rocm-5.3.3.orig/hipcub/CMakeLists.txt	2022-08-29 14:09:25.000000000 -0700
 +++ hipCUB-rocm-5.3.3/hipcub/CMakeLists.txt	2023-09-03 12:39:50.348817081 -0700
@@ -193,7 +178,7 @@ diff -urp hipCUB-rocm-5.3.3.orig/test/extra/CMakeLists.txt hipCUB-rocm-5.3.3/tes
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
 -  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/cmake /usr/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Verify that hip-clang is used on ROCM platform

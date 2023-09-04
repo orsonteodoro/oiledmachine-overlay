@@ -305,10 +305,11 @@ diff -urp rocThrust-rocm-5.1.3.orig/toolchain-linux.cmake rocThrust-rocm-5.1.3/t
 +++ rocThrust-rocm-5.1.3/toolchain-linux.cmake	2023-09-04 15:24:04.931531717 -0700
 @@ -6,7 +6,7 @@
  if (DEFINED ENV{ROCM_PATH})
-   set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
+-  set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
++  set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/hip/bin")
-+  set(rocm_bin "/usr/hip/bin")
++  set(rocm_bin "/usr/bin")
  endif()
  
  

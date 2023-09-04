@@ -171,10 +171,11 @@ diff -urp rocPRIM-rocm-5.1.3.orig/toolchain-linux.cmake rocPRIM-rocm-5.1.3/toolc
 +++ rocPRIM-rocm-5.1.3/toolchain-linux.cmake	2023-08-23 22:53:22.258449905 -0700
 @@ -6,7 +6,7 @@
  if (DEFINED ENV{ROCM_PATH})
-   set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
+-  set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
++  set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/hip/bin")
-+  set(rocm_bin "/usr/hip/bin")
++  set(rocm_bin "/usr/bin")
  endif()
  
  
