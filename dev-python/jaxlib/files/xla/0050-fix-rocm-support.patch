@@ -352,7 +352,8 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/gpus/roc
      verify_build_defines(rocm_defines)
 @@ -753,9 +871,9 @@ def _create_local_rocm_repository(reposi
              "%{cpu_compiler}": str(cc),
-             "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/hip/bin/hipcc",
+-            "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/hip/bin/hipcc",
++            "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/bin/hipcc",
              "%{hipcc_env}": _hipcc_env(repository_ctx),
 -            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/lib",
 +            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/@LIBDIR@",  # oteodoro:  changed for distro

@@ -316,7 +316,8 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
      verify_build_defines(rocm_defines)
 @@ -729,9 +842,9 @@ def _create_local_rocm_repository(reposi
              "%{cpu_compiler}": str(cc),
-             "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/hip/bin/hipcc",
+-            "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/hip/bin/hipcc",
++            "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/bin/hipcc",        # oteodoro:  changed for distro
              "%{hipcc_env}": _hipcc_env(repository_ctx),
 -            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/lib",
 +            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/@LIBDIR@",  # oteodoro:  changed for distro
