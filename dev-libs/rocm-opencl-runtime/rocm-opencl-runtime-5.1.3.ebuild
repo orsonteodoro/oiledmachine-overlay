@@ -68,40 +68,23 @@ src_prepare() {
 	# Remove "clinfo" - use "dev-util/clinfo" instead
 	[ -d tools/clinfo ] && rm -rf tools/clinfo || die
 
-	cmake_src_prepare
-	rocm_src_prepare
-
-	hprefixify amdocl/CMakeLists.txt
-
-	sed \
-		-e "s/DESTINATION lib/DESTINATION ${CMAKE_INSTALL_LIBDIR}/g" \
-		-i packaging/CMakeLists.txt \
-		|| die
-	# remove trailing CR or it won't work
-	sed \
-		-e "s/\r$//g" \
-		-i tests/ocltst/module/perf/oclperf.exclude \
-		|| die
-
-	sed \
-		-i \
-		-e "s|\"lib\"|\"$(get_libdir)\"|g" \
-		"CMakeLists.txt" \
-		|| die
-
 	pushd "${CLR_S}" || die
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
 		eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
 		eapply "${FILESDIR}/rocclr-5.1.3-fix-include.patch"
 		eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
-
-		sed \
-			-i \
-			-e "s|\"lib\"|\"$(get_libdir)\"|g" \
-			"os/os_posix.cpp" \
-			|| die
+		eapply "${FILESDIR}/ROCclr-5.1.3-path-changes.patch"
 	popd || die
+
+	cmake_src_prepare
+	rocm_src_prepare
+
+	# remove trailing CR or it won't work
+	sed \
+		-e "s/\r$//g" \
+		-i tests/ocltst/module/perf/oclperf.exclude \
+		|| die
 }
 
 src_configure() {

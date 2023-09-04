@@ -1,6 +1,19 @@
+diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/CMakeLists.txt ROCm-OpenCL-Runtime-rocm-5.1.3/CMakeLists.txt
+--- ROCm-OpenCL-Runtime-rocm-5.1.3.orig/CMakeLists.txt	2023-09-03 19:05:55.712507735 -0700
++++ ROCm-OpenCL-Runtime-rocm-5.1.3/CMakeLists.txt	2023-09-03 19:06:11.460507525 -0700
+@@ -37,7 +37,7 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURC
+ # Packaging steps
+ #############################
+ if(NOT WIN32)
+-find_package(ROCM QUIET CONFIG PATHS /opt/rocm)
++find_package(ROCM QUIET CONFIG PATHS /usr)
+ if(ROCM_FOUND)
+   include(ROCMSetupVersion)
+   rocm_setup_version( VERSION "2.0.0" )
+Only in ROCm-OpenCL-Runtime-rocm-5.1.3: CMakeLists.txt.orig
 diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/CMakeLists.txt ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/CMakeLists.txt
---- ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/CMakeLists.txt	2023-08-20 09:24:52.098815377 -0700
-+++ ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/CMakeLists.txt	2023-08-20 09:28:59.098821505 -0700
+--- ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/CMakeLists.txt	2023-09-03 19:05:55.712507735 -0700
++++ ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/CMakeLists.txt	2023-09-03 19:06:38.856507159 -0700
 @@ -5,7 +5,7 @@ set(CPACK_COMPONENTS_ALL binary dev icd)
  set(CPACK_DEB_COMPONENT_INSTALL ON)
  set(CPACK_RPM_COMPONENT_INSTALL ON)
@@ -15,7 +28,117 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/CMakeLists.txt ROCm-Open
          PATTERN cl_egl.h EXCLUDE )
  
 -install(TARGETS OpenCL DESTINATION lib COMPONENT icd )
-+install(TARGETS OpenCL DESTINATION @LIBDIR@ COMPONENT icd )
++install(TARGETS OpenCL DESTINATION  COMPONENT icd )
  install(FILES ${CMAKE_SOURCE_DIR}/khronos/icd/LICENSE DESTINATION share/doc/rocm-ocl-icd COMPONENT icd)
  
+ 
+@@ -26,7 +26,7 @@ set(CPACK_PACKAGE_CONTACT "ROCm OpenCL S
+ set(CPACK_PACKAGE_VENDOR "Advanced Micro Devices, Inc.")
+ set(CPACK_PACKAGE_DESCRIPTION "OpenCL: Open Computing Language on ROCclr")
+ 
+-set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm/opencl" CACHE PATH "Package Installation path for OpenCL")
++set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/opencl" CACHE PATH "Package Installation path for OpenCL")
+ 
+ 
+ 
+Only in ROCm-OpenCL-Runtime-rocm-5.1.3/packaging: CMakeLists.txt.orig
+Only in ROCm-OpenCL-Runtime-rocm-5.1.3/packaging: CMakeLists.txt.rej
+diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/rocm-ocl-icd.postinst ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/rocm-ocl-icd.postinst
+--- ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/rocm-ocl-icd.postinst	2022-02-09 08:37:52.000000000 -0800
++++ ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/rocm-ocl-icd.postinst	2023-09-03 19:06:11.460507525 -0700
+@@ -3,10 +3,10 @@
+ set -e
+ 
+ INSTALL_PATH=@CPACK_PACKAGING_INSTALL_PREFIX@
+-ROCM_LIBPATH=@ROCM_PATH@/lib
++ROCM_LIBPATH=@ROCM_PATH@/@LIBDIR@
+ 
+ do_ldconfig() {
+-  echo ${INSTALL_PATH}/lib > /etc/ld.so.conf.d/10-rocm-opencl.conf && ldconfig
++  echo ${INSTALL_PATH}/@LIBDIR@ > /etc/ld.so.conf.d/10-rocm-opencl.conf && ldconfig
+   mkdir -p /etc/OpenCL/vendors && (echo libamdocl64.so > /etc/OpenCL/vendors/@OPENCL_AMD_ICD_FILE@)
+ }
+ 
+@@ -16,9 +16,9 @@ case "$1" in
+   ;;
+   configure)
+     mkdir -p ${ROCM_LIBPATH}
+-    ln -s -f -r ${INSTALL_PATH}/lib/libOpenCL.so ${ROCM_LIBPATH}/libOpenCL.so
+-    ln -s -f -r ${INSTALL_PATH}/lib/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@ ${ROCM_LIBPATH}/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@
+-    ln -s -f -r ${INSTALL_PATH}/lib/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@ ${ROCM_LIBPATH}/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@
++    ln -s -f -r ${INSTALL_PATH}/@LIBDIR@/libOpenCL.so ${ROCM_LIBPATH}/libOpenCL.so
++    ln -s -f -r ${INSTALL_PATH}/@LIBDIR@/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@ ${ROCM_LIBPATH}/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@
++    ln -s -f -r ${INSTALL_PATH}/@LIBDIR@/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@ ${ROCM_LIBPATH}/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@
+     do_ldconfig
+   ;;
+   *)
+diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/rocm-ocl-icd.prerm ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/rocm-ocl-icd.prerm
+--- ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/rocm-ocl-icd.prerm	2022-02-09 08:37:52.000000000 -0800
++++ ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/rocm-ocl-icd.prerm	2023-09-03 19:06:11.460507525 -0700
+@@ -11,12 +11,12 @@ case "$1" in
+   purge)
+   ;;
+   remove)
+-    rm -f @ROCM_PATH@/lib/libOpenCL.so
+-    rm -f @ROCM_PATH@/lib/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@
+-    rm -f @ROCM_PATH@/lib/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@
++    rm -f @ROCM_PATH@/@LIBDIR@/libOpenCL.so
++    rm -f @ROCM_PATH@/@LIBDIR@/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@
++    rm -f @ROCM_PATH@/@LIBDIR@/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@
+     if [ -e "@ROCM_PATH@" ] ; then
+-        if [  -e "@ROCM_PATH@/lib" ] ; then
+-            rmdir --ignore-fail-on-non-empty @ROCM_PATH@/lib
++        if [  -e "@ROCM_PATH@/@LIBDIR@" ] ; then
++            rmdir --ignore-fail-on-non-empty @ROCM_PATH@/@LIBDIR@
+         fi
+         rmdir --ignore-fail-on-non-empty @ROCM_PATH@
+     fi
+diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/rocm-ocl-icd.rpm_post ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/rocm-ocl-icd.rpm_post
+--- ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/rocm-ocl-icd.rpm_post	2022-02-09 08:37:52.000000000 -0800
++++ ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/rocm-ocl-icd.rpm_post	2023-09-03 19:06:11.460507525 -0700
+@@ -1,10 +1,10 @@
+ INSTALL_PATH=@CPACK_PACKAGING_INSTALL_PREFIX@
+-ROCM_LIBPATH=@ROCM_PATH@/lib
++ROCM_LIBPATH=@ROCM_PATH@/@LIBDIR@
+ 
+-echo ${INSTALL_PATH}/lib > /etc/ld.so.conf.d/10-rocm-opencl.conf && ldconfig
++echo ${INSTALL_PATH}/@LIBDIR@ > /etc/ld.so.conf.d/10-rocm-opencl.conf && ldconfig
+ mkdir -p /etc/OpenCL/vendors && (echo libamdocl64.so > /etc/OpenCL/vendors/@OPENCL_AMD_ICD_FILE@)
+ 
+ mkdir -p ${ROCM_LIBPATH}
+-ln -s -f -r ${INSTALL_PATH}/lib/libOpenCL.so ${ROCM_LIBPATH}/libOpenCL.so
+-ln -s -f -r ${INSTALL_PATH}/lib/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@ ${ROCM_LIBPATH}/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@
+-ln -s -f -r ${INSTALL_PATH}/lib/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@ ${ROCM_LIBPATH}/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@
++ln -s -f -r ${INSTALL_PATH}/@LIBDIR@/libOpenCL.so ${ROCM_LIBPATH}/libOpenCL.so
++ln -s -f -r ${INSTALL_PATH}/@LIBDIR@/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@ ${ROCM_LIBPATH}/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@
++ln -s -f -r ${INSTALL_PATH}/@LIBDIR@/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@ ${ROCM_LIBPATH}/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@
+diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/rocm-ocl-icd.rpm_postun ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/rocm-ocl-icd.rpm_postun
+--- ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/rocm-ocl-icd.rpm_postun	2022-02-09 08:37:52.000000000 -0800
++++ ROCm-OpenCL-Runtime-rocm-5.1.3/packaging/rocm-ocl-icd.rpm_postun	2023-09-03 19:06:11.460507525 -0700
+@@ -1,10 +1,10 @@
+ if [ $1 -eq 0 ]; then
+   rm -f /etc/ld.so.conf.d/10-rocm-opencl.conf && ldconfig
+   rm -f /etc/OpenCL/vendors/@OPENCL_AMD_ICD_FILE@
+-  rm -f @ROCM_PATH@/lib/libOpenCL.so
+-  rm -f @ROCM_PATH@/lib/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@
+-  rm -f @ROCM_PATH@/lib/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@
+-  rmdir --ignore-fail-on-non-empty @ROCM_PATH@/lib
++  rm -f @ROCM_PATH@/@LIBDIR@/libOpenCL.so
++  rm -f @ROCM_PATH@/@LIBDIR@/libOpenCL.so.@OPENCL_LIB_VERSION_MAJOR@
++  rm -f @ROCM_PATH@/@LIBDIR@/libOpenCL.so.@OPENCL_LIB_VERSION_STRING@
++  rmdir --ignore-fail-on-non-empty @ROCM_PATH@/@LIBDIR@
+   rmdir --ignore-fail-on-non-empty @ROCM_PATH@
+ fi
+ 
+diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/README.md ROCm-OpenCL-Runtime-rocm-5.1.3/README.md
+--- ROCm-OpenCL-Runtime-rocm-5.1.3.orig/README.md	2022-02-09 08:37:52.000000000 -0800
++++ ROCm-OpenCL-Runtime-rocm-5.1.3/README.md	2023-09-03 19:06:11.460507525 -0700
+@@ -44,7 +44,7 @@ Run these commands:
+ ```bash
+ cd "$OPENCL_DIR"
+ mkdir -p build; cd build
+-cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
++cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/usr/" ..
+ make -j$(nproc)
+ ```
  

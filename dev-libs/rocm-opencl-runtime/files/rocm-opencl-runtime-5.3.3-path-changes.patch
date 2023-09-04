@@ -1,6 +1,6 @@
-diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/CMakeLists.txt ROCm-OpenCL-Runtime-rocm-5.6.0/CMakeLists.txt
---- ROCm-OpenCL-Runtime-rocm-5.6.0.orig/CMakeLists.txt	2023-03-15 02:14:02.000000000 -0700
-+++ ROCm-OpenCL-Runtime-rocm-5.6.0/CMakeLists.txt	2023-09-03 18:43:39.236525582 -0700
+diff -urp ROCm-OpenCL-Runtime-rocm-5.3.3.orig/CMakeLists.txt ROCm-OpenCL-Runtime-rocm-5.3.3/CMakeLists.txt
+--- ROCm-OpenCL-Runtime-rocm-5.3.3.orig/CMakeLists.txt	2022-09-16 08:23:25.000000000 -0700
++++ ROCm-OpenCL-Runtime-rocm-5.3.3/CMakeLists.txt	2023-09-03 19:12:42.200502307 -0700
 @@ -9,8 +9,8 @@ project(opencl)
  
  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -30,21 +30,9 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/CMakeLists.txt ROCm-OpenCL-Runtime
  #ROCM_PATH is needed to create symlink of libraries
  if(NOT DEFINED ROCM_PATH)
    string(REPLACE "/opencl" "" ROCM_PATH ${CPACK_PACKAGING_INSTALL_PREFIX})
-diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/README.md ROCm-OpenCL-Runtime-rocm-5.6.0/README.md
---- ROCm-OpenCL-Runtime-rocm-5.6.0.orig/README.md	2023-03-15 02:14:02.000000000 -0700
-+++ ROCm-OpenCL-Runtime-rocm-5.6.0/README.md	2023-09-03 18:37:58.372530134 -0700
-@@ -44,7 +44,7 @@ Run these commands:
- ```bash
- cd "$OPENCL_DIR"
- mkdir -p build; cd build
--cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
-+cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/usr/" ..
- make -j$(nproc)
- ```
-
-diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/opencl-backward-compat.cmake ROCm-OpenCL-Runtime-rocm-5.6.0/opencl-backward-compat.cmake
---- ROCm-OpenCL-Runtime-rocm-5.6.0.orig/opencl-backward-compat.cmake	2023-03-15 02:14:02.000000000 -0700
-+++ ROCm-OpenCL-Runtime-rocm-5.6.0/opencl-backward-compat.cmake	2023-09-03 18:38:00.980530099 -0700
+diff -urp ROCm-OpenCL-Runtime-rocm-5.3.3.orig/opencl-backward-compat.cmake ROCm-OpenCL-Runtime-rocm-5.3.3/opencl-backward-compat.cmake
+--- ROCm-OpenCL-Runtime-rocm-5.3.3.orig/opencl-backward-compat.cmake	2022-09-16 08:23:25.000000000 -0700
++++ ROCm-OpenCL-Runtime-rocm-5.3.3/opencl-backward-compat.cmake	2023-09-03 19:13:07.704501967 -0700
 @@ -24,7 +24,7 @@ set(OPENCL_BUILD_DIR ${CMAKE_CURRENT_BIN
  set(OPENCL_WRAPPER_DIR ${OPENCL_BUILD_DIR}/wrapper_dir)
  set(OPENCL_WRAPPER_INC_DIR ${OPENCL_WRAPPER_DIR}/include/CL)
@@ -54,19 +42,16 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/opencl-backward-compat.cmake ROCm-
  
  #Function to generate header template file
  function(create_header_template)
-@@ -54,9 +54,9 @@ function(create_header_template)
- #define @include_guard@
+@@ -48,7 +48,7 @@ function(create_header_template)
+     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
+-   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\")\n@include_statements@ \n\n#endif")
++   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with CL\")\n@include_statements@ \n\n#endif")
+ endfunction()
  
- #if defined(_MSC_VER)
--#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\")
-+#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with CL\")
- #elif defined(__GNUC__)
--#warning \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\"
-+#warning \"This file is deprecated. Use file from include path /usr/include/ and prefix with CL\"
- #endif
  
- @include_statements@
-@@ -143,7 +143,7 @@ if(BUILD_ICD)
+@@ -130,7 +130,7 @@ if(BUILD_ICD)
    install(DIRECTORY ${OPENCL_WRAPPER_LIB_DIR}  DESTINATION ${OPENCL} COMPONENT icd)
  endif()
  if(BUILD_SHARED_LIBS)
@@ -76,3 +61,17 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/opencl-backward-compat.cmake ROCm-
 -  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/lib COMPONENT binary)
 +  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/@LIBDIR@ COMPONENT binary)
  endif()
+Only in ROCm-OpenCL-Runtime-rocm-5.3.3: opencl-backward-compat.cmake.orig
+Only in ROCm-OpenCL-Runtime-rocm-5.3.3: opencl-backward-compat.cmake.rej
+diff -urp ROCm-OpenCL-Runtime-rocm-5.3.3.orig/README.md ROCm-OpenCL-Runtime-rocm-5.3.3/README.md
+--- ROCm-OpenCL-Runtime-rocm-5.3.3.orig/README.md	2022-09-16 08:23:25.000000000 -0700
++++ ROCm-OpenCL-Runtime-rocm-5.3.3/README.md	2023-09-03 19:12:42.200502307 -0700
+@@ -44,7 +44,7 @@ Run these commands:
+ ```bash
+ cd "$OPENCL_DIR"
+ mkdir -p build; cd build
+-cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
++cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/usr/" ..
+ make -j$(nproc)
+ ```
+ 

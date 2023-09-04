@@ -61,7 +61,7 @@ RESTRICT="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-gcc13.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
@@ -83,23 +83,12 @@ src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
 
-	sed \
-		-i \
-		-e "s|\"lib\"|\"$(get_libdir)\"|g" \
-		"CMakeLists.txt" \
-		|| die
-
 	pushd "${CLR_S}" || die
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
 		eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
 		eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
-
-		sed \
-			-i \
-			-e "s|\"lib\"|\"$(get_libdir)\"|g" \
-			"os/os_posix.cpp" \
-			|| die
+		eapply "${FILESDIR}/ROCclr-5.6.0-path-changes.patch"
 	popd || die
 }
 
