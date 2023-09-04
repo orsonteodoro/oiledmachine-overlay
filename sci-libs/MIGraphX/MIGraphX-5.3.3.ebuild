@@ -15,7 +15,7 @@ AMDGPU_TARGETS_COMPAT=(
 LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm python-r1
+inherit cmake llvm python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
@@ -76,11 +76,13 @@ BDEPEND="
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -90,13 +92,7 @@ src_prepare() {
 		-e "s|msgpackc-cxx|msgpack-cxx|g" \
 		"src/CMakeLists.txt" \
 		|| die
-	IFS=$'\n'
-	sed \
-		-i \
-		-e "s|half/half.hpp|half.hpp|g" \
-		$(grep -l -r -e "half/half.hpp" "${S}") \
-		|| die
-	IFS=$' \t\n'
+	rocm_src_prepare
 }
 
 src_configure() {
