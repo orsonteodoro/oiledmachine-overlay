@@ -1,0 +1,314 @@
+Only in rocThrust-rocm-5.1.3/cmake: Dependencies.cmake.orig
+Only in rocThrust-rocm-5.1.3/cmake: Dependencies.cmake.rej
+diff -urp rocThrust-rocm-5.1.3.orig/cmake/FindROCMCmake.cmake rocThrust-rocm-5.1.3/cmake/FindROCMCmake.cmake
+--- rocThrust-rocm-5.1.3.orig/cmake/FindROCMCmake.cmake	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/cmake/FindROCMCmake.cmake	2023-09-04 15:24:04.931531717 -0700
+@@ -11,13 +11,13 @@ include(cmake/DownloadProject.cmake)
+ 
+ set(PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern)
+ 
+-# By default, rocm software stack is expected at /opt/rocm
++# By default, rocm software stack is expected at /usr
+ # set environment variable ROCM_PATH to change location
+ if(NOT ROCM_PATH)
+-  set(ROCM_PATH /opt/rocm)
++  set(ROCM_PATH /usr)
+ endif()
+ 
+-find_package(ROCM 0.6 CONFIG QUIET PATHS ${ROCM_PATH} /opt/rocm)
++find_package(ROCM 0.6 CONFIG QUIET PATHS ${ROCM_PATH} /usr)
+ if(NOT ROCM_FOUND)
+   set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
+   set(rocm_cmake_url "https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip")
+diff -urp rocThrust-rocm-5.1.3.orig/cmake/ROCMExportTargetsHeaderOnly.cmake rocThrust-rocm-5.1.3/cmake/ROCMExportTargetsHeaderOnly.cmake
+--- rocThrust-rocm-5.1.3.orig/cmake/ROCMExportTargetsHeaderOnly.cmake	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-09-04 15:24:04.931531717 -0700
+@@ -29,7 +29,7 @@ include(GNUInstallDirs)
+ include(ROCMPackageConfigHelpers)
+ include(ROCMInstallTargets)
+ 
+-set(ROCM_INSTALL_LIBDIR lib)
++set(ROCM_INSTALL_LIBDIR @LIBDIR@)
+ 
+ function(rocm_write_package_template_function_if FILENAME NAME CHECK_VARIABLE)
+     string(REPLACE ";" " " ARGS "${ARGN}")
+@@ -68,12 +68,12 @@ function(rocm_export_targets_header_only
+         set(PREFIX_DIR ${PARSE_PREFIX})
+         set(PREFIX_ARG PREFIX ${PREFIX_DIR})
+         set(BIN_INSTALL_DIR ${PREFIX_DIR}/${CMAKE_INSTALL_BINDIR})
+-        set(LIB_INSTALL_DIR ${PREFIX_DIR}/${ROCM_INSTALL_LIBDIR})
+-        set(INCLUDE_INSTALL_DIR ${PREFIX_DIR}/${CMAKE_INSTALL_INCLUDEDIR})
++        set(LIB_INSTALL_DIR ${PREFIX_DIR}/${CMAKE_INSTALL_LIBDIR})
++        set(INCLUDE_INSTALL_DIR ${PREFIX_DIR}/${CMAKE_INSTALL_INCLUDEDIR}/rocthrust)
+     else()
+         set(BIN_INSTALL_DIR ${CMAKE_INSTALL_BINDIR})
+-        set(LIB_INSTALL_DIR ${ROCM_INSTALL_LIBDIR})
+-        set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR})
++        set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
++        set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_INCLUDEDIR}/rocthrust)
+     endif()
+     set(CONFIG_PACKAGE_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/${PACKAGE_NAME_LOWER})
+ 
+diff -urp rocThrust-rocm-5.1.3.orig/cmake/VerifyCompiler.cmake rocThrust-rocm-5.1.3/cmake/VerifyCompiler.cmake
+--- rocThrust-rocm-5.1.3.orig/cmake/VerifyCompiler.cmake	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/cmake/VerifyCompiler.cmake	2023-09-04 15:24:04.931531717 -0700
+@@ -20,8 +20,8 @@
+ # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ # SOFTWARE.
+ 
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/hip)
+-find_package(hip REQUIRED CONFIG PATHS /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH /usr /usr/hip)
++find_package(hip REQUIRED CONFIG PATHS /usr)
+ 
+ if(HIP_COMPILER STREQUAL "nvcc")
+     message(FATAL_ERROR "rocThrust does not support the CUDA backend.")
+@@ -29,13 +29,13 @@ elseif(HIP_COMPILER STREQUAL "hcc" OR HI
+     if(NOT (CMAKE_CXX_COMPILER MATCHES ".*/hcc$" OR CMAKE_CXX_COMPILER MATCHES ".*/hipcc$"))
+         message(FATAL_ERROR "On ROCm platform 'hcc' or 'clang' must be used as C++ compiler.")
+     elseif(NOT CXX_VERSION_STRING MATCHES "clang")
+-        list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hcc)
++        list(APPEND CMAKE_PREFIX_PATH /usr/hcc)
+         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-command-line-argument")
+     endif()
+ 
+     if(HIP_COMPILER STREQUAL "hcc")
+-      list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hcc)
+-      find_package(hcc REQUIRED CONFIG PATHS /opt/rocm)
++      list(APPEND CMAKE_PREFIX_PATH /usr/hcc)
++      find_package(hcc REQUIRED CONFIG PATHS /usr)
+     endif()
+ else()
+     message(FATAL_ERROR "HIP_COMPILER must be 'hcc' or 'clang' (AMD ROCm platform)")
+diff -urp rocThrust-rocm-5.1.3.orig/CMakeLists.txt rocThrust-rocm-5.1.3/CMakeLists.txt
+--- rocThrust-rocm-5.1.3.orig/CMakeLists.txt	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/CMakeLists.txt	2023-09-04 15:24:04.931531717 -0700
+@@ -6,27 +6,27 @@ cmake_minimum_required(VERSION 3.10.2 FA
+ 
+ # Install prefix
+ if(WIN32)
+-  set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/package CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/package CACHE PATH "Install path prefix, prepended onto install directories")
+ else()
+-  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
+ endif()
+ 
+ # Thrust project
+ project(rocthrust LANGUAGES CXX)
+ 
+ #Adding CMAKE_PREFIX_PATH
+-list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm )
++list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr )
+ 
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+   ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+-  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/cmake /usr/hip/cmake # FindHIP.cmake
+ )
+ 
+ # Set a default build type if none was specified
+ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+   message(STATUS "Setting build type to 'Release' as none was specified.")
+-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+ endif()
+ 
+diff -urp rocThrust-rocm-5.1.3.orig/examples/cpp_integration/README rocThrust-rocm-5.1.3/examples/cpp_integration/README
+--- rocThrust-rocm-5.1.3.orig/examples/cpp_integration/README	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/examples/cpp_integration/README	2023-09-04 15:24:04.931531717 -0700
+@@ -10,12 +10,12 @@ we can use the following procedure to co
+ program and link them together.
+ 
+   $ nvcc -O2 -c device.cu
+-  $ g++  -O2 -c host.cpp   -I/usr/local/cuda/include/
++  $ g++  -O2 -c host.cpp   -I/opt/cuda/include/
+   $ nvcc -o tester device.o host.o
+ 
+ Alternatively, we can use g++ to perform final linking step.
+ 
+   $ nvcc -O2 -c device.cu
+-  $ g++  -O2 -c host.cpp   -I/usr/local/cuda/include/
+-  $ g++ -o tester device.o host.o -L/usr/local/cuda/lib64 -lcudart
++  $ g++  -O2 -c host.cpp   -I/opt/cuda/include/
++  $ g++ -o tester device.o host.o -L/opt/cuda/@LIBDIR@ -lcudart
+ 
+diff -urp rocThrust-rocm-5.1.3.orig/extra/CMakeLists.txt rocThrust-rocm-5.1.3/extra/CMakeLists.txt
+--- rocThrust-rocm-5.1.3.orig/extra/CMakeLists.txt	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/extra/CMakeLists.txt	2023-09-04 15:24:04.931531717 -0700
+@@ -11,7 +11,7 @@ project(rocThrust_package_install_test C
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+   ${CMAKE_CURRENT_SOURCE_DIR}/../cmake
+-  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
+ )
+ 
+ # Detect compiler support for target ID
+@@ -55,7 +55,7 @@ endif()
+ find_package(rocprim REQUIRED CONFIG PATHS "${ROCPRIM_ROOT}")
+ 
+ # Find rocThrust
+-find_package(rocthrust REQUIRED CONFIG HINTS ${rocthrust_DIR} PATHS "/opt/rocm/rocthrust")
++find_package(rocthrust REQUIRED CONFIG HINTS ${rocthrust_DIR} PATHS "/usr/rocthrust")
+ 
+ # Build CXX flags
+ set(CMAKE_CXX_STANDARD 11)
+diff -urp rocThrust-rocm-5.1.3.orig/.gitlab-ci-gputest.yml rocThrust-rocm-5.1.3/.gitlab-ci-gputest.yml
+--- rocThrust-rocm-5.1.3.orig/.gitlab-ci-gputest.yml	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/.gitlab-ci-gputest.yml	2023-09-04 15:24:04.931531717 -0700
+@@ -16,7 +16,7 @@ test:vega20:
+   script:
+     - cd $BUILD_LATEST_DIR
+     - $SUDO_CMD $CMAKE_LATEST_PATH/bin/cmake
+-      -D CMAKE_PREFIX_PATH=/opt/rocm
++      -D CMAKE_PREFIX_PATH=/usr
+       -P $CI_PROJECT_DIR/cmake/GenerateResourceSpec.cmake
+     - $SUDO_CMD $CMAKE_LATEST_PATH/bin/ctest
+       --output-on-failure
+@@ -42,7 +42,7 @@ test:s9300:
+   script:
+     - cd $BUILD_LATEST_DIR
+     - $SUDO_CMD $CMAKE_LATEST_PATH/bin/cmake
+-      -D CMAKE_PREFIX_PATH=/opt/rocm
++      -D CMAKE_PREFIX_PATH=/usr
+       -P $CI_PROJECT_DIR/cmake/GenerateResourceSpec.cmake
+     - $SUDO_CMD $CMAKE_LATEST_PATH/bin/ctest
+       --output-on-failure
+@@ -69,7 +69,7 @@ test:mi25:
+   script:
+     - cd $BUILD_LATEST_DIR
+     - $SUDO_CMD $CMAKE_LATEST_PATH/bin/cmake
+-      -D CMAKE_PREFIX_PATH=/opt/rocm
++      -D CMAKE_PREFIX_PATH=/usr
+       -P $CI_PROJECT_DIR/cmake/GenerateResourceSpec.cmake
+     - $SUDO_CMD $CMAKE_LATEST_PATH/bin/ctest
+       --output-on-failure
+diff -urp rocThrust-rocm-5.1.3.orig/install rocThrust-rocm-5.1.3/install
+--- rocThrust-rocm-5.1.3.orig/install	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/install	2023-09-04 15:24:04.931531717 -0700
+@@ -31,7 +31,7 @@ build_release=true
+ build_type=Release
+ build_hip_clang=false
+ run_tests=false
+-rocm_path=/opt/rocm
++rocm_path=/usr
+ build_relocatable=false
+ build_address_sanitizer=false
+ 
+diff -urp rocThrust-rocm-5.1.3.orig/.jenkins/common.groovy rocThrust-rocm-5.1.3/.jenkins/common.groovy
+--- rocThrust-rocm-5.1.3.orig/.jenkins/common.groovy	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/.jenkins/common.groovy	2023-09-04 15:24:04.931531717 -0700
+@@ -19,7 +19,7 @@ def runCompileCommand(platform, project,
+                 cd ${project.paths.project_build_prefix}
+                 mkdir -p build/${buildTypeDir} && cd build/${buildTypeDir}
+                 ${auxiliary.gfxTargetParser()}
+-                ${cmake} -DCMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc ${buildTypeArg} ${amdgpuTargets} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
++                ${cmake} -DCMAKE_CXX_COMPILER=/usr/bin/hipcc ${buildTypeArg} ${amdgpuTargets} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
+                 make -j\$(nproc)
+                 """
+ 
+diff -urp rocThrust-rocm-5.1.3.orig/README.md rocThrust-rocm-5.1.3/README.md
+--- rocThrust-rocm-5.1.3.orig/README.md	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/README.md	2023-09-04 15:24:04.931531717 -0700
+@@ -99,10 +99,10 @@ configuration files.
+ 
+ ```cmake
+ # On ROCm rocThrust requires rocPRIM
+-find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "/usr/rocprim")
+ 
+-# "/opt/rocm" - default install prefix
+-find_package(rocthrust REQUIRED CONFIG PATHS "/opt/rocm/rocthrust")
++# "/usr" - default install prefix
++find_package(rocthrust REQUIRED CONFIG PATHS "/usr/rocthrust")
+ 
+ ...
+ includes rocThrust headers and roc::rocprim_hip target
+diff -urp rocThrust-rocm-5.1.3.orig/rmake.py rocThrust-rocm-5.1.3/rmake.py
+--- rocThrust-rocm-5.1.3.orig/rmake.py	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/rmake.py	2023-09-04 15:24:04.931531717 -0700
+@@ -95,7 +95,7 @@ def config_cmd():
+         # "-G \"Visual Studio 16 2019\" -A x64"  #  -G NMake ")  #
+         cmake_options.append( generator )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
+         if (OS_info["ID"] in ['centos', 'rhel']):
+           cmake_executable = "cmake3"
+         else:
+diff -urp rocThrust-rocm-5.1.3.orig/thrust/cmake/FindTBB.cmake rocThrust-rocm-5.1.3/thrust/cmake/FindTBB.cmake
+--- rocThrust-rocm-5.1.3.orig/thrust/cmake/FindTBB.cmake	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/thrust/cmake/FindTBB.cmake	2023-09-04 15:24:04.931531717 -0700
+@@ -290,7 +290,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin"
+ 
+   if (USE_LIBCXX)
+     foreach (dir IN LISTS TBB_PREFIX_PATH)
+-      list (APPEND TBB_LIB_SEARCH_PATH ${dir}/lib/libc++ ${dir}/libc++/lib)
++      list (APPEND TBB_LIB_SEARCH_PATH ${dir}/@LIBDIR@)
+     endforeach ()
+   endif ()
+ endif ()
+@@ -342,7 +342,7 @@ endforeach ()
+ 
+ # add general search paths
+ foreach (dir IN LISTS TBB_PREFIX_PATH)
+-  list(APPEND TBB_LIB_SEARCH_PATH ${dir}/lib ${dir}/Lib ${dir}/lib/tbb
++  list(APPEND TBB_LIB_SEARCH_PATH ${dir}/@LIBDIR@ ${dir}/Lib ${dir}/lib/tbb
+     ${dir}/Libs)
+   list(APPEND TBB_INC_SEARCH_PATH ${dir}/include ${dir}/Include
+     ${dir}/include/tbb)
+diff -urp rocThrust-rocm-5.1.3.orig/thrust/CMakeLists.txt rocThrust-rocm-5.1.3/thrust/CMakeLists.txt
+--- rocThrust-rocm-5.1.3.orig/thrust/CMakeLists.txt	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/thrust/CMakeLists.txt	2023-09-04 15:24:04.931531717 -0700
+@@ -17,7 +17,7 @@ target_include_directories(rocthrust
+   INTERFACE
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
+-    $<INSTALL_INTERFACE:rocthrust/include/>
++    $<INSTALL_INTERFACE:include/>
+ )
+ 
+ target_link_libraries(rocthrust
+@@ -34,7 +34,6 @@ set(INCLUDE_INSTALL_DIR ${CMAKE_INSTALL_
+ # does not support header-only libraries (INTERFACE targets)
+ rocm_install_targets(
+   TARGETS rocthrust
+-  PREFIX rocthrust
+ )
+ if(CMAKE_VERSION VERSION_LESS 3.7)
+   # Workaround: old versions of CMake do not support set(CPACK_DEBIAN_ARCHIVE_TYPE "gnutar")
+@@ -46,7 +45,7 @@ rocm_install(
+   DIRECTORY
+     "./"
+     "${PROJECT_BINARY_DIR}/thrust/include/"
+-  DESTINATION rocthrust/include/thrust
++  DESTINATION include/thrust
+   FILES_MATCHING
+   PATTERN "*.h"
+   PATTERN "*.cuh"
+@@ -61,10 +60,8 @@ include(ROCMExportTargetsHeaderOnly)
+ # Export targets
+ rocm_export_targets_header_only(
+   TARGETS roc::rocthrust
+-  PREFIX rocthrust
+   DEPENDS PACKAGE rocprim
+   NAMESPACE roc::
+ )
+ 
+ # Create symlinks
+-rocm_install_symlink_subdir(rocthrust)
+diff -urp rocThrust-rocm-5.1.3.orig/toolchain-linux.cmake rocThrust-rocm-5.1.3/toolchain-linux.cmake
+--- rocThrust-rocm-5.1.3.orig/toolchain-linux.cmake	2022-03-10 13:59:35.000000000 -0800
++++ rocThrust-rocm-5.1.3/toolchain-linux.cmake	2023-09-04 15:24:04.931531717 -0700
+@@ -6,7 +6,7 @@
+ if (DEFINED ENV{ROCM_PATH})
+   set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/hip/bin")
++  set(rocm_bin "/usr/hip/bin")
+ endif()
+ 
+ 

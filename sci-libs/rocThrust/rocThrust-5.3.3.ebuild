@@ -12,6 +12,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_plus
 	gfx1030
 )
+CUB_COMMIT="ed040d585c3237d706973d7ad290bfee40958270"
 LLVM_MAX_SLOT=15
 ROCM_VERSION="${PV}"
 
@@ -20,6 +21,8 @@ inherit cmake llvm rocm
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocThrust/archive/rocm-${PV}.tar.gz
 	-> rocThrust-${PV}.tar.gz
+https://github.com/NVlabs/cub/archive/${CUB_COMMIT}.tar.gz
+	-> cub-${CUB_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="HIP back-end for the parallel algorithm library Thrust"
@@ -57,25 +60,24 @@ RESTRICT="
 S="${WORKDIR}/rocThrust-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.0-operator_new.patch"
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
+pkg_setup() {
+	llvm_pkg_setup
+	rocm_pkg_setup
+}
+
+src_unpack() {
+	unpack ${A}
+	rm -rf "${S}/dependencies/cub" || die
+	ln -s \
+		"${WORKDIR}/cub-${CUB_COMMIT}" \
+		"${S}/dependencies/cub" \
+		|| die
+}
+
 src_prepare() {
-	sed \
-		-e "/PREFIX rocthrust/d" \
-		-e "/DESTINATION/s:rocthrust/include/thrust:include/thrust:" \
-		-e "/rocm_install_symlink_subdir(rocthrust)/d" \
-		-e "/<INSTALL_INTERFACE/s:rocthrust/include/:include/:" \
-		-i \
-		thrust/CMakeLists.txt \
-		|| die
-
-	sed \
-		-e "s:\${CMAKE_INSTALL_INCLUDEDIR}:&/rocthrust:" \
-		-e "s:\${ROCM_INSTALL_LIBDIR}:\${CMAKE_INSTALL_LIBDIR}:" \
-		-i \
-		cmake/ROCMExportTargetsHeaderOnly.cmake \
-		|| die
-
 	# Disabled downloading googletest and googlebenchmark
 	sed  -r \
 		-e '/Downloading/{:a;N;/\n *\)$/!ba; d}' \
@@ -90,8 +92,8 @@ src_prepare() {
 		cmake/Dependencies.cmake \
 		|| die
 
-	eapply_user
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
