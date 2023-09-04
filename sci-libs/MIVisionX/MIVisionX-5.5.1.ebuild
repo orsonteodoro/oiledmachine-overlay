@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_10 ) # U 20/22
 
-inherit cmake llvm python-single-r1 toolchain-funcs
+inherit cmake llvm python-single-r1 rocm toolchain-funcs
 
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 if [[ ${PV} == *9999 ]] ; then
@@ -109,32 +109,25 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/MIVisionX-5.6.0-change-libjpeg-turbo-search-path.patch"
-	"${FILESDIR}/MIVisionX-5.4.3-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.6.0-change-libjpeg-turbo-search-path.patch"
+	"${FILESDIR}/${PN}-5.4.3-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 )
 
 pkg_setup() {
 	llvm_pkg_setup
 	python-single-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
 	cmake_src_prepare
-	IFS=$'\n'
 	sed \
 		-i \
-		-e "s|\${ROCM_PATH}/llvm/bin/clang++|${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++|g" \
-		$(grep -l -r -e "/llvm/bin/clang++" "${WORKDIR}") \
-		|| die
-	sed \
-		-i \
-		-e "s|half/half.hpp|half.hpp|g" \
-		$(grep -l -r -e "half/half.hpp" "${S}") \
-		|| die
-	IFS=$' \t\n'
-	sed -i -e "s|Python3 REQUIRED|Python3 ${EPYTHON/python/} EXACT REQUIRED|g" \
+		-e "s|Python3 REQUIRED|Python3 ${EPYTHON/python/} EXACT REQUIRED|g" \
 		"rocAL/rocAL_pybind/CMakeLists.txt" \
 		|| die
+	rocm_src_prepare
 }
 
 src_configure() {

@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_10 ) # U 18/20
 
-inherit cmake llvm python-single-r1 toolchain-funcs
+inherit cmake llvm python-single-r1 toolchain-funcs rocm
 
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 if [[ ${PV} == *9999 ]] ; then
@@ -105,20 +105,25 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/MIVisionX-5.1.3-change-libjpeg-turbo-search-path.patch"
-	"${FILESDIR}/MIVisionX-5.1.3-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.1.3-change-libjpeg-turbo-search-path.patch"
+	"${FILESDIR}/${PN}-5.1.3-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 pkg_setup() {
 	llvm_pkg_setup
 	python-single-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
 	cmake_src_prepare
-	sed -i -e "s|Python3 REQUIRED|Python3 ${EPYTHON/python/} EXACT REQUIRED|g" \
+	sed \
+		-i \
+		-e "s|Python3 REQUIRED|Python3 ${EPYTHON/python/} EXACT REQUIRED|g" \
 		"rocAL/rocAL_pybind/CMakeLists.txt" \
 		|| die
+	rocm_src_prepare
 }
 
 src_configure() {

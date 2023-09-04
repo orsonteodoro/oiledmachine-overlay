@@ -1,0 +1,2570 @@
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx/cmake/FindAMDRPP.cmake MIVisionX-rocm-5.1.3/amd_openvx/cmake/FindAMDRPP.cmake
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx/cmake/FindAMDRPP.cmake	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx/cmake/FindAMDRPP.cmake	2023-09-04 11:24:33.023723637 -0700
+@@ -34,16 +34,16 @@ mark_as_advanced( AMDRPP_INCLUDE_DIRS )
+ find_library( AMDRPP_LIBRARIES
+     NAMES amd_rpp
+     PATHS
+-    /usr/lib
+-    ${ROCM_PATH}/rpp/lib
++    /usr/@LIBDIR@
++    ${ROCM_PATH}/rpp/@LIBDIR@
+ )
+ mark_as_advanced( AMDRPP_LIBRARIES_DIR )
+ 
+ find_path(AMDRPP_LIBRARIES_DIR
+     NAMES libamd_rpp.so
+     PATHS
+-    /usr/lib
+-    ${ROCM_PATH}/rpp/lib
++    /usr/@LIBDIR@
++    ${ROCM_PATH}/rpp/@LIBDIR@
+ )
+     
+ include( FindPackageHandleStandardArgs )
+@@ -61,4 +61,4 @@ set(AMDRPP_LIBRARIES_DIR ${AMDRPP_LIBRAR
+ 
+ if( NOT AMDRPP_FOUND )
+     message( "-- ${Yellow}NOTE: FindAMDRPP failed to find -- amd_rpp${ColourReset}" )
+-endif()
+\ No newline at end of file
++endif()
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx/cmake/FindFFmpeg.cmake MIVisionX-rocm-5.1.3/amd_openvx/cmake/FindFFmpeg.cmake
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx/cmake/FindFFmpeg.cmake	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx/cmake/FindFFmpeg.cmake	2023-09-04 11:24:33.587723629 -0700
+@@ -31,7 +31,7 @@
+ # FFMPEG_LIBRARIES - Link these to use ffmpeg
+ ################################################################################
+ 
+-set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig")
++set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:/usr/@LIBDIR@/pkgconfig")
+ include(FindPackageHandleStandardArgs)
+ 
+ find_package_handle_standard_args(
+@@ -77,10 +77,10 @@ else()
+   find_library(AVCODEC_LIBRARY
+     NAMES avcodec
+     PATHS ${_FFMPEG_AVCODEC_LIBRARY_DIRS}
+-      /usr/local/lib
+-      /usr/lib
+-      /opt/local/lib
+-      /sw/lib
++      /usr/local/@LIBDIR@
++      /usr/@LIBDIR@
++      /opt/local/@LIBDIR@
++      /sw/@LIBDIR@
+   )
+   mark_as_advanced(AVCODEC_LIBRARY)
+ 
+@@ -98,10 +98,10 @@ else()
+   find_library(AVFORMAT_LIBRARY
+     NAMES avformat
+     PATHS ${_FFMPEG_AVFORMAT_LIBRARY_DIRS}
+-      /usr/local/lib
+-      /usr/lib
+-      /opt/local/lib
+-      /sw/lib
++      /usr/local/@LIBDIR@
++      /usr/@LIBDIR@
++      /opt/local/@LIBDIR@
++      /sw/@LIBDIR@
+   )
+   mark_as_advanced(AVFORMAT_LIBRARY)
+ 
+@@ -119,10 +119,10 @@ else()
+   find_library(AVUTIL_LIBRARY
+     NAMES avutil
+     PATHS ${_FFMPEG_AVUTIL_LIBRARY_DIRS}
+-      /usr/local/lib
+-      /usr/lib
+-      /opt/local/lib
+-      /sw/lib
++      /usr/local/@LIBDIR@
++      /usr/@LIBDIR@
++      /opt/local/@LIBDIR@
++      /sw/@LIBDIR@
+   )
+   mark_as_advanced(AVUTIL_LIBRARY)
+ 
+@@ -140,10 +140,10 @@ else()
+   find_library(SWSCALE_LIBRARY
+     NAMES swscale
+     PATHS ${_FFMPEG_SWSCALE_LIBRARY_DIRS}
+-      /usr/local/lib
+-      /usr/lib
+-      /opt/local/lib
+-      /sw/lib
++      /usr/local/@LIBDIR@
++      /usr/@LIBDIR@
++      /opt/local/@LIBDIR@
++      /sw/@LIBDIR@
+   )
+   mark_as_advanced(SWSCALE_LIBRARY)
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx/cmake/FindOpenCL.cmake MIVisionX-rocm-5.1.3/amd_openvx/cmake/FindOpenCL.cmake
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx/cmake/FindOpenCL.cmake	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx/cmake/FindOpenCL.cmake	2023-09-04 11:24:33.623723629 -0700
+@@ -56,36 +56,24 @@ else()
+     mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+     if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-        find_library( OPENCL_LIBRARIES
+-            NAMES OpenCL
+-            HINTS
+-            ${OPENCL_ROOT}/lib
+-            $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
+-            DOC "OpenCL dynamic library path"
+-            PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-            PATHS
+-            ${ROCM_PATH}/opencl/lib/
+-            /usr/lib
+-            /usr/local/cuda/lib
+-            /opt/cuda/lib
+-        )
+-    else( )
+-        find_library( OPENCL_LIBRARIES
+-            NAMES OpenCL
+-            HINTS
+-            ${OPENCL_ROOT}/lib
+-            $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
+-            DOC "OpenCL dynamic library path"
+-            PATH_SUFFIXES x86 Win32
+-            PATHS
+-            ${ROCM_PATH}/opencl/lib/
+-            /usr/lib
+-            /usr/local/cuda/lib
+-            /opt/cuda/lib
+-        )
+-    endif( )
++        set(_PATH_SUFFIXES "x86_64 x64 x86_64/sdk")
++    else()
++        set(_PATH_SUFFIXES "x86 Win32")
++    endif()
++    find_library( OPENCL_LIBRARIES
++        NAMES OpenCL
++        HINTS
++        ${OPENCL_ROOT}/@LIBDIR@
++        $ENV{AMDAPPSDKROOT}/@LIBDIR@
++        $ENV{CUDA_PATH}/@LIBDIR@
++        DOC "OpenCL dynamic library path"
++        PATH_SUFFIXES ${_PATH_SUFFIXES}
++        PATHS
++        ${ROCM_PATH}/opencl/@LIBDIR@/
++        /usr/@LIBDIR@
++        /usr/local/cuda/@LIBDIR@
++        /opt/cuda/@LIBDIR@
++    )
+     mark_as_advanced( OPENCL_LIBRARIES )
+ 
+     if(OPENCL_LIBRARIES AND OPENCL_INCLUDE_DIRS)
+@@ -96,11 +84,11 @@ else()
+     set(OpenCL_LIBRARIES ${OPENCL_LIBRARIES} CACHE INTERNAL "")
+     set(OpenCL_INCLUDE_DIRS ${OPENCL_INCLUDE_DIRS} CACHE INTERNAL "")
+ 
+-    if(EXISTS "${ROCM_PATH}/opencl/lib/libOpenCL.so")
+-        if(NOT "${OPENCL_LIBRARIES}" STREQUAL "${ROCM_PATH}/opencl/lib/libOpenCL.so")
++    if(EXISTS "${ROCM_PATH}/opencl/@LIBDIR@/libOpenCL.so")
++        if(NOT "${OPENCL_LIBRARIES}" STREQUAL "${ROCM_PATH}/opencl/@LIBDIR@/libOpenCL.so")
+             message("-- ${White}OpenCL Found - ${OPENCL_LIBRARIES}${ColourReset}")
+             message("-- ${White}ROCm OpenCL Found - Force OpenCL_LIBRARIES & OpenCL_INCLUDE_DIRS to use ROCm OpenCL${ColourReset}")
+-            set(OpenCL_LIBRARIES ${ROCM_PATH}/opencl/lib/libOpenCL.so CACHE INTERNAL "")
++            set(OpenCL_LIBRARIES ${ROCM_PATH}/opencl/@LIBDIR@/libOpenCL.so CACHE INTERNAL "")
+             set(OpenCL_INCLUDE_DIRS ${ROCM_PATH}/opencl/include CACHE INTERNAL "")
+         endif()
+     else()
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx/cmake/FindTurboJpeg.cmake MIVisionX-rocm-5.1.3/amd_openvx/cmake/FindTurboJpeg.cmake
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx/cmake/FindTurboJpeg.cmake	2023-09-04 11:24:18.195723835 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx/cmake/FindTurboJpeg.cmake	2023-09-04 11:24:56.479723323 -0700
+@@ -33,14 +33,14 @@ mark_as_advanced( TurboJpeg_INCLUDE_DIRS
+ find_library( TurboJpeg_LIBRARIES
+     NAMES libturbojpeg.so
+     PATHS
+-    ${TURBO_JPEG_PATH}/lib
++    ${TURBO_JPEG_PATH}/@LIBDIR@
+ )
+ mark_as_advanced( TurboJpeg_LIBRARIES_DIR )
+ 
+ find_path(TurboJpeg_LIBRARIES_DIR
+     NAMES libturbojpeg.so
+     PATHS
+-    ${TURBO_JPEG_PATH}/lib
++    ${TURBO_JPEG_PATH}/@LIBDIR@
+ )
+ 
+ include( FindPackageHandleStandardArgs )
+@@ -59,4 +59,4 @@ set(TurboJpeg_LIBRARIES_DIR ${TurboJpeg_
+ 
+ if( NOT TurboJpeg_FOUND )
+     message( "-- ${Yellow}NOTE: FindTurboJpeg failed to find -- turbojpeg${ColourReset}" )
+-endif()
+\ No newline at end of file
++endif()
+Only in MIVisionX-rocm-5.1.3/amd_openvx/cmake: FindTurboJpeg.cmake.orig
+Only in MIVisionX-rocm-5.1.3/amd_openvx/cmake: FindTurboJpeg.cmake.rej
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -29,7 +29,7 @@ if(GPU_SUPPORT AND "${BACKEND}" STREQUAL
+             set(HIP_PATH $ENV{HIP_PATH} CACHE PATH "Path to which HIP has been installed")
+         endif()
+     endif()
+-    list(APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/lib/cmake/hip ${HIP_PATH}/cmake)
++    list(APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake)
+ endif()
+ 
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx/openvx/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx/openvx/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx/openvx/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx/openvx/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -116,8 +116,8 @@ elseif (GPU_SUPPORT AND "${BACKEND}" STR
+             include_directories(hipvx)
+             target_compile_definitions(openvx PUBLIC ENABLE_HIP=${ENABLE_HIP})
+             target_compile_definitions(openvx PUBLIC ENABLE_OPENCL=${ENABLE_OPENCL})
+-            link_directories(${HIP_PATH}/lib)
+-            target_link_libraries(openvx ${HIP_PATH}/lib/libamdhip64.so)
++            link_directories(${HIP_PATH}/@LIBDIR@)
++            target_link_libraries(openvx ${HIP_PATH}/@LIBDIR@/libamdhip64.so)
+             message("-- ${Green}AMD OpenVX -- OpenVX built with HIP Support${ColourReset}")
+         else()
+             message(FATAL_ERROR "unsupported hip compiler")
+@@ -149,9 +149,9 @@ endif()
+ configure_file("${PROJECT_SOURCE_DIR}/include/openvx_backend.h.in" "${PROJECT_BINARY_DIR}/include/mivisionx/openvx_backend.h")
+ install(FILES ${PROJECT_BINARY_DIR}/include/mivisionx/openvx_backend.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/mivisionx)
+ 
+-# install MIVisionX libs -- {ROCM_PATH}/lib
+-install(TARGETS openvx DESTINATION lib)
+-install(TARGETS vxu DESTINATION lib)
++# install MIVisionX libs -- {ROCM_PATH}/@LIBDIR@
++install(TARGETS openvx DESTINATION @LIBDIR@)
++install(TARGETS vxu DESTINATION @LIBDIR@)
+ # install MIVisionX include files -- {ROCM_PATH}/include/mivisionx/
+ install(FILES include/vx_ext_amd.h DESTINATION include/mivisionx)
+ install (FILES
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_loomsl/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_loomsl/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_loomsl/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_loomsl/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -54,8 +54,8 @@ include_directories(. kernels)
+ add_library(vx_loomsl SHARED ${SOURCES})
+ target_link_libraries(vx_loomsl ${OpenCL_LIBRARIES} openvx)
+ 
+-# install MIVisionX libs -- {ROCM_PATH}/lib
+-install(TARGETS vx_loomsl DESTINATION lib)
++# install MIVisionX libs -- {ROCM_PATH}/@LIBDIR@
++install(TARGETS vx_loomsl DESTINATION @LIBDIR@)
+ # install MIVisionX include files -- {ROCM_PATH}/include/mivisionx/
+ install(FILES live_stitch_api.h DESTINATION include/mivisionx)
+ # install MIVisionX apps & samples -- {ROCM_PATH}/share/mivisionx/
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_media/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_media/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_media/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_media/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -51,7 +51,7 @@ elseif (GPU_SUPPORT AND "${BACKEND}" STR
+     set(ENABLE_HIP 1)
+     add_definitions(-DENABLE_OPENCL=${ENABLE_OPENCL} -DENABLE_HIP=${ENABLE_HIP} -D__HIP_PLATFORM_AMD__)
+     include_directories(${HIP_PATH}/include  ${HSA_PATH}/include)
+-    link_directories(${HIP_PATH}/lib)
++    link_directories(${HIP_PATH}/@LIBDIR@)
+     message("-- ${Green}amd_media -- Building with HIP${ColourReset}")
+ 
+ endif()
+@@ -87,8 +87,8 @@ elseif (GPU_SUPPORT AND "${BACKEND}" STR
+     target_link_libraries(${PROJECT_NAME} ${HIP_LIBRARY})
+ endif()
+ 
+-# install MIVisionX libs -- {ROCM_PATH}/lib
+-install(TARGETS ${PROJECT_NAME} DESTINATION lib)
++# install MIVisionX libs -- {ROCM_PATH}/@LIBDIR@
++install(TARGETS ${PROJECT_NAME} DESTINATION @LIBDIR@)
+ # install MIVisionX include files -- {ROCM_PATH}/include/mivisionx/
+ install(FILES include/vx_amd_media.h DESTINATION include/mivisionx)
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_migraphx/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_migraphx/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_migraphx/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_migraphx/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -58,11 +58,11 @@ if(GPU_SUPPORT AND "${BACKEND}" STREQUAL
+         message("-- ${Green}${PROJECT_NAME} -- Building with HIP backend${ColourReset}")
+         set(ENABLE_HIP 1)
+         add_definitions(-DENABLE_HIP=${ENABLE_HIP} -D__HIP_PLATFORM_AMD__)
+-        link_directories(${HIP_PATH}/lib)
++        link_directories(${HIP_PATH}/@LIBDIR@)
+         add_library(${PROJECT_NAME} SHARED ${SOURCES})
+-        target_link_libraries(${PROJECT_NAME} openvx migraphx::c ${HIP_PATH}/lib/libamdhip64.so)
+-        # install MIVisionX libs -- {ROCM_PATH}/lib
+-        install(TARGETS ${PROJECT_NAME} DESTINATION lib)
++        target_link_libraries(${PROJECT_NAME} openvx migraphx::c ${HIP_PATH}/@LIBDIR@/libamdhip64.so)
++        # install MIVisionX libs -- {ROCM_PATH}/@LIBDIR@
++        install(TARGETS ${PROJECT_NAME} DESTINATION @LIBDIR@)
+         # install MIVisionX include files -- {ROCM_PATH}/include/mivisionx/
+         install(FILES include/vx_amd_migraphx.h DESTINATION include/mivisionx)
+     else()
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_nn/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_nn/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_nn/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_nn/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -121,7 +121,7 @@ elseif (GPU_SUPPORT AND "${BACKEND}" STR
+     set(ENABLE_HIP 1)
+     add_definitions(-DENABLE_OPENCL=${ENABLE_OPENCL} -DENABLE_HIP=${ENABLE_HIP} -D__HIP_PLATFORM_AMD__)
+     include_directories(${HIP_PATH}/include  ${HSA_PATH}/include)
+-    link_directories(${HIP_PATH}/lib)
++    link_directories(${HIP_PATH}/@LIBDIR@)
+     add_subdirectory(nn_hip)
+     add_library(vx_nn SHARED ${SOURCES} $<TARGET_OBJECTS:nn_hip>)
+     set_target_properties(openvx PROPERTIES LINKER_LANGUAGE CXX)
+@@ -131,8 +131,8 @@ else()
+     message("-- ${Red}WARNING: OpenCL/HIP Not Found -- amd_nn module excluded${ColourReset}")
+ endif()
+ 
+-# install MIVisionX libs -- {ROCM_PATH}/lib
+-install(TARGETS vx_nn DESTINATION lib)
++# install MIVisionX libs -- {ROCM_PATH}/@LIBDIR@
++install(TARGETS vx_nn DESTINATION @LIBDIR@)
+ # install MIVisionX include files -- {ROCM_PATH}/include/mivisionx/
+ install(FILES include/vx_amd_nn.h DESTINATION include/mivisionx)
+ # install MIVisionX scripts -- {ROCM_PATH}/libexec/mivisionx/
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_opencv/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_opencv/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_opencv/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_opencv/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -100,8 +100,8 @@ include_directories(${OpenCV_INCLUDE_DIR
+ target_link_libraries(vx_opencv ${OpenCV_LIBRARIES})
+ target_compile_definitions(vx_opencv PUBLIC USE_OPENCV_CONTRIB=0)
+ 
+-# install MIVisionX libs -- {ROCM_PATH}/lib
+-install(TARGETS vx_opencv DESTINATION lib)
++# install MIVisionX libs -- {ROCM_PATH}/@LIBDIR@
++install(TARGETS vx_opencv DESTINATION @LIBDIR@)
+ # install MIVisionX include files -- {ROCM_PATH}/include/mivisionx/
+ install(FILES include/vx_ext_opencv.h DESTINATION include/mivisionx)
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_rpp/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_rpp/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/amd_rpp/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx_extensions/amd_rpp/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -149,7 +149,7 @@ elseif (GPU_SUPPORT AND "${BACKEND}" STR
+     set(ENABLE_HIP 1)
+     add_definitions(-DENABLE_OPENCL=${ENABLE_OPENCL} -DENABLE_HIP=${ENABLE_HIP} -DRPP_BACKEND_HIP=1 -D__HIP_PLATFORM_AMD__)
+     include_directories(${HIP_PATH}/include  ${HSA_PATH}/include)
+-    link_directories(${HIP_PATH}/lib)
++    link_directories(${HIP_PATH}/@LIBDIR@)
+     add_library(vx_rpp SHARED ${SOURCES})
+     set_target_properties(openvx PROPERTIES LINKER_LANGUAGE CXX)
+     set_target_properties(openvx PROPERTIES POSITION_INDEPENDENT_CODE ON)
+@@ -158,8 +158,8 @@ else()
+     message("-- ${Red}WARNING: OpenCL/HIP Not Found -- amd_rpp module excluded${ColourReset}")
+ endif()
+ 
+-# install MIVisionX libs -- {ROCM_PATH}/lib
+-install(TARGETS vx_rpp DESTINATION lib)
++# install MIVisionX libs -- {ROCM_PATH}/@LIBDIR@
++install(TARGETS vx_rpp DESTINATION @LIBDIR@)
+ # install MIVisionX include files -- {ROCM_PATH}/include/mivisionx/
+ install(FILES include/vx_ext_rpp.h DESTINATION include/mivisionx)
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/CMakeLists.txt MIVisionX-rocm-5.1.3/amd_openvx_extensions/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/amd_openvx_extensions/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -42,7 +42,7 @@ if(GPU_SUPPORT)
+                 set(HIP_PATH $ENV{HIP_PATH} CACHE PATH "Path to which HIP has been installed")
+             endif()
+         endif()
+-        list(APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/lib/cmake/hip ${HIP_PATH}/cmake)
++        list(APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake)
+         # HSA_PATH
+         IF(NOT DEFINED ENV{HSA_PATH})
+             SET(HSA_PATH ${ROCM_PATH}/hsa)
+@@ -51,7 +51,7 @@ if(GPU_SUPPORT)
+         ENDIF()
+         find_package(HIP QUIET)
+         if(HIP_FOUND)
+-            list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/llvm ${ROCM_PATH}/hip)
++            list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ ${ROCM_PATH}/hip)
+         else()
+             set(GPU_SUPPORT OFF)
+         endif()
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/bubble_pop/CMakeLists.txt MIVisionX-rocm-5.1.3/apps/bubble_pop/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/apps/bubble_pop/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/bubble_pop/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -28,7 +28,7 @@ project(vx_pop)
+ 
+ set(CMAKE_CXX_STANDARD 11)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "Default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "Default ROCm installation path")
+ 
+ find_package(OpenCV REQUIRED)
+ 
+@@ -49,7 +49,7 @@ endif()
+ if(DEFINED OPENVX_LIBRARIES)
+     message(STATUS "OPENVX_LIBRARIES: ${OPENVX_LIBRARIES}")
+ else()
+-    set(OPENVX_LIBRARIES ${ROCM_PATH}/lib/libopenvx.${SHARED_LIB_TYPE})
++    set(OPENVX_LIBRARIES ${ROCM_PATH}/@LIBDIR@/libopenvx.${SHARED_LIB_TYPE})
+ 	message(STATUS "OPENVX_LIBRARIES: ${OPENVX_LIBRARIES}")
+ endif()
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/README.md MIVisionX-rocm-5.1.3/apps/cloud_inference/README.md
+--- MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/cloud_inference/README.md	2023-09-04 11:24:33.623723629 -0700
+@@ -10,14 +10,14 @@ The cloud inference app is designed as a
+ 
+ ## Inference Server Application - inference_server_app
+ 
+-The [server application](server_app#mivisionx-inference-server) is built along with MIVisionX and placed in `/opt/rocm/bin` when MIVisionX is installed. The server application has a command-line interface.
++The [server application](server_app#mivisionx-inference-server) is built along with MIVisionX and placed in `/usr/bin` when MIVisionX is installed. The server application has a command-line interface.
+ 
+ usage:
+ 
+ ``` 
+  inference_server_app [-p <port> default:26262]
+                       [-b <batch size> default:64]
+-                      [-n <model compiler path> default:/opt/rocm/libexec/mivisionx/model_compiler/python]
++                      [-n <model compiler path> default:/usr/libexec/mivisionx/model_compiler/python]
+                       [-w <server working directory> default:~/]
+                       [-t <num cpu decoder threads [2-64]> default:1]
+                       [-q <max pending batches>]
+@@ -37,8 +37,8 @@ The [client application](client_app#anni
+ **Step 1** - Launch **Inference Server Application** - this app is built and installed with the MIVisionX. You can launch the server using the following commands
+ 
+ ``` 
+-export PATH=$PATH:/opt/rocm/bin
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
++export PATH=$PATH:/usr/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
+ inference_server_app
+ ```
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/server_app/arguments.cpp MIVisionX-rocm-5.1.3/apps/cloud_inference/server_app/arguments.cpp
+--- MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/server_app/arguments.cpp	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/cloud_inference/server_app/arguments.cpp	2023-09-04 11:24:33.623723629 -0700
+@@ -9,7 +9,7 @@
+ Arguments::Arguments()
+         : workFolder{ "~" }, modelFileDownloadCounter{ 0 },
+           password{ "radeon" },
+-          modelCompilerPath{ "/opt/rocm/libexec/mivisionx/model_compiler/python" },
++          modelCompilerPath{ "/usr/libexec/mivisionx/model_compiler/python" },
+           port{ 28282 }, batchSize{ 64 }, maxPendingBatches{ 4 }, numGPUs{ 1 }, gpuIdList{ 0 },
+           maxGpuId{ 0 }, platform_id{ NULL }, num_devices{ 0 }, device_id{ NULL }, deviceUseCount{ 0 }
+ {
+@@ -241,7 +241,7 @@ static void show_usage()
+     printf("\tinference_server_app");
+     printf("\t[-p \t<port>\t\t\t\t default:26262]\n");
+     printf("\t\t\t\t[-b \t<batch size>\t\t\t default:64]\n");
+-    printf("\t\t\t\t[-n \t<model compiler path>\t\t default:/opt/rocm/libexec/mivisionx/model_compiler/python]\n");
++    printf("\t\t\t\t[-n \t<model compiler path>\t\t default:/usr/libexec/mivisionx/model_compiler/python]\n");
+     printf("\t\t\t\t[-fp16 \t<ON:1 or OFF:0>\t\t\t default:0]\n");
+     printf("\t\t\t\t[-w \t<server working directory>\t default:~/]\n");
+     printf("\t\t\t\t[-t \t<num cpu decoder threads [2-64]> default:1]\n");
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/server_app/CMakeLists.txt MIVisionX-rocm-5.1.3/apps/cloud_inference/server_app/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/server_app/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/cloud_inference/server_app/CMakeLists.txt	2023-09-04 11:24:33.623723629 -0700
+@@ -21,10 +21,10 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(inference_server_app)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "Default ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "Default ROCm Installation Path")
+ # need to do this to avoid setting the default path to /usr/local
+ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+-  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "mivisionx default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "mivisionx default installation path" FORCE)
+ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+ 
+@@ -43,7 +43,7 @@ include_directories(../../../amd_openvx/
+   					${OpenCL_INCLUDE_DIRS}
+ 					../../../amd_openvx_extensions/amd_nn
+ 				   )
+-link_directories(${ROCM_PATH}/lib)
++link_directories(${ROCM_PATH}/@LIBDIR@)
+ 
+ list(APPEND SOURCES
+ 		common.cpp
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/server_app/README.md MIVisionX-rocm-5.1.3/apps/cloud_inference/server_app/README.md
+--- MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/server_app/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/cloud_inference/server_app/README.md	2023-09-04 11:24:33.627723628 -0700
+@@ -9,7 +9,7 @@ Command-line usage:
+ ````
+   inference_server_app  [-p     <port>                           default:26262]
+                         [-b     <batch size>                     default:64]
+-                        [-n     <model compiler path>            default:/opt/rocm/libexec/mivisionx/model_compiler/python]
++                        [-n     <model compiler path>            default:/usr/libexec/mivisionx/model_compiler/python]
+                         [-fp16  <ON:1 or OFF:0>                  default:0]
+                         [-w     <server working directory>       default:~/]
+                         [-t     <num cpu decoder threads [2-64]> default:1]
+@@ -20,8 +20,8 @@ Command-line usage:
+ 
+ Make sure that all executables and libraries are in `PATH` and `LD_LIBRARY_PATH` environment variables.
+ ````
+-% export PATH=$PATH:/opt/rocm/bin
+-% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
++% export PATH=$PATH:/usr/bin
++% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
+ ````
+ 
+ The `inference_server_app` works with [Client Application](../client_app/README.md).
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/dg_test/cmake/FindOpenCL.cmake MIVisionX-rocm-5.1.3/apps/dg_test/cmake/FindOpenCL.cmake
+--- MIVisionX-rocm-5.1.3.orig/apps/dg_test/cmake/FindOpenCL.cmake	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/dg_test/cmake/FindOpenCL.cmake	2023-09-04 11:24:33.627723628 -0700
+@@ -34,36 +34,27 @@ find_path(OPENCL_INCLUDE_DIRS
+     PATHS
+     /usr/include
+     /usr/local/include
+-    /opt/rocm/opencl/include
++    /usr/opencl/include
+     DOC "OpenCL header file path"
+     )
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-        PATHS
+-        /usr/lib
+-        /opt/rocm/opencl/lib
+-        )
+-else( )
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86 Win32
+-
+-        PATHS
+-        /usr/lib
+-        )
+-endif( )
++    set(_PATH_SUFFIXES "x86_64 x64 x86_64/sdk")
++else
++    set(_PATH_SUFFIXES "x86 Win32")
++endif()
++find_library( OPENCL_LIBRARIES
++    NAMES OpenCL
++    HINTS
++    ${OPENCL_ROOT}/@LIBDIR@
++    $ENV{AMDAPPSDKROOT}/@LIBDIR@
++    DOC "OpenCL dynamic library path"
++    PATH_SUFFIXES ${_PATH_SUFFIXES}
++    PATHS
++    /usr/@LIBDIR@
++    /usr/opencl/@LIBDIR@
++    )
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ include( FindPackageHandleStandardArgs )
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/dg_test/CMakeLists.txt MIVisionX-rocm-5.1.3/apps/dg_test/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/apps/dg_test/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/dg_test/CMakeLists.txt	2023-09-04 11:24:33.627723628 -0700
+@@ -3,7 +3,7 @@ project (DGTest)
+ set (CMAKE_CXX_STANDARD 14)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "Default ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "Default ROCm Installation Path")
+ #find the OPENVX backend type
+ set(OPENVX_BACKEND_OPENCL_FOUND 0)
+ set(OPENVX_BACKEND_HIP_FOUND 0)
+@@ -24,10 +24,10 @@ endif()
+ find_package(OpenCV REQUIRED)
+ include_directories(${OpenCV_INCLUDE_DIRS})
+ include_directories(${ROCM_PATH}/include/mivisionx)
+-link_directories(${ROCM_PATH}/lib)
++link_directories(${ROCM_PATH}/@LIBDIR@)
+ add_library(annmodule SHARED annmodule.cpp)
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.2 -mf16c -std=c++11")
+ target_link_libraries(annmodule openvx vx_nn pthread)
+ set(TARGET_CPP UserInterface.cpp DGtest.cpp)
+ add_executable(DGTest main.cpp ${TARGET_CPP})
+-target_link_libraries(DGTest openvx vx_nn pthread annmodule ${OpenCV_LIBRARIES})
+\ No newline at end of file
++target_link_libraries(DGTest openvx vx_nn pthread annmodule ${OpenCV_LIBRARIES})
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/image_augmentation/CMakeLists.txt MIVisionX-rocm-5.1.3/apps/image_augmentation/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/apps/image_augmentation/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/image_augmentation/CMakeLists.txt	2023-09-04 11:24:33.627723628 -0700
+@@ -29,7 +29,7 @@ cmake_minimum_required (VERSION 3.0)
+ project (image_augmentation)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH "Default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "Default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+@@ -43,7 +43,7 @@ find_package(AMDRPP QUIET)
+ 
+ include_directories(${OpenCV_INCLUDE_DIRS}  ${ROCM_PATH}/include/mivisionx)
+ 
+-link_directories(${ROCM_PATH}/lib/)
++link_directories(${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./image_augmentation.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/image_augmentation/README.md MIVisionX-rocm-5.1.3/apps/image_augmentation/README.md
+--- MIVisionX-rocm-5.1.3.orig/apps/image_augmentation/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/image_augmentation/README.md	2023-09-04 11:24:33.627723628 -0700
+@@ -16,8 +16,8 @@ This application demonstrates the basic
+ ### build
+ 
+ ``` 
+- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
+- export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/rpp/lib
++ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
++ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/rpp/@LIBDIR@
+  mkdir build
+  cd build
+  cmake ../
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/mivisionx_inference_analyzer/mivisionx_inference_analyzer.py MIVisionX-rocm-5.1.3/apps/mivisionx_inference_analyzer/mivisionx_inference_analyzer.py
+--- MIVisionX-rocm-5.1.3.orig/apps/mivisionx_inference_analyzer/mivisionx_inference_analyzer.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/mivisionx_inference_analyzer/mivisionx_inference_analyzer.py	2023-09-04 11:24:33.627723628 -0700
+@@ -208,8 +208,8 @@ if __name__ == '__main__':
+         FP16inference = True
+ 
+     # set paths
+-    modelCompilerPath = '/opt/rocm/libexec/mivisionx/model_compiler/python'
+-    ADATPath= '/opt/rocm/libexec/mivisionx/toolkit/amd_data_analysis_toolkit/classification'
++    modelCompilerPath = '/usr/libexec/mivisionx/model_compiler/python'
++    ADATPath= '/usr/libexec/mivisionx/toolkit/amd_data_analysis_toolkit/classification'
+     setupDir = '~/.mivisionx-inference-analyzer'
+     analyzerDir = os.path.expanduser(setupDir)
+     modelDir = analyzerDir+'/'+modelName+'_dir'
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/mivisionx_inference_analyzer/README.md MIVisionX-rocm-5.1.3/apps/mivisionx_inference_analyzer/README.md
+--- MIVisionX-rocm-5.1.3.orig/apps/mivisionx_inference_analyzer/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/mivisionx_inference_analyzer/README.md	2023-09-04 11:24:33.627723628 -0700
+@@ -61,9 +61,9 @@ MIVisionX provides developers with [dock
+ * Test display with MIVisionX sample
+ 
+   ``` 
+-  % export PATH=$PATH:/opt/rocm/bin
+-  % export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
+-  % runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
++  % export PATH=$PATH:/usr/bin
++  % export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
++  % runvx /usr/share/mivisionx/samples/gdf/canny.gdf
+   ```
+ 
+ * Run [Samples](#samples)
+@@ -147,7 +147,7 @@ usage: python3 mivisionx_inference_analy
+   **Note:**
+ 
+   + MIVisionX needs to be pre-installed
+-  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+   + ONNX model conversion requires ONNX install using `pip install onnx` 	
+ 
+ * **Step 2:** Download pre-trained SqueezeNet ONNX model from [ONNX Model Zoo](https://github.com/onnx/models#open-neural-network-exchange-onnx-model-zoo) - [SqueezeNet Model](https://s3.amazonaws.com/download.onnx/models/opset_8/squeezenet.tar.gz)
+@@ -197,7 +197,7 @@ usage: python3 mivisionx_inference_analy
+   **Note:**
+ 
+   + MIVisionX needs to be pre-installed
+-  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+  
+ * **Step 2:** Download pre-trained VGG 16 caffe model - [VGG_ILSVRC_16_layers.caffemodel](http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel)
+ 
+@@ -239,7 +239,7 @@ usage: python3 mivisionx_inference_analy
+   **Note:**
+ 
+   + MIVisionX needs to be pre-installed
+-  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+   + NNEF model conversion requires [NNEF python parser](https://github.com/KhronosGroup/NNEF-Tools/tree/master/parser#nnef-parser-project) installed
+ 
+ * **Step 2:** Download pre-trained VGG 16 NNEF model
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/mivisionx_openvx_classifier/cmake/FindOpenCL.cmake MIVisionX-rocm-5.1.3/apps/mivisionx_openvx_classifier/cmake/FindOpenCL.cmake
+--- MIVisionX-rocm-5.1.3.orig/apps/mivisionx_openvx_classifier/cmake/FindOpenCL.cmake	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/mivisionx_openvx_classifier/cmake/FindOpenCL.cmake	2023-09-04 11:24:33.627723628 -0700
+@@ -34,36 +34,27 @@ find_path(OPENCL_INCLUDE_DIRS
+     PATHS
+     /usr/include
+     /usr/local/include
+-    /opt/rocm/opencl/include
++    /usr/opencl/include
+     DOC "OpenCL header file path"
+     )
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-        PATHS
+-        /usr/lib
+-        /opt/rocm/opencl/lib
+-        )
+-else( )
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86 Win32
+-
+-        PATHS
+-        /usr/lib
+-        )
+-endif( )
++    set(_PATH_SUFFIXES "x86_64 x64 x86_64/sdk")
++else()
++    set(_PATH_SUFFIXES "x86 Win32")
++endif()
++find_library( OPENCL_LIBRARIES
++    NAMES OpenCL
++    HINTS
++    ${OPENCL_ROOT}/@LIBDIR@
++    $ENV{AMDAPPSDKROOT}/@LIBDIR@
++    DOC "OpenCL dynamic library path"
++    PATH_SUFFIXES ${_PATH_SUFFIXES}
++    PATHS
++    /usr/@LIBDIR@
++    /usr/opencl/@LIBDIR@
++    )
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ include( FindPackageHandleStandardArgs )
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/mivisionx_openvx_classifier/CMakeLists.txt MIVisionX-rocm-5.1.3/apps/mivisionx_openvx_classifier/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/apps/mivisionx_openvx_classifier/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/mivisionx_openvx_classifier/CMakeLists.txt	2023-09-04 11:24:33.627723628 -0700
+@@ -32,7 +32,7 @@ set (CMAKE_CXX_STANDARD 11)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ find_package(OpenCV REQUIRED)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "Deafult ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "Deafult ROCm Installation Path")
+ #find the OPENVX backend type
+ set(OPENVX_BACKEND_OPENCL_FOUND 0)
+ set(OPENVX_BACKEND_HIP_FOUND 0)
+@@ -61,7 +61,7 @@ include_directories(${OpenCV_INCLUDE_DIR
+ include_directories(${ROCM_PATH}/include/mivisionx)
+ include_directories(include)
+ 
+-link_directories(${ROCM_PATH}/lib)
++link_directories(${ROCM_PATH}/@LIBDIR@)
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.2 -mf16c -std=c++11")
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/mivisionx_openvx_classifier/README.md MIVisionX-rocm-5.1.3/apps/mivisionx_openvx_classifier/README.md
+--- MIVisionX-rocm-5.1.3.orig/apps/mivisionx_openvx_classifier/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/mivisionx_openvx_classifier/README.md	2023-09-04 11:24:33.627723628 -0700
+@@ -64,30 +64,30 @@ Here is the sample download [link](https
+ 
+ 2. Use [MIVisionX Model Compiler](https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/tree/master/model_compiler#neural-net-model-compiler--optimizer) to extract weights.bin from the pre-trained caffe models
+ 
+-**Note:** MIVisionX installs all the model compiler scripts in `/opt/rocm/libexec/mivisionx/model_compiler/python/` folder
++**Note:** MIVisionX installs all the model compiler scripts in `/usr/libexec/mivisionx/model_compiler/python/` folder
+ 
+   + Convert the pre-trained caffemodel into AMD NNIR model:
+ 
+   ``` 
+-  % python /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
++  % python /usr/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
+   ```
+ 
+   Sample:
+ 
+     ``` 
+-    % python /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
++    % python /usr/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
+     ```
+ 
+   + Convert an AMD NNIR model into OpenVX C code:
+ 
+   ``` 
+-  % python /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
++  % python /usr/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
+   ```
+ 
+   Sample:
+ 
+     ``` 
+-    % python /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
++    % python /usr/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
+     ```
+ 
+   **Note:** The weights.bin file will be generated inside the OpenVX folder and you can use that as an input for this project.
+@@ -112,7 +112,7 @@ Run classification on the live camera fe
+ 
+ * **Step 1:** Install all the Prerequisites
+ 
+- **Note:** MIVisionX installs all the model compiler scripts in `/opt/rocm/libexec/mivisionx/model_compiler/python/` folder
++ **Note:** MIVisionX installs all the model compiler scripts in `/usr/libexec/mivisionx/model_compiler/python/` folder
+ 
+ * **Step 2:** Download pre-trained VGG 16 caffe model - [VGG_ILSVRC_16_layers.caffemodel](http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel)
+ 
+@@ -121,13 +121,13 @@ Run classification on the live camera fe
+  + Convert .caffemodel to NNIR
+ 
+ ``` 
+- % python /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
++ % python /usr/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
+ ```
+ 
+  + Convert NNIR to OpenVX
+ 
+ ``` 
+- % python /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
++ % python /usr/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
+ ```
+ 
+  **Note:** Use weights.bin generated in VGG16_OpenVX folder to run the classifier on live video
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/mivisionx_validation_tool/inference_setup.py MIVisionX-rocm-5.1.3/apps/mivisionx_validation_tool/inference_setup.py
+--- MIVisionX-rocm-5.1.3.orig/apps/mivisionx_validation_tool/inference_setup.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/mivisionx_validation_tool/inference_setup.py	2023-09-04 11:24:33.627723628 -0700
+@@ -83,8 +83,8 @@ class modelInference(QtCore.QObject):
+                 modelBatchSize, outputDir, inputAdd, inputMultiply, verbose, fp16, replaceModel, loop, rali_mode, origQueue, augQueue, gui, totalImages, fps_file, parent=None):
+ 
+         super(modelInference, self).__init__(parent)
+-        self.modelCompilerPath = '/opt/rocm/libexec/mivisionx/model_compiler/python'
+-        self.ADATPath = '/opt/rocm/libexec/mivisionx/toolkit/analysis_and_visualization/classification'
++        self.modelCompilerPath = '/usr/libexec/mivisionx/model_compiler/python'
++        self.ADATPath = '/usr/libexec/mivisionx/toolkit/analysis_and_visualization/classification'
+         self.setupDir = '~/.mivisionx-validation-tool'
+ 
+         self.analyzerDir = os.path.expanduser(self.setupDir)
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/mivisionx_validation_tool/README.md MIVisionX-rocm-5.1.3/apps/mivisionx_validation_tool/README.md
+--- MIVisionX-rocm-5.1.3.orig/apps/mivisionx_validation_tool/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/mivisionx_validation_tool/README.md	2023-09-04 11:24:33.627723628 -0700
+@@ -50,8 +50,8 @@ Pre-trained models in [ONNX](https://onn
+ * Export Path & Libraries required
+ 
+ ``` 
+-	export PATH=$PATH:/opt/rocm/bin
+-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib:/opt/rocm/rpp/lib
++	export PATH=$PATH:/usr/bin
++	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@:/usr/rpp/@LIBDIR@
+ ```
+ 
+ **NOTE:**
+@@ -88,9 +88,9 @@ sudo docker run -it --device=/dev/kfd --
+ * Test display with MIVisionX sample
+ 
+ ``` 
+-export PATH=$PATH:/opt/rocm/bin
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib:/opt/rocm/rpp/lib
+-runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
++export PATH=$PATH:/usr/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@:/usr/rpp/@LIBDIR@
++runvx /usr/share/mivisionx/samples/gdf/canny.gdf
+ ```
+ 
+ * Run [Samples](#samples)
+@@ -178,7 +178,7 @@ usage: python mivisionx_validation_tool.
+ 	**Note:**
+ 
+   + MIVisionX needs to be pre-installed
+-  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+   + ONNX model conversion requires ONNX install using `pip install onnx` 	
+ 
+ * **Step 2:** Download pre-trained SqueezeNet ONNX model from [ONNX Model Zoo](https://github.com/onnx/models#open-neural-network-exchange-onnx-model-zoo) - [SqueezeNet Model](https://s3.amazonaws.com/download.onnx/models/opset_8/squeezenet.tar.gz)
+@@ -199,8 +199,8 @@ usage: python mivisionx_validation_tool.
+ 
+     ``` 
+ 	cd ~/sample-1/MIVisionX-validation-tool/
+-	export PATH=$PATH:/opt/rocm/bin
+-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib:/opt/rocm/rpp/lib
++	export PATH=$PATH:/usr/bin
++	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@:/usr/rpp/@LIBDIR@
+ 	python mivisionx_validation_tool.py -h
+     ```
+ 
+@@ -230,7 +230,7 @@ usage: python mivisionx_validation_tool.
+   **Note:**
+ 
+   + MIVisionX needs to be pre-installed
+-  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+ 
+ * **Step 2:** Download pre-trained VGG 16 caffe model - [VGG_ILSVRC_16_layers.caffemodel](http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel)
+ 
+@@ -244,8 +244,8 @@ usage: python mivisionx_validation_tool.
+ 
+     ``` 
+ 	cd ~/sample-2/MIVisionX-validation-tool/
+-	export PATH=$PATH:/opt/rocm/bin
+-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib:/opt/rocm/rpp/lib
++	export PATH=$PATH:/usr/bin
++	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@:/usr/rpp/@LIBDIR@
+ 	python mivisionx_validation_tool.py -h
+     ```
+ 
+@@ -273,7 +273,7 @@ usage: python mivisionx_validation_tool.
+   **Note:**
+ 
+   + MIVisionX needs to be pre-installed
+-  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+   + NNEF model conversion requires [NNEF python parser](https://github.com/KhronosGroup/NNEF-Tools/tree/master/parser#nnef-parser-project) installed
+ 
+ * **Step 2:** Download pre-trained VGG 16 NNEF model
+@@ -290,8 +290,8 @@ usage: python mivisionx_validation_tool.
+ 
+     ``` 
+ 	cd ~/sample-3/MIVisionX-validation-tool/
+-	export PATH=$PATH:/opt/rocm/bin
+-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib:/opt/rocm/rpp/lib
++	export PATH=$PATH:/usr/bin
++	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@:/usr/rpp/@LIBDIR@
+ 	python mivisionx_validation_tool.py -h
+     ```
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/optical_flow/CMakeLists.txt MIVisionX-rocm-5.1.3/apps/optical_flow/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/apps/optical_flow/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/optical_flow/CMakeLists.txt	2023-09-04 11:24:33.627723628 -0700
+@@ -30,7 +30,7 @@ project(opticalFlow)
+ 
+ set(CMAKE_CXX_STANDARD 11)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "Deafult ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "Deafult ROCm Installation Path")
+ 
+ find_package(OpenCV REQUIRED)
+ 
+@@ -52,7 +52,7 @@ endif()
+ if(DEFINED OPENVX_LIBRARIES)
+     message(STATUS "OPENVX_LIBRARIES: ${OPENVX_LIBRARIES}")
+ else()
+-    set(OPENVX_LIBRARIES ${ROCM_PATH}/lib/libopenvx.${SHARED_LIB_TYPE})
++    set(OPENVX_LIBRARIES ${ROCM_PATH}/@LIBDIR@/libopenvx.${SHARED_LIB_TYPE})
+ 	message(STATUS "OPENVX_LIBRARIES: ${OPENVX_LIBRARIES}")
+ endif()
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/apps/optical_flow/README.md MIVisionX-rocm-5.1.3/apps/optical_flow/README.md
+--- MIVisionX-rocm-5.1.3.orig/apps/optical_flow/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/apps/optical_flow/README.md	2023-09-04 11:24:33.627723628 -0700
+@@ -45,7 +45,7 @@ Build OpenVX on Linux
+ * **Step - 2:** Export OpenVX Directory Path
+ 
+ ```
+-export OPENVX_DIR=/opt/rocm/
++export OPENVX_DIR=/usr/
+ ```
+ 
+ 
+@@ -53,7 +53,7 @@ export OPENVX_DIR=/opt/rocm/
+ 
+ ```
+ mkdir opticalFlow-build && cd opticalFlow-build
+-cmake -DOPENVX_INCLUDES=$OPENVX_DIR/include/mivisionx -DOPENVX_LIBRARIES=$OPENVX_DIR/lib/libopenvx.so ../optical_flow
++cmake -DOPENVX_INCLUDES=$OPENVX_DIR/include/mivisionx -DOPENVX_LIBRARIES=$OPENVX_DIR/@LIBDIR@/libopenvx.so ../optical_flow
+ make
+ ```
+ 
+@@ -72,4 +72,4 @@ make
+   + Use Live Device Camera 
+     ```
+     ./opticalFlow --live 0
+-    ```
+\ No newline at end of file
++    ```
+diff -urp MIVisionX-rocm-5.1.3.orig/CMakeLists.txt MIVisionX-rocm-5.1.3/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/CMakeLists.txt	2023-09-04 11:24:33.627723628 -0700
+@@ -22,18 +22,18 @@ cmake_minimum_required(VERSION 3.0)
+ project(MIVisionX)
+ set(VERSION "2.2.0")
+ 
+-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/@LIBDIR@)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/@LIBDIR@)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+ 
+ find_program(MAKE_NSIS_EXE makensis)
+ find_program(RPMBUILD_EXE rpmbuild)
+ find_program(DPKG_EXE dpkg)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "Default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "Default ROCm installation path")
+ # avoid setting the default installation path to /usr/local
+ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+-  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "mivisionx default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "mivisionx default installation path" FORCE)
+ endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+ 
+@@ -195,3 +195,14 @@ else()
+ endif()
+ 
+ include(CPack)
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+diff -urp MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-centos7.dockerfile MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-centos7.dockerfile
+--- MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-centos7.dockerfile	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-centos7.dockerfile	2023-09-04 11:24:33.627723628 -0700
+@@ -34,7 +34,7 @@ RUN cd conformance_tests/build-cts-openc
+ # install MIVisionX HIP
+ RUN mkdir build-hip && cd build-hip && cmake3 ../MIVisionX -DBACKEND=HIP && make -j8
+ RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
+-        cmake3 -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
++        cmake3 -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/usr/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
+         cmake3 --build .
+ RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
+         AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
+diff -urp MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-centos8.dockerfile MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-centos8.dockerfile
+--- MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-centos8.dockerfile	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-centos8.dockerfile	2023-09-04 11:24:33.627723628 -0700
+@@ -30,7 +30,7 @@ RUN cd conformance_tests/build-cts-openc
+ # install MIVisionX HIP
+ RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
+ RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
+-        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
++        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/usr/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
+         cmake --build .
+ RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
+         AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
+diff -urp MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-ubuntu18.dockerfile MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-ubuntu18.dockerfile
+--- MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-ubuntu18.dockerfile	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-ubuntu18.dockerfile	2023-09-04 11:24:33.627723628 -0700
+@@ -34,7 +34,7 @@ RUN cd conformance_tests/build-cts-openc
+ # install MIVisionX HIP
+ RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
+ RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
+-        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
++        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/usr/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
+         cmake --build .
+ RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
+         AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
+diff -urp MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-ubuntu20.dockerfile MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-ubuntu20.dockerfile
+--- MIVisionX-rocm-5.1.3.orig/docker/conformance/openvx-1-3-on-ubuntu20.dockerfile	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/docker/conformance/openvx-1-3-on-ubuntu20.dockerfile	2023-09-04 11:24:33.627723628 -0700
+@@ -34,7 +34,7 @@ RUN cd conformance_tests/build-cts-openc
+ # install MIVisionX HIP
+ RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
+ RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
+-        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
++        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/usr/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
+         cmake --build .
+ RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
+         AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
+diff -urp MIVisionX-rocm-5.1.3.orig/docker/conformance/system_info.py MIVisionX-rocm-5.1.3/docker/conformance/system_info.py
+--- MIVisionX-rocm-5.1.3.orig/docker/conformance/system_info.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/docker/conformance/system_info.py	2023-09-04 11:24:33.627723628 -0700
+@@ -79,9 +79,9 @@ gpu_info = gpu_info.rstrip()  # strip ou
+ memory_info = shell('inxi -c 0 -m')
+ board_info = shell('inxi -c0 -M')
+ 
+-vbios = shell('(cd /opt/rocm/bin/; ./rocm-smi -v)')
++vbios = shell('(cd /usr/bin/; ./rocm-smi -v)')
+ 
+-rocmInfo = shell('(cd /opt/rocm/bin/; ./rocm-smi -a)')
++rocmInfo = shell('(cd /usr/bin/; ./rocm-smi -a)')
+ 
+ rocm_packages = shell('dpkg-query -W | grep rocm')
+ rocm_packages = rocm_packages.splitlines()
+diff -urp MIVisionX-rocm-5.1.3.orig/.jenkins/common.groovy MIVisionX-rocm-5.1.3/.jenkins/common.groovy
+--- MIVisionX-rocm-5.1.3.orig/.jenkins/common.groovy	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/.jenkins/common.groovy	2023-09-04 11:24:33.627723628 -0700
+@@ -12,7 +12,7 @@ def runCompileCommand(platform, project,
+     String installPackageDeps = ''
+     String cmake = 'cmake'
+     String codeCovFlags = ''
+-    String installPrefixHIP = '-D CMAKE_INSTALL_PREFIX=/opt/rocm/mivisionx/hip'
++    String installPrefixHIP = '-D CMAKE_INSTALL_PREFIX=/usr/mivisionx/hip'
+     String installPrefixOCL = ''
+ 
+     if (platform.jenkinsLabel.contains('centos')) {
+@@ -26,7 +26,7 @@ def runCompileCommand(platform, project,
+         }
+         else {
+             installPackageDeps = 'python MIVisionX-setup.py --reinstall yes --ffmpeg yes --backend HIP'
+-            installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=/opt/rocm/mivisionx/OCL'
++            installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=/usr/mivisionx/OCL'
+             installPrefixHIP = ''
+         }
+     }
+@@ -44,7 +44,7 @@ def runCompileCommand(platform, project,
+         }
+         else {
+            installPackageDeps = 'python MIVisionX-setup.py --reinstall yes --ffmpeg yes --backend HIP'
+-           installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=/opt/rocm/mivisionx/OCL'
++           installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=/usr/mivisionx/OCL'
+            installPrefixHIP = ''
+         }
+     }
+@@ -172,7 +172,7 @@ def runTestCommand (platform, project) {
+                 export VX_TEST_DATA_PATH=\$(pwd)/OpenVX-cts/test_data/
+                 mkdir build-cts
+                 cd build-cts
+-                cmake -DOPENVX_INCLUDES=\$OPENVX_INC/include -DOPENVX_LIBRARIES=\$OPENVX_DIR/lib/libopenvx.so\\;/opt/rocm/lib/libamdhip64.so\\;pthread\\;dl\\;m\\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts
++                cmake -DOPENVX_INCLUDES=\$OPENVX_INC/include -DOPENVX_LIBRARIES=\$OPENVX_DIR/lib/libopenvx.so\\;/usr/lib/libamdhip64.so\\;pthread\\;dl\\;m\\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts
+                 cmake --build .
+                 echo MIVisionX OpenVX 1.3 Conformance - CPU - HIP Backend Build
+                 ${conformaceCPU_HIP}
+diff -urp MIVisionX-rocm-5.1.3.orig/MIVisionX-setup.py MIVisionX-rocm-5.1.3/MIVisionX-setup.py
+--- MIVisionX-rocm-5.1.3.orig/MIVisionX-setup.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/MIVisionX-setup.py	2023-09-04 11:24:33.627723628 -0700
+@@ -55,8 +55,8 @@ parser.add_argument('--reinstall', 	type
+                     help='Remove previous setup and reinstall - optional (default:no) [options:yes/no]')
+ parser.add_argument('--backend', 	type=str, default='HIP',
+                     help='MIVisionX Dependency Backend - optional (default:HIP) [options:CPU/OCL/HIP]')
+-parser.add_argument('--rocm_path', 	type=str, default='/opt/rocm',
+-                    help='ROCm Installation Path - optional (default:/opt/rocm) - ROCm Installation Required')
++parser.add_argument('--rocm_path', 	type=str, default='/usr',
++                    help='ROCm Installation Path - optional (default:/usr) - ROCm Installation Required')
+ args = parser.parse_args()
+ 
+ setupDir = args.directory
+@@ -98,7 +98,7 @@ if os.path.exists(ROCM_PATH):
+ else:
+     print("WARNING: ROCm Not Found at -- "+ROCM_PATH+"\n")
+     print(
+-        "WARNING: Set ROCm Path with --rocm_path option for full installation [Default:/opt/rocm]\n")
++        "WARNING: Set ROCm Path with --rocm_path option for full installation [Default:/usr]\n")
+     print("WARNING: Only OpenCV will be installed\n")
+     ffmpegInstall = 'no'
+     neuralNetInstall = 'no'
+diff -urp MIVisionX-rocm-5.1.3.orig/model_compiler/python/nnir_to_clib.py MIVisionX-rocm-5.1.3/model_compiler/python/nnir_to_clib.py
+--- MIVisionX-rocm-5.1.3.orig/model_compiler/python/nnir_to_clib.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/model_compiler/python/nnir_to_clib.py	2023-09-04 11:24:33.627723628 -0700
+@@ -117,13 +117,13 @@ def generateCMakeFiles(graph,outputFolde
+ cmake_minimum_required (VERSION 3.0)
+ project (mvdeploy)
+ set (CMAKE_CXX_STANDARD 11)
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/@LIBDIR@)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
+-set(CMAKE_INSTALL_PREFIX /opt/rocm)
++set(CMAKE_INSTALL_PREFIX /usr)
+ 
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "ROCm Installation Path")
+ #find the OPENVX backend type
+ set(OPENVX_BACKEND_OPENCL_FOUND 0)
+ set(OPENVX_BACKEND_HIP_FOUND 0)
+@@ -143,14 +143,14 @@ if (OPENVX_BACKEND_OPENCL_FOUND)
+ endif()
+ 
+ find_package(OpenCV QUIET)
+-include_directories (/opt/rocm/include/mivisionx)
+-link_directories    (/opt/rocm/lib)
++include_directories (/usr/include/mivisionx)
++link_directories    (/usr/@LIBDIR@)
+ list(APPEND SOURCES mvmodule.cpp)
+ add_library(mv_deploy SHARED ${SOURCES})
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.2 -std=gnu++14")
+ target_compile_definitions(mv_deploy PRIVATE ENABLE_MVDEPLOY=1)
+ target_link_libraries(mv_deploy openvx vx_nn pthread ${CMAKE_DL_LIBS})
+-install (TARGETS mv_deploy DESTINATION lib)
++install (TARGETS mv_deploy DESTINATION @LIBDIR@)
+ 
+ option (USE_POSTPROC  "Use postprocessing module implementation" OFF) 
+ add_executable(mvtestdeploy mvtestdeploy.cpp mvdeploy_api.cpp)
+@@ -189,36 +189,27 @@ find_path(OPENCL_INCLUDE_DIRS
+     PATHS
+     /usr/include
+     /usr/local/include
+-    /opt/rocm/opencl/include
++    /usr/opencl/include
+     DOC "OpenCL header file path"
+     )
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-        PATHS
+-        /usr/lib
+-        /opt/rocm/opencl/lib
+-        )
+-else( )
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86 Win32
+-
+-        PATHS
+-        /usr/lib
+-        )
+-endif( )
++    set(_PATH_SUFFIXES "x86_64 x64 x86_64/sdk")
++else()
++    set(_PATH_SUFFIXES "x86 Win32")
++endif()
++find_library( OPENCL_LIBRARIES
++    NAMES OpenCL
++    HINTS
++    ${OPENCL_ROOT}/@LIBDIR@
++    $ENV{AMDAPPSDKROOT}/@LIBDIR@
++    DOC "OpenCL dynamic library path"
++    PATH_SUFFIXES ${_PATH_SUFFIXES}
++    PATHS
++    /usr/@LIBDIR@
++    /usr/opencl/@LIBDIR@
++    )
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ include( FindPackageHandleStandardArgs )
+@@ -245,7 +236,7 @@ project (mv_extras)
+ set (CMAKE_CXX_STANDARD 11)
+ list(APPEND CMAKE_MODULE_PATH ../cmake)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "ROCm Installation Path")
+ #find the OPENVX backend type
+ set(OPENVX_BACKEND_OPENCL_FOUND 0)
+ set(OPENVX_BACKEND_HIP_FOUND 0)
+@@ -265,8 +256,8 @@ if (OPENVX_BACKEND_OPENCL_FOUND)
+ endif()
+ 
+ find_package(OpenCV QUIET)
+-include_directories (/opt/rocm/include/miviisionx ../)
+-link_directories    (/opt/rocm/lib)
++include_directories (/usr/include/miviisionx ../)
++link_directories    (/usr/@LIBDIR@)
+ add_library(${PROJECT_NAME} SHARED mv_extras_postproc.cpp)
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.2 -std=gnu++14")
+ if (OpenCV_FOUND)
+@@ -1347,7 +1338,7 @@ MIVID_API_ENTRY const char * MIVID_API_C
+ MIVID_API_ENTRY mv_status MIVID_API_CALL mvInitializeDeployment(const char* install_folder)
+ {
+     std::string libname = std::string(install_folder);
+-    libname += "/lib/" + INF_DEPLOY_LIB_NAME;
++    libname += "/@LIBDIR@/" + INF_DEPLOY_LIB_NAME;
+     mvDeploy = new mvDeployAPI((const char *)libname.c_str());
+     if (!mvDeploy || !mvDeploy->mvQueryInference_f) {
+         return MV_FAILURE;          
+diff -urp MIVisionX-rocm-5.1.3.orig/model_compiler/python/nnir_to_openvx.py MIVisionX-rocm-5.1.3/model_compiler/python/nnir_to_openvx.py
+--- MIVisionX-rocm-5.1.3.orig/model_compiler/python/nnir_to_openvx.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/model_compiler/python/nnir_to_openvx.py	2023-09-04 11:24:33.627723628 -0700
+@@ -114,7 +114,7 @@ project (annmodule)
+ 
+ set(CMAKE_CXX_STANDARD 11)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "ROCm Installation Path")
+ 
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ 
+@@ -147,7 +147,7 @@ endif()
+ 
+ include_directories(${ROCM_PATH}/include/mivisionx)
+ 
+-link_directories(${ROCM_PATH}/lib)
++link_directories(${ROCM_PATH}/@LIBDIR@)
+ 
+ list(APPEND SOURCES annmodule.cpp)
+ add_library(${PROJECT_NAME} SHARED ${SOURCES})
+@@ -233,36 +233,24 @@ else()
+     mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+     if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-        find_library( OPENCL_LIBRARIES
+-            NAMES OpenCL
+-            HINTS
+-            ${OPENCL_ROOT}/lib
+-            $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
+-            DOC "OpenCL dynamic library path"
+-            PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-            PATHS
+-            ${ROCM_PATH}/opencl/lib/
+-            /usr/lib
+-            /usr/local/cuda/lib
+-            /opt/cuda/lib
+-        )
+-    else( )
+-        find_library( OPENCL_LIBRARIES
+-            NAMES OpenCL
+-            HINTS
+-            ${OPENCL_ROOT}/lib
+-            $ENV{AMDAPPSDKROOT}/lib
+-            $ENV{CUDA_PATH}/lib
+-            DOC "OpenCL dynamic library path"
+-            PATH_SUFFIXES x86 Win32
+-            PATHS
+-            ${ROCM_PATH}/opencl/lib/
+-            /usr/lib
+-            /usr/local/cuda/lib
+-            /opt/cuda/lib
+-        )
+-    endif( )
++        set(_PATH_SUFFIXES "x86_64 x64 x86_64/sdk")
++    else()
++        set(_PATH_SUFFIXES "x86 Win32")
++    endif()
++    find_library( OPENCL_LIBRARIES
++        NAMES OpenCL
++        HINTS
++        ${OPENCL_ROOT}/@LIBDIR@
++        $ENV{AMDAPPSDKROOT}/@LIBDIR@
++        $ENV{CUDA_PATH}/@LIBDIR@
++        DOC "OpenCL dynamic library path"
++        PATH_SUFFIXES ${_PATH_SUFFIXES}
++        PATHS
++        ${ROCM_PATH}/opencl/@LIBDIR@/
++        /usr/@LIBDIR@
++        /usr/local/cuda/@LIBDIR@
++        /opt/cuda/@LIBDIR@
++    )
+     mark_as_advanced( OPENCL_LIBRARIES )
+ 
+     if(OPENCL_LIBRARIES AND OPENCL_INCLUDE_DIRS)
+@@ -273,11 +261,11 @@ else()
+     set(OpenCL_LIBRARIES ${OPENCL_LIBRARIES} CACHE INTERNAL "")
+     set(OpenCL_INCLUDE_DIRS ${OPENCL_INCLUDE_DIRS} CACHE INTERNAL "")
+ 
+-    if(EXISTS "${ROCM_PATH}/opencl/lib/libOpenCL.so")
+-        if(NOT "${OPENCL_LIBRARIES}" STREQUAL "${ROCM_PATH}/opencl/lib/libOpenCL.so")
++    if(EXISTS "${ROCM_PATH}/opencl/@LIBDIR@/libOpenCL.so")
++        if(NOT "${OPENCL_LIBRARIES}" STREQUAL "${ROCM_PATH}/opencl/@LIBDIR@/libOpenCL.so")
+             message("-- OpenCL Found - ${OPENCL_LIBRARIES}")
+             message("-- ROCm OpenCL Found - Force OpenCL_LIBRARIES & OpenCL_INCLUDE_DIRS to use ROCm OpenCL")
+-            set(OpenCL_LIBRARIES ${ROCM_PATH}/opencl/lib/libOpenCL.so CACHE INTERNAL "")
++            set(OpenCL_LIBRARIES ${ROCM_PATH}/opencl/@LIBDIR@/libOpenCL.so CACHE INTERNAL "")
+             set(OpenCL_INCLUDE_DIRS ${ROCM_PATH}/opencl/include CACHE INTERNAL "")
+         endif()
+     else()
+diff -urp MIVisionX-rocm-5.1.3.orig/model_compiler/README.md MIVisionX-rocm-5.1.3/model_compiler/README.md
+--- MIVisionX-rocm-5.1.3.orig/model_compiler/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/model_compiler/README.md	2023-09-04 11:24:33.631723628 -0700
+@@ -32,7 +32,7 @@ MIVisionX allows hundreds of different [
+ % pip3 install pytz numpy future
+ ```
+ 
+-**Note:** MIVisionX installs model compiler scripts at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++**Note:** MIVisionX installs model compiler scripts at `/usr/libexec/mivisionx/model_compiler/python/`
+ **Note:** Model compiler supports Python3. Anyone using python2 might face an issue during the model conversion
+ 
+ #### Caffe
+diff -urp MIVisionX-rocm-5.1.3.orig/README.md MIVisionX-rocm-5.1.3/README.md
+--- MIVisionX-rocm-5.1.3.orig/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/README.md	2023-09-04 11:24:33.631723628 -0700
+@@ -187,7 +187,7 @@ For the convenience of the developer, we
+                             --neural_net[MIVisionX Neural Net Dependency Install - optional (default:yes) [options:yes/no]]
+                             --reinstall [Remove previous setup and reinstall (default:no)[options:yes/no]]
+                             --backend   [MIVisionX Dependency Backend - optional (default:HIP) [options:OCL/HIP]]
+-                            --rocm_path [ROCm Installation Path - optional (default:/opt/rocm) - ROCm Installation Required]
++                            --rocm_path [ROCm Installation Path - optional (default:/usr) - ROCm Installation Required]
+   ```
+     **Note:**
+     * **ROCm upgrade** with `sudo apt upgrade` requires the setup script **rerun**.
+@@ -232,12 +232,12 @@ macOS [build instructions](https://githu
+   * `vx_winml` is not supported on `Linux`
+   * source code will not available with `apt-get` / `yum` install
+   * the installer will copy
+-    + Executables into `/opt/rocm/bin`
+-    + Libraries into `/opt/rocm/lib`
+-    + OpenVX and module header files into `/opt/rocm/include/mivisionx`
+-    + Model compiler, & toolkit folders into `/opt/rocm/libexec/mivisionx`
+-    + Apps, & samples folder into `/opt/rocm/share/mivisionx`
+-    + Docs folder into `/opt/rocm/share/doc/mivisionx`
++    + Executables into `/usr/bin`
++    + Libraries into `/usr/@LIBDIR@`
++    + OpenVX and module header files into `/usr/include/mivisionx`
++    + Model compiler, & toolkit folders into `/usr/libexec/mivisionx`
++    + Apps, & samples folder into `/usr/share/mivisionx`
++    + Docs folder into `/usr/share/doc/mivisionx`
+   * Package (.deb & .rpm) install requires `OpenCV v3+` to execute `AMD OpenCV extensions`
+ 
+ #### Using `MIVisionX-setup.py`
+@@ -285,7 +285,7 @@ macOS [build instructions](https://githu
+     ```
+ 
+   **Note:**
+-  + MIVisionX cannot be installed for both GPU backends in the same default folder (i.e., /opt/rocm/)
++  + MIVisionX cannot be installed for both GPU backends in the same default folder (i.e., /usr/)
+   if an app interested in installing MIVisionX with both GPU backends, then add **-DCMAKE_INSTALL_PREFIX** in the cmake
+   commands to install MIVisionX with OPENCL and HIP backends into two separate custom folders.
+   + vx_winml is not supported on Linux
+@@ -295,12 +295,12 @@ macOS [build instructions](https://githu
+ ### Linux / macOS
+ 
+ * The installer will copy
+-  + Executables into `/opt/rocm/bin`
+-  + Libraries into `/opt/rocm/lib`
+-  + OpenVX and OpenVX module header files into `/opt/rocm/include/mivisionx`
+-  + Apps, & Samples folder into `/opt/rocm/share/mivisionx`
+-  + Documents folder into `/opt/rocm/share/doc/mivisionx`
+-  + Model Compiler, and Toolkit folder into `/opt/rocm/libexec/mivisionx`
++  + Executables into `/usr/bin`
++  + Libraries into `/usr/@LIBDIR@`
++  + OpenVX and OpenVX module header files into `/usr/include/mivisionx`
++  + Apps, & Samples folder into `/usr/share/mivisionx`
++  + Documents folder into `/usr/share/doc/mivisionx`
++  + Model Compiler, and Toolkit folder into `/usr/libexec/mivisionx`
+ * Run the below sample to verify the installation
+ 
+   **Canny Edge Detection**
+@@ -308,9 +308,9 @@ macOS [build instructions](https://githu
+   <p align="center"><img width="60%" src="samples/images/canny_image.PNG" /></p>
+ 
+   ```
+-  export PATH=$PATH:/opt/rocm/bin
+-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
+-  runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
++  export PATH=$PATH:/usr/bin
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
++  runvx /usr/share/mivisionx/samples/gdf/canny.gdf
+   ```
+   **Note:** More samples are available [here](samples#samples)
+ 
+@@ -404,9 +404,9 @@ sudo docker run -it --device=/dev/kfd --
+ 
+     + Test display with MIVisionX sample
+     ```
+-    export PATH=$PATH:/opt/rocm/bin
+-    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
+-    runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
++    export PATH=$PATH:/usr/bin
++    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
++    runvx /usr/share/mivisionx/samples/gdf/canny.gdf
+     ```
+ 
+ ## Technical Support
+diff -urp MIVisionX-rocm-5.1.3.orig/rocAL/README.md MIVisionX-rocm-5.1.3/rocAL/README.md
+--- MIVisionX-rocm-5.1.3.orig/rocAL/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/rocAL/README.md	2023-09-04 11:24:33.631723628 -0700
+@@ -78,7 +78,7 @@ cmake -DCMAKE_INSTALL_PREFIX=/usr \
+       -DCMAKE_BUILD_TYPE=RELEASE  \
+       -DENABLE_STATIC=FALSE       \
+       -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/libjpeg-turbo-2.0.3 \
+-      -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib  \
++      -DCMAKE_INSTALL_DEFAULT_LIBDIR=@LIBDIR@  \
+       ..
+ make -j$nproc
+ sudo make install
+diff -urp MIVisionX-rocm-5.1.3.orig/rocAL/rocAL/CMakeLists.txt MIVisionX-rocm-5.1.3/rocAL/rocAL/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/rocAL/rocAL/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/rocAL/rocAL/CMakeLists.txt	2023-09-04 11:24:33.631723628 -0700
+@@ -48,7 +48,7 @@ if( GPU_SUPPORT AND "${BACKEND}" STREQUA
+             set(HIP_PATH $ENV{HIP_PATH} CACHE PATH "Path to which HIP has been installed")
+         endif()
+     endif()
+-    list(APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/lib/cmake/hip ${HIP_PATH}/cmake)
++    list(APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake)
+     # HSA_PATH
+     IF(NOT DEFINED ENV{HSA_PATH})
+         SET(HSA_PATH ${ROCM_PATH}/hsa)
+@@ -182,11 +182,11 @@ if(${BUILD_RALI})
+     protobuf_generate_cpp(TF_PROTO_SRCS TF_PROTO_HEADERS proto/example.proto proto/feature.proto)
+     protobuf_generate_cpp(CAFFE2_PROTO_SRCS CAFFE2_PROTO_HEADERS proto/caffe2_protos.proto)
+     protobuf_generate_cpp(CAFFE_PROTO_SRCS CAFFE_PROTO_HEADERS proto/caffe_protos.proto)
+-    link_directories(${AMDRPP_LIBRARIES_DIR} ${TurboJpeg_LIBRARIES_DIR} ${PROTOBUF_LIBRARY_DIRS} /usr/local/lib/)
++    link_directories(${AMDRPP_LIBRARIES_DIR} ${TurboJpeg_LIBRARIES_DIR} ${PROTOBUF_LIBRARY_DIRS} /usr/local/@LIBDIR@/)
+ 
+     if("${BACKEND}" STREQUAL "HIP" AND HIP_FOUND)
+         add_subdirectory(rocAL_hip)
+-        link_directories(${HIP_PATH}/lib)
++        link_directories(${HIP_PATH}/@LIBDIR@)
+         message("-- ${White}rocAL library is going to be built with HIP support ${ColourReset}")
+     endif()
+ 
+@@ -235,8 +235,8 @@ if(${BUILD_RALI})
+     if("${BACKEND}" STREQUAL "HIP" AND HIP_FOUND)
+         target_link_libraries(${PROJECT_NAME} $<TARGET_OBJECTS:rocAL_hip>)
+     endif()
+-    # install MIVisionX libs -- {ROCM_PATH)/lib
+-    install(TARGETS rali DESTINATION lib)
++    # install MIVisionX libs -- {ROCM_PATH)/@LIBDIR@
++    install(TARGETS rali DESTINATION @LIBDIR@)
+ else()
+     message("-- ${Red}WARNING: rocAL module excluded ${ColourReset}")
+ endif()
+diff -urp MIVisionX-rocm-5.1.3.orig/rocAL/rocAL_pybind/CMakeLists.txt MIVisionX-rocm-5.1.3/rocAL/rocAL_pybind/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/rocAL/rocAL_pybind/CMakeLists.txt	2023-09-04 11:24:18.203723834 -0700
++++ MIVisionX-rocm-5.1.3/rocAL/rocAL_pybind/CMakeLists.txt	2023-09-04 11:25:33.095722834 -0700
+@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.0)
+ project(rali_pybind)
+ 
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../amd_openvx/cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "Deafult ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "Deafult ROCm Installation Path")
+ 
+ set(MIN_CMAKE_VER_REQUIRED 3.10)
+ set(MIN_CXX_VER_REQUIRED 7.4)
+@@ -110,7 +110,7 @@ endif()
+ if(${BUILD_RALI_PYBIND})
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+ 
+-    link_directories(${ROCM_PATH}/rpp/lib ${ROCM_PATH}/lib)
++    link_directories(${ROCM_PATH}/rpp/@LIBDIR@ ${ROCM_PATH}/@LIBDIR@)
+ 
+     include_directories(../rocAL/include/
+                         third_party_lib/
+Only in MIVisionX-rocm-5.1.3/rocAL/rocAL_pybind: CMakeLists.txt.orig
+Only in MIVisionX-rocm-5.1.3/rocAL/rocAL_pybind: CMakeLists.txt.rej
+diff -urp MIVisionX-rocm-5.1.3.orig/rocAL/rocAL_pybind/README.md MIVisionX-rocm-5.1.3/rocAL/rocAL_pybind/README.md
+--- MIVisionX-rocm-5.1.3.orig/rocAL/rocAL_pybind/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/rocAL/rocAL_pybind/README.md	2023-09-04 11:24:33.631723628 -0700
+@@ -36,8 +36,8 @@ pip3 install numpy opencv-python torch
+ 
+ * Export `RPP` & `rocAL` library into PATH
+ ```
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib/
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/rpp/lib/
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@/
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/rpp/@LIBDIR@/
+ ```
+ #### Run Test Script
+ 
+Only in MIVisionX-rocm-5.1.3/rocAL/rocAL_pybind/third_party_lib: CMakeLists.txt.rej
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/c_samples/canny/CMakeLists.txt MIVisionX-rocm-5.1.3/samples/c_samples/canny/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/samples/c_samples/canny/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/c_samples/canny/CMakeLists.txt	2023-09-04 11:24:35.167723608 -0700
+@@ -27,12 +27,12 @@
+ cmake_minimum_required (VERSION 3.0)
+ project (cannyDetect)
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH "Deafult ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "Deafult ROCm Installation Path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ find_package(OpenCL REQUIRED)
+ find_package(OpenCV REQUIRED)
+ include_directories (${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib)
++link_directories    (${ROCM_PATH}/@LIBDIR@)
+ add_executable(cannyDetect canny.cpp)
+ target_link_libraries(${PROJECT_NAME} openvx ${OpenCV_LIBRARIES})
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/c_samples/opencv_orb/CMakeLists.txt MIVisionX-rocm-5.1.3/samples/c_samples/opencv_orb/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/samples/c_samples/opencv_orb/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/c_samples/opencv_orb/CMakeLists.txt	2023-09-04 11:24:35.167723608 -0700
+@@ -27,12 +27,12 @@
+ cmake_minimum_required (VERSION 3.0)
+ project (orbDetect)
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH "Deafult ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "Deafult ROCm Installation Path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ find_package(OpenCL REQUIRED)
+ find_package(OpenCV REQUIRED)
+ include_directories (${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib)
++link_directories    (${ROCM_PATH}/@LIBDIR@)
+ add_executable(orbDetect orb.cpp)
+ target_link_libraries(${PROJECT_NAME} openvx vx_opencv ${OpenCV_LIBRARIES})
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/gdf/README.md MIVisionX-rocm-5.1.3/samples/gdf/README.md
+--- MIVisionX-rocm-5.1.3.orig/samples/gdf/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/gdf/README.md	2023-09-04 11:24:35.167723608 -0700
+@@ -7,8 +7,8 @@ MIVisionX samples using [RunVX](https://
+ * To run the samples we need to put MIVisionX executables and libraries into the system path
+ 
+ ``` 
+-export PATH=$PATH:/opt/rocm/bin
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
++export PATH=$PATH:/usr/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
+ ```
+ 
+ * To get help on RunVX, use `-h` option
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/inference/mv_objdetect/CMakeLists.txt MIVisionX-rocm-5.1.3/samples/inference/mv_objdetect/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/samples/inference/mv_objdetect/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/inference/mv_objdetect/CMakeLists.txt	2023-09-04 11:24:35.167723608 -0700
+@@ -31,7 +31,7 @@ set (CMAKE_CXX_STANDARD 11)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ find_package(OpenCV QUIET)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "ROCm Installation Path")
+ #find the OPENVX backend type
+ set(OPENVX_BACKEND_OPENCL_FOUND 0)
+ set(OPENVX_BACKEND_HIP_FOUND 0)
+@@ -57,7 +57,7 @@ if (OPENVX_BACKEND_OPENCL_FOUND)
+ endif()
+ 
+ include_directories (${ROCM_PATH}/include/mivisionx ${PROJECT_SOURCE_DIR} )
+-link_directories    (${ROCM_PATH}/lib ${PROJECT_SOURCE_DIR}/lib)
++link_directories    (${ROCM_PATH}/@LIBDIR@ ${PROJECT_SOURCE_DIR}/@LIBDIR@)
+ option (USE_POSTPROC  "Use postprocessing module implementation" ON)
+ set(SOURCES mvobjdetect.cpp mvdeploy_api.cpp visualize.cpp)
+ add_executable(mvobjdetect ${SOURCES})
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/inference/mv_objdetect/README.md MIVisionX-rocm-5.1.3/samples/inference/mv_objdetect/README.md
+--- MIVisionX-rocm-5.1.3.orig/samples/inference/mv_objdetect/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/inference/mv_objdetect/README.md	2023-09-04 11:24:35.167723608 -0700
+@@ -12,8 +12,8 @@ The sample has two .cpp files, ``mvobjde
+ 	* AMD Radeon GPU or APU required
+ * [ROCm](https://github.com/RadeonOpenCompute/ROCm#installing-from-amd-rocm-repositories)
+ * Build & Install [MIVisionX](https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX#linux-1)
+-	* MIVisionX installs model compiler at `/opt/rocm/libexec/mivisionx`
+-  * mv_compile installs at `/opt/rocm/bin` and mvdeploy_api.h installs at `/opt/rocm/include/mivisionx` 
++	* MIVisionX installs model compiler at `/usr/libexec/mivisionx`
++  * mv_compile installs at `/usr/bin` and mvdeploy_api.h installs at `/usr/include/mivisionx` 
+ 
+ 
+ ### Step 1. Download pre-trained YoloV2 caffe model - [yoloV2Tiny20.caffemodel](https://github.com/kiritigowda/YoloV2NCS/raw/master/models/caffemodels/yoloV2Tiny20.caffemodel) 
+@@ -38,7 +38,7 @@ mv_compile   --model 	        <model_nam
+ ```
+ mv_compile --model yoloV2Tiny20.caffemodel --install_folder mvdeploy --input_dims 1,3,416,416
+ ```
+-There will be a file libmv_deploy.so (under ./lib), weights.bin and mvtestdeploy sample app (under ./bin).
++There will be a file libmv_deploy.so (under ./@LIBDIR@), weights.bin and mvtestdeploy sample app (under ./bin).
+ Also there will be mv_extras folder for extra post-processing helper functions.
+ Open mvdeploy_api.h to go through API functions supported for inference deployment. 
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/loom_360_stitch/README.md MIVisionX-rocm-5.1.3/samples/loom_360_stitch/README.md
+--- MIVisionX-rocm-5.1.3.orig/samples/loom_360_stitch/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/loom_360_stitch/README.md	2023-09-04 11:24:35.167723608 -0700
+@@ -9,8 +9,8 @@ MIVisionX samples using [LoomShell](http
+ * To run the samples we need to put MIVisionX executables and libraries into the system path
+ 
+ ``` 
+-export PATH=$PATH:/opt/rocm/bin
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
++export PATH=$PATH:/usr/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
+ ```
+ 
+ * To get help on loom_shell, use `-help` option
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/model_compiler_samples/cmake/FindOpenCL.cmake MIVisionX-rocm-5.1.3/samples/model_compiler_samples/cmake/FindOpenCL.cmake
+--- MIVisionX-rocm-5.1.3.orig/samples/model_compiler_samples/cmake/FindOpenCL.cmake	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/model_compiler_samples/cmake/FindOpenCL.cmake	2023-09-04 11:24:35.167723608 -0700
+@@ -34,36 +34,27 @@ find_path(OPENCL_INCLUDE_DIRS
+     PATHS
+     /usr/include
+     /usr/local/include
+-    /opt/rocm/opencl/include
++    /usr/opencl/include
+     DOC "OpenCL header file path"
+     )
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-        PATHS
+-        /usr/lib
+-        /opt/rocm/opencl/lib
+-        )
+-else( )
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86 Win32
+-
+-        PATHS
+-        /usr/lib
+-        )
+-endif( )
++    set(_PATH_SUFFIXES "x86_64 x64 x86_64/sdk")
++else()
++    set(_PATH_SUFFIXES "x86 Win32")
++endif()
++find_library( OPENCL_LIBRARIES
++    NAMES OpenCL
++    HINTS
++    ${OPENCL_ROOT}/@LIBDIR@
++    $ENV{AMDAPPSDKROOT}/@LIBDIR@
++    DOC "OpenCL dynamic library path"
++    PATH_SUFFIXES ${_PATH_SUFFIXES}
++    PATHS
++    /usr/@LIBDIR@
++    /usr/opencl/@LIBDIR@
++    )
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ include( FindPackageHandleStandardArgs )
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/model_compiler_samples/CMakeLists.txt MIVisionX-rocm-5.1.3/samples/model_compiler_samples/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/samples/model_compiler_samples/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/model_compiler_samples/CMakeLists.txt	2023-09-04 11:24:35.167723608 -0700
+@@ -32,7 +32,7 @@ set (CMAKE_CXX_STANDARD 11)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ find_package(OpenCV REQUIRED)
+ 
+-set(ROCM_PATH /opt/rocm CACHE PATH "ROCm Installation Path")
++set(ROCM_PATH /usr CACHE PATH "ROCm Installation Path")
+ #find the OPENVX backend type
+ set(OPENVX_BACKEND_OPENCL_FOUND 0)
+ set(OPENVX_BACKEND_HIP_FOUND 0)
+@@ -61,7 +61,7 @@ include_directories(${OpenCV_INCLUDE_DIR
+ include_directories(${ROCM_PATH}/include/mivisionx)
+ include_directories(include)
+ 
+-link_directories(${ROCM_PATH}/lib)
++link_directories(${ROCM_PATH}/@LIBDIR@)
+ 
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.2 -mf16c -std=c++11")
+ list(APPEND SOURCES
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/model_compiler_samples/README.md MIVisionX-rocm-5.1.3/samples/model_compiler_samples/README.md
+--- MIVisionX-rocm-5.1.3.orig/samples/model_compiler_samples/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/model_compiler_samples/README.md	2023-09-04 11:24:35.167723608 -0700
+@@ -48,9 +48,9 @@ MIVisionX provides developers with [dock
+ ````
+ * Test display with MIVisionX sample
+ ````
+-% export PATH=$PATH:/opt/rocm/bin
+-% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
+-% runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
++% export PATH=$PATH:/usr/bin
++% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
++% runvx /usr/share/mivisionx/samples/gdf/canny.gdf
+ ````
+ 
+ ## Usage
+@@ -65,7 +65,7 @@ Use MIVisionX [Neural Net Model Compiler
+ 
+ 2. Use [MIVisionX Model Compiler](https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/tree/master/model_compiler#neural-net-model-compiler--optimizer) to generate OpenVX C Code from the pre-trained models.
+ 
+-	**Note:** MIVisionX installs all the model compiler scripts in `/opt/rocm/libexec/mivisionx/model_compiler/python/` folder
++	**Note:** MIVisionX installs all the model compiler scripts in `/usr/libexec/mivisionx/model_compiler/python/` folder
+ 
+ * Convert the pre-trained models into AMD NNIR model:
+ 
+@@ -75,19 +75,19 @@ Use MIVisionX [Neural Net Model Compiler
+ 	* Caffe Models
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
++	% python3 /usr/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
+ 	````
+ 	
+ 	* ONNX Models
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py <onnxModel> <nnirOutputFolder> [--input_dims n,c,h,w (optional)]
++	% python3 /usr/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py <onnxModel> <nnirOutputFolder> [--input_dims n,c,h,w (optional)]
+ 	````
+ 	
+ 	* NNEF Models
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py <nnefInputFolder> <outputFolder>
++	% python3 /usr/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py <nnefInputFolder> <outputFolder>
+ 	````
+ 	
+ * Convert an AMD NNIR model into OpenVX C code:
+@@ -95,7 +95,7 @@ Use MIVisionX [Neural Net Model Compiler
+ <p align="center"><img width="80%" src="images/flow-3-openvx-b.png" /></p>
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
++	% python3 /usr/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
+ 	````
+ 
+ ### Build - Inference Application
+@@ -181,7 +181,7 @@ Run inference on the live camera feed wi
+ 
+ 	**Note:**
+ 	* MIVisionX needs to be pre-installed
+-	* MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++	* MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+ 	* ONNX model conversion requires ONNX install using `pip install onnx`	
+ 
+ * **Step 2:** Download pre-trained SqueezeNet ONNX model from [ONNX Model Zoo](https://github.com/onnx/models#open-neural-network-exchange-onnx-model-zoo) - [SqueezeNet Model](https://s3.amazonaws.com/download.onnx/models/opset_8/squeezenet.tar.gz)
+@@ -197,13 +197,13 @@ Run inference on the live camera feed wi
+ 	* Convert .onnx to NNIR
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py squeezenet/model.onnx squeezenet-nnir
++	% python3 /usr/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py squeezenet/model.onnx squeezenet-nnir
+ 	````
+ 
+ 	* Convert NNIR to OpenVX
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py squeezenet-nnir/ squeezenet-openvx
++	% python3 /usr/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py squeezenet-nnir/ squeezenet-openvx
+ 	````
+ 	**Note:** 
+ 	* annmodule.cpp & annmodule.h generated in squeezenet-openvx folder
+@@ -253,7 +253,7 @@ Run inference on the live camera feed wi
+ 
+ 	**Note:**
+ 	* MIVisionX needs to be pre-installed
+-	* MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++	* MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+ 
+ * **Step 2:** Download pre-trained Tiny YoloV2 caffe model - [yoloV2Tiny20.caffemodel](https://github.com/kiritigowda/YoloV2NCS/raw/master/models/caffemodels/yoloV2Tiny20.caffemodel)
+ 	````
+@@ -265,13 +265,13 @@ Run inference on the live camera feed wi
+ 	* Convert .caffemodel to NNIR
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py yoloV2Tiny20.caffemodel yoloV2-nnir --input-dims 1,3,416,416
++	% python3 /usr/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py yoloV2Tiny20.caffemodel yoloV2-nnir --input-dims 1,3,416,416
+ 	````
+ 
+ 	* Convert NNIR to OpenVX
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py yoloV2-nnir yoloV2-openvx
++	% python3 /usr/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py yoloV2-nnir yoloV2-openvx
+ 	````
+ 	**Note:** 
+ 	* annmodule.cpp & annmodule.h generated in yoloV2-openvx folder
+@@ -325,7 +325,7 @@ Run inference on the live camera feed wi
+ 
+ 	**Note:**
+ 	* MIVisionX needs to be pre-installed
+-	* MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++	* MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+ 	* NNEF model conversion requires [NNEF python parser](https://github.com/KhronosGroup/NNEF-Tools/tree/master/parser#nnef-parser-project) installed
+ 
+ * **Step 2:** Download pre-trained VGG 16 NNEF model
+@@ -342,13 +342,13 @@ Run inference on the live camera feed wi
+ 	* Convert .nnef to NNIR
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py vgg16/ vgg16-nnir
++	% python3 /usr/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py vgg16/ vgg16-nnir
+ 	````
+ 	
+ 	* Convert NNIR to OpenVX
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir/ vgg16-openvx
++	% python3 /usr/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir/ vgg16-openvx
+ 	````
+ 	**Note:** 
+ 	* annmodule.cpp & annmodule.h generated in vgg16-openvx folder
+@@ -398,7 +398,7 @@ Run inference on the live camera feed wi
+ 
+ 	**Note:**
+ 	* MIVisionX needs to be pre-installed
+-	* MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
++	* MIVisionX Model Compiler & Optimizer scripts are at `/usr/libexec/mivisionx/model_compiler/python/`
+ 
+ * **Step 2:** Download pre-trained VGG 16 caffe model - [VGG_ILSVRC_16_layers.caffemodel](http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel)
+ 	````
+@@ -411,13 +411,13 @@ Run inference on the live camera feed wi
+ 	* Convert .caffemodel to NNIR
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel vgg16-nnir --input-dims 1,3,224,224
++	% python3 /usr/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel vgg16-nnir --input-dims 1,3,224,224
+ 	````
+ 	
+ 	* Convert NNIR to OpenVX
+ 
+ 	````
+-	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir vgg16-openvx
++	% python3 /usr/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir vgg16-openvx
+ 	````
+ 	**Note:** 
+ 	* annmodule.cpp & annmodule.h generated in vgg16-openvx folder
+diff -urp MIVisionX-rocm-5.1.3.orig/samples/README.md MIVisionX-rocm-5.1.3/samples/README.md
+--- MIVisionX-rocm-5.1.3.orig/samples/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/samples/README.md	2023-09-04 11:24:35.167723608 -0700
+@@ -16,8 +16,8 @@ MIVisionX samples using [RunVX](../utili
+ * To run the samples we need to put MIVisionX executables and libraries into the system path
+ 
+ ``` 
+-export PATH=$PATH:/opt/rocm/bin
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
++export PATH=$PATH:/usr/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
+ ```
+ 
+ * To get help on RunVX, use `-h` option
+@@ -114,8 +114,8 @@ MIVisionX samples using [LoomShell](../u
+ * To run the samples we need to put MIVisionX executables and libraries into the system path
+ 
+ ``` 
+-export PATH=$PATH:/opt/rocm/bin
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
++export PATH=$PATH:/usr/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
+ ```
+ 
+ * To get help on loom_shell, use `-help` option
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/amd_migraphx_test/gdf/README.md MIVisionX-rocm-5.1.3/tests/amd_migraphx_test/gdf/README.md
+--- MIVisionX-rocm-5.1.3.orig/tests/amd_migraphx_test/gdf/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/amd_migraphx_test/gdf/README.md	2023-09-04 11:24:35.167723608 -0700
+@@ -2,7 +2,7 @@
+ * Download the mnist model to this directory, then run the sample.
+ ```
+ wget https://github.com/onnx/models/blob/main/vision/classification/mnist/model/mnist-8.onnx?raw=true
+-/opt/rocm/bin/runvx mnist_migraphx.gdf
++/usr/bin/runvx mnist_migraphx.gdf
+ ```
+ 
+ * To change the input image, use either image_0.jpg, image_1.jpg or image_4.jpg each corresponding to digits 0, 1 and 4 respectively.
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/amd_migraphx_test/mnist/CMakeLists.txt MIVisionX-rocm-5.1.3/tests/amd_migraphx_test/mnist/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/tests/amd_migraphx_test/mnist/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/amd_migraphx_test/mnist/CMakeLists.txt	2023-09-04 11:24:35.167723608 -0700
+@@ -27,10 +27,10 @@
+ cmake_minimum_required (VERSION 3.0)
+ project(migraphx_node_test)
+ set(CMAKE_CXX_STANDARD 14)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/mivisionx)
+-link_directories(${ROCM_PATH}/lib)
++link_directories(${ROCM_PATH}/@LIBDIR@)
+ list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip)
+ find_package(migraphx QUIET)
+ if(migraphx_FOUND)
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/amd_migraphx_test/resnet50/CMakeLists.txt MIVisionX-rocm-5.1.3/tests/amd_migraphx_test/resnet50/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/tests/amd_migraphx_test/resnet50/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/amd_migraphx_test/resnet50/CMakeLists.txt	2023-09-04 11:24:35.167723608 -0700
+@@ -27,10 +27,10 @@
+ cmake_minimum_required (VERSION 3.0)
+ project(migraphx_node_test)
+ set(CMAKE_CXX_STANDARD 14)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+ include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/mivisionx)
+-link_directories(${ROCM_PATH}/lib)
++link_directories(${ROCM_PATH}/@LIBDIR@)
+ include_directories(${OpenCV_INCLUDE_DIRS})
+ list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip)
+ find_package(migraphx QUIET)
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/conformance_tests/runConformanceTests.py MIVisionX-rocm-5.1.3/tests/conformance_tests/runConformanceTests.py
+--- MIVisionX-rocm-5.1.3.orig/tests/conformance_tests/runConformanceTests.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/conformance_tests/runConformanceTests.py	2023-09-04 11:24:35.167723608 -0700
+@@ -109,9 +109,9 @@ if backendType in ('ALL', 'HIP'):
+ 
+ 
+ openvxIncludePath = scriptPath+'/../../amd_openvx/openvx/include'
+-openvxHostLib = cts_dir+'/build-host/lib'
+-openvxOpenclLib = cts_dir+'/build-opencl/lib'
+-openvxHipLib = cts_dir+'/build-hip/lib'
++openvxHostLib = cts_dir+'/build-host/@LIBDIR@'
++openvxOpenclLib = cts_dir+'/build-opencl/@LIBDIR@'
++openvxHipLib = cts_dir+'/build-hip/@LIBDIR@'
+ 
+ ctsHost = cts_dir+'/conformance_tests/build-cts-host'
+ ctsOpenCL = cts_dir+'/conformance_tests/build-cts-opencl'
+@@ -142,16 +142,16 @@ gpu_info = gpu_info.rstrip()  # strip ou
+ memory_info = shell('inxi -c 0 -m')
+ board_info = shell('inxi -c0 -M')
+ 
+-vbios = shell('(cd /opt/rocm/bin/; ./rocm-smi -v)')
++vbios = shell('(cd /usr/bin/; ./rocm-smi -v)')
+ 
+-#rocmInfo = shell('(cd /opt/rocm/bin/; ./rocm-smi -a)')
++#rocmInfo = shell('(cd /usr/bin/; ./rocm-smi -a)')
+ 
+ rocm_packages = shell('dpkg-query -W | grep rocm')
+ rocm_packages = rocm_packages.splitlines()
+ 
+ lib_type = '.so'
+ dep_libs = 'rt'
+-HIP_deps = '/opt/rocm/lib/libamdhip64.so'
++HIP_deps = '/usr/@LIBDIR@/libamdhip64.so'
+ LDD_Links = 'ldd'
+ if platform.system() == 'Darwin':
+     lib_type = '.dylib'
+@@ -242,7 +242,7 @@ if backendType in ('ALL', 'HIP'):
+ # Run Host
+ if backendType in ('ALL', 'HOST'):
+     os.system('(cd '+ctsHost+' && '+testDataExport +
+-              ' && LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-HOST-CTS.md )')
++              ' && LD_LIBRARY_PATH=./@LIBDIR@ ./bin/vx_test_conformance | tee OpenVX-HOST-CTS.md )')
+     # save conformance logs
+     host_data = cts_log_data = ""
+     with open(reportFileDir) as fp:
+@@ -257,9 +257,9 @@ if backendType in ('ALL', 'HOST'):
+ # Run OpenCL
+ if backendType in ('ALL', 'OCL'):
+     os.system('(cd '+ctsOpenCL+' && '+testDataExport +
+-              ' && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-OCL.md )')
++              ' && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./@LIBDIR@ ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-OCL.md )')
+     os.system('(cd '+ctsOpenCL+' && '+testDataExport +
+-              ' && AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-OCL.md )')
++              ' && AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./@LIBDIR@ ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-OCL.md )')
+     # save conformance logs
+     ocl_data = cts_log_data = ""
+     with open(reportFileDir) as fp:
+@@ -274,9 +274,9 @@ if backendType in ('ALL', 'OCL'):
+ # Run HIP
+ if backendType in ('ALL', 'HIP'):
+     os.system('(cd '+ctsHIP+' && '+testDataExport +
+-              ' && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP.md )')
++              ' && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./@LIBDIR@ ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP.md )')
+     os.system('(cd '+ctsHIP+' && '+testDataExport +
+-              ' && AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP.md )')
++              ' && AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./@LIBDIR@ ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP.md )')
+     # save conformance logs
+     hip_data = cts_log_data = ""
+     with open(reportFileDir) as fp:
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/library_tests/runLibraryTests.py MIVisionX-rocm-5.1.3/tests/library_tests/runLibraryTests.py
+--- MIVisionX-rocm-5.1.3.orig/tests/library_tests/runLibraryTests.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/library_tests/runLibraryTests.py	2023-09-04 11:24:35.167723608 -0700
+@@ -47,7 +47,7 @@ def write_formatted(output, f):
+ 
+ # Import arguments
+ parser = argparse.ArgumentParser()
+-parser.add_argument('--install_directory',    type=str, default='/opt/rocm',
++parser.add_argument('--install_directory',    type=str, default='/usr',
+                     help='MIVisionX Install Directory - optional')
+ parser.add_argument('--backend_type',       type=str, default='OCL',
+                     help='Backend type - optional (default:CPU [options:CPU/HIP/OCL])')
+@@ -91,18 +91,18 @@ memory_info = shell('inxi -c 0 -m')
+ board_info = shell('inxi -c0 -M')
+ 
+ # level 1 - Libraries
+-openvx_lib = shell('ldd '+MIVisionXAbsPath+'/lib/libopenvx.so')
+-vxu_lib = shell('ldd '+MIVisionXAbsPath+'/lib/libvxu.so')
++openvx_lib = shell('ldd '+MIVisionXAbsPath+'/@LIBDIR@/libopenvx.so')
++vxu_lib = shell('ldd '+MIVisionXAbsPath+'/@LIBDIR@/libvxu.so')
+ # level 2 - Libraries
+-loom_lib = shell('ldd '+MIVisionXAbsPath+'/lib/libvx_loomsl.so')
++loom_lib = shell('ldd '+MIVisionXAbsPath+'/@LIBDIR@/libvx_loomsl.so')
+ # level 3 - libraries
+-media_lib = shell('ldd '+MIVisionXAbsPath+'/lib/libvx_amd_media.so')
+-opencv_lib = shell('ldd '+MIVisionXAbsPath+'/lib/libvx_opencv.so')
++media_lib = shell('ldd '+MIVisionXAbsPath+'/@LIBDIR@/libvx_amd_media.so')
++opencv_lib = shell('ldd '+MIVisionXAbsPath+'/@LIBDIR@/libvx_opencv.so')
+ # level 4 - libraries
+-nn_lib = shell('ldd '+MIVisionXAbsPath+'/lib/libvx_nn.so')
++nn_lib = shell('ldd '+MIVisionXAbsPath+'/@LIBDIR@/libvx_nn.so')
+ # level 5 - libraries
+-rpp_lib = shell('ldd '+MIVisionXAbsPath+'/lib/libvx_rpp.so')
+-rali_lib = shell('ldd '+MIVisionXAbsPath+'/lib/librali.so')
++rpp_lib = shell('ldd '+MIVisionXAbsPath+'/@LIBDIR@/libvx_rpp.so')
++rali_lib = shell('ldd '+MIVisionXAbsPath+'/@LIBDIR@/librali.so')
+ 
+ # Executables
+ runvx_exe = shell('ldd '+MIVisionXAbsPath+'/bin/runvx')
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/neural_network_tests/runNeuralNetworkTests.py MIVisionX-rocm-5.1.3/tests/neural_network_tests/runNeuralNetworkTests.py
+--- MIVisionX-rocm-5.1.3.orig/tests/neural_network_tests/runNeuralNetworkTests.py	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/neural_network_tests/runNeuralNetworkTests.py	2023-09-04 11:24:35.171723608 -0700
+@@ -130,7 +130,7 @@ parser.add_argument('--test_info',
+                     help='Show test info - optional (default:no [options:no/yes])')
+ parser.add_argument('--backend_type',       type=str, default='OCL',
+                     help='Backend type - optional (default:HOST [options:HOST/HIP/OCL])')
+-parser.add_argument('--install_directory',    type=str, default='/opt/rocm',
++parser.add_argument('--install_directory',    type=str, default='/usr',
+                     help='MIVisionX Install Directory - optional')
+ args = parser.parse_args()
+ 
+@@ -739,12 +739,12 @@ gpu_info = gpu_info.rstrip()  # strip ou
+ memory_info = shell('inxi -c 0 -m')
+ board_info = shell('inxi -c0 -M')
+ 
+-lib_tree = shell('ldd -v '+installDir+'/lib/libvx_nn.so')
++lib_tree = shell('ldd -v '+installDir+'/@LIBDIR@/libvx_nn.so')
+ lib_tree = strip_libtree_addresses(lib_tree)
+ 
+-vbios = shell('(cd /opt/rocm/bin/; ./rocm-smi -v)')
++vbios = shell('(cd /usr/bin/; ./rocm-smi -v)')
+ 
+-rocmInfo = shell('(cd /opt/rocm/bin/; ./rocm-smi -a)')
++rocmInfo = shell('(cd /usr/bin/; ./rocm-smi -a)')
+ 
+ rocm_packages = shell('dpkg-query -W | grep rocm')
+ rocm_packages = rocm_packages.splitlines()
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/openvx_node_tests/runvxTestAllScript.sh MIVisionX-rocm-5.1.3/tests/openvx_node_tests/runvxTestAllScript.sh
+--- MIVisionX-rocm-5.1.3.orig/tests/openvx_node_tests/runvxTestAllScript.sh	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/openvx_node_tests/runvxTestAllScript.sh	2023-09-04 11:24:35.171723608 -0700
+@@ -534,16 +534,16 @@ if [ "$BACKEND_TYPE" = "HOST" ]; then
+         cd build_host
+         cmake ..
+         sudo make -j20 install
+-        export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/rpp/lib"
++        export LD_LIBRARY_PATH="/usr/@LIBDIR@:/usr/rpp/@LIBDIR@"
+         cd ../tests/openvx_node_tests
+     elif [ "$OVERRIDE" = "1" ]; then
+         cd ../../build_host
+         sudo make -j20 install
+-        export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/rpp/lib"
++        export LD_LIBRARY_PATH="/usr/@LIBDIR@:/usr/rpp/@LIBDIR@"
+         cd ../tests/openvx_node_tests
+     else
+         RUNVX_PATH="$PRIMARY_RUNVX_PATH/"
+-        export LD_LIBRARY_PATH="$PRIMARY_RUNVX_PATH/../lib:/opt/rocm/rpp/lib"
++        export LD_LIBRARY_PATH="$PRIMARY_RUNVX_PATH/../@LIBDIR@:/usr/rpp/@LIBDIR@"
+     fi
+     echo "$LD_LIBRARY_PATH"
+ 
+@@ -587,16 +587,16 @@ if [ "$BACKEND_TYPE" = "OCL" ] || [ "$BA
+         cd build_ocl
+         cmake ..
+         sudo make -j20 install
+-        export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/rpp/lib"
++        export LD_LIBRARY_PATH="/usr/@LIBDIR@:/usr/rpp/@LIBDIR@"
+         cd ../tests/openvx_node_tests
+     elif [ "$OVERRIDE" = "1" ]; then
+         cd ../../build_ocl
+         sudo make -j20 install
+-        export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/rpp/lib"
++        export LD_LIBRARY_PATH="/usr/@LIBDIR@:/usr/rpp/@LIBDIR@"
+         cd ../tests/openvx_node_tests
+     else
+         RUNVX_PATH="$PRIMARY_RUNVX_PATH/"
+-        export LD_LIBRARY_PATH="$PRIMARY_RUNVX_PATH/../lib:/opt/rocm/rpp/lib"
++        export LD_LIBRARY_PATH="$PRIMARY_RUNVX_PATH/../@LIBDIR@:/usr/rpp/@LIBDIR@"
+     fi
+     echo "$LD_LIBRARY_PATH"
+ 
+@@ -640,20 +640,20 @@ if [ "$BACKEND_TYPE" = "HIP" ] || [ "$BA
+         cd build_hip
+         cmake -DBACKEND=HIP ..
+         sudo make -j20 install
+-        export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/rpp/lib"
++        export LD_LIBRARY_PATH="/usr/@LIBDIR@:/usr/rpp/@LIBDIR@"
+         cd ../tests/openvx_node_tests
+     elif [ "$OVERRIDE" = "1" ]; then
+         cd ../../build_hip
+         sudo make -j20 install
+-        export LD_LIBRARY_PATH="/opt/rocm/lib:/opt/rocm/rpp/lib"
++        export LD_LIBRARY_PATH="/usr/@LIBDIR@:/usr/rpp/@LIBDIR@"
+         cd ../tests/openvx_node_tests
+     else
+         if [ "$BACKEND_TYPE" = "HIP" ]; then
+             RUNVX_PATH="$PRIMARY_RUNVX_PATH/"
+-            export LD_LIBRARY_PATH="$PRIMARY_RUNVX_PATH/../lib:/opt/rocm/rpp/lib"
++            export LD_LIBRARY_PATH="$PRIMARY_RUNVX_PATH/../@LIBDIR@:/usr/rpp/@LIBDIR@"
+         else
+             RUNVX_PATH="$SECONDARY_RUNVX_PATH/"
+-            export LD_LIBRARY_PATH="$SECONDARY_RUNVX_PATH/../lib:/opt/rocm/rpp/lib"
++            export LD_LIBRARY_PATH="$SECONDARY_RUNVX_PATH/../@LIBDIR@:/usr/rpp/@LIBDIR@"
+         fi
+     fi
+     echo "$LD_LIBRARY_PATH"
+@@ -927,4 +927,4 @@ else
+     printf "\nFinished running funcitonalities.\n"
+ fi
+ 
+-############# Need not edit #############
+\ No newline at end of file
++############# Need not edit #############
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/smoke_tests/RALI/RALI-UNITTEST-CPU.sh MIVisionX-rocm-5.1.3/tests/smoke_tests/RALI/RALI-UNITTEST-CPU.sh
+--- MIVisionX-rocm-5.1.3.orig/tests/smoke_tests/RALI/RALI-UNITTEST-CPU.sh	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/smoke_tests/RALI/RALI-UNITTEST-CPU.sh	2023-09-04 11:24:35.171723608 -0700
+@@ -1,4 +1,4 @@
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib:/opt/rocm/rpp/lib
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@:/usr/rpp/@LIBDIR@
+ rm -rf RALI-CPU-RESULTS
+ mkdir RALI-CPU-RESULTS
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/tests/smoke_tests/RALI/RALI-UNITTEST-GPU.sh MIVisionX-rocm-5.1.3/tests/smoke_tests/RALI/RALI-UNITTEST-GPU.sh
+--- MIVisionX-rocm-5.1.3.orig/tests/smoke_tests/RALI/RALI-UNITTEST-GPU.sh	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/tests/smoke_tests/RALI/RALI-UNITTEST-GPU.sh	2023-09-04 11:24:35.171723608 -0700
+@@ -1,4 +1,4 @@
+-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib:/opt/rocm/rpp/lib
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@:/usr/rpp/@LIBDIR@
+ rm -rf RALI-GPU-RESULTS
+ mkdir RALI-GPU-RESULTS
+ 
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/CMakeLists.txt	2023-09-04 11:24:35.171723608 -0700
+@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.0)
+ project(utilities)
+ 
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+-#set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++#set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ 
+ if(GPU_SUPPORT)
+     find_package(FFmpeg QUIET)
+@@ -42,7 +42,7 @@ if(GPU_SUPPORT)
+                 set(HIP_PATH $ENV{HIP_PATH} CACHE PATH "Path to which HIP has been installed")
+             endif()
+         endif()
+-        set(CMAKE_MODULE_PATH "${ROCM_PATH}/lib/cmake/hip" "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
++        set(CMAKE_MODULE_PATH "${ROCM_PATH}/@LIBDIR@/cmake/hip" "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
+         find_package(HIP QUIET)
+         SET(BUILD_OPENCL false)
+     endif()
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/inference_generator/README.md MIVisionX-rocm-5.1.3/utilities/inference_generator/README.md
+--- MIVisionX-rocm-5.1.3.orig/utilities/inference_generator/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/inference_generator/README.md	2023-09-04 11:24:35.171723608 -0700
+@@ -83,8 +83,8 @@ vx_graph annCreateGraphWithInputImageWit
+ Make sure that all executables and libraries are in `PATH` and `LD_LIBRARY_PATH` environment variables.
+ 
+ ```
+-% export PATH=$PATH:/opt/rocm/bin
+-% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
++% export PATH=$PATH:/usr/bin
++% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
+ ```
+ 
+ Below log outlines a simple use-case with inference generator.
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/inference_generator/src/caffe2openvx.cpp MIVisionX-rocm-5.1.3/utilities/inference_generator/src/caffe2openvx.cpp
+--- MIVisionX-rocm-5.1.3.orig/utilities/inference_generator/src/caffe2openvx.cpp	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/inference_generator/src/caffe2openvx.cpp	2023-09-04 11:24:35.171723608 -0700
+@@ -2329,8 +2329,8 @@ void generateCode(
+     ofsCodeM << "list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)" << std::endl;
+     ofsCodeM << "find_package(OpenCL     REQUIRED)" << std::endl;
+     ofsCodeM << "include_directories (${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers )" << std::endl;
+-    ofsCodeM << "include_directories (/opt/rocm/include/mivisionx)" << std::endl;
+-    ofsCodeM << "link_directories    (/opt/rocm/lib)" << std::endl;
++    ofsCodeM << "include_directories (/usr/include/mivisionx)" << std::endl;
++    ofsCodeM << "link_directories    (/usr/@LIBDIR@)" << std::endl;
+     ofsCodeM << "list(APPEND SOURCES annmodule.cpp)" << std::endl;
+     ofsCodeM << "add_library(${PROJECT_NAME} SHARED ${SOURCES})" << std::endl;
+     ofsCodeM << "set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -msse4.2 -std=c++11\")" << std::endl;
+@@ -2537,34 +2537,26 @@ void generateCode(
+     ofsCodeD << "PATHS" << std::endl;
+     ofsCodeD << "/usr/include" << std::endl;
+     ofsCodeD << "/usr/local/include" << std::endl;
+-    ofsCodeD << "/opt/rocm/opencl/include" << std::endl;
++    ofsCodeD << "/usr/opencl/include" << std::endl;
+     ofsCodeD << "DOC \"OpenCL header file path\"" << std::endl;
+     ofsCodeD << ")" << std::endl;
+     ofsCodeD << "mark_as_advanced( OPENCL_INCLUDE_DIRS )" << std::endl << std::endl;
+     ofsCodeD << "if(\"${CMAKE_SIZEOF_VOID_P}\" EQUAL \"8\")" << std::endl;
+-    ofsCodeD << "   find_library( OPENCL_LIBRARIES" << std::endl;
+-    ofsCodeD << "       NAMES OpenCL" << std::endl;
+-    ofsCodeD << "       HINTS" << std::endl;
+-    ofsCodeD << "       ${OPENCL_ROOT}/lib" << std::endl;
+-    ofsCodeD << "       $ENV{AMDAPPSDKROOT}/lib" << std::endl;
+-    ofsCodeD << "       DOC \"OpenCL dynamic library path\"" << std::endl;
+-    ofsCodeD << "       PATH_SUFFIXES x86_64 x64 x86_64/sdk" << std::endl;
+-    ofsCodeD << "       PATHS" << std::endl;
+-    ofsCodeD << "       /usr/lib" << std::endl;
+-    ofsCodeD << "       /opt/rocm/opencl/lib" << std::endl;
+-    ofsCodeD << "       )" << std::endl;
++    ofsCodeD << "    set(_PATH_SUFFIXES \"x86_64 x64 x86_64/sdk\")" << std::endl;
+     ofsCodeD << "else( )" << std::endl;
+-    ofsCodeD << "   find_library( OPENCL_LIBRARIES" << std::endl;
+-    ofsCodeD << "       NAMES OpenCL" << std::endl;
+-    ofsCodeD << "       HINTS" << std::endl;
+-    ofsCodeD << "       ${OPENCL_ROOT}/lib" << std::endl;
+-    ofsCodeD << "       $ENV{AMDAPPSDKROOT}/lib" << std::endl;
+-    ofsCodeD << "       DOC \"OpenCL dynamic library path\"" << std::endl;
+-    ofsCodeD << "       PATH_SUFFIXES x86 Win32" << std::endl;
+-    ofsCodeD << "       PATHS" << std::endl;
+-    ofsCodeD << "       /usr/lib" << std::endl;
+-    ofsCodeD << "       )" << std::endl;
++    ofsCodeD << "    set(_PATH_SUFFIXES \"x86 Win32\")" << std::endl;
+     ofsCodeD << "endif( )" << std::endl;
++    ofsCodeD << "find_library( OPENCL_LIBRARIES" << std::endl;
++    ofsCodeD << "    NAMES OpenCL" << std::endl;
++    ofsCodeD << "    HINTS" << std::endl;
++    ofsCodeD << "    ${OPENCL_ROOT}/@LIBDIR@" << std::endl;
++    ofsCodeD << "    $ENV{AMDAPPSDKROOT}/@LIBDIR@" << std::endl;
++    ofsCodeD << "    DOC \"OpenCL dynamic library path\"" << std::endl;
++    ofsCodeD << "    PATH_SUFFIXES ${_PATH_SUFFIXES}" << std::endl;
++    ofsCodeD << "    PATHS" << std::endl;
++    ofsCodeD << "    /usr/@LIBDIR@" << std::endl;
++    ofsCodeD << "    /usr/opencl/@LIBDIR@" << std::endl;
++    ofsCodeD << "    )" << std::endl;
+     ofsCodeD << "mark_as_advanced( OPENCL_LIBRARIES )" << std::endl << std::endl;
+     ofsCodeD << "include( FindPackageHandleStandardArgs )" << std::endl;
+     ofsCodeD << "find_package_handle_standard_args( OPENCL DEFAULT_MSG OPENCL_LIBRARIES OPENCL_INCLUDE_DIRS )" << std::endl;
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/inference_generator/src/nnef2openvx.cpp MIVisionX-rocm-5.1.3/utilities/inference_generator/src/nnef2openvx.cpp
+--- MIVisionX-rocm-5.1.3.orig/utilities/inference_generator/src/nnef2openvx.cpp	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/inference_generator/src/nnef2openvx.cpp	2023-09-04 11:24:35.171723608 -0700
+@@ -1746,8 +1746,8 @@ protected:
+              << "find_package(OpenCL REQUIRED)" << std::endl
+              << "find_package(OpenCV QUIET)" << std::endl
+              << "include_directories (${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers )" << std::endl
+-             << "include_directories (/opt/rocm/include/mivisionx)" << std::endl
+-             << "link_directories    (/opt/rocm/lib)" << std::endl
++             << "include_directories (/usr/include/mivisionx)" << std::endl
++             << "link_directories    (/usr/@LIBDIR@)" << std::endl
+              << "list(APPEND SOURCES annmodule.cpp)" << std::endl
+              << "add_library(${PROJECT_NAME} SHARED ${SOURCES})" << std::endl
+              << "set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -msse4.2 -std=c++11\")" << std::endl
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/loom_io_media/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/loom_io_media/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/loom_io_media/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/loom_io_media/CMakeLists.txt	2023-09-04 11:24:35.171723608 -0700
+@@ -48,8 +48,8 @@ list(APPEND SOURCES decoder.cpp encoder.
+ 
+ add_library(${PROJECT_NAME} SHARED ${SOURCES})
+ target_link_libraries(${PROJECT_NAME} ${OpenCL_LIBRARIES} ${AVUTIL_LIBRARY} ${AVCODEC_LIBRARY} ${SWSCALE_LIBRARY} ${AVFORMAT_LIBRARY} openvx)
+-# install MIVisionX libs -- {ROCM_PATH}/lib
+-install (TARGETS ${PROJECT_NAME} DESTINATION lib)
++# install MIVisionX libs -- {ROCM_PATH}/@LIBDIR@
++install (TARGETS ${PROJECT_NAME} DESTINATION @LIBDIR@)
+ 
+ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+ 	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/mv_deploy/mv_compile.cpp MIVisionX-rocm-5.1.3/utilities/mv_deploy/mv_compile.cpp
+--- MIVisionX-rocm-5.1.3.orig/utilities/mv_deploy/mv_compile.cpp	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/mv_deploy/mv_compile.cpp	2023-09-04 11:24:35.171723608 -0700
+@@ -75,7 +75,7 @@ static mv_status MIVID_API_CALL mvLoadUp
+ 
+     if (backend == OpenVX_Rocm_GPU) {
+         printf("compiling model for backend OpenVX_Rocm_GPU\n");
+-        std::string compiler_path = "/opt/rocm/libexec/mivisionx/model_compiler";       // default
++        std::string compiler_path = "/usr/libexec/mivisionx/model_compiler";       // default
+         char *model_compiler_path = getenv("MIVISIONX_MODEL_COMPILER_PATH");
+         std::string install_dir = std::string(install_folder).empty()? "mvdeploy_lib" : std::string(install_folder); 
+         if (model_compiler_path != nullptr) {
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/mv_deploy/README.md MIVisionX-rocm-5.1.3/utilities/mv_deploy/README.md
+--- MIVisionX-rocm-5.1.3.orig/utilities/mv_deploy/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/mv_deploy/README.md	2023-09-04 11:24:35.171723608 -0700
+@@ -16,8 +16,8 @@ The sample demonstrates the use of mv_co
+ 	* AMD Radeon GPU or APU required
+ * [ROCm](https://github.com/RadeonOpenCompute/ROCm#installing-from-amd-rocm-repositories)
+ * Build & Install [MIVisionX](https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX#linux-1)
+-	* MIVisionX installs model compiler at `/opt/rocm/libexec/mivisionx`
+-  * mv_compile installs at `/opt/rocm/bin` and mvdeploy_api.h installs at `/opt/rocm/include/mivisionx` 
++	* MIVisionX installs model compiler at `/usr/libexec/mivisionx`
++  * mv_compile installs at `/usr/bin` and mvdeploy_api.h installs at `/usr/include/mivisionx` 
+ 
+ 
+ ### Usage
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_basic_test/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rali_basic_test/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_basic_test/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_basic_test/CMakeLists.txt	2023-09-04 11:24:35.171723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rali_basic_test)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rali_basic_test.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader/CMakeLists.txt	2023-09-04 11:24:35.171723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rali_dataloader)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rali_dataloader.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader/README.md MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader/README.md
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader/README.md	2023-09-04 11:24:35.171723608 -0700
+@@ -12,8 +12,8 @@ This application demonstrates a basic us
+ 
+ ### build
+   ````
+-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
+-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/rpp/lib
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/rpp/@LIBDIR@
+   mkdir build
+   cd build
+   cmake ../
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader_mt/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader_mt/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader_mt/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader_mt/CMakeLists.txt	2023-09-04 11:24:35.171723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rali_dataloader_mt)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rali_dataloader_mt.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader_mt/README.md MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader_mt/README.md
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader_mt/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader_mt/README.md	2023-09-04 11:24:35.171723608 -0700
+@@ -12,8 +12,8 @@ This application demonstrates a basic us
+ 
+ ### build
+   ````
+-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
+-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/rpp/lib
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/rpp/@LIBDIR@
+   mkdir build
+   cd build
+   cmake ../
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader_tf/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader_tf/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader_tf/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader_tf/CMakeLists.txt	2023-09-04 11:24:35.171723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rali_dataloader_tf)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rali_dataloader_tf.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader_tf/README.md MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader_tf/README.md
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_dataloader_tf/README.md	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_dataloader_tf/README.md	2023-09-04 11:24:35.171723608 -0700
+@@ -12,8 +12,8 @@ This application demonstrates a basic us
+ 
+ ### build
+   ````
+-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
+-  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/rpp/lib
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/@LIBDIR@
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/rpp/@LIBDIR@
+   mkdir build
+   cd build
+   cmake ../
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_performance_tests/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rali_performance_tests/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_performance_tests/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_performance_tests/CMakeLists.txt	2023-09-04 11:24:35.171723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rali_performance_tests)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rali_performance_tests.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_performance_tests_with_depth/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rali_performance_tests_with_depth/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_performance_tests_with_depth/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_performance_tests_with_depth/CMakeLists.txt	2023-09-04 11:24:35.171723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rali_performance_tests_with_depth)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rali_performance_tests_with_depth.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_unittests/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rali_unittests/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_unittests/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_unittests/CMakeLists.txt	2023-09-04 11:24:35.175723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rali_unittests)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rali_unittests.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_video_unittests/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rali_video_unittests/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rali_video_unittests/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rali_video_unittests/CMakeLists.txt	2023-09-04 11:24:35.175723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rali_video_unittests)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rali_video_unittests.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+@@ -44,4 +44,4 @@ include_directories(${OpenCV_INCLUDE_DIR
+ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mf16c -Wall ")
+ target_link_libraries(${PROJECT_NAME} rali ${OpenCV_LIBRARIES})
+ 
+-install (TARGETS ${PROJECT_NAME} DESTINATION bin)
+\ No newline at end of file
++install (TARGETS ${PROJECT_NAME} DESTINATION bin)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/rali/rocal_unittests/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/rali/rocal_unittests/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/rali/rocal_unittests/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/rali/rocal_unittests/CMakeLists.txt	2023-09-04 11:24:35.175723608 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required (VERSION 3.0)
+ project (rocal_unittests)
+ 
+ set (CMAKE_CXX_STANDARD 11)
+-set(ROCM_PATH /opt/rocm CACHE PATH " default ROCm installation path")
++set(ROCM_PATH /usr CACHE PATH " default ROCm installation path")
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../amd_openvx/cmake)
+ 
+ find_package(OpenCV QUIET)
+ find_package(AMDRPP QUIET)
+ 
+ include_directories ( ${OpenCV_INCLUDE_DIRS} ${ROCM_PATH}/include/mivisionx)
+-link_directories    (${ROCM_PATH}/lib/)
++link_directories    (${ROCM_PATH}/@LIBDIR@/)
+ 
+ add_executable(${PROJECT_NAME} ./rocal_unittests.cpp)
+ target_compile_definitions(${PROJECT_NAME} PUBLIC ENABLE_OPENCV=1)
+diff -urp MIVisionX-rocm-5.1.3.orig/utilities/runvx/CMakeLists.txt MIVisionX-rocm-5.1.3/utilities/runvx/CMakeLists.txt
+--- MIVisionX-rocm-5.1.3.orig/utilities/runvx/CMakeLists.txt	2022-05-19 14:27:37.000000000 -0700
++++ MIVisionX-rocm-5.1.3/utilities/runvx/CMakeLists.txt	2023-09-04 11:24:35.175723608 -0700
+@@ -74,7 +74,7 @@ elseif (GPU_SUPPORT AND "${BACKEND}" STR
+         SET(HSA_PATH $ENV{HSA_PATH})
+     endif()
+ 
+-    list(APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/lib/cmake/hip ${HIP_PATH}/cmake)
++    list(APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake)
+ 
+     find_package(HIP QUIET)
+     if(HIP_FOUND)
+@@ -83,7 +83,7 @@ elseif (GPU_SUPPORT AND "${BACKEND}" STR
+             set(hip_library_name amdhip64)
+             list(APPEND HIP_CXX_FLAGS -std=gnu++14)
+             include_directories(${ROCM_PATH}/include ${HIP_PATH}/include ${HSA_PATH}/include)
+-            link_directories(${HIP_PATH}/lib)
++            link_directories(${HIP_PATH}/@LIBDIR@)
+             add_executable(runvx ${SOURCES})
+             target_link_libraries(runvx openvx pthread)
+             target_compile_definitions(runvx PUBLIC ENABLE_OPENCL=0)
