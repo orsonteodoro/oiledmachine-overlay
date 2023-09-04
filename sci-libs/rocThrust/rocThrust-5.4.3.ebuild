@@ -34,7 +34,7 @@ LICENSE="Apache-2.0"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="
-benchmark test
+benchmark test r1
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
