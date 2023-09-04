@@ -45,6 +45,9 @@ RESTRICT="
 	test
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
+PATCHES=(
+	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+)
 
 pkg_setup() {
 	llvm_pkg_setup
@@ -52,8 +55,8 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply_user
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
