@@ -25,8 +25,5 @@
       Allows to bypass kernel version checks or disable emerging unwanted Linux
       kernels.
     </flag>
-    <flag name="video_cards_msm">
-      Add support for Adreno GPUs via the msm driver.
-    </flag>
   </use>
 </pkgmetadata>

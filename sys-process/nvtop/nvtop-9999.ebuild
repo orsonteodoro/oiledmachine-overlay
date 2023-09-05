@@ -22,6 +22,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 VIDEO_CARDS=(
 	amdgpu
+	freedreno
 	intel
 	msm
 	nvidia
@@ -89,12 +90,13 @@ RDEPEND="
 		)
 		>=x11-libs/libdrm-2.4.99[video_cards_amdgpu]
 	)
-	video_cards_msm?  (
+	video_cards_freedreno?  (
 		!custom-kernel? (
 			|| (
 				$(gen_kernel_repend ${LINUX_KERNEL_MSM_FDINFO_KV})
 			)
 		)
+		>=x11-libs/libdrm-2.4.99[video_cards_freedreno]
 	)
 	video_cards_intel?  (
 		!custom-kernel? (
@@ -188,7 +190,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCURSES_NEED_WIDE=$(usex unicode)
 		-DINTEL_SUPPORT=$(usex video_cards_intel)
-		-DMSM_SUPPORT=$(usex video_cards_msm)
+		-DMSM_SUPPORT=$(usex video_cards_freedreno)
 		-DNVIDIA_SUPPORT=$(usex video_cards_nvidia)
 		-DUSE_LIBUDEV_OVER_LIBSYSTEMD=$(usex udev)
 	)
