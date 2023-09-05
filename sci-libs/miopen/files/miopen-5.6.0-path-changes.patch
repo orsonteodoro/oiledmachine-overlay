@@ -264,21 +264,6 @@ diff -urp MIOpen-rocm-5.6.0.orig/CMakeLists.txt MIOpen-rocm-5.6.0/CMakeLists.txt
  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
  
  add_subdirectory(addkernels)
-@@ -794,3 +794,14 @@ add_subdirectory(utils)
- if(MIOPEN_ENABLE_FIN)
- add_subdirectory(fin)
- endif()
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
 --- MIOpen-rocm-5.6.0.orig/docs/embed.md	2023-06-07 21:56:47.000000000 -0700
 +++ MIOpen-rocm-5.6.0/docs/embed.md	2023-09-03 16:36:35.628627387 -0700

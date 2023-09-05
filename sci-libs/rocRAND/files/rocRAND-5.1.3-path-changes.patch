@@ -82,43 +82,6 @@ diff -urp rocRAND-rocm-5.1.3.orig/CMakeLists.txt rocRAND-rocm-5.1.3/CMakeLists.t
    find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} $ENV{ROCM_PATH})
  endif()
  
-@@ -160,3 +160,14 @@ endif()
- if (BUILD_BENCHMARK)
-     add_subdirectory(benchmark)
- endif()
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
-Only in rocRAND-rocm-5.1.3/hipRAND: CHANGELOG.md
-Only in rocRAND-rocm-5.1.3/hipRAND: cmake
-Only in rocRAND-rocm-5.1.3/hipRAND: CMakeLists.txt
-Only in rocRAND-rocm-5.1.3/hipRAND: conanfile.py
-Only in rocRAND-rocm-5.1.3/hipRAND: CONTRIBUTING.md
-Only in rocRAND-rocm-5.1.3/hipRAND: doc
-Only in rocRAND-rocm-5.1.3/hipRAND: .github
-Only in rocRAND-rocm-5.1.3/hipRAND: .gitignore
-Only in rocRAND-rocm-5.1.3/hipRAND: .gitignore.develop
-Only in rocRAND-rocm-5.1.3/hipRAND: .gitlab-ci-gputest.yml
-Only in rocRAND-rocm-5.1.3/hipRAND: .gitlab-ci.yml
-Only in rocRAND-rocm-5.1.3/hipRAND: install
-Only in rocRAND-rocm-5.1.3/hipRAND: .jenkins
-Only in rocRAND-rocm-5.1.3/hipRAND: library
-Only in rocRAND-rocm-5.1.3/hipRAND: LICENSE.txt
-Only in rocRAND-rocm-5.1.3/hipRAND: python
-Only in rocRAND-rocm-5.1.3/hipRAND: README.md
-Only in rocRAND-rocm-5.1.3/hipRAND: rmake.py
-Only in rocRAND-rocm-5.1.3/hipRAND: rtest.xml
-Only in rocRAND-rocm-5.1.3/hipRAND: test
-Only in rocRAND-rocm-5.1.3/hipRAND: toolchain-linux.cmake
-Only in rocRAND-rocm-5.1.3/hipRAND: toolchain-windows.cmake
 diff -urp rocRAND-rocm-5.1.3.orig/install rocRAND-rocm-5.1.3/install
 --- rocRAND-rocm-5.1.3.orig/install	2022-03-15 08:51:59.000000000 -0700
 +++ rocRAND-rocm-5.1.3/install	2023-09-04 14:07:53.419592764 -0700

@@ -104,21 +104,6 @@ diff -urp rocRAND-rocm-5.6.0.orig/CMakeLists.txt rocRAND-rocm-5.6.0/CMakeLists.t
      set(INSTALL_PREFIX "C:/hipSDK")
      set(CPACK_SET_DESTDIR OFF)
      set(CPACK_PACKAGE_INSTALL_DIRECTORY "C:/hipSDK")
-@@ -253,3 +253,14 @@ rocm_create_package(
-     LDCONFIG
-     # LDCONFIG_DIR ${ROCRAND_CONFIG_DIR}
- )
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp rocRAND-rocm-5.6.0.orig/docs/installing.rst rocRAND-rocm-5.6.0/docs/installing.rst
 --- rocRAND-rocm-5.6.0.orig/docs/installing.rst	2023-06-13 11:10:47.000000000 -0700
 +++ rocRAND-rocm-5.6.0/docs/installing.rst	2023-09-04 12:29:12.739671828 -0700

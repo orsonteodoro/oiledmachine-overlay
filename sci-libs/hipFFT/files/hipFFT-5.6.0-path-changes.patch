@@ -125,21 +125,6 @@ diff -urp hipFFT-rocm-5.6.0.orig/CMakeLists.txt hipFFT-rocm-5.6.0/CMakeLists.txt
  
    rocm_create_package(
      NAME ${package_name}
-@@ -249,3 +248,14 @@ if( ROCM_FOUND )
-     LDCONFIG_DIR ${HIPFFT_CONFIG_DIR}
-     )
- endif()
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp hipFFT-rocm-5.6.0.orig/deps/CMakeLists.txt hipFFT-rocm-5.6.0/deps/CMakeLists.txt
 --- hipFFT-rocm-5.6.0.orig/deps/CMakeLists.txt	2023-06-01 18:18:52.000000000 -0700
 +++ hipFFT-rocm-5.6.0/deps/CMakeLists.txt	2023-09-04 17:08:59.859447656 -0700

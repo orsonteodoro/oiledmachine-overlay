@@ -158,21 +158,6 @@ diff -urp hipfort-rocm-5.6.0.orig/CMakeLists.txt hipfort-rocm-5.6.0/CMakeLists.t
  message("-- CMAKE_INSTALL_PREFIX:${CMAKE_INSTALL_PREFIX}")
  
  INCLUDE(FortranCInterface)
-@@ -163,3 +163,14 @@ rocm_create_package(
- )
- 
- message("-- HIPFORT -------------  cmake DONE --------------------")
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp hipfort-rocm-5.6.0.orig/lib/CMakeLists.txt hipfort-rocm-5.6.0/lib/CMakeLists.txt
 --- hipfort-rocm-5.6.0.orig/lib/CMakeLists.txt	2023-03-24 06:32:43.000000000 -0700
 +++ hipfort-rocm-5.6.0/lib/CMakeLists.txt	2023-09-03 19:23:34.552493596 -0700

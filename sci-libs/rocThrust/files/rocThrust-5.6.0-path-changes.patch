@@ -116,21 +116,6 @@ diff -urp rocThrust-rocm-5.6.0.orig/CMakeLists.txt rocThrust-rocm-5.6.0/CMakeLis
    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
  endif()
  
-@@ -209,3 +209,14 @@ rocm_create_package(
-   MAINTAINER "rocthrust-maintainer@amd.com"
-   HEADER_ONLY
- )
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp rocThrust-rocm-5.6.0.orig/docs/setup/cmake_options.md rocThrust-rocm-5.6.0/docs/setup/cmake_options.md
 --- rocThrust-rocm-5.6.0.orig/docs/setup/cmake_options.md	2023-05-31 14:59:33.000000000 -0700
 +++ rocThrust-rocm-5.6.0/docs/setup/cmake_options.md	2023-09-04 15:38:35.859520087 -0700

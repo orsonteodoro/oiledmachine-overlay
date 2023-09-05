@@ -28,21 +28,6 @@ diff -urp rocWMMA-rocm-5.4.3.orig/CMakeLists.txt rocWMMA-rocm-5.4.3/CMakeLists.t
  # Append our library helper cmake path and the cmake path for hip (for convenience).
  # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
  list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
-@@ -127,3 +127,14 @@ rocm_create_package(
-   MAINTAINER "rocWMMA Maintainer <rocwmma-maintainer@amd.com>"
-   HEADER_ONLY
- )
-+
-+message(STATUS "<<< Gentoo configuration >>>
-+Build type      ${CMAKE_BUILD_TYPE}
-+Install path    ${CMAKE_INSTALL_PREFIX}
-+Compiler flags:
-+C               ${CMAKE_C_FLAGS}
-+C++             ${CMAKE_CXX_FLAGS}
-+Linker flags:
-+Executable      ${CMAKE_EXE_LINKER_FLAGS}
-+Module          ${CMAKE_MODULE_LINKER_FLAGS}
-+Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
 diff -urp rocWMMA-rocm-5.4.3.orig/docs/source/Contributors_Guide.rst rocWMMA-rocm-5.4.3/docs/source/Contributors_Guide.rst
 --- rocWMMA-rocm-5.4.3.orig/docs/source/Contributors_Guide.rst	2022-10-20 07:58:11.000000000 -0700
 +++ rocWMMA-rocm-5.4.3/docs/source/Contributors_Guide.rst	2023-09-03 21:30:10.752392158 -0700
