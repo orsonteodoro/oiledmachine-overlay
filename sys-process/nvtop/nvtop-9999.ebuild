@@ -113,7 +113,7 @@ pkg_setup() {
 		local kv=$(uname -r | cut -f 1 -d "-")
 		if ver_test ${kv} -lt ${LINUX_KERNEL_AMDGPU_FDINFO_KV} ; then
 ewarn
-ewarn "Kernel version requirements is not met for running kernel."
+ewarn "Kernel version requirements is not met for the running kernel."
 ewarn
 ewarn "Detected kernel version:  $(uname -r)"
 ewarn "Required kernel version:  ${LINUX_KERNEL_AMDGPU_FDINFO_KV} or later"
@@ -127,7 +127,7 @@ ewarn
 		local kv=$(uname -r | cut -f 1 -d "-")
 		if ver_test ${kv} -lt ${LINUX_KERNEL_INTEL_FDINFO_KV} ; then
 ewarn
-ewarn "Kernel version requirements is not met for running kernel."
+ewarn "Kernel version requirements is not met for the running kernel."
 ewarn
 ewarn "Detected kernel version:  $(uname -r)"
 ewarn "Required kernel version:  ${LINUX_KERNEL_INTEL_FDINFO_KV} or later"
@@ -141,7 +141,7 @@ ewarn
 		local kv=$(uname -r | cut -f 1 -d "-")
 		if ver_test ${kv} -lt ${LINUX_KERNEL_MSM_FDINFO_KV} ; then
 ewarn
-ewarn "Kernel version requirements is not met for running kernel."
+ewarn "Kernel version requirements is not met for the running kernel."
 ewarn
 ewarn "Detected kernel version:  $(uname -r)"
 ewarn "Required kernel version:  ${LINUX_KERNEL_MSM_FDINFO_KV} or later"
