@@ -108,10 +108,10 @@ BDEPEND="
 "
 
 pkg_setup() {
+	linux-info_pkg_setup
+	CONFIG_CHECK=" PROC_FS"
 	if use video_cards_amdgpu ; then
-		linux-info_pkg_setup
-		CONFIG_CHECK="~DRM_AMDGPU ~SYSFS"
-		check_extra_config
+		CONFIG_CHECK+=" ~DRM_AMDGPU ~SYSFS"
 		local kv=$(uname -r | cut -f 1 -d "-")
 		if ver_test ${kv} -lt ${LINUX_KERNEL_AMDGPU_FDINFO_KV} ; then
 ewarn
@@ -123,9 +123,7 @@ ewarn
 		fi
 	fi
 	if use video_cards_intel ; then
-		linux-info_pkg_setup
-		CONFIG_CHECK="~DRM_I915"
-		check_extra_config
+		CONFIG_CHECK+=" ~DRM_I915"
 		local kv=$(uname -r | cut -f 1 -d "-")
 		if ver_test ${kv} -lt ${LINUX_KERNEL_INTEL_FDINFO_KV} ; then
 ewarn
@@ -147,6 +145,7 @@ ewarn "Missing NVML library.  emerge x11-drivers/nvidia-drivers."
 ewarn
 		fi
 	fi
+	check_extra_config
 }
 
 src_unpack() {
