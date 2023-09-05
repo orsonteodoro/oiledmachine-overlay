@@ -1,0 +1,279 @@
+diff -urp hipFFT-rocm-5.1.3.orig/clients/cmake/FindFFTW.cmake hipFFT-rocm-5.1.3/clients/cmake/FindFFTW.cmake
+--- hipFFT-rocm-5.1.3.orig/clients/cmake/FindFFTW.cmake	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/clients/cmake/FindFFTW.cmake	2023-09-04 18:04:24.919403254 -0700
+@@ -45,11 +45,11 @@ if( FFTW_FIND_REQUIRED_FLOAT OR FFTW_FIN
+   find_library( FFTW_LIBRARIES_SINGLE
+       NAMES fftw3f fftw3f-3 fftw3 fftw3-3
+       HINTS
+-          ${FFTW_ROOT}/lib
+-          $ENV{FFTW_ROOT}/lib
++          ${FFTW_ROOT}/@LIBDIR@
++          $ENV{FFTW_ROOT}/@LIBDIR@
+       PATHS
+-          /usr/lib
+-          /usr/local/lib
++          /usr/@LIBDIR@
++          /usr/local/@LIBDIR@
+       PATH_SUFFIXES
+           x86_64-linux-gnu
+       DOC "FFTW dynamic library single"
+@@ -62,11 +62,11 @@ if( FFTW_FIND_REQUIRED_DOUBLE )
+   find_library( FFTW_LIBRARIES_DOUBLE
+       NAMES fftw3
+       HINTS
+-          ${FFTW_ROOT}/lib
+-          $ENV{FFTW_ROOT}/lib
++          ${FFTW_ROOT}/@LIBDIR@
++          $ENV{FFTW_ROOT}/@LIBDIR@
+       PATHS
+-          /usr/lib
+-          /usr/local/lib
++          /usr/@LIBDIR@
++          /usr/local/@LIBDIR@
+       PATH_SUFFIXES
+           x86_64-linux-gnu
+       DOC "FFTW dynamic library double"
+diff -urp hipFFT-rocm-5.1.3.orig/clients/CMakeLists.txt hipFFT-rocm-5.1.3/clients/CMakeLists.txt
+--- hipFFT-rocm-5.1.3.orig/clients/CMakeLists.txt	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/clients/CMakeLists.txt	2023-09-04 18:04:24.947403253 -0700
+@@ -33,7 +33,7 @@ if( WIN32 )
+     "Install path prefix, prepended onto install directories" )
+ else( )
+   set( CMAKE_INSTALL_PREFIX
+-    "/opt/rocm"
++    "/usr"
+     CACHE
+     PATH
+     "Install path prefix, prepended onto install directories" )
+@@ -92,8 +92,8 @@ if( BUILD_CLIENTS_TESTS )
+       ${CMAKE_CURRENT_BINARY_DIR}/src/gtest/googletest/include
+       )
+     set( GTEST_LIBRARIES
+-      ${CMAKE_CURRENT_BINARY_DIR}/src/gtest-build/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}
+-      ${CMAKE_CURRENT_BINARY_DIR}/src/gtest-build/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}
++      ${CMAKE_CURRENT_BINARY_DIR}/src/gtest-build/@LIBDIR@/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}
++      ${CMAKE_CURRENT_BINARY_DIR}/src/gtest-build/@LIBDIR@/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX}
+       )
+ 
+     ExternalProject_Add( gtest
+diff -urp hipFFT-rocm-5.1.3.orig/cmake/dependencies.cmake hipFFT-rocm-5.1.3/cmake/dependencies.cmake
+--- hipFFT-rocm-5.1.3.orig/cmake/dependencies.cmake	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/cmake/dependencies.cmake	2023-09-04 18:04:24.919403254 -0700
+@@ -54,7 +54,7 @@ else()
+ endif()
+ 
+ # ROCm
+-find_package( ROCM 0.6 CONFIG PATHS /opt/rocm )
++find_package( ROCM 0.6 CONFIG PATHS /usr )
+ if(NOT ROCM_FOUND)
+   set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
+   set( PROJECT_EXTERN_DIR "${CMAKE_CURRENT_BINARY_DIR}/extern" )
+diff -urp hipFFT-rocm-5.1.3.orig/cmake/package-functions.cmake hipFFT-rocm-5.1.3/cmake/package-functions.cmake
+--- hipFFT-rocm-5.1.3.orig/cmake/package-functions.cmake	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/cmake/package-functions.cmake	2023-09-04 18:04:24.919403254 -0700
+@@ -16,8 +16,8 @@ do_ldconfig() {
+ 
+ do_softlinks() {
+     ln -sr ${CPACK_PACKAGING_INSTALL_PREFIX}/${INCLUDE_INSTALL_DIR} ${CPACK_PACKAGING_INSTALL_PREFIX}/../include/${library_name}
+-    ln -sr ${CPACK_PACKAGING_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/${library_link_name}.1 ${CPACK_PACKAGING_INSTALL_PREFIX}/../lib/${library_link_name}
+-    ln -sr ${CPACK_PACKAGING_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/cmake/${library_name} ${CPACK_PACKAGING_INSTALL_PREFIX}/../lib/cmake/${library_name}
++    ln -sr ${CPACK_PACKAGING_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/${library_link_name}.1 ${CPACK_PACKAGING_INSTALL_PREFIX}/../@LIBDIR@/${library_link_name}
++    ln -sr ${CPACK_PACKAGING_INSTALL_PREFIX}/${LIB_INSTALL_DIR}/cmake/${library_name} ${CPACK_PACKAGING_INSTALL_PREFIX}/../@LIBDIR@/cmake/${library_name}
+ }
+ 
+ case \"\$1\" in
+@@ -45,8 +45,8 @@ rm_ldconfig() {
+ 
+ rm_softlinks() {
+     rm -f ${CPACK_PACKAGING_INSTALL_PREFIX}/../include/${library_name}
+-    rm -f ${CPACK_PACKAGING_INSTALL_PREFIX}/../lib/${library_link_name}
+-    rm -f ${CPACK_PACKAGING_INSTALL_PREFIX}/../lib/cmake/${library_name}
++    rm -f ${CPACK_PACKAGING_INSTALL_PREFIX}/../@LIBDIR@/${library_link_name}
++    rm -f ${CPACK_PACKAGING_INSTALL_PREFIX}/../@LIBDIR@/cmake/${library_name}
+ }
+ 
+ case \"\$1\" in
+diff -urp hipFFT-rocm-5.1.3.orig/CMakeLists.txt hipFFT-rocm-5.1.3/CMakeLists.txt
+--- hipFFT-rocm-5.1.3.orig/CMakeLists.txt	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/CMakeLists.txt	2023-09-04 18:04:25.003403253 -0700
+@@ -32,20 +32,20 @@ if( WIN32 )
+   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else()
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif()
+ 
+ 
+ # Workarounds..
+-list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm )
+-list( APPEND CMAKE_MODULE_PATH /opt/rocm/hip/cmake )
++list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr )
++list( APPEND CMAKE_MODULE_PATH /usr/@LLVM_SLOT@/cmake/hip )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.
+ # MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ project( hipfft LANGUAGES CXX )
+@@ -133,7 +133,6 @@ endif()
+ add_subdirectory( library )
+ 
+ # force library install path to lib (CentOS 7 defaults to lib64)
+-set( CMAKE_INSTALL_LIBDIR "lib" CACHE INTERNAL "Installation directory for libraries" FORCE )
+ 
+ # Build clients of the library
+ if( BUILD_CLIENTS )
+@@ -148,3 +147,14 @@ if( BUILD_CLIENTS_RIDER OR BUILD_CLIENTS
+   add_subdirectory( clients )
+ endif()
+ 
++
++message(STATUS "<<< Gentoo configuration >>>
++Build type      ${CMAKE_BUILD_TYPE}
++Install path    ${CMAKE_INSTALL_PREFIX}
++Compiler flags:
++C               ${CMAKE_C_FLAGS}
++C++             ${CMAKE_CXX_FLAGS}
++Linker flags:
++Executable      ${CMAKE_EXE_LINKER_FLAGS}
++Module          ${CMAKE_MODULE_LINKER_FLAGS}
++Shared          ${CMAKE_SHARED_LINKER_FLAGS}\n")
+diff -urp hipFFT-rocm-5.1.3.orig/deps/CMakeLists.txt hipFFT-rocm-5.1.3/deps/CMakeLists.txt
+--- hipFFT-rocm-5.1.3.orig/deps/CMakeLists.txt	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/deps/CMakeLists.txt	2023-09-04 18:04:24.951403253 -0700
+@@ -12,13 +12,13 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
+ # Consider removing this in the future
+ # It can be annoying for visual studio developers to build a project that tries to install into 'program files'
+ if( WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ # The superbuild does not build anything itself; all compiling is done in external projects
+diff -urp hipFFT-rocm-5.1.3.orig/deps/external-gtest.cmake hipFFT-rocm-5.1.3/deps/external-gtest.cmake
+--- hipFFT-rocm-5.1.3.orig/deps/external-gtest.cmake	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/deps/external-gtest.cmake	2023-09-04 18:04:24.919403254 -0700
+@@ -72,11 +72,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
+diff -urp hipFFT-rocm-5.1.3.orig/.githooks/pre-commit hipFFT-rocm-5.1.3/.githooks/pre-commit
+--- hipFFT-rocm-5.1.3.orig/.githooks/pre-commit	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/.githooks/pre-commit	2023-09-04 18:04:24.923403254 -0700
+@@ -4,7 +4,7 @@
+ # are installed, and if so, uses the installed version to format
+ # the staged changes.
+ 
+-base=/opt/rocm/hcc/bin/clang-format
++base=/usr/hcc/bin/clang-format
+ format=""
+ 
+ # Redirect output to stderr.
+diff -urp hipFFT-rocm-5.1.3.orig/library/CMakeLists.txt hipFFT-rocm-5.1.3/library/CMakeLists.txt
+--- hipFFT-rocm-5.1.3.orig/library/CMakeLists.txt	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/library/CMakeLists.txt	2023-09-04 18:04:24.951403253 -0700
+@@ -81,7 +81,7 @@ target_include_directories( hipfft
+   PUBLIC  $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/library/include>
+   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+   $<BUILD_INTERFACE:${HIP_INCLUDE_DIRS}>
+-  $<INSTALL_INTERFACE:include>
++  $<INSTALL_INTERFACE:include/hipfft>
+   ${HIP_INCLUDE_DIRS}
+   )
+ 
+@@ -130,7 +130,7 @@ generate_export_header( hipfft EXPORT_FI
+ if(WIN32)
+   set(CPACK_SOURCE_GENERATOR "ZIP")
+   set(CPACK_GENERATOR "ZIP")
+-  set(CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE)
+   set(INSTALL_PREFIX "C:/hipSDK")
+   set(CPACK_SET_DESTDIR OFF)
+   set(CPACK_PACKAGE_INSTALL_DIRECTORY "C:/hipSDK")
+@@ -142,13 +142,11 @@ if( ROCM_FOUND )
+   rocm_install_targets( TARGETS hipfft
+     INCLUDE
+     ${CMAKE_SOURCE_DIR}/library/include
+-    ${CMAKE_BINARY_DIR}/include
+-    PREFIX hipfft )
++    ${CMAKE_BINARY_DIR}/include )
+   rocm_export_targets( TARGETS hip::hipfft
+-    PREFIX hipfft
++    PREFIX .
+     DEPENDS PACKAGE hip
+     NAMESPACE hip:: )
+-  rocm_install_symlink_subdir( hipfft )
+ 
+   # Package specific CPACK vars
+   if( NOT BUILD_WITH_LIB STREQUAL "CUDA" )
+@@ -161,7 +159,7 @@ if( ROCM_FOUND )
+ 
+   set( CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE.md" )
+ 
+-  set( CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "\${CPACK_PACKAGING_INSTALL_PREFIX}" "\${CPACK_PACKAGING_INSTALL_PREFIX}/include" "\${CPACK_PACKAGING_INSTALL_PREFIX}/lib" )
++  set( CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "\${CPACK_PACKAGING_INSTALL_PREFIX}" "\${CPACK_PACKAGING_INSTALL_PREFIX}/include" "\${CPACK_PACKAGING_INSTALL_PREFIX}/@LIBDIR@" )
+ 
+   # Give hipfft compiled for CUDA backend a different name
+   if( BUILD_WITH_LIB STREQUAL "ROCM" )
+diff -urp hipFFT-rocm-5.1.3.orig/README.md hipFFT-rocm-5.1.3/README.md
+--- hipFFT-rocm-5.1.3.orig/README.md	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/README.md	2023-09-04 18:04:24.923403254 -0700
+@@ -25,8 +25,8 @@ If you are transitioning from the hipFFT
+ this standalone hipFFT version; please modify your build following
+ this example:
+ 
+-* previously: `hipcc hipfft_1d_z2z.cpp -L/opt/rocm/lib -lrocfft`
+-* during transition: `hipcc -I/opt/rocm/hipfft/include hipfft_1d_z2z.cpp -L/opt/rocm/lib -lhipfft -lrocfft`
++* previously: `hipcc hipfft_1d_z2z.cpp -L/usr/@LIBDIR@ -lrocfft`
++* during transition: `hipcc -I/usr/hipfft/include hipfft_1d_z2z.cpp -L/usr/@LIBDIR@ -lhipfft -lrocfft`
+ 
+ ## Building from source
+ 
+diff -urp hipFFT-rocm-5.1.3.orig/rmake.py hipFFT-rocm-5.1.3/rmake.py
+--- hipFFT-rocm-5.1.3.orig/rmake.py	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/rmake.py	2023-09-04 18:04:24.923403254 -0700
+@@ -88,7 +88,7 @@ def config_cmd():
+         cmake_options.extend( generator )
+         toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
+         cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path}")
+         cmake_platform_opts.append( f"-DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
+         cmake_platform_opts.append( f"-DCMAKE_INSTALL_PREFIX=rocfft-install" )
+diff -urp hipFFT-rocm-5.1.3.orig/toolchain-linux.cmake hipFFT-rocm-5.1.3/toolchain-linux.cmake
+--- hipFFT-rocm-5.1.3.orig/toolchain-linux.cmake	2022-03-10 13:18:37.000000000 -0800
++++ hipFFT-rocm-5.1.3/toolchain-linux.cmake	2023-09-04 18:04:24.923403254 -0700
+@@ -1,8 +1,8 @@
+ 
+ if (DEFINED ENV{ROCM_PATH})
+-  set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
++  set(rocm_bin "$ENV{ROCM_PATH}/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/hip/bin")
++  set(rocm_bin "/usr/bin")
+ endif()
+ 
+ set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")

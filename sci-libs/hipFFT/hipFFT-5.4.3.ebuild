@@ -97,15 +97,17 @@ S="${WORKDIR}/hipFFT-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-remove-git-dependency.patch"
 	"${FILESDIR}/${PN}-4.3.0-add-complex-header.patch"
+	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 )
 
+pkg_setup() {
+	llvm_pkg_setup
+	rocm_pkg_setup
+}
+
 src_prepare() {
-	sed \
-		-e "/CMAKE_INSTALL_LIBDIR/d" \
-		-i \
-		CMakeLists.txt \
-		|| die
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
