@@ -316,15 +316,6 @@ diff -urp hipBLAS-rocm-5.6.0.orig/library/src/CMakeLists.txt hipBLAS-rocm-5.6.0/
        endif()
      endif( )
      target_link_libraries( hipblas PRIVATE roc::rocsolver )
-@@ -155,7 +155,7 @@ endif( )
- 
- # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
- if( NOT BUILD_SHARED_LIBS )
--  set_target_properties( hipblas PROPERTIES PREFIX "lib" )
-+  set_target_properties( hipblas PROPERTIES PREFIX "@LIBDIR@" )
- endif( )
- 
- ############################################################
 @@ -199,7 +199,7 @@ if(BUILD_FILE_REORG_BACKWARD_COMPATIBILI
        CODE "
          set(PREFIX \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})

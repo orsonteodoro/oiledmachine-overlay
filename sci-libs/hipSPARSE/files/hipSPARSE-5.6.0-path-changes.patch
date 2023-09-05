@@ -244,21 +244,6 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/install.sh hipSPARSE-rocm-5.6.0/install.sh
        -DROCM_DISABLE_LDCONFIG=ON \
        -DROCM_PATH="${rocm_path}" ../..
    else
-diff -urp hipSPARSE-rocm-5.6.0.orig/library/CMakeLists.txt hipSPARSE-rocm-5.6.0/library/CMakeLists.txt
---- hipSPARSE-rocm-5.6.0.orig/library/CMakeLists.txt	2023-06-12 11:14:10.000000000 -0700
-+++ hipSPARSE-rocm-5.6.0/library/CMakeLists.txt	2023-09-01 16:38:51.825661666 -0700
-@@ -99,9 +99,9 @@ if (WIN32 AND BUILD_SHARED_LIBS)
-   endif()
- endif()
- 
--# Following boost conventions of prefixing 'lib' on static built libraries
-+# Following boost conventions of prefixing '@LIBDIR@' on static built libraries
- if(NOT BUILD_SHARED_LIBS)
--  set_target_properties(hipsparse PROPERTIES PREFIX "lib")
-+  set_target_properties(hipsparse PROPERTIES PREFIX "@LIBDIR@")
- endif()
- 
- # Generate export header
 diff -urp hipSPARSE-rocm-5.6.0.orig/rmake.py hipSPARSE-rocm-5.6.0/rmake.py
 --- hipSPARSE-rocm-5.6.0.orig/rmake.py	2023-06-12 11:14:10.000000000 -0700
 +++ hipSPARSE-rocm-5.6.0/rmake.py	2023-09-01 16:36:54.417658608 -0700

@@ -30,7 +30,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSOLVER"
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test benchmark"
+IUSE="test benchmark r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "

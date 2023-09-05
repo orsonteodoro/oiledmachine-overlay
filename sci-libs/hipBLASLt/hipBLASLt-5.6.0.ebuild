@@ -44,7 +44,7 @@ SLOT="0/$(ver_cut 1-2)"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile
+benchmark cuda +rocm +tensile r1
 "
 gen_cuda_required_use() {
 	local x

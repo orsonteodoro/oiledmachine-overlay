@@ -340,15 +340,6 @@ diff -urp hipBLAS-rocm-5.1.3.orig/library/src/CMakeLists.txt hipBLAS-rocm-5.1.3/
        endif()
      endif( )
      target_link_libraries( hipblas PRIVATE roc::rocsolver )
-@@ -128,7 +128,7 @@ generate_export_header( hipblas EXPORT_F
- 
- # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
- if( NOT BUILD_SHARED_LIBS )
--  set_target_properties( hipblas PROPERTIES PREFIX "lib" )
-+  set_target_properties( hipblas PROPERTIES PREFIX "@LIBDIR@" )
- endif( )
- 
- ############################################################
 diff -urp hipBLAS-rocm-5.1.3.orig/README.md hipBLAS-rocm-5.1.3/README.md
 --- hipBLAS-rocm-5.1.3.orig/README.md	2022-03-10 14:24:13.000000000 -0800
 +++ hipBLAS-rocm-5.1.3/README.md	2023-09-01 14:42:20.229479566 -0700

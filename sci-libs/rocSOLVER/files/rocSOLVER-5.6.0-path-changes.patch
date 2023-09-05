@@ -136,20 +136,6 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/install.sh rocSOLVER-rocm-5.6.0/install.sh
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
-Only in rocSOLVER-rocm-5.6.0: install.sh.orig
-diff -urp rocSOLVER-rocm-5.6.0.orig/library/src/CMakeLists.txt rocSOLVER-rocm-5.6.0/library/src/CMakeLists.txt
---- rocSOLVER-rocm-5.6.0.orig/library/src/CMakeLists.txt	2023-06-13 12:58:39.000000000 -0700
-+++ rocSOLVER-rocm-5.6.0/library/src/CMakeLists.txt	2023-09-01 12:13:37.117247158 -0700
-@@ -318,7 +318,7 @@ endif( )
- 
- # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
- if(NOT BUILD_SHARED_LIBS)
--  set_target_properties(rocsolver PROPERTIES PREFIX "lib")
-+  set_target_properties(rocsolver PROPERTIES PREFIX "@LIBDIR@")
- endif()
- 
- if(OPTIMAL)
-Only in rocSOLVER-rocm-5.6.0/library/src: CMakeLists.txt.orig
 diff -urp rocSOLVER-rocm-5.6.0.orig/README.md rocSOLVER-rocm-5.6.0/README.md
 --- rocSOLVER-rocm-5.6.0.orig/README.md	2023-06-13 12:58:39.000000000 -0700
 +++ rocSOLVER-rocm-5.6.0/README.md	2023-09-01 12:13:37.117247158 -0700

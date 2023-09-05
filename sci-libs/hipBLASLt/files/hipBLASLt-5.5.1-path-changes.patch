@@ -149,18 +149,6 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/deps/external-gtest.cmake hipBLASLt-rocm-5.5
  
    set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
    ExternalProject_Add_Step( googletest createPackage
-diff -urp hipBLASLt-rocm-5.5.1.orig/library/CMakeLists.txt hipBLASLt-rocm-5.5.1/library/CMakeLists.txt
---- hipBLASLt-rocm-5.5.1.orig/library/CMakeLists.txt	2023-01-12 00:53:42.000000000 -0800
-+++ hipBLASLt-rocm-5.5.1/library/CMakeLists.txt	2023-09-03 16:18:55.468641544 -0700
-@@ -163,7 +163,7 @@ set_target_propertieS(hipblaslt PROPERTI
- # TODO ??
- # Following boost conventions of prefixing 'lib' on static built libraries
- if(NOT BUILD_SHARED_LIBS)
--  set_target_properties(hipblaslt PROPERTIES PREFIX "lib")
-+  set_target_properties(hipblaslt PROPERTIES PREFIX "@LIBDIR@")
- endif()
- 
- # Generate export header
 diff -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/cmake/TensileConfig.cmake hipBLASLt-rocm-5.5.1/tensilelite/Tensile/cmake/TensileConfig.cmake
 --- hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-01-12 00:53:42.000000000 -0800
 +++ hipBLASLt-rocm-5.5.1/tensilelite/Tensile/cmake/TensileConfig.cmake	2023-09-03 16:18:55.468641544 -0700

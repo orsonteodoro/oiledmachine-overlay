@@ -224,19 +224,6 @@ diff -urp hipSOLVER-rocm-5.5.1.orig/library/src/CMakeLists.txt hipSOLVER-rocm-5.
      endif( )
    endif( )
  
-@@ -163,9 +163,9 @@ if (BUILD_FILE_REORG_BACKWARD_COMPATIBIL
- endif( )
- 
- 
--# Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
-+# Following Boost conventions of prefixing '@LIBDIR@' on static built libraries, across all platforms
- if( NOT BUILD_SHARED_LIBS )
--  set_target_properties( hipsolver PROPERTIES PREFIX "lib" )
-+  set_target_properties( hipsolver PROPERTIES PREFIX "@LIBDIR@" )
- endif( )
- 
- ############################################################
-Only in hipSOLVER-rocm-5.5.1/library/src: CMakeLists.txt.orig
 diff -urp hipSOLVER-rocm-5.5.1.orig/README.md hipSOLVER-rocm-5.5.1/README.md
 --- hipSOLVER-rocm-5.5.1.orig/README.md	2023-01-15 13:46:35.000000000 -0800
 +++ hipSOLVER-rocm-5.5.1/README.md	2023-09-01 15:19:09.721537113 -0700

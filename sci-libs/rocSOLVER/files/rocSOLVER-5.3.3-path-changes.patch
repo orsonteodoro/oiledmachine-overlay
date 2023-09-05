@@ -226,23 +226,6 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/install.sh rocSOLVER-rocm-5.3.3/install.sh
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
-Only in rocSOLVER-rocm-5.3.3: install.sh.orig
-Only in rocSOLVER-rocm-5.3.3/library: CMakeLists.txt.orig
-Only in rocSOLVER-rocm-5.3.3/library: CMakeLists.txt.rej
-diff -urp rocSOLVER-rocm-5.3.3.orig/library/src/CMakeLists.txt rocSOLVER-rocm-5.3.3/library/src/CMakeLists.txt
---- rocSOLVER-rocm-5.3.3.orig/library/src/CMakeLists.txt	2022-09-13 17:25:58.000000000 -0700
-+++ rocSOLVER-rocm-5.3.3/library/src/CMakeLists.txt	2023-09-01 12:02:49.873230300 -0700
-@@ -283,7 +283,7 @@ endif( )
- 
- # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
- if(NOT BUILD_SHARED_LIBS)
--  set_target_properties(rocsolver PROPERTIES PREFIX "lib")
-+  set_target_properties(rocsolver PROPERTIES PREFIX "@LIBDIR@")
- endif()
- 
- if(OPTIMAL)
-Only in rocSOLVER-rocm-5.3.3/library/src: CMakeLists.txt.orig
-Only in rocSOLVER-rocm-5.3.3/library/src: CMakeLists.txt.rej
 diff -urp rocSOLVER-rocm-5.3.3.orig/README.md rocSOLVER-rocm-5.3.3/README.md
 --- rocSOLVER-rocm-5.3.3.orig/README.md	2022-09-13 17:25:58.000000000 -0700
 +++ rocSOLVER-rocm-5.3.3/README.md	2023-09-01 12:03:38.849231576 -0700

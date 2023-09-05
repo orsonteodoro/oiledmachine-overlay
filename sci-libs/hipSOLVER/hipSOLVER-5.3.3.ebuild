@@ -19,7 +19,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="test cuda +rocm"
+IUSE="test cuda +rocm r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (

@@ -263,21 +263,6 @@ diff -urp rocBLAS-rocm-5.6.0.orig/install.sh rocBLAS-rocm-5.6.0/install.sh
        install_blis
      fi
      popd
-Only in rocBLAS-rocm-5.6.0: install.sh.orig
-Only in rocBLAS-rocm-5.6.0: install.sh.rej
-diff -urp rocBLAS-rocm-5.6.0.orig/library/src/CMakeLists.txt rocBLAS-rocm-5.6.0/library/src/CMakeLists.txt
---- rocBLAS-rocm-5.6.0.orig/library/src/CMakeLists.txt	2023-06-12 10:58:30.000000000 -0700
-+++ rocBLAS-rocm-5.6.0/library/src/CMakeLists.txt	2023-08-29 19:11:43.617354947 -0700
-@@ -543,7 +543,7 @@ endif( )
- 
- if( NOT BUILD_SHARED_LIBS )
-   # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
--  set_target_properties( rocblas PROPERTIES PREFIX "lib" )
-+  set_target_properties( rocblas PROPERTIES PREFIX "@LIBDIR@" )
- 
-   if( BUILD_WITH_TENSILE )
-     add_custom_command( TARGET rocblas POST_BUILD
-Only in rocBLAS-rocm-5.6.0/library/src: CMakeLists.txt.orig
 diff -urp rocBLAS-rocm-5.6.0.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.6.0/library/src/tensile_host.cpp
 --- rocBLAS-rocm-5.6.0.orig/library/src/tensile_host.cpp	2023-06-12 10:58:30.000000000 -0700
 +++ rocBLAS-rocm-5.6.0/library/src/tensile_host.cpp	2023-08-29 19:19:28.793364315 -0700

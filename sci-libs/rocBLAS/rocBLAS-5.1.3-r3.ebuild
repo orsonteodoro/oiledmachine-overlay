@@ -50,7 +50,7 @@ KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test r3
+benchmark cuda +rocm test r4
 "
 gen_cuda_required_use() {
 	local x

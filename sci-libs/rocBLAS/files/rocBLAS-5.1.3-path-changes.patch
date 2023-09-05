@@ -292,15 +292,6 @@ diff -urp rocBLAS-rocm-5.1.3.orig/library/CMakeLists.txt rocBLAS-rocm-5.1.3/libr
 diff -urp rocBLAS-rocm-5.1.3.orig/library/src/CMakeLists.txt rocBLAS-rocm-5.1.3/library/src/CMakeLists.txt
 --- rocBLAS-rocm-5.1.3.orig/library/src/CMakeLists.txt	2022-04-27 09:22:13.000000000 -0700
 +++ rocBLAS-rocm-5.1.3/library/src/CMakeLists.txt	2023-08-29 18:44:26.573321981 -0700
-@@ -503,7 +503,7 @@ add_dependencies( rocblas rocblas_device
- 
- if( NOT BUILD_SHARED_LIBS )
-   # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
--  set_target_properties( rocblas PROPERTIES PREFIX "lib" )
-+  set_target_properties( rocblas PROPERTIES PREFIX "@LIBDIR@" )
- 
-   if( BUILD_WITH_TENSILE )
-     add_custom_command( TARGET rocblas POST_BUILD
 @@ -543,7 +543,7 @@ if( BUILD_WITH_TENSILE )
    if (WIN32)
      set( ROCBLAS_TENSILE_LIBRARY_DIR "\${CPACK_PACKAGING_INSTALL_PREFIX}rocblas/bin" CACHE PATH "path to tensile library" )

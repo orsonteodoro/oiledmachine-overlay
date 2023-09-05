@@ -269,18 +269,6 @@ diff -urp rocBLAS-rocm-5.4.3.orig/install.sh rocBLAS-rocm-5.4.3/install.sh
        if ! [ -z ${ROCM_RPATH+x} ]; then
            rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
        fi
-diff -urp rocBLAS-rocm-5.4.3.orig/library/src/CMakeLists.txt rocBLAS-rocm-5.4.3/library/src/CMakeLists.txt
---- rocBLAS-rocm-5.4.3.orig/library/src/CMakeLists.txt	2023-01-20 07:40:01.000000000 -0800
-+++ rocBLAS-rocm-5.4.3/library/src/CMakeLists.txt	2023-08-29 19:23:42.073369416 -0700
-@@ -542,7 +542,7 @@ endif( )
- 
- if( NOT BUILD_SHARED_LIBS )
-   # Following Boost conventions of prefixing 'lib' on static built libraries, across all platforms
--  set_target_properties( rocblas PROPERTIES PREFIX "lib" )
-+  set_target_properties( rocblas PROPERTIES PREFIX "@LIBDIR@" )
- 
-   if( BUILD_WITH_TENSILE )
-     add_custom_command( TARGET rocblas POST_BUILD
 diff -urp rocBLAS-rocm-5.4.3.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.4.3/library/src/tensile_host.cpp
 --- rocBLAS-rocm-5.4.3.orig/library/src/tensile_host.cpp	2023-01-20 07:40:01.000000000 -0800
 +++ rocBLAS-rocm-5.4.3/library/src/tensile_host.cpp	2023-08-29 19:24:22.733370234 -0700

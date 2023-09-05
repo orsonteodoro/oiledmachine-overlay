@@ -59,7 +59,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda +rocm test r1"
+IUSE="cuda +rocm test r2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
