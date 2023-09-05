@@ -28,6 +28,7 @@ VIDEO_CARDS=(
 IUSE+="
 	${VIDEO_CARDS[@]/#/video_cards_}
 	custom-kernel systemd udev unicode
+	r1
 "
 REQUIRED_USE="
 	video_cards_amdgpu? (
@@ -109,7 +110,7 @@ BDEPEND="
 
 pkg_setup() {
 	linux-info_pkg_setup
-	CONFIG_CHECK=" PROC_FS"
+	CONFIG_CHECK=" ~PROC_FS"
 	if use video_cards_amdgpu ; then
 		CONFIG_CHECK+=" ~DRM_AMDGPU ~SYSFS"
 		local kv=$(uname -r | cut -f 1 -d "-")
