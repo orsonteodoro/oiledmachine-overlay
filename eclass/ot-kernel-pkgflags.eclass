@@ -88,16 +88,22 @@ ewarn
 warn_lowered_security() {
 	local pkgid="${1}"
 	if [[ "${OT_KERNEL_HALT_ON_LOWERED_SECURITY}" == "1" ]] ; then
+eerror
 eerror "Lowered security was detected for id = ${pkgid}."
+eerror
 eerror "To permit security lowering set OT_KERNEL_HALT_ON_LOWERED_SECURITY=0."
 eerror "Search the id in the ot-kernel-pkgflags.eclass in the eclass folder for"
 eerror "details."
+eerror
 		die
 	else
+ewarn
 ewarn "Security is lowered for id = ${pkgid}."
+eerror
 ewarn "To halt on lowered security, set OT_KERNEL_HALT_ON_LOWERED_SECURITY=1."
 ewarn "Search the id in the ot-kernel-pkgflags.eclass in the eclass folder for"
 ewarn "details."
+ewarn
 	fi
 }
 
