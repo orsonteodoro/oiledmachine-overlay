@@ -6380,6 +6380,8 @@ ot-kernel-pkgflags_nvtop() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd30a310]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-process/nvtop" ; then
 		einfo "Applying kernel config flags for the nvtop (id: d30a310)"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version "sys-process/nvtop[video_cards_amdgpu]" ; then
 			if ! has rock-dkms ${IUSE} ; then
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
