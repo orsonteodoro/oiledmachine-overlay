@@ -62,7 +62,7 @@ gen_kernel_repend() {
 		>=sys-kernel/vanilla-sources-${kv}
 		>=sys-kernel/vanilla-kernel-${kv}
 		video_cards_amdgpu? (
-			sys-kernel/rock-dkms
+			>=sys-kernel/rock-dkms-4.3.0
 		)
 	"
 }
