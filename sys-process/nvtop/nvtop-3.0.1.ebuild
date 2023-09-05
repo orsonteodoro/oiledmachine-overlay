@@ -81,7 +81,12 @@ RDEPEND="
 		!custom-kernel? (
 			|| (
 				$(gen_kernel_repend ${LINUX_KERNEL_AMDGPU_FDINFO_KV})
-				>=sys-kernel/rock-dkms-4.3.0
+				(
+					|| (
+						$(gen_kernel_repend ${LINUX_KERNEL_AMDGPU_FDINFO_KV})
+					)
+					>=sys-kernel/rock-dkms-4.3.0
+				)
 			)
 		)
 		>=x11-libs/libdrm-2.4.99[video_cards_amdgpu]
