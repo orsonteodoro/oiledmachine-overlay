@@ -24,7 +24,6 @@ VIDEO_CARDS=(
 	amdgpu
 	freedreno
 	intel
-	msm
 	nvidia
 )
 IUSE+="
