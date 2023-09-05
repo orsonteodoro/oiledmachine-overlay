@@ -2,6 +2,11 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
     <!-- Ebuild originator -->
     <email>vowstar@gmail.com</email>
     <name>Huang Rui</name>
@@ -9,4 +14,19 @@
   <upstream>
     <remote-id type="github">Syllo/nvtop</remote-id>
   </upstream>
+  <use>
+    <flag name="udev">
+      Use udev for device discovery.
+    </flag>
+    <flag name="systemd">
+      Use systemd for device discovery.
+    </flag>
+    <flag name="custom-kernel">
+      Allows to bypass kernel version checks or disable emerging unwanted Linux
+      kernels.
+    </flag>
+    <flag name="video_cards_msm">
+      Add support for Adreno GPUs via the msm driver.
+    </flag>
+  </use>
 </pkgmetadata>

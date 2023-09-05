@@ -23,6 +23,7 @@ SLOT="0"
 VIDEO_CARDS=(
 	amdgpu
 	intel
+	msm
 	nvidia
 )
 IUSE+="
@@ -65,6 +66,7 @@ gen_kernel_repend() {
 }
 LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
 LINUX_KERNEL_INTEL_FDINFO_KV="5.19"
+LINUX_KERNEL_MSM_FDINFO_KV="6.0"
 # *DEPENDS based on U 18.04
 RDEPEND="
 	>=sys-libs/ncurses-6.1:0=
@@ -132,6 +134,20 @@ ewarn "Required kernel version:  ${LINUX_KERNEL_INTEL_FDINFO_KV} or later"
 ewarn
 		fi
 	fi
+	if use video_cards_msm ; then
+		linux-info_pkg_setup
+		CONFIG_CHECK="~DRM_MSM"
+		check_extra_config
+		local kv=$(uname -r | cut -f 1 -d "-")
+		if ver_test ${kv} -lt ${LINUX_KERNEL_MSM_FDINFO_KV} ; then
+ewarn
+ewarn "Kernel version requirements is not met for running kernel."
+ewarn
+ewarn "Detected kernel version:  $(uname -r)"
+ewarn "Required kernel version:  ${LINUX_KERNEL_MSM_FDINFO_KV} or later"
+ewarn
+		fi
+	fi
 	if use video_cards_nvidia ; then
 		if [[ -e "${EROOT}/usr/"*"/libnvidia-ml.so"  ]] ; then
 			:;
@@ -161,6 +177,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCURSES_NEED_WIDE=$(usex unicode)
 		-DINTEL_SUPPORT=$(usex video_cards_intel)
+		-DMSM_SUPPORT=$(usex video_cards_msm)
 		-DNVIDIA_SUPPORT=$(usex video_cards_nvidia)
 		-DUSE_LIBUDEV_OVER_LIBSYSTEMD=$(usex udev)
 	)
