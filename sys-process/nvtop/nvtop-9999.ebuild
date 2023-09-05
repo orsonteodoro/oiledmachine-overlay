@@ -61,7 +61,9 @@ gen_kernel_repend() {
 		>=sys-kernel/gentoo-kernel-bin-${kv}
 		>=sys-kernel/vanilla-sources-${kv}
 		>=sys-kernel/vanilla-kernel-${kv}
-		sys-kernel/rock-dkms
+		video_cards_amdgpu? (
+			sys-kernel/rock-dkms
+		)
 	"
 }
 LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
@@ -89,7 +91,9 @@ RDEPEND="
 	)
 	video_cards_intel?  (
 		!custom-kernel? (
-			$(gen_kernel_repend ${LINUX_KERNEL_INTEL_FDINFO_KV})
+			|| (
+				$(gen_kernel_repend ${LINUX_KERNEL_INTEL_FDINFO_KV})
+			)
 		)
 	)
 	video_cards_nvidia? (
