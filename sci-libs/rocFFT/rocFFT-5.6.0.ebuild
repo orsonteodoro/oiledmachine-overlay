@@ -138,11 +138,9 @@ RESTRICT="
 "
 S="${WORKDIR}/rocFFT-rocm-${PV}"
 PATCHES=(
-#	"${FILESDIR}/${PN}-4.2.0-add-functional-header.patch"
-#	"${FILESDIR}/${PN}-5.0.2-add-math-header.patch"
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
-	"${FILESDIR}/${PN}-5.6.0-lib64-path.patch"
 	"${FILESDIR}/${PN}-5.6.0-aot-optional.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 required_mem() {
@@ -180,50 +178,8 @@ pkg_setup() {
 }
 
 src_prepare() {
-	sed \
-		-e "s/PREFIX rocfft//" \
-		-e "/rocm_install_symlink_subdir/d" \
-		-e "/<INSTALL_INTERFACE/s,include,include/rocFFT," \
-		-i \
-		library/src/CMakeLists.txt \
-		|| die
-
-	sed \
-		-e "/rocm_install_symlink_subdir/d" \
-		-e "$!N;s:PREFIX\n[ ]*rocfft:# PREFIX rocfft\n:;P;D" \
-		-i library/src/device/CMakeLists.txt \
-		|| die
-
-	if use perfscripts; then
-		pushd scripts/perf || die
-		sed \
-			-e "/\/opt\/rocm/d" \
-			-e "/rocmversion/s,rocm_info.strip(),\"${PV}\"," \
-			-i \
-			perflib/specs.py \
-			|| die
-		sed \
-			-e "/^top/,+1d" \
-			-i \
-			rocfft-perf suites.py \
-			|| die
-		sed \
-			-e "s,perflib,${PN}_perflib,g" \
-			-i \
-			rocfft-perf \
-			suites.py \
-			perflib/*.py \
-			|| die
-		sed \
-			-e "/^top = /s,__file__).*$,\"${EPREFIX}/usr/share/${PN}-perflib\")," \
-			-i \
-			perflib/pdf.py \
-			perflib/generators.py \
-			|| die
-		popd
-	fi
-
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 get_cuda_arch() {

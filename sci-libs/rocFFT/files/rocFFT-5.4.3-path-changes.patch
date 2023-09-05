@@ -1,0 +1,812 @@
+diff -urp rocFFT-rocm-5.4.3.orig/clients/cmake/build-gtest.cmake rocFFT-rocm-5.4.3/clients/cmake/build-gtest.cmake
+--- rocFFT-rocm-5.4.3.orig/clients/cmake/build-gtest.cmake	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/cmake/build-gtest.cmake	2023-09-04 19:56:55.883313103 -0700
+@@ -30,8 +30,8 @@ if( (BUILD_GTEST OR NOT GTEST_FOUND) AND
+   set(GTEST_INCLUDE_DIRS
+       ${CMAKE_CURRENT_BINARY_DIR}/src/gtest/googletest/include)
+   set(GTEST_LIBRARIES
+-      ${CMAKE_CURRENT_BINARY_DIR}/src/gtest-build/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}
+-      ${CMAKE_CURRENT_BINARY_DIR}/src/gtest-build/lib/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX})
++      ${CMAKE_CURRENT_BINARY_DIR}/src/gtest-build/@LIBDIR@/${CMAKE_STATIC_LIBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}
++      ${CMAKE_CURRENT_BINARY_DIR}/src/gtest-build/@LIBDIR@/${CMAKE_STATIC_LIBRARY_PREFIX}gtest_main${CMAKE_STATIC_LIBRARY_SUFFIX})
+   
+   set(GTEST_SRC_URL https://github.com/google/googletest/archive/release-1.11.0.tar.gz CACHE STRING "Location of GTest source code")
+   set(GTEST_SRC_SHA256 b4870bf121ff7795ba20d20bcdd8627b8e088f2d1dab299a031c1034eddc93d5 CACHE STRING "SHA256 hash of GTest source code")
+diff -urp rocFFT-rocm-5.4.3.orig/clients/CMakeLists.txt rocFFT-rocm-5.4.3/clients/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -30,9 +30,9 @@ if( WIN32 )
+   set( CPACK_PACKAGING_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+-  set( CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CPACK_PACKAGING_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+@@ -76,7 +76,7 @@ if( USE_CUDA )
+     message( FATAL_ERROR "CUDA_ARCH variable is required." )
+   endif()
+   add_compile_options(-I${HIP_ROOT_DIR}/include -I${CUDA_PREFIX}/include -D__HIP_PLATFORM_NVIDIA__)
+-  add_link_options(-L${CUDA_PREFIX}/lib64 -pthread)
++  add_link_options(-L${CUDA_PREFIX}/@LIBDIR@ -pthread)
+   add_compile_options(--cuda-path=${CUDA_PREFIX} --cuda-gpu-arch=${CUDA_ARCH} -xcuda)
+   set( ROCFFT_CLIENTS_HOST_LINK_LIBS -lcudart -ldl -lrt )
+ else()
+Only in rocFFT-rocm-5.4.3/clients: CMakeLists.txt.orig
+diff -urp rocFFT-rocm-5.4.3.orig/clients/rider/CMakeLists.txt rocFFT-rocm-5.4.3/clients/rider/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/rider/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/rider/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -28,7 +28,7 @@ if( WIN32 )
+   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+diff -urp rocFFT-rocm-5.4.3.orig/clients/samples/CMakeLists.txt rocFFT-rocm-5.4.3/clients/samples/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/samples/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/samples/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -28,7 +28,7 @@ if( WIN32 )
+   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+diff -urp rocFFT-rocm-5.4.3.orig/clients/samples/fixed-16/CMakeLists.txt rocFFT-rocm-5.4.3/clients/samples/fixed-16/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/samples/fixed-16/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/samples/fixed-16/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -28,7 +28,7 @@ if( WIN32 )
+   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+diff -urp rocFFT-rocm-5.4.3.orig/clients/samples/fixed-large/CMakeLists.txt rocFFT-rocm-5.4.3/clients/samples/fixed-large/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/samples/fixed-large/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/samples/fixed-large/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -28,7 +28,7 @@ if( WIN32 )
+   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+diff -urp rocFFT-rocm-5.4.3.orig/clients/samples/rocfft/CMakeLists.txt rocFFT-rocm-5.4.3/clients/samples/rocfft/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/samples/rocfft/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/samples/rocfft/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -28,7 +28,7 @@ if( WIN32 )
+   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+diff -urp rocFFT-rocm-5.4.3.orig/clients/tests/cmake/FindFFTW.cmake rocFFT-rocm-5.4.3/clients/tests/cmake/FindFFTW.cmake
+--- rocFFT-rocm-5.4.3.orig/clients/tests/cmake/FindFFTW.cmake	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/tests/cmake/FindFFTW.cmake	2023-09-04 19:56:55.883313103 -0700
+@@ -45,11 +45,11 @@ if( FFTW_FIND_REQUIRED_FLOAT OR FFTW_FIN
+   find_library( FFTW_LIBRARIES_SINGLE
+       NAMES fftw3f fftw3f-3 fftw3 fftw3-3
+       HINTS
+-          ${FFTW_ROOT}/lib
+-          $ENV{FFTW_ROOT}/lib
++          ${FFTW_ROOT}/@LIBDIR@
++          $ENV{FFTW_ROOT}/@LIBDIR@
+       PATHS
+-          /usr/lib
+-          /usr/local/lib
++          /usr/@LIBDIR@
++          /usr/local/@LIBDIR@
+       PATH_SUFFIXES
+           x86_64-linux-gnu
+       DOC "FFTW dynamic library single"
+@@ -74,11 +74,11 @@ if( FFTW_FIND_REQUIRED_DOUBLE )
+   find_library( FFTW_LIBRARIES_DOUBLE
+       NAMES fftw3
+       HINTS
+-          ${FFTW_ROOT}/lib
+-          $ENV{FFTW_ROOT}/lib
++          ${FFTW_ROOT}/@LIBDIR@
++          $ENV{FFTW_ROOT}/@LIBDIR@
+       PATHS
+-          /usr/lib
+-          /usr/local/lib
++          /usr/@LIBDIR@
++          /usr/local/@LIBDIR@
+       PATH_SUFFIXES
+           x86_64-linux-gnu
+       DOC "FFTW dynamic library double"
+diff -urp rocFFT-rocm-5.4.3.orig/clients/tests/CMakeLists.txt rocFFT-rocm-5.4.3/clients/tests/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/clients/tests/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/clients/tests/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -28,7 +28,7 @@ if( WIN32 )
+   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+@@ -230,7 +230,7 @@ option( BUILD_CLIENTS_TESTS_OPENMP "Buil
+ if( BUILD_CLIENTS_TESTS_OPENMP )
+   if( CMAKE_CXX_COMPILER MATCHES ".*/hipcc$" )  
+     target_compile_options( rocfft-test PRIVATE -fopenmp -DBUILD_CLIENTS_TESTS_OPENMP )
+-    target_link_libraries( rocfft-test PRIVATE -fopenmp -L${HIP_CLANG_ROOT}/lib -Wl,-rpath=${HIP_CLANG_ROOT}/lib )
++    target_link_libraries( rocfft-test PRIVATE -fopenmp -L${HIP_CLANG_ROOT}/@LIBDIR@ )
+     target_include_directories( rocfft-test PRIVATE ${HIP_CLANG_ROOT}/include )
+   else()
+     if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+Only in rocFFT-rocm-5.4.3/clients/tests: CMakeLists.txt.orig
+diff -urp rocFFT-rocm-5.4.3.orig/CMakeLists.txt rocFFT-rocm-5.4.3/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -28,7 +28,7 @@ if( WIN32 )
+   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ else( )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
+     "Install path prefix, prepended onto install directories" )
+ endif( )
+ 
+@@ -59,7 +59,7 @@ endif()
+ # This finds the rocm-cmake project, and installs it if not found
+ # rocm-cmake contains common cmake code for rocm projects to help setup and install
+ set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
+-find_package( ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH} /opt/rocm )
++find_package( ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH} /usr )
+ if( NOT ROCM_FOUND )
+   set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
+   file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
+@@ -175,7 +175,7 @@ if( USE_CUDA )
+     message( FATAL_ERROR "CUDA_ARCH variable is required. (e.g. sm_75)" )
+   endif()
+   add_compile_options(-I${HIP_ROOT_DIR}/include -I${CUDA_PREFIX}/include -D__HIP_PLATFORM_NVIDIA__)
+-  add_link_options(-L${CUDA_PREFIX}/lib64 -pthread)
++  add_link_options(-L${CUDA_PREFIX}/@LIBDIR@ -pthread)
+ endif( )
+ 
+ # hipcc automatically provides HIP include dirs and HIP platform,
+@@ -253,7 +253,7 @@ endif( )
+ if(WIN32)
+   set(CPACK_SOURCE_GENERATOR "ZIP")
+   set(CPACK_GENERATOR "ZIP")
+-  set(CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE)
+   set(INSTALL_PREFIX "C:/hipSDK")
+   set(CPACK_SET_DESTDIR OFF)
+   set(CPACK_PACKAGE_INSTALL_DIRECTORY "C:/hipSDK")
+diff -urp rocFFT-rocm-5.4.3.orig/deps/CMakeLists.txt rocFFT-rocm-5.4.3/deps/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/deps/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/deps/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -29,13 +29,13 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
+ # Consider removing this in the future
+ # It can be annoying for visual studio developers to build a project that tries to install into 'program files'
+ if( WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ # The superbuild does not build anything itself; all compiling is done in external projects
+diff -urp rocFFT-rocm-5.4.3.orig/docs/samples/CMakeLists.txt rocFFT-rocm-5.4.3/docs/samples/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/docs/samples/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/docs/samples/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -45,5 +45,5 @@ endforeach()
+ 
+ # Build release by default
+ if(NOT CMAKE_BUILD_TYPE)
+-  set(CMAKE_BUILD_TYPE Release)
++#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE Release)
+ endif(NOT CMAKE_BUILD_TYPE)
+diff -urp rocFFT-rocm-5.4.3.orig/.githooks/pre-commit rocFFT-rocm-5.4.3/.githooks/pre-commit
+--- rocFFT-rocm-5.4.3.orig/.githooks/pre-commit	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/.githooks/pre-commit	2023-09-04 19:56:55.883313103 -0700
+@@ -4,7 +4,7 @@
+ # are installed, and if so, uses the installed version to format
+ # the staged changes.
+ 
+-base=/opt/rocm/llvm/bin/clang-format
++base=/usr/llvm/bin/clang-format
+ format=""
+ 
+ # Redirect output to stderr.
+diff -urp rocFFT-rocm-5.4.3.orig/install.sh rocFFT-rocm-5.4.3/install.sh
+--- rocFFT-rocm-5.4.3.orig/install.sh	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/install.sh	2023-09-04 19:56:55.883313103 -0700
+@@ -373,12 +373,12 @@ else
+ fi
+ 
+ if [[ "${build_relocatable}" == true ]]; then
+-    rocm_path=/opt/rocm
++    rocm_path=/usr
+     if ! [ -z ${ROCM_PATH+x} ]; then
+         rocm_path=${ROCM_PATH}
+     fi
+ 
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+@@ -417,7 +417,7 @@ fi
+ if [[ "${build_relocatable}" == true ]]; then
+     export PATH=${rocm_path}/bin:${PATH}
+ else
+-    export PATH=${PATH}:/opt/rocm/bin
++    export PATH=${PATH}:/usr/bin
+ fi
+ 
+ pushd .
+@@ -492,7 +492,7 @@ if [[ "${build_relocatable}" == true ]];
+        -DROCM_DISABLE_LDCONFIG=ON \
+        ../..
+ else
+-    CXX=${compiler} CC=${compiler} ${cmake_executable} ${cmake_common_options} ${cmake_client_options} -DCPACK_SET_DESTDIR=OFF -DCMAKE_INSTALL_PREFIX=${install_prefix} -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm ../..
++    CXX=${compiler} CC=${compiler} ${cmake_executable} ${cmake_common_options} ${cmake_client_options} -DCPACK_SET_DESTDIR=OFF -DCMAKE_INSTALL_PREFIX=${install_prefix} -DCPACK_PACKAGING_INSTALL_PREFIX=/usr ../..
+ fi
+ check_exit_code
+ make -j$(nproc)
+diff -urp rocFFT-rocm-5.4.3.orig/library/src/CMakeLists.txt rocFFT-rocm-5.4.3/library/src/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/library/src/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/library/src/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -46,7 +46,7 @@ else()
+   if( WIN32 )
+     set( ROCFFT_RTC_LINK_LIBS "${HIP_PATH}/lib/hiprtc.lib" )
+   else()
+-    set( ROCFFT_RTC_LINK_LIBS -L${ROCM_PATH}/lib -lhiprtc -ldl )
++    set( ROCFFT_RTC_LINK_LIBS -L${ROCM_PATH}/@LIBDIR@ -lhiprtc -ldl )
+   endif()
+ endif()
+ 
+diff -urp rocFFT-rocm-5.4.3.orig/library/src/device/CMakeLists.txt rocFFT-rocm-5.4.3/library/src/device/CMakeLists.txt
+--- rocFFT-rocm-5.4.3.orig/library/src/device/CMakeLists.txt	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/library/src/device/CMakeLists.txt	2023-09-04 19:56:55.883313103 -0700
+@@ -43,7 +43,7 @@ if(ROCFFT_DEVICE_FORCE_RELEASE)
+       "are ABI-incompatible.  The core rocFFT lib and device libs must both use the same runtime."
+     )
+   endif()
+-  set (CMAKE_BUILD_TYPE Release)
++#_cmake_modify_IGNORE   set (CMAKE_BUILD_TYPE Release)
+ endif()
+ 
+ # This builds the generator executable
+diff -urp rocFFT-rocm-5.4.3.orig/library/src/device/generator.py rocFFT-rocm-5.4.3/library/src/device/generator.py
+--- rocFFT-rocm-5.4.3.orig/library/src/device/generator.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/library/src/device/generator.py	2023-09-04 19:56:55.883313103 -0700
+@@ -68,7 +68,7 @@ def cjoin(n):
+ def clang_format(code):
+     """Format code using clang-format."""
+     try:
+-        p = subprocess.run(['/opt/rocm/llvm/bin/clang-format', '-style=file'],
++        p = subprocess.run(['/usr/lib/llvm/@LLVM_SLOT@/bin/clang-format', '-style=file'],
+                            stdout=subprocess.PIPE,
+                            input=str(code),
+                            encoding='ascii',
+@@ -85,7 +85,7 @@ def clang_format_file(filename):
+     """Format a file using clang-format.  Ignores errors so the file
+        remains unformatted if clang-format isn't runnable."""
+     try:
+-        p = subprocess.run(['/opt/rocm/llvm/bin/clang-format', '-i', filename])
++        p = subprocess.run(['/usr/lib/llvm/@LLVM_SLOT@/bin/clang-format', '-i', filename])
+     except:
+         # code formatting doesn't affect functionality, so just assume
+         # default ROCm path and ignore errors if it's not there.
+diff -urp rocFFT-rocm-5.4.3.orig/rmake.py rocFFT-rocm-5.4.3/rmake.py
+--- rocFFT-rocm-5.4.3.orig/rmake.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/rmake.py	2023-09-04 19:56:55.883313103 -0700
+@@ -172,7 +172,7 @@ def config_cmd():
+         cmake_options.extend(generator)
+         toolchain = os.path.join(src_path, "toolchain-windows.cmake")
+     else:
+-        rocm_path = os.getenv('ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv('ROCM_PATH', "/usr")
+         cmake_platform_opts.append(f"-DROCM_DIR:PATH={rocm_path}")
+         cmake_platform_opts.append(
+             f"-DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}")
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/analysis.py rocFFT-rocm-5.4.3/scripts/perf/perflib/analysis.py
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/analysis.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/perflib/analysis.py	2023-09-04 19:56:55.887313103 -0700
+@@ -24,7 +24,7 @@ import random
+ import numpy as np
+ import statistics
+ 
+-from perflib.utils import Run
++from rocFFT_perflib.utils import Run
+ from dataclasses import dataclass
+ from typing import List
+ 
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/docx.py rocFFT-rocm-5.4.3/scripts/perf/perflib/docx.py
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/docx.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/perflib/docx.py	2023-09-04 19:56:55.887313103 -0700
+@@ -22,7 +22,7 @@ import pathlib
+ 
+ import docx
+ 
+-import perflib.docx_emf_patch
++import rocFFT_perflib.docx_emf_patch
+ 
+ 
+ def pdf2emf(path: pathlib.Path):
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/generators.py rocFFT-rocm-5.4.3/scripts/perf/perflib/generators.py
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/generators.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/perflib/generators.py	2023-09-04 19:56:55.887313103 -0700
+@@ -33,9 +33,9 @@ import logging
+ from dataclasses import dataclass, field
+ from pathlib import Path as path
+ from typing import Dict, List, Mapping, Generator
+-from perflib.utils import sjoin
++from rocFFT_perflib.utils import sjoin
+ 
+-top = path(__file__).resolve().parent.parent
++top = path("@EPREFIX@/usr/share/rocFFT-perflib")
+ 
+ 
+ def mktag(tag, dimension, precision, direction, inplace, real):
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/__init__.py rocFFT-rocm-5.4.3/scripts/perf/perflib/__init__.py
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/__init__.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/perflib/__init__.py	2023-09-04 19:56:55.887313103 -0700
+@@ -1,10 +1,10 @@
+-import perflib.analysis
+-import perflib.generators
+-import perflib.html
+-import perflib.pdf
+-import perflib.rider
+-import perflib.timer
+-import perflib.utils
+-import perflib.accutest
++import rocFFT_perflib.analysis
++import rocFFT_perflib.generators
++import rocFFT_perflib.html
++import rocFFT_perflib.pdf
++import rocFFT_perflib.rider
++import rocFFT_perflib.timer
++import rocFFT_perflib.utils
++import rocFFT_perflib.accutest
+ 
+ from .specs import get_machine_specs
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/pdf.py rocFFT-rocm-5.4.3/scripts/perf/perflib/pdf.py
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/pdf.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/perflib/pdf.py	2023-09-04 19:56:55.887313103 -0700
+@@ -26,16 +26,16 @@ import pandas
+ 
+ from dataclasses import dataclass
+ from pathlib import Path
+-from perflib.utils import sjoin, cjoin
++from rocFFT_perflib.utils import sjoin, cjoin
+ from typing import List
+ import tempfile
+ import numpy as np
+ import os
+ import scipy.stats
+ 
+-import perflib.utils
++import rocFFT_perflib.utils
+ 
+-top = Path(__file__).resolve().parent.parent
++top = Path("@EPREFIX@/usr/share/rocFFT-perflib")
+ 
+ 
+ @dataclass
+@@ -239,7 +239,7 @@ def make_tex(figs, docdir, outdirs, labe
+                 for row in df_good.itertuples(index=False):
+                     #figtex += str(row.token).replace("_", "\\_")
+                     #figtex += "token"
+-                    transform_type, placeness, length, batch, precision = perflib.utils.parse_token(
++                    transform_type, placeness, length, batch, precision = rocFFT_perflib.utils.parse_token(
+                         row.token)
+                     figtex += "$" + "\\times{}".join(str(x)
+                                                      for x in length) + "$"
+@@ -264,7 +264,7 @@ def make_tex(figs, docdir, outdirs, labe
+                 for row in df_bad.itertuples(index=False):
+                     #figtex += str(row.token).replace("_", "\\_")
+                     #figtex += "token"
+-                    transform_type, placeness, length, batch, precision = perflib.utils.parse_token(
++                    transform_type, placeness, length, batch, precision = rocFFT_perflib.utils.parse_token(
+                         row.token)
+                     figtex += "$" + "\\times{}".join(str(x)
+                                                      for x in length) + "$"
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/specs.py rocFFT-rocm-5.4.3/scripts/perf/perflib/specs.py
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/specs.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/perflib/specs.py	2023-09-04 19:56:55.887313103 -0700
+@@ -84,10 +84,6 @@ def get_machine_specs(devicenum):
+     meminfo = path('/proc/meminfo').read_text()
+     version = path('/proc/version').read_text()
+     os_release = path('/etc/os-release').read_text()
+-    if os.path.isfile('/opt/rocm/.info/version-utils'):
+-        rocm_info = path('/opt/rocm/.info/version-utils').read_text()
+-    elif os.path.isfile('/opt/rocm/.info/version'):
+-        rocm_info = path('/opt/rocm/.info/version').read_text()
+     else:
+         rocm_info = "rocm info not available"
+ 
+@@ -107,7 +103,7 @@ def get_machine_specs(devicenum):
+     kernel = search(r'version (\S*)', version)
+     ram = search(r'MemTotal:\s*(\S*)', meminfo)
+     distro = search(r'PRETTY_NAME="(.*?)"', os_release)
+-    rocmversion = rocm_info.strip()
++    rocmversion = "@PV@"
+     vbios = search(device + r'VBIOS version: (.*?)$',
+                    rocm_smi) if rocm_smi_found else "no rocm-smi"
+     gpuid = search(device + r'GPU ID: (.*?)$',
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/timer.py rocFFT-rocm-5.4.3/scripts/perf/perflib/timer.py
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/perflib/timer.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/perflib/timer.py	2023-09-04 19:57:25.403312708 -0700
+@@ -21,7 +21,7 @@
+ 
+ import collections
+ 
+-import perflib
++import rocFFT_perflib
+ import logging
+ 
+ from dataclasses import dataclass, field
+@@ -52,7 +52,7 @@ class Timer:
+         no_accutest_prob_count = 0
+         for prob in generator.generate_problems():
+             total_prob_count += 1
+-            token, seconds = perflib.rider.run(self.rider,
++            token, seconds = rocFFT_perflib.rider.run(self.rider,
+                                                prob.length,
+                                                direction=prob.direction,
+                                                real=prob.real,
+@@ -70,7 +70,7 @@ class Timer:
+                 logging.info("output: " + str(out))
+                 meta = {'title': prob.tag}
+                 meta.update(prob.meta)
+-                perflib.utils.write_dat(out, token, seconds[idx], meta)
++                rocFFT_perflib.utils.write_dat(out, token, seconds[idx], meta)
+                 if self.active_tests_tokens and token.encode(
+                 ) not in self.active_tests_tokens:
+                     no_accutest_prob_count += 1
+@@ -111,7 +111,7 @@ class GroupedTimer:
+             if not accutest.is_file():
+                 raise RuntimeError(
+                     f'Unable to find accuracy test: {self.accutest}')
+-            self.active_tests_tokens = perflib.accutest.get_active_tests_tokens(
++            self.active_tests_tokens = rocFFT_perflib.accutest.get_active_tests_tokens(
+                 accutest)
+ 
+         for i, (tag, problems) in enumerate(all_problems.items()):
+@@ -120,4 +120,4 @@ class GroupedTimer:
+             )
+             timer = Timer(**self.__dict__)
+             timer.out = [path(x) / (tag + '.dat') for x in self.out]
+-            timer.run_cases(perflib.generators.VerbatimGenerator(problems))
++            timer.run_cases(rocFFT_perflib.generators.VerbatimGenerator(problems))
+Only in rocFFT-rocm-5.4.3/scripts/perf/perflib: timer.py.orig
+Only in rocFFT-rocm-5.4.3/scripts/perf/perflib: timer.py.rej
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/rocfft-perf rocFFT-rocm-5.4.3/scripts/perf/rocfft-perf
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/rocfft-perf	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/rocfft-perf	2023-09-04 19:56:55.887313103 -0700
+@@ -127,10 +127,8 @@ from pathlib import Path
+ 
+ from multiprocessing import Pool
+ 
+-top = Path(__file__).resolve().parent
+-sys.path.append(str(top))
+ 
+-import perflib
++import rocFFT_perflib
+ 
+ console = logging.StreamHandler()
+ 
+@@ -194,10 +192,10 @@ def generate_mdat(dat):
+     confidence = [['token', 'median_sample', 'median_low', 'median_high']]
+     for token, sample in dat.get_samples():
+         median = statistics.median(sample.times)
+-        low, high = perflib.analysis.confidence_interval(sample.times)
++        low, high = rocFFT_perflib.analysis.confidence_interval(sample.times)
+         confidence.append([sample.label, median, low, high])
+     path = dat.path.with_suffix('.mdat')
+-    perflib.utils.write_tsv(path, confidence, meta=dat.meta, overwrite=True)
++    rocFFT_perflib.utils.write_tsv(path, confidence, meta=dat.meta, overwrite=True)
+ 
+ 
+ def generate_pts_dat(dat):
+@@ -230,7 +228,7 @@ def generate_pts_dat(dat):
+     for row_idx, sample in enumerate(dat.get_samples()):
+         new_row = []
+         token = sample[0]
+-        transform_type, placeness, length, batch, precision = perflib.utils.parse_token(
++        transform_type, placeness, length, batch, precision = rocFFT_perflib.utils.parse_token(
+             token)
+ 
+         new_row.extend(input_params)
+@@ -277,7 +275,7 @@ def generate_pts_dat(dat):
+     content = [header]
+     content.extend(rows)
+ 
+-    perflib.utils.write_pts_dat(dat.path.with_suffix('.ptsdat'),
++    rocFFT_perflib.utils.write_pts_dat(dat.path.with_suffix('.ptsdat'),
+                                 content,
+                                 meta=dat.meta)
+ 
+@@ -302,7 +300,7 @@ def command_post(arguments):
+     
+     outdirs = [Path(x) for x in outdirs]
+ 
+-    all_runs = perflib.utils.read_runs(outdirs, verbose)
++    all_runs = rocFFT_perflib.utils.read_runs(outdirs, verbose)
+ 
+     # median confidence intervals
+     for run in all_runs:
+@@ -317,7 +315,7 @@ def command_post(arguments):
+ 
+         import scipy.stats
+ 
+-        runs = perflib.utils.by_dat(all_runs)
++        runs = rocFFT_perflib.utils.by_dat(all_runs)
+         refdir, *otherdirs = outdirs
+         for dat_name, dat_runs in runs.items():
+             refdat = dat_runs[refdir]
+@@ -337,14 +335,14 @@ def command_post(arguments):
+                     Bvals = otherdat.samples[token].times
+                     speedup = statistics.median(Avals) / statistics.median(
+                         Bvals)
+-                    low, high = perflib.analysis.ratio_confidence_interval(
++                    low, high = rocFFT_perflib.analysis.ratio_confidence_interval(
+                         Avals, Bvals)
+                     _, pval, _, _ = scipy.stats.median_test(Avals, Bvals)
+                     speedups.append([sample.token, speedup, low, high, pval])
+                 path = docdir / (str(otherdat.path.parent.name) + '-over-' +
+                                  str(refdat.path.parent.name) + '-' +
+                                  dat_name + '.sdat')
+-                perflib.utils.write_tsv(path,
++                rocFFT_perflib.utils.write_tsv(path,
+                                         speedups,
+                                         meta=refdat.meta,
+                                         overwrite=True)
+@@ -353,13 +351,13 @@ def command_post(arguments):
+ def command_generate(runs=None, label=None, output=None, significance=None, type='pdf', **kwargs):
+     """Generate PDF/HTML/DOCX from run results."""
+ 
+-    import perflib.pdf
+-    import perflib.html
++    import rocFFT_perflib.pdf
++    import rocFFT_perflib.html
+ 
+     Figure = {
+-        'pdf': perflib.pdf.PDFFigure,
+-        'html': perflib.html.HTMLFigure,
+-        'docx': perflib.pdf.PDFFigure,
++        'pdf': rocFFT_perflib.pdf.PDFFigure,
++        'html': rocFFT_perflib.html.HTMLFigure,
++        'docx': rocFFT_perflib.pdf.PDFFigure,
+     }[type]
+ 
+     docdir = Path(output)
+@@ -368,17 +366,17 @@ def command_generate(runs=None, label=No
+     outdirs = [Path(outdir) for outdir in runs]
+     if label is None:
+         label = [outdir.stem for outdir in outdirs]
+-    reference = perflib.utils.read_run(outdirs[0])
++    reference = rocFFT_perflib.utils.read_run(outdirs[0])
+ 
+     figures = []
+-    for datname in perflib.utils.list_runs(outdirs[0]):
++    for datname in rocFFT_perflib.utils.list_runs(outdirs[0]):
+         tag = datname.stem
+         title = reference.dats[datname.stem].meta.get('title', tag)
+         caption = reference.dats[datname.stem].meta.get('caption',
+                                                         title).replace(
+                                                             '_', ' ')
+         figtype = reference.dats[datname.stem].meta.get('figtype', 'linegraph')
+-        primary, secondary = perflib.utils.get_post_processed(
++        primary, secondary = rocFFT_perflib.utils.get_post_processed(
+             tag, docdir, outdirs)
+         figure = Figure(tag, title, caption, docdir, label, primary, secondary,
+                         figtype)
+@@ -386,13 +384,13 @@ def command_generate(runs=None, label=No
+         figures.append(figure)
+ 
+     if type == 'pdf':
+-        perflib.pdf.make_tex(figures, docdir, outdirs, label, significance)
++        rocFFT_perflib.pdf.make_tex(figures, docdir, outdirs, label, significance)
+     if type == 'html':
+-        title = f"Performance report: {perflib.utils.cjoin(outdirs)}"
+-        perflib.html.make_html(figures, title, docdir, outdirs)
++        title = f"Performance report: {rocFFT_perflib.utils.cjoin(outdirs)}"
++        rocFFT_perflib.html.make_html(figures, title, docdir, outdirs)
+     if type == 'docx':
+-        import perflib.docx
+-        perflib.docx.make_docx(figures, docdir, outdirs)
++        import rocFFT_perflib.docx
++        rocFFT_perflib.docx.make_docx(figures, docdir, outdirs)
+ 
+ 
+ def command_run(arguments):
+@@ -401,9 +399,9 @@ def command_run(arguments):
+     # build generator
+     generator = None
+     if arguments.suite is not None:
+-        generator = perflib.generators.SuiteProblemGenerator(arguments.suite)
++        generator = rocFFT_perflib.generators.SuiteProblemGenerator(arguments.suite)
+     else:
+-        generator = perflib.generators.RadixProblemGenerator()
++        generator = rocFFT_perflib.generators.RadixProblemGenerator()
+         for attr in [
+                 'radix', 'xmin', 'xmax', 'ymin', 'ymax', 'zmin', 'zmax',
+                 'verbose', 'timeout'
+@@ -414,7 +412,7 @@ def command_run(arguments):
+         update(attr, generator, arguments)
+ 
+     # build filter
+-    filtered = perflib.generators.FilteredProblemGenerator()
++    filtered = rocFFT_perflib.generators.FilteredProblemGenerator()
+     if arguments.direction is not None:
+         filtered.direction = [arguments.direction]
+     if arguments.inplace:
+@@ -450,14 +448,14 @@ def command_run(arguments):
+         nout = len(arguments.lib) if dyna else 1
+         arguments.out = ['out' + str(i) for i in range(nout)]
+ 
+-    timer = perflib.timer.GroupedTimer()
++    timer = rocFFT_perflib.timer.GroupedTimer()
+     for attr in [
+             'device', 'rider', 'accutest', 'lib', 'out', 'device', 'ntrial',
+             'verbose', 'timeout'
+     ]:
+         update(attr, timer, arguments)
+ 
+-    specs = perflib.specs.get_machine_specs(timer.device)
++    specs = rocFFT_perflib.specs.get_machine_specs(timer.device)
+     for out in timer.out:
+         specs_file = Path(out) / 'specs.txt'
+         specs_file.parent.mkdir(parents=True, exist_ok=True)
+@@ -486,7 +484,7 @@ def command_autoperf(arguments):
+     if reference_commit != None:
+         reference_commit = reference_commit[0:6]
+ 
+-    from perflib.build import build_rocfft
++    from rocFFT_perflib.build import build_rocfft
+ 
+     if reference_repository is None:
+         reference_repository = repository
+@@ -519,32 +517,32 @@ def command_autoperf(arguments):
+     # run cases
+     if static:
+         # use more trials for static rider
+-        timer1 = perflib.timer.GroupedTimer()
++        timer1 = rocFFT_perflib.timer.GroupedTimer()
+         timer1.rider = build1 / 'rocfft-rider'
+         timer1.lib = None
+         timer1.out = [build1]
+         timer1.ntrial = 20
+ 
+-        timer2 = perflib.timer.GroupedTimer()
++        timer2 = rocFFT_perflib.timer.GroupedTimer()
+         timer2.rider = build2 / 'rocfft-rider'
+         timer2.lib = None
+         timer2.out = [build2]
+         timer2.ntrial = 20
+         timers = [timer1, timer2]
+     else:
+-        timer = perflib.timer.GroupedTimer()
++        timer = rocFFT_perflib.timer.GroupedTimer()
+         timer.rider = build1 / 'dyna-rocfft-rider'
+         timer.lib = [lib1, lib2]
+         timer.out = [build1, build2]
+         timers = [timer]
+ 
+-    specs = perflib.specs.get_machine_specs(timers[0].device)
++    specs = rocFFT_perflib.specs.get_machine_specs(timers[0].device)
+     for t in timers:
+         for out in t.out:
+             specs_file = Path(out) / 'specs.txt'
+             specs_file.write_text(str(specs))
+ 
+-    generator = perflib.generators.SuiteProblemGenerator(suite)
++    generator = rocFFT_perflib.generators.SuiteProblemGenerator(suite)
+     for t in timers:
+         t.run_cases(generator)
+ 
+@@ -565,7 +563,7 @@ def command_bweff(arguments):
+     """Collect bandwidth efficiency information."""
+ 
+     # build generator from suite
+-    generator = perflib.generators.SuiteProblemGenerator(arguments.suite)
++    generator = rocFFT_perflib.generators.SuiteProblemGenerator(arguments.suite)
+ 
+     Path(arguments.out).mkdir(parents=True, exist_ok=True)
+ 
+@@ -591,7 +589,7 @@ def command_bweff(arguments):
+             raise RuntimeError(f"Unable to find rider: {arguments.rider}")
+ 
+         effdat_paths = [Path(arguments.out) / (tag + '.effdat')]
+-        generator = perflib.generators.VerbatimGenerator(problems)
++        generator = rocFFT_perflib.generators.VerbatimGenerator(problems)
+ 
+         for prob in generator.generate_problems():
+ 
+@@ -604,7 +602,7 @@ def command_bweff(arguments):
+             nbatch = (arguments.target_size << 30) // elem_size_bytes
+ 
+             # run rider
+-            token = perflib.rider.run(arguments.rider,
++            token = rocFFT_perflib.rider.run(arguments.rider,
+                                       prob.length,
+                                       direction=prob.direction,
+                                       real=prob.real,
+@@ -646,7 +644,7 @@ def command_bweff(arguments):
+                         row['kernel_index']  # index number of this kernel in the execution plan
+                     ]
+                     data.append(records)
+-                    perflib.utils.write_tsv(out, [records], meta=meta)
++                    rocFFT_perflib.utils.write_tsv(out, [records], meta=meta)
+ 
+     # close temporary file
+     fp.close()
+@@ -680,7 +678,7 @@ def command_bweff(arguments):
+             statistics.median(medians[key][0]),  # duration_ms
+             statistics.median(medians[key][1])  # bw_efficiency_pct
+         ]
+-        perflib.utils.write_tsv(out, [records], meta=meta)
++        rocFFT_perflib.utils.write_tsv(out, [records], meta=meta)
+ 
+ 
+ #
+@@ -912,7 +910,7 @@ def main():
+         console.setLevel(logging.INFO)
+ 
+     if arguments.command == 'specs':
+-        print(perflib.specs.get_machine_specs(0))
++        print(rocFFT_perflib.specs.get_machine_specs(0))
+ 
+     if arguments.command == 'overview':
+         print(globals()['__doc__'])
+Only in rocFFT-rocm-5.4.3/scripts/perf: rocfft-perf.orig
+diff -urp rocFFT-rocm-5.4.3.orig/scripts/perf/suites.py rocFFT-rocm-5.4.3/scripts/perf/suites.py
+--- rocFFT-rocm-5.4.3.orig/scripts/perf/suites.py	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/scripts/perf/suites.py	2023-09-04 19:56:55.887313103 -0700
+@@ -18,8 +18,8 @@
+ # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ # THE SOFTWARE.
+ from itertools import product
+-from perflib.generators import Problem
+-from perflib.generators import RadixProblemGenerator
++from rocFFT_perflib.generators import Problem
++from rocFFT_perflib.generators import RadixProblemGenerator
+ 
+ from sympy import sieve
+ 
+diff -urp rocFFT-rocm-5.4.3.orig/toolchain-linux.cmake rocFFT-rocm-5.4.3/toolchain-linux.cmake
+--- rocFFT-rocm-5.4.3.orig/toolchain-linux.cmake	2023-01-25 13:05:23.000000000 -0800
++++ rocFFT-rocm-5.4.3/toolchain-linux.cmake	2023-09-04 19:58:04.555312186 -0700
+@@ -21,9 +21,9 @@
+ # #############################################################################
+ 
+ if (DEFINED ENV{ROCM_PATH})
+-  set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
++  set(rocm_bin "$ENV{ROCM_PATH}/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/hip/bin")
++  set(rocm_bin "/usr/bin")
+ endif()
+ 
+ set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")
+Only in rocFFT-rocm-5.4.3: toolchain-linux.cmake.orig
+Only in rocFFT-rocm-5.4.3: toolchain-linux.cmake.rej
