@@ -89,6 +89,13 @@ RDEPEND="
 		)
 		>=x11-libs/libdrm-2.4.99[video_cards_amdgpu]
 	)
+	video_cards_msm?  (
+		!custom-kernel? (
+			|| (
+				$(gen_kernel_repend ${LINUX_KERNEL_MSM_FDINFO_KV})
+			)
+		)
+	)
 	video_cards_intel?  (
 		!custom-kernel? (
 			|| (
