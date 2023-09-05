@@ -435,9 +435,9 @@ RDEPEND+="
 PDEPEND+="
 	rock-dkms? (
 		|| (
-			=sys-kernel/rock-dkms-5.4.3
-			=sys-kernel/rock-dkms-5.3.3
-			=sys-kernel/rock-dkms-5.1.3
+			~sys-kernel/rock-dkms-5.4.3
+			~sys-kernel/rock-dkms-5.3.3
+			~sys-kernel/rock-dkms-5.1.3
 		)
 	)
 "
