@@ -135,7 +135,6 @@ ewarn
 	fi
 	if use video_cards_intel ; then
 		CONFIG_CHECK+=" ~DRM_I915"
-		check_extra_config
 		local kv=$(uname -r | cut -f 1 -d "-")
 		if ver_test ${kv} -lt ${LINUX_KERNEL_INTEL_FDINFO_KV} ; then
 ewarn
@@ -148,7 +147,6 @@ ewarn
 	fi
 	if use video_cards_msm ; then
 		CONFIG_CHECK+=" ~DRM_MSM"
-		check_extra_config
 		local kv=$(uname -r | cut -f 1 -d "-")
 		if ver_test ${kv} -lt ${LINUX_KERNEL_MSM_FDINFO_KV} ; then
 ewarn
