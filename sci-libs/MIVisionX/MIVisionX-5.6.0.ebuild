@@ -106,7 +106,7 @@ RDEPEND="
 	)
 	rpp? (
 		>=dev-libs/boost-${BOOST_PV}:=
-		~sci-libs/rpp-${PV}:${SLOT}
+		>=sci-libs/rpp-1.1.0
 	)
 "
 DEPEND="
