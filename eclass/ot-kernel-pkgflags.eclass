@@ -6374,8 +6374,23 @@ ot-kernel-pkgflags_nv() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd30a310]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-process/nvtop" ; then
 		einfo "Applying kernel config flags for the nvtop (id: d30a310)"
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_PROC_FS"
+		if ot-kernel_has_version "sys-process/nvtop[video_cards_amdgpu]" ; then
+			if has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
+	# For sys-kernel/rock-dkms not installed yet scenario.
+				ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+			elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+				ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+			else
+				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
+			fi
+			ot-kernel_y_configopt "CONFIG_SYSFS"
+		fi
+		if ot-kernel_has_version "sys-process/nvtop[video_cards_intel]" ; then
+			ot-kernel_y_configopt "CONFIG_DRM_I915"
+		fi
+		if ot-kernel_has_version "sys-process/nvtop[video_cards_freedreno]" ; then
+			ot-kernel_y_configopt "CONFIG_DRM_MSM"
+		fi
 	fi
 }
 
@@ -7620,7 +7635,14 @@ ot-kernel-pkgflags_roct() { # DONE
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
-		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
+		if has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
+	# For sys-kernel/rock-dkms not installed yet scenario.
+			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+		elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+		else
+			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
+		fi
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_USERPTR"
 	fi
 }
@@ -9476,7 +9498,14 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_MMU"
-		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
+		if has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
+	# For sys-kernel/rock-dkms not installed yet scenario.
+			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+		elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+		else
+			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
+		fi
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_SI"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_CIK"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_USERPTR"

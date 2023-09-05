@@ -219,9 +219,10 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat futex +genpatches
--genpatches_1510 muqss orca prjc rt symlink tresor tresor_aesni tresor_i686
-tresor_prompt tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
-zen-muqss zen-sauce zen-sauce-all -zen-tune
+-genpatches_1510 muqss orca prjc rock-dkms rt symlink tresor tresor_aesni
+tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
+tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
+-zen-tune
 "
 REQUIRED_USE+="
 	genpatches_1510? (
@@ -429,6 +430,16 @@ BDEPEND+="
 
 RDEPEND+="
 	${KCP_RDEPEND}
+"
+
+PDEPEND+="
+	rock-dkms? (
+		|| (
+			=sys-kernel/rock-dkms-5.4.3
+			=sys-kernel/rock-dkms-5.3.3
+			=sys-kernel/rock-dkms-5.1.3
+		)
+	)
 "
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then

@@ -225,8 +225,8 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 
 IUSE+="
 bbrv2 build c2tcp cfi +cfs clang clang-pgo deepcc disable_debug -exfat futex2
-futex-proton +genpatches -genpatches_1510 lto multigen_lru orca prjc rt
-shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
+futex-proton +genpatches -genpatches_1510 lto multigen_lru orca prjc rock-dkms
+rt shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-multigen_lru zen-sauce zen-sauce-all -zen-tune
 "
@@ -572,6 +572,16 @@ RDEPEND+="
 			|| (
 				$(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT})
 			)
+		)
+	)
+"
+
+PDEPEND+="
+	rock-dkms? (
+		|| (
+			~sys-kernel/rock-dkms-5.4.3
+			~sys-kernel/rock-dkms-5.3.3
+			~sys-kernel/rock-dkms-5.1.3
 		)
 	)
 "

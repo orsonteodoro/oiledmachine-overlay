@@ -394,11 +394,12 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    USE flags versus OT_KERNEL_USE:
+    The difference between USE flags versus OT_KERNEL_USE:
 
-    The USE flags control downloading patches but the OT_KERNEL_USE allow
-    controlling per profile details.  The USE flags will be used as a
-    fallback if OT_KERNEL_USE is not utilized.
+    The USE flags control *downloading* patches, logos, ebuilds.   However, the
+    OT_KERNEL_USE is intended to *applying* patches or settings per each
+    extraversion profile.  The USE flags will be used as a fallback if
+    OT_KERNEL_USE is not utilized.
 
     See also:
 
@@ -3557,6 +3558,13 @@ unset OT_KERNEL_PRIVATE_KEY
       Disable to cancel both ReiserFS and Reiser4 references.
 
       (EXPERIMENTAL)
+    </flag>
+    <flag name="rock-dkms">
+      Build the amdgpu DRM driver in this kernel package as a module so that the
+      rock-dkms driver can be loaded (via modprobe or insmod) as its replacement.
+
+      In addition, install the rock-dkms kernel module package after this
+      package.
     </flag>
     <flag name="rt">
       Patches the kernel with the PREEMPT_RT patch which tries to minimize

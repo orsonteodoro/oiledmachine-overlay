@@ -201,7 +201,7 @@ RUST_PV="1.62.0"
 
 IUSE+="
 bbrv2 build c2tcp cfi +cfs clang clang-pgo deepcc disable_debug -exfat
-+genpatches -genpatches_1510 kcfi lto multigen_lru orca prjc rt -rust
++genpatches -genpatches_1510 kcfi lto multigen_lru orca prjc rock-dkms rt -rust
 shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-multigen_lru zen-sauce zen-sauce-all -zen-tune
@@ -598,6 +598,14 @@ RDEPEND+="
 			|| (
 				$(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT})
 			)
+		)
+	)
+"
+
+PDEPEND+="
+	rock-dkms? (
+		|| (
+			~sys-kernel/rock-dkms-5.6.0
 		)
 	)
 "
