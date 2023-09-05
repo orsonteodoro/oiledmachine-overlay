@@ -6370,7 +6370,7 @@ ot-kernel-pkgflags_nv() { # DONE
 # @FUNCTION: ot-kernel-pkgflags_nvtop
 # @DESCRIPTION:
 # Applies kernel config flags for nvtop
-ot-kernel-pkgflags_nv() { # DONE
+ot-kernel-pkgflags_nvtop() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sd30a310]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-process/nvtop" ; then
 		einfo "Applying kernel config flags for the nvtop (id: d30a310)"
