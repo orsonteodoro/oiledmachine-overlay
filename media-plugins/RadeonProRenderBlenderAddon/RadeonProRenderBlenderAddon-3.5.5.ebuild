@@ -6,9 +6,9 @@ EAPI=8
 # It supports Python 3.7 but 3.7 is deprecated in this distro in python-utils-r1.eclass.
 PYTHON_COMPAT=( python3_{9..11} )
 LLVM_MAX_SLOT=15
-# Blender:head :: 15 14 13 12 11
-# Blender:3.6 :: 15 14 13 12 11
-# Blender:3.3 :: 13 12 11
+# =media-gfx/blender-9999 :: 15 14 13 12 11
+# =media-gfx/blender-3.6* :: 15 14 13 12 11
+# =media-gfx/blender-3.3* :: 13 12 11
 LLVM_SLOTS=( 15 14 13 12 11 )
 
 inherit check-reqs git-r3 linux-info llvm python-r1 unpacker
