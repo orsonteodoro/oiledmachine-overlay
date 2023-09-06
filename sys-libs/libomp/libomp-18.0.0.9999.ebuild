@@ -315,6 +315,13 @@ pkg_setup() {
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
 	fi
+einfo
+einfo "The hardmask for llvm_targets_AMDGPU in ${CATEGORY}/${PN} can be removed by doing..."
+einfo
+einfo "mkdir -p /etc/portage/profile"
+einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.force"
+einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.mask"
+einfo
 }
 
 src_prepare() {

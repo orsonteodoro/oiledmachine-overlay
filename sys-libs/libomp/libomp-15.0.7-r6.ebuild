@@ -257,6 +257,13 @@ pkg_pretend() {
 pkg_setup() {
 	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
+einfo
+einfo "The hardmask for llvm_targets_AMDGPU in ${CATEGORY}/${PN} can be removed by doing..."
+einfo
+einfo "mkdir -p /etc/portage/profile"
+einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.force"
+einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.mask"
+einfo
 }
 
 src_prepare() {
