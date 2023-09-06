@@ -55,6 +55,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 cuda debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
+r1
 "
 # CUDA works only with the x86_64 ABI
 gen_cuda_required_use() {
@@ -297,8 +298,7 @@ multilib_src_configure() {
 	# Disable unnecessary hack copying stuff back to srcdir. \
 		-DLIBOMP_COPY_EXPORTS=OFF
 		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
-	# Do not install libgomp.so & libiomp5.so aliases. \
-		-DLIBOMP_INSTALL_ALIASES=OFF
+		-DLIBOMP_INSTALL_ALIASES=ON # For binary packages
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
