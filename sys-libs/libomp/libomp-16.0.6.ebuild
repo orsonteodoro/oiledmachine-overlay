@@ -279,6 +279,11 @@ pkg_setup() {
 	fi
 }
 
+src_prepare() {
+	llvm.org_src_prepare # Already calls cmake_src_prepare
+	rocm_src_prepare
+}
+
 gen_nvptx_list() {
 	if use cuda_targets_auto ; then
 		echo "auto"
