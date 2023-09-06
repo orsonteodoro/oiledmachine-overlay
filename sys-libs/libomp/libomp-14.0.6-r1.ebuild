@@ -47,7 +47,7 @@ LICENSE="
 		MIT
 	)
 "
-SLOT="0"
+SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="
 amd64 arm arm64 ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
 "
@@ -286,8 +286,10 @@ multilib_src_configure() {
 
 	local libdir="$(get_libdir)"
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 	# Disable unnecessary hack copying stuff back to srcdir. \
 		-DLIBOMP_COPY_EXPORTS=OFF
+		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
 	# Do not install libgomp.so & libiomp5.so aliases. \
 		-DLIBOMP_INSTALL_ALIASES=OFF
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)

@@ -82,7 +82,7 @@ LICENSE="
 		MIT
 	)
 "
-SLOT="0/${LLVM_SOABI}"
+SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -347,8 +347,10 @@ multilib_src_configure() {
 
 	local libdir="$(get_libdir)"
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 	# Disable unnecessary hack copying stuff back to srcdir. \
 		-DLIBOMP_COPY_EXPORTS=OFF
+		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
 	# Do not install libgomp.so & libiomp5.so aliases. \
 		-DLIBOMP_INSTALL_ALIASES=OFF
 		-DLIBOMP_OMPD_GDB_SUPPORT=$(multilib_native_usex gdb-plugin)
