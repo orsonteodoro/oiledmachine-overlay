@@ -26,7 +26,7 @@ REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	>=sys-libs/libomp-${LLVM_MAX_SLOT}
+	sys-libs/libomp:${LLVM_MAX_SLOT}
 	~dev-util/hip-${PV}:${SLOT}[rocm]
 "
 DEPEND="

@@ -13,7 +13,8 @@ EAPI=8
 # See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.40.5/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
-LLVM_MAX_SLOT=14 # This should not be more than Mesa's package LLVM_MAX_SLOT
+LLVM_MAX_SLOT=16 # This should not be more than Mesa's package LLVM_MAX_SLOT
+LLVM_SLOTS=( 16 15 14 13 )
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..11} )
@@ -748,6 +749,20 @@ RDEPEND_PROPRIETARY_CODECS_DISABLE="
 	)
 "
 
+gen_depend_llvm() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				openmp? (
+					sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
+				)
+			)
+		"
+	done
+}
 # Reasons for restrictions with mold section are due to the the patent status
 # if not expired or not granted free.
 RDEPEND+="
@@ -866,7 +881,9 @@ RDEPEND+="
 		virtual/opengl[${MULTILIB_USEDEP}]
 	)
 	openmp? (
-		>=sys-libs/libomp-10.0.0[${MULTILIB_USEDEP}]
+		|| (
+			$(gen_depend_llvm)
+		)
 	)
 	proprietary-codecs-disable? (
 		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
@@ -973,7 +990,7 @@ BDEPEND+="
 		>=dev-util/gperf-3.0.1
 	)
 	|| (
-		>=sys-devel/clang-${CLANG_PV}
+		$(gen_depend_llvm)
 		>=sys-devel/gcc-${GCC_PV}
 	)
 "

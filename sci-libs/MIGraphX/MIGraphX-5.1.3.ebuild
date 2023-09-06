@@ -54,8 +54,8 @@ RDEPEND="
 	dev-libs/msgpack
 	dev-libs/protobuf:0/32
 	cpu? (
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-libs/oneDNN
+		sys-libs/libomp:${LLVM_MAX_SLOT}
 	)
 	rocm? (
 		~sci-libs/miopen-${PV}:${SLOT}

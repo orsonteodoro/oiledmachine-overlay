@@ -70,7 +70,7 @@ gen_llvm_depends() {
 		llvm-${s}? (
 			sys-devel/clang:${s}=
 			openmp? (
-				=sys-libs/libomp-${s}*
+				sys-libs/libomp:${s}
 			)
 		)
 		"
@@ -196,10 +196,10 @@ src_configure() {
 		)
 	elif use openmp ; then
 		if tc-is-clang ; then
-			if ! has_version "=sys-libs/libomp-$(clang-major-version)" ; then
+			if ! has_version "sys-libs/libomp:$(clang-major-version)" ; then
 eerror
 eerror "You need to either switch to GCC or rebuild as"
-eerror "=sys-libs/libomp-$(clang-major-version)*"
+eerror "sys-libs/libomp:$(clang-major-version)"
 eerror
 				die
 			fi

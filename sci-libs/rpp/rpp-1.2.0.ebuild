@@ -58,10 +58,26 @@ REQUIRED_USE="
 	)
 "
 
+LLVM_SLOTS=( 16 15 14 )
+gen_rdepend_llvm() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				sys-libs/libomp:${s}
+			)
+		"
+	done
+}
 RDEPEND="
+	|| (
+		$(gen_rdepend_llvm)
+	)
+	sys-devel/clang:=
+	sys-devel/llvm:=
 	>=dev-libs/boost-1.72:=
-	>=sys-devel/clang-5.0.1:=
-	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	opencl? (
 		virtual/opencl
 	)
@@ -127,6 +143,8 @@ src_configure() {
 		-DROCM_PATH="${ESYSROOT}/usr"
 	)
 
+#	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
+#	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
@@ -172,10 +190,36 @@ einfo "Using libopenmp"
 		)
 	else
 einfo "Using libomp"
+		local stdinc_gcc="\
+ -isystem /usr/lib/gcc/${CHOST}/12/include \
+ -isystem /usr/include \
+"
+		local stdinc_gxx="\
+ -isystem /usr/lib/gcc/${CHOST}/12/include \
+ -isystem /usr/lib/gcc/${CHOST}/12/include-fixed \
+ -isystem /usr/lib/gcc/${CHOST}/12/include/g++-v12 \
+ -isystem /usr/lib/gcc/${CHOST}/12/include/g++-v12/${CHOST} \
+ -isystem /usr/include \
+"
+		local stdinc_clang="\
+ -isystem /usr/lib/clang/${LLVM_MAX_SLOT}/include \
+ -isystem /usr/include \
+"
+# -isystem /usr/lib/gcc/${CHOST}/12/include-fixed \
+		local stdinc_clangxx="\
+ -isystem /usr/lib/clang/${LLVM_MAX_SLOT}/include \
+ -isystem /usr/lib/gcc/${CHOST}/12/include \
+ -isystem /usr/lib/gcc/${CHOST}/12/include/g++-v12 \
+ -isystem /usr/lib/gcc/${CHOST}/12/include/g++-v12/${CHOST} \
+ -isystem /usr/include \
+"
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-fopenmp=libomp -Wno-unused-command-line-argument"
-			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="omp"
+#			-DOpenMP_C_FLAGS=" -nostdinc -fopenmp -Wno-unused-command-line-argument"
+			-DOpenMP_CXX_FLAGS=" -nostdinc++ ${stdinc_clangxx} -fopenmp -Wno-unused-command-line-argument"
+#			-DOpenMP_CXX_LIB_NAMES="libomp"
+#			-DOpenMP_libomp_LIBRARY="omp"
+			-DOpenMP_CXX_LIB_NAMES="libopenmp"
+			-DOpenMP_libopenmp_LIBRARY="openmp"
 		)
 	fi
 

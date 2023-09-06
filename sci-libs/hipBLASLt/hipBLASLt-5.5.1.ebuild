@@ -83,10 +83,10 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=sys-libs/libomp-${LLVM_MAX_SLOT}
 	dev-libs/boost
 	dev-libs/msgpack
 	sys-devel/clang:${LLVM_MAX_SLOT}
+	sys-libs/libomp:${LLVM_MAX_SLOT}
 	virtual/blas
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (

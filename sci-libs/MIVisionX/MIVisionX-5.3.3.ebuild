@@ -80,14 +80,14 @@ RDEPEND="
 	)
 	rocal? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		media-libs/libjpeg-turbo
+		sys-libs/libomp:${LLVM_MAX_SLOT}
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
 	)
 	rocm? (
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_MAX_SLOT}
 		~sci-libs/rocBLAS-${PV}:${SLOT}
 	)
 	rpp? (

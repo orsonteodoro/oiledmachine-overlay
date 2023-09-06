@@ -46,15 +46,15 @@ RDEPEND="
 	|| (
 		(
 			~dev-util/hip-5.6.0:0/5.6
-			>=sys-libs/libomp-16
+			sys-libs/libomp:16
 		)
 		(
 			~dev-util/hip-5.5.1:0/5.5
-			>=sys-libs/libomp-16
+			sys-libs/libomp:16
 		)
 		(
 			~dev-util/hip-5.4.3:0/5.4
-			>=sys-libs/libomp-15
+			sys-libs/libomp:15
 		)
 	)
 "

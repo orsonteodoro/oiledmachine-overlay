@@ -3,7 +3,11 @@
 
 EAPI=8
 
+LLVM_MAX_SLOT=14
+LLVM_SLOTS=( 14 ) # CI uses 14
 PYTHON_COMPAT=( python3_{8..11} )
+TEST_LLVM_SLOT=14 # For asan/ubsan tests
+
 inherit flag-o-matic llvm meson-multilib multilib-minimal vala
 inherit python-r1 toolchain-funcs
 inherit linux-info
@@ -61,7 +65,7 @@ RDEPEND+="
 	>=dev-libs/expat-2.4.7[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
 	>=sci-libs/gsl-2.7.1
-	>=sys-libs/libomp-14.0.0[${MULTILIB_USEDEP}]
+	sys-libs/libomp:14[${MULTILIB_USEDEP}]
 	cairo? (
 		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
 	)
@@ -159,9 +163,6 @@ RDEPEND+="
 	)
 "
 
-TEST_LLVM_SLOT=14 # For asan/ubsan tests
-LLVM_SLOTS=( 14 ) # CI uses 14
-
 get_configurations() {
 	use test && echo "test"
 	echo "release"
@@ -173,10 +174,10 @@ gen_llvm_bdepend()
 	for s in ${LLVM_SLOTS[@]} ; do
 		o+="
 			(
-				>=sys-libs/libomp-${s}[${MULTILIB_USEDEP}]
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 			)
 		"
 	done
@@ -192,10 +193,10 @@ gen_llvm_test_bdepend()
 	!fuzz-testing? (
 		=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
 	)
-	>=sys-libs/libomp-${s}[${MULTILIB_USEDEP}]
 	sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 	sys-devel/lld:${s}
 	sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+	sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 	fuzz-testing? (
 		=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 		=sys-libs/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]

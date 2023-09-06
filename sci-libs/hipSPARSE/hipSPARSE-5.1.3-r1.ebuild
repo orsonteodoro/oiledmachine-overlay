@@ -88,8 +88,8 @@ BDEPEND="
 	>=dev-util/cmake-3.5
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	test? (
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-cpp/gtest
+		sys-libs/libomp:${LLVM_MAX_SLOT}
 		~dev-util/rocminfo-${PV}:${SLOT}
 	)
 "

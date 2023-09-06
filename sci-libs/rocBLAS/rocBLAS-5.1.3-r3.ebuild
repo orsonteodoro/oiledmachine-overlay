@@ -92,7 +92,7 @@ RDEPEND="
 	>=dev-libs/msgpack-3.0.1
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	benchmark? (
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_MAX_SLOT}
 		virtual/blas
 	)
 	cuda? (
@@ -110,8 +110,8 @@ BDEPEND="
 		~dev-util/Tensile-${PV}:${SLOT}
 	)
 	test? (
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		dev-cpp/gtest
+		sys-libs/libomp:${LLVM_MAX_SLOT}
 		virtual/blas
 	)
 "

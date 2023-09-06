@@ -87,7 +87,7 @@ REQUIRED_USE="
 "
 SLOT="0/$(ver_cut 1-2)"
 RDEPEND="
-	>=sys-libs/libomp-${LLVM_MAX_SLOT}
+	sys-libs/libomp:${LLVM_MAX_SLOT}
 	~dev-util/hip-${PV}:${SLOT}[rocm]
 	~sci-libs/rocPRIM-${PV}:${SLOT}[rocm(+)]
 "

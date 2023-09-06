@@ -718,7 +718,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.1.2[X?]
 			~media-libs/mesa-22.1.3[X?]
 		)
-		>=sys-libs/libomp-12
+		sys-libs/libomp:12
 	)
 	llvm-13? (
 		|| (
@@ -754,7 +754,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.3.3[X?]
 			 ~media-libs/mesa-22.3.7[X?]
 		)
-		>=sys-libs/libomp-13
+		sys-libs/libomp:13
 	)
 	llvm-14? (
 		|| (
@@ -775,7 +775,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.3.3[X?]
 			 ~media-libs/mesa-22.3.7[X?]
 		)
-		>=sys-libs/libomp-14
+		sys-libs/libomp:14
 	)
 	llvm-15? (
 		|| (
@@ -793,7 +793,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			=media-libs/mesa-22.3*[X?]
 			=media-libs/mesa-9999[X?]
 		)
-		>=sys-libs/libomp-15
+		sys-libs/libomp:15
 	)
 	materialx? (
 		media-libs/materialx[${PYTHON_SINGLE_USEDEP},python]
@@ -1262,13 +1262,19 @@ einfo "CUDA_TARGETS:  ${targets}"
 einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
-	if use openmp && tc-is-clang && has_version "sys-libs/libomp" ; then
+	local llvm_slot
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		use "llvm-${s}" && llvm_slot=${s}
+	done
+
+	if use openmp && tc-is-clang && has_version "sys-libs/libomp:${llvm_slot}" ; then
 		mycmakeargs+=(
 			-DOPENMP_CUSTOM=ON
 			-DOPENMP_FOUND=ON
-			-DOpenMP_C_FLAGS="-isystem /usr/include -fopenmp"
-			-DOpenMP_C_LIB_NAMES="-isystem /usr/include -fopenmp"
-			-DOpenMP_LINKER_FLAGS="-lomp"
+			-DOpenMP_C_FLAGS="-isystem ${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp"
+			-DOpenMP_C_LIB_NAMES="-isystem ${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp"
+			-DOpenMP_LINKER_FLAGS="-L${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir) -lomp"
 		)
 	fi
 

@@ -57,8 +57,8 @@ RDEPEND="
 		virtual/mpi
 	)
 	openmp? (
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_MAX_SLOT}
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${SLOT}

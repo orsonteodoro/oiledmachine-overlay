@@ -55,8 +55,8 @@ RDEPEND="
 		~dev-util/rocm-smi-${PV}:${SLOT}
 	)
 	openmp? (
-		>=sys-libs/libomp-${LLVM_MAX_SLOT}
 		sys-devel/lld:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_MAX_SLOT}
 	)
 "
 DEPEND="
