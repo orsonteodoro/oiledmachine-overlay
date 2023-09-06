@@ -525,76 +525,76 @@ RDEPEND+="
 		>=media-libs/opencolorio-2.1.1[cpu_flags_x86_sse2?]
 	)
 	cuda? (
-		amdgpu_targets_sm_30? (
+		cuda_targets_sm_30? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_sm_35? (
-			|| (
-				=dev-util/nvidia-cuda-toolkit-11*:=
-				=dev-util/nvidia-cuda-toolkit-10.2*:=
-				=dev-util/nvidia-cuda-toolkit-10.1*:=
-			)
-		)
-		amdgpu_targets_sm_37? (
+		cuda_targets_sm_35? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_sm_50? (
+		cuda_targets_sm_37? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_sm_52? (
+		cuda_targets_sm_50? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_sm_60? (
+		cuda_targets_sm_52? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_sm_61? (
+		cuda_targets_sm_60? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_sm_70? (
+		cuda_targets_sm_61? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_sm_75? (
+		cuda_targets_sm_70? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_sm_86? (
+		cuda_targets_sm_75? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		amdgpu_targets_compute_75? (
+		cuda_targets_sm_86? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		cuda_targets_compute_75? (
 			|| (
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
