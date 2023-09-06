@@ -23,6 +23,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+FIN_COMMIT="4b1aecb98258252c9fb5e8e028722c9a245b98cb"
 ROCM_VERSION="${PV}"
 LLVM_MAX_SLOT=16
 inherit cmake flag-o-matic llvm rocm
@@ -30,6 +31,8 @@ inherit cmake flag-o-matic llvm rocm
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpen/archive/rocm-${PV}.tar.gz
 	-> MIOpen-${PV}.tar.gz
+https://github.com/ROCmSoftwarePlatform/MIFin/archive/4b1aecb98258252c9fb5e8e028722c9a245b98cb.tar.gz
+	-> MIFin-${FIN_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="AMD's Machine Intelligence Library"
@@ -37,7 +40,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test r1"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test r2"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -127,7 +130,17 @@ pkg_setup() {
 	rocm_pkg_setup
 }
 
+src_unpack() {
+	unpack ${A}
+	rm -rf "${S}/fin" || true
+	mv \
+		"${WORKDIR}/MIFin-${FIN_COMMIT}" \
+		"${S}/fin" \
+		|| die
+}
+
 src_prepare() {
+	cp -a "${S}" "${S}.orig" || die
 ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
 
@@ -149,7 +162,6 @@ ewarn "Please wait... Patching may take longer than usual."
 		-e '/MIOPEN_TIDY_ERRORS ALL/d' \
 		-i CMakeLists.txt \
 		|| die
-
 	rocm_src_prepare
 
 	# This plus avoid-metadata-error-for-vanilla-clang.patch fix bug mentioned
