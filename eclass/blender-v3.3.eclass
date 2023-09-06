@@ -144,7 +144,7 @@ gen_required_use_rocm_targets() {
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 		echo "
 			amdgpu_targets_${x}? (
-				hip
+				rocm
 			)
 		"
 	done
@@ -859,8 +859,8 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	rocm? (
 		|| (
-			~dev-util/hip-5.5.0:0/5.5[rocm]
 			~dev-util/hip-5.5.1:0/5.5[rocm]
+			~dev-util/hip-5.5.0:0/5.5[rocm]
 		)
 		dev-util/hip:=
 	)
@@ -1167,7 +1167,7 @@ _src_configure() {
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
-		-DWITH_CYCLES_HIP_BINARIES=$(usex hip)
+		-DWITH_CYCLES_HIP_BINARIES=$(usex rocm)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_DRACO=$(usex draco)
 		-DWITH_GHOST_WAYLAND_DYNLOAD=OFF
