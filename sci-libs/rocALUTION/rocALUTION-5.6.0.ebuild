@@ -3,6 +3,12 @@
 
 EAPI=8
 
+# FIXME:
+#/usr/lib/gcc/@CHOST@/12/include/omp.h:308:45: error: '__malloc__' attribute takes no arguments
+#  __GOMP_NOTHROW __attribute__((__malloc__, __malloc__ (omp_free),
+#                                            ^
+# Still happens when USE=opemp CC=hipcc CXX=hipcc OR USE=openmp CC=${CHOST}-clang-${LLVM_MAX_SLOT} CXX=hipcc
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900_xnack_minus
