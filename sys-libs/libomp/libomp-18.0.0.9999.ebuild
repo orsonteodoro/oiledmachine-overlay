@@ -310,7 +310,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-ewarn "You may need to uninstall first =libomp-${PV}."
+ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
 	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
