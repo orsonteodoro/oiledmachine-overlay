@@ -77,14 +77,26 @@ gen_llvm_depends() {
 	done
 }
 
+gen_omp_depends() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+		(
+			sys-devel/clang:${s}=
+			sys-libs/libomp:${s}
+		)
+		"
+	done
+}
+
 # U 22.04
 RDEPEND="
 	>=sys-libs/ncurses-6.3
 	>=sys-libs/zlib-1.2.11
 	openmp? (
 		|| (
+			$(gen_omp_depends)
 			>=sys-devel/gcc-11.2.0[openmp]
-			sys-libs/libomp
 		)
 	)
 	tbb? (
