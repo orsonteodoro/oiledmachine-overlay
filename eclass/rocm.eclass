@@ -329,7 +329,7 @@ eerror
 	sed \
 		-i \
 		-e "s|@CHOST@|${CHOST}|g" \
-		$(grep -r -l -e "@PV@" "${WORKDIR}") \
+		$(grep -r -l -e "@CHOST@" "${WORKDIR}") \
 		2>/dev/null || true
 	local gcc_slot=$(gcc-major-version)
 	sed \
