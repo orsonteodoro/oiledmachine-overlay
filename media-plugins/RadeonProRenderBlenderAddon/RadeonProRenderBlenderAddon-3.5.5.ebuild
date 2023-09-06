@@ -5,8 +5,13 @@ EAPI=8
 
 # It supports Python 3.7 but 3.7 is deprecated in this distro in python-utils-r1.eclass.
 PYTHON_COMPAT=( python3_{9..11} )
+LLVM_MAX_SLOT=15
+# Blender:head :: 15 14 13 12 11
+# Blender:3.6 :: 15 14 13 12 11
+# Blender:3.3 :: 13 12 11
+LLVM_SLOTS=( 15 14 13 12 11 )
 
-inherit check-reqs git-r3 linux-info python-r1 unpacker
+inherit check-reqs git-r3 linux-info llvm python-r1 unpacker
 
 DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for
 Blender"
@@ -56,7 +61,7 @@ MIN_BLENDER_PV="2.80"
 MAX_BLENDER_PV="3.5" # exclusive
 SLOT="0"
 IUSE+="
-blender-lts-2_93 blender-lts-3_3 blender-master blender-stable denoiser
+blender-lts-3_3 blender-master blender-stable denoiser
 intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide video_cards_amdgpu
 video_cards_intel video_cards_nvidia video_cards_radeonsi +vulkan
 "
@@ -66,10 +71,6 @@ NV_DRIVER_VERSION_VULKAN="390.132"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!systemwide
-	blender-lts-2_93? (
-		python_targets_python3_9
-		python_targets_python3_10
-	)
 	blender-lts-3_3? (
 		python_targets_python3_10
 		python_targets_python3_11
@@ -96,7 +97,6 @@ REQUIRED_USE+="
 		)
 	)
 	|| (
-		blender-lts-2_93
 		blender-lts-3_3
 		blender-master
 		blender-stable
@@ -113,10 +113,12 @@ DEPEND+="
 	${CDEPEND_NOT_LISTED}
 	${DEPEND_NOT_LISTED}
 	${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-python/cffi:=[${PYTHON_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/distro[${PYTHON_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/imageio[${PYTHON_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep '
+		dev-python/cffi:=[${PYTHON_USEDEP}]
+		dev-python/distro[${PYTHON_USEDEP}]
+		dev-python/imageio[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+	')
 	dev-util/opencl-headers
 	sys-apps/pciutils
 	x11-libs/libdrm
@@ -127,11 +129,24 @@ DEPEND+="
 # For details see,
 #   src/rprblender/utils/install_libs.py
 PIP_DOWNLOADED="
-	$(python_gen_cond_dep 'dev-python/boto3[${PYTHON_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/pip[${PYTHON_USEDEP}]')
-	$(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]')
+	$(python_gen_cond_dep '
+		dev-python/boto3[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
 "
 LEGACY_TBB_SLOT="2" # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/blob/master/OpenVDB/include/tbb/tbb_stddef.h
+gen_omp_depends() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			(
+				media-gfx/blender[llvm-${s}]
+				sys-libs/libomp:${s}
+			)
+		"
+	done
+}
 RDEPEND_NOT_LISTED="
 	${PIP_DOWNLOADED}
 	dev-libs/libbsd
@@ -148,7 +163,9 @@ RDEPEND_NOT_LISTED="
 	x11-libs/libXxf86vm
 	denoiser? (
 		dev-lang/vtune
-		sys-libs/libomp
+		|| (
+			$(gen_omp_depends)
+		)
 		|| (
 			(
 				 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
@@ -169,18 +186,21 @@ RDEPEND+="
 	>=media-libs/embree-2.12.0
 	>=media-libs/openimageio-1.6
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
-	blender-lts-2_93? (
-		$(python_gen_any_dep "=media-gfx/blender-2.93*["'${PYTHON_SINGLE_USEDEP}'"]")
-	)
 	blender-lts-3_3? (
-		$(python_gen_any_dep "=media-gfx/blender-3.3*["'${PYTHON_SINGLE_USEDEP}'"]")
+		$(python_gen_any_dep "
+			=media-gfx/blender-3.3*["'${PYTHON_SINGLE_USEDEP}'"]
+		")
 	)
 	blender-master? (
-		$(python_gen_any_dep "=media-gfx/blender-9999*["'${PYTHON_SINGLE_USEDEP}'"]")
+		$(python_gen_any_dep "
+			=media-gfx/blender-9999*["'${PYTHON_SINGLE_USEDEP}'"]
+		")
 	)
 	blender-stable? (
-		$(python_gen_any_dep "<media-gfx/blender-9999["'${PYTHON_SINGLE_USEDEP}'"]")
-		$(python_gen_any_dep ">=media-gfx/blender-3.4["'${PYTHON_SINGLE_USEDEP}'"]")
+		$(python_gen_any_dep "
+			<media-gfx/blender-9999["'${PYTHON_SINGLE_USEDEP}'"]
+			>=media-gfx/blender-3.4["'${PYTHON_SINGLE_USEDEP}'"]
+		")
 	)
 	matlib? (
 		media-plugins/RadeonProRenderMaterialLibrary
@@ -286,9 +306,29 @@ pkg_pretend() {
 	check-reqs_pkg_setup
 }
 
+check_iomp5() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		if use denoiser \
+			&& has_version "media-gfx/blender[llvm-${s}]" \
+			&& [[ ! -e "${EROOT}/usr/lib/llvm/${s}/$(get_libdir)/libiomp5.so" ]] \
+	; then
+ewarn
+ewarn "Missing libiomp5.so symlink.  You may need to..."
+ewarn
+ewarn "ln -s /usr/lib/llvm/${s}/$(get_libdir)/libomp.so /usr/lib/llvm/${s}/$(get_libdir)/libiomp5.so"
+ewarn "ln -s /usr/lib/llvm/${s}/$(get_libdir)/libomp.so /usr/$(get_libdir)/libiomp5.so"
+ewarn
+		fi
+	done
+}
+
 pkg_setup() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
+
+	llvm_pkg_setup
+	check_iomp5
 
 	if ! use opencl ; then
 einfo
@@ -472,14 +512,7 @@ pkg_postinst() {
 	einfo
 	einfo "You must enable the addon manually."
 
-	if use denoiser ; then
-		if [[ ! -f /usr/$(get_libdir)/libomp.so.5 ]] ; then
-			einfo "Adding symlink for the denoiser:"
-			einfo "/usr/$(get_libdir)/libomp.so -> /usr/$(get_libdir)/libiomp.so.5"
-			ln -s /usr/$(get_libdir)/libomp.so \
-				/usr/$(get_libdir)/libiomp.so.5 || die
-		fi
-	fi
+	# Denoiser may need libiomp.so.5
 
 	if use systemwide ; then
 einfo
