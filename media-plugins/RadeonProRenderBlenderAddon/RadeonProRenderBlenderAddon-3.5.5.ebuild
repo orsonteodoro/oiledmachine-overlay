@@ -327,6 +327,10 @@ pkg_setup() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
+	use blender-lts-3_3 && export LLVM_MAX_SLOT=15
+	use blender-master && export LLVM_MAX_SLOT=15
+	use blender-stable && export LLVM_MAX_SLOT=13
+
 	llvm_pkg_setup
 	check_iomp5
 
