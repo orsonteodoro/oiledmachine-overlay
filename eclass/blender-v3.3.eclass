@@ -116,10 +116,10 @@ ${FFMPEG_IUSE}
 ${OPENVDB_ABIS[@]}
 +X +abi9-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug doc +draco
-+elbeem +embree +ffmpeg +fftw flac +gmp +hdr -hip +jack +jemalloc +jpeg2k -llvm
++elbeem +embree +ffmpeg +fftw flac +gmp +hdr +jack +jemalloc +jpeg2k -llvm
 -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
-+pulseaudio release +sdl +sndfile +tbb test +tiff +usd -valgrind
++pulseaudio release -rocm +sdl +sndfile +tbb test +tiff +usd -valgrind
 r2
 "
 

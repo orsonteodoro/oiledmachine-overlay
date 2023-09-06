@@ -118,11 +118,11 @@ ${FFMPEG_IUSE}
 ${OPENVDB_ABIS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
--debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hip +jack
+-debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +jack
 +jemalloc +jpeg2k -llvm -man -materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
-+openxr -optix +osl +pdf +potrace +pulseaudio release +sdl +sndfile +tbb test
-+tiff +usd -valgrind +wayland
++openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile +tbb
+test +tiff +usd -valgrind +wayland
 r2
 "
 # hip is default ON upstream.
