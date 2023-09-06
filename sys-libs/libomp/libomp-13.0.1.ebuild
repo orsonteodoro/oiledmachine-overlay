@@ -3,6 +3,17 @@
 
 EAPI=7
 
+AMDGPU_TARGETS_COMPAT=(
+	gfx700
+	gfx701
+	gfx801
+	gfx803
+	gfx900
+	gfx902
+	gfx906
+	gfx908
+)
+
 CUDA_TARGETS_COMPAT=(
 	auto
 	sm_35
@@ -37,8 +48,9 @@ amd64 arm arm64 ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
 "
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${ROCM_IUSE}
 cuda debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-r1
+r2
 "
 # CUDA works only with the x86_64 ABI
 gen_cuda_required_use() {
@@ -51,10 +63,23 @@ gen_cuda_required_use() {
 		"
 	done
 }
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				llvm_targets_AMDGPU
+			)
+		"
+	done
+}
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	cuda? (
 		llvm_targets_NVPTX
+	)
+	llvm_targets_AMDGPU? (
+		${ROCM_REQUIRED_USE}
 	)
 	llvm_targets_NVPTX? (
 		cuda
@@ -63,6 +88,22 @@ REQUIRED_USE="
 		)
 	)
 "
+ROCM_SLOTS=(
+	"4.5.2"
+	"4.3.1"
+)
+gen_amdgpu_rdepend() {
+	local pv
+	for pv in ${ROCM_SLOTS[@]} ; do
+		local s="0/${pv%.*}"
+		echo "
+			(
+				~dev-libs/rocr-runtime-${pv}:${s}
+				~dev-libs/roct-thunk-interface-${pv}:${s}
+			)
+		"
+	done
+}
 RDEPEND="
 	cuda_targets_sm_35? (
 		=dev-util/nvidia-cuda-toolkit-11*:=
@@ -123,6 +164,11 @@ RDEPEND="
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
 	)
+	llvm_targets_AMDGPU? (
+		|| (
+			$(gen_amdgpu_rdepend)
+		)
+	)
 	llvm_targets_NVPTX? (
 		<dev-util/nvidia-cuda-toolkit-11.3
 	)
@@ -168,6 +214,9 @@ LLVM_COMPONENTS=(
 )
 LLVM_PATCHSET="${PV/_/-}"
 llvm.org_set_globals
+PATCHES=(
+	"${FILESDIR}/${PN}-13.0.1-sover-suffix.patch"
+)
 
 python_check_deps() {
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
@@ -193,6 +242,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+ewarn "You may need to uninstall first =libomp-${PV}."
 	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
 einfo
@@ -241,6 +291,7 @@ multilib_src_configure() {
 		-DLIBOMP_INSTALL_ALIASES=ON # For binary packages
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
+		-DLLVM_VERSION_MAJOR="${PV%%.*}"
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 	)
 
@@ -256,6 +307,11 @@ multilib_src_configure() {
 			-DLIBOMPTARGET_NVPTX_BC_LINKER="$(type -P llvm-link)"
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
+		if use llvm_targets_AMDGPU ; then
+			mycmakeargs+=(
+				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
+			)
+		fi
 		if use llvm_targets_NVPTX ; then
 			mycmakeargs+=(
 				-DLIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES=$(gen_nvptx_list)

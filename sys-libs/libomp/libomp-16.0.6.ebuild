@@ -69,7 +69,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-r1
+r2
 "
 gen_cuda_required_use() {
 	local x
@@ -109,9 +109,6 @@ REQUIRED_USE="
 ROCM_SLOTS=(
 	"5.6.0"
 	"5.5.1"
-	"5.4.3"
-	"5.3.3"
-	"5.1.3"
 )
 gen_amdgpu_rdepend() {
 	local pv
@@ -253,6 +250,9 @@ LLVM_COMPONENTS=(
 	"llvm/include"
 )
 llvm.org_set_globals
+PATCHES=(
+	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
+)
 
 kernel_pds_check() {
 	if use kernel_linux \
@@ -274,6 +274,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+ewarn "You may need to uninstall first =libomp-${PV}."
 	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
@@ -327,6 +328,7 @@ multilib_src_configure() {
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
 	# Prevent trying to access the GPU. \
 		-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
+		-DLLVM_VERSION_MAJOR="${PV%%.*}"
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 	)
 

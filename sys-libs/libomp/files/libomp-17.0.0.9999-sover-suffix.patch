@@ -1,0 +1,42 @@
+diff -urp a/openmp/libompd/src/CMakeLists.txt b/openmp/libompd/src/CMakeLists.txt
+--- a/openmp/libompd/src/CMakeLists.txt	2023-09-06 15:27:57.263834189 -0700
++++ b/openmp/libompd/src/CMakeLists.txt	2023-09-06 15:33:29.151844499 -0700
+@@ -15,6 +15,11 @@ add_library (ompd SHARED TargetValue.cpp
+ 
+ target_link_libraries(ompd omp) # ensure generated import library is created first
+ 
++set_target_properties(ompd PROPERTIES
++  SOVERSION ${LLVM_VERSION_MAJOR}
++  VERSION ${LLVM_VERSION_MAJOR}
++)
++
+ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+ 
+ set(LIBOMPD_LD_STD_FLAGS FALSE CACHE BOOL
+diff -urp a/openmp/runtime/src/CMakeLists.txt b/openmp/runtime/src/CMakeLists.txt
+--- a/openmp/runtime/src/CMakeLists.txt	2023-09-06 15:27:57.335834191 -0700
++++ b/openmp/runtime/src/CMakeLists.txt	2023-09-06 15:28:40.883835544 -0700
+@@ -197,6 +197,8 @@ else()
+     PREFIX "" SUFFIX "" OUTPUT_NAME "${LIBOMP_LIB_FILE}"
+     LINK_FLAGS "${LIBOMP_CONFIGURED_LDFLAGS}"
+     LINKER_LANGUAGE ${LIBOMP_LINKER_LANGUAGE}
++    SOVERSION ${LLVM_VERSION_MAJOR}
++    VERSION ${LLVM_VERSION_MAJOR}
+   )
+ endif()
+ 
+diff -urp a/openmp/tools/archer/CMakeLists.txt b/openmp/tools/archer/CMakeLists.txt
+--- a/openmp/tools/archer/CMakeLists.txt	2023-09-06 15:27:57.451834194 -0700
++++ b/openmp/tools/archer/CMakeLists.txt	2023-09-06 15:31:28.323840746 -0700
+@@ -15,6 +15,11 @@ if(LIBOMP_OMPT_SUPPORT AND LIBOMP_ARCHER
+   target_link_libraries(archer ${CMAKE_DL_LIBS})
+   add_library(archer_static STATIC ompt-tsan.cpp)
+ 
++  set_target_properties(archer PROPERTIES
++    SOVERSION ${LLVM_VERSION_MAJOR}
++    VERSION ${LLVM_VERSION_MAJOR}
++  )
++
+   install(TARGETS archer archer_static
+     LIBRARY DESTINATION ${OPENMP_INSTALL_LIBDIR}
+     ARCHIVE DESTINATION ${OPENMP_INSTALL_LIBDIR})

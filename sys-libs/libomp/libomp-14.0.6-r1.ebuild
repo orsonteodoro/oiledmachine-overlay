@@ -55,7 +55,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 cuda debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-r1
+r2
 "
 # CUDA works only with the x86_64 ABI
 gen_cuda_required_use() {
@@ -95,10 +95,6 @@ REQUIRED_USE="
 	)
 "
 ROCM_SLOTS=(
-	"5.6.0"
-	"5.5.1"
-	"5.4.3"
-	"5.3.3"
 	"5.1.3"
 )
 gen_amdgpu_rdepend() {
@@ -228,6 +224,9 @@ LLVM_COMPONENTS=(
 )
 LLVM_PATCHSET="${PV}-r2"
 llvm.org_set_globals
+PATCHES=(
+	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
+)
 
 python_check_deps() {
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
@@ -253,6 +252,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+ewarn "You may need to uninstall first =libomp-${PV}."
 	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
 	use test && python-any-r1_pkg_setup
 einfo
@@ -301,6 +301,7 @@ multilib_src_configure() {
 		-DLIBOMP_INSTALL_ALIASES=ON # For binary packages
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt)
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
+		-DLLVM_VERSION_MAJOR="${PV%%.*}"
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 	)
 

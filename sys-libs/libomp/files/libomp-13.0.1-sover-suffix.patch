@@ -1,0 +1,15 @@
+diff -urp work.orig/openmp/tools/archer/CMakeLists.txt work/openmp/tools/archer/CMakeLists.txt
+--- work.orig/openmp/tools/archer/CMakeLists.txt	2022-01-20 13:31:59.000000000 -0800
++++ work/openmp/tools/archer/CMakeLists.txt	2023-09-06 15:38:23.919853657 -0700
+@@ -14,6 +14,11 @@ if(LIBOMP_OMPT_SUPPORT)
+   add_library(archer SHARED ompt-tsan.cpp)
+   add_library(archer_static STATIC ompt-tsan.cpp)
+ 
++  set_target_properties(archer PROPERTIES
++    SOVERSION ${LLVM_VERSION_MAJOR}
++    VERSION ${LLVM_VERSION_MAJOR}
++  )
++
+   install(TARGETS archer archer_static
+     LIBRARY DESTINATION ${OPENMP_INSTALL_LIBDIR}
+     ARCHIVE DESTINATION ${OPENMP_INSTALL_LIBDIR})

@@ -88,7 +88,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-r1
+r2
 "
 gen_cuda_required_use() {
 	local x
@@ -126,11 +126,6 @@ REQUIRED_USE="
 	)
 "
 ROCM_SLOTS=(
-	"5.6.0"
-	"5.5.1"
-	"5.4.3"
-	"5.3.3"
-	"5.1.3"
 )
 gen_amdgpu_rdepend() {
 	local pv
@@ -291,6 +286,9 @@ LLVM_COMPONENTS=(
 	"llvm/include"
 )
 llvm.org_set_globals
+PATCHES=(
+	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
+)
 
 kernel_pds_check() {
 	if use kernel_linux \
@@ -312,17 +310,11 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+ewarn "You may need to uninstall first =libomp-${PV}."
 	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
 	fi
-einfo
-einfo "The hardmask for llvm_targets_AMDGPU in ${CATEGORY}/${PN} can be removed by doing..."
-einfo
-einfo "mkdir -p /etc/portage/profile"
-einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.force"
-einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.mask"
-einfo
 }
 
 src_prepare() {
@@ -356,6 +348,7 @@ multilib_src_configure() {
 	local libdir="$(get_libdir)"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
+		-DCMAKE_SHARED_LIBRARY_SUFFIX=".so.${PV%%.*}"
 	# Disable unnecessary hack copying stuff back to srcdir. \
 		-DLIBOMP_COPY_EXPORTS=OFF
 		-DLIBOMP_HEADERS_INSTALL_PATH="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/include"
@@ -365,6 +358,7 @@ multilib_src_configure() {
 		-DLIBOMP_USE_HWLOC=$(usex hwloc)
 	# Prevent trying to access the GPU. \
 		-DLIBOMPTARGET_AMDGPU_ARCH=LIBOMPTARGET_AMDGPU_ARCH-NOTFOUND
+		-DLLVM_VERSION_MAJOR="${PV%%.*}"
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 	)
 
