@@ -521,7 +521,7 @@ ewarn
 # __GOMP_NOTHROW __attribute__((__malloc__, __malloc__ (omp_free), error: '__malloc__' attribute takes no arguments
 		else
 ewarn
-ewarn "Either the tbb USE flag is recommended for threading.  Falling"
+ewarn "The tbb USE flag is recommended for threading.  Falling"
 ewarn "back to sequential."
 ewarn
 			mycmakeargs+=(
