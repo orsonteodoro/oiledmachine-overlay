@@ -1604,11 +1604,76 @@ einfo "Add -flto with one of -fuse-ld=<bfd|gold|lld|mold> for LTO optimization"
 			"${S}/Source/cmake/OptionsGTK.cmake" || die
 	fi
 
-	if use openmp ; then
+	if use openmp && tc-is-clang ; then
+		local llvm_slot=$(clang-major-version)
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-fopenmp=openmp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=openmp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="omp"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+		)
+	fi
+
+	if use openmp && tc-is-gcc ; then
+		local gcc_slot=$(gcc-major-version)
+		local gomp_abspath
+		# Known list
+		if [[ "${ABI}" =~ (amd64) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
+			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
+		elif [[ "${ABI}" =~ (x86) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
+			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
+
+		# RISC V
+		elif [[ -e "${GOMP_LIB64_LP64D_ABSPATH}" ]] && [[ "${ABI}" =~ (lp64d) ]] ; then
+			gomp_abspath="${GOMP_LIB64_LP64D_ABSPATH}"
+		elif [[ -e "${GOMP_LIB64_LP64_ABSPATH}" ]] && [[ "${ABI}" =~ (lp64) ]] ; then
+			gomp_abspath="${GOMP_LIB64_LP64_ABSPATH}"
+		elif [[ -e "${GOMP_LIB32_ILP32D_ABSPATH}" ]] && [[ "${ABI}" =~ (ilp32d) ]] ; then
+			gomp_abspath="${GOMP_LIB64_ILP32D_ABSPATH}"
+		elif [[ -e "${GOMP_LIB32_ILP32_ABSPATH}" ]] && [[ "${ABI}" =~ (ilp32) ]] ; then
+			gomp_abspath="${GOMP_LIB64_ILP32_ABSPATH}"
+		elif [[ -e "${GOMP_LIBX32_ABSPATH}" ]] && [[ "${ABI}" =~ (x32) ]] ; then
+			gomp_abspath="${GOMP_LIBX32_ABSPATH}"
+
+		# MIPS
+		elif [[ -e "${GOMP_LIBN64_ABSPATH}" ]] && [[ "${ABI}" =~ (n64) ]] ; then
+			gomp_abspath="${GOMP_LIBN64_ABSPATH}"
+		elif [[ -e "${GOMP_LIBN32_ABSPATH}" ]] && [[ "${ABI}" =~ (n32) ]] ; then
+			gomp_abspath="${GOMP_LIBN32_ABSPATH}"
+		elif [[ -e "${GOMP_LIBO32_ABSPATH}" ]] && [[ "${ABI}" =~ (o32) ]] ; then
+			gomp_abspath="${GOMP_LIBO32_ABSPATH}"
+
+		# 64-bit
+		elif [[ -e "${GOMP_LIB64_ABSPATH}" ]] && [[ "${ABI}" =~ (amd64|lp64d|ppc64|sparc64) ]] ; then
+			gomp_abspath="${GOMP_LIB64_ABSPATH}"
+		# 32-bit
+		elif [[ -e "${GOMP_LIB32_ABSPATH}" ]] && [[ "${ABI}" =~ (arm|ppc|sparc32|x86) ]] ; then
+			gomp_abspath="${GOMP_LIB32_ABSPATH}"
+		else
+# TODO:  prune
+eerror
+eerror "${ABI} is unknown.  Please set one or more of the following per-package"
+eerror "environment variables:"
+eerror
+eerror "  GOMP_LIB32_ABSPATH"
+eerror "  GOMP_LIB32_ILP32_ABSPATH"
+eerror "  GOMP_LIB32_ILP32D_ABSPATH"
+eerror "  GOMP_LIB64_ABSPATH"
+eerror "  GOMP_LIB64_LP64_ABSPATH"
+eerror "  GOMP_LIB64_LP64D_ABSPATH"
+eerror "  GOMP_LIBN32_LP64D_ABSPATH"
+eerror "  GOMP_LIBN64_LP64D_ABSPATH"
+eerror "  GOMP_LIBO32_LP64D_ABSPATH"
+eerror "  GOMP_LIBX32_ABSPATH"
+eerror
+eerror "to point to the absolute path to libgomp.so for GCC slot ${gcc_slot}"
+eerror "corresponding to that ABI."
+eerror
+			die
+		fi
+		mycmakeargs+=(
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include -fopenmp"
+			-DOpenMP_CXX_LIB_NAMES="libgomp"
+			-DOpenMP_libgomp_LIBRARY="${gomp_abspath}"
 		)
 	fi
 

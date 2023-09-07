@@ -6,7 +6,6 @@ EAPI=8
 LLVM_MAX_SLOT=14
 LLVM_SLOTS=( 14 ) # CI uses 14
 PYTHON_COMPAT=( python3_{8..11} )
-TEST_LLVM_SLOT=14 # For asan/ubsan tests
 
 inherit flag-o-matic llvm meson-multilib multilib-minimal vala
 inherit python-r1 toolchain-funcs
@@ -279,9 +278,9 @@ ewarn "breaks."
 ewarn
 		fi
 	elif [[ "${CXX}" =~ 'clang++' ]] ; then
-		if ver_test $(clang-version) -lt ${TEST_LLVM_SLOT} ; then
+		if ver_test $(clang-version) -ne ${LLVM_MAX_SLOT} ; then
 ewarn
-ewarn "Upstream tests with clang++ >= ${TEST_LLVM_SLOT} only.  Switch to version >= ${TEST_LLVM_SLOT} if it"
+ewarn "Upstream tests with clang++ == ${LLVM_MAX_SLOT} only.  Switch to version == ${LLVM_MAX_SLOT} if it"
 ewarn "breaks."
 ewarn
 		fi
@@ -399,13 +398,14 @@ _apply_flags() {
 			-g \
 			-fsanitize=address,undefined \
 			-fno-omit-frame-pointer \
-			-fopenmp \
+			-I"${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include" \
+			-fopenmp=libomp \
 			-DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
 		append-ldflags \
 			-g \
 			-fsanitize=address,undefined \
 			-shared-libsan \
-			-fopenmp=libomp
+			"${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 	fi
 einfo "CPPFLAGS:\t${CPPFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"

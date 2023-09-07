@@ -73,9 +73,9 @@ src_configure() {
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
-		-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
+		-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
 		-DOpenMP_CXX_LIB_NAMES="libomp"
-		-DOpenMP_libomp_LIBRARY="omp"
+		-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 		-DROCWMMA_BUILD_TESTS=OFF
 	)
 

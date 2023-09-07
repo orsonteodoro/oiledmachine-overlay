@@ -175,16 +175,36 @@ src_configure() {
 		fi
 
 		if [[ "${CXX}" =~ (^|-)"g++" ]] ; then
+			local gcc_slot=$(gcc-major-version)
+			local gomp_abspath
+			if [[ "${ABI}" =~ (amd64) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
+				gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
+			elif [[ "${ABI}" =~ (x86) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
+				gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
+			elif [[ -e "${GOMP_LIB_ABSPATH}" ]] ; then
+				gomp_abspath="${GOMP_LIB_ABSPATH}"
+			else
+eerror
+eerror "${ABI} is unknown.  Please set one of the following per-package"
+eerror "environment variables:"
+eerror
+eerror "  GOMP_LIB_ABSPATH"
+eerror
+eerror "to point to the the absolute path to libgomp.so for GCC slot ${gcc_slot}"
+eerror "corresponding to that ABI."
+eerror
+				die
+			fi
 			mycmakeargs+=(
-				-DOpenMP_CXX_FLAGS="-fopenmp"
-				-DOpenMP_CXX_LIB_NAMES="libopenmp"
-				-DOpenMP_libopenmp_LIBRARY="openmp"
+				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include -fopenmp"
+				-DOpenMP_CXX_LIB_NAMES="libgomp"
+				-DOpenMP_libgomp_LIBRARY="${gomp_abspath}"
 			)
 		else
 			mycmakeargs+=(
-				-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
+				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
 				-DOpenMP_CXX_LIB_NAMES="libomp"
-				-DOpenMP_libomp_LIBRARY="omp"
+				-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 			)
 		fi
 		IFS=$'\n'

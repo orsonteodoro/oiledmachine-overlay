@@ -1268,13 +1268,54 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		use "llvm-${s}" && llvm_slot=${s}
 	done
 
-	if use openmp && tc-is-clang && has_version "sys-libs/libomp:${llvm_slot}" ; then
+	if use openmp && tc-is-clang ; then
+		local llvm_slot
+		local s
+		for s in ${LLVM_SLOTS[@]} ; do
+			use "llvm-${s}" && llvm_slot=${s}
+		done
 		mycmakeargs+=(
 			-DOPENMP_CUSTOM=ON
 			-DOPENMP_FOUND=ON
-			-DOpenMP_C_FLAGS="-isystem ${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
-			-DOpenMP_C_LIB_NAMES="-isystem ${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
-			-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
+			-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
+			-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+		)
+	fi
+
+	if use openmp && tc-is-gcc ; then
+		local gcc_slot="$(gcc-major-version)"
+		local gomp_abspath
+		if [[ "${ABI}" =~ (amd64) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so" ]] ; then
+			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libgomp.so"
+		elif [[ "${ABI}" =~ (x86) && -e "${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so" ]] ; then
+			gomp_abspath="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/32/libgomp.so"
+		elif [[ -e "${GOMP_LIB64_ABSPATH}" ]] ; then
+			gomp_abspath="${GOMP_LIB64_ABSPATH}"
+		elif [[ -e "${GOMP_LIB32_ABSPATH}" ]] ; then
+			gomp_abspath="${GOMP_LIB32_ABSPATH}"
+		elif [[ -e "${GOMP_LIB_ABSPATH}" ]] ; then
+			gomp_abspath="${GOMP_LIB_ABSPATH}"
+		else
+eerror
+eerror "${ABI} is unknown.  Please set one or more of the following per-package"
+eerror "environment variables:"
+eerror
+eerror "GOMP_LIB_ABSPATH"
+eerror "GOMP_LIB32_ABSPATH"
+eerror "GOMP_LIB64_ABSPATH"
+eerror
+eerror "to point to the absolute path to libgomp.so for GCC slot ${gcc_slot}"
+eerror "corresponding to that ABI."
+eerror
+			die
+		fi
+		mycmakeargs+=(
+			-DOPENMP_CUSTOM=ON
+			-DOPENMP_FOUND=ON
+			-DOpenMP_C_FLAGS="-I/usr/lib/gcc/${gcc_slot}/${gcc_slot}/include -fopenmp"
+			-DOpenMP_C_LIB_NAMES="-I/usr/lib/gcc/${gcc_slot}/${gcc_slot}/include -fopenmp"
+			-DOpenMP_LINKER_FLAGS="${gomp_abspath}"
 		)
 	fi
 
