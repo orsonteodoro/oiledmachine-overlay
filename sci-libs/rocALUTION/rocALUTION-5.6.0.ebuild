@@ -142,9 +142,9 @@ eerror
 
 	if use openmp ; then
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-fopenmp=libomp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="omp"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 		)
 	fi
 

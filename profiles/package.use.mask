@@ -64,9 +64,6 @@ sys-kernel/ot-sources c2tcp deepcc orca
 # The training version is still WIP
 media-video/sr -pretrained
 
-# Avoid ABI incompatibility in ROCm stack between different libcxxabi versions
-sci-libs/rocALUTION openmp
-
 # No rocr-runtime, llvm-roc version correspondance
 =sys-libs/libomp-17* llvm_targets_AMDGPU
 =sys-libs/libomp-18* llvm_targets_AMDGPU
