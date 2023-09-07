@@ -4,7 +4,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..12} )
+PYTHON_COMPAT=( python3_{10..12} )
 
 inherit llvm meson-multilib python-any-r1 linux-info
 
@@ -112,6 +112,7 @@ RDEPEND="
 		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.13:=[${MULTILIB_USEDEP}]
 		x11-libs/libXfixes[${MULTILIB_USEDEP}]
+		x11-libs/xcb-util-keysyms[${MULTILIB_USEDEP}]
 	)
 	zink? ( media-libs/vulkan-loader:=[${MULTILIB_USEDEP}] )
 	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )
@@ -158,7 +159,7 @@ RDEPEND="${RDEPEND}
 unset LLVM_MIN_SLOT {LLVM,PER_SLOT}_DEPSTR
 
 DEPEND="${RDEPEND}
-	video_cards_d3d12? ( dev-util/directx-headers[${MULTILIB_USEDEP}] )
+	video_cards_d3d12? ( >=dev-util/directx-headers-1.610.0[${MULTILIB_USEDEP}] )
 	valgrind? ( dev-util/valgrind )
 	wayland? ( >=dev-libs/wayland-protocols-1.24 )
 	X? (
@@ -172,16 +173,19 @@ BDEPEND="
 	opencl? (
 		>=virtual/rust-1.62.0
 		>=dev-util/bindgen-0.58.0
+		>=dev-util/meson-1.2.0
 	)
 	sys-devel/bison
 	sys-devel/flex
 	virtual/pkgconfig
 	$(python_gen_any_dep ">=dev-python/mako-0.8.0[\${PYTHON_USEDEP}]")
-	vulkan? (
-		dev-util/glslang
-		video_cards_intel? (
-			amd64? (
-				$(python_gen_any_dep "dev-python/ply[\${PYTHON_USEDEP}]")
+	llvm? (
+		vulkan? (
+			dev-util/glslang
+			video_cards_intel? (
+				amd64? (
+					$(python_gen_any_dep "dev-python/ply[\${PYTHON_USEDEP}]")
+				)
 			)
 		)
 	)
@@ -207,11 +211,6 @@ llvm_check_deps() {
 	fi
 	has_version "sys-devel/llvm:${LLVM_SLOT}[${LLVM_USE_DEPS}]"
 }
-
-PATCHES=(
-	# Temporary rusticl workaround: https://gitlab.freedesktop.org/mesa/mesa/-/issues/7717#note_1832122
-	"${FILESDIR}/clang_resource_dir.patch"
-)
 
 pkg_pretend() {
 	if use vulkan; then
@@ -262,7 +261,7 @@ pkg_pretend() {
 
 python_check_deps() {
 	python_has_version -b ">=dev-python/mako-0.8.0[${PYTHON_USEDEP}]" || return 1
-	if use vulkan && use video_cards_intel && use amd64; then
+	if use llvm && use vulkan && use video_cards_intel && use amd64; then
 		python_has_version -b "dev-python/ply[${PYTHON_USEDEP}]" || return 1
 	fi
 }
@@ -433,9 +432,11 @@ multilib_src_configure() {
 	use vulkan-overlay && vulkan_layers+=",overlay"
 	emesonargs+=(-Dvulkan-layers=${vulkan_layers#,})
 
-	if use vulkan && use video_cards_intel; then
+	if use llvm && use vulkan && use video_cards_intel; then
 		PKG_CONFIG_PATH="$(get_llvm_prefix)/$(get_libdir)/pkgconfig"
-		emesonargs+=($(meson_feature llvm intel-clc))
+		emesonargs+=(-Dintel-clc=enabled)
+	else
+		emesonargs+=(-Dintel-clc=disabled)
 	fi
 
 	emesonargs+=(
