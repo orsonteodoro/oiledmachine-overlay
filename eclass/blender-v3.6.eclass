@@ -1313,8 +1313,8 @@ eerror
 		mycmakeargs+=(
 			-DOPENMP_CUSTOM=ON
 			-DOPENMP_FOUND=ON
-			-DOpenMP_C_FLAGS="-I/usr/lib/gcc/${gcc_slot}/${gcc_slot}/include -fopenmp"
-			-DOpenMP_C_LIB_NAMES="-I/usr/lib/gcc/${gcc_slot}/${gcc_slot}/include -fopenmp"
+			-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include -fopenmp"
+			-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include -fopenmp"
 			-DOpenMP_LINKER_FLAGS="${gomp_abspath}"
 		)
 	fi
