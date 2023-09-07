@@ -67,3 +67,4 @@ media-video/sr -pretrained
 # No rocr-runtime, llvm-roc version correspondance
 =sys-libs/libomp-17* llvm_targets_AMDGPU
 =sys-libs/libomp-18* llvm_targets_AMDGPU
+=sys-libs/libomp-13* llvm_targets_AMDGPU
