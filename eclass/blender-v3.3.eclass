@@ -1250,9 +1250,9 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 		mycmakeargs+=(
 			-DOPENMP_CUSTOM=ON
 			-DOPENMP_FOUND=ON
-			-DOpenMP_C_FLAGS="-isystem ${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp"
-			-DOpenMP_C_LIB_NAMES="-isystem ${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp"
-			-DOpenMP_LINKER_FLAGS="-L${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir) -lomp"
+			-DOpenMP_C_FLAGS="-isystem ${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
+			-DOpenMP_C_LIB_NAMES="-isystem ${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
+			-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 		)
 	fi
 
