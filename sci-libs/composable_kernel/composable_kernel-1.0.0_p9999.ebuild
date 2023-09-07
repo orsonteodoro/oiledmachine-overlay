@@ -129,9 +129,10 @@ src_prepare() {
 
 	[[ -e "/usr/$(get_libdir)/cmake/hip/hip-config.cmake" ]] || die "emerge hip"
 	# Disallow newer clang versions when producing .o files.
-	local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/usr/lib/llvm" \
+	local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/lib/llvm" \
 			"/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
 		| grep -E -o -e  "[0-9]+")
+	[[ -n "${llvm_slot}" ]] || die "Could not get HIP_CLANG_ROOT.  emerge hip."
 
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${llvm_slot})"/bin"
 	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
@@ -150,7 +151,7 @@ src_prepare() {
 
 src_configure() {
 	# Avoid ocml.bc': Unknown attribute kind (86) (Producer: 'LLVM16.0.6' Reader: 'LLVM 15.0.7') errors
-	local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/usr/lib/llvm" \
+	local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/lib/llvm" \
 			"/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
 		| grep -E -o -e  "[0-9]+")
 

@@ -55,7 +55,7 @@ CUDA_TARGETS_COMPAT=(
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_SLOTS[@]/#/llvm-}
-+apps +built-in-weights +clang cpu cuda doc gcc hip openimageio
++apps +built-in-weights +clang cpu cuda doc gcc rocm openimageio
 r1
 "
 
@@ -75,7 +75,7 @@ gen_required_use_hip_targets() {
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 		echo "
 			amdgpu_targets_${x}? (
-				hip
+				rocm
 			)
 		"
 	done
@@ -91,7 +91,7 @@ REQUIRED_USE+="
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
-	hip? (
+	rocm? (
 		${ROCM_REQUIRED_USE}
 		llvm-16
 	)
@@ -143,13 +143,13 @@ gen_hip_depends() {
 RDEPEND+="
 	${PYTHON_DEPS}
 	virtual/libc
-	hip? (
+	cuda? (
+		>=dev-util/nvidia-cuda-toolkit-11.8:=
+	)
+	rocm? (
 		|| (
 			$(gen_hip_depends)
 		)
-	)
-	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-11.8:=
 	)
 	|| (
 		(
@@ -166,14 +166,14 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-lang/ispc-1.17.0
 	>=dev-util/cmake-3.15
-	hip? (
+	cuda? (
+		>=dev-util/nvidia-cuda-toolkit-11.8
+	)
+	rocm? (
 		>=dev-util/cmake-3.21
 		|| (
 			$(gen_hip_depends)
 		)
-	)
-	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-11.8
 	)
 	|| (
 		clang? (
@@ -328,18 +328,19 @@ einfo
 		-DOIDN_APPS_OPENIMAGEIO=$(usex openimageio)
 		-DOIDN_DEVICE_CPU=$(usex cpu)
 		-DOIDN_DEVICE_CUDA=$(usex cuda)
-		-DOIDN_DEVICE_HIP=$(usex hip)
+		-DOIDN_DEVICE_HIP=$(usex rocm)
 		-DOIDN_DEVICE_SYCL=OFF # no packages
 	)
 
-	if use hip ; then
+	if use rocm ; then
 ewarn
 ewarn "All APU + GPU HIP targets on the device must be built/installed to avoid"
 ewarn "a crash."
 ewarn
-		local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/usr/lib/llvm" \
+		local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/lib/llvm" \
 				"/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
 			| grep -E -o -e  "[0-9]+")
+		[[ -n "${llvm_slot}" ]] && "HIP_CLANG_ROOT is missing.  emerge hip."
 		einfo "${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
@@ -419,7 +420,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	if use hip ; then
+	if use rocm ; then
 ewarn
 ewarn "All APU + GPU HIP targets on the device must be built/installed to avoid"
 ewarn "a crash."
