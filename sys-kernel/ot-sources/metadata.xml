@@ -3654,6 +3654,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
         https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
 
+      [Using this patchset *may* result in more IO or performance degradation.]
     </flag>
     <flag name="xz">
       Add support for xz compression

@@ -754,9 +754,14 @@ die
 		_tpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-dc3e045.patch" 0 0 ""
 
 	elif [[ "${path}" =~ "ck-0.205-5.10.0-35f6640.patch" ]] ; then
-ewarn "muqss support is WIP."
-einfo "QA (to maintainer):  See ${path}"
-die
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.205-5.10.0-35f6640-fix-for-5.10.194.patch"
+
+	elif [[ "${path}" =~ "ck-0.205-5.10.0-04468a7.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.205-5.10.0-04468a7-fix-for-5.10.194.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

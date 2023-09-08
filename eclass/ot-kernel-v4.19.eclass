@@ -548,9 +548,24 @@ ot-kernel_filter_patch_cb() {
 			"${FILESDIR}/c2tcp-0521-fix-for-4.14.305.patch"
 
 	elif [[ "${path}" =~ "ck-0.180-4.19.0-dc988b5.patch" ]] ; then
-ewarn "muqss support is WIP."
-einfo "QA (to maintainer):  See ${path}"
-		die
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.180-4.19.0-dc988b5-fixes-for-4.19.294.patch"
+
+	elif [[ "${path}" =~ "ck-0.180-4.19.0-ba77544.patch" ]] ; then
+		# Single hunk
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.180-4.19.0-ba77544-fixes-for-4.19.294.patch"
+
+	elif [[ "${path}" =~ "ck-0.180-4.19.0-8a679ba.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.180-4.19.0-8a679ba-fix-for-4.19.294.patch"
+
+	elif [[ "${path}" =~ "ck-0.180-4.19.0-befdee7.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.180-4.19.0-befdee7-fix-for-4.19.294.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

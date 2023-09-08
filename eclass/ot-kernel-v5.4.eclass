@@ -656,6 +656,11 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/c2tcp-0521-fix-for-5.4.231.patch"
+
+	elif [[ "${path}" =~ "zen-muqss-5.4.0-50955ef.patch" ]] ; then
+ewarn "Patching with zen-muqss is broken"
+ewarn "QA (to ebuild maintainer):  See ${path}"
+		die
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
