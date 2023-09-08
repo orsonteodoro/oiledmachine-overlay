@@ -726,8 +726,12 @@ einfo "Already applied ${path} upstream"
 		cat "${path}" > "${T}/futex-${FUTEX_KV}-e8d4d6d.patch" || die
 		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
 			"${T}/futex-${FUTEX_KV}-e8d4d6d.patch" || die
-		_tpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-e8d4d6d.patch" 2 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
+
+		_dpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-e8d4d6d.patch"
+
+		# FIXME - match 2 patches below with the USE flags that need it.
+#		_tpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-e8d4d6d.patch" 2 0 ""
+#		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-f6da35c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f6da35c-fix-for-5.10.129.patch"
@@ -764,11 +768,10 @@ die
 			"${FILESDIR}/ck-0.205-5.10.0-04468a7-fix-for-5.10.194.patch"
 
 	elif [[ "${path}" =~ "0255-cpuset-Convert-callback_lock-to-raw_spinlock_t.patch" ]] ; then
-		# RT patchset
-einfo "Patching for RT patchset is broken for ${KV_MAJOR_MINOR} series"
-einfo "At this moment, use the 4.14, 4.19, 5.15, 6.5 series instead."
-einfo "QA (to ebuild maintainer):  See ${path}"
-		die
+		# This patch belongs to the -rt patchset.
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/rt-patchset-0255-cpuset-Convert-callback_lock-to-raw_spinlock_t-fix-for-5.10.194.patch"
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"

@@ -829,11 +829,79 @@ einfo "See ${path}"
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 
 	elif [[ "${path}" =~ "0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch" ]] ; then
-		# RT patchset
-einfo "Patching for RT patchset is broken for ${KV_MAJOR_MINOR} series"
-einfo "At this moment, use the 4.14, 4.19, 5.15, 6.5 series instead."
-einfo "QA (to ebuild maintainer):  See ${path}"
-		die
+		# This patch belongs to the -rt patchset.
+		filterdiff \
+			-x "*/net/core/devlink.c" \
+			"${path}" \
+			> \
+			"${T}/0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch" \
+			|| die
+		_dpatch "${PATCH_OPTS}" "${T}/0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch"
+
+	elif [[ "${path}" =~ "0012-Linux-6.1.46-rt14-rc1.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Skipped patch.
+		:;
+
+	elif [[ "${path}" =~ "0053-io-mapping-don-t-disable-preempt-on-RT-in-io_mapping.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0054-locking-rwbase-Mitigate-indefinite-writer-starvation.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0055-revert-softirq-Let-ksoftirqd-do-its-job.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0056-kernel-fork-beware-of-__put_task_struct-calling-cont.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0057-debugobjects-locking-Annotate-debug_object_fill_pool.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0058-sched-avoid-false-lockdep-splat-in-put_task_struct.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0059-seqlock-Do-the-lockdep-annotation-before-locking-in-.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0060-mm-page_alloc-Use-write_seqlock_irqsave-instead-writ.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0061-bpf-Remove-in_atomic-from-bpf_link_put.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0062-posix-timers-Ensure-timer-ID-search-loop-limit-is-va.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "0063-drm-i915-Do-not-disable-preemption-for-resets.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:;
+
+	elif [[ "${path}" =~ "/series"$ ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Skipped.  Not a patch.
+		:;
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"

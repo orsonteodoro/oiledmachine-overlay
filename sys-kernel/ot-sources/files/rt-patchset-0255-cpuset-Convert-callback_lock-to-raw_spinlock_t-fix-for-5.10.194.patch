@@ -1,0 +1,45 @@
+License/copyright header for kernel/cgroup/cpuset.c:
+/*
+ *  kernel/cpuset.c
+ *
+ *  Processor and Memory placement constraints for sets of tasks.
+ *
+ *  Copyright (C) 2003 BULL SA.
+ *  Copyright (C) 2004-2007 Silicon Graphics, Inc.
+ *  Copyright (C) 2006 Google, Inc
+ *
+ *  Portions derived from Patrick Mochel's sysfs code.
+ *  sysfs is Copyright (c) 2001-3 Patrick Mochel
+ *
+ *  2003-10-10 Written by Simon Derr.
+ *  2003-10-22 Updates by Stephen Hemminger.
+ *  2004 May-July Rework by Paul Jackson.
+ *  2006 Rework by Paul Menage to use generic cgroups
+ *  2008 Rework of the scheduler domains and CPU hotplug handling
+ *       by Max Krasnyansky
+ *
+ *  This file is subject to the terms and conditions of the GNU General Public
+ *  License.  See the file COPYING in the main directory of the Linux
+ *  distribution for more details.
+ */
+
+--- a/kernel/cgroup/cpuset.c.orig	2023-09-08 11:40:33.680778627 -0700
++++ b/kernel/cgroup/cpuset.c	2023-09-08 11:41:30.640780397 -0700
+@@ -2957,7 +2957,7 @@ static void cpuset_css_free(struct cgrou
+ static void cpuset_bind(struct cgroup_subsys_state *root_css)
+ {
+ 	mutex_lock(&cpuset_mutex);
+-	spin_lock_irq(&callback_lock);
++	raw_spin_lock_irq(&callback_lock);
+ 
+ 	if (is_in_v2_mode()) {
+ 		cpumask_copy(top_cpuset.cpus_allowed, cpu_possible_mask);
+@@ -2968,7 +2968,7 @@ static void cpuset_bind(struct cgroup_su
+ 		top_cpuset.mems_allowed = top_cpuset.effective_mems;
+ 	}
+ 
+-	spin_unlock_irq(&callback_lock);
++	raw_spin_unlock_irq(&callback_lock);
+ 	mutex_unlock(&cpuset_mutex);
+ }
+ 

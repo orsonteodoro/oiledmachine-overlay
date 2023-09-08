@@ -663,11 +663,9 @@ ewarn "QA (to ebuild maintainer):  See ${path}"
 		die
 
 	elif [[ "${path}" =~ "0059-locking-percpu-rwsem-Remove-the-embedded-rwsem.patch" ]] ; then
-		# RT patchset
-einfo "Patching for RT patchset is broken for ${KV_MAJOR_MINOR} series"
-einfo "At this moment, use the 4.14, 4.19, 5.15, 6.5 series instead."
-einfo "QA (to ebuild maintainer):  See ${path}"
-		die
+		# This patch belongs to the -rt patchset.
+		# Skipping 1 already applied hunk.
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
