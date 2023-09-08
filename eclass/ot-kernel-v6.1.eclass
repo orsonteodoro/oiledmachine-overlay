@@ -827,6 +827,14 @@ einfo "Already applied ${path} upstream"
 einfo "See ${path}"
 		die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
+
+	elif [[ "${path}" =~ "0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch" ]] ; then
+		# RT patchset
+einfo "Patching for RT patchset is broken for ${KV_MAJOR_MINOR} series"
+einfo "At this moment, use the 4.14, 4.19, 5.15, 6.5 series instead."
+einfo "QA (to ebuild maintainer):  See ${path}"
+		die
+
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
