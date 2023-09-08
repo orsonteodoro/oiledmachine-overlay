@@ -148,6 +148,7 @@ f468511a824c557ced1be2fed1b4ba923a067bcc
 PATCH_ZEN_SAUCE_BL=(
 	${PATCH_ZEN_SAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
+	bec5c50bb387f4c4956fc4553d2c6491363b1489 # ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch]
 )
 
 # 811cb39 -> a79d648 is about the same as 24da54e
