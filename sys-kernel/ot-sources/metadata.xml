@@ -3688,12 +3688,13 @@ unset OT_KERNEL_PRIVATE_KEY
       Apply the zen-kernel's version of MuQSS
     </flag>
     <flag name="zen-sauce">
-      Patches the kernel with selected Zen kernel.  The zen-sauce set contains
-      patches that add drivers or functionality related to gaming, laptops,
-      optimizations, etc.
+      Patches the kernel with selected Zen kernel commits.
 
-      Patches the kernel with some Zen Interactive Tuning, particularly those
-      marked INTERACTIVE.
+      The zen-sauce set contains commit patches that add drivers or
+      functionality related to gaming, laptops, optimizations, etc.
+
+      The zen-tune set contains commit patches with some Zen Interactive Tuning,
+      particularly those marked INTERACTIVE.
     </flag>
     <flag name="zstd">
       Add support for zstd compression
