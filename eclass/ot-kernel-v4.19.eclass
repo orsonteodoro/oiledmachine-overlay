@@ -2,16 +2,16 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v4.14.eclass
+# @ECLASS: ot-kernel-v4.19.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: Eclass for patching the 4.14.x kernel
+# @BLURB: Eclass for patching the 4.19.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v4.14 eclass defines specific applicable patching for the
-# 4.14.x linux kernel.
+# The ot-kernel-v4.19 eclass defines specific applicable patching for the
+# 4.19.x linux kernel.
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -19,10 +19,10 @@ case ${EAPI:-0} in
 esac
 
 # For *DEPENDs, see
-# https://github.com/torvalds/linux/blob/v4.14/Documentation/process/changes.rst
+# https://github.com/torvalds/linux/blob/v4.19/Documentation/process/changes.rst
 
-KERNEL_RELEASE_DATE="20171112" # of first stable release
-CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v4.14/tools/build/feature/Makefile#L318
+KERNEL_RELEASE_DATE="20220731" # of first stable release
+CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v5.19/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT_ALT=13 # Without kernel-compiler-patch
 GCC_MAX_SLOT=10 # With kernel-compiler-patch
 GCC_MIN_SLOT=6
@@ -31,13 +31,10 @@ EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
-MUQSS_VER="0.162"
-
-# From Zen kernel 4.19
+MUQSS_VER="0.180"
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
-
-PATCH_PDS_VER="${PATCH_PDS_VER:-098i}"
+PATCH_PDS_VER="${PATCH_PDS_VER:-099h}"
 PATCH_TRESOR_VER="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
@@ -52,92 +49,116 @@ C2TCP_EXTRA="0521"
 C2TCP_KV="4.13.1"
 C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
-CK_KV="4.14.0"
+CK_KV="4.19.0"
 CK_COMMITS=(
-# From https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
+# From https://github.com/torvalds/linux/compare/v4.19...ckolivas:4.19-ck
 #
 # Generated from:
-# wget -q -O - https://github.com/torvalds/linux/compare/fbc0b4595aeccc2cc03e292ac8743565b3d3037b^..78f861790848e83e6c98cd8f3408dbad7c9f4c3d.patch \
+# wget -q -O - https://github.com/torvalds/linux/compare/dc988b5f353c28a846da592e31b504c32d95ed5e^..da178919d63ecfec2738877abae02cd2ce8aa29c.patch \
 #        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-fbc0b4595aeccc2cc03e292ac8743565b3d3037b
-e8e37da685f7988182d7920a711e00dd2457af65
-44fc740a3ff85d378c28a416a076cc7e019d7b8c
-d27b58b0707ac311be5a51594fc6f22ed1d109e5
-5da7d1778b96c514394334c92de9b3d8d71f4a29
-9df803c28bb8ccb2588c0ccaf857b9e673175fed
-ff1ab759022323229ca1e7b368c0df5e2aa1dabc
-3ef5df78c2f425115b87f0f2f59fd189c0f1bbe3
-6044370cf4bbc5e05f5d78f5772c1d88e3153603
-071486de633698dcdd163295173ce4663ec9158c
-ef412af05347ab4a0885080864677b85bf51072a
-9e47a80f690080c12ce607158b96c305707543b8
-5902b315d4061ebbe73a62c52e6d3b618066cebc
-ed0ab4c80fcb6fa4abb4f2f897e591df6eaa2d0e
-99d2963b648787f2fc2b72343674b8726f5c3ab2
-8e9317792c2f83621445c386240d62d54cebb826
-811cb391e71c1d60387dbbd6ae0bbc4e61f06acb
-6bfb805cbac27b18fb4ad7537fe90dfc39e17f35
-1588e6bf316231685204e358dfe172851b39fd1e
-df2a75f4864b30011ab6a6f365d9378d8eafa53b
-a79d648fcde72fc98048d4435bc86864a59fd01b
-a17a37f6698721fe40c0f6e68c4ded5317d8477b
-24da54ee4acc4ba2675e838da27bd28df08016bf
-8faec5cb69d9ea6e641155e20ff70930a88f1e65
-315a82476414f83cf099458a05148d76f30b6c8c
-03ee562c01e1a60b2b4dae80e88db83b87559cba
-721f586b71653a931e73d25116fd92e0ee62a434
-78f861790848e83e6c98cd8f3408dbad7c9f4c3d
-)
-
-# Split commits, but not final commit
-# BL = Blacklisted
-CK_COMMITS_BL_BFQ_SPLIT=( # pull request #7
-811cb391e71c1d60387dbbd6ae0bbc4e61f06acb
-6bfb805cbac27b18fb4ad7537fe90dfc39e17f35
-1588e6bf316231685204e358dfe172851b39fd1e
-df2a75f4864b30011ab6a6f365d9378d8eafa53b
-a79d648fcde72fc98048d4435bc86864a59fd01b
-)
-
-# MQ = Multi queue
-CK_BFQ_MQ=(
-99d2963b648787f2fc2b72343674b8726f5c3ab2 # Enable BFQ io scheduler by default.
-24da54ee4acc4ba2675e838da27bd28df08016bf # Merge pull request #7 from loqs/4.14-ck1-additions [A single patch of combined commits.]
-)
-
-# Split commits, but not final commit
-# BL = Blacklisted
-CK_COMMITS_BL_RQSHARE_SPLIT=(
-# BL these but prefer the single patch (78f8617) to avoid merge conflict.
-# See https://github.com/torvalds/linux/compare/master...ckolivas:linux:4.14-muqss-rqshare
-a17a37f6698721fe40c0f6e68c4ded5317d8477b
-8faec5cb69d9ea6e641155e20ff70930a88f1e65
-315a82476414f83cf099458a05148d76f30b6c8c
-03ee562c01e1a60b2b4dae80e88db83b87559cba
-721f586b71653a931e73d25116fd92e0ee62a434
+dc988b5f353c28a846da592e31b504c32d95ed5e
+ba77544e4687e62fe9d8ca870ceb47ea87d1cbfe
+2432d1de7128e6ac986749bc52eb30c4c1c654d0
+d67d0504370871bea9e73c69c840fb3d0a88d9cb
+552f25751a108c7e185b82aa3110d43bfe1e59b1
+65ea992f1da66b8c0a5554776d1350417b9107cb
+7b74daf29a88f3314af306509bd40d45c34f11c7
+8a679ba5279cbff1a8e4c47b55ac4bd6d66289f8
+cd03bffabeee4f4c8438969b3b4d184d0d0bb81b
+ba3f464ce9dd28a8999f56b327b458f869258a1a
+befdee72d814b6c302da85af524b15762e72e0cf
+9ddcf0d8c14d64c57fe5ecf2a7e668e68a3d842b
+df4136f6de5b3f45c2f4be7a3cc042903e983e0c
+ace3d66508ad4e17da3f579eaf04c5582b8256a2
+d8f6f203f5bdabdf1a5ddb6bdc9e13fae2b640b9
+da178919d63ecfec2738877abae02cd2ce8aa29c
 )
 
 # Avoid merge conflicts or already upstreamed.
 # BL = Blacklisted to avoid merge conflict
 CK_COMMITS_BL=(
-${CK_COMMITS_BL_BFQ_SPLIT[@]}
-${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
-8e9317792c2f83621445c386240d62d54cebb826 # -ck1 extraversion
+da178919d63ecfec2738877abae02cd2ce8aa29c # -ck1 extraversion
 )
 
+ZEN_KV="4.19.0"
+PATCH_ZENSAUCE_COMMITS=(
+# From https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/misc
+#
+# Generated from:
+# wget -q -O - https://github.com/torvalds/linux/compare/c340c84b774aee3eda9a818fc4c0dc6a46a2c83d^..face163a2ef728af8ed4d4923b56711ff882b350.patch \
+#        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+c340c84b774aee3eda9a818fc4c0dc6a46a2c83d
+beecc486dbe2bf08033ebe3183245b82ced26cc2
+bec5c50bb387f4c4956fc4553d2c6491363b1489
+7ab867e328af68deda133c44d7a788d03148d039
+85301de35c719b25323d924f4afe3a0c1d37fa85
+ceb4173d278282f68eaa25e33660404431ce09f4
+9bee6d9300487ed3593feadc074e52ca26dba0ed
+61b2705ca0533311aa35fa9ddaa098214eb071e6
+c53ae690ee282d129fae7e6e10a4c00e5030d588
+7d0295dc49233d9ddff5d63d5bdc24f1e80da722
+562a14babcd56efc2f51c772cb2327973d8f90ad
+dd59878702406214a858b96541484cb815017ba3
+efae3c117386b0d0c4aebac980be40f8d9d643ec
+b548c75351fddf33a7b2b93b0c04d5698583d938
+0b9aaee6f3c154c641a51fe85c1fdc6a43e99085
+fd4645c2e1ad2c6e478f6ff92be5ec559130ed9f
+e3cac2b4fbe70c670966818b67f4b6fbdb6e66f5
+170b2e90d7a511364ebb151f57cd101828833d4c
+1a6fe347cb588521e221de8966551564a80f202c
+face163a2ef728af8ed4d4923b56711ff882b350
+)
+
+# Avoid merge conflict.
+PATCH_ZENSAUCE_BRANDING="
+c340c84b774aee3eda9a818fc4c0dc6a46a2c83d
+"
+
+# This is a list containing elements of LEFT_ZENTUNE:RIGHT_ZENSAUCE.  Each
+# element means that the left commit requires right commit which can be
+# resolved by adding the right commit to ZENSAUCE_WHITELIST.
+PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE="
+"
+
+# ancestor ~ oldest, descendant ~ newest
+PATCH_ZENTUNE_COMMITS=(
+# From https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/zen-tune
+#
+# Generated from:
+# wget -q -O - https://github.com/torvalds/linux/compare/05d2f46ed42ca12307b9c792e00d02e14e87d2d1^..78fb15ac04bff56dfeb0b6fe692fb6e0ccf4e56b.patch \
+#        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+05d2f46ed42ca12307b9c792e00d02e14e87d2d1
+640a5eade4fd32d1fa2e1532c5a08dc8ec89be27
+6081521f7fc834e289d855d7091aea32d384314e
+460fcdd471488ad74772bbbf85f6394ca159463c
+15d385b63181948205a846c5136060c6d1acfe9d
+51fea0a233c2b4d7e36ff2c8f6a523791571e798
+10fb7ff8ab73879cd51b889d3878f1af43742701
+9cc1a07a280cd48e3985fcec4cc407aef5e47aa1
+646892330bc8ec470f9bf8f84258cb1041edccaa
+f3c6cb010527051e39b341e2859d8239cc0cd413
+f468511a824c557ced1be2fed1b4ba923a067bcc
+3bf7a408c5f4e6bcd08cb2f2308500fdc32f257f
+59617f4466958b9031ccf51946f004f9ef8f6f0d
+78fb15ac04bff56dfeb0b6fe692fb6e0ccf4e56b
+)
+
+# BFQ is not made default
+# BL = Blacklisted
+PATCH_ZENSAUCE_BL=(
+	${PATCH_ZENSAUCE_BRANDING}
+	${PATCH_KCP_COMMIT}
+)
 
 # 811cb39 -> a79d648 is about the same as 24da54e
 # a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
 
 IUSE+="
-bfq-mq build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss
+build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss
 orca pds rt symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
 tresor_x86_64 uksm
 "
 REQUIRED_USE+="
-	bfq-mq? (
-		muqss
-	)
 	genpatches_1510? (
 		genpatches
 	)
@@ -173,7 +194,6 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="\
 A customizable kernel package with \
-BFQ-mq updates, \
 C2TCP, \
 DeepCC, \
 genpatches, \
@@ -182,7 +202,6 @@ MuQSS, \
 Orca, \
 PDS, \
 RT_PREEMPT (-rt), \
-TRESOR, \
 UKSM. \
 "
 
@@ -211,18 +230,19 @@ KCP_RDEPEND="
 	>=sys-devel/gcc-6.5.0
 "
 
+KMOD_PV="13"
 CDEPEND+="
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
 	>=sys-devel/bc-1.06.95
 	>=sys-devel/binutils-2.20
+	>=sys-devel/bison-2.0
+	>=sys-devel/flex-2.5.35
 	>=sys-devel/make-3.81
 	app-arch/cpio
 	app-shells/bash
 	dev-util/pkgconf
 	sys-apps/grep[pcre]
-	sys-devel/bison
-	sys-devel/flex
 	virtual/libelf
 	virtual/pkgconfig
 	bzip2? (
@@ -234,7 +254,7 @@ CDEPEND+="
 		x11-libs/gtk+:2
 	)
 	gzip? (
-		sys-apps/kmod[zlib]
+		>=sys-apps/kmod-${KMOD_PV}[zlib]
 		app-arch/gzip
 	)
 	lz4? (
@@ -258,12 +278,12 @@ CDEPEND+="
 		dev-qt/qtwidgets:5
 	)
 	xz? (
+		>=sys-apps/kmod-${KMOD_PV}[lzma]
 		app-arch/xz-utils
-		sys-apps/kmod[lzma]
 	)
 	zstd? (
+		>=sys-apps/kmod-${KMOD_PV}[zstd]
 		app-arch/zstd
-		sys-apps/kmod[zstd]
 	)
 "
 
@@ -364,6 +384,10 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
+ewarn
+ewarn "This ebuild series is a WIP / IN DEVELOPMENT."
+ewarn "Expect patchtime failures."
+ewarn
 	# TRESOR for x86_64 generic was known to pass crypto testmgr on this
 	# version.
 ewarn
@@ -376,12 +400,6 @@ ewarn
 	if use tresor ; then
 ewarn
 ewarn "TRESOR for ${PV} is stable.  See dmesg for details on correctness."
-ewarn
-	fi
-
-	if use genpatches ; then
-ewarn
-ewarn "genpatches is EOL (End of Life) for the ${KV_MAJOR_MINOR} series."
 ewarn
 	fi
 }
@@ -528,6 +546,11 @@ ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/c2tcp-0521-fix-for-4.14.305.patch"
+
+	elif [[ "${path}" =~ "ck-0.180-4.19.0-dc988b5.patch" ]] ; then
+ewarn "muqss support is WIP."
+einfo "QA (to maintainer):  See ${path}"
+		die
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

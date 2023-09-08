@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2020-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -21,8 +21,8 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.10/Documentation/process/changes.rst
 
-KERNEL_RELEASE_DATE="20201213"
-CXX_STD="-std=gnu++98"
+KERNEL_RELEASE_DATE="20201213" # of first stable release
+CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.10/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
 LLVM_MAX_SLOT=15
@@ -35,15 +35,15 @@ KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
 MUQSS_VER="0.205"
 PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10
-PATCH_BBRV2_COMMIT_A="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # ancestor / oldest
-PATCH_BBRV2_COMMIT_D="3d76056b85feab3aade8007eb560c3451e7d3433" # descendant / newest
+PATCH_BBRV2_COMMIT_A="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # ancestor ~ oldest
+PATCH_BBRV2_COMMIT_D="3d76056b85feab3aade8007eb560c3451e7d3433" # descendant ~ newest
 PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8" # from zen repo
-PATCH_TRESOR_V="3.18.5"
+PATCH_TRESOR_VER="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
 #	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 # from A to D, where a is ancestor and d is descendant.
-# When using that commit list generator, it may miss some commits, so verify all
+# When using that commit list generator, it *may miss* some commits, so verify all
 # the commits in order.
 
 #C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
@@ -54,6 +54,12 @@ C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
 CK_KV="5.10.0"
 CK_COMMITS=(
+# From https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
+#
+# Generated from:
+# wget -q -O - https://github.com/torvalds/linux/compare/35f6640868573a07b1291c153021f5d75749c15e^..13f5f8abb25489af1cc019a4a3bc83cced6da67c.patch \
+#        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+# Corrected missing commit
 35f6640868573a07b1291c153021f5d75749c15e
 ea9b4218b46eae24eef6162be269934f4bb5dfb6
 aa59b50641d91d37ca28bfadbcd5281ff40f148d
@@ -76,12 +82,17 @@ a2fb34e34d157c303d07ee16b1ad42c8720ab320
 
 # Avoid merge conflict or dupes
 CK_COMMITS_BL=(
-9cdf59bc2dbfb640dbb057757e4101b147275e86
-a2fb34e34d157c303d07ee16b1ad42c8720ab320
+9cdf59bc2dbfb640dbb057757e4101b147275e86 # -ck1 extraversion
+a2fb34e34d157c303d07ee16b1ad42c8720ab320 # Update Kconfig [It makes muqss the default and CPU_FREQ_DEFAULT_GOV_ONDEMAND depend on muqss.]
 )
 
 ZEN_KV="5.10.0"
 PATCH_ZENSAUCE_COMMITS=(
+# From https://github.com/torvalds/linux/compare/v5.10...zen-kernel:zen-kernel:5.10/zen-sauce
+#
+# Generated from:
+# wget -q -O - https://github.com/torvalds/linux/compare/dda238180bacda4c39f71dd16d754a48da38e676^..e1b127aa22601f9cb2afa3daad4c69e6a42a89f5.patch \
+#        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 dda238180bacda4c39f71dd16d754a48da38e676
 9a2e0d950bfd77fb51a42a5fc7e81a9187606c38
 5b3d9f2372600c3b908b1bd0e8c9b8c6ed351fa2
@@ -116,14 +127,16 @@ PATCH_ZENSAUCE_BRANDING="
 dda238180bacda4c39f71dd16d754a48da38e676
 "
 
-# LEFT_ZENTUNE:RIGHT_ZENSAUCE
+# This is a list containing elements of LEFT_ZENTUNE:RIGHT_ZENSAUCE.  Each
+# element means that the left commit requires right commit which can be
+# resolved by adding the right commit to ZENSAUCE_WHITELIST.
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE="
 0cbcc41992693254e5e4c7952853c6aa7404f28e:513af58e2e4aa8267b1eebc1cd156e3e2a2a33e3
 " # \
-#ZEN: INTERACTIVE: Use BFQ as our elevator (0cbcc41) needs \
-#ZEN: Add CONFIG to rename the mq-deadline scheduler (513af58)
+# ZEN: INTERACTIVE: Use BFQ as our elevator (0cbcc41) requires \
+# ZEN: Add CONFIG to rename the mq-deadline scheduler (513af58)
 
-# ancestor / oldest, descendant / newest
+# ancestor ~ oldest ~ top, descendant ~ newest ~ bottom
 PATCH_ZENTUNE_COMMITS=(
 890ac858741436a40c274efb3514c5f6a96c7c80
 0cbcc41992693254e5e4c7952853c6aa7404f28e
@@ -142,6 +155,11 @@ PATCH_ZENSAUCE_BL=(
 
 # Backport from 5.9, updated to 5.10, with zen changes
 ZEN_MUQSS_COMMITS=(
+# From https://github.com/torvalds/linux/compare/v5.10...zen-kernel:zen-kernel:5.10/muqss
+#
+# Generated from:
+# wget -q -O - https://github.com/torvalds/linux/compare/9d6b3eef3a1ec22d4d3c74e0b773ff52d3b3a209^..1ee7b1ab0da8b81ad41bf83e795ba80cf1288739.patch \
+#        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 9d6b3eef3a1ec22d4d3c74e0b773ff52d3b3a209
 3b17bfa60ca1e8d94cb7a4c490dd79a14c53a074
 25b07958996a2d2dcff8b54917c01bf01196e68e
@@ -188,6 +206,12 @@ e8d4d6ded8544b5716c66d326aa290db8501518c
 BBRV2_KV="5.10.0"
 BBRV2_VERSION="v2alpha-2021-07-07"
 BBRV2_COMMITS=( # oldest
+# From https://github.com/google/bbr/compare/f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1...v2alpha-2021-07-07
+#
+# Generated from:
+# f428e49 - comes from Makefile
+# wget -q -O - https://github.com/google/bbr/compare/f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1^..v2alpha-2021-07-07.patch \
+#       | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 c13e23b9782c9a7f4bcc409bfde157e44a080e82
 89fe5fca59f015a7370543d9c906548a6ac7c7ac
 f6da35cbef6549b1141a4a5631b91748d2ed0922
@@ -353,6 +377,7 @@ KCP_RDEPEND="
 	)
 "
 
+KMOD_PV="13"
 CDEPEND+="
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
@@ -376,7 +401,7 @@ CDEPEND+="
 		x11-libs/gtk+:2
 	)
 	gzip? (
-		>=sys-apps/kmod-13[zlib]
+		>=sys-apps/kmod-${KMOD_PV}[zlib]
 		app-arch/gzip
 	)
 	lz4? (
@@ -400,12 +425,12 @@ CDEPEND+="
 		dev-qt/qtwidgets:5
 	)
 	xz? (
+		>=sys-apps/kmod-${KMOD_PV}[lzma]
 		app-arch/xz-utils
-		sys-apps/kmod[lzma]
 	)
 	zstd? (
+		>=sys-apps/kmod-${KMOD_PV}[zstd]
 		app-arch/zstd
-		sys-apps/kmod[zstd]
 	)
 "
 
@@ -727,6 +752,11 @@ die
 		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
 			"${T}/futex-${FUTEX_KV}-dc3e045.patch" || die
 		_tpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-dc3e045.patch" 0 0 ""
+
+	elif [[ "${path}" =~ "ck-0.205-5.10.0-35f6640.patch" ]] ; then
+ewarn "muqss support is WIP."
+einfo "QA (to maintainer):  See ${path}"
+die
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

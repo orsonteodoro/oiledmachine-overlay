@@ -1,0 +1,111 @@
+There is change in
+
+https://github.com/torvalds/linux/blob/master/arch/powerpc/kernel/prom_init.c#L2438
+
+which I cannot find the commit summary and reason why this hunk exists.
+
+--- a/drivers/video/logo/Kconfig.orig	2018-10-21 23:37:37.000000000 -0700
++++ b/drivers/video/logo/Kconfig	2023-09-07 21:00:28.707138160 -0700
+@@ -67,4 +67,16 @@ config LOGO_SUPERH_CLUT224
+ 	depends on SUPERH
+ 	default y
+ 
++config LOGO_CUSTOM_MONO
++	bool "Custom logo (black and white)"
++	default y
++
++config LOGO_CUSTOM_VGA16
++	bool "Custom logo (16 colors)"
++	default y
++
++config LOGO_CUSTOM_CLUT224
++	bool "Custom logo (224 colors)"
++	default y
++
+ endif # LOGO
+--- a/drivers/video/logo/Makefile.orig	2023-09-07 21:00:28.707138160 -0700
++++ b/drivers/video/logo/Makefile	2023-09-07 21:01:16.035139630 -0700
+@@ -13,6 +13,9 @@ obj-$(CONFIG_LOGO_SUN_CLUT224)		+= logo_
+ obj-$(CONFIG_LOGO_SUPERH_MONO)		+= logo_superh_mono.o
+ obj-$(CONFIG_LOGO_SUPERH_VGA16)		+= logo_superh_vga16.o
+ obj-$(CONFIG_LOGO_SUPERH_CLUT224)	+= logo_superh_clut224.o
++obj-$(CONFIG_LOGO_CUSTOM_MONO)		+= logo_custom_mono.o
++obj-$(CONFIG_LOGO_CUSTOM_VGA16)		+= logo_custom_vga16.o
++obj-$(CONFIG_LOGO_CUSTOM_CLUT224)	+= logo_custom_clut224.o
+ 
+ obj-$(CONFIG_SPU_BASE)			+= logo_spe_clut224.o
+ 
+--- a/drivers/video/logo/logo.c.orig	2018-10-21 23:37:37.000000000 -0700
++++ b/drivers/video/logo/logo.c	2023-09-07 21:00:28.707138160 -0700
+@@ -56,6 +56,10 @@ const struct linux_logo * __ref fb_find_
+ 		/* SuperH Linux logo */
+ 		logo = &logo_superh_mono;
+ #endif
++#ifdef CONFIG_LOGO_CUSTOM_MONO
++		/* Custom logo */
++		logo = &logo_custom_mono;
++#endif
+ 	}
+ 	
+ 	if (depth >= 4) {
+@@ -67,6 +71,10 @@ const struct linux_logo * __ref fb_find_
+ 		/* SuperH Linux logo */
+ 		logo = &logo_superh_vga16;
+ #endif
++#ifdef CONFIG_LOGO_CUSTOM_VGA16
++		/* Custom logo */
++		logo = &logo_custom_vga16;
++#endif
+ 	}
+ 	
+ 	if (depth >= 8) {
+@@ -99,6 +107,10 @@ const struct linux_logo * __ref fb_find_
+ 		/* SuperH Linux logo */
+ 		logo = &logo_superh_clut224;
+ #endif
++#ifdef CONFIG_LOGO_CUSTOM_CLUT224
++		/* Custom logo */
++		logo = &logo_custom_clut224;
++#endif
+ 	}
+ 	return logo;
+ }
+--- a/include/linux/linux_logo.h.orig	2018-10-21 23:37:37.000000000 -0700
++++ b/include/linux/linux_logo.h	2023-09-07 21:00:28.707138160 -0700
+@@ -45,6 +45,9 @@ extern const struct linux_logo logo_supe
+ extern const struct linux_logo logo_superh_vga16;
+ extern const struct linux_logo logo_superh_clut224;
+ extern const struct linux_logo logo_spe_clut224;
++extern const struct linux_logo logo_custom_mono;
++extern const struct linux_logo logo_custom_vga16;
++extern const struct linux_logo logo_custom_clut224;
+ 
+ extern const struct linux_logo *fb_find_logo(int depth);
+ #ifdef CONFIG_FB_LOGO_EXTRA
+--- a/arch/powerpc/kernel/prom_init_check.sh.orig	2023-09-07 21:00:28.707138160 -0700
++++ b/arch/powerpc/kernel/prom_init_check.sh	2023-09-07 21:01:52.483140762 -0700
+@@ -19,7 +19,7 @@
+ WHITELIST="add_reloc_offset __bss_start __bss_stop copy_and_flush
+ _end enter_prom memcpy memset reloc_offset __secondary_hold
+ __secondary_hold_acknowledge __secondary_hold_spinloop __start
+-strcmp strcpy strlcpy strlen strncmp strstr kstrtobool logo_linux_clut224
++strcmp strcpy strlcpy strlen strncmp strstr kstrtobool logo_linux_clut224 logo_custom_clut224
+ reloc_got2 kernstart_addr memstart_addr linux_banner _stext
+ __prom_init_toc_start __prom_init_toc_end btext_setup_display TOC."
+ 
+--- a/arch/powerpc/kernel/prom_init.c.orig	2023-09-07 20:55:25.167128730 -0700
++++ b/arch/powerpc/kernel/prom_init.c	2023-09-07 21:00:28.707138160 -0700
+@@ -2267,6 +2267,13 @@ static void __init prom_check_displays(v
+ 					   clut[2]) != 0)
+ 				break;
+ #endif /* CONFIG_LOGO_LINUX_CLUT224 */
++#ifdef CONFIG_LOGO_CUSTOM_CLUT224
++		clut = PTRRELOC(logo_custom_clut224.clut);
++		for (i = 0; i < logo_custom_clut224.clutsize; i++, clut += 3)
++			if (prom_set_color(ih, i + 32, clut[0], clut[1],
++					   clut[2]) != 0)
++				break;
++#endif /* CONFIG_LOGO_CUSTOM_CLUT224 */
+ 
+ #ifdef CONFIG_PPC_EARLY_DEBUG_BOOTX
+ 		if (prom_getprop(node, "linux,boot-display", NULL, 0) !=

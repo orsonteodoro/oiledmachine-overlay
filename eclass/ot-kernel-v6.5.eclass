@@ -2,15 +2,15 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v6.1.eclass
+# @ECLASS: ot-kernel-v6.5.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: Eclass for patching the 6.1.x kernel
+# @BLURB: Eclass for patching the 6.5.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v6.1 eclass defines specific applicable patching for the 6.1.x
+# The ot-kernel-v6.5 eclass defines specific applicable patching for the 6.5.x
 # linux kernel.
 
 case ${EAPI:-0} in
@@ -19,22 +19,22 @@ case ${EAPI:-0} in
 esac
 
 # For *DEPENDs, see
-# https://github.com/torvalds/linux/blob/v6.1/Documentation/process/changes.rst
+# https://github.com/torvalds/linux/blob/v6.5/Documentation/process/changes.rst
 # For compiler versions, see
-# https://github.com/torvalds/linux/blob/v6.1/scripts/min-tool-version.sh#L26
+# https://github.com/torvalds/linux/blob/v6.5/scripts/min-tool-version.sh#L26
 
-KERNEL_RELEASE_DATE="20221211" # of first stable release
-CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.1/tools/build/feature/Makefile#L318
+KERNEL_RELEASE_DATE="20230827" # of first stable release
+CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.5/tools/build/feature/Makefile#L331
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=16
 LLVM_MIN_SLOT=11
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
-PATCH_ALLOW_O3_COMMIT="7042e70222c4f9205194f5d296bc3272c0537eee" # from zen repo
+PATCH_ALLOW_O3_COMMIT="5b11a78f8a65d1a737d02ace04c76a350650585f" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
 PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
@@ -42,13 +42,13 @@ CLANG_PGO_KV="5.13.0_rc2"
 PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
 PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant ~ newest
-PATCH_KCP_COMMIT="b88b54d2df7b41ba362df4bf6df7c69536b5bda0" # from zen repo
+PATCH_KCP_COMMIT="e083edbd8bcb0b8d8bb76ed9acf6130826910cd1" # from zen repo
 PATCH_TRESOR_VER="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
 #	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 # from A to D, where a is ancestor and d is descendant.
-# When using that commit list generator, it *may miss* some commits, so verify all
+# When using that commit list generator, it may miss some commits, so verify all
 # the commits in order.
 
 #C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
@@ -57,50 +57,50 @@ C2TCP_EXTRA="0521"
 C2TCP_KV="4.13.1"
 C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
-ZEN_KV="6.1.0"
+ZEN_KV="6.5.0"
 PATCH_ZENSAUCE_COMMITS=(
-# From https://github.com/torvalds/linux/compare/v6.1...zen-kernel:zen-kernel:6.1/zen-sauce
+# From https://github.com/torvalds/linux/compare/v6.5...zen-kernel:zen-kernel:6.5/zen-sauce
 #
 # Generated from:
-# wget -q -O - https://github.com/torvalds/linux/compare/f884ec1baec395379fcb427bbc2b3231ba9484a2^..9381f7633208cb517fee827051afc6a7c1decd3d.patch \
+# wget -q -O - https://github.com/torvalds/linux/compare/f89ac1cf63e180940fe1e02238eefb658f5a636a^..e20ea0b7ce4b4cbf8927fe8746e46aa70de5cdd1.patch \
 #	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-f884ec1baec395379fcb427bbc2b3231ba9484a2
-ecf47767080ed4ab1e5d1c2dc0eec0518e713a45
-de09ca82f5200498edf14e6680891b846d05ef14
-0a22064e3f5b73d00cda9ec55258a8c8158cd88f
-8f951cdf30840ae40705506386ecd43453ad3d29
-b88b54d2df7b41ba362df4bf6df7c69536b5bda0
-7042e70222c4f9205194f5d296bc3272c0537eee
-e09ddbe1a0c863359ba6e053d9f7d7fc5242bcec
-5e066b1a1d6719a7c43585e3c5a408fcdf065c77
-379cbab18b5c75c622b93e2c5abdfac141fe9654
-e95c82e24dee2dac9f50593b51c9709cd7654f53
-534e7cc98412c28aa0115f4dfe36734f3d50c754
-7052cfb177a2ffcc2a8066e9f722f40c80f28259
-817b89f071edfda3fbe87c1dd1e78be848ca593d
-167602079fa211e9db4cb2c5921382d335d65eb9
-6eda5d78611dc65d486531aa798c330d0ea63e52
-2aafb56f20e4b63d8c4af172fe9d017c64bc4129
-f22bc56be85e69c71c8e36041193856bb8b01525
-6951c44a6cacf4c9f12eede7508db7b26b6f3682
-c7a4c6f6e1f0cd6c9100187412d76e8efe718ade
-90ca7255bd687a9a0219a668adb102c88eeec68e
-0a2e457e582589da38236e04d7d757f80d0d7e1a
-80592adcd16ec3d96569c908ede9656f5756da4e
-8fcf775844a6cf76b27cdfba74d311228b520708
-01489237173dca73e1bf532d1d6835b21112bb6e
-2e4db1e69cbb271db43b989d08eed8c6747dc83a
-9b6162cc8d2bde3ec029fe84cd12ada9c56732f9
-ca8da81b6ec94851525b11076b1a12852ad04c6e
-c02deac299a473f66b7de625038d69e2aad555c4
-d4e6f69ec4407163efcfd23e0dac5f9571b6ade1
-810361c77f4dd8dfb3c95fd998d120075122f171
-9381f7633208cb517fee827051afc6a7c1decd3d
+f89ac1cf63e180940fe1e02238eefb658f5a636a
+09d449c4e5c40b016f38b797e169d46ea4fdf044
+ee5667d8f6c9a26f0b881e0732f80e672b0b5fee
+e86dc98a72bd8f9d8c3efbefcc3bf21f70416a56
+ff61a8c992a138b6862840cf441b01b0bf2a53dd
+e083edbd8bcb0b8d8bb76ed9acf6130826910cd1
+5b11a78f8a65d1a737d02ace04c76a350650585f
+ee681378d069540756ec09b96ca3f855fed89b78
+0d7ef50d79d9f0ea39541a485e6e912683224a75
+34769697694be0c1243d0465006dcd54884c40fe
+a4c18d2eb242eba729eb3f3dbaacea7380f405fb
+680b3cdc9beb23d02ca50f41a5c20f10c64138b0
+361cdfc7589725339b9effa46e3c64f8bbf978f9
+4ea08c7903c50e2d9fc9a27b91e9cda0f039cd92
+c42a5c8a284d451a70b9842435b8b00b47f0c72a
+873f6a705cfc89dd35a84c22023d4188362ba74a
+046fe52ea5efc0a80a2ebee05c992fa3eaaf39cf
+923d24364baf649fb124b85aa009c452b67437c0
+6ced2437626aa0f05cb5c09674ee52a1c9d2cb79
+16dd77d6a630a3d11207b191cb5223e535c0909b
+3c6a663f70f8239d3b7f743fcb06f26ba5a8bc77
+5316e3c3b120b3672efb8030287b13d306b119aa
+566b12a10ba06e346fb3cba473c1693d2ebf5d3c
+7cb2fe3bdc8c671f432a56edcf1e8d8be646c971
+d57eaddc7ba81975c4bca0aaa06bdee8fe8fb3bd
+beec11505f67b3d9a52fcb136b4f8d8cfb253da5
+a6b43578d15b0c79507a33e70c0ba0a432065bb0
+c54af24c510bfb9b7d8a6950b2e90047e7578ba8
+07c5195b8c19a7170a3f3340ad96e934367266a8
+42ed39f242d56b020842178623e059660c110155
+bf45053c965e9b8a0b6225c5d378493b5aaf1336
+e20ea0b7ce4b4cbf8927fe8746e46aa70de5cdd1
 )
 
 # Avoid merge conflict.
 PATCH_ZENSAUCE_BRANDING="
-f884ec1baec395379fcb427bbc2b3231ba9484a2
+f89ac1cf63e180940fe1e02238eefb658f5a636a
 "
 
 # FIXME:
@@ -113,23 +113,23 @@ PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
 # Message marked with INTERACTIVE:
 PATCH_ZENTUNE_COMMITS=(
 # Generated by copy and paste.
-6951c44a6cacf4c9f12eede7508db7b26b6f3682
-c7a4c6f6e1f0cd6c9100187412d76e8efe718ade
-90ca7255bd687a9a0219a668adb102c88eeec68e
-0a2e457e582589da38236e04d7d757f80d0d7e1a
-80592adcd16ec3d96569c908ede9656f5756da4e
-8fcf775844a6cf76b27cdfba74d311228b520708
-01489237173dca73e1bf532d1d6835b21112bb6e
-2e4db1e69cbb271db43b989d08eed8c6747dc83a
-9b6162cc8d2bde3ec029fe84cd12ada9c56732f9
-ca8da81b6ec94851525b11076b1a12852ad04c6e
-c02deac299a473f66b7de625038d69e2aad555c4
-d4e6f69ec4407163efcfd23e0dac5f9571b6ade1
-810361c77f4dd8dfb3c95fd998d120075122f171
+2c23dc017c864a1b71866d2fefc1ffef26b47faa
+45e61e663aa25888de3e1bd8809d767a74de0b7b
+3f2ec7fb85691d0c8854914c8e0e8c85c26d1de9
+9873c6e7d623a878e8616901ed1265d3e1d09a94
+c409586175ae4fa3e027ab8fbb4dd5d7fdabe930
+60111be563cc0f92dcd248469a7adfbf68b65455
+f624577b3b21cc4aa675c31ce5df319e5607d49f
+f7575f138d60d81cbba18be9b4d6348a618d2786
+ffa3185e2e8a37c3dc54b3dc5ca1c642862801bc
+0fdc97ff66114427df9dcb74253a3751ef6dd162
+2afa2e16220adbe0645476f75f4fe61db60232cb
+37cbd9c88ff31b77dd4e42fb1880b7339e909b65
+fc08642f2c5a290043510811049d860aa7f0f826
+b404e67dcc4feba1cdabb224765f1382844ce016
 )
-PATCH_BFQ_DEFAULT="c7a4c6f6e1f0cd6c9100187412d76e8efe718ade" # Single queue
-PATCH_KYBER_DEFAULT="90ca7255bd687a9a0219a668adb102c88eeec68e" # Multi queue
-# BL = Blacklisted to avoid merge conflict
+PATCH_BFQ_DEFAULT="45e61e663aa25888de3e1bd8809d767a74de0b7b" # Single Queue
+PATCH_KYBER_DEFAULT="3f2ec7fb85691d0c8854914c8e0e8c85c26d1de9" # Multi Queue
 PATCH_ZENSAUCE_BL=(
 	${PATCH_KCP_COMMIT}
 	${PATCH_ZENSAUCE_BRANDING}
@@ -145,13 +145,6 @@ PATCH_ZENSAUCE_BL=(
 BBRV2_KV="5.13.12"
 BBRV2_VERSION="v2alpha-2022-08-28"
 BBRV2_COMMITS=( # oldest
-# From https://github.com/google/bbr/compare/f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1...v2alpha-2022-08-28
-#
-# Generated from:
-# f428e49 - comes from Makefile
-# wget -q -O - https://github.com/google/bbr/compare/f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1^..v2alpha-2022-08-28.patch \
-#       | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-# Removed extra commit from generated list.
 1ca5498fa4c6d4d8d634b1245d41f1427482824f
 #46ddceed8f8dad02a97e79c40893c385b859d1c8 # already applied
 #94af063d5a381af0e2063cfd97dcce9783ed25c6 # already applied
@@ -182,11 +175,11 @@ d29d596279f9ce7a33c7cc68277886e49381ea05
 cf9b1dacabb1ef62481a452f7f169e1679e2da49
 a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
-RUST_PV="1.62.0"
+RUST_PV="1.68.2"
 
 IUSE+="
 bbrv2 build c2tcp +cfs clang clang-pgo deepcc disable_debug -exfat
-+genpatches -genpatches_1510 kcfi lto orca prjc rock-dkms rt -rust
++genpatches -genpatches_1510 kcfi lto orca prjc rt -rust
 shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support
 zen-sauce zen-sauce-all -zen-tune
@@ -194,6 +187,7 @@ zen-sauce zen-sauce-all -zen-tune
 
 # Not ready yet
 REQUIRED_USE+="
+	!prjc
 "
 
 REQUIRED_USE+="
@@ -411,7 +405,7 @@ CDEPEND+="
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
 	>=sys-devel/bc-1.06.95
-	>=sys-devel/binutils-2.23
+	>=sys-devel/binutils-2.25
 	>=sys-devel/bison-2.0
 	>=sys-devel/flex-2.5.35
 	>=sys-devel/make-3.82
@@ -525,14 +519,6 @@ RDEPEND+="
 	)
 "
 
-PDEPEND+="
-	rock-dkms? (
-		|| (
-			~sys-kernel/rock-dkms-5.6.0
-		)
-	)
-"
-
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:
 else
@@ -548,6 +534,9 @@ NOT_READY_YET="
 "
 
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
+	SRC_URI_NOT_READY_YET="
+		${PRJC_SRC_URI}
+	"
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
 		${C2TCP_URIS}
@@ -557,7 +546,6 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${KCP_SRC_8_1_URI}
 		${KCP_SRC_9_1_URI}
 		${KCP_SRC_CORTEX_A72_URI}
-		${PRJC_SRC_URI}
 		${RT_SRC_ALT_URI}
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
@@ -567,6 +555,11 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${ZENSAUCE_URIS}
 	"
 else
+	SRC_URI_NOT_READY_YET="
+		prjc? (
+			${PRJC_SRC_URI}
+		)
+	"
 	SRC_URI+="
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -590,9 +583,6 @@ else
 		orca? (
 			${C2TCP_URIS}
 		)
-		prjc? (
-			${PRJC_SRC_URI}
-		)
 		rt? (
 			${RT_SRC_ALT_URI}
 		)
@@ -613,6 +603,10 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
+ewarn
+ewarn "This ebuild series is a WIP / IN DEVELOPMENT."
+ewarn "Expect patchtime failures."
+ewarn
 	if use tresor ; then
 		if [[ -n "${OT_KERNEL_DEVELOPER}" && "${OT_KERNEL_DEVELOPER}" == "1" ]] ; then
 			:
@@ -814,19 +808,23 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-3ff0ac8.patch" ]] ; then
 		# Dropped hunk from net/ipv4/bpf_tcp_ca.c
 		_tpatch "${PATCH_OPTS}" "${path}" 3 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-3ff0ac8-fix-for-6.0.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-3ff0ac8-fix-for-6.3.patch"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
 
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-use-get_random_u32_below-for-6.2.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 5 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.1.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.3.patch"
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
 # Patch needs fix
 einfo "See ${path}"
 		die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
+
+	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-1e924b1.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-1e924b1-fix-for-6.5.2.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
@@ -846,6 +844,8 @@ ot-kernel_filter_clang_pgo_patch_cb() {
 # Check optional version requirements
 ot-kernel_check_versions() {
 	_ot-kernel_check_versions "app-admin/mcelog" "0.6" ""
+	_ot-kernel_check_versions "app-arch/tar" "1.28" ""
+	_ot-kernel_check_versions "dev-util/global" "6.6.5" ""
 	_ot-kernel_check_versions "dev-util/pahole" "1.16" "CONFIG_DEBUG_INFO_BTF"
 	_ot-kernel_check_versions "net-dialup/ppp" "2.4.0" "CONFIG_PPP"
 	_ot-kernel_check_versions "net-firewall/iptables" "1.4.2" "CONFIG_NETFILTER"

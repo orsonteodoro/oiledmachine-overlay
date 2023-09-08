@@ -71,13 +71,25 @@
     4.14 (LTS)						Y
 		    -ck / MuQSS				N
 		    -rt (RT_PREEMPT)			Y
-		    genpatches				Y
+		    genpatches				N
 		    kernel_compiler_patch 		N
 		    O3 [5]				N
 		    PDS					N
 		    TRESOR (AES-NI) [3,4,5]		t
 		    TRESOR (x86) [3,4,5]		t
 		    TRESOR (x86-64) [3,5]		Y
+		    UKSM				R
+
+    4.19 (LTS)						Y
+		    -ck / MuQSS				N
+		    -rt (RT_PREEMPT)			Y
+		    genpatches				Y
+		    kernel_compiler_patch 		N
+		    O3 [5]				N
+		    PDS					N
+		    TRESOR (AES-NI) [3,4,5]		D
+		    TRESOR (x86) [3,4,5]		D
+		    TRESOR (x86-64) [3,5]		D
 		    UKSM				R
 
     5.4	(LTS)						Y
@@ -128,21 +140,43 @@
 		    zen-multigen_lru			N
 		    zen-sauce				N
 						
-    6.1 (Stable)					N
+    6.1 (LTS)						N
 		    -rt	(RT_PREEMPT)			A
 		    CFI					?
 		    Clang PGO				?
 		    genpatches				A
-		    KCFI				A
 		    kernel_compiler_patch		A
-		    multigen_lru			A
 		    Project C				A
 		    TCP BBR v2 [5]			E
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    UKSM				?
-		    zen-multigen_lru			A
+		    zen-sauce				A
+
+    6.4 (Stable)					N
+		    -rt	(RT_PREEMPT)			A
+		    CFI					?
+		    Clang PGO				?
+		    genpatches				A
+		    kernel_compiler_patch		A
+		    Project C				A
+		    TCP BBR v2 [5]			E
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				A
+
+    6.5 (Stable)					N
+		    -rt	(RT_PREEMPT)			A
+		    CFI					?
+		    Clang PGO				?
+		    genpatches				A
+		    kernel_compiler_patch		A
+		    Project C				A
+		    TCP BBR v2 [5]			E
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to

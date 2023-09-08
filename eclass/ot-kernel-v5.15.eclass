@@ -1,4 +1,4 @@
-# Copyright 2020-2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2020-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -21,8 +21,8 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 
-KERNEL_RELEASE_DATE="20211031"
-CXX_STD="-std=gnu++11"
+KERNEL_RELEASE_DATE="20211031" # of first stable release
+CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.15/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
 LLVM_MAX_SLOT=15
@@ -34,25 +34,25 @@ KV_MAJOR=$(ver_cut 1 "${PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
 PATCH_ALLOW_O3_COMMIT="b67c5033547771052515687e96adf98858ea0de6" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
-PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor / oldest
-PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant / newest
+PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
+PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
 CLANG_PGO_KV="5.13.0_rc2"
 PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
 PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
-PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant / newest
+PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant ~ newest
 PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04" # from zen repo
 PATCH_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
-PATCH_MULTIGEN_LRU_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant / newest
+PATCH_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
+PATCH_MULTIGEN_LRU_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant ~ newest
 PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor / oldest
-PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant / newest
-PATCH_TRESOR_V="3.18.5"
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
+PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant ~ newest
+PATCH_TRESOR_VER="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
 #	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 # from A to D, where a is ancestor and d is descendant.
-# When using that commit list generator, it may miss some commits, so verify all
+# When using that commit list generator, it *may miss* some commits, so verify all
 # the commits in order.
 
 #C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
@@ -63,6 +63,11 @@ C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
 ZEN_KV="5.15.0"
 PATCH_ZENSAUCE_COMMITS=(
+# From https://github.com/torvalds/linux/compare/v5.15...zen-kernel:zen-kernel:5.15/zen-sauce
+#
+# Generated from:
+# wget -q -O - https://github.com/torvalds/linux/compare/7607cbe5890545c3d4a2c5598cfb0eb9255ab46a^..2f3fee79abe0a75597d511cb0ccfb12db1688b69.patch \
+#        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
 dcc1c5d635f155c7a9458cd93827899211224486
 aa864eded832387e4ace9652ca2edbeb8155d703
@@ -104,16 +109,18 @@ PATCH_ZENSAUCE_BRANDING="
 7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
 "
 
-# LEFT_ZENTUNE:RIGHT_ZENSAUCE
+# This is a list containing elements of LEFT_ZENTUNE:RIGHT_ZENSAUCE.  Each
+# element means that the left commit requires right commit which can be
+# resolved by adding the right commit to ZENSAUCE_WHITELIST.
 PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
 de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac:05447263701b202e0086bb2cae098cf6d46c158e
 ) # \
-#ZEN: INTERACTIVE: Use BFQ as our elevator (de75df0) needs \
-#ZEN: Add CONFIG to rename the mq-deadline scheduler (0544726)
+# ZEN: INTERACTIVE: Use BFQ as our elevator (de75df0) requires \
+# ZEN: Add CONFIG to rename the mq-deadline scheduler (0544726)
 
 # Message marked with INTERACTIVE:
 PATCH_ZENTUNE_COMMITS=(
-7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
+00e58bccf05365ce65f6e9694e1ca3b9ad30f345
 de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
 3045edebf785deb5d687abd9898ac9702be5325c
 7bfc78d87614496288ad4e90f7d749a942a83718
@@ -192,6 +199,13 @@ ${FUTEX_PROTON_COMPAT[@]}
 BBRV2_KV="5.13.12"
 BBRV2_VERSION="v2alpha-2022-08-28"
 BBRV2_COMMITS=( # oldest
+# From https://github.com/google/bbr/compare/f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1...v2alpha-2022-08-28
+#
+# Generated from:
+# f428e49 - comes from Makefile
+# wget -q -O - https://github.com/google/bbr/compare/f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1^..v2alpha-2022-08-28.patch \
+#       | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+# Removed extra commit from generated list.
 1ca5498fa4c6d4d8d634b1245d41f1427482824f
 46ddceed8f8dad02a97e79c40893c385b859d1c8
 94af063d5a381af0e2063cfd97dcce9783ed25c6
@@ -467,6 +481,7 @@ KCP_RDEPEND="
 	)
 "
 
+KMOD_PV="13"
 CDEPEND+="
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
@@ -490,7 +505,7 @@ CDEPEND+="
 		x11-libs/gtk+:2
 	)
 	gzip? (
-		>=sys-apps/kmod-13[zlib]
+		>=sys-apps/kmod-${KMOD_PV}[zlib]
 		app-arch/gzip
 	)
 	lz4? (
@@ -514,12 +529,12 @@ CDEPEND+="
 		dev-qt/qtwidgets:5
 	)
 	xz? (
+		>=sys-apps/kmod-${KMOD_PV}[lzma]
 		app-arch/xz-utils
-		sys-apps/kmod[lzma]
 	)
 	zstd? (
+		>=sys-apps/kmod-${KMOD_PV}[zstd]
 		app-arch/zstd
-		sys-apps/kmod[zstd]
 	)
 "
 
@@ -879,7 +894,7 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/cfi-x86-3bc6889-makefile-fix-for-5.15.patch"
+			"${FILESDIR}/clang-pgo-3bc6889-makefile-fix-for-5.15.patch"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"
 	elif [[ "${path}" =~ "futex2-${FUTEX2_KV}-b70e738.patch" ]] ; then

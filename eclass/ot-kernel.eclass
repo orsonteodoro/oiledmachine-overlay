@@ -1,4 +1,4 @@
-# Copyright 2019-2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2019-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -40,11 +40,13 @@
 # genpatches:
 #	https://gitweb.gentoo.org/proj/linux-patches.git/
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.14
+#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.19
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.4
+#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.5
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
@@ -72,11 +74,13 @@
 # PREEMPT_RT:
 #	https://wiki.linuxfoundation.org/realtime/start
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.4/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.5/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -92,6 +96,7 @@
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.4...zen-kernel:6.4/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.5...zen-kernel:6.5/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -662,7 +667,7 @@ O3_RO_SRC_URI="${O3_SRC_URI}${O3_RO_SRC_FN} -> ${O3_RO_FN}"
 
 PDS_URI_BASE=\
 "https://gitlab.com/alfredchen/PDS-mq/raw/master/${KV_MAJOR_MINOR}/"
-PDS_FN="v${KV_MAJOR_MINOR}_pds${PATCH_PDS_V}.patch"
+PDS_FN="v${KV_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
 PDS_SRC_URI="${PDS_URI_BASE}${PDS_FN}"
 
 PRJC_URI_BASE=\
@@ -677,8 +682,8 @@ RT_SRC_URI="${RT_BASE_URI}${RT_FN}"
 RT_ALT_FN="patches-${PATCH_RT_VER}.tar.gz"
 RT_SRC_ALT_URI="${RT_BASE_URI}${RT_ALT_FN}"
 
-TRESOR_AESNI_FN="tresor-patch-${PATCH_TRESOR_V}_aesni"
-TRESOR_I686_FN="tresor-patch-${PATCH_TRESOR_V}_i686"
+TRESOR_AESNI_FN="tresor-patch-${PATCH_TRESOR_VER}_aesni"
+TRESOR_I686_FN="tresor-patch-${PATCH_TRESOR_VER}_i686"
 TRESOR_SYSFS_FN="tresor_sysfs.c"
 TRESOR_README_FN="tresor-readme.html"
 TRESOR_PDF_FN="tresor.pdf"
@@ -865,7 +870,7 @@ einfo
 	elif [[ "${KV_MAJOR_MINOR}" == "5.15" ]] ; then
 einfo
 einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
-einfo "Dec 2026."
+einfo "Oct 2026."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
@@ -917,18 +922,26 @@ einfo
 
 # @FUNCTION: check_zen_tune_deps
 # @DESCRIPTION:
-# Checks zen-tune's dependency on zen-sauce
+# Checks zen-tune's dependency on zen-sauce.  This function resolves
+# commit dependencies (as in left commit requires right commit) only for
+# the zen tune commit set.
 check_zen_tune_deps() {
-	local zentune_commit="${1}"
+	local zentune_commit="${1}" # c in C, where C is all zen tune commits.
 	local v="ZENSAUCE_WHITELIST"
 	if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
 		local p
 		for p in ${PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE[@]} ; do
-			local ztc=$(echo "${p}" | cut -f 1 -d ":")
-			local zsc=$(echo "${p}" | cut -f 2 -d ":")
-			if [[ ${ztc} == ${zentune_commit} ]] ; then
-				if [[ ! ( ${!v} =~ ${zsc} || ${!v} =~ ${zsc:0:7} ) ]] ; then
-eerror "zen-tune requires ${zsc} be added to ${v} and also the zen-sauce USE flag"
+			local zleft=$(echo "${p}" | cut -f 1 -d ":") # Left
+			local zright=$(echo "${p}" | cut -f 2 -d ":") # Right
+	# The left commit depends on right commit.
+			if [[ "${zleft}" == "${zentune_commit}" ]] ; then
+	# haystack =~ needle, where haystack is all commits in ZENSAUCE_WHITELIST
+				if [[ ! ( "${!v}" =~ "${zright}" \
+				       || "${!v}" =~ "${zright:0:7}" ) ]] ; then
+eerror
+eerror "zen-tune requires ${zright} or ${zright:0:7} be added to ${v} and also"
+eerror "the zen-sauce USE flag."
+eerror
 					die
 				fi
 			fi
@@ -1485,6 +1498,8 @@ apply_custom_logo() {
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.2 ; then
 			_fpatch "${FILESDIR}/custom-logo-for-6.1.patch"
+		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 ; then
+			_fpatch "${FILESDIR}/custom-logo-for-4.19.patch"
 		else
 			_fpatch "${FILESDIR}/custom-logo-for-4.14.patch"
 		fi
@@ -1717,7 +1732,8 @@ einfo "Applying the genpatches"
 #
 apply_o3() {
 	cd "${BUILD_DIR}" || die
-	if ver_test "${KV_MAJOR_MINOR}" -eq 4.14 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -eq 4.14 \
+	|| ver_test "${KV_MAJOR_MINOR}" -eq 4.19  ; then
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
 			"${EDISTDIR}/${O3_CO_FN}" \
@@ -1770,7 +1786,7 @@ einfo "Applying TRESOR"
 		platform="i686"
 	fi
 
-	_fpatch "${EDISTDIR}/tresor-patch-${PATCH_TRESOR_V}_${platform}"
+	_fpatch "${EDISTDIR}/tresor-patch-${PATCH_TRESOR_VER}_${platform}"
 	sed -i -E -e "s|[ ]?-tresor[0-9.]+||g" "${BUILD_DIR}/Makefile" || die
 }
 

@@ -17,6 +17,9 @@
     <flag name="4_14">
       Monitor the 4.14 branch for updates.
     </flag>
+    <flag name="4_19">
+      Monitor the 4.19 branch for updates.
+    </flag>
     <flag name="5_4">
       Monitor the 5.4 branch for updates.
     </flag>

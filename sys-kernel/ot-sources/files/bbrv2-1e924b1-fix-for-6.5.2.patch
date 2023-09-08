@@ -1,0 +1,14 @@
+# License header:
+// SPDX-License-Identifier: GPL-2.0-only
+
+--- a/net/ipv4/tcp_output.c.orig	2023-09-07 19:42:42.602993200 -0700
++++ b/net/ipv4/tcp_output.c	2023-09-07 19:43:35.950994857 -0700
+@@ -1532,7 +1532,7 @@ int tcp_fragment(struct sock *sk, enum t
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 	struct sk_buff *buff;
+-	int old_factor;
++	int old_factor, inflight_prev;
+ 	long limit;
+ 	int nlen;
+ 	u8 flags;
