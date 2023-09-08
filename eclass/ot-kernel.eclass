@@ -966,20 +966,7 @@ zen_tune_setup() {
 # Checks the existance for the ZEN_SAUCE_WHITELIST variable
 zen_sauce_setup() {
 	if use zen-sauce ; then
-		local zw="ZEN_SAUCE_WHITELIST"
-		if [[ -z "${!zw}" ]] ; then
-			local zen_sauce_uri
-			local zen_sauce_cmprange=\
-"v${KV_MAJOR_MINOR}...zen-kernel:${KV_MAJOR_MINOR}"
-			local zen_sauce_cmpbase_uri=\
-"https://github.com/torvalds/linux/compare/${zen_sauce_cmprange}"
-			if ver_test ${PV} -ge 5.4 ; then
-				zen_sauce_uri=\
-"${zen_sauce_cmpbase_uri}/zen-sauce"
-			else
-				zen_sauce_uri=\
-"${zen_sauce_cmpbase_uri}/misc"
-			fi
+		if [[ -z "${ZEN_SAUCE_WHITELIST}" ]] ; then
 ewarn
 ewarn "Detected empty ZEN_SAUCE_WHITELIST.  Some zen-sauce commits will not be added."
 ewarn
@@ -1393,7 +1380,7 @@ apply_zen_sauce() {
 	local blacklisted=""
 
 	local c
-	for c in ${!zw} ; do
+	for c in "${!zw}" ; do
 	# Add commit hashes only
 		[[ "${c}" == "*" ]] && continue
 		[[ "${c}" == "all" ]] && continue
@@ -1402,7 +1389,7 @@ apply_zen_sauce() {
 		whitelisted+=" ${c:0:7}"
 	done
 
-	for c in ${!zb} ; do
+	for c in "${!zb}" ; do
 	# Add commit hashes only
 		[[ "${c}" == "*" ]] && continue
 		[[ "${c}" == "all" ]] && continue
@@ -1420,7 +1407,7 @@ apply_zen_sauce() {
 		local bl_all_zen_tune=0
 		local wl_all_zen_sauce=0
 		local wl_all_zen_tune=0
-		for c in ${ZEN_SAUCE_BLACKLIST} ; do
+		for c in "${ZEN_SAUCE_BLACKLIST}" ; do
 			if [[ \
 				   "${c}" == "*" \
 				|| "${c}" == "all" \
@@ -1436,7 +1423,7 @@ apply_zen_sauce() {
 				bl_all_zen_sauce=1
 			fi
 		done
-		for c in ${ZEN_SAUCE_WHITELIST} ; do
+		for c in "${ZEN_SAUCE_WHITELIST}" ; do
 			if [[ \
 				   "${c}" == "*" \
 				|| "${c}" == "all" \
@@ -1454,22 +1441,22 @@ apply_zen_sauce() {
 		done
 
 		if ot-kernel_use zen-sauce && (( ${bl_all_zen_tune} == 1 )) ; then
-			for c in ${PATCH_ZEN_TUNE_COMMITS[@]} ; do
+			for c in "${PATCH_ZEN_TUNE_COMMITS[@]}" ; do
 				blacklisted+=" ${c:0:7}"
 			done
 		fi
 		if ot-kernel_use zen-sauce && (( ${bl_all_zen_sauce} == 1 )) ; then
-			for c in ${PATCH_ZEN_SAUCE_COMMITS[@]} ; do
+			for c in "${PATCH_ZEN_SAUCE_COMMITS[@]}" ; do
 				blacklisted+=" ${c:0:7}"
 			done
 		fi
 		if ot-kernel_use zen-sauce && (( ${wl_all_zen_tune} == 1 )) ; then
-			for c in ${PATCH_ZEN_TUNE_COMMITS[@]} ; do
+			for c in "${PATCH_ZEN_TUNE_COMMITS[@]}" ; do
 				whitelisted+=" ${c:0:7}"
 			done
 		fi
 		if ot-kernel_use zen-sauce && (( ${wl_all_zen_sauce} == 1 )) ; then
-			for c in ${PATCH_ZEN_SAUCE_COMMITS[@]} ; do
+			for c in "${PATCH_ZEN_SAUCE_COMMITS[@]}" ; do
 				whitelisted+=" ${c:0:7}"
 			done
 		fi
@@ -1477,9 +1464,21 @@ apply_zen_sauce() {
 
 	use_blacklisted+=" ${PATCH_ZEN_SAUCE_BL[@]}"
 
-	whitelisted=$(echo "${whitelisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
-	blacklisted=$(echo "${blacklisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
-	use_blacklisted=$(echo "${use_blacklisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
+	whitelisted=$(echo "${whitelisted}" \
+		| tr " " "\n" \
+		| sort \
+		| uniq \
+		| tr "\n" " ")
+	blacklisted=$(echo "${blacklisted}" \
+		| tr " " "\n" \
+		| sort \
+		| uniq \
+		| tr "\n" " ")
+	use_blacklisted=$(echo "${use_blacklisted}" \
+		| tr " " "\n" \
+		| sort \
+		| uniq \
+		| tr "\n" " ")
 
 	einfo "Applying zen-sauce patches"
 	for c in ${PATCH_ZEN_SAUCE_COMMITS[@]} ; do
