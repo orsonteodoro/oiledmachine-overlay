@@ -426,11 +426,11 @@ gen_kernel_seq()
 	echo $s
 }
 
-# @FUNCTION: gen_zensauce_uris
+# @FUNCTION: gen_zen_sauce_uris
 # @DESCRIPTION:
 # Generates zen secret sauce URIs
-ZENSAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
-gen_zensauce_uris()
+ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
+gen_zen_sauce_uris()
 {
 	local commits=(${@})
 	local len="${#commits[@]}"
@@ -440,7 +440,7 @@ gen_zensauce_uris()
 		local id="${commits[c]}"
 		s="
 			${s}
-			${ZENSAUCE_BASE_URI}${id}.patch
+			${ZEN_SAUCE_BASE_URI}${id}.patch
 				-> zen-sauce-${ZEN_KV}-${id:0:7}.patch
 		"
 	done
@@ -705,7 +705,7 @@ UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 if [[ -n "${ZEN_KV}" ]] ; then
-	ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS[@]}")
+	ZEN_SAUCE_URIS=$(gen_zen_sauce_uris "${PATCH_ZEN_SAUCE_COMMITS[@]}")
 fi
 
 if ver_test ${PV} -eq ${KV_MAJOR_MINOR} ; then
@@ -926,16 +926,16 @@ einfo
 # commit dependencies (as in left commit requires right commit) only for
 # the zen tune commit set.
 check_zen_tune_deps() {
-	local zentune_commit="${1}" # c in C, where C is all zen tune commits.
-	local v="ZENSAUCE_WHITELIST"
+	local zen_tune_commit="${1}" # c in C, where C is all zen tune commits.
+	local v="ZEN_SAUCE_WHITELIST"
 	if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
 		local p
-		for p in ${PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE[@]} ; do
+		for p in ${PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE[@]} ; do
 			local zleft=$(echo "${p}" | cut -f 1 -d ":") # Left
 			local zright=$(echo "${p}" | cut -f 2 -d ":") # Right
 	# The left commit depends on right commit.
-			if [[ "${zleft}" == "${zentune_commit}" ]] ; then
-	# haystack =~ needle, where haystack is all commits in ZENSAUCE_WHITELIST
+			if [[ "${zleft}" == "${zen_tune_commit}" ]] ; then
+	# haystack =~ needle, where haystack is all commits in ZEN_SAUCE_WHITELIST
 				if [[ ! ( "${!v}" =~ "${zright}" \
 				       || "${!v}" =~ "${zright:0:7}" ) ]] ; then
 eerror
@@ -949,39 +949,39 @@ eerror
 	fi
 }
 
-# @FUNCTION: zentune_setup
+# @FUNCTION: zen_tune_setup
 # @DESCRIPTION:
 # Checks zen-tune's dependency on zen-sauce at pkg_setup
-zentune_setup() {
+zen_tune_setup() {
 	if use zen-sauce ; then
 		local c
-		for c in ${PATCH_ZENTUNE_COMMITS[@]} ; do
+		for c in ${PATCH_ZEN_TUNE_COMMITS[@]} ; do
 			check_zen_tune_deps "${c}"
 		done
 	fi
 }
 
-# @FUNCTION: zensauce_setup
+# @FUNCTION: zen_sauce_setup
 # @DESCRIPTION:
-# Checks the existance for the ZENSAUCE_WHITELIST variable
-zensauce_setup() {
+# Checks the existance for the ZEN_SAUCE_WHITELIST variable
+zen_sauce_setup() {
 	if use zen-sauce ; then
-		local zw="ZENSAUCE_WHITELIST"
+		local zw="ZEN_SAUCE_WHITELIST"
 		if [[ -z "${!zw}" ]] ; then
-			local zensauce_uri
-			local zensauce_cmprange=\
+			local zen_sauce_uri
+			local zen_sauce_cmprange=\
 "v${KV_MAJOR_MINOR}...zen-kernel:${KV_MAJOR_MINOR}"
-			local zensauce_cmpbase_uri=\
-"https://github.com/torvalds/linux/compare/${zensauce_cmprange}"
+			local zen_sauce_cmpbase_uri=\
+"https://github.com/torvalds/linux/compare/${zen_sauce_cmprange}"
 			if ver_test ${PV} -ge 5.4 ; then
-				zensauce_uri=\
-"${zensauce_cmpbase_uri}/zen-sauce"
+				zen_sauce_uri=\
+"${zen_sauce_cmpbase_uri}/zen-sauce"
 			else
-				zensauce_uri=\
-"${zensauce_cmpbase_uri}/misc"
+				zen_sauce_uri=\
+"${zen_sauce_cmpbase_uri}/misc"
 			fi
 ewarn
-ewarn "Detected empty ZENSAUCE_WHITELIST.  Some zen-sauce commits will not be added."
+ewarn "Detected empty ZEN_SAUCE_WHITELIST.  Some zen-sauce commits will not be added."
 ewarn
 ewarn "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
 ewarn
@@ -1150,12 +1150,8 @@ ewarn
 	fi
 	if has zen-sauce ${IUSE} ; then
 		if use zen-sauce ; then
-			zensauce_setup
-		fi
-	fi
-	if has zen-tune ${IUSE} ; then
-		if use zen-tune ; then
-			zentune_setup
+			zen_sauce_setup
+			zen_tune_setup
 		fi
 	fi
 	if has cve_hotfix ${IUSE} ; then
@@ -1386,22 +1382,32 @@ apply_rt() {
 	done
 }
 
-# @FUNCTION: apply_zensauce
+# @FUNCTION: apply_zen_sauce
 # @DESCRIPTION:
 # Applies whitelisted zen sauce patches.
-apply_zensauce() {
-	local zw="ZENSAUCE_WHITELIST"
-	local zb="ZENSAUCE_BLACKLIST"
+apply_zen_sauce() {
+	local zw="ZEN_SAUCE_WHITELIST"
+	local zb="ZEN_SAUCE_BLACKLIST"
 
 	local whitelisted=""
 	local blacklisted=""
 
 	local c
 	for c in ${!zw} ; do
+	# Add commit hashes only
+		[[ "${c}" == "*" ]] && continue
+		[[ "${c}" == "all" ]] && continue
+		[[ "${c}" == "zen-sauce" ]] && continue
+		[[ "${c}" == "zen-tune" ]] && continue
 		whitelisted+=" ${c:0:7}"
 	done
 
 	for c in ${!zb} ; do
+	# Add commit hashes only
+		[[ "${c}" == "*" ]] && continue
+		[[ "${c}" == "all" ]] && continue
+		[[ "${c}" == "zen-sauce" ]] && continue
+		[[ "${c}" == "zen-tune" ]] && continue
 		blacklisted+=" ${c:0:7}"
 	done
 
@@ -1409,30 +1415,74 @@ apply_zensauce() {
 		whitelisted+=" ${PATCH_ALLOW_O3_COMMIT:0:7}"
 	fi
 
-	if has zen-tune ${IUSE} ; then
-		if ot-kernel_use zen-tune ; then
-			for c in ${PATCH_ZENTUNE_COMMITS[@]} ; do
+	if has zen-sauce ${IUSE} ; then
+		local bl_all_zen_sauce=0
+		local bl_all_zen_tune=0
+		local wl_all_zen_sauce=0
+		local wl_all_zen_tune=0
+		for c in ${ZEN_SAUCE_BLACKLIST} ; do
+			if [[ \
+				   "${c}" == "*" \
+				|| "${c}" == "all" \
+				|| "${c}" == "zen-tune" \
+			]] ; then
+				bl_all_zen_tune=1
+			fi
+			if [[ \
+				   "${c}" == "*" \
+				|| "${c}" == "all" \
+				|| "${c}" == "zen-sauce" \
+			]] ; then
+				bl_all_zen_sauce=1
+			fi
+		done
+		for c in ${ZEN_SAUCE_WHITELIST} ; do
+			if [[ \
+				   "${c}" == "*" \
+				|| "${c}" == "all" \
+				|| "${c}" == "zen-tune" \
+			]] ; then
+				wl_all_zen_tune=1
+			fi
+			if [[ \
+				   "${c}" == "*" \
+				|| "${c}" == "all" \
+				|| "${c}" == "zen-sauce" \
+			]] ; then
+				wl_all_zen_sauce=1
+			fi
+		done
+
+		if ot-kernel_use zen-sauce && (( ${bl_all_zen_tune} == 1 )) ; then
+			for c in ${PATCH_ZEN_TUNE_COMMITS[@]} ; do
+				blacklisted+=" ${c:0:7}"
+			done
+		fi
+		if ot-kernel_use zen-sauce && (( ${bl_all_zen_sauce} == 1 )) ; then
+			for c in ${PATCH_ZEN_SAUCE_COMMITS[@]} ; do
+				blacklisted+=" ${c:0:7}"
+			done
+		fi
+		if ot-kernel_use zen-sauce && (( ${wl_all_zen_tune} == 1 )) ; then
+			for c in ${PATCH_ZEN_TUNE_COMMITS[@]} ; do
+				whitelisted+=" ${c:0:7}"
+			done
+		fi
+		if ot-kernel_use zen-sauce && (( ${wl_all_zen_sauce} == 1 )) ; then
+			for c in ${PATCH_ZEN_SAUCE_COMMITS[@]} ; do
 				whitelisted+=" ${c:0:7}"
 			done
 		fi
 	fi
 
-	if has zen-sauce-all ${IUSE} ; then
-		if ot-kernel_use zen-sauce-all ; then
-			for c in ${PATCH_ZENSAUCE_COMMITS[@]} ; do
-				whitelisted+=" ${c:0:7}"
-			done
-		fi
-	fi
-
-	use_blacklisted+=" ${PATCH_ZENSAUCE_BL[@]}"
+	use_blacklisted+=" ${PATCH_ZEN_SAUCE_BL[@]}"
 
 	whitelisted=$(echo "${whitelisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
 	blacklisted=$(echo "${blacklisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
 	use_blacklisted=$(echo "${use_blacklisted}" | tr " " "\n"| sort | uniq | tr "\n" " ")
 
 	einfo "Applying zen-sauce patches"
-	for c in ${PATCH_ZENSAUCE_COMMITS[@]} ; do
+	for c in ${PATCH_ZEN_SAUCE_COMMITS[@]} ; do
 		local is_whitelisted=0
 		local c_wl
 		for c_wl in ${whitelisted[@]} ; do
@@ -1450,7 +1500,7 @@ apply_zensauce() {
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]] ; then
 ewarn
 ewarn "If ${c} is already applied via USE flag.  Please remove it from the"
-ewarn "ZENSAUCE_WHITELIST and use the USE flag instead."
+ewarn "ZEN_SAUCE_WHITELIST and use the USE flag instead."
 ewarn "This is to ensure the BDEPENDS/RDEPENDS/DEPENDs are met."
 ewarn "Skipping ${c} for now."
 ewarn
@@ -2108,7 +2158,7 @@ apply_all_patchsets() {
 
 	if has zen-sauce ${IUSE} ; then
 		if ot-kernel_use zen-sauce ; then
-			apply_zensauce
+			apply_zen_sauce
 		fi
 	fi
 
@@ -2786,11 +2836,27 @@ ot-kernel_get_envs() {
 	find "/etc/portage/ot-sources/${KV_MAJOR_MINOR}/" -type f -name "env"
 }
 
+# @FUNCTION: check_environment_variable_renames
+# @DESCRIPTION:
+# Check if the variable name is still being used.
+check_environment_variable_renames() {
+	if [[ "${ZENSAUCE_BLACKLIST+x}" == "x" || "${ZENSAUCE_WHITELIST+x}" == "x" ]] ; then
+eerror
+eerror "ZENSAUCE_BLACKLIST new name is now ZEN_SAUCE_BLACKLIST.  Please rename to continue."
+eerror "ZENSAUCE_WHITELIST new name is now ZEN_SAUCE_WHITELIST.  Please rename to continue."
+eerror "See metadata.xml for details."
+eerror
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel_clear_env
 # @DESCRIPTION:
 # Clears the configuration environment variables for the next
 # buildconfig being evaluated.
 ot-kernel_clear_env() {
+	check_environment_variable_renames
+
 	# The OT_KERNEL_ prefix is to avoid naming collisions.
 	unset OT_KERNEL_ARCH
 	unset OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS
@@ -2971,8 +3037,8 @@ ot-kernel_clear_env() {
 
 	unset GENPATCHES_BLACKLIST
 
-	unset ZENSAUCE_BLACKLIST
-	unset ZENSAUCE_WHITELIST
+	unset ZEN_SAUCE_BLACKLIST
+	unset ZEN_SAUCE_WHITELIST
 }
 
 # @FUNCTION: ot-kernel_load_config

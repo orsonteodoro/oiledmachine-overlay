@@ -38,6 +38,7 @@ PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10
 PATCH_BBRV2_COMMIT_A="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # ancestor ~ oldest
 PATCH_BBRV2_COMMIT_D="3d76056b85feab3aade8007eb560c3451e7d3433" # descendant ~ newest
 PATCH_KCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8" # from zen repo
+PATCH_OPENRGB_COMMIT="5b3d9f2372600c3b908b1bd0e8c9b8c6ed351fa2" # apply from zen repo
 PATCH_TRESOR_VER="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A..D.patch \
@@ -87,7 +88,7 @@ a2fb34e34d157c303d07ee16b1ad42c8720ab320 # Update Kconfig [It makes muqss the de
 )
 
 ZEN_KV="5.10.0"
-PATCH_ZENSAUCE_COMMITS=(
+PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v5.10...zen-kernel:zen-kernel:5.10/zen-sauce
 #
 # Generated from:
@@ -123,21 +124,21 @@ e1b127aa22601f9cb2afa3daad4c69e6a42a89f5
 )
 
 # Avoid merge conflict.
-PATCH_ZENSAUCE_BRANDING="
+PATCH_ZEN_SAUCE_BRANDING="
 dda238180bacda4c39f71dd16d754a48da38e676
 "
 
-# This is a list containing elements of LEFT_ZENTUNE:RIGHT_ZENSAUCE.  Each
+# This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
 # element means that the left commit requires right commit which can be
-# resolved by adding the right commit to ZENSAUCE_WHITELIST.
-PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE="
+# resolved by adding the right commit to ZEN_SAUCE_WHITELIST.
+PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE="
 0cbcc41992693254e5e4c7952853c6aa7404f28e:513af58e2e4aa8267b1eebc1cd156e3e2a2a33e3
 " # \
 # ZEN: INTERACTIVE: Use BFQ as our elevator (0cbcc41) requires \
 # ZEN: Add CONFIG to rename the mq-deadline scheduler (513af58)
 
 # ancestor ~ oldest ~ top, descendant ~ newest ~ bottom
-PATCH_ZENTUNE_COMMITS=(
+PATCH_ZEN_TUNE_COMMITS=(
 890ac858741436a40c274efb3514c5f6a96c7c80
 0cbcc41992693254e5e4c7952853c6aa7404f28e
 9b6c7af596e209356850e0991969df68f396aea6
@@ -148,8 +149,8 @@ fade4cc2bf56ce6c563c04764224b6b84a45587f
 b7b24b494b62e02c21a9a349da2d036849f9dd8b
 )
 PATCH_BFQ_DEFAULT="0cbcc41992693254e5e4c7952853c6aa7404f28e"
-PATCH_ZENSAUCE_BL=(
-	${PATCH_ZENSAUCE_BRANDING}
+PATCH_ZEN_SAUCE_BL=(
+	${PATCH_ZEN_SAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
 )
 
@@ -245,8 +246,7 @@ IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat futex +genpatches
 -genpatches_1510 muqss orca prjc rock-dkms rt symlink tresor tresor_aesni
 tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce zen-sauce-all
--zen-tune
+tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
 "
 REQUIRED_USE+="
 	genpatches_1510? (
@@ -282,12 +282,6 @@ REQUIRED_USE+="
 		tresor
 		tresor_x86_64
 	)
-	zen-sauce-all? (
-		zen-sauce
-	)
-	zen-tune? (
-		zen-sauce
-	)
 "
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
@@ -308,8 +302,7 @@ RT_PREEMPT (-rt), \
 TRESOR, \
 UKSM, \
 zen-muqss, \
-zen-sauce, \
-zen-tune. \
+zen-sauce. \
 "
 
 inherit ot-kernel
@@ -337,7 +330,7 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
 	#   found in the project.  (The implementation is based on an academic paper
 	#   from public universities.)
 LICENSE+=" zen-muqss? ( GPL-2 )"
-LICENSE+=" zen-tune? ( GPL-2 )"
+LICENSE+=" zen-sauce? ( GPL-2 )"
 
 _seq() {
 	local min=${1}
@@ -497,7 +490,7 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${TRESOR_SYSFS_SRC_URI}
 		${UKSM_SRC_URI}
 		${ZEN_MUQSS_SRC_URIS}
-		${ZENSAUCE_URIS}
+		${ZEN_SAUCE_URIS}
 	"
 else
 	SRC_URI+="
@@ -546,7 +539,7 @@ else
 			${ZEN_MUQSS_SRC_URIS}
 		)
 		zen-sauce? (
-			${ZENSAUCE_URIS}
+			${ZEN_SAUCE_URIS}
 		)
 	"
 fi
@@ -555,15 +548,6 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
-	if has zen-tune ${IUSE} ; then
-		if use zen-tune ; then
-ewarn
-ewarn "The zen-tune patch might cause lock up or slow io under heavy load like"
-ewarn "npm.  These use flags are not recommended."
-ewarn
-		fi
-	fi
-
 	if use tresor ; then
 ewarn
 ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."

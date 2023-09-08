@@ -44,6 +44,7 @@ PATCH_KCP_COMMIT="ff1381103099207c61c0e8426e82eabbb2808b04" # from zen repo
 PATCH_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
 PATCH_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
 PATCH_MULTIGEN_LRU_COMMIT_D="87542b28c81281bd1a54969df035ccf5ce1853da" # descendant ~ newest
+PATCH_OPENRGB_COMMIT="aa864eded832387e4ace9652ca2edbeb8155d703" # apply from zen repo
 PATCH_ZEN_MULTIGEN_LRU_COMMIT_A_PARENT="8bb7eca972ad531c9b149c0a51ab43a417385813"
 PATCH_ZEN_MULTIGEN_LRU_COMMIT_A="a16cb0d264fdfcbe171a689738ef4726394dfe62" # ancestor ~ oldest
 PATCH_ZEN_MULTIGEN_LRU_COMMIT_D="f16e06ddde0e38b172d8da03d4fd39c3296b0564" # descendant ~ newest
@@ -62,7 +63,7 @@ C2TCP_KV="4.13.1"
 C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
 ZEN_KV="5.15.0"
-PATCH_ZENSAUCE_COMMITS=(
+PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v5.15...zen-kernel:zen-kernel:5.15/zen-sauce
 #
 # Generated from:
@@ -105,21 +106,21 @@ e350f22a04b707a15d6af29d6d5a97e86445eacc
 )
 
 # Avoid merge conflict.
-PATCH_ZENSAUCE_BRANDING="
+PATCH_ZEN_SAUCE_BRANDING="
 7607cbe5890545c3d4a2c5598cfb0eb9255ab46a
 "
 
-# This is a list containing elements of LEFT_ZENTUNE:RIGHT_ZENSAUCE.  Each
+# This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
 # element means that the left commit requires right commit which can be
-# resolved by adding the right commit to ZENSAUCE_WHITELIST.
-PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE=(
+# resolved by adding the right commit to ZEN_SAUCE_WHITELIST.
+PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE=(
 de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac:05447263701b202e0086bb2cae098cf6d46c158e
 ) # \
 # ZEN: INTERACTIVE: Use BFQ as our elevator (de75df0) requires \
 # ZEN: Add CONFIG to rename the mq-deadline scheduler (0544726)
 
 # Message marked with INTERACTIVE:
-PATCH_ZENTUNE_COMMITS=(
+PATCH_ZEN_TUNE_COMMITS=(
 00e58bccf05365ce65f6e9694e1ca3b9ad30f345
 de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac
 3045edebf785deb5d687abd9898ac9702be5325c
@@ -130,8 +131,8 @@ be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
 96c43bfad5c8dcb116ab2088e46228707aaeca9f
 )
 PATCH_BFQ_DEFAULT="de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac"
-PATCH_ZENSAUCE_BL=(
-	${PATCH_ZENSAUCE_BRANDING}
+PATCH_ZEN_SAUCE_BL=(
+	${PATCH_ZEN_SAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
 )
 
@@ -242,7 +243,7 @@ bbrv2 build c2tcp cfi +cfs clang clang-pgo deepcc disable_debug -exfat futex2
 futex-proton +genpatches -genpatches_1510 lto multigen_lru orca prjc rock-dkms
 rt shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
-zen-multigen_lru zen-sauce zen-sauce-all -zen-tune
+zen-multigen_lru zen-sauce
 "
 REQUIRED_USE+="
 	futex-proton? (
@@ -289,12 +290,6 @@ REQUIRED_USE+="
 	)
 	zen-multigen_lru? (
 		!multigen_lru
-	)
-	zen-sauce-all? (
-		zen-sauce
-	)
-	zen-tune? (
-		zen-sauce
 	)
 "
 
@@ -343,8 +338,7 @@ Project C (BMQ, PDS-mq), \
 RT_PREEMPT (-rt), \
 UKSM, \
 zen-multigen_lru, \
-zen-sauce, \
-zen-tune. \
+zen-sauce. \
 "
 
 inherit ot-kernel
@@ -374,7 +368,7 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
 	# all-rights-reserved applies to new files introduced and no defaults license
 	#   found in the project.  (The implementation is based on an academic paper
 	#   from public universities.)
-LICENSE+=" zen-tune? ( GPL-2 )"
+LICENSE+=" zen-sauce? ( GPL-2 )"
 
 _seq() {
 	local min=${1}
@@ -637,7 +631,7 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${TRESOR_SYSFS_SRC_URI}
 		${UKSM_SRC_URI}
 		${ZEN_MULTIGEN_LRU_SRC_URI}
-		${ZENSAUCE_URIS}
+		${ZEN_SAUCE_URIS}
 	"
 else
 	SRC_URI+="
@@ -694,7 +688,7 @@ else
 			${ZEN_MULTIGEN_LRU_SRC_URI}
 		)
 		zen-sauce? (
-			${ZENSAUCE_URIS}
+			${ZEN_SAUCE_URIS}
 		)
 	"
 fi
@@ -703,6 +697,19 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
+	if use cfi && use amd64 ; then
+ewarn
+ewarn "The CFI patch for x86-64 is in development and originally for the"
+ewarn "5.15 series."
+ewarn
+	fi
+
+	if use shadowcallstack && ! use arm64 ; then
+ewarn
+ewarn "ShadowCallStack is only offered on the arm64 platform."
+ewarn
+	fi
+
 	if use tresor ; then
 		if [[ -n "${OT_KERNEL_DEVELOPER}" && "${OT_KERNEL_DEVELOPER}" == "1" ]] ; then
 			:
@@ -721,33 +728,12 @@ ewarn
 			die
 		fi
 	fi
-	if has zen-tune ${IUSE} ; then
-		if use zen-tune ; then
-ewarn
-ewarn "The zen-tune patch might cause lock up or slow io under heavy load"
-ewarn "like npm.  These use flags are not recommended."
-ewarn
-		fi
-	fi
 
 #	if use tresor ; then
 #ewarn
 #ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
 #ewarn
 #	fi
-
-	if ! use arm64 && use shadowcallstack ; then
-ewarn
-ewarn "ShadowCallStack is only offered on the arm64 platform."
-ewarn
-	fi
-
-	if use cfi && use amd64 ; then
-ewarn
-ewarn "The CFI patch for x86-64 is in development and originally for the"
-ewarn "5.15 series."
-ewarn
-	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes

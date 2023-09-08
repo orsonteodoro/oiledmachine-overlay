@@ -81,7 +81,7 @@ da178919d63ecfec2738877abae02cd2ce8aa29c # -ck1 extraversion
 )
 
 ZEN_KV="4.19.0"
-PATCH_ZENSAUCE_COMMITS=(
+PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/misc
 #
 # Generated from:
@@ -110,18 +110,18 @@ face163a2ef728af8ed4d4923b56711ff882b350
 )
 
 # Avoid merge conflict.
-PATCH_ZENSAUCE_BRANDING="
+PATCH_ZEN_SAUCE_BRANDING="
 c340c84b774aee3eda9a818fc4c0dc6a46a2c83d
 "
 
-# This is a list containing elements of LEFT_ZENTUNE:RIGHT_ZENSAUCE.  Each
+# This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
 # element means that the left commit requires right commit which can be
-# resolved by adding the right commit to ZENSAUCE_WHITELIST.
-PATCH_ZENTUNE_COMMITS_DEPS_ZENSAUCE="
+# resolved by adding the right commit to ZEN_SAUCE_WHITELIST.
+PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE="
 "
 
 # ancestor ~ oldest, descendant ~ newest
-PATCH_ZENTUNE_COMMITS=(
+PATCH_ZEN_TUNE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/zen-tune
 #
 # Generated from:
@@ -145,8 +145,8 @@ f468511a824c557ced1be2fed1b4ba923a067bcc
 
 # BFQ is not made default
 # BL = Blacklisted
-PATCH_ZENSAUCE_BL=(
-	${PATCH_ZENSAUCE_BRANDING}
+PATCH_ZEN_SAUCE_BL=(
+	${PATCH_ZEN_SAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
 )
 
@@ -156,7 +156,7 @@ PATCH_ZENSAUCE_BL=(
 IUSE+="
 build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss
 orca pds rt symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 uksm
+tresor_x86_64 uksm zen-sauce
 "
 REQUIRED_USE+="
 	genpatches_1510? (
@@ -202,7 +202,8 @@ MuQSS, \
 Orca, \
 PDS, \
 RT_PREEMPT (-rt), \
-UKSM. \
+UKSM, \
+zen-sauce. \
 "
 
 inherit ot-kernel
@@ -225,6 +226,7 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
 	# all-rights-reserved applies to new files introduced and no default license
 	#   found in the project.  (The implementation is based on an academic paper
 	#   from public universities.)
+LICENSE+=" zen-sauce? ( GPL-2 )"
 
 KCP_RDEPEND="
 	>=sys-devel/gcc-6.5.0
@@ -336,6 +338,7 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${TRESOR_README_SRC_URI}
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${UKSM_SRC_URI}
+		${ZEN_SAUCE_URIS}
 	"
 else
 	SRC_URI+="
@@ -376,6 +379,9 @@ else
 		)
 		uksm? (
 			${UKSM_SRC_URI}
+		)
+		zen-sauce? (
+			${ZEN_SAUCE_URIS}
 		)
 	"
 fi

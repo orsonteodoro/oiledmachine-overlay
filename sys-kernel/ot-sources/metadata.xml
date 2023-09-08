@@ -3269,22 +3269,35 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Environment variables for zen-sauce:
 
-    ZENSAUCE_BLACKLIST -- a space separated list of zen-sauce commit ids to ban.
-    ZENSAUCE_WHITELIST -- a space separated list of zen-sauce commit ids to apply.
+    ZEN_SAUCE_BLACKLIST -- a space separated list of zen-sauce commit ids to ban.
+    ZEN_SAUCE_WHITELIST -- a space separated list of zen-sauce commit ids to apply.
 
-    Both 7 and 40 digit commit IDs are accepted.
+    Acceptable values:
+
+      * - all commits
+      40 digit commit
+      7 digit commit
+      all - all commits
+      zen-sauce - add all zen sauce commits
+      zen-tune - add all zen tune commits
 
     Examples:
 
-      ZENSAUCE_BLACKLIST="19be35c 1baa02f"
-      ZENSAUCE_BLACKLIST="1baa02fbd7a419fdd0e484ba31ba82c90c7036cf ef12d902c1323bbbeacc3babc91aae15976474ca 56f6f4315aedbbcbef8ad61f187347c20a270e49"
-      ZENSAUCE_WHITELIST="4b03a1c 613d2ac"
+      ZEN_SAUCE_BLACKLIST="*"
+      ZEN_SAUCE_BLACKLIST="all"
+      ZEN_SAUCE_BLACKLIST="19be35c 1baa02f"
+      ZEN_SAUCE_BLACKLIST="1baa02fbd7a419fdd0e484ba31ba82c90c7036cf ef12d902c1323bbbeacc3babc91aae15976474ca 56f6f4315aedbbcbef8ad61f187347c20a270e49"
+      ZEN_SAUCE_WHITELIST="*"
+      ZEN_SAUCE_WHITELIST="all"
+      ZEN_SAUCE_WHITELIST="4b03a1c 613d2ac"
+      ZEN_SAUCE_WHITELIST="zen-tune"
 
     For a full list of commits, see the commit history.
 
     For 4.19, see:
 
       https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/misc
+      https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/zen-tune
 
     For 5.4, see:
 
@@ -3305,6 +3318,10 @@ unset OT_KERNEL_PRIVATE_KEY
     For 6.4, see:
 
       https://github.com/torvalds/linux/compare/v6.4...zen-kernel:6.4/zen-sauce
+
+    For 6.5, see:
+
+      https://github.com/torvalds/linux/compare/v6.5...zen-kernel:6.5/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
@@ -3674,11 +3691,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Patches the kernel with selected Zen kernel.  The zen-sauce set contains
       patches that add drivers or functionality related to gaming, laptops,
       optimizations, etc.
-    </flag>
-    <flag name="zen-sauce-all">
-      Blanket whitelist all zen-sauce commits
-    </flag>
-    <flag name="zen-tune">
+
       Patches the kernel with some Zen Interactive Tuning, particularly those
       marked INTERACTIVE.
     </flag>
