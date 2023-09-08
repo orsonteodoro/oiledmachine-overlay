@@ -1,8 +1,9 @@
-License header for arch/x86/Kconfig:
+# License header for arch/x86/Kconfig
 # SPDX-License-Identifier: GPL-2.0
---- a/arch/x86/Kconfig.orig	2021-09-22 14:45:34.066122741 -0700
-+++ b/arch/x86/Kconfig	2021-09-22 14:47:53.733127343 -0700
-@@ -958,6 +958,22 @@ config NR_CPUS
+
+--- a/arch/x86/Kconfig.orig	2023-09-07 22:37:25.959318881 -0700
++++ b/arch/x86/Kconfig	2023-09-07 22:39:13.923322236 -0700
+@@ -1005,6 +1005,22 @@ config NR_CPUS
  config SCHED_SMT
  	def_bool y if SMP
  
@@ -25,9 +26,9 @@ License header for arch/x86/Kconfig:
  config SCHED_MC
  	def_bool y
  	prompt "Multi-core scheduler support"
---- a/kernel/sysctl.c.orig	2021-09-22 14:45:57.218123504 -0700
-+++ b/kernel/sysctl.c	2021-09-22 14:49:16.561130073 -0700
-@@ -127,8 +127,14 @@ static int __maybe_unused four = 4;
+--- a/kernel/sysctl.c.orig	2023-09-07 22:37:25.967318882 -0700
++++ b/kernel/sysctl.c	2023-09-07 22:41:13.907325963 -0700
+@@ -130,8 +130,14 @@ static int __maybe_unused four = 4;
  static unsigned long zero_ul;
  static unsigned long one_ul = 1;
  static unsigned long long_max = LONG_MAX;

@@ -1,0 +1,13 @@
+# Header license for drivers/char/ipmi/ipmi_ssif.c:
+// SPDX-License-Identifier: GPL-2.0+
+--- a/drivers/char/ipmi/ipmi_ssif.c.orig	2023-09-07 23:10:00.031379588 -0700
++++ b/drivers/char/ipmi/ipmi_ssif.c	2023-09-08 01:18:03.591618289 -0700
+@@ -1293,7 +1293,7 @@ static void shutdown_ssif(void *send_inf
+ 
+ 	/* make sure the driver is not looking for flags any more. */
+ 	while (ssif_info->ssif_state != SSIF_IDLE)
+-		schedule_timeout(1);
++		schedule_min_hrtimeout();
+ 
+ 	ssif_info->stopping = true;
+ 	del_timer_sync(&ssif_info->watch_timer);

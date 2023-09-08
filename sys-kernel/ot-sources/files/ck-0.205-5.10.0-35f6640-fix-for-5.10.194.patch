@@ -1,0 +1,23 @@
+# License header for kernel/sysctl.c:
+// SPDX-License-Identifier: GPL-2.0-only
+--- a/kernel/sysctl.c.orig	2023-09-08 07:48:28.156346009 -0700
++++ b/kernel/sysctl.c	2023-09-08 07:53:58.768356280 -0700
+@@ -114,6 +114,18 @@ static int sixty = 60;
+ static unsigned long zero_ul;
+ static unsigned long one_ul = 1;
+ static unsigned long long_max = LONG_MAX;
++static int __maybe_unused two = 2;
++static int one_hundred = 100;
++static int two_hundred = 200;
++static int one_thousand = 1000;
++static int zero = 0;
++static int one = 1;
++#ifdef CONFIG_SCHED_MUQSS
++extern int rr_interval;
++extern int sched_interactive;
++extern int sched_iso_cpu;
++extern int sched_yield_type;
++#endif
+ #ifdef CONFIG_PRINTK
+ static int ten_thousand = 10000;
+ #endif

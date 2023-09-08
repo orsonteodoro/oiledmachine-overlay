@@ -1,3 +1,5 @@
+License header for kernel/sched/MuQSS.c:
+// SPDX-License-Identifier: GPL-2.0
 --- a/kernel/sched/MuQSS.c.orig	2021-01-02 04:39:44.923964898 -0800
 +++ b/kernel/sched/MuQSS.c	2021-01-02 04:40:22.459359777 -0800
 @@ -56,6 +56,7 @@
