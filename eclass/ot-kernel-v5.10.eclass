@@ -191,19 +191,6 @@ abcc55ee0e4b908af47d67d2a594d63862a5e914
 ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
 
-# For 5.6
-# This corresponds to the futex-proton-v3 branch.
-# Repo order is bottom oldest and top newest.
-# History:  https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3/
-FUTEX_KV="5.6.0_rc1"
-FUTEX_COMMITS=( # oldest
-dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
-714afdc15b847a7a33c5206b6e1ddf64697c07d6
-ec85ea95a00b490a059bcc817bc1b4660062dba0
-00d3ee9cff824d4d38e82d252e4300999f87f1a5
-e8d4d6ded8544b5716c66d326aa290db8501518c
-) # newest
-
 BBRV2_KV="5.10.0"
 BBRV2_VERSION="v2alpha-2021-07-07"
 BBRV2_COMMITS=( # oldest
@@ -243,7 +230,7 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 ) # newest
 
 IUSE+="
-bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat futex +genpatches
+bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
 -genpatches_1510 muqss orca pgo prjc rock-dkms rt symlink tresor tresor_aesni
 tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
@@ -292,7 +279,6 @@ BBRv2, \
 C2TCP, \
 CVE fixes, \
 DeepCC, \
-FUTEX_WAIT_MULTIPLE, \
 genpatches, \
 kernel_compiler_patch, \
 MuQSS, \
@@ -318,7 +304,6 @@ LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
-LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" orca? ( MIT )"
@@ -478,7 +463,6 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${BBRV2_SRC_URIS}
 		${C2TCP_URIS}
 		${CK_SRC_URIS}
-		${FUTEX_SRC_URIS}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -509,9 +493,6 @@ else
 		)
 		deepcc? (
 			${C2TCP_URIS}
-		)
-		futex? (
-			${FUTEX_SRC_URIS}
 		)
 		genpatches? (
 			${GENPATCHES_URI}
@@ -717,17 +698,6 @@ einfo "Already applied ${path} upstream"
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
-	elif [[ "${path}" =~ "futex-${FUTEX_KV}-e8d4d6d.patch" ]] ; then
-		cat "${path}" > "${T}/futex-${FUTEX_KV}-e8d4d6d.patch" || die
-		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
-			"${T}/futex-${FUTEX_KV}-e8d4d6d.patch" || die
-
-		if ot-kernel_use rt ; then
-			_dpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-e8d4d6d.patch"
-		else
-			_tpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-e8d4d6d.patch" 2 0 ""
-			_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-e8d4d6d-2-hunk-fix-for-5.10.patch"
-		fi
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-f6da35c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f6da35c-fix-for-5.10.129.patch"
@@ -747,12 +717,6 @@ die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/"
-	elif [[ "${path}" =~ "futex-${FUTEX_KV}-dc3e045.patch" ]] ; then
-		cat "${path}" > "${T}/futex-${FUTEX_KV}-dc3e045.patch" || die
-		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
-			"${T}/futex-${FUTEX_KV}-dc3e045.patch" || die
-		_tpatch "${PATCH_OPTS}" "${T}/futex-${FUTEX_KV}-dc3e045.patch" 0 0 ""
-
 	elif [[ "${path}" =~ "ck-0.205-5.10.0-35f6640.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \

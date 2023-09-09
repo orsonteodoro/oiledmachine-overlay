@@ -163,37 +163,6 @@ aa4fb87a71a95bef81d9742a772d1dc8eb4fceea
 CFI_EXCLUDE_COMMITS=(
 )
 
-# For 5.13
-# This corresponds to the tonyk/futex_waitv branch.
-# Repo order is bottom oldest and top newest.
-# Used for fsync in proton
-# History:  https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3/
-FUTEX_WAIT_MULTIPLE_OPTCODE31=( # oldest
-b70e738f08403950aa3053c36b98c6b0eeb0eb90
-) # newest
-
-FUTEX_PROTON_COMPAT=(
-${FUTEX_WAIT_MULTIPLE_OPTCODE31[@]}
-)
-
-# The futex2-dev commits with fwm opcode31 commits codepaths follow as if futex_wait_multiple not futex2.
-
-# Corresponding to futex2-dev branch
-# for 5.15-rc1
-# History:  https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-dev
-FUTEX2_KV="5.15.0_rc1"
-FUTEX2_COMMITS=( # oldest
-6f9eb8a836b2620327c0d4ded960673dbd761179
-b6382cdf6ec279fe61e9242a6a89d6146c870404
-f5c1ee46eeb68a59e3a6781959d0d1c25f40f5df
-4f9c741df0a35f9bbfb6f2fea653ecd3e583d663
-2b0c72de17e96323ea9c71610364a1b44e0f10dc
-8067fd6dc22722b36915718603cb4dd513d64962
-b88c926ac58eee428e37663e7ba8061af2528c06
-d810c70ed7b8228349af3c277f8c3cc0d5fa0f7b
-${FUTEX_PROTON_COMPAT[@]}
-) # newest
-
 BBRV2_KV="5.13.12"
 BBRV2_VERSION="v2alpha-2022-08-28"
 BBRV2_COMMITS=( # oldest
@@ -236,16 +205,13 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
 
 IUSE+="
-bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug -exfat futex2 futex-proton
+bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug -exfat
 +genpatches -genpatches_1510 lto multigen_lru orca pgo prjc rock-dkms rt
 shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-multigen_lru zen-sauce
 "
 REQUIRED_USE+="
-	futex-proton? (
-		futex2
-	)
 	genpatches_1510? (
 		genpatches
 	)
@@ -326,7 +292,6 @@ C2TCP, \
 CFI, \
 CVE fixes, \
 DeepCC, \
-FUTEX_WAIT_MULTIPLE, \
 genpatches, \
 kernel_compiler_patch, \
 multigen_lru, \
@@ -360,7 +325,6 @@ LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
-LICENSE+=" futex2? ( GPL-2 Linux-syscall-note GPL-2+ )" # same as original file
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" multigen_lru? ( GPL-2 )"
 LICENSE+=" orca? ( MIT )"
@@ -621,7 +585,6 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${BBRV2_SRC_URIS}
 		${C2TCP_URIS}
 		${CFI_SRC_URIS}
-		${FUTEX2_SRC_URIS}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -658,9 +621,6 @@ else
 		)
 		deepcc? (
 			${C2TCP_URIS}
-		)
-		futex2? (
-			${FUTEX2_SRC_URIS}
 		)
 		genpatches? (
 			${GENPATCHES_URI}
@@ -894,12 +854,6 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-__no_profile-for-6.5.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"
-	elif [[ "${path}" =~ "futex2-${FUTEX2_KV}-b70e738.patch" ]] ; then
-		cat "${path}" > "${T}/futex2-${FUTEX2_KV}-b70e738.patch" || die
-		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
-			"${T}/futex2-${FUTEX2_KV}-b70e738.patch" || die
-		_tpatch "${PATCH_OPTS}" "${T}/futex2-${FUTEX2_KV}-b70e738.patch" 2 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/futex-b70e738-2-hunk-fix-for-5.15.patch"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-94af063.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-40bc606-fix-for-5.15.53.patch"
@@ -943,19 +897,6 @@ einfo "See ${path}"
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/"
-
-	elif [[ "${path}" =~ "futex2-${FUTEX2_KV}-6f9eb8a.patch" ]] ; then
-		cat "${path}" > "${T}/futex2-${FUTEX2_KV}-6f9eb8a.patch" || die
-		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
-			"${T}/futex2-${FUTEX2_KV}-6f9eb8a.patch" || die
-		_tpatch "${PATCH_OPTS}" "${T}/futex2-${FUTEX2_KV}-6f9eb8a.patch" 1 0 ""
-		_tpatch "${PATCH_OPTS}" "${FILESDIR}/futex2-6f9eb8a-1-hunk-fix-for-5.15.93.patch" 0 0 ""
-	elif [[ "${path}" =~ "futex2-${FUTEX2_KV}-b6382cd.patch" ]] ; then
-		cat "${path}" > "${T}/futex2-${FUTEX2_KV}-b6382cd.patch" || die
-		sed -i -e "s|kernel/futex\.c|kernel/futex/core.c|g" \
-			"${T}/futex2-${FUTEX2_KV}-b6382cd.patch" || die
-		_tpatch "${PATCH_OPTS}" "${T}/futex2-${FUTEX2_KV}-b6382cd.patch" 2 0 ""
-		_tpatch "${PATCH_OPTS}" "${FILESDIR}/futex2-b6382cd-1-hunk-fix-for-5.15.93.patch" 0 0 ""
 
 	elif [[ "${path}" =~ "zen-sauce-5.15.0-e6e6ceb.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""

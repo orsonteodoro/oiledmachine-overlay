@@ -9131,7 +9131,6 @@ ot-kernel-pkgflags_wine() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sab3aa13]}" == "1" ]] && return
 	if \
 		ot-kernel_has_version "app-emulation/wine-d3d9" \
-		|| ot-kernel_has_version "app-emulation/wine-ge-custom-bin" \
 		|| ot-kernel_has_version "app-emulation/wine-proton" \
 		|| ot-kernel_has_version "app-emulation/wine-staging" \
 		|| ot-kernel_has_version "app-emulation/wine-vanilla" \
@@ -9149,8 +9148,7 @@ ot-kernel-pkgflags_wine() { # DONE
 	fi
 	if \
 		( \
-			ot-kernel_has_version "app-emulation/wine-ge-custom-bin" \
-			|| ot-kernel_has_version "app-emulation/wine-staging" \
+			ot-kernel_has_version "app-emulation/wine-staging" \
 		) \
 		&& [[ "${BPF_JIT}" == "1" ]] \
 		; then
@@ -9159,13 +9157,6 @@ ot-kernel-pkgflags_wine() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		ot-kernel_y_configopt "CONFIG_BPF_JIT"
-	fi
-	if \
-		ot-kernel_has_version "<app-emulation/wine-proton-6" \
-		|| ot-kernel_has_version "app-emulation/wine-ge-custom-bin" \
-		; then
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_FUTEX"
 	fi
 	if ot-kernel_has_version ">=app-emulation/wine-proton-6" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -10322,11 +10313,12 @@ einfo "Added ${opt_raw}"
 
 # @FUNCTION: _ot-kernel_set_futex
 # @DESCRIPTION:
-# Add compatibility for futex v1 / futex_wait_multiple
+# Add compatibility for futex / futex_wait_multiple (31)
 #
 # Search keywords:
 # __NR_futex
 # SYS_futex from libc which aliases it with __NR_futex
+# syscall.*__NR_futex.*31				; support dropped
 #
 _ot-kernel_set_futex() {
 	if has futex ${IUSE} && ot-kernel_use futex ; then
@@ -10338,11 +10330,13 @@ einfo "Enabling futex in .config"
 
 # @FUNCTION: _ot-kernel_set_futex2
 # @DESCRIPTION:
-# Add compatibility for futex2
+# Add compatibility for futex2 / futex_wait_multiple (449)
 #
 # Search keywords:
 # __NR_futex_waitv
+# __NR_futex_waitv.*449
 # SYS_futex_waitv from libc which aliases it with __NR_futex_waitv
+# syscall.*__NR_futex_waitv
 #
 _ot-kernel_set_futex2() {
 	if has futex2 ${IUSE} && ot-kernel_use futex2 ; then

@@ -37,14 +37,6 @@
 #	https://github.com/Soheil-ab/DeepCC.v1.0
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
-# futex (aka futex_wait_multiple):
-#	https://gitlab.collabora.com/tonyk/linux/-/commits/futex-proton-v3
-# futex2:
-#	https://gitlab.collabora.com/tonyk/linux/-/commits/futex2
-#	https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-proton
-#	https://gitlab.collabora.com/tonyk/linux/-/commits/futex2-dev
-# tonyk/futex_waitv
-#	https://gitlab.collabora.com/tonyk/linux/-/commits/tonyk/futex_waitv
 # genpatches:
 #	https://gitweb.gentoo.org/proj/linux-patches.git/
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.14
@@ -619,34 +611,6 @@ gen_kcfi_uris() {
 }
 if [[ -n "${KCFI_KV}" ]] ; then
 	KCFI_SRC_URIS=" "$(gen_kcfi_uris)
-fi
-
-FUTEX_BASE_URI=\
-"https://gitlab.collabora.com/tonyk/linux/-/commit/"
-gen_futex_uris() {
-	local s=""
-	local c
-	for c in ${FUTEX_COMMITS[@]} ; do
-		s+=" ${FUTEX_BASE_URI}${c}.patch -> futex-${FUTEX_KV}-${c:0:7}.patch"
-	done
-	echo "${s}"
-}
-if [[ -n "${FUTEX_KV}" ]] ; then
-	FUTEX_SRC_URIS=" "$(gen_futex_uris)
-fi
-
-FUTEX2_BASE_URI=\
-"https://gitlab.collabora.com/tonyk/linux/-/commit/"
-gen_futex2_uris() {
-	local s=""
-	local c
-	for c in ${FUTEX2_COMMITS[@]} ; do
-		s+=" ${FUTEX2_BASE_URI}${c}.patch -> futex2-${FUTEX2_KV}-${c:0:7}.patch"
-	done
-	echo "${s}"
-}
-if [[ -n "${FUTEX2_KV}" ]] ; then
-	FUTEX2_SRC_URIS=" "$(gen_futex2_uris)
 fi
 
 LINUX_REPO_URI=\
@@ -1610,53 +1574,6 @@ apply_kcfi() {
 	done
 }
 
-# @FUNCTION: apply_futex
-# @DESCRIPTION:
-# Adds a new syscall operation FUTEX_WAIT_MULTIPLE to the futex
-# syscall.  It may shave of < 5% CPU usage.
-apply_futex() {
-	local c
-	for c in ${FUTEX_COMMITS[@]} ; do
-		local blacklisted=0
-		if has futex-proton ${IUSE} ; then
-			if ! ot-kernel_use futex-proton ;then
-				local b
-				for b in ${FUTEX_PROTON_COMPAT[@]} ; do
-					if [[ "${b}" == "${c}" ]] ; then
-						blacklisted=1
-						break
-					fi
-				done
-			fi
-			(( ${blacklisted} == 1 )) && continue
-		fi
-		_fpatch "${EDISTDIR}/futex-${FUTEX_KV}-${c:0:7}.patch"
-	done
-}
-
-# @FUNCTION: apply_futex2
-# @DESCRIPTION:
-# Adds a new futex2 syscalls.  It may shave of < 5% CPU usage.
-apply_futex2() {
-	local c
-	for c in ${FUTEX2_COMMITS[@]} ; do
-		local blacklisted=0
-		if has futex2-proton ${IUSE} ; then
-			if ! ot-kernel_use futex2-proton ;then
-				local b
-				for b in ${FUTEX2_PROTON_COMPAT[@]} ; do
-					if [[ "${b}" == "${c}" ]] ; then
-						blacklisted=1
-						break
-					fi
-				done
-			fi
-			(( ${blacklisted} == 1 )) && continue
-		fi
-		_fpatch "${EDISTDIR}/futex2-${FUTEX2_KV}-${c:0:7}.patch"
-	done
-}
-
 # @FUNCTION: apply_bbrv2
 # @DESCRIPTION:
 # Adds BBRv2 to have ~ 1% retransmits in comparison to BBRv1 at ~ 5%
@@ -2115,18 +2032,6 @@ apply_all_patchsets() {
 	if has rt ${IUSE} ; then
 		if ot-kernel_use rt ; then
 			apply_rt
-		fi
-	fi
-
-	if has futex ${IUSE} ; then
-		if ot-kernel_use futex ; then
-			apply_futex
-		fi
-	fi
-
-	if has futex2 ${IUSE} ; then
-		if ot-kernel_use futex2 ; then
-			apply_futex2
 		fi
 	fi
 
@@ -9299,30 +9204,14 @@ einfo
 		fi
 	fi
 
-	if has futex ${IUSE} ; then
-		if use futex ; then
+	if has_version "app-emulation/wine-proton" \
+		&& ver_test ${KV_MAJOR_MINOR} -ge 5.16 ; then
 einfo
-einfo "Enable futex also in Configure standard kernel features (expert users) > Enable futex support"
+einfo "You may need to set the environment variable WINEFSYNC=1 for futex2"
+einfo "support for the app-emulation/wine-proton package."
 einfo
-einfo "Additional envvars may be required like WINEFSYNC=1.  Check the forked"
-einfo "wine code for details."
+einfo "futex2 yields benefits of less than 5% CPU usage."
 einfo
-		fi
-	fi
-	if has futex2 ${IUSE} ; then
-		if use futex2 ; then
-einfo
-einfo "Enable futex also in Configure standard kernel features (expert users) > Enable futex support"
-einfo
-einfo "  with"
-einfo
-einfo "Enable futex2 also in Configure standard kernel features (expert users) > Enable futex2 support"
-einfo
-einfo
-einfo "Additional envvars may be required like WINEFSYNC_FUTEX2=1.  Check the"
-einfo "forked wine code for details."
-einfo
-		fi
 	fi
 
 	if has tresor ${IUSE} ; then

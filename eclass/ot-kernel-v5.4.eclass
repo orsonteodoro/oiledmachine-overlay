@@ -171,20 +171,8 @@ d1bebeb959a56324fe436443ea2f21a8391632d9
 ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
 
-# For 5.6
-# This corresponds to the futex-proton-v3 branch.
-# Repo order is bottom oldest and top newest.
-FUTEX_KV="5.6.0_rc1"
-FUTEX_COMMITS=( # oldest
-dc3e0456bf719cde7ce44e1beb49d4ad0e5f0c71
-714afdc15b847a7a33c5206b6e1ddf64697c07d6
-ec85ea95a00b490a059bcc817bc1b4660062dba0
-00d3ee9cff824d4d38e82d252e4300999f87f1a5
-e8d4d6ded8544b5716c66d326aa290db8501518c
-) # newest
-
 IUSE+="
-bmq build c2tcp +cfs clang deepcc disable_debug futex +genpatches
+bmq build c2tcp +cfs clang deepcc disable_debug +genpatches
 -genpatches_1510 muqss orca pgo rock-dkms rt symlink tresor tresor_aesni
 tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
@@ -231,7 +219,6 @@ BMQ, \
 C2TCP, \
 CVE fixes, \
 DeepCC, \
-FUTEX_WAIT_MULTIPLE, \
 genpatches, \
 kernel_compiler_patch, \
 MUQSS, \
@@ -253,7 +240,6 @@ LICENSE+=" c2tcp? ( MIT )"
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" deepcc? ( MIT )"
-LICENSE+=" futex? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" orca? ( MIT )"
@@ -411,7 +397,6 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
 		${KCP_SRC_9_1_URI}
-		${FUTEX_SRC_URIS}
 		${GENPATCHES_URI}
 		${O3_ALLOW_SRC_URI}
 		${RT_SRC_URI}
@@ -438,9 +423,6 @@ else
 		)
 		deepcc? (
 			${C2TCP_URIS}
-		)
-		futex? (
-			${FUTEX_SRC_URIS}
 		)
 		genpatches? (
 			${GENPATCHES_URI}
