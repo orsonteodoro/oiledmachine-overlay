@@ -1,3 +1,5 @@
+License identified for Makefile:
+# SPDX-License-Identifier: GPL-2.0
 --- a/Documentation/dev-tools/index.rst.orig	2022-03-20 13:14:17.000000000 -0700
 +++ b/Documentation/dev-tools/index.rst	2022-03-24 13:28:20.164416861 -0700
 @@ -33,6 +33,7 @@ Documentation/dev-tools/testing-overview

@@ -1,3 +1,5 @@
+License identified for kernel/pgo/Kconfig:
+# SPDX-License-Identifier: GPL-2.0-only
 --- a/kernel/pgo/Kconfig.orig	2023-09-08 23:38:23.078116644 -0700
 +++ b/kernel/pgo/Kconfig	2023-09-08 23:39:53.858119464 -0700
 @@ -9,6 +9,7 @@ config PGO_CLANG

@@ -13,6 +13,16 @@ Modded to included LLVM_INSTR_PROF_RAW_VERSION 6 to 8 support.
 
 The patch status will change once it is confirmed working.
 
+
+License identified for kernel/pgo/fs.c:
+// SPDX-License-Identifier: GPL-2.0
+
+License identified for kernel/pgo/Kconfig:
+# SPDX-License-Identifier: GPL-2.0-only
+
+License identified for kernel/pgo/pgo.h:
+/* SPDX-License-Identifier: GPL-2.0 */
+
 --- a/kernel/pgo/fs.c.orig	2021-11-06 22:07:55.184597204 -0700
 +++ b/kernel/pgo/fs.c	2021-11-06 22:25:51.264527292 -0700
 @@ -66,9 +66,16 @@ static void prf_fill_header(void **buffe
