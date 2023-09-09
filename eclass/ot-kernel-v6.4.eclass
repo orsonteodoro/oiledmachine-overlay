@@ -39,9 +39,6 @@ PATCH_ALLOW_O3_COMMIT="1ccaaefbf26c9b2968c2e80427f720e9fc1ece50" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
 PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
-PATCH_CLANG_PGO_COMMIT_A_PARENT="fca41af18e10318e4de090db47d9fa7169e1bf2f"
-PATCH_CLANG_PGO_COMMIT_A="3bc68891829b776b9a5dd9174de05e69138af7b6" # oldest exclusive
-PATCH_CLANG_PGO_COMMIT_D="a15058eaefffc37c31326b59fa08b267b2def603" # descendant ~ newest
 PATCH_KCP_COMMIT="ccc448be0feecd57031dcd7dfe1355a552408c61" # from zen repo
 PATCH_OPENRGB_COMMIT="b43c180a45f23d1f98933afa05d7765bc6de3da6" # apply from zen repo
 PATCH_TRESOR_VER="3.18.5"
@@ -186,11 +183,10 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 RUST_PV="1.62.0"
 
 IUSE+="
-bbrv2 build c2tcp +cfs clang clang-pgo deepcc disable_debug -exfat
-+genpatches -genpatches_1510 kcfi lto orca prjc rt -rust
-shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
-tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support
-zen-sauce
+bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
+-genpatches_1510 kcfi lto orca pgo prjc rt -rust shadowcallstack symlink tresor
+tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
+tresor_x86_64-256-bit-key-support zen-sauce
 "
 
 # Not ready yet
@@ -283,7 +279,13 @@ LICENSE+=" GPL-2" # -O3 patch
 LICENSE+=" HPND" # See drivers/gpu/drm/drm_encoder.c
 LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
 LICENSE+=" c2tcp? ( MIT )"
-LICENSE+=" clang-pgo? ( GPL-2 )"
+LICENSE+="
+	pgo? (
+		clang? (
+			GPL-2
+		)
+	)
+"
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
@@ -482,12 +484,6 @@ BDEPEND+="
 # KCFI requires https://reviews.llvm.org/D119296 patch
 RDEPEND+="
 	${KCP_RDEPEND}
-	clang-pgo? (
-		sys-kernel/genkernel[clang-pgo]
-		|| (
-			$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
-		)
-	)
 	lto? (
 		|| (
 			$(gen_lto_rdepend 11 ${LLVM_MAX_SLOT})
@@ -502,6 +498,16 @@ RDEPEND+="
 		amd64? (
 			|| (
 				$(gen_kcfi_rdepend 15 ${LLVM_MAX_SLOT})
+			)
+		)
+	)
+	pgo? (
+		!clang? (
+			>=sys-devel/gcc-5.1
+		)
+		clang? (
+			|| (
+				$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
 			)
 		)
 	)
@@ -537,7 +543,6 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
 		${C2TCP_URIS}
-		${CLANG_PGO_URI}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -563,9 +568,6 @@ else
 		)
 		c2tcp? (
 			${C2TCP_URIS}
-		)
-		clang-pgo? (
-			${CLANG_PGO_URI}
 		)
 		deepcc? (
 			${C2TCP_URIS}
@@ -782,11 +784,11 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/clang-pgo-3bc6889-makefile-fix-for-5.15.patch"
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"
+		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-3bc6889-a15058e-fixes-for-5.17.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-__no_profile-for-6.5.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"
 
 	elif [[ "${path}" =~ "kernel-locking-Use-a-pointer-in-ww_mutex_trylock.patch" ]] ; then
 		: # already applied
@@ -827,15 +829,6 @@ einfo "See ${path}"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
-}
-
-# @FUNCTION: ot-kernel_filter_clang_pgo_patch_cb
-# @DESCRIPTION:
-# Apply and fix to the Clang PGO patch
-ot-kernel_filter_clang_pgo_patch_cb() {
-	local path="${1}"
-	_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
-	_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-3bc6889-a15058e-fixes-for-5.17.patch"
 }
 
 # @FUNCTION: ot-kernel_check_versions

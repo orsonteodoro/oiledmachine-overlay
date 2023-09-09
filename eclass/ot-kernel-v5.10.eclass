@@ -244,7 +244,7 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat futex +genpatches
--genpatches_1510 muqss orca prjc rock-dkms rt symlink tresor tresor_aesni
+-genpatches_1510 muqss orca pgo prjc rock-dkms rt symlink tresor tresor_aesni
 tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
 "
@@ -433,6 +433,9 @@ RDEPEND+="
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
+	)
+	pgo? (
+		>=sys-devel/gcc-4.9
 	)
 "
 

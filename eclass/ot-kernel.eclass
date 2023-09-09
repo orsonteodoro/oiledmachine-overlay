@@ -25,10 +25,14 @@
 #	https://github.com/Soheil-ab/c2tcp
 # CFI:
 #	https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
-# Clang PGO support:
-#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/mbox/			# patch
-#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/#24246189		# context
+# PGO (clang) support:
+#	Upstream acquaintances used 5.13.0_rc2
+#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/mbox/			# Earlier Clang PGO v9.
+#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/#24246189		# Context of above patch
+#	https://lore.kernel.org/all/20210621231822.2848305-1-ndesaulniers@google.com/T/#u					# Add __no_profile
 #       https://github.com/ClangBuiltLinux/linux/issues/1405
+# PGO (gcc) support:
+#	https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
 # DeepCC:
 #	https://github.com/Soheil-ab/DeepCC.v1.0
 # KCFI:
@@ -235,170 +239,168 @@ if [[ -n "${C2TCP_VER}" ]] ; then
 	"
 fi
 
-if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
-	PGT_CRYPTO_DEPEND="
-		sys-fs/cryptsetup
-	"
-	PGT_TRAINERS=(
-		2d
-		3d
-		crypto_std
-		crypto_kor
-		crypto_chn
-		crypto_rus
-		crypto_common
-		crypto_less_common
-		crypto_deprecated
-		custom
-		emerge1
-		emerge2
-		filesystem
-		memory
-		network
-		p2p
-		webcam
-		yt
+PGT_CRYPTO_DEPEND="
+	sys-fs/cryptsetup
+"
+PGT_TRAINERS=(
+	2d
+	3d
+	crypto_std
+	crypto_kor
+	crypto_chn
+	crypto_rus
+	crypto_common
+	crypto_less_common
+	crypto_deprecated
+	custom
+	emerge1
+	emerge2
+	filesystem
+	memory
+	network
+	p2p
+	webcam
+	yt
+)
+IUSE+="
+	${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
+"
+REQUIRED_USE+="
+	ot_kernel_pgt_2d? (
+		pgo
 	)
-	IUSE+="
-		${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
-	"
-	REQUIRED_USE+="
-		ot_kernel_pgt_2d? (
-			clang-pgo
-		)
-		ot_kernel_pgt_3d? (
-			clang-pgo
-		)
-		ot_kernel_pgt_crypto_std? (
-			clang-pgo
-		)
-		ot_kernel_pgt_crypto_kor? (
-			clang-pgo
-		)
-		ot_kernel_pgt_crypto_chn? (
-			clang-pgo
-		)
-		ot_kernel_pgt_crypto_rus? (
-			clang-pgo
-		)
-		ot_kernel_pgt_crypto_common? (
-			clang-pgo
-		)
-		ot_kernel_pgt_crypto_less_common? (
-			clang-pgo
-		)
-		ot_kernel_pgt_crypto_deprecated? (
-			clang-pgo
-		)
-		ot_kernel_pgt_custom? (
-			clang-pgo
-		)
-		ot_kernel_pgt_emerge1? (
-			clang-pgo
-		)
-		ot_kernel_pgt_emerge2? (
-			clang-pgo
-		)
-		ot_kernel_pgt_filesystem? (
-			clang-pgo
-		)
-		ot_kernel_pgt_memory? (
-			clang-pgo
-		)
-		ot_kernel_pgt_network? (
-			clang-pgo
-		)
-		ot_kernel_pgt_p2p? (
-			clang-pgo
-		)
-		ot_kernel_pgt_webcam? (
-			clang-pgo
-		)
-		ot_kernel_pgt_yt? (
-			clang-pgo
-		)
-	"
-	PDEPEND+="
-		sys-apps/coreutils
-		sys-apps/grep[pcre]
-		ot_kernel_pgt_2d? (
-			sys-apps/findutils
-			sys-process/procps
-			x11-misc/xscreensaver[X]
-		)
-		ot_kernel_pgt_3d? (
-			sys-apps/findutils
-			sys-process/procps
-			x11-misc/xscreensaver[X,opengl]
-			virtual/opengl
-		)
-		ot_kernel_pgt_crypto_std? (
-			${PGT_CRYPTO_DEPEND}
-		)
-		ot_kernel_pgt_crypto_kor? (
-			${PGT_CRYPTO_DEPEND}
-		)
-		ot_kernel_pgt_crypto_chn? (
-			${PGT_CRYPTO_DEPEND}
-		)
-		ot_kernel_pgt_crypto_rus? (
-			${PGT_CRYPTO_DEPEND}
-		)
-		ot_kernel_pgt_crypto_common? (
-			${PGT_CRYPTO_DEPEND}
-		)
-		ot_kernel_pgt_crypto_less_common? (
-			${PGT_CRYPTO_DEPEND}
-		)
-		ot_kernel_pgt_crypto_deprecated? (
-			${PGT_CRYPTO_DEPEND}
-		)
-		ot_kernel_pgt_emerge1? (
-			sys-apps/findutils
-		)
-		ot_kernel_pgt_filesystem? (
-			sys-apps/findutils
-		)
-		ot_kernel_pgt_memory? (
-			${PYTHON_DEPS}
-			sys-apps/util-linux
-			sys-process/procps
-		)
-		ot_kernel_pgt_network? (
-			net-analyzer/traceroute
-			net-misc/curl
-			net-misc/iputils
-		)
-		ot_kernel_pgt_p2p? (
-			net-p2p/ctorrent
-			sys-apps/util-linux
-			sys-process/procps
-		)
-		ot_kernel_pgt_webcam? (
-			media-tv/v4l-utils
-			media-video/ffmpeg[encode,v4l]
-		)
-		ot_kernel_pgt_yt? (
-			${PYTHON_DEPS}
-			$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
-			|| (
-				(
-					www-client/chromium
-				)
-				(
-					www-client/google-chrome
-					www-apps/chromedriver-bin
-				)
-				(
-					www-client/firefox[geckodriver]
-				)
+	ot_kernel_pgt_3d? (
+		pgo
+	)
+	ot_kernel_pgt_crypto_std? (
+		pgo
+	)
+	ot_kernel_pgt_crypto_kor? (
+		pgo
+	)
+	ot_kernel_pgt_crypto_chn? (
+		pgo
+	)
+	ot_kernel_pgt_crypto_rus? (
+		pgo
+	)
+	ot_kernel_pgt_crypto_common? (
+		pgo
+	)
+	ot_kernel_pgt_crypto_less_common? (
+		pgo
+	)
+	ot_kernel_pgt_crypto_deprecated? (
+		pgo
+	)
+	ot_kernel_pgt_custom? (
+		pgo
+	)
+	ot_kernel_pgt_emerge1? (
+		pgo
+	)
+	ot_kernel_pgt_emerge2? (
+		pgo
+	)
+	ot_kernel_pgt_filesystem? (
+		pgo
+	)
+	ot_kernel_pgt_memory? (
+		pgo
+	)
+	ot_kernel_pgt_network? (
+		pgo
+	)
+	ot_kernel_pgt_p2p? (
+		pgo
+	)
+	ot_kernel_pgt_webcam? (
+		pgo
+	)
+	ot_kernel_pgt_yt? (
+		pgo
+	)
+"
+PDEPEND+="
+	sys-apps/coreutils
+	sys-apps/grep[pcre]
+	ot_kernel_pgt_2d? (
+		sys-apps/findutils
+		sys-process/procps
+		x11-misc/xscreensaver[X]
+	)
+	ot_kernel_pgt_3d? (
+		sys-apps/findutils
+		sys-process/procps
+		x11-misc/xscreensaver[X,opengl]
+		virtual/opengl
+	)
+	ot_kernel_pgt_crypto_std? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_crypto_kor? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_crypto_chn? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_crypto_rus? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_crypto_common? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_crypto_less_common? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_crypto_deprecated? (
+		${PGT_CRYPTO_DEPEND}
+	)
+	ot_kernel_pgt_emerge1? (
+		sys-apps/findutils
+	)
+	ot_kernel_pgt_filesystem? (
+		sys-apps/findutils
+	)
+	ot_kernel_pgt_memory? (
+		${PYTHON_DEPS}
+		sys-apps/util-linux
+		sys-process/procps
+	)
+	ot_kernel_pgt_network? (
+		net-analyzer/traceroute
+		net-misc/curl
+		net-misc/iputils
+	)
+	ot_kernel_pgt_p2p? (
+		net-p2p/ctorrent
+		sys-apps/util-linux
+		sys-process/procps
+	)
+	ot_kernel_pgt_webcam? (
+		media-tv/v4l-utils
+		media-video/ffmpeg[encode,v4l]
+	)
+	ot_kernel_pgt_yt? (
+		${PYTHON_DEPS}
+		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
+		|| (
+			(
+				www-client/chromium
+			)
+			(
+				www-client/google-chrome
+				www-apps/chromedriver-bin
+			)
+			(
+				www-client/firefox[geckodriver]
 			)
 		)
-		pcc? (
-			sys-kernel/pcc
-		)
-	"
-fi
+	)
+	pcc? (
+		sys-kernel/pcc
+	)
+"
 
 EXPORT_FUNCTIONS \
 	pkg_pretend \
@@ -453,6 +455,8 @@ BMQ_FN="${BMQ_FN:-v${KV_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${KV_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
 
+CLANG_PGO_FN="clang-pgo-v9.patch"
+
 BBRV2_BASE_URI="https://github.com/google/bbr/commit/"
 gen_bbrv2_uris() {
 	local s=""
@@ -473,17 +477,6 @@ if [[ -n "${C2TCP_VER}" ]] ; then
 		${C2TCP_BASE_URI}/${C2TCP_FN}
 		https://raw.githubusercontent.com/Soheil-ab/c2tcp/master/copyright
 			-> copyright.c2tcp.${C2TCP_COMMIT:0:7}
-	"
-fi
-
-# Upstream acquaintances used 5.13.0_rc2
-# This patchset is currently abandoned.
-CLANG_PGO_PATCH_SRC_URI="https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/mbox/" # Mirrored monolithic patch.
-CLANG_PGO_MBOX_SHA1="2aa2a12d83dbe1720addea0352ca5ea455c24cdb"
-CLANG_PGO_FN="clang-pgo-v9-${CLANG_PGO_MBOX_SHA1:0:7}.patch"
-if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
-	CLANG_PGO_URI="
-${CLANG_PGO_PATCH_SRC_URI} -> ${CLANG_PGO_FN}
 	"
 fi
 
@@ -1200,8 +1193,8 @@ eerror "tresor_aesni requires SSE2 CPU support"
 		fi
 	fi
 
-	if has clang-pgo ${IUSE} ; then
-		if use clang-pgo ; then
+	if has clang ${IUSE} ; then
+		if use clang ; then
 			display_required_clang
 			#verify_profraw_compatibility
 		fi
@@ -1227,22 +1220,30 @@ eerror
 		die
 	fi
 
+#
+# PGO transfer paths overview:
+#
+# In memory PGO profile -> outside ebuild cache
+# outside ebuild cache -> inside ebuild staging area
+#
 	dump_profraw
+	dump_gcda
 }
 
 # @FUNCTION: dump_profraw
 # @DESCRIPTION:
-# Copies the profraw for PGO
-# It has to be done outside the sandbox
+# Copies the profraw for Clang PGO.
+# It has to be done outside of the sandbox.
 dump_profraw() {
+	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
+	[[ -e "${profraw_spath}" ]] || continue
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
-	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}.profraw"
+	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/llvm/vmlinux.profraw"
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}" || die
-	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
 	if [[ -e "${profraw_spath}" ]] ; then
 		cat "${profraw_spath}" > "${profraw_dpath}" 2>/dev/null || true
 	fi
@@ -1250,11 +1251,34 @@ dump_profraw() {
 einfo "Copying ${profraw_spath}"
 		cat "${profraw_spath}" > "${profraw_dpath}" || die
 		chmod 0644 "${profraw_dpath}" || die
-		#rm "${OT_KERNEL_PGO_DATA_DIR}/vmlinux.profraw" || true # It appears because of some bug.
 	else
 		if [[ -e "${profraw_dpath}" ]] ; then
 einfo "Using cached ${profraw_dpath}.  Delete it if stale."
 		fi
+	fi
+}
+
+# @FUNCTION: dump_gcda
+# @DESCRIPTION:
+# Copies the profraw for GCC PGO.
+# It has to be done outside of the sandbox.
+dump_gcda() {
+	cd "/sys/kernel/debug/gcov/usr/src/linux"
+	local arch=$(cat /proc/version | cut -f 3 -d " ")
+	arch="${arch##*-}"
+	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
+	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
+	[[ "${version}" != "${PV}" ]] && return
+	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" || die
+	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}" -name "*.gcda" | wc -l)
+	if (( ${n_gcda} == 0 )) ; then
+einfo "Copying *.gcda files"
+		find \
+			. \
+			-name '*.gcda' \
+			-exec cp "{}" "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc/{}" \;
+	else
+einfo "Using cached *.gcda from ${OT_KERNEL_PGO_DATA_DIR}.  Delete them if stale."
 	fi
 }
 
@@ -1920,12 +1944,7 @@ einfo "Applying some of the zen-kernel MuQSS patches"
 # @DESCRIPTION:
 # Apply the PGO patch for use with clang
 apply_clang_pgo() {
-	if declare -f ot-kernel_filter_clang_pgo_patch_cb > /dev/null ; then
-		# For fixes
-		ot-kernel_filter_clang_pgo_patch_cb "${EDISTDIR}/${CLANG_PGO_FN}"
-	else
-		_fpatch "${EDISTDIR}/${CLANG_PGO_FN}"
-	fi
+	_fpatch "${FILESDIR}/${CLANG_PGO_FN}"
 }
 
 # @FUNCTION: apply_c2tcp_v2
@@ -2187,8 +2206,8 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has clang-pgo ${IUSE} ; then
-		if ot-kernel_use clang-pgo ; then
+	if has clang ${USE} ; then
+		if ot-kernel_use clang && ot-kernel_use pgo ; then
 			apply_clang_pgo
 		fi
 	fi
@@ -2224,21 +2243,48 @@ apply_all_patchsets() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_copy_pgo_state
+# @FUNCTION: _ot-kernel_copy_pgo_state_clang
 # @DESCRIPTION:
-# Copy the PGO state file and all PGO profiles
-ot-kernel_copy_pgo_state() {
-	# This is workaround for a sandbox issue.
+# Copy the PGO state file and all PGO profiles from clang/llvm.
+_ot-kernel_copy_pgo_state_clang() {
 einfo "Copying PGO state file and profiles"
 	for f in $(find "${OT_KERNEL_PGO_DATA_DIR}" \
-		-name "*.pgophase" \
+		-name "pgophase" \
 		-o -name "*.profraw" \
 		-o -name "*.profdata" \
 		2>/dev/null \
 	) ; do
-		# Done this way because the folder can be empty.
+		# This is workaround for a sandbox issue.
+		# Done this way because the OT_KERNEL_PGO_DATA_DIR folder can be empty.
 		cp -va "${f}" "${WORKDIR}/pgodata" || die
 	done
+}
+
+# @FUNCTION: _ot-kernel_copy_pgo_state_gcc
+# @DESCRIPTION:
+# Copy the PGO state file and all PGO profiles from gcc.
+_ot-kernel_copy_pgo_state_gcc() {
+einfo "Copying PGO state file and profiles"
+	for f in $(find "${OT_KERNEL_PGO_DATA_DIR}" \
+		-name "pgophase" \
+		-o -name "*.gcda" \
+		2>/dev/null \
+	) ; do
+		# This is workaround for a sandbox issue.
+		# Done this way because the OT_KERNEL_PGO_DATA_DIR folder can be empty.
+		cp -va "${f}" "${WORKDIR}/pgodata" || die
+	done
+}
+
+# @FUNCTION: ot-kernel_copy_pgo_state
+# @DESCRIPTION:
+# Copy the PGO state file and all PGO profiles
+ot-kernel_copy_pgo_state() {
+	if has clang ${IUSE} && use clang ; then
+		_ot-kernel_copy_pgo_state_clang
+	else
+		_ot-kernel_copy_pgo_state_gcc
+	fi
 }
 
 # @FUNCTION: ot-kernel_rm_exfat
@@ -2452,7 +2498,7 @@ ot-kernel_src_prepare() {
 	cat "${FILESDIR}/all-kernel-options-as-yes" \
 		> "all-kernel-options-as-yes" || die
 
-	if has clang-pgo ${IUSE} && use clang-pgo ; then
+	if use pgo ; then
 		cat "${FILESDIR}/pgo-trainer.sh" \
 			> "pgo-trainer.sh" || die
 	fi
@@ -2495,7 +2541,7 @@ ewarn
 		fi
 	fi
 
-	if has clang-pgo ${IUSE} && use clang-pgo; then
+	if use pgo ; then
 		mkdir -p "${WORKDIR}/pgodata" || die
 		ot-kernel_copy_pgo_state
 	fi
@@ -3748,7 +3794,7 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 		   ( has cfi ${IUSE} && ot-kernel_use cfi ) \
 		|| ( has kcfi ${IUSE} && ot-kernel_use kcfi ) \
 		|| ( has lto ${IUSE} && ot-kernel_use lto ) \
-		|| ( has clang-pgo ${IUSE} && ot-kernel_use clang-pgo ) \
+		|| ( has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -5089,15 +5135,14 @@ ot-kernel_set_kconfig_pcie_mps() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_pgo
+# @FUNCTION: ot-kernel_set_kconfig_clang
 # @DESCRIPTION:
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
-ot-kernel_set_kconfig_pgo() {
-	local pgo_phase
-	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}.pgophase"
-	local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profraw"
-	local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profdata"
-	if has clang-pgo ${IUSE} && ot-kernel_use clang-pgo ; then
+_ot-kernel_set_kconfig_pgo_clang() {
+	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
+	local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
+	local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
+	if has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 		(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 		local clang_pv=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
 		local clang_pv_major=$(echo "${clang_pv}" | cut -f 1 -d ".")
@@ -5159,6 +5204,12 @@ eerror
 		else
 			pgo_phase="${PGO_PHASE_PGI}"
 		fi
+#
+#            R      R      R       R      R = Resume
+#	    ___    ___    ___     ___     S = Start
+#	    | V    | V    | V     | V
+#	S-> PGI -> PGT -> PGO -> DONE
+#
 		if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Forcing PGI flags and config"
 			ot-kernel_y_configopt "CONFIG_CC_HAS_NO_PROFILE_FN_ATTR"
@@ -5188,6 +5239,46 @@ einfo "debugfs disabled success"
 
 			ot-kernel_n_configopt "CONFIG_PGO_CLANG"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_gcc
+# @DESCRIPTION:
+# Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
+_ot-kernel_set_kconfig_pgo_gcc() {
+	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
+	local n_gdca=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" | wc -l)
+	if [[ -e "${pgo_phase_statefile}" ]] ; then
+		pgo_phase=$(cat "${pgo_phase_statefile}")
+	else
+		pgo_phase="${PGO_PHASE_PGI}"
+	fi
+#
+#            R      R      R       R      R = Resume
+#	    ___    ___    ___     ___     S = Start
+#	    | V    | V    | V     | V
+#	S-> PGI -> PGT -> PGO -> DONE
+#
+	if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+		ot-kernel_y_configopt "CONFIG_GCOV_KERNEL"
+		ot-kernel_y_configopt "GCOV_PROFILE_ALL"
+	elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") ]] && (( ${n_gcda} > 0 )) ; then
+		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
+		ot-kernel_n_configopt "CONFIG_GCOV_KERNEL"
+		ot-kernel_n_configopt "GCOV_PROFILE_ALL"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_pgo
+# @DESCRIPTION:
+# Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
+ot-kernel_set_kconfig_pgo() {
+	use pgo || return
+	if use clang ; then
+		_ot-kernel_set_kconfig_pgo_clang
+	else
+		_ot-kernel_set_kconfig_pgo_gcc
 	fi
 }
 
@@ -7722,7 +7813,7 @@ einfo "Setting up the build toolchain"
 		   ( has cfi ${IUSE} && ot-kernel_use cfi ) \
 		|| ( has kcfi ${IUSE} && ot-kernel_use kcfi ) \
 		|| ( has lto ${IUSE} && ot-kernel_use lto ) \
-		|| ( has clang-pgo ${IUSE} && ot-kernel_use clang-pgo ) \
+		|| ( has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -8121,11 +8212,11 @@ ot-kernel_build_kernel() {
 		[[ "${BUILD_DIR}/.config" ]] || die "Missing .config to build the kernel"
 		local llvm_slot=$(get_llvm_slot)
 		local pgo_phase
-		local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}.pgophase"
-		local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profraw"
-		local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}.profdata"
-		local pgo_phase="${PGO_PHASE_UNK}"
-		if has clang-pgo ${IUSE} && ot-kernel_use clang-pgo ; then
+		if has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
+			local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
+			local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
+			local pgo_phase="${PGO_PHASE_UNK}"
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase="${PGO_PHASE_PGI}"
@@ -8161,15 +8252,49 @@ eerror
 einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
+# For resuming or rebuilding as PGO phase
 einfo "Building PGO"
 				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_dpath}" ]] ; then
-ewarn
-ewarn "Missing ${profraw_spath}.  Delete the ${OT_KERNEL_PGO_DATA_DIR} folder"
-ewarn "to restart PGO or copy the profdata file into ${OT_KERNEL_PGO_DATA_DIR}."
-ewarn "Assuming builder machine, continuing to build without PGO."
-ewarn
+einfo "Resuming as PGT since no profile generated"
 			fi
+		elif \
+			( \
+				( has clang ${IUSE} && ! ot-kernel_use clang ) \
+				|| \
+				( ! has clang ${IUSE} ) \
+			) \
+			&& \
+			( \
+				ot-kernel_use pgo \
+			) \
+		; then
+			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
+			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc"
+			local pgo_phase="${PGO_PHASE_UNK}"
+			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
+				pgo_phase="${PGO_PHASE_PGI}"
+			else
+				pgo_phase=$(cat "${pgo_phase_statefile}")
+			fi
+
+			local n_gcda=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" | wc -l)
+			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+einfo "Building PGI"
+				args+=( "'CFLAGS_GCOV=-fprofile-generate -ftest-coverage'" )
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} > 0 )) ; then
+				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
+einfo "Building PGO"
+				args+=( "'KCFLAGS=-fprofile-use -fprofile-dir=${pgo_profile_dir} -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch'" )
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
+# For resuming or rebuilding as PGO phase
+einfo "Building PGO"
+				args+=( "'KCFLAGS=-fprofile-use -fprofile-dir=${pgo_profile_dir} -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch'" )
+			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} == 0 )) ; then
+einfo "Resuming as PGT since no profile generated"
+				args+=( "'CFLAGS_GCOV=-fprofile-generate -ftest-coverage'" )
+			fi
+
 		fi
 
 einfo "Running:  make all ${args[@]}"
@@ -8527,12 +8652,19 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
-			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}.pgophase"
-			mkdir -p $(dirname "${pgo_phase_statefile}")
-			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-				echo "${PGO_PHASE_PGT}" > "${pgo_phase_statefile}" || die
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
-				echo "${PGO_PHASE_DONE}" > "${pgo_phase_statefile}" || die
+			local pgo_phase_statefile
+			if has clang ${IUSE} && ot-kernel_use clang && use pgo ; then
+				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
+			elif use pgo ; then
+				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
+			fi
+			if [[ -n "${pgo_phase_statefile}" ]] ; then
+				mkdir -p $(dirname "${pgo_phase_statefile}")
+				if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+					echo "${PGO_PHASE_PGT}" > "${pgo_phase_statefile}" || die
+				elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
+					echo "${PGO_PHASE_DONE}" > "${pgo_phase_statefile}" || die
+				fi
 			fi
 			# Add for genkernel because mrproper erases it
 			mkdir -p "include/config" || die
@@ -8891,7 +9023,7 @@ EOF
 
 	done
 
-	if has clang-pgo ${IUSE} && use clang-pgo ; then
+	if use pgo ; then
 		insinto "${OT_KERNEL_PGO_DATA_DIR}"
 		doins -r "${WORKDIR}/pgodata/"* # Sanitize file permissions
 	fi
@@ -9202,7 +9334,7 @@ ewarn
 		fi
 	fi
 
-	if has clang-pgo ${IUSE} && use clang-pgo && has build ${IUSE} && use build ; then
+	if use pgo && has build ${IUSE} && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -9235,8 +9367,7 @@ ewarn "modules are signed with their corresponding build's private key and"
 ewarn "embedded in the initramfs."
 ewarn
 
-	if has clang-pgo ${IUSE} ; then
-		if use clang-pgo ; then
+	if use pgo ; then
 einfo
 einfo "The pgo-trainer.sh has been provided in the root directory of the kernel"
 einfo "sources for PGO training.  The script can be customized for automation."
@@ -9255,7 +9386,6 @@ einfo "  https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a47
 einfo
 einfo "You can use your own training scripts or test suites to perform PGO training."
 einfo
-		fi
 	fi
 	if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
 ewarn

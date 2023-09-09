@@ -3432,9 +3432,6 @@ unset OT_KERNEL_PRIVATE_KEY
       This is a stronger check for those prefer Clang over GCC and to make sure
       the prerequisites are met.
     </flag>
-    <flag name="clang-pgo">
-      Adds experimental Clang PGO support.
-    </flag>
     <flag name="cve_hotfix">
       Applies patches to resolve CVEs (Common Vulnerabilities and Exposures).
       Not enabled by default.
@@ -3599,6 +3596,12 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="pds">
       Patches the kernel with an alternative skiplist based scheduler.
+    </flag>
+    <flag name="pgo">
+      Perform Profile Guided optimization that may in average result in 10 to -0.5%
+      change in improvement.
+
+      You may use Clang or GCC.  Clang PGO is experimental.
     </flag>
     <flag name="prjc">
       Applies the Project C CPU scheduler.

@@ -185,9 +185,9 @@ e8d4d6ded8544b5716c66d326aa290db8501518c
 
 IUSE+="
 bmq build c2tcp +cfs clang deepcc disable_debug futex +genpatches
--genpatches_1510 muqss orca rock-dkms rt symlink tresor tresor_aesni tresor_i686
-tresor_prompt tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
-zen-muqss zen-sauce
+-genpatches_1510 muqss orca pgo rock-dkms rt symlink tresor tresor_aesni
+tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
+tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
 "
 
 REQUIRED_USE+="
@@ -361,11 +361,15 @@ CDEPEND+="
 "
 
 RDEPEND+="
+	${KCP_RDEPEND}
 	!build? (
 		${CDEPEND}
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
+	)
+	pgo? (
+		>=sys-devel/gcc-4.6
 	)
 "
 
@@ -377,10 +381,6 @@ BDEPEND+="
 	build? (
 		${CDEPEND}
 	)
-"
-
-RDEPEND+="
-	${KCP_RDEPEND}
 "
 
 PDEPEND+="
