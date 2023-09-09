@@ -1,0 +1,12 @@
+License identified in mm/memory.c
+// SPDX-License-Identifier: GPL-2.0-only
+--- a/mm/memory.c.orig	2023-09-08 20:12:04.409732082 -0700
++++ b/mm/memory.c	2023-09-08 20:14:11.501736030 -0700
+@@ -2802,6 +2802,7 @@ static inline int cow_user_page(struct p
+ 			memory_failure_queue(page_to_pfn(src), 0);
+ 			return -EHWPOISON;
+ 		}
++		uksm_cow_page(vma, src);
+ 		return 0;
+ 	}
+ 

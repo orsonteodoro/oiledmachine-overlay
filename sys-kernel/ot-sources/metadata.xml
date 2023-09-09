@@ -3555,6 +3555,8 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="multigen_lru">
       Applies the vanilla Multi-Gen LRU patch for improved page reclamation.
+
+      [It is still possible to get OOM/system-freeze with or without this patch.]
     </flag>
     <flag name="muqss">
       Patches the kernel with Con Kolivas patchset and includes his skiplist
@@ -3683,6 +3685,8 @@ unset OT_KERNEL_PRIVATE_KEY
       patch does not enable time based OOM-kill prevention by default.  For
       5.15, it adds the le9ec patch for size based thrash prevention and
       livelock prevention when clean pages are exausted.
+
+      [It is still possible to get OOM/system-freeze with or without this patch.]
     </flag>
     <flag name="zen-muqss">
       Apply the zen-kernel's version of MuQSS

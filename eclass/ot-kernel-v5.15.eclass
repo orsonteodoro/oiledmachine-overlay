@@ -959,6 +959,11 @@ einfo "See ${path}"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.15.0-e6e6ceb-fix-for-5.15.131.patch"
 
+	elif [[ "${path}" =~ "uksm-5.15.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/uksm-5.15-fix-for-5.15.131.patch"
+
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi
