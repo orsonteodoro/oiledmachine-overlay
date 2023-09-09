@@ -481,12 +481,12 @@ RDEPEND+="
 	kcfi? (
 		arm64? (
 			|| (
-				$(gen_kcfi_rdepend 15 ${LLVM_MAX_SLOT})
+				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
 			)
 		)
 		amd64? (
 			|| (
-				$(gen_kcfi_rdepend 15 ${LLVM_MAX_SLOT})
+				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
 			)
 		)
 	)

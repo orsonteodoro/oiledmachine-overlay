@@ -3496,9 +3496,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Apply KCFI sanitization for forward edge control flow integrity but
       limited to only indirect calls.
 
-      It requires the KCFI sanitizer patch (D119296) applied to both
-      sys-devel/clang-15 or newer and sys-devel/llvm-15+ or newer.  The kcfi
-      feature is still under code review.
+      It requires Clang 16.0.1 or newer.
 
       See also
 
