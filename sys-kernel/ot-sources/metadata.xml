@@ -122,7 +122,7 @@
 
     5.15 (LTS)						Y
 		    -rt	(RT_PREEMPT)			A
-		    CFI					A
+		    CFI					N
 		    Clang PGO				E
 		    kernel_compiler_patch		A
 		    genpatches				A
@@ -138,7 +138,6 @@
 						
     6.1 (LTS)						N
 		    -rt	(RT_PREEMPT)			A
-		    CFI					?
 		    Clang PGO				?
 		    genpatches				A
 		    kernel_compiler_patch		A
@@ -151,7 +150,6 @@
 
     6.4 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
-		    CFI					?
 		    Clang PGO				?
 		    genpatches				A
 		    kernel_compiler_patch		A
@@ -164,7 +162,6 @@
 
     6.5 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
-		    CFI					?
 		    Clang PGO				?
 		    genpatches				A
 		    kernel_compiler_patch		A
