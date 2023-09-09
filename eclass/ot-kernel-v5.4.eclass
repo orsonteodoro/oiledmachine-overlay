@@ -147,7 +147,7 @@ ZEN_MUQSS_COMMITS=(
 # wget -q -O - https://github.com/torvalds/linux/compare/7acac2e4000e75f3349106a8847cf1021651446b^..45589d24eea4cdfe59e87a65389fd72d91f43bf0.patch \
 #        | grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
 7acac2e4000e75f3349106a8847cf1021651446b
-50955efefbe23a4270faca36a99999b76d2dc4db
+#50955efefbe23a4270faca36a99999b76d2dc4db # Same as 7acac2e
 c73934ea38cffac75c43ea4fd9f67100e82d8ea2
 be525d11c201565e2c8999efc3f78c745f5d6886
 6c26d7bda791335dc0bf7b401c1cecad359b1a15
@@ -651,9 +651,7 @@ ot-kernel_filter_patch_cb() {
 			"${FILESDIR}/c2tcp-0521-fix-for-5.4.231.patch"
 
 	elif [[ "${path}" =~ "zen-muqss-5.4.0-50955ef.patch" ]] ; then
-ewarn "Patching with zen-muqss is broken"
-ewarn "QA (to ebuild maintainer):  See ${path}"
-		die
+		:; # Skipped already applied
 
 	elif [[ "${path}" =~ "0059-locking-percpu-rwsem-Remove-the-embedded-rwsem.patch" ]] ; then
 		# This patch belongs to the -rt patchset.
@@ -669,6 +667,11 @@ ewarn "QA (to ebuild maintainer):  See ${path}"
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.4.0-376d7ed-fix-for-5.4.256.patch"
+
+	elif [[ "${path}" =~ "zen-muqss-5.4.0-86df8be.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/zen-muqss-5.4.0-86df8be-fix-for-5.4.256.patch"
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
