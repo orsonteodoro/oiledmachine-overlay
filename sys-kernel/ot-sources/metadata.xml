@@ -3411,11 +3411,10 @@ unset OT_KERNEL_PRIVATE_KEY
       Installing the <pkg>sys-apps/c2tcp</pkg> evaluation package is optional.
     </flag>
     <flag name="cfi">
-      Ensures that the toolchain is ready for CFI support (for arm64 in
-      production, and for x86_64 in development).  Control Flow Integrity (CFI)
-      is mitigation against forward edge attacks and backward edge attacks
-      (through the shadowcallstack USE flag) to mitigate against arbitrary code
-      execution.
+      Ensures that the toolchain is ready for CFI support (superceeded by KCFI).
+      Control Flow Integrity (CFI) is mitigation against forward edge attacks
+      and backward edge attacks (through the shadowcallstack USE flag) to
+      mitigate against arbitrary code execution.
     </flag>
     <flag name="cfs">
       Uses the CFS (Completely Fair Scheduling) CPU scheduler and not apply
