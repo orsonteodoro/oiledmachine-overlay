@@ -3598,8 +3598,8 @@ unset OT_KERNEL_PRIVATE_KEY
       Patches the kernel with an alternative skiplist based scheduler.
     </flag>
     <flag name="pgo">
-      Perform Profile Guided optimization that may in average result in 10 to -0.5%
-      change in improvement.
+      Perform Profile Guided optimization that may in average result in a range 
+      between 10% improvement or a ~0.5% drop in performance.
 
       You may use Clang or GCC.  Clang PGO is experimental.
     </flag>
