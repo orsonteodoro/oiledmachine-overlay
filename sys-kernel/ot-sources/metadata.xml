@@ -96,7 +96,6 @@
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    futex (futex-wait-multiple) [5]	N
 		    genpatches				Y
 		    kernel_compiler_patch		N
 		    TRESOR (AES-NI) [5]			t
@@ -110,7 +109,6 @@
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    futex (futex-wait-multiple) [5]	N
 		    genpatches				Y
 		    kernel_compiler_patch		N
 		    Project C				N
@@ -126,8 +124,6 @@
 		    -rt	(RT_PREEMPT)			A
 		    CFI					A
 		    Clang PGO				E
-		    futex (futex-wait-multiple)	[5]	E
-		    futex2				E
 		    kernel_compiler_patch		A
 		    genpatches				A
 		    multigen_lru			N
@@ -3492,28 +3488,6 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="gzip">
       Add support for gzip compression
     </flag>
-    <flag name="futex">
-      Patches the kernel with FUTEX_WAIT_MULTIPLE futex syscall option.
-      It may reduce CPU usage by less than 5%.
-    </flag>
-    <flag name="futex2">
-      Patches the kernel with older futex2 syscall specification.  This may
-      reduce the CPU usage by less than 5%.
-
-      Compatible with the following:
-
-        <pkg>app-emulation/wine-proton</pkg>
-
-    </flag>
-    <flag name="futex-proton">
-      Modifies the syscall data structures to be compatible the following
-      software.  This will break compatibility.
-
-      Compatible with the following:
-
-        <pkg>app-emulation/wine-ge-custom-bin</pkg>
-
-    </flag>
     <flag name="graphicsmagick">
       Adds build time logo conversion support.
     </flag>
@@ -3573,7 +3547,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Learning (DRL w/TD3) and Finite State Machine (FSM) based Congestion
       Control Heuristics.
 
-      The Benefits are the sending rates converge towards link capacity;
+      The benefits are the sending rates converge towards link capacity;
       convergance toward high throughput, lower delays, and lower loss;
       better unseen performance; lower CPU usage than pure learning
       implementations.
