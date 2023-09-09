@@ -1200,7 +1200,7 @@ eerror
 # It has to be done outside of the sandbox.
 dump_profraw() {
 	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-	[[ -e "${profraw_spath}" ]] || continue
+	[[ -e "${profraw_spath}" ]] || return
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
@@ -1227,6 +1227,7 @@ einfo "Using cached ${profraw_dpath}.  Delete it if stale."
 # Copies the profraw for GCC PGO.
 # It has to be done outside of the sandbox.
 dump_gcda() {
+	[[ -e "/sys/kernel/debug/gcov/usr/src/linux" ]] || return
 	cd "/sys/kernel/debug/gcov/usr/src/linux"
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
