@@ -148,7 +148,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				N
 
-    6.4 (Stable)					N
+    6.4 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				?
 		    genpatches				A
@@ -160,7 +160,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				N
 
-    6.5 (Stable)					N
+    6.5 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				?
 		    genpatches				A
