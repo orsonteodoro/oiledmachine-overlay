@@ -25,6 +25,10 @@
 #	https://github.com/Soheil-ab/c2tcp
 # CFI:
 #	https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
+# Clang PGO support:
+#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/mbox/			# patch
+#       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/#24246189		# context
+#       https://github.com/ClangBuiltLinux/linux/issues/1405
 # DeepCC:
 #	https://github.com/Soheil-ab/DeepCC.v1.0
 # KCFI:
@@ -69,8 +73,6 @@
 # PDS CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/PDS
 #	https://gitlab.com/alfredchen/PDS-mq/-/tree/master
-# PGO:
-#	https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=for-next/clang/pgo
 # PREEMPT_RT:
 #	https://wiki.linuxfoundation.org/realtime/start
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
@@ -233,7 +235,7 @@ if [[ -n "${C2TCP_VER}" ]] ; then
 	"
 fi
 
-if [[ -n "${CLANG_PGO_KV}" ]] ; then
+if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
 	PGT_CRYPTO_DEPEND="
 		sys-fs/cryptsetup
 	"
@@ -474,13 +476,15 @@ if [[ -n "${C2TCP_VER}" ]] ; then
 	"
 fi
 
-CLANG_PGO_FN="clang-pgo-${CLANG_PGO_KV}-${PATCH_CLANG_PGO_COMMIT_A:0:7}-${PATCH_CLANG_PGO_COMMIT_D:0:7}.patch"
-CLANG_PGO_BASE_URI="https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/patch/?h=for-next/clang/pgo"
-if [[ -n "${CLANG_PGO_KV}" ]] ; then
+# Upstream acquaintances used 5.13.0_rc2
+# This patchset is currently abandoned.
+CLANG_PGO_PATCH_SRC_URI="https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/mbox/" # Mirrored monolithic patch.
+CLANG_PGO_MBOX_SHA1="2aa2a12d83dbe1720addea0352ca5ea455c24cdb"
+CLANG_PGO_FN="clang-pgo-v9-${CLANG_PGO_MBOX_SHA1:0:7}.patch"
+if [[ "${CLANG_PGO_SUPPORTED}" == "1" ]] ; then
 	CLANG_PGO_URI="
-${CLANG_PGO_BASE_URI}&id=${PATCH_CLANG_PGO_COMMIT_D}&id2=${PATCH_CLANG_PGO_COMMIT_A_PARENT}
-		-> ${CLANG_PGO_FN}
-	" # [oldest,newest]
+${CLANG_PGO_PATCH_SRC_URI} -> ${CLANG_PGO_FN}
+	"
 fi
 
 GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
