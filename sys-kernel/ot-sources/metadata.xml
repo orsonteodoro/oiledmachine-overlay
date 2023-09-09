@@ -136,7 +136,7 @@
 		    zen-multigen_lru			N
 		    zen-sauce				N
 						
-    6.1 (LTS)						N
+    6.1 (LTS)						Y
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				?
 		    genpatches				A
@@ -146,7 +146,7 @@
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
+		    zen-sauce				N
 
     6.4 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
@@ -158,7 +158,7 @@
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
+		    zen-sauce				N
 
     6.5 (Stable)					N
 		    -rt	(RT_PREEMPT)			A
