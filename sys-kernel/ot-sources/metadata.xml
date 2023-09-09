@@ -3495,13 +3495,6 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="kcfi">
       Apply KCFI sanitization for forward edge control flow integrity but
       limited to only indirect calls.
-
-      It requires Clang 16.0.1 or newer.
-
-      See also
-
-        https://wiki.gentoo.org/wiki//etc/portage/patches
-
     </flag>
     <flag name="linux-firmware">
       Install the firmware package and ensure that the installed version has the
