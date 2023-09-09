@@ -765,6 +765,14 @@ ot-kernel_pkg_postinst_cb() {
 # 2. Replace the original patch with a completely updated patch.
 # 3. Copy the original patch then slightly modify and apply the patch.
 #    (Modifications may fix the path changes between minor versions.)
+#
+# The reasons for each above:
+#
+# 1.  To see where the ebuild maintainer introduced error and to tell upstream
+#     how to fix their patchset.  It allows the users to code review the fix.
+# 2.  The context has mostly changed outside the edited parts.
+# 3.  Fix renamed files.
+#
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
 
@@ -896,6 +904,10 @@ einfo "See ${path}"
 		# This patch belongs to the -rt patchset.
 		# Skipped.  Not a patch.
 		:;
+
+	elif [[ "${path}" =~ "zen-sauce-6.1.0-0a22064.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.1.0-0a22064-fix-for-6.1.52.patch"
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"

@@ -1,0 +1,18 @@
+License identified in header for mm/page_alloc.c:
+// SPDX-License-Identifier: GPL-2.0-only
+--- a/mm/page_alloc.c.orig	2023-09-08 18:35:30.201552076 -0700
++++ b/mm/page_alloc.c	2023-09-08 18:44:11.317568265 -0700
+@@ -2406,8 +2406,11 @@ static void steal_suitable_fallback(stru
+ 	 * likelihood of future fallbacks. Wake kswapd now as the node
+ 	 * may be balanced overall and kswapd will not wake naturally.
+ 	 */
+-	if (boost_watermark(zone) && (alloc_flags & ALLOC_KSWAPD))
+-		set_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
++	if (alloc_flags & ALLOC_KSWAPD) {
++		boost_watermark(zone);
++		if (zone->watermark_boost)
++			set_bit(ZONE_BOOSTED_WATERMARK, &zone->flags);
++	}
+ 
+ 	/* We are not allowed to try stealing from the whole block */
+ 	if (!whole_block)

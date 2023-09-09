@@ -925,6 +925,9 @@ einfo
 # Checks zen-tune's dependency on zen-sauce.  This function resolves
 # commit dependencies (as in left commit requires right commit) only for
 # the zen tune commit set.
+#
+# ot-kernel_load_config must be called before using this function.
+#
 check_zen_tune_deps() {
 	local zen_tune_commit="${1}" # c in C, where C is all zen tune commits.
 	local v="ZEN_SAUCE_WHITELIST"
@@ -936,11 +939,25 @@ check_zen_tune_deps() {
 	# The left commit depends on right commit.
 			if [[ "${zleft}" == "${zen_tune_commit}" ]] ; then
 	# haystack =~ needle, where haystack is all commits in ZEN_SAUCE_WHITELIST
-				if [[ ! ( "${!v}" =~ "${zright}" \
-				       || "${!v}" =~ "${zright:0:7}" ) ]] ; then
+				if [[ \
+					   "${!v}" =~ "${zright}" \
+					|| "${!v}" =~ "${zright:0:7}" \
+					|| "${!v}" =~ "*" \
+					|| "${!v}" =~ "all" \
+				]] ; then
+					:;
+				else
 eerror
-eerror "zen-tune requires ${zright} or ${zright:0:7} be added to ${v} and also"
-eerror "the zen-sauce USE flag."
+eerror "zen-tune requires one of the following..."
+eerror
+eerror "  *"
+eerror "  all"
+eerror "  ${zright:0:7}"
+eerror "  ${zright}"
+eerror
+eerror "be added to ${v} and also the zen-sauce USE flag to continue."
+eerror
+eerror "!v -> |${!v}|"
 eerror
 					die
 				fi
@@ -953,12 +970,7 @@ eerror
 # @DESCRIPTION:
 # Checks zen-tune's dependency on zen-sauce at pkg_setup
 zen_tune_setup() {
-	if use zen-sauce ; then
-		local c
-		for c in ${PATCH_ZEN_TUNE_COMMITS[@]} ; do
-			check_zen_tune_deps "${c}"
-		done
-	fi
+	:;
 }
 
 # @FUNCTION: zen_sauce_setup
@@ -1399,7 +1411,12 @@ apply_zen_sauce() {
 	done
 
 	if [[ "${CFLAGS}" =~ "-O3" ]] ; then
-		whitelisted+=" ${PATCH_ALLOW_O3_COMMIT:0:7}"
+		if ver_test ${KV_MAJOR_MINOR} -eq 4.19 ; then
+			whitelisted+=" ${PATCH_O3_CO_COMMIT:0:7}"
+			whitelisted+=" ${PATCH_O3_RO_COMMIT:0:7}"
+		else
+			whitelisted+=" ${PATCH_ALLOW_O3_COMMIT:0:7}"
+		fi
 	fi
 
 	if has zen-sauce ${IUSE} ; then
@@ -1781,8 +1798,7 @@ einfo "Applying the genpatches"
 #
 apply_o3() {
 	cd "${BUILD_DIR}" || die
-	if ver_test "${KV_MAJOR_MINOR}" -eq 4.14 \
-	|| ver_test "${KV_MAJOR_MINOR}" -eq 4.19  ; then
+	if ver_test "${KV_MAJOR_MINOR}" -eq 4.14 ; then
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
 			"${EDISTDIR}/${O3_CO_FN}" \
@@ -2500,6 +2516,7 @@ ewarn
 		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
 		declare -A OT_KERNEL_PKGFLAGS_REJECT
 		ot-kernel_load_config
+		check_zen_tune_deps
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"

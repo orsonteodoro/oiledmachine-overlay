@@ -1,0 +1,17 @@
+License for Makefile:
+# SPDX-License-Identifier: GPL-2.0
+--- a/Makefile.orig	2023-09-08 17:51:24.757469891 -0700
++++ b/Makefile	2023-09-08 18:02:27.181490470 -0700
+@@ -682,8 +682,12 @@ KBUILD_CFLAGS	+= $(call cc-disable-warni
+ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+ KBUILD_CFLAGS   += -Os
+ else
++ifdef CONFIG_CC_OPTIMIZE_HARDER
++KBUILD_CFLAGS	+= -O3
++else
+ KBUILD_CFLAGS   += -O2
+ endif
++endif
+ 
+ # Tell gcc to never replace conditional load with a non-conditional one
+ KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)

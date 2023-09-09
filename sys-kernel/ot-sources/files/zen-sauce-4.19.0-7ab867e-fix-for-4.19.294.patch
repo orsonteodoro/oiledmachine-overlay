@@ -1,0 +1,110 @@
+License header for drivers/platform/x86/hdaps.c:
+/*
+ * hdaps.c - driver for IBM's Hard Drive Active Protection System
+ *
+ * Copyright (C) 2005 Robert Love <rml@novell.com>
+ * Copyright (C) 2005 Jesper Juhl <jesper.juhl@gmail.com>
+ *
+ * The HardDisk Active Protection System (hdaps) is present in IBM ThinkPads
+ * starting with the R40, T41, and X40.  It provides a basic two-axis
+ * accelerometer and other data, such as the device's temperature.
+ *
+ * This driver is based on the document by Mark A. Smith available at
+ * http://www.almaden.ibm.com/cs/people/marksmith/tpaps.html and a lot of trial
+ * and error.
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License v2 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ */
+--- a/drivers/platform/x86/hdaps.c.orig	2023-09-08 17:29:10.605428444 -0700
++++ b/drivers/platform/x86/hdaps.c	2023-09-08 17:31:22.905432554 -0700
+@@ -509,65 +509,41 @@ keep_active:
+ static ssize_t hdaps_position_show(struct device *dev,
+ 				   struct device_attribute *attr, char *buf)
+ {
+-	int ret, x, y;
+-
+-	ret = hdaps_read_pair(HDAPS_PORT_XPOS, HDAPS_PORT_YPOS, &x, &y);
+-	if (ret)
+-		return ret;
+-
+-	return sprintf(buf, "(%d,%d)\n", x, y);
+-}
+-
+-static ssize_t hdaps_variance_show(struct device *dev,
+-				   struct device_attribute *attr, char *buf)
+-{
+-	int ret, x, y;
+-
+-	ret = hdaps_read_pair(HDAPS_PORT_XVAR, HDAPS_PORT_YVAR, &x, &y);
++	int ret = hdaps_update();
+ 	if (ret)
+ 		return ret;
+-
+-	return sprintf(buf, "(%d,%d)\n", x, y);
++	return sprintf(buf, "(%d,%d)\n", pos_x, pos_y);
+ }
+ 
+ static ssize_t hdaps_temp1_show(struct device *dev,
+ 				struct device_attribute *attr, char *buf)
+ {
+-	u8 temp;
+-	int ret;
+-
+-	ret = hdaps_readb_one(HDAPS_PORT_TEMP1, &temp);
+-	if (ret)
+-		return ret;
+-
+-	return sprintf(buf, "%u\n", temp);
+-}
+-
+-static ssize_t hdaps_temp2_show(struct device *dev,
+-				struct device_attribute *attr, char *buf)
+-{
+-	u8 temp;
+-	int ret;
+-
+-	ret = hdaps_readb_one(HDAPS_PORT_TEMP2, &temp);
++	int ret = hdaps_update();
+ 	if (ret)
+ 		return ret;
+-
+-	return sprintf(buf, "%u\n", temp);
++	return sprintf(buf, "%d\n", temperature);
+ }
+ 
+ static ssize_t hdaps_keyboard_activity_show(struct device *dev,
+ 					    struct device_attribute *attr,
+ 					    char *buf)
+ {
+-	return sprintf(buf, "%u\n", KEYBD_ISSET(km_activity));
++	int ret = hdaps_update();
++	if (ret)
++		return ret;
++	return sprintf(buf, "%u\n",
++	   get_jiffies_64() < last_keyboard_jiffies + KMACT_REMEMBER_PERIOD);
+ }
+ 
+ static ssize_t hdaps_mouse_activity_show(struct device *dev,
+ 					 struct device_attribute *attr,
+ 					 char *buf)
+ {
+-	return sprintf(buf, "%u\n", MOUSE_ISSET(km_activity));
++	int ret = hdaps_update();
++	if (ret)
++		return ret;
++	return sprintf(buf, "%u\n",
++	   get_jiffies_64() < last_mouse_jiffies + KMACT_REMEMBER_PERIOD);
+ }
+ 
+ static ssize_t hdaps_calibrate_show(struct device *dev,

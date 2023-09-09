@@ -1,0 +1,13 @@
+License for drivers/pci/quirks.c:
+// SPDX-License-Identifier: GPL-2.0
+
+--- a/drivers/pci/quirks.c.orig	2023-09-08 18:10:38.917505747 -0700
++++ b/drivers/pci/quirks.c	2023-09-08 18:11:35.141507494 -0700
+@@ -5115,6 +5115,7 @@ static const struct pci_dev_acs_enabled
+ 	{ PCI_VENDOR_ID_NXP, 0x8d9b, pci_quirk_nxp_rp_acs },
+ 	/* Zhaoxin Root/Downstream Ports */
+ 	{ PCI_VENDOR_ID_ZHAOXIN, PCI_ANY_ID, pci_quirk_zhaoxin_pcie_ports_acs },
++	{ PCI_ANY_ID, PCI_ANY_ID, pcie_acs_overrides },
+ 	/* Wangxun nics */
+ 	{ PCI_VENDOR_ID_WANGXUN, PCI_ANY_ID, pci_quirk_wangxun_nic_acs },
+ 	{ 0 }

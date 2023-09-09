@@ -1,0 +1,13 @@
+License identified for drivers/cpufreq/intel_pstate.c:
+// SPDX-License-Identifier: GPL-2.0-only
+--- a/drivers/cpufreq/intel_pstate.c.orig	2023-09-08 19:00:07.897597983 -0700
++++ b/drivers/cpufreq/intel_pstate.c	2023-09-08 19:01:16.949600128 -0700
+@@ -3136,6 +3136,8 @@ static int __init intel_pstate_setup(cha
+ 	if (!strcmp(str, "no_hwp"))
+ 		no_hwp = 1;
+ 
++	if (!strcmp(str, "enable"))
++		no_load = 0;
+ 	if (!strcmp(str, "force"))
+ 		force_load = 1;
+ 	if (!strcmp(str, "hwp_only"))

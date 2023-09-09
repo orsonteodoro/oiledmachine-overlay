@@ -132,8 +132,8 @@ be5ba234ca0a5aabe74bfc7e1f636f085bd3823c
 )
 PATCH_BFQ_DEFAULT="de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac"
 PATCH_ZEN_SAUCE_BL=(
-	${PATCH_ZEN_SAUCE_BRANDING}
 	${PATCH_KCP_COMMIT}
+	${PATCH_ZEN_SAUCE_BRANDING}
 )
 
 # --
@@ -854,6 +854,14 @@ ot-kernel_pkg_postinst_cb() {
 # 2. Replace the original patch with a completely updated patch.
 # 3. Copy the original patch then slightly modify and apply the patch.
 #    (Modifications may fix the path changes between minor versions.)
+#
+# The reasons for each above:
+#
+# 1.  To see where the ebuild maintainer introduced error and to tell upstream
+#     how to fix their patchset.  It allows the users to code review the fix.
+# 2.  The context has mostly changed outside the edited parts.
+# 3.  Fix renamed files.
+#
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
 
@@ -945,6 +953,12 @@ einfo "See ${path}"
 			"${T}/futex2-${FUTEX2_KV}-b6382cd.patch" || die
 		_tpatch "${PATCH_OPTS}" "${T}/futex2-${FUTEX2_KV}-b6382cd.patch" 2 0 ""
 		_tpatch "${PATCH_OPTS}" "${FILESDIR}/futex2-b6382cd-1-hunk-fix-for-5.15.93.patch" 0 0 ""
+
+	elif [[ "${path}" =~ "zen-sauce-5.15.0-e6e6ceb.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/zen-sauce-5.15.0-e6e6ceb-fix-for-5.15.131.patch"
+
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

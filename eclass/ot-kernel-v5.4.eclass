@@ -601,6 +601,14 @@ ewarn
 # 2. Replace the original patch with a completely updated patch.
 # 3. Copy the original patch then slightly modify and apply the patch.
 #    (Modifications may fix the path changes between minor versions.)
+#
+# The reasons for each above:
+#
+# 1.  To see where the ebuild maintainer introduced error and to tell upstream
+#     how to fix their patchset.  It allows the users to code review the fix.
+# 2.  The context has mostly changed outside the edited parts.
+# 3.  Fix renamed files.
+#
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
 
@@ -651,6 +659,16 @@ ewarn "QA (to ebuild maintainer):  See ${path}"
 		# This patch belongs to the -rt patchset.
 		# Skipping 1 already applied hunk.
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+
+	elif [[ "${path}" =~ "zen-sauce-5.4.0-e4afee6.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/zen-sauce-4.19.0-7ab867e-fix-for-4.19.294.patch"
+
+	elif [[ "${path}" =~ "zen-sauce-5.4.0-376d7ed.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/zen-sauce-5.4.0-376d7ed-fix-for-5.4.256.patch"
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
