@@ -260,15 +260,13 @@
     initramfs updates.
 
 
-    The PGO (Profile Guided Optimization) progression diagram:
+    The PGO (Profile Guided Optimization) progression:
 
-      start ➡️  PGI ➡️  PGT ➡️  PGO ➡️  end
-
-    (➡️  is the right emoji symbol)
-
-    PGI = Build as instrumented
-    PGT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
-    PGO = Build as optimized
+    1. start from unknown state
+    2. PGI = Build as instrumented
+    3. PGT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
+    4. PGO = Build as optimized
+    5. end
 
 
 
