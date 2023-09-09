@@ -9172,6 +9172,14 @@ ot-kernel-pkgflags_wine() { # DONE
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_FUTEX2"
 	fi
+	if ot-kernel_has_version ">=app-emulation/wine-vanilla-5.11" ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+	fi
+	if ot-kernel_has_version ">=app-emulation/wine-staging-5.11" ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_FUTEX"
+	fi
 }
 
 # @FUNCTION: ot-kernel-pkgflags_wireguard_modules

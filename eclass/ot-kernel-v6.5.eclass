@@ -182,11 +182,6 @@ tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
 "
 
-# Not ready yet
-REQUIRED_USE+="
-	!prjc
-"
-
 REQUIRED_USE+="
 	genpatches_1510? (
 		genpatches
@@ -534,9 +529,6 @@ NOT_READY_YET="
 "
 
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
-	SRC_URI_NOT_READY_YET="
-		${PRJC_SRC_URI}
-	"
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
 		${C2TCP_URIS}
@@ -545,6 +537,7 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${KCP_SRC_8_1_URI}
 		${KCP_SRC_9_1_URI}
 		${KCP_SRC_CORTEX_A72_URI}
+		${PRJC_SRC_URI}
 		${RT_SRC_ALT_URI}
 		${TRESOR_AESNI_SRC_URI}
 		${TRESOR_I686_SRC_URI}
@@ -554,11 +547,6 @@ if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${ZEN_SAUCE_URIS}
 	"
 else
-	SRC_URI_NOT_READY_YET="
-		prjc? (
-			${PRJC_SRC_URI}
-		)
-	"
 	SRC_URI+="
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -578,6 +566,9 @@ else
 		)
 		orca? (
 			${C2TCP_URIS}
+		)
+		prjc? (
+			${PRJC_SRC_URI}
 		)
 		rt? (
 			${RT_SRC_ALT_URI}
