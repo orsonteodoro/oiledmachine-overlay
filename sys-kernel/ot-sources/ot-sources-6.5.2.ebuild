@@ -4,7 +4,7 @@
 EAPI=8
 
 GENPATCHES_VER="3"
-#PATCH_PROJC_VER="6.5-r0" # Not released yet
+PATCH_PROJC_VER="6.5-r0"
 PATCH_RT_VER="6.5-rt6"
 
 inherit ot-kernel-v6.5
