@@ -1,0 +1,10 @@
+--- a/kernel/pgo/Kconfig.orig	2023-09-08 23:38:23.078116644 -0700
++++ b/kernel/pgo/Kconfig	2023-09-08 23:39:53.858119464 -0700
+@@ -9,6 +9,7 @@ config PGO_CLANG
+ 	depends on DEBUG_FS
+ 	depends on ARCH_SUPPORTS_PGO_CLANG
+ 	depends on CC_IS_CLANG && CLANG_VERSION >= 120000
++	depends on !ARCH_WANTS_NO_INSTR || CC_HAS_NO_PROFILE_FN_ATTR
+ 	help
+ 	  This option enables clang's PGO (Profile Guided Optimization) based
+ 	  code profiling to better optimize the kernel.

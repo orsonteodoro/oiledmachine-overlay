@@ -1,0 +1,22 @@
+Partly from https://lore.kernel.org/lkml/20210618233023.1360185-2-ndesaulniers@google.com/
+--- a/include/linux/compiler_attributes.h.orig	2023-08-27 14:49:51.000000000 -0700
++++ b/include/linux/compiler_attributes.h	2023-09-08 23:24:30.078090766 -0700
+@@ -268,6 +268,18 @@
+ #endif
+ 
+ /*
++ * Optional: only supported since GCC >= 7.1, clang >= 13.0.
++ *
++ *      gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-no_005fprofile_005finstrument_005ffunction-function-attribute
++ *    clang: https://clang.llvm.org/docs/AttributeReference.html#no-profile-instrument-function
++ */
++#if __has_attribute(__no_profile_instrument_function__)
++# define __no_profile                  __attribute__((__no_profile_instrument_function__))
++#else
++# define __no_profile
++#endif
++
++/*
+  *   gcc: https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-noreturn-function-attribute
+  * clang: https://clang.llvm.org/docs/AttributeReference.html#noreturn
+  * clang: https://clang.llvm.org/docs/AttributeReference.html#id1
