@@ -588,7 +588,8 @@ ewarn
 #
 # 1.  To see where the ebuild maintainer introduced error and to tell upstream
 #     how to fix their patchset.  It allows the users to code review the fix.
-# 2.  The context has mostly changed outside the edited parts.
+# 2.  The context has mostly changed outside the edited parts or a mispatch
+#     occurred as in hunk placed in the wrong place.
 # 3.  Fix renamed files.
 #
 ot-kernel_filter_patch_cb() {
@@ -599,7 +600,8 @@ ot-kernel_filter_patch_cb() {
 	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex and futex2
 
 	if [[ "${path}" =~ "${BMQ_FN}" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${path}"
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bmq_v5.4-r2-fix-for-5.4.256.patch"
 	elif [[ "${path}" =~ "ck-0.196-5.4-7acac2e.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "ck-0.196-5.4-33b744f.patch" ]] ; then
@@ -655,6 +657,17 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-muqss-5.4.0-86df8be-fix-for-5.4.256.patch"
 
+
+	elif [[ "${path}" =~ "zen-sauce-5.4.0-3e05ad8.patch" ]] ; then
+		if ot-kernel_use bmq ; then
+			_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+			_dpatch "${PATCH_OPTS}" \
+				"${FILESDIR}/zen-sauce-5.4.0-3e05ad8-compat-with-bmq-v5.4-r2-for-5.4.256.patch"
+		fi
+	elif [[ "${path}" =~ "zen-sauce-5.4.0-7e92cd4.patch" ]] ; then
+		if ot-kernel_use bmq ; then
+			:; # Patch for MuQSS only
+		fi
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

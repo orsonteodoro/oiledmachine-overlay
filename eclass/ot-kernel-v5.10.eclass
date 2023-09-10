@@ -670,7 +670,8 @@ ot-kernel_filter_genpatches_blacklist_cb() {
 #
 # 1.  To see where the ebuild maintainer introduced error and to tell upstream
 #     how to fix their patchset.  It allows the users to code review the fix.
-# 2.  The context has mostly changed outside the edited parts.
+# 2.  The context has mostly changed outside the edited parts or a mispatch
+#     occurred as in hunk placed in the wrong place.
 # 3.  Fix renamed files.
 #
 ot-kernel_filter_patch_cb() {
@@ -691,8 +692,9 @@ einfo "Already applied ${path} upstream"
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${path}"
+	elif [[ "${path}" =~ "prjc_v5.10-lts-r3.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v5.10-lts-r3-fix-for-5.10.194.patch"
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4

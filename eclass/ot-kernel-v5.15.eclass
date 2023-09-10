@@ -822,12 +822,13 @@ ot-kernel_pkg_postinst_cb() {
 #
 # 1.  To see where the ebuild maintainer introduced error and to tell upstream
 #     how to fix their patchset.  It allows the users to code review the fix.
-# 2.  The context has mostly changed outside the edited parts.
+# 2.  The context has mostly changed outside the edited parts or a mispatch
+#     occurred as in hunk placed in the wrong place.
 # 3.  Fix renamed files.
 #
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
-
+einfo "${path}"
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
 	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex
@@ -840,9 +841,10 @@ einfo "Already applied ${path} upstream"
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
-		_dpatch "${PATCH_OPTS} -F 3" "${path}" # 1 hunk failure without fuzz
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc-5.15-sched_post_fork-change.patch"
+	elif [[ "${path}" =~ "prjc_v5.15-r1.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v5.15-r1-fix-for-5.15.131.patch"
+		#_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc-5.15-sched_post_fork-change.patch" # Review
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4

@@ -750,7 +750,8 @@ ot-kernel_pkg_postinst_cb() {
 #
 # 1.  To see where the ebuild maintainer introduced error and to tell upstream
 #     how to fix their patchset.  It allows the users to code review the fix.
-# 2.  The context has mostly changed outside the edited parts.
+# 2.  The context has mostly changed outside the edited parts or a mispatch
+#     occurred as in hunk placed in the wrong place.
 # 3.  Fix renamed files.
 #
 ot-kernel_filter_patch_cb() {

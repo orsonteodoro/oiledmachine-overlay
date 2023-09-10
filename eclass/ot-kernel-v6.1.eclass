@@ -772,7 +772,8 @@ ot-kernel_pkg_postinst_cb() {
 #
 # 1.  To see where the ebuild maintainer introduced error and to tell upstream
 #     how to fix their patchset.  It allows the users to code review the fix.
-# 2.  The context has mostly changed outside the edited parts.
+# 2.  The context has mostly changed outside the edited parts or a mispatch
+#     occurred as in hunk placed in the wrong place.
 # 3.  Fix renamed files.
 #
 ot-kernel_filter_patch_cb() {
@@ -910,6 +911,10 @@ einfo "See ${path}"
 	elif [[ "${path}" =~ "zen-sauce-6.1.0-0a22064.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.1.0-0a22064-fix-for-6.1.52.patch"
+
+	elif [[ "${path}" =~ "prjc_v6.1-r4.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v6.4-r0-fix-for-6.4.15.patch" # Same hunks
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"

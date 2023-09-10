@@ -1,0 +1,16 @@
+License identified for drivers/cpufreq/cpufreq_ondemand.c:
+// SPDX-License-Identifier: GPL-2.0-only
+--- a/drivers/cpufreq/cpufreq_ondemand.c.orig	2023-09-09 14:10:33.243742361 -0700
++++ b/drivers/cpufreq/cpufreq_ondemand.c	2023-09-09 14:14:51.887750396 -0700
+@@ -19,7 +19,11 @@
+ 
+ /* On-demand governor macros */
+ #define DEF_FREQUENCY_UP_THRESHOLD		(63)
++#ifdef CONFIG_ZEN_INTERACTIVE
++#define DEF_SAMPLING_DOWN_FACTOR		(5)
++#else
+ #define DEF_SAMPLING_DOWN_FACTOR		(1)
++#endif
+ #define MAX_SAMPLING_DOWN_FACTOR		(100000)
+ #define MICRO_FREQUENCY_UP_THRESHOLD		(95)
+ #define MICRO_FREQUENCY_MIN_SAMPLE_RATE		(10000)

@@ -503,7 +503,8 @@ ot-kernel_pkg_postinst_cb() {
 #
 # 1.  To see where the ebuild maintainer introduced error and to tell upstream
 #     how to fix their patchset.  It allows the users to code review the fix.
-# 2.  The context has mostly changed outside the edited parts.
+# 2.  The context has mostly changed outside the edited parts or a mispatch
+#     occurred as in hunk placed in the wrong place.
 # 3.  Fix renamed files.
 #
 ot-kernel_filter_patch_cb() {
@@ -542,6 +543,9 @@ ot-kernel_filter_patch_cb() {
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
+einfo "Patch needs to be fixed."
+einfo "See ${path}"
+
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/pds-4.14_pds098i-rebase-for-4.14.213.patch"

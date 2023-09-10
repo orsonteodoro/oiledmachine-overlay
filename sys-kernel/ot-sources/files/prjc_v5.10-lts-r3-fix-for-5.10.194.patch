@@ -1,0 +1,33 @@
+License identified for kernel/sysctl.c:
+// SPDX-License-Identifier: GPL-2.0-only
+--- a/kernel/sysctl.c.orig	2023-09-09 15:53:29.851934247 -0700
++++ b/kernel/sysctl.c	2023-09-09 15:59:38.123945688 -0700
+@@ -111,9 +111,15 @@
+ static int sixty = 60;
+ #endif
+ 
++static int zero;
++static int __maybe_unused two = 2;
+ static unsigned long zero_ul;
+ static unsigned long one_ul = 1;
+ static unsigned long long_max = LONG_MAX;
++#ifdef CONFIG_SCHED_ALT
++static int __maybe_unused zero = 0;
++extern int sched_yield_type;
++#endif
+ #ifdef CONFIG_PRINTK
+ static int ten_thousand = 10000;
+ #endif
+License identified for kernel/sched/cputime.c:
+// SPDX-License-Identifier: GPL-2.0-only
+--- a/kernel/sched/cputime.c.orig	2023-09-09 15:53:29.851934247 -0700
++++ b/kernel/sched/cputime.c	2023-09-09 15:54:07.967935431 -0700
+@@ -146,7 +146,7 @@ void account_guest_time(struct task_stru
+ 	p->gtime += cputime;
+ 
+ 	/* Add guest time to cpustat. */
+-	if (task_nice(p) > 0) {
++	if (task_running_nice(p)) {
+ 		task_group_account_field(p, CPUTIME_NICE, cputime);
+ 		cpustat[CPUTIME_GUEST_NICE] += cputime;
+ 	} else {

@@ -1,0 +1,13 @@
+License identified in kernel/sched/cputime.c:
+// SPDX-License-Identifier: GPL-2.0-only
+--- a/kernel/sched/cputime.c.orig	2023-09-09 13:45:07.891694974 -0700
++++ b/kernel/sched/cputime.c	2023-09-09 13:46:16.523697106 -0700
+@@ -146,7 +146,7 @@ void account_guest_time(struct task_stru
+ 	p->gtime += cputime;
+ 
+ 	/* Add guest time to cpustat. */
+-	if (task_nice(p) > 0) {
++	if (task_running_nice(p)) {
+ 		task_group_account_field(p, CPUTIME_NICE, cputime);
+ 		cpustat[CPUTIME_GUEST_NICE] += cputime;
+ 	} else {
