@@ -1207,7 +1207,7 @@ dump_profraw() {
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
 	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/llvm/vmlinux.profraw"
-	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}" || die
+	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/llvm" || die
 	if [[ -e "${profraw_spath}" ]] ; then
 		cat "${profraw_spath}" > "${profraw_dpath}" 2>/dev/null || true
 	fi
@@ -1227,23 +1227,24 @@ einfo "Using cached ${profraw_dpath}.  Delete it if stale."
 # Copies the profraw for GCC PGO.
 # It has to be done outside of the sandbox.
 dump_gcda() {
-	[[ -e "/sys/kernel/debug/gcov/usr/src/linux" ]] || return
-	cd "/sys/kernel/debug/gcov/usr/src/linux"
+#/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-6.5.2/work/linux-6.5.2-builder/sound/usb/clock.gcno
+#/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-6.5.2/work/linux-6.5.2-builder/sound/usb/clock.gcda
+	local workdir
+	local s
+	[[ -e "/sys/kernel/debug/gcov/var" ]] || return
+	cd "/sys/kernel/debug/gcov"
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
-	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" || die
-	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}" -name "*.gcda" 2>/dev/null | wc -l)
+	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || die
+	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}" -name "*.gcda" -o -name "*.gcno" 2>/dev/null | wc -l)
 	if (( ${n_gcda} == 0 )) ; then
-einfo "Copying *.gcda files"
-		find \
-			. \
-			-name '*.gcda' \
-			-exec cp "{}" "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc/{}" \;
+einfo "Copying GCC profile data"
+		cp -a . "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc"
 	else
-einfo "Using cached *.gcda from ${OT_KERNEL_PGO_DATA_DIR}.  Delete them if stale."
+einfo "Using cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}.  Delete them if stale."
 	fi
 }
 
@@ -9259,9 +9260,10 @@ einfo "    1.  Run etc-update"
 einfo "    2.  Build and install the initramfs per each kernel."
 einfo "    3.  Update the bootloader with a new entries"
 einfo "    4.  Reboot with the PGIed kernel"
-einfo "    5.  Train the kernel with benchmarks or the typical uses"
-einfo "    6.  Re-emerging the package"
-einfo "    7.  Reboot with optimized kernel"
+einfo "    5.  mount -t debugfs none /sys/kernel/debug                  # For GCC PGO if /sys/kernel/debug is not mounted yet by init scripts"
+einfo "    6.  Train the kernel with benchmarks or the typical uses"
+einfo "    7.  Re-emerging the package"
+einfo "    8.  Reboot with optimized kernel"
 einfo
 einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
 einfo

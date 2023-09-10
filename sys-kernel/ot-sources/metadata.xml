@@ -280,8 +280,9 @@
       3. Build and install initramfs
       4. Update the bootloader
       5. Reboot
-      6. Train the kernel with the pgo-trainer.sh script or your own simulation script
-      7. Re-emerge the package with the build and pgo USE flag for an optimized build
+      6. mount -t debugfs none /sys/kernel/debug                                          # For GCC PGO if /sys/kernel/debug is not mounted yet by init scripts
+      7. Train the kernel with the pgo-trainer.sh script or your own simulation script
+      8. Re-emerge the package with the build and pgo USE flag for an optimized build
 
 
 
@@ -292,15 +293,27 @@
 
 
 
-    PGO state files:
+    PGO state files and profiles:
 
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}.pgophase -- The PGO
-      phase progression state file that contains the current step.
-      {PGI,PGT,PGO,DONE} are the states in the FSM.
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profraw -- The profraw
-      captured before conversion.
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}.profdata -- The merged
-      profdata PGO profile.  It is used when building an optimized build.
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/{llvm,gcc}/pgophase --
+      The PGO phase progression state file that contains the current step.
+      {PGI,PGT,PGO,DONE} are the states in the FSM (Finite State Machine).
+
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profraw --
+      The profraw captured before conversion.
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profdata --
+      The merged profdata PGO profile.  It is used when building an optimized
+      build.
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/gcc/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-${PV}/work/linux-${PV}-${extraversion}/sound/usb/clock.gcno --
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/gcc/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-${PV}/work/linux-${PV}-${extraversion}/sound/usb/clock.gcda --
+      The GCC PGO profile.  It is used when building an optimized build.
+
+    Notes:
+    - The .profdata may be used between major versions.
+    - The .profraw may sometimes used between minor versions.
+    - The .gcda is common among PGO packages, but .gcno is of unknown use.
+    - The generated .gcda above is just a sample path.  It may vary per
+      configuration.
 
     Important:  If a change to the PGO patch has been made, the
     /var/lib/ot-sources/${PV} folder and the files in it should be manually
@@ -309,7 +322,8 @@
 
     LLVM versions supported for Clang PGO:
 
-    * 17.0.0.9999 - with the latest commit
+    * 18.0.0.9999 - with the latest commit ; not used
+    * 17.0.0.9999 - with the latest commit ; not used
     * 16.x
     * 15.x
     * 14.x
@@ -3559,7 +3573,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Patches the kernel with an alternative skiplist based scheduler.
     </flag>
     <flag name="pgo">
-      Perform Profile Guided optimization that may in average result in a range 
+      Perform Profile Guided Optimization that may in average result in a range 
       between 10% improvement or a ~0.5% drop in performance.
 
       You may use Clang or GCC.  Clang PGO is experimental.
