@@ -186,7 +186,7 @@ IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
 -genpatches_1510 kcfi lto orca pgo prjc rock-dkms rt -rust shadowcallstack
 symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support zen-sauce -zen-tune
+tresor_x86_64-256-bit-key-support zen-sauce
 "
 
 # Not ready yet
@@ -639,14 +639,6 @@ ewarn
 #ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
 #ewarn
 #	fi
-
-	if has zen-tune ${IUSE} ; then
-		if use zen-tune ; then
-ewarn
-ewarn "The zen-tune patch might cause lock up or slow io under heavy load."
-ewarn
-		fi
-	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
