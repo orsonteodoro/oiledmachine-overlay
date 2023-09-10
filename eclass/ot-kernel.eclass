@@ -1241,6 +1241,7 @@ dump_gcda() {
 	[[ "${version}" != "${PV}" ]] && return
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || die
 	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}" -name "*.gcda" -o -name "*.gcno" 2>/dev/null | wc -l)
+	[[ -z "${n_gcda}" ]] && n_gcda=0
 	if (( ${n_gcda} == 0 )) ; then
 einfo "Copying GCC profile data"
 		cp \
@@ -5133,6 +5134,7 @@ einfo "debugfs disabled success"
 _ot-kernel_set_kconfig_pgo_gcc() {
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 	local n_gdca=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
+	[[ -z "${n_gcda}" ]] && n_gcda=0
 	if [[ -e "${pgo_phase_statefile}" ]] ; then
 		pgo_phase=$(cat "${pgo_phase_statefile}")
 	else
@@ -7792,13 +7794,13 @@ einfo "HOSTLDFLAGS=${HOSTLDFLAGS}"
 einfo
 	if tc-is-cross-compiler ; then
 		args+=(
-			"'HOSTCFLAGS=-O1 -pipe'"
-			"'HOSTLDFLAGS=-O1 -pipe'"
+			"HOSTCFLAGS=-O1 -pipe"
+			"HOSTLDFLAGS=-O1 -pipe"
 		)
 	else
 		args+=(
-			"'HOSTCFLAGS=${HOSTCFLAGS}'"
-			"'HOSTLDFLAGS=${HOSTLDFLAGS}'"
+			"HOSTCFLAGS=${HOSTCFLAGS}"
+			"HOSTLDFLAGS=${HOSTLDFLAGS}"
 		)
 	fi
 
@@ -8175,7 +8177,8 @@ einfo "Resuming as PGT since no profile generated"
 			) \
 		; then
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
-			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/var/tmp/portage/sys-kernel/${PN}-${PV}/work/linux-${PV}-${extraversion}"
+#			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/var/tmp/portage/sys-kernel/${PN}-${PV}/work/linux-${PV}-${extraversion}"
+			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/"
 			local pgo_phase="${PGO_PHASE_UNK}"
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase="${PGO_PHASE_PGI}"
@@ -8184,20 +8187,21 @@ einfo "Resuming as PGT since no profile generated"
 			fi
 
 			local n_gcda=$(find "${pgo_profile_dir}" -name "*.gcda" 2>/dev/null | wc -l)
+			[[ -z "${n_gcda}" ]] && n_gcda=0
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Building PGI"
-				args+=( "'CFLAGS_GCOV=-fprofile-generate -ftest-coverage'" )
+				args+=( "CFLAGS_GCOV=-fprofile-generate -ftest-coverage" )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} > 0 )) ; then
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 einfo "Building PGO"
-				args+=( "'KCFLAGS=-fprofile-use -fprofile-dir=${pgo_profile_dir} -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch'" )
+				args+=( "KCFLAGS=-fprofile-use -fprofile-dir=${pgo_profile_dir} -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch" )
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 # For resuming or rebuilding as PGO phase
 einfo "Building PGO"
-				args+=( "'KCFLAGS=-fprofile-use -fprofile-dir=${pgo_profile_dir} -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch'" )
+				args+=( "CFLAGS=-fprofile-use -fprofile-dir=${pgo_profile_dir} -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch" )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} == 0 )) ; then
 einfo "Resuming as PGT since no profile generated"
-				args+=( "'CFLAGS_GCOV=-fprofile-generate -ftest-coverage'" )
+				args+=( "CFLAGS_GCOV=-fprofile-generate -ftest-coverage" )
 			fi
 
 		fi
