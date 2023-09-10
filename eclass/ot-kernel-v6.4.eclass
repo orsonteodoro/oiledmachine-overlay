@@ -49,7 +49,7 @@ PATCH_TRESOR_VER="3.18.5"
 # When using that commit list generator, it may miss some commits, so verify all
 # the commits in order.
 
-#C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
+C2TCP_MAJOR_VER="2" # Missing kernel/sysctl_binary.c >= 5.9
 C2TCP_VER="2.2"
 C2TCP_EXTRA="0521"
 C2TCP_KV="4.13.1"
@@ -813,13 +813,7 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.3.patch"
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-eerror
-eerror "Patching orca/c2tcp is broken for ${KV_MAJOR_MINOR}"
-eerror
-eerror "FIXME:  ${path}"
-eerror
-		die
-		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-4-15-orca-c2tcp-0521.patch"
 
 	elif [[ "${path}" =~ "0002-posix-timers-Ensure-timer-ID-search-loop-limit-is-va.patch" ]] ; then
 		# This patch belongs to the -rt patchset.
