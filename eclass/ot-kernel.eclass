@@ -1508,7 +1508,7 @@ apply_zen_sauce() {
 			for c_bl in ${use_blacklisted} ; do
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]] ; then
 ewarn
-ewarn "If ${c} is already applied via USE flag.  Please remove it from the"
+ewarn "${c} is already applied via USE flag.  Please remove it from the"
 ewarn "ZEN_SAUCE_WHITELIST and use the USE flag instead."
 ewarn "This is to ensure the BDEPENDS/RDEPENDS/DEPENDs are met."
 ewarn "Skipping ${c} for now."
