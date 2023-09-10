@@ -9162,7 +9162,7 @@ ewarn
 		fi
 	fi
 	if has kcfi ${IUSE} ; then
-		if use cfi ; then
+		if use kcfi ; then
 			wants_kcfi=1
 		fi
 	fi
