@@ -280,7 +280,7 @@
       3. Build and install initramfs
       4. Update the bootloader
       5. Reboot
-      6. Train the kernel with the gen_pgo.sh script or your own simulation script
+      6. Train the kernel with the pgo-trainer.sh script or your own simulation script
       7. Re-emerge the package with the build and pgo USE flag for an optimized build
 
 
@@ -323,7 +323,7 @@
 
 
 
-    Using gen_pgo.sh, aka the automated PGO trainer script
+    Using pgo-trainer.sh, aka the automated PGO trainer script
 
     It becomes tedious or too repetitive to manually train the kernel.
     This is why an automated trainer script pgo-trainer.sh (also found in the modded

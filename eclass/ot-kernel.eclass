@@ -5175,11 +5175,12 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 	if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_y_configopt "CONFIG_GCOV_KERNEL"
-		ot-kernel_y_configopt "GCOV_PROFILE_ALL"
+		ot-kernel_y_configopt "CONFIG_GCOV_PROFILE_ALL"
+		ot-kernel_y_configopt "CONFIG_GCOV_FORMAT_AUTODETECT"
 	elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") ]] && (( ${n_gcda} > 0 )) ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_n_configopt "CONFIG_GCOV_KERNEL"
-		ot-kernel_n_configopt "GCOV_PROFILE_ALL"
+		ot-kernel_n_configopt "CONFIG_GCOV_PROFILE_ALL"
 	fi
 }
 
