@@ -1235,7 +1235,7 @@ dump_gcda() {
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" || die
-	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}" -name "*.gcda" | wc -l)
+	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}" -name "*.gcda" 2>/dev/null | wc -l)
 	if (( ${n_gcda} == 0 )) ; then
 einfo "Copying *.gcda files"
 		find \
@@ -8191,7 +8191,7 @@ einfo "Resuming as PGT since no profile generated"
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
 
-			local n_gcda=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" | wc -l)
+			local n_gcda=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Building PGI"
 				args+=( "'CFLAGS_GCOV=-fprofile-generate -ftest-coverage'" )
