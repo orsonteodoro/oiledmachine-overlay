@@ -1,0 +1,55 @@
+License header for kernel/sched/cpufreq_schedutil.c:
+/*
+ * CPUFreq governor based on scheduler-provided CPU utilization data.
+ *
+ * Copyright (C) 2016, Intel Corporation
+ * Author: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+--- a/kernel/sched/cpufreq_schedutil.c.orig	2023-09-09 18:37:50.836240594 -0700
++++ b/kernel/sched/cpufreq_schedutil.c	2023-09-09 18:38:45.660242297 -0700
+@@ -416,7 +416,9 @@ static inline bool sugov_cpu_is_busy(str
+  */
+ static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu, struct sugov_policy *sg_policy)
+ {
++#ifndef CONFIG_SCHED_PDS
+ 	if (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_dl)
++#endif
+ 		sg_policy->limits_changed = true;
+ }
+ 
+--- a/kernel/sched/cputime.c.orig	2023-09-09 18:37:50.860240594 -0700
++++ b/kernel/sched/cputime.c	2023-09-09 18:39:28.140243616 -0700
+@@ -150,7 +150,11 @@ void account_guest_time(struct task_stru
+ 	p->gtime += cputime;
+ 
+ 	/* Add guest time to cpustat. */
++#ifdef	CONFIG_SCHED_PDS
++	if (task_nice(p) > 0 || task_running_idle(p)) {
++#else
+ 	if (task_nice(p) > 0) {
++#endif
+ 		task_group_account_field(p, CPUTIME_NICE, cputime);
+ 		cpustat[CPUTIME_GUEST_NICE] += cputime;
+ 	} else {
+--- a/kernel/sysctl.c.orig	2023-09-09 18:37:50.928240596 -0700
++++ b/kernel/sysctl.c	2023-09-09 18:39:59.020244576 -0700
+@@ -130,8 +130,12 @@ static int __maybe_unused four = 4;
+ static unsigned long zero_ul;
+ static unsigned long one_ul = 1;
+ static unsigned long long_max = LONG_MAX;
+-static int one_hundred = 100;
+-static int one_thousand = 1000;
++static int __read_mostly one_hundred = 100;
++static int __read_mostly one_thousand = 1000;
++#ifdef CONFIG_SCHED_PDS
++extern int rr_interval;
++extern int sched_yield_type;
++#endif
+ #ifdef CONFIG_PRINTK
+ static int ten_thousand = 10000;
+ #endif

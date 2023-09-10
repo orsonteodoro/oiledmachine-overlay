@@ -543,13 +543,10 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "0481-futex-Make-the-futex_hash_bucket-spinlock_t-again-an.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
-einfo "Patch needs to be fixed."
-einfo "See ${path}"
-
-		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+	elif [[ "${path}" =~ "v4.19_pds099h.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 3 0 ""
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/pds-4.14_pds098i-rebase-for-4.14.213.patch"
+			"${FILESDIR}/v4.19_pds099h-fixes-for-4.19.294.patch"
 	elif [[ "${path}" =~ "${O3_CO_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
