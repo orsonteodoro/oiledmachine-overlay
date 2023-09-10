@@ -1217,9 +1217,10 @@ einfo "Copying ${profraw_spath}"
 		chmod 0644 "${profraw_dpath}" || die
 	else
 		if [[ -e "${profraw_dpath}" ]] ; then
-einfo "Using cached ${profraw_dpath}.  Delete it if stale."
+einfo "Using a cached ${profraw_dpath}.  Delete it if stale."
 		fi
 	fi
+	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
 }
 
 # @FUNCTION: dump_gcda
@@ -1232,7 +1233,7 @@ dump_gcda() {
 	local workdir
 	local s
 	[[ -e "/sys/kernel/debug/gcov/var" ]] || return
-	cd "/sys/kernel/debug/gcov"
+	cd "/sys/kernel/debug/gcov" || die
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
@@ -1242,10 +1243,17 @@ dump_gcda() {
 	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}" -name "*.gcda" -o -name "*.gcno" 2>/dev/null | wc -l)
 	if (( ${n_gcda} == 0 )) ; then
 einfo "Copying GCC profile data"
-		cp -a . "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc"
+		cp \
+			-va \
+			"var" \
+			"${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" \
+			|| die
 	else
-einfo "Using cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}.  Delete them if stale."
+		if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/gcc" ]] ; then
+einfo "Using a cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}/gcc.  Delete it if stale."
+		fi
 	fi
+	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
 }
 
 # @FUNCTION: get_current_tag_for_k_major_minor_branch
@@ -2157,50 +2165,6 @@ apply_all_patchsets() {
 	fi
 }
 
-# @FUNCTION: _ot-kernel_copy_pgo_state_clang
-# @DESCRIPTION:
-# Copy the PGO state file and all PGO profiles from clang/llvm.
-_ot-kernel_copy_pgo_state_clang() {
-einfo "Copying PGO state file and profiles"
-	for f in $(find "${OT_KERNEL_PGO_DATA_DIR}" \
-		-name "pgophase" \
-		-o -name "*.profraw" \
-		-o -name "*.profdata" \
-		2>/dev/null \
-	) ; do
-		# This is workaround for a sandbox issue.
-		# Done this way because the OT_KERNEL_PGO_DATA_DIR folder can be empty.
-		cp -va "${f}" "${WORKDIR}/pgodata" || die
-	done
-}
-
-# @FUNCTION: _ot-kernel_copy_pgo_state_gcc
-# @DESCRIPTION:
-# Copy the PGO state file and all PGO profiles from gcc.
-_ot-kernel_copy_pgo_state_gcc() {
-einfo "Copying PGO state file and profiles"
-	for f in $(find "${OT_KERNEL_PGO_DATA_DIR}" \
-		-name "pgophase" \
-		-o -name "*.gcda" \
-		2>/dev/null \
-	) ; do
-		# This is workaround for a sandbox issue.
-		# Done this way because the OT_KERNEL_PGO_DATA_DIR folder can be empty.
-		cp -va "${f}" "${WORKDIR}/pgodata" || die
-	done
-}
-
-# @FUNCTION: ot-kernel_copy_pgo_state
-# @DESCRIPTION:
-# Copy the PGO state file and all PGO profiles
-ot-kernel_copy_pgo_state() {
-	if has clang ${IUSE} && use clang ; then
-		_ot-kernel_copy_pgo_state_clang
-	else
-		_ot-kernel_copy_pgo_state_gcc
-	fi
-}
-
 # @FUNCTION: ot-kernel_rm_exfat
 # @DESCRIPTION:
 # Deletes the exFAT filesystem from the source code.
@@ -2455,11 +2419,6 @@ ewarn
 		fi
 	fi
 
-	if use pgo ; then
-		mkdir -p "${WORKDIR}/pgodata" || die
-		ot-kernel_copy_pgo_state
-	fi
-
 	#if [[ -e "/lib/firmware/regulatory.db.p7s" ]] ; then
 	#	cp -a "/lib/firmware/regulatory.db.p7s" "${BUILD_DIR}/"
 	#fi
@@ -2472,6 +2431,8 @@ ewarn
 
 	local moved=0
 
+	mkdir -p "${WORKDIR}/pgodata" || die
+
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
@@ -2483,6 +2444,16 @@ ewarn
 		check_zen_tune_deps
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
+		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
+
+		if use pgo ; then
+			if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" ]] ; then
+				cp -a \
+					"${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" \
+					"${WORKDIR}/pgodata" || die
+			fi
+		fi
+
 		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
 		if (( ${moved} == 0 )) ; then
 einfo "Renaming for -${extraversion}"
@@ -8204,7 +8175,7 @@ einfo "Resuming as PGT since no profile generated"
 			) \
 		; then
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
-			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc"
+			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/var/tmp/portage/sys-kernel/${PN}-${PV}/work/linux-${PV}-${extraversion}"
 			local pgo_phase="${PGO_PHASE_UNK}"
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase="${PGO_PHASE_PGI}"
@@ -8212,7 +8183,7 @@ einfo "Resuming as PGT since no profile generated"
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
 
-			local n_gcda=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
+			local n_gcda=$(find "${pgo_profile_dir}" -name "*.gcda" 2>/dev/null | wc -l)
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Building PGI"
 				args+=( "'CFLAGS_GCOV=-fprofile-generate -ftest-coverage'" )
