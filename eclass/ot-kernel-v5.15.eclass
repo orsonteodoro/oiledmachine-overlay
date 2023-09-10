@@ -895,7 +895,11 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-5.15.84.patch"
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-einfo "See ${path}"
+eerror
+eerror "Patching orca/c2tcp is broken for ${KV_MAJOR_MINOR}"
+eerror
+eerror "FIXME:  ${path}"
+eerror
 		die
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 		_dpatch "${PATCH_OPTS}" \
