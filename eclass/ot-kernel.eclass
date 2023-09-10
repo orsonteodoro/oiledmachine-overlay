@@ -2067,7 +2067,14 @@ apply_all_patchsets() {
 	fi
 
 	if has prjc ${IUSE} ; then
-		if ot-kernel_use prjc && [[ "${cpu_sched}" == "prjc" ]] ; then
+		if \
+		ot-kernel_use prjc \
+		&& \
+		[[ \
+			   "${cpu_sched}" == "prjc" \
+			|| "${cpu_sched}" == "prjc-bmq" \
+			|| "${cpu_sched}" == "prjc-pds" \
+		]] ; then
 			apply_prjc
 		fi
 	fi
