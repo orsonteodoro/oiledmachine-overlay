@@ -5160,7 +5160,7 @@ einfo "debugfs disabled success"
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 _ot-kernel_set_kconfig_pgo_gcc() {
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
-	local n_gdca=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" | wc -l)
+	local n_gdca=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
 	if [[ -e "${pgo_phase_statefile}" ]] ; then
 		pgo_phase=$(cat "${pgo_phase_statefile}")
 	else
@@ -6882,11 +6882,26 @@ einfo "Fixing config for genkernel"
 ot-kernel_convert_tristate_fix() {
 	if ot-kernel_has_version "x11-drivers/nvidia-drivers" \
 		&& grep -q -e "^CONFIG_DRM_NOUVEAU=y" "${BUILD_DIR}/.config" ; then
+ewarn "Enabling modules support for nouveau"
+		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_NOUVEAU" "m"
 	fi
 	if ot-kernel_has_version "x11-drivers/nvidia-drivers" \
 		&& grep -q -e "^CONFIG_DRM_SIMPLEDRM=y" "${BUILD_DIR}/.config" ; then
+ewarn "Enabling modules support for simpledrm"
+		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_SIMPLEDRM" "m"
+	fi
+
+	if has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
+	# For sys-kernel/rock-dkms not installed yet scenario.
+ewarn "Enabling modules support for sys-kernel/rock-dkms"
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+	elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+ewarn "Enabling modules support for sys-kernel/rock-dkms"
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 	fi
 }
 

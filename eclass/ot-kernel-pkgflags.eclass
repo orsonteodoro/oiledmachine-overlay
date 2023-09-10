@@ -6387,8 +6387,10 @@ ot-kernel-pkgflags_nvtop() { # DONE
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 			elif has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
+				ot-kernel_y_configopt "CONFIG_MODULES"
 				ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 			elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+				ot-kernel_y_configopt "CONFIG_MODULES"
 				ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 			else
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
@@ -7649,8 +7651,10 @@ ot-kernel-pkgflags_roct() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
+			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 		elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
@@ -9513,8 +9517,10 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
+			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 		elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
