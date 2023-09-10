@@ -6803,7 +6803,7 @@ ot-kernel_fix_config_for_boot() {
 		subsystems=( ${OT_KERNEL_BOOT_SUBSYSTEMS} )
 	else
 		subsystems=(
-			# All related to boot initalization and logins
+			# All related to boot initialization and logins
 			crypto
 			drivers/ata
 			drivers/block
@@ -6882,24 +6882,28 @@ einfo "Fixing config for genkernel"
 ot-kernel_convert_tristate_fix() {
 	if ot-kernel_has_version "x11-drivers/nvidia-drivers" \
 		&& grep -q -e "^CONFIG_DRM_NOUVEAU=y" "${BUILD_DIR}/.config" ; then
-ewarn "Enabling modules support for nouveau"
+ewarn "Enabling modules support for nouveau."
+ewarn "Early KMS is disabled for the nouveau driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_NOUVEAU" "m"
 	fi
 	if ot-kernel_has_version "x11-drivers/nvidia-drivers" \
 		&& grep -q -e "^CONFIG_DRM_SIMPLEDRM=y" "${BUILD_DIR}/.config" ; then
-ewarn "Enabling modules support for simpledrm"
+ewarn "Enabling modules support for simpledrm."
+ewarn "Early KMS is disabled for the simpledrm driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_SIMPLEDRM" "m"
 	fi
 
 	if has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
-ewarn "Enabling modules support for sys-kernel/rock-dkms"
+ewarn "Enabling modules support for sys-kernel/rock-dkms."
+ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 	elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
-ewarn "Enabling modules support for sys-kernel/rock-dkms"
+ewarn "Enabling modules support for sys-kernel/rock-dkms."
+ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
 	fi
