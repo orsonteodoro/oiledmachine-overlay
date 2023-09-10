@@ -763,7 +763,8 @@ ot-kernel_pkg_postinst_cb() {
 #
 # 1. Apply original patch with _tpatch, then apply a patch to fix hunks with
 #    _dpatch.  [_tpatch is patch with no die.  _dpatch is patch with die on
-#    fail.]
+#    fail.]  Essentially, we apply all the correct hunks first and replace the
+#    the broken hunks afterwards.
 # 2. Replace the original patch with a completely updated patch.
 # 3. Copy the original patch then slightly modify and apply the patch.
 #    (Modifications may fix the path changes between minor versions.)
