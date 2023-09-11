@@ -376,7 +376,7 @@
           - Hot code may get essentially -O3 treatment.
           - Cold code may get essentially -Os treatment.
           - Coalesces code into either hot or cold sections or maybe pages.
-          - Code reording
+          - Code reordering
           - Loop rolling or unrolling loops based on PGO profile and thresholds.
     - Q:  What is the performance?
       A:  Avg: 10% to -0.5% benefit.  Potentially 40% outliers.
@@ -387,10 +387,11 @@
           subsystems, algorithms, user space programs.
     - Q:  Which is better active or passive training?
       A:  It depends...  For the least time investment, use passive traning.
-          For consistent performance determinism try custom active traning.
+          For consistent performance determinism try writing your own custom
+          active training script.
     - Q:  When should I do PGO?
       A:  It should be done at the beginning of the release cycle.  Doing
-          it about a week after the release may result in a discarded profile.
+          it about a week after the release may result in imminent replacement.
           Do not train more than once in a point release.
     - Q:  Should I pick GCC PGO or Clang PGO?
       A:  It depends if you plan to use KCFI or other compiler features.
