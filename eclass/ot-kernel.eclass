@@ -1261,8 +1261,8 @@ einfo "Copying GCC profile data"
 		done
 		IFS=$' \t\n'
 	else
-		if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/gcc" ]] ; then
-einfo "Using a cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}/gcc.  Delete *.gcda if stale."
+		if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" ]] ; then
+einfo "Using a cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc.  Delete *.gcda if stale."
 		fi
 	fi
 	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
