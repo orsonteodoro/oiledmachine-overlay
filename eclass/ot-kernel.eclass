@@ -1217,7 +1217,7 @@ einfo "Copying ${profraw_spath}"
 		chmod 0644 "${profraw_dpath}" || die
 	else
 		if [[ -e "${profraw_dpath}" ]] ; then
-einfo "Using a cached ${profraw_dpath}.  Delete *.profraw and *.profdata if stale."
+einfo "Using a cached ${profraw_dpath}.  Delete *.profraw and *.profdata if stale or to force a PGO profile update."
 		fi
 	fi
 	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
@@ -1262,7 +1262,7 @@ einfo "Copying GCC profile data"
 		IFS=$' \t\n'
 	else
 		if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" ]] ; then
-einfo "Using a cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc.  Delete *.gcda if stale."
+einfo "Using a cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc.  Delete *.gcda if stale or to force a PGO profile update."
 		fi
 	fi
 	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
