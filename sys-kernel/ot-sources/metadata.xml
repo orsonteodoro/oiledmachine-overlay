@@ -397,6 +397,11 @@
           GCC PGO looks promising with the least amount of time investment.
     - Q:  Does it really feel slow running under a instrumented kernel?
       A:  No outstanding noticeable difference.
+    - Q:  How do I unstuck myself from broken PGO and compile without it?
+      A:  Try one these:
+          - Disable the pgo USE flag.
+          - FORCE_PGO_PHASE="PG0" emerge =ot-sources-${PV}
+          - Delete the /var/lib/ot-sources/${PV} folder.
 
 
 
