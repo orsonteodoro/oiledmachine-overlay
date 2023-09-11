@@ -353,6 +353,51 @@
 
 
 
+    PGO for kernel mini FAQ
+
+    - Q:  Does GCC PGO work now for the kernel?
+      A:  No, it breaks during the building of the PGO image.
+    - Q:  Does Clang PGO work?
+      A:  No outstanding perceptable differences before and after but it does do
+          all steps without problems.
+    - Q:  Why do I keep seeing.   warning: '....gcda' profile count data file not
+          found [-Wmissing-profile]?
+      A:  It could be either one of these:
+          * The compiler is hinting that you skipped training for that.  If
+            it is not of value, don't train it.
+          * Name mangling bug.  This was observed with paths that have /../ that
+            should be mangled as #^# but this information is lost in
+            /sys/kernel/debug/gcov to fix it.  This serious issue pertains also
+            the amdgcn driver.
+    - Q:  What does PGO do?
+      A:  It depends on the implementation.
+          For optimized builds it may do the following:
+          - Automatic hot or cold classification, instead of manual annotations.
+          - Hot code may get essentially -O3 treatment.
+          - Cold code may get essentially -Os treatment.
+          - Coalesces code into hot or cold.
+          - Code reording
+          - Loop rolling or unrolling loops based on PGO profile and thresholds.
+    - Q:  What is the performance?
+      A:  Avg: 10% to -0.5% benefit.  Potentially 40% outliers.
+    - Q:  What benefits the greatest from PGO?
+      A:  Throughput and TPS (Transactions Per Second).
+    - Q:  How do I avoid the worst case performance?
+      A:  Do not do comprehesive training.  Train only actively used drivers,
+          subsystems, algorithms, user space programs.
+    - Q:  Which is better active or passive training?
+      A:  It depends...  For the least time investment, use passive traning.
+          For consistent performance determinism try custom active traning.
+    - Q:  When should I do PGO?
+      A:  It should be done at the beginning of the release cycle.  Doing
+          it about a week after the release may result in a discarded profile.
+          Do not train more than once in a point release.
+    - Q:  Should I pick GCC PGO or Clang PGO?
+      A:  It depends if you plan to use KCFI or other compiler features.
+          GCC PGO looks promising with the least amount of time investment.
+
+
+
     The config file-directory structure
 
     The tree structure is as follows in abstract form:
