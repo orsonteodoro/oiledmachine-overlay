@@ -395,6 +395,8 @@
     - Q:  Should I pick GCC PGO or Clang PGO?
       A:  It depends if you plan to use KCFI or other compiler features.
           GCC PGO looks promising with the least amount of time investment.
+    - Q:  Does it really feel slow running under a instrumented kernel?
+      A:  No outstanding noticeable difference.
 
 
 
