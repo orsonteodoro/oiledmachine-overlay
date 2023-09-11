@@ -368,7 +368,7 @@
           * Name mangling bug.  This was observed with paths that have /../ that
             should be mangled as #^# but this information is lost in
             /sys/kernel/debug/gcov to fix it.  This serious issue pertains also
-            the amdgcn driver.
+            to the amdgcn driver.
     - Q:  What does PGO do?
       A:  It depends on the implementation.
           For optimized builds it may do the following:
