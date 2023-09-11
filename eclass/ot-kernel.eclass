@@ -1217,7 +1217,7 @@ einfo "Copying ${profraw_spath}"
 		chmod 0644 "${profraw_dpath}" || die
 	else
 		if [[ -e "${profraw_dpath}" ]] ; then
-einfo "Using a cached ${profraw_dpath}.  Delete it if stale."
+einfo "Using a cached ${profraw_dpath}.  Delete *.profraw and *.profdata if stale."
 		fi
 	fi
 	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
@@ -1228,8 +1228,8 @@ einfo "Using a cached ${profraw_dpath}.  Delete it if stale."
 # Copies the profraw for GCC PGO.
 # It has to be done outside of the sandbox.
 dump_gcda() {
-#/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-6.5.2/work/linux-6.5.2-builder/sound/usb/clock.gcno
-#/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-6.5.2/work/linux-6.5.2-builder/sound/usb/clock.gcda
+#/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-6.5.2/work/linux-6.5.2-builder/sound/usb/clock.gcno ; symlink to deleted file
+#/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-6.5.2/work/linux-6.5.2-builder/sound/usb/clock.gcda ; profile data
 	local workdir
 	local s
 	[[ -e "/sys/kernel/debug/gcov/var" ]] || return
@@ -1240,18 +1240,29 @@ dump_gcda() {
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || die
-	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}" -name "*.gcda" -o -name "*.gcno" 2>/dev/null | wc -l)
+	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}"-name "*.gcda" 2>/dev/null | wc -l)
 	[[ -z "${n_gcda}" ]] && n_gcda=0
 	if (( ${n_gcda} == 0 )) ; then
 einfo "Copying GCC profile data"
-		cp \
-			-va \
-			"var" \
-			"${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" \
-			|| die
+		IFS=$'\n'
+		local L=(
+			$(find . -type f -name "*.gcda")
+		)
+		local f
+		for f in ${L[@]} ; do
+			local new_fn=$(echo "${f}" \
+				| sed -e "s|^\.||g" \
+				| sed -e "s|/|#|g")
+			cat \
+				"${f}" \
+				> \
+				"${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc/${new_fn}" \
+				|| die
+		done
+		IFS=$' \t\n'
 	else
 		if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/gcc" ]] ; then
-einfo "Using a cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}/gcc.  Delete it if stale."
+einfo "Using a cached GCC profile data from ${OT_KERNEL_PGO_DATA_DIR}/gcc.  Delete *.gcda if stale."
 		fi
 	fi
 	chown -R portage:portage "${OT_KERNEL_PGO_DATA_DIR}"
@@ -5133,7 +5144,7 @@ einfo "debugfs disabled success"
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 _ot-kernel_set_kconfig_pgo_gcc() {
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
-	local n_gdca=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
+	local n_gcda=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
 	[[ -z "${n_gcda}" ]] && n_gcda=0
 	if [[ -e "${pgo_phase_statefile}" ]] ; then
 		pgo_phase=$(cat "${pgo_phase_statefile}")
@@ -8177,7 +8188,6 @@ einfo "Resuming as PGT since no profile generated"
 			) \
 		; then
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
-#			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/var/tmp/portage/sys-kernel/${PN}-${PV}/work/linux-${PV}-${extraversion}"
 			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/"
 			local pgo_phase="${PGO_PHASE_UNK}"
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then

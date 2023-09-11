@@ -304,8 +304,7 @@
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profdata --
       The merged profdata PGO profile.  It is used when building an optimized
       build.
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/gcc/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-${PV}/work/linux-${PV}-${extraversion}/sound/usb/clock.gcno --
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/gcc/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-${PV}/work/linux-${PV}-${extraversion}/sound/usb/clock.gcda --
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/gcc/#var#tmp#portage#sys-kernel#ot-sources-${PV}#work#linux-${PV}-${extraversion}#sound#usb#clock.gcda --
       The GCC PGO profile.  It is used when building an optimized build.
 
     Notes:
