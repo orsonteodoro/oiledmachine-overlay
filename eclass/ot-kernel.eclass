@@ -1239,8 +1239,8 @@ dump_gcda() {
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
-	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || die
-	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
+	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || true
+	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
 	[[ -z "${n_gcda}" ]] && n_gcda=0
 	if (( ${n_gcda} == 0 )) ; then
 einfo "Copying GCC profile data"
