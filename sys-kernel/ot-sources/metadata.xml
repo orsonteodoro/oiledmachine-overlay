@@ -268,6 +268,11 @@
     4. PGO = Build as optimized
     5. end
 
+    Notes:
+
+    FORCE_PGO_PHASE may be used to unbreak or disable pgo using PGI, PGT, PGO,
+    PG0 as valid values.  PG0 means to disable/skip PGO.
+
 
 
     Using the build USE flag with the pgo USE flag

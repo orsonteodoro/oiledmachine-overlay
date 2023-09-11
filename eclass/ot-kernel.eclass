@@ -5103,7 +5103,9 @@ eerror
 			die
 		fi
 
-		if [[ -e "${pgo_phase_statefile}" ]] ; then
+		if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
+			pgo_phase="${FORCE_PGO_PHASE}"
+		elif [[ -e "${pgo_phase_statefile}" ]] ; then
 			pgo_phase=$(cat "${pgo_phase_statefile}")
 		else
 			pgo_phase="${PGO_PHASE_PGI}"
@@ -5153,7 +5155,9 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 	local n_gcda=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
 	[[ -z "${n_gcda}" ]] && n_gcda=0
-	if [[ -e "${pgo_phase_statefile}" ]] ; then
+	if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
+		pgo_phase="${FORCE_PGO_PHASE}"
+	elif [[ -e "${pgo_phase_statefile}" ]] ; then
 		pgo_phase=$(cat "${pgo_phase_statefile}")
 	else
 		pgo_phase="${PGO_PHASE_PGI}"
@@ -8143,7 +8147,9 @@ ot-kernel_build_kernel() {
 			local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
 			local pgo_phase="${PGO_PHASE_UNK}"
 			(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
-			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
+			if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
+				pgo_phase="${FORCE_PGO_PHASE}"
+			elif [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase="${PGO_PHASE_PGI}"
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
@@ -8197,7 +8203,9 @@ einfo "Resuming as PGT since no profile generated"
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc"
 			local pgo_phase="${PGO_PHASE_UNK}"
-			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
+			if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
+				pgo_phase="${FORCE_PGO_PHASE}"
+			elif [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase="${PGO_PHASE_PGI}"
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
@@ -8573,7 +8581,9 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 				ot-kernel_restore_keys
 			fi
 			local pgo_phase
-			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
+			if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
+				pgo_phase="${FORCE_PGO_PHASE}"
+			elif [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase="${PGO_PHASE_PGI}"
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
