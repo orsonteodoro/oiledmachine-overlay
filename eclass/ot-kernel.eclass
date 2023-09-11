@@ -7816,13 +7816,13 @@ einfo "HOSTLDFLAGS=${HOSTLDFLAGS}"
 einfo
 	if tc-is-cross-compiler ; then
 		args+=(
-			"HOSTCFLAGS=-O1 -pipe"
-			"HOSTLDFLAGS=-O1 -pipe"
+			'HOSTCFLAGS=-O1 -pipe'
+			'HOSTLDFLAGS=-O1 -pipe'
 		)
 	else
 		args+=(
-			"HOSTCFLAGS=${HOSTCFLAGS}"
-			"HOSTLDFLAGS=${HOSTLDFLAGS}"
+			'HOSTCFLAGS='"${HOSTCFLAGS}"
+			'HOSTLDFLAGS='"${HOSTLDFLAGS}"
 		)
 	fi
 
@@ -8181,11 +8181,11 @@ eerror
 				pgo_phase="${PGO_PHASE_PGO}"
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 einfo "Building PGO"
-				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
+				args+=( 'KCFLAGS=-fprofile-use="'"${profdata_dpath}"'"' )
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 # For resuming or rebuilding as PGO phase
 einfo "Building PGO"
-				args+=( KCFLAGS=-fprofile-use="${profdata_dpath}" )
+				args+=( 'KCFLAGS=-fprofile-use="'"${profdata_dpath}"'"' )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_dpath}" ]] ; then
 einfo "Resuming as PGT since no profile generated"
 			fi
@@ -8215,18 +8215,18 @@ einfo "Resuming as PGT since no profile generated"
 			[[ -z "${n_gcda}" ]] && n_gcda=0
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Building PGI"
-				args+=( "CFLAGS_GCOV=-fprofile-generate -ftest-coverage" )
+				args+=( 'CFLAGS_GCOV=-fprofile-generate -ftest-coverage' )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} > 0 )) ; then
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 einfo "Building PGO"
-				args+=( "KCFLAGS=-fprofile-use -fprofile-dir=${pgo_profile_dir} -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch" )
+				args+=( 'KCFLAGS=-fprofile-use -fprofile-dir="'"${pgo_profile_dir}"'" -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch' )
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 # For resuming or rebuilding as PGO phase
 einfo "Building PGO"
-				args+=( "CFLAGS=-fprofile-use -fprofile-dir=${pgo_profile_dir} -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch" )
+				args+=( 'CFLAGS=-fprofile-use -fprofile-dir="'"${pgo_profile_dir}"'" -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch' )
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} == 0 )) ; then
 einfo "Resuming as PGT since no profile generated"
-				args+=( "CFLAGS_GCOV=-fprofile-generate -ftest-coverage" )
+				args+=( 'CFLAGS_GCOV=-fprofile-generate -ftest-coverage' )
 			fi
 
 		fi
