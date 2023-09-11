@@ -285,9 +285,12 @@
       3. Build and install initramfs
       4. Update the bootloader
       5. Reboot
-      6. mount -t debugfs none /sys/kernel/debug                                          # For GCC PGO if /sys/kernel/debug is not mounted yet by init scripts
-      7. Train the kernel with the pgo-trainer.sh script or your own simulation script
-      8. Re-emerge the package with the build and pgo USE flag for an optimized build
+      6. mount -t debugfs none /sys/kernel/debug
+         (For GCC PGO if /sys/kernel/debug is not mounted yet by init scripts)
+      7. Train the kernel with the pgo-trainer.sh script or your own simulation
+         script
+      8. Re-emerge the package with the build and pgo USE flag for an optimized
+         build
 
 
 
@@ -303,7 +306,6 @@
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}/{llvm,gcc}/pgophase --
       The PGO phase progression state file that contains the current step.
       {PGI,PGT,PGO,DONE} are the states in the FSM (Finite State Machine).
-
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profraw --
       The profraw captured before conversion.
     /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profdata --
@@ -402,7 +404,8 @@
       A:  Try one these:
           - Disable the pgo USE flag.
           - FORCE_PGO_PHASE="PG0" emerge =ot-sources-${PV}
-          - Delete the /var/lib/ot-sources/${PV} folder.
+          - Delete the /var/lib/ot-sources/${PV} or the
+            /var/lib/ot-sources/${PV}/${extraversion}-${arch} folder.
 
 
 
