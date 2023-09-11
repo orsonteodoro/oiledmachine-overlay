@@ -1240,7 +1240,7 @@ dump_gcda() {
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || die
-	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}"-name "*.gcda" 2>/dev/null | wc -l)
+	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
 	[[ -z "${n_gcda}" ]] && n_gcda=0
 	if (( ${n_gcda} == 0 )) ; then
 einfo "Copying GCC profile data"
@@ -8188,7 +8188,7 @@ einfo "Resuming as PGT since no profile generated"
 			) \
 		; then
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
-			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/"
+			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc"
 			local pgo_phase="${PGO_PHASE_UNK}"
 			if [[ ! -e "${pgo_phase_statefile}" ]] ; then
 				pgo_phase="${PGO_PHASE_PGI}"
