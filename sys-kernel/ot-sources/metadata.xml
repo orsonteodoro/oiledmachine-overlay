@@ -375,7 +375,7 @@
           - Automatic hot or cold classification, instead of manual annotations.
           - Hot code may get essentially -O3 treatment.
           - Cold code may get essentially -Os treatment.
-          - Coalesces code into hot or cold.
+          - Coalesces code into either hot or cold sections or maybe pages.
           - Code reording
           - Loop rolling or unrolling loops based on PGO profile and thresholds.
     - Q:  What is the performance?
