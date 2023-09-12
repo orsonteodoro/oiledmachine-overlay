@@ -1,0 +1,34 @@
+License identified in Makefile:
+# SPDX-License-Identifier: GPL-2.0
+--- a/Makefile.orig	2023-09-11 21:22:08.843786154 -0700
++++ b/Makefile	2023-09-11 21:25:55.491780644 -0700
+@@ -762,7 +762,11 @@ endif # KBUILD_EXTMOD
+ # Defaults to vmlinux, but the arch makefile usually adds further targets
+ all: vmlinux
+ 
+-CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
++CFLAGS_GCOV	:=
++ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++CFLAGS_GCOV	+= -fprofile-generate
++endif
++CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage
+ ifdef CONFIG_CC_IS_GCC
+ CFLAGS_GCOV	+= -fno-tree-loop-im
+ endif
+@@ -1119,6 +1123,16 @@ KBUILD_RUSTFLAGS += $(KRUSTFLAGS)
+ KBUILD_LDFLAGS_MODULE += --build-id=sha1
+ LDFLAGS_vmlinux += --build-id=sha1
+ 
++ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
++KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
++endif
++ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++KBUILD_CFLAGS         += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
++KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
++endif
++
+ KBUILD_LDFLAGS	+= -z noexecstack
+ ifeq ($(CONFIG_LD_IS_BFD),y)
+ KBUILD_LDFLAGS	+= $(call ld-option,--no-warn-rwx-segments)

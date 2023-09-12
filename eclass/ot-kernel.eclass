@@ -1207,7 +1207,10 @@ dump_profraw() {
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
 	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/llvm/vmlinux.profraw"
-	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/llvm" || die
+	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PG0") ]] ; then
+		rm -rf "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/llvm"
+	fi
+	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/llvm" || die
 	if [[ -e "${profraw_spath}" ]] ; then
 		cat "${profraw_spath}" > "${profraw_dpath}" 2>/dev/null || true
 	fi
@@ -1242,6 +1245,9 @@ dump_gcda() {
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
+	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PG0") ]] ; then
+		rm -rf "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc"
+	fi
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || true
 	local n_gcda=$(find "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
 	[[ -z "${n_gcda}" ]] && n_gcda=0
@@ -2446,6 +2452,14 @@ ewarn
 		eapply "${FILESDIR}/ep800/add-ep800-to-build-for-5.18.patch"
 	else
 		eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
+	fi
+
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		eapply "${FILESDIR}/gcc-pgo-flags-5.6.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
+		eapply "${FILESDIR}/gcc-pgo-flags-4.19.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		eapply "${FILESDIR}/gcc-pgo-flags-4.14.patch"
 	fi
 
 	local moved=0
@@ -5172,7 +5186,10 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_y_configopt "CONFIG_GCOV_KERNEL"
 		ot-kernel_y_configopt "CONFIG_GCOV_PROFILE_ALL"
-		ot-kernel_y_configopt "CONFIG_GCOV_FORMAT_AUTODETECT"
+		if ver_test ${KV_MAJOR_MINOR} -le 4.17 ; then
+			ot-kernel_y_configopt "CONFIG_GCOV_FORMAT_AUTODETECT"
+		fi
+		ot-kernel_n_configopt "CONFIG_COMPILE_TEST"
 	elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") ]] && (( ${n_gcda} > 0 )) ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_n_configopt "CONFIG_GCOV_KERNEL"
@@ -7727,15 +7744,17 @@ ot-kernel_setup_tc() {
 	# The make command likes to complain before the build when trying to make menuconfig.
 einfo "Setting up the build toolchain"
 	args+=(
-		INSTALL_MOD_PATH="${ED}"
-		INSTALL_PATH="${ED}${kernel_dir}"
-		${MAKEOPTS}
-		ARCH=${arch}
+		"${MAKEOPTS}"
+		"ARCH=${arch}"
+		"INSTALL_MOD_PATH=${ED}"
+		"INSTALL_PATH=${ED}${kernel_dir}"
 	)
 	local llvm_slot=$(get_llvm_slot)
 	local gcc_slot=$(get_gcc_slot)
 	if [[ -n "${cross_compile_target}" ]] ; then
-		args+=( CROSS_COMPILE=${target_triple}- )
+		args+=(
+			"CROSS_COMPILE=${target_triple}-"
+		)
 	fi
 	if \
 		( \
@@ -7751,46 +7770,46 @@ einfo "Using Clang ${llvm_slot}"
 		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
 		# Assumes we are not cross-compiling or we are only building on CBUILD=CHOST.
 		args+=(
-			CC=${CHOST}-clang-${llvm_slot}
-			CXX=${CHOST}-clang++-${llvm_slot}
-			LD=ld.lld
-			AR=llvm-ar
-			NM=llvm-nm
-			STRIP=llvm-strip
-			OBJCOPY=llvm-objcopy
-			OBJDUMP=llvm-objdump
-			READELF=llvm-readelf
-			HOSTCC=${CBUILD}-clang-${llvm_slot}
-			HOSTCXX=${CBUILD}-clang++-${llvm_slot}
-			HOSTAR=llvm-ar
-			HOSTLD=ld.lld
+			"CC=${CHOST}-clang-${llvm_slot}"
+			"CXX=${CHOST}-clang++-${llvm_slot}"
+			"LD=ld.lld"
+			"AR=llvm-ar"
+			"NM=llvm-nm"
+			"STRIP=llvm-strip"
+			"OBJCOPY=llvm-objcopy"
+			"OBJDUMP=llvm-objdump"
+			"READELF=llvm-readelf"
+			"HOSTCC=${CBUILD}-clang-${llvm_slot}"
+			"HOSTCXX=${CBUILD}-clang++-${llvm_slot}"
+			"HOSTAR=llvm-ar"
+			"HOSTLD=ld.lld"
 		)
 		# For flag-o-matic
-		CC=clang
-		CXX=clang++
-		LD=ld.lld
+		CC="clang"
+		CXX="clang++"
+		LD="ld.lld"
 	else
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
 einfo "Using GCC ${gcc_slot}"
 		args+=(
-			CC=${CHOST}-gcc-${gcc_slot}
-			CXX=${CHOST}-g++-${gcc_slot}
-			LD=${CHOST}-ld.bfd
-			AR=${CHOST}-ar
-			NM=${CHOST}-nm
-			STRIP=${CHOST}-strip
-			OBJCOPY=${CHOST}-objcopy
-			OBJDUMP=${CHOST}-objdump
-			READELF=${CHOST}-readelf
-			HOSTCC=${CBUILD}-gcc-${gcc_slot}
-			HOSTCXX=${CBUILD}-g++-${gcc_slot}
-			HOSTAR=${CBUILD}-ar
-			HOSTLD=${CBUILD}-ld.bfd
+			"CC=${CHOST}-gcc-${gcc_slot}"
+			"CXX=${CHOST}-g++-${gcc_slot}"
+			"LD=${CHOST}-ld.bfd"
+			"AR=${CHOST}-ar"
+			"NM=${CHOST}-nm"
+			"STRIP=${CHOST}-strip"
+			"OBJCOPY=${CHOST}-objcopy"
+			"OBJDUMP=${CHOST}-objdump"
+			"READELF=${CHOST}-readelf"
+			"HOSTCC=${CBUILD}-gcc-${gcc_slot}"
+			"HOSTCXX=${CBUILD}-g++-${gcc_slot}"
+			"HOSTAR=${CBUILD}-ar"
+			"HOSTLD=${CBUILD}-ld.bfd"
 		)
 		# For flag-o-matic
-		CC=gcc
-		CXX=g++
-		LD=ld.bfd
+		CC="gcc"
+		CXX="g++"
+		LD="ld.bfd"
 	fi
 
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
@@ -7816,18 +7835,20 @@ einfo "HOSTLDFLAGS=${HOSTLDFLAGS}"
 einfo
 	if tc-is-cross-compiler ; then
 		args+=(
-			'HOSTCFLAGS=-O1 -pipe'
-			'HOSTLDFLAGS=-O1 -pipe'
+			"HOSTCFLAGS=-O1 -pipe"
+			"HOSTLDFLAGS=-O1 -pipe"
 		)
 	else
 		args+=(
-			'HOSTCFLAGS='"${HOSTCFLAGS}"
-			'HOSTLDFLAGS='"${HOSTLDFLAGS}"
+			"HOSTCFLAGS=${HOSTCFLAGS}"
+			"HOSTLDFLAGS=${HOSTLDFLAGS}"
 		)
 	fi
 
 	if has tresor ${IUSE} && ot-kernel_use tresor && tc-is-clang ; then
-		args+=( LLVM_IAS=0 )
+		args+=(
+			"LLVM_IAS=0"
+		)
 	fi
 
 	local march_flags=($(echo "${CFLAGS}" \
@@ -8181,11 +8202,15 @@ eerror
 				pgo_phase="${PGO_PHASE_PGO}"
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 einfo "Building PGO"
-				args+=( 'KCFLAGS=-fprofile-use="'"${profdata_dpath}"'"' )
+				args+=(
+					"KCFLAGS=-fprofile-use=${profdata_dpath}"
+				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 # For resuming or rebuilding as PGO phase
 einfo "Building PGO"
-				args+=( 'KCFLAGS=-fprofile-use="'"${profdata_dpath}"'"' )
+				args+=(
+					"KCFLAGS=-fprofile-use=${profdata_dpath}"
+				)
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_dpath}" ]] ; then
 einfo "Resuming as PGT since no profile generated"
 			fi
@@ -8215,18 +8240,70 @@ einfo "Resuming as PGT since no profile generated"
 			[[ -z "${n_gcda}" ]] && n_gcda=0
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Building PGI"
-				args+=( 'CFLAGS_GCOV=-fprofile-generate -ftest-coverage' )
+				local gcc_slot=$(gcc-major-version)
+				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
+					args+=(
+						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
+					)
+				elif [[ "${arch}" == "x86" ]] ; then
+					args+=(
+						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_GCOV_DIR=/usr/lib/gcc/${CHOST}/${gcc_slot}/32"
+					)
+				elif [[ "${arch}" == "x86_64" ]] ; then
+					args+=(
+						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_GCOV_DIR=/usr/lib/gcc/${CHOST}/${gcc_slot}"
+					)
+				else
+eerror
+eerror "Unknown arch:  ${arch}"
+eerror
+eerror "You must define GCC_GCOV_DIR to the folder containing libgcov.a."
+eerror
+					die
+				fi
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} > 0 )) ; then
 				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
 einfo "Building PGO"
-				args+=( 'KCFLAGS=-fprofile-use -fprofile-dir="'"${pgo_profile_dir}"'" -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch' )
+				args+=(
+					"GCC_PGO_PHASE=GCC_PGO"
+					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
+				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 # For resuming or rebuilding as PGO phase
 einfo "Building PGO"
-				args+=( 'CFLAGS=-fprofile-use -fprofile-dir="'"${pgo_profile_dir}"'" -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch' )
+				args+=(
+					"GCC_PGO_PHASE=GCC_PGO"
+					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
+				)
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} == 0 )) ; then
 einfo "Resuming as PGT since no profile generated"
-				args+=( 'CFLAGS_GCOV=-fprofile-generate -ftest-coverage' )
+				local gcc_slot=$(gcc-major-version)
+				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
+					args+=(
+						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
+					)
+				elif [[ "${arch}" == "x86" ]] ; then
+					args+=(
+						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_GCOV_DIR=/usr/lib/gcc/${CHOST}/${gcc_slot}/32"
+					)
+				elif [[ "${arch}" == "x86_64" ]] ; then
+					args+=(
+						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_GCOV_DIR=/usr/lib/gcc/${CHOST}/${gcc_slot}"
+					)
+				else
+eerror
+eerror "Unknown arch:  ${arch}"
+eerror
+eerror "You must define GCC_GCOV_DIR to the folder containing libgcov.a."
+eerror
+					die
+				fi
 			fi
 
 		fi
@@ -8297,7 +8374,10 @@ einfo
 
 		local args=()
 		if [[ -n "${OT_KERNEL_VERBOSITY}" ]] ; then
-			args+=( V=${OT_KERNEL_VERBOSITY} ) # 0=minimal, 1=compiler flags, 2=rebuild reasons
+			# 0=minimal, 1=compiler flags, 2=rebuild reasons
+			args+=(
+				"V=${OT_KERNEL_VERBOSITY}"
+			)
 		fi
 		ot-kernel_setup_tc
 		ot-kernel_build_tresor_sysfs
