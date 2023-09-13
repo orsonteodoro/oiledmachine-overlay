@@ -1,44 +1,119 @@
+Patch status:  WIP / In development
 License identified for Makefile:
 # SPDX-License-Identifier: GPL-2.0
 License identified for scripts/Makefile.modfinal:
 # SPDX-License-Identifier: GPL-2.0-only
---- a/Makefile.orig	2023-09-12 16:10:01.828046361 -0700
-+++ b/Makefile	2023-09-12 16:19:37.180031480 -0700
-@@ -762,7 +762,14 @@ endif # KBUILD_EXTMOD
+License identified for scripts/Makefile.vmlinux_o:
+# SPDX-License-Identifier: GPL-2.0-only
+License identified in scripts/Makefile.vmlinux:
+# SPDX-License-Identifier: GPL-2.0-only
+--- a/Makefile.orig	2023-09-12 19:32:05.446367357 -0700
++++ b/Makefile	2023-09-12 19:47:59.266342687 -0700
+@@ -762,7 +762,18 @@ endif # KBUILD_EXTMOD
  # Defaults to vmlinux, but the arch makefile usually adds further targets
  all: vmlinux
  
 -CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
 +CFLAGS_GCOV	:=
-+CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++ifeq ($(findstring GCC_PDI,$(GCC_PGO_PHASE)),GCC_PDI)
++CFLAGS_GCOV	+= -fprofile-arcs
++else ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
 +CFLAGS_GCOV	+= -fprofile-generate
-+endif
-+ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++else ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
++CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++else ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
 +CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++else
++CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage
 +endif
  ifdef CONFIG_CC_IS_GCC
  CFLAGS_GCOV	+= -fno-tree-loop-im
  endif
+--- a/scripts/Makefile.vmlinux_o.orig	2023-08-27 14:49:51.000000000 -0700
++++ b/scripts/Makefile.vmlinux_o	2023-09-12 20:18:26.242295433 -0700
+@@ -44,12 +44,18 @@ objtool-args = $(vmlinux-objtool-args-y)
+ # Link of vmlinux.o used for section mismatch analysis
+ # ---------------------------------------------------------------------------
+ 
++LDFLAGS_PGI :=
++#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#      LDFLAGS_PGI += -L$(LIBC_DIR) -l:libc.a -L$(GCC_GCOV_DIR) -l:libgcov.a -l:libgcc.a $(LIBBFD_DIR) -l:libunwind.a
++#endif
++
+ quiet_cmd_ld_vmlinux.o = LD      $@
+       cmd_ld_vmlinux.o = \
+ 	$(LD) ${KBUILD_LDFLAGS} -r -o $@ \
+ 	$(addprefix -T , $(initcalls-lds)) \
++	--allow-multiple-definition \
+-	--whole-archive vmlinux.a --no-whole-archive \
++	--whole-archive vmlinux.a --no-whole-archive \
+-	--start-group $(KBUILD_VMLINUX_LIBS) --end-group \
++	--start-group $(KBUILD_VMLINUX_LIBS) $(LDFLAGS_PGI) --end-group \
+ 	$(cmd_objtool)
+ 
+ define rule_ld_vmlinux.o
 --- a/scripts/Makefile.modfinal.orig	2023-08-27 14:49:51.000000000 -0700
-+++ b/scripts/Makefile.modfinal	2023-09-12 16:19:21.560031884 -0700
-@@ -22,6 +22,11 @@ __modfinal: $(modules:%.o=%.ko)
++++ b/scripts/Makefile.modfinal	2023-09-12 19:43:51.714349090 -0700
+@@ -22,8 +22,20 @@ __modfinal: $(modules:%.o=%.ko)
  modname = $(notdir $(@:.mod.o=))
  part-of-module = y
  
++CFLAGS_GCOV_PGI :=
++CFLAGS_GCOV_PGO :=
++LDFLAGS_GCOV_PGI :=
 +LDFLAGS_GCOV_PGO :=
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+      LDFLAGS_GCOV_PGO += -L$(GCC_GCOV_DIR) -lgcov
-+endif
++#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#      CFLAGS_GCOV_PGI += -fprofile-generate -fno-tree-loop-im
++#      LDFLAGS_GCOV_PGI += -L$(LIBC_DIR) -l:libc.a -L$(GCC_GCOV_DIR) -l:libgcov.a -l:libgcc.a -l:libunwind.a
++#endif
++#ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++#      CFLAGS_GCOV_PGO += -fprofile-use -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++#endif
 +
  quiet_cmd_cc_o_c = CC [M]  $@
-       cmd_cc_o_c = $(CC) $(filter-out $(CC_FLAGS_CFI) $(CFLAGS_GCOV), $(c_flags)) -c -o $@ $<
+-      cmd_cc_o_c = $(CC) $(filter-out $(CC_FLAGS_CFI) $(CFLAGS_GCOV), $(c_flags)) -c -o $@ $<
++      cmd_cc_o_c = $(CC) $(filter-out $(CC_FLAGS_CFI) $(CFLAGS_GCOV), $(c_flags)) $(CFLAGS_GCOV_PGI) $(LDFLAGS_GCOV_PGO) -c -o $@ $<
  
-@@ -34,6 +39,7 @@ quiet_cmd_ld_ko_o = LD [M]  $@
+ %.mod.o: %.mod.c FORCE
+ 	$(call if_changed_dep,cc_o_c)
+@@ -34,6 +46,7 @@ quiet_cmd_ld_ko_o = LD [M]  $@
        cmd_ld_ko_o +=							\
  	$(LD) -r $(KBUILD_LDFLAGS)					\
  		$(KBUILD_LDFLAGS_MODULE) $(LDFLAGS_MODULE)		\
-+		$(LDFLAGS_GCOV_PGO) \
++		$(LDFLAGS_GCOV_PGI) \
  		-T scripts/module.lds -o $@ $(filter %.o, $^);		\
  	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
  
+--- a/scripts/Makefile.vmlinux.orig	2023-08-27 14:49:51.000000000 -0700
++++ b/scripts/Makefile.vmlinux	2023-09-12 19:41:24.802352890 -0700
+@@ -11,8 +11,20 @@ include $(srctree)/scripts/Makefile.lib
+ 
+ targets :=
+ 
++CFLAGS_PGI :=
++CFLAGS_PGO :=
++LDFLAGS_PGI :=
++LDFLAGS_PGO :=
++#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#CFLAGS_PGI	+= -fprofile-generate -fno-tree-loop-im
++#LDFLAGS_PGI     += -L$(LIBC_DIR) -l:libc.a -L$(GCC_GCOV_DIR) -l:libgcov.a -l:libgcc.a -l:libunwind.a
++#endif
++#ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++##CFLAGS_PGO	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++#endif
++
+ quiet_cmd_cc_o_c = CC      $@
+-      cmd_cc_o_c = $(CC) $(c_flags) -c -o $@ $<
++      cmd_cc_o_c = $(CC) $(c_flags) $(CFLAGS_GCOV) $(CFLAGS_PGI) $(CFLAGS_PGO) -c -o $@ $<
+ 
+ %.o: %.c FORCE
+ 	$(call if_changed_dep,cc_o_c)
+@@ -28,7 +40,7 @@ ARCH_POSTLINK := $(wildcard $(srctree)/a
+ 
+ # Final link of vmlinux with optional arch pass after final link
+ cmd_link_vmlinux =							\
+-	$< "$(LD)" "$(KBUILD_LDFLAGS)" "$(LDFLAGS_vmlinux)";		\
++	$< "$(LD)" "$(KBUILD_LDFLAGS)" "$(LDFLAGS_vmlinux)" "$(LDFLAGS_PGI)" "$(LDFLAGS_PGO)";		\
+ 	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
+ 
+ targets += vmlinux

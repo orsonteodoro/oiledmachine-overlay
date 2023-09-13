@@ -131,7 +131,7 @@ ${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
 
 IUSE+="
 bfq-mq build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss
-orca pds pgo rt symlink tresor tresor_aesni tresor_i686 tresor_prompt
+orca pdo pds pgo rt symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 uksm
 "
 REQUIRED_USE+="
@@ -267,6 +267,7 @@ CDEPEND+="
 	)
 "
 
+GCC_PV="3.1"
 RDEPEND+="
 	!build? (
 		${CDEPEND}
@@ -274,13 +275,16 @@ RDEPEND+="
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
+	pdo? (
+		>=sys-devel/gcc-${GCC_PV}
+	)
 	pgo? (
-		>=sys-devel/gcc-3.2
+		>=sys-devel/gcc-kpgo-${GCC_PV}
 	)
 "
 
 DEPEND+="
-	${DEPEND}
+	${RDEPEND}
 "
 
 BDEPEND+="

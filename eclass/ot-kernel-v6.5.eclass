@@ -177,8 +177,8 @@ RUST_PV="1.68.2"
 
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi lto orca pgo prjc rt -rust shadowcallstack symlink tresor
-tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
+-genpatches_1510 kcfi lto orca pdo pgo prjc rt -rust shadowcallstack symlink
+tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
 "
 
@@ -471,6 +471,7 @@ BDEPEND+="
 "
 
 # KCFI requires https://reviews.llvm.org/D119296 patch
+GCC_PV="5.1"
 RDEPEND+="
 	${KCP_RDEPEND}
 	lto? (
@@ -490,9 +491,14 @@ RDEPEND+="
 			)
 		)
 	)
+	pdo? (
+		!clang? (
+			>=sys-devel/gcc-${GCC_PV}
+		)
+	)
 	pgo? (
 		!clang? (
-			>=sys-devel/gcc-5.1
+			>=sys-devel/gcc-kpgo-${GCC_PV}
 		)
 		clang? (
 			|| (

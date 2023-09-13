@@ -173,7 +173,7 @@ ZEN_MUQSS_EXCLUDED_COMMITS=(
 
 IUSE+="
 bmq build c2tcp +cfs clang deepcc disable_debug +genpatches
--genpatches_1510 muqss orca pgo rock-dkms rt symlink tresor tresor_aesni
+-genpatches_1510 muqss orca pdo pgo rock-dkms rt symlink tresor tresor_aesni
 tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
 "
@@ -346,6 +346,7 @@ CDEPEND+="
 	)
 "
 
+GCC_PV="4.6"
 RDEPEND+="
 	${KCP_RDEPEND}
 	!build? (
@@ -354,8 +355,11 @@ RDEPEND+="
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
+	pdo? (
+		>=sys-devel/gcc-${GCC_PV}
+	)
 	pgo? (
-		>=sys-devel/gcc-4.6
+		>=sys-devel/gcc-kpgo-${GCC_PV}
 	)
 "
 

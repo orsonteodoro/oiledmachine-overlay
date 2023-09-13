@@ -260,6 +260,15 @@
     initramfs updates.
 
 
+    The PDO (Profile Directed Optimization) progression:
+
+    1. start from unknown state
+    2. PDI = Build as instrumented
+    3. PDT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
+    4. PDO = Build as optimized
+    5. end
+
+
     The PGO (Profile Guided Optimization) progression:
 
     1. start from unknown state
@@ -270,9 +279,13 @@
 
     Notes:
 
+    FORCE_PGO_PHASE may be used to unbreak or disable pdo using PDI, PDT, PDO,
+    PD0 as valid values.  PD0 means to disable/skip PGO.
+
     FORCE_PGO_PHASE may be used to unbreak or disable pgo using PGI, PGT, PGO,
     PG0 as valid values.  PG0 means to disable/skip PGO.
 
+    Same variable name but different values for PGO/PDO.
 
 
     Using the build USE flag with the pgo USE flag
@@ -355,7 +368,7 @@
 
 
 
-    PGO for kernel mini FAQ
+    PGO/PDO for kernel mini FAQ
 
     - Q:  Does GCC PGO work now for the kernel?
       A:  No, it breaks during the building of the PGO image.
@@ -383,7 +396,7 @@
     - Q:  What is the performance?
       A:  Avg: 10% to -0.5% benefit.  Potentially 40% outliers.
     - Q:  What benefits the greatest from PGO?
-      A:  Throughput and TPS (Transactions Per Second).
+      A:  Throughput, TPS (Transactions Per Second)
     - Q:  How do I avoid the worst case performance?
       A:  Do not do comprehesive training.  Train only actively used drivers,
           subsystems, algorithms, user space programs.
@@ -406,7 +419,12 @@
           - FORCE_PGO_PHASE="PG0" emerge =ot-sources-${PV}
           - Delete the /var/lib/ot-sources/${PV} or the
             /var/lib/ot-sources/${PV}/${extraversion}-${arch} folder.
-
+    - Q:  Difference between PGO and PDO?
+      A:  PDO is a weaker optimization compared to PGO.  PDO can only do
+          optimization based on the CFG (Control Flow Graph) not values. 
+          PGO is more difficult to apply on the kernel, but with PDO it
+          is more easier.  Kernel GCOV support for PGO is not fully implemented,
+          but requires patches.
 
 
     The config file-directory structure
@@ -3634,6 +3652,13 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="pds">
       Patches the kernel with an alternative skiplist based scheduler.
+    </flag>
+    <flag name="pdo">
+      Perform Profile Directed Optimization.  3 phases like PGO but only using
+      same optimizations, code generation options, and -fbranch-probabilities
+      optimization.
+
+      Support is experimental and GCC only in the ebuild level.
     </flag>
     <flag name="pgo">
       Perform Profile Guided Optimization that may in average result in a range 

@@ -178,6 +178,7 @@ IUSE+="
 bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick intel-microcode
 linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5 xz zstd
 "
+GCC_PKG="sys-devel/gcc"
 NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{10..11} ) # Slots based on dev-python/selenium
 inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags
@@ -206,7 +207,6 @@ DEPEND+="
 	pgo? (
 		!clang? (
 			sys-devel/binutils[static-libs]
-			sys-devel/gcc-kpgo
 			sys-libs/libunwind[static-libs]
 		)
 	)
@@ -1200,6 +1200,30 @@ eerror
 #
 	dump_profraw
 	dump_gcda
+
+	export PATH_ORIG="${PATH}"
+	if has_version "sys-devel/gcc-kpgo" && use pgo ; then
+einfo "Detected sys-devel/gcc-kpgo"
+		export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
+		GCC_PKG="sys-devel/gcc-kpgo"
+	else
+		GCC_PKG="sys-devel/gcc"
+	fi
+
+	if has ccache ${FEATURES} && use pgo && ! use clang ; then
+ewarn
+ewarn "ccache is not supported in FEATURES with GCC PGO."
+ewarn "Trying to disable."
+ewarn
+	        einfo "PATH=${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+	                | tr ":" "\n" \
+	                | sed -E -e "/ccache/d" \
+	                | tr "\n" ":" \
+	                | sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
+	        einfo "PATH=${PATH} (after)"
+	fi
+
 }
 
 # @FUNCTION: dump_profraw
@@ -1999,7 +2023,7 @@ ot-kernel_src_unpack() {
 	if (( ${wants_kcp} == 1 || ${wants_kcp_rpi} == 1 )) ; then
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
-		local gcc_pv=$(best_version "sys-devel/gcc:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|sys-devel/gcc-||" -e "s|-r[0-9]+||")
+		local gcc_pv=$(best_version "${GCC_PKG}:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|${GCC_PKG}-||" -e "s|-r[0-9]+||")
 		local clang_pv=$(best_version "sys-devel/clang:${llvm_slot}" | sed -r -e "s|sys-devel/clang-||" -e "s|-r[0-9]+||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
 		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
@@ -7740,7 +7764,7 @@ get_llvm_slot() {
 get_gcc_slot() {
 	local gcc_slot
 	for gcc_slot in $(seq ${GCC_MAX_SLOT:-13} -1 ${GCC_MIN_SLOT:-6}) ; do
-		ot-kernel_has_version "sys-devel/gcc:${gcc_slot}" && is_gcc_ready && break
+		ot-kernel_has_version "${GCC_PKG}:${gcc_slot}" && is_gcc_ready && break
 	done
 	echo "${gcc_slot}"
 }
@@ -7797,8 +7821,12 @@ einfo "Using Clang ${llvm_slot}"
 		CXX="clang++"
 		LD="ld.lld"
 	else
+		if has_version "sys-devel/gcc-kpgo" && use pgo ; then
+einfo "Detected sys-devel/gcc-kpgo"
+			export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
+		fi
+
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
-einfo "Using GCC ${gcc_slot}"
 		args+=(
 			"CC=${CHOST}-gcc-${gcc_slot}"
 			"CXX=${CHOST}-g++-${gcc_slot}"
@@ -8238,7 +8266,9 @@ einfo "Resuming as PGT since no profile generated"
 			local pgo_phase="${PGO_PHASE_UNK}"
 			if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
 				pgo_phase="${FORCE_PGO_PHASE}"
-			elif [[ ! -e "${pgo_phase_statefile}" ]] ; then
+			elif [[ ! -e "${pgo_phase_statefile}" ]] && ot-kernel_use pdo ; then
+				pgo_phase="${PGO_PHASE_PDI}"
+			elif [[ ! -e "${pgo_phase_statefile}" ]] && ot-kernel_use pgo ; then
 				pgo_phase="${PGO_PHASE_PGI}"
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
@@ -8252,10 +8282,12 @@ eerror
 				die
 			fi
 
+einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
+
 			local n_gcda=$(find "${pgo_profile_dir}" -name "*.gcda" 2>/dev/null | wc -l)
 			[[ -z "${n_gcda}" ]] && n_gcda=0
-			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-einfo "Building PGI"
+			if [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGI}"|"${PGO_PHASE_PDI}") ]] ; then
+einfo "Building ${pgo_phase}"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
 				local binutils_pv=$(best_version sys-devel/binutils \
@@ -8263,7 +8295,7 @@ einfo "Building PGI"
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_PGO_PHASE=${pgo_phase}"
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${LIBBFD_DIR}"
@@ -8271,7 +8303,7 @@ einfo "Building PGI"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_PGO_PHASE=${pgo_phase}"
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST}/${binutils_pv}"
@@ -8285,26 +8317,43 @@ eerror "You must define GCC_GCOV_DIR to the absolute path containing libgcov.a."
 eerror "You must define LIBBFD_DIR to the absolute path containing libbfd.a."
 eerror "You must define LIBC_DIR to the absolute path containing libc.a."
 eerror
-eerror "Only native GCC PGO builds supported."
+eerror "Only native GCC PGO/PDO builds are supported."
 eerror
 					die
 				fi
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} > 0 )) ; then
-				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
-einfo "Building PGO"
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}"|"${PGO_PHASE_PDT}") ]] && (( ${n_gcda} > 0 )) ; then
+				if [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] ; then
+					pgo_phase="PGO"
+				elif [[ "${pgo_phase}" == "${PGO_PHASE_PDT}" ]] ; then
+					pgo_phase="PDO"
+				fi
+				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
+einfo "Building ${pgo_phase}"
 				args+=(
-					"GCC_PGO_PHASE=GCC_PGO"
+					"GCC_PGO_PHASE=${pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
-			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PDO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] && ot-kernel_use pdo ; then
+# For resuming or rebuilding as PDO phase
+einfo "Building ${pgo_phase}"
+				args+=(
+					"GCC_PGO_PHASE=${pgo_phase}"
+					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
+				)
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] && ot-kernel_use pgo ; then
 # For resuming or rebuilding as PGO phase
-einfo "Building PGO"
+einfo "Building ${pgo_phase}"
 				args+=(
-					"GCC_PGO_PHASE=GCC_PGO"
+					"GCC_PGO_PHASE=${pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
-			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} == 0 )) ; then
-einfo "Resuming as PGT since no profile generated"
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}"|"${PGO_PHASE_PDT}") ]] && (( ${n_gcda} == 0 )) ; then
+				if [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] ; then
+					pgo_phase="PGI"
+				elif [[ "${pgo_phase}" == "${PGO_PHASE_PDT}" ]] ; then
+					pgo_phase="PDI"
+				fi
+einfo "Resuming as ${pgo_phase} since no profile generated"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
 				local binutils_pv=$(best_version sys-devel/binutils \
@@ -8312,7 +8361,7 @@ einfo "Resuming as PGT since no profile generated"
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_PGO_PHASE=${pgo_phase}"
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${LIBBFD_DIR}"
@@ -8320,7 +8369,7 @@ einfo "Resuming as PGT since no profile generated"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=GCC_PGI"
+						"GCC_PGO_PHASE=${pgo_phase}"
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST_amd64}/${binutils_pv}"
@@ -8334,7 +8383,7 @@ eerror "You must define GCC_GCOV_DIR to the absolute path containing libgcov.a."
 eerror "You must define LIBBFD_DIR to the absolute path containing libbfd.a."
 eerror "You must define LIBC_DIR to the absolute path containing libc.a."
 eerror
-eerror "Only native GCC PGO builds supported."
+eerror "Only native GCC PGO/PDO builds are supported."
 eerror
 					die
 				fi
@@ -8414,6 +8463,7 @@ einfo
 			)
 		fi
 		ot-kernel_setup_tc
+		local gcc_slot=$(get_gcc_slot)
 		ot-kernel_build_tresor_sysfs
 		ot-kernel_build_kernel
 	done
@@ -9268,8 +9318,8 @@ ewarn
 	local wants_cfi=0
 	local wants_kcfi=0
 	local wants_lto=0
-	local gcc_pv=$(best_version "sys-devel/gcc" \
-		| sed -r -e "s|sys-devel/gcc-||g" \
+	local gcc_pv=$(best_version "${GCC_PKG}" \
+		| sed -r -e "s|${GCC_PKG}-||g" \
 		-e "s|-r[0-9]+||"| cut -f 1-3 -d ".")
 	if ot-kernel_has_version "sys-devel/clang" ; then
 		has_llvm=1

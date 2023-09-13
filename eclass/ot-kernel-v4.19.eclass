@@ -156,8 +156,8 @@ PATCH_ZEN_SAUCE_BL=(
 
 IUSE+="
 build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss orca
-pds pgo rt symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs
-tresor_x86_64 uksm zen-sauce
+pdo pds pgo rt symlink tresor tresor_aesni tresor_i686 tresor_prompt
+tresor_sysfs tresor_x86_64 uksm zen-sauce
 "
 REQUIRED_USE+="
 	genpatches_1510? (
@@ -290,6 +290,7 @@ CDEPEND+="
 	)
 "
 
+GCC_PV="4.6"
 RDEPEND+="
 	!build? (
 		${CDEPEND}
@@ -297,13 +298,16 @@ RDEPEND+="
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
+	pdo? (
+		>=sys-devel/gcc-${GCC_PV}
+	)
 	pgo? (
-		>=sys-devel/gcc-4.6
+		>=sys-devel/gcc-kpgo-${GCC_PV}
 	)
 "
 
 DEPEND+="
-	${DEPEND}
+	${RDEPEND}
 "
 
 BDEPEND+="

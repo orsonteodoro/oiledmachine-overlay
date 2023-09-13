@@ -231,8 +231,8 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 muqss orca pgo prjc rock-dkms rt symlink tresor tresor_aesni
-tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
+-genpatches_1510 muqss orca pdo pgo prjc rock-dkms rt symlink tresor
+tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
 "
 REQUIRED_USE+="
@@ -412,6 +412,7 @@ CDEPEND+="
 	)
 "
 
+GCC_PV="4.9"
 RDEPEND+="
 	!build? (
 		${CDEPEND}
@@ -419,8 +420,11 @@ RDEPEND+="
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
+	pdo? (
+		>=sys-devel/gcc-${GCC_PV}
+	)
 	pgo? (
-		>=sys-devel/gcc-4.9
+		>=sys-devel/gcc-kpgo-${GCC_PV}
 	)
 "
 

@@ -1,17 +1,26 @@
+Patch status:  WIP / In development
 License identified in Makefile:
 # SPDX-License-Identifier: GPL-2.0
 --- a/Makefile.orig	2023-09-11 21:30:18.095774260 -0700
 +++ b/Makefile	2023-09-11 21:31:54.343771920 -0700
-@@ -619,7 +619,11 @@ endif
+@@ -619,7 +619,19 @@ endif
  # Defaults to vmlinux, but the arch makefile usually adds further targets
  all: vmlinux
  
 -CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage \
 +CFLAGS_GCOV	:=
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+#CFLAGS_GCOV	+= -fprofile-generate
-+endif
++ifeq ($(findstring GCC_PDI,$(GCC_PGO_PHASE)),GCC_PDI)
++CFLAGS_GCOV	+= -fprofile-arcs
++else ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++CFLAGS_GCOV	+= -fprofile-generate
++else ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
++CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++else ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++else
 +CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage \
++endif
++CFLAGS_GCOV	+=  \
  	$(call cc-option,-fno-tree-loop-im) \
  	$(call cc-disable-warning,maybe-uninitialized,)
  export CFLAGS_GCOV
@@ -19,16 +28,16 @@ License identified in Makefile:
  KBUILD_LDFLAGS_MODULE += $(LDFLAGS_BUILD_ID)
  LDFLAGS_vmlinux += $(LDFLAGS_BUILD_ID)
  
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+KBUILD_CFLAGS         += -fprofile-generate
++#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#KBUILD_CFLAGS         += -fprofile-generate
 +#KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
 +#KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
-+endif
-+ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
-+KBUILD_CFLAGS         += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++#endif
++#ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++#KBUILD_CFLAGS         += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +#KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
 +#KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
-+endif
++#endif
 +
  KBUILD_LDFLAGS	+= -z noexecstack
  KBUILD_LDFLAGS	+= $(call ld-option,--no-warn-rwx-segments)
