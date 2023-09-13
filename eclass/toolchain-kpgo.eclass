@@ -805,7 +805,7 @@ toolchain-kpgo_src_configure() {
 
 	# oteodoro:  Kernel PGO changes to avoid use of TLS.
 	# Kernel PGO requirements:
-	# See Yuan (2017), "Building application-specific operating systems:  a profile-guided approach", Sec 3.2
+	# See Yuan P., et.al., "Rethinking Compiler Optimizations for the Linux Kernel:  An Explorative Study", Sec 3.2 bullet 2.
 	confgcc+=(
 		 --disable-threads
 		 --disable-tls

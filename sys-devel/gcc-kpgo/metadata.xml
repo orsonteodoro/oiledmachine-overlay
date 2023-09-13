@@ -5,6 +5,24 @@
 		<email>toolchain@gentoo.org</email>
 		<name>Gentoo Toolchain Project</name>
 	</maintainer>
+	<!--
+
+	oiledmachine-overlay notes:
+
+	This ebuild-package is for Kernel PGO only:
+
+	Differences between sys-devel/gcc-kpgo and sys-devel/gcc:
+
+	- Threading disabled
+	- TLS disabled
+	- Install prefix is /usr/lib/gcc-kpgo
+	- Symlink creation in /usr/bin are disabled
+	- Merge conflict avoidance
+	- Env file(s) naming changes
+
+	See Yuan P., et.al., "Rethinking Compiler Optimizations for the Linux Kernel:  An Explorative Study", Sec 3.2 bullet 2.
+
+	-->
 	<use>
 		<flag name="ada">Build the ADA language (GNAT) frontend</flag>
 		<flag name="cet" restrict="&gt;=sys-devel/gcc-10">
