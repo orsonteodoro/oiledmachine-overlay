@@ -195,12 +195,20 @@ RDEPEND+="
 		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
 	)
 "
+
 DEPEND+="
 	intel-microcode? (
 		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
+	)
+	pgo? (
+		!clang? (
+			sys-devel/binutils[static-libs]
+			sys-devel/gcc-kpgo
+			sys-libs/libunwind[static-libs]
+		)
 	)
 "
 
@@ -8236,31 +8244,48 @@ einfo "Resuming as PGT since no profile generated"
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
 
+			if tc-is-cross-compiler ; then
+# libbfd.a is always native ${CHOST}.
+eerror
+eerror "GCC PGO builds does not support cross-compile."
+eerror
+				die
+			fi
+
 			local n_gcda=$(find "${pgo_profile_dir}" -name "*.gcda" 2>/dev/null | wc -l)
 			[[ -z "${n_gcda}" ]] && n_gcda=0
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Building PGI"
 				local gcc_slot=$(gcc-major-version)
+				local current_abi="LIBDIR_${DEFAULT_ABI}"
+				local binutils_pv=$(best_version sys-devel/binutils \
+					| sed -e "s|sys-devel/binutils-||g")
+				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
 						"GCC_PGO_PHASE=GCC_PGI"
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
-					)
-				elif [[ "${arch}" == "x86" ]] ; then
-					args+=(
-						"GCC_PGO_PHASE=GCC_PGI"
-						"GCC_GCOV_DIR=/usr/lib/gcc/${CHOST}/${gcc_slot}/32"
+						"KBUILD_MODPOST_WARN=1"
+						"LIBBFD_DIR=${LIBBFD_DIR}"
+						"LIBC_DIR=${LIBC_DIR}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
 						"GCC_PGO_PHASE=GCC_PGI"
-						"GCC_GCOV_DIR=/usr/lib/gcc/${CHOST}/${gcc_slot}"
+						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}"
+						"KBUILD_MODPOST_WARN=1"
+						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST}/${binutils_pv}"
+						"LIBC_DIR=${ESYSROOT}/usr/${LIBDIR_amd64}"
 					)
 				else
 eerror
 eerror "Unknown arch:  ${arch}"
 eerror
-eerror "You must define GCC_GCOV_DIR to the folder containing libgcov.a."
+eerror "You must define GCC_GCOV_DIR to the absolute path containing libgcov.a."
+eerror "You must define LIBBFD_DIR to the absolute path containing libbfd.a."
+eerror "You must define LIBC_DIR to the absolute path containing libc.a."
+eerror
+eerror "Only native GCC PGO builds supported."
 eerror
 					die
 				fi
@@ -8281,26 +8306,35 @@ einfo "Building PGO"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] && (( ${n_gcda} == 0 )) ; then
 einfo "Resuming as PGT since no profile generated"
 				local gcc_slot=$(gcc-major-version)
+				local current_abi="LIBDIR_${DEFAULT_ABI}"
+				local binutils_pv=$(best_version sys-devel/binutils \
+					| sed -e "s|sys-devel/binutils-||g")
+				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
 						"GCC_PGO_PHASE=GCC_PGI"
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
-					)
-				elif [[ "${arch}" == "x86" ]] ; then
-					args+=(
-						"GCC_PGO_PHASE=GCC_PGI"
-						"GCC_GCOV_DIR=/usr/lib/gcc/${CHOST}/${gcc_slot}/32"
+						"KBUILD_MODPOST_WARN=1"
+						"LIBBFD_DIR=${LIBBFD_DIR}"
+						"LIBC_DIR=${LIBC_DIR}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
 						"GCC_PGO_PHASE=GCC_PGI"
-						"GCC_GCOV_DIR=/usr/lib/gcc/${CHOST}/${gcc_slot}"
+						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}"
+						"KBUILD_MODPOST_WARN=1"
+						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST_amd64}/${binutils_pv}"
+						"LIBC_DIR=${ESYSROOT}/usr/${LIBDIR_amd64}"
 					)
 				else
 eerror
 eerror "Unknown arch:  ${arch}"
 eerror
-eerror "You must define GCC_GCOV_DIR to the folder containing libgcov.a."
+eerror "You must define GCC_GCOV_DIR to the absolute path containing libgcov.a."
+eerror "You must define LIBBFD_DIR to the absolute path containing libbfd.a."
+eerror "You must define LIBC_DIR to the absolute path containing libc.a."
+eerror
+eerror "Only native GCC PGO builds supported."
 eerror
 					die
 				fi
