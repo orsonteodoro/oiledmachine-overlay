@@ -16,7 +16,7 @@
 	- Threading disabled
 	- TLS disabled
 	- Install prefix is /usr/lib/gcc-kpgo
-	- Symlink creation in /usr/bin are disabled
+	- Symlink creation changed to /usr/bin -> /usr/lib/gcc-kpgo/usr/bin
 	- Merge conflict avoidance
 	- Env file(s) naming changes
 

@@ -1859,7 +1859,7 @@ toolchain-kpgo_src_install() {
 	create_gcc_env_entry
 	create_revdep_rebuild_entry
 
-	dodir /usr/bin
+	dodir /usr/lib/gcc-kpgo/usr/bin # oteodoro:  Add prefix /usr/lib/gcc-kpgo/usr/bin
 	cd "${D}"${BINPATH} || die
 	# Ugh: we really need to auto-detect this list.
 	#      It's constantly out of date.
@@ -1876,14 +1876,14 @@ toolchain-kpgo_src_install() {
 		if [[ -f ${CTARGET}-${x} ]] ; then
 			if ! is_crosscompile ; then
 				ln -sf ${CTARGET}-${x} ${x}
-# oteodoro:  disabled dosym to avoid merge conflict
-				#dosym ${BINPATH}/${CTARGET}-${x} \
-				#	/usr/bin/${x}-${GCC_CONFIG_VER}
+# oteodoro:  Changed dosym prefix to avoid merge conflict
+				dosym ${BINPATH}/${CTARGET}-${x} \
+					/usr/lib/gcc-kpgo/usr/bin/${x}-${GCC_CONFIG_VER}
 			fi
 			# Create versioned symlinks
-# oteodoro:  disabled dosym to avoid merge conflict
-			#dosym ${BINPATH}/${CTARGET}-${x} \
-			#	/usr/bin/${CTARGET}-${x}-${GCC_CONFIG_VER}
+# oteodoro:  Changed dosym prefix to avoid merge conflict
+			dosym ${BINPATH}/${CTARGET}-${x} \
+				/usr/lib/gcc-kpgo/usr/bin/${CTARGET}-${x}-${GCC_CONFIG_VER}
 		fi
 
 		if [[ -f ${CTARGET}-${x}-${GCC_CONFIG_VER} ]] ; then
@@ -2202,7 +2202,7 @@ toolchain-kpgo_pkg_postrm() {
 			einfo "Removing last cross-compiler instance. Deleting dangling symlinks."
 			rm -f "${EROOT}"/etc/env.d/gcc${MY_FLAVOR}/config-${CTARGET}
 			rm -f "${EROOT}"/etc/env.d/??gcc${MY_FLAVOR}-${CTARGET}
-			rm -f "${EROOT}"/usr/bin/${CTARGET}-{gcc,{g,c}++}{,32,64}
+			#rm -f "${EROOT}"/usr/bin/${CTARGET}-{gcc,{g,c}++}{,32,64} # oteodoro:  disabled,  TODO:  review
 		fi
 		return 0
 	fi
