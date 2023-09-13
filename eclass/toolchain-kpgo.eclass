@@ -1,3 +1,4 @@
+# Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -1856,7 +1857,7 @@ toolchain-kpgo_src_install() {
 	fi
 
 	dodir /etc/env.d/gcc${MY_FLAVOR} # oteodoro:  Changed to gcc -> gcc${MY_FLAVOR}
-	create_gcc_env_entry
+	create_gcc_env_entry # oteodoro?  Disable?  It could interfere with system compiler.
 	create_revdep_rebuild_entry
 
 	dodir /usr/lib/gcc-kpgo/usr/bin # oteodoro:  Add prefix /usr/lib/gcc-kpgo/usr/bin
