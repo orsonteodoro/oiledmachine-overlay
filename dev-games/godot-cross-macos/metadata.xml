@@ -42,5 +42,5 @@
     <flag name="sdk_10_6_or_newer">
       Compatibility for macOS SDK 10.6 or newer
     </flag>
-  <use>
+  </use>
 </pkgmetadata>

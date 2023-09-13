@@ -11,6 +11,7 @@
     <email>genkernel@gentoo.org</email>
   </maintainer>
   <longdescription>
+  <![CDATA[
     This is an ebuild fork that applies subdir_mount, crypt_root_plain, CFI,
     Clang PGO support patches.
 
@@ -133,6 +134,7 @@
 
       Instructions for applying per-package user patches:
       https://wiki.gentoo.org/wiki//etc/portage/patches
+  ]]>
   </longdescription>
   <use>
     <flag name="cfi">Ensure that the Code Flow Integrity toolchain requirements

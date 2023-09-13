@@ -10,10 +10,10 @@
 
   Per-package environmental variables:
 
-    EGAMBAS_GB_NO_JIT -- Set 1 to disable JIT completely, 0 or unset to enable
-    EGAMBAS_GB_JIT_DEBUG -- Set 1 to see debug messages, 0 or unset to quiet
-    EGAMBAS_GB_JIT_CC -- Set to either gcc, clang, or tcc
-    EGAMBAS_GB_JIT_CFLAGS -- -O3 (default)
+    EGAMBAS_GB_NO_JIT - Set 1 to disable JIT completely, 0 or unset to enable
+    EGAMBAS_GB_JIT_DEBUG - Set 1 to see debug messages, 0 or unset to quiet
+    EGAMBAS_GB_JIT_CC - Set to either gcc, clang, or tcc
+    EGAMBAS_GB_JIT_CFLAGS - -O3 (default)
 
   -->
   <upstream>

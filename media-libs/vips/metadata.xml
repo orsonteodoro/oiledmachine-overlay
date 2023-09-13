@@ -97,7 +97,7 @@
     </flag>
     <flag name="nifti">
       Enables support for NIfTI images.
-    </endif>
+    </flag>
     <flag name="openexr">
       Enables file import of EXR images.
     </flag>

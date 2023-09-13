@@ -30,6 +30,6 @@
     </slot>
     <subslots>
       The semver major.minor
-    </subslot>
+    </subslots>
   </slots>
 </pkgmetadata>

@@ -10,5 +10,5 @@
     <flag name="cert-only-pem">
       Allow only the certificate (csr) not the private key in the .pem file.
     </flag>
-  <use>
+  </use>
 </pkgmetadata>

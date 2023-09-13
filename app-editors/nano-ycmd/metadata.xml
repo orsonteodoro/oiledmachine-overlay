@@ -63,16 +63,16 @@
     M- Alt
     C- Ctrl
 
-    C-`             -- Open up YCMD command menu
-    C-` C-o         -- Open up definition in a new indow
-    C-` C-d         -- Goes to the function definition
-    C-` C-c         -- Goes to declaration
-    C-` C-space     -- Closes the YCMD command menu
-    C-` C-i         -- Goes to the include
-    C-` C-x         -- Reloads .ycm_extra_conf.py for C projects
-    C-` C-f         -- Fixes easy trivial errors
-    C-` M-f         -- Displays all FixIts
-    C-` C-t         -- Gets type
+    C-`             - Open up YCMD command menu
+    C-` C-o         - Open up definition in a new indow
+    C-` C-d         - Goes to the function definition
+    C-` C-c         - Goes to declaration
+    C-` C-space     - Closes the YCMD command menu
+    C-` C-i         - Goes to the include
+    C-` C-x         - Reloads .ycm_extra_conf.py for C projects
+    C-` C-f         - Fixes easy trivial errors
+    C-` M-f         - Displays all FixIts
+    C-` C-t         - Gets type
 
   -->
   <upstream>

@@ -102,4 +102,5 @@
     <flag name="websockets">
       Enables WebSocket transport.
     </flag>
+  </use>
 </pkgmetadata>

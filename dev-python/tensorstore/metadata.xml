@@ -14,5 +14,5 @@
     <flag name="clang">
       Build with clang.
     </flag>
-  <use>
+  </use>
 </pkgmetadata>

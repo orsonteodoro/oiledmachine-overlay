@@ -29,8 +29,8 @@
 
     oiledmachine-overlay notes:
 
-    3.3.x -- LTS (Long Term Support)
-    3.4 and later -- Stable
+    3.3.x         - LTS (Long Term Support)
+    3.4 and later - Stable
 
     Information about Cycles network rendering can be found at:
     https://wiki.blender.org/wiki/Source/Render/Cycles/Network_Render
@@ -234,7 +234,7 @@
     </flag>
     <flag name="cycles-device-oneapi">
       Support for newer GPUs (EXPERIMENTAL/IN DEVELOPMENT)
-    </flag
+    </flag>
     <flag name="cycles-network">
       Enable experimental peer-to-peer LAN networking support for Cycles.
     </flag>

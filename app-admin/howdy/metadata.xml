@@ -14,7 +14,7 @@
     or use the mkl USE flag.[1]
 
     Only one capture source can be used.  Priority is given based on highest
-    to lowest -- FFmpeg, pyv4l2, OpenCV.
+    to lowest - FFmpeg, pyv4l2, OpenCV.
 
     Howdy also supports gesture authentication called rubber stamp.[2]
 

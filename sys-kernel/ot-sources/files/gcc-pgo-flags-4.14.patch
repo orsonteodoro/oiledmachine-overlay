@@ -15,18 +15,19 @@ License identified in Makefile:
  CFLAGS_KCOV	:= $(call cc-option,-fsanitize-coverage=trace-pc,)
  export CFLAGS_GCOV CFLAGS_KCOV
  
-@@ -885,6 +889,16 @@ ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATI
+@@ -885,6 +889,17 @@ ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATI
  LDFLAGS_vmlinux	+= $(call ld-option, --gc-sections,)
  endif
  
 +ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+KBUILD_LDFLAGS_MODULE  += $(GCC_GCOV_DIR)/libgcov.a
-+LDFLAGS                += $(GCC_GCOV_DIR)/libgcov.a
++#KBUILD_CFLAGS          += -fprofile-generate
++#KBUILD_LDFLAGS_MODULE  += $(GCC_GCOV_DIR)/libgcov.a
++#LDFLAGS                += $(GCC_GCOV_DIR)/libgcov.a
 +endif
 +ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
 +KBUILD_CFLAGS          += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+KBUILD_LDFLAGS_MODULE  += $(GCC_GCOV_DIR)/libgcov.a
-+LDFLAGS                += $(GCC_GCOV_DIR)/libgcov.a
++#KBUILD_LDFLAGS_MODULE  += $(GCC_GCOV_DIR)/libgcov.a
++#LDFLAGS                += $(GCC_GCOV_DIR)/libgcov.a
 +endif
 +
  LDFLAGS	+= -z noexecstack

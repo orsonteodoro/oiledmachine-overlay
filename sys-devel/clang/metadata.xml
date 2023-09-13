@@ -23,15 +23,15 @@
     so the flags below will be implied in use.
 
     Default ON patch status:
-    present -- _FORITIFY_SOURCE=2
-    testing --  -fstack-clash-protection (x86/x86_64 only)
-    SSP canary is verified but strength is unverified --  -fstack-protector-strong
-    unverified --param=ssp-buffer-size=4
-    present -- -Wl,relro -Wl,now
-    present -- PIE
+    present - _FORITIFY_SOURCE=2
+    testing - -fstack-clash-protection (x86/x86_64 only)
+    SSP canary is verified but strength is unverified - -fstack-protector-strong
+    unverified -param=ssp-buffer-size=4
+    present - -Wl,relro -Wl,now
+    present - PIE
 
     Secondary patches:
-    testing -- -shared and fsanitize-cfi-cross-dso
+    testing - -shared and fsanitize-cfi-cross-dso
 
     Verification is done via the app-admin/checksec package.
 
@@ -44,8 +44,8 @@
 
     While the toolchain-funcs.eclass only recognize hardened gcc existance
     in the ssp checking functions, you may verify a hardenedized counterpart
-    though `clang --version` if using these patches from this overlay which
-    also report the default ON hardened options.
+    though `clang ~~version`, replacing ~ with -, if using these patches from
+    this overlay which also report the default ON hardened options.
 
     When using -stdlib=libc++, add -static-libstdc++ in front of it for a
     proper CFI build.
@@ -144,7 +144,10 @@ main() {
 	trainer
 	emerge -1vO "sys-devel/clang:${SLOT}[epgo,ebolt]" # pgo, bolt_inst
 	trainer
-	emerge --config "sys-devel/clang:${SLOT}[epgo,ebolt]" # bolt_opt
+
+	# replace ~~ with double hyphen.
+	# xml does not allow double hyphen in comments in compatibility mode.
+	emerge ~~config "sys-devel/clang:${SLOT}[epgo,ebolt]" # bolt_opt
 }
 
 main

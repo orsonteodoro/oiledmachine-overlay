@@ -12,6 +12,6 @@
   <use>
     <flag name="aocc">
       Use the AOCC compiler to build Flang.
-    </flang>
+    </flag>
   </use>
 </pkgmetadata>

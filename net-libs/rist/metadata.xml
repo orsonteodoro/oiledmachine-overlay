@@ -6,11 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  </upstream>
   <longdescription>
     Temporary fork.  Removal ASAP when added to distro overlay.
   </longdescription>
-  <use>
-    <flag name="">
-    </flag>
 </pkgmetadata>

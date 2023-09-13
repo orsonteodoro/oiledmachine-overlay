@@ -9,24 +9,25 @@ License identified in Makefile:
 -CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage \
 +CFLAGS_GCOV	:=
 +ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+CFLAGS_GCOV	+= -fprofile-generate
++#CFLAGS_GCOV	+= -fprofile-generate
 +endif
 +CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage \
  	$(call cc-option,-fno-tree-loop-im) \
  	$(call cc-disable-warning,maybe-uninitialized,)
  export CFLAGS_GCOV
-@@ -889,6 +893,16 @@ LDFLAGS_BUILD_ID := $(call ld-option, --
+@@ -889,6 +893,17 @@ LDFLAGS_BUILD_ID := $(call ld-option, --
  KBUILD_LDFLAGS_MODULE += $(LDFLAGS_BUILD_ID)
  LDFLAGS_vmlinux += $(LDFLAGS_BUILD_ID)
  
 +ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
-+KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
++KBUILD_CFLAGS         += -fprofile-generate
++#KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
++#KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
 +endif
 +ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
 +KBUILD_CFLAGS         += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
-+KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
++#KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
++#KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
 +endif
 +
  KBUILD_LDFLAGS	+= -z noexecstack

@@ -56,7 +56,10 @@
     2.  Emerge the ebuild with the bolt and ebolt use flag
     4.  Train the LLVM library by either emerging, compiling shaders, compiling
         WASM (aka HTML5 games) based games.
-    5.  emerge --config =llvm-${PV}[bolt,ebolt]  # Fastest
+
+    # Replace ~~ with double hyphen.
+    # xml does not allow double hyphen in compatibility mode.
+    5.  emerge ~~config =llvm-${PV}[bolt,ebolt]  # Fastest
                      or
         emerge =llvm-${PV}[bolt,ebolt] # Deterministic reliable
 
@@ -120,7 +123,10 @@ main() {
 	trainer
 	emerge -1vO "sys-devel/llvm:${SLOT}[epgo,ebolt]" # pgo, bolt_inst
 	trainer
-	emerge --config "sys-devel/llvm:${SLOT}[epgo,ebolt]" # bolt_opt
+
+	# Replace ~~ with double hyphens.
+	# xml does not allow double hyphen in comments.
+	emerge ~~config "sys-devel/llvm:${SLOT}[epgo,ebolt]" # bolt_opt
 }
 
 main

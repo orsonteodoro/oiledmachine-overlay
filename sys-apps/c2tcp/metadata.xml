@@ -30,10 +30,10 @@
  
     Additional Environment variables for run-sample.sh:
 
-      C2TCP_ELEVATE_CMD -- accepts sudo, pkexec, " "
-      C2TCP_BROWSER -- path to a svg supported web browser to show graph results.
+      C2TCP_ELEVATE_CMD - accepts sudo, pkexec, " "
+      C2TCP_BROWSER - path to a svg supported web browser to show graph results.
         You may set it to "none", "skip", "disable", or empty string to not show it.
-      C2TCP_TARGET_DELAY -- controls average delay and throughput in
+      C2TCP_TARGET_DELAY - controls average delay and throughput in
         milliseconds (ms)
         (1) lower values improve average delays and low jitter.
         (2) higher values increase throughput and increase jitter

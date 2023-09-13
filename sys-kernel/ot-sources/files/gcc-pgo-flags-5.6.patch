@@ -1,34 +1,44 @@
-License identified in Makefile:
+License identified for Makefile:
 # SPDX-License-Identifier: GPL-2.0
---- a/Makefile.orig	2023-09-11 21:22:08.843786154 -0700
-+++ b/Makefile	2023-09-11 21:25:55.491780644 -0700
-@@ -762,7 +762,11 @@ endif # KBUILD_EXTMOD
+License identified for scripts/Makefile.modfinal:
+# SPDX-License-Identifier: GPL-2.0-only
+--- a/Makefile.orig	2023-09-12 16:10:01.828046361 -0700
++++ b/Makefile	2023-09-12 16:19:37.180031480 -0700
+@@ -762,7 +762,14 @@ endif # KBUILD_EXTMOD
  # Defaults to vmlinux, but the arch makefile usually adds further targets
  all: vmlinux
  
 -CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
 +CFLAGS_GCOV	:=
++CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage
 +ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
 +CFLAGS_GCOV	+= -fprofile-generate
 +endif
-+CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage
++ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++endif
  ifdef CONFIG_CC_IS_GCC
  CFLAGS_GCOV	+= -fno-tree-loop-im
  endif
-@@ -1119,6 +1123,16 @@ KBUILD_RUSTFLAGS += $(KRUSTFLAGS)
- KBUILD_LDFLAGS_MODULE += --build-id=sha1
- LDFLAGS_vmlinux += --build-id=sha1
+--- a/scripts/Makefile.modfinal.orig	2023-08-27 14:49:51.000000000 -0700
++++ b/scripts/Makefile.modfinal	2023-09-12 16:19:21.560031884 -0700
+@@ -22,6 +22,11 @@ __modfinal: $(modules:%.o=%.ko)
+ modname = $(notdir $(@:.mod.o=))
+ part-of-module = y
  
++LDFLAGS_GCOV_PGO :=
 +ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
-+KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
-+endif
-+ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
-+KBUILD_CFLAGS         += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
-+KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
++      LDFLAGS_GCOV_PGO += -L$(GCC_GCOV_DIR) -lgcov
 +endif
 +
- KBUILD_LDFLAGS	+= -z noexecstack
- ifeq ($(CONFIG_LD_IS_BFD),y)
- KBUILD_LDFLAGS	+= $(call ld-option,--no-warn-rwx-segments)
+ quiet_cmd_cc_o_c = CC [M]  $@
+       cmd_cc_o_c = $(CC) $(filter-out $(CC_FLAGS_CFI) $(CFLAGS_GCOV), $(c_flags)) -c -o $@ $<
+ 
+@@ -34,6 +39,7 @@ quiet_cmd_ld_ko_o = LD [M]  $@
+       cmd_ld_ko_o +=							\
+ 	$(LD) -r $(KBUILD_LDFLAGS)					\
+ 		$(KBUILD_LDFLAGS_MODULE) $(LDFLAGS_MODULE)		\
++		$(LDFLAGS_GCOV_PGO) \
+ 		-T scripts/module.lds -o $@ $(filter %.o, $^);		\
+ 	$(if $(ARCH_POSTLINK), $(MAKE) -f $(ARCH_POSTLINK) $@, true)
+ 

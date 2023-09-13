@@ -8,7 +8,6 @@
 <!--
   The oiledmachine-overlay provides this ebuild for PGO/BOLT optimization.
 
-
   USE flag status:
 
     pgo - done
@@ -78,7 +77,7 @@
 
     The value of vscenario can be fantasy, film, grainy, streaming, realism.
     The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
-    The value of vdecoder matches  mpv --vd=help
+    The value of vdecoder matches  mpv ~~vd=help ; replace ~~ with double hyphens
     The value of ext matches  ffmpeg -formats
     The value of tags may be added for custom trainers providing metadata
     for enablement of special optimization options.  Multiple tags
@@ -97,7 +96,7 @@
 
     The value of ascenario can be voice, radio, music.
     The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
-    The value of adecoder matches  mpv --ad=help
+    The value of adecoder matches  mpv ~~ad=help ; replace ~~ with double hyphens
     The value of ext matches  ffmpeg -formats
     The value of tags may be added for custom trainers providing metadata
     for enablement of special optimization options.  Multiple tags
@@ -194,9 +193,9 @@
 
     The value of avscenario can be live-streaming
     The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
-    The value of vdecoder matches  mpv --vd=help ; you may specify none
+    The value of vdecoder matches  mpv ~~vd=help ; replace ~~ with double hyphens.  you may specify none.
     The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
-    The value of adecoder matches  mpv --ad=help ; you may specify none
+    The value of adecoder matches  mpv ~~ad=help ; replace ~~ with double hyphens.  you may specify none.
     The value of container matches  ffmpeg -formats ; if you don't know put unknown.
     The value of tags may be added for custom trainers providing metadata
     for enablement of special optimization options.  Multiple tags
@@ -234,14 +233,14 @@
 
   Available variables:
 
-    ${abitrate} -- audio bitrate in kbps.  Some sites cap it at 256 kbps.
-    ${asample_rate} -- audio sample rate.  Some sites cap it at 44.8 kHz.
-    ${vquality} -- 1 for low, 2 for mid, 3 for high video quality
-    ${is_30fps} -- 1 for true
-    ${is_60fps} -- 1 for true
-    ${fps} -- frames per second.  Max is 60
-    ${mic} -- 1 for true
-    ${total_bitrate} -- in kbps summing the audio and video bitrates
+    ${abitrate}      - audio bitrate in kbps.  Some sites cap it at 256 kbps.
+    ${asample_rate}  - audio sample rate.  Some sites cap it at 44.8 kHz.
+    ${vquality}      - 1 for low, 2 for mid, 3 for high video quality
+    ${is_30fps}      - 1 for true
+    ${is_60fps}      - 1 for true
+    ${fps}           - frames per second.  Max is 60
+    ${mic}           - 1 for true
+    ${total_bitrate} - in kbps summing the audio and video bitrates
 
     * It is recommended to normalize the variables from [0,1].
     * It may be left unset, it will fall back to the total bitrate.
@@ -422,7 +421,7 @@
   `ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.] .*"` commands.
   Also test with actual scenario also.
 
-  FFMPEG_CLEAR_CONFIG_SETS -- space delimited list to of component types to disable.
+  FFMPEG_CLEAR_CONFIG_SETS - space delimited list to of component types to disable.
   This can be used to find problematic sets of options.  Only valid when
   clear-config-first USE flag is enabled.
 
@@ -463,6 +462,9 @@
    * The pic USE flag may be required for LTO builds.
    * Either Gold LTO or Thin LTO may only be used for LTO.
    * Using BFD LTO may result in linker errors.
+   * Replace ~~ with double hyphens.
+     XML does not support double hyphens in xml comments in compatibility mode.
+
 -->
 <use>
   <flag name="amf">

@@ -68,7 +68,7 @@
         p      *        *                  *                   *
         s      *        *                  *                   *
         |      *        *                  *                   *
-        0-------------------------- delay ---------------------------+
+        0~~~~~~~~~~~~~~~~~~~~~~~~~ delay ~~~~~~~~~~~~~~~~~~~~~~~~~~+
 
     Criticisms and comparisons with other TCP CCs:
 
@@ -126,9 +126,9 @@
       * max - highest throughput
       * min - lowest average delay
       * sweetspot - Lowest RTT while above 80% utilization.
-          sweet, ss, sw, swt, auto -- are all aliases.
+          sweet, ss, sw, swt, auto - are all aliases.
 
-    DEEPCC_TEST_SERVER -- a domain or IP address to ping in order to
+    DEEPCC_TEST_SERVER - a domain or IP address to ping in order to
     discover the approximate minRTT used by sweetspot.  It uses the distro
     website by default.  (Only for real-network.sh)
 

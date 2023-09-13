@@ -66,7 +66,12 @@
     distdir="/usr/portage/distfiles/assets/sr/images/training/lr"
     for path in $(find "${distdir}" -type -f -name "*.png") ; do
         esize=$(stat -c "%s" "${path}")
-        eblake2b=$(rhash --blake2b "${path}" | cut -f 1 -d " ")
+
+	# IMPORTANT:
+	# Replace ## with double hyphen.
+	# XML don't allow double hyphen in compatibility mode.
+        eblake2b=$(rhash ##blake2b "${path}" | cut -f 1 -d " ")
+
         esha512=$(sha512sum "${path}" | cut -f 1 -d " ")
         echo "${path}:${esize}:${eblake2b}:${esha512}"
     done

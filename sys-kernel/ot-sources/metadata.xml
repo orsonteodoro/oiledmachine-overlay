@@ -303,15 +303,15 @@
 
     PGO state files and profiles:
 
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/{llvm,gcc}/pgophase --
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/{llvm,gcc}/pgophase -
       The PGO phase progression state file that contains the current step.
       {PGI,PGT,PGO,DONE} are the states in the FSM (Finite State Machine).
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profraw --
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profraw -
       The profraw captured before conversion.
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profdata --
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/llvm/vmlinux.profdata -
       The merged profdata PGO profile.  It is used when building an optimized
       build.
-    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/gcc/#var#tmp#portage#sys-kernel#ot-sources-${PV}#work#linux-${PV}-${extraversion}#sound#usb#clock.gcda --
+    /var/lib/ot-sources/${PV}/${extraversion}-${arch}/gcc/#var#tmp#portage#sys-kernel#ot-sources-${PV}#work#linux-${PV}-${extraversion}#sound#usb#clock.gcda -
       The GCC PGO profile.  It is used when building an optimized build.
 
     Notes:
@@ -515,12 +515,12 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     
     Environment variables:
 
-    DISABLE_DEBUG_EXCLUDES -- A space delimited list of kernel config symbols
+    DISABLE_DEBUG_EXCLUDES - A space delimited list of kernel config symbols
     to ignore.
 
 
 
-    OT_KERNEL_5_LEVEL_PAGING -- set 5 level paging for supercomputers
+    OT_KERNEL_5_LEVEL_PAGING - set 5 level paging for supercomputers
 
     Acceptable values:
 
@@ -530,7 +530,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_ABIS -- Adds support for ABIS especially cross compiling but only
+    OT_KERNEL_ABIS - Adds support for ABIS especially cross compiling but only
     if the kernel arch supports it.  You many only choose one kernel arch per
     buildconfig env.  If unset, it will use auto settings.  Users are still
     responsible for editing the kernel config for details such as the
@@ -553,11 +553,11 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_ADD_KEY_TO_MOK -- Auto adds the provided key to MOK if not found.
+    OT_KERNEL_ADD_KEY_TO_MOK - Auto adds the provided key to MOK if not found.
 
 
 
-    OT_KERNEL_ARCH -- The native ABI of the kernel to build using one of the
+    OT_KERNEL_ARCH - The native ABI of the kernel to build using one of the
     names of the folders in /usr/src/linux/arch.  This package assumes that both
     x86_64 and arm64 are recognized as 64 with possibly 32 compatibility, but
     x86 and arm are recognized as strictly 32-bit.
@@ -571,7 +571,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS -- Auto edit the kernel .config
+    OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS - Auto edit the kernel .config
     for installed packages.  What this means is that certain @world packages
     have additional kernel .config requirements and sometimes too complex
     or too long ago to remember to apply.  These missing or conflicting
@@ -587,12 +587,12 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BLACKLIST_FIRMWARE_PATHS -- A space separated list of firmware
+    OT_KERNEL_BLACKLIST_FIRMWARE_PATHS - A space separated list of firmware
     relative paths to not include in CONFIG_EXTRA_FIRMWARE.
 
 
 
-    OT_KERNEL_BOOT_ARGS -- Set and embed the kernel command line into the
+    OT_KERNEL_BOOT_ARGS - Set and embed the kernel command line into the
     kernel instead of the bootloader.
 
     iotop users:  You may remove delayacct from the kernel command line if you
@@ -605,7 +605,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BOOT_ARGS_LOCKDOWN -- Prevent bootloader from overriding
+    OT_KERNEL_BOOT_ARGS_LOCKDOWN - Prevent bootloader from overriding
     the internal kernel cmdline.
 
     Certain security options may auto enable this if they happen to use
@@ -619,7 +619,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BOOT_DECOMPRESSOR -- chooses the main boot decompressor for both
+    OT_KERNEL_BOOT_DECOMPRESSOR - chooses the main boot decompressor for both
     kernel decompression and initramfs decompression.  If not chosen, it will
     choose either the previous manual setting, or if it is a new kernel config
     defaults which will choose gzip for the kernel and all decompressors for
@@ -635,7 +635,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BUILD -- It be 0, 1, true, false, yes, no, nobuild, build, not
+    OT_KERNEL_BUILD - It be 0, 1, true, false, yes, no, nobuild, build, not
     set.  Most are aliases, but it means to build or not build the kernel.  If
     not set it will try to guestimate based on the build flag.
 
@@ -646,7 +646,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BUILD_CHECK_MOUNTED -- Check if the boot directory referenced
+    OT_KERNEL_BUILD_CHECK_MOUNTED - Check if the boot directory referenced
     by OT_KERNEL_KERNEL_DIR is mounted.
 
     Acceptable values:
@@ -661,7 +661,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BUILD_ALL_MODULES_AS -- Choose how to build options capable of
+    OT_KERNEL_BUILD_ALL_MODULES_AS - Choose how to build options capable of
     being built as modules.  You can choose to convert kernel config
     options as mostly modules (m) or all builtins (y).  One may choose to
     build everything as builtins to prevent loading of hacked drivers or to
@@ -684,7 +684,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BOOT_KOPTIONS -- A space separated list of CONFIG_... options to
+    OT_KERNEL_BOOT_KOPTIONS - A space separated list of CONFIG_... options to
     be built as builtins instead as modules.  This setting is optional.  This
     option depends on OT_KERNEL_BUILD_ALL_MODULES_AS="m".  This option focuses
     on specific devices.  This information can be found in help "defined at"
@@ -702,7 +702,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BOOT_KOPTIONS_APPEND -- A space separated list of CONFIG_...
+    OT_KERNEL_BOOT_KOPTIONS_APPEND - A space separated list of CONFIG_...
     options to be built as builtins instead of modules added after auto boot
     option discovery.  This option depends on OT_KERNEL_BUILD_ALL_MODULES_AS="m"
 
@@ -714,7 +714,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BOOT_SUBSYSTEMS -- A space separated list of subsystems required
+    OT_KERNEL_BOOT_SUBSYSTEMS - A space separated list of subsystems required
     to boot as builtins instead of modules used to replace the defaults.
     This information can be found in the help "defined at"
     section in in "make menuconfig".  Early KMS requires drivers/char/agp,
@@ -732,7 +732,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_BOOT_SUBSYSTEMS_APPEND -- An additional space separated list of
+    OT_KERNEL_BOOT_SUBSYSTEMS_APPEND - An additional space separated list of
     subsystems required to boot as builtins appended to the default set of boot
     required subsystems.  Early KMS requires drivers/char/agp
     and drivers/gpu to be added.
@@ -749,7 +749,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES -- checks if the firmware or
+    OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES - checks if the firmware or
     microcode is up-to-date for mitigation against criticial vulnerabilies.
     This check is only available during kernel config assist mode.
 
@@ -765,7 +765,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_COLD_BOOT_MITIGATIONS -- changes the kernel config to mitigate
+    OT_KERNEL_COLD_BOOT_MITIGATIONS - changes the kernel config to mitigate
     against cold boot attacks.
 
     Acceptable values:
@@ -780,7 +780,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_CONFIG -- Points to the absolute path of the kernel config. (This
+    OT_KERNEL_CONFIG - Points to the absolute path of the kernel config. (This
     can be not set but then defaults to
     /etc/kernels/kernel-config-${PV}-${extraversion}-$(uname -m))
 
@@ -790,7 +790,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_CONFIG_MODE -- Choose between ebuild assisted and fully custom
+    OT_KERNEL_CONFIG_MODE - Choose between ebuild assisted and fully custom
     config.
 
     Acceptable values:
@@ -810,7 +810,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_CPU_SCHED -- can be one of the below depending on the kernel version.
+    OT_KERNEL_CPU_SCHED - can be one of the below depending on the kernel version.
 
       4.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, pds
       4.19: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, pds
@@ -1159,7 +1159,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_DMESG -- Allow the use of early printk and dmesg.  Setting this
+    OT_KERNEL_DMESG - Allow the use of early printk and dmesg.  Setting this
     may affect features that may depend on it.  Setting it off may increase
     security.
 
@@ -1182,7 +1182,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_EARLY_KMS -- enable early KMS for graphics improvement.
+    OT_KERNEL_EARLY_KMS - enable early KMS for graphics improvement.
     This setting fixes early kms problem with OT_KERNEL_BOOT_SUBSYSTEMS="m".
     For out-of-tree Direct Rendering Manager DKMS graphics drivers, this should
     be 0 to load these drivers as modules.
@@ -1195,7 +1195,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_EP800 -- adds and enables the ep800 webcam driver.
+    OT_KERNEL_EP800 - adds and enables the ep800 webcam driver.
 
     It is used for testing driver breakage between LTS versions and stable for
     the media-video/epcam package.
@@ -1206,7 +1206,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_EXTRAVERSION -- initials or name of the kernel.
+    OT_KERNEL_EXTRAVERSION - initials or name of the kernel.
 
     See also:
 
@@ -1215,7 +1215,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_EXTERNAL_MODULES -- prepares the kernel for out-of-tree
+    OT_KERNEL_EXTERNAL_MODULES - prepares the kernel for out-of-tree
     modules.  The kernel needs to expose these for packages that build
     kernel drivers outside this package.
 
@@ -1228,7 +1228,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_FAST_SOURCE_CODE_INSTALL -- install the kernel sources in the
+    OT_KERNEL_FAST_SOURCE_CODE_INSTALL - install the kernel sources in the
     fastest way without permissions sanitization.
 
     Acceptable values:
@@ -1250,7 +1250,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_FIRMWARE -- a space separated list of keywords matching the
+    OT_KERNEL_FIRMWARE - a space separated list of keywords matching the
     firmware relative to inside /lib/firmware.  Wildcards (denoted by "*") are
     accepted as well as relative paths.  Wildcards are implied before and after
     the pattern.  These patterns are case sensitive meaning there is a
@@ -1296,7 +1296,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG -- force the applying disable debug
+    OT_KERNEL_FORCE_APPLY_DISABLE_DEBUG - force the applying disable debug
     globally to remove config symbols containing the following keywords:
 
       DEBUG, TRACE, VERBOSE, LOG, PRINT
@@ -1312,7 +1312,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_FPS -- Set to the frames per second based on recording standard.
+    OT_KERNEL_FPS - Set to the frames per second based on recording standard.
     It can be a multiple of 30 (corresponding to 300 HZ), or multiple of 25
     (corresponding to 250 HZ).  This matters because some archs cannot use
     300 HZ.  This may help reduce the number of frames dropped in older
@@ -1325,7 +1325,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_HARDENING_LEVEL -- sets the hardening level based on the level
+    OT_KERNEL_HARDENING_LEVEL - sets the hardening level based on the level
     of trust.  In these ebuilds and eclasses, both CFI and ShadowCallStack (SCS)
     are determined by the hardening level.  In other words, if a user chooses to
     use the trust level, CFI or SCS would be disabled.
@@ -1418,7 +1418,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       https://nvd.nist.gov/vuln/detail/CVE-2019-15847
 
 
-    OT_KERNEL_HDD -- Set if HDD drive is present for this kernel build.
+    OT_KERNEL_HDD - Set if HDD drive is present for this kernel build.
 
     Acceptable values:
 
@@ -1433,7 +1433,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_HWRAID -- Set if SATA hardware raid is being used.  This may
+    OT_KERNEL_HWRAID - Set if SATA hardware raid is being used.  This may
     improve the throughput with the BFQ I/O scheduler.
 
     Acceptable values:
@@ -1444,9 +1444,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_IMA -- Sets the mode for IMA.  IMA will essentially ensure
+    OT_KERNEL_IMA - Sets the mode for IMA.  IMA will essentially ensure
     system integrity with the use of hashing and filesystem metadata.
-    IMA requires 2 steps -- measurement and appraisal.  Measurement
+    IMA requires 2 steps - measurement and appraisal.  Measurement
     is done by hashing files.  Appraisal is done by comparing hashes.
 
     These kernel configs will be built in so the kernel needs to be rebuilt
@@ -1467,7 +1467,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_IMA_HASH_ALG -- Sets the default hashing algorithm
+    OT_KERNEL_IMA_HASH_ALG - Sets the default hashing algorithm
 
     Acceptable values:
 
@@ -1477,7 +1477,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_IMA_POLICIES -- A space separated list of IMA policies.
+    OT_KERNEL_IMA_POLICIES - A space separated list of IMA policies.
 
     Acceptable values:
 
@@ -1522,7 +1522,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_IOMMU -- Sets the default IOMMU domain type upon initalization.
+    OT_KERNEL_IOMMU - Sets the default IOMMU domain type upon initalization.
     Setting this has implications with security and performance tradeoff.
 
     The OT_KERNEL_COLD_BOOT_MITIGATIONS have higher precedence when this
@@ -1683,7 +1683,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_IRQ_REMAP -- Sets IRQ remapping for virtual machine hypervisors
+    OT_KERNEL_IRQ_REMAP - Sets IRQ remapping for virtual machine hypervisors
     or hosts to prevent malicious MSIs.  This option enables use of x2APIC
     mode.
 
@@ -1695,7 +1695,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_KCONFIG -- A set of key-value pairs used to enable or disable
+    OT_KERNEL_KCONFIG - A set of key-value pairs used to enable or disable
     drivers or set options in the kernel config.  This is another convenient way
     to change the default config slightly without wasting minutes in menuconfig
     hunting down for the flag, or to quickly enable driver support on top of the
@@ -1737,7 +1737,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_KERNEL_DIR -- Sets and overrides the install location to install
+    OT_KERNEL_KERNEL_DIR - Sets and overrides the install location to install
     the kernel.
 
     Acceptable values:
@@ -1746,7 +1746,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_KEXEC -- Sets kexec config to allow to reboot into a new kernel
+    OT_KERNEL_KEXEC - Sets kexec config to allow to reboot into a new kernel
     instantly.  Booting into a poorly configured destination kernel can lead to
     severe security holes.  It is not recommended to use this feature unless the
     destination kernels are signed and updated daily.
@@ -1767,7 +1767,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LOGO_AVSCAN -- Perform antivirus scan on image before running
+    OT_KERNEL_LOGO_AVSCAN - Perform antivirus scan on image before running
       image *magick conversion and adding to kernel if avscanner available.
 
     Acceptable values:
@@ -1778,7 +1778,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LOGO_LICENSE_URI -- A uri, local file containing the license
+    OT_KERNEL_LOGO_LICENSE_URI - A uri, local file containing the license
 
     Acceptable values:
 
@@ -1794,7 +1794,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LOGO_MAGICK_ARGS -- Args to pass to the converter
+    OT_KERNEL_LOGO_MAGICK_ARGS - Args to pass to the converter
 
     Examples:
 
@@ -1824,7 +1824,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LOGO_PREPROCESS_PATH -- This is an absolute path to the
+    OT_KERNEL_LOGO_PREPROCESS_PATH - This is an absolute path to the
     preprocessor script.  This script can apply a series of extra manipulation
     on the logo such as distortions (wavy flag), or text annotations, or color
     tinting to the logo, or drawing borders, or waifu2x style upscaling.  The
@@ -1859,17 +1859,18 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LOGO_PREPROCESS_SHA512 -- sha512 checksum for OT_KERNEL_LOGO_PREPROCESS script.
-    OT_KERNEL_LOGO_PREPROCESS_BLAKE2B -- blake2b checksum for OT_KERNEL_LOGO_PREPROCESS script..
+    OT_KERNEL_LOGO_PREPROCESS_SHA512 - sha512 checksum for OT_KERNEL_LOGO_PREPROCESS script.
+    OT_KERNEL_LOGO_PREPROCESS_BLAKE2B - blake2b checksum for OT_KERNEL_LOGO_PREPROCESS script..
 
     Notes:
 
       - Use `sha512sum /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the sha512 checksum.
-      - Use `rhash --blake2b /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the blake2b checksum
+      - Use `rhash ~~blake2b /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the blake2b checksum
+        (You must replace the ~~ with double comments.  xml does not allow double hyphens in comments.)
 
 
 
-    OT_KERNEL_LOGO_COUNT -- number of times to show the logo. (EXPERIMENTAL)
+    OT_KERNEL_LOGO_COUNT - number of times to show the logo. (EXPERIMENTAL)
 
     Acceptable values:
 
@@ -1878,7 +1879,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LOGO_FOOTNOTES -- save notes to a file next to the optional license file. (EXPERIMENTAL)
+    OT_KERNEL_LOGO_FOOTNOTES - save notes to a file next to the optional license file. (EXPERIMENTAL)
 
     Example:
 
@@ -1913,7 +1914,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LOGO_URI -- A URI, local file, or pre-bundled logo provided by the
+    OT_KERNEL_LOGO_URI - A URI, local file, or pre-bundled logo provided by the
     package.
 
     Acceptable values:
@@ -1952,17 +1953,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_LSMS -- Enable and set the order for LSM (Linux Security Modules)
+    OT_KERNEL_LSMS - Enable and set the order for LSM (Linux Security Modules)
 
     Acceptable multi values: apparmor, bpf, integrity, landlock, loadpin,
     lockdown, safesetid, selinux, smack, tomoyo, yama.
 
     Acceptable general values:  auto, default, manual
 
-    * auto -- Adds LSMs based on packages installed with default subsettings
-    * default -- Uses "integrity,selinux,bpf" with default subsettings
+    * auto - Adds LSMs based on packages installed with default subsettings
+    * default - Uses "integrity,selinux,bpf" with default subsettings
       equivalent to upstream defaults
-    * manual -- Uses previously manually set settings
+    * manual - Uses previously manually set settings
 
     The "acceptable multi values" and "acceptable general values" are mutually
     exclusive.  In acceptable multi values listing, the LSMs needs to be comma
@@ -1976,7 +1977,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_MESSAGE -- Print a message near the end of the kernel init.
+    OT_KERNEL_MESSAGE - Print a message near the end of the kernel init.
 
     Examples:
 
@@ -1984,11 +1985,11 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_N_CPUS -- Sets the max number of CPUs.
+    OT_KERNEL_N_CPUS - Sets the max number of CPUs.
 
 
 
-    OT_KERNEL_MENUCONFIG_COLORS -- Sets the colors for menuconfig.
+    OT_KERNEL_MENUCONFIG_COLORS - Sets the colors for menuconfig.
 
     Acceptable values:
 
@@ -1999,7 +2000,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_MENUCONFIG_RUN_AT -- Sets the location to run the menuconfig
+    OT_KERNEL_MENUCONFIG_RUN_AT - Sets the location to run the menuconfig
     wrapper.
 
     Acceptable values:
@@ -2011,7 +2012,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_MENUCONFIG_UI -- Select the menu to use when running the
+    OT_KERNEL_MENUCONFIG_UI - Select the menu to use when running the
     wrapper.  When this value is set to a UI, the emerge will prematurely quit
     to allow to configure it using a wrapper script.  Due to interactive bugs,
     this workaround is used instead.
@@ -2034,7 +2035,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_MODULES_SUPPORT -- Enables or disable modules support.
+    OT_KERNEL_MODULES_SUPPORT - Enables or disable modules support.
     For unsigned kernel modules, this will prevent loading hacked modules.
     If a option is still a module and modules support is disable, it will
     convert all modules into builtins.
@@ -2048,7 +2049,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_MODULES_COMPRESSOR (optional) -- compresses the kernel
+    OT_KERNEL_MODULES_COMPRESSOR (optional) - compresses the kernel
     modules.
 
     Acceptable values:
@@ -2062,7 +2063,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_NETFILTER -- a space delimited list of kernel config symbols.
+    OT_KERNEL_NETFILTER - a space delimited list of kernel config symbols.
 
     Acceptable values:
 
@@ -2097,7 +2098,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PA_BITS -- the address space of the dynamic memory (e.g. RAM).
+    OT_KERNEL_PA_BITS - the address space of the dynamic memory (e.g. RAM).
     PA_BITS correspond to N in the 2^N physical address space.
 
     Acceptable values:
@@ -2114,7 +2115,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PAGE_SIZE -- memory block transferred between hard drive and
+    OT_KERNEL_PAGE_SIZE - memory block transferred between hard drive and
     physical memory.  All transfers must be page sized.  The page size
     is architecture dependent.  Small page sizes store memory in physical more
     efficiently.  Large page sizes reduce page faults (fetching from storage).
@@ -2134,7 +2135,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PCIE_MPS -- sets the Maximum Paylond Size (MPS) and Max Read
+    OT_KERNEL_PCIE_MPS - sets the Maximum Paylond Size (MPS) and Max Read
     Request Size (MRRS).  This setting may improve performance by reducing
     overhead and packets transferred.
 
@@ -2151,7 +2152,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PKGFLAGS_ACCEPT -- a key-value pair(s) of auto apply-able kernel
+    OT_KERNEL_PKGFLAGS_ACCEPT - a key-value pair(s) of auto apply-able kernel
     config symbols to accept per package-wise.
 
     Examples:
@@ -2170,7 +2171,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PKGFLAGS_REJECT -- is a key-value pair(s) auto apply-able kernel
+    OT_KERNEL_PKGFLAGS_REJECT - is a key-value pair(s) auto apply-able kernel
     config symbols to reject.  These sets of flags are identified (id) with a 7
     digit hash code and used to either skip the config and apply the config
     manually or permit a disable_debug conflict to priorize disable_debug
@@ -2199,7 +2200,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PKU -- enables PKU (Memory Protection Keys) for supported
+    OT_KERNEL_PKU - enables PKU (Memory Protection Keys) for supported
     hardware.
 
     Acceptable values:
@@ -2254,17 +2255,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PRIMARY_EXTRAVERSION (optional) -- sets the primary extraversion
+    OT_KERNEL_PRIMARY_EXTRAVERSION (optional) - sets the primary extraversion
     for the symlink USE flag.  If not set, it defaults to ot.
 
 
 
-    OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR (optional) -- sets the primary
+    OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR (optional) - sets the primary
     extraversion for tresor_sysfs USE flag.  If not set, it defaults to ot.
 
 
 
-    OT_KERNEL_PRIVATE_KEY -- The absolute path to a .pem private key file
+    OT_KERNEL_PRIVATE_KEY - The absolute path to a .pem private key file
     used for module signing.  This should only be set in the command line
     not saved in any make.conf, any per package configuration file, any
     env.  When done the variable should be overritten a new string and
@@ -2282,7 +2283,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_PROCESSOR_CLASS -- sets the type of CPU class for used in this
+    OT_KERNEL_PROCESSOR_CLASS - sets the type of CPU class for used in this
     kernel.  This will reduce or increase latency.  If you do not see separate
     memory banks per socket, it probably means it is not designed for NUMA.
     Setting this may change the memory allocator which may affect the network
@@ -2301,7 +2302,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_PRUNE_EXTRA_ARCHES -- remove extra arches for faster install time.
+    OT_KERNEL_PRUNE_EXTRA_ARCHES - remove extra arches for faster install time.
     The one not pruned is the one corresponding to the value in OT_KERNEL_ARCH.
 
     Acceptable values:
@@ -2377,9 +2378,9 @@ unset OT_KERNEL_PRIVATE_KEY
       unset - disallow
 
 
-    OT_KERNEL_SATA_LPM_MAX -- Set the SATA link power management policy for max performance. (Default:  1)
-    OT_KERNEL_SATA_LPM_MID -- Set the SATA link power management policy for mid performance. (Default:  0)
-    OT_KERNEL_SATA_LPM_MIN -- Set the SATA link power management policy for power saving. (Default:  0)
+    OT_KERNEL_SATA_LPM_MAX - Set the SATA link power management policy for max performance. (Default:  1)
+    OT_KERNEL_SATA_LPM_MID - Set the SATA link power management policy for mid performance. (Default:  0)
+    OT_KERNEL_SATA_LPM_MIN - Set the SATA link power management policy for power saving. (Default:  0)
 
     Acceptable values:
 
@@ -2394,7 +2395,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SLAB_ALLOCATOR -- Set the slab allocator
+    OT_KERNEL_SLAB_ALLOCATOR - Set the slab allocator
 
     Acceptable values:
       auto - Auto detect based on kernel config
@@ -2416,7 +2417,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SGX -- sets SGX (Software Guard eXtensions) support for supported
+    OT_KERNEL_SGX - sets SGX (Software Guard eXtensions) support for supported
     hardware.
 
     Acceptable values:
@@ -2427,7 +2428,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SIGN_MODULES (optional) -- signs kernel modules with sha384
+    OT_KERNEL_SIGN_MODULES (optional) - signs kernel modules with sha384
     or sha512.  This option is dependent on OT_KERNEL_MODULES_SUPPORT=y.
 
     Acceptable values:
@@ -2464,7 +2465,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SIGN_KERNEL (WIP) -- Cryptographically sign the kernel for the
+    OT_KERNEL_SIGN_KERNEL (WIP) - Cryptographically sign the kernel for the
     type of system and install the kernel to the EFI partition if possible.
 
     Acceptable values:
@@ -2473,12 +2474,12 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SHARED_KEY -- The absolute path to a .x509 shared key file
+    OT_KERNEL_SHARED_KEY - The absolute path to a .x509 shared key file
     used for module signing.
 
 
 
-    OT_KERNEL_SME -- allow support for Secure Memory Encryption for
+    OT_KERNEL_SME - allow support for Secure Memory Encryption for
     supported hardware.  This feature is not enabled by default due to
     possible boot failure.  To test, set OT_KERNEL_SME to 1 and bootloader
     with mem_encrypt=on.  If it works after testing, you must set
@@ -2492,7 +2493,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SME_DEFAULT_ON -- sets SME ON at boot.  This requires
+    OT_KERNEL_SME_DEFAULT_ON - sets SME ON at boot.  This requires
     OT_KERNEL_BOOT_ARGS to have all kernel args that would be normally
     specified in the bootline to be builtin.  It will automatically add
     mem_encrypt=on and the kernel commandline provided by the bootloader
@@ -2511,7 +2512,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SSD -- Set if SSD drive is present for this kernel build.
+    OT_KERNEL_SSD - Set if SSD drive is present for this kernel build.
 
     Acceptable values:
 
@@ -2526,7 +2527,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SWAP -- Enable or disable use of swap.
+    OT_KERNEL_SWAP - Enable or disable use of swap.
 
     Acceptable values:
 
@@ -2538,14 +2539,14 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_TARGET_TRIPLE -- The target triple (CHOST) to use when
+    OT_KERNEL_TARGET_TRIPLE - The target triple (CHOST) to use when
     cross-compiling.  Use the expanded CHOST value.  (This can be not set but
     then defaults to ${CHOST}.)  If you put just CHOST or just CBUILD it will
     expand for each case.
 
 
 
-    OT_KERNEL_TCP_CONGESTION_CONTROLS -- Select TCP congestion controls to
+    OT_KERNEL_TCP_CONGESTION_CONTROLS - Select TCP congestion controls to
     add.  A space separated list may be used.  The first option
     is the fallback default.  (EXPERIMENTAL)
 
@@ -2787,13 +2788,13 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_USB_AUTOSUSPEND -- Set to -1 to disable, or set to a whole number
+    OT_KERNEL_USB_AUTOSUSPEND - Set to -1 to disable, or set to a whole number
     to set the delay.  Some OT_KERNEL_WORK_PROFILE will automatically set it
     to -1 for gaming or digital-audio-workstations work profiles.
     
 
 
-    OT_KERNEL_USE -- Per build env USE flags.  If not set, it will use the same
+    OT_KERNEL_USE - Per build env USE flags.  If not set, it will use the same
     USE flags set.  The scope of OT_KERNEL_USE is partially in src_prepare,
     src_configure, src_compile, partially in src_install.  The normal USE flags
     are valid in global scope, fetching and unpacking, and in the remaining
@@ -2803,7 +2804,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_USE_LSM_UPSTREAM_ORDER -- Use the upstream init order
+    OT_KERNEL_USE_LSM_UPSTREAM_ORDER - Use the upstream init order
     for LSM modules.
     Accepted values: 1 to use upstream order, 0 to use custom order.
     The custom order (0) can optionally apply to "acceptable multi values"
@@ -2811,7 +2812,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_VA_BITS -- the address space of the virtual memory (which includes
+    OT_KERNEL_VA_BITS - the address space of the virtual memory (which includes
     RAM + SWAP).  PB_BITS correspond to N in the 2^N virtual address space.
 
     Acceptable values:
@@ -2828,7 +2829,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_VERBOSITY=N (optional) -- presentation of compiler and build
+    OT_KERNEL_VERBOSITY=N (optional) - presentation of compiler and build
     invocation.  This will print out the compiler flags used during 
     compilation.  Using 1 will print as if you are compiling a typical ebuild
     package.
@@ -2842,7 +2843,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_WORK_PROFILE -- sets the power-performance profile while taking
+    OT_KERNEL_WORK_PROFILE - sets the power-performance profile while taking
     in consideration productivity and latency requirements.  This value can
     be unset which is equivalent to manual.
 
@@ -2925,7 +2926,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_ZSWAP_ALLOCATOR -- chooses the swap allocator which tries to fit
+    OT_KERNEL_ZSWAP_ALLOCATOR - chooses the swap allocator which tries to fit
     the number of compressed pages while aiming to reduce fragmentation.
 
     Acceptable values:
@@ -2940,7 +2941,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_ZSWAP_COMPRESSOR -- chooses a swap page algorithm
+    OT_KERNEL_ZSWAP_COMPRESSOR - chooses a swap page algorithm
 
     Acceptable values:
 
@@ -3147,16 +3148,18 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0 (default), 1.
     See also:  MEMCARD_MMC, MEMCARD_SD, USB_MASS_STORAGE
 
-    MICROCODE_SIGNATURES -- Whitelist processor signatures.  If changed, it will
+    MICROCODE_SIGNATURES - Whitelist processor signatures.  If changed, it will
       replace the ebuild defaults.  Requires OT_KERNEL_CPU_MICROCODE=1.
     Valid values:
       See iucode_tool man page for details.
     Examples:
-      MICROCODE_SIGNATURES="-S" # Equivalent to --scan-system=auto ; Not recommended for multisocket mobos.
-      MICROCODE_SIGNATURES="--scan-system=exact" # Recommended for multisocket, server.  Ebuild default.
+      MICROCODE_SIGNATURES="-S" # Equivalent to ~~scan-system=auto ; Not recommended for multisocket mobos.
+      MICROCODE_SIGNATURES="~~scan-system=exact" # Recommended for multisocket, server.  Ebuild default.
       MICROCODE_SIGNATURES="-s 0x000306c3"
 
-    MICROCODE_BLACKLIST -- Blacklist processor signatures.
+      (You must replace ~~ with double hyphen.  xml does not allow double hyphen in comments.)
+
+    MICROCODE_BLACKLIST - Blacklist processor signatures.
       Requires OT_KERNEL_CPU_MICROCODE=1.
     Valid values:
       See iucode_tool man page for details.
@@ -3312,7 +3315,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     disable_debug environment variables:
 
-    PERMIT_NETFILTER_SYMBOL_REMOVAL -- Remove extra symbols containing names
+    PERMIT_NETFILTER_SYMBOL_REMOVAL - Remove extra symbols containing names
     with those keywords.  Note, some of these symbols may be beneficial to
     netfilter and not be related to debugging.  By default, this is disabled.
 
@@ -3324,7 +3327,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Environment variables for genpatches:
     
-    GENPATCHES_BLACKLIST -- a space separated list of genpatches to ban.
+    GENPATCHES_BLACKLIST - a space separated list of genpatches to ban.
     See the genpatches website for the number to patch correspondance.
 
     Examples:
@@ -3336,8 +3339,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Environment variables for zen-sauce:
 
-    ZEN_SAUCE_BLACKLIST -- a space separated list of zen-sauce commit ids to ban.
-    ZEN_SAUCE_WHITELIST -- a space separated list of zen-sauce commit ids to apply.
+    ZEN_SAUCE_BLACKLIST - a space separated list of zen-sauce commit ids to ban.
+    ZEN_SAUCE_WHITELIST - a space separated list of zen-sauce commit ids to apply.
 
     Acceptable values:
 

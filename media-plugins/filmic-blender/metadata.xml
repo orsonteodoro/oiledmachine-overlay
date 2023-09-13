@@ -23,7 +23,6 @@
     For 3.x see:
       https://docs.blender.org/manual/en/2.83/render/color_management.html?highlight=color%20management#settings
   -->
-  </longdescription>
   <upstream>
     <bugs-to>https://github.com/sobotka/filmic-blender/issues</bugs-to>
     <remote-id type="github">sobotka/filmic-blender</remote-id>
