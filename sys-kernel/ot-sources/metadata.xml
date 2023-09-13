@@ -279,11 +279,9 @@
 
     Notes:
 
-    FORCE_PGO_PHASE may be used to unbreak or disable pdo using PDI, PDT, PDO,
-    PD0 as valid values.  PD0 means to disable/skip PGO.
-
-    FORCE_PGO_PHASE may be used to unbreak or disable pgo using PGI, PGT, PGO,
-    PG0 as valid values.  PG0 means to disable/skip PGO.
+    FORCE_PGO_PHASE may be used to unbreak or disable
+    - pdo using PDI, PDT, PDO, PD0 as valid values.  PD0 means to disable/skip PDO.
+    - pgo using PGI, PGT, PGO, PG0 as valid values.  PG0 means to disable/skip PGO.
 
     Same variable name but different values for PGO/PDO.
 
