@@ -5,29 +5,47 @@ License identified for kernel/gcov/Makefile:
 # SPDX-License-Identifier: GPL-2.0
 License identified in arch/x86/kernel/paravirt.c:
 // SPDX-License-Identifier: GPL-2.0-or-later
---- a/Makefile.orig	2023-09-11 21:35:55.943766047 -0700
-+++ b/Makefile	2023-09-11 21:38:02.587762968 -0700
-@@ -640,7 +640,18 @@ all: vmlinux
+--- a/Makefile.orig	2023-09-13 18:48:47.672199841 -0700
++++ b/Makefile	2023-09-13 18:50:11.440197675 -0700
+@@ -640,7 +640,36 @@ all: vmlinux
  
  KBUILD_CFLAGS	+= $(call cc-option,-fno-PIE)
  KBUILD_AFLAGS	+= $(call cc-option,-fno-PIE)
 -CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage -fno-tree-loop-im $(call cc-disable-warning,maybe-uninitialized,)
++
 +CFLAGS_GCOV	:=
++CFLAGS_GCOV_DEFAULT	:= y
++
 +ifeq ($(findstring GCC_PDI,$(GCC_PGO_PHASE)),GCC_PDI)
 +CFLAGS_GCOV	+= -fprofile-arcs -fno-tree-loop-im
-+else ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+CFLAGS_GCOV	+= -fprofile-generate -fno-tree-loop-im
-+else ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
-+CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+else ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
-+CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+else
-+CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage -fno-tree-loop-im $(call cc-disable-warning,maybe-uninitialized,)
++CFLAGS_GCOV_DEFAULT	:= n
 +endif
++
++ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++CFLAGS_GCOV	+= -fprofile-generate -fno-tree-loop-im
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
++CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(CFLAGS_GCOV_DEFAULT),y)
++CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage -fno-tree-loop-im
++endif
++
++CFLAGS_GCOV	+= $(call cc-disable-warning,maybe-uninitialized,)
++
  CFLAGS_KCOV	:= $(call cc-option,-fsanitize-coverage=trace-pc,)
  export CFLAGS_GCOV CFLAGS_KCOV
  
-@@ -885,6 +889,17 @@ ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATI
+@@ -885,6 +914,17 @@ ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATI
  LDFLAGS_vmlinux	+= $(call ld-option, --gc-sections,)
  endif
  

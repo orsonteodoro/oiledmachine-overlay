@@ -11,28 +11,45 @@ License identified for kernel/gcov/Makefile:
 # SPDX-License-Identifier: GPL-2.0
 License identified in arch/x86/kernel/paravirt.c:
 // SPDX-License-Identifier: GPL-2.0-or-later
---- a/Makefile.orig	2023-09-12 19:32:05.446367357 -0700
-+++ b/Makefile	2023-09-12 19:47:59.266342687 -0700
-@@ -762,7 +762,18 @@ endif # KBUILD_EXTMOD
+--- a/Makefile.orig	2023-09-13 18:20:31.324243717 -0700
++++ b/Makefile	2023-09-13 18:21:21.272242425 -0700
+@@ -762,10 +762,33 @@ endif # KBUILD_EXTMOD
  # Defaults to vmlinux, but the arch makefile usually adds further targets
  all: vmlinux
  
 -CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
+-ifdef CONFIG_CC_IS_GCC
+-CFLAGS_GCOV	+= -fno-tree-loop-im
 +CFLAGS_GCOV	:=
++CFLAGS_GCOV_DEFAULT	:= y
++
 +ifeq ($(findstring GCC_PDI,$(GCC_PGO_PHASE)),GCC_PDI)
-+CFLAGS_GCOV	+= -fprofile-arcs
-+else ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
-+CFLAGS_GCOV	+= -fprofile-generate
-+else ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
++CFLAGS_GCOV	+= -fprofile-arcs -fno-tree-loop-im
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++CFLAGS_GCOV	+= -fprofile-generate -fno-tree-loop-im
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
 +CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+else ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++CFLAGS_GCOV_DEFAULT	:= n
+ endif
++
++ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
 +CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+else
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(CFLAGS_GCOV_DEFAULT),y)
 +CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage
 +endif
- ifdef CONFIG_CC_IS_GCC
- CFLAGS_GCOV	+= -fno-tree-loop-im
- endif
++
+ export CFLAGS_GCOV
+ 
+ # The arch Makefiles can override CC_FLAGS_FTRACE. We may also append it later.
 --- a/scripts/Makefile.vmlinux_o.orig	2023-08-27 14:49:51.000000000 -0700
 +++ b/scripts/Makefile.vmlinux_o	2023-09-12 20:18:26.242295433 -0700
 @@ -44,12 +44,18 @@ objtool-args = $(vmlinux-objtool-args-y)
