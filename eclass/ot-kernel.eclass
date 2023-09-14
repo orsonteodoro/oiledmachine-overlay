@@ -205,10 +205,8 @@ DEPEND+="
 		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
 	)
 	pgo? (
-		!clang? (
-			sys-devel/binutils[static-libs]
-			sys-libs/libunwind[static-libs]
-		)
+		sys-devel/binutils[static-libs]
+		sys-libs/libunwind[static-libs]
 	)
 "
 
@@ -1210,7 +1208,8 @@ einfo "Detected sys-devel/gcc-kpgo"
 		GCC_PKG="sys-devel/gcc"
 	fi
 
-	if has ccache ${FEATURES} && use pgo && ! use clang ; then
+	if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE} && ! use clang ) \
+		|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE} ) ; then
 ewarn
 ewarn "ccache is not supported in FEATURES with GCC PGO."
 ewarn "Trying to disable."
