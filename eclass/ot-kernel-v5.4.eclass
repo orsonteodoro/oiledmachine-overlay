@@ -126,6 +126,8 @@ PATCH_ZEN_TUNE_COMMITS=(
 # This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
 # element means that the left commit requires right commit which can be
 # resolved by adding the right commit to ZEN_SAUCE_WHITELIST.
+# commits [oldest] a b c d e... [newest]
+# b:a
 PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE=(
 c9a8f36311f14311a3202501c88009f758683c0f:3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
 ) # \
@@ -668,10 +670,14 @@ ot-kernel_filter_patch_cb() {
 			_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 			_dpatch "${PATCH_OPTS}" \
 				"${FILESDIR}/zen-sauce-5.4.0-3e05ad8-compat-with-bmq-v5.4-r2-for-5.4.256.patch"
+		else
+			_dpatch "${PATCH_OPTS}" "${path}"
 		fi
 	elif [[ "${path}" =~ "zen-sauce-5.4.0-7e92cd4.patch" ]] ; then
 		if ot-kernel_use bmq ; then
 			:; # Patch for MuQSS only
+		else
+			_dpatch "${PATCH_OPTS}" "${path}"
 		fi
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"

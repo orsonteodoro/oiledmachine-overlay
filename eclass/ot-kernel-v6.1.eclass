@@ -105,6 +105,8 @@ f884ec1baec395379fcb427bbc2b3231ba9484a2
 # This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
 # element means that the left commit requires right commit which can be
 # resolved by adding the right commit to ZEN_SAUCE_WHITELIST.
+# commits [oldest] a b c d e... [newest]
+# b:a
 PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE=(
 )
 

@@ -1446,14 +1446,11 @@ apply_rt() {
 # @DESCRIPTION:
 # Applies whitelisted zen sauce patches.
 apply_zen_sauce() {
-	local zw="ZEN_SAUCE_WHITELIST"
-	local zb="ZEN_SAUCE_BLACKLIST"
-
 	local whitelisted=""
 	local blacklisted=""
 
 	local c
-	for c in "${!zw}" ; do
+	for c in "${ZEN_SAUCE_WHITELIST}" ; do
 	# Add commit hashes only
 		[[ "${c}" == "*" ]] && continue
 		[[ "${c}" == "all" ]] && continue
@@ -1462,7 +1459,7 @@ apply_zen_sauce() {
 		whitelisted+=" ${c:0:7}"
 	done
 
-	for c in "${!zb}" ; do
+	for c in "${ZEN_SAUCE_BLACKLIST}" ; do
 	# Add commit hashes only
 		[[ "${c}" == "*" ]] && continue
 		[[ "${c}" == "all" ]] && continue
@@ -1540,7 +1537,7 @@ apply_zen_sauce() {
 		fi
 	fi
 
-	use_blacklisted+=" ${PATCH_ZEN_SAUCE_BL[@]}"
+	local use_blacklisted+=" ${PATCH_ZEN_SAUCE_BL[@]}"
 
 	whitelisted=$(echo "${whitelisted}" \
 		| tr " " "\n" \
@@ -2488,8 +2485,12 @@ ewarn
 		eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
 	fi
 
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.6.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		eapply "${FILESDIR}/gcc-pgo-flags-5.15.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.19.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then

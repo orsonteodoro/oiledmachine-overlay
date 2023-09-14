@@ -1,0 +1,93 @@
+Patch status:  WIP / In development
+License identified in Makefile:
+# SPDX-License-Identifier: GPL-2.0
+License identified for kernel/gcov/Makefile:
+# SPDX-License-Identifier: GPL-2.0
+License identified in arch/x86/kernel/paravirt.c:
+// SPDX-License-Identifier: GPL-2.0-or-later
+--- a/Makefile.orig	2023-09-11 21:30:18.095774260 -0700
++++ b/Makefile	2023-09-11 21:31:54.343771920 -0700
+@@ -619,7 +619,33 @@ endif
+ # Defaults to vmlinux, but the arch makefile usually adds further targets
+ all: vmlinux
+ 
+-CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage \
++CFLAGS_GCOV	:=
++CFLAGS_GCOV_DEFAULT	:= y
++
++ifeq ($(findstring GCC_PDI,$(GCC_PGO_PHASE)),GCC_PDI)
++CFLAGS_GCOV	+= -fprofile-arcs -fno-tree-loop-im
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++CFLAGS_GCOV	+= -fprofile-generate -fno-tree-loop-im
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
++CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++CFLAGS_GCOV_DEFAULT	:= n
++endif
++
++ifeq ($(CFLAGS_GCOV_DEFAULT),y)
++CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage $(call cc-option,-fno-tree-loop-im)
++endif
++
++CFLAGS_GCOV	+=  \
+-	$(call cc-option,-fno-tree-loop-im) \
+ 	$(call cc-disable-warning,maybe-uninitialized,)
+ export CFLAGS_GCOV
+@@ -889,6 +893,17 @@ LDFLAGS_BUILD_ID := $(call ld-option, --
+ KBUILD_LDFLAGS_MODULE += $(LDFLAGS_BUILD_ID)
+ LDFLAGS_vmlinux += $(LDFLAGS_BUILD_ID)
+ 
++#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#KBUILD_CFLAGS         += -fprofile-generate
++#KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
++#KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
++#endif
++#ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++#KBUILD_CFLAGS         += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++#KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
++#KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
++#endif
++
+ KBUILD_LDFLAGS	+= -z noexecstack
+ KBUILD_LDFLAGS	+= $(call ld-option,--no-warn-rwx-segments)
+ 
+--- a/kernel/gcov/Makefile.orig	2023-08-27 14:49:51.000000000 -0700
++++ b/kernel/gcov/Makefile	2023-09-13 15:27:37.344512036 -0700
+@@ -1,4 +1,9 @@
+ # SPDX-License-Identifier: GPL-2.0
++
++ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++GCOV_PROFILE := n
++endif
++
+ ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
+ 
+ obj-y := base.o fs.o
+--- a/arch/x86/kernel/paravirt.c.orig	2019-11-24 16:32:01.000000000 -0800
++++ b/arch/x86/kernel/paravirt.c	2023-09-13 19:35:31.452127322 -0700
+@@ -36,6 +36,7 @@
+  * avoid confusing the entry prologues.
+  */
+ extern void _paravirt_nop(void);
++//
+ asm (".pushsection .entry.text, \"ax\"\n"
+      ".global _paravirt_nop\n"
+      "_paravirt_nop:\n\t"
+@@ -80,6 +81,7 @@ static unsigned paravirt_patch_call(void
+ 
+ #ifdef CONFIG_PARAVIRT_XXL
+ /* identity function, which can be inlined */
++#pragma GCC optimize "-fno-profile-values"
+ u64 notrace _paravirt_ident_64(u64 x)
+ {
+ 	return x;

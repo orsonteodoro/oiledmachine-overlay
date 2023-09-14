@@ -110,6 +110,8 @@ PATCH_ZEN_SAUCE_BRANDING="
 # This is a list containing elements of LEFT_ZEN_COMMIT:RIGHT_ZEN_COMMIT.  Each
 # element means that the left commit requires right commit which can be
 # resolved by adding the right commit to ZEN_SAUCE_WHITELIST.
+# commits [oldest] a b c d e... [newest]
+# b:a
 PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE=(
 de75df02de322eaa8a0cd35ef9e4f7a1c010c9ac:05447263701b202e0086bb2cae098cf6d46c158e
 ) # \
@@ -537,7 +539,7 @@ RDEPEND+="
 		!clang? (
 			>=sys-devel/gcc-${GCC_PV}
 		)
-	}
+	)
 	pgo? (
 		!clang? (
 			>=sys-devel/gcc-kpgo-${GCC_PV}
