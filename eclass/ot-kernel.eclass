@@ -1230,6 +1230,9 @@ ewarn
 # Copies the profraw for Clang PGO.
 # It has to be done outside of the sandbox.
 dump_profraw() {
+	if [[ "${FORCE_PGO_PHASE}" =~ ("PDI"|"PDT"|"PDO"|"PD0") ]] ; then
+		return
+	fi
 	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
 	[[ -e "${profraw_spath}" ]] || return
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
@@ -1276,7 +1279,7 @@ dump_gcda() {
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
-	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PG0") ]] ; then
+	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PDI"|"PG0") ]] ; then
 		rm -rf "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc"
 	fi
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || true
@@ -2656,11 +2659,20 @@ ewarn "Securely wiping private keys for ${extraversion}"
 }
 
 # Constant enums
+# For Profile Guided Optimization (PDO)
 PGO_PHASE_UNK="UNK" # Unset
 PGO_PHASE_PGI="PGI" # Instrumentation step
 PGO_PHASE_PGT="PGT" # Training step
 PGO_PHASE_PGO="PGO" # Optimization step
 PGO_PHASE_PG0="PG0" # No PGO
+PGO_PHASE_DONE="DONE" # DONE
+
+# For Profile Directed Optimization (PDO)
+PGO_PHASE_UNK="UNK" # Unset
+PGO_PHASE_PDI="PGI" # Instrumentation step
+PGO_PHASE_PDT="PGT" # Training step
+PGO_PHASE_PDO="PGO" # Optimization step
+PGO_PHASE_PD0="PG0" # No PDO
 PGO_PHASE_DONE="DONE" # DONE
 
 # @FUNCTION: is_clang_ready

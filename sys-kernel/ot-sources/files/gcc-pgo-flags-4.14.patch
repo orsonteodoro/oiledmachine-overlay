@@ -15,11 +15,11 @@ License identified in arch/x86/kernel/paravirt.c:
 +CFLAGS_GCOV	:=
 +ifeq ($(findstring GCC_PDI,$(GCC_PGO_PHASE)),GCC_PDI)
 +CFLAGS_GCOV	+= -fprofile-arcs -fno-tree-loop-im
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++else ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
 +CFLAGS_GCOV	+= -fprofile-generate -fno-tree-loop-im
-+ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
++else ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
 +CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++else ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
 +CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +else
 +CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage -fno-tree-loop-im $(call cc-disable-warning,maybe-uninitialized,)
