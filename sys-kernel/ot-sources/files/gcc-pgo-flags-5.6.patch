@@ -21,29 +21,29 @@ License identified in arch/x86/kernel/paravirt.c:
 -ifdef CONFIG_CC_IS_GCC
 -CFLAGS_GCOV	+= -fno-tree-loop-im
 +CFLAGS_GCOV	:=
-+CFLAGS_GCOV_DEFAULT	:= y
++CFLAGS_GCOV_DEFAULT	:= 1
 +
-+ifeq ($(findstring GCC_PDI,$(GCC_PGO_PHASE)),GCC_PDI)
++ifeq ($(GCC_PGO_PHASE),GCC_PDI)
 +CFLAGS_GCOV	+= -fprofile-arcs -fno-tree-loop-im
-+CFLAGS_GCOV_DEFAULT	:= n
++CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++ifeq ($(GCC_PGO_PHASE),GCC_PGI)
 +CFLAGS_GCOV	+= -fprofile-generate -fno-tree-loop-im
-+CFLAGS_GCOV_DEFAULT	:= n
++CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
-+ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
++ifeq ($(GCC_PGO_PHASE),GCC_PDO)
 +CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+CFLAGS_GCOV_DEFAULT	:= n
++CFLAGS_GCOV_DEFAULT	= 0
  endif
 +
-+ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++ifeq ($(GCC_PGO_PHASE),GCC_PGO)
 +CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+CFLAGS_GCOV_DEFAULT	:= n
++CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
-+ifeq ($(CFLAGS_GCOV_DEFAULT),y)
++ifeq ($(CFLAGS_GCOV_DEFAULT),1)
 +CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage
 +endif
 +
@@ -57,7 +57,7 @@ License identified in arch/x86/kernel/paravirt.c:
  # ---------------------------------------------------------------------------
  
 +LDFLAGS_PGI :=
-+#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#ifeq ($(GCC_PGO_PHASE),GCC_PGI)
 +#      LDFLAGS_PGI += -L$(LIBC_DIR) -l:libc.a -L$(GCC_GCOV_DIR) -l:libgcov.a -l:libgcc.a $(LIBBFD_DIR) -l:libunwind.a
 +#endif
 +
@@ -83,11 +83,11 @@ License identified in arch/x86/kernel/paravirt.c:
 +CFLAGS_GCOV_PGO :=
 +LDFLAGS_GCOV_PGI :=
 +LDFLAGS_GCOV_PGO :=
-+#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#ifeq ($(GCC_PGO_PHASE),GCC_PGI)
 +#      CFLAGS_GCOV_PGI += -fprofile-generate -fno-tree-loop-im
 +#      LDFLAGS_GCOV_PGI += -L$(LIBC_DIR) -l:libc.a -L$(GCC_GCOV_DIR) -l:libgcov.a -l:libgcc.a -l:libunwind.a
 +#endif
-+#ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++#ifeq ($(GCC_PGO_PHASE),GCC_PGO)
 +#      CFLAGS_GCOV_PGO += -fprofile-use -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +#endif
 +
@@ -115,11 +115,11 @@ License identified in arch/x86/kernel/paravirt.c:
 +CFLAGS_PGO :=
 +LDFLAGS_PGI :=
 +LDFLAGS_PGO :=
-+#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#ifeq ($(GCC_PGO_PHASE),GCC_PGI)
 +#CFLAGS_PGI	+= -fprofile-generate -fno-tree-loop-im
 +#LDFLAGS_PGI     += -L$(LIBC_DIR) -l:libc.a -L$(GCC_GCOV_DIR) -l:libgcov.a -l:libgcc.a -l:libunwind.a
 +#endif
-+#ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++#ifeq ($(GCC_PGO_PHASE),GCC_PGO)
 +##CFLAGS_PGO	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +#endif
 +
@@ -143,7 +143,7 @@ License identified in arch/x86/kernel/paravirt.c:
 @@ -1,4 +1,9 @@
  # SPDX-License-Identifier: GPL-2.0
 +
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++ifeq ($(GCC_PGO_PHASE),GCC_PGI)
 +GCOV_PROFILE := n
 +endif
 +

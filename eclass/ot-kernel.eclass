@@ -2670,10 +2670,10 @@ PGO_PHASE_DONE="DONE" # DONE
 
 # For Profile Directed Optimization (PDO)
 PGO_PHASE_UNK="UNK" # Unset
-PGO_PHASE_PDI="PGI" # Instrumentation step
-PGO_PHASE_PDT="PGT" # Training step
-PGO_PHASE_PDO="PGO" # Optimization step
-PGO_PHASE_PD0="PG0" # No PDO
+PGO_PHASE_PDI="PDI" # Instrumentation step
+PGO_PHASE_PDT="PDT" # Training step
+PGO_PHASE_PDO="PDO" # Optimization step
+PGO_PHASE_PD0="PD0" # No PDO
 PGO_PHASE_DONE="DONE" # DONE
 
 # @FUNCTION: is_clang_ready
@@ -8307,7 +8307,7 @@ einfo "Building ${pgo_phase}"
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=${pgo_phase}"
+						"GCC_PGO_PHASE=GCC_${pgo_phase}"
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${LIBBFD_DIR}"
@@ -8315,7 +8315,7 @@ einfo "Building ${pgo_phase}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=${pgo_phase}"
+						"GCC_PGO_PHASE=GCC_${pgo_phase}"
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST}/${binutils_pv}"
@@ -8342,21 +8342,21 @@ eerror
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
 einfo "Building ${pgo_phase}"
 				args+=(
-					"GCC_PGO_PHASE=${pgo_phase}"
+					"GCC_PGO_PHASE=GCC_${pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PDO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] && ot-kernel_use pdo ; then
 # For resuming or rebuilding as PDO phase
 einfo "Building ${pgo_phase}"
 				args+=(
-					"GCC_PGO_PHASE=${pgo_phase}"
+					"GCC_PGO_PHASE=GCC_${pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] && ot-kernel_use pgo ; then
 # For resuming or rebuilding as PGO phase
 einfo "Building ${pgo_phase}"
 				args+=(
-					"GCC_PGO_PHASE=${pgo_phase}"
+					"GCC_PGO_PHASE=GCC_${pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}"|"${PGO_PHASE_PDT}") ]] && (( ${n_gcda} == 0 )) ; then
@@ -8373,7 +8373,7 @@ einfo "Resuming as ${pgo_phase} since no profile generated"
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=${pgo_phase}"
+						"GCC_PGO_PHASE=GCC_${pgo_phase}"
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${LIBBFD_DIR}"
@@ -8381,7 +8381,7 @@ einfo "Resuming as ${pgo_phase} since no profile generated"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=${pgo_phase}"
+						"GCC_PGO_PHASE=GCC_${pgo_phase}"
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST_amd64}/${binutils_pv}"

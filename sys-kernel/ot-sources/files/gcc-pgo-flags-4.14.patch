@@ -14,29 +14,29 @@ License identified in arch/x86/kernel/paravirt.c:
 -CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage -fno-tree-loop-im $(call cc-disable-warning,maybe-uninitialized,)
 +
 +CFLAGS_GCOV	:=
-+CFLAGS_GCOV_DEFAULT	:= y
++CFLAGS_GCOV_DEFAULT	:= 1
 +
-+ifeq ($(findstring GCC_PDI,$(GCC_PGO_PHASE)),GCC_PDI)
++ifeq ($(GCC_PGO_PHASE),GCC_PDI)
 +CFLAGS_GCOV	+= -fprofile-arcs -fno-tree-loop-im
-+CFLAGS_GCOV_DEFAULT	:= n
++CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++ifeq ($(GCC_PGO_PHASE),GCC_PGI)
 +CFLAGS_GCOV	+= -fprofile-generate -fno-tree-loop-im
-+CFLAGS_GCOV_DEFAULT	:= n
++CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
-+ifeq ($(findstring GCC_PDO,$(GCC_PGO_PHASE)),GCC_PDO)
++ifeq ($(GCC_PGO_PHASE),GCC_PDO)
 +CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+CFLAGS_GCOV_DEFAULT	:= n
++CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
-+ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++ifeq ($(GCC_PGO_PHASE),GCC_PGO)
 +CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+CFLAGS_GCOV_DEFAULT	:= n
++CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
-+ifeq ($(CFLAGS_GCOV_DEFAULT),y)
++ifeq ($(CFLAGS_GCOV_DEFAULT),1)
 +CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage -fno-tree-loop-im
 +endif
 +
@@ -49,12 +49,12 @@ License identified in arch/x86/kernel/paravirt.c:
  LDFLAGS_vmlinux	+= $(call ld-option, --gc-sections,)
  endif
  
-+#ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++#ifeq ($(GCC_PGO_PHASE),GCC_PGI)
 +#KBUILD_CFLAGS          += -fprofile-generate
 +#KBUILD_LDFLAGS_MODULE  += $(GCC_GCOV_DIR)/libgcov.a
 +#LDFLAGS                += $(GCC_GCOV_DIR)/libgcov.a
 +#endif
-+#ifeq ($(findstring GCC_PGO,$(GCC_PGO_PHASE)),GCC_PGO)
++#ifeq ($(GCC_PGO_PHASE),GCC_PGO)
 +#KBUILD_CFLAGS          += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +#KBUILD_LDFLAGS_MODULE  += $(GCC_GCOV_DIR)/libgcov.a
 +#LDFLAGS                += $(GCC_GCOV_DIR)/libgcov.a
@@ -68,7 +68,7 @@ License identified in arch/x86/kernel/paravirt.c:
 @@ -1,4 +1,9 @@
  # SPDX-License-Identifier: GPL-2.0
 +
-+ifeq ($(findstring GCC_PGI,$(GCC_PGO_PHASE)),GCC_PGI)
++ifeq ($(GCC_PGO_PHASE),GCC_PGI)
 +GCOV_PROFILE := n
 +endif
 +
