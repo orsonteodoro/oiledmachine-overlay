@@ -3,31 +3,30 @@
 
 EAPI=8
 
-GENPATCHES_VER="17"
-PATCH_PROJC_VER="6.4-r0"
-PATCH_RT_VER="6.4.6-rt8"
+GENPATCHES_VER="59"
+PATCH_PROJC_VER="6.1-r4"
+PATCH_RT_VER="6.1.46-rt14-rc1"
 
-inherit ot-kernel-v6.4
+inherit ot-kernel-v6.1
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.4.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.1.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.4.1 (20230702) with builder profile
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.4.2 (20230711) with builder profile
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.4.3 (20230711) with builder profile
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.1.38 (20230711) with builder profile
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.1.38 (20230711) with gamer profile
 # USE="bbrv2 build cfs disable_debug genpatches ncurses openssl symlink
 # zen-sauce zstd -bzip2 -cfi -clang -clang-pgo -cve_hotfix -exfat
-# -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick -kcfi -lto -lz4 -lzma
-# -lzo -multigen_lru -pcc -prjc (-qt5) -reiserfs -rt -rust -shadowcallstack
-# -tresor -tresor_aesni -tresor_i686 -tresor_prompt -tresor_sysfs -tresor_x86_64
-# -tresor_x86_64-256-bit-key-support -uksm -xz -zen-multigen_lru -zen-sauce-all
-# -zen-tune"
+# -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick -kcfi -lto -lz4
+# -lzma -lzo -multigen_lru -pcc -prjc (-qt5) -reiserfs -rt -rust
+# -shadowcallstack -tresor -tresor_aesni -tresor_i686 -tresor_prompt
+# -tresor_sysfs -tresor_x86_64 -tresor_x86_64-256-bit-key-support -uksm -xz
+# -zen-multigen_lru -zen-sauce-all -zen-tune"
 # OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
 # -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
@@ -42,8 +41,8 @@ inherit ot-kernel-v6.4
 # OT_KERNEL_LOGO_COUNT=1
 # OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
 # OT_KERNEL_LOGO_URI="<redacted>"
-# OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_SLAB_ALLOCATOR="slub"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
 # OT_KERNEL_USE="-c2tcp O3 bbrv2 disable_debug -tresor -tresor_sysfs
@@ -65,8 +64,8 @@ inherit ot-kernel-v6.4
 # OT_KERNEL_LOGO_COUNT=1
 # OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
 # OT_KERNEL_LOGO_URI="<redacted>"
-# OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_SLAB_ALLOCATOR="slab"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
 # OT_KERNEL_USE="-c2tcp O3 bbrv2 disable_debug -tresor -tresor_sysfs
@@ -77,3 +76,6 @@ inherit ot-kernel-v6.4
 # OT_KERNEL_WORK_PROFILE="pro-gaming"
 # OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 # OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
+# boot:       passed
+# show logo:  passed
+# network:    passed

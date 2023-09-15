@@ -2493,9 +2493,24 @@ ewarn
 		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.19.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
+		eapply "${FILESDIR}/gcc-pgo-flags-4.19.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.14.patch"
 	fi
+
+if false ; then
+	# Still a long way...
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		eapply "A${FILESDIR}/gcc-pgo-profilers-6.1.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		eapply "${FILESDIR}/gcc-pgo-profilers-5.4.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
+		eapply "${FILESDIR}/gcc-pgo-profilers-4.19.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		eapply "${FILESDIR}/gcc-pgo-profilers-4.14.patch"
+	fi
+fi
 
 	local moved=0
 
@@ -8307,18 +8322,20 @@ einfo "Building ${pgo_phase}"
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=GCC_${pgo_phase}"
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
+						"GCC_PGO_PHASE=GCC_${pgo_phase}"
+						"GCC_PLUGINS_INCLUDE=${GCC_PLUGINS_INCLUDE}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${LIBBFD_DIR}"
 						"LIBC_DIR=${LIBC_DIR}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
+						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}"
 						"GCC_PGO_PHASE=GCC_${pgo_phase}"
-						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}"
+						"GCC_PLUGINS_INCLUDE=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}/plugin/include"
 						"KBUILD_MODPOST_WARN=1"
-						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST}/${binutils_pv}"
+						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST_amd64}/${binutils_pv}"
 						"LIBC_DIR=${ESYSROOT}/usr/${LIBDIR_amd64}"
 					)
 				else
@@ -8326,6 +8343,7 @@ eerror
 eerror "Unknown arch:  ${arch}"
 eerror
 eerror "You must define GCC_GCOV_DIR to the absolute path containing libgcov.a."
+eerror "You must define GCC_PLUGINS_INCLUDE to the absolute path containing coretypes.h, tsystem.h."
 eerror "You must define LIBBFD_DIR to the absolute path containing libbfd.a."
 eerror "You must define LIBC_DIR to the absolute path containing libc.a."
 eerror
@@ -8373,16 +8391,18 @@ einfo "Resuming as ${pgo_phase} since no profile generated"
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
-						"GCC_PGO_PHASE=GCC_${pgo_phase}"
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
+						"GCC_PGO_PHASE=GCC_${pgo_phase}"
+						"GCC_PLUGINS_INCLUDE=${GCC_PLUGINS_INCLUDE}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${LIBBFD_DIR}"
 						"LIBC_DIR=${LIBC_DIR}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
+						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}"
 						"GCC_PGO_PHASE=GCC_${pgo_phase}"
-						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}"
+						"GCC_PLUGINS_INCLUDE=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}/plugin/include"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST_amd64}/${binutils_pv}"
 						"LIBC_DIR=${ESYSROOT}/usr/${LIBDIR_amd64}"
@@ -8392,6 +8412,7 @@ eerror
 eerror "Unknown arch:  ${arch}"
 eerror
 eerror "You must define GCC_GCOV_DIR to the absolute path containing libgcov.a."
+eerror "You must define GCC_PLUGINS_INCLUDE to the absolute path containing coretypes.h, tsystem.h."
 eerror "You must define LIBBFD_DIR to the absolute path containing libbfd.a."
 eerror "You must define LIBC_DIR to the absolute path containing libc.a."
 eerror
