@@ -75,7 +75,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 +runtime
-r1
+r2
 "
 RDEPEND="
 	dev-libs/libxml2
