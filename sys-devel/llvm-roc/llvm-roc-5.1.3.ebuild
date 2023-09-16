@@ -99,7 +99,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	default
+	cmake_src_prepare
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 		eapply "${FILESDIR}/llvm-roc-5.1.3-path-changes.patch"
 	popd
