@@ -38,8 +38,8 @@ REQUIRED_USE="
 "
 RDEPEND="
 	sys-devel/gcc
-	~sys-devel/llvm-roc-${PV}:${SLOT#*/}[llvm_targets_AMDGPU,llvm_targets_X86]
-	~sys-libs/llvm-roc-libomp-${PV}:${SLOT#*/}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
+	~sys-devel/llvm-roc-${PV}:${PV}[llvm_targets_AMDGPU,llvm_targets_X86]
+	~sys-libs/llvm-roc-libomp-${PV}:${PV}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
 	aocc? (
 		sys-devel/aocc:${AOCC_SLOT}
 	)
