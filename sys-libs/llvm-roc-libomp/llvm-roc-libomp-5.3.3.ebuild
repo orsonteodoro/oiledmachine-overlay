@@ -107,7 +107,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd
-r1
+r2
 "
 
 gen_cuda_required_use() {
@@ -301,7 +301,7 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
-		-DLLVM_INSTALL_PREFIX="${ESYSROOT}/opt/rocm-${PV}/llvm/lib/cmake/llvm"
+		-DLLVM_INSTALL_PREFIX="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/lib/cmake/llvm"
 		-DLLVM_INSTALL_UTILS=ON
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
@@ -424,17 +424,17 @@ src_install() {
 		_cmake_src_install \
 			${targets[@]}
 		if ! use llvm_targets_AMDGPU ; then
-			rm "${ED}/opt/rocm-${PV}/llvm/bin/amdgpu-offload-arch" || die
+			rm "${ED}/usr/lib/rocm/${PV}/llvm/bin/amdgpu-offload-arch" || die
 		fi
 		if ! use llvm_targets_NVPTX ; then
-			rm "${ED}/opt/rocm-${PV}/llvm/bin/nvidia-arch" || die
+			rm "${ED}/usr/lib/rocm/${PV}/llvm/bin/nvidia-arch" || die
 		fi
 	fi
 	cd "${BUILD_DIR}" || die
-	exeinto "/opt/rocm-${PV}/llvm/lib"
+	exeinto "/usr/lib/rocm/${PV}/llvm/lib"
 	doexe "lib/"{libgomp.so,libomp.so,libiomp5.so}
 	use ompd && doexe "lib/libompd.so"
-	insinto "/opt/rocm-${PV}/llvm/include"
+	insinto "/usr/lib/rocm/${PV}/llvm/include"
 	doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp.h"
 	if use ompt ; then
 		doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp-tools.h"
