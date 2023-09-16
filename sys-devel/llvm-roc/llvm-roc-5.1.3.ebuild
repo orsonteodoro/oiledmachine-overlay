@@ -67,7 +67,15 @@ LICENSE="
 # ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 KEYWORDS="~amd64"
 SLOT="${PV}"
-IUSE="+runtime"
+LLVM_TARGETS=(
+	AMDGPU
+	X86
+)
+IUSE="
+${LLVM_TARGETS[@]/#/llvm_targets_}
++runtime
+r1
+"
 RDEPEND="
 	dev-libs/libxml2
 	sys-libs/ncurses:=
@@ -97,7 +105,7 @@ src_configure() {
 	fi
 	local mycmakeargs=(
 #		-DBUILD_SHARED_LIBS=OFF
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/rocm/${PV}/llvm"
 		-DLLVM_BUILD_DOCS=NO
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir

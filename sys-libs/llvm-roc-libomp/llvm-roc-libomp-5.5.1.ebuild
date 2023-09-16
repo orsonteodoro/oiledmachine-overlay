@@ -102,10 +102,16 @@ LICENSE="
 #   Keyword search:  "all right, title, and interest"
 KEYWORDS="~amd64"
 SLOT="${PV}"
+LLVM_TARGETS=(
+	AMDGPU
+	X86
+)
 IUSE+="
+${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd
+r1
 "
 
 gen_cuda_required_use() {
@@ -286,7 +292,7 @@ src_configure() {
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
 		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/opt/rocm-${PV}/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/rocm/${PV}/llvm"
 		-DLIBOMP_OMPD_SUPPORT=$(usex ompd ON OFF)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt ON OFF)
 		-DLLVM_BUILD_DOCS=NO
