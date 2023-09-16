@@ -4,7 +4,7 @@
 EAPI=8
 
 LUA_COMPAT=( lua5-{1..4} )
-inherit lua multilib-minimal toolchain-funcs
+inherit lua toolchain-funcs
 
 DESCRIPTION="LuaSQLite3"
 HOMEPAGE="http://lua.sqlite.org"
@@ -17,8 +17,8 @@ REQUIRED_USE="${LUA_REQUIRED_USE}"
 RDEPEND="
 	${DEPEND}
 	${LUA_DEPS}
-	dev-db/sqlite:3[${MULTILIB_USEDEP},static-libs?]
-	dev-lang/lua:*[${MULTILIB_USEDEP}]
+	dev-db/sqlite:3[static-libs?]
+	dev-lang/lua:*
 "
 DEPEND="
 	${RDEPEND}
@@ -35,17 +35,13 @@ get_lib_types() {
 
 src_prepare() {
 	default
-	prepare_abi()
-	{
-		local lib_type
-		for lib_type in $(get_lib_types) ; do
-			lua_src_prepare() {
-				cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}" || die
-			}
-			lua_foreach_impl lua_src_prepare
-		done
-	}
-        multilib_foreach_abi prepare_abi
+	local lib_type
+	for lib_type in $(get_lib_types) ; do
+		lua_src_prepare() {
+			cp -a "${S}" "${S}_${lib_type}_${ELUA}" || die
+		}
+		lua_foreach_impl lua_src_prepare
+	done
 }
 
 src_configure() {
@@ -54,7 +50,7 @@ src_configure() {
 
 lua_src_compile()
 {
-	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
+	export BUILD_DIR="${S}_${lib_type}_${ELUA}"
 	cd "${BUILD_DIR}"
 	export CC=$(tc-getCC ${ABI})
 	mkdir -p "shared" || die
@@ -101,38 +97,29 @@ einfo "Linking static-lib"
 }
 
 src_compile() {
-	compile_abi()
-	{
-		local lib_type
-		for lib_type in $(get_lib_types) ; do
-			lua_foreach_impl lua_src_compile
-		done
-	}
-        multilib_foreach_abi compile_abi
+	local lib_type
+	for lib_type in $(get_lib_types) ; do
+		lua_foreach_impl lua_src_compile
+	done
 }
 
 src_install() {
-	install_abi()
-	{
-		local lib_type
-		for lib_type in $(get_lib_types) ; do
-			lua_src_install()
-			{
-				export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
-				cd "${BUILD_DIR}" || die
-				exeinto $(lua_get_cmod_dir)
-				doexe shared/lsqlite3.so
-				if use static-libs ; then
-					insinto $(lua_get_cmod_dir)
-					doins static/lsqlite3complete.a
-				fi
-			}
-			lua_foreach_impl lua_src_install
-			dodoc doc/lsqlite3.wiki
-		done
-		multilib_check_headers
-	}
-        multilib_foreach_abi install_abi
+	local lib_type
+	for lib_type in $(get_lib_types) ; do
+		lua_src_install()
+		{
+			export BUILD_DIR="${S}_${lib_type}_${ELUA}"
+			cd "${BUILD_DIR}" || die
+			exeinto $(lua_get_cmod_dir)
+			doexe shared/lsqlite3.so
+			if use static-libs ; then
+				insinto $(lua_get_cmod_dir)
+				doins static/lsqlite3complete.a
+			fi
+		}
+		lua_foreach_impl lua_src_install
+		dodoc doc/lsqlite3.wiki
+	done
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:

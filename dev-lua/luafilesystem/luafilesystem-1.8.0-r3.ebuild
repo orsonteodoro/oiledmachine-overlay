@@ -4,7 +4,7 @@
 EAPI=8
 
 LUA_COMPAT=( lua5-{1..4} )
-inherit lua multilib-minimal toolchain-funcs
+inherit lua toolchain-funcs
 
 DESCRIPTION="File System Library for the Lua Programming Language"
 HOMEPAGE="https://keplerproject.github.io/luafilesystem/"
@@ -16,7 +16,7 @@ RESTRICT="!test? ( test )"
 # See doc/us/index.html for current versions of lua supported
 RDEPEND+="
 	${LUA_DEPS}
-	dev-lang/lua:*[${MULTILIB_USEDEP}]
+	dev-lang/lua:*
 	luajit? (
 		dev-lang/luajit:2
 	)
@@ -25,7 +25,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
 	test? (
 		${RDEPEND}
 	)
@@ -39,14 +39,10 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
 	default
-	prepare_abi()
-	{
-		lua_src_prepare() {
-			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}" || die
-		}
-		lua_foreach_impl lua_src_prepare
+	lua_src_prepare() {
+		cp -a "${S}" "${S}_${ELUA}" || die
 	}
-        multilib_foreach_abi prepare_abi
+	lua_foreach_impl lua_src_prepare
 }
 
 _gen_config() {
@@ -72,7 +68,7 @@ EOF
 
 lua_src_configure()
 {
-	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
+	export BUILD_DIR="${S}_${ELUA}"
 	cd "${BUILD_DIR}" || die
 	local _pkgconfig="${CHOST}-pkg-config"
 einfo "pkgconfig:\t${CHOST}-pkg-config"
@@ -80,8 +76,7 @@ einfo "pkgconfig:\t${CHOST}-pkg-config"
 	local pkgcfgpath="${ESYSROOT}/usr/$(get_libdir)/pkgconfig/$(usex luajit luajit lua${lua_v}).pc"
 	if [[ ! -e "${pkgcfgpath}" ]] ; then
 eerror
-eerror "You are missing ${pkgcfgpath}.  You must manually symlink it because"
-eerror "eselect for lua is broken for multilib abi_x86_32."
+eerror "You are missing ${pkgcfgpath}.  You must manually symlink."
 eerror
 		die
 	fi
@@ -93,57 +88,37 @@ eerror
 }
 
 src_configure() {
-	configure_abi()
-	{
-		lua_foreach_impl lua_src_configure
-	}
-        multilib_foreach_abi configure_abi
+	lua_foreach_impl lua_src_configure
 }
 
 src_compile() {
-	compile_abi()
+	lua_src_compile()
 	{
-		lua_src_compile()
-		{
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
-			cd "${BUILD_DIR}" || die
-			emake PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig"
-		}
-		lua_foreach_impl lua_src_compile
+		export BUILD_DIR="${S}_${ELUA}"
+		cd "${BUILD_DIR}" || die
+		emake PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig"
 	}
-        multilib_foreach_abi compile_abi
+	lua_foreach_impl lua_src_compile
 }
 
 src_test() {
-	test_abi()
-	{
-		lua_src_test() {
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
-			cd "${BUILD_DIR}" || die
-			LUA_CPATH=./src/?.so $(usex luajit 'luajit' 'lua') \
-				tests/test.lua || die
-		}
-		lua_foreach_impl lua_src_test
+	lua_src_test() {
+		export BUILD_DIR="${S}_${ELUA}"
+		cd "${BUILD_DIR}" || die
+		LUA_CPATH=./src/?.so $(usex luajit 'luajit' 'lua') \
+			tests/test.lua || die
 	}
-        multilib_foreach_abi test_abi
+	lua_foreach_impl lua_src_test
 }
 
 src_install() {
-	install_abi()
-	{
-		lua_src_install() {
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
-			cd "${BUILD_DIR}" || die
-			emake DESTDIR="${D}" install
-		}
-		lua_foreach_impl lua_src_install
-		multilib_check_headers
+	lua_src_install() {
+		export BUILD_DIR="${S}_${ELUA}"
+		cd "${BUILD_DIR}" || die
+		emake DESTDIR="${D}" install
 	}
-        multilib_foreach_abi install_abi
-	multilib_src_install_all
-}
+	lua_foreach_impl lua_src_install
 
-multilib_src_install_all() {
 	cd "${S}" || die
 	use doc && local HTML_DOCS=( doc/us/. )
 	einstalldocs
@@ -151,4 +126,4 @@ multilib_src_install_all() {
 	dodoc LICENSE
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:

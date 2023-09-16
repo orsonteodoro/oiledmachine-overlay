@@ -73,7 +73,7 @@ gen_lua_targets() {
 		local v="LUA_${x/./_}_MIN"
 		echo "
 		lua_targets_lua${x/./-}? (
-			>=dev-lang/lua-${!v}:${x}=[${MULTILIB_USEDEP},static-libs?]
+			>=dev-lang/lua-${!v}:${x}=[static-libs?]
 			>=dev-lang/lua-extra-headers-${!v}:${x}=
 		)
 		"
@@ -94,10 +94,10 @@ DEPEND+="
 	lua? (
 		$(gen_lua_targets)
 		${LUA_DEPS}
-		>=dev-db/sqlite-0.1.2[${MULTILIB_USEDEP},static-libs?]
-		>=dev-lua/luafilesystem-1.6.3[${MULTILIB_USEDEP},${LUA_USEDEP},static-libs?]
-		>=dev-lua/luasqlite3-0.9.3[${MULTILIB_USEDEP},${LUA_USEDEP},static-libs?]
-		>=dev-lua/luaxml-1.8[${MULTILIB_USEDEP},${LUA_USEDEP},static-libs?]
+		>=dev-db/sqlite-0.1.2[static-libs?]
+		>=dev-lua/luafilesystem-1.6.3[${LUA_USEDEP},static-libs?]
+		>=dev-lua/luasqlite3-0.9.3[${LUA_USEDEP},static-libs?]
+		>=dev-lua/luaxml-1.8[${LUA_USEDEP},static-libs?]
 	)
 "
 BDEPEND+="

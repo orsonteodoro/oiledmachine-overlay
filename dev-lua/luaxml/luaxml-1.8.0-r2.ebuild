@@ -7,9 +7,8 @@
 EAPI=8
 
 LUA_COMPAT=( lua5-{1..3} ) # See https://github.com/n1tehawk/LuaXML/#luaxml
-IS_MULTILIB=true
 
-inherit flag-o-matic lua multilib-build
+inherit flag-o-matic lua
 
 DESCRIPTION="A minimal set of XML processing funcs & simple XML<->Tables mapping"
 HOMEPAGE="http://viremo.eludi.net/LuaXML/"
@@ -30,31 +29,25 @@ DOCS=( README.md )
 src_prepare() {
 	default
 
-	prepare_abi() {
-		lua_src_prepare() {
-			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}" || die
-		}
-		lua_foreach_impl lua_src_prepare
+	lua_src_prepare() {
+		cp -a "${S}" "${S}_${ELUA}" || die
 	}
-	multilib_foreach_abi prepare_abi
+	lua_foreach_impl lua_src_prepare
 }
 
 src_configure() {
-	configure_abi() {
-		lua_src_configure() {
-			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
-			cd "${BUILD_DIR}" || die
-			local flags=$(get_abi_CFLAGS ${ABI})
-			sed -i -e "s|^CFLAGS = |CFLAGS = ${flags} |g" "Makefile" || die
-			sed -i -e "s|LFLAGS = |LFLAGS = ${flags} |g" "Makefile" || die
-		}
-		lua_foreach_impl lua_src_configure
+	lua_src_configure() {
+		export BUILD_DIR="${S}_${ELUA}"
+		cd "${BUILD_DIR}" || die
+		local flags=$(get_abi_CFLAGS ${ABI})
+		sed -i -e "s|^CFLAGS = |CFLAGS = ${flags} |g" "Makefile" || die
+		sed -i -e "s|LFLAGS = |LFLAGS = ${flags} |g" "Makefile" || die
 	}
-	multilib_foreach_abi configure_abi
+	lua_foreach_impl lua_src_configure
 }
 
 lua_src_compile() {
-	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
+	export BUILD_DIR="${S}_${ELUA}"
 	cd "${BUILD_DIR}" || die
 	local myemakeargs=(
 		LUA_INC="$(lua_get_CFLAGS)"
@@ -70,31 +63,20 @@ lua_src_compile() {
 }
 
 src_compile() {
-	compile_abi() {
-		lua_foreach_impl lua_src_compile
-	}
-	multilib_foreach_abi compile_abi
+	lua_foreach_impl lua_src_compile
 }
 
 lua_src_install() {
-	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${ELUA}"
+	export BUILD_DIR="${S}_${ELUA}"
 	cd "${BUILD_DIR}" || die
 	exeinto $(lua_get_cmod_dir)
 	doexe LuaXML_lib.so
 }
 
 src_install() {
-	install_abi() {
-		lua_foreach_impl lua_src_install
-		multilib_check_headers
-	}
-	multilib_foreach_abi install_abi
-	multilib_src_install_all
-}
-
-multilib_src_install_all() {
+	lua_foreach_impl lua_src_install
 	cd "${S}" || die
 	dodoc ${DOCS[@]}
 }
 
-# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES: multilib
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:
