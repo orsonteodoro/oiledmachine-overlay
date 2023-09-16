@@ -238,6 +238,7 @@ ewarn
 			return 2
 		fi
 
+		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local actual=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
@@ -537,6 +538,7 @@ tbolt_src_install() {
 			"${ED}/${bolt_data_suffix_dir}" \
 			|| die
 
+		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " " \
