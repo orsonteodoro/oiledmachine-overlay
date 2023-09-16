@@ -1,10 +1,10 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 LLVM_MAX_SLOT=15
-inherit cmake flag-o-matic
+inherit cmake flag-o-matic rocm
 
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
@@ -93,6 +93,26 @@ PATCHES=(
 )
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
+
+pkg_setup() {
+	rocm_pkg_setup
+}
+
+src_prepare() {
+	default
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+		eapply "${FILESDIR}/llvm-roc-5.5.1-path-changes.patch"
+	popd
+	# Reduce the search space.
+	PATCH_PATHS=(
+		"${WORKDIR}/llvm-project-rocm-${PV}/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${WORKDIR}/llvm-project-rocm-${PV}/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp"
+		"${WORKDIR}/llvm-project-rocm-${PV}/compiler-rt/test/asan/lit.cfg.py"
+		"${WORKDIR}/llvm-project-rocm-${PV}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/deviceRTLs/libm/CMakeLists.txt"
+	)
+	rocm_src_prepare
+}
 
 src_configure() {
 	export CC="${CHOST}-gcc"

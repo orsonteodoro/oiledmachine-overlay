@@ -271,27 +271,38 @@ eerror "LLVM_MAX_SLOT must be defined"
 eerror
 		die
 	fi
+
 	IFS=$'\n'
+
+	local _patch_paths=(
+		"${WORKDIR}"
+	)
+	if [[ "${PATCH_PATHS[@]}" ]] ; then
+		_patch_paths=(
+			"${PATCH_PATHS[@]}"
+		)
+	fi
+
 	sed \
 		-i \
 		-e "s|@EPREFIX@|${EPREFIX}|g" \
-		$(grep -r -l -e "@EPREFIX@" "${WORKDIR}") \
+		$(grep -r -l -e "@EPREFIX@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 	sed \
 		-i \
 		-e "s|@ESYSROOT@|${ESYSROOT}|g" \
-		$(grep -r -l -e "@ESYSROOT@" "${WORKDIR}") \
+		$(grep -r -l -e "@ESYSROOT@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 	sed \
 		-i \
 		-e "s|@LIBDIR@|$(get_libdir)|g" \
-		$(grep -r -l -e "@LIBDIR@" "${WORKDIR}") \
+		$(grep -r -l -e "@LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
 		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		$(grep -r -l -e "@LLVM_SLOT@" "${WORKDIR}") \
+		$(grep -r -l -e "@LLVM_SLOT@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	local clang_slot=""
@@ -305,13 +316,13 @@ eerror
 	sed \
 		-i \
 		-e "s|@CLANG_SLOT@|${clang_slot}|g" \
-		$(grep -r -l -e "@CLANG_SLOT@" "${WORKDIR}") \
+		$(grep -r -l -e "@CLANG_SLOT@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
 		-e "s|@ROCM_VERSION@|${PV}|g" \
-		$(grep -r -l -e "@ROCM_VERSION@" "${WORKDIR}") \
+		$(grep -r -l -e "@ROCM_VERSION@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	local libdir_suffix="$(get_libdir)"
@@ -319,35 +330,35 @@ eerror
 	sed \
 		-i \
 		-e "s|@LIBDIR_SUFFIX@|${libdir_suffix}|g" \
-		$(grep -r -l -e "@LIBDIR_SUFFIX@" "${WORKDIR}") \
+		$(grep -r -l -e "@LIBDIR_SUFFIX@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 	sed \
 		-i \
 		-e "s|@PV@|${PV}|g" \
-		$(grep -r -l -e "@PV@" "${WORKDIR}") \
+		$(grep -r -l -e "@PV@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 	sed \
 		-i \
 		-e "s|@CHOST@|${CHOST}|g" \
-		$(grep -r -l -e "@CHOST@" "${WORKDIR}") \
+		$(grep -r -l -e "@CHOST@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 	local gcc_slot=$(gcc-major-version)
 	sed \
 		-i \
 		-e "s|@GCC_SLOT@|${gcc_slot}|g" \
-		$(grep -r -l -e "@GCC_SLOT@" "${WORKDIR}") \
+		$(grep -r -l -e "@GCC_SLOT@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	if [[ -n "${EPYTHON}" ]] ; then
 		sed \
 			-i \
 			-e "s|@EPYTHON@|${EPYTHON}|g" \
-			$(grep -r -l -e "@EPYTHON@" "${WORKDIR}") \
+			$(grep -r -l -e "@EPYTHON@" "${_patch_paths[@]}" 2>/dev/null) \
 			2>/dev/null || true
 		sed \
 			-i \
 			-e "s|@PYTHON@|${PYTHON}|g" \
-			$(grep -r -l -e "@PYTHON@" "${WORKDIR}") \
+			$(grep -r -l -e "@PYTHON@" "${_patch_paths[@]}" 2>/dev/null) \
 			2>/dev/null || true
 	fi
 

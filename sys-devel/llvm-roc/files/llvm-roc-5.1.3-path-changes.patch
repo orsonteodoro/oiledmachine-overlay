@@ -1,0 +1,76 @@
+--- a/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp.orig	2023-09-16 14:11:56.418637997 -0700
++++ b/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-09-16 14:12:18.738637280 -0700
+@@ -271,7 +271,7 @@ SerializeToHsacoPass::translateToLLVMIR(
+   Optional<SmallVector<std::unique_ptr<llvm::Module>, 3>> mbModules;
+   std::string theRocmPath = getRocmPath();
+   llvm::SmallString<32> bitcodePath(std::move(theRocmPath));
+-  llvm::sys::path::append(bitcodePath, "amdgcn", "bitcode");
++  llvm::sys::path::append(bitcodePath, "@LIBDIR@", "amdgcn", "bitcode");
+   mbModules = loadLibraries(bitcodePath, libraries, llvmContext);
+ 
+   if (!mbModules) {
+--- a/compiler-rt/test/asan/lit.cfg.py.orig	2023-06-14 10:03:33.000000000 -0700
++++ b/compiler-rt/test/asan/lit.cfg.py	2023-09-16 12:13:18.138866637 -0700
+@@ -253,13 +253,13 @@ if config.host_os == 'NetBSD':
+ def configure_rocm(config, test_rocm_path):
+     if (not os.path.isdir(test_rocm_path)):
+         print("no directory found")
+-        test_rocm_path = os.path.join('/opt','rocm')
++        test_rocm_path = os.path.join('/usr')
+         if (not os.path.isdir(test_rocm_path)):
+             test_rocm_path = os.path.abspath(os.path.join(config.llvm_install_dir, os.pardir))
+             if (not os.path.isdir(test_rocm_path)):
+                 sys.exit("ROCM installation not found, try exporting ASAN_TEST_ROCM variable")
+ 
+-    test_device_libs  = os.path.join(test_rocm_path, 'amdgcn', 'bitcode')
++    test_device_libs  = os.path.join(test_rocm_path, '@LIBDIR@', 'amdgcn', 'bitcode')
+     test_hip_path     = os.path.join(test_rocm_path, 'hip')
+     hipcc             = os.path.join(test_hip_path, 'bin', 'hipcc')
+ 
+--- a/clang/lib/Driver/ToolChains/AMDGPU.cpp.orig	2023-09-16 13:31:57.246715059 -0700
++++ b/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-09-16 13:32:28.042714069 -0700
+@@ -424,11 +424,13 @@ void RocmInstallationDetector::detectDev
+     };
+ 
+     // The possible structures are:
++    // - ${ROCM_ROOT}/@LIBDIR@/amdgcn/bitcode/*
+     // - ${ROCM_ROOT}/amdgcn/bitcode/*
+     // - ${ROCM_ROOT}/lib/*
+     // - ${ROCM_ROOT}/lib/bitcode/*
+     // so try to detect these layouts.
+     static constexpr std::array<const char *, 2> SubDirsList[] = {
++        {"@LIBDIR@/amdgcn", "bitcode"},
+         {"amdgcn", "bitcode"},
+         {"lib", ""},
+         {"lib", "bitcode"},
+--- a/openmp/libomptarget/deviceRTLs/libm/CMakeLists.txt.orig	2022-03-17 08:38:43.000000000 -0700
++++ b/openmp/libomptarget/deviceRTLs/libm/CMakeLists.txt	2023-09-16 14:19:55.150622620 -0700
+@@ -73,7 +73,7 @@ message("------------------- DIR: ${CMAK
+   if(NOT ${AOMP_STANDALONE_BUILD})
+     #FIXME Remove NEW_BC_PATH along with reference to /lib/bitcode when non-standalone build switches to new amdgcn path.
+     if(${NEW_BC_PATH})
+-      set(BC_DIR ${ROCM_DIR}/amdgcn/bitcode)
++      set(BC_DIR ${ROCM_DIR}/@LIBDIR@/amdgcn/bitcode)
+     else()
+       set(BC_DIR ${ROCM_DIR}/lib/bitcode)
+     endif()
+--- a/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp.orig	2022-03-17 08:38:43.000000000 -0700
++++ b/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp	2023-09-16 14:16:34.706629058 -0700
+@@ -146,6 +146,8 @@ const char *AMDGCN::OpenMPLinker::constr
+ 
+   // Add compiler path libdevice last as lowest priority search
+   LibraryPaths.push_back(
++      Args.MakeArgString(C.getDriver().Dir + "/../@LIBDIR@/amdgcn/bitcode"));
++  LibraryPaths.push_back(
+       Args.MakeArgString(C.getDriver().Dir + "/../amdgcn/bitcode"));
+   LibraryPaths.push_back(
+       Args.MakeArgString(C.getDriver().Dir + "/../../amdgcn/bitcode"));
+@@ -671,6 +673,8 @@ void AMDGPUOpenMPToolChain::addClangTarg
+ 
+     // Add compiler path libdevice last as lowest priority search
+     LibraryPaths.push_back(
++        DriverArgs.MakeArgString(getDriver().Dir + "/../@LIBDIR@/amdgcn/bitcode"));
++    LibraryPaths.push_back(
+         DriverArgs.MakeArgString(getDriver().Dir + "/../amdgcn/bitcode"));
+     LibraryPaths.push_back(
+         DriverArgs.MakeArgString(getDriver().Dir + "/../../amdgcn/bitcode"));
