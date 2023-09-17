@@ -1,0 +1,31 @@
+--- a/mlir/lib/ExecutionEngine/CMakeLists.txt.orig	2023-09-16 18:24:08.810151941 -0700
++++ b/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-09-16 18:25:56.154148493 -0700
+@@ -142,14 +142,14 @@ if(MLIR_ENABLE_ROCM_RUNNER)
+   # Configure ROCm support.
+   if (NOT DEFINED ROCM_PATH)
+     if (NOT DEFINED ENV{ROCM_PATH})
+-      set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
++      set(ROCM_PATH "/usr" CACHE PATH "Path to which ROCm has been installed")
+     else()
+       set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
+     endif()
+     set(HIP_PATH "${ROCM_PATH}/hip" CACHE PATH "Path to which HIP has been installed")
+   endif()
+-  set(CMAKE_MODULE_PATH "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
+-  find_package(HIP)
++  set(CMAKE_MODULE_PATH "${HIP_PATH}/@LIBDIR@/cmake" ${CMAKE_MODULE_PATH})
++  find_package(HIP) 
+   if (NOT HIP_FOUND)
+     message(SEND_ERROR "Building mlir with ROCm support requires a working ROCm and HIP install")
+   else()
+--- a/mlir/lib/Dialect/GPU/CMakeLists.txt.orig	2023-09-16 18:25:56.154148493 -0700
++++ b/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-09-16 18:26:39.894147088 -0700
+@@ -126,7 +126,7 @@ if(MLIR_ENABLE_ROCM_RUNNER)
+   # Configure ROCm support.
+   if (NOT DEFINED ROCM_PATH)
+     if (NOT DEFINED ENV{ROCM_PATH})
+-      set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
++      set(ROCM_PATH "/usr" CACHE PATH "Path to which ROCm has been installed")
+     else()
+       set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
+     endif()

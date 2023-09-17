@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{9..11} )
 
-inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1
+inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1 rocm
 
 DESCRIPTION="Multi Level Intermediate Representation for LLVM"
 HOMEPAGE="https://openmp.llvm.org"
@@ -23,7 +23,7 @@ KEYWORDS="
 "
 IUSE="
 	debug test
-	r1
+	r2
 "
 REQUIRED_USE="
 "
@@ -49,6 +49,8 @@ LLVM_COMPONENTS=(
 #LLVM_PATCHSET="15.0.7-r6"
 LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
+PATCHES=(
+)
 
 python_check_deps() {
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
@@ -57,6 +59,21 @@ python_check_deps() {
 pkg_setup() {
 	llvm_pkg_setup # Init LLVM_SLOT
 	use test && python-any-r1_pkg_setup
+	rocm_pkg_setup
+}
+
+src_prepare() {
+	cmake_src_prepare
+	pushd "${WORKDIR}" || die
+		eapply "${FILESDIR}/mlir-15.0.7-path-changes.patch"
+	popd || die
+	PATCH_PATHS=(
+		"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+		"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
+	)
+	rocm_src_prepare
 }
 
 multilib_src_configure() {

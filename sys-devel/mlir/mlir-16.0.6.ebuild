@@ -7,7 +7,7 @@ LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
-inherit python-single-r1 toolchain-funcs
+inherit python-single-r1 rocm toolchain-funcs
 
 DESCRIPTION="Multi Level Intermediate Representation for LLVM"
 HOMEPAGE="https://openmp.llvm.org"
@@ -24,7 +24,7 @@ KEYWORDS="
 "
 IUSE="
 	debug test
-	r1
+	r2
 "
 REQUIRED_USE="
 "
@@ -49,6 +49,8 @@ LLVM_COMPONENTS=(
 )
 LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
+PATCHES=(
+)
 
 python_check_deps() {
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
@@ -59,6 +61,21 @@ pkg_setup() {
 	if use test; then
 		python-single-r1_pkg_setup
 	fi
+	rocm_pkg_setup
+}
+
+src_prepare() {
+	cmake_src_prepare
+	pushd "${WORKDIR}" || die
+		eapply "${FILESDIR}/mlir-16.0.6-path-changes.patch"
+	popd || die
+	PATCH_PATHS=(
+		"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+		"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
+	)
+	rocm_src_prepare
 }
 
 multilib_src_configure() {

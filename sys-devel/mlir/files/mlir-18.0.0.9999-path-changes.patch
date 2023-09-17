@@ -1,0 +1,33 @@
+--- a/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp.orig	2023-09-16 16:33:55.758364353 -0700
++++ b/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-09-16 16:44:24.650344153 -0700
+@@ -279,7 +279,7 @@ SerializeToHsacoPass::translateToLLVMIR(
+   std::optional<SmallVector<std::unique_ptr<llvm::Module>, 3>> mbModules;
+   std::string theRocmPath = getRocmPath();
+   llvm::SmallString<32> bitcodePath(theRocmPath);
+-  llvm::sys::path::append(bitcodePath, "amdgcn", "bitcode");
++  llvm::sys::path::append(bitcodePath, "@LIBDIR@", "amdgcn", "bitcode");
+   mbModules = loadLibraries(bitcodePath, libraries, llvmContext);
+ 
+   if (!mbModules) {
+--- a/mlir/lib/Target/LLVM/ROCDL/Target.cpp.orig	2023-09-16 16:33:58.134364277 -0700
++++ b/mlir/lib/Target/LLVM/ROCDL/Target.cpp	2023-09-16 16:44:46.550343450 -0700
+@@ -142,7 +142,7 @@ LogicalResult SerializeGPUModuleBase::ap
+   if (!pathRef.empty()) {
+     SmallVector<char, 256> path;
+     path.insert(path.begin(), pathRef.begin(), pathRef.end());
+-    llvm::sys::path::append(path, "amdgcn", "bitcode");
++    llvm::sys::path::append(path, "@LIBDIR@", "amdgcn", "bitcode");
+     pathRef = StringRef(path.data(), path.size());
+     if (!llvm::sys::fs::is_directory(pathRef)) {
+       getOperation().emitRemark() << "ROCm amdgcn bitcode path: " << pathRef
+--- a/mlir/lib/ExecutionEngine/CMakeLists.txt.orig	2023-09-16 17:27:49.590260482 -0700
++++ b/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-09-16 17:31:02.902254273 -0700
+@@ -247,7 +247,7 @@ if(LLVM_ENABLE_PIC)
+     # Configure ROCm support.
+     if (NOT DEFINED ROCM_PATH)
+       if (NOT DEFINED ENV{ROCM_PATH})
+-        set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
++        set(ROCM_PATH "/usr" CACHE PATH "Path to which ROCm has been installed")
+       else()
+         set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
+       endif()
