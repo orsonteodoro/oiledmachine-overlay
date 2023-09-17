@@ -236,17 +236,19 @@ RDEPEND="
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
 	)
-	llvm_targets_AMDGPU? (
-		|| (
-			$(gen_amdgpu_rdepend)
-		)
-	)
 	llvm_targets_NVPTX? (
 		<dev-util/nvidia-cuda-toolkit-12.2
 	)
 	offload? (
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
+	)
+"
+DISABLED_RDEPEND="
+	llvm_targets_AMDGPU? (
+		|| (
+			$(gen_amdgpu_rdepend)
+		)
 	)
 "
 # Tests:
