@@ -1,0 +1,11 @@
+--- a/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt.orig	2023-09-16 20:09:09.125949573 -0700
++++ b/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-09-16 20:09:23.317949117 -0700
+@@ -20,7 +20,7 @@ if (NOT LIBOMPTARGET_BUILD_AMDGPU_PLUGIN
+ endif()
+ 
+ # as of rocm-3.7, hsa is installed with cmake packages and kmt is found via hsa
+-find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr/@LIBDIR@)
+ 
+ if(NOT (CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(ppc64le)|(aarch64)$" AND CMAKE_SYSTEM_NAME MATCHES "Linux"))
+   libomptarget_say("Not building AMDGPU plugin: only support AMDGPU in Linux x86_64, ppc64le, or aarch64 hosts")

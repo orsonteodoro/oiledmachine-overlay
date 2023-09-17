@@ -88,7 +88,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-r2
+r3
 "
 gen_cuda_required_use() {
 	local x
@@ -290,6 +290,7 @@ LLVM_COMPONENTS=(
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
+	"${FILESDIR}/${PN}-18.0.0.9999-path-changes.patch"
 )
 
 kernel_pds_check() {
@@ -313,14 +314,28 @@ pkg_pretend() {
 
 pkg_setup() {
 ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
-	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
+	if use offload ; then
+		LLVM_MAX_SLOT="${PV%%.*}"
+		llvm_pkg_setup
+	else
+		LLVM_MAX_SLOT=$((${PV%%.*} + 1))
+		llvm_pkg_setup
+	fi
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
 	fi
+	rocm_pkg_setup
 }
 
 src_prepare() {
 	llvm.org_src_prepare # Already calls cmake_src_prepare
+	PATCH_PATHS=(
+		"${WORKDIR}/openmp/libompd/src/CMakeLists.txt"
+		"${WORKDIR}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/openmp/runtime/src/CMakeLists.txt"
+		"${WORKDIR}/openmp/tools/archer/CMakeLists.txt"
+	)
 	rocm_src_prepare
 }
 

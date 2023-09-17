@@ -62,7 +62,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-r2
+r3
 "
 gen_cuda_required_use() {
 	local x
@@ -230,6 +230,7 @@ LLVM_PATCHSET="15.0.7-r6"
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
+	"${FILESDIR}/${PN}-15.0.7-path-changes.patch"
 )
 
 python_check_deps() {
@@ -257,7 +258,13 @@ pkg_pretend() {
 
 pkg_setup() {
 ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
-	use offload && LLVM_MAX_SLOT="${PV%%.*}" llvm_pkg_setup
+	if use offload ; then
+		LLVM_MAX_SLOT="${PV%%.*}"
+		llvm_pkg_setup
+	else
+		LLVM_MAX_SLOT=$((${PV%%.*} + 1))
+		llvm_pkg_setup
+	fi
 	use test && python-any-r1_pkg_setup
 einfo
 einfo "The hardmask for llvm_targets_AMDGPU in ${CATEGORY}/${PN} can be removed by doing..."
@@ -266,10 +273,18 @@ einfo "mkdir -p /etc/portage/profile"
 einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.force"
 einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.mask"
 einfo
+	rocm_pkg_setup
 }
 
 src_prepare() {
 	llvm.org_src_prepare # Already calls cmake_src_prepare
+	PATCH_PATHS=(
+		"${WORKDIR}/openmp/libompd/src/CMakeLists.txt"
+		"${WORKDIR}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/openmp/runtime/src/CMakeLists.txt"
+		"${WORKDIR}/openmp/tools/archer/CMakeLists.txt"
+	)
 	rocm_src_prepare
 }
 
