@@ -75,7 +75,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 +runtime
-r2
+r3
 "
 RDEPEND="
 	dev-libs/libxml2
@@ -146,14 +146,12 @@ src_configure() {
 }
 
 src_compile() {
-	# libomp needs LLVMOffloadArch
 	# mlir needs LLVMDemangle, LLVMSupport, LLVMTableGen
 	cmake_src_compile \
 		all \
 		LLVMDemangle \
 		LLVMSupport \
-		LLVMTableGen \
-		LLVMOffloadArch
+		LLVMTableGen
 }
 
 src_install() {
@@ -161,8 +159,7 @@ src_install() {
 	cmake_src_install \
 		install-LLVMDemangle \
 		install-LLVMSupport \
-		install-LLVMTableGen \
-		install-LLVMOffloadArch
+		install-LLVMTableGen
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

@@ -18,3 +18,15 @@
  
  target_link_libraries(omptarget PRIVATE
    ${CMAKE_DL_LIBS}
+--- a/openmp/libomptarget/CMakeLists.txt.orig	2023-09-16 23:22:42.381576553 -0700
++++ b/openmp/libomptarget/CMakeLists.txt	2023-09-16 23:51:18.641521426 -0700
+@@ -35,7 +35,8 @@ if (NOT LIBOMPTARGET_LLVM_INCLUDE_DIRS)
+   message(FATAL_ERROR "Missing definition for LIBOMPTARGET_LLVM_INCLUDE_DIRS")
+ endif()
+ 
+-include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS})
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OPENMP_RUNTIME_DIR})
+ 
+ # This is a list of all the targets that are supported/tested right now.
+ set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} aarch64-unknown-linux-gnu")

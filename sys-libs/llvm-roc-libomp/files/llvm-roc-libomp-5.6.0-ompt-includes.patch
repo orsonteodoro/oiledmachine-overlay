@@ -18,7 +18,7 @@
 +    NAMES
 +      omp-tools.h
 +    PATHS
-+      ${PROJECT_SOURCE_DIR}/llvm_build/projects/openmp/runtime/src
++      ${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src
 +      ${CMAKE_BINARY_DIR}/openmp/runtime/src
 +      ${CMAKE_BINARY_DIR}/runtime/src
 +    )

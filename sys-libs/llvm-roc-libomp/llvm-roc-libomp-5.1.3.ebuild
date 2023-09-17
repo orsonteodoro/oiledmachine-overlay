@@ -126,6 +126,7 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	offload
 	cuda? (
 		llvm_targets_NVPTX
 	)
@@ -268,6 +269,18 @@ src_prepare() {
 		"${S_ROOT}/openmp/libomptarget/src/CMakeLists.txt"
 	)
 	rocm_src_prepare
+	if ! use llvm_targets_NVPTX ; then
+		sed -i \
+			-e "\|/nvidia-arch|d" \
+			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
+			|| die
+	fi
+	if ! use llvm_targets_AMDGPU ; then
+		sed -i \
+			-e "\|/amdgpu-offload-arch|d" \
+			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
+			|| die
+	fi
 }
 
 src_configure() {
@@ -352,6 +365,7 @@ src_compile() {
 	)
 	if use offload ; then
 		targets+=(
+			LLVMOffloadArch
 			bin/offload-arch
 			lib/libomptarget.so.${LLVM_MAX_SLOT}roc
 			lib/libomptarget.so
@@ -410,7 +424,6 @@ src_install() {
 	local targets=()
 	if use offload ; then
 		targets+=(
-			install-offload-arch
 			install-omptarget
 		)
 		if use llvm_targets_X86 ; then
@@ -430,12 +443,6 @@ src_install() {
 		fi
 		_cmake_src_install \
 			${targets[@]}
-		if ! use llvm_targets_AMDGPU ; then
-			rm "${ED}/usr/lib/rocm/${PV}/llvm/bin/amdgpu-offload-arch" || die
-		fi
-		if ! use llvm_targets_NVPTX ; then
-			rm "${ED}/usr/lib/rocm/${PV}/llvm/bin/nvidia-arch" || die
-		fi
 	fi
 	cd "${BUILD_DIR}" || die
 	exeinto "/usr/lib/rocm/${PV}/llvm/lib"

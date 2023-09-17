@@ -1,0 +1,10 @@
+--- a/openmp/libomptarget/libm/CMakeLists.txt.orig	2023-06-14 10:03:33.000000000 -0700
++++ b/openmp/libomptarget/libm/CMakeLists.txt	2023-09-16 23:15:52.913589705 -0700
+@@ -54,6 +54,7 @@ foreach(mcpu ${amdgpu_mcpus})
+   set(omp_common_args
+     -c 
+     -I ${CMAKE_BINARY_DIR}${_xdir}/runtime/src
++    -I "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src"
+     -emit-llvm
+     -target ${cpu_target}
+     -fopenmp 
