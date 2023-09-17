@@ -1,6 +1,6 @@
 --- a/openmp/libomptarget/CMakeLists.txt.orig	2023-06-14 10:03:33.000000000 -0700
 +++ b/openmp/libomptarget/CMakeLists.txt	2023-08-12 00:04:09.825338028 -0700
-@@ -105,16 +105,20 @@ pythonize_bool(LIBOMPTARGET_OMPT_SUPPORT
+@@ -105,16 +105,21 @@ pythonize_bool(LIBOMPTARGET_OMPT_SUPPORT
  
  set(LIBOMPTARGET_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
  
@@ -18,6 +18,7 @@
 +    NAMES
 +      omp-tools.h
 +    PATHS
++      ${PROJECT_SOURCE_DIR}/llvm_build/projects/openmp/runtime/src
 +      ${CMAKE_BINARY_DIR}/openmp/runtime/src
 +      ${CMAKE_BINARY_DIR}/runtime/src
 +    )

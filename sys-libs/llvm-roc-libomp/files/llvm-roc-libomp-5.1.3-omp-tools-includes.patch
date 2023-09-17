@@ -1,0 +1,20 @@
+--- a/openmp/libomptarget/src/CMakeLists.txt.orig	2023-09-16 11:16:59.594975157 -0700
++++ b/openmp/libomptarget/src/CMakeLists.txt	2023-09-16 11:17:28.730974221 -0700
+@@ -12,6 +12,8 @@
+ 
+ libomptarget_say("Building offloading runtime library libomptarget.")
+ 
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/llvm_build/projects/openmp/runtime/src")
++
+ set(LIBOMPTARGET_SRC_FILES
+   ${CMAKE_CURRENT_SOURCE_DIR}/api.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/device.cpp
+@@ -25,7 +27,7 @@ set(LIBOMPTARGET_SRC_FILES
+ 
+ set(LIBOMPTARGET_SRC_FILES ${LIBOMPTARGET_SRC_FILES} PARENT_SCOPE)
+ 
+-include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS})
++include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OPENMP_RUNTIME_DIR})
+ 
+ # Build libomptarget library with libdl dependency.
+ add_library(omptarget SHARED ${LIBOMPTARGET_SRC_FILES})

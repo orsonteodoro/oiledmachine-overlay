@@ -107,7 +107,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd
-r2
+r3
 "
 
 gen_cuda_required_use() {
@@ -152,8 +152,9 @@ REQUIRED_USE="
 		${LLVM_TARGETS_CPU_COMPAT[@]}
 	)
 "
+ROCM_SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="
-	~dev-libs/rocm-device-libs-${PV}:${SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
 	cuda_targets_sm_35? (
 		=dev-util/nvidia-cuda-toolkit-11*:=
@@ -259,8 +260,21 @@ gen_nvptx_list() {
 src_prepare() {
 	cd "${S_ROOT}" || die
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
+	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp-tools-includes.patch"
+	eapply "${FILESDIR}/llvm-roc-5.5.1-path-changes.patch"
 	cd "${S}" || die
 	cmake_src_prepare
+
+	PATCH_PATHS=(
+		"${S_ROOT}/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${S_ROOT}/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp"
+		"${S_ROOT}/compiler-rt/test/asan/lit.cfg.py"
+		"${S_ROOT}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+		"${S_ROOT}/openmp/libomptarget/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/deviceRTLs/libm/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/src/CMakeLists.txt"
+	)
+	rocm_src_prepare
 }
 
 src_configure() {
