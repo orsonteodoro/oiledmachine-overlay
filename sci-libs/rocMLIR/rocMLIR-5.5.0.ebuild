@@ -123,6 +123,27 @@ ewarn "Patching may take a long time.  Please wait..."
                 || true
         IFS=$' \t\n'
 
+	PATCH_PATHS=(
+		"${S}/CMakeLists.txt"
+		"${S}/cmake/llvm-project.cmake"
+		"${S}/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${S}/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${S}/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${S}/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${S}/mlir/CMakeLists.txt"
+		"${S}/mlir/lib/Dialect/MIOpen/CMakeLists.txt"
+		"${S}/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt"
+		"${S}/mlir/lib/Dialect/Rock/Tuning/CMakeLists.txt"
+		"${S}/mlir/lib/Dialect/Rock/Tuning/SqliteDb.cpp"
+		"${S}/mlir/lib/ExecutionEngine/ROCm/CMakeLists.txt"
+		"${S}/mlir/tools/mlir-rocm-runner/CMakeLists.txt"
+		"${S}/mlir/tools/rocmlir-lib/CMakeLists.txt"
+		"${S}/mlir/utils/performance/parameterSweeps.py"
+		"${S}/mlir/utils/performance/perfRunner.py"
+		"${S}/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt"
+		"${S}/mlir/utils/widgets/tune_MLIR_kernels.sh"
+	)
 	rocm_src_prepare
 }
 
