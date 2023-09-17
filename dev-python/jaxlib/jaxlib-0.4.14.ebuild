@@ -713,6 +713,36 @@ ewarn
 
 	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
 	eapply -p1 "${FILESDIR}/xla/"*
+
+	# Speed up symbol replacement for @...@ by reducing search space.
+	XLA_S="${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
+	PATCH_PATHS=(
+	# Generated in this folder from:
+	# grep -F -r -e "+++" files/xla | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+		"${S}/jaxlib/gpu/vendor.h"
+
+	# Generated in this folder from:
+	# grep -F -r -e "+++" files/*.patch | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+		"${XLA_S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl"
+		"${XLA_S}/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl"
+		"${XLA_S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl"
+		"${XLA_S}/third_party/gpus/find_rocm_config.py"
+		"${XLA_S}/third_party/gpus/rocm_configure.bzl"
+		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl"
+		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl"
+		"${XLA_S}/third_party/tsl/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl"
+		"${XLA_S}/third_party/tsl/third_party/gpus/find_rocm_config.py"
+		"${XLA_S}/third_party/tsl/third_party/gpus/rocm_configure.bzl"
+		"${XLA_S}/third_party/tsl/tsl/platform/default/rocm_rocdl_path.cc"
+		"${XLA_S}/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc"
+		"${XLA_S}/xla/stream_executor/gpu/asm_compiler.cc"
+		"${XLA_S}/xla/stream_executor/rocm/hipblaslt_wrapper.h"
+		"${XLA_S}/xla/stream_executor/rocm/hipsolver_wrapper.h"
+		"${XLA_S}/xla/stream_executor/rocm/hipsparse_wrapper.h"
+		"${XLA_S}/xla/stream_executor/rocm/rocm_fft.h"
+		"${XLA_S}/xla/stream_executor/rocm/rocsolver_wrapper.h"
+	)
+
 	rocm_src_prepare
 
 	cd "${S}" || die
@@ -720,7 +750,7 @@ ewarn
 	cuda_src_prepare
 	distutils-r1_python_prepare_all
 
-	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
+	cd "${XLA_S}" || die
 
 	local L=(
 		"third_party/gpus"
