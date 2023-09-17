@@ -559,7 +559,6 @@ ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
 	LLVM_MAX_SLOT=${s}
 	llvm_pkg_setup
-	rocm_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
 }
@@ -596,6 +595,7 @@ einfo "completely installed."
 einfo
 		die
 	fi
+	rocm_pkg_setup
 }
 
 pkg_setup() {
