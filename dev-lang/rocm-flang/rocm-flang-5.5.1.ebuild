@@ -100,7 +100,7 @@ einfo "Building Flang lib"
 	cd build || die
 	local mycmakeargs_=(
 		"${mycmakeargs[@]}"
-		-DFLANG_LLVM_EXTENSIONS=ON
+		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
@@ -139,9 +139,13 @@ einfo "Building Flang runtime"
 	cd "${S}" || die
 	mkdir -p build || die
 	cd build || die
+# Setting -DFLANG_LLVM_EXTENSIONS=ON causes:
+# /var/tmp/portage/dev-lang/rocm-flang-5.6.0/temp/gather_cmplx32-0b0f56.ll:409:7: error: expected metadata type
+# !14 = !DIFortranSubrange(constLowerBound: 1, upperBound: !12, upperBoundExpression: !13)
+#       ^
 	local mycmakeargs_=(
 		"${mycmakeargs[@]}"
-		-DFLANG_LLVM_EXTENSIONS=ON
+		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
