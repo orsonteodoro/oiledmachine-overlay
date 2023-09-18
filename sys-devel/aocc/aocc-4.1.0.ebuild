@@ -46,8 +46,8 @@ BDEPEND="
 "
 RESTRICT="
 	binchecks
-	strip
 	fetch
+	strip
 "
 S="${WORKDIR}/${PN}-compiler-${PV}"
 
