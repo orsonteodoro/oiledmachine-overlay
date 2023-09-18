@@ -23,7 +23,7 @@ KEYWORDS="
 ~amd64 ~x86
 "
 IUSE="
-	r1
+	r2
 "
 REQUIRED_USE="
 "
