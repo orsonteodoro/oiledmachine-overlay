@@ -1,0 +1,13 @@
+--- a/hip-config-amd.cmake.orig	2023-09-08 08:36:06.000000000 -0700
++++ b/hip-config-amd.cmake	2023-09-18 08:48:43.206587390 -0700
+@@ -73,7 +73,9 @@ if(NOT WIN32)
+   find_dependency(amd_comgr)
+ endif()
+ 
+-include( "${CMAKE_CURRENT_LIST_DIR}/hip-targets.cmake" )
++if(HIP_RUNTIME MATCHES "rocclr")
++  include( "${CMAKE_CURRENT_LIST_DIR}/hip-targets.cmake" )
++endif()
+ 
+ #Using find_dependency to locate the dependency for the packages
+ #This makes the cmake generated file xxxx-targets to supply the linker libraries

@@ -32,7 +32,7 @@ diff -urp rocminfo-rocm-5.1.3.orig/README.md rocminfo-rocm-5.1.3/README.md
  cd build
  
 -cmake -DCMAKE_PREFIX_PATH=/opt/rocm ..
-+cmake -DCMAKE_PREFIX_PATH=/usr ..
++cmake -DCMAKE_PREFIX_PATH=@EPREFIX_ROCM_SLOT@ ..
  
  make
  

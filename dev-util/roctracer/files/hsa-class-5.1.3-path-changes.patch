@@ -6,7 +6,7 @@ diff -urp hsa-class-f8b387043b9f510afdf2e72e38a011900360d6ab.orig/script/build_k
  
  if [ -z "$ROCM_DIR" ] ; then
 -  ROCM_DIR=/opt/rocm
-+  ROCM_DIR=/usr
++  ROCM_DIR="@ESYSROOT_ROCM_PATH@"
  fi
  
  if [ -z "$TGT_LIST" ] ; then

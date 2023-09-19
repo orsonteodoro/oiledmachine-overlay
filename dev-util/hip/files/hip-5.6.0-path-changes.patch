@@ -35,8 +35,8 @@ diff -urp HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake HIP-rocm-5.6.0/cmake/FindHIP.c
          elseif(DEFINED ROCM_PATH)
 -            set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
 +            set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-+        elseif(EXISTS "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin")
-+            set(HIP_CLANG_PATH "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin")
++        elseif(EXISTS "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin")
++            set(HIP_CLANG_PATH "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin")
          else()
              message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env ")
          endif()
@@ -68,8 +68,8 @@ diff -urp HIP-rocm-5.6.0.orig/cmake/FindHIP.cmake HIP-rocm-5.6.0/cmake/FindHIP.c
              elseif(DEFINED ROCM_PATH)
 -                set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
 +                set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-+            elseif(EXISTS "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin")
-+                set(HIP_CLANG_PATH "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin")
++            elseif(EXISTS "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin")
++                set(HIP_CLANG_PATH "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin")
              else()
                  message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env")
              endif()
@@ -81,7 +81,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/build.md HIP-rocm-5.6.0/docs/
  Similiar format for future branches.
  
 -`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is at `/opt/rocm`.
-+`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is at `/usr`.
++`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is at `@ESYSROOT_ROCM_PATH@`.
  
  
  ## Build HIP on AMD platform
@@ -90,7 +90,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/build.md HIP-rocm-5.6.0/docs/
  cd "$CLR_DIR"
  mkdir -p build; cd build
 -cmake -DHIP_COMMON_DIR=$HIP_DIR -DHIP_PLATFORM=amd -DCMAKE_PREFIX_PATH="/opt/rocm/" -DCMAKE_INSTALL_PREFIX=$PWD/install -DHIPCC_BIN_DIR=$HIPCC_DIR/build -DHIP_CATCH_TEST=0 -DCLR_BUILD_HIP=ON -DCLR_BUILD_OCL=OFF ..
-+cmake -DHIP_COMMON_DIR=$HIP_DIR -DHIP_PLATFORM=amd -DCMAKE_PREFIX_PATH="/usr/" -DCMAKE_INSTALL_PREFIX=$PWD/install -DHIPCC_BIN_DIR=$HIPCC_DIR/build -DHIP_CATCH_TEST=0 -DCLR_BUILD_HIP=ON -DCLR_BUILD_OCL=OFF ..
++cmake -DHIP_COMMON_DIR=$HIP_DIR -DHIP_PLATFORM=amd -DCMAKE_PREFIX_PATH="@ESYSROOT_ROCM_PATH@/" -DCMAKE_INSTALL_PREFIX=$PWD/install -DHIPCC_BIN_DIR=$HIPCC_DIR/build -DHIP_CATCH_TEST=0 -DCLR_BUILD_HIP=ON -DCLR_BUILD_OCL=OFF ..
  
  make -j$(nproc)
  sudo make install
@@ -114,7 +114,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/build.md HIP-rocm-5.6.0/docs/
  cd "$HIPTESTS_DIR"
  mkdir -p build; cd build
 -export HIP_PATH=$CLR_DIR/build/install (or any path where HIP is installed, for example, /opt/rocm)
-+export HIP_PATH=$CLR_DIR/build/install (or any path where HIP is installed, for example, /usr)
++export HIP_PATH=$CLR_DIR/build/install (or any path where HIP is installed, for example, @ESYSROOT_ROCM_PATH@)
  cmake ../catch/ -DHIP_PLATFORM=amd
  make -j$(nproc) build_tests
  ctest # run tests
@@ -126,7 +126,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/developer_guide/contributing.md HIP-rocm-5.6.
  
  ## Make Tips
 -`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is `/opt/rocm`.
-+`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is `/usr`.
++`ROCM_PATH` is path where ROCM is installed. BY default `ROCM_PATH` is `@ESYSROOT_ROCM_PATH@`.
  When building HIP, you will likely want to build and install to a local user-accessible directory (rather than `<ROCM_PATH>`).
  This can be easily be done by setting the `-DCMAKE_INSTALL_PREFIX` variable when running cmake.  Typical use case is to
  set `CMAKE_INSTALL_PREFIX` to your HIP git root, and then ensure `HIP_PATH` points to this directory. For example
@@ -161,7 +161,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/gen_clang_option_doc.sh HIP-rocm-5.6.0/docs/g
  ## generates documentation about clang options.
  
 -clang=/opt/rocm*/llvm/bin/clang
-+clang="/usr/lib/llvm/@LLVM_SLOT@/bin/clang"
++clang="@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/clang"
  
  exec > clang_options.md
  
@@ -173,11 +173,11 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/debugging.md HIP-rocm-5.6.0/doc
  For details, see (https://github.com/ROCm-Developer-Tools/ROCgdb).
  
 -Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder /opt/rocm/bin.
-+Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder /usr/bin.
++Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder @ESYSROOT_ROCM_PATH@/bin.
  
  ```console
 -$ export PATH=$PATH:/opt/rocm/bin
-+$ export PATH=$PATH:/usr/bin
++$ export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
  $ rocgdb ./hipTexObjPitch
  GNU gdb (rocm-dkms-no-npi-hipclang-6549) 10.1
  Copyright (C) 2020 Free Software Foundation, Inc.
@@ -186,7 +186,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/debugging.md HIP-rocm-5.6.0/doc
  Starting program: /home/test/hip/build/directed_tests/texture/hipTexObjPitch
  [Thread debugging using libthread_db enabled]
 -Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-+Using host libthread_db library "/@LIBDIR@/libthread_db.so.1".
++Using host libthread_db library "@ESYSROOT@/@LIBDIR@/libthread_db.so.1".
  
  Breakpoint 1, main ()
      at /home/test/hip/tests/src/texture/hipTexObjPitch.cpp:98
@@ -195,7 +195,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/debugging.md HIP-rocm-5.6.0/doc
  Starting program: /home/test/hipamd/build/directed_tests/runtimeApi/memory/hipMemcpy_simple
  [Thread debugging using libthread_db enabled]
 -Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-+Using host libthread_db library "/@LIBDIR@/libthread_db.so.1".
++Using host libthread_db library "@ESYSROOT@/@LIBDIR@/libthread_db.so.1".
  
  Breakpoint 1, main (argc=1, argv=0x7fffffffdea8)
      at /home/test/hip/tests/src/runtimeApi/memory/hipMemcpy_simple.cpp:147
@@ -204,11 +204,11 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/debugging.md HIP-rocm-5.6.0/doc
      at /home/test/hip/tests/src/runtimeApi/memory/hipMemcpy_simple.cpp:104
    2    Thread 0x7ffff64c4700 (LWP 146066) "hipMemcpy_simpl" 0x00007ffff6b0850b in ioctl
 -    () from /lib/x86_64-linux-gnu/libc.so.6
-+    () from /@LIBDIR@/libc.so.6
++    () from @ESYSROOT@/@LIBDIR@/libc.so.6
  (gdb) thread 2
  [Switching to thread 2 (Thread 0x7ffff64c4700 (LWP 146066))]
 -#0  0x00007ffff6b0850b in ioctl () from /lib/x86_64-linux-gnu/libc.so.6
-+#0  0x00007ffff6b0850b in ioctl () from /@LIBDIR@/libc.so.6
++#0  0x00007ffff6b0850b in ioctl () from @ESYSROOT@/@LIBDIR@/libc.so.6
  (gdb) bt
 -#0  0x00007ffff6b0850b in ioctl () from /lib/x86_64-linux-gnu/libc.so.6
 -#1  0x00007ffff6604568 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
@@ -219,15 +219,15 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/debugging.md HIP-rocm-5.6.0/doc
 -#6  0x00007ffff654f547 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
 -#7  0x00007ffff7f76609 in start_thread () from /lib/x86_64-linux-gnu/libpthread.so.0
 -#8  0x00007ffff6b13293 in clone () from /lib/x86_64-linux-gnu/libc.so.6
-+#0  0x00007ffff6b0850b in ioctl () from /@LIBDIR@/libc.so.6
-+#1  0x00007ffff6604568 in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#2  0x00007ffff65fe73a in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#3  0x00007ffff659e4d6 in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#4  0x00007ffff65807de in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#5  0x00007ffff65932a2 in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#6  0x00007ffff654f547 in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#7  0x00007ffff7f76609 in start_thread () from /@LIBDIR@/libpthread.so.0
-+#8  0x00007ffff6b13293 in clone () from /@LIBDIR@/libc.so.6
++#0  0x00007ffff6b0850b in ioctl () from @ESYSROOT@/@LIBDIR@/libc.so.6
++#1  0x00007ffff6604568 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#2  0x00007ffff65fe73a in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#3  0x00007ffff659e4d6 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#4  0x00007ffff65807de in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#5  0x00007ffff65932a2 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#6  0x00007ffff654f547 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#7  0x00007ffff7f76609 in start_thread () from @ESYSROOT@/@LIBDIR@/libpthread.so.0
++#8  0x00007ffff6b13293 in clone () from @ESYSROOT@/@LIBDIR@/libc.so.6
  (gdb) thread 1
  [Switching to thread 1 (Thread 0x7ffff64c5880 (LWP 146060))]
  #0  0x000000000020f78e in simpleTest2<float> (numElements=4194304, usePinnedHost=true)
@@ -239,7 +239,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/install.md HIP-rocm-5.6.0/docs/
  HIP is part of ROCM packages, it will be automatically installed following the ROCm Installation Guide on AMD public documentation site (https://docs.amd.com/) for the coresponding ROCm release.
  
 -By default, HIP is installed into /opt/rocm/hip.
-+By default, HIP is installed into /usr.
++By default, HIP is installed into @ESYSROOT_ROCM_PATH@.
  
  
  ## NVIDIA Platform
@@ -251,8 +251,8 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/install.md HIP-rocm-5.6.0/docs/
 -   * By default HIP is installed into /opt/rocm/hip.
 -   * Optionally, consider adding /opt/rocm/bin to your path to make it easier to use the tools.
 +   * By default HIP looks for CUDA SDK in /opt/cuda.
-+   * By default HIP is installed into /usr.
-+   * Optionally, consider adding /usr/bin to your path to make it easier to use the tools.
++   * By default HIP is installed into @ESYSROOT_ROCM_PATH@.
++   * Optionally, consider adding @ESYSROOT_ROCM_PATH@/bin to your path to make it easier to use the tools.
  
  
  # Verify your installation
@@ -260,7 +260,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/how_to_guides/install.md HIP-rocm-5.6.0/docs/
  Run hipconfig (instructions below assume default installation path):
  ```
 -/opt/rocm/bin/hipconfig --full
-+/usr/bin/hipconfig --full
++@ESYSROOT_ROCM_PATH@/bin/hipconfig --full
  ```
  
  # How to build HIP from source
@@ -272,7 +272,7 @@ diff -urp HIP-rocm-5.6.0.orig/docs/user_guide/programming_manual.md HIP-rocm-5.6
      ```
      hipcc hipOptLibrary.cpp --emit-static-lib -fPIC -o libHipOptLibrary.a
 -    gcc test.cpp -L. -lhipOptLibrary -L/path/to/hip/lib -lamdhip64 -o test.out
-+    gcc test.cpp -L. -lhipOptLibrary -L/usr/@LIBDIR@ -lamdhip64 -o test.out
++    gcc test.cpp -L. -lhipOptLibrary -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lamdhip64 -o test.out
      ```
  - Type 2 using system ar:
      ```
@@ -288,7 +288,7 @@ diff -urp HIP-rocm-5.6.0.orig/hip-lang-config.cmake.in HIP-rocm-5.6.0/hip-lang-c
 -# Go 4 level up to get IMPORT PREFIX
 -get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" REALPATH)
 -get_filename_component(_IMPORT_PREFIX "${_DIR}/../../../../" ABSOLUTE)
-+set(_IMPORT_PREFIX "/usr")
++set(_IMPORT_PREFIX "@ESYSROOT_ROCM_PATH@")
  
  
  set_target_properties(hip-lang::device PROPERTIES
@@ -480,7 +480,7 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipModule.cpp HIP-rocm
      hipcc_path = "$ROCM_PATH/bin/hipcc";
    } else {
 -    hipcc_path = "/opt/rocm/bin/hipcc";
-+    hipcc_path = "/usr/bin/hipcc";
++    hipcc_path = "@ESYSROOT_ROCM_PATH@/bin/hipcc";
    }
    /* Putting these command parameters into a variable to shorten the string
      literal length in order to avoid multiline string literal cpplint warning
@@ -492,12 +492,12 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    const char *rocmpath = nullptr;
    if (rocmPathSet) {
 -    // For STG2 testing where /opt/rocm path is not present
-+    // For STG2 testing where /usr path is not present
++    // For STG2 testing where @ESYSROOT_ROCM_PATH@ path is not present
      rocmpath = "$ROCM_PATH/bin/rocminfo";
    } else {
      // Check if the rocminfo tool exists
 -    rocmpath = "/opt/rocm/bin/rocminfo";
-+    rocmpath = "/usr/bin/rocminfo";
++    rocmpath = "@ESYSROOT_ROCM_PATH@/bin/rocminfo";
    }
    snprintf(command, COMMAND_LEN, "%s", rocmpath);
    strncat(command, " | grep -m1 \"sramecc.:xnack.\"", COMMAND_LEN);
@@ -506,19 +506,19 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    */
    if (rocmPathSet) {
 -    // For STG2 testing where /opt/rocm path is not present
-+    // For STG2 testing where /usr path is not present
++    // For STG2 testing where @ESYSROOT_ROCM_PATH@ path is not present
      snprintf(command, COMMAND_LEN,
 -    "$ROCM_PATH/llvm/bin/clang -target amdgcn-amd-amdhsa -x cl ");
 +    "$ROCM_PATH/lib/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
    } else {
      snprintf(command, COMMAND_LEN,
 -    "/opt/rocm/llvm/bin/clang -target amdgcn-amd-amdhsa -x cl ");
-+    "/usr/lib/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
++    "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
    }
    char command_temp[COMMAND_LEN] = "";
    snprintf(command_temp, COMMAND_LEN,
 -  "-include `find /opt/rocm* -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
-+  "-include `find /usr -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
++  "-include `find @ESYSROOT_ROCM_PATH@ -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
    pCodeObjVer, v3option, props.gcnArchName, pCodeObjFile, OPENCL_OBJ_FILE);
  
    strncat(command, command_temp, COMMAND_LEN);
@@ -539,11 +539,11 @@ diff -urp HIP-rocm-5.6.0.orig/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.
    rsmi_status_t (*fntopo_shut_down)();
  
 -  lib_rocm_smi_hdl = dlopen("/opt/rocm/rocm_smi/lib/librocm_smi64.so",
-+  lib_rocm_smi_hdl = dlopen("/usr/@LIBDIR@/librocm_smi64.so",
++  lib_rocm_smi_hdl = dlopen("@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm_smi64.so",
                          RTLD_LAZY);
    if (!lib_rocm_smi_hdl) {
 -    printf("Error opening /opt/rocm/rocm_smi/lib/librocm_smi64.so\n");
-+    printf("Error opening /usr/@LIBDIR@/librocm_smi64.so\n");
++    printf("Error opening @ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm_smi64.so\n");
      printf("Skipping this test\n");
      passed();
    }

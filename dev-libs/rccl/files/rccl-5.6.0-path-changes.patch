@@ -19,7 +19,7 @@ diff -urp rccl-rocm-5.6.0.orig/cmake/Dependencies.cmake rccl-rocm-5.6.0/cmake/De
  # Find or download/install rocm-cmake project
  set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
 -find_package(ROCM 0.7.3 QUIET CONFIG PATHS /opt/rocm)
-+find_package(ROCM 0.7.3 QUIET CONFIG PATHS /usr)
++find_package(ROCM 0.7.3 QUIET CONFIG PATHS @ESYSROOT_ROCM_PATH@)
  if(NOT ROCM_FOUND)
      set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
      file(
@@ -100,7 +100,7 @@ diff -urp rccl-rocm-5.6.0.orig/install.sh rccl-rocm-5.6.0/install.sh
      echo "    [--run_tests_all] Run all rccl unit tests (must be built already.)"
      echo "    [--hcc] Build library using deprecated hcc compiler (default:hip-clang)."
 -    echo "    [--prefix] Specify custom directory to install RCCL to (default: /opt/rocm)."
-+    echo "    [--prefix] Specify custom directory to install RCCL to (default: /usr)."
++    echo "    [--prefix] Specify custom directory to install RCCL to (default: @ESYSROOT_ROCM_PATH@)."
      echo "    [--address-sanitizer] Build with address sanitizer enabled"
      echo "    [--build_allreduce_only] Build only AllReduce + sum + float kernel"
      echo "    [--rm-legacy-include-dir] Remove legacy include dir Packaging added for file/folder reorg backward compatibility"
@@ -109,7 +109,7 @@ diff -urp rccl-rocm-5.6.0.orig/install.sh rccl-rocm-5.6.0/install.sh
  # #################################################
  build_package=false
 -ROCM_PATH=${ROCM_PATH:="/opt/rocm"}
-+ROCM_PATH=${ROCM_PATH:="/usr"}
++ROCM_PATH=${ROCM_PATH:="@ESYSROOT_ROCM_PATH@"}
  build_tests=false
  run_tests=false
  run_tests_all=false
@@ -134,45 +134,6 @@ diff -urp rccl-rocm-5.6.0.orig/makefiles/common.mk rccl-rocm-5.6.0/makefiles/com
  CUDA_INC ?= $(CUDA_HOME)/include
  CUDA_VERSION = $(strip $(shell which $(NVCC) >/dev/null && $(NVCC) --version | grep release | sed 's/.*release //' | sed 's/\,.*//'))
  #CUDA_VERSION ?= $(shell ls $(CUDA_LIB)/libcudart.so.* | head -1 | rev | cut -d "." -f -2 | rev)
-diff -urp rccl-rocm-5.6.0.orig/pkg/debian/libnccl2.install.in rccl-rocm-5.6.0/pkg/debian/libnccl2.install.in
---- rccl-rocm-5.6.0.orig/pkg/debian/libnccl2.install.in	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/pkg/debian/libnccl2.install.in	2023-08-28 10:04:51.965443012 -0700
-@@ -1,2 +1,2 @@
--lib/libnccl.so.${nccl:Major} /usr/lib/${pkg:MultiArch}
--lib/libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} /usr/lib/${pkg:MultiArch}
-+@LIBDIR@/libnccl.so.${nccl:Major} /usr/@LIBDIR@/${pkg:MultiArch}
-+@LIBDIR@/libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} /usr/@LIBDIR@/${pkg:MultiArch}
-diff -urp rccl-rocm-5.6.0.orig/pkg/debian/libnccl-dev.install.in rccl-rocm-5.6.0/pkg/debian/libnccl-dev.install.in
---- rccl-rocm-5.6.0.orig/pkg/debian/libnccl-dev.install.in	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/pkg/debian/libnccl-dev.install.in	2023-08-28 10:04:51.965443012 -0700
-@@ -1,4 +1,4 @@
- include/nccl.h /usr/include
- include/nccl_net.h /usr/include
--lib/libnccl.so /usr/lib/${pkg:MultiArch}
--lib/libnccl_static.a /usr/lib/${pkg:MultiArch}
-+@LIBDIR@/libnccl.so /usr/@LIBDIR@/${pkg:MultiArch}
-+@LIBDIR@/libnccl_static.a /usr/@LIBDIR@/${pkg:MultiArch}
-diff -urp rccl-rocm-5.6.0.orig/pkg/redhat/nccl.spec.in rccl-rocm-5.6.0/pkg/redhat/nccl.spec.in
---- rccl-rocm-5.6.0.orig/pkg/redhat/nccl.spec.in	2023-06-14 09:24:41.000000000 -0700
-+++ rccl-rocm-5.6.0/pkg/redhat/nccl.spec.in	2023-08-28 10:04:51.965443012 -0700
-@@ -40,7 +40,7 @@ NCCL static library
- rm -rf $RPM_BUILD_ROOT
- install -m 755 -d $RPM_BUILD_ROOT
- install -m 755 -d $RPM_BUILD_ROOT/%{_libdir}
--install -m 755 lib/libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} $RPM_BUILD_ROOT/%{_libdir}
-+install -m 755 @LIBDIR@/libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} $RPM_BUILD_ROOT/%{_libdir}
- ln -s libnccl.so.${nccl:Major}.${nccl:Minor}.${nccl:Patch} $RPM_BUILD_ROOT/%{_libdir}/libnccl.so.${nccl:Major}
- 
- # devel
-@@ -50,7 +50,7 @@ install -m 644 include/nccl_net.h $RPM_B
- ln -s libnccl.so.${nccl:Major} $RPM_BUILD_ROOT/%{_libdir}/libnccl.so
- 
- # static
--install -m 644 lib/libnccl_static.a $RPM_BUILD_ROOT/%{_libdir}
-+install -m 644 @LIBDIR@/libnccl_static.a $RPM_BUILD_ROOT/%{_libdir}
- 
- %post -p /sbin/ldconfig
- %postun -p /sbin/ldconfig
 diff -urp rccl-rocm-5.6.0.orig/pkg/txz/create_txz.sh.in rccl-rocm-5.6.0/pkg/txz/create_txz.sh.in
 --- rccl-rocm-5.6.0.orig/pkg/txz/create_txz.sh.in	2023-06-14 09:24:41.000000000 -0700
 +++ rccl-rocm-5.6.0/pkg/txz/create_txz.sh.in	2023-08-28 10:04:51.965443012 -0700
@@ -190,7 +151,7 @@ diff -urp rccl-rocm-5.6.0.orig/README.md rccl-rocm-5.6.0/README.md
  
  *  `./install.sh` -- builds library including rccl unit tests
 -*  `./install.sh -i` -- builds and installs the library to /opt/rocm/rccl; installation path can be changed with --prefix argument (see below.)
-+*  `./install.sh -i` -- builds and installs the library to /usr/rccl; installation path can be changed with --prefix argument (see below.)
++*  `./install.sh -i` -- builds and installs the library to @ESYSROOT_ROCM_PATH@/rccl; installation path can be changed with --prefix argument (see below.)
  *  `./install.sh -d` -- installs all necessary dependencies for RCCL.  Should be re-invoked if the build folder is removed.
  *  `./install.sh -h` -- shows help
  *  `./install.sh -t` -- builds library including rccl unit tests
@@ -199,7 +160,7 @@ diff -urp rccl-rocm-5.6.0.orig/README.md rccl-rocm-5.6.0/README.md
  *  `./install.sh -s` -- builds RCCL as a static library (default: shared)
  *  `./install.sh -hcc` -- builds RCCL with hcc compiler; note that hcc is now deprecated. (default:hip-clang)
 -*  `./install.sh --prefix` -- specify custom path to install RCCL to (default:/opt/rocm)
-+*  `./install.sh --prefix` -- specify custom path to install RCCL to (default:/usr)
++*  `./install.sh --prefix` -- specify custom path to install RCCL to (default:@ESYSROOT_ROCM_PATH@)
  *  `./install.sh  --npkit-enable` -- enable compilation of npkit profiler framework with all options
  
  ## Manual build
@@ -208,13 +169,13 @@ diff -urp rccl-rocm-5.6.0.orig/README.md rccl-rocm-5.6.0/README.md
  $ mkdir build
  $ cd build
 -$ CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/opt/rocm/ ..
-+$ CXX=/usr/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/usr/ ..
++$ CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/usr/ ..
  $ make -j
  ```
  You may substitute an installation path of your own choosing by passing CMAKE_INSTALL_PREFIX. For example:
  ```shell
 -$ CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/opt/rocm/ -DCMAKE_INSTALL_PREFIX=$PWD/rccl-install ..
-+$ CXX=/usr/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/usr/ -DCMAKE_INSTALL_PREFIX=$PWD/rccl-install ..
++$ CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/usr/ -DCMAKE_INSTALL_PREFIX=$PWD/rccl-install ..
  ```
  Note: ensure rocm-cmake is installed, `apt install rocm-cmake`.
  
@@ -223,7 +184,7 @@ diff -urp rccl-rocm-5.6.0.orig/README.md rccl-rocm-5.6.0/README.md
  ```
  
 -RCCL package install requires sudo/root access because it creates a directory called "rccl" under /opt/rocm/. This is an optional step and RCCL can be used directly by including the path containing librccl.so.
-+RCCL package install requires sudo/root access because it creates a directory called "rccl" under /usr/. This is an optional step and RCCL can be used directly by including the path containing librccl.so.
++RCCL package install requires sudo/root access because it creates a directory called "rccl" under @ESYSROOT_ROCM_PATH@/. This is an optional step and RCCL can be used directly by including the path containing librccl.so.
  
  ## Enabling peer-to-peer transport
  
@@ -277,7 +238,7 @@ diff -urp rccl-rocm-5.6.0.orig/test/CMakeLists.txt rccl-rocm-5.6.0/test/CMakeLis
    #endif()
  
 -  find_package(hsa-runtime64 PATHS /opt/rocm )
-+  find_package(hsa-runtime64 PATHS /usr )
++  find_package(hsa-runtime64 PATHS @ESYSROOT_ROCM_PATH@ )
    if(${hsa-runtime64_FOUND})
      message("hsa-runtime64 found @  ${hsa-runtime64_DIR} ")
    else()
@@ -286,12 +247,12 @@ diff -urp rccl-rocm-5.6.0.orig/test/CMakeLists.txt rccl-rocm-5.6.0/test/CMakeLis
  
      # Search for ROCr header file in user defined locations
 -    find_path(ROCR_HDR hsa/hsa.h PATHS ${ROCR_INC_DIR} "/opt/rocm" PATH_SUFFIXES include REQUIRED)
-+    find_path(ROCR_HDR hsa/hsa.h PATHS ${ROCR_INC_DIR} "/usr" PATH_SUFFIXES include REQUIRED)
++    find_path(ROCR_HDR hsa/hsa.h PATHS ${ROCR_INC_DIR} "@ESYSROOT_ROCM_PATH@" PATH_SUFFIXES include REQUIRED)
      INCLUDE_DIRECTORIES(${ROCR_HDR})
  
      # Search for ROCr library file in user defined locations
 -    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm" PATH_SUFFIXES lib lib64 REQUIRED)
-+    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/usr" PATH_SUFFIXES @LIBDIR@ REQUIRED)
++    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "@ESYSROOT_ROCM_PATH@" PATH_SUFFIXES @LIBDIR@ REQUIRED)
    endif()
  
    include_directories(${GTEST_INCLUDE_DIRS} ./common)
@@ -305,7 +266,7 @@ diff -urp rccl-rocm-5.6.0.orig/test/CMakeLists.txt rccl-rocm-5.6.0/test/CMakeLis
      target_link_libraries(rccl-UnitTests PRIVATE rccl)
    endif()
 -  # HIPCC adds /opt/rocm/lib as RPATH, even though the install process is supposed to
-+  # HIPCC adds /usr/@LIBDIR@ as RPATH, even though the install process is supposed to
++  # HIPCC adds @ESYSROOT_ROCM_PATH@/@LIBDIR@ as RPATH, even though the install process is supposed to
    # remove RPATH.  It also occurs before any user-specified rpath, which effectively overrides the user rpath.
    #  As a work-around, set the correct RPATH for the rccl unit test executable as a post-install step
    # if (CMAKE_INSTALL_PREFIX MATCHES "${ROCM_PATH}")
@@ -331,7 +292,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/GraphBench/Makefile rccl-rocm-5.6.0/tools/G
  RCCL_INSTALL=../../build/release
  
 -HIP_PATH?= $(wildcard /opt/rocm)
-+HIP_PATH?= $(wildcard /usr)
++HIP_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@)
  ifeq (,$(HIP_PATH))
  HIP_PATH=../../..
  endif
@@ -343,7 +304,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/HelloRccl/Makefile rccl-rocm-5.6.0/tools/He
  RCCL_INSTALL=../../build/release
  
 -HIP_PATH?= $(wildcard /opt/rocm)
-+HIP_PATH?= $(wildcard /usr)
++HIP_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@)
  ifeq (,$(HIP_PATH))
  HIP_PATH=../../..
  endif
@@ -353,7 +314,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/ib-test/Makefile rccl-rocm-5.6.0/tools/ib-t
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH ?= $(wildcard /opt/rocm)
-+HIP_PATH ?= $(wildcard /usr)
++HIP_PATH ?= $(wildcard @ESYSROOT_ROCM_PATH@)
  ifeq (,$(HIP_PATH))
  HIP_PATH = ../../..
  endif
@@ -365,7 +326,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/MultiRank/Makefile rccl-rocm-5.6.0/tools/Mu
  RCCL_INSTALL=../../build/release
  
 -HIP_PATH?= $(wildcard /opt/rocm)
-+HIP_PATH?= $(wildcard /usr)
++HIP_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@)
  ifeq (,$(HIP_PATH))
  HIP_PATH=../../..
  endif
@@ -390,7 +351,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/rccl-prim-test/Makefile rccl-rocm-5.6.0/too
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH?= $(wildcard /opt/rocm)
-+HIP_PATH?= $(wildcard /usr)
++HIP_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
  endif
@@ -400,7 +361,7 @@ diff -urp rccl-rocm-5.6.0.orig/tools/topo_expl/Makefile rccl-rocm-5.6.0/tools/to
 @@ -1,5 +1,5 @@
  # Copyright (c) 2019-2020 Advanced Micro Devices, Inc. All rights reserved.
 -HIP_PATH ?= $(wildcard /opt/rocm)
-+HIP_PATH ?= $(wildcard /usr)
++HIP_PATH ?= $(wildcard @ESYSROOT_ROCM_PATH@)
  ifeq (,$(HIP_PATH))
  HIP_PATH = ../../..
  endif

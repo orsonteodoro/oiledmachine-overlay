@@ -16,6 +16,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2)"
 VERBOSE=1
 
 inherit cmake flag-o-matic rocm
@@ -34,7 +35,7 @@ LICENSE="
 "
 # custom - bin/mymcpu
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug
 r1
@@ -42,16 +43,16 @@ r1
 RDEPEND="
 	sys-devel/llvm:${LLVM_MAX_SLOT}
 	virtual/libelf
-	~dev-libs/rocm-comgr-${PV}:${SLOT}
-	~dev-libs/rocm-device-libs-${PV}:${SLOT}
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
+	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
 	>=dev-util/cmake-3.16.8
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
 	"${FILESDIR}/atmi-5.5.1-path-changes.patch"
@@ -74,16 +75,17 @@ src_configure() {
 		CMAKE_BUILD_TYPE="Release"
 	fi
 	export GFXLIST=$(get_amdgpu_flags)
-	export ROC_DIR="/usr"
-	export ROCR_DIR="/usr"
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	export ROC_DIR="${rocm_path}"
+	export ROCR_DIR="${rocm_path}"
 	local mycmakeargs=(
-		-DAMD_DEVICE_LIBS_PREFIX="${ESYSROOT}/usr"
+		-DAMD_DEVICE_LIBS_PREFIX="${ESYSROOT}${rocm_path}"
 		-DATMI_C_EXTENSION=OFF
 		-DATMI_DEVICE_RUNTIME=ON
 		-DATMI_HSA_INTEROP=ON
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/"
-		-DDEVICE_LIB_DIR="${ESYSROOT}/usr"
-		-DHSA_DIR="${ESYSROOT}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${rocm_path}"
+		-DDEVICE_LIB_DIR="${ESYSROOT}${rocm_path}"
+		-DHSA_DIR="${ESYSROOT}${rocm_path}"
 		-DLLVM_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/"
 		-DROCM_VERSION="${PV}"
 	)

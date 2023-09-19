@@ -64,6 +64,7 @@ CUDA_TARGETS_COMPAT=(
 	auto
 )
 LLVM_MAX_SLOT=14
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
 
@@ -90,7 +91,7 @@ LICENSE="
 # Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.6.0/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
 KEYWORDS="~amd64"
-SLOT="${PV}"
+SLOT="${ROCM_SLOT}/${PV}"
 LLVM_TARGETS=(
 	AMDGPU
 	X86
@@ -146,10 +147,9 @@ REQUIRED_USE="
 		${LLVM_TARGETS_CPU_COMPAT[@]}
 	)
 "
-ROCM_SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${PV}:${SLOT}[${LLVM_TARGETS_USEDEP}]
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
 	cuda_targets_sm_35? (
 		=dev-util/nvidia-cuda-toolkit-11*:=
 	)
@@ -304,11 +304,12 @@ src_configure() {
 		experimental_targets+=";NVPTX"
 	fi
 	experimental_targets="${experimental_targets:1}"
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	local mycmakeargs=(
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
 		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/rocm/${PV}/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${rocm_path}/llvm"
 		-DLIBOMP_OMPD_SUPPORT=$(usex ompd ON OFF)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt ON OFF)
 		-DLLVM_BUILD_DOCS=NO
@@ -321,7 +322,7 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
-		-DLLVM_INSTALL_PREFIX="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/lib/cmake/llvm"
+		-DLLVM_INSTALL_PREFIX="${EPREFIX}${rocm_path}/llvm/lib/cmake/llvm"
 		-DLLVM_INSTALL_UTILS=ON
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
@@ -338,7 +339,7 @@ src_configure() {
 		)
 		if use llvm_targets_AMDGPU ; then
 			mycmakeargs+=(
-				-DAMDDeviceLibs_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake/AMDDeviceLibs"
+				-DAMDDeviceLibs_DIR="${ESYSROOT}${rocm_path}/$(get_libdir)/cmake/AMDDeviceLibs"
 				-DDEVICELIBS_ROOT="${S_DEVICELIBS}"
 				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
 			)
@@ -445,10 +446,11 @@ src_install() {
 			${targets[@]}
 	fi
 	cd "${BUILD_DIR}" || die
-	exeinto "/usr/lib/rocm/${PV}/llvm/lib"
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	exeinto "${rocm_path}/llvm/lib"
 	doexe "lib/"{libgomp.so,libomp.so,libiomp5.so}
 	use ompd && doexe "lib/libompd.so"
-	insinto "/usr/lib/rocm/${PV}/llvm/include"
+	insinto "${rocm_path}/llvm/include"
 	doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp.h"
 	if use ompt ; then
 		doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp-tools.h"

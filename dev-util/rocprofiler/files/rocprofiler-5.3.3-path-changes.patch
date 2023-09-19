@@ -6,7 +6,7 @@ unchanged:
  
  if [ -z "$ROCM_DIR" ] ; then
 -  ROCM_DIR=/opt/rocm
-+  ROCM_DIR=/usr
++  ROCM_DIR="@ESYSROOT_ROCM_PATH@"
  fi
  
  if [ -z "$TGT_LIST" ] ; then
@@ -46,7 +46,7 @@ unchanged:
  
  ROCPROF=`which rocprof`
 -BIN_DIR=$(dirname $(realpath ${ROCPROF:-/opt/rocm/bin/rocprof}))
-+BIN_DIR=$(dirname $(realpath ${ROCPROF:-/usr/bin/rocprof}))
++BIN_DIR=$(dirname $(realpath ${ROCPROF:-@ESYSROOT_ROCM_PATH@/bin/rocprof}))
  
  bin_name=`basename $0`
  
@@ -151,7 +151,7 @@ unchanged:
  COMPONENT="rocprofiler"
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
 -LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
-+ROCM_PATH="${ROCM_PATH:=/usr}"
++ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
 +LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/@LIBDIR@"
  
  if [ -z "$ROCPROFILER_ROOT" ]; then ROCPROFILER_ROOT=$SRC_DIR; fi
@@ -184,7 +184,7 @@ unchanged:
            ${PROF_API_HEADER_PATH}
          PATHS
 -            /opt/rocm/include
-+            /usr/include
++            @ESYSROOT_ROCM_PATH@/include
          PATH_SUFFIXES
              roctracer/ext
      )
@@ -219,11 +219,11 @@ diff -u rocprofiler-rocm-5.3.3/cmake_modules/env.cmake rocprofiler-rocm-5.3.3/cm
  
  ## Find hsa-runtime
 -find_package(hsa-runtime64 CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm PATH_SUFFIXES lib/cmake/hsa-runtime64 )
-+find_package(hsa-runtime64 CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr PATH_SUFFIXES @LIBDIR@/cmake/hsa-runtime64 )
++find_package(hsa-runtime64 CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@ PATH_SUFFIXES @LIBDIR@/cmake/hsa-runtime64 )
  
  # find KFD thunk
 -find_package(hsakmt CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm PATH_SUFFIXES lib/cmake/hsakmt )
-+find_package(hsakmt CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr PATH_SUFFIXES @LIBDIR@/cmake/hsakmt )
++find_package(hsakmt CONFIG REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@ PATH_SUFFIXES @LIBDIR@/cmake/hsakmt )
  
  ## Find ROCm
  find_library ( HSA_KMT_LIB "libhsakmt.so" )
@@ -232,7 +232,7 @@ diff -u rocprofiler-rocm-5.3.3/cmake_modules/env.cmake rocprofiler-rocm-5.3.3/cm
  endif ()
  
 -find_library ( FIND_AQL_PROFILE_LIB "libhsa-amd-aqlprofile64.so" HINTS ${CMAKE_INSTALL_PREFIX} PATHS ${ROCM_ROOT_DIR})
-+find_library ( FIND_AQL_PROFILE_LIB "libhsa-amd-aqlprofile64.so" PATH_SUFFIXES lib HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm-@ROCM_VERSION@)
++find_library ( FIND_AQL_PROFILE_LIB "libhsa-amd-aqlprofile64.so" PATH_SUFFIXES lib HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT@/opt/rocm-@ROCM_VERSION@)
  if (  NOT FIND_AQL_PROFILE_LIB )
    message ( FATAL_ERROR "AQL_PROFILE not installed. Please install AQL_PROFILE" )
  endif()
@@ -244,7 +244,7 @@ unchanged:
  
  $ cd .../rocprofiler
 -$ export CMAKE_PREFIX_PATH=/opt/rocm/include/hsa:/opt/rocm
-+$ export CMAKE_PREFIX_PATH=/usr/include/hsa:/usr
++$ export CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@/include/hsa:@ESYSROOT_ROCM_PATH@
  $ mkdir build
  $ cd build
  $ cmake ..
@@ -265,7 +265,7 @@ unchanged:
      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 -   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with rocprofiler\")\n@include_statements@ \n\n#endif")
-+   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with rocprofiler\")\n@include_statements@ \n\n#endif")
++   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with rocprofiler\")\n@include_statements@ \n\n#endif")
  endfunction()
  
  #use header template file and generate wrapper header files
@@ -313,7 +313,7 @@ unchanged:
  
  # paths to ROC profiler and oher libraries
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../lib:/opt/rocm/lib:/opt/rocm/lib/rocprofiler
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:/usr/@LIBDIR@:/usr/@LIBDIR@/rocprofiler
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:@ESYSROOT_ROCM_PATH@/@LIBDIR@:@ESYSROOT_ROCM_PATH@/@LIBDIR@/rocprofiler
  
  # enable tools load failure reporting
  export HSA_TOOLS_REPORT_LOAD_FAILURE=1

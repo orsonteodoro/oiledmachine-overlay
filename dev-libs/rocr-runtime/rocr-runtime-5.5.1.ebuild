@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic llvm rocm
 
@@ -23,23 +24,24 @@ fi
 DESCRIPTION="Radeon Open Compute Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCR-Runtime"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-+aqlprofile debug
-r1
+	+aqlprofile debug system-llvm
+	r1
 "
 CDEPEND="
 	dev-libs/elfutils
 "
 RDEPEND="
+	!dev-libs/rocr-runtime:0
 	${CDEPEND}
 "
 DEPEND="
 	${CDEPEND}
 	=sys-devel/lld-${LLVM_MAX_SLOT}*
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
-	~dev-libs/rocm-device-libs-${PV}:${SLOT}
+	~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 "
 # vim-core is needed for "xxd"
 BDEPEND="
@@ -67,6 +69,7 @@ src_configure() {
 	use debug || append-cxxflags "-DNDEBUG"
 	local mycmakeargs=(
 		-DINCLUDE_PATH_COMPATIBILITY=OFF
+		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
 	)
 	cmake_src_configure
 }

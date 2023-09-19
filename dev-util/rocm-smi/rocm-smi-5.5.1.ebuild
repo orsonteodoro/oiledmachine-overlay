@@ -5,6 +5,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{9..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
 
@@ -27,7 +28,7 @@ LICENSE="
 	MIT
 	NCSA-AMD
 "
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -60,7 +61,7 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 	)
 	cmake_src_configure

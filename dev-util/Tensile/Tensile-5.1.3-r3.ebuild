@@ -20,7 +20,9 @@ AMDGPU_TARGETS_COMPAT=(
 PYTHON_COMPAT=( python3_{9..11} )
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_MAX_SLOT=14
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
+
 inherit cmake distutils-r1 llvm prefix rocm toolchain-funcs
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
@@ -32,7 +34,7 @@ https://github.com/littlewu2508/littlewu2508.github.io/raw/main/gentoo-distfiles
 "
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="client openmp r4"
 REQUIRED_USE="
 	client? (
@@ -46,10 +48,10 @@ RDEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 	client? (
 		dev-libs/boost
-		~dev-util/rocm-smi-${PV}:${SLOT}
+		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	)
 	openmp? (
 		sys-devel/lld:${LLVM_MAX_SLOT}

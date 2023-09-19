@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
@@ -18,11 +19,11 @@ https://github.com/RadeonOpenCompute/rocm_bandwidth_test/commit/a58f9fd4cb5d1120
 DESCRIPTION="Bandwidth test for ROCm"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE="r2"
 RDEPEND="
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${DEPEND}

@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake edo flag-o-matic rocm
 
@@ -29,26 +30,27 @@ LICENSE="
 	Apache-2.0
 	MIT
 "
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
 r1
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
+	!dev-libs/rocm-opencl-runtime:0
 	=sys-libs/compiler-rt-${LLVM_MAX_SLOT}*:=
 	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
-	~dev-libs/rocm-comgr-${PV}:${SLOT}
-	~dev-libs/rocm-device-libs-${PV}:${SLOT}
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
+	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
 	>=dev-util/opencl-headers-2023.02.06
 "
 BDEPEND="
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
 		media-libs/glew
@@ -113,12 +115,16 @@ src_configure() {
 }
 
 src_install() {
-	insinto /etc/OpenCL/vendors
+	insinto /usr/$(get_libdir)/rocm/${ROCM_SLOT}/etc/OpenCL/vendors
 	doins config/amdocl64.icd
 	cd "${BUILD_DIR}" || die
-	insinto /usr/$(get_libdir)
+	insinto /usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)
 	doins amdocl/libamdocl64.so
 	doins tools/cltrace/libcltrace.so
+	# TODO symlinks:
+	# /usr/$(get_libdir)/rocm/${ROCM_SLOT}/etc/OpenCL/vendors/amdocl64.icd -> /etc/OpenCL/vendors/amdocl64.icd
+	# /usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)/libamdocl64.so /usr/$(get_libdir)/libamdocl64.so
+	# /usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)/libcltrace.so /usr/$(get_libdir)/libcltrace.so
 }
 
 # Copied from rocm.eclass. This ebuild does not need amdgpu_targets

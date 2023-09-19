@@ -50,6 +50,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 cuda debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
+rocm_4_3 rocm_4_5
 r3
 "
 # CUDA works only with the x86_64 ABI
@@ -80,12 +81,22 @@ REQUIRED_USE="
 	)
 	llvm_targets_AMDGPU? (
 		${ROCM_REQUIRED_USE}
+		^^ (
+			rocm_4_5
+			rocm_4_3
+		)
 	)
 	llvm_targets_NVPTX? (
 		cuda
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
+	)
+	rocm_4_3? (
+		llvm_targets_AMDGPU
+	)
+	rocm_4_5? (
+		llvm_targets_AMDGPU
 	)
 "
 ROCM_SLOTS=(
@@ -95,9 +106,9 @@ ROCM_SLOTS=(
 gen_amdgpu_rdepend() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/${pv%.*}"
+		local s="${pv%.*}"
 		echo "
-			(
+			rocm_${s/./_}? (
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-libs/roct-thunk-interface-${pv}:${s}
 			)

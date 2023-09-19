@@ -5,6 +5,7 @@ EAPI=8
 
 CONFIG_CHECK="~HSA_AMD"
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake linux-info rocm
 
@@ -17,14 +18,15 @@ DESCRIPTION="Radeon Open Compute Debug Agent"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocr_debug_agent/"
 KEYWORDS="~amd64"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test"
 RDEPEND="
-	~dev-libs/ROCdbgapi-${PV}:${SLOT}
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
+	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
 	dev-util/systemtap
 	virtual/libelf
+	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -32,7 +34,7 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.8.0
 	test? (
-		~dev-util/hip-${PV}:${SLOT}
+		~dev-util/hip-${PV}:${ROCM_SLOT}
 	)
 "
 RESTRICT="

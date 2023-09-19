@@ -121,15 +121,15 @@ diff -urp roctracer-rocm-5.1.3.orig/README.md roctracer-rocm-5.1.3/README.md
    To use the rocTracer API you need the API header and to link your application with roctracer .so librray:
 -  - the API header: /opt/rocm/roctracer/include/roctracer.h
 -  - the .so library: /opt/rocm/lib/libroctracer64.so
-+  - the API header: /usr/include/roctracer/roctracer.h
-+  - the .so library: /usr/@LIBDIR@/libroctracer64.so
++  - the API header: @ESYSROOT_ROCM_PATH@/include/roctracer/roctracer.h
++  - the .so library: @ESYSROOT_ROCM_PATH@/@LIBDIR@/libroctracer64.so
  
  rocTX API:
    To use the rocTX API you need the API header and to link your application with roctx .so librray:
 -  - the API header: /opt/rocm/roctracer/include/roctx.h
 -  - the .so library: /opt/rocm/lib/libroctx64.so
-+  - the API header: /usr/include/roctracer/roctx.h
-+  - the .so library: /usr/@LIBDIR@/libroctx64.so
++  - the API header: @ESYSROOT_ROCM_PATH@/include/roctracer/roctx.h
++  - the .so library: @ESYSROOT_ROCM_PATH@/@LIBDIR@/libroctx64.so
  ```
  
  ## The library source tree

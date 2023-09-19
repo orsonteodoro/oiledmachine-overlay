@@ -3,6 +3,8 @@
 
 EAPI=8
 
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 inherit unpacker
 
 SRC_URI="
@@ -19,11 +21,15 @@ LICENSE="
 	hsa-amd-aqlprofile-DISCLAIMER
 	hsa-amd-aqlprofile-LICENSE
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE="deny-install skip-install"
-DEPEND=""
-RDEPEND="${DEPEND}"
+RDEPEND="
+	!dev-libs/hsa-amd-aqlprofile:0
+"
+DEPEND="
+	${RDEPEND}
+"
 RESTRICT="binchecks fetch"
 S="${WORKDIR}"
 QA_PREBUILT="

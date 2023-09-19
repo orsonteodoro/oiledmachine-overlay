@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm rocm
 
@@ -22,14 +23,16 @@ fi
 DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
-IUSE="test r1"
+SLOT="${ROCM_SLOT}/${PV}"
+IUSE="system-llvm test r1"
 gen_llvm_rdepend() {
 	local s="${1}"
 	echo "
 		(
-			~sys-devel/llvm-${s}
-			~sys-devel/clang-${s}
+			system-llvm? (
+				~sys-devel/llvm-${s}
+				~sys-devel/clang-${s}
+			)
 		)
 	"
 }
@@ -41,14 +44,24 @@ CDEPEND="
 			|| (
 				$(gen_llvm_rdepend 14.0.6)
 				$(gen_llvm_rdepend 14.0.5)
+				(
+					!system-llvm? (
+						~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+					)
+				)
 			)
 		)
 	)
 "
 RDEPEND="
 	!test? (
-		sys-devel/llvm:${LLVM_MAX_SLOT}
-		sys-devel/clang:${LLVM_MAX_SLOT}
+		!system-llvm? (
+			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		)
+		system-llvm? (
+			sys-devel/llvm:${LLVM_MAX_SLOT}
+			sys-devel/clang:${LLVM_MAX_SLOT}
+		)
 	)
 "
 DEPEND="
@@ -56,8 +69,13 @@ DEPEND="
 "
 BDEPEND="
 	!test? (
-		sys-devel/llvm:${LLVM_MAX_SLOT}
-		sys-devel/clang:${LLVM_MAX_SLOT}
+		!system-llvm? (
+			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		)
+		system-llvm? (
+			sys-devel/llvm:${LLVM_MAX_SLOT}
+			sys-devel/clang:${LLVM_MAX_SLOT}
+		)
 	)
 	test? (
 		${CDEPEND}
@@ -101,8 +119,10 @@ src_configure() {
 	export CC="${CHOST}-clang-${LLVM_SLOT}"
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${rocm_path}"
+		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
 	)
 	cmake_src_configure
 }

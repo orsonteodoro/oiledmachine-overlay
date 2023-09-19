@@ -6,7 +6,7 @@ diff -urp ROCclr-rocm-5.6.0.orig/cmake/ROCclrHSA.cmake ROCclr-rocm-5.6.0/cmake/R
  find_package(hsa-runtime64 1.6 REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    /usr/
++    @ESYSROOT_ROCM_PATH@/
    PATH_SUFFIXES
      cmake/hsa-runtime64
 -    lib/cmake/hsa-runtime64
@@ -23,7 +23,7 @@ diff -urp ROCclr-rocm-5.6.0.orig/cmake/ROCclrLC.cmake ROCclr-rocm-5.6.0/cmake/RO
  find_package(amd_comgr REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    /usr/
++    @ESYSROOT_ROCM_PATH@/
    PATH_SUFFIXES
      cmake/amd_comgr
 -    lib/cmake/amd_comgr)
@@ -39,7 +39,7 @@ diff -urp ROCclr-rocm-5.6.0.orig/elf/test/CMakeLists.txt ROCclr-rocm-5.6.0/elf/t
  find_package(amd_comgr REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    /usr/
++    @ESYSROOT_ROCM_PATH@/
    PATH_SUFFIXES
      cmake/amd_comgr
 -    lib/cmake/amd_comgr)
@@ -48,7 +48,7 @@ diff -urp ROCclr-rocm-5.6.0.orig/elf/test/CMakeLists.txt ROCclr-rocm-5.6.0/elf/t
  find_package(hsa-runtime64 REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    /usr/
++    @ESYSROOT_ROCM_PATH@/
    PATH_SUFFIXES
      cmake/hsa-runtime64)
  
@@ -58,8 +58,8 @@ diff -urp ROCclr-rocm-5.6.0.orig/elf/test/CMakeLists.txt ROCclr-rocm-5.6.0/elf/t
    PATHS
 -    /opt/rocm
 -    /opt/rocm/rocclr)
-+    /usr
-+    /usr/rocclr)
++    @ESYSROOT_ROCM_PATH@
++    @ESYSROOT_ROCM_PATH@/rocclr)
  
  add_executable(elf_test main.cpp)
  set_target_properties(
@@ -79,8 +79,8 @@ diff -urp ROCclr-rocm-5.6.0.orig/elf/test/main.cpp ROCclr-rocm-5.6.0/elf/test/ma
  static const amd::Elf::SymbolInfo commentSymbolInfos_[] = {
 -    { ".comment", nullptr, 0, "compile", "-g -I/opt/include",  strlen("-g -I/opt/include") + 1 },
 -    { ".comment", nullptr, 0, "link",    "-g -l/opt/rocm/lib", strlen("-g -l/opt/rocm/lib") + 1 },
-+    { ".comment", nullptr, 0, "compile", "-g -I/usr/include",  strlen("-g -I/usr/include") + 1 },
-+    { ".comment", nullptr, 0, "link",    "-g -l/usr/@LIBDIR@", strlen("-g -l/usr/@LIBDIR@") + 1 },
++    { ".comment", nullptr, 0, "compile", "-g -I@ESYSROOT_ROCM_PATH@/include",  strlen("-g -I@ESYSROOT_ROCM_PATH@/include") + 1 },
++    { ".comment", nullptr, 0, "link",    "-g -l@ESYSROOT_ROCM_PATH@/@LIBDIR@", strlen("-g -l@ESYSROOT_ROCM_PATH@/@LIBDIR@") + 1 },
    };
  static constexpr size_t commentSymbolInfosSize_ = sizeof(commentSymbolInfos_)
      / sizeof(commentSymbolInfos_[0]);
@@ -104,7 +104,7 @@ diff -urp ROCclr-rocm-5.6.0.orig/README.md ROCclr-rocm-5.6.0/README.md
  cd "$ROCclr_DIR"
  mkdir -p build; cd build
 -cmake -DOPENCL_DIR="$OPENCL_DIR" -DCMAKE_INSTALL_PREFIX=/opt/rocm/rocclr ..
-+cmake -DOPENCL_DIR="$OPENCL_DIR" -DCMAKE_INSTALL_PREFIX=/usr/rocclr ..
++cmake -DOPENCL_DIR="$OPENCL_DIR" -DCMAKE_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@/rocclr ..
  make -j$(nproc)
  sudo make install
  ```
@@ -113,7 +113,7 @@ diff -urp ROCclr-rocm-5.6.0.orig/README.md ROCclr-rocm-5.6.0/README.md
  cd "$HIP_DIR"
  mkdir -p build; cd build
 -cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
-+cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/usr/" ..
++cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@ESYSROOT_ROCM_PATH@/" ..
  make -j$(nproc)
  ```
  

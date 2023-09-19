@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm rocm
 
@@ -19,9 +20,10 @@ https://github.com/ROCmSoftwarePlatform/hipfort
 "
 KEYWORDS="~amd64"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="debug r4"
 RDEPEND="
+	!dev-util/hipfort:0
 	|| (
 		>=sys-devel/gcc-7.5.0[fortran]
 		dev-lang/flang

@@ -18,5 +18,9 @@
     <flag name="aqlprofile">
       Add support for the AQLPROFILE HSA extension.
     </flag>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability.
+    </flag>
   </use>
 </pkgmetadata>

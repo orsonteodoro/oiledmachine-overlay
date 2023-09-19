@@ -16,7 +16,7 @@
      if (not os.path.isdir(test_rocm_path)):
          print("no directory found")
 -        test_rocm_path = os.path.join('/opt','rocm')
-+        test_rocm_path = os.path.join('/usr')
++        test_rocm_path = os.path.join('/usr','@LIBDIR@','rocm','@ROCM_SLOT@')
          if (not os.path.isdir(test_rocm_path)):
              test_rocm_path = os.path.abspath(os.path.join(config.llvm_install_dir, os.pardir))
              if (not os.path.isdir(test_rocm_path)):

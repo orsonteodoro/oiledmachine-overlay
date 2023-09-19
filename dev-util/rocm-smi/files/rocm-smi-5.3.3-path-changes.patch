@@ -6,7 +6,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/CMakeLists.txt rocm_smi_lib-rocm-5.3.3/CM
  ## Define default variable and variables for the optional build target
  ##  rocm_smi_lib-dev
 -set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE STRING "Default installation directory.")
-+#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "/usr" CACHE STRING "Default installation directory.")
++#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE STRING "Default installation directory.")
  set(COMMON_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Location source code common root.")
  set(ROCM_SMI_PACKAGE rocm-smi-lib)
  
@@ -24,7 +24,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/CMakeLists.txt rocm_smi_lib-rocm-5.3.3/CM
  ###########################
  set(CPACK_GENERATOR "DEB;RPM"  CACHE STRING "Default packaging generators.")
 -set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE STRING "Default packaging prefix.")
-+set(CPACK_PACKAGING_INSTALL_PREFIX "/usr" CACHE STRING "Default packaging prefix.")
++set(CPACK_PACKAGING_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE STRING "Default packaging prefix.")
  set ( ENABLE_LDCONFIG ON CACHE BOOL "Set library links and caches using ldconfig.")
  set(CPACK_PACKAGE_NAME ${ROCM_SMI_PACKAGE})
  set(CPACK_PACKAGE_VENDOR "Advanced Micro Devices, Inc.")
@@ -32,12 +32,6 @@ Only in rocm_smi_lib-rocm-5.3.3: CMakeLists.txt.orig
 Only in rocm_smi_lib-rocm-5.3.3: CMakeLists.txt.rej
 Only in rocm_smi_lib-rocm-5.3.3/DEBIAN: postinst.in.orig
 Only in rocm_smi_lib-rocm-5.3.3/DEBIAN: postinst.in.rej
-diff -urp rocm_smi_lib-rocm-5.3.3.orig/DEBIAN/x86_64-librocm_smi_lib.conf rocm_smi_lib-rocm-5.3.3/DEBIAN/x86_64-librocm_smi_lib.conf
---- rocm_smi_lib-rocm-5.3.3.orig/DEBIAN/x86_64-librocm_smi_lib.conf	2022-09-16 19:18:47.000000000 -0700
-+++ rocm_smi_lib-rocm-5.3.3/DEBIAN/x86_64-librocm_smi_lib.conf	2023-08-26 11:24:03.607854718 -0700
-@@ -1 +1 @@
--/opt/rocm/lib
-+/usr/@LIBIDR@
 diff -urp rocm_smi_lib-rocm-5.3.3.orig/oam/CMakeLists.txt rocm_smi_lib-rocm-5.3.3/oam/CMakeLists.txt
 --- rocm_smi_lib-rocm-5.3.3.orig/oam/CMakeLists.txt	2022-09-16 19:18:47.000000000 -0700
 +++ rocm_smi_lib-rocm-5.3.3/oam/CMakeLists.txt	2023-08-26 11:24:03.607854718 -0700
@@ -69,7 +63,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/python_smi_tools/README.md rocm_smi_lib-r
  For detailed and up to date usage information, we recommend consulting the help:
  ```shell
 -/opt/rocm/bin/rocm-smi -h
-+/usr/bin/rocm-smi -h
++@ESYSROOT_ROCM_PATH@/bin/rocm-smi -h
  ```
  
  For convenience purposes, following is the output from the -h flag:
@@ -95,7 +89,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/python_smi_tools/rsmiBindings.py rocm_smi
  
  # Use ROCm installation path if running from standard installation
 -# With File Reorg rsmiBindings.py will be installed in  /opt/rocm/libexec/rocm_smi.
-+# With File Reorg rsmiBindings.py will be installed in  /usr/libexec/rocm_smi.
++# With File Reorg rsmiBindings.py will be installed in  @ESYSROOT_ROCM_PATH@/libexec/rocm_smi.
  # relative path changed accordingly
 -path_librocm = os.path.dirname(os.path.realpath(__file__)) + '/../../lib/librocm_smi64.so'
 -if not os.path.isfile(path_librocm):
@@ -107,7 +101,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/python_smi_tools/rsmiBindings.py rocm_smi
 -        print('Using lib from %s' % path_librocm)
 -    else:
 -        print('Unable to find librocm_smi64.so')
-+path_librocm = '/usr/@LIBDIR@/librocm_smi64.so'
++path_librocm = '@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm_smi64.so'
  
  # ----------> TODO: Support static libs as well as SO
  
@@ -121,7 +115,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/README.md rocm_smi_lib-rocm-5.3.3/README.
  ##### ```$ cmake <location of root of ROCm SMI library CMakeLists.txt>```
  ##### ```$ make```
 -##### ```# Install library file and header; default location is /opt/rocm```
-+##### ```# Install library file and header; default location is /usr```
++##### ```# Install library file and header; default location is @ESYSROOT_ROCM_PATH@```
  ##### ```$ make install```
  The built library will appear in the `build` folder.
  
@@ -176,7 +170,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/rocm_smi-backward-compat.cmake rocm_smi_l
      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 -   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with @prefix_name@\")\n@include_statements@ \n\n#endif")
-+   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with @prefix_name@\")\n@include_statements@ \n\n#endif")
++   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with @prefix_name@\")\n@include_statements@ \n\n#endif")
  endfunction()
  
  #use header template file and generate wrapper header files

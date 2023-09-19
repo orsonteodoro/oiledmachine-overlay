@@ -88,6 +88,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
+rocm_5_7
 r3
 "
 gen_cuda_required_use() {
@@ -113,26 +114,33 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	gdb-plugin? (
+		${PYTHON_REQUIRED_USE}
+	)
 	llvm_targets_AMDGPU? (
 		${ROCM_REQUIRED_USE}
+		^^ (
+			rocm_5_7
+		)
 	)
 	llvm_targets_NVPTX? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
-	gdb-plugin? (
-		${PYTHON_REQUIRED_USE}
+	rocm_5_7? (
+		llvm_targets_AMDGPU
 	)
 "
 ROCM_SLOTS=(
+	"5.7.0"
 )
 gen_amdgpu_rdepend() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/${pv%.*}"
+		local s="${pv%.*}"
 		echo "
-			(
+			rocm_${s/./_}? (
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-libs/roct-thunk-interface-${pv}:${s}
 			)

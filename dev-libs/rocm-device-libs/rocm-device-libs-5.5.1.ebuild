@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm rocm
 
@@ -23,9 +24,10 @@ fi
 DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test r4"
 RDEPEND="
+	!dev-libs/rocm-device-libs:0
 	sys-devel/clang:${LLVM_MAX_SLOT}
 "
 DEPEND="
@@ -34,7 +36,7 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.13.4
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="
 	!test? (

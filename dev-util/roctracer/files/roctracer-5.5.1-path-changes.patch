@@ -1,69 +1,67 @@
 diff -urp roctracer-rocm-5.5.1.orig/build.sh roctracer-rocm-5.5.1/build.sh
 --- roctracer-rocm-5.5.1.orig/build.sh	2023-01-26 14:44:55.000000000 -0800
-+++ roctracer-rocm-5.5.1/build.sh	2023-08-23 09:46:07.953277985 -0700
++++ roctracer-rocm-5.5.1/build.sh	2023-09-18 17:48:21.150155021 -0700
 @@ -24,8 +24,8 @@
  
  SRC_DIR=`dirname $0`
  COMPONENT="roctracer"
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
 -LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
-+ROCM_PATH="${ROCM_PATH:=/usr}"
-+LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,/@LIBDIR@"
++ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
++LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/@LIBDIR@"
  DEFAULTS=defaults.sh
  
  fatal() {
 diff -urp roctracer-rocm-5.5.1.orig/build_static.sh roctracer-rocm-5.5.1/build_static.sh
 --- roctracer-rocm-5.5.1.orig/build_static.sh	2023-01-26 14:44:55.000000000 -0800
-+++ roctracer-rocm-5.5.1/build_static.sh	2023-08-23 09:46:07.953277985 -0700
++++ roctracer-rocm-5.5.1/build_static.sh	2023-09-18 17:48:21.150155021 -0700
 @@ -24,8 +24,8 @@
  
  SRC_DIR=`dirname $0`
  COMPONENT="roctracer"
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
 -LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
-+ROCM_PATH="${ROCM_PATH:=/usr}"
++ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
 +LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/@LIBDIR@"
  DEFAULTS=defaults.sh
  
  fatal() {
 diff -urp roctracer-rocm-5.5.1.orig/CMakeLists.txt roctracer-rocm-5.5.1/CMakeLists.txt
---- roctracer-rocm-5.5.1.orig/CMakeLists.txt	2023-08-23 09:45:03.577276388 -0700
-+++ roctracer-rocm-5.5.1/CMakeLists.txt	2023-08-23 09:46:07.953277985 -0700
+--- roctracer-rocm-5.5.1.orig/CMakeLists.txt	2023-09-18 17:48:04.482155244 -0700
++++ roctracer-rocm-5.5.1/CMakeLists.txt	2023-09-18 17:48:21.150155021 -0700
 @@ -27,7 +27,7 @@ project(roctracer VERSION 4.1.0)
  include(GNUInstallDirs)
  # set default ROCM_PATH
  if(NOT DEFINED ROCM_PATH)
 -    set(ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory")
-+    set(ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory")
++    set(ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory")
  endif()
  
  ## Build is not supported on Windows plaform
 diff -urp roctracer-rocm-5.5.1.orig/header_template.hpp.in roctracer-rocm-5.5.1/header_template.hpp.in
 --- roctracer-rocm-5.5.1.orig/header_template.hpp.in	2023-01-26 14:44:55.000000000 -0800
-+++ roctracer-rocm-5.5.1/header_template.hpp.in	2023-08-23 09:47:17.585279713 -0700
++++ roctracer-rocm-5.5.1/header_template.hpp.in	2023-09-18 17:48:21.150155021 -0700
 @@ -24,9 +24,9 @@
  #define @include_guard@
  
  #if defined(__GNUC__)
 -#warning "This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with roctracer"
-+#warning "This file is deprecated. Use file from include path /usr/include/ and prefix with roctracer"
++#warning "This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with roctracer"
  #else
 -#pragma message("This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with roctracer")
-+#pragma message("This file is deprecated. Use file from include path /usr/include/ and prefix with roctracer")
++#pragma message("This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with roctracer")
  #endif
  
  @include_statements@
-Only in roctracer-rocm-5.5.1: header_template.hpp.in.orig
-Only in roctracer-rocm-5.5.1: header_template.hpp.in.rej
 diff -urp roctracer-rocm-5.5.1.orig/plugin/file/CMakeLists.txt roctracer-rocm-5.5.1/plugin/file/CMakeLists.txt
 --- roctracer-rocm-5.5.1.orig/plugin/file/CMakeLists.txt	2023-01-26 14:44:55.000000000 -0800
-+++ roctracer-rocm-5.5.1/plugin/file/CMakeLists.txt	2023-08-23 09:46:07.953277985 -0700
++++ roctracer-rocm-5.5.1/plugin/file/CMakeLists.txt	2023-09-18 17:48:21.150155021 -0700
 @@ -22,9 +22,9 @@
  
  find_package(amd_comgr REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    /usr/
++    @ESYSROOT_ROCM_PATH@/
    PATH_SUFFIXES
 -    lib/cmake/amd_comgr
 +    @LIBDIR@/cmake/amd_comgr
@@ -72,18 +70,18 @@ diff -urp roctracer-rocm-5.5.1.orig/plugin/file/CMakeLists.txt roctracer-rocm-5.
  
 diff -urp roctracer-rocm-5.5.1.orig/README.md roctracer-rocm-5.5.1/README.md
 --- roctracer-rocm-5.5.1.orig/README.md	2023-01-26 14:44:55.000000000 -0800
-+++ roctracer-rocm-5.5.1/README.md	2023-08-23 09:46:07.953277985 -0700
++++ roctracer-rocm-5.5.1/README.md	2023-09-18 17:48:21.150155021 -0700
 @@ -20,11 +20,11 @@
  
  To use the rocTracer API you need the API header and to link your application with `roctracer` .so library:
  
 -- `/opt/rocm/include/roctracer/roctracer.h`
-+- `/usr/include/roctracer/roctracer.h`
++- `@ESYSROOT_ROCM_PATH@/include/roctracer/roctracer.h`
  
    API header.
  
 -- `/opt/rocm/lib/libroctracer64.so`
-+- `/usr/@LIBDIR@/libroctracer64.so`
++- `@ESYSROOT_ROCM_PATH@/@LIBDIR@/libroctracer64.so`
  
    .so library.
  
@@ -92,18 +90,18 @@ diff -urp roctracer-rocm-5.5.1.orig/README.md roctracer-rocm-5.5.1/README.md
  To use the rocTX API you need the API header and to link your application with `roctx` .so library:
  
 -- `/opt/rocm/roctracer/include/roctx.h`
-+- `/usr/roctracer/include/roctx.h`
++- `@ESYSROOT_ROCM_PATH@/roctracer/include/roctx.h`
  
    API header.
  
 -- `/opt/rocm/lib/libroctx64.so`
-+- `/usr/@LIBDIR@/libroctx64.so`
++- `@ESYSROOT_ROCM_PATH@/@LIBDIR@/libroctx64.so`
  
    .so library.
  
 diff -urp roctracer-rocm-5.5.1.orig/roctracer-backward-compat.cmake roctracer-rocm-5.5.1/roctracer-backward-compat.cmake
 --- roctracer-rocm-5.5.1.orig/roctracer-backward-compat.cmake	2023-01-26 14:44:55.000000000 -0800
-+++ roctracer-rocm-5.5.1/roctracer-backward-compat.cmake	2023-08-23 09:46:07.953277985 -0700
++++ roctracer-rocm-5.5.1/roctracer-backward-compat.cmake	2023-09-18 17:48:21.150155021 -0700
 @@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.16.8)
  set(ROCT_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
  set(ROCT_WRAPPER_DIR ${ROCT_BUILD_DIR}/wrapper_dir)
@@ -124,19 +122,19 @@ diff -urp roctracer-rocm-5.5.1.orig/roctracer-backward-compat.cmake roctracer-ro
  #Use template header file and generater wrapper header files
 diff -urp roctracer-rocm-5.5.1.orig/run_test.sh roctracer-rocm-5.5.1/run_test.sh
 --- roctracer-rocm-5.5.1.orig/run_test.sh	2023-01-26 14:44:55.000000000 -0800
-+++ roctracer-rocm-5.5.1/run_test.sh	2023-08-23 09:46:07.953277985 -0700
++++ roctracer-rocm-5.5.1/run_test.sh	2023-09-18 17:48:21.150155021 -0700
 @@ -22,7 +22,7 @@
  # IN THE SOFTWARE.
  ################################################################################
  
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
-+ROCM_PATH="${ROCM_PATH:=/usr}"
++ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
  
  fatal() {
    echo "$1"
 diff -urp roctracer-rocm-5.5.1.orig/src/CMakeLists.txt roctracer-rocm-5.5.1/src/CMakeLists.txt
 --- roctracer-rocm-5.5.1.orig/src/CMakeLists.txt	2023-01-26 14:44:55.000000000 -0800
-+++ roctracer-rocm-5.5.1/src/CMakeLists.txt	2023-08-23 09:46:36.273278688 -0700
++++ roctracer-rocm-5.5.1/src/CMakeLists.txt	2023-09-18 17:48:21.150155021 -0700
 @@ -223,12 +223,12 @@ target_include_directories(roctracer_too
  target_link_libraries(roctracer_tool util roctracer hsa-runtime64::hsa-runtime64 stdc++fs Threads::Threads atomic dl)
  target_link_options(roctracer_tool PRIVATE -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/tracer_tool/exportmap -Wl,--no-undefined)
@@ -152,11 +150,9 @@ diff -urp roctracer-rocm-5.5.1.orig/src/CMakeLists.txt roctracer-rocm-5.5.1/src/
  
  endif()
  
-Only in roctracer-rocm-5.5.1/src: CMakeLists.txt.orig
-Only in roctracer-rocm-5.5.1/src: CMakeLists.txt.rej
 diff -urp roctracer-rocm-5.5.1.orig/test/CMakeLists.txt roctracer-rocm-5.5.1/test/CMakeLists.txt
---- roctracer-rocm-5.5.1.orig/test/CMakeLists.txt	2023-08-23 09:45:03.573276388 -0700
-+++ roctracer-rocm-5.5.1/test/CMakeLists.txt	2023-08-23 09:46:07.957277985 -0700
+--- roctracer-rocm-5.5.1.orig/test/CMakeLists.txt	2023-09-18 17:48:04.478155244 -0700
++++ roctracer-rocm-5.5.1/test/CMakeLists.txt	2023-09-18 17:48:37.386154804 -0700
 @@ -27,13 +27,13 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
  set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP})
  set(CMAKE_EXECUTABLE_RPATH_LINK_HIP_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG})
@@ -167,8 +163,9 @@ diff -urp roctracer-rocm-5.5.1.orig/test/CMakeLists.txt roctracer-rocm-5.5.1/tes
  find_package(HIP REQUIRED MODULE)
  
  find_package(Clang REQUIRED CONFIG
-              PATHS "${ROCM_PATH}"
+-             PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
++             PATHS "@ESYSROOT@/usr"
 +             PATH_SUFFIXES "lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/clang")
  
  ## Add a custom targets to build and run all the tests
@@ -177,7 +174,7 @@ diff -urp roctracer-rocm-5.5.1.orig/test/CMakeLists.txt roctracer-rocm-5.5.1/tes
  function(generate_hsaco TARGET_ID INPUT_FILE OUTPUT_FILE)
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
      "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0 -Wl,--build-id=sha1
-+    --rocm-path=@EPREFIX@/usr --rocm-device-lib-path=@EPREFIX@/usr/@LIBDIR@/amdgcn/bitcode
++    --rocm-path=@EPREFIX@/usr --rocm-device-lib-path=@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode
      -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}")
    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/${OUTPUT_FILE}
      COMMAND clang ${CLANG_ARG_LIST}

@@ -5,6 +5,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..12} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit llvm python-single-r1 rocm
 
@@ -26,7 +27,7 @@ https://rocm.docs.amd.com/projects/ROCgdb/en/latest/
 https://github.com/ROCm-Developer-Tools/ROCgdb
 "
 LICENSE="GPL-3+ LGPL-2.1+"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" r1"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -43,7 +44,7 @@ RDEPEND="
 	sys-devel/gcc
 	sys-libs/ncurses
 	virtual/libc
-	~dev-libs/ROCdbgapi-${PV}:${SLOT}
+	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -70,21 +71,17 @@ pkg_setup() {
 
 src_prepare() {
 	default
-	sed \
-		-i \
-		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
-		"gdb/testsuite/lib/rocm.exp" \
-		|| die
 	rocm_src_prepare
 }
 
 src_configure() {
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	local myconf=(
 		--enable-targets="${CHOST},amdgcn-amd-amdhsa"
 		--enable-64-bit-bfd
 		--enable-tui
-		--datadir="${EPREFIX}/usr/$(get_libdir)/${PN}/share"
-		--datarootdir="${EPREFIX}/usr/$(get_libdir)/${PN}/share"
+		--datadir="${EPREFIX}${rocm_path}/share"
+		--datarootdir="${EPREFIX}${rocm_path}/share"
 		--disable-gas
 		--disable-gdbserver
 		--disable-gdbtk
@@ -92,11 +89,11 @@ src_configure() {
 		--disable-ld
 		--disable-sim
 		--disable-shared
-		--infodir="${EPREFIX}/usr/$(get_libdir)/${PN}/share/info"
-		--localedir="${EPREFIX}/usr/$(get_libdir)/${PN}/share/locale"
-		--mandir="${EPREFIX}/usr/$(get_libdir)/${PN}/share/man"
+		--infodir="${EPREFIX}${rocm_path}/share/info"
+		--localedir="${EPREFIX}${rocm_path}/share/locale"
+		--mandir="${EPREFIX}${rocm_path}/share/man"
 		--program-prefix=roc
-		--prefix="${EPREFIX}/usr/$(get_libdir)/${PN}"
+		--prefix="${EPREFIX}${rocm_path}"
 		--with-babeltrace
 		--with-expat
 		--with-lzma

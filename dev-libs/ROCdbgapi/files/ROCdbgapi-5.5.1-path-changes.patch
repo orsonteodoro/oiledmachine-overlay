@@ -26,7 +26,7 @@ diff -urp ROCdbgapi-rocm-5.5.1.orig/CMakeLists.txt ROCdbgapi-rocm-5.5.1/CMakeLis
  find_package(amd_comgr REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    /usr/
++    @ESYSROOT_ROCM_PATH@/
    PATH_SUFFIXES
 -    lib/cmake/amd_comgr
 +    @LIBDIR@/cmake/amd_comgr
@@ -38,7 +38,7 @@ diff -urp ROCdbgapi-rocm-5.5.1.orig/CMakeLists.txt ROCdbgapi-rocm-5.5.1/CMakeLis
  # We are using the HSA runtime headers, but not the runtime library. Get the HSA runtime
  # include directories from the hsa-runtime64::hsa-runtime64 interface.
 -find_package(hsa-runtime64 REQUIRED CONFIG PATHS "/opt/rocm")
-+find_package(hsa-runtime64 REQUIRED CONFIG PATHS "/usr")
++find_package(hsa-runtime64 REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@")
  get_property(HSA_RUNTIME_INCLUDE_DIRECTORIES TARGET hsa-runtime64::hsa-runtime64 PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
  
  target_include_directories(amd-dbgapi

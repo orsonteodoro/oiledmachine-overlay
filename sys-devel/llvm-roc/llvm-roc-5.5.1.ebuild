@@ -4,6 +4,8 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 inherit cmake flag-o-matic rocm
 
 SRC_URI="
@@ -66,7 +68,7 @@ LICENSE="
 # MIT - llvm-project-rocm-5.6.0/polly/lib/External/isl/LICENSE
 # ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 KEYWORDS="~amd64"
-SLOT="${PV}"
+SLOT="${ROCM_SLOT}/${PV}"
 LLVM_TARGETS=(
 	AMDGPU
 	NVPTX
@@ -78,6 +80,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 r3
 "
 RDEPEND="
+	!sys-devel/llvm-rocm:0
 	dev-libs/libxml2
 	sys-libs/ncurses:=
 	sys-libs/zlib
@@ -126,7 +129,7 @@ src_configure() {
 	fi
 	local mycmakeargs=(
 #		-DBUILD_SHARED_LIBS=OFF
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/rocm/${PV}/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 		-DLLVM_BUILD_DOCS=NO
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir

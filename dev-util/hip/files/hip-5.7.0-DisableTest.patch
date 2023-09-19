@@ -1,0 +1,21 @@
+--- a/CMakeLists.txt.orig	2023-09-17 22:07:37.895101047 -0700
++++ b/CMakeLists.txt	2023-09-17 22:09:17.631099716 -0700
+@@ -50,6 +50,7 @@ option(HIP_OFFICIAL_BUILD "Enable/Disabl
+ if(NOT ENABLE_ASAN_PACKAGING)
+     option(FILE_REORG_BACKWARD_COMPATIBILITY "Enable File Reorg with backward compatibility" ON)
+ endif()
++option(SKIP_TESTS "Skip building tests" ON)
+ 
+ if(MSVC)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi")
+@@ -485,7 +486,9 @@ file(COPY ${HIPCC_BIN_DIR}/hipconfig DES
+ file(COPY ${HIPCC_BIN_DIR}/hipconfig.pl DESTINATION ${HIP_ROOT_DIR}/bin/)
+ file(COPY ${HIPCC_BIN_DIR}/hipvars.pm DESTINATION ${HIP_ROOT_DIR}/bin/)
+ 
+-if(HIP_CATCH_TEST EQUAL "1")
++if(SKIP_TESTS)
++	message(STATUS "Skipping building tests")
++elseif(HIP_CATCH_TEST EQUAL "1")
+ 	message(STATUS "Building of catch tests through hipamd is no longer supported. Testing targets will not be available. catch tests have been moved to an independent github project hip-tests. Please refer to hip-tests Readme for build instructions! ")
+ else()
+     if(${RUN_HIT} EQUAL 0)

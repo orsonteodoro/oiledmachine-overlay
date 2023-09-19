@@ -1,0 +1,14 @@
+diff -urp roctracer-rocm-5.7.0.orig/CMakeLists.txt roctracer-rocm-5.7.0/CMakeLists.txt
+--- roctracer-rocm-5.7.0.orig/CMakeLists.txt	2023-07-13 16:43:46.000000000 -0700
++++ roctracer-rocm-5.7.0/CMakeLists.txt	2023-09-18 17:34:35.294166050 -0700
+@@ -37,7 +37,7 @@ endif()
+ 
+ set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+-add_compile_options(-Wall -Werror)
++add_compile_options(-Wall)
+ # To set addition RUNPATH in libraries
+ # installed in /opt/rocm-ver/lib/roctracer
+ set(ROCM_APPEND_PRIVLIB_RPATH "$ORIGIN/..")
+Only in roctracer-rocm-5.7.0: CMakeLists.txt.orig
+Only in roctracer-rocm-5.7.0: CMakeLists.txt.rej

@@ -5,6 +5,8 @@ EAPI=8
 
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic llvm prefix python-any-r1 rocm
 
@@ -21,15 +23,16 @@ https://github.com/ROCmSoftwarePlatform/hsa-class/archive/${HSA_CLASS_COMMIT}.ta
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE=" +aqlprofile test"
 RDEPEND="
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
-	~dev-util/hip-${PV}:${SLOT}
+	!dev-util/roctracer:0
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 	aqlprofile? (
-		~dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
-		~dev-libs/rocr-runtime-${PV}:${SLOT}
+		~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
+		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -116,15 +119,16 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
-		append-flags --rocm-path="${ESYSROOT}/usr"
+		append-flags --rocm-path="${ESYSROOT}${rocm_path}"
 	fi
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"
 	export HIP_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
-		-DCMAKE_PREFIX_PATH="${EPREFIX}/usr/include/hsa"
+		-DCMAKE_PREFIX_PATH="${ESYSROOT}${rocm_path}/include/hsa"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"

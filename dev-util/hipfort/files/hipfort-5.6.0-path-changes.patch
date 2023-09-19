@@ -7,8 +7,8 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/hipfc hipfort-rocm-5.6.0/bin/hipfc
      -hipfort          <path>  $HIPFORT   or _HIPFORT_INSTALL_DIR_
 -    -cuda-path         <path> $CUDA_PATH or /usr/local/cuda
 -    -rocm-path         <path>  $ROCM_PATH  or /opt/rocm
-+    -cuda-path         <path> $CUDA_PATH or /opt/cuda
-+    -rocm-path         <path>  $ROCM_PATH  or /usr
++    -cuda-path         <path> $CUDA_PATH or @ESYSROOT@/opt/cuda
++    -rocm-path         <path>  $ROCM_PATH  or @ESYSROOT_ROCM_PATH@
      -I         <include dir>  Provide one directory per -I option
      -O         <LLVM opt>     LLVM optimization level
      -o         <outfilename>  Default=a.out
@@ -36,8 +36,8 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/hipfc hipfort-rocm-5.6.0/bin/hipfc
  
 -CUDA_PATH=${CUDA_PATH:-/usr/local/cuda}
 -ROCM_PATH=${ROCM_PATH:-/opt/rocm}
-+CUDA_PATH=${CUDA_PATH:-@EPREFIX@/opt/cuda}
-+ROCM_PATH=${ROCM_PATH:-@EPREFIX@/usr}
++CUDA_PATH=${CUDA_PATH:-@ESYSROOT@/opt/cuda}
++ROCM_PATH=${ROCM_PATH:-@ESYSROOT_ROCM_PATH@}
  HIP_PLATFORM=${HIP_PLATFORM:-amd}
  
  HIPFORT=${HIPFORT:-_HIPFORT_INSTALL_DIR_}
@@ -79,7 +79,7 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/Makefile.hipfort hipfort-rocm-5.6.0/bin/Ma
  # set HIPFORT_HOME to the build or install location of HIPFORT.  For example:
  #
 -#    HIPFORT_HOME ?= /opt/rocm/
-+#    HIPFORT_HOME ?= /usr/
++#    HIPFORT_HOME ?= @ESYSROOT_ROCM_PATH@/
  #    include $(HIPFORT_HOME)/share/hipfort/Makefile.hipfort
  #  
  # If the caller does not set HIPFORT_ARCHGPU, this Makefile will call 
@@ -91,10 +91,10 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/Makefile.hipfort hipfort-rocm-5.6.0/bin/Ma
 -ROCM_PATH=${ROCM_PATH:-/opt/rocm}
 -DEVICE_LIB_PATH  ?= $(ROCM_PATH)/lib
 -HIP_CLANG_PATH   ?= $(ROCM_PATH)/llvm/bin
-+CUDA_PATH=${CUDA_PATH:-/opt/cuda}
-+ROCM_PATH=${ROCM_PATH:-/usr}
++CUDA_PATH=${CUDA_PATH:-@ESYSROOT@/opt/cuda}
++ROCM_PATH=${ROCM_PATH:-@ESYSROOT_ROCM_PATH@}
 +DEVICE_LIB_PATH  ?= $(ROCM_PATH)/@LIBDIR@/amdgcn/bitcode
-+HIP_CLANG_PATH   ?= $(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin
++HIP_CLANG_PATH   ?= @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin
  HIP_PLATFORM=${HIP_PLATFORM:-amd}
  
  MOD_DIR  = $(HIPFORT_HOME)/include/hipfort/$(ARCH)
@@ -118,7 +118,7 @@ diff -urp hipfort-rocm-5.6.0.orig/cmake/Modules/rocm-cmake.cmake hipfort-rocm-5.
 @@ -1,5 +1,5 @@
  # Find or download/install rocm-cmake project
 -find_package(ROCM QUIET CONFIG PATHS /opt/rocm)
-+find_package(ROCM QUIET CONFIG PATHS /usr)
++find_package(ROCM QUIET CONFIG PATHS @ESYSROOT_ROCM_PATH@)
  if(NOT ROCM_FOUND)
    set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
    file(
@@ -176,8 +176,8 @@ diff -urp hipfort-rocm-5.6.0.orig/README.md hipfort-rocm-5.6.0/README.md
  | `HIP_PLATFORM` | The platform to compile for (either 'amd' or 'nvcc') | `amd` |
 -| `ROCM_PATH` | Path to ROCm installation | `/opt/rocm` |
 -| `CUDA_PATH` | Path to CUDA installation | `/usr/local/cuda` | 
-+| `ROCM_PATH` | Path to ROCm installation | `/usr` |
-+| `CUDA_PATH` | Path to CUDA installation | `/opt/cuda` | 
++| `ROCM_PATH` | Path to ROCm installation | `@ESYSROOT_ROCM_PATH@` |
++| `CUDA_PATH` | Path to CUDA installation | `@ESYSROOT@/opt/cuda` | 
  | `HIPFORT_COMPILER` | Fortran compiler to be used | `gfortran` | 
  
  ## Examples and tests
@@ -186,7 +186,7 @@ diff -urp hipfort-rocm-5.6.0.orig/README.md hipfort-rocm-5.6.0/README.md
  #### AMD devices
  
 -> **NOTE**: Running all tests as below requires that all ROCm math libraries can be found at `/opt/rocm`.
-+> **NOTE**: Running all tests as below requires that all ROCm math libraries can be found at `/usr`.
++> **NOTE**: Running all tests as below requires that all ROCm math libraries can be found at `@ESYSROOT_ROCM_PATH@`.
  Specify a different ROCm location via the `ROCM_PATH` environment variable.
  
  > **NOTE**: When using older ROCm versions, you might need to manually set the environment variable `HIP_PLATFORM` to `hcc`

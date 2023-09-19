@@ -1,0 +1,21 @@
+--- a/hip-config-amd.cmake.orig	2023-09-18 08:53:42.050583399 -0700
++++ b/hip-config-amd.cmake	2023-09-18 08:55:57.482581590 -0700
+@@ -85,11 +85,13 @@ if(NOT WIN32)
+   find_dependency(Threads)
+ endif()
+ 
+-set(_IMPORT_PREFIX ${HIP_PACKAGE_PREFIX_DIR})
+-# Right now this is only supported for amd platforms
+-set_target_properties(hip::host PROPERTIES
+-  INTERFACE_COMPILE_DEFINITIONS "__HIP_PLATFORM_HCC__=1;__HIP_PLATFORM_AMD__=1"
+-)
++if(HIP_RUNTIME MATCHES "rocclr")
++  set(_IMPORT_PREFIX ${HIP_PACKAGE_PREFIX_DIR})
++  # Right now this is only supported for amd platforms
++  set_target_properties(hip::host PROPERTIES
++    INTERFACE_COMPILE_DEFINITIONS "__HIP_PLATFORM_HCC__=1;__HIP_PLATFORM_AMD__=1"
++  )
++endif()
+ 
+ set_target_properties(hip::amdhip64 PROPERTIES
+   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include"

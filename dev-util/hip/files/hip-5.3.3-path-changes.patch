@@ -16,7 +16,7 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipcc.pl HIP-rocm-5.3.3/bin/hipcc.pl
 +# CUDA_PATH      : Path to CUDA SDK (defaults to /opt/cuda).  Used on NVIDIA platforms only.
 +# HSA_PATH       : Path to HSA dir (defaults to /usr).  Used on AMD platforms only.
 +# HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to /usr).  Used on AMD platforms only.
-+# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin).
++# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin).
 +#                  Used on AMD platforms only.
  
  if(scalar @ARGV == 0){
@@ -27,8 +27,8 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipcc.pl HIP-rocm-5.3.3/bin/hipcc.pl
  
 -$HIP_LIB_PATH=$ENV{'HIP_LIB_PATH'};
 -$DEVICE_LIB_PATH=$ENV{'DEVICE_LIB_PATH'};
-+$HIP_LIB_PATH='@EPREFIX@/usr/@LIBDIR@';
-+$DEVICE_LIB_PATH='@EPREFIX@/usr/@LIBDIR@/amdgcn/bitcode';
++$HIP_LIB_PATH='@ESYSROOT@/usr/@LIBDIR@';
++$DEVICE_LIB_PATH='@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode';
  $HIP_CLANG_HCC_COMPAT_MODE=$ENV{'HIP_CLANG_HCC_COMPAT_MODE'}; # HCC compatibility mode
  $HIP_COMPILE_CXX_AS_HIP=$ENV{'HIP_COMPILE_CXX_AS_HIP'} // "1";
  
@@ -198,7 +198,7 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipconfig.pl HIP-rocm-5.3.3/bin/hipconfig.pl
      print "usage: hipconfig [OPTIONS]\n";
      print "  --path,  -p        : print HIP_PATH (use env var if set, else determine from hipconfig path)\n";
 -    print "  --rocmpath,  -R    : print ROCM_PATH (use env var if set, else determine from hip path or /opt/rocm)\n";
-+    print "  --rocmpath,  -R    : print ROCM_PATH (use env var if set, else determine from hip path or /usr)\n";
++    print "  --rocmpath,  -R    : print ROCM_PATH (use env var if set, else determine from hip path or @ESYSROOT_ROCM_PATH@)\n";
      print "  --cpp_config, -C   : print C++ compiler options\n";
      print "  --compiler, -c     : print compiler (clang or nvcc)\n";
      print "  --platform, -P     : print platform (amd or nvidia)\n";
@@ -210,12 +210,12 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipvars.pm HIP-rocm-5.3.3/bin/hipvars.pm
  # Since this hipcc script gets installed at two uneven hierarchical levels,
  # linked by symlink, the absolute path of this script should be used to
 -# derive HIP_PATH, as dirname $0 could be /opt/rocm/bin or /opt/rocm/hip/bin
-+# derive HIP_PATH, as dirname $0 could be /usr/bin or /usr/bin
++# derive HIP_PATH, as dirname $0 could be @ESYSROOT_ROCM_PATH@/bin or /usr/bin
  # depending on how it gets invoked.
  # ROCM_PATH which points to <rocm_install_dir> is determined based on whether
  # we find bin/rocm_agent_enumerator in the parent of HIP_PATH or not. If it is found,
 -# ROCM_PATH is defined relative to HIP_PATH else it is hardcoded to /opt/rocm.
-+# ROCM_PATH is defined relative to HIP_PATH else it is hardcoded to /usr.
++# ROCM_PATH is defined relative to HIP_PATH else it is hardcoded to @ESYSROOT_ROCM_PATH@.
  #
  $HIP_PATH=$ENV{'HIP_PATH'} // dirname(Cwd::abs_path("$0/../")); # use parent directory of hipcc
  if (-e "$HIP_PATH/../bin/rocm_agent_enumerator") {
@@ -224,7 +224,7 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipvars.pm HIP-rocm-5.3.3/bin/hipvars.pm
      $ROCM_PATH=$ENV{'ROCM_PATH'} // "$HIP_PATH"; # use HIP_PATH
  } else {
 -    $ROCM_PATH=$ENV{'ROCM_PATH'} // "/opt/rocm";
-+    $ROCM_PATH=$ENV{'ROCM_PATH'} // "/usr";
++    $ROCM_PATH=$ENV{'ROCM_PATH'} // "@ESYSROOT_ROCM_PATH@";
  }
 -$CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
 +$CUDA_PATH=$ENV{'CUDA_PATH'} // '/opt/cuda';
@@ -383,7 +383,7 @@ diff -urp HIP-rocm-5.3.3.orig/CONTRIBUTING.md HIP-rocm-5.3.3/CONTRIBUTING.md
  
  ## Make Tips
 -ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is /opt/rocm.
-+ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is /usr.
++ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is @ESYSROOT_ROCM_PATH@.
  When building HIP, you will likely want to build and install to a local user-accessible directory (rather than <ROCM_PATH>).
  This can be easily be done by setting the -DCMAKE_INSTALL_PREFIX variable when running cmake.  Typical use case is to
  set CMAKE_INSTALL_PREFIX to your HIP git root, and then ensure HIP_PATH points to this directory.   For example
@@ -418,7 +418,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/gen_clang_option_doc.sh HIP-rocm-5.3
  ## generates documentation about clang options.
  
 -clang=/opt/rocm*/llvm/bin/clang
-+clang=/usr/lib/llvm/@LLVM_SLOT@/bin/clang
++clang="@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/clang"
  
  exec > clang_options.md
  
@@ -430,7 +430,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_build.md HIP-rocm-5.3.3/docs/mar
  Similiar format for future branches.
  
 -ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is at /opt/rocm.
-+ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is at /usr.
++ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is at @ESYSROOT_ROCM_PATH@.
  
  
  # Build HIP on AMD platform
@@ -457,11 +457,11 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
  For details, see (https://github.com/ROCm-Developer-Tools/ROCgdb).
  
 -Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder /opt/rocm/bin.
-+Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder /usr/bin.
++Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder @ESYSROOT_ROCM_PATH@/bin.
  
  ```
 -$ export PATH=$PATH:/opt/rocm/bin
-+$ export PATH=$PATH:/usr/bin
++$ export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
  $ rocgdb ./hipTexObjPitch
  GNU gdb (rocm-dkms-no-npi-hipclang-6549) 10.1
  Copyright (C) 2020 Free Software Foundation, Inc.
@@ -470,7 +470,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
  Starting program: /home/test/hip/build/directed_tests/texture/hipTexObjPitch 
  [Thread debugging using libthread_db enabled]
 -Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-+Using host libthread_db library "/@LIBDIR@/libthread_db.so.1".
++Using host libthread_db library "@ESYSROOT@/@LIBDIR@/libthread_db.so.1".
  
  Breakpoint 1, main ()
      at /home/test/hip/tests/src/texture/hipTexObjPitch.cpp:98
@@ -479,7 +479,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
  Starting program: /home/test/hipamd/build/directed_tests/runtimeApi/memory/hipMemcpy_simple
  [Thread debugging using libthread_db enabled]
 -Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-+Using host libthread_db library "/@LIBDIR@/libthread_db.so.1".
++Using host libthread_db library "@ESYSROOT@/@LIBDIR@/libthread_db.so.1".
  
  Breakpoint 1, main (argc=1, argv=0x7fffffffdea8)
      at /home/test/hip/tests/src/runtimeApi/memory/hipMemcpy_simple.cpp:147
@@ -488,11 +488,11 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
      at /home/test/hip/tests/src/runtimeApi/memory/hipMemcpy_simple.cpp:104
    2    Thread 0x7ffff64c4700 (LWP 146066) "hipMemcpy_simpl" 0x00007ffff6b0850b in ioctl
 -    () from /lib/x86_64-linux-gnu/libc.so.6
-+    () from /@LIBDIR@/libc.so.6
++    () from @ESYSROOT@/@LIBDIR@/libc.so.6
  (gdb) thread 2
  [Switching to thread 2 (Thread 0x7ffff64c4700 (LWP 146066))]
 -#0  0x00007ffff6b0850b in ioctl () from /lib/x86_64-linux-gnu/libc.so.6
-+#0  0x00007ffff6b0850b in ioctl () from /@LIBDIR@/libc.so.6
++#0  0x00007ffff6b0850b in ioctl () from @ESYSROOT@/@LIBDIR@/libc.so.6
  (gdb) bt
 -#0  0x00007ffff6b0850b in ioctl () from /lib/x86_64-linux-gnu/libc.so.6
 -#1  0x00007ffff6604568 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
@@ -503,15 +503,15 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
 -#6  0x00007ffff654f547 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
 -#7  0x00007ffff7f76609 in start_thread () from /lib/x86_64-linux-gnu/libpthread.so.0
 -#8  0x00007ffff6b13293 in clone () from /lib/x86_64-linux-gnu/libc.so.6
-+#0  0x00007ffff6b0850b in ioctl () from /@LIBDIR@/libc.so.6
-+#1  0x00007ffff6604568 in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#2  0x00007ffff65fe73a in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#3  0x00007ffff659e4d6 in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#4  0x00007ffff65807de in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#5  0x00007ffff65932a2 in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#6  0x00007ffff654f547 in ?? () from /usr/@LIBDIR@/libhsa-runtime64.so.1
-+#7  0x00007ffff7f76609 in start_thread () from /@LIBDIR@/libpthread.so.0
-+#8  0x00007ffff6b13293 in clone () from /@LIBDIR@/libc.so.6
++#0  0x00007ffff6b0850b in ioctl () from @ESYSROOT@/@LIBDIR@/libc.so.6
++#1  0x00007ffff6604568 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#2  0x00007ffff65fe73a in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#3  0x00007ffff659e4d6 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#4  0x00007ffff65807de in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#5  0x00007ffff65932a2 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#6  0x00007ffff654f547 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#7  0x00007ffff7f76609 in start_thread () from @ESYSROOT@/@LIBDIR@/libpthread.so.0
++#8  0x00007ffff6b13293 in clone () from @ESYSROOT@/@LIBDIR@/libc.so.6
  (gdb) thread 1
  [Switching to thread 1 (Thread 0x7ffff64c5880 (LWP 146060))]
  #0  0x000000000020f78e in simpleTest2<float> (numElements=4194304, usePinnedHost=true)
@@ -629,7 +629,7 @@ diff -urp HIP-rocm-5.3.3.orig/INSTALL.md HIP-rocm-5.3.3/INSTALL.md
  HIP is part of ROCM packages, it will be automatically installed following the ROCm Installation Guide on AMD public documentation site (https://docs.amd.com/) for the coresponding ROCm release.
  
 -By default, HIP is installed into /opt/rocm/hip.
-+By default, HIP is installed into /usr.
++By default, HIP is installed into @ESYSROOT_ROCM_PATH@.
  
  
  ## NVIDIA Platform
@@ -641,8 +641,8 @@ diff -urp HIP-rocm-5.3.3.orig/INSTALL.md HIP-rocm-5.3.3/INSTALL.md
 -   * By default HIP is installed into /opt/rocm/hip.
 -   * Optionally, consider adding /opt/rocm/bin to your path to make it easier to use the tools.
 +   * By default HIP looks for CUDA SDK in /opt/cuda.
-+   * By default HIP is installed into /usr.
-+   * Optionally, consider adding /usr/bin to your path to make it easier to use the tools.
++   * By default HIP is installed into @ESYSROOT_ROCM_PATH@.
++   * Optionally, consider adding @ESYSROOT_ROCM_PATH@/bin to your path to make it easier to use the tools.
  
  
  # Verify your installation
@@ -650,7 +650,7 @@ diff -urp HIP-rocm-5.3.3.orig/INSTALL.md HIP-rocm-5.3.3/INSTALL.md
  Run hipconfig (instructions below assume default installation path) :
  ```shell
 -/opt/rocm/bin/hipconfig --full
-+/usr/bin/hipconfig --full
++@ESYSROOT_ROCM_PATH@/bin/hipconfig --full
  ```
  
  # How to build HIP from source
@@ -662,7 +662,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/bit_extract/CMakeLists.txt HIP-roc
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  if(${__HIP_ENABLE_PCH})
@@ -674,7 +674,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/bit_extract/Makefile HIP-rocm-5.3.
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -686,7 +686,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/module_api/CMakeLists.txt HIP-rocm
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -698,7 +698,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/module_api/Makefile HIP-rocm-5.3.3
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -710,7 +710,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/module_api_global/CMakeLists.txt H
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -729,7 +729,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/module_api_global/Makefile HIP-roc
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -741,7 +741,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/square/CMakeLists.txt HIP-rocm-5.3
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -760,7 +760,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/square/Makefile HIP-rocm-5.3.3/sam
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -774,9 +774,9 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/square/README.md HIP-rocm-5.3.3/sa
 -/opt/rocm/hip/bin/hipify-perl square.cu > square.cpp
 -/opt/rocm/hip/bin/hipcc  square.cpp -o square.out
 -/opt/rocm/hip/bin/hipcc -use-staticlib  square.cpp -o square.out.static
-+/usr/bin/hipify-perl square.cu > square.cpp
-+/usr/bin/hipcc  square.cpp -o square.out
-+/usr/bin/hipcc -use-staticlib  square.cpp -o square.out.static
++@ESYSROOT_ROCM_PATH@/bin/hipify-perl square.cu > square.cpp
++@ESYSROOT_ROCM_PATH@/bin/hipcc  square.cpp -o square.out
++@ESYSROOT_ROCM_PATH@/bin/hipcc -use-staticlib  square.cpp -o square.out.static
  ```
  - Execute file
  ```
@@ -788,7 +788,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/1_Utils/hipBusBandwidth/CMakeLists.txt HIP
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -807,7 +807,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/1_Utils/hipBusBandwidth/Makefile HIP-rocm-
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -819,7 +819,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/1_Utils/hipCommander/CMakeLists.txt HIP-ro
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -831,7 +831,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/1_Utils/hipCommander/Makefile HIP-rocm-5.3
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -843,7 +843,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/1_Utils/hipDispatchLatency/CMakeLists.txt 
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -855,7 +855,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/1_Utils/hipDispatchLatency/Makefile HIP-ro
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -867,7 +867,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/1_Utils/hipInfo/CMakeLists.txt HIP-rocm-5.
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -879,7 +879,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/1_Utils/hipInfo/Makefile HIP-rocm-5.3.3/sa
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -891,7 +891,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.tx
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -903,7 +903,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/0_MatrixTranspose/Makefile HIP-
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -915,7 +915,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/10_inline_asm/CMakeLists.txt HI
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -927,7 +927,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/10_inline_asm/Makefile HIP-rocm
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -939,7 +939,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/11_texture_driver/CMakeLists.tx
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -951,7 +951,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/11_texture_driver/Makefile HIP-
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -963,7 +963,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/CMa
  cmake_minimum_required(VERSION 2.8.3)
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  if(NOT DEFINED HIP_PATH)
@@ -972,7 +972,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/CMa
      endif()
  endif()
 -set(CMAKE_MODULE_PATH "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
-+set(CMAKE_MODULE_PATH "@EPREFIX@/usr/@LIBDIR@/cmake" ${CMAKE_MODULE_PATH})
++set(CMAKE_MODULE_PATH "@ESYSROOT@/usr/@LIBDIR@/cmake" ${CMAKE_MODULE_PATH})
  set(CMAKE_HIP_ARCHITECTURES OFF)
  project(12_cmake)
  
@@ -984,7 +984,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  The simplest approach is to use
  ```
 -set(CMAKE_MODULE_PATH "/opt/rocm/hip/cmake" ${CMAKE_MODULE_PATH})
-+set(CMAKE_MODULE_PATH "/usr/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH})
++set(CMAKE_MODULE_PATH "@ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH})
  find_package(HIP)
  ```
  
@@ -993,7 +993,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  if(NOT DEFINED HIP_PATH)
      if(NOT DEFINED ENV{HIP_PATH})
 -        set(HIP_PATH "/opt/rocm/hip" CACHE PATH "Path to which HIP has been installed")
-+        set(HIP_PATH "/usr" CACHE PATH "Path to which HIP has been installed")
++        set(HIP_PATH "@ESYSROOT_ROCM_PATH@" CACHE PATH "Path to which HIP has been installed")
      else()
          set(HIP_PATH $ENV{HIP_PATH} CACHE PATH "Path to which HIP has been installed")
      endif()
@@ -1002,7 +1002,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  cmake ..
  Or for static lib of hip rt,
 -cmake -DCMAKE_PREFIX_PATH="/opt/rocm/llvm/lib/cmake" ..
-+cmake -DCMAKE_PREFIX_PATH="/usr/lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake" ..
++cmake -DCMAKE_PREFIX_PATH="@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake" ..
  
  Then,
  make
@@ -1014,7 +1014,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/13_occupancy/CMakeLists.txt HIP
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1026,7 +1026,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/13_occupancy/Makefile HIP-rocm-
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1038,7 +1038,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt HIP-
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1050,7 +1050,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/14_gpu_arch/Makefile HIP-rocm-5
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1062,7 +1062,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/15_static_library/device_functi
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1074,7 +1074,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/15_static_library/device_functi
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1086,7 +1086,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/15_static_library/host_function
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1095,7 +1095,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/15_static_library/host_function
  # Set-up the correct flags to generate the static library.
  target_link_libraries(HipOptLibrary PRIVATE --emit-static-lib)
 -target_include_directories(HipOptLibrary PRIVATE /opt/rocm/hsa/include)
-+target_include_directories(HipOptLibrary PRIVATE /usr/hsa/include)
++target_include_directories(HipOptLibrary PRIVATE @ESYSROOT_ROCM_PATH@/hsa/include)
  get_property(link_libraries TARGET HipOptLibrary PROPERTY LINK_LIBRARIES)
  string (REPLACE ";" " " LINK_PROPS "${link_libraries}")
  set(CMAKE_CXX_ARCHIVE_CREATE "<CMAKE_AR> -o <TARGET> ${LINK_PROPS} <LINK_FLAGS> <OBJECTS>")
@@ -1107,7 +1107,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/15_static_library/host_function
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1129,7 +1129,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/15_static_library/README.md HIP
  ```
 -ROCM_PATH is the path where ROCM is installed. default path is /opt/rocm.
 -g++ hipMain1.cpp -L. -lHipOptLibrary -L<ROCM_PATH>/hip/lib -lamdhip64 -o test_emit_static_host_linker.out
-+ROCM_PATH is the path where ROCM is installed. default path is /usr.
++ROCM_PATH is the path where ROCM is installed. default path is @ESYSROOT_ROCM_PATH@.
 +g++ hipMain1.cpp -L. -lHipOptLibrary -L<ROCM_PATH>/@LIBDIR@ -lamdhip64 -o test_emit_static_host_linker.out
  ```
  
@@ -1142,7 +1142,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/16_assembly_to_executable/Makef
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1164,7 +1164,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/16_assembly_to_executable/READM
 +++ HIP-rocm-5.3.3/samples/2_Cookbook/16_assembly_to_executable/README.md	2023-08-30 14:37:28.562763490 -0700
 @@ -1,4 +1,4 @@
 -ROCM_PATH is the path where ROCM is installed. default path is /opt/rocm.
-+ROCM_PATH is the path where ROCM is installed. default path is /usr.
++ROCM_PATH is the path where ROCM is installed. default path is @ESYSROOT_ROCM_PATH@.
  # Compile to assembly and create an executable from modified asm
  
  This sample shows how to generate the assembly code for a simple HIP source application, then re-compiling it and generating a valid HIP executable.
@@ -1216,7 +1216,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/Makefi
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1242,7 +1242,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
 +++ HIP-rocm-5.3.3/samples/2_Cookbook/17_llvm_ir_to_executable/README.md	2023-08-30 14:37:28.562763490 -0700
 @@ -1,4 +1,4 @@
 -ROCM_PATH is the path where ROCM is installed. default path is /opt/rocm.
-+ROCM_PATH is the path where ROCM is installed. default path is /usr.
++ROCM_PATH is the path where ROCM is installed. default path is @ESYSROOT_ROCM_PATH@.
  # Compile to LLVM IR and create an executable from modified IR
  
  This sample shows how to generate the LLVM IR for a simple HIP source application, then re-compiling it and generating a valid HIP executable.
@@ -1311,7 +1311,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/1_hipEvent/CMakeLists.txt HIP-r
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1323,7 +1323,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/1_hipEvent/Makefile HIP-rocm-5.
  # THE SOFTWARE.
  
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1335,7 +1335,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt HI
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1360,9 +1360,9 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.m
 -CXX=`hipconfig -l`/amdclang++ cmake .. (or)
 -cmake -DCMAKE_CXX_COMPILER=/opt/rocm/bin/amdclang++ .. (or)
 -cmake -DCMAKE_CXX_COMPILER=/opt/rocm-X.Y.Z/llvm/bin/amdclang++ ..
-+CXX=`hipconfig -l`/clang++ cmake .. (or)
-+cmake -DCMAKE_CXX_COMPILER=/usr/bin/clang++ .. (or)
-+cmake -DCMAKE_CXX_COMPILER=/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ ..
++CXX=`@ESYSROOT_ROCM_PATH@/bin/hipconfig -l`/clang++ cmake .. (or)
++cmake -DCMAKE_CXX_COMPILER=@ESYSROOT@/usr/bin/clang++ .. (or)
++cmake -DCMAKE_CXX_COMPILER=@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ ..
  make
  
  II. Test
@@ -1374,7 +1374,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/3_shared_memory/CMakeLists.txt 
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1386,7 +1386,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/3_shared_memory/Makefile HIP-ro
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1398,7 +1398,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/4_shfl/CMakeLists.txt HIP-rocm-
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1410,7 +1410,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/4_shfl/Makefile HIP-rocm-5.3.3/
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1422,7 +1422,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/5_2dshfl/CMakeLists.txt HIP-roc
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1434,7 +1434,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/5_2dshfl/Makefile HIP-rocm-5.3.
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1446,7 +1446,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1458,7 +1458,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/6_dynamic_shared/Makefile HIP-r
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1470,7 +1470,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/7_streams/CMakeLists.txt HIP-ro
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1482,7 +1482,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/7_streams/Makefile HIP-rocm-5.3
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1494,7 +1494,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/8_peer2peer/CMakeLists.txt HIP-
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1506,7 +1506,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/8_peer2peer/Makefile HIP-rocm-5
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1518,7 +1518,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/9_unroll/CMakeLists.txt HIP-roc
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  
  # Search for rocm in common locations
@@ -1530,7 +1530,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/9_unroll/Makefile HIP-rocm-5.3.
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
  endif
 -ROCM_PATH?= $(wildcard /opt/rocm/)
-+ROCM_PATH?= $(wildcard /usr/)
++ROCM_PATH?= $(wildcard @ESYSROOT_ROCM_PATH@/)
  HIP_PATH?= $(wildcard $(ROCM_PATH)/hip)
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
@@ -1559,7 +1559,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/catch/CMakeLists.txt HIP-rocm-5.3.3/tests/ca
          cmake_path(GET HIP_PATH PARENT_PATH ROCM_PATH)
          if (NOT EXISTS "${ROCM_PATH}/bin/rocm_agent_enumerator")
 -            set(ROCM_PATH "/opt/rocm/")
-+            set(ROCM_PATH "/usr/")
++            set(ROCM_PATH "@ESYSROOT_ROCM_PATH@/")
          endif()
      endif()
  endif()
@@ -1751,7 +1751,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/module/hipModule.cpp HIP-rocm
      hipcc_path = "$ROCM_PATH/bin/hipcc";
    } else {
 -    hipcc_path = "/opt/rocm/bin/hipcc";
-+    hipcc_path = "/usr/bin/hipcc";
++    hipcc_path = "@ESYSROOT_ROCM_PATH@/bin/hipcc";
    }
    /* Putting these command parameters into a variable to shorten the string
      literal length in order to avoid multiline string literal cpplint warning
@@ -1763,12 +1763,12 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    const char *rocmpath = nullptr;
    if (rocmPathSet) {
 -    // For STG2 testing where /opt/rocm path is not present
-+    // For STG2 testing where /usr path is not present
++    // For STG2 testing where @ESYSROOT_ROCM_PATH@ path is not present
      rocmpath = "$ROCM_PATH/bin/rocminfo";
    } else {
      // Check if the rocminfo tool exists
 -    rocmpath = "/opt/rocm/bin/rocminfo";
-+    rocmpath = "/usr/bin/rocminfo";
++    rocmpath = "@ESYSROOT_ROCM_PATH@/bin/rocminfo";
    }
    snprintf(command, COMMAND_LEN, "%s", rocmpath);
    strncat(command, " | grep -m1 \"sramecc.:xnack.\"", COMMAND_LEN);
@@ -1777,7 +1777,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    */
    if (rocmPathSet) {
 -    // For STG2 testing where /opt/rocm path is not present
-+    // For STG2 testing where /usr path is not present
++    // For STG2 testing where @ESYSROOT_ROCM_PATH@ path is not present
      snprintf(command, COMMAND_LEN,
 -    "$ROCM_PATH/llvm/bin/clang -target amdgcn-amd-amdhsa -x cl ");
 +    "$ROCM_PATH/lib/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
@@ -1789,7 +1789,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    char command_temp[COMMAND_LEN] = "";
    snprintf(command_temp, COMMAND_LEN,
 -  "-include `find /opt/rocm* -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
-+  "-include `find /usr* -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
++  "-include `find @ESYSROOT_ROCM_PATH@ -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
    pCodeObjVer, v3option, props.gcnArchName, pCodeObjFile, OPENCL_OBJ_FILE);
  
    strncat(command, command_temp, COMMAND_LEN);
@@ -1810,11 +1810,11 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.
    rsmi_status_t (*fntopo_shut_down)();
  
 -  lib_rocm_smi_hdl = dlopen("/opt/rocm/rocm_smi/lib/librocm_smi64.so",
-+  lib_rocm_smi_hdl = dlopen("/usr/@LIBDIR@/librocm_smi64.so",
++  lib_rocm_smi_hdl = dlopen("@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm_smi64.so",
                          RTLD_LAZY);
    if (!lib_rocm_smi_hdl) {
 -    printf("Error opening /opt/rocm/rocm_smi/lib/librocm_smi64.so\n");
-+    printf("Error opening /usr/@LIBDIR@/librocm_smi64.so\n");
++    printf("Error opening @ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm_smi64.so\n");
      printf("Skipping this test\n");
      passed();
    }

@@ -6,7 +6,7 @@ diff -urp rocm-cmake-rocm-5.3.3.orig/CMakeLists.txt rocm-cmake-rocm-5.3.3/CMakeL
  cmake_minimum_required (VERSION 3.6)
  
 -set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
-+#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "")
++#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "")
  
  project(rocm-cmake)
  
@@ -18,7 +18,7 @@ diff -urp rocm-cmake-rocm-5.3.3.orig/share/rocm/cmake/ROCMClangTidy.cmake rocm-c
      HINTS ${CLANG_TIDY_EXE_HINT}
      PATH_SUFFIXES compiler/bin bin
 -    PATHS /opt/rocm/llvm/bin /opt/rocm/hcc /usr/local/opt/llvm/bin)
-+    PATHS /usr/lib/llvm/@LLVM_SLOT@/bin /usr/hcc)
++    PATHS /usr/lib/llvm/@LLVM_SLOT@/bin @ESYSROOT@/usr/hcc)
  
  execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE CLANG_TIDY_COMPILER_VERSION_OUTPUT)
  function(rocm_find_clang_tidy_version VAR)
@@ -30,7 +30,7 @@ diff -urp rocm-cmake-rocm-5.3.3.orig/share/rocm/cmake/ROCMCppCheck.cmake rocm-cm
      CPPCHECK_EXE
      NAMES cppcheck
 -    PATHS /opt/rocm/bin)
-+    PATHS /usr/bin)
++    PATHS @ESYSROOT_ROCM_PATH@/bin)
  
  function(rocm_find_cppcheck_version VAR)
      execute_process(COMMAND ${CPPCHECK_EXE} --version OUTPUT_VARIABLE VERSION_OUTPUT)

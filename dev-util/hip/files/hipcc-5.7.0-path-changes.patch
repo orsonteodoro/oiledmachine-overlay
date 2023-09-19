@@ -1,0 +1,330 @@
+diff -urp HIPCC-rocm-5.7.0.orig/bin/hipcc.pl HIPCC-rocm-5.7.0/bin/hipcc.pl
+--- HIPCC-rocm-5.7.0.orig/bin/hipcc.pl	2023-09-17 22:38:58.431075935 -0700
++++ HIPCC-rocm-5.7.0/bin/hipcc.pl	2023-09-17 22:39:14.639075719 -0700
+@@ -39,11 +39,11 @@ use Cwd 'abs_path';
+ # If HIP_PLATFORM is not set hipcc will attempt auto-detect based on if nvcc is found.
+ #
+ # Other environment variable controls:
+-# HIP_PATH       : Path to HIP directory, default is one dir level above location of this script.
+-# CUDA_PATH      : Path to CUDA SDK (default /usr/local/cuda). Used on NVIDIA platforms only.
+-# HIP_ROCCLR_HOME : Path to HIP/ROCclr directory. Used on AMD platforms only.
+-# HIP_CLANG_PATH : Path to HIP-Clang (default to ../../llvm/bin relative to this
+-#                  script's abs_path). Used on AMD platforms only.
++# HIP_PATH       : Path to the HIP directory (defaults to /usr).
++# CUDA_PATH      : Path to the CUDA SDK (defaults to /opt/cuda). Used on NVIDIA platforms only.
++# HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to /usr). Used on AMD platforms only.
++# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT@/lib/llvm/@LLVM_SLOT@/bin).
++#                  Used on AMD platforms only.
+ 
+ if(scalar @ARGV == 0){
+     print "No Arguments passed, exiting ...\n";
+@@ -78,8 +78,8 @@ $HIPCC_LINK_FLAGS_APPEND=$ENV{'HIPCC_LIN
+ # Known Features
+ @knownFeatures = ('sramecc-', 'sramecc+', 'xnack-', 'xnack+');
+ 
+-$HIP_LIB_PATH=$ENV{'HIP_LIB_PATH'};
+-$DEVICE_LIB_PATH=$ENV{'DEVICE_LIB_PATH'};
++$HIP_LIB_PATH='@ESYSROOT@/usr/@LIBDIR@';
++$DEVICE_LIB_PATH='@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode';
+ $HIP_CLANG_HCC_COMPAT_MODE=$ENV{'HIP_CLANG_HCC_COMPAT_MODE'}; # HCC compatibility mode
+ $HIP_COMPILE_CXX_AS_HIP=$ENV{'HIP_COMPILE_CXX_AS_HIP'} // "1";
+ 
+@@ -134,7 +134,7 @@ $HIP_ROCCLR_HOME =   $hipvars::HIP_ROCCL
+ if ($HIP_PLATFORM eq "amd") {
+   $HIP_INCLUDE_PATH = "$HIP_ROCCLR_HOME/include";
+   if (!defined $HIP_LIB_PATH) {
+-    $HIP_LIB_PATH = "$HIP_ROCCLR_HOME/lib";
++    $HIP_LIB_PATH = "$HIP_ROCCLR_HOME/@LIBDIR@";
+   }
+ }
+ 
+@@ -179,7 +179,7 @@ if ($HIP_PLATFORM eq "amd") {
+         $HIP_INCLUDE_PATH = "$HIP_PATH/include";
+     }
+     if (! defined $HIP_LIB_PATH) {
+-        $HIP_LIB_PATH = "$HIP_PATH/lib";
++        $HIP_LIB_PATH = "$HIP_PATH/@LIBDIR@";
+     }
+     if ($verbose & 0x2) {
+         print ("ROCM_PATH=$ROCM_PATH\n");
+@@ -198,7 +198,7 @@ if ($HIP_PLATFORM eq "amd") {
+         $HIPCXXFLAGS .= " -Xclang -fallow-half-arguments-and-returns -D__HIP_HCC_COMPAT_MODE__=1";
+     }
+ } elsif ($HIP_PLATFORM eq "nvidia") {
+-    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
++    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/opt/cuda';
+     $HIP_INCLUDE_PATH = "$HIP_PATH/include";
+     if ($verbose & 0x2) {
+         print ("CUDA_PATH=$CUDA_PATH\n");
+@@ -209,16 +209,20 @@ if ($HIP_PLATFORM eq "amd") {
+     $HIPCXXFLAGS .= " -isystem $CUDA_PATH/include";
+     $HIPCFLAGS .= " -isystem $CUDA_PATH/include";
+ 
+-    $HIPLDFLAGS = " -Wno-deprecated-gpu-targets -lcuda -lcudart -L$CUDA_PATH/lib64";
++    $HIPLDFLAGS = " -Wno-deprecated-gpu-targets -lcuda -lcudart -L$CUDA_PATH/@LIBDIR@";
+ } else {
+     printf ("error: unknown HIP_PLATFORM = '$HIP_PLATFORM'");
+     printf ("       or HIP_COMPILER = '$HIP_COMPILER'");
+     exit (-1);
+ }
+ 
++#
++# Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
++# which makes "stdlib.h" not found when using "#include_next" in header files;
++#
+ # Add paths to common HIP includes:
+-$HIPCXXFLAGS .= " -isystem \"$HIP_INCLUDE_PATH\"" ;
+-$HIPCFLAGS .= " -isystem \"$HIP_INCLUDE_PATH\"" ;
++#$HIPCXXFLAGS .= " -isystem \"$HIP_INCLUDE_PATH\"" ;
++#$HIPCFLAGS .= " -isystem \"$HIP_INCLUDE_PATH\"" ;
+ 
+ my $compileOnly = 0;
+ my $needCXXFLAGS = 0;  # need to add CXX flags to compile step
+@@ -576,7 +580,8 @@ if ($HIP_PLATFORM eq "amd") {
+     }
+ 
+     if ($hasHIP) {
+-        if (defined $DEVICE_LIB_PATH) {
++        if (defined $DEVICE_LIB_PATH or 1) {
++            $HIPCXXFLAGS .= " --rocm-path=\"$ROCM_PATH\"" ;
+             $HIPCXXFLAGS .= " --hip-device-lib-path=\"$DEVICE_LIB_PATH\"";
+         }
+     }
+diff -urp HIPCC-rocm-5.7.0.orig/bin/hipconfig.pl HIPCC-rocm-5.7.0/bin/hipconfig.pl
+--- HIPCC-rocm-5.7.0.orig/bin/hipconfig.pl	2023-07-25 12:35:46.000000000 -0700
++++ HIPCC-rocm-5.7.0/bin/hipconfig.pl	2023-09-17 22:40:11.135074964 -0700
+@@ -46,6 +46,7 @@ $CUDA_PATH      =   $hipvars::CUDA_PATH;
+ $HIP_PATH       =   $hipvars::HIP_PATH;
+ $ROCM_PATH      =   $hipvars::ROCM_PATH;
+ $HIP_VERSION    =   $hipvars::HIP_VERSION;
++$CLANG_RESOURCE_DIR = $hipvars::CLANG_RESOURCE_DIR;
+ 
+ Getopt::Long::Configure ( qw{bundling no_ignore_case});
+ GetOptions(
+@@ -68,7 +69,7 @@ if ($HIP_COMPILER eq "clang") {
+     if($isWindows) {
+         $HIP_CLANG_INCLUDE = `\"$HIP_CLANG_PATH/clang++\" --print-resource-dir`;
+     } else {
+-        $HIP_CLANG_INCLUDE = `$HIP_CLANG_PATH/clang++ --print-resource-dir`;
++        $HIP_CLANG_INCLUDE = $CLANG_RESOURCE_DIR."/include";
+     }
+ 
+     $CPP_CONFIG = " -D__HIP_PLATFORM_HCC__= -D__HIP_PLATFORM_AMD__=";
+@@ -87,7 +88,7 @@ if ($HIP_PLATFORM eq "nvidia") {
+ if ($p_help) {
+     print "usage: hipconfig [OPTIONS]\n";
+     print "  --path,  -p        : print HIP_PATH (use env var if set, else determine from hipconfig path)\n";
+-    print "  --rocmpath,  -R    : print ROCM_PATH (use env var if set, else determine from hip path or /opt/rocm)\n";
++    print "  --rocmpath,  -R    : print ROCM_PATH (use env var if set, else determine from hip path or @ESYSROOT_ROCM_PATH@)\n";
+     print "  --cpp_config, -C   : print C++ compiler options\n";
+     print "  --compiler, -c     : print compiler (clang or nvcc)\n";
+     print "  --platform, -P     : print platform (amd or nvidia)\n";
+Only in HIPCC-rocm-5.7.0/bin: hipconfig.pl.orig
+Only in HIPCC-rocm-5.7.0/bin: hipconfig.pl.rej
+diff -urp HIPCC-rocm-5.7.0.orig/bin/hipvars.pm HIPCC-rocm-5.7.0/bin/hipvars.pm
+--- HIPCC-rocm-5.7.0.orig/bin/hipvars.pm	2023-07-25 12:35:46.000000000 -0700
++++ HIPCC-rocm-5.7.0/bin/hipvars.pm	2023-09-18 07:52:13.874632650 -0700
+@@ -67,11 +67,11 @@ $isWindows =  ($^O eq 'MSWin32' or $^O e
+ #
+ # Since this hipcc script gets installed at two uneven hierarchical levels,
+ # linked by symlink, the absolute path of this script should be used to
+-# derive HIP_PATH, as dirname $0 could be /opt/rocm/bin or /opt/rocm/hip/bin
++# derive HIP_PATH, as dirname $0 could be @ESYSROOT_ROCM_PATH@/bin
+ # depending on how it gets invoked.
+ # ROCM_PATH which points to <rocm_install_dir> is determined based on whether
+ # we find bin/rocm_agent_enumerator in the parent of HIP_PATH or not. If it is found,
+-# ROCM_PATH is defined relative to HIP_PATH else it is hardcoded to /opt/rocm.
++# ROCM_PATH is defined relative to HIP_PATH else it is hardcoded to /usr.
+ #
+ $HIP_PATH=$ENV{'HIP_PATH'} // dirname(Cwd::abs_path("$0/../")); # use parent directory of hipcc
+ if (-e "$HIP_PATH/bin/rocm_agent_enumerator") {
+@@ -79,23 +79,23 @@ if (-e "$HIP_PATH/bin/rocm_agent_enumera
+ }elsif (-e "$HIP_PATH/../bin/rocm_agent_enumerator") { # case for backward compatibility
+     $ROCM_PATH=$ENV{'ROCM_PATH'} // dirname("$HIP_PATH"); # use parent directory of HIP_PATH
+ } else {
+-    $ROCM_PATH=$ENV{'ROCM_PATH'} // "/opt/rocm";
++    $ROCM_PATH=$ENV{'ROCM_PATH'} // "@ESYSROOT_ROCM_PATH@";
+ }
+ $CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
+ 
+ # Windows/Distro's have a different structure, all binaries are with hipcc
+-if (-e "$HIP_PATH/bin/clang" or -e "$HIP_PATH/bin/clang.exe") {
+-    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$HIP_PATH/bin";
++if (-e "$HIP_PATH/lib/llvm/@LLVM_SLOT@/bin/clang" or -e "$HIP_PATH/bin/clang.exe") {
++    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$HIP_PATH/lib/llvm/@LLVM_SLOT@/bin";
+ } else {
+-    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/llvm/bin";
++    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/lib/llvm/@LLVM_SLOT@/bin";
+ }
+ # HIP_ROCCLR_HOME is used by Windows builds
+ $HIP_ROCCLR_HOME=$ENV{'HIP_ROCCLR_HOME'};
+ 
+ if (defined $HIP_ROCCLR_HOME) {
+-    $HIP_INFO_PATH= "$HIP_ROCCLR_HOME/lib/.hipInfo";
++    $HIP_INFO_PATH= "$HIP_ROCCLR_HOME/@LIBDIR@/.hipInfo";
+ } else {
+-    $HIP_INFO_PATH= "$HIP_PATH/lib/.hipInfo"; # use actual file
++    $HIP_INFO_PATH= "$HIP_PATH/@LIBDIR@/.hipInfo"; # use actual file
+ }
+ #---
+ #HIP_PLATFORM controls whether to use nvidia or amd platform:
+@@ -110,9 +110,9 @@ $HIP_RUNTIME = $ENV{'HIP_RUNTIME'} // $h
+ # If using ROCclr runtime, need to find HIP_ROCCLR_HOME
+ if (defined $HIP_RUNTIME and $HIP_RUNTIME eq "rocclr" and !defined $HIP_ROCCLR_HOME) {
+     my $hipvars_dir = dirname(Cwd::abs_path($0));
+-    if (-e "$hipvars_dir/../lib/bitcode") {
++    if (-e "$hipvars_dir/../@LIBDIR@/amdgcn/bitcode") {
+         $HIP_ROCCLR_HOME = Cwd::abs_path($hipvars_dir . "/.."); #FILE_REORG Backward compatibility
+-    } elsif (-e "$hipvars_dir/lib/bitcode") {
++    } elsif (-e "$hipvars_dir/@LIBDIR@/amdgcn/bitcode") {
+         $HIP_ROCCLR_HOME = Cwd::abs_path($hipvars_dir);
+     } else {
+         $HIP_ROCCLR_HOME = $HIP_PATH; # use HIP_PATH
+diff -urp HIPCC-rocm-5.7.0.orig/docs/build.md HIPCC-rocm-5.7.0/docs/build.md
+--- HIPCC-rocm-5.7.0.orig/docs/build.md	2023-07-25 12:35:46.000000000 -0700
++++ HIPCC-rocm-5.7.0/docs/build.md	2023-09-17 22:39:14.639075719 -0700
+@@ -9,4 +9,4 @@ cmake ..
+ make -j
+ ```
+ 
+-The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /opt/rocm/hip/bin folder location. Packaging and installing will be handled in future releases.
++The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to @ESYSROOT_ROCM_PATH@/bin folder location. Packaging and installing will be handled in future releases.
+diff -urp HIPCC-rocm-5.7.0.orig/docs/env.md HIPCC-rocm-5.7.0/docs/env.md
+--- HIPCC-rocm-5.7.0.orig/docs/env.md	2023-07-25 12:35:46.000000000 -0700
++++ HIPCC-rocm-5.7.0/docs/env.md	2023-09-17 22:39:14.639075719 -0700
+@@ -5,7 +5,7 @@ The environment variable HIP_PLATFORM ma
+ - If HIP_PLATFORM is not set, then hipcc will attempt to auto-detect based on if nvcc is found.
+ 
+ Other environment variable controls:
+-- HIP_PATH        : Path to HIP directory, default is one dir level above location of hipcc.
+-- CUDA_PATH       : Path to CUDA SDK (default /usr/local/cuda). Used on NVIDIA platforms only.
+-- HIP_ROCCLR_HOME : Path to HIP/ROCclr directory. Used on AMD platforms only.
+-- HIP_CLANG_PATH  : Path to HIP-Clang (default to ../../llvm/bin relative to hipcc's abs_path). Used on AMD platforms only.
++- HIP_PATH        : Path to the HIP directory, (defaults to /usr).
++- CUDA_PATH       : Path to the CUDA SDK (defaults to /opt/cuda). Used on NVIDIA platforms only.
++- HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to /usr). Used on AMD platforms only.
++- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin relative to hipcc's abs_path). Used on AMD platforms only.
+diff -urp HIPCC-rocm-5.7.0.orig/README.md HIPCC-rocm-5.7.0/README.md
+--- HIPCC-rocm-5.7.0.orig/README.md	2023-07-25 12:35:46.000000000 -0700
++++ HIPCC-rocm-5.7.0/README.md	2023-09-17 22:39:14.643075719 -0700
+@@ -38,11 +38,11 @@ The environment variable HIP_PLATFORM ma
+ - If HIP_PLATFORM is not set, then hipcc will attempt to auto-detect based on if nvcc is found.
+ 
+ Other environment variable controls:
+-- HIP_PATH        : Path to HIP directory, default is one dir level above location of hipcc.
+-- CUDA_PATH       : Path to CUDA SDK (default /usr/local/cuda). Used on NVIDIA platforms only.
+-- HSA_PATH        : Path to HSA dir (defaults to ../../hsa relative to abs_path of hipcc). Used on AMD platforms only.
+-- HIP_ROCCLR_HOME : Path to HIP/ROCclr directory. Used on AMD platforms only.
+-- HIP_CLANG_PATH  : Path to HIP-Clang (default to ../../llvm/bin relative to hipcc's abs_path). Used on AMD platforms only.
++- HIP_PATH        : Path to HIP directory (defaults to /usr)
++- CUDA_PATH       : Path to CUDA SDK (default /usr/local/cuda).  Used on NVIDIA platforms only.
++- HSA_PATH        : Path to HSA dir (defaults to /usr).  Used on AMD platforms only.
++- HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to /usr).  Used on AMD platforms only.
++- HIP_CLANG_PATH  : Path to HIP-Clang (default to @ESYSROOT@/lib/llvm/@LLVM_SLOT@/bin).  Used on AMD platforms only.
+ 
+ ### <a name="usage"></a> hipcc: usage
+ 
+@@ -56,7 +56,7 @@ Example:
+ ./hipconfig --full
+ ```
+ 
+-when the excutables are copied to /opt/rocm/hip/bin or <anyfolder>hip/bin. 
++when the excutables are copied to @ESYSROOT_ROCM_PATH@/bin. 
+ The ./ is not required as the HIP path is added to the envirnoment variables list.
+ 
+ ### <a name="building"></a> hipcc: building
+@@ -70,7 +70,7 @@ cmake ..
+ make -j
+ ```
+ 
+-The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /opt/rocm/hip/bin folder location. Packaging and installing will be handled in future releases.
++The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to @ESYSROOT_ROCM_PATH@/bin folder location. Packaging and installing will be handled in future releases.
+ 
+ ### <a name="testing"></a> hipcc: testing
+ 
+diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_amd.h HIPCC-rocm-5.7.0/src/hipBin_amd.h
+--- HIPCC-rocm-5.7.0.orig/src/hipBin_amd.h	2023-07-25 12:35:46.000000000 -0700
++++ HIPCC-rocm-5.7.0/src/hipBin_amd.h	2023-09-17 22:41:23.199074002 -0700
+@@ -94,7 +94,7 @@ void HipBinAmd::constructRocclrHomePath(
+   fs::path bitcode = hipvars_dir;
+   string rocclrHomePath = getEnvVariables().hipRocclrPathEnv_;
+   if (rocclrHomePath.empty()) {
+-    bitcode /= "../lib/bitcode";
++    bitcode /= "../@LIBDIR@/amdgcn/bitcode";
+     if (!fs::exists(bitcode)) {
+       rocclrHomePath = getHipPath();
+     } else {
+@@ -158,9 +158,11 @@ void HipBinAmd::initializeHipCFlags() {
+   string hipCFlags;
+   const OsType& os = getOSInfo();
+   if (os != windows) {
+-    string hsaPath;
+-    hsaPath = getHsaPath();
+-    hipCFlags += " -isystem " + hsaPath + "/include";
++// Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
++// which makes "stdlib.h" not found when using "#include_next" in header files;
++//    string hsaPath;
++//    hsaPath = getHsaPath();
++//    hipCFlags += " -isystem " + hsaPath + "/include";
+   }
+   string hipIncludePath;
+   hipIncludePath = getHipInclude();
+@@ -198,8 +200,10 @@ void HipBinAmd::initializeHipCXXFlags()
+   }
+ 
+   if (os != windows) {
+-    const string& hsaPath = getHsaPath();
+-    hipCXXFlags += " -isystem " + hsaPath + "/include";
++// Setting HSA_PATH to "/usr" results in setting "-isystem /usr/include"
++// which makes "stdlib.h" not found when using "#include_next" in header files;
++//    const string& hsaPath = getHsaPath();
++//    hipCXXFlags += " -isystem " + hsaPath + "/include";
+   }
+   // Add paths to common HIP includes:
+   string hipIncludePath;
+@@ -222,8 +226,8 @@ void HipBinAmd::constructCompilerPath()
+       complierPath = getRoccmPath();
+       hipClangPath = complierPath;
+     }
+-    if (fs::exists("llvm/bin/clang++")) {
+-      hipClangPath /= "llvm/bin";
++    if (fs::exists("lib/llvm/@LLVM_SLOT@/bin/clang++")) {
++      hipClangPath /= "lib/llvm/@LLVM_SLOT@/bin";
+     } else {
+       hipClangPath /= "bin";
+     }
+Only in HIPCC-rocm-5.7.0/src: hipBin_amd.h.orig
+Only in HIPCC-rocm-5.7.0/src: hipBin_amd.h.rej
+diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_base.h HIPCC-rocm-5.7.0/src/hipBin_base.h
+--- HIPCC-rocm-5.7.0.orig/src/hipBin_base.h	2023-07-25 12:35:46.000000000 -0700
++++ HIPCC-rocm-5.7.0/src/hipBin_base.h	2023-09-17 22:39:14.643075719 -0700
+@@ -344,7 +344,7 @@ void HipBinBase::constructRoccmPath() {
+     fs::path rocm_agent_enumerator_file(roccm_path);
+     rocm_agent_enumerator_file /= "bin/rocm_agent_enumerator";
+     if (!fs::exists(rocm_agent_enumerator_file)) {
+-      roccm_path = "/opt/rocm";
++      roccm_path = "@ESYSROOT_ROCM_PATH@";
+     }
+   } else {
+     variables_.roccmPathEnv_ = envVariables_.roccmPathEnv_;}
+@@ -443,7 +443,7 @@ void HipBinBase::printUsage() const {
+   " print HIP_PATH (use env var if set, else determine from hipconfig path)\n";
+   cout << "  --rocmpath,  -R    :"
+   " print ROCM_PATH (use env var if set,"
+-  " else determine from hip path or /opt/rocm)\n";
++  " else determine from hip path or @ESYSROOT_ROCM_PATH@)\n";
+   cout << "  --cpp_config, -C   : print C++ compiler options\n";
+   cout << "  --compiler, -c     : print compiler (clang or nvcc)\n";
+   cout << "  --platform, -P     : print platform (amd or nvidia)\n";
+diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_nvidia.h HIPCC-rocm-5.7.0/src/hipBin_nvidia.h
+--- HIPCC-rocm-5.7.0.orig/src/hipBin_nvidia.h	2023-07-25 12:35:46.000000000 -0700
++++ HIPCC-rocm-5.7.0/src/hipBin_nvidia.h	2023-09-17 22:39:14.643075719 -0700
+@@ -177,7 +177,7 @@ void HipBinNvidia::initializeHipLdFlags(
+   string hipLdFlags;
+   const string& cudaPath = getCompilerPath();
+   hipLdFlags = " -Wno-deprecated-gpu-targets -lcuda -lcudart -L" +
+-               cudaPath + "/lib64";
++               cudaPath + "/@LIBDIR@";
+   hipLdFlags_ = hipLdFlags;
+ }
+ 

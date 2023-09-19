@@ -26,7 +26,7 @@ diff -urp ROCdbgapi-rocm-5.1.3.orig/CMakeLists.txt ROCdbgapi-rocm-5.1.3/CMakeLis
  find_package(amd_comgr REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    /usr/
++    @ESYSROOT_ROCM_PATH@/
    PATH_SUFFIXES
      cmake/amd_comgr
 -    lib/cmake/amd_comgr

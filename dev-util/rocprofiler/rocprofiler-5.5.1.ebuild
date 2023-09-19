@@ -6,6 +6,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic llvm python-any-r1 rocm
 
@@ -23,10 +24,11 @@ LICENSE="
 "
 # BSD - src/util/hsa_rsrc_factory.cpp
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE=" +aqlprofile r4"
 RDEPEND="
+	!dev-util/rocprofiler:0
 	dev-python/barectf
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
@@ -100,25 +102,26 @@ src_configure() {
 	if use aqlprofile ; then
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] || die "Missing" # For e80f7cb
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
-		append-ldflags -Wl,-rpath="/opt/rocm-${PV}/lib"
+		append-ldflags -Wl,-rpath="${ESYSROOT}/opt/rocm-${PV}/lib"
 	fi
 	export CMAKE_BUILD_TYPE="debug"
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 	export HIP_PLATFORM="amd"
 	local gpu_targets=$(get_amdgpu_flags \
 		| tr ";" " ")
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
-		-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/hip"
-		-DCMAKE_PREFIX_PATH="${EPREFIX}/usr/include/hsa"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${rocm_path}"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${rocm_path}/$(get_libdir)/cmake/hip"
+		-DCMAKE_PREFIX_PATH="${ESYSROOT}${rocm_path}/include/hsa"
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGPU_TARGETS="${gpu_targets}"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
-		-DHIP_ROOT_DIR="${ESYSROOT}/usr"
+		-DHIP_ROOT_DIR="${ESYSROOT}${rocm_path}"
 		-DHIP_RUNTIME="rocclr"
-		-DPROF_API_HEADER_PATH="${EPREFIX}/usr/include/roctracer/ext"
+		-DPROF_API_HEADER_PATH="${ESYSROOT}${rocm_path}/include/roctracer/ext"
 		-DUSE_PROF_API=1
 	)
 	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"

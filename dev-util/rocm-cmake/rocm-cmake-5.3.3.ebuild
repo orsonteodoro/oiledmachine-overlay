@@ -5,6 +5,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10..11} )
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
 
@@ -23,7 +24,7 @@ fi
 DESCRIPTION="Radeon Open Compute CMake Modules"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-cmake"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 BDEPEND="
 	>=dev-util/cmake-3.5
 "

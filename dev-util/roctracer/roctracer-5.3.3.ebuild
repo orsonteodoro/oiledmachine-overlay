@@ -5,6 +5,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic llvm prefix python-any-r1 rocm
@@ -20,12 +21,13 @@ https://github.com/ROCm-Developer-Tools/roctracer/commit/c95d5dd96fa50a567b7b203
 DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE=" test"
 RDEPEND="
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
-	~dev-util/hip-${PV}:${SLOT}
+	!dev-util/roctracer:0
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -45,9 +47,9 @@ RESTRICT="
 S="${WORKDIR}/roctracer-rocm-${PV}"
 S_PROFILER="${WORKDIR}/rocprofiler"
 PATCHES=(
-	"${FILESDIR}/roctracer-5.3.3-do-not-install-test-files.patch"
-	"${FILESDIR}/roctracer-5.3.3-Werror.patch"
-	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
+	"${FILESDIR}/${PN}-5.3.3-Werror.patch"
+	"${FILESDIR}/${PN}-5.4.4-path-changes.patch"
 	"${DISTDIR}/${PN}-c95d5dd.patch"
 )
 
@@ -73,16 +75,17 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
-		append-flags --rocm-path="${ESYSROOT}/usr"
+		append-flags --rocm-path="${ESYSROOT}${rocm_path}"
 	fi
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"
 	export ROCM_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
-		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake/hip"
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${rocm_path}/$(get_libdir)/cmake/hip"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"

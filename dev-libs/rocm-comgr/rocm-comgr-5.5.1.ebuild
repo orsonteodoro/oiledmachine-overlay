@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm prefix rocm
 
@@ -23,13 +24,14 @@ fi
 DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test r5"
 RDEPEND="
-	~dev-libs/rocm-device-libs-${PV}:${SLOT}
+	!dev-libs/rocm-comgr:0
 	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 	sys-devel/clang:${LLVM_MAX_SLOT}=
 	sys-devel/lld:${LLVM_MAX_SLOT}=
+	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -41,7 +43,7 @@ RESTRICT="
 "
 BDEPEND="
 	>=dev-util/cmake-3.13.4
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"

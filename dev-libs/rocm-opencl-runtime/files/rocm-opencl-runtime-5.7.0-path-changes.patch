@@ -1,0 +1,85 @@
+diff -urp opencl.orig/CMakeLists.txt opencl/CMakeLists.txt
+--- opencl.orig/CMakeLists.txt	2023-09-08 08:36:06.000000000 -0700
++++ opencl/CMakeLists.txt	2023-09-18 14:29:13.950314562 -0700
+@@ -9,8 +9,8 @@ project(opencl)
+ 
+ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+ 
+-# Set default libdir to be "lib" for ROCm, distros will override this anyway:
+-set(CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Library install directory")
++# Set default libdir to be "@LIBDIR@" for ROCm, distros will override this anyway:
++set(CMAKE_INSTALL_LIBDIR "@LIBDIR@" CACHE STRING "Library install directory")
+ 
+ include(GNUInstallDirs)
+ 
+@@ -57,7 +57,7 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURC
+ # Packaging steps
+ #############################
+ if(NOT WIN32)
+-find_package(ROCM QUIET CONFIG PATHS /opt/rocm)
++find_package(ROCM QUIET CONFIG PATHS @ESYSROOT_ROCM_PATH@)
+ if(ROCM_FOUND)
+   include(ROCMSetupVersion)
+   rocm_setup_version( VERSION "2.0.0" )
+@@ -96,7 +96,7 @@ if(DEFINED ENV{ROCM_LIBPATCH_VERSION})
+   message("Using CPACK_PACKAGE_VERSION ${CPACK_PACKAGE_VERSION}")
+ endif()
+ 
+-set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Package Installation path for OpenCL")
++set(CPACK_PACKAGING_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Package Installation path for OpenCL")
+ #ROCM_PATH is needed to create symlink of libraries
+ if(NOT DEFINED ROCM_PATH)
+   string(REPLACE "/opencl" "" ROCM_PATH ${CPACK_PACKAGING_INSTALL_PREFIX})
+Only in opencl: CMakeLists.txt.orig
+diff -urp opencl.orig/opencl-backward-compat.cmake opencl/opencl-backward-compat.cmake
+--- opencl.orig/opencl-backward-compat.cmake	2023-09-08 08:36:06.000000000 -0700
++++ opencl/opencl-backward-compat.cmake	2023-09-18 14:30:05.950313867 -0700
+@@ -24,7 +24,7 @@ set(OPENCL_BUILD_DIR ${CMAKE_CURRENT_BIN
+ set(OPENCL_WRAPPER_DIR ${OPENCL_BUILD_DIR}/wrapper_dir)
+ set(OPENCL_WRAPPER_INC_DIR ${OPENCL_WRAPPER_DIR}/include/CL)
+ set(OPENCL_WRAPPER_BIN_DIR ${OPENCL_WRAPPER_DIR}/bin)
+-set(OPENCL_WRAPPER_LIB_DIR ${OPENCL_WRAPPER_DIR}/lib)
++set(OPENCL_WRAPPER_LIB_DIR ${OPENCL_WRAPPER_DIR}/@LIBDIR@)
+ 
+ #Function to generate header template file
+ function(create_header_template)
+@@ -57,12 +57,12 @@ function(create_header_template)
+ #define ROCM_HEADER_WRAPPER_WERROR @deprecated_error@
+ #endif
+ #if ROCM_HEADER_WRAPPER_WERROR  /* ROCM_HEADER_WRAPPER_WERROR 1 */
+-#error \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\"
++#error \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with CL\"
+ #else    /* ROCM_HEADER_WRAPPER_WERROR 0 */
+ #if defined(__GNUC__)
+-#warning \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\"
++#warning \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with CL\"
+ #else
+-#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\")
++#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with CL\")
+ #endif
+ #endif  /* ROCM_HEADER_WRAPPER_WERROR */
+ 
+@@ -150,7 +150,7 @@ if(BUILD_ICD)
+   install(DIRECTORY ${OPENCL_WRAPPER_LIB_DIR}  DESTINATION ${OPENCL} COMPONENT icd)
+ endif()
+ if(BUILD_SHARED_LIBS)
+-  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.so  DESTINATION ${OPENCL}/lib COMPONENT binary)
++  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.so  DESTINATION ${OPENCL}/@LIBDIR@ COMPONENT binary)
+ else()
+-  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/lib COMPONENT binary)
++  install(FILES ${OPENCL_WRAPPER_DIR}/libamdocl64.a  DESTINATION ${OPENCL}/@LIBDIR@ COMPONENT binary)
+ endif()
+Only in opencl: opencl-backward-compat.cmake.orig
+Only in opencl: opencl-backward-compat.cmake.rej
+diff -urp opencl.orig/README.md opencl/README.md
+--- opencl.orig/README.md	2023-09-08 08:36:06.000000000 -0700
++++ opencl/README.md	2023-09-18 14:29:13.950314562 -0700
+@@ -44,7 +44,7 @@ Run these commands:
+ ```bash
+ cd "$OPENCL_DIR"
+ mkdir -p build; cd build
+-cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
++cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@ESYSROOT_ROCM_PATH@/" ..
+ make -j$(nproc)
+ ```
+ 

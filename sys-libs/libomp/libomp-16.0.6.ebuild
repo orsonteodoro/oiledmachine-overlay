@@ -64,6 +64,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="
 amd64 ~arm arm64 ~loong ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
+rocm_5_5 rocm_5_6
 "
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -94,16 +95,26 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	gdb-plugin? (
+		${PYTHON_REQUIRED_USE}
+	)
 	llvm_targets_AMDGPU? (
 		${ROCM_REQUIRED_USE}
+		^^ (
+			rocm_5_6
+			rocm_5_5
+		)
 	)
 	llvm_targets_NVPTX? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
-	gdb-plugin? (
-		${PYTHON_REQUIRED_USE}
+	rocm_5_5? (
+		llvm_targets_AMDGPU
+	)
+	rocm_5_6? (
+		llvm_targets_AMDGPU
 	)
 "
 ROCM_SLOTS=(
@@ -113,9 +124,9 @@ ROCM_SLOTS=(
 gen_amdgpu_rdepend() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/${pv%.*}"
+		local s="${pv%.*}"
 		echo "
-			(
+			rocm_${s/./_}? (
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-libs/roct-thunk-interface-${pv}:${s}
 			)

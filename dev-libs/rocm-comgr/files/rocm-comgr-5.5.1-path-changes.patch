@@ -25,7 +25,7 @@ diff -urp comgr.orig/cmake/opencl_pch.cmake comgr/cmake/opencl_pch.cmake
 -else()
 -  get_target_property(clang_build_header_dir clang-resource-headers RUNTIME_OUTPUT_DIRECTORY)
 -  set(OPENCL_C_H "${clang_build_header_dir}/opencl-c.h")
-+  set(CLANG_RESOURCE_DIR "@EPREFIX@/usr/lib/clang/@CLANG_SLOT@")
++  set(CLANG_RESOURCE_DIR "@ESYSROOT@/usr/lib/clang/@CLANG_SLOT@")
 +  string(STRIP ${CLANG_RESOURCE_DIR} CLANG_RESOURCE_DIR)
 +  set(OPENCL_C_H "${CLANG_RESOURCE_DIR}/include/opencl-c.h")
  endif()
@@ -60,10 +60,10 @@ diff -urp comgr.orig/comgr-backward-compat.cmake comgr/comgr-backward-compat.cma
  
  #if defined(__GNUC__)
 -#warning \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with amd_comgr\"
-+#warning \"This file is deprecated. Use file from include path /usr/include/ and prefix with amd_comgr\"
++#warning \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with amd_comgr\"
  #else
 -#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with amd_comgr\")
-+#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with amd_comgr\")
++#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with amd_comgr\")
  #endif
  
  @include_statements@
@@ -146,7 +146,7 @@ diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
      sys::path::append(LLVMPath, "llvm");
  
 -    return LLVMPath;
-+    return llvm::SmallString<128>("/usr/lib/llvm/@LLVM_SLOT@");
++    return llvm::SmallString<128>("@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@");
    }
  
    virtual SmallString<128> getHIPPathImpl() {
@@ -161,7 +161,7 @@ diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
      ROCmInstallPath = EnvROCMPath;
    }
 +  else {
-+	ROCmInstallPath = "/usr";
++	ROCmInstallPath = "@ESYSROOT_ROCM_PATH@";
 +  }
  
    InstallationDetector *Detector;

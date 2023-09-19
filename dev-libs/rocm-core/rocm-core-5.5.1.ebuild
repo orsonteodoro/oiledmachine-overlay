@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake rocm
@@ -23,9 +24,10 @@ fi
 DESCRIPTION="rocm-core is a utility which can be used to get ROCm release version. "
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-core"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="r1"
 RDEPEND="
+	!dev-libs/rocm-core:0
 "
 DEPEND="
 	${RDEPEND}

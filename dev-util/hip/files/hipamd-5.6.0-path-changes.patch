@@ -8,7 +8,7 @@ diff -urp hipamd-rocm-5.6.0.orig/bin/roc-obj hipamd-rocm-5.6.0/bin/roc-obj
 -#| it is searched; otherwise, the base directory path is appended with
 -#| "../../llvm/bin" and it is searched. Finally, the PATH is searched as if by
 -#| a POSIX "execvp" function.
-+#| it is searched; otherwise, "@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin" is
++#| it is searched; otherwise, "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin" is
 +#| searched. Finally, the PATH is searched as if by a POSIX "execvp" function.
  #|
  #| Option Descriptions:
@@ -18,7 +18,7 @@ diff -urp hipamd-rocm-5.6.0.orig/bin/roc-obj hipamd-rocm-5.6.0/bin/roc-obj
    local file
    local searched=()
 -  for dir in "$BASE_DIR" "${HIP_CLANG_PATH:-"$BASE_DIR/../../llvm/bin"}"; do
-+  for dir in "$BASE_DIR" "${HIP_CLANG_PATH:-"@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin"}"; do
++  for dir in "$BASE_DIR" "${HIP_CLANG_PATH:-"@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin"}"; do
      file="$dir/$command"
      if [[ -x $file ]]; then
        printf "%s" "$file"
@@ -39,7 +39,7 @@ diff -urp hipamd-rocm-5.6.0.orig/CMakeLists.txt hipamd-rocm-5.6.0/CMakeLists.txt
  
  if (NOT DEFINED ROCM_PATH )
 -     set ( ROCM_PATH "/opt/rocm"  CACHE STRING "Default ROCM installation directory." )
-+     set ( ROCM_PATH "/usr"  CACHE STRING "Default ROCM installation directory." )
++     set ( ROCM_PATH "@ESYSROOT_ROCM_PATH@"  CACHE STRING "Default ROCM installation directory." )
  endif ()
  message (STATUS "ROCM Installation path(ROCM_PATH): ${ROCM_PATH}")
  
@@ -48,7 +48,7 @@ diff -urp hipamd-rocm-5.6.0.orig/CMakeLists.txt hipamd-rocm-5.6.0/CMakeLists.txt
      else()
        # Exclude .bat files on Linux.
 -      #Hip bin files moved to /opt/rocm/bin and the file permission need to set properly
-+      #Hip bin files moved to /usr/bin and the file permission need to set properly
++      #Hip bin files moved to @ESYSROOT_ROCM_PATH@/bin and the file permission need to set properly
        install(DIRECTORY ${HIP_COMMON_BIN_DIR} DESTINATION . USE_SOURCE_PERMISSIONS
                DIRECTORY_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
                PATTERN *.bat EXCLUDE)
@@ -78,7 +78,7 @@ diff -urp hipamd-rocm-5.6.0.orig/hip-backward-compat.cmake hipamd-rocm-5.6.0/hip
  #use header template file and generate wrapper header files
  function(generate_wrapper_header)
 -#create respecitve folder in /opt/rocm/hip
-+#create respecitve folder in /usr
++#create respecitve folder in @ESYSROOT_ROCM_PATH@
    file(MAKE_DIRECTORY ${HIP_WRAPPER_INC_DIR}/amd_detail)
    file(MAKE_DIRECTORY ${HIP_WRAPPER_INC_DIR}/nvidia_detail)
  
@@ -127,11 +127,11 @@ diff -urp hipamd-rocm-5.6.0.orig/hip-config.cmake.in hipamd-rocm-5.6.0/hip-confi
      # first find the real path to hip-config file which doesn't have symbolic links
 -    # Real Path : /opt/rocm-ver/lib/cmake/hip/hip-config.cmake
 -    # then go up 4 levels get to /opt/rocm-ver
-+    # Real Path : /usr/@LIBDIR@/cmake/hip/hip-config.cmake
-+    # then go up some levels get to /usr
++    # Real Path : @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip/hip-config.cmake
++    # then go up some levels get to @ESYSROOT_ROCM_PATH@
      get_filename_component(CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" REALPATH)
 -    get_filename_component(ROCM_PATH "${CONFIG_PATH}/../../../../" ABSOLUTE)
-+    set(ROCM_PATH "/usr")
++    set(ROCM_PATH "@ESYSROOT_ROCM_PATH@")
    endif()
  
  endif()
@@ -152,8 +152,8 @@ diff -urp hipamd-rocm-5.6.0.orig/hip-config.cmake.in hipamd-rocm-5.6.0/hip-confi
 -# Go up 4 levels to get /opt/rocm-ver
 -get_filename_component(_DIR "${CMAKE_CURRENT_LIST_FILE}" REALPATH)
 -get_filename_component(_IMPORT_PREFIX "${_DIR}/../../../../" ABSOLUTE)
-+# Real Path : /usr/@LIBDIR@/cmake/hip/hip-config.cmake
-+set(_IMPORT_PREFIX "/usr")
++# Real Path : @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip/hip-config.cmake
++set(_IMPORT_PREFIX "@ESYSROOT_ROCM_PATH@")
  
  if(HIP_RUNTIME MATCHES "rocclr")
    # Right now this is only supported for amd platforms
@@ -166,7 +166,7 @@ diff -urp hipamd-rocm-5.6.0.orig/install.sh hipamd-rocm-5.6.0/install.sh
  DASH_JAY="-j $(getconf _NPROCESSORS_ONLN)"
  OS_NAME="$(cat /etc/os-release | awk -F '=' '/^NAME/{print $2}' | awk '{print $1}' | tr -d '"')"
 -[[ -z "$ROCM_PATH" ]] && ROCM_PATH=/opt/rocm
-+[[ -z "$ROCM_PATH" ]] && ROCM_PATH="/usr"
++[[ -z "$ROCM_PATH" ]] && ROCM_PATH="@ESYSROOT_ROCM_PATH@"
  
  err() {
      echo "${1-Died}." >&2
@@ -237,7 +237,7 @@ diff -urp hipamd-rocm-5.6.0.orig/packaging/hip-runtime-nvidia.postinst hipamd-ro
  
  if [ -d $ROCMDIR ] ; then
 -    ln -s -f $ROCMDIR /opt/rocm
-+    ln -s -f $ROCMDIR /usr
++    ln -s -f $ROCMDIR @ESYSROOT_ROCM_PATH@
  fi
 diff -urp hipamd-rocm-5.6.0.orig/packaging/hip-runtime-nvidia.prerm hipamd-rocm-5.6.0/packaging/hip-runtime-nvidia.prerm
 --- hipamd-rocm-5.6.0.orig/packaging/hip-runtime-nvidia.prerm	2023-03-15 02:13:57.000000000 -0700
@@ -248,8 +248,8 @@ diff -urp hipamd-rocm-5.6.0.orig/packaging/hip-runtime-nvidia.prerm hipamd-rocm-
  
 -if [ -L "/opt/rocm" ] ; then
 -   unlink /opt/rocm
-+if [ -L "/usr" ] ; then
-+   unlink /usr
++if [ -L "@ESYSROOT_ROCM_PATH@" ] ; then
++   unlink @ESYSROOT_ROCM_PATH@
  fi
 diff -urp hipamd-rocm-5.6.0.orig/src/CMakeLists.txt hipamd-rocm-5.6.0/src/CMakeLists.txt
 --- hipamd-rocm-5.6.0.orig/src/CMakeLists.txt	2023-08-30 14:56:39.470786667 -0700

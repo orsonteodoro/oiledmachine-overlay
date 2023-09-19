@@ -3,6 +3,8 @@
 
 EAPI=8
 
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 inherit unpacker
 
 SRC_URI="
@@ -17,11 +19,15 @@ https://github.com/RadeonOpenCompute/ROCm
 LICENSE="
 	hsa-amd-aqlprofile-LICENSE
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE="deny-install skip-install"
-DEPEND=""
-RDEPEND="${DEPEND}"
+RDEPEND="
+	!dev-libs/hsa-amd-aqlprofile:0
+"
+DEPEND="
+	${RDEPEND}
+"
 RESTRICT="binchecks"
 S="${WORKDIR}"
 QA_PREBUILT="

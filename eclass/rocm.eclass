@@ -325,6 +325,31 @@ eerror
 		$(grep -r -l -e "@ROCM_VERSION@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
+	sed \
+		-i \
+		-e "s|@ROCM_SLOT@|${ROCM_SLOT}|g" \
+		$(grep -r -l -e "@ROCM_SLOT@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	sed \
+		-i \
+		-e "s|@ROCM_PATH@|${rocm_path}|g" \
+		$(grep -r -l -e "@ROCM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}${rocm_path}|g" \
+		$(grep -r -l -e "@EPREFIX_ROCM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}${rocm_path}|g" \
+		$(grep -r -l -e "@ESYSROOT_ROCM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
 	local libdir_suffix="$(get_libdir)"
 	libdir_suffix="${libdir_suffix/lib}"
 	sed \

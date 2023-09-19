@@ -7,6 +7,7 @@ AOCC_SLOT=14
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=14 # Same as llvm-roc
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 
@@ -30,7 +31,7 @@ LICENSE="
 # The Apache-2.0 license template does not have all rights reserved in the distro
 # template but all rights reserved is explicit in Apache-1.0 and BSD licenses.
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 aocc doc test
 "
@@ -105,7 +106,7 @@ einfo "Building Flang lib"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
-		-DOPENMP_BUILD_DIR="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/lib"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${rocm_path}/llvm/lib"
 	)
 einfo "GCC major version:  $(gcc-major-version)"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
@@ -150,7 +151,7 @@ einfo "Building Flang runtime"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
-		-DOPENMP_BUILD_DIR="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/lib"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${rocm_path}/llvm/lib"
 	)
 einfo "GCC major version:  $(gcc-major-version)"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
@@ -192,6 +193,7 @@ src_prepare() {
 src_configure() {
 	# Removed all clangs except for one used for building.
 	local compiler_path=""
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	if use aocc ; then
 		compiler_path="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin"
 	else
@@ -229,6 +231,7 @@ eerror
 		["emake"]="Unix Makefiles"
 		["ninja"]="Ninja"
 	)
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	mycmakeargs=(
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
 		-DCMAKE_BUILD_TYPE="Release"
@@ -239,19 +242,19 @@ eerror
 	)
 	if use aocc ; then
 		export PATH="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin:${PATH}"
-		export LD_LIBRARY_PATH="${ED}/usr/lib/rocm/${PV}/llvm/lib"
+		export LD_LIBRARY_PATH="${ED}${rocm_path}/llvm/lib"
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang"
 			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang++"
 			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/flang"
 		)
 	else
-		export PATH="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/bin:${PATH}"
-		export LD_LIBRARY_PATH="${ED}/usr/lib/rocm/${PV}/llvm/lib"
+		export PATH="${ESYSROOT}${rocm_path}/llvm/bin:${PATH}"
+		export LD_LIBRARY_PATH="${ED}${rocm_path}/llvm/lib"
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/bin/clang++"
-			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/bin/flang"
+			-DCMAKE_C_COMPILER="${ESYSROOT}${rocm_path}/llvm/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ESYSROOT}${rocm_path}/llvm/bin/clang++"
+			-DCMAKE_Fortran_COMPILER="${ESYSROOT}${rocm_path}/llvm/bin/flang"
 		)
 	fi
 	export VERBOSE=1
@@ -305,7 +308,8 @@ einfo "Sanitizing file/folder permissions"
 
 src_install() {
 	local staging_prefix="${PWD}/install"
-	local dest="/usr/lib/rocm/${PV}/llvm"
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	local dest="${rocm_path}/llvm"
 	insinto "${dest}"
 	doins -r "${staging_prefix}/"*
 	fix_file_permissions
@@ -314,8 +318,9 @@ src_install() {
 
 pkg_postinst() {
 einfo "Switching ${EROOT}/usr/bin/rocm-flang -> ${EROOT}/usr/bin/flang"
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	ln -sf \
-		"${EROOT}/usr/lib/rocm/${PV}/llvm/bin/flang" \
+		"${EROOT}${rocm_path}/llvm/bin/flang" \
 		"${EROOT}/usr/bin/flang"
 }
 

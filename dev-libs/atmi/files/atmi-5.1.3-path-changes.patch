@@ -18,20 +18,19 @@ diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 -   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n\#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with atmi\")\n@include_statements@ \n\n#endif")
-+   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n\#pragma message(\"This file is deprecated. Use file from include path /usr/include/ and prefix with atmi\")\n@include_statements@ \n\n#endif")
++   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n\#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with atmi\")\n@include_statements@ \n\n#endif")
  endfunction()
  
  #use header template file and generate wrapper header files
 diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
 --- src.orig/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
 +++ src/CMakeLists.txt	2023-08-27 22:18:01.076921401 -0700
-@@ -31,7 +31,8 @@ set (atmi_VERSION_MINOR 5)
+@@ -31,7 +31,7 @@ set (atmi_VERSION_MINOR 5)
  ################################################################################
  if ( NOT DEFINED CMAKE_INSTALL_PREFIX )
  if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set (CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "default install path" FORCE )
-+  set (CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "default install path" FORCE )
-+#_cmake_modify_IGNORE   set (CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "default install path" FORCE )
++  set (CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "default install path" FORCE )
  endif()
  endif()
  
@@ -40,7 +39,7 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
      set(ROC_DIR ${HSA_DIR})
    else()
 -    set(ROC_DIR "/opt/rocm")
-+    set(ROC_DIR "/usr")
++    set(ROC_DIR "@ESYSROOT_ROCM_PATH@")
    endif()
  endif()
  
@@ -49,7 +48,7 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  
  if ( NOT DEFINED CPACK_PACKAGING_INSTALL_PREFIX )
 -    set ( CPACK_PACKAGING_INSTALL_PREFIX /opt/rocm )
-+    set ( CPACK_PACKAGING_INSTALL_PREFIX /usr )
++    set ( CPACK_PACKAGING_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ )
  endif()
  set ( CPACK_GENERATOR "RPM;DEB" CACHE STRING "CPACK Generator to use, e.g. DEB;RPM")
  
@@ -76,8 +75,8 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
      ${ROCR_DIR}
 -    /opt/rocm/include
 -    /opt/rocm/hsa/include
-+    /usr/include
-+    /usr/hsa/include
++    @ESYSROOT_ROCM_PATH@/include
++    @ESYSROOT_ROCM_PATH@/hsa/include
      /usr/local/include
      ENV CPATH
    PATH_SUFFIXES
@@ -94,12 +93,12 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 -    /opt/rocm/lib
 -    /opt/rocm/hsa/lib
 -    /usr/local/lib
-+    /usr/@LIBDIR@
-+    /usr/hsa/@LIBDIR@
-+    /usr/local/@LIBDIR@
++    @ESYSROOT_ROCM_PATH@/@LIBDIR@
++    @ESYSROOT_ROCM_PATH@/hsa/@LIBDIR@
++    @ESYSROOT@/usr/local/@LIBDIR@
      /usr/lib/x86_64-linux-gnu
 -    /usr/lib
-+    /usr/@LIBDIR@
++    @ESYSROOT@/usr/@LIBDIR@
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH
  )
@@ -116,12 +115,12 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 -    /opt/rocm/lib
 -    /opt/rocm/hsa/lib
 -    /usr/local/lib
-+    /usr/@LIBDIR@
-+    /usr/hsa/@LIBDIR@
++    @ESYSROOT_ROCM_PATH@/@LIBDIR@
++    @ESYSROOT_ROCM_PATH@/hsa/@LIBDIR@
 +    /usr/local/@LIBDIR@
      /usr/lib/x86_64-linux-gnu
 -    /usr/lib
-+    /usr/@LIBDIR@
++    @ESYSROOT@/usr/@LIBDIR@
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH
  )
@@ -130,7 +129,7 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
  #   file(GLOB version_files
  #       LIST_DIRECTORIES false
 -#       /opt/rocm/.info/version*
-+#       /usr/.info/version*
++#       @ESYSROOT_ROCM_PATH@/.info/version*
  #       )
  #   list(GET version_files 0 version_file)
  #   # Compute the version
@@ -139,7 +138,7 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
  #       )
  #   if(NOT _rocm_error)
 -#     set(ROCM_VERSION ${_rocm_version} CACHE STRING "Version of ROCm as found in /opt/rocm/.info/version*")
-+#     set(ROCM_VERSION ${_rocm_version} CACHE STRING "Version of ROCm as found in /usr/.info/version*")
++#     set(ROCM_VERSION ${_rocm_version} CACHE STRING "Version of ROCm as found in @ESYSROOT_ROCM_PATH@/.info/version*")
  #   else()
  #     set(ROCM_VERSION "0.0.0" CACHE STRING "Version of ROCm set to default")
  #   endif()
@@ -177,7 +176,7 @@ diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
      -I${CMAKE_CURRENT_SOURCE_DIR}/include
      -I${CMAKE_CURRENT_SOURCE_DIR}/../../include
      -I${CMAKE_CURRENT_SOURCE_DIR}/../runtime/include
-+    --rocm-device-lib-path=/usr/@LIBDIR@/amdgcn/bitcode
++    --rocm-device-lib-path=@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode
      ${CLANG_OPTIONS_APPEND})
  
    set(ll_files)
@@ -212,7 +211,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
 -    "${AMD_DEVICE_LIBS_PREFIX}/lib"
 +    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@/bitcode"
 +    "${AMD_DEVICE_LIBS_PREFIX}/@LIBDIR@"
-+    "/usr/@LIBDIR@/amdgcn/bitcode"
++    "@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode"
    NO_DEFAULT_PATH)
  
  get_filename_component (ATMI_DE_DEP_LIBHSA_LIBRARIES_DIRS ${ATMI_DE_DEP_LIBHSA_LIBRARIES} DIRECTORY)
@@ -252,11 +251,12 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
 diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
 --- src.orig/runtime/core/CMakeLists.txt	2022-05-17 08:16:19.000000000 -0700
 +++ src/runtime/core/CMakeLists.txt	2023-08-27 22:18:01.076921401 -0700
-@@ -23,7 +23,6 @@ find_path (amd_comgr_INCLUDE_DIRS
+@@ -23,7 +23,7 @@ find_path (amd_comgr_INCLUDE_DIRS
      ${ROC_DIR}
      ${ROC_COMGR_INCLUDE_DIR}
      ${ROC_COMGR_INCLUDE_DIR}/include
 -    /opt/rocm/include
++    @ESYSROOT_ROCM_PATH@/include
      /usr/include
      /usr/local/include
      ENV CPATH

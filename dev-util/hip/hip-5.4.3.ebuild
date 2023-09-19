@@ -5,8 +5,9 @@ EAPI=8
 
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.3/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake docs llvm prefix python-any-r1 rocm
 
@@ -27,7 +28,7 @@ DESCRIPTION="C++ Heterogeneous-Compute Interface for Portability"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="$(ver_cut 1-2)/${PV}"
 IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test r20"
 REQUIRED_USE="
 	hsa? (
@@ -196,12 +197,12 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_HIPIFY_CLANG=OFF
 		-DCMAKE_BUILD_TYPE="${buildtype}"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 		-DCMAKE_PREFIX_PATH="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMMON_DIR="${HIP_S}"
-		-DROCM_PATH="${EPREFIX}/usr"
+		-DROCM_PATH="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 		-DUSE_PROF_API=0
 	)
 

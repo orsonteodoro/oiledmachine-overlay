@@ -3,10 +3,12 @@
 
 EAPI=8
 
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 DESCRIPTION="ROCm metapackage"
 HOMEPAGE=""
 LICENSE="metapackage"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE="
 	aqlprofile
@@ -33,79 +35,79 @@ REQUIRED_USE="
 "
 RDEPEND="
 	atmi? (
-		~dev-libs/atmi-${PV}:${SLOT}
+		~dev-libs/atmi-${PV}:${ROCM_SLOT}
 	)
 	hipfort? (
-		~dev-util/hipfort-${PV}:${SLOT}
+		~dev-util/hipfort-${PV}:${ROCM_SLOT}
 	)
 	flang? (
-		~dev-lang/rocm-flang-${PV}:${SLOT}
+		~dev-lang/rocm-flang-${PV}:${ROCM_SLOT}
 	)
 	migraphx? (
-		~sci-libs/MIGraphX-${PV}:${SLOT}[rocm]
+		~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}[rocm]
 	)
 	mivisionx? (
-		~sci-libs/MIVisionX-${PV}:${SLOT}[rocm]
+		~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[rocm]
 	)
 	rdc? (
-		~sys-cluster/rdc-${PV}:${SLOT}
+		~sys-cluster/rdc-${PV}:${ROCM_SLOT}
 	)
 	rock-dkms? (
-		~sys-kernel/rock-dkms-${PV}:${SLOT}
+		~sys-kernel/rock-dkms-${PV}:${ROCM_SLOT}
 	)
 	rocm-bandwidth-test? (
-		~dev-util/rocm_bandwidth_test-${PV}:${SLOT}
+		~dev-util/rocm_bandwidth_test-${PV}:${ROCM_SLOT}
 	)
 	rocm-dev? (
-		~dev-libs/ROCdbgapi-${PV}:${SLOT}
-		~dev-libs/rocm-comgr-${PV}:${SLOT}
-		~dev-libs/rocm-core-${PV}:${SLOT}
-		~dev-libs/rocm-debug-agent-${PV}:${SLOT}
-		~dev-libs/rocm-device-libs-${PV}:${SLOT}
-		~dev-libs/rocm-opencl-runtime-${PV}:${SLOT}
-		~dev-libs/rocr-runtime-${PV}:${SLOT}
-		~dev-libs/roct-thunk-interface-${PV}:${SLOT}
+		~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-debug-agent-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 
-		~dev-util/hip-${PV}:${SLOT}[rocm]
-		~dev-util/HIPIFY-${PV}:${SLOT}
-		~dev-util/rocm-cmake-${PV}:${SLOT}
-		~dev-util/rocm-smi-${PV}:${SLOT}
-		~dev-util/rocprofiler-${PV}:${SLOT}[aqlprofile?]
-		~dev-util/roctracer-${PV}:${SLOT}
+		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+		~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
+		~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}[aqlprofile?]
+		~dev-util/roctracer-${PV}:${ROCM_SLOT}
 
 		dev-util/clinfo
 
 		aqlprofile? (
-			~dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
+			~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
 		)
 	)
 	rocm-gdb? (
-		~dev-util/ROCgdb-${PV}:${SLOT}
+		~dev-util/ROCgdb-${PV}:${ROCM_SLOT}
 	)
 	rocm-libs? (
-		~dev-libs/rccl-${PV}:${SLOT}
-		~dev-libs/rocm-core-${PV}:${SLOT}
-		~sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
-		~sci-libs/hipBLASLt-${PV}:${SLOT}[rocm]
-		~sci-libs/hipCUB-${PV}:${SLOT}[rocm]
-		~sci-libs/hipFFT-${PV}:${SLOT}[rocm]
-		~sci-libs/hipSOLVER-${PV}:${SLOT}[rocm]
-		~sci-libs/hipSPARSE-${PV}:${SLOT}[rocm]
-		~sci-libs/miopen-${PV}:${SLOT}[rocm]
-		~sci-libs/rocALUTION-${PV}:${SLOT}
-		~sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
-		~sci-libs/rocFFT-${PV}:${SLOT}[rocm]
-		~sci-libs/rocPRIM-${PV}:${SLOT}[rocm]
-		~sci-libs/rocRAND-${PV}:${SLOT}[rocm]
-		~sci-libs/rocSOLVER-${PV}:${SLOT}
-		~sci-libs/rocSPARSE-${PV}:${SLOT}
-		~sci-libs/rocThrust-${PV}:${SLOT}
-		~sci-libs/rocWMMA-${PV}:${SLOT}
+		~dev-libs/rccl-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
+		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipBLASLt-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipCUB-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipFFT-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipSOLVER-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/hipSPARSE-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/miopen-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocALUTION-${PV}:${ROCM_SLOT}
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}
+		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}
+		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}
+		~sci-libs/rocWMMA-${PV}:${ROCM_SLOT}
 	)
 	rocm-utils? (
-		~dev-util/rocm-cmake-${PV}:${SLOT}
-		~dev-libs/rocm-core-${PV}:${SLOT}
-		~dev-util/rocminfo-${PV}:${SLOT}
+		~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
+		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
 
 "

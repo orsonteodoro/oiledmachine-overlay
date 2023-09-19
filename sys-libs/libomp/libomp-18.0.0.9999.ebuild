@@ -130,9 +130,9 @@ ROCM_SLOTS=(
 gen_amdgpu_rdepend() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/${pv%.*}"
+		local s="${pv%.*}"
 		echo "
-			(
+			rocm_${s/./_}? (
 				~dev-libs/rocr-runtime-${pv}:${s}
 				~dev-libs/roct-thunk-interface-${pv}:${s}
 			)

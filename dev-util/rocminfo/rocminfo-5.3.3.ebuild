@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
@@ -22,9 +23,9 @@ fi
 DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="UoI-NCSA"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -60,6 +61,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_PREFIX_PATH="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 		-DROCRTST_BLD_TYPE="Release"
 	)
 	cmake_src_configure

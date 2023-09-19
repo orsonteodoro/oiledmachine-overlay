@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
@@ -16,11 +17,12 @@ DESCRIPTION="AMD Debugger API"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" r3"
 RDEPEND="
-	~dev-libs/rocm-comgr-${PV}:${SLOT}
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
+	!dev-libs/ROCdbgapi:0
+	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}

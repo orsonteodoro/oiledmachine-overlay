@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm rocm
 
@@ -23,20 +24,23 @@ fi
 DESCRIPTION="Radeon Open Compute Runtime"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCR-Runtime"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
-IUSE="+aqlprofile"
+SLOT="${ROCM_SLOT}/${PV}"
+IUSE="
+	+aqlprofile system-llvm
+"
 CDEPEND="
 	dev-libs/elfutils
 "
 RDEPEND="
+	!dev-libs/rocr-runtime:0
 	${CDEPEND}
 "
 DEPEND="
 	${CDEPEND}
 	=sys-devel/lld-${LLVM_MAX_SLOT}*
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-libs/roct-thunk-interface-${PV}:${SLOT}
-	~dev-libs/rocm-device-libs-${PV}:${SLOT}
+	~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
+	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 "
 # vim-core is needed for "xxd"
 BDEPEND="
@@ -56,6 +60,7 @@ src_prepare() {
 	cmake_src_prepare
 	if ! use aqlprofile ; then
 		eapply "${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
+		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
 	fi
 	rocm_src_prepare
 }

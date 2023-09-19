@@ -1,0 +1,84 @@
+diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/CMakeLists.txt ROCT-Thunk-Interface-rocm-5.7.0/CMakeLists.txt
+--- ROCT-Thunk-Interface-rocm-5.7.0.orig/CMakeLists.txt	2023-09-18 09:08:12.594571774 -0700
++++ ROCT-Thunk-Interface-rocm-5.7.0/CMakeLists.txt	2023-09-18 09:09:48.158570498 -0700
+@@ -183,7 +183,7 @@ target_compile_options(${HSAKMT_TARGET}
+ 
+ ## Define default paths and packages.
+ if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+-  set ( CMAKE_INSTALL_PREFIX "/opt/rocm" )
++#_cmake_modify_IGNORE   set ( CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" )
+ endif()
+ set ( CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE STRING "Default installation directory." FORCE )
+ set ( CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}"  CACHE STRING "Default packaging prefix." )
+Only in ROCT-Thunk-Interface-rocm-5.7.0: CMakeLists.txt.orig
+Only in ROCT-Thunk-Interface-rocm-5.7.0: CMakeLists.txt.rej
+diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/CMakeLists.txt ROCT-Thunk-Interface-rocm-5.7.0/tests/kfdtest/CMakeLists.txt
+--- ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/CMakeLists.txt	2023-08-09 14:00:06.000000000 -0700
++++ ROCT-Thunk-Interface-rocm-5.7.0/tests/kfdtest/CMakeLists.txt	2023-09-18 09:09:40.250570603 -0700
+@@ -77,7 +77,7 @@ set(CPACK_PACKAGE_VERSION "${PACKAGE_VER
+ 
+ ## Define default variable and variables for the optional build target hsakmt-dev
+ set ( SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Location of hsakmt source code." )
+-set ( CMAKE_INSTALL_PREFIX "/opt/rocm"  CACHE STRING "Default installation directory." )
++#_cmake_modify_IGNORE set ( CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@"  CACHE STRING "Default installation directory." )
+ set ( CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}"  CACHE STRING "Default packaging prefix." )
+ set ( CPACK_GENERATOR "DEB;RPM"  CACHE STRING "Default packaging generators." )
+ 
+@@ -106,7 +106,7 @@ else()
+     if ( ${ROCM_INSTALL_PATH} )
+        set ( ENV{PKG_CONFIG_PATH} ${ROCM_INSTALL_PATH}/share/pkgconfig )
+     else()
+-       set ( ENV{PKG_CONFIG_PATH} /opt/rocm/share/pkgconfig )
++       set ( ENV{PKG_CONFIG_PATH} @ESYSROOT_ROCM_PATH@/share/pkgconfig )
+     endif()
+ 
+     pkg_check_modules(HSAKMT libhsakmt)
+Only in ROCT-Thunk-Interface-rocm-5.7.0/tests/kfdtest: CMakeLists.txt.orig
+Only in ROCT-Thunk-Interface-rocm-5.7.0/tests/kfdtest: CMakeLists.txt.rej
+diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/scripts/run_kfdtest.sh ROCT-Thunk-Interface-rocm-5.7.0/tests/kfdtest/scripts/run_kfdtest.sh
+--- ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/scripts/run_kfdtest.sh	2023-08-09 14:00:06.000000000 -0700
++++ ROCT-Thunk-Interface-rocm-5.7.0/tests/kfdtest/scripts/run_kfdtest.sh	2023-09-18 09:08:30.430571536 -0700
+@@ -33,7 +33,7 @@ done <<EOF
+ $KFDTEST_SHARE_DIR
+ $CWD
+ $CWD/../share/kfdtest
+-/opt/rocm/share/kfdtest
++@ESYSROOT_ROCM_PATH@/share/kfdtest
+ EOF
+ 
+ # Keep these checks until automation starts using the package install
+@@ -48,7 +48,7 @@ fi
+ # This filter will always exist if we sourced a valid kfdtest.exclude
+ if [ -z "${FILTER[core]}" ]; then
+     echo "Unable to locate kfdtest.exclude."
+-    echo "Please set KFDTEST_SHARE_DIR or ensure that kfdtest.exclude is present inside $CWD, $CWD/../share/kfdtest or /opt/rocm/share/kfdtest"
++    echo "Please set KFDTEST_SHARE_DIR or ensure that kfdtest.exclude is present inside $CWD, $CWD/../share/kfdtest or @ESYSROOT_ROCM_PATH@/share/kfdtest"
+     exit 1
+ fi
+ 
+@@ -61,14 +61,14 @@ if [ -z "$(command -v kfdtest)" ]; then
+             BIN_DIR="${0%/*}"
+         else
+             # The default location
+-            BIN_DIR="/opt/rocm/bin"
++            BIN_DIR="@ESYSROOT_ROCM_PATH@/bin"
+         fi
+     fi
+     if [ -e "$BIN_DIR/kfdtest" ]; then
+         KFDTEST="$BIN_DIR/kfdtest"
+     else
+         echo "Unable to locate kfdtest."
+-        echo "Please set BIN_DIR, ensure that kfdtest is in $PATH, or ensure that kfdtest is present inside ${0%/*} or /opt/rocm/bin"
++        echo "Please set BIN_DIR, ensure that kfdtest is in $PATH, or ensure that kfdtest is present inside ${0%/*} or @ESYSROOT_ROCM_PATH@/bin"
+         exit 1
+     fi
+ else
+@@ -274,7 +274,7 @@ while [ "$1" != "" ]; do
+ done
+ 
+ # If the SMI is missing, just report and continue
+-SMI="$(find /opt/rocm* -type l -name rocm-smi | tail -1)"
++SMI="$(find @ESYSROOT_ROCM_PATH@ -type l -name rocm-smi | tail -1)"
+ if [ "$FORCE_HIGH" == "true" ]; then
+     if [ -e "$SMI" ]; then
+         OLDPERF=$($SMI -p | awk '/Performance Level:/ {print $NF; exit}')

@@ -13,6 +13,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 )
 LLVM_MAX_SLOT=14
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic llvm rocm
@@ -25,18 +26,19 @@ https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz
 "
 LICENSE="BSD"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test"
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}[rocm]
-	~dev-util/rocm-smi-${PV}:${SLOT}
+	!dev-libs/rccl:0
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=dev-cpp/gtest-1.11
 	)
@@ -71,11 +73,12 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		# Prevent configure test issues
 		append-flags \
-			--rocm-path="${ESYSROOT}/usr" \
-			--rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
+			--rocm-path="${ESYSROOT}${rocm_path}" \
+			--rocm-device-lib-path="${ESYSROOT}${rocm_path}/$(get_libdir)/amdgcn/bitcode"
 	fi
 
 	export HIP_PLATFORM="amd"
@@ -85,7 +88,7 @@ src_configure() {
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
-		-DROCM_PATH="${EPREFIX}/usr"
+		-DROCM_PATH="${ESYSROOT}${rocm_path}"
 		-DSKIP_RPATH=ON
 		-Wno-dev
 	)

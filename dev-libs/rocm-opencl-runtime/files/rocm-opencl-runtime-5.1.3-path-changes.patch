@@ -6,7 +6,7 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/CMakeLists.txt ROCm-OpenCL-Runtime
  #############################
  if(NOT WIN32)
 -find_package(ROCM QUIET CONFIG PATHS /opt/rocm)
-+find_package(ROCM QUIET CONFIG PATHS /usr)
++find_package(ROCM QUIET CONFIG PATHS @ESYSROOT_ROCM_PATH@)
  if(ROCM_FOUND)
    include(ROCMSetupVersion)
    rocm_setup_version( VERSION "2.0.0" )
@@ -37,7 +37,7 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/packaging/CMakeLists.txt ROCm-Open
  set(CPACK_PACKAGE_DESCRIPTION "OpenCL: Open Computing Language on ROCclr")
  
 -set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm/opencl" CACHE PATH "Package Installation path for OpenCL")
-+set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/opencl" CACHE PATH "Package Installation path for OpenCL")
++set(CPACK_PACKAGING_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@/opencl" CACHE PATH "Package Installation path for OpenCL")
  
  
  
@@ -138,7 +138,7 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.1.3.orig/README.md ROCm-OpenCL-Runtime-rocm
  cd "$OPENCL_DIR"
  mkdir -p build; cd build
 -cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
-+cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/usr/" ..
++cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@ESYSROOT_ROCM_PATH@/" ..
  make -j$(nproc)
  ```
  

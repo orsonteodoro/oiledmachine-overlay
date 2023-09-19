@@ -20,7 +20,7 @@ PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
 KV="6.0.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.5.1/Makefile#L2
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="$(ver_cut 1-2 ${PV})"
 IUSE="
 acpi +build +check-mmu-notifier custom-kernel directgma hybrid-graphics
 numa +sign-modules ssg strict-pairing
@@ -89,6 +89,7 @@ CDEPEND="
 	)
 "
 RDEPEND="
+	!sys-kernel/rock-dkms:0
 	${CDEPEND}
 	sys-kernel/dkms
 "

@@ -6,7 +6,7 @@ diff -urp rocm_bandwidth_test-rocm-5.1.3.orig/CMakeLists.txt rocm_bandwidth_test
  #     export CMAKE_PREFIX_PATH="Path to ROCr Header and ROCr libraries"
  #     
 -#       e.g. export CMAKE_PREFIX_PATH=/opt/rocm/
-+#       e.g. export CMAKE_PREFIX_PATH=/usr
++#       e.g. export CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@
  #       e.g. export CMAKE_PREFIX_PATH=${HOME}/git/compute/out/ubuntu-16.04/16.04/
  #
  #  2) Make an new folder called build under root folder
@@ -54,7 +54,7 @@ diff -urp rocm_bandwidth_test-rocm-5.1.3.orig/CMakeLists.txt rocm_bandwidth_test
  # This scheme could fail when using older builds of ROCm. In such a case the
  # build system relies on user defined locations to find header and library files
 -find_package(hsa-runtime64 PATHS /opt/rocm )
-+find_package(hsa-runtime64 PATHS /usr )
++find_package(hsa-runtime64 PATHS @ESYSROOT_ROCM_PATH@ )
  if(${hsa-runtime64_FOUND})
    message("hsa-runtime64 found @  ${hsa-runtime64_DIR} ")
  else()
@@ -63,12 +63,12 @@ diff -urp rocm_bandwidth_test-rocm-5.1.3.orig/CMakeLists.txt rocm_bandwidth_test
  
    # Search for ROCr header file in user defined locations
 -  find_path(ROCR_HDR hsa.h PATHS ${ROCR_INC_DIR} "/opt/rocm" PATH_SUFFIXES include/hsa REQUIRED)
-+  find_path(ROCR_HDR hsa.h PATHS ${ROCR_INC_DIR} "/usr" PATH_SUFFIXES include/hsa REQUIRED)
++  find_path(ROCR_HDR hsa.h PATHS ${ROCR_INC_DIR} "@ESYSROOT_ROCM_PATH@" PATH_SUFFIXES include/hsa REQUIRED)
    INCLUDE_DIRECTORIES(${ROCR_HDR})
    
    # Search for ROCr library file in user defined locations
 -  find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm" PATH_SUFFIXES lib lib64 REQUIRED)
-+  find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/usr" PATH_SUFFIXES @LIBDIR@ REQUIRED)
++  find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "@ESYSROOT_ROCM_PATH@" PATH_SUFFIXES @LIBDIR@ REQUIRED)
  endif()
  
  #

@@ -1,0 +1,128 @@
+diff -urp rocclr.orig/cmake/ROCclrHSA.cmake rocclr/cmake/ROCclrHSA.cmake
+--- rocclr.orig/cmake/ROCclrHSA.cmake	2023-09-08 08:36:06.000000000 -0700
++++ rocclr/cmake/ROCclrHSA.cmake	2023-09-18 08:19:59.334610410 -0700
+@@ -20,12 +20,11 @@
+ 
+ find_package(hsa-runtime64 1.11 REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    @ESYSROOT_ROCM_PATH@/
+     ${ROCM_INSTALL_PATH}
+   PATH_SUFFIXES
+     cmake/hsa-runtime64
+-    lib/cmake/hsa-runtime64
+-    lib64/cmake/hsa-runtime64)
++    @LIBDIR@/cmake/hsa-runtime64)
+ target_link_libraries(rocclr PUBLIC hsa-runtime64::hsa-runtime64)
+ 
+ find_package(NUMA)
+Only in rocclr/cmake: ROCclrHSA.cmake.orig
+Only in rocclr/cmake: ROCclrHSA.cmake.rej
+diff -urp rocclr.orig/cmake/ROCclrLC.cmake rocclr/cmake/ROCclrLC.cmake
+--- rocclr.orig/cmake/ROCclrLC.cmake	2023-09-08 08:36:06.000000000 -0700
++++ rocclr/cmake/ROCclrLC.cmake	2023-09-18 08:19:08.086611094 -0700
+@@ -20,11 +20,11 @@
+ 
+ find_package(amd_comgr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    @ESYSROOT_ROCM_PATH@/
+     ${ROCM_INSTALL_PATH}
+   PATH_SUFFIXES
+     cmake/amd_comgr
+-    lib/cmake/amd_comgr)
++    @LIBDIR@/cmake/amd_comgr)
+ 
+ target_compile_definitions(rocclr PUBLIC WITH_LIGHTNING_COMPILER USE_COMGR_LIBRARY)
+ if(BUILD_SHARED_LIBS)
+Only in rocclr/cmake: ROCclrLC.cmake.orig
+Only in rocclr/cmake: ROCclrLC.cmake.rej
+diff -urp rocclr.orig/elf/test/CMakeLists.txt rocclr/elf/test/CMakeLists.txt
+--- rocclr.orig/elf/test/CMakeLists.txt	2023-09-08 08:36:06.000000000 -0700
++++ rocclr/elf/test/CMakeLists.txt	2023-09-18 08:18:03.750611953 -0700
+@@ -26,24 +26,24 @@ cmake_minimum_required(VERSION 3.5.1)
+ 
+ find_package(amd_comgr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    @ESYSROOT_ROCM_PATH@/
+   PATH_SUFFIXES
+     cmake/amd_comgr
+-    lib/cmake/amd_comgr)
++    @LIBDIR@/cmake/amd_comgr)
+ 
+ find_package(hsa-runtime64 REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    @ESYSROOT_ROCM_PATH@/
+   PATH_SUFFIXES
+-    cmake/hsa-runtime64)
++    @LIBDIR@/cmake/hsa-runtime64)
+ 
+ find_package(Threads REQUIRED)
+ 
+ # Look for ROCclr which contains elfio
+ find_package(ROCclr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm
+-    /opt/rocm/rocclr)
++    @ESYSROOT_ROCM_PATH@/
++    @ESYSROOT_ROCM_PATH@/rocclr)
+ 
+ add_executable(elf_test main.cpp)
+ set_target_properties(
+@@ -60,4 +60,4 @@ add_definitions(-DUSE_COMGR_LIBRARY -DCO
+ 
+ target_link_libraries(elf_test PRIVATE amdrocclr_static)
+ 
+-#-------------------------------------elf_test--------------------------------------#
+\ No newline at end of file
++#-------------------------------------elf_test--------------------------------------#
+diff -urp rocclr.orig/elf/test/main.cpp rocclr/elf/test/main.cpp
+--- rocclr.orig/elf/test/main.cpp	2023-09-08 08:36:06.000000000 -0700
++++ rocclr/elf/test/main.cpp	2023-09-18 08:18:03.750611953 -0700
+@@ -45,8 +45,8 @@ static constexpr size_t rodataSymbolInfo
+ 
+ // Elf::COMMENT,        ".comment",        1, SHT_PROGBITS, 0,
+ static const amd::Elf::SymbolInfo commentSymbolInfos_[] = {
+-    { ".comment", nullptr, 0, "compile", "-g -I/opt/include",  strlen("-g -I/opt/include") + 1 },
+-    { ".comment", nullptr, 0, "link",    "-g -l/opt/rocm/lib", strlen("-g -l/opt/rocm/lib") + 1 },
++    { ".comment", nullptr, 0, "compile", "-g -I@ESYSROOT_ROCM_PATH@/include",  strlen("-g -I@ESYSROOT_ROCM_PATH@/include") + 1 },
++    { ".comment", nullptr, 0, "link",    "-g -l@ESYSROOT_ROCM_PATH@/@LIBDIR@", strlen("-g -l@ESYSROOT_ROCM_PATH@/@LIBDIR@") + 1 },
+   };
+ static constexpr size_t commentSymbolInfosSize_ = sizeof(commentSymbolInfos_)
+     / sizeof(commentSymbolInfos_[0]);
+diff -urp rocclr.orig/os/os_posix.cpp rocclr/os/os_posix.cpp
+--- rocclr.orig/os/os_posix.cpp	2023-09-08 08:36:06.000000000 -0700
++++ rocclr/os/os_posix.cpp	2023-09-18 08:18:03.750611953 -0700
+@@ -436,7 +436,7 @@ uint64_t Os::timerResolutionNanos() {
+ 
+ const char* Os::libraryExtension() { return MACOS_SWITCH(".dylib", ".so"); }
+ 
+-const char* Os::libraryPrefix() { return "lib"; }
++const char* Os::libraryPrefix() { return "@LIBDIR@"; }
+ 
+ const char* Os::objectExtension() { return ".o"; }
+ 
+Only in rocclr/os: os_posix.cpp.orig
+diff -urp rocclr.orig/README.md rocclr/README.md
+--- rocclr.orig/README.md	2023-09-08 08:36:06.000000000 -0700
++++ rocclr/README.md	2023-09-18 08:21:44.950608999 -0700
+@@ -42,7 +42,7 @@ Here is command to build ROCclr:
+ ```bash
+ cd "$ROCclr_DIR"
+ mkdir -p build; cd build
+-cmake -DOPENCL_DIR="$OPENCL_DIR" -DCMAKE_INSTALL_PREFIX=/opt/rocm/rocclr ..
++cmake -DOPENCL_DIR="$OPENCL_DIR" -DCMAKE_INSTALL_PREFIX=@ESYSROOT_ROCM_PATH@/rocclr ..
+ make -j$(nproc)
+ sudo make install
+ ```
+@@ -55,7 +55,7 @@ git clone -b main https://github.com/ROC
+ export HIP_DIR="$(readlink -f HIP)"
+ cd "$HIP_DIR"
+ mkdir -p build; cd build
+-cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
++cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@ESYSROOT_ROCM_PATH@/" ..
+ make -j$(nproc)
+ ```
+ 
