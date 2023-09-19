@@ -21,7 +21,7 @@ LICENSE="
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
-KV="5.18.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.4.3/Makefile#L2
+KV="6.2.8" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.0/Makefile#L2
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier custom-kernel directgma hybrid-graphics
@@ -53,9 +53,7 @@ gen_kernel_pairs() {
 	)
 	local KVS=(
 		"$(ver_cut 1-2 ${KV})"
-		"5.15"
-		"5.10"
-		"5.4"
+		"6.1"
 	)
 	local kv
 	for flavor in ${FLAVORS[@]} ; do
@@ -79,7 +77,7 @@ gen_kernel_pairs() {
 		done
 	done
 }
-AMDGPU_FIRMWARE_PV="5.13.20.22.10.50103"
+AMDGPU_FIRMWARE_PV="6.1.5.50600"
 CDEPEND="
 	!custom-kernel? (
 		|| (
@@ -113,11 +111,11 @@ https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-$
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.173" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
+DC_VER="3.2.241" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.0/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
-	"${FILESDIR}/rock-dkms-5.1.3-enable-mmu_notifier.patch"
+	"${FILESDIR}/rock-dkms-5.3.3-enable-mmu_notifier.patch"
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 )
 
@@ -349,7 +347,7 @@ check_kernel() {
 eerror
 eerror "The ROCK_DKMS_KERNELS has been renamed to ROCK_DKMS_KERNELS_X_Y, where"
 eerror "X is the major version and Y is the minor version corresponding to this"
-eerror "package.  For this kernel it is named ROCK_DKMS_KERNELS_5_1."
+eerror "package.  For this kernel it is named ROCK_DKMS_KERNELS_5_7."
 eerror
 eerror "Rename it to continue."
 eerror
@@ -357,14 +355,14 @@ eerror
 	fi
 	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
 eerror
-eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_1"
+eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_7"
 eerror "environmental variable."
 eerror
 		die
 	fi
 	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
 eerror
-eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_1"
+eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_7"
 eerror "environmental variable."
 eerror
 		die
@@ -383,29 +381,27 @@ show_supported_kv() {
 ewarn
 ewarn "The following kernel versions are only supported for ${P}:"
 ewarn
-ewarn "Stable 5.18.x [EOL (End of Life)]"
-ewarn "LTS 5.15.x"
-ewarn "LTS 5.10.x"
-ewarn "LTS 5.4.x"
+ewarn "Stable 6.2.x [EOL (End of Life)]"
+ewarn "LTS 6.1.x"
 ewarn
 }
 
 pkg_setup() {
 	show_supported_kv
-	if [[ -z "${ROCK_DKMS_KERNELS_5_1}" ]] ; then
+	if [[ -z "${ROCK_DKMS_KERNELS_5_7}" ]] ; then
 eerror
 eerror "You must define a per-package env or add to /etc/portage/make.conf an"
-eerror "environmental variable named ROCK_DKMS_KERNELS_5_1 containing a space"
+eerror "environmental variable named ROCK_DKMS_KERNELS_5_7 containing a space"
 eerror "delimited <kernvel_ver>-<extra_version>."
 eerror
-eerror "It should look like ROCK_DKMS_KERNELS_5_1=\"${KV}-pf ${KV}-zen\""
+eerror "It should look like ROCK_DKMS_KERNELS_5_7=\"${KV}-pf ${KV}-zen\""
 eerror
 		die
 	fi
 
 if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 	local k
-	for k in ${ROCK_DKMS_KERNELS_5_1} ; do
+	for k in ${ROCK_DKMS_KERNELS_5_7} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
 			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
@@ -640,10 +636,10 @@ ewarn
 }
 
 pkg_postinst() {
-	dkms add "${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
 	if use build ; then
 		local k
-		for k in ${ROCK_DKMS_KERNELS_5_1} ; do
+		for k in ${ROCK_DKMS_KERNELS_5_7} ; do
 			if [[ "${k}" =~ "*" ]] ; then
 				# Pick all point releases:  6.1.*-zen
 				local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \

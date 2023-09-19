@@ -3,6 +3,8 @@
 
 EAPI=8
 
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 inherit linux-info
 
 MAINTAINER_MODE=0
@@ -19,8 +21,8 @@ LICENSE="
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
-KV="6.1.11" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.0/Makefile#L2
-SLOT="$(ver_cut 1-2 ${PV})"
+KV="6.1.11" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/Makefile#L2
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier custom-kernel directgma hybrid-graphics
 numa +sign-modules ssg strict-pairing
@@ -109,7 +111,7 @@ https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-$
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.230" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.0/drivers/gpu/drm/amd/display/dc/dc.h#L48
+DC_VER="3.2.230" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
@@ -341,16 +343,26 @@ check_kernel() {
 	local k="${1}"
 	local kv=$(echo "${k}" \
 		| cut -f1 -d'-')
+	if [[ "${ROCK_DKMS_KERNELS+x}" != "x" ]] ; then
+eerror
+eerror "The ROCK_DKMS_KERNELS has been renamed to ROCK_DKMS_KERNELS_X_Y, where"
+eerror "X is the major version and Y is the minor version corresponding to this"
+eerror "package.  For this kernel it is named ROCK_DKMS_KERNELS_5_6."
+eerror
+eerror "Rename it to continue."
+eerror
+		die
+	fi
 	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
 eerror
-eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS"
+eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_6"
 eerror "environmental variable."
 eerror
 		die
 	fi
 	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
 eerror
-eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS"
+eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_6"
 eerror "environmental variable."
 eerror
 		die
@@ -375,26 +387,25 @@ ewarn
 
 pkg_setup() {
 	show_supported_kv
-	if [[ -z "${ROCK_DKMS_KERNELS}" ]] ; then
+	if [[ -z "${ROCK_DKMS_KERNELS_5_6}" ]] ; then
 eerror
 eerror "You must define a per-package env or add to /etc/portage/make.conf an"
-eerror "environmental variable named ROCK_DKMS_KERNELS containing a space"
+eerror "environmental variable named ROCK_DKMS_KERNELS_5_6 containing a space"
 eerror "delimited <kernvel_ver>-<extra_version>."
 eerror
-eerror "It should look like ROCK_DKMS_KERNELS=\"${KV}-pf ${KV}-zen\""
+eerror "It should look like ROCK_DKMS_KERNELS_5_6=\"${KV}-pf ${KV}-zen\""
 eerror
 		die
 	fi
 
 if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 	local k
-	for k in ${ROCK_DKMS_KERNELS} ; do
+	for k in ${ROCK_DKMS_KERNELS_5_6} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
 			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
 				| sort --version-sort -r \
-				| cut -f 4 -d "/" \
-				| sed -e "s|linux-||")
+				| sed -e "s|.*/linux-||")
 			local v
 			for v in ${V} ; do
 				k="${v}"
@@ -406,8 +417,7 @@ if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
 				| sort --version-sort -r \
 				| head -n 1 \
-				| cut -f 4 -d "/" \
-				| sed -e "s|linux-||")
+				| sed -e "s|.*/linux-||")
 			check_kernel "${k}"
 		else
 			check_kernel "${k}"
@@ -628,13 +638,12 @@ pkg_postinst() {
 	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
 	if use build ; then
 		local k
-		for k in ${ROCK_DKMS_KERNELS} ; do
+		for k in ${ROCK_DKMS_KERNELS_5_6} ; do
 			if [[ "${k}" =~ "*" ]] ; then
 				# Pick all point releases:  6.1.*-zen
 				local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
 					| sort --version-sort -r \
-					| cut -f 4 -d "/" \
-					| sed -e "s|linux-||")
+					| sed -e "s|.*/linux-||")
 				local v
 				for v in ${V} ; do
 					k="${v}"
@@ -646,8 +655,7 @@ pkg_postinst() {
 				k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" \
 					| sort --version-sort -r \
 					| head -n 1 \
-					| cut -f 4 -d "/" \
-					| sed -e "s|linux-||")
+					| sed -e "s|.*/linux-||")
 				dkms_build
 			else
 				dkms_build

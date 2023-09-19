@@ -29,17 +29,23 @@
     vanilla amdgpu module that can be used to tune ROCk, SSG, power savings,
     memory usage.  For details, do `modinfo amdgpu`.
 
+
     It must look like:
 
-    ROCK_DKMS_KERNELS="5.2.17-pf 5.2.17-gentoo"
+    ROCK_DKMS_KERNELS_5_7="6.1.53-builder 6.1.^-gaming 6.1.^-pf"
+
+    * 5_7 comes from the package major/minor version for this package.
+    ROCK_DKMS_KERNELS_X_Y contains a X the major version and Y the minor
+    version.  sys-kernel/rocm-dkms-5.7.0 would correspond to
+    ROCK_DKMS_KERNELS_5_7.
 
     Use:
 
     * to build all point releases
-    Examples: 5.2.*-ot
+    Examples: 5.2.*-builder
 
     ^ to build only the highest point release
-    Examples: 5.2.^-ot
+    Examples: 5.2.^-builder
 
   -->
   <upstream>
