@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm test r20"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm system-llvm test r20"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -91,8 +91,14 @@ RDEPEND="
 		sys-process/numactl
 	)
 	rocm? (
-		=sys-devel/clang-${LLVM_MAX_SLOT}*:=
-		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
+		!system-llvm? (
+			sys-devel/llvm-rocm:=
+			~sys-devel/llvm-rocm-${PV}:${ROCM_SLOT}
+		)
+		system-llvm? (
+			=sys-devel/clang-${LLVM_MAX_SLOT}*:=
+			=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
+		)
 		~dev-libs/rocr-runtime-${PV}:${SLOT}
 		~dev-util/rocminfo-${PV}:${SLOT}
 	)
@@ -240,6 +246,7 @@ src_configure() {
 		-DHIP_COMMON_DIR="${HIP_S}"
 		-DROCM_PATH="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 		-DUSE_PROF_API=$(usex profile 1 0)
+		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
 	)
 
 	if use cuda ; then

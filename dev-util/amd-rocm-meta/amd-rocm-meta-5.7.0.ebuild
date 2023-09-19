@@ -14,6 +14,7 @@ IUSE="
 	aqlprofile
 	flang
 	hipfort
+	hiptensor
 	migraphx
 	mivisionx
 	rdc
@@ -104,6 +105,9 @@ RDEPEND="
 		~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
+	)
+	hiptensor? (
+		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}
 	)
 "
 

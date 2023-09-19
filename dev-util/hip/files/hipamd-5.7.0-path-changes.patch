@@ -1,6 +1,6 @@
 diff -urp hipamd.orig/bin/roc-obj hipamd/bin/roc-obj
 --- hipamd.orig/bin/roc-obj	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/bin/roc-obj	2023-09-18 08:37:52.154596084 -0700
++++ hipamd/bin/roc-obj	2023-09-19 10:46:50.761338976 -0700
 @@ -48,9 +48,8 @@
  #| finding the executable, an error occurs. The first directory searched is the
  #| one containing the hard-link to the roc-obj being executed, known as the
@@ -8,7 +8,7 @@ diff -urp hipamd.orig/bin/roc-obj hipamd/bin/roc-obj
 -#| it is searched; otherwise, the base directory path is appended with
 -#| "../../llvm/bin" and it is searched. Finally, the PATH is searched as if by
 -#| a POSIX "execvp" function.
-+#| it is searched; otherwise, "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin" is
++#| it is searched; otherwise, "@ESYSROOT_LLVM_PATH_COND@/bin" is
 +#| searched. Finally, the PATH is searched as if by a POSIX "execvp" function.
  #|
  #| Option Descriptions:
@@ -18,13 +18,13 @@ diff -urp hipamd.orig/bin/roc-obj hipamd/bin/roc-obj
    local file
    local searched=()
 -  for dir in "$BASE_DIR" "${HIP_CLANG_PATH:-"$BASE_DIR/../../llvm/bin"}"; do
-+  for dir in "$BASE_DIR" "${HIP_CLANG_PATH:-"@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin"}"; do
++  for dir in "$BASE_DIR" "${HIP_CLANG_PATH:-"@ESYSROOT_LLVM_PATH_COND@/bin"}"; do
      file="$dir/$command"
      if [[ -x $file ]]; then
        printf "%s" "$file"
 diff -urp hipamd.orig/CMakeLists.txt hipamd/CMakeLists.txt
---- hipamd.orig/CMakeLists.txt	2023-09-18 08:36:37.690597078 -0700
-+++ hipamd/CMakeLists.txt	2023-09-18 08:37:52.154596084 -0700
+--- hipamd.orig/CMakeLists.txt	2023-09-19 10:45:22.885340149 -0700
++++ hipamd/CMakeLists.txt	2023-09-19 10:45:40.877339909 -0700
 @@ -233,7 +233,7 @@ add_to_config(_buildInfo HIP_RUNTIME)
  add_to_config(_buildInfo HIP_COMPILER)
  
@@ -54,7 +54,7 @@ diff -urp hipamd.orig/CMakeLists.txt hipamd/CMakeLists.txt
      endif()
 diff -urp hipamd.orig/hip-backward-compat.cmake hipamd/hip-backward-compat.cmake
 --- hipamd.orig/hip-backward-compat.cmake	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/hip-backward-compat.cmake	2023-09-18 08:37:52.154596084 -0700
++++ hipamd/hip-backward-compat.cmake	2023-09-19 10:45:40.877339909 -0700
 @@ -23,7 +23,7 @@ set(HIP_BUILD_DIR ${CMAKE_CURRENT_BINARY
  set(HIP_WRAPPER_DIR ${HIP_BUILD_DIR}/wrapper_dir)
  set(HIP_WRAPPER_INC_DIR ${HIP_WRAPPER_DIR}/include/hip)
@@ -114,20 +114,20 @@ diff -urp hipamd.orig/hip-backward-compat.cmake hipamd/hip-backward-compat.cmake
 +install(DIRECTORY ${HIP_WRAPPER_CMAKE_DIR}/hip DESTINATION hip/@LIBDIR@/cmake COMPONENT dev)
  install(DIRECTORY ${HIP_WRAPPER_FINDHIP_DIR}/ DESTINATION hip/cmake COMPONENT dev)
 diff -urp hipamd.orig/hip-config-amd.cmake hipamd/hip-config-amd.cmake
---- hipamd.orig/hip-config-amd.cmake	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/hip-config-amd.cmake	2023-09-18 08:40:23.606594061 -0700
+--- hipamd.orig/hip-config-amd.cmake	2023-09-19 10:45:22.913340149 -0700
++++ hipamd/hip-config-amd.cmake	2023-09-19 10:46:51.673338964 -0700
 @@ -57,7 +57,7 @@ if(WIN32)
      file(TO_CMAKE_PATH "${HIP_PATH}/../lc" HIP_CLANG_ROOT)
    endif()
  else()
 -  set(HIP_CLANG_ROOT "${ROCM_PATH}/llvm")
-+  set(HIP_CLANG_ROOT "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@")
++  set(HIP_CLANG_ROOT "@ESYSROOT_LLVM_PATH_COND@")
  endif()
  if(NOT HIP_CXX_COMPILER)
    set(HIP_CXX_COMPILER ${CMAKE_CXX_COMPILER})
 diff -urp hipamd.orig/hip-config.cmake.in hipamd/hip-config.cmake.in
 --- hipamd.orig/hip-config.cmake.in	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/hip-config.cmake.in	2023-09-18 08:37:52.154596084 -0700
++++ hipamd/hip-config.cmake.in	2023-09-19 10:45:40.877339909 -0700
 @@ -83,17 +83,17 @@ function(hip_add_interface_link_flags TA
    endif()
  endfunction()
@@ -154,7 +154,7 @@ diff -urp hipamd.orig/hip-config.cmake.in hipamd/hip-config.cmake.in
  set(HIP_PACKAGE_PREFIX_DIR  ${PACKAGE_PREFIX_DIR})
 diff -urp hipamd.orig/install.sh hipamd/install.sh
 --- hipamd.orig/install.sh	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/install.sh	2023-09-18 08:37:52.154596084 -0700
++++ hipamd/install.sh	2023-09-19 10:45:40.877339909 -0700
 @@ -71,7 +71,7 @@ SRC_ROOT="$( cd "$( dirname "${BASH_SOUR
  WORKING_DIR=$PWD
  DASH_JAY="-j $(getconf _NPROCESSORS_ONLN)"
@@ -165,8 +165,8 @@ diff -urp hipamd.orig/install.sh hipamd/install.sh
  err() {
      echo "${1-Died}." >&2
 diff -urp hipamd.orig/packaging/CMakeLists.txt hipamd/packaging/CMakeLists.txt
---- hipamd.orig/packaging/CMakeLists.txt	2023-09-18 08:36:37.698597078 -0700
-+++ hipamd/packaging/CMakeLists.txt	2023-09-18 08:37:52.154596084 -0700
+--- hipamd.orig/packaging/CMakeLists.txt	2023-09-19 10:45:22.893340149 -0700
++++ hipamd/packaging/CMakeLists.txt	2023-09-19 10:45:40.877339909 -0700
 @@ -42,20 +42,20 @@ set(CPACK_RPM_PACKAGE_LICENSE "MIT")
  #Begin binary files install
  if(HIP_PLATFORM STREQUAL "amd" )
@@ -201,7 +201,7 @@ diff -urp hipamd.orig/packaging/CMakeLists.txt hipamd/packaging/CMakeLists.txt
  #TODO:This do not belong in BINARY package.
 diff -urp hipamd.orig/packaging/hip-runtime-amd.postinst hipamd/packaging/hip-runtime-amd.postinst
 --- hipamd.orig/packaging/hip-runtime-amd.postinst	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/packaging/hip-runtime-amd.postinst	2023-09-18 08:37:52.154596084 -0700
++++ hipamd/packaging/hip-runtime-amd.postinst	2023-09-19 10:45:40.877339909 -0700
 @@ -21,7 +21,7 @@
  
  ROCMDIR=@ROCM_PATH@
@@ -213,7 +213,7 @@ diff -urp hipamd.orig/packaging/hip-runtime-amd.postinst hipamd/packaging/hip-ru
  mkdir -p $HIPCMAKEDIR/hip
 diff -urp hipamd.orig/packaging/hip-runtime-amd.prerm hipamd/packaging/hip-runtime-amd.prerm
 --- hipamd.orig/packaging/hip-runtime-amd.prerm	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/packaging/hip-runtime-amd.prerm	2023-09-18 08:37:52.154596084 -0700
++++ hipamd/packaging/hip-runtime-amd.prerm	2023-09-19 10:45:40.877339909 -0700
 @@ -21,9 +21,9 @@
  
  ROCMDIR=@ROCM_PATH@
@@ -229,7 +229,7 @@ diff -urp hipamd.orig/packaging/hip-runtime-amd.prerm hipamd/packaging/hip-runti
  
 diff -urp hipamd.orig/packaging/hip-runtime-nvidia.postinst hipamd/packaging/hip-runtime-nvidia.postinst
 --- hipamd.orig/packaging/hip-runtime-nvidia.postinst	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/packaging/hip-runtime-nvidia.postinst	2023-09-18 08:37:52.154596084 -0700
++++ hipamd/packaging/hip-runtime-nvidia.postinst	2023-09-19 10:45:40.877339909 -0700
 @@ -23,5 +23,5 @@ ROCMDIR=@ROCM_PATH@
  HIPDIR=$ROCMDIR/hip
  
@@ -239,7 +239,7 @@ diff -urp hipamd.orig/packaging/hip-runtime-nvidia.postinst hipamd/packaging/hip
  fi
 diff -urp hipamd.orig/packaging/hip-runtime-nvidia.prerm hipamd/packaging/hip-runtime-nvidia.prerm
 --- hipamd.orig/packaging/hip-runtime-nvidia.prerm	2023-09-08 08:36:06.000000000 -0700
-+++ hipamd/packaging/hip-runtime-nvidia.prerm	2023-09-18 08:37:52.154596084 -0700
++++ hipamd/packaging/hip-runtime-nvidia.prerm	2023-09-19 10:45:40.877339909 -0700
 @@ -19,6 +19,6 @@
  # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  # THE SOFTWARE.
@@ -250,8 +250,8 @@ diff -urp hipamd.orig/packaging/hip-runtime-nvidia.prerm hipamd/packaging/hip-ru
 +   unlink @ESYSROOT_ROCM_PATH@
  fi
 diff -urp hipamd.orig/src/CMakeLists.txt hipamd/src/CMakeLists.txt
---- hipamd.orig/src/CMakeLists.txt	2023-09-18 08:36:37.706597078 -0700
-+++ hipamd/src/CMakeLists.txt	2023-09-18 08:37:52.154596084 -0700
+--- hipamd.orig/src/CMakeLists.txt	2023-09-19 10:45:22.901340149 -0700
++++ hipamd/src/CMakeLists.txt	2023-09-19 10:46:52.601338951 -0700
 @@ -66,9 +66,9 @@ set_target_properties(amdhip64 PROPERTIE
    CXX_EXTENSIONS OFF
    POSITION_INDEPENDENT_CODE ON
@@ -271,11 +271,11 @@ diff -urp hipamd.orig/src/CMakeLists.txt hipamd/src/CMakeLists.txt
      PATHS
 -      ${ROCM_PATH}/llvm)
 -  # find_package(LLVM) returns the lib/cmake/llvm location. We require the root.
-+      ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
++      @ESYSROOT_LLVM_PATH_COND@)
 +  # find_package(LLVM) returns the @LIBDIR@/cmake/llvm location. We require the root.
    if(NOT DEFINED HIP_LLVM_ROOT)
 -    set(HIP_LLVM_ROOT "${LLVM_DIR}/../../..")
-+    set(HIP_LLVM_ROOT "@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@")
++    set(HIP_LLVM_ROOT "@ESYSROOT_LLVM_PATH_COND@")
    endif()
  
    execute_process(COMMAND sh -c "${CMAKE_CURRENT_SOURCE_DIR}/hip_embed_pch.sh ${HIP_COMMON_INCLUDE_DIR} ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/include ${HIP_LLVM_ROOT}" COMMAND_ECHO STDERR RESULT_VARIABLE EMBED_PCH_RC WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -301,8 +301,8 @@ diff -urp hipamd.orig/src/CMakeLists.txt hipamd/src/CMakeLists.txt
  
  INSTALL(TARGETS amdhip64 host device
 diff -urp hipamd.orig/src/hiprtc/CMakeLists.txt hipamd/src/hiprtc/CMakeLists.txt
---- hipamd.orig/src/hiprtc/CMakeLists.txt	2023-09-18 08:36:37.638597079 -0700
-+++ hipamd/src/hiprtc/CMakeLists.txt	2023-09-18 08:37:52.154596084 -0700
+--- hipamd.orig/src/hiprtc/CMakeLists.txt	2023-09-19 10:45:22.837340150 -0700
++++ hipamd/src/hiprtc/CMakeLists.txt	2023-09-19 10:46:49.593338992 -0700
 @@ -44,8 +44,8 @@ set_target_properties(hiprtc PROPERTIES
    CXX_STANDARD_REQUIRED ON
    CXX_EXTENSIONS OFF
@@ -320,8 +320,8 @@ diff -urp hipamd.orig/src/hiprtc/CMakeLists.txt hipamd/src/hiprtc/CMakeLists.txt
  # Requires clang and llvm-mc to create this library.
 -find_package(LLVM REQUIRED CONFIG PATHS ${ROCM_PATH}/llvm)
 -find_package(Clang REQUIRED CONFIG PATHS ${ROCM_PATH}/llvm)
-+find_package(LLVM REQUIRED CONFIG PATHS ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
-+find_package(Clang REQUIRED CONFIG PATHS ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
++find_package(LLVM REQUIRED CONFIG PATHS @ESYSROOT_LLVM_PATH_COND@)
++find_package(Clang REQUIRED CONFIG PATHS @ESYSROOT_LLVM_PATH_COND@)
  set(HIPRTC_GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/hip_rtc_gen")
  set(HIPRTC_GEN_HEADER "${HIPRTC_GEN_DIR}/hipRTC_header.h")
  set(HIPRTC_GEN_MCIN "${HIPRTC_GEN_DIR}/hipRTC_header.mcin")

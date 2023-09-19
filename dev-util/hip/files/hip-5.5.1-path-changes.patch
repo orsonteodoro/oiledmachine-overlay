@@ -1,6 +1,6 @@
 diff -urp HIP-rocm-5.5.1.orig/bin/hipcc.pl HIP-rocm-5.5.1/bin/hipcc.pl
---- HIP-rocm-5.5.1.orig/bin/hipcc.pl	2023-08-30 14:58:24.482788782 -0700
-+++ HIP-rocm-5.5.1/bin/hipcc.pl	2023-08-30 15:00:20.114791110 -0700
+--- HIP-rocm-5.5.1.orig/bin/hipcc.pl	2023-09-19 10:25:34.801356015 -0700
++++ HIP-rocm-5.5.1/bin/hipcc.pl	2023-09-19 10:30:51.985351779 -0700
 @@ -39,11 +39,11 @@ use Cwd 'abs_path';
  # If HIP_PLATFORM is not set hipcc will attempt auto-detect based on if nvcc is found.
  #
@@ -13,7 +13,7 @@ diff -urp HIP-rocm-5.5.1.orig/bin/hipcc.pl HIP-rocm-5.5.1/bin/hipcc.pl
 +# HIP_PATH       : Path to HIP directory (defaults to /usr).
 +# CUDA_PATH      : Path to CUDA SDK (defaults /opt/cuda).  Used on NVIDIA platforms only.
 +# HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to /usr).  Used on AMD platforms only.
-+# HIP_CLANG_PATH : Path to HIP-Clang (default to @ESYSROOT@/lib/llvm/@LLVM_SLOT@/bin)
++# HIP_CLANG_PATH : Path to HIP-Clang (default to @ESYSROOT_LLVM_PATH_COND@/bin)
 +#                  Used on AMD platforms only.
  
  if(scalar @ARGV == 0){
@@ -97,10 +97,9 @@ diff -urp HIP-rocm-5.5.1.orig/bin/hipcc.pl HIP-rocm-5.5.1/bin/hipcc.pl
              $HIPCXXFLAGS .= " --hip-device-lib-path=\"$DEVICE_LIB_PATH\"";
          }
      }
-Only in HIP-rocm-5.5.1/bin: hipcc.pl.orig
 diff -urp HIP-rocm-5.5.1.orig/bin/hipconfig.pl HIP-rocm-5.5.1/bin/hipconfig.pl
 --- HIP-rocm-5.5.1.orig/bin/hipconfig.pl	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/bin/hipconfig.pl	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/bin/hipconfig.pl	2023-09-19 10:25:54.177355756 -0700
 @@ -46,6 +46,7 @@ $CUDA_PATH      =   $hipvars::CUDA_PATH;
  $HIP_PATH       =   $hipvars::HIP_PATH;
  $ROCM_PATH      =   $hipvars::ROCM_PATH;
@@ -129,13 +128,13 @@ diff -urp HIP-rocm-5.5.1.orig/bin/hipconfig.pl HIP-rocm-5.5.1/bin/hipconfig.pl
      print "  --platform, -P     : print platform (amd or nvidia)\n";
 diff -urp HIP-rocm-5.5.1.orig/bin/hipvars.pm HIP-rocm-5.5.1/bin/hipvars.pm
 --- HIP-rocm-5.5.1.orig/bin/hipvars.pm	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/bin/hipvars.pm	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/bin/hipvars.pm	2023-09-19 10:30:53.009351766 -0700
 @@ -67,11 +67,11 @@ $isWindows =  ($^O eq 'MSWin32' or $^O e
  #
  # Since this hipcc script gets installed at two uneven hierarchical levels,
  # linked by symlink, the absolute path of this script should be used to
 -# derive HIP_PATH, as dirname $0 could be /opt/rocm/bin or /opt/rocm/hip/bin
-+# derive HIP_PATH, as dirname $0 could be @ESYSROOT_ROCM_PATH@/bin or /usr/bin
++# derive HIP_PATH, as dirname $0 could be @ESYSROOT_ROCM_PATH@/bin
  # depending on how it gets invoked.
  # ROCM_PATH which points to <rocm_install_dir> is determined based on whether
  # we find bin/rocm_agent_enumerator in the parent of HIP_PATH or not. If it is found,
@@ -152,14 +151,14 @@ diff -urp HIP-rocm-5.5.1.orig/bin/hipvars.pm HIP-rocm-5.5.1/bin/hipvars.pm
 +    $ROCM_PATH=$ENV{'ROCM_PATH'} // "@ESYSROOT_ROCM_PATH@";
  }
 -$CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
-+$CUDA_PATH=$ENV{'CUDA_PATH'} // '/opt/cuda';
++$CUDA_PATH=$ENV{'CUDA_PATH'} // '@ESYSROOT@/opt/cuda';
  
  # Windows has a different structure, all binaries are inside hip/bin
  if ($isWindows) {
      $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$HIP_PATH/bin";
  } else {
 -    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/llvm/bin";
-+    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/lib/llvm/@LLVM_SLOT@/bin";
++    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "@ESYSROOT_LLVM_PATH_COND@/bin";
  }
  # HIP_ROCCLR_HOME is used by Windows builds
  $HIP_ROCCLR_HOME=$ENV{'HIP_ROCCLR_HOME'};
@@ -175,82 +174,85 @@ diff -urp HIP-rocm-5.5.1.orig/bin/hipvars.pm HIP-rocm-5.5.1/bin/hipvars.pm
  #HIP_PLATFORM controls whether to use nvidia or amd platform:
 diff -urp HIP-rocm-5.5.1.orig/cmake/FindHIP.cmake HIP-rocm-5.5.1/cmake/FindHIP.cmake
 --- HIP-rocm-5.5.1.orig/cmake/FindHIP.cmake	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/cmake/FindHIP.cmake	2023-08-30 14:58:39.794789090 -0700
-@@ -255,27 +255,29 @@ elseif("${HIP_COMPILER}" STREQUAL "clang
-     if("x${HIP_CLANG_PATH}" STREQUAL "x")
-       # IF HIP_CLANG_INSTALL_DIR is Found
-       if( HIP_CLANG_INSTALL_DIR )
++++ HIP-rocm-5.5.1/cmake/FindHIP.cmake	2023-09-19 10:30:42.385351907 -0700
+@@ -252,35 +252,7 @@ if("${HIP_COMPILER}" STREQUAL "nvcc")
+     set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+ elseif("${HIP_COMPILER}" STREQUAL "clang")
+     #Set HIP_CLANG_PATH
+-    if("x${HIP_CLANG_PATH}" STREQUAL "x")
+-      # IF HIP_CLANG_INSTALL_DIR is Found
+-      if( HIP_CLANG_INSTALL_DIR )
 -        set(HIP_CLANG_PATH ${HIP_CLANG_INSTALL_DIR})
-+        set(HIP_CLANG_PATH "${HIP_CLANG_INSTALL_DIR}/bin")
-       else() # IF HIP_CLANG_INSTALL_DIR is not found
-         if(DEFINED ENV{HIP_CLANG_PATH})
-             set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
-         elseif(DEFINED ENV{ROCM_PATH})
+-      else() # IF HIP_CLANG_INSTALL_DIR is not found
+-        if(DEFINED ENV{HIP_CLANG_PATH})
+-            set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+-        elseif(DEFINED ENV{ROCM_PATH})
 -            set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/llvm/bin")
-+            set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-         elseif(DEFINED ENV{HIP_PATH})
+-        elseif(DEFINED ENV{HIP_PATH})
 -            if(EXISTS "$ENV{HIP_PATH}/llvm/bin") #File Reorg backward compatibility
 -                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/llvm/bin")
-+            if(EXISTS "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #File Reorg backward compatibility
-+                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-             else()
+-            else()
 -                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../llvm/bin")
-+                set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
-             endif()
-         elseif(DEFINED HIP_PATH)
+-            endif()
+-        elseif(DEFINED HIP_PATH)
 -            if(EXISTS "${HIP_PATH}/llvm/bin") #File Reorg backward compatibility
 -                set(HIP_CLANG_PATH "${HIP_PATH}/llvm/bin")
-+            if(EXISTS "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #File Reorg backward compatibility
-+                set(HIP_CLANG_PATH "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-             else()
+-            else()
 -                set(HIP_CLANG_PATH "${HIP_PATH}/../llvm/bin")
-+                set(HIP_CLANG_PATH "${HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
-             endif()
-         # Handle the case where ROCM_PATH is defined and not set in ENV
-         elseif(DEFINED ROCM_PATH)
+-            endif()
+-        # Handle the case where ROCM_PATH is defined and not set in ENV
+-        elseif(DEFINED ROCM_PATH)
 -            set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
-+            set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-+        elseif(EXISTS "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-+            set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-         else()
-             message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env ")
-         endif()
-@@ -696,22 +698,24 @@ macro(HIP_ADD_EXECUTABLE hip_target)
-             if(DEFINED ENV{HIP_CLANG_PATH})
-                 set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
-             elseif(DEFINED ENV{ROCM_PATH})
+-        else()
+-            message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env ")
+-        endif()
+-      endif() # HIP_CLANG_INSTALL_DIR Check
+-    endif() # Set HIP_CLANG_PATH
++    set(HIP_CLANG_PATH "@ESYSROOT_LLVM_PATH_COND@/bin")
+ 
+     #Number of parallel jobs by default is 1
+     if(NOT DEFINED HIP_CLANG_NUM_PARALLEL_JOBS)
+@@ -688,36 +660,7 @@ macro(HIP_ADD_EXECUTABLE hip_target)
+         list(REMOVE_ITEM _sources ${_source_files})
+     endif()
+     if("${HIP_COMPILER}" STREQUAL "clang")
+-        if("x${HIP_CLANG_PATH}" STREQUAL "x")
+-          # IF HIP_CLANG_INSTALL_DIR is Found
+-          if( HIP_CLANG_INSTALL_DIR )
+-            set(HIP_CLANG_PATH ${HIP_CLANG_INSTALL_DIR})
+-          else() # IF HIP_CLANG_INSTALL_DIR is not found
+-            if(DEFINED ENV{HIP_CLANG_PATH})
+-                set(HIP_CLANG_PATH $ENV{HIP_CLANG_PATH})
+-            elseif(DEFINED ENV{ROCM_PATH})
 -                set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/llvm/bin")
-+                set(HIP_CLANG_PATH "$ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-             elseif(DEFINED ENV{HIP_PATH})
+-            elseif(DEFINED ENV{HIP_PATH})
 -                if(EXISTS "$ENV{HIP_PATH}/llvm/bin") #file reorg backward compatibility
 -                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/llvm/bin")
-+                if(EXISTS "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #file reorg backward compatibility
-+                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-                 else()
+-                else()
 -                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../llvm/bin")
-+                    set(HIP_CLANG_PATH "$ENV{HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
-                 endif()
-             elseif(DEFINED HIP_PATH)
+-                endif()
+-            elseif(DEFINED HIP_PATH)
 -                if(EXISTS "${HIP_PATH}/llvm/bin") #file reorg backward compatibility
 -                    set(HIP_CLANG_PATH "${HIP_PATH}/llvm/bin")
-+                if(EXISTS "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin") #file reorg backward compatibility
-+                    set(HIP_CLANG_PATH "${HIP_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-                 else()
+-                else()
 -                    set(HIP_CLANG_PATH "${HIP_PATH}/../llvm/bin")
-+                    set(HIP_CLANG_PATH "${HIP_PATH}/../lib/llvm/@LLVM_SLOT@/bin")
-                 endif()
-             # Handle  the case where ROCM_PATH is defined and not set in ENV
-             elseif(DEFINED ROCM_PATH)
+-                endif()
+-            # Handle  the case where ROCM_PATH is defined and not set in ENV
+-            elseif(DEFINED ROCM_PATH)
 -                set(HIP_CLANG_PATH "${ROCM_PATH}/llvm/bin")
-+                set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-+            elseif(EXISTS "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-+                set(HIP_CLANG_PATH "${ROCM_PATH}/lib/llvm/@LLVM_SLOT@/bin")
-             else()
-                 message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env")
-             endif()
+-            else()
+-                message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env")
+-            endif()
+-          endif() # HIP_CLANG_INSTALL_DIR Check
+-        endif()
+-
++        set(HIP_CLANG_PATH "@ESYSROOT_LLVM_PATH_COND@/bin")
+         set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} ${HIP_CLANG_PATH} ${HIP_CLANG_PARALLEL_BUILD_LINK_OPTIONS} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
+     else()
+         set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
 diff -urp HIP-rocm-5.5.1.orig/CONTRIBUTING.md HIP-rocm-5.5.1/CONTRIBUTING.md
 --- HIP-rocm-5.5.1.orig/CONTRIBUTING.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/CONTRIBUTING.md	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/CONTRIBUTING.md	2023-09-19 10:30:54.049351752 -0700
 @@ -1,7 +1,7 @@
  # Contributor Guidelines
  
@@ -265,30 +267,31 @@ diff -urp HIP-rocm-5.5.1.orig/CONTRIBUTING.md HIP-rocm-5.5.1/CONTRIBUTING.md
  
  ```
 -$ <ROCM_PATH>/llvm/bin/clang -v
-+$ <ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/clang -v
- clang version 11.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
+-clang version 11.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
++$ @ESYSROOT_LLVM_PATH_COND@/bin/clang -v
++clang version @LLVM_SLOT@.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
  Target: x86_64-unknown-linux-gnu
  Thread model: posix
 -InstalledDir: <ROCM_PATH>/llvm/bin
-+InstalledDir: <ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin
++InstalledDir: @ESYSROOT_LLVM_PATH_COND@/bin
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7.5.0
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/8
 diff -urp HIP-rocm-5.5.1.orig/docs/markdown/gen_clang_option_doc.sh HIP-rocm-5.5.1/docs/markdown/gen_clang_option_doc.sh
 --- HIP-rocm-5.5.1.orig/docs/markdown/gen_clang_option_doc.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/docs/markdown/gen_clang_option_doc.sh	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/docs/markdown/gen_clang_option_doc.sh	2023-09-19 10:30:51.041351792 -0700
 @@ -21,7 +21,7 @@
  
  ## generates documentation about clang options.
  
 -clang=/opt/rocm*/llvm/bin/clang
-+clang="@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/clang"
++clang="@ESYSROOT_LLVM_PATH_COND@/bin/clang"
  
  exec > clang_options.md
  
 diff -urp HIP-rocm-5.5.1.orig/docs/markdown/hip_build.md HIP-rocm-5.5.1/docs/markdown/hip_build.md
 --- HIP-rocm-5.5.1.orig/docs/markdown/hip_build.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/docs/markdown/hip_build.md	2023-08-30 14:59:25.522790011 -0700
++++ HIP-rocm-5.5.1/docs/markdown/hip_build.md	2023-09-19 10:30:50.017351806 -0700
 @@ -50,7 +50,7 @@ export ROCM_BRANCH=rocm-5.4.x
  ```
  Similiar format for future branches.
@@ -308,7 +311,7 @@ diff -urp HIP-rocm-5.5.1.orig/docs/markdown/hip_build.md HIP-rocm-5.5.1/docs/mar
 -   * By default HIP looks for device library in <ROCM_PATH>/lib (can be overridden by setting DEVICE_LIB_PATH environment variable).
 +   * By default HIP looks for HSA in <ROCM_PATH> (can be overridden by setting HSA_PATH environment variable).
 +   * By default HIP is installed into <ROCM_PATH>r (can be overridden by setting HIP_PATH environment variable).
-+   * By default HIP looks for clang in <ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin (can be overridden by setting HIP_CLANG_PATH environment variable)
++   * By default HIP looks for clang in @ESYSROOT_LLVM_PATH_COND@/bin (can be overridden by setting HIP_CLANG_PATH environment variable)
 +   * By default HIP looks for device library in <ROCM_PATH>/@LIBDIR@/amdgcn/bitcode (can be overridden by setting DEVICE_LIB_PATH environment variable).
     * Optionally, consider adding <ROCM_PATH>/bin to your PATH to make it easier to use the tools.
     * Optionally, set HIPCC_VERBOSE=7 to output the command line for compilation.
@@ -324,7 +327,7 @@ diff -urp HIP-rocm-5.5.1.orig/docs/markdown/hip_build.md HIP-rocm-5.5.1/docs/mar
  ctest # run tests
 diff -urp HIP-rocm-5.5.1.orig/docs/markdown/hip_debugging.md HIP-rocm-5.5.1/docs/markdown/hip_debugging.md
 --- HIP-rocm-5.5.1.orig/docs/markdown/hip_debugging.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/docs/markdown/hip_debugging.md	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/docs/markdown/hip_debugging.md	2023-09-19 10:25:54.177355756 -0700
 @@ -96,10 +96,10 @@ HIP developers on ROCm can use AMD's ROC
  ROCgdb is the ROCm source-level debugger for Linux, based on GDB, the GNU source-level debugger, equivalent of cuda-gdb, can be used with debugger frontends, such as eclipse, vscode, or gdb-dashboard.
  For details, see (https://github.com/ROCm-Developer-Tools/ROCgdb).
@@ -390,7 +393,7 @@ diff -urp HIP-rocm-5.5.1.orig/docs/markdown/hip_debugging.md HIP-rocm-5.5.1/docs
  #0  0x000000000020f78e in simpleTest2<float> (numElements=4194304, usePinnedHost=true)
 diff -urp HIP-rocm-5.5.1.orig/docs/markdown/hip_programming_guide.md HIP-rocm-5.5.1/docs/markdown/hip_programming_guide.md
 --- HIP-rocm-5.5.1.orig/docs/markdown/hip_programming_guide.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/docs/markdown/hip_programming_guide.md	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/docs/markdown/hip_programming_guide.md	2023-09-19 10:25:54.177355756 -0700
 @@ -179,7 +179,7 @@ Here is an example to create and use sta
  - Type 1 using --emit-static-lib:
      ```
@@ -402,7 +405,7 @@ diff -urp HIP-rocm-5.5.1.orig/docs/markdown/hip_programming_guide.md HIP-rocm-5.
      ```
 diff -urp HIP-rocm-5.5.1.orig/hip-lang-config.cmake.in HIP-rocm-5.5.1/hip-lang-config.cmake.in
 --- HIP-rocm-5.5.1.orig/hip-lang-config.cmake.in	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/hip-lang-config.cmake.in	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/hip-lang-config.cmake.in	2023-09-19 10:25:54.177355756 -0700
 @@ -66,7 +66,7 @@ find_dependency(amd_comgr)
  include( "${CMAKE_CURRENT_LIST_DIR}/hip-lang-targets.cmake" )
  
@@ -430,7 +433,7 @@ diff -urp HIP-rocm-5.5.1.orig/hip-lang-config.cmake.in HIP-rocm-5.5.1/hip-lang-c
  set_property(TARGET hip-lang::device APPEND PROPERTY
 diff -urp HIP-rocm-5.5.1.orig/INSTALL.md HIP-rocm-5.5.1/INSTALL.md
 --- HIP-rocm-5.5.1.orig/INSTALL.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/INSTALL.md	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/INSTALL.md	2023-09-19 10:25:54.177355756 -0700
 @@ -25,7 +25,7 @@ On NVIDIA platform, check system require
  
  HIP is part of ROCM packages, it will be automatically installed following the ROCm Installation Guide on AMD public documentation site (https://docs.amd.com/) for the coresponding ROCm release.
@@ -447,7 +450,7 @@ diff -urp HIP-rocm-5.5.1.orig/INSTALL.md HIP-rocm-5.5.1/INSTALL.md
 -   * By default HIP looks for CUDA SDK in /usr/local/cuda.
 -   * By default HIP is installed into /opt/rocm/hip.
 -   * Optionally, consider adding /opt/rocm/bin to your path to make it easier to use the tools.
-+   * By default HIP looks for CUDA SDK in /opt/cuda.
++   * By default HIP looks for CUDA SDK in @ESYSROOT@/opt/cuda.
 +   * By default HIP is installed into @ESYSROOT_ROCM_PATH@.
 +   * Optionally, consider adding @ESYSROOT_ROCM_PATH@/bin to your path to make it easier to use the tools.
  
@@ -463,7 +466,7 @@ diff -urp HIP-rocm-5.5.1.orig/INSTALL.md HIP-rocm-5.5.1/INSTALL.md
  # How to build HIP from source
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/bit_extract/CMakeLists.txt HIP-rocm-5.5.1/samples/0_Intro/bit_extract/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/bit_extract/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/bit_extract/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/bit_extract/CMakeLists.txt	2023-09-19 10:25:54.177355756 -0700
 @@ -27,7 +27,7 @@ if(NOT WIN32 AND NOT DEFINED __HIP_ENABL
  endif()
  
@@ -475,7 +478,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/bit_extract/CMakeLists.txt HIP-roc
  if(${__HIP_ENABLE_PCH})
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/bit_extract/Makefile HIP-rocm-5.5.1/samples/0_Intro/bit_extract/Makefile
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/bit_extract/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/bit_extract/Makefile	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/bit_extract/Makefile	2023-09-19 10:25:54.177355756 -0700
 @@ -22,7 +22,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -487,7 +490,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/bit_extract/Makefile HIP-rocm-5.5.
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api/CMakeLists.txt HIP-rocm-5.5.1/samples/0_Intro/module_api/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/module_api/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/module_api/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/module_api/CMakeLists.txt	2023-09-19 10:25:54.177355756 -0700
 @@ -23,7 +23,7 @@ project(module_api)
  cmake_minimum_required(VERSION 3.10)
  
@@ -499,7 +502,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api/CMakeLists.txt HIP-rocm
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api/Makefile HIP-rocm-5.5.1/samples/0_Intro/module_api/Makefile
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/module_api/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/module_api/Makefile	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/module_api/Makefile	2023-09-19 10:25:54.177355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -511,7 +514,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api/Makefile HIP-rocm-5.5.1
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api_global/CMakeLists.txt HIP-rocm-5.5.1/samples/0_Intro/module_api_global/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/module_api_global/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/module_api_global/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/module_api_global/CMakeLists.txt	2023-09-19 10:25:54.177355756 -0700
 @@ -23,7 +23,7 @@ project(modile_api_global)
  cmake_minimum_required(VERSION 3.10)
  
@@ -530,7 +533,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api_global/CMakeLists.txt H
 +target_link_libraries(runKernel.hip.out hip::host)
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api_global/Makefile HIP-rocm-5.5.1/samples/0_Intro/module_api_global/Makefile
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/module_api_global/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/module_api_global/Makefile	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/module_api_global/Makefile	2023-09-19 10:25:54.177355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -542,7 +545,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/module_api_global/Makefile HIP-roc
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/square/CMakeLists.txt HIP-rocm-5.5.1/samples/0_Intro/square/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/square/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/square/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/square/CMakeLists.txt	2023-09-19 10:25:54.177355756 -0700
 @@ -25,7 +25,7 @@ project(square)
  cmake_minimum_required(VERSION 3.10)
  
@@ -561,7 +564,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/square/CMakeLists.txt HIP-rocm-5.5
 +target_link_libraries(square hip::host)
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/square/Makefile HIP-rocm-5.5.1/samples/0_Intro/square/Makefile
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/square/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/square/Makefile	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/square/Makefile	2023-09-19 10:25:54.177355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -573,7 +576,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/square/Makefile HIP-rocm-5.5.1/sam
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/square/README.md HIP-rocm-5.5.1/samples/0_Intro/square/README.md
 --- HIP-rocm-5.5.1.orig/samples/0_Intro/square/README.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/0_Intro/square/README.md	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/0_Intro/square/README.md	2023-09-19 10:25:54.177355756 -0700
 @@ -19,9 +19,9 @@ $ export HIP_PATH=[MYHIP]
  ```
  $ cd ~/hip/samples/0_Intro/square
@@ -589,7 +592,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/0_Intro/square/README.md HIP-rocm-5.5.1/sa
  ```
 diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipBusBandwidth/CMakeLists.txt HIP-rocm-5.5.1/samples/1_Utils/hipBusBandwidth/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipBusBandwidth/CMakeLists.txt	2023-09-19 10:25:54.177355756 -0700
 @@ -23,7 +23,7 @@ project(hipBusBandwidth)
  cmake_minimum_required(VERSION 3.10)
  
@@ -608,7 +611,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipBusBandwidth/CMakeLists.txt HIP
 +target_link_libraries(hipBusBandwidth hip::host)
 diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipBusBandwidth/Makefile HIP-rocm-5.5.1/samples/1_Utils/hipBusBandwidth/Makefile
 --- HIP-rocm-5.5.1.orig/samples/1_Utils/hipBusBandwidth/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/1_Utils/hipBusBandwidth/Makefile	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipBusBandwidth/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -620,7 +623,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipBusBandwidth/Makefile HIP-rocm-
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipCommander/CMakeLists.txt HIP-rocm-5.5.1/samples/1_Utils/hipCommander/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/1_Utils/hipCommander/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/1_Utils/hipCommander/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipCommander/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(hipCommander)
  cmake_minimum_required(VERSION 3.10)
  
@@ -632,7 +635,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipCommander/CMakeLists.txt HIP-ro
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipCommander/Makefile HIP-rocm-5.5.1/samples/1_Utils/hipCommander/Makefile
 --- HIP-rocm-5.5.1.orig/samples/1_Utils/hipCommander/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/1_Utils/hipCommander/Makefile	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipCommander/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -644,7 +647,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipCommander/Makefile HIP-rocm-5.5
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipDispatchLatency/CMakeLists.txt HIP-rocm-5.5.1/samples/1_Utils/hipDispatchLatency/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipDispatchLatency/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(hipDispatchLatency)
  cmake_minimum_required(VERSION 3.10)
  
@@ -656,7 +659,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipDispatchLatency/CMakeLists.txt 
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipDispatchLatency/Makefile HIP-rocm-5.5.1/samples/1_Utils/hipDispatchLatency/Makefile
 --- HIP-rocm-5.5.1.orig/samples/1_Utils/hipDispatchLatency/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/1_Utils/hipDispatchLatency/Makefile	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipDispatchLatency/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -668,7 +671,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipDispatchLatency/Makefile HIP-ro
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipInfo/CMakeLists.txt HIP-rocm-5.5.1/samples/1_Utils/hipInfo/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/1_Utils/hipInfo/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/1_Utils/hipInfo/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipInfo/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -31,7 +31,7 @@ cmake_minimum_required(VERSION 3.10)
  option(HIPINFO_INTERNAL_BUILD "Enable building hipInfo from compute" OFF)
  
@@ -680,7 +683,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipInfo/CMakeLists.txt HIP-rocm-5.
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipInfo/Makefile HIP-rocm-5.5.1/samples/1_Utils/hipInfo/Makefile
 --- HIP-rocm-5.5.1.orig/samples/1_Utils/hipInfo/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/1_Utils/hipInfo/Makefile	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/1_Utils/hipInfo/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -692,7 +695,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/1_Utils/hipInfo/Makefile HIP-rocm-5.5.1/sa
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2023-08-30 14:58:39.794789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(MatrixTranspose)
  cmake_minimum_required(VERSION 3.10)
  
@@ -704,7 +707,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/0_MatrixTranspose/CMakeLists.tx
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/0_MatrixTranspose/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/0_MatrixTranspose/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/0_MatrixTranspose/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/0_MatrixTranspose/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/0_MatrixTranspose/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -716,7 +719,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/0_MatrixTranspose/Makefile HIP-
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/10_inline_asm/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/10_inline_asm/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/10_inline_asm/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(inline_asm)
  cmake_minimum_required(VERSION 3.10)
  
@@ -728,7 +731,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/10_inline_asm/CMakeLists.txt HI
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/10_inline_asm/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/10_inline_asm/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/10_inline_asm/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/10_inline_asm/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/10_inline_asm/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -740,7 +743,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/10_inline_asm/Makefile HIP-rocm
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/11_texture_driver/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/11_texture_driver/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/11_texture_driver/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(texture2dDrv)
  cmake_minimum_required(VERSION 3.10)
  
@@ -752,7 +755,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/11_texture_driver/CMakeLists.tx
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/11_texture_driver/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/11_texture_driver/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/11_texture_driver/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/11_texture_driver/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/11_texture_driver/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -764,7 +767,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/11_texture_driver/Makefile HIP-
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  
  cmake_minimum_required(VERSION 2.8.3)
@@ -785,7 +788,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/CMa
  
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Readme.md HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable/Readme.md
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Readme.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable/Readme.md	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/12_cmake_hip_add_executable/Readme.md	2023-09-19 10:30:43.697351890 -0700
 @@ -6,7 +6,7 @@ Since FindHIP cmake module is not yet a
  
  The simplest approach is to use
@@ -809,13 +812,13 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  cmake ..
  Or for static lib of hip rt,
 -cmake -DCMAKE_PREFIX_PATH="/opt/rocm/llvm/lib/cmake" ..
-+cmake -DCMAKE_PREFIX_PATH="@ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake" ..
++cmake -DCMAKE_PREFIX_PATH="@ESYSROOT_LLVM_PATH_COND@/@LIBDIR@/cmake" ..
  
  Then,
  make
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/13_occupancy/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/13_occupancy/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/13_occupancy/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(occupancy)
  cmake_minimum_required(VERSION 3.10)
  
@@ -827,7 +830,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/13_occupancy/CMakeLists.txt HIP
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/13_occupancy/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/13_occupancy/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/13_occupancy/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/13_occupancy/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/13_occupancy/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -839,7 +842,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/13_occupancy/Makefile HIP-rocm-
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(gpuarch)
  cmake_minimum_required(VERSION 3.10)
  
@@ -851,7 +854,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/14_gpu_arch/CMakeLists.txt HIP-
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/14_gpu_arch/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/14_gpu_arch/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/14_gpu_arch/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/14_gpu_arch/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/14_gpu_arch/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -863,7 +866,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/14_gpu_arch/Makefile HIP-rocm-5
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/device_functions/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -3,7 +3,7 @@ project(static_lib)
  cmake_minimum_required(VERSION 3.10)
  
@@ -875,7 +878,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/device_functi
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/device_functions/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/device_functions/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/device_functions/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/device_functions/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/device_functions/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -1,7 +1,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -887,7 +890,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/device_functi
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -3,7 +3,7 @@ project(static_lib)
  cmake_minimum_required(VERSION 3.10)
  
@@ -908,7 +911,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/host_function
  set(TEST_SOURCES ${CMAKE_SOURCE_DIR}/hipMain1.cpp)
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/host_functions/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/host_functions/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/host_functions/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -1,7 +1,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -929,7 +932,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/host_function
  	$(HIPCC_EXE)
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/README.md HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/README.md
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/README.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/README.md	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/15_static_library/README.md	2023-09-19 10:25:54.181355756 -0700
 @@ -74,8 +74,8 @@ hipcc hipMain1.cpp -L. -lHipOptLibrary -
  ```
  Using g++:
@@ -943,7 +946,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/15_static_library/README.md HIP
  ## Static libraries with device functions
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/16_assembly_to_executable/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/16_assembly_to_executable/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/16_assembly_to_executable/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/16_assembly_to_executable/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/16_assembly_to_executable/Makefile	2023-09-19 10:30:47.313351842 -0700
 @@ -20,16 +20,16 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -959,15 +962,15 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/16_assembly_to_executable/Makef
 -CLANG=$(HIP_PATH)/../llvm/bin/clang
 -LLVM_MC=$(HIP_PATH)/../llvm/bin/llvm-mc
 -CLANG_OFFLOAD_BUNDLER=$(HIP_PATH)/../llvm/bin/clang-offload-bundler
-+CLANG=$(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin/clang
-+LLVM_MC=$(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin/llvm-mc
-+CLANG_OFFLOAD_BUNDLER=$(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler
++CLANG=@ESYSROOT_LLVM_PATH_COND@/bin/clang
++LLVM_MC=@ESYSROOT_LLVM_PATH_COND@/bin/llvm-mc
++CLANG_OFFLOAD_BUNDLER=@ESYSROOT_LLVM_PATH_COND@/bin/clang-offload-bundler
  
  SRCS=square.cpp
  
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/16_assembly_to_executable/README.md HIP-rocm-5.5.1/samples/2_Cookbook/16_assembly_to_executable/README.md
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/16_assembly_to_executable/README.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/16_assembly_to_executable/README.md	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/16_assembly_to_executable/README.md	2023-09-19 10:30:48.161351830 -0700
 @@ -1,4 +1,4 @@
 -ROCM_PATH is the path where ROCM is installed. default path is /opt/rocm.
 +ROCM_PATH is the path where ROCM is installed. default path is @ESYSROOT_ROCM_PATH@.
@@ -993,10 +996,10 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/16_assembly_to_executable/READM
 -<ROCM_PATH>/hip/../llvm/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
 -<ROCM_PATH>/llvm/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
 -<ROCM_PATH>/llvm/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.s -o square-hip-amdgcn-amd-amdhsa-gfx900.o
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
++@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.s -o square-hip-amdgcn-amd-amdhsa-gfx900.o
++@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
++@ESYSROOT_LLVM_PATH_COND@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
++@ESYSROOT_LLVM_PATH_COND@/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
  ```
  
  **Note:** Using option `-bundle-align=4096` only works on ROCm 4.0 and newer compilers. Also, the architecture must match the same arch as when compiling to assembly.
@@ -1010,7 +1013,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/16_assembly_to_executable/READM
  
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/17_llvm_ir_to_executable/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/17_llvm_ir_to_executable/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/17_llvm_ir_to_executable/Makefile	2023-09-19 10:30:44.609351878 -0700
 @@ -20,18 +20,18 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -1029,17 +1032,17 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/Makefi
 -LLVM_AS=$(HIP_PATH)/../llvm/bin/llvm-as
 -LLVM_DIS=$(HIP_PATH)/../llvm/bin/llvm-dis
 +HIPCC=$(ROCM_PATH)/bin/hipcc
-+CLANG=$(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin/clang
-+LLVM_MC=$(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin/llvm-mc
-+CLANG_OFFLOAD_BUNDLER=$(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler
-+LLVM_AS=$(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin/llvm-as
-+LLVM_DIS=$(ROCM_PATH)/lib/llvm/@LLVM_SLOT@/bin/llvm-dis
++CLANG=@ESYSROOT_LLVM_PATH_COND@/bin/clang
++LLVM_MC=@ESYSROOT_LLVM_PATH_COND@/bin/llvm-mc
++CLANG_OFFLOAD_BUNDLER=@ESYSROOT_LLVM_PATH_COND@/bin/clang-offload-bundler
++LLVM_AS=@ESYSROOT_LLVM_PATH_COND@/bin/llvm-as
++LLVM_DIS=@ESYSROOT_LLVM_PATH_COND@/bin/llvm-dis
  
  SRCS=square.cpp
  
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README.md HIP-rocm-5.5.1/samples/2_Cookbook/17_llvm_ir_to_executable/README.md
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/17_llvm_ir_to_executable/README.md	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/17_llvm_ir_to_executable/README.md	2023-09-19 10:30:45.457351866 -0700
 @@ -1,4 +1,4 @@
 -ROCM_PATH is the path where ROCM is installed. default path is /opt/rocm.
 +ROCM_PATH is the path where ROCM is installed. default path is @ESYSROOT_ROCM_PATH@.
@@ -1063,8 +1066,8 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
  ```
 -<ROCM_PATH>/llvm/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
 -<ROCM_PATH>/llvm/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
++@ESYSROOT_LLVM_PATH_COND@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
++@ESYSROOT_LLVM_PATH_COND@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
  ```
  
  **Warning:** We cannot ensure any compiler besides the ROCm hipcc and clang will be compatible with this process. Also, there is no guarantee that the starting IR produced with `-x cl` will run with HIP runtime. Experimenting with other compilers or starting IR will be the responsibility of the developer.
@@ -1074,7 +1077,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
  ```
 -<ROCM_PATH>/llvm/bin/llvm-as square_host.ll -o square_host.bc
 -<ROCM_PATH>/hip/bin/hipcc -c square_host.bc -o square_host.o
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/llvm-as square_host.ll -o square_host.bc
++@ESYSROOT_LLVM_PATH_COND@/bin/llvm-as square_host.ll -o square_host.bc
 +<ROCM_PATH>/bin/hipcc -c square_host.bc -o square_host.o
  ```
  
@@ -1086,12 +1089,12 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
 -<ROCM_PATH>/hip/../llvm/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
 -<ROCM_PATH>/hip/../llvm/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
 -<ROCM_PATH>/llvm/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx900.ll -o square-hip-amdgcn-amd-amdhsa-gfx900.bc
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx906.ll -o square-hip-amdgcn-amd-amdhsa-gfx906.bc
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.o
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
-+<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
++@ESYSROOT_LLVM_PATH_COND@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx900.ll -o square-hip-amdgcn-amd-amdhsa-gfx900.bc
++@ESYSROOT_LLVM_PATH_COND@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx906.ll -o square-hip-amdgcn-amd-amdhsa-gfx906.bc
++@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.o
++@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
++@ESYSROOT_LLVM_PATH_COND@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
++@ESYSROOT_LLVM_PATH_COND@/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
  ```
  
  **Note:** Using option `-bundle-align=4096` only works on ROCm 4.0 and newer compilers. Also, the architecture must match the same arch as when compiling to LLVM IR.
@@ -1105,7 +1108,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
  
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/1_hipEvent/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/1_hipEvent/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/1_hipEvent/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(hipEvent)
  cmake_minimum_required(VERSION 3.10)
  
@@ -1117,7 +1120,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/1_hipEvent/CMakeLists.txt HIP-r
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/1_hipEvent/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/1_hipEvent/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/1_hipEvent/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/1_hipEvent/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/1_hipEvent/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -18,7 +18,7 @@
  # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  # THE SOFTWARE.
@@ -1129,7 +1132,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/1_hipEvent/Makefile HIP-rocm-5.
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -30,7 +30,7 @@ cmake_minimum_required(VERSION 3.10)
  set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
  
@@ -1150,8 +1153,8 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/20_hip_vulkan/CMakeLists.txt HI
  set(CMAKE_CXX_COMPILER ${HIP_HIPCC_EXECUTABLE})
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.md HIP-rocm-5.5.1/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.md
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.md	2023-08-30 14:58:39.798789090 -0700
-@@ -1,10 +1,10 @@
++++ HIP-rocm-5.5.1/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.md	2023-09-19 10:30:46.401351854 -0700
+@@ -1,10 +1,9 @@
 -### This sample tests CXX Language support with amdclang++
 +### This sample tests CXX Language support with clang++
  I. Build
@@ -1161,14 +1164,13 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.m
 -cmake -DCMAKE_CXX_COMPILER=/opt/rocm/bin/amdclang++ .. (or)
 -cmake -DCMAKE_CXX_COMPILER=/opt/rocm-X.Y.Z/llvm/bin/amdclang++ ..
 +CXX=`hipconfig -l`/clang++ cmake .. (or)
-+cmake -DCMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/clang++ .. (or)
-+cmake -DCMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/lib/llvm/@LLVM_SLOT@/bin/clang++ ..
++cmake -DCMAKE_CXX_COMPILER=@ESYSROOT_LLVM_PATH_COND@/bin/clang++ ..
  make
  
  II. Test
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/23_cmake_hiprtc/README.md HIP-rocm-5.5.1/samples/2_Cookbook/23_cmake_hiprtc/README.md
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/23_cmake_hiprtc/README.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/23_cmake_hiprtc/README.md	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/23_cmake_hiprtc/README.md	2023-09-19 10:25:54.181355756 -0700
 @@ -1,7 +1,7 @@
  ### This will test linking hiprtc::hiprtc interface in cmake
  I. Build
@@ -1180,7 +1182,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/23_cmake_hiprtc/README.md HIP-r
  II. Test
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/3_shared_memory/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/3_shared_memory/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/3_shared_memory/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(sharedMemory)
  cmake_minimum_required(VERSION 3.10)
  
@@ -1192,7 +1194,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/3_shared_memory/CMakeLists.txt 
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/3_shared_memory/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/3_shared_memory/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/3_shared_memory/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/3_shared_memory/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/3_shared_memory/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -1204,7 +1206,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/3_shared_memory/Makefile HIP-ro
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/4_shfl/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/4_shfl/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/4_shfl/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/4_shfl/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/4_shfl/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(shfl)
  cmake_minimum_required(VERSION 3.10)
  
@@ -1216,7 +1218,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/4_shfl/CMakeLists.txt HIP-rocm-
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/4_shfl/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/4_shfl/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/4_shfl/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/4_shfl/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/4_shfl/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -1228,7 +1230,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/4_shfl/Makefile HIP-rocm-5.5.1/
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/5_2dshfl/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/5_2dshfl/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/5_2dshfl/CMakeLists.txt	2023-09-19 10:25:54.181355756 -0700
 @@ -23,7 +23,7 @@ project(2dshfl)
  cmake_minimum_required(VERSION 3.10)
  
@@ -1240,7 +1242,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/5_2dshfl/CMakeLists.txt HIP-roc
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/5_2dshfl/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/5_2dshfl/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/5_2dshfl/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/5_2dshfl/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/5_2dshfl/Makefile	2023-09-19 10:25:54.181355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -1252,7 +1254,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/5_2dshfl/Makefile HIP-rocm-5.5.
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt	2023-09-19 10:25:54.185355756 -0700
 @@ -23,7 +23,7 @@ project(dynamic_shared)
  cmake_minimum_required(VERSION 3.10)
  
@@ -1264,7 +1266,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/6_dynamic_shared/CMakeLists.txt
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/6_dynamic_shared/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/6_dynamic_shared/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/6_dynamic_shared/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/6_dynamic_shared/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/6_dynamic_shared/Makefile	2023-09-19 10:25:54.185355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -1276,7 +1278,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/6_dynamic_shared/Makefile HIP-r
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/7_streams/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/7_streams/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/7_streams/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/7_streams/CMakeLists.txt	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/7_streams/CMakeLists.txt	2023-09-19 10:25:54.185355756 -0700
 @@ -23,7 +23,7 @@ project(stream)
  cmake_minimum_required(VERSION 3.10)
  
@@ -1288,7 +1290,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/7_streams/CMakeLists.txt HIP-ro
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/7_streams/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/7_streams/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/7_streams/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/7_streams/Makefile	2023-08-30 14:58:39.798789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/7_streams/Makefile	2023-09-19 10:25:54.185355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -1300,7 +1302,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/7_streams/Makefile HIP-rocm-5.5
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/8_peer2peer/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/8_peer2peer/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/8_peer2peer/CMakeLists.txt	2023-09-19 10:25:54.185355756 -0700
 @@ -23,7 +23,7 @@ project(peer2peer)
  cmake_minimum_required(VERSION 3.10)
  
@@ -1312,7 +1314,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/8_peer2peer/CMakeLists.txt HIP-
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/8_peer2peer/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/8_peer2peer/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/8_peer2peer/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/8_peer2peer/Makefile	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/8_peer2peer/Makefile	2023-09-19 10:25:54.185355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -1324,7 +1326,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/8_peer2peer/Makefile HIP-rocm-5
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/9_unroll/CMakeLists.txt HIP-rocm-5.5.1/samples/2_Cookbook/9_unroll/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/9_unroll/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/9_unroll/CMakeLists.txt	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/9_unroll/CMakeLists.txt	2023-09-19 10:25:54.185355756 -0700
 @@ -23,7 +23,7 @@ project(unroll)
  cmake_minimum_required(VERSION 3.10)
  
@@ -1336,7 +1338,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/9_unroll/CMakeLists.txt HIP-roc
  # Search for rocm in common locations
 diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/9_unroll/Makefile HIP-rocm-5.5.1/samples/2_Cookbook/9_unroll/Makefile
 --- HIP-rocm-5.5.1.orig/samples/2_Cookbook/9_unroll/Makefile	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/2_Cookbook/9_unroll/Makefile	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/samples/2_Cookbook/9_unroll/Makefile	2023-09-19 10:25:54.185355756 -0700
 @@ -20,7 +20,7 @@
  ifeq ($(OS),Windows_NT)
   $(error Makefile is not supported on windows platform. Please use cmake instead to build sample.)
@@ -1348,13 +1350,13 @@ diff -urp HIP-rocm-5.5.1.orig/samples/2_Cookbook/9_unroll/Makefile HIP-rocm-5.5.
  	HIP_PATH=../../..
 diff -urp HIP-rocm-5.5.1.orig/samples/README.md HIP-rocm-5.5.1/samples/README.md
 --- HIP-rocm-5.5.1.orig/samples/README.md	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/samples/README.md	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/samples/README.md	2023-09-19 10:30:49.073351818 -0700
 @@ -24,10 +24,10 @@ cmake ..
  
  b. to build with static libs, run
  
 -cmake -DCMAKE_PREFIX_PATH="<ROCM_PATH>/llvm/lib/cmake" ..
-+cmake -DCMAKE_PREFIX_PATH="<ROCM_PATH>/lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake" ..
++cmake -DCMAKE_PREFIX_PATH="@ESYSROOT_LLVM_PATH_COND@/@LIBDIR@/cmake" ..
  
  Then run,
  
@@ -1365,7 +1367,7 @@ diff -urp HIP-rocm-5.5.1.orig/samples/README.md HIP-rocm-5.5.1/samples/README.md
 +Note that if you want debug version, add "-DCMAKE_BUILD_TYPE=Debug" in cmake cmd.
 diff -urp HIP-rocm-5.5.1.orig/tests/catch/CMakeLists.txt HIP-rocm-5.5.1/tests/catch/CMakeLists.txt
 --- HIP-rocm-5.5.1.orig/tests/catch/CMakeLists.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/catch/CMakeLists.txt	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/catch/CMakeLists.txt	2023-09-19 10:25:54.185355756 -0700
 @@ -37,7 +37,7 @@ if(NOT DEFINED ROCM_PATH)
      else()
          cmake_path(GET HIP_PATH PARENT_PATH ROCM_PATH)
@@ -1377,7 +1379,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/catch/CMakeLists.txt HIP-rocm-5.5.1/tests/ca
  endif()
 diff -urp HIP-rocm-5.5.1.orig/tests/catch/packaging/hip-tests.txt HIP-rocm-5.5.1/tests/catch/packaging/hip-tests.txt
 --- HIP-rocm-5.5.1.orig/tests/catch/packaging/hip-tests.txt	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/catch/packaging/hip-tests.txt	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/catch/packaging/hip-tests.txt	2023-09-19 10:25:54.185355756 -0700
 @@ -65,7 +65,7 @@ install(FILES @PROJECT_BINARY_DIR@/CTest
  set(CPACK_SET_DESTDIR TRUE)
  set(CPACK_INSTALL_PREFIX @CPACK_INSTALL_PREFIX@)
@@ -1389,7 +1391,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/catch/packaging/hip-tests.txt HIP-rocm-5.5.1
  
 diff -urp HIP-rocm-5.5.1.orig/tests/catch/unit/device/hipGetDeviceAttribute.cc HIP-rocm-5.5.1/tests/catch/unit/device/hipGetDeviceAttribute.cc
 --- HIP-rocm-5.5.1.orig/tests/catch/unit/device/hipGetDeviceAttribute.cc	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/catch/unit/device/hipGetDeviceAttribute.cc	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/catch/unit/device/hipGetDeviceAttribute.cc	2023-09-19 10:25:54.185355756 -0700
 @@ -273,11 +273,11 @@ TEST_CASE("Unit_hipGetDeviceAttribute_Ch
    char command[COMMAND_LEN] = "";
    const char *rocmpath = nullptr;
@@ -1413,7 +1415,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/catch/unit/device/hipGetDeviceAttribute.cc H
 +}
 diff -urp HIP-rocm-5.5.1.orig/tests/hit/HIT.cmake HIP-rocm-5.5.1/tests/hit/HIT.cmake
 --- HIP-rocm-5.5.1.orig/tests/hit/HIT.cmake	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/hit/HIT.cmake	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/hit/HIT.cmake	2023-09-19 10:25:54.185355756 -0700
 @@ -326,7 +326,7 @@ endmacro()
  #-------------------------------------------------------------------------------
  
@@ -1434,7 +1436,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/hit/HIT.cmake HIP-rocm-5.5.1/tests/hit/HIT.c
                  foreach(_dependency ${_depends})
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gapi.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/gapi.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gapi.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/gapi.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/gapi.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,9 +1,9 @@
  #!/bin/bash
  
@@ -1450,7 +1452,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gapi.sh HIP-rocm-5
  
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/ghipapi.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/ghipapi.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/ghipapi.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/ghipapi.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/ghipapi.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,8 +1,8 @@
  #!/bin/bash
  
@@ -1464,7 +1466,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/ghipapi.sh HIP-roc
  
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gxxapi.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/gxxapi.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gxxapi.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/gxxapi.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/gxxapi.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,8 +1,8 @@
  #!/bin/bash
  
@@ -1479,7 +1481,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gxxapi.sh HIP-rocm
  
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gxxhipapi.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/gxxhipapi.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gxxhipapi.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/gxxhipapi.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/gxxhipapi.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,8 +1,8 @@
  #!/bin/bash
  
@@ -1493,7 +1495,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/gxxhipapi.sh HIP-r
  
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipapig.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipapig.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipapig.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipapig.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipapig.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,3 +1,3 @@
  #!/bin/bash
  
@@ -1501,7 +1503,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipapig.sh HIP-roc
 +gcc -D__HIP_PLATFORM_AMD__= -I${HIP_PATH}/include -I${HCC_HOME}/include gApi.c ${HIP_PATH}/@LIBDIR@/device_util.cpp.o ${HIP_PATH}/@LIBDIR@/hip_device.cpp.o ${HIP_PATH}/@LIBDIR@/hip_error.cpp.o ${HIP_PATH}/@LIBDIR@/hip_event.cpp.o ${HIP_PATH}/@LIBDIR@/hip_hcc.cpp.o ${HIP_PATH}/@LIBDIR@/hip_memory.cpp.o ${HIP_PATH}/@LIBDIR@/hip_peer.cpp.o ${HIP_PATH}/@LIBDIR@/hip_stream.cpp.o ${HIP_PATH}/@LIBDIR@/unpinned_copy_engine.cpp.o -L${HCC_HOME}/@LIBDIR@ -lhc_am -L${HSA_PATH}/@LIBDIR@ -lhsa-runtime64 -lc++ -lmcwamp -ldl -lm -o gApi
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipapigxx.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipapigxx.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipapigxx.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipapigxx.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipapigxx.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,3 +1,3 @@
  #!/bin/bash
  
@@ -1509,7 +1511,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipapigxx.sh HIP-r
 +g++ -D__HIP_PLATFORM_AMD__= -I${HIP_PATH}/include -I${HCC_HOME}/include gxxApi.cpp ${HIP_PATH}/@LIBDIR@/device_util.cpp.o ${HIP_PATH}/@LIBDIR@/hip_device.cpp.o ${HIP_PATH}/@LIBDIR@/hip_error.cpp.o ${HIP_PATH}/@LIBDIR@/hip_event.cpp.o ${HIP_PATH}/@LIBDIR@/hip_hcc.cpp.o ${HIP_PATH}/@LIBDIR@/hip_memory.cpp.o ${HIP_PATH}/@LIBDIR@/hip_peer.cpp.o ${HIP_PATH}/@LIBDIR@/hip_stream.cpp.o ${HIP_PATH}/@LIBDIR@/unpinned_copy_engine.cpp.o -L${HCC_HOME}/@LIBDIR@ -lhc_am -L${HSA_PATH}/@LIBDIR@ -lhsa-runtime64 -lc++ -lmcwamp -ldl -o gxxApi
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgapi.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgapi.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgapi.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgapi.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgapi.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
@@ -1520,7 +1522,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgapi.sh HIP-roc
  
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipg.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipg.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipg.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipg.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipg.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
@@ -1531,7 +1533,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipg.sh HIP-rocm-5
  
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgxxapi.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgxxapi.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgxxapi.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgxxapi.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgxxapi.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
@@ -1542,7 +1544,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgxxapi.sh HIP-r
  
 diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgxx.sh HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgxx.sh
 --- HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgxx.sh	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgxx.sh	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/experimental/xcompile/hipgxx.sh	2023-09-19 10:25:54.185355756 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash
  
@@ -1553,7 +1555,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/experimental/xcompile/hipgxx.sh HIP-rocm
  
 diff -urp HIP-rocm-5.5.1.orig/tests/src/g++/hipMalloc.cpp HIP-rocm-5.5.1/tests/src/g++/hipMalloc.cpp
 --- HIP-rocm-5.5.1.orig/tests/src/g++/hipMalloc.cpp	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/g++/hipMalloc.cpp	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/g++/hipMalloc.cpp	2023-09-19 10:25:54.185355756 -0700
 @@ -18,8 +18,8 @@
   * */
  
@@ -1567,7 +1569,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/g++/hipMalloc.cpp HIP-rocm-5.5.1/tests/s
   * HIT_END
 diff -urp HIP-rocm-5.5.1.orig/tests/src/gcc/hipMalloc.c HIP-rocm-5.5.1/tests/src/gcc/hipMalloc.c
 --- HIP-rocm-5.5.1.orig/tests/src/gcc/hipMalloc.c	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/gcc/hipMalloc.c	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/gcc/hipMalloc.c	2023-09-19 10:25:54.185355756 -0700
 @@ -18,8 +18,8 @@
   * */
  
@@ -1581,7 +1583,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/gcc/hipMalloc.c HIP-rocm-5.5.1/tests/src
   * HIT_END
 diff -urp HIP-rocm-5.5.1.orig/tests/src/gcc/LaunchKernel.c HIP-rocm-5.5.1/tests/src/gcc/LaunchKernel.c
 --- HIP-rocm-5.5.1.orig/tests/src/gcc/LaunchKernel.c	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/gcc/LaunchKernel.c	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/gcc/LaunchKernel.c	2023-09-19 10:25:54.185355756 -0700
 @@ -21,7 +21,7 @@
  /* HIT_START
   * BUILD_CMD: gpu.o %hc -I%hip-path/include -g -c %S/gpu.cpp -o %T/gpu.o EXCLUDE_HIP_PLATFORM nvidia EXCLUDE_HIP_LIB_TYPE static
@@ -1593,7 +1595,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/gcc/LaunchKernel.c HIP-rocm-5.5.1/tests/
   */
 diff -urp HIP-rocm-5.5.1.orig/tests/src/runtimeApi/module/hipModule.cpp HIP-rocm-5.5.1/tests/src/runtimeApi/module/hipModule.cpp
 --- HIP-rocm-5.5.1.orig/tests/src/runtimeApi/module/hipModule.cpp	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/runtimeApi/module/hipModule.cpp	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/runtimeApi/module/hipModule.cpp	2023-09-19 10:25:54.185355756 -0700
 @@ -153,7 +153,7 @@ bool testMultiTargArchCodeObj() {
    if (isRocmPathSet()) {
      hipcc_path = "$ROCM_PATH/bin/hipcc";
@@ -1605,7 +1607,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/runtimeApi/module/hipModule.cpp HIP-rocm
      literal length in order to avoid multiline string literal cpplint warning
 diff -urp HIP-rocm-5.5.1.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HIP-rocm-5.5.1/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp
 --- HIP-rocm-5.5.1.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp	2023-09-19 10:25:54.185355756 -0700
 @@ -130,11 +130,11 @@ int getV3TargetIdFeature(char* feature,
    char command[COMMAND_LEN] = "";
    const char *rocmpath = nullptr;
@@ -1632,7 +1634,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    } else {
      snprintf(command, COMMAND_LEN,
 -    "/opt/rocm/llvm/bin/clang -target amdgcn-amd-amdhsa -x cl ");
-+    "/usr/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
++    "@ESYSROOT@/usr/llvm/@LLVM_SLOT@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
    }
    char command_temp[COMMAND_LEN] = "";
    snprintf(command_temp, COMMAND_LEN,
@@ -1643,7 +1645,7 @@ diff -urp HIP-rocm-5.5.1.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    strncat(command, command_temp, COMMAND_LEN);
 diff -urp HIP-rocm-5.5.1.orig/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp HIP-rocm-5.5.1/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp
 --- HIP-rocm-5.5.1.orig/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp	2023-05-09 12:52:23.000000000 -0700
-+++ HIP-rocm-5.5.1/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp	2023-08-30 14:58:39.802789090 -0700
++++ HIP-rocm-5.5.1/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.cpp	2023-09-19 10:25:54.185355756 -0700
 @@ -21,7 +21,7 @@ THE SOFTWARE.
  */
  
