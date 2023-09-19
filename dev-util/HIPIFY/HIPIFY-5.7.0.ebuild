@@ -37,7 +37,7 @@ gen_llvm_rdepend() {
 	"
 }
 # https://github.com/ROCm-Developer-Tools/HIPIFY/blob/rocm-5.6.0/docs/hipify-clang.md#hipify-clang-dependencies
-CDEPEND="
+TEST_BDEPEND="
 	|| (
 		(
 			=dev-util/nvidia-cuda-toolkit-12.1*:=
@@ -72,6 +72,7 @@ CDEPEND="
 	)
 "
 RDEPEND="
+	sys-devel/hip-compiler[system-llvm=]
 	!test? (
 		!system-llvm? (
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
@@ -96,7 +97,7 @@ BDEPEND="
 		)
 	)
 	test? (
-		${CDEPEND}
+		${TEST_BDEPEND}
 	)
 	>=dev-util/cmake-3.16.8
 "

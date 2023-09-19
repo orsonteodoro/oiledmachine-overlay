@@ -35,6 +35,7 @@ CDEPEND="
 RDEPEND="
 	!dev-libs/rocr-runtime:0
 	${CDEPEND}
+	dev-util/rocm-compiler[system-llvm=]
 "
 DEPEND="
 	${CDEPEND}

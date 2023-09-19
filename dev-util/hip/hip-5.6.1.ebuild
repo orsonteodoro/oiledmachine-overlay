@@ -72,6 +72,7 @@ REQUIRED_USE="
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
+	dev-util/hip-compiler[system-llvm=]
 	virtual/opengl
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -88,13 +89,14 @@ RDEPEND="
 			sys-devel/llvm-rocm:=
 			~sys-devel/llvm-rocm-${PV}:${ROCM_SLOT}
 		)
+		dev-util/rocm-compiler[system-llvm=]
+		~dev-libs/rocr-runtime-${PV}:${SLOT}
+		~dev-util/rocminfo-${PV}:${SLOT}
 		system-llvm? (
 			=sys-devel/clang-${LLVM_MAX_SLOT}*:=
 			=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
 			=sys-libs/compiler-rt-${LLVM_MAX_SLOT}*:=
 		)
-		~dev-libs/rocr-runtime-${PV}:${SLOT}
-		~dev-util/rocminfo-${PV}:${SLOT}
 	)
 "
 DEPEND="
