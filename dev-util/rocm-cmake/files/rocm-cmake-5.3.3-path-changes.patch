@@ -18,7 +18,7 @@ diff -urp rocm-cmake-rocm-5.3.3.orig/share/rocm/cmake/ROCMClangTidy.cmake rocm-c
      HINTS ${CLANG_TIDY_EXE_HINT}
      PATH_SUFFIXES compiler/bin bin
 -    PATHS /opt/rocm/llvm/bin /opt/rocm/hcc /usr/local/opt/llvm/bin)
-+    PATHS /usr/lib/llvm/@LLVM_SLOT@/bin @ESYSROOT@/usr/hcc)
++    PATHS @ESYSROOT_LLVM_PATH@/bin @ESYSROOT@/usr/hcc)
  
  execute_process(COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE CLANG_TIDY_COMPILER_VERSION_OUTPUT)
  function(rocm_find_clang_tidy_version VAR)

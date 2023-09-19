@@ -120,17 +120,12 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
 diff -urp src.orig/image/blit_src/CMakeLists.txt src/image/blit_src/CMakeLists.txt
 --- src.orig/image/blit_src/CMakeLists.txt	2022-05-20 11:40:46.000000000 -0700
 +++ src/image/blit_src/CMakeLists.txt	2023-09-18 19:27:35.642075506 -0700
-@@ -46,11 +46,16 @@ cmake_minimum_required ( VERSION 3.7 )
+@@ -46,11 +46,11 @@ cmake_minimum_required ( VERSION 3.7 )
  set (QUIT 0)
  
  # Import target 'clang'
 -find_package(Clang REQUIRED HINTS ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
-+option(USE_SYSTEM_LLVM "Use the system's LLVM" OFF)
-+if (${USE_SYSTEM_LLVM})
-+  find_package(Clang REQUIRED HINTS @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@ )
-+else()
-+  find_package(Clang REQUIRED HINTS @ESYSROOT_ROCM_PATH@/llvm )
-+endif()
++find_package(Clang REQUIRED HINTS @ESYSROOT_LLVM_PATH@ )
  
  # Device libs doesn't support find_package yet.
  set(PREFIX_HINTS "")

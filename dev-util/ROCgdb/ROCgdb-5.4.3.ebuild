@@ -28,7 +28,7 @@ https://github.com/ROCm-Developer-Tools/ROCgdb
 "
 LICENSE="GPL-3+ LGPL-2.1+"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" r1"
+IUSE="system-llvm r1"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -54,6 +54,7 @@ BDEPEND="
 	app-alternatives/lex
 	app-alternatives/sh
 	app-alternatives/yacc
+	dev-util/rocm-compiler[system-llvm=]
 	sys-apps/texinfo
 	sys-devel/automake
 	sys-devel/make
@@ -71,6 +72,11 @@ pkg_setup() {
 
 src_prepare() {
 	default
+	PATCH_PATHS=(
+		"${S}/gdb/configure"
+		"${S}/gdb/configure.ac"
+		"${S}/gdb/testsuite/lib/rocm.exp"
+	)
 	rocm_src_prepare
 }
 

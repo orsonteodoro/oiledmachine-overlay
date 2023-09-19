@@ -67,7 +67,6 @@ src_prepare() {
 	cmake_src_prepare
 	if ! use aqlprofile ; then
 		eapply "${FILESDIR}/${PN}-4.3.0_no-aqlprofiler.patch"
-		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
 	fi
 	rocm_src_prepare
 }

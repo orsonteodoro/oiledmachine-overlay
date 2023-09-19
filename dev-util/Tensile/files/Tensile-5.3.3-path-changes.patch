@@ -6,7 +6,7 @@ diff -urp Tensile-rocm-5.3.3.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5
  set( CMAKE_CXX_EXTENSIONS OFF )
  
 -list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} /usr)
++list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} @ESYSROOT_ROCM_PATH@)
  
  option(TENSILE_USE_HIP       "Use the Hip runtime." ON)
  option(TENSILE_USE_OPENCL    "Use the OpenCL runtime." ON)
@@ -15,7 +15,7 @@ diff -urp Tensile-rocm-5.3.3.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5
  #if(TENSILE_USE_HIP AND NOT HIP_DIR)
  if(TENSILE_USE_HIP)
 -    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} /opt/rocm)
-+    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} /usr)
++    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} @ESYSROOT_ROCM_PATH@)
  endif()
  
  if(TENSILE_USE_OPENMP AND NOT TARGET custom_openmp_cxx)
@@ -30,7 +30,7 @@ diff -urp Tensile-rocm-5.3.3.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5
 -            find_package(LLVM REQUIRED CONFIG)
 -        endif()
 -    endif()
-+    find_package(LLVM PATHS /usr/lib/llvm/@LLVM_SLOT@ REQUIRED CONFIG)
++    find_package(LLVM PATHS @ESYSROOT_LLVM_PATH@ REQUIRED CONFIG)
  
      set(test_sources ${test_sources}
          ContractionLibraryLoading_test.cpp
@@ -70,13 +70,13 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-5.3.3/Tensile/C
 -globalParameters["ROCmAgentEnumeratorPath"] = None      # /opt/rocm/bin/rocm_agent_enumerator
 -globalParameters["ROCmSMIPath"] = None                  # /opt/rocm/bin/rocm-smi
 -globalParameters["AssemblerPath"] = None                # /opt/rocm/hip/bin/hipcc
-+globalParameters["ROCmAgentEnumeratorPath"] = None      # /usr/bin/rocm_agent_enumerator
-+globalParameters["ROCmSMIPath"] = None                  # /usr/bin/rocm-smi
-+globalParameters["AssemblerPath"] = None                # /usr/bin/hipcc
++globalParameters["ROCmAgentEnumeratorPath"] = None      # @ESYSROOT_ROCM_PATH@/bin/rocm_agent_enumerator
++globalParameters["ROCmSMIPath"] = None                  # @ESYSROOT_ROCM_PATH@/bin/rocm-smi
++globalParameters["AssemblerPath"] = None                # @ESYSROOT_ROCM_PATH@/bin/hipcc
  globalParameters["WorkingPath"] = os.getcwd()           # path where tensile called from
  globalParameters["IndexChars"] =  "IJKLMNOPQRSTUVWXYZ"  # which characters to use for C[ij]=Sum[k] A[ik]*B[jk]
 -globalParameters["ScriptPath"] = os.path.dirname(os.path.realpath(__file__))            # path to Tensile/Tensile.py
-+globalParameters["ScriptPath"] = "@EPREFIX@/usr/share/Tensile"            # path to Tensile/Tensile.py
++globalParameters["ScriptPath"] = "@ESYSROOT_ROCM_PATH@/share/Tensile"            # path to Tensile/Tensile.py
  globalParameters["SourcePath"] = os.path.join(globalParameters["ScriptPath"], "Source") # path to Tensile/Source/
  globalParameters["HipClangVersion"] = "0.0.0"
  
@@ -85,7 +85,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-5.3.3/Tensile/C
  
  # directory where custom kernels are located
 -globalParameters["CustomKernelDirectory"] = os.path.join(os.path.dirname(os.path.realpath(__file__)), "CustomKernels")
-+globalParameters["CustomKernelDirectory"] = os.path.join("@EPREFIX@/usr/share/Tensile", "CustomKernels")
++globalParameters["CustomKernelDirectory"] = os.path.join("@ESYSROOT_ROCM_PATH@/share/Tensile", "CustomKernels")
  
  globalParameters["PristineOnGPU"] = True # use Pristine memory on Tensile training verification or not
  
@@ -94,7 +94,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-5.3.3/Tensile/C
  def isExe( filePath ):
    return os.path.isfile(filePath) and os.access(filePath, os.X_OK)
 -def locateExe( defaultPath, exeName ): # /opt/rocm/bin, hip-clang
-+def locateExe( defaultPath, exeName ): # /usr/bin, hip-clang
++def locateExe( defaultPath, exeName ): # @ESYSROOT_ROCM_PATH@/bin, hip-clang
    # look in defaultPath first
    exePath = os.path.join(defaultPath, exeName)
    if isExe(exePath):
@@ -103,7 +103,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-5.3.3/Tensile/C
        print2(" %24s: %8s (unspecified)" % (key, defaultValue))
  
 -  globalParameters["ROCmPath"] = "/opt/rocm"
-+  globalParameters["ROCmPath"] = "@EPREFIX@/usr"
++  globalParameters["ROCmPath"] = "@ESYSROOT_ROCM_PATH@"
    if "ROCM_PATH" in os.environ:
      globalParameters["ROCmPath"] = os.environ.get("ROCM_PATH")
    if "TENSILE_ROCM_PATH" in os.environ:
@@ -112,12 +112,12 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-5.3.3/Tensile/C
        globalParameters["AssemblerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang++.exe")
      else:
 -      globalParameters["AssemblerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "llvm/bin"), "clang++")
-+      globalParameters["AssemblerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "lib/llvm/@LLVM_SLOT@/bin"), "clang++")
++      globalParameters["AssemblerPath"] = locateExe("@ESYSROOT_LLVM_PATH@/bin", "clang++")
  
    globalParameters["ROCmSMIPath"] = locateExe(globalParameters["ROCmBinPath"], "rocm-smi")
  
 -  globalParameters["ExtractKernelPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "hip/bin"), "extractkernel")
-+  globalParameters["ExtractKernelPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "bin"), "extractkernel")
++  globalParameters["ExtractKernelPath"] = locateExe("@ESYSROOT_ROCM_PATH@/bin", "extractkernel")
  
    if "TENSILE_ROCM_OFFLOAD_BUNDLER_PATH" in os.environ:
      globalParameters["ClangOffloadBundlerPath"] = os.environ.get("TENSILE_ROCM_OFFLOAD_BUNDLER_PATH")
@@ -126,7 +126,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Common.py Tensile-rocm-5.3.3/Tensile/C
        globalParameters["ClangOffloadBundlerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang-offload-bundler.exe")
      else:
 -      globalParameters["ClangOffloadBundlerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "llvm/bin"), "clang-offload-bundler")
-+      globalParameters["ClangOffloadBundlerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "lib/llvm/@LLVM_SLOT@/bin"), "clang-offload-bundler")
++      globalParameters["ClangOffloadBundlerPath"] = locateExe("@ESYSROOT_LLVM_PATH@/bin", "clang-offload-bundler")
  
    if "ROCmAgentEnumeratorPath" in config:
      globalParameters["ROCmAgentEnumeratorPath"] = config["ROCmAgentEnumeratorPath"]
@@ -160,7 +160,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/__init__.py Tensile-rocm-5.3.3/Tensile
      import os.path
  
 -    print(os.path.dirname(__file__), end='')
-+    print("@EPREFIX@/usr/share/Tensile/Source", end='')
++    print("@ESYSROOT_ROCM_PATH@/share/Tensile/Source", end='')
 diff -urp Tensile-rocm-5.3.3.orig/Tensile/ReplacementKernels.py Tensile-rocm-5.3.3/Tensile/ReplacementKernels.py
 --- Tensile-rocm-5.3.3.orig/Tensile/ReplacementKernels.py	2022-10-29 10:39:08.000000000 -0700
 +++ Tensile-rocm-5.3.3/Tensile/ReplacementKernels.py	2023-09-03 20:26:33.708443130 -0700
@@ -169,7 +169,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/ReplacementKernels.py Tensile-rocm-5.3
      @classmethod
      def Directory(cls):
 -        scriptDir = os.path.dirname(os.path.realpath(__file__))
-+        scriptDir = "@EPREFIX@/usr/share/Tensile"
++        scriptDir = "@ESYSROOT_ROCM_PATH@/share/Tensile"
          dirName = 'ReplacementKernels'
          if globalParameters['CodeObjectVersion'] == 'V3':
              dirName += '-cov3'
@@ -181,7 +181,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Source/cmake/FindROCmSMI.cmake Tensile
  if(NOT ROCM_ROOT)
      if(NOT ROCM_DIR)
 -        set(ROCM_ROOT "/opt/rocm")
-+        set(ROCM_ROOT "/usr")
++        set(ROCM_ROOT "@ESYSROOT_ROCM_PATH@")
      else()
          set(ROCM_DIR "${ROCM_DIR}/../../..")
      endif()
@@ -202,7 +202,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Source/CMakeLists.txt Tensile-rocm-5.3
  # Override all paths arguments as they do not work properly
  file(TO_CMAKE_PATH "$ENV{ROCM_PATH}" ROCM_PATH_ENV_VALUE)
 -list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} /usr)
++list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} @ESYSROOT_ROCM_PATH@)
  
  project(Tensile)
  
@@ -211,7 +211,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Source/CMakeLists.txt Tensile-rocm-5.3
  
  if(TENSILE_USE_HIP)
 -    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} /opt/rocm)
-+    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} /usr)
++    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} @ESYSROOT_ROCM_PATH@)
  endif()
  
  if(TENSILE_USE_OPENMP)
@@ -223,7 +223,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindHIP.cmake Tensile-rocm-5.3.
        PATHS
          ENV HIP_PATH
 -        /opt/rocm
-+        /usr
++        @ESYSROOT_ROCM_PATH@
        PATH_SUFFIXES
          /include/hip
          /include
@@ -232,7 +232,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindHIP.cmake Tensile-rocm-5.3.
      PATHS
        ENV HIP_PATH
 -          /opt/rocm
-+          /usr
++          @ESYSROOT_ROCM_PATH@
      PATH_SUFFIXES
            /bin
        )
@@ -245,8 +245,8 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindOpenCL.cmake Tensile-rocm-5
      /usr/local/include
 -    /usr/local/cuda/include
 -    /opt/rocm/opencl/include
-+    /opt/cuda/include
-+    /usr/opencl/include
++    @ESYSROOT@/opt/cuda/include
++    @ESYSROOT_ROCM_PATH@/opencl/include
    DOC "OpenCL header file path"
  )
  mark_as_advanced( OPENCL_INCLUDE_DIRS )
@@ -302,9 +302,9 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Source/FindOpenCL.cmake Tensile-rocm-5
 +  DOC "OpenCL dynamic library path"
 +  PATH_SUFFIXES ${_PATH_SUFFIXES}
 +  PATHS
-+  /usr/@LIBDIR@
-+  /opt/cuda/@LIBDIR@
-+  /usr/opencl/@LIBDIR@
++  @ESYSROOT@/usr/@LIBDIR@
++  @ESYSROOT@/opt/cuda/@LIBDIR@
++  @ESYSROOT_ROCM_PATH@/opencl/@LIBDIR@
 +)
  mark_as_advanced( OPENCL_LIBRARIES )
  
@@ -323,7 +323,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Source/lib/CMakeLists.txt Tensile-rocm
 -            find_package(LLVM REQUIRED CONFIG)
 -        endif()
 -    endif()
-+    find_package(LLVM PATHS /usr/lib/llvm/@LLVM_SLOT@ REQUIRED CONFIG)
++    find_package(LLVM PATHS @ESYSROOT_LLVM_PATH@ REQUIRED CONFIG)
  
      set(tensile_sources ${tensile_sources}
          source/llvm/YAML.cpp
@@ -336,7 +336,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/TensileCreateLibrary.py Tensile-rocm-5
    # one process running this script. This is to avoid build directory clashing.
    # NOTE: file paths must not contain the lower case word 'kernel' or the
 -  # /opt/rocm/bin/extractkernel will fail.
-+  # /usr/bin/extractkernel will fail.
++  # @ESYSROOT_ROCM_PATH@/bin/extractkernel will fail.
    # See buildSourceCodeObjectFile:167 for the call to this binary.
    Common.pushWorkingPath('build_tmp')
    Common.pushWorkingPath(os.path.basename(outputPath).upper())
@@ -349,12 +349,12 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Tensile.py Tensile-rocm-5.3.3/Tensile/
  
  def TensileConfigPath(*args):
 -    return os.path.join(os.path.dirname(os.path.realpath(__file__)), "Configs", *args)
-+    return os.path.join("@EPREFIX@/usr/share/Tensile", "Configs", *args)
++    return os.path.join("@ESYSROOT_ROCM_PATH@/share/Tensile", "Configs", *args)
  
  
  def TensileTestPath(*args):
 -    return os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tests", *args)
-+    return os.path.join("@EPREFIX@/usr/share/Tensile", "Tests", *args)
++    return os.path.join("@ESYSROOT_ROCM_PATH@/share/Tensile", "Tests", *args)
  
  
  ################################################################################
@@ -367,7 +367,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Tests/extended/convolution_config/Yaml
      def findAvailableArchs(self):
          availableArchs = []
 -        rocmpath = "/opt/rocm"
-+        rocmpath = "/usr"
++        rocmpath = "@ESYSROOT_ROCM_PATH@"
          if "ROCM_PATH" in os.environ:
              rocmpath = os.environ.get("ROCM_PATH")
          if "TENSILE_ROCM_PATH" in os.environ:
@@ -380,11 +380,11 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Tests/hipModuleLoad_timing/Makefile Te
  
 -CXX=/opt/rocm/hip/bin/hipcc
 -LIBFLAGS=-L/opt/rocm/hip/lib/
-+CXX=@ESYSROOT@/usr/bin/hipcc
-+LIBFLAGS=-L@ESYSROOT@/usr/@LIBDIR@/
++CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc
++LIBFLAGS=-L@ESYSROOT_ROCM_PATH@/@LIBDIR@/
  LIBS=-lamdhip64
 -INCFLAGS=-I/opt/rocm/hip/include/
-+INCFLAGS=-I@ESYSROOT@/usr/include/hip
++INCFLAGS=-I@ESYSROOT_ROCM_PATH@/include/hip
  
  hipModuleLoadTiming.out: hipModuleLoadTiming.o
  	$(CXX) -o $@ $(LIBFLAGS) $^
@@ -420,7 +420,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Tests/yaml_only/test_config.py Tensile
    return os.path.isfile(filePath) and os.access(filePath, os.X_OK)
  
 -def locateExe( defaultPath, exeName ): # /opt/rocm/bin, hip-clang
-+def locateExe( defaultPath, exeName ): # /usr/bin, hip-clang
++def locateExe( defaultPath, exeName ): # @ESYSROOT_ROCM_PATH@/bin, hip-clang
    # look in path first
    for path in os.environ["PATH"].split(os.pathsep):
      exePath = os.path.join(path, exeName)
@@ -429,7 +429,7 @@ diff -urp Tensile-rocm-5.3.3.orig/Tensile/Tests/yaml_only/test_config.py Tensile
  def findAvailableArchs():
      availableArchs = []
 -    rocmpath = "/opt/rocm"
-+    rocmpath = "/usr"
++    rocmpath = "@ESYSROOT_ROCM_PATH@"
      if "ROCM_PATH" in os.environ:
          rocmpath = os.environ.get("ROCM_PATH")
      if "TENSILE_ROCM_PATH" in os.environ:

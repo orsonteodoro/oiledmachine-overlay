@@ -6,7 +6,7 @@ diff -urp ROCgdb-rocm-5.6.0.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.6.0/gd
      set rocm_path $env(ROCM_PATH)
  } else {
 -    set rocm_path "/opt/rocm"
-+    set rocm_path "/usr"
++    set rocm_path "@ESYSROOT_ROCM_PATH@"
  }
  
  # Get the gpu target to be passed to e.g., -mcpu=.
@@ -15,7 +15,7 @@ diff -urp ROCgdb-rocm-5.6.0.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.6.0/gd
      # Bundle device and host objects.
      set res [remote_exec host \
 -		 "${rocm_path}/llvm/bin/clang-offload-bundler\
-+		 "${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler\
++		 "@ESYSROOT_LLVM_PATH@/bin/clang-offload-bundler\
  				-type=o\
  				-targets=hip-amdgcn-amd-amdhsa-${gpu_target},host-x86_64-unknown-linux-gnu\
  				-outputs=$dest\
@@ -25,8 +25,8 @@ diff -urp ROCgdb-rocm-5.6.0.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.6.0/gd
      save_vars {CC_FOR_TARGET CXX_FOR_TARGET} {
 -	set CC_FOR_TARGET ${rocm_path}/llvm/bin/clang
 -	set CXX_FOR_TARGET ${rocm_path}/llvm/bin/clang
-+	set CC_FOR_TARGET ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
-+	set CXX_FOR_TARGET ${rocm_path}/lib/llvm/@LLVM_SLOT@/bin/clang
++	set CC_FOR_TARGET @ESYSROOT_LLVM_PATH@/bin/clang
++	set CXX_FOR_TARGET @ESYSROOT_LLVM_PATH@/bin/clang
  
  	# target_compile always adds -lm which is not supported for
  	# kernel compilation.

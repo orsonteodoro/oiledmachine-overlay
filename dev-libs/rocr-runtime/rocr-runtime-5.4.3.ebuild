@@ -76,7 +76,6 @@ src_configure() {
 	use debug || append-cxxflags "-DNDEBUG"
 	local mycmakeargs=(
 		-DINCLUDE_PATH_COMPATIBILITY=OFF
-		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
 	)
 	cmake_src_configure
 }

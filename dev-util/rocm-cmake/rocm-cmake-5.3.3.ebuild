@@ -25,6 +25,10 @@ DESCRIPTION="Radeon Open Compute CMake Modules"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-cmake"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
+IUSE="system-llvm"
+RDEPEND="
+	dev-util/rocm-compiler[system-llvm=]
+"
 BDEPEND="
 	>=dev-util/cmake-3.5
 "

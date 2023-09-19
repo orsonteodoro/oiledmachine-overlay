@@ -40,20 +40,14 @@ diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.c
 diff -urp src.orig/core/runtime/trap_handler/CMakeLists.txt src/core/runtime/trap_handler/CMakeLists.txt
 --- src.orig/core/runtime/trap_handler/CMakeLists.txt	2023-06-28 05:56:26.000000000 -0700
 +++ src/core/runtime/trap_handler/CMakeLists.txt	2023-09-18 19:36:24.494068444 -0700
-@@ -43,8 +43,14 @@
+@@ -43,8 +43,8 @@
  cmake_minimum_required ( VERSION 3.7 )
  
  # Import target 'clang' and 'llvm-objcopy'
 -find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
 -find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
-+option(USE_SYSTEM_LLVM "Use the system's LLVM" OFF)
-+if(${USE_SYSTEM_LLVM})
-+  find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@ )
-+  find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@ )
-+else()
-+  find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_ROCM_PATH@/llvm )
-+  find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_ROCM_PATH@/llvm )
-+endif()
++find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_LLVM_PATH@ )
++find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_LLVM_PATH@ )
  
  set (TARGET_DEVS "gfx900;gfx1010;gfx1030;gfx1100")
  set (POSTFIX "9;1010;10;11")
@@ -72,17 +66,12 @@ diff -urp src.orig/hsa-backward-compat.cmake src/hsa-backward-compat.cmake
 diff -urp src.orig/image/blit_src/CMakeLists.txt src/image/blit_src/CMakeLists.txt
 --- src.orig/image/blit_src/CMakeLists.txt	2023-06-28 05:56:26.000000000 -0700
 +++ src/image/blit_src/CMakeLists.txt	2023-09-18 19:36:17.566068536 -0700
-@@ -43,7 +43,12 @@
+@@ -43,7 +43,7 @@
  cmake_minimum_required ( VERSION 3.7 )
  
  # Import target 'clang'
 -find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
-+option(USE_SYSTEM_LLVM "Use the system's LLVM" OFF)
-+if(${USE_SYSTEM_LLVM})
-+  find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@ )
-+else()
-+  find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_ROCM_PATH@/llvm )
-+endif()
++find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_LLVM_PATH@ )
  
  # Determine the target devices if not specified
  if (NOT DEFINED TARGET_DEVICES)

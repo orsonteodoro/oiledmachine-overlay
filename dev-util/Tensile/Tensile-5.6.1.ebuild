@@ -38,7 +38,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp r4"
+IUSE="client openmp system-llvm r4"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -46,12 +46,16 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	!system-llvm? (
+		sys-devel/llvm-roc:=
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	)
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	sys-devel/clang:${LLVM_MAX_SLOT}
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	client? (
 		dev-libs/boost
@@ -60,6 +64,9 @@ RDEPEND="
 	openmp? (
 		sys-devel/lld:${LLVM_MAX_SLOT}
 		sys-libs/libomp:${LLVM_MAX_SLOT}
+	)
+	system-llvm? (
+		sys-devel/clang:${LLVM_MAX_SLOT}
 	)
 "
 DEPEND="
@@ -124,13 +131,36 @@ src_configure() {
 		append-flags -fuse-ld=lld
 	fi
 
-	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang++"
-	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-offload-bundler"
+	local clang_slot=""
+	if ver_test ${LLVM_SLOT} -ge 16 ; then
+		clang_slot="${LLVM_SLOT}"
+	else
+		clang_slot=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+			| sed -e "s|sys-devel/clang-||")
+		clang_slot=$(ver_cut 1-3 "${clang_slot}")
+	fi
+
+	local clang_path
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		clang_path="/usr/lib/clang/${clang_slot}"
+	else
+		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/lib/clang/${LLVM_MAX_SLOT}.0.0"
+	fi
+
+	local llvm_path
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		llvm_path="/usr/lib/llvm/${LLVM_MAX_SLOT}"
+	else
+		llvm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	fi
+
+	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${llvm_path}/bin/clang++"
+	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${llvm_path}/bin/clang-offload-bundler"
 
 	distutils-r1_src_configure
 
 	if use client; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}${llvm_path}/bin"
 		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
