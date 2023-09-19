@@ -380,26 +380,26 @@ eerror
 
 	sed \
 		-i \
-		-e "s|@EPREFIX_CLANG_PATH_COND@|${EPREFIX}${clang_path}|g" \
-		$(grep -r -l -e "@EPREFIX_CLANG_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
+		-e "s|@EPREFIX_CLANG_PATH@|${EPREFIX}${clang_path}|g" \
+		$(grep -r -l -e "@EPREFIX_CLANG_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
-		-e "s|@ESYSROOT_CLANG_PATH_COND@|${ESYSROOT}${clang_path}|g" \
-		$(grep -r -l -e "@ESYSROOT_CLANG_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
+		-e "s|@ESYSROOT_CLANG_PATH@|${ESYSROOT}${clang_path}|g" \
+		$(grep -r -l -e "@ESYSROOT_CLANG_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
-		-e "s|@EPREFIX_LLVM_PATH_COND@|${EPREFIX}${llvm_path}|g" \
-		$(grep -r -l -e "@EPREFIX_LLVM_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
+		-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}${llvm_path}|g" \
+		$(grep -r -l -e "@EPREFIX_LLVM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
-		-e "s|@ESYSROOT_LLVM_PATH_COND@|${ESYSROOT}${llvm_path}|g" \
-		$(grep -r -l -e "@ESYSROOT_LLVM_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
+		-e "s|@ESYSROOT_LLVM_PATH@|${ESYSROOT}${llvm_path}|g" \
+		$(grep -r -l -e "@ESYSROOT_LLVM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 

@@ -13,7 +13,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/bin/hipcc.pl HIPCC-rocm-5.7.0/bin/hipcc.pl
 +# HIP_PATH       : Path to the HIP directory (defaults to /usr).
 +# CUDA_PATH      : Path to the CUDA SDK (defaults to /opt/cuda). Used on NVIDIA platforms only.
 +# HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to /usr). Used on AMD platforms only.
-+# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH_COND@/bin).
++# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH@/bin).
 +#                  Used on AMD platforms only.
  
  if(scalar @ARGV == 0){
@@ -152,7 +152,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/bin/hipvars.pm HIPCC-rocm-5.7.0/bin/hipvars.pm
 -} else {
 -    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/llvm/bin";
 -}
-+$HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "@ESYSROOT_LLVM_PATH_COND@/bin";
++$HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "@ESYSROOT_LLVM_PATH@/bin";
  # HIP_ROCCLR_HOME is used by Windows builds
  $HIP_ROCCLR_HOME=$ENV{'HIP_ROCCLR_HOME'};
  
@@ -200,7 +200,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/docs/env.md HIPCC-rocm-5.7.0/docs/env.md
 +- HIP_PATH        : Path to the HIP directory, (defaults to /usr).
 +- CUDA_PATH       : Path to the CUDA SDK (defaults to /opt/cuda). Used on NVIDIA platforms only.
 +- HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to /usr). Used on AMD platforms only.
-+- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH_COND@/bin relative to hipcc's abs_path). Used on AMD platforms only.
++- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH@/bin relative to hipcc's abs_path). Used on AMD platforms only.
 diff -urp HIPCC-rocm-5.7.0.orig/README.md HIPCC-rocm-5.7.0/README.md
 --- HIPCC-rocm-5.7.0.orig/README.md	2023-07-25 12:35:46.000000000 -0700
 +++ HIPCC-rocm-5.7.0/README.md	2023-09-19 10:54:03.357333199 -0700
@@ -217,7 +217,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/README.md HIPCC-rocm-5.7.0/README.md
 +- CUDA_PATH       : Path to CUDA SDK (default /usr/local/cuda).  Used on NVIDIA platforms only.
 +- HSA_PATH        : Path to HSA dir (defaults to /usr).  Used on AMD platforms only.
 +- HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to /usr).  Used on AMD platforms only.
-+- HIP_CLANG_PATH  : Path to HIP-Clang (default to @ESYSROOT_LLVM_PATH_COND@/bin).  Used on AMD platforms only.
++- HIP_CLANG_PATH  : Path to HIP-Clang (default to @ESYSROOT_LLVM_PATH@/bin).  Used on AMD platforms only.
  
  ### <a name="usage"></a> hipcc: usage
  
@@ -296,7 +296,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_amd.h HIPCC-rocm-5.7.0/src/hipBin_amd
 -    } else {
 -      hipClangPath /= "bin";
 -    }
-+    hipClangPath = "@ESYSROOT_LLVM_PATH_COND@/bin";
++    hipClangPath = "@ESYSROOT_LLVM_PATH@/bin";
      complierPath = hipClangPath.string();
    } else {
      complierPath = envVariables.hipClangPathEnv_;

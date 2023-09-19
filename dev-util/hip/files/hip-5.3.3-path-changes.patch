@@ -16,7 +16,7 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipcc.pl HIP-rocm-5.3.3/bin/hipcc.pl
 +# CUDA_PATH      : Path to CUDA SDK (defaults to /opt/cuda).  Used on NVIDIA platforms only.
 +# HSA_PATH       : Path to HSA dir (defaults to /usr).  Used on AMD platforms only.
 +# HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to /usr).  Used on AMD platforms only.
-+# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH_COND@/bin).
++# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH@/bin).
 +#                  Used on AMD platforms only.
  
  if(scalar @ARGV == 0){
@@ -234,7 +234,7 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipvars.pm HIP-rocm-5.3.3/bin/hipvars.pm
      $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$HIP_PATH/bin";
  } else {
 -    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/llvm/bin";
-+    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "@ESYSROOT_LLVM_PATH_COND@/bin";
++    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "@ESYSROOT_LLVM_PATH@/bin";
  }
  # HIP_ROCCLR_HOME is used by Windows builds
  $HIP_ROCCLR_HOME=$ENV{'HIP_ROCCLR_HOME'};
@@ -309,7 +309,7 @@ diff -urp HIP-rocm-5.3.3.orig/cmake/FindHIP.cmake HIP-rocm-5.3.3/cmake/FindHIP.c
 -            message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env ")
 -        endif()
 -    endif()
-+    set(HIP_CLANG_PATH "@ESYSROOT_LLVM_PATH_COND@/bin")
++    set(HIP_CLANG_PATH "@ESYSROOT_LLVM_PATH@/bin")
 +
      #Number of parallel jobs by default is 1
      if(NOT DEFINED HIP_CLANG_NUM_PARALLEL_JOBS)
@@ -342,7 +342,7 @@ diff -urp HIP-rocm-5.3.3.orig/cmake/FindHIP.cmake HIP-rocm-5.3.3/cmake/FindHIP.c
 -                message(FATAL_ERROR "Unable to find the clang compiler path. Set ROCM_PATH or HIP_PATH in env")
 -            endif()
 -        endif()
-+        set(HIP_CLANG_PATH "@ESYSROOT_LLVM_PATH_COND@/bin")
++        set(HIP_CLANG_PATH "@ESYSROOT_LLVM_PATH@/bin")
          set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} ${HIP_CLANG_PATH} ${HIP_CLANG_PARALLEL_BUILD_LINK_OPTIONS} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
      else()
          set(CMAKE_HIP_LINK_EXECUTABLE "${HIP_HIPCC_CMAKE_LINKER_HELPER} <FLAGS> <CMAKE_CXX_LINK_FLAGS> <LINK_FLAGS> <OBJECTS> -o <TARGET> <LINK_LIBRARIES>")
@@ -373,12 +373,12 @@ diff -urp HIP-rocm-5.3.3.orig/CONTRIBUTING.md HIP-rocm-5.3.3/CONTRIBUTING.md
  ```
 -$ <ROCM_PATH>/llvm/bin/clang -v
 -clang version 11.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
-+$ @ESYSROOT_LLVM_PATH_COND@/bin/clang -v
++$ @ESYSROOT_LLVM_PATH@/bin/clang -v
 +clang version @LLVM_SLOT@.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
  Target: x86_64-unknown-linux-gnu
  Thread model: posix
 -InstalledDir: <ROCM_PATH>/llvm/bin
-+InstalledDir: @ESYSROOT_LLVM_PATH_COND@/bin
++InstalledDir: @ESYSROOT_LLVM_PATH@/bin
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7.5.0
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/8
@@ -390,7 +390,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/gen_clang_option_doc.sh HIP-rocm-5.3
  ## generates documentation about clang options.
  
 -clang=/opt/rocm*/llvm/bin/clang
-+clang="@ESYSROOT_LLVM_PATH_COND@/bin/clang"
++clang="@ESYSROOT_LLVM_PATH@/bin/clang"
  
  exec > clang_options.md
  
@@ -416,7 +416,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_build.md HIP-rocm-5.3.3/docs/mar
 -   * By default HIP looks for device library in <ROCM_PATH>/lib (can be overridden by setting DEVICE_LIB_PATH environment variable).
 +   * By default HIP looks for HSA in <ROCM_PATH> (can be overridden by setting HSA_PATH environment variable).
 +   * By default HIP is installed into <ROCM_PATH> (can be overridden by setting HIP_PATH environment variable).
-+   * By default HIP looks for clang in @ESYSROOT_LLVM_PATH_COND@/bin (can be overridden by setting HIP_CLANG_PATH environment variable)
++   * By default HIP looks for clang in @ESYSROOT_LLVM_PATH@/bin (can be overridden by setting HIP_CLANG_PATH environment variable)
 +   * By default HIP looks for device library in <ROCM_PATH>/@LIBDIR@/amdgcn/bitcode (can be overridden by setting DEVICE_LIB_PATH environment variable).
     * Optionally, consider adding <ROCM_PATH>/bin to your PATH to make it easier to use the tools.
     * Optionally, set HIPCC_VERBOSE=7 to output the command line for compilation.
@@ -1125,9 +1125,9 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/16_assembly_to_executable/Makef
 -LLVM_MC=$(HIP_PATH)/../llvm/bin/llvm-mc
 -CLANG_OFFLOAD_BUNDLER=$(HIP_PATH)/../llvm/bin/clang-offload-bundler
 +HIPCC=$(ROCM_PATH)/bin/hipcc
-+CLANG=@ESYSROOT_LLVM_PATH_COND@/bin/clang
-+LLVM_MC=@ESYSROOT_LLVM_PATH_COND@/bin/llvm-mc
-+CLANG_OFFLOAD_BUNDLER=@ESYSROOT_LLVM_PATH_COND@/bin/clang-offload-bundler
++CLANG=@ESYSROOT_LLVM_PATH@/bin/clang
++LLVM_MC=@ESYSROOT_LLVM_PATH@/bin/llvm-mc
++CLANG_OFFLOAD_BUNDLER=@ESYSROOT_LLVM_PATH@/bin/clang-offload-bundler
  
  SRCS=square.cpp
  
@@ -1165,10 +1165,10 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/16_assembly_to_executable/READM
 -<ROCM_PATH>/hip/../llvm/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
 -<ROCM_PATH>/llvm/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
 -<ROCM_PATH>/llvm/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
-+@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.s -o square-hip-amdgcn-amd-amdhsa-gfx900.o
-+@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
-+@ESYSROOT_LLVM_PATH_COND@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
-+@ESYSROOT_LLVM_PATH_COND@/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
++@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.s -o square-hip-amdgcn-amd-amdhsa-gfx900.o
++@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
++@ESYSROOT_LLVM_PATH@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
++@ESYSROOT_LLVM_PATH@/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
  ```
  
  **Note:** Using option `-bundle-align=4096` only works on ROCm 4.0 and newer compilers. Also, the architecture must match the same arch as when compiling to assembly.
@@ -1201,11 +1201,11 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/Makefi
 -LLVM_AS=$(HIP_PATH)/../llvm/bin/llvm-as
 -LLVM_DIS=$(HIP_PATH)/../llvm/bin/llvm-dis
 +HIPCC=$(ROCM_PATH)/bin/hipcc
-+CLANG=@ESYSROOT_LLVM_PATH_COND@/bin/clang
-+LLVM_MC=@ESYSROOT_LLVM_PATH_COND@/bin/llvm-mc
-+CLANG_OFFLOAD_BUNDLER=@ESYSROOT_LLVM_PATH_COND@/bin/clang-offload-bundler
-+LLVM_AS=@ESYSROOT_LLVM_PATH_COND@/bin/llvm-as
-+LLVM_DIS=@ESYSROOT_LLVM_PATH_COND@/bin/llvm-dis
++CLANG=@ESYSROOT_LLVM_PATH@/bin/clang
++LLVM_MC=@ESYSROOT_LLVM_PATH@/bin/llvm-mc
++CLANG_OFFLOAD_BUNDLER=@ESYSROOT_LLVM_PATH@/bin/clang-offload-bundler
++LLVM_AS=@ESYSROOT_LLVM_PATH@/bin/llvm-as
++LLVM_DIS=@ESYSROOT_LLVM_PATH@/bin/llvm-dis
  
  SRCS=square.cpp
  
@@ -1235,8 +1235,8 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
  ```
 -<ROCM_PATH>/llvm/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
 -<ROCM_PATH>/llvm/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
-+@ESYSROOT_LLVM_PATH_COND@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
-+@ESYSROOT_LLVM_PATH_COND@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
++@ESYSROOT_LLVM_PATH@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
++@ESYSROOT_LLVM_PATH@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
  ```
  
  **Warning:** We cannot ensure any compiler besides the ROCm hipcc and clang will be compatible with this process. Also, there is no guarantee that the starting IR produced with `-x cl` will run with HIP runtime. Experimenting with other compilers or starting IR will be the responsibility of the developer.
@@ -1246,7 +1246,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
  ```
 -<ROCM_PATH>/llvm/bin/llvm-as square_host.ll -o square_host.bc
 -<ROCM_PATH>/hip/bin/hipcc -c square_host.bc -o square_host.o
-+@ESYSROOT_LLVM_PATH_COND@/bin/llvm-as square_host.ll -o square_host.bc
++@ESYSROOT_LLVM_PATH@/bin/llvm-as square_host.ll -o square_host.bc
 +<ROCM_PATH>/bin/hipcc -c square_host.bc -o square_host.o
  ```
  
@@ -1258,12 +1258,12 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
 -<ROCM_PATH>/hip/../llvm/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
 -<ROCM_PATH>/hip/../llvm/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
 -<ROCM_PATH>/llvm/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
-+@ESYSROOT_LLVM_PATH_COND@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx900.ll -o square-hip-amdgcn-amd-amdhsa-gfx900.bc
-+@ESYSROOT_LLVM_PATH_COND@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx906.ll -o square-hip-amdgcn-amd-amdhsa-gfx906.bc
-+@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.o
-+@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
-+@ESYSROOT_LLVM_PATH_COND@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
-+@ESYSROOT_LLVM_PATH_COND@/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
++@ESYSROOT_LLVM_PATH@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx900.ll -o square-hip-amdgcn-amd-amdhsa-gfx900.bc
++@ESYSROOT_LLVM_PATH@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx906.ll -o square-hip-amdgcn-amd-amdhsa-gfx906.bc
++@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.o
++@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
++@ESYSROOT_LLVM_PATH@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
++@ESYSROOT_LLVM_PATH@/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
  ```
  
  **Note:** Using option `-bundle-align=4096` only works on ROCm 4.0 and newer compilers. Also, the architecture must match the same arch as when compiling to LLVM IR.
@@ -1333,7 +1333,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.m
 -cmake -DCMAKE_CXX_COMPILER=/opt/rocm/bin/amdclang++ .. (or)
 -cmake -DCMAKE_CXX_COMPILER=/opt/rocm-X.Y.Z/llvm/bin/amdclang++ ..
 +CXX=`@ESYSROOT_ROCM_PATH@/bin/hipconfig -l`/clang++ cmake .. (or)
-+cmake -DCMAKE_CXX_COMPILER=@ESYSROOT_LLVM_PATH_COND@/bin/clang++ ..
++cmake -DCMAKE_CXX_COMPILER=@ESYSROOT_LLVM_PATH@/bin/clang++ ..
  make
  
  II. Test
@@ -1513,7 +1513,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/README.md HIP-rocm-5.3.3/samples/README.md
  b. to build with static libs, run
  
 -cmake -DCMAKE_PREFIX_PATH="<ROCM_PATH>/llvm/lib/cmake" ..
-+cmake -DCMAKE_PREFIX_PATH="@ESYSROOT_LLVM_PATH_COND@/@LIBDIR@/cmake" ..
++cmake -DCMAKE_PREFIX_PATH="@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake" ..
  
  Then run,
  
@@ -1756,7 +1756,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
 -    "/opt/rocm/llvm/bin/clang -target amdgcn-amd-amdhsa -x cl ");
 -  }
 +  snprintf(command, COMMAND_LEN,
-+  "@ESYSROOT_LLVM_PATH_COND@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
++  "@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
    char command_temp[COMMAND_LEN] = "";
    snprintf(command_temp, COMMAND_LEN,
 -  "-include `find /opt/rocm* -name opencl-c.h` %s %s -mcpu=%s -o %s %s",

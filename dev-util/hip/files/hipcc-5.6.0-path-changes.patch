@@ -13,7 +13,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/bin/hipcc.pl HIPCC-rocm-5.6.1/bin/hipcc.pl
 +# HIP_PATH       : Path to the HIP directory (defaults to /usr).
 +# CUDA_PATH      : Path to the CUDA SDK (defaults to /opt/cuda). Used on NVIDIA platforms only.
 +# HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to /usr). Used on AMD platforms only.
-+# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH_COND@/bin).
++# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH@/bin).
 +#                  Used on AMD platforms only.
  
  if(scalar @ARGV == 0){
@@ -180,7 +180,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/docs/env.md HIPCC-rocm-5.6.1/docs/env.md
 +- HIP_PATH        : Path to the HIP directory, (defaults to /usr).
 +- CUDA_PATH       : Path to the CUDA SDK (defaults to /opt/cuda). Used on NVIDIA platforms only.
 +- HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to /usr). Used on AMD platforms only.
-+- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH_COND@/bin relative to hipcc's abs_path). Used on AMD platforms only.
++- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH@/bin relative to hipcc's abs_path). Used on AMD platforms only.
 diff -urp HIPCC-rocm-5.6.1.orig/README.md HIPCC-rocm-5.6.1/README.md
 --- HIPCC-rocm-5.6.1.orig/README.md	2023-06-01 07:32:59.000000000 -0700
 +++ HIPCC-rocm-5.6.1/README.md	2023-09-19 10:40:46.425343841 -0700
@@ -197,7 +197,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/README.md HIPCC-rocm-5.6.1/README.md
 +- CUDA_PATH       : Path to CUDA SDK (default /usr/local/cuda).  Used on NVIDIA platforms only.
 +- HSA_PATH        : Path to HSA dir (defaults to /usr).  Used on AMD platforms only.
 +- HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to /usr).  Used on AMD platforms only.
-+- HIP_CLANG_PATH  : Path to HIP-Clang (default to @ESYSROOT_LLVM_PATH_COND@/bin).  Used on AMD platforms only.
++- HIP_CLANG_PATH  : Path to HIP-Clang (default to @ESYSROOT_LLVM_PATH@/bin).  Used on AMD platforms only.
  
  ### <a name="usage"></a> hipcc: usage
  
@@ -266,7 +266,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/src/hipBin_amd.h HIPCC-rocm-5.6.1/src/hipBin_amd
 -      complierPath = getRoccmPath();
 -      hipClangPath = complierPath;
 -      hipClangPath /= "llvm/bin";
-+      hipClangPath = "@ESYSROOT_LLVM_PATH_COND@";
++      hipClangPath = "@ESYSROOT_LLVM_PATH@";
      }
      complierPath = hipClangPath.string();
    } else {
@@ -292,7 +292,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/src/hipBin_amd.h HIPCC-rocm-5.6.1/src/hipBin_amd
      // To support __fp16 and _Float16, explicitly link with compiler-rt
 -    toolArgs += " -L" + hipClangPath + "/../lib/clang/" +
 -                hipClangVersion + "/lib/linux -lclang_rt.builtins-x86_64 ";
-+    toolArgs += string(" -L@ESYSROOT_CLANG_PATH_COND@/lib/linux") +
++    toolArgs += string(" -L@ESYSROOT_CLANG_PATH@/lib/linux") +
 +                string(" -lclang_rt.builtins-x86_64 ");
    }
    if (!var.hipccCompileFlagsAppendEnv_.empty()) {

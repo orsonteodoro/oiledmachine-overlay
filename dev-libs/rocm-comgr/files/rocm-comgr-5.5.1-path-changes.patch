@@ -25,7 +25,7 @@ diff -urp comgr.orig/cmake/opencl_pch.cmake comgr/cmake/opencl_pch.cmake
 -else()
 -  get_target_property(clang_build_header_dir clang-resource-headers RUNTIME_OUTPUT_DIRECTORY)
 -  set(OPENCL_C_H "${clang_build_header_dir}/opencl-c.h")
-+  set(CLANG_RESOURCE_DIR "@ESYSROOT_CLANG_PATH_COND@")
++  set(CLANG_RESOURCE_DIR "@ESYSROOT_CLANG_PATH@")
 +  string(STRIP ${CLANG_RESOURCE_DIR} CLANG_RESOURCE_DIR)
 +  set(OPENCL_C_H "${CLANG_RESOURCE_DIR}/include/opencl-c.h")
  endif()
@@ -84,7 +84,7 @@ diff -urp comgr.orig/README.md comgr/README.md
    LLVM installation, which is currently used for HIP compilation to locate
    certain runtime headers. If this is not set, it has a default value of
 -  "${ROCM_PATH}/llvm".
-+  "@ESYSROOT_LLVM_PATH_COND@".
++  "@ESYSROOT_LLVM_PATH@".
  
  Comgr also supports some environment variables to aid in debugging. These
  include:
@@ -146,7 +146,7 @@ diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
      sys::path::append(LLVMPath, "llvm");
  
 -    return LLVMPath;
-+    return llvm::SmallString<128>("@ESYSROOT_LLVM_PATH_COND@");
++    return llvm::SmallString<128>("@ESYSROOT_LLVM_PATH@");
    }
  
    virtual SmallString<128> getHIPPathImpl() {
