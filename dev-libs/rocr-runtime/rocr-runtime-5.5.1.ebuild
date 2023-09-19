@@ -38,16 +38,22 @@ RDEPEND="
 "
 DEPEND="
 	${CDEPEND}
-	=sys-devel/lld-${LLVM_MAX_SLOT}*
-	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 "
 # vim-core is needed for "xxd"
 BDEPEND="
+	!system-llvm? (
+		sys-devel/llvm-roc:=
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	)
 	>=dev-util/cmake-3.7
 	>=app-editors/vim-core-9.0.1378
 	virtual/pkgconfig
+	system-llvm? (
+		=sys-devel/lld-${LLVM_MAX_SLOT}*
+		sys-devel/clang:${LLVM_MAX_SLOT}
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"

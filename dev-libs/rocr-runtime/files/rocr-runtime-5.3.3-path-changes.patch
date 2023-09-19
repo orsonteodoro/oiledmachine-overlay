@@ -39,11 +39,11 @@ diff -urp src.orig/core/runtime/trap_handler/CMakeLists.txt src/core/runtime/tra
 -find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
 +option(USE_SYSTEM_LLVM "Use the system's LLVM" OFF)
 +if(${USE_SYSTEM_LLVM})
-+  find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT@/lib/llvm/@LLVM_SLOT@ )
++  find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@ )
 +  find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@ )
 +else()
 +  find_package(Clang REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_ROCM_PATH@/llvm )
-+  find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_ROCM_PATH@/lib/llvm )
++  find_package(LLVM REQUIRED HINTS ${CMAKE_PREFIX_PATH}/llvm PATHS @ESYSROOT_ROCM_PATH@/llvm )
 +endif()
  
  set (TARGET_DEVS "gfx900;gfx1010;gfx1030;gfx1100")
