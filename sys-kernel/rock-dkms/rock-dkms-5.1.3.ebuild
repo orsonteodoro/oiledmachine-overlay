@@ -431,54 +431,28 @@ if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 fi
 }
 
+# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/dkms/sources
 _reconstruct_tarball_layout() {
+einfo "Reconstructing tarball layout"
 	local tarball_root="${WORKDIR}/ROCK-Kernel-Driver-rocm-${PV}"
 	local base="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 	mkdir -p "${base}" || die
 	pushd "${base}" || die
-		mkdir -p "${base}/include" || die
-		mkdir -p "${base}/include/include/linux" || die
-		mkdir -p "${base}/include/uapi/drm" || die
-		mkdir -p "${base}/include/uapi/linux" || die
+		while IFS= read -r row ; do
+			[[ "${row:0:1}" == "#" ]] && continue
+			local src=$(echo "${row}" | cut -f 1 -d " ")
+			local dest=$(echo "${row}" | cut -f 2 -d " ")
+			if [[ "${dest: -1}" == "/" ]] ; then
+				mkdir -p "${base}/${dest}"
+			fi
+			cp -a \
+				"${tarball_root}/${src}" \
+				"${base}/${dest}" \
+				|| die
+		done < "${WORKDIR}/ROCK-Kernel-Driver-rocm-${PV}/drivers/gpu/drm/amd/dkms/sources"
 		cp -a \
 			"${tarball_root}/drivers/gpu/drm/amd/dkms/"* \
 			"${base}" \
-			|| die
-		cp -a \
-			"${tarball_root}/drivers/gpu/drm/scheduler" \
-			"${base}" \
-			|| die
-		cp -a \
-			"${tarball_root}/drivers/gpu/drm/ttm" \
-			"${base}" \
-			|| die
-		cp -a \
-			"${tarball_root}/drivers/gpu/drm/amd" \
-			"${base}" \
-			|| die
-		cp -a \
-			"${tarball_root}/include/drm" \
-			"${base}/include" \
-			|| die
-		cp -a \
-			"${tarball_root}/include/kcl" \
-			"${base}/include" \
-			|| die
-		cp -a \
-			"${tarball_root}/include/linux/dma-resv.h" \
-			"${base}/include/linux" \
-			|| die
-		cp -a \
-			"${tarball_root}/include/kcl/reservation.h" \
-			"${base}/include/linux" \
-			|| die
-		cp -a \
-			"${tarball_root}/include/uapi/drm/amdgpu_drm.h" \
-			"${base}/include/uapi/drm" \
-			|| die
-		cp -a \
-			"${tarball_root}/include/uapi/linux/kfd_ioctl.h" \
-			"${base}/include/uapi/linux" \
 			|| die
 	popd
 }
