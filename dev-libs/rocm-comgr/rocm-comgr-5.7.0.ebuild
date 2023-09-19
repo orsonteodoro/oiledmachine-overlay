@@ -25,13 +25,19 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test r5"
+IUSE="system-llvm test r5"
 RDEPEND="
+	!system-llvm? (
+		sys-devel/llvm-roc:=
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	)
 	!dev-libs/rocm-comgr:0
-	=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
-	sys-devel/clang:${LLVM_MAX_SLOT}=
-	sys-devel/lld:${LLVM_MAX_SLOT}=
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
+	system-llvm? (
+		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
+		sys-devel/clang:${LLVM_MAX_SLOT}=
+		sys-devel/lld:${LLVM_MAX_SLOT}=
+	)
 "
 DEPEND="
 	${RDEPEND}

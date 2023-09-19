@@ -292,7 +292,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/src/hipBin_amd.h HIPCC-rocm-5.6.1/src/hipBin_amd
      // To support __fp16 and _Float16, explicitly link with compiler-rt
 -    toolArgs += " -L" + hipClangPath + "/../lib/clang/" +
 -                hipClangVersion + "/lib/linux -lclang_rt.builtins-x86_64 ";
-+    toolArgs += string(" -L@ESYSROOT@/usr/lib/clang/@CLANG_SLOT@/lib/linux") +
++    toolArgs += string(" -L@ESYSROOT_CLANG_PATH_COND@/lib/linux") +
 +                string(" -lclang_rt.builtins-x86_64 ");
    }
    if (!var.hipccCompileFlagsAppendEnv_.empty()) {

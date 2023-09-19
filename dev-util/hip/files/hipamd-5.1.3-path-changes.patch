@@ -90,7 +90,7 @@ diff -urp hipamd-rocm-5.1.3.orig/hip-config.cmake.in hipamd-rocm-5.1.3/hip-confi
      get_filename_component(HIP_CLANG_ROOT "${HIP_CLANG_ROOT}" DIRECTORY)
    endif()
 -  file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/*/include)
-+  file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS @ESYSROOT@/usr/lib/clang/@CLANG_SLOT@/include)
++  file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS @ESYSROOT_CLANG_PATH_COND@/include)
    find_path(HIP_CLANG_INCLUDE_PATH stddef.h
        HINTS
            ${HIP_CLANG_INCLUDE_SEARCH_PATHS}
@@ -140,7 +140,7 @@ diff -urp hipamd-rocm-5.1.3.orig/hip-config.cmake.in hipamd-rocm-5.1.3/hip-confi
    endif()
  
 -  file(GLOB HIP_CLANGRT_LIB_SEARCH_PATHS "${HIP_CLANG_ROOT}/lib/clang/*/lib/*")
-+  file(GLOB HIP_CLANGRT_LIB_SEARCH_PATHS "${HIP_CLANG_ROOT}/lib/clang/@CLANG_SLOT@/lib/*")
++  file(GLOB HIP_CLANGRT_LIB_SEARCH_PATHS "@ESYSROOT_CLANG_PATH_COND@/lib/*")
    find_library(CLANGRT_BUILTINS
      NAMES
        clang_rt.builtins

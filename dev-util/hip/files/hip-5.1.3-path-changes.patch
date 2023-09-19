@@ -480,7 +480,7 @@ diff -urp HIP-rocm-5.1.3.orig/hip-lang-config.cmake.in HIP-rocm-5.1.3/hip-lang-c
  
  #need _IMPORT_PREFIX to be set
 -file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS "${_IMPORT_PREFIX}/../llvm/lib/clang/*/include")
-+file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS "@ESYSROOT@/usr/lib/clang/@CLANG_SLOT@/include")
++file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS "@ESYSROOT_CLANG_PATH_COND@/include")
  find_path(HIP_CLANG_INCLUDE_PATH __clang_cuda_math.h
      HINTS ${HIP_CLANG_INCLUDE_SEARCH_PATHS}
      NO_DEFAULT_PATH)

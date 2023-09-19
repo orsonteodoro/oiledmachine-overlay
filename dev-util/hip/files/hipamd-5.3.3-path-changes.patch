@@ -150,7 +150,7 @@ diff -urp hipamd-rocm-5.3.3.orig/hip-config.cmake.in hipamd-rocm-5.3.3/hip-confi
 +
 +  # Use HIP_CXX_COMPILER option -print-resource-dir
 +  # To fetch the clang include path
-+  set(HIP_CLANG_INCLUDE_PATH "@ESYSROOT@/usr/lib/clang/@CLANG_SLOT@") # Replaced with faster version.  From clang -print-resource-dir
++  set(HIP_CLANG_INCLUDE_PATH "@ESYSROOT_CLANG_PATH_COND@") # Replaced with faster version.  From clang -print-resource-dir
 +  set(CLANG_INCLUDE_PATH_FETCH_EXIT_CODE 0)
 +
 +  if( NOT "${CLANG_INCLUDE_PATH_FETCH_EXIT_CODE}" STREQUAL "0" )
@@ -206,7 +206,7 @@ diff -urp hipamd-rocm-5.3.3.orig/hip-config.cmake.in hipamd-rocm-5.3.3/hip-confi
 +      endif()
 +
 +
-+      file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS ${HIP_CLANG_ROOT}/lib/clang/@CLANG_SLOT@/include)
++      file(GLOB HIP_CLANG_INCLUDE_SEARCH_PATHS @ESYSROOT_CLANG_PATH_COND@/include)
 +      find_path(HIP_CLANG_INCLUDE_PATH stddef.h
 +        HINTS
            ${HIP_CLANG_INCLUDE_SEARCH_PATHS}
