@@ -364,18 +364,45 @@ eerror
 		$(grep -r -l -e "@ESYSROOT_ROCM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
-	local esysroot_llvm_path
+	local clang_path
 	if has system-llvm ${IUSE} && use system-llvm ; then
-		esysroot_llvm_path="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}"
+		clang_path="/usr/lib/clang/${clang_slot}"
 	else
-		esysroot_llvm_path="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/lib/clang/${LLVM_MAX_SLOT}.0.0"
+	fi
+
+	local llvm_path
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		llvm_path="/usr/lib/llvm/${LLVM_MAX_SLOT}"
+	else
+		llvm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	fi
 
 	sed \
 		-i \
-		-e "s|@ESYSROOT_LLVM_PATH_COND@|${ESYSROOT}${esysroot_llvm_path}|g" \
+		-e "s|@EPREFIX_CLANG_PATH_COND@|${EPREFIX}${clang_path}|g" \
+		$(grep -r -l -e "@EPREFIX_CLANG_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@ESYSROOT_CLANG_PATH_COND@|${ESYSROOT}${clang_path}|g" \
+		$(grep -r -l -e "@ESYSROOT_CLANG_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@EPREFIX_LLVM_PATH_COND@|${EPREFIX}${llvm_path}|g" \
+		$(grep -r -l -e "@EPREFIX_LLVM_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	sed \
+		-i \
+		-e "s|@ESYSROOT_LLVM_PATH_COND@|${ESYSROOT}${llvm_path}|g" \
 		$(grep -r -l -e "@ESYSROOT_LLVM_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
+
+
 
 	local libdir_suffix="$(get_libdir)"
 	libdir_suffix="${libdir_suffix/lib}"
