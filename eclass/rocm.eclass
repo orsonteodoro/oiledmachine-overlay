@@ -265,9 +265,23 @@ eerror
 
 _rocm_change_common_paths() {
 	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
-	if [[ -z "${LLVM_SLOT}" ]] ; then
+	if [[ "${LLVM_SLOT+x}" != "x" ]] ; then
 eerror
-eerror "LLVM_MAX_SLOT must be defined"
+eerror "LLVM_MAX_SLOT must be defined.  \${LLVM_SLOT+x} != x"
+eerror
+		die
+	fi
+
+	if [[ "${LLVM_MAX_SLOT+x}" != "x" ]] ; then
+eerror
+eerror "LLVM_MAX_SLOT must be defined.  \${LLVM_MAX_SLOT+x} != x"
+eerror
+		die
+	fi
+
+	if [[ "${ROCM_SLOT+x}" != "x" ]] ; then
+eerror
+eerror "ROCM_SLOT must be defined."
 eerror
 		die
 	fi
@@ -348,6 +362,19 @@ eerror
 		-i \
 		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}${rocm_path}|g" \
 		$(grep -r -l -e "@ESYSROOT_ROCM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+
+	local esysroot_llvm_path
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		esysroot_llvm_path="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}"
+	else
+		esysroot_llvm_path="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	fi
+
+	sed \
+		-i \
+		-e "s|@ESYSROOT_LLVM_PATH_COND@|${ESYSROOT}${esysroot_llvm_path}|g" \
+		$(grep -r -l -e "@ESYSROOT_LLVM_PATH_COND@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	local libdir_suffix="$(get_libdir)"
