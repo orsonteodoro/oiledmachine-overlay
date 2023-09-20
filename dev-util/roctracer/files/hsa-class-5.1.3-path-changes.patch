@@ -17,8 +17,8 @@ diff -urp hsa-class-f8b387043b9f510afdf2e72e38a011900360d6ab.orig/script/build_k
 -if [ -e $ROCM_DIR/llvm ] ; then
 -  LLVM_DIR=$ROCM_DIR/llvm
 -  LIB_DIR=$ROCM_DIR/lib
-+if [ -e $ROCM_DIR/lib/llvm/@LLVM_MAX_SLOT@ ] ; then
-+  LLVM_DIR=$ROCM_DIR/lib/llvm/@LLVM_MAX_SLOT@
++if [ -e @ESYSROOT_LLVM_PATH@ ] ; then
++  LLVM_DIR=@ESYSROOT_LLVM_PATH@
 +  LIB_DIR=$ROCM_DIR/@LIBDIR@
  else
    LLVM_DIR=$ROCM_DIR/hcc
@@ -27,21 +27,21 @@ diff -urp hsa-class-f8b387043b9f510afdf2e72e38a011900360d6ab.orig/script/build_k
  fi
  
  # Determine whether using new or old device-libs layout
-@@ -45,14 +45,14 @@ if [ -e $LIB_DIR/bitcode/opencl.amdgcn.b
+@@ -45,14 +45,16 @@ if [ -e $LIB_DIR/bitcode/opencl.amdgcn.b
    BC_DIR=$LIB_DIR/bitcode
  elif [ -e $LIB_DIR/opencl.amdgcn.bc ]; then
    BC_DIR=$LIB_DIR
--elif [ -e $ROCM_DIR/amdgcn/bitcode/opencl.bc ]; then
--  BC_DIR=$ROCM_DIR/amdgcn/bitcode
 +elif [ -e $ROCM_DIR/@LIBDIR@/amdgcn/bitcode/opencl.bc ]; then
 +  BC_DIR=$ROCM_DIR/@LIBDIR@/amdgcn/bitcode
+ elif [ -e $ROCM_DIR/amdgcn/bitcode/opencl.bc ]; then
+   BC_DIR=$ROCM_DIR/amdgcn/bitcode
  else
    echo "Error: Cannot find amdgcn bitcode directory"
    exit 1
  fi
  
 -CLANG_ROOT=$LLVM_DIR/lib/clang
-+CLANG_ROOT=$LLVM_DIR/lib/clang/@CLANG_SLOT@
++CLANG_ROOT=@ESYSROOT_CLANG_PATH@
  CLANG_DIR=`ls -d $CLANG_ROOT/* | head -n 1`
  if [ "$CLANG_DIR" = "" ] ; then
    echo "Error: LLVM clang library was not found"
