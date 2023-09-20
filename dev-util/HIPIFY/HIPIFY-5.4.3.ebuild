@@ -114,6 +114,29 @@ src_prepare() {
 }
 
 src_configure() {
+	local clang_slot=""
+	if ver_test ${LLVM_SLOT} -ge 16 ; then
+		clang_slot="${LLVM_SLOT}"
+	else
+		clang_slot=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+			| sed -e "s|sys-devel/clang-||")
+		clang_slot=$(ver_cut 1-3 "${clang_slot}")
+	fi
+
+	local clang_path
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		clang_path="/usr/lib/clang/${clang_slot}"
+	else
+		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/lib/clang/${LLVM_MAX_SLOT}.0.0"
+	fi
+
+	local llvm_path
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		llvm_path="/usr/lib/llvm/${LLVM_MAX_SLOT}"
+	else
+		llvm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	fi
+
 	# Disallow newer clangs versions when producing .o files.
 	einfo "LLVM_SLOT=${LLVM_SLOT}"
 	einfo "PATH=${PATH} (before)"
@@ -121,7 +144,7 @@ src_configure() {
 		| tr ":" "\n" \
 		| sed -E -e "/llvm\/[0-9]+/d" \
 		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_path}/bin|g")
 	einfo "PATH=${PATH} (after)"
 
 	export CC="${CHOST}-clang-${LLVM_SLOT}"
