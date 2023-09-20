@@ -20,5 +20,9 @@
     <flag name="rocm">
       Add dependencies for GPU support
     </flag>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability in HIP/ROCm contexts.
+    </flag>
   </use>
 </pkgmetadata>

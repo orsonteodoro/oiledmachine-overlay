@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <maintainer type="person">
-    <!-- Ebuild on the oiledmachine-overlay -->
-    <email>orsonteodoro@hotmail.com</email>
-    <name>Orson Teodoro</name>
-  </maintainer>
-  <upstream>
-    <remote-id type="github">RadeonOpenCompute/atmi</remote-id>
-  </upstream>
   <use>
     <flag name="system-llvm">
       Use the system clang/llvm packages instead of the ROCm forks at the

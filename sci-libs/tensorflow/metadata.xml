@@ -41,6 +41,10 @@
     <flag name="rocm">
       Enable support for AMD GPUs
     </flag>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability in HIP/ROCm contexts.
+    </flag>
     <flag name="xla">
       XLA (Accelerated Linear Algebra) Optimizing Compiler for TensorFlow
     </flag>
