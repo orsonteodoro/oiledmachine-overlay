@@ -49,7 +49,13 @@ BDEPEND="
 	')
 	>=dev-util/cmake-3.18.0
 	test? (
+		!system-llvm? (
+			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		)
 		sys-devel/gcc[sanitize]
+		system-llvm? (
+			sys-devel/clang:${LLVM_MAX_SLOT}
+		)
 	)
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -108,6 +114,40 @@ src_configure() {
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
 		append-ldflags -Wl,-rpath="${ESYSROOT}/opt/rocm-${PV}/lib"
 	fi
+
+	local clang_slot=""
+	if ver_test ${LLVM_SLOT} -ge 16 ; then
+		clang_slot="${LLVM_SLOT}"
+	else
+		clang_slot=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+			| sed -e "s|sys-devel/clang-||")
+		clang_slot=$(ver_cut 1-3 "${clang_slot}")
+	fi
+
+	local clang_path
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		clang_path="/usr/lib/clang/${clang_slot}"
+	else
+		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/lib/clang/${LLVM_MAX_SLOT}.0.0"
+	fi
+
+	local llvm_path
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		llvm_path="/usr/lib/llvm/${LLVM_MAX_SLOT}"
+	else
+		llvm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	fi
+
+	# Disallow newer clangs versions when producing .o files.
+	einfo "LLVM_SLOT=${LLVM_SLOT}"
+	einfo "PATH=${PATH} (before)"
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_path}/bin|g")
+	einfo "PATH=${PATH} (after)"
+
 	export CMAKE_BUILD_TYPE="debug"
 	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 	export HIP_PLATFORM="amd"
