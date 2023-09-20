@@ -5,5 +5,6 @@ EAPI=8
 
 DESCRIPTION="Compiler selection for the HIP stack"
 LICENSE="metapackage"
+KEYWORDS="~amd64"
 IUSE="system-llvm"
 SLOT="0"
