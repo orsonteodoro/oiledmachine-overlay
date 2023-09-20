@@ -1,6 +1,6 @@
 diff -urp rocprofiler-rocm-5.5.1.orig/bin/build_kernel.sh rocprofiler-rocm-5.5.1/bin/build_kernel.sh
 --- rocprofiler-rocm-5.5.1.orig/bin/build_kernel.sh	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/bin/build_kernel.sh	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/bin/build_kernel.sh	2023-09-20 06:22:25.504397069 -0700
 @@ -18,7 +18,7 @@ if [ -z "$DST_DIR" ] ; then
  fi
  
@@ -17,8 +17,8 @@ diff -urp rocprofiler-rocm-5.5.1.orig/bin/build_kernel.sh rocprofiler-rocm-5.5.1
 -if [ -e $ROCM_DIR/llvm ] ; then
 -  LLVM_DIR=$ROCM_DIR/llvm
 -  LIB_DIR=$ROCM_DIR/lib
-+if [ -e $ROCM_DIR/lib/llvm/@LLVM_SLOT@ ] ; then
-+  LLVM_DIR=$ROCM_DIR/lib/llvm/@LLVM_SLOT@
++if [ -e @ESYSROOT_LLVM_PATH@ ] ; then
++  LLVM_DIR=@ESYSROOT_LLVM_PATH@
 +  LIB_DIR=$ROCM_DIR/@LIBDIR@
  else
    LLVM_DIR=$ROCM_DIR/hcc
@@ -27,20 +27,27 @@ diff -urp rocprofiler-rocm-5.5.1.orig/bin/build_kernel.sh rocprofiler-rocm-5.5.1
  fi
  
  # Determine whether using new or old device-libs layout
-@@ -45,8 +45,8 @@ if [ -e $LIB_DIR/bitcode/opencl.amdgcn.b
+@@ -45,6 +45,8 @@ if [ -e $LIB_DIR/bitcode/opencl.amdgcn.b
    BC_DIR=$LIB_DIR/bitcode
  elif [ -e $LIB_DIR/opencl.amdgcn.bc ]; then
    BC_DIR=$LIB_DIR
--elif [ -e $ROCM_DIR/amdgcn/bitcode/opencl.bc ]; then
--  BC_DIR=$ROCM_DIR/amdgcn/bitcode
 +elif [ -e $ROCM_DIR/@LIBDIR@/amdgcn/bitcode/opencl.bc ]; then
 +  BC_DIR=$ROCM_DIR/@LIBDIR@/amdgcn/bitcode
+ elif [ -e $ROCM_DIR/amdgcn/bitcode/opencl.bc ]; then
+   BC_DIR=$ROCM_DIR/amdgcn/bitcode
  else
-   echo "Error: Cannot find amdgcn bitcode directory"
+@@ -52,7 +54,7 @@ else
    exit 1
+ fi
+ 
+-CLANG_ROOT=$LLVM_DIR/lib/clang
++CLANG_ROOT=@ESYSROOT_CLANG_PATH@
+ CLANG_DIR=`ls -d $CLANG_ROOT/* | head -n 1`
+ if [ "$CLANG_DIR" = "" ] ; then
+   echo "Error: LLVM clang library was not found"
 diff -urp rocprofiler-rocm-5.5.1.orig/bin/rocprofv2 rocprofiler-rocm-5.5.1/bin/rocprofv2
 --- rocprofiler-rocm-5.5.1.orig/bin/rocprofv2	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/bin/rocprofv2	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/bin/rocprofv2	2023-09-20 05:49:24.560423523 -0700
 @@ -111,8 +111,8 @@ while [ 1 ] ; do
        eval $ROCM_DIR/build/src/tools/ctrl
      else
@@ -71,7 +78,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/bin/rocprofv2 rocprofiler-rocm-5.5.1/bin/r
  
 diff -urp rocprofiler-rocm-5.5.1.orig/bin/rpl_run.sh rocprofiler-rocm-5.5.1/bin/rpl_run.sh
 --- rocprofiler-rocm-5.5.1.orig/bin/rpl_run.sh	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/bin/rpl_run.sh	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/bin/rpl_run.sh	2023-09-20 05:49:24.560423523 -0700
 @@ -29,11 +29,12 @@ RUN_DIR=`pwd`
  TMP_DIR="/tmp"
  DATA_DIR="rpl_data_${time_stamp}_$$"
@@ -163,7 +170,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/bin/rpl_run.sh rocprofiler-rocm-5.5.1/bin/
      echo "Profiling data corrupted: '$OUTPUT_LIST'" | tee "$ROCPROFILER_SESS/error"
 diff -urp rocprofiler-rocm-5.5.1.orig/build.sh rocprofiler-rocm-5.5.1/build.sh
 --- rocprofiler-rocm-5.5.1.orig/build.sh	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/build.sh	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/build.sh	2023-09-20 05:49:24.560423523 -0700
 @@ -24,8 +24,8 @@
  
  SRC_DIR=$(dirname "$0")
@@ -176,8 +183,8 @@ diff -urp rocprofiler-rocm-5.5.1.orig/build.sh rocprofiler-rocm-5.5.1/build.sh
  usage() {
    echo -e "ROCProfiler Build Script Usage:"
 diff -urp rocprofiler-rocm-5.5.1.orig/CMakeLists.txt rocprofiler-rocm-5.5.1/CMakeLists.txt
---- rocprofiler-rocm-5.5.1.orig/CMakeLists.txt	2023-08-26 14:05:24.524094909 -0700
-+++ rocprofiler-rocm-5.5.1/CMakeLists.txt	2023-08-26 14:05:39.272095275 -0700
+--- rocprofiler-rocm-5.5.1.orig/CMakeLists.txt	2023-09-20 05:49:07.100423756 -0700
++++ rocprofiler-rocm-5.5.1/CMakeLists.txt	2023-09-20 05:49:24.560423523 -0700
 @@ -38,7 +38,7 @@ include(GNUInstallDirs)
  # set default ROCM_PATH
  if(NOT DEFINED ROCM_PATH)
@@ -227,10 +234,9 @@ diff -urp rocprofiler-rocm-5.5.1.orig/CMakeLists.txt rocprofiler-rocm-5.5.1/CMak
    PERMISSIONS
      OWNER_READ
      OWNER_WRITE
-Only in rocprofiler-rocm-5.5.1: CMakeLists.txt.orig
 diff -urp rocprofiler-rocm-5.5.1.orig/cmake_modules/env.cmake rocprofiler-rocm-5.5.1/cmake_modules/env.cmake
---- rocprofiler-rocm-5.5.1.orig/cmake_modules/env.cmake	2023-08-26 14:05:24.528094909 -0700
-+++ rocprofiler-rocm-5.5.1/cmake_modules/env.cmake	2023-08-26 14:05:39.272095275 -0700
+--- rocprofiler-rocm-5.5.1.orig/cmake_modules/env.cmake	2023-09-20 05:49:07.104423756 -0700
++++ rocprofiler-rocm-5.5.1/cmake_modules/env.cmake	2023-09-20 05:49:24.560423523 -0700
 @@ -46,10 +46,10 @@ if ( DEFINED ENV{CMAKE_LD_AQLPROFILE} )
  endif()
  
@@ -255,7 +261,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/cmake_modules/env.cmake rocprofiler-rocm-5
  ## Basic Tool Chain Information
 diff -urp rocprofiler-rocm-5.5.1.orig/cmake_modules/FindLibDw.cmake rocprofiler-rocm-5.5.1/cmake_modules/FindLibDw.cmake
 --- rocprofiler-rocm-5.5.1.orig/cmake_modules/FindLibDw.cmake	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/cmake_modules/FindLibDw.cmake	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/cmake_modules/FindLibDw.cmake	2023-09-20 05:49:24.560423523 -0700
 @@ -16,8 +16,8 @@ find_library(FIND_LIBDW_LIBRARIES
    NAMES
      dw
@@ -269,7 +275,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/cmake_modules/FindLibDw.cmake rocprofiler-
  find_package_handle_standard_args(LibDw DEFAULT_MSG
 diff -urp rocprofiler-rocm-5.5.1.orig/cmake_modules/FindLibElf.cmake rocprofiler-rocm-5.5.1/cmake_modules/FindLibElf.cmake
 --- rocprofiler-rocm-5.5.1.orig/cmake_modules/FindLibElf.cmake	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/cmake_modules/FindLibElf.cmake	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/cmake_modules/FindLibElf.cmake	2023-09-20 05:49:24.560423523 -0700
 @@ -18,8 +18,8 @@ find_library(FIND_LIBELF_LIBRARIES
    NAMES
      elf
@@ -283,7 +289,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/cmake_modules/FindLibElf.cmake rocprofiler
  find_package_handle_standard_args(LibElf DEFAULT_MSG
 diff -urp rocprofiler-rocm-5.5.1.orig/plugin/att/att.py rocprofiler-rocm-5.5.1/plugin/att/att.py
 --- rocprofiler-rocm-5.5.1.orig/plugin/att/att.py	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/plugin/att/att.py	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/plugin/att/att.py	2023-09-20 05:49:24.564423523 -0700
 @@ -107,7 +107,7 @@ try: # For build dir
      path_to_parser = os.path.abspath(rocprofv2_att_lib)
      SO = CDLL(path_to_parser)
@@ -295,7 +301,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/plugin/att/att.py rocprofiler-rocm-5.5.1/p
  SO.AnalyseBinary.restype = ReturnInfo
 diff -urp rocprofiler-rocm-5.5.1.orig/README.md rocprofiler-rocm-5.5.1/README.md
 --- rocprofiler-rocm-5.5.1.orig/README.md	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/README.md	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/README.md	2023-09-20 05:49:24.564423523 -0700
 @@ -34,7 +34,7 @@ $ export CMAKE_DEBUG_TRACE=1 # 1 to enab
  To build with the current installed ROCM:
   ```bash
@@ -325,7 +331,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/README.md rocprofiler-rocm-5.5.1/README.md
     ```
 diff -urp rocprofiler-rocm-5.5.1.orig/rocprofiler-backward-compat.cmake rocprofiler-rocm-5.5.1/rocprofiler-backward-compat.cmake
 --- rocprofiler-rocm-5.5.1.orig/rocprofiler-backward-compat.cmake	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/rocprofiler-backward-compat.cmake	2023-08-26 14:08:44.132099861 -0700
++++ rocprofiler-rocm-5.5.1/rocprofiler-backward-compat.cmake	2023-09-20 05:49:24.564423523 -0700
 @@ -23,7 +23,7 @@ set(ROCPROF_BUILD_DIR ${CMAKE_CURRENT_BI
  set(ROCPROF_WRAPPER_DIR ${ROCPROF_BUILD_DIR}/wrapper_dir)
  set(ROCPROF_WRAPPER_INC_DIR ${ROCPROF_WRAPPER_DIR}/include)
@@ -389,8 +395,8 @@ diff -urp rocprofiler-rocm-5.5.1.orig/rocprofiler-backward-compat.cmake rocprofi
  install(DIRECTORY ${ROCPROF_WRAPPER_TOOL_DIR} DESTINATION ${ROCPROFILER_NAME} COMPONENT runtime)
 diff -urp rocprofiler-rocm-5.5.1.orig/samples/CMakeLists.txt rocprofiler-rocm-5.5.1/samples/CMakeLists.txt
 --- rocprofiler-rocm-5.5.1.orig/samples/CMakeLists.txt	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/samples/CMakeLists.txt	2023-08-26 14:05:39.272095275 -0700
-@@ -18,15 +18,15 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
++++ rocprofiler-rocm-5.5.1/samples/CMakeLists.txt	2023-09-20 06:22:49.264396752 -0700
+@@ -18,15 +18,14 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
  set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP})
  set(CMAKE_EXECUTABLE_RPATH_LINK_HIP_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG})
  
@@ -400,9 +406,9 @@ diff -urp rocprofiler-rocm-5.5.1.orig/samples/CMakeLists.txt rocprofiler-rocm-5.
  find_package(HIP REQUIRED MODULE)
  
  find_package(Clang REQUIRED CONFIG
-              PATHS "${ROCM_PATH}"
+-             PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATH_SUFFIXES "lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/clang")
++             PATHS "@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake/clang")
  
 -set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules" "${ROCM_PATH}/lib/cmake/hip")
 +set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules" "${ROCM_PATH}/@LIBDIR@/cmake/hip")
@@ -411,7 +417,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/samples/CMakeLists.txt rocprofiler-rocm-5.
  
 diff -urp rocprofiler-rocm-5.5.1.orig/samples/Makefile rocprofiler-rocm-5.5.1/samples/Makefile
 --- rocprofiler-rocm-5.5.1.orig/samples/Makefile	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/samples/Makefile	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/samples/Makefile	2023-09-20 05:49:24.564423523 -0700
 @@ -1,5 +1,5 @@
 -ROCM_PATH ?=/opt/rocm
 -ROCPROFILER_LIBS_PATH ?=$(ROCM_PATH)/lib
@@ -422,7 +428,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/samples/Makefile rocprofiler-rocm-5.5.1/sa
  
 diff -urp rocprofiler-rocm-5.5.1.orig/samples/pcsampler/code_printing_sample/Makefile rocprofiler-rocm-5.5.1/samples/pcsampler/code_printing_sample/Makefile
 --- rocprofiler-rocm-5.5.1.orig/samples/pcsampler/code_printing_sample/Makefile	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/samples/pcsampler/code_printing_sample/Makefile	2023-08-26 14:05:39.272095275 -0700
++++ rocprofiler-rocm-5.5.1/samples/pcsampler/code_printing_sample/Makefile	2023-09-20 05:49:24.564423523 -0700
 @@ -1,6 +1,6 @@
  # -*- makefile-gmake -*-
  
@@ -442,7 +448,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/samples/pcsampler/code_printing_sample/Mak
  
 diff -urp rocprofiler-rocm-5.5.1.orig/samples/pcsampler/code_printing_sample/README.md rocprofiler-rocm-5.5.1/samples/pcsampler/code_printing_sample/README.md
 --- rocprofiler-rocm-5.5.1.orig/samples/pcsampler/code_printing_sample/README.md	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/samples/pcsampler/code_printing_sample/README.md	2023-08-26 14:05:39.276095275 -0700
++++ rocprofiler-rocm-5.5.1/samples/pcsampler/code_printing_sample/README.md	2023-09-20 05:49:24.564423523 -0700
 @@ -15,7 +15,7 @@ build the demo program are:
  * libdw (**not** libdwarf)
  * libelf
@@ -454,7 +460,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/samples/pcsampler/code_printing_sample/REA
  the location of the ROCProfiler source repo before running `make`.
 diff -urp rocprofiler-rocm-5.5.1.orig/samples/README.md rocprofiler-rocm-5.5.1/samples/README.md
 --- rocprofiler-rocm-5.5.1.orig/samples/README.md	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/samples/README.md	2023-08-26 14:05:39.276095275 -0700
++++ rocprofiler-rocm-5.5.1/samples/README.md	2023-09-20 05:49:24.564423523 -0700
 @@ -48,8 +48,8 @@ This code sample demonstrates how to use
  
  
@@ -488,7 +494,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/samples/README.md rocprofiler-rocm-5.5.1/s
 +See [PC-Sampler README](pcsampler/code_printing_sample/README.md)
 diff -urp rocprofiler-rocm-5.5.1.orig/src/tools/amdsys/amdsys.cpp rocprofiler-rocm-5.5.1/src/tools/amdsys/amdsys.cpp
 --- rocprofiler-rocm-5.5.1.orig/src/tools/amdsys/amdsys.cpp	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/src/tools/amdsys/amdsys.cpp	2023-08-26 14:05:39.276095275 -0700
++++ rocprofiler-rocm-5.5.1/src/tools/amdsys/amdsys.cpp	2023-09-20 05:49:24.564423523 -0700
 @@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
    if (Dl_info dl_info; dladdr(reinterpret_cast<void*>(main), &dl_info) != 0) {
      bin_path = fs::path(dl_info.dli_fname).remove_filename();
@@ -500,7 +506,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/src/tools/amdsys/amdsys.cpp rocprofiler-ro
    std::string session_name = "default_session_roctracer";
 diff -urp rocprofiler-rocm-5.5.1.orig/src/tools/rocprofv2/rocprofv2.cpp rocprofiler-rocm-5.5.1/src/tools/rocprofv2/rocprofv2.cpp
 --- rocprofiler-rocm-5.5.1.orig/src/tools/rocprofv2/rocprofv2.cpp	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/src/tools/rocprofv2/rocprofv2.cpp	2023-08-26 14:05:39.276095275 -0700
++++ rocprofiler-rocm-5.5.1/src/tools/rocprofv2/rocprofv2.cpp	2023-09-20 05:49:24.564423523 -0700
 @@ -71,7 +71,7 @@ void runMemCheck(fs::path bin_path) {
    log_path = log_path.replace_filename("memleaks.log");
  
@@ -537,7 +543,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/src/tools/rocprofv2/rocprofv2.cpp rocprofi
 +}
 diff -urp rocprofiler-rocm-5.5.1.orig/test/run.sh rocprofiler-rocm-5.5.1/test/run.sh
 --- rocprofiler-rocm-5.5.1.orig/test/run.sh	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/test/run.sh	2023-08-26 14:05:39.276095275 -0700
++++ rocprofiler-rocm-5.5.1/test/run.sh	2023-09-20 05:49:24.564423523 -0700
 @@ -57,7 +57,7 @@ eval_test() {
  }
  
@@ -549,17 +555,18 @@ diff -urp rocprofiler-rocm-5.5.1.orig/test/run.sh rocprofiler-rocm-5.5.1/test/ru
  export HSA_TOOLS_REPORT_LOAD_FAILURE=1
 diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/CMakeLists.txt rocprofiler-rocm-5.5.1/tests/featuretests/profiler/CMakeLists.txt
 --- rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/CMakeLists.txt	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/tests/featuretests/profiler/CMakeLists.txt	2023-08-26 14:05:39.276095275 -0700
-@@ -13,7 +13,7 @@ include_directories(${PROJECT_SOURCE_DIR
++++ rocprofiler-rocm-5.5.1/tests/featuretests/profiler/CMakeLists.txt	2023-09-20 06:20:22.608398711 -0700
+@@ -12,8 +12,7 @@ get_filename_component(HSA_RUNTIME_INC_P
+ include_directories(${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${HSA_RUNTIME_INC_PATH})
  
  find_package(Clang REQUIRED CONFIG
-              PATHS "${ROCM_PATH}"
+-             PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATH_SUFFIXES "lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/clang")
++             PATHS "@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake/clang")
  
  # Set the HIP language runtime link flags as FindHIP does not set them.
  set(CMAKE_INSTALL_TESTDIR test/${PROJECT_NAME})
-@@ -21,7 +21,7 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
+@@ -21,7 +20,7 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
  set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP})
  set(CMAKE_EXECUTABLE_RPATH_LINK_HIP_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG})
  
@@ -568,7 +575,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/CMakeLists.txt
  set(CMAKE_HIP_ARCHITECTURES OFF)
  find_package(HIP REQUIRED MODULE)
  
-@@ -142,6 +142,7 @@ file(GLOB ROCPROFILER_UTIL_SRC_FILES ${P
+@@ -142,6 +141,7 @@ file(GLOB ROCPROFILER_UTIL_SRC_FILES ${P
  function(generate_hsaco TARGET_ID INPUT_FILE OUTPUT_FILE)
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
      "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0 -Wl,--build-id=sha1
@@ -578,7 +585,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/CMakeLists.txt
      COMMAND clang ${CLANG_ARG_LIST}
 diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/gtests/apps/mpi/mpi_run.sh rocprofiler-rocm-5.5.1/tests/featuretests/profiler/gtests/apps/mpi/mpi_run.sh
 --- rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/gtests/apps/mpi/mpi_run.sh	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/tests/featuretests/profiler/gtests/apps/mpi/mpi_run.sh	2023-08-26 14:05:39.276095275 -0700
++++ rocprofiler-rocm-5.5.1/tests/featuretests/profiler/gtests/apps/mpi/mpi_run.sh	2023-09-20 05:49:24.564423523 -0700
 @@ -19,13 +19,13 @@ MPIRUN=mpirun
  if ! command -v $MPIRUN &> /dev/null
  then
@@ -599,7 +606,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/gtests/apps/mp
              exit
 diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/tracer/CMakeLists.txt rocprofiler-rocm-5.5.1/tests/featuretests/tracer/CMakeLists.txt
 --- rocprofiler-rocm-5.5.1.orig/tests/featuretests/tracer/CMakeLists.txt	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/tests/featuretests/tracer/CMakeLists.txt	2023-08-26 14:05:39.276095275 -0700
++++ rocprofiler-rocm-5.5.1/tests/featuretests/tracer/CMakeLists.txt	2023-09-20 05:49:24.564423523 -0700
 @@ -4,7 +4,7 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
  set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP})
  set(CMAKE_EXECUTABLE_RPATH_LINK_HIP_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG})
@@ -611,7 +618,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/tracer/CMakeLists.txt r
  
 diff -urp rocprofiler-rocm-5.5.1.orig/tests/memorytests/run_asan_tests.sh rocprofiler-rocm-5.5.1/tests/memorytests/run_asan_tests.sh
 --- rocprofiler-rocm-5.5.1.orig/tests/memorytests/run_asan_tests.sh	2023-04-14 10:32:14.000000000 -0700
-+++ rocprofiler-rocm-5.5.1/tests/memorytests/run_asan_tests.sh	2023-08-26 14:05:39.276095275 -0700
++++ rocprofiler-rocm-5.5.1/tests/memorytests/run_asan_tests.sh	2023-09-20 05:49:24.564423523 -0700
 @@ -4,6 +4,6 @@ CURRENT_DIR="$( dirname -- "$0"; )";
  export PATH=$rocmtoolsdir:$PATH
  

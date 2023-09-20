@@ -26,10 +26,11 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile r4"
+IUSE=" +aqlprofile system-llvm test r4"
 RDEPEND="
 	!dev-util/rocprofiler:0
 	dev-python/barectf
+	dev-util/roc-compiler[system-llvm=]
 	~dev-libs/rocm-comgr-${PV}:${SLOT}
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/hip-${PV}:${SLOT}
@@ -47,6 +48,9 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-3.18.0
+	test? (
+		sys-devel/gcc[sanitize]
+	)
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(

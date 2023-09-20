@@ -1,0 +1,1024 @@
+Subject:  Disable aqlprofile for 5.7.0.
+Patch status:  Needs testing / in development
+
+The patch will disable performance counters, metrics, ATT trace, error details,
+etc in rocprofiler when AQLPROFILE is off.
+
+The patch may need to be reworked because part of the SPM trace section should
+not be disabled.
+
+Initially the patch was supposed to disable only performance counters and keep
+tracers untouched but the patch in it's current form cannot do it yet.
+
+Dependencies on this package may need to be modified if they use headers, or
+any public classes/interfaces relating to metrics or profiles.
+
+From packager perpective, it is better to delete the aqlprofile disable
+patches but modify the parent packages to disable rocprofiler use.
+
+The patch is provided for tradeoff choice between avoiding the negativity of
+the license restrictions and legal implications by aqlprofile (>= 5.3.3) and
+build systems that make it difficult to patch without rocprofiler.
+
+It may be good enough link against but BUG OUT if aqlprofile is disabled and the
+app that depends on rocprofiler uses again metrics, performance counters
+directly/indirectly/tracing.
+
+Disabling aqlprofile will also severely degrade rocprofiler features/utility
+which is why it is not recommended to disable use of it.
+
+diff -urp rocprofiler-rocm-5.7.0.orig/CMakeLists.txt rocprofiler-rocm-5.7.0/CMakeLists.txt
+--- rocprofiler-rocm-5.7.0.orig/CMakeLists.txt	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/CMakeLists.txt	2023-09-19 20:58:37.848848797 -0700
+@@ -87,6 +87,8 @@ set(TEST_DIR "${ROOT_DIR}/test")
+ # To set additional RUNPATH in libraries installed in /opt/rocm-ver/lib/roctracer
+ set(ROCM_APPEND_PRIVLIB_RPATH "\$ORIGIN/..")
+ 
++option(AQLPROFILE "Add support for performance counters and metrics" ON)
++
+ find_package(
+     amd_comgr REQUIRED CONFIG
+     HINTS ${CMAKE_INSTALL_PREFIX}
+Only in rocprofiler-rocm-5.7.0: CMakeLists.txt.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/cmake_modules/env.cmake rocprofiler-rocm-5.7.0/cmake_modules/env.cmake
+--- rocprofiler-rocm-5.7.0.orig/cmake_modules/env.cmake	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/cmake_modules/env.cmake	2023-09-19 21:34:56.104819709 -0700
+@@ -84,11 +84,14 @@ if("${ROCM_ROOT_DIR}" STREQUAL "")
+     message(FATAL_ERROR "ROCM_ROOT_DIR is not found.")
+ endif()
+ 
+-find_library(
+-    FIND_AQL_PROFILE_LIB "libhsa-amd-aqlprofile64.so"
+-    HINTS ${CMAKE_PREFIX_PATH}
+-    PATHS ${ROCM_ROOT_DIR}
+-    PATH_SUFFIXES lib REQUIRED)
+-if(NOT FIND_AQL_PROFILE_LIB)
+-    message("AQL_PROFILE not installed. Please install AQL_PROFILE")
++if(AQLPROFILE)
++  add_definitions(-DUSE_AQLPROFILE)
++  find_library(
++      FIND_AQL_PROFILE_LIB "libhsa-amd-aqlprofile64.so"
++      HINTS ${CMAKE_PREFIX_PATH}
++      PATHS @ESYSROOT@/opt/rocm-@ROCM_VERSION@
++      PATH_SUFFIXES lib REQUIRED)
++  if(NOT FIND_AQL_PROFILE_LIB)
++      message("AQL_PROFILE not installed. Please install AQL_PROFILE")
++  endif()
+ endif()
+Only in rocprofiler-rocm-5.7.0/cmake_modules: env.cmake.orig
+Only in rocprofiler-rocm-5.7.0/cmake_modules: env.cmake.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/api/CMakeLists.txt rocprofiler-rocm-5.7.0/src/api/CMakeLists.txt
+--- rocprofiler-rocm-5.7.0.orig/src/api/CMakeLists.txt	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/api/CMakeLists.txt	2023-09-19 21:34:34.152820002 -0700
+@@ -49,14 +49,19 @@ find_file(
+     NO_DEFAULT_PATH REQUIRED)
+ get_filename_component(HSA_RUNTIME_INC_PATH ${HSA_H} DIRECTORY)
+ 
+-find_library(
+-    AQLPROFILE_LIB "libhsa-amd-aqlprofile64.so"
+-    HINTS ${CMAKE_PREFIX_PATH}
+-    PATHS ${ROCM_PATH}
+-    PATH_SUFFIXES lib)
++if(AQLPROFILE)
++  add_definitions(-DUSE_AQLPROFILE)
++  find_library(
++      AQLPROFILE_LIB "libhsa-amd-aqlprofile64.so"
++      HINTS ${CMAKE_PREFIX_PATH}
++      PATHS @ESYSROOT@/opt/rocm-@ROCM_VERSION@
++      PATH_SUFFIXES lib)
+ 
+-if(NOT AQLPROFILE_LIB)
+-    message(FATAL_ERROR "AQL_PROFILE not installed. Please install hsa-amd-aqlprofile!")
++  if(NOT AQLPROFILE_LIB)
++      message(FATAL_ERROR "AQL_PROFILE not installed. Please install hsa-amd-aqlprofile!")
++  endif()
++else()
++  set(AQLPROFILE_LIB "")
+ endif()
+ 
+ # ########################################################################################
+Only in rocprofiler-rocm-5.7.0/src/api: CMakeLists.txt.orig
+Only in rocprofiler-rocm-5.7.0/src/api: CMakeLists.txt.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/context.h rocprofiler-rocm-5.7.0/src/core/context.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/context.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/context.h	2023-09-19 22:14:13.736788226 -0700
+@@ -274,6 +274,7 @@ class Context {
+     }
+   }
+ 
++#ifdef USE_AQLPROFILE
+   void GetData(const uint32_t& group_index) {
+     const profile_vector_t profile_vector = GetProfiles(group_index);
+     for (auto& tuple : profile_vector) {
+@@ -319,6 +320,7 @@ class Context {
+       if (status != HSA_STATUS_SUCCESS) AQL_EXC_RAISING(status, "context iterate data failed");
+     }
+   }
++#endif
+ 
+   static bool Handler(hsa_signal_value_t value, void* arg) {
+     Group* group = reinterpret_cast<Group*>(arg);
+@@ -349,7 +351,9 @@ class Context {
+         queue_(queue),
+         hsa_rsrc_(&util::HsaRsrcFactory::Instance()),
+         api_(hsa_rsrc_->AqlProfileApi()),
++#ifdef USE_AQLPROFILE
+         metrics_(NULL),
++#endif
+         handler_(handler),
+         handler_arg_(handler_arg),
+         pcsmp_mode_(false) {}
+@@ -360,10 +364,12 @@ class Context {
+     for (const auto& v : info_map_) {
+       const std::string& name = v.first;
+       const rocprofiler_feature_t* info = v.second;
++#ifdef USE_AQLPROFILE
+       if ((info->kind == ROCPROFILER_FEATURE_KIND_METRIC) &&
+           (metrics_map_.find(name) == metrics_map_.end())) {
+         delete info;
+       }
++#endif
+     }
+   }
+ 
+@@ -374,13 +380,17 @@ class Context {
+       return;
+     }
+ 
++#ifdef USE_AQLPROFILE
+     metrics_ = MetricsDict::Create(agent_info);
+     if (metrics_ == NULL) EXC_RAISING(HSA_STATUS_ERROR, "MetricsDict create failed");
++#endif
+ 
+     if (Initialize(info, info_count) == false) {
+       fprintf(stdout, "\nInput metrics out of HW limit. Proposed metrics group set:\n");
+       fflush(stdout);
++#ifdef USE_AQLPROFILE
+       MetricsGroupSet(agent_info, info, info_count).Print(stdout);
++#endif
+       fprintf(stdout, "\n");
+       fflush(stdout);
+       EXC_RAISING(HSA_STATUS_ERROR, "Metrics list exceeds HW limits");
+@@ -412,10 +422,12 @@ class Context {
+       if (kind == ROCPROFILER_FEATURE_KIND_METRIC) {
+         if (name == NULL) EXC_RAISING(HSA_STATUS_ERROR, "metric name is NULL");
+         info_map_[name] = info;
++#ifdef USE_AQLPROFILE
+         auto ret = metrics_map_.insert({name, NULL});
+         if (!ret.second)
+           EXC_RAISING(HSA_STATUS_ERROR,
+                       "input metric '" << name << "' is registered more then once");
++#endif
+       }
+     }
+ 
+@@ -428,6 +440,7 @@ class Context {
+       const rocprofiler_feature_kind_t kind = info->kind;
+       const char* name = info->name;
+ 
++#ifdef USE_AQLPROFILE
+       if (kind == ROCPROFILER_FEATURE_KIND_METRIC) {  // Processing metrics features
+         const Metric* metric = metrics_->Get(name);
+         if (metric == NULL)
+@@ -484,13 +497,17 @@ class Context {
+           const uint32_t group_index = block_status.group_index;
+           set_[group_index].Insert(profile_info_t{event, NULL, 0, info});
+         }
+-      } else if (kind & ROCPROFILER_FEATURE_KIND_TRACE) {  // Processing traces features
++      } else
++#endif
++      if (kind & ROCPROFILER_FEATURE_KIND_TRACE) {  // Processing traces features
+         info->kind = ROCPROFILER_FEATURE_KIND_TRACE;
+ 
+         const event_t* event = NULL;
+         if (kind & ROCPROFILER_FEATURE_KIND_PCSMP_MOD) {  // PC sampling
+           pcsmp_mode_ = true;
+-        } else if (kind & ROCPROFILER_FEATURE_KIND_SPM_MOD) {  // SPM trace
++        } else
++#ifdef USE_AQLPROFILE
++        if (kind & ROCPROFILER_FEATURE_KIND_SPM_MOD) {  // SPM trace
+           const Metric* metric = metrics_->Get(name);
+           if (metric == NULL)
+             EXC_RAISING(HSA_STATUS_ERROR, "input metric '" << name << "' is not found");
+@@ -500,6 +517,7 @@ class Context {
+           const counter_t* counter = counters_vec[0];
+           event = &(counter->event);
+         }
++#endif
+         set_[0].Insert(profile_info_t{event, info->parameters, info->parameter_count, info});
+       } else {
+         EXC_RAISING(HSA_STATUS_ERROR, "bad rocprofiler feature kind (" << kind << ")");
+@@ -612,12 +630,14 @@ class Context {
+     return status;
+   }
+ 
++#ifdef USE_AQLPROFILE
+   rocprofiler_feature_t* NewCounterInfo(const counter_t* counter) {
+     rocprofiler_feature_t* info = new rocprofiler_feature_t{};
+     info->kind = ROCPROFILER_FEATURE_KIND_METRIC;
+     info->name = counter->name.c_str();
+     return info;
+   }
++#endif
+ 
+   // GPU handel
+   const hsa_agent_t agent_;
+@@ -630,14 +650,18 @@ class Context {
+   const pfn_t* api_;
+   // Profile group set
+   std::vector<Group> set_;
++#ifdef USE_AQLPROFILE
+   // Metrics dictionary
+   const MetricsDict* metrics_;
++#endif
+   // Groups map
+   std::map<block_des_t, block_status_t, lt_block_des> groups_map_;
+   // Info map
+   info_map_t info_map_;
++#ifdef USE_AQLPROFILE
+   // Metrics map
+   std::map<std::string, const Metric*> metrics_map_;
++#endif
+   // Context completion handler
+   rocprofiler_handler_t handler_;
+   void* handler_arg_;
+Only in rocprofiler-rocm-5.7.0/src/core: context.h.orig
+Only in rocprofiler-rocm-5.7.0/src/core: context.h.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/eval_metrics.cpp rocprofiler-rocm-5.7.0/src/core/counters/metrics/eval_metrics.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/eval_metrics.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/counters/metrics/eval_metrics.cpp	2023-09-19 20:58:41.156848753 -0700
+@@ -79,6 +79,7 @@ template <class Map> class MetricArgs :
+ 
+ static std::mutex extract_metric_events_lock;
+ 
++#ifdef USE_AQLPROFILE
+ bool metrics::ExtractMetricEvents(
+     std::vector<std::string>& metric_names, hsa_agent_t gpu_agent, MetricsDict* metrics_dict,
+     std::map<std::string, results_t*>& results_map, std::vector<event_t>& events_list,
+@@ -220,3 +221,4 @@ void metrics::GetCountersAndMetricResult
+ 
+   GetMetricsData(results_map, metrics_list, kernel_duration);
+ }
++#endif
+Only in rocprofiler-rocm-5.7.0/src/core/counters/metrics: eval_metrics.cpp.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/eval_metrics.h rocprofiler-rocm-5.7.0/src/core/counters/metrics/eval_metrics.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/eval_metrics.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/counters/metrics/eval_metrics.h	2023-09-19 22:10:51.288790929 -0700
+@@ -52,8 +52,10 @@ typedef struct {
+   packet_t* start_packet;
+   packet_t* stop_packet;
+   packet_t* read_packet;
++#ifdef USE_AQLPROFILE
+   rocprofiler::MetricsDict* metrics_dict;
+   std::vector<const rocprofiler::Metric*> metrics_list;
++#endif
+   std::map<std::string, rocprofiler::results_t*> results_map;
+   std::vector<rocprofiler::results_t*> results_list;
+   std::vector<event_t> events_list;
+@@ -62,6 +64,7 @@ typedef struct {
+   std::atomic<bool> begin_completed{false};
+ } profiling_context_t;
+ 
++#ifdef USE_AQLPROFILE
+ namespace metrics {
+ bool ExtractMetricEvents(
+     std::vector<std::string>& metric_names, hsa_agent_t gpu_agent, MetricsDict* metrics_dict,
+@@ -83,6 +86,7 @@ void GetCountersAndMetricResultsByXcc(ui
+                                       uint64_t kernel_duration = 0);
+ 
+ }  // namespace metrics
++#endif
+ }  // namespace rocprofiler
+ 
+-#endif  // SRC_CORE_METRICS_EVALMETRICS_H_
+\ No newline at end of file
++#endif  // SRC_CORE_METRICS_EVALMETRICS_H_
+Only in rocprofiler-rocm-5.7.0/src/core/counters/metrics: eval_metrics.h.orig
+Only in rocprofiler-rocm-5.7.0/src/core/counters/metrics: eval_metrics.h.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/exception.h rocprofiler-rocm-5.7.0/src/core/counters/metrics/exception.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/exception.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/counters/metrics/exception.h	2023-09-19 20:58:41.160848753 -0700
+@@ -48,12 +48,20 @@ THE SOFTWARE.
+     throw rocprofiler::util::exception(error, oss.str());                                          \
+   } while (0)
+ 
++#ifdef USE_AQLPROFILE
+ #define AQL_EXC_RAISING(error, stream)                                                             \
+   do {                                                                                             \
+     const char* error_string = NULL;                                                               \
+     hsa_ven_amd_aqlprofile_error_string(&error_string);                                            \
+     EXC_RAISING(error, stream << ", " << error_string);                                            \
+   } while (0)
++#else
++#define AQL_EXC_RAISING(error, stream)                                                             \
++  do {                                                                                             \
++    const char* error_string = NULL;                                                               \
++    EXC_RAISING(error, stream);                                                                    \
++  } while (0)
++#endif
+ 
+ namespace rocprofiler {
+ namespace util {
+Only in rocprofiler-rocm-5.7.0/src/core/counters/metrics: exception.h.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/metrics.cpp rocprofiler-rocm-5.7.0/src/core/counters/metrics/metrics.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/metrics.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/counters/metrics/metrics.cpp	2023-09-19 22:09:53.016791707 -0700
+@@ -23,6 +23,8 @@ THE SOFTWARE.
+ #include "metrics.h"
+ 
+ namespace rocprofiler {
++#ifdef USE_AQLPROFILE
+ MetricsDict::map_t* MetricsDict::map_ = NULL;
+ MetricsDict::mutex_t MetricsDict::mutex_;
++#endif
+ }  // namespace rocprofiler
+Only in rocprofiler-rocm-5.7.0/src/core/counters/metrics: metrics.cpp.orig
+Only in rocprofiler-rocm-5.7.0/src/core/counters/metrics: metrics.cpp.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/metrics.h rocprofiler-rocm-5.7.0/src/core/counters/metrics/metrics.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/counters/metrics/metrics.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/counters/metrics/metrics.h	2023-09-19 22:09:00.344792411 -0700
+@@ -47,6 +47,7 @@ THE SOFTWARE.
+ 
+ namespace fs = std::experimental::filesystem;
+ namespace rocprofiler {
++#ifdef USE_AQLPROFILE
+ struct counter_t {
+   std::string name;
+   event_t event;
+@@ -387,6 +388,7 @@ class MetricsDict {
+   static map_t* map_;
+   static mutex_t mutex_;
+ };
++#endif
+ 
+ }  // namespace rocprofiler
+ 
+Only in rocprofiler-rocm-5.7.0/src/core/counters/metrics: metrics.h.orig
+Only in rocprofiler-rocm-5.7.0/src/core/counters/metrics: metrics.h.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/gpu_command.cpp rocprofiler-rocm-5.7.0/src/core/gpu_command.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/gpu_command.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/gpu_command.cpp	2023-09-19 20:58:41.160848753 -0700
+@@ -42,6 +42,7 @@ size_t CreateGpuCommand(gpu_cmd_op_t op,
+ 
+   if (packet_count > slot_count) EXC_RAISING(HSA_STATUS_ERROR, "packet_count > slot_count");
+ 
++#ifdef USE_AQLPROFILE
+   // AQLprofile object
+   hsa_ven_amd_aqlprofile_profile_t profile{};
+   profile.agent = agent_info->dev_id;
+@@ -79,6 +80,7 @@ size_t CreateGpuCommand(gpu_cmd_op_t op,
+         hsa_rsrc->AqlProfileApi()->hsa_ven_amd_aqlprofile_get_info(&profile, info_type, command);
+     if (status != HSA_STATUS_SUCCESS) EXC_RAISING(status, "get_info(ENABLE_CMD).data exc");
+   }
++#endif
+ 
+   // Return cmd packet data size
+   return (packet_count * sizeof(packet_t));
+Only in rocprofiler-rocm-5.7.0/src/core: gpu_command.cpp.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/group_set.h rocprofiler-rocm-5.7.0/src/core/group_set.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/group_set.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/group_set.h	2023-09-19 20:58:41.160848753 -0700
+@@ -53,6 +53,7 @@ struct block_status_t {
+   uint32_t group_index;
+ };
+ 
++#ifdef USE_AQLPROFILE
+ // Metrics set class
+ class MetricsGroup {
+  public:
+@@ -235,6 +236,7 @@ class MetricsGroupSet {
+   // Metrics group vector
+   std::vector<MetricsGroup*> groups_;
+ };
++#endif
+ 
+ }  // namespace rocprofiler
+ 
+Only in rocprofiler-rocm-5.7.0/src/core: group_set.h.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/hsa/hsa_support.cpp rocprofiler-rocm-5.7.0/src/core/hsa/hsa_support.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/hsa/hsa_support.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/hsa/hsa_support.cpp	2023-09-19 22:08:13.896793031 -0700
+@@ -989,6 +989,7 @@ void Finalize() {
+   ResetMaps();
+ }
+ 
++#ifdef USE_AQLPROFILE
+ static std::map<uint64_t, rocprofiler::MetricsDict*> metricsDicts;
+ 
+ bool IterateCounters(rocprofiler_counters_info_callback_t counters_info_callback) {
+@@ -1074,6 +1075,7 @@ bool IterateCounters(rocprofiler_counter
+ 
+   return true;
+ }
++#endif
+ 
+ }  // namespace hsa_support
+ }  // namespace rocprofiler
+Only in rocprofiler-rocm-5.7.0/src/core/hsa: hsa_support.cpp.orig
+Only in rocprofiler-rocm-5.7.0/src/core/hsa: hsa_support.cpp.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/hsa/hsa_support.h rocprofiler-rocm-5.7.0/src/core/hsa/hsa_support.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/hsa/hsa_support.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/hsa/hsa_support.h	2023-09-19 20:58:41.160848753 -0700
+@@ -99,7 +99,9 @@ void Initialize(HsaApiTable* Table);
+ hsa_status_t hsa_iterate_agents_cb(hsa_agent_t agent, void* data);
+ void Finalize();
+ 
++#ifdef USE_AQLPROFILE
+ bool IterateCounters(rocprofiler_counters_info_callback_t counters_info_callback);
++#endif
+ 
+ }  // namespace hsa_support
+ }  // namespace rocprofiler
+Only in rocprofiler-rocm-5.7.0/src/core/hsa: hsa_support.h.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/hsa/packets/packets_generator.cpp rocprofiler-rocm-5.7.0/src/core/hsa/packets/packets_generator.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/hsa/packets/packets_generator.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/hsa/packets/packets_generator.cpp	2023-09-19 22:07:24.504793691 -0700
+@@ -150,6 +150,7 @@ void CheckPacketReqiurements(std::vector
+ // Initialize the PM4 commands with having the CPU&GPU agents, the counters,
+ // counters count to output three packets which are start, stop and read
+ // packets
++#ifdef USE_AQLPROFILE
+ std::vector<std::pair<rocprofiler::profiling_context_t*, hsa_ven_amd_aqlprofile_profile_t*>>
+ InitializeAqlPackets(hsa_agent_t cpu_agent, hsa_agent_t gpu_agent,
+                      std::vector<std::string>& counter_names, rocprofiler_session_id_t session_id,
+@@ -398,10 +399,12 @@ InitializeAqlPackets(hsa_agent_t cpu_age
+   // } while (events_list.size() > 0);
+   return profiles;
+ }
++#endif
+ 
+ // Initialize the PM4 commands with having the CPU&GPU agents, the counters,
+ // counters count to output three packets which are start, stop and read
+ // packets
++#ifdef USE_AQLPROFILE
+ hsa_ven_amd_aqlprofile_profile_t* InitializeDeviceProfilingAqlPackets(
+     hsa_agent_t cpu_agent, hsa_agent_t gpu_agent, hsa_ven_amd_aqlprofile_event_t* events,
+     uint32_t event_count, packet_t* start_packet, packet_t* stop_packet, packet_t* read_packet) {
+@@ -478,6 +481,7 @@ hsa_ven_amd_aqlprofile_profile_t* Initia
+   if (status == HSA_STATUS_ERROR) return nullptr;
+   return profile;
+ }
++#endif
+ 
+ // ATT
+ bool g_output_buffer_local = true;
+@@ -553,6 +557,7 @@ att_mem_pools_map_t* GetAttMemPoolsMap()
+ // Generate start and stop packets for collecting ATT traces
+ // Also generate and return the profile object which has the PM4
+ // command buffer and the output buffer for retrieving the traces
++#ifdef USE_AQLPROFILE
+ hsa_ven_amd_aqlprofile_profile_t* GenerateATTPackets(
+     hsa_agent_t cpu_agent, hsa_agent_t gpu_agent,
+     std::vector<hsa_ven_amd_aqlprofile_parameter_t>& att_params, packet_t* start_packet,
+@@ -587,5 +592,6 @@ hsa_ven_amd_aqlprofile_profile_t* Genera
+   CHECK_HSA_STATUS("Error: Creating Stop PM4 Packet", status);
+   return profile;
+ }
++#endif
+ 
+ }  // namespace Packet
+Only in rocprofiler-rocm-5.7.0/src/core/hsa/packets: packets_generator.cpp.orig
+Only in rocprofiler-rocm-5.7.0/src/core/hsa/packets: packets_generator.cpp.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/hsa/packets/packets_generator.h rocprofiler-rocm-5.7.0/src/core/hsa/packets/packets_generator.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/hsa/packets/packets_generator.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/hsa/packets/packets_generator.h	2023-09-19 22:06:32.776794381 -0700
+@@ -39,18 +39,22 @@ namespace Packet {
+ 
+ typedef hsa_ext_amd_aql_pm4_packet_t packet_t;
+ 
++#ifdef USE_AQLPROFILE
+ std::vector<std::pair<rocprofiler::profiling_context_t*, hsa_ven_amd_aqlprofile_profile_t*>>
+ InitializeAqlPackets(hsa_agent_t cpu_agent, hsa_agent_t gpu_agent,
+                      std::vector<std::string>& counter_names, rocprofiler_session_id_t session_id,
+                      bool is_spm = false);
++#endif
+ uint8_t* AllocateSysMemory(hsa_agent_t gpu_agent, size_t size, hsa_amd_memory_pool_t* cpu_pool);
+ void GetCommandBufferMap(std::map<size_t, uint8_t*>);
+ void GetOutputBufferMap(std::map<size_t, uint8_t*>);
+ void InitializePools(hsa_agent_t cpu_agent, Agent::AgentInfo* agent_info);
+ void InitializeGPUPool(hsa_agent_t gpu_agent, Agent::AgentInfo* agent_info);
++#ifdef USE_AQLPROFILE
+ hsa_ven_amd_aqlprofile_profile_t* InitializeDeviceProfilingAqlPackets(
+     hsa_agent_t cpu_agent, hsa_agent_t gpu_agent, hsa_ven_amd_aqlprofile_event_t* events,
+     uint32_t event_count, packet_t* start_packet, packet_t* stop_packet, packet_t* read_packet);
++#endif
+ hsa_amd_memory_pool_t& GetCommandPool();
+ hsa_amd_memory_pool_t& GetOutputPool();
+ 
+Only in rocprofiler-rocm-5.7.0/src/core/hsa/packets: packets_generator.h.orig
+Only in rocprofiler-rocm-5.7.0/src/core/hsa/packets: packets_generator.h.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/hsa/queues/queue.cpp rocprofiler-rocm-5.7.0/src/core/hsa/queues/queue.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/hsa/queues/queue.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/hsa/queues/queue.cpp	2023-09-19 22:05:13.348795442 -0700
+@@ -308,6 +308,7 @@ hsa_status_t attTraceDataCallback(hsa_ve
+   return status;
+ }
+ 
++#ifdef USE_AQLPROFILE
+ void AddRecordCounters(rocprofiler_record_profiler_t* record, const pending_signal_t* pending) {
+   record->counters_count =
+       rocprofiler_record_counters_instances_count_t{pending->context->metrics_list.size()};
+@@ -344,7 +345,9 @@ void AddRecordCounters(rocprofiler_recor
+                       });
+   }
+ }
++#endif
+ 
++#ifdef USE_AQLPROFILE
+ void AddAttRecord(rocprofiler_record_att_tracer_t* record, hsa_agent_t gpu_agent,
+                   att_pending_signal_t& pending) {
+   Agent::AgentInfo agent_info = hsa_support::GetAgentInfo(gpu_agent.handle);
+@@ -493,6 +496,7 @@ bool AsyncSignalHandler(hsa_signal_value
+   return false;
+ }
+ 
++#ifdef USE_AQLPROFILE
+ bool AsyncSignalHandlerATT(hsa_signal_value_t /* signal */, void* data) {
+   // TODO: finish implementation to iterate trace data and add it to rocprofiler record
+   // and generic buffer
+@@ -523,9 +527,11 @@ bool AsyncSignalHandlerATT(hsa_signal_va
+       record.thread_id = rocprofiler_thread_id_t{pending.thread_id};
+       record.queue_idx = rocprofiler_queue_index_t{pending.queue_index};
+       record.queue_id = rocprofiler_queue_id_t{queue_info_session->queue_id};
++#ifdef USE_AQLPROFILE
+       if (/*pending.counters_count > 0 && */ pending.profile) {
+         AddAttRecord(&record, queue_info_session->agent, pending);
+       }
++#endif
+       // July/01/2023 -> Changed this to writer ID so we can correlate to dispatches
+       // kernel_id already has the descriptor.
+       record.header = {ROCPROFILER_ATT_TRACER_RECORD,
+@@ -551,6 +557,7 @@ bool AsyncSignalHandlerATT(hsa_signal_va
+ 
+   return false;
+ }
++#endif
+ 
+ void CreateBarrierPacket(const hsa_signal_t& packet_completion_signal,
+                          std::vector<Packet::packet_t>* transformed_packets) {
+@@ -577,9 +584,11 @@ void SignalAsyncHandler(const hsa_signal
+ }
+ 
+ void signalAsyncHandlerATT(const hsa_signal_t& signal, void* data) {
++#ifdef USE_AQLPROFILE
+   hsa_status_t status = hsa_support::GetAmdExtTable().hsa_amd_signal_async_handler_fn(
+       signal, HSA_SIGNAL_CONDITION_EQ, 0, AsyncSignalHandlerATT, data);
+   CHECK_HSA_STATUS("Error: hsa_amd_signal_async_handler for ATT failed", status);
++#endif
+ }
+ 
+ void CreateSignal(uint32_t attribute, hsa_signal_t* signal) {
+@@ -828,12 +837,14 @@ void WriteInterceptor(const void* packet
+       }
+ 
+       // If counters found in the session
++#ifdef USE_AQLPROFILE
+       if (session_data_count > 0 && is_counter_collection_mode) {
+         // Get the PM4 Packets using packets_generator
+         profiles = Packet::InitializeAqlPackets(queue_info.GetCPUAgent(), queue_info.GetGPUAgent(),
+                                                 session_data, session_id_snapshot);
+         replay_mode_count = profiles.size();
+       }
++#endif
+ 
+       uint32_t profile_id = 0;
+       // do {
+@@ -868,12 +879,15 @@ void WriteInterceptor(const void* packet
+         uint64_t record_id = GetROCProfilerSingleton()->GetUniqueRecordId();
+         AddKernelNameWithDispatchID(GetKernelNameFromKsymbols(dispatch_packet.kernel_object),
+                                     record_id);
++#ifdef USE_AQLPROFILE
+         if (session_data_count > 0 && profile.second) {
+           session->GetProfiler()->AddPendingSignals(
+               writer_id, record_id, original_packet.completion_signal, packet.completion_signal,
+               session_id, buffer_id, profile.first, session_data_count, profile.second,
+               kernel_properties, (uint32_t)syscall(__NR_gettid), user_pkt_index, correlation_id);
+-        } else {
++        } else
++#endif
++        {
+           session->GetProfiler()->AddPendingSignals(
+               writer_id, record_id, original_packet.completion_signal, packet.completion_signal,
+               session_id, buffer_id, nullptr, session_data_count, nullptr, kernel_properties,
+@@ -963,6 +977,7 @@ void WriteInterceptor(const void* packet
+       writer(packets, pkt_count);
+       return;
+     }
++#endif
+ 
+     // Preparing att Packets
+     Packet::packet_t start_packet{};
+Only in rocprofiler-rocm-5.7.0/src/core/hsa/queues: queue.cpp.orig
+Only in rocprofiler-rocm-5.7.0/src/core/hsa/queues: queue.cpp.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/hsa/queues/queue.h rocprofiler-rocm-5.7.0/src/core/hsa/queues/queue.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/hsa/queues/queue.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/hsa/queues/queue.h	2023-09-19 20:58:41.160848753 -0700
+@@ -86,7 +86,9 @@ struct queue_info_session_t {
+   uint32_t xcc_count;
+ };
+ 
++#ifdef USE_AQLPROFILE
+ void AddRecordCounters(rocprofiler_record_profiler_t* record, const pending_signal_t& pending);
++#endif
+ 
+ void InitializePools(hsa_agent_t cpu_agent, Agent::AgentInfo* agent_info);
+ void InitializeGPUPool(hsa_agent_t gpu_agent, Agent::AgentInfo* agent_info);
+Only in rocprofiler-rocm-5.7.0/src/core/hsa/queues: queue.h.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/metrics.cpp rocprofiler-rocm-5.7.0/src/core/metrics.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/metrics.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/metrics.cpp	2023-09-19 21:52:54.768805305 -0700
+@@ -23,6 +23,8 @@ THE SOFTWARE.
+ #include "core/metrics.h"
+ 
+ namespace rocprofiler {
++#ifdef USE_AQLPROFILE
+ MetricsDict::map_t* MetricsDict::map_ = NULL;
+ MetricsDict::mutex_t MetricsDict::mutex_;
++#endif
+ }  // namespace rocprofiler
+Only in rocprofiler-rocm-5.7.0/src/core: metrics.cpp.orig
+Only in rocprofiler-rocm-5.7.0/src/core: metrics.cpp.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/metrics.h rocprofiler-rocm-5.7.0/src/core/metrics.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/metrics.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/metrics.h	2023-09-19 20:58:41.160848753 -0700
+@@ -43,6 +43,7 @@ THE SOFTWARE.
+ #include "xml/xml.h"
+ 
+ namespace rocprofiler {
++#ifdef USE_AQLPROFILE
+ struct counter_t {
+   std::string name;
+   event_t event;
+@@ -371,6 +372,7 @@ class MetricsDict {
+   static map_t* map_;
+   static mutex_t mutex_;
+ };
++#endif
+ 
+ }  // namespace rocprofiler
+ 
+Only in rocprofiler-rocm-5.7.0/src/core: metrics.h.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/profile.h rocprofiler-rocm-5.7.0/src/core/profile.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/profile.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/profile.h	2023-09-19 20:58:41.160848753 -0700
+@@ -184,6 +184,8 @@ class Profile {
+       packet_t read{};   // read at kernel start
+       packet_t read2{};  // read at kernel end
+ 
++      hsa_status_t rd_status = HSA_STATUS_ERROR;
++#ifdef USE_AQLPROFILE
+       // Check the profile buffer sizes
+       status = api->hsa_ven_amd_aqlprofile_start(&profile_, NULL);
+       if (status != HSA_STATUS_SUCCESS) AQL_EXC_RAISING(status, "aqlprofile_start(NULL)");
+@@ -197,7 +199,6 @@ class Profile {
+       if (status != HSA_STATUS_SUCCESS) AQL_EXC_RAISING(status, "aqlprofile_start");
+       status = api->hsa_ven_amd_aqlprofile_stop(&profile_, &stop);
+       if (status != HSA_STATUS_SUCCESS) AQL_EXC_RAISING(status, "aqlprofile_stop");
+-      hsa_status_t rd_status = HSA_STATUS_ERROR;
+ #ifdef AQLPROF_NEW_API
+       if (profile_.type == HSA_VEN_AMD_AQLPROFILE_EVENT_TYPE_PMC) {
+         rd_status = api->hsa_ven_amd_aqlprofile_read(&profile_, &read);
+@@ -210,6 +211,7 @@ class Profile {
+       if (rd_status != HSA_STATUS_SUCCESS) AQL_EXC_RAISING(status, "aqlprofile_read");
+ #endif
+ #endif
++#endif
+ 
+       // Set completion signal of start
+       hsa_signal_t dummy_signal{};
+@@ -248,6 +250,7 @@ class Profile {
+ 
+       // Fill packet vectors
+       if (is_legacy_) {
++#ifdef USE_AQLPROFILE
+         const uint32_t start_index = start_vector.size();
+         const uint32_t stop_index = stop_vector.size();
+ 
+@@ -280,6 +283,7 @@ class Profile {
+               AQL_EXC_RAISING(status, "hsa_ven_amd_aqlprofile_legacy_get_pm4");
+           }
+         }
++#endif
+       } else {
+         start_vector.push_back(start);
+         if (is_concurrent) start_vector.push_back(barrier_st);
+Only in rocprofiler-rocm-5.7.0/src/core: profile.h.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/rocprofiler.cpp rocprofiler-rocm-5.7.0/src/core/rocprofiler.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/rocprofiler.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/rocprofiler.cpp	2023-09-19 20:58:41.164848753 -0700
+@@ -287,12 +287,15 @@ CONSTRUCTOR_API void constructor() {
+ 
+ DESTRUCTOR_API void destructor() {
+   ONLOAD_TRACE_BEG();
++#ifdef USE_AQLPROFILE
+   rocprofiler::MetricsDict::Destroy();
++#endif
+   util::HsaRsrcFactory::Destroy();
+   util::Logger::Destroy();
+   ONLOAD_TRACE_END();
+ }
+ 
++#ifdef USE_AQLPROFILE
+ const MetricsDict* GetMetrics(const hsa_agent_t& agent) {
+   rocprofiler::util::HsaRsrcFactory* hsa_rsrc = &rocprofiler::util::HsaRsrcFactory::Instance();
+   const rocprofiler::util::AgentInfo* agent_info = hsa_rsrc->GetAgentInfo(agent);
+@@ -301,6 +304,7 @@ const MetricsDict* GetMetrics(const hsa_
+   if (metrics == NULL) EXC_RAISING(HSA_STATUS_ERROR, "MetricsDict create failed");
+   return metrics;
+ }
++#endif
+ 
+ hsa_status_t GetExcStatus(const std::exception& e) {
+   const util::exception* rocprofiler_exc_ptr = dynamic_cast<const util::exception*>(&e);
+@@ -581,10 +585,12 @@ PUBLIC_API hsa_status_t rocprofiler_read
+ 
+ // Get profiling data
+ PUBLIC_API hsa_status_t rocprofiler_get_data(rocprofiler_t* handle, uint32_t group_index) {
++#ifdef USE_AQLPROFILE
+   API_METHOD_PREFIX
+   rocprofiler::Context* context = reinterpret_cast<rocprofiler::Context*>(handle);
+   context->GetData(group_index);
+   API_METHOD_SUFFIX
++#endif
+ }
+ 
+ // Start profiling
+@@ -610,18 +616,22 @@ PUBLIC_API hsa_status_t rocprofiler_grou
+ 
+ // Get profiling data
+ PUBLIC_API hsa_status_t rocprofiler_group_get_data(rocprofiler_group_t* group) {
++#ifdef USE_AQLPROFILE
+   API_METHOD_PREFIX
+   rocprofiler::Context* context = reinterpret_cast<rocprofiler::Context*>(group->context);
+   context->GetData(group->index);
+   API_METHOD_SUFFIX
++#endif
+ }
+ 
+ // Get metrics data
+ PUBLIC_API hsa_status_t rocprofiler_get_metrics(const rocprofiler_t* handle) {
++#ifdef USE_AQLPROFILE
+   API_METHOD_PREFIX
+   const rocprofiler::Context* context = reinterpret_cast<const rocprofiler::Context*>(handle);
+   context->GetMetricsData();
+   API_METHOD_SUFFIX
++#endif
+ }
+ 
+ // Set/remove queue callbacks
+@@ -654,10 +664,12 @@ PUBLIC_API hsa_status_t rocprofiler_stop
+ // Method for iterating the events output data
+ PUBLIC_API hsa_status_t rocprofiler_iterate_trace_data(
+     rocprofiler_t* handle, hsa_ven_amd_aqlprofile_data_callback_t callback, void* data) {
++#ifdef USE_AQLPROFILE
+   API_METHOD_PREFIX
+   rocprofiler::Context* context = reinterpret_cast<rocprofiler::Context*>(handle);
+   context->IterateTraceData(callback, data);
+   API_METHOD_SUFFIX
++#endif
+ }
+ 
+ ////////////////////////////////////////////////////////////////////////////////
+@@ -722,9 +734,11 @@ PUBLIC_API hsa_status_t rocprofiler_get_
+   uint32_t* result_32bit_ptr = reinterpret_cast<uint32_t*>(data);
+ 
+   switch (kind) {
++#ifdef USE_AQLPROFILE
+     case ROCPROFILER_INFO_KIND_METRIC_COUNT:
+       *result_32bit_ptr = rocprofiler::GetMetrics(*agent)->Size();
+       break;
++#endif
+     case ROCPROFILER_INFO_KIND_TRACE_COUNT:
+       *result_32bit_ptr = 1;
+       break;
+@@ -757,6 +771,7 @@ PUBLIC_API hsa_status_t rocprofiler_iter
+     info.agent_index = agent_idx;
+ 
+     switch (kind) {
++#ifdef USE_AQLPROFILE
+       case ROCPROFILER_INFO_KIND_METRIC: {
+         const rocprofiler::MetricsDict* dict = rocprofiler::GetMetrics(agent_info->dev_id);
+         auto nodes_vec = dict->GetNodes();
+@@ -818,6 +833,7 @@ PUBLIC_API hsa_status_t rocprofiler_iter
+         }
+         break;
+       }
++#endif
+       case ROCPROFILER_INFO_KIND_TRACE: {
+         info.trace.name = strdup("TT");
+         info.trace.description = strdup("Thread Trace");
+Only in rocprofiler-rocm-5.7.0/src/core: rocprofiler.cpp.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/session/device_profiling.cpp rocprofiler-rocm-5.7.0/src/core/session/device_profiling.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/core/session/device_profiling.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/session/device_profiling.cpp	2023-09-19 20:58:41.164848753 -0700
+@@ -124,6 +124,7 @@ bool DeviceProfileSession::generatePacke
+   std::map<std::string, std::set<std::string>> metrics_counters;
+ 
+ 
++#ifdef USE_AQLPROFILE
+   metrics::ExtractMetricEvents(profiling_data_, gpu_agent_, metrics_dict_, results_map_,
+                                events_list_, results_list_, events_max_block_counters,
+                                metrics_counters);
+@@ -131,6 +132,7 @@ bool DeviceProfileSession::generatePacke
+   profile_ = Packet::InitializeDeviceProfilingAqlPackets(cpu_agent_, gpu_agent_, &events_list_[0],
+                                                          events_list_.size(), &start_packet_,
+                                                          &stop_packet_, &read_packet_);
++#endif
+ 
+   start_packet_.header = HSA_PACKET_TYPE_VENDOR_SPECIFIC << HSA_PACKET_HEADER_TYPE;
+ 
+@@ -183,6 +185,7 @@ DeviceProfileSession::DeviceProfileSessi
+   if (hsa_agent_get_info(gpu_agent_, HSA_AGENT_INFO_NAME, gpu_name) != HSA_STATUS_SUCCESS)
+     fatal("Agent name query failed");
+ 
++#ifdef USE_AQLPROFILE
+   Agent::AgentInfo* agentInfo = &(hsa_support::GetAgentInfo(gpu_agent_.handle));
+   metrics_dict_ = MetricsDict::Create(agentInfo);
+ 
+@@ -191,6 +194,7 @@ DeviceProfileSession::DeviceProfileSessi
+     if (metric == NULL) std::cout << d << " not found in metrics_dict\n";
+     metrics_list_.push_back(metric);
+   }
++#endif
+ 
+   createQueue();
+   generatePackets();
+@@ -231,6 +235,7 @@ void DeviceProfileSession::StartSession(
+   // set a variable that this session has started
+ }
+ 
++#ifdef USE_AQLPROFILE
+ void DeviceProfileSession::PollMetrics(rocprofiler_device_profile_metric_t* data) {
+   // TODO: check if session was already started
+   // TODO: can't poll if stopped
+@@ -263,6 +268,7 @@ void DeviceProfileSession::PollMetrics(r
+   // restore signal to a value of 1
+   hsa_signal_store_screlease(completion_signal_, 1);
+ }
++#endif
+ 
+ void DeviceProfileSession::StopSession() {
+   // TODO: check if session was already started
+@@ -328,4 +334,4 @@ bool rocprofiler::find_hsa_agent_gpu(uin
+ }
+ 
+ std::map<uint64_t, hsa_queue_t*> DeviceProfileSession::agent_queue_map_;
+-std::mutex DeviceProfileSession::agent_queue_map_mutex_;
+\ No newline at end of file
++std::mutex DeviceProfileSession::agent_queue_map_mutex_;
+Only in rocprofiler-rocm-5.7.0/src/core/session: device_profiling.cpp.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/src/core/session/device_profiling.h rocprofiler-rocm-5.7.0/src/core/session/device_profiling.h
+--- rocprofiler-rocm-5.7.0.orig/src/core/session/device_profiling.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/core/session/device_profiling.h	2023-09-19 20:58:41.164848753 -0700
+@@ -34,7 +34,9 @@ namespace rocprofiler {
+ class DeviceProfileSession {
+  public:
+   void StartSession();
++#ifdef USE_AQLPROFILE
+   void PollMetrics(rocprofiler_device_profile_metric_t* data);
++#endif
+   void StopSession();
+ 
+   DeviceProfileSession(std::vector<std::string> counters, hsa_agent_t cpu_agent,
+@@ -63,8 +65,10 @@ class DeviceProfileSession {
+   Packet::packet_t stop_packet_;
+   Packet::packet_t read_packet_;
+ 
++#ifdef USE_AQLPROFILE
+   MetricsDict* metrics_dict_;
+   std::vector<const Metric*> metrics_list_;
++#endif
+   std::map<std::string, results_t*> results_map_;
+   std::vector<event_t> events_list_;
+   std::vector<results_t*> results_list_;
+diff -urp rocprofiler-rocm-5.7.0.orig/src/tools/rocprofv2/CMakeLists.txt rocprofiler-rocm-5.7.0/src/tools/rocprofv2/CMakeLists.txt
+--- rocprofiler-rocm-5.7.0.orig/src/tools/rocprofv2/CMakeLists.txt	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/tools/rocprofv2/CMakeLists.txt	2023-09-19 21:51:58.592806055 -0700
+@@ -7,13 +7,18 @@ get_property(
+     TARGET hsa-runtime64::hsa-runtime64
+     PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
+ 
+-find_library(
+-    AQLPROFILE_LIB "libhsa-amd-aqlprofile64.so"
+-    HINTS ${CMAKE_PREFIX_PATH}
+-    PATHS ${ROCM_PATH}
+-    PATH_SUFFIXES lib)
+-if(NOT AQLPROFILE_LIB)
+-    message(FATAL_ERROR "AQL_PROFILE not installed. Please install hsa-amd-aqlprofile!")
++if(AQLPROFILE)
++    add_definitions(-DUSE_AQLPROFILE)
++    find_library(
++        AQLPROFILE_LIB "libhsa-amd-aqlprofile64.so"
++        PATH_SUFFIXES lib
++        HINTS ${CMAKE_PREFIX_PATH}
++        PATHS @ESYSROOT@/opt/rocm-@ROCM_VERSION@)
++    if(NOT AQLPROFILE_LIB)
++        message(FATAL_ERROR "AQL_PROFILE not installed. Please install hsa-amd-aqlprofile!")
++    endif()
++else()
++    set(AQLPROFILE_LIB "")
+ endif()
+ 
+ file(GLOB ROCPROFV2_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+Only in rocprofiler-rocm-5.7.0/src/tools/rocprofv2: CMakeLists.txt.orig
+Only in rocprofiler-rocm-5.7.0/src/tools/rocprofv2: CMakeLists.txt.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/tools/tool.cpp rocprofiler-rocm-5.7.0/src/tools/tool.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/tools/tool.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/tools/tool.cpp	2023-09-19 21:48:34.816808776 -0700
+@@ -244,11 +244,13 @@ void getTracePeriodFromEnv() {
+ 
+ std::vector<std::string> GetCounterNames() {
+   std::vector<std::string> counters;
++#ifdef USE_AQLPROFILE
+   const char* line_c_str = getenv("ROCPROFILER_COUNTERS");
+   if (line_c_str) {
+     std::string line = line_c_str;
+     rocprofiler::validate_counters_format(counters, line);
+   }
++#endif
+   return counters;
+ }
+ 
+@@ -298,6 +300,7 @@ att_parsed_input_t GetATTParams() {
+ 
+   int MPI_RANK = GetMpRank();
+ 
++#ifdef USE_AQLPROFILE
+   bool started_att_counters = false;
+   std::string line;
+   while (getline(trace_file, line)) {
+@@ -385,6 +388,7 @@ att_parsed_input_t GetATTParams() {
+ 
+   for (auto& param : default_params)
+     parameters.push_back(std::make_pair(ATT_PARAM_NAMES[param.first], param.second));
++#endif
+ 
+   return {parameters, kernel_names, counters_names, dispatch_ids};
+ }
+Only in rocprofiler-rocm-5.7.0/src/tools: tool.cpp.orig
+Only in rocprofiler-rocm-5.7.0/src/tools: tool.cpp.rej
+diff -urp rocprofiler-rocm-5.7.0.orig/src/util/exception.h rocprofiler-rocm-5.7.0/src/util/exception.h
+--- rocprofiler-rocm-5.7.0.orig/src/util/exception.h	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/util/exception.h	2023-09-19 20:58:41.164848753 -0700
+@@ -48,6 +48,7 @@ THE SOFTWARE.
+     throw rocprofiler::util::exception(error, oss.str());                                          \
+   } while (0)
+ 
++#ifdef USE_AQLPROFILE
+ #define AQL_EXC_RAISING(error, stream)                                                             \
+   do {                                                                                             \
+     const char* error_string = NULL;                                                               \
+@@ -55,6 +56,13 @@ THE SOFTWARE.
+     api->hsa_ven_amd_aqlprofile_error_string(&error_string);                                       \
+     EXC_RAISING(error, stream << ", " << error_string);                                            \
+   } while (0)
++#else
++#define AQL_EXC_RAISING(error, stream)                                                             \
++  do {                                                                                             \
++    const char* error_string = NULL;                                                               \
++    EXC_RAISING(error, stream);                                                                    \
++  } while (0)
++#endif
+ 
+ namespace rocprofiler {
+ namespace util {
+diff -urp rocprofiler-rocm-5.7.0.orig/src/util/hsa_rsrc_factory.cpp rocprofiler-rocm-5.7.0/src/util/hsa_rsrc_factory.cpp
+--- rocprofiler-rocm-5.7.0.orig/src/util/hsa_rsrc_factory.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/src/util/hsa_rsrc_factory.cpp	2023-09-19 20:58:41.164848753 -0700
+@@ -287,6 +287,7 @@ void HsaRsrcFactory::InitHsaApiTable(Hsa
+   }
+ }
+ 
++#ifdef USE_AQLPROFILE
+ hsa_status_t HsaRsrcFactory::LoadAqlProfileLib(aqlprofile_pfn_t* api) {
+   void* handle = dlopen(kAqlProfileLib, RTLD_NOW);
+   if (handle == NULL) {
+@@ -320,6 +321,7 @@ hsa_status_t HsaRsrcFactory::LoadAqlProf
+ 
+   return HSA_STATUS_SUCCESS;
+ }
++#endif
+ 
+ // Add system agent info
+ const AgentInfo* HsaRsrcFactory::AddAgentInfo(const hsa_agent_t agent) {
+Only in rocprofiler-rocm-5.7.0/src/util: hsa_rsrc_factory.cpp.orig
+diff -urp rocprofiler-rocm-5.7.0.orig/test/util/hsa_rsrc_factory.cpp rocprofiler-rocm-5.7.0/test/util/hsa_rsrc_factory.cpp
+--- rocprofiler-rocm-5.7.0.orig/test/util/hsa_rsrc_factory.cpp	2023-09-07 04:11:36.000000000 -0700
++++ rocprofiler-rocm-5.7.0/test/util/hsa_rsrc_factory.cpp	2023-09-19 20:58:41.164848753 -0700
+@@ -281,6 +281,7 @@ void HsaRsrcFactory::InitHsaApiTable(Hsa
+   }
+ }
+ 
++#ifdef USE_AQLPROFILE
+ hsa_status_t HsaRsrcFactory::LoadAqlProfileLib(aqlprofile_pfn_t* api) {
+   void* handle = dlopen(kAqlProfileLib, RTLD_NOW);
+   if (handle == NULL) {
+@@ -314,6 +315,7 @@ hsa_status_t HsaRsrcFactory::LoadAqlProf
+ 
+   return HSA_STATUS_SUCCESS;
+ }
++#endif
+ 
+ // Add system agent info
+ const AgentInfo* HsaRsrcFactory::AddAgentInfo(const hsa_agent_t agent) {
+Only in rocprofiler-rocm-5.7.0/test/util: hsa_rsrc_factory.cpp.orig

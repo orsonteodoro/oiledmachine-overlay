@@ -24,9 +24,10 @@ LICENSE="
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile r4"
+IUSE=" +aqlprofile system-llvm test r4"
 RDEPEND="
 	!dev-util/rocprofiler:0
+	dev-util/roc-compiler[system-llvm=]
 	~dev-libs/rocr-runtime-${PV}:${SLOT}
 	~dev-util/roctracer-${PV}:${SLOT}
 	aqlprofile? (
@@ -42,6 +43,9 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-2.8.12
+	test? (
+		sys-devel/gcc[sanitize]
+	)
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
