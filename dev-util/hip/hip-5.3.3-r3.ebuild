@@ -201,15 +201,16 @@ src_configure() {
 	# which will be installed to find HIP.
 	# Other ROCm packages expect a "RELEASE" configuration.
 	# See "hipBLAS".
+	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	local mycmakeargs=(
 		-DBUILD_HIPIFY_CLANG=OFF
 		-DCMAKE_BUILD_TYPE="${buildtype}"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${rocm_path}"
 		-DCMAKE_PREFIX_PATH="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMMON_DIR="${HIP_S}"
-		-DROCM_PATH="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+		-DROCM_PATH="${EPREFIX}${rocm_path}"
 		-DUSE_PROF_API=0
 		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
 	)
