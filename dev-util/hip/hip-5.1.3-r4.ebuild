@@ -93,8 +93,8 @@ RDEPEND="
 	)
 	rocm? (
 		!system-llvm? (
-			sys-devel/llvm-rocm:=
-			~sys-devel/llvm-rocm-${PV}:${ROCM_SLOT}
+			sys-devel/llvm-roc:=
+			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 		dev-util/rocm-compiler[system-llvm=]
 		~dev-libs/rocr-runtime-${PV}:${SLOT}
