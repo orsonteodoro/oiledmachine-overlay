@@ -352,7 +352,7 @@ diff -urp xla-9f26b9390f5a5c565a13925731de749be8a760be.orig/third_party/tsl/thir
  _TF_ROCM_CONFIG_REPO = "TF_ROCM_CONFIG_REPO"
  
 -_DEFAULT_ROCM_TOOLKIT_PATH = "/opt/rocm"
-+_DEFAULT_ROCM_TOOLKIT_PATH = "/usr"
++_DEFAULT_ROCM_TOOLKIT_PATH = "@ESYSROOT_ROCM_PATH@"
  
  def verify_build_defines(params):
      """Verify all variables that crosstool/BUILD.rocm.tpl expects are substituted.
