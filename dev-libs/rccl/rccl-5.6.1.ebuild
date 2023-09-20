@@ -57,7 +57,7 @@ RESTRICT="
 S="${WORKDIR}/rccl-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-remove-chrpath.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.6.1-path-changes.patch"
 )
 
 pkg_pretend() {
