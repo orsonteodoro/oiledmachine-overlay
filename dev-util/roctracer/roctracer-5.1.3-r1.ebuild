@@ -25,7 +25,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile test"
+IUSE=" +aqlprofile system-llvm test"
 RDEPEND="
 	!dev-util/roctracer:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -44,6 +44,9 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-2.8.12
+	test? (
+		dev-util/rocm-compiler[system-llvm=]
+	)
 "
 RESTRICT="test"
 S="${WORKDIR}/roctracer-rocm-${PV}"
@@ -55,7 +58,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-Werror.patch"
 	"${FILESDIR}/${PN}-5.0.2-strip-license.patch"
 
-	"A${FILESDIR}/${PN}-5.1.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 python_check_deps() {

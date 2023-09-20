@@ -23,7 +23,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" test"
+IUSE=" system-llvm test"
 RDEPEND="
 	!dev-util/roctracer:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -38,6 +38,9 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-3.18.0
+	test? (
+		dev-util/rocm-compiler[system-llvm=]
+	)
 "
 RESTRICT="
 	!test? (
