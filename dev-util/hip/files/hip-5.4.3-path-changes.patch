@@ -359,7 +359,7 @@ diff -urp HIP-rocm-5.4.3.orig/CONTRIBUTING.md HIP-rocm-5.4.3/CONTRIBUTING.md
 -$ <ROCM_PATH>/llvm/bin/clang -v
 -clang version 11.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
 +$ @ESYSROOT_LLVM_PATH@/bin/clang -v
-+clang version @LLVM_SLOT@.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
++clang version @LLVM_SLOT@.0.0 (/src/external/llvm-project/clang <40 digit commit>)
  Target: x86_64-unknown-linux-gnu
  Thread model: posix
 -InstalledDir: <ROCM_PATH>/llvm/bin
@@ -972,7 +972,7 @@ diff -urp HIP-rocm-5.4.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  cmake ..
  Or for static lib of hip rt,
 -cmake -DCMAKE_PREFIX_PATH="/opt/rocm/llvm/lib/cmake" ..
-+cmake -DCMAKE_PREFIX_PATH="@ESYSROOT@/usr/llvm/@LLVM_SLOT@/@LIBDIR@/cmake" ..
++cmake -DCMAKE_PREFIX_PATH="@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake" ..
  
  Then,
  make

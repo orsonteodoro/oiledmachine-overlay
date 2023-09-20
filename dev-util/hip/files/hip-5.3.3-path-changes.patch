@@ -374,7 +374,7 @@ diff -urp HIP-rocm-5.3.3.orig/CONTRIBUTING.md HIP-rocm-5.3.3/CONTRIBUTING.md
 -$ <ROCM_PATH>/llvm/bin/clang -v
 -clang version 11.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
 +$ @ESYSROOT_LLVM_PATH@/bin/clang -v
-+clang version @LLVM_SLOT@.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
++clang version @LLVM_SLOT@.0.0 (/src/external/llvm-project/clang <40 digit commit>)
  Target: x86_64-unknown-linux-gnu
  Thread model: posix
 -InstalledDir: <ROCM_PATH>/llvm/bin
