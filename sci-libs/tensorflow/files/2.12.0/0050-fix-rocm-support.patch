@@ -9,7 +9,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  _TF_ROCM_CONFIG_REPO = "TF_ROCM_CONFIG_REPO"
  
 -_DEFAULT_ROCM_TOOLKIT_PATH = "/opt/rocm"
-+_DEFAULT_ROCM_TOOLKIT_PATH = "/usr"
++_DEFAULT_ROCM_TOOLKIT_PATH = "@ESYSROOT_ROCM_PATH@"
  
  def verify_build_defines(params):
      """Verify all variables that crosstool/BUILD.rocm.tpl expects are substituted.
@@ -42,7 +42,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
 -    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/13.0.0/include")
 -    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/14.0.0/include")
 -    inc_dirs.append(rocm_toolkit_path + "/llvm/lib/clang/15.0.0/include")
-+    inc_dirs.append(rocm_toolkit_path + "/lib/clang/@CLANG_SLOT@/include")     # oteodoro:  changed for distro
++    inc_dirs.append("@ESYSROOT_CLANG_PATH@/include")     # oteodoro:  changed for distro
 +
  
      # Support hcc based off clang 10.0.0 (for ROCm 3.3)
@@ -257,7 +257,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
      ))
  
 -    clang_offload_bundler_path = rocm_toolkit_path + "/llvm/bin/clang-offload-bundler"
-+    clang_offload_bundler_path = rocm_toolkit_path + "/lib/llvm/@LLVM_SLOT@/bin/clang-offload-bundler" # oteodoro:  changed for distro
++    clang_offload_bundler_path = "@ESYSROOT_LLVM_PATH@/bin/clang-offload-bundler" # oteodoro:  changed for distro
  
      # copy files mentioned in third_party/gpus/rocm/BUILD
      copy_rules.append(make_copy_files_rule(
@@ -310,7 +310,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/rocm_configure.bzl tensorflow-
  
      rocm_defines["%{cxx_builtin_include_directories}"] = to_list_of_strings(
 -        host_compiler_includes + _rocm_include_path(repository_ctx, rocm_config, bash_bin),
-+        host_compiler_includes + _rocm_include_path(repository_ctx, rocm_config, bash_bin) + ['@EPREFIX@/usr/include/hip', '@EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/include'],  # oteodoro:  changed for distro
++        host_compiler_includes + _rocm_include_path(repository_ctx, rocm_config, bash_bin) + ['@ESYSROOT_ROCM_PATH@/include/hip', '@ESYSROOT_LLVM_PATH@/include'],  # oteodoro:  changed for distro
      )
  
      verify_build_defines(rocm_defines)

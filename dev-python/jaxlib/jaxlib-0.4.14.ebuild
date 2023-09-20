@@ -155,7 +155,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-clang custom-optimization-level cpu cuda hardened portable rocm r1
+clang custom-optimization-level cpu cuda hardened portable rocm system-llvm r1
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -276,6 +276,8 @@ RDEPEND+="
 			$(gen_rocm_depends)
 		)
 		dev-util/hip:=
+		dev-util/hip-compiler[system-llvm=]
+		dev-util/rocm-compiler[system-llvm=]
 	)
 "
 # We cannot use cuda 12 (which the project supports) until cudnn ebuild allows
