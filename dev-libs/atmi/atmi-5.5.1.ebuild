@@ -76,8 +76,8 @@ src_configure() {
 	fi
 	export GFXLIST=$(get_amdgpu_flags)
 	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
-	export ROC_DIR="${rocm_path}"
-	export ROCR_DIR="${rocm_path}"
+	export ROC_DIR="${ESYSROOT}${rocm_path}"
+	export ROCR_DIR="${ESYSROOT}${rocm_path}"
 	local mycmakeargs=(
 		-DAMD_DEVICE_LIBS_PREFIX="${ESYSROOT}${rocm_path}"
 		-DATMI_C_EXTENSION=OFF

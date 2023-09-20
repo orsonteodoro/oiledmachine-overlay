@@ -244,6 +244,10 @@ eerror
 		die
 	fi
 	llvm_pkg_setup # Init LLVM_SLOT
+	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
+		export PATH="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/bin:${PATH}"
+einfo "PATH:  ${PATH}"
+	fi
 }
 
 # @FUNCTION:  _rocm_change_common_paths
