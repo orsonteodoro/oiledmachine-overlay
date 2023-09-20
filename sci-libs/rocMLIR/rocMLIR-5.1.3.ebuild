@@ -30,7 +30,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="0/$(ver_cut 1-2)"
-IUSE="r5"
+IUSE="system-llvm r5"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
@@ -145,9 +145,7 @@ ewarn "Patching may take a long time.  Please wait..."
 src_configure() { :; }
 
 build_rocmlir() {
-	# FIXME:  The unislot conflicts with the multislot rocm-llvm
-	export ROCM_PATH="${ESYSROOT}/usr"
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 	export HIP_PLATFORM="amd"
 	SOURCE_DIR="${S}"
 	cd "${S}" || die
@@ -174,13 +172,14 @@ build_rocmlir() {
 		-DLLVM_ENABLE_ZSTD=OFF
 
 		-DMLIR_INCLUDE_TESTS=OFF
-		-DCMAKE_INSTALL_PREFIX="${staging_prefix}/${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${staging_prefix}/${EPREFIX}/${ROCM_PATH}"
 
 		-DROCMLIR_DRIVER_ENABLED=OFF
 		-DLLVM_INSTALL_TOOLCHAIN_ONLY=OFF
 
 		-DELLVM_VERSION_SUFFIX=roc
-		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include"
+		# -DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include" # Originally this
+		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/${EROCM_LLVM_PATH}/llvm/include"
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
 
 		-DCMAKE_THREAD_LIBS_INIT="-lpthread"
@@ -195,8 +194,13 @@ build_rocmlir() {
 		-DHAVE_SYSEXITS_H=1
 	)
 
-	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
-	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
+	if use system-llvm ; then
+		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
+		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
+	else
+		export CC="${HIP_CC:-clang}"
+		export CXX="${HIP_CXX:-clang++}"
+	fi
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
@@ -205,16 +209,6 @@ build_rocmlir() {
 }
 
 src_compile() {
-	# Removed all clangs except max
-	einfo "LLVM_SLOT=${LLVM_SLOT}"
-	einfo "PATH=${PATH} (before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
-	einfo "PATH=${PATH} (after)"
-
 	local staging_prefix="${PWD}/install"
 	build_rocmlir
 }

@@ -85,41 +85,17 @@ src_configure() {
 	fi
 	export GFXLIST=$(get_amdgpu_flags)
 
-	local clang_slot=""
-	if ver_test ${LLVM_SLOT} -ge 16 ; then
-		clang_slot="${LLVM_SLOT}"
-	else
-		clang_slot=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-			| sed -e "s|sys-devel/clang-||")
-		clang_slot=$(ver_cut 1-3 "${clang_slot}")
-	fi
-
-	local clang_path
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		clang_path="/usr/lib/clang/${clang_slot}"
-	else
-		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/lib/clang/${LLVM_MAX_SLOT}.0.0"
-	fi
-
-	local llvm_path
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		llvm_path="/usr/lib/llvm/${LLVM_MAX_SLOT}"
-	else
-		llvm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
-	fi
-
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
-	export ROC_DIR="${ESYSROOT}${rocm_path}"
-	export ROCR_DIR="${ESYSROOT}${rocm_path}"
+	export ROC_DIR="${ESYSROOT}${EROCM_PATH}"
+	export ROCR_DIR="${ESYSROOT}${EROCM_PATH}"
 	local mycmakeargs=(
-		-DAMD_DEVICE_LIBS_PREFIX="${ESYSROOT}${rocm_path}"
+		-DAMD_DEVICE_LIBS_PREFIX="${ESYSROOT}${EROCM_PATH}"
 		-DATMI_C_EXTENSION=OFF
 		-DATMI_DEVICE_RUNTIME=ON
 		-DATMI_HSA_INTEROP=ON
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${rocm_path}"
-		-DDEVICE_LIB_DIR="${ESYSROOT}${rocm_path}"
-		-DHSA_DIR="${ESYSROOT}${rocm_path}"
-		-DLLVM_DIR="${ESYSROOT}${llvm_path}"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DDEVICE_LIB_DIR="${ESYSROOT}${EROCM_PATH}"
+		-DHSA_DIR="${ESYSROOT}${EROCM_PATH}"
+		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 		-DROCM_VERSION="${PV}"
 	)
 	cmake_src_configure

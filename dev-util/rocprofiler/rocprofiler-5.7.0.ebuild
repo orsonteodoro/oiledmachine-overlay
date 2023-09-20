@@ -116,60 +116,31 @@ src_configure() {
 		append-ldflags -Wl,-rpath="${ESYSROOT}/opt/rocm-${PV}/lib"
 	fi
 
-	local clang_slot=""
-	if ver_test ${LLVM_SLOT} -ge 16 ; then
-		clang_slot="${LLVM_SLOT}"
-	else
-		clang_slot=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-			| sed -e "s|sys-devel/clang-||")
-		clang_slot=$(ver_cut 1-3 "${clang_slot}")
-	fi
-
-	local clang_path
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		clang_path="/usr/lib/clang/${clang_slot}"
-	else
-		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/lib/clang/${LLVM_MAX_SLOT}.0.0"
-	fi
-
-	local llvm_path
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		llvm_path="/usr/lib/llvm/${LLVM_MAX_SLOT}"
-	else
-		llvm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
-	fi
-
-	# Disallow newer clangs versions when producing .o files.
-	einfo "LLVM_SLOT=${LLVM_SLOT}"
-	einfo "PATH=${PATH} (before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${llvm_path}/bin|g")
-	einfo "PATH=${PATH} (after)"
-
 	export CMAKE_BUILD_TYPE="debug"
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 	export HIP_PLATFORM="amd"
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${rocm_path}"
-		-DCMAKE_MODULE_PATH="${ESYSROOT}${rocm_path}/$(get_libdir)/cmake/hip"
-		-DCMAKE_PREFIX_PATH="${EPREFIX}${rocm_path}/include/hsa"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip"
+		-DCMAKE_PREFIX_PATH="${EPREFIX}${EROCM_PATH}/include/hsa"
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGPU_TARGETS="${gpu_targets}"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
-		-DHIP_ROOT_DIR="${ESYSROOT}${rocm_path}"
+		-DHIP_ROOT_DIR="${ESYSROOT}${EROCM_PATH}"
 		-DHIP_RUNTIME="rocclr"
-		-DPROF_API_HEADER_PATH="${ESYSROOT}${rocm_path}/include/roctracer/ext"
+		-DPROF_API_HEADER_PATH="${ESYSROOT}${EROCM_PATH}/include/roctracer/ext"
 		-DUSE_PROF_API=1
 		-DAQLPROFILE=$(usex aqlprofile ON OFF)
 	)
-	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
-	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
+	if use system-llvm ; then
+		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
+		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
+	else
+		export CC="${HIP_CC:-clang}"
+		export CXX="${HIP_CXX:-clang++}"
+	fi
 	cmake_src_configure
 }
 

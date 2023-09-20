@@ -72,12 +72,11 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		# Prevent configure test issues
 		append-flags \
-			--rocm-path="${ESYSROOT}${rocm_path}" \
-			--rocm-device-lib-path="${ESYSROOT}${rocm_path}/$(get_libdir)/amdgcn/bitcode"
+			--rocm-path="${ESYSROOT}${EROCM_PATH}" \
+			--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
 	fi
 
 	export HIP_PLATFORM="amd"
@@ -87,7 +86,7 @@ src_configure() {
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
-		-DROCM_PATH="${ESYSROOT}${rocm_path}"
+		-DROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 		-DSKIP_RPATH=ON
 		-Wno-dev
 	)

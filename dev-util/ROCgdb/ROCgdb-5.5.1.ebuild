@@ -81,13 +81,12 @@ src_prepare() {
 }
 
 src_configure() {
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	local myconf=(
 		--enable-targets="${CHOST},amdgcn-amd-amdhsa"
 		--enable-64-bit-bfd
 		--enable-tui
-		--datadir="${EPREFIX}${rocm_path}/share"
-		--datarootdir="${EPREFIX}${rocm_path}/share"
+		--datadir="${EPREFIX}${EROCM_PATH}/share"
+		--datarootdir="${EPREFIX}${EROCM_PATH}/share"
 		--disable-gas
 		--disable-gdbserver
 		--disable-gdbtk
@@ -95,11 +94,11 @@ src_configure() {
 		--disable-ld
 		--disable-sim
 		--disable-shared
-		--infodir="${EPREFIX}${rocm_path}/share/info"
-		--localedir="${EPREFIX}${rocm_path}/share/locale"
-		--mandir="${EPREFIX}${rocm_path}/share/man"
+		--infodir="${EPREFIX}${EROCM_PATH}/share/info"
+		--localedir="${EPREFIX}${EROCM_PATH}/share/locale"
+		--mandir="${EPREFIX}${EROCM_PATH}/share/man"
 		--program-prefix=roc
-		--prefix="${EPREFIX}${rocm_path}"
+		--prefix="${EPREFIX}${EROCM_PATH}"
 		--with-babeltrace
 		--with-expat
 		--with-lzma
@@ -113,22 +112,22 @@ src_configure() {
 src_install() {
 	emake V=1 DESTDIR="${D}" install
 	local L=(
-		"/usr/$(get_libdir)/ROCgdb/bin/rocgcore"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocstrip"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocgprof"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocnm"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocranlib"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocc++filt"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocobjdump"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocsize"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocar"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocobjcopy"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocaddr2line"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocelfedit"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocreadelf"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocstrings"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocgdb-add-index"
-		"/usr/$(get_libdir)/ROCgdb/bin/rocgdb"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocgcore"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocstrip"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocgprof"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocnm"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocranlib"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocc++filt"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocobjdump"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocsize"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocar"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocobjcopy"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocaddr2line"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocelfedit"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocreadelf"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocstrings"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocgdb-add-index"
+		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocgdb"
 	)
 	local path
 	for path in ${L[@]} ; do

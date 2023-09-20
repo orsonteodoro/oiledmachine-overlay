@@ -168,16 +168,6 @@ src_configure() {
 	# undefined reference to `rocblas_status_ rocblas_internal_check_numerics_matrix_template
 	replace-flags '-O0' '-O1'
 
-	# Disallow newer clangs versions when producing .o files.
-	einfo "LLVM_SLOT=${LLVM_SLOT}"
-	einfo "PATH=${PATH} (before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
-	einfo "PATH=${PATH} (after)"
-
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
@@ -209,7 +199,7 @@ src_configure() {
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -222,8 +212,8 @@ src_configure() {
 			-DTensile_CPU_THREADS=$(makeopts_jobs)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 			-DTensile_LOGIC="asm_full"
-			-DTensile_ROOT="${EPREFIX}/usr/share/Tensile"
-			-DTensile_TEST_LOCAL_PATH="${EPREFIX}/usr/share/Tensile"
+			-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}/share/Tensile"
+			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}${EROCM_PATH}/share/Tensile"
 		)
 	fi
 	export CC="${HIP_CC:-hipcc}"

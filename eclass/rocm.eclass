@@ -237,45 +237,6 @@ unset -f _rocm_set_globals
 # Init paths
 rocm_pkg_setup() {
 	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
-	if [[ -z "${LLVM_MAX_SLOT}" ]] ; then
-eerror
-eerror "LLVM_MAX_SLOT must be defined"
-eerror
-		die
-	fi
-	llvm_pkg_setup # Init LLVM_SLOT
-	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
-		export PATH="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/bin:${PATH}"
-einfo "PATH:  ${PATH}"
-	fi
-}
-
-# @FUNCTION:  _rocm_change_common_paths
-# @DESCRIPTION:
-# Patch common paths or symbols.
-#
-# Supported symbol replacements with expanded possibilities:
-#
-# @CHOST@        - x86_64-pc-linux-gnu, or whatever is produced by `gcc -dumpmachine`
-# @CLANG_SLOT@   - 13.0.1, 14.0.6, 15.0.1, 15.0.5, 15.0.6, 15.0.7, 16
-# @EPREFIX@      - /home/<USER>/blah, "", or any path
-# @ESYSROOT@     - /usr/x86_64-pc-linux-gnu, "", or any path.
-# @GCC_SLOT@     - 10, 11, 12 [based on folders contained in /usr/lib/gcc/]
-# @LIBDIR@       - lib or lib64
-# @LLVM_SLOT@    - 13, 14, 15, or 16
-# @PV@           - x.y.z
-# @ROCM_VERSION@ - 5.1.3, 5.3.3, 5.4.3, 5.5.1, 5.6.0
-#
-
-_rocm_change_common_paths() {
-	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
-	if [[ "${LLVM_SLOT+x}" != "x" ]] ; then
-eerror
-eerror "LLVM_MAX_SLOT must be defined.  \${LLVM_SLOT+x} != x"
-eerror
-		die
-	fi
-
 	if [[ "${LLVM_MAX_SLOT+x}" != "x" ]] ; then
 eerror
 eerror "LLVM_MAX_SLOT must be defined.  \${LLVM_MAX_SLOT+x} != x"
@@ -290,6 +251,78 @@ eerror
 		die
 	fi
 
+	llvm_pkg_setup # Init LLVM_SLOT
+	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
+		export PATH="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/bin:${PATH}"
+	fi
+
+	export EROCM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	export ROCM_PATH="${ESYSROOT}${EROCM_PATH}"
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		EROCM_CLANG_PATH="/usr/lib/clang/${clang_slot}"
+	else
+		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0"
+	fi
+
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_MAX_SLOT}"
+	else
+		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+	fi
+
+	if [[ \
+		   "${EROCM_ALLOW_MULTIPLE_CLANG_SLOTS}" == "1" \
+		|| "${EROCM_ALLOW_MULTIPLE_LLVM_SLOTS}" == "1" \
+		|| "${EROCM_SKIP_EXCLUSIVE_CLANG_SLOT_IN_PATH}" == "1" \
+		|| "${EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH}" == "1" \
+	]] ; then
+		:;
+	else
+	        # Disallow newer clangs versions when producing .o files.
+		einfo "LLVM_SLOT=${LLVM_SLOT}"
+		einfo "PATH=${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr "\n" ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
+		einfo "PATH=${PATH} (after)"
+	fi
+}
+
+# @FUNCTION:  _rocm_change_common_paths
+# @DESCRIPTION:
+# Patch common paths or symbols.
+#
+# Supported symbol replacements with expanded possibilities:
+#
+# @CHOST@        - x86_64-pc-linux-gnu, or whatever is produced by `gcc -dumpmachine`
+# @CLANG_SLOT@   -
+#     if !system-llvm then 13.0.0, 14.0.0, 15.0.0, 16.0.0, 17.0.0.
+#     if system-llvm then 13.0.1, 14.0.6, 15.0.1, 15.0.5, 15.0.6, 15.0.7, 16, 17.
+# @EPREFIX@      - /home/<USER>/blah, "", or any path
+# @EPREFIX_CLANG_PATH@  -
+#     if !system-llvm then ${EPREFIX}/usr/lib64/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0
+#     if system-llvm then ${EPREFIX}/usr/lib/clang/${CLANG_SLOT}
+# @EPREFIX_LLVM_PATH@   -
+#     if !system-llvm then ${EPREFIX}/usr/lib64/rocm/${ROCM_SLOT}/llvm
+#     if system-llvm then ${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}
+# @ESYSROOT@     - /usr/x86_64-pc-linux-gnu, "", or any path.
+# @ESYSROOT_CLANG_PATH@ -
+#     if !system-llvm then ${ESYSROOT}/usr/lib64/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0
+#     if system-llvm then ${ESYSROOT}/usr/lib/clang/${CLANG_SLOT}
+# @ESYSROOT_LLVM_PATH@  -
+#     if !system-llvm then ${ESYSROOT}/usr/lib64/rocm/${ROCM_SLOT}/llvm
+#     if system-llvm then ${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}
+# @GCC_SLOT@     - 10, 11, 12 [based on folders contained in /usr/lib/gcc/]
+# @LIBDIR@       - lib or lib64
+# @LLVM_SLOT@    - 13, 14, 15, 16, 17
+# @PV@           - x.y.z
+# @ROCM_VERSION@ - 5.1.3, 5.3.3, 5.4.3, 5.5.1, 5.6.1, 5.7.0
+#
+
+_rocm_change_common_paths() {
+	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
 	IFS=$'\n'
 
 	local _patch_paths=(
@@ -317,6 +350,7 @@ eerror
 		$(grep -r -l -e "@LIBDIR@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
+	# @LLVM_SLOT@ is deprecated.  Use @EPREFIX_LLVM_PATH@, @ESYSROOT_LLVM_PATH@.
 	sed \
 		-i \
 		-e "s|@LLVM_SLOT@|${LLVM_SLOT}|g" \
@@ -331,6 +365,7 @@ eerror
 			| sed -e "s|sys-devel/clang-||")
 		clang_slot=$(ver_cut 1-3 "${clang_slot}")
 	fi
+	# @CLANG_SLOT@ is deprecated.  Use @EPREFIX_CLANG_PATH@, @ESYSROOT_CLANG_PATH@.
 	sed \
 		-i \
 		-e "s|@CLANG_SLOT@|${clang_slot}|g" \
@@ -349,60 +384,45 @@ eerror
 		$(grep -r -l -e "@ROCM_SLOT@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	sed \
 		-i \
-		-e "s|@ROCM_PATH@|${rocm_path}|g" \
+		-e "s|@ROCM_PATH@|${EROCM_PATH}|g" \
 		$(grep -r -l -e "@ROCM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
-		-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}${rocm_path}|g" \
+		-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}${EROCM_PATH}|g" \
 		$(grep -r -l -e "@EPREFIX_ROCM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
-		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}${rocm_path}|g" \
+		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}${EROCM_PATH}|g" \
 		$(grep -r -l -e "@ESYSROOT_ROCM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
-	local clang_path
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		clang_path="/usr/lib/clang/${clang_slot}"
-	else
-		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0"
-	fi
-
-	local llvm_path
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		llvm_path="/usr/lib/llvm/${LLVM_MAX_SLOT}"
-	else
-		llvm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
-	fi
-
 	sed \
 		-i \
-		-e "s|@EPREFIX_CLANG_PATH@|${EPREFIX}${clang_path}|g" \
+		-e "s|@EPREFIX_CLANG_PATH@|${EPREFIX}${EROCM_CLANG_PATH}|g" \
 		$(grep -r -l -e "@EPREFIX_CLANG_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
-		-e "s|@ESYSROOT_CLANG_PATH@|${ESYSROOT}${clang_path}|g" \
+		-e "s|@ESYSROOT_CLANG_PATH@|${ESYSROOT}${EROCM_CLANG_PATH}|g" \
 		$(grep -r -l -e "@ESYSROOT_CLANG_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
-		-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}${llvm_path}|g" \
+		-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}${EROCM_LLVM_PATH}|g" \
 		$(grep -r -l -e "@EPREFIX_LLVM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
 	sed \
 		-i \
-		-e "s|@ESYSROOT_LLVM_PATH@|${ESYSROOT}${llvm_path}|g" \
+		-e "s|@ESYSROOT_LLVM_PATH@|${ESYSROOT}${EROCM_LLVM_PATH}|g" \
 		$(grep -r -l -e "@ESYSROOT_LLVM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 

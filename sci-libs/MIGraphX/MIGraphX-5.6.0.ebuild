@@ -33,7 +33,7 @@ DESCRIPTION="AMD's graph optimization engine"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="-cpu -fpga -hip-rtc -mlir +rocm test"
+IUSE="-cpu -fpga -hip-rtc -mlir +rocm system-llvm test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	|| (
@@ -71,8 +71,12 @@ DEPEND="
 	>=dev-cpp/blaze-3.4:=
 "
 BDEPEND="
+	!system-llvm? (
+		sys-devel/llvm-roc:=
+		~sys-devel/llvm-roc-${PV}
+	)
 	>=dev-util/cmake-3.5
-	sys-devel/clang:${LLVM_MAX_SLOT}[extra]
+	sys-devel/hip-compiler[system-llvm=]
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	mlir? (
 		|| (
@@ -80,6 +84,12 @@ BDEPEND="
 			=sci-libs/rocMLIR-9999
 			=sci-libs/rocMLIR-5.5*:0/5.5
 		)
+	)
+	rocm? (
+		sys-devel/rocm-compiler[system-llvm=]
+	)
+	system-llvm? (
+		sys-devel/clang:${LLVM_MAX_SLOT}[extra]
 	)
 "
 PATCHES=(
@@ -103,23 +113,7 @@ src_prepare() {
 }
 
 src_configure() {
-	# Disallow newer/older clangs versions when invoking clang-tidy.
-	einfo "LLVM_SLOT=${LLVM_SLOT}"
-	einfo "PATH=${PATH} (before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
-	einfo "PATH=${PATH} (after)"
-
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-	local clang_tidy_path
-	if [[ -e "${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin" ]] ; then
-		clang_tidy_path="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-tidy"
-	elif [[ -e "${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin" ]] ; then
-		clang_tidy_path="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-tidy"
-	fi
+	export HIP_CLANG_PATH="${ESYSROOT_LLVM_PATH}/bin"
 	local mycmakeargs=(
 		-DMIGRAPHX_ENABLE_CPU=$(usex cpu ON OFF)
 		-DMIGRAPHX_ENABLE_FPGA=$(usex fpga ON OFF)

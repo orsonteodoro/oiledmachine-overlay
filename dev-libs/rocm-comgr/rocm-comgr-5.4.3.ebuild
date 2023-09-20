@@ -78,7 +78,7 @@ src_configure() {
 		-DBUILD_TESTING=$(usex test ON OFF)
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58
 		-DCMAKE_STRIP=""
-		-DLLVM_DIR="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
+		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 	)
 	cmake_src_configure
 }

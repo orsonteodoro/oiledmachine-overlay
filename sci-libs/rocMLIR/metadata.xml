@@ -9,4 +9,13 @@
   <upstream>
     <remote-id type="github">ROCmSoftwarePlatform/rocMLIR</remote-id>
   </upstream>
+  <use>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability.
+
+      It will still use the unstable llvm as the source code but build
+      with the system's llvm.
+    </flag>
+  </use>
 </pkgmetadata>

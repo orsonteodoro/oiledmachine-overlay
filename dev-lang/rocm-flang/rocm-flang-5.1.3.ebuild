@@ -38,6 +38,7 @@ aocc doc test
 REQUIRED_USE="
 "
 RDEPEND="
+	dev-util/rocm-compiler[-system-llvm]
 	sys-devel/gcc
 	~sys-devel/llvm-roc-${PV}:${PV}[llvm_targets_AMDGPU,llvm_targets_X86]
 	~sys-libs/llvm-roc-libomp-${PV}:${PV}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
@@ -106,7 +107,7 @@ einfo "Building Flang lib"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
-		-DOPENMP_BUILD_DIR="${ESYSROOT}${rocm_path}/llvm/lib"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/lib"
 	)
 einfo "GCC major version:  $(gcc-major-version)"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
@@ -151,7 +152,7 @@ einfo "Building Flang runtime"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
-		-DOPENMP_BUILD_DIR="${ESYSROOT}${rocm_path}/llvm/lib"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/lib"
 	)
 einfo "GCC major version:  $(gcc-major-version)"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
@@ -193,11 +194,10 @@ src_prepare() {
 src_configure() {
 	# Removed all clangs except for one used for building.
 	local compiler_path=""
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	if use aocc ; then
 		compiler_path="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin"
 	else
-		compiler_path="${ESYSROOT}/usr/lib/rocm/${PV}/llvm/bin"
+		compiler_path="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 	fi
 	einfo "LLVM_SLOT=${LLVM_SLOT}"
 	einfo "PATH=${PATH} (before)"
@@ -231,7 +231,6 @@ eerror
 		["emake"]="Unix Makefiles"
 		["ninja"]="Ninja"
 	)
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	mycmakeargs=(
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
 		-DCMAKE_BUILD_TYPE="Release"
@@ -242,19 +241,19 @@ eerror
 	)
 	if use aocc ; then
 		export PATH="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin:${PATH}"
-		export LD_LIBRARY_PATH="${ED}${rocm_path}/llvm/lib"
+		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/lib"
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang"
 			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang++"
 			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/flang"
 		)
 	else
-		export PATH="${ESYSROOT}${rocm_path}/llvm/bin:${PATH}"
-		export LD_LIBRARY_PATH="${ED}${rocm_path}/llvm/lib"
+		export PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin:${PATH}"
+		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/lib"
 		mycmakeargs+=(
-			-DCMAKE_C_COMPILER="${ESYSROOT}${rocm_path}/llvm/bin/clang"
-			-DCMAKE_CXX_COMPILER="${ESYSROOT}${rocm_path}/llvm/bin/clang++"
-			-DCMAKE_Fortran_COMPILER="${ESYSROOT}${rocm_path}/llvm/bin/flang"
+			-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang"
+			-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
+			-DCMAKE_Fortran_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/flang"
 		)
 	fi
 	export VERBOSE=1
@@ -308,8 +307,7 @@ einfo "Sanitizing file/folder permissions"
 
 src_install() {
 	local staging_prefix="${PWD}/install"
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
-	local dest="${rocm_path}/llvm"
+	local dest="${EROCM_LLVM_PATH}"
 	insinto "${dest}"
 	doins -r "${staging_prefix}/"*
 	fix_file_permissions
@@ -318,9 +316,8 @@ src_install() {
 
 pkg_postinst() {
 einfo "Switching ${EROOT}/usr/bin/rocm-flang -> ${EROOT}/usr/bin/flang"
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	ln -sf \
-		"${EROOT}${rocm_path}/llvm/bin/flang" \
+		"${EROOT}${EROCM_LLVM_PATH}/bin/flang" \
 		"${EROOT}/usr/bin/flang"
 }
 

@@ -25,18 +25,32 @@ DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test r4"
+IUSE="system-llvm test r4"
 RDEPEND="
 	!dev-libs/rocm-device-libs:0
-	sys-devel/clang:${LLVM_MAX_SLOT}
+	!system-llvm? (
+		sys-devel/llvm-roc:=
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	)
+	system-llvm? (
+		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-devel/llvm:${LLVM_MAX_SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	!system-llvm? (
+		sys-devel/llvm-roc:=
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	)
 	>=dev-util/cmake-3.13.4
-	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	system-llvm? (
+		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-devel/llvm:${LLVM_MAX_SLOT}
+	)
 "
 RESTRICT="
 	!test? (
@@ -62,7 +76,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DLLVM_DIR="$(get_llvm_prefix ${LLVM_MAX_SLOT})"
+		-DLLVM_DIR="${ESYSROOT}${ROCM_LLVM_PATH}"
 	)
 	cmake_src_configure
 }

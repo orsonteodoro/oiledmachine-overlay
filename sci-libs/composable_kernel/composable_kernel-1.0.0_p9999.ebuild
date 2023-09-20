@@ -18,6 +18,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=16
+ROCM_SLOT="5.6" # To be changed in pkg_setup()
 ROCM_VERSION="9999"
 
 inherit cmake flag-o-matic llvm rocm
@@ -45,7 +46,7 @@ REQUIRED_USE="
 RDEPEND="
 	|| (
 		(
-			~dev-util/hip-5.6.0:0/5.6
+			~dev-util/hip-5.6.1:0/5.6
 			sys-libs/libomp:16
 		)
 		(
@@ -67,7 +68,7 @@ BDEPEND="
 	)
 	|| (
 		(
-			~dev-util/rocm-cmake-5.6.0:0/5.6
+			~dev-util/rocm-cmake-5.6.1:0/5.6
 			sys-devel/clang:16
 		)
 		(
@@ -99,12 +100,15 @@ else
 fi
 
 pkg_setup() {
-	if has_version "~dev-util/hip-5.6.0" ; then
+	if has_version "~dev-util/hip-5.6.1" ; then
 		LLVM_MAX_SLOT=16
+		export ROCM_SLOT="5.6"
 	elif has_version "~dev-util/hip-5.5.1" ; then
 		LLVM_MAX_SLOT=16
+		export ROCM_SLOT="5.5"
 	elif has_version "~dev-util/hip-5.4.3" ; then
 		LLVM_MAX_SLOT=15
+		export ROCM_SLOT="5.4"
 	fi
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
@@ -127,23 +131,8 @@ src_unpack() {
 src_prepare() {
 	cmake_src_prepare
 
-	[[ -e "/usr/$(get_libdir)/cmake/hip/hip-config.cmake" ]] || die "emerge hip"
-	# Disallow newer clang versions when producing .o files.
-	local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/lib/llvm" \
-			"/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
-		| grep -E -o -e  "[0-9]+")
-	[[ -n "${llvm_slot}" ]] || die "Could not get HIP_CLANG_ROOT.  emerge hip."
-
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${llvm_slot})"/bin"
-	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
-	einfo "PATH=${PATH} (before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${llvm_slot}/bin|g")
-	einfo "PATH=${PATH} (after)"
+	[[ -e "${ESYSROOT}/${EROCM_PATH}/$(get_libdir)/cmake/hip/hip-config.cmake" ]] || die "emerge hip"
+	export HIP_CLANG_PATH="${EROCM_LLVM_PATH}/bin"
 
 #	hipconfig --help >/dev/null || die
 	rocm_src_prepare
@@ -152,14 +141,22 @@ src_prepare() {
 src_configure() {
 	# Avoid ocml.bc': Unknown attribute kind (86) (Producer: 'LLVM16.0.6' Reader: 'LLVM 15.0.7') errors
 	local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/lib/llvm" \
-			"/usr/$(get_libdir)/cmake/hip/hip-config.cmake" \
+			"${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip/hip-config.cmake" \
 		| grep -E -o -e  "[0-9]+")
 
-	export CC="${CHOST}-clang-${llvm_slot}"
-	export CXX="${CHOST}-clang++-${llvm_slot}"
-
-	has_version "sys-devel/llvm:${llvm_slot}" || die "llvm-${llvm_slot} must be installed"
-	has_version "sys-devel/clang:${llvm_slot}" || die "clang-${llvm_slot} must be installed"
+	if use system-llvm ; then
+		export CC="${CHOST}-clang-${llvm_slot}"
+		export CXX="${CHOST}-clang++-${llvm_slot}"
+		has_version "sys-devel/llvm:${llvm_slot}" \
+			|| die "sys-devel/llvm-${llvm_slot} must be installed."
+		has_version "sys-devel/clang:${llvm_slot}" \
+			|| die "sys-devel/clang-${llvm_slot} must be installed."
+	else
+		export CC="clang"
+		export CXX="clang++"
+		has_version "sys-devel/llvm-roc:${ROCM_SLOT}" \
+			|| die "sys-devel/llvm-roc-${ROCM_SLOT} must be installed."
+	fi
 
 	# Prevent
 	# error: Illegal instruction detected: Operand has incorrect register class.
@@ -176,12 +173,12 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_TEST=$(use test)
 		-DCMAKE_BUILD_TYPE=release
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/${EROCM_PATH}"
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DDOWNLOAD_GTEST=OFF
 		-DGPU_TARGETS="${gpu_targets}"
-		-DHIP_COMPILER_PATH="${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
+		-DHIP_COMPILER_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}"
 	)
 
 #
@@ -194,7 +191,7 @@ src_configure() {
 #
 
 	append-flags \
-		--rocm-path="${ESYSROOT}/usr/lib" \
+		--rocm-path="${ESYSROOT}${ROCM_PATH}/$(get_libdir)" \
 		-fno-stack-protector
 #		-mcumode -mno-wavefrontsize64
 

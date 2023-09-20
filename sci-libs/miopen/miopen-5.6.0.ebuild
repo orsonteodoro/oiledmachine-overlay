@@ -40,7 +40,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test r2"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm system-llvm test r2"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -144,18 +144,7 @@ src_prepare() {
 ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
 
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-	einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
-	# Disallow newer clangs versions when producing .o files.
-	einfo "LLVM_SLOT=${LLVM_SLOT}"
-	einfo "PATH=${PATH} (before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_SLOT}/bin|g")
-	einfo "PATH=${PATH} (after)"
+	export HIP_CLANG_PATH="${ESYSROOT_LLVM_PATH}/bin"
 
 	hipconfig --help >/dev/null || die
 	sed \
@@ -302,7 +291,7 @@ src_configure() {
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBoost_USE_STATIC_LIBS=OFF
 		-DBUILD_TESTS=$(usex test ON OFF)
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 		-DMIOPEN_BACKEND=HIP
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
@@ -314,7 +303,7 @@ src_configure() {
 
 	if use mlir ; then
 		mycmakeargs+=(
-			-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/rocMLIR"
+			-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/rocMLIR"
 		)
 	fi
 
@@ -329,22 +318,27 @@ src_configure() {
 
 	addpredict /dev/kfd
 	addpredict /dev/dri/
-	append-cxxflags "--rocm-path=$(hipconfig -R)"
-	append-cxxflags "--hip-device-lib-path=${EPREFIX}/usr/$(get_libdir)/amdgcn/bitcode"
+	append-cxxflags "--rocm-path=${ESYSROOT}${EROCM_PATH}"
+	append-cxxflags "--hip-device-lib-path=${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
 
 	# Fix for both
 	# lld: error: undefined symbol: __stack_chk_fail ; if fail try append-flags "-fno-stack-protector"
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
-	export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
-	export CXX="${CHOST}-clang++${LLVM_MAX_SLOT}"
+	if use system-llvm ; then
+		export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
+		export CXX="${CHOST}-clang++${LLVM_MAX_SLOT}"
+	else
+		export CC="clang"
+		export CXX="clang++"
+	fi
 	cmake_src_configure
 }
 
 src_test() {
 	check_amdgpu
-	export LD_LIBRARY_PATH="${BUILD_DIR}/lib"
+	export LD_LIBRARY_PATH="${BUILD_DIR}/$(get_libdir)"
 
 	MAKEOPTS="-j1" \
 	cmake_src_test

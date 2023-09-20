@@ -17,5 +17,9 @@
       Build kernels [GPU programs] during runtime.  If disabled, it will build
       kernels during build time.
     </flag>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability.
+    </flag>
   </use>
 </pkgmetadata>

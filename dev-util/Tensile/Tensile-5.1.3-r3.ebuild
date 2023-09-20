@@ -131,36 +131,13 @@ src_configure() {
 		append-flags -fuse-ld=lld
 	fi
 
-	local clang_slot=""
-	if ver_test ${LLVM_SLOT} -ge 16 ; then
-		clang_slot="${LLVM_SLOT}"
-	else
-		clang_slot=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-			| sed -e "s|sys-devel/clang-||")
-		clang_slot=$(ver_cut 1-3 "${clang_slot}")
-	fi
-
-	local clang_path
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		clang_path="/usr/lib/clang/${clang_slot}"
-	else
-		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/lib/clang/${LLVM_MAX_SLOT}.0.0"
-	fi
-
-	local llvm_path
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		llvm_path="/usr/lib/llvm/${LLVM_MAX_SLOT}"
-	else
-		llvm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
-	fi
-
-	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${llvm_path}/bin/clang++"
-	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${llvm_path}/bin/clang-offload-bundler"
+	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
+	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 
 	distutils-r1_src_configure
 
 	if use client; then
-		export HIP_CLANG_PATH="${ESYSROOT}${llvm_path}/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -189,7 +166,7 @@ python_install() {
 src_install() {
 	distutils-r1_src_install
 	cd "${PN}" || die
-	insinto "/usr/share/${PN}"
+	insinto "${EROCM_PATH}/share/${PN}"
 	doins -r \
 		"Configs" \
 		"CustomKernels" \
@@ -197,7 +174,7 @@ src_install() {
 		"ReplacementKernels" \
 		"ReplacementKernels-cov3" \
 		"Source"
-	insinto "/usr/$(get_libdir)/cmake/${PN}"
+	insinto "${EROCM_PATH}/$(get_libdir)/cmake/${PN}"
 	doins "cmake/"*".cmake"
 }
 

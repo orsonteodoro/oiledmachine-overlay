@@ -210,8 +210,8 @@ src_configure() {
 			-DTensile_CPU_THREADS=$(makeopts_jobs)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 			-DTensile_LOGIC="asm_full"
-			-DTensile_ROOT="${EPREFIX}/usr/share/Tensile"
-			-DTensile_TEST_LOCAL_PATH="${EPREFIX}/usr/share/Tensile"
+			-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}/share/Tensile"
+			-DTensile_TEST_LOCAL_PATH="${ESYSROOT}${EROCM_PATH}/share/Tensile"
 		)
 	fi
 	export CC="${HIP_CC:-hipcc}"

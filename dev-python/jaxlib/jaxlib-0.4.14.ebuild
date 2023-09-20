@@ -16,12 +16,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_plus
 	gfx1030
 )
-DISTUTILS_USE_PEP517="standalone"
-GCC_SLOTS=( 12 11 10 9 )
-JAVA_SLOT="11"
-LLVM_MAX_SLOT=16
-LLVM_SLOTS=( 16 ) # Limited by rocm
-PYTHON_COMPAT=( python3_{10..11} )
 CUDA_TARGETS_COMPAT=(
 	sm_52
 	sm_60
@@ -29,6 +23,13 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	compute_90
 )
+DISTUTILS_USE_PEP517="standalone"
+EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
+GCC_SLOTS=( 12 11 10 9 )
+JAVA_SLOT="11"
+LLVM_MAX_SLOT=16
+LLVM_SLOTS=( 16 ) # Limited by rocm
+PYTHON_COMPAT=( python3_{10..11} )
 
 inherit bazel cuda distutils-r1 flag-o-matic git-r3 java-pkg-opt-2 llvm rocm
 inherit toolchain-funcs
