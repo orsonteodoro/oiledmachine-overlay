@@ -9,6 +9,9 @@ IUSE+="
 "
 fi
 
+# For AMDGPUs, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L41
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
 	gfx701
@@ -21,6 +24,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a
 	gfx90c
 	gfx940
+	gfx941
+	gfx942
 	gfx1010
 	gfx1030
 	gfx1031

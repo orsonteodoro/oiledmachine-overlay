@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# For AMDGPUs, see https://github.com/llvm/llvm-project/blob/llvmorg-13.0.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt#L101
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/llvmorg-13.0.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L75
+# For CUDA sdk versions, https://github.com/llvm/llvm-project/blob/llvmorg-13.0.1/clang/include/clang/Basic/Cuda.h
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
 	gfx701
