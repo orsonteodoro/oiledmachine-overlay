@@ -25,7 +25,7 @@ DESCRIPTION="Radeon Open Compute CMake Modules"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocm-cmake"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm"
+IUSE="system-llvm r1"
 RDEPEND="
 	dev-util/rocm-compiler[system-llvm=]
 "
@@ -40,6 +40,7 @@ PATCHES=(
 
 pkg_setup() {
 	llvm_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -53,6 +54,13 @@ src_prepare() {
 		|| die
 	cmake_src_prepare
 	rocm_src_prepare
+}
+
+src_configure() {
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+	)
+	cmake_src_configure
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
