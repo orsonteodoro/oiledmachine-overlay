@@ -55,7 +55,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-Werror.patch"
 	"${FILESDIR}/${PN}-5.0.2-strip-license.patch"
 
-	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
+	"A${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 )
 
 python_check_deps() {

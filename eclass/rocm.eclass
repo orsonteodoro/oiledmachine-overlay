@@ -372,7 +372,7 @@ eerror
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		clang_path="/usr/lib/clang/${clang_slot}"
 	else
-		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/lib/clang/${LLVM_MAX_SLOT}.0.0"
+		clang_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0"
 	fi
 
 	local llvm_path
@@ -405,7 +405,6 @@ eerror
 		-e "s|@ESYSROOT_LLVM_PATH@|${ESYSROOT}${llvm_path}|g" \
 		$(grep -r -l -e "@ESYSROOT_LLVM_PATH@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
-
 
 
 	local libdir_suffix="$(get_libdir)"

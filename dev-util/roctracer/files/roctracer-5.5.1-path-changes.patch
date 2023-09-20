@@ -153,7 +153,7 @@ diff -urp roctracer-rocm-5.5.1.orig/src/CMakeLists.txt roctracer-rocm-5.5.1/src/
 diff -urp roctracer-rocm-5.5.1.orig/test/CMakeLists.txt roctracer-rocm-5.5.1/test/CMakeLists.txt
 --- roctracer-rocm-5.5.1.orig/test/CMakeLists.txt	2023-09-18 17:48:04.478155244 -0700
 +++ roctracer-rocm-5.5.1/test/CMakeLists.txt	2023-09-18 17:48:37.386154804 -0700
-@@ -27,13 +27,13 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
+@@ -27,13 +27,12 @@ set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG ${
  set(CMAKE_EXECUTABLE_RUNTIME_HIP_FLAG_SEP ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG_SEP})
  set(CMAKE_EXECUTABLE_RPATH_LINK_HIP_FLAG ${CMAKE_SHARED_LIBRARY_RPATH_LINK_CXX_FLAG})
  
@@ -165,8 +165,7 @@ diff -urp roctracer-rocm-5.5.1.orig/test/CMakeLists.txt roctracer-rocm-5.5.1/tes
  find_package(Clang REQUIRED CONFIG
 -             PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATHS "@ESYSROOT@/usr"
-+             PATH_SUFFIXES "lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/clang")
++             PATHS "@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake/clang")
  
  ## Add a custom targets to build and run all the tests
  add_custom_target(mytest)
