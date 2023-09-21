@@ -270,6 +270,8 @@ eerror
 		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 	fi
 
+	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
+
 	if [[ \
 		   "${EROCM_ALLOW_MULTIPLE_CLANG_SLOTS}" == "1" \
 		|| "${EROCM_ALLOW_MULTIPLE_LLVM_SLOTS}" == "1" \

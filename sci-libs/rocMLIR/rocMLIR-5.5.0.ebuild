@@ -152,7 +152,6 @@ ewarn "Patching may take a long time.  Please wait..."
 src_configure() { :; }
 
 build_rocmlir() {
-	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 	export HIP_PLATFORM="amd"
 	SOURCE_DIR="${S}"
 	cd "${S}" || die

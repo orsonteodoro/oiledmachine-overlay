@@ -145,8 +145,6 @@ src_prepare() {
 ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
 
-	export HIP_CLANG_PATH="${ESYSROOT_LLVM_PATH}/bin"
-
 	hipconfig --help >/dev/null || die
 	sed \
 		-e '/MIOPEN_TIDY_ERRORS ALL/d' \

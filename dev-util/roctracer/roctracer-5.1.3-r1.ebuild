@@ -122,9 +122,8 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
-		append-flags --rocm-path="${ESYSROOT}${rocm_path}"
+		append-flags --rocm-path="${ESYSROOT}${EROCM_PATH}"
 	fi
 
 	hipconfig --help >/dev/null || die
@@ -132,7 +131,7 @@ src_configure() {
 	export HIP_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DCMAKE_PREFIX_PATH="${ESYSROOT}${rocm_path}/include/hsa"
+		-DCMAKE_PREFIX_PATH="${ESYSROOT}${EROCM_PATH}/include/hsa"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"

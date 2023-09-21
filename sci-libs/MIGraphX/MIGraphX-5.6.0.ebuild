@@ -114,7 +114,6 @@ src_prepare() {
 }
 
 src_configure() {
-	export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DMIGRAPHX_ENABLE_CPU=$(usex cpu ON OFF)

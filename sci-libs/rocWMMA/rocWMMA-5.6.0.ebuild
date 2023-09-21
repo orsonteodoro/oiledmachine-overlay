@@ -74,7 +74,6 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
-	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"

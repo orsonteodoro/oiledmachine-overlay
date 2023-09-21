@@ -1,0 +1,32 @@
+--- a/openmp/libomptarget/src/CMakeLists.txt.orig	2022-08-11 10:57:36.000000000 -0700
++++ b/openmp/libomptarget/src/CMakeLists.txt	2023-09-21 07:34:26.935185594 -0700
+@@ -12,6 +12,8 @@
+ 
+ libomptarget_say("Building offloading runtime library libomptarget.")
+ 
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++
+ set(LIBOMPTARGET_SRC_FILES
+   ${CMAKE_CURRENT_SOURCE_DIR}/api.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/device.cpp
+@@ -27,7 +29,7 @@ set(LIBOMPTARGET_SRC_FILES
+ 
+ set(LIBOMPTARGET_SRC_FILES ${LIBOMPTARGET_SRC_FILES} PARENT_SCOPE)
+ 
+-include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS})
++include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OPENMP_RUNTIME_DIR})
+ 
+ # Build libomptarget library with libdl dependency.
+ add_library(omptarget SHARED ${LIBOMPTARGET_SRC_FILES})
+--- a/openmp/libomptarget/CMakeLists.txt.orig	2023-09-21 07:34:26.935185594 -0700
++++ b/openmp/libomptarget/CMakeLists.txt	2023-09-21 07:37:27.339183185 -0700
+@@ -35,6 +35,9 @@ if (NOT LIBOMPTARGET_LLVM_INCLUDE_DIRS)
+   message(FATAL_ERROR "Missing definition for LIBOMPTARGET_LLVM_INCLUDE_DIRS")
+ endif()
+ 
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OPENMP_RUNTIME_DIR})
++
+ # This is a list of all the targets that are supported/tested right now.
+ set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} aarch64-unknown-linux-gnu")
+ set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} amdgcn-amd-amdhsa")

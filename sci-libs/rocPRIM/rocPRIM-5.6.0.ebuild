@@ -146,7 +146,6 @@ src_configure() {
 		export CC="gcc"
 		export CXX="g++"
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"

@@ -132,7 +132,6 @@ src_prepare() {
 	cmake_src_prepare
 
 	[[ -e "${ESYSROOT}/${EROCM_PATH}/$(get_libdir)/cmake/hip/hip-config.cmake" ]] || die "emerge hip"
-	export HIP_CLANG_PATH="${EROCM_LLVM_PATH}/bin"
 
 #	hipconfig --help >/dev/null || die
 	rocm_src_prepare

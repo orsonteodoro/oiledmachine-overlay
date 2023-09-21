@@ -960,9 +960,6 @@ ewarn
 		)
 	fi
 	if use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
-		einfo "HIP_CLANG_PATH=${HIP_CLANG_PATH}"
-
 		local gcc_slot=$(gcc-major-version)
 		local rocm_pv=$(best_version "sci-libs/rocFFT" \
 			| sed -e "s|sci-libs/rocFFT-||")
@@ -979,7 +976,6 @@ ewarn
 		export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 			| tr ";" ",")
 einfo "GCC_HOST_COMPILER_PATH:  ${GCC_HOST_COMPILER_PATH}"
-einfo "HIP_CLANG_PATH:  ${HIP_CLANG_PATH}"
 einfo "HIP_PATH:  ${HIP_PATH}"
 einfo "HOST_C_COMPILER:  ${HOST_C_COMPILER}"
 einfo "HOST_CXX_COMPILER:  ${HOST_CXX_COMPILER}"

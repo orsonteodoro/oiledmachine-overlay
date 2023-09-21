@@ -214,7 +214,6 @@ ewarn
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 		export HIP_PLATFORM="amd"
 		export ROCM_PATH="${ESYSROOT}/usr"
 		einfo "get_amdgpu_flags:  $(get_amdgpu_flags)"

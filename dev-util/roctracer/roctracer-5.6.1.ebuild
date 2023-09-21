@@ -76,19 +76,16 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
-		append-flags --rocm-path="${ESYSROOT}${rocm_path}"
+		append-flags --rocm-path="${ESYSROOT}${EROCM_PATH}"
 	fi
 
 	hipconfig --help >/dev/null || die
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
 	export HIP_PLATFORM="amd"
-	export ROCM_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DCMAKE_MODULE_PATH="${ESYSROOT}${rocm_path}/$(get_libdir)/cmake/hip"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"

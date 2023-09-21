@@ -138,7 +138,6 @@ src_configure() {
 	distutils-r1_src_configure
 
 	if use client; then
-		export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"

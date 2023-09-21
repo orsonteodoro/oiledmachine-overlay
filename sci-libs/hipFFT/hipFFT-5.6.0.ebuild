@@ -152,7 +152,6 @@ src_configure() {
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
-		export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DBUILD_WITH_LIB="ROCM"

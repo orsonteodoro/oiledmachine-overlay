@@ -78,7 +78,7 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
-		-DLLVM_DIR="${ESYSROOT}${ROCM_LLVM_PATH}"
+		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 	)
 	cmake_src_configure
 }

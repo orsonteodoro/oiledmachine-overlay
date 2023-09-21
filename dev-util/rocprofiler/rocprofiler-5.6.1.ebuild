@@ -117,7 +117,6 @@ src_configure() {
 	fi
 
 	export CMAKE_BUILD_TYPE="debug"
-	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"

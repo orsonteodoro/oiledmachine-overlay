@@ -1,0 +1,52 @@
+diff -urp llvm-project-rocm-5.2.3.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp llvm-project-rocm-5.2.3/clang/lib/Driver/ToolChains/AMDGPU.cpp
+--- llvm-project-rocm-5.2.3.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp	2022-08-11 10:57:36.000000000 -0700
++++ llvm-project-rocm-5.2.3/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-09-21 07:57:15.351167321 -0700
+@@ -412,11 +412,13 @@ void RocmInstallationDetector::detectDev
+     };
+ 
+     // The possible structures are:
++    // - ${ROCM_ROOT}/@LIBDIR@/amdgcn/bitcode/*
+     // - ${ROCM_ROOT}/amdgcn/bitcode/*
+     // - ${ROCM_ROOT}/lib/*
+     // - ${ROCM_ROOT}/lib/bitcode/*
+     // so try to detect these layouts.
+     static constexpr std::array<const char *, 2> SubDirsList[] = {
++        {"@LIBDIR@/amdgcn", "bitcode"},
+         {"amdgcn", "bitcode"},
+         {"lib", ""},
+         {"lib", "bitcode"},
+Only in llvm-project-rocm-5.2.3/clang/lib/Driver/ToolChains: AMDGPU.cpp.orig
+Only in llvm-project-rocm-5.2.3/clang/lib/Driver/ToolChains: AMDGPUOpenMP.cpp.orig
+Only in llvm-project-rocm-5.2.3/clang/lib/Driver/ToolChains: AMDGPUOpenMP.cpp.rej
+diff -urp llvm-project-rocm-5.2.3.orig/compiler-rt/test/asan/lit.cfg.py llvm-project-rocm-5.2.3/compiler-rt/test/asan/lit.cfg.py
+--- llvm-project-rocm-5.2.3.orig/compiler-rt/test/asan/lit.cfg.py	2022-08-11 10:57:36.000000000 -0700
++++ llvm-project-rocm-5.2.3/compiler-rt/test/asan/lit.cfg.py	2023-09-21 07:57:15.351167321 -0700
+@@ -253,13 +253,13 @@ if config.host_os == 'NetBSD':
+ def configure_rocm(config, test_rocm_path):
+     if (not os.path.isdir(test_rocm_path)):
+         print("no directory found")
+-        test_rocm_path = os.path.join('/opt','rocm')
++        test_rocm_path = os.path.join('/usr')
+         if (not os.path.isdir(test_rocm_path)):
+             test_rocm_path = os.path.abspath(os.path.join(config.llvm_install_dir, os.pardir))
+             if (not os.path.isdir(test_rocm_path)):
+                 sys.exit("ROCM installation not found, try exporting ASAN_TEST_ROCM variable")
+ 
+-    test_device_libs  = os.path.join(test_rocm_path, 'amdgcn', 'bitcode')
++    test_device_libs  = os.path.join(test_rocm_path, '@LIBDIR@', 'amdgcn', 'bitcode')
+     test_hip_path     = os.path.join(test_rocm_path, 'hip')
+     hipcc             = os.path.join(test_hip_path, 'bin', 'hipcc')
+ 
+diff -urp llvm-project-rocm-5.2.3.orig/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp llvm-project-rocm-5.2.3/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp
+--- llvm-project-rocm-5.2.3.orig/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2022-08-11 10:57:36.000000000 -0700
++++ llvm-project-rocm-5.2.3/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-09-21 07:57:15.351167321 -0700
+@@ -272,7 +272,7 @@ SerializeToHsacoPass::translateToLLVMIR(
+   Optional<SmallVector<std::unique_ptr<llvm::Module>, 3>> mbModules;
+   std::string theRocmPath = getRocmPath();
+   llvm::SmallString<32> bitcodePath(std::move(theRocmPath));
+-  llvm::sys::path::append(bitcodePath, "amdgcn", "bitcode");
++  llvm::sys::path::append(bitcodePath, "@LIBDIR@", "amdgcn", "bitcode");
+   mbModules = loadLibraries(bitcodePath, libraries, llvmContext);
+ 
+   if (!mbModules) {
+Only in llvm-project-rocm-5.2.3/mlir/lib/Dialect/GPU/Transforms: SerializeToHsaco.cpp.orig

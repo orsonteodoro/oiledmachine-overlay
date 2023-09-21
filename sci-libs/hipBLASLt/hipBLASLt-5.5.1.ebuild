@@ -225,8 +225,8 @@ ewarn
 			-DHIP_RUNTIME="rocclr"
 		)
 		if use tensile ; then
-			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${ROCM_LLVM_PATH}/bin/clang++"
-			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${ROCM_LLVM_PATH}/bin/clang-offload-bundler"
+			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
+			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 			mycmakeargs+=(
 				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with with xnack-
 				-DTensile_CPU_THREADS="${nprocs}"
