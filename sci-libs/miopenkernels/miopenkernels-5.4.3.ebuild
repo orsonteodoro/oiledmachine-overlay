@@ -11,7 +11,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 )
 MAINTAINER_MODE=0
-MY_PV="${PV}"
+if [[ "${PV##*.}" == "0" ]] ; then
+	MY_PV=$(ver_cut 1-2 ${PV})
+else
+	MY_PV="${PV}"
+fi
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
 ROCM_VERSION="${PV}"
 inherit rocm unpacker
@@ -106,7 +110,7 @@ unpack_deb() {
 
 src_unpack() {
 	check_sandbox
-	# obtain from after csplit below:
+	# Obtained from after csplit below manually removing junk items:
 	local uri_base="https://repo.radeon.com/rocm/apt/${MY_PV}/"
 	local files=(
 pool/main/m/miopenkernels-gfx1030-36kdb/miopenkernels-gfx1030-36kdb_1.1.0.50403-121~20.04_amd64.deb
@@ -157,6 +161,9 @@ pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50403-
 				| cut -f 2 -d " "))
 			[[ "${bn}" =~ "${PV}" ]] && continue # Skip duplicate
 			[[ -z "${bn}" ]] && continue
+
+	# bnsan means base name (aka file name) sanitized.  Sometimes you cannot
+	# use the raw base name as the key to the associative array.
 			local bnsan="A"$(echo "${bn}" \
 				| sha1sum \
 				| cut -f 1 -d " ")

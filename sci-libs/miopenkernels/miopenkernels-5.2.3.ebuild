@@ -11,7 +11,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 )
 MAINTAINER_MODE=0
-MY_PV=$(ver_cut 1-2 ${PV})
+if [[ "${PV##*.}" == "0" ]] ; then
+	MY_PV=$(ver_cut 1-2 ${PV})
+else
+	MY_PV="${PV}"
+fi
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
 ROCM_VERSION="${PV}"
 inherit rocm unpacker
@@ -44,55 +48,43 @@ PATCHES=(
 # hash of filename : data
 # hashing is required for the key because of bug evaluating ~ within single quotes.
 declare -A EXPECTED_SHA1=(
-["Aec7dca048027f0f6f25f40af0197e4e8a0db9eca"]="524bbe96383729786b8a4b59c4764ddf813c9bd2"
-["Adb65a6d33366ead7199778de802e74ed1a9c899d"]="7325f77bce6b600519aaa1af9fadc625540b9086"
-["A0256f2fbf5c67f08dc5aa45c90a6b5a80ecd4b9d"]="e86c337755a66419055e9abc9c1f5035890d96b8"
-["Af2eecdd4642162e08d3013ebf175e0cad723f0d9"]="406ab920d3ffc1edf822cf3dd7853c7e4c2591d7"
-["Af3ead9cea20555ad0aebc2df459bcf9cbc6567c2"]="b8be3f496eb610679e56578590e858efb277553e"
-["A82827e14770a53ac26657399880f42da87001175"]="7c9bb2c850112ee25dfc5e42379afcb1390dbeff"
-["A9c4b64399626b720727816f942f5a04de37eac0a"]="27959f4fab433d31240134589261251224271d7e"
-["Acd8cbe668837ca0b9c29e03d72155eb8fc0d8bce"]="30ec518ddcb54699eeb9a70bccac8de296757e98"
-["Afa9e8d78b4d37311bf4208ee28838c16cf0cd1f7"]="2f260eb0d452896b17099de89684473f81057e1a"
-["A62e6018160941dfd64753d254f8f258203600dc3"]="9f282522b44b75fe7e0d4389053c5a02b5ab25fd"
+["A2a1473f2571379743bdb8b5ecf5375375ab5ad9b"]="cae98ce9798f1df329542b9932fc882f66646372"
+["A6a5fade9e52123f9661fde2ab90926f0463b7039"]="e09ebb96fa9e982edab6c41b98b3f5febb6137cf"
+["Aa419d9e97d9e0906440243815b9404615b933cee"]="fe0f01813603a484f28ea35bc7145bcfce237e27"
+["Aea37f08e7b22ea8a567bf2bb6594285f8158870b"]="29701e16f99599461e7d4ecf9d36f56b4245794b"
+["Ae6906b860935cb66da60585b1dd3810f4b262ee6"]="aaffb9816e03d726978f3ffea7be188125301172"
+["Af60b2be53bb51ad5188f3b49848e34655b21288a"]="79d3d3da86ae25d6965594bb5d3bb9655a54f7c0"
+["Ac80b04d63fde9440298e0f883d754cb07122c376"]="b999e0a178022ce2adaa1a3290606f004da6ba44"
 )
 
 declare -A EXPECTED_SHA256=(
-["Aec7dca048027f0f6f25f40af0197e4e8a0db9eca"]="daf2c1ec77b54813842f37da525c6059a2e4353751bf91decf433ec7548be8b1"
-["Adb65a6d33366ead7199778de802e74ed1a9c899d"]="51babf99690e8fdb9a4145a4421d16cc1f550404e085a1d3810299ffe2662899"
-["A0256f2fbf5c67f08dc5aa45c90a6b5a80ecd4b9d"]="c756f2270bd2034731a753ef6190c82c6ad3524298d3f1d571985db1dc19f2f1"
-["Af2eecdd4642162e08d3013ebf175e0cad723f0d9"]="37221956a568b5fe8dc33e7a2f61a8ed2728faa85b20e6f82ce6809d6bc5dd57"
-["Af3ead9cea20555ad0aebc2df459bcf9cbc6567c2"]="ba1d74791470a8af403e121e7407396904ce647f9977b3cfa89d51b3fe056329"
-["A82827e14770a53ac26657399880f42da87001175"]="daffd6f1e33d9326aa595c67baa7afa8c0b4b8ac208d8dd786c725969002f503"
-["A9c4b64399626b720727816f942f5a04de37eac0a"]="04eedf775bd8e729716bcab33ede3dcd758cdceefedb2a3e46a9934842a436b6"
-["Acd8cbe668837ca0b9c29e03d72155eb8fc0d8bce"]="2be69d7171f2937466c5014cba836bdb58ab2668d7e64b93d488a7b4cc86b991"
-["Afa9e8d78b4d37311bf4208ee28838c16cf0cd1f7"]="9353e34ff7c9123ea2c4ded8b1a35cf1adb5276a15c92a52d5ef5233bb52f44a"
-["A62e6018160941dfd64753d254f8f258203600dc3"]="f29f55e9acba3e495f2e24f6e2683db05a6261204c439d8df422e1a5ffef8f94"
+["A2a1473f2571379743bdb8b5ecf5375375ab5ad9b"]="1b2ca974b9b8cfef458d27450ee26cc7ac22d102fccec0024a86ef71549eaf55"
+["A6a5fade9e52123f9661fde2ab90926f0463b7039"]="6ed0adea80f00e1b9c95824be66013018531002025c097229ec0ccf543bb78e7"
+["Aa419d9e97d9e0906440243815b9404615b933cee"]="b93445822864fd70aacfe068e6d7d49dd1c53b2c7350183759bbcf7075e57a21"
+["Aea37f08e7b22ea8a567bf2bb6594285f8158870b"]="35eac06f9000567230f00bb741d9f0d7db2a01f0fb069a8d573880487c5206b9"
+["Ae6906b860935cb66da60585b1dd3810f4b262ee6"]="d7f178c57dcd1c43331304ca52d90b7d50dea69eafe79c21a68f98f91c50b9fc"
+["Af60b2be53bb51ad5188f3b49848e34655b21288a"]="ff8ce448a6525ca44510f931bef64995495c1e3c3f459ad348654f00cca81f29"
+["Ac80b04d63fde9440298e0f883d754cb07122c376"]="cbe6703ae80be6a6149087fcf7265d4886a50b5cba7e8a723ec2c7b1117442b8"
 )
 
 declare -A EXPECTED_MD5=(
-["Aec7dca048027f0f6f25f40af0197e4e8a0db9eca"]="40a112b4a721465fcbd16a897beb557b"
-["Adb65a6d33366ead7199778de802e74ed1a9c899d"]="1779f66496cd33cb01433ac75360e3b1"
-["A0256f2fbf5c67f08dc5aa45c90a6b5a80ecd4b9d"]="07393488bc6ba0121feeaac375e6b660"
-["Af2eecdd4642162e08d3013ebf175e0cad723f0d9"]="1642737eb69425aa5b9c1dc13fbbaec8"
-["Af3ead9cea20555ad0aebc2df459bcf9cbc6567c2"]="01570d619163855d32ad428013d909e7"
-["A82827e14770a53ac26657399880f42da87001175"]="0991f79dbd4d649965a76344e420e5bc"
-["A9c4b64399626b720727816f942f5a04de37eac0a"]="b50942b76786435dd5703de5bbc6aa30"
-["Acd8cbe668837ca0b9c29e03d72155eb8fc0d8bce"]="0489f1a439da87dfc942e5d4b64cea59"
-["Afa9e8d78b4d37311bf4208ee28838c16cf0cd1f7"]="56665f0775de6ac71d6e7fb5be31c356"
-["A62e6018160941dfd64753d254f8f258203600dc3"]="d5bf6f5bf22f261624efb9c31487b546"
+["A2a1473f2571379743bdb8b5ecf5375375ab5ad9b"]="a2f28647f500d866323bc3ef88e5fbee"
+["A6a5fade9e52123f9661fde2ab90926f0463b7039"]="59f4534370b5cab9acbdaea79c09c7c2"
+["Aa419d9e97d9e0906440243815b9404615b933cee"]="b88deccbe3637eb8e23a82bbd5b718e2"
+["Aea37f08e7b22ea8a567bf2bb6594285f8158870b"]="c48daf415f12d733ec9bcf59088400de"
+["Ae6906b860935cb66da60585b1dd3810f4b262ee6"]="f12824d8189188db6295fce4ea64f49a"
+["Af60b2be53bb51ad5188f3b49848e34655b21288a"]="ddf7a2e6bd1b6e097e256fb69fa09636"
+["Ac80b04d63fde9440298e0f883d754cb07122c376"]="73a924fb868365ee7dba8fd03846693f"
 )
 
 declare -A EXPECTED_SIZE=(
-["Aec7dca048027f0f6f25f40af0197e4e8a0db9eca"]="390901188"
-["Adb65a6d33366ead7199778de802e74ed1a9c899d"]="321387208"
-["A0256f2fbf5c67f08dc5aa45c90a6b5a80ecd4b9d"]="32150"
-["Af2eecdd4642162e08d3013ebf175e0cad723f0d9"]="261946534"
-["Af3ead9cea20555ad0aebc2df459bcf9cbc6567c2"]="776591590"
-["A82827e14770a53ac26657399880f42da87001175"]="308966848"
-["A9c4b64399626b720727816f942f5a04de37eac0a"]="272103008"
-["Acd8cbe668837ca0b9c29e03d72155eb8fc0d8bce"]="272103008"
-["Afa9e8d78b4d37311bf4208ee28838c16cf0cd1f7"]="81363874"
-["A62e6018160941dfd64753d254f8f258203600dc3"]="500036704"
+["A2a1473f2571379743bdb8b5ecf5375375ab5ad9b"]="329295326"
+["A6a5fade9e52123f9661fde2ab90926f0463b7039"]="213718152"
+["Aa419d9e97d9e0906440243815b9404615b933cee"]="329295444"
+["Aea37f08e7b22ea8a567bf2bb6594285f8158870b"]="290769532"
+["Ae6906b860935cb66da60585b1dd3810f4b262ee6"]="283794578"
+["Af60b2be53bb51ad5188f3b49848e34655b21288a"]="314289728"
+["Ac80b04d63fde9440298e0f883d754cb07122c376"]="290769532"
 )
 
 check_sandbox() {
@@ -114,17 +106,16 @@ unpack_deb() {
 
 src_unpack() {
 	check_sandbox
-	# obtain from after csplit below:
+	# Obtained from after csplit below manually removing junk items:
 	local uri_base="https://repo.radeon.com/rocm/apt/${MY_PV}/"
 	local files=(
-pool/main/m/miopen-hip-gfx1030-36kdb/miopen-hip-gfx1030-36kdb_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-gfx900-56kdb/miopen-hip-gfx900-56kdb_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-gfx900-64kdb/miopen-hip-gfx900-64kdb_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-gfx906-60kdb/miopen-hip-gfx906-60kdb_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-gfx906-64kdb/miopen-hip-gfx906-64kdb_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-gfx908-120kdb/miopen-hip-gfx908-120kdb_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-gfx90a-104kdb/miopen-hip-gfx90a-104kdb_2.20.0.50600-67~20.04_amd64.deb
-pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.20.0.50600-67~20.04_amd64.deb
+pool/main/m/miopenkernels-gfx1030-36kdb/miopenkernels-gfx1030-36kdb_1.1.0.50203-109_amd64.deb
+pool/main/m/miopenkernels-gfx900-56kdb/miopenkernels-gfx900-56kdb_1.1.0.50203-109_amd64.deb
+pool/main/m/miopenkernels-gfx900-64kdb/miopenkernels-gfx900-64kdb_1.1.0.50203-109_amd64.deb
+pool/main/m/miopenkernels-gfx906-60kdb/miopenkernels-gfx906-60kdb_1.1.0.50203-109_amd64.deb
+pool/main/m/miopenkernels-gfx906-64kdb/miopenkernels-gfx906-64kdb_1.1.0.50203-109_amd64.deb
+pool/main/m/miopenkernels-gfx908-120kdb/miopenkernels-gfx908-120kdb_1.1.0.50203-109_amd64.deb
+pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50203-109_amd64.deb
 	)
 
 	if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
@@ -139,7 +130,7 @@ pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.20.0.50600-67~20
 
 		IFS=$'\n'
 		local L=(
-			$(grep -i -r -e "miopen-hip.*deb" "${WORKDIR}" \
+			$(grep -i -r -e "miopenkernels.*deb" "${WORKDIR}" \
 			| cut -f 2 -d " " \
 			| sort \
 			| uniq)
@@ -158,13 +149,16 @@ pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.20.0.50600-67~20
 		declare -A EXPECTED_SHA256
 		declare -A EXPECTED_MD5
 		declare -A EXPECTED_SIZE
-		for p in $(grep -l -r -e "miopen-hip.*deb" "${WORKDIR}" \
+		for p in $(grep -l -r -e "miopenkernels.*deb" "${WORKDIR}" \
 			| cut -f 2 -d " " \
 			| sort) ; do
 			local bn=$(basename $(grep "Filename:" "${p}" \
 				| cut -f 2 -d " "))
 			[[ "${bn}" =~ "${PV}" ]] && continue # Skip duplicate
 			[[ -z "${bn}" ]] && continue
+
+	# bnsan means base name (aka file name) sanitized.  Sometimes you cannot
+	# use the raw base name as the key to the associative array.
 			local bnsan="A"$(echo "${bn}" \
 				| sha1sum \
 				| cut -f 1 -d " ")
@@ -289,4 +283,4 @@ einfo "Compressing kernels"
 	popd
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  finished
+# OILEDMACHINE-OVERLAY-STATUS:  finished, builds-without-problems

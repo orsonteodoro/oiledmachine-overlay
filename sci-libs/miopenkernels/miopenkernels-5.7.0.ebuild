@@ -48,47 +48,67 @@ PATCHES=(
 # hash of filename : data
 # hashing is required for the key because of bug evaluating ~ within single quotes.
 declare -A EXPECTED_SHA1=(
-["Aec7b78e4c8389e1a088ff1d56a87514689e03a47"]="cda0e4daafe000d8727da86725a3821ab93582a2"
-["A5921040b219da856c6b5c13541f3e9bd683c09fe"]="5a89f9d5097eb36f27d9e8868105dda2ec660d4b"
-["Acadaa140690e525ef11a4b0d48e31b0065ca68ee"]="16ce8783bde1000161c842ed77d450c9e5bfce13"
-["A7a679c70b695da2936149c3196466cb67fc5f320"]="24137b6f4b838aaddd542309a39a675ab9c6019e"
-["A84aaeb49adbe38e1a136d3294f179fff8b1b8662"]="9a5796c6c8c33cc64afa9a8ced9e8da778179de5"
-["A0d358eef14f4271fb83c02bf4839d16082dc8f71"]="9dc6052598b8a750747d1ed1e5d19761efa72804"
-["Aeddd72756c18bac361911cc8c340a7a7bdb04bde"]="458f7831fa141231f23cb0889733c7a8692da965"
-["A3e52492e66e1337b49c93721cac43994b3906690"]="042ba968e810a0a0edd9bfb25c91f410d22ef124"
+["A9ae482f6e1a7514824010ea6cb499f2a9f1fc498"]="ff99ba264e45c75433a4c599b7c37ebf021dc53e"
+["Aeb9082254c8943feb16a1313607f81c9efb7e306"]="8f113006cd4cf93eaf5e369b9eed1427af580777"
+["A6926c5f5e1cd80363385159f1de829b98d0ac23c"]="d347cb39300fb16b22ef01ce6e1af40fd29e51c8"
+["Ad90157791c108ce25a81544e926c67af62fd4e9d"]="7f79ae69114af9fb69f531d9fc35b46f6b809799"
+["A9c9c4c3ab6c761efe02f4f2c64d14bfa004fadce"]="3d98e30b5eb57d955e3b3867475428e182971d17"
+["A5fb34322961db96b4fdeb36fd9fdb162f21d7b08"]="b5195cdb6d003b14ff537784773b9575df5c87e7"
+["A05c602228d8e96822842a88fb0c1b7e89d6b4445"]="cffedc59b4b04461c775f3c15a5cde3f97ced2ab"
+["A640874c689b56202c90eb3b2e906e8671f7d18d1"]="c985bc0a27657af63f1fdc19b5b0ee3604370ebb"
+["Aa4a56c86f64d508bf66f94187d9efbab4e7fbc3e"]="e4b01dcd3ed9c0fca5ae573d723a834b8b0f9edb"
+["A90ac58e2ac6d4ae2b7a14373fe64f42bc113f120"]="d1d3af2960df2013093efade4ef94000467c303c"
+["Acc42603207a44da30768aed1259ce7abaf35fa05"]="c7ad627cb0862beaca18eb0e54fac7b00e5b7340"
+["Aae1bae95f308aeb211841e7e8d1a15b9fa94195f"]="937dbea5c1ba6222fa44d1b0efef57dd723bbb2d"
+["A10d48a3c5cfb4d89d527099634fa48b0080f4ec0"]="2cb0809d2b3e6efafdd8bd0331d45e64556bacc4"
 )
 
 declare -A EXPECTED_SHA256=(
-["Aec7b78e4c8389e1a088ff1d56a87514689e03a47"]="5894ec6221a758dc17a5276cca308d7f041e7687e207aad4e93a04af0dc24db0"
-["A5921040b219da856c6b5c13541f3e9bd683c09fe"]="7af30399b5392c46295145a6d774c8c464d4946b280880785d77d0ed79c7f3cd"
-["Acadaa140690e525ef11a4b0d48e31b0065ca68ee"]="b03f008148ddd2b5152690f320807e74fd362e5003949326e49d258a3c5b1c24"
-["A7a679c70b695da2936149c3196466cb67fc5f320"]="54b58fb96daa01770fc4cf3586d43cff60a7304369f4ca896977caad5b1d0315"
-["A84aaeb49adbe38e1a136d3294f179fff8b1b8662"]="abb061e54ca721853df1610dadaf2264faf3f928e0f321849e961c8e48706864"
-["A0d358eef14f4271fb83c02bf4839d16082dc8f71"]="91c40668e8a3b56b075497a1b285e8ed821de509213d8dfba39a6ef5f6ec91cc"
-["Aeddd72756c18bac361911cc8c340a7a7bdb04bde"]="b4ced67afcfc956f05250ce862b28f5433bea491372ffd0c91945a9aec5ccf46"
-["A3e52492e66e1337b49c93721cac43994b3906690"]="0971a956d434b9f5434171174bc5c6b19af3567670158f5809c4818c04e3cdf3"
+["A9ae482f6e1a7514824010ea6cb499f2a9f1fc498"]="50aa75962d4a3f319eaf16bd4182e5e9ce6499ce937aaaa1562651fb704b1666"
+["Aeb9082254c8943feb16a1313607f81c9efb7e306"]="b430f912d9ac3bd51547f9ad03f1015daa825bed4e433ff4f355781d53a1eafb"
+["A6926c5f5e1cd80363385159f1de829b98d0ac23c"]="bb5aefec03173f6f0ff3fdf9a31193c97ea8bac5ad39644770b01cea93771091"
+["Ad90157791c108ce25a81544e926c67af62fd4e9d"]="7bbeca5591abce89e58a3f1a80634437e982fe85b8327db2f833ae04853e32c0"
+["A9c9c4c3ab6c761efe02f4f2c64d14bfa004fadce"]="76dd4efe580cbaeda35797c04d2f34c7f5eb237edf48b0f32f6c861beea50d99"
+["A5fb34322961db96b4fdeb36fd9fdb162f21d7b08"]="d85ae986e3ad3af63960aeab104868bf4f6e134d7e1e13aa9c93cd312281e136"
+["A05c602228d8e96822842a88fb0c1b7e89d6b4445"]="f5059a3168b016e4a2aa3fddea7ff2fa41f75b729c76b32a835bd98ed0982323"
+["A640874c689b56202c90eb3b2e906e8671f7d18d1"]="4ac6b9308d538d1ebe08e70e49fd3507e4cc3ead7833a161be685cda7ed5c6ec"
+["Aa4a56c86f64d508bf66f94187d9efbab4e7fbc3e"]="2081835f10307c2395ecd3b75b6ba79acf028b482be01979fadeee6c10ab45e6"
+["A90ac58e2ac6d4ae2b7a14373fe64f42bc113f120"]="90f8c75764435e1d582f53b2264839d0509e4accd7d5b5593abb0f2f1ef5a1e2"
+["Acc42603207a44da30768aed1259ce7abaf35fa05"]="713ad42b5bc1c191a255fb7c307859ca8e7925881fe9660987a4cff6c5e16329"
+["Aae1bae95f308aeb211841e7e8d1a15b9fa94195f"]="622280dfa1541b3312c9635e6cfb6205ec9efbf82d968a27953c0faefbfb65e8"
+["A10d48a3c5cfb4d89d527099634fa48b0080f4ec0"]="86d24b699216e343eb961b2d405dafe481aee606671065fea90fdf1247b7d9d3"
 )
 
 declare -A EXPECTED_MD5=(
-["Aec7b78e4c8389e1a088ff1d56a87514689e03a47"]="6675f6710d95e0d7f6758377b2760d43"
-["A5921040b219da856c6b5c13541f3e9bd683c09fe"]="ae01b2b6028ec6d9efb681bcda8b2d4f"
-["Acadaa140690e525ef11a4b0d48e31b0065ca68ee"]="fb7e8f8c634a77ea76f51cc982c0b599"
-["A7a679c70b695da2936149c3196466cb67fc5f320"]="39d71b904e97d5512a578aa23a5a9fc7"
-["A84aaeb49adbe38e1a136d3294f179fff8b1b8662"]="8f161521a76ca3434aaf4f154d46bc70"
-["A0d358eef14f4271fb83c02bf4839d16082dc8f71"]="3a4d626520b408707b66ea89298d0182"
-["Aeddd72756c18bac361911cc8c340a7a7bdb04bde"]="88f3e7137a68a5272c9a9463da35cc95"
-["A3e52492e66e1337b49c93721cac43994b3906690"]="9a04bc46123094c94ecb58f41d085931"
+["A9ae482f6e1a7514824010ea6cb499f2a9f1fc498"]="3e3a15158a993715abcb862aec884ea9"
+["Aeb9082254c8943feb16a1313607f81c9efb7e306"]="2165a273f3723a3537c653d9dbc11387"
+["A6926c5f5e1cd80363385159f1de829b98d0ac23c"]="eb6bce91376743ab7d14e755c2b8b909"
+["Ad90157791c108ce25a81544e926c67af62fd4e9d"]="16d53ca9ed2c02ac642331bab0417397"
+["A9c9c4c3ab6c761efe02f4f2c64d14bfa004fadce"]="000a4d8889c1303aa073111da07b8e1d"
+["A5fb34322961db96b4fdeb36fd9fdb162f21d7b08"]="e980433f12194a0ea3124885a6f78139"
+["A05c602228d8e96822842a88fb0c1b7e89d6b4445"]="ca806c49af76503f6fba685e94784b6b"
+["A640874c689b56202c90eb3b2e906e8671f7d18d1"]="4b1dafdc1e6a1a1e1fb17eefb7a1e22d"
+["Aa4a56c86f64d508bf66f94187d9efbab4e7fbc3e"]="945d94bb52f1e3881cd33d22bc939870"
+["A90ac58e2ac6d4ae2b7a14373fe64f42bc113f120"]="d8445ea3ad3b58f8c5b851298000b16e"
+["Acc42603207a44da30768aed1259ce7abaf35fa05"]="d40b9cb5cbf38ef9a0a4447b34260cc7"
+["Aae1bae95f308aeb211841e7e8d1a15b9fa94195f"]="a11a0a82a041a87ee383e0a2abe5fce8"
+["A10d48a3c5cfb4d89d527099634fa48b0080f4ec0"]="bdf37da24929bdb4936acbae56db8c06"
 )
 
 declare -A EXPECTED_SIZE=(
-["Aec7b78e4c8389e1a088ff1d56a87514689e03a47"]="239414010"
-["A5921040b219da856c6b5c13541f3e9bd683c09fe"]="290769484"
-["Acadaa140690e525ef11a4b0d48e31b0065ca68ee"]="290769510"
-["A7a679c70b695da2936149c3196466cb67fc5f320"]="329295376"
-["A84aaeb49adbe38e1a136d3294f179fff8b1b8662"]="213718190"
-["A0d358eef14f4271fb83c02bf4839d16082dc8f71"]="329295398"
-["Aeddd72756c18bac361911cc8c340a7a7bdb04bde"]="782"
-["A3e52492e66e1337b49c93721cac43994b3906690"]="337703964"
+["A9ae482f6e1a7514824010ea6cb499f2a9f1fc498"]="272266576"
+["Aeb9082254c8943feb16a1313607f81c9efb7e306"]="734"
+["A6926c5f5e1cd80363385159f1de829b98d0ac23c"]="325614692"
+["Ad90157791c108ce25a81544e926c67af62fd4e9d"]="732"
+["A9c9c4c3ab6c761efe02f4f2c64d14bfa004fadce"]="111319578"
+["A5fb34322961db96b4fdeb36fd9fdb162f21d7b08"]="734"
+["A05c602228d8e96822842a88fb0c1b7e89d6b4445"]="339285480"
+["A640874c689b56202c90eb3b2e906e8671f7d18d1"]="734"
+["Aa4a56c86f64d508bf66f94187d9efbab4e7fbc3e"]="90203954"
+["A90ac58e2ac6d4ae2b7a14373fe64f42bc113f120"]="32334"
+["Acc42603207a44da30768aed1259ce7abaf35fa05"]="734"
+["Aae1bae95f308aeb211841e7e8d1a15b9fa94195f"]="390900968"
+["A10d48a3c5cfb4d89d527099634fa48b0080f4ec0"]="321529380"
 )
 
 check_sandbox() {
@@ -113,14 +133,16 @@ src_unpack() {
 	# Obtained from after csplit below manually removing junk items:
 	local uri_base="https://repo.radeon.com/rocm/apt/${MY_PV}/"
 	local files=(
-pool/main/m/miopenkernels-gfx1030-36kdb/miopenkernels-gfx1030-36kdb_1.1.0.50303-99~20.04_amd64.deb
-pool/main/m/miopenkernels-gfx900-56kdb/miopenkernels-gfx900-56kdb_1.1.0.50303-99~20.04_amd64.deb
-pool/main/m/miopenkernels-gfx900-64kdb/miopenkernels-gfx900-64kdb_1.1.0.50303-99~20.04_amd64.deb
-pool/main/m/miopenkernels-gfx906-60kdb/miopenkernels-gfx906-60kdb_1.1.0.50303-99~20.04_amd64.deb
-pool/main/m/miopenkernels-gfx906-64kdb/miopenkernels-gfx906-64kdb_1.1.0.50303-99~20.04_amd64.deb
-pool/main/m/miopenkernels-gfx908-120kdb/miopenkernels-gfx908-120kdb_1.1.0.50303-99~20.04_amd64.deb
-pool/main/m/miopenkernels-gfx90a-104kdb/miopenkernels-gfx90a-104kdb_1.1.0.50303-99~20.04_amd64.deb
-pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50303-99~20.04_amd64.deb
+pool/main/m/miopen-hip-asan-gfx1030kdb/miopen-hip-asan-gfx1030kdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-asan-gfx900kdb/miopen-hip-asan-gfx900kdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-asan-gfx906kdb/miopen-hip-asan-gfx906kdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-asan-gfx908kdb/miopen-hip-asan-gfx908kdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-asan-gfx90akdb/miopen-hip-asan-gfx90akdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_2.20.0.50700-63~20.04_amd64.deb
+pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_2.20.0.50700-63~20.04_amd64.deb
 	)
 
 	if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
@@ -135,7 +157,7 @@ pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50303-
 
 		IFS=$'\n'
 		local L=(
-			$(grep -i -r -e "miopenkernels.*deb" "${WORKDIR}" \
+			$(grep -i -r -e "miopen-hip.*deb" "${WORKDIR}" \
 			| cut -f 2 -d " " \
 			| sort \
 			| uniq)
@@ -154,16 +176,13 @@ pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50303-
 		declare -A EXPECTED_SHA256
 		declare -A EXPECTED_MD5
 		declare -A EXPECTED_SIZE
-		for p in $(grep -l -r -e "miopenkernels.*deb" "${WORKDIR}" \
+		for p in $(grep -l -r -e "miopen-hip.*deb" "${WORKDIR}" \
 			| cut -f 2 -d " " \
 			| sort) ; do
 			local bn=$(basename $(grep "Filename:" "${p}" \
 				| cut -f 2 -d " "))
 			[[ "${bn}" =~ "${PV}" ]] && continue # Skip duplicate
 			[[ -z "${bn}" ]] && continue
-
-	# bnsan means base name (aka file name) sanitized.  Sometimes you cannot
-	# use the raw base name as the key to the associative array.
 			local bnsan="A"$(echo "${bn}" \
 				| sha1sum \
 				| cut -f 1 -d " ")
@@ -215,6 +234,9 @@ pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50303-
 				local bn=$(basename "${y}")
 				[[ "${bn}" =~ "${PV}" ]] && continue # Skip duplicate
 				wget -c "${uri_base}/${y}"
+
+	# bnsan means base name (aka file name) sanitized.  Sometimes you cannot
+	# use the raw base name as the key to the associative array.
 				local bnsan="A"$(echo "${bn}" \
 					| sha1sum \
 					| cut -f 1 -d " ")
