@@ -211,13 +211,14 @@ REQUIRED_USE+="
 
 ROCM_SLOTS=(
 # The container uses 5.5.0
+# See https://github.com/google/jax/blob/jaxlib-v0.4.14/build/rocm/Dockerfile.ms
 	"5.5.1" # For llvm 16
-	"5.6.0" # For llvm 16 added by ebuild maintainer
+#	"5.6.0" # For llvm 16 added by ebuild maintainer
 )
 
 declare -A LLD_SLOT=(
 	["5.5.1"]="16"
-	["5.6.0"]="16"
+#	["5.6.0"]="16"
 )
 
 gen_rocm_depends() {

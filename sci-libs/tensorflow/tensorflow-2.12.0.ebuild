@@ -396,18 +396,19 @@ CUDA_CDEPEND="
 "
 
 # Upstream tests 5.0, 5.3
+# See "deps versioning" section above for details.
 HIP_SLOTS=(
 	"5.3.3" # For llvm 15
-	"5.4.3" # For llvm 15
-	"5.5.1" # For llvm 16
-	"5.6.0" # For llvm 16
+#	"5.4.3" # For llvm 15
+#	"5.5.1" # For llvm 16
+#	"5.6.0" # For llvm 16
 )
 
 declare -A LLD_SLOT=(
 	["5.3.3"]="15"
-	["5.4.3"]="15"
-	["5.5.1"]="16"
-	["5.6.0"]="16"
+#	["5.4.3"]="15"
+#	["5.5.1"]="16"
+#	["5.6.0"]="16"
 )
 
 gen_rocm_rdepend() {
