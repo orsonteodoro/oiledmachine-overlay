@@ -267,7 +267,7 @@ eerror
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_MAX_SLOT}"
 	else
-		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 	fi
 
 	if [[ \
