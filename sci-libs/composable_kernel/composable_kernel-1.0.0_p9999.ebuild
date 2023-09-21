@@ -190,7 +190,7 @@ src_configure() {
 #
 
 	append-flags \
-		--rocm-path="${ESYSROOT}${ROCM_PATH}/$(get_libdir)" \
+		--rocm-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
 		-fno-stack-protector
 #		-mcumode -mno-wavefrontsize64
 
