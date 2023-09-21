@@ -6,4 +6,10 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <use>
+    <flag name="si">
+      Generate an informational list of additional firmware required for
+      Southern Islands (SI).
+    </flag>
+  </use>
 </pkgmetadata>

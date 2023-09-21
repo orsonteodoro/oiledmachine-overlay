@@ -7,26 +7,34 @@ DESCRIPTION="Firmware blobs used by amdgpu driver in DKMS format"
 HOMEPAGE="
 https://www.amd.com/en/support/linux-drivers
 "
-LICENSE="AMDGPU-FIRMWARE-2020"
+LICENSE="
+	AMDGPU-FIRMWARE-2020
+	si? (
+		MIT
+	)
+"
 KEYWORDS="~amd64"
 RDEPEND="
 	!sys-firmware/rock-firmware
 "
 SLOT="0/${PV}"
 inherit unpacker
-IUSE="r1"
+IUSE="si r1"
 REQUIRED_USE="
 "
-DRIVER_PV="5.5.1"
+DRIVER_PV="5.5.1" # Folder name
 ROCM_PV="5.5.1"
 MY_PV="6.0.5.50501-1593694" # The 4th component is the rock version 5.05.01 == 5.5.1.
 DEB_OS_REL="22.04"
 FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
 SRC_URI="
 https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms/${FN}
+si? (
+https://raw.githubusercontent.com/RadeonOpenCompute/ROCK-Kernel-Driver/rocm-${ROCM_PV}/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
+	-> amdgpu_cgs.c.${ROCM_PV}
+)
 "
-# Update also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.5.1/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
-# The above file is used to obtain CONFIG_EXTRA_FIRMWARE.
+# The amdgpu_cgs.c file is used to obtain CONFIG_EXTRA_FIRMWARE for Southern Islands (SI).
 S="${WORKDIR}"
 
 pkg_setup() {
@@ -78,9 +86,11 @@ PKG_POSTINST_LIST=""
 PKG_RADEON_LIST=""
 
 gen_radeon_list() {
+	local amdgpu_cgs_path="${DISTDIR}/amdgpu_cgs.c.${ROCM_PV}"
+	[[ -e "${amdgpu_cgs_path}" ]] || die "Missing file"
 	local F=$(grep -r \
 		-e "radeon/" \
-		"${FILESDIR}/${ROCM_PV}/amdgpu_cgs.c" \
+		"${amdgpu_cgs_path}" \
 		| sed \
 			-e "s|.*\"radeon|radeon|" \
 			-e "s|.bin.*|.bin|")
@@ -175,7 +185,7 @@ pkg_preinst() {
 	)
 
 	gen_all_list
-	gen_radeon_list
+	use si && gen_radeon_list
 }
 
 src_install() {
@@ -198,8 +208,10 @@ einfo "Additional firmware in the sys-kernel/linux-firmware package is"
 einfo "required by amdgpu-dkms for these codenames and should be added to"
 einfo "CONFIG_EXTRA_FIRMWARE:"
 einfo
-	echo -e "${PKG_RADEON_LIST}"
-	einfo
+	if use si ; then
+		echo -e "${PKG_RADEON_LIST}"
+		einfo
+	fi
 einfo
 einfo "The firmware requirements may change if the amdgpu DKMS driver is"
 einfo "updated."

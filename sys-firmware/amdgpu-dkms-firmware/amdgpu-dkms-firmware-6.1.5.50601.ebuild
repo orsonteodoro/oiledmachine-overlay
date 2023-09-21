@@ -22,12 +22,11 @@ inherit unpacker
 IUSE="si r1"
 REQUIRED_USE="
 "
-DRIVER_PV="22.10.3" # Folder name
-ROCM_PV="5.1.3"
-MY_PV="5.13.20.22.10.50103-1420323" # The 6th component is the rock version 5.01.03 == 5.1.3.
-MY_PV2="5.13.20.22.10-1420323"
+DRIVER_PV="5.6.1" # Folder name
+ROCM_PV="5.6.1"
+MY_PV="6.1.5.50601-1649308"  # The 4th component is the rock version 5.06.00 == 5.6.0.
 DEB_OS_REL="22.04"
-FN="amdgpu-dkms-firmware_${MY_PV}_all.deb"
+FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
 SRC_URI="
 https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms/${FN}
 si? (
@@ -72,7 +71,7 @@ unpack_deb() {
 src_unpack() {
 	default
 	unpack_deb "${DISTDIR}/${FN}"
-	export S="${WORKDIR}/usr/src/amdgpu-${MY_PV2}/firmware/amdgpu"
+	export S="${WORKDIR}/lib/firmware/updates/amdgpu"
 }
 
 src_configure() {
