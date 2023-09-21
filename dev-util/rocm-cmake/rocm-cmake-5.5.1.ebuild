@@ -65,10 +65,7 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
-	mv \
-		"${ED}/usr/share/doc" \
-		"${ED}${EROCM_PATH}/usr/share" \
-		|| die
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

@@ -518,6 +518,19 @@ check_amdgpu() {
 	done
 }
 
+# @FUNCTION: rocm_mv_docs
+# @DESCRIPTION:
+# Move the docs to avoid a multislot collision.
+rocm_mv_docs() {
+	if [[ -e "${ED}/usr/share/doc" ]] ; then
+		dodir "${EROCM_PATH}/share"
+		mv \
+			"${ED}/usr/share/doc" \
+			"${ED}${EROCM_PATH}/share" \
+			|| die
+	fi
+}
+
 EXPORT_FUNCTIONS pkg_setup src_prepare
 
 fi
