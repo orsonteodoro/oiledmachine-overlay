@@ -157,7 +157,7 @@ eerror
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
-			-DROCM_PATH="${ESYSROOT}/usr"
+			-DROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 		)
 	fi
 

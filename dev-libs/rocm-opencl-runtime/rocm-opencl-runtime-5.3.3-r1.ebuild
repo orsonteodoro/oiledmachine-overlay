@@ -88,13 +88,13 @@ src_configure() {
 
 	local mycmakeargs=(
 		-Wno-dev
-		-DROCCLR_PATH="${CLR_S}"
 		-DAMD_OPENCL_PATH="${S}"
-		-DROCM_PATH="${EPREFIX}/usr"
 		-DBUILD_TESTS=$(usex test ON OFF)
 		-DEMU_ENV=ON
 		-DBUILD_ICD=OFF
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
+		-DROCCLR_PATH="${CLR_S}"
+		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 	)
 	cmake_src_configure
 }

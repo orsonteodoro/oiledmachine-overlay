@@ -105,7 +105,7 @@ src_configure() {
 		-DBUILD_ICD=OFF
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DROCCLR_PATH="${CLR_S}"
-		-DROCM_PATH="${EPREFIX}/usr"
+		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-Wno-dev
 	)
 	cmake_src_configure

@@ -6,7 +6,7 @@ diff -urp rpp-1.2.0.orig/cmake/CppCheck.cmake rpp-1.2.0/cmake/CppCheck.cmake
          cppcheck
      PATHS
 -        /opt/rocm/bin
-+        /usr/bin
++        @ESYSROOT_ROCM_PATH@/bin
  )
  
  ProcessorCount(CPPCHECK_JOBS)
@@ -64,9 +64,9 @@ diff -urp rpp-1.2.0.orig/cmake/FindOpenCL.cmake rpp-1.2.0/cmake/FindOpenCL.cmake
 +        PATH_SUFFIXES ${_PATH_SUFFIXES}
 +        PATHS
 +        ${ROCM_PATH}/@LIBDIR@/
-+        /usr/@LIBDIR@
-+        /usr/local/cuda/@LIBDIR@
-+        /opt/cuda/@LIBDIR@
++        @ESYSROOT@/usr/@LIBDIR@
++        @ESYSROOT@/usr/local/cuda/@LIBDIR@
++        @ESYSROOT@/opt/cuda/@LIBDIR@
 +    )
      mark_as_advanced( OPENCL_LIBRARIES )
  
@@ -109,8 +109,8 @@ diff -urp rpp-1.2.0.orig/cmake/FindTurboJpeg.cmake rpp-1.2.0/cmake/FindTurboJpeg
 -    /usr/lib
 -    /opt/libjpeg-turbo/lib
 +    ${TURBO_JPEG_PATH}/@LIBDIR@
-+    /usr/@LIBDIR@
-+    /opt/libjpeg-turbo/@LIBDIR@
++    @ESYSROOT@/usr/@LIBDIR@
++    @ESYSROOT@/opt/libjpeg-turbo/@LIBDIR@
  )
  mark_as_advanced(TurboJpeg_LIBRARIES)
  
@@ -126,8 +126,8 @@ diff -urp rpp-1.2.0.orig/cmake/FindTurboJpeg.cmake rpp-1.2.0/cmake/FindTurboJpeg
 -    /usr/lib
 -    /opt/libjpeg-turbo/lib
 +    ${TURBO_JPEG_PATH}/@LIBDIR@
-+    /usr/@LIBDIR@
-+    /opt/libjpeg-turbo/@LIBDIR@
++    @ESYSROOT@/usr/@LIBDIR@
++    @ESYSROOT@/opt/libjpeg-turbo/@LIBDIR@
  )
  mark_as_advanced(TurboJpeg_LIBRARIES_DIRS)
  
@@ -164,7 +164,7 @@ diff -urp rpp-1.2.0.orig/CMakeLists.txt rpp-1.2.0/CMakeLists.txt
  
  # ROCm Path
 -set(ROCM_PATH /opt/rocm CACHE PATH "RPP default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "RPP default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "RPP default ROCm installation path")
  # Avoid setting the default path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
    set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "RPP default ROCm installation path" FORCE)
@@ -173,7 +173,7 @@ diff -urp rpp-1.2.0.orig/CMakeLists.txt rpp-1.2.0/CMakeLists.txt
          # To use RPP_BACKEND_HIP
          add_definitions(-DRPP_BACKEND_HIP=${RPP_BACKEND_HIP})
 -        set(COMPILER_FOR_HIP ${ROCM_PATH}/llvm/bin/clang++)
-+        set(COMPILER_FOR_HIP @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/clang++)
++        set(COMPILER_FOR_HIP @ESYSROOT_LLVM_PATH@/bin/clang++)
          include_directories(${ROCM_PATH}/${CMAKE_INSTALL_INCLUDEDIR})
          link_directories(${HIP_PATH}/${CMAKE_INSTALL_LIBDIR})
          # link To HIP Host library -- [hip::host] to use host API
@@ -194,7 +194,7 @@ diff -urp rpp-1.2.0.orig/utilities/examples/brightness/CMakeLists.txt rpp-1.2.0/
  project(examples/brightness)
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH})
  
  # Set message options
@@ -203,7 +203,7 @@ diff -urp rpp-1.2.0.orig/utilities/examples/brightness/CMakeLists.txt rpp-1.2.0/
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(brightness_hip brightness_hip.cpp)
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGPU_SUPPORT=1 -DRPP_BACKEND_HIP=1 -std=gnu++14")
@@ -221,7 +221,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt r
  project(rpp_performancetests/HIP_NEW)
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH})
  
  # Set message options
@@ -230,7 +230,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt r
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(BatchPD_hip_pkd3 BatchPD_hip_pkd3.cpp)
      add_executable(BatchPD_hip_pln1 BatchPD_hip_pln1.cpp)
@@ -249,7 +249,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt 
  project(rpp_performancetests/HOST_NEW)
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  
  # Set message options
  if(NOT WIN32)
@@ -258,7 +258,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt 
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(BatchPD_host_pkd3 BatchPD_host_pkd3.cpp)
      add_executable(BatchPD_host_pln1 BatchPD_host_pln1.cpp)
@@ -277,7 +277,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt r
  project(Rpp_test)
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  
  # Set message options
  if(NOT WIN32)
@@ -286,11 +286,11 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt r
  if (OpenCL_FOUND AND OpenCV_FOUND)
      message("-- ${Green}${PROJECT_NAME} set to build with rpp, OpenCL and OpenCV${ColourReset}")
 -    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated /opt/rocm/opencl/include
-+    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated /usr/opencl/include
++    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated @ESYSROOT_ROCM_PATH@/opencl/include
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(BatchPD_ocl_pkd3 BatchPD_ocl_pkd3.cpp)
      add_executable(BatchPD_ocl_pln1 BatchPD_ocl_pln1.cpp)
@@ -309,7 +309,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-1.2.
  project(rpp_unittests/HIP_NEW)
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH})
  
  # Set message options
@@ -318,7 +318,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-1.2.
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(BatchPD_hip_pkd3 BatchPD_hip_pkd3.cpp)
      add_executable(BatchPD_hip_pln1 BatchPD_hip_pln1.cpp)
@@ -337,7 +337,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-1.2
  project(rpp_unittests/HOST_NEW)
  
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  
  # Set message options
  if(NOT WIN32)
@@ -346,7 +346,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-1.2
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(BatchPD_host_pkd3 BatchPD_host_pkd3.cpp)
      add_executable(BatchPD_host_pln1 BatchPD_host_pln1.cpp)
@@ -365,7 +365,7 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-1.2.
  project(rpp_unittests/OCL_NEW)
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  
  # Set message options
  if(NOT WIN32)
@@ -374,11 +374,11 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-1.2.
  if (OpenCL_FOUND AND OpenCV_FOUND)
      message("-- ${Green}${PROJECT_NAME} set to build with rpp, OpenCL and OpenCV${ColourReset}")
 -    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated /opt/rocm/opencl/include
-+    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated /usr/opencl/include
++    # include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers) # commented since OpenCL_INCLUDE_DIRS points to a deprecated @ESYSROOT_ROCM_PATH@/opencl/include
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(BatchPD_ocl_pkd3 BatchPD_ocl_pkd3.cpp)
      add_executable(BatchPD_ocl_pln1 BatchPD_ocl_pln1.cpp)
@@ -397,7 +397,7 @@ diff -urp rpp-1.2.0.orig/utilities/test_suite/HIP/CMakeLists.txt rpp-1.2.0/utili
  project(test_suite/HIP)
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH})
  
  # Set message options
@@ -406,7 +406,7 @@ diff -urp rpp-1.2.0.orig/utilities/test_suite/HIP/CMakeLists.txt rpp-1.2.0/utili
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(Tensor_hip Tensor_hip.cpp)
      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGPU_SUPPORT=1 -DRPP_BACKEND_HIP=1 -std=gnu++14")
@@ -424,7 +424,7 @@ diff -urp rpp-1.2.0.orig/utilities/test_suite/HOST/CMakeLists.txt rpp-1.2.0/util
  project(test_suite/HOST)
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
 -set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
-+set(ROCM_PATH /usr CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
  
  # Set message options
  if(NOT WIN32)
@@ -433,7 +433,7 @@ diff -urp rpp-1.2.0.orig/utilities/test_suite/HOST/CMakeLists.txt rpp-1.2.0/util
      include_directories(${OpenCV_INCLUDE_DIRS})
      include_directories(${ROCM_PATH}/include ${ROCM_PATH}/include/rpp /usr/local/include)
 -    link_directories(${ROCM_PATH}/lib /usr/local/lib)
-+    link_directories(${ROCM_PATH}/@LIBDIR@ /usr/local/@LIBDIR@)
++    link_directories(${ROCM_PATH}/@LIBDIR@ @ESYSROOT@/usr/local/@LIBDIR@)
  
      add_executable(Tensor_host Tensor_host.cpp)
  

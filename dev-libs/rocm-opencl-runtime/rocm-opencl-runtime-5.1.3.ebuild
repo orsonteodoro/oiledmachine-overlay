@@ -101,7 +101,7 @@ src_configure() {
 		-DBUILD_TESTS=$(usex test ON OFF)
 		-DEMU_ENV=ON
 		-DROCCLR_PATH="${CLR_S}"
-		-DROCM_PATH="${EPREFIX}/usr"
+		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-Wno-dev
 		# -DCMAKE_STRIP=""
 	)
