@@ -65,6 +65,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCPACK_PACKAGING_INSTALL_PREFIX="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	)
 	cmake_src_configure
