@@ -3,24 +3,22 @@
 
 EAPI=8
 
-GENPATCHES_VER="18"
-PATCH_PROJC_VER="6.4-r0"
-PATCH_RT_VER="6.4.6-rt8"
+GENPATCHES_VER="6"
+PATCH_PROJC_VER="6.5-r0"
+PATCH_RT_VER="6.5.2-rt8"
 
-inherit ot-kernel-v6.4
+inherit ot-kernel-v6.5
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.4.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.5.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.4.1 (20230702) with builder profile
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.4.2 (20230711) with builder profile
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.4.3 (20230711) with builder profile
+# OILEDMACHINE-OVERLAY-TEST:  NOT TESTED (interactive) 6.5.2 with builder profile
 # USE="bbrv2 build cfs disable_debug genpatches ncurses openssl symlink
 # zen-sauce zstd -bzip2 -cfi -clang -clang-pgo -cve_hotfix -exfat
 # -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick -kcfi -lto -lz4 -lzma
@@ -54,9 +52,9 @@ inherit ot-kernel-v6.4
 # OT_KERNEL_WORK_PROFILE="builder-interactive"
 # OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 # OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
-# boot:       passed
-# show logo:  passed
-# network:    passed
+# boot:       not tested
+# show logo:  not tested
+# network:    not tested
 
 # env file gamer profile sample:
 # OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
