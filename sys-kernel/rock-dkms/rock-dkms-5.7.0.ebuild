@@ -25,7 +25,7 @@ KV="6.2.8" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/ro
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier custom-kernel directgma hybrid-graphics
-numa +sign-modules ssg strict-pairing
+numa +sign-modules ssg strict-pairing r1
 "
 REQUIRED_USE="
 	hybrid-graphics? (
@@ -77,7 +77,7 @@ gen_kernel_pairs() {
 		done
 	done
 }
-AMDGPU_FIRMWARE_PV="6.1.5.50600"
+AMDGPU_FIRMWARE_PV="6.2.4.50700"
 CDEPEND="
 	!custom-kernel? (
 		|| (
