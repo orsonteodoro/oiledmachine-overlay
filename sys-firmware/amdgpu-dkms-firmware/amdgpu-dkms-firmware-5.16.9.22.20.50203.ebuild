@@ -25,8 +25,8 @@ REQUIRED_USE="
 DRIVER_PV="22.20.3" # Folder name
 ROCM_PV="5.2.3"
 MY_PV="5.16.9.22.20.50203-1462319" # The 6th component is the rock version 5.01.03 == 5.1.3.
-MY_PV2="5.16.9.22.20-1462319"
 DEB_OS_REL="20.04"
+MY_PV2="5.16.9.22.20-1462319~${DEB_OS_REL}"
 FN="amdgpu-dkms-firmware_${MY_PV}~${DEB_OS_REL}_all.deb"
 SRC_URI="
 https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms/${FN}
