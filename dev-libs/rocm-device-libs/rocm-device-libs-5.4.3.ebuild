@@ -59,7 +59,6 @@ RESTRICT="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-test-bitcode-dir.patch"
-	"${FILESDIR}/${PN}-5.1.3-llvm-link.patch"
 
 # Fixes mtime.cl:20:12: error: use of undeclared identifier '__builtin_amdgcn_s_sendmsg_rtnl'
 	"${FILESDIR}/${PN}-5.4.3-Revert-Update-counters-for-gfx11.patch"
@@ -74,14 +73,23 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	if use system-llvm ; then
+		eapply "${FILESDIR}/${PN}-5.1.3-llvm-link.patch"
+	fi
 	rocm_src_prepare
 }
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DLLVM_DIR="${ESYSROOT}${ROCM_LLVM_PATH}"
 	)
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

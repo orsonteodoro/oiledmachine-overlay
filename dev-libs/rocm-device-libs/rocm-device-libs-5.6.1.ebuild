@@ -58,9 +58,6 @@ RESTRICT="
 	)
 "
 PATCHES=(
-# https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94
-	"${FILESDIR}/${PN}-5.5.1-llvm-link.patch"
-
 	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
@@ -71,14 +68,24 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	if use system-llvm ; then
+# https://github.com/RadeonOpenCompute/ROCm-Device-Libs/issues/94
+		eapply "${FILESDIR}/${PN}-5.5.1-llvm-link.patch"
+	fi
 	rocm_src_prepare
 }
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DLLVM_DIR="${ESYSROOT}${ROCM_LLVM_PATH}"
 	)
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
