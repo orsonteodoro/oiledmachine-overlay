@@ -67,7 +67,7 @@ src_install() {
 	cmake_src_install
 	mv \
 		"${ED}/usr/share/doc" \
-		"${ED}${EROCM_PATH}" \
+		"${ED}${EROCM_PATH}/usr/share" \
 		|| die
 }
 
