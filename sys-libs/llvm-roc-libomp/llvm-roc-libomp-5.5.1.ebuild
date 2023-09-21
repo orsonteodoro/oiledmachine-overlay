@@ -316,12 +316,11 @@ src_configure() {
 		experimental_targets+=";NVPTX"
 	fi
 	experimental_targets="${experimental_targets:1}"
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	local mycmakeargs=(
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
 		-DCMAKE_CXX_COMPILER="${CHOST}-g++"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${rocm_path}/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
 		-DLIBOMP_OMPD_SUPPORT=$(usex ompd ON OFF)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt ON OFF)
 		-DLLVM_BUILD_DOCS=NO
@@ -334,7 +333,7 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
-		-DLLVM_INSTALL_PREFIX="${EPREFIX}${rocm_path}/llvm/lib/cmake/llvm"
+		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm/lib/cmake/llvm"
 		-DLLVM_INSTALL_UTILS=ON
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
@@ -351,7 +350,7 @@ src_configure() {
 		)
 		if use llvm_targets_AMDGPU ; then
 			mycmakeargs+=(
-				-DAMDDeviceLibs_DIR="${ESYSROOT}${rocm_path}/$(get_libdir)/cmake/AMDDeviceLibs"
+				-DAMDDeviceLibs_DIR="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/AMDDeviceLibs"
 				-DDEVICELIBS_ROOT="${S_DEVICELIBS}"
 				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
 			)
@@ -458,11 +457,10 @@ src_install() {
 			${targets[@]}
 	fi
 	cd "${BUILD_DIR}" || die
-	local rocm_path="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
-	exeinto "${rocm_path}/llvm/lib"
+	exeinto "${EROCM_PATH}/llvm/lib"
 	doexe "lib/"{libgomp.so,libomp.so,libiomp5.so}
 	use ompd && doexe "lib/libompd.so"
-	insinto "${rocm_path}/llvm/include"
+	insinto "${EROCM_PATH}/llvm/include"
 	doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp.h"
 	if use ompt ; then
 		doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp-tools.h"
