@@ -17,6 +17,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 PYTHON_COMPAT=( python3_{9..11} )
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic llvm python-any-r1 toolchain-funcs rocm
@@ -80,15 +81,23 @@ DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-IUSE="benchmark test r1"
+IUSE="benchmark system-llvm test r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
-	sys-libs/libomp:${LLVM_MAX_SLOT}
+	!sci-libs/rocSPARSE:0
+	!system-llvm? (
+		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	)
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}[rocm]
 	~sci-libs/rocPRIM-${PV}:${SLOT}[rocm(+)]
+	system-llvm? (
+		sys-libs/libomp:${LLVM_MAX_SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -189,6 +198,7 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocsparse"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
@@ -212,6 +222,7 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		dobin clients/staging/rocsparse-bench
 	fi
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

@@ -51,6 +51,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DROCM_VERSION="${PV}"
 	)
 	cmake_src_configure
@@ -59,6 +60,7 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	dodoc copyright
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

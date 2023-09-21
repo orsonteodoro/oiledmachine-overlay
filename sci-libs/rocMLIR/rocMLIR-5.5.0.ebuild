@@ -6,6 +6,7 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR="ninja"
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm python-r1 rocm
 
@@ -30,7 +31,7 @@ LICENSE="
 # Apache-2.0-with-LLVM-exceptions - mlir/LICENSE.TXT
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="system-llvm r5"
 RDEPEND="
 	${PYTHON_DEPS}
@@ -232,8 +233,8 @@ src_install() {
 		"${staging_prefix}/"* \
 		"${ED}" \
 		|| die
-	cd "${ED}/usr" || die
 	sanitize_permissions
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

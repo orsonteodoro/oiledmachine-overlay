@@ -20,6 +20,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 	gfx1031
 )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 LLVM_MAX_SLOT=15
 inherit cmake flag-o-matic llvm rocm
@@ -33,7 +34,7 @@ DESCRIPTION="AMD's Machine Intelligence Library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm system-llvm test r1"
 gen_amdgpu_required_use() {
 	local x
@@ -321,6 +322,11 @@ src_test() {
 
 	MAKEOPTS="-j1" \
 	cmake_src_test
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

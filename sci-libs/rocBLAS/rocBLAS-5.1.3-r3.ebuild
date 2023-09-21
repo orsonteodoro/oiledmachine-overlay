@@ -32,6 +32,7 @@ DOCS_DEPEND="
 "
 LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 inherit cmake docs edo flag-o-matic multiprocessing prefix llvm python-any-r1 rocm
 
@@ -159,6 +160,7 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_TESTING=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 		-Dpython="${PYTHON}"
 	)
@@ -226,6 +228,7 @@ src_install() {
 		dolib.so clients/librocblas_fortran_client.so
 		dobin clients/staging/rocblas-bench
 	fi
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# TODO:  review the install prefix
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
@@ -12,7 +14,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx940
 	gfx1030
 )
+# See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/1.2.0/docs/release.md?plain=1#L18C22-L18C25
 LLVM_MAX_SLOT=16
+ROCM_SLOT="5.5"
 
 inherit cmake flag-o-matic llvm rocm toolchain-funcs
 
@@ -33,10 +37,10 @@ high-performance computer vision library for AMD processors with HIP/OpenCL/CPU 
 back-ends."
 HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE="
 ${ROCM_IUSE}
-cpu opencl rocm test
+cpu opencl rocm system-llvm test
 r1
 "
 gen_rocm_required_use() {
@@ -58,7 +62,7 @@ REQUIRED_USE="
 	)
 "
 
-LLVM_SLOTS=( 16 15 14 )
+LLVM_SLOTS=( 16 )
 gen_rdepend_llvm() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -71,19 +75,28 @@ gen_rdepend_llvm() {
 		"
 	done
 }
+#		>=dev-util/hip-5.4.3:= # originally
 RDEPEND="
-	|| (
-		$(gen_rdepend_llvm)
+	!sci-libs/rpp:0
+	!system-llvm? (
+		sys-devel/llvm-roc:=
 	)
-	sys-devel/clang:=
-	sys-devel/llvm:=
 	>=dev-libs/boost-1.72:=
+	dev-libs/rocm-compiler[system-llvm=]
 	opencl? (
 		virtual/opencl
 	)
 	rocm? (
-		>=dev-util/hip-5.4.3:=
-		dev-libs/rocm-device-libs
+		>=dev-util/hip-5.5.0:${ROCM_SLOT}
+		>=dev-libs/rocm-device-libs-5.5.0:${ROCM_SLOT}
+		dev-util/hip:=
+	)
+	system-llvm? (
+		sys-devel/clang:=
+		sys-devel/llvm:=
+	)
+	|| (
+		$(gen_rdepend_llvm)
 	)
 "
 DEPEND="
@@ -138,9 +151,10 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DCMAKE_C_COMPILER="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang"
-		-DCMAKE_CXX_COMPILER="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++"
-		-DROCM_PATH="${ESYSROOT}/usr"
+		-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang"
+		-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 	)
 
 #	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
@@ -157,7 +171,7 @@ ewarn
 			-DBACKEND="OCL"
 		)
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS=$(get_amdgpu_flags)
@@ -167,8 +181,8 @@ ewarn
 			-DHIP_RUNTIME="rocclr"
 		)
 		append-flags \
-			--rocm-path="${ESYSROOT}/usr" \
-			--rocm-device-lib-path="${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode"
+			--rocm-path="${ESYSROOT}${EROCM_PATH}" \
+			--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
 
 		# Fix:
 		# lld: error: undefined symbol: __stack_chk_guard
@@ -211,13 +225,18 @@ eerror
 	else
 einfo "Using libomp"
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp -Wno-unused-command-line-argument"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 		)
 	fi
 
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

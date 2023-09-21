@@ -116,4 +116,9 @@ src_configure() {
 	cmake_src_configure
 }
 
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
+}
+
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

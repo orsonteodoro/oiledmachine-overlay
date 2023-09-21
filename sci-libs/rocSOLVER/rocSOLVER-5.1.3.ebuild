@@ -14,6 +14,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 )
 LLVM_MAX_SLOT=14
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake edo llvm rocm
@@ -27,7 +28,7 @@ DESCRIPTION="Implementation of a subset of LAPACK functionality on the ROCm plat
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSOLVER"
 LICENSE="BSD"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test benchmark r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -86,7 +87,8 @@ src_configure() {
 		-DBUILD_CLIENTS_SAMPLES=NO
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_SKIP_RPATH=ON
-		-DCMAKE_INSTALL_INCLUDEDIR="${EPREFIX}/usr/include/rocsolver"
+		-DCMAKE_INSTALL_INCLUDEDIR="${EPREFIX}${EROCM_PATH}/include/rocsolver"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
@@ -111,6 +113,7 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		dobin clients/staging/rocsolver-bench
 	fi
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

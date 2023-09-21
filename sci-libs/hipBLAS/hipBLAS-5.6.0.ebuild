@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic llvm rocm
 
@@ -16,8 +17,8 @@ DESCRIPTION="ROCm BLAS marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
-IUSE+=" cuda +rocm r1"
+SLOT="${ROCM_SLOT}/${PV}"
+IUSE+=" cuda +rocm system-llvm r1"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -25,6 +26,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	dev-util/hip-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -62,7 +64,7 @@ src_configure() {
 	# to perform the test here.
 		-DBUILD_CLIENTS_TESTS=OFF
 
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
 	if use cuda ; then
@@ -84,7 +86,7 @@ src_configure() {
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DHIP_COMPILER="clang"
@@ -104,6 +106,7 @@ src_install() {
 	rm "${ED}/usr/include/hipblas/hipblas_module.f90" || die
 	insinto "${EPREFIX}/usr/include/hipblas"
 	doins library/src/hipblas_module.f90
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

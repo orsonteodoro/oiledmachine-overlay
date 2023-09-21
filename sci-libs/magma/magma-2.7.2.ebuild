@@ -45,7 +45,9 @@ CUDA_TARGETS_COMPAT=(
 FORTRAN_STANDARD="77 90"
 MY_PV=$(ver_rs 3 '-')
 PYTHON_COMPAT=( python3_{10..11} )
+LLVM_MAX_SLOT=16
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
+ROCM_SLOT="5.6" # Placeholder
 
 inherit cmake flag-o-matic fortran-2 python-any-r1 rocm toolchain-funcs
 

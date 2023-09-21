@@ -34,6 +34,7 @@ DOCS_DEPEND="
 	media-gfx/graphviz
 "
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 PYTHON_COMPAT=( python3_{10..11} )
 inherit cmake docs edo flag-o-matic multiprocessing llvm python-any-r1 rocm
@@ -53,7 +54,7 @@ KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test r4
+benchmark cuda +rocm system-llvm test r4
 "
 gen_cuda_required_use() {
 	local x
@@ -96,6 +97,7 @@ RDEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	>=dev-libs/msgpack-3.0.1
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	benchmark? (
 		sys-libs/libomp:${LLVM_MAX_SLOT}
@@ -174,6 +176,7 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 		-Dpython="${PYTHON}"
 		-DROCM_SYMLINK_LIBS=OFF
@@ -243,6 +246,7 @@ src_install() {
 		dolib.a clients/librocblas_fortran_client.a
 		dobin clients/staging/rocblas-bench
 	fi
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

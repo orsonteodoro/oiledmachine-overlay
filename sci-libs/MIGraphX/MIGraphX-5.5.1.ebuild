@@ -14,6 +14,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm python-r1 rocm
 
@@ -32,7 +33,7 @@ fi
 DESCRIPTION="AMD's graph optimization engine"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="-cpu -fpga -hip-rtc -mlir +rocm system-llvm test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -113,6 +114,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DMIGRAPHX_ENABLE_CPU=$(usex cpu ON OFF)
 		-DMIGRAPHX_ENABLE_FPGA=$(usex fpga ON OFF)
 		-DMIGRAPHX_ENABLE_GPU=$(usex rocm ON OFF)
@@ -132,6 +134,11 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

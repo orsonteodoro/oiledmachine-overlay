@@ -42,9 +42,17 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+src_configure() {
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+	)
+	cmake_src_configure
+}
+
 src_install() {
 	cmake_src_install
-	rm -rfv "${ED}/usr/share/doc/rocm-bandwidth-test"
+#	rm -rfv "${ED}/usr/share/doc/rocm-bandwidth-test"
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

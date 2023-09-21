@@ -12,6 +12,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 inherit cmake llvm rocm
 
@@ -25,14 +26,21 @@ multiply-accumulate (MMA) operations leveraging AMD GPU hardware"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocWMMA"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
-IUSE=""
+SLOT="${ROCM_SLOT}/${PV}"
+IUSE="system-llvm"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	sys-libs/libomp:${LLVM_MAX_SLOT}
+	!system-llvm? (
+		sys-libs/llvm-roc-libomp:=
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	)
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}[rocm]
+	system-llvm? (
+		sys-libs/libomp:${LLVM_MAX_SLOT}
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -66,22 +74,28 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
-		-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
+		-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 		-DOpenMP_CXX_LIB_NAMES="libomp"
-		-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+		-DOpenMP_libomp_LIBRARY="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 		-DROCWMMA_BUILD_TESTS=OFF
 	)
 
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

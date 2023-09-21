@@ -25,6 +25,7 @@ CUDA_TARGETS_COMPAT=(
 CHECKREQS_DISK_BUILD="7G"
 LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{9..10} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake check-reqs edo flag-o-matic llvm multiprocessing python-r1 rocm
@@ -38,7 +39,7 @@ DESCRIPTION="Next generation FFT implementation for ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocFFT"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 benchmark cuda perfscripts +rocm test
@@ -189,6 +190,7 @@ src_configure() {
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocFFT/"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 		-DPYTHON3_EXE="${EPYTHON}"
 		-DSQLITE_USE_SYSTEM_PACKAGE=ON
@@ -259,6 +261,7 @@ src_install() {
 		insinto "/usr/share/${PN}-perflib"
 		doins *.asy suites.py
 	fi
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

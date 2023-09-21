@@ -12,7 +12,13 @@
   <upstream>
     <remote-id type="github">ROCmSoftwarePlatform/rocSPARSE</remote-id>
   </upstream>
-    <use>
-        <flag name="benchmark">Build and install rocblas-bench.</flag>
-    </use>
+  <use>
+    <flag name="benchmark">
+      Build and install rocblas-bench.
+    </flag>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability.
+    </flag>
+  </use>
 </pkgmetadata>

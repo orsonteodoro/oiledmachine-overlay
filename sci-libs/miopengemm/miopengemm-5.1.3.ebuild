@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=14
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
 
@@ -16,7 +17,7 @@ DESCRIPTION="An OpenCL general matrix multiplication (GEMM) API and kernel gener
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpenGEMM"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="-benchmark"
 RDEPEND="virtual/opencl"
 RDEPEND="
@@ -49,7 +50,7 @@ src_configure() {
 	strip-flags
 	filter-flags '*march*'
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
 	if use benchmark; then
 		mycmakeargs+=(
@@ -59,6 +60,11 @@ src_configure() {
 		)
 	fi
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

@@ -63,6 +63,7 @@ src_prepare() {
 src_configure() {
         local mycmakeargs=(
                 -DCMAKE_BUILD_TYPE=$(usex debug "DEBUG" "RELEASE")
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
         )
         cmake_src_configure
 }
@@ -70,6 +71,7 @@ src_configure() {
 src_install() {
         cmake_src_install
 	dodoc LICENSE
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

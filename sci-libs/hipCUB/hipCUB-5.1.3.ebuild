@@ -24,6 +24,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_75
 )
 LLVM_MAX_SLOT=14
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake llvm rocm
@@ -37,10 +38,10 @@ DESCRIPTION="Wrapper of rocPRIM or CUB for GPU parallel primitives"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipCUB"
 LICENSE="BSD"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test
+benchmark cuda +rocm system-llvm test
 "
 gen_cuda_required_use() {
 	local x
@@ -85,6 +86,7 @@ RESTRICT="
 	)
 "
 RDEPEND="
+	dev-util/hip-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	benchmark? (
 		dev-cpp/benchmark
@@ -164,6 +166,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 		-DBUILD_TEST=$(usex test ON OFF)
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
 
 	if use cuda ; then
@@ -193,7 +196,7 @@ src_configure() {
 			)
 		fi
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}/${ROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -212,6 +215,11 @@ src_test() {
 	check_amdgpu
 	MAKEOPTS="-j1" \
 	cmake_src_test
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

@@ -30,6 +30,7 @@ LLVM_MAX_SLOT=16
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
+ROCM_SLOT="5.4" # To be changed in pkg_setup()
 
 inherit cmake cuda flag-o-matic rocm python-single-r1
 
@@ -99,8 +100,9 @@ REQUIRED_USE="
 	)
 "
 ROCM_SLOTS=(
-	"5.5.1"
-	"5.6.0"
+# See https://github.com/pytorch/pytorch/blob/v2.0.1/.ci/docker/build.sh#L190
+	"5.4.3"
+	"5.3.3"
 )
 gen_rocm_depends() {
 	local pv
@@ -251,6 +253,13 @@ PATCHES=(
 )
 
 pkg_setup() {
+	if has_version "dev-util/hip:5.4" ; then
+		LLVM_MAX_SLOT="15"
+		ROCM_SLOT="5.4"
+	elif has_version "dev-util/hip:5.3" ; then
+		LLVM_MAX_SLOT="15"
+		ROCM_SLOT="5.3"
+	fi
 	rocm_pkg_setup
 }
 
@@ -397,26 +406,26 @@ einfo
 		)
 	fi
 	if use rocm ; then
-		export HCC_PATH="${ESYSROOT}/usr"
-		export HIP_PATH="${ESYSROOT}/usr"
-		export HIPCUB_PATH="${ESYSROOT}/usr"
-		export HIPFFT_PATH="${ESYSROOT}/usr"
-		export HIPRAND_PATH="${ESYSROOT}/usr"
-		export HIPSPARSE_PATH="${ESYSROOT}/usr"
-		export HSA_PATH="${ESYSROOT}/usr"
-		export MAGMA_HOME="${ESYSROOT}/usr"
-		export MIOPEN_PATH="${ESYSROOT}/usr"
-		export RCCL_PATH="${ESYSROOT}/usr"
-		export ROCBLAS_PATH="${ESYSROOT}/usr"
-		export ROCFFT_PATH="${ESYSROOT}/usr"
-		export ROCM_HOME="${ESYSROOT}/usr"
-		export ROCM_INCLUDE_DIRS="${ESYSROOT}/usr/include"
-		export ROCM_PATH="${ESYSROOT}/usr"
-		export ROCPRIM_PATH="${ESYSROOT}/usr"
-		export ROCRAND_PATH="${ESYSROOT}/usr"
-		export ROCTRACER_PATH="${ESYSROOT}/usr"
-		export ROCTHRUST_PATH="${ESYSROOT}/usr"
-		export THRUST_PATH="${ESYSROOT}/usr/include"
+		export HCC_PATH="${ESYSROOT}${EROCM_PATH}"
+		export HIP_PATH="${ESYSROOT}${EROCM_PATH}"
+		export HIPCUB_PATH="${ESYSROOT}${EROCM_PATH}"
+		export HIPFFT_PATH="${ESYSROOT}${EROCM_PATH}"
+		export HIPRAND_PATH="${ESYSROOT}${EROCM_PATH}"
+		export HIPSPARSE_PATH="${ESYSROOT}${EROCM_PATH}"
+		export HSA_PATH="${ESYSROOT}${EROCM_PATH}"
+		export MAGMA_HOME="${ESYSROOT}${EROCM_PATH}"
+		export MIOPEN_PATH="${ESYSROOT}${EROCM_PATH}"
+		export RCCL_PATH="${ESYSROOT}${EROCM_PATH}"
+		export ROCBLAS_PATH="${ESYSROOT}${EROCM_PATH}"
+		export ROCFFT_PATH="${ESYSROOT}${EROCM_PATH}"
+		export ROCM_HOME="${ESYSROOT}${EROCM_PATH}"
+		export ROCM_INCLUDE_DIRS="${ESYSROOT}${EROCM_PATH}/include"
+		export ROCM_PATH="${ESYSROOT}${EROCM_PATH}"
+		export ROCPRIM_PATH="${ESYSROOT}${EROCM_PATH}"
+		export ROCRAND_PATH="${ESYSROOT}${EROCM_PATH}"
+		export ROCTRACER_PATH="${ESYSROOT}${EROCM_PATH}"
+		export ROCTHRUST_PATH="${ESYSROOT}${EROCM_PATH}"
+		export THRUST_PATH="${ESYSROOT}${EROCM_PATH}/include"
 		mycmakeargs+=(
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
 		)

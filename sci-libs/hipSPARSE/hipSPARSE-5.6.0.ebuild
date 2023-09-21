@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic llvm rocm toolchain-funcs
@@ -58,8 +59,8 @@ DESCRIPTION="ROCm SPARSE marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
-IUSE="cuda +rocm test r2"
+SLOT="${ROCM_SLOT}/${PV}"
+IUSE="cuda +rocm system-llvm test r2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -73,6 +74,7 @@ RESTRICT="
 	)
 "
 RDEPEND="
+	dev-util/hip-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -143,6 +145,7 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/hipsparse"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
 
@@ -166,7 +169,7 @@ src_configure() {
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}/${ROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -184,6 +187,11 @@ src_test() {
 	check_amdgpu
 	cd "${BUILD_DIR}/clients/staging" || die
 	edob ./${PN,,}-test
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

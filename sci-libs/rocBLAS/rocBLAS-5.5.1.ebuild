@@ -34,6 +34,7 @@ DOCS_DEPEND="
 	media-gfx/graphviz
 "
 LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 PYTHON_COMPAT=( python3_{10..11} )
 inherit cmake docs edo flag-o-matic multiprocessing llvm python-any-r1 rocm
@@ -173,6 +174,7 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocblas"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 		-Dpython="${PYTHON}"
 		-DROCM_SYMLINK_LIBS=OFF
@@ -241,6 +243,7 @@ src_install() {
 		dolib.a clients/librocblas_fortran_client.a
 		dobin clients/staging/rocblas-bench
 	fi
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

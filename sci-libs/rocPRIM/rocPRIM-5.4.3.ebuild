@@ -15,6 +15,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 inherit cmake llvm rocm
 
@@ -27,7 +28,7 @@ DESCRIPTION="HIP parallel primitives for developing performant GPU-accelerated c
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocPRIM"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="benchmark hip-cpu +rocm test"
 gen_rocm_required_use() {
 	local x
@@ -130,6 +131,7 @@ src_configure() {
 		-DBUILD_BENCHMARK=$(usex benchmark ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DBUILD_TEST=$(usex test ON OFF)
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DSKIP_RPATH=ON
 		-DUSE_HIP_CPU=$(usex hip-cpu ON OFF)
 	)
@@ -157,6 +159,11 @@ src_test() {
 	check_amdgpu
 	MAKEOPTS="-j1" \
 	cmake_src_test
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

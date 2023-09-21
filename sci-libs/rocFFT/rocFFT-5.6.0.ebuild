@@ -34,6 +34,7 @@ CUDA_TARGETS_COMPAT=(
 CHECKREQS_DISK_BUILD="7G"
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{9..10} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake check-reqs edo flag-o-matic llvm multiprocessing python-r1 rocm
@@ -47,10 +48,10 @@ DESCRIPTION="Next generation FFT implementation for ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocFFT"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+aot benchmark cuda perfscripts +rocm test
++aot benchmark cuda perfscripts +rocm system-llvm test
 "
 gen_cuda_required_use() {
 	local x
@@ -102,6 +103,7 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	~sci-libs/rocRAND-${PV}:${SLOT}
 	cuda? (
@@ -205,6 +207,7 @@ src_configure() {
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocFFT/"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 		-DPYTHON3_EXE="${EPYTHON}"
 		-DSQLITE_USE_SYSTEM_PACKAGE=ON
@@ -233,7 +236,7 @@ src_configure() {
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -277,6 +280,7 @@ src_install() {
 		insinto "/usr/share/${PN}-perflib"
 		doins *.asy suites.py
 	fi
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-without-problems

@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic llvm rocm
 
@@ -16,7 +17,7 @@ DESCRIPTION="ROCm BLAS marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" cuda +rocm r1"
 REQUIRED_USE="
 	^^ (
@@ -62,7 +63,7 @@ src_configure() {
 	# to perform the test here.
 		-DBUILD_CLIENTS_TESTS=OFF
 
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
 	if use cuda ; then
@@ -103,6 +104,7 @@ src_install() {
 	rm "${ED}/usr/include/hipblas/hipblas_module.f90" || die
 	insinto "${EPREFIX}/usr/include/hipblas"
 	doins library/src/hipblas_module.f90
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

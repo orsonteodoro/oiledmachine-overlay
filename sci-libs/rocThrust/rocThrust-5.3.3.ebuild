@@ -14,6 +14,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CUB_COMMIT="ed040d585c3237d706973d7ad290bfee40958270"
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake llvm rocm
@@ -30,7 +31,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocThrust"
 
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 benchmark test r1
 "
@@ -60,7 +61,7 @@ RESTRICT="
 S="${WORKDIR}/rocThrust-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.0-operator_new.patch"
-	"A${FILESDIR}/${PN}-5.3.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -106,6 +107,7 @@ src_configure() {
 		-DBUILD_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DBUILD_TEST=$(usex test ON OFF)
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
@@ -127,6 +129,7 @@ src_install() {
 	cmake_src_install
 	use benchmark && \
 	dobin "${BUILD_DIR}/benchmarks/benchmark_thrust_bench"
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

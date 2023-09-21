@@ -61,10 +61,16 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DCMAKE_PREFIX_PATH="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DCMAKE_PREFIX_PATH="${ESYSROOT}${EROCM_PATH}"
 		-DROCRTST_BLD_TYPE="Release"
 	)
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

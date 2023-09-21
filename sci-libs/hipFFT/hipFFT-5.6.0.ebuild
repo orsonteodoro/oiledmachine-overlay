@@ -27,6 +27,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_86
 )
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic llvm rocm toolchain-funcs
@@ -40,7 +41,7 @@ DESCRIPTION="CU / ROCM agnostic hip FFT implementation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipFFT"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda +rocm
+cuda +rocm system-llvm
 "
 gen_cuda_required_use() {
 	local x
@@ -80,8 +81,9 @@ REQUIRED_USE="
 "
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
+	dev-util/hip-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -123,11 +125,11 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=OFF
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/hipfft"
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake"
 		-DCMAKE_MODULE_PATH="${EPREFIX}/usr/$(get_libdir)/cmake/hip"
-		-DHIP_ROOT_DIR="${EPREFIX}/usr"
-		-DROCM_PATH="${EPREFIX}/usr"
+		-DHIP_ROOT_DIR="${EPREFIX}${EROCM_PATH}"
+		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 	)
 	if use cuda ; then
 		local s=11
@@ -144,13 +146,13 @@ src_configure() {
 		export HIP_PLATFORM="nvidia"
 		mycmakeargs+=(
 			-DBUILD_WITH_LIB="CUDA"
-			-DCMAKE_CXX_COMPILER="${ESYSROOT}/usr/bin/nvcc"
+			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/cuda/bin/nvcc"
 			-DHIP_COMPILER="nvcc"
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
-		export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+		export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DBUILD_WITH_LIB="ROCM"
@@ -162,6 +164,11 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

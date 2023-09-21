@@ -14,6 +14,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake llvm rocm
@@ -27,9 +28,9 @@ DESCRIPTION="Next generation library for iterative sparse solvers for ROCm platf
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocALUTION"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-rocm samples +openmp mpi r1
+rocm samples +openmp mpi system-llvm r1
 "
 gen_rocm_required_use() {
 	local x
@@ -53,12 +54,19 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	dev-util/rocm-compiler[system-llvm=]
 	mpi? (
 		virtual/mpi
 	)
 	openmp? (
-		sys-devel/clang:${LLVM_MAX_SLOT}
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		!system-llvm? (
+			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		)
+		system-llvm? (
+			sys-devel/clang:${LLVM_MAX_SLOT}
+			sys-libs/libomp:${LLVM_MAX_SLOT}
+		)
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${SLOT}
@@ -118,7 +126,8 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=OFF
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/rocALUTION"
-		-DCMAKE_MODULE_PATH="${ESYSROOT}/usr/$(get_libdir)/cmake/hip"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip"
 		-DSUPPORT_HIP=$(usex rocm ON OFF)
 		-DSUPPORT_MPI=$(usex mpi ON OFF)
 		-DSUPPORT_OMP=$(usex openmp ON OFF)
@@ -136,14 +145,13 @@ eerror
 
 	if use openmp ; then
 		mycmakeargs+=(
-			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 		)
 	fi
 
 	if use rocm ; then
-		export ROCM_PATH="${ESYSROOT}/usr"
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -160,6 +168,7 @@ eerror
 src_install() {
         cmake_src_install
         chrpath --delete "${D}/usr/$(get_libdir)/librocalution.so.0.1" || die
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

@@ -131,12 +131,18 @@ src_configure() {
 	export HIP_PLATFORM="amd"
 	export HIP_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_PREFIX_PATH="${ESYSROOT}${rocm_path}/include/hsa"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

@@ -75,11 +75,17 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test ON OFF)
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58
 		-DCMAKE_STRIP=""
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 	)
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_configure
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

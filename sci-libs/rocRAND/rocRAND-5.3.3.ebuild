@@ -24,6 +24,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_75
 )
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic llvm rocm
@@ -40,7 +41,7 @@ DESCRIPTION="Generate pseudo-random and quasi-random numbers"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocRAND"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 benchmark cuda +rocm test r1
@@ -170,6 +171,7 @@ src_configure() {
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 
 		-DBUILD_TEST=$(usex test ON OFF)
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_SKIP_RPATH=ON
 	)
 
@@ -229,6 +231,7 @@ src_install() {
 		cd "${BUILD_DIR}"/benchmark
 		dobin benchmark_rocrand_*
 	fi
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

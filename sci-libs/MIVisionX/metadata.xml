@@ -45,5 +45,9 @@
       Adds support for computer vision primatives [or common image manipulation
       operations] supporting GPUs and CPUs.
     </flag>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability.
+    </flag>
   </use>
 </pkgmetadata>

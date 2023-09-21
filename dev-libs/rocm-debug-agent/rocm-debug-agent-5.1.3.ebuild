@@ -66,4 +66,16 @@ src_prepare() {
 	rocm_src_prepare
 }
 
+src_configure() {
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+	)
+	rocm_src_install
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
+}
+
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

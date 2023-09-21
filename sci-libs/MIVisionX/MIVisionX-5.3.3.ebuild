@@ -5,6 +5,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_10 ) # U 20/22
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm python-single-r1 rocm toolchain-funcs
 
@@ -28,10 +29,10 @@ machine intelligence libraries, utilities, and applications bundled into a \
 single toolkit."
 HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg +loom +migraphx +neural-net opencl opencv
-+rocal +rocm +rpp
++rocal +rocm +rpp system-llvm
 r1
 "
 REQUIRED_USE="
@@ -79,16 +80,27 @@ RDEPEND="
 		>=media-libs/opencv-4.5.5[features2d,jpeg]
 	)
 	rocal? (
+		!system-llvm? (
+			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		)
 		>=dev-libs/protobuf-${PROTOBUF_PV}
 		media-libs/libjpeg-turbo
-		sys-libs/libomp:${LLVM_MAX_SLOT}
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
+		system-llvm? (
+			sys-libs/libomp:${LLVM_MAX_SLOT}
+		)
 	)
 	rocm? (
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		!system-llvm? (
+			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		)
+		dev-util/rocm-compiler[system-llvm=]
 		~sci-libs/rocBLAS-${PV}:${SLOT}
+		system-llvm? (
+			sys-libs/libomp:${LLVM_MAX_SLOT}
+		)
 	)
 	rpp? (
 		>=dev-libs/boost-${BOOST_PV}:=
@@ -131,6 +143,7 @@ src_configure() {
 	build_libjpeg_turbo
 	cd "${S}" || die
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
 		-DGPU_SUPPORT=$(usex cpu OFF ON)
 		-DLOOM=$(usex loom ON OFF)
@@ -202,15 +215,15 @@ eerror
 			)
 		else
 			mycmakeargs+=(
-				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
+				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 				-DOpenMP_CXX_LIB_NAMES="libomp"
-				-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 			)
 		fi
 		IFS=$'\n'
 		sed \
 			-i \
-			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}/usr' --rocm-device-lib-path='${ESYSROOT}/usr/$(get_libdir)/amdgcn/bitcode'|g" \
+			-e "s|-DNDEBUG -fPIC|-DNDEBUG -fPIC --rocm-path='${ESYSROOT}${EROCM_PATH}' --rocm-device-lib-path='${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode'|g" \
 			$(grep -l -r -e "-DNDEBUG -fPIC" "${WORKDIR}") \
 			|| die
 		IFS=$' \t\n'

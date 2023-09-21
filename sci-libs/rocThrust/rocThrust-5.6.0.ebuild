@@ -17,6 +17,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CUB_COMMIT="c493b3bf143ccd66c917a1982ea64bb2a8a82932"
 LLVM_MAX_SLOT=16
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake llvm rocm
@@ -33,15 +34,16 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocThrust"
 
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark test r1
+benchmark system-llvm test r1
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 #[${ROCM_USEDEP}]
 RDEPEND="
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${SLOT}
 	~sci-libs/rocPRIM-${PV}:${SLOT}
 	test? (
@@ -103,13 +105,14 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
-	export HIP_CLANG_PATH=$(get_llvm_prefix ${LLVM_SLOT})"/bin"
+	export HIP_CLANG_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DBUILD_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DBUILD_TEST=$(usex test ON OFF)
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
@@ -131,6 +134,7 @@ src_install() {
 	cmake_src_install
 	use benchmark && \
 	dobin "${BUILD_DIR}/benchmarks/benchmark_thrust_bench"
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problem

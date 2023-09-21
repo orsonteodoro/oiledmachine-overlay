@@ -14,6 +14,12 @@
     <remote-id type="github">ROCm-Developer-Tools/rocThrust</remote-id>
   </upstream>
   <use>
-    <flag name="benchmark">Build and install benchmark binary.</flag>
+    <flag name="benchmark">
+      Build and install benchmark binary.
+    </flag>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability.
+    </flag>
   </use>
 </pkgmetadata>

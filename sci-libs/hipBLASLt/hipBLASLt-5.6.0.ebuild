@@ -20,6 +20,7 @@ CUDA_TARGETS_COMPAT=(
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic llvm python-r1 rocm
 
@@ -40,11 +41,11 @@ operations with a flexible API and extends functionalities beyond a \
 traditional BLAS library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLASLt"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile r1
+benchmark cuda +rocm system-llvm +tensile r1
 "
 gen_cuda_required_use() {
 	local x
@@ -83,10 +84,13 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	!system-llvm? (
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+	)
 	dev-libs/boost
 	dev-libs/msgpack
-	sys-devel/clang:${LLVM_MAX_SLOT}
-	sys-libs/libomp:${LLVM_MAX_SLOT}
+	dev-util/hip-compiler[system-llvm=]
 	virtual/blas
 	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
 	cuda? (
@@ -96,6 +100,13 @@ RDEPEND="
 	rocm? (
 		~dev-util/rocm-smi-${PV}:${SLOT}
 		~sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
+	)
+	system-llvm? (
+		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_MAX_SLOT}
+	)
+	tensile? (
+		dev-util/rocm-compiler[system-llvm=]
 	)
 "
 DEPEND="
@@ -177,6 +188,7 @@ ewarn
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SAMPLES=OFF
 		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 #		-DVIRTUALENV_BIN_DIR="${BUILD_DIR}/venv/bin"
 #		-DVIRTUALENV_PYTHON_EXENAME="${EPYTHON}"
@@ -214,8 +226,8 @@ ewarn
 			-DHIP_RUNTIME="rocclr"
 		)
 		if use tensile ; then
-			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang++"
-			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin/clang-offload-bundler"
+			export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
+			export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 			mycmakeargs+=(
 				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with xnack-
 				-DTensile_CPU_THREADS="${nprocs}"
@@ -251,6 +263,11 @@ src_test() {
 	export ROCBLAS_TEST_TIMEOUT=3600
 	export LD_LIBRARY_PATH="${BUILD_DIR}/clients:${BUILD_DIR}/library/src"
 	edob "${PN,,}-test"
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=15
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic llvm rocm toolchain-funcs
@@ -18,7 +19,7 @@ DESCRIPTION="ROCm SOLVER marshalling library"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test cuda +rocm r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -76,6 +77,7 @@ src_configure() {
 		-DBUILD_CLIENTS_TESTS=$(usex test ON OFF)
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DCMAKE_INSTALL_INCLUDEDIR="include/hipsolver"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DUSE_CUDA=$(usex cuda ON OFF)
 	)
 
@@ -114,6 +116,11 @@ src_test() {
 	check_amdgpu
 	cd "${BUILD_DIR}/clients/staging" || die
 	edob ./${PN,,}-test
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild

@@ -89,8 +89,8 @@ REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
 ROCM_SLOTS=(
-	"5.5.1"
-	"5.6.0"
+# See https://github.com/pytorch/pytorch/blob/v1.13.1/.github/workflows/trunk.yml
+	"5.2.0"
 )
 gen_rocm_depends() {
 	local pv

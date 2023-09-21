@@ -84,6 +84,7 @@ src_configure() {
 	export ROCM_PATH="$(hipconfig -p)"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_MODULE_PATH="${ESYSROOT}${rocm_path}/$(get_libdir)/cmake/hip"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMPILER="clang"
@@ -99,6 +100,11 @@ src_test() {
 	# If LD_LIBRARY_PATH not set, dlopen cannot find the correct lib.
 	LD_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)" \
 	bash run.sh || die
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
