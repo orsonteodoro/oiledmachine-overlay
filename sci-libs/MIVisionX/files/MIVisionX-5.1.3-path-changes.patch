@@ -464,7 +464,7 @@ diff -urp MIVisionX-rocm-5.1.3.orig/apps/cloud_inference/server_app/CMakeLists.t
  # need to do this to avoid setting the default path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "mivisionx default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "mivisionx default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "mivisionx default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -987,7 +987,7 @@ diff -urp MIVisionX-rocm-5.1.3.orig/CMakeLists.txt MIVisionX-rocm-5.1.3/CMakeLis
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "mivisionx default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "mivisionx default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "mivisionx default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -1062,7 +1062,7 @@ diff -urp MIVisionX-rocm-5.1.3.orig/.jenkins/common.groovy MIVisionX-rocm-5.1.3/
      String cmake = 'cmake'
      String codeCovFlags = ''
 -    String installPrefixHIP = '-D CMAKE_INSTALL_PREFIX=/opt/rocm/mivisionx/hip'
-+    String installPrefixHIP = '-D CMAKE_INSTALL_PREFIX=/usr/mivisionx/hip'
++    String installPrefixHIP = '-D CMAKE_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@/mivisionx/hip'
      String installPrefixOCL = ''
  
      if (platform.jenkinsLabel.contains('centos')) {
@@ -1071,7 +1071,7 @@ diff -urp MIVisionX-rocm-5.1.3.orig/.jenkins/common.groovy MIVisionX-rocm-5.1.3/
          else {
              installPackageDeps = 'python MIVisionX-setup.py --reinstall yes --ffmpeg yes --backend HIP'
 -            installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=/opt/rocm/mivisionx/OCL'
-+            installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=/usr/mivisionx/OCL'
++            installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@/mivisionx/OCL'
              installPrefixHIP = ''
          }
      }
@@ -1080,7 +1080,7 @@ diff -urp MIVisionX-rocm-5.1.3.orig/.jenkins/common.groovy MIVisionX-rocm-5.1.3/
          else {
             installPackageDeps = 'python MIVisionX-setup.py --reinstall yes --ffmpeg yes --backend HIP'
 -           installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=/opt/rocm/mivisionx/OCL'
-+           installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=/usr/mivisionx/OCL'
++           installPrefixOCL = '-D CMAKE_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@/mivisionx/OCL'
             installPrefixHIP = ''
          }
      }
@@ -1127,7 +1127,7 @@ diff -urp MIVisionX-rocm-5.1.3.orig/model_compiler/python/nnir_to_clib.py MIVisi
 +set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/@LIBDIR@)
  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 -set(CMAKE_INSTALL_PREFIX /opt/rocm)
-+set(CMAKE_INSTALL_PREFIX /usr)
++set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@)
  
  list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
  

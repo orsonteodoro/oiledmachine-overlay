@@ -309,7 +309,7 @@ diff -urp MIVisionX-rocm-5.3.3.orig/amd_openvx_extensions/amd_custom/custom_lib/
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -602,7 +602,7 @@ diff -urp MIVisionX-rocm-5.3.3.orig/apps/cloud_inference/server_app/CMakeLists.t
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -684,7 +684,7 @@ diff -urp MIVisionX-rocm-5.3.3.orig/apps/dg_test/CMakeLists.txt MIVisionX-rocm-5
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -706,7 +706,7 @@ diff -urp MIVisionX-rocm-5.3.3.orig/apps/image_augmentation/CMakeLists.txt MIVis
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -797,7 +797,7 @@ diff -urp MIVisionX-rocm-5.3.3.orig/apps/mivisionx_openvx_classifier/CMakeLists.
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -1029,7 +1029,7 @@ diff -urp MIVisionX-rocm-5.3.3.orig/CMakeLists.txt MIVisionX-rocm-5.3.3/CMakeLis
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -1134,7 +1134,7 @@ diff -urp MIVisionX-rocm-5.3.3.orig/MIVisionX-setup.py MIVisionX-rocm-5.3.3/MIVi
                  '(cd '+deps_dir+'; git clone -b 2.0.6.2 https://github.com/rrawther/libjpeg-turbo.git )')
              os.system('(cd '+deps_dir+'/libjpeg-turbo; mkdir build; cd build; '+linuxCMake +
 -                      ' -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib ..; make -j 4; sudo make install )')
-+                      ' -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DEFAULT_LIBDIR=@LIBDIR@ ..; make -j 4; sudo make install )')
++                      ' -DCMAKE_INSTALL_PREFIX=@EPREFIX@/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DEFAULT_LIBDIR=@LIBDIR@ ..; make -j 4; sudo make install )')
              # RPP
              # Remove Previous Install - RPP
              os.system('sudo -v')
@@ -1143,7 +1143,7 @@ diff -urp MIVisionX-rocm-5.3.3.orig/MIVisionX-setup.py MIVisionX-rocm-5.3.3/MIVi
              # os.system('(cd '+deps_dir+'; wget https://downloads.sourceforge.net/libjpeg-turbo/libjpeg-turbo-2.0.3.tar.gz )')
              # os.system('(cd '+deps_dir+'; tar xf libjpeg-turbo-2.0.3.tar.gz )')
 -            # os.system('(cd '+deps_dir+'/libjpeg-turbo-2.0.3; mkdir build; cd build; '+linuxCMake+' -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DOCDIR=/usr/share/doc/libjpeg-turbo-2.0.3 -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib ..; make -j 4; sudo make install )')
-+            # os.system('(cd '+deps_dir+'/libjpeg-turbo-2.0.3; mkdir build; cd build; '+linuxCMake+' -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DOCDIR=@ESYSROOT@/usr/share/doc/libjpeg-turbo-2.0.3 -DCMAKE_INSTALL_DEFAULT_LIBDIR=@LIBDIR@ ..; make -j 4; sudo make install )')
++            # os.system('(cd '+deps_dir+'/libjpeg-turbo-2.0.3; mkdir build; cd build; '+linuxCMake+' -DCMAKE_INSTALL_PREFIX=@EPREFIX@/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DOCDIR=@EPREFIX@/usr/share/doc/libjpeg-turbo-2.0.3 -DCMAKE_INSTALL_DEFAULT_LIBDIR=@LIBDIR@ ..; make -j 4; sudo make install )')
              # RPP
              # os.system('(cd '+deps_dir+'; git clone -b '+rppVersion+' https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp.git; cd rpp; mkdir build; cd build; '+linuxCMake+' -DBACKEND=OCL ../; make -j4; sudo make install)')
  

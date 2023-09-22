@@ -143,10 +143,10 @@ diff -urp MIOpen-rocm-5.3.3.orig/CMakeLists.txt MIOpen-rocm-5.3.3/CMakeLists.txt
  # Default installation path
  if(WIN32)
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "")
-+#_cmake_modify_IGNORE    set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "")
++#_cmake_modify_IGNORE    set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "")
  else()
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
-+#_cmake_modify_IGNORE    set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "")
++#_cmake_modify_IGNORE    set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "")
  endif()
  
  project ( MIOpen C CXX )
@@ -478,10 +478,10 @@ diff -urp MIOpen-rocm-5.3.3.orig/fin/CMakeLists.txt MIOpen-rocm-5.3.3/fin/CMakeL
  # Default installation path
  if(WIN32)
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "")
-+#_cmake_modify_IGNORE     set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "")
++#_cmake_modify_IGNORE     set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "")
  else()
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
-+#_cmake_modify_IGNORE     set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "")
++#_cmake_modify_IGNORE     set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "")
  endif()
  
  project ( fin C CXX )

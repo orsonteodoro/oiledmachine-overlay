@@ -6,7 +6,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/clients/benchmarks/CMakeLists.txt hipSOLVER-
  
  if( NOT TARGET hipsolver )
 -  find_package( hipsolver REQUIRED CONFIG PATHS /opt/rocm/hipsolver )
-+  find_package( hipsolver REQUIRED CONFIG PATHS /usr/hipsolver )
++  find_package( hipsolver REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/hipsolver )
  endif( )
  
  set(hipsolver_benchmark_common
@@ -21,7 +21,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/clients/CMakeLists.txt hipSOLVER-rocm-5.1.3/
 +#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
  else( )
 -  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" )
-+#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories" )
  endif( )
  
  # This has to be initialized before the project() command appears
@@ -40,7 +40,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/clients/gtest/CMakeLists.txt hipSOLVER-rocm-
  
  if( NOT TARGET hipsolver )
 -  find_package( hipsolver REQUIRED CONFIG PATHS /opt/rocm/hipsolver )
-+  find_package( hipsolver REQUIRED CONFIG PATHS /usr/hipsolver )
++  find_package( hipsolver REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/hipsolver )
  endif( )
  
  find_package( GTest REQUIRED )
@@ -55,7 +55,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt hipSOLVER-rocm-5.1.3/CMakeLis
 +#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
  else( )
 -  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" )
-+#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories" )
  endif( )
  
  # This has to be initialized before the project() command appears
@@ -71,7 +71,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt hipSOLVER-rocm-5.1.3/CMakeLis
  # rocm-cmake contains common cmake code for rocm projects to help setup and install
  set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
 -find_package( ROCM CONFIG QUIET PATHS /opt/rocm )
-+find_package( ROCM CONFIG QUIET PATHS /usr )
++find_package( ROCM CONFIG QUIET PATHS @ESYSROOT_ROCM_PATH@ )
  if( NOT ROCM_FOUND )
    set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
    file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
@@ -80,7 +80,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt hipSOLVER-rocm-5.1.3/CMakeLis
  
  if( NOT DEFINED ENV{HIP_PATH})
 -    set( HIP_PATH "/opt/rocm/hip" )
-+    set( HIP_PATH "/usr/hip" )
++    set( HIP_PATH "@ESYSROOT_ROCM_PATH@/hip" )
  else( )
      set (HIP_PATH $ENV{HIP_PATH} )
  endif( )
@@ -89,7 +89,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt hipSOLVER-rocm-5.1.3/CMakeLis
  
  # NOTE:  workaround until hip cmake modules fixes symlink logic in their config files; remove when fixed
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/llvm /opt/rocm/hip )
-+list( APPEND CMAKE_PREFIX_PATH /usr /usr/lib/llvm/@LLVM_SLOT@ /usr/hip )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/lib/llvm/@LLVM_SLOT@ @ESYSROOT_ROCM_PATH@/hip )
  
  option( BUILD_VERBOSE "Output additional build information" OFF )
  
@@ -98,7 +98,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt hipSOLVER-rocm-5.1.3/CMakeLis
      find_package( HIP MODULE REQUIRED )
  else( )
 -    find_package( hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} /opt/rocm )
-+    find_package( hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} /usr )
++    find_package( hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
  endif( )
  
  if( USE_CUDA )
@@ -107,7 +107,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt hipSOLVER-rocm-5.1.3/CMakeLis
      COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
      COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
 -    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
-+    COMMAND printf "exec /usr/lib/llvm/@LLVM@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
      COMMAND chmod +x llvm-gcov.sh
      )
  
@@ -154,12 +154,12 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/docs/source/userguide_install.rst hipSOLVER-
      mkdir -p <HIPSOLVER_BUILD_DIR_PATH>/release
      cd <HIPSOLVER_BUILD_DIR_PATH>/release
 -    CXX=/opt/rocm/bin/hipcc cmake <HIPSOLVER_SOURCE_DIR_PATH>
-+    CXX=/usr/bin/hipcc cmake <HIPSOLVER_SOURCE_DIR_PATH>
++    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake <HIPSOLVER_SOURCE_DIR_PATH>
      make -j$(nproc)
      sudo make install
  
 -sudo is required if installing into a system directory such as /opt/rocm, which is the default option.
-+sudo is required if installing into a system directory such as /usr, which is the default option.
++sudo is required if installing into a system directory such as @ESYSROOT_ROCM_PATH@, which is the default option.
  
  * Use ``-DCMAKE_INSTALL_PREFIX=<other_path>`` to specify a different install directory.
  * Use ``-DCMAKE_BUILD_TYPE=<other_configuration>`` to specify a build configuration, such as 'Debug'. The default build configuration is 'Release'.
@@ -168,10 +168,10 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/docs/source/userguide_install.rst hipSOLVER-
  .. code-block:: bash
  
 -    CXX=/opt/rocm/bin/hcc cmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPSOLVER_SOURCE]
-+    CXX=/usr/bin/hcc cmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPSOLVER_SOURCE]
++    CXX=@ESYSROOT_ROCM_PATH@/bin/hcc cmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPSOLVER_SOURCE]
      make -j$(nproc)
 -    sudo make install   # sudo required if installing into system directory such as /opt/rocm
-+    sudo make install   # sudo required if installing into system directory such as /usr
++    sudo make install   # sudo required if installing into system directory such as @ESYSROOT_ROCM_PATH@
 diff -urp hipSOLVER-rocm-5.1.3.orig/install.sh hipSOLVER-rocm-5.1.3/install.sh
 --- hipSOLVER-rocm-5.1.3.orig/install.sh	2022-03-16 09:47:37.000000000 -0700
 +++ hipSOLVER-rocm-5.1.3/install.sh	2023-09-01 15:45:15.777577902 -0700
@@ -181,8 +181,8 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/install.sh hipSOLVER-rocm-5.1.3/install.sh
  build_relocatable=false
 -cmake_prefix_path=/opt/rocm
 -rocm_path=/opt/rocm
-+cmake_prefix_path=/usr
-+rocm_path=/usr
++cmake_prefix_path=@ESYSROOT_ROCM_PATH@
++rocm_path=@ESYSROOT_ROCM_PATH@
  compiler=g++
  build_static=false
  build_release_debug=false
@@ -191,7 +191,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/install.sh hipSOLVER-rocm-5.1.3/install.sh
      fi
  
 -    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
-+    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
@@ -200,19 +200,20 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/install.sh hipSOLVER-rocm-5.1.3/install.sh
  # We append customary rocm path; if user provides custom rocm path in ${path}, our
  # hard-coded path has lesser priority
 -# export PATH=${PATH}:/opt/rocm/bin
-+# export PATH=${PATH}:/usr/bin
++# export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
  pushd .
    # #################################################
    # configure & build
 @@ -547,9 +547,9 @@ pushd .
    # Build library
    if [[ "${build_relocatable}" == true ]]; then
-     CXX=${compiler} ${cmake_executable} ${cmake_common_options[@]} ${cmake_client_options[@]} -DCPACK_SET_DESTDIR=OFF -DCMAKE_INSTALL_PREFIX="${rocm_path}" \
+-    CXX=${compiler} ${cmake_executable} ${cmake_common_options[@]} ${cmake_client_options[@]} -DCPACK_SET_DESTDIR=OFF -DCMAKE_INSTALL_PREFIX="${rocm_path}" \
++    CXX=${compiler} ${cmake_executable} ${cmake_common_options[@]} ${cmake_client_options[@]} -DCPACK_SET_DESTDIR=OFF -DCMAKE_INSTALL_PREFIX="@EPREFIX_ROCM_PATH@" \
 -    -DCMAKE_PREFIX_PATH="${rocm_path};${rocm_path}/hcc;${rocm_path}/hip;$(pwd)/../deps/deps-install;/usr/local/cuda;${cmake_prefix_path}" \
-+    -DCMAKE_PREFIX_PATH="${rocm_path};${rocm_path}/hcc;${rocm_path}/hip;$(pwd)/../deps/deps-install;/opt/cuda;${cmake_prefix_path}" \
++    -DCMAKE_PREFIX_PATH="${rocm_path};${rocm_path}/hcc;${rocm_path}/hip;$(pwd)/../deps/deps-install;@ESYSROOT@/opt/cuda;${cmake_prefix_path}" \
      -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
 -    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64" \
-+    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/@LIBDIR@" \
++    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@" \
      -DROCM_DISABLE_LDCONFIG=ON \
      -DROCM_PATH="${rocm_path}" ../..
    else
@@ -236,7 +237,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/library/src/CMakeLists.txt hipSOLVER-rocm-5.
        find_package( rocblas REQUIRED CONFIG NO_CMAKE_PATH )
      else( )
 -      find_package( rocblas REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocblas )
-+      find_package( rocblas REQUIRED CONFIG PATHS /usr /usr/rocblas )
++      find_package( rocblas REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/rocblas )
      endif( )
    endif( )
  
@@ -245,7 +246,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/library/src/CMakeLists.txt hipSOLVER-rocm-5.
        find_package( rocsolver REQUIRED CONFIG NO_CMAKE_PATH )
      else( )
 -      find_package( rocsolver REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocsolver /usr/local/rocsolver )
-+      find_package( rocsolver REQUIRED CONFIG PATHS /usr /usr/rocsolver /usr/local/rocsolver )
++      find_package( rocsolver REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/rocsolver @ESYSROOT@/usr/local/rocsolver )
      endif( )
    endif( )
  
@@ -257,7 +258,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/README.md hipSOLVER-rocm-5.1.3/README.md
      git clone https://github.com/ROCmSoftwarePlatform/hipSOLVER.git
  
 -hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `/opt/rocm/hipsolver`:
-+hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `/usr/hipsolver`:
++hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `@ESYSROOT_ROCM_PATH@/hipsolver`:
  
      cd hipSOLVER
      ./install.sh -i
@@ -269,10 +270,10 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/rmake.py hipSOLVER-rocm-5.1.3/rmake.py
      # hipsolver
      parser.add_argument(     '--rocblas-path', dest='rocblas_path', type=str, required=False, default = "",
 -                        help='Set specific path to custom built rocblas (optional, default: /opt/rocm/rocblas)')
-+                        help='Set specific path to custom built rocblas (optional, default: /usr/rocblas)')
++                        help='Set specific path to custom built rocblas (optional, default: @ESYSROOT_ROCM_PATH@/rocblas)')
      parser.add_argument(     '--rocsolver-path', dest='rocsolver_path', type=str, required=False, default = "",
 -                        help='Set specific path to custom built rocsolver (optional, default: /opt/rocm/rocsolver)')
-+                        help='Set specific path to custom built rocsolver (optional, default: /usr/rocsolver)')
++                        help='Set specific path to custom built rocsolver (optional, default: @ESYSROOT_ROCM_PATH@/rocsolver)')
  
      return parser.parse_args()
  
@@ -281,7 +282,8 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/rmake.py hipSOLVER-rocm-5.1.3/rmake.py
          cmake_options.append("-G Ninja")
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          cmake_executable = "cmake"
-         cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
+-        cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
++        cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@" )
          cmake_platform_opts.append("-DCMAKE_INSTALL_PREFIX=hipsolver-install")

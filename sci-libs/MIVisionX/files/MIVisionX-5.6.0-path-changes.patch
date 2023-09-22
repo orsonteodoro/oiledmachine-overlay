@@ -393,7 +393,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/amd_openvx_extensions/amd_custom/custom_lib/
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -684,7 +684,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/apps/cloud_inference/server_app/CMakeLists.t
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -774,7 +774,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/apps/dg_test/CMakeLists.txt MIVisionX-rocm-5
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -796,7 +796,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/apps/image_augmentation/CMakeLists.txt MIVis
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -887,7 +887,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/apps/mivisionx_openvx_classifier/CMakeLists.
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -1119,7 +1119,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/CMakeLists.txt MIVisionX-rocm-5.6.0/CMakeLis
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -1140,7 +1140,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/docker/conformance/openvx-1-3-on-centos7.doc
  RUN mkdir build-hip && cd build-hip && cmake3 ../MIVisionX -DBACKEND=HIP && make -j8
  RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
 -        cmake3 -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-+        cmake3 -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
++        cmake3 -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/@LIBDIR@/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
          cmake3 --build .
  RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
          AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
@@ -1152,7 +1152,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/docker/conformance/openvx-1-3-on-centos8.doc
  RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
  RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
 -        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-+        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
++        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/@LIBDIR@/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
          cmake --build .
  RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
          AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
@@ -1164,7 +1164,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/docker/conformance/openvx-1-3-on-ubuntu18.do
  RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
  RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
 -        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-+        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
++        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/@LIBDIR@/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
          cmake --build .
  RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
          AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
@@ -1176,7 +1176,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/docker/conformance/openvx-1-3-on-ubuntu20.do
  RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
  RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
 -        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-+        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
++        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/@LIBDIR@/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
          cmake --build .
  RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
          AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
@@ -1223,7 +1223,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/MIVisionX-setup.py MIVisionX-rocm-5.6.0/MIVi
              '(cd '+deps_dir+'; git clone -b 2.0.6.2 https://github.com/rrawther/libjpeg-turbo.git )')
          os.system('(cd '+deps_dir+'/libjpeg-turbo; mkdir build; cd build; '+linuxCMake +
 -                  ' -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DEFAULT_LIBDIR=lib ..; make -j 4; sudo make install )')
-+                  ' -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DEFAULT_LIBDIR=@LIBDIR@ ..; make -j 4; sudo make install )')
++                  ' -DCMAKE_INSTALL_PREFIX=@EPREFIX@/usr -DCMAKE_BUILD_TYPE=RELEASE -DENABLE_STATIC=FALSE -DCMAKE_INSTALL_DEFAULT_LIBDIR=@LIBDIR@ ..; make -j 4; sudo make install )')
          # RPP
          os.system('sudo -v')
          os.system('(cd '+deps_dir+'; git clone -b '+rppVersion+' https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp.git; cd rpp; mkdir build-'+backend+'; cd build-'+backend+'; ' +
@@ -2688,7 +2688,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/utilities/rocAL/rocAL_basic_test/CMakeLists.
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -2720,7 +2720,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/utilities/rocAL/rocAL_dataloader/CMakeLists.
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -2764,7 +2764,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/utilities/rocAL/rocAL_dataloader_mt/CMakeLis
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -2817,7 +2817,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/utilities/rocAL/rocAL_dataloader_tf/CMakeLis
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -2861,7 +2861,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/utilities/rocAL/rocAL_performance_tests/CMak
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -2893,7 +2893,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/utilities/rocAL/rocAL_performance_tests_with
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -2925,7 +2925,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/utilities/rocAL/rocAL_unittests/CMakeLists.t
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  
@@ -2957,7 +2957,7 @@ diff -urp MIVisionX-rocm-5.6.0.orig/utilities/rocAL/rocAL_video_unittests/CMakeL
  # avoid setting the default installation path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 -  set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "MIVisionX default installation path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX @EPREFIX_ROCM_PATH@ CACHE PATH "MIVisionX default installation path" FORCE)
  endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
  

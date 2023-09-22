@@ -19,7 +19,7 @@ diff -urp rocSPARSE-rocm-5.1.3.orig/clients/CMakeLists.txt rocSPARSE-rocm-5.1.3/
    set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
  else()
 -  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+  set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
++  set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  endif()
  
  # This has to be initialized before the project() command appears
@@ -76,7 +76,7 @@ diff -urp rocSPARSE-rocm-5.1.3.orig/CMakeLists.txt rocSPARSE-rocm-5.1.3/CMakeLis
    set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
  else()
 -  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+  set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
++  set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  endif()
  
  # Adding CMAKE_PREFIX_PATH, needed for static builds

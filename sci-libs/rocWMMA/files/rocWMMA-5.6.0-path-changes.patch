@@ -15,7 +15,7 @@ diff -urp rocWMMA-rocm-5.6.0.orig/CMakeLists.txt rocWMMA-rocm-5.6.0/CMakeLists.t
  # set( AMDGPU_TARGETS "gfx908:xnack-" ) # User variable
  if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 -  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
-+#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
  endif()
  if( NOT CPACK_PACKAGING_INSTALL_PREFIX )
    set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" CACHE PATH "Install path prefix for packages.")
@@ -24,7 +24,7 @@ diff -urp rocWMMA-rocm-5.6.0.orig/CMakeLists.txt rocWMMA-rocm-5.6.0/CMakeLists.t
  
  # This helps cmake properly find hip-config.cmake
 -list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} ${ROCM_PATH} /opt/rocm )
-+list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} ${ROCM_PATH} /usr )
++list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
  # Append our library helper cmake path and the cmake path for hip (for convenience).
  # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
  list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
@@ -45,7 +45,7 @@ diff -urp rocWMMA-rocm-5.6.0.orig/docs/Contributors_Guide.rst rocWMMA-rocm-5.6.0
  
  C++ code is formatted using ``clang-format``. To run clang-format
 -use the version in the ``/opt/rocm/llvm/bin`` directory. Please do not use your
-+use the version in the ``/usr/lib/llvm/@LLVM_SLOT@/bin`` directory. Please do not use your
++use the version in the ``@ESYSROOT_LLVM_PATH@/bin`` directory. Please do not use your
  system's built-in ``clang-format``, as this may be an older version that
  will result in different results.
  
@@ -54,7 +54,7 @@ diff -urp rocWMMA-rocm-5.6.0.orig/docs/Contributors_Guide.rst rocWMMA-rocm-5.6.0
  ::
  
 -    /opt/rocm/llvm/bin/clang-format -style=file -i <path-to-source-file>
-+    /usr/lib/llvm/@LLVM_SLOT@/bin/clang-format -style=file -i <path-to-source-file>
++    @ESYSROOT_LLVM_PATH@/bin/clang-format -style=file -i <path-to-source-file>
  
  To format all files, run the following script in rocWMMA directory:
  
@@ -62,7 +62,7 @@ diff -urp rocWMMA-rocm-5.6.0.orig/docs/Contributors_Guide.rst rocWMMA-rocm-5.6.0
  
      #!/bin/bash
 -    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /opt/rocm/llvm/bin/clang-format -style=file -i
-+    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /usr/lib/llvm/@LLVM_SLOT@/bin/clang-format -style=file -i
++    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 @ESYSROOT_LLVM_PATH@/bin/clang-format -style=file -i
  
  Also, githooks can be installed to format the code per-commit:
  
@@ -74,10 +74,10 @@ diff -urp rocWMMA-rocm-5.6.0.orig/docs/Linux_Install_Guide.rst rocWMMA-rocm-5.6.
  into rocWMMA.
  
 -Once installed, rocwmma.hpp can be found in the /opt/rocm/include directory.
-+Once installed, rocwmma.hpp can be found in the /usr/include directory.
++Once installed, rocwmma.hpp can be found in the @ESYSROOT_ROCM_PATH@/include directory.
  Only this installed file should be used when needed in user code.
 -Other rocWMMA files can be found in /opt/rocm/include/internal, however these files
-+Other rocWMMA files can be found in /usr/include/internal, however these files
++Other rocWMMA files can be found in @ESYSROOT_ROCM_PATH@/include/internal, however these files
  should not be directly included.
  
  
@@ -89,7 +89,7 @@ diff -urp rocWMMA-rocm-5.6.0.orig/samples/hipRTC_gemm.cpp rocWMMA-rocm-5.6.0/sam
      // 2. Default path
      std::string rocm_path
 -        = (std::getenv("ROCM_PATH") == nullptr) ? "/opt/rocm" : std::getenv("ROCM_PATH");
-+        = (std::getenv("ROCM_PATH") == nullptr) ? "/usr" : std::getenv("ROCM_PATH");
++        = (std::getenv("ROCM_PATH") == nullptr) ? "@EPREFIX_ROCM_PATH@" : std::getenv("ROCM_PATH");
      std::string rocWMMAIncludePath = std::string("-I") + rocm_path + std::string("/include");
  
      // gemm parameters
@@ -101,7 +101,7 @@ diff -urp rocWMMA-rocm-5.6.0.orig/test/CMakeLists.txt rocWMMA-rocm-5.6.0/test/CM
    add_executable(${TEST_TARGET} ${TEST_SOURCE})
    target_link_libraries(${TEST_TARGET} rocwmma gtest)
 -  target_link_libraries(${TEST_TARGET} OpenMP::OpenMP_CXX "-L${HIP_CLANG_ROOT}/lib" "-Wl,-rpath=${HIP_CLANG_ROOT}/lib")
-+  target_link_libraries(${TEST_TARGET} OpenMP::OpenMP_CXX "-L${HIP_CLANG_ROOT}/@LIBDIR@" "-Wl,-rpath=${HIP_CLANG_ROOT}/@LIBDIR@")
++  target_link_libraries(${TEST_TARGET} OpenMP::OpenMP_CXX "-L${HIP_CLANG_ROOT}/@LIBDIR@" "-Wl,-rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@")
    target_include_directories(${TEST_TARGET} PRIVATE
                               ${CMAKE_CURRENT_SOURCE_DIR}
                               ${ROCWMMA_TEST_INCLUDE_DIRS})
@@ -113,7 +113,7 @@ diff -urp rocWMMA-rocm-5.6.0.orig/test/gemm/CMakeLists.txt rocWMMA-rocm-5.6.0/te
  
  if(ROCWMMA_VALIDATE_WITH_ROCBLAS OR ROCWMMA_BENCHMARK_WITH_ROCBLAS)
 -  find_package( rocblas REQUIRED PATHS /opt/rocm /opt/rocm/rocblas $ENV{ROCBLAS_DIR} )
-+  find_package( rocblas REQUIRED PATHS /usr /usr/rocblas $ENV{ROCBLAS_DIR} )
++  find_package( rocblas REQUIRED PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/rocblas $ENV{ROCBLAS_DIR} )
    rocm_package_add_dependencies("rocblas >= 2.32.0" COMPONENT tests)
  endif()
  

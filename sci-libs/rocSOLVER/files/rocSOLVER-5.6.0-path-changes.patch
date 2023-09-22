@@ -182,5 +182,6 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/rmake.py rocSOLVER-rocm-5.6.0/rmake.py
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
 +        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          cmake_executable = "cmake"
-         cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
+-        cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
++        cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@" )
          cmake_platform_opts.append("-DCMAKE_INSTALL_PREFIX=rocsolver-install")

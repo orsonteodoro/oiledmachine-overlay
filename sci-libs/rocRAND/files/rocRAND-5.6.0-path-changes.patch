@@ -247,7 +247,7 @@ diff -urp rocRAND-rocm-5.6.0.orig/hipRAND/install rocRAND-rocm-5.6.0/hipRAND/ins
      fi
  
 -    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
-+    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
@@ -280,7 +280,7 @@ diff -urp rocRAND-rocm-5.6.0.orig/hipRAND/library/src/fortran/CMakeLists.txt roc
              hiprand
              roc::rocrand
 -            "-L${HIP_ROOT_DIR}/lib -lhip_hcc -Wl,-rpath,${HIP_ROOT_DIR}/lib"
-+            "-L${HIP_ROOT_DIR}/@LIBDIR@ -lhip_hcc -Wl,-rpath,${HIP_ROOT_DIR}/@LIBDIR@"
++            "-L${HIP_ROOT_DIR}/@LIBDIR@ -lhip_hcc -Wl,-rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      )
  endif()
  
@@ -351,7 +351,7 @@ diff -urp rocRAND-rocm-5.6.0.orig/hipRAND/test/package/CMakeLists.txt rocRAND-ro
              PRIVATE
                  hip::hiprand
 -                "-L${HIP_ROOT_DIR}/lib -Wl,-rpath,${HIP_ROOT_DIR}/lib"
-+                "-L${HIP_ROOT_DIR}/@LIBDIR@ -Wl,-rpath,${HIP_ROOT_DIR}/@LIBDIR@"
++                "-L${HIP_ROOT_DIR}/@LIBDIR@ -Wl,-rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
          )
      else()
          target_link_libraries(${test_name}
@@ -385,7 +385,7 @@ diff -urp rocRAND-rocm-5.6.0.orig/install rocRAND-rocm-5.6.0/install
      fi
  
 -    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
-+    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
@@ -420,7 +420,7 @@ diff -urp rocRAND-rocm-5.6.0.orig/library/src/fortran/CMakeLists.txt rocRAND-roc
          PRIVATE
              rocrand
 -            "-L${HIP_ROOT_DIR}/lib -lhip_hcc -Wl,-rpath,${HIP_ROOT_DIR}/lib"
-+            "-L${HIP_ROOT_DIR}/@LIBDIR@ -lhip_hcc -Wl,-rpath,${HIP_ROOT_DIR}/@LIBDIR@"
++            "-L${HIP_ROOT_DIR}/@LIBDIR@ -lhip_hcc -Wl,-rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      )
  endif()
  
@@ -509,7 +509,7 @@ diff -urp rocRAND-rocm-5.6.0.orig/test/package/CMakeLists.txt rocRAND-rocm-5.6.0
              PRIVATE
                  roc::rocrand
 -                "-L${HIP_ROOT_DIR}/lib -Wl,-rpath,${HIP_ROOT_DIR}/lib"
-+                "-L${HIP_ROOT_DIR}/@LIBDIR@ -Wl,-rpath,${HIP_ROOT_DIR}/@LIBDIR@"
++                "-L${HIP_ROOT_DIR}/@LIBDIR@ -Wl,-rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
          )
      endif()
      add_relative_test(${test_name} ${test_name})
@@ -530,7 +530,7 @@ diff -urp rocRAND-rocm-5.6.0.orig/test/parity/CMakeLists.txt rocRAND-rocm-5.6.0/
          PRIVATE
              roc::rocrand
 -            "-L${HIP_ROOT_DIR}/lib -Wl,-rpath,${HIP_ROOT_DIR}/lib"
-+            "-L${HIP_ROOT_DIR}/@LIBDIR@ -Wl,-rpath,${HIP_ROOT_DIR}/@LIBDIR@"
++            "-L${HIP_ROOT_DIR}/@LIBDIR@ -Wl,-rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      )
  endif()
  

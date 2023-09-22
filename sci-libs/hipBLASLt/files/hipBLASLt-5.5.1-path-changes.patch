@@ -53,7 +53,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/CMakeLists.txt hipBLASLt-rocm-5.5.1/CMakeLis
    set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
  else()
 -  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+  set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
++  set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  endif()
  
  if(NOT BUILD_CUDA)

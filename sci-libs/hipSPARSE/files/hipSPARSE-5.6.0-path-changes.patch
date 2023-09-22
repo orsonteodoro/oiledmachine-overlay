@@ -9,7 +9,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/clients/CMakeLists.txt hipSPARSE-rocm-5.6.0/
 +#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
  else()
 -  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  endif()
  
  # This has to be initialized before the project() command appears
@@ -25,7 +25,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/clients/CMakeLists.txt hipSPARSE-rocm-5.6.0/
  
  if(NOT TARGET hipsparse)
 -  find_package(hipsparse REQUIRED CONFIG PATHS /opt/rocm/hipsparse)
-+  find_package(hipsparse REQUIRED CONFIG PATHS /usr/hipsparse)
++  find_package(hipsparse REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/hipsparse)
  
    option(BUILD_CLIENTS_TESTS "Build tests (requires googletest)" OFF)
    option(BUILD_CLIENTS_SAMPLES "Build examples" ON)
@@ -37,7 +37,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/cmake/Dependencies.cmake hipSPARSE-rocm-5.6.
          set( HIP_PATH "C:/hip" )
      else ()
 -        set( HIP_PATH "/opt/rocm" )
-+        set( HIP_PATH "/usr" )
++        set( HIP_PATH "@ESYSROOT_ROCM_PATH@" )
      endif()
  else( )
      file(TO_CMAKE_PATH "$ENV{HIP_PATH}" HIP_PATH)
@@ -47,8 +47,8 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/cmake/Dependencies.cmake hipSPARSE-rocm-5.6.
    else()
 -        find_package(hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} /opt/rocm)
 -        find_package( rocsparse REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocsparse /usr/local/rocsparse )
-+        find_package(hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} /usr)
-+        find_package( rocsparse REQUIRED CONFIG PATHS /usr /usr/rocsparse /usr/local/rocsparse )
++        find_package(hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@)
++        find_package( rocsparse REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/rocsparse @ESYSROOT@/usr/local/rocsparse )
    endif()
  else()
    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${HIP_PATH}/cmake")
@@ -63,12 +63,12 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/CMakeLists.txt hipSPARSE-rocm-5.6.0/CMakeLis
 +#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
  else()
 -  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  endif()
  
  # Pick up static and dynamic shared object files
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm /opt/rocm/hip )
-+list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr /usr/hip )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip )
  
  # CMake modules
  list(APPEND CMAKE_MODULE_PATH
@@ -95,7 +95,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/CMakeLists.txt hipSPARSE-rocm-5.6.0/CMakeLis
      COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
      COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
 -    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
-+    COMMAND printf "exec /usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
      COMMAND chmod +x llvm-gcov.sh
      )
  
@@ -142,7 +142,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/docs/install.rst hipSPARSE-rocm-5.6.0/docs/i
  `./install.sh -d` Build dependencies and library in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
  `./install.sh`    Build library in your local directory. It is assumed dependencies are available.
 -`./install.sh -i` Build library, then build and install hipSPARSE package in `/opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
-+`./install.sh -i` Build library, then build and install hipSPARSE package in `/usr/hipsparse`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -i` Build library, then build and install hipSPARSE package in `@ESYSROOT_ROCM_PATH@/hipsparse`. You will be prompted for sudo access. This will install for all users.
  ================= ====
  
  Using `install.sh` to build hipSPARSE with dependencies and clients
@@ -151,7 +151,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/docs/install.rst hipSPARSE-rocm-5.6.0/docs/i
  `./install.sh -dc`  Build dependencies, library and client in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
  `./install.sh -c`   Build library and client in your local directory. It is assumed dependencies are available.
 -`./install.sh -idc` Build library, dependencies and client, then build and install hipSPARSE package in `/opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
-+`./install.sh -idc` Build library, dependencies and client, then build and install hipSPARSE package in `/usr/hipsparse`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -idc` Build library, dependencies and client, then build and install hipSPARSE package in `@ESYSROOT_ROCM_PATH@/hipsparse`. You will be prompted for sudo access. This will install for all users.
  `./install.sh -ic`  Build library and client, then build and install hipSPARSE package in `opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
  =================== ====
  
@@ -160,14 +160,14 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/docs/install.rst hipSPARSE-rocm-5.6.0/docs/i
    $ mkdir -p build/release ; cd build/release
  
 -  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
-+  # Default install path is /usr, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
++  # Default install path is @ESYSROOT_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
    $ cmake ../..
  
    # Compile hipSPARSE library
    $ make -j$(nproc)
  
 -  # Install hipSPARSE to /opt/rocm
-+  # Install hipSPARSE to /usr
++  # Install hipSPARSE to @ESYSROOT_ROCM_PATH@
    $ make install
  
  GoogleTest is required in order to build hipSPARSE clients.
@@ -176,14 +176,14 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/docs/install.rst hipSPARSE-rocm-5.6.0/docs/i
    $ cd ..
  
 -  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
-+  # Default install path is /usr, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
++  # Default install path is @ESYSROOT_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
    $ cmake ../.. -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_SAMPLES=ON
  
    # Compile hipSPARSE library
    $ make -j$(nproc)
  
 -  # Install hipSPARSE to /opt/rocm
-+  # Install hipSPARSE to /usr
++  # Install hipSPARSE to @ESYSROOT_ROCM_PATH@
    $ make install
  
  Simple Test
@@ -202,7 +202,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/install.sh hipSPARSE-rocm-5.6.0/install.sh
  build_codecoverage=false
  install_prefix=hipsparse-install
 -rocm_path=/opt/rocm
-+rocm_path=/usr
++rocm_path=@ESYSROOT_ROCM_PATH@
  build_relocatable=false
  build_address_sanitizer=false
  build_freorg_bkwdcomp=true
@@ -211,7 +211,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/install.sh hipSPARSE-rocm-5.6.0/install.sh
      fi
  
 -    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
-+    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
@@ -220,16 +220,17 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/install.sh hipSPARSE-rocm-5.6.0/install.sh
      export PATH=${rocm_path}/bin:${PATH}
  else
 -    export PATH=${PATH}:/opt/rocm/bin
-+    export PATH=${PATH}:/usr/bin
++    export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
  fi
  
  pushd .
 @@ -453,7 +453,7 @@ pushd .
    if [[ "${build_relocatable}" == true ]]; then
-     cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path}"
+-    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path}"
++    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@"
    else
 -    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm"
-+    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/usr"
++    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@"
    fi
  
    # cuda or hip
@@ -240,7 +241,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/install.sh hipSPARSE-rocm-5.6.0/install.sh
 -      -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
 -      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64 ${cmake_build_static_options}" \
 +      -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip ${rocm_path}/hip/cmake" \
-+      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/@LIBDIR@ ${cmake_build_static_options}" \
++      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@ ${cmake_build_static_options}" \
        -DROCM_DISABLE_LDCONFIG=ON \
        -DROCM_PATH="${rocm_path}" ../..
    else
@@ -252,7 +253,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/rmake.py hipSPARSE-rocm-5.6.0/rmake.py
          toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          if (OS_info["ID"] in ['centos', 'rhel']):
            cmake_executable = "cmake" # was cmake3 but now we built cmake
          else:
@@ -264,7 +265,7 @@ diff -urp hipSPARSE-rocm-5.6.0.orig/toolchain-linux.cmake hipSPARSE-rocm-5.6.0/t
    set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/bin")
-+  set(rocm_bin "/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")

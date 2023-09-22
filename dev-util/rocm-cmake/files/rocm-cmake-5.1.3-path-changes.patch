@@ -6,7 +6,7 @@ diff -urp rocm-cmake-rocm-5.1.3.orig/CMakeLists.txt rocm-cmake-rocm-5.1.3/CMakeL
  cmake_minimum_required (VERSION 3.6)
  
 -set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
-+#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "")
++#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "")
  
  project(rocm-cmake)
  

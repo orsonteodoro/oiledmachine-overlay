@@ -21,7 +21,7 @@ diff -urp rocALUTION-rocm-5.6.0.orig/CMakeLists.txt rocALUTION-rocm-5.6.0/CMakeL
      COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
      COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
 -    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
-+    COMMAND printf "exec @ESYSROOT@/usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
      COMMAND chmod +x llvm-gcov.sh
      )
  
@@ -49,7 +49,7 @@ diff -urp rocALUTION-rocm-5.6.0.orig/install.sh rocALUTION-rocm-5.6.0/install.sh
  build_dir=./build
  install_prefix=rocalution-install
 -rocm_path=/opt/rocm
-+rocm_path=@EPREFIX@/usr
++rocm_path=@ESYSROOT_ROCM_PATH@
  build_relocatable=false
  build_static=false
  build_address_sanitizer=false
@@ -58,7 +58,7 @@ diff -urp rocALUTION-rocm-5.6.0.orig/install.sh rocALUTION-rocm-5.6.0/install.sh
      fi
  
 -    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
-+    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX@/usr/@LIBDIR@"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
@@ -67,7 +67,7 @@ diff -urp rocALUTION-rocm-5.6.0.orig/install.sh rocALUTION-rocm-5.6.0/install.sh
      export PATH=${rocm_path}/bin:${PATH}
  else
 -    export PATH=${PATH}:/opt/rocm/bin
-+    export PATH=${PATH}:@EPREFIX@/usr/bin
++    export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
  fi
  
  pushd .
@@ -76,7 +76,7 @@ diff -urp rocALUTION-rocm-5.6.0.orig/install.sh rocALUTION-rocm-5.6.0/install.sh
      cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path}"
    else
 -    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm"
-+    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/usr"
++    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@"
    fi
  
    # Build library with AMD toolchain because of existense of device kernels
@@ -87,7 +87,7 @@ diff -urp rocALUTION-rocm-5.6.0.orig/install.sh rocALUTION-rocm-5.6.0/install.sh
 -      -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
 -      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64" \
 +      -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip" \
-+      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/@LIBDIR@" \
++      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@" \
        -DROCM_DISABLE_LDCONFIG=ON \
        -DROCM_PATH="${rocm_path}" ../..
    else
@@ -99,7 +99,7 @@ diff -urp rocALUTION-rocm-5.6.0.orig/toolchain-linux.cmake rocALUTION-rocm-5.6.0
    set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/bin")
-+  set(rocm_bin "@EPREFIX@/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")
