@@ -179,6 +179,7 @@ src_configure() {
 		)
 
 		if use rocal ; then
+			# FIXME: fix prefix in TURBO_JPEG_PATH.
 			local staging_dir="${WORKDIR}/install"
 			export TURBO_JPEG_PATH="${staging_dir}/usr/$(get_libdir)/${PN}/third_party/libjpeg-turbo"
 			mycmakeargs+=(

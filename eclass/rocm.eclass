@@ -258,8 +258,18 @@ eerror
 
 	export EROCM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	export ROCM_PATH="${ESYSROOT}${EROCM_PATH}"
+
+	# LLVM_SLOT must be after llvm_pkg_setup
+	if ver_test ${LLVM_SLOT} -ge 16 ; then
+		CLANG_SLOT="${LLVM_SLOT}"
+	else
+		CLANG_SLOT=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+			| sed -e "s|sys-devel/clang-||")
+		CLANG_SLOT=$(ver_cut 1-3 "${CLANG_SLOT}")
+	fi
+
 	if has system-llvm ${IUSE} && use system-llvm ; then
-		EROCM_CLANG_PATH="/usr/lib/clang/${clang_slot}"
+		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0"
 	fi
@@ -359,18 +369,10 @@ _rocm_change_common_paths() {
 		$(grep -r -l -e "@LLVM_SLOT@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
-	local clang_slot=""
-	if ver_test ${LLVM_SLOT} -ge 16 ; then
-		clang_slot="${LLVM_SLOT}"
-	else
-		clang_slot=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-			| sed -e "s|sys-devel/clang-||")
-		clang_slot=$(ver_cut 1-3 "${clang_slot}")
-	fi
 	# @CLANG_SLOT@ is deprecated.  Use @EPREFIX_CLANG_PATH@, @ESYSROOT_CLANG_PATH@.
 	sed \
 		-i \
-		-e "s|@CLANG_SLOT@|${clang_slot}|g" \
+		-e "s|@CLANG_SLOT@|${CLANG_SLOT}|g" \
 		$(grep -r -l -e "@CLANG_SLOT@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
 
