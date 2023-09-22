@@ -86,7 +86,7 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -106,7 +106,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3

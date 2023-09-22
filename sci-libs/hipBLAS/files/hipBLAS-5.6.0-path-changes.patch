@@ -6,7 +6,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/clients/benchmarks/CMakeLists.txt hipBLAS-rocm
  
  if( NOT TARGET hipblas )
 -  find_package( hipblas REQUIRED CONFIG PATHS /opt/rocm/hipblas )
-+  find_package( hipblas REQUIRED CONFIG PATHS /usr/hipblas )
++  find_package( hipblas REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/hipblas )
  endif( )
  
  set( hipblas_benchmark_common
@@ -21,7 +21,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/clients/CMakeLists.txt hipBLAS-rocm-5.6.0/clie
 +#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
  else( )
 -  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" )
-+#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories" )
  endif( )
  
  # This has to be initialized before the project() command appears
@@ -57,7 +57,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/clients/gtest/CMakeLists.txt hipBLAS-rocm-5.6.
  
  if( NOT TARGET hipblas )
 -  find_package( hipblas REQUIRED CONFIG PATHS /opt/rocm/hipblas )
-+  find_package( hipblas REQUIRED CONFIG PATHS /usr/hipblas )
++  find_package( hipblas REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/hipblas )
  endif( )
  
  find_package( GTest REQUIRED )
@@ -81,7 +81,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/CMakeLists.txt hipBLAS-rocm-5.6.0/CMakeLists.t
 +#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" )
  else( )
 -  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" )
-+#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories" )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories" )
  endif( )
  
  # This has to be initialized before the project() command appears
@@ -97,7 +97,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/CMakeLists.txt hipBLAS-rocm-5.6.0/CMakeLists.t
  # rocm-cmake contains common cmake code for rocm projects to help setup and install
  set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
 -find_package( ROCM 0.7.3 CONFIG QUIET PATHS /opt/rocm )
-+find_package( ROCM 0.7.3 CONFIG QUIET PATHS /usr )
++find_package( ROCM 0.7.3 CONFIG QUIET PATHS @ESYSROOT_ROCM_PATH@ )
  if( NOT ROCM_FOUND )
    set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
    file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
@@ -106,11 +106,11 @@ diff -urp hipBLAS-rocm-5.6.0.orig/CMakeLists.txt hipBLAS-rocm-5.6.0/CMakeLists.t
  # Append our library helper cmake path and the cmake path for hip (for convenience)
  # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
 -list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip ${HIP_DIR}/cmake )
-+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/@LIBDIR@/cmake/hip /usr/@LIBDIR@/cmake/hip ${HIP_DIR}/cmake )
++list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/@LIBDIR@/cmake/hip @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip ${HIP_DIR}/cmake )
  
  # NOTE:  workaround until hip cmake modules fixes symlink logic in their config files; remove when fixed
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/llvm /opt/rocm/hip )
-+list( APPEND CMAKE_PREFIX_PATH /usr /usr/lib/llvm/@LLVM_SLOT@ /usr/hip )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@/hip )
  
  option( BUILD_VERBOSE "Output additional build information" OFF )
  
@@ -119,7 +119,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/CMakeLists.txt hipBLAS-rocm-5.6.0/CMakeLists.t
      find_package( HIP MODULE REQUIRED )
  else( )
 -    find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm)
-+    find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr)
++    find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@)
  endif( )
  
  if( USE_CUDA )
@@ -137,7 +137,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/CMakeLists.txt hipBLAS-rocm-5.6.0/CMakeLists.t
      COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
      COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
 -    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
-+    COMMAND printf "exec /usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
      COMMAND chmod +x llvm-gcov.sh
      )
  
@@ -184,7 +184,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/docs/contributing.rst hipBLAS-rocm-5.6.0/docs/
  
  C and C++ code is formatted using ``clang-format``. To run clang-format
 -use the version in the ``/opt/rocm/llvm/bin`` directory. Please do not use your
-+use the version in the ``/usr/lib/llvm/@LLVM_SLOT@/bin`` directory. Please do not use your
++use the version in the ``@ESYSROOT_LLVM_PATH@/bin`` directory. Please do not use your
  system's built-in ``clang-format``, as this may be an older version that
  will result in different results.
  
@@ -193,7 +193,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/docs/contributing.rst hipBLAS-rocm-5.6.0/docs/
  ::
  
 -    /opt/rocm/llvm/bin/clang-format -style=file -i <path-to-source-file>
-+    /usr/lib/llvm/@LLVM_SLOT@/bin/clang-format -style=file -i <path-to-source-file>
++    @ESYSROOT_LLVM_PATH@/bin/clang-format -style=file -i <path-to-source-file>
  
  To format all files, run the following script in rocBLAS directory:
  
@@ -201,7 +201,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/docs/contributing.rst hipBLAS-rocm-5.6.0/docs/
  
      #!/bin/bash
 -    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /opt/rocm/llvm/bin/clang-format -style=file -i
-+    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /usr/lib/llvm/@LLVM_SLOT@/bin/clang-format -style=file -i
++    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 @ESYSROOT_LLVM_PATH@/bin/clang-format -style=file -i
  
  Also, githooks can be installed to format the code per-commit:
  
@@ -213,7 +213,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/docs/install.rst hipBLAS-rocm-5.6.0/docs/insta
  |                                           | build and install        |
  |                                           | hipBLAS package in       |
 -|                                           | `/opt/rocm/hipblas`. You |
-+|                                           | `/usr/hipblas`. You |
++|                                           | `@ESYSROOT_ROCM_PATH@/hipblas`. You |
  |                                           | will be prompted for     |
  |                                           | sudo access. This will   |
  |                                           | install for all users.   |
@@ -222,13 +222,13 @@ diff -urp hipBLAS-rocm-5.6.0.orig/docs/install.rst hipBLAS-rocm-5.6.0/docs/insta
     mkdir -p [HIPBLAS_BUILD_DIR]/release
     cd [HIPBLAS_BUILD_DIR]/release
 -   # Default install location is in /opt/rocm, define -DCMAKE_INSTALL_PREFIX=<path> to specify other
-+   # Default install location is in /usr, define -DCMAKE_INSTALL_PREFIX=<path> to specify other
++   # Default install location is in @ESYSROOT_ROCM_PATH@, define -DCMAKE_INSTALL_PREFIX=<path> to specify other
     # Default build config is 'Release', define -DCMAKE_BUILD_TYPE=<config> to specify other
 -   CXX=/opt/rocm/bin/hipcc ccmake [HIPBLAS_SOURCE]
-+   CXX=/usr/bin/hipcc ccmake [HIPBLAS_SOURCE]
++   CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc ccmake [HIPBLAS_SOURCE]
     make -j$(nproc)
 -   sudo make install # sudo required if installing into system directory such as /opt/rocm
-+   sudo make install # sudo required if installing into system directory such as /usr
++   sudo make install # sudo required if installing into system directory such as @ESYSROOT_ROCM_PATH@
  
  
  Build Library + Tests + Benchmarks + Samples Using Individual Commands
@@ -238,11 +238,11 @@ diff -urp hipBLAS-rocm-5.6.0.orig/docs/install.rst hipBLAS-rocm-5.6.0/docs/insta
     -DCMAKE_PREFIX_PATH="<semicolon separated paths>"
 -   # Default install location is in /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to specify other
 -   CXX=/opt/rocm/bin/hipcc ccmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPBLAS_SOURCE]
-+   # Default install location is in /usr, use -DCMAKE_INSTALL_PREFIX=<path> to specify other
-+   CXX=/usr/bin/hipcc ccmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPBLAS_SOURCE]
++   # Default install location is in @ESYSROOT_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to specify other
++   CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc ccmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPBLAS_SOURCE]
     make -j$(nproc)
 -   sudo make install   # sudo required if installing into system directory such as /opt/rocm
-+   sudo make install   # sudo required if installing into system directory such as /usr
++   sudo make install   # sudo required if installing into system directory such as @ESYSROOT_ROCM_PATH@
 diff -urp hipBLAS-rocm-5.6.0.orig/install.sh hipBLAS-rocm-5.6.0/install.sh
 --- hipBLAS-rocm-5.6.0.orig/install.sh	2023-05-29 15:56:02.000000000 -0700
 +++ hipBLAS-rocm-5.6.0/install.sh	2023-09-01 14:37:55.925472682 -0700
@@ -251,7 +251,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/install.sh hipBLAS-rocm-5.6.0/install.sh
      --cuda, --use-cuda            Build library for CUDA backend.
  
 -    --cudapath <cudadir>          Specify path of CUDA install (default /usr/local/cuda).
-+    --cudapath <cudadir>          Specify path of CUDA install (default /opt/cuda).
++    --cudapath <cudadir>          Specify path of CUDA install (default @ESYSROOT@/opt/cuda).
  
      --cmake-arg                   Forward the given argument to CMake when configuring the build.
  
@@ -262,9 +262,9 @@ diff -urp hipBLAS-rocm-5.6.0.orig/install.sh hipBLAS-rocm-5.6.0/install.sh
 -cuda_path=/usr/local/cuda
 -cmake_prefix_path=/opt/rocm
 -rocm_path=/opt/rocm
-+cuda_path=/opt/cuda
-+cmake_prefix_path=/usr
-+rocm_path=/usr
++cuda_path=@ESYSROOT@/opt/cuda
++cmake_prefix_path=@ESYSROOT_ROCM_PATH@
++rocm_path=@ESYSROOT_ROCM_PATH@
  compiler=g++
  build_static=false
  build_release_debug=false
@@ -273,7 +273,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/install.sh hipBLAS-rocm-5.6.0/install.sh
      fi
  
 -    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
-+    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
@@ -282,7 +282,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/install.sh hipBLAS-rocm-5.6.0/install.sh
  # We append customary rocm path; if user provides custom rocm path in ${path}, our
  # hard-coded path has lesser priority
 -# export PATH=${PATH}:/opt/rocm/bin
-+# export PATH=${PATH}:/usr/bin
++# export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
  pushd .
    # #################################################
    # configure & build
@@ -291,7 +291,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/install.sh hipBLAS-rocm-5.6.0/install.sh
      -DCMAKE_PREFIX_PATH="${rocm_path};${rocm_path}/hip;$(pwd)/../deps/deps-install;${cuda_path};${cmake_prefix_path}" \
      -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
 -    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64" \
-+    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/@LIBDIR@" \
++    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@" \
      -DROCM_DISABLE_LDCONFIG=ON \
      -DROCM_PATH="${rocm_path}" ../..
    else
@@ -303,7 +303,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/library/src/CMakeLists.txt hipBLAS-rocm-5.6.0/
          find_package( rocblas REQUIRED CONFIG PATHS ${ROCBLAS_PATH})
      else()
 -      find_package( rocblas REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocblas )
-+      find_package( rocblas REQUIRED CONFIG PATHS /usr /usr/rocblas )
++      find_package( rocblas REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/rocblas )
      endif( )
    endif( )
  
@@ -312,7 +312,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/library/src/CMakeLists.txt hipBLAS-rocm-5.6.0/
          find_package( rocsolver REQUIRED CONFIG PATHS ${ROCSOLVER_PATH} )
        else()
 -        find_package( rocsolver REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocsolver /usr/local/rocsolver )
-+        find_package( rocsolver REQUIRED CONFIG PATHS /usr /usr/rocsolver /usr/local/rocsolver )
++        find_package( rocsolver REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/rocsolver @ESYSROOT@/usr/local/rocsolver )
        endif()
      endif( )
      target_link_libraries( hipblas PRIVATE roc::rocsolver )
@@ -333,7 +333,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/README.md hipBLAS-rocm-5.6.0/README.md
  **hipBLAS** requires specific version of **rocBLAS** & **rocSOLVER** to be installed on the system. The required **rocBLAS** and **rocSOLVER** versions to build **hipBLAS** is provided [here](https://github.com/ROCmSoftwarePlatform/hipBLAS/blob/develop/library/CMakeLists.txt).
  
 -Once the dependent libraries are installed, the following command will build hipBLAS and install to `/opt/rocm/hipblas`:
-+Once the dependent libraries are installed, the following command will build hipBLAS and install to `/usr/hipblas`:
++Once the dependent libraries are installed, the following command will build hipBLAS and install to `@ESYSROOT_ROCM_PATH@/hipblas`:
  
  ```bash
      cd hipblas
@@ -345,7 +345,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/rmake.py hipBLAS-rocm-5.6.0/rmake.py
          toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          if (OS_info["ID"] in ['centos', 'rhel']):
            cmake_executable = "cmake" # was cmake3 but now we built cmake
          else:
@@ -354,8 +354,9 @@ diff -urp hipBLAS-rocm-5.6.0.orig/rmake.py hipBLAS-rocm-5.6.0/rmake.py
  
      if args.relocatable:
 -        rocm_rpath = os.getenv( 'ROCM_RPATH', "/opt/rocm/lib:/opt/rocm/lib64")
-+        rocm_rpath = os.getenv( 'ROCM_RPATH', "/usr/@LIBDIR@")
-         cmake_options.append( f'-DCMAKE_SHARED_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,{rocm_rpath}"' )
++        rocm_rpath = os.getenv( 'ROCM_RPATH', "@EPREFIX_ROCM_PATH@/@LIBDIR@")
+-        cmake_options.append( f'-DCMAKE_SHARED_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,{rocm_rpath}"' )
++        cmake_options.append( f'-DCMAKE_SHARED_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@"' )
  
      if args.skip_ld_conf_entry or args.relocatable:
 diff -urp hipBLAS-rocm-5.6.0.orig/scripts/performance/blas/commandrunner.py hipBLAS-rocm-5.6.0/scripts/performance/blas/commandrunner.py
@@ -366,7 +367,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/scripts/performance/blas/commandrunner.py hipB
              smi = rocm_smi
  
 -            # The following is needed to call rsmi_init() before other calls as documented in /opt/rocm/rocm_smi/docs/README.md
-+            # The following is needed to call rsmi_init() before other calls as documented in /usr/rocm_smi/docs/README.md
++            # The following is needed to call rsmi_init() before other calls as documented in @ESYSROOT_ROCM_PATH@/rocm_smi/docs/README.md
              smi.initializeRsmi()
          except ImportError:
              print('WARNING - rocm_smi.py not found!')
@@ -375,7 +376,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/scripts/performance/blas/commandrunner.py hipB
      parser.add_argument('-d', '--device-num', default=0, type=int,
                          help='Device number to run on.')
 -    parser.add_argument('--install-path', default='/opt/rocm', help='Top directory of driver installation.')
-+    parser.add_argument('--install-path', default='/usr', help='Top directory of driver installation.')
++    parser.add_argument('--install-path', default='@ESYSROOT_ROCM_PATH@', help='Top directory of driver installation.')
      parser.add_argument('--surface-plot', default=False, action='store_true', help='Adds a surface plot instead of a normal plot.')
      return parser.parse_args()
  
@@ -387,14 +388,14 @@ diff -urp hipBLAS-rocm-5.6.0.orig/scripts/performance/blas/getspecs.py hipBLAS-r
          return "nvidia-smi"
      else:
 -        return "/opt/rocm/bin/rocm-smi"
-+        return "/usr/bin/rocm-smi"
++        return "@ESYSROOT_ROCM_PATH@/bin/rocm-smi"
  
  def getgfx(devicenum, cuda):
      if cuda:
          return "N/A"
      else:
 -        cmd = ["/opt/rocm/bin/rocm_agent_enumerator"]
-+        cmd = ["/usr/bin/rocm_agent_enumerator"]
++        cmd = ["@ESYSROOT_ROCM_PATH@/bin/rocm_agent_enumerator"]
          success, cout = _subprocess_helper(cmd)
          if not success:
              return "N/A"
@@ -403,7 +404,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/scripts/performance/blas/getspecs.py hipBLAS-r
          return ["vram"]
      elif smi is not None:
 -        # Hardcoded in /opt/rocm/rocm_smi/bindings/rsmiBindings.py
-+        # Hardcoded in /usr/rocm_smi/bindings/rsmiBindings.py
++        # Hardcoded in @ESYSROOT_ROCM_PATH@/rocm_smi/bindings/rsmiBindings.py
          return ["VRAM", "VIS_VRAM", "GTT"]
  
  def getmeminfo(devicenum, mem_type, cuda, smi=None):
@@ -413,8 +414,8 @@ diff -urp hipBLAS-rocm-5.6.0.orig/scripts/performance/blas/getspecs.py hipBLAS-r
  def validversioncomponents(cuda, smi=None):
 -    # currently only driver according to /opt/rocm/bin/rocm_smi.py
 -    # driver corresponds to 0 in /opt/rocm/bin/rocm_smi.py
-+    # currently only driver according to /usr/bin/rocm_smi.py
-+    # driver corresponds to 0 in /usr/bin/rocm_smi.py
++    # currently only driver according to @ESYSROOT_ROCM_PATH@/bin/rocm_smi.py
++    # driver corresponds to 0 in @ESYSROOT_ROCM_PATH@/bin/rocm_smi.py
      if cuda:
          return ['driver']
      else:
@@ -426,7 +427,7 @@ diff -urp hipBLAS-rocm-5.6.0.orig/toolchain-linux.cmake hipBLAS-rocm-5.6.0/toolc
    set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/bin")
-+  set(rocm_bin "/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  # relying on env and path for backward compatibility with external recipes

@@ -85,7 +85,7 @@ REQUIRED_USE="
 # RDEPEND: perfscripts? dev-python/plotly[${PYTHON_USEDEP}] # currently masked by arch/amd64/x32/package.mask
 RDEPEND="
 	${PYTHON_DEPS}
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -105,7 +105,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=dev-cpp/gtest-1.10.0
 		>=sci-libs/fftw-3

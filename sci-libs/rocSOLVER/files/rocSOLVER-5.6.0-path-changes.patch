@@ -6,7 +6,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/clients/CMakeLists.txt rocSOLVER-rocm-5.6.0/
  # but if this is a clients-only build, we'll have to search for it.
  if(NOT TARGET rocsolver)
 -  find_package(rocsolver REQUIRED CONFIG PATHS ${ROCM_PATH}/rocsolver /opt/rocm/rocsolver)
-+  find_package(rocsolver REQUIRED CONFIG PATHS ${ROCM_PATH}/rocsolver /usr/rocsolver)
++  find_package(rocsolver REQUIRED CONFIG PATHS ${ROCM_PATH}/rocsolver @ESYSROOT_ROCM_PATH@/rocsolver)
    get_imported_target_location(location roc::rocsolver)
    message(STATUS "Found rocSOLVER: ${location}")
  endif()
@@ -18,11 +18,11 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/cmake/get-rocm-cmake.cmake rocSOLVER-rocm-5.
  set(PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern)
  
 -# By default, rocm software stack is expected at /opt/rocm
-+# By default, rocm software stack is expected at /usr
++# By default, rocm software stack is expected at @ESYSROOT_ROCM_PATH@
  # set environment variable ROCM_PATH to change location
  if(NOT ROCM_PATH)
 -  set(ROCM_PATH /opt/rocm)
-+  set(ROCM_PATH /usr)
++  set(ROCM_PATH @ESYSROOT_ROCM_PATH@)
  endif()
  
  find_package(ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH})
@@ -34,14 +34,14 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/CMakeLists.txt rocSOLVER-rocm-5.6.0/CMakeLis
  list(APPEND CMAKE_PREFIX_PATH
    ${ROCM_PATH}
 -  ${ROCM_PATH}/llvm
-+  ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@
++  @ESYSROOT_LLVM_PATH@
    ${ROCM_PATH}/hip
 -  /opt/rocm
 -  /opt/rocm/llvm
 -  /opt/rocm/hip
-+  /usr
-+  /usr/lib/llvm/@LLVM_SLOT@
-+  /usr/hip
++  @ESYSROOT_ROCM_PATH@
++  @ESYSROOT_LLVM_PATH@
++  @ESYSROOT_ROCM_PATH@/hip
  )
  
  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -50,7 +50,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/CMakeLists.txt rocSOLVER-rocm-5.6.0/CMakeLis
  
  # Find HIP dependencies
 -find_package(hip REQUIRED CONFIG PATHS ${ROCM_PATH} /opt/rocm)
-+find_package(hip REQUIRED CONFIG PATHS ${ROCM_PATH} /usr)
++find_package(hip REQUIRED CONFIG PATHS ${ROCM_PATH} @ESYSROOT_ROCM_PATH@)
  
  find_package(rocblas REQUIRED CONFIG PATHS ${ROCM_PATH})
  get_imported_target_location(location roc::rocblas)
@@ -59,7 +59,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/CMakeLists.txt rocSOLVER-rocm-5.6.0/CMakeLis
      COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
      COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
 -    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
-+    COMMAND printf "exec /usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
      COMMAND chmod +x llvm-gcov.sh
    )
  
@@ -73,8 +73,8 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/docs/userguide/examples.rst rocSOLVER-rocm-5
  
 -    /opt/rocm/bin/hipcc -I/opt/rocm/include -c example.c
 -    /opt/rocm/bin/hipcc -o example -L/opt/rocm/lib -lrocsolver -lrocblas example.o
-+    /usr/bin/hipcc -I/usr/include -c example.c
-+    /usr/bin/hipcc -o example -L/usr/@LIBDIR@ -lrocsolver -lrocblas example.o
++    @ESYSROOT_ROCM_PATH@/bin/hipcc -I@ESYSROOT_ROCM_PATH@/include -c example.c
++    @ESYSROOT_ROCM_PATH@/bin/hipcc -o example -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocsolver -lrocblas example.o
  
  
  QR factorization of a batch of matrices
@@ -86,7 +86,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/install.sh rocSOLVER-rocm-5.6.0/install.sh
    --install_dir <installdir>  Specify path to the directory where the library package
                                (when generated) will be installed. Use only absolute paths.
 -                              (Default is /opt/rocm)
-+                              (Default is /usr)
++                              (Default is @ESYSROOT_ROCM_PATH@)
  
    --rocblas_dir <blasdir>     Specify path to an existing rocBLAS install directory.
                                (e.g. /src/rocBLAS/build/release/rocblas-install)
@@ -95,7 +95,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/install.sh rocSOLVER-rocm-5.6.0/install.sh
  # global variables
  # #################################################
 -rocm_path=/opt/rocm
-+rocm_path=/usr
++rocm_path=@ESYSROOT_ROCM_PATH@
  if ! [ -z ${ROCM_PATH+x} ]; then
    rocm_path=${ROCM_PATH}
  fi
@@ -132,7 +132,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/install.sh rocSOLVER-rocm-5.6.0/install.sh
  rocm_rpath=""
  if [[ "${build_relocatable}" == true ]]; then
 -    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
-+    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/usr/@LIBDIR@"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
      if ! [ -z ${ROCM_RPATH+x} ]; then
          rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
      fi
@@ -144,7 +144,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/README.md rocSOLVER-rocm-5.6.0/README.md
  
  After a standard installation of rocBLAS, the following commands will build
 -rocSOLVER and install to `/opt/rocm`:
-+rocSOLVER and install to `/usr`:
++rocSOLVER and install to `@ESYSROOT_ROCM_PATH@`:
  
      cd rocSOLVER
      ./install.sh -i
@@ -154,8 +154,8 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/README.md rocSOLVER-rocm-5.6.0/README.md
  
 -    /opt/rocm/bin/hipcc -I/opt/rocm/include -c example.cpp
 -    /opt/rocm/bin/hipcc -o example -L/opt/rocm/lib -lrocsolver -lrocblas example.o
-+    /usr/bin/hipcc -I/usr/include -c example.cpp
-+    /usr/bin/hipcc -o example -L/usr/@LIBDIR@ -lrocsolver -lrocblas example.o
++    @ESYSROOT_ROCM_PATH@/bin/hipcc -I@ESYSROOT_ROCM_PATH@/include -c example.cpp
++    @ESYSROOT_ROCM_PATH@/bin/hipcc -o example -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocsolver -lrocblas example.o
  
  
  [1]: https://www.netlib.org/lapack/
@@ -168,10 +168,10 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/rmake.py rocSOLVER-rocm-5.6.0/rmake.py
                          help='Build only clients with a pre-built library')
      parser.add_argument(     '--rocblas_dir', dest='rocblas_dir', type=str, required=False, default = "",
 -                        help='Specify path to an existing rocBLAS install directory (optional, default: /opt/rocm/rocblas)')
-+                        help='Specify path to an existing rocBLAS install directory (optional, default: /usr/rocblas)')
++                        help='Specify path to an existing rocBLAS install directory (optional, default: @ESYSROOT_ROCM_PATH@/rocblas)')
      parser.add_argument(     '--rocsolver_dir', dest='rocsolver_dir', type=str, required=False, default = "",
 -                        help='Specify path to an existing rocSOLVER install directory (optional, default: /opt/rocm/rocsolver)')
-+                        help='Specify path to an existing rocSOLVER install directory (optional, default: /usr/rocsolver)')
++                        help='Specify path to an existing rocSOLVER install directory (optional, default: @ESYSROOT_ROCM_PATH@/rocsolver)')
      parser.add_argument('-a', '--architecture', dest='gpu_architecture', type=str, required=False, default=None,
                          help='Set GPU architectures to build for (optional)')
  
@@ -180,7 +180,7 @@ diff -urp rocSOLVER-rocm-5.6.0.orig/rmake.py rocSOLVER-rocm-5.6.0/rmake.py
          cmake_options.append("-G Ninja")
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          cmake_executable = "cmake"
          cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
          cmake_platform_opts.append("-DCMAKE_INSTALL_PREFIX=rocsolver-install")

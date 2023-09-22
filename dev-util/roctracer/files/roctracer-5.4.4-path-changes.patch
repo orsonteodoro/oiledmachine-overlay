@@ -8,7 +8,7 @@ diff -urp roctracer-rocm-5.4.4.orig/build.sh roctracer-rocm-5.4.4/build.sh
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
 -LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
 +ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
-+LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/@LIBDIR@"
++LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
  DEFAULTS=defaults.sh
  
  fatal() {
@@ -22,7 +22,7 @@ diff -urp roctracer-rocm-5.4.4.orig/build_static.sh roctracer-rocm-5.4.4/build_s
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
 -LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
 +ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
-+LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/@LIBDIR@"
++LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
  DEFAULTS=defaults.sh
  
  fatal() {

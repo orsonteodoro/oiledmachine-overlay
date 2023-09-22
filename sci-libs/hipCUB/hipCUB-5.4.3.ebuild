@@ -87,7 +87,7 @@ RESTRICT="
 "
 RDEPEND="
 	dev-util/hip-compiler[system-llvm=]
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
 		dev-cpp/benchmark
 	)
@@ -95,7 +95,7 @@ RDEPEND="
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		~sci-libs/rocPRIM-${PV}:${SLOT}[${ROCM_USEDEP},rocm?]
+		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm?]
 	)
 	test? (
 		dev-cpp/gtest
@@ -106,7 +106,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 S="${WORKDIR}/hipCUB-rocm-${PV}"
 PATCHES=(

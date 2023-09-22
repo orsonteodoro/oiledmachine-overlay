@@ -38,7 +38,7 @@ RDEPEND="
 	>=dev-python/pybind11-2.6[${PYTHON_USEDEP}]
 	media-libs/vulkan-loader
 	virtual/libc
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}

@@ -92,14 +92,14 @@ RDEPEND="
 	dev-libs/msgpack
 	dev-util/hip-compiler[system-llvm=]
 	virtual/blas
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
-		~sci-libs/hipBLAS-${PV}:${SLOT}[cuda]
+		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[cuda]
 	)
 	rocm? (
-		~dev-util/rocm-smi-${PV}:${SLOT}
-		~sci-libs/hipBLAS-${PV}:${SLOT}[rocm]
+		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
+		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
 	)
 	system-llvm? (
 		sys-devel/clang:${LLVM_MAX_SLOT}
@@ -118,7 +118,7 @@ BDEPEND="
 	>=dev-util/cmake-3.16.8
 	dev-python/pip[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="test"
 PATCHES=(
@@ -203,7 +203,7 @@ ewarn
 			-Wl,--as-needed \
 			-Wno-unknown-pragmas
 		if [[ "${HIP_CXX}" == "nvcc" ]] ; then
-			append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
+			append-cxxflags -ccbin "${ESYSROOT}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 		fi
 		export CUDA_PATH="${ESYSROOT}/opt/cuda"
 		export HIP_PLATFORM="nvidia"
@@ -230,7 +230,7 @@ ewarn
 			mycmakeargs+=(
 				-DTensile_CODE_OBJECT_VERSION="V3" # Avoid V2 build error with with xnack-
 				-DTensile_CPU_THREADS="${nprocs}"
-#				-DTensile_ROOT="${ESYSROOT}/usr"
+#				-DTensile_ROOT="${ESYSROOT}${EROCM_PATH}"
 				-DTensile_ROOT="${S}/tensilelite"
 			)
 		fi

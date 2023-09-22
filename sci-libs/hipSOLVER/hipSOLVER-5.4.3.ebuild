@@ -34,15 +34,15 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		~sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
-		~sci-libs/rocSOLVER-${PV}:${SLOT}[rocm(+)]
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}[rocm(+)]
 
-		~dev-util/rocm-smi-${PV}:${SLOT}
+		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	)
 	virtual/blas
 "
@@ -51,7 +51,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.7
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
 	)

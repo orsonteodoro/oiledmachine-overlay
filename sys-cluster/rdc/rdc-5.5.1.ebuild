@@ -3,6 +3,8 @@
 
 EAPI=8
 
+ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+
 inherit cmake
 
 if [[ ${PV} == *9999 ]] ; then
@@ -22,7 +24,7 @@ addresses key infrastructure challenges in AMD GPUs in cluster and datacenter \
 environments."
 HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
 IUSE="+compile-commands doc -raslib +standalone systemd test"
 REQUIRED_USE="
@@ -32,9 +34,9 @@ REQUIRED_USE="
 "
 RDEPEND="
 	sys-libs/libcap
-	~dev-util/rocm-smi-${PV}:${SLOT}
+	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	raslib? (
-		~dev-libs/roct-thunk-interface-${PV}:${SLOT}
+		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	)
 	standalone? (
 		>=net-libs/grpc-1.44.0
@@ -45,8 +47,8 @@ RDEPEND="
 	)
 "
 #	|| (
-#		~sys-kernel/rock-dkms-${PV}:${SLOT}
-#		~sys-kernel/rocm-sources-${PV}:${SLOT}
+#		~sys-kernel/rock-dkms-${PV}:${ROCM_SLOT}
+#		~sys-kernel/rocm-sources-${PV}:${ROCM_SLOT}
 #	)
 DEPEND="
 	${RDEPEND}
@@ -61,8 +63,8 @@ BDEPEND="
 	)
 	test? (
 		>=dev-cpp/gtest-1.11.0
-		~dev-libs/rocr-runtime-${PV}:${SLOT}
-		~dev-util/rocprofiler-${PV}:${SLOT}
+		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}
 	)
 "
 RESTRICT="test"

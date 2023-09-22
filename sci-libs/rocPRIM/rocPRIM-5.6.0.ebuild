@@ -52,7 +52,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}[rocm]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	benchmark? (
 		dev-cpp/benchmark
 	)
@@ -65,7 +65,7 @@ RDEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}

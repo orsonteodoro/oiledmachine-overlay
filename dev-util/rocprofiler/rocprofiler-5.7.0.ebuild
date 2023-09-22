@@ -31,13 +31,13 @@ RDEPEND="
 	!dev-util/rocprofiler:0
 	dev-python/barectf
 	dev-util/roc-compiler[system-llvm=]
-	~dev-libs/rocm-comgr-${PV}:${SLOT}
-	~dev-libs/rocr-runtime-${PV}:${SLOT}
-	~dev-util/hip-${PV}:${SLOT}
-	~dev-util/roctracer-${PV}:${SLOT}
+	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	aqlprofile? (
-		~dev-libs/hsa-amd-aqlprofile-${PV}:${SLOT}
-		~dev-libs/rocr-runtime-${PV}:${SLOT}
+		~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
+		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -113,7 +113,7 @@ src_configure() {
 	if use aqlprofile ; then
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] || die "Missing" # For e80f7cb
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
-		append-ldflags -Wl,-rpath="${ESYSROOT}/opt/rocm-${PV}/lib"
+		append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
 	fi
 
 	export CMAKE_BUILD_TYPE="debug"

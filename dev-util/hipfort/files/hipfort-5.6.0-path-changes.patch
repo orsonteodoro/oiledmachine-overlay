@@ -46,7 +46,7 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/hipfc hipfort-rocm-5.6.0/bin/hipfc
     TARGET_TRIPLE=${TARGET_TRIPLE:-amdgcn-amd-amdhsa}
     TARGET_ARCH="amdgcn"
 -   TARGET_LIBS="-L$ROCM_PATH/lib -lamdhip64 -Wl,-rpath=$ROCM_PATH/lib "
-+   TARGET_LIBS="-L$ROCM_PATH/@LIBDIR@ -lamdhip64 -Wl,-rpath=$ROCM_PATH/@LIBDIR@ "
++   TARGET_LIBS="-L$ROCM_PATH/@LIBDIR@ -lamdhip64 -Wl,-rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@ "
     HIPCC_ENV="HIP_PLATFORM=$HIP_PLATFORM"
     if [ -z ${HIP_CLANG_PATH+x} ]; then
 -     HIPCC_ENV+=" HIP_CLANG_PATH=$ROCM_PATH/llvm/bin"
@@ -108,7 +108,7 @@ diff -urp hipfort-rocm-5.6.0.orig/bin/Makefile.hipfort hipfort-rocm-5.6.0/bin/Ma
    HIPCC_OPTS = "--gpu-architecture=$(GPU)"
  else
 -  LINKOPTS   = -L$(LIB_DIR) -lhipfort-$(ARCH) -L$(ROCM_PATH)/lib $(HIPCC_LIBS) -lamdhip64 -Wl,-rpath=$(ROCM_PATH)/lib
-+  LINKOPTS   = -L$(LIB_DIR) -lhipfort-$(ARCH) -L$(ROCM_PATH)/@LIBDIR@ $(HIPCC_LIBS) -lamdhip64 -Wl,-rpath=$(ROCM_PATH)/@LIBDIR@
++  LINKOPTS   = -L$(LIB_DIR) -lhipfort-$(ARCH) -L$(ROCM_PATH)/@LIBDIR@ $(HIPCC_LIBS) -lamdhip64 -Wl,-rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@
    HIPCC_ENV  = HIP_PLATFORM=$(HIP_PLATFORM) DEVICE_LIB_PATH=$(DEVICE_LIB_PATH) HIP_CLANG_PATH=$(HIP_CLANG_PATH)
    HIPCC_OPTS = -fno-gpu-rdc -fPIC --offload-arch=$(GPU)
  endif

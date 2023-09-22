@@ -59,11 +59,11 @@ RDEPEND="
 		sys-libs/libomp:${LLVM_MAX_SLOT}
 	)
 	rocm? (
-		~sci-libs/miopen-${PV}:${SLOT}
-		~sci-libs/rocBLAS-${PV}:${SLOT}
+		~sci-libs/miopen-${PV}:${ROCM_SLOT}
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 	)
 	test? (
-		~dev-util/hip-${PV}:${SLOT}
+		~dev-util/hip-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -77,7 +77,7 @@ BDEPEND="
 	)
 	>=dev-util/cmake-3.5
 	sys-devel/hip-compiler[system-llvm=]
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		sys-devel/rocm-compiler[system-llvm=]
 	)

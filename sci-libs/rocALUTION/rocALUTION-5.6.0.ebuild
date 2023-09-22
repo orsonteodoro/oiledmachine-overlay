@@ -75,11 +75,11 @@ RDEPEND="
 		)
 	)
 	rocm? (
-		~dev-util/hip-${PV}:${SLOT}
-		~sci-libs/rocBLAS-${PV}:${SLOT}
-		~sci-libs/rocPRIM-${PV}:${SLOT}
-		~sci-libs/rocRAND-${PV}:${SLOT}
-		~sci-libs/rocSPARSE-${PV}:${SLOT}
+		~dev-util/hip-${PV}:${ROCM_SLOT}
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
+		~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}
+		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}
+		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}
 	)
 "
 DEPEND="
@@ -87,7 +87,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-rocm-${PV}"

@@ -84,13 +84,13 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	dev-util/hip-compiler[system-llvm=]
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		~sci-libs/rocFFT-${PV}:${SLOT}[rocm]
-		~sci-libs/rocRAND-${PV}:${SLOT}[rocm]
+		~sci-libs/rocFFT-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocRAND-${PV}:${ROCM_SLOT}[rocm]
 	)
 "
 DEPEND="
@@ -98,7 +98,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="test mirror" # The distro mirrored copy is wrong
 S="${WORKDIR}/hipFFT-rocm-${PV}"

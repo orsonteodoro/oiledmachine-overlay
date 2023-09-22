@@ -41,8 +41,8 @@ RDEPEND="
 	virtual/libc
 	|| (
 		(
-			~dev-util/hip-${PV}:${SLOT}
-			~sci-libs/rocBLAS-${PV}:${SLOT}
+			~dev-util/hip-${PV}:${ROCM_SLOT}
+			~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 		)
 		(
 			=dev-util/hip-5.6*:0/5.6

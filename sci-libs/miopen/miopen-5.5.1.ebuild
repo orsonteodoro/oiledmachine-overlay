@@ -71,15 +71,15 @@ RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
 	app-arch/bzip2
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 	comgr? (
-		~dev-libs/rocm-comgr-${PV}:${SLOT}
+		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
 	composable-kernel? (
 		>=sci-libs/composable_kernel-1.0.0
 	)
 	kernels? (
-		~sci-libs/miopenkernels-${PV}:${SLOT}
+		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}
 	)
 	opencl? (
 		sys-devel/clang
@@ -87,8 +87,8 @@ RDEPEND="
 		=sci-libs/miopengemm-5.5*:0/5.5
 	)
 	rocm? (
-		~dev-util/hip-${PV}:${SLOT}[rocm]
-		~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
+		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm]
 	)
 "
 DEPEND="
@@ -98,11 +98,11 @@ DEPEND="
 "
 BDEPEND="
 	virtual/pkgconfig
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
 		|| (
-			~sci-libs/rocMLIR-${PV}:${SLOT}[fat-librockcompiler(+)]
-			=sci-libs/rocMLIR-${PV%.*}*:${SLOT}[fat-librockcompiler(+)]
+			~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}[fat-librockcompiler(+)]
+			=sci-libs/rocMLIR-${PV%.*}*:${ROCM_SLOT}[fat-librockcompiler(+)]
 		)
 	)
 "

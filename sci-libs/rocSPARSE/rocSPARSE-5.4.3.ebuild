@@ -92,8 +92,8 @@ RDEPEND="
 		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
 	dev-util/rocm-compiler[system-llvm=]
-	~dev-util/hip-${PV}:${SLOT}[rocm]
-	~sci-libs/rocPRIM-${PV}:${SLOT}[rocm(+)]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[rocm(+)]
 	system-llvm? (
 		sys-libs/libomp:${LLVM_MAX_SLOT}
 	)
@@ -112,7 +112,7 @@ BDEPEND="
 	benchmark? (
 		app-admin/chrpath
 	)
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="
 	!test? (

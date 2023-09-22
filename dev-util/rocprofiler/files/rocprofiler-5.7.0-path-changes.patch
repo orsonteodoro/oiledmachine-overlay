@@ -190,7 +190,7 @@ diff -urp rocprofiler-rocm-5.7.0.orig/build.sh rocprofiler-rocm-5.7.0/build.sh
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
 -LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib"
 +ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
-+LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/@LIBDIR@"
++LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
  
  usage() {
    echo -e "ROCProfiler Build Script Usage:"

@@ -35,8 +35,8 @@ REQUIRED_USE="
 "
 RDEPEND="
 	=dev-libs/libfmt-8*
-	~dev-util/hip-${PV}:${SLOT}[rocm]
-	~sci-libs/rocBLAS-${PV}:${SLOT}[${ROCM_USEDEP},rocm]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm]
 	benchmark? (
 		virtual/blas
 	)
@@ -45,7 +45,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=dev-util/cmake-3.13
 		dev-cpp/gtest

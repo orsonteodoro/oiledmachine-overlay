@@ -74,12 +74,12 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		~sci-libs/rocSPARSE-${PV}:${SLOT}[rocm(+)]
+		~sci-libs/rocSPARSE-${PV}:${ROCM_SLOT}[rocm(+)]
 	)
 "
 DEPEND="
@@ -87,11 +87,11 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
 		sys-libs/libomp:${LLVM_MAX_SLOT}
-		~dev-util/rocminfo-${PV}:${SLOT}
+		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
 "
 S="${WORKDIR}/hipSPARSE-rocm-${PV}"

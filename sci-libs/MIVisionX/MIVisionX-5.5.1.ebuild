@@ -68,7 +68,7 @@ RDEPEND="
 		>=dev-python/pybind11-2.4[${PYTHON_USEDEP}]
 	')
 	dev-libs/openssl
-	~dev-util/hip-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 	ffmpeg? (
 		>=media-video/ffmpeg-4.4.2[fdk,gpl,libass,x264,x265,nonfree]
 	)
@@ -77,7 +77,7 @@ RDEPEND="
 	)
 	opencl? (
 		virtual/opencl
-		~sci-libs/miopengemm-${PV}:${SLOT}
+		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	opencv? (
 		>=media-libs/opencv-4.6.0[features2d,jpeg]
@@ -100,7 +100,7 @@ RDEPEND="
 			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		)
 		dev-util/rocm-compiler[system-llvm=]
-		~sci-libs/rocBLAS-${PV}:${SLOT}
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 		system-llvm? (
 			sys-libs/libomp:${LLVM_MAX_SLOT}
 		)

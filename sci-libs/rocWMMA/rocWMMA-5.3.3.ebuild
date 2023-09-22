@@ -32,7 +32,7 @@ RDEPEND="
 		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
 	dev-util/rocm-compiler[system-llvm=]
-	~dev-util/hip-${PV}:${SLOT}[rocm]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	system-llvm? (
 		sys-libs/libomp:${LLVM_MAX_SLOT}
 	)
@@ -42,7 +42,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.5
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}

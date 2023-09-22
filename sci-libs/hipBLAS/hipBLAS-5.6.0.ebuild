@@ -27,13 +27,13 @@ REQUIRED_USE="
 "
 RDEPEND="
 	dev-util/hip-compiler[system-llvm=]
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	rocm? (
-		~sci-libs/rocBLAS-${PV}:${SLOT}[rocm]
-		~sci-libs/rocSOLVER-${PV}:${SLOT}[rocm(+)]
+		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[rocm]
+		~sci-libs/rocSOLVER-${PV}:${ROCM_SLOT}[rocm(+)]
 	)
 "
 DEPEND="

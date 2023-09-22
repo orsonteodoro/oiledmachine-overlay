@@ -42,8 +42,8 @@ REQUIRED_USE="
 "
 #[${ROCM_USEDEP}]
 RDEPEND="
-	~dev-util/hip-${PV}:${SLOT}
-	~sci-libs/rocPRIM-${PV}:${SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
 	)
@@ -53,7 +53,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.15
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="
 	!test? (

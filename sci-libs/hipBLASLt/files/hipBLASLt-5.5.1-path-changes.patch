@@ -6,7 +6,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/clients/CMakeLists.txt hipBLASLt-rocm-5.5.1/
  if (TARGET OpenMP::OpenMP_CXX)
    set( COMMON_LINK_LIBS "OpenMP::OpenMP_CXX")
 -  list( APPEND COMMON_LINK_LIBS "-L${HIP_CLANG_ROOT}/lib;-Wl,-rpath=${HIP_CLANG_ROOT}/lib")
-+  list( APPEND COMMON_LINK_LIBS "-L${HIP_CLANG_ROOT}/@LIBDIR@;-Wl,-rpath=${HIP_CLANG_ROOT}/@LIBDIR@")
++  list( APPEND COMMON_LINK_LIBS "-L${HIP_CLANG_ROOT}/@LIBDIR@;-Wl,-rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@")
  endif()
  
  if (TARGET Threads::Threads)
@@ -15,12 +15,12 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/clients/CMakeLists.txt hipBLASLt-rocm-5.5.1/
  
  if( NOT TARGET hipblaslt )
 -  find_package( hipblaslt REQUIRED CONFIG PATHS ${ROCM_PATH}/hipblaslt /opt/rocm/hipblaslt ${HIPBLASLT_LIBRARY_DIR})
-+  find_package( hipblaslt REQUIRED CONFIG PATHS ${ROCM_PATH}/hipblaslt /usr/hipblaslt ${HIPBLASLT_LIBRARY_DIR})
++  find_package( hipblaslt REQUIRED CONFIG PATHS ${ROCM_PATH}/hipblaslt @ESYSROOT_ROCM_PATH@/hipblaslt ${HIPBLASLT_LIBRARY_DIR})
  endif( )
  
  # Hip headers required of all clients; clients use hip to allocate device memory
 -list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} /opt/rocm )
-+list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} /usr )
++list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
  if ( NOT hip_FOUND )
    find_package( hip REQUIRED CONFIG PATHS ${ROCM_PATH} )
  endif( )
@@ -41,7 +41,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/cmake/Dependencies.cmake hipBLASLt-rocm-5.5.
  # Workaround until hcc & hip cmake modules fixes symlink logic in their config files.
  # (Thanks to rocBLAS devs for finding workaround for this problem!)
 -list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH /usr/hip /usr)
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@/hip @ESYSROOT_ROCM_PATH@)
  
  # ROCm cmake package
  find_package(ROCM 0.6 QUIET CONFIG PATHS ${CMAKE_PREFIX_PATH})
@@ -53,18 +53,18 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/CMakeLists.txt hipBLASLt-rocm-5.5.1/CMakeLis
    set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
  else()
 -  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+  set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
++  set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  endif()
  
  if(NOT BUILD_CUDA)
  # Adding CMAKE_PREFIX_PATH, needed for static builds
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm )
-+list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ )
  endif()
  
  if( NOT DEFINED ENV{HIP_PATH})
 -    set( HIP_PATH "/opt/rocm/hip" )
-+    set( HIP_PATH "/usr/hip" )
++    set( HIP_PATH "@ESYSROOT_ROCM_PATH@/hip" )
  else( )
      set (HIP_PATH $ENV{HIP_PATH} )
  endif( )
@@ -73,7 +73,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/CMakeLists.txt hipBLASLt-rocm-5.5.1/CMakeLis
  # rocm-cmake contains common cmake code for rocm projects to help setup and install
  set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
 -find_package( ROCM 0.7.3 CONFIG QUIET PATHS /opt/rocm )
-+find_package( ROCM 0.7.3 CONFIG QUIET PATHS /usr )
++find_package( ROCM 0.7.3 CONFIG QUIET PATHS @ESYSROOT_ROCM_PATH@ )
  if( NOT ROCM_FOUND )
    set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
    file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
@@ -82,7 +82,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/CMakeLists.txt hipBLASLt-rocm-5.5.1/CMakeLis
  # Append our library helper cmake path and the cmake path for hip (for convenience)
  # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
 -list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip ${HIP_PATH}/cmake )
-+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/@LIBDIR@/cmake/hip @EPREFIX@/usr/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake )
++list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake  ${ROCM_PATH}/@LIBDIR@/cmake/hip @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip ${HIP_PATH}/cmake )
  
  # Set a default build type if none was specified
  if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -102,7 +102,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/CMakeLists.txt hipBLASLt-rocm-5.5.1/CMakeLis
  
      if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
 -        find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm )
-+        find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr )
++        find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
      endif( )
  
      option( BUILD_WITH_TENSILE "Build full functionality which requires tensile?" ON )
@@ -111,7 +111,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/CMakeLists.txt hipBLASLt-rocm-5.5.1/CMakeLis
  endif()
  
 -find_package( hipblas 0.50.0 REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm)
-+find_package( hipblas 0.50.0 REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr)
++find_package( hipblas 0.50.0 REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@)
  
  # Setup version
  set(VERSION_STRING "0.1.0")
@@ -129,7 +129,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/CMakeLists.txt hipBLASLt-rocm-5.5.1/CMakeLis
      COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
      COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
 -    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
-+    COMMAND printf "exec @EPREFIX@/usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
      COMMAND chmod +x llvm-gcov.sh
      )
  
@@ -191,7 +191,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/cmake/FindROCmSMI
  if(NOT ROCM_ROOT)
      if(NOT ROCM_DIR)
 -        set(ROCM_ROOT "/opt/rocm")
-+        set(ROCM_ROOT "/usr")
++        set(ROCM_ROOT "@ESYSROOT_ROCM_PATH@")
      else()
          set(ROCM_DIR "${ROCM_DIR}/../../..")
      endif()
@@ -212,7 +212,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/CMakeLists.txt hi
  # Override all paths arguments as they do not work properly
  file(TO_CMAKE_PATH "$ENV{ROCM_PATH}" ROCM_PATH_ENV_VALUE)
 -list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} /usr)
++list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH_ENV_VALUE} @ESYSROOT_ROCM_PATH@)
  
  project(Tensile)
  
@@ -221,7 +221,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/CMakeLists.txt hi
  
  if(TENSILE_USE_HIP)
 -    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} /opt/rocm)
-+    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} /usr)
++    find_package(HIP REQUIRED CONFIG PATHS ${ROCM_PATH_ENV_VALUE} @ESYSROOT_ROCM_PATH@)
  endif()
  
  if(TENSILE_USE_OPENMP)
@@ -233,7 +233,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/FindHIP.cmake hip
        PATHS
          ENV HIP_PATH
 -        /opt/rocm
-+        /usr
++        @ESYSROOT_ROCM_PATH@
        PATH_SUFFIXES
          /include/hip
          /include
@@ -242,7 +242,7 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/FindHIP.cmake hip
      PATHS
        ENV HIP_PATH
 -          /opt/rocm
-+          /usr
++          @ESYSROOT_ROCM_PATH@
      PATH_SUFFIXES
            /bin
        )
@@ -255,8 +255,8 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/FindOpenCL.cmake 
      /usr/local/include
 -    /usr/local/cuda/include
 -    /opt/rocm/opencl/include
-+    /opt/cuda/include
-+    /usr/opencl/include
++    @ESYSROOT@/opt/cuda/include
++    @ESYSROOT_ROCM_PATH@/opencl/include
    DOC "OpenCL header file path"
  )
  mark_as_advanced( OPENCL_INCLUDE_DIRS )
@@ -312,9 +312,9 @@ diff -urp hipBLASLt-rocm-5.5.1.orig/tensilelite/Tensile/Source/FindOpenCL.cmake 
 +  DOC "OpenCL dynamic library path"
 +  PATH_SUFFIXES ${_PATH_SUFFIX}
 +  PATHS
-+  /usr/@LIBDIR@
-+  /opt/cuda/@LIBDIR@
-+  /usr/opencl/@LIBDIR@
++  @ESYSROOT@/usr/@LIBDIR@
++  @ESYSROOT@/opt/cuda/@LIBDIR@
++  @ESYSROOT_ROCM_PATH@/opencl/@LIBDIR@
 +)
  mark_as_advanced( OPENCL_LIBRARIES )
  

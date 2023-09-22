@@ -98,7 +98,7 @@ RDEPEND="
 	')
 	>=dev-libs/msgpack-3.0.1
 	dev-util/rocm-compiler[system-llvm=]
-	~dev-util/hip-${PV}:${SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
 		sys-libs/libomp:${LLVM_MAX_SLOT}
 		virtual/blas
@@ -125,7 +125,7 @@ BDEPEND="
 	')
 	${PYTHON_DEPS}
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/rocm-cmake-${PV}:${SLOT}
+	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		~dev-util/Tensile-${PV}:${ROCM_SLOT}
 	)

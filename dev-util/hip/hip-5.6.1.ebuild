@@ -79,7 +79,7 @@ RDEPEND="
 		sys-devel/gcc:11
 	)
 	lc? (
-		~dev-libs/rocm-comgr-${PV}:${SLOT}
+		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
 	numa? (
 		sys-process/numactl
@@ -90,8 +90,8 @@ RDEPEND="
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 		dev-util/rocm-compiler[system-llvm=]
-		~dev-libs/rocr-runtime-${PV}:${SLOT}
-		~dev-util/rocminfo-${PV}:${SLOT}
+		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 		system-llvm? (
 			=sys-devel/clang-${LLVM_MAX_SLOT}*:=
 			=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
@@ -107,7 +107,7 @@ BDEPEND="
 	>=dev-util/cmake-3.16.8
 	test? (
 		rocm? (
-			~dev-util/rocminfo-${PV}:${SLOT}
+			~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 		)
 	)
 "
