@@ -160,7 +160,7 @@ diff -urp src.orig/image/blit_src/CMakeLists.txt src/image/blit_src/CMakeLists.t
  
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
 -    "-O2 -x cl -cl-denorms-are-zero -cl-std=CL2.0 -target amdgcn-amd-amdhsa
-+    "--rocm-path=/usr --rocm-device-lib-path=@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode -O2 -x cl -cl-denorms-are-zero -cl-std=CL2.0 -target amdgcn-amd-amdhsa
++    "--rocm-path=@ESYSROOT_ROCM_PATH@ --rocm-device-lib-path=@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode -O2 -x cl -cl-denorms-are-zero -cl-std=CL2.0 -target amdgcn-amd-amdhsa
      -Xclang -finclude-default-header -mcpu=${TARGET_ID}
      ${BITCODE_ARGS} -o ${OUTPUT_FILE} ${INPUT_FILE}")
  

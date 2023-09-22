@@ -241,6 +241,14 @@ pkg_setup() {
 	fi
 
 	python-single-r1_pkg_setup
+	if has_version "dev-util:5.6" ; then
+		ROCM_SLOT="5.6"
+		LLVM_MAX_SLOT=16
+	elif has_version "dev-util:5.5" ; then
+		ROCM_SLOT="5.5"
+		LLVM_MAX_SLOT=16
+	fi
+	rocm_pkg_setup
 }
 
 src_unpack() {
@@ -274,6 +282,7 @@ src_prepare() {
 		eapply "${FILESDIR}/composable_kernel-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
 	popd
 	use cuda && cuda_src_prepare
+	rocm_src_prepare
 }
 
 get_cuda_targets() {
