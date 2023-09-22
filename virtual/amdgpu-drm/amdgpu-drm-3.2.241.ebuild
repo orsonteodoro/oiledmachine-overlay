@@ -4,12 +4,12 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7./drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="5.13.20.22.10.50103"
-KERNEL_FIRMWARE_PV="20220516" # Based on linux-firmware commit logs
-KERNEL_PV="5.18"  # DC_VER = 3.2.177 ; KERNEL_PV is from linux-kernel not rock-dkms
-ROCM_VERSION="5.1.3" # DC_VER = ${PV}
+AMDGPU_FIRMWARE_PV="6.2.4.50700"
+KERNEL_FIRMWARE_PV="99999999" # Based on linux-firmware commit logs ; not released yet, no 5.7 commit message
+KERNEL_PV="6.5"  # DC_VER = 3.2.241 ; KERNEL_PV is from linux-kernel not rock-dkms
+ROCM_VERSION="5.7.0" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
@@ -27,10 +27,7 @@ SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 RDEPEND="
 	!virtual/amdgpu-drm:0
 	!strict-pairing? (
-		|| (
-			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
-			>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-		)
+		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
 		kernel? (
 			!custom-kernel? (
 				|| (

@@ -3,10 +3,14 @@
 
 EAPI=7
 
-AMDGPU_FIRMWARE_PV="6.1.5.50600"
+# The PV is the same as DC_VER in
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
+
+AMDGPU_FIRMWARE_PV="6.1.5.50601"
 KERNEL_FIRMWARE_PV="99999999" # Based on linux-firmware commit logs ; not released yet, no 5.6 commit message
 KERNEL_PV="6.4"  # DC_VER = 3.2.230 ; KERNEL_PV is from linux-kernel not rock-dkms
-ROCK_DKMS_PV="5.6.0" # DC_VER = ${PV}
+ROCM_VERSION="5.6.1" # DC_VER = ${PV}
+ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
 # no exact tag # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
@@ -19,8 +23,9 @@ ROCK_DKMS_PV="5.6.0" # DC_VER = ${PV}
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="~amd64 ~x86"
 IUSE="custom-kernel kernel rock-dkms strict-pairing"
-SLOT="0/${PV}"
+SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 RDEPEND="
+	!virtual/amdgpu-drm:0
 	!strict-pairing? (
 		>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
 		kernel? (
@@ -40,7 +45,7 @@ RDEPEND="
 			)
 		)
 		rock-dkms? (
-			>=sys-kernel/rock-dkms-${ROCK_DKMS_PV}
+			>=sys-kernel/rock-dkms-${ROCM_VERSION}
 		)
 	)
 	strict-pairing? (
@@ -62,7 +67,7 @@ RDEPEND="
 			)
 		)
 		rock-dkms? (
-			~sys-kernel/rock-dkms-${ROCK_DKMS_PV}
+			~sys-kernel/rock-dkms-${ROCM_VERSION}
 		)
 	)
 "
