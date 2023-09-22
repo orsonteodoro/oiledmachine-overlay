@@ -77,7 +77,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 +runtime
-r4
+r5
 "
 RDEPEND="
 	!sys-devel/llvm-rocm:0
@@ -98,6 +98,13 @@ S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
+	if has_version "dev-libs/rocr-runtime:${ROCM_SLOT}" ; then
+# TODO:  fix dev-libs/rocr-runtime
+eerror
+eerror "Un-emerge dev-libs/rocr-runtime:${ROCM_SLOT} first."
+eerror
+		die
+	fi
 	rocm_pkg_setup
 }
 
@@ -129,7 +136,8 @@ src_configure() {
 	fi
 	local mycmakeargs=(
 #		-DBUILD_SHARED_LIBS=OFF
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
+		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
 		-DLLVM_BUILD_DOCS=NO
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
