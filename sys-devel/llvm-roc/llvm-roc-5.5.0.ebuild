@@ -77,7 +77,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 +runtime
-r3
+r4
 "
 RDEPEND="
 	!sys-devel/llvm-rocm:0
@@ -142,7 +142,7 @@ src_configure() {
 		-DLLVM_INSTALL_UTILS=ON
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
-		-DLLVM_VERSION_SUFFIX=roc
+#		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
 	)
 	cmake_src_configure

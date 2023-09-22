@@ -114,7 +114,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd
-r3
+r4
 "
 
 gen_cuda_required_use() {
@@ -349,7 +349,7 @@ src_configure() {
 		-DLLVM_INSTALL_UTILS=ON
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
-		-DLLVM_VERSION_SUFFIX=roc
+#		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
 		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
 	)
