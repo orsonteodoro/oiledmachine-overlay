@@ -132,6 +132,7 @@ PATCHES=(
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {

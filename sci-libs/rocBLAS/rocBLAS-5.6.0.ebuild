@@ -127,7 +127,7 @@ BDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${SLOT}
 	rocm? (
-		~dev-util/Tensile-${PV}:${SLOT}
+		~dev-util/Tensile-${PV}:${ROCM_SLOT}
 	)
 "
 RESTRICT="
@@ -148,6 +148,7 @@ QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-any-r1_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
