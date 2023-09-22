@@ -6,7 +6,7 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  find_package(PkgConfig)
  find_package(LibElf REQUIRED)
 -find_package(hsakmt 1.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
-+find_package(hsakmt 1.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS @EPREFIX_ROCM_PATH@)
++find_package(hsakmt 1.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@)
  pkg_check_modules(drm REQUIRED IMPORTED_TARGET libdrm)
  
  ## Create the rocr target.

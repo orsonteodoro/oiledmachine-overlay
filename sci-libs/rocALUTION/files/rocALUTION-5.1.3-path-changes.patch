@@ -69,7 +69,7 @@ diff -urp rocALUTION-rocm-5.1.3.orig/install.sh rocALUTION-rocm-5.1.3/install.sh
      cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path}"
    else
 -    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm"
-+    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@ESYSROOT_ROCM_PATH@"
++    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@"
    fi
  
    # Build library with AMD toolchain because of existense of device kernels
