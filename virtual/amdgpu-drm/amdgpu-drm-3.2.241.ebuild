@@ -4,7 +4,7 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7./drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.0/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 AMDGPU_FIRMWARE_PV="6.2.4.50700"
 KERNEL_FIRMWARE_PV="99999999" # Based on linux-firmware commit logs ; not released yet, no 5.7 commit message
