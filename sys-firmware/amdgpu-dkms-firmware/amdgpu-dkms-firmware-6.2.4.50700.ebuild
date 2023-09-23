@@ -11,7 +11,7 @@ ROCM_SLOT="${ROCM_PV%.*}"
 MY_PV="6.2.4.50700-1652687"  # The 4th component is the rock version 5.07.00 == 5.7.0.
 FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
 
-DESCRIPTION="Firmware blobs used by amdgpu driver in DKMS format"
+DESCRIPTION="Firmware blobs used by the amdgpu kernel driver"
 HOMEPAGE="
 https://www.amd.com/en/support/linux-drivers
 "

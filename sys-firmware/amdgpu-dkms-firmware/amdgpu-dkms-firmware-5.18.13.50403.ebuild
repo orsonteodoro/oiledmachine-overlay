@@ -12,7 +12,7 @@ MY_PV="5.18.13.50403-1538762"  # The 4th component is the rock version 5.04.03 =
 MY_PV2="5.18.13-1538762.22.04"
 FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
 
-DESCRIPTION="Firmware blobs used by amdgpu driver in DKMS format"
+DESCRIPTION="Firmware blobs used by the amdgpu kernel driver"
 HOMEPAGE="
 https://www.amd.com/en/support/linux-drivers
 "
