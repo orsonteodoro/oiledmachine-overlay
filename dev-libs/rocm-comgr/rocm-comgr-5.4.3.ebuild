@@ -61,6 +61,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.3.3-remove-h-option.patch"
 	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
@@ -80,6 +81,7 @@ src_configure() {
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58
 		-DCMAKE_STRIP=""
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
+		-DLLVM_LINK_LLVM_DYLIB=$(usex system-llvm)
 	)
 	cmake_src_configure
 }

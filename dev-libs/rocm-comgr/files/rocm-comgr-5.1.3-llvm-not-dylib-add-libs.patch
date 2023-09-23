@@ -1,0 +1,45 @@
+--- a/CMakeLists.txt.orig	2023-09-23 11:34:43.613162411 -0700
++++ b/CMakeLists.txt	2023-09-23 11:37:34.229160448 -0700
+@@ -294,21 +294,31 @@ if (LLVM_LINK_LLVM_DYLIB)
+ else()
+   llvm_map_components_to_libnames(LLVM_LIBS
+     ${LLVM_TARGETS_TO_BUILD}
+-    Option
+-    DebugInfoDWARF
+-    Symbolize
+-    Support
+-    Object
++    BinaryFormat
++    BitReader
+     BitWriter
+-    MC
+-    MCParser
+-    MCDisassembler
++    CodeGen
+     Core
++    DebugInfoDWARF
++    Demangle
+     IRReader
+-    CodeGen
+     Linker
+-    Demangle
+-    BinaryFormat)
++    MC
++    MCDisassembler
++    MCParser
++    Object
++    Option
++    Support
++    Symbolize
++    TargetParser
++  )
++  set(CLANG_LIBS
++    ${CLANG_LIBS}
++      clangBasic
++      clangDriver
++      clangFrontend
++      clangSerialization
++)
+ endif()
+ 
+ target_link_options(amd_comgr

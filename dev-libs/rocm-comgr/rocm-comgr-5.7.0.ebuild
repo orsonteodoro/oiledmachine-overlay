@@ -60,8 +60,9 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
 )
-#CMAKE_BUILD_TYPE="Release"
+CMAKE_BUILD_TYPE="Release"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -73,16 +74,13 @@ src_prepare() {
 }
 
 src_configure() {
-#	append-cppflags -UNDEBUG
-	replace-flags -O0 -O1
-	filter-flags -Wl,--as-needed
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test ON OFF)
-#		-DCMAKE_BUILD_TYPE="RelWithDebInfo"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58
 		-DCMAKE_STRIP=""
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
+		-DLLVM_LINK_LLVM_DYLIB=$(usex system-llvm)
 	)
 	cmake_src_configure
 }
