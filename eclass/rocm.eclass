@@ -504,8 +504,6 @@ _rocm_change_common_paths() {
 	fi
 
 	IFS=$' \t\n'
-einfo "CLANG_SLOT:  ${clang_slot}"
-einfo "LLVM_SLOT:  ${LLVM_SLOT}"
 }
 
 # @FUNCTION:  rocm_src_prepare
