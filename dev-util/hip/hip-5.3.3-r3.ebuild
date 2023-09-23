@@ -254,10 +254,10 @@ src_compile() {
 src_install() {
 	cmake_src_install
 
-	rm "${ED}/usr/include/hip/hcc_detail" || die
+	rm "${ED}${EROCM_PATH}/include/hip/hcc_detail" || die
 
 	# Don't install .hipInfo and .hipVersion to bin/lib
-	rm "${ED}/usr/bin/.hipVersion" || die
+#	rm "${ED}${EROCM_PATH}/bin/.hipVersion" || die
 	rocm_mv_docs
 }
 
