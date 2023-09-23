@@ -49,7 +49,7 @@ RDEPEND="
 		)
 	)
 	strict-pairing? (
-		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
+		~sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}:${ROCM_SLOT}
 		kernel? (
 			!custom-kernel? (
 				|| (
@@ -67,7 +67,7 @@ RDEPEND="
 			)
 		)
 		rock-dkms? (
-			~sys-kernel/rock-dkms-${ROCM_VERSION}
+			~sys-kernel/rock-dkms-${ROCM_VERSION}:${ROCM_SLOT}
 		)
 	)
 "
