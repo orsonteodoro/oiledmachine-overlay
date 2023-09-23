@@ -260,18 +260,25 @@ eerror
 	export ROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 
 	# LLVM_SLOT must be after llvm_pkg_setup
-	if ver_test ${LLVM_SLOT} -ge 16 ; then
-		CLANG_SLOT="${LLVM_SLOT}"
+	# The CLANG_SLOT is the folder name.
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		# ls /usr/lib/clang -> 13.0.1  14.0.6  15.0.1  15.0.5  15.0.6  15.0.7  16  17
+		if ver_test ${LLVM_SLOT} -ge 16 ; then
+			CLANG_SLOT="${LLVM_SLOT}"
+		else
+			CLANG_SLOT=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
+				| sed -e "s|sys-devel/clang-||")
+			CLANG_SLOT=$(ver_cut 1-3 "${CLANG_SLOT}")
+		fi
 	else
-		CLANG_SLOT=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-			| sed -e "s|sys-devel/clang-||")
-		CLANG_SLOT=$(ver_cut 1-3 "${CLANG_SLOT}")
+		# ls /usr/lib64/rocm/*/llvm/lib64/clang -> 16.0.0 17.0.0
+		CLANG_SLOT="${LLVM_MAX_SLOT}.0.0"
 	fi
 
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
 	else
-		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${LLVM_MAX_SLOT}.0.0"
+		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 	fi
 
 	if has system-llvm ${IUSE} && use system-llvm ; then
