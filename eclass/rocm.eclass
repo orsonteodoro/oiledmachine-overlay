@@ -271,7 +271,7 @@ eerror
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
 	else
-		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0"
+		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${LLVM_MAX_SLOT}.0.0"
 	fi
 
 	if has system-llvm ${IUSE} && use system-llvm ; then
@@ -300,6 +300,24 @@ eerror
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 		einfo "PATH=${PATH} (after)"
 	fi
+einfo
+einfo "Eclass variables:"
+einfo
+einfo "  CLANG_SLOT:  ${CLANG_SLOT}"
+einfo "  LLVM_MAX_SLOT:  ${LLVM_MAX_SLOT}"
+einfo "  EROCM_CLANG_PATH:  ${EROCM_CLANG_PATH}"
+einfo "  EROCM_LLVM_PATH:  ${EROCM_LLVM_PATH}"
+einfo "  EROCM_PATH:  ${EROCM_PATH}"
+einfo
+einfo "Build files variables:"
+einfo
+einfo "  HIP_CLANG_PATH:  ${HIP_CLANG_PATH}"
+einfo "  ROCM_PATH:  ${ROCM_PATH}"
+einfo
+einfo "Environment variables:"
+einfo
+einfo "  PATH:  ${PATH}"
+einfo
 }
 
 # @FUNCTION:  _rocm_change_common_paths
