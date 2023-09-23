@@ -240,7 +240,7 @@ diff -urp rocSPARSE-rocm-5.6.0.orig/install.sh rocSPARSE-rocm-5.6.0/install.sh
  # but with hip-clang existing path has lesser priority to avoid use of installed clang++
  if [[ "${build_hip_clang}" == true ]]; then
 -  export PATH=${rocm_path}/bin:${rocm_path}/hip/bin:${rocm_path}/llvm/bin:${PATH}
-+  export PATH=${rocm_path}/bin:${rocm_path}/lib/llvm/@LLVM_SLOT@/bin:${PATH}
++  export PATH=${rocm_path}/bin:@ESYSROOT_LLVM_PATH@/bin:${PATH}
  fi
  
  # #################################################
@@ -263,7 +263,8 @@ diff -urp rocSPARSE-rocm-5.6.0.orig/install.sh rocSPARSE-rocm-5.6.0/install.sh
  
  pushd .
 @@ -522,7 +522,7 @@ pushd .
-       -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path} \
+-      -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path} \
++      -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@ \
        -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
        -DCMAKE_PREFIX_PATH="${rocm_path} ${rocm_path}/hcc ${rocm_path}/hip" \
 -      -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
@@ -314,7 +315,8 @@ diff -urp rocSPARSE-rocm-5.6.0.orig/rmake.py rocSPARSE-rocm-5.6.0/rmake.py
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
 +        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          cmake_executable = "cmake"
-         cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
+-        cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
++        cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@" )
          cmake_platform_opts.append( f"-DCMAKE_INSTALL_PREFIX=\"rocsparse-install\"" )
 diff -urp rocSPARSE-rocm-5.6.0.orig/toolchain-linux.cmake rocSPARSE-rocm-5.6.0/toolchain-linux.cmake
 --- rocSPARSE-rocm-5.6.0.orig/toolchain-linux.cmake	2023-06-20 14:29:47.000000000 -0700

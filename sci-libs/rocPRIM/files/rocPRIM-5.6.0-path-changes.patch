@@ -6,7 +6,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/cmake/Dependencies.cmake rocPRIM-rocm-5.6.0/cm
  if(NOT DEPENDENCIES_FORCE_DOWNLOAD)
    set(CMAKE_FIND_DEBUG_MODE TRUE)
 -  find_package(ROCM 0.7.3 CONFIG QUIET PATHS /opt/rocm)
-+  find_package(ROCM 0.7.3 CONFIG QUIET PATHS /usr)
++  find_package(ROCM 0.7.3 CONFIG QUIET PATHS @ESYSROOT_ROCM_PATH@)
    set(CMAKE_FIND_DEBUG_MODE FALSE)
  endif()
  if(NOT ROCM_FOUND)
@@ -15,7 +15,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/cmake/Dependencies.cmake rocPRIM-rocm-5.6.0/cm
    find_package(ROCM CONFIG REQUIRED NO_DEFAULT_PATH HINTS "${rocm-cmake_SOURCE_DIR}")
  else()
 -  find_package(ROCM 0.7.3 CONFIG REQUIRED PATHS /opt/rocm)
-+  find_package(ROCM 0.7.3 CONFIG REQUIRED PATHS /usr)
++  find_package(ROCM 0.7.3 CONFIG REQUIRED PATHS @ESYSROOT_ROCM_PATH@)
  endif()
  
  # Restore user global state
@@ -28,8 +28,8 @@ diff -urp rocPRIM-rocm-5.6.0.orig/cmake/VerifyCompiler.cmake rocPRIM-rocm-5.6.0/
  
 -list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip ${ROCM_PATH}/llvm /opt/rocm/llvm /opt/rocm /opt/rocm/hip)
 -find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ /usr/lib/llvm/@LLVM_SLOT@ /usr /usr/hip)
-+find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr)
++list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip)
++find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@)
  
  if(HIP_COMPILER STREQUAL "clang")
      if(NOT (HIP_CXX_COMPILER MATCHES ".*hipcc" OR HIP_CXX_COMPILER MATCHES ".*clang\\+\\+"))
@@ -41,14 +41,14 @@ diff -urp rocPRIM-rocm-5.6.0.orig/CMakeLists.txt rocPRIM-rocm-5.6.0/CMakeLists.t
  
  # Install prefix
 -set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
++set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  
  # rocPRIM project
  project(rocprim LANGUAGES CXX)
  
  #Adding CMAKE_PREFIX_PATH
 -list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH /usr)
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
  
  # Build options
  option(BUILD_TEST "Build tests (requires googletest)" OFF)
@@ -57,7 +57,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/CMakeLists.txt rocPRIM-rocm-5.6.0/CMakeLists.t
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
 -  ${ROCM_PATH}/lib/cmake/hip ${HIP_PATH}/cmake /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
++  ${ROCM_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Set a default build type if none was specified
@@ -67,8 +67,8 @@ diff -urp rocPRIM-rocm-5.6.0.orig/CMakeLists.txt rocPRIM-rocm-5.6.0/CMakeLists.t
    endif()
 -  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip ${ROCM_PATH}/llvm /opt/rocm/llvm /opt/rocm /opt/rocm/hip)
 -  find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm)
-+  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ /usr/lib/llvm/@LLVM_SLOT@ /usr /usr/hip)
-+  find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /usr)
++  list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/hip @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip)
++  find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@)
  endif()
  
  # FOR HANDLING ENABLE/DISABLE OPTIONAL BACKWARD COMPATIBILITY for FILE/FOLDER REORG
@@ -77,7 +77,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/CMakeLists.txt rocPRIM-rocm-5.6.0/CMakeLists.t
      COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
      COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
 -    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
-+    COMMAND printf "exec /usr/lib/llvm/@LLVM_SLOT@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
      COMMAND chmod +x llvm-gcov.sh
      )
  
@@ -89,12 +89,13 @@ diff -urp rocPRIM-rocm-5.6.0.orig/install rocPRIM-rocm-5.6.0/install
  run_tests=false
  build_benchmark=false
 -rocm_path=/opt/rocm
-+rocm_path=/usr
++rocm_path=@ESYSROOT_ROCM_PATH@
  build_relocatable=false
  build_address_sanitizer=false
  build_freorg_bkwdcomp=true
 @@ -191,7 +191,7 @@ if [[ "${build_relocatable}" == true ]];
-        -DCMAKE_INSTALL_PREFIX=${rocm_path} -DBUILD_BENCHMARK=${benchmark} \
+-       -DCMAKE_INSTALL_PREFIX=${rocm_path} -DBUILD_BENCHMARK=${benchmark} \
++       -DCMAKE_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@ -DBUILD_BENCHMARK=${benchmark} \
         -DCMAKE_PREFIX_PATH="${rocm_path}  ${rocm_path}/hip" \
         -DBUILD_BENCHMARK=${benchmark} -DBUILD_TEST=${clients} \
 -       -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" ../../.     # or cmake-gui ../.
@@ -111,8 +112,8 @@ diff -urp rocPRIM-rocm-5.6.0.orig/README.md rocPRIM-rocm-5.6.0/README.md
  ```cmake
 -# "/opt/rocm" - default install prefix
 -find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
-+# "/usr" - default install prefix
-+find_package(rocprim REQUIRED CONFIG PATHS "/usr/rocprim")
++# "@ESYSROOT_ROCM_PATH@" - default install prefix
++find_package(rocprim REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocprim")
  
  ...
  
@@ -124,7 +125,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/rmake.py rocPRIM-rocm-5.6.0/rmake.py
          cmake_options.append( generator )
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          rocm_cmake_path = '"' + rocm_path + '"'
          if (OS_info["ID"] in ['centos', 'rhel']):
            cmake_executable = "cmake3"
@@ -133,7 +134,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/rmake.py rocPRIM-rocm-5.6.0/rmake.py
  #   case "${ID}" in
  #     centos|rhel)
 -#     cmake_options="${cmake_options} -DCMAKE_FIND_ROOT_PATH=/usr/lib64/llvm7.0/lib/cmake/"
-+#     cmake_options="${cmake_options} -DCMAKE_FIND_ROOT_PATH=/usr/lib/llvm/@LLVM_SLOT@/@LIBDIR@/cmake/"
++#     cmake_options="${cmake_options} -DCMAKE_FIND_ROOT_PATH=@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake/"
  #     ;;
  #     windows)
  #     cmake_options="${cmake_options} -DWIN32=ON -DROCM_PATH=${rocm_path} -DROCM_DIR:PATH=${rocm_path} -DCMAKE_PREFIX_PATH:PATH=${rocm_path}"
@@ -145,7 +146,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/test/extra/CMakeLists.txt rocPRIM-rocm-5.6.0/t
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
 -  ${HIP_PATH}/lib/cmake/hip ${HIP_PATH}/cmake /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Use target ID syntax if supported for AMDGPU_TARGETS
@@ -154,7 +155,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/test/extra/CMakeLists.txt rocPRIM-rocm-5.6.0/t
  
  # Find rocPRIM
 -find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
-+find_package(rocprim REQUIRED CONFIG PATHS "/usr/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocprim")
  
  # Build CXX flags
  set(CMAKE_CXX_STANDARD 14)
@@ -166,7 +167,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/toolchain-linux.cmake rocPRIM-rocm-5.6.0/toolc
    set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/bin")
-+  set(rocm_bin "/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  

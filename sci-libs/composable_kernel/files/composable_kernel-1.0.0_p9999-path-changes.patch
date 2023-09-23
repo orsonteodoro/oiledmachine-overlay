@@ -6,7 +6,7 @@ diff -urp composable_kernel-1.0.0_p9999.orig/client_example/CMakeLists.txt compo
  
  find_package(composable_kernel 1.0.0 COMPONENTS device_operations)
 -find_package(hip REQUIRED PATHS /opt/rocm)
-+find_package(hip REQUIRED PATHS /usr)
++find_package(hip REQUIRED PATHS @ESYSROOT_ROCM_PATH@)
  message(STATUS "Build with HIP ${hip_VERSION}")
  
  # add all example subdir
@@ -19,8 +19,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/client_example/README.md composable
  cmake                                                                 \
 --D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                             \
 --D CMAKE_PREFIX_PATH="/opt/rocm;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
-+-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                             \
-+-D CMAKE_PREFIX_PATH="/usr;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
++-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                             \
++-D CMAKE_PREFIX_PATH="@ESYSROOT_ROCM_PATH@;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
  ..
  ```
  
@@ -34,8 +34,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/cmake/ClangTidy.cmake composable_ke
 -        /opt/rocm/llvm/bin
 -        /opt/rocm/hcc
 -        /usr/local/opt/llvm/bin
-+        /usr/lib/llvm/@LLVM_SLOT@/bin
-+        /usr/hcc
++        @ESYSROOT_LLVM_PATH@
++        @ESYSROOT@/usr/hcc
  )
  
  function(find_clang_tidy_version VAR)
@@ -47,7 +47,7 @@ diff -urp composable_kernel-1.0.0_p9999.orig/cmake/CppCheck.cmake composable_ker
          cppcheck
      PATHS
 -        /opt/rocm/bin
-+        /usr/bin
++        @ESYSROOT_ROCM_PATH@/bin
  )
  
  ProcessorCount(CPPCHECK_JOBS)
@@ -59,7 +59,7 @@ diff -urp composable_kernel-1.0.0_p9999.orig/CMakeLists.txt composable_kernel-1.
  
  set(ROCM_SYMLINK_LIBS OFF)
 -find_package(ROCM REQUIRED PATHS /opt/rocm)
-+find_package(ROCM REQUIRED PATHS /usr)
++find_package(ROCM REQUIRED PATHS @ESYSROOT_ROCM_PATH@)
  
  include(ROCMInstallTargets)
  include(ROCMPackageConfigHelpers)
@@ -68,7 +68,7 @@ diff -urp composable_kernel-1.0.0_p9999.orig/CMakeLists.txt composable_kernel-1.
  rocm_setup_version(VERSION 0.2.0)
  include(TargetFlags)
 -list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_INSTALL_PREFIX}/hip /opt/rocm /opt/rocm/llvm /opt/rocm/hip)
-+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/lib/llvm/@LLVM_SLOT@ ${CMAKE_INSTALL_PREFIX}/hip /usr /usr/lib/llvm/@LLVM_SLOT@ /usr/hip)
++list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} @ESYSROOT_LLVM_PATH@ ${CMAKE_INSTALL_PREFIX}/hip @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip)
  
  message("GPU_TARGETS= ${GPU_TARGETS}")
  
@@ -92,8 +92,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/docs/dockerhub.rst composable_kerne
      cmake                                                                                             \
 -    -D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
 -    -D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
-+    -D CMAKE_PREFIX_PATH=/usr                                                                         \
-+    -D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                              \
++    -D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                         \
++    -D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                              \
      -D CMAKE_CXX_FLAGS="-O3"                                                                          \
      -D CMAKE_BUILD_TYPE=Release                                                                       \
      -D GPU_TARGETS="gfx908;gfx90a"                                                                    \
@@ -106,8 +106,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/docs/tutorial_hello_world.rst compo
      cmake  \
 -    -D CMAKE_PREFIX_PATH=/opt/rocm  \
 -    -D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc  \
-+    -D CMAKE_PREFIX_PATH=/usr  \
-+    -D CMAKE_CXX_COMPILER=/usr/bin/hipcc  \
++    -D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@  \
++    -D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc  \
      -D CMAKE_CXX_FLAGS="-O3"  \
      -D CMAKE_BUILD_TYPE=Release  \
      -D BUILD_DEV=OFF  \
@@ -132,8 +132,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/README.md composable_kernel-1.0.0_p
  cmake                                                                                             \
 --D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
 --D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
-+-D CMAKE_PREFIX_PATH=/usr                                                                         \
-+-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                              \
++-D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                         \
++-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                              \
  -D CMAKE_CXX_FLAGS="-O3"                                                                          \
  -D CMAKE_BUILD_TYPE=Release                                                                       \
  -D GPU_TARGETS="gfx908;gfx90a"                                                                    \
@@ -146,8 +146,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/script/cmake-ck-dev.sh composable_k
  cmake                                                                                             \
 --D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
 --D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
-+-D CMAKE_PREFIX_PATH=/usr                                                                         \
-+-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                              \
++-D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                         \
++-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                              \
  -D CMAKE_CXX_FLAGS="-std=c++17 -O3 -ftemplate-backtrace-limit=0  -fPIE  -Wno-gnu-line-marker      \
  -save-temps=$PWD"                                                                                 \
  -D CMAKE_BUILD_TYPE=Release                                                                       \
@@ -160,8 +160,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/script/cmake-ck-release.sh composab
  cmake                                                                                             \
 --D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
 --D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
-+-D CMAKE_PREFIX_PATH=/usr                                                                         \
-+-D CMAKE_CXX_COMPILER=/usr/bin/hipcc                                                              \
++-D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                         \
++-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                              \
  -D CMAKE_CXX_FLAGS="-O3"                                                                          \
  -D CMAKE_BUILD_TYPE=Release                                                                       \
  -D BUILD_DEV=OFF                                                                                  \
@@ -176,28 +176,28 @@ diff -urp composable_kernel-1.0.0_p9999.orig/script/hipclang_opt.sh composable_k
 -/opt/rocm/llvm/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
 -/opt/rocm/llvm/bin/opt -S -sroa inline.ll > sroa.ll
 -/opt/rocm/llvm/bin/opt -S -O3 sroa.ll > o3.ll
-+/usr/llvm/@LLVM_SLOT@/bin/llvm-dis $BC_FILE -o original.ll
-+/usr/llvm/@LLVM_SLOT@/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
-+/usr/llvm/@LLVM_SLOT@/bin/opt -S -sroa inline.ll > sroa.ll
-+/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 sroa.ll > o3.ll
++@ESYSROOT_LLVM_PATH@/bin/llvm-dis $BC_FILE -o original.ll
++@ESYSROOT_LLVM_PATH@/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
++@ESYSROOT_LLVM_PATH@/bin/opt -S -sroa inline.ll > sroa.ll
++@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 sroa.ll > o3.ll
  
 -/opt/rocm/llvm/bin/llc -mcpu=gfx906 original.ll
 -/opt/rocm/llvm/bin/llc -mcpu=gfx906 inline.ll
 -/opt/rocm/llvm/bin/llc -mcpu=gfx906 sroa.ll
 -/opt/rocm/llvm/bin/llc -mcpu=gfx906 o3.ll
-+/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 original.ll
-+/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 inline.ll
-+/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 sroa.ll
-+/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx906 o3.ll
++@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx906 original.ll
++@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx906 inline.ll
++@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx906 sroa.ll
++@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx906 o3.ll
  
 -#/opt/rocm/llvm/bin/opt -S -O3 -sroa inline.ll > o3.ll
 -#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
 -#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
 -#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa inline.ll > o3.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
++#@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 -sroa inline.ll > o3.ll
++#@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
++#@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
++#@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
  
 -#/opt/rocm/llvm/bin/llc -mcpu=gfx908 opt.ll
 -#/opt/rocm/llvm/bin/llc -mcpu=gfx908 inline.ll
@@ -205,12 +205,12 @@ diff -urp composable_kernel-1.0.0_p9999.orig/script/hipclang_opt.sh composable_k
 -#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_2.ll
 -#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_3.ll
 -#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_4.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 opt.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 inline.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_2.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_3.ll
-+#/usr/llvm/@LLVM_SLOT@/bin/llc -mcpu=gfx908 o3_4.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 opt.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 inline.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 o3.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 o3_2.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 o3_3.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 o3_4.ll
 diff -urp composable_kernel-1.0.0_p9999.orig/script/parse_perf_data.py composable_kernel-1.0.0_p9999/script/parse_perf_data.py
 --- composable_kernel-1.0.0_p9999.orig/script/parse_perf_data.py	2023-08-24 02:31:11.326774158 -0700
 +++ composable_kernel-1.0.0_p9999/script/parse_perf_data.py	2023-08-24 09:39:40.955412034 -0700
@@ -219,7 +219,7 @@ diff -urp composable_kernel-1.0.0_p9999.orig/script/parse_perf_data.py composabl
              if 'InstalledDir' in line:
                  lst=line.split()
 -                rocm_vers=lst[1][lst[1].find('/opt/rocm-')+len('/opt/rocm-'):lst[1].rfind('/llvm/bin')]
-+                rocm_vers=lst[1][lst[1].find('/usr')+len('/usr'):lst[1].rfind('/lib/llvm/@LLVM_SLOT@/bin')]
++                rocm_vers="@ROCM_VERSION@"
      print("Branch name:",branch_name)
      print("Node name:",node_id)
      print("GPU_arch:",gpu_arch)
@@ -238,7 +238,7 @@ diff -urp composable_kernel-1.0.0_p9999.orig/script/process_perf_data.py composa
          if 'InstalledDir' in line:
              lst=line.split()
 -            rocm_vers=lst[1][lst[1].find('/opt/rocm-')+len('/opt/rocm-'):lst[1].rfind('/llvm/bin')]
-+            rocm_vers=lst[1][lst[1].find('/usr')+len('/usr'):lst[1].rfind('lib/llvm/@LLVM_SLOT@/bin')]
++            rocm_vers="@ROCM_VERSION@"
      return branch_name, node_id, gpu_arch, compute_units, rocm_vers, hip_vers, environment
  
  def parse_logfile(logfile):
@@ -250,7 +250,7 @@ diff -urp composable_kernel-1.0.0_p9999.orig/script/run_full_performance_tests.s
  	hipcc --version | grep -e 'HIP version'  >> $1;
  	echo 'Environment type: ' $2 >> $1;
 -	/opt/rocm/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
-+	/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ --version | grep -e 'InstalledDir' >> $1;
++	@EPREFIX_LLVM_PATH@/bin/clang++ --version | grep -e 'InstalledDir' >> $1;
  }
  
  #run gemm tests
@@ -262,7 +262,7 @@ diff -urp composable_kernel-1.0.0_p9999.orig/script/run_performance_tests.sh com
  	hipcc --version | grep -e 'HIP version'  >> $1;
  	echo 'Environment type: ' $2 >> $1;
 -	/opt/rocm/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
-+	/usr/lib/llvm/@LLVM_SLOT@/bin/clang++ --version | grep -e 'InstalledDir' >> $1;
++	@EPREFIX_LLVM_PATH@/bin/clang++ --version | grep -e 'InstalledDir' >> $1;
  }
  
  #run gemm tests

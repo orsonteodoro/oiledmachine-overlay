@@ -1,12 +1,13 @@
 diff -urp rocRAND-rocm-5.5.1.orig/cmake/Dependencies.cmake rocRAND-rocm-5.5.1/cmake/Dependencies.cmake
 --- rocRAND-rocm-5.5.1.orig/cmake/Dependencies.cmake	2023-09-04 13:51:53.083605588 -0700
 +++ rocRAND-rocm-5.5.1/cmake/Dependencies.cmake	2023-09-04 13:52:42.251604932 -0700
-@@ -59,7 +59,7 @@ if(USE_HIP_CPU)
+@@ -59,7 +59,8 @@ if(USE_HIP_CPU)
        )
        find_program(CLANG_EXE
          clang
++        PATHS @EPREFIX_LLVM_PATH@
 -        PATH_SUFFIXES bin llvm/bin
-+        PATH_SUFFIXES bin llvm/llvm/@LLVM_SLOT@/bin
++        PATH_SUFFIXES bin
          REQUIRED
        )
        get_filename_component(CLANG_DIR "${CLANG_EXE}" DIRECTORY)
@@ -58,11 +59,11 @@ diff -urp rocRAND-rocm-5.5.1.orig/CMakeLists.txt rocRAND-rocm-5.5.1/CMakeLists.t
    set( CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF )
  else()
 -  set(CMAKE_INSTALL_PREFIX "$ENV{ROCM_PATH}" CACHE PATH "Install path prefix, prepended onto install directories")
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "$ENV{ROCM_PATH}" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  
    #Adding CMAKE_PREFIX_PATH
 -  list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH}/llvm $ENV{ROCM_PATH} )
-+  list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@ $ENV{ROCM_PATH} )
++  list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ $ENV{ROCM_PATH} )
    if(NOT CPACK_PACKAGING_INSTALL_PREFIX)
        set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
    endif()
@@ -75,7 +76,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/CMakeLists.txt rocRAND-rocm-5.5.1/CMakeLists.t
 -    $ENV{ROCM_PATH}/llvm
 +    $ENV{ROCM_PATH}/@LIBDIR@/cmake/hip
 +    ${HIP_PATH}/@LIBDIR@/cmake $ENV{ROCM_PATH}/cmake/hip # FindHIP.cmake
-+    $ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@
++    @ESYSROOT_LLVM_PATH@
  )
  
  #
@@ -93,7 +94,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/CMakeLists.txt rocRAND-rocm-5.5.1/CMakeLists.t
      include(cmake/VerifyCompiler.cmake)
    else()
 -    list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} $ENV{ROCM_PATH}/hip $ENV{ROCM_PATH}/llvm)
-+    list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} $ENV{ROCM_PATH}/hip $ENV{ROCM_PATH}/lib/llvm/@LLVM_SLOT@)
++    list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} $ENV{ROCM_PATH}/hip @ESYSROOT_LLVM_PATH@)
      find_package(hip REQUIRED CONFIG PATHS ${HIP_DIR} $ENV{ROCM_PATH})
    endif()
  endif()
@@ -114,7 +115,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/docs/installing.rst rocRAND-rocm-5.5.1/docs/in
      sudo dnf install rocrand
  
 -This will install rocRAND into the ``/opt/rocm`` directory.
-+This will install rocRAND into the ``/usr`` directory.
++This will install rocRAND into the ``@ESYSROOT_ROCM_PATH@`` directory.
  
  Building rocRAND From Source
  ----------------------------
@@ -123,33 +124,10 @@ diff -urp rocRAND-rocm-5.5.1.orig/docs/installing.rst rocRAND-rocm-5.5.1/docs/in
      ./install --install
  
 -This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``/opt/rocm`` if everything went well. See ``./install --help`` for further information.
-+This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``/usr`` if everything went well. See ``./install --help`` for further information.
++This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``@ESYSROOT_ROCM_PATH@`` if everything went well. See ``./install --help`` for further information.
  
  Building With CMake
  ^^^^^^^^^^^^^^^^^^^
-diff -urp rocRAND-rocm-5.5.1.orig/.gitlab-ci.yml rocRAND-rocm-5.5.1/.gitlab-ci.yml
---- rocRAND-rocm-5.5.1.orig/.gitlab-ci.yml	2023-03-06 13:05:54.000000000 -0800
-+++ rocRAND-rocm-5.5.1/.gitlab-ci.yml	2023-09-04 13:52:10.123605361 -0700
-@@ -22,7 +22,7 @@
- 
- variables:
-   GIT_SUBMODULE_STRATEGY: normal # Fetch submodules before job start (non-recursively)
--  ROCM_PATH: /opt/rocm
-+  ROCM_PATH: /usr
- 
- include:
-   - project: amd/ci-templates
-@@ -50,8 +50,8 @@ clang-format:
-   tags:
-     - rocm-build
-   variables:
--    CLANG_FORMAT: "/opt/rocm/llvm/bin/clang-format"
--    GIT_CLANG_FORMAT: "/opt/rocm/llvm/bin/git-clang-format"
-+    CLANG_FORMAT: "/usr/llvm/bin/clang-format"
-+    GIT_CLANG_FORMAT: "/usr/llvm/bin/git-clang-format"
-   rules:
-     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-   script:
 diff -urp rocRAND-rocm-5.5.1.orig/install rocRAND-rocm-5.5.1/install
 --- rocRAND-rocm-5.5.1.orig/install	2023-03-06 13:05:54.000000000 -0800
 +++ rocRAND-rocm-5.5.1/install	2023-09-04 13:52:10.123605361 -0700
@@ -158,7 +136,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/install rocRAND-rocm-5.5.1/install
  run_tests=false
  build_hip_clang=false
 -rocm_path=/opt/rocm
-+rocm_path=/usr
++rocm_path=@ESYSROOT_ROCM_PATH@
  build_relocatable=false
  install_dependencies=false
  build_address_sanitizer=false
@@ -180,27 +158,6 @@ diff -urp rocRAND-rocm-5.5.1.orig/install rocRAND-rocm-5.5.1/install
      ../../. # or cmake-gui ../.
  else
      CXX=${rocm_path}/bin/$compiler ${cmake_executable} ${clients} ${cmake_common_options} ../../. # or cmake-gui ../.
-diff -urp rocRAND-rocm-5.5.1.orig/.jenkins/common.groovy rocRAND-rocm-5.5.1/.jenkins/common.groovy
---- rocRAND-rocm-5.5.1.orig/.jenkins/common.groovy	2023-03-06 13:05:54.000000000 -0800
-+++ rocRAND-rocm-5.5.1/.jenkins/common.groovy	2023-09-04 13:52:10.123605361 -0700
-@@ -19,7 +19,7 @@ def runCompileCommand(platform, project,
-                 mkdir -p build/${buildTypeDir} && cd build/${buildTypeDir}
-                 # gfxTargetParser reads gfxarch and adds target features such as xnack
-                 ${auxiliary.gfxTargetParser()}
--                ${cmake} -DCMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc ${buildTypeArg} ${buildStatic} ${amdgpuTargets} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
-+                ${cmake} -DCMAKE_CXX_COMPILER=/usr/bin/hipcc ${buildTypeArg} ${buildStatic} ${amdgpuTargets} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
-                 make -j\$(nproc)
-                 """
- 
-@@ -38,7 +38,7 @@ def runTestCommand (platform, project)
-                 set -x
-                 cd ${project.paths.project_build_prefix}/build/release
-                 make -j4
--                ${sudo} LD_LIBRARY_PATH=/opt/rocm/lib/ ${testCommand}
-+                ${sudo} LD_LIBRARY_PATH=/usr/lib/ ${testCommand}
-             """
- 
-     platform.runCommand(this, command)
 diff -urp rocRAND-rocm-5.5.1.orig/library/CMakeLists.txt rocRAND-rocm-5.5.1/library/CMakeLists.txt
 --- rocRAND-rocm-5.5.1.orig/library/CMakeLists.txt	2023-03-06 13:05:54.000000000 -0800
 +++ rocRAND-rocm-5.5.1/library/CMakeLists.txt	2023-09-04 13:52:10.123605361 -0700
@@ -255,7 +212,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/library/src/rocrand-fortran-config.cmake.in ro
  #     [REQUIRED]                  # Fail with error if rocRAND is not found
  #     CONFIG                      # Enable Config mode (might be required)
 -#     [PATHS path1 [path2 ... ]]  # Path to install dir (e.g. /opt/rocm/rocrand)
-+#     [PATHS path1 [path2 ... ]]  # Path to install dir (e.g. /usr/rocrand)
++#     [PATHS path1 [path2 ... ]]  # Path to install dir (e.g. @ESYSROOT_ROCM_PATH@/rocrand)
  #   )
  #
  # The following variables are defined when rocRAND is found:
@@ -264,7 +221,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/library/src/rocrand-fortran-config.cmake.in ro
  #    // First find and include HIP
  #    // See https://github.com/ROCm-Developer-Tools/HIP
 -#    find_package(rocrand REQUIRED CONFIG PATHS "/opt/rocm/rocrand")
-+#    find_package(rocrand REQUIRED CONFIG PATHS "/usr/rocrand")
++#    find_package(rocrand REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocrand")
  #    add_executable(foo foo.cpp)
  #    // Set HIP flags, add HIP includes
  #    // Link foo against HIP or CUDA lib (see hipconfig)
@@ -277,8 +234,8 @@ diff -urp rocRAND-rocm-5.5.1.orig/python/rocrand/rocrand/hip.py rocRAND-rocm-5.5
      os.getenv("HIP_PATH"),
 -    "/opt/rocm",
 -    "/opt/rocm/hip"]
-+    "/usr",
-+    "/usr/hip"]
++    "@EPREFIX_ROCM_PATH@",
++    "@EPREFIX_ROCM_PATH@/hip"]
  
  CUDA_PATHS = [
      os.getenv("CUDA_PATH"),
@@ -290,7 +247,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/rmake.py rocRAND-rocm-5.5.1/rmake.py
          cmake_options.append( generator )
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          if (OS_info["ID"] in ['centos', 'rhel']):
            cmake_executable = "cmake3"
          else:
@@ -346,7 +303,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/toolchain-linux.cmake rocRAND-rocm-5.5.1/toolc
    set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/bin")
-+  set(rocm_bin "/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  

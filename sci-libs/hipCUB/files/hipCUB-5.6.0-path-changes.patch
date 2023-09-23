@@ -8,7 +8,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/cmake/RocmCmakeDependence.cmake hipCUB-rocm-5.6
  
  # Find or download/install rocm-cmake project
 -find_package(ROCM 0.7.3 QUIET CONFIG PATHS /opt/rocm)
-+find_package(ROCM 0.7.3 QUIET CONFIG PATHS /usr)
++find_package(ROCM 0.7.3 QUIET CONFIG PATHS @ESYSROOT_ROCM_PATH@)
  if(NOT ROCM_FOUND)
      set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
      file(
@@ -37,12 +37,12 @@ diff -urp hipCUB-rocm-5.6.0.orig/cmake/VerifyCompiler.cmake hipCUB-rocm-5.6.0/cm
  # SOFTWARE.
  
 -list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/hip)
-+list(APPEND CMAKE_PREFIX_PATH /usr /usr/hip)
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip)
  if(CMAKE_CXX_COMPILER MATCHES ".*nvcc$" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 -    list(APPEND CMAKE_MODULE_PATH /opt/rocm/hip/cmake)
 -    find_package(hip QUIET CONFIG PATHS /opt/rocm)
-+    list(APPEND CMAKE_MODULE_PATH /usr/@LIBDIR@/cmake/hip)
-+    find_package(hip QUIET CONFIG PATHS /usr)
++    list(APPEND CMAKE_MODULE_PATH @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip)
++    find_package(hip QUIET CONFIG PATHS @ESYSROOT_ROCM_PATH@)
      if(NOT hip_FOUND)
          find_package(HIP REQUIRED)
      endif()
@@ -51,7 +51,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/cmake/VerifyCompiler.cmake hipCUB-rocm-5.6.0/cm
      endif()
  else()
 -  find_package(hip REQUIRED CONFIG PATHS /opt/rocm)
-+  find_package(hip REQUIRED CONFIG PATHS /usr)
++  find_package(hip REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@)
  endif()
  
  if(HIP_COMPILER STREQUAL "nvcc")
@@ -63,26 +63,26 @@ diff -urp hipCUB-rocm-5.6.0.orig/CMakeLists.txt hipCUB-rocm-5.6.0/CMakeLists.txt
  
  # Install prefix
 -set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  
  #Adding CMAKE_PREFIX_PATH
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm ${ROCM_PATH})
-+list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr ${ROCM_PATH})
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ ${ROCM_PATH})
  
  # hipCUB project
  project(hipcub LANGUAGES CXX)
  
  #Adding CMAKE_PREFIX_PATH
 -list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH /usr)
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
  
  # CMake modules
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
 -  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
 -  ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip # FindHIP.cmake
-+  ${HIP_PATH}/@LIBDIR@/cmake /usr/hip/cmake # FindHIP.cmake
-+  ${ROCM_PATH}/@LIBDIR@/cmake/hip /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake @ESYSROOT_ROCM_PATH@/hip/cmake # FindHIP.cmake
++  ${ROCM_PATH}/@LIBDIR@/cmake/hip @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Set a default build type if none was specified
@@ -101,7 +101,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/hipcub/CMakeLists.txt hipCUB-rocm-5.6.0/hipcub/
  
  # Install the wrapper to hipcub folder. 
 -# Wrappers would be in /opt/rocm-xxx/hipcub/include/hipcub
-+# Wrappers would be in /usr/hipcub/include/hipcub
++# Wrappers would be in @ESYSROOT_ROCM_PATH@/hipcub/include/hipcub
  if (BUILD_FILE_REORG_BACKWARD_COMPATIBILITY AND NOT WIN32)
    rocm_install(
      DIRECTORY
@@ -113,13 +113,14 @@ diff -urp hipCUB-rocm-5.6.0.orig/install hipCUB-rocm-5.6.0/install
  build_hip_clang=false
  run_tests=false
 -rocm_path=/opt/rocm
-+rocm_path=/usr
++rocm_path=@ESYSROOT_ROCM_PATH@
  build_relocatable=false
  install_dependencies=false
  build_address_sanitizer=false
 @@ -169,7 +169,7 @@ if [[ "${build_relocatable}" == true ]];
      CXX=$rocm_path/bin/${compiler} ${cmake_executable} \
-         -DCMAKE_INSTALL_PREFIX=${rocm_path} \
+-        -DCMAKE_INSTALL_PREFIX=${rocm_path} \
++        -DCMAKE_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@ \
          -DCMAKE_PREFIX_PATH="${rocm_path} ${rocm_path}/hcc ${rocm_path}/hip" \
 -        -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
 +        -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip" \
@@ -134,12 +135,12 @@ diff -urp hipCUB-rocm-5.6.0.orig/README.md hipCUB-rocm-5.6.0/README.md
  ```cmake
  # On ROCm hipCUB requires rocPRIM
 -find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
-+find_package(rocprim REQUIRED CONFIG PATHS "/usr/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocprim")
  
 -# "/opt/rocm" - default install prefix
 -find_package(hipcub REQUIRED CONFIG PATHS "/opt/rocm/hipcub")
-+# "/usr" - default install prefix
-+find_package(hipcub REQUIRED CONFIG PATHS "/usr/hipcub")
++# "@ESYSROOT_ROCM_PATH@" - default install prefix
++find_package(hipcub REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/hipcub")
  
  ...
  # On ROCm: includes hipCUB headers and roc::rocprim_hip target
@@ -151,7 +152,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/rmake.py hipCUB-rocm-5.6.0/rmake.py
          cmake_options.append( generator )
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          if (OS_info["ID"] in ['centos', 'rhel']):
            cmake_executable = "cmake3"
          else:
@@ -163,7 +164,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/test/extra/CMakeLists.txt hipCUB-rocm-5.6.0/tes
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
 -  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Verify that hip-clang is used on ROCM platform
@@ -172,7 +173,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/test/extra/CMakeLists.txt hipCUB-rocm-5.6.0/tes
  
  # Find hipCUB
 -find_package(hipcub REQUIRED CONFIG HINTS ${hipcub_DIR} PATHS "/opt/rocm")
-+find_package(hipcub REQUIRED CONFIG HINTS ${hipcub_DIR} PATHS "/usr")
++find_package(hipcub REQUIRED CONFIG HINTS ${hipcub_DIR} PATHS "@ESYSROOT_ROCM_PATH@")
  
  # Build CXX flags
  set(CMAKE_CXX_STANDARD 14)
@@ -184,7 +185,7 @@ diff -urp hipCUB-rocm-5.6.0.orig/toolchain-linux.cmake hipCUB-rocm-5.6.0/toolcha
    set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/bin")
-+  set(rocm_bin "/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  

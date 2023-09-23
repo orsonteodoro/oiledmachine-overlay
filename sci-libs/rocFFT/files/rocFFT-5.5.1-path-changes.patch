@@ -110,8 +110,8 @@ diff -urp rocFFT-rocm-5.5.1.orig/clients/tests/cmake/FindFFTW.cmake rocFFT-rocm-
        PATHS
 -          /usr/lib
 -          /usr/local/lib
-+          /usr/@LIBDIR@
-+          /usr/local/@LIBDIR@
++          @ESYSROOT@/usr/@LIBDIR@
++          @ESYSROOT@/usr/local/@LIBDIR@
        PATH_SUFFIXES
            x86_64-linux-gnu
        DOC "FFTW dynamic library single"
@@ -126,8 +126,8 @@ diff -urp rocFFT-rocm-5.5.1.orig/clients/tests/cmake/FindFFTW.cmake rocFFT-rocm-
        PATHS
 -          /usr/lib
 -          /usr/local/lib
-+          /usr/@LIBDIR@
-+          /usr/local/@LIBDIR@
++          @ESYSROOT@/usr/@LIBDIR@
++          @ESYSROOT@/usr/local/@LIBDIR@
        PATH_SUFFIXES
            x86_64-linux-gnu
        DOC "FFTW dynamic library double"
@@ -172,7 +172,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/CMakeLists.txt rocFFT-rocm-5.5.1/CMakeLists.txt
  # rocm-cmake contains common cmake code for rocm projects to help setup and install
  set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
 -find_package( ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH} /opt/rocm )
-+find_package( ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH} /usr )
++find_package( ROCM 0.7.3 CONFIG QUIET PATHS ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
  if( NOT ROCM_FOUND )
    set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
    file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
@@ -223,18 +223,6 @@ diff -urp rocFFT-rocm-5.5.1.orig/docs/samples/CMakeLists.txt rocFFT-rocm-5.5.1/d
 -  set(CMAKE_BUILD_TYPE Release)
 +#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE Release)
  endif(NOT CMAKE_BUILD_TYPE)
-diff -urp rocFFT-rocm-5.5.1.orig/.githooks/pre-commit rocFFT-rocm-5.5.1/.githooks/pre-commit
---- rocFFT-rocm-5.5.1.orig/.githooks/pre-commit	2023-01-30 22:20:16.000000000 -0800
-+++ rocFFT-rocm-5.5.1/.githooks/pre-commit	2023-09-04 19:45:32.747322225 -0700
-@@ -4,7 +4,7 @@
- # are installed, and if so, uses the installed version to format
- # the staged changes.
- 
--base=/opt/rocm/llvm/bin/clang-format
-+base=/usr/llvm/bin/clang-format
- format=""
- 
- # Redirect output to stderr.
 diff -urp rocFFT-rocm-5.5.1.orig/install.sh rocFFT-rocm-5.5.1/install.sh
 --- rocFFT-rocm-5.5.1.orig/install.sh	2023-01-30 22:20:16.000000000 -0800
 +++ rocFFT-rocm-5.5.1/install.sh	2023-09-04 19:45:32.747322225 -0700
@@ -243,7 +231,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/install.sh rocFFT-rocm-5.5.1/install.sh
  
  if [[ "${build_relocatable}" == true ]]; then
 -    rocm_path=/opt/rocm
-+    rocm_path=/usr
++    rocm_path=@ESYSROOT_ROCM_PATH@
      if ! [ -z ${ROCM_PATH+x} ]; then
          rocm_path=${ROCM_PATH}
      fi
@@ -258,7 +246,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/install.sh rocFFT-rocm-5.5.1/install.sh
      export PATH=${rocm_path}/bin:${PATH}
  else
 -    export PATH=${PATH}:/opt/rocm/bin
-+    export PATH=${PATH}:/usr/bin
++    export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
  fi
  
  pushd .
@@ -304,7 +292,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/library/src/device/generator.py rocFFT-rocm-5.5
      """Format code using clang-format."""
      try:
 -        p = subprocess.run(['/opt/rocm/llvm/bin/clang-format', '-style=file'],
-+        p = subprocess.run(['/usr/lib/llvm/@LLVM_SLOT@/bin/clang-format', '-style=file'],
++        p = subprocess.run(['@EPREFIX_LLVM_PREFIX@/bin/clang-format', '-style=file'],
                             stdout=subprocess.PIPE,
                             input=str(code),
                             encoding='ascii',
@@ -313,7 +301,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/library/src/device/generator.py rocFFT-rocm-5.5
         remains unformatted if clang-format isn't runnable."""
      try:
 -        p = subprocess.run(['/opt/rocm/llvm/bin/clang-format', '-i', filename])
-+        p = subprocess.run(['/usr/lib/llvm/@LLVM_SLOT@/bin/clang-format', '-i', filename])
++        p = subprocess.run(['@EPREFIX_LLVM_PREFIX@/bin/clang-format', '-i', filename])
      except:
          # code formatting doesn't affect functionality, so just assume
          # default ROCm path and ignore errors if it's not there.
@@ -325,7 +313,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/rmake.py rocFFT-rocm-5.5.1/rmake.py
          toolchain = os.path.join(src_path, "toolchain-windows.cmake")
      else:
 -        rocm_path = os.getenv('ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv('ROCM_PATH', "/usr")
++        rocm_path = os.getenv('ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          cmake_platform_opts.append(f"-DROCM_DIR:PATH={rocm_path}")
          cmake_platform_opts.append(
              f"-DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}")
@@ -364,7 +352,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/scripts/perf/perflib/generators.py rocFFT-rocm-
 +from rocFFT_perflib.utils import sjoin
  
 -top = path(__file__).resolve().parent.parent
-+top = path("@EPREFIX@/usr/share/rocFFT-perflib")
++top = path("@ESYSROOT_ROCM_PATH@/share/rocFFT-perflib")
  
  
  def mktag(tag, dimension, precision, direction, inplace, real):
@@ -412,7 +400,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/scripts/perf/perflib/pdf.py rocFFT-rocm-5.5.1/s
 +import rocFFT_perflib.utils
  
 -top = Path(__file__).resolve().parent.parent
-+top = Path("@EPREFIX@/usr/share/rocFFT-perflib")
++top = Path("@ESYSROOT_ROCM_PATH@/share/rocFFT-perflib")
  
  
  @dataclass
@@ -438,7 +426,7 @@ Only in rocFFT-rocm-5.5.1/scripts/perf/perflib: pdf.py.orig
 diff -urp rocFFT-rocm-5.5.1.orig/scripts/perf/perflib/specs.py rocFFT-rocm-5.5.1/scripts/perf/perflib/specs.py
 --- rocFFT-rocm-5.5.1.orig/scripts/perf/perflib/specs.py	2023-01-30 22:20:16.000000000 -0800
 +++ rocFFT-rocm-5.5.1/scripts/perf/perflib/specs.py	2023-09-04 19:45:32.751322225 -0700
-@@ -84,10 +84,6 @@ def get_machine_specs(devicenum):
+@@ -84,10 +84,4 @@ def get_machine_specs(devicenum):
      meminfo = path('/proc/meminfo').read_text()
      version = path('/proc/version').read_text()
      os_release = path('/etc/os-release').read_text()
@@ -446,8 +434,8 @@ diff -urp rocFFT-rocm-5.5.1.orig/scripts/perf/perflib/specs.py rocFFT-rocm-5.5.1
 -        rocm_info = path('/opt/rocm/.info/version-utils').read_text()
 -    elif os.path.isfile('/opt/rocm/.info/version'):
 -        rocm_info = path('/opt/rocm/.info/version').read_text()
-     else:
-         rocm_info = "rocm info not available"
+-    else:
+-        rocm_info = "rocm info not available"
  
 @@ -107,7 +103,7 @@ def get_machine_specs(devicenum):
      kernel = search(r'version (\S*)', version)
@@ -811,7 +799,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/toolchain-linux.cmake rocFFT-rocm-5.5.1/toolcha
    set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/bin")
-+  set(rocm_bin "/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")

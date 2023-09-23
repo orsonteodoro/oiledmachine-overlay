@@ -89,7 +89,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/CMakeLists.txt hipSOLVER-rocm-5.1.3/CMakeLis
  
  # NOTE:  workaround until hip cmake modules fixes symlink logic in their config files; remove when fixed
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/llvm /opt/rocm/hip )
-+list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/lib/llvm/@LLVM_SLOT@ @ESYSROOT_ROCM_PATH@/hip )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@/hip )
  
  option( BUILD_VERBOSE "Output additional build information" OFF )
  

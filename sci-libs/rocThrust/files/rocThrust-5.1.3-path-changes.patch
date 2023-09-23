@@ -8,15 +8,15 @@ diff -urp rocThrust-rocm-5.1.3.orig/cmake/FindROCMCmake.cmake rocThrust-rocm-5.1
  set(PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern)
  
 -# By default, rocm software stack is expected at /opt/rocm
-+# By default, rocm software stack is expected at /usr
++# By default, rocm software stack is expected at @ESYSROOT_ROCM_PATH@
  # set environment variable ROCM_PATH to change location
  if(NOT ROCM_PATH)
 -  set(ROCM_PATH /opt/rocm)
-+  set(ROCM_PATH /usr)
++  set(ROCM_PATH @ESYSROOT_ROCM_PATH@)
  endif()
  
 -find_package(ROCM 0.6 CONFIG QUIET PATHS ${ROCM_PATH} /opt/rocm)
-+find_package(ROCM 0.6 CONFIG QUIET PATHS ${ROCM_PATH} /usr)
++find_package(ROCM 0.6 CONFIG QUIET PATHS ${ROCM_PATH} @ESYSROOT_ROCM_PATH@)
  if(NOT ROCM_FOUND)
    set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
    set(rocm_cmake_url "https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip")
@@ -58,8 +58,8 @@ diff -urp rocThrust-rocm-5.1.3.orig/cmake/VerifyCompiler.cmake rocThrust-rocm-5.
  
 -list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/hip)
 -find_package(hip REQUIRED CONFIG PATHS /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH /usr /usr/hip)
-+find_package(hip REQUIRED CONFIG PATHS /usr)
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip)
++find_package(hip REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@)
  
  if(HIP_COMPILER STREQUAL "nvcc")
      message(FATAL_ERROR "rocThrust does not support the CUDA backend.")
@@ -68,15 +68,15 @@ diff -urp rocThrust-rocm-5.1.3.orig/cmake/VerifyCompiler.cmake rocThrust-rocm-5.
          message(FATAL_ERROR "On ROCm platform 'hcc' or 'clang' must be used as C++ compiler.")
      elseif(NOT CXX_VERSION_STRING MATCHES "clang")
 -        list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hcc)
-+        list(APPEND CMAKE_PREFIX_PATH /usr/hcc)
++        list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@/hcc)
          set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-command-line-argument")
      endif()
  
      if(HIP_COMPILER STREQUAL "hcc")
 -      list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hcc)
 -      find_package(hcc REQUIRED CONFIG PATHS /opt/rocm)
-+      list(APPEND CMAKE_PREFIX_PATH /usr/hcc)
-+      find_package(hcc REQUIRED CONFIG PATHS /usr)
++      list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@/hcc)
++      find_package(hcc REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@)
      endif()
  else()
      message(FATAL_ERROR "HIP_COMPILER must be 'hcc' or 'clang' (AMD ROCm platform)")
@@ -91,7 +91,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/CMakeLists.txt rocThrust-rocm-5.1.3/CMakeLis
 +#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR}/package CACHE PATH "Install path prefix, prepended onto install directories")
  else()
 -  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
-+#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
  endif()
  
  # Thrust project
@@ -99,13 +99,13 @@ diff -urp rocThrust-rocm-5.1.3.orig/CMakeLists.txt rocThrust-rocm-5.1.3/CMakeLis
  
  #Adding CMAKE_PREFIX_PATH
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm )
-+list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ )
  
  # CMake modules
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/cmake
 -  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/cmake /usr/hip/cmake # FindHIP.cmake
++  ${HIP_PATH}/cmake @ESYSROOT_ROCM_PATH@/hip/cmake # FindHIP.cmake
  )
  
  # Set a default build type if none was specified
@@ -124,7 +124,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/examples/cpp_integration/README rocThrust-ro
  
    $ nvcc -O2 -c device.cu
 -  $ g++  -O2 -c host.cpp   -I/usr/local/cuda/include/
-+  $ g++  -O2 -c host.cpp   -I/opt/cuda/include/
++  $ g++  -O2 -c host.cpp   -I@ESYSROOT@/opt/cuda/include/
    $ nvcc -o tester device.o host.o
  
  Alternatively, we can use g++ to perform final linking step.
@@ -132,8 +132,8 @@ diff -urp rocThrust-rocm-5.1.3.orig/examples/cpp_integration/README rocThrust-ro
    $ nvcc -O2 -c device.cu
 -  $ g++  -O2 -c host.cpp   -I/usr/local/cuda/include/
 -  $ g++ -o tester device.o host.o -L/usr/local/cuda/lib64 -lcudart
-+  $ g++  -O2 -c host.cpp   -I/opt/cuda/include/
-+  $ g++ -o tester device.o host.o -L/opt/cuda/@LIBDIR@ -lcudart
++  $ g++  -O2 -c host.cpp   -I@ESYSROOT@/opt/cuda/include/
++  $ g++ -o tester device.o host.o -L@ESYSROOT@/opt/cuda/@LIBDIR@ -lcudart
  
 diff -urp rocThrust-rocm-5.1.3.orig/extra/CMakeLists.txt rocThrust-rocm-5.1.3/extra/CMakeLists.txt
 --- rocThrust-rocm-5.1.3.orig/extra/CMakeLists.txt	2022-03-10 13:59:35.000000000 -0800
@@ -143,7 +143,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/extra/CMakeLists.txt rocThrust-rocm-5.1.3/ex
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/../cmake
 -  ${HIP_PATH}/cmake /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/@LIBDIR@/cmake /usr/@LIBDIR@/cmake/hip # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Detect compiler support for target ID
@@ -152,7 +152,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/extra/CMakeLists.txt rocThrust-rocm-5.1.3/ex
  
  # Find rocThrust
 -find_package(rocthrust REQUIRED CONFIG HINTS ${rocthrust_DIR} PATHS "/opt/rocm/rocthrust")
-+find_package(rocthrust REQUIRED CONFIG HINTS ${rocthrust_DIR} PATHS "/usr/rocthrust")
++find_package(rocthrust REQUIRED CONFIG HINTS ${rocthrust_DIR} PATHS "@ESYSROOT_ROCM_PATH@/rocthrust")
  
  # Build CXX flags
  set(CMAKE_CXX_STANDARD 11)
@@ -164,7 +164,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/.gitlab-ci-gputest.yml rocThrust-rocm-5.1.3/
      - cd $BUILD_LATEST_DIR
      - $SUDO_CMD $CMAKE_LATEST_PATH/bin/cmake
 -      -D CMAKE_PREFIX_PATH=/opt/rocm
-+      -D CMAKE_PREFIX_PATH=/usr
++      -D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@
        -P $CI_PROJECT_DIR/cmake/GenerateResourceSpec.cmake
      - $SUDO_CMD $CMAKE_LATEST_PATH/bin/ctest
        --output-on-failure
@@ -173,7 +173,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/.gitlab-ci-gputest.yml rocThrust-rocm-5.1.3/
      - cd $BUILD_LATEST_DIR
      - $SUDO_CMD $CMAKE_LATEST_PATH/bin/cmake
 -      -D CMAKE_PREFIX_PATH=/opt/rocm
-+      -D CMAKE_PREFIX_PATH=/usr
++      -D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@
        -P $CI_PROJECT_DIR/cmake/GenerateResourceSpec.cmake
      - $SUDO_CMD $CMAKE_LATEST_PATH/bin/ctest
        --output-on-failure
@@ -182,7 +182,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/.gitlab-ci-gputest.yml rocThrust-rocm-5.1.3/
      - cd $BUILD_LATEST_DIR
      - $SUDO_CMD $CMAKE_LATEST_PATH/bin/cmake
 -      -D CMAKE_PREFIX_PATH=/opt/rocm
-+      -D CMAKE_PREFIX_PATH=/usr
++      -D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@
        -P $CI_PROJECT_DIR/cmake/GenerateResourceSpec.cmake
      - $SUDO_CMD $CMAKE_LATEST_PATH/bin/ctest
        --output-on-failure
@@ -194,7 +194,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/install rocThrust-rocm-5.1.3/install
  build_hip_clang=false
  run_tests=false
 -rocm_path=/opt/rocm
-+rocm_path=/usr
++rocm_path=@ESYSROOT_ROCM_PATH@
  build_relocatable=false
  build_address_sanitizer=false
  
@@ -206,7 +206,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/.jenkins/common.groovy rocThrust-rocm-5.1.3/
                  mkdir -p build/${buildTypeDir} && cd build/${buildTypeDir}
                  ${auxiliary.gfxTargetParser()}
 -                ${cmake} -DCMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc ${buildTypeArg} ${amdgpuTargets} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
-+                ${cmake} -DCMAKE_CXX_COMPILER=/usr/bin/hipcc ${buildTypeArg} ${amdgpuTargets} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
++                ${cmake} -DCMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc ${buildTypeArg} ${amdgpuTargets} -DBUILD_TEST=ON -DBUILD_BENCHMARK=ON ../..
                  make -j\$(nproc)
                  """
  
@@ -218,12 +218,12 @@ diff -urp rocThrust-rocm-5.1.3.orig/README.md rocThrust-rocm-5.1.3/README.md
  ```cmake
  # On ROCm rocThrust requires rocPRIM
 -find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
-+find_package(rocprim REQUIRED CONFIG PATHS "/usr/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocprim")
  
 -# "/opt/rocm" - default install prefix
 -find_package(rocthrust REQUIRED CONFIG PATHS "/opt/rocm/rocthrust")
-+# "/usr" - default install prefix
-+find_package(rocthrust REQUIRED CONFIG PATHS "/usr/rocthrust")
++# "@ESYSROOT_ROCM_PATH@" - default install prefix
++find_package(rocthrust REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocthrust")
  
  ...
  includes rocThrust headers and roc::rocprim_hip target
@@ -235,7 +235,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/rmake.py rocThrust-rocm-5.1.3/rmake.py
          cmake_options.append( generator )
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          if (OS_info["ID"] in ['centos', 'rhel']):
            cmake_executable = "cmake3"
          else:
@@ -309,7 +309,7 @@ diff -urp rocThrust-rocm-5.1.3.orig/toolchain-linux.cmake rocThrust-rocm-5.1.3/t
 +  set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/hip/bin")
-+  set(rocm_bin "/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  

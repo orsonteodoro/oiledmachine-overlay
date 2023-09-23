@@ -17,10 +17,10 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindCLBlast.cmake MIOpenGEMM-rocm-5.5
 -        /usr/local/lib
 -        /usr/local/lib64
 -        /home/james/nugteren/clblast/install/lib
-+        /@LIBDIR@/
-+        /usr/@LIBDIR@
-+        /usr/@LIBDIR@/clblast
-+        /usr/local/@LIBDIR@
++        @ESYSROOT@/@LIBDIR@/
++        @ESYSROOT@/usr/@LIBDIR@
++        @ESYSROOT@/usr/@LIBDIR@/clblast
++        @ESYSROOT@/usr/local/@LIBDIR@
  )
  
  FIND_PATH(CLBLAST_INCLUDE_DIR NAMES clblast.h PATHS ${CLBLAST_INCLUDE_SEARCH_PATHS})
@@ -38,10 +38,10 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindIsaac.cmake MIOpenGEMM-rocm-5.5.0
 -        /usr/lib64
 -        /usr/local/lib
 -        /usr/local/lib64
-+        /@LIBDIR@/
-+        /usr/@LIBDIR@
-+        /usr/@LIBDIR@/isaac
-+        /usr/local/@LIBDIR@
++        @ESYSROOT@/@LIBDIR@/
++        @ESYSROOT@/usr/@LIBDIR@
++        @ESYSROOT@/usr/@LIBDIR@/isaac
++        @ESYSROOT@/usr/local/@LIBDIR@
   )
  
  
@@ -53,7 +53,7 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindOpenBLAS.cmake MIOpenGEMM-rocm-5.
  
  SET(Open_BLAS_LIB_SEARCH_PATHS
 -        /opt/OpenBLAS/lib
-+        /opt/OpenBLAS/@LIBDIR@
++        @ESYSROOT@/opt/OpenBLAS/@LIBDIR@
          $ENV{OpenBLAS}cd
 -        $ENV{OpenBLAS}/lib
 +        $ENV{OpenBLAS}/@LIBDIR@
@@ -68,11 +68,11 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindOpenBLAS.cmake MIOpenGEMM-rocm-5.
 -        /usr/local/lib
 -        /usr/local/lib64
 +        $ENV{OpenBLAS_HOME}/@LIBDIR@
-+        /@LIBDIR@/
-+        /@LIBDIR@/openblas-base
-+        /usr/@LIBDIR@
-+        /usr/@LIBDIR@/openblas-base
-+        /usr/local/@LIBDIR@
++        @ESYSROOT@/@LIBDIR@/
++        @ESYSROOT@/@LIBDIR@/openblas-base
++        @ESYSROOT@/usr/@LIBDIR@
++        @ESYSROOT@/usr/@LIBDIR@/openblas-base
++        @ESYSROOT@/usr/local/@LIBDIR@
   )
  
  FIND_PATH(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${Open_BLAS_INCLUDE_SEARCH_PATHS})
@@ -84,7 +84,7 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindOpenCL.cmake MIOpenGEMM-rocm-5.5.
  	/usr/local/cuda/include
  	/opt/cuda/include
 -	/opt/rocm/opencl/include
-+	/usr/opencl/include
++	@ESYSROOT_ROCM_PATH@/opencl/include
  	DOC "OpenCL header file path"
  	)
  mark_as_advanced( OPENCL_INCLUDE_DIRS )
@@ -133,10 +133,10 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/cmake/FindOpenCL.cmake MIOpenGEMM-rocm-5.5.
 +	DOC "OpenCL dynamic library path"
 +	PATH_SUFFIXES ${_PATH_SUFFIX}
 +	PATHS
-+	/usr/@LIBDIR@
-+	/usr/local/cuda/@LIBDIR@
-+	/opt/cuda/@LIBDIR@
-+	/usr/opencl/@LIBDIR@
++	@ESYSROOT@/usr/@LIBDIR@
++	@ESYSROOT@/usr/local/cuda/@LIBDIR@
++	@ESYSROOT@/opt/cuda/@LIBDIR@
++	@ESYSROOT_ROCM_PATH@/opencl/@LIBDIR@
 +	)
  mark_as_advanced( OPENCL_LIBRARIES )
  
@@ -149,19 +149,19 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/CMakeLists.txt MIOpenGEMM-rocm-5.5.0/CMakeL
  # Default installation path
  if(WIN32)
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "Installation path")
-+    set(CMAKE_INSTALL_PREFIX "/usr/x86_64-w64-mingw32" CACHE PATH "Installation path")
++    set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "Installation path")
  else()
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Installation path")
-+    set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Installation path")
++    set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Installation path")
  endif()
  
  project(miopengemm)
  
 -#find_package(ROCM REQUIRED PATHS /opt/rocm)
-+#find_package(ROCM REQUIRED PATHS /usr)
++#find_package(ROCM REQUIRED PATHS @ESYSROOT_ROCM_PATH@)
  #Update Required ROCM-CMAKE Path for wrapper support
 -find_package(ROCM 0.7.3 CONFIG QUIET PATHS /opt/rocm ${ROCM_PATH})
-+find_package(ROCM 0.7.3 CONFIG QUIET PATHS /usr ${ROCM_PATH})
++find_package(ROCM 0.7.3 CONFIG QUIET PATHS @ESYSROOT_ROCM_PATH@ ${ROCM_PATH})
  if(NOT ROCM_FOUND)
    set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
    set(rocm_cmake_url "https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip")
@@ -173,7 +173,7 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/doc/README.md MIOpenGEMM-rocm-5.5.0/doc/REA
  
  
 -By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
-+By default the install location is set to '/usr', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '@EPREFIX_ROCM_PATH@', this can be set by using `CMAKE_INSTALL_PREFIX`:
  
  ```
  cmake -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..
@@ -185,7 +185,7 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/doc/src/install.md MIOpenGEMM-rocm-5.5.0/do
  
  
 -By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
-+By default the install location is set to '/usr', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '@EPREFIX_ROCM_PATH@', this can be set by using `CMAKE_INSTALL_PREFIX`:
  
  ```
  cmake -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..
@@ -197,7 +197,7 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/miopengemm/src/oclutil.cpp MIOpenGEMM-rocm-
    cl_int errcode_ret;
  
 -// CL_VERSION_2_0 is defined on line 198 /opt/rocm/opencl/include/CL/cl.h.
-+// CL_VERSION_2_0 is defined on line 198 /usr/opencl/include/CL/cl.h.
++// CL_VERSION_2_0 is defined on line 198 @EPREFIX_ROCM_PATH@/opencl/include/CL/cl.h.
  #if (CL_VERSION_2_0 == 1)
    std::vector<cl_queue_properties> props = {CL_QUEUE_PROPERTIES, properties, 0};
    a_cl_command_queue =
@@ -209,7 +209,7 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/README.md MIOpenGEMM-rocm-5.5.0/README.md
  
  
 -By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
-+By default the install location is set to '/usr', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '@EPREFIX_ROCM_PATH@', this can be set by using `CMAKE_INSTALL_PREFIX`:
  
  ```
  cmake -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..

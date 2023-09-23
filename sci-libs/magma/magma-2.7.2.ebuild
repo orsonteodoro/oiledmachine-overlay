@@ -340,14 +340,11 @@ einfo "Using AOMP (unislot)"
 			|| true
 	elif (( ${llvm_slot} > 0 )) ; then
 einfo "Using LLVM proper"
-		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I/usr/lib/llvm/@LLVM_SLOT@/include|g" \
+		sed -i -e "s|-I/opt/aomp/@AOMP_SLOT@/include|-I@ESYSROOT_LLVM_PATH@/include|g" \
 			$(grep -r -l -e "@AOMP_SLOT@/include" "${WORKDIR}") \
 			|| true
-		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@|-L/usr/lib/llvm/@LLVM_SLOT@/@LIBDIR@|g" \
+		sed -i -e "s|-L/opt/aomp/@AOMP_SLOT@/@LIBDIR@|-L@ESYSROOT_LLVM_PATH@/@LIBDIR@|g" \
 			$(grep -r -l -e "@AOMP_SLOT@/@LIBDIR@" "${WORKDIR}") \
-			|| true
-		sed -i -e "s|@LLVM_SLOT@|${llvm_slot}|g" \
-			$(grep -r -l -e "@LLVM_SLOT@" "${WORKDIR}") \
 			|| true
 	else
 einfo "Removing AOMP references"

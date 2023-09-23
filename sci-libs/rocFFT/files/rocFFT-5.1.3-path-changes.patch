@@ -12,8 +12,8 @@ diff -urp rocFFT-rocm-5.1.3.orig/clients/cmake/FindFFTW.cmake rocFFT-rocm-5.1.3/
        PATHS
 -          /usr/lib
 -          /usr/local/lib
-+          /usr/@LIBDIR@
-+          /usr/local/@LIBDIR@
++          @ESYSROOT@/usr/@LIBDIR@
++          @ESYSROOT@/usr/local/@LIBDIR@
        PATH_SUFFIXES
            x86_64-linux-gnu
        DOC "FFTW dynamic library single"
@@ -28,8 +28,8 @@ diff -urp rocFFT-rocm-5.1.3.orig/clients/cmake/FindFFTW.cmake rocFFT-rocm-5.1.3/
        PATHS
 -          /usr/lib
 -          /usr/local/lib
-+          /usr/@LIBDIR@
-+          /usr/local/@LIBDIR@
++          @ESYSROOT@/usr/@LIBDIR@
++          @ESYSROOT@/usr/local/@LIBDIR@
        PATH_SUFFIXES
            x86_64-linux-gnu
        DOC "FFTW dynamic library double"
@@ -111,7 +111,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/CMakeLists.txt rocFFT-rocm-5.1.3/CMakeLists.txt
 -# Workaround for missing llvm cmake files in /opt/rocm/lib/cmake. Remove when this is fixed
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm )
 +# Workaround for missing llvm cmake files in /usr/lib/cmake. Remove when this is fixed
-+list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PREFIX@ @ESYSROOT_ROCM_PATH@ )
  
  
  # This has to be initialized before the project() command appears
@@ -120,7 +120,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/CMakeLists.txt rocFFT-rocm-5.1.3/CMakeLists.txt
  # rocm-cmake contains common cmake code for rocm projects to help setup and install
  set( PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern )
 -find_package( ROCM 0.6 CONFIG QUIET PATHS ${ROCM_PATH} /opt/rocm )
-+find_package( ROCM 0.6 CONFIG QUIET PATHS ${ROCM_PATH} /usr )
++find_package( ROCM 0.6 CONFIG QUIET PATHS ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
  if( NOT ROCM_FOUND )
    set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
    file( DOWNLOAD https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip
@@ -164,18 +164,6 @@ diff -urp rocFFT-rocm-5.1.3.orig/docs/samples/CMakeLists.txt rocFFT-rocm-5.1.3/d
 -  set(CMAKE_BUILD_TYPE Release)
 +#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE Release)
  endif(NOT CMAKE_BUILD_TYPE)
-diff -urp rocFFT-rocm-5.1.3.orig/.githooks/pre-commit rocFFT-rocm-5.1.3/.githooks/pre-commit
---- rocFFT-rocm-5.1.3.orig/.githooks/pre-commit	2022-03-14 21:12:15.000000000 -0700
-+++ rocFFT-rocm-5.1.3/.githooks/pre-commit	2023-09-04 19:34:06.807331385 -0700
-@@ -4,7 +4,7 @@
- # are installed, and if so, uses the installed version to format
- # the staged changes.
- 
--base=/opt/rocm/llvm/bin/clang-format
-+base=/usr/llvm/bin/clang-format
- format=""
- 
- # Redirect output to stderr.
 diff -urp rocFFT-rocm-5.1.3.orig/install.sh rocFFT-rocm-5.1.3/install.sh
 --- rocFFT-rocm-5.1.3.orig/install.sh	2022-03-14 21:12:15.000000000 -0700
 +++ rocFFT-rocm-5.1.3/install.sh	2023-09-04 19:35:42.295330110 -0700
@@ -184,7 +172,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/install.sh rocFFT-rocm-5.1.3/install.sh
  
  if [[ "${build_relocatable}" == true ]]; then
 -    rocm_path=/opt/rocm
-+    rocm_path=/usr
++    rocm_path=@ESYSROOT_ROCM_PATH@
      if ! [ -z ${ROCM_PATH+x} ]; then
          rocm_path=${ROCM_PATH}
      fi
@@ -199,7 +187,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/install.sh rocFFT-rocm-5.1.3/install.sh
      export PATH=${rocm_path}/bin:${PATH}
  else
 -    export PATH=${PATH}:/opt/rocm/bin
-+    export PATH=${PATH}:/usr/bin
++    export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
  fi
  
  pushd .
@@ -294,7 +282,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/library/src/device/generator.py rocFFT-rocm-5.1
      """Format code using clang-format."""
      try:
 -        p = subprocess.run(['/opt/rocm/llvm/bin/clang-format', '-style=file'],
-+        p = subprocess.run(['/usr/lib/llvm/@LLVM_SLOT@/bin/clang-format', '-style=file'],
++        p = subprocess.run(['@EPREFIX_LLVM_PREFIX@/bin/clang-format', '-style=file'],
                             stdout=subprocess.PIPE,
                             input=str(code),
                             encoding='ascii',
@@ -303,7 +291,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/library/src/device/generator.py rocFFT-rocm-5.1
         remains unformatted if clang-format isn't runnable."""
      try:
 -        p = subprocess.run(['/opt/rocm/llvm/bin/clang-format', '-i', filename])
-+        p = subprocess.run(['/usr/lib/llvm/@LLVM_SLOT@/bin/clang-format', '-i', filename])
++        p = subprocess.run(['@EPREFIX_LLVM_PREFIX@/bin/clang-format', '-i', filename])
      except:
          # code formatting doesn't affect functionality, so just assume
          # default ROCm path and ignore errors if it's not there.
@@ -315,7 +303,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/rmake.py rocFFT-rocm-5.1.3/rmake.py
          toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path}")
          cmake_platform_opts.append( f"-DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
          cmake_platform_opts.append( f"-DCMAKE_INSTALL_PREFIX=rocfft-install" )
@@ -354,7 +342,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/scripts/perf/perflib/generators.py rocFFT-rocm-
 +from rocFFT_perflib.utils import sjoin
  
 -top = path(__file__).resolve().parent.parent
-+top = path("/usr/share/rocFFT-perflib")
++top = path("@ESYSROOT_ROCM_PATH@/share/rocFFT-perflib")
  
  
  def mktag(tag, dimension, precision, direction, inplace, real):
@@ -391,7 +379,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/scripts/perf/perflib/pdf.py rocFFT-rocm-5.1.3/s
  from typing import List
  
 -top = Path(__file__).resolve().parent.parent
-+top = Path("/usr/share/rocFFT-perflib")
++top = Path("@ESYSROOT_ROCM_PATH@/share/rocFFT-perflib")
  
  
  @dataclass
@@ -681,7 +669,7 @@ diff -urp rocFFT-rocm-5.1.3.orig/toolchain-linux.cmake rocFFT-rocm-5.1.3/toolcha
    set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
  else()
 -  set(rocm_bin "/opt/rocm/hip/bin")
-+  set(rocm_bin "/usr/hip/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/hip/bin")
  endif()
  
  set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")

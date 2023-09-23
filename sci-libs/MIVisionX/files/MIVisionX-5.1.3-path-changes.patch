@@ -375,7 +375,7 @@ diff -urp MIVisionX-rocm-5.1.3.orig/amd_openvx_extensions/CMakeLists.txt MIVisio
          find_package(HIP QUIET)
          if(HIP_FOUND)
 -            list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/llvm ${ROCM_PATH}/hip)
-+            list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} ${ROCM_PATH}/lib/llvm/@LLVM_SLOT@ ${ROCM_PATH}/hip)
++            list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} @ESYSROOT_LLVM_PATH@ ${ROCM_PATH}/hip)
          else()
              set(GPU_SUPPORT OFF)
          endif()

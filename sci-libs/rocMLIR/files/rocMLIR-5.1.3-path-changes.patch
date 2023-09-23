@@ -81,7 +81,7 @@ diff -urp rocMLIR-rocm-5.1.3.orig/external/llvm-project/clang/lib/Driver/ToolCha
  
 -    // Some versions of the rocm llvm package install to /opt/rocm/llvm/bin
 -    // Some versions of the aomp package install to /opt/rocm/aomp/bin
-+    // Some versions of the rocm llvm package install to /usr/lib/llvm/@LLVM_SLOT@/bin  // oteodoro: edited
++    // Some versions of the rocm llvm package install to @ESYSROOT_LLVM_PATH@/bin  // oteodoro: edited
 +    // Some versions of the aomp package install to /opt/aomp/@LLVM_SLOT@/bin           // oteodoro: edited
      if (ParentName == "llvm" || ParentName.startswith("aomp"))
        ParentDir = llvm::sys::path::parent_path(ParentDir);
