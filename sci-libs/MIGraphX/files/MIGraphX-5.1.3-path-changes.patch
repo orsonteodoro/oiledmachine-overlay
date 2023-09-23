@@ -399,7 +399,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/tools/build_and_test_onnxrt.sh AMDMIGraphX
  pip3 install -r requirements.txt
  # Add newer cmake to the path
 -export PATH="/opt/cmake/bin:$PATH"
-+export PATH="@ESYSROOT@/usr/bin:$PATH"
++export PATH="@EPREFIX@/usr/bin:$PATH"
  export CXXFLAGS="-D__HIP_PLATFORM_HCC__=1 -w"
  ./build.sh --config Release --update --build --parallel --cmake_extra_defines ONNXRUNTIME_VERSION=$(cat ./VERSION_NUMBER) --test --use_migraphx
  # pip3 install /code/onnxruntime/build/Linux/Release/dist/*.whl
@@ -412,7 +412,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/tools/roctx.py AMDMIGraphX-rocm-5.1.3/tool
      configs = '--hip-trace --roctx-trace --flush-rate 10ms --timestamp on'
      output_dir = f"-d {args.out}"
 -    executable = f"/opt/rocm/bin/migraphx-driver roctx {run_args}"
-+    executable = f"@ESYSROOT_ROCM_PATH@/bin/migraphx-driver roctx {run_args}"
++    executable = f"@EPREFIX_ROCM_PATH@/bin/migraphx-driver roctx {run_args}"
      process_args = configs + ' ' + output_dir + ' ' + executable
      for i in range(repeat_count):
          os.system('rocprof ' + process_args)

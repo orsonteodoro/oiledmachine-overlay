@@ -134,6 +134,7 @@ src_configure() {
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
 	fi
+	local libdir=$(get_libdir)
 	local mycmakeargs=(
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
@@ -148,6 +149,7 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_INSTALL_UTILS=ON
+		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
 #		-DLLVM_VERSION_SUFFIX=roc

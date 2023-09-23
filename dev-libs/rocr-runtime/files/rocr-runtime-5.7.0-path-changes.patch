@@ -81,10 +81,10 @@ diff -urp src.orig/image/blit_src/README.md src/image/blit_src/README.md
  
        OPENCL_DIR - the location of installed OpenCL
 -                   (Default: /opt/rocm/opencl)
-+                   (Default: @ESYSROOT_ROCM_PATH@/opencl)
++                   (Default: @EPREFIX_ROCM_PATH@/opencl)
       BITCODE_DIR - the directory contains the bitcode library
 -                   (Default: /opt/rocm/amdgcn/bitcode)
-+                   (Default: @ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode)
++                   (Default: @EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode)
          LLVM_DIR - the directory contains the clang, llvm-link and llvm-dis
                     executables
                     (Default: ${PROJECT_BUILD_DIR}/../lightning/bin)
@@ -96,7 +96,7 @@ diff -urp src.orig/README.md src/README.md
  mkdir build
  cd build
 -cmake -DCMAKE_INSTALL_PATH=/opt/rocm ..
-+cmake -DCMAKE_INSTALL_PATH=@ESYSROOT_ROCM_PATH@ ..
++cmake -DCMAKE_INSTALL_PATH=@EPREFIX_ROCM_PATH@ ..
  make
  make install
  make package
@@ -105,13 +105,13 @@ diff -urp src.orig/README.md src/README.md
  
  The runtime provides a CMake package config file, installed by default to
 -`/opt/rocm/lib/cmake/hsa-runtime64`. The runtime exports CMake target
-+`@ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hsa-runtime64`. The runtime exports CMake target
++`@EPREFIX_ROCM_PATH@/@LIBDIR@/cmake/hsa-runtime64`. The runtime exports CMake target
  `hsa-runtime64` in namespace `hsa-runtime64`. A CMake project (`Foo`) using the
  runtime may locate, include, and link the runtime with the following template:
  
  ```cmake
 -# Add /opt/rocm to CMAKE_PREFIX_PATH.
-+# Add @ESYSROOT_ROCM_PATH@ to CMAKE_PREFIX_PATH.
++# Add @EPREFIX_ROCM_PATH@ to CMAKE_PREFIX_PATH.
  
  find_package(hsa-runtime64 1.0 REQUIRED)
  ...

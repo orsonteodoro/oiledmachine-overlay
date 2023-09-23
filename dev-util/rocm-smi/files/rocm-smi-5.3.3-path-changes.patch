@@ -63,7 +63,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/python_smi_tools/README.md rocm_smi_lib-r
  For detailed and up to date usage information, we recommend consulting the help:
  ```shell
 -/opt/rocm/bin/rocm-smi -h
-+@ESYSROOT_ROCM_PATH@/bin/rocm-smi -h
++@EPREFIX_ROCM_PATH@/bin/rocm-smi -h
  ```
  
  For convenience purposes, following is the output from the -h flag:
@@ -89,7 +89,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/python_smi_tools/rsmiBindings.py rocm_smi
  
  # Use ROCm installation path if running from standard installation
 -# With File Reorg rsmiBindings.py will be installed in  /opt/rocm/libexec/rocm_smi.
-+# With File Reorg rsmiBindings.py will be installed in  @ESYSROOT_ROCM_PATH@/libexec/rocm_smi.
++# With File Reorg rsmiBindings.py will be installed in  @EPREFIX_ROCM_PATH@/libexec/rocm_smi.
  # relative path changed accordingly
 -path_librocm = os.path.dirname(os.path.realpath(__file__)) + '/../../lib/librocm_smi64.so'
 -if not os.path.isfile(path_librocm):
@@ -101,7 +101,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/python_smi_tools/rsmiBindings.py rocm_smi
 -        print('Using lib from %s' % path_librocm)
 -    else:
 -        print('Unable to find librocm_smi64.so')
-+path_librocm = '@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm_smi64.so'
++path_librocm = '@EPREFIX_ROCM_PATH@/@LIBDIR@/librocm_smi64.so'
  
  # ----------> TODO: Support static libs as well as SO
  
@@ -115,7 +115,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/README.md rocm_smi_lib-rocm-5.3.3/README.
  ##### ```$ cmake <location of root of ROCm SMI library CMakeLists.txt>```
  ##### ```$ make```
 -##### ```# Install library file and header; default location is /opt/rocm```
-+##### ```# Install library file and header; default location is @ESYSROOT_ROCM_PATH@```
++##### ```# Install library file and header; default location is @EPREFIX_ROCM_PATH@```
  ##### ```$ make install```
  The built library will appear in the `build` folder.
  
@@ -170,7 +170,7 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/rocm_smi-backward-compat.cmake rocm_smi_l
      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 -   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with @prefix_name@\")\n@include_statements@ \n\n#endif")
-+   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with @prefix_name@\")\n@include_statements@ \n\n#endif")
++   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with @prefix_name@\")\n@include_statements@ \n\n#endif")
  endfunction()
  
  #use header template file and generate wrapper header files
@@ -229,11 +229,11 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/tests/rocm_smi_test/gtest/docs/pkgconfig.
  pkg-config where it can find the `.pc` files containing the information. Say you
  installed GoogleTest to `/usr/local`, then it might be that the `.pc` files are
 -installed under `/usr/local/lib64/pkgconfig`. If you set
-+installed under `/usr/@LIBDIR@/pkgconfig`. If you set
++installed under `@EPREFIX@/usr/@LIBDIR@/pkgconfig`. If you set
  
  ```
 -export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
-+export PKG_CONFIG_PATH=/usr/@LIBDIR@/pkgconfig
++export PKG_CONFIG_PATH=@EPREFIX@/usr/@LIBDIR@/pkgconfig
  ```
  
  pkg-config will also try to look in `PKG_CONFIG_PATH` to find `gtest_main.pc`.
@@ -242,8 +242,9 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/tests/rocm_smi_test/gtest/docs/pkgconfig.
  
  ```
 -libdir=/usr/lib64
-+libdir=/usr/@LIBDIR@
- includedir=/usr/include
++libdir=@EPREFIX@/usr/@LIBDIR@
+-includedir=/usr/include
++includedir=@EPREFIX@/usr/include
  
  Name: gtest
 @@ -113,14 +113,14 @@ Cflags: -I${includedir} -DGTEST_HAS_PTHR
@@ -256,10 +257,11 @@ diff -urp rocm_smi_lib-rocm-5.3.3.orig/tests/rocm_smi_test/gtest/docs/pkgconfig.
  
  ```
  $ pkg-config --cflags gtest
- -DGTEST_HAS_PTHREAD=1 -lpthread -I/usr/include
+--DGTEST_HAS_PTHREAD=1 -lpthread -I/usr/include
++-DGTEST_HAS_PTHREAD=1 -lpthread -I@EPREFIX@/usr/include
  $ pkg-config --libs gtest
 --L/usr/lib64 -lgtest -lpthread
-+-L/usr/@LIBDIR@ -lgtest -lpthread
++-L@EPREFIX@/usr/@LIBDIR@ -lgtest -lpthread
  ```
  
  which is obviously wrong and points to the `CBUILD` and not `CHOST` root. In

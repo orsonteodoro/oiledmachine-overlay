@@ -12,8 +12,8 @@ diff -urp hipFFT-rocm-5.3.3.orig/clients/cmake/FindFFTW.cmake hipFFT-rocm-5.3.3/
        PATHS
 -          /usr/lib
 -          /usr/local/lib
-+          /usr/@LIBDIR@
-+          /usr/local/@LIBDIR@
++          @ESYSROOT@/usr/@LIBDIR@
++          @ESYSROOT@/usr/local/@LIBDIR@
        PATH_SUFFIXES
            x86_64-linux-gnu
        DOC "FFTW dynamic library single"
@@ -28,8 +28,8 @@ diff -urp hipFFT-rocm-5.3.3.orig/clients/cmake/FindFFTW.cmake hipFFT-rocm-5.3.3/
        PATHS
 -          /usr/lib
 -          /usr/local/lib
-+          /usr/@LIBDIR@
-+          /usr/local/@LIBDIR@
++          @ESYSROOT@/usr/@LIBDIR@
++          @ESYSROOT@/usr/local/@LIBDIR@
        PATH_SUFFIXES
            x86_64-linux-gnu
        DOC "FFTW dynamic library double"
@@ -41,7 +41,7 @@ diff -urp hipFFT-rocm-5.3.3.orig/clients/CMakeLists.txt hipFFT-rocm-5.3.3/client
  else( )
    set( CMAKE_INSTALL_PREFIX
 -    "/opt/rocm"
-+    "/usr"
++    "@EPREFIX_ROCM_PATH@"
      CACHE
      PATH
      "Install path prefix, prepended onto install directories" )
@@ -64,7 +64,7 @@ diff -urp hipFFT-rocm-5.3.3.orig/cmake/dependencies.cmake hipFFT-rocm-5.3.3/cmak
  
  # ROCm
 -find_package( ROCM 0.7.3 CONFIG PATHS /opt/rocm )
-+find_package( ROCM 0.7.3 CONFIG PATHS /usr )
++find_package( ROCM 0.7.3 CONFIG PATHS @ESYSROOT_ROCM_PATH@ )
  if(NOT ROCM_FOUND)
    set( rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download" )
    set( PROJECT_EXTERN_DIR "${CMAKE_CURRENT_BINARY_DIR}/extern" )
@@ -76,7 +76,7 @@ diff -urp hipFFT-rocm-5.3.3.orig/CMakeLists.txt hipFFT-rocm-5.3.3/CMakeLists.txt
      "Install path prefix, prepended onto install directories" )
  else()
 -  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH
-+  set( CMAKE_INSTALL_PREFIX "/usr" CACHE PATH
++  set( CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH
      "Install path prefix, prepended onto install directories" )
  endif()
  
@@ -84,8 +84,8 @@ diff -urp hipFFT-rocm-5.3.3.orig/CMakeLists.txt hipFFT-rocm-5.3.3/CMakeLists.txt
  # Workarounds..
 -list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm )
 -list( APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake )
-+list( APPEND CMAKE_PREFIX_PATH /usr/lib/llvm/@LLVM_SLOT@ /usr )
-+list( APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/@LIBDIR@/cmake/hip /usr/@LIBDIR@/cmake/hip )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ )
++list( APPEND CMAKE_MODULE_PATH ${ROCM_PATH}/@LIBDIR@/cmake/hip @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip )
  
  # This has to be initialized before the project() command appears
  # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.
@@ -148,18 +148,6 @@ diff -urp hipFFT-rocm-5.3.3.orig/deps/external-gtest.cmake hipFFT-rocm-5.3.3/dep
  
    set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
    ExternalProject_Add_Step( googletest createPackage
-diff -urp hipFFT-rocm-5.3.3.orig/.githooks/pre-commit hipFFT-rocm-5.3.3/.githooks/pre-commit
---- hipFFT-rocm-5.3.3.orig/.githooks/pre-commit	2022-08-29 14:12:18.000000000 -0700
-+++ hipFFT-rocm-5.3.3/.githooks/pre-commit	2023-09-04 17:46:47.859417369 -0700
-@@ -4,7 +4,7 @@
- # are installed, and if so, uses the installed version to format
- # the staged changes.
- 
--base=/opt/rocm/hcc/bin/clang-format
-+base=/usr/hcc/bin/clang-format
- format=""
- 
- # Redirect output to stderr.
 diff -urp hipFFT-rocm-5.3.3.orig/README.md hipFFT-rocm-5.3.3/README.md
 --- hipFFT-rocm-5.3.3.orig/README.md	2022-08-29 14:12:18.000000000 -0700
 +++ hipFFT-rocm-5.3.3/README.md	2023-09-04 17:46:47.859417369 -0700
@@ -169,8 +157,8 @@ diff -urp hipFFT-rocm-5.3.3.orig/README.md hipFFT-rocm-5.3.3/README.md
  
 -* previously: `hipcc hipfft_1d_z2z.cpp -L/opt/rocm/lib -lrocfft`
 -* during transition: `hipcc -I/opt/rocm/hipfft/include hipfft_1d_z2z.cpp -L/opt/rocm/lib -lhipfft -lrocfft`
-+* previously: `hipcc hipfft_1d_z2z.cpp -L/usr/@LIBDIR@ -lrocfft`
-+* during transition: `hipcc -I/usr/hipfft/include hipfft_1d_z2z.cpp -L/usr/@LIBDIR@ -lhipfft -lrocfft`
++* previously: `hipcc hipfft_1d_z2z.cpp -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocfft`
++* during transition: `hipcc -I@ESYSROOT@/usr/hipfft/include hipfft_1d_z2z.cpp -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lhipfft -lrocfft`
  
  ## Building from source
  
@@ -182,9 +170,10 @@ diff -urp hipFFT-rocm-5.3.3.orig/rmake.py hipFFT-rocm-5.3.3/rmake.py
          toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
      else:
 -        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
-+        rocm_path = os.getenv( 'ROCM_PATH', "/usr")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
          cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path}")
-         cmake_platform_opts.append( f"-DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
+-        cmake_platform_opts.append( f"-DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
++        cmake_platform_opts.append( f"-DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@" )
          cmake_platform_opts.append( f"-DCMAKE_INSTALL_PREFIX=rocfft-install" )
 diff -urp hipFFT-rocm-5.3.3.orig/toolchain-linux.cmake hipFFT-rocm-5.3.3/toolchain-linux.cmake
 --- hipFFT-rocm-5.3.3.orig/toolchain-linux.cmake	2022-08-29 14:12:18.000000000 -0700
@@ -197,7 +186,7 @@ diff -urp hipFFT-rocm-5.3.3.orig/toolchain-linux.cmake hipFFT-rocm-5.3.3/toolcha
 +  set(rocm_bin "$ENV{ROCM_PATH}/bin")
  else()
 -  set(rocm_bin "/opt/rocm/hip/bin")
-+  set(rocm_bin "/usr/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
  endif()
  
  set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")

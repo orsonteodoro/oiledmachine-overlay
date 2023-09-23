@@ -60,7 +60,7 @@ diff -urp comgr.orig/README.md comgr/README.md
    LLVM installation, which is currently used for HIP compilation to locate
    certain runtime headers. If this is not set, it has a default value of
 -  "${ROCM_PATH}/llvm".
-+  "@ESYSROOT_LLVM_PATH@".
++  "@EPREFIX_LLVM_PATH@".
  
  Comgr also supports some environment variables to aid in debugging. These
  include:
@@ -84,8 +84,8 @@ diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
 -  ClangIncludePath2 = (Twine(env::getLLVMPath()) + "/lib/clang/" +
 -                       CLANG_VERSION_STRING + "/include")
 -                          .str();
-+  ClangIncludePath = std::string("@ESYSROOT_CLANG_PATH@");
-+  ClangIncludePath2 = std::string("@ESYSROOT_CLANG_PATH@/include");
++  ClangIncludePath = std::string("@EPREFIX_CLANG_PATH@");
++  ClangIncludePath2 = std::string("@EPREFIX_CLANG_PATH@/include");
  
    Args.push_back("-x");
  
@@ -120,7 +120,7 @@ diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
      sys::path::append(LLVMPath, "llvm");
  
 -    return LLVMPath;
-+    return llvm::SmallString<128>("@ESYSROOT_LLVM_PATH@");
++    return llvm::SmallString<128>("@EPREFIX_LLVM_PATH@");
    }
  
    virtual SmallString<128> getHIPPathImpl() {
@@ -135,7 +135,7 @@ diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
      ROCmInstallPath = EnvROCMPath;
    }
 +  else {
-+	ROCmInstallPath = "@ESYSROOT_ROCM_PATH@";
++	ROCmInstallPath = "@EPREFIX_ROCM_PATH@";
 +  }
  
    InstallationDetector *Detector;

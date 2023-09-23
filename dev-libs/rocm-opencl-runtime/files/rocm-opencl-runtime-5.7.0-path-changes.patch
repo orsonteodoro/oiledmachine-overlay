@@ -48,14 +48,14 @@ diff -urp opencl.orig/opencl-backward-compat.cmake opencl/opencl-backward-compat
  #endif
  #if ROCM_HEADER_WRAPPER_WERROR  /* ROCM_HEADER_WRAPPER_WERROR 1 */
 -#error \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\"
-+#error \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with CL\"
++#error \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with CL\"
  #else    /* ROCM_HEADER_WRAPPER_WERROR 0 */
  #if defined(__GNUC__)
 -#warning \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\"
-+#warning \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with CL\"
++#warning \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with CL\"
  #else
 -#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\")
-+#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with CL\")
++#pragma message(\"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with CL\")
  #endif
  #endif  /* ROCM_HEADER_WRAPPER_WERROR */
  
@@ -79,7 +79,7 @@ diff -urp opencl.orig/README.md opencl/README.md
  cd "$OPENCL_DIR"
  mkdir -p build; cd build
 -cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
-+cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@ESYSROOT_ROCM_PATH@/" ..
++cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@EPREFIX_ROCM_PATH@/" ..
  make -j$(nproc)
  ```
  

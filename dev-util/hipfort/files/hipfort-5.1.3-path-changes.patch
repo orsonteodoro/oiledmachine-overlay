@@ -185,8 +185,8 @@ diff -urp hipfort-rocm-5.1.3.orig/README.md hipfort-rocm-5.1.3/README.md
  | `HIP_PLATFORM` | The platform to compile for (either 'amd' or 'nvcc') | `amd` |
 -| `ROCM_PATH` | Path to ROCm installation | `/opt/rocm` |
 -| `CUDA_PATH` | Path to CUDA installation | `/usr/local/cuda` | 
-+| `ROCM_PATH` | Path to ROCm installation | `@ESYSROOT_ROCM_PATH@` |
-+| `CUDA_PATH` | Path to CUDA installation | `@ESYSROOT@/opt/cuda` | 
++| `ROCM_PATH` | Path to ROCm installation | `@EPREFIX_ROCM_PATH@` |
++| `CUDA_PATH` | Path to CUDA installation | `@EPREFIX@/opt/cuda` | 
  | `HIPFORT_COMPILER` | Fortran compiler to be used | `gfortran` | 
  
  ## Examples and tests
@@ -195,7 +195,7 @@ diff -urp hipfort-rocm-5.1.3.orig/README.md hipfort-rocm-5.1.3/README.md
  #### AMD devices
  
 -> **NOTE**: Running all tests as below requires that all ROCm math libraries can be found at `/opt/rocm`.
-+> **NOTE**: Running all tests as below requires that all ROCm math libraries can be found at `@ESYSROOT_ROCM_PATH@`.
++> **NOTE**: Running all tests as below requires that all ROCm math libraries can be found at `@EPREFIX_ROCM_PATH@`.
  Specify a different ROCm location via the `ROCM_PATH` environment variable.
  
  > **NOTE**: When using older ROCm versions, you might need to manually set the environment variable `HIP_PLATFORM` to `hcc`

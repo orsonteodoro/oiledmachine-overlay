@@ -445,6 +445,16 @@ _rocm_change_common_paths() {
 		2>/dev/null || true
 	sed \
 		-i \
+		-e "s|@PVR@|${PVR}|g" \
+		$(grep -r -l -e "@PVR@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|@S@|${S}|g" \
+		$(grep -r -l -e "@S@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+	sed \
+		-i \
 		-e "s|@CHOST@|${CHOST}|g" \
 		$(grep -r -l -e "@CHOST@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true

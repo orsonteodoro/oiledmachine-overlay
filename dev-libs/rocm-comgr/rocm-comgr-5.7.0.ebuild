@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake llvm prefix rocm
+inherit cmake flag-o-matic llvm prefix rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
@@ -61,7 +61,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
-CMAKE_BUILD_TYPE="Release"
+#CMAKE_BUILD_TYPE="Release"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -73,8 +73,12 @@ src_prepare() {
 }
 
 src_configure() {
+#	append-cppflags -UNDEBUG
+	replace-flags -O0 -O1
+	filter-flags -Wl,--as-needed
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test ON OFF)
+#		-DCMAKE_BUILD_TYPE="RelWithDebInfo"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58
 		-DCMAKE_STRIP=""

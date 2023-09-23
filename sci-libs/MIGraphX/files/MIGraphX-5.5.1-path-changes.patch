@@ -492,7 +492,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/tools/roctx.py AMDMIGraphX-rocm-5.5.1/tool
      configs = '--hip-trace --roctx-trace --flush-rate 10ms --timestamp on'
      output_dir = f"-d {args.out}"
 -    executable = f"/opt/rocm/bin/migraphx-driver roctx {run_args}"
-+    executable = f"@ESYSROOT_ROCM_PATH@/bin/migraphx-driver roctx {run_args}"
++    executable = f"@EPREFIX_ROCM_PATH@/bin/migraphx-driver roctx {run_args}"
      process_args = configs + ' ' + output_dir + ' ' + executable
      for i in range(repeat_count):
          os.system('rocprof ' + process_args)

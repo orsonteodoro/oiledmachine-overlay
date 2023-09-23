@@ -114,7 +114,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd
-r4
+r5
 "
 
 gen_cuda_required_use() {
@@ -328,6 +328,7 @@ src_configure() {
 		experimental_targets+=";NVPTX"
 	fi
 	experimental_targets="${experimental_targets:1}"
+	local libdir="$(get_libdir)"
 	local mycmakeargs=(
 #		-DBUILD_SHARED_LIBS=OFF
 		-DCMAKE_C_COMPILER="${CHOST}-gcc"
@@ -352,6 +353,7 @@ src_configure() {
 #		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
 		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
+		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 	)
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		mycmakeargs+=(

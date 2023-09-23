@@ -160,7 +160,7 @@ diff -urp rccl-rocm-5.3.3.orig/README.md rccl-rocm-5.3.3/README.md
  
  *  `./install.sh` -- builds library including unit tests
 -*  `./install.sh -i` -- builds and installs the library to /opt/rocm/rccl; installation path can be changed with --prefix argument (see below.)
-+*  `./install.sh -i` -- builds and installs the library to @ESYSROOT_ROCM_PATH@/rccl; installation path can be changed with --prefix argument (see below.)
++*  `./install.sh -i` -- builds and installs the library to @EPREFIX_ROCM_PATH@/rccl; installation path can be changed with --prefix argument (see below.)
  *  `./install.sh -d` -- installs all necessary dependencies for RCCL.  Should be re-invoked if the build folder is removed.
  *  `./install.sh -h` -- shows help
  *  `./install.sh -t` -- builds library including unit tests
@@ -169,7 +169,7 @@ diff -urp rccl-rocm-5.3.3.orig/README.md rccl-rocm-5.3.3/README.md
  *  `./install.sh -s` -- builds RCCL as a static library (default: shared)
  *  `./install.sh -hcc` -- builds RCCL with hcc compiler; note that hcc is now deprecated. (default:hip-clang)
 -*  `./install.sh --prefix` -- specify custom path to install RCCL to (default:/opt/rocm)
-+*  `./install.sh --prefix` -- specify custom path to install RCCL to (default:@ESYSROOT_ROCM_PATH@)
++*  `./install.sh --prefix` -- specify custom path to install RCCL to (default:@EPREFIX_ROCM_PATH@)
  
  ## Manual build
  #### To build the library :
@@ -178,13 +178,13 @@ diff -urp rccl-rocm-5.3.3.orig/README.md rccl-rocm-5.3.3/README.md
  $ mkdir build
  $ cd build
 -$ CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/opt/rocm/ ..
-+$ CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/usr/ ..
++$ CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/usr/ ..
  $ make -j
  ```
  You may substitute an installation path of your own choosing by passing CMAKE_INSTALL_PREFIX. For example:
  ```shell
 -$ CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/opt/rocm/ -DCMAKE_INSTALL_PREFIX=$PWD/rccl-install ..
-+$ CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/usr/ -DCMAKE_INSTALL_PREFIX=$PWD/rccl-install ..
++$ CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_PREFIX_PATH=/usr/ -DCMAKE_INSTALL_PREFIX=$PWD/rccl-install ..
  ```
  Note: ensure rocm-cmake is installed, `apt install rocm-cmake`.
  
@@ -193,7 +193,7 @@ diff -urp rccl-rocm-5.3.3.orig/README.md rccl-rocm-5.3.3/README.md
  ```
  
 -RCCL package install requires sudo/root access because it creates a directory called "rccl" under /opt/rocm/. This is an optional step and RCCL can be used directly by including the path containing librccl.so.
-+RCCL package install requires sudo/root access because it creates a directory called "rccl" under @ESYSROOT_ROCM_PATH@/. This is an optional step and RCCL can be used directly by including the path containing librccl.so.
++RCCL package install requires sudo/root access because it creates a directory called "rccl" under @EPREFIX_ROCM_PATH@/. This is an optional step and RCCL can be used directly by including the path containing librccl.so.
  
  ## Enabling peer-to-peer transport
  In order to enable peer-to-peer access on machines with PCIe-connected GPUs, the HSA environment variable HSA_FORCE_FINE_GRAIN_PCIE=1 is required to be set, on top of requiring GPUs that support peer-to-peer access and proper large BAR addressing support.
@@ -247,7 +247,7 @@ diff -urp rccl-rocm-5.3.3.orig/test/CMakeLists.txt rccl-rocm-5.3.3/test/CMakeLis
    #endif()
  
 -  find_package(hsa-runtime64 PATHS /opt/rocm )
-+  find_package(hsa-runtime64 PATHS @ESYSROOT_ROCM_PATH@ )
++  find_package(hsa-runtime64 PATHS @EPREFIX_ROCM_PATH@ )
    if(${hsa-runtime64_FOUND})
      message("hsa-runtime64 found @  ${hsa-runtime64_DIR} ")
    else()
@@ -256,12 +256,12 @@ diff -urp rccl-rocm-5.3.3.orig/test/CMakeLists.txt rccl-rocm-5.3.3/test/CMakeLis
  
      # Search for ROCr header file in user defined locations
 -    find_path(ROCR_HDR hsa.h PATHS ${ROCR_INC_DIR} "/opt/rocm" PATH_SUFFIXES include/hsa REQUIRED)
-+    find_path(ROCR_HDR hsa.h PATHS ${ROCR_INC_DIR} "@ESYSROOT_ROCM_PATH@" PATH_SUFFIXES include/hsa REQUIRED)
++    find_path(ROCR_HDR hsa.h PATHS ${ROCR_INC_DIR} "@EPREFIX_ROCM_PATH@" PATH_SUFFIXES include/hsa REQUIRED)
      INCLUDE_DIRECTORIES(${ROCR_HDR})
  
      # Search for ROCr library file in user defined locations
 -    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "/opt/rocm" PATH_SUFFIXES lib lib64 REQUIRED)
-+    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "@ESYSROOT_ROCM_PATH@" PATH_SUFFIXES @LIBDIR@ REQUIRED)
++    find_library(ROCR_LIB ${CORE_RUNTIME_TARGET} PATHS ${ROCR_LIB_DIR} "@EPREFIX_ROCM_PATH@" PATH_SUFFIXES @LIBDIR@ REQUIRED)
    endif()
  
    include_directories(${GTEST_INCLUDE_DIRS} ./common)
@@ -275,7 +275,7 @@ diff -urp rccl-rocm-5.3.3.orig/test/CMakeLists.txt rccl-rocm-5.3.3/test/CMakeLis
      target_link_libraries(UnitTests PRIVATE rccl)
    endif()
 -  # HIPCC adds /opt/rocm/lib as RPATH, even though the install process is supposed to
-+  # HIPCC adds @ESYSROOT_ROCM_PATH@/@LIBDIR@ as RPATH, even though the install process is supposed to
++  # HIPCC adds @EPREFIX_ROCM_PATH@/@LIBDIR@ as RPATH, even though the install process is supposed to
    # remove RPATH.  It also occurs before any user-specified rpath, which effectively overrides the user rpath.
    #  As a work-around, set the correct RPATH for the unit test executable as a post-install step
    # if (CMAKE_INSTALL_PREFIX MATCHES "${ROCM_PATH}")

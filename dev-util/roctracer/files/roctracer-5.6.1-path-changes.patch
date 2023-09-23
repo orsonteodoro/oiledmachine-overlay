@@ -80,12 +80,12 @@ diff -urp roctracer-rocm-5.6.1.orig/README.md roctracer-rocm-5.6.1/README.md
  To use the rocTracer API you need the API header and to link your application with `roctracer` .so library:
  
 -- `/opt/rocm/include/roctracer/roctracer.h`
-+- `@ESYSROOT_ROCM_PATH@/include/roctracer/roctracer.h`
++- `@EPREFIX_ROCM_PATH@/include/roctracer/roctracer.h`
  
    API header.
  
 -- `/opt/rocm/lib/libroctracer64.so`
-+- `@ESYSROOT_ROCM_PATH@/@LIBDIR@/libroctracer64.so`
++- `@EPREFIX_ROCM_PATH@/@LIBDIR@/libroctracer64.so`
  
    .so library.
  
@@ -94,12 +94,12 @@ diff -urp roctracer-rocm-5.6.1.orig/README.md roctracer-rocm-5.6.1/README.md
  To use the rocTX API you need the API header and to link your application with `roctx` .so library:
  
 -- `/opt/rocm/roctracer/include/roctx.h`
-+- `@ESYSROOT_ROCM_PATH@/roctracer/include/roctx.h`
++- `@EPREFIX_ROCM_PATH@/roctracer/include/roctx.h`
  
    API header.
  
 -- `/opt/rocm/lib/libroctx64.so`
-+- `@ESYSROOT_ROCM_PATH@/@LIBDIR@/libroctx64.so`
++- `@EPREFIX_ROCM_PATH@/@LIBDIR@/libroctx64.so`
  
    .so library.
  
@@ -173,7 +173,7 @@ diff -urp roctracer-rocm-5.6.1.orig/test/CMakeLists.txt roctracer-rocm-5.6.1/tes
  find_package(Clang REQUIRED CONFIG
 -             PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATHS "@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake/clang")
++             PATHS "@EPREFIX_LLVM_PATH@/@LIBDIR@/cmake/clang")
  
  ## Add a custom targets to build and run all the tests
  add_custom_target(mytest)
@@ -181,7 +181,7 @@ diff -urp roctracer-rocm-5.6.1.orig/test/CMakeLists.txt roctracer-rocm-5.6.1/tes
  function(generate_hsaco TARGET_ID INPUT_FILE OUTPUT_FILE)
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
      "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0 -Wl,--build-id=sha1
-+    --rocm-path=@ESYSROOT_ROCM_PATH@ --rocm-device-lib-path=@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode
++    --rocm-path=@EPREFIX_ROCM_PATH@ --rocm-device-lib-path=@EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode
      -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}")
    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/${OUTPUT_FILE}
      COMMAND clang ${CLANG_ARG_LIST}

@@ -29,7 +29,7 @@ diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/CMakeLists.txt ROCT
         set ( ENV{PKG_CONFIG_PATH} ${ROCM_INSTALL_PATH}/share/pkgconfig )
      else()
 -       set ( ENV{PKG_CONFIG_PATH} /opt/rocm/share/pkgconfig )
-+       set ( ENV{PKG_CONFIG_PATH} @ESYSROOT_ROCM_PATH@/share/pkgconfig )
++       set ( ENV{PKG_CONFIG_PATH} @EPREFIX_ROCM_PATH@/share/pkgconfig )
      endif()
  
      pkg_check_modules(HSAKMT libhsakmt)
@@ -43,7 +43,7 @@ diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/scripts/run_kfdtest
  $CWD
  $CWD/../share/kfdtest
 -/opt/rocm/share/kfdtest
-+@ESYSROOT_ROCM_PATH@/share/kfdtest
++@EPREFIX_ROCM_PATH@/share/kfdtest
  EOF
  
  # Keep these checks until automation starts using the package install
@@ -52,7 +52,7 @@ diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/scripts/run_kfdtest
  if [ -z "${FILTER[core]}" ]; then
      echo "Unable to locate kfdtest.exclude."
 -    echo "Please set KFDTEST_SHARE_DIR or ensure that kfdtest.exclude is present inside $CWD, $CWD/../share/kfdtest or /opt/rocm/share/kfdtest"
-+    echo "Please set KFDTEST_SHARE_DIR or ensure that kfdtest.exclude is present inside $CWD, $CWD/../share/kfdtest or @ESYSROOT_ROCM_PATH@/share/kfdtest"
++    echo "Please set KFDTEST_SHARE_DIR or ensure that kfdtest.exclude is present inside $CWD, $CWD/../share/kfdtest or @EPREFIX_ROCM_PATH@/share/kfdtest"
      exit 1
  fi
  
@@ -61,7 +61,7 @@ diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/scripts/run_kfdtest
          else
              # The default location
 -            BIN_DIR="/opt/rocm/bin"
-+            BIN_DIR="@ESYSROOT_ROCM_PATH@/bin"
++            BIN_DIR="@EPREFIX_ROCM_PATH@/bin"
          fi
      fi
      if [ -e "$BIN_DIR/kfdtest" ]; then
@@ -69,7 +69,7 @@ diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/scripts/run_kfdtest
      else
          echo "Unable to locate kfdtest."
 -        echo "Please set BIN_DIR, ensure that kfdtest is in $PATH, or ensure that kfdtest is present inside ${0%/*} or /opt/rocm/bin"
-+        echo "Please set BIN_DIR, ensure that kfdtest is in $PATH, or ensure that kfdtest is present inside ${0%/*} or @ESYSROOT_ROCM_PATH@/bin"
++        echo "Please set BIN_DIR, ensure that kfdtest is in $PATH, or ensure that kfdtest is present inside ${0%/*} or @EPREFIX_ROCM_PATH@/bin"
          exit 1
      fi
  else
@@ -78,7 +78,7 @@ diff -urp ROCT-Thunk-Interface-rocm-5.7.0.orig/tests/kfdtest/scripts/run_kfdtest
  
  # If the SMI is missing, just report and continue
 -SMI="$(find /opt/rocm* -type l -name rocm-smi | tail -1)"
-+SMI="$(find @ESYSROOT_ROCM_PATH@ -type l -name rocm-smi | tail -1)"
++SMI="$(find @EPREFIX_ROCM_PATH@ -type l -name rocm-smi | tail -1)"
  if [ "$FORCE_HIGH" == "true" ]; then
      if [ -e "$SMI" ]; then
          OLDPERF=$($SMI -p | awk '/Performance Level:/ {print $NF; exit}')

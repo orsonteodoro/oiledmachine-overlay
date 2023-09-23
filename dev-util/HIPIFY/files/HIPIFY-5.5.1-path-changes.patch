@@ -21,7 +21,7 @@ diff -urp HIPIFY-rocm-5.5.1.orig/CMakeLists.txt HIPIFY-rocm-5.5.1/CMakeLists.txt
          include(hipify-backward-compat.cmake)
      endif()
 -    set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE PATH "HIP Package Installation Path")
-+    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr" CACHE PATH "HIP Package Installation Path")
++    set(CPACK_PACKAGING_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "HIP Package Installation Path")
      set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/packages/hipify-clang)
      configure_file(packaging/hipify-clang.txt ${BUILD_DIR}/CMakeLists.txt @ONLY)
      configure_file(${CMAKE_SOURCE_DIR}/LICENSE.txt ${BUILD_DIR}/LICENSE.txt @ONLY)
@@ -35,9 +35,9 @@ diff -urp HIPIFY-rocm-5.5.1.orig/hipify-backward-compat.cmake HIPIFY-rocm-5.5.1/
 -#With File Reorganization , hipify(and hip)  will be installed in /opt/rocm-ver
 -#instead of  /opt/rocm-ver/hip/. For maintaining backward  compatibility
 -# the previous location(/opt/rocm-ver/hip/) will have soft link.
-+#With File Reorganization , hipify(and hip)  will be installed in /usr
-+#instead of  /usr/hip/. For maintaining backward  compatibility
-+# the previous location(/usr/hip/) will have soft link.
++#With File Reorganization , hipify(and hip)  will be installed in @ESYSROOT_ROCM_PATH@
++#instead of  @ESYSROOT_ROCM_PATH@/hip/. For maintaining backward  compatibility
++# the previous location(@ESYSROOT_ROCM_PATH@/hip/) will have soft link.
  #This file is for creating  soft link to binary files and install it in the  previous location
  #Note: soft link added for binary files.
  

@@ -514,7 +514,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/cloud_inference/README.md MIVisionX-roc
  ## Inference Server Application - inference_server_app
  
 -The [server application](server_app#mivisionx-inference-server) is built along with MIVisionX and placed in `/opt/rocm/bin` when MIVisionX is installed. The server application has a command-line interface.
-+The [server application](server_app#mivisionx-inference-server) is built along with MIVisionX and placed in `@ESYSROOT_ROCM_PATH@/bin` when MIVisionX is installed. The server application has a command-line interface.
++The [server application](server_app#mivisionx-inference-server) is built along with MIVisionX and placed in `@EPREFIX_ROCM_PATH@/bin` when MIVisionX is installed. The server application has a command-line interface.
  
  usage:
  
@@ -522,7 +522,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/cloud_inference/README.md MIVisionX-roc
   inference_server_app [-p <port> default:26262]
                        [-b <batch size> default:64]
 -                      [-n <model compiler path> default:/opt/rocm/libexec/mivisionx/model_compiler/python]
-+                      [-n <model compiler path> default:@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python]
++                      [-n <model compiler path> default:@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python]
                        [-w <server working directory> default:~/]
                        [-t <num cpu decoder threads [2-64]> default:1]
                        [-q <max pending batches>]
@@ -532,8 +532,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/cloud_inference/README.md MIVisionX-roc
  ``` 
 -export PATH=$PATH:/opt/rocm/bin
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  inference_server_app
  ```
  
@@ -645,7 +645,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/cloud_inference/server_app/README.md MI
    inference_server_app  [-p     <port>                           default:26262]
                          [-b     <batch size>                     default:64]
 -                        [-n     <model compiler path>            default:/opt/rocm/libexec/mivisionx/model_compiler/python]
-+                        [-n     <model compiler path>            default:@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python]
++                        [-n     <model compiler path>            default:@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python]
                          [-fp16  <ON:1 or OFF:0>                  default:0]
                          [-w     <server working directory>       default:~/]
                          [-t     <num cpu decoder threads [2-64]> default:1]
@@ -655,8 +655,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/cloud_inference/server_app/README.md MI
  ````
 -% export PATH=$PATH:/opt/rocm/bin
 -% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+% export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++% export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  ````
  
  The `inference_server_app` works with [Client Application](../client_app/README.md).
@@ -668,7 +668,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/cloud_inference/server_app/source/argum
          : workFolder{ "~" }, modelFileDownloadCounter{ 0 },
            password{ "radeon" },
 -          modelCompilerPath{ "/opt/rocm/libexec/mivisionx/model_compiler/python" },
-+          modelCompilerPath{ "@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python" },
++          modelCompilerPath{ "@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python" },
            port{ 28282 }, batchSize{ 64 }, maxPendingBatches{ 4 }, numGPUs{ 1 }, gpuIdList{ 0 },
            maxGpuId{ 0 }, platform_id{ NULL }, num_devices{ 0 },  deviceUseCount{ 0 }
  {
@@ -677,7 +677,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/cloud_inference/server_app/source/argum
      printf("\t[-p \t<port>\t\t\t\t default:26262]\n");
      printf("\t\t\t\t[-b \t<batch size>\t\t\t default:64]\n");
 -    printf("\t\t\t\t[-n \t<model compiler path>\t\t default:/opt/rocm/libexec/mivisionx/model_compiler/python]\n");
-+    printf("\t\t\t\t[-n \t<model compiler path>\t\t default:@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python]\n");
++    printf("\t\t\t\t[-n \t<model compiler path>\t\t default:@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python]\n");
      printf("\t\t\t\t[-fp16 \t<ON:1 or OFF:0>\t\t\t default:0]\n");
      printf("\t\t\t\t[-w \t<server working directory>\t default:~/]\n");
      printf("\t\t\t\t[-t \t<num cpu decoder threads [2-64]> default:1]\n");
@@ -761,8 +761,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_inference_analyzer/mivisionx_
      # set paths
 -    modelCompilerPath = '/opt/rocm/libexec/mivisionx/model_compiler/python'
 -    ADATPath= '/opt/rocm/libexec/mivisionx/toolkit/amd_data_analysis_toolkit/classification'
-+    modelCompilerPath = '@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python'
-+    ADATPath= '@ESYSROOT_ROCM_PATH@/libexec/mivisionx/toolkit/amd_data_analysis_toolkit/classification'
++    modelCompilerPath = '@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python'
++    ADATPath= '@EPREFIX_ROCM_PATH@/libexec/mivisionx/toolkit/amd_data_analysis_toolkit/classification'
      setupDir = '~/.mivisionx-inference-analyzer'
      analyzerDir = os.path.expanduser(setupDir)
      modelDir = analyzerDir+'/'+modelName+'_dir'
@@ -776,9 +776,9 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_inference_analyzer/README.md 
 -  % export PATH=$PATH:/opt/rocm/bin
 -  % export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
 -  % runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
-+  % export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+  % export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
-+  % runvx @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
++  % export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++  % export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
++  % runvx @EPREFIX_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
    ```
  
  * Run [Samples](#samples)
@@ -787,7 +787,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_inference_analyzer/README.md 
  
    + MIVisionX needs to be pre-installed
 -  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+  + MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
    + ONNX model conversion requires ONNX install using `pip install onnx` 	
  
  * **Step 2:** Download pre-trained SqueezeNet ONNX model from [ONNX Model Zoo](https://github.com/onnx/models#open-neural-network-exchange-onnx-model-zoo) - [SqueezeNet Model](https://s3.amazonaws.com/download.onnx/models/opset_8/squeezenet.tar.gz)
@@ -796,7 +796,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_inference_analyzer/README.md 
  
    + MIVisionX needs to be pre-installed
 -  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+  + MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
   
  * **Step 2:** Download pre-trained VGG 16 caffe model - [VGG_ILSVRC_16_layers.caffemodel](http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel)
  
@@ -805,7 +805,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_inference_analyzer/README.md 
  
    + MIVisionX needs to be pre-installed
 -  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+  + MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
    + NNEF model conversion requires [NNEF python parser](https://github.com/KhronosGroup/NNEF-Tools/tree/master/parser#nnef-parser-project) installed
  
  * **Step 2:** Download pre-trained VGG 16 NNEF model
@@ -839,34 +839,34 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_openvx_classifier/README.md M
  2. Use [MIVisionX Model Compiler](https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/tree/master/model_compiler#neural-net-model-compiler--optimizer) to extract weights.bin from the pre-trained caffe models
  
 -**Note:** MIVisionX installs all the model compiler scripts in `/opt/rocm/libexec/mivisionx/model_compiler/python/` folder
-+**Note:** MIVisionX installs all the model compiler scripts in `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/` folder
++**Note:** MIVisionX installs all the model compiler scripts in `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/` folder
  
    + Convert the pre-trained caffemodel into AMD NNIR model:
  
    ``` 
 -  % python /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
-+  % python @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
++  % python @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
    ```
  
    Sample:
  
      ``` 
 -    % python /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
-+    % python @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
++    % python @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
      ```
  
    + Convert an AMD NNIR model into OpenVX C code:
  
    ``` 
 -  % python /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
-+  % python @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
++  % python @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
    ```
  
    Sample:
  
      ``` 
 -    % python /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
-+    % python @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
++    % python @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
      ```
  
    **Note:** The weights.bin file will be generated inside the OpenVX folder and you can use that as an input for this project.
@@ -875,7 +875,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_openvx_classifier/README.md M
  * **Step 1:** Install all the Prerequisites
  
 - **Note:** MIVisionX installs all the model compiler scripts in `/opt/rocm/libexec/mivisionx/model_compiler/python/` folder
-+ **Note:** MIVisionX installs all the model compiler scripts in `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/` folder
++ **Note:** MIVisionX installs all the model compiler scripts in `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/` folder
  
  * **Step 2:** Download pre-trained VGG 16 caffe model - [VGG_ILSVRC_16_layers.caffemodel](http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel)
  
@@ -884,14 +884,14 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_openvx_classifier/README.md M
  
  ``` 
 - % python /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
-+ % python @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
++ % python @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel VGG16_NNIR --input-dims 1,3,224,224
  ```
  
   + Convert NNIR to OpenVX
  
  ``` 
 - % python /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
-+ % python @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
++ % python @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py VGG16_NNIR VGG16_OpenVX
  ```
  
   **Note:** Use weights.bin generated in VGG16_OpenVX folder to run the classifier on live video
@@ -904,8 +904,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/inference_set
          super(modelInference, self).__init__(parent)
 -        self.modelCompilerPath = '/opt/rocm/libexec/mivisionx/model_compiler/python'
 -        self.ADATPath = '/opt/rocm/libexec/mivisionx/toolkit/analysis_and_visualization/classification'
-+        self.modelCompilerPath = '@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python'
-+        self.ADATPath = '@ESYSROOT_ROCM_PATH@/libexec/mivisionx/toolkit/analysis_and_visualization/classification'
++        self.modelCompilerPath = '@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python'
++        self.ADATPath = '@EPREFIX_ROCM_PATH@/libexec/mivisionx/toolkit/analysis_and_visualization/classification'
          self.setupDir = '~/.mivisionx-validation-tool'
  
          self.analyzerDir = os.path.expanduser(self.setupDir)
@@ -918,8 +918,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/README.md MIV
  ``` 
 -	export PATH=$PATH:/opt/rocm/bin
 -	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+	export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++	export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  ```
  
  **NOTE:**
@@ -930,9 +930,9 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/README.md MIV
 -export PATH=$PATH:/opt/rocm/bin
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
 -runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
-+export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
-+runvx @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
++export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
++runvx @EPREFIX_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
  ```
  
  * Run [Samples](#samples)
@@ -941,7 +941,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/README.md MIV
  
    + MIVisionX needs to be pre-installed
 -  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+  + MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
    + ONNX model conversion requires ONNX install using `pip install onnx` 	
  
  * **Step 2:** Download pre-trained SqueezeNet ONNX model from [ONNX Model Zoo](https://github.com/onnx/models#open-neural-network-exchange-onnx-model-zoo) - [SqueezeNet Model](https://s3.amazonaws.com/download.onnx/models/opset_8/squeezenet.tar.gz)
@@ -951,8 +951,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/README.md MIV
  	cd ~/sample-1/MIVisionX-validation-tool/
 -	export PATH=$PATH:/opt/rocm/bin
 -	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+	export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++	export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  	python mivisionx_validation_tool.py -h
      ```
  
@@ -961,7 +961,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/README.md MIV
  
    + MIVisionX needs to be pre-installed
 -  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+  + MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
  
  * **Step 2:** Download pre-trained VGG 16 caffe model - [VGG_ILSVRC_16_layers.caffemodel](http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel)
  
@@ -971,8 +971,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/README.md MIV
  	cd ~/sample-2/MIVisionX-validation-tool/
 -	export PATH=$PATH:/opt/rocm/bin
 -	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+	export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++	export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  	python mivisionx_validation_tool.py -h
      ```
  
@@ -981,7 +981,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/README.md MIV
  
    + MIVisionX needs to be pre-installed
 -  + MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+  + MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++  + MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
    + NNEF model conversion requires [NNEF python parser](https://github.com/KhronosGroup/NNEF-Tools/tree/master/parser#nnef-parser-project) installed
  
  * **Step 2:** Download pre-trained VGG 16 NNEF model
@@ -991,8 +991,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/mivisionx_validation_tool/README.md MIV
  	cd ~/sample-3/MIVisionX-validation-tool/
 -	export PATH=$PATH:/opt/rocm/bin
 -	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+	export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++	export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  	python mivisionx_validation_tool.py -h
      ```
  
@@ -1019,7 +1019,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/apps/optical_flow/README.md MIVisionX-rocm-5
  
  ```
 -export OPENVX_DIR=/opt/rocm/
-+export OPENVX_DIR=@ESYSROOT_ROCM_PATH@/
++export OPENVX_DIR=@EPREFIX_ROCM_PATH@/
  ```
  
  
@@ -1067,69 +1067,6 @@ diff -urp MIVisionX-rocm-5.4.3.orig/CMakeLists.txt MIVisionX-rocm-5.4.3/CMakeLis
  endif()
  if(CMAKE_BUILD_TYPE MATCHES Debug)
 Only in MIVisionX-rocm-5.4.3: CMakeLists.txt.orig
-diff -urp MIVisionX-rocm-5.4.3.orig/docker/conformance/openvx-1-3-on-centos7.dockerfile MIVisionX-rocm-5.4.3/docker/conformance/openvx-1-3-on-centos7.dockerfile
---- MIVisionX-rocm-5.4.3.orig/docker/conformance/openvx-1-3-on-centos7.dockerfile	2022-10-26 21:12:19.000000000 -0700
-+++ MIVisionX-rocm-5.4.3/docker/conformance/openvx-1-3-on-centos7.dockerfile	2023-09-04 09:39:13.355808028 -0700
-@@ -34,7 +34,7 @@ RUN cd conformance_tests/build-cts-openc
- # install MIVisionX HIP
- RUN mkdir build-hip && cd build-hip && cmake3 ../MIVisionX -DBACKEND=HIP && make -j8
- RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
--        cmake3 -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-+        cmake3 -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/@LIBDIR@/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-         cmake3 --build .
- RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
-         AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
-diff -urp MIVisionX-rocm-5.4.3.orig/docker/conformance/openvx-1-3-on-centos8.dockerfile MIVisionX-rocm-5.4.3/docker/conformance/openvx-1-3-on-centos8.dockerfile
---- MIVisionX-rocm-5.4.3.orig/docker/conformance/openvx-1-3-on-centos8.dockerfile	2022-10-26 21:12:19.000000000 -0700
-+++ MIVisionX-rocm-5.4.3/docker/conformance/openvx-1-3-on-centos8.dockerfile	2023-09-04 09:39:13.355808028 -0700
-@@ -30,7 +30,7 @@ RUN cd conformance_tests/build-cts-openc
- # install MIVisionX HIP
- RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
- RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
--        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-+        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/@LIBDIR@/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-         cmake --build .
- RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
-         AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
-diff -urp MIVisionX-rocm-5.4.3.orig/docker/conformance/openvx-1-3-on-ubuntu18.dockerfile MIVisionX-rocm-5.4.3/docker/conformance/openvx-1-3-on-ubuntu18.dockerfile
---- MIVisionX-rocm-5.4.3.orig/docker/conformance/openvx-1-3-on-ubuntu18.dockerfile	2022-10-26 21:12:19.000000000 -0700
-+++ MIVisionX-rocm-5.4.3/docker/conformance/openvx-1-3-on-ubuntu18.dockerfile	2023-09-04 09:39:13.355808028 -0700
-@@ -35,7 +35,7 @@ RUN cd conformance_tests/build-cts-openc
- # install MIVisionX HIP
- RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
- RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
--        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-+        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/@LIBDIR@/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-         cmake --build .
- RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
-         AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
-diff -urp MIVisionX-rocm-5.4.3.orig/docker/conformance/openvx-1-3-on-ubuntu20.dockerfile MIVisionX-rocm-5.4.3/docker/conformance/openvx-1-3-on-ubuntu20.dockerfile
---- MIVisionX-rocm-5.4.3.orig/docker/conformance/openvx-1-3-on-ubuntu20.dockerfile	2022-10-26 21:12:19.000000000 -0700
-+++ MIVisionX-rocm-5.4.3/docker/conformance/openvx-1-3-on-ubuntu20.dockerfile	2023-09-04 09:39:13.355808028 -0700
-@@ -34,7 +34,7 @@ RUN cd conformance_tests/build-cts-openc
- # install MIVisionX HIP
- RUN mkdir build-hip && cd build-hip && cmake ../MIVisionX -DBACKEND=HIP && make -j8
- RUN cd conformance_tests && mkdir build-cts-hip && cd build-cts-hip && \
--        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;/opt/rocm/hip/lib/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-+        cmake -DOPENVX_INCLUDES=$OPENVX_INC/include -DOPENVX_LIBRARIES=$OPENVX_DIR_HIP/lib/libopenvx.so\;$OPENVX_DIR_HIP/lib/libvxu.so\;@ESYSROOT_ROCM_PATH@/@LIBDIR@/libamdhip64.so\;pthread\;dl\;m\;rt -DOPENVX_CONFORMANCE_VISION=ON ../OpenVX-cts && \
-         cmake --build .
- RUN cd conformance_tests/build-cts-hip && AGO_DEFAULT_TARGET=CPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-CPU-CTS-HIP-centos7.md && \
-         AGO_DEFAULT_TARGET=GPU LD_LIBRARY_PATH=./lib ./bin/vx_test_conformance | tee OpenVX-GPU-CTS-HIP-centos7.md && \
-diff -urp MIVisionX-rocm-5.4.3.orig/docker/conformance/system_info.py MIVisionX-rocm-5.4.3/docker/conformance/system_info.py
---- MIVisionX-rocm-5.4.3.orig/docker/conformance/system_info.py	2022-10-26 21:12:19.000000000 -0700
-+++ MIVisionX-rocm-5.4.3/docker/conformance/system_info.py	2023-09-04 09:39:13.355808028 -0700
-@@ -79,9 +79,9 @@ gpu_info = gpu_info.rstrip()  # strip ou
- memory_info = shell('inxi -c 0 -m')
- board_info = shell('inxi -c0 -M')
- 
--vbios = shell('(cd /opt/rocm/bin/; ./rocm-smi -v)')
-+vbios = shell('(cd @ESYSROOT_ROCM_PATH@/bin/; ./rocm-smi -v)')
- 
--rocmInfo = shell('(cd /opt/rocm/bin/; ./rocm-smi -a)')
-+rocmInfo = shell('(cd @ESYSROOT_ROCM_PATH@/bin/; ./rocm-smi -a)')
- 
- rocm_packages = shell('dpkg-query -W | grep rocm')
- rocm_packages = rocm_packages.splitlines()
 diff -urp MIVisionX-rocm-5.4.3.orig/MIVisionX-setup.py MIVisionX-rocm-5.4.3/MIVisionX-setup.py
 --- MIVisionX-rocm-5.4.3.orig/MIVisionX-setup.py	2022-10-26 21:12:19.000000000 -0700
 +++ MIVisionX-rocm-5.4.3/MIVisionX-setup.py	2023-09-04 09:45:13.259803222 -0700
@@ -1440,7 +1377,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/model_compiler/README.md MIVisionX-rocm-5.4.
    ```
  
 -**Note:** MIVisionX installs model compiler scripts at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+**Note:** MIVisionX installs model compiler scripts at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++**Note:** MIVisionX installs model compiler scripts at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
  
  #### Caffe
  
@@ -1452,7 +1389,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/README.md MIVisionX-rocm-5.4.3/README.md
                              --reinstall [Remove previous setup and reinstall (default:no)[options:yes/no]]
                              --backend   [MIVisionX Dependency Backend - optional (default:HIP) [options:OCL/HIP]]
 -                            --rocm_path [ROCm Installation Path - optional (default:/opt/rocm) - ROCm Installation Required]
-+                            --rocm_path [ROCm Installation Path - optional (default:@ESYSROOT_ROCM_PATH@) - ROCm Installation Required]
++                            --rocm_path [ROCm Installation Path - optional (default:@EPREFIX_ROCM_PATH@) - ROCm Installation Required]
    ```
      **Note:**
      * **ROCm upgrade** with `sudo apt upgrade` requires the setup script **rerun**.
@@ -1466,12 +1403,12 @@ diff -urp MIVisionX-rocm-5.4.3.orig/README.md MIVisionX-rocm-5.4.3/README.md
 -    + Model compiler, & toolkit folders into `/opt/rocm/libexec/mivisionx`
 -    + Apps, & samples folder into `/opt/rocm/share/mivisionx`
 -    + Docs folder into `/opt/rocm/share/doc/mivisionx`
-+    + Executables into `@ESYSROOT_ROCM_PATH@/bin`
-+    + Libraries into `@ESYSROOT_ROCM_PATH@/@LIBDIR@`
-+    + OpenVX and module header files into `@ESYSROOT_ROCM_PATH@/include/mivisionx`
-+    + Model compiler, & toolkit folders into `@ESYSROOT_ROCM_PATH@/libexec/mivisionx`
-+    + Apps, & samples folder into `@ESYSROOT_ROCM_PATH@/share/mivisionx`
-+    + Docs folder into `@ESYSROOT_ROCM_PATH@/share/doc/mivisionx`
++    + Executables into `@EPREFIX_ROCM_PATH@/bin`
++    + Libraries into `@EPREFIX_ROCM_PATH@/@LIBDIR@`
++    + OpenVX and module header files into `@EPREFIX_ROCM_PATH@/include/mivisionx`
++    + Model compiler, & toolkit folders into `@EPREFIX_ROCM_PATH@/libexec/mivisionx`
++    + Apps, & samples folder into `@EPREFIX_ROCM_PATH@/share/mivisionx`
++    + Docs folder into `@EPREFIX_ROCM_PATH@/share/doc/mivisionx`
    * Package (.deb & .rpm) install requires `OpenCV v3+` to execute `AMD OpenCV extensions`
  
  #### Using `MIVisionX-setup.py`
@@ -1480,7 +1417,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/README.md MIVisionX-rocm-5.4.3/README.md
  
    **Note:**
 -  + MIVisionX cannot be installed for both GPU backends in the same default folder (i.e., /opt/rocm/)
-+  + MIVisionX cannot be installed for both GPU backends in the same default folder (i.e., @ESYSROOT_ROCM_PATH@/)
++  + MIVisionX cannot be installed for both GPU backends in the same default folder (i.e., @EPREFIX_ROCM_PATH@/)
    if an app interested in installing MIVisionX with both GPU backends, then add **-DCMAKE_INSTALL_PREFIX** in the cmake
    commands to install MIVisionX with OPENCL and HIP backends into two separate custom folders.
    + vx_winml is not supported on Linux
@@ -1494,12 +1431,12 @@ diff -urp MIVisionX-rocm-5.4.3.orig/README.md MIVisionX-rocm-5.4.3/README.md
 -  + Apps, & Samples folder into `/opt/rocm/share/mivisionx`
 -  + Documents folder into `/opt/rocm/share/doc/mivisionx`
 -  + Model Compiler, and Toolkit folder into `/opt/rocm/libexec/mivisionx`
-+  + Executables into `@ESYSROOT_ROCM_PATH@/bin`
-+  + Libraries into `@ESYSROOT_ROCM_PATH@/@LIBDIR@`
-+  + OpenVX and OpenVX module header files into `@ESYSROOT_ROCM_PATH@/include/mivisionx`
-+  + Apps, & Samples folder into `@ESYSROOT_ROCM_PATH@/share/mivisionx`
-+  + Documents folder into `@ESYSROOT_ROCM_PATH@/share/doc/mivisionx`
-+  + Model Compiler, and Toolkit folder into `@ESYSROOT_ROCM_PATH@/libexec/mivisionx`
++  + Executables into `@EPREFIX_ROCM_PATH@/bin`
++  + Libraries into `@EPREFIX_ROCM_PATH@/@LIBDIR@`
++  + OpenVX and OpenVX module header files into `@EPREFIX_ROCM_PATH@/include/mivisionx`
++  + Apps, & Samples folder into `@EPREFIX_ROCM_PATH@/share/mivisionx`
++  + Documents folder into `@EPREFIX_ROCM_PATH@/share/doc/mivisionx`
++  + Model Compiler, and Toolkit folder into `@EPREFIX_ROCM_PATH@/libexec/mivisionx`
  * Run the below sample to verify the installation
  
    **Canny Edge Detection**
@@ -1510,14 +1447,14 @@ diff -urp MIVisionX-rocm-5.4.3.orig/README.md MIVisionX-rocm-5.4.3/README.md
 -  export PATH=$PATH:/opt/rocm/bin
 -  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
 -  runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
-+  export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
-+  runvx @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
++  export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
++  runvx @EPREFIX_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
    ```
    **Note:** More samples are available [here](samples#samples)
  
 -  **Note:** For `macOS` use `export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/opt/rocm/lib`
-+  **Note:** For `macOS` use `export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@`
++  **Note:** For `macOS` use `export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@`
  
  ### Windows
  
@@ -1528,9 +1465,9 @@ diff -urp MIVisionX-rocm-5.4.3.orig/README.md MIVisionX-rocm-5.4.3/README.md
 -    export PATH=$PATH:/opt/rocm/bin
 -    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
 -    runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
-+    export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
-+    runvx @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
++    export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
++    runvx @EPREFIX_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
      ```
  
  ## Technical Support
@@ -1681,7 +1618,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/rocAL/rocAL_pybind/README.md MIVisionX-rocm-
  * Export `RPP` & `rocAL` library into PATH
  ```
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib/
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@/
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@/
  ```
  #### Run Test Script
  
@@ -1742,8 +1679,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/gdf/README.md MIVisionX-rocm-5.4.3/s
  ``` 
 -export PATH=$PATH:/opt/rocm/bin
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  ```
  
  * To get help on RunVX, use `-h` option
@@ -1779,15 +1716,15 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/inference/mv_objdetect/README.md MIV
  * Build & Install [MIVisionX](https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX#linux-1)
 -  * MIVisionX installs model compiler at `/opt/rocm/libexec/mivisionx`
 -  * mv_compile installs at `/opt/rocm/bin` and mvdeploy_api.h installs at `/opt/rocm/include/mivisionx`
-+  * MIVisionX installs model compiler at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx`
-+  * mv_compile installs at `@ESYSROOT_ROCM_PATH@/bin` and mvdeploy_api.h installs at `@ESYSROOT_ROCM_PATH@/include/mivisionx`
++  * MIVisionX installs model compiler at `@EPREFIX_ROCM_PATH@/libexec/mivisionx`
++  * mv_compile installs at `@EPREFIX_ROCM_PATH@/bin` and mvdeploy_api.h installs at `@EPREFIX_ROCM_PATH@/include/mivisionx`
  * Install MIVisionX [Model Compiler Prerequisites](../../../model_compiler#pre-requisites)
  * Add MIVisionX libraries & executables to PATH
  ```
 -export PATH=$PATH:/opt/rocm/bin
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  ```
  
  ## Sample - Detection Using Pre-Trained CAFFE Model
@@ -1805,7 +1742,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/inference/mv_objdetect/README.md MIV
  ```	
  cd mvdeploy
 -./bin/mvtestdeploy /opt/rocm/share/mivisionx/samples/mv_objdetect/data/images/img_04.JPG output.bin --install_folder . --t 100
-+./bin/mvtestdeploy @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/data/images/img_04.JPG output.bin --install_folder . --t 100
++./bin/mvtestdeploy @EPREFIX_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/data/images/img_04.JPG output.bin --install_folder . --t 100
  ```
  **NOTE:** This runs inference for an input file and generate output for N number of iterations.
  
@@ -1817,10 +1754,10 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/inference/mv_objdetect/README.md MIV
 -cp /opt/rocm/share/mivisionx/samples/mv_objdetect/visualize.cpp .
 -cp /opt/rocm/share/mivisionx/samples/mv_objdetect/visualize.h .
 -cp /opt/rocm/share/mivisionx/samples/mv_objdetect/CMakeLists.txt .
-+cp @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/mvobjdetect.cpp .
-+cp @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/visualize.cpp .
-+cp @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/visualize.h .
-+cp @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/CMakeLists.txt .
++cp @EPREFIX_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/mvobjdetect.cpp .
++cp @EPREFIX_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/visualize.cpp .
++cp @EPREFIX_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/visualize.h .
++cp @EPREFIX_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/CMakeLists.txt .
  ```
  
  ### Step 5. cmake and make mvobjdetect
@@ -1829,7 +1766,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/inference/mv_objdetect/README.md MIV
  ```
  cd ..
 -./mv_build/mvobjdetect /opt/rocm/share/mivisionx/samples/mv_objdetect/data/images/img_04.JPG - --install_folder . --bb 20 0.2 0.4 --v
-+./mv_build/mvobjdetect @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/data/images/img_04.JPG - --install_folder . --bb 20 0.2 0.4 --v
++./mv_build/mvobjdetect @EPREFIX_ROCM_PATH@/share/mivisionx/samples/mv_objdetect/data/images/img_04.JPG - --install_folder . --bb 20 0.2 0.4 --v
  ./mv_build/mvobjdetect <PATH TO VIDEO FILE> - --install_folder . --bb 20 0.2 0.4 --v
  ```
  **Note:** Make sure the input image and video file exist and specified with full path
@@ -1842,8 +1779,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/loom_360_stitch/README.md MIVisionX-
  ``` 
 -export PATH=$PATH:/opt/rocm/bin
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  ```
  
  * To get help on loom_shell, use `-help` option
@@ -1934,9 +1871,9 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
 -% export PATH=$PATH:/opt/rocm/bin
 -% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
 -% runvx /opt/rocm/share/mivisionx/samples/gdf/canny.gdf
-+% export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
-+% runvx @ESYSROOT_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
++% export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
++% runvx @EPREFIX_ROCM_PATH@/share/mivisionx/samples/gdf/canny.gdf
  ````
  ## Usage
  
@@ -1945,7 +1882,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  2. Use [MIVisionX Model Compiler](https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/tree/master/model_compiler#neural-net-model-compiler--optimizer) to generate OpenVX C Code from the pre-trained models.
  
 -	**Note:** MIVisionX installs all the model compiler scripts in `/opt/rocm/libexec/mivisionx/model_compiler/python/` folder
-+	**Note:** MIVisionX installs all the model compiler scripts in `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/` folder
++	**Note:** MIVisionX installs all the model compiler scripts in `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/` folder
  
  * Convert the pre-trained models into AMD NNIR model:
  
@@ -1954,21 +1891,21 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py <net.caffeModel> <nnirOutputFolder> --input-dims <n,c,h,w> [--verbose <0|1>]
  	````
  	
  	* ONNX Models
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py <onnxModel> <nnirOutputFolder> [--input_dims n,c,h,w (optional)]
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py <onnxModel> <nnirOutputFolder> [--input_dims n,c,h,w (optional)]
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py <onnxModel> <nnirOutputFolder> [--input_dims n,c,h,w (optional)]
  	````
  	
  	* NNEF Models
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py <nnefInputFolder> <outputFolder>
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py <nnefInputFolder> <outputFolder>
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py <nnefInputFolder> <outputFolder>
  	````
  	
  * Convert an AMD NNIR model into OpenVX C code:
@@ -1977,7 +1914,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py <nnirModelFolder> <nnirModelOutputFolder>
  	````
  
  ### Build - Inference Application
@@ -1986,7 +1923,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  	**Note:**
  	* MIVisionX needs to be pre-installed
 -	* MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+	* MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++	* MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
  	* ONNX model conversion requires ONNX install using `pip install onnx`	
  
  * **Step 2:** Download pre-trained SqueezeNet ONNX model from [ONNX Model Zoo](https://github.com/onnx/models#open-neural-network-exchange-onnx-model-zoo) - [SqueezeNet Model](https://s3.amazonaws.com/download.onnx/models/opset_8/squeezenet.tar.gz)
@@ -1995,14 +1932,14 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py squeezenet/model.onnx squeezenet-nnir
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py squeezenet/model.onnx squeezenet-nnir
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/onnx_to_nnir.py squeezenet/model.onnx squeezenet-nnir
  	````
  
  	* Convert NNIR to OpenVX
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py squeezenet-nnir/ squeezenet-openvx
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py squeezenet-nnir/ squeezenet-openvx
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py squeezenet-nnir/ squeezenet-openvx
  	````
  	**Note:** 
  	* annmodule.cpp & annmodule.h generated in squeezenet-openvx folder
@@ -2011,7 +1948,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  	**Note:**
  	* MIVisionX needs to be pre-installed
 -	* MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+	* MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++	* MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
  
  * **Step 2:** Download pre-trained Tiny YoloV2 caffe model - [yoloV2Tiny20.caffemodel](https://github.com/kiritigowda/YoloV2NCS/raw/master/models/caffemodels/yoloV2Tiny20.caffemodel)
  	````
@@ -2020,14 +1957,14 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py yoloV2Tiny20.caffemodel yoloV2-nnir --input-dims 1,3,416,416
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py yoloV2Tiny20.caffemodel yoloV2-nnir --input-dims 1,3,416,416
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py yoloV2Tiny20.caffemodel yoloV2-nnir --input-dims 1,3,416,416
  	````
  
  	* Convert NNIR to OpenVX
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py yoloV2-nnir yoloV2-openvx
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py yoloV2-nnir yoloV2-openvx
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py yoloV2-nnir yoloV2-openvx
  	````
  	**Note:** 
  	* annmodule.cpp & annmodule.h generated in yoloV2-openvx folder
@@ -2036,7 +1973,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  	**Note:**
  	* MIVisionX needs to be pre-installed
 -	* MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+	* MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++	* MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
  	* NNEF model conversion requires [NNEF python parser](https://github.com/KhronosGroup/NNEF-Tools/tree/master/parser#nnef-parser-project) installed
  
  * **Step 2:** Download pre-trained VGG 16 NNEF model
@@ -2045,14 +1982,14 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py vgg16/ vgg16-nnir
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py vgg16/ vgg16-nnir
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnef_to_nnir.py vgg16/ vgg16-nnir
  	````
  	
  	* Convert NNIR to OpenVX
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir/ vgg16-openvx
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir/ vgg16-openvx
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir/ vgg16-openvx
  	````
  	**Note:** 
  	* annmodule.cpp & annmodule.h generated in vgg16-openvx folder
@@ -2061,7 +1998,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  	**Note:**
  	* MIVisionX needs to be pre-installed
 -	* MIVisionX Model Compiler & Optimizer scripts are at `/opt/rocm/libexec/mivisionx/model_compiler/python/`
-+	* MIVisionX Model Compiler & Optimizer scripts are at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
++	* MIVisionX Model Compiler & Optimizer scripts are at `@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/`
  
  * **Step 2:** Download pre-trained VGG 16 caffe model - [VGG_ILSVRC_16_layers.caffemodel](http://www.robots.ox.ac.uk/~vgg/software/very_deep/caffe/VGG_ILSVRC_16_layers.caffemodel)
  	````
@@ -2070,14 +2007,14 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/model_compiler_samples/README.md MIV
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel vgg16-nnir --input-dims 1,3,224,224
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel vgg16-nnir --input-dims 1,3,224,224
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/caffe_to_nnir.py VGG_ILSVRC_16_layers.caffemodel vgg16-nnir --input-dims 1,3,224,224
  	````
  	
  	* Convert NNIR to OpenVX
  
  	````
 -	% python3 /opt/rocm/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir vgg16-openvx
-+	% python3 @ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir vgg16-openvx
++	% python3 @EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler/python/nnir_to_openvx.py vgg16-nnir vgg16-openvx
  	````
  	**Note:** 
  	* annmodule.cpp & annmodule.h generated in vgg16-openvx folder
@@ -2090,8 +2027,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/README.md MIVisionX-rocm-5.4.3/sampl
  ``` 
 -export PATH=$PATH:/opt/rocm/bin
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  ```
  
  * To get help on RunVX, use `-h` option
@@ -2101,8 +2038,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/samples/README.md MIVisionX-rocm-5.4.3/sampl
  ``` 
 -export PATH=$PATH:/opt/rocm/bin
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  ```
  
  * To get help on loom_shell, use `-help` option
@@ -2114,7 +2051,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/tests/amd_migraphx_tests/gdf/README.md MIVis
  ```
  wget https://github.com/onnx/models/blob/main/vision/classification/mnist/model/mnist-8.onnx?raw=true
 -/opt/rocm/bin/runvx mnist_migraphx.gdf
-+@ESYSROOT_ROCM_PATH@/bin/runvx mnist_migraphx.gdf
++@EPREFIX_ROCM_PATH@/bin/runvx mnist_migraphx.gdf
  ```
  
  * To change the input image, use either image_0.jpg, image_1.jpg or image_4.jpg each corresponding to digits 0, 1 and 4 respectively.
@@ -2534,8 +2471,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/inference_generator/README.md MIVi
  ```
 -% export PATH=$PATH:/opt/rocm/bin
 -% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+% export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
-+% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++% export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
++% export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
  ```
  
  Below log outlines a simple use-case with inference generator.
@@ -2548,8 +2485,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/inference_generator/src/caffe2open
      ofsCodeM << "include_directories (${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers )" << std::endl;
 -    ofsCodeM << "include_directories (/opt/rocm/include/mivisionx)" << std::endl;
 -    ofsCodeM << "link_directories    (/opt/rocm/lib)" << std::endl;
-+    ofsCodeM << "include_directories (@ESYSROOT_ROCM_PATH@/include/mivisionx)" << std::endl;
-+    ofsCodeM << "link_directories    (@ESYSROOT_ROCM_PATH@/@LIBDIR@)" << std::endl;
++    ofsCodeM << "include_directories (@EPREFIX_ROCM_PATH@/include/mivisionx)" << std::endl;
++    ofsCodeM << "link_directories    (@EPREFIX_ROCM_PATH@/@LIBDIR@)" << std::endl;
      ofsCodeM << "list(APPEND SOURCES annmodule.cpp)" << std::endl;
      ofsCodeM << "add_library(${PROJECT_NAME} SHARED ${SOURCES})" << std::endl;
      ofsCodeM << "set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -msse4.2 -std=gnu++14\")" << std::endl;
@@ -2558,7 +2495,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/inference_generator/src/caffe2open
      ofsCodeD << "/usr/include" << std::endl;
      ofsCodeD << "/usr/local/include" << std::endl;
 -    ofsCodeD << "/opt/rocm/opencl/include" << std::endl;
-+    ofsCodeD << "@ESYSROOT_ROCM_PATH@/opencl/include" << std::endl;
++    ofsCodeD << "@EPREFIX_ROCM_PATH@/opencl/include" << std::endl;
      ofsCodeD << "DOC \"OpenCL header file path\"" << std::endl;
      ofsCodeD << ")" << std::endl;
      ofsCodeD << "mark_as_advanced( OPENCL_INCLUDE_DIRS )" << std::endl << std::endl;
@@ -2596,8 +2533,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/inference_generator/src/caffe2open
 +    ofsCodeD << "    DOC \"OpenCL dynamic library path\"" << std::endl;
 +    ofsCodeD << "    PATH_SUFFIXES ${_PATH_SUFFIXES}" << std::endl;
 +    ofsCodeD << "    PATHS" << std::endl;
-+    ofsCodeD << "    @ESYSROOT@/usr/@LIBDIR@" << std::endl;
-+    ofsCodeD << "    @ESYSROOT_ROCM_PATH@/opencl/@LIBDIR@" << std::endl;
++    ofsCodeD << "    @EPREFIX@/usr/@LIBDIR@" << std::endl;
++    ofsCodeD << "    @EPREFIX_ROCM_PATH@/opencl/@LIBDIR@" << std::endl;
 +    ofsCodeD << "    )" << std::endl;
      ofsCodeD << "mark_as_advanced( OPENCL_LIBRARIES )" << std::endl << std::endl;
      ofsCodeD << "include( FindPackageHandleStandardArgs )" << std::endl;
@@ -2611,8 +2548,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/inference_generator/src/nnef2openv
               << "include_directories (${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers )" << std::endl
 -             << "include_directories (/opt/rocm/include/mivisionx)" << std::endl
 -             << "link_directories    (/opt/rocm/lib)" << std::endl
-+             << "include_directories (@ESYSROOT_ROCM_PATH@/include/mivisionx)" << std::endl
-+             << "link_directories    (@ESYSROOT_ROCM_PATH@/@LIBDIR@)" << std::endl
++             << "include_directories (@EPREFIX_ROCM_PATH@/include/mivisionx)" << std::endl
++             << "link_directories    (@EPREFIX_ROCM_PATH@/@LIBDIR@)" << std::endl
               << "list(APPEND SOURCES annmodule.cpp)" << std::endl
               << "add_library(${PROJECT_NAME} SHARED ${SOURCES})" << std::endl
               << "set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -msse4.2 -std=gnu++14\")" << std::endl
@@ -2636,7 +2573,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/mv_deploy/mv_compile.cpp MIVisionX
      if (backend == OpenVX_Rocm_GPU) {
          printf("compiling model for backend OpenVX_Rocm_GPU\n");
 -        std::string compiler_path = "/opt/rocm/libexec/mivisionx/model_compiler";       // default
-+        std::string compiler_path = "@ESYSROOT_ROCM_PATH@/libexec/mivisionx/model_compiler";       // default
++        std::string compiler_path = "@EPREFIX_ROCM_PATH@/libexec/mivisionx/model_compiler";       // default
          char *model_compiler_path = getenv("MIVISIONX_MODEL_COMPILER_PATH");
          std::string install_dir = std::string(install_folder).empty()? "mvdeploy_lib" : std::string(install_folder); 
          if (model_compiler_path != nullptr) {
@@ -2649,8 +2586,8 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/mv_deploy/README.md MIVisionX-rocm
  * Build & Install [MIVisionX](https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX#linux-1)
 -	* MIVisionX installs model compiler at `/opt/rocm/libexec/mivisionx`
 -  * mv_compile installs at `/opt/rocm/bin` and mvdeploy_api.h installs at `/opt/rocm/include/mivisionx` 
-+	* MIVisionX installs model compiler at `@ESYSROOT_ROCM_PATH@/libexec/mivisionx`
-+  * mv_compile installs at `@ESYSROOT_ROCM_PATH@/bin` and mvdeploy_api.h installs at `@ESYSROOT_ROCM_PATH@/include/mivisionx` 
++	* MIVisionX installs model compiler at `@EPREFIX_ROCM_PATH@/libexec/mivisionx`
++  * mv_compile installs at `@EPREFIX_ROCM_PATH@/bin` and mvdeploy_api.h installs at `@EPREFIX_ROCM_PATH@/include/mivisionx` 
  
  
  ### Usage
@@ -2708,7 +2645,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/rocAL/rocAL_dataloader/README.md M
  ### build
    ````
 -  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
    mkdir build
    cd build
    cmake ../
@@ -2752,7 +2689,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/rocAL/rocAL_dataloader_mt/README.m
  ### build
    ````
 -  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
    mkdir build
    cd build
    cmake ../
@@ -2786,7 +2723,7 @@ diff -urp MIVisionX-rocm-5.4.3.orig/utilities/rocAL/rocAL_dataloader_tf/README.m
  ### build
    ````
 -  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/opt/rocm/lib
-+  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@ESYSROOT_ROCM_PATH@/@LIBDIR@
++  export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:@EPREFIX_ROCM_PATH@/@LIBDIR@
    mkdir build
    cd build
    cmake ../

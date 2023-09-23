@@ -38,7 +38,7 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/README.md ROCm-OpenCL-Runtime-rocm
  cd "$OPENCL_DIR"
  mkdir -p build; cd build
 -cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
-+cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@ESYSROOT_ROCM_PATH@/" ..
++cmake -DUSE_COMGR_LIBRARY=ON -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@EPREFIX_ROCM_PATH@/" ..
  make -j$(nproc)
  ```
 
@@ -59,10 +59,10 @@ diff -urp ROCm-OpenCL-Runtime-rocm-5.6.0.orig/opencl-backward-compat.cmake ROCm-
  
  #if defined(_MSC_VER)
 -#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\")
-+#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with CL\")
++#pragma message(\"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with CL\")
  #elif defined(__GNUC__)
 -#warning \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with CL\"
-+#warning \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with CL\"
++#warning \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with CL\"
  #endif
  
  @include_statements@

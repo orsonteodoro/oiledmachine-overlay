@@ -64,7 +64,7 @@ diff -urp rocr_debug_agent-rocm-5.7.0.orig/README.md rocr_debug_agent-rocm-5.7.0
  
  ````sh
 -/opt/rocm/bin/hipcc -O0 -ggdb -o my_program my_program.cpp
-+@ESYSROOT_ROCM_PATH@/bin/hipcc -O0 -ggdb -o my_program my_program.cpp
++@EPREFIX_ROCM_PATH@/bin/hipcc -O0 -ggdb -o my_program my_program.cpp
  ````
  
  To use the ROCdebug-agent set the ``HSA_TOOLS_LIB`` environment variable to the
@@ -72,7 +72,7 @@ diff -urp rocr_debug_agent-rocm-5.7.0.orig/README.md rocr_debug_agent-rocm-5.7.0
  
  ````sh
 -HSA_TOOLS_LIB=/opt/rocm/lib/librocm-debug-agent.so.2 ./my_program
-+HSA_TOOLS_LIB=@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm-debug-agent.so.2 ./my_program
++HSA_TOOLS_LIB=@EPREFIX_ROCM_PATH@/@LIBDIR@/librocm-debug-agent.so.2 ./my_program
  ````
  
  If the application encounters a triggering event, it will print the state of
@@ -81,7 +81,7 @@ diff -urp rocr_debug_agent-rocm-5.7.0.orig/README.md rocr_debug_agent-rocm-5.7.0
  Use ``CMAKE_MODULE_PATH`` to specify a ``';'`` separated list of paths that
  will be used to locate cmake modules.  It is used to locate the HIP cmake
 -modules required to build the tests.  The default is ``/opt/rocm/hip/cmake``
-+modules required to build the tests.  The default is ``@ESYSROOT_ROCM_PATH@/hip/cmake``
++modules required to build the tests.  The default is ``@EPREFIX_ROCM_PATH@/hip/cmake``
  
  The built ROCdebug-agent library will be placed in:
  
@@ -104,7 +104,7 @@ diff -urp rocr_debug_agent-rocm-5.7.0.orig/test/CMakeLists.txt rocr_debug_agent-
  project(rocm-debug-agent-test)
  
 -set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/opt/rocm/hip/cmake")
-+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "@ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip/")
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "@EPREFIX_ROCM_PATH@/@LIBDIR@/cmake/hip/")
  find_package(HIP REQUIRED MODULE)
  set(CMAKE_HIP_ARCHITECTURES OFF)
  

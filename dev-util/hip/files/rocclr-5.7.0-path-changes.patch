@@ -45,7 +45,7 @@ diff -urp rocclr.orig/elf/test/CMakeLists.txt rocclr/elf/test/CMakeLists.txt
  find_package(amd_comgr REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    @ESYSROOT_ROCM_PATH@/
++    @EPREFIX_ROCM_PATH@/
    PATH_SUFFIXES
      cmake/amd_comgr
 -    lib/cmake/amd_comgr)
@@ -54,7 +54,7 @@ diff -urp rocclr.orig/elf/test/CMakeLists.txt rocclr/elf/test/CMakeLists.txt
  find_package(hsa-runtime64 REQUIRED CONFIG
    PATHS
 -    /opt/rocm/
-+    @ESYSROOT_ROCM_PATH@/
++    @EPREFIX_ROCM_PATH@/
    PATH_SUFFIXES
 -    cmake/hsa-runtime64)
 +    @LIBDIR@/cmake/hsa-runtime64)
@@ -66,8 +66,8 @@ diff -urp rocclr.orig/elf/test/CMakeLists.txt rocclr/elf/test/CMakeLists.txt
    PATHS
 -    /opt/rocm
 -    /opt/rocm/rocclr)
-+    @ESYSROOT_ROCM_PATH@/
-+    @ESYSROOT_ROCM_PATH@/rocclr)
++    @EPREFIX_ROCM_PATH@/
++    @EPREFIX_ROCM_PATH@/rocclr)
  
  add_executable(elf_test main.cpp)
  set_target_properties(
@@ -87,8 +87,8 @@ diff -urp rocclr.orig/elf/test/main.cpp rocclr/elf/test/main.cpp
  static const amd::Elf::SymbolInfo commentSymbolInfos_[] = {
 -    { ".comment", nullptr, 0, "compile", "-g -I/opt/include",  strlen("-g -I/opt/include") + 1 },
 -    { ".comment", nullptr, 0, "link",    "-g -l/opt/rocm/lib", strlen("-g -l/opt/rocm/lib") + 1 },
-+    { ".comment", nullptr, 0, "compile", "-g -I@ESYSROOT_ROCM_PATH@/include",  strlen("-g -I@ESYSROOT_ROCM_PATH@/include") + 1 },
-+    { ".comment", nullptr, 0, "link",    "-g -l@ESYSROOT_ROCM_PATH@/@LIBDIR@", strlen("-g -l@ESYSROOT_ROCM_PATH@/@LIBDIR@") + 1 },
++    { ".comment", nullptr, 0, "compile", "-g -I@EPREFIX_ROCM_PATH@/include",  strlen("-g -I@EPREFIX_ROCM_PATH@/include") + 1 },
++    { ".comment", nullptr, 0, "link",    "-g -l@EPREFIX_ROCM_PATH@/@LIBDIR@", strlen("-g -l@EPREFIX_ROCM_PATH@/@LIBDIR@") + 1 },
    };
  static constexpr size_t commentSymbolInfosSize_ = sizeof(commentSymbolInfos_)
      / sizeof(commentSymbolInfos_[0]);
@@ -122,7 +122,7 @@ diff -urp rocclr.orig/README.md rocclr/README.md
  cd "$HIP_DIR"
  mkdir -p build; cd build
 -cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;/opt/rocm/" ..
-+cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@ESYSROOT_ROCM_PATH@/" ..
++cmake -DCMAKE_PREFIX_PATH="$ROCclr_DIR/build;@EPREFIX_ROCM_PATH@/" ..
  make -j$(nproc)
  ```
  

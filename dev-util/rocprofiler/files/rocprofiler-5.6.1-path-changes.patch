@@ -199,12 +199,12 @@ diff -urp rocprofiler-rocm-5.6.1.orig/CHANGELOG.md rocprofiler-rocm-5.6.1/CHANGE
  
  ```sh
 -$ gcc main.c -I/opt/rocm-5.4.4/include -L/opt/rocm-5.4.4/lib -lrocprofiler64
-+$ gcc main.c -I@ESYSROOT_ROCM_PATH@/include -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocprofiler64
++$ gcc main.c -I@EPREFIX_ROCM_PATH@/include -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lrocprofiler64
  ```
  
  The resulting `a.out` will depend on
 -`/opt/rocm-5.4.4/lib/librocprofiler64.so.1`.
-+`@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.1`.
++`@EPREFIX_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.1`.
  
  The ROCm Profiler that uses `rocprofilerV2` API can be invoked using the
  following command:
@@ -213,11 +213,11 @@ diff -urp rocprofiler-rocm-5.6.1.orig/CHANGELOG.md rocprofiler-rocm-5.6.1/CHANGE
  
  ```sh
 -$ gcc main.c -I/opt/rocm-5.4.4/include -L/opt/rocm-5.4.4/lib -lrocmtools
-+$ gcc main.c -I@ESYSROOT_ROCM_PATH@/include -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocmtools
++$ gcc main.c -I@EPREFIX_ROCM_PATH@/include -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lrocmtools
  ```
  
 -The resulting `a.out` will depend on `/opt/rocm-5.4.4/lib/librocmtools.so.1`.
-+The resulting `a.out` will depend on `@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocmtools.so.1`.
++The resulting `a.out` will depend on `@EPREFIX_ROCM_PATH@/@LIBDIR@/librocmtools.so.1`.
  
  ## ROCprofiler for rocm 5.5.0
  
@@ -235,12 +235,12 @@ diff -urp rocprofiler-rocm-5.6.1.orig/CHANGELOG.md rocprofiler-rocm-5.6.1/CHANGE
  
  ```sh
 -$ gcc main.c -I/opt/rocm-5.5.0/include -L/opt/rocm-5.5.0/lib -lrocprofiler64
-+$ gcc main.c -I@ESYSROOT_ROCM_PATH@/include -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocprofiler64
++$ gcc main.c -I@EPREFIX_ROCM_PATH@/include -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lrocprofiler64
  ```
  
  The resulting `a.out` will depend on
 -`/opt/rocm-5.5.0/lib/librocprofiler64.so.1`.
-+`@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.1`.
++`@EPREFIX_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.1`.
  
  The ROCm Profiler that uses `rocprofilerV2` API can be invoked using the
  following command:
@@ -249,12 +249,12 @@ diff -urp rocprofiler-rocm-5.6.1.orig/CHANGELOG.md rocprofiler-rocm-5.6.1/CHANGE
  
  ```sh
 -$ gcc main.c -I/opt/rocm-5.5.0/include -L/opt/rocm-5.5.0/lib -lrocprofiler64
-+$ gcc main.c -I@ESYSROOT_ROCM_PATH@/include -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocprofiler64
++$ gcc main.c -I@EPREFIX_ROCM_PATH@/include -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lrocprofiler64
  ```
  
  The resulting `a.out` will depend on
 -`/opt/rocm-5.5.0/lib/librocprofiler64.so.1`.
-+`@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.1`.
++`@EPREFIX_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.1`.
  
  ## ROCprofiler for rocm 5.6.0
  
@@ -272,12 +272,12 @@ diff -urp rocprofiler-rocm-5.6.1.orig/CHANGELOG.md rocprofiler-rocm-5.6.1/CHANGE
  
  ```sh
 -$ gcc main.c -I/opt/rocm-5.6.0/include -L/opt/rocm-5.6.0/lib -lrocprofiler64
-+$ gcc main.c -I@ESYSROOT_ROCM_PATH@/include -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocprofiler64
++$ gcc main.c -I@EPREFIX_ROCM_PATH@/include -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lrocprofiler64
  ```
  
  The resulting `a.out` will depend on
 -`/opt/rocm-5.6.0/lib/librocprofiler64.so.1`.
-+`@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.1`.
++`@EPREFIX_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.1`.
  
  The ROCm Profiler that uses `rocprofilerV2` API can be invoked using the
  following command:
@@ -286,12 +286,12 @@ diff -urp rocprofiler-rocm-5.6.1.orig/CHANGELOG.md rocprofiler-rocm-5.6.1/CHANGE
  
  ```sh
 -$ gcc main.c -I/opt/rocm-5.6.0/include -L/opt/rocm-5.6.0/lib -lrocprofiler64-v2
-+$ gcc main.c -I@ESYSROOT_ROCM_PATH@/include -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocprofiler64-v2
++$ gcc main.c -I@EPREFIX_ROCM_PATH@/include -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lrocprofiler64-v2
  ```
  
  The resulting `a.out` will depend on
 -`/opt/rocm-5.6.0/lib/librocprofiler64.so.2`.
-+`@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.2`.
++`@EPREFIX_ROCM_PATH@/@LIBDIR@/librocprofiler64.so.2`.
  
  ### Optimized
  - Improved Test Suite
@@ -471,7 +471,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/README.md rocprofiler-rocm-5.6.1/README.md
   ```bash
  $ cd .../rocprofiler
 -$ export CMAKE_PREFIX_PATH=/opt/rocm/include/hsa:/opt/rocm
-+$ export CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@/include/hsa:@ESYSROOT_ROCM_PATH@
++$ export CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@/include/hsa:@EPREFIX_ROCM_PATH@
  $ mkdir build
  $ cd build
  $ cmake ..
@@ -480,7 +480,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/README.md rocprofiler-rocm-5.6.1/README.md
  The user has two options for building:
  
 -- Option 1 (It will install in the path saved in ROCM_PATH environment variable or /opt/rocm if ROCM_PATH is empty):
-+- Option 1 (It will install in the path saved in ROCM_PATH environment variable or @ESYSROOT_ROCM_PATH@ if ROCM_PATH is empty):
++- Option 1 (It will install in the path saved in ROCM_PATH environment variable or @EPREFIX_ROCM_PATH@ if ROCM_PATH is empty):
  
    - Run
  
@@ -489,7 +489,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/README.md rocprofiler-rocm-5.6.1/README.md
  
     ```bash
 -   # ROCM_PATH by default is /opt/rocm
-+   # ROCM_PATH by default is @ESYSROOT_ROCM_PATH@
++   # ROCM_PATH by default is @EPREFIX_ROCM_PATH@
     # It can be set by the user in different location if needed.
     <ROCM_PATH>/share/doc/rocprofv2
     ```
@@ -510,14 +510,14 @@ diff -urp rocprofiler-rocm-5.6.1.orig/rocprofiler-backward-compat.cmake rocprofi
  #endif
  #if ROCM_HEADER_WRAPPER_WERROR  /* ROCM_HEADER_WRAPPER_WERROR 1 */
 -#error \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with rocprofiler\"
-+#error \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with rocprofiler\"
++#error \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with rocprofiler\"
  #else      /* ROCM_HEADER_WRAPPER_WERROR 0 */
  #if defined(__GNUC__)
 -#error \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with rocprofiler\"
-+#error \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with rocprofiler\"
++#error \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with rocprofiler\"
  #else
 -#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with rocprofiler\")
-+#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with rocprofiler\")
++#pragma message(\"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with rocprofiler\")
  #endif
  #endif /* ROCM_HEADER_WRAPPER_WERROR */
  
@@ -624,7 +624,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/samples/pcsampler/code_printing_sample/REA
  * libelf
  
 -If ROCm is installed in the standard location (`/opt/rocm`), running `make` in
-+If ROCm is installed in the standard location (`@ESYSROOT_ROCM_PATH@`), running `make` in
++If ROCm is installed in the standard location (`@EPREFIX_ROCM_PATH@`), running `make` in
  the same directory as this README should work; otherwise, set `ROCM_PATH` to the
  location of the ROCm installation in your environment and `ROCPROFILER_PATH` to
  the location of the ROCProfiler source repo before running `make`.
@@ -637,8 +637,8 @@ diff -urp rocprofiler-rocm-5.6.1.orig/samples/README.md rocprofiler-rocm-5.6.1/s
  ## How to compile
 -In order to get the samples to compile, make sure to copy rocprofiler binaries into /opt/rocm/lib
 -Running 'make install' inside the rocprofiler/build folder will copy the binaries to /opt/rocm/lib
-+In order to get the samples to compile, make sure to copy rocprofiler binaries into @ESYSROOT_ROCM_PATH@/@LIBIDR@
-+Running 'make install' inside the rocprofiler/build folder will copy the binaries to @ESYSROOT_ROCM_PATH@/@LIBDIR@
++In order to get the samples to compile, make sure to copy rocprofiler binaries into @EPREFIX_ROCM_PATH@/@LIBIDR@
++Running 'make install' inside the rocprofiler/build folder will copy the binaries to @EPREFIX_ROCM_PATH@/@LIBDIR@
  
  Alternately, change the 'ROCPROFILER_LIBS_PATH' variable in the Makefile to point to the rocprofiler/build folder. 
  After modifications to Makefile are done, run:
@@ -647,11 +647,11 @@ diff -urp rocprofiler-rocm-5.6.1.orig/samples/README.md rocprofiler-rocm-5.6.1/s
  ### How to run
  Before running, ROCPROFILER_METRICS_PATH needs to be set to point to 'derived_counters.xml'
 -If the rocprofiler binaries are present in the rocm installation path /opt/rocm
-+If the rocprofiler binaries are present in the rocm installation path @ESYSROOT_ROCM_PATH@
++If the rocprofiler binaries are present in the rocm installation path @EPREFIX_ROCM_PATH@
  then below command will work:
  ```bash
 -export ROCPROFILER_METRICS_PATH=/opt/rocm/libexec/rocprofiler/counters/derived_counters.xml
-+export ROCPROFILER_METRICS_PATH=@ESYSROOT_ROCM_PATH@/libexec/rocprofiler/counters/derived_counters.xml
++export ROCPROFILER_METRICS_PATH=@EPREFIX_ROCM_PATH@/libexec/rocprofiler/counters/derived_counters.xml
  ```
  
  Otherwise, make it point to rocprofiler/build/counters/derived_counters.xml like below:
@@ -670,7 +670,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/src/tools/amdsys/amdsys.cpp rocprofiler-ro
      bin_path = fs::path(dl_info.dli_fname).remove_filename();
    } else {
 -    bin_path = "/opt/rocm";
-+    bin_path = "@ESYSROOT_ROCM_PATH@";
++    bin_path = "@EPREFIX_ROCM_PATH@";
    }
  
    std::string session_name = "default_session_roctracer";
@@ -682,7 +682,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/src/tools/rocprofv2/rocprofv2.cpp rocprofi
  
    std::cout << "Running Memory Leaks Check...." << std::endl;
 -  std::string run_command = "LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.6:" + pathenv +
-+  std::string run_command = "LD_PRELOAD=@ESYSROOT@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so:" + pathenv +
++  std::string run_command = "LD_PRELOAD=@EPREFIX@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so:" + pathenv +
        " ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=" + suppr_path.string() +
        " COUNTERS_PATH=" + counter_path.string() + " " + app_path.string() +
        " > /tmp/rocprofv2-temp 2> " + log_path.string();
@@ -691,7 +691,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/src/tools/rocprofv2/rocprofv2.cpp rocprofi
      } else if (strcmp(argv[i], "-a") == 0 || strcmp(argv[i], "--asan") == 0) {
        std::string current_ld_preload{getenv("LD_PRELOAD")};
 -      std::string ld_preload = "/usr/lib/x86_64-linux-gnu/libasan.so.6";
-+      std::string ld_preload = "@ESYSROOT@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so";
++      std::string ld_preload = "@EPREFIX@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so";
        if (!current_ld_preload.empty()) ld_preload = current_ld_preload + ":" + ld_preload;
  
        std::cout << ld_preload << std::endl;
@@ -719,7 +719,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/test/run.sh rocprofiler-rocm-5.6.1/test/ru
  
  # paths to ROC profiler and oher libraries
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../lib:/opt/rocm/lib:/opt/rocm/lib/rocprofiler
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:@ESYSROOT_ROCM_PATH@/@LIBDIR@:@ESYSROOT_ROCM_PATH@/@LIBDIR@/rocprofiler
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:@EPREFIX_ROCM_PATH@/@LIBDIR@:@EPREFIX_ROCM_PATH@/@LIBDIR@/rocprofiler
  
  # enable tools load failure reporting
  export HSA_TOOLS_REPORT_LOAD_FAILURE=1
@@ -731,16 +731,16 @@ diff -urp rocprofiler-rocm-5.6.1.orig/tests/featuretests/profiler/apps/mpi_run.s
  then
      echo "$MPIRUN could not be found. checking libs"
 -    if [ -f "/usr/lib64/openmpi/bin/mpirun" ]
-+    if [ -f "@ESYSROOT@/usr/@LIBDIR@/openmpi/bin/mpirun" ]
++    if [ -f "@EPREFIX@/usr/@LIBDIR@/openmpi/bin/mpirun" ]
      then
 -        MPIRUN=/usr/lib64/openmpi/bin/mpirun
-+        MPIRUN=@ESYSROOT@/usr/@LIBDIR@/openmpi/bin/mpirun
++        MPIRUN=@EPREFIX@/usr/@LIBDIR@/openmpi/bin/mpirun
      else
 -        if [ -f "/usr/lib64/mpi/gcc/openmpi2/bin/mpirun" ]
-+        if [ -f "@ESYSROOT@/usr/@LIBDIR@/mpi/gcc/openmpi2/bin/mpirun" ]
++        if [ -f "@EPREFIX@/usr/@LIBDIR@/mpi/gcc/openmpi2/bin/mpirun" ]
          then
 -            MPIRUN=/usr/lib64/mpi/gcc/openmpi2/bin/mpirun
-+            MPIRUN=@ESYSROOT@/usr/@LIBDIR@/mpi/gcc/openmpi2/bin/mpirun
++            MPIRUN=@EPREFIX@/usr/@LIBDIR@/mpi/gcc/openmpi2/bin/mpirun
          else
              echo "$MPIRUN could not be found. exiting"
              exit
@@ -753,7 +753,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/tests/featuretests/profiler/CMakeLists.txt
  find_package(Clang REQUIRED CONFIG
 -             PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATHS "@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake/clang")
++             PATHS "@EPREFIX_LLVM_PATH@/@LIBDIR@/cmake/clang")
  
  # Set the HIP language runtime link flags as FindHIP does not set them.
  set(CMAKE_INSTALL_TESTDIR test/${PROJECT_NAME})
@@ -770,7 +770,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/tests/featuretests/profiler/CMakeLists.txt
  function(generate_hsaco TARGET_ID INPUT_FILE OUTPUT_FILE)
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
      "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0 -Wl,--build-id=sha1
-+    --rocm-device-lib-path=@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode
++    --rocm-device-lib-path=@EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode
      -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}")
    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/tests/featuretests/profiler/${OUTPUT_FILE}
      COMMAND clang ${CLANG_ARG_LIST}
@@ -817,7 +817,7 @@ diff -urp rocprofiler-rocm-5.6.1.orig/tests/memorytests/run_asan_tests.sh rocpro
  
  echo -e "Running Memory Leaks Check From ${CURRENT_DIR}"
 -LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libasan.so.6 ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=$CURRENT_DIR/suppr.txt ${CURRENT_DIR}/../../rocprofv2 -i $CURRENT_DIR/input.txt $1 > /tmp/rocprofv2-temp 2> $2
-+LD_PRELOAD=@ESYSROOT@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=$CURRENT_DIR/suppr.txt ${CURRENT_DIR}/../../rocprofv2 -i $CURRENT_DIR/input.txt $1 > /tmp/rocprofv2-temp 2> $2
++LD_PRELOAD=@EPREFIX@/usr/lib/gcc/@CHOST@/@GCC_SLOT@/libasan.so ASAN_OPTIONS=detect_leaks=1 LSAN_OPTIONS=suppressions=$CURRENT_DIR/suppr.txt ${CURRENT_DIR}/../../rocprofv2 -i $CURRENT_DIR/input.txt $1 > /tmp/rocprofv2-temp 2> $2
  echo -e "Log with all detected leaks is available at build/memleaks.log"
  eval python3 $CURRENT_DIR/test_mem.py $2
 diff -urp rocprofiler-rocm-5.6.1.orig/tests/microbenchmarks/CMakeLists.txt rocprofiler-rocm-5.6.1/tests/microbenchmarks/CMakeLists.txt

@@ -274,7 +274,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.3.
  #include <link.h>
  #include <unistd.h>
 -#define ROCBLAS_LIB_PATH "/opt/rocm/lib/rocblas"
-+#define ROCBLAS_LIB_PATH "@ESYSROOT_ROCM_PATH@/@LIBDIR@"
++#define ROCBLAS_LIB_PATH "@EPREFIX_ROCM_PATH@/@LIBDIR@"
  #endif
  
  #ifdef WIN32
@@ -323,7 +323,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.3.
 -
 -                if(TestPath(path + "/" + processor))
 -                    path += "/" + processor;
-+		path="@ESYSROOT@/usr/@LIBDIR@/rocblas/library";
++		path="@EPREFIX@/usr/@LIBDIR@/rocblas/library";
              }
  
  #ifdef TENSILE_YAML

@@ -76,12 +76,12 @@ diff -urp roctracer-rocm-5.5.1.orig/README.md roctracer-rocm-5.5.1/README.md
  To use the rocTracer API you need the API header and to link your application with `roctracer` .so library:
  
 -- `/opt/rocm/include/roctracer/roctracer.h`
-+- `@ESYSROOT_ROCM_PATH@/include/roctracer/roctracer.h`
++- `@EPREFIX_ROCM_PATH@/include/roctracer/roctracer.h`
  
    API header.
  
 -- `/opt/rocm/lib/libroctracer64.so`
-+- `@ESYSROOT_ROCM_PATH@/@LIBDIR@/libroctracer64.so`
++- `@EPREFIX_ROCM_PATH@/@LIBDIR@/libroctracer64.so`
  
    .so library.
  
@@ -90,12 +90,12 @@ diff -urp roctracer-rocm-5.5.1.orig/README.md roctracer-rocm-5.5.1/README.md
  To use the rocTX API you need the API header and to link your application with `roctx` .so library:
  
 -- `/opt/rocm/roctracer/include/roctx.h`
-+- `@ESYSROOT_ROCM_PATH@/roctracer/include/roctx.h`
++- `@EPREFIX_ROCM_PATH@/roctracer/include/roctx.h`
  
    API header.
  
 -- `/opt/rocm/lib/libroctx64.so`
-+- `@ESYSROOT_ROCM_PATH@/@LIBDIR@/libroctx64.so`
++- `@EPREFIX_ROCM_PATH@/@LIBDIR@/libroctx64.so`
  
    .so library.
  

@@ -441,7 +441,7 @@ diff -urp AMDMIGraphX-rocm-5.6.0.orig/test/api/CMakeLists.txt AMDMIGraphX-rocm-5
  # GPU-based tests
  if(MIGRAPHX_ENABLE_GPU)
 -list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
-+list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
++list(APPEND CMAKE_PREFIX_PATH @EPREFIX_ROCM_PATH@)
  find_package(hip)
  add_api_test(gpu test_gpu.cpp ${TEST_ONNX_DIR})
  target_link_libraries(test_api_gpu)
@@ -465,7 +465,7 @@ diff -urp AMDMIGraphX-rocm-5.6.0.orig/tools/roctx.py AMDMIGraphX-rocm-5.6.0/tool
      configs = '--hip-trace --roctx-trace --flush-rate 10ms --timestamp on'
      output_dir = f"-d {args.out}"
 -    executable = f"/opt/rocm/bin/migraphx-driver roctx {run_args}"
-+    executable = f"@ESYSROOT_ROCM_PATH@/bin/migraphx-driver roctx {run_args}"
++    executable = f"@EPREFIX_ROCM_PATH@/bin/migraphx-driver roctx {run_args}"
      process_args = configs + ' ' + output_dir + ' ' + executable
      for i in range(repeat_count):
          os.system('rocprof ' + process_args)

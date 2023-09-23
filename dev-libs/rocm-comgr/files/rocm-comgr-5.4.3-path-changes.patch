@@ -48,7 +48,7 @@ diff -urp comgr.orig/README.md comgr/README.md
    LLVM installation, which is currently used for HIP compilation to locate
    certain runtime headers. If this is not set, it has a default value of
 -  "${ROCM_PATH}/llvm".
-+  "@ESYSROOT_LLVM_PATH@".
++  "@EPREFIX_LLVM_PATH@".
  
  Comgr also supports some environment variables to aid in debugging. These
  include:
@@ -60,7 +60,7 @@ diff -urp comgr.orig/src/comgr-compiler.cpp comgr/src/comgr-compiler.cpp
    DiagnosticsEngine Diags(DiagID, &*DiagOpts, DiagClient);
    ProcessWarningOptions(Diags, *DiagOpts, /*ReportDiags=*/false);
 -  Driver TheDriver("", "", Diags);
-+  Driver TheDriver((Twine(env::getLLVMPath()) + "/bin/clang").str(), "", Diags);
++  Driver TheDriver((Twine("@EPREFIX_LLVM_PATH@") + "/bin/clang").str(), "", Diags);
    TheDriver.setTitle("AMDGPU Code Object Manager");
    TheDriver.setCheckInputsExist(false);
  
@@ -110,7 +110,7 @@ diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
      sys::path::append(LLVMPath, "llvm");
  
 -    return LLVMPath;
-+    return llvm::SmallString<128>("@ESYSROOT_LLVM_PATH@");
++    return llvm::SmallString<128>("@EPREFIX_LLVM_PATH@");
    }
  
    virtual SmallString<128> getHIPPathImpl() {
@@ -125,7 +125,7 @@ diff -urp comgr.orig/src/comgr-env.cpp comgr/src/comgr-env.cpp
      ROCmInstallPath = EnvROCMPath;
    }
 +  else {
-+	ROCmInstallPath = "@ESYSROOT_ROCM_PATH@";
++	ROCmInstallPath = "@EPREFIX_ROCM_PATH@";
 +  }
  
    InstallationDetector *Detector;

@@ -272,7 +272,7 @@ diff -urp rocprofiler-rocm-5.3.3.orig/rocprofiler-backward-compat.cmake rocprofi
      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 -   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with rocprofiler\")\n@include_statements@ \n\n#endif")
-+   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with rocprofiler\")\n@include_statements@ \n\n#endif")
++   */\n\n#ifndef @include_guard@\n#define @include_guard@ \n\n#pragma message(\"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with rocprofiler\")\n@include_statements@ \n\n#endif")
  endfunction()
  
  #use header template file and generate wrapper header files
@@ -320,7 +320,7 @@ diff -urp rocprofiler-rocm-5.3.3.orig/test/run.sh rocprofiler-rocm-5.3.3/test/ru
  
  # paths to ROC profiler and oher libraries
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../lib:/opt/rocm/lib:/opt/rocm/lib/rocprofiler
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:@ESYSROOT_ROCM_PATH@/@LIBDIR@:@ESYSROOT_ROCM_PATH@/@LIBDIR@/rocprofiler
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:@EPREFIX_ROCM_PATH@/@LIBDIR@:@EPREFIX_ROCM_PATH@/@LIBDIR@/rocprofiler
  
  # enable tools load failure reporting
  export HSA_TOOLS_REPORT_LOAD_FAILURE=1

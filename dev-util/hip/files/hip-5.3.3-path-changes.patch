@@ -12,10 +12,10 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipcc.pl HIP-rocm-5.3.3/bin/hipcc.pl
 -# HIP_ROCCLR_HOME : Path to HIP/ROCclr directory. Used on AMD platforms only.
 -# HIP_CLANG_PATH : Path to HIP-Clang (default to ../../llvm/bin relative to this
 -#                  script's abs_path). Used on AMD platforms only.
-+# HIP_PATH       : Path to HIP directory, (defaults to /usr)
-+# CUDA_PATH      : Path to CUDA SDK (defaults to /opt/cuda).  Used on NVIDIA platforms only.
-+# HSA_PATH       : Path to HSA dir (defaults to /usr).  Used on AMD platforms only.
-+# HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to /usr).  Used on AMD platforms only.
++# HIP_PATH       : Path to HIP directory, (defaults to @ESYSROOT_ROCM_PATH@)
++# CUDA_PATH      : Path to CUDA SDK (defaults to @ESYSROOT@/opt/cuda).  Used on NVIDIA platforms only.
++# HSA_PATH       : Path to HSA dir (defaults to @ESYSROOT_ROCM_PATH@).  Used on AMD platforms only.
++# HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to @ESYSROOT_ROCM_PATH@).  Used on AMD platforms only.
 +# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH@/bin).
 +#                  Used on AMD platforms only.
  
@@ -112,7 +112,7 @@ diff -urp HIP-rocm-5.3.3.orig/bin/hipcc.pl HIP-rocm-5.3.3/bin/hipcc.pl
  
  } elsif ($HIP_PLATFORM eq "nvidia") {
 -    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
-+    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/opt/cuda';
++    $CUDA_PATH=$ENV{'CUDA_PATH'} // '@ESYSROOT@/opt/cuda';
      $HIP_INCLUDE_PATH = "$HIP_PATH/include";
      if ($verbose & 0x2) {
          print ("CUDA_PATH=$CUDA_PATH\n");
@@ -354,7 +354,7 @@ diff -urp HIP-rocm-5.3.3.orig/CONTRIBUTING.md HIP-rocm-5.3.3/CONTRIBUTING.md
  
  ## Make Tips
 -ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is /opt/rocm.
-+ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is @ESYSROOT_ROCM_PATH@.
++ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is @EPREFIX_ROCM_PATH@.
  When building HIP, you will likely want to build and install to a local user-accessible directory (rather than <ROCM_PATH>).
  This can be easily be done by setting the -DCMAKE_INSTALL_PREFIX variable when running cmake.  Typical use case is to
  set CMAKE_INSTALL_PREFIX to your HIP git root, and then ensure HIP_PATH points to this directory.   For example
@@ -373,12 +373,12 @@ diff -urp HIP-rocm-5.3.3.orig/CONTRIBUTING.md HIP-rocm-5.3.3/CONTRIBUTING.md
  ```
 -$ <ROCM_PATH>/llvm/bin/clang -v
 -clang version 11.0.0 (/src/external/llvm-project/clang 075fedd3fd2f4d9d8cca79d0cd51f64c5ef21432)
-+$ @ESYSROOT_LLVM_PATH@/bin/clang -v
++$ @EPREFIX_LLVM_PATH@/bin/clang -v
 +clang version @LLVM_SLOT@.0.0 (/src/external/llvm-project/clang <40 digit commit>)
  Target: x86_64-unknown-linux-gnu
  Thread model: posix
 -InstalledDir: <ROCM_PATH>/llvm/bin
-+InstalledDir: @ESYSROOT_LLVM_PATH@/bin
++InstalledDir: @EPREFIX_LLVM_PATH@/bin
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/7.5.0
  Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/8
@@ -402,7 +402,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_build.md HIP-rocm-5.3.3/docs/mar
  Similiar format for future branches.
  
 -ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is at /opt/rocm.
-+ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is at @ESYSROOT_ROCM_PATH@.
++ROCM_PATH is path where ROCM is installed. BY default ROCM_PATH is at @EPREFIX_ROCM_PATH@.
  
  
  # Build HIP on AMD platform
@@ -416,7 +416,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_build.md HIP-rocm-5.3.3/docs/mar
 -   * By default HIP looks for device library in <ROCM_PATH>/lib (can be overridden by setting DEVICE_LIB_PATH environment variable).
 +   * By default HIP looks for HSA in <ROCM_PATH> (can be overridden by setting HSA_PATH environment variable).
 +   * By default HIP is installed into <ROCM_PATH> (can be overridden by setting HIP_PATH environment variable).
-+   * By default HIP looks for clang in @ESYSROOT_LLVM_PATH@/bin (can be overridden by setting HIP_CLANG_PATH environment variable)
++   * By default HIP looks for clang in @EPREFIX_LLVM_PATH@/bin (can be overridden by setting HIP_CLANG_PATH environment variable)
 +   * By default HIP looks for device library in <ROCM_PATH>/@LIBDIR@/amdgcn/bitcode (can be overridden by setting DEVICE_LIB_PATH environment variable).
     * Optionally, consider adding <ROCM_PATH>/bin to your PATH to make it easier to use the tools.
     * Optionally, set HIPCC_VERBOSE=7 to output the command line for compilation.
@@ -429,11 +429,11 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
  For details, see (https://github.com/ROCm-Developer-Tools/ROCgdb).
  
 -Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder /opt/rocm/bin.
-+Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder @ESYSROOT_ROCM_PATH@/bin.
++Below is a sample how to use ROCgdb run and debug HIP application, rocgdb is installed with ROCM package in the folder @EPREFIX_ROCM_PATH@/bin.
  
  ```
 -$ export PATH=$PATH:/opt/rocm/bin
-+$ export PATH=$PATH:@ESYSROOT_ROCM_PATH@/bin
++$ export PATH=$PATH:@EPREFIX_ROCM_PATH@/bin
  $ rocgdb ./hipTexObjPitch
  GNU gdb (rocm-dkms-no-npi-hipclang-6549) 10.1
  Copyright (C) 2020 Free Software Foundation, Inc.
@@ -442,7 +442,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
  Starting program: /home/test/hip/build/directed_tests/texture/hipTexObjPitch 
  [Thread debugging using libthread_db enabled]
 -Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-+Using host libthread_db library "@ESYSROOT@/@LIBDIR@/libthread_db.so.1".
++Using host libthread_db library "@EPREFIX@/@LIBDIR@/libthread_db.so.1".
  
  Breakpoint 1, main ()
      at /home/test/hip/tests/src/texture/hipTexObjPitch.cpp:98
@@ -451,7 +451,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
  Starting program: /home/test/hipamd/build/directed_tests/runtimeApi/memory/hipMemcpy_simple
  [Thread debugging using libthread_db enabled]
 -Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
-+Using host libthread_db library "@ESYSROOT@/@LIBDIR@/libthread_db.so.1".
++Using host libthread_db library "@EPREFIX@/@LIBDIR@/libthread_db.so.1".
  
  Breakpoint 1, main (argc=1, argv=0x7fffffffdea8)
      at /home/test/hip/tests/src/runtimeApi/memory/hipMemcpy_simple.cpp:147
@@ -460,11 +460,11 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
      at /home/test/hip/tests/src/runtimeApi/memory/hipMemcpy_simple.cpp:104
    2    Thread 0x7ffff64c4700 (LWP 146066) "hipMemcpy_simpl" 0x00007ffff6b0850b in ioctl
 -    () from /lib/x86_64-linux-gnu/libc.so.6
-+    () from @ESYSROOT@/@LIBDIR@/libc.so.6
++    () from @EPREFIX@/@LIBDIR@/libc.so.6
  (gdb) thread 2
  [Switching to thread 2 (Thread 0x7ffff64c4700 (LWP 146066))]
 -#0  0x00007ffff6b0850b in ioctl () from /lib/x86_64-linux-gnu/libc.so.6
-+#0  0x00007ffff6b0850b in ioctl () from @ESYSROOT@/@LIBDIR@/libc.so.6
++#0  0x00007ffff6b0850b in ioctl () from @EPREFIX@/@LIBDIR@/libc.so.6
  (gdb) bt
 -#0  0x00007ffff6b0850b in ioctl () from /lib/x86_64-linux-gnu/libc.so.6
 -#1  0x00007ffff6604568 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
@@ -475,15 +475,15 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_debugging.md HIP-rocm-5.3.3/docs
 -#6  0x00007ffff654f547 in ?? () from /opt/rocm/lib/libhsa-runtime64.so.1
 -#7  0x00007ffff7f76609 in start_thread () from /lib/x86_64-linux-gnu/libpthread.so.0
 -#8  0x00007ffff6b13293 in clone () from /lib/x86_64-linux-gnu/libc.so.6
-+#0  0x00007ffff6b0850b in ioctl () from @ESYSROOT@/@LIBDIR@/libc.so.6
-+#1  0x00007ffff6604568 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
-+#2  0x00007ffff65fe73a in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
-+#3  0x00007ffff659e4d6 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
-+#4  0x00007ffff65807de in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
-+#5  0x00007ffff65932a2 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
-+#6  0x00007ffff654f547 in ?? () from @ESYSROOT_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
-+#7  0x00007ffff7f76609 in start_thread () from @ESYSROOT@/@LIBDIR@/libpthread.so.0
-+#8  0x00007ffff6b13293 in clone () from @ESYSROOT@/@LIBDIR@/libc.so.6
++#0  0x00007ffff6b0850b in ioctl () from @EPREFIX@/@LIBDIR@/libc.so.6
++#1  0x00007ffff6604568 in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#2  0x00007ffff65fe73a in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#3  0x00007ffff659e4d6 in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#4  0x00007ffff65807de in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#5  0x00007ffff65932a2 in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#6  0x00007ffff654f547 in ?? () from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
++#7  0x00007ffff7f76609 in start_thread () from @EPREFIX@/@LIBDIR@/libpthread.so.0
++#8  0x00007ffff6b13293 in clone () from @EPREFIX@/@LIBDIR@/libc.so.6
  (gdb) thread 1
  [Switching to thread 1 (Thread 0x7ffff64c5880 (LWP 146060))]
  #0  0x000000000020f78e in simpleTest2<float> (numElements=4194304, usePinnedHost=true)
@@ -495,7 +495,7 @@ diff -urp HIP-rocm-5.3.3.orig/docs/markdown/hip_programming_guide.md HIP-rocm-5.
      ```
      hipcc hipOptLibrary.cpp --emit-static-lib -fPIC -o libHipOptLibrary.a
 -    gcc test.cpp -L. -lhipOptLibrary -L/path/to/hip/lib -lamdhip64 -o test.out
-+    gcc test.cpp -L. -lhipOptLibrary -L/@LIBDIR@ -lamdhip64 -o test.out
++    gcc test.cpp -L. -lhipOptLibrary -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lamdhip64 -o test.out
      ```
  - Type 2 using system ar:
      ```
@@ -601,7 +601,7 @@ diff -urp HIP-rocm-5.3.3.orig/INSTALL.md HIP-rocm-5.3.3/INSTALL.md
  HIP is part of ROCM packages, it will be automatically installed following the ROCm Installation Guide on AMD public documentation site (https://docs.amd.com/) for the coresponding ROCm release.
  
 -By default, HIP is installed into /opt/rocm/hip.
-+By default, HIP is installed into @ESYSROOT_ROCM_PATH@.
++By default, HIP is installed into @EPREFIX_ROCM_PATH@.
  
  
  ## NVIDIA Platform
@@ -612,9 +612,9 @@ diff -urp HIP-rocm-5.3.3.orig/INSTALL.md HIP-rocm-5.3.3/INSTALL.md
 -   * By default HIP looks for CUDA SDK in /usr/local/cuda.
 -   * By default HIP is installed into /opt/rocm/hip.
 -   * Optionally, consider adding /opt/rocm/bin to your path to make it easier to use the tools.
-+   * By default HIP looks for CUDA SDK in @ESYSROOT@/opt/cuda.
-+   * By default HIP is installed into @ESYSROOT_ROCM_PATH@.
-+   * Optionally, consider adding @ESYSROOT_ROCM_PATH@/bin to your path to make it easier to use the tools.
++   * By default HIP looks for CUDA SDK in @EPREFIX@/opt/cuda.
++   * By default HIP is installed into @EPREFIX_ROCM_PATH@.
++   * Optionally, consider adding @EPREFIX_ROCM_PATH@/bin to your path to make it easier to use the tools.
  
  
  # Verify your installation
@@ -622,7 +622,7 @@ diff -urp HIP-rocm-5.3.3.orig/INSTALL.md HIP-rocm-5.3.3/INSTALL.md
  Run hipconfig (instructions below assume default installation path) :
  ```shell
 -/opt/rocm/bin/hipconfig --full
-+@ESYSROOT_ROCM_PATH@/bin/hipconfig --full
++@EPREFIX_ROCM_PATH@/bin/hipconfig --full
  ```
  
  # How to build HIP from source
@@ -746,9 +746,9 @@ diff -urp HIP-rocm-5.3.3.orig/samples/0_Intro/square/README.md HIP-rocm-5.3.3/sa
 -/opt/rocm/hip/bin/hipify-perl square.cu > square.cpp
 -/opt/rocm/hip/bin/hipcc  square.cpp -o square.out
 -/opt/rocm/hip/bin/hipcc -use-staticlib  square.cpp -o square.out.static
-+@ESYSROOT_ROCM_PATH@/bin/hipify-perl square.cu > square.cpp
-+@ESYSROOT_ROCM_PATH@/bin/hipcc  square.cpp -o square.out
-+@ESYSROOT_ROCM_PATH@/bin/hipcc -use-staticlib  square.cpp -o square.out.static
++@EPREFIX_ROCM_PATH@/bin/hipify-perl square.cu > square.cpp
++@EPREFIX_ROCM_PATH@/bin/hipcc  square.cpp -o square.out
++@EPREFIX_ROCM_PATH@/bin/hipcc -use-staticlib  square.cpp -o square.out.static
  ```
  - Execute file
  ```
@@ -956,7 +956,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  The simplest approach is to use
  ```
 -set(CMAKE_MODULE_PATH "/opt/rocm/hip/cmake" ${CMAKE_MODULE_PATH})
-+set(CMAKE_MODULE_PATH "@ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH})
++set(CMAKE_MODULE_PATH "@EPREFIX_ROCM_PATH@/@LIBDIR@/cmake/hip" ${CMAKE_MODULE_PATH})
  find_package(HIP)
  ```
  
@@ -965,7 +965,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  if(NOT DEFINED HIP_PATH)
      if(NOT DEFINED ENV{HIP_PATH})
 -        set(HIP_PATH "/opt/rocm/hip" CACHE PATH "Path to which HIP has been installed")
-+        set(HIP_PATH "@ESYSROOT_ROCM_PATH@" CACHE PATH "Path to which HIP has been installed")
++        set(HIP_PATH "@EPREFIX_ROCM_PATH@" CACHE PATH "Path to which HIP has been installed")
      else()
          set(HIP_PATH $ENV{HIP_PATH} CACHE PATH "Path to which HIP has been installed")
      endif()
@@ -974,7 +974,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/Rea
  cmake ..
  Or for static lib of hip rt,
 -cmake -DCMAKE_PREFIX_PATH="/opt/rocm/llvm/lib/cmake" ..
-+cmake -DCMAKE_PREFIX_PATH="@ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake" ..
++cmake -DCMAKE_PREFIX_PATH="@EPREFIX_ROCM_PATH@/@LIBDIR@/cmake" ..
  
  Then,
  make
@@ -1101,7 +1101,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/15_static_library/README.md HIP
  ```
 -ROCM_PATH is the path where ROCM is installed. default path is /opt/rocm.
 -g++ hipMain1.cpp -L. -lHipOptLibrary -L<ROCM_PATH>/hip/lib -lamdhip64 -o test_emit_static_host_linker.out
-+ROCM_PATH is the path where ROCM is installed. default path is @ESYSROOT_ROCM_PATH@.
++ROCM_PATH is the path where ROCM is installed. default path is @EPREFIX_ROCM_PATH@.
 +g++ hipMain1.cpp -L. -lHipOptLibrary -L<ROCM_PATH>/@LIBDIR@ -lamdhip64 -o test_emit_static_host_linker.out
  ```
  
@@ -1136,7 +1136,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/16_assembly_to_executable/READM
 +++ HIP-rocm-5.3.3/samples/2_Cookbook/16_assembly_to_executable/README.md	2023-09-19 10:05:28.437372124 -0700
 @@ -1,4 +1,4 @@
 -ROCM_PATH is the path where ROCM is installed. default path is /opt/rocm.
-+ROCM_PATH is the path where ROCM is installed. default path is @ESYSROOT_ROCM_PATH@.
++ROCM_PATH is the path where ROCM is installed. default path is @EPREFIX_ROCM_PATH@.
  # Compile to assembly and create an executable from modified asm
  
  This sample shows how to generate the assembly code for a simple HIP source application, then re-compiling it and generating a valid HIP executable.
@@ -1165,10 +1165,10 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/16_assembly_to_executable/READM
 -<ROCM_PATH>/hip/../llvm/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
 -<ROCM_PATH>/llvm/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
 -<ROCM_PATH>/llvm/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
-+@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.s -o square-hip-amdgcn-amd-amdhsa-gfx900.o
-+@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
-+@ESYSROOT_LLVM_PATH@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
-+@ESYSROOT_LLVM_PATH@/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
++@EPREFIX_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.s -o square-hip-amdgcn-amd-amdhsa-gfx900.o
++@EPREFIX_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.s -o square-hip-amdgcn-amd-amdhsa-gfx906.o
++@EPREFIX_LLVM_PATH@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
++@EPREFIX_LLVM_PATH@/bin/llvm-mc -triple x86_64-unknown-linux-gnu hip_obj_gen.mcin -o square_device.o --filetype=obj
  ```
  
  **Note:** Using option `-bundle-align=4096` only works on ROCm 4.0 and newer compilers. Also, the architecture must match the same arch as when compiling to assembly.
@@ -1214,7 +1214,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
 +++ HIP-rocm-5.3.3/samples/2_Cookbook/17_llvm_ir_to_executable/README.md	2023-09-19 10:05:25.541372163 -0700
 @@ -1,4 +1,4 @@
 -ROCM_PATH is the path where ROCM is installed. default path is /opt/rocm.
-+ROCM_PATH is the path where ROCM is installed. default path is @ESYSROOT_ROCM_PATH@.
++ROCM_PATH is the path where ROCM is installed. default path is @EPREFIX_ROCM_PATH@.
  # Compile to LLVM IR and create an executable from modified IR
  
  This sample shows how to generate the LLVM IR for a simple HIP source application, then re-compiling it and generating a valid HIP executable.
@@ -1235,8 +1235,8 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
  ```
 -<ROCM_PATH>/llvm/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
 -<ROCM_PATH>/llvm/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
-+@ESYSROOT_LLVM_PATH@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
-+@ESYSROOT_LLVM_PATH@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
++@EPREFIX_LLVM_PATH@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.ll
++@EPREFIX_LLVM_PATH@/bin/llvm-dis square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.ll
  ```
  
  **Warning:** We cannot ensure any compiler besides the ROCm hipcc and clang will be compatible with this process. Also, there is no guarantee that the starting IR produced with `-x cl` will run with HIP runtime. Experimenting with other compilers or starting IR will be the responsibility of the developer.
@@ -1246,7 +1246,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
  ```
 -<ROCM_PATH>/llvm/bin/llvm-as square_host.ll -o square_host.bc
 -<ROCM_PATH>/hip/bin/hipcc -c square_host.bc -o square_host.o
-+@ESYSROOT_LLVM_PATH@/bin/llvm-as square_host.ll -o square_host.bc
++@EPREFIX_LLVM_PATH@/bin/llvm-as square_host.ll -o square_host.bc
 +<ROCM_PATH>/bin/hipcc -c square_host.bc -o square_host.o
  ```
  
@@ -1258,12 +1258,12 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/17_llvm_ir_to_executable/README
 -<ROCM_PATH>/hip/../llvm/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
 -<ROCM_PATH>/hip/../llvm/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
 -<ROCM_PATH>/llvm/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
-+@ESYSROOT_LLVM_PATH@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx900.ll -o square-hip-amdgcn-amd-amdhsa-gfx900.bc
-+@ESYSROOT_LLVM_PATH@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx906.ll -o square-hip-amdgcn-amd-amdhsa-gfx906.bc
-+@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.o
-+@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
-+@ESYSROOT_LLVM_PATH@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
-+@ESYSROOT_LLVM_PATH@/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
++@EPREFIX_LLVM_PATH@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx900.ll -o square-hip-amdgcn-amd-amdhsa-gfx900.bc
++@EPREFIX_LLVM_PATH@/bin/llvm-as square-hip-amdgcn-amd-amdhsa-gfx906.ll -o square-hip-amdgcn-amd-amdhsa-gfx906.bc
++@EPREFIX_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx900 square-hip-amdgcn-amd-amdhsa-gfx900.bc -o square-hip-amdgcn-amd-amdhsa-gfx900.o
++@EPREFIX_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -mcpu=gfx906 square-hip-amdgcn-amd-amdhsa-gfx906.bc -o square-hip-amdgcn-amd-amdhsa-gfx906.o
++@EPREFIX_LLVM_PATH@/bin/clang-offload-bundler -type=o -bundle-align=4096 -targets=host-x86_64-unknown-linux,hip-amdgcn-amd-amdhsa-gfx900,hip-amdgcn-amd-amdhsa-gfx906 -inputs=/dev/null,square-hip-amdgcn-amd-amdhsa-gfx900.o,square-hip-amdgcn-amd-amdhsa-gfx906.o -outputs=offload_bundle.hipfb
++@EPREFIX_LLVM_PATH@/bin/llvm-mc hip_obj_gen.mcin -o square_device.o --filetype=obj
  ```
  
  **Note:** Using option `-bundle-align=4096` only works on ROCm 4.0 and newer compilers. Also, the architecture must match the same arch as when compiling to LLVM IR.
@@ -1332,8 +1332,8 @@ diff -urp HIP-rocm-5.3.3.orig/samples/2_Cookbook/21_cmake_hip_cxx_clang/README.m
 -CXX=`hipconfig -l`/amdclang++ cmake .. (or)
 -cmake -DCMAKE_CXX_COMPILER=/opt/rocm/bin/amdclang++ .. (or)
 -cmake -DCMAKE_CXX_COMPILER=/opt/rocm-X.Y.Z/llvm/bin/amdclang++ ..
-+CXX=`@ESYSROOT_ROCM_PATH@/bin/hipconfig -l`/clang++ cmake .. (or)
-+cmake -DCMAKE_CXX_COMPILER=@ESYSROOT_LLVM_PATH@/bin/clang++ ..
++CXX=`@EPREFIX_ROCM_PATH@/bin/hipconfig -l`/clang++ cmake .. (or)
++cmake -DCMAKE_CXX_COMPILER=@EPREFIX_LLVM_PATH@/bin/clang++ ..
  make
  
  II. Test
@@ -1513,7 +1513,7 @@ diff -urp HIP-rocm-5.3.3.orig/samples/README.md HIP-rocm-5.3.3/samples/README.md
  b. to build with static libs, run
  
 -cmake -DCMAKE_PREFIX_PATH="<ROCM_PATH>/llvm/lib/cmake" ..
-+cmake -DCMAKE_PREFIX_PATH="@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake" ..
++cmake -DCMAKE_PREFIX_PATH="@EPREFIX_LLVM_PATH@/@LIBDIR@/cmake" ..
  
  Then run,
  
@@ -1530,7 +1530,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/catch/CMakeLists.txt HIP-rocm-5.3.3/tests/ca
          cmake_path(GET HIP_PATH PARENT_PATH ROCM_PATH)
          if (NOT EXISTS "${ROCM_PATH}/bin/rocm_agent_enumerator")
 -            set(ROCM_PATH "/opt/rocm/")
-+            set(ROCM_PATH "@ESYSROOT_ROCM_PATH@/")
++            set(ROCM_PATH "@EPREFIX_ROCM_PATH@/")
          endif()
      endif()
  endif()
@@ -1683,7 +1683,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/g++/hipMalloc.cpp HIP-rocm-5.3.3/tests/s
  /* HIT_START
 - * BUILD_CMD: hipMalloc %cxx -D__HIP_PLATFORM_NVIDIA__ -I%hip-path/include -I/usr/local/cuda/include %S/%s -o %T/hipMalloc_cxx_nvidia -L/usr/local/cuda/lib64 -lcudart -std=c++11 EXCLUDE_HIP_PLATFORM amd
 - * BUILD_CMD: hipMalloc %cxx -D__HIP_PLATFORM_AMD__ -I%hip-path/include -I%rocm-path/include %S/%s -Wl,--rpath=%rocm-path/lib %hip-path/lib/libamdhip64.so -o %T/hipMalloc_cxx_amd -std=c++11 EXCLUDE_HIP_PLATFORM nvidia
-+ * BUILD_CMD: hipMalloc %cxx -D__HIP_PLATFORM_NVIDIA__ -I%hip-path/include -I/opt/cuda/include %S/%s -o %T/hipMalloc_cxx_nvidia -L/opt/cuda/@LIBDIR@ -lcudart -std=c++11 EXCLUDE_HIP_PLATFORM amd
++ * BUILD_CMD: hipMalloc %cxx -D__HIP_PLATFORM_NVIDIA__ -I%hip-path/include -I@EPREFIX@/opt/cuda/include %S/%s -o %T/hipMalloc_cxx_nvidia -L@EPREFIX@/opt/cuda/@LIBDIR@ -lcudart -std=c++11 EXCLUDE_HIP_PLATFORM amd
 + * BUILD_CMD: hipMalloc %cxx -D__HIP_PLATFORM_AMD__ -I%hip-path/include -I%rocm-path/include %S/%s -Wl,--rpath=%rocm-path/@LIBDIR@ %hip-path/@LIBDIR@/libamdhip64.so -o %T/hipMalloc_cxx_amd -std=c++11 EXCLUDE_HIP_PLATFORM nvidia
   * TEST: hipMalloc_cxx_nvidia EXCLUDE_HIP_PLATFORM amd
   * TEST: hipMalloc_cxx_amd EXCLUDE_HIP_PLATFORM nvidia
@@ -1697,7 +1697,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/gcc/hipMalloc.c HIP-rocm-5.3.3/tests/src
  /* HIT_START
 - * BUILD_CMD: hipMalloc %cc -D__HIP_PLATFORM_NVIDIA__ -I%hip-path/include -I/usr/local/cuda/include %S/%s -o %T/hipMalloc_cc_nvidia -L/usr/local/cuda/lib64 -lcudart EXCLUDE_HIP_PLATFORM amd
 - * BUILD_CMD: hipMalloc %cc -D__HIP_PLATFORM_AMD__ -I%hip-path/include %S/%s -Wl,--rpath=%hip-path/lib %hip-path/lib/libamdhip64.so -o %T/hipMalloc_cc_amd EXCLUDE_HIP_PLATFORM nvidia
-+ * BUILD_CMD: hipMalloc %cc -D__HIP_PLATFORM_NVIDIA__ -I%hip-path/include -I/opt/cuda/include %S/%s -o %T/hipMalloc_cc_nvidia -L/opt/cuda/@LIBDIR@ -lcudart EXCLUDE_HIP_PLATFORM amd
++ * BUILD_CMD: hipMalloc %cc -D__HIP_PLATFORM_NVIDIA__ -I%hip-path/include -I@EPREFIX@/opt/cuda/include %S/%s -o %T/hipMalloc_cc_nvidia -L@EPREFIX@/opt/cuda/@LIBDIR@ -lcudart EXCLUDE_HIP_PLATFORM amd
 + * BUILD_CMD: hipMalloc %cc -D__HIP_PLATFORM_AMD__ -I%hip-path/include %S/%s -Wl,--rpath=%hip-path/@LIBDIR@ %hip-path/@LIBDIR@/libamdhip64.so -o %T/hipMalloc_cc_amd EXCLUDE_HIP_PLATFORM nvidia
   * TEST: hipMalloc_cc_nvidia EXCLUDE_HIP_PLATFORM amd
   * TEST: hipMalloc_cc_amd EXCLUDE_HIP_PLATFORM nvidia
@@ -1722,7 +1722,7 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/module/hipModule.cpp HIP-rocm
      hipcc_path = "$ROCM_PATH/bin/hipcc";
    } else {
 -    hipcc_path = "/opt/rocm/bin/hipcc";
-+    hipcc_path = "@ESYSROOT_ROCM_PATH@/bin/hipcc";
++    hipcc_path = "@EPREFIX_ROCM_PATH@/bin/hipcc";
    }
    /* Putting these command parameters into a variable to shorten the string
      literal length in order to avoid multiline string literal cpplint warning
@@ -1734,12 +1734,12 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
    const char *rocmpath = nullptr;
    if (rocmPathSet) {
 -    // For STG2 testing where /opt/rocm path is not present
-+    // For STG2 testing where @ESYSROOT_ROCM_PATH@ path is not present
++    // For STG2 testing where @EPREFIX_ROCM_PATH@ path is not present
      rocmpath = "$ROCM_PATH/bin/rocminfo";
    } else {
      // Check if the rocminfo tool exists
 -    rocmpath = "/opt/rocm/bin/rocminfo";
-+    rocmpath = "@ESYSROOT_ROCM_PATH@/bin/rocminfo";
++    rocmpath = "@EPREFIX_ROCM_PATH@/bin/rocminfo";
    }
    snprintf(command, COMMAND_LEN, "%s", rocmpath);
    strncat(command, " | grep -m1 \"sramecc.:xnack.\"", COMMAND_LEN);
@@ -1756,11 +1756,11 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/module/hipOpenCLCOTest.cpp HI
 -    "/opt/rocm/llvm/bin/clang -target amdgcn-amd-amdhsa -x cl ");
 -  }
 +  snprintf(command, COMMAND_LEN,
-+  "@ESYSROOT_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
++  "@EPREFIX_LLVM_PATH@/bin/clang -target amdgcn-amd-amdhsa -x cl ");
    char command_temp[COMMAND_LEN] = "";
    snprintf(command_temp, COMMAND_LEN,
 -  "-include `find /opt/rocm* -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
-+  "-include `find @ESYSROOT_ROCM_PATH@ -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
++  "-include `find @EPREFIX_ROCM_PATH@ -name opencl-c.h` %s %s -mcpu=%s -o %s %s",
    pCodeObjVer, v3option, props.gcnArchName, pCodeObjFile, OPENCL_OBJ_FILE);
  
    strncat(command, command_temp, COMMAND_LEN);
@@ -1781,11 +1781,11 @@ diff -urp HIP-rocm-5.3.3.orig/tests/src/runtimeApi/p2p/hipP2pLinkTypeAndHopFunc.
    rsmi_status_t (*fntopo_shut_down)();
  
 -  lib_rocm_smi_hdl = dlopen("/opt/rocm/rocm_smi/lib/librocm_smi64.so",
-+  lib_rocm_smi_hdl = dlopen("@ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm_smi64.so",
++  lib_rocm_smi_hdl = dlopen("@EPREFIX_ROCM_PATH@/@LIBDIR@/librocm_smi64.so",
                          RTLD_LAZY);
    if (!lib_rocm_smi_hdl) {
 -    printf("Error opening /opt/rocm/rocm_smi/lib/librocm_smi64.so\n");
-+    printf("Error opening @ESYSROOT_ROCM_PATH@/@LIBDIR@/librocm_smi64.so\n");
++    printf("Error opening @EPREFIX_ROCM_PATH@/@LIBDIR@/librocm_smi64.so\n");
      printf("Skipping this test\n");
      passed();
    }

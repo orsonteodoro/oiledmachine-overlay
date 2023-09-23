@@ -234,7 +234,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/README.md rocSOLVER-rocm-5.3.3/README.md
  
  After a standard installation of rocBLAS, the following commands will build
 -rocSOLVER and install to `/opt/rocm`:
-+rocSOLVER and install to `@ESYSROOT_ROCM_PATH@`:
++rocSOLVER and install to `@EPREFIX_ROCM_PATH@`:
  
      cd rocSOLVER
      ./install.sh -i
@@ -244,8 +244,8 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/README.md rocSOLVER-rocm-5.3.3/README.md
  
 -    /opt/rocm/bin/hipcc -I/opt/rocm/include -c example.cpp
 -    /opt/rocm/bin/hipcc -o example -L/opt/rocm/lib -lrocsolver -lrocblas example.o
-+    @ESYSROOT_ROCM_PATH@/bin/hipcc -I@ESYSROOT_ROCM_PATH@/include -c example.cpp
-+    @ESYSROOT_ROCM_PATH@/bin/hipcc -o example -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocsolver -lrocblas example.o
++    @EPREFIX_ROCM_PATH@/bin/hipcc -I@EPREFIX_ROCM_PATH@/include -c example.cpp
++    @EPREFIX_ROCM_PATH@/bin/hipcc -o example -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lrocsolver -lrocblas example.o
  
  
  [1]: https://www.netlib.org/lapack/

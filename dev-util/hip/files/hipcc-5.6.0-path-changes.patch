@@ -180,7 +180,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/docs/env.md HIPCC-rocm-5.6.1/docs/env.md
 +- HIP_PATH        : Path to the HIP directory, (defaults to /usr).
 +- CUDA_PATH       : Path to the CUDA SDK (defaults to /opt/cuda). Used on NVIDIA platforms only.
 +- HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to /usr). Used on AMD platforms only.
-+- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH@/bin relative to hipcc's abs_path). Used on AMD platforms only.
++- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @EPREFIX_LLVM_PATH@/bin relative to hipcc's abs_path). Used on AMD platforms only.
 diff -urp HIPCC-rocm-5.6.1.orig/README.md HIPCC-rocm-5.6.1/README.md
 --- HIPCC-rocm-5.6.1.orig/README.md	2023-06-01 07:32:59.000000000 -0700
 +++ HIPCC-rocm-5.6.1/README.md	2023-09-19 10:40:46.425343841 -0700
@@ -197,7 +197,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/README.md HIPCC-rocm-5.6.1/README.md
 +- CUDA_PATH       : Path to CUDA SDK (default /usr/local/cuda).  Used on NVIDIA platforms only.
 +- HSA_PATH        : Path to HSA dir (defaults to /usr).  Used on AMD platforms only.
 +- HIP_ROCCLR_HOME : Path to HIP/ROCclr directory (defaults to /usr).  Used on AMD platforms only.
-+- HIP_CLANG_PATH  : Path to HIP-Clang (default to @ESYSROOT_LLVM_PATH@/bin).  Used on AMD platforms only.
++- HIP_CLANG_PATH  : Path to HIP-Clang (default to @EPREFIX_LLVM_PATH@/bin).  Used on AMD platforms only.
  
  ### <a name="usage"></a> hipcc: usage
  
@@ -206,7 +206,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/README.md HIPCC-rocm-5.6.1/README.md
  ```
  
 -when the excutables are copied to /opt/rocm/hip/bin or <anyfolder>hip/bin. 
-+when the excutables are copied to @ESYSROOT_ROCM_PATH@/bin. 
++when the excutables are copied to @EPREFIX_ROCM_PATH@/bin. 
  The ./ is not required as the HIP path is added to the envirnoment variables list.
  
  ### <a name="building"></a> hipcc: building
@@ -215,7 +215,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/README.md HIPCC-rocm-5.6.1/README.md
  ```
  
 -The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to /opt/rocm/hip/bin folder location. Packaging and installing will be handled in future releases.
-+The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to @ESYSROOT_ROCM_PATH@/bin folder location. Packaging and installing will be handled in future releases.
++The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to @EPREFIX_ROCM_PATH@/bin folder location. Packaging and installing will be handled in future releases.
  
  ### <a name="testing"></a> hipcc: testing
  
@@ -266,7 +266,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/src/hipBin_amd.h HIPCC-rocm-5.6.1/src/hipBin_amd
 -      complierPath = getRoccmPath();
 -      hipClangPath = complierPath;
 -      hipClangPath /= "llvm/bin";
-+      hipClangPath = "@ESYSROOT_LLVM_PATH@";
++      hipClangPath = "@EPREFIX_LLVM_PATH@";
      }
      complierPath = hipClangPath.string();
    } else {
@@ -292,7 +292,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/src/hipBin_amd.h HIPCC-rocm-5.6.1/src/hipBin_amd
      // To support __fp16 and _Float16, explicitly link with compiler-rt
 -    toolArgs += " -L" + hipClangPath + "/../lib/clang/" +
 -                hipClangVersion + "/lib/linux -lclang_rt.builtins-x86_64 ";
-+    toolArgs += string(" -L@ESYSROOT_CLANG_PATH@/lib/linux") +
++    toolArgs += string(" -L@EPREFIX_CLANG_PATH@/lib/linux") +
 +                string(" -lclang_rt.builtins-x86_64 ");
    }
    if (!var.hipccCompileFlagsAppendEnv_.empty()) {
@@ -305,7 +305,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/src/hipBin_base.h HIPCC-rocm-5.6.1/src/hipBin_ba
      rocm_agent_enumerator_file /= "bin/rocm_agent_enumerator";
      if (!fs::exists(rocm_agent_enumerator_file)) {
 -      roccm_path = "/opt/rocm";
-+      roccm_path = "@ESYSROOT_ROCM_PATH@";
++      roccm_path = "@EPREFIX_ROCM_PATH@";
      }
    } else {
      variables_.roccmPathEnv_ = envVariables_.roccmPathEnv_;}
@@ -314,7 +314,7 @@ diff -urp HIPCC-rocm-5.6.1.orig/src/hipBin_base.h HIPCC-rocm-5.6.1/src/hipBin_ba
    cout << "  --rocmpath,  -R    :"
    " print ROCM_PATH (use env var if set,"
 -  " else determine from hip path or /opt/rocm)\n";
-+  " else determine from hip path or @ESYSROOT_ROCM_PATH@)\n";
++  " else determine from hip path or @EPREFIX_ROCM_PATH@)\n";
    cout << "  --cpp_config, -C   : print C++ compiler options\n";
    cout << "  --compiler, -c     : print compiler (clang or nvcc)\n";
    cout << "  --platform, -P     : print platform (amd or nvidia)\n";
