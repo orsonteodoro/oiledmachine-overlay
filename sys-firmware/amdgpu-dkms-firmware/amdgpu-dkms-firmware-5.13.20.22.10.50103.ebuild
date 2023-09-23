@@ -3,6 +3,15 @@
 
 EAPI=7
 
+DEB_OS_REL="22.04"
+DRIVER_PV="22.10.3" # Folder name
+KERNEL_PV="5.18" # For vanilla kernel
+ROCM_PV="5.1.3"
+ROCM_SLOT="${ROCM_PV%.*}"
+MY_PV="5.13.20.22.10.50103-1420323" # The 6th component is the rock version 5.01.03 == 5.1.3.
+MY_PV2="5.13.20.22.10-1420323"
+FN="amdgpu-dkms-firmware_${MY_PV}_all.deb"
+
 DESCRIPTION="Firmware blobs used by amdgpu driver in DKMS format"
 HOMEPAGE="
 https://www.amd.com/en/support/linux-drivers
@@ -17,50 +26,20 @@ KEYWORDS="~amd64"
 RDEPEND="
 	!sys-firmware/rock-firmware
 "
-SLOT="0/${PV}"
+SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r1"
+IUSE="si r2"
 REQUIRED_USE="
 "
-DRIVER_PV="22.10.3" # Folder name
-ROCM_PV="5.1.3"
-MY_PV="5.13.20.22.10.50103-1420323" # The 6th component is the rock version 5.01.03 == 5.1.3.
-MY_PV2="5.13.20.22.10-1420323"
-DEB_OS_REL="22.04"
-FN="amdgpu-dkms-firmware_${MY_PV}_all.deb"
 SRC_URI="
 https://repo.radeon.com/amdgpu/${DRIVER_PV}/ubuntu/pool/main/a/amdgpu-dkms/${FN}
-si? (
+	si? (
 https://raw.githubusercontent.com/RadeonOpenCompute/ROCK-Kernel-Driver/rocm-${ROCM_PV}/drivers/gpu/drm/amd/amdgpu/amdgpu_cgs.c
 	-> amdgpu_cgs.c.${ROCM_PV}
-)
+	)
 "
 # The amdgpu_cgs.c file is used to obtain CONFIG_EXTRA_FIRMWARE for Southern Islands (SI).
 S="${WORKDIR}"
-
-pkg_setup() {
-	has_version "sys-kernel/linux-firmware" || return
-	local bv=$(best_version "sys-kernel/linux-firmware" \
-		| sed -e "s|sys-kernel/linux-firmware-||")
-	local last_cfg="linux-firmware-${bv}"
-
-ewarn
-ewarn "/lib/firmware/amdgpu folders must not be present in order to prevent a"
-ewarn "merge conflict.  Make sure that the savedconfig USE flag is set in the"
-ewarn "linux-firmware package."
-ewarn
-ewarn "Do something like:"
-ewarn
-ewarn "  sed -i -e \"s|^amdgpu|#amdgpu|g\" /etc/portage/savedconfig/sys-kernel/${last_cfg}"
-ewarn
-ewarn "Then, remerge linux-firmware again.  If you emerged rock-firmware or"
-ewarn "amdgpu-firmware, unemerge them completely."
-ewarn
-ewarn "For futher details, see"
-ewarn
-ewarn "  https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
-ewarn
-}
 
 unpack_deb() {
 	echo ">>> Unpacking ${1##*/} to ${PWD}"
@@ -189,13 +168,53 @@ pkg_preinst() {
 	use si && gen_radeon_list
 }
 
+gen_scripts() {
+	dodir /usr/bin
+cat <<EOF > "${ED}/usr/bin/install-${P}.sh"
+echo "Installing ${P} into /lib/firmware/amdgpu"
+rm -f /lib/firmware/amdgpu/*
+mkdir -p /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+EOF
+
+cat <<EOF > "${ED}/usr/bin/install-${P}-for-kernel-version-${KERNEL_PV}.sh"
+echo "Installing ${P} into /lib/firmware/amdgpu"
+rm -f /lib/firmware/amdgpu/*
+mkdir -p /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+EOF
+
+cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
+echo "Installing ROCm v${ROCM_PV} compatible firmware into /lib/firmware/amdgpu"
+rm -f /lib/firmware/amdgpu/*
+mkdir -p /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+EOF
+
+cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh"
+echo "Installing ROCm ${ROCM_SLOT} (slot) compatible firmware into /lib/firmware/amdgpu"
+rm -f /lib/firmware/amdgpu/*
+mkdir -p /lib/firmware/amdgpu
+cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
+
+EOF
+	fperms 0755 /usr/bin/install-${P}.sh
+	fperms 0755 /usr/bin/install-${P}-for-kernel-version-${KERNEL_PV}.sh
+	fperms 0755 /usr/bin/install-rocm-firmware-${ROCM_PV}.sh
+	fperms 0755 /usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh
+}
+
 src_install() {
-	insinto /lib/firmware/amdgpu
+	insinto /lib/firmware/amdgpu-${MY_PV%-*}
 	doins -r *
 	docinto licenses
 	cd "${WORKDIR}/usr/share/doc/amdgpu-dkms-firmware" || die
 	dodoc "copyright"
 	dodoc "LICENSE"
+	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-version-${ROCM_PV}"
+	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-slot-${ROCM_SLOT}"
+	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/kernel-version-${KERNEL_PV}"
+	gen_scripts
 }
 
 pkg_postinst() {
@@ -216,5 +235,13 @@ einfo
 einfo
 einfo "The firmware requirements may change if the amdgpu DKMS driver is"
 einfo "updated."
+einfo
+einfo "Manual install still required.  Use one of these helper scripts to"
+einfo "install:"
+einfo
+einfo "  install-${P}.sh"
+einfo "  install-${P}-for-kernel-version-${KERNEL_PV}.sh"
+einfo "  install-rocm-firmware-${ROCM_PV}.sh"
+einfo "  install-rocm-firmware-slot-${ROCM_SLOT}.sh"
 einfo
 }
