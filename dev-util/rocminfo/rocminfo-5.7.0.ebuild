@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit cmake flag-o-matic rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocminfo/"
@@ -24,6 +24,7 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="UoI-NCSA"
 SLOT="${ROCM_SLOT}/${PV}"
+IUSE+=" system-llvm"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -31,7 +32,16 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	!system-llvm? (
+		sys-devel/llvm-roc:${ROCM_SLOT}
+	)
 	>=dev-util/cmake-3.6.3
+	dev-util/rocm-compiler[system-llvm=]
+	system-llvm? (
+		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-devel/lld:${LLVM_MAX_SLOT}
+		sys-devel/llvm:${LLVM_MAX_SLOT}
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
@@ -57,6 +67,9 @@ src_prepare() {
 }
 
 src_configure() {
+	export CC="clang"
+	export CXX="clang++"
+	append-ldflags -fuse-ld=lld # Breaks with bfd
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_PREFIX_PATH="${ESYSROOT}${EROCM_PATH}"
