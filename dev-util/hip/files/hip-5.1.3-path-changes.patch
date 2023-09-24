@@ -867,7 +867,7 @@ diff -urp HIP-rocm-5.1.3.orig/samples/2_Cookbook/12_cmake_hip_add_executable/CMa
      endif()
  endif()
 -set(CMAKE_MODULE_PATH "${HIP_PATH}/cmake" ${CMAKE_MODULE_PATH})
-+set(CMAKE_MODULE_PATH "@ESYSROOT@/usr/@LIBDIR@/cmake" ${CMAKE_MODULE_PATH})
++set(CMAKE_MODULE_PATH "@ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake" ${CMAKE_MODULE_PATH})
  
  project(12_cmake)
  
