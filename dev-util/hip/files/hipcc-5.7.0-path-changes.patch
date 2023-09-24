@@ -197,9 +197,9 @@ diff -urp HIPCC-rocm-5.7.0.orig/docs/env.md HIPCC-rocm-5.7.0/docs/env.md
 -- CUDA_PATH       : Path to CUDA SDK (default /usr/local/cuda). Used on NVIDIA platforms only.
 -- HIP_ROCCLR_HOME : Path to HIP/ROCclr directory. Used on AMD platforms only.
 -- HIP_CLANG_PATH  : Path to HIP-Clang (default to ../../llvm/bin relative to hipcc's abs_path). Used on AMD platforms only.
-+- HIP_PATH        : Path to the HIP directory, (defaults to /usr).
-+- CUDA_PATH       : Path to the CUDA SDK (defaults to /opt/cuda). Used on NVIDIA platforms only.
-+- HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to /usr). Used on AMD platforms only.
++- HIP_PATH        : Path to the HIP directory, (defaults to @EPREFIX_ROCM_PATH@).
++- CUDA_PATH       : Path to the CUDA SDK (defaults to @EPREFIX@/opt/cuda). Used on NVIDIA platforms only.
++- HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to @EPREFIX_ROCM_PATH@). Used on AMD platforms only.
 +- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @EPREFIX_LLVM_PATH@/bin relative to hipcc's abs_path). Used on AMD platforms only.
 diff -urp HIPCC-rocm-5.7.0.orig/README.md HIPCC-rocm-5.7.0/README.md
 --- HIPCC-rocm-5.7.0.orig/README.md	2023-07-25 12:35:46.000000000 -0700
