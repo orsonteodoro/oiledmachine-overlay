@@ -1,0 +1,23 @@
+unchanged:
+--- hipamd/src/hiprtc/hiprtcInternal.hpp.orig	2023-09-08 08:36:06.000000000 -0700
++++ hipamd/src/hiprtc/hiprtcInternal.hpp	2023-09-23 19:58:08.236814972 -0700
+@@ -22,6 +22,7 @@ THE SOFTWARE.
+ #include <hip/hip_runtime.h>
+ #include <hip/hiprtc.h>
+ #include <hip/hip_version.h>
++#include "device/comgrctx.hpp"
+ 
+ 
+ #ifdef HIPRTC_USE_EXCEPTIONS
+only in patch2:
+unchanged:
+--- hipamd/src/hiprtc/hiprtc.cpp.orig	2023-09-08 08:36:06.000000000 -0700
++++ hipamd/src/hiprtc/hiprtc.cpp	2023-09-23 19:46:49.584822778 -0700
+@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWAR
+ THE SOFTWARE.
+ */
+ 
++#include <amd_comgr/amd_comgr.h>
+ #include <hip/hiprtc.h>
+ #include "hiprtcInternal.hpp"
+ 

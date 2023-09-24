@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_MAX_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.7.0/llvm/CMakeLists.txt
@@ -106,6 +107,10 @@ BDEPEND="
 	)
 "
 CLR_PATCHES=(
+	"${FILESDIR}/rocclr-5.7.0-include-path.patch"
+#	"${FILESDIR}/rocclr-5.7.0-opencl-header.patch"
+)
+ROCCLR_PATCHES=(
 	"${FILESDIR}/rocclr-5.7.0-path-changes.patch"
 )
 HIP_PATCHES=(
@@ -120,6 +125,11 @@ HIPAMD_PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-hip-config-not-cuda.patch"
 	"${FILESDIR}/${PN}-5.7.0-hip-host-not-cuda.patch"
 	"${FILESDIR}/hipamd-5.7.0-path-changes.patch"
+	"${FILESDIR}/hipamd-5.7.0-unwrap-line.patch"
+	"${FILESDIR}/hipamd-5.7.0-hip_fatbin-header.patch"
+	"${FILESDIR}/hipamd-5.7.0-hiprtc-includes-path.patch"
+	"${FILESDIR}/hipamd-5.7.0-hiprtc-header.patch"
+	"${FILESDIR}/hipamd-5.7.0-fix-install-cmake-files.patch"
 )
 HIPCC_PATCHES=(
 	"${FILESDIR}/hipcc-5.6.0-fno-stack-protector.patch"
@@ -139,6 +149,11 @@ DOCS_DIR="${HIP_S}/docs/doxygen-input"
 DOCS_CONFIG_NAME="doxy.cfg"
 
 pkg_setup() {
+	if use rocm ; then
+ewarn
+ewarn "The lc USE flag may be required."
+ewarn
+	fi
 	# Ignore QA FLAGS check for library compiled from assembly sources
 	QA_FLAGS_IGNORED="/usr/$(get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
 	llvm_pkg_setup
@@ -196,6 +211,9 @@ src_prepare() {
 			eapply "${OCL_PATCHES[@]}"
 		popd || die
 		pushd "${ROCCLR_S}" || die
+			eapply "${ROCCLR_PATCHES[@]}"
+		popd || die
+		pushd "${CLR_S}" || die
 			eapply "${CLR_PATCHES[@]}"
 		popd || die
 	fi
@@ -204,6 +222,7 @@ src_prepare() {
 }
 
 src_configure() {
+	MAKEOPTS="-j1"
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	# TODO: Currently the distro configuration is to build.
@@ -219,6 +238,7 @@ src_configure() {
 		-DCMAKE_SKIP_RPATH=ON
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DHIP_COMMON_DIR="${HIP_S}"
+		-DHIPCC_BIN_DIR="${WORKDIR}/HIPCC-rocm-${PV}/bin"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-DUSE_PROF_API=0
 		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
@@ -241,6 +261,7 @@ src_configure() {
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMD_OPENCL_PATH="${OCL_S}"
+			-DCLR_PATH="${CLR_S}"
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
@@ -249,9 +270,18 @@ src_configure() {
 			-DROCCLR_ENABLE_HSAIL=$(usex hsail ON OFF)
 			-DROCCLR_ENABLE_PAL=$(usex pal ON OFF)
 			-DROCCLR_PATH="${ROCCLR_S}"
+			-DUSE_COMGR_LIBRARY=$(usex lc ON OFF)
 		)
 	fi
 
+einfo "E2"
+	pushd "${ROCCLR_S}" || die
+		CMAKE_USE_DIR="${ROCCLR_S}" \
+		BUILD_DIR="${ROCCLR_S}_build" \
+		cmake_src_configure
+	popd
+
+einfo "E1"
 	cmake_src_configure
 
 	pushd "${HIPCC_S}" || die
@@ -262,10 +292,20 @@ src_configure() {
 }
 
 src_compile() {
+einfo "E3a"
+	pushd "${ROCCLR_S}" || die
+		CMAKE_USE_DIR="${ROCCLR_S}" \
+		BUILD_DIR="${ROCCLR_S}_build" \
+		cmake_src_compile
+	popd
+
+einfo "E3b"
 	HIP_PATH="${HIP_S}" \
 	docs_compile
 	cmake_src_compile
 
+
+einfo "E4"
 	pushd "${HIPCC_S}_build" || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \

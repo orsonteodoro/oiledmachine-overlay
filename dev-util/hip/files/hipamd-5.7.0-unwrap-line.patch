@@ -1,0 +1,12 @@
+--- a/packaging/CMakeLists.txt.orig	2023-09-23 15:52:07.736984760 -0700
++++ b/packaging/CMakeLists.txt	2023-09-23 15:52:37.848984413 -0700
+@@ -52,8 +52,7 @@ if(HIP_PLATFORM STREQUAL "amd" )
+       install(PROGRAMS ${PROJECT_BINARY_DIR}/@LIBDIR@/libhiprtc-builtins.so.${HIP_LIB_VERSION_MAJOR} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT binary)
+       install(PROGRAMS ${PROJECT_BINARY_DIR}/@LIBDIR@/libhiprtc-builtins.so.${HIP_LIB_VERSION_STRING} DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT binary)
+       # Add libraries to asan package
+-      install(DIRECTORY ${PROJECT_BINARY_DIR}/@LIBDIR@/ DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT asan
+-                                                 PATTERN ".hipInfo" EXCLUDE)
++      install(DIRECTORY ${PROJECT_BINARY_DIR}/@LIBDIR@/ DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT asan PATTERN ".hipInfo" EXCLUDE)
+    else()
+       install(PROGRAMS ${PROJECT_BINARY_DIR}/@LIBDIR@/libamdhip64.a DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT binary)
+    endif()#End BUILD_SHARED_LIBS

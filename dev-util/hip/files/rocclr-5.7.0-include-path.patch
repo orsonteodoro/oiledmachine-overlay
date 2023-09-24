@@ -1,0 +1,29 @@
+--- clr-rocm-5.7.0/hipamd/src/CMakeLists.txt.orig	2023-09-23 16:00:07.768979238 -0700
++++ clr-rocm-5.7.0/hipamd/src/CMakeLists.txt	2023-09-23 16:10:36.896972001 -0700
+@@ -138,6 +138,26 @@ endif()
+ 
++target_compile_definitions(amdhip64
++  PRIVATE
++   -DCL_TARGET_OPENCL_VERSION=220
++   -DHAVE_CL2_HPP
++   -DOPENCL_MAJOR=2
++   -DOPENCL_MINOR=1
++   -DOPENCL_C_MAJOR=2
++   -DOPENCL_C_MINOR=0
++   -DCL_TARGET_OPENCL_VERSION=220
++   -DCL_USE_DEPRECATED_OPENCL_1_0_APIS
++   -DCL_USE_DEPRECATED_OPENCL_1_1_APIS
++   -DCL_USE_DEPRECATED_OPENCL_1_2_APIS
++   -DCL_USE_DEPRECATED_OPENCL_2_0_APIS)
+ target_include_directories(amdhip64
+   PRIVATE
++    ${CLR_PATH}/opencl
++    ${CLR_PATH}/opencl/amdocl
++    ${CLR_PATH}/opencl/khronos/headers/opencl2.2
++    ${CLR_PATH}/rocclr
++    ${ROCCLR_PATH}/elf
++    ${ROCCLR_PATH}/include
++    ${ROCM_PATH}/include
+     ${HIP_COMMON_INCLUDE_DIR}
+     ${PROJECT_SOURCE_DIR}/include
+     ${PROJECT_BINARY_DIR}/include)

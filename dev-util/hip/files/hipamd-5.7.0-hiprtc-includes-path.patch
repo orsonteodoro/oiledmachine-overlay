@@ -1,0 +1,76 @@
+unchanged:
+--- hipamd/src/hiprtc/CMakeLists.txt.orig	2023-09-23 21:53:12.640735552 -0700
++++ hipamd/src/hiprtc/CMakeLists.txt	2023-09-23 22:01:31.008729819 -0700
+@@ -120,6 +120,19 @@ if(USE_COMGR_LIBRARY)
+   target_compile_definitions(amdhip64 PRIVATE USE_COMGR_LIBRARY)
+   target_compile_definitions(hiprtc PRIVATE USE_COMGR_LIBRARY)
+ endif()
++target_compile_definitions(hiprtc
++  PRIVATE
++   -DCL_TARGET_OPENCL_VERSION=220
++   -DHAVE_CL2_HPP
++   -DOPENCL_MAJOR=2
++   -DOPENCL_MINOR=1
++   -DOPENCL_C_MAJOR=2
++   -DOPENCL_C_MINOR=0
++   -DCL_TARGET_OPENCL_VERSION=220
++   -DCL_USE_DEPRECATED_OPENCL_1_0_APIS
++   -DCL_USE_DEPRECATED_OPENCL_1_1_APIS
++   -DCL_USE_DEPRECATED_OPENCL_1_2_APIS
++   -DCL_USE_DEPRECATED_OPENCL_2_0_APIS)
+ 
+ target_compile_definitions(hiprtc PUBLIC __HIP_PLATFORM_AMD__)
+ 
+only in patch2:
+unchanged:
+--- hipamd/src/hiprtc/CMakeLists.txt.orig	2023-09-23 20:49:01.868779846 -0700
++++ hipamd/src/hiprtc/CMakeLists.txt	2023-09-23 20:58:06.888773577 -0700
+@@ -105,6 +105,7 @@ if(WIN32)
+ endif()
+ 
+ target_link_libraries(hiprtc PUBLIC ${CMAKE_DL_LIBS})
++target_link_directories(hiprtc PRIVATE ${CLR_PATH}/rocclr_build)
+ 
+ if(BUILD_SHARED_LIBS)
+   target_link_libraries(hiprtc PRIVATE rocclr)
+only in patch2:
+unchanged:
+--- hipamd/src/CMakeLists.txt.orig	2023-09-23 20:49:01.868779846 -0700
++++ hipamd/src/CMakeLists.txt	2023-09-23 20:58:08.468773559 -0700
+@@ -166,6 +166,8 @@ target_compile_definitions(amdhip64 PRIV
+ target_link_libraries(amdhip64 PRIVATE ${OPENGL_LIBRARIES})
+ target_link_libraries(amdhip64 PRIVATE ${CMAKE_DL_LIBS})
+ 
++target_link_directories(amdhip64 PRIVATE ${CLR_PATH}/rocclr_build)
++
+ # Note in static case we cannot link against rocclr.
+ # If we would, we'd also have to export rocclr and have hipcc pass it to the linker.
+ if(BUILD_SHARED_LIBS)
+only in patch2:
+unchanged:
+--- hipamd/src/hiprtc/CMakeLists.txt.orig	2023-09-23 20:37:05.016788092 -0700
++++ hipamd/src/hiprtc/CMakeLists.txt	2023-09-23 20:39:31.916786402 -0700
+@@ -80,6 +80,12 @@ set_target_properties(hiprtc PROPERTIES
+ 
+ target_include_directories(hiprtc
+   PRIVATE
++  ${CLR_PATH}/opencl
++  ${CLR_PATH}/opencl/khronos/headers/opencl2.2
++  ${ROCCLR_PATH}
++  ${ROCCLR_PATH}/elf
++  ${ROCCLR_PATH}/include
++  ${ROCM_PATH}/include
+   $<BUILD_INTERFACE:${HIP_COMMON_INCLUDE_DIR}>
+   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+   $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+@@ -110,6 +112,10 @@ else()
+   target_compile_definitions(hiprtc PRIVATE $<TARGET_PROPERTY:rocclr,COMPILE_DEFINITIONS>)
+   target_include_directories(hiprtc PRIVATE $<TARGET_PROPERTY:rocclr,INCLUDE_DIRECTORIES>)
+ endif()
++if(USE_COMGR_LIBRARY)
++  target_compile_definitions(amdhip64 PRIVATE USE_COMGR_LIBRARY)
++  target_compile_definitions(hiprtc PRIVATE USE_COMGR_LIBRARY)
++endif()
+ 
+ target_compile_definitions(hiprtc PUBLIC __HIP_PLATFORM_AMD__)
+ 

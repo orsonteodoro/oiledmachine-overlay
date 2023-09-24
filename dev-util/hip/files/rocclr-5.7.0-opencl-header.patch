@@ -1,0 +1,16 @@
+--- clr-rocm-5.7.0/opencl/amdocl/CMakeLists.txt.orig	2023-09-08 08:36:06.000000000 -0700
++++ clr-rocm-5.7.0/opencl/amdocl/CMakeLists.txt	2023-09-23 18:42:50.184866942 -0700
+@@ -91,6 +91,13 @@ target_sources(amdocl PRIVATE
+   cl_svm.cpp
+   cl_thread_trace_amd.cpp)
+ 
++target_include_directories(amdocl PRIVATE
++  ${CLR_PATH}/opencl
++  ${CLR_PATH}/rocclr
++  ${ROCCLR_PATH}/elf
++  ${ROCCLR_PATH}/include
++  )
++
+ if(WIN32)
+   target_sources(amdocl PRIVATE
+   cl_runtime.cpp)

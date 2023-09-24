@@ -12,11 +12,11 @@ diff -urp HIP-rocm-5.1.3.orig/bin/hipcc.pl HIP-rocm-5.1.3/bin/hipcc.pl
 -# HIP_ROCCLR_HOME : Path to HIP/ROCclr directory. Used on AMD platforms only.
 -# HIP_CLANG_PATH : Path to HIP-Clang (default to ../../llvm/bin relative to this
 -#                  script's abs_path). Used on AMD platforms only.
-+# HIP_PATH       : Path to the HIP directory (defaults to @ESYSROOT_ROCM_PATH@).
-+# CUDA_PATH      : Path to the CUDA SDK (defaults to @ESYSROOT@/opt/cuda).  Used on NVIDIA platforms only.
-+# HSA_PATH       : Path to the HSA dir (defaults to @ESYSROOT_ROCM_PATH@).  Used on AMD platforms only.
-+# HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to @ESYSROOT_ROCM_PATH@).  Used on AMD platforms only.
-+# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @ESYSROOT_LLVM_PATH@/bin)
++# HIP_PATH       : Path to the HIP directory (defaults to @EPREFIX_ROCM_PATH@).
++# CUDA_PATH      : Path to the CUDA SDK (defaults to @EPREFIX@/opt/cuda).  Used on NVIDIA platforms only.
++# HSA_PATH       : Path to the HSA dir (defaults to @EPREFIX_ROCM_PATH@).  Used on AMD platforms only.
++# HIP_ROCCLR_HOME : Path to the HIP/ROCclr directory (defaults to @EPREFIX_ROCM_PATH@).  Used on AMD platforms only.
++# HIP_CLANG_PATH : Path to HIP-Clang (defaults to @EPREFIX_LLVM_PATH@/bin)
 +#                  Used on AMD platforms only.
  
  if(scalar @ARGV == 0){
@@ -27,8 +27,8 @@ diff -urp HIP-rocm-5.1.3.orig/bin/hipcc.pl HIP-rocm-5.1.3/bin/hipcc.pl
  
 -$HIP_LIB_PATH=$ENV{'HIP_LIB_PATH'};
 -$DEVICE_LIB_PATH=$ENV{'DEVICE_LIB_PATH'};
-+$HIP_LIB_PATH='@ESYSROOT@/usr/@LIBDIR@';
-+$DEVICE_LIB_PATH='@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode';
++$HIP_LIB_PATH='@EPREFIX@/usr/@LIBDIR@';
++$DEVICE_LIB_PATH='@EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode';
  $HIP_CLANG_HCC_COMPAT_MODE=$ENV{'HIP_CLANG_HCC_COMPAT_MODE'}; # HCC compatibility mode
  $HIP_COMPILE_CXX_AS_HIP=$ENV{'HIP_COMPILE_CXX_AS_HIP'} // "1";
  
@@ -89,7 +89,7 @@ diff -urp HIP-rocm-5.1.3.orig/bin/hipcc.pl HIP-rocm-5.1.3/bin/hipcc.pl
  
  } elsif ($HIP_PLATFORM eq "nvidia") {
 -    $CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
-+    $CUDA_PATH=$ENV{'CUDA_PATH'} // '@ESYSROOT@/opt/cuda';
++    $CUDA_PATH=$ENV{'CUDA_PATH'} // '@EPREFIX@/opt/cuda';
      $HIP_INCLUDE_PATH = "$HIP_PATH/include";
      if ($verbose & 0x2) {
          print ("CUDA_PATH=$CUDA_PATH\n");
@@ -166,7 +166,7 @@ diff -urp HIP-rocm-5.1.3.orig/bin/hipconfig.pl HIP-rocm-5.1.3/bin/hipconfig.pl
      print "usage: hipconfig [OPTIONS]\n";
      print "  --path,  -p        : print HIP_PATH (use env var if set, else determine from hipconfig path)\n";
 -    print "  --rocmpath,  -R    : print ROCM_PATH (use env var if set, else determine from hip path or /opt/rocm)\n";
-+    print "  --rocmpath,  -R    : print ROCM_PATH (use env var if set, else determine from hip path or @ESYSROOT_ROCM_PATH@)\n";
++    print "  --rocmpath,  -R    : print ROCM_PATH (use env var if set, else determine from hip path or @EPREFIX_ROCM_PATH@)\n";
      print "  --cpp_config, -C   : print C++ compiler options\n";
      print "  --compiler, -c     : print compiler (clang or nvcc)\n";
      print "  --platform, -P     : print platform (amd or nvidia)\n";
@@ -178,22 +178,22 @@ diff -urp HIP-rocm-5.1.3.orig/bin/hipvars.pm HIP-rocm-5.1.3/bin/hipvars.pm
  # Since this hipcc script gets installed at two uneven hierarchical levels,
  # linked by symlink, the absolute path of this script should be used to
 -# derive HIP_PATH, as dirname $0 could be /opt/rocm/bin or /opt/rocm/hip/bin
-+# derive HIP_PATH, as dirname $0 could be @ESYSROOT_ROCM_PATH@/bin
++# derive HIP_PATH, as dirname $0 could be @EPREFIX_ROCM_PATH@/bin
  # depending on how it gets invoked.
  # ROCM_PATH which points to <rocm_install_dir> is determined based on whether
  # we find bin/rocm_agent_enumerator in the parent of HIP_PATH or not. If it is found,
 -# ROCM_PATH is defined relative to HIP_PATH else it is hardcoded to /opt/rocm.
-+# ROCM_PATH is defined relative to HIP_PATH else it is hardcoded to @ESYSROOT_ROCM_PATH@.
++# ROCM_PATH is defined relative to HIP_PATH else it is hardcoded to @EPREFIX_ROCM_PATH@.
  #
  $HIP_PATH=$ENV{'HIP_PATH'} // dirname(Cwd::abs_path("$0/../")); # use parent directory of hipcc
  if (-e "$HIP_PATH/../bin/rocm_agent_enumerator") {
      $ROCM_PATH=$ENV{'ROCM_PATH'} // dirname("$HIP_PATH"); # use parent directory of HIP_PATH
  } else {
 -    $ROCM_PATH=$ENV{'ROCM_PATH'} // "/opt/rocm";
-+    $ROCM_PATH=$ENV{'ROCM_PATH'} // "@ESYSROOT_ROCM_PATH@";
++    $ROCM_PATH=$ENV{'ROCM_PATH'} // "@EPREFIX_ROCM_PATH@";
  }
 -$CUDA_PATH=$ENV{'CUDA_PATH'} // '/usr/local/cuda';
-+$CUDA_PATH=$ENV{'CUDA_PATH'} // '@ESYSROOT@/opt/cuda';
++$CUDA_PATH=$ENV{'CUDA_PATH'} // '@EPREFIX@/opt/cuda';
  $HSA_PATH=$ENV{'HSA_PATH'} // "$ROCM_PATH/hsa";
  
  # Windows has a different structure, all binaries are inside hip/bin
@@ -201,7 +201,7 @@ diff -urp HIP-rocm-5.1.3.orig/bin/hipvars.pm HIP-rocm-5.1.3/bin/hipvars.pm
      $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$HIP_PATH/bin";
  } else {
 -    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "$ROCM_PATH/llvm/bin";
-+    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "@ESYSROOT_LLVM_PATH@/bin";
++    $HIP_CLANG_PATH=$ENV{'HIP_CLANG_PATH'} // "@EPREFIX_LLVM_PATH@/bin";
  }
  # HIP_ROCCLR_HOME is used by Windows builds
  $HIP_ROCCLR_HOME=$ENV{'HIP_ROCCLR_HOME'};

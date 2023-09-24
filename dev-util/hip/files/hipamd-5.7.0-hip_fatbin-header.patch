@@ -1,0 +1,10 @@
+--- hipamd/src/hip_fatbin.cpp.orig	2023-09-08 08:36:06.000000000 -0700
++++ hipamd/src/hip_fatbin.cpp	2023-09-23 19:22:57.288839254 -0700
+@@ -2,6 +2,7 @@
+ 
+ #include <unordered_map>
+ #include "hip_code_object.hpp"
++#include <amd_comgr/amd_comgr.h>
+ 
+ namespace hip {
+ 

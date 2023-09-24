@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
 LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.4.4/llvm/CMakeLists.txt
@@ -133,7 +134,7 @@ OCL_PATCHES=(
 S="${WORKDIR}/hipamd-rocm-${PV}"
 HIP_S="${WORKDIR}/HIP-rocm-${PV}"
 OCL_S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
-CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
+ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 RTC_S="${WORKDIR}/roctracer-rocm-${PV}"
 DOCS_DIR="${HIP_S}/docs/doxygen-input"
 DOCS_CONFIG_NAME="doxy.cfg"
@@ -186,7 +187,7 @@ src_prepare() {
 		pushd "${OCL_S}" || die
 			eapply "${OCL_PATCHES[@]}"
 		popd || die
-		pushd "${CLR_S}" || die
+		pushd "${ROCCLR_S}" || die
 			eapply "${CLR_PATCHES[@]}"
 		popd || die
 	fi
@@ -239,7 +240,7 @@ src_configure() {
 			-DROCCLR_ENABLE_HSA=$(usex hsa ON OFF)
 			-DROCCLR_ENABLE_HSAIL=$(usex hsail ON OFF)
 			-DROCCLR_ENABLE_PAL=$(usex pal ON OFF)
-			-DROCCLR_PATH="${CLR_S}"
+			-DROCCLR_PATH="${ROCCLR_S}"
 		)
 	fi
 
