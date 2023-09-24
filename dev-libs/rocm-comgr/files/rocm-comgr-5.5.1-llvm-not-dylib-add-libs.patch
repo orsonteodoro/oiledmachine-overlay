@@ -1,0 +1,33 @@
+diff -u comgr/CMakeLists.txt comgr/CMakeLists.txt
+--- comgr/CMakeLists.txt	2023-09-23 11:15:40.937175555 -0700
++++ comgr/CMakeLists.txt	2023-09-23 10:19:16.085214491 -0700
+@@ -337,6 +338,28 @@
+   llvm_map_components_to_libnames(LLVM_LIBS
+     ${LLVM_TARGETS_TO_BUILD}
++    BinaryFormat
++    BitReader
++    BitWriter
++    CodeGen
++    Core
+     DebugInfoDWARF
+-    Symbolize)
++    Demangle
++    IRReader
++    Linker
++    MC
++    MCDisassembler
++    MCParser
++    Object
++    Option
++    Support
++    Symbolize
++)
++set(CLANG_LIBS
++    ${CLANG_LIBS}
++    clangBasic
++    clangDriver
++    clangFrontend
++    clangSerialization
++)
+ endif()
+ 

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.2.3/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm prefix rocm
@@ -57,14 +57,12 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
-#	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
+	"${FILESDIR}/${PN}-5.1.3-llvm-15-remove-zlib-gnu"
+	"${FILESDIR}/${PN}-5.3.3-fix-tests.patch"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.3.3-remove-h-option.patch"
-	"${FILESDIR}/${PN}-5.5.1-clang-fix-None.patch"
-	"${FILESDIR}/${PN}-5.5.1-CommonLinkerContext-header.patch"
-	"${FILESDIR}/${PN}-5.5.1-fix-SubtargetFeatures.patch"
-	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
-	"${FILESDIR}/${PN}-5.5.1-llvm-not-dylib-add-libs.patch"
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
@@ -74,9 +72,6 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	if use system-llvm ; then
-		eapply "${FILESDIR}/${PN}-5.5.1-update-relax-relocation.patch"
-	fi
 	rocm_src_prepare
 }
 
