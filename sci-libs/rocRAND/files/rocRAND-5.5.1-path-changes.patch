@@ -115,7 +115,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/docs/installing.rst rocRAND-rocm-5.5.1/docs/in
      sudo dnf install rocrand
  
 -This will install rocRAND into the ``/opt/rocm`` directory.
-+This will install rocRAND into the ``@ESYSROOT_ROCM_PATH@`` directory.
++This will install rocRAND into the ``@EPREFIX_ROCM_PATH@`` directory.
  
  Building rocRAND From Source
  ----------------------------
@@ -124,7 +124,7 @@ diff -urp rocRAND-rocm-5.5.1.orig/docs/installing.rst rocRAND-rocm-5.5.1/docs/in
      ./install --install
  
 -This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``/opt/rocm`` if everything went well. See ``./install --help`` for further information.
-+This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``@ESYSROOT_ROCM_PATH@`` if everything went well. See ``./install --help`` for further information.
++This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``@EPREFIX_ROCM_PATH@`` if everything went well. See ``./install --help`` for further information.
  
  Building With CMake
  ^^^^^^^^^^^^^^^^^^^

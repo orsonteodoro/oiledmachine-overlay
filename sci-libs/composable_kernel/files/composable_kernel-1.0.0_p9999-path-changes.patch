@@ -19,8 +19,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/client_example/README.md composable
  cmake                                                                 \
 --D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                             \
 --D CMAKE_PREFIX_PATH="/opt/rocm;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
-+-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                             \
-+-D CMAKE_PREFIX_PATH="@ESYSROOT_ROCM_PATH@;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
++-D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc                             \
++-D CMAKE_PREFIX_PATH="@EPREFIX_ROCM_PATH@;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
  ..
  ```
  
@@ -92,8 +92,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/docs/dockerhub.rst composable_kerne
      cmake                                                                                             \
 -    -D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
 -    -D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
-+    -D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                         \
-+    -D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                              \
++    -D CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@                                                                         \
++    -D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc                                                              \
      -D CMAKE_CXX_FLAGS="-O3"                                                                          \
      -D CMAKE_BUILD_TYPE=Release                                                                       \
      -D GPU_TARGETS="gfx908;gfx90a"                                                                    \
@@ -106,8 +106,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/docs/tutorial_hello_world.rst compo
      cmake  \
 -    -D CMAKE_PREFIX_PATH=/opt/rocm  \
 -    -D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc  \
-+    -D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@  \
-+    -D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc  \
++    -D CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@  \
++    -D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc  \
      -D CMAKE_CXX_FLAGS="-O3"  \
      -D CMAKE_BUILD_TYPE=Release  \
      -D BUILD_DEV=OFF  \
@@ -132,8 +132,8 @@ diff -urp composable_kernel-1.0.0_p9999.orig/README.md composable_kernel-1.0.0_p
  cmake                                                                                             \
 --D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
 --D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
-+-D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                         \
-+-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                              \
++-D CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@                                                                         \
++-D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc                                                              \
  -D CMAKE_CXX_FLAGS="-O3"                                                                          \
  -D CMAKE_BUILD_TYPE=Release                                                                       \
  -D GPU_TARGETS="gfx908;gfx90a"                                                                    \

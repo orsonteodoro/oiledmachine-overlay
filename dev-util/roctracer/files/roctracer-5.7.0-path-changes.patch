@@ -70,14 +70,14 @@ diff -urp roctracer-rocm-5.7.0.orig/header_template.hpp.in roctracer-rocm-5.7.0/
  #endif
  #if ROCM_HEADER_WRAPPER_WERROR  /* ROCM_HEADER_WRAPPER_WERROR 1 */
 -#error "This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with roctracer"
-+#error "This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with roctracer"
++#error "This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with roctracer"
  #else      /* ROCM_HEADER_WRAPPER_WERROR 0 */
  #if defined(__GNUC__)
 -#warning "This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with roctracer"
-+#warning "This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with roctracer"
++#warning "This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with roctracer"
  #else
 -#pragma message("This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with roctracer")
-+#pragma message("This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with roctracer")
++#pragma message("This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with roctracer")
  #endif
  #endif /* ROCM_HEADER_WRAPPER_WERROR */
  

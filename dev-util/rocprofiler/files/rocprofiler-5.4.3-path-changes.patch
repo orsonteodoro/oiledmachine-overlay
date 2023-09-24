@@ -6,7 +6,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/bin/build_kernel.sh rocprofiler-rocm-5.4.3
  
  if [ -z "$ROCM_DIR" ] ; then
 -  ROCM_DIR=/opt/rocm
-+  ROCM_DIR="@ESYSROOT_ROCM_PATH@"
++  ROCM_DIR="@EPREFIX_ROCM_PATH@"
  fi
  
  if [ -z "$TGT_LIST" ] ; then
@@ -17,8 +17,8 @@ diff -urp rocprofiler-rocm-5.4.3.orig/bin/build_kernel.sh rocprofiler-rocm-5.4.3
 -if [ -e $ROCM_DIR/llvm ] ; then
 -  LLVM_DIR=$ROCM_DIR/llvm
 -  LIB_DIR=$ROCM_DIR/lib
-+if [ -e @ESYSROOT_LLVM_PATH@ ] ; then
-+  LLVM_DIR=@ESYSROOT_LLVM_PATH@
++if [ -e @EPREFIX_LLVM_PATH@ ] ; then
++  LLVM_DIR=@EPREFIX_LLVM_PATH@
 +  LIB_DIR=$ROCM_DIR/@LIBDIR@
  else
    LLVM_DIR=$ROCM_DIR/hcc
@@ -41,7 +41,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/bin/build_kernel.sh rocprofiler-rocm-5.4.3
  fi
  
 -CLANG_ROOT=$LLVM_DIR/lib/clang
-+CLANG_ROOT=@ESYSROOT_CLANG_PATH@
++CLANG_ROOT=@EPREFIX_CLANG_PATH@
  CLANG_DIR=`ls -d $CLANG_ROOT/* | head -n 1`
  if [ "$CLANG_DIR" = "" ] ; then
    echo "Error: LLVM clang library was not found"
@@ -53,7 +53,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/bin/merge_traces.sh rocprofiler-rocm-5.4.3
  
  ROCPROF=`which rocprof`
 -BIN_DIR=$(dirname $(realpath ${ROCPROF:-/opt/rocm/bin/rocprof}))
-+BIN_DIR=$(dirname $(realpath ${ROCPROF:-@ESYSROOT_ROCM_PATH@/bin/rocprof}))
++BIN_DIR=$(dirname $(realpath ${ROCPROF:-@EPREFIX_ROCM_PATH@/bin/rocprof}))
  
  bin_name=`basename $0`
  
@@ -158,7 +158,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/build.sh rocprofiler-rocm-5.4.3/build.sh
  COMPONENT="rocprofiler"
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
 -LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
-+ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
++ROCM_PATH="${ROCM_PATH:=@EPREFIX_ROCM_PATH@}"
 +LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
  
  if [ -z "$ROCPROFILER_ROOT" ]; then ROCPROFILER_ROOT=$SRC_DIR; fi

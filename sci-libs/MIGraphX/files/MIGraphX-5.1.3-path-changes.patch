@@ -54,7 +54,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/doc/src/driver.rst AMDMIGraphX-rocm-5.1.3/
  .. code-block:: bash
  
 -    /opt/rocm/bin/rocprof --hip-trace --roctx-trace --flush-rate 1ms --timestamp on -d <OUTPUT_PATH> --obj-tracking on /opt/rocm/bin/migraphx-driver roctx <ONNX_FILE> <MIGRAPHX_OPTIONS>
-+    @ESYSROOT_ROCM_PATH@/bin/rocprof --hip-trace --roctx-trace --flush-rate 1ms --timestamp on -d <OUTPUT_PATH> --obj-tracking on /usr/bin/migraphx-driver roctx <ONNX_FILE> <MIGRAPHX_OPTIONS>
++    @EPREFIX_ROCM_PATH@/bin/rocprof --hip-trace --roctx-trace --flush-rate 1ms --timestamp on -d <OUTPUT_PATH> --obj-tracking on /usr/bin/migraphx-driver roctx <ONNX_FILE> <MIGRAPHX_OPTIONS>
  
  After `rocprof` is run, the output directory will contain trace information for HIP, HCC and ROCTX in seperate `.txt` files.
  To understand the interactions between API calls, it is recommended to utilize `roctx.py` helper script as desribed in :ref:`dev/tools:rocTX` section. 
@@ -83,7 +83,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/export_frozen_graph_tf2/
     "source": [
      "import subprocess\n",
 -    "driver = \"/opt/rocm/bin/migraphx-driver\"\n",
-+    "driver = \"@ESYSROOT_ROCM_PATH@/bin/migraphx-driver\"\n",
++    "driver = \"@EPREFIX_ROCM_PATH@/bin/migraphx-driver\"\n",
      "command = \"read\"\n",
      "model_path = \"./frozen_models/{}_frozen_graph.pb\".format(MODEL_NAME)\n",
      "process = subprocess.run([driver, command, model_path], \n",
@@ -96,7 +96,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/export_frozen_graph_tf2/
     "source": [
      "import subprocess\n",
 -    "driver = \"/opt/rocm/bin/migraphx-driver\"\n",
-+    "driver = \"@ESYSROOT_ROCM_PATH@/bin/migraphx-driver\"\n",
++    "driver = \"@EPREFIX_ROCM_PATH@/bin/migraphx-driver\"\n",
      "command = \"read\"\n",
      "model_path = \"./frozen_models/{}_frozen_graph.pb\".format(MODEL_NAME)\n",
      "process = subprocess.run([driver, command, model_path], \n",
@@ -109,7 +109,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/migraphx_driver/README.m
  ## How to Use this Example
  
 -The MIGraphX driver is installed with MIGraphX and can be found in `/opt/rocm/bin/migraphx-driver`, or in `AMDMIGraphX/build/bin/migraphx-driver` after building the source code. 
-+The MIGraphX driver is installed with MIGraphX and can be found in `@ESYSROOT_ROCM_PATH@/bin/migraphx-driver`, or in `AMDMIGraphX/build/bin/migraphx-driver` after building the source code. 
++The MIGraphX driver is installed with MIGraphX and can be found in `@EPREFIX_ROCM_PATH@/bin/migraphx-driver`, or in `AMDMIGraphX/build/bin/migraphx-driver` after building the source code. 
  
  See below for a comprehensive list of commands and option arguments, as well as some usage examples.
  
@@ -118,7 +118,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/migraphx_driver/README.m
  ##### Example: op
  ```
 -$ /opt/rocm/bin/migraphx-driver op --list
-+$ @ESYSROOT_ROCM_PATH@/bin/migraphx-driver op --list
++$ @EPREFIX_ROCM_PATH@/bin/migraphx-driver op --list
  ```
  
  <details>
@@ -127,7 +127,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/migraphx_driver/README.m
  ##### Example: params
  ```
 -$ /opt/rocm/bin/migraphx-driver params simple_graph.pb 
-+$ @ESYSROOT_ROCM_PATH@/bin/migraphx-driver params simple_graph.pb 
++$ @EPREFIX_ROCM_PATH@/bin/migraphx-driver params simple_graph.pb 
  ```
  
  <details>
@@ -136,7 +136,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/migraphx_driver/README.m
  ##### Example: run (onnx file input)
  ```
 -$ /opt/rocm/bin/migraphx-driver run --onnx simple_graph.onnx
-+$ @ESYSROOT_ROCM_PATH@/bin/migraphx-driver run --onnx simple_graph.onnx
++$ @EPREFIX_ROCM_PATH@/bin/migraphx-driver run --onnx simple_graph.onnx
  ```
  
  <details>
@@ -145,7 +145,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/migraphx_driver/README.m
  ##### Example: read
  ```
 -$ /opt/rocm/bin/migraphx-driver read simple_graph.pb 
-+$ @ESYSROOT_ROCM_PATH@/bin/migraphx-driver read simple_graph.pb 
++$ @EPREFIX_ROCM_PATH@/bin/migraphx-driver read simple_graph.pb 
  ```
  
  <details>
@@ -154,7 +154,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/migraphx_driver/README.m
  ##### Example: compile (on GPU, quantized for fp16)
  ```
 -$ /opt/rocm/bin/migraphx-driver compile --gpu --fp16 simple_graph.pb
-+$ @ESYSROOT_ROCM_PATH@/bin/migraphx-driver compile --gpu --fp16 simple_graph.pb
++$ @EPREFIX_ROCM_PATH@/bin/migraphx-driver compile --gpu --fp16 simple_graph.pb
  ```
  
  <details>
@@ -163,7 +163,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/migraphx_driver/README.m
  ##### Example: verify
  ```
 -$ /opt/rocm/bin/migraphx-driver verify simple_graph.pb
-+$ @ESYSROOT_ROCM_PATH@/bin/migraphx-driver verify simple_graph.pb
++$ @EPREFIX_ROCM_PATH@/bin/migraphx-driver verify simple_graph.pb
  ```
  
  <details>
@@ -172,7 +172,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/migraphx/migraphx_driver/README.m
  ##### Example: perf
  ```
 -$ /opt/rocm/bin/migraphx-driver perf simple_graph.pb
-+$ @ESYSROOT_ROCM_PATH@/bin/migraphx-driver perf simple_graph.pb
++$ @EPREFIX_ROCM_PATH@/bin/migraphx-driver perf simple_graph.pb
  ```
  
  <details>
@@ -198,7 +198,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/vision/cpp_mnist/README.md AMDMIG
  The targets "ref" and "cpu" both compile the program to run on the CPU. The target "ref" is primarily used for correctness checking. The target "cpu" is under ongoing development and has more optimizations enabled. Additionally, the "cpu" target requires MIGraphX to be built with the `-DMIGRAPHX_ENABLE_CPU=On` flag. Specifically, 
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIGRAPHX_ENABLE_CPU=On ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIGRAPHX_ENABLE_CPU=On ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIGRAPHX_ENABLE_CPU=On ..
  ```
  
  ## Preparing Input Data
@@ -207,7 +207,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/vision/cpp_mnist/README.md AMDMIG
  $ mkdir build
  $ cd build
 -$ CXX=/opt/rocm/llvm/bin/clang++ cmake ..
-+$ CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake ..
++$ CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake ..
  $ make
  ```
  There will now be an executable named `mnist_inference` in the `build` directory. This can be run with or without options. Executing without any options will produce the following output:
@@ -226,12 +226,12 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/vision/python_resnet50/resnet50_i
      "If your receive a \"Module Not Found\" error when trying to `import migraphx` in your own application, try running:\n",
      "```\n",
 -    "$ export PYTHONPATH=/opt/rocm/lib:$PYTHONPATH\n",
-+    "$ export PYTHONPATH=@ESYSROOT_ROCM_PATH@/@LIBDIR@:$PYTHONPATH\n",
++    "$ export PYTHONPATH=@EPREFIX_ROCM_PATH@/@LIBDIR@:$PYTHONPATH\n",
      "```\n",
      "For this example, the library will be added to the kernel's sys.path.\n",
      "\n",
 -    "If you receive \"cannot open shared object file: No such file or directory\" , please make sure `/opt/rocm/lib` is included in $LD_LIBRARY_PATH\n",
-+    "If you receive \"cannot open shared object file: No such file or directory\" , please make sure `@ESYSROOT_ROCM_PATH@/@LIBDIR@` is included in $LD_LIBRARY_PATH\n",
++    "If you receive \"cannot open shared object file: No such file or directory\" , please make sure `@EPREFIX_ROCM_PATH@/@LIBDIR@` is included in $LD_LIBRARY_PATH\n",
      "```\n",
      " cannot open shared object file: No such file or directory\n",
      "```"
@@ -240,7 +240,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/vision/python_resnet50/resnet50_i
     "outputs": [],
     "source": [
 -    "migx_lib_path = \"/opt/rocm/lib\"\n",
-+    "migx_lib_path = \"@ESYSROOT_ROCM_PATH@/@LIBDIR@\"\n",
++    "migx_lib_path = \"@EPREFIX_ROCM_PATH@/@LIBDIR@\"\n",
      "if migx_lib_path not in sys.path:\n",
      "    sys.path.append(migx_lib_path)"
     ]
@@ -253,10 +253,10 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/examples/vision/python_yolov4/yolov4_infer
     "source": [
      "if not os.path.exists(\"yolov4_fp16.mxr\"):\n",
 -    "    !/opt/rocm/bin/migraphx-driver compile ./utilities/yolov4.onnx --gpu --enable-offload-copy --fp16ref --binary -o yolov4_fp16.mxr\n",
-+    "    !@ESYSROOT_ROCM_PATH@/bin/migraphx-driver compile ./utilities/yolov4.onnx --gpu --enable-offload-copy --fp16ref --binary -o yolov4_fp16.mxr\n",
++    "    !@EPREFIX_ROCM_PATH@/bin/migraphx-driver compile ./utilities/yolov4.onnx --gpu --enable-offload-copy --fp16ref --binary -o yolov4_fp16.mxr\n",
      "if not os.path.exists(\"yolov4.mxr\"):\n",
 -    "    !/opt/rocm/bin/migraphx-driver compile ./utilities/yolov4.onnx --gpu --enable-offload-copy --binary -o yolov4.mxr"
-+    "    !@ESYSROOT_ROCM_PATH@/bin/migraphx-driver compile ./utilities/yolov4.onnx --gpu --enable-offload-copy --binary -o yolov4.mxr"
++    "    !@EPREFIX_ROCM_PATH@/bin/migraphx-driver compile ./utilities/yolov4.onnx --gpu --enable-offload-copy --binary -o yolov4.mxr"
     ]
    },
    {
@@ -312,7 +312,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/README.md AMDMIGraphX-rocm-5.1.3/README.md
  sudo apt update && sudo apt install -y migraphx
  ```
 -then the header files and libs are installed under `/opt/rocm-<version>`, where `<version>` is the ROCm version.
-+then the header files and libs are installed under `@ESYSROOT_ROCM_PATH@`.
++then the header files and libs are installed under `@EPREFIX_ROCM_PATH@`.
  
  ## Building from source
  
@@ -321,7 +321,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/README.md AMDMIGraphX-rocm-5.1.3/README.md
  
  ```
 -rbuild build -d depend -B build --cxx=/opt/rocm/llvm/bin/clang++
-+rbuild build -d depend -B build --cxx=@ESYSROOT_LLVM_PATH@/bin/clang++
++rbuild build -d depend -B build --cxx=@EPREFIX_LLVM_PATH@/bin/clang++
  ```
  
  then all the prerequisites are in the folder `depend`, and MIGraphX is built in the `build` directory.
@@ -330,7 +330,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/README.md AMDMIGraphX-rocm-5.1.3/README.md
  
  ```
 -rbuild build -d depend --cxx=/opt/rocm/llvm/bin/clang++
-+rbuild build -d depend --cxx=@ESYSROOT_LLVM_PATH@/bin/clang++
++rbuild build -d depend --cxx=@EPREFIX_LLVM_PATH@/bin/clang++
  ```
  
  then all the prerequisites are in the folder `depend`, and they can be used in the `cmake` configuration
@@ -339,7 +339,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/README.md AMDMIGraphX-rocm-5.1.3/README.md
  
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake ..
  ```
  Otherwise, you need to set `-DCMAKE_PREFIX_PATH=$your_loc` to configure the cmake. 
  
@@ -348,7 +348,7 @@ diff -urp AMDMIGraphX-rocm-5.1.3.orig/README.md AMDMIGraphX-rocm-5.1.3/README.md
  - Setting `PYTHONPATH` :
  ```
 -export PYTHONPATH=/opt/rocm/lib:$PYTHONPATH
-+export PYTHONPATH=@ESYSROOT_ROCM_PATH@/@LIBDIR@:$PYTHONPATH
++export PYTHONPATH=@EPREFIX_ROCM_PATH@/@LIBDIR@:$PYTHONPATH
  ```
  - Creating and installing the package:
  

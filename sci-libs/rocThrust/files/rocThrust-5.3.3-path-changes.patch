@@ -202,12 +202,12 @@ diff -urp rocThrust-rocm-5.3.3.orig/README.md rocThrust-rocm-5.3.3/README.md
  ```cmake
  # On ROCm rocThrust requires rocPRIM
 -find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
-+find_package(rocprim REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "@EPREFIX_ROCM_PATH@/rocprim")
  
 -# "/opt/rocm" - default install prefix
 -find_package(rocthrust REQUIRED CONFIG PATHS "/opt/rocm/rocthrust")
-+# "@ESYSROOT_ROCM_PATH@" - default install prefix
-+find_package(rocthrust REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocthrust")
++# "@EPREFIX_ROCM_PATH@" - default install prefix
++find_package(rocthrust REQUIRED CONFIG PATHS "@EPREFIX_ROCM_PATH@/rocthrust")
  
  ...
  includes rocThrust headers and roc::rocprim_hip target

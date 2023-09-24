@@ -6,7 +6,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/bin/build_kernel.sh rocprofiler-rocm-5.5.1
  
  if [ -z "$ROCM_DIR" ] ; then
 -  ROCM_DIR=/opt/rocm
-+  ROCM_DIR="@ESYSROOT_ROCM_PATH@"
++  ROCM_DIR="@EPREFIX_ROCM_PATH@"
  fi
  
  if [ -z "$TGT_LIST" ] ; then
@@ -17,8 +17,8 @@ diff -urp rocprofiler-rocm-5.5.1.orig/bin/build_kernel.sh rocprofiler-rocm-5.5.1
 -if [ -e $ROCM_DIR/llvm ] ; then
 -  LLVM_DIR=$ROCM_DIR/llvm
 -  LIB_DIR=$ROCM_DIR/lib
-+if [ -e @ESYSROOT_LLVM_PATH@ ] ; then
-+  LLVM_DIR=@ESYSROOT_LLVM_PATH@
++if [ -e @EPREFIX_LLVM_PATH@ ] ; then
++  LLVM_DIR=@EPREFIX_LLVM_PATH@
 +  LIB_DIR=$ROCM_DIR/@LIBDIR@
  else
    LLVM_DIR=$ROCM_DIR/hcc
@@ -41,7 +41,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/bin/build_kernel.sh rocprofiler-rocm-5.5.1
  fi
  
 -CLANG_ROOT=$LLVM_DIR/lib/clang
-+CLANG_ROOT=@ESYSROOT_CLANG_PATH@
++CLANG_ROOT=@EPREFIX_CLANG_PATH@
  CLANG_DIR=`ls -d $CLANG_ROOT/* | head -n 1`
  if [ "$CLANG_DIR" = "" ] ; then
    echo "Error: LLVM clang library was not found"
@@ -177,7 +177,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/build.sh rocprofiler-rocm-5.5.1/build.sh
  COMPONENT="rocprofiler"
 -ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
 -LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
-+ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
++ROCM_PATH="${ROCM_PATH:=@EPREFIX_ROCM_PATH@}"
 +LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
  
  usage() {
@@ -562,7 +562,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/CMakeLists.txt
  find_package(Clang REQUIRED CONFIG
 -             PATHS "${ROCM_PATH}"
 -             PATH_SUFFIXES "llvm/lib/cmake/clang")
-+             PATHS "@ESYSROOT_LLVM_PATH@/@LIBDIR@/cmake/clang")
++             PATHS "@EPREFIX_LLVM_PATH@/@LIBDIR@/cmake/clang")
  
  # Set the HIP language runtime link flags as FindHIP does not set them.
  set(CMAKE_INSTALL_TESTDIR test/${PROJECT_NAME})
@@ -579,7 +579,7 @@ diff -urp rocprofiler-rocm-5.5.1.orig/tests/featuretests/profiler/CMakeLists.txt
  function(generate_hsaco TARGET_ID INPUT_FILE OUTPUT_FILE)
    separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
      "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0 -Wl,--build-id=sha1
-+    --rocm-device-lib-path=@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode
++    --rocm-device-lib-path=@EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode
      -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -o ${OUTPUT_FILE} ${INPUT_FILE}")
    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/tests/featuretests/profiler/${OUTPUT_FILE}
      COMMAND clang ${CLANG_ARG_LIST}

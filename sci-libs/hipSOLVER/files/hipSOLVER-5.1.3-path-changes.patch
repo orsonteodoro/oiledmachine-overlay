@@ -154,12 +154,12 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/docs/source/userguide_install.rst hipSOLVER-
      mkdir -p <HIPSOLVER_BUILD_DIR_PATH>/release
      cd <HIPSOLVER_BUILD_DIR_PATH>/release
 -    CXX=/opt/rocm/bin/hipcc cmake <HIPSOLVER_SOURCE_DIR_PATH>
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake <HIPSOLVER_SOURCE_DIR_PATH>
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake <HIPSOLVER_SOURCE_DIR_PATH>
      make -j$(nproc)
      sudo make install
  
 -sudo is required if installing into a system directory such as /opt/rocm, which is the default option.
-+sudo is required if installing into a system directory such as @ESYSROOT_ROCM_PATH@, which is the default option.
++sudo is required if installing into a system directory such as @EPREFIX_ROCM_PATH@, which is the default option.
  
  * Use ``-DCMAKE_INSTALL_PREFIX=<other_path>`` to specify a different install directory.
  * Use ``-DCMAKE_BUILD_TYPE=<other_configuration>`` to specify a build configuration, such as 'Debug'. The default build configuration is 'Release'.
@@ -168,10 +168,10 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/docs/source/userguide_install.rst hipSOLVER-
  .. code-block:: bash
  
 -    CXX=/opt/rocm/bin/hcc cmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPSOLVER_SOURCE]
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hcc cmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPSOLVER_SOURCE]
++    CXX=@EPREFIX_ROCM_PATH@/bin/hcc cmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPSOLVER_SOURCE]
      make -j$(nproc)
 -    sudo make install   # sudo required if installing into system directory such as /opt/rocm
-+    sudo make install   # sudo required if installing into system directory such as @ESYSROOT_ROCM_PATH@
++    sudo make install   # sudo required if installing into system directory such as @EPREFIX_ROCM_PATH@
 diff -urp hipSOLVER-rocm-5.1.3.orig/install.sh hipSOLVER-rocm-5.1.3/install.sh
 --- hipSOLVER-rocm-5.1.3.orig/install.sh	2022-03-16 09:47:37.000000000 -0700
 +++ hipSOLVER-rocm-5.1.3/install.sh	2023-09-01 15:45:15.777577902 -0700
@@ -258,7 +258,7 @@ diff -urp hipSOLVER-rocm-5.1.3.orig/README.md hipSOLVER-rocm-5.1.3/README.md
      git clone https://github.com/ROCmSoftwarePlatform/hipSOLVER.git
  
 -hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `/opt/rocm/hipsolver`:
-+hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `@ESYSROOT_ROCM_PATH@/hipsolver`:
++hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `@EPREFIX_ROCM_PATH@/hipsolver`:
  
      cd hipSOLVER
      ./install.sh -i

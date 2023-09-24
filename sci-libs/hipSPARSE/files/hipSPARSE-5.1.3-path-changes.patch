@@ -148,7 +148,7 @@ diff -urp hipSPARSE-rocm-5.1.3.orig/docs/source/usermanual.rst hipSPARSE-rocm-5.
  `./install.sh -d` Build dependencies and library in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
  `./install.sh`    Build library in your local directory. It is assumed dependencies are available.
 -`./install.sh -i` Build library, then build and install hipSPARSE package in `/opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
-+`./install.sh -i` Build library, then build and install hipSPARSE package in `@ESYSROOT_ROCM_PATH@/hipsparse`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -i` Build library, then build and install hipSPARSE package in `@EPREFIX_ROCM_PATH@/hipsparse`. You will be prompted for sudo access. This will install for all users.
  ================= ====
  
  Using `install.sh` to build hipSPARSE with dependencies and clients
@@ -157,7 +157,7 @@ diff -urp hipSPARSE-rocm-5.1.3.orig/docs/source/usermanual.rst hipSPARSE-rocm-5.
  `./install.sh -dc`  Build dependencies, library and client in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
  `./install.sh -c`   Build library and client in your local directory. It is assumed dependencies are available.
 -`./install.sh -idc` Build library, dependencies and client, then build and install hipSPARSE package in `/opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
-+`./install.sh -idc` Build library, dependencies and client, then build and install hipSPARSE package in `@ESYSROOT_ROCM_PATH@/hipsparse`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -idc` Build library, dependencies and client, then build and install hipSPARSE package in `@EPREFIX_ROCM_PATH@/hipsparse`. You will be prompted for sudo access. This will install for all users.
  `./install.sh -ic`  Build library and client, then build and install hipSPARSE package in `opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
  =================== ====
  
@@ -166,14 +166,14 @@ diff -urp hipSPARSE-rocm-5.1.3.orig/docs/source/usermanual.rst hipSPARSE-rocm-5.
    $ mkdir -p build/release ; cd build/release
  
 -  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
-+  # Default install path is @ESYSROOT_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
++  # Default install path is @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
    $ cmake ../..
  
    # Compile hipSPARSE library
    $ make -j$(nproc)
  
 -  # Install hipSPARSE to /opt/rocm
-+  # Install hipSPARSE to @ESYSROOT_ROCM_PATH@
++  # Install hipSPARSE to @EPREFIX_ROCM_PATH@
    $ make install
  
  GoogleTest is required in order to build hipSPARSE clients.
@@ -182,14 +182,14 @@ diff -urp hipSPARSE-rocm-5.1.3.orig/docs/source/usermanual.rst hipSPARSE-rocm-5.
    $ cd ..
  
 -  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
-+  # Default install path is @ESYSROOT_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
++  # Default install path is @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
    $ cmake ../.. -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_SAMPLES=ON
  
    # Compile hipSPARSE library
    $ make -j$(nproc)
  
 -  # Install hipSPARSE to /opt/rocm
-+  # Install hipSPARSE to @ESYSROOT_ROCM_PATH@
++  # Install hipSPARSE to @EPREFIX_ROCM_PATH@
    $ make install
  
  Simple Test

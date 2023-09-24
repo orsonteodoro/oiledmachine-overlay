@@ -399,7 +399,7 @@ diff -urp rccl-rocm-5.4.3.orig/tools/TransferBench/README.md rccl-rocm-5.4.3/too
  * `make`
  
 -  If ROCm is installed in a folder other than `/opt/rocm/`, set ROCM_PATH appropriately
-+  If ROCm is installed in a folder other than `@ESYSROOT_ROCM_PATH@/`, set ROCM_PATH appropriately
++  If ROCm is installed in a folder other than `@EPREFIX_ROCM_PATH@/`, set ROCM_PATH appropriately
  
  ## Copyright
  All source code and accompanying documentation is copyright (c) 2022, Advanced Micro Devices, Inc. All rights reserved.

@@ -62,7 +62,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-remove-h-option.patch"
 	"${FILESDIR}/${PN}-5.5.1-clang-fix-None.patch"
 	"${FILESDIR}/${PN}-5.5.1-CommonLinkerContext-header.patch"
-	"${FILESDIR}/${PN}-5.5.1-update-relax-relocation.patch"
 	"${FILESDIR}/${PN}-5.5.1-fix-SubtargetFeatures.patch"
 	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
 	"${FILESDIR}/${PN}-5.6.1-llvm-not-dylib-add-libs.patch"
@@ -75,6 +74,9 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	if use system-llvm ; then
+		eapply "${FILESDIR}/${PN}-5.5.1-update-relax-relocation.patch"
+	fi
 	rocm_src_prepare
 }
 

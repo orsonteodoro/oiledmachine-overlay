@@ -134,7 +134,7 @@ diff -urp rocThrust-rocm-5.6.0.orig/docs/setup/installing.rst rocThrust-rocm-5.6
      sudo dnf install rocthrust
  
 -This will install rocThrust into the ``/opt/rocm`` directory.
-+This will install rocThrust into the ``@ESYSROOT_ROCM_PATH@`` directory.
++This will install rocThrust into the ``@EPREFIX_ROCM_PATH@`` directory.
  
  Building rocThrust From Source
  ==============================
@@ -143,7 +143,7 @@ diff -urp rocThrust-rocm-5.6.0.orig/docs/setup/installing.rst rocThrust-rocm-5.6
      ./install --install
  
 -This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``/opt/rocm`` if everything went well. See ``./install --help`` for further information.
-+This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``@ESYSROOT_ROCM_PATH@`` if everything went well. See ``./install --help`` for further information.
++This automatically builds all required dependencies, excluding HIP and Git, and installs the project to ``@EPREFIX_ROCM_PATH@`` if everything went well. See ``./install --help`` for further information.
  
  Building with rmake.py
  ----------------------
@@ -152,7 +152,7 @@ diff -urp rocThrust-rocm-5.6.0.orig/docs/setup/installing.rst rocThrust-rocm-5.6
  
      cd rocThrust
 -    # The -i option will install rocThrust into /opt/rocm on Linux, and C:\hipSDK on Windows.
-+    # The -i option will install rocThrust into @ESYSROOT_ROCM_PATH@ on Linux, and C:\hipSDK on Windows.
++    # The -i option will install rocThrust into @EPREFIX_ROCM_PATH@ on Linux, and C:\hipSDK on Windows.
      python rmake.py -i
      # The -c option will build all clients, including unit tests
      python rmake.py -c
@@ -164,7 +164,7 @@ diff -urp rocThrust-rocm-5.6.0.orig/examples/cpp_integration/README rocThrust-ro
  
    $ nvcc -O2 -c device.cu
 -  $ g++  -O2 -c host.cpp   -I/usr/local/cuda/include/
-+  $ g++  -O2 -c host.cpp   -I@ESYSROOT@/opt/cuda/include/
++  $ g++  -O2 -c host.cpp   -I@EPREFIX@/opt/cuda/include/
    $ nvcc -o tester device.o host.o
  
  Alternatively, we can use g++ to perform final linking step.
@@ -172,8 +172,8 @@ diff -urp rocThrust-rocm-5.6.0.orig/examples/cpp_integration/README rocThrust-ro
    $ nvcc -O2 -c device.cu
 -  $ g++  -O2 -c host.cpp   -I/usr/local/cuda/include/
 -  $ g++ -o tester device.o host.o -L/usr/local/cuda/lib64 -lcudart
-+  $ g++  -O2 -c host.cpp   -I@ESYSROOT@/opt/cuda/include/
-+  $ g++ -o tester device.o host.o -L@ESYSROOT@/opt/cuda/@LIBDIR@ -lcudart
++  $ g++  -O2 -c host.cpp   -I@EPREFIX@/opt/cuda/include/
++  $ g++ -o tester device.o host.o -L@EPREFIX@/opt/cuda/@LIBDIR@ -lcudart
  
 diff -urp rocThrust-rocm-5.6.0.orig/extra/CMakeLists.txt rocThrust-rocm-5.6.0/extra/CMakeLists.txt
 --- rocThrust-rocm-5.6.0.orig/extra/CMakeLists.txt	2023-05-31 14:59:33.000000000 -0700
@@ -261,12 +261,12 @@ diff -urp rocThrust-rocm-5.6.0.orig/README.md rocThrust-rocm-5.6.0/README.md
  ```cmake
  # On ROCm rocThrust requires rocPRIM
 -find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
-+find_package(rocprim REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "@EPREFIX_ROCM_PATH@/rocprim")
  
 -# "/opt/rocm" - default install prefix
 -find_package(rocthrust REQUIRED CONFIG PATHS "/opt/rocm/rocthrust")
-+# "@ESYSROOT_ROCM_PATH@" - default install prefix
-+find_package(rocthrust REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocthrust")
++# "@EPREFIX_ROCM_PATH@" - default install prefix
++find_package(rocthrust REQUIRED CONFIG PATHS "@EPREFIX_ROCM_PATH@/rocthrust")
  
  ...
  includes rocThrust headers and roc::rocprim_hip target

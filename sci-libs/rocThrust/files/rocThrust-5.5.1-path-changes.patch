@@ -134,7 +134,7 @@ diff -urp rocThrust-rocm-5.5.1.orig/examples/cpp_integration/README rocThrust-ro
  
    $ nvcc -O2 -c device.cu
 -  $ g++  -O2 -c host.cpp   -I/usr/local/cuda/include/
-+  $ g++  -O2 -c host.cpp   -I@ESYSROOT@/opt/cuda/include/
++  $ g++  -O2 -c host.cpp   -I@EPREFIX@/opt/cuda/include/
    $ nvcc -o tester device.o host.o
  
  Alternatively, we can use g++ to perform final linking step.
@@ -142,8 +142,8 @@ diff -urp rocThrust-rocm-5.5.1.orig/examples/cpp_integration/README rocThrust-ro
    $ nvcc -O2 -c device.cu
 -  $ g++  -O2 -c host.cpp   -I/usr/local/cuda/include/
 -  $ g++ -o tester device.o host.o -L/usr/local/cuda/lib64 -lcudart
-+  $ g++  -O2 -c host.cpp   -I@ESYSROOT@/opt/cuda/include/
-+  $ g++ -o tester device.o host.o -L@ESYSROOT@/opt/cuda/@LIBDIR@ -lcudart
++  $ g++  -O2 -c host.cpp   -I@EPREFIX@/opt/cuda/include/
++  $ g++ -o tester device.o host.o -L@EPREFIX@/opt/cuda/@LIBDIR@ -lcudart
  
 diff -urp rocThrust-rocm-5.5.1.orig/extra/CMakeLists.txt rocThrust-rocm-5.5.1/extra/CMakeLists.txt
 --- rocThrust-rocm-5.5.1.orig/extra/CMakeLists.txt	2023-03-06 13:06:21.000000000 -0800
@@ -231,12 +231,12 @@ diff -urp rocThrust-rocm-5.5.1.orig/README.md rocThrust-rocm-5.5.1/README.md
  ```cmake
  # On ROCm rocThrust requires rocPRIM
 -find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
-+find_package(rocprim REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "@EPREFIX_ROCM_PATH@/rocprim")
  
 -# "/opt/rocm" - default install prefix
 -find_package(rocthrust REQUIRED CONFIG PATHS "/opt/rocm/rocthrust")
-+# "@ESYSROOT_ROCM_PATH@" - default install prefix
-+find_package(rocthrust REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocthrust")
++# "@EPREFIX_ROCM_PATH@" - default install prefix
++find_package(rocthrust REQUIRED CONFIG PATHS "@EPREFIX_ROCM_PATH@/rocthrust")
  
  ...
  includes rocThrust headers and roc::rocprim_hip target

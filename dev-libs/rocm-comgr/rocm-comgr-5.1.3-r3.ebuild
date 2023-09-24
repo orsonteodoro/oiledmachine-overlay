@@ -73,13 +73,6 @@ src_prepare() {
 }
 
 src_configure() {
-	if has_version "dev-util/hip" ; then
-eerror
-eerror "You must uninstall dev-util/hip first before emerging this version of"
-eerror "the package."
-eerror
-		die
-	fi
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	# Disable stripping defined at lib/comgr/CMakeLists.txt:58

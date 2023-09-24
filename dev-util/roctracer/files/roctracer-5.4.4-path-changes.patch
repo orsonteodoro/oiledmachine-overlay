@@ -46,7 +46,7 @@ diff -urp roctracer-rocm-5.4.4.orig/header_template.hpp.in roctracer-rocm-5.4.4/
  #define @include_guard@
  
 -#pragma message("This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with roctracer")
-+#pragma message("This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with roctracer")
++#pragma message("This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with roctracer")
  @include_statements@
  
  #endif

@@ -6,7 +6,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/CHANGELOG.md rocBLAS-rocm-5.3.3/CHANGELOG.md
  - dependencies:
    - rocblas-tensile internal component requires msgpack instead of LLVM
 -- Moved the following files from /opt/rocm/include to /opt/rocm/include/internal:
-+- Moved the following files from @ESYSROOT_ROCM_PATH@/include to @ESYSROOT_ROCM_PATH@/include/internal:
++- Moved the following files from @EPREFIX_ROCM_PATH@/include to @EPREFIX_ROCM_PATH@/include/internal:
    - rocblas-auxillary.h
    - rocblas-complex-types.h
    - rocblas-functions.h
@@ -15,7 +15,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/CHANGELOG.md rocBLAS-rocm-5.3.3/CHANGELOG.md
    - rocblas_bfloat16.h
  
 -  These files should NOT be included directly as this may lead to errors. Instead, /opt/rocm/include/rocblas.h should be included directly. /opt/rocm/include/rocblas_module.f90 can also be direcly used.
-+  These files should NOT be included directly as this may lead to errors. Instead, @ESYSROOT_ROCM_PATH@/include/rocblas.h should be included directly. @ESYSROOT_ROCM_PATH@/include/rocblas_module.f90 can also be direcly used.
++  These files should NOT be included directly as this may lead to errors. Instead, @EPREFIX_ROCM_PATH@/include/rocblas.h should be included directly. @EPREFIX_ROCM_PATH@/include/rocblas_module.f90 can also be direcly used.
  
  
  ## rocBLAS 2.26.0 for ROCm 3.7.0
@@ -27,7 +27,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/clients/CMakeLists.txt rocBLAS-rocm-5.3.3/clie
  if (TARGET OpenMP::OpenMP_CXX)
    set( COMMON_LINK_LIBS "OpenMP::OpenMP_CXX")
 -  list( APPEND COMMON_LINK_LIBS "-L${HIP_CLANG_ROOT}/lib;-Wl,-rpath=${HIP_CLANG_ROOT}/lib")
-+  list( APPEND COMMON_LINK_LIBS "-L${HIP_CLANG_ROOT}/@LIBDIR@;-Wl,-rpath=${HIP_CLANG_ROOT}/@LIBDIR@")
++  list( APPEND COMMON_LINK_LIBS "-L${HIP_CLANG_ROOT}/@LIBDIR@;-Wl,-rpath=@EPREFIX_LLVM_PATH@/@LIBDIR@")
  endif()
  
  if (TARGET Threads::Threads)
@@ -109,7 +109,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/CONTRIBUTING.rst rocBLAS-rocm-5.3.3/CONTRIBUTI
  
  C and C++ code is formatted using ``clang-format``. To run clang-format
 -use the version in the ``/opt/rocm/llvm/bin`` directory. Please do not use your
-+use the version in the ``@ESYSROOT_LLVM_PATH@/bin`` directory. Please do not use your
++use the version in the ``@EPREFIX_LLVM_PATH@/bin`` directory. Please do not use your
  system's built-in ``clang-format``, as this may be an older version that
  will result in different results.
  
@@ -118,7 +118,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/CONTRIBUTING.rst rocBLAS-rocm-5.3.3/CONTRIBUTI
  ::
  
 -    /opt/rocm/llvm/bin/clang-format -style=file -i <path-to-source-file>
-+    @ESYSROOT_LLVM_PATH@/bin/clang-format -style=file -i <path-to-source-file>
++    @EPREFIX_LLVM_PATH@/bin/clang-format -style=file -i <path-to-source-file>
  
  To format all files, run the following script in rocBLAS directory:
  
@@ -126,7 +126,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/CONTRIBUTING.rst rocBLAS-rocm-5.3.3/CONTRIBUTI
  
      #!/bin/bash
 -    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /opt/rocm/llvm/bin/clang-format -style=file -i
-+    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 @ESYSROOT_LLVM_PATH@/bin/clang-format -style=file -i
++    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 @EPREFIX_LLVM_PATH@/bin/clang-format -style=file -i
  
  Also, githooks can be installed to format the code per-commit:
  
@@ -154,10 +154,10 @@ diff -urp rocBLAS-rocm-5.3.3.orig/docs/source/Linux_Install_Guide.rst rocBLAS-ro
  dependent for the user applciation.
  
 -Once installed, rocblas.h and rocblas_module.f90 can be found in the /opt/rocm/include
-+Once installed, rocblas.h and rocblas_module.f90 can be found in the @ESYSROOT_ROCM_PATH@/include
++Once installed, rocblas.h and rocblas_module.f90 can be found in the @EPREFIX_ROCM_PATH@/include
  directory. Only these two installed files should be used when needed in user code.
 -Other rocBLAS files can be found in /opt/rocm/include/internal, however these files
-+Other rocBLAS files can be found in @ESYSROOT_ROCM_PATH@/include/internal, however these files
++Other rocBLAS files can be found in @EPREFIX_ROCM_PATH@/include/internal, however these files
  should not be directly included.
  
  
@@ -166,7 +166,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/docs/source/Linux_Install_Guide.rst rocBLAS-ro
  |                      | build and install        |
  |                      | rocBLAS package in       |
 -|                      | /opt/rocm/rocblas. You   |
-+|                      | @ESYSROOT_ROCM_PATH@/rocblas. You   |
++|                      | @EPREFIX_ROCM_PATH@/rocblas. You   |
  |                      | will be prompted for     |
  |                      | sudo access. This will   |
  |                      | install for all users.   |
@@ -175,7 +175,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/docs/source/Linux_Install_Guide.rst rocBLAS-ro
  |                                     | and use an installed     |
  |                                     | rocBLAS library at       |
 -|                                     | ROCM_PATH (/opt/rocm if  |
-+|                                     | ROCM_PATH (@ESYSROOT_ROCM_PATH@ if  |
++|                                     | ROCM_PATH (@EPREFIX_ROCM_PATH@ if  |
  |                                     | not specified).          |
  +-------------------------------------+--------------------------+
  | ``./install.sh --clients-only``     | Build rocBLAS clients    |
@@ -187,7 +187,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/header_compilation_tests.sh rocBLAS-rocm-5.3.3
  }
  
 -rocm_path=/opt/rocm
-+rocm_path=@ESYSROOT_ROCM_PATH@
++rocm_path=@EPREFIX_ROCM_PATH@
  if ! [ -z ${ROCM_PATH+x} ]; then
      rocm_path=${ROCM_PATH}
  fi
@@ -196,7 +196,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/header_compilation_tests.sh rocBLAS-rocm-5.3.3
  GPU_OPTS="-Wno-unused-command-line-argument -fvisibility=hidden -fvisibility-inlines-hidden -hc -fno-gpu-rdc --amdgpu-target=gfx803 --amdgpu-target=gfx900 --amdgpu-target=gfx906 -Werror"
  
 -CLANG=${rocm_path}/llvm/bin/clang
-+CLANG=@ESYSROOT_LLVM_PATH@/bin/clang
++CLANG=@EPREFIX_LLVM_PATH@/bin/clang
  CLANG_OPTS="-xc-header -std=c99"  # auto set in hip_common.h -D__HIP_PLATFORM_HCC__
  
  GCC=/usr/bin/gcc
@@ -262,7 +262,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/install.sh rocBLAS-rocm-5.3.3/install.sh
    rocm_rpath=""
    if [[ "${build_relocatable}" == true ]]; then
 -      rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
-+      rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@ESYSROOT_ROCM_PATH@/@LIBDIR@"
++      rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
        if ! [ -z ${ROCM_RPATH+x} ]; then
            rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
        fi
@@ -356,7 +356,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/scripts/performance/blas/commandrunner.py rocB
              smi = rocm_smi
  
 -            # The following is needed to call rsmi_init() before other calls as documented in /opt/rocm/rocm_smi/docs/README.md
-+            # The following is needed to call rsmi_init() before other calls as documented in @ESYSROOT_ROCM_PATH@/rocm_smi/docs/README.md
++            # The following is needed to call rsmi_init() before other calls as documented in @EPREFIX_ROCM_PATH@/rocm_smi/docs/README.md
              smi.initializeRsmi()
          except ImportError:
              print('WARNING - rocm_smi.py not found!')
@@ -365,7 +365,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/scripts/performance/blas/commandrunner.py rocB
      parser.add_argument('-d', '--device-num', default=0, type=int,
                          help='Device number to run on.')
 -    parser.add_argument('--install-path', default='/opt/rocm', help='Top directory of driver installation.')
-+    parser.add_argument('--install-path', default='@ESYSROOT_ROCM_PATH@', help='Top directory of driver installation.')
++    parser.add_argument('--install-path', default='@EPREFIX_ROCM_PATH@', help='Top directory of driver installation.')
  
      parser.add_argument('--surface-plot', default=False, action='store_true', help='Adds a surface plot instead of a normal plot.')
  
@@ -377,14 +377,14 @@ diff -urp rocBLAS-rocm-5.3.3.orig/scripts/performance/blas/getspecs.py rocBLAS-r
          return "nvidia-smi"
      else:
 -        return "/opt/rocm/bin/rocm-smi"
-+        return "@ESYSROOT_ROCM_PATH@/bin/rocm-smi"
++        return "@EPREFIX_ROCM_PATH@/bin/rocm-smi"
  
  def getgfx(devicenum, cuda):
      if cuda:
          return "N/A"
      else:
 -        cmd = ["/opt/rocm/bin/rocm_agent_enumerator"]
-+        cmd = ["@ESYSROOT_ROCM_PATH@/bin/rocm_agent_enumerator"]
++        cmd = ["@EPREFIX_ROCM_PATH@/bin/rocm_agent_enumerator"]
          success, cout = _subprocess_helper(cmd)
          if not success:
              return "N/A"
@@ -393,7 +393,7 @@ diff -urp rocBLAS-rocm-5.3.3.orig/scripts/performance/blas/getspecs.py rocBLAS-r
          return ["vram"]
      elif smi is not None:
 -        # Hardcoded in /opt/rocm/rocm_smi/bindings/rsmiBindings.py
-+        # Hardcoded in @ESYSROOT_ROCM_PATH@/rocm_smi/bindings/rsmiBindings.py
++        # Hardcoded in @EPREFIX_ROCM_PATH@/rocm_smi/bindings/rsmiBindings.py
          return ["VRAM", "VIS_VRAM", "GTT"]
  
  def getmeminfo(devicenum, mem_type, cuda, smi=None):
@@ -403,13 +403,13 @@ diff -urp rocBLAS-rocm-5.3.3.orig/scripts/performance/blas/getspecs.py rocBLAS-r
  def validversioncomponents(cuda, smi=None):
 -    # currently only driver according to /opt/rocm/bin/rocm_smi.py
 -    # driver corresponds to 0 in /opt/rocm/bin/rocm_smi.py
-+    # currently only driver according to @ESYSROOT_ROCM_PATH@/bin/rocm_smi.py
-+    # driver corresponds to 0 in @ESYSROOT_ROCM_PATH@/bin/rocm_smi.py
++    # currently only driver according to @EPREFIX_ROCM_PATH@/bin/rocm_smi.py
++    # driver corresponds to 0 in @EPREFIX_ROCM_PATH@/bin/rocm_smi.py
      if cuda:
          return ['driver']
      else:
 -        # currently only driver according to /opt/rocm/bin/rocm_smi.py
-+        # currently only driver according to @ESYSROOT_ROCM_PATH@/bin/rocm_smi.py
++        # currently only driver according to @EPREFIX_ROCM_PATH@/bin/rocm_smi.py
          return [0]
  
  def getversion(devicenum, component, cuda, smi=None):
@@ -418,10 +418,10 @@ diff -urp rocBLAS-rocm-5.3.3.orig/scripts/utilities/check_for_pretuned_sizes_c/M
 +++ rocBLAS-rocm-5.3.3/scripts/utilities/check_for_pretuned_sizes_c/Makefile	2023-08-29 19:25:46.209371915 -0700
 @@ -1,10 +1,10 @@
 -# Makefile assumes rocBLAS is installed in /opt/rocm/rocblas
-+# Makefile assumes rocBLAS is installed in @ESYSROOT_ROCM_PATH@/rocblas
++# Makefile assumes rocBLAS is installed in @EPREFIX_ROCM_PATH@/rocblas
  
 -ROCM_INSTALL_DIR=/opt/rocm
-+ROCM_INSTALL_DIR=@ESYSROOT_ROCM_PATH@
++ROCM_INSTALL_DIR=@EPREFIX_ROCM_PATH@
  ROCBLAS_INSTALL_DIR=$(ROCM_INSTALL_DIR)
  ROCBLAS_INCLUDE=$(ROCBLAS_INSTALL_DIR)/include
 -ROCBLAS_LIB_PATH=$(ROCBLAS_INSTALL_DIR)/lib

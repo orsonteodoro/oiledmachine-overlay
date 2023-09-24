@@ -275,10 +275,13 @@ eerror
 		CLANG_SLOT="${LLVM_MAX_SLOT}.0.0"
 	fi
 
+	local clang_selected_desc
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
+		clang_selected_desc="sys-devel/clang:${LLVM_MAX_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
+		clang_selected_desc="sys-devel/llvm-roc:${LLVM_MAX_SLOT}"
 	fi
 
 	if has system-llvm ${IUSE} && use system-llvm ; then
@@ -297,16 +300,25 @@ eerror
 	]] ; then
 		:;
 	else
-	        # Disallow newer clangs versions when producing .o files.
-		einfo "LLVM_SLOT=${LLVM_SLOT}"
-		einfo "PATH=${PATH} (before)"
+# Disallow newer clangs versions when producing .o files.
+einfo "Removing all clangs except for ${clang_selected_desc} from PATH..."
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -E -e "/llvm\/[0-9]+/d" \
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
-		einfo "PATH=${PATH} (after)"
 	fi
+
+	if has system-llvm ${IUSE} && use system-llvm ; then
+		:;
+	else
+einfo "Removing ccache from PATH to prevent override by system's clang..."
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/ccache/d" \
+			| tr "\n" ":")
+	fi
+
 einfo
 einfo "Eclass variables:"
 einfo

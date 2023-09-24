@@ -278,14 +278,14 @@ diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
  Minimal static build configuration line without embedded precompiled kernels package, or Find-Db:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
  ```
  
  To enable HIP kernels in MIOpen while using embedded builds add: `-DMIOPEN_USE_HIP_KERNELS=On` to the configure line.
  For example:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_USE_HIP_KERNELS=On -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_USE_HIP_KERNELS=On -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_USE_HIP_KERNELS=On -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
  ```
  
  
@@ -294,7 +294,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
  Example:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 ..
  ```
  
  This will configure the build directory for embedding not just the find-db, but also the performance database. 
@@ -303,7 +303,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
  Example:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
  #### Using the URL to a kernels binary 
@@ -311,15 +311,15 @@ diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
  Example:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/URL/to/binary -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/URL/to/binary -DMIOPEN_EMBED_BUILD=On .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/URL/to/binary -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
 -Precompiled kernels packages are installed in `/opt/rocm/miopen/share/miopen/db`.
-+Precompiled kernels packages are installed in `@ESYSROOT_ROCM_PATH@/miopen/share/miopen/db`.
++Precompiled kernels packages are installed in `@EPREFIX_ROCM_PATH@/miopen/share/miopen/db`.
  An example with the architecture gfx900 with 56 compute units:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/opt/rocm/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=@ESYSROOT_ROCM_PATH@/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=@EPREFIX_ROCM_PATH@/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
  
@@ -327,14 +327,14 @@ diff -urp MIOpen-rocm-5.6.0.orig/docs/embed.md MIOpen-rocm-5.6.0/docs/embed.md
  For example for the architecture gfx906 with 64 compute units:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=http://repo.radeon.com/rocm/miopen-kernel/rel-3.8/gfx906_60.kdb -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=http://repo.radeon.com/rocm/miopen-kernel/rel-3.8/gfx906_60.kdb -DMIOPEN_EMBED_BUILD=On .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=http://repo.radeon.com/rocm/miopen-kernel/rel-3.8/gfx906_60.kdb -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
  ### Full configuration line:
  Putting it all together, building MIOpen statically, and embedding the performance database, find-db, and the precompiled kernels binary:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 .. 
  ```
  
  After configuration is complete, run:
@@ -888,8 +888,8 @@ diff -urp MIOpen-rocm-5.6.0.orig/README.md MIOpen-rocm-5.6.0/README.md
  ```
 -export CXX=/opt/rocm/llvm/bin/clang++ && \
 -cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFIX_PATH="/opt/rocm/;/opt/rocm/hip;/root/MIOpen/install_dir" ..
-+export CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ && \
-+cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFIX_PATH="@ESYSROOT_ROCM_PATH@/;@ESYSROOT_ROCM_PATH@/hip;/root/MIOpen/install_dir" ..
++export CXX=@EPREFIX_LLVM_PATH@/bin/clang++ && \
++cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFIX_PATH="@EPREFIX_ROCM_PATH@/;@EPREFIX_ROCM_PATH@/hip;/root/MIOpen/install_dir" ..
  ```
  
  Note: When specifying the path for the `CMAKE_PREFIX_PATH` variable, **do not** use the `~` shorthand for the user home directory.
@@ -898,12 +898,12 @@ diff -urp MIOpen-rocm-5.6.0.orig/README.md MIOpen-rocm-5.6.0/README.md
  And an example setting the dependency path for an envirnment in ROCm 3.5 and later:
  ```
 -cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_HIP_COMPILER=/opt/rocm/llvm/bin/clang++ -DCMAKE_PREFIX_PATH="/opt/rocm/;/opt/rocm/hip;/root/MIOpen/install_dir" ..
-+cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_HIP_COMPILER=@ESYSROOT_LLVM_PATH@/bin/clang++ -DCMAKE_PREFIX_PATH="@ESYSROOT_ROCM_PATH@/;@ESYSROOT_ROCM_PATH@/hip;/root/MIOpen/install_dir" ..
++cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_HIP_COMPILER=@EPREFIX_LLVM_PATH@/bin/clang++ -DCMAKE_PREFIX_PATH="@EPREFIX_ROCM_PATH@/;@EPREFIX_ROCM_PATH@/hip;/root/MIOpen/install_dir" ..
  ```
  ### Setting Up Locations
  
 -By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
-+By default the install location is set to '@ESYSROOT_ROCM_PATH@', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '@EPREFIX_ROCM_PATH@', this can be set by using `CMAKE_INSTALL_PREFIX`:
  
  ```
  cmake -DMIOPEN_BACKEND=OpenCL -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..
@@ -986,7 +986,7 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/README.md MIOpen-rocm-5.6
  Add path of Boost
  ```
 - export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-+ export LD_LIBRARY_PATH=@ESYSROOT@/usr/local/@LIBDIR@:$LD_LIBRARY_PATH
++ export LD_LIBRARY_PATH=@EPREFIX@/usr/local/@LIBDIR@:$LD_LIBRARY_PATH
  ```
  
  ```
@@ -996,8 +996,8 @@ diff -urp MIOpen-rocm-5.6.0.orig/src/composable_kernel/README.md MIOpen-rocm-5.6
  -D HIP_ONLINE_COMPILER_FLAGS="-DCK_AMD_GPU_GFX908"                                                                                             \
 --D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                                                                      \
 --D CMAKE_PREFIX_PATH=/opt/rocm                                                                                                                 \
-+-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                                                                      \
-+-D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                                                                 \
++-D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc                                                                                                      \
++-D CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@                                                                                                                 \
  -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON                                                                                                              \
  ..
  ```

@@ -280,14 +280,14 @@ diff -urp MIOpen-rocm-5.1.3.orig/doc/src/embed.md MIOpen-rocm-5.1.3/doc/src/embe
  Minimal static build configuration line without embedded precompiled kernels package, or Find-Db:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
  ```
  
  To enable HIP kernels in MIOpen while using embedded builds add: `-DMIOPEN_USE_HIP_KERNELS=On` to the configure line.
  For example:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_USE_HIP_KERNELS=On -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_USE_HIP_KERNELS=On -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DMIOPEN_USE_HIP_KERNELS=On -DMIOPEN_EMBED_BUILD=On -DCMAKE_PREFIX_PATH="/some/local/dir" ..
  ```
  
  
@@ -296,7 +296,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/doc/src/embed.md MIOpen-rocm-5.1.3/doc/src/embe
  Example:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 ..
  ```
  
  This will configure the build directory for embedding not just the find-db, but also the performance database. 
@@ -305,7 +305,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/doc/src/embed.md MIOpen-rocm-5.1.3/doc/src/embe
  Example:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
  #### Using the URL to a kernels binary 
@@ -313,15 +313,15 @@ diff -urp MIOpen-rocm-5.1.3.orig/doc/src/embed.md MIOpen-rocm-5.1.3/doc/src/embe
  Example:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/URL/to/binary -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/URL/to/binary -DMIOPEN_EMBED_BUILD=On .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/URL/to/binary -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
 -Precompiled kernels packages are installed in `/opt/rocm/miopen/share/miopen/db`.
-+Precompiled kernels packages are installed in `@ESYSROOT_ROCM_PATH@/share/miopen/db`.
++Precompiled kernels packages are installed in `@EPREFIX_ROCM_PATH@/share/miopen/db`.
  An example with the architecture gfx900 with 56 compute units:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/opt/rocm/miopen/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=@ESYSROOT_ROCM_PATH@/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=@EPREFIX_ROCM_PATH@/share/miopen/db/gfx900_56.kdb -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
  
@@ -329,14 +329,14 @@ diff -urp MIOpen-rocm-5.1.3.orig/doc/src/embed.md MIOpen-rocm-5.1.3/doc/src/embe
  For example for the architecture gfx906 with 64 compute units:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=http://repo.radeon.com/rocm/miopen-kernel/rel-3.8/gfx906_60.kdb -DMIOPEN_EMBED_BUILD=On .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=http://repo.radeon.com/rocm/miopen-kernel/rel-3.8/gfx906_60.kdb -DMIOPEN_EMBED_BUILD=On .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=http://repo.radeon.com/rocm/miopen-kernel/rel-3.8/gfx906_60.kdb -DMIOPEN_EMBED_BUILD=On .. 
  ```
  
  ### Full configuration line:
  Putting it all together, building MIOpen statically, and embedding the performance database, find-db, and the precompiled kernels binary:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 .. 
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 .. 
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BINCACHE_PATH=/path/to/package/install -DMIOPEN_EMBED_BUILD=On -DMIOPEN_EMBED_DB=gfx900_56 .. 
  ```
  
  After configuration is complete, run:
@@ -611,7 +611,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/fin/src/tests/fin_output_find_compile.json MIOp
          "process_env": [
              "LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:",
 -            "LD_LIBRARY_PATH=/opt/rocm/lib:",
-+            "LD_LIBRARY_PATH=@ESYSROOT_ROCM_PATH@/@LIBDIR@:",
++            "LD_LIBRARY_PATH=@EPREFIX_ROCM_PATH@/@LIBDIR@:",
              "LESSCLOSE=/usr/bin/lesspipe %s %s",
              "HOSTNAME=47ee3f8552bc",
              "OLDPWD=/data/MIOpen/_hip",
@@ -620,7 +620,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/fin/src/tests/fin_output_find_compile.json MIOp
              "TUNA_DB_USER_PASSWORD=root1234",
              "MIOPEN_LOG_LEVEL=6",
 -            "PATH=/opt/rocm/miopen/bin:/opt/rocm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-+            "PATH=@ESYSROOT_ROCM_PATH@/miopen/bin:@ESYSROOT_ROCM_PATH@/bin:@ESYSROOT@/usr/local/sbin:@ESYSROOT@/usr/local/bin:@ESYSROOT@/usr/sbin:@ESYSROOT@/usr/bin:@ESYSROOT@/sbin:@ESYSROOT@/bin",
++            "PATH=@EPREFIX_ROCM_PATH@/miopen/bin:@EPREFIX_ROCM_PATH@/bin:@EPREFIX@/usr/local/sbin:@EPREFIX@/usr/local/bin:@EPREFIX@/usr/sbin:@EPREFIX@/usr/bin:@EPREFIX@/sbin:@EPREFIX@/bin",
              "TUNA_DB_HOSTNAME=localhost",
              "LESSOPEN=| /usr/bin/lesspipe %s",
              "_=./bin/fin"
@@ -632,7 +632,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/fin/src/tests/fin_output_find_eval.json MIOpen-
          "process_env": [
              "LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:",
 -            "LD_LIBRARY_PATH=/opt/rocm/lib:",
-+            "LD_LIBRARY_PATH=@ESYSROOT_ROCM_PATH@/@LIBDIR@:",
++            "LD_LIBRARY_PATH=@EPREFIX_ROCM_PATH@/@LIBDIR@:",
              "LESSCLOSE=/usr/bin/lesspipe %s %s",
              "HOSTNAME=7d639d51429b",
              "OLDPWD=/root/dFin/_hip",
@@ -641,7 +641,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/fin/src/tests/fin_output_find_eval.json MIOpen-
              "TUNA_DB_USER_PASSWORD=root1234",
              "MIOPEN_LOG_LEVEL=6",
 -            "PATH=/opt/rocm/miopen/bin:/opt/rocm/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-+            "PATH=@ESYSROOT_ROCM_PATH@/miopen/bin:@ESYSROOT_ROCM_PATH@/bin:@ESYSROOT@/usr/local/sbin:@ESYSROOT@/usr/local/bin:@ESYSROOT@/usr/sbin:@ESYSROOT@/usr/bin:@ESYSROOT@/sbin:@ESYSROOT@/bin",
++            "PATH=@EPREFIX_ROCM_PATH@/miopen/bin:@EPREFIX_ROCM_PATH@/bin:@EPREFIX@/usr/local/sbin:@EPREFIX@/usr/local/bin:@EPREFIX@/usr/sbin:@EPREFIX@/usr/bin:@EPREFIX@/sbin:@EPREFIX@/bin",
              "TUNA_DB_HOSTNAME=localhost",
              "LESSOPEN=| /usr/bin/lesspipe %s",
              "_=./bin/fin"
@@ -719,7 +719,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/README.md MIOpen-rocm-5.1.3/README.md
  And an example setting the dependency path for an envirnment in ROCm 3.5 and later:
  ```
 -cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_HIP_COMPILER=/opt/rocm/llvm/bin/clang++ -DCMAKE_PREFIX_PATH=/some/local/dir ..
-+cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_HIP_COMPILER=@ESYSROOT_LLVM_PATH@/bin/clang++ -DCMAKE_PREFIX_PATH=/some/local/dir ..
++cmake -DMIOPEN_BACKEND=OpenCL -DMIOPEN_HIP_COMPILER=@EPREFIX_LLVM_PATH@/bin/clang++ -DCMAKE_PREFIX_PATH=/some/local/dir ..
  ```
  
  ### For the HIP backend on ROCm 3.5 and later, run:
@@ -728,7 +728,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/README.md MIOpen-rocm-5.1.3/README.md
  An example cmake step can be:
  ```
 -CXX=/opt/rocm/llvm/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFIX_PATH="/some/local/dir" ..
-+CXX=@ESYSROOT_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFIX_PATH="/some/local/dir" ..
++CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake -DMIOPEN_BACKEND=HIP -DCMAKE_PREFIX_PATH="/some/local/dir" ..
  ```
  
  Note: When specifying the path for the `CMAKE_PREFIX_PATH` variable, **do not** use the `~` shorthand for the user home directory.
@@ -736,7 +736,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/README.md MIOpen-rocm-5.1.3/README.md
  ### Setting Up Locations
  
 -By default the install location is set to '/opt/rocm', this can be set by using `CMAKE_INSTALL_PREFIX`:
-+By default the install location is set to '@ESYSROOT_ROCM_PATH@', this can be set by using `CMAKE_INSTALL_PREFIX`:
++By default the install location is set to '@EPREFIX_ROCM_PATH@', this can be set by using `CMAKE_INSTALL_PREFIX`:
  
  ```
  cmake -DMIOPEN_BACKEND=OpenCL -DCMAKE_INSTALL_PREFIX=<miopen-installed-path> ..
@@ -828,7 +828,7 @@ diff -urp MIOpen-rocm-5.1.3.orig/src/composable_kernel/README.md MIOpen-rocm-5.1
  Add path of Boost
  ```
 - export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
-+ export LD_LIBRARY_PATH=@ESYSROOT@/usr/local/@LIBDIR@:$LD_LIBRARY_PATH
++ export LD_LIBRARY_PATH=@EPREFIX@/usr/local/@LIBDIR@:$LD_LIBRARY_PATH
  ```
  
  ```
@@ -838,8 +838,8 @@ diff -urp MIOpen-rocm-5.1.3.orig/src/composable_kernel/README.md MIOpen-rocm-5.1
  -D HIP_ONLINE_COMPILER_FLAGS="-DCK_AMD_GPU_GFX908"                                                                                             \
 --D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                                                                      \
 --D CMAKE_PREFIX_PATH=/opt/rocm                                                                                                                 \
-+-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                                                                      \
-+-D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                                                                 \
++-D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc                                                                                                      \
++-D CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@                                                                                                                 \
  -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON                                                                                                              \
  ..
  ```

@@ -75,8 +75,8 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_examples.rst rocSOLVER
  
 -    /opt/rocm/bin/hipcc -I/opt/rocm/include -c example.c
 -    /opt/rocm/bin/hipcc -o example -L/opt/rocm/lib -lrocsolver -lrocblas example.o
-+    @ESYSROOT_ROCM_PATH@/bin/hipcc -I@ESYSROOT_ROCM_PATH@/include -c example.c
-+    @ESYSROOT_ROCM_PATH@/bin/hipcc -o example -L@ESYSROOT_ROCM_PATH@/@LIBDIR@ -lrocsolver -lrocblas example.o
++    @EPREFIX_ROCM_PATH@/bin/hipcc -I@EPREFIX_ROCM_PATH@/include -c example.c
++    @EPREFIX_ROCM_PATH@/bin/hipcc -o example -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lrocsolver -lrocblas example.o
  
  
  QR factorization of a batch of matrices
@@ -88,7 +88,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  ``rocSOLVER/build`` and ``rocSOLVER/build/release`` directories. It is assumed that all
  external library dependencies have been installed. It also assumes that the rocBLAS library
 -is located at ``/opt/rocm/rocblas``.
-+is located at ``@ESYSROOT_ROCM_PATH@/rocblas``.
++is located at ``@EPREFIX_ROCM_PATH@/rocblas``.
  
  .. code-block:: bash
  
@@ -97,7 +97,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  install it, using a suitable package
  manager, at the standard location:
 -``/opt/rocm/rocsolver``.
-+``@ESYSROOT_ROCM_PATH@/rocsolver``.
++``@EPREFIX_ROCM_PATH@/rocsolver``.
  This is the preferred approach to install
  rocSOLVER on a system, as it will allow
  the library to be safely removed using the
@@ -106,7 +106,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  
      mkdir -p build/release && cd build/release
 -    CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install ../..
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install ../..
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install ../..
      make install
  
  This is equivalent to ``./install.sh``.
@@ -115,7 +115,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  
      mkdir -p buildoutput/release && cd buildoutput/release
 -    CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=/home/user/rocsolverlib ../..
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=/home/user/rocsolverlib ../..
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=/home/user/rocsolverlib ../..
      make install
  
  This is equivalent to ``./install.sh --lib_dir /home/user/rocsolverlib --build_dir buildoutput``.
@@ -124,7 +124,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  
      mkdir -p build/release && cd build/release
 -    CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -Drocblas_DIR=/alternative/rocblas/location ../..
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -Drocblas_DIR=/alternative/rocblas/location ../..
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -Drocblas_DIR=/alternative/rocblas/location ../..
      make install
  
  This is equivalent to ``./install.sh --rocblas_dir /alternative/rocblas/location``.
@@ -133,7 +133,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  
      mkdir -p build/debug && cd build/debug
 -    CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCMAKE_BUILD_TYPE=Debug ../..
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCMAKE_BUILD_TYPE=Debug ../..
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCMAKE_BUILD_TYPE=Debug ../..
      make install
  
  This is equivalent to ``./install.sh -g``.
@@ -142,7 +142,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  
      mkdir -p build/release && cd build/release
 -    CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DBUILD_SHARED_LIBS=OFF ../..
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DBUILD_SHARED_LIBS=OFF ../..
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DBUILD_SHARED_LIBS=OFF ../..
      make install
  
  This is equivalent to ``./install.sh -s``.
@@ -151,7 +151,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  
      mkdir -p build/release && cd build/release
 -    CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON ../..
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON ../..
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON ../..
      make install
  
  This is equivalent to ``./install.sh -c``.
@@ -160,7 +160,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  
      mkdir -p build/release && cd build/release
 -    CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm ../..
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX@/usr ../..
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX@/usr ../..
      make install
      make package
  
@@ -169,7 +169,7 @@ diff -urp rocSOLVER-rocm-5.3.3.orig/docs/source/userguide_install.rst rocSOLVER-
  
      mkdir -p build/release && cd build/release
 -    CXX=/opt/rocm/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/package/install/path ../..
-+    CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/package/install/path ../..
++    CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DCMAKE_INSTALL_PREFIX=rocsolver-install -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/package/install/path ../..
      make install
      make package
      sudo dpkg -i rocsolver[-\_]*.deb

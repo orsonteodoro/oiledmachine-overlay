@@ -6,7 +6,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/clients/benchmarks/CMakeLists.txt hipBLAS-rocm
  
  if( NOT TARGET hipblas )
 -  find_package( hipblas REQUIRED CONFIG PATHS /opt/rocm/hipblas )
-+  find_package( hipblas REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/hipblas )
++  find_package( hipblas REQUIRED CONFIG PATHS @EPREFIX_ROCM_PATH@/hipblas )
  endif( )
  
  set( hipblas_benchmark_common
@@ -57,7 +57,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/clients/gtest/CMakeLists.txt hipBLAS-rocm-5.5.
  
  if( NOT TARGET hipblas )
 -  find_package( hipblas REQUIRED CONFIG PATHS /opt/rocm/hipblas )
-+  find_package( hipblas REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/hipblas )
++  find_package( hipblas REQUIRED CONFIG PATHS @EPREFIX_ROCM_PATH@/hipblas )
  endif( )
  
  find_package( GTest REQUIRED )
@@ -184,7 +184,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/docs/source/contributing.rst hipBLAS-rocm-5.5.
  
  C and C++ code is formatted using ``clang-format``. To run clang-format
 -use the version in the ``/opt/rocm/llvm/bin`` directory. Please do not use your
-+use the version in the ``@ESYSROOT_LLVM_PATH@/bin`` directory. Please do not use your
++use the version in the ``@EPREFIX_LLVM_PATH@/bin`` directory. Please do not use your
  system's built-in ``clang-format``, as this may be an older version that
  will result in different results.
  
@@ -193,7 +193,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/docs/source/contributing.rst hipBLAS-rocm-5.5.
  ::
  
 -    /opt/rocm/llvm/bin/clang-format -style=file -i <path-to-source-file>
-+    @ESYSROOT_LLVM_PATH@/bin/clang-format -style=file -i <path-to-source-file>
++    @EPREFIX_LLVM_PATH@/bin/clang-format -style=file -i <path-to-source-file>
  
  To format all files, run the following script in rocBLAS directory:
  
@@ -201,7 +201,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/docs/source/contributing.rst hipBLAS-rocm-5.5.
  
      #!/bin/bash
 -    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /opt/rocm/llvm/bin/clang-format -style=file -i
-+    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 @ESYSROOT_LLVM_PATH@/bin/clang-format -style=file -i
++    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 @EPREFIX_LLVM_PATH@/bin/clang-format -style=file -i
  
  Also, githooks can be installed to format the code per-commit:
  
@@ -213,7 +213,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/docs/source/install.rst hipBLAS-rocm-5.5.1/doc
  |                                           | build and install        |
  |                                           | hipBLAS package in       |
 -|                                           | `/opt/rocm/hipblas`. You |
-+|                                           | `@ESYSROOT_ROCM_PATH@/hipblas`. You |
++|                                           | `@EPREFIX_ROCM_PATH@/hipblas`. You |
  |                                           | will be prompted for     |
  |                                           | sudo access. This will   |
  |                                           | install for all users.   |
@@ -222,13 +222,13 @@ diff -urp hipBLAS-rocm-5.5.1.orig/docs/source/install.rst hipBLAS-rocm-5.5.1/doc
     mkdir -p [HIPBLAS_BUILD_DIR]/release
     cd [HIPBLAS_BUILD_DIR]/release
 -   # Default install location is in /opt/rocm, define -DCMAKE_INSTALL_PREFIX=<path> to specify other
-+   # Default install location is in @ESYSROOT_ROCM_PATH@, define -DCMAKE_INSTALL_PREFIX=<path> to specify other
++   # Default install location is in @EPREFIX_ROCM_PATH@, define -DCMAKE_INSTALL_PREFIX=<path> to specify other
     # Default build config is 'Release', define -DCMAKE_BUILD_TYPE=<config> to specify other
 -   CXX=/opt/rocm/bin/hipcc ccmake [HIPBLAS_SOURCE]
-+   CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc ccmake [HIPBLAS_SOURCE]
++   CXX=@EPREFIX_ROCM_PATH@/bin/hipcc ccmake [HIPBLAS_SOURCE]
     make -j$(nproc)
 -   sudo make install # sudo required if installing into system directory such as /opt/rocm
-+   sudo make install # sudo required if installing into system directory such as @ESYSROOT_ROCM_PATH@
++   sudo make install # sudo required if installing into system directory such as @EPREFIX_ROCM_PATH@
  
  
  Build Library + Tests + Benchmarks + Samples Using Individual Commands
@@ -238,11 +238,11 @@ diff -urp hipBLAS-rocm-5.5.1.orig/docs/source/install.rst hipBLAS-rocm-5.5.1/doc
     -DCMAKE_PREFIX_PATH="<semicolon separated paths>"
 -   # Default install location is in /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to specify other
 -   CXX=/opt/rocm/bin/hipcc ccmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPBLAS_SOURCE]
-+   # Default install location is in @ESYSROOT_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to specify other
-+   CXX=@ESYSROOT_ROCM_PATH@/bin/hipcc ccmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPBLAS_SOURCE]
++   # Default install location is in @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to specify other
++   CXX=@EPREFIX_ROCM_PATH@/bin/hipcc ccmake -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_BENCHMARKS=ON [HIPBLAS_SOURCE]
     make -j$(nproc)
 -   sudo make install   # sudo required if installing into system directory such as /opt/rocm
-+   sudo make install   # sudo required if installing into system directory such as @ESYSROOT_ROCM_PATH@
++   sudo make install   # sudo required if installing into system directory such as @EPREFIX_ROCM_PATH@
 diff -urp hipBLAS-rocm-5.5.1.orig/install.sh hipBLAS-rocm-5.5.1/install.sh
 --- hipBLAS-rocm-5.5.1.orig/install.sh	2022-12-14 17:49:02.000000000 -0800
 +++ hipBLAS-rocm-5.5.1/install.sh	2023-09-01 14:39:09.141474589 -0700
@@ -333,7 +333,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/README.md hipBLAS-rocm-5.5.1/README.md
  **hipBLAS** requires specific version of **rocBLAS** & **rocSOLVER** to be installed on the system. The required **rocBLAS** and **rocSOLVER** versions to build **hipBLAS** is provided [here](https://github.com/ROCmSoftwarePlatform/hipBLAS/blob/develop/library/CMakeLists.txt).
  
 -Once the dependent libraries are installed, the following command will build hipBLAS and install to `/opt/rocm/hipblas`:
-+Once the dependent libraries are installed, the following command will build hipBLAS and install to `@ESYSROOT_ROCM_PATH@/hipblas`:
++Once the dependent libraries are installed, the following command will build hipBLAS and install to `@EPREFIX_ROCM_PATH@/hipblas`:
  
  ```bash
      cd hipblas
@@ -367,7 +367,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/commandrunner.py hipB
              smi = rocm_smi
  
 -            # The following is needed to call rsmi_init() before other calls as documented in /opt/rocm/rocm_smi/docs/README.md
-+            # The following is needed to call rsmi_init() before other calls as documented in @ESYSROOT_ROCM_PATH@/rocm_smi/docs/README.md
++            # The following is needed to call rsmi_init() before other calls as documented in @EPREFIX_ROCM_PATH@/rocm_smi/docs/README.md
              smi.initializeRsmi()
          except ImportError:
              print('WARNING - rocm_smi.py not found!')
@@ -376,7 +376,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/commandrunner.py hipB
      parser.add_argument('-d', '--device-num', default=0, type=int,
                          help='Device number to run on.')
 -    parser.add_argument('--install-path', default='/opt/rocm', help='Top directory of driver installation.')
-+    parser.add_argument('--install-path', default='@ESYSROOT_ROCM_PATH@', help='Top directory of driver installation.')
++    parser.add_argument('--install-path', default='@EPREFIX_ROCM_PATH@', help='Top directory of driver installation.')
      parser.add_argument('--surface-plot', default=False, action='store_true', help='Adds a surface plot instead of a normal plot.')
      return parser.parse_args()
  
@@ -388,14 +388,14 @@ diff -urp hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py hipBLAS-r
          return "nvidia-smi"
      else:
 -        return "/opt/rocm/bin/rocm-smi"
-+        return "@ESYSROOT_ROCM_PATH@/bin/rocm-smi"
++        return "@EPREFIX_ROCM_PATH@/bin/rocm-smi"
  
  def getgfx(devicenum, cuda):
      if cuda:
          return "N/A"
      else:
 -        cmd = ["/opt/rocm/bin/rocm_agent_enumerator"]
-+        cmd = ["@ESYSROOT_ROCM_PATH@/bin/rocm_agent_enumerator"]
++        cmd = ["@EPREFIX_ROCM_PATH@/bin/rocm_agent_enumerator"]
          success, cout = _subprocess_helper(cmd)
          if not success:
              return "N/A"
@@ -404,7 +404,7 @@ diff -urp hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py hipBLAS-r
          return ["vram"]
      elif smi is not None:
 -        # Hardcoded in /opt/rocm/rocm_smi/bindings/rsmiBindings.py
-+        # Hardcoded in @ESYSROOT_ROCM_PATH@/rocm_smi/bindings/rsmiBindings.py
++        # Hardcoded in @EPREFIX_ROCM_PATH@/rocm_smi/bindings/rsmiBindings.py
          return ["VRAM", "VIS_VRAM", "GTT"]
  
  def getmeminfo(devicenum, mem_type, cuda, smi=None):
@@ -414,8 +414,8 @@ diff -urp hipBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py hipBLAS-r
  def validversioncomponents(cuda, smi=None):
 -    # currently only driver according to /opt/rocm/bin/rocm_smi.py
 -    # driver corresponds to 0 in /opt/rocm/bin/rocm_smi.py
-+    # currently only driver according to @ESYSROOT_ROCM_PATH@/bin/rocm_smi.py
-+    # driver corresponds to 0 in @ESYSROOT_ROCM_PATH@/bin/rocm_smi.py
++    # currently only driver according to @EPREFIX_ROCM_PATH@/bin/rocm_smi.py
++    # driver corresponds to 0 in @EPREFIX_ROCM_PATH@/bin/rocm_smi.py
      if cuda:
          return ['driver']
      else:

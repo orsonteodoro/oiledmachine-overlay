@@ -232,7 +232,7 @@ diff -urp hipSOLVER-rocm-5.5.1.orig/README.md hipSOLVER-rocm-5.5.1/README.md
      git clone https://github.com/ROCmSoftwarePlatform/hipSOLVER.git
  
 -hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `/opt/rocm`:
-+hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `@ESYSROOT_ROCM_PATH@`:
++hipSOLVER requires either cuSOLVER or rocSOLVER + rocBLAS to be installed on the system. Once these are installed, the following commands will build hipSOLVER and install to `@EPREFIX_ROCM_PATH@`:
  
      cd hipSOLVER
      ./install.sh -i
