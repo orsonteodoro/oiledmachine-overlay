@@ -1,0 +1,166 @@
+diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
+--- src.orig/CMakeLists.txt	2022-06-28 10:50:37.000000000 -0700
++++ src/CMakeLists.txt	2023-09-24 15:38:31.424000304 -0700
+@@ -96,7 +96,7 @@ set ( PACKAGE_VERSION_STRING "${VERSION_
+ 
+ ## Find external dependencies.
+ find_package(LibElf REQUIRED)
+-find_package(hsakmt 1.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsakmt 1.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@)
+ 
+ ## Create the rocr target.
+ add_library( ${CORE_RUNTIME_TARGET} "" )
+@@ -124,8 +124,8 @@ target_include_directories( ${CORE_RUNTI
+   ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/libamdhsacode )
+ 
+-## Set RUNPATH - ../../lib covers use of the legacy symlink in /hsa/lib/
+-set_property(TARGET ${CORE_RUNTIME_TARGET} PROPERTY INSTALL_RPATH "$ORIGIN;$ORIGIN/../../lib;$ORIGIN/../../lib64;$ORIGIN/../lib64" )
++## Set RUNPATH - ../../@LIBDIR@ covers use of the legacy symlink in /hsa/@LIBDIR@/
++set_property(TARGET ${CORE_RUNTIME_TARGET} PROPERTY INSTALL_RPATH "$ORIGIN;$ORIGIN/../../@LIBDIR@;$ORIGIN/../@LIBDIR@" )
+ 
+ ## ------------------------- Linux Compiler and Linker options -------------------------
+ set ( HSA_CXX_FLAGS ${HSA_COMMON_CXX_FLAGS} -fexceptions -fno-rtti -fvisibility=hidden -Wno-error=missing-braces -Wno-error=sign-compare -Wno-sign-compare -Wno-write-strings -Wno-conversion-null -fno-math-errno -fno-threadsafe-statics -fmerge-all-constants -fms-extensions -Wno-error=comment -Wno-comment -Wno-error=pointer-arith -Wno-pointer-arith -Wno-error=unused-variable -Wno-error=unused-function )
+@@ -310,8 +310,8 @@ install ( FILES ${CMAKE_CURRENT_BINARY_D
+ 
+ # Legacy symlinks.
+ if ( ${BUILD_SHARED_LIBS} )
+-    install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/${CORE_RUNTIME_LIBRARY}-link.so DESTINATION hsa/lib PERMISSIONS OWNER_WRITE OWNER_READ RENAME ${CORE_RUNTIME_LIBRARY}.so COMPONENT binary)
+-    install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/${CORE_RUNTIME_LIBRARY}-link.so.${VERSION_MAJOR} DESTINATION hsa/lib PERMISSIONS OWNER_WRITE OWNER_READ RENAME ${CORE_RUNTIME_LIBRARY}.so.${VERSION_MAJOR} COMPONENT binary)
++    install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/${CORE_RUNTIME_LIBRARY}-link.so DESTINATION hsa/@LIBDIR@ PERMISSIONS OWNER_WRITE OWNER_READ RENAME ${CORE_RUNTIME_LIBRARY}.so COMPONENT binary)
++    install ( FILES ${CMAKE_CURRENT_BINARY_DIR}/${CORE_RUNTIME_LIBRARY}-link.so.${VERSION_MAJOR} DESTINATION hsa/@LIBDIR@ PERMISSIONS OWNER_WRITE OWNER_READ RENAME ${CORE_RUNTIME_LIBRARY}.so.${VERSION_MAJOR} COMPONENT binary)
+ endif ()
+ 
+ ## Configure and install package config file
+Only in src: CMakeLists.txt.orig
+diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
+--- src.orig/cmake_modules/FindLibElf.cmake	2022-06-28 10:50:37.000000000 -0700
++++ src/cmake_modules/FindLibElf.cmake	2023-09-24 15:42:00.475997899 -0700
+@@ -21,24 +21,24 @@ find_path (LIBELF_INCLUDE_DIRS
+   NAMES
+     libelf.h
+   PATHS
+-    /usr/include
+-    /usr/include/libelf
+-    /usr/local/include
+-    /usr/local/include/libelf
+-    /opt/local/include
+-    /opt/local/include/libelf
+-    /sw/include
+-    /sw/include/libelf
++    @ESYSROOT@/usr/include
++    @ESYSROOT@/usr/include/libelf
++    @ESYSROOT@/usr/local/include
++    @ESYSROOT@/usr/local/include/libelf
++    @ESYSROOT@/opt/local/include
++    @ESYSROOT@/opt/local/include/libelf
++    @ESYSROOT@/sw/include
++    @ESYSROOT@/sw/include/libelf
+     ENV CPATH)
+ 
+ find_library (LIBELF_LIBRARIES
+   NAMES
+     elf
+   PATHS
+-    /usr/lib
+-    /usr/local/lib
+-    /opt/local/lib
+-    /sw/lib
++    @ESYSROOT@/usr/@LIBDIR@
++    @ESYSROOT@/usr/local/@LIBDIR@
++    @ESYSROOT@/opt/local/@LIBDIR@
++    @ESYSROOT@/sw/lib
+     ENV LIBRARY_PATH
+     ENV LD_LIBRARY_PATH)
+ 
+diff -urp src.orig/image/blit_src/CMakeLists.txt src/image/blit_src/CMakeLists.txt
+--- src.orig/image/blit_src/CMakeLists.txt	2022-06-28 10:50:37.000000000 -0700
++++ src/image/blit_src/CMakeLists.txt	2023-09-24 15:36:59.872001357 -0700
+@@ -46,11 +46,11 @@ cmake_minimum_required ( VERSION 3.7 )
+ set (QUIT 0)
+ 
+ # Import target 'clang'
+-find_package(Clang REQUIRED HINTS ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_PREFIX_PATH}/llvm PATHS /opt/rocm/llvm )
++find_package(Clang REQUIRED HINTS @ESYSROOT_LLVM_PATH@ )
+ 
+ # Device libs doesn't support find_package yet.
+ set(PREFIX_HINTS "")
+-foreach(hint "/amdgcn/bitcode" "/lib/bitcode" "/lib/x86_64/bitcode")
++foreach(hint "@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode" "/amdgcn/bitcode" "/lib/bitcode" "/lib/x86_64/bitcode")
+   foreach(path ${CMAKE_PREFIX_PATH})
+     string(APPEND path ${hint})
+     list(APPEND PREFIX_HINTS ${path})
+@@ -59,15 +59,17 @@ endforeach(hint)
+ 
+ get_include_path(BITCODE_DIR "Bitcode library path" RESULT FOUND NAMES "opencl.bc" "opencl.amdgcn.bc"
+   HINTS
++    "${CMAKE_INSTALL_PREFIX}/@LIBDIR@/amdgcn/bitcode"
+     "${CMAKE_INSTALL_PREFIX}/amdgcn/bitcode"
+     "${CMAKE_INSTALL_PREFIX}/lib/bitcode"
+     "${CMAKE_INSTALL_PREFIX}/lib/x86_64/bitcode"
+     "${PREFIX_HINTS}"
+   PATHS
+-    "/opt/rocm/amdgcn/bitcode"
+-    "/opt/rocm/lib/bitcode"
+-    "/opt/rocm/lib"
+-    "/opt/rocm/lib/x86_64/bitcode")
++    "@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode"
++    "@ESYSROOT_ROCM_PATH@/amdgcn/bitcode"
++    "@ESYSROOT_ROCM_PATH@/lib/bitcode"
++    "@ESYSROOT_ROCM_PATH@/lib"
++    "@ESYSROOT_ROCM_PATH@/lib/x86_64/bitcode")
+ if (NOT ${FOUND})
+   set (QUIT 1)
+ endif()
+@@ -122,7 +124,7 @@ function(gen_kernel_bc TARGET_ID INPUT_F
+   endif()
+ 
+   separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
+-    "-O2 -x cl -cl-denorms-are-zero -cl-std=CL2.0 -target amdgcn-amd-amdhsa
++    "--rocm-path=@ESYSROOT_ROCM_PATH@ --rocm-device-lib-path=@ESYSROOT_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode -O2 -x cl -cl-denorms-are-zero -cl-std=CL2.0 -target amdgcn-amd-amdhsa
+     -Xclang -finclude-default-header -mcpu=${TARGET_ID}
+     ${BITCODE_ARGS} -o ${OUTPUT_FILE} ${INPUT_FILE}")
+ 
+Only in src/image/blit_src: CMakeLists.txt.orig
+Only in src/image/blit_src: CMakeLists.txt.rej
+diff -urp src.orig/image/blit_src/README.md src/image/blit_src/README.md
+--- src.orig/image/blit_src/README.md	2022-06-28 10:50:37.000000000 -0700
++++ src/image/blit_src/README.md	2023-09-24 15:32:52.484004202 -0700
+@@ -46,9 +46,9 @@ There are several variables are required
+ object file.  All of them have default values, and defined as following:
+ 
+       OPENCL_DIR - the location of installed OpenCL
+-                   (Default: /opt/rocm/opencl)
++                   (Default: @EPREFIX_ROCM_PATH@/opencl)
+      BITCODE_DIR - the directory contains the bitcode library
+-                   (Default: /opt/rocm/amdgcn/bitcode)
++                   (Default: @EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode)
+         LLVM_DIR - the directory contains the clang, llvm-link and llvm-dis
+                    executables
+                    (Default: ${PROJECT_BUILD_DIR}/../lightning/bin)
+diff -urp src.orig/README.md src/README.md
+--- src.orig/README.md	2022-06-28 10:50:37.000000000 -0700
++++ src/README.md	2023-09-24 15:32:52.484004202 -0700
+@@ -74,7 +74,7 @@ ROCm packages installed, execute the fol
+ 
+     mkdir build
+     cd build
+-    cmake -DCMAKE_INSTALL_PATH=/opt/rocm ..
++    cmake -DCMAKE_INSTALL_PATH=@EPREFIX_ROCM_PATH@ ..
+     make
+     make install
+     make package
+@@ -102,11 +102,11 @@ Alternately ccmake and cmake-gui are sup
+ #### Building Against the Runtime
+ 
+ The runtime provides a cmake package config file, installed by default to
+-/opt/rocm/lib/cmake/hsa-runtime64. The runtime exports cmake target
++@EPREFIX_ROCM_PATH@/@LIBDIR@/cmake/hsa-runtime64. The runtime exports cmake target
+ hsa-runtime64 in namespace hsa-runtime64. A cmake project (Foo) using the
+ runtime may locate, include, and link the runtime with the following template:
+ 
+-    Add /opt/rocm to CMAKE_PREFIX_PATH.
++    Add @EPREFIX_ROCM_PATH@ to CMAKE_PREFIX_PATH.
+ 
+     find_package(hsa-runtime64 1.0 REQUIRED)
+     ...
