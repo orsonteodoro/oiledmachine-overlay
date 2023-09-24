@@ -2,7 +2,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
@@ -22,7 +22,7 @@ NPM_MULTI_LOCKFILE=1
 NPM_OFFLINE=0 # Offline is broken.  It says that tarballs are corrupt.
 NPM_AUDIT_FIX=0
 
-inherit check-reqs desktop electron-app eutils evar_dump flag-o-matic npm
+inherit check-reqs desktop electron-app evar_dump flag-o-matic npm
 inherit toolchain-funcs xdg
 
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
