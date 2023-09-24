@@ -222,7 +222,6 @@ src_prepare() {
 }
 
 src_configure() {
-	MAKEOPTS="-j1"
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	# TODO: Currently the distro configuration is to build.
@@ -274,14 +273,12 @@ src_configure() {
 		)
 	fi
 
-einfo "E2"
 	pushd "${ROCCLR_S}" || die
 		CMAKE_USE_DIR="${ROCCLR_S}" \
 		BUILD_DIR="${ROCCLR_S}_build" \
 		cmake_src_configure
 	popd
 
-einfo "E1"
 	cmake_src_configure
 
 	pushd "${HIPCC_S}" || die
@@ -292,20 +289,17 @@ einfo "E1"
 }
 
 src_compile() {
-einfo "E3a"
 	pushd "${ROCCLR_S}" || die
 		CMAKE_USE_DIR="${ROCCLR_S}" \
 		BUILD_DIR="${ROCCLR_S}_build" \
 		cmake_src_compile
 	popd
 
-einfo "E3b"
 	HIP_PATH="${HIP_S}" \
 	docs_compile
 	cmake_src_compile
 
 
-einfo "E4"
 	pushd "${HIPCC_S}_build" || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \

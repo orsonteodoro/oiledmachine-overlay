@@ -259,10 +259,8 @@ src_configure() {
 		)
 	fi
 
-einfo "E1"
 	cmake_src_configure
 
-einfo "E2"
 	pushd "${HIPCC_S}" || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \
@@ -271,12 +269,10 @@ einfo "E2"
 }
 
 src_compile() {
-einfo "E3"
 	HIP_PATH="${HIP_S}" \
 	docs_compile
 	cmake_src_compile
 
-einfo "E4"
 	pushd "${HIPCC_S}_build" || die
 		CMAKE_USE_DIR="${HIPCC_S}" \
 		BUILD_DIR="${HIPCC_S}_build" \
