@@ -26,7 +26,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/ROCR-Runtime"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-	+aqlprofile system-llvm
+	+aqlprofile debug system-llvm
 "
 CDEPEND="
 	dev-libs/elfutils
