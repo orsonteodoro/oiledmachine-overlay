@@ -83,7 +83,7 @@
     4.19 (LTS)						Y
 		    -ck / MuQSS				N
 		    -rt (RT_PREEMPT)			Y
-		    genpatches				Y
+		    genpatches				N
 		    kernel_compiler_patch 		N
 		    O3 [5]				N
 		    PDS					N

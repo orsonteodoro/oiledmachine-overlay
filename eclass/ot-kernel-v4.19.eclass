@@ -414,6 +414,12 @@ ewarn
 ewarn "TRESOR for ${PV} is stable.  See dmesg for details on correctness."
 ewarn
 	fi
+
+	if use genpatches ; then
+ewarn
+ewarn "genpatches is EOL (End of Life) for the ${KV_MAJOR_MINOR} series."
+ewarn
+	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
