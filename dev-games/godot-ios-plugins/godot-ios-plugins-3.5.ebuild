@@ -17,7 +17,7 @@ GODOT_PV="3.4"
 GODOT_P="${GODOT_PN}-${GODOT_PV}"
 
 inherit godot-3.5
-inherit desktop eutils flag-o-matic multilib-build python-any-r1 scons-utils
+inherit desktop flag-o-matic multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for iOS"
 HOMEPAGE="http://godotengine.org"

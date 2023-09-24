@@ -11,7 +11,7 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 inherit godot-4.0
-inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils
+inherit desktop flag-o-matic llvm python-any-r1 scons-utils
 
 DESCRIPTION="Godot built as a Linux dedicated server"
 HOMEPAGE="http://godotengine.org"

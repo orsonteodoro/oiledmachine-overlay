@@ -12,7 +12,7 @@ MY_P="${MY_PN}-${PV}"
 
 # 64 bit only
 inherit godot-4.0
-inherit desktop eutils flag-o-matic python-any-r1 scons-utils
+inherit desktop flag-o-matic python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for macOS"
 HOMEPAGE="http://godotengine.org"

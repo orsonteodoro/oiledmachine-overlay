@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit eutils git-r3 lcnr
+inherit git-r3 lcnr
 
 DESCRIPTION="SharpNav is advanced pathfinding for C#"
 HOMEPAGE="http://sharpnav.com"

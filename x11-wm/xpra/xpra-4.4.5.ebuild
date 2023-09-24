@@ -2,14 +2,14 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 MY_PV="$(ver_cut 1-4)"
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_10 ) # Upstream only tests with 3.10
 
-inherit cuda distutils-r1 eutils flag-o-matic linux-info prefix tmpfiles udev
+inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
 
 SRC_URI="

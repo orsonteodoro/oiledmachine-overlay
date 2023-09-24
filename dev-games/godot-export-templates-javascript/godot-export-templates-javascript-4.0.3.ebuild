@@ -12,7 +12,7 @@ MY_P="${MY_PN}-${PV}"
 
 inherit godot-4.0
 EMSCRIPTEN_PV="2.0.10"
-inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
+inherit desktop flag-o-matic llvm multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for JavaScript"
 HOMEPAGE="http://godotengine.org"

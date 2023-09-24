@@ -12,7 +12,7 @@ MY_P="${MY_PN}-${PV}"
 
 MULTILIB_COMPAT=( abi_x86_32 )
 inherit godot-3.5
-inherit desktop eutils flag-o-matic llvm multilib-build python-any-r1 scons-utils
+inherit desktop flag-o-matic llvm multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for Linux (32-bit)"
 HOMEPAGE="http://godotengine.org"

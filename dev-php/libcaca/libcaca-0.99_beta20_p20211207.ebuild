@@ -5,7 +5,7 @@
 # dev-perl/Alien-caca needs to be patched/bump if vulnerabilities are fixed for
 # same version as this one.
 
-EAPI=7
+EAPI=8
 
 MY_PN="libcaca"
 MY_P="libcaca-${PV}"
@@ -15,7 +15,7 @@ PHP_EXT_NEEDED_USE="cli,gd,unicode"
 PHP_EXT_SKIP_PATCHES="yes"
 PHP_EXT_S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 USE_PHP="php7-4 php8-0 php8-1 php8-2"
-inherit autotools eutils flag-o-matic php-ext-source-r3-caca
+inherit autotools flag-o-matic php-ext-source-r3-caca
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"

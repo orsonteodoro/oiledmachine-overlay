@@ -13,7 +13,7 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 inherit godot-3.4
-inherit desktop eutils flag-o-matic java-pkg-2 multilib-build python-any-r1
+inherit desktop flag-o-matic java-pkg-2 multilib-build python-any-r1
 inherit scons-utils
 
 DESCRIPTION="Godot export template for Android"

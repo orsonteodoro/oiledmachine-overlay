@@ -14,7 +14,7 @@ FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
 inherit godot-3.4
-inherit desktop eutils flag-o-matic llvm python-any-r1 scons-utils \
+inherit desktop flag-o-matic llvm python-any-r1 scons-utils \
 virtualx
 
 DESCRIPTION="Godot editor"

@@ -13,7 +13,7 @@ MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
 inherit godot-3.4
-inherit desktop eutils flag-o-matic multilib-build python-any-r1 scons-utils
+inherit desktop flag-o-matic multilib-build python-any-r1 scons-utils
 
 DESCRIPTION="Godot export template for iOS"
 HOMEPAGE="http://godotengine.org"

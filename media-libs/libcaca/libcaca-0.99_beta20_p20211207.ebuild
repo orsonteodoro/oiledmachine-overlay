@@ -1,15 +1,15 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=7
+
 # SECURITY NOTE(S):
 # dev-perl/Alien-caca needs to be patched/bump if vulnerabilities are fixed for
 # same version as this one.
 
-EAPI=7
-
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit autotools eutils flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
+inherit autotools flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
 inherit python-r1 virtualx
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"

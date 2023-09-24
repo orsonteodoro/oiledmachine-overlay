@@ -5,11 +5,11 @@
 # dev-perl/Alien-caca needs to be patched/bump if vulnerabilities are fixed for
 # same version as this one.
 
-EAPI=7
+EAPI=8
 
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 USE_RUBY="ruby30 ruby31"
-inherit autotools eutils flag-o-matic ruby-ng virtualx
+inherit autotools flag-o-matic ruby-ng virtualx
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
