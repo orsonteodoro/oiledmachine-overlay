@@ -18,6 +18,9 @@
 #	https://github.com/google/bbr/compare/f428e49...v2alpha-2021-08-21
 #	2c85ebc f428e49 comes from /Makefile commit history in v2alpha branch
 #		that corresponds to the same version for that tag
+# BBR v3:
+#       https://github.com/google/bbr/tree/v3
+#       https://github.com/google/bbr/compare/ba2274dcfda859b8a27193e68ad37bfe4da28ddc..v3
 # BMQ CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/BMQ
 #	https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
@@ -464,8 +467,21 @@ gen_bbrv2_uris() {
 	done
 	echo "${s}"
 }
-if [[ -n "${BBRV2}_KV" ]] ; then
+if [[ -n "${BBRV2_KV}" ]] ; then
 	BBRV2_SRC_URIS=" "$(gen_bbrv2_uris)
+fi
+
+BBRV3_BASE_URI="https://github.com/google/bbr/commit/"
+gen_bbrv3_uris() {
+	local s=""
+	local c
+	for c in ${BBRV3_COMMITS[@]} ; do
+		s+=" ${BBRV3_BASE_URI}${c}.patch -> bbrv3-${BBRV3_VERSION}-${BBRV3_KV}-${c:0:7}.patch"
+	done
+	echo "${s}"
+}
+if [[ -n "${BBRV3_KV}" ]] ; then
+	BBRV3_SRC_URIS=" "$(gen_bbrv3_uris)
 fi
 
 if [[ -n "${C2TCP_VER}" ]] ; then
@@ -1655,6 +1671,18 @@ apply_bbrv2() {
 	done
 }
 
+# @FUNCTION: apply_bbrv3
+# @DESCRIPTION:
+# Adds BBRv3 to have 12% reduction in retransmission, 0.2% lower latency, +/- 1%
+# throughput with all figures relative to BBRv1.
+apply_bbrv3() {
+	local c
+	for c in ${BBRV3_COMMITS[@]} ; do
+		_fpatch "${EDISTDIR}/bbrv3-${BBRV3_VERSION}-${BBRV3_KV}-${c:0:7}.patch"
+		rm config.gce 2>/dev/null # It was included in the bbrv2 patch.
+	done
+}
+
 # @FUNCTION: apply_multigen_lru
 # @DESCRIPTION:
 # Uses multigenerational LRU to improve page reclamation.
@@ -2181,6 +2209,12 @@ apply_all_patchsets() {
 	if has bbrv2 ${IUSE} ; then
 		if ot-kernel_use bbrv2 ; then
 			apply_bbrv2
+		fi
+	fi
+
+	if has bbrv3 ${IUSE} ; then
+		if ot-kernel_use bbrv3 ; then
+			apply_bbrv3
 		fi
 	fi
 
@@ -3152,6 +3186,7 @@ ot-kernel_validate_tcp_congestion_controls_default() {
 		CDG
 		BBR
 		BBR2
+		BBR3
 		RENO
 	)
 	local picked_alg=$(echo "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
@@ -3180,6 +3215,8 @@ eerror
 # @DESCRIPTION:
 # Gets the default TCP Congestion Control algorithm from
 # OT_KERNEL_TCP_CONGESTION_CONTROLS.
+#
+# The result is the non-canonical name.
 ot-kernel_get_tcp_congestion_controls_default() {
 	local picked_alg=$(echo "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" \
 		| tr " " "\n" \
@@ -3192,7 +3229,9 @@ ot-kernel_get_tcp_congestion_controls_default() {
 # Get the initial defaults for OT_KERNEL_TCP_CONGESTION_CONTROLS
 _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	local v
-	if has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
+	if has bbrv3 ${IUSE} && ot-kernel_use bbrv3 ; then
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic dctcp hybla pcc vegas westwood"}
+	elif has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
 		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 bbr cubic dctcp hybla pcc vegas westwood"}
 	else
 		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla pcc vegas westwood"}
@@ -3221,6 +3260,7 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 		CDG
 		BBR
 		BBR2
+		BBR3
 		RENO
 	)
 	local ALGS=(
@@ -3241,6 +3281,7 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 		CDG
 		BBR
 		BBR2
+		BBR3
 	)
 	local alg
 	for alg in ${DEFAULT_ALGS[@]} ; do
@@ -3254,6 +3295,16 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 	# clear is for configurations without network.
 	if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" != "clear" ]] ; then
 		for alg in ${OT_KERNEL_TCP_CONGESTION_CONTROLS} ; do
+	#
+	# Non-canonical means what the ebuild accepts to easily identify the
+	# exact needs of the user.  It is the informal name.
+	#
+	# Canonical means what the kernel formally accepts or only accepts.
+	#
+			local alg_canonical="${alg}"
+			if [[ "${alg}" == "bbr3" ]] ; then
+				alg_canonical="bbr"
+			fi
 			if [[ "${alg}" == "bbr2" ]] ; then
 				if has bbrv2 ${IUSE} \
 					&& ! ot-kernel_use bbrv2 ; then
@@ -3268,13 +3319,17 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 einfo "Adding ${alg}"
 				# reno is only a default not advanced option
 				ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
-				ot-kernel_y_configopt "CONFIG_TCP_CONG_${alg^^}"
+				ot-kernel_y_configopt "CONFIG_TCP_CONG_${alg_canonical^^}"
 			fi
 		done
 
 		ot-kernel_validate_tcp_congestion_controls_default
 		local picked_alg=$(ot-kernel_get_tcp_congestion_controls_default)
 		picked_alg="${picked_alg,,}"
+		local picked_alg_canonical="${picked_alg}"
+		if [[ "${picked_alg}" == "bbr3" ]] ; then
+			picked_alg_canonical="bbr"
+		fi
 		if [[ "${picked_alg}" == "bbr2" ]] ; then
 			if has bbrv2 ${IUSE} \
 				&& ! ot-kernel_use bbrv2 ; then
@@ -3284,8 +3339,8 @@ einfo "Adding ${alg}"
 		fi
 		[[ "${alg}" == "pcc" ]] && return
 einfo "Using ${picked_alg} as the default TCP congestion control"
-		ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg^^}"
-		ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg}\""
+		ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg_canonical^^}"
+		ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg_canonical}\""
 	fi
 }
 
@@ -3293,14 +3348,18 @@ einfo "Using ${picked_alg} as the default TCP congestion control"
 # @DESCRIPTION:
 # Sets the kernel config for the TCP congestion control making it the default.
 ot-kernel_set_kconfig_set_tcp_congestion_control_default() {
-	local picked_alg="${1^^}"
+	local picked_alg="${1^^}" # non-canonical
 einfo "Using ${picked_alg} as the default TCP congestion control"
+	local picked_alg_canonical="${picked_alg}"
+	if [[ "${picked_alg}" == "bbr3" ]] ; then
+		picked_alg_canonical="bbr"
+	fi
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_INET"
 	ot-kernel_y_configopt "CONFIG_TCP_CONG_ADVANCED"
-	ot-kernel_y_configopt "CONFIG_TCP_CONG_${picked_alg}"
-	ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg}"
-	ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg,,}\""
+	ot-kernel_y_configopt "CONFIG_TCP_CONG_${picked_alg_canonical}"
+	ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg_canonical}"
+	ot-kernel_set_configopt "CONFIG_DEFAULT_TCP_CONG" "\"${picked_alg_canonical,,}\""
 }
 
 # @FUNCTION: ot-kernel_validate_net_qos_schedulers_default
@@ -8886,7 +8945,9 @@ einfo "Installing iosched script settings"
 			local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
 
 			local tcca_fair_server
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+				tcca_fair_server="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_fair_server="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 				tcca_fair_server="dctcp"
@@ -8908,7 +8969,9 @@ einfo "Installing iosched script settings"
 
 			# Sorted by RTT (lowest top) with many flows
 			local tcca_gaming
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+				tcca_gaming="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_gaming="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_gaming="bbr"
@@ -8929,6 +8992,8 @@ einfo "Installing iosched script settings"
 			local tcca_web_client
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 				tcca_web_client="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+				tcca_web_client="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_web_client="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
@@ -8966,6 +9031,8 @@ einfo "Installing iosched script settings"
 				tcca_streaming="reno"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_streaming="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+				tcca_streaming="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_streaming="bbr2"
 			else
@@ -8974,7 +9041,9 @@ einfo "Installing iosched script settings"
 
 			# Should not be loss based.
 			local tcca_rec
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+				tcca_rec="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_rec="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_rec="bbr"
@@ -8990,6 +9059,8 @@ einfo "Installing iosched script settings"
 				tcca_server_throughput="dctcp"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_server_throughput="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+				tcca_server_throughput="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_server_throughput="bbr2"
 			else
@@ -9002,6 +9073,8 @@ einfo "Installing iosched script settings"
 				tcca_multi_small="hybla"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
 				tcca_multi_small="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcca_multi_small="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
 				tcca_multi_small="bbr2"
 			else
@@ -9013,6 +9086,8 @@ einfo "Installing iosched script settings"
 			local tcca_multi_large
 			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
 				tcca_multi_large="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcca_multi_large="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
 				tcca_multi_large="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
@@ -9024,7 +9099,9 @@ einfo "Installing iosched script settings"
 			# Any delay based but not loss based feedback otherwise throughput
 			# maybe be cut in half
 			local tcca_bad
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcca_bad="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
 				tcca_bad="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
 				tcca_bad="bbr"
@@ -9060,6 +9137,8 @@ einfo "Installing iosched script settings"
 				tcca_bulk_send="cubic"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 				tcca_bulk_send="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+				tcca_bulk_send="bbr3"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 				tcca_bulk_send="bbr2"
 			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
@@ -9428,6 +9507,22 @@ einfo
 einfo "To make BBRv2 the default go to"
 einfo
 einfo "  Networking support > Networking options >  TCP: advanced congestion control > Default TCP congestion control > BBR2"
+einfo
+		fi
+	fi
+
+	if has bbrv3 ${IUSE} ; then
+		if use bbrv3 ; then
+einfo
+einfo "To enable BBRv3 go to"
+einfo
+einfo "  Networking support > Networking options >  TCP: advanced congestion control > BBR TCP"
+einfo
+einfo "To make BBRv3 the default go to"
+einfo
+einfo "  Networking support > Networking options >  TCP: advanced congestion control > Default TCP congestion control > BBR"
+einfo
+einfo "[BBR is not a typo for choosing BBRv3.]"
 einfo
 		fi
 	fi

@@ -177,14 +177,53 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
 RUST_PV="1.68.2"
 
+BBRV3_KV="6.4.0" # According to Makefile, but the net folder has tagged net-6.5-rc1 commit
+BBRV3_VERSION="6e321d1" # Latest commit in the branch
+BBRV3_COMMITS=( # oldest
+ba2274dcfda859b8a27193e68ad37bfe4da28ddc
+f601c9f8eee1585892530f6e4d847c6801b3bd2d
+9cb2d74a55ce4d621666a93c59f8635a91c03975
+767930979dacb584aa07b9f492f521d1f06a9bc3
+4e589c6069b75bf559f59e09fa19871fd92fb44d
+ade2a0e3f26b45f0de9fe9b368c9bef6609a2c8f
+1f4015e7004cea97a458feb4bb847a78a3367607
+f82a3d3f940c5220b37a2e0884ef399fc8b952c2
+bfa26db027f29177f05a9772094ed16c8c88c488
+0fa4869b2177bafeadc4a15a5d9c37dad13b147b
+c20e56d9661031647ddc99c47ae8971d0a7b99b7
+a5cc0063dc64f3d43c82390567ec9ddf16f4727c
+4fef7ac2a9ccc4402d8d079002c65e42e9187068
+dc4a1f8de1f074d505b3f539df47635af22621f9
+9f5cbd8717f7c95c7def5af51972316ea92cbf7b
+40f1ce936f1a1732add87dd3518fdd6e5fa0982c
+aa27c22a2ebe5696b5b42002337425e2a53b2f79
+5ad789ec25187629f09d7636ebd05ae1391fe916
+a1d32ad82d426f29c71dd837393b3d7ea8501b5e
+#a7743a2757fae9b06613c201cce6416a95d5f345 # Don't need kernel config
+04ed1b49454dd2ce5d19a877b34612039a069a69
+e7db8639c6a6a71785028c0804bc8b2b5942f57c
+f60d60e24fc60335d3a5b40f89536e24dd4a1748
+#c931462c3a1a08e025f2bdcd3bd863d55b1a61dd # Don't need kernel config
+118c5d9d8e9c374ab8c73fcd5413474c22e64e49
+2dec5d0ee507c98b5efca591a93a960c8bf1a062
+aaf932736a4748b18196ecdf86471bc3c5576d11
+6e321d1c986a88e21dcbb46005668cd874de01da
+)
+
 IUSE+="
-bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
+bbrv2 bbrv3 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
 -genpatches_1510 kcfi lto orca pdo pgo prjc rt -rust shadowcallstack symlink
 tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
 "
 
 REQUIRED_USE+="
+	bbrv2? (
+		!bbrv3
+	)
+	bbrv3? (
+		!bbrv2
+	)
 	genpatches_1510? (
 		genpatches
 	)
@@ -252,6 +291,7 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 DESCRIPTION="\
 A customizable kernel package with \
 BBRv2, \
+BBRv3, \
 C2TCP, \
 CVE fixes, \
 DeepCC, \
@@ -269,6 +309,7 @@ LICENSE+=" GPL-2" # kernel_compiler_patch
 LICENSE+=" GPL-2" # -O3 patch
 LICENSE+=" HPND" # See drivers/gpu/drm/drm_encoder.c
 LICENSE+=" bbrv2? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v2alpha#license
+LICENSE+=" bbrv3? ( || ( GPL-2 BSD ) )" # https://github.com/google/bbr/tree/v3
 LICENSE+=" c2tcp? ( MIT )"
 LICENSE+="
 	pgo? (
@@ -539,6 +580,7 @@ NOT_READY_YET="
 if [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
+		${BBRV3_SRC_URIS}
 		${C2TCP_URIS}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
@@ -562,6 +604,9 @@ else
 		${KCP_SRC_CORTEX_A72_URI}
 		bbrv2? (
 			${BBRV2_SRC_URIS}
+		)
+		bbrv3? (
+			${BBRV3_SRC_URIS}
 		)
 		c2tcp? (
 			${C2TCP_URIS}
@@ -820,6 +865,7 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-1e924b1.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-1e924b1-fix-for-6.5.2.patch"
+
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

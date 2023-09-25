@@ -167,6 +167,7 @@
 		    kernel_compiler_patch		A
 		    Project C				A
 		    TCP BBR v2 [5]			E
+		    TCP BBR v3 [5]			A
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
@@ -2590,9 +2591,13 @@ unset OT_KERNEL_PRIVATE_KEY
       dctcp     - For data centers, HPC, high capacity streaming media
       cdg
       bbr       - For video streaming services, higher throughput,
-                  more greedy* (production ready)
+                  more greedy* (production ready, deprecated)
       bbr2      - For video streaming services, lower latency,
-                  high fairness* (alpha still, experimental)
+                  high fairness* (alpha still, experimental, deprecated),
+                  ECN support.
+      bbr3      - For video streaming services, higher throughput,
+                  better coexistance with reno/cubic, 0.2% less latency for
+                  short requests, ECN support fixes.
 
       * Due to router's smaller buffer size.
 
@@ -2602,8 +2607,13 @@ unset OT_KERNEL_PRIVATE_KEY
 
         https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
 
+      For BBRv3 ECN support, see
+
+        https://github.com/google/bbr/tree/v3#enabling-ecn-support
+
     Defaults (EXPERIMENTAL):
 
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr3 cubic dctcp hybla pcc vegas westwood"      # if USE=bbrv3 and OT_KERNEL_USE=bbrv3
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic dctcp hybla pcc vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
       OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla pcc vegas westwood"       # otherwise
 
@@ -3472,6 +3482,11 @@ unset OT_KERNEL_PRIVATE_KEY
       around less than 5 percent retransmission comparable to Cubic but trading
       off ~5-10 MBps raw throughput, which includes data retransmissions and
       overhead.
+    </flag>
+    <flag name="bbrv3">
+      Patches the kernel with BBRv3 TCP congestion control reducing the
+      retransmission and latency by %0.2 compared to BBRv1, lower loss rate,
+      throughput is +/- 1% of BBRv1.
     </flag>
     <flag name="bfq-mq">
       Update the BFQ IO scheduler from single queue to multi-queue in 4.14.x
