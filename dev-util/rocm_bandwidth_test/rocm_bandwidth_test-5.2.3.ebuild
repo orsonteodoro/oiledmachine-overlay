@@ -1,12 +1,12 @@
-# Copyright 2022-2023 Gentoo Authors
+# Copyright 2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-LLVM_MAX_SLOT=17
+LLVM_MAX_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic rocm
+inherit cmake rocm
 
 SRC_URI="
 https://github.com/RadeonOpenCompute/${PN}/archive/rocm-${PV}.tar.gz
@@ -33,8 +33,7 @@ BDEPEND="
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
-	"${DISTDIR}/${PN}-pr90-a58f9fd.patch"
-	"${FILESDIR}/rocm_bandwidth_test-5.3.3-path-changes.patch"
+	"${FILESDIR}/rocm_bandwidth_test-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -47,9 +46,6 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="clang"
-	export CXX="clang++"
-	append-ldflags -fuse-ld=lld # Does not work with bfd
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
