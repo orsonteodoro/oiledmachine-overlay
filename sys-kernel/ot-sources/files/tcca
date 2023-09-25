@@ -289,6 +289,9 @@ echo
 
 set_tcca() {
 	local alg="${1}"
+	if [[ "${alg,,}" == "bbr3" ]] ; then
+		alg="bbr"
+	fi
 	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit") ]] ; then
 		_set_tcca_polkit "${alg}"
 	elif [[ "${TCCA_ELEVATE_PRIV}" == "sudo" ]] ; then
