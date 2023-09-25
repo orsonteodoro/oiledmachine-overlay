@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=17
+LLVM_MAX_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm rocm
@@ -42,7 +42,7 @@ S="${WORKDIR}/${PN}-rocm-${PV}"
 DOCS=( README.md )
 CMAKE_BUILD_TYPE="RELEASE"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {
