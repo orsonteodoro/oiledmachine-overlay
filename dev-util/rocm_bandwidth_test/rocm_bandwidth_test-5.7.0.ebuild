@@ -21,7 +21,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE="r2"
+IUSE="r2 system-llvm"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -29,7 +29,16 @@ DEPEND="
 	${DEPEND}
 "
 BDEPEND="
+	!system-llvm? (
+		sys-devel/llvm-roc:${ROCM_SLOT}
+	)
 	>=dev-util/cmake-3.6.3
+	dev-util/rocm-compiler[system-llvm=]
+	system-llvm? (
+		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-devel/llvm:${LLVM_MAX_SLOT}
+		sys-devel/lld:${LLVM_MAX_SLOT}
+	)
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
