@@ -54,7 +54,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.5.2-dependencies.patch"
 	"${FILESDIR}/${PN}-5.1.3-clang-link.patch"
 	"${FILESDIR}/${PN}-5.1.3-clang-fix-include.patch"
-	"${FILESDIR}/0001-COMGR-changes-needed-for-upstream-llvm.patch"
 #	"${FILESDIR}/${PN}-5.1.3-llvm-15-remove-zlib-gnu"
 #	"${FILESDIR}/${PN}-5.1.3-llvm-15-args-changed"
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
@@ -68,6 +67,9 @@ pkg_setup() {
 }
 
 src_prepare() {
+	if use system-llvm ; then
+		eapply	"${FILESDIR}/0001-COMGR-changes-needed-for-upstream-llvm.patch"
+	fi
 	cmake_src_prepare
 	rocm_src_prepare
 }
