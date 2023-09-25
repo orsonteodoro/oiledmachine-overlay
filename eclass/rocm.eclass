@@ -573,10 +573,19 @@ check_amdgpu() {
 rocm_mv_docs() {
 	if [[ -e "${ED}/usr/share/doc" ]] ; then
 		dodir "${EROCM_PATH}/share"
-		mv \
-			"${ED}/usr/share/doc" \
-			"${ED}${EROCM_PATH}/share" \
-			|| die
+		if [[ -e "${ED}${EROCM_PATH}/share/doc" ]] ; then
+			cp \
+				-aT \
+				"${ED}/usr/share/doc" \
+				"${ED}${EROCM_PATH}/share/doc" \
+				|| die
+			rm -rf "${ED}/usr/share/doc"
+		else
+			mv \
+				"${ED}/usr/share/doc" \
+				"${ED}${EROCM_PATH}/share" \
+				|| die
+		fi
 	fi
 }
 
