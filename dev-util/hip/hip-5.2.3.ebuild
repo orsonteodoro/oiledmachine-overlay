@@ -113,6 +113,7 @@ BDEPEND="
 CLR_PATCHES=(
 	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
 	"${FILESDIR}/rocclr-5.3.3-path-changes.patch"
+	"${FILESDIR}/rocclr-5.2.3-comgr-header.patch"
 )
 HIP_PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-fno-stack-protector.patch"

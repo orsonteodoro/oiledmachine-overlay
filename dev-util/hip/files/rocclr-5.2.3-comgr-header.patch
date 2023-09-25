@@ -1,0 +1,36 @@
+diff -urp ROCclr-rocm-5.2.3.orig/device/comgrctx.hpp ROCclr-rocm-5.2.3/device/comgrctx.hpp
+--- ROCclr-rocm-5.2.3.orig/device/comgrctx.hpp	2023-09-24 21:25:22.783760914 -0700
++++ ROCclr-rocm-5.2.3/device/comgrctx.hpp	2023-09-24 21:26:32.099760116 -0700
+@@ -23,7 +23,7 @@
+ #include <mutex>
+ #if defined(USE_COMGR_LIBRARY)
+ #include "top.hpp"
+-#include "amd_comgr/amd_comgr.h"
++#include "amd_comgr.h"
+ 
+ namespace amd {
+ typedef void (*t_amd_comgr_get_version)(size_t *major, size_t *minor);
+diff -urp ROCclr-rocm-5.2.3.orig/device/devkernel.hpp ROCclr-rocm-5.2.3/device/devkernel.hpp
+--- ROCclr-rocm-5.2.3.orig/device/devkernel.hpp	2023-09-24 21:25:22.783760914 -0700
++++ ROCclr-rocm-5.2.3/device/devkernel.hpp	2023-09-24 21:26:31.027760129 -0700
+@@ -105,7 +105,7 @@ struct RuntimeHandle {
+   uint32_t group_segment_size;        //!< From GROUP_SEGMENT_FIXED_SIZE
+ };
+ 
+-#include "amd_comgr/amd_comgr.h"
++#include "amd_comgr.h"
+ 
+ //  for Code Object V3
+ enum class ArgField : uint8_t {
+diff -urp ROCclr-rocm-5.2.3.orig/device/devprogram.hpp ROCclr-rocm-5.2.3/device/devprogram.hpp
+--- ROCclr-rocm-5.2.3.orig/device/devprogram.hpp	2023-09-24 21:25:22.783760914 -0700
++++ ROCclr-rocm-5.2.3/device/devprogram.hpp	2023-09-24 21:26:29.907760142 -0700
+@@ -29,7 +29,7 @@
+ #include "devwavelimiter.hpp"
+ 
+ #if defined(USE_COMGR_LIBRARY)
+-#include "amd_comgr/amd_comgr.h"
++#include "amd_comgr.h"
+ #endif  // defined(USE_COMGR_LIBRARY)
+ 
+ namespace amd {
