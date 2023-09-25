@@ -1,0 +1,12 @@
+diff -urp comgr.orig/CMakeLists.txt comgr/CMakeLists.txt
+--- comgr.orig/CMakeLists.txt	2023-09-25 00:44:34.015623440 -0700
++++ comgr/CMakeLists.txt	2023-09-25 00:48:56.027620427 -0700
+@@ -146,7 +146,7 @@ if (UNIX)
+   list(APPEND AMD_COMGR_PRIVATE_COMPILE_OPTIONS -fno-strict-aliasing)
+   list(APPEND AMD_COMGR_PRIVATE_COMPILE_DEFINITIONS
+     _GNU_SOURCE __STDC_LIMIT_MACROS __STDC_CONSTANT_MACROS)
+-  list(APPEND AMD_COMGR_PUBLIC_LINKER_OPTIONS -pthread)
++  list(APPEND AMD_COMGR_PUBLIC_LINKER_OPTIONS -pthread -Wl,--rpath=@EPREFIX_LLVM_PATH@/@LIBDIR@ -Wl,--rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@)
+   if (NOT APPLE AND COMGR_BUILD_SHARED_LIBS)
+     configure_file(
+       src/exportmap.in

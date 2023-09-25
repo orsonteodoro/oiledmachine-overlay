@@ -25,7 +25,7 @@ DESCRIPTION="Radeon Open Compute Code Object Manager"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm r5"
+IUSE="system-llvm r6"
 RDEPEND="
 	!system-llvm? (
 		sys-devel/llvm-roc:=
@@ -59,6 +59,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-fno-stack-protector.patch"
 	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
 	"${FILESDIR}/${PN}-5.1.3-llvm-not-dylib-add-libs.patch"
+	"${FILESDIR}/${PN}-5.6.1-rpath.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 
