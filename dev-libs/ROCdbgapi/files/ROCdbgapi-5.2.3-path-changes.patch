@@ -1,0 +1,50 @@
+diff -urp ROCdbgapi-rocm-5.2.3.orig/amd-dbgapi.pc.in ROCdbgapi-rocm-5.2.3/amd-dbgapi.pc.in
+--- ROCdbgapi-rocm-5.2.3.orig/amd-dbgapi.pc.in	2022-03-25 09:58:12.000000000 -0700
++++ ROCdbgapi-rocm-5.2.3/amd-dbgapi.pc.in	2023-09-24 23:28:32.203675914 -0700
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${prefix}/lib
++libdir=${prefix}/@LIBDIR@
+ includedir=${prefix}/include
+ 
+ Name: amd-dbgapi
+diff -urp ROCdbgapi-rocm-5.2.3.orig/CMakeLists.txt ROCdbgapi-rocm-5.2.3/CMakeLists.txt
+--- ROCdbgapi-rocm-5.2.3.orig/CMakeLists.txt	2022-03-25 09:58:12.000000000 -0700
++++ ROCdbgapi-rocm-5.2.3/CMakeLists.txt	2023-09-24 23:29:43.543675094 -0700
+@@ -85,7 +85,7 @@ set_target_properties(amd-dbgapi PROPERT
+   CXX_EXTENSIONS ON
+   CXX_VISIBILITY_PRESET hidden
+   OUTPUT_NAME "rocm-dbgapi"
+-  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
++  LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/@LIBDIR@
+   DEFINE_SYMBOL "AMD_DBGAPI_EXPORTS"
+   VERSION ${AMD_DBGAPI_VERSION}
+   SOVERSION ${AMD_DBGAPI_VERSION_MAJOR})
+@@ -114,10 +114,10 @@ endif()
+ 
+ find_package(amd_comgr REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    @ESYSROOT_ROCM_PATH@/
+   PATH_SUFFIXES
+     cmake/amd_comgr
+-    lib/cmake/amd_comgr
++    @LIBDIR@/cmake/amd_comgr
+ )
+ MESSAGE(STATUS "Code Object Manager found at ${amd_comgr_DIR}.")
+ 
+Only in ROCdbgapi-rocm-5.2.3: CMakeLists.txt.orig
+Only in ROCdbgapi-rocm-5.2.3: CMakeLists.txt.rej
+diff -urp ROCdbgapi-rocm-5.2.3.orig/README.md ROCdbgapi-rocm-5.2.3/README.md
+--- ROCdbgapi-rocm-5.2.3.orig/README.md	2022-03-25 09:58:12.000000000 -0700
++++ ROCdbgapi-rocm-5.2.3/README.md	2023-09-24 23:28:32.203675914 -0700
+@@ -95,7 +95,7 @@ make install
+ The installed ROCdbgapi library and documentation will be placed in:
+ 
+ - ``../install/include/amd-dbgapi.h``
+-- ``../install/lib/librocm-dbgapi.so*``
++- ``../install/@LIBDIR@/librocm-dbgapi.so*``
+ - ``../install/share/amd-dbgapi/LICENSE.txt``
+ - ``../install/share/amd-dbgapi/README.md``
+ - ``../install/share/html/amd-dbgapi/index.html``
