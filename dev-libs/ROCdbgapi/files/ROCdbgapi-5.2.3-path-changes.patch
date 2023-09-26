@@ -1,6 +1,6 @@
 diff -urp ROCdbgapi-rocm-5.2.3.orig/amd-dbgapi.pc.in ROCdbgapi-rocm-5.2.3/amd-dbgapi.pc.in
 --- ROCdbgapi-rocm-5.2.3.orig/amd-dbgapi.pc.in	2022-03-25 09:58:12.000000000 -0700
-+++ ROCdbgapi-rocm-5.2.3/amd-dbgapi.pc.in	2023-09-24 23:28:32.203675914 -0700
++++ ROCdbgapi-rocm-5.2.3/amd-dbgapi.pc.in	2023-09-25 07:39:28.855337079 -0700
 @@ -1,6 +1,6 @@
  prefix=${pcfiledir}/../..
  exec_prefix=${prefix}
@@ -11,7 +11,7 @@ diff -urp ROCdbgapi-rocm-5.2.3.orig/amd-dbgapi.pc.in ROCdbgapi-rocm-5.2.3/amd-db
  Name: amd-dbgapi
 diff -urp ROCdbgapi-rocm-5.2.3.orig/CMakeLists.txt ROCdbgapi-rocm-5.2.3/CMakeLists.txt
 --- ROCdbgapi-rocm-5.2.3.orig/CMakeLists.txt	2022-03-25 09:58:12.000000000 -0700
-+++ ROCdbgapi-rocm-5.2.3/CMakeLists.txt	2023-09-24 23:29:43.543675094 -0700
++++ ROCdbgapi-rocm-5.2.3/CMakeLists.txt	2023-09-25 07:40:54.099336098 -0700
 @@ -85,7 +85,7 @@ set_target_properties(amd-dbgapi PROPERT
    CXX_EXTENSIONS ON
    CXX_VISIBILITY_PRESET hidden
@@ -34,11 +34,27 @@ diff -urp ROCdbgapi-rocm-5.2.3.orig/CMakeLists.txt ROCdbgapi-rocm-5.2.3/CMakeLis
  )
  MESSAGE(STATUS "Code Object Manager found at ${amd_comgr_DIR}.")
  
-Only in ROCdbgapi-rocm-5.2.3: CMakeLists.txt.orig
-Only in ROCdbgapi-rocm-5.2.3: CMakeLists.txt.rej
+@@ -165,7 +165,7 @@ target_link_libraries(amd-dbgapi
+ 
+ set(AMD_DBGAPI_CONFIG_NAME amd-dbgapi-config.cmake)
+ set(AMD_DBGAPI_TARGETS_NAME amd-dbgapi-targets.cmake)
+-set(AMD_DBGAPI_PACKAGE_PREFIX lib/cmake/amd-dbgapi)
++set(AMD_DBGAPI_PACKAGE_PREFIX @LIBDIR@/cmake/amd-dbgapi)
+ 
+ # Generate the build-tree package.
+ set(AMD_DBGAPI_PREFIX_CODE)
+@@ -179,7 +179,7 @@ configure_file("cmake/${AMD_DBGAPI_CONFI
+ 
+ install(TARGETS amd-dbgapi
+   EXPORT amd-dbgapi-export
+-  DESTINATION lib)
++  DESTINATION @LIBDIR@)
+ 
+ install(FILES
+   "${CMAKE_CURRENT_BINARY_DIR}/include/amd-dbgapi/amd-dbgapi.h"
 diff -urp ROCdbgapi-rocm-5.2.3.orig/README.md ROCdbgapi-rocm-5.2.3/README.md
 --- ROCdbgapi-rocm-5.2.3.orig/README.md	2022-03-25 09:58:12.000000000 -0700
-+++ ROCdbgapi-rocm-5.2.3/README.md	2023-09-24 23:28:32.203675914 -0700
++++ ROCdbgapi-rocm-5.2.3/README.md	2023-09-25 07:39:28.855337079 -0700
 @@ -95,7 +95,7 @@ make install
  The installed ROCdbgapi library and documentation will be placed in:
  

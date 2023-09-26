@@ -1,0 +1,30 @@
+diff -urp ROCm-Device-Libs-rocm-5.2.3.orig/cmake/OCL.cmake ROCm-Device-Libs-rocm-5.2.3/cmake/OCL.cmake
+--- ROCm-Device-Libs-rocm-5.2.3.orig/cmake/OCL.cmake	2022-04-21 11:06:40.000000000 -0700
++++ ROCm-Device-Libs-rocm-5.2.3/cmake/OCL.cmake	2023-09-25 11:24:13.495181967 -0700
+@@ -45,7 +45,7 @@ set (BC_EXT .bc)
+ set (LIB_SUFFIX ".lib${BC_EXT}")
+ set (STRIP_SUFFIX ".strip${BC_EXT}")
+ set (FINAL_SUFFIX "${BC_EXT}")
+-set (INSTALL_ROOT_SUFFIX "amdgcn/bitcode")
++set (INSTALL_ROOT_SUFFIX "@LIBDIR@/amdgcn/bitcode")
+ 
+ # Set `inc_options` to contain Clang command-line for include directories for
+ # current source directory.
+diff -urp ROCm-Device-Libs-rocm-5.2.3.orig/cmake/Packages.cmake ROCm-Device-Libs-rocm-5.2.3/cmake/Packages.cmake
+--- ROCm-Device-Libs-rocm-5.2.3.orig/cmake/Packages.cmake	2022-04-21 11:06:40.000000000 -0700
++++ ROCm-Device-Libs-rocm-5.2.3/cmake/Packages.cmake	2023-09-25 11:26:05.939180674 -0700
+@@ -1,4 +1,4 @@
+-set(PACKAGE_PREFIX lib/cmake/AMDDeviceLibs)
++set(PACKAGE_PREFIX @LIBDIR@/cmake/AMDDeviceLibs)
+ 
+ # Generate the build-tree package.
+ # We know the absolute path to the build tree, so we leave
+@@ -16,7 +16,7 @@ configure_file(AMDDeviceLibsConfig.cmake
+   @ONLY)
+ 
+ 
+-set(install_path_suffix "amdgcn/bitcode")
++set(install_path_suffix "@LIBDIR@/amdgcn/bitcode")
+ 
+ # Generate the install-tree package.
+ # We do not know the absolute path to the intall tree until we are installed,

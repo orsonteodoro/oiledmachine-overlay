@@ -25,7 +25,7 @@ DESCRIPTION="Radeon Open Compute Device Libraries"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test r4"
+IUSE="system-llvm test r5"
 RDEPEND="
 	!dev-libs/rocm-device-libs:0
 	!system-llvm? (
@@ -59,7 +59,7 @@ RESTRICT="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-test-bitcode-dir.patch"
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
 

@@ -1,34 +1,38 @@
---- a/ui/qt/qt.gni.orig	2023-07-20 20:41:25.032349300 -0700
-+++ b/ui/qt/qt.gni	2023-07-22 18:20:29.487794206 -0700
-@@ -9,12 +9,21 @@ import("//build/config/sysroot.gni")
+--- a/ui/qt/qt.gni.orig	2023-09-25 13:29:34.207095458 -0700
++++ b/ui/qt/qt.gni	2023-09-25 13:32:44.743093266 -0700
+@@ -9,17 +9,17 @@ import("//build/config/sysroot.gni")
  declare_args() {
    # TODO(https://crbug.com/1424435): Allow QT in MSAN builds once QT is
    # added to the instrumented libraries.
 -  use_qt = is_linux && !is_castos && !is_msan
 +  use_qt5 = is_linux && !is_castos && !is_msan
-+}
-+declare_args() {
-+  if(!use_sysroot && use_qt5) {
-+     moc_qt5_path = ""
-+  }
-+}
-+declare_args() {
-+  use_qt6 = use_qt5 && use_sysroot
- }
--
- declare_args() {
--  use_qt6 = use_qt && use_sysroot
-+  if(!use_sysroot && use_qt6) {
-+     moc_qt6_path = ""
-+  }
  }
  
- # use_qt6 => use_qt
+ declare_args() {
+-  if (!use_sysroot && use_qt) {
+-    moc_qt5_path = ""
++  if(!use_sysroot && use_qt5) {
++     moc_qt5_path = ""
+   }
+ }
+ 
+ declare_args() {
+-  use_qt6 = use_qt && use_sysroot
++  use_qt6 = use_qt5 && use_sysroot
+ }
+ 
+ declare_args() {
+@@ -28,5 +28,5 @@ declare_args() {
+   }
+ }
+ 
+-# use_qt6 => use_qt
 -assert(!use_qt6 || use_qt)
++# require one
 +assert(use_qt6 || use_qt5)
---- a/ui/linux/BUILD.gn.orig	2023-07-20 20:41:24.952343200 -0700
-+++ b/ui/linux/BUILD.gn	2023-07-22 16:26:39.551616316 -0700
-@@ -63,7 +63,7 @@ component("linux_ui_factory") {
+--- a/ui/linux/BUILD.gn.orig	2023-09-21 13:09:50.443904400 -0700
++++ b/ui/linux/BUILD.gn	2023-09-25 13:29:34.207095458 -0700
+@@ -64,7 +64,7 @@ component("linux_ui_factory") {
      # This is the only component that can interact with gtk.
      deps += [ "//ui/gtk" ]
    }
@@ -37,9 +41,9 @@
      deps += [ "//ui/qt" ]
    }
  }
---- a/ui/base/BUILD.gn.orig	2023-07-20 20:41:24.532311700 -0700
-+++ b/ui/base/BUILD.gn	2023-07-22 16:25:49.631615016 -0700
-@@ -99,7 +99,8 @@ buildflag_header("buildflags") {
+--- a/ui/base/BUILD.gn.orig	2023-09-21 13:09:49.791858400 -0700
++++ b/ui/base/BUILD.gn	2023-09-25 13:29:34.207095458 -0700
+@@ -100,7 +100,8 @@ buildflag_header("buildflags") {
      "HAS_NATIVE_ACCESSIBILITY=$has_native_accessibility",
      "HAS_PLATFORM_ACCESSIBILITY_SUPPORT=$has_platform_accessibility_support",
      "USE_GTK=$use_gtk",
@@ -49,9 +53,9 @@
    ]
  }
  
---- a/ui/linux/linux_ui_factory.cc.orig	2023-07-20 20:41:24.952343200 -0700
-+++ b/ui/linux/linux_ui_factory.cc	2023-07-22 16:27:53.951618254 -0700
-@@ -21,7 +21,7 @@
+--- a/ui/linux/linux_ui_factory.cc.orig	2023-09-21 13:09:50.443904400 -0700
++++ b/ui/linux/linux_ui_factory.cc	2023-09-25 13:29:34.207095458 -0700
+@@ -22,7 +22,7 @@
  #if BUILDFLAG(USE_GTK)
  #include "ui/gtk/gtk_ui_factory.h"
  #endif
@@ -60,7 +64,7 @@
  #include "ui/qt/qt_ui.h"
  #endif
  
-@@ -58,7 +58,7 @@ std::unique_ptr<LinuxUiAndTheme> CreateQ
+@@ -65,7 +65,7 @@ std::unique_ptr<LinuxUiAndTheme> CreateQ
    if (!base::FeatureList::IsEnabled(kAllowQt)) {
      return nullptr;
    }
@@ -68,11 +72,11 @@
 +#if BUILDFLAG(USE_QT5) || BUILDFLAG(USE_QT6)
    auto qt_ui = qt::CreateQtUi(GetGtkUi());
    if (qt_ui->Initialize()) {
-     return qt_ui;
---- a/ui/qt/BUILD.gn.orig	2023-07-20 20:41:25.032349300 -0700
-+++ b/ui/qt/BUILD.gn	2023-07-22 19:44:24.375925342 -0700
-@@ -7,7 +7,7 @@ import("//build/config/linux/pkg_config.
- import("//build/config/sysroot.gni")
+     GetLinuxUiThemesImpl().push_back(qt_ui.get());
+--- a/ui/qt/BUILD.gn.orig	2023-09-21 13:09:50.547911600 -0700
++++ b/ui/qt/BUILD.gn	2023-09-25 13:41:39.715087112 -0700
+@@ -8,7 +8,7 @@ import("//build/config/sysroot.gni")
+ import("//printing/buildflags/buildflags.gni")
  import("//ui/qt/qt.gni")
  
 -assert(use_qt)
@@ -80,65 +84,25 @@
  assert(is_linux)
  assert(!is_castos)
  
-@@ -40,16 +40,19 @@ source_set("qt_interface") {
-   sources = [ "qt_interface.cc" ]
- }
- 
--if (!use_sysroot) {
--  action("generate_moc") {
--    script = "moc_wrapper.py"
--    inputs = [ "//ui/qt/qt_shim.h" ]
--    outputs = [ "$root_gen_dir/qt_shim_moc.cc" ]
--    args = rebase_path(inputs + outputs, root_build_dir)
-+template("qt_shim") {
-+  if (!use_sysroot) {
-+    action("generate_moc" + invoker.qt_version) {
-+      script = "moc_wrapper.py"
-+      inputs = [ "//ui/qt/qt_shim.h" ]
-+      outputs = [ "$root_gen_dir/qt" + invoker.qt_version + "/qt_shim_moc.cc" ]
-+      args = rebase_path(inputs + outputs, root_build_dir)
-+      if (invoker.moc_qt_path != "") {
-+        args += [ "--path", invoker.moc_qt_path ]
-+      }
-+    }
-   }
--}
- 
--template("qt_shim") {
-   pkg_config("qt" + invoker.qt_version + "_config") {
-     packages = [
-       "Qt" + invoker.qt_version + "Core",
-@@ -89,17 +92,25 @@ template("qt_shim") {
-       # avoid a build-time dependency on `moc` when using the sysroot.
-       sources += [ "qt" + invoker.qt_version + "_shim_moc.cc" ]
-     } else {
--      sources += get_target_outputs(":generate_moc")
--      deps += [ ":generate_moc" ]
-+      sources += get_target_outputs(":generate_moc" + invoker.qt_version)
-+      deps += [ ":generate_moc" + invoker.qt_version ]
+@@ -101,10 +101,13 @@ template("qt_shim") {
      }
    }
  }
 -qt_shim("qt5_shim") {
 -  qt_version = "5"
+-  if (!use_sysroot) {
+-    moc_qt_path = "$moc_qt5_path"
++assert(use_qt5 || use_qt6)
 +if (use_qt5) {
 +  qt_shim("qt5_shim") {
 +    qt_version = "5"
 +    if (!use_sysroot) {
 +      moc_qt_path = "$moc_qt5_path"
 +    }
-+  }
- }
- if (use_qt6) {
-   qt_shim("qt6_shim") {
-     qt_version = "6"
-+    if (!use_sysroot) {
-+      moc_qt_path = "$moc_qt6_path"
-+    }
    }
  }
- 
-@@ -109,7 +120,10 @@ component("qt") {
+ if (use_qt6) {
+@@ -122,7 +125,10 @@ component("qt") {
    defines = [ "IS_QT_IMPL" ]
  
    # qt_shim is in data_deps since we want to load it manually.
@@ -150,28 +114,3 @@
    if (use_qt6) {
      data_deps += [ ":qt6_shim" ]
    }
---- a/ui/qt/moc_wrapper.py.orig	2023-06-28 09:42:06.614272800 -0700
-+++ b/ui/qt/moc_wrapper.py	2023-07-05 19:49:03.986481674 -0700
-@@ -3,8 +3,20 @@
- # Use of this source code is governed by a BSD-style license that can be
- # found in the LICENSE file.
- 
-+import argparse
- import subprocess
--import sys
- 
-+parser = argparse.ArgumentParser()
-+parser.add_argument(
-+    'input', type=str, help='Input header file.')
-+parser.add_argument(
-+    'output', type=str, help='Output file.')
-+parser.add_argument(
-+    '--path', required=False, type=str, default=None,
-+    help='Path to moc binary.')
-+args = parser.parse_args()
- 
--subprocess.check_call(["moc", sys.argv[1], "-o", sys.argv[2]])
-+if args.path is None:
-+    subprocess.check_call(["moc", args.input, "-o", args.output])
-+else:
-+    subprocess.check_call([args.path + "/moc", args.input, "-o", args.output])

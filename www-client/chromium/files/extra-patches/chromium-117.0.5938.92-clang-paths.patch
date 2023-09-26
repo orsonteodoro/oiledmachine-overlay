@@ -1,0 +1,77 @@
+diff -u b/build/config/clang/BUILD.gn b/build/config/clang/BUILD.gn
+--- b/build/config/clang/BUILD.gn	2023-09-25 17:31:39.230928378 -0700
++++ b/build/config/clang/BUILD.gn	2023-09-25 18:29:06.454888726 -0700
+@@ -116,14 +116,15 @@
+       } else if (is_apple) {
+         _dir = "darwin"
+       } else if (is_linux || is_chromeos) {
++        _dir = "linux"
+         if (current_cpu == "x64") {
+-          _dir = "x86_64-unknown-linux-gnu"
++          _suffix = "-x86_64"
+         } else if (current_cpu == "x86") {
+-          _dir = "i386-unknown-linux-gnu"
+-        } else if (current_cpu == "arm") {
+-          _dir = "armv7-unknown-linux-gnueabihf"
++          _suffix = "-i386"
+         } else if (current_cpu == "arm64") {
+-          _dir = "aarch64-unknown-linux-gnu"
++          _suffix = "-aarch64"
++        } else if (current_cpu == "ppc64") {
++          _suffix = "-powerpc64"
+         } else {
+           assert(false)  # Unhandled cpu type
+         }
+@@ -154,7 +155,7 @@
+         assert(false)  # Unhandled target platform
+       }
+ 
+-      _clang_lib_dir = "$clang_base_path/lib/clang/$clang_version/lib"
++      _clang_lib_dir = "$clang_base_path/../../clang/$clang_version/lib"
+       _lib_file = "${_prefix}clang_rt.${_libname}${_suffix}.${_ext}"
+       libs = [ "$_clang_lib_dir/$_dir/$_lib_file" ]
+     }
+unchanged:
+--- a/build/rust/rust_bindgen.gni.orig	2023-09-21 13:08:21.529632000 -0700
++++ b/build/rust/rust_bindgen.gni	2023-09-25 17:44:24.390919577 -0700
+@@ -97,7 +97,7 @@ template("rust_bindgen") {
+       # point to.
+       args += [
+         "--ld-library-path",
+-        rebase_path(clang_base_path + "/lib", root_build_dir),
++        rebase_path(clang_base_path + "/" + llvm_libdir, root_build_dir),
+       ]
+     }
+ 
+@@ -125,7 +125,7 @@ template("rust_bindgen") {
+     # make it behave consistently with our other command line flags and allows
+     # system headers to be found.
+     clang_resource_dir =
+-        rebase_path(clang_base_path + "/lib/clang/" + clang_version,
++        rebase_path(clang_base_path + "/../../clang/" + clang_version,
+                     root_build_dir)
+     args += [
+       "-resource-dir",
+unchanged:
+--- a/build/rust/rs_bindings_from_cc.gni.orig	2023-09-21 13:08:21.529632000 -0700
++++ b/build/rust/rs_bindings_from_cc.gni	2023-09-25 17:36:14.462925213 -0700
+@@ -287,7 +287,7 @@ template("rs_bindings_from_cc") {
+       #
+       # Add it last so includes from deps and configs take precedence.
+       "-isystem" + rebase_path(
+-              clang_base_path + "/lib/clang/" + clang_version + "/include",
++              clang_base_path + "/../../clang/" + clang_version + "/include",
+               root_build_dir),
+ 
+       # Passes C comments through as rustdoc attributes.
+unchanged:
+--- a/build/toolchain/toolchain.gni.orig	2023-09-25 17:39:21.162923065 -0700
++++ b/build/toolchain/toolchain.gni	2023-09-25 17:41:52.122921328 -0700
+@@ -39,6 +39,7 @@ if (generate_linker_map) {
+ 
+ declare_args() {
+   clang_version = "18"
++  llvm_libdir = "lib64" # /usr/lib/llvm/18/lib64, the 6 component with / as delimiter.
+ }
+ 
+ # Extension for shared library files (including leading dot).

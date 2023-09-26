@@ -73,6 +73,7 @@ REQUIRED_USE="
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
+	app-eselect/eselect-rocm
 	dev-util/hip-compiler[system-llvm=]
 	virtual/opengl
 	cuda? (

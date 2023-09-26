@@ -1,6 +1,6 @@
 diff -urp hipfort-rocm-5.2.3.orig/bin/hipfc hipfort-rocm-5.2.3/bin/hipfc
 --- hipfort-rocm-5.2.3.orig/bin/hipfc	2022-04-22 23:08:56.000000000 -0700
-+++ hipfort-rocm-5.2.3/bin/hipfc	2023-09-24 22:22:11.663721702 -0700
++++ hipfort-rocm-5.2.3/bin/hipfc	2023-09-25 07:45:13.267333117 -0700
 @@ -61,8 +61,8 @@ function usage(){
     Options with values:       Defaults  
      -hipfort-compiler <bin>   $HIPFORT_COMPILER or gfortran
@@ -74,10 +74,9 @@ diff -urp hipfort-rocm-5.2.3.orig/bin/hipfc hipfort-rocm-5.2.3/bin/hipfc
     for lib in $ROCM_LIBS; do
       addrocmlib $lib
     done
-Only in hipfort-rocm-5.2.3/bin: hipfc.orig
 diff -urp hipfort-rocm-5.2.3.orig/bin/Makefile.hipfort hipfort-rocm-5.2.3/bin/Makefile.hipfort
 --- hipfort-rocm-5.2.3.orig/bin/Makefile.hipfort	2022-04-22 23:08:56.000000000 -0700
-+++ hipfort-rocm-5.2.3/bin/Makefile.hipfort	2023-09-24 22:21:07.855722436 -0700
++++ hipfort-rocm-5.2.3/bin/Makefile.hipfort	2023-09-25 07:45:13.267333117 -0700
 @@ -6,7 +6,7 @@
  # This file is meant to be included by other Makefiles.  The includer must 
  # set HIPFORT_HOME to the build or install location of HIPFORT.  For example:
@@ -118,7 +117,7 @@ diff -urp hipfort-rocm-5.2.3.orig/bin/Makefile.hipfort hipfort-rocm-5.2.3/bin/Ma
  endif
 diff -urp hipfort-rocm-5.2.3.orig/cmake/Modules/rocm-cmake.cmake hipfort-rocm-5.2.3/cmake/Modules/rocm-cmake.cmake
 --- hipfort-rocm-5.2.3.orig/cmake/Modules/rocm-cmake.cmake	2022-04-22 23:08:56.000000000 -0700
-+++ hipfort-rocm-5.2.3/cmake/Modules/rocm-cmake.cmake	2023-09-24 22:21:07.855722436 -0700
++++ hipfort-rocm-5.2.3/cmake/Modules/rocm-cmake.cmake	2023-09-25 07:45:13.267333117 -0700
 @@ -1,5 +1,5 @@
  # Find or download/install rocm-cmake project
 -find_package(ROCM QUIET CONFIG PATHS /opt/rocm)
@@ -127,8 +126,8 @@ diff -urp hipfort-rocm-5.2.3.orig/cmake/Modules/rocm-cmake.cmake hipfort-rocm-5.
    set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
    file(
 diff -urp hipfort-rocm-5.2.3.orig/CMakeLists.txt hipfort-rocm-5.2.3/CMakeLists.txt
---- hipfort-rocm-5.2.3.orig/CMakeLists.txt	2023-09-24 22:20:51.827722620 -0700
-+++ hipfort-rocm-5.2.3/CMakeLists.txt	2023-09-24 22:21:07.855722436 -0700
+--- hipfort-rocm-5.2.3.orig/CMakeLists.txt	2023-09-25 07:44:31.223333601 -0700
++++ hipfort-rocm-5.2.3/CMakeLists.txt	2023-09-25 07:45:13.267333117 -0700
 @@ -17,7 +17,7 @@ IF(CMAKE_INSTALL_PREFIX)
    set(HIPFORT_INSTALL_DIR ${CMAKE_INSTALL_PREFIX})
  ELSE()
@@ -153,21 +152,37 @@ diff -urp hipfort-rocm-5.2.3.orig/CMakeLists.txt hipfort-rocm-5.2.3/CMakeLists.t
  message("-- CMAKE_INSTALL_PREFIX:${CMAKE_INSTALL_PREFIX}")
  
  INCLUDE(FortranCInterface)
-Only in hipfort-rocm-5.2.3: CMakeLists.txt.orig
-Only in hipfort-rocm-5.2.3: CMakeLists.txt.rej
 diff -urp hipfort-rocm-5.2.3.orig/lib/CMakeLists.txt hipfort-rocm-5.2.3/lib/CMakeLists.txt
 --- hipfort-rocm-5.2.3.orig/lib/CMakeLists.txt	2022-04-22 23:08:56.000000000 -0700
-+++ hipfort-rocm-5.2.3/lib/CMakeLists.txt	2023-09-24 22:21:07.855722436 -0700
-@@ -45,4 +45,4 @@ set(HIPFORT_ARCH "nvptx")
++++ hipfort-rocm-5.2.3/lib/CMakeLists.txt	2023-09-25 07:46:55.059331946 -0700
+@@ -21,8 +21,8 @@ set(HIPFORT_ARCH "amdgcn")
+     ENDIF(CMAKE_Fortran_COMPILER_SUPPORTS_F08)
+     target_compile_definitions(${HIPFORT_LIB} PRIVATE _HIPFORT_ARCH='${HIPFORT_ARCH}')
+     install(TARGETS ${HIPFORT_LIB} 
+-            ARCHIVE DESTINATION lib
+-            LIBRARY DESTINATION lib)
++            ARCHIVE DESTINATION @LIBDIR@
++            LIBRARY DESTINATION @LIBDIR@)
+ 
+ set(HIPFORT_ARCH "nvptx")
+     # nvptx
+@@ -39,10 +39,10 @@ set(HIPFORT_ARCH "nvptx")
+     target_compile_definitions(${HIPFORT_LIB} PRIVATE USE_CUDA_NAMES)
+     target_compile_definitions(${HIPFORT_LIB} PRIVATE _HIPFORT_ARCH='${HIPFORT_ARCH}')
+     install(TARGETS ${HIPFORT_LIB} 
+-            ARCHIVE DESTINATION lib
+-            LIBRARY DESTINATION lib)
++            ARCHIVE DESTINATION @LIBDIR@
++            LIBRARY DESTINATION @LIBDIR@)
+    
  install(DIRECTORY ${CMAKE_BINARY_DIR}/include/hipfort DESTINATION include)
  
  #   target_link_libraries(${HIPFORT_LIB} PUBLIC 
 -#   /usr/local/cuda/targets/x86_64-linux/lib/libcudart_static.a)
-+#   /opt/cuda/targets/x86_64-linux/lib/libcudart_static.a)
-Only in hipfort-rocm-5.2.3/lib: CMakeLists.txt.orig
++#   @EPREFIX@/opt/cuda/targets/x86_64-linux/lib/libcudart_static.a)
 diff -urp hipfort-rocm-5.2.3.orig/README.md hipfort-rocm-5.2.3/README.md
 --- hipfort-rocm-5.2.3.orig/README.md	2022-04-22 23:08:56.000000000 -0700
-+++ hipfort-rocm-5.2.3/README.md	2023-09-24 22:21:07.855722436 -0700
++++ hipfort-rocm-5.2.3/README.md	2023-09-25 07:45:13.267333117 -0700
 @@ -131,8 +131,8 @@ Among the environment variables, the mos
  | Variable | Description | Default |
  |---|---|---|

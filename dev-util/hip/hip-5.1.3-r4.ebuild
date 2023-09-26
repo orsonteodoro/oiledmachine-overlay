@@ -36,7 +36,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm system-llvm test r20"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm system-llvm test r21"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -80,6 +80,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
+	app-eselect/eselect-rocm
 	dev-util/hip-compiler[system-llvm=]
 	virtual/opengl
 	cuda? (
