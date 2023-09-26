@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the ROCm multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20230925"
+VERSION="20230926"
 PN="rocm"
 
 find_rocm_slots() {
@@ -187,4 +187,19 @@ do_set() {
     else
         set_symlink "$1" || die -q "Couldn't set a new symlink"
     fi
+}
+
+### remove action
+
+describe_remove() {
+    echo "Remove symlinks"
+}
+
+do_remove() {
+    for x in $(find /usr/bin/ -maxdepth 1 -type l) ; do
+        local path=$(realpath "${x}" 2>/dev/null)
+        if echo "${path}" | grep -q "/rocm/" ; then
+            rm -vf "${x}"
+        fi
+    done
 }
