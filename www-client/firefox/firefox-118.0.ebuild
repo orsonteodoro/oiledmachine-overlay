@@ -406,12 +406,12 @@ REQUIRED_USE="
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/118.0/system-requirements/
+# https://www.mozilla.org/en-US/firefox/117.0.1/system-requirements/
 # /var/tmp/portage/www-client/firefox-118.0/work/firefox-118.0/moz.configure
 #   perl L589
 # /var/tmp/portage/www-client/firefox-118.0/work/firefox-118.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
 # /var/tmp/portage/www-client/firefox-118.0/work/firefox-118.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-118.0/work/firefox-118.0/gfx/graphite2/include/graphite2/Font.h L31 omt
+# /var/tmp/portage/www-client/firefox-118.0/work/firefox-118.0/gfx/graphite2/include/graphite2/Font.h L31
 # /var/tmp/portage/www-client/firefox-118.0/work/firefox-118.0/gfx/harfbuzz/configure.ac L3
 # /var/tmp/portage/www-client/firefox-118.0/work/firefox-118.0/intl/icu/source/common/unicode/uvernum.h L63
 # /var/tmp/portage/www-client/firefox-118.0/work/firefox-118.0/ipc/chromium/src/third_party/libevent/configure.ac L8

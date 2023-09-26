@@ -406,7 +406,7 @@ REQUIRED_USE="
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/115.3.0/system-requirements/
+# https://www.mozilla.org/en-US/firefox/117.0.1/system-requirements/
 # /var/tmp/portage/www-client/firefox-115.3.0e/work/firefox-115.3.0/moz.configure
 #   perl L589
 # /var/tmp/portage/www-client/firefox-115.3.0e/work/firefox-115.3.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
