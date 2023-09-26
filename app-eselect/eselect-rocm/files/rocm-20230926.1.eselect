@@ -5,12 +5,13 @@
 
 DESCRIPTION="Manages the ROCm multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20230926"
+VERSION="20230926.1"
 PN="rocm"
+EPREFIX="@EPREFIX@"
 
 find_rocm_slots() {
 	local L=(
-		$(realpath /usr/*/rocm/* 2>/dev/null)
+		$(realpath "${EPREFIX}/usr/"*"/rocm/"* 2>/dev/null)
 	)
 	echo ${L[@]##*/} | tr " " "\n"
 }
@@ -18,7 +19,7 @@ find_rocm_slots() {
 # remove the ROCm symlinks
 remove_symlinks() {
     IFS=$'\n'
-    for x in $(ls /usr/*/rocm/*/bin/*) ; do
+    for x in $(ls "${EPREFIX}/usr/"*"/rocm/"*"/bin/"*) ; do
         if [[ -e "/usr/bin/${x}" ]] ; then
             rm -f "/usr/bin/${x}"
         fi
@@ -59,10 +60,10 @@ set_symlink() {
 
         cd /usr/bin
         IFS=$'\n'
-        for x in $(ls /usr/*/rocm/${slot}/bin/*) ; do
+        for x in $(ls "${EPREFIX}/usr/"*"/rocm/${slot}/bin/"*) ; do
             local bn=$(basename "${x}")
             is_blacklisted_exe "${bn}" && continue
-            local src=$(realpath /usr/*/rocm/${slot}/bin/${bn})
+            local src=$(realpath "${EPREFIX}/usr/"*"/rocm/${slot}/bin/${bn}")
             ln -sf "${src}" "/usr/bin/${bn}"
         done
         IFS=$' \t\n'
@@ -71,10 +72,10 @@ set_symlink() {
 
         cd /usr/bin
         IFS=$'\n'
-        for x in $(ls /usr/*/rocm/${slot}/bin/*) ; do
+        for x in $(ls "${EPREFIX}/usr/"*"/rocm/${slot}/bin/"*) ; do
             local bn=$(basename "${x}")
             is_blacklisted_exe "${bn}" && continue
-            local src=$(realpath /usr/*/rocm/${slot}/bin/${bn})
+            local src=$(realpath "${EPREFIX}/usr/"*"/rocm/${slot}/bin/${bn}")
             ln -sf "${src}" "/usr/bin/${bn}"
         done
         IFS=$' \t\n'
@@ -105,14 +106,14 @@ do_show() {
     for rocm_slot in ${rocm_slots[@]} ; do
         if [[ -L "/usr/bin/hipcc" ]] ; then
             local x=$(realpath "/usr/bin/hipcc")
-            x=$(dirname "${x}") # /usr/lib64/rocm/5.5/bin
-            x=$(dirname "${x}") # /usr/lib64/rocm/5.5
+            x=$(dirname "${x}") # ${EPREFIX}/usr/@LIBDIR@/rocm/5.5/bin
+            x=$(dirname "${x}") # ${EPREFIX}/usr/@LIBDIR@/rocm/5.5
             x=$(basename "${x}") # 5.5
             target="${x}"
         fi
     done
     IFS=$'\n'
-    for x in $(ls /usr/*/rocm/${target}/bin/* 2>/dev/null) ; do
+    for x in $(ls "${EPREFIX}/usr/"*"/rocm/${target}/bin/"* 2>/dev/null) ; do
         local bn=$(basename "${x}")
         found=1
         local k_hipcc_src="/usr/bin/${bn}"

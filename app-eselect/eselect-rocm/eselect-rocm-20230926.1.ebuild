@@ -16,7 +16,16 @@ IUSE+=" r1"
 src_unpack() {
 	default
 	mkdir -p "${S}" || die
-	cat "${FILESDIR}/rocm-${PVR}.eselect" > "${S}/rocm.eselect" || die
+	cat \
+		"${FILESDIR}/rocm-${PVR}.eselect" \
+		> \
+		"${S}/rocm.eselect" \
+		|| die
+	sed -i \
+		-e "s|@EPREFIX@|${EPREFIX}|g" \
+		-e "s|@LIBDIR@|$(get_libdir)|g" \
+		"${S}/rocm.eselect" \
+		|| die
 }
 
 src_install() {
