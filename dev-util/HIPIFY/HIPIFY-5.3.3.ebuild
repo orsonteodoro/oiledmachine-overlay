@@ -94,7 +94,9 @@ PATCHES=(
 pkg_setup() {
 	if ! use test ; then
 		:;
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
+		LLVM_MAX_VERSION=14
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=sys-devel/llvm-13*" ; then
 		LLVM_MAX_VERSION=13
 	fi
 	llvm_pkg_setup

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake llvm rocm
@@ -36,26 +36,12 @@ gen_llvm_rdepend() {
 		)
 	"
 }
-# https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.5.1#-hipify-clang-dependencies
+# https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.3.3#-hipify-clang-dependencies
 TEST_BDEPEND="
 	|| (
 		(
-			=dev-util/nvidia-cuda-toolkit-12.0*:=
+			=dev-util/nvidia-cuda-toolkit-11.7*:=
 			|| (
-				$(gen_llvm_rdepend 17.0.0.9999)
-			)
-		)
-		(
-			=dev-util/nvidia-cuda-toolkit-11.8*:=
-			|| (
-				$(gen_llvm_rdepend 15.0.7)
-				$(gen_llvm_rdepend 15.0.6)
-				$(gen_llvm_rdepend 15.0.5)
-				$(gen_llvm_rdepend 15.0.4)
-				$(gen_llvm_rdepend 15.0.3)
-				$(gen_llvm_rdepend 15.0.2)
-				$(gen_llvm_rdepend 15.0.1)
-				$(gen_llvm_rdepend 15.0.0)
 				$(gen_llvm_rdepend 14.0.6)
 				$(gen_llvm_rdepend 14.0.5)
 				(
@@ -101,29 +87,17 @@ RESTRICT="
 	test
 "
 PATCHES=(
-	"${FILESDIR}/HIPIFY-5.6.0-llvm-dynlib-on.patch"
-	"${FILESDIR}/HIPIFY-5.5.1-path-changes.patch"
+	"${FILESDIR}/HIPIFY-5.1.3-llvm-dynlib-on.patch"
+	"${FILESDIR}/HIPIFY-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {
 	if ! use test ; then
 		:;
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.0*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
-ewarn "CUDA 12 support is experimental"
-		LLVM_MAX_VERSION=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-15*" && has_version "=sys-devel/llvm-15*" ; then
-		LLVM_MAX_VERSION=15
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
-		LLVM_MAX_VERSION=14
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
-		LLVM_MAX_VERSION=14
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=sys-devel/llvm-13*" ; then
 		LLVM_MAX_VERSION=13
 	fi
 	llvm_pkg_setup
-	if has_version "=dev-util/nvidia-cuda-toolkit-12.0*" ; then
-ewarn "CUDA 12 is experimental."
-	fi
 	rocm_pkg_setup
 }
 

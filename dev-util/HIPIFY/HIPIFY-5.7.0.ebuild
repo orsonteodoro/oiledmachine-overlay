@@ -115,19 +115,20 @@ PATCHES=(
 pkg_setup() {
 	if ! use test ; then
 		:;
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.1*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
 		LLVM_MAX_VERSION=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.1*" && has_version "=sys-devel/clang-16*" && has_version "=sys-devel/llvm-16*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-16*" && has_version "=sys-devel/llvm-16*" ; then
 		LLVM_MAX_VERSION=16
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-15*" && has_version "=sys-devel/llvm-15*" ; then
 		LLVM_MAX_VERSION=15
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
 		LLVM_MAX_VERSION=14
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
+		LLVM_MAX_VERSION=14
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=sys-devel/llvm-13*" ; then
+		LLVM_MAX_VERSION=13
 	fi
 	llvm_pkg_setup
-	if has_version "=dev-util/nvidia-cuda-toolkit-12.1*" ; then
-ewarn "CUDA 12 is experimental."
-	fi
 	rocm_pkg_setup
 }
 
