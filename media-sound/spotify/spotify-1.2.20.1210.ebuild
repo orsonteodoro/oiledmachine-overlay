@@ -24,21 +24,21 @@ EAPI=8
 #
 
 # For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/112.0.5615.165/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
-# https://github.com/chromium/chromium/blob/112.0.5615.165/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/115.0.5790.171/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/115.0.5790.171/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/115.0.5790.171/tools/clang/scripts/update.py#L42
 
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/112.0.5615.165/third_party/zlib/zlib.h#L40
-# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-112.0.5615.165/work/chromium-112.0.5615.165/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# https://github.com/chromium/chromium/blob/115.0.5790.171/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/115.0.5790.171/third_party/zlib/zlib.h#L40
+# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/ffmpeg/libavformat/version*.h            ; do not use
 
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
 
@@ -46,7 +46,8 @@ DESCRIPTION="A social music platform"
 HOMEPAGE="https://www.spotify.com"
 LICENSE="Spotify BSD"
 KEYWORDS="~amd64"
-SLOT="0/stable"
+DEFAULT_CONFIGURATION="testing"
+SLOT="0/${DEFAULT_CONFIGURATION}"
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
 # is already EOL.  Use the web version instead for the secure version.
@@ -75,7 +76,7 @@ REQUIRED_USE+="
 "
 RESTRICT="mirror strip"
 
-# Support based on (20.04) LTS mainly but older LTSs may be supported.
+# Support based on D 10 with U 16.04 LTS as the fallback.
 
 # Found in Recommends: section of stable requirements.
 # For ffmpeg:0/x.y.z, y must be <= 59.
@@ -85,7 +86,7 @@ CAIRO_PV="1.16.0"
 CLANG_PV="17"
 FFMPEG_SLOT="0/57.59.59" # Same as 5.1 in chromium tarball [do not use]
 FONTCONFIG_PV="2.14.2"
-FREETYPE_PV="2.13.0"
+FREETYPE_PV="2.10.4"
 GCC_PV="10.2.1"
 GLIB_PV="2.66.8"
 GLIBC_PV="2.31"
@@ -97,13 +98,13 @@ NSS_PV="3.61"
 MESA_PV="20.3.5"
 
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
-# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
+# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
 		<media-video/ffmpeg-5
 	)
 	libnotify? (
-		>=x11-libs/libnotify-0.7.9
+		>=x11-libs/libnotify-0.7.6
 	)
 "
 
@@ -124,7 +125,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 		>=media-sound/pulseaudio-14.2
 	)
 	vaapi? (
-		>=media-libs/libva-2.14.0[drm(+),wayland?,X?]
+		>=media-libs/libva-2.17.0[drm(+),wayland?,X?]
 		media-libs/vaapi-drivers
 	)
 	zenity? (
@@ -139,7 +140,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # U >=16.04 LTS assumed, supported only in CEF
 
 # For details see:
-# https://github.com/chromium/chromium/blob/112.0.5615.165/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/115.0.5790.171/build/install-build-deps.sh#L237
 
 # The version is obtained in src_prepare
 
@@ -160,7 +161,7 @@ CHROMIUM_CDEPEND="
 	>=sys-libs/pam-1.4.0
 	>=x11-libs/cairo-${CAIRO_PV}
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
-	>=x11-libs/libdrm-2.4.114
+	>=x11-libs/libdrm-2.4.104
 	wayland? (
 		>=dev-libs/wayland-1.18.0:=
 	)
@@ -179,7 +180,7 @@ UNLISTED_RDEPEND="
 	>=dev-libs/libtasn1-4.16.0
 	>=dev-libs/libunistring-0.9.10
 	>=dev-libs/nettle-3.7.3
-	>=media-libs/harfbuzz-5.3.1
+	>=media-libs/harfbuzz-2.7.4
 	>=media-libs/libglvnd-1.3.2
 "
 
@@ -193,7 +194,7 @@ UNLISTED_RDEPEND="
 #"
 
 #UNLISTED_SP_RDEPEND_DROPPED="
-#	>=x11-libs/libxshmfence-1.3
+#	>=x11-libs/libxshmfence-1.2
 #
 
 OPTIONAL_RDEPEND="
@@ -207,7 +208,7 @@ CHROMIUM_RDEPEND="
 	${UNLISTED_RDEPEND}
 	>=dev-libs/atk-${ATK_PV}
 	>=dev-libs/expat-2.2.10
-	>=dev-libs/libpcre-8.39
+	>=dev-libs/libpcre-10.36
 	>=dev-libs/nspr-4.29
 	>=media-libs/fontconfig-${FONTCONFIG_PV}
 	>=media-libs/freetype-${FREETYPE_PV}
@@ -253,19 +254,20 @@ RDEPEND+="
 
 # gcc contains libatomic.so.1
 # mesa contains libgbm.so.1
-# Sourced from http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
+# Sourced from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 RDEPEND+="
 	${OPTIONAL_RDEPENDS_LISTED}
 	${OPTIONAL_RDEPENDS_UNLISTED}
 	>=dev-libs/atk-${ATK_PV}
 	>=dev-libs/glib-${GLIB_PV}:2
+	>=dev-libs/libayatana-appindicator-0.5.3
 	>=dev-libs/nss-${NSS_PV}
 	>=gnome-base/gconf-3.2.6
 	>=media-libs/alsa-lib-${ALSA_LIB}
 	>=media-libs/mesa-${MESA_PV}[wayland?,X?]
-	>=net-misc/curl-7.85.0[ssl,gnutls]
+	>=net-misc/curl-7.88.1[ssl,gnutls]
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
-	>=x11-misc/xdg-utils-1.1.3
+	>=x11-misc/xdg-utils-1.1.1
 	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/glibc-${GLIBC_PV}
 	X? (
@@ -275,6 +277,7 @@ RDEPEND+="
 	|| (
 		=dev-libs/openssl-3*:0/3
 		>=dev-libs/openssl-1.1.1n:0/1.1
+		~dev-libs/openssl-1.0.2:0
 	)
 "
 
@@ -333,7 +336,7 @@ SRC_URI+="
 if ! [[ ${PV} =~ 9999 ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="geb595a67"
+	BUILD_ID_AMD64="g2a8a8a57"
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
@@ -344,8 +347,8 @@ if ! [[ ${PV} =~ 9999 ]] ; then
 	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${PUBLIC_KEY_ID}"
 	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
 	SRC_URI+="
-		https://repository-origin.spotify.com/dists/stable/InRelease -> ${FN_INRELEASE}
-		https://repository-origin.spotify.com/dists/stable/non-free/binary-amd64/Packages -> ${FN_PACKAGES}
+		https://repository-origin.spotify.com/dists/${CONFIGURATION}/InRelease -> ${FN_INRELEASE}
+		https://repository-origin.spotify.com/dists/${CONFIGURATION}/non-free/binary-amd64/Packages -> ${FN_PACKAGES}
 		https://repository-origin.spotify.com/pool/non-free/s/spotify-client/${FN_CLIENT}
 	"
 fi
@@ -368,8 +371,8 @@ PUBKEY_BLAKE2B="\
 "
 
 EXPECTED_DEPENDS_FINGERPRINT="\
-326cfb97b1990013731281c4ca187f858c7ae3b266af14cddc3c77b05790fcba\
-02235a9e25e94978916e90192ec859eab67e2ec1cbd6785136af831058a09598\
+68aa0f7d5f1b944e59be1354b86b0353d18fc662beb7eb1b7af01f7473341dcd\
+63d61878bf15f39f0d132793741d027a69e66fffff3cf2efcb1bbd7c64d4ee0c\
 " # Packages fingerprint for client
 EXPECTED_CR_DEPENDS_FINGERPRINT="\
 27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
@@ -406,7 +409,7 @@ declare -A atabs=(
 pkg_setup() {
 	local configuration_desc
 	if [[ ${PV} =~ 9999 ]] ; then
-		CONFIGURATION="testing"
+		CONFIGURATION="${DEFAULT_CONFIGURATION}"
 		export FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease"
 		export FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
 	fi
@@ -579,7 +582,7 @@ eerror
 
 	(( ${external_key_check} == 0 )) && return 0
 
-	export _GNUPGHOME=$(mktemp -d)
+	export _GNUPGHOME=$(mktemp -d -p "${T}")
 	local pub_keyserver=${GPG_PUBLIC_KEYSERVER:-keys.gnupg.net}
 	local O
 	O=$(gpg \
@@ -597,6 +600,9 @@ eerror
 		--batch \
 		--homedir ${_GNUPGHOME} \
 		--list-keys "${KEY_ID}" 2>&1)
+echo "===================="
+echo "${O}"
+echo "===================="
 	if ! [[ "${O}" =~ "${KEY_ID}" && "${O}" =~ "${EXPECTED_UID}" ]] ; then
 eerror
 eerror "The public key's ID was not found."

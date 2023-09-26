@@ -46,7 +46,8 @@ DESCRIPTION="A social music platform"
 HOMEPAGE="https://www.spotify.com"
 LICENSE="Spotify BSD"
 KEYWORDS="~amd64"
-SLOT="0/testing"
+DEFAULT_CONFIGURATION="stable"
+SLOT="0/${DEFAULT_CONFIGURATION}"
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
 # is already EOL.  Use the web version instead for the secure version.
@@ -75,8 +76,9 @@ REQUIRED_USE+="
 "
 RESTRICT="mirror strip"
 
-# Support based on (20.04) LTS mainly but older LTSs may be supported.
-# Found in Recommends: section of stable requirements.
+# Support based on D 10 with U 16.04 LTS as the fallback.
+
+# Found in Recommends: section of testing requirements.
 # For ffmpeg:0/x.y.z, y must be <= 58.
 ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
@@ -96,7 +98,7 @@ NSS_PV="3.61"
 MESA_PV="20.3.5"
 
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
-# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
+# <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
 OPTIONAL_RDEPENDS_LISTED="
 	ffmpeg? (
 		<media-video/ffmpeg-5
@@ -332,7 +334,7 @@ SRC_URI+="
 if ! [[ ${PV} =~ 9999 ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="ga588f749"
+	BUILD_ID_AMD64="g9b38fc27"
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
@@ -343,8 +345,8 @@ if ! [[ ${PV} =~ 9999 ]] ; then
 	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${PUBLIC_KEY_ID}"
 	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
 	SRC_URI+="
-		https://repository-origin.spotify.com/dists/stable/InRelease -> ${FN_INRELEASE}
-		https://repository-origin.spotify.com/dists/stable/non-free/binary-amd64/Packages -> ${FN_PACKAGES}
+		https://repository-origin.spotify.com/dists/${CONFIGURATION}/InRelease -> ${FN_INRELEASE}
+		https://repository-origin.spotify.com/dists/${CONFIGURATION}/non-free/binary-amd64/Packages -> ${FN_PACKAGES}
 		https://repository-origin.spotify.com/pool/non-free/s/spotify-client/${FN_CLIENT}
 	"
 fi
@@ -405,7 +407,7 @@ declare -A atabs=(
 pkg_setup() {
 	local configuration_desc
 	if [[ ${PV} =~ 9999 ]] ; then
-		CONFIGURATION="stable"
+		CONFIGURATION="${DEFAULT_CONFIGURATION}"
 		export FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease"
 		export FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
 	fi
@@ -578,7 +580,7 @@ eerror
 
 	(( ${external_key_check} == 0 )) && return 0
 
-	export _GNUPGHOME=$(mktemp -d)
+	export _GNUPGHOME=$(mktemp -d -p "${T}")
 	local pub_keyserver=${GPG_PUBLIC_KEYSERVER:-keys.gnupg.net}
 	local O
 	O=$(gpg \
