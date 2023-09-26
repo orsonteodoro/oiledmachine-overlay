@@ -1,6 +1,108 @@
-diff -urp ROCgdb-rocm-5.6.0.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.6.0/gdb/testsuite/lib/rocm.exp
---- ROCgdb-rocm-5.6.0.orig/gdb/testsuite/lib/rocm.exp	2023-04-13 08:56:37.000000000 -0700
-+++ ROCgdb-rocm-5.6.0/gdb/testsuite/lib/rocm.exp	2023-08-19 01:40:47.995980892 -0700
+diff -urp ROCgdb-rocm-5.6.1.orig/gdb/doc/gdb.texinfo ROCgdb-rocm-5.6.1/gdb/doc/gdb.texinfo
+--- ROCgdb-rocm-5.6.1.orig/gdb/doc/gdb.texinfo	2023-04-13 08:56:37.000000000 -0700
++++ ROCgdb-rocm-5.6.1/gdb/doc/gdb.texinfo	2023-09-26 07:23:50.282354029 -0700
+@@ -23735,9 +23735,9 @@ For example,
+   2          Thread 0x7ffff59cb700 (LWP 74773) "bit_extract" 0x00007ffff6b696d7 in ioctl () from /lib/x86_64-linux-gnu/libc.so.6
+   4          Thread 0x7ffff7fc1700 (LWP 74775) "bit_extract" 0x00007ffff6b696d7 in ioctl () from /lib/x86_64-linux-gnu/libc.so.6
+ * 5   62/64  AMDGPU Wave 1:1:1:1 (0,0,0)/0 "bit_extract"     bit_extract_kernel (C_d=0x7ffde8800000, A_d=0x7ffde8e00000, N=4000000) at bit_extract.cpp:38
+-  6   2/64   AMDGPU Wave 1:1:1:2 (0,0,0)/1 "bit_extract"     __hip_get_block_dim_x () at /opt/rocm-3.8.0-3471/hip/include/hip/hcc_detail/hip_runtime.h:462
+-  7   64/64  AMDGPU Wave 1:1:1:3 (1,0,0)/0 "bit_extract"     __hip_get_block_dim_x () at /opt/rocm-3.8.0-3471/hip/include/hip/hcc_detail/hip_runtime.h:462
+-  8   8/64   AMDGPU Wave 1:1:1:4 (1,0,0)/1 "bit_extract"     __hip_get_block_dim_x () at /opt/rocm-3.8.0-3471/hip/include/hip/hcc_detail/hip_runtime.h:462
++  6   2/64   AMDGPU Wave 1:1:1:2 (0,0,0)/1 "bit_extract"     __hip_get_block_dim_x () at @EPREFIX_ROCM_PATH@/hip/include/hip/hcc_detail/hip_runtime.h:462
++  7   64/64  AMDGPU Wave 1:1:1:3 (1,0,0)/0 "bit_extract"     __hip_get_block_dim_x () at @EPREFIX_ROCM_PATH@/hip/include/hip/hcc_detail/hip_runtime.h:462
++  8   8/64   AMDGPU Wave 1:1:1:4 (1,0,0)/1 "bit_extract"     __hip_get_block_dim_x () at @EPREFIX_ROCM_PATH@/hip/include/hip/hcc_detail/hip_runtime.h:462
+ @end smallexample
+ 
+ @table @code
+@@ -28062,7 +28062,7 @@ together with the CPU code objects.  For
+ From                To                  Syms Read   Shared Object Library
+ 0x00007fd120664ac0  0x00007fd120682790  Yes (*)     /lib64/ld-linux-x86-64.so.2
+ ...
+-0x00007fd0125d8ec0  0x00007fd015f21630  Yes (*)     /opt/rocm-3.5.0/hip/lib/../../lib/libamd_comgr.so
++0x00007fd0125d8ec0  0x00007fd015f21630  Yes (*)     @EPREFIX_ROCM_PATH@/@LIBDIR@/../@LIBDIR@/libamd_comgr.so
+ 0x00007fd11d74e870  0x00007fd11d75a868  Yes (*)     /lib/x86_64-linux-gnu/libtinfo.so.5
+ 0x00007fd11d001000  0x00007fd11d00173c  Yes         file:///home/rocm/examples/bit_extract#offset=6477&size=10832
+ 0x00007fd11d008000  0x00007fd11d00adc0  Yes (*)     memory://95557/mem#offset=0x7fd0083e7f60&size=41416
+@@ -28577,7 +28577,7 @@ library version and file path.  For exam
+ @smallexample
+ (@value{GDBP}) show amdgpu version
+ ROCdbgapi 0.56.0 (0.56.0-rocm-rel-4.5-56)
+-Loaded from `/opt/rocm-4.5.0/lib/librocm-dbgapi.so.0'
++Loaded from `@EPREFIX_ROCM_PATH@/@LIBDIR@/librocm-dbgapi.so.0'
+ @end smallexample
+ 
+ @subsubsection @acronym{AMD GPU} Restrictions
+@@ -28885,7 +28885,7 @@ Thread 6 hit Breakpoint 1, with lanes [0
+   1    Thread 0x7ffff6493880 (LWP 2222574)  0x00007ffff6cb989b in sched_yield () at ../sysdeps/unix/syscall-template.S:78
+   2    Thread 0x7ffff6492700 (LWP 2222582)  0x00007ffff6ccb50b in ioctl () at ../sysdeps/unix/syscall-template.S:78
+   4    Thread 0x7ffff5aff700 (LWP 2222584)  0x00007ffff6ccb50b in ioctl () at ../sysdeps/unix/syscall-template.S:78
+-  5    Thread 0x7ffff515d700 (LWP 2222585)  0x00007ffff6764d81 in rocr::core::InterruptSignal::WaitRelaxed() from /opt/rocm/lib/libhsa-runtime64.so.1
++  5    Thread 0x7ffff515d700 (LWP 2222585)  0x00007ffff6764d81 in rocr::core::InterruptSignal::WaitRelaxed() from @EPREFIX_ROCM_PATH@/@LIBDIR@/libhsa-runtime64.so.1
+ * 6    AMDGPU Wave 1:1:1:1 (0,0,0)/0        kernel () at test.cpp:38
+ (@value{GDBP}) del 1
+ (@value{GDBP}) set scheduler-locking on
+diff -urp ROCgdb-rocm-5.6.1.orig/gdb/gdb-hip-test-mode.c ROCgdb-rocm-5.6.1/gdb/gdb-hip-test-mode.c
+--- ROCgdb-rocm-5.6.1.orig/gdb/gdb-hip-test-mode.c	2023-04-13 08:56:37.000000000 -0700
++++ ROCgdb-rocm-5.6.1/gdb/gdb-hip-test-mode.c	2023-09-26 07:25:00.490353222 -0700
+@@ -59,7 +59,7 @@ gdb_hip_test_mode_frob_names (struct obj
+   else if (objfile->obfd->arch_info->arch != bfd_arch_amdgcn
+ 	   && name == "_ZN3lld3elf12LinkerDriver4mainEN4llvm8ArrayRefIPKcEE")
+     {
+-      /* /opt/rocm/lib/libamd_comgr.so.1 calls
++      /* @EPREFIX_ROCM_PATH@/@LIBDIR@/libamd_comgr.so.1 calls
+ 	   lld::elf::LinkerDriver::main(llvm::ArrayRef<char const*>)
+ 	 before we reach the device's main.  */
+       if (gdb_hip_test_mode > 1)
+diff -urp ROCgdb-rocm-5.6.1.orig/gdb/testsuite/gdb.rocm/lane-pc-vega20-kernel.S ROCgdb-rocm-5.6.1/gdb/testsuite/gdb.rocm/lane-pc-vega20-kernel.S
+--- ROCgdb-rocm-5.6.1.orig/gdb/testsuite/gdb.rocm/lane-pc-vega20-kernel.S	2023-04-13 08:56:37.000000000 -0700
++++ ROCgdb-rocm-5.6.1/gdb/testsuite/gdb.rocm/lane-pc-vega20-kernel.S	2023-09-26 07:22:23.530355027 -0700
+@@ -22,7 +22,7 @@
+ 		    -disable-O0-optnone -triple amdgcn-amd-amdhsa
+ 		    -target-cpu "gfx906" -Dcl_khr_fp64 -Dcl_khr_fp16
+ 		    -finclude-default-header -emit-llvm-bc
+-		    -I /opt/rocm/opencl/include/CL/
++		    -I @EPREFIX_ROCM_PATH@/opencl/include/CL/
+ 		    -o lane-pc-vega20-kernel.raw.bc
+ 		    lane-pc-vega20-kernel.cl
+ 
+@@ -31,8 +31,8 @@
+ 
+ 	bash$ llvm-link -f -o lane-pc-vega20-kernel.linked.bc
+ 			lane-pc-vega20-kernel.orig.bc
+-			/opt/rocm/amdgcn/bitcode/opencl.bc
+-			/opt/rocm/amdgcn/bitcode/ockl.bc
++			@EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode/opencl.bc
++			@EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode/ockl.bc
+ 
+ 	bash$ llc -amdgpu-spill-cfi-saved-regs -relocation-model=pic
+ 		  -march=amdgcn -mcpu="gfx906" -filetype=asm -o
+diff -urp ROCgdb-rocm-5.6.1.orig/gdb/testsuite/gdb.rocm/show-info.exp ROCgdb-rocm-5.6.1/gdb/testsuite/gdb.rocm/show-info.exp
+--- ROCgdb-rocm-5.6.1.orig/gdb/testsuite/gdb.rocm/show-info.exp	2023-04-13 08:56:37.000000000 -0700
++++ ROCgdb-rocm-5.6.1/gdb/testsuite/gdb.rocm/show-info.exp	2023-09-26 07:24:58.170353248 -0700
+@@ -109,7 +109,7 @@ gdb_test_sequence "show convenience" "sh
+ #From                To                  Syms Read   Shared Object Library
+ #0x00007fd120664ac0  0x00007fd120682790  Yes (*)     /lib64/ld-linux-x86-64.so.2
+ #...
+-#0x00007fd0125d8ec0  0x00007fd015f21630  Yes (*)     /opt/rocm-3.5.0/hip/lib/../../lib/libamd_comgr.so
++#0x00007fd0125d8ec0  0x00007fd015f21630  Yes (*)     @EPREFIX_ROCM_PATH@/@LIBDIR@/../@LIBDIR@/libamd_comgr.so
+ #0x00007fd11d74e870  0x00007fd11d75a868  Yes (*)     /lib/x86_64-linux-gnu/libtinfo.so.5
+ #0x00007fd11d008000  0x00007fd11d00adc0  Yes (*)     memory://95557/mem#offset=0x7fd0083e7f60&size=41416
+ #0x00007fd11d001000  0x00007fd11d00173c  Yes         file:///home/rocm/examples/bit_extract#offset=6477&size=10832
+diff -urp ROCgdb-rocm-5.6.1.orig/gdb/testsuite/lib/hip/__clang_hip_runtime_wrapper.h ROCgdb-rocm-5.6.1/gdb/testsuite/lib/hip/__clang_hip_runtime_wrapper.h
+--- ROCgdb-rocm-5.6.1.orig/gdb/testsuite/lib/hip/__clang_hip_runtime_wrapper.h	2023-04-13 08:56:37.000000000 -0700
++++ ROCgdb-rocm-5.6.1/gdb/testsuite/lib/hip/__clang_hip_runtime_wrapper.h	2023-09-26 07:24:59.370353235 -0700
+@@ -43,7 +43,7 @@
+ #undef malloc
+ #undef free
+ 
+-/* /opt/rocm/hip/include/hip/hcc_detail/host_defines.h defines this,
++/* @EPREFIX_ROCM_PATH@/hip/include/hip/hcc_detail/host_defines.h defines this,
+    but it conflicts with uses such as:
+    __attribute__((__noinline__))
+ */
+diff -urp ROCgdb-rocm-5.6.1.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.6.1/gdb/testsuite/lib/rocm.exp
+--- ROCgdb-rocm-5.6.1.orig/gdb/testsuite/lib/rocm.exp	2023-04-13 08:56:37.000000000 -0700
++++ ROCgdb-rocm-5.6.1/gdb/testsuite/lib/rocm.exp	2023-09-26 07:21:36.682355566 -0700
 @@ -104,7 +104,7 @@ gdb_caching_proc allow_hipcc_tests {
  if {[info exists env(ROCM_PATH)]} {
      set rocm_path $env(ROCM_PATH)
@@ -30,3 +132,33 @@ diff -urp ROCgdb-rocm-5.6.0.orig/gdb/testsuite/lib/rocm.exp ROCgdb-rocm-5.6.0/gd
  
  	# target_compile always adds -lm which is not supported for
  	# kernel compilation.
+diff -urp ROCgdb-rocm-5.6.1.orig/README-ROCM.md ROCgdb-rocm-5.6.1/README-ROCM.md
+--- ROCgdb-rocm-5.6.1.orig/README-ROCM.md	2023-04-13 08:56:37.000000000 -0700
++++ ROCgdb-rocm-5.6.1/README-ROCM.md	2023-09-26 07:24:42.458353429 -0700
+@@ -19,8 +19,8 @@ You can use the standard GDB commands fo
+ more information about ROCgdb, refer to the *ROCgdb User Guide* which is
+ installed at:
+ 
+-- ``/opt/rocm/share/info/rocgdb/gdb.info`` as a texinfo file
+-- ``/opt/rocm/share/doc/rocgdb/rocgdb.pdf`` as a PDF file
++- ``@EPREFIX_ROCM_PATH@/share/info/rocgdb/gdb.info`` as a texinfo file
++- ``@EPREFIX_ROCM_PATH@/share/doc/rocgdb/rocgdb.pdf`` as a PDF file
+ 
+ You can refer to the following chapters in the *ROCgdb User Guide* for more
+ specific information about debugging heterogeneous programs on AMD ROCm:
+@@ -94,12 +94,12 @@ make
+ If the AMD Debugger API Library (ROCdbgapi) is not installed in the system
+ default location, specify ``PKG_CONFIG_PATH`` so ``pkg-config` can gather the
+ correct build configuration.  If ROCdbgapi is installed in
+-``/opt/rocm-$ROCM_VERSION`` (the default for ROCm packages), use
+-``PKG_CONFIG_PATH=/opt/rocm-$ROCM_VERSION/share/pkgconfig``.
++``@EPREFIX_ROCM_PATH@`` (the default for ROCm packages), use
++``PKG_CONFIG_PATH=@EPREFIX_ROCM_PATH@/share/pkgconfig``.
+ 
+ If the system's dynamic linker is not configured to locate ROCdbgapi where it is
+ installed, ROCgdb can be configured and built using
+-``LDFLAGS="-Wl,-rpath=/opt/rocm-$ROCM_VERSION/lib"``.  Alternatively,
++``LDFLAGS="-Wl,-rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@"``.  Alternatively,
+ ``LD_LIBRARY_PATH`` can be used at runtime to indicate where ROCdbgapi is
+ installed.
+ 

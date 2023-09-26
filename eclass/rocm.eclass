@@ -319,6 +319,8 @@ einfo "Removing ccache from PATH to prevent override by system's clang..."
 			| tr "\n" ":")
 	fi
 
+	export PKG_CONFIG_PATH="${ESYSROOT}${EROCM_PATH}/share/pkgconfig:${PKG_CONFIG_PATH}"
+
 einfo
 einfo "Eclass variables:"
 einfo
@@ -336,6 +338,7 @@ einfo
 einfo "Environment variables:"
 einfo
 einfo "  PATH:  ${PATH}"
+einfo "  PKG_CONFIG_PATH:  ${PKG_CONFIG_PATH}"
 einfo
 }
 

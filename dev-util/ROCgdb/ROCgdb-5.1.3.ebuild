@@ -28,7 +28,7 @@ https://github.com/ROCm-Developer-Tools/ROCgdb
 "
 LICENSE="GPL-3+ LGPL-2.1+"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm r1"
+IUSE="system-llvm r2"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -72,10 +72,20 @@ pkg_setup() {
 
 src_prepare() {
 	default
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
 		"${S}/gdb/configure"
 		"${S}/gdb/configure.ac"
+		"${S}/gdb/doc/gdb.texinfo"
+		"${S}/gdb/gdb-hip-test-mode.c"
+		"${S}/gdb/testsuite/gdb.rocm/lane-pc-vega20-kernel.S"
+		"${S}/gdb/testsuite/gdb.rocm/show-info.exp"
+		"${S}/gdb/testsuite/lib/future.exp"
+		"${S}/gdb/testsuite/lib/hip/__clang_hip_runtime_wrapper.h"
 		"${S}/gdb/testsuite/lib/rocm.exp"
+		"${S}/README-ROCM.md"
 	)
 	rocm_src_prepare
 }
@@ -132,7 +142,7 @@ src_install() {
 	local path
 	for path in ${L[@]} ; do
 		local bn=$(basename "${path}")
-		dosym "${EPREFIX}/${path}" "/usr/bin/${bn}"
+#		dosym "${EPREFIX}/${path}" "/usr/bin/${bn}"
 	done
 }
 
