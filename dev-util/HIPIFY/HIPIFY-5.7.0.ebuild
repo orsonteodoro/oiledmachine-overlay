@@ -65,17 +65,28 @@ TEST_BDEPEND="
 				$(gen_llvm_rdepend 15.0.0)
 				$(gen_llvm_rdepend 14.0.6)
 				$(gen_llvm_rdepend 14.0.5)
-				(
-					!system-llvm? (
-						~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-					)
-				)
+			)
+		)
+		(
+			=dev-util/nvidia-cuda-toolkit-11.7*:=
+			|| (
+				$(gen_llvm_rdepend 14.0.4)
+				$(gen_llvm_rdepend 14.0.3)
+				$(gen_llvm_rdepend 14.0.2)
+				$(gen_llvm_rdepend 14.0.1)
+			)
+		)
+		(
+			=dev-util/nvidia-cuda-toolkit-11.5*:=
+			|| (
+				$(gen_llvm_rdepend 13.0.1)
+				$(gen_llvm_rdepend 13.0.0)
 			)
 		)
 	)
 "
 RDEPEND="
-	sys-devel/hip-compiler[system-llvm=]
+	dev-util/hip-compiler[system-llvm=]
 	!test? (
 		!system-llvm? (
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}

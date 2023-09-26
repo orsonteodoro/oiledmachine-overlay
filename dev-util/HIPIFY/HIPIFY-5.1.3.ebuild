@@ -44,17 +44,12 @@ TEST_BDEPEND="
 			|| (
 				$(gen_llvm_rdepend 13.0.1)
 				$(gen_llvm_rdepend 13.0.0)
-				(
-					!system-llvm? (
-						~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-					)
-				)
 			)
 		)
 	)
 "
 RDEPEND="
-	sys-devel/hip-compiler[system-llvm=]
+	dev-util/hip-compiler[system-llvm=]
 	!test? (
 		!system-llvm? (
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
