@@ -61,9 +61,16 @@ RESTRICT="
 		test
 	)
 "
-PATCHES=(
+OCL_PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-gcc13.patch"
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+)
+ROCCLR_PATCHES=(
+	# Bug #753377
+	# patch re-enables accidentally disabled gfx800 family
+	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
+	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+	"${FILESDIR}/ROCclr-5.6.0-path-changes.patch"
 )
 CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
@@ -82,25 +89,29 @@ src_unpack () {
 	fi
 }
 src_prepare() {
+	pushd "${CLR_S}" || die
+		eapply ${ROCCLR_PATCHES[@]}
+	popd || die
+	eapply ${OCL_PATCHES[@]}
 	cmake_src_prepare
 	rocm_src_prepare
-
-	pushd "${CLR_S}" || die
-	# Bug #753377
-	# patch re-enables accidentally disabled gfx800 family
-		eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
-		eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
-		eapply "${FILESDIR}/ROCclr-5.6.0-path-changes.patch"
-	popd || die
 }
 
 src_configure() {
+	if has_version "dev-util/HIPIFY:${ROCM_SLOT}" ; then
+eerror
+eerror "dev-util/HIPIFY:${ROCM_SLOT} must be unemerged temporarily before emerging this package."
+eerror
+		die
+	fi
 #
 # Reported upstream:
 #
 # https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/issues/120
 #
 	append-cflags -fcommon
+
+	replace-flags -O0 -O1
 	local mycmakeargs=(
 		-DAMD_OPENCL_PATH="${S}"
 		-DBUILD_TESTS=$(usex test ON OFF)

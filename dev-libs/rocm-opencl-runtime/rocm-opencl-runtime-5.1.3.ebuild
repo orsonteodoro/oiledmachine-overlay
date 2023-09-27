@@ -53,11 +53,19 @@ RESTRICT="
 		test
 	)
 "
-PATCHES=(
+OCL_PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-remove-clinfo.patch"
 	"${FILESDIR}/${PN}-3.5.0-do-not-install-libopencl.patch"
 	"${FILESDIR}/${PN}-5.3.3-gcc13.patch"
 	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
+)
+ROCCLR_PATCHES=(
+	# Bug #753377
+	# patch re-enables accidentally disabled gfx800 family
+	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
+	"${FILESDIR}/rocclr-5.1.3-fix-include.patch"
+	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
+	"${FILESDIR}/ROCclr-5.1.3-path-changes.patch"
 )
 S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
 CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
@@ -71,14 +79,10 @@ src_prepare() {
 	[ -d tools/clinfo ] && rm -rf tools/clinfo || die
 
 	pushd "${CLR_S}" || die
-	# Bug #753377
-	# patch re-enables accidentally disabled gfx800 family
-		eapply "${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
-		eapply "${FILESDIR}/rocclr-5.1.3-fix-include.patch"
-		eapply "${FILESDIR}/rocclr-5.3.3-gcc13.patch"
-		eapply "${FILESDIR}/ROCclr-5.1.3-path-changes.patch"
+		eapply ${ROCCLR_PATCHES[@]}
 	popd || die
 
+	eapply ${OCL_PATCHES[@]}
 	cmake_src_prepare
 	rocm_src_prepare
 
@@ -90,12 +94,20 @@ src_prepare() {
 }
 
 src_configure() {
+	if has_version "dev-util/HIPIFY:${ROCM_SLOT}" ; then
+eerror
+eerror "dev-util/HIPIFY:${ROCM_SLOT} must be unemerged temporarily before emerging this package."
+eerror
+		die
+	fi
 #
 # Reported upstream:
 #
 # https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/issues/120
 #
 	append-cflags -fcommon
+
+	replace-flags -O0 -O1
 	local mycmakeargs=(
 		-DAMD_OPENCL_PATH="${S}"
 		-DBUILD_TESTS=$(usex test ON OFF)
@@ -105,6 +117,8 @@ src_configure() {
 		-Wno-dev
 		# -DCMAKE_STRIP=""
 	)
+	export CC="clang"
+	export CXX="clang++"
 	cmake_src_configure
 }
 

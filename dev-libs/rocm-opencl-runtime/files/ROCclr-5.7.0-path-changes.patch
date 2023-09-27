@@ -56,7 +56,8 @@ diff -urp rocclr.orig/elf/test/CMakeLists.txt rocclr/elf/test/CMakeLists.txt
 -    /opt/rocm/
 +    @EPREFIX_ROCM_PATH@/
    PATH_SUFFIXES
-     cmake/hsa-runtime64)
+-    cmake/hsa-runtime64)
++    @LIBDIR@/cmake/hsa-runtime64)
  
 @@ -42,8 +42,8 @@ find_package(Threads REQUIRED)
  # Look for ROCclr which contains elfio
