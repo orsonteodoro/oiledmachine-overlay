@@ -156,6 +156,13 @@ src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
+
+# Fixes:
+#HipifyAction.cpp:736:34: error: no type named 'OptionalFileEntryRef' in namespace 'clang'
+#                          clang::OptionalFileEntryRef file,
+#                          ~~~~~~~^
+		-DSWDEV_375013=ON
+
 		-DUSE_SYSTEM_LLVM=$(usex system-llvm)
 	)
 	cmake_src_configure
