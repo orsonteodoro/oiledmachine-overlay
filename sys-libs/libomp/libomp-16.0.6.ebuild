@@ -67,12 +67,12 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="
 amd64 ~arm arm64 ~loong ~ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
-rocm_5_5 rocm_5_6
 "
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
+rocm_5_5 rocm_5_6
 r3
 "
 gen_cuda_required_use() {
