@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the ROCm multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20230926.2"
+VERSION="20230927"
 PN="rocm"
 EPREFIX="@EPREFIX@"
 LIBDIR="@LIBDIR@"
@@ -17,8 +17,9 @@ find_rocm_slots() {
 	echo ${L[@]##*/} | tr " " "\n"
 }
 
-# remove the ROCm symlinks
+# remove the ROCm symlinks before switch
 remove_symlinks() {
+    local x
     IFS=$'\n'
     for x in $(ls "${EPREFIX}/usr/${LIBDIR}/rocm/"*"/bin/"*) ; do
         if [[ -e "/usr/bin/${x}" ]] ; then
@@ -35,17 +36,14 @@ remove_symlinks() {
     local path
     for path in "${L[@]}" ; do
         if [[ -L "${path}" ]] ; then
-            local x=$(realpath "${path}")
+            x=$(realpath "${path}")
             if [[ "${x}" =~ "/rocm/" ]] ; then
-                targets[i]="${targets[i]}"
-                local k_hipcc_src="${path}"
-                local k_hipcc_dest=$(canonicalise "${path}")
                 rm -f "${path}"
             fi
         fi
     done
 
-    IFS=$'\t\n'
+    IFS=$' \t\n'
 }
 
 BLACKLISTED_EXES=(
@@ -64,31 +62,35 @@ is_blacklisted_exe() {
 }
 
 add_rocm_opencl_runtime_symlinks() {
-    unset ROWS
-    declare -A ROWS=(
+    local ROWS=(
         "${EPREFIX}/usr/${LIBDIR}/rocm/${slot}/etc/OpenCL/vendors/amdocl64.icd:/etc/OpenCL/vendors/amdocl64.icd"
-        "${EPREFIX}/usr/${LIBDIR}/rocm/${ROCM_SLOT}/${LIBDIR}/libamdocl64.so:/usr/${LIBDIR}/libamdocl64.so"
-        "${EPREFIX}/usr/${LIBDIR}/rocm/${ROCM_SLOT}/${LIBDIR}/libcltrace.so:/usr/${LIBDIR}/libcltrace.so"
+        "${EPREFIX}/usr/${LIBDIR}/rocm/${slot}/${LIBDIR}/libamdocl64.so:/usr/${LIBDIR}/libamdocl64.so"
+        "${EPREFIX}/usr/${LIBDIR}/rocm/${slot}/${LIBDIR}/libcltrace.so:/usr/${LIBDIR}/libcltrace.so"
     )
 
     local row
+    IFS=$'\n'
     for row in "${ROWS[@]}" ; do
-        local src="${A%:*}" # left
-        local dest="${A#*:}" # right
-        if [[ -e "${srch}" ]] ; then
-            mkdir -p $(dirname "${src}")
+        local src="${row%:*}" # left
+        local dest="${row#*:}" # right
+        if [[ -e "${src}" ]] ; then
+            mkdir -p $(dirname "${dest}")
+            echo "linking ${src} -> ${dest}"
             ln -sf "${src}" "${dest}"
         fi
     done
+    IFS=$' \t\n'
 }
 
 add_bin_symlinks() {
+    local x
     cd /usr/bin
     IFS=$'\n'
     for x in $(ls "${EPREFIX}/usr/${LIBDIR}/rocm/${slot}/bin/"*) ; do
         local bn=$(basename "${x}")
         is_blacklisted_exe "${bn}" && continue
         local src=$(realpath "${EPREFIX}/usr/${LIBDIR}/rocm/${slot}/bin/${bn}")
+        echo "linking ${src} -> /usr/bin/${bn}"
         ln -sf "${src}" "/usr/bin/${bn}"
     done
     IFS=$' \t\n'
@@ -141,8 +143,9 @@ do_show() {
     local found=0
     local rocm_slot
     local target
+    local x
     if [[ -L "/usr/bin/hipcc" ]] ; then
-        local x=$(realpath "/usr/bin/hipcc")
+        x=$(realpath "/usr/bin/hipcc")
         x=$(dirname "${x}") # ${EPREFIX}/usr/@LIBDIR@/rocm/5.5/bin
         x=$(dirname "${x}") # ${EPREFIX}/usr/@LIBDIR@/rocm/5.5
         x=$(basename "${x}") # 5.5
@@ -157,7 +160,6 @@ do_show() {
         is_blacklisted_exe "${bn}" && continue
         write_kv_list_entry "${k_hipcc_src%/} ->" "${k_hipcc_dest%/}"
     done
-    IFS=$' \t\n'
 
     local L=(
         "/etc/OpenCL/vendors/amdocl64.icd"
@@ -168,15 +170,15 @@ do_show() {
     local path
     for path in "${L[@]}" ; do
         if [[ -L "${path}" ]] ; then
-            local x=$(realpath "${path}")
+            x=$(realpath "${path}")
             if [[ "${x}" =~ "/rocm/" ]] ; then
-                targets[i]="${targets[i]}"
-                local k_hipcc_src="${path}"
-                local k_hipcc_dest=$(canonicalise "${path}")
-                write_kv_list_entry "${k_hipcc_src%/} ->" "${k_hipcc_dest%/}"
+                local k_ocl_src="${path}"
+                local k_ocl_dest=$(canonicalise "${path}")
+                write_kv_list_entry "${k_ocl_src%/} ->" "${k_ocl_dest%/}"
             fi
         fi
     done
+    IFS=$' \t\n'
 
 
     if (( ${found} == 0 )) ; then
@@ -192,25 +194,32 @@ describe_list() {
 
 do_list() {
     local i targets=( $(find_rocm_slots) )
+    local x
 
     local rocm_slots=(
 	$(find_rocm_slots)
     )
 
+    local slot
+    for rocm_slot in ${rocm_slots[@]} ; do
+        x=$(realpath "/usr/bin/hipcc")
+        x=$(dirname "${x}") # ${EPREFIX}/usr/@LIBDIR@/rocm/5.5/bin
+        x=$(dirname "${x}") # ${EPREFIX}/usr/@LIBDIR@/rocm/5.5
+        slot=$(basename "${x}") # 5.5
+    done
+
     write_list_start "Available ROCm symlink targets:"
     IFS=$'\n'
     for (( i = 0; i < ${#targets[@]}; i++ )); do
         # highlight the target where the symlink is pointing to
-        for rocm_slot in ${rocm_slots[@]} ; do
-            if [[ -L /usr/bin/hipcc ]] ; then
-                local x=$(realpath /usr/bin/hipcc)
-                if [[ ${targets[i]} =~ "${x}" ]] ; then
-                    targets[i]=$(highlight_marker "${targets[i]}")
-                else
-                    targets[i]="${targets[i]}"
-                fi
+        if [[ -L /usr/bin/hipcc ]] ; then
+            if [[ ${targets[${i}]} =~ "${slot}" ]] ; then
+                # show blue asterisk at index
+                targets[${i}]=$(highlight_marker "${targets[${i}]}")
+            else
+                targets[${i}]="${targets[${i}]}"
             fi
-        done
+        fi
     done
     IFS=$' \t\n'
     write_numbered_list -m "(none found)" "${targets[@]}"
@@ -249,14 +258,34 @@ do_set() {
 ### remove action
 
 describe_remove() {
-    echo "Remove symlinks"
+    echo "Completely remove ROCm symlinks"
 }
 
+# Remove all symlinks containing /rocm/ in path even third party ones.
 do_remove() {
+    local x
+    IFS=$'\n'
     for x in $(find /usr/bin/ -maxdepth 1 -type l) ; do
         local path=$(realpath "${x}" 2>/dev/null)
         if echo "${path}" | grep -q "/rocm/" ; then
             rm -vf "${x}"
         fi
     done
+
+    local L=(
+        "/etc/OpenCL/vendors/amdocl64.icd"
+        "/usr/${LIBDIR}/libamdocl64.so"
+        "/usr/${LIBDIR}/libcltrace.so"
+    )
+
+    local path
+    for path in "${L[@]}" ; do
+        if [[ -L "${path}" ]] ; then
+            x=$(realpath "${path}")
+            if [[ "${x}" =~ "/rocm/" ]] ; then
+                rm -vf "${path}"
+            fi
+        fi
+    done
+    IFS=$' \t\n'
 }
