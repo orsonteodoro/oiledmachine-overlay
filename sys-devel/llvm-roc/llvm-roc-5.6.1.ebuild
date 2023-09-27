@@ -98,13 +98,7 @@ S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
-	if has_version "dev-libs/rocr-runtime:${ROCM_SLOT}" ; then
-# TODO:  fix dev-libs/rocr-runtime
-eerror
-eerror "Un-emerge dev-libs/rocr-runtime:${ROCM_SLOT} first."
-eerror
-		die
-	fi
+#ewarn "Un-emerge dev-libs/rocr-runtime:${ROCM_SLOT} first."
 	rocm_pkg_setup
 }
 
