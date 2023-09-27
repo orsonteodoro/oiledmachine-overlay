@@ -15,7 +15,7 @@ AMDGPU_TARGETS_COMPAT=(
         gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2)"
 VERBOSE=1
 
@@ -64,7 +64,7 @@ BDEPEND="
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
-	"${FILESDIR}/atmi-5.5.1-path-changes.patch"
+	"${FILESDIR}/atmi-5.2.3-path-changes.patch"
 	"${FILESDIR}/atmi-5.5.1-headers.patch"
 )
 S="${WORKDIR}/atmi-rocm-${PV}/src"

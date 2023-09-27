@@ -65,10 +65,12 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/atmi-5.1.3-path-changes.patch"
+	"${FILESDIR}/atmi-5.5.1-headers.patch"
 )
 S="${WORKDIR}/atmi-rocm-${PV}/src"
 
 pkg_setup() {
+ewarn "The ebuild is under construction."
 	rocm_pkg_setup
 }
 
@@ -84,6 +86,10 @@ src_configure() {
 		CMAKE_BUILD_TYPE="Release"
 	fi
 	export GFXLIST=$(get_amdgpu_flags)
+
+	export CC="clang"
+	export CXX="clang++"
+	replace-flags -O0 -O1
 
 	export ROC_DIR="${ESYSROOT}${EROCM_PATH}"
 	export ROCR_DIR="${ESYSROOT}${EROCM_PATH}"

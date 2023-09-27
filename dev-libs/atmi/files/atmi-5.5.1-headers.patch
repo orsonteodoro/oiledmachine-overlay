@@ -1,0 +1,20 @@
+--- src/runtime/core/system.cpp.orig	2023-05-09 09:40:57.000000000 -0700
++++ src/runtime/core/system.cpp	2023-09-26 19:52:54.877837038 -0700
+@@ -13,6 +13,7 @@
+ #include <iostream>
+ #include <set>
+ #include <string>
++#include <cstddef>
+ 
+ #include "amd_comgr/amd_comgr.h"
+ #include "device_rt_internal.h"
+--- src/runtime/core/cputask.cpp.orig	2023-05-09 09:40:57.000000000 -0700
++++ src/runtime/core/cputask.cpp	2023-09-26 19:55:44.733835085 -0700
+@@ -9,6 +9,7 @@
+ #include <climits>
+ #include <iostream>
+ #include <thread>
++#include <cstddef>
+ #include "internal.h"
+ #include "kernel.h"
+ #include "machine.h"

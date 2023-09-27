@@ -1,6 +1,6 @@
 diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
 --- src.orig/atmi-backward-compat.cmake	2023-05-09 09:40:57.000000000 -0700
-+++ src/atmi-backward-compat.cmake	2023-08-27 22:21:50.292924221 -0700
++++ src/atmi-backward-compat.cmake	2023-09-26 19:32:13.553851317 -0700
 @@ -24,10 +24,10 @@ set(ATMI_WRAPPER_DIR ${ATMI_BUILD_DIR}/w
  set(ATMI_WRAPPER_INC_DIR ${ATMI_WRAPPER_DIR}/include)
  set(ATMI_WRAPPER_BIN_DIR ${ATMI_WRAPPER_DIR}/bin)
@@ -20,20 +20,20 @@ diff -urp src.orig/atmi-backward-compat.cmake src/atmi-backward-compat.cmake
  #endif
  #if ROCM_HEADER_WRAPPER_WERROR  /* ROCM_HEADER_WRAPPER_WERROR 1 */
 -#error \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with atmi\"
-+#error \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with atmi\"
++#error \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with atmi\"
  #else     /* ROCM_HEADER_WRAPPER_WERROR 0 */
  #if defined(__GNUC__)
 -#warning \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with atmi\"
-+#warning \"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with atmi\"
++#warning \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with atmi\"
  #else
 -#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with atmi\")
-+#pragma message(\"This file is deprecated. Use file from include path @ESYSROOT_ROCM_PATH@/include/ and prefix with atmi\")
++#pragma message(\"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with atmi\")
  #endif
  #endif  /* ROCM_HEADER_WRAPPER_WERROR */
  
 diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
 --- src.orig/CMakeLists.txt	2023-05-09 09:40:57.000000000 -0700
-+++ src/CMakeLists.txt	2023-08-27 22:21:50.292924221 -0700
++++ src/CMakeLists.txt	2023-09-26 19:32:13.553851317 -0700
 @@ -32,7 +32,7 @@ set (atmi_VERSION_MINOR 5)
  ################################################################################
  if ( NOT DEFINED CMAKE_INSTALL_PREFIX )
@@ -43,7 +43,7 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  endif()
  endif()
  
-@@ -48,7 +49,7 @@ else()
+@@ -48,7 +48,7 @@ else()
    if(HSA_DIR)
      set(ROC_DIR ${HSA_DIR})
    else()
@@ -52,7 +52,7 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
    endif()
  endif()
  
-@@ -122,7 +123,7 @@ set ( CPACK_RESOURCE_FILE_LICENSE "${CMA
+@@ -122,7 +122,7 @@ set ( CPACK_RESOURCE_FILE_LICENSE "${CMA
  install( FILES ${CPACK_RESOURCE_FILE_LICENSE} DESTINATION ${CMAKE_INSTALL_DOCDIR} COMPONENT runtime )
  
  if ( NOT DEFINED CPACK_PACKAGING_INSTALL_PREFIX )
@@ -63,21 +63,33 @@ diff -urp src.orig/CMakeLists.txt src/CMakeLists.txt
  
 diff -urp src.orig/cmake_modules/FindLibElf.cmake src/cmake_modules/FindLibElf.cmake
 --- src.orig/cmake_modules/FindLibElf.cmake	2023-05-09 09:40:57.000000000 -0700
-+++ src/cmake_modules/FindLibElf.cmake	2023-08-27 22:21:50.292924221 -0700
-@@ -23,8 +23,8 @@ find_library (LIBELF_LIBRARIES
++++ src/cmake_modules/FindLibElf.cmake	2023-09-26 19:33:02.285850757 -0700
+@@ -14,17 +14,17 @@ find_path (LIBELF_INCLUDE_DIRS
+     NAMES
+     libelf.h
+     PATHS
+-    /usr/include
+-    /usr/local/include
++    @ESYSROOT@/usr/include
++    @ESYSROOT@/usr/local/include
+     ENV CPATH)
+ 
+ find_library (LIBELF_LIBRARIES
+     NAMES
      elf
      PATHS
-     /usr/lib/x86_64-linux-gnu
+-    /usr/lib/x86_64-linux-gnu
 -    /usr/lib
 -    /usr/local/lib
-+    /usr/@LIBDIR@
-+    /usr/local/@LIBDIR@
++    @ESYSROOT@/usr/lib/x86_64-linux-gnu
++    @ESYSROOT@/usr/@LIBDIR@
++    @ESYSROOT@/usr/local/@LIBDIR@
      ENV LIBRARY_PATH
      ENV LD_LIBRARY_PATH)
  
 diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
 --- src.orig/cmake_modules/FindROCm.cmake	2023-05-09 09:40:57.000000000 -0700
-+++ src/cmake_modules/FindROCm.cmake	2023-08-27 22:21:50.292924221 -0700
++++ src/cmake_modules/FindROCm.cmake	2023-09-26 19:32:13.553851317 -0700
 @@ -20,7 +20,7 @@ find_path(
    HINTS
      ${ROC_DIR}/include
@@ -147,7 +159,7 @@ diff -urp src.orig/cmake_modules/FindROCm.cmake src/cmake_modules/FindROCm.cmake
  #   endif()
 diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
 --- src.orig/compiler/CMakeLists.txt	2023-05-09 09:40:57.000000000 -0700
-+++ src/compiler/CMakeLists.txt	2023-08-27 22:21:50.292924221 -0700
++++ src/compiler/CMakeLists.txt	2023-09-26 19:32:13.553851317 -0700
 @@ -65,9 +65,9 @@ if(ROCM_FOUND)
              include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
              include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../include)
@@ -171,7 +183,7 @@ diff -urp src.orig/compiler/CMakeLists.txt src/compiler/CMakeLists.txt
         else()
 diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
 --- src.orig/device_runtime/bc.cmake	2023-05-09 09:40:57.000000000 -0700
-+++ src/device_runtime/bc.cmake	2023-08-27 22:22:37.264924798 -0700
++++ src/device_runtime/bc.cmake	2023-09-26 19:32:13.553851317 -0700
 @@ -70,6 +70,7 @@ macro(add_ocl_bc_library name dir)
      -I${CMAKE_CURRENT_SOURCE_DIR}/include
      -I${CMAKE_CURRENT_SOURCE_DIR}/../../include
@@ -191,7 +203,7 @@ diff -urp src.orig/device_runtime/bc.cmake src/device_runtime/bc.cmake
    add_custom_target(${name}-${mcpu} ALL DEPENDS ${name}-${mcpu}.bc)
 diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.txt
 --- src.orig/device_runtime/CMakeLists.txt	2023-05-09 09:40:57.000000000 -0700
-+++ src/device_runtime/CMakeLists.txt	2023-08-27 22:21:50.292924221 -0700
++++ src/device_runtime/CMakeLists.txt	2023-09-26 19:32:13.553851317 -0700
 @@ -32,7 +32,7 @@ if(LLVM_FOUND)
    if (CLANG_INSTALL_PREFIX)
      set(CLANG_BINDIR ${CLANG_INSTALL_PREFIX}/bin)
@@ -244,7 +256,7 @@ diff -urp src.orig/device_runtime/CMakeLists.txt src/device_runtime/CMakeLists.t
      install(FILES
 diff -urp src.orig/runtime/core/CMakeLists.txt src/runtime/core/CMakeLists.txt
 --- src.orig/runtime/core/CMakeLists.txt	2023-05-09 09:40:57.000000000 -0700
-+++ src/runtime/core/CMakeLists.txt	2023-08-27 22:21:50.292924221 -0700
++++ src/runtime/core/CMakeLists.txt	2023-09-26 19:32:13.553851317 -0700
 @@ -44,7 +44,7 @@ add_definitions(-DROCM_VERSION_MINOR=${R
  add_definitions(-fpic)
  
