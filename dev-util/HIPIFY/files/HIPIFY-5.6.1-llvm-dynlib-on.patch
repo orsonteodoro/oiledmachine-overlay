@@ -1,0 +1,47 @@
+diff -urp HIPIFY-rocm-5.6.1.orig/CMakeLists.txt HIPIFY-rocm-5.6.1/CMakeLists.txt
+--- HIPIFY-rocm-5.6.1.orig/CMakeLists.txt	2023-05-12 18:19:43.000000000 -0700
++++ HIPIFY-rocm-5.6.1/CMakeLists.txt	2023-09-26 14:52:45.598044196 -0700
+@@ -35,7 +35,14 @@ set(CMAKE_CXX_COMPILER ${LLVM_TOOLS_BINA
+ set(CMAKE_C_COMPILER ${LLVM_TOOLS_BINARY_DIR}/clang)
+ 
+ # Link against LLVM and CLANG libraries
+-target_link_libraries(hipify-clang PRIVATE
++option(USE_SYSTEM_LLVM "Use the system's LLVM" OFF)
++if (${USE_SYSTEM_LLVM})
++  target_link_libraries(hipify-clang PRIVATE
++    clang
++    clang-cpp
++    LLVM)
++else()
++  target_link_libraries(hipify-clang PRIVATE
+     clangASTMatchers
+     clangFrontend
+     clangTooling
+@@ -59,16 +66,17 @@ target_link_libraries(hipify-clang PRIVA
+     LLVMOption
+     LLVMCore)
+ 
+-if(LLVM_PACKAGE_VERSION VERSION_GREATER "6.0.1")
+-    target_link_libraries(hipify-clang PRIVATE clangToolingInclusions)
+-endif()
++  if(LLVM_PACKAGE_VERSION VERSION_GREATER "6.0.1")
++      target_link_libraries(hipify-clang PRIVATE clangToolingInclusions)
++  endif()
+ 
+-if(LLVM_PACKAGE_VERSION VERSION_GREATER "9.0.1")
+-    target_link_libraries(hipify-clang PRIVATE LLVMFrontendOpenMP)
+-endif()
++  if(LLVM_PACKAGE_VERSION VERSION_GREATER "9.0.1")
++      target_link_libraries(hipify-clang PRIVATE LLVMFrontendOpenMP)
++  endif()
+ 
+-if(LLVM_PACKAGE_VERSION VERSION_EQUAL "15.0.0" OR LLVM_PACKAGE_VERSION VERSION_GREATER "15.0.0")
+-    target_link_libraries(hipify-clang PRIVATE LLVMWindowsDriver clangSupport)
++  if(LLVM_PACKAGE_VERSION VERSION_EQUAL "15.0.0" OR LLVM_PACKAGE_VERSION VERSION_GREATER "15.0.0")
++      target_link_libraries(hipify-clang PRIVATE LLVMWindowsDriver clangSupport)
++  endif()
+ endif()
+ 
+ if(LLVM_PACKAGE_VERSION VERSION_EQUAL "16.0.0" OR LLVM_PACKAGE_VERSION VERSION_GREATER "16.0.0")
+Only in HIPIFY-rocm-5.6.1: CMakeLists.txt.orig
+Only in HIPIFY-rocm-5.6.1: CMakeLists.txt.rej

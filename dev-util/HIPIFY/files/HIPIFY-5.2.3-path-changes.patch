@@ -1,7 +1,31 @@
 diff -urp HIPIFY-rocm-5.2.3.orig/CMakeLists.txt HIPIFY-rocm-5.2.3/CMakeLists.txt
---- HIPIFY-rocm-5.2.3.orig/CMakeLists.txt	2023-09-26 13:43:40.378091878 -0700
-+++ HIPIFY-rocm-5.2.3/CMakeLists.txt	2023-09-26 13:44:38.010091215 -0700
-@@ -134,13 +134,13 @@ if(UNIX)
+--- HIPIFY-rocm-5.2.3.orig/CMakeLists.txt	2023-09-26 17:38:59.457929469 -0700
++++ HIPIFY-rocm-5.2.3/CMakeLists.txt	2023-09-26 17:42:28.017927070 -0700
+@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.16.8)
+ 
+ project(hipify-clang)
+ 
++include(GNUInstallDirs)
+ find_package(LLVM REQUIRED CONFIG PATHS ${CMAKE_PREFIX_PATH})
+ 
+ message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}:")
+@@ -107,12 +108,12 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_D
+     set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/dist" CACHE PATH ${INSTALL_PATH_DOC_STRING} FORCE)
+ endif()
+ 
+-set(HIPIFY_INSTALL_PATH ${CMAKE_INSTALL_PREFIX})
++set(HIPIFY_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/bin)
+ 
+-install(TARGETS hipify-clang DESTINATION ${CMAKE_INSTALL_PREFIX})
++install(TARGETS hipify-clang DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+ install(
+     DIRECTORY ${CMAKE_SOURCE_DIR}/bin/
+-    DESTINATION ${CMAKE_INSTALL_PREFIX}
++    DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+     USE_SOURCE_PERMISSIONS
+     PATTERN "hipify-perl"
+     PATTERN "*.sh")
+@@ -134,13 +135,13 @@ if(UNIX)
      if(FILE_REORG_BACKWARD_COMPATIBILITY)
          include(hipify-backward-compat.cmake)
      endif()
@@ -17,11 +41,9 @@ diff -urp HIPIFY-rocm-5.2.3.orig/CMakeLists.txt HIPIFY-rocm-5.2.3/CMakeLists.txt
          if(NOT ${ROCMDIR_FOUND} MATCHES "-1")
              get_filename_component(DEST_DIR ${CPACK_PACKAGING_INSTALL_PREFIX} NAME)
              if(DEST_DIR STREQUAL "hip")
-Only in HIPIFY-rocm-5.2.3: CMakeLists.txt.orig
-Only in HIPIFY-rocm-5.2.3: CMakeLists.txt.rej
 diff -urp HIPIFY-rocm-5.2.3.orig/hipify-backward-compat.cmake HIPIFY-rocm-5.2.3/hipify-backward-compat.cmake
 --- HIPIFY-rocm-5.2.3.orig/hipify-backward-compat.cmake	2022-04-22 11:35:20.000000000 -0700
-+++ HIPIFY-rocm-5.2.3/hipify-backward-compat.cmake	2023-09-26 13:44:02.090091628 -0700
++++ HIPIFY-rocm-5.2.3/hipify-backward-compat.cmake	2023-09-26 17:43:21.153926458 -0700
 @@ -23,9 +23,9 @@ set(HIPIFY_BUILD_DIR ${CMAKE_CURRENT_BIN
  set(HIPIFY_WRAPPER_DIR ${HIPIFY_BUILD_DIR}/wrapper_dir)
  set(HIPIFY_WRAPPER_BIN_DIR ${HIPIFY_WRAPPER_DIR}/bin)
@@ -35,3 +57,58 @@ diff -urp HIPIFY-rocm-5.2.3.orig/hipify-backward-compat.cmake HIPIFY-rocm-5.2.3/
  #This file is for creating  soft link to binary files and install it in the  previous location
  #Note: soft link added for binary files.
  
+@@ -39,7 +39,7 @@ function(create_binary_symlink)
+     add_custom_target(link_${file_name} ALL
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                   COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                  ../../bin/${file_name} ${HIPIFY_WRAPPER_BIN_DIR}/${file_name})
++                  ../../${CMAKE_INSTALL_BINDIR}/${file_name} ${HIPIFY_WRAPPER_BIN_DIR}/${file_name})
+   endforeach()
+   #create softlink for private scripts
+   file(GLOB binary_files ${CMAKE_SOURCE_DIR}/bin/find*)
+@@ -48,7 +48,7 @@ function(create_binary_symlink)
+     add_custom_target(link_${file_name} ALL
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                   COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                  ../../libexec/hipify/${file_name} ${HIPIFY_WRAPPER_BIN_DIR}/${file_name})
++                  ../../${CMAKE_INSTALL_LIBEXECDIR}/hipify/${file_name} ${HIPIFY_WRAPPER_BIN_DIR}/${file_name})
+   endforeach()
+ 
+   #symlink for hipify-clang
+@@ -56,7 +56,7 @@ function(create_binary_symlink)
+   add_custom_target(link_${file_name} ALL
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                   COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                  ../../bin/${file_name} ${HIPIFY_WRAPPER_BIN_DIR}/${file_name})
++                  ../../${CMAKE_INSTALL_BINDIR}/${file_name} ${HIPIFY_WRAPPER_BIN_DIR}/${file_name})
+ endfunction()
+ # Create symlink to binaries
+ create_binary_symlink()
+diff -urp HIPIFY-rocm-5.2.3.orig/packaging/hipify-clang.txt HIPIFY-rocm-5.2.3/packaging/hipify-clang.txt
+--- HIPIFY-rocm-5.2.3.orig/packaging/hipify-clang.txt	2022-04-22 11:35:20.000000000 -0700
++++ HIPIFY-rocm-5.2.3/packaging/hipify-clang.txt	2023-09-26 17:39:15.625929283 -0700
+@@ -1,15 +1,15 @@
+ cmake_minimum_required(VERSION 3.6.3)
+ project(hipify-clang)
+ 
+-install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipify-clang DESTINATION bin)
+-install(DIRECTORY @HIPIFY_INSTALL_PATH@/include/ DESTINATION include/hipify)
+-install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipify-perl DESTINATION bin)
+-install(PROGRAMS @HIPIFY_INSTALL_PATH@/findcode.sh DESTINATION libexec/hipify)
+-install(PROGRAMS @HIPIFY_INSTALL_PATH@/finduncodep.sh DESTINATION libexec/hipify)
+-install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipconvertinplace-perl.sh DESTINATION bin)
+-install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipconvertinplace.sh DESTINATION bin)
+-install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipexamine-perl.sh DESTINATION bin)
+-install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipexamine.sh DESTINATION bin)
++install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipify-clang DESTINATION @CMAKE_INSTALL_BINDIR@)
++install(DIRECTORY @HIPIFY_INSTALL_PATH@/include/ DESTINATION @CMAKE_INSTALL_INCLUDEDIR@/hipify)
++install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipify-perl DESTINATION @CMAKE_INSTALL_BINDIR@)
++install(PROGRAMS @HIPIFY_INSTALL_PATH@/findcode.sh DESTINATION @CMAKE_INSTALL_LIBEXECDIR@//hipify)
++install(PROGRAMS @HIPIFY_INSTALL_PATH@/finduncodep.sh DESTINATION @CMAKE_INSTALL_LIBEXECDIR@//hipify)
++install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipconvertinplace-perl.sh DESTINATION @CMAKE_INSTALL_BINDIR@)
++install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipconvertinplace.sh DESTINATION @CMAKE_INSTALL_BINDIR@)
++install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipexamine-perl.sh DESTINATION @CMAKE_INSTALL_BINDIR@)
++install(PROGRAMS @HIPIFY_INSTALL_PATH@/hipexamine.sh DESTINATION @CMAKE_INSTALL_BINDIR@)
+ set (FILE_REORG_BACKWARD_COMPATIBILITY "@FILE_REORG_BACKWARD_COMPATIBILITY@")
+ if(FILE_REORG_BACKWARD_COMPATIBILITY)
+   install(DIRECTORY @PROJECT_BINARY_DIR@/wrapper_dir/bin DESTINATION hip)

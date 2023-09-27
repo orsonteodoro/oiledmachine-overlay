@@ -1,7 +1,23 @@
 diff -urp HIPIFY-rocm-5.3.3.orig/CMakeLists.txt HIPIFY-rocm-5.3.3/CMakeLists.txt
---- HIPIFY-rocm-5.3.3.orig/CMakeLists.txt	2023-08-23 14:20:02.345685735 -0700
-+++ HIPIFY-rocm-5.3.3/CMakeLists.txt	2023-08-23 14:20:27.229686352 -0700
-@@ -90,7 +90,7 @@ if(UNIX)
+--- HIPIFY-rocm-5.3.3.orig/CMakeLists.txt	2023-09-26 17:47:03.125923905 -0700
++++ HIPIFY-rocm-5.3.3/CMakeLists.txt	2023-09-26 17:47:40.093923480 -0700
+@@ -102,12 +102,12 @@ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_D
+     set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/dist" CACHE PATH ${INSTALL_PATH_DOC_STRING} FORCE)
+ endif()
+ 
+-set(HIPIFY_INSTALL_PATH ${CMAKE_INSTALL_PREFIX})
++set(HIPIFY_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/bin)
+ 
+-install(TARGETS hipify-clang DESTINATION ${CMAKE_INSTALL_PREFIX})
++install(TARGETS hipify-clang DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+ install(
+     DIRECTORY ${CMAKE_SOURCE_DIR}/bin/
+-    DESTINATION ${CMAKE_INSTALL_PREFIX}
++    DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+     USE_SOURCE_PERMISSIONS
+     PATTERN "hipify-perl"
+     PATTERN "*.sh")
+@@ -129,7 +129,7 @@ if(UNIX)
      if(FILE_REORG_BACKWARD_COMPATIBILITY)
          include(hipify-backward-compat.cmake)
      endif()
@@ -12,7 +28,7 @@ diff -urp HIPIFY-rocm-5.3.3.orig/CMakeLists.txt HIPIFY-rocm-5.3.3/CMakeLists.txt
      configure_file(${CMAKE_SOURCE_DIR}/LICENSE.txt ${BUILD_DIR}/LICENSE.txt @ONLY)
 diff -urp HIPIFY-rocm-5.3.3.orig/hipify-backward-compat.cmake HIPIFY-rocm-5.3.3/hipify-backward-compat.cmake
 --- HIPIFY-rocm-5.3.3.orig/hipify-backward-compat.cmake	2022-08-22 08:31:44.000000000 -0700
-+++ HIPIFY-rocm-5.3.3/hipify-backward-compat.cmake	2023-08-23 14:20:40.653686685 -0700
++++ HIPIFY-rocm-5.3.3/hipify-backward-compat.cmake	2023-09-26 17:47:19.885923712 -0700
 @@ -23,9 +23,9 @@ set(HIPIFY_BUILD_DIR ${CMAKE_CURRENT_BIN
  set(HIPIFY_WRAPPER_DIR ${HIPIFY_BUILD_DIR}/wrapper_dir)
  set(HIPIFY_WRAPPER_BIN_DIR ${HIPIFY_WRAPPER_DIR}/bin)

@@ -1,6 +1,6 @@
 diff -urp HIPIFY-rocm-5.7.0.orig/CMakeLists.txt HIPIFY-rocm-5.7.0/CMakeLists.txt
 --- HIPIFY-rocm-5.7.0.orig/CMakeLists.txt	2023-07-18 11:29:56.000000000 -0700
-+++ HIPIFY-rocm-5.7.0/CMakeLists.txt	2023-09-18 22:49:04.013914080 -0700
++++ HIPIFY-rocm-5.7.0/CMakeLists.txt	2023-09-26 15:39:14.962012111 -0700
 @@ -68,40 +68,48 @@ if (NOT HIPIFY_CLANG_TESTS_ONLY)
    endif()
  
