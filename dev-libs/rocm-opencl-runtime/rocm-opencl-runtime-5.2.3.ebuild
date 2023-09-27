@@ -61,7 +61,7 @@ ROCCLR_PATCHES=(
 	# Bug #753377
 	# patch re-enables accidentally disabled gfx800 family
 	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
-	"${FILESDIR}/rocclr-5.3.3-fix-include.patch"
+	"${FILESDIR}/rocclr-5.2.3-fix-include.patch"
 	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
 	"${FILESDIR}/ROCclr-5.6.0-path-changes.patch"
 )
