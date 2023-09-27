@@ -117,8 +117,6 @@ eerror
 		-Wno-dev
 		# -DCMAKE_STRIP=""
 	)
-	export CC="clang"
-	export CXX="clang++"
 	cmake_src_configure
 }
 
