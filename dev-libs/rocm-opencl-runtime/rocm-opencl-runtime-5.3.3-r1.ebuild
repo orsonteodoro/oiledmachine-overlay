@@ -66,14 +66,14 @@ ROCCLR_PATCHES=(
 	"${FILESDIR}/ROCclr-5.6.0-path-changes.patch"
 )
 S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
-CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
+ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
 pkg_setup() {
 	rocm_pkg_setup
 }
 
 src_prepare() {
-	pushd "${CLR_S}" || die
+	pushd "${ROCCLR_S}" || die
 		eapply ${ROCCLR_PATCHES[@]}
 	popd || die
 	eapply ${OCL_PATCHES[@]}
@@ -103,7 +103,7 @@ eerror
 		-DEMU_ENV=ON
 		-DBUILD_ICD=OFF
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DROCCLR_PATH="${CLR_S}"
+		-DROCCLR_PATH="${ROCCLR_S}"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 	)
 	cmake_src_configure

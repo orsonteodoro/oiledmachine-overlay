@@ -68,7 +68,7 @@ ROCCLR_PATCHES=(
 	"${FILESDIR}/ROCclr-5.1.3-path-changes.patch"
 )
 S="${WORKDIR}/ROCm-OpenCL-Runtime-rocm-${PV}"
-CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
+ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -78,7 +78,7 @@ src_prepare() {
 	# Remove "clinfo" - use "dev-util/clinfo" instead
 	[ -d tools/clinfo ] && rm -rf tools/clinfo || die
 
-	pushd "${CLR_S}" || die
+	pushd "${ROCCLR_S}" || die
 		eapply ${ROCCLR_PATCHES[@]}
 	popd || die
 
@@ -112,7 +112,7 @@ eerror
 		-DAMD_OPENCL_PATH="${S}"
 		-DBUILD_TESTS=$(usex test ON OFF)
 		-DEMU_ENV=ON
-		-DROCCLR_PATH="${CLR_S}"
+		-DROCCLR_PATH="${ROCCLR_S}"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-Wno-dev
 		# -DCMAKE_STRIP=""

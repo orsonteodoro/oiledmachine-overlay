@@ -1,0 +1,10 @@
+--- opencl/amdocl/CMakeLists.txt.orig	2023-09-27 12:49:30.969135410 -0700
++++ opencl/amdocl/CMakeLists.txt	2023-09-27 12:49:36.233135349 -0700
+@@ -137,6 +137,7 @@ if(WIN32)
+ endif()
+ 
++target_link_directories(amdocl PRIVATE "${CLR_PATH}/rocclr_build")
+ target_link_libraries(amdocl PUBLIC rocclr)
+ 
+ INSTALL(TARGETS amdocl
+   COMPONENT MAIN

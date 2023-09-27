@@ -61,6 +61,9 @@ RESTRICT="
 "
 OCL_PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-include-search-path.patch"
+	"${FILESDIR}/${PN}-5.7.0-defs.patch"
+	"${FILESDIR}/${PN}-5.7.0-link-path.patch"
 )
 ROCCLR_PATCHES=(
 	# Bug #753377
@@ -68,7 +71,8 @@ ROCCLR_PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-enable-gfx800.patch"
 	"${FILESDIR}/ROCclr-5.7.0-path-changes.patch"
 )
-CLR_S="${WORKDIR}/clr-rocm-${PV}/rocclr"
+ROCCLR_S="${WORKDIR}/clr-rocm-${PV}/rocclr"
+CLR_S="${WORKDIR}/clr-rocm-${PV}"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -79,13 +83,13 @@ src_unpack () {
 		git-r3_fetch
 		git-r3_checkout
 		git-r3_fetch "${EGIT_CLR_REPO_URI}"
-		git-r3_checkout "${EGIT_CLR_REPO_URI}" "${CLR_S}"
+		git-r3_checkout "${EGIT_CLR_REPO_URI}" "${ROCCLR_S}"
 	else
 		default
 	fi
 }
 src_prepare() {
-	pushd "${CLR_S}" || die
+	pushd "${ROCCLR_S}" || die
 		eapply ${ROCCLR_PATCHES[@]}
 	popd || die
 	eapply ${OCL_PATCHES[@]}
@@ -111,14 +115,29 @@ eerror
 	local mycmakeargs=(
 		-DAMD_OPENCL_PATH="${S}"
 		-DBUILD_TESTS=$(usex test ON OFF)
+		-DCLR_PATH="${CLR_S}"
 		-DEMU_ENV=ON
 		-DBUILD_ICD=OFF
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DROCCLR_PATH="${CLR_S}"
+		-DROCCLR_PATH="${ROCCLR_S}"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-Wno-dev
 	)
+	pushd "${ROCCLR_S}" || die
+		CMAKE_USE_DIR="${ROCCLR_S}" \
+		BUILD_DIR="${ROCCLR_S}_build" \
+		cmake_src_configure
+	popd || die
 	cmake_src_configure
+}
+
+src_compile() {
+	pushd "${ROCCLR_S}" || die
+		CMAKE_USE_DIR="${ROCCLR_S}" \
+		BUILD_DIR="${ROCCLR_S}_build" \
+		cmake_src_compile
+	popd || die
+	cmake_src_compile
 }
 
 src_install() {

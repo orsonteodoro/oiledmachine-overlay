@@ -1,0 +1,32 @@
+--- opencl/amdocl/CMakeLists.txt.orig	2023-09-27 09:29:17.121273603 -0700
++++ opencl/amdocl/CMakeLists.txt	2023-09-27 09:59:21.033252853 -0700
+@@ -91,6 +91,15 @@ target_sources(amdocl PRIVATE
+   cl_svm.cpp
+   cl_thread_trace_amd.cpp)
+ 
++target_include_directories(amdocl PRIVATE
++  ${ROCCLR_PATH}
++  ${ROCCLR_PATH}/../opencl
++  ${ROCCLR_PATH}/../opencl/amdocl
++  ${ROCCLR_PATH}/../opencl/khronos/headers/opencl2.2
++  ${ROCCLR_PATH}/elf
++  ${ROCCLR_PATH}/include
++  )
++
+ if(WIN32)
+   target_sources(amdocl PRIVATE
+   cl_runtime.cpp)
+--- opencl/tools/cltrace/CMakeLists.txt.orig	2023-09-27 11:52:30.361174756 -0700
++++ opencl/tools/cltrace/CMakeLists.txt	2023-09-27 11:55:18.105172827 -0700
+@@ -9,6 +9,11 @@ endif()
+ 
+ target_include_directories(cltrace PRIVATE ${CMAKE_SOURCE_DIR}/opencl ${OPENCL_ICD_LOADER_HEADERS_DIR} ${ROCCLR_INCLUDE_DIR})
+ 
++target_include_directories(cltrace PRIVATE
++  ${ROCCLR_PATH}/../opencl
++  ${ROCCLR_PATH}/include
++  )
++
+ INSTALL(TARGETS cltrace
+   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

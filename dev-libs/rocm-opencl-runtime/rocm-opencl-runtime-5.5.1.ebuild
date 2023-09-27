@@ -72,7 +72,7 @@ ROCCLR_PATCHES=(
 	"${FILESDIR}/rocclr-5.3.3-gcc13.patch"
 	"${FILESDIR}/ROCclr-5.6.0-path-changes.patch"
 )
-CLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
+ROCCLR_S="${WORKDIR}/ROCclr-rocm-${PV}"
 
 pkg_setup() {
 	rocm_pkg_setup
@@ -83,13 +83,13 @@ src_unpack () {
 		git-r3_fetch
 		git-r3_checkout
 		git-r3_fetch "${EGIT_CLR_REPO_URI}"
-		git-r3_checkout "${EGIT_CLR_REPO_URI}" "${CLR_S}"
+		git-r3_checkout "${EGIT_CLR_REPO_URI}" "${ROCCLR_S}"
 	else
 		default
 	fi
 }
 src_prepare() {
-	pushd "${CLR_S}" || die
+	pushd "${ROCCLR_S}" || die
 		eapply ${ROCCLR_PATCHES[@]}
 	popd || die
 	eapply ${OCL_PATCHES[@]}
@@ -118,7 +118,7 @@ eerror
 		-DEMU_ENV=ON
 		-DBUILD_ICD=OFF
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DROCCLR_PATH="${CLR_S}"
+		-DROCCLR_PATH="${ROCCLR_S}"
 		-DROCM_PATH="${EPREFIX}${EROCM_PATH}"
 		-Wno-dev
 	)
