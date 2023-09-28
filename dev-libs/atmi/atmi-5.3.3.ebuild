@@ -80,16 +80,20 @@ src_prepare() {
 }
 
 src_configure() {
+	if has_version "dev-util/HIPIFY:${ROCM_SLOT}" ; then
+# Avoid header problem:
+# cstdint:48:11: error: no member named 'int16_t' in the global namespace
+eerror
+eerror "dev-util/HIPIFY:${ROCM_SLOT} must be unemerged temporarily before emerging this package."
+eerror
+		die
+	fi
 	if use debug ; then
 		CMAKE_BUILD_TYPE="Debug"
 	else
 		CMAKE_BUILD_TYPE="Release"
 	fi
 	export GFXLIST=$(get_amdgpu_flags)
-
-	export CC="clang"
-	export CXX="clang++"
-	replace-flags -O0 -O1
 
 	export ROC_DIR="${ESYSROOT}${EROCM_PATH}"
 	export ROCR_DIR="${ESYSROOT}${EROCM_PATH}"
