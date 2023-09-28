@@ -1,0 +1,22 @@
+diff -urp HIPIFY-rocm-5.5.1.orig/CMakeLists.txt HIPIFY-rocm-5.5.1/CMakeLists.txt
+--- HIPIFY-rocm-5.5.1.orig/CMakeLists.txt	2023-09-27 20:10:56.672830749 -0700
++++ HIPIFY-rocm-5.5.1/CMakeLists.txt	2023-09-27 20:11:49.384830142 -0700
+@@ -141,6 +141,8 @@ install(
+     USE_SOURCE_PERMISSIONS
+     PATTERN "hipify-perl"
+     PATTERN "*.sh")
++option(HIPIFY_INSTALL_HEADERS "Install headers" OFF)
++if(HIPIFY_INSTALL_HEADERS)
+ install(
+     DIRECTORY ${LLVM_DIR}/../../clang/${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH}/
+     DESTINATION ${CMAKE_INSTALL_PREFIX}
+@@ -153,6 +155,7 @@ install(
+     PATTERN "new"
+     PATTERN "ppc_wrappers" EXCLUDE
+     PATTERN "openmp_wrappers" EXCLUDE)
++endif()
+ 
+ option(FILE_REORG_BACKWARD_COMPATIBILITY "Enable File Reorg with backward compatibility" ON)
+ 
+Only in HIPIFY-rocm-5.5.1: CMakeLists.txt.orig
+Only in HIPIFY-rocm-5.5.1: CMakeLists.txt.rej

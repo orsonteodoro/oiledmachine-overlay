@@ -24,7 +24,7 @@ DESCRIPTION="HIPIFY: Convert CUDA to Portable C++ Code"
 HOMEPAGE="https://github.com/RadeonOpenCompute/HIPIFY"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test r3"
+IUSE="system-llvm test r4"
 gen_llvm_rdepend() {
 	local s="${1}"
 	echo "
@@ -115,6 +115,7 @@ RESTRICT="
 PATCHES=(
 	"${FILESDIR}/HIPIFY-5.6.1-llvm-dynlib-on.patch"
 	"${FILESDIR}/HIPIFY-5.5.1-path-changes.patch"
+	"${FILESDIR}/HIPIFY-5.5.1-install-headers-option.patch"
 )
 
 pkg_setup() {
