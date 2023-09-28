@@ -7,7 +7,7 @@ CONFIG_CHECK="~HSA_AMD"
 LLVM_MAX_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake linux-info rocm
+inherit cmake flag-o-matic linux-info rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/rocr_debug_agent/archive/rocm-${PV}.tar.gz
@@ -43,6 +43,7 @@ RESTRICT="
 S="${WORKDIR}/rocr_debug_agent-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-epoll_wait-nevents.patch"
 )
 
 pkg_setup() {
@@ -67,6 +68,8 @@ src_prepare() {
 }
 
 src_configure() {
+	append-flags -fno-stack-protector
+	replace-flags -O0 -O1
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
