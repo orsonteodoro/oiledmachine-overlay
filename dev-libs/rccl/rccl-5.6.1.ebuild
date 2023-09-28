@@ -96,12 +96,13 @@ src_configure() {
 # XXXXXXXXXXX is omitted
 	replace-flags '-O0' '-O1'
 
-	export CC="${HIP_CC:-clang}"
-	export CXX="${HIP_CXX:-clang++}"
+	export CC="${HIP_CC:-hipcc}"
+	export CXX="${HIP_CXX:-hipcc}"
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		# Prevent configure test issues
 		append-flags \
+			-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
 			--rocm-path="${ESYSROOT}${EROCM_PATH}" \
 			--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
 	fi
