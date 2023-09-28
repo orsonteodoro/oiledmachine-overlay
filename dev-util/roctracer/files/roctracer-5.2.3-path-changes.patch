@@ -1,0 +1,320 @@
+diff -urp roctracer-rocm-5.2.3.orig/build_proto.sh roctracer-rocm-5.2.3/build_proto.sh
+--- roctracer-rocm-5.2.3.orig/build_proto.sh	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/build_proto.sh	2023-09-28 11:43:53.992186850 -0700
+@@ -1,6 +1,6 @@
+ #!/bin/bash -x
+ COMPONENT="roctracer"
+-ROCM_PATH="/opt/rocm"
++ROCM_PATH="@ESYSROOT_ROCM_PATH@"
+ 
+ fatal() {
+   echo "$1"
+diff -urp roctracer-rocm-5.2.3.orig/build.sh roctracer-rocm-5.2.3/build.sh
+--- roctracer-rocm-5.2.3.orig/build.sh	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/build.sh	2023-09-28 11:43:53.992186850 -0700
+@@ -1,8 +1,8 @@
+ #!/bin/bash -e
+ SRC_DIR=`dirname $0`
+ COMPONENT="roctracer"
+-ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
+-LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
++ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
++LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
+ DEFAULTS=defaults.sh
+ 
+ fatal() {
+diff -urp roctracer-rocm-5.2.3.orig/build_static.sh roctracer-rocm-5.2.3/build_static.sh
+--- roctracer-rocm-5.2.3.orig/build_static.sh	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/build_static.sh	2023-09-28 11:43:53.992186850 -0700
+@@ -1,8 +1,8 @@
+ #!/bin/bash -x
+ SRC_DIR=`dirname $0`
+ COMPONENT="roctracer"
+-ROCM_PATH="${ROCM_PATH:=/opt/rocm}"
+-LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,$ROCM_PATH/lib:$ROCM_PATH/lib64"
++ROCM_PATH="${ROCM_PATH:=@ESYSROOT_ROCM_PATH@}"
++LD_RUNPATH_FLAG=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
+ DEFAULTS=defaults.sh
+ 
+ fatal() {
+diff -urp roctracer-rocm-5.2.3.orig/CMakeLists.txt roctracer-rocm-5.2.3/CMakeLists.txt
+--- roctracer-rocm-5.2.3.orig/CMakeLists.txt	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/CMakeLists.txt	2023-09-28 11:51:39.540181495 -0700
+@@ -26,7 +26,7 @@
+ cmake_minimum_required ( VERSION 3.5.0 )
+ 
+ ## Verbose output.
+-set ( CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "Verbose Output" FORCE )
++#_cmake_modify_IGNORE set ( CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "Verbose Output" FORCE )
+ 
+ ## Set module name and project name.
+ set ( ROCTRACER_NAME "roctracer" )
+@@ -119,14 +119,14 @@ message ( "------Install-prefix: ${CMAKE
+ message ( "-----------CPACK-dir: ${CPACK_PACKAGING_INSTALL_PREFIX}" )
+ 
+ ## Install information
+-install ( TARGETS ${ROCTRACER_TARGET} LIBRARY DESTINATION lib )
++install ( TARGETS ${ROCTRACER_TARGET} LIBRARY DESTINATION @LIBDIR@ )
+ foreach ( header ${PUBLIC_HEADERS} )
+   get_filename_component ( header_subdir ${header} DIRECTORY )
+-  install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/inc/${header} DESTINATION include/${DEST_NAME}/${header_subdir} )
++  install ( FILES ${CMAKE_CURRENT_SOURCE_DIR}/inc/${header} DESTINATION include )
+ endforeach ()
+ foreach ( header ${GEN_HEADERS} )
+   get_filename_component ( header_subdir ${header} DIRECTORY )
+-  install ( FILES ${PROJECT_BINARY_DIR}/inc/${header} DESTINATION include/${DEST_NAME}/${header_subdir} )
++  install ( FILES ${PROJECT_BINARY_DIR}/inc/${header} DESTINATION include )
+ endforeach ()
+ 
+ option(FILE_REORG_BACKWARD_COMPATIBILITY "Enable File Reorg with backward compatibility" ON)
+@@ -142,7 +142,7 @@ set ( ROCTX_LIBRARY "lib${ROCTX_TARGET}"
+ set_property ( TARGET ${ROCTX_TARGET} PROPERTY VERSION "${LIB_VERSION_STRING}" )
+ set_property ( TARGET ${ROCTX_TARGET} PROPERTY SOVERSION "${LIB_VERSION_MAJOR}" )
+ 
+-install ( TARGETS ${ROCTX_TARGET} LIBRARY DESTINATION lib )
++install ( TARGETS ${ROCTX_TARGET} LIBRARY DESTINATION @LIBDIR@ )
+ 
+ ## Packaging directives
+ set ( CPACK_GENERATOR "DEB" "RPM" "TGZ" CACHE STRING "CPACK GENERATOR DEB;RPM")
+Only in roctracer-rocm-5.2.3: CMakeLists.txt.orig
+Only in roctracer-rocm-5.2.3: CMakeLists.txt.rej
+diff -urp roctracer-rocm-5.2.3.orig/cmake_modules/env.cmake roctracer-rocm-5.2.3/cmake_modules/env.cmake
+--- roctracer-rocm-5.2.3.orig/cmake_modules/env.cmake	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/cmake_modules/env.cmake	2023-09-28 11:43:53.992186850 -0700
+@@ -107,7 +107,7 @@ if ( NOT DEFINED CMAKE_PREFIX_PATH AND D
+ endif()
+ set ( ENV{CMAKE_PREFIX_PATH} ${CMAKE_PREFIX_PATH} )
+ 
+-set ( HIP_PATH "/opt/rocm/hip" )
++set ( HIP_PATH "@ESYSROOT_ROCM_PATH@/hip" )
+ if ( DEFINED ENV{HIP_PATH} )
+   set ( HIP_PATH $ENV{HIP_PATH} )
+ endif()
+diff -urp roctracer-rocm-5.2.3.orig/inc/ext/CMakeLists.txt roctracer-rocm-5.2.3/inc/ext/CMakeLists.txt
+--- roctracer-rocm-5.2.3.orig/inc/ext/CMakeLists.txt	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/inc/ext/CMakeLists.txt	2023-09-28 11:43:53.992186850 -0700
+@@ -26,7 +26,7 @@
+ cmake_minimum_required ( VERSION 3.5.0 )
+ 
+ ## Verbose output.
+-set ( CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "Verbose Output" FORCE )
++#_cmake_modify_IGNORE set ( CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "Verbose Output" FORCE )
+ 
+ ## Set module name and project name.
+ set ( ROCTRACER_NAME "roctracer" )
+@@ -55,7 +55,7 @@ endif ()
+ set ( BUILD_VERSION_STRING "${BUILD_VERSION_MAJOR}.${BUILD_VERSION_MINOR}.${BUILD_VERSION_PATCH}" )
+ 
+ ## Install and packaging
+-set ( CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${ROCTRACER_NAME} )
++#_cmake_modify_IGNORE set ( CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${ROCTRACER_NAME} )
+ message ( "---------Install-Dir: ${CMAKE_INSTALL_PREFIX}" )
+ 
+ add_custom_target( pkgconfig_install COMMAND sh -x "${CMAKE_CURRENT_SOURCE_DIR}/RPM/rpm_post" )
+diff -urp roctracer-rocm-5.2.3.orig/README.md roctracer-rocm-5.2.3/README.md
+--- roctracer-rocm-5.2.3.orig/README.md	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/README.md	2023-09-28 11:43:53.992186850 -0700
+@@ -15,13 +15,13 @@ Includes basic API: roctxMark, roctxRang
+ ```
+ rocTracer API:
+   To use the rocTracer API you need the API header and to link your application with roctracer .so librray:
+-  - the API header: /opt/rocm/roctracer/include/roctracer.h
+-  - the .so library: /opt/rocm/lib/libroctracer64.so
++  - the API header: @EPREFIX_ROCM_PATH@/roctracer/include/roctracer.h
++  - the .so library: @EPREFIX_ROCM_PATH@/@LIBDIR@/libroctracer64.so
+ 
+ rocTX API:
+   To use the rocTX API you need the API header and to link your application with roctx .so librray:
+-  - the API header: /opt/rocm/roctracer/include/roctx.h
+-  - the .so library: /opt/rocm/lib/libroctx64.so
++  - the API header: @EPREFIX_ROCM_PATH@/roctracer/include/roctx.h
++  - the .so library: @EPREFIX_ROCM_PATH@/@LIBDIR@/libroctx64.so
+ ```
+ 
+ ## The library source tree
+@@ -56,13 +56,13 @@ rocTX API:
+   git clone -b amd-master https://github.com/ROCm-Developer-Tools/roctracer
+ 
+  - Set environment:
+-  export CMAKE_PREFIX_PATH=/opt/rocm
++  export CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@
+  - To use custom HIP version:
+-  export HIP_PATH=/opt/rocm/hip
++  export HIP_PATH=@EPREFIX_ROCM_PATH@/hip
+ 
+  - To build roctracer library:
+   export CMAKE_BUILD_TYPE=<debug|release> # release by default
+-  cd <your path>/roctracer && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=/opt/rocm .. && make -j <nproc>
++  cd <your path>/roctracer && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@ .. && make -j <nproc>
+ 
+  - To build and run test:
+   make mytest
+diff -urp roctracer-rocm-5.2.3.orig/roctracer-backward-compat.cmake roctracer-rocm-5.2.3/roctracer-backward-compat.cmake
+--- roctracer-rocm-5.2.3.orig/roctracer-backward-compat.cmake	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/roctracer-backward-compat.cmake	2023-09-28 11:51:54.612181322 -0700
+@@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.16.8)
+ set(ROCT_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
+ set(ROCT_WRAPPER_DIR ${ROCT_BUILD_DIR}/wrapper_dir)
+ set(ROCT_WRAPPER_INC_DIR ${ROCT_WRAPPER_DIR}/include)
+-set(ROCT_WRAPPER_LIB_DIR ${ROCT_WRAPPER_DIR}/lib)
++set(ROCT_WRAPPER_LIB_DIR ${ROCT_WRAPPER_DIR}/@LIBDIR@)
+ set(ROCT_WRAPPER_TOOL_DIR ${ROCT_WRAPPER_DIR}/tool)
+ 
+ #Function to set actual file contents in wrapper files
+@@ -94,7 +94,7 @@ function(create_library_symlink)
+     add_custom_target(link_${file_name} ALL
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                   COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                  ../../lib/${file_name} ${ROCT_WRAPPER_LIB_DIR}/${file_name})
++                  ../../@LIBDIR@/${file_name} ${ROCT_WRAPPER_LIB_DIR}/${file_name})
+   endforeach()
+   #set softlink for roctracer/tool/libtracer_tool.so
+   #The libray name is changed to libroctracer_tool.so with file reorg changes
+@@ -104,7 +104,7 @@ function(create_library_symlink)
+   add_custom_target(link_${LIB_TRACERTOOL} ALL
+                   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                   COMMAND ${CMAKE_COMMAND} -E create_symlink
+-                  ../../lib/${ROCTRACER_NAME}/${LIB_ROCTRACERTOOL} ${ROCT_WRAPPER_TOOL_DIR}/${LIB_TRACERTOOL})
++                  ../../@LIBDIR@/${ROCTRACER_NAME}/${LIB_ROCTRACERTOOL} ${ROCT_WRAPPER_TOOL_DIR}/${LIB_TRACERTOOL})
+ endfunction()
+ 
+ #Use template header file and generater wrapper header files
+diff -urp roctracer-rocm-5.2.3.orig/run_test.sh roctracer-rocm-5.2.3/run_test.sh
+--- roctracer-rocm-5.2.3.orig/run_test.sh	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/run_test.sh	2023-09-28 11:43:53.992186850 -0700
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-ROCM_PATH="/opt/rocm"
++ROCM_PATH="@ESYSROOT_ROCM_PATH@"
+ 
+ fatal() {
+   echo "$1"
+diff -urp roctracer-rocm-5.2.3.orig/test/CMakeLists.txt roctracer-rocm-5.2.3/test/CMakeLists.txt
+--- roctracer-rocm-5.2.3.orig/test/CMakeLists.txt	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/test/CMakeLists.txt	2023-09-28 11:45:38.920185643 -0700
+@@ -21,7 +21,7 @@
+ ################################################################################
+ 
+ cmake_minimum_required ( VERSION 3.5.0 )
+-set ( CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "Verbose Output" FORCE )
++#_cmake_modify_IGNORE set ( CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "Verbose Output" FORCE )
+ 
+ if ( NOT DEFINED ROOT_DIR )
+   MESSAGE ( FATAL_ERROR "ROOT_DIR is not defined" )
+@@ -84,7 +84,7 @@ if ( DEFINED ROCTRACER_TARGET )
+   add_library ( ${TEST_LIB} SHARED ${TEST_LIB_SRC} )
+   target_include_directories ( ${TEST_LIB} PRIVATE ${HSA_TEST_DIR} ${ROOT_DIR} ${ROOT_DIR}/inc ${HSA_RUNTIME_INC_PATH} ${ROCM_INC_PATH} ${HIP_INC_DIR} ${HSA_KMT_INC_PATH} ${GEN_INC_DIR} )
+   target_link_libraries ( ${TEST_LIB} ${ROCTRACER_TARGET} ${HSA_RUNTIME_LIB} c stdc++ dl pthread rt numa )
+-  install ( TARGETS ${TEST_LIB} LIBRARY DESTINATION lib/${DEST_NAME})
++  install ( TARGETS ${TEST_LIB} LIBRARY DESTINATION @LIBDIR@)
+ endif ()
+ 
+ ## Build hsaco_test.cpp referenc test
+Only in roctracer-rocm-5.2.3/test: CMakeLists.txt.orig
+Only in roctracer-rocm-5.2.3/test: CMakeLists.txt.rej
+diff -urp roctracer-rocm-5.2.3.orig/test/hsa/script/build_kernel.sh roctracer-rocm-5.2.3/test/hsa/script/build_kernel.sh
+--- roctracer-rocm-5.2.3.orig/test/hsa/script/build_kernel.sh	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/test/hsa/script/build_kernel.sh	2023-09-28 11:43:53.996186850 -0700
+@@ -18,7 +18,7 @@ if [ -z "$DST_DIR" ] ; then
+ fi
+ 
+ if [ -z "$ROCM_DIR" ] ; then
+-  ROCM_DIR=/opt/rocm
++  ROCM_DIR=@EPREFIX_ROCM_PATH@
+ fi
+ 
+ if [ -z "$TGT_LIST" ] ; then
+@@ -32,12 +32,12 @@ fi
+ 
+ OCL_VER="2.0"
+ 
+-if [ -e $ROCM_DIR/llvm ] ; then
+-  LLVM_DIR=$ROCM_DIR/llvm
+-  LIB_DIR=$ROCM_DIR/lib
++if [ -e @EPREFIX_LLVM_PATH@ ] ; then
++  LLVM_DIR=@EPREFIX_LLVM_PATH@
++  LIB_DIR=$ROCM_DIR/@LIBDIR@
+ else
+   LLVM_DIR=$ROCM_DIR/hcc
+-  LIB_DIR=$LLVM_DIR/lib
++  LIB_DIR=$LLVM_DIR/@LIBDIR@
+ fi
+ 
+ # Determine whether using new or old device-libs layout
+@@ -45,6 +45,8 @@ if [ -e $LIB_DIR/bitcode/opencl.amdgcn.b
+   BC_DIR=$LIB_DIR/bitcode
+ elif [ -e $LIB_DIR/opencl.amdgcn.bc ]; then
+   BC_DIR=$LIB_DIR
++elif [ -e $ROCM_DIR/@LIBDIR@/amdgcn/bitcode/opencl.bc ]; then
++  BC_DIR=$ROCM_DIR/@LIBDIR@/amdgcn/bitcode
+ elif [ -e $ROCM_DIR/amdgcn/bitcode/opencl.bc ]; then
+   BC_DIR=$ROCM_DIR/amdgcn/bitcode
+ else
+@@ -52,7 +54,7 @@ else
+   exit 1
+ fi
+ 
+-CLANG_ROOT=$LLVM_DIR/lib/clang
++CLANG_ROOT=@EPREFIX_CLANG_PATH@
+ CLANG_DIR=`ls -d $CLANG_ROOT/* | head -n 1`
+ if [ "$CLANG_DIR" = "" ] ; then
+   echo "Error: LLVM clang library was not found"
+diff -urp roctracer-rocm-5.2.3.orig/test/hsa/test/CMakeLists.txt roctracer-rocm-5.2.3/test/hsa/test/CMakeLists.txt
+--- roctracer-rocm-5.2.3.orig/test/hsa/test/CMakeLists.txt	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/test/hsa/test/CMakeLists.txt	2023-09-28 11:43:53.996186850 -0700
+@@ -21,7 +21,7 @@
+ ################################################################################
+ 
+ cmake_minimum_required ( VERSION 2.8.12 )
+-set ( CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "Verbose Output" FORCE )
++#_cmake_modify_IGNORE set ( CMAKE_VERBOSE_MAKEFILE TRUE CACHE BOOL "Verbose Output" FORCE )
+ 
+ set ( EXE_NAME "ctrl" )
+ 
+diff -urp roctracer-rocm-5.2.3.orig/test/MatrixTranspose/Makefile roctracer-rocm-5.2.3/test/MatrixTranspose/Makefile
+--- roctracer-rocm-5.2.3.orig/test/MatrixTranspose/Makefile	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/test/MatrixTranspose/Makefile	2023-09-28 11:43:53.996186850 -0700
+@@ -1,10 +1,10 @@
+ ROOT_PATH ?= ../..
+ INC_PATH  ?= $(ROOT_PATH)/inc
+ LIB_PATH  ?= $(ROOT_PATH)/build
+-ROCM_PATH ?= /opt/rocm
++ROCM_PATH ?= @EPREFIX_ROCM_PATH@
+ ROC_LIBS  = -Wl,--rpath,${LIB_PATH} $(LIB_PATH)/libroctracer64.so $(LIB_PATH)/libroctx64.so
+ 
+-HIP_PATH ?= $(wildcard /opt/rocm/hip)
++HIP_PATH ?= $(wildcard @EPREFIX_ROCM_PATH@/hip)
+ ifeq (,$(HIP_PATH))
+ 	HIP_PATH=../../..
+ endif
+diff -urp roctracer-rocm-5.2.3.orig/test/MatrixTranspose_test/Makefile roctracer-rocm-5.2.3/test/MatrixTranspose_test/Makefile
+--- roctracer-rocm-5.2.3.orig/test/MatrixTranspose_test/Makefile	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/test/MatrixTranspose_test/Makefile	2023-09-28 11:43:53.996186850 -0700
+@@ -1,13 +1,13 @@
+ ROOT_PATH ?= ../..
+ INC_PATH  ?= $(ROOT_PATH)/inc
+ LIB_PATH  ?= $(ROOT_PATH)/build
+-ROCM_PATH ?= /opt/rocm
++ROCM_PATH ?= @EPREFIX_ROCM_PATH@
+ HIP_VDI ?= 0
+ ITERATIONS ?= 100
+ 
+ ROC_LIBS  = -Wl,--rpath,${LIB_PATH} $(LIB_PATH)/libroctracer64.so $(LIB_PATH)/libroctx64.so
+ 
+-HIP_PATH ?= $(wildcard /opt/rocm/hip)
++HIP_PATH ?= $(wildcard @EPREFIX_ROCM_PATH@/hip)
+ ifeq (,$(HIP_PATH))
+ 	HIP_PATH=../../..
+ endif
+diff -urp roctracer-rocm-5.2.3.orig/test/run.sh roctracer-rocm-5.2.3/test/run.sh
+--- roctracer-rocm-5.2.3.orig/test/run.sh	2022-05-03 10:07:23.000000000 -0700
++++ roctracer-rocm-5.2.3/test/run.sh	2023-09-28 11:43:53.996186850 -0700
+@@ -37,7 +37,7 @@ export HSA_TOOLS_REPORT_LOAD_FAILURE=1
+ # paths to ROC profiler and other libraries
+ export LD_LIBRARY_PATH=$PWD
+ if [ $IS_CI = 1 ] ; then
+-  export LD_LIBRARY_PATH=/opt/rocm/roctracer/lib
++  export LD_LIBRARY_PATH=@EPREFIX_ROCM_PATH@/roctracer/@LIBDIR@
+ fi
+ if [ -n "$ROCTRACER_LIB_PATH" ] ; then
+   export LD_LIBRARY_PATH=$ROCTRACER_LIB_PATH
