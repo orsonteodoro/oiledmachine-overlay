@@ -83,9 +83,10 @@ src_configure() {
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		# Prevent configure test issues
 		append-flags \
-			-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
 			--rocm-path="${ESYSROOT}${EROCM_PATH}" \
 			--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
+		append-ldflags \
+			-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)"
 	fi
 
 	export HIP_PLATFORM="amd"

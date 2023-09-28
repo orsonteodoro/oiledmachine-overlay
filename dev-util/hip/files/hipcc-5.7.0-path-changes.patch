@@ -1,6 +1,6 @@
 diff -urp HIPCC-rocm-5.7.0.orig/bin/hipcc.pl HIPCC-rocm-5.7.0/bin/hipcc.pl
---- HIPCC-rocm-5.7.0.orig/bin/hipcc.pl	2023-09-19 10:47:38.721338336 -0700
-+++ HIPCC-rocm-5.7.0/bin/hipcc.pl	2023-09-19 10:53:50.029333377 -0700
+--- HIPCC-rocm-5.7.0.orig/bin/hipcc.pl	2023-09-28 02:58:24.512549529 -0700
++++ HIPCC-rocm-5.7.0/bin/hipcc.pl	2023-09-28 03:01:27.656547422 -0700
 @@ -39,11 +39,11 @@ use Cwd 'abs_path';
  # If HIP_PLATFORM is not set hipcc will attempt auto-detect based on if nvcc is found.
  #
@@ -24,7 +24,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/bin/hipcc.pl HIPCC-rocm-5.7.0/bin/hipcc.pl
  
 -$HIP_LIB_PATH=$ENV{'HIP_LIB_PATH'};
 -$DEVICE_LIB_PATH=$ENV{'DEVICE_LIB_PATH'};
-+$HIP_LIB_PATH='@EPREFIX@/usr/@LIBDIR@';
++$HIP_LIB_PATH='@EPREFIX_ROCM_PATH@/@LIBDIR@';
 +$DEVICE_LIB_PATH='@EPREFIX_ROCM_PATH@/@LIBDIR@/amdgcn/bitcode';
  $HIP_CLANG_HCC_COMPAT_MODE=$ENV{'HIP_CLANG_HCC_COMPAT_MODE'}; # HCC compatibility mode
  $HIP_COMPILE_CXX_AS_HIP=$ENV{'HIP_COMPILE_CXX_AS_HIP'} // "1";
@@ -92,7 +92,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/bin/hipcc.pl HIPCC-rocm-5.7.0/bin/hipcc.pl
      }
 diff -urp HIPCC-rocm-5.7.0.orig/bin/hipconfig.pl HIPCC-rocm-5.7.0/bin/hipconfig.pl
 --- HIPCC-rocm-5.7.0.orig/bin/hipconfig.pl	2023-07-25 12:35:46.000000000 -0700
-+++ HIPCC-rocm-5.7.0/bin/hipconfig.pl	2023-09-19 10:47:55.133338116 -0700
++++ HIPCC-rocm-5.7.0/bin/hipconfig.pl	2023-09-28 03:00:50.376547851 -0700
 @@ -46,6 +46,7 @@ $CUDA_PATH      =   $hipvars::CUDA_PATH;
  $HIP_PATH       =   $hipvars::HIP_PATH;
  $ROCM_PATH      =   $hipvars::ROCM_PATH;
@@ -121,7 +121,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/bin/hipconfig.pl HIPCC-rocm-5.7.0/bin/hipconfig.
      print "  --platform, -P     : print platform (amd or nvidia)\n";
 diff -urp HIPCC-rocm-5.7.0.orig/bin/hipvars.pm HIPCC-rocm-5.7.0/bin/hipvars.pm
 --- HIPCC-rocm-5.7.0.orig/bin/hipvars.pm	2023-07-25 12:35:46.000000000 -0700
-+++ HIPCC-rocm-5.7.0/bin/hipvars.pm	2023-09-19 10:53:51.629333356 -0700
++++ HIPCC-rocm-5.7.0/bin/hipvars.pm	2023-09-28 03:00:50.376547851 -0700
 @@ -67,11 +67,11 @@ $isWindows =  ($^O eq 'MSWin32' or $^O e
  #
  # Since this hipcc script gets installed at two uneven hierarchical levels,
@@ -179,7 +179,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/bin/hipvars.pm HIPCC-rocm-5.7.0/bin/hipvars.pm
          $HIP_ROCCLR_HOME = $HIP_PATH; # use HIP_PATH
 diff -urp HIPCC-rocm-5.7.0.orig/docs/build.md HIPCC-rocm-5.7.0/docs/build.md
 --- HIPCC-rocm-5.7.0.orig/docs/build.md	2023-07-25 12:35:46.000000000 -0700
-+++ HIPCC-rocm-5.7.0/docs/build.md	2023-09-19 10:47:55.133338116 -0700
++++ HIPCC-rocm-5.7.0/docs/build.md	2023-09-28 03:00:50.380547851 -0700
 @@ -9,4 +9,4 @@ cmake ..
  make -j
  ```
@@ -188,7 +188,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/docs/build.md HIPCC-rocm-5.7.0/docs/build.md
 +The hipcc and hipconfig executables are created in the current build folder. These executables need to be copied to @EPREFIX_ROCM_PATH@/bin folder location. Packaging and installing will be handled in future releases.
 diff -urp HIPCC-rocm-5.7.0.orig/docs/env.md HIPCC-rocm-5.7.0/docs/env.md
 --- HIPCC-rocm-5.7.0.orig/docs/env.md	2023-07-25 12:35:46.000000000 -0700
-+++ HIPCC-rocm-5.7.0/docs/env.md	2023-09-19 10:48:17.449337818 -0700
++++ HIPCC-rocm-5.7.0/docs/env.md	2023-09-28 03:00:50.380547851 -0700
 @@ -5,7 +5,7 @@ The environment variable HIP_PLATFORM ma
  - If HIP_PLATFORM is not set, then hipcc will attempt to auto-detect based on if nvcc is found.
  
@@ -203,7 +203,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/docs/env.md HIPCC-rocm-5.7.0/docs/env.md
 +- HIP_CLANG_PATH  : Path to HIP-Clang (defaults to @EPREFIX_LLVM_PATH@/bin relative to hipcc's abs_path). Used on AMD platforms only.
 diff -urp HIPCC-rocm-5.7.0.orig/README.md HIPCC-rocm-5.7.0/README.md
 --- HIPCC-rocm-5.7.0.orig/README.md	2023-07-25 12:35:46.000000000 -0700
-+++ HIPCC-rocm-5.7.0/README.md	2023-09-19 10:54:03.357333199 -0700
++++ HIPCC-rocm-5.7.0/README.md	2023-09-28 03:00:50.380547851 -0700
 @@ -38,11 +38,11 @@ The environment variable HIP_PLATFORM ma
  - If HIP_PLATFORM is not set, then hipcc will attempt to auto-detect based on if nvcc is found.
  
@@ -241,7 +241,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/README.md HIPCC-rocm-5.7.0/README.md
  
 diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_amd.h HIPCC-rocm-5.7.0/src/hipBin_amd.h
 --- HIPCC-rocm-5.7.0.orig/src/hipBin_amd.h	2023-07-25 12:35:46.000000000 -0700
-+++ HIPCC-rocm-5.7.0/src/hipBin_amd.h	2023-09-19 10:53:45.805333434 -0700
++++ HIPCC-rocm-5.7.0/src/hipBin_amd.h	2023-09-28 03:02:28.776546719 -0700
 @@ -94,7 +94,7 @@ void HipBinAmd::constructRocclrHomePath(
    fs::path bitcode = hipvars_dir;
    string rocclrHomePath = getEnvVariables().hipRocclrPathEnv_;
@@ -300,9 +300,18 @@ diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_amd.h HIPCC-rocm-5.7.0/src/hipBin_amd
      complierPath = hipClangPath.string();
    } else {
      complierPath = envVariables.hipClangPathEnv_;
+@@ -365,7 +357,7 @@ string HipBinAmd::getHipLibPath() const
+   }
+   else if (!env.hipPathEnv_.empty()) {
+     fs::path p = env.hipLibPathEnv_;
+-    p /= "lib";
++    p /= "@LIBDIR@";
+     hipLibPath = p.string();
+   }
+   return hipLibPath;
 diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_base.h HIPCC-rocm-5.7.0/src/hipBin_base.h
 --- HIPCC-rocm-5.7.0.orig/src/hipBin_base.h	2023-07-25 12:35:46.000000000 -0700
-+++ HIPCC-rocm-5.7.0/src/hipBin_base.h	2023-09-19 10:47:55.133338116 -0700
++++ HIPCC-rocm-5.7.0/src/hipBin_base.h	2023-09-28 03:00:50.380547851 -0700
 @@ -344,7 +344,7 @@ void HipBinBase::constructRoccmPath() {
      fs::path rocm_agent_enumerator_file(roccm_path);
      rocm_agent_enumerator_file /= "bin/rocm_agent_enumerator";
@@ -323,7 +332,7 @@ diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_base.h HIPCC-rocm-5.7.0/src/hipBin_ba
    cout << "  --platform, -P     : print platform (amd or nvidia)\n";
 diff -urp HIPCC-rocm-5.7.0.orig/src/hipBin_nvidia.h HIPCC-rocm-5.7.0/src/hipBin_nvidia.h
 --- HIPCC-rocm-5.7.0.orig/src/hipBin_nvidia.h	2023-07-25 12:35:46.000000000 -0700
-+++ HIPCC-rocm-5.7.0/src/hipBin_nvidia.h	2023-09-19 10:47:55.133338116 -0700
++++ HIPCC-rocm-5.7.0/src/hipBin_nvidia.h	2023-09-28 03:00:50.380547851 -0700
 @@ -177,7 +177,7 @@ void HipBinNvidia::initializeHipLdFlags(
    string hipLdFlags;
    const string& cudaPath = getCompilerPath();

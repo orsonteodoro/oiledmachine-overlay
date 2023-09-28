@@ -370,7 +370,7 @@ einfo
 # @LIBDIR@       - lib or lib64
 # @LLVM_SLOT@    - 13, 14, 15, 16, 17
 # @PV@           - x.y.z
-# @ROCM_VERSION@ - 5.1.3, 5.3.3, 5.4.3, 5.5.1, 5.6.1, 5.7.0
+# @ROCM_VERSION@ - 5.1.3, 5.2.3, 5.3.3, 5.4.3, 5.5.1, 5.6.1, 5.7.0
 #
 
 _rocm_change_common_paths() {
