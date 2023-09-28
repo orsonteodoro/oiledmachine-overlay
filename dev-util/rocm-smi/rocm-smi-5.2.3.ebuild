@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=17
+LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -41,7 +41,8 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.0.2-gcc12-memcpy.patch"
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -54,11 +55,6 @@ src_prepare() {
 		-e "/LICENSE.txt/d" \
 		"CMakeLists.txt" \
 		|| die
-	sed \
-		-i \
-		-e "/find_program (GIT/d" \
-		"CMakeLists.txt" \
-		|| die
 	cmake_src_prepare
 	rocm_src_prepare
 }
@@ -68,7 +64,6 @@ src_configure() {
 		-DCMAKE_DISABLE_FIND_PACKAGE_LATEX=ON
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
-		-DPKG_VERSION_STR="${PV}"
 	)
 	cmake_src_configure
 }

@@ -1,0 +1,216 @@
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/CMakeLists.txt rocm_smi_lib-rocm-5.7.0/CMakeLists.txt
+--- rocm_smi_lib-rocm-5.7.0.orig/CMakeLists.txt	2023-09-27 18:26:02.296903152 -0700
++++ rocm_smi_lib-rocm-5.7.0/CMakeLists.txt	2023-09-27 18:26:18.828902962 -0700
+@@ -52,7 +52,7 @@ set(PKG_VERSION_NUM_COMMIT 0)
+ 
+ ## Define default variable and variables for the optional build target
+ ##  rocm_smi_lib-dev
+-set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE STRING "Default installation directory.")
++#_cmake_modify_IGNORE set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE STRING "Default installation directory.")
+ set(COMMON_SRC_ROOT ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Location source code common root.")
+ set(ROCM_SMI_PACKAGE rocm-smi-lib)
+ 
+@@ -263,16 +263,20 @@ set(CPACK_RPM_PACKAGE_LICENSE "NCSA")
+ # install license file in share/doc/rocm_smi-asan folder
+ if( ENABLE_ASAN_PACKAGING )
+   install(FILES ${CPACK_RESOURCE_FILE_LICENSE}
++        DESTINATION
++        share/doc/rocm_smi-asan
+         COMPONENT asan)
+ endif()
+ install( FILES ${CPACK_RESOURCE_FILE_LICENSE}
++        DESTINATION
++        share/doc/rocm_smi-asan
+         COMPONENT dev)
+ 
+ ###########################
+ # Packaging directives
+ ###########################
+ set(CPACK_GENERATOR "DEB;RPM"  CACHE STRING "Default packaging generators.")
+-set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE STRING "Default packaging prefix.")
++set(CPACK_PACKAGING_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE STRING "Default packaging prefix.")
+ set ( ENABLE_LDCONFIG ON CACHE BOOL "Set library links and caches using ldconfig.")
+ if( ENABLE_ASAN_PACKAGING )
+   set(CPACK_PACKAGE_NAME ${ROCM_SMI_PACKAGE}-asan)
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/cmake_modules/help_package.cmake rocm_smi_lib-rocm-5.7.0/cmake_modules/help_package.cmake
+--- rocm_smi_lib-rocm-5.7.0.orig/cmake_modules/help_package.cmake	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/cmake_modules/help_package.cmake	2023-09-27 18:26:18.828902962 -0700
+@@ -6,17 +6,17 @@ option(CMAKE_EXPORT_COMPILE_COMMANDS "Ex
+ 
+ function(generic_add_rocm)
+     set(ROCM_DIR
+-        "/opt/rocm"
++        "@EPREFIX_ROCM_PATH@"
+         CACHE STRING "ROCm directory.")
+     if(DEFINED ENV{ROCM_RPATH} AND NOT DEFINED LIB_RUNPATH)
+-        set(LIB_RUNPATH "\$ORIGIN:\$ORIGIN/../lib:\$ORIGIN/../lib64" PARENT_SCOPE)
++        set(LIB_RUNPATH "\$ORIGIN:\$ORIGIN/../lib:\$ORIGIN/../@LIBDIR@" PARENT_SCOPE)
+     endif()
+ 
+     set(CMAKE_INSTALL_PREFIX ${ROCM_DIR} CACHE STRING "Default installation directory.")
+     set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" CACHE STRING "Default packaging prefix.")
+     # add package search paths
+     set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} /usr/local PARENT_SCOPE)
+-    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/lib64 /usr/lib/x86_64-linux-gnu PARENT_SCOPE)
++    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/@LIBDIR@ /usr/lib/x86_64-linux-gnu PARENT_SCOPE)
+ endfunction()
+ 
+ function(generic_package)
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/oam/CMakeLists.txt rocm_smi_lib-rocm-5.7.0/oam/CMakeLists.txt
+--- rocm_smi_lib-rocm-5.7.0.orig/oam/CMakeLists.txt	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/oam/CMakeLists.txt	2023-09-27 18:26:18.828902962 -0700
+@@ -7,7 +7,7 @@ message("                    CMake OAM (
+ message("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+ 
+ ## Verbose output.
+-set(CMAKE_VERBOSE_MAKEFILE on)
++#_cmake_modify_IGNORE set(CMAKE_VERBOSE_MAKEFILE on)
+ 
+ # Required Defines first:
+ 
+@@ -18,7 +18,7 @@ message("Build Configuration:")
+ # message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ # message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-# message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++# message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ # message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ # message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ # message("--------RSMI Inc Dir: " ${OAM_INC_DIR})
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/python_smi_tools/README.md rocm_smi_lib-rocm-5.7.0/python_smi_tools/README.md
+--- rocm_smi_lib-rocm-5.7.0.orig/python_smi_tools/README.md	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/python_smi_tools/README.md	2023-09-27 18:26:18.828902962 -0700
+@@ -30,7 +30,7 @@ $(uname -a) | cut -d ' ' -f 3)
+ 
+ For detailed and up to date usage information, we recommend consulting the help:
+ ```shell
+-/opt/rocm/bin/rocm-smi -h
++@EPREFIX_ROCM_PATH@/bin/rocm-smi -h
+ ```
+ 
+ For convenience purposes, following is the output from the -h flag:
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/python_smi_tools/rocm_smi.py rocm_smi_lib-rocm-5.7.0/python_smi_tools/rocm_smi.py
+--- rocm_smi_lib-rocm-5.7.0.orig/python_smi_tools/rocm_smi.py	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/python_smi_tools/rocm_smi.py	2023-09-27 18:26:18.828902962 -0700
+@@ -69,7 +69,7 @@ def driverInitialized():
+     """
+     driverInitialized = ''
+     try:
+-        driverInitialized = str(subprocess.check_output("cat /sys/module/amdgpu/initstate |grep live", shell=True))
++        driverInitialized = str(subprocess.check_output("test -d /sys/module/amdgpu", shell=True))
+     except subprocess.CalledProcessError:
+         pass
+     if len(driverInitialized) > 0:
+Only in rocm_smi_lib-rocm-5.7.0/python_smi_tools: rocm-smi.rej
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/python_smi_tools/rsmiBindings.py.in rocm_smi_lib-rocm-5.7.0/python_smi_tools/rsmiBindings.py.in
+--- rocm_smi_lib-rocm-5.7.0.orig/python_smi_tools/rsmiBindings.py.in	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/python_smi_tools/rsmiBindings.py.in	2023-09-27 18:26:18.828902962 -0700
+@@ -10,12 +10,12 @@ from enum import Enum
+ import os
+ 
+ # Use ROCm installation path if running from standard installation
+-# With File Reorg rsmiBindings.py will be installed in  /opt/rocm/libexec/rocm_smi.
++# With File Reorg rsmiBindings.py will be installed in  @EPREFIX_ROCM_PATH@/libexec/rocm_smi.
+ # relative path changed accordingly
+ path_librocm = os.path.dirname(os.path.realpath(__file__)) + '/../../@CMAKE_INSTALL_LIBDIR@/librocm_smi64.so.@VERSION_MAJOR@'
+ if not os.path.isfile(path_librocm):
+-    print('Unable to find %s . Trying /opt/rocm*' % path_librocm)
+-    for root, dirs, files in os.walk('/opt', followlinks=True):
++    print('Unable to find %s . Trying @EPREFIX_ROCM_PATH@*' % path_librocm)
++    for root, dirs, files in os.walk('@EPREFIX_ROCM_PATH@', followlinks=True):
+         if 'librocm_smi64.so.@VERSION_MAJOR@' in files:
+             path_librocm = os.path.join(os.path.realpath(root), 'librocm_smi64.so.@VERSION_MAJOR@')
+     if os.path.isfile(path_librocm):
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/README.md rocm_smi_lib-rocm-5.7.0/README.md
+--- rocm_smi_lib-rocm-5.7.0.orig/README.md	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/README.md	2023-09-27 18:26:18.828902962 -0700
+@@ -30,7 +30,7 @@ mkdir -p build
+ cd build
+ cmake <location of root of ROCm SMI library CMakeLists.txt>
+ make
+-# Install library file and header; default location is /opt/rocm
++# Install library file and header; default location is @EPREFIX_ROCM_PATH@
+ $ make install
+ ```
+ The built library will appear in the `build` folder.
+@@ -57,7 +57,7 @@ In order to verify the build and capabil
+ 
+ ```shell
+ # Set environment variables used in CMakeLists.txt file
+-ROCM_DIR=<parent dir. to lib/ and inc/, containing RSMI library and header>
++ROCM_DIR=<parent dir. to @LIBDIR@/ and inc/, containing RSMI library and header>
+ mkdir <location for test build>
+ cd <location for test build>
+ cmake -DROCM_DIR=$ROCM_DIR <ROCm SMI source root>/tests/rocm_smi_test
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/rocm_smi/CMakeLists.txt rocm_smi_lib-rocm-5.7.0/rocm_smi/CMakeLists.txt
+--- rocm_smi_lib-rocm-5.7.0.orig/rocm_smi/CMakeLists.txt	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/rocm_smi/CMakeLists.txt	2023-09-27 18:26:18.828902962 -0700
+@@ -7,7 +7,7 @@ message("                    CMake ROCm
+ message("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+ 
+ ## Verbose output.
+-set(CMAKE_VERBOSE_MAKEFILE on)
++#_cmake_modify_IGNORE set(CMAKE_VERBOSE_MAKEFILE on)
+ 
+ # Required Defines first:
+ 
+@@ -18,7 +18,7 @@ message("Build Configuration:")
+ # message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ # message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-# message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++# message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ # message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ # message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ # message("--------RSMI Inc Dir: " ${RSMI_INC_DIR})
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/rocm_smi-backward-compat.cmake rocm_smi_lib-rocm-5.7.0/rocm_smi-backward-compat.cmake
+--- rocm_smi_lib-rocm-5.7.0.orig/rocm_smi-backward-compat.cmake	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/rocm_smi-backward-compat.cmake	2023-09-27 18:26:18.828902962 -0700
+@@ -24,8 +24,8 @@ set(RSMI_WRAPPER_DIR ${RSMI_BUILD_DIR}/w
+ set(RSMI_WRAPPER_INC_DIR ${RSMI_WRAPPER_DIR}/include/${ROCM_SMI})
+ set(OAM_TARGET_NAME "oam")
+ set(OAM_WRAPPER_INC_DIR ${RSMI_WRAPPER_DIR}/include/${OAM_TARGET_NAME})
+-set(RSMI_WRAPPER_LIB_DIR ${RSMI_WRAPPER_DIR}/${ROCM_SMI}/lib)
+-set(OAM_WRAPPER_LIB_DIR ${RSMI_WRAPPER_DIR}/${OAM_TARGET_NAME}/lib)
++set(RSMI_WRAPPER_LIB_DIR ${RSMI_WRAPPER_DIR}/${ROCM_SMI}/@LIBDIR@)
++set(OAM_WRAPPER_LIB_DIR ${RSMI_WRAPPER_DIR}/${OAM_TARGET_NAME}/@LIBDIR@)
+ ## package headers
+ set(PUBLIC_RSMI_HEADERS
+     rocm_smi.h
+@@ -66,12 +66,12 @@ function(create_header_template)
+ #define ROCM_HEADER_WRAPPER_WERROR @deprecated_error@
+ #endif
+ #if ROCM_HEADER_WRAPPER_WERROR  /* ROCM_HEADER_WRAPPER_WERROR 1 */
+-#error \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with @prefix_name@\"
++#error \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with @prefix_name@\"
+ #else  /* ROCM_HEADER_WRAPPER_WERROR 0 */
+ #if defined(__GNUC__)
+-#warning \"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with @prefix_name@\"
++#warning \"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with @prefix_name@\"
+ #else
+-#pragma message(\"This file is deprecated. Use file from include path /opt/rocm-ver/include/ and prefix with @prefix_name@\")
++#pragma message(\"This file is deprecated. Use file from include path @EPREFIX_ROCM_PATH@/include/ and prefix with @prefix_name@\")
+ #endif
+ #endif  /* ROCM_HEADER_WRAPPER_WERROR */
+ 
+diff -urp rocm_smi_lib-rocm-5.7.0.orig/tests/rocm_smi_test/CMakeLists.txt rocm_smi_lib-rocm-5.7.0/tests/rocm_smi_test/CMakeLists.txt
+--- rocm_smi_lib-rocm-5.7.0.orig/tests/rocm_smi_test/CMakeLists.txt	2023-08-08 10:06:50.000000000 -0700
++++ rocm_smi_lib-rocm-5.7.0/tests/rocm_smi_test/CMakeLists.txt	2023-09-27 18:26:18.828902962 -0700
+@@ -17,7 +17,7 @@ message("------------Compiler: " ${CMAKE
+ message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("")
+ 
+@@ -26,7 +26,7 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+ set(RSMITST "rsmitst")
+ 
+ # Hack to find libraries after installation
+-# /opt/rocm/share/rocm-smi/rsmitst_tests/../../../ = /opt/rocm
++# @EPREFIX_ROCM_PATH@/share/rocm-smi/rsmitst_tests/../../../ = @EPREFIX_ROCM_PATH@
+ set(RSMITST_RPATH
+     "\$ORIGIN/../../../lib")
+ # combine lists
