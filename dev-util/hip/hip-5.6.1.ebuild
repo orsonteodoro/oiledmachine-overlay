@@ -212,12 +212,6 @@ src_prepare() {
 }
 
 src_configure() {
-	if has_version "dev-util/HIPIFY:${ROCM_SLOT}" ; then
-eerror
-eerror "dev-util/HIPIFY:${ROCM_SLOT} must be unemerged temporarily before emerging this package."
-eerror
-		die
-	fi
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	# TODO: Currently the distro configuration is to build.
