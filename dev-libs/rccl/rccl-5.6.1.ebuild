@@ -31,9 +31,10 @@ https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test"
+IUSE="system-llvm test"
 RDEPEND="
 	!dev-libs/rccl:0
+	dev-libs/rocm-compiler[system-llvm=]
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
@@ -95,8 +96,8 @@ src_configure() {
 # XXXXXXXXXXX is omitted
 	replace-flags '-O0' '-O1'
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	export CC="${HIP_CC:-clang}"
+	export CXX="${HIP_CXX:-clang++}"
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		# Prevent configure test issues
