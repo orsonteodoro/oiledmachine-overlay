@@ -1,6 +1,6 @@
 diff -urp HIPIFY-rocm-5.7.0.orig/CMakeLists.txt HIPIFY-rocm-5.7.0/CMakeLists.txt
---- HIPIFY-rocm-5.7.0.orig/CMakeLists.txt	2023-09-27 20:02:59.800836234 -0700
-+++ HIPIFY-rocm-5.7.0/CMakeLists.txt	2023-09-27 20:04:10.636835419 -0700
+--- HIPIFY-rocm-5.7.0.orig/CMakeLists.txt	2023-09-27 20:47:18.004805657 -0700
++++ HIPIFY-rocm-5.7.0/CMakeLists.txt	2023-09-27 20:48:56.776804521 -0700
 @@ -171,7 +171,8 @@ if (NOT HIPIFY_CLANG_TESTS_ONLY)
      PATTERN "*.sh")
  
@@ -11,3 +11,19 @@ diff -urp HIPIFY-rocm-5.7.0.orig/CMakeLists.txt HIPIFY-rocm-5.7.0/CMakeLists.txt
      # Install all folders under clang/version/ in CMAKE_INSTALL_PREFIX path.
      install(
        DIRECTORY ${LLVM_DIR}/../../clang/${LIB_CLANG_RES}/
+@@ -185,7 +186,6 @@ if (NOT HIPIFY_CLANG_TESTS_ONLY)
+       PATTERN "new"
+       PATTERN "ppc_wrappers" EXCLUDE
+       PATTERN "openmp_wrappers" EXCLUDE)
+-  endif()
+ 
+ # install all folders under clang/version/ in CMAKE_INSTALL_PREFIX path
+ install(
+@@ -200,6 +200,7 @@ install(
+     PATTERN "new"
+     PATTERN "ppc_wrappers" EXCLUDE
+     PATTERN "openmp_wrappers" EXCLUDE)
++  endif()
+ 
+   if(UNIX)
+     # Get rid of any RPATH definations already.

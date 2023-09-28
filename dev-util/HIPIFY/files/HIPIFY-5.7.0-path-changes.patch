@@ -1,29 +1,40 @@
 diff -urp HIPIFY-rocm-5.7.0.orig/CMakeLists.txt HIPIFY-rocm-5.7.0/CMakeLists.txt
---- HIPIFY-rocm-5.7.0.orig/CMakeLists.txt	2023-09-27 20:47:18.004805657 -0700
-+++ HIPIFY-rocm-5.7.0/CMakeLists.txt	2023-09-27 20:48:56.776804521 -0700
-@@ -171,7 +171,8 @@ if (NOT HIPIFY_CLANG_TESTS_ONLY)
-     PATTERN "*.sh")
- 
-   # Headers are already included in HIP SDK, so skip those if including HIPIFY in HIP SDK.
--  if(NOT HIPIFY_INCLUDE_IN_HIP_SDK)
-+  option(HIPIFY_INSTALL_HEADERS "Install headers" OFF)
-+  if(HIPIFY_INSTALL_HEADERS AND NOT HIPIFY_INCLUDE_IN_HIP_SDK)
-     # Install all folders under clang/version/ in CMAKE_INSTALL_PREFIX path.
-     install(
-       DIRECTORY ${LLVM_DIR}/../../clang/${LIB_CLANG_RES}/
-@@ -185,7 +186,6 @@ if (NOT HIPIFY_CLANG_TESTS_ONLY)
-       PATTERN "new"
-       PATTERN "ppc_wrappers" EXCLUDE
-       PATTERN "openmp_wrappers" EXCLUDE)
--  endif()
- 
- # install all folders under clang/version/ in CMAKE_INSTALL_PREFIX path
- install(
-@@ -200,6 +200,7 @@ install(
-     PATTERN "new"
-     PATTERN "ppc_wrappers" EXCLUDE
-     PATTERN "openmp_wrappers" EXCLUDE)
-+  endif()
- 
-   if(UNIX)
+--- HIPIFY-rocm-5.7.0.orig/CMakeLists.txt	2023-09-26 15:40:14.918011421 -0700
++++ HIPIFY-rocm-5.7.0/CMakeLists.txt	2023-09-26 15:41:07.262010819 -0700
+@@ -205,7 +205,7 @@ install(
      # Get rid of any RPATH definations already.
+     set_target_properties(hipify-clang PROPERTIES INSTALL_RPATH "")
+     # Set RPATH for the binary.
+-    set_target_properties(hipify-clang PROPERTIES LINK_FLAGS "-Wl,--enable-new-dtags -Wl,--rpath,$ORIGIN/../lib" )
++    set_target_properties(hipify-clang PROPERTIES LINK_FLAGS "-Wl,--enable-new-dtags -Wl,--rpath,$ORIGIN/../@LIBDIR@" )
+ 
+     option(FILE_REORG_BACKWARD_COMPATIBILITY "Enable File Reorg with backward compatibility" ON)
+ 
+@@ -213,7 +213,7 @@ install(
+       include(hipify-backward-compat.cmake)
+     endif()
+ 
+-    set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE PATH "HIP Package Installation Path")
++    set(CPACK_PACKAGING_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "HIP Package Installation Path")
+     set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/packages/hipify-clang)
+ 
+     configure_file(packaging/hipify-clang.txt ${BUILD_DIR}/CMakeLists.txt @ONLY)
+Only in HIPIFY-rocm-5.7.0: CMakeLists.txt.orig
+Only in HIPIFY-rocm-5.7.0: CMakeLists.txt.rej
+diff -urp HIPIFY-rocm-5.7.0.orig/hipify-backward-compat.cmake HIPIFY-rocm-5.7.0/hipify-backward-compat.cmake
+--- HIPIFY-rocm-5.7.0.orig/hipify-backward-compat.cmake	2023-07-18 11:29:56.000000000 -0700
++++ HIPIFY-rocm-5.7.0/hipify-backward-compat.cmake	2023-09-26 15:40:29.938011248 -0700
+@@ -23,9 +23,9 @@ set(HIPIFY_BUILD_DIR ${CMAKE_CURRENT_BIN
+ set(HIPIFY_WRAPPER_DIR ${HIPIFY_BUILD_DIR}/wrapper_dir)
+ set(HIPIFY_WRAPPER_BIN_DIR ${HIPIFY_WRAPPER_DIR}/bin)
+ 
+-#With File Reorganization , hipify(and hip)  will be installed in /opt/rocm-ver
+-#instead of  /opt/rocm-ver/hip/. For maintaining backward  compatibility
+-# the previous location(/opt/rocm-ver/hip/) will have soft link.
++#With File Reorganization , hipify(and hip)  will be installed in @ESYSROOT_ROCM_PATH@
++#instead of  @ESYSROOT_ROCM_PATH@/hip/. For maintaining backward  compatibility
++# the previous location(@ESYSROOT_ROCM_PATH@/hip/) will have soft link.
+ #This file is for creating  soft link to binary files and install it in the  previous location
+ #Note: soft link added for binary files.
+ 
+Only in HIPIFY-rocm-5.7.0: hipify-backward-compat.cmake.orig
