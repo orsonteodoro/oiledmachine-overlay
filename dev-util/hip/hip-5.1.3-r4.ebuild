@@ -36,7 +36,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/hipamd"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm system-llvm test r22"
+IUSE="cuda debug +hsa -hsail +lc numa -pal profile +rocm system-llvm test r23"
 REQUIRED_USE="
 	hsa? (
 		rocm

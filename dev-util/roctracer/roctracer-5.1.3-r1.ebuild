@@ -123,7 +123,9 @@ src_configure() {
 	export CXX="${HIP_CXX:-hipcc}"
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
-		append-flags --rocm-path="${ESYSROOT}${EROCM_PATH}"
+		append-flags \
+			-Wl,-L"${ESYSROOT}/${EROCM_PATH}/$(get_libdir)" \
+			--rocm-path="${ESYSROOT}${EROCM_PATH}"
 	fi
 
 	hipconfig --help >/dev/null || die
