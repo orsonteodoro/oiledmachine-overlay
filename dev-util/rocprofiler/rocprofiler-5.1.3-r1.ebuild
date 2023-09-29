@@ -4,6 +4,13 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_COMPAT=(
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+)
+
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -24,7 +31,10 @@ LICENSE="
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile system-llvm test r4"
+IUSE=" +aqlprofile system-llvm test r5"
+REQUIRED_USE="
+	${ROCM_REQUIRED_USE}
+"
 RDEPEND="
 	!dev-util/rocprofiler:0
 	dev-util/rocm-compiler[system-llvm=]
@@ -88,7 +98,8 @@ src_prepare() {
 
 src_configure() {
 	if use aqlprofile ; then
-		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
+		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] \
+			|| die "Missing" # For 071379b
 		append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
 	fi
 
@@ -111,8 +122,6 @@ src_configure() {
 		export CC="${HIP_CC:-clang}"
 		export CXX="${HIP_CXX:-clang++}"
 	fi
-	export CC="${HIP_CC:-clang}"
-	export CXX="${HIP_CXX:-clang++}"
 	cmake_src_configure
 }
 

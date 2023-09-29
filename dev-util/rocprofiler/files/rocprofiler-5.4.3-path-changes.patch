@@ -119,12 +119,12 @@ diff -urp rocprofiler-rocm-5.4.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.4.3/bin/
    elif [ "$1" = "--list-basic" ] ; then
      export ROCP_INFO=b
 -    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$TLIB_PATH/rocprof-ctrl"
-+    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$PROF_BIN_DIR/rocprof-ctrl"
++    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$TLIB_PATH/rocprof-ctrl"
      exit 1
    elif [ "$1" = "--list-derived" ] ; then
      export ROCP_INFO=d
 -    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$TLIB_PATH/rocprof-ctrl"
-+    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$PROF_BIN_DIR/rocprof-ctrl"
++    HSA_TOOLS_LIB="$MY_HSA_TOOLS_LIB" eval "$TLIB_PATH/rocprof-ctrl"
      exit 1
    elif [ "$1" = "--basenames" ] ; then
      if [ "$2" = "on" ] ; then
@@ -213,8 +213,8 @@ diff -urp rocprofiler-rocm-5.4.3.orig/CMakeLists.txt rocprofiler-rocm-5.4.3/CMak
  # librocprof-tool.so
 -install ( FILES ${PROJECT_BINARY_DIR}/test/librocprof-tool.so DESTINATION ${CMAKE_INSTALL_LIBDIR}/${DEST_NAME} )
 -install ( FILES ${PROJECT_BINARY_DIR}/test/rocprof-ctrl DESTINATION ${CMAKE_INSTALL_LIBDIR}/${DEST_NAME}
-+install ( FILES ${PROJECT_BINARY_DIR}/test/librocprof-tool.so DESTINATION ${CMAKE_INSTALL_LIBDIR} )
-+install ( FILES ${PROJECT_BINARY_DIR}/test/rocprof-ctrl DESTINATION ${CMAKE_INSTALL_BINDIR}
++install ( FILES ${PROJECT_BINARY_DIR}/test/librocprof-tool.so DESTINATION ${CMAKE_INSTALL_LIBDIR}/${DEST_NAME} )
++install ( FILES ${PROJECT_BINARY_DIR}/test/rocprof-ctrl DESTINATION ${CMAKE_INSTALL_LIBDIR}/${DEST_NAME}
            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE )
  
  # File reorg Backward compatibility
@@ -281,7 +281,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/rocprofiler-backward-compat.cmake rocprofi
                     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                     COMMAND ${CMAKE_COMMAND} -E create_symlink
 -                   ../../${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}/${LIB_ROCPROFTOOL} ${ROCPROF_WRAPPER_TOOL_DIR}/${LIB_TOOL})
-+                   ../../${CMAKE_INSTALL_LIBDIR}/${LIB_ROCPROFTOOL} ${ROCPROF_WRAPPER_TOOL_DIR}/${LIB_TOOL})
++                   ../../${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}/${LIB_ROCPROFTOOL} ${ROCPROF_WRAPPER_TOOL_DIR}/${LIB_TOOL})
    #create symlink to test binary
    #since its saved in lib folder , the code for the same is added here
    # With File reorg ,binary name changed from ctrl to rocprof-ctrl
@@ -290,7 +290,7 @@ diff -urp rocprofiler-rocm-5.4.3.orig/rocprofiler-backward-compat.cmake rocprofi
                      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                      COMMAND ${CMAKE_COMMAND} -E create_symlink
 -                    ../../${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}/${TEST_ROCPROFCTRL} ${ROCPROF_WRAPPER_TOOL_DIR}/${TEST_CTRL})
-+                    ../../${CMAKE_INSTALL_BINDIR}/${TEST_ROCPROFCTRL} ${ROCPROF_WRAPPER_TOOL_DIR}/${TEST_CTRL})
++                    ../../${CMAKE_INSTALL_LIBDIR}/${ROCPROFILER_NAME}/${TEST_ROCPROFCTRL} ${ROCPROF_WRAPPER_TOOL_DIR}/${TEST_CTRL})
    set(METRICS "metrics.xml")
    add_custom_target(link_metrics ALL
                      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}

@@ -4,6 +4,20 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_COMPAT=(
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx940
+	gfx941
+	gfx942
+	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
+)
+
 LLVM_MAX_SLOT=17
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -26,7 +40,10 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile system-llvm test r4"
+IUSE=" +aqlprofile system-llvm test r5"
+REQUIRED_USE="
+	${ROCM_REQUIRED_USE}
+"
 RDEPEND="
 	!dev-util/rocprofiler:0
 	dev-python/barectf
@@ -111,13 +128,17 @@ ewarn
 
 src_configure() {
 	if use aqlprofile ; then
-		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] || die "Missing" # For e80f7cb
-		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing" # For 071379b
+		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
+			|| die "Missing" # For e80f7cb
+		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] \
+			|| die "Missing" # For 071379b
 		append-ldflags -Wl,-rpath="${EPREFIX}/opt/rocm-${PV}/lib"
 	fi
 
 	export CMAKE_BUILD_TYPE="debug"
 	export HIP_PLATFORM="amd"
+	local gpu_targets=$(get_amdgpu_flags \
+		| tr ";" " ")
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_MODULE_PATH="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip"
