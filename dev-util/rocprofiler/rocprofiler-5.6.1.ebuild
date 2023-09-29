@@ -34,7 +34,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile system-llvm test r5"
+IUSE=" +aqlprofile system-llvm test r6"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "

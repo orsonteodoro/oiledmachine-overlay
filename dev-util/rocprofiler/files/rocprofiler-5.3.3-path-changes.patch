@@ -320,7 +320,7 @@ diff -urp rocprofiler-rocm-5.3.3.orig/test/run.sh rocprofiler-rocm-5.3.3/test/ru
  
  # paths to ROC profiler and oher libraries
 -export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../lib:/opt/rocm/lib:/opt/rocm/lib/rocprofiler
-+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:@EPREFIX_ROCM_PATH@/@LIBDIR@:@EPREFIX_ROCM_PATH@/@LIBDIR@/rocprofiler
++export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD:$PWD/../../@LIBDIR@:@EPREFIX_ROCM_PATH@/@LIBDIR@:@EPREFIX_ROCM_PATH@/@LIBDIR@/rocprofiler:/opt/rocm-${ROCM_VERSION}/lib
  
  # enable tools load failure reporting
  export HSA_TOOLS_REPORT_LOAD_FAILURE=1

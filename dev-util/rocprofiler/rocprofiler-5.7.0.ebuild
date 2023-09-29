@@ -18,6 +18,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=17
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -40,7 +41,7 @@ LICENSE="
 # Apache-2.0 - plugin/perfetto/perfetto_sdk/sdk/perfetto.cc
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile system-llvm test r5"
+IUSE=" +aqlprofile system-llvm test r6"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
