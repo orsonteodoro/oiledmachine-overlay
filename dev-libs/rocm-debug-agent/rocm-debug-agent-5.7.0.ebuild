@@ -19,7 +19,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocr_debug_agent/"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test"
+IUSE="test r1"
 RDEPEND="
 	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils

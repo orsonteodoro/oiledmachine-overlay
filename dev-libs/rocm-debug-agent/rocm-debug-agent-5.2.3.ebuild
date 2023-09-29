@@ -19,7 +19,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/rocr_debug_agent/"
 KEYWORDS="~amd64"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test"
+IUSE="test r1"
 RDEPEND="
 	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
@@ -42,7 +42,7 @@ RESTRICT="
 "
 S="${WORKDIR}/rocr_debug_agent-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {

@@ -1,0 +1,120 @@
+diff -urp rocr_debug_agent-rocm-5.2.3.orig/cmake/modules/FindLibDw.cmake rocr_debug_agent-rocm-5.2.3/cmake/modules/FindLibDw.cmake
+--- rocr_debug_agent-rocm-5.2.3.orig/cmake/modules/FindLibDw.cmake	2022-03-18 18:42:43.000000000 -0700
++++ rocr_debug_agent-rocm-5.2.3/cmake/modules/FindLibDw.cmake	2023-09-29 08:34:52.623323462 -0700
+@@ -16,8 +16,8 @@ find_library(FIND_LIBDW_LIBRARIES
+   NAMES
+     dw
+   PATH
+-    /usr/lib
+-    /usr/local/lib)
++    @ESYSROOT@/usr/@LIBDIR@
++    @ESYSROOT@/usr/local/@LIBDIR@)
+ 
+ include(FindPackageHandleStandardArgs)
+ find_package_handle_standard_args(LibDw DEFAULT_MSG
+diff -urp rocr_debug_agent-rocm-5.2.3.orig/cmake/modules/FindLibElf.cmake rocr_debug_agent-rocm-5.2.3/cmake/modules/FindLibElf.cmake
+--- rocr_debug_agent-rocm-5.2.3.orig/cmake/modules/FindLibElf.cmake	2022-03-18 18:42:43.000000000 -0700
++++ rocr_debug_agent-rocm-5.2.3/cmake/modules/FindLibElf.cmake	2023-09-29 08:34:52.623323462 -0700
+@@ -18,8 +18,8 @@ find_library(FIND_LIBELF_LIBRARIES
+   NAMES
+     elf
+   PATH
+-    /usr/lib
+-    /usr/local/lib)
++    @ESYSROOT@/usr/@LIBDIR@
++    @ESYSROOT@/usr/local/@LIBDIR@)
+ 
+ include(FindPackageHandleStandardArgs)
+ find_package_handle_standard_args(LibElf DEFAULT_MSG
+diff -urp rocr_debug_agent-rocm-5.2.3.orig/cmake/modules/FindROCR.cmake rocr_debug_agent-rocm-5.2.3/cmake/modules/FindROCR.cmake
+--- rocr_debug_agent-rocm-5.2.3.orig/cmake/modules/FindROCR.cmake	2022-03-18 18:42:43.000000000 -0700
++++ rocr_debug_agent-rocm-5.2.3/cmake/modules/FindROCR.cmake	2023-09-29 08:34:52.623323462 -0700
+@@ -4,8 +4,8 @@
+ #   - ROCR_FOUND     - ROCR status (found or not found)
+ #   - ROCR_INCLUDES  - Required ROCR include directories
+ #   - ROCR_LIBRARIES - Required ROCR libraries
+-find_path(FIND_ROCR_INCLUDES hsa/hsa.h HINTS /opt/rocm/include /opt/rocm/hsa/include)
+-find_library(FIND_ROCR_LIBRARIES hsa-runtime64 HINTS /opt/rocm/lib /opt/rocm/hsa/lib)
++find_path(FIND_ROCR_INCLUDES hsa/hsa.h HINTS @ESYSROOT_ROCM_PATH@/include @ESYSROOT_ROCM_PATH@/hsa/include)
++find_library(FIND_ROCR_LIBRARIES hsa-runtime64 HINTS @ESYSROOT_ROCM_PATH@/@LIBDIR@ @ESYSROOT_ROCM_PATH@/hsa/@LIBDIR@)
+ 
+ include(FindPackageHandleStandardArgs)
+ find_package_handle_standard_args(ROCR DEFAULT_MSG
+diff -urp rocr_debug_agent-rocm-5.2.3.orig/CMakeLists.txt rocr_debug_agent-rocm-5.2.3/CMakeLists.txt
+--- rocr_debug_agent-rocm-5.2.3.orig/CMakeLists.txt	2023-09-29 08:34:35.667323657 -0700
++++ rocr_debug_agent-rocm-5.2.3/CMakeLists.txt	2023-09-29 08:35:49.875322804 -0700
+@@ -55,10 +55,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PAT
+ 
+ find_package(amd-dbgapi REQUIRED CONFIG
+   PATHS
+-    /opt/rocm/
++    @ESYSROOT_ROCM_PATH@/
+   PATH_SUFFIXES
+     cmake/amd-dbgapi
+-    lib/cmake/amd-dbgapi
++    @LIBDIR@/cmake/amd-dbgapi
+ )
+ 
+ find_package(ROCR REQUIRED)
+@@ -122,7 +122,7 @@ target_compile_definitions(rocm-debug-ag
+ install(TARGETS rocm-debug-agent
+   LIBRARY
+     NAMELINK_SKIP
+-    DESTINATION lib
++    DESTINATION @LIBDIR@
+   COMPONENT runtime)
+ 
+ install(FILES LICENSE.txt README.md
+Only in rocr_debug_agent-rocm-5.2.3: CMakeLists.txt.orig
+diff -urp rocr_debug_agent-rocm-5.2.3.orig/README.md rocr_debug_agent-rocm-5.2.3/README.md
+--- rocr_debug_agent-rocm-5.2.3.orig/README.md	2022-03-18 18:42:43.000000000 -0700
++++ rocr_debug_agent-rocm-5.2.3/README.md	2023-09-29 08:34:52.623323462 -0700
+@@ -29,7 +29,7 @@ will not be available and only machine c
+ wavefronts' pc will be printed.  For example:
+ 
+ ````sh
+-/opt/rocm/bin/hipcc -O0 -ggdb -o my_program my_program.cpp
++@EPREFIX_ROCM_PATH@/bin/hipcc -O0 -ggdb -o my_program my_program.cpp
+ ````
+ 
+ To use the ROCdebug-agent set the ``HSA_TOOLS_LIB`` environment variable to the
+@@ -37,7 +37,7 @@ file name or path of the library and the
+ to ``1``.  For example:
+ 
+ ````sh
+-HSA_TOOLS_LIB=/opt/rocm/lib/librocm-debug-agent.so.2 HSA_ENABLE_DEBUG=1 ./my_program
++HSA_TOOLS_LIB=@EPREFIX_ROCM_PATH@/@LIBDIR@/librocm-debug-agent.so.2 HSA_ENABLE_DEBUG=1 ./my_program
+ ````
+ 
+ If the application encounters a triggering event, it will print the state of
+@@ -263,7 +263,7 @@ should be installed.  The default locati
+ 
+ Use ``CMAKE_MODULE_PATH`` to specify a ``';'`` separated list of paths that
+ will be used to locate cmake modules.  It is used to locate the HIP cmake
+-modules required to build the tests.  The default is ``/opt/rocm/hip/cmake``
++modules required to build the tests.  The default is ``@EPREFIX_ROCM_PATH@/hip/cmake``
+ 
+ The built ROCdebug-agent library will be placed in:
+ 
+@@ -277,7 +277,7 @@ make install
+ 
+ The installed ROCdebug-agent library and tests will be placed in:
+ 
+-- ``<install-prefix>/lib/librocm-debug-agent.so.2*``
++- ``<install-prefix>/@LIBDIR@/librocm-debug-agent.so.2*``
+ - ``<install-prefix>/share/rocm-debug-agent/LICENSE.txt``
+ - ``<install-prefix>/share/rocm-debug-agent/README.md``
+ - ``<install-prefix>/src/rocm-debug-agent-test/*``
+diff -urp rocr_debug_agent-rocm-5.2.3.orig/test/CMakeLists.txt rocr_debug_agent-rocm-5.2.3/test/CMakeLists.txt
+--- rocr_debug_agent-rocm-5.2.3.orig/test/CMakeLists.txt	2022-03-18 18:42:43.000000000 -0700
++++ rocr_debug_agent-rocm-5.2.3/test/CMakeLists.txt	2023-09-29 08:34:52.623323462 -0700
+@@ -36,7 +36,7 @@ cmake_minimum_required(VERSION 3.8.0)
+ 
+ project(ROCM_DEBUG_AGENT_TEST VERSION ${ROCM_DEBUG_AGENT_VERSION})
+ 
+-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/opt/rocm/hip/cmake")
++set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "@EPREFIX_ROCM_PATH@/@LIBDIR@/cmake/hip/")
+ find_package(HIP REQUIRED MODULE)
+ set(CMAKE_HIP_ARCHITECTURES OFF)
+ 
+Only in rocr_debug_agent-rocm-5.2.3/test: CMakeLists.txt.orig
