@@ -28,6 +28,8 @@ RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	dev-util/rocm-compiler[system-llvm=]
+	sys-devel/gcc:12
 "
 DEPEND="
 	${RDEPEND}
@@ -38,6 +40,10 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-3.18.0
+	sys-devel/binutils[gold]
+	sys-devel/clang:${LLVM_MAX_SLOT}
+	sys-devel/gcc:12
+	sys-devel/llvm:${LLVM_MAX_SLOT}
 	test? (
 		dev-util/rocm-compiler[system-llvm=]
 	)
@@ -73,14 +79,19 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	export CC="${HIP_CC:-clang}"
+	export CXX="${HIP_CXX:-clang++}"
 
-	if [[ "${CXX}" =~ "hipcc" ]] ; then
+	if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
 		append-flags \
 			--rocm-path="${ESYSROOT}${EROCM_PATH}"
 		append-ldflags \
-			-L"${ESYSROOT}/${EROCM_PATH}/$(get_libdir)"
+			-fuse-ld=gold \
+			-Wl,-rpath="${ESYSROOT}/${EROCM_PATH}/$(get_libdir)"
+	else
+		append-ldflags \
+			-fuse-ld=gold \
+			-Wl,-rpath="${ESYSROOT}/${EROCM_PATH}/$(get_libdir)"
 	fi
 
 	hipconfig --help >/dev/null || die

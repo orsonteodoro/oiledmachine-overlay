@@ -27,7 +27,7 @@ KEYWORDS="~amd64"
 IUSE=" +aqlprofile system-llvm test r4"
 RDEPEND="
 	!dev-util/rocprofiler:0
-	dev-util/roc-compiler[system-llvm=]
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	aqlprofile? (

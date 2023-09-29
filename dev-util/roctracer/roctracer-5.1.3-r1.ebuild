@@ -30,6 +30,7 @@ RDEPEND="
 	!dev-util/roctracer:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	sys-devel/gcc:11
 	aqlprofile? (
 		~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -44,6 +45,7 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-2.8.12
+	sys-devel/gcc:11
 	test? (
 		dev-util/rocm-compiler[system-llvm=]
 	)
@@ -119,8 +121,8 @@ src_configure() {
 		[[ -e "${ESYSROOT}/opt/rocm-${PV}/lib/libhsa-amd-aqlprofile64.so" ]] || die "Missing"
 	fi
 
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	export CC="${HIP_CC:-gcc-11}"
+	export CXX="${HIP_CXX:-g++-11}"
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		append-flags \
@@ -130,7 +132,7 @@ src_configure() {
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"
-	export HIP_PATH="$(hipconfig -p)"
+	export HIP_PATH="${ESYSROOT}${EROCM_PATH}"
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_PREFIX_PATH="${ESYSROOT}${EROCM_PATH}/include/hsa"

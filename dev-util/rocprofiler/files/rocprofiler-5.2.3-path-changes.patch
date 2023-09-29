@@ -70,7 +70,7 @@ diff -urp rocprofiler-rocm-5.2.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.2.3/bin/
 -ROCM_LIB_PATH=$ROOT_DIR/lib
 -PROF_BIN_DIR=$ROOT_DIR/libexec/rocprofiler
 +RPL_PATH=$ROOT_DIR/@LIBDIR@
-+TLIB_PATH=$RPL_PATH
++TLIB_PATH=$RPL_PATH/rocprofiler
 +TTLIB_PATH=$TT_DIR/@LIBDIR@
 +ROCM_LIB_PATH=$ROOT_DIR/@LIBDIR@
 +PROF_BIN_DIR=$ROOT_DIR/bin
@@ -83,7 +83,7 @@ diff -urp rocprofiler-rocm-5.2.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.2.3/bin/
  unset ROCP_PROXY_QUEUE
  # ROC Profiler metrics definition
 -export ROCP_METRICS=$TLIB_PATH/metrics.xml
-+export ROCP_METRICS=$ROOT_DIR/share/rocprofiler/metrics.xml
++export ROCP_METRICS=$TLIB_PATH/metrics.xml
  # Disable AQL-profile read API
  export AQLPROFILE_READ_API=0
  # ROC Profiler package path
@@ -92,7 +92,7 @@ diff -urp rocprofiler-rocm-5.2.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.2.3/bin/
    echo "ROCm Profiling Library (RPL) run script, a part of ROCprofiler library package."
    echo "Full path: $BIN_DIR/$bin_name"
 -  echo "Metrics definition: $TLIB_PATH/metrics.xml"
-+  echo "Metrics definition: $ROOT_DIR/share/rocprofiler/metrics.xml"
++  echo "Metrics definition: $TLIB_PATH/metrics.xml"
    echo ""
    echo "Usage:"
    echo "  $bin_name [-h] [--list-basic] [--list-derived] [-i <input .txt/.xml file>] [-o <output CSV file>] <app command line>"
@@ -202,7 +202,7 @@ diff -urp rocprofiler-rocm-5.2.3.orig/CMakeLists.txt rocprofiler-rocm-5.2.3/CMak
            ${CMAKE_CURRENT_SOURCE_DIR}/test/tool/metrics.xml
            ${CMAKE_CURRENT_SOURCE_DIR}/test/tool/gfx_metrics.xml
 -          DESTINATION lib/${DEST_NAME} )
-+          DESTINATION ${CMAKE_INSTALL_DATADIR}/${DEST_NAME} )
++          DESTINATION ${CMAKE_INSTALL_LIBDIR}/${DEST_NAME} )
  # librocprof-tool.so
 -install ( FILES ${PROJECT_BINARY_DIR}/test/librocprof-tool.so DESTINATION lib/${DEST_NAME} )
 -install ( FILES ${PROJECT_BINARY_DIR}/test/rocprof-ctrl DESTINATION lib/${DEST_NAME}

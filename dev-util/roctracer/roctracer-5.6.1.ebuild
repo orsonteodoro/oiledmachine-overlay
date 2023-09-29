@@ -3,6 +3,8 @@
 
 EAPI=8
 
+#broken
+
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -28,6 +30,7 @@ RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	sys-devel/gcc:12
 "
 DEPEND="
 	${RDEPEND}
@@ -38,6 +41,7 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-3.18.0
+	sys-devel/gcc:12
 	test? (
 		dev-util/rocm-compiler[system-llvm=]
 	)
@@ -73,8 +77,8 @@ src_prepare() {
 }
 
 src_configure() {
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	export CC="${HIP_CC:-gcc-12}"
+	export CXX="${HIP_CXX:-g++-12}"
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		append-flags \

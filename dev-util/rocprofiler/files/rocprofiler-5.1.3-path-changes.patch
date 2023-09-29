@@ -66,8 +66,8 @@ diff -urp rocprofiler-rocm-5.1.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.1.3/bin/
  PKG_DIR=$(dirname $BIN_DIR)
 -ROOT_DIR=$(dirname $PKG_DIR)
 -TT_DIR=$ROOT_DIR/roctracer
-+ROOT_DIR=$PKG_DIR
-+TT_DIR=$ROOT_DIR
++ROOT_DIR=$(dirname $PKG_DIR)
++TT_DIR=$ROOT_DIR/roctracer
  RUN_DIR=`pwd`
  TMP_DIR="/tmp"
  DATA_DIR="rpl_data_${time_stamp}_$$"
@@ -77,8 +77,8 @@ diff -urp rocprofiler-rocm-5.1.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.1.3/bin/
 -TTLIB_PATH=$TT_DIR/tool
 -ROCM_LIB_PATH=$ROOT_DIR/lib
 +RPL_PATH=$PKG_DIR/@LIBDIR@
-+TLIB_PATH=$PKG_DIR/@LIBDIR@
-+TTLIB_PATH=$TT_DIR/@LIBDIR@
++TLIB_PATH=$PKG_DIR/tool
++TTLIB_PATH=$TT_DIR/tool
 +ROCM_LIB_PATH=$ROOT_DIR/@LIBDIR@
  
  if [ -z "$ROCP_PYTHON_VERSION" ] ; then
@@ -88,7 +88,7 @@ diff -urp rocprofiler-rocm-5.1.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.1.3/bin/
  unset ROCP_PROXY_QUEUE
  # ROC Profiler metrics definition
 -export ROCP_METRICS=$PKG_DIR/lib/metrics.xml
-+export ROCP_METRICS=$PKG_DIR/share/rocprofiler/metrics.xml
++export ROCP_METRICS=$PKG_DIR/@LIBDIR@/metrics.xml
  # Disable AQL-profile read API
  export AQLPROFILE_READ_API=0
  # ROC Profiler package path
@@ -97,7 +97,7 @@ diff -urp rocprofiler-rocm-5.1.3.orig/bin/rpl_run.sh rocprofiler-rocm-5.1.3/bin/
    echo "ROCm Profiling Library (RPL) run script, a part of ROCprofiler library package."
    echo "Full path: $BIN_DIR/$bin_name"
 -  echo "Metrics definition: $PKG_DIR/lib/metrics.xml"
-+  echo "Metrics definition: $PKG_DIR/share/rocprofiler/metrics.xml"
++  echo "Metrics definition: $PKG_DIR/@LIBDIR@/metrics.xml"
    echo ""
    echo "Usage:"
    echo "  $bin_name [-h] [--list-basic] [--list-derived] [-i <input .txt/.xml file>] [-o <output CSV file>] <app command line>"
@@ -213,7 +213,7 @@ diff -urp rocprofiler-rocm-5.1.3.orig/CMakeLists.txt rocprofiler-rocm-5.1.3/CMak
            ${CMAKE_CURRENT_SOURCE_DIR}/test/tool/metrics.xml
            ${CMAKE_CURRENT_SOURCE_DIR}/test/tool/gfx_metrics.xml
 -          DESTINATION ${DEST_NAME}/lib )
-+          DESTINATION @LIBDIR@ )
++          DESTINATION ${DEST_NAME}/@LIBDIR@ )
  # libtool.so
 -install ( FILES ${PROJECT_BINARY_DIR}/test/libtool.so DESTINATION ${DEST_NAME}/tool )
 -install ( FILES ${PROJECT_BINARY_DIR}/test/ctrl DESTINATION ${DEST_NAME}/tool

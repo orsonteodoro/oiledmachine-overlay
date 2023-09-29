@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -13,6 +13,8 @@ inherit cmake flag-o-matic llvm prefix python-any-r1 rocm
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
 	-> rocm-tracer-${PV}.tar.gz
+https://github.com/ROCm-Developer-Tools/rocprofiler/archive/rocm-${PV}.tar.gz
+	-> rocprofiler-${PV}.tar.gz
 https://github.com/ROCm-Developer-Tools/roctracer/commit/c95d5dd96fa50a567b7b203029652bb036ecd3f4.patch
 	-> roctracer-c95d5dd.patch
 "
@@ -28,6 +30,7 @@ RDEPEND="
 	!dev-util/roctracer:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	sys-devel/gcc:12
 "
 DEPEND="
 	${RDEPEND}
@@ -38,6 +41,7 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-util/cmake-3.18.0
+	sys-devel/gcc:12
 	test? (
 		dev-util/rocm-compiler[system-llvm=]
 	)
@@ -51,9 +55,9 @@ S="${WORKDIR}/roctracer-rocm-${PV}"
 S_PROFILER="${WORKDIR}/rocprofiler"
 PATCHES=(
 #	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
-#	"${FILESDIR}/${PN}-5.2.3-Werror.patch"
+	"${FILESDIR}/${PN}-5.2.3-Werror.patch"
 	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
-	"${DISTDIR}/${PN}-c95d5dd.patch"
+#	"${DISTDIR}/${PN}-c95d5dd.patch"
 )
 
 python_check_deps() {
@@ -70,22 +74,35 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
+	ln -s \
+		"${WORKDIR}/rocprofiler-rocm-${PV}" \
+		"${WORKDIR}/rocprofiler" \
+		|| die
+
+	pushd "${S_PROFILER}" || die
+		eapply "${FILESDIR}/rocprofiler-5.2.3-path-changes.patch"
+	popd
+
 	hprefixify script/*.py
 	rocm_src_prepare
 }
 
 src_configure() {
-	export CC="${HIP_CC:-hipcc}"
-	export CXX="${HIP_CXX:-hipcc}"
+	addpredict /dev/kfd
+
+	export CC="${HIP_CC:-gcc-12}"
+	export CXX="${HIP_CXX:-g++-12}"
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		append-flags \
 			-Wl,-L"${ESYSROOT}/${EROCM_PATH}/$(get_libdir)" \
+			-Wl,-fuse-ld=lld \
 			--rocm-path="${ESYSROOT}${EROCM_PATH}"
 	fi
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"
+	export HIP_PATH="${ESYSROOT}${EROCM_PATH}"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"

@@ -1,6 +1,6 @@
 diff -urp roctracer-rocm-5.2.3.orig/build_proto.sh roctracer-rocm-5.2.3/build_proto.sh
 --- roctracer-rocm-5.2.3.orig/build_proto.sh	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/build_proto.sh	2023-09-28 11:43:53.992186850 -0700
++++ roctracer-rocm-5.2.3/build_proto.sh	2023-09-28 17:26:48.259950187 -0700
 @@ -1,6 +1,6 @@
  #!/bin/bash -x
  COMPONENT="roctracer"
@@ -11,7 +11,7 @@ diff -urp roctracer-rocm-5.2.3.orig/build_proto.sh roctracer-rocm-5.2.3/build_pr
    echo "$1"
 diff -urp roctracer-rocm-5.2.3.orig/build.sh roctracer-rocm-5.2.3/build.sh
 --- roctracer-rocm-5.2.3.orig/build.sh	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/build.sh	2023-09-28 11:43:53.992186850 -0700
++++ roctracer-rocm-5.2.3/build.sh	2023-09-28 17:26:48.259950187 -0700
 @@ -1,8 +1,8 @@
  #!/bin/bash -e
  SRC_DIR=`dirname $0`
@@ -25,7 +25,7 @@ diff -urp roctracer-rocm-5.2.3.orig/build.sh roctracer-rocm-5.2.3/build.sh
  fatal() {
 diff -urp roctracer-rocm-5.2.3.orig/build_static.sh roctracer-rocm-5.2.3/build_static.sh
 --- roctracer-rocm-5.2.3.orig/build_static.sh	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/build_static.sh	2023-09-28 11:43:53.992186850 -0700
++++ roctracer-rocm-5.2.3/build_static.sh	2023-09-28 17:26:48.259950187 -0700
 @@ -1,8 +1,8 @@
  #!/bin/bash -x
  SRC_DIR=`dirname $0`
@@ -39,7 +39,7 @@ diff -urp roctracer-rocm-5.2.3.orig/build_static.sh roctracer-rocm-5.2.3/build_s
  fatal() {
 diff -urp roctracer-rocm-5.2.3.orig/CMakeLists.txt roctracer-rocm-5.2.3/CMakeLists.txt
 --- roctracer-rocm-5.2.3.orig/CMakeLists.txt	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/CMakeLists.txt	2023-09-28 11:51:39.540181495 -0700
++++ roctracer-rocm-5.2.3/CMakeLists.txt	2023-09-28 17:26:48.259950187 -0700
 @@ -26,7 +26,7 @@
  cmake_minimum_required ( VERSION 3.5.0 )
  
@@ -76,11 +76,9 @@ diff -urp roctracer-rocm-5.2.3.orig/CMakeLists.txt roctracer-rocm-5.2.3/CMakeLis
  
  ## Packaging directives
  set ( CPACK_GENERATOR "DEB" "RPM" "TGZ" CACHE STRING "CPACK GENERATOR DEB;RPM")
-Only in roctracer-rocm-5.2.3: CMakeLists.txt.orig
-Only in roctracer-rocm-5.2.3: CMakeLists.txt.rej
 diff -urp roctracer-rocm-5.2.3.orig/cmake_modules/env.cmake roctracer-rocm-5.2.3/cmake_modules/env.cmake
---- roctracer-rocm-5.2.3.orig/cmake_modules/env.cmake	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/cmake_modules/env.cmake	2023-09-28 11:43:53.992186850 -0700
+--- roctracer-rocm-5.2.3.orig/cmake_modules/env.cmake	2023-09-28 17:26:00.163950741 -0700
++++ roctracer-rocm-5.2.3/cmake_modules/env.cmake	2023-09-28 17:26:48.259950187 -0700
 @@ -107,7 +107,7 @@ if ( NOT DEFINED CMAKE_PREFIX_PATH AND D
  endif()
  set ( ENV{CMAKE_PREFIX_PATH} ${CMAKE_PREFIX_PATH} )
@@ -92,7 +90,7 @@ diff -urp roctracer-rocm-5.2.3.orig/cmake_modules/env.cmake roctracer-rocm-5.2.3
  endif()
 diff -urp roctracer-rocm-5.2.3.orig/inc/ext/CMakeLists.txt roctracer-rocm-5.2.3/inc/ext/CMakeLists.txt
 --- roctracer-rocm-5.2.3.orig/inc/ext/CMakeLists.txt	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/inc/ext/CMakeLists.txt	2023-09-28 11:43:53.992186850 -0700
++++ roctracer-rocm-5.2.3/inc/ext/CMakeLists.txt	2023-09-28 17:26:48.259950187 -0700
 @@ -26,7 +26,7 @@
  cmake_minimum_required ( VERSION 3.5.0 )
  
@@ -113,7 +111,7 @@ diff -urp roctracer-rocm-5.2.3.orig/inc/ext/CMakeLists.txt roctracer-rocm-5.2.3/
  add_custom_target( pkgconfig_install COMMAND sh -x "${CMAKE_CURRENT_SOURCE_DIR}/RPM/rpm_post" )
 diff -urp roctracer-rocm-5.2.3.orig/README.md roctracer-rocm-5.2.3/README.md
 --- roctracer-rocm-5.2.3.orig/README.md	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/README.md	2023-09-28 11:43:53.992186850 -0700
++++ roctracer-rocm-5.2.3/README.md	2023-09-28 17:26:48.259950187 -0700
 @@ -15,13 +15,13 @@ Includes basic API: roctxMark, roctxRang
  ```
  rocTracer API:
@@ -151,7 +149,7 @@ diff -urp roctracer-rocm-5.2.3.orig/README.md roctracer-rocm-5.2.3/README.md
    make mytest
 diff -urp roctracer-rocm-5.2.3.orig/roctracer-backward-compat.cmake roctracer-rocm-5.2.3/roctracer-backward-compat.cmake
 --- roctracer-rocm-5.2.3.orig/roctracer-backward-compat.cmake	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/roctracer-backward-compat.cmake	2023-09-28 11:51:54.612181322 -0700
++++ roctracer-rocm-5.2.3/roctracer-backward-compat.cmake	2023-09-28 17:26:48.259950187 -0700
 @@ -22,7 +22,7 @@ cmake_minimum_required(VERSION 3.16.8)
  set(ROCT_BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR})
  set(ROCT_WRAPPER_DIR ${ROCT_BUILD_DIR}/wrapper_dir)
@@ -181,7 +179,7 @@ diff -urp roctracer-rocm-5.2.3.orig/roctracer-backward-compat.cmake roctracer-ro
  #Use template header file and generater wrapper header files
 diff -urp roctracer-rocm-5.2.3.orig/run_test.sh roctracer-rocm-5.2.3/run_test.sh
 --- roctracer-rocm-5.2.3.orig/run_test.sh	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/run_test.sh	2023-09-28 11:43:53.992186850 -0700
++++ roctracer-rocm-5.2.3/run_test.sh	2023-09-28 17:26:48.259950187 -0700
 @@ -1,5 +1,5 @@
  #!/bin/bash
 -ROCM_PATH="/opt/rocm"
@@ -191,7 +189,7 @@ diff -urp roctracer-rocm-5.2.3.orig/run_test.sh roctracer-rocm-5.2.3/run_test.sh
    echo "$1"
 diff -urp roctracer-rocm-5.2.3.orig/test/CMakeLists.txt roctracer-rocm-5.2.3/test/CMakeLists.txt
 --- roctracer-rocm-5.2.3.orig/test/CMakeLists.txt	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/test/CMakeLists.txt	2023-09-28 11:45:38.920185643 -0700
++++ roctracer-rocm-5.2.3/test/CMakeLists.txt	2023-09-28 17:26:48.259950187 -0700
 @@ -21,7 +21,7 @@
  ################################################################################
  
@@ -210,11 +208,9 @@ diff -urp roctracer-rocm-5.2.3.orig/test/CMakeLists.txt roctracer-rocm-5.2.3/tes
  endif ()
  
  ## Build hsaco_test.cpp referenc test
-Only in roctracer-rocm-5.2.3/test: CMakeLists.txt.orig
-Only in roctracer-rocm-5.2.3/test: CMakeLists.txt.rej
 diff -urp roctracer-rocm-5.2.3.orig/test/hsa/script/build_kernel.sh roctracer-rocm-5.2.3/test/hsa/script/build_kernel.sh
 --- roctracer-rocm-5.2.3.orig/test/hsa/script/build_kernel.sh	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/test/hsa/script/build_kernel.sh	2023-09-28 11:43:53.996186850 -0700
++++ roctracer-rocm-5.2.3/test/hsa/script/build_kernel.sh	2023-09-28 17:26:48.259950187 -0700
 @@ -18,7 +18,7 @@ if [ -z "$DST_DIR" ] ; then
  fi
  
@@ -261,7 +257,7 @@ diff -urp roctracer-rocm-5.2.3.orig/test/hsa/script/build_kernel.sh roctracer-ro
    echo "Error: LLVM clang library was not found"
 diff -urp roctracer-rocm-5.2.3.orig/test/hsa/test/CMakeLists.txt roctracer-rocm-5.2.3/test/hsa/test/CMakeLists.txt
 --- roctracer-rocm-5.2.3.orig/test/hsa/test/CMakeLists.txt	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/test/hsa/test/CMakeLists.txt	2023-09-28 11:43:53.996186850 -0700
++++ roctracer-rocm-5.2.3/test/hsa/test/CMakeLists.txt	2023-09-28 17:26:48.259950187 -0700
 @@ -21,7 +21,7 @@
  ################################################################################
  
@@ -273,7 +269,7 @@ diff -urp roctracer-rocm-5.2.3.orig/test/hsa/test/CMakeLists.txt roctracer-rocm-
  
 diff -urp roctracer-rocm-5.2.3.orig/test/MatrixTranspose/Makefile roctracer-rocm-5.2.3/test/MatrixTranspose/Makefile
 --- roctracer-rocm-5.2.3.orig/test/MatrixTranspose/Makefile	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/test/MatrixTranspose/Makefile	2023-09-28 11:43:53.996186850 -0700
++++ roctracer-rocm-5.2.3/test/MatrixTranspose/Makefile	2023-09-28 17:26:48.259950187 -0700
 @@ -1,10 +1,10 @@
  ROOT_PATH ?= ../..
  INC_PATH  ?= $(ROOT_PATH)/inc
@@ -289,7 +285,7 @@ diff -urp roctracer-rocm-5.2.3.orig/test/MatrixTranspose/Makefile roctracer-rocm
  endif
 diff -urp roctracer-rocm-5.2.3.orig/test/MatrixTranspose_test/Makefile roctracer-rocm-5.2.3/test/MatrixTranspose_test/Makefile
 --- roctracer-rocm-5.2.3.orig/test/MatrixTranspose_test/Makefile	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/test/MatrixTranspose_test/Makefile	2023-09-28 11:43:53.996186850 -0700
++++ roctracer-rocm-5.2.3/test/MatrixTranspose_test/Makefile	2023-09-28 17:27:22.803949790 -0700
 @@ -1,13 +1,13 @@
  ROOT_PATH ?= ../..
  INC_PATH  ?= $(ROOT_PATH)/inc
@@ -306,9 +302,18 @@ diff -urp roctracer-rocm-5.2.3.orig/test/MatrixTranspose_test/Makefile roctracer
  ifeq (,$(HIP_PATH))
  	HIP_PATH=../../..
  endif
+@@ -17,7 +17,7 @@ TARGET=hcc
+ 
+ EXECUTABLE=./MatrixTranspose
+ OBJECTS = MatrixTranspose.o
+-FLAGS =-g $(INC_PATH:%=-I%) -I$(ROCM_PATH)/hsa/include/hsa -I$(ROCM_PATH)/hsa/include -I$(ROCM_PATH)/hip/include -I$(ROCM_PATH)/include -DLOCAL_BUILD=1 -DITERATIONS=$(ITERATIONS) -DAMD_INTERNAL_BUILD=1
++FLAGS =-g $(INC_PATH:%=-I%) -I$(ROCM_PATH)/hsa/include/hsa -I$(ROCM_PATH)/include/hsa -I$(ROCM_PATH)/include/hip -I$(ROCM_PATH)/include -DLOCAL_BUILD=1 -DITERATIONS=$(ITERATIONS) -DAMD_INTERNAL_BUILD=1
+ 
+ ifeq ($(C_TEST), 1)
+ 	COMP=${CC}
 diff -urp roctracer-rocm-5.2.3.orig/test/run.sh roctracer-rocm-5.2.3/test/run.sh
 --- roctracer-rocm-5.2.3.orig/test/run.sh	2022-05-03 10:07:23.000000000 -0700
-+++ roctracer-rocm-5.2.3/test/run.sh	2023-09-28 11:43:53.996186850 -0700
++++ roctracer-rocm-5.2.3/test/run.sh	2023-09-28 17:26:48.259950187 -0700
 @@ -37,7 +37,7 @@ export HSA_TOOLS_REPORT_LOAD_FAILURE=1
  # paths to ROC profiler and other libraries
  export LD_LIBRARY_PATH=$PWD

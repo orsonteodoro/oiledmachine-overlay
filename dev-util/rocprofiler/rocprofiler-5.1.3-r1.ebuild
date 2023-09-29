@@ -27,7 +27,7 @@ KEYWORDS="~amd64"
 IUSE=" +aqlprofile system-llvm test r4"
 RDEPEND="
 	!dev-util/rocprofiler:0
-	dev-util/roc-compiler[system-llvm=]
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	aqlprofile? (
@@ -102,13 +102,17 @@ src_configure() {
 		-DPROF_API_HEADER_PATH="${ESYSROOT}${EROCM_PATH}/include/roctracer/ext"
 		-DUSE_PROF_API=1
 	)
-	if use system-llvm ; then
+	if true ; then
+		:;
+	elif use system-llvm ; then
 		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
 		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
 	else
 		export CC="${HIP_CC:-clang}"
 		export CXX="${HIP_CXX:-clang++}"
 	fi
+	export CC="${HIP_CC:-clang}"
+	export CXX="${HIP_CXX:-clang++}"
 	cmake_src_configure
 }
 
