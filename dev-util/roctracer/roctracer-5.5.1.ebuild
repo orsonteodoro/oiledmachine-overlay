@@ -23,12 +23,18 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE=" system-llvm test"
+CDEPEND="
+	sys-devel/clang:${LLVM_MAX_SLOT}
+	sys-devel/gcc:12
+	sys-devel/llvm:${LLVM_MAX_SLOT}
+"
 RDEPEND="
 	!dev-util/roctracer:0
+	${CDEPEND}
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
-	sys-devel/gcc:12
+	dev-util/rocm-compiler[system-llvm=]
 "
 DEPEND="
 	${RDEPEND}
@@ -38,8 +44,8 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
+	${CDEPEND}
 	>=dev-util/cmake-3.18.0
-	sys-devel/gcc:12
 	test? (
 		dev-util/rocm-compiler[system-llvm=]
 	)

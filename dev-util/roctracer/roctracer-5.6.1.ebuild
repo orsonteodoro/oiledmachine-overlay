@@ -23,14 +23,18 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE=" system-llvm test"
-# libhsa-runtime64.so.1.9.0: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
-# This means it requires >= libstdc++ 12.
+CDEPEND="
+	sys-devel/clang:${LLVM_MAX_SLOT}
+	sys-devel/gcc:12
+	sys-devel/llvm:${LLVM_MAX_SLOT}
+"
 RDEPEND="
 	!dev-util/roctracer:0
+	${CDEPEND}
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
-	sys-devel/gcc:12
+	dev-util/rocm-compiler[system-llvm=]
 "
 DEPEND="
 	${RDEPEND}
@@ -40,8 +44,8 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
+	${CDEPEND}
 	>=dev-util/cmake-3.18.0
-	sys-devel/gcc:12
 	test? (
 		dev-util/rocm-compiler[system-llvm=]
 	)
