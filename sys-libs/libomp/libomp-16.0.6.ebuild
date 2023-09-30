@@ -121,7 +121,7 @@ REQUIRED_USE="
 	)
 "
 ROCM_SLOTS=(
-	"5.6.0"
+	"5.6.1"
 	"5.5.1"
 )
 gen_amdgpu_rdepend() {
