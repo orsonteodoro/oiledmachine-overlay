@@ -7,7 +7,7 @@ LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit llvm python-single-r1 rocm
+inherit autotools llvm python-single-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCgdb/"
