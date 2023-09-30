@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -31,12 +31,11 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="+compile-commands doc +raslib +standalone systemd test"
 REQUIRED_USE="
 	raslib
-	standalone
 	systemd? (
 		standalone
 	)
 "
-# abseil-cpp needs >=c++14
+# abseil-cpp needs >=c++11
 RDEPEND="
 	sys-libs/libcap
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
@@ -44,12 +43,16 @@ RDEPEND="
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	)
 	standalone? (
-		>=net-libs/grpc-1.44.0
+		>=net-libs/grpc-1.28.1
 		dev-libs/protobuf:0/32
 		|| (
 			(
-				>=net-libs/grpc-1.53.1
-				dev-cpp/abseil-cpp:0/20230125
+				=net-libs/grpc-1.52.2*
+				dev-cpp/abseil-cpp:0/20220623
+			)
+			(
+				=net-libs/grpc-1.49.3*
+				dev-cpp/abseil-cpp:0/20220623
 			)
 		)
 	)
@@ -80,8 +83,8 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/rdc-5.4.3-raslib-install.patch"
-	"${FILESDIR}/rdc-5.4.3-path-changes.patch"
+	"${FILESDIR}/rdc-5.2.3-raslib-install.patch"
+	"${FILESDIR}/rdc-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -91,15 +94,6 @@ pkg_setup() {
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
-	if use standalone ; then
-#/usr/include/absl/strings/string_view.h:52:21: note: 'std::string_view' is only available from C++17 onwards
-#   52 | using string_view = std::string_view;
-#      |                     ^~~
-		sed -i -e "s|-std=c++11|-std=c++17|g" \
-			$(grep -l -r -e "-std=c++11" ./)
-		sed -i -e "s|CMAKE_CXX_STANDARD 11|CMAKE_CXX_STANDARD 17|g" \
-			CMakeLists.txt
-	fi
 }
 
 src_configure() {
@@ -122,12 +116,6 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
-	cp \
-		-aT \
-		"${ED}${EROCM_PATH}/usr/share/doc" \
-		"${ED}${EROCM_PATH}/share/doc" \
-		|| die
-	rm -rf "${ED}${EROCM_PATH}/usr"
 }
 
 pkg_postinst() {

@@ -1,0 +1,518 @@
+diff -urp rdc-rocm-5.2.3.orig/client/CMakeLists.txt rdc-rocm-5.2.3/client/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/client/CMakeLists.txt	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/client/CMakeLists.txt	2023-09-29 16:33:35.458993068 -0700
+@@ -49,7 +49,7 @@ message("--------------Compiler: " ${CMA
+ message("---------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("----------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("----------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("----------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("----------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("----------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("----------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ message("----------RSMI Inc Dir: " ${RSMI_INC_DIR})
+@@ -132,7 +132,7 @@ set(CLIENT_LIB_INC_LIST ${CLIENT_LIB_INC
+ set(CLIENT_LIB_INC_LIST ${CLIENT_LIB_INC_LIST}
+                                    "${PROJECT_SOURCE_DIR}/common/rdc_utils.h")
+ 
+-link_directories("${GRPC_ROOT}/lib" "${GRPC_ROOT}/lib64")
++link_directories("${GRPC_ROOT}/@LIBDIR@")
+ add_library(${CLIENT_LIB} SHARED ${CLIENT_LIB_SRC_LIST} ${CLIENT_LIB_INC_LIST})
+ target_link_libraries(${CLIENT_LIB} pthread rt grpc grpc++ grpc++_reflection
+                                                                   dl protobuf)
+@@ -159,7 +159,7 @@ endif ()
+ 
+ ## Add the install directives for the runtime library.
+ install(TARGETS ${CLIENT_LIB}
+-        LIBRARY DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib
++        LIBRARY DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@LIBDIR@
+                COMPONENT ${CLIENT_COMPONENT})
+ install(DIRECTORY ${SOURCE_DIR}/authentication
+              DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}
+diff -urp rdc-rocm-5.2.3.orig/CMakeLists.txt rdc-rocm-5.2.3/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/CMakeLists.txt	2023-09-29 16:32:43.038993671 -0700
++++ rdc-rocm-5.2.3/CMakeLists.txt	2023-09-29 16:33:35.458993068 -0700
+@@ -60,7 +60,7 @@ if (BUILD_RASLIB AND NOT DEFINED HSA_DIR
+ endif()
+ 
+ 
+-set(RSMI_LIB_DIR ${ROCM_DIR}/rocm_smi/lib)
++set(RSMI_LIB_DIR ${ROCM_DIR}/rocm_smi/@LIBDIR@)
+ 
+ if (NOT DEFINED GRPC_ROOT)
+     set(GRPC_ROOT "/usr")
+@@ -170,7 +170,7 @@ if(BUILD_STANDALONE)
+    set(PROTOB_OUT_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+    set(PROTOB_CMD "${GRPC_ROOT}/bin/protoc")
+    set(GRPC_PLUGIN "${GRPC_ROOT}/bin/grpc_cpp_plugin")
+-   set(GRPC_LIB_DIR "${GRPC_ROOT}/lib")
++   set(GRPC_LIB_DIR "${GRPC_ROOT}/@LIBDIR@")
+ 
+    set(ENV{LD_LIBRARY_PATH} ${GRPC_LIB_DIR}:${GRPC_LIB_DIR}64:$ENV{LD_LIBRARY_PATH})
+    message("LD_LIBRARY_PATH = $ENV{LD_LIBRARY_PATH}")
+@@ -214,15 +214,15 @@ set(CLIENT_COMPONENT "client")
+ 
+ # Standalone only folders
+ if(BUILD_STANDALONE)
+-  install(DIRECTORY ${GRPC_ROOT}/lib
++  install(DIRECTORY ${GRPC_ROOT}/@LIBDIR@
+                 USE_SOURCE_PERMISSIONS
+                 DESTINATION ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/grpc
+                 COMPONENT ${SERVER_COMPONENT})
+   # In SLES, The libprotobuf is created under lib64 folder, install it as well
+-  if(EXISTS ${GRPC_ROOT}/lib64)
+-      install(DIRECTORY ${GRPC_ROOT}/lib64/
++  if(EXISTS ${GRPC_ROOT}/@LIBDIR@)
++      install(DIRECTORY ${GRPC_ROOT}/@LIBDIR@/
+                 USE_SOURCE_PERMISSIONS
+-                DESTINATION ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/grpc/lib
++                DESTINATION ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/grpc/@LIBDIR@
+                 COMPONENT ${SERVER_COMPONENT})
+   endif() 
+ # Also include dev setup for people do not want to build grpc
+@@ -272,7 +272,7 @@ configure_file(rdc-config.cmake.in
+   "${PROJECT_BINARY_DIR}/rdc-config.cmake" @ONLY)
+ # ... for the install tree
+ set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}${RDC_CLIENT_INSTALL_PREFIX}/rdc/include")
+-set(CONF_LIB_DIR  "${CMAKE_INSTALL_PREFIX}${RDC_CLIENT_INSTALL_PREFIX}/rdc/lib")
++set(CONF_LIB_DIR  "${CMAKE_INSTALL_PREFIX}${RDC_CLIENT_INSTALL_PREFIX}/rdc/@LIBDIR@")
+ set(CONF_LIBS "librdc_bootstrap.so")
+ 
+ configure_file(rdc-config.cmake.in
+@@ -284,10 +284,10 @@ configure_file(rdc-config-version.cmake.
+ install(FILES
+   "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/rdc-config.cmake"
+   "${PROJECT_BINARY_DIR}/rdc-config-version.cmake"
+-  DESTINATION "${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib/cmake" COMPONENT dev)
++  DESTINATION "${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@LIBDIR@/cmake" COMPONENT dev)
+ # Install the export set for use with the install-tree
+ install(EXPORT rdcTargets DESTINATION
+-  "${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib/cmake" COMPONENT dev)
++  "${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@LIBDIR@/cmake" COMPONENT dev)
+ 
+ 
+ # License file
+@@ -323,7 +323,7 @@ set(CPACK_PACKAGE_VERSION ${VERSION_STRI
+ set(RDC_CLIENT_ROOT_PATH "${RDC_SERVER_ROOT_PATH}/${RDC_CLIENT_INSTALL_PREFIX}")
+ 
+ #Identify between SLES and Centos for setting symlink for rdc.service
+-#SLES need serice file in /usr/lib/systemd/system/rdc.service
++#SLES need serice file in /usr//systemd/system/rdc.service
+ #CENTOS/RHEL Require file in /lib/systemd/system/rdc.service
+ file(STRINGS /etc/os-release LINUX_DISTRO LIMIT_COUNT 1 REGEX "NAME=")
+ message ( "Using Linux Distro: ${LINUX_DISTRO}" )
+@@ -388,7 +388,7 @@ set ( CPACK_RPM_FILE_NAME "RPM-DEFAULT"
+ set(CPACK_RPM_PACKAGE_AUTOREQ 0)
+ set(CPACK_RPM_PACKAGE_AUTOPROV 0)
+ set(CPACK_RPM_PACKAGE_REQUIRES "rocm-smi-lib")
+-list(APPEND CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "/lib")
++list(APPEND CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "/@LIBDIR@")
+ list(APPEND CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "/usr/sbin")
+ list(APPEND CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "/lib/systemd")
+ list(APPEND CPACK_RPM_EXCLUDE_FROM_AUTO_FILELIST_ADDITION "/lib/systemd/system")
+diff -urp rdc-rocm-5.2.3.orig/example/CMakeLists.txt rdc-rocm-5.2.3/example/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/example/CMakeLists.txt	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/example/CMakeLists.txt	2023-09-29 16:33:35.458993068 -0700
+@@ -34,7 +34,7 @@ message("------------Compiler: " ${CMAKE
+ message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ message("--------RSMI Inc Dir: " ${RSMI_INC_DIR})
+diff -urp rdc-rocm-5.2.3.orig/python_binding/rdc_bootstrap.py rdc-rocm-5.2.3/python_binding/rdc_bootstrap.py
+--- rdc-rocm-5.2.3.orig/python_binding/rdc_bootstrap.py	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/python_binding/rdc_bootstrap.py	2023-09-29 16:33:35.458993068 -0700
+@@ -10,8 +10,7 @@ librdc = "librdc_bootstrap.so"
+ # Search librdc_bootstrap.so paths
+ current_folder = os.path.dirname(os.path.realpath(__file__))
+ rdc_paths = [ "", # without path
+-        current_folder+"/../lib/",   # package installation
+-        current_folder+"/../lib64/", # package installation
++        current_folder+"/../@LIBDIR@/", # package installation
+         current_folder+"/../build/rdc_libs/" # build from source code
+ ]
+ 
+diff -urp rdc-rocm-5.2.3.orig/python_binding/rdc_collectd.conf rdc-rocm-5.2.3/python_binding/rdc_collectd.conf
+--- rdc-rocm-5.2.3.orig/python_binding/rdc_collectd.conf	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/python_binding/rdc_collectd.conf	2023-09-29 16:33:35.458993068 -0700
+@@ -1,5 +1,5 @@
+  <Plugin python>
+-    ModulePath "/opt/rocm/rdc/python_binding"
++    ModulePath "@EPREFIX_ROCM_PATH@/rdc/python_binding"
+     LogTraces true
+     Interactive false
+     Import "rdc_collectd"
+diff -urp rdc-rocm-5.2.3.orig/rdci/CMakeLists.txt rdc-rocm-5.2.3/rdci/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/rdci/CMakeLists.txt	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/rdci/CMakeLists.txt	2023-09-29 16:33:35.458993068 -0700
+@@ -37,7 +37,7 @@ message("-Pkg.-Install Prefix: " ${CPACK
+ message("-CMake inst. Bindir : " ${CMAKE_INSTALL_BINDIR})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ message("--------RSMI Inc Dir: " ${RSMI_INC_DIR})
+@@ -86,14 +86,14 @@ set(RDCI_SRC_LIST ${RDCI_SRC_LIST}
+ message("RDCI_SRC_LIST=${RDCI_SRC_LIST}")
+ set(RDCI_EXE "rdci")
+ 
+-link_directories(${LIB_BOOSTRAP_DIR} "${GRPC_ROOT}/lib" "${GRPC_ROOT}/lib64")
++link_directories(${LIB_BOOSTRAP_DIR} "${GRPC_ROOT}/@LIBDIR@")
+ 
+ add_executable(${RDCI_EXE} "${RDCI_SRC_LIST}")
+ 
+ ## RUNPATH should help to run "rdci" without the usage of ldconfig
+ if (DEFINED ENV{ROCM_RPATH})
+-   set(RDC_RUNPATH "\$ORIGIN:\$ORIGIN/../lib:\$ORIGIN/../lib64")
+-   set(GRPC_RUNPATH "\$ORIGIN/../grpc/lib:\$ORIGIN/../grpc/lib64")
++   set(RDC_RUNPATH "\$ORIGIN/../@LIBDIR@")
++   set(GRPC_RUNPATH "\$ORIGIN/../grpc/@LIBDIR@")
+    set(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-new-dtags -Wl,--rpath,${RDC_RUNPATH}:${GRPC_RUNPATH} -Wl,--no-as-needed -Wl,-z,origin")
+    set(CMAKE_SKIP_BUILD_RPATH TRUE)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+diff -urp rdc-rocm-5.2.3.orig/rdc_libs/CMakeLists.txt rdc-rocm-5.2.3/rdc_libs/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/rdc_libs/CMakeLists.txt	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/rdc_libs/CMakeLists.txt	2023-09-29 16:33:35.458993068 -0700
+@@ -49,7 +49,7 @@ message("------------Compiler: " ${CMAKE
+ message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ message("--------RSMI Inc Dir: " ${RSMI_INC_DIR})
+@@ -68,7 +68,7 @@ set(COMMON_DIR "${PROJECT_SOURCE_DIR}/co
+ ## Set RUNPATH if ROCM_RPATH is defined and passed by the environment
+ ## RUNPATH should help to run "rdcd" without the usage of ldconfig
+ if (DEFINED ENV{ROCM_RPATH})
+- set (LIB_RUNPATH "\$ORIGIN/../lib:\$ORIGIN/../lib64:\$ORIGIN/../grpc/lib:\$ORIGIN/../grpc/lib64")
++ set (LIB_RUNPATH "\$ORIGIN/../@LIBDIR@:\$ORIGIN/../grpc/@LIBDIR@")
+  set (CMAKE_SHARED_LINKER_FLAGS "-Wl,--enable-new-dtags -Wl,--no-as-needed -Wl,-z,origin")
+  set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${LIB_RUNPATH}")
+  set (CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+@@ -142,6 +142,7 @@ target_include_directories(${BOOTSTRAP_L
+                                          "${PROJECT_SOURCE_DIR}/include"
+                                          "${COMMON_DIR}"
+                                          "${CMAKE_CURRENT_SOURCE_DIR}/include")
++include_directories(@EPREFIX_ROCM_PATH@/include)
+ 
+ # TODO: set the properties for the library once we have one
+ ## Set the VERSION and SOVERSION values
+@@ -203,7 +204,7 @@ set(RDC_LIB_INC_LIST ${RDC_LIB_INC_LIST}
+ 
+ message("RDC_LIB_INC_LIST=${RDC_LIB_INC_LIST}")
+ 
+-link_directories(${RSMI_LIB_DIR} "${GRPC_ROOT}/lib" "${GRPC_ROOT}/lib64" "${ROCM_DIR}/lib")
++link_directories(${RSMI_LIB_DIR} "${GRPC_ROOT}/@LIBDIR@" "${ROCM_DIR}/@LIBDIR@")
+ add_library(${RDC_LIB} SHARED ${RDC_LIB_SRC_LIST} ${RDC_LIB_INC_LIST})
+ target_link_libraries(${RDC_LIB} ${BOOTSTRAP_LIB} pthread rocm_smi64 cap)
+ target_include_directories(${RDC_LIB} PRIVATE
+@@ -328,12 +329,12 @@ target_include_directories(${BOOTSTRAP_L
+ if(BUILD_STANDALONE)
+     install(TARGETS ${BOOTSTRAP_LIB} ${RDC_LIB} ${RDCCLIENT_LIB} ${DIAGNOSTIC_LIB}
+             EXPORT rdcTargets
+-            LIBRARY DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib
++            LIBRARY DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@LIBDIR@
+                                             COMPONENT ${CLIENT_COMPONENT})
+ else()
+     install(TARGETS ${BOOTSTRAP_LIB} ${RDC_LIB} ${DIAGNOSTIC_LIB}
+             EXPORT rdcTargets
+-            LIBRARY DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib
++            LIBRARY DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@LIBDIR@
+                                             COMPONENT ${CLIENT_COMPONENT})
+ endif()
+ 
+@@ -343,7 +344,7 @@ install(FILES ${SOURCE_DIR}/include/rdc/
+ 
+ # Install the kernel files
+ install(DIRECTORY ${PROJECT_SOURCE_DIR}/rdc_libs/rdc_modules/kernels/hsaco
+-    DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/lib
++    DESTINATION  ${RDC_CLIENT_INSTALL_PREFIX}/${RDC}/@LIBDIR@
+     COMPONENT ${CLIENT_COMPONENT})
+ 
+ 
+Only in rdc-rocm-5.2.3/rdc_libs: CMakeLists.txt.orig
+diff -urp rdc-rocm-5.2.3.orig/README.md rdc-rocm-5.2.3/README.md
+--- rdc-rocm-5.2.3.orig/README.md	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/README.md	2023-09-29 16:33:35.462993068 -0700
+@@ -52,12 +52,12 @@ The following tools are required for gRP
+     $ mkdir -p cmake/build
+     $ cd cmake/build
+ 
+-    ## By default (without using CMAKE_INSTALL_PREFIX option), the following will install to /usr/local lib, include and bin directories
++    ## By default (without using CMAKE_INSTALL_PREFIX option), the following will install to /usr/local @LIBDIR@, include and bin directories
+ 
+     $ cmake -DgRPC_INSTALL=ON -DBUILD_SHARED_LIBS=ON <-DCMAKE_INSTALL_PREFIX=<install dir>> ../..
+     $ make
+     $ sudo make install
+-    $ echo "<install dir>/lib" | sudo tee /etc/ld.so.conf.d/grpc.conf
++    $ echo "<install dir>/@LIBDIR@" | sudo tee /etc/ld.so.conf.d/grpc.conf
+ 
+ ## Building RDC
+ 
+@@ -66,28 +66,28 @@ Clone the RDC source code from GitHub an
+     $ git clone https://github.com/RadeonOpenCompute/rdc
+     $ cd rdc
+     $ mkdir -p build; cd build
+-    $ cmake -DROCM_DIR=/opt/rocm  -DGRPC_ROOT="$GRPC_PROTOC_ROOT" <-DCMAKE_INSTALL_PREFIX=<install dir>> ..
++    $ cmake -DROCM_DIR=@EPREFIX_ROCM_PATH@  -DGRPC_ROOT="$GRPC_PROTOC_ROOT" <-DCMAKE_INSTALL_PREFIX=<install dir>> ..
+     $ make
+-    $ make install ## default installation location is /opt/rocm
++    $ make install ## default installation location is @EPREFIX_ROCM_PATH@
+ 
+ ## Building RDC library only without gRPC (optional)
+ 
+ If only the RDC libraries are needed (i.e. only "embedded mode" is required), the user can choose to not build rdci and rdcd. This will eliminate the need for gRPC and protoc. To build in this way, -DBUILD_STANDALONE=off should be passed on the the cmake command line:
+ 
+-    $ cmake -DROCM_DIR=/opt/rocm -DBUILD_STANDALONE=off <-DCMAKE_INSTALL_PREFIX=<install dir>> ..
++    $ cmake -DROCM_DIR=@EPREFIX_ROCM_PATH@ -DBUILD_STANDALONE=off <-DCMAKE_INSTALL_PREFIX=<install dir>> ..
+ 
+ ## Building RDC library without ROCM Run time (optional)
+ 
+ The user can choose to not build RDC diagnostic ROCM Run time. This will eliminate the need for ROCM Run time. To build in this way, -DBUILD_ROCRTEST=off should be passed on the the cmake command line:
+ 
+-    $ cmake -DROCM_DIR=/opt/rocm -DBUILD_ROCRTEST=off <-DCMAKE_INSTALL_PREFIX=<install dir>> ..
++    $ cmake -DROCM_DIR=@EPREFIX_ROCM_PATH@ -DBUILD_ROCRTEST=off <-DCMAKE_INSTALL_PREFIX=<install dir>> ..
+ 
+ ## Update System Library Path
+ 
+ The following commands need to be executed as root (sudo). It may be easiest to put them into a script and then run that script as root:
+ 
+-    $ RDC_LIB_DIR=<RDC install dir>/lib
+-    $ GRPC_LIB_DIR=<gRPC install dir>/lib
++    $ RDC_LIB_DIR=<RDC install dir>/@LIBDIR@
++    $ GRPC_LIB_DIR=<gRPC install dir>/@LIBDIR@
+     $ echo "$GRPC_LIB_DIR" > /etc/ld.so.conf.d/x86_64-librdc_client.conf
+     $ echo "$GRPC_LIB_DIR"64 >> /etc/ld.so.conf.d/x86_64-librdc_client.conf
+     $ echo "$RDC_LIB_DIR" >> /etc/ld.so.conf.d/x86_64-librdc_client.conf
+@@ -108,13 +108,13 @@ When *rdcd* is started from a command-li
+ 
+     ## To run with authentication. Ensure SSL keys are setup properly
+     ## version will be the version number(ex:3.10.0) of ROCm where RDC was pacakged with
+-    $ /opt/rocm-<version>/rdc/bin/rdcd           ## rdcd is started with monitor-only capabilities
+-    $ sudo /opt/rocm-<version>/rdc/bin/rdcd      ## rdcd is started will full-capabilities
++    $ @EPREFIX_ROCM_PATH@/rdc/bin/rdcd           ## rdcd is started with monitor-only capabilities
++    $ sudo @EPREFIX_ROCM_PATH@/rdc/bin/rdcd      ## rdcd is started will full-capabilities
+ 
+     ## To run without authentication. SSL key & certificates are not required.
+     ## version will be the version number(ex:3.10.0) of ROCm where RDC was pacakged with
+-    $ /opt/rocm-<version>/rdc/bin/rdcd -u        ## rdcd is started with monitor-only capabilities
+-    $ sudo /opt/rocm-<version>/rdc/bin/rdcd -u   ## rdcd is started will full-capabilities
++    $ @EPREFIX_ROCM_PATH@/rdc/bin/rdcd -u        ## rdcd is started with monitor-only capabilities
++    $ sudo @EPREFIX_ROCM_PATH@/rdc/bin/rdcd -u   ## rdcd is started will full-capabilities
+ 
+ ### Start RDCD using systemd
+ *rdcd* can be started by using the systemctl command. systemctl will read /lib/systemd/system/rdc.service, which is installed with rdc. This file has 2 lines that control what *capabilities* with which *rdcd* will run. If left uncommented, rdcd will run with full-capabilities.
+@@ -135,8 +135,8 @@ RDCI provides command-line interface to
+     ## NOTE: option -u (for unauthenticated) is required is rdcd was started in this mode
+ 
+     $ cd rdc_install_prefix                           ## If specified in Building RDC section
+-    ./opt/rocm/rdc/bin/rdci discovery -l <-u>         ## list available GPUs in localhost
+-    ./opt/rocm/rdc/bin/rdci discovery <host> -l <-u>  ## list available GPUs in host machine
++    @EPREFIX_ROCM_PATH@/rdc/bin/rdci discovery -l <-u>         ## list available GPUs in localhost
++    @EPREFIX_ROCM_PATH@/rdc/bin/rdci discovery <host> -l <-u>  ## list available GPUs in host machine
+ 
+ ## Troubleshooting rdcd
+ 
+@@ -147,6 +147,6 @@ Log messages that can provide useful deb
+ 
+     ## To run rdcd with debug log from command-line use
+     ## version will be the version number(ex:3.10.0) of ROCm where RDC was pacakged with
+-    RDC_LOG=DEBUG /opt/rocm-<version>/rdc/bin/rdcd
++    RDC_LOG=DEBUG @EPREFIX_ROCM_PATH@/rdc/bin/rdcd
+ 
+ 
+diff -urp rdc-rocm-5.2.3.orig/server/CMakeLists.txt rdc-rocm-5.2.3/server/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/server/CMakeLists.txt	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/server/CMakeLists.txt	2023-09-29 16:33:35.462993068 -0700
+@@ -34,7 +34,7 @@ message("--------------Compiler: " ${CMA
+ message("---------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("----------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("----------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("----------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("----------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("----------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("----------RSMI Lib Dir: " ${RSMI_LIB_DIR})
+ message("----------RSMI Inc Dir: " ${RSMI_INC_DIR})
+@@ -84,12 +84,12 @@ set(SERVER_DAEMON_EXE "rdcd")
+ configure_file("rdc.service.in" "${PROJECT_BINARY_DIR}/rdc.service" @ONLY)
+ set(SERVICE_FILE_NAME "rdc.service")
+ 
+-link_directories(${RSMI_LIB_DIR} "${GRPC_ROOT}/lib" "${GRPC_ROOT}/lib64")
++link_directories(${RSMI_LIB_DIR} "${GRPC_ROOT}/@LIBDIR@")
+ 
+ ## Set RUNPATH if ROCM_RPATH is defined and passed by the environment
+ ## RUNPATH should help to run "rdcd" without the usage of ldconfig
+ if (DEFINED ENV{ROCM_RPATH})
+- set (GRPC_RUNPATH "\$ORIGIN/../lib:\$ORIGIN/../grpc/lib:\$ORIGIN/../grpc/lib64")
++ set (GRPC_RUNPATH "\$ORIGIN/../@LIBDIR@:\$ORIGIN/../grpc/@LIBDIR@")
+  set (CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-new-dtags -Wl,--no-as-needed -Wl,-z,origin")
+  set (CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_RPATH}:${GRPC_RUNPATH}")
+  set (CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+@@ -98,7 +98,7 @@ if (DEFINED ENV{ROCM_RPATH})
+  # Run path can only include direct refer library, include the indirect libs
+  # required by gRPC
+  # Get all absl library and re2
+- file(GLOB grpc_libs "${GRPC_ROOT}/lib*/lib*.so")
++ file(GLOB grpc_libs "${GRPC_ROOT}/@LIBDIR@/lib*.so")
+  foreach(src_file ${grpc_libs})
+     get_filename_component(lib_name "${src_file}" NAME_WLE)
+     STRING(REGEX REPLACE "^lib" "" lib_name ${lib_name})  # strip out lib
+@@ -122,7 +122,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR
+         DESTINATION ${RDC_CLIENT_INSTALL_PREFIX}/rdc/bin
+         COMPONENT ${SERVER_COMPONENT})
+ install(FILES ${PROJECT_BINARY_DIR}/${SERVICE_FILE_NAME}
+-               DESTINATION ${RDC_CLIENT_INSTALL_PREFIX}/rdc/lib
++               DESTINATION ${RDC_CLIENT_INSTALL_PREFIX}/rdc/@LIBDIR@
+                COMPONENT ${SERVER_COMPONENT})
+ 
+ message("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+diff -urp rdc-rocm-5.2.3.orig/server/run_build.sh rdc-rocm-5.2.3/server/run_build.sh
+--- rdc-rocm-5.2.3.orig/server/run_build.sh	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/server/run_build.sh	2023-09-29 16:33:35.462993068 -0700
+@@ -2,7 +2,7 @@
+ 
+ mkdir -p build
+ cd build
+-cmake -DROCM_DIR=/opt/rocm ..
++cmake -DROCM_DIR=@EPREFIX_ROCM_PATH@ ..
+ make
+ cd ..
+ 
+diff -urp rdc-rocm-5.2.3.orig/tests/example/CMakeLists.txt rdc-rocm-5.2.3/tests/example/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/tests/example/CMakeLists.txt	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/tests/example/CMakeLists.txt	2023-09-29 16:33:35.462993068 -0700
+@@ -48,7 +48,7 @@ message("------------Compiler: " ${CMAKE
+ message("-------------Version: " ${CMAKE_CXX_COMPILER_VERSION})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("--------RSMI Inc Dir: " ${RSMI_INC_DIR})
+ message("")
+diff -urp rdc-rocm-5.2.3.orig/tests/rdc_tests/CMakeLists.txt rdc-rocm-5.2.3/tests/rdc_tests/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/tests/rdc_tests/CMakeLists.txt	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/tests/rdc_tests/CMakeLists.txt	2023-09-29 16:33:35.462993068 -0700
+@@ -44,7 +44,7 @@ endif()
+ 
+ set(RDC_CLIENT_INSTALL_PREFIX "opt/rocm")
+ set(RDC_INC_DIR ${ROCM_DIR}/${RDC_CLIENT_INSTALL_PREFIX}/include)
+-set(RDC_LIB_DIR ${ROCM_DIR}/${RDC_CLIENT_INSTALL_PREFIX}/rdc/lib)
++set(RDC_LIB_DIR ${ROCM_DIR}/${RDC_CLIENT_INSTALL_PREFIX}/rdc/@LIBDIR@)
+ 
+ #
+ # Determine RDC Header files are present
+@@ -76,7 +76,7 @@ message("-------------Version: " ${CMAKE
+ message("------------ROCM_DIR: " ${ROCM_DIR})
+ message("--------Proj Src Dir: " ${PROJECT_SOURCE_DIR})
+ message("--------Proj Bld Dir: " ${PROJECT_BINARY_DIR})
+-message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/lib)
++message("--------Proj Lib Dir: " ${PROJECT_BINARY_DIR}/@LIBDIR@)
+ message("--------Proj Exe Dir: " ${PROJECT_BINARY_DIR}/bin)
+ message("--------RDC Lib Dir: " ${RDC_LIB_DIR})
+ message("--------RDC Inc Dir: " ${RDC_INC_DIR})
+@@ -155,7 +155,7 @@ aux_source_directory(${RDCTST_ROOT}/func
+ # to be linked against for building ROC Perf applications
+ #
+ 
+-link_directories(${ROCM_DIR}/lib)
++link_directories(${ROCM_DIR}/@LIBDIR@)
+ #
+ # Source files for building rocrtst
+ #
+diff -urp rdc-rocm-5.2.3.orig/tests/rdc_tests/deps/external-gtest.cmake rdc-rocm-5.2.3/tests/rdc_tests/deps/external-gtest.cmake
+--- rdc-rocm-5.2.3.orig/tests/rdc_tests/deps/external-gtest.cmake	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/tests/rdc_tests/deps/external-gtest.cmake	2023-09-29 16:33:35.462993068 -0700
+@@ -91,11 +91,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
+diff -urp rdc-rocm-5.2.3.orig/tests/rdc_tests/gtest/docs/pkgconfig.md rdc-rocm-5.2.3/tests/rdc_tests/gtest/docs/pkgconfig.md
+--- rdc-rocm-5.2.3.orig/tests/rdc_tests/gtest/docs/pkgconfig.md	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/tests/rdc_tests/gtest/docs/pkgconfig.md	2023-09-29 16:33:35.462993068 -0700
+@@ -61,10 +61,10 @@ These failures are common if you install
+ sourced it from a distro or other package manager. If so, you need to tell
+ pkg-config where it can find the `.pc` files containing the information. Say you
+ installed GoogleTest to `/usr/local`, then it might be that the `.pc` files are
+-installed under `/usr/local/lib64/pkgconfig`. If you set
++installed under `/usr/local/@LIBDIR@/pkgconfig`. If you set
+ 
+ ```
+-export PKG_CONFIG_PATH=/usr/local/lib64/pkgconfig
++export PKG_CONFIG_PATH=/usr/local/@LIBDIR@/pkgconfig
+ ```
+ 
+ pkg-config will also try to look in `PKG_CONFIG_PATH` to find `gtest_main.pc`.
+@@ -100,7 +100,7 @@ reasons why this stripping needs to occu
+ If you look at the generated pkg-config file, it will look something like
+ 
+ ```
+-libdir=/usr/lib64
++libdir=/usr/@LIBDIR@
+ includedir=/usr/include
+ 
+ Name: gtest
+@@ -113,14 +113,14 @@ Cflags: -I${includedir} -DGTEST_HAS_PTHR
+ 
+ Notice that the sysroot is not included in `libdir` and `includedir`! If you try
+ to run `pkg-config` with the correct
+-`PKG_CONFIG_LIBDIR=/home/MYUSER/sysroot/usr/lib64/pkgconfig` against this `.pc`
++`PKG_CONFIG_LIBDIR=/home/MYUSER/sysroot/usr/@LIBDIR@/pkgconfig` against this `.pc`
+ file, you will get
+ 
+ ```
+ $ pkg-config --cflags gtest
+ -DGTEST_HAS_PTHREAD=1 -lpthread -I/usr/include
+ $ pkg-config --libs gtest
+--L/usr/lib64 -lgtest -lpthread
++-L/usr/@LIBDIR@ -lgtest -lpthread
+ ```
+ 
+ which is obviously wrong and points to the `CBUILD` and not `CHOST` root. In
+@@ -131,7 +131,7 @@ pkg-config about the actual sysroot
+ ```
+ export PKG_CONFIG_DIR=
+ export PKG_CONFIG_SYSROOT_DIR=/home/MYUSER/sysroot
+-export PKG_CONFIG_LIBDIR=${PKG_CONFIG_SYSROOT_DIR}/usr/lib64/pkgconfig
++export PKG_CONFIG_LIBDIR=${PKG_CONFIG_SYSROOT_DIR}/usr/@LIBDIR@/pkgconfig
+ ```
+ 
+ and running `pkg-config` again we get
+@@ -140,7 +140,7 @@ and running `pkg-config` again we get
+ $ pkg-config --cflags gtest
+ -DGTEST_HAS_PTHREAD=1 -lpthread -I/home/MYUSER/sysroot/usr/include
+ $ pkg-config --libs gtest
+--L/home/MYUSER/sysroot/usr/lib64 -lgtest -lpthread
++-L/home/MYUSER/sysroot/usr/@LIBDIR@ -lgtest -lpthread
+ ```
+ 
+ which contains the correct sysroot now. For a more comprehensive guide to also
+diff -urp rdc-rocm-5.2.3.orig/tests/rdc_tests/gtest/googletest/cmake/internal_utils.cmake rdc-rocm-5.2.3/tests/rdc_tests/gtest/googletest/cmake/internal_utils.cmake
+--- rdc-rocm-5.2.3.orig/tests/rdc_tests/gtest/googletest/cmake/internal_utils.cmake	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/tests/rdc_tests/gtest/googletest/cmake/internal_utils.cmake	2023-09-29 16:33:35.462993068 -0700
+@@ -159,8 +159,8 @@ function(cxx_library_with_type name type
+     PROPERTIES
+     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+     LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/gtest/googlemock/gtest"
+-    # LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+-    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
++    # LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/@LIBDIR@"
++    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/@LIBDIR@"
+     PDB_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+   # make PDBs match library name
+   get_target_property(pdb_debug_postfix ${name} DEBUG_POSTFIX)

@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -31,7 +31,6 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="+compile-commands doc +raslib +standalone systemd test"
 REQUIRED_USE="
 	raslib
-	standalone
 	systemd? (
 		standalone
 	)
@@ -80,8 +79,8 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/rdc-5.4.3-raslib-install.patch"
-	"${FILESDIR}/rdc-5.4.3-path-changes.patch"
+	"${FILESDIR}/rdc-5.6.0-raslib-install.patch"
+	"${FILESDIR}/rdc-5.5.1-path-changes.patch"
 )
 
 pkg_setup() {
@@ -109,11 +108,11 @@ src_configure() {
 		-DBUILD_ROCRTEST=$(usex raslib ON OFF)
 		-DBUILD_STANDALONE=$(usex standalone ON OFF)
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=$(usex compile-commands ON OFF)
-		-DCMAKE_INSTALL_PREFIX="${ESYSROOT}"
+		-DCMAKE_INSTALL_PREFIX="${ESYSROOT}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGRPC_ROOT="${ESYSROOT}/usr"
 		-DINSTALL_RASLIB=$(usex raslib ON OFF)
-		-DRDC_CLIENT_INSTALL_PREFIX="${EROCM_PATH#*/}"
+		-DRDC_CLIENT_INSTALL_PREFIX="share/rdc"
 		-DROCM_DIR="${ESYSROOT}/${EROCM_PATH}"
 	)
 	cmake_src_configure
@@ -122,12 +121,6 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
-	cp \
-		-aT \
-		"${ED}${EROCM_PATH}/usr/share/doc" \
-		"${ED}${EROCM_PATH}/share/doc" \
-		|| die
-	rm -rf "${ED}${EROCM_PATH}/usr"
 }
 
 pkg_postinst() {
@@ -144,5 +137,4 @@ ewarn
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

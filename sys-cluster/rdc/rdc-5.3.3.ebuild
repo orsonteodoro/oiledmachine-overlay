@@ -3,9 +3,11 @@
 
 EAPI=8
 
+CMAKE_MAKEFILE_GENERATOR="emake"
+LLVM_MAX_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake
+inherit cmake rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rdc/"
@@ -26,12 +28,14 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc -raslib +standalone systemd test"
+IUSE="+compile-commands doc +raslib +standalone systemd test"
 REQUIRED_USE="
+	raslib
 	systemd? (
 		standalone
 	)
 "
+# abseil-cpp needs >=c++11
 RDEPEND="
 	sys-libs/libcap
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
@@ -39,8 +43,18 @@ RDEPEND="
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	)
 	standalone? (
-		>=net-libs/grpc-1.44.0
+		>=net-libs/grpc-1.28.1
 		dev-libs/protobuf:0/32
+		|| (
+			(
+				=net-libs/grpc-1.52.2*
+				dev-cpp/abseil-cpp:0/20220623
+			)
+			(
+				=net-libs/grpc-1.49.3*
+				dev-cpp/abseil-cpp:0/20220623
+			)
+		)
 	)
 	systemd? (
 		sys-apps/systemd
@@ -70,24 +84,44 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/rdc-5.3.3-raslib-install.patch"
+	"${FILESDIR}/rdc-5.3.3-path-changes.patch"
 )
+
+pkg_setup() {
+	rocm_pkg_setup
+}
 
 src_prepare() {
 	cmake_src_prepare
+	rocm_src_prepare
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DBUILD_RASLIB=OFF # No repo
 		-DBUILD_ROCPTEST=$(usex test ON OFF)
-		-DBUILD_ROCRTEST=$(usex test ON OFF)
+		-DBUILD_ROCRTEST=$(usex raslib ON OFF)
 		-DBUILD_STANDALONE=$(usex standalone ON OFF)
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=$(usex compile-commands ON OFF)
+		-DCMAKE_INSTALL_PREFIX="${ESYSROOT}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGRPC_ROOT="${ESYSROOT}/usr"
 		-DINSTALL_RASLIB=$(usex raslib ON OFF)
+		-DRDC_CLIENT_INSTALL_PREFIX="${EROCM_PATH#*/}"
+		-DROCM_DIR="${ESYSROOT}/${EROCM_PATH}"
 	)
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
+	cp \
+		-aT \
+		"${ED}${EROCM_PATH}/usr/share/doc" \
+		"${ED}${EROCM_PATH}/share/doc" \
+		|| die
+	rm -rf "${ED}${EROCM_PATH}/usr"
 }
 
 pkg_postinst() {

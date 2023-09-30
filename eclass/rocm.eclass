@@ -480,6 +480,16 @@ _rocm_change_common_paths() {
 		2>/dev/null || true
 	sed \
 		-i \
+		-e "s|@P@|${P}|g" \
+		$(grep -r -l -e "@P@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+	sed \
+		-i \
+		-e "s|@PN@|${PN}|g" \
+		$(grep -r -l -e "@PN@" "${_patch_paths[@]}" 2>/dev/null) \
+		2>/dev/null || true
+	sed \
+		-i \
 		-e "s|@PV@|${PV}|g" \
 		$(grep -r -l -e "@PV@" "${_patch_paths[@]}" 2>/dev/null) \
 		2>/dev/null || true
@@ -584,10 +594,13 @@ rocm_mv_docs() {
 				|| die
 			rm -rf "${ED}/usr/share/doc"
 		else
-			mv \
+			dodir "${EROCM_PATH}/share/doc"
+			cp \
+				-aT \
 				"${ED}/usr/share/doc" \
-				"${ED}${EROCM_PATH}/share" \
+				"${ED}${EROCM_PATH}/share/doc" \
 				|| die
+			rm -rf "${ED}/usr/share/doc"
 		fi
 	fi
 }

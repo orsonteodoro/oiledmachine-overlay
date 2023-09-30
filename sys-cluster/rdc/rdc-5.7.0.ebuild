@@ -3,9 +3,11 @@
 
 EAPI=8
 
+CMAKE_MAKEFILE_GENERATOR="emake"
+LLVM_MAX_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake
+inherit cmake rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rdc/"
@@ -26,12 +28,14 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc -raslib +standalone systemd test"
+IUSE="+compile-commands doc +raslib +standalone systemd test"
 REQUIRED_USE="
+	raslib
 	systemd? (
 		standalone
 	)
 "
+# abseil-cpp needs >=c++14
 RDEPEND="
 	sys-libs/libcap
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
@@ -41,6 +45,12 @@ RDEPEND="
 	standalone? (
 		>=net-libs/grpc-1.44.0
 		dev-libs/protobuf:0/32
+		|| (
+			(
+				>=net-libs/grpc-1.53.1
+				dev-cpp/abseil-cpp:0/20230125
+			)
+		)
 	)
 	systemd? (
 		sys-apps/systemd
@@ -70,24 +80,47 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/rdc-5.6.0-raslib-install.patch"
+	"${FILESDIR}/rdc-5.7.0-path-changes.patch"
 )
+
+pkg_setup() {
+	rocm_pkg_setup
+}
 
 src_prepare() {
 	cmake_src_prepare
+	rocm_src_prepare
+	if use standalone ; then
+#/usr/include/absl/strings/string_view.h:52:21: note: 'std::string_view' is only available from C++17 onwards
+#   52 | using string_view = std::string_view;
+#      |                     ^~~
+		sed -i -e "s|-std=c++11|-std=c++17|g" \
+			$(grep -l -r -e "-std=c++11" ./)
+		sed -i -e "s|CMAKE_CXX_STANDARD 11|CMAKE_CXX_STANDARD 17|g" \
+			CMakeLists.txt
+	fi
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DBUILD_RASLIB=OFF # No repo
 		-DBUILD_ROCPTEST=$(usex test ON OFF)
-		-DBUILD_ROCRTEST=$(usex test ON OFF)
+		-DBUILD_ROCRTEST=$(usex raslib ON OFF)
 		-DBUILD_STANDALONE=$(usex standalone ON OFF)
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=$(usex compile-commands ON OFF)
+		-DCMAKE_INSTALL_PREFIX="${ESYSROOT}${EROCM_PATH}"
 		-DFILE_REORG_BACKWARD_COMPATIBILITY=OFF
 		-DGRPC_ROOT="${ESYSROOT}/usr"
 		-DINSTALL_RASLIB=$(usex raslib ON OFF)
+		-DRDC_CLIENT_INSTALL_PREFIX="share/rdc"
+		-DROCM_DIR="${ESYSROOT}/${EROCM_PATH}"
 	)
 	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
 }
 
 pkg_postinst() {

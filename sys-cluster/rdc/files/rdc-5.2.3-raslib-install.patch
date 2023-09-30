@@ -1,6 +1,6 @@
-diff -urp rdc-rocm-5.1.3.orig/CMakeLists.txt rdc-rocm-5.1.3/CMakeLists.txt
---- rdc-rocm-5.1.3.orig/CMakeLists.txt	2022-03-18 09:09:27.000000000 -0700
-+++ rdc-rocm-5.1.3/CMakeLists.txt	2023-08-08 22:41:23.322457659 -0700
+diff -urp rdc-rocm-5.2.3.orig/CMakeLists.txt rdc-rocm-5.2.3/CMakeLists.txt
+--- rdc-rocm-5.2.3.orig/CMakeLists.txt	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/CMakeLists.txt	2023-09-29 09:18:17.815293495 -0700
 @@ -39,6 +39,12 @@ option(BUILD_RASLIB "Build targets for r
  # which requires the Rocm run time.
  option(BUILD_ROCRTEST "Build targets for librdc_rocr.so" ON)
@@ -14,7 +14,7 @@ diff -urp rdc-rocm-5.1.3.orig/CMakeLists.txt rdc-rocm-5.1.3/CMakeLists.txt
  if( NOT EXISTS "${CMAKE_SOURCE_DIR}/raslib/.git" AND BUILD_RASLIB)
      message( FATAL_ERROR "The git submodule raslib is not available. Please run
      git submodule update --init --recursive
-@@ -290,15 +296,17 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
+@@ -297,15 +303,17 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/
                                           COMPONENT ${CLIENT_COMPONENT})
  
  # Prebuild packages to install
@@ -41,9 +41,11 @@ diff -urp rdc-rocm-5.1.3.orig/CMakeLists.txt rdc-rocm-5.1.3/CMakeLists.txt
  
  
  set(CPACK_PACKAGE_NAME ${RDC_PACKAGE})
-diff -urp rdc-rocm-5.1.3.orig/rdc_libs/rdc/src/RdcRasLib.cc rdc-rocm-5.1.3/rdc_libs/rdc/src/RdcRasLib.cc
---- rdc-rocm-5.1.3.orig/rdc_libs/rdc/src/RdcRasLib.cc	2022-03-18 09:09:27.000000000 -0700
-+++ rdc-rocm-5.1.3/rdc_libs/rdc/src/RdcRasLib.cc	2023-08-08 22:41:51.994458406 -0700
+Only in rdc-rocm-5.2.3: CMakeLists.txt.orig
+Only in rdc-rocm-5.2.3: CMakeLists.txt.rej
+diff -urp rdc-rocm-5.2.3.orig/rdc_libs/rdc/src/RdcRasLib.cc rdc-rocm-5.2.3/rdc_libs/rdc/src/RdcRasLib.cc
+--- rdc-rocm-5.2.3.orig/rdc_libs/rdc/src/RdcRasLib.cc	2022-04-06 23:06:01.000000000 -0700
++++ rdc-rocm-5.2.3/rdc_libs/rdc/src/RdcRasLib.cc	2023-09-29 09:17:18.151294181 -0700
 @@ -34,6 +34,10 @@ RdcRasLib::RdcRasLib(const char* lib_nam
      , fields_unwatch_(nullptr)
      , rdc_module_init_(nullptr)
