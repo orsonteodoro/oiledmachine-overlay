@@ -15,6 +15,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx90a
+	gfx940
+	gfx941
+	gfx942
 	gfx1011
 	gfx1012
 	gfx1030

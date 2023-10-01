@@ -141,7 +141,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	cp -a "${S}" "${S}.orig" || die
 ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
 
