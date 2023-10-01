@@ -33,7 +33,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="system-llvm test"
 RDEPEND="
 	!dev-libs/rccl:0
-	dev-libs/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
