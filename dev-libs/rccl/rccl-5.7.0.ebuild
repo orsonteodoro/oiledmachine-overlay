@@ -59,6 +59,7 @@ S="${WORKDIR}/rccl-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-remove-chrpath.patch"
 	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-customize-targets.patch"
 )
 
 pkg_pretend() {
@@ -109,10 +110,12 @@ src_configure() {
 	fi
 
 	export HIP_PLATFORM="amd"
+	local amdgpu_targets=$(get_amdgpu_flags)
 	local mycmakeargs=(
-		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
+		-DAMDGPU_TARGETS="${amdgpu_targets}"
 		-DBUILD_TESTS=$(usex test ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
+		-DGPU_TARGETS="${amdgpu_targets}"
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"

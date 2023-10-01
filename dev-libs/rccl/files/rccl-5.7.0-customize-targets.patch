@@ -1,0 +1,13 @@
+--- a/CMakeLists.txt.orig	2023-10-01 10:40:14.550450217 -0700
++++ b/CMakeLists.txt	2023-10-01 10:44:55.058455936 -0700
+@@ -62,8 +62,8 @@ else()
+   message(WARNING "Unable to check for supported GPU targets. Falling back to default GPUs")
+   set(SUPPORTED_GPUS ${DEFAULT_GPUS})
+ endif()
+-set(AMDGPU_TARGETS "${SUPPORTED_GPUS}" CACHE STRING "AMD GPU targets to compile for" FORCE)
+-set(GPU_TARGETS "${AMDGPU_TARGETS}" CACHE STRING "GPU targets to compile for" FORCE)
++option(AMDGPU_TARGETS "AMD GPU targets to compile for" "${SUPPORTED_GPUS}")
++option(GPU_TARGETS "GPU targets to compile for" "${AMDGPU_TARGETS}")
+ message(STATUS "Compiling for ${GPU_TARGETS}")
+ 
+ ## NOTE: Reload rocm-cmake in order to update GPU_TARGETS
