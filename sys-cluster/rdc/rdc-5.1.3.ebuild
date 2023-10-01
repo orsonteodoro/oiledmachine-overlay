@@ -16,6 +16,8 @@ else
 	SRC_URI="
 https://github.com/RadeonOpenCompute/rdc/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/RadeonOpenCompute/rdc/commit/52a34631474e10369111e84a917114ed4f87a86a.patch
+	-> ${PN}-52a3463.patch
 	"
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-rocm-${PV}"

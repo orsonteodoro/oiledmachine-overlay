@@ -3,7 +3,7 @@
 
 EAPI=8
 
-MY_PV="${PV}" # For /opt/rocm-5.5.1
+MY_PV="${PV%.*}" # For /opt/rocm-5.6
 
 AMDGPU_TARGETS_COMPAT=(
 #	 gfx800
@@ -23,6 +23,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+FIN_COMMIT="55c154d374cef086daeddc18226910b90555bf18"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 LLVM_MAX_SLOT=16
@@ -31,6 +32,8 @@ inherit cmake flag-o-matic llvm rocm
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpen/archive/rocm-${PV}.tar.gz
 	-> MIOpen-${PV}.tar.gz
+https://github.com/ROCmSoftwarePlatform/MIFin/archive/${FIN_COMMIT}.tar.gz
+	-> MIFin-${FIN_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="AMD's Machine Intelligence Library"
@@ -38,7 +41,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm system-llvm test r1"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm system-llvm test r2"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -94,16 +97,15 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	>=dev-libs/half-1.12.0:=
+	>=dev-cpp/eigen-3.4.0:3=
+	>=dev-cpp/frugally-deep-0.15.20:=
 	>=dev-cpp/nlohmann_json-3.10.4:=
 "
 BDEPEND="
 	virtual/pkgconfig
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
-		|| (
-			~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}[fat-librockcompiler(+)]
-			=sci-libs/rocMLIR-${PV%.*}*:${ROCM_SLOT}[fat-librockcompiler(+)]
-		)
+		=sci-libs/rocMLIR-5.5*:0/5.5[fat-librockcompiler(+)]
 	)
 "
 RESTRICT="
@@ -121,7 +123,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
-	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )
 
 pkg_setup() {
@@ -129,7 +131,17 @@ pkg_setup() {
 	rocm_pkg_setup
 }
 
+src_unpack() {
+	unpack ${A}
+	rm -rf "${S}/fin" || true
+	mv \
+		"${WORKDIR}/MIFin-${FIN_COMMIT}" \
+		"${S}/fin" \
+		|| die
+}
+
 src_prepare() {
+	cp -a "${S}" "${S}.orig" || die
 ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
 
@@ -259,7 +271,7 @@ einfo "Copying kernels"
 
 filter_test_gpus() {
 	if use "${gpu_target}" && [[ "${gputarget}" =~ "gfx103" ]] ; then
-		echo "-DMIOPEN_TEST_GFX103X=ON"
+		echo "-DMIOPEN_TEST_GFX103x=ON"
 	elif use "${gpu_target}" && [[ "${gputarget}" =~ "gfx110" ]] ; then
 		echo "-DMIOPEN_TEST_GFX110X=ON"
 	elif [[ "${gpu_target}" =~ ("gfx900"|"gfx906"|"gfx908"|"gfx90a") ]] ; then

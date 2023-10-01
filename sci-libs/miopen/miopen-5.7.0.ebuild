@@ -23,16 +23,16 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-FIN_COMMIT="4b1aecb98258252c9fb5e8e028722c9a245b98cb"
+FIN_COMMIT="55c154d374cef086daeddc18226910b90555bf18"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=17
 inherit cmake flag-o-matic llvm rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpen/archive/rocm-${PV}.tar.gz
 	-> MIOpen-${PV}.tar.gz
-https://github.com/ROCmSoftwarePlatform/MIFin/archive/4b1aecb98258252c9fb5e8e028722c9a245b98cb.tar.gz
+https://github.com/ROCmSoftwarePlatform/MIFin/archive/${FIN_COMMIT}.tar.gz
 	-> MIFin-${FIN_COMMIT:0:7}.tar.gz
 "
 
@@ -123,7 +123,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
 )
 
 pkg_setup() {
@@ -141,17 +141,17 @@ src_unpack() {
 }
 
 src_prepare() {
-	cp -a "${S}" "${S}.orig" || die
 ewarn "Please wait... Patching may take longer than usual."
 	cmake_src_prepare
-
 	hipconfig --help >/dev/null || die
 	sed \
 		-e '/MIOPEN_TIDY_ERRORS ALL/d' \
 		-i CMakeLists.txt \
 		|| die
 
-	# This speeds up @...@ symbol replacement by reducing the search space.
+        # Speed up symbol replacmenet for @...@ by reducing the search space
+        # Generated from below one liner ran in the same folder as this file:
+        # grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
 		"${S}/cmake/ClangTidy.cmake"
 		"${S}/cmake/CppCheck.cmake"

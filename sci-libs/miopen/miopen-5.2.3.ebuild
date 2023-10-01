@@ -3,7 +3,7 @@
 
 EAPI=8
 
-MY_PV="${PV}" # For /opt/rocm-5.5.1
+MY_PV="${PV}" # For /opt/rocm-5.3.3
 
 AMDGPU_TARGETS_COMPAT=(
 #	 gfx800
@@ -19,13 +19,10 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1012
 	gfx1030
 	gfx1031
-	gfx1100
-	gfx1101
-	gfx1102
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=14
 inherit cmake flag-o-matic llvm rocm
 
 SRC_URI="
@@ -38,7 +35,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm system-llvm test r1"
+IUSE="comgr debug hiprtc kernels mlir opencl +rocm system-llvm test r1"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -51,16 +48,12 @@ gen_amdgpu_required_use() {
 }
 REQUIRED_USE="
 	$(gen_amdgpu_required_use)
-	composable-kernel? (
-		rocm
-	)
 	hiprtc? (
 		comgr
 		rocm
 	)
 	opencl? (
 		!comgr
-		!composable-kernel
 	)
 	^^ (
 		rocm
@@ -75,16 +68,13 @@ RDEPEND="
 	comgr? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
-	composable-kernel? (
-		>=sci-libs/composable_kernel-1.0.0
-	)
 	kernels? (
 		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}
 	)
 	opencl? (
 		sys-devel/clang
 		virtual/opencl
-		=sci-libs/miopengemm-5.5*:0/5.5
+		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	rocm? (
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
@@ -100,10 +90,7 @@ BDEPEND="
 	virtual/pkgconfig
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
-		|| (
-			~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}[fat-librockcompiler(+)]
-			=sci-libs/rocMLIR-${PV%.*}*:${ROCM_SLOT}[fat-librockcompiler(+)]
-		)
+		~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}[fat-librockcompiler(+)]
 	)
 "
 RESTRICT="
@@ -114,14 +101,16 @@ RESTRICT="
 S="${WORKDIR}/MIOpen-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.2.0-disable-no-inline-boost.patch"
+	"${FILESDIR}/${PN}-4.2.0-gcc11-numeric_limits.patch"
 	"${FILESDIR}/${PN}-5.6.0-strip-xnack-in-flags.patch"
 	"${FILESDIR}/${PN}-4.3.0-fix-interface-include-in-HIP_COMPILER_FLAGS.patch"
 	"${FILESDIR}/${PN}-5.3.3-enable-test.patch"
 #	"${FILESDIR}/${PN}-5.1.3-gfx1031.patch" # Already added upstream but some parts missing
+#	"${FILESDIR}/${PN}-5.3.3-deprecate-clang-ocl.patch" # TODO: review
 	"${FILESDIR}/${PN}-5.1.3-no-strip.patch"
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
-#	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
-	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # See also pr #1830
+	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -260,8 +249,6 @@ einfo "Copying kernels"
 filter_test_gpus() {
 	if use "${gpu_target}" && [[ "${gputarget}" =~ "gfx103" ]] ; then
 		echo "-DMIOPEN_TEST_GFX103X=ON"
-	elif use "${gpu_target}" && [[ "${gputarget}" =~ "gfx110" ]] ; then
-		echo "-DMIOPEN_TEST_GFX110X=ON"
 	elif [[ "${gpu_target}" =~ ("gfx900"|"gfx906"|"gfx908"|"gfx90a") ]] ; then
 		echo "-DMIOPEN_TEST_${gpu_target^^}=ON"
 	fi
@@ -285,7 +272,6 @@ src_configure() {
 		-DMIOPEN_BACKEND=HIP
 		-DMIOPEN_TEST_ALL=$(usex test ON OFF)
 		-DMIOPEN_USE_COMGR=$(usex comgr ON OFF)
-		-DMIOPEN_USE_COMPOSABLEKERNEL=$(usex composable-kernel ON OFF)
 		-DMIOPEN_USE_HIPRTC=$(usex hiprtc ON OFF)
 		-DMIOPEN_USE_MLIR=$(usex mlir ON OFF)
 	)

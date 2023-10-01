@@ -134,7 +134,9 @@ ewarn "Please wait... Patching may take longer than usual."
 		-i CMakeLists.txt \
 		|| die
 
-	# This speeds up @...@ symbol replacement by reducing the search space.
+        # Speed up symbol replacmenet for @...@ by reducing the search space
+        # Generated from below one liner ran in the same folder as this file:
+        # grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
 		"${S}/cmake/ClangTidy.cmake"
 		"${S}/cmake/CppCheck.cmake"

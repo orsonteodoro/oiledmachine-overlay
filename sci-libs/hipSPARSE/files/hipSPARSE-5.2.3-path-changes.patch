@@ -1,0 +1,272 @@
+diff -urp hipSPARSE-rocm-5.2.3.orig/clients/CMakeLists.txt hipSPARSE-rocm-5.2.3/clients/CMakeLists.txt
+--- hipSPARSE-rocm-5.2.3.orig/clients/CMakeLists.txt	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/clients/CMakeLists.txt	2023-09-30 21:18:39.829245699 -0700
+@@ -27,15 +27,15 @@ cmake_minimum_required(VERSION 3.5 FATAL
+ # Consider removing this in the future
+ # This should appear before the project command, because it does not use FORCE
+ if(WIN32)
+-  set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
+ else()
+-  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
+ endif()
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if(NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE)
+-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel.")
++#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel.")
+ endif()
+ 
+ # This project may compile dependencies for clients
+@@ -48,7 +48,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CU
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ 
+ if(NOT TARGET hipsparse)
+-  find_package(hipsparse REQUIRED CONFIG PATHS /opt/rocm/hipsparse)
++  find_package(hipsparse REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/hipsparse)
+ 
+   option(BUILD_CLIENTS_TESTS "Build tests (requires googletest)" OFF)
+   option(BUILD_CLIENTS_SAMPLES "Build examples" ON)
+diff -urp hipSPARSE-rocm-5.2.3.orig/cmake/Dependencies.cmake hipSPARSE-rocm-5.2.3/cmake/Dependencies.cmake
+--- hipSPARSE-rocm-5.2.3.orig/cmake/Dependencies.cmake	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/cmake/Dependencies.cmake	2023-09-30 21:19:10.837246488 -0700
+@@ -30,7 +30,7 @@ if( NOT DEFINED ENV{HIP_PATH})
+     if(WIN32)
+         set( HIP_PATH "C:/hip" )
+     else ()
+-        set( HIP_PATH "/opt/rocm/hip" )
++        set( HIP_PATH "@ESYSROOT_ROCM_PATH@/hip" )
+     endif()
+ else( )
+     file(TO_CMAKE_PATH "$ENV{HIP_PATH}" HIP_PATH)
+@@ -42,8 +42,8 @@ if(NOT USE_CUDA)
+         find_package(hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH})
+         find_package( rocsparse REQUIRED CONFIG PATHS ${ROCSPARSE_PATH} )
+   else()
+-        find_package(hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} /opt/rocm)
+-        find_package( rocsparse REQUIRED CONFIG PATHS /opt/rocm /opt/rocm/rocsparse /usr/local/rocsparse )
++        find_package(hip REQUIRED CONFIG PATHS ${HIP_PATH} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@)
++        find_package( rocsparse REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/rocsparse @ESYSROOT_ROCM_PATH@/local/rocsparse )
+   endif()
+ else()
+   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${HIP_PATH}/cmake")
+Only in hipSPARSE-rocm-5.2.3/cmake: Dependencies.cmake.orig
+Only in hipSPARSE-rocm-5.2.3/cmake: Dependencies.cmake.rej
+diff -urp hipSPARSE-rocm-5.2.3.orig/CMakeLists.txt hipSPARSE-rocm-5.2.3/CMakeLists.txt
+--- hipSPARSE-rocm-5.2.3.orig/CMakeLists.txt	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/CMakeLists.txt	2023-09-30 21:18:39.833245700 -0700
+@@ -30,13 +30,13 @@ endif()
+ # Consider removing this in the future
+ # This should appear before the project command, because it does not use FORCE
+ if(WIN32)
+-  set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
+ else()
+-  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
+ endif()
+ 
+ # Pick up static and dynamic shared object files
+-list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm /opt/rocm/hip )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip )
+ 
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+@@ -47,7 +47,7 @@ list(APPEND CMAKE_MODULE_PATH
+ # Set a default build type if none was specified
+ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+   message(STATUS "Setting build type to 'Release' as none was specified.")
+-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
+   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+ endif()
+ 
+@@ -166,7 +166,7 @@ set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+ if(WIN32)
+   set(CPACK_SOURCE_GENERATOR "ZIP")
+   set(CPACK_GENERATOR "ZIP")
+-  set(CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE)
++#_cmake_modify_IGNORE   set(CMAKE_INSTALL_PREFIX "C:/hipSDK" CACHE PATH "Install path" FORCE)
+   set(INSTALL_PREFIX "C:/hipSDK")
+   set(CPACK_SET_DESTDIR OFF)
+   set(CPACK_PACKAGE_INSTALL_DIRECTORY "C:/hipSDK")
+@@ -228,7 +228,7 @@ if(BUILD_CODE_COVERAGE)
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+     )
+ 
+Only in hipSPARSE-rocm-5.2.3: CMakeLists.txt.orig
+diff -urp hipSPARSE-rocm-5.2.3.orig/deps/CMakeLists.txt hipSPARSE-rocm-5.2.3/deps/CMakeLists.txt
+--- hipSPARSE-rocm-5.2.3.orig/deps/CMakeLists.txt	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/deps/CMakeLists.txt	2023-09-30 21:18:39.833245700 -0700
+@@ -32,13 +32,13 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
+ # Consider removing this in the future
+ # It can be annoying for visual studio developers to build a project that tries to install into 'program files'
+ if( WIN32 AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+-  set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
++#_cmake_modify_IGNORE   set( CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
+ endif( )
+ 
+ # This has to be initialized before the project() command appears
+ # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
+ if( NOT DEFINED CMAKE_CONFIGURATION_TYPES AND NOT DEFINED CMAKE_BUILD_TYPE )
+-  set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
++#_cmake_modify_IGNORE   set( CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." )
+ endif()
+ 
+ # The superbuild does not build anything itself; all compiling is done in external projects
+diff -urp hipSPARSE-rocm-5.2.3.orig/deps/external-gtest.cmake hipSPARSE-rocm-5.2.3/deps/external-gtest.cmake
+--- hipSPARSE-rocm-5.2.3.orig/deps/external-gtest.cmake	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/deps/external-gtest.cmake	2023-09-30 21:18:39.833245700 -0700
+@@ -91,11 +91,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
+diff -urp hipSPARSE-rocm-5.2.3.orig/docs/source/usermanual.rst hipSPARSE-rocm-5.2.3/docs/source/usermanual.rst
+--- hipSPARSE-rocm-5.2.3.orig/docs/source/usermanual.rst	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/docs/source/usermanual.rst	2023-09-30 21:18:39.833245700 -0700
+@@ -97,7 +97,7 @@ Command           Description
+ `./install.sh -h` Print help information.
+ `./install.sh -d` Build dependencies and library in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
+ `./install.sh`    Build library in your local directory. It is assumed dependencies are available.
+-`./install.sh -i` Build library, then build and install hipSPARSE package in `/opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -i` Build library, then build and install hipSPARSE package in `@EPREFIX_ROCM_PATH@/hipsparse`. You will be prompted for sudo access. This will install for all users.
+ ================= ====
+ 
+ Using `install.sh` to build hipSPARSE with dependencies and clients
+@@ -113,7 +113,7 @@ Command             Description
+ `./install.sh -h`   Print help information.
+ `./install.sh -dc`  Build dependencies, library and client in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
+ `./install.sh -c`   Build library and client in your local directory. It is assumed dependencies are available.
+-`./install.sh -idc` Build library, dependencies and client, then build and install hipSPARSE package in `/opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -idc` Build library, dependencies and client, then build and install hipSPARSE package in `@EPREFIX_ROCM_PATH@/hipsparse`. You will be prompted for sudo access. This will install for all users.
+ `./install.sh -ic`  Build library and client, then build and install hipSPARSE package in `opt/rocm/hipsparse`. You will be prompted for sudo access. This will install for all users.
+ =================== ====
+ 
+@@ -128,13 +128,13 @@ hipSPARSE can be built using the followi
+   # Create and change to build directory
+   $ mkdir -p build/release ; cd build/release
+ 
+-  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
++  # Default install path is @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
+   $ cmake ../..
+ 
+   # Compile hipSPARSE library
+   $ make -j$(nproc)
+ 
+-  # Install hipSPARSE to /opt/rocm
++  # Install hipSPARSE to @EPREFIX_ROCM_PATH@
+   $ make install
+ 
+ GoogleTest is required in order to build hipSPARSE clients.
+@@ -151,13 +151,13 @@ hipSPARSE with dependencies and clients
+   # Change to build directory
+   $ cd ..
+ 
+-  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
++  # Default install path is @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
+   $ cmake ../.. -DBUILD_CLIENTS_TESTS=ON -DBUILD_CLIENTS_SAMPLES=ON
+ 
+   # Compile hipSPARSE library
+   $ make -j$(nproc)
+ 
+-  # Install hipSPARSE to /opt/rocm
++  # Install hipSPARSE to @EPREFIX_ROCM_PATH@
+   $ make install
+ 
+ Simple Test
+diff -urp hipSPARSE-rocm-5.2.3.orig/install.sh hipSPARSE-rocm-5.2.3/install.sh
+--- hipSPARSE-rocm-5.2.3.orig/install.sh	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/install.sh	2023-09-30 21:18:39.833245700 -0700
+@@ -249,7 +249,7 @@ build_release=true
+ build_release_debug=false
+ build_codecoverage=false
+ install_prefix=hipsparse-install
+-rocm_path=/opt/rocm
++rocm_path=@ESYSROOT_ROCM_PATH@
+ build_relocatable=false
+ build_address_sanitizer=false
+ build_freorg_bkwdcomp=true
+@@ -340,7 +340,7 @@ if [[ "${build_relocatable}" == true ]];
+         rocm_path=${ROCM_PATH}
+     fi
+ 
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+@@ -392,7 +392,7 @@ fi
+ if [[ "${build_relocatable}" == true ]]; then
+     export PATH=${rocm_path}/bin:${PATH}
+ else
+-    export PATH=${PATH}:/opt/rocm/bin
++    export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
+ fi
+ 
+ pushd .
+@@ -450,9 +450,9 @@ pushd .
+ 
+   # cpack
+   if [[ "${build_relocatable}" == true ]]; then
+-    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path}"
++    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@"
+   else
+-    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm"
++    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@"
+   fi
+ 
+   # cuda or hip
+@@ -468,8 +468,8 @@ pushd .
+       -DCMAKE_INSTALL_PREFIX="${install_prefix}" \
+       -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
+       -DCMAKE_PREFIX_PATH="${rocm_path} ${rocm_path}/hcc ${rocm_path}/hip" \
+-      -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
+-      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64 ${cmake_build_static_options}" \
++      -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip ${rocm_path}/hip/cmake" \
++      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@ ${cmake_build_static_options}" \
+       -DROCM_DISABLE_LDCONFIG=ON \
+       -DROCM_PATH="${rocm_path}" ../..
+   else
+Only in hipSPARSE-rocm-5.2.3: install.sh.orig
+diff -urp hipSPARSE-rocm-5.2.3.orig/rmake.py hipSPARSE-rocm-5.2.3/rmake.py
+--- hipSPARSE-rocm-5.2.3.orig/rmake.py	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/rmake.py	2023-09-30 21:18:39.833245700 -0700
+@@ -130,7 +130,7 @@ def config_cmd():
+         cmake_options.append( generator )
+         toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
+         if (OS_info["ID"] in ['centos', 'rhel']):
+           cmake_executable = "cmake" # was cmake3 but now we built cmake
+         else:
+diff -urp hipSPARSE-rocm-5.2.3.orig/toolchain-linux.cmake hipSPARSE-rocm-5.2.3/toolchain-linux.cmake
+--- hipSPARSE-rocm-5.2.3.orig/toolchain-linux.cmake	2022-05-26 08:24:24.000000000 -0700
++++ hipSPARSE-rocm-5.2.3/toolchain-linux.cmake	2023-09-30 21:19:34.085247079 -0700
+@@ -2,7 +2,7 @@
+ if (DEFINED ENV{ROCM_PATH})
+   set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/hip/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/hip/bin")
+ endif()
+ 
+ set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")
+Only in hipSPARSE-rocm-5.2.3: toolchain-linux.cmake.orig
+Only in hipSPARSE-rocm-5.2.3: toolchain-linux.cmake.rej
