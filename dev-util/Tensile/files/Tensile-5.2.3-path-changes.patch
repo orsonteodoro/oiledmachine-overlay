@@ -1,0 +1,450 @@
+diff -urp Tensile-rocm-5.2.3.orig/HostLibraryTests/CMakeLists.txt Tensile-rocm-5.2.3/HostLibraryTests/CMakeLists.txt
+--- Tensile-rocm-5.2.3.orig/HostLibraryTests/CMakeLists.txt	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/HostLibraryTests/CMakeLists.txt	2023-10-01 00:22:34.461526352 -0700
+@@ -26,7 +26,7 @@ project(TensileHostLibraryTest)
+ set( CMAKE_CXX_STANDARD 14 )
+ set( CMAKE_CXX_EXTENSIONS OFF )
+ 
+-list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} @ESYSROOT_ROCM_PATH@)
+ 
+ option(TENSILE_USE_HIP       "Use the Hip runtime." ON)
+ option(TENSILE_USE_OPENCL    "Use the OpenCL runtime." ON)
+@@ -80,7 +80,7 @@ find_package(Boost COMPONENTS filesystem
+ 
+ #if(TENSILE_USE_HIP AND NOT HIP_DIR)
+ if(TENSILE_USE_HIP)
+-    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} /opt/rocm)
++    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} @ESYSROOT_ROCM_PATH@)
+ endif()
+ 
+ if(TENSILE_USE_OPENMP AND NOT TARGET custom_openmp_cxx)
+@@ -135,13 +135,7 @@ set(test_sources ${test_sources}
+ )
+ 
+ if(TENSILE_USE_LLVM)
+-    find_package(LLVM 13.0 QUIET CONFIG)
+-    if(NOT LLVM_FOUND)
+-        find_package(LLVM 12.0 QUIET CONFIG)
+-        if(NOT LLVM_FOUND)
+-            find_package(LLVM REQUIRED CONFIG)
+-        endif()
+-    endif()
++    find_package(LLVM PATHS @ESYSROOT_LLVM_PATH@ REQUIRED CONFIG)
+ 
+     set(test_sources ${test_sources}
+         ContractionLibraryLoading_test.cpp
+Only in Tensile-rocm-5.2.3/HostLibraryTests: CMakeLists.txt.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/ClientWriter.py Tensile-rocm-5.2.3/Tensile/ClientWriter.py
+--- Tensile-rocm-5.2.3.orig/Tensile/ClientWriter.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/ClientWriter.py	2023-10-01 00:22:34.465526352 -0700
+@@ -178,7 +178,7 @@ def getBuildClientLibraryScript(buildPat
+   import io
+   runScriptFile = io.StringIO()
+ 
+-  callCreateLibraryCmd = globalParameters["ScriptPath"] + "/bin/TensileCreateLibrary"
++  callCreateLibraryCmd = "TensileCreateLibrary"
+ 
+ 
+   if globalParameters["MergeFiles"]:
+Only in Tensile-rocm-5.2.3/Tensile: ClientWriter.py.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/cmake/TensileConfig.cmake Tensile-rocm-5.2.3/Tensile/cmake/TensileConfig.cmake
+--- Tensile-rocm-5.2.3.orig/Tensile/cmake/TensileConfig.cmake	2023-10-01 00:22:18.593525948 -0700
++++ Tensile-rocm-5.2.3/Tensile/cmake/TensileConfig.cmake	2023-10-01 00:22:34.465526352 -0700
+@@ -134,7 +134,7 @@ function(TensileCreateLibraryFiles
+   if(Tensile_TENSILE_ROOT)
+     set(Script "${Tensile_TENSILE_ROOT}/bin/TensileCreateLibrary")
+   else()
+-    set(Script "${Tensile_ROOT}/bin/TensileCreateLibrary")
++    set(Script "TensileCreateLibrary") # ${Tensile_ROOT}/bin does not exists; call command directly
+   endif()
+ 
+   message(STATUS "Tensile script: ${Script}")
+Only in Tensile-rocm-5.2.3/Tensile/cmake: TensileConfig.cmake.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Common.py Tensile-rocm-5.2.3/Tensile/Common.py
+--- Tensile-rocm-5.2.3.orig/Tensile/Common.py	2023-10-01 00:22:18.593525948 -0700
++++ Tensile-rocm-5.2.3/Tensile/Common.py	2023-10-01 00:22:34.465526352 -0700
+@@ -213,12 +213,12 @@ globalParameters["LibraryUpdateComment"]
+ 
+ # internal, i.e., gets set during startup
+ globalParameters["CurrentISA"] = (0,0,0)
+-globalParameters["ROCmAgentEnumeratorPath"] = None      # /opt/rocm/bin/rocm_agent_enumerator
+-globalParameters["ROCmSMIPath"] = None                  # /opt/rocm/bin/rocm-smi
+-globalParameters["AssemblerPath"] = None                # /opt/rocm/hip/bin/hipcc
++globalParameters["ROCmAgentEnumeratorPath"] = None      # @ESYSROOT_ROCM_PATH@/bin/rocm_agent_enumerator
++globalParameters["ROCmSMIPath"] = None                  # @ESYSROOT_ROCM_PATH@/bin/rocm-smi
++globalParameters["AssemblerPath"] = None                # @ESYSROOT_ROCM_PATH@/bin/hipcc
+ globalParameters["WorkingPath"] = os.getcwd()           # path where tensile called from
+ globalParameters["IndexChars"] =  "IJKLMNOPQRSTUVWXYZ"  # which characters to use for C[ij]=Sum[k] A[ik]*B[jk]
+-globalParameters["ScriptPath"] = os.path.dirname(os.path.realpath(__file__))            # path to Tensile/Tensile.py
++globalParameters["ScriptPath"] = "@ESYSROOT_ROCM_PATH@/share/Tensile"            # path to Tensile/Tensile.py
+ globalParameters["SourcePath"] = os.path.join(globalParameters["ScriptPath"], "Source") # path to Tensile/Source/
+ globalParameters["HipClangVersion"] = "0,0,0"
+ 
+@@ -251,7 +251,7 @@ globalParameters["MinKForGSU"] = 256 # m
+ globalParameters["GranularityThreshold"] = 0.0
+ 
+ # directory where custom kernels are located
+-globalParameters["CustomKernelDirectory"] = os.path.join(os.path.dirname(os.path.realpath(__file__)), "CustomKernels")
++globalParameters["CustomKernelDirectory"] = os.path.join("@ESYSROOT_ROCM_PATH@/share/Tensile", "CustomKernels")
+ 
+ globalParameters["PristineOnGPU"] = True # use Pristine memory on Tensile trainning verification or not
+ 
+@@ -1632,7 +1632,7 @@ def printExit(message):
+ ################################################################################
+ def isExe( filePath ):
+   return os.path.isfile(filePath) and os.access(filePath, os.X_OK)
+-def locateExe( defaultPath, exeName ): # /opt/rocm/bin, hip-clang
++def locateExe( defaultPath, exeName ): # @ESYSROOT_ROCM_PATH@/bin, hip-clang
+   # look in defaultPath first
+   exePath = os.path.join(defaultPath, exeName)
+   if isExe(exePath):
+@@ -1883,7 +1883,7 @@ def assignGlobalParameters( config ):
+     else:
+       print2(" %24s: %8s (unspecified)" % (key, defaultValue))
+ 
+-  globalParameters["ROCmPath"] = "/opt/rocm"
++  globalParameters["ROCmPath"] = "@ESYSROOT_ROCM_PATH@"
+   if "ROCM_PATH" in os.environ:
+     globalParameters["ROCmPath"] = os.environ.get("ROCM_PATH")
+   if "TENSILE_ROCM_PATH" in os.environ:
+@@ -1911,11 +1911,11 @@ def assignGlobalParameters( config ):
+     if os.name == "nt":
+       globalParameters["AssemblerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang++.exe")
+     else:
+-      globalParameters["AssemblerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "llvm/bin"), "clang++")
++      globalParameters["AssemblerPath"] = locateExe("@ESYSROOT_LLVM_PATH@/bin", "clang++")
+ 
+   globalParameters["ROCmSMIPath"] = locateExe(globalParameters["ROCmBinPath"], "rocm-smi")
+ 
+-  globalParameters["ExtractKernelPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "hip/bin"), "extractkernel")
++  globalParameters["ExtractKernelPath"] = locateExe("@ESYSROOT_ROCM_PATH@/bin", "extractkernel")
+ 
+   if "TENSILE_ROCM_OFFLOAD_BUNDLER_PATH" in os.environ:
+     globalParameters["ClangOffloadBundlerPath"] = os.environ.get("TENSILE_ROCM_OFFLOAD_BUNDLER_PATH")
+@@ -1923,7 +1923,7 @@ def assignGlobalParameters( config ):
+     if os.name == "nt":
+       globalParameters["ClangOffloadBundlerPath"] = locateExe(globalParameters["ROCmBinPath"], "clang-offload-bundler.exe")
+     else:
+-      globalParameters["ClangOffloadBundlerPath"] = locateExe(os.path.join(globalParameters["ROCmPath"], "llvm/bin"), "clang-offload-bundler")
++      globalParameters["ClangOffloadBundlerPath"] = locateExe("@ESYSROOT_LLVM_PATH@/bin", "clang-offload-bundler")
+ 
+   if "ROCmAgentEnumeratorPath" in config:
+     globalParameters["ROCmAgentEnumeratorPath"] = config["ROCmAgentEnumeratorPath"]
+Only in Tensile-rocm-5.2.3/Tensile: Common.py.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/GenerateSummations.py Tensile-rocm-5.2.3/Tensile/GenerateSummations.py
+--- Tensile-rocm-5.2.3.orig/Tensile/GenerateSummations.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/GenerateSummations.py	2023-10-01 00:22:34.465526352 -0700
+@@ -57,7 +57,7 @@ def createLibraryForBenchmark(logicPath,
+     Selection.
+     """
+ 
+-    pythonExePath = os.path.join(os.path.dirname(os.path.realpath(__file__)), "bin", "TensileCreateLibrary")
++    pythonExePath = "TensileCreateLibrary"
+     args = [pythonExePath, \
+         "--merge-files", "--new-client-only", "--no-short-file-names", "--no-library-print-debug", \
+         "--architecture=all", "--code-object-version=V3", "--cxx-compiler=hipcc", "--library-format=yaml", \
+@@ -89,7 +89,7 @@ def GenerateSummations(userArgs):
+ 
+         currentPath = ensurePath(os.path.join(outputPath, logicFileStem))
+ 
+-        libPath = ensurePath(os.path.join(currentPath, "lib"))
++        libPath = ensurePath(os.path.join(currentPath, "lib")) 
+         finalPath = ensurePath(os.path.join(currentPath, "final"))
+         localLogicPath = ensurePath(os.path.join(currentPath, "logic"))
+         localLogicFilePath = os.path.join(localLogicPath, logicFileBaseName)
+Only in Tensile-rocm-5.2.3/Tensile: GenerateSummations.py.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/__init__.py Tensile-rocm-5.2.3/Tensile/__init__.py
+--- Tensile-rocm-5.2.3.orig/Tensile/__init__.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/__init__.py	2023-10-01 00:23:03.693527095 -0700
+@@ -28,6 +28,6 @@ __version__ = "4.33.0"
+ def PrintTensileRoot():
+     import os.path
+ 
+-    print(os.path.dirname(__file__), end='')
++    print("@ESYSROOT_ROCM_PATH@/share/Tensile/Source", end='')
+ 
+ 
+Only in Tensile-rocm-5.2.3/Tensile: __init__.py.orig
+Only in Tensile-rocm-5.2.3/Tensile: __init__.py.rej
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/ReplacementKernels.py Tensile-rocm-5.2.3/Tensile/ReplacementKernels.py
+--- Tensile-rocm-5.2.3.orig/Tensile/ReplacementKernels.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/ReplacementKernels.py	2023-10-01 00:22:34.465526352 -0700
+@@ -78,7 +78,7 @@ class ReplacementKernels:
+ 
+     @classmethod
+     def Directory(cls):
+-        scriptDir = os.path.dirname(os.path.realpath(__file__))
++        scriptDir = "@ESYSROOT_ROCM_PATH@/share/Tensile"
+         dirName = 'ReplacementKernels'
+         if globalParameters['CodeObjectVersion'] == 'V3':
+             dirName += '-cov3'
+Only in Tensile-rocm-5.2.3/Tensile: ReplacementKernels.py.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Source/cmake/FindROCmSMI.cmake Tensile-rocm-5.2.3/Tensile/Source/cmake/FindROCmSMI.cmake
+--- Tensile-rocm-5.2.3.orig/Tensile/Source/cmake/FindROCmSMI.cmake	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Source/cmake/FindROCmSMI.cmake	2023-10-01 00:22:34.465526352 -0700
+@@ -21,7 +21,7 @@
+ 
+ if(NOT ROCM_ROOT)
+     if(NOT ROCM_DIR)
+-        set(ROCM_ROOT "/opt/rocm")
++        set(ROCM_ROOT "@ESYSROOT_ROCM_PATH@")
+     else()
+         set(ROCM_DIR "${ROCM_DIR}/../../..")
+     endif()
+@@ -36,7 +36,7 @@ find_path(ROCM_SMI_ROOT "include/rocm_sm
+ mark_as_advanced(ROCM_SMI_ROOT)
+ 
+ find_library(ROCM_SMI_LIBRARY rocm_smi64
+-    PATHS "${ROCM_SMI_ROOT}/lib")
++    PATHS "${ROCM_SMI_ROOT}/@LIBDIR@")
+ mark_as_advanced(ROCM_SMI_LIBRARY)
+ 
+ include( FindPackageHandleStandardArgs )
+Only in Tensile-rocm-5.2.3/Tensile/Source/cmake: FindROCmSMI.cmake.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Source/CMakeLists.txt Tensile-rocm-5.2.3/Tensile/Source/CMakeLists.txt
+--- Tensile-rocm-5.2.3.orig/Tensile/Source/CMakeLists.txt	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Source/CMakeLists.txt	2023-10-01 00:23:41.021528044 -0700
+@@ -22,7 +22,7 @@
+ cmake_minimum_required(VERSION 3.13)
+ 
+ # Override all paths arguments as they do not work properly
+-list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} @ESYSROOT_ROCM_PATH@)
+ 
+ project(Tensile)
+ 
+@@ -57,7 +57,7 @@ CMAKE_DEPENDENT_OPTION(TENSILE_BUILD_CLI
+                         "TENSILE_USE_HIP" OFF)
+ 
+ if(TENSILE_USE_HIP)
+-    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} /opt/rocm)
++    find_package(HIP REQUIRED CONFIG PATHS $ENV{ROCM_PATH} @ESYSROOT_ROCM_PATH@)
+ endif()
+ 
+ if(TENSILE_USE_OPENMP)
+Only in Tensile-rocm-5.2.3/Tensile/Source: CMakeLists.txt.orig
+Only in Tensile-rocm-5.2.3/Tensile/Source: CMakeLists.txt.rej
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Source/FindHIP.cmake Tensile-rocm-5.2.3/Tensile/Source/FindHIP.cmake
+--- Tensile-rocm-5.2.3.orig/Tensile/Source/FindHIP.cmake	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Source/FindHIP.cmake	2023-10-01 00:22:34.465526352 -0700
+@@ -76,7 +76,7 @@ else()
+         hip/hip_runtime.h
+       PATHS
+         ENV HIP_PATH
+-        /opt/rocm
++        @ESYSROOT_ROCM_PATH@
+       PATH_SUFFIXES
+         /include/hip
+         /include
+@@ -95,7 +95,7 @@ else()
+     NAMES  hipcc
+     PATHS
+       ENV HIP_PATH
+-          /opt/rocm
++          @ESYSROOT_ROCM_PATH@
+     PATH_SUFFIXES
+           /bin
+       )
+Only in Tensile-rocm-5.2.3/Tensile/Source: FindHIP.cmake.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Source/FindOpenCL.cmake Tensile-rocm-5.2.3/Tensile/Source/FindOpenCL.cmake
+--- Tensile-rocm-5.2.3.orig/Tensile/Source/FindOpenCL.cmake	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Source/FindOpenCL.cmake	2023-10-01 00:22:34.465526352 -0700
+@@ -68,8 +68,8 @@ find_path(OPENCL_INCLUDE_DIRS
+   PATHS
+     /usr/include
+     /usr/local/include
+-    /usr/local/cuda/include
+-    /opt/rocm/opencl/include
++    @ESYSROOT@/opt/cuda/include
++    @ESYSROOT_ROCM_PATH@/opencl/include
+   DOC "OpenCL header file path"
+ )
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+@@ -110,42 +110,27 @@ cmake_pop_check_state( )
+ if( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+   set(LIB64 ON)
+   message( STATUS "FindOpenCL searching for 64-bit libraries" )
++  set(_PATH_SUFFIXES "x86_64 x64")
+ else( )
+   set(LIB64 OFF)
+   message( STATUS "FindOpenCL searching for 32-bit libraries" )
++  set(_PATH_SUFFIXES "x86 Win32")
+ endif( )
+ 
+-if( LIB64 )
+-  find_library( OPENCL_LIBRARIES
+-    NAMES OpenCL
+-    HINTS
+-      ${OPENCL_ROOT}/lib
+-      $ENV{OPENCL_ROOT}/lib
+-      $ENV{AMDAPPSDKROOT}/lib
+-      $ENV{CUDA_PATH}/lib
+-    DOC "OpenCL dynamic library path"
+-    PATH_SUFFIXES x86_64 x64
+-    PATHS
+-    /usr/lib
+-    /usr/local/cuda/lib
+-    /opt/rocm/opencl/lib
+-  )
+-else( )
+-  find_library( OPENCL_LIBRARIES
+-    NAMES OpenCL
+-    HINTS
+-      ${OPENCL_ROOT}/lib
+-      $ENV{OPENCL_ROOT}/lib
+-      $ENV{AMDAPPSDKROOT}/lib
+-      $ENV{CUDA_PATH}/lib
+-    DOC "OpenCL dynamic library path"
+-    PATH_SUFFIXES x86 Win32
+-    PATHS
+-    /usr/lib
+-    /usr/local/cuda/lib
+-    /opt/rocm/opencl/lib
+-  )
+-endif( )
++find_library( OPENCL_LIBRARIES
++  NAMES OpenCL
++  HINTS
++    ${OPENCL_ROOT}/@LIBDIR@
++    $ENV{OPENCL_ROOT}/@LIBDIR@
++    $ENV{AMDAPPSDKROOT}/@LIBDIR@
++    $ENV{CUDA_PATH}/@LIBDIR@
++  DOC "OpenCL dynamic library path"
++  PATH_SUFFIXES ${_PATH_SUFFIXES}
++  PATHS
++  @ESYSROOT@/usr/@LIBDIR@
++  @ESYSROOT@/opt/cuda/@LIBDIR@
++  @ESYSROOT_ROCM_PATH@/opencl/@LIBDIR@
++)
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ # If we asked for OpenCL 1.2, and we found a version installed greater than that, pass the 'use deprecated' flag
+Only in Tensile-rocm-5.2.3/Tensile/Source: FindOpenCL.cmake.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Source/lib/CMakeLists.txt Tensile-rocm-5.2.3/Tensile/Source/lib/CMakeLists.txt
+--- Tensile-rocm-5.2.3.orig/Tensile/Source/lib/CMakeLists.txt	2023-10-01 00:22:18.585525948 -0700
++++ Tensile-rocm-5.2.3/Tensile/Source/lib/CMakeLists.txt	2023-10-01 00:22:34.465526352 -0700
+@@ -47,13 +47,7 @@ set(tensile_sources  ${tensile_sources}
+     )
+ 
+ if(TENSILE_USE_LLVM)
+-    find_package(LLVM 13.0 QUIET CONFIG)
+-    if(NOT LLVM_FOUND)
+-        find_package(LLVM 12.0 QUIET CONFIG)
+-        if(NOT LLVM_FOUND)
+-            find_package(LLVM REQUIRED CONFIG)
+-        endif()
+-    endif()
++    find_package(LLVM PATHS @ESYSROOT_LLVM_PATH@ REQUIRED CONFIG)
+ 
+     set(tensile_sources ${tensile_sources}
+         source/llvm/YAML.cpp
+Only in Tensile-rocm-5.2.3/Tensile/Source/lib: CMakeLists.txt.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/TensileCreateLibrary.py Tensile-rocm-5.2.3/Tensile/TensileCreateLibrary.py
+--- Tensile-rocm-5.2.3.orig/Tensile/TensileCreateLibrary.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/TensileCreateLibrary.py	2023-10-01 00:22:34.465526352 -0700
+@@ -432,7 +432,7 @@ def writeSolutionsAndKernels(outputPath,
+   # Push working path into build_tmp folder because there may be more than
+   # one process running this script. This is to avoid build directory clashing.
+   # NOTE: file paths must not contain the lower case word 'kernel' or the
+-  # /opt/rocm/bin/extractkernel will fail.
++  # @ESYSROOT_ROCM_PATH@/bin/extractkernel will fail.
+   # See buildSourceCodeObjectFile:167 for the call to this binary.
+   Common.pushWorkingPath('build_tmp')
+   Common.pushWorkingPath(os.path.basename(outputPath).upper())
+Only in Tensile-rocm-5.2.3/Tensile: TensileCreateLibrary.py.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Tensile.py Tensile-rocm-5.2.3/Tensile/Tensile.py
+--- Tensile-rocm-5.2.3.orig/Tensile/Tensile.py	2023-10-01 00:22:18.601525948 -0700
++++ Tensile-rocm-5.2.3/Tensile/Tensile.py	2023-10-01 00:24:35.549529431 -0700
+@@ -239,10 +239,10 @@ def Tensile(userArgs):
+ 
+ 
+ def TensileConfigPath(*args):
+-  return os.path.join(os.path.dirname(os.path.realpath(__file__)), "Configs", *args)
++  return os.path.join("@ESYSROOT_ROCM_PATH@/share/Tensile", "Configs", *args)
+ 
+ def TensileTestPath(*args):
+-  return os.path.join(os.path.dirname(os.path.realpath(__file__)), "Tests", *args)
++  return os.path.join("@ESYSROOT_ROCM_PATH@/share/Tensile", "Tests", *args)
+ 
+ 
+ ################################################################################
+Only in Tensile-rocm-5.2.3/Tensile: Tensile.py.orig
+Only in Tensile-rocm-5.2.3/Tensile: Tensile.py.rej
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py Tensile-rocm-5.2.3/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py
+--- Tensile-rocm-5.2.3.orig/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Tests/extended/convolution_config/YamlBuilder/YamlBuilder.py	2023-10-01 00:22:34.465526352 -0700
+@@ -218,7 +218,7 @@ class YamlBuilder:
+     @classmethod
+     def findAvailableArchs(self):
+         availableArchs = []
+-        rocmpath = "/opt/rocm"
++        rocmpath = "@ESYSROOT_ROCM_PATH@"
+         if "ROCM_PATH" in os.environ:
+             rocmpath = os.environ.get("ROCM_PATH")
+         if "TENSILE_ROCM_PATH" in os.environ:
+Only in Tensile-rocm-5.2.3/Tensile/Tests/extended/convolution_config/YamlBuilder: YamlBuilder.py.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Tests/hipModuleLoad_timing/Makefile Tensile-rocm-5.2.3/Tensile/Tests/hipModuleLoad_timing/Makefile
+--- Tensile-rocm-5.2.3.orig/Tensile/Tests/hipModuleLoad_timing/Makefile	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Tests/hipModuleLoad_timing/Makefile	2023-10-01 00:25:35.309530951 -0700
+@@ -1,7 +1,7 @@
+-CXX=/opt/rocm/hip/bin/hipcc
+-LIBFLAGS=-L/opt/rocm/hip/lib/
++CXX=@ESYSROOT_ROCM_PATH@/hip/bin/hipcc
++LIBFLAGS=-L@ESYSROOT_ROCM_PATH@/@LIBDIR@/
+ LIBS=-lamdhip64
+-INCFLAGS=-I/opt/rocm/hip/include/
++INCFLAGS=-I@ESYSROOT_ROCM_PATH@/hip/include/
+ 
+ hipModuleLoadTiming.out: hipModuleLoadTiming.o
+ 	$(CXX) -o $@ $(LIBFLAGS) $^
+Only in Tensile-rocm-5.2.3/Tensile/Tests/hipModuleLoad_timing: Makefile.orig
+Only in Tensile-rocm-5.2.3/Tensile/Tests/hipModuleLoad_timing: Makefile.rej
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Tests/integration/test_integration.py Tensile-rocm-5.2.3/Tensile/Tests/integration/test_integration.py
+--- Tensile-rocm-5.2.3.orig/Tensile/Tests/integration/test_integration.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Tests/integration/test_integration.py	2023-10-01 00:22:34.465526352 -0700
+@@ -111,7 +111,7 @@ def test_integration(useGlobalParameters
+     pytest.skip("only run pre_checkin test in certain combo")
+ 
+   logicFileDir = os.path.join(getLogicFileDir, testYamls)
+-  outputDir    = os.path.join(builddir, "lib")
++  outputDir    = os.path.join(builddir, "@LIBDIR@")
+ 
+   with useGlobalParameters(OutputPath=outputDir,
+                            WorkingPath=outputDir,
+Only in Tensile-rocm-5.2.3/Tensile/Tests/integration: test_integration.py.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Tests/unit/test_TensileCreateLibrary.py Tensile-rocm-5.2.3/Tensile/Tests/unit/test_TensileCreateLibrary.py
+--- Tensile-rocm-5.2.3.orig/Tensile/Tests/unit/test_TensileCreateLibrary.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Tests/unit/test_TensileCreateLibrary.py	2023-10-01 00:22:34.465526352 -0700
+@@ -82,7 +82,7 @@ def test_WriteClientLibraryFromSolutions
+     Common.globalParameters["CxxCompiler"] = "hipcc"
+     Common.assignGlobalParameters({})
+ 
+-    libraryWorkingPath = tmpdir.mkdir("lib")
++    libraryWorkingPath = tmpdir.mkdir("@LIBDIR@")
+     buildWorkingPath = tmpdir.mkdir("build")
+ 
+ 
+Only in Tensile-rocm-5.2.3/Tensile/Tests/unit: test_TensileCreateLibrary.py.orig
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Tests/yaml_only/test_config.py Tensile-rocm-5.2.3/Tensile/Tests/yaml_only/test_config.py
+--- Tensile-rocm-5.2.3.orig/Tensile/Tests/yaml_only/test_config.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Tests/yaml_only/test_config.py	2023-10-01 00:22:34.465526352 -0700
+@@ -13,7 +13,7 @@ from Tensile import DataType
+ def isExe( filePath ):
+   return os.path.isfile(filePath) and os.access(filePath, os.X_OK)
+ 
+-def locateExe( defaultPath, exeName ): # /opt/rocm/bin, hip-clang
++def locateExe( defaultPath, exeName ): # @ESYSROOT_ROCM_PATH@/bin, hip-clang
+   # look in path first
+   for path in os.environ["PATH"].split(os.pathsep):
+     exePath = os.path.join(path, exeName)
+@@ -133,7 +133,7 @@ def configMarks(filepath, rootDir, avail
+ 
+ def findAvailableArchs():
+     availableArchs = []
+-    rocmpath = "/opt/rocm"
++    rocmpath = "@ESYSROOT_ROCM_PATH@"
+     if "ROCM_PATH" in os.environ:
+         rocmpath = os.environ.get("ROCM_PATH")
+     if "TENSILE_ROCM_PATH" in os.environ:
+Only in Tensile-rocm-5.2.3/Tensile/Tests/yaml_only: test_config.py.orig

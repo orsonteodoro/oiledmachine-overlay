@@ -1,0 +1,13 @@
+diff -urp Tensile-rocm-5.2.3.orig/Tensile/Tensile.py Tensile-rocm-5.2.3/Tensile/Tensile.py
+--- Tensile-rocm-5.2.3.orig/Tensile/Tensile.py	2022-05-26 10:42:01.000000000 -0700
++++ Tensile-rocm-5.2.3/Tensile/Tensile.py	2023-10-01 00:21:08.173524157 -0700
+@@ -97,7 +97,6 @@ def addCommonArguments(argParser):
+     """
+ 
+     (key, value) = par.split("=")
+-    value = eval(value)
+     return (key, value)
+ 
+   argParser.add_argument("-d", "--device", dest="device", type=int, \
+Only in Tensile-rocm-5.2.3/Tensile: Tensile.py.orig
+Only in Tensile-rocm-5.2.3/Tensile: Tensile.py.rej
