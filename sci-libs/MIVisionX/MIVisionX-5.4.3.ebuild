@@ -104,7 +104,8 @@ RDEPEND="
 	)
 	rpp? (
 		>=dev-libs/boost-${BOOST_PV}:=
-		>=sci-libs/rpp-0.98
+		>=sci-libs/rpp-0.98:${ROCM_SLOT}
+		sci-libs/rpp:=
 	)
 "
 DEPEND="
@@ -120,7 +121,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-change-libjpeg-turbo-search-path.patch"
 	"${FILESDIR}/${PN}-5.4.3-use-system-pybind11.patch"
-	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
+	"A${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )
 
 pkg_setup() {

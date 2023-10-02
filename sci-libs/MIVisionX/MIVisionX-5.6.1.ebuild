@@ -3,6 +3,17 @@
 
 EAPI=8
 
+AMDGPU_TARGETS_COMPAT=(
+	gfx803
+	gfx900
+	gfx906
+	gfx908
+	gfx90a
+	gfx940
+	gfx1030
+	gfx1031
+	gfx1032
+)
 LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_10 ) # U 20/22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -61,7 +72,7 @@ REQUIRED_USE="
 # GCC 12 (libstdcxx:12) required to fix:
 # libhsa-runtime64.so.1: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
 BOOST_PV="1.72.0"
-PROTOBUF_PV="3.12.4"
+PROTOBUF_PV="3.12.0"
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
@@ -107,7 +118,7 @@ RDEPEND="
 	)
 	rpp? (
 		>=dev-libs/boost-${BOOST_PV}:=
-		>=sci-libs/rpp-0.99:${ROCM_SLOT}
+		>=sci-libs/rpp-1.1.0:${ROCM_SLOT}
 		sci-libs/rpp:=
 	)
 "
@@ -123,8 +134,8 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-change-libjpeg-turbo-search-path.patch"
-	"${FILESDIR}/${PN}-5.4.3-use-system-pybind11.patch"
-	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
+	"${FILESDIR}/${PN}-5.6.0-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.6.1-path-changes.patch"
 )
 
 pkg_setup() {
@@ -312,5 +323,4 @@ src_install() {
 	fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

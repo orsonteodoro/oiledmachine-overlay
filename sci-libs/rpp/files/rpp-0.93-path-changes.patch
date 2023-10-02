@@ -1,0 +1,1141 @@
+diff -urp rpp-0.93.orig/cmake/ClangTidy.cmake rpp-0.93/cmake/ClangTidy.cmake
+--- rpp-0.93.orig/cmake/ClangTidy.cmake	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/cmake/ClangTidy.cmake	2023-10-01 16:42:06.046892859 -0700
+@@ -39,8 +39,8 @@ find_program(CLANG_TIDY_EXE
+     PATH_SUFFIXES
+         compiler/bin
+     PATHS
+-        /opt/rocm/hcc
+-        /usr/local/opt/llvm/bin
++        @ESYSROOT_ROCM_PATH@/hcc
++        @ESYSROOT_LLVM_PATH@/bin
+ )
+ 
+ function(find_clang_tidy_version VAR)
+diff -urp rpp-0.93.orig/cmake/CppCheck.cmake rpp-0.93/cmake/CppCheck.cmake
+--- rpp-0.93.orig/cmake/CppCheck.cmake	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/cmake/CppCheck.cmake	2023-10-01 14:50:48.694756725 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        @ESYSROOT_ROCM_PATH@/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+diff -urp rpp-0.93.orig/cmake/FindHIP.cmake rpp-0.93/cmake/FindHIP.cmake
+--- rpp-0.93.orig/cmake/FindHIP.cmake	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/cmake/FindHIP.cmake	2023-10-01 16:44:16.590895520 -0700
+@@ -67,8 +67,8 @@ if(UNIX AND NOT APPLE AND NOT CYGWIN)
+             HIP_ROOT_DIR
+             NAMES hipconfig
+             PATHS
+-            /opt/rocm
+-            /opt/rocm/hip
++            @ESYSROOT_ROCM_PATH@
++            @ESYSROOT_ROCM_PATH@/hip
+             PATH_SUFFIXES bin
+             DOC "HIP installed location"
+             )
+diff -urp rpp-0.93.orig/cmake/FindOpenCL.cmake rpp-0.93/cmake/FindOpenCL.cmake
+--- rpp-0.93.orig/cmake/FindOpenCL.cmake	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/cmake/FindOpenCL.cmake	2023-10-01 16:42:47.726893708 -0700
+@@ -1,51 +1,40 @@
+ find_path(OPENCL_INCLUDE_DIRS
+     NAMES OpenCL/cl.h CL/cl.h CL/cl.hpp
+     HINTS
+-    /opt/rocm/opencl/include
++    @ESYSROOT_ROCM_PATH@/opencl/include
+     ${OPENCL_ROOT}/include
+     $ENV{AMDAPPSDKROOT}/include
+     $ENV{CUDA_PATH}/include
+     PATHS
+-    /opt/rocm/opencl/include
+-    /usr/include
+-    /usr/local/include
+-    /usr/local/cuda/include
+-    /opt/cuda/include
++    @ESYSROOT_ROCM_PATH@/opencl/include
++    @ESYSROOT@/usr/include
++    @ESYSROOT@/usr/local/include
++    @ESYSROOT@/usr/local/cuda/include
++    @ESYSROOT@/opt/cuda/include
+     DOC "OpenCL header file path"
+     )
+ mark_as_advanced( OPENCL_INCLUDE_DIRS )
+ 
+ if("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        $ENV{CUDA_PATH}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86_64 x64 x86_64/sdk
+-        PATHS
+-        /usr/lib
+-        /usr/local/cuda/lib
+-        /opt/cuda/lib
+-        /opt/rocm/opencl/lib
+-        )
++    set(_PATH_SUFFIXES "x86_64 x64 x86_64/sdk")
+ else( )
+-    find_library( OPENCL_LIBRARIES
+-        NAMES OpenCL
+-        HINTS
+-        ${OPENCL_ROOT}/lib
+-        $ENV{AMDAPPSDKROOT}/lib
+-        $ENV{CUDA_PATH}/lib
+-        DOC "OpenCL dynamic library path"
+-        PATH_SUFFIXES x86 Win32
+-
+-        PATHS
+-        /usr/lib
+-        /usr/local/cuda/lib
+-        /opt/cuda/lib
+-        )
++    set(_PATH_SUFFIXES "x86 Win32")
+ endif( )
++
++find_library( OPENCL_LIBRARIES
++    NAMES OpenCL
++    HINTS
++    ${OPENCL_ROOT}/@LIBDIR@
++    $ENV{AMDAPPSDKROOT}/@LIBDIR@
++    $ENV{CUDA_PATH}/@LIBDIR@
++    DOC "OpenCL dynamic library path"
++    PATH_SUFFIXES x86_64 x64 x86_64/sdk
++    PATHS
++    @ESYSROOT@/usr/@LIBDIR@
++    @ESYSROOT@/usr/local/cuda/@LIBDIR@
++    @ESYSROOT@/opt/cuda/@LIBDIR@
++    @ESYSROOT_ROCM_PATH@/opencl/@LIBDIR@
++    )
+ mark_as_advanced( OPENCL_LIBRARIES )
+ 
+ include( FindPackageHandleStandardArgs )
+@@ -55,7 +44,7 @@ set(OpenCL_FOUND ${OPENCL_FOUND} CACHE I
+ set(OpenCL_LIBRARIES ${OPENCL_LIBRARIES} CACHE INTERNAL "")
+ set(OpenCL_INCLUDE_DIRS ${OPENCL_INCLUDE_DIRS} CACHE INTERNAL "")
+ 
+-if(EXISTS "${ROCM_PATH}/opencl/lib/libOpenCL.so")
++if(EXISTS "${ROCM_PATH}/opencl/@LIBDIR@/libOpenCL.so")
+     message("-- ${Magenta}ROCm OpenCL Found - Set CL_TARGET_OPENCL_VERSION=220${ColourReset}")
+     add_definitions(-DCL_TARGET_OPENCL_VERSION=220)
+ endif()
+Only in rpp-0.93/cmake: FindOpenCL.cmake.orig
+Only in rpp-0.93/cmake: FindOpenCL.cmake.rej
+diff -urp rpp-0.93.orig/CMakeLists.txt rpp-0.93/CMakeLists.txt
+--- rpp-0.93.orig/CMakeLists.txt	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/CMakeLists.txt	2023-10-01 16:29:30.678877459 -0700
+@@ -27,7 +27,7 @@ find_program(RPMBUILD_EXE rpmbuild)
+ find_program(DPKG_EXE dpkg)
+ 
+ # ROCm Path
+-set(ROCM_PATH /opt/rocm CACHE PATH "RPP default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "RPP default ROCm installation path")
+ # Avoid setting the default path to /usr/local
+ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+   set(CMAKE_INSTALL_PREFIX ${ROCM_PATH}/rpp CACHE PATH "RPP default ROCm installation path" FORCE)
+@@ -156,7 +156,7 @@ target_include_directories(${PROJECT_NAM
+ add_subdirectory(addkernels)
+ 
+ # Installation
+-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
++install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/@LIBDIR@)
+ install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX} PATTERN "*.h.in" EXCLUDE)
+ install(FILES ${PROJECT_BINARY_DIR}/include/rpp_backend.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+ 
+Only in rpp-0.93: CMakeLists.txt.orig
+Only in rpp-0.93: CMakeLists.txt.rej
+diff -urp rpp-0.93.orig/src/modules/cl/hip_build_utils.cpp rpp-0.93/src/modules/cl/hip_build_utils.cpp
+--- rpp-0.93.orig/src/modules/cl/hip_build_utils.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/src/modules/cl/hip_build_utils.cpp	2023-10-01 14:50:48.694756725 -0700
+@@ -62,7 +62,7 @@ boost::filesystem::path HipBuild(boost::
+     auto bin_file = tmp_dir->path / (filename + ".o");
+     // compile with hcc
+     auto env = std::string("KMOPTLLC=-mattr=+enable-ds128");
+-    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm/hip/bin/hipcc",
++    tmp_dir->Execute(env + std::string(" ") + "@EPREFIX_ROCM_PATH@/bin/hipcc",
+                      params + filename + " -o " + bin_file.string());
+     if(!boost::filesystem::exists(bin_file))
+         RPP_THROW(filename + " failed to compile");
+Only in rpp-0.93/src/modules/cl: hip_build_utils.cpp.orig
+diff -urp rpp-0.93.orig/src/modules/CMakeLists.txt rpp-0.93/src/modules/CMakeLists.txt
+--- rpp-0.93.orig/src/modules/CMakeLists.txt	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/src/modules/CMakeLists.txt	2023-10-01 16:43:09.118894145 -0700
+@@ -81,7 +81,7 @@ if( "${BACKEND}" STREQUAL "HIP")
+     add_definitions(-DRPP_BACKEND_HIP)
+ 
+     # Add HIP specific includes
+-    set(HIP_INC "/opt/rocm/hip/include")
++    set(HIP_INC "@ESYSROOT_ROCM_PATH@/hip/include")
+     set(INCLUDE_LIST ${HIP_INC} ${INCLUDE_LIST})
+     message("-- ${Blue}HIP include directories -- ${INCLUDE_LIST}${ColourReset}")
+ 
+@@ -103,7 +103,7 @@ elseif( "${BACKEND}" STREQUAL "OCL")
+     add_definitions(-DMOD_CL_PATH="${CMAKE_CURRENT_LIST_DIR}/cl/kernel/")
+ 
+     # Add OpenCL specific includes
+-    set(ROCM_INC "/opt/rocm/include")
++    set(ROCM_INC "@ESYSROOT_ROCM_PATH@/include")
+     list(APPEND OpenCL_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src/include/cl/)
+     set(INCLUDE_LIST ${OpenCL_INCLUDE_DIRS} ${INCLUDE_LIST} ${ROCM_INC})
+     message("-- ${Blue}OpenCL include directories -- ${INCLUDE_LIST}${ColourReset}")
+@@ -129,4 +129,4 @@ target_include_directories( ${PROJECT_NA
+     PRIVATE
+         ${CMAKE_SOURCE_DIR}/src/include
+         ${INCLUDE_LIST}
+-)
+\ No newline at end of file
++)
+diff -urp rpp-0.93.orig/src/modules/hip/hip_build_utils.cpp rpp-0.93/src/modules/hip/hip_build_utils.cpp
+--- rpp-0.93.orig/src/modules/hip/hip_build_utils.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/src/modules/hip/hip_build_utils.cpp	2023-10-01 14:50:48.694756725 -0700
+@@ -62,7 +62,7 @@ boost::filesystem::path HipBuild(boost::
+     auto bin_file = tmp_dir->path / (filename + ".o");
+     // compile with hcc
+     auto env = std::string("KMOPTLLC=-mattr=+enable-ds128");
+-    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm/hip/bin/hipcc",
++    tmp_dir->Execute(env + std::string(" ") + "@EPREFIX_ROCM_PATH@/bin/hipcc",
+                      params + filename + " -o " + bin_file.string());
+     if(!boost::filesystem::exists(bin_file))
+         RPP_THROW(filename + " failed to compile");
+Only in rpp-0.93/src/modules/hip: hip_build_utils.cpp.orig
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pkd3.cpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pkd3.cpp	2023-10-01 16:43:25.950894488 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pln1.cpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pln1.cpp	2023-10-01 16:43:23.502894438 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pln3.cpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/BatchPD_hip_pln3.cpp	2023-10-01 16:43:22.654894421 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt rpp-0.93/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-10-01 16:30:31.942878708 -0700
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(Rpp_test)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
+ list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/hip ${ROCM_PATH})
+ find_package(hip REQUIRED)
+ find_package(OpenCV REQUIRED)
+@@ -17,8 +17,8 @@ if (hip_FOUND)
+ 
+     include_directories(${HIP_INCLUDE_DIRS} ${HIP_INCLUDE_DIRS}/hip)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+-    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib ${ROCM_PATH}/rpp/lib/ /usr/local/lib)
++    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include @ESYSROOT@/usr/local/include)
++    link_directories(${ROCM_PATH}/@LIBDIR@ ${ROCM_PATH}/rpp/@LIBDIR@/ @ESYSROOT@/usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_hip_pkd3 BatchPD_hip_pkd3.cpp)
+     add_executable(BatchPD_hip_pln1 BatchPD_hip_pln1.cpp)
+@@ -37,4 +37,4 @@ if (hip_FOUND)
+     target_link_libraries(Tensor_hip_pln3 ${OpenCV_LIBS} -lamd_rpp ${HIP_LIBRARIES} pthread boost_filesystem boost_system hip::host)
+     # target_link_libraries(Single_hip ${OpenCV_LIBS} -lamd_rpp ${HIP_LIBRARIES} pthread boost_filesystem boost_system hip::host)
+     target_link_libraries(uniqueFunctionalities_hip ${OpenCV_LIBS} -lamd_rpp ${HIP_LIBRARIES} pthread boost_filesystem boost_system hip::host)
+-endif()
+\ No newline at end of file
++endif()
+Only in rpp-0.93/utilities/rpp-performancetests/HIP_NEW: CMakeLists.txt.orig
+Only in rpp-0.93/utilities/rpp-performancetests/HIP_NEW: CMakeLists.txt.rej
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/helpers/testSuite_helper.hpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/helpers/testSuite_helper.hpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/helpers/testSuite_helper.hpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/helpers/testSuite_helper.hpp	2023-10-01 16:37:10.498886833 -0700
+@@ -1,7 +1,7 @@
+ #ifndef TESTSUITE_HELPER
+ #define TESTSUITE_HELPER
+ 
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ 
+ RppStatus compute_image_location_host(RppiSize batch_srcSizeMax, int batchCount, Rpp32u *loc, Rpp32u channel)
+ {
+@@ -183,4 +183,4 @@ inline RppStatus generate_bressenham_lin
+     return RPP_SUCCESS;
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/Single_host.cpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/Single_host.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/Single_host.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/Single_host.cpp	2023-10-01 16:43:27.614894522 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pkd3.cpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pkd3.cpp	2023-10-01 16:43:20.750894382 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -1447,4 +1447,4 @@ int main(int argc, char **argv)
+     }
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pln1.cpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pln1.cpp	2023-10-01 16:43:25.070894470 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -1345,4 +1345,4 @@ int main(int argc, char **argv)
+     }
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pln3.cpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/Tensor_hip_pln3.cpp	2023-10-01 16:43:21.742894402 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -1523,4 +1523,4 @@ int main(int argc, char **argv)
+     }
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/uniqueFunctionalities_hip.cpp rpp-0.93/utilities/rpp-performancetests/HIP_NEW/uniqueFunctionalities_hip.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HIP_NEW/uniqueFunctionalities_hip.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HIP_NEW/uniqueFunctionalities_hip.cpp	2023-10-01 16:43:26.814894505 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pkd3.cpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pkd3.cpp	2023-10-01 16:43:37.454894722 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pln1.cpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pln1.cpp	2023-10-01 16:43:41.230894799 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pln3.cpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/BatchPD_host_pln3.cpp	2023-10-01 16:43:38.430894742 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt rpp-0.93/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-10-01 16:31:22.598879740 -0700
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(Rpp_test)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
+ find_package(OpenCL REQUIRED)
+ find_package(OpenCV REQUIRED)
+ find_package(AMDRPP QUIET)
+@@ -13,8 +13,8 @@ endif()
+ if (OpenCL_FOUND)
+     include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+-    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib ${ROCM_PATH}/rpp/lib/ /usr/local/lib)
++    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include @ESYSROOT@/usr/local/include)
++    link_directories(${ROCM_PATH}/@LIBDIR@ ${ROCM_PATH}/rpp/@LIBDIR@/ @ESYSROOT@/usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_host_pkd3 BatchPD_host_pkd3.cpp)
+     add_executable(BatchPD_host_pln1 BatchPD_host_pln1.cpp)
+@@ -31,4 +31,4 @@ if (OpenCL_FOUND)
+     target_link_libraries(Tensor_host_pln1 ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+     target_link_libraries(Tensor_host_pln3 ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+     # target_link_libraries(Single_host ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system )
+-endif()
+\ No newline at end of file
++endif()
+Only in rpp-0.93/utilities/rpp-performancetests/HOST_NEW: CMakeLists.txt.orig
+Only in rpp-0.93/utilities/rpp-performancetests/HOST_NEW: CMakeLists.txt.rej
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/helpers/testSuite_helper.hpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/helpers/testSuite_helper.hpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/helpers/testSuite_helper.hpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/helpers/testSuite_helper.hpp	2023-10-01 16:43:39.422894762 -0700
+@@ -1,7 +1,7 @@
+ #ifndef TESTSUITE_HELPER
+ #define TESTSUITE_HELPER
+ 
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ 
+ RppStatus compute_image_location_host(RppiSize batch_srcSizeMax, int batchCount, Rpp32u *loc, Rpp32u channel)
+ {
+@@ -183,4 +183,4 @@ inline RppStatus generate_bressenham_lin
+     return RPP_SUCCESS;
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/Single_host.cpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/Single_host.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/Single_host.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/Single_host.cpp	2023-10-01 16:43:43.006894835 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pkd3.cpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pkd3.cpp	2023-10-01 16:43:40.382894782 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pln1.cpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pln1.cpp	2023-10-01 16:43:44.590894868 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pln3.cpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/Tensor_host_pln3.cpp	2023-10-01 16:43:42.126894818 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/uniqueFunctionalities_host.cpp rpp-0.93/utilities/rpp-performancetests/HOST_NEW/uniqueFunctionalities_host.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/HOST_NEW/uniqueFunctionalities_host.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/HOST_NEW/uniqueFunctionalities_host.cpp	2023-10-01 16:43:35.886894690 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -953,4 +953,4 @@ int main(int argc, char **argv)
+     }
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pkd3.cpp rpp-0.93/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pkd3.cpp	2023-10-01 16:43:31.966894610 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -14,7 +14,7 @@
+ #include <fstream>
+ #include <algorithm>
+ #include <iterator>
+-#include </opt/rocm/opencl/include/CL/cl.h>
++#include <@EPREFIX_ROCM_PATH@/opencl/include/CL/cl.h>
+ 
+ using namespace cv;
+ using namespace std;
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pln1.cpp rpp-0.93/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pln1.cpp	2023-10-01 16:43:30.974894590 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -16,7 +16,7 @@
+ #include <algorithm>
+ #include <iterator>
+ #include "helpers/testSuite_helper.hpp"
+-#include </opt/rocm/opencl/include/CL/cl.h>
++#include <@EPREFIX_ROCM_PATH@/opencl/include/CL/cl.h>
+ 
+ using namespace cv;
+ using namespace std;
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pln3.cpp rpp-0.93/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/OCL_NEW/BatchPD_ocl_pln3.cpp	2023-10-01 16:43:29.470894559 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt rpp-0.93/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt
+--- rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-10-01 16:32:13.570880780 -0700
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(Rpp_test)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
+ find_package(OpenCL REQUIRED)
+ find_package(OpenCV REQUIRED)
+ find_package(AMDRPP QUIET)
+@@ -13,8 +13,8 @@ endif()
+ if (OpenCL_FOUND)
+     include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+-    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib ${ROCM_PATH}/rpp/lib/ /usr/local/lib)
++    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include @ESYSROOT@/usr/local/include)
++    link_directories(${ROCM_PATH}/@LIBDIR@ ${ROCM_PATH}/rpp/@LIBDIR@/ @ESYSROOT@/usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_ocl_pkd3 BatchPD_ocl_pkd3.cpp)
+     add_executable(BatchPD_ocl_pln1 BatchPD_ocl_pln1.cpp)
+@@ -27,4 +27,4 @@ if (OpenCL_FOUND)
+     target_link_libraries(BatchPD_ocl_pln3 ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+     # target_link_libraries(Single_ocl ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+     target_link_libraries(uniqueFunctionalities_ocl ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+-endif()
+\ No newline at end of file
++endif()
+Only in rpp-0.93/utilities/rpp-performancetests/OCL_NEW: CMakeLists.txt.orig
+Only in rpp-0.93/utilities/rpp-performancetests/OCL_NEW: CMakeLists.txt.rej
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/helpers/testSuite_helper.hpp rpp-0.93/utilities/rpp-performancetests/OCL_NEW/helpers/testSuite_helper.hpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/helpers/testSuite_helper.hpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/OCL_NEW/helpers/testSuite_helper.hpp	2023-10-01 16:38:15.570888160 -0700
+@@ -1,7 +1,7 @@
+ #ifndef TESTSUITE_HELPER
+ #define TESTSUITE_HELPER
+ 
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ 
+ RppStatus compute_image_location_host(RppiSize batch_srcSizeMax, int batchCount, Rpp32u *loc, Rpp32u channel)
+ {
+@@ -183,4 +183,4 @@ inline RppStatus generate_bressenham_lin
+     return RPP_SUCCESS;
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/Single_host.cpp rpp-0.93/utilities/rpp-performancetests/OCL_NEW/Single_host.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/Single_host.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/OCL_NEW/Single_host.cpp	2023-10-01 16:43:32.910894630 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/uniqueFunctionalities_ocl.cpp rpp-0.93/utilities/rpp-performancetests/OCL_NEW/uniqueFunctionalities_ocl.cpp
+--- rpp-0.93.orig/utilities/rpp-performancetests/OCL_NEW/uniqueFunctionalities_ocl.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-performancetests/OCL_NEW/uniqueFunctionalities_ocl.cpp	2023-10-01 16:43:34.798894668 -0700
+@@ -5,14 +5,14 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #include <time.h>
+ #include <half.hpp>
+ #include <fstream>
+-#include </opt/rocm/opencl/include/CL/cl.h>
++#include <@EPREFIX_ROCM_PATH@/opencl/include/CL/cl.h>
+ 
+ using namespace cv;
+ using namespace std;
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pkd3.cpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pkd3.cpp	2023-10-01 16:43:52.782895035 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pln1.cpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pln1.cpp	2023-10-01 16:43:49.918894976 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pln3.cpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/BatchPD_hip_pln3.cpp	2023-10-01 16:43:49.038894958 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-0.93/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-10-01 16:33:19.794882130 -0700
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(Rpp_test)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
+ list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/hip ${ROCM_PATH})
+ find_package(hip REQUIRED)
+ find_package(OpenCV REQUIRED)
+@@ -17,8 +17,8 @@ if (hip_FOUND)
+ 
+     include_directories(${HIP_INCLUDE_DIRS} ${HIP_INCLUDE_DIRS}/hip)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+-    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib ${ROCM_PATH}/rpp/lib/ /usr/local/lib)
++    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include @ESYSROOT@/usr/local/include)
++    link_directories(${ROCM_PATH}/@LIBDIR@ ${ROCM_PATH}/rpp/@LIBDIR@/ @ESYSROOT@/usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_hip_pkd3 BatchPD_hip_pkd3.cpp)
+     add_executable(BatchPD_hip_pln1 BatchPD_hip_pln1.cpp)
+@@ -37,4 +37,4 @@ if (hip_FOUND)
+     target_link_libraries(Tensor_hip_pln3 ${OpenCV_LIBS} -lamd_rpp ${HIP_LIBRARIES} pthread boost_filesystem boost_system hip::host)
+     # target_link_libraries(Single_hip ${OpenCV_LIBS} -lamd_rpp ${HIP_LIBRARIES} pthread boost_filesystem boost_system hip::host)
+     target_link_libraries(uniqueFunctionalities_hip ${OpenCV_LIBS} -lamd_rpp ${HIP_LIBRARIES} pthread boost_filesystem boost_system hip::host)
+-endif()
+\ No newline at end of file
++endif()
+Only in rpp-0.93/utilities/rpp-unittests/HIP_NEW: CMakeLists.txt.orig
+Only in rpp-0.93/utilities/rpp-unittests/HIP_NEW: CMakeLists.txt.rej
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/helpers/testSuite_helper.hpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/helpers/testSuite_helper.hpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/helpers/testSuite_helper.hpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/helpers/testSuite_helper.hpp	2023-10-01 16:43:51.022894999 -0700
+@@ -1,7 +1,7 @@
+ #ifndef TESTSUITE_HELPER
+ #define TESTSUITE_HELPER
+ 
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ 
+ RppStatus compute_image_location_host(RppiSize batch_srcSizeMax, int batchCount, Rpp32u *loc, Rpp32u channel)
+ {
+@@ -183,4 +183,4 @@ inline RppStatus generate_bressenham_lin
+     return RPP_SUCCESS;
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/Single_host.cpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/Single_host.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/Single_host.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/Single_host.cpp	2023-10-01 16:43:54.430895068 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pkd3.cpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pkd3.cpp	2023-10-01 16:43:46.446894906 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -1652,4 +1652,4 @@ int main(int argc, char **argv)
+     }
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pln1.cpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pln1.cpp	2023-10-01 16:43:51.934895017 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -1510,4 +1510,4 @@ int main(int argc, char **argv)
+     }
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pln3.cpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/Tensor_hip_pln3.cpp	2023-10-01 16:43:48.158894940 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -1727,4 +1727,4 @@ int main(int argc, char **argv)
+     }
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/uniqueFunctionalities_hip.cpp rpp-0.93/utilities/rpp-unittests/HIP_NEW/uniqueFunctionalities_hip.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HIP_NEW/uniqueFunctionalities_hip.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HIP_NEW/uniqueFunctionalities_hip.cpp	2023-10-01 16:43:53.598895051 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pkd3.cpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pkd3.cpp	2023-10-01 16:44:04.974895283 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pln1.cpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pln1.cpp	2023-10-01 16:44:08.862895363 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pln3.cpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/BatchPD_host_pln3.cpp	2023-10-01 16:44:05.918895303 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-0.93/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-10-01 16:35:28.706884758 -0700
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(Rpp_test)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
+ find_package(OpenCL REQUIRED)
+ find_package(OpenCV REQUIRED)
+ find_package(AMDRPP QUIET)
+@@ -13,8 +13,8 @@ endif()
+ if (OpenCL_FOUND)
+     include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+-    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib ${ROCM_PATH}/rpp/lib/ /usr/local/lib)
++    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include @ESYSROOT@/usr/local/include)
++    link_directories(${ROCM_PATH}/@LIBDIR@ ${ROCM_PATH}/rpp/@LIBDIR@/ @ESYSROOT@/usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_host_pkd3 BatchPD_host_pkd3.cpp)
+     add_executable(BatchPD_host_pln1 BatchPD_host_pln1.cpp)
+@@ -33,4 +33,4 @@ if (OpenCL_FOUND)
+     target_link_libraries(Tensor_host_pln1 ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+     # target_link_libraries(Single_host ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system )
+     target_link_libraries(uniqueFunctionalities_host ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+-endif()
+\ No newline at end of file
++endif()
+Only in rpp-0.93/utilities/rpp-unittests/HOST_NEW: CMakeLists.txt.orig
+Only in rpp-0.93/utilities/rpp-unittests/HOST_NEW: CMakeLists.txt.rej
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/helpers/testSuite_helper.hpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/helpers/testSuite_helper.hpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/helpers/testSuite_helper.hpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/helpers/testSuite_helper.hpp	2023-10-01 16:44:07.022895325 -0700
+@@ -1,7 +1,7 @@
+ #ifndef TESTSUITE_HELPER
+ #define TESTSUITE_HELPER
+ 
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ 
+ RppStatus compute_image_location_host(RppiSize batch_srcSizeMax, int batchCount, Rpp32u *loc, Rpp32u channel)
+ {
+@@ -183,4 +183,4 @@ inline RppStatus generate_bressenham_lin
+     return RPP_SUCCESS;
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/Single_host.cpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/Single_host.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/Single_host.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/Single_host.cpp	2023-10-01 16:44:10.590895398 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/Tensor_host_pkd3.cpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/Tensor_host_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/Tensor_host_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/Tensor_host_pkd3.cpp	2023-10-01 16:44:07.966895344 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/Tensor_host_pln1.cpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/Tensor_host_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/Tensor_host_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/Tensor_host_pln1.cpp	2023-10-01 16:44:13.182895451 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/Tensor_host_pln3.cpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/Tensor_host_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/Tensor_host_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/Tensor_host_pln3.cpp	2023-10-01 16:44:09.726895380 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rpp.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rpp.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -1327,4 +1327,4 @@ int main(int argc, char **argv)
+     free(outputi8);
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/uniqueFunctionalities_host.cpp rpp-0.93/utilities/rpp-unittests/HOST_NEW/uniqueFunctionalities_host.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/HOST_NEW/uniqueFunctionalities_host.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/HOST_NEW/uniqueFunctionalities_host.cpp	2023-10-01 16:44:03.102895245 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -908,4 +908,4 @@ int main(int argc, char **argv)
+     }
+ 
+     return 0;
+-}
+\ No newline at end of file
++}
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pkd3.cpp rpp-0.93/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pkd3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pkd3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pkd3.cpp	2023-10-01 16:43:59.406895170 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -14,7 +14,7 @@
+ #include <fstream>
+ #include <algorithm>
+ #include <iterator>
+-#include </opt/rocm/opencl/include/CL/cl.h>
++#include <@EPREFIX_ROCM_PATH@/opencl/include/CL/cl.h>
+ 
+ using namespace cv;
+ using namespace std;
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pln1.cpp rpp-0.93/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pln1.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pln1.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pln1.cpp	2023-10-01 16:43:58.478895151 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -16,7 +16,7 @@
+ #include <algorithm>
+ #include <iterator>
+ #include "helpers/testSuite_helper.hpp"
+-#include </opt/rocm/opencl/include/CL/cl.h>
++#include <@EPREFIX_ROCM_PATH@/opencl/include/CL/cl.h>
+ 
+ using namespace cv;
+ using namespace std;
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pln3.cpp rpp-0.93/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pln3.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pln3.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/OCL_NEW/BatchPD_ocl_pln3.cpp	2023-10-01 16:43:56.398895108 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -15,7 +15,7 @@
+ #include <fstream>
+ #include <algorithm>
+ #include <iterator>
+-#include </opt/rocm/opencl/include/CL/cl.h>
++#include <@EPREFIX_ROCM_PATH@/opencl/include/CL/cl.h>
+ 
+ 
+ using namespace cv;
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-0.93/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt
+--- rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-10-01 16:35:45.842885107 -0700
+@@ -1,7 +1,7 @@
+ cmake_minimum_required(VERSION 3.0)
+ project(Rpp_test)
+ list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../../../cmake)
+-set(ROCM_PATH /opt/rocm CACHE PATH "default ROCm installation path")
++set(ROCM_PATH @ESYSROOT_ROCM_PATH@ CACHE PATH "default ROCm installation path")
+ find_package(OpenCL REQUIRED)
+ find_package(OpenCV REQUIRED)
+ find_package(AMDRPP QUIET)
+@@ -13,8 +13,8 @@ endif()
+ if (OpenCL_FOUND)
+     include_directories(${OpenCL_INCLUDE_DIRS} ${OpenCL_INCLUDE_DIRS}/Headers)
+     include_directories(${OpenCV_INCLUDE_DIRS})
+-    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include /usr/local/include)
+-    link_directories(${ROCM_PATH}/lib ${ROCM_PATH}/rpp/lib/ /usr/local/lib)
++    include_directories(${ROCM_PATH}/include ${ROCM_PATH}/rpp/include @ESYSROOT@/usr/local/include)
++    link_directories(${ROCM_PATH}/@LIBDIR@ ${ROCM_PATH}/rpp/@LIBDIR@/ @ESYSROOT@/usr/local/@LIBDIR@)
+ 
+     add_executable(BatchPD_ocl_pkd3 BatchPD_ocl_pkd3.cpp)
+     add_executable(BatchPD_ocl_pln1 BatchPD_ocl_pln1.cpp)
+@@ -27,4 +27,4 @@ if (OpenCL_FOUND)
+     target_link_libraries(BatchPD_ocl_pln3 ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+     # target_link_libraries(Single_ocl ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+     target_link_libraries(uniqueFunctionalities_ocl ${OpenCV_LIBS} -lamd_rpp ${OpenCL_LIBRARIES} pthread boost_filesystem boost_system)
+-endif()
+\ No newline at end of file
++endif()
+Only in rpp-0.93/utilities/rpp-unittests/OCL_NEW: CMakeLists.txt.orig
+Only in rpp-0.93/utilities/rpp-unittests/OCL_NEW: CMakeLists.txt.rej
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/helpers/testSuite_helper.hpp rpp-0.93/utilities/rpp-unittests/OCL_NEW/helpers/testSuite_helper.hpp
+--- rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/helpers/testSuite_helper.hpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/OCL_NEW/helpers/testSuite_helper.hpp	2023-10-01 16:43:57.454895130 -0700
+@@ -1,7 +1,7 @@
+ #ifndef TESTSUITE_HELPER
+ #define TESTSUITE_HELPER
+ 
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ 
+ RppStatus compute_image_location_host(RppiSize batch_srcSizeMax, int batchCount, Rpp32u *loc, Rpp32u channel)
+ {
+@@ -183,4 +183,4 @@ inline RppStatus generate_bressenham_lin
+     return RPP_SUCCESS;
+ }
+ 
+-#endif
+\ No newline at end of file
++#endif
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/Single_host.cpp rpp-0.93/utilities/rpp-unittests/OCL_NEW/Single_host.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/Single_host.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/OCL_NEW/Single_host.cpp	2023-10-01 16:44:00.302895188 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+diff -urp rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/uniqueFunctionalities_ocl.cpp rpp-0.93/utilities/rpp-unittests/OCL_NEW/uniqueFunctionalities_ocl.cpp
+--- rpp-0.93.orig/utilities/rpp-unittests/OCL_NEW/uniqueFunctionalities_ocl.cpp	2022-03-25 15:51:53.000000000 -0700
++++ rpp-0.93/utilities/rpp-unittests/OCL_NEW/uniqueFunctionalities_ocl.cpp	2023-10-01 16:44:02.158895226 -0700
+@@ -5,7 +5,7 @@
+ #include <opencv2/highgui/highgui.hpp>
+ #include <opencv2/opencv.hpp>
+ #include <iostream>
+-#include "/opt/rocm/rpp/include/rppi.h"
++#include "@EPREFIX_ROCM_PATH@/rpp/include/rppi.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+@@ -16,7 +16,7 @@
+ #define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+ // #define CL_USE_DEPRECATED_OPENCL_2_0_APIS
+ 
+-#include </opt/rocm/opencl/include/CL/cl.h>
++#include <@EPREFIX_ROCM_PATH@/opencl/include/CL/cl.h>
+ // #include </usr/include/CL/cl.h>
+ 
+ using namespace cv;

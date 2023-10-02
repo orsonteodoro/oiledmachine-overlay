@@ -1,6 +1,6 @@
-diff -urp rpp-1.2.0.orig/cmake/CppCheck.cmake rpp-1.2.0/cmake/CppCheck.cmake
---- rpp-1.2.0.orig/cmake/CppCheck.cmake	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/cmake/CppCheck.cmake	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/cmake/CppCheck.cmake rpp-1.1.0/cmake/CppCheck.cmake
+--- rpp-1.1.0.orig/cmake/CppCheck.cmake	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/cmake/CppCheck.cmake	2023-10-01 13:03:31.302625483 -0700
 @@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
      NAMES 
          cppcheck
@@ -10,9 +10,9 @@ diff -urp rpp-1.2.0.orig/cmake/CppCheck.cmake rpp-1.2.0/cmake/CppCheck.cmake
  )
  
  ProcessorCount(CPPCHECK_JOBS)
-diff -urp rpp-1.2.0.orig/cmake/FindOpenCL.cmake rpp-1.2.0/cmake/FindOpenCL.cmake
---- rpp-1.2.0.orig/cmake/FindOpenCL.cmake	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/cmake/FindOpenCL.cmake	2023-09-03 16:31:59.484631074 -0700
+diff -urp rpp-1.1.0.orig/cmake/FindOpenCL.cmake rpp-1.1.0/cmake/FindOpenCL.cmake
+--- rpp-1.1.0.orig/cmake/FindOpenCL.cmake	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/cmake/FindOpenCL.cmake	2023-10-01 13:03:31.302625483 -0700
 @@ -57,38 +57,25 @@ else()
      mark_as_advanced( OPENCL_INCLUDE_DIRS )
  
@@ -93,9 +93,9 @@ diff -urp rpp-1.2.0.orig/cmake/FindOpenCL.cmake rpp-1.2.0/cmake/FindOpenCL.cmake
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/cmake/FindTurboJpeg.cmake rpp-1.2.0/cmake/FindTurboJpeg.cmake
---- rpp-1.2.0.orig/cmake/FindTurboJpeg.cmake	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/cmake/FindTurboJpeg.cmake	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/cmake/FindTurboJpeg.cmake rpp-1.1.0/cmake/FindTurboJpeg.cmake
+--- rpp-1.1.0.orig/cmake/FindTurboJpeg.cmake	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/cmake/FindTurboJpeg.cmake	2023-10-01 13:03:31.302625483 -0700
 @@ -43,26 +43,22 @@ mark_as_advanced(TurboJpeg_INCLUDE_DIRS)
  find_library(TurboJpeg_LIBRARIES
      NAMES libturbojpeg${SHARED_LIB_TYPE}
@@ -138,9 +138,9 @@ diff -urp rpp-1.2.0.orig/cmake/FindTurboJpeg.cmake rpp-1.2.0/cmake/FindTurboJpeg
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/CMakeLists.txt rpp-1.2.0/CMakeLists.txt
---- rpp-1.2.0.orig/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/CMakeLists.txt rpp-1.1.0/CMakeLists.txt
+--- rpp-1.1.0.orig/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/CMakeLists.txt	2023-10-01 13:03:31.302625483 -0700
 @@ -19,7 +19,7 @@
  # THE SOFTWARE.
  
@@ -152,7 +152,7 @@ diff -urp rpp-1.2.0.orig/CMakeLists.txt rpp-1.2.0/CMakeLists.txt
  project(rpp CXX)
 @@ -27,7 +27,7 @@ project(rpp CXX)
  # RPP Version
- set(VERSION "1.2.0")
+ set(VERSION "1.1.0")
  
 -set(CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Library install directory")
 +set(CMAKE_INSTALL_LIBDIR "@LIBDIR@" CACHE STRING "Library install directory")
@@ -168,7 +168,7 @@ diff -urp rpp-1.2.0.orig/CMakeLists.txt rpp-1.2.0/CMakeLists.txt
  # Avoid setting the default path to /usr/local
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
    set(CMAKE_INSTALL_PREFIX ${ROCM_PATH} CACHE PATH "RPP default ROCm installation path" FORCE)
-@@ -189,7 +189,7 @@ if("${BACKEND}" STREQUAL "HIP")
+@@ -187,7 +187,7 @@ if("${BACKEND}" STREQUAL "HIP")
          set(RPP_BACKEND_HIP 1)
          # To use RPP_BACKEND_HIP
          add_definitions(-DRPP_BACKEND_HIP=${RPP_BACKEND_HIP})
@@ -177,7 +177,7 @@ diff -urp rpp-1.2.0.orig/CMakeLists.txt rpp-1.2.0/CMakeLists.txt
          include_directories(${ROCM_PATH}/${CMAKE_INSTALL_INCLUDEDIR})
          link_directories(${HIP_PATH}/${CMAKE_INSTALL_LIBDIR})
          # link To HIP Host library -- [hip::host] to use host API
-@@ -293,7 +293,7 @@ endif()
+@@ -291,7 +291,7 @@ endif()
  add_subdirectory(addkernels)
  
  # Installation
@@ -186,9 +186,34 @@ diff -urp rpp-1.2.0.orig/CMakeLists.txt rpp-1.2.0/CMakeLists.txt
  install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
  # install RPP include files -- {ROCM_PATH}/include/rpp/
  install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/rpp PATTERN "*.h.in" EXCLUDE)
-diff -urp rpp-1.2.0.orig/utilities/examples/brightness/CMakeLists.txt rpp-1.2.0/utilities/examples/brightness/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/examples/brightness/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/examples/brightness/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+Only in rpp-1.1.0: CMakeLists.txt.orig
+diff -urp rpp-1.1.0.orig/src/modules/cl/hip_build_utils.cpp rpp-1.1.0/src/modules/cl/hip_build_utils.cpp
+--- rpp-1.1.0.orig/src/modules/cl/hip_build_utils.cpp	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/src/modules/cl/hip_build_utils.cpp	2023-10-01 13:06:48.150629496 -0700
+@@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
+     auto bin_file = tmp_dir->path / (filename + ".o");
+     // compile with hcc
+     auto env = std::string("KMOPTLLC=-mattr=+enable-ds128");
+-    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm/bin/hipcc",
++    tmp_dir->Execute(env + std::string(" ") + "@EPREFIX_ROCM_PATH@/bin/hipcc",
+                      params + filename + " -o " + bin_file.string());
+     if(!boost::filesystem::exists(bin_file))
+         RPP_THROW(filename + " failed to compile");
+diff -urp rpp-1.1.0.orig/src/modules/hip/hip_build_utils.cpp rpp-1.1.0/src/modules/hip/hip_build_utils.cpp
+--- rpp-1.1.0.orig/src/modules/hip/hip_build_utils.cpp	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/src/modules/hip/hip_build_utils.cpp	2023-10-01 13:06:49.286629519 -0700
+@@ -59,7 +59,7 @@ boost::filesystem::path HipBuild(boost::
+     auto bin_file = tmp_dir->path / (filename + ".o");
+     // compile with hcc
+     auto env = std::string("KMOPTLLC=-mattr=+enable-ds128");
+-    tmp_dir->Execute(env + std::string(" ") + "/opt/rocm/bin/hipcc",
++    tmp_dir->Execute(env + std::string(" ") + "@EPREFIX_ROCM_PATH@/bin/hipcc",
+                      params + filename + " -o " + bin_file.string());
+     if(!boost::filesystem::exists(bin_file))
+         RPP_THROW(filename + " failed to compile");
+diff -urp rpp-1.1.0.orig/utilities/examples/brightness/CMakeLists.txt rpp-1.1.0/utilities/examples/brightness/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/examples/brightness/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/examples/brightness/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(examples/brightness)
@@ -213,9 +238,9 @@ diff -urp rpp-1.2.0.orig/utilities/examples/brightness/CMakeLists.txt rpp-1.2.0/
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_performancetests/HIP_NEW)
@@ -241,9 +266,9 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HIP_NEW/CMakeLists.txt r
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_performancetests/HOST_NEW)
@@ -269,9 +294,9 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/HOST_NEW/CMakeLists.txt 
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(Rpp_test)
@@ -301,9 +326,9 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-performancetests/OCL_NEW/CMakeLists.txt r
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/HIP_NEW)
@@ -329,9 +354,9 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HIP_NEW/CMakeLists.txt rpp-1.2.
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/HOST_NEW)
@@ -357,9 +382,9 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/HOST_NEW/CMakeLists.txt rpp-1.2
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-1.2.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-1.1.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(rpp_unittests/OCL_NEW)
@@ -389,9 +414,9 @@ diff -urp rpp-1.2.0.orig/utilities/rpp-unittests/OCL_NEW/CMakeLists.txt rpp-1.2.
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/utilities/test_suite/HIP/CMakeLists.txt rpp-1.2.0/utilities/test_suite/HIP/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/test_suite/HIP/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/test_suite/HIP/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/utilities/test_suite/HIP/CMakeLists.txt rpp-1.1.0/utilities/test_suite/HIP/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/test_suite/HIP/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/test_suite/HIP/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(test_suite/HIP)
@@ -416,9 +441,9 @@ diff -urp rpp-1.2.0.orig/utilities/test_suite/HIP/CMakeLists.txt rpp-1.2.0/utili
 -endif()
 \ No newline at end of file
 +endif()
-diff -urp rpp-1.2.0.orig/utilities/test_suite/HOST/CMakeLists.txt rpp-1.2.0/utilities/test_suite/HOST/CMakeLists.txt
---- rpp-1.2.0.orig/utilities/test_suite/HOST/CMakeLists.txt	2023-06-29 21:43:27.000000000 -0700
-+++ rpp-1.2.0/utilities/test_suite/HOST/CMakeLists.txt	2023-09-03 16:29:38.796632953 -0700
+diff -urp rpp-1.1.0.orig/utilities/test_suite/HOST/CMakeLists.txt rpp-1.1.0/utilities/test_suite/HOST/CMakeLists.txt
+--- rpp-1.1.0.orig/utilities/test_suite/HOST/CMakeLists.txt	2023-05-02 14:13:17.000000000 -0700
++++ rpp-1.1.0/utilities/test_suite/HOST/CMakeLists.txt	2023-10-01 13:03:31.306625483 -0700
 @@ -21,7 +21,7 @@
  cmake_minimum_required(VERSION 3.5)
  project(test_suite/HOST)

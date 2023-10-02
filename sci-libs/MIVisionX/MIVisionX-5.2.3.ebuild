@@ -3,18 +3,7 @@
 
 EAPI=8
 
-AMDGPU_TARGETS_COMPAT=(
-	gfx803
-	gfx900
-	gfx906
-	gfx908
-	gfx90a
-	gfx940
-	gfx1030
-	gfx1031
-	gfx1032
-)
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_10 ) # U 20/22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -42,15 +31,12 @@ HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-cpu +debug +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net
-opencl opencv +rocal +rocal-python +rocm +rpp system-llvm
+cpu +enhanced-message ffmpeg +loom +migraphx +neural-net opencl opencv
++rocal +rocm +rpp system-llvm
 r1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
-	opencl? (
-		!rocal-python
-	)
 	rocal? (
 		^^ (
 			rocm
@@ -72,7 +58,7 @@ REQUIRED_USE="
 # GCC 12 (libstdcxx:12) required to fix:
 # libhsa-runtime64.so.1: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
 BOOST_PV="1.72.0"
-PROTOBUF_PV="3.12.0"
+PROTOBUF_PV="3.12.4"
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
@@ -81,7 +67,7 @@ RDEPEND="
 	dev-libs/openssl
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	ffmpeg? (
-		>=media-video/ffmpeg-4.4.2[fdk,gpl,libass,x264,x265,nonfree]
+		>=media-video/ffmpeg-4.0.4[fdk,gpl,libass,x264,x265,nonfree]
 	)
 	neural-net? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}
@@ -91,7 +77,7 @@ RDEPEND="
 		~sci-libs/miopengemm-${PV}:${ROCM_SLOT}
 	)
 	opencv? (
-		>=media-libs/opencv-4.6.0[features2d,jpeg]
+		>=media-libs/opencv-4.5.5[features2d,jpeg]
 	)
 	rocal? (
 		!system-llvm? (
@@ -118,7 +104,8 @@ RDEPEND="
 	)
 	rpp? (
 		>=dev-libs/boost-${BOOST_PV}:=
-		>=sci-libs/rpp-1.1.0
+		>=sci-libs/rpp-0.97:${ROCM_SLOT}
+		sci-libs/rpp:=
 	)
 "
 DEPEND="
@@ -132,9 +119,9 @@ BDEPEND="
 	virtual/pkgconfig
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-change-libjpeg-turbo-search-path.patch"
-	"${FILESDIR}/${PN}-5.6.0-use-system-pybind11.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.1.3-change-libjpeg-turbo-search-path.patch"
+	"${FILESDIR}/${PN}-5.1.3-use-system-pybind11.patch"
+	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {
@@ -157,8 +144,6 @@ src_configure() {
 	build_libjpeg_turbo
 	cd "${S}" || die
 	local mycmakeargs=(
-		-DAMD_FP16_SUPPORT=$(usex fp16 ON OFF)
-		-DBUILD_DEV=$(usex debug ON OFF)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DENHANCED_MESSAGE=$(usex enhanced-message ON OFF)
 		-DGPU_SUPPORT=$(usex cpu OFF ON)
@@ -166,7 +151,6 @@ src_configure() {
 		-DMIGRAPHX=$(usex migraphx ON OFF)
 		-DNEURAL_NET=$(usex neural-net ON OFF)
 		-DROCAL=$(usex rocal ON OFF)
-		-DROCAL_PYTHON=$(usex rocal-python ON OFF)
 	)
 
 	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
@@ -202,12 +186,6 @@ src_configure() {
 		if use rpp ; then
 			mycmakeargs+=(
 				-DAMDRPP_PATH="${ESYSROOT}/usr"
-			)
-		fi
-
-		if use rocal-python ; then
-			mycmakeargs+=(
-				-DCMAKE_INSTALL_PREFIX_PYTHON="$(python_get_sitedir)"
 			)
 		fi
 
@@ -322,4 +300,5 @@ src_install() {
 	fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO

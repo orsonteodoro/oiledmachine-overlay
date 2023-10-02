@@ -16,7 +16,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 # See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/1.2.0/docs/release.md?plain=1#L18C22-L18C25
 LLVM_MAX_SLOT=16
-ROCM_SLOT="5.5"
+ROCM_SLOT="5.6"
 
 inherit cmake flag-o-matic llvm rocm toolchain-funcs
 
@@ -37,7 +37,7 @@ high-performance computer vision library for AMD processors with HIP/OpenCL/CPU 
 back-ends."
 HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp"
 LICENSE="MIT"
-SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${ROCM_IUSE}
 cpu opencl rocm system-llvm test
@@ -112,7 +112,7 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/rpp-1.2.0-path-changes.patch"
+	"${FILESDIR}/rpp-1.1.0-path-changes.patch"
 )
 
 pkg_setup() {
