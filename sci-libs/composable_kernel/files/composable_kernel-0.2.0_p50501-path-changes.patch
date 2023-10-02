@@ -1,0 +1,243 @@
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/client_example/CMakeLists.txt composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/client_example/CMakeLists.txt
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/client_example/CMakeLists.txt	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/client_example/CMakeLists.txt	2023-10-02 14:01:36.172458003 -0700
+@@ -3,7 +3,7 @@ project(ck_app)
+ add_compile_options(-std=c++17)
+ 
+ find_package(composable_kernel 1.0.0 COMPONENTS device_operations)
+-find_package(hip REQUIRED PATHS /opt/rocm)
++find_package(hip REQUIRED PATHS @ESYSROOT_ROCM_PATH@)
+ message(STATUS "Build with HIP ${hip_VERSION}")
+ 
+ # add all example subdir
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/client_example/README.md composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/client_example/README.md
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/client_example/README.md	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/client_example/README.md	2023-10-02 14:01:36.172458003 -0700
+@@ -10,8 +10,8 @@ cd client_example/build
+ 
+ ```bash
+ cmake                                                                 \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                             \
+--D CMAKE_PREFIX_PATH="/opt/rocm;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
++-D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc                             \
++-D CMAKE_PREFIX_PATH="@EPREFIX_ROCM_PATH@;${PATH_TO_CK_INSTALL_DIRECTORY}"      \
+ ..
+ ```
+ 
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/cmake/ClangTidy.cmake composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/cmake/ClangTidy.cmake
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/cmake/ClangTidy.cmake	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/cmake/ClangTidy.cmake	2023-10-02 14:01:36.172458003 -0700
+@@ -43,9 +43,8 @@ find_program(CLANG_TIDY_EXE
+     PATH_SUFFIXES
+         compiler/bin
+     PATHS
+-        /opt/rocm/llvm/bin
+-        /opt/rocm/hcc
+-        /usr/local/opt/llvm/bin
++        @ESYSROOT_LLVM_PATH@
++        @ESYSROOT@/usr/hcc
+ )
+ 
+ function(find_clang_tidy_version VAR)
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/cmake/CppCheck.cmake composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/cmake/CppCheck.cmake
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/cmake/CppCheck.cmake	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/cmake/CppCheck.cmake	2023-10-02 14:01:36.172458003 -0700
+@@ -32,7 +32,7 @@ find_program(CPPCHECK_EXE
+     NAMES 
+         cppcheck
+     PATHS
+-        /opt/rocm/bin
++        @ESYSROOT_ROCM_PATH@/bin
+ )
+ 
+ ProcessorCount(CPPCHECK_JOBS)
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/CMakeLists.txt composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/CMakeLists.txt
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/CMakeLists.txt	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/CMakeLists.txt	2023-10-02 14:01:36.172458003 -0700
+@@ -8,7 +8,7 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT
+ enable_testing()
+ 
+ set(ROCM_SYMLINK_LIBS OFF)
+-find_package(ROCM REQUIRED PATHS /opt/rocm)
++find_package(ROCM REQUIRED PATHS @ESYSROOT_ROCM_PATH@)
+ 
+ include(ROCMInstallTargets)
+ include(ROCMPackageConfigHelpers)
+@@ -19,7 +19,7 @@ include(CheckCXXCompilerFlag)
+ 
+ rocm_setup_version(VERSION 0.2.0)
+ include(TargetFlags)
+-list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} ${CMAKE_INSTALL_PREFIX}/llvm ${CMAKE_INSTALL_PREFIX}/hip /opt/rocm /opt/rocm/llvm /opt/rocm/hip)
++list(APPEND CMAKE_PREFIX_PATH ${CMAKE_INSTALL_PREFIX} @ESYSROOT_LLVM_PATH@ ${CMAKE_INSTALL_PREFIX}/hip @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip)
+ 
+ option(USE_BITINT_EXTENSION_INT4, "Whether to enable clang's BitInt extension to provide int4 data type." OFF)
+ 
+@@ -227,8 +227,8 @@ enable_cppcheck(
+         __linux__=1
+ )
+ 
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+ 
+ include_directories(BEFORE
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/library/src/tensor_operation_instance/gpu/CMakeLists.txt composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/library/src/tensor_operation_instance/gpu/CMakeLists.txt
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/library/src/tensor_operation_instance/gpu/CMakeLists.txt	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/library/src/tensor_operation_instance/gpu/CMakeLists.txt	2023-10-02 14:01:38.124458043 -0700
+@@ -54,7 +54,7 @@ target_compile_options(device_operations
+     --offload-arch=gfx90a
+ )
+ 
+-# install(TARGETS device_operations LIBRARY DESTINATION lib)
++# install(TARGETS device_operations LIBRARY DESTINATION @LIBDIR@)
+ rocm_install(TARGETS device_operations
+         EXPORT device_operationsTargets)
+ 
+Only in composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/library/src/tensor_operation_instance/gpu: CMakeLists.txt.orig
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/README.md composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/README.md
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/README.md	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/README.md	2023-10-02 14:01:38.124458043 -0700
+@@ -55,8 +55,8 @@ mkdir build && cd build
+ 
+ # Need to specify target ID, example below is for gfx908 and gfx90a
+ cmake                                                                                             \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++-D CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@                                                                         \
++-D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc                                                              \
+ -D CMAKE_CXX_FLAGS="-O3"                                                                          \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D GPU_TARGETS=gfx908;gfx90a                                                                      \
+Only in composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b: README.md.orig
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/cmake-ck-dev.sh composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/cmake-ck-dev.sh
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/cmake-ck-dev.sh	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/cmake-ck-dev.sh	2023-10-02 14:01:38.124458043 -0700
+@@ -6,8 +6,8 @@ rm -rf CMakeFiles
+ MY_PROJECT_SOURCE=$1
+ 
+ cmake                                                                                             \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++-D CMAKE_PREFIX_PATH=@EPREFIX_ROCM_PATH@                                                                    \
++-D CMAKE_CXX_COMPILER=@EPREFIX_ROCM_PATH@/bin/hipcc                                                         \
+ -D CMAKE_CXX_FLAGS="-O3 -ftemplate-backtrace-limit=0 -gline-tables-only -save-temps=$PWD"         \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D BUILD_DEV=ON                                                                                   \
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/cmake-ck-release.sh composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/cmake-ck-release.sh
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/cmake-ck-release.sh	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/cmake-ck-release.sh	2023-10-02 14:01:38.124458043 -0700
+@@ -6,8 +6,8 @@ rm -rf CMakeFiles
+ MY_PROJECT_SOURCE=$1
+ 
+ cmake                                                                                             \
+--D CMAKE_PREFIX_PATH=/opt/rocm                                                                    \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                         \
++-D CMAKE_PREFIX_PATH=@ESYSROOT_ROCM_PATH@                                                                         \
++-D CMAKE_CXX_COMPILER=@ESYSROOT_ROCM_PATH@/bin/hipcc                                                              \
+ -D CMAKE_CXX_FLAGS="-O3"                                                                          \
+ -D CMAKE_BUILD_TYPE=Release                                                                       \
+ -D BUILD_DEV=OFF                                                                                  \
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/hipclang_opt.sh composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/hipclang_opt.sh
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/hipclang_opt.sh	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/hipclang_opt.sh	2023-10-02 14:01:38.124458043 -0700
+@@ -2,24 +2,24 @@ rm *.ll *.s
+ 
+ BC_FILE=$1
+ 
+-/opt/rocm/llvm/bin/llvm-dis $BC_FILE -o original.ll
+-/opt/rocm/llvm/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
+-/opt/rocm/llvm/bin/opt -S -sroa inline.ll > sroa.ll
+-/opt/rocm/llvm/bin/opt -S -O3 sroa.ll > o3.ll
++@ESYSROOT_LLVM_PATH@/bin/llvm-dis $BC_FILE -o original.ll
++@ESYSROOT_LLVM_PATH@/bin/opt -S -inline -inline-threshold=104857 original.ll > inline.ll
++@ESYSROOT_LLVM_PATH@/bin/opt -S -sroa inline.ll > sroa.ll
++@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 sroa.ll > o3.ll
+ 
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 original.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 inline.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 sroa.ll
+-/opt/rocm/llvm/bin/llc -mcpu=gfx906 o3.ll
++@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx906 original.ll
++@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx906 inline.ll
++@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx906 sroa.ll
++@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx906 o3.ll
+ 
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa inline.ll > o3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
+-#/opt/rocm/llvm/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
++#@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 -sroa inline.ll > o3.ll
++#@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 -sroa o3.ll > o3_2.ll
++#@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 -sroa o3_2.ll > o3_3.ll
++#@ESYSROOT_LLVM_PATH@/bin/opt -S -O3 -sroa o3_3.ll > o3_4.ll
+ 
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 opt.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 inline.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_2.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_3.ll
+-#/opt/rocm/llvm/bin/llc -mcpu=gfx908 o3_4.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 opt.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 inline.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 o3.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 o3_2.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 o3_3.ll
++#@ESYSROOT_LLVM_PATH@/bin/llc -mcpu=gfx908 o3_4.ll
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/parse_perf_data.py composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/parse_perf_data.py
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/parse_perf_data.py	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/parse_perf_data.py	2023-10-02 14:01:38.124458043 -0700
+@@ -69,7 +69,7 @@ def main():
+                 compute_units=lst[2]
+             if 'InstalledDir' in line:
+                 lst=line.split()
+-                rocm_vers=lst[1][lst[1].find('/opt/rocm-')+len('/opt/rocm-'):lst[1].rfind('/llvm/bin')]
++                rocm_vers="@ROCM_VERSION@"
+     print("Branch name:",branch_name)
+     print("Node name:",node_id)
+     print("GPU_arch:",gpu_arch)
+@@ -287,4 +287,4 @@ def main():
+     return regression
+ 
+ if __name__ == '__main__':
+-    main()
+\ No newline at end of file
++    main()
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/process_perf_data.py composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/process_perf_data.py
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/process_perf_data.py	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/process_perf_data.py	2023-10-02 14:01:38.124458043 -0700
+@@ -63,7 +63,7 @@ def get_log_params(logfile):
+             environment=lst[2]
+         if 'InstalledDir' in line:
+             lst=line.split()
+-            rocm_vers=lst[1][lst[1].find('/opt/rocm-')+len('/opt/rocm-'):lst[1].rfind('/llvm/bin')]
++            rocm_vers="@ROCM_VERSION@"
+     return branch_name, node_id, gpu_arch, compute_units, rocm_vers, hip_vers, environment
+ 
+ def parse_logfile(logfile):
+Only in composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script: process_perf_data.py.orig
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/run_full_performance_tests.sh composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/run_full_performance_tests.sh
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/run_full_performance_tests.sh	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/run_full_performance_tests.sh	2023-10-02 14:01:38.124458043 -0700
+@@ -31,7 +31,7 @@ function print_log_header(){
+ 	rocminfo | grep "Compute Unit:" >> $1;
+ 	hipcc --version | grep -e 'HIP version'  >> $1;
+ 	echo 'Environment type: ' $2 >> $1;
+-	/opt/rocm/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
++	@EPREFIX_LLVM_PATH@/bin/clang++ --version | grep -e 'InstalledDir' >> $1;
+ }
+ 
+ #run gemm tests
+diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/run_performance_tests.sh composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/run_performance_tests.sh
+--- composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/script/run_performance_tests.sh	2022-10-17 16:14:35.000000000 -0700
++++ composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b/script/run_performance_tests.sh	2023-10-02 14:01:38.124458043 -0700
+@@ -28,7 +28,7 @@ function print_log_header(){
+ 	rocminfo | grep "Compute Unit:" >> $1;
+ 	hipcc --version | grep -e 'HIP version'  >> $1;
+ 	echo 'Environment type: ' $2 >> $1;
+-	/opt/rocm/bin/amdclang++ --version | grep -e 'InstalledDir' >> $1;
++	@EPREFIX_LLVM_PATH@/bin/clang++ --version | grep -e 'InstalledDir' >> $1;
+ }
+ 
+ #run gemm tests

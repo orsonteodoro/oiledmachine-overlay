@@ -1,0 +1,27 @@
+diff -urp composable_kernel-0a8dac4ef1a232abd8f6896a5b016f9e76192ddd.orig/include/ck/utility/math.hpp composable_kernel-0a8dac4ef1a232abd8f6896a5b016f9e76192ddd/include/ck/utility/math.hpp
+--- composable_kernel-0a8dac4ef1a232abd8f6896a5b016f9e76192ddd.orig/include/ck/utility/math.hpp	2023-04-26 13:48:22.000000000 -0700
++++ composable_kernel-0a8dac4ef1a232abd8f6896a5b016f9e76192ddd/include/ck/utility/math.hpp	2023-10-02 13:50:01.196443834 -0700
+@@ -8,6 +8,9 @@
+ #include "number.hpp"
+ #include "type.hpp"
+ #include "enable_if.hpp"
++#if !defined(_LIBCPP_VERSION)
++#  include <cmath>
++#endif
+ 
+ namespace ck {
+ namespace math {
+@@ -159,7 +162,11 @@ __device__ T exp(T x);
+ template <>
+ __device__ float exp<float>(float x)
+ {
++#if !defined(_LIBCPP_VERSION)
+     return __expf(x);
++#else
++    return std::expf(x);
++#endif
+ }
+ 
+ template <>
+Only in composable_kernel-0a8dac4ef1a232abd8f6896a5b016f9e76192ddd/include/ck/utility: math.hpp.orig
+Only in composable_kernel-0a8dac4ef1a232abd8f6896a5b016f9e76192ddd/include/ck/utility: math.hpp.rej

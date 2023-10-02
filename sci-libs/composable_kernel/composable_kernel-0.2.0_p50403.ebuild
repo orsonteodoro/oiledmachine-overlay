@@ -4,22 +4,19 @@
 EAPI=8
 
 AMDGPU_TARGETS_COMPAT=(
+# Same as MIOpen's requirements.txt
 	gfx900
 	gfx906
 	gfx908
 	gfx90a
-	gfx940
-	gfx941
-	gfx942
 	gfx1030
-	gfx1100
-	gfx1101
-	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=16
-ROCM_SLOT="5.6" # To be changed in pkg_setup()
-ROCM_VERSION="9999"
+LLVM_MAX_SLOT=15
+ROCM_SLOT="5.4"
+ROCM_VERSION="5.4"
+COMPOSABLE_KERNEL_COMMIT="eef009d001b928db1bb377a105c93b75e0dccc7b" # Same as MIOpen's requirements.txt
+MY_PV=$(ver_cut 1-2)
 
 inherit cmake flag-o-matic llvm rocm
 
@@ -28,34 +25,35 @@ if [[ ${PV} =~ 9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/composable_kernel.git"
 	inherit git-r3
 	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
 else
 	SRC_URI="
+https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
+	-> ${PN}-${MY_PV}-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
 	"
+	S="${WORKDIR}/${PN}-${COMPOSABLE_KERNEL_COMMIT}"
 fi
 
 DESCRIPTION="Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/composable_kernel"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-test r2
+system-llvm test r2
 "
 REQUIRED_USE="
 "
 RDEPEND="
 	|| (
 		(
-			~dev-util/hip-5.6.1:0/5.6
-			sys-libs/libomp:16
-		)
-		(
-			~dev-util/hip-5.5.1:0/5.5
-			sys-libs/libomp:16
-		)
-		(
-			~dev-util/hip-5.4.3:0/5.4
-			sys-libs/libomp:15
+			!system-llvm? (
+				~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+			)
+			~dev-util/hip-${PV}:${ROCM_SLOT}
+			system-llvm? (
+				sys-libs/libomp:${LLVM_MAX_SLOT}
+			)
 		)
 	)
 "
@@ -66,28 +64,24 @@ BDEPEND="
 	test? (
 		dev-cpp/gtest
 	)
+	dev-util/rocm-compiler[system-llvm=]
 	|| (
 		(
-			~dev-util/rocm-cmake-5.6.1:0/5.6
-			sys-devel/clang:16
-		)
-		(
-			~dev-util/rocm-cmake-5.5.1:0/5.5
-			sys-devel/clang:16
-		)
-		(
-			~dev-util/rocm-cmake-5.4.3:0/5.4
-			sys-devel/clang:15
+			!system-llvm? (
+				~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+			)
+			~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+			system-llvm? (
+				sys-devel/clang:${LLVM_MAX_SLOT}
+			)
 		)
 	)
 "
 #RESTRICT="test"
-S="${WORKDIR}/${P}"
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
+	"${FILESDIR}/${PN}-0.2.0_p50601-fix-missing-libstdcxx-expf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
-	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
-	"${FILESDIR}/${PN}-1.0.0_p9999-path-changes.patch"
+	"${FILESDIR}/${PN}-0.2.0_p50501-path-changes.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
@@ -95,21 +89,11 @@ if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	)
 else
 	PATCHES+=(
-		"${FILESDIR}/${PN}-1.0.0_p9999-master-optional-tests.patch"
+		"${FILESDIR}/${PN}-0.2.0_p50501-optional-tests.patch"
 	)
 fi
 
 pkg_setup() {
-	if has_version "~dev-util/hip-5.6.1" ; then
-		LLVM_MAX_SLOT=16
-		export ROCM_SLOT="5.6"
-	elif has_version "~dev-util/hip-5.5.1" ; then
-		LLVM_MAX_SLOT=16
-		export ROCM_SLOT="5.5"
-	elif has_version "~dev-util/hip-5.4.3" ; then
-		LLVM_MAX_SLOT=15
-		export ROCM_SLOT="5.4"
-	fi
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
 }

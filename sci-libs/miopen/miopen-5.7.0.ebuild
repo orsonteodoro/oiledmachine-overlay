@@ -82,7 +82,7 @@ RDEPEND="
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
 	composable-kernel? (
-		>=sci-libs/composable_kernel-1.0.0
+		sci-libs/composable_kernel:${ROCM_SLOT}
 	)
 	kernels? (
 		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}
