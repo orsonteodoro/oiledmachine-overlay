@@ -352,7 +352,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/scripts/perf/perflib/generators.py rocFFT-rocm-
 +from rocFFT_perflib.utils import sjoin
  
 -top = path(__file__).resolve().parent.parent
-+top = path("@ESYSROOT_ROCM_PATH@/share/rocFFT-perflib")
++top = path("@EPREFIX_ROCM_PATH@/share/rocFFT-perflib")
  
  
  def mktag(tag, dimension, precision, direction, inplace, real):
@@ -400,7 +400,7 @@ diff -urp rocFFT-rocm-5.5.1.orig/scripts/perf/perflib/pdf.py rocFFT-rocm-5.5.1/s
 +import rocFFT_perflib.utils
  
 -top = Path(__file__).resolve().parent.parent
-+top = Path("@ESYSROOT_ROCM_PATH@/share/rocFFT-perflib")
++top = Path("@EPREFIX_ROCM_PATH@/share/rocFFT-perflib")
  
  
  @dataclass

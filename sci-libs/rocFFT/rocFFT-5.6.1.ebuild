@@ -142,7 +142,7 @@ S="${WORKDIR}/rocFFT-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-add-stdexcept-header.patch"
 	"${FILESDIR}/${PN}-5.6.0-aot-optional.patch"
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.6.1-path-changes.patch"
 )
 
 required_mem() {
