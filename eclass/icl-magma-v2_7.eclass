@@ -536,6 +536,7 @@ icl-magma-v2_7_src_configure() {
 	)
 	if has cuda ${IUSE} ; then
 		mycmakeargs+=(
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 			-DMAGMA_ENABLE_CUDA=$(usex cuda ON OFF)
 		)
 	else
@@ -546,8 +547,11 @@ icl-magma-v2_7_src_configure() {
 
 	if has rocm ${IUSE} ; then
 		mycmakeargs+=(
+			-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 			-DMAGMA_ENABLE_HIP=$(usex rocm ON OFF)
 		)
+		append-ldflags \
+			-L"${EPREFIX}${EROCM_PATH}/$(get_libdir)"
 	else
 		mycmakeargs+=(
 			-DMAGMA_ENABLE_HIP=OFF
