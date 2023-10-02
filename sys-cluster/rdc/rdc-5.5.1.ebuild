@@ -3,6 +3,13 @@
 
 EAPI=8
 
+# Before fixing the paths any further, a reminder or warning for modders.
+# There is a prebuilt binary that has a hardcoded path.  It is unknown if the
+# path is relative or absolute.  All these ebuilds may need to use paths exactly
+# like the binary release in order to reduce chances of breakage.
+#
+# See commit 52a3463 for details
+
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
