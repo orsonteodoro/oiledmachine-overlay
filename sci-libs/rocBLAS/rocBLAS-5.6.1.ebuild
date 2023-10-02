@@ -33,7 +33,7 @@ DOCS_DIR="docs"
 DOCS_DEPEND="
 	media-gfx/graphviz
 "
-LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
+LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.1/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 PYTHON_COMPAT=( python3_{10..11} )
@@ -159,6 +159,37 @@ src_prepare() {
 			"library/src/blas3/Tensile/Logic/" \
 			|| die
 	fi
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	PATCH_PATHS=(
+		"${S}/CHANGELOG.md"
+		"${S}/clients/CMakeLists.txt"
+		"${S}/clients/common/utility.cpp"
+		"${S}/clients/gtest/rocblas_test.cpp"
+		"${S}/clients/include/host_alloc.hpp"
+		"${S}/clients/include/rocblas_data.hpp"
+		"${S}/clients/include/singletons.hpp"
+		"${S}/clients/include/testing_logging.hpp"
+		"${S}/clients/include/testing_ostream_threadsafety.hpp"
+		"${S}/clients/include/utility.hpp"
+		"${S}/CMakeLists.txt"
+		"${S}/CONTRIBUTING.rst"
+		"${S}/deps/external-gtest.cmake"
+		"${S}/docs/Linux_Install_Guide.rst"
+		"${S}/docs/source/Contributors_Guide.rst"
+		"${S}/docs/source/Linux_Install_Guide.rst"
+		"${S}/header_compilation_tests.sh"
+		"${S}/install.sh"
+		"${S}/library/CMakeLists.txt"
+		"${S}/library/src/CMakeLists.txt"
+		"${S}/library/src/tensile_host.cpp"
+		"${S}/rmake.py"
+		"${S}/scripts/performance/blas/commandrunner.py"
+		"${S}/scripts/performance/blas/getspecs.py"
+		"${S}/scripts/utilities/check_for_pretuned_sizes_c/Makefile"
+		"${S}/toolchain-linux.cmake"
+	)
 	rocm_src_prepare
 }
 

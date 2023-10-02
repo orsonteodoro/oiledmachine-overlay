@@ -1,7 +1,7 @@
-diff -urp rocBLAS-rocm-5.5.1.orig/CHANGELOG.md rocBLAS-rocm-5.5.1/CHANGELOG.md
---- rocBLAS-rocm-5.5.1.orig/CHANGELOG.md	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/CHANGELOG.md	2023-08-29 19:21:17.929366513 -0700
-@@ -265,7 +265,7 @@ Full documentation for rocBLAS is availa
+diff -urp rocBLAS-rocm-5.7.0.orig/CHANGELOG.md rocBLAS-rocm-5.7.0/CHANGELOG.md
+--- rocBLAS-rocm-5.7.0.orig/CHANGELOG.md	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/CHANGELOG.md	2023-10-02 02:12:28.271590561 -0700
+@@ -311,7 +311,7 @@ Full documentation for rocBLAS is availa
  - function rocblas_Xdgmm algorithm corrected and incx=0 support added
  - dependencies:
    - rocblas-tensile internal component requires msgpack instead of LLVM
@@ -10,18 +10,20 @@ diff -urp rocBLAS-rocm-5.5.1.orig/CHANGELOG.md rocBLAS-rocm-5.5.1/CHANGELOG.md
    - rocblas-auxillary.h
    - rocblas-complex-types.h
    - rocblas-functions.h
-@@ -273,7 +273,7 @@ Full documentation for rocBLAS is availa
+@@ -319,7 +319,7 @@ Full documentation for rocBLAS is availa
    - rocblas-version.h
    - rocblas_bfloat16.h
  
--  These files should NOT be included directly as this may lead to errors. Instead, /opt/rocm/include/rocblas.h should be included directly. /opt/rocm/include/rocblas_module.f90 can also be direcly used.
-+  These files should NOT be included directly as this may lead to errors. Instead, @EPREFIX_ROCM_PATH@/include/rocblas.h should be included directly. @EPREFIX_ROCM_PATH@/include/rocblas_module.f90 can also be direcly used.
+-  These files should NOT be included directly as this may lead to errors. Instead, /opt/rocm/include/rocblas.h should be included directly. /opt/rocm/include/rocblas_module.f90 can also be directly used.
++  These files should NOT be included directly as this may lead to errors. Instead, @EPREFIX_ROCM_PATH@/include/rocblas.h should be included directly. @EPREFIX_ROCM_PATH@/include/rocblas_module.f90 can also be directly used.
  
  
  ## rocBLAS 2.26.0 for ROCm 3.7.0
-diff -urp rocBLAS-rocm-5.5.1.orig/clients/CMakeLists.txt rocBLAS-rocm-5.5.1/clients/CMakeLists.txt
---- rocBLAS-rocm-5.5.1.orig/clients/CMakeLists.txt	2023-08-29 19:21:02.645366205 -0700
-+++ rocBLAS-rocm-5.5.1/clients/CMakeLists.txt	2023-08-29 19:21:18.009366514 -0700
+Only in rocBLAS-rocm-5.7.0: CHANGELOG.md.orig
+Only in rocBLAS-rocm-5.7.0: CHANGELOG.md.rej
+diff -urp rocBLAS-rocm-5.7.0.orig/clients/CMakeLists.txt rocBLAS-rocm-5.7.0/clients/CMakeLists.txt
+--- rocBLAS-rocm-5.7.0.orig/clients/CMakeLists.txt	2023-10-02 02:07:15.779584190 -0700
++++ rocBLAS-rocm-5.7.0/clients/CMakeLists.txt	2023-10-02 02:11:22.063589211 -0700
 @@ -75,9 +75,9 @@ find_package(OpenMP)
  
  if (TARGET OpenMP::OpenMP_CXX)
@@ -48,15 +50,36 @@ diff -urp rocBLAS-rocm-5.5.1.orig/clients/CMakeLists.txt rocBLAS-rocm-5.5.1/clie
  if ( NOT hip_FOUND )
    find_package( hip REQUIRED CONFIG PATHS ${ROCM_PATH} )
  endif( )
-@@ -115,14 +115,14 @@ if( BUILD_CLIENTS_BENCHMARKS OR BUILD_CL
+@@ -113,18 +113,18 @@ endif( )
+ if( BUILD_CLIENTS_BENCHMARKS OR BUILD_CLIENTS_TESTS)
+   if ( NOT WIN32 )
      if (LINK_BLIS)
-       set( BLIS_INCLUDE_DIR ${BUILD_DIR}/deps/blis/include/blis )
-       set( BLIS_CPP ../common/blis_interface.cpp )
--      set( BLAS_LIBRARY ${BUILD_DIR}/deps/blis/lib/libblis.a )
-+      set( BLAS_LIBRARY ${BUILD_DIR}/deps/blis/@LIBDIR@/libblis.a )
-     else()
-       set( BLAS_LIBRARY "blas -lcblas" )
-     endif()
+-      if(EXISTS          "${BUILD_DIR}/deps/amd-blis/lib/ILP64/libblis-mt.a")
+-        set( BLAS_LIBRARY ${BUILD_DIR}/deps/amd-blis/lib/ILP64/libblis-mt.a )
++      if(EXISTS          "${BUILD_DIR}/deps/amd-blis/@LIBDIR@/ILP64/libblis-mt.a")
++        set( BLAS_LIBRARY ${BUILD_DIR}/deps/amd-blis/@LIBDIR@/ILP64/libblis-mt.a )
+         set( BLIS_INCLUDE_DIR ${BUILD_DIR}/deps/amd-blis/include/ILP64 )
+-      elseif(EXISTS      "/opt/AMD/aocl/aocl-linux-aocc-4.0/lib_ILP64/libblis-mt.a" )
+-        set( BLAS_LIBRARY /opt/AMD/aocl/aocl-linux-aocc-4.0/lib_ILP64/libblis-mt.a )
+-        set( BLIS_INCLUDE_DIR /opt/AMD/aocl/aocl-linux-aocc-4.0/include_ILP64/ )
+-      elseif(EXISTS      "${BUILD_DIR}/deps/blis/lib/libblis.a")
+-        set( BLAS_LIBRARY ${BUILD_DIR}/deps/blis/lib/libblis.a )
++      elseif(EXISTS      "@EPREFIX@/opt/AMD/aocl/aocl-linux-aocc-4.0/lib_ILP64/libblis-mt.a" )
++        set( BLAS_LIBRARY @EPREFIX@/opt/AMD/aocl/aocl-linux-aocc-4.0/lib_ILP64/libblis-mt.a )
++        set( BLIS_INCLUDE_DIR @EPREFIX@/opt/AMD/aocl/aocl-linux-aocc-4.0/include_ILP64/ )
++      elseif(EXISTS      "${BUILD_DIR}/deps/blis/@LIBDIR@/libblis.a")
++        set( BLAS_LIBRARY ${BUILD_DIR}/deps/blis/@LIBDIR@/libblis.a )
+         set( BLIS_INCLUDE_DIR ${BUILD_DIR}/deps/blis/include/blis )
+-      elseif(EXISTS      "/usr/local/lib/libblis.a")
+-        set( BLAS_LIBRARY /usr/local/lib/libblis.a )
+-        set( BLIS_INCLUDE_DIR /usr/local/include/blis )
++      elseif(EXISTS      "@EPREFIX@/usr/local/@LIBDIR@/libblis.a")
++        set( BLAS_LIBRARY @EPREFIX@/usr/local/@LIBDIR@/libblis.a )
++        set( BLIS_INCLUDE_DIR @EPREFIX@/usr/local/include/blis )
+       endif()
+       if ( DEFINED BLIS_INCLUDE_DIR )
+         set( BLIS_CPP ../common/blis_interface.cpp )
+@@ -136,7 +136,7 @@ if( BUILD_CLIENTS_BENCHMARKS OR BUILD_CL
    else() # WIN32
      set( BLAS_INCLUDE_DIR ${OPENBLAS_DIR}/include CACHE PATH "OpenBLAS library include path" )
      find_library( BLAS_LIBRARY libopenblas
@@ -65,9 +88,11 @@ diff -urp rocBLAS-rocm-5.5.1.orig/clients/CMakeLists.txt rocBLAS-rocm-5.5.1/clie
                    NO_DEFAULT_PATH
                  )
      if (NOT BLAS_LIBRARY)
-diff -urp rocBLAS-rocm-5.5.1.orig/CMakeLists.txt rocBLAS-rocm-5.5.1/CMakeLists.txt
---- rocBLAS-rocm-5.5.1.orig/CMakeLists.txt	2023-08-29 19:21:02.629366205 -0700
-+++ rocBLAS-rocm-5.5.1/CMakeLists.txt	2023-08-29 19:21:18.009366514 -0700
+Only in rocBLAS-rocm-5.7.0/clients: CMakeLists.txt.orig
+Only in rocBLAS-rocm-5.7.0/clients: CMakeLists.txt.rej
+diff -urp rocBLAS-rocm-5.7.0.orig/CMakeLists.txt rocBLAS-rocm-5.7.0/CMakeLists.txt
+--- rocBLAS-rocm-5.7.0.orig/CMakeLists.txt	2023-10-02 02:07:15.763584190 -0700
++++ rocBLAS-rocm-5.7.0/CMakeLists.txt	2023-10-02 02:07:43.059584747 -0700
 @@ -54,7 +54,7 @@ endif()
  # This finds the rocm-cmake project, and installs it if not found
  # rocm-cmake contains common cmake code for rocm projects to help setup and install
@@ -84,9 +109,9 @@ diff -urp rocBLAS-rocm-5.5.1.orig/CMakeLists.txt rocBLAS-rocm-5.5.1/CMakeLists.t
 -list( APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/llvm ${ROCM_PATH} ${ROCM_PATH}/hip /opt/rocm/llvm /opt/rocm /opt/rocm/hip )
 +list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ ${ROCM_PATH} ${ROCM_PATH}/hip @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip )
  
- 
  # gpu arch configuration
-@@ -148,7 +148,7 @@ endif()
+ set( AMDGPU_TARGETS "all" CACHE STRING "Compile for which gpu architectures?")
+@@ -157,7 +157,7 @@ endif()
  
  # Find HIP dependencies
  if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
@@ -95,7 +120,7 @@ diff -urp rocBLAS-rocm-5.5.1.orig/CMakeLists.txt rocBLAS-rocm-5.5.1/CMakeLists.t
  endif( )
  
  message(STATUS "Using AMDGPU_TARGETS: ${AMDGPU_TARGETS}")
-@@ -301,7 +301,7 @@ if(BUILD_CODE_COVERAGE)
+@@ -320,7 +320,7 @@ if(BUILD_CODE_COVERAGE)
      COMMAND mkdir -p lcoverage
      COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
      COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
@@ -104,10 +129,12 @@ diff -urp rocBLAS-rocm-5.5.1.orig/CMakeLists.txt rocBLAS-rocm-5.5.1/CMakeLists.t
      COMMAND chmod +x llvm-gcov.sh
      )
  
-diff -urp rocBLAS-rocm-5.5.1.orig/CONTRIBUTING.rst rocBLAS-rocm-5.5.1/CONTRIBUTING.rst
---- rocBLAS-rocm-5.5.1.orig/CONTRIBUTING.rst	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/CONTRIBUTING.rst	2023-08-29 19:21:18.009366514 -0700
-@@ -774,7 +774,7 @@ Format
+Only in rocBLAS-rocm-5.7.0: CMakeLists.txt.orig
+Only in rocBLAS-rocm-5.7.0: CMakeLists.txt.rej
+diff -urp rocBLAS-rocm-5.7.0.orig/CONTRIBUTING.rst rocBLAS-rocm-5.7.0/CONTRIBUTING.rst
+--- rocBLAS-rocm-5.7.0.orig/CONTRIBUTING.rst	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/CONTRIBUTING.rst	2023-10-02 02:07:43.063584747 -0700
+@@ -773,7 +773,7 @@ Format
  ------
  
  C and C++ code is formatted using ``clang-format``. To run clang-format
@@ -116,7 +143,7 @@ diff -urp rocBLAS-rocm-5.5.1.orig/CONTRIBUTING.rst rocBLAS-rocm-5.5.1/CONTRIBUTI
  system's built-in ``clang-format``, as this may be an older version that
  will result in different results.
  
-@@ -782,14 +782,14 @@ To format a file, use:
+@@ -781,14 +781,14 @@ To format a file, use:
  
  ::
  
@@ -133,9 +160,10 @@ diff -urp rocBLAS-rocm-5.5.1.orig/CONTRIBUTING.rst rocBLAS-rocm-5.5.1/CONTRIBUTI
  
  Also, githooks can be installed to format the code per-commit:
  
-diff -urp rocBLAS-rocm-5.5.1.orig/deps/external-gtest.cmake rocBLAS-rocm-5.5.1/deps/external-gtest.cmake
---- rocBLAS-rocm-5.5.1.orig/deps/external-gtest.cmake	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/deps/external-gtest.cmake	2023-08-29 19:21:18.009366514 -0700
+Only in rocBLAS-rocm-5.7.0: CONTRIBUTING.rst.orig
+diff -urp rocBLAS-rocm-5.7.0.orig/deps/external-gtest.cmake rocBLAS-rocm-5.7.0/deps/external-gtest.cmake
+--- rocBLAS-rocm-5.7.0.orig/deps/external-gtest.cmake	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/deps/external-gtest.cmake	2023-10-02 02:07:43.079584747 -0700
 @@ -90,11 +90,7 @@ ExternalProject_Get_Property( googletest
  set( package_dir "${PREFIX_GTEST}" )
  if( CMAKE_CONFIGURATION_TYPES )
@@ -149,9 +177,9 @@ diff -urp rocBLAS-rocm-5.5.1.orig/deps/external-gtest.cmake rocBLAS-rocm-5.5.1/d
  
    set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
    ExternalProject_Add_Step( googletest createPackage
-diff -urp rocBLAS-rocm-5.5.1.orig/docs/source/Linux_Install_Guide.rst rocBLAS-rocm-5.5.1/docs/source/Linux_Install_Guide.rst
---- rocBLAS-rocm-5.5.1.orig/docs/source/Linux_Install_Guide.rst	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/docs/source/Linux_Install_Guide.rst	2023-08-29 19:21:18.009366514 -0700
+diff -urp rocBLAS-rocm-5.7.0.orig/docs/Linux_Install_Guide.rst rocBLAS-rocm-5.7.0/docs/Linux_Install_Guide.rst
+--- rocBLAS-rocm-5.7.0.orig/docs/Linux_Install_Guide.rst	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/docs/Linux_Install_Guide.rst	2023-10-02 02:07:43.083584747 -0700
 @@ -45,9 +45,9 @@ The rocblas.h header file must be includ
  into rocBLAS, and the rocBLAS shared library will become link-time and run-time
  dependent for the user application.
@@ -182,9 +210,9 @@ diff -urp rocBLAS-rocm-5.5.1.orig/docs/source/Linux_Install_Guide.rst rocBLAS-ro
  |                                     | not specified).          |
  +-------------------------------------+--------------------------+
  | ``./install.sh --clients-only``     | Build rocBLAS clients    |
-diff -urp rocBLAS-rocm-5.5.1.orig/header_compilation_tests.sh rocBLAS-rocm-5.5.1/header_compilation_tests.sh
---- rocBLAS-rocm-5.5.1.orig/header_compilation_tests.sh	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/header_compilation_tests.sh	2023-08-29 19:21:18.009366514 -0700
+diff -urp rocBLAS-rocm-5.7.0.orig/header_compilation_tests.sh rocBLAS-rocm-5.7.0/header_compilation_tests.sh
+--- rocBLAS-rocm-5.7.0.orig/header_compilation_tests.sh	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/header_compilation_tests.sh	2023-10-02 02:07:43.083584747 -0700
 @@ -39,7 +39,7 @@ out_uptodate()
      done
  }
@@ -203,19 +231,19 @@ diff -urp rocBLAS-rocm-5.5.1.orig/header_compilation_tests.sh rocBLAS-rocm-5.5.1
  CLANG_OPTS="-xc-header -std=c99"  # auto set in hip_common.h -D__HIP_PLATFORM_HCC__
  
  GCC=/usr/bin/gcc
-diff -urp rocBLAS-rocm-5.5.1.orig/install.sh rocBLAS-rocm-5.5.1/install.sh
---- rocBLAS-rocm-5.5.1.orig/install.sh	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/install.sh	2023-08-29 19:21:18.009366514 -0700
-@@ -173,7 +173,7 @@ install_packages( )
+diff -urp rocBLAS-rocm-5.7.0.orig/install.sh rocBLAS-rocm-5.7.0/install.sh
+--- rocBLAS-rocm-5.7.0.orig/install.sh	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/install.sh	2023-10-02 02:07:43.083584747 -0700
+@@ -174,7 +174,7 @@ install_packages( )
      library_dependencies_sles+=( "gcc-fortran" "libgomp1" )
  
      # wget is needed for blis
--    if [[ ! -e "${build_dir}/deps/blis/lib/libblis.a" ]]; then
-+    if [[ ! -e "${build_dir}/deps/blis/@LIBDIR@/libblis.a" ]]; then
+-    if [[ ! -e "${build_dir}/deps/blis/lib/libblis.a" ]] && [[ ! -e "/usr/local/lib/libblis.a" ]]; then
++    if [[ ! -e "${build_dir}/deps/blis/@LIBDIR@/libblis.a" ]] && [[ ! -e "@ESYSROOT@/usr/local/@LIBDIR@/libblis.a" ]]; then
        library_dependencies_ubuntu+=("wget")
        library_dependencies_centos_rhel+=("wget")
        library_dependencies_centos_8+=("wget")
-@@ -403,7 +403,7 @@ printf "\033[32mCreating project build d
+@@ -404,7 +404,7 @@ printf "\033[32mCreating project build d
  install_blis()
  {
      #Download prebuilt AMD multithreaded blis
@@ -224,7 +252,7 @@ diff -urp rocBLAS-rocm-5.5.1.orig/install.sh rocBLAS-rocm-5.5.1/install.sh
        case "${ID}" in
            centos|rhel|sles|opensuse-leap)
                wget -nv -O blis.tar.gz https://github.com/amd/blis/releases/download/2.0/aocl-blis-mt-centos-2.0.tar.gz
-@@ -421,7 +421,7 @@ install_blis()
+@@ -422,7 +422,7 @@ install_blis()
        rm -rf blis/amd-blis-mt
        mv amd-blis-mt blis
        rm blis.tar.gz
@@ -233,10 +261,19 @@ diff -urp rocBLAS-rocm-5.5.1.orig/install.sh rocBLAS-rocm-5.5.1/install.sh
        ln -sf libblis-mt.a libblis.a
      fi
  }
-diff -urp rocBLAS-rocm-5.5.1.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.5.1/library/src/tensile_host.cpp
---- rocBLAS-rocm-5.5.1.orig/library/src/tensile_host.cpp	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/library/src/tensile_host.cpp	2023-08-29 19:22:12.201367606 -0700
-@@ -66,7 +66,7 @@ extern "C" void rocblas_shutdown();
+@@ -482,7 +482,7 @@ if [[ "${install_dependencies}" == true
+     CXX=${cxx} CC=${cc} FC=${fc} ${cmake_executable} ${ROCBLAS_SRC_PATH}/deps
+     make build_deps
+     elevate_if_not_root make install_deps
+-    if [[ ! -e "${build_dir}/deps/blis/lib/libblis.a" ]] && [[ ! -e "/usr/local/lib/libblis.a" ]]; then
++    if [[ ! -e "${build_dir}/deps/blis/@LIBDIR@/libblis.a" ]] && [[ ! -e "@ESYSROOT@/usr/local/@LIBDIR@/libblis.a" ]]; then
+       install_blis
+     fi
+     popd
+diff -urp rocBLAS-rocm-5.7.0.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.7.0/library/src/tensile_host.cpp
+--- rocBLAS-rocm-5.7.0.orig/library/src/tensile_host.cpp	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/library/src/tensile_host.cpp	2023-10-02 02:09:16.051586642 -0700
+@@ -67,7 +67,7 @@ extern "C" void rocblas_shutdown();
  #include <libgen.h>
  #include <link.h>
  #include <unistd.h>
@@ -244,8 +281,8 @@ diff -urp rocBLAS-rocm-5.5.1.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.5.
 +#define ROCBLAS_LIB_PATH "@EPREFIX_ROCM_PATH@/@LIBDIR@"
  #endif
  
- #ifdef WIN32
-@@ -561,47 +561,10 @@ namespace
+ #if __has_include(<filesystem>)
+@@ -626,47 +626,10 @@ namespace
              }
              else
              {
@@ -283,7 +320,7 @@ diff -urp rocBLAS-rocm-5.5.1.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.5.
 -                // Find the location of the libraries
 -                if(TestPath(path + "/../../Tensile/library"))
 -                    path += "/../../Tensile/library";
--                else if(TestPath(path + "library"))
+-                else if(TestPath(path + "/library"))
 -                    path += "/library";
 -                else
 -                    path += "/rocblas/library";
@@ -294,10 +331,12 @@ diff -urp rocBLAS-rocm-5.5.1.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.5.
              }
  
  #ifdef TENSILE_YAML
-diff -urp rocBLAS-rocm-5.5.1.orig/rmake.py rocBLAS-rocm-5.5.1/rmake.py
---- rocBLAS-rocm-5.5.1.orig/rmake.py	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/rmake.py	2023-08-29 19:21:18.325366521 -0700
-@@ -105,7 +105,7 @@ def parse_args():
+Only in rocBLAS-rocm-5.7.0/library/src: tensile_host.cpp.orig
+Only in rocBLAS-rocm-5.7.0/library/src: tensile_host.cpp.rej
+diff -urp rocBLAS-rocm-5.7.0.orig/rmake.py rocBLAS-rocm-5.7.0/rmake.py
+--- rocBLAS-rocm-5.7.0.orig/rmake.py	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/rmake.py	2023-10-02 02:07:43.083584747 -0700
+@@ -111,7 +111,7 @@ def parse_args():
                          help='Disable on-demand loading of Tensile Library files. (Default is enabled)')
  
      parser.add_argument(     '--library-path', dest='library_dir_installed', type=str, required=False, default="",
@@ -306,7 +345,7 @@ diff -urp rocBLAS-rocm-5.5.1.orig/rmake.py rocBLAS-rocm-5.5.1/rmake.py
  
      parser.add_argument('-n', '--no_tensile', dest='build_tensile', required=False, default=True, action='store_false',
                          help='Build a subset of rocBLAS library which does not require Tensile.')
-@@ -238,7 +238,7 @@ def config_cmd():
+@@ -290,7 +290,7 @@ def config_cmd():
          cmake_platform_opts.append(f'-DCMAKE_INSTALL_PREFIX="C:/hipSDK"')
          toolchain = os.path.join(src_path, "toolchain-windows.cmake")
      else:
@@ -315,19 +354,21 @@ diff -urp rocBLAS-rocm-5.5.1.orig/rmake.py rocBLAS-rocm-5.5.1/rmake.py
          rocm_path = rocm_raw_path
          cmake_platform_opts.append(f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}")
          cmake_platform_opts.append(f'-DCMAKE_INSTALL_PREFIX="rocblas-install"')
-@@ -298,7 +298,7 @@ def config_cmd():
+@@ -350,8 +350,8 @@ def config_cmd():
          cmake_options.append(f"-DBUILD_SHARED_LIBS=OFF")
  
      if args.relocatable:
 -        rocm_rpath = os.getenv('ROCM_RPATH', "/opt/rocm/lib:/opt/rocm/lib64")
-+        rocm_rpath = os.getenv('ROCM_RPATH', "@EPREFIX_ROCM_PATH@/@LIBDIR@")
 -        cmake_options.append(f'-DCMAKE_SHARED_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,{rocm_rpath}"')
++        rocm_rpath = os.getenv('ROCM_RPATH', "@EPREFIX_ROCM_PATH@/@LIBDIR@")
 +        cmake_options.append(f'-DCMAKE_SHARED_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@"')
  
      if args.skip_ld_conf_entry or args.relocatable:
-diff -urp rocBLAS-rocm-5.5.1.orig/scripts/performance/blas/commandrunner.py rocBLAS-rocm-5.5.1/scripts/performance/blas/commandrunner.py
---- rocBLAS-rocm-5.5.1.orig/scripts/performance/blas/commandrunner.py	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/scripts/performance/blas/commandrunner.py	2023-08-29 19:21:18.325366521 -0700
+         cmake_options.append(f"-DROCM_DISABLE_LDCONFIG=ON")
+Only in rocBLAS-rocm-5.7.0: rmake.py.orig
+diff -urp rocBLAS-rocm-5.7.0.orig/scripts/performance/blas/commandrunner.py rocBLAS-rocm-5.7.0/scripts/performance/blas/commandrunner.py
+--- rocBLAS-rocm-5.7.0.orig/scripts/performance/blas/commandrunner.py	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/scripts/performance/blas/commandrunner.py	2023-10-02 02:07:43.083584747 -0700
 @@ -125,7 +125,7 @@ def import_rocm_smi(install_path):
              import rocm_smi
              smi = rocm_smi
@@ -346,9 +387,9 @@ diff -urp rocBLAS-rocm-5.5.1.orig/scripts/performance/blas/commandrunner.py rocB
  
      parser.add_argument('--surface-plot', default=False, action='store_true', help='Adds a surface plot instead of a normal plot.')
  
-diff -urp rocBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py rocBLAS-rocm-5.5.1/scripts/performance/blas/getspecs.py
---- rocBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/scripts/performance/blas/getspecs.py	2023-08-29 19:21:18.329366521 -0700
+diff -urp rocBLAS-rocm-5.7.0.orig/scripts/performance/blas/getspecs.py rocBLAS-rocm-5.7.0/scripts/performance/blas/getspecs.py
+--- rocBLAS-rocm-5.7.0.orig/scripts/performance/blas/getspecs.py	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/scripts/performance/blas/getspecs.py	2023-10-02 02:07:43.083584747 -0700
 @@ -45,13 +45,13 @@ def get_smi_exec(cuda):
      if cuda:
          return "nvidia-smi"
@@ -365,6 +406,21 @@ diff -urp rocBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py rocBLAS-r
          success, cout = _subprocess_helper(cmd)
          if not success:
              return "N/A"
+@@ -113,10 +113,10 @@ def getdistro():
+ 
+ # Get the version number for rocm
+ def getrocmversion():
+-    if os.path.isfile("/opt/rocm/.info/version-utils"):
+-        rocm_info = path("/opt/rocm/.info/version-utils").read_text()
+-    elif os.path.isfile("/opt/rocm/.info/version"):
+-        rocm_info = path("/opt/rocm/.info/version").read_text()
++    if os.path.isfile("@EPREFIX_ROCM_PATH@/.info/version-utils"):
++        rocm_info = path("@EPREFIX_ROCM_PATH@/.info/version-utils").read_text()
++    elif os.path.isfile("@EPREFIX_ROCM_PATH@/.info/version"):
++        rocm_info = path("@EPREFIX_ROCM_PATH@/.info/version").read_text()
+     else:
+         return "N/A"
+ 
 @@ -410,7 +410,7 @@ def validmemtypes(cuda, smi=None):
      if cuda:
          return ["vram"]
@@ -390,9 +446,9 @@ diff -urp rocBLAS-rocm-5.5.1.orig/scripts/performance/blas/getspecs.py rocBLAS-r
          return [0]
  
  def getversion(devicenum, component, cuda, smi=None):
-diff -urp rocBLAS-rocm-5.5.1.orig/scripts/utilities/check_for_pretuned_sizes_c/Makefile rocBLAS-rocm-5.5.1/scripts/utilities/check_for_pretuned_sizes_c/Makefile
---- rocBLAS-rocm-5.5.1.orig/scripts/utilities/check_for_pretuned_sizes_c/Makefile	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/scripts/utilities/check_for_pretuned_sizes_c/Makefile	2023-08-29 19:21:18.329366521 -0700
+diff -urp rocBLAS-rocm-5.7.0.orig/scripts/utilities/check_for_pretuned_sizes_c/Makefile rocBLAS-rocm-5.7.0/scripts/utilities/check_for_pretuned_sizes_c/Makefile
+--- rocBLAS-rocm-5.7.0.orig/scripts/utilities/check_for_pretuned_sizes_c/Makefile	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/scripts/utilities/check_for_pretuned_sizes_c/Makefile	2023-10-02 02:07:43.083584747 -0700
 @@ -1,9 +1,9 @@
 -# Makefile assumes rocBLAS is installed in /opt/rocm/rocblas
 +# Makefile assumes rocBLAS is installed in @EPREFIX_ROCM_PATH@/rocblas
@@ -406,9 +462,9 @@ diff -urp rocBLAS-rocm-5.5.1.orig/scripts/utilities/check_for_pretuned_sizes_c/M
  HIP_INCLUDE=$(ROCM_INSTALL_DIR)/include
  LDFLAGS=-L$(ROCBLAS_LIB_PATH) -lrocblas
  LD=$(ROCM_INSTALL_DIR)/bin/hipcc
-diff -urp rocBLAS-rocm-5.5.1.orig/toolchain-linux.cmake rocBLAS-rocm-5.5.1/toolchain-linux.cmake
---- rocBLAS-rocm-5.5.1.orig/toolchain-linux.cmake	2023-03-28 07:57:37.000000000 -0700
-+++ rocBLAS-rocm-5.5.1/toolchain-linux.cmake	2023-08-29 19:21:18.441366523 -0700
+diff -urp rocBLAS-rocm-5.7.0.orig/toolchain-linux.cmake rocBLAS-rocm-5.7.0/toolchain-linux.cmake
+--- rocBLAS-rocm-5.7.0.orig/toolchain-linux.cmake	2023-09-08 08:06:24.000000000 -0700
++++ rocBLAS-rocm-5.7.0/toolchain-linux.cmake	2023-10-02 02:07:43.083584747 -0700
 @@ -6,7 +6,7 @@ endif()
  if (DEFINED ENV{ROCM_PATH})
    set(rocm_bin "$ENV{ROCM_PATH}/bin")

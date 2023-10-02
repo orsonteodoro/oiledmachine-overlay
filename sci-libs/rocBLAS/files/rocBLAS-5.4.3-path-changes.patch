@@ -326,7 +326,7 @@ diff -urp rocBLAS-rocm-5.4.3.orig/library/src/tensile_host.cpp rocBLAS-rocm-5.4.
 -
 -                if(TestPath(path + "/" + processor))
 -                    path += "/" + processor;
-+		path="@EPREFIX@/usr/@LIBDIR@/rocblas/library";
++		path="@EPREFIX_ROCM_PATH@/@LIBDIR@/rocblas/library";
              }
  
  #ifdef TENSILE_YAML
