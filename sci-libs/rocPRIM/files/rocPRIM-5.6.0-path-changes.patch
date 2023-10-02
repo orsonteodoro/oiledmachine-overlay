@@ -146,7 +146,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/test/extra/CMakeLists.txt rocPRIM-rocm-5.6.0/t
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
 -  ${HIP_PATH}/lib/cmake/hip ${HIP_PATH}/cmake /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake @EPREFIX_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Use target ID syntax if supported for AMDGPU_TARGETS
@@ -155,7 +155,7 @@ diff -urp rocPRIM-rocm-5.6.0.orig/test/extra/CMakeLists.txt rocPRIM-rocm-5.6.0/t
  
  # Find rocPRIM
 -find_package(rocprim REQUIRED CONFIG PATHS "/opt/rocm/rocprim")
-+find_package(rocprim REQUIRED CONFIG PATHS "@ESYSROOT_ROCM_PATH@/rocprim")
++find_package(rocprim REQUIRED CONFIG PATHS "@EPREFIX_ROCM_PATH@/rocprim")
  
  # Build CXX flags
  set(CMAKE_CXX_STANDARD 14)

@@ -1,6 +1,6 @@
 diff -urp rocPRIM-rocm-5.2.3.orig/cmake/Dependencies.cmake rocPRIM-rocm-5.2.3/cmake/Dependencies.cmake
---- rocPRIM-rocm-5.2.3.orig/cmake/Dependencies.cmake	2023-09-30 20:51:49.161204734 -0700
-+++ rocPRIM-rocm-5.2.3/cmake/Dependencies.cmake	2023-09-30 20:52:04.145205115 -0700
+--- rocPRIM-rocm-5.2.3.orig/cmake/Dependencies.cmake	2023-10-02 10:08:38.072173026 -0700
++++ rocPRIM-rocm-5.2.3/cmake/Dependencies.cmake	2023-10-02 10:08:54.744173365 -0700
 @@ -106,13 +106,13 @@ endif()
  
  set(PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern)
@@ -20,8 +20,8 @@ diff -urp rocPRIM-rocm-5.2.3.orig/cmake/Dependencies.cmake rocPRIM-rocm-5.2.3/cm
    set(rocm_cmake_url "https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip")
 Only in rocPRIM-rocm-5.2.3/cmake: Dependencies.cmake.orig
 diff -urp rocPRIM-rocm-5.2.3.orig/cmake/VerifyCompiler.cmake rocPRIM-rocm-5.2.3/cmake/VerifyCompiler.cmake
---- rocPRIM-rocm-5.2.3.orig/cmake/VerifyCompiler.cmake	2023-09-30 20:51:49.153204734 -0700
-+++ rocPRIM-rocm-5.2.3/cmake/VerifyCompiler.cmake	2023-09-30 20:52:04.145205115 -0700
+--- rocPRIM-rocm-5.2.3.orig/cmake/VerifyCompiler.cmake	2023-10-02 10:08:38.068173025 -0700
++++ rocPRIM-rocm-5.2.3/cmake/VerifyCompiler.cmake	2023-10-02 10:08:54.744173365 -0700
 @@ -21,8 +21,8 @@
  # SOFTWARE.
  
@@ -35,7 +35,7 @@ diff -urp rocPRIM-rocm-5.2.3.orig/cmake/VerifyCompiler.cmake rocPRIM-rocm-5.2.3/
      if(NOT (HIP_CXX_COMPILER MATCHES ".*hipcc" OR HIP_CXX_COMPILER MATCHES ".*clang\\+\\+"))
 diff -urp rocPRIM-rocm-5.2.3.orig/CMakeLists.txt rocPRIM-rocm-5.2.3/CMakeLists.txt
 --- rocPRIM-rocm-5.2.3.orig/CMakeLists.txt	2022-05-26 08:32:32.000000000 -0700
-+++ rocPRIM-rocm-5.2.3/CMakeLists.txt	2023-09-30 20:53:12.573206856 -0700
++++ rocPRIM-rocm-5.2.3/CMakeLists.txt	2023-10-02 10:09:49.432174480 -0700
 @@ -24,10 +24,10 @@ cmake_minimum_required(VERSION 3.16 FATA
  cmake_policy(VERSION 3.16...3.21)
  
@@ -82,7 +82,7 @@ Only in rocPRIM-rocm-5.2.3: CMakeLists.txt.orig
 Only in rocPRIM-rocm-5.2.3: CMakeLists.txt.rej
 diff -urp rocPRIM-rocm-5.2.3.orig/install rocPRIM-rocm-5.2.3/install
 --- rocPRIM-rocm-5.2.3.orig/install	2022-05-26 08:32:32.000000000 -0700
-+++ rocPRIM-rocm-5.2.3/install	2023-09-30 20:52:04.145205115 -0700
++++ rocPRIM-rocm-5.2.3/install	2023-10-02 10:08:54.748173365 -0700
 @@ -38,7 +38,7 @@ build_type=Release
  build_hip_clang=false
  run_tests=false
@@ -107,7 +107,7 @@ diff -urp rocPRIM-rocm-5.2.3.orig/install rocPRIM-rocm-5.2.3/install
         -DBUILD_TEST=${clients} -DCMAKE_BUILD_TYPE=${build_type} -DBUILD_CODE_COVERAGE=${codecoverage}  ../../. # or cmake-gui ../.
 diff -urp rocPRIM-rocm-5.2.3.orig/README.md rocPRIM-rocm-5.2.3/README.md
 --- rocPRIM-rocm-5.2.3.orig/README.md	2022-05-26 08:32:32.000000000 -0700
-+++ rocPRIM-rocm-5.2.3/README.md	2023-09-30 20:52:04.145205115 -0700
++++ rocPRIM-rocm-5.2.3/README.md	2023-10-02 10:08:54.748173365 -0700
 @@ -93,8 +93,8 @@ Recommended way of including rocPRIM int
  configuration files. rocPRIM package name is `rocprim`.
  
@@ -121,7 +121,7 @@ diff -urp rocPRIM-rocm-5.2.3.orig/README.md rocPRIM-rocm-5.2.3/README.md
  
 diff -urp rocPRIM-rocm-5.2.3.orig/rmake.py rocPRIM-rocm-5.2.3/rmake.py
 --- rocPRIM-rocm-5.2.3.orig/rmake.py	2022-05-26 08:32:32.000000000 -0700
-+++ rocPRIM-rocm-5.2.3/rmake.py	2023-09-30 20:52:04.145205115 -0700
++++ rocPRIM-rocm-5.2.3/rmake.py	2023-10-02 10:08:54.748173365 -0700
 @@ -97,7 +97,7 @@ def config_cmd():
          # "-G \"Visual Studio 16 2019\" -A x64"  #  -G NMake ")  #
          cmake_options.append( generator )
@@ -143,13 +143,13 @@ diff -urp rocPRIM-rocm-5.2.3.orig/rmake.py rocPRIM-rocm-5.2.3/rmake.py
 Only in rocPRIM-rocm-5.2.3: rmake.py.orig
 diff -urp rocPRIM-rocm-5.2.3.orig/test/extra/CMakeLists.txt rocPRIM-rocm-5.2.3/test/extra/CMakeLists.txt
 --- rocPRIM-rocm-5.2.3.orig/test/extra/CMakeLists.txt	2022-05-26 08:32:32.000000000 -0700
-+++ rocPRIM-rocm-5.2.3/test/extra/CMakeLists.txt	2023-09-30 20:53:43.549207643 -0700
++++ rocPRIM-rocm-5.2.3/test/extra/CMakeLists.txt	2023-10-02 10:20:42.616187797 -0700
 @@ -29,7 +29,7 @@ project(rocprim_package_install_test CXX
  # CMake modules
  list(APPEND CMAKE_MODULE_PATH
    ${CMAKE_CURRENT_SOURCE_DIR}/../../cmake
 -  ${HIP_PATH}/lib/cmake/hip ${HIP_PATH}/cmake /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake # FindHIP.cmake
-+  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
++  ${HIP_PATH}/@LIBDIR@/cmake/hip ${HIP_PATH}/@LIBDIR@/cmake @EPREFIX_ROCM_PATH@/@LIBDIR@/cmake/hip # FindHIP.cmake
  )
  
  # Use target ID syntax if supported for AMDGPU_TARGETS
@@ -166,7 +166,7 @@ Only in rocPRIM-rocm-5.2.3/test/extra: CMakeLists.txt.orig
 Only in rocPRIM-rocm-5.2.3/test/extra: CMakeLists.txt.rej
 diff -urp rocPRIM-rocm-5.2.3.orig/toolchain-linux.cmake rocPRIM-rocm-5.2.3/toolchain-linux.cmake
 --- rocPRIM-rocm-5.2.3.orig/toolchain-linux.cmake	2022-05-26 08:32:32.000000000 -0700
-+++ rocPRIM-rocm-5.2.3/toolchain-linux.cmake	2023-09-30 20:54:19.853208567 -0700
++++ rocPRIM-rocm-5.2.3/toolchain-linux.cmake	2023-10-02 10:21:38.760188942 -0700
 @@ -6,7 +6,7 @@
  if (DEFINED ENV{ROCM_PATH})
    set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")

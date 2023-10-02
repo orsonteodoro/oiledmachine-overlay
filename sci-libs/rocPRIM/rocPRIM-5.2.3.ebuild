@@ -74,7 +74,7 @@ RESTRICT="
 "
 S="${WORKDIR}/rocPRIM-rocm-${PV}"
 PATCHES=(
-	"A${FILESDIR}/rocPRIM-5.4.3-path-changes.patch"
+	"${FILESDIR}/rocPRIM-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {
