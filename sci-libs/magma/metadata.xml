@@ -43,4 +43,33 @@
       [TBB avoids oversubscription across processes.]
     </flag>
   </use>
+  <slots>
+    <slot name="0">
+      Build kernels for CPU and/or CUDA
+    </slot>
+    <slot name="5.1">
+      Build kernels for ROCm 5.1 and optionally CPU
+    </slot>
+    <slot name="5.2">
+      Build kernels for ROCm 5.2 and optionally	CPU
+    </slot>
+    <slot name="5.3">
+      Build kernels for ROCm 5.3 and optionally	CPU
+    </slot>
+    <slot name="5.4">
+      Build kernels for ROCm 5.4 and optionally	CPU
+    </slot>
+    <slot name="5.5">
+      Build kernels for ROCm 5.5 and optionally	CPU
+    </slot>
+    <slot name="5.6">
+      Build kernels for ROCm 5.6 and optionally	CPU
+    </slot>
+    <slot name="5.7">
+      Build kernels for ROCm 5.7 and optionally	CPU
+    </slot>
+    <subslots>
+      Bumps for GPU kernel rebuild
+    </subslots>
+  </slots>
 </pkgmetadata>

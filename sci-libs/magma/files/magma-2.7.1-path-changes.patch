@@ -6,7 +6,7 @@ diff -urp magma-2.7.2.orig/CMakeLists.txt magma-2.7.2/CMakeLists.txt
  if (MAGMA_ENABLE_HIP)
    set( GPU_TARGET "gfx900" CACHE STRING "HIP architectures to compile for" )
 -  list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/hip)
-+  list(APPEND CMAKE_PREFIX_PATH /usr /usr)
++  list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip)
    find_package( HIP )
    if (HIP_FOUND)
      message( STATUS "Found HIP ${HIP_VERSION}" )
@@ -305,14 +305,14 @@ diff -urp magma-2.7.2.orig/make.check-hip magma-2.7.2/make.check-hip
      hip := $(shell which hipcc | perl -pe 's|/bin/hipcc||')
      ifeq ($(hip),)
 -        hip := /opt/rocm/hip
-+        hip := /usr
++        hip := @ESYSROOT_ROCM_PATH@
      endif
      $(error Set $$HIPDIR, preferably in your environment, e.g., run "export HIPDIR=$(hip)" in ~/.bashrc, or "setenv HIPDIR $(hip)" in ~/.cshrc)
  endif
  
  ifeq ($(wildcard $(HIPDIR)),)
 -$(error $$HIPDIR=$(HIPDIR) does not exist. Please set $$HIPDIR to where HIP is installed. (normally in /opt/rocm/hip))
-+$(error $$HIPDIR=$(HIPDIR) does not exist. Please set $$HIPDIR to where HIP is installed. (normally in /usr))
++$(error $$HIPDIR=$(HIPDIR) does not exist. Please set $$HIPDIR to where HIP is installed. (normally in @ESYSROOT_ROCM_PATH@))
  endif
  
  # don't compile HIP platfo
@@ -338,7 +338,7 @@ diff -urp magma-2.7.2.orig/Makefile magma-2.7.2/Makefile
 -CUDADIR     ?= /usr/local/cuda
 -HIPDIR      ?= /opt/rocm/hip
 +CUDADIR     ?= /opt/cuda
-+HIPDIR      ?= /usr
++HIPDIR      ?= @ESYSROOT_ROCM_PATH@
  
  # require either hip or cuda
  ifeq (,$(findstring $(BACKEND),"hip cuda"))
@@ -471,7 +471,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-mkl magma-2.7.2/ma
  # set these to their real paths
 -HIPDIR  ?= /opt/rocm/hip
 -CUDADIR ?= /usr/local/cuda
-+HIPDIR  ?= /usr
++HIPDIR  ?= @ESYSROOT_ROCM_PATH@
 +CUDADIR ?= /opt/cuda
  
  # require either hip or cuda
@@ -521,7 +521,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.hip-gcc-openblas magma-2.7
 -HIPDIR      ?= /opt/rocm/hip
 -CUDADIR     ?= /usr/local/cuda
 +OPENBLASDIR ?= /usr
-+HIPDIR      ?= /usr
++HIPDIR      ?= @ESYSROOT_ROCM_PATH@
 +CUDADIR     ?= /opt/cuda
  
  # require either hip or cuda
@@ -803,7 +803,7 @@ diff -urp magma-2.7.2.orig/make.inc-examples/make.inc.openblas magma-2.7.2/make.
 -HIPDIR      ?= /opt/rocm/hip
 +OPENBLASDIR ?= /usr
 +CUDADIR     ?= /opt/cuda
-+HIPDIR      ?= /usr
++HIPDIR      ?= @ESYSROOT_ROCM_PATH@
  
  # require either hip or cuda
  ifeq (,$(findstring $(BACKEND),hip cuda))

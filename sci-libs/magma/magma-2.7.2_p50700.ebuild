@@ -3,8 +3,15 @@
 
 EAPI=8
 
-MAGMA_CUDA=1
 LLVM_MAX_SLOT=17
-SLOT="0/${PV}"
+MAGMA_ROCM=1
+ROCM_SLOT="5.7"
+ROCM_SLOTS=(
+	"5.7.0"
+)
+declare -A ROCM_PV_TO_LLVM_MAX_SLOT=(
+	["5.7.0"]="17"
+)
+SLOT="${ROCM_SLOT}/${PV}"
 
 inherit icl-magma-v2_7
