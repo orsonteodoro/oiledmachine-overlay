@@ -122,6 +122,9 @@ gen_rocm_depends() {
 				~sci-libs/rocRAND-${pv}:${s}[rocm]
 				~sci-libs/rocPRIM-${pv}:${s}[rocm]
 				~sci-libs/rocThrust-${pv}:${s}
+				magma? (
+					sci-libs/magma:${s}
+				)
 			)
 		"
 	done
@@ -186,6 +189,10 @@ RDEPEND="
 	)
 	magma? (
 		sci-libs/magma[cuda?,rocm?]
+		sci-libs/magma:=
+		cuda? (
+			sci-libs/magma:0
+		)
 	)
 	mpi? (
 		sys-cluster/openmpi
