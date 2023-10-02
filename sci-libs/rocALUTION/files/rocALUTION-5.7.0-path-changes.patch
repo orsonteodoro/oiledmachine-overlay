@@ -1,0 +1,195 @@
+diff -urp rocALUTION-rocm-5.7.0.orig/CMakeLists.txt rocALUTION-rocm-5.7.0/CMakeLists.txt
+--- rocALUTION-rocm-5.7.0.orig/CMakeLists.txt	2023-07-10 08:34:31.000000000 -0700
++++ rocALUTION-rocm-5.7.0/CMakeLists.txt	2023-10-02 02:30:48.923613001 -0700
+@@ -32,12 +32,12 @@ else()
+ endif()
+ 
+ # Needed to pickup static library files
+-list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH}/llvm ${ROCM_PATH})
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ ${ROCM_PATH})
+ 
+ # CMake modules
+ list(APPEND CMAKE_MODULE_PATH
+      ${CMAKE_CURRENT_SOURCE_DIR}/cmake
+-     ${ROCM_PATH}/lib/cmake/hip
++     ${ROCM_PATH}/@LIBDIR@/cmake/hip
+      ${ROCM_PATH}/hip/cmake)
+ 
+ # Set a default build type if none was specified
+@@ -204,7 +204,7 @@ if(BUILD_CODE_COVERAGE)
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+     )
+ 
+diff -urp rocALUTION-rocm-5.7.0.orig/deps/external-gtest.cmake rocALUTION-rocm-5.7.0/deps/external-gtest.cmake
+--- rocALUTION-rocm-5.7.0.orig/deps/external-gtest.cmake	2023-07-10 08:34:31.000000000 -0700
++++ rocALUTION-rocm-5.7.0/deps/external-gtest.cmake	2023-10-02 02:30:48.923613001 -0700
+@@ -91,11 +91,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
+diff -urp rocALUTION-rocm-5.7.0.orig/docs/usermanual/install.rst rocALUTION-rocm-5.7.0/docs/usermanual/install.rst
+--- rocALUTION-rocm-5.7.0.orig/docs/usermanual/install.rst	2023-07-10 08:34:31.000000000 -0700
++++ rocALUTION-rocm-5.7.0/docs/usermanual/install.rst	2023-10-02 02:32:50.951615489 -0700
+@@ -60,7 +60,7 @@ Command                    Description
+ `./install.sh -h`          Print help information.
+ `./install.sh -d`          Build dependencies and library in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
+ `./install.sh`             Build library in your local directory. It is assumed dependencies are available.
+-`./install.sh -i`          Build library, then build and install rocALUTION package in `/opt/rocm/rocalution`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -i`          Build library, then build and install rocALUTION package in `@EPREFIX_ROCM_PATH@/rocalution`. You will be prompted for sudo access. This will install for all users.
+ `./install.sh --host`      Build library in your local directory without HIP support. It is assumed dependencies are available.
+ `./install.sh --mpi=<dir>` Build library in your local directory with HIP and MPI support. It is assumed dependencies are available.
+ ========================== ====
+@@ -78,7 +78,7 @@ Command             Description
+ `./install.sh -h`   Print help information.
+ `./install.sh -dc`  Build dependencies, library and client in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
+ `./install.sh -c`   Build library and client in your local directory. It is assumed dependencies are available.
+-`./install.sh -idc` Build library, dependencies and client, then build and install rocALUTION package in `/opt/rocm/rocalution`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -idc` Build library, dependencies and client, then build and install rocALUTION package in `@EPREFIX_ROCM_PATH@/rocalution`. You will be prompted for sudo access. This will install for all users.
+ `./install.sh -ic`  Build library and client, then build and install rocALUTION package in `opt/rocm/rocalution`. You will be prompted for sudo access. This will install for all users.
+ =================== ====
+ 
+@@ -93,7 +93,7 @@ rocALUTION can be built with cmake using
+   # Create and change to build directory
+   mkdir -p build/release ; cd build/release
+ 
+-  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path>
++  # Default install path is @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path>
+   # to adjust it. In this case, rocALUTION is built with HIP and
+   # OpenMP support.
+   # MPI support is disabled.
+@@ -104,7 +104,7 @@ rocALUTION can be built with cmake using
+   # Compile rocALUTION library
+   make -j$(nproc)
+ 
+-  # Install rocALUTION to /opt/rocm
++  # Install rocALUTION to @EPREFIX_ROCM_PATH@
+   sudo make install
+ 
+ `GoogleTest <https://github.com/google/googletest>`_ is required in order to build all rocALUTION clients.
+@@ -121,7 +121,7 @@ rocALUTION with dependencies and clients
+   # Change to build directory
+   cd ..
+ 
+-  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path>
++  # Default install path is @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path>
+   # to adjust it. By default, HIP and OpenMP support are enabled,
+   # MPI support is disabled.
+   cmake ../.. -DBUILD_CLIENTS_TESTS=ON \
+@@ -130,7 +130,7 @@ rocALUTION with dependencies and clients
+   # Compile rocALUTION library
+   make -j$(nproc)
+ 
+-  # Install rocALUTION to /opt/rocm
++  # Install rocALUTION to @EPREFIX_ROCM_PATH@
+   sudo make install
+ 
+ The compilation process produces a shared library file `librocalution.so` and `librocalution_hip.so` if HIP support is enabled.
+diff -urp rocALUTION-rocm-5.7.0.orig/install.sh rocALUTION-rocm-5.7.0/install.sh
+--- rocALUTION-rocm-5.7.0.orig/install.sh	2023-07-10 08:34:31.000000000 -0700
++++ rocALUTION-rocm-5.7.0/install.sh	2023-10-02 02:30:48.923613001 -0700
+@@ -269,7 +269,7 @@ build_omp=true
+ build_release=true
+ build_dir=./build
+ install_prefix=rocalution-install
+-rocm_path=/opt/rocm
++rocm_path=@ESYSROOT_ROCM_PATH@
+ build_relocatable=false
+ build_static=false
+ build_address_sanitizer=false
+@@ -384,7 +384,7 @@ if [[ "${build_relocatable}" == true ]];
+         rocm_path=${ROCM_PATH}
+     fi
+ 
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+@@ -421,7 +421,7 @@ fi
+ if [[ "${build_relocatable}" == true ]]; then
+     export PATH=${rocm_path}/bin:${PATH}
+ else
+-    export PATH=${PATH}:/opt/rocm/bin
++    export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
+ fi
+ 
+ pushd .
+@@ -517,7 +517,7 @@ pushd .
+   if [[ "${build_relocatable}" == true ]]; then
+     cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path}"
+   else
+-    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=/opt/rocm"
++    cmake_common_options="${cmake_common_options} -DCPACK_SET_DESTDIR=OFF -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@"
+   fi
+ 
+   # Build library with AMD toolchain because of existense of device kernels
+@@ -526,8 +526,8 @@ pushd .
+       -DCMAKE_INSTALL_PREFIX="${install_prefix}" \
+       -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
+       -DCMAKE_PREFIX_PATH="${rocm_path} ${rocm_path}/hcc ${rocm_path}/hip" \
+-      -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
+-      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,${rocm_path}/lib:${rocm_path}/lib64" \
++      -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip" \
++      -DCMAKE_EXE_LINKER_FLAGS=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@" \
+       -DROCM_DISABLE_LDCONFIG=ON \
+       -DROCM_PATH="${rocm_path}" ../..
+   else
+diff -urp rocALUTION-rocm-5.7.0.orig/README.md rocALUTION-rocm-5.7.0/README.md
+--- rocALUTION-rocm-5.7.0.orig/README.md	2023-07-10 08:34:31.000000000 -0700
++++ rocALUTION-rocm-5.7.0/README.md	2023-10-02 02:33:00.603615685 -0700
+@@ -34,7 +34,7 @@ cd rocALUTION; mkdir build; cd build
+ #   SUPPORT_MPI         - build rocALUTION with MPI (multi-node) support (OFF)
+ #   BUILD_SHARED_LIBS   - build rocALUTION as shared library (ON, recommended)
+ #   BUILD_EXAMPLES      - build rocALUTION examples (ON)
+-cmake .. -DSUPPORT_HIP=ON -DROCM_PATH=/opt/rocm/
++cmake .. -DSUPPORT_HIP=ON -DROCM_PATH=@EPREFIX_ROCM_PATH@/
+ 
+ # Build
+ make
+diff -urp rocALUTION-rocm-5.7.0.orig/rmake.py rocALUTION-rocm-5.7.0/rmake.py
+--- rocALUTION-rocm-5.7.0.orig/rmake.py	2023-07-10 08:34:31.000000000 -0700
++++ rocALUTION-rocm-5.7.0/rmake.py	2023-10-02 02:32:19.159614840 -0700
+@@ -86,7 +86,7 @@ def parse_args():
+     parser.add_argument(     '--clients-only', dest='clients_only', required=False, default = False, action='store_true',
+                         help='Build only clients with a pre-built library')
+     parser.add_argument(     '--rocprim_dir', dest='rocprim_dir', type=str, required=False, default = "",
+-                             help='Specify path to an existing rocPRIM install directory (optional, default: /opt/rocm/rocprim)')
++                             help='Specify path to an existing rocPRIM install directory (optional, default: @EPREFIX_ROCM_PATH@/rocprim)')
+     return parser.parse_args()
+ 
+ def os_detect():
+@@ -146,7 +146,7 @@ def config_cmd():
+         cmake_options.append( generator )
+         toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "@EPREFIX_ROCM_PATH@")
+         cmake_executable = "cmake"
+         cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
+         cmake_platform_opts.append( f"-DCMAKE_INSTALL_PREFIX=\"rocalution-install\"" )
+diff -urp rocALUTION-rocm-5.7.0.orig/toolchain-linux.cmake rocALUTION-rocm-5.7.0/toolchain-linux.cmake
+--- rocALUTION-rocm-5.7.0.orig/toolchain-linux.cmake	2023-07-10 08:34:31.000000000 -0700
++++ rocALUTION-rocm-5.7.0/toolchain-linux.cmake	2023-10-02 02:30:48.923613001 -0700
+@@ -2,7 +2,7 @@
+ if (DEFINED ENV{ROCM_PATH})
+   set(rocm_bin "$ENV{ROCM_PATH}/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
+ endif()
+ 
+ set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")
