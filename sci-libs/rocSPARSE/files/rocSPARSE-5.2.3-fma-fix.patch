@@ -1,0 +1,14 @@
+# Partial backport of fixing fma ambiguities (#516)
+https://github.com/ROCmSoftwarePlatform/rocSPARSE/commit/0be37a2288c3692e7165221326d257e54f50e8c9
+diff -urp rocSPARSE-rocm-5.2.3.orig/library/include/rocsparse-complex-types.h rocSPARSE-rocm-5.2.3/library/include/rocsparse-complex-types.h
+--- rocSPARSE-rocm-5.2.3.orig/library/include/rocsparse-complex-types.h	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/library/include/rocsparse-complex-types.h	2023-10-02 10:43:10.632215280 -0700
+@@ -201,7 +201,7 @@ private:
+ 
+     static __forceinline__ __device__ __host__ float fma(float p, float q, float r)
+     {
+-        return ::fma(p, q, r);
++        return ::fmaf(p, q, r);
+     }
+ 
+     static __forceinline__ __device__ __host__ double fma(double p, double q, double r)

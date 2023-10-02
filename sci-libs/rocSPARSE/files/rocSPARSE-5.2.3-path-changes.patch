@@ -1,0 +1,348 @@
+diff -urp rocSPARSE-rocm-5.2.3.orig/clients/benchmarks/CMakeLists.txt rocSPARSE-rocm-5.2.3/clients/benchmarks/CMakeLists.txt
+--- rocSPARSE-rocm-5.2.3.orig/clients/benchmarks/CMakeLists.txt	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/clients/benchmarks/CMakeLists.txt	2023-10-02 10:44:51.788217342 -0700
+@@ -169,7 +169,7 @@ endif()
+ # Add OpenMP if available
+ if(OPENMP_FOUND)
+ if (NOT WIN32)
+-   target_link_libraries(rocsparse-bench PRIVATE OpenMP::OpenMP_CXX -Wl,-rpath=${HIP_CLANG_ROOT}/lib)
++   target_link_libraries(rocsparse-bench PRIVATE OpenMP::OpenMP_CXX -Wl,-rpath=@EPREFIX_LLVM_PATH@/@LIBDIR@)
+   else()
+    target_link_libraries(rocsparse-bench PRIVATE libomp)
+   endif()
+Only in rocSPARSE-rocm-5.2.3/clients/benchmarks: CMakeLists.txt.orig
+diff -urp rocSPARSE-rocm-5.2.3.orig/clients/CMakeLists.txt rocSPARSE-rocm-5.2.3/clients/CMakeLists.txt
+--- rocSPARSE-rocm-5.2.3.orig/clients/CMakeLists.txt	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/clients/CMakeLists.txt	2023-10-02 10:44:51.788217342 -0700
+@@ -29,7 +29,7 @@ cmake_minimum_required(VERSION 3.5 FATAL
+ if(WIN32)
+   set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
+ else()
+-  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
++  set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
+ endif()
+ 
+ # This has to be initialized before the project() command appears
+@@ -55,7 +55,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CU
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+ 
+ if(NOT TARGET rocsparse)
+-  find_package(rocsparse REQUIRED CONFIG PATHS /opt/rocm/rocsparse)
++  find_package(rocsparse REQUIRED CONFIG PATHS @ESYSROOT_ROCM_PATH@/rocsparse)
+ 
+   option(BUILD_CLIENTS_TESTS "Build tests (requires googletest)" OFF)
+   option(BUILD_CLIENTS_BENCHMARKS "Build benchmarks" OFF)
+@@ -63,7 +63,7 @@ if(NOT TARGET rocsparse)
+ endif()
+ 
+ # HIP headers required of all clients; clients use hip to allocate device memory
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
+ find_package(HIP REQUIRED CONFIG PATHS ${CMAKE_PREFIX_PATH})
+ 
+ # Build flags
+diff -urp rocSPARSE-rocm-5.2.3.orig/clients/tests/CMakeLists.txt rocSPARSE-rocm-5.2.3/clients/tests/CMakeLists.txt
+--- rocSPARSE-rocm-5.2.3.orig/clients/tests/CMakeLists.txt	2023-10-02 10:44:35.968217019 -0700
++++ rocSPARSE-rocm-5.2.3/clients/tests/CMakeLists.txt	2023-10-02 10:44:51.788217342 -0700
+@@ -278,7 +278,7 @@ endif()
+ # Add OpenMP if available
+ if(OPENMP_FOUND)
+ if (NOT WIN32)
+-   target_link_libraries(rocsparse-test PRIVATE OpenMP::OpenMP_CXX -Wl,-rpath=${HIP_CLANG_ROOT}/lib)
++   target_link_libraries(rocsparse-test PRIVATE OpenMP::OpenMP_CXX -Wl,-rpath=@EPREFIX_LLVM_PATH@/@LIBDIR@)
+   else()
+    target_link_libraries(rocsparse-test PRIVATE libomp)
+   endif()
+Only in rocSPARSE-rocm-5.2.3/clients/tests: CMakeLists.txt.orig
+diff -urp rocSPARSE-rocm-5.2.3.orig/cmake/Dependencies.cmake rocSPARSE-rocm-5.2.3/cmake/Dependencies.cmake
+--- rocSPARSE-rocm-5.2.3.orig/cmake/Dependencies.cmake	2023-10-02 10:44:35.948217019 -0700
++++ rocSPARSE-rocm-5.2.3/cmake/Dependencies.cmake	2023-10-02 10:45:14.296217801 -0700
+@@ -27,7 +27,7 @@
+ 
+ # Workaround until hcc & hip cmake modules fixes symlink logic in their config files.
+ # (Thanks to rocBLAS devs for finding workaround for this problem!)
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@/hip @ESYSROOT_ROCM_PATH@)
+ 
+ # ROCm cmake package
+ find_package(ROCM 0.7.3 QUIET CONFIG PATHS ${CMAKE_PREFIX_PATH})
+Only in rocSPARSE-rocm-5.2.3/cmake: Dependencies.cmake.orig
+Only in rocSPARSE-rocm-5.2.3/cmake: Dependencies.cmake.rej
+diff -urp rocSPARSE-rocm-5.2.3.orig/CMakeLists.txt rocSPARSE-rocm-5.2.3/CMakeLists.txt
+--- rocSPARSE-rocm-5.2.3.orig/CMakeLists.txt	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/CMakeLists.txt	2023-10-02 10:44:51.788217342 -0700
+@@ -29,14 +29,14 @@ cmake_minimum_required(VERSION 3.5 FATAL
+ if(WIN32)
+   set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
+ else()
+-  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories")
++  set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories")
+ endif()
+ 
+ # Adding CMAKE_PREFIX_PATH, needed for static builds
+-list( APPEND CMAKE_PREFIX_PATH /opt/rocm/llvm /opt/rocm )
++list( APPEND CMAKE_PREFIX_PATH @ESYSROOT_LLVM_PATH@ @ESYSROOT_ROCM_PATH@ )
+ 
+ # CMake modules
+-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${ROCM_PATH}/lib/cmake/hip /opt/rocm/lib/cmake/hip /opt/rocm/hip/cmake)
++list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${ROCM_PATH}/@LIBDIR@/cmake/hip @ESYSROOT_ROCM_PATH@/@LIBDIR@/cmake/hip @ESYSROOT_ROCM_PATH@/hip/cmake)
+ 
+ # Set a default build type if none was specified
+ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+@@ -177,7 +177,7 @@ message(STATUS "AMDGPU_TARGETS: ${AMDGPU
+ find_package(rocprim REQUIRED)
+ 
+ if( CMAKE_CXX_COMPILER_ID MATCHES "Clang" )
+-  find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} /opt/rocm )
++  find_package( hip REQUIRED CONFIG PATHS ${HIP_DIR} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
+ endif( )
+ 
+ # Setup version
+@@ -289,7 +289,7 @@ if(BUILD_CODE_COVERAGE)
+     COMMAND mkdir -p lcoverage
+     COMMAND echo "\\#!/bin/bash" > llvm-gcov.sh
+     COMMAND echo "\\# THIS FILE HAS BEEN GENERATED" >> llvm-gcov.sh
+-    COMMAND printf "exec /opt/rocm/llvm/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
++    COMMAND printf "exec @ESYSROOT_LLVM_PATH@/bin/llvm-cov gcov $$\\@" >> llvm-gcov.sh
+     COMMAND chmod +x llvm-gcov.sh
+     )
+ 
+Only in rocSPARSE-rocm-5.2.3: CMakeLists.txt.orig
+diff -urp rocSPARSE-rocm-5.2.3.orig/deps/external-gtest.cmake rocSPARSE-rocm-5.2.3/deps/external-gtest.cmake
+--- rocSPARSE-rocm-5.2.3.orig/deps/external-gtest.cmake	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/deps/external-gtest.cmake	2023-10-02 10:44:51.788217342 -0700
+@@ -91,11 +91,7 @@ ExternalProject_Get_Property( googletest
+ set( package_dir "${PREFIX_GTEST}" )
+ if( CMAKE_CONFIGURATION_TYPES )
+   # Create a package by bundling libraries and header files
+-  if( BUILD_64 )
+-    set( LIB_DIR lib64 )
+-  else( )
+-    set( LIB_DIR lib )
+-  endif( )
++  set( LIB_DIR @LIBDIR@ )
+ 
+   set( gtest_lib_dir "<BINARY_DIR>/${LIB_DIR}" )
+   ExternalProject_Add_Step( googletest createPackage
+diff -urp rocSPARSE-rocm-5.2.3.orig/docs/source/design.rst rocSPARSE-rocm-5.2.3/docs/source/design.rst
+--- rocSPARSE-rocm-5.2.3.orig/docs/source/design.rst	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/docs/source/design.rst	2023-10-02 10:44:51.788217342 -0700
+@@ -99,7 +99,7 @@ C and C++ code is formatted using clang-
+ 
+ ::
+ 
+-  /opt/rocm/llvm/bin/clang-format -style=file -i <file>
++  @EPREFIX_LLVM_PATH@/bin/clang-format -style=file -i <file>
+ 
+ To format all files, run the following script in rocSPARSE directory:
+ 
+@@ -115,7 +115,7 @@ To format all files, run the following s
+   -o -iname '*.cpp.in' \
+   -o -iname '*.cl' \
+   | grep -v 'build' \
+-  | xargs -n 1 -P 8 -I{} /opt/rocm/llvm/bin/clang-format -style=file -i {}
++  | xargs -n 1 -P 8 -I{} @EPREFIX_LLVM_PATH@/bin/clang-format -style=file -i {}
+ 
+ Library Source Organization
+ ===========================
+Only in rocSPARSE-rocm-5.2.3/docs/source: design.rst.orig
+diff -urp rocSPARSE-rocm-5.2.3.orig/docs/source/usermanual.rst rocSPARSE-rocm-5.2.3/docs/source/usermanual.rst
+--- rocSPARSE-rocm-5.2.3.orig/docs/source/usermanual.rst	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/docs/source/usermanual.rst	2023-10-02 10:44:51.788217342 -0700
+@@ -86,7 +86,7 @@ Command           Description
+ `./install.sh -h` Print help information.
+ `./install.sh -d` Build dependencies and library in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
+ `./install.sh`    Build library in your local directory. It is assumed dependencies are available.
+-`./install.sh -i` Build library, then build and install rocSPARSE package in `/opt/rocm/rocsparse`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -i` Build library, then build and install rocSPARSE package in `@EPREFIX_ROCM_PATH@/rocsparse`. You will be prompted for sudo access. This will install for all users.
+ ================= ====
+ 
+ Using `install.sh` to build rocSPARSE with dependencies and clients
+@@ -102,7 +102,7 @@ Command             Description
+ `./install.sh -h`   Print help information.
+ `./install.sh -dc`  Build dependencies, library and client in your local directory. The `-d` flag only needs to be used once. For subsequent invocations of `install.sh` it is not necessary to rebuild the dependencies.
+ `./install.sh -c`   Build library and client in your local directory. It is assumed dependencies are available.
+-`./install.sh -idc` Build library, dependencies and client, then build and install rocSPARSE package in `/opt/rocm/rocsparse`. You will be prompted for sudo access. This will install for all users.
++`./install.sh -idc` Build library, dependencies and client, then build and install rocSPARSE package in `@EPREFIX_ROCM_PATH@/rocsparse`. You will be prompted for sudo access. This will install for all users.
+ `./install.sh -ic`  Build library and client, then build and install rocSPARSE package in `opt/rocm/rocsparse`. You will be prompted for sudo access. This will install for all users.
+ =================== ====
+ 
+@@ -118,13 +118,13 @@ rocSPARSE can be built using the followi
+   # Create and change to build directory
+   $ mkdir -p build/release ; cd build/release
+ 
+-  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
+-  $ CXX=/opt/rocm/bin/hipcc cmake ../..
++  # Default install path is @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
++  $ CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake ../..
+ 
+   # Compile rocSPARSE library
+   $ make -j$(nproc)
+ 
+-  # Install rocSPARSE to /opt/rocm
++  # Install rocSPARSE to @EPREFIX_ROCM_PATH@
+   $ make install
+ 
+ GoogleTest is required in order to build rocSPARSE clients.
+@@ -141,15 +141,15 @@ rocSPARSE with dependencies and clients
+   # Change to build directory
+   $ cd ..
+ 
+-  # Default install path is /opt/rocm, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
+-  $ CXX=/opt/rocm/bin/hipcc cmake ../.. -DBUILD_CLIENTS_TESTS=ON \
++  # Default install path is @EPREFIX_ROCM_PATH@, use -DCMAKE_INSTALL_PREFIX=<path> to adjust it
++  $ CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake ../.. -DBUILD_CLIENTS_TESTS=ON \
+                                         -DBUILD_CLIENTS_BENCHMARKS=ON \
+                                         -DBUILD_CLIENTS_SAMPLES=ON
+ 
+   # Compile rocSPARSE library
+   $ make -j$(nproc)
+ 
+-  # Install rocSPARSE to /opt/rocm
++  # Install rocSPARSE to @EPREFIX_ROCM_PATH@
+   $ make install
+ 
+ Common build problems
+diff -urp rocSPARSE-rocm-5.2.3.orig/.github/CONTRIBUTING.md rocSPARSE-rocm-5.2.3/.github/CONTRIBUTING.md
+--- rocSPARSE-rocm-5.2.3.orig/.github/CONTRIBUTING.md	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/.github/CONTRIBUTING.md	2023-10-02 10:44:51.788217342 -0700
+@@ -52,19 +52,19 @@ This project follows the [CPP Core guide
+ -  [I.2](https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Ri-global): Avoid global variables
+ 
+ ## Format
+-C and C++ code is formatted using `clang-format`. Use the clang-format version for Clang 9, which is available in the `/opt/rocm` directory. Please do not use your system's built-in `clang-format`, as this is an older version that will result in different results.
++C and C++ code is formatted using `clang-format`. Use the clang-format version for Clang 9, which is available in the `@EPREFIX_ROCM_PATH@` directory. Please do not use your system's built-in `clang-format`, as this is an older version that will result in different results.
+ 
+ To format a file, use:
+ 
+ ```
+-/opt/rocm/hcc/bin/clang-format -style=file -i <path-to-source-file>
++@EPREFIX_ROCM_PATH@/hcc/bin/clang-format -style=file -i <path-to-source-file>
+ ```
+ 
+ To format all files, run the following script in rocSPARSE directory:
+ 
+ ```
+ #!/bin/bash
+-git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /opt/rocm/hcc/bin/clang-format  -style=file -i
++git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 @EPREFIX_ROCM_PATH@/hcc/bin/clang-format  -style=file -i
+ ```
+ 
+ Also, githooks can be installed to format the code per-commit:
+Only in rocSPARSE-rocm-5.2.3/.github: CONTRIBUTING.md.orig
+diff -urp rocSPARSE-rocm-5.2.3.orig/install.sh rocSPARSE-rocm-5.2.3/install.sh
+--- rocSPARSE-rocm-5.2.3.orig/install.sh	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/install.sh	2023-10-02 10:44:51.788217342 -0700
+@@ -251,7 +251,7 @@ build_static=false
+ build_release_debug=false
+ build_codecoverage=false
+ install_prefix=rocsparse-install
+-rocm_path=/opt/rocm
++rocm_path=@ESYSROOT_ROCM_PATH@
+ build_relocatable=false
+ build_address_sanitizer=false
+ matrices_dir=
+@@ -397,7 +397,7 @@ esac
+ # If user provides custom ${rocm_path} path for hcc it has lesser priority,
+ # but with hip-clang existing path has lesser priority to avoid use of installed clang++
+ if [[ "${build_hip_clang}" == true ]]; then
+-  export PATH=${rocm_path}/bin:${rocm_path}/hip/bin:${rocm_path}/llvm/bin:${PATH}
++  export PATH=${rocm_path}/bin:@ESYSROOT_LLVM_PATH@/bin:${PATH}
+ fi
+ 
+ # #################################################
+@@ -422,7 +422,7 @@ if [[ "${build_relocatable}" == true ]];
+         rocm_path=${ROCM_PATH}
+     fi
+ 
+-    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,/opt/rocm/lib:/opt/rocm/lib64"
++    rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,@EPREFIX_ROCM_PATH@/@LIBDIR@"
+     if ! [ -z ${ROCM_RPATH+x} ]; then
+         rocm_rpath=" -Wl,--enable-new-dtags -Wl,--rpath,${ROCM_RPATH}"
+     fi
+@@ -433,7 +433,7 @@ fi
+ if [[ "${build_relocatable}" == true ]]; then
+     export PATH=${rocm_path}/bin:${PATH}
+ else
+-    export PATH=${PATH}:/opt/rocm/bin
++    export PATH=${PATH}:@ESYSROOT_ROCM_PATH@/bin
+ fi
+ 
+ pushd .
+@@ -506,10 +506,10 @@ pushd .
+   if [[ "${build_relocatable}" == true ]]; then
+     FC=gfortran CXX=${compiler} ${cmake_executable} ${cmake_common_options} ${cmake_client_options} -DCPACK_SET_DESTDIR=OFF \
+       -DCMAKE_INSTALL_PREFIX=${install_prefix} \
+-      -DCPACK_PACKAGING_INSTALL_PREFIX=${rocm_path} \
++      -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@ \
+       -DCMAKE_SHARED_LINKER_FLAGS="${rocm_rpath}" \
+       -DCMAKE_PREFIX_PATH="${rocm_path} ${rocm_path}/hcc ${rocm_path}/hip" \
+-      -DCMAKE_MODULE_PATH="${rocm_path}/lib/cmake/hip ${rocm_path}/hip/cmake" \
++      -DCMAKE_MODULE_PATH="${rocm_path}/@LIBDIR@/cmake/hip ${rocm_path}/hip/cmake" \
+       -DROCM_DISABLE_LDCONFIG=ON \
+       -DROCM_PATH="${rocm_path}" ../..
+   else
+Only in rocSPARSE-rocm-5.2.3: install.sh.orig
+diff -urp rocSPARSE-rocm-5.2.3.orig/library/CMakeLists.txt rocSPARSE-rocm-5.2.3/library/CMakeLists.txt
+--- rocSPARSE-rocm-5.2.3.orig/library/CMakeLists.txt	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/library/CMakeLists.txt	2023-10-02 10:44:51.788217342 -0700
+@@ -138,7 +138,7 @@ if(BUILD_FILE_REORG_BACKWARD_COMPATIBILI
+       CODE "
+         set(PREFIX \$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX})
+ 	set(INPUT_FILES \${PREFIX}/include/rocsparse/rocsparse.f90 \${PREFIX}/include/rocsparse/rocsparse_enums.f90)
+-        set(SYMLINK_LOCATIONS \${PREFIX}/rocsparse/include \${PREFIX}/include)
++        set(SYMLINK_LOCATIONS \${PREFIX}/include/rocsparse \${PREFIX}/include)
+ 	foreach(INPUT_FILE IN LISTS INPUT_FILES)
+           foreach(LOCATION IN LISTS SYMLINK_LOCATIONS)
+             file(MAKE_DIRECTORY \${LOCATION})
+diff -urp rocSPARSE-rocm-5.2.3.orig/README.md rocSPARSE-rocm-5.2.3/README.md
+--- rocSPARSE-rocm-5.2.3.orig/README.md	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/README.md	2023-10-02 10:44:51.788217342 -0700
+@@ -52,7 +52,7 @@ cd rocSPARSE; mkdir -p build/release; cd
+ #   BUILD_CLIENTS_SAMPLES    - build examples (ON)
+ #   BUILD_VERBOSE            - verbose output (OFF)
+ #   BUILD_SHARED_LIBS        - build rocSPARSE as a shared library (ON)
+-CXX=/opt/rocm/bin/hipcc cmake -DBUILD_CLIENTS_TESTS=ON ../..
++CXX=@EPREFIX_ROCM_PATH@/bin/hipcc cmake -DBUILD_CLIENTS_TESTS=ON ../..
+ 
+ # Build
+ make
+diff -urp rocSPARSE-rocm-5.2.3.orig/rmake.py rocSPARSE-rocm-5.2.3/rmake.py
+--- rocSPARSE-rocm-5.2.3.orig/rmake.py	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/rmake.py	2023-10-02 10:44:51.788217342 -0700
+@@ -86,7 +86,7 @@ def parse_args():
+     parser.add_argument(     '--clients-only', dest='clients_only', required=False, default = False, action='store_true',
+                         help='Build only clients with a pre-built library')
+     parser.add_argument(     '--rocprim_dir', dest='rocprim_dir', type=str, required=False, default = "",
+-                             help='Specify path to an existing rocPRIM install directory (optional, default: /opt/rocm/rocprim)')
++                             help='Specify path to an existing rocPRIM install directory (optional, default: @ESYSROOT_ROCM_PATH@/rocprim)')
+     return parser.parse_args()
+ 
+ def os_detect():
+@@ -146,9 +146,9 @@ def config_cmd():
+         cmake_options.append( generator )
+         toolchain = os.path.join( src_path, "toolchain-windows.cmake" )
+     else:
+-        rocm_path = os.getenv( 'ROCM_PATH', "/opt/rocm")
++        rocm_path = os.getenv( 'ROCM_PATH', "@ESYSROOT_ROCM_PATH@")
+         cmake_executable = "cmake"
+-        cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX={rocm_path}" )
++        cmake_platform_opts.append( f"-DROCM_DIR:PATH={rocm_path} -DCPACK_PACKAGING_INSTALL_PREFIX=@EPREFIX_ROCM_PATH@" )
+         cmake_platform_opts.append( f"-DCMAKE_INSTALL_PREFIX=\"rocsparse-install\"" )
+         toolchain = "toolchain-linux.cmake"
+ 
+Only in rocSPARSE-rocm-5.2.3: rmake.py.orig
+diff -urp rocSPARSE-rocm-5.2.3.orig/toolchain-linux.cmake rocSPARSE-rocm-5.2.3/toolchain-linux.cmake
+--- rocSPARSE-rocm-5.2.3.orig/toolchain-linux.cmake	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/toolchain-linux.cmake	2023-10-02 10:45:37.656218277 -0700
+@@ -2,7 +2,7 @@
+ if (DEFINED ENV{ROCM_PATH})
+   set(rocm_bin "$ENV{ROCM_PATH}/hip/bin")
+ else()
+-  set(rocm_bin "/opt/rocm/hip/bin")
++  set(rocm_bin "@ESYSROOT_ROCM_PATH@/bin")
+ endif()
+ 
+ set(CMAKE_CXX_COMPILER "${rocm_bin}/hipcc")
+Only in rocSPARSE-rocm-5.2.3: toolchain-linux.cmake.orig
+Only in rocSPARSE-rocm-5.2.3: toolchain-linux.cmake.rej

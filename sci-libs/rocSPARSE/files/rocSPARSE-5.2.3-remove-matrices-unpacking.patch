@@ -1,0 +1,39 @@
+diff -urp rocSPARSE-rocm-5.2.3.orig/clients/tests/CMakeLists.txt rocSPARSE-rocm-5.2.3/clients/tests/CMakeLists.txt
+--- rocSPARSE-rocm-5.2.3.orig/clients/tests/CMakeLists.txt	2022-05-26 13:57:24.000000000 -0700
++++ rocSPARSE-rocm-5.2.3/clients/tests/CMakeLists.txt	2023-10-02 10:38:28.072209519 -0700
+@@ -24,35 +24,6 @@
+ find_package(GTest 1.11.0 REQUIRED)
+ find_package(rocsparseio QUIET)
+ 
+-#
+-# Client matrices.
+-#
+-
+-if(NOT EXISTS "${CMAKE_MATRICES_DIR}")
+-  #
+-  # Download.
+-  #
+-  set(CMAKE_MATRICES_DIR ${PROJECT_BINARY_DIR}/matrices CACHE STRING "Matrices directory.")
+-
+-  if(NOT TARGET rocsparse)
+-    set(CONVERT_SOURCE ${CMAKE_SOURCE_DIR}/../deps/convert.cpp CACHE STRING "Convert tool mtx2csr.")
+-    include(${CMAKE_SOURCE_DIR}/../cmake/ClientMatrices.cmake)
+-  else()
+-   set(CONVERT_SOURCE ${CMAKE_SOURCE_DIR}/deps/convert.cpp CACHE STRING "Convert tool mtx2csr.")
+-    include(${CMAKE_SOURCE_DIR}/cmake/ClientMatrices.cmake)
+-  endif()
+-
+-else()
+-
+-  #
+-  # Copy.
+-  #
+-  if(NOT CMAKE_MATRICES_DIR STREQUAL "${PROJECT_BINARY_DIR}/matrices")
+-    execute_process(COMMAND cp -r ${CMAKE_MATRICES_DIR} ${PROJECT_BINARY_DIR}/matrices)
+-  endif()
+-
+-endif()
+-
+ set(ROCSPARSE_TEST_SOURCES
+   test_axpby.cpp
+   test_axpyi.cpp
