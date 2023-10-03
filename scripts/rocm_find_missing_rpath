@@ -1,0 +1,31 @@
+IFS=$'\n'
+for x in $(find /usr/lib64/rocm/*/bin /usr/lib64/rocm/*/lib64 -type f) ; do
+	is_so=0 
+	is_exe=0 
+	if file "${x}" | grep -q "shared object" ; then
+		is_so=1
+	fi
+	if file "${x}" | grep -q "ELF.*executable" ; then
+		is_exe=1
+	fi
+
+	if (( ${is_so} || ${is_exe} )) ; then
+		has_lib=0
+		if ldd "${x}" 2>/dev/null | grep -q "libhsa-runtime64.so" ; then
+			has_lib=1
+		elif ldd "${x}" 2>/dev/null | grep -q "libamdhip64.so" ; then
+			has_lib=1
+		fi
+
+		if (( ${has_lib} == 0 )) ; then
+			:;
+		elif ldd "${x}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ; then
+			:;
+		elif ldd "${x}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
+			:;
+		else
+			echo "missing rpath for ${x}"
+		fi
+	fi
+done
+IFS=$' \t\n'

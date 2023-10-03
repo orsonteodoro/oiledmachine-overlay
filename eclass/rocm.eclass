@@ -762,6 +762,55 @@ einfo "Fixing rpath for ${path}"
 	IFS=$' \t\n'
 }
 
+# @FUNCTION: rocm_verify_rpath_correctness
+# @DESCRIPTION:
+# Check if we are using the multislot lib paths and not unislot system folders
+# for libhsa-runtime64.so and libamdhip64.so.
+rocm_verify_rpath_correctness() {
+	local source
+	if [[ -z "${EROCM_RPATH_SCAN_FOLDER}" ]] ; then
+		source="${ED}"
+	else
+		source="${EROCM_RPATH_SCAN_FOLDER}"
+	fi
+	IFS=$'\n'
+	for x in $(find "${source}" -type f) ; do
+		local is_so=0
+		local is_exe=0
+		if file "${x}" | grep -q "shared object" ; then
+			is_so=1
+		fi
+		if file "${x}" | grep -q "ELF.*executable" ; then
+			is_exe=1
+		fi
+		local has_lib=0
+		if (( ${is_so} || ${is_exe} )) ; then
+			has_lib=0
+		elif ldd "${x}" 2>/dev/null | grep -q "libhsa-runtime64.so" ; then
+			has_lib=1
+		elif ldd "${x}" 2>/dev/null | grep -q "libamdhip64.so" ; then
+			has_lib=1
+		fi
+
+		if (( ${has_lib} == 0 )) ; then
+			:;
+		elif ldd "${x}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ; then
+			:;
+		elif ldd "${x}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
+			:;
+		else
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${x}"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${x}"
+			fi
+		fi
+	done
+	IFS=$' \t\n'
+}
+
 EXPORT_FUNCTIONS pkg_setup src_prepare
 
 fi

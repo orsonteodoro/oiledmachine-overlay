@@ -21,7 +21,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rocm_bandwidth_test"
 LICENSE="NCSA-AMD"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE="r2"
+IUSE="r3"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -56,6 +56,7 @@ src_install() {
 	cmake_src_install
 #	rm -rfv "${ED}/usr/share/doc/rocm-bandwidth-test"
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
