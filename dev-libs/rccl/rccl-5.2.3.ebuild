@@ -73,14 +73,6 @@ src_configure() {
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
-	if [[ "${CXX}" =~ "hipcc" ]] ; then
-		# Prevent configure test issues
-		append-flags \
-			-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
-			--rocm-path="${ESYSROOT}${EROCM_PATH}" \
-			--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
-	fi
-
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
 		-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -94,7 +86,7 @@ src_configure() {
 		-Wno-dev
 	)
 
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {
