@@ -95,9 +95,7 @@ src_configure() {
 
 	if [[ "${CXX}" =~ "hipcc" ]] ; then
 		append-flags \
-			-Wl,-L"${ESYSROOT}/${EROCM_PATH}/$(get_libdir)" \
-			-Wl,-fuse-ld=lld \
-			--rocm-path="${ESYSROOT}${EROCM_PATH}"
+			-Wl,-fuse-ld=lld
 	fi
 
 	hipconfig --help >/dev/null || die
@@ -112,7 +110,7 @@ src_configure() {
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {

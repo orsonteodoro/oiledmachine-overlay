@@ -93,7 +93,7 @@ esac
 if [[ ! ${_ROCM_ECLASS} ]]; then
 _ROCM_ECLASS=1
 
-inherit llvm toolchain-funcs
+inherit flag-o-matic llvm toolchain-funcs
 
 # @ECLASS_VARIABLE: ROCM_VERSION
 # @REQUIRED
@@ -536,6 +536,118 @@ _rocm_change_common_paths() {
 # Patcher
 rocm_src_prepare() {
 	_rocm_change_common_paths
+}
+
+# @FUNCTION:  verify_libstdcxx
+# Checks if the selected gcc via eselect gcc is >= the one used to build rocr-runtime and hip.
+verify_libstdcxx() {
+	has_version "dev-util/hip:${ROCM_SLOT}" || return # For libamdhip64.so checks
+	has_version "dev-libs/rocr-runtime:${ROCM_SLOT}" || return # For libhsa-runtime64.so.1 checks
+	# GLIBCXX_3.4.28 - GCC 10
+	# GLIBCXX_3.4.29 - GCC 11
+	# GLIBCXX_3.4.30 - GCC 12
+	unset _glibc_ver
+	declare -A _glibc_ver=(
+		["3.4.45"]="25" # guessed
+		["3.4.44"]="24" # guessed
+		["3.4.43"]="23" # guessed
+		["3.4.42"]="22" # guessed
+		["3.4.41"]="21" # guessed
+		["3.4.40"]="20" # guessed
+		["3.4.39"]="19" # guessed
+		["3.4.38"]="18" # guessed
+		["3.4.37"]="17" # guessed
+		["3.4.36"]="16" # guessed
+		["3.4.35"]="15" # guessed
+		["3.4.34"]="14" # guessed
+		["3.4.31"]="13" # guessed
+		["3.4.30"]="12"
+		["3.4.29"]="11"
+		["3.4.28"]="10"
+		["3.4.27"]="9" # guessed
+		["3.4.28"]="8" # guessed
+	)
+	local hip_libstdcxx_ver=$(strings "${EROCM_PATH}/$(get_libdir)/libamdhip64.so" \
+		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
+		| sort -V \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local hsa_runtime_libstdcxx_ver=$(strings "${EROCM_PATH}/$(get_libdir)/libhsa-runtime64.so" \
+		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
+		| sort -V \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+	local libstdcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
+		| grep -E "GLIBCXX_[0-9]\.[0-9]\.[0-9]+" \
+		| sort -V \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+einfo
+einfo "libstdcxx used:"
+einfo
+printf " \e[32m*\e[0m %-30s%s\n" "dev-libs/hsa-runtime:${ROCM_SLOT}" "GCC ${_glibc_ver[${hsa_runtime_libstdcxx_ver}]} (libstdcxx version ${hsa_runtime_libstdcxx_ver})"
+printf " \e[32m*\e[0m %-30s%s\n" "sys-deve/gcc:${_glibc_ver[${libstdcxx_ver}]}" "GCC ${_glibc_ver[${libstdcxx_ver}]} (libstdcxx version ${libstdcxx_ver})"
+printf " \e[32m*\e[0m %-30s%s\n" "sys-devel/hip:${ROCM_SLOT}" "GCC ${_glibc_ver[${hip_libstdcxx_ver}]} (libstdcxx version ${hip_libstdcxx_ver})"
+einfo
+	if ver_test "${libstdcxx_ver}" -lt "${hsa_runtime_libstdcxx_ver}" ; then
+		local built_gcc_slot="${_glibc_ver[${hsa_runtime_libstdcxx_ver}]}"
+eerror
+eerror "You must switch to >= GCC ${built_gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "Error 1"
+eerror
+		die
+	fi
+	if ver_test "${libstdcxx_ver}" -lt "${hip_libstdcxx_ver}" ; then
+		local built_gcc_slot="${_glibc_ver[${hip_libstdcxx_ver}]}"
+eerror
+eerror "You must switch to >= GCC ${built_gcc_slot}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${built_gcc_slot}"
+eerror "  source /etc/profile"
+eerror
+eerror "Error 2"
+eerror
+		die
+	fi
+	if ver_test "${hsa_runtime_libstdcxx_ver}" -ne "${hip_libstdcxx_ver}" ; then
+ewarn
+ewarn "Detected dev-util/hip:${ROCM_SLOT} and dev-libs/rocr-runtime:${ROCM_SLOT}"
+ewarn "with mismatched libstdcxx.  Please rebuild the entire HIP/ROCm stack"
+ewarn "with the same libstdcxx/gcc version."
+ewarn
+	fi
+}
+
+# @FUNCTION:  rocm_src_configure
+# @DESCRIPTION:
+# Apply multilib configuration and call the build system's configure.
+rocm_src_configure() {
+	verify_libstdcxx
+	if [[ -n "${_CMAKE_ECLASS}" ]] ; then
+		if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
+			# Prevent configure test issues
+			append-flags \
+				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
+				--rocm-path="${ESYSROOT}${EROCM_PATH}" \
+				--rocm-device-lib-path="${ESYSROOT}${EROCM_PATH}/$(get_libdir)/amdgcn/bitcode"
+			append-ldflags \
+				-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)"
+		else
+			append-flags \
+				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)"
+			append-ldflags \
+				-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)"
+		fi
+		cmake_src_configure
+	else
+		ewarn "src_configure not called for the build system."
+	fi
 }
 
 # @FUNCTION: get_amdgpu_flags

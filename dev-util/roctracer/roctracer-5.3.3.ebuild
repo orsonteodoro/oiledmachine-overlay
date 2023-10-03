@@ -54,7 +54,7 @@ S_PROFILER="${WORKDIR}/rocprofiler"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-do-not-install-test-files.patch"
 	"${FILESDIR}/${PN}-5.3.3-Werror.patch"
-	"${FILESDIR}/${PN}-5.4.4-path-changes.patch"
+	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
 	"${DISTDIR}/${PN}-c95d5dd.patch"
 )
 
@@ -80,10 +80,11 @@ src_configure() {
 	export CC="${HIP_CC:-gcc-12}"
 	export CXX="${HIP_CXX:-g++-12}"
 
-	if [[ "${CXX}" =~ "hipcc" ]] ; then
+	if ! [[ "${CXX}" =~ "g++" ]] ; then
 		append-flags \
-			-Wl,-L"${ESYSROOT}/${EROCM_PATH}/$(get_libdir)" \
-			--rocm-path="${ESYSROOT}${EROCM_PATH}"
+			-Wl,-fuse-ld=gold
+		append-ldflags \
+			-fuse-ld=gold
 	fi
 
 	hipconfig --help >/dev/null || die
@@ -97,7 +98,7 @@ src_configure() {
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {

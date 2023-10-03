@@ -80,12 +80,6 @@ src_configure() {
 	export CC="${HIP_CC:-gcc-12}"
 	export CXX="${HIP_CXX:-g++-12}"
 
-	if [[ "${CXX}" =~ "hipcc" ]] ; then
-		append-flags \
-			-Wl,-L"${ESYSROOT}/${EROCM_PATH}/$(get_libdir)" \
-			--rocm-path="${ESYSROOT}${EROCM_PATH}"
-	fi
-
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"
 	local mycmakeargs=(
@@ -97,7 +91,7 @@ src_configure() {
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {

@@ -84,15 +84,11 @@ src_configure() {
 	export CXX="${HIP_CXX:-clang++}"
 
 	if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
-		append-flags \
-			--rocm-path="${ESYSROOT}${EROCM_PATH}"
 		append-ldflags \
-			-fuse-ld=gold \
-			-Wl,-rpath="${ESYSROOT}/${EROCM_PATH}/$(get_libdir)"
+			-fuse-ld=gold
 	else
 		append-ldflags \
-			-fuse-ld=gold \
-			-Wl,-rpath="${ESYSROOT}/${EROCM_PATH}/$(get_libdir)"
+			-fuse-ld=gold
 	fi
 
 	hipconfig --help >/dev/null || die
@@ -106,7 +102,7 @@ src_configure() {
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {
