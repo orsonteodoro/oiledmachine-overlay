@@ -734,24 +734,30 @@ rocm_fix_rpath() {
 		local is_so=0
 		if file "${path}" | grep -q "shared object" ; then
 			is_so=1
-		elif file "${path}" | grep -q "ELF .*-bit LSB pie executable" ; then
+		elif file "${path}" | grep -q "ELF .*-bit LSB.* executable" ; then
 			is_exe=1
 		fi
 
 		local needs_rpath_patch=0
-		if ldd "${path}" 2>/dev/null | grep -1 "libamdhip64.so" ; then
-			if ! ( ldd "${path}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ) ; then
-				needs_rpath_patch=1
+		if (( ${is_so} || ${is_exe} )) ; then
+			if ldd "${path}" 2>/dev/null | grep -q "libamdhip64.so" ; then
+				if ldd "${path}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
+					:;
+				else
+					needs_rpath_patch=1
+				fi
+			fi
+
+			if ldd "${path}" 2>/dev/null | grep -q "libhsa-runtime64.so" ; then
+				if ldd "${path}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ; then
+					:;
+				else
+					needs_rpath_patch=1
+				fi
 			fi
 		fi
 
-		if ldd "${path}" 2>/dev/null | grep "libhsa-runtime64.so" ; then
-			if ! ( ldd "${path}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ) ; then
-				needs_rpath_patch=1
-			fi
-		fi
-
-		if (( ${is_exe} || ${is_so} )) && (( ${needs_rpath_patch} )) ; then
+		if (( ${needs_rpath_patch} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
 				--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
@@ -774,37 +780,42 @@ rocm_verify_rpath_correctness() {
 		source="${EROCM_RPATH_SCAN_FOLDER}"
 	fi
 	IFS=$'\n'
-	for x in $(find "${source}" -type f) ; do
+	local path
+	for path in $(find "${source}" -type f) ; do
 		local is_so=0
 		local is_exe=0
-		if file "${x}" | grep -q "shared object" ; then
+		if file "${path}" | grep -q "shared object" ; then
 			is_so=1
-		fi
-		if file "${x}" | grep -q "ELF.*executable" ; then
+		elif file "${path}" | grep -q "ELF .*-bit LSB.* executable" ; then
 			is_exe=1
 		fi
-		local has_lib=0
+
+		local needs_rpath_patch=0
 		if (( ${is_so} || ${is_exe} )) ; then
-			has_lib=0
-		elif ldd "${x}" 2>/dev/null | grep -q "libhsa-runtime64.so" ; then
-			has_lib=1
-		elif ldd "${x}" 2>/dev/null | grep -q "libamdhip64.so" ; then
-			has_lib=1
+			if ldd "${path}" 2>/dev/null | grep -q "libamdhip64.so" ; then
+				if ldd "${path}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
+					:;
+				else
+					needs_rpath_patch=1
+				fi
+			fi
+
+			if ldd "${path}" 2>/dev/null | grep -q "libhsa-runtime64.so" ; then
+				if ldd "${path}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ; then
+					:;
+				else
+					needs_rpath_patch=1
+				fi
+			fi
 		fi
 
-		if (( ${has_lib} == 0 )) ; then
-			:;
-		elif ldd "${x}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ; then
-			:;
-		elif ldd "${x}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
-			:;
-		else
+		if (( ${needs_rpath_patch} )) ; then
 			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
-				die "Q/A:  Missing rpath for ${x}"
+				die "Q/A:  Missing rpath for ${path}"
 			else
 				# Use 0 or unset in pkg_postinst
-				ewarn "Q/A:  Missing rpath for ${x}"
+				ewarn "Q/A:  Missing rpath for ${path}"
 			fi
 		fi
 	done

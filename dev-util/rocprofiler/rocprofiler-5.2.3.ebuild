@@ -31,7 +31,7 @@ LICENSE="
 # BSD - src/util/hsa_rsrc_factory.cpp
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile system-llvm test r8"
+IUSE=" +aqlprofile system-llvm test r9"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "

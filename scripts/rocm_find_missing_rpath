@@ -1,31 +1,40 @@
-IFS=$'\n'
-for x in $(find /usr/lib64/rocm/*/bin /usr/lib64/rocm/*/lib64 -type f) ; do
-	is_so=0 
-	is_exe=0 
-	if file "${x}" | grep -q "shared object" ; then
-		is_so=1
-	fi
-	if file "${x}" | grep -q "ELF.*executable" ; then
-		is_exe=1
-	fi
-
-	if (( ${is_so} || ${is_exe} )) ; then
-		has_lib=0
-		if ldd "${x}" 2>/dev/null | grep -q "libhsa-runtime64.so" ; then
-			has_lib=1
-		elif ldd "${x}" 2>/dev/null | grep -q "libamdhip64.so" ; then
-			has_lib=1
+#!/bin/bash
+main() {
+	IFS=$'\n'
+	for path in $(find /usr/lib64/rocm/*/{bin,lib64,lib} 2>/dev/null) ; do
+		local is_so=0
+		local is_exe=0
+		if file "${path}" | grep -q "shared object" ; then
+			is_so=1
+		elif file "${path}" | grep -q "ELF .*-bit LSB.* executable" ; then
+			is_exe=1
 		fi
 
-		if (( ${has_lib} == 0 )) ; then
-			:;
-		elif ldd "${x}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ; then
-			:;
-		elif ldd "${x}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
-			:;
-		else
-			echo "missing rpath for ${x}"
+		if (( ${is_so} || ${is_exe} )) ; then
+			local needs_rpath_patch=0
+			if ldd "${path}" 2>/dev/null | grep -q "libamdhip64.so" ; then
+				if ldd "${path}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
+					:;
+				else
+					needs_rpath_patch=1
+				fi
+			fi
+
+			if ldd "${path}" 2>/dev/null | grep -q "libhsa-runtime64.so" ; then
+				if ldd "${path}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ; then
+					:;
+				else
+					needs_rpath_patch=1
+				fi
+			fi
+
+			if (( ${needs_rpath_patch} )) ; then
+				echo "missing rpath for ${path}"
+			fi
 		fi
-	fi
-done
-IFS=$' \t\n'
+	done
+	IFS=$' \t\n'
+}
+
+
+main
