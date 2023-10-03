@@ -95,11 +95,9 @@ _ROCM_ECLASS=1
 
 inherit flag-o-matic llvm toolchain-funcs
 
-if [[ "${ROCM_RPATH_LIST+x}" == "x" ]] ; then
 BDEPEND+="
 	dev-util/patchelf
 "
-fi
 
 # @ECLASS_VARIABLE: ROCM_VERSION
 # @REQUIRED
