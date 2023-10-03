@@ -25,7 +25,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" system-llvm test r1"
+IUSE=" system-llvm test r2"
 RDEPEND="
 	!dev-util/roctracer:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -124,9 +124,6 @@ src_test() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
-	ROCM_RPATH_LIST=(
-		"${EPREFIX}/${EROCM_PATH}/$(get_libdir)/libroctracer_tool.so"
-	)
 	rocm_fix_rpath
 }
 

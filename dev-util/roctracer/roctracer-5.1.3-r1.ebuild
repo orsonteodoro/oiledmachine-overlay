@@ -25,7 +25,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" +aqlprofile system-llvm test r1"
+IUSE=" +aqlprofile system-llvm test r2"
 RDEPEND="
 	!dev-util/roctracer:0
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
@@ -140,6 +140,7 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
