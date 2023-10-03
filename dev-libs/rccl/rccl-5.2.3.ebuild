@@ -27,7 +27,7 @@ https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test"
+IUSE="system-llvm test r1"
 RDEPEND="
 	!dev-libs/rccl:0
 	dev-util/rocm-compiler[system-llvm=]

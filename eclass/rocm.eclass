@@ -730,8 +730,10 @@ rocm_fix_rpath() {
 	IFS=$'\n'
 	local path
 	for path in "${ROCM_RPATH_LIST[@]}" ; do
-		local old=$(patchelf --print-rpath)
-		patchelf --add-rpath "${EPREFIX}${EROCM_PATH}" "${ED}/${path}" || die
+		patchelf \
+			--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
+			"${ED}/${path}" \
+			|| die
 	done
 	IFS=$' \t\n'
 }

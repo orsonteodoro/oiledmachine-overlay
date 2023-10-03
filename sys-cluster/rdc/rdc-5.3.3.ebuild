@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test r1"
+IUSE="+compile-commands doc +raslib +standalone systemd test r2"
 REQUIRED_USE="
 	raslib
 	systemd? (
