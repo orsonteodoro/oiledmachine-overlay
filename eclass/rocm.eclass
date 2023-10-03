@@ -729,11 +729,35 @@ rocm_mv_docs() {
 rocm_fix_rpath() {
 	IFS=$'\n'
 	local path
-	for path in "${ROCM_RPATH_LIST[@]}" ; do
-		patchelf \
-			--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
-			"${ED}/${path}" \
-			|| die
+	for path in $(find "${ED}" -type f) ; do
+		local is_exe=0
+		local is_so=0
+		if file "${path}" | grep -q "shared object" ; then
+			is_so=1
+		elif file "${path}" | grep -q "ELF .*-bit LSB pie executable" ; then
+			is_exe=1
+		fi
+
+		local needs_rpath_patch=0
+		if ldd "${path}" 2>/dev/null | grep -1 "libamdhip64.so" ; then
+			if ! ( ldd "${path}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ) ; then
+				needs_rpath_patch=1
+			fi
+		fi
+
+		if ldd "${path}" 2>/dev/null | grep "libhsa-runtime64.so" ; then
+			if ! ( ldd "${path}" 2>/dev/null | grep "libhsa-runtime64.so" | grep -q "/rocm/" ) ; then
+				needs_rpath_patch=1
+			fi
+		fi
+
+		if (( ${is_exe} || ${is_so} )) && (( ${needs_rpath_patch} )) ; then
+einfo "Fixing rpath for ${path}"
+			patchelf \
+				--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
+				"${ED}/${path}" \
+				|| die
+		fi
 	done
 	IFS=$' \t\n'
 }

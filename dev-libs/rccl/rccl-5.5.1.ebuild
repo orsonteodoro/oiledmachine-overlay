@@ -30,7 +30,7 @@ https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm test r1"
+IUSE="system-llvm test r2"
 RDEPEND="
 	!dev-libs/rccl:0
 	dev-util/rocm-compiler[system-llvm=]
@@ -104,6 +104,7 @@ src_test() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
