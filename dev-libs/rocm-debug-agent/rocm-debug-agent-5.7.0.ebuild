@@ -79,6 +79,10 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	ROCM_RPATH_LIST=(
+		"${EPREFIX}${EROCM_PATH}/$(get_libdir)/librocm-debug-agent.so.2.0.3"
+	)
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

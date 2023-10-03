@@ -95,6 +95,12 @@ _ROCM_ECLASS=1
 
 inherit flag-o-matic llvm toolchain-funcs
 
+if [[ "${ROCM_RPATH_LIST+x}" == "x" ]] ; then
+BDEPEND+="
+	dev-util/patchelf
+"
+fi
+
 # @ECLASS_VARIABLE: ROCM_VERSION
 # @REQUIRED
 # @PRE_INHERIT
@@ -715,6 +721,19 @@ rocm_mv_docs() {
 			rm -rf "${ED}/usr/share/doc"
 		fi
 	fi
+}
+
+# @FUNCTION: rocm_fix_rpath
+# @DESCRIPTION:
+# Fix multislot issues
+rocm_fix_rpath() {
+	IFS=$'\n'
+	local path
+	for path in "${ROCM_RPATH_LIST[@]}" ; do
+		local old=$(patchelf --print-rpath)
+		patchelf --add-rpath "${EPREFIX}${EROCM_PATH}" "${ED}/${path}" || die
+	done
+	IFS=$' \t\n'
 }
 
 EXPORT_FUNCTIONS pkg_setup src_prepare
