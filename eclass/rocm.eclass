@@ -755,7 +755,7 @@ rocm_fix_rpath() {
 einfo "Fixing rpath for ${path}"
 			patchelf \
 				--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
-				"${ED}/${path}" \
+				"${path}" \
 				|| die
 		fi
 	done
