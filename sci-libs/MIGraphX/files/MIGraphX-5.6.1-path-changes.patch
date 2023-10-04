@@ -1,6 +1,6 @@
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/CMakeLists.txt
---- AMDMIGraphX-rocm-5.5.1.orig/CMakeLists.txt	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/CMakeLists.txt	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/CMakeLists.txt	2023-10-04 08:45:34.566959306 -0700
 @@ -30,7 +30,7 @@ endif()
  # This has to be initialized before the project() command appears
  # Set the default of CMAKE_BUILD_TYPE to be release, unless user specifies with -D.  MSVC_IDE does not use CMAKE_BUILD_TYPE
@@ -10,19 +10,23 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/CMak
  endif()
  
  # Setup valid strings for build type
-@@ -41,9 +41,9 @@ set_property(CACHE CMAKE_BUILD_TYPE PROP
+@@ -41,12 +41,12 @@ set_property(CACHE CMAKE_BUILD_TYPE PROP
  
  # Default installation path
  if(WIN32)
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "")
-+#_cmake_modify_IGNORE    set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "")
++#_cmake_modify_IGNORE     set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "")
  else()
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
-+#_cmake_modify_IGNORE    set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "")
++#_cmake_modify_IGNORE     set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "")
  endif()
  
+-set(CMAKE_BUILD_RPATH "${CMAKE_BINARY_DIR}/lib")
++set(CMAKE_BUILD_RPATH "${CMAKE_BINARY_DIR}/@LIBDIR@")
+ 
  project(migraphx)
-@@ -257,8 +257,8 @@ enable_testing()
+ find_package(ROCM REQUIRED)
+@@ -264,8 +264,8 @@ enable_testing()
  
  include(ROCMCreatePackage)
  
@@ -32,8 +36,8 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/CMak
 +set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
  add_subdirectory(src)
- add_subdirectory(doc)
-@@ -267,9 +267,9 @@ add_subdirectory(tools)
+ add_subdirectory(docs)
+@@ -274,9 +274,9 @@ add_subdirectory(tools)
  
  set(DEST_DIR ${CMAKE_BINARY_DIR})
  file(GLOB backend_files ${CMAKE_SOURCE_DIR}/src/py/backend/*.py)
@@ -45,9 +49,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/CMak
  endforeach(py_file)
  configure_file(${CMAKE_SOURCE_DIR}/test/py/onnx_backend_test.py ${DEST_DIR}/onnx_backend_test.py COPYONLY)
  
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/doc/src/driver.rst AMDMIGraphX-rocm-5.5.1/doc/src/driver.rst
---- AMDMIGraphX-rocm-5.5.1.orig/doc/src/driver.rst	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/doc/src/driver.rst	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/docs/driver.rst AMDMIGraphX-rocm-5.6.1/docs/driver.rst
+--- AMDMIGraphX-rocm-5.6.1.orig/docs/driver.rst	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/docs/driver.rst	2023-10-04 08:45:34.566959306 -0700
 @@ -73,9 +73,9 @@ An example command line combined with ro
  
  .. code-block:: bash
@@ -61,21 +65,33 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/doc/src/driver.rst AMDMIGraphX-rocm-5.5.1/
 -.. include:: ./driver/compile.rst
 \ No newline at end of file
 +.. include:: ./driver/compile.rst
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/cpp_parse_load_save/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/examples/migraphx/cpp_parse_load_save/CMakeLists.txt
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/cpp_parse_load_save/CMakeLists.txt	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/cpp_parse_load_save/CMakeLists.txt	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/cpp_dynamic_batch/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/examples/migraphx/cpp_dynamic_batch/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/cpp_dynamic_batch/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/cpp_dynamic_batch/CMakeLists.txt	2023-10-04 08:45:34.566959306 -0700
+@@ -27,7 +27,7 @@ project (cpp_dynamic_batch)
+ set (CMAKE_CXX_STANDARD 14)
+ set (EXAMPLE dynamic_batch)
+ 
+-list (APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
+ find_package (migraphx)
+ 
+ message("source file: " ${EXAMPLE}.cpp " ---> bin: " ${EXAMPLE})
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/cpp_parse_load_save/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/examples/migraphx/cpp_parse_load_save/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/cpp_parse_load_save/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/cpp_parse_load_save/CMakeLists.txt	2023-10-04 08:45:34.566959306 -0700
 @@ -27,7 +27,7 @@ project (PLS)
  set (CMAKE_CXX_STANDARD 14)
  set (EXAMPLE parse_load_save)
  
--list (APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
-+list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@/hip @ESYSROOT_ROCM_PATH@)
+-list (APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
  find_package (migraphx)
  
  message("source file: " ${EXAMPLE}.cpp " ---> bin: " ${EXAMPLE})
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_hip_kernel/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_hip_kernel/CMakeLists.txt
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_hip_kernel/CMakeLists.txt	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_hip_kernel/CMakeLists.txt	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_hip_kernel/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_hip_kernel/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_hip_kernel/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_hip_kernel/CMakeLists.txt	2023-10-04 08:45:34.566959306 -0700
 @@ -27,7 +27,7 @@ project (custom_hip_kernel)
  set (CMAKE_CXX_STANDARD 14)
  set (EXAMPLE custom_op_hip_kernel)
@@ -85,9 +101,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_hip_kernel/CMa
  find_package (migraphx REQUIRED)
  find_package (hip REQUIRED)
  
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_hip_kernel/README.md AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_hip_kernel/README.md
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_hip_kernel/README.md	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_hip_kernel/README.md	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_hip_kernel/README.md AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_hip_kernel/README.md
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_hip_kernel/README.md	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_hip_kernel/README.md	2023-10-04 08:45:34.566959306 -0700
 @@ -3,9 +3,9 @@ This is an example of a custom operator
  
  Kernels can be written in either HIP, MIOpen, or by using RocBLAS library. This particular example uses **HIP**.
@@ -103,21 +119,21 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_hip_kernel/REA
 \ No newline at end of file
 + 4.  `CXX=@EPREFIX_LLVM_PATH@/bin/clang++ cmake ..  && make`
 + 5.  `./custom_op_hip_kernel`
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_miopen_kernel/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_miopen_kernel/CMakeLists.txt
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_miopen_kernel/CMakeLists.txt	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_miopen_kernel/CMakeLists.txt	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_miopen_kernel/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_miopen_kernel/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_miopen_kernel/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_miopen_kernel/CMakeLists.txt	2023-10-04 08:45:34.566959306 -0700
 @@ -27,7 +27,7 @@ project (custom_miopen_kernel)
  set (CMAKE_CXX_STANDARD 14)
  set (EXAMPLE custom_op_miopen_kernel)
  
--list (APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
-+list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@/hip /usr)
+-list (APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
  find_package (migraphx REQUIRED)
  find_package (miopen REQUIRED)
  
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_miopen_kernel/README.md AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_miopen_kernel/README.md
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_miopen_kernel/README.md	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_miopen_kernel/README.md	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_miopen_kernel/README.md AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_miopen_kernel/README.md
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_miopen_kernel/README.md	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_miopen_kernel/README.md	2023-10-04 08:45:34.566959306 -0700
 @@ -2,8 +2,8 @@
   This is an example of a custom operator implementation using MIGraphX's C/C++ APIs. It also demonstrates how to use this custom op in conjunction with rest of MIGraphX operators to build  and run MIGraphX program on GPU. 
   Kernels can be written in either HIP, MIOpen, or by using RocBLAS library.  This particular example uses **MIOpen** library calls.
@@ -125,25 +141,25 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_miopen_kernel/
 - To build and run example, ensure ROCm is installed at `/opt/rocm`. 
 - 1.  `export LD_LIBRARY_PATH=/opt/rocm/lib:$LD_LIBRARY_PATH`
 + To build and run example, ensure ROCm is installed at `@EPREFIX_ROCM_PATH@`. 
-+ 1.  `export LD_LIBRARY_PATH=@EPREFIX_ROCM_PATH@/@LIBDIR@:$LD_LIBRARY_PATH`
++ 1.  `export LD_LIBRARY_PATH=/usr/@LIBDIR@:$LD_LIBRARY_PATH`
   2.  `cd $MIGRAPHX_SRC/examples/migraphx/custom_op_miopen_kernel/`
   3.  `mkdir build && cd build`
   4.  `cmake ..  && make`
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_rocblas_kernel/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_rocblas_kernel/CMakeLists.txt
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_rocblas_kernel/CMakeLists.txt	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_rocblas_kernel/CMakeLists.txt	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_rocblas_kernel/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_rocblas_kernel/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_rocblas_kernel/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_rocblas_kernel/CMakeLists.txt	2023-10-04 08:45:34.566959306 -0700
 @@ -28,7 +28,7 @@ set (CMAKE_CXX_STANDARD 14)
  set (EXAMPLE custom_op_rocblas_kernel)
  
  
--list (APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
-+list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@/hip @ESYSROOT_ROCM_PATH@)
+-list (APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
  find_package (migraphx REQUIRED)
  find_package (rocblas REQUIRED)
  
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_rocblas_kernel/README.md AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_rocblas_kernel/README.md
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_rocblas_kernel/README.md	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/custom_op_rocblas_kernel/README.md	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_rocblas_kernel/README.md AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_rocblas_kernel/README.md
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/custom_op_rocblas_kernel/README.md	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/custom_op_rocblas_kernel/README.md	2023-10-04 08:45:34.566959306 -0700
 @@ -3,8 +3,8 @@
  
   Kernels can be written in either HIP, MIOpen, or by using RocBLAS library.  This particular example uses **rocBLAS** library calls.
@@ -155,9 +171,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/custom_op_rocblas_kernel
   2.  `cd $MIGRAPHX_SRC/examples/migraphx/custom_op_rocblas_kernel/`
   3.  `mkdir build && cd build`
   4.  `cmake ..  && make`
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/export_frozen_graph_tf2/example.ipynb AMDMIGraphX-rocm-5.5.1/examples/migraphx/export_frozen_graph_tf2/example.ipynb
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/export_frozen_graph_tf2/example.ipynb	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/export_frozen_graph_tf2/example.ipynb	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/export_frozen_graph_tf2/example.ipynb AMDMIGraphX-rocm-5.6.1/examples/migraphx/export_frozen_graph_tf2/example.ipynb
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/export_frozen_graph_tf2/example.ipynb	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/export_frozen_graph_tf2/example.ipynb	2023-10-04 08:45:34.566959306 -0700
 @@ -168,7 +168,7 @@
     "outputs": [],
     "source": [
@@ -167,9 +183,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/export_frozen_graph_tf2/
      "command = \"read\"\n",
      "model_path = \"./frozen_models/{}_frozen_graph.pb\".format(MODEL_NAME)\n",
      "process = subprocess.run([driver, command, model_path], \n",
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/export_frozen_graph_tf2/.ipynb_checkpoints/example-checkpoint.ipynb AMDMIGraphX-rocm-5.5.1/examples/migraphx/export_frozen_graph_tf2/.ipynb_checkpoints/example-checkpoint.ipynb
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/export_frozen_graph_tf2/.ipynb_checkpoints/example-checkpoint.ipynb	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/export_frozen_graph_tf2/.ipynb_checkpoints/example-checkpoint.ipynb	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/export_frozen_graph_tf2/.ipynb_checkpoints/example-checkpoint.ipynb AMDMIGraphX-rocm-5.6.1/examples/migraphx/export_frozen_graph_tf2/.ipynb_checkpoints/example-checkpoint.ipynb
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/export_frozen_graph_tf2/.ipynb_checkpoints/example-checkpoint.ipynb	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/export_frozen_graph_tf2/.ipynb_checkpoints/example-checkpoint.ipynb	2023-10-04 08:45:34.566959306 -0700
 @@ -3040,7 +3040,7 @@
     ],
     "source": [
@@ -179,9 +195,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/export_frozen_graph_tf2/
      "command = \"read\"\n",
      "model_path = \"./frozen_models/{}_frozen_graph.pb\".format(MODEL_NAME)\n",
      "process = subprocess.run([driver, command, model_path], \n",
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.md AMDMIGraphX-rocm-5.5.1/examples/migraphx/migraphx_driver/README.md
---- AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.md	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/migraphx/migraphx_driver/README.md	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/migraphx_driver/README.md AMDMIGraphX-rocm-5.6.1/examples/migraphx/migraphx_driver/README.md
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/migraphx/migraphx_driver/README.md	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/migraphx/migraphx_driver/README.md	2023-10-04 08:45:34.566959306 -0700
 @@ -5,7 +5,7 @@ The MIGraphX driver is a tool that allow
  
  ## How to Use this Example
@@ -191,7 +207,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.m
  
  See below for a comprehensive list of commands and option arguments, as well as some usage examples.
  
-@@ -62,7 +62,7 @@ The examples below supply a simple MNIST
+@@ -66,7 +66,7 @@ The examples below supply a simple MNIST
  
  ##### Example: op
  ```
@@ -200,7 +216,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.m
  ```
  
  <details>
-@@ -278,7 +278,7 @@ unsqueeze
+@@ -282,7 +282,7 @@ unsqueeze
  
  ##### Example: params
  ```
@@ -209,7 +225,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.m
  ```
  
  <details>
-@@ -294,7 +294,7 @@ x: float_type, {1, 28, 28}, {784, 28, 1}
+@@ -298,7 +298,7 @@ x: float_type, {1, 28, 28}, {784, 28, 1}
  
  ##### Example: run (onnx file input)
  ```
@@ -218,7 +234,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.m
  ```
  
  <details>
-@@ -354,7 +354,7 @@ x:0 = @param:x:0 -> float_type, {1, 28,
+@@ -358,7 +358,7 @@ x:0 = @param:x:0 -> float_type, {1, 28,
  
  ##### Example: read
  ```
@@ -227,7 +243,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.m
  ```
  
  <details>
-@@ -389,7 +389,7 @@ x = @param:x -> float_type, {1, 28, 28},
+@@ -393,7 +393,7 @@ x = @param:x -> float_type, {1, 28, 28},
  
  ##### Example: compile (on GPU, quantized for fp16)
  ```
@@ -236,7 +252,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.m
  ```
  
  <details>
-@@ -429,7 +429,7 @@ output = @param:output -> float_type, {1
+@@ -433,7 +433,7 @@ output = @param:output -> float_type, {1
  
  ##### Example: verify
  ```
@@ -245,7 +261,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.m
  ```
  
  <details>
-@@ -528,7 +528,7 @@ output = @param:output -> float_type, {1
+@@ -532,7 +532,7 @@ output = @param:output -> float_type, {1
  
  ##### Example: perf
  ```
@@ -254,21 +270,21 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/migraphx/migraphx_driver/README.m
  ```
  
  <details>
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/vision/cpp_mnist/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/examples/vision/cpp_mnist/CMakeLists.txt
---- AMDMIGraphX-rocm-5.5.1.orig/examples/vision/cpp_mnist/CMakeLists.txt	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/vision/cpp_mnist/CMakeLists.txt	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/vision/cpp_mnist/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/examples/vision/cpp_mnist/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/vision/cpp_mnist/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/vision/cpp_mnist/CMakeLists.txt	2023-10-04 08:45:34.566959306 -0700
 @@ -27,7 +27,7 @@ project (CAI)
  set (CMAKE_CXX_STANDARD 14)
  set (EXAMPLE mnist_inference)
  
--list (APPEND CMAKE_PREFIX_PATH /opt/rocm/hip /opt/rocm)
-+list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@/hip @ESYSROOT_ROCM_PATH@)
+-list (APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list (APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
  find_package (migraphx)
  
  message("source file: " ${EXAMPLE}.cpp " ---> bin: " ${EXAMPLE})
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/vision/cpp_mnist/README.md AMDMIGraphX-rocm-5.5.1/examples/vision/cpp_mnist/README.md
---- AMDMIGraphX-rocm-5.5.1.orig/examples/vision/cpp_mnist/README.md	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/vision/cpp_mnist/README.md	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/vision/cpp_mnist/README.md AMDMIGraphX-rocm-5.6.1/examples/vision/cpp_mnist/README.md
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/vision/cpp_mnist/README.md	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/vision/cpp_mnist/README.md	2023-10-04 08:45:34.566959306 -0700
 @@ -78,7 +78,7 @@ prog.compile(targ);
  
  The targets "ref" and "cpu" both compile the program to run on the CPU. The target "ref" is primarily used for correctness checking. The target "cpu" is under ongoing development and has more optimizations enabled. Additionally, the "cpu" target requires MIGraphX to be built with the `-DMIGRAPHX_ENABLE_CPU=On` flag. Specifically, 
@@ -294,9 +310,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/vision/cpp_mnist/README.md AMDMIG
 -*Note: the actual digit selected and printed will not necessarily be the same as shown above. 
 \ No newline at end of file
 +*Note: the actual digit selected and printed will not necessarily be the same as shown above. 
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/vision/python_resnet50/resnet50_inference.ipynb AMDMIGraphX-rocm-5.5.1/examples/vision/python_resnet50/resnet50_inference.ipynb
---- AMDMIGraphX-rocm-5.5.1.orig/examples/vision/python_resnet50/resnet50_inference.ipynb	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/vision/python_resnet50/resnet50_inference.ipynb	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/vision/python_resnet50/resnet50_inference.ipynb AMDMIGraphX-rocm-5.6.1/examples/vision/python_resnet50/resnet50_inference.ipynb
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/vision/python_resnet50/resnet50_inference.ipynb	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/vision/python_resnet50/resnet50_inference.ipynb	2023-10-04 08:45:34.566959306 -0700
 @@ -66,11 +66,11 @@
      "Sometimes the PYTHONPATH variable is not set during installation of MIGraphX. \n",
      "If your receive a \"Module Not Found\" error when trying to `import migraphx` in your own application, try running:\n",
@@ -320,9 +336,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/vision/python_resnet50/resnet50_i
      "if migx_lib_path not in sys.path:\n",
      "    sys.path.append(migx_lib_path)"
     ]
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/vision/python_yolov4/yolov4_inference.ipynb AMDMIGraphX-rocm-5.5.1/examples/vision/python_yolov4/yolov4_inference.ipynb
---- AMDMIGraphX-rocm-5.5.1.orig/examples/vision/python_yolov4/yolov4_inference.ipynb	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/examples/vision/python_yolov4/yolov4_inference.ipynb	2023-10-04 08:55:33.354962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/examples/vision/python_yolov4/yolov4_inference.ipynb AMDMIGraphX-rocm-5.6.1/examples/vision/python_yolov4/yolov4_inference.ipynb
+--- AMDMIGraphX-rocm-5.6.1.orig/examples/vision/python_yolov4/yolov4_inference.ipynb	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/examples/vision/python_yolov4/yolov4_inference.ipynb	2023-10-04 08:45:34.570959306 -0700
 @@ -80,9 +80,9 @@
     "outputs": [],
     "source": [
@@ -335,27 +351,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/examples/vision/python_yolov4/yolov4_infer
     ]
    },
    {
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/install_deps.cmake AMDMIGraphX-rocm-5.5.1/install_deps.cmake
---- AMDMIGraphX-rocm-5.5.1.orig/install_deps.cmake	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/install_deps.cmake	2023-10-04 08:55:33.358962925 -0700
-@@ -73,7 +73,7 @@ endif()
- 
- # Set compiler to hcc if not set
- if(NOT DEFINED ENV{CXX} AND NOT DEFINED CMAKE_CXX_COMPILER AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
--    find_program(HCC hcc PATHS /opt/rocm PATH_SUFFIXES bin)
-+    find_program(HCC hcc PATHS @ESYSROOT_ROCM_PATH@ PATH_SUFFIXES bin)
-     if(HCC)
-         set(ENV{CXX} ${HCC})
-     else()
-@@ -81,4 +81,4 @@ if(NOT DEFINED ENV{CXX} AND NOT DEFINED
-     endif()
- endif()
- 
--cmake_get_from(${CMAKE_CURRENT_LIST_DIR}/dev-requirements.txt PREFIX ${PREFIX} CMAKE_ARGS -DCMAKE_INSTALL_RPATH=${PREFIX}/lib ${PARSE_UNPARSED_ARGUMENTS})
-+cmake_get_from(${CMAKE_CURRENT_LIST_DIR}/dev-requirements.txt PREFIX ${PREFIX} CMAKE_ARGS -DCMAKE_INSTALL_RPATH=${PREFIX}/@LIBDIR@ ${PARSE_UNPARSED_ARGUMENTS})
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/rbuild.ini AMDMIGraphX-rocm-5.5.1/rbuild.ini
---- AMDMIGraphX-rocm-5.5.1.orig/rbuild.ini	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/rbuild.ini	2023-10-04 08:55:33.358962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/rbuild.ini AMDMIGraphX-rocm-5.6.1/rbuild.ini
+--- AMDMIGraphX-rocm-5.6.1.orig/rbuild.ini	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/rbuild.ini	2023-10-04 08:45:34.570959306 -0700
 @@ -1,6 +1,6 @@
  [main]
 -cxx = ${rocm_path}/llvm/bin/clang++
@@ -365,8 +363,8 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/rbuild.ini AMDMIGraphX-rocm-5.5.1/rbuild.i
  deps =
      ROCmSoftwarePlatform/rocm-recipes
      -f requirements.txt
-@@ -16,8 +16,8 @@ define =
-     MIGRAPHX_ENABLE_CPU=On
+@@ -17,8 +17,8 @@ define =
+     BUILD_DEV=On
  
  [develop]
 -cxx = ${rocm_path}/llvm/bin/clang++
@@ -376,9 +374,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/rbuild.ini AMDMIGraphX-rocm-5.5.1/rbuild.i
  deps =
      -f dev-requirements.txt
      oneapi-src/oneDNN@v1.7
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/README.md AMDMIGraphX-rocm-5.5.1/README.md
---- AMDMIGraphX-rocm-5.5.1.orig/README.md	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/README.md	2023-10-04 08:55:33.358962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/README.md AMDMIGraphX-rocm-5.6.1/README.md
+--- AMDMIGraphX-rocm-5.6.1.orig/README.md	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/README.md	2023-10-04 08:45:34.570959306 -0700
 @@ -13,7 +13,7 @@ With ROCm installed correctly, MIGraphX
  ```
  sudo apt update && sudo apt install -y migraphx
@@ -388,25 +386,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/README.md AMDMIGraphX-rocm-5.5.1/README.md
  
  ## Building from source
  
-@@ -68,7 +68,7 @@ pip3 install https://github.com/RadeonOp
- 3) Build MIGraphX source code
- 
- ```
--rbuild build -d depend -B build --cxx=/opt/rocm/llvm/bin/clang++
-+rbuild build -d depend -B build --cxx=@EPREFIX_LLVM_PATH@/bin/clang++
- ```
- 
- then all the prerequisites are in the folder `depend`, and MIGraphX is built in the `build` directory.
-@@ -89,7 +89,7 @@ If using this approach, we need to insta
- For convenience, the prerequisites can be built automatically with rbuild as:
- 
- ```
--rbuild build -d depend --cxx=/opt/rocm/llvm/bin/clang++
-+rbuild build -d depend --cxx=@EPREFIX_LLVM_PATH@/bin/clang++
- ```
- 
- then all the prerequisites are in the folder `depend`, and they can be used in the `cmake` configuration
-@@ -117,7 +117,7 @@ cd build
+@@ -114,7 +114,7 @@ cd build
  2) Configure the cmake. If the prerequisites are installed at the default location `/usr/local`, the command is:
  
  ```
@@ -415,7 +395,7 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/README.md AMDMIGraphX-rocm-5.5.1/README.md
  ```
  Otherwise, you need to set `-DCMAKE_PREFIX_PATH=$your_loc` to configure the cmake. 
  
-@@ -159,7 +159,7 @@ To use MIGraphX's Python module, please
+@@ -156,7 +156,7 @@ To use MIGraphX's Python module, please
  
  - Setting `PYTHONPATH` :
  ```
@@ -424,15 +404,27 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/README.md AMDMIGraphX-rocm-5.5.1/README.md
  ```
  - Creating and installing the package:
  
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/src/targets/gpu/CMakeLists.txt AMDMIGraphX-rocm-5.5.1/src/targets/gpu/CMakeLists.txt
---- AMDMIGraphX-rocm-5.5.1.orig/src/targets/gpu/CMakeLists.txt	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/src/targets/gpu/CMakeLists.txt	2023-10-04 08:55:33.358962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/src/include/migraphx/half.hpp AMDMIGraphX-rocm-5.6.1/src/include/migraphx/half.hpp
+--- AMDMIGraphX-rocm-5.6.1.orig/src/include/migraphx/half.hpp	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/src/include/migraphx/half.hpp	2023-10-04 08:45:34.570959306 -0700
+@@ -25,7 +25,7 @@
+ #ifndef MIGRAPHX_GUARD_RTGLIB_HALF_HPP
+ #define MIGRAPHX_GUARD_RTGLIB_HALF_HPP
+ 
+-#include <half/half.hpp>
++#include <half.hpp>
+ #include <migraphx/config.hpp>
+ 
+ namespace migraphx {
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/src/targets/gpu/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/src/targets/gpu/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/src/targets/gpu/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/src/targets/gpu/CMakeLists.txt	2023-10-04 08:45:34.570959306 -0700
 @@ -22,11 +22,11 @@
  # THE SOFTWARE.
  # ####################################################################################
  
--list(APPEND CMAKE_PREFIX_PATH /opt/rocm /opt/rocm/hip /opt/rocm/hcc)
-+list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hip @ESYSROOT_ROCM_PATH@/hcc)
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH @ESYSROOT_ROCM_PATH@)
  find_package(miopen)
  
  # rocblas
@@ -441,22 +433,9 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/src/targets/gpu/CMakeLists.txt AMDMIGraphX
  message(STATUS "Build with rocblas")
  
  if(NOT TARGET MIOpen)
-@@ -177,9 +177,9 @@ if(NOT CMAKE_CXX_COMPILER MATCHES ".*cla
-         PATH_SUFFIXES bin
-         HINTS ${CMAKE_CXX_COMPILER_PATH}
-         PATHS
--        /opt/rocm/hip
--        /opt/rocm/hcc
--        /opt/rocm
-+        @ESYSROOT_ROCM_PATH@/hip
-+        @ESYSROOT_ROCM_PATH@/hcc
-+        @ESYSROOT_ROCM_PATH@
-     )
- endif()
- 
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/src/targets/gpu/perfdb.cpp AMDMIGraphX-rocm-5.5.1/src/targets/gpu/perfdb.cpp
---- AMDMIGraphX-rocm-5.5.1.orig/src/targets/gpu/perfdb.cpp	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/src/targets/gpu/perfdb.cpp	2023-10-04 08:56:15.226963178 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/src/targets/gpu/perfdb.cpp AMDMIGraphX-rocm-5.6.1/src/targets/gpu/perfdb.cpp
+--- AMDMIGraphX-rocm-5.6.1.orig/src/targets/gpu/perfdb.cpp	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/src/targets/gpu/perfdb.cpp	2023-10-04 08:49:51.286960858 -0700
 @@ -93,7 +93,7 @@ auto query_miopen_db(const std::string&
      const std::lock_guard<std::mutex> lock(g_db_mutex);
  
@@ -466,21 +445,33 @@ diff -urp AMDMIGraphX-rocm-5.5.1.orig/src/targets/gpu/perfdb.cpp AMDMIGraphX-roc
      // Check if db file exists.
      std::ifstream dbs(dbpath);
      if(dbs.is_open())
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/tools/build_and_test_onnxrt.sh AMDMIGraphX-rocm-5.5.1/tools/build_and_test_onnxrt.sh
---- AMDMIGraphX-rocm-5.5.1.orig/tools/build_and_test_onnxrt.sh	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/tools/build_and_test_onnxrt.sh	2023-10-04 08:55:33.358962925 -0700
-@@ -26,7 +26,7 @@ pip3 install -r requirements.txt
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/test/api/CMakeLists.txt AMDMIGraphX-rocm-5.6.1/test/api/CMakeLists.txt
+--- AMDMIGraphX-rocm-5.6.1.orig/test/api/CMakeLists.txt	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/test/api/CMakeLists.txt	2023-10-04 08:45:34.570959306 -0700
+@@ -57,7 +57,7 @@ add_api_test(custom_op test_custom_op.cp
+ add_api_test(tf_parser test_tf_parser.cpp ${TEST_TF_DIR})
+ # GPU-based tests
+ if(MIGRAPHX_ENABLE_GPU)
+-list(APPEND CMAKE_PREFIX_PATH /opt/rocm)
++list(APPEND CMAKE_PREFIX_PATH @EPREFIX_ROCM_PATH@)
+ find_package(hip)
+ add_api_test(gpu test_gpu.cpp ${TEST_ONNX_DIR})
+ target_link_libraries(test_api_gpu)
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/tools/build_and_test_onnxrt.sh AMDMIGraphX-rocm-5.6.1/tools/build_and_test_onnxrt.sh
+--- AMDMIGraphX-rocm-5.6.1.orig/tools/build_and_test_onnxrt.sh	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/tools/build_and_test_onnxrt.sh	2023-10-04 08:45:34.570959306 -0700
+@@ -31,7 +31,7 @@ pip3 install -r requirements-dev.txt
  # Add newer cmake to the path
  export PATH="/opt/cmake/bin:$PATH"
- export CXXFLAGS="-D__HIP_PLATFORM_HCC__=1 -w"
--./build.sh --config Release  --cmake_extra_defines CMAKE_HIP_COMPILER=/opt/rocm/llvm/bin/clang++ --update --build --parallel --cmake_extra_defines ONNXRUNTIME_VERSION=$(cat ./VERSION_NUMBER) --skip_tests --rocm_home /opt/rocm --use_migraphx --migraphx_home /opt/rocm --rocm_version=`cat /opt/rocm/.info/version-dev`
-+./build.sh --config Release  --cmake_extra_defines CMAKE_HIP_COMPILER=@ESYSROOT_LLVM_PATH@/bin/clang++ --update --build --parallel --cmake_extra_defines ONNXRUNTIME_VERSION=$(cat ./VERSION_NUMBER) --skip_tests --rocm_home @ESYSROOT_ROCM_PATH@ --use_migraphx --migraphx_home /usr --rocm_version=`cat /usr/.info/version-dev`
+ export CXXFLAGS="-D__HIP_PLATFORM_AMD__=1 -w"
+-./build.sh --config Release  --cmake_extra_defines CMAKE_HIP_COMPILER=/opt/rocm/llvm/bin/clang++ --update --build --parallel --cmake_extra_defines ONNXRUNTIME_VERSION=$(cat ./VERSION_NUMBER) --skip_tests --rocm_home /opt/rocm --use_migraphx --migraphx_home /opt/rocm --rocm_version=`cat /opt/rocm/.info/version-dev` --allow_running_as_root
++./build.sh --config Release  --cmake_extra_defines CMAKE_HIP_COMPILER=@ESYSROOT_LLVM_PATH@/bin/clang++ --update --build --parallel --cmake_extra_defines ONNXRUNTIME_VERSION=$(cat ./VERSION_NUMBER) --skip_tests --rocm_home @ESYSROOT_ROCM_PATH@ --use_migraphx --migraphx_home /usr --rocm_version=`cat /usr/.info/version-dev` --allow_running_as_root
  
  cd build/Linux/Release
  #Add test launcher for onnxrt tests
-diff -urp AMDMIGraphX-rocm-5.5.1.orig/tools/roctx.py AMDMIGraphX-rocm-5.5.1/tools/roctx.py
---- AMDMIGraphX-rocm-5.5.1.orig/tools/roctx.py	2023-02-23 07:49:20.000000000 -0800
-+++ AMDMIGraphX-rocm-5.5.1/tools/roctx.py	2023-10-04 08:55:33.358962925 -0700
+diff -urp AMDMIGraphX-rocm-5.6.1.orig/tools/roctx.py AMDMIGraphX-rocm-5.6.1/tools/roctx.py
+--- AMDMIGraphX-rocm-5.6.1.orig/tools/roctx.py	2023-06-14 13:38:45.000000000 -0700
++++ AMDMIGraphX-rocm-5.6.1/tools/roctx.py	2023-10-04 08:45:34.570959306 -0700
 @@ -217,7 +217,7 @@ def run():
      #configurations
      configs = '--hip-trace --roctx-trace --flush-rate 10ms --timestamp on'

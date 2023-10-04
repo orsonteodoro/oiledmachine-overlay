@@ -12,11 +12,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx1030
 )
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic llvm python-r1 rocm
+inherit cmake llvm python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
@@ -69,7 +69,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/blaze-3.4:=
+	>=dev-cpp/blaze-3.8:=
 "
 BDEPEND="
 	!system-llvm? (
@@ -79,13 +79,6 @@ BDEPEND="
 	>=dev-util/cmake-3.5
 	sys-devel/hip-compiler[system-llvm=]
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
-	mlir? (
-		|| (
-			~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}
-			=sci-libs/rocMLIR-9999
-			=sci-libs/rocMLIR-5.5*:0/5.5
-		)
-	)
 	rocm? (
 		sys-devel/rocm-compiler[system-llvm=]
 	)
@@ -94,7 +87,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {

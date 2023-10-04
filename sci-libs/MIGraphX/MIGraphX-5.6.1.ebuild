@@ -16,7 +16,7 @@ LLVM_MAX_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake llvm python-r1 rocm
+inherit cmake flag-o-matic llvm python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
@@ -69,7 +69,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/blaze-3.8:=
+	>=dev-cpp/blaze-3.4:=
 "
 BDEPEND="
 	!system-llvm? (
@@ -93,7 +93,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"
+	"${FILESDIR}/${PN}-5.6.1-path-changes.patch"
 )
 
 pkg_setup() {
