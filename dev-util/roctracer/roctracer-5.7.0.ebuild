@@ -20,7 +20,7 @@ HOMEPAGE="https://github.com/ROCm-Developer-Tools/roctracer.git"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE=" system-llvm test r2"
+IUSE=" system-llvm test r3"
 CDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	sys-devel/gcc:12
