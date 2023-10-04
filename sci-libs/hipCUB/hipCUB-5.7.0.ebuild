@@ -11,6 +11,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
 	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
 )
 CUDA_TARGETS_COMPAT=(
 	auto
@@ -111,7 +114,7 @@ BDEPEND="
 S="${WORKDIR}/hipCUB-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-add-memory-header.patch"
-	"A${FILESDIR}/${PN}-5.6.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
 )
 
 pkg_setup() {

@@ -111,7 +111,7 @@ BDEPEND="
 S="${WORKDIR}/hipCUB-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-add-memory-header.patch"
-	"${FILESDIR}/${PN}-5.3.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
 )
 
 pkg_setup() {

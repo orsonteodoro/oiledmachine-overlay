@@ -1,6 +1,6 @@
 diff -urp hipCUB-rocm-5.7.0.orig/cmake/RocmCmakeDependence.cmake hipCUB-rocm-5.7.0/cmake/RocmCmakeDependence.cmake
 --- hipCUB-rocm-5.7.0.orig/cmake/RocmCmakeDependence.cmake	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/cmake/RocmCmakeDependence.cmake	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/cmake/RocmCmakeDependence.cmake	2023-10-04 13:27:51.635061656 -0700
 @@ -21,7 +21,7 @@
  # SOFTWARE.
  
@@ -12,7 +12,7 @@ diff -urp hipCUB-rocm-5.7.0.orig/cmake/RocmCmakeDependence.cmake hipCUB-rocm-5.7
      file(
 diff -urp hipCUB-rocm-5.7.0.orig/cmake/ROCMExportTargetsHeaderOnly.cmake hipCUB-rocm-5.7.0/cmake/ROCMExportTargetsHeaderOnly.cmake
 --- hipCUB-rocm-5.7.0.orig/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-10-04 13:27:51.635061656 -0700
 @@ -67,11 +67,11 @@ function(rocm_export_targets_header_only
          set(PREFIX_DIR ${PARSE_PREFIX})
          set(PREFIX_ARG PREFIX ${PREFIX_DIR})
@@ -29,7 +29,7 @@ diff -urp hipCUB-rocm-5.7.0.orig/cmake/ROCMExportTargetsHeaderOnly.cmake hipCUB-
      set(CONFIG_PACKAGE_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/${PACKAGE_NAME_LOWER})
 diff -urp hipCUB-rocm-5.7.0.orig/cmake/VerifyCompiler.cmake hipCUB-rocm-5.7.0/cmake/VerifyCompiler.cmake
 --- hipCUB-rocm-5.7.0.orig/cmake/VerifyCompiler.cmake	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/cmake/VerifyCompiler.cmake	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/cmake/VerifyCompiler.cmake	2023-10-04 13:27:51.635061656 -0700
 @@ -20,10 +20,10 @@
  # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  # SOFTWARE.
@@ -55,7 +55,7 @@ diff -urp hipCUB-rocm-5.7.0.orig/cmake/VerifyCompiler.cmake hipCUB-rocm-5.7.0/cm
  if(HIP_COMPILER STREQUAL "nvcc")
 diff -urp hipCUB-rocm-5.7.0.orig/CMakeLists.txt hipCUB-rocm-5.7.0/CMakeLists.txt
 --- hipCUB-rocm-5.7.0.orig/CMakeLists.txt	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/CMakeLists.txt	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/CMakeLists.txt	2023-10-04 13:27:51.635061656 -0700
 @@ -24,28 +24,28 @@ cmake_minimum_required(VERSION 3.16 FATA
  cmake_policy(VERSION 3.16...3.21)
  
@@ -93,7 +93,7 @@ diff -urp hipCUB-rocm-5.7.0.orig/CMakeLists.txt hipCUB-rocm-5.7.0/CMakeLists.txt
  
 diff -urp hipCUB-rocm-5.7.0.orig/hipcub/CMakeLists.txt hipCUB-rocm-5.7.0/hipcub/CMakeLists.txt
 --- hipCUB-rocm-5.7.0.orig/hipcub/CMakeLists.txt	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/hipcub/CMakeLists.txt	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/hipcub/CMakeLists.txt	2023-10-04 13:27:51.635061656 -0700
 @@ -91,7 +91,7 @@ rocm_install(
  )
  
@@ -105,7 +105,7 @@ diff -urp hipCUB-rocm-5.7.0.orig/hipcub/CMakeLists.txt hipCUB-rocm-5.7.0/hipcub/
      DIRECTORY
 diff -urp hipCUB-rocm-5.7.0.orig/install hipCUB-rocm-5.7.0/install
 --- hipCUB-rocm-5.7.0.orig/install	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/install	2023-09-30 21:09:46.577232137 -0700
++++ hipCUB-rocm-5.7.0/install	2023-10-04 13:28:28.783061881 -0700
 @@ -31,7 +31,7 @@ build_clients=false
  build_release=true
  build_hip_clang=false
@@ -130,7 +130,7 @@ Only in hipCUB-rocm-5.7.0: install.orig
 Only in hipCUB-rocm-5.7.0: install.rej
 diff -urp hipCUB-rocm-5.7.0.orig/README.md hipCUB-rocm-5.7.0/README.md
 --- hipCUB-rocm-5.7.0.orig/README.md	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/README.md	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/README.md	2023-10-04 13:27:51.635061656 -0700
 @@ -100,10 +100,10 @@ configuration files.
  
  ```cmake
@@ -147,7 +147,7 @@ diff -urp hipCUB-rocm-5.7.0.orig/README.md hipCUB-rocm-5.7.0/README.md
  # On ROCm: includes hipCUB headers and roc::rocprim_hip target
 diff -urp hipCUB-rocm-5.7.0.orig/rmake.py hipCUB-rocm-5.7.0/rmake.py
 --- hipCUB-rocm-5.7.0.orig/rmake.py	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/rmake.py	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/rmake.py	2023-10-04 13:27:51.635061656 -0700
 @@ -103,7 +103,7 @@ def config_cmd():
          # "-G \"Visual Studio 16 2019\" -A x64"  #  -G NMake ")  #
          cmake_options.append( generator )
@@ -159,7 +159,7 @@ diff -urp hipCUB-rocm-5.7.0.orig/rmake.py hipCUB-rocm-5.7.0/rmake.py
          else:
 diff -urp hipCUB-rocm-5.7.0.orig/test/extra/CMakeLists.txt hipCUB-rocm-5.7.0/test/extra/CMakeLists.txt
 --- hipCUB-rocm-5.7.0.orig/test/extra/CMakeLists.txt	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/test/extra/CMakeLists.txt	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/test/extra/CMakeLists.txt	2023-10-04 13:27:51.635061656 -0700
 @@ -30,7 +30,7 @@ project(hipCUB_package_install_test CXX)
  # CMake modules
  list(APPEND CMAKE_MODULE_PATH
@@ -180,7 +180,7 @@ diff -urp hipCUB-rocm-5.7.0.orig/test/extra/CMakeLists.txt hipCUB-rocm-5.7.0/tes
  set(CMAKE_CXX_STANDARD 14)
 diff -urp hipCUB-rocm-5.7.0.orig/toolchain-linux.cmake hipCUB-rocm-5.7.0/toolchain-linux.cmake
 --- hipCUB-rocm-5.7.0.orig/toolchain-linux.cmake	2023-09-07 13:49:03.000000000 -0700
-+++ hipCUB-rocm-5.7.0/toolchain-linux.cmake	2023-09-30 21:08:59.349230936 -0700
++++ hipCUB-rocm-5.7.0/toolchain-linux.cmake	2023-10-04 13:27:51.635061656 -0700
 @@ -6,7 +6,7 @@
  if (DEFINED ENV{ROCM_PATH})
    set(rocm_bin "$ENV{ROCM_PATH}/bin")
