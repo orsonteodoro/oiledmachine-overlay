@@ -18,7 +18,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpenGEMM"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="-benchmark"
+IUSE="-benchmark r1"
 RDEPEND="virtual/opencl"
 RDEPEND="
 	virtual/blas

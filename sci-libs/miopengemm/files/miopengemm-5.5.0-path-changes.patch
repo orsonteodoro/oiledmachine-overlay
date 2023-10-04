@@ -149,10 +149,10 @@ diff -urp MIOpenGEMM-rocm-5.5.0.orig/CMakeLists.txt MIOpenGEMM-rocm-5.5.0/CMakeL
  # Default installation path
  if(WIN32)
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm/x86_64-w64-mingw32" CACHE PATH "Installation path")
-+    set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "Installation path")
++    set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@/x86_64-w64-mingw32" CACHE PATH "Installation path")
  else()
 -    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Installation path")
-+    set(CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Installation path")
++    set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Installation path")
  endif()
  
  project(miopengemm)
