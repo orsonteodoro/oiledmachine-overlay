@@ -107,7 +107,7 @@ RDEPEND="
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
 	hiptensor? (
-		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}
+		~sci-libs/hiptensor-${PV}:${ROCM_SLOT}[rocm]
 	)
 "
 
