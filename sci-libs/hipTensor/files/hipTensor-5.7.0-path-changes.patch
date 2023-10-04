@@ -6,7 +6,7 @@ diff -urp hipTensor-rocm-5.7.0.orig/CMakeLists.txt hipTensor-rocm-5.7.0/CMakeLis
  
  if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 -  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
-+  set( CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
++  set( CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
  endif()
  if( NOT CPACK_PACKAGING_INSTALL_PREFIX )
    set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" CACHE PATH "Install path prefix for packages.")
