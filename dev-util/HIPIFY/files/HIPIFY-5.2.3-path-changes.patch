@@ -30,14 +30,14 @@ diff -urp HIPIFY-rocm-5.2.3.orig/CMakeLists.txt HIPIFY-rocm-5.2.3/CMakeLists.txt
          include(hipify-backward-compat.cmake)
      endif()
 -    set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE PATH "HIP Package Installation Path")
-+    set(CPACK_PACKAGING_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "HIP Package Installation Path")
++    set(CPACK_PACKAGING_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "HIP Package Installation Path")
      #TODO: To be removed
      #In jenkins and docker build , hipify need to be installed in /opt/rocm.
      #Currently build script passes /opt/rocm/hip as install path
      #Workaround for removing same, till prototype changes are merged
      if(CPACK_PACKAGING_INSTALL_PREFIX)
 -        string(FIND ${CPACK_PACKAGING_INSTALL_PREFIX} "/opt/rocm" ROCMDIR_FOUND)
-+        string(FIND ${CPACK_PACKAGING_INSTALL_PREFIX} "@ESYSROOT_ROCM_PATH@" ROCMDIR_FOUND)
++        string(FIND ${CPACK_PACKAGING_INSTALL_PREFIX} "@EPREFIX_ROCM_PATH@" ROCMDIR_FOUND)
          if(NOT ${ROCMDIR_FOUND} MATCHES "-1")
              get_filename_component(DEST_DIR ${CPACK_PACKAGING_INSTALL_PREFIX} NAME)
              if(DEST_DIR STREQUAL "hip")

@@ -15,7 +15,7 @@ diff -urp HIPIFY-rocm-5.7.0.orig/CMakeLists.txt HIPIFY-rocm-5.7.0/CMakeLists.txt
      endif()
  
 -    set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE PATH "HIP Package Installation Path")
-+    set(CPACK_PACKAGING_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "HIP Package Installation Path")
++    set(CPACK_PACKAGING_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "HIP Package Installation Path")
      set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/packages/hipify-clang)
  
      configure_file(packaging/hipify-clang.txt ${BUILD_DIR}/CMakeLists.txt @ONLY)

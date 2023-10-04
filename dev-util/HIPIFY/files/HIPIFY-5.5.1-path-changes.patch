@@ -21,7 +21,7 @@ diff -urp HIPIFY-rocm-5.5.1.orig/CMakeLists.txt HIPIFY-rocm-5.5.1/CMakeLists.txt
          include(hipify-backward-compat.cmake)
      endif()
 -    set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/rocm" CACHE PATH "HIP Package Installation Path")
-+    set(CPACK_PACKAGING_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "HIP Package Installation Path")
++    set(CPACK_PACKAGING_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE PATH "HIP Package Installation Path")
      set(BUILD_DIR ${CMAKE_CURRENT_BINARY_DIR}/packages/hipify-clang)
      configure_file(packaging/hipify-clang.txt ${BUILD_DIR}/CMakeLists.txt @ONLY)
      configure_file(${CMAKE_SOURCE_DIR}/LICENSE.txt ${BUILD_DIR}/LICENSE.txt @ONLY)
