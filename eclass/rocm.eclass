@@ -737,6 +737,8 @@ rocm_fix_rpath() {
 		fi
 
 		local needs_rpath_patch=0
+		local needs_rpath_patch_clang=0
+		local needs_rpath_patch_llvm=0
 		if (( ${is_so} || ${is_exe} )) ; then
 			if ldd "${path}" 2>/dev/null | grep -q "libamdhip64.so" ; then
 				if ldd "${path}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
@@ -753,12 +755,112 @@ rocm_fix_rpath() {
 					needs_rpath_patch=1
 				fi
 			fi
+
+			if has system-llvm && ! use system-llvm ; then
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMCore.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMCore.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libclangBasic.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libclangBasic.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_clang=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMFrontendOpenMP.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMFrontendOpenMP.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMOption.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMOption.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMSupport.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMSupport.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+			fi
+
+			if has system-llvm && use system-llvm ; then
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMCore.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMCore.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libclangBasic.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libclangBasic.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_clang=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMFrontendOpenMP.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMFrontendOpenMP.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMOption.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMOption.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMSupport.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMSupport.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+			fi
 		fi
 
 		if (( ${needs_rpath_patch} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
 				--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
+				"${path}" \
+				|| die
+		fi
+
+		if (( ${needs_rpath_patch_clang} )) ; then
+einfo "Fixing rpath for ${path}"
+			patchelf \
+				--add-rpath "${EPREFIX}${EROCM_CLANG_PATH}/$(get_libdir)" \
+				"${path}" \
+				|| die
+		fi
+
+		if (( ${needs_rpath_patch_llvm} )) ; then
+einfo "Fixing rpath for ${path}"
+			patchelf \
+				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(get_libdir)" \
 				"${path}" \
 				|| die
 		fi
@@ -789,6 +891,8 @@ rocm_verify_rpath_correctness() {
 		fi
 
 		local needs_rpath_patch=0
+		local needs_rpath_patch_clang=0
+		local needs_rpath_patch_llvm=0
 		if (( ${is_so} || ${is_exe} )) ; then
 			if ldd "${path}" 2>/dev/null | grep -q "libamdhip64.so" ; then
 				if ldd "${path}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
@@ -805,9 +909,113 @@ rocm_verify_rpath_correctness() {
 					needs_rpath_patch=1
 				fi
 			fi
+
+			if has system-llvm && ! use system-llvm ; then
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMCore.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMCore.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libclangBasic.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libclangBasic.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_clang=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMFrontendOpenMP.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMFrontendOpenMP.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMOption.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMOption.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMSupport.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMSupport.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+			fi
+
+			if has system-llvm && use system-llvm ; then
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMCore.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMCore.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libclangBasic.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libclangBasic.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_clang=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMFrontendOpenMP.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMFrontendOpenMP.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMOption.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMOption.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMSupport.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMSupport.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+			fi
 		fi
 
 		if (( ${needs_rpath_patch} )) ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path}"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path}"
+			fi
+		fi
+
+		if (( ${needs_rpath_patch_llvm} )) ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path}"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path}"
+			fi
+		fi
+
+		if (( ${needs_rpath_patch_clang} )) ; then
 			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
 				die "Q/A:  Missing rpath for ${path}"

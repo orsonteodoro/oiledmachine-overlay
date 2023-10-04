@@ -1,4 +1,7 @@
 #!/bin/bash
+
+USE_SYSTEM_LLVM=${USE_SYSTEM_LLVM:-1}
+
 main() {
 	IFS=$'\n'
 	for path in $(find /usr/lib64/rocm/*/{bin,lib64,lib} 2>/dev/null) ; do
@@ -11,12 +14,18 @@ main() {
 		fi
 
 		if (( ${is_so} || ${is_exe} )) ; then
+			local reason=""
+			local reason_llvm=""
+			local reason_clang=""
 			local needs_rpath_patch=0
+			local needs_rpath_patch_clang=0
+			local needs_rpath_patch_llvm=0
 			if ldd "${path}" 2>/dev/null | grep -q "libamdhip64.so" ; then
 				if ldd "${path}" 2>/dev/null | grep "libamdhip64.so" | grep -q "/rocm/" ; then
 					:;
 				else
 					needs_rpath_patch=1
+					reason="libamdhip64.so is not linked to .../rocm/"
 				fi
 			fi
 
@@ -25,11 +34,114 @@ main() {
 					:;
 				else
 					needs_rpath_patch=1
+					reason="libhsa-runtime64.so is not linked to .../rocm/"
+				fi
+			fi
+
+			if [[ "${USE_SYSTEM_LLVM}" == "1" ]] ; then
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMCore.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMCore.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+						reason_llvm="libLLVMCore.so is not linked to .../rocm/"
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libclangBasic.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libclangBasic.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_clang=1
+						reason_clang="libclangBasic.so is not linked to .../rocm/"
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMFrontendOpenMP.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMFrontendOpenMP.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+						reason_llvm="libLLVMFrontendOpenMP.so is not linked to .../rocm/"
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMOption.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMOption.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+						reason_llvm="libLLVMOption.so is not linked to .../rocm/"
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMSupport.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMSupport.so" | grep -q "/rocm/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+						reason_llvm="libLLVMSupport.so is not linked to .../rocm/"
+					fi
+				fi
+			fi
+
+			if [[ "${USE_SYSTEM_LLVM}" != "1" ]] ; then
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMCore.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMCore.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+						reason_llvm="libLLVMCore.so is not linked to ...lib/llvm"
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libclangBasic.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libclangBasic.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_clang=1
+						reason_clang="libclangBasic.so is not linked to ...lib/llvm"
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMFrontendOpenMP.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMFrontendOpenMP.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+						reason_llvm="libLLVMFrontendOpenMP.so is not linked to ...lib/llvm"
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMOption.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMOption.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+						reason_llvm="libLLVMOption.so is not linked to ...lib/llvm"
+					fi
+				fi
+
+				if ldd "${path}" 2>/dev/null | grep -q "libLLVMSupport.so" ; then
+					if ldd "${path}" 2>/dev/null | grep "libLLVMSupport.so" | grep -q "lib/llvm" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+						reason_llvm="libLLVMSupport.so is not linked to ...lib/llvm"
+					fi
 				fi
 			fi
 
 			if (( ${needs_rpath_patch} )) ; then
-				echo "missing rpath for ${path}"
+				echo "missing rpath for ${path} ; Reason:  ${reason}"
+			fi
+
+			if (( ${needs_rpath_patch_clang} )) ; then
+				echo "missing rpath for ${path} ; Reason:  ${reason_clang} (clang)"
+			fi
+
+			if (( ${needs_rpath_patch_llvm} )) ; then
+				echo "missing rpath for ${path} ; Reason:  ${reason_llvm} (llvm)"
 			fi
 		fi
 	done
