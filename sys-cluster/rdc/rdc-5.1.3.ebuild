@@ -37,7 +37,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test r4"
+IUSE="+compile-commands doc +raslib +standalone systemd test r5"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -126,6 +126,14 @@ src_install() {
 	cmake_src_install
 	rocm_mv_docs
 	rocm_fix_rpath
+	patchelf \
+		--add-rpath "${EPREFIX}${EROCM_PATH}/rdc/$(get_libdir)" \
+		"${ED}${EROCM_PATH}/rdc/$(get_libdir)/librdc.so.1.0" \
+		|| die
+	patchelf \
+		--add-rpath "${EPREFIX}${EROCM_PATH}/rdc/$(get_libdir)" \
+		"${ED}${EROCM_PATH}/rdc/$(get_libdir)/librdc_rocr.so.1.0" \
+		|| die
 }
 
 pkg_postinst() {

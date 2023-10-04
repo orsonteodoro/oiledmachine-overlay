@@ -838,7 +838,7 @@ einfo "Fixing rpath for ${path}"
 		fi
 
 		if (( ${is_so} || ${is_exe} )) && ldd "${path}" 2>/dev/null | grep -q "not found" ; then
-			if [[ "${EROCM_RPATH_SCAN_FATAL:-1}" == "1" ]] ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
 				die "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
 			else
@@ -951,7 +951,7 @@ rocm_verify_rpath_correctness() {
 		fi
 
 		if (( ${needs_rpath_patch} )) ; then
-			if [[ "${EROCM_RPATH_SCAN_FATAL:-1}" == "1" ]] ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
 				die "Q/A:  Missing rpath for ${path}"
 			else
@@ -961,7 +961,7 @@ rocm_verify_rpath_correctness() {
 		fi
 
 		if (( ${needs_rpath_patch_llvm} )) ; then
-			if [[ "${EROCM_RPATH_SCAN_FATAL:-1}" == "1" ]] ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
 				die "Q/A:  Missing rpath for ${path} (llvm)"
 			else
@@ -971,7 +971,7 @@ rocm_verify_rpath_correctness() {
 		fi
 
 		if (( ${needs_rpath_patch_clang} )) ; then
-			if [[ "${EROCM_RPATH_SCAN_FATAL:-1}" == "1" ]] ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
 				die "Q/A:  Missing rpath for ${path} (clang)"
 			else
@@ -981,7 +981,7 @@ rocm_verify_rpath_correctness() {
 		fi
 
 		if (( ${is_so} || ${is_exe} )) && ldd "${path}" 2>/dev/null | grep -q "not found" ; then
-			if [[ "${EROCM_RPATH_SCAN_FATAL:-1}" == "1" ]] ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
 				die "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
 			else
