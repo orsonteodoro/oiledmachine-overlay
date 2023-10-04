@@ -36,6 +36,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
 	>=dev-python/pybind11-2.6[${PYTHON_USEDEP}]
+	dev-util/rocm-compiler[system-llvm=]
 	media-libs/vulkan-loader
 	virtual/libc
 	~dev-util/hip-${PV}:${ROCM_SLOT}

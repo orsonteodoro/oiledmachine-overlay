@@ -15,7 +15,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.5.0/cm
  if (NOT DEFINED ROCM_PATH)
    if (NOT DEFINED ENV{ROCM_PATH})
 -    set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
-+    set(ROCM_PATH "/usr" CACHE PATH "Path to which ROCm has been installed") # oteodoro:  edited
++    set(ROCM_PATH "@ESYSROOT_ROCM_PATH@" CACHE PATH "Path to which ROCm has been installed") # oteodoro:  edited
    else()
      set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
    endif()
@@ -69,7 +69,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/CMakeLists.txt rocMLIR-rocm-5.5.0/CMakeLists.t
    set(MLIR_ENABLE_ROCM_RUNNER 0 CACHE BOOL "")
    set(MLIR_INCLUDE_INTEGRATION_TESTS OFF CACHE BOOL "")
 -  set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE STRING "")
-+  set(CMAKE_INSTALL_PREFIX "/usr" CACHE STRING "") # oteodoro: edited
++  set(CMAKE_INSTALL_PREFIX "@EPREFIX_ROCM_PATH@" CACHE STRING "") # oteodoro: edited
    set(ROCMLIR_DRIVER_PR_E2E_TEST_ENABLED 0 CACHE BOOL "Enable build PR-triggered E2E tests for Rock driver")
    # Note, this is a hack to ignore Pytorch added conda path
    list(APPEND CMAKE_IGNORE_PATH /opt/conda)
@@ -82,7 +82,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/clang/lib/Driver/ToolCha
  
 -    // Some versions of the rocm llvm package install to /opt/rocm/llvm/bin
 -    // Some versions of the aomp package install to /opt/rocm/aomp/bin
-+    // Some versions of the rocm llvm package install to @ESYSROOT_LLVM_PATH@/bin  // oteodoro: edited
++    // Some versions of the rocm llvm package install to @EPREFIX_LLVM_PATH@/bin  // oteodoro: edited
 +    // Some versions of the aomp package install to /opt/aomp/@LLVM_SLOT@/bin           // oteodoro: edited
      if (ParentName == "llvm" || ParentName.startswith("aomp"))
        ParentDir = llvm::sys::path::parent_path(ParentDir);
@@ -92,7 +92,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/clang/lib/Driver/ToolCha
                                /*StrictChecking=*/true);
  
 -  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
-+  ROCmSearchDirs.emplace_back(D.SysRoot + "/usr", // oteodoro:  edited
++  ROCmSearchDirs.emplace_back(D.SysRoot + "@ROCM_PATH@", // oteodoro:  edited
                                /*StrictChecking=*/true);
  
 +// oteodoro:  disabled
@@ -130,7 +130,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/clang/tools/amdgpu-arch/
  # //===----------------------------------------------------------------------===//
  
 -find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
-+find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr) # oteodoro:  edited
++find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@) # oteodoro:  edited
  if (NOT ${hsa-runtime64_FOUND})
    message(STATUS "Not building amdgpu-arch: hsa-runtime64 not found")
    return()
@@ -142,7 +142,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMa
    endif()
  
 -  set(DEFAULT_ROCM_PATH "/opt/rocm" CACHE PATH "Fallback path to search for ROCm installs")
-+  set(DEFAULT_ROCM_PATH "/usr" CACHE PATH "Fallback path to search for ROCm installs") # oteodoro:  edited
++  set(DEFAULT_ROCM_PATH "@EPREFIX_ROCM_PATH@" CACHE PATH "Fallback path to search for ROCm installs") # oteodoro:  edited
    target_compile_definitions(obj.MLIRGPUTransforms
      PRIVATE
      __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"
@@ -154,7 +154,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/mlir/lib/ExecutionEngine
    if (NOT DEFINED ROCM_PATH)
      if (NOT DEFINED ENV{ROCM_PATH})
 -      set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
-+      set(ROCM_PATH "/usr" CACHE PATH "Path to which ROCm has been installed") # oteodoro:  edited
++      set(ROCM_PATH "@ESYSROOT_ROCM_PATH@" CACHE PATH "Path to which ROCm has been installed") # oteodoro:  edited
      else()
        set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
      endif()
@@ -172,7 +172,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/external/llvm-project/openmp/libomptarget/plug
  
  # as of rocm-3.7, hsa is installed with cmake packages and kmt is found via hsa
 -find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
-+find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /usr) # oteodoro:  edited
++find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@) # oteodoro:  edited
  
  if(NOT CMAKE_SYSTEM_PROCESSOR MATCHES "(x86_64)|(ppc64le)|(aarch64)$" AND CMAKE_SYSTEM_NAME MATCHES "Linux")
    libomptarget_say("Not building AMDGPU plugin: only support AMDGPU in Linux x86_64, ppc64le, or aarch64 hosts")
@@ -198,7 +198,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Tuning/CMakeLists.txt ro
      set(MIOPEN_PATH ${ROCM_PATH}/miopen)
      if (NOT MIOPEN_SYSTEM_DB_PATH)
 -      set(MIOPEN_SYSTEM_DB_PATH "${MIOPEN_PATH}/share/miopen/db/miopen.db")
-+      set(MIOPEN_SYSTEM_DB_PATH "/usr/share/miopen/db/miopen.db") # oteodoro:  edited
++      set(MIOPEN_SYSTEM_DB_PATH "@EPREFIX_ROCM_PATH@/share/miopen/db/miopen.db") # oteodoro:  edited
      endif()
      if (EXISTS "${MIOPEN_SYSTEM_DB_PATH}")
        message(STATUS "miopen system perfdb path: ${MIOPEN_SYSTEM_DB_PATH}")
@@ -210,7 +210,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/mlir/lib/Dialect/Rock/Tuning/SqliteDb.cpp rocM
  
  SQLitePerfDb mlir::getDb(const llvm::SmallString<8> &arch, std::size_t num_cu) {
 -  // DB path: "/opt/rocm/rock/share/rock/db/rock.db"
-+  // DB path: "/usr/share/rock/db/rock.db" // oteodoro:  edited
++  // DB path: "@EPREFIX_ROCM_PATH@/share/rock/db/rock.db" // oteodoro:  edited
    return {ROCK_SYSTEM_DB_PATH, true, std::string(arch), num_cu};
  }
  
@@ -255,14 +255,14 @@ diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/parameterSweeps.py rocM
  
  def getArch():
 -    p = subprocess.run(["/opt/rocm/bin/rocm_agent_enumerator", "-name"], check=True,
-+    p = subprocess.run(["/usr/bin/rocm_agent_enumerator", "-name"], check=True, # oteodoro:  edited
++    p = subprocess.run(["@EPREFIX_ROCM_PATH@/bin/rocm_agent_enumerator", "-name"], check=True, # oteodoro:  edited
                         stdout=subprocess.PIPE)
      agents = set(x.decode("utf-8") for x in p.stdout.split())
      if not agents:
          # TODO: Remove this workaround for a bug in rocm_agent_enumerator -name
          # Once https://github.com/RadeonOpenCompute/rocminfo/pull/59 lands
 -        q = subprocess.run(["/opt/rocm/bin/rocm_agent_enumerator"],
-+        q = subprocess.run(["/usr/bin/rocm_agent_enumerator"], # oteodoro:  edited
++        q = subprocess.run(["@EPREFIX_ROCM_PATH@/bin/rocm_agent_enumerator"], # oteodoro:  edited
                                check=True, stdout=subprocess.PIPE)
          agents = set(x.decode("utf-8") for x in q.stdout.split() if x != b"gfx000")
      return agents
@@ -274,7 +274,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/perfRunner.py rocMLIR-r
  
  # global variables.
 -ROCPROF = '/opt/rocm/bin/rocprof'
-+ROCPROF = '/usr/bin/rocprof' # oteodoro:  edited
++ROCPROF = '@EPREFIX_ROCM_PATH@/bin/rocprof' # oteodoro:  edited
  BENCHMARKING_RESULT_FILE_NAME = 'results.stats.csv'
  DIRECTIONS = ['-F 1', '-F 2', '-F 4']
  DATA_TYPES = ['conv', 'convfp16', 'convint8']
@@ -292,21 +292,21 @@ diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/perfRunner.py rocMLIR-r
      for gpu in xdlop_supported_gpus[1:]:
          xdlop_supported_gpus_str += '|' + gpu
 -    r = subprocess.run(f"/opt/rocm/bin/rocm_agent_enumerator -t GPU | grep -q -E '{xdlop_supported_gpus_str}'", shell=True)
-+    r = subprocess.run(f"/usr/bin/rocm_agent_enumerator -t GPU | grep -q -E '{xdlop_supported_gpus_str}'", shell=True) # oteodoro:  edited
++    r = subprocess.run(f"@EPREFIX_ROCM_PATH@/bin/rocm_agent_enumerator -t GPU | grep -q -E '{xdlop_supported_gpus_str}'", shell=True) # oteodoro:  edited
      if r.returncode == 0:
          return True
      return False
  
  def getArch():
 -    p = subprocess.run(["/opt/rocm/bin/rocm_agent_enumerator", "-name"], check=True,
-+    p = subprocess.run(["/usr/bin/rocm_agent_enumerator", "-name"], check=True, # oteodoro:  edited
++    p = subprocess.run(["@EPREFIX_ROCM_PATH@/bin/rocm_agent_enumerator", "-name"], check=True, # oteodoro:  edited
                         stdout=subprocess.PIPE)
      agents = set(x.decode("utf-8") for x in p.stdout.split())
      if not agents:
          # TODO: Remove this workaround for a bug in rocm_agent_enumerator -name
          # Once https://github.com/RadeonOpenCompute/rocminfo/pull/59 lands
 -        q = subprocess.run(["/opt/rocm/bin/rocm_agent_enumerator"],
-+        q = subprocess.run(["/usr/bin/rocm_agent_enumerator"], # oteodoro:  edited
++        q = subprocess.run(["@EPREFIX_ROCM_PATH@/bin/rocm_agent_enumerator"], # oteodoro:  edited
                                check=True, stdout=subprocess.PIPE)
          agents = set(x.decode("utf-8") for x in q.stdout.split() if x != b"gfx000")
      return agents
@@ -315,7 +315,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/performance/rocblas-benchmark-drive
 +++ rocMLIR-rocm-5.5.0/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt	2023-08-31 00:04:21.981815617 -0700
 @@ -1,4 +1,4 @@
 -find_package(rocblas CONFIG HINTS /opt/rocm)
-+find_package(rocblas CONFIG HINTS /usr) # oteodoro:  edited
++find_package(rocblas CONFIG HINTS @EPREFIX_ROCM_PATH@) # oteodoro:  edited
  if(NOT rocblas_FOUND)
    message(WARNING "Could not find rocBLAS, not building a rocBLAS benchmark driver")
  endif()
@@ -340,7 +340,7 @@ diff -urp rocMLIR-rocm-5.5.0.orig/mlir/utils/widgets/tune_MLIR_kernels.sh rocMLI
      esac
  
 -    case $(/opt/rocm/bin/rocm_agent_enumerator) in
-+    case $(/usr/bin/rocm_agent_enumerator) in # oteodoro:  edited
++    case $(@EPREFIX_ROCM_PATH@/bin/rocm_agent_enumerator) in # oteodoro:  edited
          *gfx908*|*gfx90a*)           XDLOPS=1 ;;
          *gfx906*|*gfx900*|*gfx1030*) XDLOPS=0 ;;
          *)                           echo "No useful GPU found." ; exit 2 ;;

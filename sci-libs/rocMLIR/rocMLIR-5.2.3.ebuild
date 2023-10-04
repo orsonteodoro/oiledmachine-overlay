@@ -3,8 +3,7 @@
 
 EAPI=8
 
-CMAKE_MAKEFILE_GENERATOR="ninja"
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=15
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -40,16 +39,7 @@ RDEPEND="
 	dev-util/rocm-compiler[system-llvm=]
 	media-libs/vulkan-loader
 	virtual/libc
-	|| (
-		(
-			~dev-util/hip-${PV}:${ROCM_SLOT}
-			~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
-		)
-		(
-			>=dev-util/hip-${PV}:${ROCM_SLOT}
-			>=sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
-		)
-	)
+	~dev-util/hip-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -63,8 +53,8 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.0-path-changes.patch"
-	"${FILESDIR}/${PN}-5.5.0-fix-so-suffix.patch"
+	"${FILESDIR}/${PN}-5.2.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.3.3-fix-so-suffix.patch"
 )
 
 ccmake() {
@@ -89,6 +79,10 @@ pkg_setup() {
 
 src_prepare() {
 ewarn "Patching may take a long time.  Please wait..."
+	sed -i -e "s|FATAL_ERROR|WARNING|g" \
+		external/llvm-project/llvm/cmake/modules/CheckCompilerVersion.cmake \
+		external/llvm-project/llvm/cmake/modules/CheckAtomic.cmake \
+		|| die
 	sed -i -e "s|LLVM_VERSION_SUFFIX git|LLVM_VERSION_SUFFIX roc|g" \
 		external/llvm-project/llvm/CMakeLists.txt \
 		|| die
@@ -166,7 +160,7 @@ build_rocmlir() {
 	libdir_suffix="${libdir_suffix/lib}"
 	local mycmakeargs=(
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
-		-DBUILD_FAT_LIBROCKCOMPILER=ON # DO NOT CHANGE.  Static produces rocMLIR folder while shared does not.
+		-DBUILD_FAT_LIBMLIRMIOPEN=ON # DO NOT CHANGE.  Static produces rocMLIR folder while shared does not.
 
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
@@ -186,6 +180,14 @@ build_rocmlir() {
 		# -DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include" # Originally this
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/${EROCM_LLVM_PATH}/llvm/include"
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
+
+		-DCMAKE_THREAD_LIBS_INIT="-lpthread"
+		-DCMAKE_HAVE_THREADS_LIBRARY=1
+		-DCMAKE_USE_PTHREADS_INIT=1
+		-DCMAKE_USE_WIN32_THREADS_INIT=0
+		-DTHREADS_PREFER_PTHREAD_FLAG=ON
+
+		-DHAVE_SYSEXITS_H=1
 	)
 
 	if use system-llvm ; then
@@ -237,5 +239,6 @@ src_install() {
 	rocm_mv_docs
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
-# works
+# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# no works

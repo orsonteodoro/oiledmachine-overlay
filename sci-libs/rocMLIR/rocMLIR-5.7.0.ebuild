@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=17
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -63,7 +63,7 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
 	"${FILESDIR}/${PN}-5.5.0-fix-so-suffix.patch"
 )
 

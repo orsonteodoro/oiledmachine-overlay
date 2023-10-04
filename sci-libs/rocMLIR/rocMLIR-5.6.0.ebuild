@@ -63,7 +63,7 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"${FILESDIR}/${PN}-5.5.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
 	"${FILESDIR}/${PN}-5.5.0-fix-so-suffix.patch"
 )
 
