@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild on the oiledmachine overlay -->
+    <name>Orson Teodoro</name>
+    <email>orsonteodoro@hotmail.com</email>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">ROCmSoftwarePlatform/hipTensor</remote-id>
+  </upstream>
+  <use>
+    <flag name="system-llvm">
+      Use the system clang/llvm packages instead of the ROCm forks at the
+      expense of minor version availability.
+    </flag>
+  </use>
+</pkgmetadata>

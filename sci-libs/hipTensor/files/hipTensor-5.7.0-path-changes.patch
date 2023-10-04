@@ -1,0 +1,144 @@
+diff -urp hipTensor-rocm-5.7.0.orig/CMakeLists.txt hipTensor-rocm-5.7.0/CMakeLists.txt
+--- hipTensor-rocm-5.7.0.orig/CMakeLists.txt	2023-09-07 14:41:18.000000000 -0700
++++ hipTensor-rocm-5.7.0/CMakeLists.txt	2023-10-04 15:01:31.507095617 -0700
+@@ -35,7 +35,7 @@ message( VERBOSE "CMAKE_BUILD_TYPE=${CMA
+ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE BOOL "" FORCE )
+ 
+ if( CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+-  set( CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
++  set( CMAKE_INSTALL_PREFIX "@ESYSROOT_ROCM_PATH@" CACHE PATH "Install path prefix, prepended onto install directories" FORCE )
+ endif()
+ if( NOT CPACK_PACKAGING_INSTALL_PREFIX )
+   set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}" CACHE PATH "Install path prefix for packages.")
+@@ -43,7 +43,7 @@ if( NOT CPACK_PACKAGING_INSTALL_PREFIX )
+ endif()
+ 
+ # This helps cmake properly find hip-config.cmake
+-list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} ${ROCM_PATH} /opt/rocm )
++list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
+ # Append our library helper cmake path and the cmake path for hip (for convenience).
+ # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
+ list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+@@ -64,8 +64,8 @@ endif()
+ 
+ # Setup output paths
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/bin)
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib)
+-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/lib)
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/@LIBDIR@)
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY  ${CMAKE_BINARY_DIR}/@LIBDIR@)
+ 
+ # ROCm setup
+ find_package(ROCM 0.8 CONFIG REQUIRED)
+diff -urp hipTensor-rocm-5.7.0.orig/docs/Contributors_Guide.rst hipTensor-rocm-5.7.0/docs/Contributors_Guide.rst
+--- hipTensor-rocm-5.7.0.orig/docs/Contributors_Guide.rst	2023-09-07 14:41:18.000000000 -0700
++++ hipTensor-rocm-5.7.0/docs/Contributors_Guide.rst	2023-10-04 14:58:39.539094578 -0700
+@@ -99,7 +99,7 @@ Format
+ ------
+ 
+ C++ code is formatted using ``clang-format``. To run clang-format
+-use the version in the ``/opt/rocm/llvm/bin`` directory. Please do not use your
++use the version in the ``@EPREFIX_LLVM_PATH@/bin`` directory. Please do not use your
+ system's built-in ``clang-format``, as this may be an older version that
+ will result in different results.
+ 
+@@ -107,14 +107,14 @@ To format a file, use:
+ 
+ ::
+ 
+-    /opt/rocm/llvm/bin/clang-format -style=file -i <path-to-source-file>
++    @EPREFIX_LLVM_PATH@/bin/clang-format -style=file -i <path-to-source-file>
+ 
+ To format all files, run the following script in hipTensor directory:
+ 
+ ::
+ 
+     #!/bin/bash
+-    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 /opt/rocm/llvm/bin/clang-format -style=file -i
++    git ls-files -z *.cc *.cpp *.h *.hpp *.cl *.h.in *.hpp.in *.cpp.in | xargs -0 @EPREFIX_LLVM_PATH@/bin/clang-format -style=file -i
+ 
+ Also, githooks can be installed to format the code per-commit:
+ 
+diff -urp hipTensor-rocm-5.7.0.orig/library/src/CMakeLists.txt hipTensor-rocm-5.7.0/library/src/CMakeLists.txt
+--- hipTensor-rocm-5.7.0.orig/library/src/CMakeLists.txt	2023-09-07 14:41:18.000000000 -0700
++++ hipTensor-rocm-5.7.0/library/src/CMakeLists.txt	2023-10-04 14:58:41.523094590 -0700
+@@ -24,7 +24,7 @@
+  #
+  ###############################################################################
+ 
+-find_package( composable_kernel 1.0.0 REQUIRED PATHS /opt/rocm /opt/rocm/ck $ENV{CK_DIR}/lib/cmake COMPONENTS device_operations )
++find_package( composable_kernel 1.0.0 REQUIRED PATHS @EPREFIX_LLVM_PATH@ @EPREFIX_LLVM_PATH@/ck $ENV{CK_DIR}/@LIBDIR@/cmake COMPONENTS device_operations )
+ rocm_package_add_dependencies("composable_kernel >= 1.0.0" COMPONENT tests)
+ 
+ set(THREADS_PREFER_PTHREAD_FLAG ON)
+diff -urp hipTensor-rocm-5.7.0.orig/README.md hipTensor-rocm-5.7.0/README.md
+--- hipTensor-rocm-5.7.0.orig/README.md	2023-09-07 14:41:18.000000000 -0700
++++ hipTensor-rocm-5.7.0/README.md	2023-10-04 14:58:40.563094584 -0700
+@@ -116,8 +116,8 @@ cd samples/build
+ 
+ ```bash
+ cmake                                                                                                  \
+--D CMAKE_CXX_COMPILER=/opt/rocm/bin/hipcc                                                              \
+--D CMAKE_PREFIX_PATH="/opt/rocm;${PATH_TO_HIPTENSOR_INSTALL_DIRECTORY};${PATH_TO_CK_INSTALL_DIRECTORY} \
++-D CMAKE_CXX_COMPILER=@EPREFIX_LLVM_PATH@/bin/hipcc                                                              \
++-D CMAKE_PREFIX_PATH="@EPREFIX_LLVM_PATH@;${PATH_TO_HIPTENSOR_INSTALL_DIRECTORY};${PATH_TO_CK_INSTALL_DIRECTORY} \
+ ..
+ ```
+ ### Build client example
+diff -urp hipTensor-rocm-5.7.0.orig/samples/CMakeLists.txt hipTensor-rocm-5.7.0/samples/CMakeLists.txt
+--- hipTensor-rocm-5.7.0.orig/samples/CMakeLists.txt	2023-09-07 14:41:18.000000000 -0700
++++ hipTensor-rocm-5.7.0/samples/CMakeLists.txt	2023-10-04 15:00:29.155095240 -0700
+@@ -46,7 +46,7 @@ if( CMAKE_PROJECT_NAME STREQUAL "hiptens
+ 
+         # Sample must propagate the build interface includes to make sure
+         # hiptensor includes are captured at runtime.
+-        target_link_libraries(${BINARY_NAME} PRIVATE hiptensor::hiptensor "-L${HIP_CLANG_ROOT}/lib" "-Wl,-rpath=${HIP_CLANG_ROOT}/lib")
++        target_link_libraries(${BINARY_NAME} PRIVATE hiptensor::hiptensor "-L@ESYSROOT_ROCM_PATH@/@LIBDIR@" "-Wl,-rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@")
+         target_include_directories(${BINARY_NAME} PRIVATE
+                                 ${CMAKE_CURRENT_SOURCE_DIR}
+                                 ${PROJECT_SOURCE_DIR}/library/include)
+@@ -84,7 +84,7 @@ if( CMAKE_PROJECT_NAME STREQUAL "hiptens
+ # If building hipTensor samples as a standalone Cmake project
+ else()
+     if(NOT CMAKE_CXX_COMPILER)
+-        set(CMAKE_CXX_COMPILER "/opt/rocm/bin/hipcc" CACHE STRING
++        set(CMAKE_CXX_COMPILER "@ESYSROOT_ROCM_PATH@/bin/hipcc" CACHE STRING
+             "Choose the type of compiler to build: Default point to hipcc"
+             FORCE)
+     endif()
+@@ -94,11 +94,11 @@ else()
+     add_compile_options(-std=c++17)
+ 
+     # Requires linking installed composable kernel and hipTensor library
+-    find_package(composable_kernel 1.0.0 REQUIRED PATHS /opt/rocm /opt/rocm/ck $ENV{CK_DIR}/lib/cmake COMPONENTS device_operations )
+-    find_package(hiptensor 0.2.0 REQUIRED PATHS /opt/rocm /opt/rocm/hiptensor $ENV{HIPTENSOR_DIR}/lib/cmake COMPONENTS hiptensor)
++    find_package(composable_kernel 1.0.0 REQUIRED PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/ck $ENV{CK_DIR}/@LIBDIR@/cmake COMPONENTS device_operations )
++    find_package(hiptensor 0.2.0 REQUIRED PATHS @ESYSROOT_ROCM_PATH@ @ESYSROOT_ROCM_PATH@/hiptensor $ENV{HIPTENSOR_DIR}/@LIBDIR@/cmake COMPONENTS hiptensor)
+ 
+     # This helps cmake properly find hip-config.cmake
+-    list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} ${ROCM_PATH} /opt/rocm )
++    list( APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH} ${ROCM_PATH} @ESYSROOT_ROCM_PATH@ )
+     # Append our library helper cmake path and the cmake path for hip (for convenience).
+     # Users may override HIP path by specifying their own in CMAKE_MODULE_PATH
+     list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
+diff -urp hipTensor-rocm-5.7.0.orig/test/CMakeLists.txt hipTensor-rocm-5.7.0/test/CMakeLists.txt
+--- hipTensor-rocm-5.7.0.orig/test/CMakeLists.txt	2023-09-07 14:41:18.000000000 -0700
++++ hipTensor-rocm-5.7.0/test/CMakeLists.txt	2023-10-04 14:59:45.155094974 -0700
+@@ -44,7 +44,7 @@ function(add_hiptensor_test BINARY_NAME
+ 
+     # Test must propagate the build interface includes to make sure
+     # hiptensor includes are captured at runtime.
+-    target_link_libraries(${BINARY_NAME} PRIVATE hiptensor::hiptensor "-L${HIP_CLANG_ROOT}/lib" "-Wl,-rpath=${HIP_CLANG_ROOT}/lib")
++    target_link_libraries(${BINARY_NAME} PRIVATE hiptensor::hiptensor "-L${HIP_CLANG_ROOT}/@LIBDIR@" "-Wl,-rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@")
+     target_include_directories(${BINARY_NAME} PRIVATE
+                                ${CMAKE_CURRENT_SOURCE_DIR}
+                                ${PROJECT_SOURCE_DIR}/library/include
+@@ -85,7 +85,7 @@ function(add_hiptensor_unit_test BINARY_
+ 
+     # Test must propagate the build interface includes to make sure
+     # hiptensor includes are captured at runtime.
+-    target_link_libraries(${BINARY_NAME} PRIVATE hiptensor::hiptensor "-L${HIP_CLANG_ROOT}/lib" "-Wl,-rpath=${HIP_CLANG_ROOT}/lib")
++    target_link_libraries(${BINARY_NAME} PRIVATE hiptensor::hiptensor "-L@EPREFIX_ROCM_PATH@/@LIBDIR@" "-Wl,-rpath=@EPREFIX_ROCM_PATH@/@LIBDIR@")
+     target_include_directories(${BINARY_NAME} PRIVATE
+                                ${CMAKE_CURRENT_SOURCE_DIR}
+                                ${PROJECT_SOURCE_DIR}/library/include
