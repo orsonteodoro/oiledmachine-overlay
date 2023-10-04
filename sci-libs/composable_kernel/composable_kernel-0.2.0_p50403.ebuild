@@ -122,10 +122,7 @@ src_prepare() {
 }
 
 src_configure() {
-	# Avoid ocml.bc': Unknown attribute kind (86) (Producer: 'LLVM16.0.6' Reader: 'LLVM 15.0.7') errors
-	local llvm_slot=$(grep -e "HIP_CLANG_ROOT.*/lib/llvm" \
-			"${ESYSROOT}${EROCM_PATH}/$(get_libdir)/cmake/hip/hip-config.cmake" \
-		| grep -E -o -e  "[0-9]+")
+	local llvm_slot="${LLVM_MAX_SLOT}"
 
 	if use system-llvm ; then
 		export CC="${CHOST}-clang-${llvm_slot}"
