@@ -121,29 +121,6 @@ src_configure() {
 
 src_install() {
 	emake V=1 DESTDIR="${D}" install
-	local L=(
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocgcore"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocstrip"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocgprof"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocnm"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocranlib"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocc++filt"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocobjdump"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocsize"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocar"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocobjcopy"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocaddr2line"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocelfedit"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocreadelf"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocstrings"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocgdb-add-index"
-		"${EROCM_PATH}/$(get_libdir)/ROCgdb/bin/rocgdb"
-	)
-	local path
-	for path in ${L[@]} ; do
-		local bn=$(basename "${path}")
-#		dosym "${EPREFIX}/${path}" "/usr/bin/${bn}"
-	done
 	rocm_fix_rpath
 }
 
