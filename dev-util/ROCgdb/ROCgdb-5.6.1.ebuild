@@ -28,7 +28,7 @@ https://github.com/ROCm-Developer-Tools/ROCgdb
 "
 LICENSE="GPL-3+ LGPL-2.1+"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm r3"
+IUSE="system-llvm r4"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -144,6 +144,7 @@ src_install() {
 		local bn=$(basename "${path}")
 #		dosym "${EPREFIX}/${path}" "/usr/bin/${bn}"
 	done
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
