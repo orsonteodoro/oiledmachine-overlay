@@ -119,22 +119,31 @@ ewarn "Patching may take a long time.  Please wait..."
                 || true
         IFS=$' \t\n'
 
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
 		"${S}/CMakeLists.txt"
 		"${S}/cmake/llvm-project.cmake"
 		"${S}/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp"
 		"${S}/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${S}/external/llvm-project/libc/cmake/modules/prepare_libc_gpu_build.cmake"
 		"${S}/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt"
 		"${S}/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt"
 		"${S}/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${S}/external/llvm-project/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
 		"${S}/mlir/CMakeLists.txt"
 		"${S}/mlir/lib/Dialect/MIOpen/CMakeLists.txt"
 		"${S}/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt"
+		"${S}/mlir/lib/Dialect/MIOpen/Tuning/SqliteDb.cpp"
 		"${S}/mlir/lib/Dialect/Rock/Tuning/CMakeLists.txt"
 		"${S}/mlir/lib/Dialect/Rock/Tuning/SqliteDb.cpp"
 		"${S}/mlir/lib/ExecutionEngine/ROCm/CMakeLists.txt"
 		"${S}/mlir/tools/mlir-rocm-runner/CMakeLists.txt"
 		"${S}/mlir/tools/rocmlir-lib/CMakeLists.txt"
+		"${S}/mlir/tools/rocmlir-tuning-driver/CMakeLists.txt"
+		"${S}/mlir/utils/performance/ck-benchmark-driver/CMakeLists.txt"
+		"${S}/mlir/utils/performance/common/CMakeLists.txt"
 		"${S}/mlir/utils/performance/parameterSweeps.py"
 		"${S}/mlir/utils/performance/perfRunner.py"
 		"${S}/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt"
