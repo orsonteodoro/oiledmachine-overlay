@@ -143,6 +143,10 @@ main() {
 			if (( ${needs_rpath_patch_llvm} )) ; then
 				echo "missing rpath for ${path} ; Reason:  ${reason_llvm} (llvm)"
 			fi
+
+			if ldd "${path}" 2>/dev/null | grep -q "not found" ; then
+				echo "missing rpath for ${path} ; Reason:  (not found)"
+			fi
 		fi
 	done
 	IFS=$' \t\n'

@@ -864,6 +864,16 @@ einfo "Fixing rpath for ${path}"
 				"${path}" \
 				|| die
 		fi
+
+		if (( ${is_so} || ${is_exe} )) && ldd "${path}" 2>/dev/null | grep -q "not found" ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
+			fi
+		fi
 	done
 	IFS=$' \t\n'
 }
@@ -993,6 +1003,7 @@ rocm_verify_rpath_correctness() {
 					fi
 				fi
 			fi
+
 		fi
 
 		if (( ${needs_rpath_patch} )) ; then
@@ -1022,6 +1033,16 @@ rocm_verify_rpath_correctness() {
 			else
 				# Use 0 or unset in pkg_postinst
 				ewarn "Q/A:  Missing rpath for ${path}"
+			fi
+		fi
+
+		if (( ${is_so} || ${is_exe} )) && ldd "${path}" 2>/dev/null | grep -q "not found" ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
 			fi
 		fi
 	done
