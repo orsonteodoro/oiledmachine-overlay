@@ -38,10 +38,11 @@ aocc doc test
 REQUIRED_USE="
 "
 RDEPEND="
+	!dev-lang/rocm-flang:0
 	dev-util/rocm-compiler[-system-llvm]
 	sys-devel/gcc
-	~sys-devel/llvm-roc-${PV}:${PV}[llvm_targets_AMDGPU,llvm_targets_X86]
-	~sys-libs/llvm-roc-libomp-${PV}:${PV}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[llvm_targets_AMDGPU,llvm_targets_X86]
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
 	aocc? (
 		sys-devel/aocc:${AOCC_SLOT}
 	)
@@ -107,7 +108,7 @@ einfo "Building Flang lib"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
-		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/lib"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
 einfo "GCC major version:  $(gcc-major-version)"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
@@ -152,7 +153,7 @@ einfo "Building Flang runtime"
 		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
-		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/lib"
+		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
 einfo "GCC major version:  $(gcc-major-version)"
 	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
@@ -312,6 +313,9 @@ src_install() {
 	doins -r "${staging_prefix}/"*
 	fix_file_permissions
 	# Flang symlink frontend is already installed by sys-devel/llvm-roc.
+	dosym \
+		"${EROCM_LLVM_PATH}/bin/flang" \
+		"${EROCM_PATH}/bin/flang"
 }
 
 pkg_postinst() {

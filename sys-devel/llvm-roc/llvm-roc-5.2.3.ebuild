@@ -77,7 +77,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 +runtime
-r7
+r8
 "
 RDEPEND="
 	!sys-devel/llvm-rocm:0
