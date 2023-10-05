@@ -1,0 +1,47 @@
+unchanged:
+--- a/lib/Driver/ToolChains/AMDGPU.cpp.orig	2023-08-27 22:37:21.608935675 -0700
++++ b/lib/Driver/ToolChains/AMDGPU.cpp	2023-08-27 22:39:51.664937520 -0700
+@@ -409,9 +409,9 @@ void RocmInstallationDetector::detectDev
+     return true;
+   };
+ 
+-  // Find device libraries in <LLVM_DIR>/lib/clang/<ver>/lib/amdgcn/bitcode
++  // Find device libraries in <LLVM_DIR>/lib/clang/<ver>/@LIBDIR@/amdgcn/bitcode
+   LibDevicePath = D.ResourceDir;
+-  llvm::sys::path::append(LibDevicePath, CLANG_INSTALL_LIBDIR_BASENAME,
++  llvm::sys::path::append(LibDevicePath, "@LIBDIR@",
+                           "amdgcn", "bitcode");
+   HasDeviceLibrary = CheckDeviceLib(LibDevicePath, true);
+   if (HasDeviceLibrary)
+@@ -422,7 +422,7 @@ void RocmInstallationDetector::detectDev
+   auto &ROCmDirs = getInstallationPathCandidates();
+   for (const auto &Candidate : ROCmDirs) {
+     LibDevicePath = Candidate.Path;
+-    llvm::sys::path::append(LibDevicePath, "amdgcn", "bitcode");
++    llvm::sys::path::append(LibDevicePath, "@LIBDIR@", "amdgcn", "bitcode");
+     HasDeviceLibrary = CheckDeviceLib(LibDevicePath, Candidate.StrictChecking);
+     if (HasDeviceLibrary)
+       return;
+diff -urp clang.orig/lib/Driver/ToolChains/AMDGPU.cpp clang/lib/Driver/ToolChains/AMDGPU.cpp
+--- clang.orig/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-05 12:11:21.207556028 -0700
++++ clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-05 12:12:27.495556429 -0700
+@@ -241,8 +241,8 @@ RocmInstallationDetector::getInstallatio
+       }
+     }
+ 
+-    // Some versions of the rocm llvm package install to /opt/rocm/llvm/bin
+-    // Some versions of the aomp package install to /opt/rocm/aomp/bin
++    // Some versions of the rocm llvm package install to @EPREFIX_LLVM_PATH@/bin
++    // Some versions of the aomp package install to @EPREFIX_ROCM_PATH@/aomp/bin
+     if (ParentName == "llvm" || ParentName.startswith("aomp"))
+       ParentDir = llvm::sys::path::parent_path(ParentDir);
+ 
+@@ -270,7 +270,7 @@ RocmInstallationDetector::getInstallatio
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
+ 
+-  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
++  ROCmSearchDirs.emplace_back(D.SysRoot + "@ROCM_PATH@",
+                               /*StrictChecking=*/true);
+ 
+   // Find the latest /opt/rocm-{release} directory.

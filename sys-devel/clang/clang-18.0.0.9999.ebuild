@@ -418,13 +418,6 @@ src_prepare() {
 			|| die
 	fi
 
-	eapply "${FILESDIR}/clang-16.0.6-rocm-device-libs-path.patch"
-	sed \
-		-i \
-		-e "s|@LIBDIR@|$(get_libdir)|g" \
-		"lib/Driver/ToolChains/AMDGPU.cpp" \
-		|| die
-
 	prepare_abi() {
 		uopts_src_prepare
 	}

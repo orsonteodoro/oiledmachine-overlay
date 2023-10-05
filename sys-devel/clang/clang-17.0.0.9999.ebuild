@@ -41,7 +41,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE+="
-+debug doc +extra ieee-long-double +pie +static-analyzer test xml
++debug doc +extra ieee-long-double +pie rocm_5_7 +static-analyzer test xml
 
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
@@ -122,6 +122,9 @@ RDEPEND+="
 	>=sys-devel/clang-common-${PV}
 	ebolt? (
 		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},bolt,debug=]
+	)
+	rocm_5_7? (
+		dev-libs/rocm-device-libs:5.7
 	)
 	static-analyzer? (
 		dev-lang/perl:*
@@ -393,6 +396,32 @@ ewarn
 	fi
 }
 
+fix_rocm_paths() {
+	eapply "${FILESDIR}/clang-17.0.0.9999-rocm-path-changes.patch"
+	sed \
+		-i \
+		-e "s|@LIBDIR@|$(get_libdir)|g" \
+		-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}/usr/lib/llvm/${PV%%.*}|g" \
+		"lib/Driver/ToolChains/AMDGPU.cpp" \
+		|| die
+
+	if use rocm_5_7 ; then
+		local rocm_slot="5.7"
+		sed \
+			-i \
+			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			"lib/Driver/ToolChains/AMDGPU.cpp" \
+			|| die
+	fi
+	sed \
+		-i \
+		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+		"tools/amdgpu-arch/CMakeLists.txt" \
+		|| die
+}
+
 src_prepare() {
 	# Create an extra parent dir for relative CLANG_RESOURCE_DIR access.
 	mkdir -p "${WORKDIR}/x/y" || die
@@ -418,12 +447,7 @@ src_prepare() {
 			|| die
 	fi
 
-	eapply "${FILESDIR}/clang-16.0.6-rocm-device-libs-path.patch"
-	sed \
-		-i \
-		-e "s|@LIBDIR@|$(get_libdir)|g" \
-		"lib/Driver/ToolChains/AMDGPU.cpp" \
-		|| die
+	fix_rocm_paths
 
 	prepare_abi() {
 		uopts_src_prepare

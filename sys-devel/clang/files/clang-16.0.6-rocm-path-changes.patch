@@ -1,0 +1,61 @@
+unchanged:
+--- a/lib/Driver/ToolChains/AMDGPU.cpp.orig	2023-08-27 22:37:21.608935675 -0700
++++ b/lib/Driver/ToolChains/AMDGPU.cpp	2023-08-27 22:39:51.664937520 -0700
+@@ -409,9 +409,9 @@ void RocmInstallationDetector::detectDev
+     return true;
+   };
+ 
+-  // Find device libraries in <LLVM_DIR>/lib/clang/<ver>/lib/amdgcn/bitcode
++  // Find device libraries in <LLVM_DIR>/lib/clang/<ver>/@LIBDIR@/amdgcn/bitcode
+   LibDevicePath = D.ResourceDir;
+-  llvm::sys::path::append(LibDevicePath, CLANG_INSTALL_LIBDIR_BASENAME,
++  llvm::sys::path::append(LibDevicePath, "@LIBDIR@",
+                           "amdgcn", "bitcode");
+   HasDeviceLibrary = CheckDeviceLib(LibDevicePath, true);
+   if (HasDeviceLibrary)
+@@ -422,7 +422,7 @@ void RocmInstallationDetector::detectDev
+   auto &ROCmDirs = getInstallationPathCandidates();
+   for (const auto &Candidate : ROCmDirs) {
+     LibDevicePath = Candidate.Path;
+-    llvm::sys::path::append(LibDevicePath, "amdgcn", "bitcode");
++    llvm::sys::path::append(LibDevicePath, "@LIBDIR@", "amdgcn", "bitcode");
+     HasDeviceLibrary = CheckDeviceLib(LibDevicePath, Candidate.StrictChecking);
+     if (HasDeviceLibrary)
+       return;
+only in patch2:
+unchanged:
+--- clang.orig/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-05 11:24:43.271539120 -0700
++++ clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-05 11:26:49.575539883 -0700
+@@ -240,8 +240,8 @@ RocmInstallationDetector::getInstallatio
+       }
+     }
+ 
+-    // Some versions of the rocm llvm package install to /opt/rocm/llvm/bin
+-    // Some versions of the aomp package install to /opt/rocm/aomp/bin
++    // Some versions of the rocm llvm package install to @EPREFIX_LLVM_PATH@/bin
++    // Some versions of the aomp package install to @EPREFIX_ROCM_PATH@/aomp/bin
+     if (ParentName == "llvm" || ParentName.startswith("aomp"))
+       ParentDir = llvm::sys::path::parent_path(ParentDir);
+ 
+@@ -269,7 +269,7 @@ RocmInstallationDetector::getInstallatio
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
+ 
+-  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
++  ROCmSearchDirs.emplace_back(D.SysRoot + "@ROCM_PATH@",
+                               /*StrictChecking=*/true);
+ 
+   // Find the latest /opt/rocm-{release} directory.
+only in patch2:
+unchanged:
+--- clang.orig/tools/amdgpu-arch/CMakeLists.txt	2023-10-05 11:24:42.907539118 -0700
++++ clang/tools/amdgpu-arch/CMakeLists.txt	2023-10-05 11:27:15.719540041 -0700
+@@ -11,7 +11,7 @@ set(LLVM_LINK_COMPONENTS Support)
+ add_clang_tool(amdgpu-arch AMDGPUArch.cpp)
+ 
+ # If we find the HSA runtime we link with it directly.
+-find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@)
+ if (${hsa-runtime64_FOUND})
+   set_target_properties(amdgpu-arch PROPERTIES INSTALL_RPATH_USE_LINK_PATH ON)
+   target_link_libraries(amdgpu-arch PRIVATE hsa-runtime64::hsa-runtime64)

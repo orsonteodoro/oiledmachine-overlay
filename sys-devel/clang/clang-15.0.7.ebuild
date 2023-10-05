@@ -28,7 +28,7 @@ amd64 arm arm64 ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x64-macos
 "
 IUSE="
 debug default-compiler-rt default-libcxx default-lld doc +extra ieee-long-double
-llvm-libunwind +pie +static-analyzer test xml
+llvm-libunwind +pie rocm_5_3 rocm_5_4 +static-analyzer test xml
 
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
@@ -100,6 +100,12 @@ REQUIRED_USE="
 		pie
 		ssp
 	)
+	rocm_5_3? (
+		!rocm_5_4
+	)
+	rocm_5_4? (
+		!rocm_5_3
+	)
 	ssp? (
 		!test
 	)
@@ -109,6 +115,14 @@ RDEPEND+="
 	>=sys-devel/clang-common-${PV}
 	ebolt? (
 		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},bolt,debug=]
+	)
+	rocm_5_3? (
+		dev-libs/rocm-device-libs:5.3
+		dev-libs/rocr-runtime:5.3
+	)
+	rocm_5_4? (
+		dev-libs/rocm-device-libs:5.4
+		dev-libs/rocr-runtime:5.4
 	)
 	static-analyzer? (
 		dev-lang/perl:*
@@ -389,6 +403,41 @@ ewarn
 	fi
 }
 
+fix_rocm_paths() {
+	eapply "${FILESDIR}/clang-15.0.7-rocm-path-changes.patch"
+	sed \
+		-i \
+		-e "s|@LIBDIR@|$(get_libdir)|g" \
+		-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}/usr/lib/llvm/${PV%%.*}|g" \
+		"lib/Driver/ToolChains/AMDGPU.cpp" \
+		|| die
+
+	if use rocm_5_3 ; then
+		local rocm_slot="5.3"
+		sed \
+			-i \
+			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			"lib/Driver/ToolChains/AMDGPU.cpp" \
+			|| die
+	elif use rocm_5_4 ; then
+		local rocm_slot="5.4"
+		sed \
+			-i \
+			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			"lib/Driver/ToolChains/AMDGPU.cpp" \
+			|| die
+	fi
+	sed \
+		-i \
+		-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+		"tools/amdgpu-arch/CMakeLists.txt" \
+		|| die
+}
+
 src_prepare() {
 	# Create an extra parent dir for relative CLANG_RESOURCE_DIR access.
 	mkdir -p "${WORKDIR}/x/y" || die
@@ -415,12 +464,7 @@ src_prepare() {
 			|| die
 	fi
 
-	eapply "${FILESDIR}/clang-15.0.7-rocm-device-libs-path.patch"
-	sed \
-		-i \
-		-e "s|@LIBDIR@|$(get_libdir)|g" \
-		"lib/Driver/ToolChains/AMDGPU.cpp" \
-		|| die
+	fix_rocm_paths
 
 	prepare_abi() {
 		uopts_src_prepare

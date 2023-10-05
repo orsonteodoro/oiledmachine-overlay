@@ -66,7 +66,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
 rocm_5_3 rocm_5_4
-r3
+r4
 "
 gen_cuda_required_use() {
 	local x
@@ -208,6 +208,14 @@ RDEPEND="
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		virtual/libelf:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
+		llvm_targets_AMDGPU? (
+			rocm_5_3? (
+				sys-devel/clang:15[rocm_5_3]
+			)
+			rocm_5_4? (
+				sys-devel/clang:15[rocm_5_4]
+			)
+		)
 	)
 "
 # tests:

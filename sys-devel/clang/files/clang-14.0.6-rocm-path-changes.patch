@@ -1,0 +1,54 @@
+unchanged:
+--- a/lib/Driver/ToolChains/AMDGPU.cpp.orig	2023-01-11 23:12:30.000000000 -0800
++++ b/lib/Driver/ToolChains/AMDGPU.cpp	2023-08-27 22:55:03.152948731 -0700
+@@ -411,11 +411,13 @@ void RocmInstallationDetector::detectDev
+     };
+ 
+     // The possible structures are:
++    // - ${ROCM_ROOT}/@LIBDIR@/amdgcn/bitcode/*
+     // - ${ROCM_ROOT}/amdgcn/bitcode/*
+     // - ${ROCM_ROOT}/lib/*
+     // - ${ROCM_ROOT}/lib/bitcode/*
+     // so try to detect these layouts.
+     static constexpr std::array<const char *, 2> SubDirsList[] = {
++        {"@LIBDIR@/amdgcn", "bitcode"},
+         {"amdgcn", "bitcode"},
+         {"lib", ""},
+         {"lib", "bitcode"},
+only in patch2:
+unchanged:
+--- clang.orig/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-05 11:56:39.939550703 -0700
++++ clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-05 11:57:59.143551181 -0700
+@@ -231,8 +231,8 @@ RocmInstallationDetector::getInstallatio
+       }
+     }
+ 
+-    // Some versions of the rocm llvm package install to /opt/rocm/llvm/bin
+-    // Some versions of the aomp package install to /opt/rocm/aomp/bin
++    // Some versions of the rocm llvm package install to @EPREFIX_LLVM_PATH@/bin
++    // Some versions of the aomp package install to @EPREFIX_ROCM_PATH@/aomp/bin
+     if (ParentName == "llvm" || ParentName.startswith("aomp"))
+       ParentDir = llvm::sys::path::parent_path(ParentDir);
+ 
+@@ -260,7 +260,7 @@ RocmInstallationDetector::getInstallatio
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
+ 
+-  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
++  ROCmSearchDirs.emplace_back(D.SysRoot + "@ROCM_PATH@",
+                               /*StrictChecking=*/true);
+ 
+   // Find the latest /opt/rocm-{release} directory.
+only in patch2:
+unchanged:
+--- clang.orig/tools/amdgpu-arch/CMakeLists.txt	2023-10-05 11:56:39.607550701 -0700
++++ clang/tools/amdgpu-arch/CMakeLists.txt	2023-10-05 11:58:09.335551243 -0700
+@@ -6,7 +6,7 @@
+ # //
+ # //===----------------------------------------------------------------------===//
+ 
+-find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@)
+ if (NOT ${hsa-runtime64_FOUND})
+   message(STATUS "Not building amdgpu-arch: hsa-runtime64 not found")
+   return()

@@ -58,8 +58,8 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 cuda debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-rocm_5_1
-r3
+rocm_5_1 rocm_5_2
+r4
 "
 # CUDA works only with the x86_64 ABI
 gen_cuda_required_use() {
@@ -196,6 +196,14 @@ RDEPEND="
 		dev-libs/libffi:=[${MULTILIB_USEDEP}]
 		virtual/libelf:=[${MULTILIB_USEDEP}]
 		~sys-devel/llvm-${PV}[${MULTILIB_USEDEP}]
+		llvm_targets_AMDGPU? (
+			rocm_5_1? (
+				sys-devel/clang:14[rocm_5_1]
+			)
+			rocm_5_2? (
+				sys-devel/clang:14[rocm_5_2]
+			)
+		)
 	)
 "
 # tests:
