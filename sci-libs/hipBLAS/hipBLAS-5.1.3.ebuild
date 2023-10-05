@@ -18,7 +18,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" cuda +rocm"
+IUSE+=" cuda +rocm system-llvm"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -26,6 +26,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	dev-util/hip-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=

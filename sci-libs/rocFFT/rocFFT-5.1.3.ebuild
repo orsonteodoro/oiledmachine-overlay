@@ -40,7 +40,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm test
+benchmark cuda perfscripts +rocm system-llvm test
 "
 gen_cuda_required_use() {
 	local x
@@ -85,6 +85,7 @@ REQUIRED_USE="
 # RDEPEND: perfscripts? dev-python/plotly[${PYTHON_USEDEP}] # currently masked by arch/amd64/x32/package.mask
 RDEPEND="
 	${PYTHON_DEPS}
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=

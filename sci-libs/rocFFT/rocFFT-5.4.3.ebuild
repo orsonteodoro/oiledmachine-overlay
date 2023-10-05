@@ -42,7 +42,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm test
+benchmark cuda perfscripts +rocm system-llvm test
 "
 gen_cuda_required_use() {
 	local x
@@ -88,6 +88,7 @@ REQUIRED_USE="
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	~sci-libs/rocRAND-${PV}:${ROCM_SLOT}
 	cuda? (

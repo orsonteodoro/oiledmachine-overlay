@@ -51,7 +51,7 @@ KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test r4
+benchmark cuda +rocm system-llvm test r4
 "
 gen_cuda_required_use() {
 	local x
@@ -94,6 +94,7 @@ RDEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	>=dev-libs/msgpack-3.0.1
+	dev-util/rocm-compiler[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
 		sys-libs/libomp:${LLVM_MAX_SLOT}
