@@ -1,5 +1,21 @@
---- a/openmp/libomptarget/src/CMakeLists.txt.orig	2023-09-16 11:16:59.594975157 -0700
-+++ b/openmp/libomptarget/src/CMakeLists.txt	2023-09-16 11:17:28.730974221 -0700
+diff -urp openmp.orig/libomptarget/CMakeLists.txt openmp/libomptarget/CMakeLists.txt
+--- a/openmp/libomptarget/CMakeLists.txt	2023-09-30 07:53:18.126358310 -0700
++++ b/openmp/libomptarget/CMakeLists.txt	2023-09-30 07:59:02.318354351 -0700
+@@ -35,6 +35,9 @@ if (NOT LIBOMPTARGET_LLVM_INCLUDE_DIRS)
+   message(FATAL_ERROR "Missing definition for LIBOMPTARGET_LLVM_INCLUDE_DIRS")
+ endif()
+ 
++set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS})
++
+ # This is a list of all the targets that are supported/tested right now.
+ set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} aarch64-unknown-linux-gnu")
+ set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} amdgcn-amd-amdhsa")
+Only in openmp/libomptarget: CMakeLists.txt.orig
+Only in openmp/libomptarget: CMakeLists.txt.rej
+diff -urp openmp.orig/libomptarget/src/CMakeLists.txt openmp/libomptarget/src/CMakeLists.txt
+--- a/openmp/libomptarget/src/CMakeLists.txt	2022-03-17 08:38:43.000000000 -0700
++++ b/openmp/libomptarget/src/CMakeLists.txt	2023-09-30 07:57:44.766355243 -0700
 @@ -12,6 +12,8 @@
  
  libomptarget_say("Building offloading runtime library libomptarget.")
@@ -18,15 +34,4 @@
  
  # Build libomptarget library with libdl dependency.
  add_library(omptarget SHARED ${LIBOMPTARGET_SRC_FILES})
---- a/openmp/libomptarget/CMakeLists.txt.orig	2023-09-16 23:22:42.381576553 -0700
-+++ b/openmp/libomptarget/CMakeLists.txt	2023-09-16 23:51:18.641521426 -0700
-@@ -35,7 +35,8 @@ if (NOT LIBOMPTARGET_LLVM_INCLUDE_DIRS)
-   message(FATAL_ERROR "Missing definition for LIBOMPTARGET_LLVM_INCLUDE_DIRS")
- endif()
- 
--include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS})
-+set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
-+include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OPENMP_RUNTIME_DIR})
- 
- # This is a list of all the targets that are supported/tested right now.
- set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} aarch64-unknown-linux-gnu")
+Only in openmp/libomptarget/src: CMakeLists.txt.orig

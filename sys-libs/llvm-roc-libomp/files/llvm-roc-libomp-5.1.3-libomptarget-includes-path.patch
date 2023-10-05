@@ -1,0 +1,10 @@
+--- llvm-project-rocm-5.1.3/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt.orig	2022-03-17 08:38:43.000000000 -0700
++++ llvm-project-rocm-5.1.3/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-09-30 11:40:13.274201697 -0700
+@@ -66,6 +66,7 @@ else()
+   set(LIBOMPTARGET_EXTRA_SOURCE dynamic_hsa/hsa.cpp)
+   set(LIBOMPTARGET_DEP_LIBRARIES)
+ endif()
++include_directories(${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src)
+ 
+ add_library(omptarget.rtl.amdgpu SHARED
+       impl/impl.cpp

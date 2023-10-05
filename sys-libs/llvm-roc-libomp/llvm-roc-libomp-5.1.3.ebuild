@@ -101,7 +101,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd
-r5
+r6
 "
 
 gen_cuda_required_use() {
@@ -256,16 +256,35 @@ src_prepare() {
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-ompt-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-omp-tools-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-5.1.3-path-changes.patch"
+	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-libomptarget-includes-path.patch"
 	cd "${S}" || die
 	cmake_src_prepare
 
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS=(
 		"${S_ROOT}/clang/lib/Driver/ToolChains/AMDGPU.cpp"
 		"${S_ROOT}/clang/lib/Driver/ToolChains/AMDGPUOpenMP.cpp"
+		"${S_ROOT}/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${S_ROOT}/compiler-rt/CMakeLists.txt"
 		"${S_ROOT}/compiler-rt/test/asan/lit.cfg.py"
+		"${S_ROOT}/libc/cmake/modules/prepare_libc_gpu_build.cmake"
+		"${S_ROOT}/libc/utils/gpu/loader/CMakeLists.txt"
+		"${S_ROOT}/mlir/lib/Dialect/GPU/CMakeLists.txt"
 		"${S_ROOT}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+		"${S_ROOT}/mlir/lib/ExecutionEngine/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/deviceRTLs/libm/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/hostexec/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/hostexec/CMakeLists.txt.with400files"
+		"${S_ROOT}/openmp/libomptarget/hostrpc/services/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/libm/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
+		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh"
+		"${S_ROOT}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/src/CMakeLists.txt"
 	)
 	rocm_src_prepare
@@ -275,7 +294,16 @@ src_prepare() {
 			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
 			|| die
 	fi
-	if ! use llvm_targets_AMDGPU ; then
+	if use llvm_targets_AMDGPU ; then
+		ln -s \
+			"${S_DEVICELIBS}" \
+			"${WORKDIR}/llvm-project-rocm-${PV}/rocm-device-libs" \
+			|| die
+		ln -s \
+			"${S_DEVICELIBS}" \
+			"${WORKDIR}/rocm-device-libs" \
+			|| die
+	else
 		sed -i \
 			-e "\|/amdgpu-offload-arch|d" \
 			"${S_ROOT}/llvm/lib/OffloadArch/offload-arch/CMakeLists.txt" \
@@ -322,13 +350,14 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
-		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm/$(get_libdir)/cmake/llvm"
+#		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm/$(get_libdir)/cmake/llvm"
+		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
 		-DLLVM_INSTALL_UTILS=ON
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
 #		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
-		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
+#		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 	)
 	if use offload && has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
@@ -362,36 +391,47 @@ src_configure() {
 }
 
 src_compile() {
-	local targets=(
+	local targets
+	local install_targets
+	targets=(
 		omp
 	)
 	if use offload ; then
-		targets+=(
-			LLVMOffloadArch
-			bin/offload-arch
-			lib/libomptarget.so.${LLVM_MAX_SLOT}roc
-			lib/libomptarget.so
-		)
 		if use llvm_targets_X86 ; then
-			targets+=(
-				lib/libomptarget.rtl.x86_64.so.${LLVM_MAX_SLOT}roc
-				lib/libomptarget.rtl.x86_64.so
+			install_targets+=(
+				install-omptarget.rtl.x86_64
 			)
 		fi
 		if use llvm_targets_AMDGPU ; then
-			targets+=(
-				lib/OffloadArch/offload-arch/amdgpu-offload-arch
-				lib/libomptarget.rtl.amdgpu.so.${LLVM_MAX_SLOT}roc
-				lib/libomptarget.rtl.amdgpu.so
+			local target
+			for target in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
+				if use "amdgpu_targets_${target}" ; then
+					targets+=(
+						"linked_libomptarget-amdgpu-${target}.bc"
+					)
+				fi
+			done
+			linked_libomptarget-amdgpu-gfx803.bc
+			install_targets+=(
+				install-omptarget.rtl.amdgpu
 			)
 		fi
 		if use llvm_targets_NVPTX ; then
-			targets+=(
-				lib/OffloadArch/offload-arch/nvidia-arch
-				lib/libomptarget.rtl.cuda.so.${LLVM_MAX_SLOT}roc
-				lib/libomptarget.rtl.cuda.so
+			local target
+			for target in "${CUDA_TARGETS_COMPAT[@]}" ; do
+				if use "cuda_targets_${target}" ; then
+					targets+=(
+						"linked_libomptarget-nvptx-${target}.bc"
+					)
+				fi
+			done
+			install_targets+=(
+				install-omptarget.rtl.cuda
 			)
 		fi
+		install_targets+=(
+			install-omptarget
+		)
 	fi
 	if use ompd ; then
 		targets+=(
@@ -399,7 +439,9 @@ src_compile() {
 		)
 	fi
 	cmake_src_compile \
-		${targets[@]}
+		"${targets[@]}"
+	_cmake_src_install \
+		"${install_targets[@]}"
 }
 
 # From cmake.eclass.  Removed cmake_build install.
@@ -423,29 +465,6 @@ _cmake_src_install() {
 }
 
 src_install() {
-	local targets=()
-	if use offload ; then
-		targets+=(
-			install-omptarget
-		)
-		if use llvm_targets_X86 ; then
-			targets+=(
-				install-omptarget.rtl.x86_64
-			)
-		fi
-		if use llvm_targets_AMDGPU ; then
-			targets+=(
-				install-omptarget.rtl.amdgpu
-			)
-		fi
-		if use llvm_targets_NVPTX ; then
-			targets+=(
-				install-omptarget.rtl.cuda
-			)
-		fi
-		_cmake_src_install \
-			${targets[@]}
-	fi
 	cd "${BUILD_DIR}" || die
 	exeinto "${EROCM_PATH}/llvm/lib"
 	doexe "lib/"{libgomp.so,libomp.so,libiomp5.so}
@@ -455,6 +474,7 @@ src_install() {
 	if use ompt ; then
 		doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp-tools.h"
 	fi
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

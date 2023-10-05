@@ -1,34 +1,30 @@
---- a/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp.orig	2023-06-14 10:03:33.000000000 -0700
-+++ b/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-09-16 12:06:17.210880158 -0700
-@@ -281,7 +281,7 @@ SerializeToHsacoPass::translateToLLVMIR(
-   std::optional<SmallVector<std::unique_ptr<llvm::Module>, 3>> mbModules;
-   std::string theRocmPath = getRocmPath();
-   llvm::SmallString<32> bitcodePath(theRocmPath);
--  llvm::sys::path::append(bitcodePath, "amdgcn", "bitcode");
-+  llvm::sys::path::append(bitcodePath, "@LIBDIR@", "amdgcn", "bitcode");
-   mbModules = loadLibraries(bitcodePath, libraries, llvmContext);
+diff -urp llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/AMDGPU.cpp
+--- llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-05 02:37:00.879347786 -0700
+@@ -242,11 +242,11 @@ RocmInstallationDetector::getInstallatio
+       }
+     }
  
-   if (!mbModules) {
---- a/compiler-rt/test/asan/lit.cfg.py.orig	2023-06-14 10:03:33.000000000 -0700
-+++ b/compiler-rt/test/asan/lit.cfg.py	2023-09-16 12:13:18.138866637 -0700
-@@ -253,13 +253,13 @@ if config.host_os == 'NetBSD':
- def configure_rocm(config, test_rocm_path):
-     if (not os.path.isdir(test_rocm_path)):
-         print("no directory found")
--        test_rocm_path = os.path.join('/opt','rocm')
-+        test_rocm_path = os.path.join('/usr','@LIBDIR@','rocm','@ROCM_SLOT@')
-         if (not os.path.isdir(test_rocm_path)):
-             test_rocm_path = os.path.abspath(os.path.join(config.llvm_install_dir, os.pardir))
-             if (not os.path.isdir(test_rocm_path)):
-                 sys.exit("ROCM installation not found, try exporting ASAN_TEST_ROCM variable")
+-    // Some versions of the rocm llvm package install to /opt/rocm/llvm/bin
+-    // Some versions of the aomp package install to /opt/rocm/aomp/bin
++    // Some versions of the rocm llvm package install to @EPREFIX_LLVM_PATH@/bin
++    // Some versions of the aomp package install to @EPREFIX_ROCM_PATH@/aomp/bin
+     if (ParentName == "llvm" || ParentName.startswith("aomp"))
+       ParentDir = llvm::sys::path::parent_path(ParentDir);
+-    // Some versions of the aomp package install to /opt/rocm/aomp/bin
++    // Some versions of the aomp package install to @EPREFIX_ROCM_PATH@/aomp/bin
+     // and it seems ParentDir is already pointing to correct place.
+     return Candidate(ParentDir.str(), /*StrictChecking=*/true);
+   };
+@@ -272,7 +272,7 @@ RocmInstallationDetector::getInstallatio
+   ROCmSearchDirs.emplace_back(D.ResourceDir,
+                               /*StrictChecking=*/true);
  
--    test_device_libs  = os.path.join(test_rocm_path, 'amdgcn', 'bitcode')
-+    test_device_libs  = os.path.join(test_rocm_path, '@LIBDIR@', 'amdgcn', 'bitcode')
-     test_hip_path     = os.path.join(test_rocm_path, 'hip')
-     hipcc             = os.path.join(test_hip_path, 'bin', 'hipcc')
+-  ROCmSearchDirs.emplace_back(D.SysRoot + "/opt/rocm",
++  ROCmSearchDirs.emplace_back(D.SysRoot + "@ROCM_PATH@",
+                               /*StrictChecking=*/true);
  
---- a/clang/lib/Driver/ToolChains/AMDGPU.cpp.orig	2023-09-16 13:31:57.246715059 -0700
-+++ b/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-09-16 13:32:28.042714069 -0700
+   // Find the latest /opt/rocm-{release} directory.
 @@ -424,11 +424,13 @@ void RocmInstallationDetector::detectDev
      };
  
@@ -43,3 +39,153 @@
          {"amdgcn", "bitcode"},
          {"lib", ""},
          {"lib", "bitcode"},
+diff -urp llvm-project-rocm-5.5.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt llvm-project-rocm-5.5.1/clang/tools/amdgpu-arch/CMakeLists.txt
+--- llvm-project-rocm-5.5.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/clang/tools/amdgpu-arch/CMakeLists.txt	2023-10-05 02:25:27.843343598 -0700
+@@ -8,7 +8,7 @@
+ # //
+ # //===----------------------------------------------------------------------===//
+ 
+-find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@)
+ 
+ set(AMDGPU_ARCH_DLOPEN_LIBHSA OFF)
+ option(AMDGPU_ARCH_FORCE_DLOPEN_LIBHSA "Build with dlopened libhsa" ${AMDGPU_ARCH_DLOPEN_LIBHSA})
+diff -urp llvm-project-rocm-5.5.1.orig/compiler-rt/CMakeLists.txt llvm-project-rocm-5.5.1/compiler-rt/CMakeLists.txt
+--- llvm-project-rocm-5.5.1.orig/compiler-rt/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/compiler-rt/CMakeLists.txt	2023-10-05 02:25:30.771343615 -0700
+@@ -481,12 +481,12 @@ endif()
+ 
+ if(SANITIZER_AMDGPU)
+   list(APPEND SANITIZER_COMMON_CFLAGS -DSANITIZER_AMDGPU=1)
+-  find_path(HSA_INCLUDE hsa.h HINTS ${HSA_INCLUDE_PATH} ${CMAKE_INSTALL_PREFIX}/include/hsa ${CMAKE_INSTALL_PREFIX}/../include/hsa /opt/rocm/include/hsa PATH_SUFFIXES hsa)
++  find_path(HSA_INCLUDE hsa.h HINTS ${HSA_INCLUDE_PATH} ${CMAKE_INSTALL_PREFIX}/include/hsa ${CMAKE_INSTALL_PREFIX}/../include/hsa @ESYSROOT_ROCM_PATH@/include/hsa PATH_SUFFIXES hsa)
+   include_directories(${HSA_INCLUDE})
+   find_path(COMgr_INCLUDE amd_comgr.h.in HINTS ${COMGR_INCLUDE_PATH} ${CMAKE_INSTALL_PREFIX}/../include ${CMAKE_INSTALL_PREFIX}/include)
+   if (NOT COMgr_INCLUDE)
+     add_compile_definitions(AMD_COMGR)
+-    find_path(COMgr_INCLUDE amd_comgr.h HINTS ${CMAKE_INSTALL_PREFIX}/../include ${CMAKE_INSTALL_PREFIX}/include /opt/rocm/include)
++    find_path(COMgr_INCLUDE amd_comgr.h HINTS ${CMAKE_INSTALL_PREFIX}/../include ${CMAKE_INSTALL_PREFIX}/include @ESYSROOT_ROCM_PATH@/include)
+   endif()
+   include_directories(${COMgr_INCLUDE})
+ endif()
+diff -urp llvm-project-rocm-5.5.1.orig/compiler-rt/test/asan/lit.cfg.py llvm-project-rocm-5.5.1/compiler-rt/test/asan/lit.cfg.py
+--- llvm-project-rocm-5.5.1.orig/compiler-rt/test/asan/lit.cfg.py	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/compiler-rt/test/asan/lit.cfg.py	2023-10-05 02:22:34.939342553 -0700
+@@ -253,13 +253,13 @@ if config.host_os == 'NetBSD':
+ def configure_rocm(config, test_rocm_path):
+     if (not os.path.isdir(test_rocm_path)):
+         print("no directory found")
+-        test_rocm_path = os.path.join('/opt','rocm')
++        test_rocm_path = "@EPREFIX_ROCM_PATH@"
+         if (not os.path.isdir(test_rocm_path)):
+             test_rocm_path = os.path.abspath(os.path.join(config.llvm_install_dir, os.pardir))
+             if (not os.path.isdir(test_rocm_path)):
+                 sys.exit("ROCM installation not found, try exporting ASAN_TEST_ROCM variable")
+ 
+-    test_device_libs  = os.path.join(test_rocm_path, 'amdgcn', 'bitcode')
++    test_device_libs  = os.path.join(test_rocm_path, '@LIBDIR@', 'amdgcn', 'bitcode')
+     test_hip_path     = os.path.join(test_rocm_path, 'hip')
+     hipcc             = os.path.join(test_hip_path, 'bin', 'hipcc')
+ 
+diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/CMakeLists.txt llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/CMakeLists.txt
+--- llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-10-05 02:25:28.867343604 -0700
+@@ -129,7 +129,7 @@ if(MLIR_ENABLE_ROCM_CONVERSIONS)
+       "Building mlir with ROCm support requires the AMDGPU backend")
+   endif()
+ 
+-  set(DEFAULT_ROCM_PATH "/opt/rocm" CACHE PATH "Fallback path to search for ROCm installs")
++  set(DEFAULT_ROCM_PATH "@EPREFIX_ROCM_PATH@" CACHE PATH "Fallback path to search for ROCm installs")
+   target_compile_definitions(obj.MLIRGPUTransforms
+     PRIVATE
+     __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"
+diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp
+--- llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-10-05 02:22:34.899342553 -0700
+@@ -280,7 +280,7 @@ SerializeToHsacoPass::translateToLLVMIR(
+   Optional<SmallVector<std::unique_ptr<llvm::Module>, 3>> mbModules;
+   std::string theRocmPath = getRocmPath();
+   llvm::SmallString<32> bitcodePath(theRocmPath);
+-  llvm::sys::path::append(bitcodePath, "amdgcn", "bitcode");
++  llvm::sys::path::append(bitcodePath, "@LIBDIR@", "amdgcn", "bitcode");
+   mbModules = loadLibraries(bitcodePath, libraries, llvmContext);
+ 
+   if (!mbModules) {
+Only in llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/Transforms: SerializeToHsaco.cpp.orig
+diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/ExecutionEngine/CMakeLists.txt llvm-project-rocm-5.5.1/mlir/lib/ExecutionEngine/CMakeLists.txt
+--- llvm-project-rocm-5.5.1.orig/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-10-05 02:25:29.795343610 -0700
+@@ -200,7 +200,7 @@ if(MLIR_ENABLE_ROCM_RUNNER)
+   # Configure ROCm support.
+   if (NOT DEFINED ROCM_PATH)
+     if (NOT DEFINED ENV{ROCM_PATH})
+-      set(ROCM_PATH "/opt/rocm" CACHE PATH "Path to which ROCm has been installed")
++      set(ROCM_PATH "@ESYSROOT_ROCM_PATH@" CACHE PATH "Path to which ROCm has been installed")
+     else()
+       set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
+     endif()
+diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/DeviceRTL/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt
+--- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/DeviceRTL/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt	2023-10-05 02:25:32.547343626 -0700
+@@ -198,7 +198,7 @@ function(compileDeviceRTLLibrary target_
+         HINTS
+         ${CMAKE_INSTALL_PREFIX}
+         PATHS
+-        /opt/rocm)
++        @ESYSROOT_ROCM_PATH@)
+       if(AMDDeviceLibs_DIR)
+ 	set(amd_device_libs_found ON)
+         libomptarget_say("DeviceRTLs ${target_cpu}: Getting ROCm device libs from ${AMDDeviceLibs_DIR}")
+diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
+--- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2023-10-05 02:25:34.371343637 -0700
+@@ -17,7 +17,7 @@ endif()
+ find_package(AMDDeviceLibs REQUIRED CONFIG PATHS
+ 	${CMAKE_BINARY_DIR}/../../tools/ROCMDEVLIBS
+ 	${CMAKE_INSTALL_PREFIX}
+-	/opt/rocm)
++	@ESYSROOT_ROCM_PATH@)
+ if(AMDDeviceLibs_DIR)
+   libomptarget_say("Getting ROCm device libs from ${AMDDeviceLibs_DIR}")
+ else()
+diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/hostrpc/services/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/hostrpc/services/CMakeLists.txt
+--- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2023-10-05 02:25:31.699343621 -0700
+@@ -1,5 +1,5 @@
+ 
+-find_package(hsa-runtime64 1.2.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
++find_package(hsa-runtime64 1.2.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS @ESYSROOT_ROCM_PATH@)
+ add_library(hostrpc_services STATIC hostcall.cpp hostrpc_execute_service.c hostrpc_externs.c urilocator.cpp devsanitizer.cpp)
+ set_property(TARGET hostrpc_services PROPERTY POSITION_INDEPENDENT_CODE ON)
+ if(SANITIZER_AMDGPU)
+diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
+--- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-10-05 02:25:33.427343631 -0700
+@@ -23,7 +23,7 @@ endif()
+ 
+ # as of rocm-3.7, hsa is installed with cmake packages and kmt is found via hsa
+ find_package(hsa-runtime64 QUIET 1.2.0 HINTS ${CMAKE_INSTALL_PREFIX} PATHS
+-  ${CMAKE_INSTALL_PREFIX} /opt/rocm)
++  ${CMAKE_INSTALL_PREFIX} @ESYSROOT_ROCM_PATH@)
+ 
+ if(hsa-runtime64_DIR)
+   message("FOUND hsa-runtime64 at ${hsa-runtime64_DIR}")
+diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh
+--- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh	2023-05-11 11:50:45.000000000 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh	2023-10-05 02:23:24.883342855 -0700
+@@ -1,11 +1,11 @@
+ CLOC_PATH=/usr/bin
+-AOMP=${AOMP:-/opt/rocm/aomp}
++AOMP=${AOMP:-@EPREFIX_ROCM_PATH@/aomp}
+ AOMPRT_REPOS=${AOMPRT_REPOS:-$HOME/git/aomp}
+ RT_REPO_NAME=${RT_REPO_NAME:-openmp}
+ 
+ $CLOC_PATH/cloc.sh -ll -vv -opt 2  hw.cl
+ 
+-g++ rtl_test.cpp -lelf -L/usr/lib/x86_64-linux-gnu -lomptarget -lpthread -L${AOMP}/lib -I$AOMPRT_REPOS/$RT_REPO_NAME/libamdgcn}/src -L/opt/rocm/lib -lhsa-runtime64 -g -o rtl_test
++g++ rtl_test.cpp -lelf -L/usr/lib/x86_64-linux-gnu -lomptarget -lpthread -L${AOMP}/@LIBDIR@ -I$AOMPRT_REPOS/$RT_REPO_NAME/libamdgcn}/src -L@EPREFIX_ROCM_PATH@/@LIBDIR@ -lhsa-runtime64 -g -o rtl_test
+ 
+-LD_LIBRARY_PATH=/opt/rocm/lib:$AOMP/lib:$LD_LIBRARY_PATH ./rtl_test hw.hsaco
++LD_LIBRARY_PATH=@EPREFIX_ROCM_PATH@/@LIBDIR@:$AOMP/@LIBDIR@:$LD_LIBRARY_PATH ./rtl_test hw.hsaco
+ 
