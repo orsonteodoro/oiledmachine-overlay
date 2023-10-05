@@ -112,7 +112,7 @@ gen_amdgpu_rdepend() {
 		local s="${pv%.*}"
 		echo "
 			rocm_${s/./_}? (
-				~dev-libs/rocr-runtime-${pv}:${s}
+				~dev-libs/rocr-runtime-${pv}:${s}[system-llvm]
 				~dev-libs/roct-thunk-interface-${pv}:${s}
 			)
 		"
