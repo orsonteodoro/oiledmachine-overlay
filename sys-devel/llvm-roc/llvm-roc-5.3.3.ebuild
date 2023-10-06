@@ -3,16 +3,6 @@
 
 EAPI=8
 
-# FIXME:  build time failure
-
-# -o lib/Target/AMDGPU/CMakeFiles/LLVMAMDGPUCodeGen.dir/AMDGPUPreLegalizerCombiner.cpp.o -c /var/tmp/portage/sys-devel/llvm-roc-5.3.3/work/llvm-project-rocm-5.3.3/llvm/lib/Target/AMDGPU/AMDGPUPreLegalizerCombiner.cpp
-#FAILED: lib/Target/AMDGPU/CMakeFiles/LLVMAMDGPUCodeGen.dir/AMDGPUPreLegalizerCombiner.cpp.o
-
-#AMDGPUGenPreLegalizeGICombiner.inc:694:0:   required from here
-#12/include/g++-v12/type_traits:144:12: internal compiler error: Segmentation fault
-#  144 |     struct __or_<_B1, _B2>
-#      |            ^~~~~~~~~~~~~~~
-
 LLVM_MAX_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
