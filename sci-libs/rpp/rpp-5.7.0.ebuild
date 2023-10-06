@@ -83,7 +83,7 @@ RDEPEND="
 		sys-devel/llvm-roc:=
 	)
 	>=dev-libs/boost-1.72:=
-	dev-libs/rocm-compiler[system-llvm=]
+	dev-libs/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	opencl? (
 		virtual/opencl
 	)

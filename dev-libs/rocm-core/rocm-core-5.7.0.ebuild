@@ -28,7 +28,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="system-llvm r1"
 RDEPEND="
 	!dev-libs/rocm-core:0
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 "
 DEPEND="
 	${RDEPEND}

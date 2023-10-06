@@ -51,7 +51,7 @@ RDEPEND="
 	>=dev-cpp/msgpack-cxx-6.0.0
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	client? (
 		dev-libs/boost

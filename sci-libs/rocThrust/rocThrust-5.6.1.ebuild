@@ -43,7 +43,7 @@ REQUIRED_USE="
 "
 #[${ROCM_USEDEP}]
 RDEPEND="
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}
 	test? (

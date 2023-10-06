@@ -45,7 +45,7 @@ RDEPEND="
 		sys-devel/llvm-roc:=
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-devel/llvm:${LLVM_MAX_SLOT}
 	virtual/libelf
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}

@@ -439,6 +439,9 @@ gen_rocm_rdepend() {
 			~dev-util/Tensile-${pv}:${s}
 
 			sys-devel/lld:${LLD_SLOT[${pv}]}
+
+			dev-util/hip-compiler:${s}[system-llvm=]
+			dev-util/rocm-compiler:${s}[system-llvm=]
 		)
 		"
 	done
@@ -535,8 +538,6 @@ RDEPEND="
 			$(gen_rocm_rdepend)
 		)
 		dev-util/hip:=
-		dev-util/hip-compiler[system-llvm=]
-		dev-util/rocm-compiler[system-llvm=]
 	)
 "
 DEPEND="

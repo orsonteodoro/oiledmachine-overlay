@@ -95,7 +95,7 @@ RDEPEND="
 		!system-llvm? (
 			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		)
-		dev-util/rocm-compiler[system-llvm=]
+		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 		system-llvm? (
 			sys-libs/libomp:${LLVM_MAX_SLOT}

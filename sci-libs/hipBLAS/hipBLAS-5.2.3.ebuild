@@ -26,7 +26,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/hip-compiler[system-llvm=]
+	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=

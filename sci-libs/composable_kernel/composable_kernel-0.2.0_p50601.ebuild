@@ -67,7 +67,7 @@ BDEPEND="
 	test? (
 		dev-cpp/gtest
 	)
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	|| (
 		(
 			!system-llvm? (

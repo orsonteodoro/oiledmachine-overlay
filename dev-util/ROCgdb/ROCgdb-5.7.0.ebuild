@@ -54,7 +54,7 @@ BDEPEND="
 	app-alternatives/lex
 	app-alternatives/sh
 	app-alternatives/yacc
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-apps/texinfo
 	sys-devel/automake
 	sys-devel/make

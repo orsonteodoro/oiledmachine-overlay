@@ -77,13 +77,13 @@ BDEPEND="
 		~sys-devel/llvm-roc-${PV}
 	)
 	>=dev-util/cmake-3.5
-	sys-devel/hip-compiler[system-llvm=]
+	sys-devel/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
 		~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}
 	)
 	rocm? (
-		sys-devel/rocm-compiler[system-llvm=]
+		sys-devel/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	)
 	system-llvm? (
 		sys-devel/clang:${LLVM_MAX_SLOT}[extra]

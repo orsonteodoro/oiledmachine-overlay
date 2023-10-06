@@ -38,7 +38,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	!dev-util/rocprofiler:0
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	aqlprofile? (

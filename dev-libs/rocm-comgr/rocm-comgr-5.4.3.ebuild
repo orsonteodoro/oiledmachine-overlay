@@ -32,7 +32,7 @@ RDEPEND="
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 	!dev-libs/rocm-comgr:0
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	system-llvm? (
 		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*

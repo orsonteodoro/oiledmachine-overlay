@@ -28,7 +28,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="system-llvm r2"
 RDEPEND="
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 "
 BDEPEND="
 	>=dev-util/cmake-3.5

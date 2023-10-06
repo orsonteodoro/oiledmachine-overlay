@@ -90,7 +90,7 @@ RDEPEND="
 	)
 	dev-libs/boost
 	dev-libs/msgpack
-	dev-util/hip-compiler[system-llvm=]
+	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	virtual/blas
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	cuda? (
@@ -106,7 +106,7 @@ RDEPEND="
 		sys-libs/libomp:${LLVM_MAX_SLOT}
 	)
 	tensile? (
-		dev-util/rocm-compiler[system-llvm=]
+		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	)
 "
 DEPEND="

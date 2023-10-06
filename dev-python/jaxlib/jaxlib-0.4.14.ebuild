@@ -241,6 +241,9 @@ gen_rocm_depends() {
 				~sci-libs/hipBLASLt-${pv}:${s}[rocm]
 
 				sys-devel/lld:${LLD_SLOT[${pv}]}
+
+				dev-util/hip-compiler:${s}[system-llvm=]
+				dev-util/rocm-compiler:${s}[system-llvm=]
 		"
 
 		# Indirect dependencies
@@ -278,8 +281,6 @@ RDEPEND+="
 			$(gen_rocm_depends)
 		)
 		dev-util/hip:=
-		dev-util/hip-compiler[system-llvm=]
-		dev-util/rocm-compiler[system-llvm=]
 	)
 "
 # We cannot use cuda 12 (which the project supports) until cudnn ebuild allows

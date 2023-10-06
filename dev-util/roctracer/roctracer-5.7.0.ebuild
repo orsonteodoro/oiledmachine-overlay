@@ -32,7 +32,7 @@ RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	~dev-util/hip-${PV}:${ROCM_SLOT}
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 "
 DEPEND="
 	${RDEPEND}
@@ -46,7 +46,7 @@ BDEPEND="
 	>=dev-util/cmake-3.18.0
 	sys-devel/binutils[gold]
 	test? (
-		dev-util/rocm-compiler[system-llvm=]
+		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	)
 "
 RESTRICT="

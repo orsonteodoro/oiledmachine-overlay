@@ -41,7 +41,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	=dev-libs/libfmt-8*
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm]
 	benchmark? (

@@ -60,7 +60,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	mpi? (
 		virtual/mpi
 	)

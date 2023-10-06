@@ -24,7 +24,7 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="UoI-NCSA"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" system-llvm"
+IUSE+=" "
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -32,16 +32,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	!system-llvm? (
-		sys-devel/llvm-roc:${ROCM_SLOT}
-	)
 	>=dev-util/cmake-3.6.3
-	dev-util/rocm-compiler[system-llvm=]
-	system-llvm? (
-		sys-devel/clang:${LLVM_MAX_SLOT}
-		sys-devel/lld:${LLVM_MAX_SLOT}
-		sys-devel/llvm:${LLVM_MAX_SLOT}
-	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"

@@ -41,7 +41,7 @@ BDEPEND="
 	>=dev-util/cmake-3.18.0
 	sys-devel/gcc:12
 	test? (
-		dev-util/rocm-compiler[system-llvm=]
+		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	)
 "
 RESTRICT="

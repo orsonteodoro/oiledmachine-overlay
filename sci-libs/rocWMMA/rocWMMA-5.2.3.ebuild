@@ -33,7 +33,7 @@ RDEPEND="
 		sys-libs/llvm-roc-libomp:=
 		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 	)
-	dev-util/rocm-compiler[system-llvm=]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	system-llvm? (
 		sys-libs/libomp:${LLVM_MAX_SLOT}

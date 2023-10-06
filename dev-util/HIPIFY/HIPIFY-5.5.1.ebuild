@@ -80,7 +80,7 @@ TEST_BDEPEND="
 	)
 "
 RDEPEND="
-	dev-util/hip-compiler[system-llvm=]
+	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	!test? (
 		!system-llvm? (
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}

@@ -86,7 +86,7 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	dev-util/hip-compiler[system-llvm=]
+	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
 		dev-cpp/benchmark

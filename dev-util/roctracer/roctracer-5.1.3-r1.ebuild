@@ -47,7 +47,7 @@ BDEPEND="
 	>=dev-util/cmake-2.8.12
 	sys-devel/gcc:11
 	test? (
-		dev-util/rocm-compiler[system-llvm=]
+		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	)
 "
 RESTRICT="test"

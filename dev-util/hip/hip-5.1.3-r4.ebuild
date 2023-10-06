@@ -81,7 +81,7 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-perl/URI-Encode-1.1.1
 	app-eselect/eselect-rocm
-	dev-util/hip-compiler[system-llvm=]
+	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	virtual/opengl
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -98,7 +98,7 @@ RDEPEND="
 			sys-devel/llvm-roc:=
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 		)
-		dev-util/rocm-compiler[system-llvm=]
+		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 		system-llvm? (
