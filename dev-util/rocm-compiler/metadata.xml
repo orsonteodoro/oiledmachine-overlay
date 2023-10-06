@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  The ebuilds are slotted to support GPU offloading for ebuilds that prefer
+  it through the system's llvm or through the ROCm fork of llvm.
+
+  This ebuild is to ensure that the entire slot has a consistent choice.
+
+  -->
   <use>
     <flag name="system-llvm">
       Use the system clang/llvm packages instead of the ROCm forks at the
