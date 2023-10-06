@@ -14,7 +14,11 @@
   <use>
     <flag name="system-llvm">
       Use the system clang/llvm packages instead of the ROCm forks at the
-      expense of minor version availability.
+      expense of minor version availability.  This also controls which libomp
+      does GPU offloading which may be chosen differently per slot.
+
+      Setting this to disable may have early access to GPU offloading for newer
+      GPUs.
     </flag>
   </use>
 </pkgmetadata>
