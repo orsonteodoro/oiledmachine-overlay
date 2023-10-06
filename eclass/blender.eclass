@@ -388,6 +388,7 @@ blender_pkg_setup() {
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
 	fi
+	use rocm && rocm_pkg_setup
 }
 
 check_portable_dependencies() {
