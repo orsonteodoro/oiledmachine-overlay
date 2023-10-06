@@ -243,10 +243,10 @@ pkg_setup() {
 	fi
 
 	python-single-r1_pkg_setup
-	if has_version "dev-util:5.6" ; then
+	if has_version "dev-util/hip:5.6" ; then
 		ROCM_SLOT="5.6"
 		LLVM_MAX_SLOT=16
-	elif has_version "dev-util:5.5" ; then
+	elif has_version "dev-util/hip:5.5" ; then
 		ROCM_SLOT="5.5"
 		LLVM_MAX_SLOT=16
 	fi
@@ -356,7 +356,7 @@ ewarn
 		export CXX="${CHOST}-clang++-${llvm_slot}"
 		use llvm-${llvm_slot} || die "llvm-${llvm_slot} required for hip"
 		mycmakeargs+=(
-			-DHIP_COMPILER_PATH="${ESYSROOT}/usr/lib/llvm/${llvm_slot}"
+			-DHIP_COMPILER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}"
 		)
 
 		mycmakeargs+=(
