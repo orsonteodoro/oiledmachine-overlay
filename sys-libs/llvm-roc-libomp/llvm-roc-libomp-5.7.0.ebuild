@@ -116,7 +116,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd
-r6
+r8
 "
 
 gen_cuda_required_use() {
@@ -483,7 +483,7 @@ _cmake_src_install() {
 
 src_install() {
 	cd "${BUILD_DIR}" || die
-	exeinto "${EROCM_PATH}/llvm/lib"
+	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
 	doexe "lib/"{libgomp.so,libomp.so,libiomp5.so}
 	use ompd && doexe "lib/libompd.so"
 	insinto "${EROCM_PATH}/llvm/include"
