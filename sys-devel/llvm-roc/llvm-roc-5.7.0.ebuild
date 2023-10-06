@@ -91,6 +91,7 @@ DEPEND="
 "
 BDEPEND="
 	sys-devel/gcc
+	sys-devel/binutils[gold]
 "
 PATCHES=(
 )
@@ -143,6 +144,7 @@ src_configure() {
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 	replace-flags '-O0' '-O1'
+	append-ldflags -fuse-ld=gold
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
