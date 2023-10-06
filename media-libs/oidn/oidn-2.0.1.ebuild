@@ -119,20 +119,21 @@ gen_clang_depends() {
 
 HIP_VERSIONS=(
 	"5.5.1"
-	"5.6.0"
+	"5.6.1"
 ) # 5.3.0 fails
 gen_hip_depends() {
 	local hip_version
 	for hip_version in ${HIP_VERSIONS[@]} ; do
 		# Needed because of build failures
+		local s=$(ver_cut 1-2 ${hip_version})
 		echo "
 			(
-			~dev-libs/rocm-comgr-${hip_version}
-			~dev-libs/rocm-device-libs-${hip_version}
-			~dev-libs/rocr-runtime-${hip_version}
-			~dev-libs/roct-thunk-interface-${hip_version}
-			~dev-util/hip-${hip_version}:=[rocm]
-			~dev-util/rocminfo-${hip_version}
+				~dev-libs/rocm-comgr-${hip_version}:${s}
+				~dev-libs/rocm-device-libs-${hip_version}${s}
+				~dev-libs/rocr-runtime-${hip_version}:${s}
+				~dev-libs/roct-thunk-interface-${hip_version}${s}
+				~dev-util/hip-${hip_version}:${s}[rocm]
+				~dev-util/rocminfo-${hip_version}:${s}
 			)
 		"
 	done
@@ -149,6 +150,7 @@ RDEPEND+="
 		|| (
 			$(gen_hip_depends)
 		)
+		dev-util/hip:=[rocm]
 	)
 	|| (
 		(
