@@ -460,7 +460,7 @@ src_compile() {
 		targets+=(
 			"libomptarget.devicertl.a"
 			"libomptarget.so"
-			"omptarget.devicert"
+			"omptarget.devicertl"
 			"omptarget"
 		)
 	fi
