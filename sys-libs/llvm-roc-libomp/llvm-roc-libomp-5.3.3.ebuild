@@ -107,7 +107,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
--cuda -offload -ompt +ompd
+-cuda -offload -ompt +ompd -rpc
 r10
 "
 
@@ -149,6 +149,9 @@ REQUIRED_USE="
 	)
 	ompd? (
 		ompt
+	)
+	rpc? (
+		offload
 	)
 	^^ (
 		${LLVM_TARGETS_CPU_COMPAT[@]}
@@ -218,12 +221,19 @@ RDEPEND="
 			=dev-util/nvidia-cuda-toolkit-11*:=
 		)
 	)
+	llvm_targets_AMDGPU? (
+		dev-libs/roct-thunk-interface:${ROCM_SLOT}
+	)
 	llvm_targets_NVPTX? (
 		<dev-util/nvidia-cuda-toolkit-11.6:=
 	)
 	offload? (
 		dev-libs/libffi:=
 		virtual/libelf:=
+	)
+	rpc? (
+		dev-libs/protobuf
+		net-libs/grpc
 	)
 "
 DEPEND="
@@ -363,6 +373,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex rpc)
 			-DLIBOMPTARGET_OMPT_SUPPORT=$(usex ompt ON OFF)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
@@ -429,6 +440,12 @@ src_compile() {
 			done
 			targets+=(
 				"omptarget.devicertl.nvptx"
+			)
+		fi
+		if use rpc ; then
+			targets+=(
+				"libomptarget.rtl.rpc.so"
+				"omptarget.rtl.rpc"
 			)
 		fi
 		targets+=(
