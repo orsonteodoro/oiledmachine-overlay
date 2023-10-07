@@ -91,7 +91,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-rocm_5_7 rpc
+rocm_5_7
 r4
 "
 gen_cuda_required_use() {
@@ -133,9 +133,6 @@ REQUIRED_USE="
 	)
 	rocm_5_7? (
 		llvm_targets_AMDGPU
-	)
-	rpc? (
-		offload
 	)
 "
 ROCM_SLOTS=(
@@ -261,10 +258,6 @@ RDEPEND="
 				sys-devel/clang:17[rocm_5_7]
 			)
 		)
-	)
-	rpc? (
-		>=net-libs/grpc-1.49.3:=
-		dev-libs/protobuf:0/32
 	)
 "
 DISABLED_RDEPEND="
@@ -406,7 +399,6 @@ multilib_src_configure() {
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
-			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex rpc)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
 		if use llvm_targets_AMDGPU ; then
