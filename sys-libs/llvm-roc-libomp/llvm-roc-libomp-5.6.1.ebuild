@@ -248,8 +248,8 @@ RDEPEND="
 		virtual/libelf:=
 	)
 	rpc? (
-		dev-libs/protobuf
-		net-libs/grpc
+		>=net-libs/grpc-1.49.3:=
+		dev-libs/protobuf:0/32
 	)
 "
 DEPEND="
