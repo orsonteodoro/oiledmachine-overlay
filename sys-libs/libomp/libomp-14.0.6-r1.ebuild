@@ -58,7 +58,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 cuda debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-rocm_5_1 rocm_5_2
+rocm_5_1 rocm_5_2 rpc
 r4
 "
 # CUDA works only with the x86_64 ABI
@@ -102,6 +102,9 @@ REQUIRED_USE="
 	)
 	rocm_5_1? (
 		llvm_targets_AMDGPU
+	)
+	rpc? (
+		offload
 	)
 "
 ROCM_SLOTS=(
@@ -204,6 +207,10 @@ RDEPEND="
 				sys-devel/clang:14[rocm_5_2]
 			)
 		)
+	)
+	rpc? (
+		>=net-libs/grpc-1.49.3:=
+		dev-libs/protobuf:0/32
 	)
 "
 # tests:
@@ -343,6 +350,7 @@ multilib_src_configure() {
 			-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=$(usex !cuda)
 			-DLIBOMPTARGET_BUILD_AMDGCN_BCLIB=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_NVPTX_BCLIB=$(usex llvm_targets_NVPTX)
+			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex rpc)
 	# A cheap hack to force clang. \
 			-DLIBOMPTARGET_NVPTX_CUDA_COMPILER="$(type -P "${CHOST}-clang")"
 	# Upstream defaults to looking for it in clang dir.  This fails when

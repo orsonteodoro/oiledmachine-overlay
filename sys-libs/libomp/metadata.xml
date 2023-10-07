@@ -40,6 +40,9 @@
     <flag name="ompt">
       Enable OpenMP Tools Interface support
     </flag>
+    <flag name="rpc">
+      Add support for remote offloading.  (EXPERIMENTAL)
+    </flag>
   </use>
   <upstream>
     <remote-id type="github">llvm/llvm-project</remote-id>
