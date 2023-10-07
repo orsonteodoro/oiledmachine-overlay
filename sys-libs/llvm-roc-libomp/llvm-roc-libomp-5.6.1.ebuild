@@ -114,7 +114,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd
-r8
+r10
 "
 
 gen_cuda_required_use() {
@@ -406,14 +406,16 @@ src_configure() {
 
 src_compile() {
 	local targets
-	local install_targets
 	targets=(
-		omp
+		"omp"
 	)
 	if use offload ; then
 		if use llvm_targets_X86 ; then
-			install_targets+=(
-				install-omptarget.rtl.x86_64
+			targets+=(
+				"libomptarget.rtl.x86_64.so"
+				"libomptarget.rtl.x86_64.nextgen.so"
+				"omptarget.rtl.x86_64"
+				"omptarget.rtl.x86_64.nextgen"
 			)
 		fi
 		if use llvm_targets_AMDGPU ; then
@@ -421,13 +423,20 @@ src_compile() {
 			for target in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 				if use "amdgpu_targets_${target}" ; then
 					targets+=(
-						"linked_libomptarget-amdgpu-${target}.bc"
+						"libomptarget-amdgpu-${target}.bc"
+						"libomptarget-old-amdgpu-${target}.bc"
+						"omptarget-amdgpu-${target}-bc"
+						"omptarget-old-amdgpu-${target}-bc"
 					)
 				fi
 			done
-			linked_libomptarget-amdgpu-gfx803.bc
-			install_targets+=(
-				install-omptarget.rtl.amdgpu
+			targets+=(
+				"libomptarget-old-amdgpu-gfx803.bc"
+				"libomptarget.rtl.amdgpu.so"
+				"libomptarget.rtl.amdgpu.nextgen.so"
+				"omptarget.devicertl.amdgpu"
+				"omptarget.rtl.amdgpu"
+				"omptarget.rtl.amdgpu.nextgen"
 			)
 		fi
 		if use llvm_targets_NVPTX ; then
@@ -435,27 +444,30 @@ src_compile() {
 			for target in "${CUDA_TARGETS_COMPAT[@]}" ; do
 				if use "cuda_targets_${target}" ; then
 					targets+=(
-						"linked_libomptarget-nvptx-${target}.bc"
+						"libomptarget-nvptx-${target}.bc"
+						"omptarget-nvptx-${target}-bc"
 					)
 				fi
 			done
-			install_targets+=(
-				install-omptarget.rtl.cuda
+			targets+=(
+				"libomptarget.so"
+				"omptarget.devicertl.nvptx"
 			)
 		fi
-		install_targets+=(
-			install-omptarget
+		targets+=(
+			"libomptarget.devicertl.a"
+			"libomptarget.so"
+			"omptarget.devicert"
+			"omptarget"
 		)
 	fi
 	if use ompd ; then
 		targets+=(
-			ompd
+			"ompd"
 		)
 	fi
 	cmake_src_compile \
 		"${targets[@]}"
-	_cmake_src_install \
-		"${install_targets[@]}"
 }
 
 # From cmake.eclass.  Removed cmake_build install.
@@ -478,16 +490,54 @@ _cmake_src_install() {
 	fi
 }
 
+_install_libomptarget() {
+	# Missing install-* targets.
+	local L1=(
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -type f -name "libomptarget.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -type f -name "libomptarget.rtl.*.so*")
+	)
+	local L2=(
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -type f -name "libomptarget*.bc")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -type f -name "libomptarget.devicertl.a")
+	)
+
+	exeinto "${EROCM_PATH}/$(get_libdir)"
+	insinto "${EROCM_PATH}/$(get_libdir)"
+	IFS=$'\n'
+	for x in "${L1[@]}" ; do
+		doexe "${x}"
+	done
+	for x in "${L2[@]}" ; do
+		doins "${x}"
+	done
+	IFS=$' \t\n'
+}
+
+_install_libomp_libs() {
+	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	local L=(
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -type f -name "libgomp.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -type f -name "libiomp*.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -type f -name "libomp.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -type f -name "libompd.so*")
+	)
+	IFS=$'\n'
+	for x in "${L[@]}" ; do
+		doexe "${x}"
+	done
+	IFS=$' \t\n'
+}
+
 src_install() {
 	cd "${BUILD_DIR}" || die
+	_install_libomp_libs
 	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
-	doexe "lib/"{libgomp.so,libomp.so,libiomp5.so}
-	use ompd && doexe "lib/libompd.so"
 	insinto "${EROCM_PATH}/llvm/include"
 	doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp.h"
 	if use ompt ; then
 		doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp-tools.h"
 	fi
+	_install_libomptarget
 	rocm_fix_rpath
 }
 
