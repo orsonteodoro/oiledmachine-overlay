@@ -488,11 +488,11 @@ _cmake_src_install() {
 _install_libomptarget() {
 	# Missing install-* targets.
 	local L1=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -type f -name "libomptarget.so*")
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -type f -name "libomptarget.rtl.*.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libomptarget.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libomptarget.rtl.*.so*")
 	)
 	local L2=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -type f -name "libomptarget*.bc")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libomptarget*.bc")
 	)
 
 	exeinto "${EROCM_PATH}/$(get_libdir)"
@@ -510,10 +510,10 @@ _install_libomptarget() {
 _install_libomp_libs() {
 	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
 	local L=(
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -type f -name "libgomp.so*")
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -type f -name "libiomp*.so*")
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -type f -name "libomp.so*")
-		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -type f -name "libompd.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libgomp.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libiomp*.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libomp.so*")
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libompd.so*")
 	)
 	IFS=$'\n'
 	for x in "${L[@]}" ; do
