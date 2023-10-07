@@ -1,6 +1,6 @@
 diff -urp llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/AMDGPU.cpp
 --- llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-05 02:37:00.879347786 -0700
++++ llvm-project-rocm-5.5.1/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-06 17:21:56.121062768 -0700
 @@ -242,11 +242,11 @@ RocmInstallationDetector::getInstallatio
        }
      }
@@ -41,7 +41,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/clang/lib/Driver/ToolChains/AMDGPU.cpp ll
          {"lib", "bitcode"},
 diff -urp llvm-project-rocm-5.5.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt llvm-project-rocm-5.5.1/clang/tools/amdgpu-arch/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/clang/tools/amdgpu-arch/CMakeLists.txt	2023-10-05 02:25:27.843343598 -0700
++++ llvm-project-rocm-5.5.1/clang/tools/amdgpu-arch/CMakeLists.txt	2023-10-06 17:21:56.141062768 -0700
 @@ -8,7 +8,7 @@
  # //
  # //===----------------------------------------------------------------------===//
@@ -53,7 +53,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/clang/tools/amdgpu-arch/CMakeLists.txt ll
  option(AMDGPU_ARCH_FORCE_DLOPEN_LIBHSA "Build with dlopened libhsa" ${AMDGPU_ARCH_DLOPEN_LIBHSA})
 diff -urp llvm-project-rocm-5.5.1.orig/compiler-rt/CMakeLists.txt llvm-project-rocm-5.5.1/compiler-rt/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/compiler-rt/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/compiler-rt/CMakeLists.txt	2023-10-05 02:25:30.771343615 -0700
++++ llvm-project-rocm-5.5.1/compiler-rt/CMakeLists.txt	2023-10-06 17:23:19.429060222 -0700
 @@ -481,12 +481,12 @@ endif()
  
  if(SANITIZER_AMDGPU)
@@ -69,9 +69,11 @@ diff -urp llvm-project-rocm-5.5.1.orig/compiler-rt/CMakeLists.txt llvm-project-r
    endif()
    include_directories(${COMgr_INCLUDE})
  endif()
+Only in llvm-project-rocm-5.5.1/compiler-rt: CMakeLists.txt.orig
+Only in llvm-project-rocm-5.5.1/compiler-rt: CMakeLists.txt.rej
 diff -urp llvm-project-rocm-5.5.1.orig/compiler-rt/test/asan/lit.cfg.py llvm-project-rocm-5.5.1/compiler-rt/test/asan/lit.cfg.py
 --- llvm-project-rocm-5.5.1.orig/compiler-rt/test/asan/lit.cfg.py	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/compiler-rt/test/asan/lit.cfg.py	2023-10-05 02:22:34.939342553 -0700
++++ llvm-project-rocm-5.5.1/compiler-rt/test/asan/lit.cfg.py	2023-10-06 17:21:56.209062765 -0700
 @@ -253,13 +253,13 @@ if config.host_os == 'NetBSD':
  def configure_rocm(config, test_rocm_path):
      if (not os.path.isdir(test_rocm_path)):
@@ -90,7 +92,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/compiler-rt/test/asan/lit.cfg.py llvm-pro
  
 diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/CMakeLists.txt llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-10-05 02:25:28.867343604 -0700
++++ llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-10-06 17:21:56.209062765 -0700
 @@ -129,7 +129,7 @@ if(MLIR_ENABLE_ROCM_CONVERSIONS)
        "Building mlir with ROCm support requires the AMDGPU backend")
    endif()
@@ -102,7 +104,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/CMakeLists.txt llvm-
      __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"
 diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp
 --- llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-10-05 02:22:34.899342553 -0700
++++ llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp	2023-10-06 17:21:56.209062765 -0700
 @@ -280,7 +280,7 @@ SerializeToHsacoPass::translateToLLVMIR(
    Optional<SmallVector<std::unique_ptr<llvm::Module>, 3>> mbModules;
    std::string theRocmPath = getRocmPath();
@@ -112,10 +114,9 @@ diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/Dialect/GPU/Transforms/Serialize
    mbModules = loadLibraries(bitcodePath, libraries, llvmContext);
  
    if (!mbModules) {
-Only in llvm-project-rocm-5.5.1/mlir/lib/Dialect/GPU/Transforms: SerializeToHsaco.cpp.orig
 diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/ExecutionEngine/CMakeLists.txt llvm-project-rocm-5.5.1/mlir/lib/ExecutionEngine/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-10-05 02:25:29.795343610 -0700
++++ llvm-project-rocm-5.5.1/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-10-06 17:21:56.209062765 -0700
 @@ -200,7 +200,7 @@ if(MLIR_ENABLE_ROCM_RUNNER)
    # Configure ROCm support.
    if (NOT DEFINED ROCM_PATH)
@@ -127,7 +128,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/mlir/lib/ExecutionEngine/CMakeLists.txt l
      endif()
 diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/DeviceRTL/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/DeviceRTL/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt	2023-10-05 02:25:32.547343626 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/DeviceRTL/CMakeLists.txt	2023-10-06 17:21:56.209062765 -0700
 @@ -198,7 +198,7 @@ function(compileDeviceRTLLibrary target_
          HINTS
          ${CMAKE_INSTALL_PREFIX}
@@ -139,7 +140,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/DeviceRTL/CMakeLists.
          libomptarget_say("DeviceRTLs ${target_cpu}: Getting ROCm device libs from ${AMDDeviceLibs_DIR}")
 diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2023-10-05 02:25:34.371343637 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/deviceRTLs/amdgcn/CMakeLists.txt	2023-10-06 17:21:56.209062765 -0700
 @@ -17,7 +17,7 @@ endif()
  find_package(AMDDeviceLibs REQUIRED CONFIG PATHS
  	${CMAKE_BINARY_DIR}/../../tools/ROCMDEVLIBS
@@ -151,7 +152,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/deviceRTLs/amdgcn/CMa
  else()
 diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/hostrpc/services/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/hostrpc/services/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2023-10-05 02:25:31.699343621 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/hostrpc/services/CMakeLists.txt	2023-10-06 17:21:56.209062765 -0700
 @@ -1,5 +1,5 @@
  
 -find_package(hsa-runtime64 1.2.0 REQUIRED HINTS ${CMAKE_INSTALL_PREFIX} PATHS /opt/rocm)
@@ -161,7 +162,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/hostrpc/services/CMak
  if(SANITIZER_AMDGPU)
 diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-10-05 02:25:33.427343631 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-10-06 17:21:56.209062765 -0700
 @@ -23,7 +23,7 @@ endif()
  
  # as of rocm-3.7, hsa is installed with cmake packages and kmt is found via hsa
@@ -173,7 +174,7 @@ diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/CMakeL
    message("FOUND hsa-runtime64 at ${hsa-runtime64_DIR}")
 diff -urp llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh
 --- llvm-project-rocm-5.5.1.orig/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh	2023-05-11 11:50:45.000000000 -0700
-+++ llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh	2023-10-05 02:23:24.883342855 -0700
++++ llvm-project-rocm-5.5.1/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh	2023-10-06 17:21:56.209062765 -0700
 @@ -1,11 +1,11 @@
  CLOC_PATH=/usr/bin
 -AOMP=${AOMP:-/opt/rocm/aomp}
