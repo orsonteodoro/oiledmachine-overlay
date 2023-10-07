@@ -91,7 +91,7 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
-rocm_5_7
+rocm_5_7 rpc
 r4
 "
 gen_cuda_required_use() {
@@ -133,6 +133,9 @@ REQUIRED_USE="
 	)
 	rocm_5_7? (
 		llvm_targets_AMDGPU
+	)
+	rpc? (
+		offload
 	)
 "
 ROCM_SLOTS=(
@@ -247,6 +250,11 @@ RDEPEND="
 	hwloc? (
 		>=sys-apps/hwloc-2.5:0=[${MULTILIB_USEDEP}]
 	)
+	llvm_targets_AMDGPU? (
+		|| (
+			$(gen_amdgpu_rdepend)
+		)
+	)
 	llvm_targets_NVPTX? (
 		<dev-util/nvidia-cuda-toolkit-12.2
 	)
@@ -259,12 +267,9 @@ RDEPEND="
 			)
 		)
 	)
-"
-DISABLED_RDEPEND="
-	llvm_targets_AMDGPU? (
-		|| (
-			$(gen_amdgpu_rdepend)
-		)
+	rpc? (
+		>=net-libs/grpc-1.49.3:=
+		dev-libs/protobuf:0/32
 	)
 "
 # Tests:
