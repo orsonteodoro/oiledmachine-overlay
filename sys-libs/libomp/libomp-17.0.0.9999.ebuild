@@ -404,6 +404,7 @@ multilib_src_configure() {
 		mycmakeargs+=(
 			-DLIBOMPTARGET_BUILD_AMDGPU_PLUGIN=$(usex llvm_targets_AMDGPU)
 			-DLIBOMPTARGET_BUILD_CUDA_PLUGIN=$(usex llvm_targets_NVPTX)
+			-DLIBOMPTARGET_ENABLE_EXPERIMENTAL_REMOTE_PLUGIN=$(usex rpc)
 			-DOPENMP_ENABLE_LIBOMPTARGET=ON
 		)
 		if use llvm_targets_AMDGPU ; then
