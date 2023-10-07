@@ -349,6 +349,7 @@ src_configure() {
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
+		-DLLVM_EXTERNAL_LIT="/usr/bin/lit"
 		-DLLVM_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm/$(get_libdir)/cmake/llvm"
 		-DLLVM_INSTALL_UTILS=ON
 #		-DLLVM_LINK_LLVM_DYLIB=ON
