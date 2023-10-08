@@ -305,6 +305,8 @@ src_prepare() {
 		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh"
 		"${S_ROOT}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/src/CMakeLists.txt"
+
+		"${S_ROOT}/openmp/libomptarget/tools/prep-libomptarget-bc/CMakeLists.txt"
 	)
 	rocm_src_prepare
 	if ! use llvm_targets_NVPTX ; then
@@ -328,6 +330,7 @@ src_configure() {
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 	replace-flags '-O0' '-O1'
+	append-ldflags -fuse-ld=lld
 # Avoid
 # The dependency target "clang" of target "check-all" does not exist.
 	PROJECTS="clang;openmp"
