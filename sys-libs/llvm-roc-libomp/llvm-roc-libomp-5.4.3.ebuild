@@ -80,7 +80,10 @@ https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
 https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/refs/tags/rocm-${PV}.tar.gz
 	-> rocm-device-libs-${PV}.tar.gz
+https://github.com/RadeonOpenCompute/llvm-project/commit/056b229c2c479171ff7bd634321a2c1064f400a0.patch
+	-> llvm-roc-commit-056b229.patch
 "
+# 056b229 - [openmp] - Fix DP issue in amdgpu plugin.
 
 DESCRIPTION="The ROCm™ fork of LLVM's libomp"
 HOMEPAGE="
@@ -276,6 +279,7 @@ src_prepare() {
 	eapply "${FILESDIR}/llvm-roc-libomp-5.6.0-omp.h-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.1.3-libomptarget-includes-path.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.2.3-libomptarget-prep-libomptarget-bc-link-directory.patch"
+	eapply "${DISTDIR}/llvm-roc-commit-056b229.patch"
 	cd "${S}" || die
 	cmake_src_prepare
 
@@ -330,7 +334,7 @@ src_configure() {
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 	replace-flags '-O0' '-O1'
-	append-ldflags -fuse-ld=lld
+	append-ldflags -fuse-ld=lld # Fix ld: duplicate version tag `VERS1.0'
 # Avoid
 # The dependency target "clang" of target "check-all" does not exist.
 	PROJECTS="clang;openmp"

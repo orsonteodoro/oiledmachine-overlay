@@ -333,6 +333,7 @@ src_configure() {
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 	replace-flags '-O0' '-O1'
+	append-ldflags -fuse-ld=lld # Fix ld: duplicate version tag `VERS1.0'
 # Avoid
 # The dependency target "clang" of target "check-all" does not exist.
 	PROJECTS="clang;openmp"
