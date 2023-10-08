@@ -1,0 +1,28 @@
+Backport of 056b229c2c479171ff7bd634321a2c1064f400a0
+--- a/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp.orig	2022-10-13 12:47:09.000000000 -0700
++++ b/openmp/libomptarget/plugins/amdgpu/impl/impl.cpp	2023-10-08 09:26:56.680054431 -0700
+@@ -21,9 +21,13 @@ bool already_locked(void *ptr, hsa_statu
+   info.size = sizeof(hsa_amd_pointer_info_t);
+   err = hsa_amd_pointer_info(ptr, &info, nullptr, nullptr, nullptr);
+ 
+-  if (err != HSA_STATUS_SUCCESS)
++  if (err_p)
++    *err_p = err;
++
++  if (err != HSA_STATUS_SUCCESS){
+     DP("Error when getting pointer info\n");
+-  else
++    return already_locked;
++  } else
+     already_locked = (info.type == HSA_EXT_POINTER_TYPE_LOCKED);
+ 
+   if (already_locked && agentBaseAddress != nullptr) {
+@@ -35,8 +39,6 @@ bool already_locked(void *ptr, hsa_statu
+                  (uint64_t)info.hostBaseAddress);
+   }
+ 
+-  if (err_p)
+-    *err_p = err;
+   return already_locked;
+ }
+ 
