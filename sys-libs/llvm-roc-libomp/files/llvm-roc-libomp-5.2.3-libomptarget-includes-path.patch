@@ -1,18 +1,6 @@
-unchanged:
---- llvm-project-rocm-5.1.3/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt.orig	2022-03-17 08:38:43.000000000 -0700
-+++ llvm-project-rocm-5.1.3/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-09-30 11:40:13.274201697 -0700
-@@ -66,6 +66,7 @@ else()
-   set(LIBOMPTARGET_EXTRA_SOURCE dynamic_hsa/hsa.cpp)
-   set(LIBOMPTARGET_DEP_LIBRARIES)
- endif()
-+include_directories(${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src)
- 
- add_library(omptarget.rtl.amdgpu SHARED
-       impl/impl.cpp
-only in patch2:
-unchanged:
---- llvm-project-rocm-5.2.3/openmp/libomptarget/libm/CMakeLists.txt.orig	2022-08-11 10:57:36.000000000 -0700
-+++ llvm-project-rocm-5.2.3/openmp/libomptarget/libm/CMakeLists.txt	2023-09-30 17:20:34.156882361 -0700
+diff -urp llvm-project-rocm-5.2.3.orig/openmp/libomptarget/libm/CMakeLists.txt llvm-project-rocm-5.2.3/openmp/libomptarget/libm/CMakeLists.txt
+--- llvm-project-rocm-5.2.3.orig/openmp/libomptarget/libm/CMakeLists.txt	2022-08-11 10:57:36.000000000 -0700
++++ llvm-project-rocm-5.2.3/openmp/libomptarget/libm/CMakeLists.txt	2023-10-07 15:41:10.851843757 -0700
 @@ -42,6 +42,8 @@ foreach(proj ${LLVM_ENABLE_RUNTIMES})
    endif()
  endforeach()
@@ -22,3 +10,23 @@ unchanged:
  # prepare variables used by build_static_device_bc_lib
  set(triple "amdgcn-amd-amdhsa")
  set(systemarch "amdgcn")
+@@ -54,6 +56,7 @@ foreach(mcpu ${amdgpu_mcpus})
+   set(omp_common_args
+     -c 
+     -I ${CMAKE_BINARY_DIR}${_xdir}/runtime/src
++    -I ${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src
+     -emit-llvm
+     -target ${cpu_target}
+     -fopenmp 
+diff -urp llvm-project-rocm-5.2.3.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt llvm-project-rocm-5.2.3/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
+--- llvm-project-rocm-5.2.3.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-10-07 15:39:52.483844804 -0700
++++ llvm-project-rocm-5.2.3/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-10-07 15:40:51.915844010 -0700
+@@ -71,6 +71,7 @@ else()
+   set(LIBOMPTARGET_EXTRA_SOURCE dynamic_hsa/hsa.cpp)
+   set(LIBOMPTARGET_DEP_LIBRARIES)
+ endif()
++include_directories(${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src)
+ 
+ add_library(omptarget.rtl.amdgpu SHARED
+       impl/impl.cpp
+Only in llvm-project-rocm-5.2.3/openmp/libomptarget/plugins/amdgpu: CMakeLists.txt.orig

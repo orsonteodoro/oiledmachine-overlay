@@ -403,6 +403,9 @@ src_configure() {
 	cmake_src_configure
 }
 
+# The reason why to do this is to reduce the build cost from 4000 compilation
+# units to 1000 units skipping over the already built ones in both src_compile()
+# and src_install().
 src_compile() {
 	local targets
 	targets=(
@@ -420,6 +423,7 @@ src_compile() {
 			for target in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 				if use "amdgpu_targets_${target}" ; then
 					targets+=(
+						"libm-amdgcn-${target}"
 						"omptarget-new-amdgpu-${target}-bc"
 					)
 				fi
@@ -434,6 +438,7 @@ src_compile() {
 			for target in "${CUDA_TARGETS_COMPAT[@]}" ; do
 				if use "cuda_targets_${target}" ; then
 					targets+=(
+						"libm-nvptx-${target}"
 						"omptarget-nvptx-${target}-bc"
 						"omptarget-new-nvptx-${target}-bc"
 					)

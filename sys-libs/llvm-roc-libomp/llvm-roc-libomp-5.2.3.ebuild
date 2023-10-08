@@ -267,6 +267,7 @@ src_prepare() {
 	eapply "${FILESDIR}/llvm-roc-libomp-5.2.3-omp-tools-includes.patch"
 	eapply "${FILESDIR}/llvm-roc-5.2.3-path-changes.patch"
 	eapply "${FILESDIR}/llvm-roc-libomp-5.2.3-libomptarget-includes-path.patch"
+	eapply "${FILESDIR}/llvm-roc-libomp-5.2.3-libomptarget-prep-libomptarget-bc-link-directory.patch"
 	cd "${S}" || die
 	cmake_src_prepare
 
@@ -296,6 +297,8 @@ src_prepare() {
 		"${S_ROOT}/openmp/libomptarget/plugins/amdgpu/rtl_test/buildrun.sh"
 		"${S_ROOT}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
 		"${S_ROOT}/openmp/libomptarget/src/CMakeLists.txt"
+
+		"${S_ROOT}/openmp/libomptarget/tools/prep-libomptarget-bc/CMakeLists.txt"
 	)
 	rocm_src_prepare
 	if ! use llvm_targets_NVPTX ; then
@@ -393,6 +396,9 @@ src_configure() {
 	cmake_src_configure
 }
 
+# The reason why to do this is to reduce the build cost from 4000 compilation
+# units to 1000 units skipping over the already built ones in both src_compile()
+# and src_install().
 src_compile() {
 	local targets
 	targets=(
@@ -410,12 +416,17 @@ src_compile() {
 			for target in "${AMDGPU_TARGETS_COMPAT[@]}" ; do
 				if use "amdgpu_targets_${target}" ; then
 					targets+=(
+						"libhostrpc-amdgcn-${target}.bc"
+						"libhostrpc-target-${target}"
+						"libm-amdgcn-${target}.bc"
+						"libm-target-${target}"
 						"libomptarget-amdgcn-${target}"
 						"omptarget-new-amdgpu-${target}-bc"
 					)
 				fi
 			done
 			targets+=(
+				"libhostrpc_services.a"
 				"libomptarget.rtl.amdgpu.so"
 				"omptarget.rtl.amdgpu"
 				"omptarget-amdgcn"
