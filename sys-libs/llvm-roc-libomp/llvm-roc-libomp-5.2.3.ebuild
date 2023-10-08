@@ -406,7 +406,7 @@ src_compile() {
 	)
 	if use offload ; then
 		if use llvm_targets_X86 ; then
-			install_targets+=(
+			targets+=(
 				"libomptarget.rtl.x86_64.so"
 				"omptarget.rtl.x86_64"
 			)
