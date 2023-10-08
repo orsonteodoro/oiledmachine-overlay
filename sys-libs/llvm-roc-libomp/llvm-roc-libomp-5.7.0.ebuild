@@ -116,7 +116,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 -cuda -offload -ompt +ompd -rpc
-r10
+r11
 "
 
 gen_cuda_required_use() {
@@ -533,8 +533,8 @@ _install_libomptarget() {
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libomptarget.devicertl.a")
 	)
 
-	exeinto "${EROCM_PATH}/$(get_libdir)"
-	insinto "${EROCM_PATH}/$(get_libdir)"
+	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	insinto "${EROCM_PATH}/llvm/$(get_libdir)"
 	IFS=$'\n'
 	for x in "${L1[@]}" ; do
 		doexe "${x}"
