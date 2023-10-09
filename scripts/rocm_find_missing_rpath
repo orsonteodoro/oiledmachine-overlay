@@ -7,10 +7,11 @@ main() {
 	local rocm_libs=(
 		"libamdhip64.so"
 		"libhsa-runtime64.so"
-		"libroctracer64.so"
 		"librdc_bootstrap.so"
-		"librocm_smi64.so"
 		"librocm-dbgapi.so"
+		"librocm_smi64.so"
+		"librocrand.so"
+		"libroctracer64.so"
 	)
 	local llvm_libs=(
 		"libLLVMCore.so"
