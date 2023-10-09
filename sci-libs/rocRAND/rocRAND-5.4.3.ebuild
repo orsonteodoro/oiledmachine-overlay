@@ -46,7 +46,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test r2
+benchmark cuda +rocm test r3
 "
 gen_cuda_required_use() {
 	local x
