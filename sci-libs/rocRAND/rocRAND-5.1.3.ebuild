@@ -44,7 +44,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm test r1
+benchmark cuda +rocm test r2
 "
 gen_cuda_required_use() {
 	local x
@@ -227,6 +227,7 @@ src_install() {
 		dobin benchmark_rocrand_*
 	fi
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
