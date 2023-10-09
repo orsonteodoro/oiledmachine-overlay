@@ -48,7 +48,7 @@ DESCRIPTION="AMD's library for BLAS on ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocBLAS"
 LICENSE="BSD"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 benchmark cuda +rocm system-llvm test r4

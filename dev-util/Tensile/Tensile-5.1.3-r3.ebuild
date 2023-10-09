@@ -160,9 +160,24 @@ python_install() {
 	cd "Tensile" || die
 	python_domodule "Components"
 	python_newexe "Utilities/merge.py" "${PN}-merge"
+
+	dodir "${EROCM_PATH}/usr/lib/python-exec/${EPYTHON}"
+	cp -aT \
+		"${ED}/usr/lib/python-exec/${EPYTHON}" \
+		"${ED}${EROCM_PATH}/usr/lib/python-exec/${EPYTHON}" \
+		|| die
+	rm -rf "${ED}/usr/lib/python-exec/${EPYTHON}" || die
+
+	dodir "${EROCM_PATH}/usr/lib/${EPYTHON}/site-packages"
+	cp -aT \
+		"${ED}/usr/lib/${EPYTHON}/site-packages" \
+		"${ED}${EROCM_PATH}/usr/lib/${EPREFIX}/site-packages" \
+		|| die
+	rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages" || die
 }
 
 src_install() {
+	export EPREFIX="${EPREFIX}/${EROCM_PATH}"
 	distutils-r1_src_install
 	cd "${PN}" || die
 	insinto "${EROCM_PATH}/share/${PN}"
@@ -175,6 +190,13 @@ src_install() {
 		"Source"
 	insinto "${EROCM_PATH}/$(get_libdir)/cmake/${PN}"
 	doins "cmake/"*".cmake"
+	rocm_mv_docs
+
+	cp -aT \
+		"${ED}/usr/bin" \
+		"${ED}/${EROCM_PATH}/bin" \
+		|| die
+	rm -rf "${ED}/usr/bin" || die
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
