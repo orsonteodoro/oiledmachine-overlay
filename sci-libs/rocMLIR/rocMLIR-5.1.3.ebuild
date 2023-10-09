@@ -3,6 +3,10 @@
 
 EAPI=8
 
+#CMake Error at external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt:167 (message):
+#  Could not locate ROCm HIP runtime library
+
+
 LLVM_MAX_SLOT=14
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -175,6 +179,7 @@ build_rocmlir() {
 
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
+		-DHIP_ROOT_DIR="${ESYSROOT}/${EROCM_PATH}"
 		-DHIP_RUNTIME="rocclr"
 
 		# From additional settings in HEAD

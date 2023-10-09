@@ -173,6 +173,7 @@ build_rocmlir() {
 
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
+		-DHIP_ROOT_DIR="${ESYSROOT}/${EROCM_PATH}"
 		-DHIP_RUNTIME="rocclr"
 
 		# From additional settings in HEAD
