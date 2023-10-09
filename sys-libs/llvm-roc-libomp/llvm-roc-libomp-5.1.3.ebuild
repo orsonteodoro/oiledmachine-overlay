@@ -101,7 +101,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda -offload -ompt +ompd -rpc
-r12
+r13
 "
 
 gen_cuda_required_use() {
@@ -537,7 +537,7 @@ _install_libomp_libs() {
 	)
 	IFS=$'\n'
 	for x in "${L2[@]}" ; do
-		insinto "${x}"
+		doins "${x}"
 	done
 	IFS=$' \t\n'
 }
