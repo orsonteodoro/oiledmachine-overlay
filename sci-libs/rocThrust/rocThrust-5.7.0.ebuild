@@ -36,7 +36,7 @@ LICENSE="Apache-2.0"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark system-llvm test r1
+benchmark system-llvm test r2
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
