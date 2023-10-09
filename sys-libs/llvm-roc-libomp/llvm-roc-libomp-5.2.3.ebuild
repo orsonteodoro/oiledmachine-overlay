@@ -100,8 +100,8 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
--cuda -offload -ompt +ompd -rpc
-r11
++archer -cuda -offload -ompt +ompd -rpc
+r12
 "
 
 gen_cuda_required_use() {
@@ -404,6 +404,12 @@ src_compile() {
 	targets=(
 		"omp"
 	)
+	if use archer ; then
+		targets+=(
+			"libarcher.so"
+			"libarcher_static.a"
+		)
+	fi
 	if use offload ; then
 		if use llvm_targets_X86 ; then
 			targets+=(
@@ -508,15 +514,46 @@ _install_libomptarget() {
 
 _install_libomp_libs() {
 	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
-	local L=(
+	local L1=(
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libgomp.so*")
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libiomp*.so*")
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libomp.so*")
 		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build/lib" -name "libompd.so*")
 	)
 	IFS=$'\n'
-	for x in "${L[@]}" ; do
+	for x in "${L1[@]}" ; do
 		doexe "${x}"
+	done
+	IFS=$' \t\n'
+
+	insinto "${EROCM_PATH}/llvm/$(get_libdir)/cmake/openmp"
+	local L2=(
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/openmp" -name "FindOpenMPTarget.cmake")
+	)
+	IFS=$'\n'
+	for x in "${L2[@]}" ; do
+		insinto "${x}"
+	done
+	IFS=$' \t\n'
+}
+
+_install_archer() {
+	exeinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	local L1=(
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libarcher.so*")
+	)
+	IFS=$'\n'
+	for x in "${L1[@]}" ; do
+		doexe "${x}"
+	done
+	IFS=$' \t\n'
+	insinto "${EROCM_PATH}/llvm/$(get_libdir)"
+	local L2=(
+		$(find "${WORKDIR}/llvm-project-rocm-${PV}/llvm_build" -name "libarcher_static.a*")
+	)
+	IFS=$'\n'
+	for x in "${L2[@]}" ; do
+		doins "${x}"
 	done
 	IFS=$' \t\n'
 }
@@ -529,8 +566,13 @@ src_install() {
 	doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp.h"
 	if use ompt ; then
 		doins "${S_ROOT}/openmp/runtime/exports/common.dia.ompt.optional/include/omp-tools.h"
+		doins "${S_ROOT}/openmp/tools/multiplex/ompt-multiplex.h"
+		dosym \
+			"/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/include/omp-tools.h" \
+			"/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/include/ompt.h"
 	fi
 	_install_libomptarget
+	use archer && _install_archer
 	rocm_fix_rpath
 }
 

@@ -10,6 +10,9 @@
     <remote-id type="github">RadeonOpenCompute/llvm-project</remote-id>
   </upstream>
   <use>
+    <flag name="archer">
+      Adds the archer runtime library used for data racing detection in OpenMP.
+    </flag>
     <flag name="ompd">
       Add debug tools support.
     </flag>
