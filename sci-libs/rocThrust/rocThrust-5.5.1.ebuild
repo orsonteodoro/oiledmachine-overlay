@@ -119,7 +119,7 @@ src_configure() {
 
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {
