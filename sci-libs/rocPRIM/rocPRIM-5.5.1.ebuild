@@ -153,7 +153,7 @@ src_configure() {
 			-DHIP_RUNTIME="rocclr"
 		)
 	fi
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {
