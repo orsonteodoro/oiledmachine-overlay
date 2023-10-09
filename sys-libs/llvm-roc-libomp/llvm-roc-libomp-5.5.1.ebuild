@@ -248,6 +248,10 @@ BDEPEND="
 	offload? (
 		virtual/pkgconfig
 	)
+	|| (
+		sys-devel/lld:${LLVM_MAX_SLOT}
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
+	)
 "
 PATCHES=(
 )
