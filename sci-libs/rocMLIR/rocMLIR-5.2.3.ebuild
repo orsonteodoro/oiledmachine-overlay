@@ -174,6 +174,7 @@ build_rocmlir() {
 		-DBUILD_FAT_LIBMLIRMIOPEN=ON # DO NOT CHANGE.  Static produces rocMLIR folder while shared does not.
 
 		-DHIP_COMPILER="clang"
+		-DHIP_PATH="${ESYSROOT}/${EROCM_PATH}"
 		-DHIP_PLATFORM="amd"
 		-DHIP_ROOT_DIR="${ESYSROOT}/${EROCM_PATH}"
 		-DHIP_RUNTIME="rocclr"
