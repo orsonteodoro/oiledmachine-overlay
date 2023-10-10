@@ -1219,25 +1219,26 @@ eerror
 	if has_version "sys-devel/gcc-kpgo" && use pgo ; then
 einfo "Detected sys-devel/gcc-kpgo"
 		export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
+		export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
 		GCC_PKG="sys-devel/gcc-kpgo"
 	else
 		GCC_PKG="sys-devel/gcc"
 	fi
 
-	if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE} && ! use clang ) \
-		|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE} ) ; then
-ewarn
-ewarn "ccache is not supported in FEATURES with GCC PGO."
-ewarn "Trying to disable."
-ewarn
-	        einfo "PATH=${PATH} (before)"
-		export PATH=$(echo "${PATH}" \
-	                | tr ":" "\n" \
-	                | sed -E -e "/ccache/d" \
-	                | tr "\n" ":" \
-	                | sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
-	        einfo "PATH=${PATH} (after)"
-	fi
+#	if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE} && ! use clang ) \
+#		|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE} ) ; then
+#ewarn
+#ewarn "ccache is not supported in FEATURES with GCC PGO."
+#ewarn "Trying to disable."
+#ewarn
+#	        einfo "PATH=${PATH} (before)"
+#		export PATH=$(echo "${PATH}" \
+#	                | tr ":" "\n" \
+#	                | sed -E -e "/ccache/d" \
+#	                | tr "\n" ":" \
+#	                | sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
+#	        einfo "PATH=${PATH} (after)"
+#	fi
 
 }
 
@@ -7910,6 +7911,7 @@ einfo "Using Clang ${llvm_slot}"
 		if has_version "sys-devel/gcc-kpgo" && use pgo ; then
 einfo "Detected sys-devel/gcc-kpgo"
 			export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
+			export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
 		fi
 
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
