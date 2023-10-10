@@ -370,7 +370,15 @@
     PGO/PDO for kernel mini FAQ
 
     - Q:  Does GCC PGO work now for the kernel?
-      A:  No, it breaks during the building of the PGO image.
+      A:  No, it breaks during the building of the PGO image.  It requires
+          additional patches for both gcc and the compiler.  The source code for
+          these modifications for needs to be provided by the researchers [I could
+          not find them] or rewritten from scratch [the likely scenario].  
+          See the Yuan-ScienceChina-18 sections 3.2 and section 3.1 paragraph 3
+          in the document in
+          https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
+          Send an issue request if you completed it or send a copy of the patch
+          from the researchers.
     - Q:  Does Clang PGO work?
       A:  No outstanding perceptable differences before and after but it does do
           all steps without problems.
