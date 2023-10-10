@@ -1219,7 +1219,9 @@ eerror
 	if has_version "sys-devel/gcc-kpgo" && use pgo ; then
 einfo "Detected sys-devel/gcc-kpgo"
 		export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
-		export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
+		if [[ "${FEATURES}" =~ "ccache" ]] ; then
+			export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
+		fi
 		GCC_PKG="sys-devel/gcc-kpgo"
 	else
 		GCC_PKG="sys-devel/gcc"
@@ -7911,7 +7913,9 @@ einfo "Using Clang ${llvm_slot}"
 		if has_version "sys-devel/gcc-kpgo" && use pgo ; then
 einfo "Detected sys-devel/gcc-kpgo"
 			export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
-			export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
+			if [[ "${FEATURES}" =~ "ccache" ]] ; then
+				export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
+			fi
 		fi
 
 		is_gcc_ready || ot-kernel_compiler_not_found "Failed compiler sanity check for gcc"
