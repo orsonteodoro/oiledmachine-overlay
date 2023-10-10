@@ -1,6 +1,6 @@
 diff -urp rocMLIR-rocm-5.4.3.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.4.3/cmake/llvm-project.cmake
 --- rocMLIR-rocm-5.4.3.orig/cmake/llvm-project.cmake	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/cmake/llvm-project.cmake	2023-08-31 13:39:20.248244993 -0700
++++ rocMLIR-rocm-5.4.3/cmake/llvm-project.cmake	2023-10-09 20:22:12.240434720 -0700
 @@ -3,7 +3,7 @@ message(STATUS "Adding LLVM git-submodul
  # Passed to lit.site.cfg.py.so that the out of tree Standalone dialect test
  # can find MLIR's CMake configuration
@@ -49,7 +49,7 @@ diff -urp rocMLIR-rocm-5.4.3.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.4.3/cm
  add_subdirectory("${LLVM_PROJ_SRC}/llvm" "external/llvm-project/llvm" EXCLUDE_FROM_ALL)
 diff -urp rocMLIR-rocm-5.4.3.orig/CMakeLists.txt rocMLIR-rocm-5.4.3/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/CMakeLists.txt	2023-08-31 13:39:20.248244993 -0700
++++ rocMLIR-rocm-5.4.3/CMakeLists.txt	2023-10-09 20:22:12.252434720 -0700
 @@ -43,9 +43,9 @@ set(LLVM_TARGETS_TO_BUILD "X86;AMDGPU" C
  # Pointers to: 1) external LLVM bins/libs, and 2) MIOpen Dialect bins/libs
  set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/llvm" CACHE PATH "Path to LLVM sources")
@@ -73,7 +73,7 @@ diff -urp rocMLIR-rocm-5.4.3.orig/CMakeLists.txt rocMLIR-rocm-5.4.3/CMakeLists.t
    set(LLVM_BUILD_LLVM_DYLIB ON CACHE BOOL "")
 diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp rocMLIR-rocm-5.4.3/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp
 --- rocMLIR-rocm-5.4.3.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-08-31 13:39:20.260244993 -0700
++++ rocMLIR-rocm-5.4.3/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-09 20:22:12.272434720 -0700
 @@ -238,8 +238,8 @@ RocmInstallationDetector::getInstallatio
        }
      }
@@ -122,7 +122,7 @@ diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/clang/lib/Driver/ToolCha
          {"lib", "bitcode"},
 diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt rocMLIR-rocm-5.4.3/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-08-31 13:39:20.276244992 -0700
++++ rocMLIR-rocm-5.4.3/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-10-09 20:22:12.272434720 -0700
 @@ -6,7 +6,7 @@
  # //
  # //===----------------------------------------------------------------------===//
@@ -134,7 +134,7 @@ diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/clang/tools/amdgpu-arch/
    return()
 diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt rocMLIR-rocm-5.4.3/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-08-31 13:39:20.276244992 -0700
++++ rocMLIR-rocm-5.4.3/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-10-09 20:22:12.272434720 -0700
 @@ -128,7 +128,7 @@ if(MLIR_ENABLE_ROCM_CONVERSIONS)
        "Building mlir with ROCm support requires the AMDGPU backend")
    endif()
@@ -146,7 +146,7 @@ diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMa
      __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"
 diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt rocMLIR-rocm-5.4.3/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-08-31 13:39:20.276244992 -0700
++++ rocMLIR-rocm-5.4.3/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-10-09 20:22:12.272434720 -0700
 @@ -198,23 +198,27 @@ if(MLIR_ENABLE_ROCM_RUNNER)
    # Configure ROCm support.
    if (NOT DEFINED ROCM_PATH)
@@ -181,10 +181,9 @@ diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/mlir/lib/ExecutionEngine
    if (NOT ROCM_RUNTIME_LIBRARY)
      message(SEND_ERROR "Could not locate ROCm HIP runtime library")
    else()
-Only in rocMLIR-rocm-5.4.3/external/llvm-project/mlir/lib/ExecutionEngine: CMakeLists.txt.orig
 diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt rocMLIR-rocm-5.4.3/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-08-31 13:39:20.284244992 -0700
++++ rocMLIR-rocm-5.4.3/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-10-09 20:22:12.272434720 -0700
 @@ -20,7 +20,7 @@ if (NOT LIBOMPTARGET_BUILD_AMDGPU_PLUGIN
  endif()
  
@@ -196,7 +195,7 @@ diff -urp rocMLIR-rocm-5.4.3.orig/external/llvm-project/openmp/libomptarget/plug
    libomptarget_say("Not building AMDGPU plugin: LIBELF not found")
 diff -urp rocMLIR-rocm-5.4.3.orig/mlir/CMakeLists.txt rocMLIR-rocm-5.4.3/mlir/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/mlir/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/mlir/CMakeLists.txt	2023-08-31 13:39:20.284244992 -0700
++++ rocMLIR-rocm-5.4.3/mlir/CMakeLists.txt	2023-10-09 20:22:12.292434720 -0700
 @@ -4,7 +4,7 @@ message(STATUS "LLVM_BUILD_LIBRARY_DIR:
  message(STATUS "LLVM_DEFINITIONS: ${LLVM_DEFINITIONS}")
  
@@ -208,7 +207,7 @@ diff -urp rocMLIR-rocm-5.4.3.orig/mlir/CMakeLists.txt rocMLIR-rocm-5.4.3/mlir/CM
  
 diff -urp rocMLIR-rocm-5.4.3.orig/mlir/lib/Dialect/MIOpen/CMakeLists.txt rocMLIR-rocm-5.4.3/mlir/lib/Dialect/MIOpen/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/mlir/lib/Dialect/MIOpen/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/mlir/lib/Dialect/MIOpen/CMakeLists.txt	2023-08-31 13:39:20.284244992 -0700
++++ rocMLIR-rocm-5.4.3/mlir/lib/Dialect/MIOpen/CMakeLists.txt	2023-10-09 20:22:12.312434721 -0700
 @@ -1,7 +1,7 @@
  # Configure ROCm support.
  if (NOT DEFINED ROCM_PATH)
@@ -220,7 +219,7 @@ diff -urp rocMLIR-rocm-5.4.3.orig/mlir/lib/Dialect/MIOpen/CMakeLists.txt rocMLIR
    endif()
 diff -urp rocMLIR-rocm-5.4.3.orig/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt rocMLIR-rocm-5.4.3/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt	2023-08-31 13:39:20.284244992 -0700
++++ rocMLIR-rocm-5.4.3/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt	2023-10-09 20:22:12.312434721 -0700
 @@ -20,7 +20,7 @@ if (MLIR_MIOPEN_SQLITE_ENABLED)
    if (SQLITE3_FOUND)
      set(MIOPEN_PATH ${ROCM_PATH}/miopen)
@@ -230,9 +229,39 @@ diff -urp rocMLIR-rocm-5.4.3.orig/mlir/lib/Dialect/MIOpen/Tuning/CMakeLists.txt 
      endif()
      if (EXISTS "${MIOPEN_SYSTEM_DB_PATH}")
        message(STATUS "miopen system perfdb path: ${MIOPEN_SYSTEM_DB_PATH}")
+diff -urp rocMLIR-rocm-5.4.3.orig/mlir/tools/mlir-miopen-lib/CMakeLists.txt rocMLIR-rocm-5.4.3/mlir/tools/mlir-miopen-lib/CMakeLists.txt
+--- rocMLIR-rocm-5.4.3.orig/mlir/tools/mlir-miopen-lib/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
++++ rocMLIR-rocm-5.4.3/mlir/tools/mlir-miopen-lib/CMakeLists.txt	2023-10-09 20:25:27.616438221 -0700
+@@ -127,7 +127,7 @@ if(BUILD_FAT_LIBROCKCOMPILER)
+     set(pkg_config_file ${package_name}Config.cmake)
+     set(pkg_version_file ${package_name}ConfigVersion.cmake)
+     set(INCLUDE_DIR include/${package_name}/)
+-    set(LIB_CMAKE_DIR lib/cmake/${package_name}/)
++    set(LIB_CMAKE_DIR @LIBDIR@/cmake/${package_name}/)
+ 
+     # Install lib${lib_name}.a to ${CMAKE_INSTALL_PREFIX}/lib/${package_name}/
+     # and group it into the ${export-set}
+@@ -140,7 +140,7 @@ if(BUILD_FAT_LIBROCKCOMPILER)
+     endif()
+     install(TARGETS ${lib_name}
+       EXPORT ${export_set}
+-      ARCHIVE DESTINATION lib/${package_name}
++      ARCHIVE DESTINATION @LIBDIR@/${package_name}
+       COMPONENT ${component_name}
+       INCLUDES DESTINATION ${INCLUDE_DIR} ${EXTRA_INCLUDES}
+     )
+@@ -155,7 +155,7 @@ if(BUILD_FAT_LIBROCKCOMPILER)
+ 
+     configure_package_config_file(cmake/${pkg_config_file}.in
+       "${CMAKE_CURRENT_BINARY_DIR}/${pkg_config_file}"
+-      INSTALL_DESTINATION lib/cmake/${package_name}
++      INSTALL_DESTINATION @LIBDIR@/cmake/${package_name}
+       PATH_VARS LIB_CMAKE_DIR
+       NO_SET_AND_CHECK_MACRO
+       NO_CHECK_REQUIRED_COMPONENTS_MACRO
 diff -urp rocMLIR-rocm-5.4.3.orig/mlir/tools/mlir-rocm-runner/CMakeLists.txt rocMLIR-rocm-5.4.3/mlir/tools/mlir-rocm-runner/CMakeLists.txt
 --- rocMLIR-rocm-5.4.3.orig/mlir/tools/mlir-rocm-runner/CMakeLists.txt	2022-09-19 22:59:27.000000000 -0700
-+++ rocMLIR-rocm-5.4.3/mlir/tools/mlir-rocm-runner/CMakeLists.txt	2023-08-31 13:40:37.940242498 -0700
++++ rocMLIR-rocm-5.4.3/mlir/tools/mlir-rocm-runner/CMakeLists.txt	2023-10-09 20:22:12.312434721 -0700
 @@ -13,10 +13,13 @@ if(MLIR_ENABLE_ROCM_RUNNER)
    # Set compile-time flags for ROCm path.
    add_definitions(-D__ROCM_PATH__="${ROCM_PATH}")

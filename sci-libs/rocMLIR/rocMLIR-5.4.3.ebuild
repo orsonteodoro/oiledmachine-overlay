@@ -31,7 +31,7 @@ LICENSE="
 # all rights reserved with MIT - mlir/tools/rocmlir-lib/LICENSE
 # The distro MIT license template does not have all rights reserved
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="system-llvm r5"
+IUSE="system-llvm r6"
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
