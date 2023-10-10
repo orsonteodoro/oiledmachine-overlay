@@ -293,6 +293,9 @@ eerror
 	else
 		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 	fi
+	if [[ "${FEATURES}" =~ "ccache" ]] ; then
+		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
+	fi
 
 	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 
@@ -313,15 +316,15 @@ einfo "Removing all clangs except for ${clang_selected_desc} from PATH..."
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 	fi
 
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		:;
-	else
-einfo "Removing ccache from PATH to prevent override by system's clang..."
-		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -E -e "/ccache/d" \
-			| tr "\n" ":")
-	fi
+#	if has system-llvm ${IUSE} && use system-llvm ; then
+#		:;
+#	else
+#einfo "Removing ccache from PATH to prevent override by system's clang..."
+#		export PATH=$(echo "${PATH}" \
+#			| tr ":" "\n" \
+#			| sed -E -e "/ccache/d" \
+#			| tr "\n" ":")
+#	fi
 
 	export PKG_CONFIG_PATH="${ESYSROOT}${EROCM_PATH}/share/pkgconfig:${PKG_CONFIG_PATH}"
 
