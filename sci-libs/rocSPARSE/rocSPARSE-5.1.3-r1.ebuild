@@ -78,7 +78,7 @@ DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-IUSE="benchmark system-llvm test"
+IUSE="benchmark system-llvm test r2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -220,6 +220,7 @@ src_install() {
 		dobin clients/staging/rocsparse-bench
 	fi
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

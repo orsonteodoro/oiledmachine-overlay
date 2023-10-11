@@ -3,6 +3,15 @@
 
 EAPI=8
 
+# FIXME:  gfortran src_configure()
+#
+#CMake Error at /usr/share/cmake/Modules/CMakeTestFortranCompiler.cmake:59 (message):
+#  The Fortran compiler
+#
+#    "/usr/bin/${CHOST}-gfortran"
+#
+#  is not able to compile a simple test program.
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900_xnack_minus
@@ -82,7 +91,7 @@ DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-IUSE="benchmark system-llvm test r1"
+IUSE="benchmark system-llvm test r2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -207,7 +216,7 @@ src_configure() {
 	)
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {
@@ -224,6 +233,7 @@ src_install() {
 		dobin clients/staging/rocsparse-bench
 	fi
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
