@@ -3,15 +3,6 @@
 
 EAPI=8
 
-#FIXME:
-#/var/tmp/portage/dev-lang/rocm-flang-5.1.3/work/flang-rocm-5.1.3/runtime/flang/alarm3f.c:19:12: error: conflicting types for 'alarm'
-#extern int alarm();
-#           ^
-#/usr/include/unistd.h:452:21: note: previous declaration is here
-#extern unsigned int alarm (unsigned int __seconds) __THROW;
-#                    ^
-
-
 AOCC_SLOT=14
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=14 # Same as llvm-roc

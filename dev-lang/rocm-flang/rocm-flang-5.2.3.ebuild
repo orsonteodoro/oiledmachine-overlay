@@ -11,7 +11,7 @@ EAPI=8
 #void xdble(IEEE32 f, IEEE64 r);
 #                  ^
 
-AOCC_SLOT=16 # Still testing
+AOCC_SLOT=16
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=15 # Same as llvm-roc
 PYTHON_COMPAT=( python3_{10..11} )
