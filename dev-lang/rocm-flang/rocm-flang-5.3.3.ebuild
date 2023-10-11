@@ -260,6 +260,7 @@ eerror
 			-DCMAKE_C_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang"
 			-DCMAKE_CXX_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/clang++"
 			-DCMAKE_Fortran_COMPILER="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin/flang"
+			-DUSE_AAOC=1
 		)
 	else
 		export PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin:${PATH}"
@@ -268,6 +269,7 @@ eerror
 			-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang"
 			-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 			-DCMAKE_Fortran_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/flang"
+			-DUSE_AAOC=0
 		)
 	fi
 	export VERBOSE=1
