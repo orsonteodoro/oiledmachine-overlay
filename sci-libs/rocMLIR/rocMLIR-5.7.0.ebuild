@@ -197,6 +197,9 @@ build_rocmlir() {
 		# -DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/opt/rocm-${PV}/llvm/include" # Originally this
 		-DMLIR_MAIN_INCLUDE_DIR="${ESYSROOT}/${EROCM_LLVM_PATH}/llvm/include"
 		-DLLVM_LIBDIR_SUFFIX="${libdir_suffix}"
+
+		-DLLVM_CMAKE_DIR="${WORKDIR}/${PN}-rocm-${PV}/external/llvm-project"
+		-DLIB_INSTALL_DIR="$(get_libdir)"
 	)
 
 	if use system-llvm ; then

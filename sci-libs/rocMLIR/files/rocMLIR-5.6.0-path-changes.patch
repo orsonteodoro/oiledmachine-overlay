@@ -1,6 +1,15 @@
 diff -urp rocMLIR-rocm-5.6.0.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.6.0/cmake/llvm-project.cmake
 --- rocMLIR-rocm-5.6.0.orig/cmake/llvm-project.cmake	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/cmake/llvm-project.cmake	2023-10-09 21:14:50.284491317 -0700
++++ rocMLIR-rocm-5.6.0/cmake/llvm-project.cmake	2023-10-10 21:30:56.302057074 -0700
+@@ -10,7 +10,7 @@ message(STATUS "LLVM_EXTERNAL_BIN_DIR: $
+ # Pointers to: 1) external LLVM bins/libs, and 2) Rock Dialect bins/libs
+ set(LLVM_MAIN_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/llvm-project/llvm" CACHE PATH "Path to LLVM sources")
+ set(LLVM_EXTERNAL_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/bin" CACHE PATH "")
+-set(LLVM_EXTERNAL_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib" CACHE PATH "")
++set(LLVM_EXTERNAL_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/@LIBDIR@" CACHE PATH "")
+ 
+ # Passed to lit.site.cfg.py.so that the out of tree Standalone dialect test
+ # can find MLIR's CMake configuration
 @@ -31,7 +31,7 @@ set(LLVM_PROJ_SRC "${CMAKE_CURRENT_SOURC
  # Configure ROCm support.
  if (NOT DEFINED ROCM_PATH)
@@ -10,9 +19,42 @@ diff -urp rocMLIR-rocm-5.6.0.orig/cmake/llvm-project.cmake rocMLIR-rocm-5.6.0/cm
    else()
      set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
    endif()
+@@ -43,10 +43,10 @@ list(APPEND CMAKE_MODULE_PATH
+   "${ROCM_PATH}/hip/cmake"
+ )
+ list(APPEND CMAKE_MODULE_PATH
+-  "${CMAKE_CURRENT_BINARY_DIR}/lib/cmake/mlir"
++  "${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@/cmake/mlir"
+ )
+ list(APPEND CMAKE_MODULE_PATH
+-  "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib/cmake/llvm/"
++  "${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/@LIBDIR@/cmake/llvm/"
+ )
+ 
+ # Include dirs for MLIR and LLVM
+@@ -60,7 +60,7 @@ list(APPEND LLVM_INCLUDE_DIRS
+ )
+ 
+ # Linker flags
+-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/lib")
++set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,${CMAKE_CURRENT_BINARY_DIR}/external/llvm-project/llvm/@LIBDIR@")
+ 
+ add_subdirectory("${LLVM_PROJ_SRC}/llvm" "external/llvm-project/llvm" EXCLUDE_FROM_ALL)
+ 
+Only in rocMLIR-rocm-5.6.0/cmake: llvm-project.cmake.orig
+Only in rocMLIR-rocm-5.6.0/cmake: llvm-project.cmake.rej
 diff -urp rocMLIR-rocm-5.6.0.orig/CMakeLists.txt rocMLIR-rocm-5.6.0/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/CMakeLists.txt	2023-10-09 21:14:50.284491317 -0700
++++ rocMLIR-rocm-5.6.0/CMakeLists.txt	2023-10-10 21:29:49.826055883 -0700
+@@ -32,7 +32,7 @@ set(ROCMLIR_DRIVER_TEST_GPU_VALIDATION 1
+ set(ROCK_E2E_TEST_ENABLED 0 CACHE BOOL "Enable build rock E2E tests")
+ 
+ set(ROCMLIR_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin" CACHE PATH "")
+-set(ROCMLIR_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/lib" CACHE PATH "")
++set(ROCMLIR_LIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@" CACHE PATH "")
+ message(STATUS "ROCMLIR_BIN_DIR: ${ROCMLIR_BIN_DIR}")
+ 
+ if(BUILD_MIXR_TARGET)
 @@ -50,7 +50,7 @@ if( BUILD_FAT_LIBROCKCOMPILER )
    # rocm-runner is not supported with static libraries
    set(MLIR_ENABLE_ROCM_RUNNER 0 CACHE BOOL "")
@@ -25,7 +67,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/CMakeLists.txt rocMLIR-rocm-5.6.0/CMakeLists.t
 Only in rocMLIR-rocm-5.6.0: CMakeLists.txt.orig
 diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp rocMLIR-rocm-5.6.0/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp
 --- rocMLIR-rocm-5.6.0.orig/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-09 21:14:50.304491318 -0700
++++ rocMLIR-rocm-5.6.0/external/llvm-project/clang/lib/Driver/ToolChains/AMDGPU.cpp	2023-10-10 21:29:49.890055884 -0700
 @@ -241,8 +241,8 @@ RocmInstallationDetector::getInstallatio
        }
      }
@@ -48,7 +90,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/clang/lib/Driver/ToolCha
    // Find the latest /opt/rocm-{release} directory.
 diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt rocMLIR-rocm-5.6.0/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-10-09 21:14:50.304491318 -0700
++++ rocMLIR-rocm-5.6.0/external/llvm-project/clang/tools/amdgpu-arch/CMakeLists.txt	2023-10-10 21:29:49.934055885 -0700
 @@ -11,7 +11,7 @@ set(LLVM_LINK_COMPONENTS Support)
  add_clang_tool(amdgpu-arch AMDGPUArch.cpp)
  
@@ -60,7 +102,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/clang/tools/amdgpu-arch/
    clang_target_link_libraries(amdgpu-arch PRIVATE hsa-runtime64::hsa-runtime64)
 diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/libc/cmake/modules/prepare_libc_gpu_build.cmake rocMLIR-rocm-5.6.0/external/llvm-project/libc/cmake/modules/prepare_libc_gpu_build.cmake
 --- rocMLIR-rocm-5.6.0.orig/external/llvm-project/libc/cmake/modules/prepare_libc_gpu_build.cmake	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/external/llvm-project/libc/cmake/modules/prepare_libc_gpu_build.cmake	2023-10-09 21:14:50.304491318 -0700
++++ rocMLIR-rocm-5.6.0/external/llvm-project/libc/cmake/modules/prepare_libc_gpu_build.cmake	2023-10-10 21:29:49.970055885 -0700
 @@ -32,7 +32,7 @@ endif()
  # Identify any locally installed GPUs to use for testing.
  find_program(LIBC_AMDGPU_ARCH
@@ -72,7 +114,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/libc/cmake/modules/prepa
                    OUTPUT_VARIABLE LIBC_AMDGPU_ARCH_OUTPUT
 diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt rocMLIR-rocm-5.6.0/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-10-09 21:14:50.304491318 -0700
++++ rocMLIR-rocm-5.6.0/external/llvm-project/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-10-10 21:29:49.994055886 -0700
 @@ -137,7 +137,7 @@ if(MLIR_ENABLE_ROCM_CONVERSIONS)
        "LLD is not enabled, please reconfigure llvm build")
    endif()
@@ -84,7 +126,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/mlir/lib/Dialect/GPU/CMa
      __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"
 diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt rocMLIR-rocm-5.6.0/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-10-10 21:29:49.994055886 -0700
 @@ -208,7 +208,7 @@ if(MLIR_ENABLE_ROCM_RUNNER)
    # Configure ROCm support.
    if (NOT DEFINED ROCM_PATH)
@@ -96,7 +138,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/mlir/lib/ExecutionEngine
      endif()
 diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt rocMLIR-rocm-5.6.0/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/external/llvm-project/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-10-10 21:29:50.014055886 -0700
 @@ -20,7 +20,7 @@ if (NOT LIBOMPTARGET_BUILD_AMDGPU_PLUGIN
  endif()
  
@@ -108,7 +150,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/openmp/libomptarget/plug
    libomptarget_say("Not building AMDGPU plugin: only support AMDGPU in Linux x86_64, ppc64le, or aarch64 hosts")
 diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt rocMLIR-rocm-5.6.0/external/llvm-project/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/external/llvm-project/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/external/llvm-project/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/external/llvm-project/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt	2023-10-10 21:29:50.014055886 -0700
 @@ -20,7 +20,7 @@ if (NOT LIBOMPTARGET_BUILD_AMDGPU_PLUGIN
  endif()
  
@@ -120,7 +162,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/openmp/libomptarget/plug
    libomptarget_say("Not building AMDGPU NextGen plugin: only support AMDGPU in Linux x86_64, ppc64le, or aarch64 hosts")
 diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/pstl/CMakeLists.txt rocMLIR-rocm-5.6.0/external/llvm-project/pstl/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/external/llvm-project/pstl/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/external/llvm-project/pstl/CMakeLists.txt	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/external/llvm-project/pstl/CMakeLists.txt	2023-10-10 21:29:50.034055886 -0700
 @@ -88,10 +88,10 @@ install(TARGETS ParallelSTL
  install(EXPORT ParallelSTLTargets
          FILE ParallelSTLTargets.cmake
@@ -134,9 +176,30 @@ diff -urp rocMLIR-rocm-5.6.0.orig/external/llvm-project/pstl/CMakeLists.txt rocM
  install(DIRECTORY include/
          DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
          PATTERN "*.in" EXCLUDE)
+diff -urp rocMLIR-rocm-5.6.0.orig/mlir/CMakeLists.txt rocMLIR-rocm-5.6.0/mlir/CMakeLists.txt
+--- rocMLIR-rocm-5.6.0.orig/mlir/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
++++ rocMLIR-rocm-5.6.0/mlir/CMakeLists.txt	2023-10-10 21:29:50.034055886 -0700
+@@ -4,7 +4,7 @@ message(STATUS "LLVM_BUILD_LIBRARY_DIR:
+ message(STATUS "LLVM_DEFINITIONS: ${LLVM_DEFINITIONS}")
+ 
+ set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/bin)
+-set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/lib)
++set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/@LIBDIR@)
+ set(MLIR_BINARY_DIR ${CMAKE_BINARY_DIR})
+ set(MLIR_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+ 
 diff -urp rocMLIR-rocm-5.6.0.orig/mlir/tools/rocmlir-lib/CMakeLists.txt rocMLIR-rocm-5.6.0/mlir/tools/rocmlir-lib/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/mlir/tools/rocmlir-lib/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/mlir/tools/rocmlir-lib/CMakeLists.txt	2023-10-09 21:15:45.368492305 -0700
++++ rocMLIR-rocm-5.6.0/mlir/tools/rocmlir-lib/CMakeLists.txt	2023-10-10 21:32:53.970059183 -0700
+@@ -7,7 +7,7 @@ set(LIBS
+   LLVMX86AsmParser
+ )
+ 
+-set(CMAKE_BUILD_RPATH ${CMAKE_BUILD_DIR}/external/llvm-project/llvm/lib)
++set(CMAKE_BUILD_RPATH "${CMAKE_BUILD_DIR}/external/llvm-project/llvm/lib:${CMAKE_BUILD_DIR}/external/llvm-project/llvm/@LIBDIR@")
+ 
+ llvm_add_library(MLIRRockThin
+ PARTIAL_SOURCES_INTENDED
 @@ -40,7 +40,7 @@ mlir_check_link_libraries(rocmlir-lib-te
  llvm_canonicalize_cmake_booleans(BUILD_FAT_LIBROCKCOMPILER)
  # Static library target, enabled only when building static libs
@@ -177,7 +240,7 @@ Only in rocMLIR-rocm-5.6.0/mlir/tools/rocmlir-lib: CMakeLists.txt.orig
 Only in rocMLIR-rocm-5.6.0/mlir/tools/rocmlir-lib: CMakeLists.txt.rej
 diff -urp rocMLIR-rocm-5.6.0.orig/mlir/tools/rocmlir-tuning-driver/CMakeLists.txt rocMLIR-rocm-5.6.0/mlir/tools/rocmlir-tuning-driver/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/mlir/tools/rocmlir-tuning-driver/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/mlir/tools/rocmlir-tuning-driver/CMakeLists.txt	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/mlir/tools/rocmlir-tuning-driver/CMakeLists.txt	2023-10-10 21:29:50.054055887 -0700
 @@ -20,7 +20,7 @@ add_llvm_tool(rocmlir-tuning-driver
  # Grab HIP again, since we'll be using it directly
  if (NOT DEFINED ROCM_PATH)
@@ -189,7 +252,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/mlir/tools/rocmlir-tuning-driver/CMakeLists.tx
    endif()
 diff -urp rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/ck-benchmark-driver/CMakeLists.txt rocMLIR-rocm-5.6.0/mlir/utils/performance/ck-benchmark-driver/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/ck-benchmark-driver/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/mlir/utils/performance/ck-benchmark-driver/CMakeLists.txt	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/mlir/utils/performance/ck-benchmark-driver/CMakeLists.txt	2023-10-10 21:29:50.054055887 -0700
 @@ -4,7 +4,7 @@ if(NOT composable_kernel_FOUND)
  endif()
  
@@ -201,16 +264,24 @@ diff -urp rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/ck-benchmark-driver/CMa
  
 diff -urp rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/common/CMakeLists.txt rocMLIR-rocm-5.6.0/mlir/utils/performance/common/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/common/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/mlir/utils/performance/common/CMakeLists.txt	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/mlir/utils/performance/common/CMakeLists.txt	2023-10-10 21:29:50.054055887 -0700
 @@ -1,4 +1,4 @@
 -find_package(hip PATHS /opt/rocm)
 +find_package(hip PATHS @EPREFIX_ROCM_PATH@)
  if(NOT hip_FOUND)
    message(WARNING "Could not find HIP, not building benchmark utils")
  endif()
+@@ -9,6 +9,6 @@ if (hip_FOUND)
+   target_link_libraries(benchmark-driver-utils PUBLIC hip::host hip::amdhip64)
+   set_target_properties(benchmark-driver-utils
+     PROPERTIES
+-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
++    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/@LIBDIR@"
+   )
+ endif()
 diff -urp rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/parameterSweeps.py rocMLIR-rocm-5.6.0/mlir/utils/performance/parameterSweeps.py
 --- rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/parameterSweeps.py	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/mlir/utils/performance/parameterSweeps.py	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/mlir/utils/performance/parameterSweeps.py	2023-10-10 21:29:50.058055887 -0700
 @@ -362,13 +362,13 @@ async def runConfig(paramIter: Iterable[
      return len(failures) == 0
  
@@ -229,7 +300,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/parameterSweeps.py rocM
      return agents
 diff -urp rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/perfRunner.py rocMLIR-rocm-5.6.0/mlir/utils/performance/perfRunner.py
 --- rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/perfRunner.py	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/mlir/utils/performance/perfRunner.py	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/mlir/utils/performance/perfRunner.py	2023-10-10 21:29:50.058055887 -0700
 @@ -24,7 +24,7 @@ from dataclasses import dataclass
  from typing import Optional, Dict, Tuple
  
@@ -265,7 +336,7 @@ diff -urp rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/perfRunner.py rocMLIR-r
 Only in rocMLIR-rocm-5.6.0/mlir/utils/performance: perfRunner.py.orig
 diff -urp rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt rocMLIR-rocm-5.6.0/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt
 --- rocMLIR-rocm-5.6.0.orig/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt	2023-04-12 05:18:38.000000000 -0700
-+++ rocMLIR-rocm-5.6.0/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt	2023-10-09 21:14:50.316491318 -0700
++++ rocMLIR-rocm-5.6.0/mlir/utils/performance/rocblas-benchmark-driver/CMakeLists.txt	2023-10-10 21:29:50.058055887 -0700
 @@ -1,4 +1,4 @@
 -find_package(rocblas CONFIG HINTS /opt/rocm)
 +find_package(rocblas CONFIG HINTS @EPREFIX_ROCM_PATH@)
