@@ -3,6 +3,12 @@
 
 EAPI=8
 
+# FIXME:
+#/var/tmp/portage/dev-lang/rocm-flang-5.3.3/work/flang-rocm-5.3.3/runtime/flang/rnum.c:6361:15: error: incompatible function pointer types assigning to 'void (*)(__REAL16_T *, F90_Desc *, __INT_T, int, __INT_T, __INT_T)' (aka 'void (*)(__float128 *, struct F90_Desc *, int, int, int, int)') from 'void (__REAL8_T *, F90_Desc *, __INT_T, int, __INT_T, __INT_T)' (aka 'void (double *, struct F90_Desc *, int, int, int, int)') [-Wincompatible-function-pointer-types]
+#  prng_loop_q = I8(prng_loop_q_npb);
+#              ^    ~~~~~~~~~~~~~~~
+#1 error generated.
+
 AOCC_SLOT=16 # Still testing
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=15 # Same as llvm-roc
@@ -106,14 +112,14 @@ einfo "Building Flang lib"
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
 		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+einfo "GCC major version:  ${gcc_slot}"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:;
@@ -151,14 +157,14 @@ einfo "Building Flang runtime"
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
 		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+einfo "GCC major version:  ${gcc_slot}"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:;

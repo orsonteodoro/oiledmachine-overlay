@@ -106,14 +106,14 @@ einfo "Building Flang lib"
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
 		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+einfo "GCC major version:  ${gcc_slot}"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:;
@@ -151,14 +151,14 @@ einfo "Building Flang runtime"
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
 		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+einfo "GCC major version:  ${gcc_slot}"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:;

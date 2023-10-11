@@ -3,6 +3,14 @@
 
 EAPI=8
 
+#FIXME:
+#/var/tmp/portage/dev-lang/rocm-flang-5.2.3/work/flang-rocm-5.2.3/tools/flang1/flang1exe/ast.c:1869:15: error: incompatible pointer to integer conversion passing 'INT[8]' (aka 'int[8]') to parameter of type 'IEEE32' (aka 'int') [-Wint-conversion]
+#        xdble(num1, &num[0]);
+#              ^~~~
+#/var/tmp/portage/dev-lang/rocm-flang-5.2.3/work/flang-rocm-5.2.3/include/legacy-folding-api.h:265:19: note: passing argument to parameter 'f' here
+#void xdble(IEEE32 f, IEEE64 r);
+#                  ^
+
 AOCC_SLOT=16 # Still testing
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=15 # Same as llvm-roc
@@ -106,14 +114,14 @@ einfo "Building Flang lib"
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
 		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+einfo "GCC major version:  ${gcc_slot}"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:;
@@ -151,14 +159,14 @@ einfo "Building Flang runtime"
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
 		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+einfo "GCC major version:  ${gcc_slot}"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:;

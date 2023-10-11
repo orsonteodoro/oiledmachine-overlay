@@ -3,6 +3,15 @@
 
 EAPI=8
 
+#FIXME:
+#/var/tmp/portage/dev-lang/rocm-flang-5.1.3/work/flang-rocm-5.1.3/runtime/flang/alarm3f.c:19:12: error: conflicting types for 'alarm'
+#extern int alarm();
+#           ^
+#/usr/include/unistd.h:452:21: note: previous declaration is here
+#extern unsigned int alarm (unsigned int __seconds) __THROW;
+#                    ^
+
+
 AOCC_SLOT=14
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=14 # Same as llvm-roc
@@ -14,7 +23,10 @@ inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/ROCm-Developer-Tools/flang/commit/57ac6f3d7e8fe68d642d7436bef45404d5b08aae.patch
+	-> rocm-flang-57ac6f3.patch
 "
+# 57ac6f3 - Fix conflicting types for alarm issue on centos-9 build.
 DESCRIPTION="ROCm's fork of Classic Flang with GPU offload support"
 HOMEPAGE="https://github.com/flang-compiler/flang"
 THIRD_PARTY_LICENSES="
@@ -67,6 +79,7 @@ S="${WORKDIR}/flang-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/rocm-flang-5.1.3-rt-flang2-no-rule-fix.patch"
 	"${FILESDIR}/rocm-flang-5.1.3-path-changes.patch"
+	"${DISTDIR}/rocm-flang-57ac6f3.patch"
 )
 
 fmake() {
@@ -106,14 +119,14 @@ einfo "Building Flang lib"
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=OFF
 		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+einfo "GCC major version:  ${gcc_slot}"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:;
@@ -151,14 +164,14 @@ einfo "Building Flang runtime"
 		"${mycmakeargs[@]}"
 		-DFLANG_LLVM_EXTENSIONS=OFF
 		-DFLANG_INCLUDE_DOCS=$(usex doc ON OFF)
-		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/libquadmath.so"
+		-DLIBQUADMATH_LOC="${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/libquadmath.so"
 		-DLLVM_ENABLE_DOXYGEN=$(usex doc ON OFF)
 		-DLLVM_INSTALL_RUNTIME=ON
 		-DOPENMP_BUILD_DIR="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)"
 	)
-einfo "GCC major version:  $(gcc-major-version)"
-	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)/include"
-	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/$(gcc-major-version)" -lquadmath
+einfo "GCC major version:  ${gcc_slot}"
+	append-flags -I"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}/include"
+	append-ldflags -L"${ESYSROOT}/usr/lib/gcc/${CHOST}/${gcc_slot}" -lquadmath
 	filter-flags -Wl,--as-needed
 	if has "${CHOST%%-*}" aarch64 powerpc64le x86_64 ; then
 		:;
