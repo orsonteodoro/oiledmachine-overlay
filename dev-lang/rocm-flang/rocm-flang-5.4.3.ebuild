@@ -33,7 +33,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test
+aocc doc test r1
 "
 REQUIRED_USE="
 "

@@ -3,12 +3,6 @@
 
 EAPI=8
 
-# FIXME:
-#/var/tmp/portage/dev-lang/rocm-flang-5.3.3/work/flang-rocm-5.3.3/runtime/flang/rnum.c:6361:15: error: incompatible function pointer types assigning to 'void (*)(__REAL16_T *, F90_Desc *, __INT_T, int, __INT_T, __INT_T)' (aka 'void (*)(__float128 *, struct F90_Desc *, int, int, int, int)') from 'void (__REAL8_T *, F90_Desc *, __INT_T, int, __INT_T, __INT_T)' (aka 'void (double *, struct F90_Desc *, int, int, int, int)') [-Wincompatible-function-pointer-types]
-#  prng_loop_q = I8(prng_loop_q_npb);
-#              ^    ~~~~~~~~~~~~~~~
-#1 error generated.
-
 AOCC_SLOT=16
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=15 # Same as llvm-roc
@@ -39,7 +33,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test
+aocc doc test r1
 "
 REQUIRED_USE="
 "
@@ -245,6 +239,8 @@ eerror "GCC compiler slot:  ${gcc_slot}"
 eerror
 		die
 	fi
+
+	append-flags -Wno-incompatible-function-pointer-types # Same as 8ff4926 061a0fc
 
 	local staging_prefix="${PWD}/install"
 	declare -A _cmake_generator=(
