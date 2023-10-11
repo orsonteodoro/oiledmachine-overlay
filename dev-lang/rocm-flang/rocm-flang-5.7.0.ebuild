@@ -183,6 +183,7 @@ eerror
 pkg_setup() {
 	llvm_pkg_setup
 	python_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -191,6 +192,17 @@ src_prepare() {
 	sed -i -e "s|\"--src-root\"||g" \
 		"${S}/CMakeLists.txt" \
 		|| die
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	PATCH_PATHS=(
+		"${S}/CMakeLists.txt"
+		"${S}/flang-legacy/CMakeLists.txt"
+		"${S}/runtime/flang/CMakeLists.txt"
+		"${S}/runtime/flangrti/CMakeLists.txt"
+		"${S}/runtime/libpgmath/CMakeLists.txt"
+	)
+	rocm_src_prepare
 }
 
 src_configure() {
