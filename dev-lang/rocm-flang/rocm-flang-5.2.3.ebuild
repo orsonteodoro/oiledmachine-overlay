@@ -3,14 +3,6 @@
 
 EAPI=8
 
-#FIXME:
-#/var/tmp/portage/dev-lang/rocm-flang-5.2.3/work/flang-rocm-5.2.3/tools/flang1/flang1exe/ast.c:1869:15: error: incompatible pointer to integer conversion passing 'INT[8]' (aka 'int[8]') to parameter of type 'IEEE32' (aka 'int') [-Wint-conversion]
-#        xdble(num1, &num[0]);
-#              ^~~~
-#/var/tmp/portage/dev-lang/rocm-flang-5.2.3/work/flang-rocm-5.2.3/include/legacy-folding-api.h:265:19: note: passing argument to parameter 'f' here
-#void xdble(IEEE32 f, IEEE64 r);
-#                  ^
-
 AOCC_SLOT=16
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=15 # Same as llvm-roc
@@ -247,6 +239,9 @@ eerror "GCC compiler slot:  ${gcc_slot}"
 eerror
 		die
 	fi
+
+	append-flags -Wno-int-conversion # Same as a6deb3b a277d13
+	append-flags -Wno-incompatible-function-pointer-types # Same as 8ff4926 061a0fc
 
 	local staging_prefix="${PWD}/install"
 	declare -A _cmake_generator=(
