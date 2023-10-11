@@ -1,0 +1,94 @@
+diff -urp flang-rocm-5.1.3.orig/CMakeLists.txt flang-rocm-5.1.3/CMakeLists.txt
+--- flang-rocm-5.1.3.orig/CMakeLists.txt	2022-02-16 10:37:15.000000000 -0800
++++ flang-rocm-5.1.3/CMakeLists.txt	2023-10-11 10:50:00.402916319 -0700
+@@ -110,12 +110,12 @@ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURR
+   endif()
+ 
+   set(LLVM_TOOLS_BINARY_DIR ${TOOLS_BINARY_DIR} CACHE PATH "Path to llvm/bin")
+-  set(LLVM_LIBRARY_DIR ${LIBRARY_DIR} CACHE PATH "Path to llvm/lib")
++  set(LLVM_LIBRARY_DIR ${LIBRARY_DIR} CACHE PATH "Path to llvm/@LIBDIR@")
+   set(LLVM_MAIN_INCLUDE_DIR ${INCLUDE_DIR} CACHE PATH "Path to llvm/include")
+   set(LLVM_BINARY_DIR ${LLVM_OBJ_ROOT} CACHE PATH "Path to LLVM build tree")
+   set(LLVM_MAIN_SRC_DIR ${MAIN_SRC_DIR} CACHE PATH "Path to LLVM source tree")
+ 
+-  set(LLVM_CMAKE_PATH "${LLVM_BINARY_DIR}/lib/cmake/llvm"
++  set(LLVM_CMAKE_PATH "${LLVM_BINARY_DIR}/@LIBDIR@/cmake/llvm"
+      CACHE PATH "Path to LLVM cmake modules")
+   set(LLVMCONFIG_FILE "${LLVM_CMAKE_PATH}/LLVMConfig.cmake")
+   if(EXISTS ${LLVMCONFIG_FILE})
+@@ -135,7 +135,7 @@ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURR
+ 
+   # They are used as destination of target generators.
+   set(LLVM_RUNTIME_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin)
+-  set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib)
++  set(LLVM_LIBRARY_OUTPUT_INTDIR ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/@LIBDIR@)
+ 
+   option(LLVM_INSTALL_TOOLCHAIN_ONLY
+     "Only include toolchain files in the 'install' target." OFF)
+@@ -159,8 +159,8 @@ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURR
+   link_directories("${LLVM_LIBRARY_DIR}")
+ 
+   set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
+-  set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
+-  set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
++  set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/@LIBDIR@ )
++  set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/@LIBDIR@ )
+   if(LLVM_INCLUDE_TESTS)
+     set(Python_ADDITIONAL_VERSIONS 2.7)
+     include(FindPythonInterp)
+@@ -396,8 +396,8 @@ option(FLANG_INCLUDE_TESTS
+ get_property(FLANG_TABLEGEN_TARGETS GLOBAL PROPERTY FLANG_TABLEGEN_TARGETS)
+ list(APPEND LLVM_COMMON_DEPENDS ${FLANG_TABLEGEN_TARGETS})
+ 
+-set(FLANG_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
+-set(FLANG_RTE_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
++set(FLANG_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
++set(FLANG_RTE_LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/@LIBDIR@)
+ add_definitions( -DPGFLANG )
+ 
+ if (LLVM_INSTALL_RUNTIME)
+diff -urp flang-rocm-5.1.3.orig/runtime/flang/CMakeLists.txt flang-rocm-5.1.3/runtime/flang/CMakeLists.txt
+--- flang-rocm-5.1.3.orig/runtime/flang/CMakeLists.txt	2023-10-11 10:47:10.026913266 -0700
++++ flang-rocm-5.1.3/runtime/flang/CMakeLists.txt	2023-10-11 10:50:01.698916342 -0700
+@@ -554,7 +554,7 @@ set_property(TARGET flang_shared PROPERT
+ #
+ add_dependencies(flang_shared flang_static)
+ 
+-target_link_libraries(flang_shared ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib/libflangrti.so)
++target_link_libraries(flang_shared ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/@LIBDIR@/libflangrti.so)
+ # Resolve symbols against libm and librt
+ target_link_libraries(flang_shared m rt)
+ 
+diff -urp flang-rocm-5.1.3.orig/runtime/flangrti/CMakeLists.txt flang-rocm-5.1.3/runtime/flangrti/CMakeLists.txt
+--- flang-rocm-5.1.3.orig/runtime/flangrti/CMakeLists.txt	2022-02-16 10:37:15.000000000 -0800
++++ flang-rocm-5.1.3/runtime/flangrti/CMakeLists.txt	2023-10-11 10:50:05.066916403 -0700
+@@ -95,7 +95,7 @@ if (NOT DEFINED LIBOMP_EXPORT_DIR)
+     FLANG_LIBOMP
+     libomp.so
+     HINTS
+-    ${CMAKE_BINARY_DIR}/lib
++    ${CMAKE_BINARY_DIR}/@LIBDIR@
+     ${OPENMP_BUILD_DIR}
+     NO_DEFAULT_PATH)
+     message (STATUS "FLANGRTI ${FLANG_LIBOMP}")
+@@ -105,7 +105,7 @@ endif()
+ find_library( 
+   LIBPGMATH
+   libpgmath.so
+-  HINTS ${CMAKE_BINARY_DIR}/lib)
++  HINTS ${CMAKE_BINARY_DIR}/@LIBDIR@)
+ target_link_libraries(flangrti_shared ${LIBPGMATH} -Wl,-rpath,\$ORIGIN)
+ target_link_libraries(flangrti_shared quadmath)
+ 
+diff -urp flang-rocm-5.1.3.orig/runtime/libpgmath/CMakeLists.txt flang-rocm-5.1.3/runtime/libpgmath/CMakeLists.txt
+--- flang-rocm-5.1.3.orig/runtime/libpgmath/CMakeLists.txt	2022-02-16 10:37:15.000000000 -0800
++++ flang-rocm-5.1.3/runtime/libpgmath/CMakeLists.txt	2023-10-11 10:50:02.866916363 -0700
+@@ -107,7 +107,7 @@ set(LIBPGMATH_BASE_DIR ${CMAKE_CURRENT_S
+ set(LIBPGMATH_SRC_DIR ${LIBPGMATH_BASE_DIR}/lib)
+ set(LIBPGMATH_TOOLS_DIR ${LIBPGMATH_BASE_DIR}/tools)
+ set(LIBPGMATH_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+-set(LIBPGMATH_RUNTIME_PATH ${CMAKE_BINARY_DIR}/lib)
++set(LIBPGMATH_RUNTIME_PATH ${CMAKE_BINARY_DIR}/@LIBDIR@)
+ set(LIBPGMATH_LIBRARY_NAME pgmath)
+ set(LIBPGMATH_RTL ${CMAKE_SHARED_LIBRARY_PREFIX}${LIBPGMATH_LIBRARY_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX})
+ set(CMAKE_POSITION_INDEPENDENT_CODE ON)

@@ -65,7 +65,8 @@ RESTRICT="
 "
 S="${WORKDIR}/flang-rocm-${PV}"
 PATCHES=(
-	"${FILESDIR}/rocm-flang-5.6.0-rt-flang2-no-rule-fix.patch"
+	"${FILESDIR}/rocm-flang-5.1.3-rt-flang2-no-rule-fix.patch"
+	"${FILESDIR}/rocm-flang-5.1.3-path-changes.patch"
 )
 
 fmake() {
