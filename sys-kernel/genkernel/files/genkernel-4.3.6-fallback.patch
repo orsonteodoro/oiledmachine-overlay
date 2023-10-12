@@ -1,0 +1,29 @@
+diff -urp genkernel-4.3.6.orig/defaults/linuxrc genkernel-4.3.6/defaults/linuxrc
+--- genkernel-4.3.6.orig/defaults/linuxrc	2023-10-12 16:43:25.104773197 -0700
++++ genkernel-4.3.6/defaults/linuxrc	2023-10-12 16:44:04.920772739 -0700
+@@ -674,7 +674,10 @@ keyctl_keyadd
+ # Initialize LUKS root device except for livecd's
+ if [ "${CDROOT}" != '1' ]
+ then
+-	start_entry
++	if [ -z "${CRYPT_ROOT_PLAIN}" ]
++	then
++		start_entry
++	fi
+ 	if ( [ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] ) || \
+ 	   ( [ -n "${CRYPT_SWAP_HEADER}" ] && [ -z "${CRYPT_SWAP_HEADERDEV}" ] ) || \
+ 	   ( [ "${REAL_ROOT}" = "${REAL_RESUME}" ] || [ "${USE_LVM_NORMAL}" = '1' ] )
+@@ -1083,7 +1086,10 @@ then
+ 
+ 	cache_cd_contents
+ 
+-	start_entry
++	if [ -z "${CRYPT_ROOT_PLAIN}" ]
++	then
++		start_entry
++	fi
+ 
+ 	# If encrypted, find key and mount, otherwise mount as usual
+ 	if [ -n "${CRYPT_ROOT}" ]
+Only in genkernel-4.3.6/defaults: linuxrc.orig
+Only in genkernel-4.3.6/defaults: linuxrc.rej

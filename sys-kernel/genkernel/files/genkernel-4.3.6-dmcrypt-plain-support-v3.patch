@@ -1,0 +1,99 @@
+diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/initrd.scripts
+--- genkernel-4.3.6.orig/defaults/initrd.scripts	2023-07-28 08:42:05.000000000 -0700
++++ genkernel-4.3.6/defaults/initrd.scripts	2023-10-12 16:28:44.316783328 -0700
+@@ -1672,7 +1672,7 @@ start_volumes() {
+ 			then
+ 				good_msg "ZFS pool ${ZFS_POOL} already imported."
+ 
+-				if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_SWAP}" ]
++				if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_SWAP}" -o -n "${CRYPT_ROOT_PLAIN}" ]
+ 				then
+ 					good_msg "LUKS detected. Reimporting ${ZFS_POOL} ..."
+ 
+@@ -1830,7 +1830,7 @@ openLUKS() {
+ 	local KEY_ERROR=0 KEYDEV_ERROR=0
+ 	local mntheader="/mnt/header/" mntkey="/mnt/key/" crypt_filter_ret=
+ 
+-	if [ -z "${LUKS_DEVICE}" ]
++	if [ -z "${LUKS_DEVICE}" -a -z "${CRYPT_ROOT_PLAIN}" ]
+ 	then
+ 		bad_msg "'crypt_${1}' kernel command-line argument is not set!"
+ 		exit 1
+@@ -1879,7 +1879,7 @@ openLUKS() {
+ 			KEYDEV_ERROR=0
+ 		else
+ 			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
+-			if [ -z "${LUKS_DEVICE}" ]
++			if [ -z "${LUKS_DEVICE}" -a -z "${CRYPT_ROOT_PLAIN}" ]
+ 			then
+ 				bad_msg "Failed to find LUKS device. If crypt_${1} kernel command-line argument is correct you are probably missing kernel support for your storage!" ${CRYPT_SILENT}
+ 				DEV_ERROR=1
+@@ -1955,7 +1955,7 @@ openLUKS() {
+ 					fi
+ 				fi
+ 
+-				if ! run cryptsetup isLuks ${LUKS_DEVICE} --header ${mntheader}${LUKS_HEADER}
++				if [ ! run cryptsetup isLuks ${LUKS_DEVICE} --header ${mntheader}${LUKS_HEADER} ]
+ 				then
+ 					bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
+ 					DEV_ERROR=1
+@@ -1966,7 +1966,7 @@ openLUKS() {
+ 				good_msg "${LUKS_HEADER} on device ${REAL_LUKS_HEADERDEV} found" ${CRYPT_SILENT}
+ 
+ 				cryptsetup_options="${cryptsetup_options} --header ${mntheader}${LUKS_HEADER}"
+-			elif ! run cryptsetup isLuks ${LUKS_DEVICE}
++			elif [ ! run cryptsetup isLuks ${LUKS_DEVICE} -a -z "${CRYPT_ROOT_PLAIN}" ]
+ 			then
+ 				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
+ 				DEV_ERROR=1
+@@ -2068,7 +2068,12 @@ openLUKS() {
+ 			fi
+ 
+ 			# At this point, {header,key}file or not, we're ready!
+-			crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
++			if [ -n "${CRYPT_ROOT_PLAIN}" ]
++			then
++				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} plainOpen ${CRYPT_ROOT_PLAIN} ${LUKS_NAME}"
++			else
++				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
++			fi
+ 			crypt_filter_ret=$?
+ 
+ 			[ -e /dev/tty.org ] \
+@@ -2503,7 +2508,7 @@ start_LUKS_root() {
+ 	[ -n "${CRYPT_ROOT_HEADER}" -a -z "${CRYPT_ROOT_HEADERDEV}" ] \
+ 		&& bootstrapHeader "ROOT"
+ 
+-	if [ -n "${CRYPT_ROOT}" ]
++	if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_ROOT_PLAIN}" ]
+ 	then
+ 		openLUKS "root"
+ 		if [ -n "${REAL_ROOT}" ]
+Only in genkernel-4.3.6/defaults: initrd.scripts.orig
+Only in genkernel-4.3.6/defaults: initrd.scripts.rej
+diff -urp genkernel-4.3.6.orig/defaults/linuxrc genkernel-4.3.6/defaults/linuxrc
+--- genkernel-4.3.6.orig/defaults/linuxrc	2023-07-28 08:42:05.000000000 -0700
++++ genkernel-4.3.6/defaults/linuxrc	2023-10-12 16:23:15.536787110 -0700
+@@ -221,6 +221,10 @@ do
+ 		crypt_root_options=*)
+ 			CRYPT_ROOT_OPTIONS=$(echo ${CRYPT_ROOT_OPTIONS} ${x#*=} | sed -e 's/,/ /g')
+ 		;;
++		crypt_root_plain=*)
++			CRYPT_ROOT_PLAIN=${x#*=}
++			USE_CRYPTSETUP=1
++		;;
+ 		crypt_swap=*)
+ 			CRYPT_SWAP=${x#*=}
+ 			USE_CRYPTSETUP=1
+diff -urp genkernel-4.3.6.orig/defaults/unlock-luks.sh genkernel-4.3.6/defaults/unlock-luks.sh
+--- genkernel-4.3.6.orig/defaults/unlock-luks.sh	2023-07-28 08:42:05.000000000 -0700
++++ genkernel-4.3.6/defaults/unlock-luks.sh	2023-10-12 16:23:15.536787110 -0700
+@@ -50,7 +50,7 @@ main() {
+ 	cryptsetup_options="$(trim "${cryptsetup_options}")"
+ 	eval local OPENED_LOCKFILE='"${CRYPT_'${TYPE}'_OPENED_LOCKFILE}"'
+ 
+-	if [ -z "${LUKS_DEVICE}" ]
++	if [ -z "${LUKS_DEVICE}" -a -z "${CRYPT_ROOT_PLAIN}" ]
+ 	then
+ 		bad_msg "'crypt_${NAME}' kernel command-line argument is not set!"
+ 		exit 1

@@ -1,15 +1,6 @@
-Subject:       New entry system
-Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Patch Status:  In development (DO NOT USE YET) pre-alpha quality, untested
-Date:          Sun Sep 26 10:37:20 PM PDT 2021 (Unix time: 1632721040)
-
-Requires input-event-codes.h from the linux kernel
-
-A complete rewrite of the flawed existing one.
-
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.defaults genkernel-4.2.6/defaults/initrd.defaults
---- genkernel-4.2.6.orig/defaults/initrd.defaults	2021-11-15 10:35:10.000000000 -0800
-+++ genkernel-4.2.6/defaults/initrd.defaults	2022-02-05 19:49:39.449728855 -0800
+diff -urp genkernel-4.3.6.orig/defaults/initrd.defaults genkernel-4.3.6/defaults/initrd.defaults
+--- genkernel-4.3.6.orig/defaults/initrd.defaults	2023-07-28 08:42:05.000000000 -0700
++++ genkernel-4.3.6/defaults/initrd.defaults	2023-10-12 16:36:00.268778314 -0700
 @@ -158,3 +158,21 @@ HWOPTS="keymap cache modules virtio hype
  # This is the set of default HWOPTS, in the order that they are loaded.
  # This is whitespace aligned with HWOPTS above.
@@ -32,10 +23,10 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.defaults genkernel-4
 +ENTRY_RESUMEP='Y3J5cHRzZXR1cCBvcGVuICR7RU5UUllfUkVTVU1FX0RFVn0gc3dhcCA7IFJFQUxfUkVTVU1FPScvZGV2L21hcHBlci9zd2FwJwo='
 +ENTRY_SUPPORT_DEVICE=0
 +ENTRY_SUPPORT_RESUME=0
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.scripts genkernel-4.2.6/defaults/initrd.scripts
---- genkernel-4.2.6.orig/defaults/initrd.scripts	2021-11-15 10:35:10.000000000 -0800
-+++ genkernel-4.2.6/defaults/initrd.scripts	2022-02-05 19:49:39.451728934 -0800
-@@ -2319,6 +2319,325 @@ ipv6_tentative() {
+diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/initrd.scripts
+--- genkernel-4.3.6.orig/defaults/initrd.scripts	2023-07-28 08:42:05.000000000 -0700
++++ genkernel-4.3.6/defaults/initrd.scripts	2023-10-12 16:40:13.676775399 -0700
+@@ -2485,6 +2485,325 @@ ipv6_tentative() {
  	fi
  }
  
@@ -358,21 +349,23 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/initrd.scripts genkernel-4.
 +	fi
 +}
 +
- start_LUKS() {
- 	# if key is set but neither ssh enabled or key device is given, find
- 	# the key device
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/linuxrc genkernel-4.2.6/defaults/linuxrc
---- genkernel-4.2.6.orig/defaults/linuxrc	2021-11-15 10:35:10.000000000 -0800
-+++ genkernel-4.2.6/defaults/linuxrc	2022-02-05 19:49:39.453729013 -0800
-@@ -641,6 +641,7 @@ fi
+ start_LUKS_root() {
+ 	# if key/header is set but neither ssh enabled or key device is given, find
+ 	# the key/header device
+Only in genkernel-4.3.6/defaults: initrd.scripts.orig
+Only in genkernel-4.3.6/defaults: initrd.scripts.rej
+diff -urp genkernel-4.3.6.orig/defaults/linuxrc genkernel-4.3.6/defaults/linuxrc
+--- genkernel-4.3.6.orig/defaults/linuxrc	2023-07-28 08:42:05.000000000 -0700
++++ genkernel-4.3.6/defaults/linuxrc	2023-10-12 16:36:35.516777908 -0700
+@@ -670,6 +670,7 @@ keyctl_keyadd
  # Initialize LUKS root device except for livecd's
  if [ "${CDROOT}" != '1' ]
  then
 +	start_entry
- 	start_LUKS
- 	if [ "${NORESUME}" != '1' ] && [ -n "${REAL_RESUME}" ]
- 	then
-@@ -1032,6 +1033,8 @@ then
+ 	if ( [ -n "${CRYPT_SWAP_KEY}" ] && [ -z "${CRYPT_SWAP_KEYDEV}" ] ) || \
+ 	   ( [ -n "${CRYPT_SWAP_HEADER}" ] && [ -z "${CRYPT_SWAP_HEADERDEV}" ] ) || \
+ 	   ( [ "${REAL_ROOT}" = "${REAL_RESUME}" ] || [ "${USE_LVM_NORMAL}" = '1' ] )
+@@ -1078,6 +1079,8 @@ then
  
  	cache_cd_contents
  
@@ -381,10 +374,12 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/linuxrc genkernel-4.2.6/def
  	# If encrypted, find key and mount, otherwise mount as usual
  	if [ -n "${CRYPT_ROOT}" ]
  	then
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/software.sh genkernel-4.2.6/defaults/software.sh
---- genkernel-4.2.6.orig/defaults/software.sh	2022-02-05 19:49:05.019367934 -0800
-+++ genkernel-4.2.6/defaults/software.sh	2022-02-05 19:55:26.432439024 -0800
-@@ -156,6 +156,20 @@ GKPKG_LIBGPG_ERROR_SRCTAR="${GKPKG_LIBGP
+Only in genkernel-4.3.6/defaults: linuxrc.orig
+Only in genkernel-4.3.6/defaults: linuxrc.rej
+diff -urp genkernel-4.3.6.orig/defaults/software.sh genkernel-4.3.6/defaults/software.sh
+--- genkernel-4.3.6.orig/defaults/software.sh	2023-10-12 16:35:46.432778473 -0700
++++ genkernel-4.3.6/defaults/software.sh	2023-10-12 16:36:00.272778313 -0700
+@@ -163,6 +163,20 @@ GKPKG_LIBGPG_ERROR_SRCTAR="${GKPKG_LIBGP
  GKPKG_LIBGPG_ERROR_SRCDIR="${GKPKG_LIBGPG_ERROR_SRCDIR:-libgpg-error-${GKPKG_LIBGPG_ERROR_PV}}"
  GKPKG_LIBGPG_ERROR_BINPKG="${GKPKG_LIBGPG_ERROR_BINPKG:-%%CACHE%%/libgpg-error-${GKPKG_LIBGPG_ERROR_PV}-%%ARCH%%.tar.xz}"
  
@@ -403,9 +398,9 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/software.sh genkernel-4.2.6
 +GKPKG_LIBMCRYPT_BINPKG="${GKPKG_LIBMCRYPT_BINPKG:-%%CACHE%%/libmcrypt-${GKPKG_LIBMCRYPT_PV}-%%ARCH%%.tar.xz}"
 +
  GKPKG_LIBXCRYPT_PN="libxcrypt"
- GKPKG_LIBXCRYPT_PV="${GKPKG_LIBXCRYPT_PV:-4.4.26}"
+ GKPKG_LIBXCRYPT_PV="${GKPKG_LIBXCRYPT_PV:-4.4.36}"
  GKPKG_LIBXCRYPT_DEPS=""
-@@ -177,6 +191,13 @@ GKPKG_LZO_SRCTAR="${GKPKG_LZO_SRCTAR:-${
+@@ -184,6 +198,13 @@ GKPKG_LZO_SRCTAR="${GKPKG_LZO_SRCTAR:-${
  GKPKG_LZO_SRCDIR="${GKPKG_LZO_SRCDIR:-lzo-${GKPKG_LZO_PV}}"
  GKPKG_LZO_BINPKG="${GKPKG_LZO_BINPKG:-%%CACHE%%/lzo-${GKPKG_LZO_PV}-%%ARCH%%.tar.xz}"
  
@@ -419,7 +414,7 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/software.sh genkernel-4.2.6
  GKPKG_MDADM_PN="mdadm"
  GKPKG_MDADM_PV="${GKPKG_MDADM_PV:-4.1}"
  GKPKG_MDADM_DEPS="eudev"
-@@ -184,6 +205,13 @@ GKPKG_MDADM_SRCTAR="${GKPKG_MDADM_SRCTAR
+@@ -191,6 +212,13 @@ GKPKG_MDADM_SRCTAR="${GKPKG_MDADM_SRCTAR
  GKPKG_MDADM_SRCDIR="${GKPKG_MDADM_SRCDIR:-mdadm-${GKPKG_MDADM_PV}}"
  GKPKG_MDADM_BINPKG="${GKPKG_MDADM_BINPKG:-%%CACHE%%/mdadm-${GKPKG_MDADM_PV}-%%ARCH%%.tar.xz}"
  
@@ -433,7 +428,7 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/software.sh genkernel-4.2.6
  GKPKG_POPT_PN="popt"
  GKPKG_POPT_PV="${GKPKG_POPT_PV:-1.18}"
  GKPKG_POPT_DEPS=""
-@@ -191,6 +219,13 @@ GKPKG_POPT_SRCTAR="${GKPKG_POPT_SRCTAR:-
+@@ -198,6 +226,13 @@ GKPKG_POPT_SRCTAR="${GKPKG_POPT_SRCTAR:-
  GKPKG_POPT_SRCDIR="${GKPKG_POPT_SRCDIR:-popt-${GKPKG_POPT_PV}}"
  GKPKG_POPT_BINPKG="${GKPKG_POPT_BINPKG:-%%CACHE%%/popt-${GKPKG_POPT_PV}-%%ARCH%%.tar.xz}"
  
@@ -445,17 +440,18 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/defaults/software.sh genkernel-4.2.6
 +GKPKG_STEGHIDE_BINPKG="${GKPKG_STEGHIDE_BINPKG:-%%CACHE%%/steghide-${GKPKG_STEGHIDE_PV}-%%ARCH%%.tar.xz}"
 +
  GKPKG_STRACE_PN="strace"
- GKPKG_STRACE_PV="${GKPKG_STRACE_PV:-5.14}"
+ GKPKG_STRACE_PV="${GKPKG_STRACE_PV:-6.4}"
  GKPKG_STRACE_DEPS="libaio"
-@@ -246,3 +281,4 @@ GKPKG_ZSTD_DEPS=""
+@@ -260,3 +295,4 @@ GKPKG_ZSTD_DEPS=""
  GKPKG_ZSTD_SRCTAR="${GKPKG_ZSTD_SRCTAR:-${DISTDIR}/zstd-${GKPKG_ZSTD_PV}.tar.gz}"
  GKPKG_ZSTD_SRCDIR="${GKPKG_ZSTD_SRCDIR:-zstd-${GKPKG_ZSTD_PV}}"
  GKPKG_ZSTD_BINPKG="${GKPKG_ZSTD_BINPKG:-%%CACHE%%/zstd-${GKPKG_ZSTD_PV}-%%ARCH%%.tar.xz}"
 +
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/gen_initramfs.sh genkernel-4.2.6/gen_initramfs.sh
---- genkernel-4.2.6.orig/gen_initramfs.sh	2021-11-15 10:35:10.000000000 -0800
-+++ genkernel-4.2.6/gen_initramfs.sh	2022-02-05 19:49:39.455729092 -0800
-@@ -1924,6 +1924,11 @@ append_auxiliary() {
+Only in genkernel-4.3.6/defaults: software.sh.orig
+diff -urp genkernel-4.3.6.orig/gen_initramfs.sh genkernel-4.3.6/gen_initramfs.sh
+--- genkernel-4.3.6.orig/gen_initramfs.sh	2023-07-28 08:42:05.000000000 -0700
++++ genkernel-4.3.6/gen_initramfs.sh	2023-10-12 16:36:00.272778313 -0700
+@@ -1952,6 +1952,11 @@ append_auxiliary() {
  	ln -s init linuxrc || gen_die "Failed to create symlink 'linuxrc' to 'init'!"
  	popd &>/dev/null || gen_die "Failed to chdir!"
  
@@ -467,168 +463,9 @@ diff -x '*.orig' -urpN genkernel-4.2.6.orig/gen_initramfs.sh genkernel-4.2.6/gen
  	local myinitrd_script=
  	if [ -f "${GK_SHARE}/arch/${ARCH}/initrd.scripts" ]
  	then
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/libjpeg.gkbuild genkernel-4.2.6/gkbuilds/libjpeg.gkbuild
---- genkernel-4.2.6.orig/gkbuilds/libjpeg.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.6/gkbuilds/libjpeg.gkbuild	2022-02-05 19:49:39.456729132 -0800
-@@ -0,0 +1,31 @@
-+# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
-+# Copyright 1999-2021 Gentoo Authors
-+# Distributed under the terms of the GNU General Public License v2
-+
-+src_prepare(){
-+	default
-+	gkautoreconf
-+}
-+
-+src_configure() {
-+	local myconf=(
-+		--disable-shared
-+		--enable-static
-+	)
-+	CONFIG_SHELL="${EPREFIX}"/bin/bash \
-+	gkconf "${myconf[@]}"
-+}
-+
-+src_compile(){
-+	local MYMAKEOPTS=( "V=1" )
-+	gkmake "${MYMAKEOPTS[@]}"
-+}
-+
-+src_install() {
-+	local MYMAKEOPTS=( "V=1" )
-+	MYMAKEOPTS+=( "DESTDIR=${D}" )
-+	gkmake "${MYMAKEOPTS[@]}" install
-+	rm -rf \
-+		"${D}"/usr/bin \
-+		"${D}"/usr/share
-+}
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/libmcrypt.gkbuild genkernel-4.2.6/gkbuilds/libmcrypt.gkbuild
---- genkernel-4.2.6.orig/gkbuilds/libmcrypt.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.6/gkbuilds/libmcrypt.gkbuild	2022-02-05 19:49:39.456729132 -0800
-@@ -0,0 +1,30 @@
-+# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
-+# Copyright 1999-2021 Gentoo Authors
-+# Distributed under the terms of the GNU General Public License v2
-+
-+src_prepare(){
-+	default
-+	gkautoreconf
-+}
-+
-+src_configure() {
-+	local myconf=(
-+		--disable-shared
-+		--enable-static
-+	)
-+	mv configure.in configure.ac
-+	mv libltdl/configure.in libltdl/configure.ac
-+	sed -i 's/AM_CONFIG_HEADER/AC_CONFIG_HEADERS/g' configure.ac libltdl/configure.ac || die
-+	gkconf "${myconf[@]}"
-+}
-+
-+src_compile(){
-+	local MYMAKEOPTS=( "V=1" )
-+	gkmake "${MYMAKEOPTS[@]}"
-+}
-+
-+src_install() {
-+	local MYMAKEOPTS=( "V=1" )
-+	MYMAKEOPTS+=( "DESTDIR=${D}" )
-+	gkmake "${MYMAKEOPTS[@]}" install
-+}
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/mcrypt.gkbuild genkernel-4.2.6/gkbuilds/mcrypt.gkbuild
---- genkernel-4.2.6.orig/gkbuilds/mcrypt.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.6/gkbuilds/mcrypt.gkbuild	2022-02-05 19:49:39.456729132 -0800
-@@ -0,0 +1,28 @@
-+# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
-+# Copyright 1999-2021 Gentoo Authors
-+# Distributed under the terms of the GNU General Public License v2
-+
-+src_prepare(){
-+	default
-+	gkautoreconf
-+}
-+
-+src_configure() {
-+	local myconf=(
-+		--disable-shared
-+		--enable-static
-+		--enable-static-link
-+	)
-+	gkconf "${myconf[@]}"
-+}
-+
-+src_compile(){
-+	local MYMAKEOPTS=( "V=1" )
-+	gkmake "${MYMAKEOPTS[@]}"
-+}
-+
-+src_install() {
-+	local MYMAKEOPTS=( "V=1" )
-+	MYMAKEOPTS+=( "DESTDIR=${D}" )
-+	gkmake "${MYMAKEOPTS[@]}" install
-+}
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/mhash.gkbuild genkernel-4.2.6/gkbuilds/mhash.gkbuild
---- genkernel-4.2.6.orig/gkbuilds/mhash.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.6/gkbuilds/mhash.gkbuild	2022-02-05 19:49:39.457729171 -0800
-@@ -0,0 +1,28 @@
-+# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
-+# Copyright 1999-2021 Gentoo Authors
-+# Distributed under the terms of the GNU General Public License v2
-+
-+src_prepare(){
-+	default
-+	gkautoreconf
-+}
-+
-+src_configure() {
-+	export ac_cv_func_malloc_0_nonnull=yes
-+	local myconf=(
-+		--disable-shared
-+		--enable-static
-+	)
-+	gkconf "${myconf[@]}"
-+}
-+
-+src_compile(){
-+	local MYMAKEOPTS=( "V=1" )
-+	gkmake "${MYMAKEOPTS[@]}"
-+}
-+
-+src_install() {
-+	local MYMAKEOPTS=( "V=1" )
-+	MYMAKEOPTS+=( "DESTDIR=${D}" )
-+	gkmake "${MYMAKEOPTS[@]}" install
-+}
-diff -x '*.orig' -urpN genkernel-4.2.6.orig/gkbuilds/steghide.gkbuild genkernel-4.2.6/gkbuilds/steghide.gkbuild
---- genkernel-4.2.6.orig/gkbuilds/steghide.gkbuild	1969-12-31 16:00:00.000000000 -0800
-+++ genkernel-4.2.6/gkbuilds/steghide.gkbuild	2022-02-05 19:49:39.457729171 -0800
-@@ -0,0 +1,28 @@
-+# Copyright 2021-2022 Orson Teodoro <orsonteodoro@hotmail.com>
-+# Copyright 1999-2020 Gentoo Authors
-+# Distributed under the terms of the GNU General Public License v2
-+
-+src_prepare(){
-+	default
-+	gkautoreconf
-+}
-+
-+src_configure() {
-+	local myconf=()
-+	local libtool
-+	export CXXFLAGS="$CXXFLAGS -std=c++0x"
-+	[[ ${CHOST} == *-darwin* ]] && die "${CHOST} is not supported" # missing glibtool
-+	[[ ${CHOST} == *-darwin* ]] && glibtool libtool=$(type -P glibtool) || libtool=$(type -P libtool)
-+	LIBTOOL="${libtool}" gkconf "${myconf[@]}"
-+}
-+
-+src_compile(){
-+	local MYMAKEOPTS=( "V=1" )
-+	gkmake "${MYMAKEOPTS[@]}"
-+}
-+
-+src_install() {
-+	local MYMAKEOPTS=( "V=1" )
-+	MYMAKEOPTS+=( "DESTDIR=${D}" )
-+	gkmake "${MYMAKEOPTS[@]}" install
-+}
+Only in genkernel-4.3.6: gen_initramfs.sh.orig
+Only in genkernel-4.3.6/gkbuilds: libjpeg.gkbuild
+Only in genkernel-4.3.6/gkbuilds: libmcrypt.gkbuild
+Only in genkernel-4.3.6/gkbuilds: mcrypt.gkbuild
+Only in genkernel-4.3.6/gkbuilds: mhash.gkbuild
+Only in genkernel-4.3.6/gkbuilds: steghide.gkbuild
