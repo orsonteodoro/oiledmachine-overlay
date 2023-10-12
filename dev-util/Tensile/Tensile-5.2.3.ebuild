@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# FIXME: build
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
@@ -131,6 +133,9 @@ src_configure() {
 	if use openmp ; then
 		append-flags -fuse-ld=lld
 	fi
+	append-ldflags \
+		-Wl,-L/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir) \
+		-Wl,-lLLVMSupport
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"

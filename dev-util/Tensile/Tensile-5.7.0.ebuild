@@ -69,6 +69,10 @@ RDEPEND="
 	system-llvm? (
 		sys-devel/clang:${LLVM_MAX_SLOT}
 	)
+
+	sys-process/numactl
+	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}
@@ -131,6 +135,12 @@ src_configure() {
 	if use openmp ; then
 		append-flags -fuse-ld=lld
 	fi
+	append-ldflags \
+		-Wl,-L/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir) \
+		-Wl,-lLLVMSupport \
+		-Wl,-lhsa-runtime64 \
+		-Wl,-lamd_comgr \
+		-Wl,-lnuma
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
@@ -151,7 +161,7 @@ src_configure() {
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
-		cmake_src_configure
+		rocm_src_configure
 	fi
 }
 
