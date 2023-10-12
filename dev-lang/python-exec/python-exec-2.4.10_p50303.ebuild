@@ -55,8 +55,8 @@ src_configure() {
 	done
 
 	local myconf=(
-		--prefix="${EPREFIX}/${EROCM_PATH}"
-		--with-fallback-path="${EPREFIX}/${EROCM_PATH}/bin:${EPREFIX}/usr/local/sbin:${EPREFIX}/usr/local/bin:${EPREFIX}/usr/sbin:${EPREFIX}/usr/bin:${EPREFIX}/sbin:${EPREFIX}/bin"
+		--prefix="${EPREFIX}${EROCM_PATH}"
+		--with-fallback-path="${EPREFIX}${EROCM_PATH}/bin:${EPREFIX}/usr/local/sbin:${EPREFIX}/usr/local/bin:${EPREFIX}/usr/sbin:${EPREFIX}/usr/bin:${EPREFIX}/sbin:${EPREFIX}/bin"
 		--with-python-impls="${pyimpls[*]}"
 	)
 
