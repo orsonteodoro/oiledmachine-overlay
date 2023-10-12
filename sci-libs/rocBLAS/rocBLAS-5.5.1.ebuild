@@ -126,7 +126,7 @@ BDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
-		~dev-util/Tensile-${PV}:${ROCM_SLOT}
+		~dev-util/Tensile-${PV}:${ROCM_SLOT}[client]
 	)
 "
 RESTRICT="
