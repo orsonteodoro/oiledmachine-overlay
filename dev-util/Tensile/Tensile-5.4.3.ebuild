@@ -34,7 +34,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp system-llvm r5"
+IUSE="client openmp system-llvm r6"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -178,7 +178,7 @@ python_install() {
 	dodir "${EROCM_PATH}/usr/lib/${EPYTHON}/site-packages"
 	cp -aT \
 		"${ED}/usr/lib/${EPYTHON}/site-packages" \
-		"${ED}${EROCM_PATH}/usr/lib/${EPREFIX}/site-packages" \
+		"${ED}${EROCM_PATH}/usr/lib/${EPYTHON}/site-packages" \
 		|| die
 	rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages" || die
 }
@@ -208,6 +208,7 @@ src_install() {
 		"${ED}/${EROCM_PATH}/bin" \
 		|| die
 	rm -rf "${ED}/usr/bin" || die
+	use client || ewarn "The symlinks require the client USE flag."
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
