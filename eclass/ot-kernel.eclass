@@ -2712,7 +2712,7 @@ ewarn "Securely wiping private keys for ${extraversion}"
 }
 
 # Constant enums
-# For Profile Guided Optimization (PDO)
+# For Profile Guided Optimization (PGO)
 PGO_PHASE_UNK="UNK" # Unset
 PGO_PHASE_PGI="PGI" # Instrumentation step
 PGO_PHASE_PGT="PGT" # Training step
@@ -5322,7 +5322,11 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 # @DESCRIPTION:
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 ot-kernel_set_kconfig_pgo() {
-	use pgo || return
+	if use pgo || use pdo ; then
+		:;
+	else
+		return
+	fi
 	if use clang ; then
 		_ot-kernel_set_kconfig_pgo_clang
 	else
