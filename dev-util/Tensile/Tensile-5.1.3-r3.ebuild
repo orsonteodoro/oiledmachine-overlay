@@ -35,7 +35,7 @@ https://github.com/littlewu2508/littlewu2508.github.io/raw/main/gentoo-distfiles
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp system-llvm r4"
+IUSE="client openmp system-llvm r5"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -49,6 +49,7 @@ RDEPEND="
 	)
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
+	dev-lang/python-exec:rocm-${ROCM_SLOT}
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
