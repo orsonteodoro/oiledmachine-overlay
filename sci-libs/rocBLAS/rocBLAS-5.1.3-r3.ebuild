@@ -35,7 +35,7 @@ LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/ro
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
-inherit cmake docs edo flag-o-matic multiprocessing prefix llvm python-any-r1 rocm
+inherit cmake docs edo flag-o-matic multiprocessing prefix llvm python-single-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
@@ -110,7 +110,9 @@ BDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
-		~dev-util/Tensile-${PV}:${ROCM_SLOT}[client]
+		$(python_gen_cond_dep '
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'[${PYTHON_USEDEP},client]
+		')
 	)
 	test? (
 		dev-cpp/gtest
@@ -133,7 +135,7 @@ PATCHES=(
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
-	python-any-r1_pkg_setup
+	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }
 

@@ -44,7 +44,7 @@ LLVM_MAX_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/ro
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
-inherit cmake docs edo flag-o-matic multiprocessing llvm python-any-r1 rocm
+inherit cmake docs edo flag-o-matic multiprocessing llvm python-single-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
@@ -100,7 +100,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	>=dev-libs/msgpack-3.0.1
@@ -123,7 +123,7 @@ DEPEND="
 	)
 "
 BDEPEND="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		dev-python/joblib[${PYTHON_USEDEP}]
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
@@ -134,7 +134,9 @@ BDEPEND="
 	sys-devel/clang:${LLVM_MAX_SLOT}
 	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
-		~dev-util/Tensile-${PV}:${ROCM_SLOT}[client]
+		$(python_gen_cond_dep '
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'[${PYTHON_USEDEP},client]
+		')
 	)
 "
 RESTRICT="
@@ -154,7 +156,7 @@ QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
 
 pkg_setup() {
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
-	python-any-r1_pkg_setup
+	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }
 
