@@ -365,8 +365,8 @@
     Clang PGO           | Yes (abandoned)              | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
                         |                              | or code generation differences between   |
                         |                              | compilers that create bugs               |
-    GCC PGO (CFG+value) | No                           | Yes (incomplete)                         | See faq below to help finish.  It will use -fprofile-generate and -fprofile-use.
-    GCC PGO (CFG only)  | No                           | Unknown, but likely build time failures  | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
+    GCC PGO (CFG+value) | No                           | Yes incomplete with build time failures  | See faq below to help finish.  It will use -fprofile-generate and -fprofile-use.
+    GCC PGO (CFG only)  | Yes                          | No known problems                        | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
                         |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
                         |                              |                                          | benefit without documented problems.
     GCC PDO             | Yes                          | No                                       | -fprofile-arcs and -fbranch-probabilities only
@@ -462,6 +462,12 @@
           PGO is more difficult to apply on the kernel, but with PDO it
           is more easier.  Kernel GCOV support for PGO is not fully implemented,
           but requires patches.
+    - Q:  Do I need use the same version before and after?
+      A:  Yes likely depending if the profile was not converted to a version
+          agnostic format.
+    - Q:  Why do I keep seeing 
+          ....c:889:1: warning: '....gcda' profile count data file not found [-Wmissing-profile]
+      A:  The output of file name mangler is broken because the source path information is lost.
 
 
     The config file-directory structure
