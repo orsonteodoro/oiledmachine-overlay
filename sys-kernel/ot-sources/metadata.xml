@@ -375,7 +375,7 @@
     GCC PGO (CFG+value) | No                           | Yes (incomplete)                         | See faq below to help finish
     GCC PGO (CFG only)  | No (not added to ebuild yet) | Unknown                                  | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
                         |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
-                        |                              |                                          | benefit.
+                        |                              |                                          | benefit without documented problems.
     GCC PDO             | Yes                          | No                                       | -fprofile-arcs and -fbranch-probabilities only
 
     * CFG means Control Flow Graph.  Essentially if/else and function calls will be profiled.
