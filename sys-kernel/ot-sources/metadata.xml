@@ -472,9 +472,6 @@
     - Q:  Do I need use the same version before and after?
       A:  Yes likely depending if the profile was not converted to a version
           agnostic format.
-    - Q:  Why do I keep seeing 
-          ....c:889:1: warning: '....gcda' profile count data file not found [-Wmissing-profile]
-      A:  The output of file name mangler is broken because the source path information is lost.
 
 
     The config file-directory structure
