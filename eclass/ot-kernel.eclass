@@ -211,6 +211,10 @@ DEPEND+="
 		sys-devel/binutils[static-libs]
 		sys-libs/libunwind[static-libs]
 	)
+	pdo? (
+		sys-devel/binutils[static-libs]
+		sys-libs/libunwind[static-libs]
+	)
 "
 
 BDEPEND+="
@@ -268,58 +272,112 @@ IUSE+="
 "
 REQUIRED_USE+="
 	ot_kernel_pgt_2d? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_3d? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_crypto_std? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_crypto_kor? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_crypto_chn? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_crypto_rus? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_crypto_common? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_crypto_less_common? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_crypto_deprecated? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_custom? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_emerge1? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_emerge2? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_filesystem? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_memory? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_network? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_p2p? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_webcam? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 	ot_kernel_pgt_yt? (
-		pgo
+		|| (
+			pdo
+			pgo
+		)
 	)
 "
 PDEPEND+="
@@ -2469,7 +2527,7 @@ ot-kernel_src_prepare() {
 	cat "${FILESDIR}/all-kernel-options-as-yes" \
 		> "all-kernel-options-as-yes" || die
 
-	if use pgo ; then
+	if use pgo || use pdo ; then
 		cat "${FILESDIR}/pgo-trainer.sh" \
 			> "pgo-trainer.sh" || die
 	fi
@@ -2566,7 +2624,7 @@ fi
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
 
-		if use pgo ; then
+		if use pgo || use pdo ; then
 			if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" ]] ; then
 				cp -a \
 					"${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" \
@@ -7883,10 +7941,10 @@ einfo "Setting up the build toolchain"
 	fi
 	if \
 		( \
-		   ( has cfi ${IUSE} && ot-kernel_use cfi ) \
-		|| ( has kcfi ${IUSE} && ot-kernel_use kcfi ) \
-		|| ( has lto ${IUSE} && ot-kernel_use lto ) \
-		|| ( has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ) \
+			   ( has cfi ${IUSE} && ot-kernel_use cfi ) \
+			|| ( has kcfi ${IUSE} && ot-kernel_use kcfi ) \
+			|| ( has lto ${IUSE} && ot-kernel_use lto ) \
+			|| ( has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -8857,7 +8915,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			local pgo_phase_statefile
 			if has clang ${IUSE} && ot-kernel_use clang && use pgo ; then
 				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
-			elif use pgo ; then
+			elif use pgo || use pdo ; then
 				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 			fi
 			if [[ -n "${pgo_phase_statefile}" ]] ; then
@@ -9245,7 +9303,7 @@ EOF
 
 	done
 
-	if use pgo ; then
+	if use pgo || use pdo ; then
 		insinto "${OT_KERNEL_PGO_DATA_DIR}"
 		doins -r "${WORKDIR}/pgodata/"* # Sanitize file permissions
 	fi
@@ -9556,7 +9614,7 @@ ewarn
 		fi
 	fi
 
-	if use pgo && has build ${IUSE} && use build ; then
+	if ( use pgo || use pdo ) && has build ${IUSE} && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -9592,7 +9650,7 @@ ewarn "modules are signed with their corresponding build's private key and"
 ewarn "embedded in the initramfs."
 ewarn
 
-	if use pgo ; then
+	if ( use pgo || use pdo ) ; then
 einfo
 einfo "The pgo-trainer.sh has been provided in the root directory of the kernel"
 einfo "sources for PGO training.  The script can be customized for automation."
