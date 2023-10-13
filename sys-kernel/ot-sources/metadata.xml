@@ -414,9 +414,9 @@
           Send an issue request if you completed it or send a copy of the patch
           from the researchers.
     - Q:  Does Clang PGO work?
-      A:  No outstanding perceptable differences before and after but it does do
+      A:  No outstanding perceptable differences before and after, but it does do
           all steps without problems.
-    - Q:  Why do I keep seeing.   warning: '....gcda' profile count data file not
+    - Q:  Why do I keep seeing warning: '....gcda' profile count data file not
           found [-Wmissing-profile]?
       A:  It could be either one of these:
           * The compiler is hinting that you skipped training for that.  If
@@ -432,12 +432,13 @@
           - Hot code may get essentially -O3 treatment.
           - Cold code may get essentially -Os treatment.
           - Coalesces code into either hot or cold sections or maybe pages.
-          - Code reordering
+          - Code reordering or improving locality
           - Loop rolling or unrolling loops based on PGO profile and thresholds.
     - Q:  What is the performance?
       A:  Avg: 10% to -0.5% benefit.  Potentially 40% outliers.
     - Q:  What benefits the greatest from PGO?
-      A:  Throughput, TPS (Transactions Per Second)
+      A:  Throughput, TPS (Transactions Per Second), Requests Per Second, server
+          related parts on the kernel side
     - Q:  How do I avoid the worst case performance?
       A:  Do not do comprehesive training.  Train only actively used drivers,
           subsystems, algorithms, user space programs.
@@ -475,6 +476,10 @@
     - Q:  Do I need use the same version before and after?
       A:  Yes likely depending if the profile was not converted to a version
           agnostic format.
+    - Q:  Is it easy to PGO?
+      A:  Yes, the ebuild tries its best to simplify.  It requires 2 emerges and
+          training in the middle.
+
 
 
     The config file-directory structure
