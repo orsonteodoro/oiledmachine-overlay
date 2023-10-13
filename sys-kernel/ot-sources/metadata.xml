@@ -406,6 +406,7 @@
               __gcov_merge_single
               __gcov_merge_delta
               __gcov_merge_ior
+              kernel/gcov/gcc_4_7.c contains the data to gcda format conversion.
             These have to ported using the kernel API.
           * section 3.3 bullet point 1 with missing utility program
           * section 3.4 bullet point 2 changes to fix -Os in GCC
@@ -454,7 +455,9 @@
 
           If fully implemented, GCC_PGO should have more profilers or
           instrumented kinds of data versus CLANG_PGO.  So far, CLANG_PGO has
-          more kinds of profiled data.
+          more kinds of profiled data.  The more implemented profilers, the
+          more access to other types of 19 types of optimizations in
+          -fprofile-use.
     - Q:  Does it really feel slow running under a instrumented kernel?
       A:  No outstanding noticeable difference.
     - Q:  How do I unstuck myself from broken PGO and compile without it?
