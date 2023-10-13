@@ -360,7 +360,7 @@
 
     PGO support summary table:
 
-    Implementation      | Completeness                 | Buggy / Broken                           | Notes 
+    Implementation      | Complete?                    | Buggy / Broken                           | Notes 
     --------------------+------------------------------+------------------------------------------+-----------------------------------------------------------------------------------------
     Clang PGO           | Yes (abandoned)              | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
                         |                              | or code generation differences between   |
