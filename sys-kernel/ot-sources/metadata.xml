@@ -261,7 +261,7 @@
     initramfs updates.
 
 
-    The PDO (Profile Directed Optimization) progression:
+    The PDO/PGO (Profile Directed Optimization) progression:
 
     1. start from unknown state
     2. PDI = Build as instrumented
@@ -270,19 +270,10 @@
     5. end
 
 
-    The PGO (Profile Guided Optimization) progression:
-
-    1. start from unknown state
-    2. PGI = Build as instrumented
-    3. PGT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
-    4. PGO = Build as optimized
-    5. end
-
     Notes:
 
     FORCE_PGO_PHASE may be used to unbreak or disable
-    - pdo using PDI, PDT, PDO, PD0 as valid values.  PD0 means to disable/skip PDO.
-    - pgo using PGI, PGT, PGO, PG0 as valid values.  PG0 means to disable/skip PGO.
+    - PGI, PGT, PGO, PG0 are valid values.  PG0 means to disable/skip PGO.
 
     Same variable name but different values for PGO/PDO.
 
@@ -370,12 +361,12 @@
     PGO support summary table:
 
     Implementation      | Completeness                 | Buggy / Broken                           | Notes 
-    --------------------+------------------------------+------------------------------------------+----------------------------------------------------------------------------------------
+    --------------------+------------------------------+------------------------------------------+-----------------------------------------------------------------------------------------
     Clang PGO           | Yes (abandoned)              | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
                         |                              | or code generation differences between   |
                         |                              | compilers that create bugs               |
-    GCC PGO (CFG+value) | No                           | Yes (incomplete)                         | See faq below to help finish
-    GCC PGO (CFG only)  | No (not added to ebuild yet) | Unknown                                  | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
+    GCC PGO (CFG+value) | No                           | Yes (incomplete)                         | See faq below to help finish.  It will use -fprofile-generate and -fprofile-use.
+    GCC PGO (CFG only)  | No                           | Unknown, but likely build time failures  | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
                         |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
                         |                              |                                          | benefit without documented problems.
     GCC PDO             | Yes                          | No                                       | -fprofile-arcs and -fbranch-probabilities only
@@ -1386,6 +1377,17 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       https://en.wikipedia.org/wiki/List_of_broadcast_video_formats
       https://en.wikipedia.org/wiki/PAL#/media/File:PAL-NTSC-SECAM.svg
+
+
+
+    OT_KERNEL_PGO_FLAVOR - sets the flavor for PGO
+    
+    Acceptable values:
+
+      CLANG_PGO   - Full PGO
+      GCC_PGO     - CFG + value profiling, full PGO
+      GCC_PGO_CFG - CFG only, partial PGO
+      GCC_PDO     - CFG only
 
 
 
@@ -3713,18 +3715,20 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="pds">
       Patches the kernel with an alternative skiplist based scheduler.
     </flag>
-    <flag name="pdo">
-      Perform Profile Directed Optimization.  3 phases like PGO but only using
-      same optimizations, code generation options, and -fbranch-probabilities
-      optimization.
-
-      Support is experimental and GCC only in the ebuild level.
-    </flag>
     <flag name="pgo">
       Perform Profile Guided Optimization that may in average result in a range 
       between 10% improvement or a ~0.5% drop in performance.
 
+      Perform Profile Directed Optimization.  3 phases like PGO but only using
+      same optimizations, code generation options, and -fbranch-probabilities
+      optimization.
+
+      GCC PGO includes and implies GCC PDO.
+
       You may use Clang or GCC.  Support is experimental.
+
+      In addition OT_KERNEL_PGO_FLAVOR must be set as either GCC_PDO, GCC_PGO,
+      or GCC_PGO_CFG.  Only one value may be selected.
     </flag>
     <flag name="prjc">
       Applies the Project C CPU scheduler.

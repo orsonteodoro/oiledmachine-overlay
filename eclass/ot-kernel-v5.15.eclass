@@ -208,7 +208,7 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 
 IUSE+="
 bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug -exfat
-+genpatches -genpatches_1510 lto multigen_lru orca pdo pgo prjc rock-dkms rt
++genpatches -genpatches_1510 lto multigen_lru orca pgo prjc rock-dkms rt
 shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-multigen_lru zen-sauce
@@ -533,11 +533,6 @@ RDEPEND+="
 			|| (
 				$(gen_cfi_rdepend 12 ${LLVM_MAX_SLOT})
 			)
-		)
-	)
-	pdo? (
-		!clang? (
-			>=sys-devel/gcc-${GCC_PV}
 		)
 	)
 	pgo? (

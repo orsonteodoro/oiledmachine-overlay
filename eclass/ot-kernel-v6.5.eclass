@@ -212,7 +212,7 @@ aaf932736a4748b18196ecdf86471bc3c5576d11
 
 IUSE+="
 bbrv2 bbrv3 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi lto orca pdo pgo prjc rt -rust shadowcallstack symlink
+-genpatches_1510 kcfi lto orca pgo prjc rt -rust shadowcallstack symlink
 tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
 "
@@ -532,11 +532,6 @@ RDEPEND+="
 			|| (
 				$(gen_kcfi_rdepend 16 ${LLVM_MAX_SLOT})
 			)
-		)
-	)
-	pdo? (
-		!clang? (
-			>=sys-devel/gcc-${GCC_PV}
 		)
 	)
 	pgo? (

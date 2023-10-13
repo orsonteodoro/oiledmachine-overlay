@@ -211,10 +211,6 @@ DEPEND+="
 		sys-devel/binutils[static-libs]
 		sys-libs/libunwind[static-libs]
 	)
-	pdo? (
-		sys-devel/binutils[static-libs]
-		sys-libs/libunwind[static-libs]
-	)
 "
 
 BDEPEND+="
@@ -272,112 +268,58 @@ IUSE+="
 "
 REQUIRED_USE+="
 	ot_kernel_pgt_2d? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_3d? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_crypto_std? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_crypto_kor? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_crypto_chn? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_crypto_rus? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_crypto_common? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_crypto_less_common? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_crypto_deprecated? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_custom? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_emerge1? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_emerge2? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_filesystem? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_memory? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_network? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_p2p? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_webcam? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 	ot_kernel_pgt_yt? (
-		|| (
-			pdo
-			pgo
-		)
+		pgo
 	)
 "
 PDEPEND+="
@@ -1307,7 +1249,7 @@ einfo "Detected sys-devel/gcc-kpgo"
 # Copies the profraw for Clang PGO.
 # It has to be done outside of the sandbox.
 dump_profraw() {
-	if [[ "${FORCE_PGO_PHASE}" =~ ("PDI"|"PDT"|"PDO"|"PD0") ]] ; then
+	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PGO"|"PG0") ]] ; then
 		return
 	fi
 	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
@@ -1356,7 +1298,7 @@ dump_gcda() {
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
 	[[ "${version}" != "${PV}" ]] && return
-	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PDI"|"PG0") ]] ; then
+	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PG0") ]] ; then
 		rm -rf "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc"
 	fi
 	mkdir -p "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc" || true
@@ -2527,7 +2469,7 @@ ot-kernel_src_prepare() {
 	cat "${FILESDIR}/all-kernel-options-as-yes" \
 		> "all-kernel-options-as-yes" || die
 
-	if use pgo || use pdo ; then
+	if use pgo ; then
 		cat "${FILESDIR}/pgo-trainer.sh" \
 			> "pgo-trainer.sh" || die
 	fi
@@ -2624,7 +2566,7 @@ fi
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
 
-		if use pgo || use pdo ; then
+		if use pgo ; then
 			if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" ]] ; then
 				cp -a \
 					"${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" \
@@ -2770,20 +2712,12 @@ ewarn "Securely wiping private keys for ${extraversion}"
 }
 
 # Constant enums
-# For Profile Guided Optimization (PGO)
+# For Profile Guided Optimization (PGO) or Profile Directed Optimization (PDO)
 PGO_PHASE_UNK="UNK" # Unset
 PGO_PHASE_PGI="PGI" # Instrumentation step
 PGO_PHASE_PGT="PGT" # Training step
 PGO_PHASE_PGO="PGO" # Optimization step
 PGO_PHASE_PG0="PG0" # No PGO
-PGO_PHASE_DONE="DONE" # DONE
-
-# For Profile Directed Optimization (PDO)
-PGO_PHASE_UNK="UNK" # Unset
-PGO_PHASE_PDI="PDI" # Instrumentation step
-PGO_PHASE_PDT="PDT" # Training step
-PGO_PHASE_PDO="PDO" # Optimization step
-PGO_PHASE_PD0="PD0" # No PDO
 PGO_PHASE_DONE="DONE" # DONE
 
 # @FUNCTION: is_clang_ready
@@ -3062,6 +2996,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_NET_QOS_CLASSIFIERS
 	unset OT_KERNEL_NET_QOS_SCHEDULERS
 	unset OT_KERNEL_PCIE_MPS
+	unset OT_KERNEL_PGO_FLAVOR
 	unset OT_KERNEL_PHYS_MEM_TOTAL_GIB
 	unset OT_KERNEL_PKGFLAGS_ACCEPT
 	unset OT_KERNEL_PKGFLAGS_REJECT
@@ -5303,6 +5238,11 @@ eerror
 		else
 			pgo_phase="${PGO_PHASE_PGI}"
 		fi
+		# Convert deprecated
+		[[ "${pgo_phase}" == "PDI" ]] && pgo_phase="PGI"
+		[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
+		[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
+		[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
 #
 #            R      R      R       R      R = Resume
 #	    ___    ___    ___     ___     S = Start
@@ -5355,6 +5295,11 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 	else
 		pgo_phase="${PGO_PHASE_PGI}"
 	fi
+	# Convert deprecated
+	[[ "${pgo_phase}" == "PDI" ]] && pgo_phase="PGI"
+	[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
+	[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
+	[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
 #
 #            R      R      R       R      R = Resume
 #	    ___    ___    ___     ___     S = Start
@@ -5380,7 +5325,7 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 # @DESCRIPTION:
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 ot-kernel_set_kconfig_pgo() {
-	if use pgo || use pdo ; then
+	if use pgo ; then
 		:;
 	else
 		return
@@ -8351,7 +8296,8 @@ ot-kernel_build_kernel() {
 	if ot-kernel_is_build ; then
 		[[ "${BUILD_DIR}/.config" ]] || die "Missing .config to build the kernel"
 		local llvm_slot=$(get_llvm_slot)
-		local pgo_phase
+		local pgo_phase # pgophase file
+		local makefile_pgo_phase
 		if has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 			local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
@@ -8365,6 +8311,7 @@ ot-kernel_build_kernel() {
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
+einfo "pgo_phase (1):  ${pgo_phase}"
 
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Building PGI"
@@ -8390,7 +8337,7 @@ eerror
 				llvm-profdata merge --output="${profdata_dpath}" \
 					"${profraw_dpath}" || die "PGO profile merging failed"
 				pgo_phase="${PGO_PHASE_PGO}"
-				echo "${PGO_PHASE_PGO}" > "${pgo_phase_statefile}" || die
+				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
 einfo "Building PGO"
 				args+=(
 					"KCFLAGS=-fprofile-use=${profdata_dpath}"
@@ -8412,7 +8359,7 @@ einfo "Resuming as PGT since no profile generated"
 			) \
 			&& \
 			( \
-				ot-kernel_use pgo \
+				   ot-kernel_use pgo \
 			) \
 		; then
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
@@ -8420,13 +8367,26 @@ einfo "Resuming as PGT since no profile generated"
 			local pgo_phase="${PGO_PHASE_UNK}"
 			if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
 				pgo_phase="${FORCE_PGO_PHASE}"
-			elif [[ ! -e "${pgo_phase_statefile}" ]] && ot-kernel_use pdo ; then
-				pgo_phase="${PGO_PHASE_PDI}"
 			elif [[ ! -e "${pgo_phase_statefile}" ]] && ot-kernel_use pgo ; then
 				pgo_phase="${PGO_PHASE_PGI}"
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
+			# Convert deprecated
+			[[ "${pgo_phase}" == "PDI" ]] && pgo_phase="PGI"
+			[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
+			[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
+			[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
+
+			if [[ -z "${OT_KERNEL_PGO_FLAVOR}" ]] ; then
+eerror
+eerror "OT_KERNEL_PGO_FLAVOR needs to be defined as either GCC_PDO, GCC_PGO,"
+eerror "GCC_PGO_CFG for GCC PGO support."
+eerror
+				die
+			fi
+
+einfo "pgo_phase (2):  ${pgo_phase}"
 
 			if tc-is-cross-compiler ; then
 # libbfd.a is always native ${CHOST}.
@@ -8440,7 +8400,14 @@ einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
 
 			local n_gcda=$(find "${pgo_profile_dir}" -name "*.gcda" 2>/dev/null | wc -l)
 			[[ -z "${n_gcda}" ]] && n_gcda=0
-			if [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGI}"|"${PGO_PHASE_PDI}") ]] ; then
+			if [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGI}") ]] ; then
+				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
+					makefile_pgo_phase="GCC_PDI"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
+					makefile_pgo_phase="GCC_PGI"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
+					makefile_pgo_phase="GCC_PGI_CFG"
+				fi
 einfo "Building ${pgo_phase}"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
@@ -8450,7 +8417,7 @@ einfo "Building ${pgo_phase}"
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
-						"GCC_PGO_PHASE=GCC_${pgo_phase}"
+						"GCC_PGO_PHASE=${makefile_pgo_phase}"
 						"GCC_PLUGINS_INCLUDE=${GCC_PLUGINS_INCLUDE}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${LIBBFD_DIR}"
@@ -8459,7 +8426,7 @@ einfo "Building ${pgo_phase}"
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}"
-						"GCC_PGO_PHASE=GCC_${pgo_phase}"
+						"GCC_PGO_PHASE=${makefile_pgo_phase}"
 						"GCC_PLUGINS_INCLUDE=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}/plugin/include"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST_amd64}/${binutils_pv}"
@@ -8474,42 +8441,55 @@ eerror "You must define GCC_PLUGINS_INCLUDE to the absolute path containing core
 eerror "You must define LIBBFD_DIR to the absolute path containing libbfd.a."
 eerror "You must define LIBC_DIR to the absolute path containing libc.a."
 eerror
-eerror "Only native GCC PGO/PDO builds are supported."
+eerror "Only native GCC PGO builds are supported."
 eerror
 					die
 				fi
-			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}"|"${PGO_PHASE_PDT}") ]] && (( ${n_gcda} > 0 )) ; then
-				if [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] ; then
-					pgo_phase="PGO"
-				elif [[ "${pgo_phase}" == "${PGO_PHASE_PDT}" ]] ; then
-					pgo_phase="PDO"
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} > 0 )) ; then
+				pgo_phase="PGO"
+				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
+					makefile_pgo_phase="GCC_PDO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
+					makefile_pgo_phase="GCC_PGO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
+					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
 einfo "Building ${pgo_phase}"
 				args+=(
-					"GCC_PGO_PHASE=GCC_${pgo_phase}"
+					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
-			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PDO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] && ot-kernel_use pdo ; then
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
+				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
+					makefile_pgo_phase="GCC_PDO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
+					makefile_pgo_phase="GCC_PGO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
+					makefile_pgo_phase="GCC_PGO_CFG"
+
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "DONE" ]] ; then
+					makefile_pgo_phase="GCC_PDO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" && "${PGO_PHASE_PGO}" == "DONE" ]] ; then
+					makefile_pgo_phase="GCC_PGO"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" && "${PGO_PHASE_PGO}" == "DONE" ]] ; then
+					makefile_pgo_phase="GCC_PGO_CFG"
+				fi
 # For resuming or rebuilding as PDO phase
 einfo "Building ${pgo_phase}"
 				args+=(
-					"GCC_PGO_PHASE=GCC_${pgo_phase}"
+					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
-			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] && ot-kernel_use pgo ; then
-# For resuming or rebuilding as PGO phase
-einfo "Building ${pgo_phase}"
-				args+=(
-					"GCC_PGO_PHASE=GCC_${pgo_phase}"
-					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
-				)
-			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}"|"${PGO_PHASE_PDT}") ]] && (( ${n_gcda} == 0 )) ; then
-				if [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" ]] ; then
-					pgo_phase="PGI"
-				elif [[ "${pgo_phase}" == "${PGO_PHASE_PDT}" ]] ; then
-					pgo_phase="PDI"
+			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} == 0 )) ; then
+				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
+					makefile_pgo_phase="GCC_PDI"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
+					makefile_pgo_phase="GCC_PGI"
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
+					makefile_pgo_phase="GCC_PGI_CFG"
 				fi
+
 einfo "Resuming as ${pgo_phase} since no profile generated"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
@@ -8519,7 +8499,7 @@ einfo "Resuming as ${pgo_phase} since no profile generated"
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
 					args+=(
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
-						"GCC_PGO_PHASE=GCC_${pgo_phase}"
+						"GCC_PGO_PHASE=${makefile_pgo_phase}"
 						"GCC_PLUGINS_INCLUDE=${GCC_PLUGINS_INCLUDE}"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${LIBBFD_DIR}"
@@ -8528,7 +8508,7 @@ einfo "Resuming as ${pgo_phase} since no profile generated"
 				elif [[ "${arch}" == "x86_64" ]] ; then
 					args+=(
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}"
-						"GCC_PGO_PHASE=GCC_${pgo_phase}"
+						"GCC_PGO_PHASE=${makefile_pgo_phase}"
 						"GCC_PLUGINS_INCLUDE=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}/plugin/include"
 						"KBUILD_MODPOST_WARN=1"
 						"LIBBFD_DIR=${ESYSROOT}/usr/${!current_abi}/binutils/${CHOST_amd64}/${binutils_pv}"
@@ -8543,7 +8523,7 @@ eerror "You must define GCC_PLUGINS_INCLUDE to the absolute path containing core
 eerror "You must define LIBBFD_DIR to the absolute path containing libbfd.a."
 eerror "You must define LIBC_DIR to the absolute path containing libc.a."
 eerror
-eerror "Only native GCC PGO/PDO builds are supported."
+eerror "Only native GCC PGO builds are supported."
 eerror
 					die
 				fi
@@ -8904,7 +8884,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 				ot-kernel_restore_keys
 			fi
-			local pgo_phase
+			local pgo_phase # pgophase file
 			if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
 				pgo_phase="${FORCE_PGO_PHASE}"
 			elif [[ ! -e "${pgo_phase_statefile}" ]] ; then
@@ -8912,10 +8892,15 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
+			# Convert deprecated
+			[[ "${pgo_phase}" == "PDI" ]] && pgo_phase="PGI"
+			[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
+			[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
+			[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
 			local pgo_phase_statefile
 			if has clang ${IUSE} && ot-kernel_use clang && use pgo ; then
 				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
-			elif use pgo || use pdo ; then
+			elif use pgo ; then
 				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 			fi
 			if [[ -n "${pgo_phase_statefile}" ]] ; then
@@ -9303,7 +9288,7 @@ EOF
 
 	done
 
-	if use pgo || use pdo ; then
+	if use pgo ; then
 		insinto "${OT_KERNEL_PGO_DATA_DIR}"
 		doins -r "${WORKDIR}/pgodata/"* # Sanitize file permissions
 	fi
@@ -9614,7 +9599,7 @@ ewarn
 		fi
 	fi
 
-	if ( use pgo || use pdo ) && has build ${IUSE} && use build ; then
+	if use pgo && has build ${IUSE} && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -9650,7 +9635,7 @@ ewarn "modules are signed with their corresponding build's private key and"
 ewarn "embedded in the initramfs."
 ewarn
 
-	if ( use pgo || use pdo ) ; then
+	if use pgo ; then
 einfo
 einfo "The pgo-trainer.sh has been provided in the root directory of the kernel"
 einfo "sources for PGO training.  The script can be customized for automation."
