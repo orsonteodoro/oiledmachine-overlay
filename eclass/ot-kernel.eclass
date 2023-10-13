@@ -8311,6 +8311,12 @@ ot-kernel_build_kernel() {
 			else
 				pgo_phase=$(cat "${pgo_phase_statefile}")
 			fi
+			# Convert deprecated
+			[[ "${pgo_phase}" == "PDI" ]] && pgo_phase="PGI"
+			[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
+			[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
+			[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
+
 einfo "pgo_phase (1):  ${pgo_phase}"
 
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
