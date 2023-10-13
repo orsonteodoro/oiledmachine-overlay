@@ -372,8 +372,8 @@
     GCC PDO               | Yes                          | No                                       | -fprofile-arcs and -fbranch-probabilities only
 
     * CFG means Control Flow Graph.  Essentially if/else and function calls will
-      be profiled.  It may profile constructors, deconstructors, conditional
-      loops.
+      be profiled.  It may profile calls that act like constructors and
+      deconstructors, conditional loops.
 
 
 
