@@ -1227,21 +1227,20 @@ einfo "Detected sys-devel/gcc-kpgo"
 		GCC_PKG="sys-devel/gcc"
 	fi
 
-#	if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE} && ! use clang ) \
-#		|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE} ) ; then
-#ewarn
-#ewarn "ccache is not supported in FEATURES with GCC PGO."
-#ewarn "Trying to disable."
-#ewarn
-#	        einfo "PATH=${PATH} (before)"
-#		export PATH=$(echo "${PATH}" \
-#	                | tr ":" "\n" \
-#	                | sed -E -e "/ccache/d" \
-#	                | tr "\n" ":" \
-#	                | sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
-#	        einfo "PATH=${PATH} (after)"
-#	fi
-
+	if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE} && ! use clang ) \
+		|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE} ) ; then
+ewarn
+ewarn "ccache is not supported in FEATURES with GCC PGO."
+ewarn "Trying to disable."
+ewarn
+	        einfo "PATH=${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+	                | tr ":" "\n" \
+	                | sed -E -e "/ccache/d" \
+	                | tr "\n" ":" \
+	                | sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
+	        einfo "PATH=${PATH} (after)"
+	fi
 }
 
 # @FUNCTION: dump_profraw
