@@ -363,7 +363,7 @@
     write your own automated script.  The script can be extended with
     pgo_custom.sh in the same directory or modded directly.  Using pgo_custom.sh
     is recommended to preserve changes between installs.  It should be ran only
-    as a non-root user.
+    as a non-root user.  This script is compatible with PDO.
 
 
 
