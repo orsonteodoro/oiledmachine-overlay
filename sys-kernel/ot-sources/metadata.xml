@@ -3728,7 +3728,11 @@ unset OT_KERNEL_PRIVATE_KEY
       You may use Clang or GCC.  Support is experimental.
 
       In addition OT_KERNEL_PGO_FLAVOR must be set as either GCC_PDO, GCC_PGO,
-      or GCC_PGO_CFG.  Only one value may be selected.
+      GCC_PGO_CFG, CLANG_PGO.  Only one value may be selected.
+
+      In additon OT_KERNEL_USE must contain pgo.
+
+      For clang pgo, OT_KERNEL_USE and USE must contain the clang USE flag.
     </flag>
     <flag name="prjc">
       Applies the Project C CPU scheduler.
