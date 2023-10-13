@@ -441,7 +441,9 @@
           related parts on the kernel side
     - Q:  How do I avoid the worst case performance?
       A:  Do not do comprehesive training.  Train only actively used drivers,
-          subsystems, algorithms, user space programs.
+          subsystems, algorithms, user space programs.  The goal again is to
+          optimize the cache heirarchy not pollute it with least likely used
+          pages or increase the number page faults.
     - Q:  Which is better active or passive training?
       A:  It depends...  For the least time investment, use passive traning.
           For consistent performance determinism try writing your own custom
