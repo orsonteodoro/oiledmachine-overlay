@@ -360,16 +360,16 @@
 
     PGO support summary table:
 
-    Implementation      | Complete?                    | Buggy / Broken                           | Notes 
-    --------------------+------------------------------+------------------------------------------+-----------------------------------------------------------------------------------------
-    Clang PGO           | Yes (abandoned)              | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
-                        |                              | or code generation differences between   |
-                        |                              | compilers that create bugs               |
-    GCC PGO (CFG+value) | No                           | Yes incomplete with build time failures  | See faq below to help finish.  It will use -fprofile-generate and -fprofile-use.
-    GCC PGO (CFG only)  | Yes                          | No known problems                        | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
-                        |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
-                        |                              |                                          | benefit without documented problems.
-    GCC PDO             | Yes                          | No                                       | -fprofile-arcs and -fbranch-probabilities only
+    Implementation        | Complete?                    | Buggy / Broken                           | Notes 
+    ----------------------+------------------------------+------------------------------------------+-----------------------------------------------------------------------------------------
+    Clang PGO             | Yes (abandoned)              | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
+                          |                              | or code generation differences between   |
+                          |                              | compilers that create bugs               |
+    GCC PGO (CFG + value) | No                           | Yes incomplete with build time failures  | See faq below to help finish.  It will use -fprofile-generate and -fprofile-use.
+    GCC PGO (CFG only)    | Yes                          | No known problems                        | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
+                          |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
+                          |                              |                                          | benefit without documented problems.
+    GCC PDO               | Yes                          | No                                       | -fprofile-arcs and -fbranch-probabilities only
 
     * CFG means Control Flow Graph.  Essentially if/else and function calls will
       be profiled.  It may profile constructors, deconstructors, conditional
