@@ -367,16 +367,53 @@
 
 
 
+    PGO support summary table:
+
+    Implementation      | Completeness                 | Buggy / Broken                           | Notes 
+    --------------------+------------------------------+------------------------------------------+----------------------------------------------------------------------------------------
+    Clang PGO           | Yes (abandoned)              | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
+    GCC PGO (CFG+value) | No                           | Yes (incomplete)                         | See faq below to help finish
+    GCC PGO (CFG only)  | No (not added to ebuild yet) | Unknown                                  | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
+                        |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
+                        |                              |                                          | benefit.
+    GCC PDO             | Yes                          | No                                       | -fprofile-arcs and -fbranch-probabilities only
+
+    * CFG means Control Flow Graph.  Essentially if/else and function calls will be profiled.
+
+
+
     PGO/PDO for kernel mini FAQ
 
     - Q:  Does GCC PGO work now for the kernel?
       A:  No, it breaks during the building of the PGO image.  It requires
           additional patches for both gcc and the compiler.  The source code for
-          these modifications for needs to be provided by the researchers [I could
+          these modifications needs to be provided by the researchers [I could
           not find them] or rewritten from scratch [the likely scenario].  
-          See the Yuan-ScienceChina-18 sections 3.2 and section 3.1 paragraph 3
-          in the document in
+          See the Yuan-ScienceChina-18 in the document in
           https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
+          The following points have missing implementation for complete GCC PGO
+          support:
+          * sections 3.2 - value profiling which corresponds to in the
+            kernel kernel/gcov/gcc_base.c and
+            GCC 4.3.0 (GPL-2+) with __gcov_*_profiler symbols in https://github.com/gcc-mirror/gcc/blob/1a9075e2897aed199f8f52b7a212672d1f86a1b4/gcc/libgcov.c#L791 or specifically
+              __gcov_average_profiler 
+              __gcov_indirect_call_profiler
+              __gcov_interval_profiler
+              __gcov_ior_profiler
+              __gcov_one_value_profiler
+              __gcov_pow2_profiler
+            GCC 5.1.0 (GPL-3+) with __gcov_*_profiler symbols in https://github.com/gcc-mirror/gcc/blob/releases/gcc-5.1.0/libgcc/libgcov-profiler.c#L221 or specifically
+              __gcov_indirect_call_topn_profiler (GPL-3+)
+              __gcov_time_profiler (GPL-3+)
+            profile merging (GPL-2+) which corresponds to __gcov_merge_* in https://github.com/gcc-mirror/gcc/blob/1a9075e2897aed199f8f52b7a212672d1f86a1b4/gcc/libgcov.c#L610 or specifically
+              __gcov_merge_add
+              __gcov_merge_single
+              __gcov_merge_delta
+              __gcov_merge_ior
+            These have to ported using the kernel API.
+          * section 3.3 bullet point 1 with missing utility program
+          * section 3.4 bullet point 2 changes to fix -Os in GCC
+          * section 3.6 lists overall requirements
           Send an issue request if you completed it or send a copy of the patch
           from the researchers.
     - Q:  Does Clang PGO work?
