@@ -372,6 +372,8 @@
     Implementation      | Completeness                 | Buggy / Broken                           | Notes 
     --------------------+------------------------------+------------------------------------------+----------------------------------------------------------------------------------------
     Clang PGO           | Yes (abandoned)              | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
+                        |                              | or code generation differences between   |
+                        |                              | compilers that create bugs               |
     GCC PGO (CFG+value) | No                           | Yes (incomplete)                         | See faq below to help finish
     GCC PGO (CFG only)  | No (not added to ebuild yet) | Unknown                                  | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
                         |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
