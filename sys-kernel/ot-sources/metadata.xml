@@ -444,10 +444,6 @@
       A:  It depends...  For the least time investment, use passive traning.
           For consistent performance determinism try writing your own custom
           active training script.
-
-          If fully implemented, GCC_PGO should have more profilers or
-          instrumented kinds of data versus CLANG_PGO.  So far, CLANG_PGO has
-          more kinds of profiled data.
     - Q:  When should I do PGO?
       A:  It should be done at the beginning of the release cycle.  Doing
           it about a week after the release may result in imminent replacement.
@@ -455,6 +451,10 @@
     - Q:  Should I pick GCC PGO or Clang PGO?
       A:  It depends if you plan to use KCFI or other compiler features.
           GCC PGO looks promising with the least amount of time investment.
+
+          If fully implemented, GCC_PGO should have more profilers or
+          instrumented kinds of data versus CLANG_PGO.  So far, CLANG_PGO has
+          more kinds of profiled data.
     - Q:  Does it really feel slow running under a instrumented kernel?
       A:  No outstanding noticeable difference.
     - Q:  How do I unstuck myself from broken PGO and compile without it?
