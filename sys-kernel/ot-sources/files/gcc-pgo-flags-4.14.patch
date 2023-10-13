@@ -27,12 +27,12 @@ License identified in arch/x86/kernel/paravirt.c:
 +endif
 +
 +ifeq ($(GCC_PGO_PHASE),GCC_PDO)
-+CFLAGS_GCOV	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++KCFLAGS	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
 +ifeq ($(GCC_PGO_PHASE),GCC_PGO)
-+CFLAGS_GCOV	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++KCFLAGS	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
