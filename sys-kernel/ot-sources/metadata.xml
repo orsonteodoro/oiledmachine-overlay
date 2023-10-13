@@ -378,10 +378,11 @@
     PGO/PDO for kernel mini FAQ
 
     - Q:  Does GCC PGO work now for the kernel?
-      A:  No, it breaks during the building of the PGO image.  It requires
-          additional patches for both gcc and the compiler.  The source code for
-          these modifications needs to be provided by the researchers [I could
-          not find them] or rewritten from scratch [the likely scenario].  
+      A:  No not for Full PGO.  It breaks during the building of the PGO image.
+          It requires additional patches for both gcc and the compiler.  The
+          source code for these modifications needs to be provided by the
+          researchers [I could not find them] or rewritten from scratch [the
+          likely scenario].  
           See the Yuan-ScienceChina-18 in the document in
           https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
           The following points have missing implementation for complete GCC PGO
@@ -1395,8 +1396,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     Acceptable values:
 
       CLANG_PGO   - Full PGO
-      GCC_PGO     - CFG + value profiling, full PGO
-      GCC_PGO_CFG - CFG only, partial PGO
+      GCC_PGO     - CFG + value profiling, Full PGO
+      GCC_PGO_CFG - CFG only, Partial PGO
       GCC_PDO     - CFG only
 
 
