@@ -365,7 +365,7 @@
 
     Implementation        | Complete?                    | Buggy / Broken                           | Notes 
     ----------------------+------------------------------+------------------------------------------+-----------------------------------------------------------------------------------------
-    Clang PGO             | Yes (abandoned)              | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
+    Clang PGO             | Yes (upstream abandoned)     | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
                           |                              | or code generation differences between   |
                           |                              | compilers that create bugs               |
     GCC PGO (CFG + value) | No                           | Yes incomplete with build time failures  | See faq below to help finish.  It will use -fprofile-generate and -fprofile-use.
