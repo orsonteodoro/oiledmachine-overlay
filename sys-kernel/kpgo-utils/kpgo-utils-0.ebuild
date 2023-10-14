@@ -37,6 +37,8 @@ eerror "process.sh      -> kpgo-process.sh-27755a6"
 eerror "rename.sh       -> kpgo-rename.sh-cc3d30d"
 eerror "calcsum-4.9.cpp -> kpgo-calcsum-4.9.cpp-d048bb9"
 eerror
+eerror "The 7 digit code is the sha1sum of that file."
+eerror
 }
 
 src_unpack() {
