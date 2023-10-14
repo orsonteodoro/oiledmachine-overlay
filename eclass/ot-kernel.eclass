@@ -180,7 +180,7 @@ OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
 # Upstream keeps reiserfs
 IUSE+="
 bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick intel-microcode
-kpgo-utils linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5 xz zstd
+linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5 xz zstd
 "
 GCC_PKG="sys-devel/gcc"
 NEEDS_DEBUGFS=0
