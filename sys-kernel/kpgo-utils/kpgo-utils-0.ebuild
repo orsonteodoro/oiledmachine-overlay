@@ -10,7 +10,7 @@ SRC_URI="
 "
 # The hashes are first 7 digit sha1sum of that file.
 
-DESCRIPTION="KPGO scripts and tool"
+DESCRIPTION="KPGO scripts and calcsum tool"
 HOMEPAGE="
 http://coolypf.com/kpgo.htm
 "
