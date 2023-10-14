@@ -882,7 +882,7 @@ diff -Nurp linux-4.19.296-ot.orig/kernel/gcov/gcc_4_9.c linux-4.19.296-ot/kernel
 diff -Nurp linux-4.19.296-ot.orig/kernel/gcov/Kconfig linux-4.19.296-ot/kernel/gcov/Kconfig
 --- linux-4.19.296-ot.orig/kernel/gcov/Kconfig	2018-10-21 23:37:37.000000000 -0700
 +++ linux-4.19.296-ot/kernel/gcov/Kconfig	2023-10-14 03:07:06.548747810 -0700
-@@ -53,16 +53,15 @@ config GCOV_PROFILE_ALL
+@@ -53,16 +53,16 @@ config GCOV_PROFILE_ALL
  choice
  	prompt "Specify GCOV format"
  	depends on GCOV_KERNEL
@@ -890,12 +890,13 @@ diff -Nurp linux-4.19.296-ot.orig/kernel/gcov/Kconfig linux-4.19.296-ot/kernel/g
  	---help---
 -	The gcov format is usually determined by the GCC version, and the
 -	default is chosen according to your GCC version. However, there are
-+	The gcov format is usually determined by the GCC version, but there are
++	The gcov format is usually determined by the GCC version, and the
++	default is chosen according to your GCC version. However, there are
  	exceptions where format changes are integrated in lower-version GCCs.
 -	In such a case, change this option to adjust the format used in the
 -	kernel accordingly.
-+	In such a case use this option to adjust the format used in the kernel
-+	accordingly.
++	In such a case, change this option to adjust the format used in the
++	kernel accordingly.
  
  config GCOV_FORMAT_3_4
  	bool "GCC 3.4 format"
@@ -918,18 +919,12 @@ diff -Nurp linux-4.19.296-ot.orig/kernel/gcov/Kconfig linux-4.19.296-ot/kernel/g
 diff -Nurp linux-4.19.296-ot.orig/kernel/gcov/Makefile linux-4.19.296-ot/kernel/gcov/Makefile
 --- linux-4.19.296-ot.orig/kernel/gcov/Makefile	2023-10-14 03:03:11.240743012 -0700
 +++ linux-4.19.296-ot/kernel/gcov/Makefile	2023-10-14 03:06:52.196747517 -0700
-@@ -7,5 +7,12 @@ endif
+@@ -7,5 +7,6 @@ endif
  ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
  
  obj-y := base.o fs.o
 -obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
 -obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
-+ifeq ($(CONFIG_GCOV_FORMAT_3_4),y)
-+  obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
-+endif
-+ifeq ($(CONFIG_GCOV_FORMAT_4_7),y)
-+  obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
-+endif
-+ifeq ($(CONFIG_GCOV_FORMAT_4_9),y)
-+  obj-$(CONFIG_GCOV_FORMAT_4_9) += gcc_4_9.o
-+endif
++obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
++obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
++obj-$(CONFIG_GCOV_FORMAT_4_9) += gcc_4_9.o

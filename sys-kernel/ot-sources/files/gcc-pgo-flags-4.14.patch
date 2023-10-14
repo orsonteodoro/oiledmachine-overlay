@@ -55,24 +55,6 @@ License identified in arch/x86/kernel/paravirt.c:
  CFLAGS_KCOV	:= $(call cc-option,-fsanitize-coverage=trace-pc,)
  export CFLAGS_GCOV CFLAGS_KCOV
  
-@@ -885,6 +914,17 @@ ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATI
- LDFLAGS_vmlinux	+= $(call ld-option, --gc-sections,)
- endif
- 
-+#ifeq ($(GCC_PGO_PHASE),GCC_PGI)
-+#KBUILD_CFLAGS          += -fprofile-generate
-+#KBUILD_LDFLAGS_MODULE  += $(GCC_GCOV_DIR)/libgcov.a
-+#LDFLAGS                += $(GCC_GCOV_DIR)/libgcov.a
-+#endif
-+#ifeq ($(GCC_PGO_PHASE),GCC_PGO)
-+#KBUILD_CFLAGS          += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+#KBUILD_LDFLAGS_MODULE  += $(GCC_GCOV_DIR)/libgcov.a
-+#LDFLAGS                += $(GCC_GCOV_DIR)/libgcov.a
-+#endif
-+
- LDFLAGS	+= -z noexecstack
- LDFLAGS	+= $(call ld-option,--no-warn-rwx-segments)
- 
 --- a/kernel/gcov/Makefile.orig	2023-08-27 14:49:51.000000000 -0700
 +++ b/kernel/gcov/Makefile	2023-09-13 15:27:37.344512036 -0700
 @@ -1,4 +1,9 @@

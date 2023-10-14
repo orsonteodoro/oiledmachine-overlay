@@ -879,48 +879,15 @@ diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/gcc_4_9.c b/kernel/gcov/gcc
 +
 +	return 0;
 +}
-diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/Kconfig b/kernel/gcov/Kconfig
---- a/kernel/gcov.orig/Kconfig	2023-08-27 14:49:51.000000000 -0700
-+++ b/kernel/gcov/Kconfig	2023-10-14 00:57:04.084588738 -0700
-@@ -52,4 +52,26 @@ config GCOV_PROFILE_ALL
- 	larger and run slower. Also be sure to exclude files from profiling
- 	which are not linked to the kernel image to prevent linker errors.
- 
-+choice
-+	prompt "Specify GCOV format"
-+	depends on GCOV_KERNEL
-+	default GCOV_FORMAT_4_9
-+	---help---
-+	The gcov format is usually determined by the GCC version, but there are
-+	exceptions where format changes are integrated in lower-version GCCs.
-+	In such a case use this option to adjust the format used in the kernel
-+	accordingly.
-+
-+config GCOV_FORMAT_4_7
-+	bool "GCC 4.7 format"
-+	---help---
-+	Select this option to use the format defined by GCC 4.7.
-+
-+config GCOV_FORMAT_4_9
-+	bool "GCC 4.9 format"
-+	---help---
-+	Select this option to use the format defined by GCC 4.9.
-+
-+endchoice
-+
- endmenu
 diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/Makefile b/kernel/gcov/Makefile
 --- a/kernel/gcov.orig/Makefile	2023-10-14 00:46:24.916575707 -0700
 +++ b/kernel/gcov/Makefile	2023-10-14 00:52:04.468582629 -0700
-@@ -7,5 +7,10 @@ endif
+@@ -7,5 +7,7 @@ endif
  ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
  
  obj-y := base.o fs.o
 -obj-$(CONFIG_CC_IS_GCC) += gcc_base.o gcc_4_7.o
-+ifeq ($(CONFIG_GCOV_FORMAT_4_7),y)
-+  obj-$(CONFIG_CC_IS_GCC) += gcc_base.o gcc_4_7.o
-+endif
-+ifeq ($(CONFIG_GCOV_FORMAT_4_9),y)
-+  obj-$(CONFIG_CC_IS_GCC) += gcc_base.o gcc_4_9.o
-+endif
++obj-$(CONFIG_CC_IS_GCC) += gcc_base.o
++obj-$(CONFIG_CC_IS_GCC) += gcc_4_7.o
++obj-$(CONFIG_CC_IS_GCC) += gcc_4_9.o
  obj-$(CONFIG_CC_IS_CLANG) += clang.o

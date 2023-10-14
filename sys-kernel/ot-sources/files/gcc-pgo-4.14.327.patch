@@ -920,7 +920,7 @@ diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/Kconfig b/kernel/gcov/Kconf
 diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/Makefile b/kernel/gcov/Makefile
 --- a/kernel/gcov.orig/Makefile	2023-10-14 02:40:31.136715283 -0700
 +++ b/kernel/gcov/Makefile	2023-10-14 02:45:24.180721258 -0700
-@@ -7,7 +7,12 @@ endif
+@@ -7,7 +7,6 @@ endif
  ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
  
  obj-y := base.o fs.o
@@ -928,12 +928,6 @@ diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/Makefile b/kernel/gcov/Make
 -obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
 -obj-$(CONFIG_GCOV_FORMAT_AUTODETECT) += $(call cc-ifversion, -lt, 0407, \
 -							gcc_3_4.o, gcc_4_7.o)
-+ifeq ($(CONFIG_GCOV_FORMAT_3_4),y)
-+  obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
-+endif
-+ifeq ($(CONFIG_GCOV_FORMAT_4_7),y)
-+  obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
-+endif
-+ifeq ($(CONFIG_GCOV_FORMAT_4_9),y)
-+  obj-$(CONFIG_GCOV_FORMAT_4_9) += gcc_4_9.o
-+endif
++obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
++obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
++obj-$(CONFIG_GCOV_FORMAT_4_9) += gcc_4_9.o

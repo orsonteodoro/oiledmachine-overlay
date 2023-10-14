@@ -53,24 +53,6 @@ License identified in arch/x86/kernel/paravirt.c:
 -	$(call cc-option,-fno-tree-loop-im) \
  	$(call cc-disable-warning,maybe-uninitialized,)
  export CFLAGS_GCOV
-@@ -889,6 +893,17 @@ LDFLAGS_BUILD_ID := $(call ld-option, --
- KBUILD_LDFLAGS_MODULE += $(LDFLAGS_BUILD_ID)
- LDFLAGS_vmlinux += $(LDFLAGS_BUILD_ID)
- 
-+#ifeq ($(GCC_PGO_PHASE),GCC_PGI)
-+#KBUILD_CFLAGS         += -fprofile-generate
-+#KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
-+#KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
-+#endif
-+#ifeq ($(GCC_PGO_PHASE),GCC_PGO)
-+#KBUILD_CFLAGS         += -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
-+#KBUILD_LDFLAGS        += $(GCC_GCOV_DIR)/libgcov.a
-+#KBUILD_LDFLAGS_MODULE += $(GCC_GCOV_DIR)/libgcov.a
-+#endif
-+
- KBUILD_LDFLAGS	+= -z noexecstack
- KBUILD_LDFLAGS	+= $(call ld-option,--no-warn-rwx-segments)
- 
 --- a/kernel/gcov/Makefile.orig	2023-08-27 14:49:51.000000000 -0700
 +++ b/kernel/gcov/Makefile	2023-09-13 15:27:37.344512036 -0700
 @@ -1,4 +1,9 @@
