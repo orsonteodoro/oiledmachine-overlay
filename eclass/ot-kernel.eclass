@@ -2118,10 +2118,36 @@ einfo "Done unpacking."
 	verify_point_release
 }
 
+# @FUNCTION: apply_gcc_full_pgo
+# @DESCRIPTION:
+# Applies a patchset for Full PGO with GCC.
+apply_gcc_full_pgo() {
+	einfo "Applying patchset for Full PGO with GCC"
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
+		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		eapply "${FILESDIR}/gcc-pgo-5.4.258.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
+		eapply "${FILESDIR}/gcc-pgo-4.19.296.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
+		eapply "${FILESDIR}/gcc-pgo-4.14.327.patch"
+	fi
+}
+
 # @FUNCTION: apply_all_patchsets
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
+	if has pgo ${IUSE} ; then
+		if ot-kernel_use pgo && [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
+			apply_gcc_full_pgo
+		fi
+	fi
+
 	if has rt ${IUSE} ; then
 		if ot-kernel_use rt ; then
 			apply_rt
@@ -2520,22 +2546,16 @@ ewarn
 
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.6.patch"
-		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.15.patch"
-		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
-		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
-		eapply "${FILESDIR}/gcc-pgo-5.4.258.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.19.patch"
-		eapply "${FILESDIR}/gcc-pgo-4.19.296.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.14.patch"
-		eapply "${FILESDIR}/gcc-pgo-4.14.327.patch"
 	fi
 
 	local moved=0
