@@ -393,7 +393,7 @@
           The following points have missing implementation for complete GCC PGO
           support:
           * sections 3.2 - value profiling which corresponds to in the
-            kernel kernel/gcov/gcc_base.c and
+            kernel's kernel/gcov/gcc_base.c and
             GCC 4.3.0 (GPL-2+) with __gcov_*_profiler symbols in https://github.com/gcc-mirror/gcc/blob/1a9075e2897aed199f8f52b7a212672d1f86a1b4/gcc/libgcov.c#L791 or specifically
               __gcov_average_profiler 
               __gcov_indirect_call_profiler
