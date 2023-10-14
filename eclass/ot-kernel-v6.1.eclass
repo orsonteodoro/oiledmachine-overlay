@@ -509,9 +509,7 @@ RDEPEND+="
 		)
 	)
 	pgo? (
-		!clang? (
-			>=sys-devel/gcc-kpgo-${GCC_PV}
-		)
+		>=sys-devel/gcc-kpgo-${GCC_PV}
 		clang? (
 			|| (
 				$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
