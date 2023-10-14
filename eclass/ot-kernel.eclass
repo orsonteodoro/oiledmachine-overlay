@@ -8443,17 +8443,17 @@ eerror
 					makefile_pgo_phase="GCC_PDO"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
 					makefile_pgo_phase="GCC_PGO"
-				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
-					makefile_pgo_phase="GCC_PGO_CFG"
 
+					has_version "sys-kernel/kpgo-utils" || die "Package is not installed"
 					cp -a "/usr/$(get_libdir)/kpgo-utils" "${WORKDIR}" || die
 					pushd "${WORKDIR}/kpgo-utils" || die
 einfo "Gathering initial PGO profile"
-						"./gather.sh" profile.tar.gz || die
+						./gather.sh profile.tar.gz || die
 einfo "Generating counter summary and histogram and adding to the PGO profile"
-						"./process.sh" profile.tar.gz || die
+						./process.sh profile.tar.gz || die
 					popd || die
-
+				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
+					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
 einfo "Building ${pgo_phase}"
