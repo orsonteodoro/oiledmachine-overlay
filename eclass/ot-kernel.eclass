@@ -8449,7 +8449,8 @@ eerror
 eerror "The kpgo-utils USE flag must be enabled in order to complete the"
 eerror "PGO profile."
 eerror
-eerror "Alternatively, you may switch to another PGO method or disable PGO."
+eerror "Alternatively, you may switch to another PGO method and start at the"
+eerror "beginning or disable PGO."
 eerror
 					fi
 					cp -a "/usr/$(get_libdir)/kpgo-utils" "${WORKDIR}" || die
