@@ -8440,6 +8440,7 @@ eerror
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
 					makefile_pgo_phase="GCC_PGO"
 
+# FIXME?:  This may trigger a sandbox violation.  This is why we dump the profile in pkg_setup() outside the sandbox.
 					use "kpgo-utils" || die "The kpgo-utils USE flag must be enabled."
 					cp -a "/usr/$(get_libdir)/kpgo-utils" "${WORKDIR}" || die
 					pushd "${WORKDIR}/kpgo-utils" || die
