@@ -298,6 +298,7 @@ LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" orca? ( MIT )"
+LICENSE+=" pgo? ( GPL-2 GPL-2+ )" # GCC_PGO kernel patch only
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" zen-sauce? ( GPL-2 )"
@@ -480,6 +481,9 @@ DEPEND+="
 BDEPEND+="
 	build? (
 		${CDEPEND}
+	)
+	pgo? (
+		sys-kernel/kpgo-utils
 	)
 "
 
@@ -909,6 +913,9 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v6.4-r0-fix-for-6.4.15.patch" # Same hunks
 
+	elif [[ "${path}" =~ "zen-sauce-6.1.0-f22bc56.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.1.0-f22bc56-fix-for-6.1.57.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

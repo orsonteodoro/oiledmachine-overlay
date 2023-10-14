@@ -1,0 +1,21 @@
+--- a/mm/page_alloc.c.orig	2023-10-14 01:28:48.536627565 -0700
++++ b/mm/page_alloc.c	2023-10-14 01:30:33.304629700 -0700
+@@ -3109,7 +3109,8 @@ static int rmqueue_bulk(struct zone *zon
+ 			int migratetype, unsigned int alloc_flags)
+ {
+ 	unsigned long flags;
+-	int i, allocated = 0;
++	const bool can_resched = !preempt_count() && !irqs_disabled();
++	int i, allocated = 0, last_mod = 0;
+ 
+ 	spin_lock_irqsave(&zone->lock, flags);
+ 	for (i = 0; i < count; ++i) {
+@@ -3156,7 +3157,7 @@ static int rmqueue_bulk(struct zone *zon
+ 	 * on i. Do not confuse with 'allocated' which is the number of
+ 	 * pages added to the pcp list.
+ 	 */
+-	__mod_zone_page_state(zone, NR_FREE_PAGES, -(i << order));
++	__mod_zone_page_state(zone, NR_FREE_PAGES, -((i - last_mod) << order));
+ 	spin_unlock_irqrestore(&zone->lock, flags);
+ 	return allocated;
+ }

@@ -36,6 +36,7 @@
 #       https://github.com/ClangBuiltLinux/linux/issues/1405
 # PGO (gcc) support:
 #	https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
+#       http://coolypf.com/kpgo.htm
 # DeepCC:
 #	https://github.com/Soheil-ab/DeepCC.v1.0
 # KCFI:
@@ -2523,30 +2524,20 @@ ewarn
 
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.6.patch"
+		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.15.patch"
+		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
+		eapply "${FILESDIR}/gcc-pgo-5.4.258.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.19.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
-		eapply "${FILESDIR}/gcc-pgo-flags-4.19.patch"
+		eapply "${FILESDIR}/gcc-pgo-4.19.296.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-4.14.patch"
+		eapply "${FILESDIR}/gcc-pgo-4.14.327.patch"
 	fi
-
-if false ; then
-	# Still a long way...
-	if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
-		eapply "A${FILESDIR}/gcc-pgo-profilers-6.1.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
-		eapply "${FILESDIR}/gcc-pgo-profilers-5.4.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
-		eapply "${FILESDIR}/gcc-pgo-profilers-4.19.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
-		eapply "${FILESDIR}/gcc-pgo-profilers-4.14.patch"
-	fi
-fi
 
 	local moved=0
 
@@ -8458,6 +8449,15 @@ eerror
 					makefile_pgo_phase="GCC_PGO"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
 					makefile_pgo_phase="GCC_PGO_CFG"
+
+					cp -a "/usr/$(get_libdir)/kpgo-utils" "${WORKDIR}" || die
+					pushd "${WORKDIR}/kpgo-utils" || die
+einfo "Gathering initial PGO profile"
+						"./gather.sh" profile.tar.gz || die
+einfo "Generating counter summary and histogram and adding to the PGO profile"
+						"./process.sh" profile.tar.gz || die
+					popd || die
+
 				fi
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
 einfo "Building ${pgo_phase}"
@@ -8665,6 +8665,7 @@ ot-kernel_gen_iosched_config() {
 	|| return
 	OT_KERNEL_IOSCHED_CONFIG_INSTALL=1
 	if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] \
+		&& ot-kernel_has_version "sys-apps/openrc" \
 		&& ! ot-kernel_has_version "sys-apps/openrc[bash]" ; then
 eerror
 eerror "Re-emerge sys-apps/openrc[bash]"

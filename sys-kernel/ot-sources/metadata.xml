@@ -368,7 +368,8 @@
     Clang PGO             | Yes (upstream abandoned)     | Maybe if ABI/API changes for newer LLVMs | See also https://github.com/ClangBuiltLinux/linux/issues/1074
                           |                              | or code generation differences between   |
                           |                              | compilers that create bugs               |
-    GCC PGO (CFG + value) | No                           | Yes incomplete with build time failures  | See faq below to help finish.  It will use -fprofile-generate and -fprofile-use.
+    GCC PGO (CFG + value) | No                           | Yes incomplete with build time failures  | It will use -fprofile-generate and -fprofile-use.
+                          |                              |                                          | It also requires utility scripts below in footnotes.
     GCC PGO (CFG only)    | Yes                          | No known problems                        | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
                           |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
                           |                              |                                          | benefit without documented problems.
@@ -378,7 +379,17 @@
       be profiled.  It may profile calls that act like constructors and
       deconstructors, conditional loops.
 
+    * GCC_PGO requires the following from http://coolypf.com and saved to
+      distdir as the following:
 
+      Website file    | Renamed to and copied into /var/cache/distfiles
+      ----------------+------------------------------------------------
+      gather.sh       | gcc-pgo-gather.sh-7be99d3
+      process.sh      | gcc-pgo-process.sh-27755a6
+      rename.sh       | gcc-pgo-rename.sh-cc3d30d
+      calcsum-4.9.cpp | gcc-pgo-calcsum-4.9.cpp-d048bb9
+
+      The 7 digit hash is the 7 digits in sha1sum of that file.
 
     PGO/PDO for kernel mini FAQ
 
@@ -390,32 +401,14 @@
           scenario].  
           See the Yuan-ScienceChina-18 in the document in
           https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
-          The following points have missing implementation for complete GCC PGO
+          The following points still have missing implementation for complete GCC PGO
           support:
           * sections 3.2 - value profiling which corresponds to in the
             kernel's kernel/gcov/gcc_base.c and
-            GCC 4.3.0 (GPL-2+) with __gcov_*_profiler symbols in https://github.com/gcc-mirror/gcc/blob/1a9075e2897aed199f8f52b7a212672d1f86a1b4/gcc/libgcov.c#L791 or specifically
-              __gcov_average_profiler 
-              __gcov_indirect_call_profiler
-              __gcov_interval_profiler
-              __gcov_ior_profiler
-              __gcov_one_value_profiler
-              __gcov_pow2_profiler
             GCC 5.1.0 (GPL-3+) with __gcov_*_profiler symbols in https://github.com/gcc-mirror/gcc/blob/releases/gcc-5.1.0/libgcc/libgcov-profiler.c#L221 or specifically
               __gcov_indirect_call_topn_profiler (GPL-3+)
-              __gcov_time_profiler (GPL-3+)
-            profile merging (GPL-2+) which corresponds to __gcov_merge_* in https://github.com/gcc-mirror/gcc/blob/1a9075e2897aed199f8f52b7a212672d1f86a1b4/gcc/libgcov.c#L610 or specifically
-              __gcov_merge_add
-              __gcov_merge_single
-              __gcov_merge_delta
-              __gcov_merge_ior
-              kernel/gcov/gcc_4_7.c contains the data to gcda format conversion.
-            These have to ported using the kernel API.
-          * section 3.3 bullet point 1 with missing utility program
           * section 3.4 bullet point 2 changes to fix -Os in GCC
           * section 3.6 lists overall requirements
-          Send an issue request if you completed it or send a copy of the patch
-          from the researchers.
     - Q:  Does Clang PGO work?
       A:  No outstanding perceptable differences before and after, but it does do
           all steps without problems.

@@ -157,8 +157,8 @@ PATCH_ZEN_SAUCE_BL=(
 # a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
 
 IUSE+="
-build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss orca
-pds pgo rt symlink tresor tresor_aesni tresor_i686 tresor_prompt
+build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 muqss
+orca pds pgo rt symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 uksm zen-sauce
 "
 REQUIRED_USE+="
@@ -222,6 +222,7 @@ LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" orca? ( MIT )"
 LICENSE+=" pds? ( GPL-3 )" # \
 	# See https://gitlab.com/alfredchen/PDS-mq/-/blob/master/LICENSE
+LICENSE+=" pgo? ( GPL-2 GPL-2+ )" # GCC_PGO kernel patch only
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
@@ -312,6 +313,9 @@ DEPEND+="
 BDEPEND+="
 	build? (
 		${CDEPEND}
+	)
+	pgo? (
+		sys-kernel/kpgo-utils
 	)
 "
 

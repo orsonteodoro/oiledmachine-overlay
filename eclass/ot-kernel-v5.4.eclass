@@ -245,6 +245,7 @@ LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" orca? ( MIT )"
+LICENSE+=" pgo? ( GPL-2 GPL-2+ )" # GCC_PGO kernel patch only
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
@@ -369,6 +370,9 @@ DEPEND+="
 BDEPEND+="
 	build? (
 		${CDEPEND}
+	)
+	pgo? (
+		sys-kernel/kpgo-utils
 	)
 "
 

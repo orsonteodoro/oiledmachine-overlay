@@ -211,9 +211,9 @@ aaf932736a4748b18196ecdf86471bc3c5576d11
 )
 
 IUSE+="
-bbrv2 bbrv3 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi lto orca pgo prjc rt -rust shadowcallstack symlink
-tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
+bbrv2 bbrv3 build c2tcp +cfs clang deepcc disable_debug -exfat
++genpatches -genpatches_1510 kcfi lto orca pgo prjc rt -rust shadowcallstack
+symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
 "
 
@@ -328,6 +328,7 @@ LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" orca? ( MIT )"
+LICENSE+=" pgo? ( GPL-2 GPL-2+ )" # GCC_PGO kernel patch only
 LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" zen-sauce? ( GPL-2 )"
@@ -510,6 +511,9 @@ DEPEND+="
 BDEPEND+="
 	build? (
 		${CDEPEND}
+	)
+	pgo? (
+		sys-kernel/kpgo-utils
 	)
 "
 
