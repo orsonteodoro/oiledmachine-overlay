@@ -261,21 +261,24 @@
     initramfs updates.
 
 
-    The PDO/PGO (Profile Directed Optimization) progression:
+    The PDO/PGO (Profile Directed Optimization / Profile Guided Optimization) progression:
 
     1. start from unknown state
-    2. PDI = Build as instrumented
-    3. PDT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
-    4. PDO = Build as optimized
+    2. PGI = Build as instrumented
+    3. PGT = Train with actual typical use, or simulation script that replays or mimics typical use, or benchmarks
+    4. PGO = Build as optimized
     5. end
-
 
     Notes:
 
-    FORCE_PGO_PHASE may be used to unbreak or disable
-    - PGI, PGT, PGO, PG0 are valid values.  PG0 means to disable/skip PGO.
+      * The FORCE_PGO_PHASE environment variable may be used to unbreak or disable PGO.
+      * PGI, PGT, PGO, PG0 are valid values.  PG0 means to disable/skip PGO.
+      * PDI, PDT, PDO, PD0 are deprecated and will be removed in the next minor version.
 
-    Same variable name but different values for PGO/PDO.
+    See also:
+
+      OT_KERNEL_PGO_FLAVOR
+
 
 
     Using the build USE flag with the pgo USE flag
@@ -1387,9 +1390,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_FPS - Set to the frames per second based on recording standard.
-    It can be a multiple of 30 (corresponding to 300 HZ), or multiple of 25
-    (corresponding to 250 HZ).  This matters because some archs cannot use
+    OT_KERNEL_FPS - Set it to the frames per second based on the recording
+    standard.  It can be a multiple of 30 (corresponding to 300 HZ), or multiple
+    of 25 (corresponding to 250 HZ).  This matters because some archs cannot use
     300 HZ.  This may help reduce the number of frames dropped in older
     processors or designs if set properly.
 
