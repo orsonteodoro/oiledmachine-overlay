@@ -24,6 +24,16 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0"
 S="${WORKDIR}"
 RESTRICT="fetch"
+RDEPEND="
+	app-shells/bash
+	sys-devel/gcc
+"
+DEPEND="
+	${RDEPEND}
+"
+BDEPEND="
+	sys-devel/gcc
+"
 
 pkg_nofetch() {
 	use skip-install && return
