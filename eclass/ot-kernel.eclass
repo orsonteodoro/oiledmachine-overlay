@@ -2524,6 +2524,9 @@ ewarn
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.15.patch"
 		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
+		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-flags-5.4.patch"
 		eapply "${FILESDIR}/gcc-pgo-5.4.258.patch"
@@ -8441,7 +8444,14 @@ eerror
 					makefile_pgo_phase="GCC_PGO"
 
 # FIXME?:  This may trigger a sandbox violation.  This is why we dump the profile in pkg_setup() outside the sandbox.
-					use "kpgo-utils" || die "The kpgo-utils USE flag must be enabled."
+					if ! use "kpgo-utils" ; then
+eerror
+eerror "The kpgo-utils USE flag must be enabled in order to complete the"
+eerror "PGO profile."
+eerror
+eerror "Alternatively, you may switch to another PGO method or disable PGO."
+eerror
+					fi
 					cp -a "/usr/$(get_libdir)/kpgo-utils" "${WORKDIR}" || die
 					pushd "${WORKDIR}/kpgo-utils" || die
 einfo "Gathering initial PGO profile"
