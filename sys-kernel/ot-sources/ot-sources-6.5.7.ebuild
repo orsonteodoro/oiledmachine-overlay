@@ -19,7 +19,8 @@ inherit ot-kernel-v6.5
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.5.7 with builder profile, PDO optimized with manual training
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.5.7 (20231013) with builder profile, GCC_PGO_CFG optimized with manual training
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.5.7 (20231013) with builder profile, GCC_PDO optimized with manual training
 # USE="bbrv3 build cfs disable_debug genpatches ncurses openssl pdo symlink
 # zen-sauce zstd -bbrv2 -bzip2 (-c2tcp) -clang -cve_hotfix (-deepcc) -exfat
 # -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick -intel-microcode
