@@ -177,6 +177,7 @@ pkg_setup() {
 	check-reqs_pkg_setup
 	python_setup
 	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
+	rocm_pkg_setup
 }
 
 src_prepare() {
@@ -247,7 +248,7 @@ src_configure() {
 	fi
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {
