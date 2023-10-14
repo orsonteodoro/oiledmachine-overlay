@@ -15,11 +15,8 @@ HOMEPAGE="
 http://coolypf.com/kpgo.htm
 "
 LICENSE="
-	!skip-install? (
-		all-rights-reserved
-	)
+	all-rights-reserved
 "
-IUSE="skip-install"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 S="${WORKDIR}"
@@ -36,7 +33,6 @@ BDEPEND="
 "
 
 pkg_nofetch() {
-	use skip-install && return
 local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 eerror
 eerror "You must download the following files from http://coolypf.com."
@@ -52,7 +48,6 @@ eerror
 }
 
 src_unpack() {
-	use skip-install && return
 	cat "${DISTDIR}/kpgo-gather.sh-7be99d3" > "${WORKDIR}/gather.sh" || die
 	cat "${DISTDIR}/kpgo-process.sh-27755a6" > "${WORKDIR}/process.sh" || die
 	cat "${DISTDIR}/kpgo-rename.sh-cc3d30d" > "${WORKDIR}/rename.sh" || die
@@ -60,13 +55,11 @@ src_unpack() {
 }
 
 src_compile() {
-	use skip-install && return
 	export CXX="${CXX:-g++}"
 	${CXX} -o calcsum calcsum-4.9.cpp || die
 }
 
 src_install() {
-	use skip-install && return
 	insinto /usr/$(get_libdir)/kpgo-utils
 	exeinto /usr/$(get_libdir)/kpgo-utils
 	doexe gather.sh
