@@ -148,18 +148,6 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				N
 
-    6.4 (Stable)					A
-		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				?
-		    genpatches				A
-		    kernel_compiler_patch		A
-		    Project C				A
-		    TCP BBR v2 [5]			E
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
-		    zen-sauce				N
-
     6.5 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				?
@@ -879,7 +867,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, prjc, prjc-bmq, prjc-pds
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
-      6.4: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.5: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
@@ -3466,10 +3454,6 @@ unset OT_KERNEL_PRIVATE_KEY
     For 6.1, see:
 
       https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
-
-    For 6.4, see:
-
-      https://github.com/torvalds/linux/compare/v6.4...zen-kernel:6.4/zen-sauce
 
     For 6.5, see:
 
