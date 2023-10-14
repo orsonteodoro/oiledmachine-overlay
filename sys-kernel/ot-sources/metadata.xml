@@ -369,7 +369,7 @@
                           |                              | or code generation differences between   |
                           |                              | compilers that create bugs               |
     GCC PGO (CFG + value) | No                           | Yes incomplete with build time failures  | It will use -fprofile-generate and -fprofile-use.
-                          |                              |                                          | It also requires utility scripts below in footnotes.
+                          |                              |                                          | It also requires the sys-kernel/kpgo-utils package.
     GCC PGO (CFG only)    | Yes                          | No known problems                        | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
                           |                              |                                          | may rely on undefined behavior from incomplete profile, but reports claim
                           |                              |                                          | benefit without documented problems.
@@ -378,18 +378,6 @@
     * CFG means Control Flow Graph.  Essentially if/else and function calls will
       be profiled.  It may profile calls that act like constructors and
       deconstructors, conditional loops.
-
-    * GCC_PGO requires the following from http://coolypf.com and saved to
-      distdir as the following:
-
-      Website file    | Renamed to and copied into /var/cache/distfiles
-      ----------------+------------------------------------------------
-      gather.sh       | gcc-pgo-gather.sh-7be99d3
-      process.sh      | gcc-pgo-process.sh-27755a6
-      rename.sh       | gcc-pgo-rename.sh-cc3d30d
-      calcsum-4.9.cpp | gcc-pgo-calcsum-4.9.cpp-d048bb9
-
-      The 7 digit hash is the 7 digits in sha1sum of that file.
 
     PGO/PDO for kernel mini FAQ
 
@@ -3657,6 +3645,9 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="graphicsmagick">
       Adds build time logo conversion support.
+    </flag>
+    <flag name="kpgo-utils">
+      Adds support for Full PGO for GCC compilers.
     </flag>
     <flag name="imagemagick">
       Adds build time logo conversion support.

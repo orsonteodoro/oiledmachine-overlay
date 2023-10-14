@@ -207,8 +207,8 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
 
 IUSE+="
-bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug -exfat
-+genpatches -genpatches_1510 lto multigen_lru orca pgo prjc rock-dkms rt
+bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug -exfat +genpatches
+-genpatches_1510 kpgo-utils lto multigen_lru orca pgo prjc rock-dkms rt
 shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-multigen_lru zen-sauce
@@ -445,6 +445,7 @@ KCP_RDEPEND="
 	)
 "
 
+GCC_PV="5.1"
 KMOD_PV="13"
 CDEPEND+="
 	>=dev-lang/perl-5
@@ -500,32 +501,7 @@ CDEPEND+="
 		>=sys-apps/kmod-${KMOD_PV}[zstd]
 		app-arch/zstd
 	)
-"
 
-RDEPEND+="
-	!build? (
-		${CDEPEND}
-	)
-	linux-firmware? (
-		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
-	)
-"
-
-DEPEND+="
-	${RDEPEND}
-"
-
-BDEPEND+="
-	build? (
-		${CDEPEND}
-	)
-	pgo? (
-		sys-kernel/kpgo-utils
-	)
-"
-
-GCC_PV="5.1"
-RDEPEND+="
 	${KCP_RDEPEND}
 	cfi? (
 		amd64? (
@@ -539,8 +515,18 @@ RDEPEND+="
 			)
 		)
 	)
+	kpgo-utils? (
+		sys-kernel/kpgo-utils
+	)
+	linux-firmware? (
+		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
+	)
 	pgo? (
-		>=sys-devel/gcc-kpgo-${GCC_PV}
+		(
+			>=sys-devel/gcc-kpgo-${GCC_PV}
+			sys-devel/binutils[static-libs]
+			sys-libs/libunwind[static-libs]
+		)
 		clang? (
 			|| (
 				$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
@@ -558,6 +544,22 @@ RDEPEND+="
 				$(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT})
 			)
 		)
+	)
+"
+
+RDEPEND+="
+	!build? (
+		${CDEPEND}
+	)
+"
+
+DEPEND+="
+	${RDEPEND}
+"
+
+BDEPEND+="
+	build? (
+		${CDEPEND}
 	)
 "
 

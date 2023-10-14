@@ -233,7 +233,7 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 muqss orca pgo prjc rock-dkms rt symlink tresor
+-genpatches_1510 kpgo-utils muqss orca pgo prjc rock-dkms rt symlink tresor
 tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
 "
@@ -358,6 +358,7 @@ KCP_RDEPEND="
 	)
 "
 
+GCC_PV="4.9"
 KMOD_PV="13"
 CDEPEND+="
 	>=dev-lang/perl-5
@@ -413,18 +414,24 @@ CDEPEND+="
 		>=sys-apps/kmod-${KMOD_PV}[zstd]
 		app-arch/zstd
 	)
-"
 
-GCC_PV="4.9"
-RDEPEND+="
-	!build? (
-		${CDEPEND}
+	${KCP_RDEPEND}
+	kpgo-utils? (
+		sys-kernel/kpgo-utils
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
 	pgo? (
 		>=sys-devel/gcc-kpgo-${GCC_PV}
+		sys-devel/binutils[static-libs]
+		sys-libs/libunwind[static-libs]
+	)
+"
+
+RDEPEND+="
+	!build? (
+		${CDEPEND}
 	)
 "
 
@@ -436,13 +443,6 @@ BDEPEND+="
 	build? (
 		${CDEPEND}
 	)
-	pgo? (
-		sys-kernel/kpgo-utils
-	)
-"
-
-RDEPEND+="
-	${KCP_RDEPEND}
 "
 
 PDEPEND+="

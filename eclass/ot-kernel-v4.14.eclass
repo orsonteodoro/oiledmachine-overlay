@@ -130,8 +130,8 @@ ${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
 # a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
 
 IUSE+="
-bfq-mq build c2tcp +cfs deepcc disable_debug +genpatches
--genpatches_1510 muqss orca pds pgo rt symlink tresor tresor_aesni tresor_i686
+bfq-mq build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510
+kpgo-utils muqss orca pds pgo rt symlink tresor tresor_aesni tresor_i686
 tresor_prompt tresor_sysfs tresor_x86_64 uksm
 "
 REQUIRED_USE+="
@@ -213,6 +213,7 @@ KCP_RDEPEND="
 	>=sys-devel/gcc-6.5.0
 "
 
+GCC_PV="3.1"
 CDEPEND+="
 	>=dev-lang/perl-5
 	>=sys-apps/util-linux-2.10o
@@ -267,18 +268,24 @@ CDEPEND+="
 		app-arch/zstd
 		sys-apps/kmod[zstd]
 	)
-"
 
-GCC_PV="3.1"
-RDEPEND+="
-	!build? (
-		${CDEPEND}
+	${KCP_RDEPEND}
+	kpgo-utils? (
+		sys-kernel/kpgo-utils
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
 	pgo? (
 		>=sys-devel/gcc-kpgo-${GCC_PV}
+		sys-devel/binutils[static-libs]
+		sys-libs/libunwind[static-libs]
+	)
+"
+
+RDEPEND+="
+	!build? (
+		${CDEPEND}
 	)
 "
 
@@ -290,13 +297,6 @@ BDEPEND+="
 	build? (
 		${CDEPEND}
 	)
-	pgo? (
-		sys-kernel/kpgo-utils
-	)
-"
-
-RDEPEND+="
-	${KCP_RDEPEND}
 "
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then

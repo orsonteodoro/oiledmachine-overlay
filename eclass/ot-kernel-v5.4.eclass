@@ -174,10 +174,10 @@ ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
 
 IUSE+="
-bmq build c2tcp +cfs clang deepcc disable_debug +genpatches
--genpatches_1510 muqss orca pgo rock-dkms rt symlink tresor tresor_aesni
-tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
+bmq build c2tcp +cfs clang deepcc disable_debug +genpatches -genpatches_1510
+kpgo-utils muqss orca pgo rock-dkms rt symlink tresor tresor_aesni tresor_i686
+tresor_prompt tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
+zen-muqss zen-sauce
 "
 
 REQUIRED_USE+="
@@ -292,6 +292,7 @@ KCP_RDEPEND="
 	)
 "
 
+GCC_PV="4.6"
 KMOD_PV="13"
 CDEPEND+="
 	>=dev-lang/perl-5
@@ -347,19 +348,24 @@ CDEPEND+="
 		>=sys-apps/kmod-${KMOD_PV}[zstd]
 		app-arch/zstd
 	)
-"
 
-GCC_PV="4.6"
-RDEPEND+="
 	${KCP_RDEPEND}
-	!build? (
-		${CDEPEND}
+	kpgo-utils? (
+		sys-kernel/kpgo-utils
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
 	pgo? (
 		>=sys-devel/gcc-kpgo-${GCC_PV}
+		sys-devel/binutils[static-libs]
+		sys-libs/libunwind[static-libs]
+	)
+"
+
+RDEPEND+="
+	!build? (
+		${CDEPEND}
 	)
 "
 
@@ -370,9 +376,6 @@ DEPEND+="
 BDEPEND+="
 	build? (
 		${CDEPEND}
-	)
-	pgo? (
-		sys-kernel/kpgo-utils
 	)
 "
 

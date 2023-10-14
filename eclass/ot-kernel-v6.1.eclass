@@ -186,9 +186,9 @@ RUST_PV="1.62.0"
 
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi lto orca pgo prjc rock-dkms rt -rust shadowcallstack
-symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
-tresor_x86_64-256-bit-key-support zen-sauce
+-genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rock-dkms rt -rust
+shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
+tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support zen-sauce
 "
 
 # Not ready yet
@@ -404,6 +404,8 @@ KCP_RDEPEND="
 	)
 "
 
+# KCFI requires https://reviews.llvm.org/D119296 patch
+GCC_PV="5.1"
 KMOD_PV="13"
 CDEPEND+="
 	>=app-shells/bash-4.2
@@ -463,34 +465,14 @@ CDEPEND+="
 		>=sys-apps/kmod-${KMOD_PV}[zstd]
 		app-arch/zstd
 	)
-"
 
-RDEPEND+="
-	!build? (
-		${CDEPEND}
+	${KCP_RDEPEND}
+	kpgo-utils? (
+		sys-kernel/kpgo-utils
 	)
 	linux-firmware? (
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
-"
-
-DEPEND+="
-	${RDEPEND}
-"
-
-BDEPEND+="
-	build? (
-		${CDEPEND}
-	)
-	pgo? (
-		sys-kernel/kpgo-utils
-	)
-"
-
-# KCFI requires https://reviews.llvm.org/D119296 patch
-GCC_PV="5.1"
-RDEPEND+="
-	${KCP_RDEPEND}
 	lto? (
 		|| (
 			$(gen_lto_rdepend 11 ${LLVM_MAX_SLOT})
@@ -509,7 +491,11 @@ RDEPEND+="
 		)
 	)
 	pgo? (
-		>=sys-devel/gcc-kpgo-${GCC_PV}
+		(
+			>=sys-devel/gcc-kpgo-${GCC_PV}
+			sys-devel/binutils[static-libs]
+			sys-libs/libunwind[static-libs]
+		)
 		clang? (
 			|| (
 				$(gen_clang_pgo_rdepend 13 ${LLVM_MAX_SLOT})
@@ -527,6 +513,22 @@ RDEPEND+="
 				$(gen_shadowcallstack_rdepend 10 ${LLVM_MAX_SLOT})
 			)
 		)
+	)
+"
+
+RDEPEND+="
+	!build? (
+		${CDEPEND}
+	)
+"
+
+DEPEND+="
+	${RDEPEND}
+"
+
+BDEPEND+="
+	build? (
+		${CDEPEND}
 	)
 "
 
