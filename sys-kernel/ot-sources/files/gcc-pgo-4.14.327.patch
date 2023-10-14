@@ -10,19 +10,13 @@
 # License identified in kernel/gcov/Makefile:
 # SPDX-License-Identifier: GPL-2.0
 
-diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/base.c b/kernel/gcov/base.c
---- a/kernel/gcov.orig/base.c	2017-11-12 10:46:13.000000000 -0800
-+++ b/kernel/gcov/base.c	2023-10-14 02:41:30.292716489 -0700
-@@ -105,6 +105,97 @@ void __gcov_exit(void)
+diff -x '*.rej' -x '*.orig' -urpN linux-4.14.327-builder.orig/kernel/gcov/base.c linux-4.14.327-builder/kernel/gcov/base.c
+--- linux-4.14.327-builder.orig/kernel/gcov/base.c	2017-11-12 10:46:13.000000000 -0800
++++ linux-4.14.327-builder/kernel/gcov/base.c	2023-10-14 16:20:05.049717812 -0700
+@@ -105,6 +105,91 @@ void __gcov_exit(void)
  }
  EXPORT_SYMBOL(__gcov_exit);
  
-+void __gcov_merge_time_profile(gcov_type *counters, unsigned int n_counters)
-+{
-+	/* Unused. */
-+}
-+EXPORT_SYMBOL(__gcov_merge_time_profile);
-+
 +static inline void __gcov_one_value_profiler_body(gcov_type *counters,
 +						  gcov_type value)
 +{
@@ -111,9 +105,9 @@ diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/base.c b/kernel/gcov/base.c
  /**
   * gcov_enable_events - enable event reporting through gcov_event()
   *
-diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/gcc_4_7.c b/kernel/gcov/gcc_4_7.c
---- a/kernel/gcov.orig/gcc_4_7.c	2023-10-14 02:40:13.000714914 -0700
-+++ b/kernel/gcov/gcc_4_7.c	2023-10-14 02:41:30.292716489 -0700
+diff -x '*.rej' -x '*.orig' -urpN linux-4.14.327-builder.orig/kernel/gcov/gcc_4_7.c linux-4.14.327-builder/kernel/gcov/gcc_4_7.c
+--- linux-4.14.327-builder.orig/kernel/gcov/gcc_4_7.c	2023-10-14 16:14:56.637711524 -0700
++++ linux-4.14.327-builder/kernel/gcov/gcc_4_7.c	2023-10-14 16:18:40.873716096 -0700
 @@ -227,6 +227,85 @@ int gcov_info_is_compatible(struct gcov_
  	return (info1->stamp == info2->stamp);
  }
@@ -228,9 +222,9 @@ diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/gcc_4_7.c b/kernel/gcov/gcc
  				goto err_free;
  
  			dci_ptr->num = sci_ptr->num;
-diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/gcc_4_9.c b/kernel/gcov/gcc_4_9.c
---- a/kernel/gcov.orig/gcc_4_9.c	1969-12-31 16:00:00.000000000 -0800
-+++ b/kernel/gcov/gcc_4_9.c	2023-10-14 02:41:30.292716489 -0700
+diff -x '*.rej' -x '*.orig' -urpN linux-4.14.327-builder.orig/kernel/gcov/gcc_4_9.c linux-4.14.327-builder/kernel/gcov/gcc_4_9.c
+--- linux-4.14.327-builder.orig/kernel/gcov/gcc_4_9.c	1969-12-31 16:00:00.000000000 -0800
++++ linux-4.14.327-builder/kernel/gcov/gcc_4_9.c	2023-10-14 16:18:40.873716096 -0700
 @@ -0,0 +1,647 @@
 +/*
 + *  This code provides functions to handle gcc's profiling data format
@@ -879,9 +873,9 @@ diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/gcc_4_9.c b/kernel/gcov/gcc
 +
 +	return 0;
 +}
-diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/Kconfig b/kernel/gcov/Kconfig
---- a/kernel/gcov.orig/Kconfig	2017-11-12 10:46:13.000000000 -0800
-+++ b/kernel/gcov/Kconfig	2023-10-14 02:45:36.820721516 -0700
+diff -x '*.rej' -x '*.orig' -urpN linux-4.14.327-builder.orig/kernel/gcov/Kconfig linux-4.14.327-builder/kernel/gcov/Kconfig
+--- linux-4.14.327-builder.orig/kernel/gcov/Kconfig	2017-11-12 10:46:13.000000000 -0800
++++ linux-4.14.327-builder/kernel/gcov/Kconfig	2023-10-14 16:18:40.873716096 -0700
 @@ -53,21 +53,13 @@ config GCOV_PROFILE_ALL
  choice
  	prompt "Specify GCOV format"
@@ -917,17 +911,13 @@ diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/Kconfig b/kernel/gcov/Kconf
  endchoice
  
  endmenu
-diff -x '*.rej' -x '*.orig' -Nurp a/kernel/gcov.orig/Makefile b/kernel/gcov/Makefile
---- a/kernel/gcov.orig/Makefile	2023-10-14 02:40:31.136715283 -0700
-+++ b/kernel/gcov/Makefile	2023-10-14 02:45:24.180721258 -0700
-@@ -7,7 +7,6 @@ endif
- ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
- 
+diff -x '*.rej' -x '*.orig' -urpN linux-4.14.327-builder.orig/kernel/gcov/Makefile linux-4.14.327-builder/kernel/gcov/Makefile
+--- linux-4.14.327-builder.orig/kernel/gcov/Makefile	2023-10-14 16:15:23.637712075 -0700
++++ linux-4.14.327-builder/kernel/gcov/Makefile	2023-10-14 16:18:40.873716096 -0700
+@@ -9,5 +9,4 @@ ccflags-y := -DSRCTREE='"$(srctree)"' -D
  obj-y := base.o fs.o
--obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
--obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
+ obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
+ obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
 -obj-$(CONFIG_GCOV_FORMAT_AUTODETECT) += $(call cc-ifversion, -lt, 0407, \
 -							gcc_3_4.o, gcc_4_7.o)
-+obj-$(CONFIG_GCOV_FORMAT_3_4) += gcc_3_4.o
-+obj-$(CONFIG_GCOV_FORMAT_4_7) += gcc_4_7.o
 +obj-$(CONFIG_GCOV_FORMAT_4_9) += gcc_4_9.o
