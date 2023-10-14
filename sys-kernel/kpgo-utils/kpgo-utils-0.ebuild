@@ -2,11 +2,16 @@
 
 EAPI=8
 
+GATHER_SH_SHA1="7be99d3880b2e904756b3b4036ca0915acf2e12c"
+KPGO_CALCSUM_4_9_SHA1="d048bb9e74c84b86478ac5d790a123c235223e27"
+PROCESS_SH_SHA1="27755a66194d32ce419fd44bf03a1638d9341928"
+RENAME_SH_SHA1="cc3d30d9cc47bc2a0b96ff142260d44b131e3dee"
+
 SRC_URI="
-	kpgo-gather.sh-7be99d3
-	kpgo-process.sh-27755a6
-	kpgo-rename.sh-cc3d30d
-	kpgo-calcsum-4.9.cpp-d048bb9
+	kpgo-calcsum-4.9.cpp-${KPGO_CALCSUM_4_9_SHA1:0:7}
+	kpgo-gather.sh-${GATHER_SH_SHA1:0:7}
+	kpgo-process.sh-${PROCESS_SH_SHA1:0:7}
+	kpgo-rename.sh-${RENAME_SH_SHA1:0:7}
 "
 # The hashes are first 7 digit sha1sum of that file.
 
@@ -38,20 +43,20 @@ eerror
 eerror "You must download the following files from http://coolypf.com."
 eerror "After downloading them, rename them, save them in ${EDISTDIR}."
 eerror
-eerror "gather.sh       -> kpgo-gather.sh-7be99d3"
-eerror "process.sh      -> kpgo-process.sh-27755a6"
-eerror "rename.sh       -> kpgo-rename.sh-cc3d30d"
-eerror "calcsum-4.9.cpp -> kpgo-calcsum-4.9.cpp-d048bb9"
+eerror "calcsum-4.9.cpp -> kpgo-calcsum-4.9.cpp-${KPGO_CALCSUM_4_9_SHA1:0:7}"
+eerror "gather.sh       -> kpgo-gather.sh-${GATHER_SH_SHA1:0:7}"
+eerror "process.sh      -> kpgo-process.sh-${PROCESS_SH_SHA1:0:7}"
+eerror "rename.sh       -> kpgo-rename.sh-${RENAME_SH_SHA1:0:7}"
 eerror
 eerror "The 7 digit code is the sha1sum of that file."
 eerror
 }
 
 src_unpack() {
-	cat "${DISTDIR}/kpgo-gather.sh-7be99d3" > "${WORKDIR}/gather.sh" || die
-	cat "${DISTDIR}/kpgo-process.sh-27755a6" > "${WORKDIR}/process.sh" || die
-	cat "${DISTDIR}/kpgo-rename.sh-cc3d30d" > "${WORKDIR}/rename.sh" || die
-	cat "${DISTDIR}/kpgo-calcsum-4.9.cpp-d048bb9" > "${WORKDIR}/calcsum-4.9.cpp" || die
+	cat "${DISTDIR}/kpgo-calcsum-4.9.cpp-${KPGO_CALCSUM_4_9_SHA1:0:7}" > "${WORKDIR}/calcsum-4.9.cpp" || die
+	cat "${DISTDIR}/kpgo-gather.sh-${GATHER_SH_SHA1:0:7}" > "${WORKDIR}/gather.sh" || die
+	cat "${DISTDIR}/kpgo-process.sh-${PROCESS_SH_SHA1:0:7}" > "${WORKDIR}/process.sh" || die
+	cat "${DISTDIR}/kpgo-rename.sh-${RENAME_SH_SHA1:0:7}" > "${WORKDIR}/rename.sh" || die
 }
 
 src_compile() {
