@@ -8307,8 +8307,6 @@ ot-kernel_build_kernel() {
 			[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
 			[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
 
-einfo "pgo_phase (1):  ${pgo_phase}"
-
 			if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Building PGI"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_dpath}" ]] ; then
@@ -8381,8 +8379,6 @@ eerror "GCC_PGO_CFG for GCC PGO support."
 eerror
 				die
 			fi
-
-einfo "pgo_phase (2):  ${pgo_phase}"
 
 			if tc-is-cross-compiler ; then
 # libbfd.a is always native ${CHOST}.
