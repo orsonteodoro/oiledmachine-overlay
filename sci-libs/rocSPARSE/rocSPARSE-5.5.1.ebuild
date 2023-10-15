@@ -91,7 +91,7 @@ DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-IUSE="benchmark system-llvm test r2"
+IUSE="benchmark system-llvm test r3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
