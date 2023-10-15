@@ -376,15 +376,18 @@
           multiple step workflow, but it may likely miss the benefits or the
           expected optimizations that are missing in authentic Full PGO.
 
-          For Full PGO, it breaks during the building of the PGO image.
-          It requires additional patches for both GCC and the kernel.  The
-          source code for these modifications [which I could not find] needs to
-          be provided by the researchers or rewritten from scratch [the likely
-          scenario].  
-          See the Yuan-ScienceChina-18 in the document in
-          https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
-          The following points still have missing implementation for complete GCC PGO
-          support:
+          For Full PGO, it breaks during the building of the PGO image.  The
+          patch can be found at http://coolypf.com/kpgo.htm.  Most of the heavy
+          lifting I would guess is already been done by that patch but it really
+          needs a update for the newer GCCs and it is behind like 8 major
+          versions from 4.9.  The only remaining item left is the missing -Os
+          changes mentioned in the Yuan-ScienceChina-18 in the document which
+          can be found at
+
+            https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
+
+          The following points still have missing implementation for complete
+          support for Full PGO with GCC:
           * sections 3.2 - value profiling which corresponds to in the
             kernel's kernel/gcov/gcc_base.c and
             __gcov_*_profiler symbols in libgcov-profiler.c or specifically
@@ -395,10 +398,11 @@
               __gcov_time_profiler_counter (GCC 7.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
           * section 3.4 bullet point 2 changes to fix -Os in GCC
           * section 3.6 lists overall requirements
-          * On hold indefinitely until license incompatibilities are resolved or
-            workarounds provided to avoid incompatible symbols.  It may require
-            edits to the sys-devel/gcc-kpgo ebuild to avoid/disable these symbols
-            and to use the older license compatibile PGO profile format.
+          * The patch is on hold indefinitely until license incompatibilities
+            are resolved or workarounds provided to avoid license incompatible
+            symbols.  It may require edits to the sys-devel/gcc-kpgo ebuild to
+            avoid/disable these symbols and to use the older license compatible
+            PGO profile format.
     - Q:  Does Clang PGO work?
       A:  No outstanding perceptable differences before and after, but it does do
           all steps without problems.
