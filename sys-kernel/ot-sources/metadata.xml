@@ -386,11 +386,14 @@
               __gcov_indirect_call (GCC 9.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
               __gcov_indirect_call_profiler_v4 (GCC 10.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
               __gcov_indirect_call_topn_profiler (GCC 5.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
+              __gcov_time_profiler (GCC 4.9.0, GPL-3+ gcc-runtime-library-exception-3.1)
               __gcov_time_profiler_counter (GCC 7.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
           * section 3.4 bullet point 2 changes to fix -Os in GCC
           * section 3.6 lists overall requirements
           * On hold indefinately until license incompatiblities resolved or
-            workarounds provided to avoid incompatible symbols.
+            workarounds provided to avoid incompatible symbols.  It may require
+            edits to the sys-devel/gcc-kpgo ebuild to avoid/disable these symbols
+            and to use the older license compatibile PGO profile format.
     - Q:  Does Clang PGO work?
       A:  No outstanding perceptable differences before and after, but it does do
           all steps without problems.
