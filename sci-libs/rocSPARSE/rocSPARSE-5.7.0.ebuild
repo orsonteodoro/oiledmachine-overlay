@@ -24,6 +24,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+CMAKE_MAKEFILE_GENERATOR="emake"
 PYTHON_COMPAT=( python3_{9..11} )
 LLVM_MAX_SLOT=17 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -150,6 +151,34 @@ pkg_setup() {
 	rocm_pkg_setup
 }
 
+add_gfortran_wrapper() {
+	mkdir -p "${WORKDIR}/bin" || die
+	touch "${WORKDIR}/bin/${CHOST}-gfortran" || die
+	local gcc_major_version=$(gcc-major-version)
+cat <<EOF > "${WORKDIR}/bin/${CHOST}-gfortran" || die
+#!/bin/bash
+args="\$@"
+args=\$(echo "\${args}" \
+	| tr " " "\n" \
+	| sed \
+		-E \
+		-e "/-O(1|2|3|4|Ofast|s)/d" \
+		-e "/-pipe/d" \
+		-e "/--rocm-path/d" \
+		-e "/--rocm-device-lib-path=/d")
+"/usr/${CHOST}/gcc-bin/${gcc_major_version}/${CHOST}-gfortran" \${args}
+EOF
+	chmod +x "${WORKDIR}/bin/${CHOST}-gfortran" || die
+	ln -s \
+		"${WORKDIR}/bin/${CHOST}-gfortran" \
+		"${WORKDIR}/bin/gfortran" \
+		|| die
+	ln -s \
+		"${WORKDIR}/bin/${CHOST}-gfortran" \
+		"${WORKDIR}/bin/gfortran-${gcc_major_version}" \
+		|| die
+}
+
 src_prepare() {
 	# Removing the GIT dependency.
 	sed \
@@ -190,6 +219,7 @@ src_prepare() {
 		done
 	fi
 	rocm_src_prepare
+	add_gfortran_wrapper
 }
 
 src_configure() {
@@ -216,6 +246,8 @@ src_configure() {
 	)
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
+	export FC="${WORKDIR}/bin/gfortran"
+	export PATH="${WORKDIR}/bin:${PATH}"
 	rocm_src_configure
 }
 
