@@ -374,7 +374,7 @@
       A:  Yes and no, but not for the commonly used Full PGO.  Some people
           consider PDO and CFG only PGO as PGO because it uses a profile and
           multiple step workflow, but it may likely miss the benefits or the
-          expected optimizations that are missing in authenticallly Full PGO.
+          expected optimizations that are missing in authentic Full PGO.
 
           For Full PGO, it breaks during the building of the PGO image.
           It requires additional patches for both GCC and the kernel.  The
