@@ -358,6 +358,7 @@
                           |                              | compilers that create bugs               |                       |
     GCC PGO (CFG + value) | No                           | Yes incomplete with build time failures  | ~10%                  | It will use -fprofile-generate and -fprofile-use.
                           |                              |                                          |                       | It also requires the sys-kernel/kpgo-utils package.
+                          |                              |                                          |                       |
     GCC PGO (CFG only)    | Yes                          | No known problems                        | ~5%                   | -fprofile-arcs and -fprofile-use only.  Use PDO instead since -fprofile-use
                           |                              |                                          |                       | may rely on undefined behavior from incomplete profile, but reports claim
                           |                              |                                          |                       | benefit without documented problems.
@@ -381,8 +382,11 @@
           support:
           * sections 3.2 - value profiling which corresponds to in the
             kernel's kernel/gcov/gcc_base.c and
-            GCC 5.1.0 (GPL-3+) with __gcov_*_profiler symbols in https://github.com/gcc-mirror/gcc/blob/releases/gcc-5.1.0/libgcc/libgcov-profiler.c#L221 or specifically
-              __gcov_indirect_call_topn_profiler (GPL-3+)
+            __gcov_*_profiler symbols in libgcov-profiler.c or specifically
+              __gcov_indirect_call (GCC 9.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
+              __gcov_indirect_call_profiler_v4 (GCC 10.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
+              __gcov_indirect_call_topn_profiler (GCC 5.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
+              __gcov_time_profiler_counter (GCC 7.1.0, GPL-3+, gcc-runtime-library-exception-3.1)
           * section 3.4 bullet point 2 changes to fix -Os in GCC
           * section 3.6 lists overall requirements
     - Q:  Does Clang PGO work?
