@@ -77,7 +77,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 +runtime
-r7
+r9
 "
 RDEPEND="
 	!sys-devel/llvm-rocm:0
@@ -142,7 +142,8 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
-	replace-flags '-O0' '-O1'
+	replace-flags '-O0' '-O2'
+	replace-flags '-O1' '-O2'
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
