@@ -381,7 +381,7 @@
           lifting I would guess is already been done by that patch but it really
           needs a update for the newer GCCs and it is behind like 8 major
           versions from 4.9.  The only remaining item left is the missing -Os
-          changes mentioned in the Yuan-ScienceChina-18 in the document which
+          changes mentioned in the Yuan-ScienceChina-18 document which
           can be found at
 
             https://wiki.gentoo.org/wiki/Kernel/Optimization#GCC_PGO
