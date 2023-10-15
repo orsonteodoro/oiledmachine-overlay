@@ -371,11 +371,10 @@
     PGO/PDO for kernel mini FAQ
 
     - Q:  Does GCC PGO work now for the kernel?
-      A:  Yes and no, but not for the commonly used Full PGO.  Some people
-          consider PDO and CFG only PGO as PGO because it uses a profile and
-          multiple step workflow, but it may likely miss the benefits or the
-          expected optimizations that are missing in authentic and widely
-          used Full PGO.
+      A:  Yes and no, but not for Full PGO.  Some people consider PDO and CFG
+          only PGO as PGO because it uses a profile and multiple step workflow,
+          but it may likely miss the benefits or the expected optimizations that
+          are missing in authentic and widely used Full PGO.
 
           For Full PGO, it breaks during the building of the PGO image.  The
           patch can be found at http://coolypf.com/kpgo.htm.  Most of the heavy
