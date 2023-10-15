@@ -21,6 +21,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 PYTHON_COMPAT=( python3_{10..11} )
 DISTUTILS_USE_PEP517="setuptools"
+GCC_SLOT=11
 LLVM_MAX_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
@@ -57,6 +58,7 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	client? (
 		dev-libs/boost
+		sys-devel/gcc:${GCC_SLOT}
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	)
 	openmp? (
@@ -143,6 +145,23 @@ src_configure() {
 	distutils-r1_src_configure
 
 	if use client; then
+		local gcc_current_profile=$(gcc-config -c)
+		local gcc_current_profile_slot=${gcc_current_profile##*-}
+
+		if ver_test "${GCC_SLOT}" -ne "${gcc_current_profile_slot}" ; then
+# Fixes:
+#shared_ptr_base.h:196:22: error: use of undeclared identifier 'noinline'; did you mean 'inline'?
+#      __attribute__((__noinline__))
+#                     ^
+eerror
+eerror "You must switch to == GCC ${GCC_SLOT}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
+eerror "  source /etc/profile"
+eerror
+			die
+		fi
+
 		export HIP_PLATFORM="amd"
 		local mycmakeargs=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
