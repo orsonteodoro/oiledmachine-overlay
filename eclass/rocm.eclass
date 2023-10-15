@@ -747,6 +747,9 @@ rocm_fix_rpath() {
 	local clang_libs=(
 		"libclangBasic.so"
 	)
+	local libomp_libs=(
+		"libomp.so"
+	)
 	local l
 	local path
 	for path in $(find "${ED}" -type f) ; do
@@ -758,16 +761,17 @@ rocm_fix_rpath() {
 			is_exe=1
 		fi
 
-		local needs_rpath_patch=0
 		local needs_rpath_patch_clang=0
+		local needs_rpath_patch_libomp=0
 		local needs_rpath_patch_llvm=0
+		local needs_rpath_patch_rocm=0
 		if (( ${is_so} || ${is_exe} )) ; then
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
 						:;
 					else
-						needs_rpath_patch=1
+						needs_rpath_patch_rocm=1
 					fi
 				fi
 			done
@@ -789,6 +793,16 @@ rocm_fix_rpath() {
 							:;
 						else
 							needs_rpath_patch_clang=1
+						fi
+					fi
+				done
+
+				for l in "${libomp_libs[@]}" ; do
+					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+							:;
+						else
+							needs_rpath_patch_libomp=1
 						fi
 					fi
 				done
@@ -814,10 +828,20 @@ rocm_fix_rpath() {
 						fi
 					fi
 				done
+
+				for l in "${libomp_libs[@]}" ; do
+					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
+							:;
+						else
+							needs_rpath_patch_libomp=1
+						fi
+					fi
+				done
 			fi
 		fi
 
-		if (( ${needs_rpath_patch} )) ; then
+		if (( ${needs_rpath_patch_rocm} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
 				--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
@@ -834,6 +858,14 @@ einfo "Fixing rpath for ${path}"
 		fi
 
 		if (( ${needs_rpath_patch_llvm} )) ; then
+einfo "Fixing rpath for ${path}"
+			patchelf \
+				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(get_libdir)" \
+				"${path}" \
+				|| die
+		fi
+
+		if (( ${needs_rpath_patch_libomp} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
 				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(get_libdir)" \
@@ -884,6 +916,9 @@ rocm_verify_rpath_correctness() {
 	local clang_libs=(
 		"libclangBasic.so"
 	)
+	local libomp_libs=(
+		"libomp.so"
+	)
 	local l
 	local path
 	for path in $(find "${source}" -type f) ; do
@@ -895,16 +930,22 @@ rocm_verify_rpath_correctness() {
 			is_exe=1
 		fi
 
-		local needs_rpath_patch=0
+		local reason_clang=""
+		local reason_libomp=""
+		local reason_llvm=""
+		local reason_rocm=""
 		local needs_rpath_patch_clang=0
+		local needs_rpath_patch_libomp=0
 		local needs_rpath_patch_llvm=0
+		local needs_rpath_patch_rocm=0
 		if (( ${is_so} || ${is_exe} )) ; then
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
 						:;
 					else
-						needs_rpath_patch=1
+						reason_rocm="${l}"
+						needs_rpath_patch_rocm=1
 					fi
 				fi
 			done
@@ -915,6 +956,7 @@ rocm_verify_rpath_correctness() {
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
 							:;
 						else
+							reason_llvm="${l}"
 							needs_rpath_patch_llvm=1
 						fi
 					fi
@@ -925,7 +967,19 @@ rocm_verify_rpath_correctness() {
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
 							:;
 						else
+							reason_clang="${l}"
 							needs_rpath_patch_clang=1
+						fi
+					fi
+				done
+
+				for l in "${libomp_libs[@]}" ; do
+					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
+							:;
+						else
+							reason_libomp="${l}"
+							needs_rpath_patch_libomp=1
 						fi
 					fi
 				done
@@ -937,6 +991,7 @@ rocm_verify_rpath_correctness() {
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
 							:;
 						else
+							reason_llvm="${l}"
 							needs_rpath_patch_llvm=1
 						fi
 					fi
@@ -947,7 +1002,19 @@ rocm_verify_rpath_correctness() {
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
 							:;
 						else
+							reason_clang="${l}"
 							needs_rpath_patch_clang=1
+						fi
+					fi
+				done
+
+				for l in "${libomp_libs[@]}" ; do
+					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "lib/llvm" ; then
+							:;
+						else
+							reason_libomp="${l}"
+							needs_rpath_patch_libomp=1
 						fi
 					fi
 				done
@@ -955,13 +1022,13 @@ rocm_verify_rpath_correctness() {
 
 		fi
 
-		if (( ${needs_rpath_patch} )) ; then
+		if (( ${needs_rpath_patch_rocm} )) ; then
 			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
-				die "Q/A:  Missing rpath for ${path}"
+				die "Q/A:  Missing rpath for ${path} (rocm)"
 			else
 				# Use 0 or unset in pkg_postinst
-				ewarn "Q/A:  Missing rpath for ${path}"
+				ewarn "Q/A:  Missing rpath for ${path} (rocm)"
 			fi
 		fi
 
@@ -985,6 +1052,16 @@ rocm_verify_rpath_correctness() {
 			fi
 		fi
 
+		if (( ${needs_rpath_patch_libomp} )) ; then
+			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} (libomp)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} (libomp)"
+			fi
+		fi
+
 		if (( ${is_so} || ${is_exe} )) && ldd "${path}" 2>/dev/null | grep -q "not found" ; then
 			if [[ "${EROCM_RPATH_SCAN_FATAL}" == "1" ]] ; then
 				# Use 1 in src_install
@@ -996,6 +1073,35 @@ rocm_verify_rpath_correctness() {
 		fi
 	done
 	IFS=$' \t\n'
+}
+
+# @FUNCTION: rocm_get_libomp_path
+# @DESCRIPTION:
+# Gets the abspath to libomp.so*.
+rocm_get_libomp_path() {
+	[[ "${IUSE}" =~ "system-llvm" ]] || die "QA:  Add system-llvm to IUSE."
+	local libomp_path
+	if use system-llvm ; then
+		# Stable API, slotted
+		libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+	else
+		# The suffix allows us to resolve the ambiguousness.
+		if [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}roc" ]] ; then
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}roc"
+		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}git" ]] ; then
+			# May require RPATH
+			# Unstable API, slotted
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}git"
+		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}" ]] ; then
+			# Requires RPATH
+			# Stable API, slotted
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+		else
+			# Requires RPATH
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
+		fi
+	fi
+	echo "${libomp_path}"
 }
 
 EXPORT_FUNCTIONS pkg_setup src_prepare

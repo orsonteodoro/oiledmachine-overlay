@@ -78,7 +78,7 @@ src_configure() {
 		-DHIP_RUNTIME="rocclr"
 		-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 		-DOpenMP_CXX_LIB_NAMES="libomp"
-		-DOpenMP_libomp_LIBRARY="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+		-DOpenMP_libomp_LIBRARY="$(rocm_get_libomp_path)"
 		-DROCWMMA_BUILD_TESTS=OFF
 	)
 
@@ -90,6 +90,7 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
