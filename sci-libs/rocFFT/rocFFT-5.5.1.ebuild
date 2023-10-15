@@ -51,7 +51,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+aot benchmark cuda perfscripts +rocm system-llvm test
++aot benchmark cuda perfscripts +rocm system-llvm test r1
 "
 gen_cuda_required_use() {
 	local x
@@ -281,6 +281,7 @@ src_install() {
 		doins *.asy suites.py
 	fi
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
