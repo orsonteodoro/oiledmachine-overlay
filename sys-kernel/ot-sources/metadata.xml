@@ -390,7 +390,7 @@
           * section 3.4 bullet point 2 changes to fix -Os in GCC
           * section 3.6 lists overall requirements
           * On hold indefinately until license incompatiblities resolved or
-            workarounds.
+            workarounds provided to avoid incompatible symbols.
     - Q:  Does Clang PGO work?
       A:  No outstanding perceptable differences before and after, but it does do
           all steps without problems.
