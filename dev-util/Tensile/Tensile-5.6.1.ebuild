@@ -38,7 +38,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp system-llvm r7"
+IUSE="client openmp system-llvm r8"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -210,6 +210,7 @@ src_install() {
 		|| die
 	rm -rf "${ED}/usr/bin" || die
 	use client || ewarn "The symlinks require the client USE flag."
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-without-problems

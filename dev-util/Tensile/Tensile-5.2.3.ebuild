@@ -37,7 +37,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp system-llvm r7"
+IUSE="client openmp system-llvm r8"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -159,6 +159,9 @@ eerror
 eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
 eerror "  source /etc/profile"
 eerror
+eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+eerror "to the default immediately after this package has been merged."
+eerror
 			die
 		fi
 
@@ -232,6 +235,10 @@ src_install() {
 		|| die
 	rm -rf "${ED}/usr/bin" || die
 	use client || ewarn "The symlinks require the client USE flag."
+	rocm_fix_rpath
+ewarn
+ewarn "You must restore back the default gcc via eselect."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
