@@ -34,7 +34,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp system-llvm r6"
+IUSE="client openmp system-llvm r7"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -170,17 +170,17 @@ python_install() {
 	python_domodule "Components"
 	python_newexe "Utilities/merge.py" "${PN}-merge"
 
-	dodir "${EROCM_PATH}/usr/lib/python-exec/${EPYTHON}"
+	dodir "${EROCM_PATH}/lib/python-exec/${EPYTHON}"
 	cp -aT \
 		"${ED}/usr/lib/python-exec/${EPYTHON}" \
-		"${ED}${EROCM_PATH}/usr/lib/python-exec/${EPYTHON}" \
+		"${ED}${EROCM_PATH}/lib/python-exec/${EPYTHON}" \
 		|| die
 	rm -rf "${ED}/usr/lib/python-exec/${EPYTHON}" || die
 
-	dodir "${EROCM_PATH}/usr/lib/${EPYTHON}/site-packages"
+	dodir "${EROCM_PATH}/lib/${EPYTHON}/site-packages"
 	cp -aT \
 		"${ED}/usr/lib/${EPYTHON}/site-packages" \
-		"${ED}${EROCM_PATH}/usr/lib/${EPYTHON}/site-packages" \
+		"${ED}${EROCM_PATH}/lib/${EPYTHON}/site-packages" \
 		|| die
 	rm -rf "${ED}/usr/lib/${EPYTHON}/site-packages" || die
 }
