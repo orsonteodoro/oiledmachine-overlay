@@ -61,7 +61,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda +rocm system-llvm test r5
+benchmark cuda +rocm system-llvm test r6
 "
 gen_cuda_required_use() {
 	local x
@@ -211,8 +211,8 @@ src_configure() {
 	# undefined reference to `rocblas_status_ rocblas_internal_check_numerics_matrix_template
 	replace-flags '-O0' '-O1'
 
-	export PATH="${ESYSROOT}/${EROCM_PATH}/usr/lib/python-exec/${EPYTHON}:${ESYSROOT}/${EROCM_PATH}/bin:${PATH}"
-	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+	export PATH="${ESYSROOT}/${EROCM_PATH}/lib/python-exec/${EPYTHON}:${ESYSROOT}/${EROCM_PATH}/bin:${PATH}"
+	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_BENCHMARKS=$(usex benchmark ON OFF)
@@ -250,6 +250,7 @@ src_configure() {
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
 			-DBUILD_WITH_TENSILE=ON
+			-DCMAKE_CXX_COMPILER="hipcc" # Required to not call //usr/lib64/rocm/5.7/bin/hipcc.bat
 			-DHIP_COMPILER="clang"
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
