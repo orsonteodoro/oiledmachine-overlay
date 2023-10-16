@@ -252,20 +252,20 @@ einfo "Entering PGT phase (2/3)"
 	fi
 }
 
-_pgo_precheck() {
-	local pgo_ready=1
+is_pgo_ready() {
+	local pgo_ready=0
 	if [[ -z "${ROCM_OVERLAY_DIR}" ]] ; then
 eerror
 eerror "You must define ROCM_OVERLAY_DIR to point to the root absolute path"
 eerror "containing sci-libs/composable_kernel."
 eerror
-		pgo_ready=0
+		pgo_ready=1
 	fi
 	if [[ ! -e "${ROCM_OVERLAY_DIR}/sci-libs" ]] ; then
 eerror "Path to \${ROCM_OVERLAY_DIR}/sci-libs was not found"
-		pgo_ready=0
+		pgo_ready=1
 	fi
-	if (( "${pgo_ready}" == 0 )) ; then
+	if (( "${pgo_ready}" == 1 )) ; then
 ewarn "Prereqs not met.  Skipping pgo."
 	fi
 	return ${pgo_ready}
