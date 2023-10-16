@@ -569,6 +569,7 @@ _src_configure() {
 
 	# Fix longer than usual build times when building rocm ebuilds in sci-libs.
 	replace-flags -O1 -O2
+	replace-flags -Oz -O2
 	replace-flags -Os -O2
 
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
