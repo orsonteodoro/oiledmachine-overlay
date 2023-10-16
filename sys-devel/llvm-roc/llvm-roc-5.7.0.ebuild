@@ -236,19 +236,19 @@ einfo "Entering PGT phase (2/3)"
 	export LLVM_ROC_ED="${ED}"
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" || die
-			export LLVM_ROC_TRAINING="1"
+			export LLVM_ROC_PGO_TRAINING="1"
 			ebuild rocPRIM-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" || die
-			export LLVM_ROC_TRAINING="1"
+			export LLVM_ROC_PGO_TRAINING="1"
 			ebuild rocRAND-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" || die
-			export LLVM_ROC_TRAINING="1"
+			export LLVM_ROC_PGO_TRAINING="1"
 			ebuild rocSPARSE-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi

@@ -284,7 +284,7 @@ eerror
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/clang:${LLVM_MAX_SLOT}"
 	else
-		if [[ "${LLVM_ROC_TRAINING}" == "1" ]] ; then
+		if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
 			EROCM_CLANG_PATH="${LLVM_ROC_ED}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 		else
 			EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
@@ -295,8 +295,9 @@ eerror
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_MAX_SLOT}"
 	else
-		if [[ "${LLVM_ROC_TRAINING}" == "1" ]] ; then
+		if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
 			EROCM_LLVM_PATH="${LLVM_ROC_ED}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
+			export PATH="${EROCM_LLVM_PATH}/bin:${PATH}"
 		else
 			EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 		fi
@@ -334,7 +335,7 @@ einfo "Removing all clangs except for ${clang_selected_desc} from PATH..."
 #			| tr "\n" ":")
 #	fi
 
-	if [[ "${LLVM_ROC_TRAINING}" == "1" ]] ; then
+	if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
 einfo "Removing ccache from PATH to prevent override by system's clang..."
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
