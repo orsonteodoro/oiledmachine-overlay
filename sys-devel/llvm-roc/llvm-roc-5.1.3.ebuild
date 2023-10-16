@@ -229,6 +229,7 @@ _src_compile() {
 _src_train() {
 einfo "Entering PGT phase (2/3)"
 	export LD_LIBRARY_PATH="${ED}/${EROCM_LLVM_PATH}/$(get_libdir):${ED}/${EROCM_CLANG_PATH}/lib/linux:${LD_LIBRARY_PATH}"
+	export LLVM_ROC_ED="${ED}"
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" || die
 			export LLVM_ROC_TRAINING="1"
