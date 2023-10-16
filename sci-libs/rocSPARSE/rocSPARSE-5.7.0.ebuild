@@ -163,7 +163,7 @@ args=\$(echo "\${args}" \
 	| tr " " "\n" \
 	| sed \
 		-E \
-		-e "/-O(1|2|3|4|Ofast|s)/d" \
+		-e "/-O(0|1|2|3|4|Ofast|s)/d" \
 		-e "/-pipe/d" \
 		-e "/--rocm-path/d" \
 		-e "/--rocm-device-lib-path=/d")
