@@ -76,7 +76,7 @@ LLVM_TARGETS=(
 )
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
-+runtime
+pgo +runtime
 r9
 "
 RDEPEND="
@@ -137,22 +137,67 @@ src_prepare() {
 	rocm_src_prepare
 }
 
-src_configure() {
-	export CC="${CHOST}-gcc"
-	export CXX="${CHOST}-g++"
+_src_configure() {
+	local mycmakeargs=()
+	PGO_TOOLCHAIN="${PGO_TOOLCHAIN:-gcc}"
+	if [[ "${PGO_TOOLCHAIN}" == "clang" ]] ; then
+		export CC="${EROCM_PATH}/bin/clang"
+		export CXX="${EROCM_PATH}/bin/clang++"
+	else
+		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+	fi
+	mycmakeargs+=(
+		-DCMAKE_C_COMPILER="${CC}"
+		-DCMAKE_CXX_COMPILER="${CXX}"
+	)
+	mkdir -p "${T}/pgo-profile"
+	if [[ "${PGO_PHASE}" == "PG0" ]] ; then
+		:;
+	elif [[ "${PGO_PHASE}" == "PGI" && "${PGO_TOOLCHAIN}" == "gcc" ]] ; then
+einfo "Entering PGI phase (1/3)"
+		append-flags \
+			-fprofile-generate \
+			-fprofile-dir="${T}/pgo-profile"
+	elif [[ "${PGO_PHASE}" == "PGO" && "${PGO_TOOLCHAIN}" == "gcc" ]] ; then
+einfo "Entering PGO phase (3/3)"
+		append-flags \
+			-fprofile-use \
+			-fprofile-correction \
+			-fprofile-dir="${T}/pgo-profile"
+	elif [[ "${PGO_PHASE}" == "PGI" && "${PGO_TOOLCHAIN}" == "clang" ]] ; then
+einfo "Entering PGI phase (1/3)"
+		append-flags \
+			-fprofile-generate="${T}/pgo-profile"
+	elif [[ "${PGO_PHASE}" == "PGO" && "${PGO_TOOLCHAIN}" == "clang" ]] ; then
+einfo "Entering PGO phase (3/3)"
+		if [[ ! "${T}/pgo-profile/pgo-custom.profdata" ]] ; then
+			llvm-profdata \
+				merge \
+				-output="${T}/pgo-profile/pgo-custom.profdata"
+		fi
+		append-flags \
+			-fprofile-use="${T}/pgo-profile"
+	fi
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
-	replace-flags '-O0' '-O2'
-	replace-flags '-O1' '-O2'
-	replace-flags '-Oz' '-O2'
-	replace-flags '-Os' '-O2'
+
+	# Speed up composable_kernel, rocBLAS build times
+	replace-flags '-O0' '-O3'
+	replace-flags '-O1' '-O3'
+	replace-flags '-Oz' '-O3'
+	replace-flags '-Os' '-O3'
+	replace-flags '-Ofast' '-O3'
+
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
 	fi
 	local libdir=$(get_libdir)
-	local mycmakeargs=(
+	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF
+		-DCMAKE_C_FLAGS="${CFLAGS}"
+		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
 		-DLLVM_BUILD_DOCS=NO
@@ -174,7 +219,7 @@ src_configure() {
 	cmake_src_configure
 }
 
-src_compile() {
+_src_compile() {
 	# mlir needs LLVMDemangle, LLVMSupport, LLVMTableGen
 	cmake_src_compile \
 		all \
@@ -183,12 +228,98 @@ src_compile() {
 		LLVMTableGen
 }
 
-src_install() {
+_src_train() {
+einfo "Entering PGT phase (2/3)"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" || die
+			export LLVM_ROC_TRAINING="1"
+			ebuild rocPRIM-${PV}*.ebuild clean unpack prepare compile
+		popd || die
+	fi
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" || die
+			export LLVM_ROC_TRAINING="1"
+			ebuild rocRAND-${PV}*.ebuild clean unpack prepare compile
+		popd || die
+	fi
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" || die
+			export LLVM_ROC_TRAINING="1"
+			ebuild rocSPARSE-${PV}*.ebuild clean unpack prepare compile
+		popd || die
+	fi
+}
+
+_pgo_precheck() {
+	local pgo_ready=1
+	if [[ -z "${ROCM_OVERLAY_DIR}" ]] ; then
+eerror
+eerror "You must define ROCM_OVERLAY_DIR to point to the root absolute path"
+eerror "containing sci-libs/composable_kernel."
+eerror
+		pgo_ready=0
+	fi
+	if [[ ! -e "${ROCM_OVERLAY_DIR}/sci-libs" ]] ; then
+eerror "Path to \${ROCM_OVERLAY_DIR}/sci-libs was not found"
+		pgo_ready=0
+	fi
+	if (( "${pgo_ready}" == 0 )) ; then
+ewarn "Prereqs not met.  Skipping pgo."
+	fi
+	return ${pgo_ready}
+}
+
+has_pgo_profile() {
+	if [[ -e "/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}" ]] ; then
+		cp -aT \
+			"/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}" \
+			"${T}/pgo-profile" \
+			|| die
+		return 0
+	fi
+	return 1
+}
+
+src_compile() {
+	if use pgo && is_pgo_ready ; then
+		if ! has_pgo_profile ; then
+			PGO_PHASE="PGI"
+			_src_configure
+			_src_compile
+			_src_install
+
+			_src_train
+		fi
+
+		PGO_PHASE="PGO"
+		_src_configure
+		_src_compile
+		_src_install
+	else
+		PGO_PHASE="PG0"
+		_src_configure
+		_src_compile
+		_src_install
+	fi
+}
+
+_src_install() {
 	DESTDIR="${D}" \
 	cmake_src_install \
 		install-LLVMDemangle \
 		install-LLVMSupport \
 		install-LLVMTableGen
+}
+
+src_install() {
+	if use pgo ; then
+		dodir "/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}"
+		cp \
+			-aT \
+			"${ED}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}" \
+			"${T}/pgo-profile" \
+			|| die
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
