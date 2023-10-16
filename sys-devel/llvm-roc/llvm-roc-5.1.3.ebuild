@@ -171,9 +171,11 @@ einfo "Entering PGI phase (1/3)"
 			-fprofile-generate="${T}/pgo-profile"
 	elif [[ "${PGO_PHASE}" == "PGO" && "${PGO_TOOLCHAIN}" == "clang" ]] ; then
 einfo "Entering PGO phase (3/3)"
-		llvm-profdata \
-			merge \
-			-output="${T}/pgo-profile/pgo-custom.profdata"
+		if [[ ! "${T}/pgo-profile/pgo-custom.profdata" ]] ; then
+			llvm-profdata \
+				merge \
+				-output="${T}/pgo-profile/pgo-custom.profdata"
+		fi
 		append-flags \
 			-fprofile-use="${T}/pgo-profile"
 	fi
@@ -270,6 +272,9 @@ ewarn "Prereqs not met.  Skipping pgo."
 }
 
 has_pgo_profile() {
+	if [[ "${RESTART_PGO}" == "1" ]] ; then
+		return 1
+	fi
 	if [[ -e "/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}" ]] ; then
 		cp -aT \
 			"/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}" \

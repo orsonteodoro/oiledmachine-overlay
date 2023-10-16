@@ -272,6 +272,9 @@ ewarn "Prereqs not met.  Skipping pgo."
 }
 
 has_pgo_profile() {
+	if [[ "${RESTART_PGO}" == "1" ]] ; then
+		return 1
+	fi
 	if [[ -e "/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}" ]] ; then
 		cp -aT \
 			"/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}" \
