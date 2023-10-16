@@ -144,6 +144,7 @@ src_configure() {
 	strip-unsupported-flags
 	replace-flags '-O0' '-O2'
 	replace-flags '-O1' '-O2'
+	replace-flags '-Os' '-O2'
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
