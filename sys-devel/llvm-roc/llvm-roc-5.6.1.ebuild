@@ -189,6 +189,12 @@ einfo "Entering PGO phase (3/3)"
 	replace-flags '-Os' '-O3'
 	replace-flags '-Ofast' '-O3'
 
+	mycmakeargs+=(
+		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
+		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
+		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
+	)
+
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
