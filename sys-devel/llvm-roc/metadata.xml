@@ -76,7 +76,7 @@
   rocPRIM:  GPU compile for PGO profile generation
 
 
-  PGO Post install instructions:
+  PGO post install instructions:
 
   When starting the ./llvm-roc-opt.sh, the epgo and ebolt USE flags should be
   removed from package.use.  The script will override it.
