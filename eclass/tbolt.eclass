@@ -66,6 +66,10 @@ _UOPTS_BOLT_CATPN_DATA_DIR=${_UOPTS_BOLT_CATPN_DATA_DIR:-"${UOPTS_BOLT_PROFILES_
 # The path to the program BOLT profile with version specificity.
 _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_BOLT_PV}"}
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_PATH
+# @DESCRIPTION:
+# The absolute path to the folder containing llvm-bolt.
+
 # @ECLASS_VARIABLE: _UOPTS_BOLT_PATH
 # @INTERNAL
 # @DESCRIPTION:
@@ -133,7 +137,9 @@ _setup_malloc() {
 # @DESCRIPTION:
 # Setup PATH for llvm-bolt
 _setup_llvm() {
-	if [[ -n "${UOPTS_BOLT_SLOT}" ]] ; then
+	if [[ -n "${UOPTS_BOLT_PATH}" ]] ; then
+		_UOPTS_BOLT_PATH="${UOPTS_BOLT_PATH}"
+	elif [[ -n "${UOPTS_BOLT_SLOT}" ]] ; then
 		_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${UOPTS_BOLT_SLOT}/bin"
 	elif [[ -z "${LLVM_MAX_SLOT}" ]] ; then
 		for s in ${_UOPTS_LLVM_SLOTS[@]} ; do
