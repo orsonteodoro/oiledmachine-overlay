@@ -13,7 +13,7 @@
 
   oiledmachine-overlay notes:
 
-  Examples to get pgo working
+  To get PGO working, add the following files and change the settings to your needs:
 
   Add to /etc/portage/env/llvm-roc.conf:
 ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # Location if using eselect repository
@@ -34,10 +34,22 @@ sys-devel/llvm-roc llvm-roc.conf
 
   Additional environment variables:
 
-  PGO_TOOLCHAIN - gcc (default) to use GCC's PGO and toolchain.  clang to use Clang's PGO and toolchain.
-  RESTART_PGO - 1 to disable cached PGO profile or start the pgo process from the beginning.
+  COMPOSABLE_KERNEL_TRAINING_USE - USE flags used to build the composable_kernel package.
+  LLVM_ROC_TRAINERS - A space separated list of ebuilds to train.  Acceptable values composable_kernel, rocBLAS, rocPRIM, rocRAND, rocSPARSE.
+  PGO_TOOLCHAIN - Select the PGO toolchain.  Acceptable values - gcc (the default), clang.
+  RESTART_PGO - 1 to disable the cached PGO profile or start the PGO process from the beginning.
+  ROCBLAS_TRAINING_USE - USE flags used to build the rocBLAS package.
+  ROCPRIM_TRAINING_USE - USE flags used to build the rocPRIM package.
+  ROCRAND_TRAINING_USE - USE flags used to build the rocRAND package.
+  ROCSPARSE_TRAINING_USE - USE flags used to build the rocSPARSE package.
 
   * To use PGO_TOOLCHAIN="clang", the sys-devel/llvm-roc:${ROCM_SLOT} must be already installed.
+  * LLVM_ROC_TRAINERS always needs the associated *_TRAINING_USE environment variable.
+
+
+  Examples:
+
+  LLVM_ROC_TRAINERS="rocBLAS rocPRIM rocRAND"
 
   -->
   <use>
