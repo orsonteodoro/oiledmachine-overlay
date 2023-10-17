@@ -227,6 +227,11 @@ _src_install() {
 }
 
 src_install() {
+	_src_install
+	uopts_src_install
+}
+
+pkg_postinst() {
 	uopts_pkg_postinst
 }
 
