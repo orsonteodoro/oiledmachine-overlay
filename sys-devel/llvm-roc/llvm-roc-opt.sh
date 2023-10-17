@@ -54,7 +54,7 @@ echo "PGI Phase (1/3)"
 echo "PGT Phase (2/3)"
 		_src_train
 
-echo "PGT Phase (3/3)"
+echo "PGO Phase (3/3)"
 		USE="epgo" emerge llvm-roc:${ROCM_SLOT}
 	fi
 
