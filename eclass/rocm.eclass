@@ -335,8 +335,10 @@ einfo "Removing ccache from PATH to prevent override by system's clang..."
 
 		# Allow to create and write a PGO profile.
 		local path="/var/lib/pgo-profiles/sys-devel/llvm-roc/${ROCM_SLOT}/.${ABI}"
-		addwrite "${path}"
-		chown -R portage:portage "${path}"
+		if [[ -e "${path}" ]] ; then
+			addwrite "${path}"
+			chown -R portage:portage "${path}" || die
+		fi
 	fi
 
 	export PKG_CONFIG_PATH="${ESYSROOT}${EROCM_PATH}/share/pkgconfig:${PKG_CONFIG_PATH}"
