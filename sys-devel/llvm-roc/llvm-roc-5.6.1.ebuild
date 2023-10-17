@@ -78,7 +78,7 @@ LLVM_TARGETS=(
 )
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
-pgo +runtime
+bolt pgo +runtime
 r9
 "
 RDEPEND="
@@ -177,6 +177,9 @@ _src_configure() {
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
+	fi
+	if use bolt ; then
+		PROJECTS+=";bolt"
 	fi
 	local libdir=$(get_libdir)
 	mycmakeargs+=(

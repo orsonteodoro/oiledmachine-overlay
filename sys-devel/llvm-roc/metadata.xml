@@ -86,6 +86,10 @@
 
   -->
   <use>
+    <flag name="bolt">
+      Build support for BOLT (Binary Optimization and Layout Tool) for post
+      build optimization that has a workflow similar to PGO.
+    </flag>
     <flag name="epgo">
       Build an optimized Clang toolchain using Profile Guided Optimization (PGO)
       to decrease build times by maybe 20%.
