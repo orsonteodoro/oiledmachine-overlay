@@ -108,6 +108,7 @@ ewarn "of the following use flags must be defined"
 ewarn
 ewarn "  COMPOSABLE_KERNEL_TRAINING_USE"
 ewarn "  ROCBLAS_TRAINING_USE"
+ewarn "  ROCMLIR_TRAINING_USE"
 ewarn "  ROCPRIM_TRAINING_USE"
 ewarn "  ROCRAND_TRAINING_USE"
 ewarn "  ROCSPARSE_TRAINING_USE"
@@ -261,53 +262,39 @@ einfo "Entering PGT phase (2/3)"
 		'-fprofile-generate' \
 		'-fprofile-use'
 	LLVM_ROC_TRAINERS=${LLVM_ROC_TRAINERS:-"rocPRIM rocRAND rocSPARSE"}
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" && -n "${COMPOSABLE_KERNEL_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" || die
 			export LLVM_ROC_PGO_TRAINING="1"
-			if [[ -z "${COMPOSABLE_KERNEL_TRAINING_USE}" ]] ; then
-eerror "COMPOSABLE_KERNEL_TRAINING_USE must be defined."
-				die
-			fi
 			USE="${COMPOSABLE_KERNEL_TRAINING_USE}" ebuild composable_kernel-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${LLVM_ROC_TRAINERS}" =~ "rocBLAS" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${LLVM_ROC_TRAINERS}" =~ "rocBLAS" && -n "${ROCBLAS_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" || die
 			export LLVM_ROC_PGO_TRAINING="1"
-			if [[ -z "${ROCBLAS_TRAINING_USE}" ]] ; then
-eerror "ROCBLAS_TRAINING_USE must be defined."
-				die
-			fi
 			USE="${ROCBLAS_TRAINING_USE}" ebuild rocBLAS-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${LLVM_ROC_TRAINERS}" =~ "rocPRIM" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" && "${LLVM_ROC_TRAINERS}" =~ "rocMLIR" && -n "${ROCMLIR_TRAINING_USE}" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" || die
+			export LLVM_ROC_PGO_TRAINING="1"
+			USE="${ROCMLIR_TRAINING_USE}" ebuild rocMLIR-${PV}*.ebuild clean unpack prepare compile
+		popd || die
+	fi
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${LLVM_ROC_TRAINERS}" =~ "rocPRIM" && -n "${ROCPRIM_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" || die
 			export LLVM_ROC_PGO_TRAINING="1"
-			if [[ -z "${ROCPRIM_TRAINING_USE}" ]] ; then
-eerror "ROCPRIM_TRAINING_USE must be defined."
-				die
-			fi
 			USE="${ROCPRIM_TRAINING_USE}" ebuild rocPRIM-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${LLVM_ROC_TRAINERS}" =~ "rocRAND" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${LLVM_ROC_TRAINERS}" =~ "rocRAND" && -n "${ROCRAND_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" || die
 			export LLVM_ROC_PGO_TRAINING="1"
-			if [[ -z "${ROCRAND_TRAINING_USE}" ]] ; then
-eerror "ROCRAND_TRAINING_USE must be defined."
-				die
-			fi
 			USE="${ROCRAND_TRAINING_USE}" ebuild rocRAND-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${LLVM_ROC_TRAINERS}" =~ "rocSPARSE" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${LLVM_ROC_TRAINERS}" =~ "rocSPARSE" && -n "${ROCSPARSE_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" || die
 			export LLVM_ROC_PGO_TRAINING="1"
-			if [[ -z "${ROCSPARSE_TRAINING_USE}" ]] ; then
-eerror "ROCSPARSE_TRAINING_USE must be defined."
-				die
-			fi
 			USE="${ROCSPARSE_TRAINING_USE}" ebuild rocSPARSE-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi

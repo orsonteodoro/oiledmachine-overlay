@@ -35,10 +35,11 @@ sys-devel/llvm-roc llvm-roc.conf
   Additional environment variables:
 
   COMPOSABLE_KERNEL_TRAINING_USE - USE flags used to build the composable_kernel package.
-  LLVM_ROC_TRAINERS - A space separated list of ebuilds to train.  Acceptable values composable_kernel, rocBLAS, rocPRIM, rocRAND, rocSPARSE.
+  LLVM_ROC_TRAINERS - A space separated list of ebuilds to train.  Acceptable values composable_kernel, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE.  The default is "rocPRIM rocRAND rocSPARSE"
   PGO_TOOLCHAIN - Select the PGO toolchain.  Acceptable values - gcc (the default), clang.
   RESTART_PGO - 1 to disable the cached PGO profile or start the PGO process from the beginning.
   ROCBLAS_TRAINING_USE - USE flags used to build the rocBLAS package.
+  ROCMLIR_TRAINING_USE - USE flags used to build the rocMLIR package.
   ROCPRIM_TRAINING_USE - USE flags used to build the rocPRIM package.
   ROCRAND_TRAINING_USE - USE flags used to build the rocRAND package.
   ROCSPARSE_TRAINING_USE - USE flags used to build the rocSPARSE package.
