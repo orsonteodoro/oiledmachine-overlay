@@ -44,6 +44,8 @@
 
   Environment variables:
 
+  LLVM_ROC_EPGO - 1 to perform PGO.  [Do not change.]
+  LLVM_ROC_EBOLT - 1 to perform BOLT.
   LLVM_SLOTS - A space separated list of slots to build.  "5.1 5.2 5.3 5.4 5.5 5.6 5.7" (default)
   LLVM_ROC_ENV_PATH - path to the env config.  "/etc/portage/env/llvm-roc.conf" (default)
   LLVM_ROC_TRAINERS - A space separated list of packages to build.  Acceptable values:  composable_kernel, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE
