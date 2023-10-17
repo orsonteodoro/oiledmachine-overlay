@@ -24,68 +24,12 @@
     needs to check the build logs to see if the program unecessarily overrides
     the default.
 
-    PGO
 
-    Steps to optimize:
-    1. Bootstrap the build to rid of bugs and symbol errors.
-    2. Instrument the build
-    3. Train.  Just set lld as the default compiler and emerge a couple
-       of ebuilds.
-    4. Optimize the build
+    PGO/BOLT optimization:
 
-
-    BOLT
-
-    Steps to optimize
-    1. Bootstrap if you haven't yet
-    2. Instrument the build
-    3. Train
-    4. Optimize the build
-
-    BOLT + PGO.
-
-    We recommend doing PGO to completion first then BOLT to completion
-    afterwards.
-
-
-    Draft sample script with buildself trainer
-
-#!/bin/bash
-SLOT=13
-OVERLAY_DIR="/usr/local/oiledmachine-overlay"
-
-trainer() {
-	export CC="clang-${SLOT}"
-	export CXX="clang++-${SLOT}"
-	export LD="clang-${SLOT}"
-	pushd "${OVERLAY_DIR}/sys-devel"
-		export CFLAGS="-O2 -pipe"
-		export CXXFLAGS="-O2 -pipe"
-		export LDFLAGS="-O2 -pipe"
-		ebuild $(realpath ./lld-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
-
-		export CFLAGS="-O2 -flto=thin -pipe"
-		export CXXFLAGS="-O2 -flto=thin -pipe"
-		export LDFLAGS="-O2 -fuse-ld=lld -flto=thin -pipe"
-		ebuild $(realpath ./lld-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
-	popd
-
-	# Static linking should be trained.  Try
-	emerge -1vuDN dev-lang/go
-}
-
-main() {
-	emerge -1vuDN "sys-devel/lld:${SLOT}[-epgo,-ebolt]"
-	emerge -1vO "sys-devel/lld:${SLOT}[epgo,-ebolt]"
-	trainer
-	emerge -1vO "sys-devel/lld:${SLOT}[epgo,ebolt]"
-	trainer
-	emerge -1vO "sys-devel/lld:${SLOT}[epgo,ebolt]"
-}
-
-main
-
-#DONE
+    See the sys-devel/clang/metadata.xml in the oiledmachine-overlay for
+    details about PGO/BOLT training.  The sys-devel/clang ebuild now has the
+    trainer script.
 
   -->
   <use>

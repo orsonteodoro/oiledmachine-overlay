@@ -51,108 +51,56 @@
     proper CFI build.
 
 
-    PGO notes
 
-    General steps:
+    PGO/BOLTing
 
-      1. Bootstrap the llvm toolchain using the system compiler
-      2. Build an instrumented build.
-      3. Train with real world examples such as emerging a sample of world,
-         compile shaders, compile WASM (aka HTML5 games)
-      4. Build an optimized build
+    The clang-opt.sh script has been provided to automate PGO/BOLT training with
+    the least effort and to make it practically usable/accessible to the
+    community.
 
-
-    BOLT notes
-
-    BOLT optimized builds require specific CPUs with LBR support in its current
-    form.
-
-    To optimize for BOLT, use the same steps as PGO and the ebuild
-    will automatically optimize using events such as version bumps or
-    compiler signature differences.
-
-    General steps
-
-    1. Instrument
-    2. Train
-    3. Optimize
-
-    When performing BOLT+PGO, we recommend performing PGO to completion
-    first then BOLT to completion.
+    The goal of the clang-opt.sh script in its current form is to improve build
+    times.  Different use cases will be considered later.  The script will
+    manage PGO/BOLT optimization for the entire LLVM/Clang toolchain.  The
+    current iteration needs work and more trainers will be added as we figure
+    out which packages can be built by clang.
 
 
-    Draft sample script
+    Add the following to /etc/portage/env/clang-pgo-training.conf:
 
-#!/bin/bash
-OVERLAY_DIR="/usr/local/oiledmachine-overlay"
-PORTAGE_DIR="/usr/portage"
-SLOT=15
+#OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
+OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if using eselect repository
+CLANG_SLOTS="14 15 16 17 18"
+CLANG_EPGO="1"
+CLANG_EBOLT="0"
+CLANG_TRAINERS="lld"
 
-trainer() {
-	export CC="clang-${SLOT}"
-	export CXX="clang++-${SLOT}"
-	export LD="clang-${SLOT}"
 
-	# Here you need to train the -O* levels but we train the parser.
-	# The actual brains/algorithms of the compiler are in the llvm library.
-	# The trainer program here is way better than what is promoted by upstream.
-	pushd "${OVERLAY_DIR}/sys-devel/clang"
-		export CFLAGS="-march=native -O2 -pipe"
-		export CXXFLAGS="-march=native -O2 -pipe"
-		export LDFLAGS="-march=native -O2 -pipe"
-		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+    To run the optimizer do:
 
-		export CFLAGS="-march=native -O3 -pipe"
-		export CXXFLAGS="-march=native -O3 -pipe"
-		export LDFLAGS="-march=native -O3 -pipe"
-		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+    ./clang-opt.sh
 
-		export CFLAGS="-march=native -O3 -flto=thin -pipe"
-		export CXXFLAGS="-march=native -O3 -flto=thin -pipe"
-		export LDFLAGS="-march=native -O3 -fuse-ld=lld -flto=thin -pipe"
-		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
 
-		export CFLAGS="-march=native -O3 -flto=thin -pipe"
-		export CXXFLAGS="-march=native -O3 -flto=thin -pipe"
-		export LDFLAGS="-march=native -O3 -fuse-ld=lld -flto=thin -pipe"
-		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
+    clang-opt.sh Environment variables:
 
-	popd
+    CLANG_EPGO - 1 to perform PGO [Do not change]
+    CLANG_EBOLT - 1 to perform BOLT
+    CLANG_SLOTS - A space separated list of slots to build.  "14 15 16 17 18" (default)
+    CLANG_TRAINERS - A space separated list of packages to build.  "lld" (default)
+    CLANG_WIPE_PGO_PROFILES - 1 to delete PGO/BOLT profiles, 0 or unset to use cached profiles.
+    OVERLAY_DIR - The absolute path to the repository containing ebuilds to perform training on.
 
-	pushd "${OVERLAY_DIR}/media-libs/mesa"
-		ebuild $(realpath ./mesa-22*.ebuild | tail -n 1) clean unpack prepare compile
-	popd
 
-	# Duration in seconds
-	timeout 30 blender project1.blend  -f 1,3,5,7,9,11 -E CYCLES
+    Training cost:
 
-	# Run opencl programs with timeout 180
-	timeout $((60*5)) bitcoin_miner
-	timeout $((60*5)) distributed_computing_project
+    lld - low
 
-	timeout $((60*5)) benchmark_demo_with_shader_programs
 
-	# Build with WASM
-	pushd "${OVERLAY_DIR}/dev-games/gdevelop"
-		ebuild $(realpath ./gdevelop-*.ebuild | tail -n 1) clean unpack prepare compile
-	popd
-}
+    Training purpose:
 
-main() {
-	emerge -1vuDN "sys-devel/clang:${SLOT}[-epgo,-ebolt]"
-	emerge -1vO "sys-devel/clang:${SLOT}[epgo,-ebolt]" # pgi
-	trainer
-	emerge -1vO "sys-devel/clang:${SLOT}[epgo,ebolt]" # pgo, bolt_inst
-	trainer
+    lld - basic compile
 
-	# replace ~~ with double hyphen.
-	# xml does not allow double hyphen in comments in compatibility mode.
-	emerge ~~config "sys-devel/clang:${SLOT}[epgo,ebolt]" # bolt_opt
-}
 
-main
-
-## DONE
+    The above trainers are still a WIP (Work In Progress).
 
   References:
 [1] https://research.facebook.com/publications/bolt-a-practical-binary-optimizer-for-data-centers-and-beyond/

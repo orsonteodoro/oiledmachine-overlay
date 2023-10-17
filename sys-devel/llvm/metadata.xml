@@ -25,112 +25,11 @@
     Release candidates and inits will be ignored.
 
 
-    PGO notes:
+    PGO/BOLT optimization:
 
-    PGO is based on 1 step per phase (EPGO), or event based PGO.  The idea
-    is to maintain same build times as normal builds but the PGO is a bonus.
-    Training is done passively and with real world examples.  The problem
-    with active trainers is that it doesn't train the GPU portions or SIMD
-    portions but does the minimal basic training.
-
-    Essentially use as normally.  Steps required:
-
-    1.  Bootstrap (resulting in proper built toolchain)
-    2.  Switch clang as primary compiler.
-    3.  Instrument all Clang / LLVM packages with EPGO.
-    4.  Emerge/train a sample of world (emerge packages, compile shader
-        programs by running games or building 3D models, build WASM HTML5
-        games), training the compiler toolchain
-    5.  Re-emerge again as optimized in the next point release or after
-        training is completed.
-
-
-    BOLT (Experimental / WIP)
-
-    BOLT support is only offered is only offered in LLVM 15 or newer.  In its
-    current form it requires a recent CPU with LBR support.
-
-    BOLT optimized builds steps:
-
-    1.  Bootstrap
-    2.  Emerge the ebuild with the bolt and ebolt use flag
-    4.  Train the LLVM library by either emerging, compiling shaders, compiling
-        WASM (aka HTML5 games) based games.
-
-    # Replace ~~ with double hyphen.
-    # xml does not allow double hyphen in compatibility mode.
-    5.  emerge ~~config =llvm-${PV}[bolt,ebolt]  # Fastest
-                     or
-        emerge =llvm-${PV}[bolt,ebolt] # Deterministic reliable
-
-    When doing BOLT+PGO, we recommend doing PGO first to completion then BOLT to
-    completion.
-
-
-    Draft sample script
-
-#!/bin/bash
-OVERLAY_DIR="/usr/local/oiledmachine-overlay"
-PORTAGE_DIR="/usr/portage"
-SLOT=15
-
-trainer() {
-	export CC="clang-${SLOT}"
-	export CXX="clang++-${SLOT}"
-	export LD="clang-${SLOT}"
-
-	# Here you need to train the -O* levels or optimizations being used personally.
-	# The actual brains/algorithms of the compiler are in the llvm library.
-	# The trainer program here is way better than what is promoted by upstream.
-	pushd "${OVERLAY_DIR}/sys-devel/clang"
-		export CFLAGS="-march=native -O2 -pipe"
-		export CXXFLAGS="-march=native -O2 -pipe"
-		export LDFLAGS="-march=native -O2 -pipe"
-		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
-
-		export CFLAGS="-march=native -O3 -pipe"
-		export CXXFLAGS="-march=native -O3 -pipe"
-		export LDFLAGS="-march=native -O3 -pipe"
-		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
-
-		export CFLAGS="-march=native -O3 -flto=thin -pipe"
-		export CXXFLAGS="-march=native -O3 -flto=thin -pipe"
-		export LDFLAGS="-march=native -O3 -fuse-ld=lld -flto=thin -pipe"
-		ebuild $(realpath ./clang-${SLOT}*.ebuild | tail -n 1) clean unpack prepare compile
-	popd
-	pushd "${OVERLAY_DIR}/media-libs/mesa"
-		ebuild $(realpath ./mesa-22*.ebuild | tail -n 1) clean unpack prepare compile
-	popd
-
-	# Duration in seconds
-	timeout 30 blender project1.blend  -f 1,3,5,7,9,11 -E CYCLES
-
-	# Run opencl programs with timeout 180
-	timeout $((60*5)) bitcoin_miner
-	timeout $((60*5)) distributed_computing_project
-
-	timeout $((60*5)) benchmark_demo_with_shader_programs
-
-	# Build with WASM
-	pushd "${OVERLAY_DIR}/dev-games/gdevelop"
-		ebuild $(realpath ./gdevelop-*.ebuild | tail -n 1) clean unpack prepare compile
-	popd
-}
-
-main() {
-	emerge -1vuDN "sys-devel/llvm:${SLOT}[-epgo,-ebolt]"
-	emerge -1vO "sys-devel/llvm:${SLOT}[epgo,-ebolt]" # pgi
-	trainer
-	emerge -1vO "sys-devel/llvm:${SLOT}[epgo,ebolt]" # pgo, bolt_inst
-	trainer
-
-	# Replace ~~ with double hyphens.
-	# xml does not allow double hyphen in comments.
-	emerge ~~config "sys-devel/llvm:${SLOT}[epgo,ebolt]" # bolt_opt
-}
-
-main
-### DONE
+    See the sys-devel/clang/metadata.xml in the oiledmachine-overlay for
+    details about PGO/BOLT training.  The sys-devel/clang ebuild now has the
+    trainer script.
 
 
     References:

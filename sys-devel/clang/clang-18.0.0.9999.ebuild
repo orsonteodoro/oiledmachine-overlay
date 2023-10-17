@@ -293,6 +293,11 @@ einfo
 einfo "However, some packages still need some or all of these.  Some are"
 einfo "mentioned in bug #767700."
 einfo
+
+einfo
+einfo "See the metadata.xml for details about using the PGO/BOLT optimizer"
+einfo "script (clang-opt.sh)"
+einfo
 }
 
 src_unpack() {
@@ -629,9 +634,12 @@ ewarn
 	replace-flags -O0 -O1
 
 	# Fix longer than usual build times when building rocm ebuilds in sci-libs.
+	# -O3 may cause random segfaults like in rocSPARSE.
 	replace-flags -O1 -O2
 	replace-flags -Oz -O2
 	replace-flags -Os -O2
+	replace-flags -O3 -O2
+	replace-flags -Ofast -O2
 
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
@@ -938,10 +946,6 @@ einfo "  dev-python/pyyaml"
 einfo
 	fi
 	uopts_pkg_postinst
-einfo
-einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
-einfo "for a possible PGO+BOLT trainer script"
-einfo
 }
 
 pkg_postrm() {

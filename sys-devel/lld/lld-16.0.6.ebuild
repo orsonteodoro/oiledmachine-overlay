@@ -154,6 +154,10 @@ einfo
 einfo "However, some packages still need some or all of these.  Some are"
 einfo "mentioned in bug #767700."
 einfo
+
+einfo
+einfo "See sys-devel/clang/metadata.xml for details on PGO/BOLT optimization."
+einfo
 }
 
 src_unpack() {
@@ -243,10 +247,6 @@ src_install() {
 
 pkg_postinst() {
 	uopts_pkg_postinst
-einfo
-einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
-einfo "for a possible PGO+BOLT trainer script"
-einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS

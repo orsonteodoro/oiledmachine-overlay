@@ -223,6 +223,10 @@ ewarn "There is a high rebuild cost if llvm_targets_WebAssembly is not enabled"
 ewarn "now before building dev-util/emscripten."
 ewarn
 	fi
+
+einfo
+einfo "See sys-devel/clang/metadata.xml for details on PGO/BOLT optimization."
+einfo
 }
 
 python_check_deps() {
@@ -550,9 +554,12 @@ _src_configure() {
 	replace-flags -O0 -O1
 
 	# Fix longer than usual build times when building rocm ebuilds in sci-libs.
+	# -O3 may cause random segfaults/ICE.
 	replace-flags -O1 -O2
 	replace-flags -Oz -O2
 	replace-flags -Os -O2
+	replace-flags -O3 -O2
+	replace-flags -Ofast -O2
 
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
@@ -767,10 +774,6 @@ einfo "  dev-python/pygments (for opt-viewer)"
 einfo "  dev-python/pyyaml (for all of them)"
 einfo
 	uopts_pkg_postinst
-einfo
-einfo "See metadata.xml or \`epkginfo -x =${CATEGORY}/${P}::oiledmachine-overlay\`"
-einfo "for a possible PGO+BOLT trainer script"
-einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
