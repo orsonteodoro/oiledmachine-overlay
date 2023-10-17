@@ -104,6 +104,9 @@ DEPEND="
 "
 BDEPEND="
 	sys-devel/gcc
+	bolt? (
+		dev-util/patchutils
+	)
 "
 PATCHES=(
 )
