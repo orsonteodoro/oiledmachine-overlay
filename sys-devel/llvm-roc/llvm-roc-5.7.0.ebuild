@@ -103,7 +103,7 @@ pkg_setup() {
 	if use pgo ; then
 ewarn
 ewarn "The pgo USE flag assumes that the dependencies for rocPRIM:${ROCM_SLOT},"
-ewarn "rocRAND:${ROCM_SLOT}, rocSPARSE:${ROCM_SLOT} are already installed."
+ewarn "rocRAND:${ROCM_SLOT}, rocSPARSE:${ROCM_SLOT}, ... are already installed."
 ewarn "Please install them before enabling the pgo USE flag.  In addition, one"
 ewarn "of the following use flags must be defined"
 ewarn
@@ -114,8 +114,7 @@ ewarn "  ROCPRIM_TRAINING_USE"
 ewarn "  ROCRAND_TRAINING_USE"
 ewarn "  ROCSPARSE_TRAINING_USE"
 ewarn
-ewarn "must be defined containing USE flags per each package.  See the"
-ewarn "metadata.xml for details."
+ewarn "with USE flags per each package.  See the metadata.xml for details."
 ewarn
 	fi
 }
