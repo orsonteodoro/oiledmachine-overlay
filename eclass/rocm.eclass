@@ -284,23 +284,14 @@ eerror
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/clang:${LLVM_MAX_SLOT}"
 	else
-		if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
-			EROCM_CLANG_PATH="${LLVM_ROC_ED}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
-		else
-			EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
-		fi
+		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:${LLVM_MAX_SLOT}"
 	fi
 
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_MAX_SLOT}"
 	else
-		if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
-			EROCM_LLVM_PATH="${LLVM_ROC_ED}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
-			export PATH="${EROCM_LLVM_PATH}/bin:${PATH}"
-		else
-			EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
-		fi
+		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 	fi
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
