@@ -98,8 +98,16 @@ S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
-#ewarn "Un-emerge dev-libs/rocr-runtime:${ROCM_SLOT} first."
 	rocm_pkg_setup
+	if use pgo ; then
+ewarn
+ewarn "The pgo USE flag assumes that the dependencies for rocPRIM:${ROCM_SLOT},"
+ewarn "rocRAND:${ROCM_SLOT}, rocSPARSE:${ROCM_SLOT} are already installed."
+ewarn "Please install them before enabling the pgo USE flag.  In addition,"
+ewarn "ROCPRIM_TRAINING_USE, ROCRAND_TRAINING_USE, ROCSPARSE_TRAINING_USE must"
+ewarn "be defined containing USE flags per each package."
+ewarn
+	fi
 }
 
 src_prepare() {
@@ -235,6 +243,7 @@ _src_compile() {
 }
 
 _src_train() {
+# Train emerge compile to try to improve build times of similar packages.
 einfo "Entering PGT phase (2/3)"
 	export LD_LIBRARY_PATH="${ED}/${EROCM_LLVM_PATH}/$(get_libdir):${ED}/${EROCM_CLANG_PATH}/lib/linux:${LD_LIBRARY_PATH}"
 	export LLVM_ROC_ED="${ED}"
@@ -246,19 +255,31 @@ einfo "Entering PGT phase (2/3)"
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" || die
 			export LLVM_ROC_PGO_TRAINING="1"
-			ebuild rocPRIM-${PV}*.ebuild clean unpack prepare compile
+			if [[ -z "${ROCPRIM_USE}" ]] ; then
+eerror "ROCPRIM_TRAINING_USE must be defined."
+				die
+			fi
+			USE="${ROCPRIM_TRAINING_USE}" ebuild rocPRIM-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" || die
 			export LLVM_ROC_PGO_TRAINING="1"
-			ebuild rocRAND-${PV}*.ebuild clean unpack prepare compile
+			if [[ -z "${ROCPRIM_USE}" ]] ; then
+eerror "ROCRAND_TRAINING_USE must be defined."
+				die
+			fi
+			USE="${ROCRAND_TRAINING_USE}" ebuild rocRAND-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" || die
 			export LLVM_ROC_PGO_TRAINING="1"
-			ebuild rocSPARSE-${PV}*.ebuild clean unpack prepare compile
+			if [[ -z "${ROCPRIM_USE}" ]] ; then
+eerror "ROCSPARSE_TRAINING_USE must be defined."
+				die
+			fi
+			USE="${ROCSPARSE_TRAINING_USE}" ebuild rocSPARSE-${PV}*.ebuild clean unpack prepare compile
 		popd || die
 	fi
 }
