@@ -1,3 +1,4 @@
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -5,6 +6,7 @@ EAPI=8
 
 LLVM_MAX_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
@@ -78,7 +80,7 @@ LLVM_TARGETS=(
 )
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
-bolt pgo +runtime
+pgo +runtime
 r9
 "
 RDEPEND="
@@ -102,8 +104,8 @@ CMAKE_BUILD_TYPE="RelWithDebInfo"
 pkg_setup() {
 	rocm_pkg_setup
 	uopts_setup
-	if use epgo || use ebolt ; then
-einfo "See comments of metadata.xml for documentation on ebolt/epgo."
+	if use epgo ; then
+einfo "See comments of metadata.xml for documentation on epgo."
 	fi
 }
 
@@ -177,9 +179,6 @@ _src_configure() {
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
-	fi
-	if use bolt ; then
-		PROJECTS+=";bolt"
 	fi
 	local libdir=$(get_libdir)
 	mycmakeargs+=(

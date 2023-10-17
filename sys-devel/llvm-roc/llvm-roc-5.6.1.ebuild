@@ -1,3 +1,4 @@
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -112,6 +113,12 @@ src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 		eapply "${FILESDIR}/llvm-roc-5.6.1-path-changes.patch"
 	popd
+	if use bolt ; then
+		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+			eapply -p1 "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
+			eapply -p1 "${FILESDIR}/llvm-16.0.0.9999-bolt_rt-RuntimeLibrary.cpp-path.patch"
+		popd
+	fi
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq

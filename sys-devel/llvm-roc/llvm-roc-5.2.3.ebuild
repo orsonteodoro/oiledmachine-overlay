@@ -1,3 +1,4 @@
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -13,7 +14,17 @@ inherit cmake flag-o-matic rocm uopts
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
+	bolt? (
+		https://github.com/llvm/llvm-project/commit/eddf384965560f40b9d375b6e07f3b3db537a010.patch
+			-> llvm-commit-eddf384.patch
+		https://github.com/llvm/llvm-project/commit/bdba3d091c66e3ab87fe0d631d90771b747ddf0d.patch
+			-> llvm-commit-bdba3d0.patch
+	)
 "
+# eddf384 - [BOLT-UnitTests] Fix shared libraries build
+#   Commit dependency of bdba3d0
+# bdba3d0 - [BOLT][CMAKE] Fix DYLIB build
+#   Fixes linking
 
 DESCRIPTION="The ROCm™ fork of the LLVM project"
 HOMEPAGE="
@@ -112,6 +123,21 @@ src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 		eapply "${FILESDIR}/llvm-roc-5.2.3-path-changes.patch"
 	popd
+	if use bolt ; then
+		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
+			eapply -p1 "${DISTDIR}/llvm-commit-eddf384.patch"
+			cat "${DISTDIR}/llvm-commit-bdba3d0.patch" \
+				> "${T}/llvm-commit-bdba3d0.patch" || die
+			filterdiff -x "*/bolt/tools/heatmap/*" \
+				"${T}/llvm-commit-bdba3d0.patch" \
+				> "${T}/llvm-commit-bdba3d0.patch.t" || die
+			mv "${T}/llvm-commit-bdba3d0.patch"{.t,} || die
+			eapply -p1 "${T}/llvm-commit-bdba3d0.patch"
+			eapply -p1 "${FILESDIR}/llvm-14.0.6-bolt_rt-libdir.patch"
+			eapply -p1 "${FILESDIR}/llvm-14.0.6-bolt-set-cmake-libdir.patch"
+			eapply -p1 "${FILESDIR}/llvm-14.0.6-bolt_rt-RuntimeLibrary.cpp-path.patch"
+                popd
+	fi
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq

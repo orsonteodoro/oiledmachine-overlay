@@ -1,0 +1,49 @@
+Based on 90dcdc4b6e7d86cb3d5049bd766aecddd549dd7d
+diff -urp a/bolt.orig/CMakeLists.txt b/bolt/CMakeLists.txt
+--- a/bolt.orig/CMakeLists.txt	2023-10-17 11:40:08.774659796 -0700
++++ b/bolt/CMakeLists.txt	2023-10-17 11:42:35.342662785 -0700
+@@ -4,6 +4,14 @@ set(BOLT_SOURCE_DIR ${CMAKE_CURRENT_SOUR
+ set(BOLT_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR})
+ set(CMAKE_CXX_STANDARD 14)
+ 
++if (NOT DEFINED CMAKE_INSTALL_LIBDIR AND DEFINED LLVM_LIBDIR_SUFFIX)
++  # Must go before `include(GNUInstallDirs)`.
++  set(CMAKE_INSTALL_LIBDIR "lib${LLVM_LIBDIR_SUFFIX}")
++endif()
++
++# Must go after `DEFINED LLVM_LIBDIR_SUFFIX` check.
++set(LLVM_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
++
+ set(BOLT_ENABLE_RUNTIME OFF)
+ if (CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
+   set(BOLT_ENABLE_RUNTIME ON)
+Only in bolt: CMakeLists.txt.orig
+Only in bolt: CMakeLists.txt.rej
+diff -urp a/bolt.orig/runtime/CMakeLists.txt b/bolt/runtime/CMakeLists.txt
+--- a/bolt.orig/runtime/CMakeLists.txt	2023-01-27 09:11:54.000000000 -0800
++++ b/bolt/runtime/CMakeLists.txt	2023-10-17 11:40:39.502660423 -0700
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.13.4)
+ include(CheckIncludeFiles)
++include(GNUInstallDirs)
+ 
+ set(CMAKE_CXX_EXTENSIONS OFF)
+ set(CMAKE_CXX_STANDARD 14)
+@@ -32,8 +33,8 @@ target_include_directories(bolt_rt_instr
+ target_compile_options(bolt_rt_hugify PRIVATE ${BOLT_RT_FLAGS})
+ target_include_directories(bolt_rt_hugify PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+ 
+-install(TARGETS bolt_rt_instr DESTINATION lib)
+-install(TARGETS bolt_rt_hugify DESTINATION lib)
++install(TARGETS bolt_rt_instr DESTINATION "${CMAKE_INSTALL_LIBDIR}")
++install(TARGETS bolt_rt_hugify DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+ 
+ if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
+   add_library(bolt_rt_instr_osx STATIC
+@@ -44,5 +45,5 @@ if (CMAKE_CXX_COMPILER_ID MATCHES ".*Cla
+   target_compile_options(bolt_rt_instr_osx PRIVATE
+     -target x86_64-apple-darwin19.6.0
+     ${BOLT_RT_FLAGS})
+-  install(TARGETS bolt_rt_instr_osx DESTINATION lib)
++  install(TARGETS bolt_rt_instr_osx DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+ endif()

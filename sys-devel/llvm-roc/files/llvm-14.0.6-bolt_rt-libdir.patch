@@ -1,0 +1,57 @@
+
+Backport of 90dcdc4b6e7d86cb3d5049bd766aecddd549dd7d for 14.x
+URI:  https://github.com/llvm/llvm-project/commit/90dcdc4b6e7d86cb3d5049bd766aecddd549dd7d
+
+--- a/bolt/runtime/CMakeLists.txt	2022-06-22 09:46:24.000000000 -0700
++++ b/bolt/runtime/CMakeLists.txt	2022-08-28 15:08:41.605181747 -0700
+@@ -1,6 +1,7 @@
+ cmake_minimum_required(VERSION 3.1.0)
+ 
+ include(CheckIncludeFiles)
++include(GNUInstallDirs)
+ 
+ set(CMAKE_CXX_STANDARD 11)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+@@ -27,8 +28,8 @@ target_include_directories(bolt_rt_instr
+ target_compile_options(bolt_rt_hugify PRIVATE -ffreestanding -fno-exceptions -fno-rtti -fno-stack-protector)
+ target_include_directories(bolt_rt_hugify PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+ 
+-install(TARGETS bolt_rt_instr DESTINATION lib)
+-install(TARGETS bolt_rt_hugify DESTINATION lib)
++install(TARGETS bolt_rt_instr DESTINATION "${CMAKE_INSTALL_LIBDIR}")
++install(TARGETS bolt_rt_hugify DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+ 
+ if (CMAKE_CXX_COMPILER_ID MATCHES ".*Clang.*")
+   add_library(bolt_rt_instr_osx STATIC
+@@ -42,5 +43,5 @@ if (CMAKE_CXX_COMPILER_ID MATCHES ".*Cla
+     -fno-exceptions
+     -fno-rtti
+     -fno-stack-protector)
+-  install(TARGETS bolt_rt_instr_osx DESTINATION lib)
++  install(TARGETS bolt_rt_instr_osx DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+ endif()
+--- a/llvm/CMakeLists.txt	2022-08-28 15:13:00.735284529 -0700
++++ b/llvm/CMakeLists.txt	2022-08-28 15:11:39.616122726 -0700
+@@ -50,6 +50,13 @@ project(LLVM
+   VERSION ${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH}
+   LANGUAGES C CXX ASM)
+ 
++if (NOT DEFINED CMAKE_INSTALL_LIBDIR AND DEFINED LLVM_LIBDIR_SUFFIX)
++  # Must go before `include(GNUInstallDirs)`.
++  set(CMAKE_INSTALL_LIBDIR "lib${LLVM_LIBDIR_SUFFIX}")
++endif()
++
++set(LLVM_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
++
+ # Must go after project(..)
+ include(GNUInstallDirs)
+ 
+@@ -295,8 +302,6 @@ if (CMAKE_BUILD_TYPE AND
+   message(FATAL_ERROR "Invalid value for CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+ endif()
+ 
+-set(LLVM_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
+-
+ set(LLVM_TOOLS_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}" CACHE STRING
+     "Path for binary subdirectory (defaults to '${CMAKE_INSTALL_BINDIR}')")
+ mark_as_advanced(LLVM_TOOLS_INSTALL_DIR)
