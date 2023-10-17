@@ -5,8 +5,10 @@ EAPI=8
 
 LLVM_MAX_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
 
-inherit cmake flag-o-matic rocm
+inherit cmake flag-o-matic rocm uopts
 
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
@@ -99,23 +101,7 @@ CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
 	rocm_pkg_setup
-	if use pgo ; then
-ewarn
-ewarn "The pgo USE flag assumes that the dependencies for rocPRIM:${ROCM_SLOT},"
-ewarn "rocRAND:${ROCM_SLOT}, rocSPARSE:${ROCM_SLOT}, ... are already installed."
-ewarn "Please install them before enabling the pgo USE flag.  In addition, one"
-ewarn "of the following use flags must be defined"
-ewarn
-ewarn "  COMPOSABLE_KERNEL_TRAINING_USE"
-ewarn "  ROCBLAS_TRAINING_USE"
-ewarn "  ROCMLIR_TRAINING_USE"
-ewarn "  ROCPRIM_TRAINING_USE"
-ewarn "  ROCRAND_TRAINING_USE"
-ewarn "  ROCSPARSE_TRAINING_USE"
-ewarn
-ewarn "with USE flags per each package.  See the metadata.xml for details."
-ewarn
-	fi
+	uopts_setup
 }
 
 src_prepare() {
@@ -151,6 +137,7 @@ src_prepare() {
 		"${WORKDIR}/llvm-project-rocm-${PV}/openmp/libomptarget/src/CMakeLists.txt"
 	)
 	rocm_src_prepare
+	uopts_src_prepare
 }
 
 _src_configure() {
@@ -167,34 +154,7 @@ _src_configure() {
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
 	)
-	mkdir -p "${T}/pgo-profile"
-	if [[ "${PGO_PHASE}" == "PG0" ]] ; then
-		:;
-	elif [[ "${PGO_PHASE}" == "PGI" && "${PGO_TOOLCHAIN}" == "gcc" ]] ; then
-einfo "Entering PGI phase (1/3)"
-		append-flags \
-			-fprofile-generate \
-			-fprofile-dir="${T}/pgo-profile"
-	elif [[ "${PGO_PHASE}" == "PGO" && "${PGO_TOOLCHAIN}" == "gcc" ]] ; then
-einfo "Entering PGO phase (3/3)"
-		append-flags \
-			-fprofile-use \
-			-fprofile-correction \
-			-fprofile-dir="${T}/pgo-profile"
-	elif [[ "${PGO_PHASE}" == "PGI" && "${PGO_TOOLCHAIN}" == "clang" ]] ; then
-einfo "Entering PGI phase (1/3)"
-		append-flags \
-			-fprofile-generate="${T}/pgo-profile"
-	elif [[ "${PGO_PHASE}" == "PGO" && "${PGO_TOOLCHAIN}" == "clang" ]] ; then
-einfo "Entering PGO phase (3/3)"
-		if [[ ! "${T}/pgo-profile/pgo-custom.profdata" ]] ; then
-			llvm-profdata \
-				merge \
-				-output="${T}/pgo-profile/pgo-custom.profdata"
-		fi
-		append-flags \
-			-fprofile-use="${T}/pgo-profile"
-	fi
+	uopts_src_configure
 	filter-flags "-fuse-ld=*"
 	strip-unsupported-flags
 
@@ -263,38 +223,63 @@ einfo "Entering PGT phase (2/3)"
 	LLVM_ROC_TRAINERS=${LLVM_ROC_TRAINERS:-"rocPRIM rocRAND rocSPARSE"}
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" && -n "${COMPOSABLE_KERNEL_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" || die
-			export LLVM_ROC_PGO_TRAINING="1"
-			USE="${COMPOSABLE_KERNEL_TRAINING_USE}" ebuild composable_kernel-${PV}*.ebuild clean unpack prepare compile
+cat <<EOF > "${T}/run.sh"
+#!/bin/bash
+export LLVM_ROC_PGO_TRAINING="1"
+USE="${COMPOSABLE_KERNEL_TRAINING_USE}" ebuild composable_kernel-${PV}*.ebuild clean unpack prepare compile
+EOF
+			chmod +x "${T}/run.sh"
+			"${T}/run.sh"
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${LLVM_ROC_TRAINERS}" =~ "rocBLAS" && -n "${ROCBLAS_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" || die
-			export LLVM_ROC_PGO_TRAINING="1"
-			USE="${ROCBLAS_TRAINING_USE}" ebuild rocBLAS-${PV}*.ebuild clean unpack prepare compile
+cat <<EOF > "${T}/run.sh"
+export LLVM_ROC_PGO_TRAINING="1"
+USE="${ROCBLAS_TRAINING_USE}" ebuild rocBLAS-${PV}*.ebuild clean unpack prepare compile
+EOF
+			chmod +x "${T}/run.sh"
+			"${T}/run.sh"
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" && "${LLVM_ROC_TRAINERS}" =~ "rocMLIR" && -n "${ROCMLIR_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" || die
-			export LLVM_ROC_PGO_TRAINING="1"
-			USE="${ROCMLIR_TRAINING_USE}" ebuild rocMLIR-${PV}*.ebuild clean unpack prepare compile
+cat <<EOF > "${T}/run.sh"
+export LLVM_ROC_PGO_TRAINING="1"
+USE="${ROCMLIR_TRAINING_USE}" ebuild rocMLIR-${PV}*.ebuild clean unpack prepare compile
+EOF
+			chmod +x "${T}/run.sh"
+			"${T}/run.sh"
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${LLVM_ROC_TRAINERS}" =~ "rocPRIM" && -n "${ROCPRIM_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" || die
-			export LLVM_ROC_PGO_TRAINING="1"
-			USE="${ROCPRIM_TRAINING_USE}" ebuild rocPRIM-${PV}*.ebuild clean unpack prepare compile
+cat <<EOF > "${T}/run.sh"
+export LLVM_ROC_PGO_TRAINING="1"
+USE="${ROCPRIM_TRAINING_USE}" ebuild rocPRIM-${PV}*.ebuild clean unpack prepare compile
+EOF
+			chmod +x "${T}/run.sh"
+			"${T}/run.sh"
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${LLVM_ROC_TRAINERS}" =~ "rocRAND" && -n "${ROCRAND_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" || die
-			export LLVM_ROC_PGO_TRAINING="1"
-			USE="${ROCRAND_TRAINING_USE}" ebuild rocRAND-${PV}*.ebuild clean unpack prepare compile
+cat <<EOF > "${T}/run.sh"
+export LLVM_ROC_PGO_TRAINING="1"
+USE="${ROCRAND_TRAINING_USE}" ebuild rocRAND-${PV}*.ebuild clean unpack prepare compile
+EOF
+			chmod +x "${T}/run.sh"
+			"${T}/run.sh"
 		popd || die
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${LLVM_ROC_TRAINERS}" =~ "rocSPARSE" && -n "${ROCSPARSE_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" || die
-			export LLVM_ROC_PGO_TRAINING="1"
-			USE="${ROCSPARSE_TRAINING_USE}" ebuild rocSPARSE-${PV}*.ebuild clean unpack prepare compile
+cat <<EOF > "${T}/run.sh"
+export LLVM_ROC_PGO_TRAINING="1"
+USE="${ROCSPARSE_TRAINING_USE}" ebuild rocSPARSE-${PV}*.ebuild clean unpack prepare compile
+EOF
+			chmod +x "${T}/run.sh"
+			"${T}/run.sh"
 		popd || die
 	fi
 }
@@ -333,26 +318,7 @@ has_pgo_profile() {
 }
 
 src_compile() {
-	if use pgo && is_pgo_ready ; then
-		if ! has_pgo_profile ; then
-			PGO_PHASE="PGI"
-			_src_configure
-			_src_compile
-			_src_install
-
-			_src_train
-		fi
-
-		PGO_PHASE="PGO"
-		_src_configure
-		_src_compile
-		_src_install
-	else
-		PGO_PHASE="PG0"
-		_src_configure
-		_src_compile
-		_src_install
-	fi
+	uopts_src_compile
 }
 
 _src_install() {
@@ -364,14 +330,7 @@ _src_install() {
 }
 
 src_install() {
-	if use pgo ; then
-		dodir "/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}"
-		cp \
-			-aT \
-			"${ED}/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}" \
-			"${T}/pgo-profile" \
-			|| die
-	fi
+	uopts_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test

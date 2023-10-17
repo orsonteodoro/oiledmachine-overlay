@@ -13,50 +13,64 @@
 
   oiledmachine-overlay notes:
 
-  To get PGO working, add the following files and change the settings to your needs:
+  This ebuild package allows the package to be optimized with PGO/BOLT for
+  purposes of speeding up compilation time.
 
-  Add to /etc/portage/env/llvm-roc.conf:
-ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # Location if using eselect repository
-#ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # An alternative location if using the old README.md instructions.
-ROCPRIM_TRAINING_USE="rocm amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus"
-ROCRAND_TRAINING_USE="rocm amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus"
-ROCSPARSE_TRAINING_USE="amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus"
+  To get PGO working, add run each slotted opt.sh script as follows:
 
-  Add to /etc/portage/package.env:
-sys-devel/llvm-roc llvm-roc.conf
-
-  In the shell, run the following:
-
+  #ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
+  ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if overlay was added through eselect repository
+  LLVM_ROC_TRAINERS="rocPRIM rocRAND rocSPARSE"
   ROCM_SLOT="5.7"
-  emerge -1vuDN rocPRIM:${ROCM_SLOT} rocRAND:${ROCM_SLOT} rocSPARSE:${ROCM_SLOT}
-  USE="pgo" emerge llvm-roc:${ROCM_SLOT}
+  ./llvm-roc-opt.sh
+
+  To run ./llvm-roc-opt.sh, you must make sure that all the dependencies are
+  installed for that slot.
+
+  The corresponding LLVM_ROC_TRAINERS must have the corresponding
+  *_PGO_TRAINING_USE flag defined.
+
+  Environment variables:
+
+  LLVM_ROC_TRAINERS - A space separated list of packages to build.  Acceptable values:  composable_kernel, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE
+  COMPOSABLE_KERNEL_PGO_TRAINING_USE - USE flags to pass to the composable_kernel ebuild.
+  ROCBLAS_PGO_TRAINING_USE - USE flags to pass to the rocBLAS ebuild.
+  ROCPRIM_PGO_TRAINING_USE - USE flags to pass to the rocPRIM ebuild.
+  ROCRAND_PGO_TRAINING_USE - USE flags to pass to the rocRAND ebuild.
+  ROCSPARSE_PGO_TRAINING_USE - USE flags to pass to the rocSPARSE ebuild.
 
 
-  Additional environment variables:
+  Training time cost:
 
-  COMPOSABLE_KERNEL_TRAINING_USE - USE flags used to build the composable_kernel package.
-  LLVM_ROC_TRAINERS - A space separated list of ebuilds to train.  Acceptable values composable_kernel, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE.  The default is "rocPRIM rocRAND rocSPARSE"
-  PGO_TOOLCHAIN - Select the PGO toolchain.  Acceptable values - gcc (the default), clang.
-  RESTART_PGO - 1 to disable the cached PGO profile or start the PGO process from the beginning.
-  ROCBLAS_TRAINING_USE - USE flags used to build the rocBLAS package.
-  ROCMLIR_TRAINING_USE - USE flags used to build the rocMLIR package.
-  ROCPRIM_TRAINING_USE - USE flags used to build the rocPRIM package.
-  ROCRAND_TRAINING_USE - USE flags used to build the rocRAND package.
-  ROCSPARSE_TRAINING_USE - USE flags used to build the rocSPARSE package.
-
-  * To use PGO_TOOLCHAIN="clang", the sys-devel/llvm-roc:${ROCM_SLOT} must be already installed.
-  * LLVM_ROC_TRAINERS always needs the associated *_TRAINING_USE environment variable.
+  composable_kernel:  high
+  rocBLAS:  high
+  rocMLIR:  medium
+  rocRAND:  low
+  rocSPARSE:  medium
+  rocPRIM:  low
 
 
-  Examples:
+  Training purpose:
 
-  LLVM_ROC_TRAINERS="rocBLAS rocPRIM rocRAND"
+  composable_kernel:  GPU compile for PGO profile generation
+  rocBLAS:  GPU compile for PGO profile generation
+  rocMLIR:  CPU based compilation for PGO profile generation
+  rocRAND:  GPU compile for PGO profile generation
+  rocSPARSE:  GPU compile for PGO profile generation
+  rocPRIM:  GPU compile for PGO profile generation
+
 
   -->
   <use>
-    <flag name="pgo">
+    <flag name="epgo">
       Build an optimized Clang toolchain using Profile Guided Optimization (PGO)
       to decrease build times by maybe 20%.
+    </flag>
+    <flag name="ebolt">
+      Build an optimized build using BOLT (Binary Optimization and Layout Tool)
+      to improve CPU caching and branch prediction using execution sampling data
+      used to optimize code layout.  This may improve performance by 15%.  It
+      provides additional post build optimizations. (EXPERIMENTAL)
     </flag>
   </use>
 </pkgmetadata>
