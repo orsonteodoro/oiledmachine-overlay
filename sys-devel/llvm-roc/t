@@ -1,0 +1,7 @@
+#!/bin/bash
+ROCRAND_PGO_TRAINING_USE="rocm amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus" \
+ROCPRIM_PGO_TRAINING_USE="rocm amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus" \
+ROCSPARSE_PGO_TRAINING_USE="amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus" \
+ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" \
+ROCM_SLOT="5.7" \
+./llvm-roc-opt.sh

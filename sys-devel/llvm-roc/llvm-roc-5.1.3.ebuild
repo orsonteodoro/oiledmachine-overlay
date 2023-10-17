@@ -102,6 +102,9 @@ CMAKE_BUILD_TYPE="RelWithDebInfo"
 pkg_setup() {
 	rocm_pkg_setup
 	uopts_setup
+	if use epgo || use ebolt ; then
+einfo "See comments of metadata.xml for documentation on ebolt/epgo."
+	fi
 }
 
 src_prepare() {
