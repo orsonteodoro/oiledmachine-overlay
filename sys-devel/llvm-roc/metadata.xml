@@ -99,8 +99,6 @@
       to improve CPU caching and branch prediction using execution sampling data
       used to optimize code layout.  This may improve performance by 15%.  It
       provides additional post build optimizations. (EXPERIMENTAL)
-
-      (Currently not supported)
     </flag>
   </use>
 </pkgmetadata>

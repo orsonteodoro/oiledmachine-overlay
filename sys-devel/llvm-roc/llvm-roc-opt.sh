@@ -91,8 +91,10 @@ echo "PGO Phase (3/3)"
 	llvm_bolt_path=""
 	if [[ -e "/usr/lib64/rocm/${ROCM_SLOT}/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 0 )) ; then
 		llvm_bolt_path="/usr/lib64/rocm/${ROCM_SLOT}/bin/llvm-bolt"
+		export UOPTS_BOLT_PATH="/usr/lib64/rocm/${ROCM_SLOT}/bin"
 	elif [[ -e "/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 1 )); then
 		llvm_bolt_path="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt"
+		export UOPTS_BOLT_PATH="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin"
 	fi
 	if [[ "${LLVM_ROC_EBOLT}" == "1" && -e "${llvm_bolt_path}" ]] ; then
 
