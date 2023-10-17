@@ -74,10 +74,10 @@ echo "Building sys-devel/llvm-roc:${ROCM_SLOT}"
 
 	if [[ "${LLVM_ROC_EPGO}" == "1" ]] ; then
 echo "PGI Phase (1/3)"
-		USE="epgo -ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGI failed"
+#		USE="epgo -ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGI failed"
 
 echo "PGT Phase (2/3)"
-		_src_train
+#		_src_train
 
 echo "PGO Phase (3/3)"
 		USE="epgo -ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGO failed"
@@ -111,6 +111,9 @@ echo "BGO Phase (3/3)"
 }
 
 main() {
+	if [[ "${LLVM_ROC_WIPE_PGO_PROFILES}" == "1" ]] ; then
+                rm -rf /var/lib/pgo-profiles/sys-devel/llvm-roc
+	fi
 	LLVM_ROC_ENV_PATH=${LLVM_ROC_ENV_PATH:-"/etc/portage/env/llvm-roc.conf"}
 	source "${LLVM_ROC_ENV_PATH}"
 	LLVM_ROC_EPGO=${LLVM_ROC_EPGO:-"1"}

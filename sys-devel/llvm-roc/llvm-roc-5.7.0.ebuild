@@ -80,7 +80,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 bolt pgo +runtime
-r9
+r10
 "
 RDEPEND="
 	!sys-devel/llvm-rocm:0
@@ -171,11 +171,12 @@ _src_configure() {
 	strip-unsupported-flags
 
 	# Speed up composable_kernel, rocBLAS build times
-	replace-flags '-O0' '-O3'
-	replace-flags '-O1' '-O3'
-	replace-flags '-Oz' '-O3'
-	replace-flags '-Os' '-O3'
-	replace-flags '-Ofast' '-O3'
+	# -O3 may cause random ICE/segfault.
+	replace-flags '-O0' '-O2'
+	replace-flags '-O1' '-O2'
+	replace-flags '-Oz' '-O2'
+	replace-flags '-Os' '-O2'
+	replace-flags '-Ofast' '-O2'
 
 	mycmakeargs+=(
 		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
