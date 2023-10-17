@@ -1,10 +1,13 @@
 #!/bin/bash
 
+# Motivation:  There is a bug which you cannot use the USE flag to call ebuild
+# even within a wrapper script in the ebuild.  This script fixes that.
+
 _src_train() {
 	export LLVM_ROC_PGO_TRAINING=1
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" && -n "${COMPOSABLE_KERNEL_PGO_TRAINING_USE}" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel"
-			USE="${ROCBLAS_PGO_TRAINING_USE}" ebuild composable_kernel-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
+			USE="${COMPOSABLE_KERNEL_PGO_TRAINING_USE}" ebuild composable_kernel-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${LLVM_ROC_TRAINERS}" =~ "rocBLAS" && -n "${ROCBLAS_PGO_TRAINING_USE}" ]] ; then
