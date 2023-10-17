@@ -35,6 +35,9 @@ sys-devel/llvm-roc llvm-roc.conf
   Additional environment variables:
 
   RESTART_PGO - 1 to disable cached PGO profile or start the pgo process from the beginning.
+  PGO_TOOLCHAIN - gcc (default) to use GCC's PGO and toolchain.  clang to use Clang's PGO and toolchain.
+
+  * To use PGO_TOOLCHAIN="clang", the sys-devel/llvm-roc:${ROCM_SLOT} must be already installed.
 
   -->
   <use>
