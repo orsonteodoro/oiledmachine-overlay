@@ -44,6 +44,27 @@ die() {
 	exit 1
 }
 
+declare -A GET_LLVM_SLOT_FROM_ROCM_SLOT=(
+	["5.1"]="14"
+	["5.2"]="14"
+	["5.3"]="15"
+	["5.4"]="15"
+	["5.5"]="16"
+	["5.6"]="16"
+	["5.7"]="17"
+)
+
+# PV = Package Version
+declare -A GET_ROCM_COMPILER_PV_SUFFIX_FROM_ROCM_SLOT=(
+	["5.1"]="_p501"
+	["5.2"]="_p502"
+	["5.3"]="_p503"
+	["5.4"]="_p504"
+	["5.5"]="_p505"
+	["5.6"]="_p506"
+	["5.7"]="_p507"
+)
+
 _build_one_slot() {
 	if [[ -z "${ROCM_SLOT}" ]] ; then
 echo "ROCM_SLOT must be defined as an environment variable."
@@ -62,7 +83,18 @@ echo "PGO Phase (3/3)"
 		USE="epgo -ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGO failed"
 	fi
 
-	if [[ "${LLVM_ROC_EBOLT}" == "1" ]] ; then
+	is_system_llvm=0
+	if grep "system-llvm" /var/db/pkg/dev-util/rocm-compiler*${GET_ROCM_COMPILER_PV_SUFFIX_FROM_ROCM_SLOT[${ROCM_SLOT}]}*/USE ; then
+		is_system_llvm=1
+	fi
+
+	llvm_bolt_path=""
+	if [[ -e "/usr/lib64/rocm/${ROCM_SLOT}/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 0 )) ; then
+		llvm_bolt_path="/usr/lib64/rocm/${ROCM_SLOT}/bin/llvm-bolt"
+	elif [[ -e "/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 1 )); then
+		llvm_bolt_path="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt"
+	fi
+	if [[ "${LLVM_ROC_EBOLT}" == "1" && -e "${llvm_bolt_path}" ]] ; then
 
 echo "BGI Phase (1/3)"
 		USE="epgo ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGI failed"
@@ -81,6 +113,7 @@ main() {
 	source "${LLVM_ROC_ENV_PATH}"
 	LLVM_ROC_EPGO=${LLVM_ROC_EPGO:-"1"}
 	LLVM_ROC_EBOLT=${LLVM_ROC_EBOLT:-"0"}
+	LLVM_ROC_TRAINERS=${LLVM_ROC_TRAINERS:-"rocPRIM rocRAND rocSPARSE"}
 	ROCM_SLOTS=${ROCM_SLOTS:-"5.1 5.2 5.3 5.4 5.5 5.6 5.7"}
 
 	if [[ -z "${ROCM_OVERLAY_DIR}" ]] ; then
