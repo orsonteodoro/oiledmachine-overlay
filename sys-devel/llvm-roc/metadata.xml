@@ -9,4 +9,38 @@
   <upstream>
     <remote-id type="github">RadeonOpenCompute/llvm-project</remote-id>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Examples to get pgo working
+
+  Add to /etc/portage/env/llvm-roc.conf:
+ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # Location if using eselect repository
+#ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # An alternative location if using the old README.md instructions.
+ROCPRIM_TRAINING_USE="rocm amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus"
+ROCRAND_TRAINING_USE="rocm amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus"
+ROCSPARSE_TRAINING_USE="amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus"
+
+  Add to /etc/portage/package.env:
+sys-devel/llvm-roc llvm-roc.conf
+
+  In the shell, run the following:
+
+  ROCM_SLOT="5.7"
+  emerge -1vuDN rocPRIM:${ROCM_SLOT} rocRAND:${ROCM_SLOT} rocSPARSE:${ROCM_SLOT}
+  USE="pgo" emerge llvm-roc:${ROCM_SLOT}
+
+
+  Additional environment variables:
+
+  RESTART_PGO - 1 to disable cached PGO profile or start the pgo process from the beginning.
+
+  -->
+  <use>
+    <flag name="pgo">
+      Build an optimized Clang toolchain using Profile Guided Optimization (PGO)
+      to decrease build times by maybe 20%.
+    <flag>
+  </use>
 </pkgmetadata>
