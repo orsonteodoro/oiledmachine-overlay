@@ -33,18 +33,22 @@
 
   To get PGO working, add run each slotted opt.sh script as follows:
 
+  LLVM_ROC_PHASES="PGI PGT PGO" \
+  ROCM_SLOTS="5.7" \
+  ./optimize.sh
+
+  LLVM_ROC_PHASES="PGI PGT PGO BGI BGT BGO" \
   ROCM_SLOTS="5.7" \
   ./optimize.sh
 
 
   Environment variables:
 
-  LLVM_ROC_EBOLT - 1 to perform BOLT.
-  LLVM_ROC_EPGO - 1 to perform PGO.  [Do not change.]
   LLVM_ROC_ENV_PATH - path to the env config.  "/etc/portage/env/llvm-roc.conf" (default)
   LLVM_ROC_TRAINERS - A space separated list of packages to build.  Acceptable values:  composable_kernel, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE
   LLVM_ROC_WIPE_PGO_PROFILES - 1 to delete all PGO/BOLT profiles,  0 to used cached PGO profile.
   LLVM_SLOTS - A space separated list of slots to build.  "5.1 5.2 5.3 5.4 5.5 5.6 5.7" (default)
+  LLVM_ROC_PHASES - A space separated list of PGO/BOLT phases to add or remove, allowing to skip if previous steps performed.  "PGI PGT PGO" (default)  Acceptable values:  PGI PGT PGO BGI BGT BGO
 
 
   Training time cost:

@@ -2134,7 +2134,7 @@ apply_gcc_full_pgo() {
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
 		eapply "${FILESDIR}/gcc-pgo-4.19.296.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
-		eapply "${FILESDIR}/gcc-pgo-4.14.327.patch"
+		eapply "A${FILESDIR}/gcc-pgo-4.14.327.patch"
 	fi
 }
 
@@ -5339,7 +5339,7 @@ ot-kernel_set_kconfig_pgo() {
 	else
 		return
 	fi
-	if use clang ; then
+	if has clang ${IUSE} && use clang ; then
 		_ot-kernel_set_kconfig_pgo_clang
 	else
 		_ot-kernel_set_kconfig_pgo_gcc

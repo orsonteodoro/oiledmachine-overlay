@@ -72,13 +72,17 @@ echo "ROCM_SLOT must be defined as an environment variable."
 	fi
 echo "Building sys-devel/llvm-roc:${ROCM_SLOT}"
 
-	if [[ "${LLVM_ROC_EPGO}" == "1" ]] ; then
+	if [[ "${LLVM_ROC_PHASES}" =~ "PGI" ]] ; then
 echo "PGI Phase (1/3)"
 		USE="epgo -ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGI failed"
+	fi
 
+	if [[ "${LLVM_ROC_PHASES}" =~ "PGT" ]] ; then
 echo "PGT Phase (2/3)"
 		_src_train
+	fi
 
+	if [[ "${LLVM_ROC_PHASES}" =~ "PGO" ]] ; then
 echo "PGO Phase (3/3)"
 		USE="epgo -ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGO failed"
 	fi
@@ -96,18 +100,23 @@ echo "PGO Phase (3/3)"
 		llvm_bolt_path="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt"
 		export UOPTS_BOLT_PATH="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin"
 	fi
-	if [[ "${LLVM_ROC_EBOLT}" == "1" && -e "${llvm_bolt_path}" ]] ; then
+	if [[ -e "${llvm_bolt_path}" ]] ; then
 
+		if [[ "${LLVM_ROC_PHASES}" =~ "BGI" ]] ; then
 echo "BGI Phase (1/3)"
-		USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGI failed"
+			USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGI failed"
+		fi
 
+		if [[ "${LLVM_ROC_PHASES}" =~ "BGT" ]] ; then
 echo "BGT Phase (2/3)"
-		_src_train
+			_src_train
+		fi
 
+		if [[ "${LLVM_ROC_PHASES}" =~ "BGO" ]] ; then
 echo "BGO Phase (3/3)"
-		USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGO failed"
+			USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGO failed"
+		fi
 	fi
-
 }
 
 _check_prereqs() {
@@ -138,10 +147,9 @@ main() {
 	fi
 	LLVM_ROC_ENV_PATH=${LLVM_ROC_ENV_PATH:-"/etc/portage/env/llvm-roc.conf"}
 	source "${LLVM_ROC_ENV_PATH}"
-	LLVM_ROC_EPGO=${LLVM_ROC_EPGO:-"1"}
-	LLVM_ROC_EBOLT=${LLVM_ROC_EBOLT:-"0"}
 	LLVM_ROC_TRAINERS=${LLVM_ROC_TRAINERS:-"rocPRIM rocRAND rocSPARSE"}
 	ROCM_SLOTS=${ROCM_SLOTS:-"5.1 5.2 5.3 5.4 5.5 5.6 5.7"}
+	LLVM_ROC_PHASES=${LLVM_ROC_PHASES:-"PGI PGT PGO"}
 
 	if [[ -z "${ROCM_OVERLAY_DIR}" ]] ; then
 echo "ROCM_OVERLAY_DIR must be defined as an environment variable."

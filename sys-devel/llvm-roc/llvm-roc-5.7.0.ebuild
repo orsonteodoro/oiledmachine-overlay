@@ -9,7 +9,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit cmake flag-o-matic rocm uopts
+inherit cmake flag-o-matic rocm toolchain-funcs uopts
 
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
@@ -80,7 +80,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 bolt +runtime
-r10
+r11
 "
 RDEPEND="
 	!sys-devel/llvm-rocm:0
@@ -172,7 +172,7 @@ _src_configure() {
 	uopts_src_configure
 	filter-flags "-fuse-ld=*"
 	append-ldflags -fuse-ld=gold
-	strip-unsupported-flags
+#	strip-unsupported-flags # Broken, strips -fprofile-use
 
 	# Speed up composable_kernel, rocBLAS build times
 	# -O3 may cause random ICE/segfault.
@@ -188,6 +188,12 @@ _src_configure() {
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 	)
+	if ( use epgo || use ebolt ) && tc-is-gcc ; then
+		local gcc_slot=$(gcc-major-version)
+		mycmakeargs+=(
+			-DCMAKE_STATIC_LINKER_FLAGS="/usr/lib/gcc/${CHOST}/${gcc_slot}/libgcov.a"
+		)
+	fi
 
 	PROJECTS="llvm;clang;lld"
 	if use runtime ; then
