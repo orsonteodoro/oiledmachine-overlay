@@ -111,6 +111,7 @@ echo "BGO Phase (3/3)"
 }
 
 _check_prereqs() {
+echo "Checking if *DEPENDs was installed for slot :${ROCM_SLOT} trainers"
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" && -n "${COMPOSABLE_KERNEL_PGO_TRAINING_USE}" ]] ; then
 		USE="${COMPOSABLE_KERNEL_PGO_TRAINING_USE}" emerge -1vo composable_kernel:${ROCM_SLOT} || die "Prereq check/install failed"
 	fi
