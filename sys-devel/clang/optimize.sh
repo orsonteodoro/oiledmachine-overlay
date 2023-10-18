@@ -29,15 +29,19 @@ echo "CLANG_SLOT must be defined as an environment variable."
 	fi
 echo "Building sys-devel/llvm:${CLANG_SLOT}, sys-devel/clang:${CLANG_SLOT}, sys-devel/lld:${CLANG_SLOT}"
 
-	if [[ "${CLANG_EPGO}" == "1" ]] ; then
+	if [[ "${CLANG_PHASES}" == "PGI" ]] ; then
 echo "PGI Phase (1/3)"
 		USE="epgo -ebolt" emerge -1vO llvm:${CLANG_SLOT} || die "Encountered build failure.  PGI failed for llvm"
 		USE="epgo -ebolt" emerge -1vO clang:${CLANG_SLOT} || die "Encountered build failure.  PGI failed for clang"
 		USE="epgo -ebolt" emerge -1vO lld:${CLANG_SLOT} || die "Encountered build failure.  PGI failed for lld"
+	fi
 
+	if [[ "${CLANG_PHASES}" == "PGT" ]] ; then
 echo "PGT Phase (2/3)"
 		_src_train
+	fi
 
+	if [[ "${CLANG_PHASES}" == "PGO" ]] ; then
 echo "PGO Phase (3/3)"
 		USE="epgo -ebolt" emerge -1vO llvm:${CLANG_SLOT} || die "Encountered build failure.  PGO failed for llvm"
 		USE="epgo -ebolt" emerge -1vO clang:${CLANG_SLOT} || die "Encountered build failure.  PGO failed for clang"
@@ -49,20 +53,26 @@ echo "PGO Phase (3/3)"
 		llvm_bolt_path="/usr/lib/llvm/${CLANG_SLOT}/bin/llvm-bolt"
 		export UOPTS_BOLT_PATH="/usr/lib/llvm/${CLANG_SLOT}/bin"
 	fi
-	if [[ "${CLANG_EBOLT}" == "1" && -e "${llvm_bolt_path}" ]] ; then
+	if [[ -e "${llvm_bolt_path}" ]] ; then
 
+		if [[ "${CLANG_PHASES}" == "BGI" ]] ; then
 echo "BGI Phase (1/3)"
-		USE="epgo ebolt" emerge -1vO llvm:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for llvm"
-		USE="epgo ebolt" emerge -1vO clang:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for clang"
-		USE="epgo ebolt" emerge -1vO lld:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for lld"
+			USE="epgo ebolt" emerge -1vO llvm:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for llvm"
+			USE="epgo ebolt" emerge -1vO clang:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for clang"
+			USE="epgo ebolt" emerge -1vO lld:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for lld"
+		fi
 
+		if [[ "${CLANG_PHASES}" == "BGT" ]] ; then
 echo "BGT Phase (2/3)"
-		_src_train
+			_src_train
+		fi
 
+		if [[ "${CLANG_PHASES}" == "BGO" ]] ; then
 echo "BGO Phase (3/3)"
-		USE="epgo ebolt" emerge -1vO llvm:${CLANG_SLOT} || die "Encountered build failure.  BGO failed for llvm"
-		USE="epgo ebolt" emerge -1vO clang:${CLANG_SLOT} || die "Encountered build failure.  BGO failed for clang"
-		USE="epgo ebolt" emerge -1vO lld:${CLANG_SLOT} || die "Encountered build failure.  BGO failed for lld"
+			USE="epgo ebolt" emerge -1vO llvm:${CLANG_SLOT} || die "Encountered build failure.  BGO failed for llvm"
+			USE="epgo ebolt" emerge -1vO clang:${CLANG_SLOT} || die "Encountered build failure.  BGO failed for clang"
+			USE="epgo ebolt" emerge -1vO lld:${CLANG_SLOT} || die "Encountered build failure.  BGO failed for lld"
+		fi
 	fi
 
 }
@@ -83,10 +93,9 @@ main() {
 
 	CLANG_PGO_TRAINING_ENV_PATH=${CLANG_PGO_TRAINING_ENV_PATH:-"/etc/portage/env/clang-pgo-training.conf"}
 	source "${CLANG_PGO_TRAINING_ENV_PATH}"
-	CLANG_EPGO=${CLANG_EPGO:-"1"}
-	CLANG_EBOLT=${CLANG_EBOLT:-"0"}
 	CLANG_TRAINERS=${CLANG_TRAINERS:-"lld"}
 	CLANG_SLOTS=${CLANG_SLOTS:-"14 15 16 17 18"}
+	CLANG_PHASES=${CLANG_PHASES:-"PGI PGT PGO"}
 
 	if [[ -z "${OVERLAY_DIR}" ]] ; then
 echo "OVERLAY_DIR must be defined as an environment variable."

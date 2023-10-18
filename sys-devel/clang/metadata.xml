@@ -77,13 +77,18 @@ CLANG_TRAINERS="lld"
 
     To run the optimizer do:
 
+    CLANG_PHASES="PGI PGT PGO" \
+    ./optimize.sh
+
+
+    # Alternatively,
+    CLANG_PHASES="PGI PGT PGO BGI BGT BGO" \
     ./optimize.sh
 
 
     optimize.sh Environment variables:
 
-    CLANG_EPGO - 1 to perform PGO [Do not change]
-    CLANG_EBOLT - 1 to perform BOLT
+    CLANG_PHASES - A space separated list of PGO/BOLT phases, which may be used to skip over previous steps.  "PGI PGT PGO" (default).  Acceptable values PGI, PGT, PGO, BGI, BGT, BGO.
     CLANG_SLOTS - A space separated list of slots to build.  "14 15 16 17 18" (default)
     CLANG_TRAINERS - A space separated list of packages to build.  "lld" (default)
     CLANG_WIPE_PGO_PROFILES - 1 to delete PGO/BOLT profiles, 0 or unset to use cached profiles.

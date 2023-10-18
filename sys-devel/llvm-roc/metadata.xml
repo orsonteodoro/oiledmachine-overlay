@@ -37,6 +37,7 @@
   ROCM_SLOTS="5.7" \
   ./optimize.sh
 
+  # Alternatively,
   LLVM_ROC_PHASES="PGI PGT PGO BGI BGT BGO" \
   ROCM_SLOTS="5.7" \
   ./optimize.sh
