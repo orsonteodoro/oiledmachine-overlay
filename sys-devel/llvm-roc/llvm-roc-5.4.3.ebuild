@@ -116,7 +116,7 @@ pkg_setup() {
 	uopts_setup
 	if use epgo || use ebolt ; then
 einfo "See comments of metadata.xml for documentation on ebolt/epgo."
-		local path="/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}/.${ABI}"
+		local path="/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
 		addwrite "${path}"
 		if [[ -e "${path}" ]] ; then
 			chown -R portage:portage "${path}" || die
