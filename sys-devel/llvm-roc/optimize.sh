@@ -94,14 +94,16 @@ echo "PGO Phase (3/3)"
 	fi
 
 	llvm_bolt_path=""
-	if [[ -e "/usr/lib64/rocm/${ROCM_SLOT}/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 0 )) ; then
-		llvm_bolt_path="/usr/lib64/rocm/${ROCM_SLOT}/bin/llvm-bolt"
-		export UOPTS_BOLT_PATH="/usr/lib64/rocm/${ROCM_SLOT}/bin"
+	if [[ -e "/usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 0 )) ; then
+		llvm_bolt_path="/usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/llvm-bolt"
+		export UOPTS_BOLT_PATH="/usr/lib64/rocm/${ROCM_SLOT}/llvm/bin"
 	elif [[ -e "/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt" ]] && (( ${is_system_llvm} == 1 )); then
 		llvm_bolt_path="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt"
 		export UOPTS_BOLT_PATH="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin"
 	fi
+echo "llvm_bolt_path=|${llvm_bolt_path}|"
 	if [[ -e "${llvm_bolt_path}" ]] ; then
+echo "OMT A"
 
 		if [[ "${LLVM_ROC_PHASES}" =~ "BGI" ]] ; then
 echo "BGI Phase (1/3)"
