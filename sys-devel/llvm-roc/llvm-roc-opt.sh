@@ -149,6 +149,7 @@ echo "ROCM_OVERLAY_DIR must be defined as an environment variable."
 
 	local s
 	for s in ${ROCM_SLOTS} ; do
+		ROCM_SLOT="${s}"
 		_check_prereqs
 	done
 
