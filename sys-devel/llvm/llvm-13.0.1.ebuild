@@ -495,6 +495,7 @@ _src_configure() {
 	replace-flags -Os -O2
 	replace-flags -O3 -O2
 	replace-flags -Ofast -O2
+	replace-flags -O4 -O2
 
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'

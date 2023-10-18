@@ -177,6 +177,7 @@ _src_configure() {
 	replace-flags '-Oz' '-O2'
 	replace-flags '-Os' '-O2'
 	replace-flags '-Ofast' '-O2'
+	replace-flags '-O4' '-O2'
 
 	mycmakeargs+=(
 		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"

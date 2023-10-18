@@ -679,12 +679,13 @@ ewarn
 	replace-flags -O0 -O1
 
 	# Fix longer than usual build times when building rocm ebuilds in sci-libs.
-	# -O3 may cause random segfaults like in rocSPARSE.
+	# -O3 may cause random segfaults during build like in rocSPARSE.
 	replace-flags -O1 -O2
 	replace-flags -Oz -O2
 	replace-flags -Os -O2
 	replace-flags -O3 -O2
 	replace-flags -Ofast -O2
+	replace-flags -O4 -O2
 
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
