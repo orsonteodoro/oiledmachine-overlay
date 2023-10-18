@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Motivation:  There is a bug which you cannot use the USE flag to call ebuild
-# even within a wrapper script in the ebuild.  This script fixes that.
+# Motivation:  There is a bug which you cannot use the USE variable with the
+# ebuild command inside the .ebuild even within a wrapper script in the ebuild.
+# This script fixes that.
 
 _src_train() {
 	export LLVM_ROC_PGO_TRAINING=1
@@ -104,6 +105,8 @@ echo "PGO Phase (3/3)"
 
 		if [[ "${LLVM_ROC_PHASES}" =~ "BGI" ]] ; then
 echo "BGI Phase (1/3)"
+# For those who are still confused, it will rebuild with the PGO profile plus
+# BOLT flags.  Then, it will attach BOLT instrumentation to .so/exe.
 			USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGI failed"
 		fi
 

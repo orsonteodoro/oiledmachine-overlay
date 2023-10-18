@@ -1,16 +1,17 @@
 #!/bin/bash
 
-# Motivation:  There is a bug which you cannot use the USE flag to call ebuild
-# even within a wrapper script in the ebuild.  This script fixes that.
+# Motivation:  There is a bug which you cannot use the USE variable with the
+# ebuild command inside the .ebuild even within a wrapper script in the ebuild.
+# This script fixes that.
 
 _src_train() {
 	export CLANG_PGO_TRAINING=1
-	CC="clang-${CLANG_SLOT}"
-	CC="clang++${CLANG_SLOT}"
+	export CC="clang-${CLANG_SLOT}"
+	export CXX="clang++${CLANG_SLOT}"
 # TODO:  Add more ebuilds
-	if [[ -e "${OVERLAY_DIR}/sys-devel/lld" && "${CLANG_TRAINERS}" =~ "lld" && -n "${LLD_PGO_TRAINING_USE}" ]] ; then
+	if [[ -e "${OVERLAY_DIR}/sys-devel/lld" && "${CLANG_TRAINERS}" =~ "lld" ]] ; then
 		pushd "${OVERLAY_DIR}/sys-devel/lld"
-			USE="${LLD_PGO_TRAINING_USE}" ebuild lld-${CLANG_SLOT}*.ebuild digest clean unpack prepare compile
+			ebuild lld-${CLANG_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
 	unset CLANG_PGO_TRAINING
@@ -57,6 +58,8 @@ echo "PGO Phase (3/3)"
 
 		if [[ "${CLANG_PHASES}" == "BGI" ]] ; then
 echo "BGI Phase (1/3)"
+# For those who are still confused, it will rebuild with the PGO profile plus
+# BOLT flags.  Then, it will attach BOLT instrumentation to .so/exe.
 			USE="epgo ebolt" emerge -1vO llvm:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for llvm"
 			USE="epgo ebolt" emerge -1vO clang:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for clang"
 			USE="epgo ebolt" emerge -1vO lld:${CLANG_SLOT} || die "Encountered build failure.  BGI failed for lld"
