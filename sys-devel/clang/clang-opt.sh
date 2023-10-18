@@ -68,6 +68,7 @@ echo "BGO Phase (3/3)"
 }
 
 _install_prereqs() {
+echo "Checking if *DEPENDs was installed for llvm, clang, lld"
 	emerge -1vo llvm:${CLANG_SLOT} || die "Encountered build failure.  Prereq check/install failed for llvm"
 	emerge -1vo clang:${CLANG_SLOT} || die "Encountered build failure.  Prereq check/install failed for clang"
 	emerge -1vo lld:${CLANG_SLOT} || die "Encountered build failure.  Prereq check/install failed for lld"
