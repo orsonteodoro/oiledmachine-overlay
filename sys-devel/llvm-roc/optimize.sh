@@ -75,7 +75,7 @@ echo "Building sys-devel/llvm-roc:${ROCM_SLOT}"
 
 	if [[ "${LLVM_ROC_PHASES}" =~ "PGI" ]] ; then
 echo "PGI Phase (1/3)"
-		USE="epgo -ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGI failed"
+		USE="epgo -ebolt" emerge -1vO llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGI failed"
 	fi
 
 	if [[ "${LLVM_ROC_PHASES}" =~ "PGT" ]] ; then
@@ -85,7 +85,7 @@ echo "PGT Phase (2/3)"
 
 	if [[ "${LLVM_ROC_PHASES}" =~ "PGO" ]] ; then
 echo "PGO Phase (3/3)"
-		USE="epgo -ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGO failed"
+		USE="epgo -ebolt" emerge -1vO llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGO failed"
 	fi
 
 	is_system_llvm=0
@@ -107,7 +107,7 @@ echo "PGO Phase (3/3)"
 echo "BGI Phase (1/3)"
 # For those who are still confused, it will rebuild with the PGO profile plus
 # BOLT flags.  Then, it will attach BOLT instrumentation to .so/exe.
-			USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGI failed"
+			USE="epgo ebolt" emerge -1vO llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGI failed"
 		fi
 
 		if [[ "${LLVM_ROC_PHASES}" =~ "BGT" ]] ; then
@@ -117,7 +117,7 @@ echo "BGT Phase (2/3)"
 
 		if [[ "${LLVM_ROC_PHASES}" =~ "BGO" ]] ; then
 echo "BGO Phase (3/3)"
-			USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGO failed"
+			USE="epgo ebolt" emerge -1vO llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGO failed"
 		fi
 	fi
 }
