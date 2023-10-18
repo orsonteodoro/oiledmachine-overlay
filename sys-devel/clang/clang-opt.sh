@@ -67,6 +67,12 @@ echo "BGO Phase (3/3)"
 
 }
 
+_install_prereqs() {
+	emerge -1vo llvm:${CLANG_SLOT} || die "Encountered build failure.  Prereq check/install failed for llvm"
+	emerge -1vo clang:${CLANG_SLOT} || die "Encountered build failure.  Prereq check/install failed for clang"
+	emerge -1vo lld:${CLANG_SLOT} || die "Encountered build failure.  Prereq check/install failed for lld"
+}
+
 main() {
 	if [[ "${CLANG_WIPE_PGO_PROFILES}" == "1" ]] ; then
 		rm -rf /var/lib/pgo-profiles/sys-devel/llvm*
@@ -85,6 +91,12 @@ main() {
 echo "OVERLAY_DIR must be defined as an environment variable."
 		exit 1
 	fi
+
+	local s
+	for s in ${CLANG_SLOTS} ; do
+		CLANG_SLOT="${s}"
+		_install_prereqs
+	done
 
 	local s
 	for s in ${CLANG_SLOTS} ; do
