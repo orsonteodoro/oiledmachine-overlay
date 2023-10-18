@@ -301,7 +301,7 @@ einfo
 
 einfo
 einfo "See the metadata.xml for details about using the PGO/BOLT optimizer"
-einfo "script (clang-opt.sh)"
+einfo "script (optimize.sh)"
 einfo
 }
 

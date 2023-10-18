@@ -54,11 +54,11 @@
 
     PGO/BOLTing
 
-    The clang-opt.sh script has been provided to automate PGO/BOLT training with
+    The optimize.sh script has been provided to automate PGO/BOLT training with
     the least effort and to make it practically usable/accessible to the
     community.
 
-    The goal of the clang-opt.sh script in its current form is to improve build
+    The goal of the optimize.sh script in its current form is to improve build
     times.  Different use cases will be considered later.  The script will
     manage PGO/BOLT optimization for the entire LLVM/Clang toolchain.  The
     current iteration needs work and more trainers will be added as we figure
@@ -77,10 +77,10 @@ CLANG_TRAINERS="lld"
 
     To run the optimizer do:
 
-    ./clang-opt.sh
+    ./optimize.sh
 
 
-    clang-opt.sh Environment variables:
+    optimize.sh Environment variables:
 
     CLANG_EPGO - 1 to perform PGO [Do not change]
     CLANG_EBOLT - 1 to perform BOLT

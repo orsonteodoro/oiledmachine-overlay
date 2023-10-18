@@ -5,34 +5,34 @@
 
 _src_train() {
 	export LLVM_ROC_PGO_TRAINING=1
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" && -n "${COMPOSABLE_KERNEL_PGO_TRAINING_USE}" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel"
-			USE="${COMPOSABLE_KERNEL_PGO_TRAINING_USE}" ebuild composable_kernel-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
+			ebuild composable_kernel-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${LLVM_ROC_TRAINERS}" =~ "rocBLAS" && -n "${ROCBLAS_PGO_TRAINING_USE}" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${LLVM_ROC_TRAINERS}" =~ "rocBLAS" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS"
-			USE="${ROCBLAS_PGO_TRAINING_USE}" ebuild rocBLAS-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
+			ebuild rocBLAS-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" && "${LLVM_ROC_TRAINERS}" =~ "rocMLIR" && -n "${ROCMLIR_PGO_TRAINING_USE}" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" && "${LLVM_ROC_TRAINERS}" =~ "rocMLIR" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR"
-			USE="${ROCMLIR_PGO_TRAINING_USE}" ebuild rocMLIR-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
+			ebuild rocMLIR-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${LLVM_ROC_TRAINERS}" =~ "rocPRIM" && -n "${ROCPRIM_PGO_TRAINING_USE}" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${LLVM_ROC_TRAINERS}" =~ "rocPRIM" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM"
-			USE="${ROCPRIM_PGO_TRAINING_USE}" ebuild rocPRIM-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
+			ebuild rocPRIM-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${LLVM_ROC_TRAINERS}" =~ "rocSPARSE" && -n "${ROCSPARSE_PGO_TRAINING_USE}" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${LLVM_ROC_TRAINERS}" =~ "rocSPARSE" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE"
-			USE="${ROCSPARSE_PGO_TRAINING_USE}" ebuild rocSPARSE-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
+			ebuild rocSPARSE-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${LLVM_ROC_TRAINERS}" =~ "rocRAND" && -n "${ROCRAND_PGO_TRAINING_USE}" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${LLVM_ROC_TRAINERS}" =~ "rocRAND" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND"
-			USE="${ROCRAND_PGO_TRAINING_USE}" ebuild rocRAND-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
+			ebuild rocRAND-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
 	unset LLVM_ROC_PGO_TRAINING
@@ -112,23 +112,23 @@ echo "BGO Phase (3/3)"
 
 _check_prereqs() {
 echo "Checking if *DEPENDs was installed for slot :${ROCM_SLOT} trainers"
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" && -n "${COMPOSABLE_KERNEL_PGO_TRAINING_USE}" ]] ; then
-		USE="${COMPOSABLE_KERNEL_PGO_TRAINING_USE}" emerge -1vo composable_kernel:${ROCM_SLOT} || die "Prereq check/install failed"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" ]] ; then
+		emerge -1vo composable_kernel:${ROCM_SLOT} || die "Prereq check/install failed"
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${LLVM_ROC_TRAINERS}" =~ "rocBLAS" && -n "${ROCBLAS_PGO_TRAINING_USE}" ]] ; then
-		USE="${ROCBLAS_PGO_TRAINING_USE}" emerge -1vo rocBLAS:${ROCM_SLOT} || die "Prereq check/install failed"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${LLVM_ROC_TRAINERS}" =~ "rocBLAS" ]] ; then
+		emerge -1vo rocBLAS:${ROCM_SLOT} || die "Prereq check/install failed"
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" && "${LLVM_ROC_TRAINERS}" =~ "rocMLIR" && -n "${ROCMLIR_PGO_TRAINING_USE}" ]] ; then
-		USE="${ROCMLIR_PGO_TRAINING_USE}" emerge -1vo rocMLIR:${ROCM_SLOT} || die "Prereq check/install failed"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" && "${LLVM_ROC_TRAINERS}" =~ "rocMLIR" ]] ; then
+		emerge -1vo rocMLIR:${ROCM_SLOT} || die "Prereq check/install failed"
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${LLVM_ROC_TRAINERS}" =~ "rocPRIM" && -n "${ROCPRIM_PGO_TRAINING_USE}" ]] ; then
-		USE="${ROCPRIM_PGO_TRAINING_USE}" emerge -1vo rocPRIM:${ROCM_SLOT} || die "Prereq check/install failed"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${LLVM_ROC_TRAINERS}" =~ "rocPRIM" ]] ; then
+		emerge -1vo rocPRIM:${ROCM_SLOT} || die "Prereq check/install failed"
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${LLVM_ROC_TRAINERS}" =~ "rocSPARSE" && -n "${ROCSPARSE_PGO_TRAINING_USE}" ]] ; then
-		USE="${ROCSPARSE_PGO_TRAINING_USE}" emerge -1vo rocSPARSE:${ROCM_SLOT} || die "Prereq check/install failed"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${LLVM_ROC_TRAINERS}" =~ "rocSPARSE" ]] ; then
+		emerge -1vo rocSPARSE:${ROCM_SLOT} || die "Prereq check/install failed"
 	fi
-	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${LLVM_ROC_TRAINERS}" =~ "rocRAND" && -n "${ROCRAND_PGO_TRAINING_USE}" ]] ; then
-		USE="${ROCRAND_PGO_TRAINING_USE}" emerge -1vo rocRAND:${ROCM_SLOT} || die "Prereq check/install failed"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${LLVM_ROC_TRAINERS}" =~ "rocRAND" ]] ; then
+		emerge -1vo rocRAND:${ROCM_SLOT} || die "Prereq check/install failed"
 	fi
 }
 

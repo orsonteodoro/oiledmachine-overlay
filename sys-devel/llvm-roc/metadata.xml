@@ -22,8 +22,6 @@
   It is assumed that the dependencies are already installed for that slot.
   You may use the -o emerge flag to add just the dependencies.
 
-  The corresponding LLVM_ROC_TRAINERS must have the corresponding
-  *_PGO_TRAINING_USE flag defined.
 
 
   Add to /etc/portage/env/llvm-roc.conf:
@@ -31,31 +29,22 @@
   LLVM_ROC_TRAINERS="rocPRIM rocRAND rocSPARSE"
   #ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
   ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if overlay was added through eselect repository
-  ROCRAND_PGO_TRAINING_USE="rocm amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus" # Change the GPU targets
-  ROCPRIM_PGO_TRAINING_USE="rocm amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus" # Change the GPU targets
-  ROCSPARSE_PGO_TRAINING_USE="amdgpu_targets_gfx803 amdgpu_targets_gfx900 amdgpu_targets_gfx900_xnack_minus" # Change the GPU targets
 
 
   To get PGO working, add run each slotted opt.sh script as follows:
 
   ROCM_SLOTS="5.7" \
-  ./llvm-roc-opt.sh
+  ./optimize.sh
 
 
   Environment variables:
 
-  COMPOSABLE_KERNEL_PGO_TRAINING_USE - USE flags to pass to the composable_kernel ebuild.
   LLVM_ROC_EBOLT - 1 to perform BOLT.
   LLVM_ROC_EPGO - 1 to perform PGO.  [Do not change.]
   LLVM_ROC_ENV_PATH - path to the env config.  "/etc/portage/env/llvm-roc.conf" (default)
   LLVM_ROC_TRAINERS - A space separated list of packages to build.  Acceptable values:  composable_kernel, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE
   LLVM_ROC_WIPE_PGO_PROFILES - 1 to delete all PGO/BOLT profiles,  0 to used cached PGO profile.
   LLVM_SLOTS - A space separated list of slots to build.  "5.1 5.2 5.3 5.4 5.5 5.6 5.7" (default)
-  ROCBLAS_PGO_TRAINING_USE - USE flags to pass to the rocBLAS ebuild.
-  ROCMLIR_PGO_TRAINING_USE - USE flags to pass to the rocMLIR ebuild.
-  ROCPRIM_PGO_TRAINING_USE - USE flags to pass to the rocPRIM ebuild.
-  ROCRAND_PGO_TRAINING_USE - USE flags to pass to the rocRAND ebuild.
-  ROCSPARSE_PGO_TRAINING_USE - USE flags to pass to the rocSPARSE ebuild.
 
 
   Training time cost:
@@ -80,7 +69,7 @@
 
   PGO post install instructions:
 
-  When starting the ./llvm-roc-opt.sh, the epgo and ebolt USE flags should be
+  When starting the ./optimize.sh, the epgo and ebolt USE flags should be
   removed from package.use.  The script will override it.
 
   After the process is done, you should set both epgo and ebolt in package.use.
