@@ -80,7 +80,7 @@ LLVM_TARGETS=(
 )
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
-pgo +runtime
++runtime
 r10
 "
 RDEPEND="
@@ -108,9 +108,8 @@ pkg_setup() {
 einfo "See comments of metadata.xml for documentation on epgo."
 		local path="/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
 		addwrite "${path}"
-		if [[ -e "${path}" ]] ; then
-			chown -R portage:portage "${path}" || die
-		fi
+		mkdir -p "${path}"
+		chown -R portage:portage "${path}" || die
 	fi
 }
 

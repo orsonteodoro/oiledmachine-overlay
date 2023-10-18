@@ -74,13 +74,13 @@ echo "Building sys-devel/llvm-roc:${ROCM_SLOT}"
 
 	if [[ "${LLVM_ROC_EPGO}" == "1" ]] ; then
 echo "PGI Phase (1/3)"
-		USE="epgo -ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGI failed"
+		USE="epgo -ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGI failed"
 
 echo "PGT Phase (2/3)"
 		_src_train
 
 echo "PGO Phase (3/3)"
-		USE="epgo -ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGO failed"
+		USE="epgo -ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  PGO failed"
 	fi
 
 	is_system_llvm=0
@@ -99,13 +99,13 @@ echo "PGO Phase (3/3)"
 	if [[ "${LLVM_ROC_EBOLT}" == "1" && -e "${llvm_bolt_path}" ]] ; then
 
 echo "BGI Phase (1/3)"
-		USE="epgo ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGI failed"
+		USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGI failed"
 
 echo "BGT Phase (2/3)"
 		_src_train
 
 echo "BGO Phase (3/3)"
-		USE="epgo ebolt" emerge llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGO failed"
+		USE="epgo ebolt" emerge -v llvm-roc:${ROCM_SLOT} || die "Encountered build failure.  BGO failed"
 	fi
 
 }
