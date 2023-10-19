@@ -78,34 +78,50 @@ CLANG_TRAINERS="lld"
     To run the optimizer do:
 
     CLANG_PHASES="PGI PGT PGO" \
+    CLANG_TRAINERS="lld ffmpeg mesa" \
     ./optimize.sh
 
 
     # Alternatively,
     CLANG_PHASES="PGI PGT PGO BGI BGT BGO" \
+    CLANG_TRAINERS="lld ffmpeg mesa" \
     ./optimize.sh
 
 
     optimize.sh Environment variables:
 
-    CLANG_PHASES - A space separated list of PGO/BOLT phases, which may be used to skip over previous steps.  "PGI PGT PGO" (default).  Acceptable values PGI, PGT, PGO, BGI, BGT, BGO.
+    CLANG_PHASES - A space separated list of PGO/BOLT phases, which may be used to skip over previous steps.  "PGI PGT PGO" (default).  Acceptable values:  PGI, PGT, PGO, BGI, BGT, BGO.
     CLANG_SLOTS - A space separated list of slots to build.  "14 15 16 17 18" (default)
-    CLANG_TRAINERS - A space separated list of packages to build.  "lld" (default)
+    CLANG_TRAINERS - A space separated list of packages to build.  "lld" (default).  Acceptable values:  composable_kernel, ffmpeg, lld, mesa, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE.
     CLANG_WIPE_PGO_PROFILES - 1 to delete PGO/BOLT profiles, 0 or unset to use cached profiles.
     OVERLAY_DIR - The absolute path to the repository containing ebuilds to perform training on.
 
 
     Training cost:
 
+    composable_kernel - high
+    ffmpeg - medium
     lld - low
+    mesa - medium
+    rocBLAS - high
+    rocMLIR - medium
+    rocPRIM - low
+    rocRAND - low
+    rocSPARSE - medium
 
 
     Training purpose:
 
+    composable_kernel - profile GPU build
+    ffmpeg - profile CPU build
     lld - basic compile
+    mesa - profile CPU/GPU build
+    rocBLAS - profile GPU build
+    rocMLIR - profile CPU build
+    rocPRIM - profile GPU build
+    rocRAND - profile GPU build
+    rocSPARSE - profile GPU build
 
-
-    The above trainers are still a WIP (Work In Progress).
 
   References:
 [1] https://research.facebook.com/publications/bolt-a-practical-binary-optimizer-for-data-centers-and-beyond/
