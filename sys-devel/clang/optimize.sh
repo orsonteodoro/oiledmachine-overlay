@@ -75,8 +75,8 @@ _src_train() {
 	export CXX="clang++${CLANG_SLOT}"
 	local pn
 # TODO:  Add more ebuilds
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sys-devel/lld" && "${CLANG_TRAINERS}" =~ "lld" ]] ; then
-		pushd "${OILEDMACHINE_OVERLAY_DIR}/sys-devel/lld"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sys-devel/lld" && "${CLANG_TRAINERS}" =~ "lld" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sys-devel/lld"
 			ebuild lld-${CLANG_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
@@ -108,36 +108,36 @@ _src_train() {
 	fi
 
 	local ROCM_SLOT=$(_get_rocm_slot "${CLANG_SLOT}")
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/composable_kernel" && "${CLANG_TRAINERS}" =~ "composable_kernel" ]] ; then
-		pushd "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/composable_kernel"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${CLANG_TRAINERS}" =~ "composable_kernel" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel"
 			local fn=$(ls *6.0* | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild composable_kernel-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 			fi
 		popd
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocBLAS" && "${CLANG_TRAINERS}" =~ "rocBLAS" ]] ; then
-		pushd "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocBLAS"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${CLANG_TRAINERS}" =~ "rocBLAS" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS"
 			ebuild rocBLAS-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocMLIR" && "${CLANG_TRAINERS}" =~ "rocMLIR" ]] ; then
-		pushd "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocMLIR"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" && "${CLANG_TRAINERS}" =~ "rocMLIR" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR"
 			ebuild rocMLIR-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocPRIM" && "${CLANG_TRAINERS}" =~ "rocPRIM" ]] ; then
-		pushd "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocPRIM"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${CLANG_TRAINERS}" =~ "rocPRIM" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM"
 			ebuild rocPRIM-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocRAND" && "${CLANG_TRAINERS}" =~ "rocRAND" ]] ; then
-		pushd "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocRAND"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${CLANG_TRAINERS}" =~ "rocRAND" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND"
 			ebuild rocRAND-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${CLANG_TRAINERS}" =~ "rocSPARSE" ]] ; then
-		pushd "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocSPARSE"
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${CLANG_TRAINERS}" =~ "rocSPARSE" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE"
 			ebuild rocSPARSE-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
@@ -223,22 +223,22 @@ echo "Checking if *DEPENDs was installed for llvm, clang, lld"
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/x11-base/xorg-server" && "${CLANG_TRAINERS}" =~ "xorg-server" ]] ; then
 		emerge -1vo =xorg-server-21* || die "Encountered build failure.  Prereq check/install failed for xorg-server"
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/composable_kernel" && "${CLANG_TRAINERS}" =~ "composable_kernel" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${CLANG_TRAINERS}" =~ "composable_kernel" ]] ; then
 		emerge -1vo composable_kernel:${ROCM_SLOT} || die "Encountered build failure.  Prereq check/install failed for composable_kernel:${ROCM_SLOT}"
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocBLAS" && "${CLANG_TRAINERS}" =~ "rocBLAS" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocBLAS" && "${CLANG_TRAINERS}" =~ "rocBLAS" ]] ; then
 		emerge -1vo rocBLAS:${ROCM_SLOT} || die "Encountered build failure.  Prereq check/install failed for rocBLAS:${ROCM_SLOT}"
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocMLIR" && "${CLANG_TRAINERS}" =~ "rocMLIR" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocMLIR" && "${CLANG_TRAINERS}" =~ "rocMLIR" ]] ; then
 		emerge -1vo rocMLIR:${ROCM_SLOT} || die "Encountered build failure.  Prereq check/install failed for rocMLIR:${ROCM_SLOT}"
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocPRIM" && "${CLANG_TRAINERS}" =~ "rocPRIM" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocPRIM" && "${CLANG_TRAINERS}" =~ "rocPRIM" ]] ; then
 		emerge -1vo rocPRIM:${ROCM_SLOT} || die "Encountered build failure.  Prereq check/install failed for rocPRIM:${ROCM_SLOT}"
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocRAND" && "${CLANG_TRAINERS}" =~ "rocRAND" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocRAND" && "${CLANG_TRAINERS}" =~ "rocRAND" ]] ; then
 		emerge -1vo rocRAND:${ROCM_SLOT} || die "Encountered build failure.  Prereq check/install failed for rocRAND:${ROCM_SLOT}"
 	fi
-	if [[ -e "${OILEDMACHINE_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${CLANG_TRAINERS}" =~ "rocSPARSE" ]] ; then
+	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/rocSPARSE" && "${CLANG_TRAINERS}" =~ "rocSPARSE" ]] ; then
 		emerge -1vo rocSPARSE:${ROCM_SLOT} || die "Encountered build failure.  Prereq check/install failed for rocSPARSE:${ROCM_SLOT}"
 	fi
 }
@@ -256,8 +256,8 @@ main() {
 	CLANG_SLOTS=${CLANG_SLOTS:-"14 15 16 17 18"}
 	CLANG_PHASES=${CLANG_PHASES:-"PGI PGT PGO"}
 
-	if [[ -z "${OILEDMACHINE_OVERLAY_DIR}" ]] ; then
-echo "OILEDMACHINE_OVERLAY_DIR must be defined as an environment variable."
+	if [[ -z "${ROCM_OVERLAY_DIR}" ]] ; then
+echo "ROCM_OVERLAY_DIR must be defined as an environment variable."
 		exit 1
 	fi
 

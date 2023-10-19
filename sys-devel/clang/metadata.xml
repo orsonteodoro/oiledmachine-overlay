@@ -67,8 +67,8 @@
 
     Add the following to /etc/portage/env/clang-pgo-training.conf:
 
-#OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
-OILEDMACHINE_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if using eselect repository
+#ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
+ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if using eselect repository
 PORTAGE_OVERLAY_DIR="/usr/portage" # if using old instructions
 CLANG_SLOTS="14 15 16 17 18"
 CLANG_EPGO="1"
@@ -95,7 +95,7 @@ CLANG_TRAINERS="lld"
     CLANG_SLOTS - A space separated list of slots to build.  "14 15 16 17 18" (default)
     CLANG_TRAINERS - A space separated list of packages to build.  "lld" (default).  Acceptable values:  composable_kernel, ffmpeg, lld, mesa, rocBLAS, rocMLIR, rocPRIM, rocRAND, rocSPARSE, xorg-server.
     CLANG_WIPE_PGO_PROFILES - 1 to delete PGO/BOLT profiles, 0 or unset to use cached profiles.
-    OILEDMACHINE_OVERLAY_DIR - The absolute path to the oiledmachine-overlay repository containing ebuilds to perform training on.
+    ROCM_OVERLAY_DIR - The absolute path to the repository containing ROCm ebuilds to perform training on.
     PORTAGE_OVERLAY_DIR - The absolute path to the distro's main repository containing ebuilds to perform training on.
 
 
