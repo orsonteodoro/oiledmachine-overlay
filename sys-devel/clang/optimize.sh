@@ -12,7 +12,7 @@ _get_rocm_slot() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
 		if grep "rocm_${s}" /var/db/pkg/sys-devel/clang-${clang_slot}*/USE ; then
-			rocm_slot="${s}"
+			rocm_slot="${s/_/.}"
 			break
 		fi
 	done
