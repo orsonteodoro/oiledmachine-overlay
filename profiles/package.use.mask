@@ -65,4 +65,5 @@ media-video/sr -pretrained
 =sys-libs/libomp-18* llvm_targets_AMDGPU
 =sys-libs/libomp-13* llvm_targets_AMDGPU
 
+# The gold linker prevents this.
 =sys-devel/llvm-roc-5.7.0 bolt ebolt
