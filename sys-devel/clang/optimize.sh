@@ -4,6 +4,14 @@
 # ebuild command inside the .ebuild even within a wrapper script in the ebuild.
 # This script fixes that.
 
+FFMPEG_PV=${FFMPEG_PV:-"6.0"}
+FLAC_PV=${FLAC_PV:-"1.4"}
+MESA_PV=${MESA_PV:-"23.1"}
+QTBASE_PV=${QTBASE_PV:-"6.5"}
+QTCORE_PV=${QTCORE_PV:-"5.15"}
+WEBKIT_GTK_PV=${WEBKIT_GTK_PV:-"2.40"}
+XORG_SERVER_PV=${XORG_SERVER_PV:-"21.1"}
+
 # For system-llvm USE flag
 _get_rocm_slot() {
 	local clang_slot="${1}"
@@ -83,32 +91,64 @@ _src_train() {
 
 	local pn
 # TODO:  Add more ebuilds
-	if [[ -e "${ROCM_OVERLAY_DIR}/sys-devel/lld" && "${CLANG_TRAINERS}" =~ "lld" ]] ; then
-		pushd "${ROCM_OVERLAY_DIR}/sys-devel/lld"
-			ebuild lld-${CLANG_SLOT}*.ebuild digest clean unpack prepare compile
-		popd
-	fi
-	if [[ -e "${PORTAGE_OVERLAY_DIR}/media-video/ffmpeg" && "${CLANG_TRAINERS}" =~ "ffmpeg" ]] ; then
-		pushd "${PORTAGE_OVERLAY_DIR}/media-video/ffmpeg"
-			local fn=$(ls 6.0* | sort -V | tail -n 1)
+	if [[ -e "${PORTAGE_OVERLAY_DIR}/dev-qt/qtbase" && "${CLANG_TRAINERS}" =~ "qtbase" ]] ; then
+		pushd "${PORTAGE_OVERLAY_DIR}/dev-qt/qtbase"
+			local fn=$(ls ${QTBASE_PV}* | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild ${fn} digest clean unpack prepare compile
 			fi
+		popd
+	fi
+
+	if [[ -e "${PORTAGE_OVERLAY_DIR}/dev-qt/qtcore" && "${CLANG_TRAINERS}" =~ "qtcore" ]] ; then
+		pushd "${PORTAGE_OVERLAY_DIR}/dev-qt/qtcore"
+			local fn=$(ls ${QTCORE_PV}* | sort -V | tail -n 1)
+			if [[ -e "${fn}" ]] ; then
+				ebuild ${fn} digest clean unpack prepare compile
+			fi
+		popd
+	fi
+
+	if [[ -e "${PORTAGE_OVERLAY_DIR}/media-video/ffmpeg" && "${CLANG_TRAINERS}" =~ "ffmpeg" ]] ; then
+		pushd "${PORTAGE_OVERLAY_DIR}/media-video/ffmpeg"
+			local fn=$(ls ${FFMPEG_PV}* | sort -V | tail -n 1)
+			if [[ -e "${fn}" ]] ; then
+				ebuild ${fn} digest clean unpack prepare compile
+			fi
+		popd
+	fi
+	if [[ -e "${ROCM_OVERLAY_DIR}/media-libs/flac" && "${CLANG_TRAINERS}" =~ "flac" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/media-libs/flac"
+			local fn=$(ls ${FLAC_PV}* | sort -V | tail -n 1)
+			ebuild ${fn}*.ebuild digest clean unpack prepare compile
 		popd
 	fi
 
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/media-libs/mesa" && "${CLANG_TRAINERS}" =~ "mesa" ]] && ver_le "${CLANG_SLOT}" "16" ; then
 		pushd "${PORTAGE_OVERLAY_DIR}/media-libs/mesa"
-			local fn=$(ls 23.2* | sort -V | tail -n 1)
+			local fn=$(ls ${MESA_PV}* | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild ${fn} digest clean unpack prepare compile
 			fi
 		popd
 	fi
 
+	if [[ -e "${ROCM_OVERLAY_DIR}/net-libs/webkit-gtk" && "${CLANG_TRAINERS}" =~ "webkit-gtk" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/net-libs/webkit-gtk"
+			local fn=$(ls ${WEBKIT_GTK_PV}* | sort -V | tail -n 1)
+			ebuild ${fn} digest clean unpack prepare compile
+		popd
+	fi
+
+	if [[ -e "${ROCM_OVERLAY_DIR}/sys-devel/lld" && "${CLANG_TRAINERS}" =~ "lld" ]] ; then
+		pushd "${ROCM_OVERLAY_DIR}/sys-devel/lld"
+			ebuild lld-${CLANG_SLOT}*.ebuild digest clean unpack prepare compile
+		popd
+	fi
+
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/x11-base/xorg-server" && "${CLANG_TRAINERS}" =~ "xorg-server" ]] ; then
 		pushd "${PORTAGE_OVERLAY_DIR}/x11-base/xorg-server"
-			local fn=$(ls 21* | sort -V | tail -n 1)
+			local fn=$(ls ${XORG_SERVER_PV}* | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild ${fn} digest clean unpack prepare compile
 			fi
@@ -224,14 +264,26 @@ echo "Checking if *DEPENDs was installed for llvm, clang, lld"
 	emerge -1vo clang:${CLANG_SLOT} || die "Encountered build failure.  Prereq check/install failed for clang"
 	emerge -1vo lld:${CLANG_SLOT} || die "Encountered build failure.  Prereq check/install failed for lld"
 	local ROCM_SLOT=$(_get_rocm_slot "${CLANG_SLOT}")
+	if [[ -e "${PORTAGE_OVERLAY_DIR}/dev-qt/qtbase" && "${CLANG_TRAINERS}" =~ "qtbase" ]] ; then
+		emerge -1vo =dev-qt/qtbase-${QTBASE_PV}* || die "Encountered build failure.  Prereq check/install failed for qtbase"
+	fi
+	if [[ -e "${PORTAGE_OVERLAY_DIR}/dev-qt/qtcore" && "${CLANG_TRAINERS}" =~ "qtcore" ]] ; then
+		emerge -1vo =dev-qt/qtcore-${QTCORE_PV}* || die "Encountered build failure.  Prereq check/install failed for qtcore"
+	fi
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/media-video/ffmpeg" && "${CLANG_TRAINERS}" =~ "ffmpeg" ]] ; then
-		emerge -1vo =ffmpeg-6.0* || die "Encountered build failure.  Prereq check/install failed for ffmpeg"
+		emerge -1vo =ffmpeg-${FFMPEG_PV}* || die "Encountered build failure.  Prereq check/install failed for ffmpeg"
+	fi
+	if [[ -e "${PORTAGE_OVERLAY_DIR}/media-libs/flac" && "${CLANG_TRAINERS}" =~ "flac" ]] ; then
+		emerge -1vo =flac-${FLAC_PV}* || die "Encountered build failure.  Prereq check/install failed for flac"
 	fi
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/media-libs/mesa" && "${CLANG_TRAINERS}" =~ "mesa" ]] ; then
-		emerge -1vo =mesa-23.2* || die "Encountered build failure.  Prereq check/install failed for mesa"
+		emerge -1vo =mesa-${MESA_PV}* || die "Encountered build failure.  Prereq check/install failed for mesa"
+	fi
+	if [[ -e "${PORTAGE_OVERLAY_DIR}/net-libs/webkit-gtk" && "${CLANG_TRAINERS}" =~ "webkit-gtk" ]] ; then
+		emerge -1vo =xorg-server-${WEBKIT_GTK_PV}* || die "Encountered build failure.  Prereq check/install failed for webkit-gtk"
 	fi
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/x11-base/xorg-server" && "${CLANG_TRAINERS}" =~ "xorg-server" ]] ; then
-		emerge -1vo =xorg-server-21* || die "Encountered build failure.  Prereq check/install failed for xorg-server"
+		emerge -1vo =xorg-server-${XORG_SERVER_PV}* || die "Encountered build failure.  Prereq check/install failed for xorg-server"
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${CLANG_TRAINERS}" =~ "composable_kernel" ]] ; then
 		emerge -1vo composable_kernel:${ROCM_SLOT} || die "Encountered build failure.  Prereq check/install failed for composable_kernel:${ROCM_SLOT}"
