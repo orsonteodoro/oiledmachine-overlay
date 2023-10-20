@@ -77,6 +77,16 @@ ver_ge() {
 	return 1
 }
 
+declare -A ROCM_SLOT_TO_COMPOSABLE_KERNEL_PV=(
+	["5.1"]="_p501"
+	["5.2"]="_p502"
+	["5.3"]="_p503"
+	["5.4"]="_p504"
+	["5.5"]="_p505"
+	["5.6"]="_p506"
+	["5.7"]="5.7"
+)
+
 _src_train() {
 	export CLANG_PGO_TRAINING=1
 	export CC="clang-${CLANG_SLOT}"
@@ -93,7 +103,7 @@ _src_train() {
 # TODO:  Add more ebuilds
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/dev-qt/qtbase" && "${CLANG_TRAINERS}" =~ "qtbase" ]] ; then
 		pushd "${PORTAGE_OVERLAY_DIR}/dev-qt/qtbase"
-			local fn=$(ls ${QTBASE_PV}* | sort -V | tail -n 1)
+			local fn=$(ls *${QTBASE_PV}*.ebuild | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild ${fn} digest clean unpack prepare compile
 			fi
@@ -102,7 +112,7 @@ _src_train() {
 
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/dev-qt/qtcore" && "${CLANG_TRAINERS}" =~ "qtcore" ]] ; then
 		pushd "${PORTAGE_OVERLAY_DIR}/dev-qt/qtcore"
-			local fn=$(ls ${QTCORE_PV}* | sort -V | tail -n 1)
+			local fn=$(ls *${QTCORE_PV}*.ebuild | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild ${fn} digest clean unpack prepare compile
 			fi
@@ -111,7 +121,7 @@ _src_train() {
 
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/media-video/ffmpeg" && "${CLANG_TRAINERS}" =~ "ffmpeg" ]] ; then
 		pushd "${PORTAGE_OVERLAY_DIR}/media-video/ffmpeg"
-			local fn=$(ls ${FFMPEG_PV}* | sort -V | tail -n 1)
+			local fn=$(ls *${FFMPEG_PV}*.ebuild | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild ${fn} digest clean unpack prepare compile
 			fi
@@ -119,14 +129,14 @@ _src_train() {
 	fi
 	if [[ -e "${ROCM_OVERLAY_DIR}/media-libs/flac" && "${CLANG_TRAINERS}" =~ "flac" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/media-libs/flac"
-			local fn=$(ls ${FLAC_PV}* | sort -V | tail -n 1)
-			ebuild ${fn}*.ebuild digest clean unpack prepare compile
+			local fn=$(ls *${FLAC_PV}*.ebuild | sort -V | tail -n 1)
+			ebuild ${fn} digest clean unpack prepare compile
 		popd
 	fi
 
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/media-libs/mesa" && "${CLANG_TRAINERS}" =~ "mesa" ]] && ver_le "${CLANG_SLOT}" "16" ; then
 		pushd "${PORTAGE_OVERLAY_DIR}/media-libs/mesa"
-			local fn=$(ls ${MESA_PV}* | sort -V | tail -n 1)
+			local fn=$(ls *${MESA_PV}*.ebuild | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild ${fn} digest clean unpack prepare compile
 			fi
@@ -135,7 +145,7 @@ _src_train() {
 
 	if [[ -e "${ROCM_OVERLAY_DIR}/net-libs/webkit-gtk" && "${CLANG_TRAINERS}" =~ "webkit-gtk" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/net-libs/webkit-gtk"
-			local fn=$(ls ${WEBKIT_GTK_PV}* | sort -V | tail -n 1)
+			local fn=$(ls *${WEBKIT_GTK_PV}*.ebuild | sort -V | tail -n 1)
 			ebuild ${fn} digest clean unpack prepare compile
 		popd
 	fi
@@ -148,7 +158,7 @@ _src_train() {
 
 	if [[ -e "${PORTAGE_OVERLAY_DIR}/x11-base/xorg-server" && "${CLANG_TRAINERS}" =~ "xorg-server" ]] ; then
 		pushd "${PORTAGE_OVERLAY_DIR}/x11-base/xorg-server"
-			local fn=$(ls ${XORG_SERVER_PV}* | sort -V | tail -n 1)
+			local fn=$(ls *${XORG_SERVER_PV}*.ebuild | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
 				ebuild ${fn} digest clean unpack prepare compile
 			fi
@@ -158,9 +168,9 @@ _src_train() {
 	local ROCM_SLOT=$(_get_rocm_slot "${CLANG_SLOT}")
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${CLANG_TRAINERS}" =~ "composable_kernel" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel"
-			local fn=$(ls *6.0* | sort -V | tail -n 1)
+			local fn=$(ls *${ROCM_SLOT_TO_COMPOSABLE_KERNEL_PV[${ROCM_SLOT}]}*.ebuild | sort -V | tail -n 1)
 			if [[ -e "${fn}" ]] ; then
-				ebuild composable_kernel-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile
+				ebuild ${fn} digest clean unpack prepare compile
 			fi
 		popd
 	fi
