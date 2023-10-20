@@ -73,6 +73,11 @@ _src_train() {
 	export CLANG_PGO_TRAINING=1
 	export CC="clang-${CLANG_SLOT}"
 	export CXX="clang++${CLANG_SLOT}"
+
+	# Pass cmake configure time tests for clang/llvm built with GCC PGO
+	export CFLAGS="${CFLAGS} -Wl,-lgcov"
+	export CXXFLAGS="${CXXFLAGS} -Wl,-lgcov"
+
 	local pn
 # TODO:  Add more ebuilds
 	if [[ -e "${ROCM_OVERLAY_DIR}/sys-devel/lld" && "${CLANG_TRAINERS}" =~ "lld" ]] ; then
