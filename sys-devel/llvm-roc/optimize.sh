@@ -6,6 +6,11 @@
 
 _src_train() {
 	export LLVM_ROC_PGO_TRAINING=1
+
+	# Pass configure time tests
+	export CFLAGS="${CFLAGS} -Wl,-lgcov"
+	export CXXFLAGS="${CXXFLAGS} -Wl,-lgcov"
+
 	if [[ -e "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel" && "${LLVM_ROC_TRAINERS}" =~ "composable_kernel" ]] ; then
 		pushd "${ROCM_OVERLAY_DIR}/sci-libs/composable_kernel"
 			ebuild composable_kernel-${ROCM_SLOT}*.ebuild digest clean unpack prepare compile

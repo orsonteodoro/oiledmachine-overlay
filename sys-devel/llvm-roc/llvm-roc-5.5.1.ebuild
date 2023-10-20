@@ -84,7 +84,7 @@ LLVM_TARGETS=(
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 bolt +runtime
-r11
+r12
 "
 RDEPEND="
 	!sys-devel/llvm-rocm:0
@@ -219,7 +219,7 @@ _src_configure() {
 		-DLLVM_ENABLE_PROJECTS="${PROJECTS}"
 		-DLLVM_ENABLE_SPHINX=NO
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
-		-DLLVM_ENABLE_ZLIB=OFF # For mlir
+		-DLLVM_ENABLE_ZLIB=ON # OFF for mlir, ON for lld+scudo
 		-DLLVM_INSTALL_UTILS=ON
 		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
 #		-DLLVM_LINK_LLVM_DYLIB=ON
