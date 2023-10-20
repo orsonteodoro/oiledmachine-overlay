@@ -7,6 +7,9 @@
 _src_train() {
 	export LLVM_ROC_PGO_TRAINING=1
 
+	export CFLAGS_ORIG="${CFLAGS}"
+	export CXXFLAGS_ORIG="${CXXFLAGS}"
+
 	# Pass configure time tests
 	export CFLAGS="${CFLAGS} -Wl,-lgcov"
 	export CXXFLAGS="${CXXFLAGS} -Wl,-lgcov"
@@ -42,6 +45,8 @@ _src_train() {
 		popd
 	fi
 	unset LLVM_ROC_PGO_TRAINING
+	export CFLAGS="${CFLAGS_ORIG}"
+	export CXXFLAGS="${CXXFLAGS_ORIG}"
 }
 
 die() {

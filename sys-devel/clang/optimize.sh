@@ -74,6 +74,9 @@ _src_train() {
 	export CC="clang-${CLANG_SLOT}"
 	export CXX="clang++${CLANG_SLOT}"
 
+	export CFLAGS_ORIG="${CFLAGS}"
+	export CXXFLAGS_ORIG="${CXXFLAGS}"
+
 	# Pass cmake configure time tests for clang/llvm built with GCC PGO
 	export CFLAGS="${CFLAGS} -Wl,-lgcov"
 	export CXXFLAGS="${CXXFLAGS} -Wl,-lgcov"
@@ -148,6 +151,8 @@ _src_train() {
 	fi
 
 	unset CLANG_PGO_TRAINING
+	export CFLAGS="${CFLAGS_ORIG}"
+	export CXXFLAGS="${CXXFLAGS_ORIG}"
 }
 
 die() {
