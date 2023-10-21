@@ -42,7 +42,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-system-llvm test r2
+system-llvm test r3
 "
 REQUIRED_USE="
 "
@@ -164,7 +164,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_TEST=$(use test)
 		-DCMAKE_BUILD_TYPE=release
-		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/${EROCM_PATH}"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
 		-DDOWNLOAD_GTEST=OFF
@@ -187,6 +187,12 @@ src_configure() {
 #		-mcumode -mno-wavefrontsize64
 
 	rocm_src_configure
+}
+
+src_install() {
+	cmake_src_install
+	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
