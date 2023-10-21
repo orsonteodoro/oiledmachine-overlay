@@ -73,7 +73,7 @@ declare -A GET_ROCM_COMPILER_PV_SUFFIX_FROM_ROCM_SLOT=(
 	["5.4"]="_p504"
 	["5.5"]="_p505"
 	["5.6"]="_p506"
-	["5.7"]="_p507"
+	["5.7"]="5.7.0"
 )
 
 _build_one_slot() {
@@ -111,9 +111,7 @@ echo "PGO Phase (3/3)"
 		llvm_bolt_path="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin/llvm-bolt"
 		export UOPTS_BOLT_PATH="/usr/lib/llvm/${GET_LLVM_SLOT_FROM_ROCM_SLOT[${ROCM_SLOT}]}/bin"
 	fi
-echo "llvm_bolt_path=|${llvm_bolt_path}|"
 	if [[ -e "${llvm_bolt_path}" ]] ; then
-echo "OMT A"
 
 		if [[ "${LLVM_ROC_PHASES}" =~ "BGI" ]] ; then
 echo "BGI Phase (1/3)"
