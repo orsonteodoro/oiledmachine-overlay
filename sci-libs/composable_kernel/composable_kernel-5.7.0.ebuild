@@ -50,9 +50,9 @@ RDEPEND="
 	|| (
 		(
 			!system-llvm? (
-				~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+				~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
 			)
-			~dev-util/hip-${PV}:${ROCM_SLOT}
+			~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
 				sys-libs/libomp:${LLVM_MAX_SLOT}
 			)
@@ -67,12 +67,13 @@ BDEPEND="
 		dev-cpp/gtest
 	)
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
+	sys-devel/binutils[gold]
 	|| (
 		(
 			!system-llvm? (
-				~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+				~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 			)
-			~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+			~dev-util/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
 				sys-devel/clang:${LLVM_MAX_SLOT}
 			)
@@ -85,6 +86,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
 	"${FILESDIR}/${PN}-1.0.0_p9999-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.0-example-libs.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
@@ -145,6 +147,12 @@ src_configure() {
 	# error: Illegal instruction detected: Operand has incorrect register class.
 	replace-flags '-O0' '-O1'
 
+	filter-flags -Wl,--as-needed
+
+	# Fix libhsa-runtime64.so: undefined reference to `hsaKmtWaitOnEvent_Ext'
+	filter-flags '-fuse-ld=*'
+	append-ldflags -fuse-ld=gold
+
 	einfo "USE=${USE}"
 	local gpu_targets=$(echo "${USE}" \
 		| tr " " "\n" \
@@ -178,7 +186,7 @@ src_configure() {
 		-fno-stack-protector
 #		-mcumode -mno-wavefrontsize64
 
-	cmake_src_configure
+	rocm_src_configure
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

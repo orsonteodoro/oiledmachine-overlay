@@ -1,0 +1,20 @@
+--- composable_kernel-rocm-5.7.0/example/CMakeLists.txt.orig	2023-10-21 10:18:13.033605790 -0700
++++ composable_kernel-rocm-5.7.0/example/CMakeLists.txt	2023-10-21 11:08:01.573571413 -0700
+@@ -8,7 +8,7 @@ add_custom_target(examples)
+ function(add_example_executable EXAMPLE_NAME FILE_NAME)
+     message("adding example ${EXAMPLE_NAME}")
+     add_executable(${EXAMPLE_NAME} ${FILE_NAME})
+-    target_link_libraries(${EXAMPLE_NAME} PRIVATE utility)
++    target_link_libraries(${EXAMPLE_NAME} PRIVATE utility amd_comgr hsa-runtime64 numa amdhip64)
+     add_test(NAME ${EXAMPLE_NAME} COMMAND $<TARGET_FILE:${EXAMPLE_NAME}> ${ARGN})
+     add_dependencies(examples ${EXAMPLE_NAME})
+     add_dependencies(check ${EXAMPLE_NAME})
+@@ -18,7 +18,7 @@ endfunction(add_example_executable EXAMP
+ function(add_example_executable_no_testing EXAMPLE_NAME FILE_NAME)
+     message("adding example ${EXAMPLE_NAME}")
+     add_executable(${EXAMPLE_NAME} ${FILE_NAME})
+-    target_link_libraries(${EXAMPLE_NAME} PRIVATE utility)
++    target_link_libraries(${EXAMPLE_NAME} PRIVATE utility amd_comgr hsa-runtime64 numa amdhip64)
+     add_dependencies(examples ${EXAMPLE_NAME})
+     rocm_install(TARGETS ${EXAMPLE_NAME} COMPONENT examples)
+ endfunction(add_example_executable_no_testing EXAMPLE_NAME)

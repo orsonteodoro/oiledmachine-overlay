@@ -55,7 +55,7 @@ diff -urp composable_kernel-eef009d001b928db1bb377a105c93b75e0dccc7b.orig/CMakeL
 -    add_subdirectory(test)
 +    if(${BUILD_TEST})
 +        add_subdirectory(test)
-+    fi
++    endif()
      add_subdirectory(profiler)
  endif()
  

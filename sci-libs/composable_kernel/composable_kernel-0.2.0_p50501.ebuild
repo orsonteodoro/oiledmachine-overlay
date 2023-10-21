@@ -48,9 +48,9 @@ RDEPEND="
 	|| (
 		(
 			!system-llvm? (
-				~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+				~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
 			)
-			~dev-util/hip-${PV}:${ROCM_SLOT}
+			~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
 				sys-libs/libomp:${LLVM_MAX_SLOT}
 			)
@@ -68,9 +68,9 @@ BDEPEND="
 	|| (
 		(
 			!system-llvm? (
-				~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+				~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 			)
-			~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+			~dev-util/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
 				sys-devel/clang:${LLVM_MAX_SLOT}
 			)

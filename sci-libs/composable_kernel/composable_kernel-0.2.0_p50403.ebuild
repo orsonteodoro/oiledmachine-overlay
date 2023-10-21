@@ -14,7 +14,7 @@ AMDGPU_TARGETS_COMPAT=(
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_MAX_SLOT=15
 ROCM_SLOT="5.4"
-ROCM_VERSION="5.4"
+ROCM_VERSION="5.4.3"
 COMPOSABLE_KERNEL_COMMIT="eef009d001b928db1bb377a105c93b75e0dccc7b" # Same as MIOpen's requirements.txt
 MY_PV=$(ver_cut 1-2)
 
@@ -48,9 +48,9 @@ RDEPEND="
 	|| (
 		(
 			!system-llvm? (
-				~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+				~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
 			)
-			~dev-util/hip-${PV}:${ROCM_SLOT}
+			~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
 				sys-libs/libomp:${LLVM_MAX_SLOT}
 			)
@@ -68,9 +68,9 @@ BDEPEND="
 	|| (
 		(
 			!system-llvm? (
-				~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+				~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 			)
-			~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+			~dev-util/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
 				sys-devel/clang:${LLVM_MAX_SLOT}
 			)
