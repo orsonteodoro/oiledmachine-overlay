@@ -15,7 +15,7 @@ LLVM_MAX_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake llvm rocm
+inherit cmake flag-o-matic llvm rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipTensor/archive/refs/tags/rocm-${PV}.tar.gz
@@ -28,7 +28,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-+rocm samples system-llvm test
++rocm samples system-llvm test r1
 "
 gen_rocm_required_use() {
 	local x
@@ -84,6 +84,10 @@ src_configure() {
 	addpredict /dev/kfd
 	addpredict /dev/dri/
 
+	# For reduced memory usage during build.
+	replace-flags '-O0' '-O2'
+	replace-flags '-O0' '-O2'
+
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DHIPTENSOR_BUILD_TESTS=$(usex test ON OFF)
@@ -114,6 +118,7 @@ src_test() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  ebuild needs test
