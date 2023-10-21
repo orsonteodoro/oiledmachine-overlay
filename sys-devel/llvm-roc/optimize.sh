@@ -73,7 +73,7 @@ declare -A GET_ROCM_COMPILER_PV_SUFFIX_FROM_ROCM_SLOT=(
 	["5.4"]="_p504"
 	["5.5"]="_p505"
 	["5.6"]="_p506"
-	["5.7"]="5.7.0"
+	["5.7"]="5.7"
 )
 
 _build_one_slot() {
