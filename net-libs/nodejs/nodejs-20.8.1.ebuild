@@ -728,7 +728,7 @@ einfo
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
-	cp "${FILESDIR}/node-multiplexer-v7" "${EROOT}/usr/bin/node" || die
+	cp "${FILESDIR}/node-multiplexer-v8" "${EROOT}/usr/bin/node" || die
 	sed -i -e "s|__EPREFIX__|${EPREFIX}|g" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die

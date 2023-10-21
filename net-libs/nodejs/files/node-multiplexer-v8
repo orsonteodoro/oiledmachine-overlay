@@ -4,20 +4,14 @@ ACTIVE_VERSION=$(grep -r -e "#define NODE_MAJOR_VERSION" \
 	"${EPREFIX}/usr/include/node/node_version.h" | cut -f 3 -d " ")
 NODE_VERSION=${NODE_VERSION:-${ACTIVE_VERSION}}
 
-if [[ "${NODE_VERSION}" == "20" ]] ; then
+if [[ "${NODE_VERSION}" == "21" ]] ; then
+	"${EPREFIX}/usr/bin/node21" "${@}"
+elif [[ "${NODE_VERSION}" == "20" ]] ; then
 	"${EPREFIX}/usr/bin/node20" "${@}"
-elif [[ "${NODE_VERSION}" == "19" ]] ; then
-	"${EPREFIX}/usr/bin/node19" "${@}"
 elif [[ "${NODE_VERSION}" == "18" ]] ; then
 	"${EPREFIX}/usr/bin/node18" "${@}"
-elif [[ "${NODE_VERSION}" == "17" ]] ; then
-	"${EPREFIX}/usr/bin/node17" "${@}"
 elif [[ "${NODE_VERSION}" == "16" ]] ; then
 	"${EPREFIX}/usr/bin/node16" "${@}"
-elif [[ "${NODE_VERSION}" == "14" ]] ; then
-	"${EPREFIX}/usr/bin/node14" "${@}"
-elif [[ "${NODE_VERSION}" == "12" ]] ; then
-	"${EPREFIX}/usr/bin/node12" "${@}"
 else
 	echo "LTS is only supported"
 	exit 1
