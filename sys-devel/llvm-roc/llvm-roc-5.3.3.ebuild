@@ -273,6 +273,7 @@ _src_install() {
 src_install() {
 	_src_install
 	uopts_src_install
+	rm -rf "${ED}/var/tmp"
 }
 
 pkg_postinst() {
