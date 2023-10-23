@@ -217,6 +217,13 @@ _src_configure() {
 
 	use elibc_musl && append-ldflags -Wl,-z,stack-size=2097152
 
+	# For PGO
+	if tc-is-gcc ; then
+# error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
+# The PGO profiles are isolated.  The Code is the same.
+		append-flags -Wno-error=coverage-mismatch
+	fi
+
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DBUILD_SHARED_LIBS=ON

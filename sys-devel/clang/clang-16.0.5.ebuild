@@ -683,6 +683,13 @@ ewarn
 	replace-flags -Ofast -O2
 	replace-flags -O4 -O2
 
+	# For PGO
+	if tc-is-gcc ; then
+# error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
+# The PGO profiles are isolated.  The Code is the same.
+		append-flags -Wno-error=coverage-mismatch
+	fi
+
 	filter-flags -m32 -m64 -mx32 -m31 '-mabi=*'
 	[[ ${CHOST} =~ "risc" ]] && filter-flags '-march=*'
 	export CFLAGS="$(get_abi_CFLAGS ${ABI}) ${CFLAGS}"
