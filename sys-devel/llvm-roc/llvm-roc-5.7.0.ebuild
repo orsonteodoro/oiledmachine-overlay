@@ -188,7 +188,7 @@ _src_configure() {
 # The error is not a problem for 5.7.0.
 # error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
 # The PGO profiles are isolated.  The Code is the same.
-		:; #append-flags -Wno-error=coverage-mismatch
+		append-flags -Wno-error=coverage-mismatch
 	fi
 
 	mycmakeargs+=(
