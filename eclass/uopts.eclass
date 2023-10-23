@@ -239,7 +239,7 @@ einfo "is_tbolt_profile_reusable=${skip_inst} "
 		_tbolt_opt_tree "${BUILD_DIR}"
 	elif has ebolt ${IUSE} && use ebolt && [[ -n "${_EBOLT_ECLASS}" ]] ; then
 		if has ebolt ${IUSE} && use ebolt ; then
-			BOLT_PHASE=$(epgo_get_phase)
+			BOLT_PHASE=$(ebolt_get_phase)
 		fi
 		has ebolt ${IUSE} && use ebolt && _src_compile_bolt_inst
 		has ebolt ${IUSE} && use ebolt && _src_compile_bolt_opt
