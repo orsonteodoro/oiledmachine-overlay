@@ -203,6 +203,13 @@ _src_configure() {
 	replace-flags '-Ofast' '-O2'
 	replace-flags '-O4' '-O2'
 
+	# For PGO
+	if tc-is-gcc ; then
+# error: number of counters in profile data for function '...' does not match its profile data (counter 'arcs', expected 7 and have 13) [-Werror=coverage-mismatch]
+# The PGO profiles are isolated.  The Code is the same.
+		append-flags -Wno-error=coverage-mismatch
+	fi
+
 	mycmakeargs+=(
 		-DCMAKE_EXE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"

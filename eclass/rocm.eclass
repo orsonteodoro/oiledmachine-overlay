@@ -293,6 +293,7 @@ eerror
 	else
 		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 	fi
+
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 		export CCACHE_PATH="${EROCM_LLVM_PATH}/bin"
 	fi
@@ -326,14 +327,20 @@ einfo "Removing all clangs except for ${clang_selected_desc} from PATH..."
 #			| tr "\n" ":")
 #	fi
 
+
+# Avoid these kinds of errors with pgo by disabling ccache:
+#error: number of counters in profile data for function '...' does not match its profile data (counter 'indirect_call', expected 2 and have 3) [-Werror=coverage-mismatch]
+#error: the control flow of function '...' does not match its profile data (counter 'time_profiler') [-Werror=coverage-mismatch]
 	if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
 einfo "Removing ccache from PATH to prevent override by system's clang..."
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -E -e "/ccache/d" \
 			| tr "\n" ":")
+	fi
 
-		# Allow to create and write a PGO profile.
+	if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
+	# Allow to create and write a PGO profile.
 		MULTILIB_ABI_FLAG=""
 		local path="/var/lib/pgo-profiles/sys-devel/llvm-roc/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
 		addwrite "${path}"
