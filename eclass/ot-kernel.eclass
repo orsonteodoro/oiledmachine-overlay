@@ -8926,7 +8926,13 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 	# For app-emulation/virtualbox-modules
 				"include/config"
 				"include/generated"
-				"scripts/basic/fixdep"
+				"scripts"
+#				"scripts/basic/fixdep" # Broken copy
+				"scripts/basic"
+#				"scripts/genksyms/genksyms"
+				"scripts/genksyms"
+#				"scripts/mod/modpost"
+				"scripts/mod"
 			)
 
 			local arches=(
@@ -8936,7 +8942,10 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 			for _arch in "${arches[@]}" ; do
 	# Save generated headers
 				save_paths+=(
-					"arch/${_arch}/include/generated"
+					"arch/${_arch}"
+#					"arch/${_arch}/include/generated"
+					"arch/${_arch}/include/generated/asm"
+#					"arch/${_arch}/include/generated/asm/rwonce.h"
 				)
 			done
 
@@ -8946,13 +8955,12 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 				if [[ -d "${path}" ]] ; then
 					mkdir -p "${cache}/${path}" || true
 					cp -aT "${path}" "${cache}/${path}" || true
-				fi
-				if [[ -f "${path}" || -x "${path}" ]] ; then
+				elif [[ -f "${path}" || -x "${path}" ]] ; then
 					local d=$(dirname "${path}")
 					if [[ "${d}" == "." ]] ; then
 						cp -a "${path}" "${cache}" || true
 					else
-						mkdir -p "${d}" || true
+						mkdir -p "${cache}/${d}" || true
 						cp -a "${path}" "${cache}/${d}" || true
 					fi
 				fi
