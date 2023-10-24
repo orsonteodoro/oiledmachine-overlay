@@ -8909,8 +8909,61 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch} \
 				"/usr/src/linux-${PV}-${extraversion}/.config"
 
+			local cache="${T}/save_cache"
+			mkdir -p "${cache}" || true
+
+	# Save files before wiped by mrproper.
+			local save_paths=(
+	# For module checks in linux-mod-r1.eclass.
+				"Module.symvers"
+
+	# Save generated headers
+				"include/generated"
+				"tools/virtio/generated"
+				"tools/testing/radix-tree/generated"
+				"tools/net/ynl/generated"
+
+	# For app-emulation/virtualbox-modules
+				"include/config"
+				"include/generated"
+				"scripts/basic/fixdep"
+			)
+
+			local arches=(
+				$(ls arch)
+			)
+			local _arch # arch already defined
+			for _arch in "${arches[@]}" ; do
+	# Save generated headers
+				save_paths+=(
+					"arch/${_arch}/include/generated"
+				)
+			done
+
+			local path
+			for path in "${save_paths[@]}" ; do
+				[[ -e "${path}" ]] || continue
+				if [[ -d "${path}" ]] ; then
+					mkdir -p "${cache}/${path}" || true
+					cp -aT "${path}" "${cache}/${path}" || true
+				fi
+				if [[ -f "${path}" || -x "${path}" ]] ; then
+					local d=$(dirname "${path}")
+					if [[ "${d}" == "." ]] ; then
+						cp -a "${path}" "${cache}" || true
+					else
+						mkdir -p "${d}" || true
+						cp -a "${path}" "${cache}/${d}" || true
+					fi
+				fi
+			done
+
 einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			make mrproper ARCH=${arch} || die
+
+			cp -aT "${cache}" ./ || true
+			rm -rf "${cache}" || true
+
 			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
 				ot-kernel_restore_keys
 			fi
