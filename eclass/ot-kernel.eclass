@@ -8927,12 +8927,9 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 				"include/config"
 				"include/generated"
 				"scripts"
-#				"scripts/basic/fixdep" # Broken copy
-				"scripts/basic"
-#				"scripts/genksyms/genksyms"
-				"scripts/genksyms"
-#				"scripts/mod/modpost"
-				"scripts/mod"
+				"scripts/basic/fixdep"
+				"scripts/genksyms/genksyms"
+				"scripts/mod/modpost"
 			)
 
 			local arches=(
@@ -8940,11 +8937,9 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 			)
 			local _arch # arch already defined
 			for _arch in "${arches[@]}" ; do
-	# Save generated headers
+	# Save generated headers, required for app-emulation/virtualbox-modules
 				save_paths+=(
-					"arch/${_arch}"
-#					"arch/${_arch}/include/generated"
-					"arch/${_arch}/include/generated/asm"
+					"arch/${_arch}/include/generated"
 #					"arch/${_arch}/include/generated/asm/rwonce.h"
 				)
 			done
