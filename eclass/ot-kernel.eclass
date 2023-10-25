@@ -3592,7 +3592,10 @@ ot-kernel_set_kconfig_boot_args() {
 # @DESCRIPTION:
 # Sets the kernel config for Control Flow Integrity (CFI)
 ot-kernel_set_kconfig_cfi() {
-	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+	_ot-kernel_validate_hardening_level
+	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
+		:;
+	elif [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
 		&& has cfi ${IUSE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) && die "CFI requires LLVM >= 12 on arm64"
@@ -3603,12 +3606,13 @@ einfo "Enabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-	else
+	elif [[ "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "trusted" ]] ; then
 einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
-	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
 		&& has cfi ${IUSE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		# Need to recheck
@@ -3620,7 +3624,10 @@ ewarn "You must manually set arm64 CFI in the .config."
 # @DESCRIPTION:
 # Sets the kernel config for Control Flow Integrity (CFI)
 ot-kernel_set_kconfig_kcfi() {
-	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+	_ot-kernel_validate_hardening_level
+	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
+		:;
+	elif [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
 		&& has kcfi ${IUSE} && ot-kernel_use kcfi \
 		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on arm64"
@@ -3635,22 +3642,23 @@ eerror "See also https://wiki.gentoo.org/wiki//etc/portage/patches"
 eerror
 			die
 		fi
-einfo "Enabling CFI support in the in the .config."
+einfo "Enabling KCFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-	else
-einfo "Disabling CFI support in the in the .config."
+	elif [[ "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "trusted" ]] ; then
+einfo "Disabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
-	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
 		&& has kcfi ${IUSE} && ot-kernel_use kcfi \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		# Need to recheck
-ewarn "You must manually set arm64 CFI in the .config."
+ewarn "You must manually set arm64 KCFI in the .config."
 	fi
 }
 
@@ -4255,6 +4263,7 @@ ot-kernel_set_kconfig_exfat() {
 # @DESCRIPTION:
 # Sets the kernel config related to kernel hardening
 ot-kernel_set_kconfig_hardening_level() {
+	_ot-kernel_validate_hardening_level
 einfo "Using ${hardening_level} hardening level"
 	ot-kernel_y_configopt "CONFIG_EXPERT"
 
@@ -4279,7 +4288,8 @@ einfo "Using ${hardening_level} hardening level"
 
 	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
 		:
-	elif [[ "${hardening_level}" == "trusted" ]] ; then
+	elif [[ "${hardening_level}" == "trusted" \
+		|| "${hardening_level}" == "performance" ]] ; then
 		# Disable all hardening
 		# All randomization is disabled because it increases instruction latency or adds more noise to pipeline
 		# CFI and SCS handled later
@@ -5429,18 +5439,46 @@ einfo "Processor class is ${processor_class}"
 einfo "Processor count maximum:  ${ncpus}"
 }
 
+# @FUNCTION: _ot-kernel_validate_hardening_level
+# @DESCRIPTION:
+# Check settings
+_ot-kernel_validate_hardening_level() {
+	if [[ -z "${hardening_level}" ]] ; then
+		hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
+	fi
+	if [[ "${hardening_level}" =~ ("custom"|"manual"|"performance") ]] ; then
+		:;
+	elif [[ "${hardening_level}" == "untrusted" ]] ; then
+		:;
+	elif [[ "${hardening_level}" == "untrusted-distant" ]] ; then
+		:;
+	elif [[ "${hardening_level}" == "trusted" ]] ; then
+eerror
+eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
+eerror
+eerror "Acceptable values:  custom, manual, performance, trusted, untrusted, untrusted-distant"
+eerror "Actual:  ${hardening_level}"
+eerror
+		die
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_scs
 # @DESCRIPTION:
 # Sets the kernel config for ShadowCallStack (SCS)
 ot-kernel_set_kconfig_scs() {
-	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant"|"manual"|"custom") ]] \
+	_ot-kernel_validate_hardening_level
+	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
+		:;
+	elif [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
 		&& has shadowcallstack ${IUSE} && ot-kernel_use shadowcallstack \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		(( ${llvm_slot} < 10 )) && die "Shadow call stack (SCS) requires LLVM >= 10"
 einfo "Enabling SCS support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
 		ot-kernel_y_configopt "CONFIG_MODULES"
-	else
+	elif [[ "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "trusted" ]] ; then
 einfo "Disabling SCS support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 	fi
@@ -7670,9 +7708,15 @@ einfo
 	ot-kernel_set_kconfig_firmware
 	ot-kernel_check_firmware
 
-	# Apply flags to minimize the time cost of reconfigure and rebuild time
-	# from a generated new kernel config.
-	ot-kernel-pkgflags_apply # Placed before security flags
+	#
+	# hardening_level meanings:
+	#
+	#   trusted - no hardening applied
+	#   untrusted - full hardening applied
+	#   untrusted-distant - some hardening applied except for physical access mitigation
+	#
+	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
+		ot-kernel-pkgflags_apply
 	ot-kernel_set_at_system
 	ot-kernel_set_tcca
 	ot-kernel_set_iosched_kconfig
@@ -7691,7 +7735,7 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	ot-kernel_set_kconfig_logo
 
-	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
+	# Continue hardening_level context:
 		ot-kernel_set_kconfig_hardening_level
 		ot-kernel_set_kconfig_scs # Uses llvm_slot
 		ot-kernel_set_kconfig_cfi # Uses llvm_slot

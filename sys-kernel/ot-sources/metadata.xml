@@ -1404,10 +1404,14 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_HARDENING_LEVEL - sets the hardening level based on the level
-    of trust.  In these ebuilds and eclasses, both CFI and ShadowCallStack (SCS)
-    are determined by the hardening level.  In other words, if a user chooses to
-    use the trust level, CFI or SCS would be disabled.
+    OT_KERNEL_HARDENING_LEVEL - sets the hardening level based on the level of
+    trust.  In these ebuilds and eclasses -- security hardening flags, CFI,
+    KCFI, and SCS (ShadowCallStack) -- get enabled when set to untrusted or
+    untrusted-distant.  To disable them, it is set to trusted.  Trusted is
+    synonymous for performance.
+
+    Setting to trusted also allows to use io_uring for more performance at the
+    expense of security.
 
     Acceptable values:
 
@@ -1416,6 +1420,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     Meanings:
 
       custom - customize hardening.  (same as manual and unset)
+
+      performance - disables hardening.  It is the same as trusted.
 
       trusted - no hardening applied.  Used for single user presentation,
         LAN tournaments, pure performance like in house renderfarm setups.
@@ -1429,6 +1435,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     See also:
 
       HT
+
+    External sources:
+
+      https://en.wikipedia.org/wiki/Io_uring#Security
 
 
 

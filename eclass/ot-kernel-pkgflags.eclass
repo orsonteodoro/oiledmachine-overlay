@@ -1074,7 +1074,7 @@ ot-kernel-pkgflags_boost() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 	fi
 }
 
@@ -1631,7 +1631,7 @@ ot-kernel-pkgflags_clamav() { # DONE
 		# ot-kernel_y_configopt "CONFIG_FHANDLE"
 		# ot-kernel_y_configopt "CONFIG_FUTEX"
 		# ot-kernel_y_configopt "CONFIG_FUTEX2"
-		# ot-kernel_y_configopt "CONFIG_IO_URING"
+		# _ot-kernel_set_io_uring
 		# ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		# ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		# ot-kernel_y_configopt "CONFIG_SIGNALFD"
@@ -1942,7 +1942,7 @@ ot-kernel-pkgflags_cr() { # DONE
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
@@ -3202,7 +3202,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_AIO"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 
 		if has_version "app-containers/docker[seccomp]" ; then
@@ -3590,7 +3590,7 @@ ot-kernel-pkgflags_ff() { # DONE
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
@@ -3836,7 +3836,7 @@ ot-kernel-pkgflags_gcc() { # DONE
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # Referenced but no noted performance gain/loss
@@ -3930,7 +3930,7 @@ ot-kernel-pkgflags_glibc() { # DONE
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
@@ -5705,7 +5705,7 @@ ot-kernel-pkgflags_mariadb() { # DONE
 		ot-kernel_y_configopt "CONFIG_AIO"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 	fi
@@ -6068,7 +6068,7 @@ ot-kernel-pkgflags_musl() { # DONE
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		# ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE" # Has THP symbol but not used within lib.
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
@@ -6093,7 +6093,7 @@ ot-kernel-pkgflags_mysql() { # DONE
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 		if ot-kernel_has_version "dev-db/mysql[numa]" ; then
@@ -7045,7 +7045,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 
@@ -7306,7 +7306,7 @@ ot-kernel-pkgflags_plocate() { # DONE
 	if ot-kernel_has_version "sys-apps/plocate[io-uring]" ; then
 		einfo "Applying kernel config flags for the plocate package (id: 38b20ed)"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 	fi
 }
 
@@ -7671,7 +7671,7 @@ ot-kernel-pkgflags_rocksdb() { # DONE
 	if ot-kernel_has_version "dev-libs/rocksdb" ; then
 		einfo "Applying kernel config flags for rocksdb (id: dd76993)"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		if ot-kernel_has_version "<dev-libs/rocksdb-7" ; then
 			ot-kernel_y_configopt "CONFIG_FUTEX"
 		fi
@@ -7780,7 +7780,7 @@ ot-kernel-pkgflags_rust() { # DONE
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_FUTEX2"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
@@ -8398,7 +8398,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		#ot-kernel_y_configopt "CONFIG_FHANDLE"
 		#ot-kernel_y_configopt "CONFIG_TIMERFD"
 		#ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 
 		# LDT referended in sys-apps/systemd
@@ -9448,7 +9448,7 @@ ot-kernel-pkgflags_xen() { # DONE
 		ot-kernel_y_configopt "CONFIG_EVENTFD"
 		ot-kernel_y_configopt "CONFIG_FHANDLE"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
@@ -10435,6 +10435,30 @@ _ot-kernel_set_uts_ns() {
 _ot-kernel_set_posix_mqueue() {
 	ot-kernel_y_configopt "CONFIG_NET"
 	ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
+}
+
+# @FUNCTION: _ot-kernel_set_io_uring
+# @DESCRIPTION:
+# Enable asynchronous IO using circular queue buffers
+#
+# See also:
+#
+#   https://en.wikipedia.org/wiki/Io_uring#Security
+#
+_ot-kernel_set_io_uring() {
+	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] ; then
+	# Secure
+		ot-kernel_unset_configopt "CONFIG_IO_URING"
+	elif [[ "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "trusted" ]] ; then
+		ot-kernel_y_configopt "CONFIG_EXPERT"
+		ot-kernel_y_configopt "CONFIG_IO_URING"
+	elif [[ "${hardening_level}" =~ ("manual"|"custom") ]] ; then
+		:;
+	else
+ewarn "OT_KERNEL_HARDENING_LEVEL is using an invalid value ${hardening_level}."
+		die
+	fi
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
