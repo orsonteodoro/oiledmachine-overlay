@@ -3595,7 +3595,8 @@ ot-kernel_set_kconfig_cfi() {
 	_ot-kernel_validate_hardening_level
 	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
 		:;
-	elif [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
+	elif [[ "${hardening_level}" == "untrusted" \
+		|| "${hardening_level}" == "untrusted-distant" ]] \
 		&& has cfi ${IUSE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) && die "CFI requires LLVM >= 12 on arm64"
@@ -3612,7 +3613,8 @@ einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
-	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
+	if [[ "${hardening_level}" == "untrusted" \
+		|| "${hardening_level}" == "untrusted-distant" ]] \
 		&& has cfi ${IUSE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		# Need to recheck
@@ -3627,7 +3629,8 @@ ot-kernel_set_kconfig_kcfi() {
 	_ot-kernel_validate_hardening_level
 	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
 		:;
-	elif [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
+	elif [[ "${hardening_level}" == "untrusted" \
+		|| "${hardening_level}" == "untrusted-distant" ]] \
 		&& has kcfi ${IUSE} && ot-kernel_use kcfi \
 		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on arm64"
@@ -3654,7 +3657,8 @@ einfo "Disabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
-	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
+	if [[ "${hardening_level}" == "untrusted" \
+		|| "${hardening_level}" == "untrusted-distant" ]] \
 		&& has kcfi ${IUSE} && ot-kernel_use kcfi \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		# Need to recheck
@@ -5475,7 +5479,8 @@ ot-kernel_set_kconfig_scs() {
 	_ot-kernel_validate_hardening_level
 	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
 		:;
-	elif [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] \
+	elif [[ "${hardening_level}" == "untrusted" \
+		|| "${hardening_level}" == "untrusted-distant" ]] \
 		&& has shadowcallstack ${IUSE} && ot-kernel_use shadowcallstack \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		(( ${llvm_slot} < 10 )) && die "Shadow call stack (SCS) requires LLVM >= 10"

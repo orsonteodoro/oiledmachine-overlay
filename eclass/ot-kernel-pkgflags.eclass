@@ -10446,17 +10446,23 @@ _ot-kernel_set_posix_mqueue() {
 #   https://en.wikipedia.org/wiki/Io_uring#Security
 #
 _ot-kernel_set_io_uring() {
-	if [[ "${hardening_level}" =~ ("untrusted"|"untrusted-distant") ]] ; then
+	if [[ "${hardening_level}" =~ ("manual"|"custom") ]] ; then
+		:;
+	elif [[ "${hardening_level}" == "untrusted" \
+		|| "${hardening_level}" == "untrusted-distant" ]] ; then
 	# Secure
 		ot-kernel_unset_configopt "CONFIG_IO_URING"
 	elif [[ "${hardening_level}" == "performance" \
 		|| "${hardening_level}" == "trusted" ]] ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
-	elif [[ "${hardening_level}" =~ ("manual"|"custom") ]] ; then
-		:;
 	else
-ewarn "OT_KERNEL_HARDENING_LEVEL is using an invalid value ${hardening_level}."
+eerror
+eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
+eerror
+eerror "Acceptable values:  custom, manual, performance, trusted, untrusted, untrusted-distant"
+eerror "Actual:  ${hardening_level}"
+eerror
 		die
 	fi
 }
