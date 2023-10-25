@@ -10450,7 +10450,7 @@ _ot-kernel_set_io_uring() {
 		:;
 	elif [[ "${hardening_level}" == "untrusted" \
 		|| "${hardening_level}" == "untrusted-distant" ]] ; then
-	# Secure
+	# Increased security
 		ot-kernel_unset_configopt "CONFIG_IO_URING"
 	elif [[ "${hardening_level}" == "performance" \
 		|| "${hardening_level}" == "trusted" ]] ; then
