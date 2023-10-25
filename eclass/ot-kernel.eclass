@@ -5444,7 +5444,10 @@ einfo "Processor count maximum:  ${ncpus}"
 # Check settings
 _ot-kernel_validate_hardening_level() {
 	if [[ -z "${hardening_level}" ]] ; then
-		hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
+eerror
+eerror "QA:  Set hardening_level from OT_KERNEL_HARDENING_LEVEL."
+eerror
+		die
 	fi
 	if [[ "${hardening_level}" =~ ("custom"|"manual"|"performance") ]] ; then
 		:;
@@ -5453,6 +5456,8 @@ _ot-kernel_validate_hardening_level() {
 	elif [[ "${hardening_level}" == "untrusted-distant" ]] ; then
 		:;
 	elif [[ "${hardening_level}" == "trusted" ]] ; then
+		:;
+	else
 eerror
 eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
 eerror
