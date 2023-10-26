@@ -8937,6 +8937,9 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 				"scripts/basic/fixdep"
 				"scripts/genksyms/genksyms"
 				"scripts/mod/modpost"
+
+	# For genkernel
+				"include/config/kernel.release"
 			)
 
 			local arches=(
@@ -9004,10 +9007,6 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 					echo "${PGO_PHASE_DONE}" > "${pgo_phase_statefile}" || die
 				fi
 			fi
-			# Add for genkernel because mrproper erases it
-			mkdir -p "include/config" || die
-			echo "${PV}-${extraversion}-${arch}" \
-				> include/config/kernel.release || die
 		fi
 
 		cd "${BUILD_DIR}" || die
