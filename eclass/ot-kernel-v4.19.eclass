@@ -148,7 +148,6 @@ f468511a824c557ced1be2fed1b4ba923a067bcc
 # BFQ is not made default
 # BL = Blacklisted
 PATCH_ZEN_SAUCE_BL=(
-	${PATCH_KCP_COMMIT}
 	${PATCH_ZEN_SAUCE_BRANDING}
 	bec5c50bb387f4c4956fc4553d2c6491363b1489 # ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch]
 )

@@ -161,6 +161,19 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
+    6.6 (Master / Live)					A
+		    -rt	(RT_PREEMPT)			?
+		    Clang PGO				D
+		    genpatches				D
+		    kernel_compiler_patch		X
+		    Project C				?
+		    TCP BBR v2 [5]			D
+		    TCP BBR v3 [5]			D
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				A
+
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
         third party patchsets
     [2] Third party patchset LTS has provided updates
@@ -188,6 +201,7 @@
     S - Upstream indicated support
     T - Patch is undergoing testing
     t - Only patch/building testing but without correctness verification
+    X - Patch provided by alternative or multiple independent forks.
     ? - Unknown status
 
     EOL (End Of Life) stable kernels get dropped next update cycle which is
@@ -526,6 +540,7 @@ OT_KERNEL_EXTRAVERSION="ot"
 OT_KERNEL_FIRMWARE="regulatory"
 OT_KERNEL_HARDENING_LEVEL="untrusted"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
+OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
 OT_KERNEL_LOGO_COUNT=1
 OT_KERNEL_LOGO_FOOTNOTES="Photo:  Comet 2023.01.27 C-22-E3-ZTF 500 F5.  Credits: Auvo Korpi.  License: CC-BY-2.0."
 OT_KERNEL_LOGO_FOOTNOTES_ON_INIT="1"
@@ -1823,6 +1838,18 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     See also:
 
        OT_KERNEL_CONFIG
+
+
+
+    OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER - Sets the upstream provider of the patch.
+
+    Acceptable values:
+
+      graysky2   - (default) Uses the kernel_compiler_patch directly from the creator of the patchset.
+      zen-sauce  - Use the zen-sauce version of kernel_compiler_patch
+      genpatches - Use the genpatches version of kernel_compiler_patch
+      none       - Disables kernel_compiler_patch
+      disable    - Disables kernel_compiler_patch
 
 
 

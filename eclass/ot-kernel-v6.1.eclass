@@ -131,7 +131,6 @@ PATCH_BFQ_DEFAULT="c7a4c6f6e1f0cd6c9100187412d76e8efe718ade" # Single queue
 PATCH_KYBER_DEFAULT="90ca7255bd687a9a0219a668adb102c88eeec68e" # Multi queue
 # BL = Blacklisted to avoid merge conflict
 PATCH_ZEN_SAUCE_BL=(
-	${PATCH_KCP_COMMIT}
 	${PATCH_ZEN_SAUCE_BRANDING}
 )
 

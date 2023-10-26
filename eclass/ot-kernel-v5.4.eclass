@@ -136,7 +136,6 @@ c9a8f36311f14311a3202501c88009f758683c0f:3e05ad861b9b2b61a1cbfd0d98951579eb3c85e
 
 # BL = Blacklisted to avoid merge conflict
 PATCH_ZEN_SAUCE_BL=(
-	${PATCH_KCP_COMMIT}
 	${PATCH_ZEN_SAUCE_BRANDING}
 	56f6f4315aedbbcbef8ad61f187347c20a270e49 # ZEN: Add a choice of boot logos [permissions issue and conflicts with logo patch]
 )

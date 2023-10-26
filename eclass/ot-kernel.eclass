@@ -168,12 +168,6 @@ https://wiki.linuxfoundation.org/realtime/start
 https://www1.informatik.uni-erlangen.de/tresor
 "
 
-if [[ "${PV}" =~ "9999" ]] ; then
-	LIVE=1
-else
-	LIVE=0
-fi
-
 OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:-"MAJOR_MINOR"}
 SLOT=${SLOT:-${PV}}
 K_EXTRAVERSION="ot"
@@ -1446,6 +1440,10 @@ apply_zen_sauce() {
 		fi
 	fi
 
+	if ! [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ "zen-sauce" ]] ; then
+		blacklisted+=" ${PATCH_KCP_COMMIT:0:7}"
+	fi
+
 	if has zen-sauce ${IUSE} ; then
 		local bl_all_zen_sauce=0
 		local bl_all_zen_tune=0
@@ -1667,8 +1665,10 @@ _filter_genpatches() {
 	fi
 	# Already applied since 5.13.14
 	P_GENPATCHES_BLACKLIST+=" 2700"
-	# Already applied 5010-5013 GraySky2's kernel_compiler_patches
-	P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
+	if ! [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ "genpatches" ]] ; then
+		# Already applied 5010-5013 GraySky2's kernel_compiler_patches
+		P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
+	fi
 	# Already applied 5000-5007 ZSTD patches
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
 	# Already applied bmq.
@@ -1963,7 +1963,7 @@ eerror
 eerror "Actual PV:  ${actual_pv}"
 eerror "Expected PV:  ${expected_pv}"
 eerror
-		if (( ${LIVE} == 1 )) ; then
+		if [[ "${PV}" == "9999" ]] ; then
 eerror
 eerror "Bump the live major and minor versions to ${c0}.${c1}."
 eerror
@@ -1972,41 +1972,32 @@ eerror
 	fi
 }
 
-# @FUNCTION: ot-kernel_src_unpack
+# @FUNCTION: ot-kernel_apply_kcp
 # @DESCRIPTION:
-# Applies patch sets in order.
-ot-kernel_src_unpack() {
-	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	_PATCHES=()
+# Applies graysky's kernel_compiler_patch
+ot-kernel_apply_kcp() {
+	local patches=()
 
 	local wants_kcp=0
 	local wants_kcp_rpi=0
 
-	local env_path
-	for env_path in $(ot-kernel_get_envs) ; do
-		[[ -e "${env_path}" ]] || continue
-		ot-kernel_clear_env
-		declare -A OT_KERNEL_KCONFIG
-		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
-		declare -A OT_KERNEL_PKGFLAGS_REJECT
-		ot-kernel_load_config
-		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
+	if [[ "${CFLAGS}" =~ ("-march") ]] ; then
+		wants_kcp=1
+	fi
+	if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
+		wants_kcp=1
+	fi
+	if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
+		wants_kcp_rpi=1
+	fi
 
-		if [[ "${CFLAGS}" =~ ("-march") ]] ; then
-			wants_kcp=1
-		fi
-		if [[ -n "${X86_MICROARCH_OVERRIDE}" ]] ; then
-			wants_kcp=1
-		fi
-		if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
-			wants_kcp_rpi=1
-		fi
-		if [[ "${PV}" =~ "9999" ]] ; then
-ewarn "Disabling kernel_compiler_patch"
-			wants_kcp=0
-			wants_kcp_rpi=0
-		fi
-	done
+	if [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ ("disable"|"none") ]] ; then
+		wants_kcp=0
+		wants_kcp_rpi=0
+	elif ! [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ "graysky2" ]] ; then
+		wants_kcp=0
+		wants_kcp_rpi=0
+	fi
 
 	# Verify Toolchain (TC) requirement for kernel_compiler_patch (KCP)
 	# because of multislot TC.
@@ -2039,21 +2030,21 @@ einfo
 einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10.0."
 einfo
-			_PATCHES+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
+			patches+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
 		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 8.1) ) \
 			&& test -f "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
 einfo
-			_PATCHES+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+			patches+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 4.9) ) \
 			&& test -f "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
 einfo
-			_PATCHES+=( "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+			patches+=( "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
 ewarn
 ewarn "Cannot find a compatible kernel_compiler_patch for gcc_pv = ${gcc_pv}"
@@ -2071,8 +2062,20 @@ ewarn
 einfo
 einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 einfo
-		_PATCHES+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+		patches+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
+
+	if (( ${#patches[@]} > 0 )) ; then
+		eapply ${patches[@]}
+	fi
+}
+
+
+# @FUNCTION: ot-kernel_src_unpack
+# @DESCRIPTION:
+# Applies patch sets in order.
+ot-kernel_src_unpack() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -2243,9 +2246,7 @@ apply_all_patchsets() {
 
 	apply_custom_logo
 
-	if (( ${#_PATCHES[@]} > 0 )) ; then
-		eapply ${_PATCHES[@]}
-	fi
+	ot-kernel_apply_kcp
 }
 
 # @FUNCTION: ot-kernel_rm_exfat
@@ -2933,6 +2934,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IOSCHED_OVERRIDE
 	unset OT_KERNEL_IOSCHED_SYSTEMD
 	unset OT_KERNEL_KCONFIG
+	unset OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER
 	unset OT_KERNEL_KERNEL_DIR
 	unset OT_KERNEL_KEXEC
 	unset OT_KERNEL_LOGO_COUNT
@@ -3111,6 +3113,33 @@ eerror
 
 	if [[ -z "${OT_KERNEL_BUILD}" ]] && ( use build || ot-kernel_use build ) ; then
 		export OT_KERNEL_BUILD=1
+	fi
+
+	if [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ ("graysky2") ]] && [[ "${PV}" =~ "9999" ]] ; then
+eerror
+eerror "The current value of OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER is not"
+eerror "acceptable for live sources.  In addition the corresponding USE flag"
+eerror "(for either genpatches or zen-sauce) must be enabled."
+eerror
+eerror "Allowed values:  disable, none, zen-sauce"
+eerror "Actual value:  ${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}"
+eerror
+		die
+	fi
+
+	if [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ ("zen-sauce") ]] && ! use zen-sauce ; then
+eerror
+eerror "The zen-sauce USE flag must be enabled for"
+eerror "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER=\"zen-sauce\""
+eerror
+		die
+	fi
+	if [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ ("genpatches") ]] && ! use genpatches ; then
+eerror
+eerror "The zen-sauce USE flag must be enabled for"
+eerror "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER=\"genpatches\""
+eerror
+		die
 	fi
 }
 
@@ -5417,7 +5446,7 @@ eerror
 eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
 eerror
 eerror "Acceptable values:  custom, manual, performance, trusted, untrusted, untrusted-distant"
-eerror "Actual:  ${hardening_level}"
+eerror "Actual value:  ${hardening_level}"
 eerror
 		die
 	fi

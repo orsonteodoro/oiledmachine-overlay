@@ -10461,7 +10461,7 @@ eerror
 eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
 eerror
 eerror "Acceptable values:  custom, manual, performance, trusted, untrusted, untrusted-distant"
-eerror "Actual:  ${hardening_level}"
+eerror "Actual value:  ${hardening_level}"
 eerror
 		die
 	fi
