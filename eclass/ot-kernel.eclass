@@ -1440,7 +1440,8 @@ apply_zen_sauce() {
 		fi
 	fi
 
-	if ! [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ "zen-sauce" ]] ; then
+	local kcp_provider=$(ot-kernel_get_kcp_provider)
+	if ! [[ "${kcp_provider}" =~ "zen-sauce" ]] ; then
 		blacklisted+=" ${PATCH_KCP_COMMIT:0:7}"
 	fi
 
@@ -1648,6 +1649,18 @@ apply_zen_multigen_lru() {
 	_fpatch "${EDISTDIR}/${ZEN_MULTIGEN_LRU_FN}"
 }
 
+# @FUNCTION: ot-kernel_get_kcp_provider
+# @DESCRIPTION:
+# Gets the kernel_compiler_patch_provider.
+ot-kernel_get_kcp_provider() {
+	local kcp_provider
+	if [[ "${PV}" =~ "9999" ]] ; then
+		kcp_provider="${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-zen-sauce}"
+	else
+		kcp_provider="${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}"
+	fi
+}
+
 # @FUNCTION: _filter_genpatches
 # @DESCRIPTION:
 # Applies a genpatch if not blacklisted.
@@ -1665,7 +1678,8 @@ _filter_genpatches() {
 	fi
 	# Already applied since 5.13.14
 	P_GENPATCHES_BLACKLIST+=" 2700"
-	if ! [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ "genpatches" ]] ; then
+	local kcp_provider=$(ot-kernel_get_kcp_provider)
+	if ! [[ "${kcp_provider}" =~ "genpatches" ]] ; then
 		# Already applied 5010-5013 GraySky2's kernel_compiler_patches
 		P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
 	fi
@@ -1991,7 +2005,8 @@ ot-kernel_apply_kcp() {
 		wants_kcp_rpi=1
 	fi
 
-	if ! [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ "graysky2" ]] ; then
+	local kcp_provider=$(ot-kernel_get_kcp_provider)
+	if ! [[ "${kcp_provider}" =~ "graysky2" ]] ; then
 		wants_kcp=0
 		wants_kcp_rpi=0
 	fi
@@ -3112,7 +3127,9 @@ eerror
 		export OT_KERNEL_BUILD=1
 	fi
 
-	if [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ ("graysky2") ]] && [[ "${PV}" =~ "9999" ]] ; then
+	local kcp_provider=$(ot-kernel_get_kcp_provider)
+
+	if [[ "${kcp_provider}" =~ ("graysky2") ]] && [[ "${PV}" =~ "9999" ]] ; then
 eerror
 eerror "The current value of OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER is not"
 eerror "acceptable for live sources.  In addition the corresponding USE flag"
@@ -3124,14 +3141,14 @@ eerror
 		die
 	fi
 
-	if [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ ("zen-sauce") ]] && ! use zen-sauce ; then
+	if [[ "${kcp_provider}" =~ ("zen-sauce") ]] && ! use zen-sauce ; then
 eerror
 eerror "The zen-sauce USE flag must be enabled for"
 eerror "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER=\"zen-sauce\""
 eerror
 		die
 	fi
-	if [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ ("genpatches") ]] && ! use genpatches ; then
+	if [[ "${kcp_provider}" =~ ("genpatches") ]] && ! use genpatches ; then
 eerror
 eerror "The zen-sauce USE flag must be enabled for"
 eerror "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER=\"genpatches\""

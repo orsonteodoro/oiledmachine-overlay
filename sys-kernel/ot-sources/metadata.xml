@@ -1845,8 +1845,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     Acceptable values:
 
-      graysky2   - (default) Uses the kernel_compiler_patch directly from the creator of the patchset.
-      zen-sauce  - Use the zen-sauce version of kernel_compiler_patch
+      graysky2   - (default in lts/stable) Use the kernel_compiler_patch directly from the creator of the patchset.
+      zen-sauce  - (default in live)       Use the zen-sauce version of kernel_compiler_patch
       genpatches - Use the genpatches version of kernel_compiler_patch
       none       - Disables kernel_compiler_patch
       disable    - Disables kernel_compiler_patch
