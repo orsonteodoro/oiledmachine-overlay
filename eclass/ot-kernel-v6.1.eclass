@@ -184,6 +184,7 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
 RUST_PV="1.62.0"
 
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
 -genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rock-dkms rt -rust

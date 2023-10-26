@@ -156,6 +156,7 @@ PATCH_ZEN_SAUCE_BL=(
 # 811cb39 -> a79d648 is about the same as 24da54e
 # a17a37f, 8faec5c -> 721f586 is about the same as 78f8617
 
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
 build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510 kpgo-utils
 muqss orca pds pgo rt symlink tresor tresor_aesni tresor_i686 tresor_prompt

@@ -210,6 +210,7 @@ aaf932736a4748b18196ecdf86471bc3c5576d11
 6e321d1c986a88e21dcbb46005668cd874de01da
 )
 
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 bbrv3 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
 -genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rt -rust shadowcallstack

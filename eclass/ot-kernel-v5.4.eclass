@@ -173,6 +173,7 @@ d1bebeb959a56324fe436443ea2f21a8391632d9
 ZEN_MUQSS_EXCLUDED_COMMITS=(
 )
 
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
 bmq build c2tcp +cfs clang deepcc disable_debug +genpatches -genpatches_1510
 kpgo-utils muqss orca pgo rock-dkms rt symlink tresor tresor_aesni tresor_i686

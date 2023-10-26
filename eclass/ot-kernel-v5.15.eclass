@@ -206,6 +206,7 @@ cf9b1dacabb1ef62481a452f7f169e1679e2da49
 a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
 
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug -exfat +genpatches
 -genpatches_1510 kpgo-utils lto multigen_lru orca pgo prjc rock-dkms rt
