@@ -175,8 +175,9 @@ else
 fi
 
 OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:-"MAJOR_MINOR"}
-KEYWORDS=${KEYWORDS:-\
-"~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"}
+if ! [[ "${PV}" =~ "9999" ]] ; then
+	KEYWORDS=${KEYWORDS:-"~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"}
+fi
 SLOT=${SLOT:-${PV}}
 K_EXTRAVERSION="ot"
 S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
