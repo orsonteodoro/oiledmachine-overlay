@@ -2001,6 +2001,11 @@ ot-kernel_src_unpack() {
 		if [[ "${CFLAGS}" =~ "-mcpu=cortex-a72" ]] ; then
 			wants_kcp_rpi=1
 		fi
+		if [[ "${PV}" =~ "9999" ]] ; then
+ewarn "Disabling kernel_compiler_patch"
+			wants_kcp=0
+			wants_kcp_rpi=0
+		fi
 	done
 
 	# Verify Toolchain (TC) requirement for kernel_compiler_patch (KCP)
@@ -2097,7 +2102,7 @@ apply_gcc_full_pgo() {
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
 		eapply "${FILESDIR}/gcc-pgo-4.19.296.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
-		eapply "A${FILESDIR}/gcc-pgo-4.14.327.patch"
+		eapply "${FILESDIR}/gcc-pgo-4.14.327.patch"
 	fi
 }
 
