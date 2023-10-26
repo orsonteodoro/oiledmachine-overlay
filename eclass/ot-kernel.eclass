@@ -1991,10 +1991,7 @@ ot-kernel_apply_kcp() {
 		wants_kcp_rpi=1
 	fi
 
-	if [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ ("disable"|"none") ]] ; then
-		wants_kcp=0
-		wants_kcp_rpi=0
-	elif ! [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ "graysky2" ]] ; then
+	if ! [[ "${OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:-graysky2}" =~ "graysky2" ]] ; then
 		wants_kcp=0
 		wants_kcp_rpi=0
 	fi
