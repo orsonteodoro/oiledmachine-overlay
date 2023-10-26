@@ -2638,8 +2638,13 @@ einfo
 		apply_all_patchsets
 		cd "${BUILD_DIR}" || die
 einfo "Setting the extra version for the -${extraversion} build"
-		sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
-			"Makefile" || die
+		if [[ "${PV}" =~ "9999" ]] ; then
+			sed -i -e "s|EXTRAVERSION = -${RC_PV}\$|EXTRAVERSION = -${extraversion}|g" \
+				"Makefile" || die
+		else
+			sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
+				"Makefile" || die
+		fi
 		if ot-kernel_use disable_debug ; then
 			chmod +x "disable_debug" || die
 		fi
