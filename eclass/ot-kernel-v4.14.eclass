@@ -21,6 +21,8 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v4.14/Documentation/process/changes.rst
 
+MY_PV="${PV}" # ver_test context
+UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20171112" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v4.14/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT_ALT=13 # Without kernel-compiler-patch
@@ -29,8 +31,8 @@ GCC_MIN_SLOT=6
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 "${PV}")
-KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
+KV_MAJOR=$(ver_cut 1 "${MY_PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 MUQSS_VER="0.162"
 
 # From Zen kernel 4.19
@@ -378,7 +380,7 @@ ot-kernel_pkg_setup_cb() {
 	# TRESOR for x86_64 generic was known to pass crypto testmgr on this
 	# version.
 ewarn
-ewarn "This ot-sources ${PV} release is only for research purposes or to access"
+ewarn "This ot-sources ${MY_PV} release is only for research purposes or to access"
 ewarn "TRESOR devices.  This ${KV_MAJOR_MINOR}.x series is EOL for this repo but"
 ewarn "not for upstream.  It will be removed immediately once TRESOR has been"
 ewarn "fixed for mainline / stable for >= 5.x."
@@ -386,7 +388,7 @@ ewarn
 
 	if use tresor ; then
 ewarn
-ewarn "TRESOR for ${PV} is stable.  See dmesg for details on correctness."
+ewarn "TRESOR for ${MY_PV} is stable.  See dmesg for details on correctness."
 ewarn
 	fi
 

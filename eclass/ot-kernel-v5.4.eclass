@@ -21,6 +21,8 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.4/Documentation/process/changes.rst
 
+MY_PV="${PV}" # ver_test context
+UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20191124" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.4/tools/build/feature/Makefile#L318
 LLVM_MAX_SLOT=15
@@ -29,8 +31,8 @@ DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 "${PV}")
-KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
+KV_MAJOR=$(ver_cut 1 "${MY_PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 MUQSS_VER="0.196"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \
@@ -470,7 +472,7 @@ fi
 ot-kernel_pkg_setup_cb() {
 	if use tresor ; then
 ewarn
-ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+ewarn "TRESOR for ${MY_PV} is tested working.  See dmesg for details on correctness."
 ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to a"
@@ -692,7 +694,7 @@ ot-kernel_filter_patch_cb() {
 # Filter
 ot-kernel_filter_genpatches_blacklist_cb() {
 	if \
-		   ver_test $(ver_cut 1-3 "${PV}") -eq "5.4.85" \
+		   ver_test $(ver_cut 1-3 "${MY_PV}") -eq "5.4.85" \
 		&& ver_test "${GENPATCHES_VER}"    -eq "87" \
 	; then
 		echo "2400"

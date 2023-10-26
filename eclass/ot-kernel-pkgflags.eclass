@@ -928,7 +928,7 @@ ot-kernel-pkgflags_bcm_sta() { # DONE
 			ot-kernel_y_configopt "CONFIG_LIB80211_CRYPT_TKIP"
 		}
 
-		if ver_test "${PV}" -ge "3.8.8" ; then
+		if ver_test "${MY_PV}" -ge "3.8.8" ; then
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_CFG80211"
@@ -938,16 +938,16 @@ ot-kernel-pkgflags_bcm_sta() { # DONE
 			if grep -q -e "CONFIG_PREEMPT" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY" # fallback to next best
 			fi
-		elif ver_test "${PV}" -ge "2.6.32" ; then
+		elif ver_test "${MY_PV}" -ge "2.6.32" ; then
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_CFG80211"
-		elif ver_test "${PV}" -ge "2.6.31" ; then
+		elif ver_test "${MY_PV}" -ge "2.6.31" ; then
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_WIRELESS_EXT"
 			ot-kernel_unset_configopt "CONFIG_MAC80211"
-		elif ver_test "${PV}" -ge "2.6.29" ; then
+		elif ver_test "${MY_PV}" -ge "2.6.29" ; then
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_WIRELESS_EXT"
@@ -1775,7 +1775,7 @@ ot-kernel-pkgflags_conntrack_tools() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf6a25e5]}" == "1" ]] && return
 	if ot-kernel_has_version "net-firewall/conntrack-tools" ; then
 		einfo "Applying kernel config flags for the conntrack-tools package (id: f6a25e5)"
-		if ver_test "${PV}" -lt "2.6.20" ; then
+		if ver_test "${MY_PV}" -lt "2.6.20" ; then
 			ot-kernel_y_configopt "CONFIG_IP_NF_CONNTRACK_NETLINK"
 		else
 			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
@@ -4851,7 +4851,7 @@ ot-kernel-pkgflags_keyutils() { # DONE
 		einfo "Applying kernel config flags for the keyutils package (id: 2082e35)"
 		ot-kernel_y_configopt "CONFIG_KEYS"
 		if ot-kernel_has_version "sys-apps/keyutils[test]" \
-			&& ver_test "${PV}" -ge "2.6.10" \
+			&& ver_test "${MY_PV}" -ge "2.6.10" \
 			&& ver_test "${KV_MAJOR_MINOR}" -lt "4.0" ; then
 			ban_disable_debug "2082e35"
 			ot-kernel_y_configopt "CONFIG_KEYS_DEBUG_PROC_KEYS"
@@ -5117,7 +5117,7 @@ ot-kernel-pkgflags_libnfnetlink() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S731aa2e]}" == "1" ]] && return
 	if ot-kernel_has_version "net-libs/libnfnetlink" ; then
 		einfo "Applying kernel config flags for the libnfnetlink package (id: 731aa2e)"
-		if ver_test "${PV}" -lt "2.6.20" ; then
+		if ver_test "${MY_PV}" -lt "2.6.20" ; then
 			ot-kernel_y_configopt "CONFIG_IP_NF_CONNTRACK_NETLINK"
 		else
 			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
@@ -5154,7 +5154,7 @@ ot-kernel-pkgflags_libnetfilter_conntrack() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2616787]}" == "1" ]] && return
 	if ot-kernel_has_version "net-libs/libnetfilter_conntrack" ; then
 		einfo "Applying kernel config flags for the libnetfilter_conntrack package (id: 2616787)"
-		if ver_test "${PV}" -lt "2.6.20" ; then
+		if ver_test "${MY_PV}" -lt "2.6.20" ; then
 			ot-kernel_y_configopt "CONFIG_IP_NF_CONNTRACK_NETLINK"
 		else
 			ot-kernel_y_configopt "CONFIG_NF_CT_NETLINK"
@@ -6297,7 +6297,7 @@ _ot-kernel-pkgflags_tty_fallback() {
 		ot-kernel_set_configopt "CONFIG_FB_EFI" "y"
 		ot-kernel_unset_configopt "CONFIG_FB_SIMPLE"
 	elif [[ "${TTY_DRIVER}" == "simple" ]] \
-		&& ver_test "${PV}" -lt "5.8.13" ; then
+		&& ver_test "${MY_PV}" -lt "5.8.13" ; then
 		ot-kernel_y_configopt "CONFIG_FB"
 		ot-kernel_set_configopt "CONFIG_FB_SIMPLE" "m"
 		ot-kernel_unset_configopt "CONFIG_DRM_SIMPLEDRM"
@@ -8702,13 +8702,13 @@ ot-kernel-pkgflags_ufw() { # DONE
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_MULTIPORT"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_RECENT"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_STATE"
-		if ver_test "${PV}" -ge "2.6.39" ; then
+		if ver_test "${MY_PV}" -ge "2.6.39" ; then
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_ADDRTYPE"
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_MATCH_ADDRTYPE"
 		fi
 		ban_disable_debug "18d6a56" "NETFILTER"
-		if ver_test "${PV}" -ge "3.4" ; then
+		if ver_test "${MY_PV}" -ge "3.4" ; then
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_LOG"
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_LOG"

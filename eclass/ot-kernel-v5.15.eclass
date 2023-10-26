@@ -21,6 +21,8 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.15/Documentation/process/changes.rst
 
+MY_PV="${PV}" # ver_test context
+UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20211031" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.15/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT=13
@@ -31,8 +33,8 @@ CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 "${PV}")
-KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
+KV_MAJOR=$(ver_cut 1 "${MY_PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 PATCH_ALLOW_O3_COMMIT="b67c5033547771052515687e96adf98858ea0de6" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
@@ -700,7 +702,7 @@ ewarn
 
 #	if use tresor ; then
 #ewarn
-#ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+#ewarn "TRESOR for ${MY_PV} is tested working.  See dmesg for details on correctness."
 #ewarn
 #	fi
 }
@@ -841,10 +843,10 @@ einfo "${path}"
 	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex
 
 	if [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"

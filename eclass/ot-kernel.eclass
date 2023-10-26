@@ -172,9 +172,9 @@ https://www1.informatik.uni-erlangen.de/tresor
 OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:-"MAJOR_MINOR"}
 SLOT=${SLOT:-${PV}}
 K_EXTRAVERSION="ot"
-S="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
+S="${WORKDIR}/linux-${UPSTREAM_PV}-${K_EXTRAVERSION}"
 #PROPERTIES="interactive" # The menuconfig is broken because of emerge or sandbox.  All things were disabled but still doesn't work.
-OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${PV}"
+OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${MY_PV}"
 
 # Upstream keeps reiserfs
 IUSE+="
@@ -692,9 +692,9 @@ if [[ -n "${ZEN_KV}" ]] ; then
 	ZEN_SAUCE_URIS=$(gen_zen_sauce_uris "${PATCH_ZEN_SAUCE_COMMITS[@]}")
 fi
 
-if ver_test ${PV} -eq ${KV_MAJOR_MINOR} ; then
+if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
 	KERNEL_NO_POINT_RELEASE="1"
-elif ver_test ${PV} -eq ${KV_MAJOR_MINOR}.1 ; then
+elif ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR}.1 ; then
 	KERNEL_0_TO_1_ONLY="1"
 fi
 
@@ -712,7 +712,7 @@ elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
 	)
 else
 	KERNEL_PATCH_TO_FROM=(
-		$(gen_kernel_seq $(ver_cut 3 ${PV}))
+		$(gen_kernel_seq $(ver_cut 3 ${MY_PV}))
 	)
 	KERNEL_PATCH_FNS_EXT=(
 		${KERNEL_PATCH_TO_FROM[@]/%/.xz}
@@ -1254,7 +1254,7 @@ dump_profraw() {
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
-	[[ "${version}" != "${PV}" ]] && return
+	[[ "${version}" != "${MY_PV}" ]] && return
 	local profraw_dpath="${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/llvm/vmlinux.profraw"
 	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PG0") ]] ; then
 		rm -rf "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/llvm"
@@ -1293,7 +1293,7 @@ dump_gcda() {
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
 	local version=$(cat /proc/version | cut -f 3 -d " " | cut -f 1 -d "-")
-	[[ "${version}" != "${PV}" ]] && return
+	[[ "${version}" != "${MY_PV}" ]] && return
 	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PG0") ]] ; then
 		rm -rf "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}/gcc"
 	fi
@@ -1799,7 +1799,7 @@ einfo "Using genpatches from repo"
 		else
 			EGIT_CHECKOUT_DIR="${T}/linux-patches-${KV_MAJOR_MINOR}-head"
 		fi
-		EGIT_BRANCH="$(ver_cut 1-2 ${PV})"
+		EGIT_BRANCH="$(ver_cut 1-2 ${MY_PV})"
 
 		git-r3_fetch
 		git-r3_checkout
@@ -1990,7 +1990,7 @@ verify_point_release() {
 	local c1=$(grep "^PATCHLEVEL = " "${BUILD_DIR}/Makefile" | cut -f 2 -d "=" | sed -e "s| ||g")
 	local c2=$(grep "^SUBLEVEL = " "${BUILD_DIR}/Makefile" | cut -f 2 -d "=" | sed -e "s| ||g")
 	local actual_pv="${c0}.${c1}.${c2}"
-	local expected_pv=$(ver_cut 1-3 "${PV}")
+	local expected_pv=$(ver_cut 1-3 "${MY_PV}")
 
 	local nparts=$(echo "${expected_pv}" | tr "." "\n" | wc -l)
 	(( ${nparts} == 2 )) && return # Not a point release
@@ -2008,6 +2008,22 @@ eerror "Bump the live major and minor versions to ${c0}.${c1}."
 eerror
 		fi
 		die
+	fi
+	if [[ "${PV}" == "9999" ]] ; then
+		if ! grep -q -o -e "EXTRAVERSION = -${RC_PV}" "Makefile" ; then
+			local actual_suffix=$(grep -e "EXTRAVERSION =" \
+				| cut -f 2 -d "=" \
+				| sed -e "s| -||g")
+eerror
+eerror "The suffix does not match."
+eerror
+eerror "Expected:  ${RC_PV}"
+eerror "Actual:    ${actual_suffix}"
+eerror
+eerror "QA:  Update RC_PV in ot-kernel-v${KV_MAJOR_MINOR}.eclass."
+eerror
+			die
+		fi
 	fi
 }
 
@@ -2114,7 +2130,7 @@ einfo
 ot-kernel_src_unpack() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
-	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
+	export BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${K_EXTRAVERSION}"
 	if [[ "${PV}" =~ "9999" ]] ; then
 		ot-kernel_unpack_live
 	else
@@ -2476,8 +2492,8 @@ einfo "Canceling Reiser4"
 # Patch the kernel a bit
 ot-kernel_src_prepare() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
-	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
+	export BUILD_DIR_MASTER="${WORKDIR}/linux-${UPSTREAM_PV}-${K_EXTRAVERSION}"
+	export BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${K_EXTRAVERSION}"
 
 	cd "${BUILD_DIR}" || die
 
@@ -2573,7 +2589,7 @@ ot-kernel_src_prepare() {
 			fi
 		fi
 
-		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		if (( ${moved} == 0 )) ; then
 einfo "Renaming for -${extraversion}"
 			if [[ "${extraversion}" == "${K_EXTRAVERSION}" ]] ; then
@@ -2582,7 +2598,7 @@ einfo "Renaming for -${extraversion}"
 				mv "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
 			fi
 			mkdir -p "${S}" || die # Dummy dir for portage... Do not remove.
-			export BUILD_DIR_MASTER="${WORKDIR}/linux-${PV}-${extraversion}"
+			export BUILD_DIR_MASTER="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 			moved=1
 		else
 einfo "Copying sources for -${extraversion}"
@@ -2614,7 +2630,7 @@ eerror
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
 		ot-kernel_use rt && cpu_sched="cfs"
-		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 einfo
 einfo "Applying patchsets for -${extraversion}"
@@ -2698,7 +2714,7 @@ ot-kernel_clear_keys() {
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
-		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		local p="${BUILD_DIR}/certs/signing_key.pem"
 		if [[ -e "${p}" ]] ; then
 ewarn "Securely wiping private keys for ${extraversion}"
@@ -7891,7 +7907,7 @@ eerror
 			fi
 		fi
 
-		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
 		local args=()
@@ -8226,7 +8242,7 @@ ot-kernel_install_built_kernel() {
 
 	insinto "${kernel_dir}"
 	local system_map_spath="${BUILD_DIR}/System.map"
-	local system_map_dpath="System.map-${PV}-${extraversion}-${arch}"
+	local system_map_dpath="System.map-${MY_PV}-${extraversion}-${arch}"
 	newins "${system_map_spath}" "${system_map_dpath}"
 
 	local kimage_spath
@@ -8249,7 +8265,7 @@ ot-kernel_install_built_kernel() {
 	done
 
 	# FIXME:  Complete signing kernel
-	local kimage_dpath="${name}-${PV}-${extraversion}-${arch}"
+	local kimage_dpath="${name}-${MY_PV}-${extraversion}-${arch}"
 	if true ; then
 einfo "Installing unsigned kernel"
 		newins "${kimage_spath}" "${kimage_dpath}"
@@ -8299,11 +8315,11 @@ einfo "Installing unsigned kernel"
 ot-kernel_install_source_code() {
 einfo "Installing the kernel sources"
 	if [[ "${OT_KERNEL_FAST_SOURCE_CODE_INSTALL:-0}" == "1" ]] ; then
-		cp -a "${ED}/usr/src/linux-${PV}-${extraversion}/.config" "${T}"
-		rm -rf "${ED}/usr/src/linux-${PV}-${extraversion}"
+		cp -a "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config" "${T}"
+		rm -rf "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
 		dodir /usr/src
 		mv "${BUILD_DIR}" "${ED}/usr/src" || die
-		cp -a "${T}/.config" "${ED}/usr/src/linux-${PV}-${extraversion}/.config"
+		cp -a "${T}/.config" "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config"
 	else
 		insinto /usr/src
 		doins -r "${BUILD_DIR}" # Sanitize file permissions
@@ -8313,13 +8329,13 @@ einfo
 einfo "nprocs:  ${nprocs}"
 einfo "Restoring +x bit"
 einfo
-		cd "${ED}/usr/src/linux-${PV}-${extraversion}" || die
+		cd "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}" || die
 		export IFS=$'\n'
 		local f
 		for f in $(find . -type f) ; do
 			(
 				if file "${f}" | grep -q -F -e 'executable' ; then
-					fperms 0755 "/usr/src/linux-${PV}-${extraversion}/${f#./}"
+					fperms 0755 "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/${f#./}"
 				fi
 			) &
 			local njobs=$(jobs -r -p | wc -l)
@@ -8344,7 +8360,7 @@ ot-kernel_get_boot_decompressor() {
 		XZ
 		ZSTD
 	)
-	local BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+	local BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 	local d
 	for d in ${decompressors[@]} ; do
 		if grep -q -E -e "^CONFIG_KERNEL_${d}=y" "${BUILD_DIR}/.config" 2>/dev/null ; then
@@ -8666,7 +8682,7 @@ ot-kernel_src_compile() {
 		[[ -z "${cpu_sched}" ]] && die "cpu_sched cannot be empty"
 
 		local path_config="${BUILD_DIR}/.config"
-		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
 		# Summary for this compile
@@ -8760,7 +8776,7 @@ eerror
 	local salt=$(dd if=/dev/random bs=40 count=1 2>/dev/null | sha256sum | cut -f 1 -d " ")
 
 ################################################################################
-	cat <<EOF > "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}" || die
+	cat <<EOF > "${T}/etc/ot-sources/iosched/conf/${MY_PV}-${extraversion}-${arch}" || die
 # See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay for details
 IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
 
@@ -8885,7 +8901,7 @@ ot-kernel_src_install() {
 			fi
 		fi
 		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
-		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
 		if ot-kernel_is_full_sources_required ; then
@@ -8915,7 +8931,7 @@ ot-kernel_src_install() {
 				local last_version=$(best_version "=sys-kernel/${PN}-${KV_MAJOR_MINOR}*" \
 					| sed -e "s|sys-kernel/${PN}-||g")
 				local license_preserve_path_src="/usr/share/${PN}/${last_version}-${extraversion}/licenses"
-				local license_preserve_path_dest="/usr/share/${PN}/${PV}-${extraversion}/licenses"
+				local license_preserve_path_dest="/usr/share/${PN}/${MY_PV}-${extraversion}/licenses"
 				dodir "${license_preserve_path_dest}"
 				if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
 					&& -e "${license_preserve_path_src}" ]] ; then
@@ -8960,11 +8976,11 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 			newins "${BUILD_DIR}/.config" $(basename "${default_config}")
 			# dosym src_relpath_real dest_abspath_symlink
 			dosym $(basename "${default_config}") \
-				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch}
+				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})-${extraversion}-${arch}
 
 			# For linux-info.eclass config checks
-			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${PV})-${extraversion}-${arch} \
-				"/usr/src/linux-${PV}-${extraversion}/.config"
+			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})-${extraversion}-${arch} \
+				"/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config"
 
 			local cache="${T}/save_cache"
 			mkdir -p "${cache}" || true
@@ -9064,7 +9080,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			-name "logo_custom_*.*.license" \
 			2>/dev/null)
 		if [[ -n "${logo_license_path}" && -e "${logo_license_path}" ]] ; then
-			insinto "/usr/share/${PN}/${PV}-${extraversion}/licenses/logo"
+			insinto "/usr/share/${PN}/${MY_PV}-${extraversion}/licenses/logo"
 			doins "${logo_license_path}"
 			if [[ -n "${OT_KERNEL_LOGO_FOOTNOTES}" ]] ; then
 				echo "${OT_KERNEL_LOGO_FOOTNOTES}" > "${T}/logo_footnotes" || die
@@ -9084,13 +9100,13 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			cd "${BUILD_DIR}" || die
 
 			# Required for genkernel
-			insinto "/usr/src/linux-${PV}-${extraversion}"
+			insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
 			doins "Makefile" # Also required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
-			insinto "/usr/src/linux-${PV}-${extraversion}/include/config"
+			insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config"
 			doins "include/config/kernel.release"
 
 			# Required for building external modules
-			insinto "/usr/src/linux-${PV}-${extraversion}/certs"
+			insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/certs"
 			ls "certs/"*".pem" 2>/dev/null 1>/dev/null \
 				&& doins "certs/"*".pem"
 			ls "certs/"*".x509" 2>/dev/null 1>/dev/null \
@@ -9101,7 +9117,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 
 		local cert
 		for cert in $(find certs -type f) ; do
-			fperms 600 "/usr/src/linux-${PV}-${extraversion}/${cert}"
+			fperms 600 "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/${cert}"
 		done
 
 		if ot-kernel_is_full_sources_required ; then
@@ -9110,14 +9126,14 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		else
 			# Add files to pass version and kernel config checks for linux-info.eclass.
 			# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
-			local ed_kernel_path="${ED}/usr/src/linux-${PV}-${extraversion}"
-			insinto "/usr/src/linux-${PV}-${extraversion}/scripts"
+			local ed_kernel_path="${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
+			insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/scripts"
 			doins scripts/Kbuild.include
 			doins scripts/Makefile.extrawarn
 			doins scripts/subarch.include
 			local path
 			for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
-				insinto "/usr/src/linux-${PV}-${extraversion}/"$(dirname "${path}")
+				insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/"$(dirname "${path}")
 				doins "${path}"
 			done
 		fi
@@ -9128,7 +9144,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		]] ; then
 einfo "Installing iosched script settings"
 			insinto "/etc/ot-sources/iosched/conf"
-			doins "${T}/etc/ot-sources/iosched/conf/${PV}-${extraversion}-${arch}"
+			doins "${T}/etc/ot-sources/iosched/conf/${MY_PV}-${extraversion}-${arch}"
 		fi
 
 		OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
@@ -9369,10 +9385,10 @@ TCCA_ELEVATE_PRIV="${tcca_elevate_priv}"
 EOF
 			cat "${FILESDIR}/tcca" > "${T}/tcca" || die
 			sed -i -e "s|__EXTRAVERSION__|${extraversion}|" "${T}/tcca" || die
-			sed -i -e "s|__PV__|${PV}|" "${T}/tcca" || die
+			sed -i -e "s|__PV__|${MY_PV}|" "${T}/tcca" || die
 			sed -i -e "s|__ARCH__|${arch}|" "${T}/tcca" || die
 			insinto /etc
-			newins "${T}/tcca.conf" "tcca-${PV}-${extraversion}-${arch}.conf"
+			newins "${T}/tcca.conf" "tcca-${MY_PV}-${extraversion}-${arch}.conf"
 			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 		fi
 
@@ -9391,7 +9407,7 @@ EOF
 	done
 
 	# The make install* screws up the symlinks using ${BUILD_DIR} instead of
-	# /usr/src/linux-${PV}-${EXTRAVERSION}.
+	# /usr/src/linux-${UPSTREAM_PV}-${EXTRAVERSION}.
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
@@ -9406,27 +9422,27 @@ EOF
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		local arch="${OT_KERNEL_ARCH}"
 
-		mkdir -p "${ED}/lib/modules/${PV}-${extraversion}-${arch}"
-		if [[ -e "${ED}/lib/modules/${PV}-${extraversion}" ]] ; then
+		mkdir -p "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}"
+		if [[ -e "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" ]] ; then
 			cp -a \
-				"${ED}/lib/modules/${PV}-${extraversion}/"* \
-				"${ED}/lib/modules/${PV}-${extraversion}-${arch}" \
+				"${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}/"* \
+				"${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}" \
 				|| die
 		fi
 
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}" \
+		rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" \
 			|| true
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/build" \
+		rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}/build" \
 			|| true
-		rm -rf "${ED}/lib/modules/${PV}-${extraversion}-${arch}/source" \
+		rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}/source" \
 			|| true
 
 		dosym \
-			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/${PV}-${extraversion}-${arch}/build"
+			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
+			"/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}/build"
 		dosym \
-			"/usr/src/linux-${PV}-${extraversion}" \
-			"/lib/modules/${PV}-${extraversion}-${arch}/source"
+			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
+			"/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}/source"
 
 	done
 
@@ -9453,7 +9469,7 @@ ot-kernel_pkg_postinst() {
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
-		BUILD_DIR="${WORKDIR}/linux-${PV}-${extraversion}"
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		if [[ -e "${BUILD_DIR}/certs/signing_key.pem" ]] ; then
 			cd "${BUILD_DIR}" || die
 einfo "Secure wiping the private key in build directory for ${extraversion}"

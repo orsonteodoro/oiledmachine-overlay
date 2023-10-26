@@ -27,9 +27,14 @@ GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-
 LINUX_SOURCES_FALLBACK_COMMIT="611da07b89fdd53f140d7b33013f255bf0ed8f34" # 2023-10-25 07:51:56 -1000
 if [[ "${PV}" =~ "9999" ]] ; then
 	KERNEL_RELEASE_DATE="99999999"
+	MY_PV="${PV}_rc7" # ver_test context
+	RC_PV="rc7"
 else
 	KERNEL_RELEASE_DATE="" # of first stable release
+	MY_PV="${PV}" # ver_test context
+	RC_PV=""
 fi
+UPSTREAM_PV="${MY_PV/_/-}" # file context
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.6/tools/build/feature/Makefile#L331
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
@@ -39,8 +44,8 @@ CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 "${PV}")
-KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
+KV_MAJOR=$(ver_cut 1 "${MY_PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 PATCH_ALLOW_O3_COMMIT="5cfe707ed5a04b88374c91937b8fb7fa020b96a8" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
@@ -723,7 +728,7 @@ ewarn
 
 #	if use tresor ; then
 #ewarn
-#ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+#ewarn "TRESOR for ${MY_PV} is tested working.  See dmesg for details on correctness."
 #ewarn
 #	fi
 }
@@ -868,10 +873,10 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"

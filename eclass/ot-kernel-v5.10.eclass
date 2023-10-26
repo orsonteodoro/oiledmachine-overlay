@@ -21,6 +21,8 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v5.10/Documentation/process/changes.rst
 
+MY_PV="${PV}" # ver_test context
+UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20201213" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.10/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT=13
@@ -30,8 +32,8 @@ LLVM_MIN_SLOT=10
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
-KV_MAJOR=$(ver_cut 1 "${PV}")
-KV_MAJOR_MINOR=$(ver_cut 1-2 "${PV}")
+KV_MAJOR=$(ver_cut 1 "${MY_PV}")
+KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
 MUQSS_VER="0.205"
 PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10
@@ -540,7 +542,7 @@ fi
 ot-kernel_pkg_setup_cb() {
 	if use tresor ; then
 ewarn
-ewarn "TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
+ewarn "TRESOR for ${MY_PV} is tested working.  See dmesg for details on correctness."
 ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
@@ -692,10 +694,10 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS}" "${path}"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
-		&& ver_test $(ver_cut 1-3 "${PV}") -ge "5.10.4" ; then
+		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
