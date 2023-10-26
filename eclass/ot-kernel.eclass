@@ -2639,7 +2639,7 @@ einfo
 		cd "${BUILD_DIR}" || die
 einfo "Setting the extra version for the -${extraversion} build"
 		if [[ "${PV}" =~ "9999" ]] ; then
-			sed -i -e "s|EXTRAVERSION = -${RC_PV}\$|EXTRAVERSION = -${extraversion}|g" \
+			sed -i -e "s|EXTRAVERSION = -${RC_PV}\$|EXTRAVERSION = -${RC_PV}-${extraversion}|g" \
 				"Makefile" || die
 		else
 			sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \

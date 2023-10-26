@@ -25,6 +25,7 @@ esac
 
 GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
 LINUX_SOURCES_FALLBACK_COMMIT="611da07b89fdd53f140d7b33013f255bf0ed8f34" # 2023-10-25 07:51:56 -1000
+# PV is for 9999 (live) context check
 if [[ "${PV}" =~ "9999" ]] ; then
 	KERNEL_RELEASE_DATE="99999999"
 	MY_PV=$(ver_cut 1-3 "${PV}")"_rc7" # ver_test context

@@ -23,6 +23,7 @@ esac
 # For compiler versions, see
 # https://github.com/torvalds/linux/blob/v6.1/scripts/min-tool-version.sh#L26
 
+# PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
 UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20221211" # of first stable release

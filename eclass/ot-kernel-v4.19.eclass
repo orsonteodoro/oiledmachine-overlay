@@ -21,6 +21,7 @@ esac
 # For *DEPENDs, see
 # https://github.com/torvalds/linux/blob/v4.19/Documentation/process/changes.rst
 
+# PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
 UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20220731" # of first stable release
