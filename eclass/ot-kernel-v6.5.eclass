@@ -428,6 +428,9 @@ KCP_RDEPEND="
 	|| (
 		(
 			>=sys-devel/gcc-11.1
+			hppa? (
+				>=sys-devel/gcc-12
+			)
 		)
 		$(gen_clang_llvm_pair 12 ${LLVM_MAX_SLOT})
 	)
@@ -522,6 +525,9 @@ CDEPEND+="
 	pgo? (
 		(
 			>=sys-devel/gcc-kpgo-${GCC_PV}
+			hppa? (
+				>=sys-devel/gcc-kpgo-12
+			)
 			sys-devel/binutils[static-libs]
 			sys-libs/libunwind[static-libs]
 		)
