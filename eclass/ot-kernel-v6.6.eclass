@@ -691,7 +691,7 @@ ewarn "You are using the live kernel sources.  This may result in data loss,"
 ewarn "data format incompatibilities, or vulnerabilities."
 ewarn
 ewarn "The live sources is intended for people that want to submit"
-ewarn "commits/patches, to use security fixesm, for ebuild maintainers or modders"
+ewarn "commits/patches, to use security fixes, for ebuild maintainers or modders"
 ewarn "to smooth out  updates before stable."
 ewarn
 	fi
