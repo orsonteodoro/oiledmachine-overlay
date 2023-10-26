@@ -51,6 +51,7 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.4
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.5
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
@@ -1102,7 +1103,8 @@ ot-kernel_use() {
 	local u
 	for u in ${OT_KERNEL_USE} ; do
 		[[ "${u}" =~ ^"-" ]] && continue
-		has ${u} ${IUSE} || continue
+		[[ "${u}" =~ ^"+" ]] && u="${u:1}"
+		has ${u} ${IUSE_EFFECTIVE} || continue
 		use ${u} && [[ "${1}" == "${u}" ]] && return 0
 	done
 	return 1
@@ -1127,7 +1129,7 @@ ewarn
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi
-	if has zen-sauce ${IUSE} ; then
+	if has zen-sauce ${IUSE_EFFECTIVE} ; then
 		if use zen-sauce ; then
 			zen_sauce_setup
 			zen_tune_setup
@@ -1141,7 +1143,7 @@ ewarn
 		_check_network_sandbox
 	fi
 
-	if has tresor ${IUSE} ; then
+	if has tresor ${IUSE_EFFECTIVE} ; then
 		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor ; then
 			if use tresor_i686 && ! grep -F -q "sse2" /proc/cpuinfo ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
@@ -1174,7 +1176,7 @@ eerror "tresor_aesni requires SSE2 CPU support"
 		fi
 	fi
 
-	if has clang ${IUSE} ; then
+	if has clang ${IUSE_EFFECTIVE} ; then
 		if use clang ; then
 			display_required_clang
 			#verify_profraw_compatibility
@@ -1222,8 +1224,8 @@ einfo "Detected sys-devel/gcc-kpgo"
 		GCC_PKG="sys-devel/gcc"
 	fi
 
-	if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE} && ! use clang ) \
-		|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE} ) ; then
+	if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE_EFFECTIVE} && ! use clang ) \
+		|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE_EFFECTIVE} ) ; then
 ewarn
 ewarn "ccache is not supported in FEATURES with GCC PGO."
 ewarn "Trying to disable."
@@ -1445,7 +1447,7 @@ apply_zen_sauce() {
 		blacklisted+=" ${PATCH_KCP_COMMIT:0:7}"
 	fi
 
-	if has zen-sauce ${IUSE} ; then
+	if has zen-sauce ${IUSE_EFFECTIVE} ; then
 		local bl_all_zen_sauce=0
 		local bl_all_zen_tune=0
 		local wl_all_zen_sauce=0
@@ -1694,6 +1696,10 @@ _filter_genpatches() {
 		P_GENPATCHES_BLACKLIST+=$(ot-kernel_filter_genpatches_blacklist_cb)
 	fi
 
+	if [[ "${KV_MAJOR_MINOR}" == "6.6" && "${PV}" =~ "9999" ]] ; then
+		P_GENPATCHES_BLACKLIST+=" 1500" # fail to patch
+	fi
+
 	pushd "${d}" || die
 		local f
 		for f in $(ls -1) ; do
@@ -1783,15 +1789,34 @@ apply_ck() {
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
 apply_genpatches() {
-einfo "Applying the genpatches"
-	local dn="${GENPATCHES_FN%.tar.bz2}"
-	local d="${T}/${dn}"
-	if [[ ! -d "${d}" ]] ; then
-		mkdir -p "${d}" || die
-		cd "${d}" || die
-		unpack "${GENPATCHES_FN}"
+	local d
+	if [[ "${PV}" =~ "9999" ]] ; then
+einfo "Using genpatches from repo"
+		EGIT_REPO_URI="https://anongit.gentoo.org/git/proj/linux-patches.git"
+		if use fallback-commit && [[ -n "GENPATCHES_FALLBACK_COMMIT" ]] ; then
+			EGIT_COMMIT="${GENPATCHES_FALLBACK_COMMIT}"
+			EGIT_CHECKOUT_DIR="${T}/linux-patches-${KV_MAJOR_MINOR}-${EGIT_COMMIT:0:7}"
+		else
+			EGIT_CHECKOUT_DIR="${T}/linux-patches-${KV_MAJOR_MINOR}-head"
+		fi
+		EGIT_BRANCH="$(ver_cut 1-2 ${PV})"
+
+		git-r3_fetch
+		git-r3_checkout
+		d="${EGIT_CHECKOUT_DIR}"
+		[[ "${d}/0000_README" ]] || die
+	else
+einfo "Using genpatches from tarball"
+		local dn="${GENPATCHES_FN%.tar.bz2}"
+		local d="${T}/${dn}"
+		if [[ ! -d "${d}" ]] ; then
+			mkdir -p "${d}" || die
+			cd "${d}" || die
+			unpack "${GENPATCHES_FN}"
+		fi
+		d="${T}/${dn}/${dn}"
 	fi
-	d="${T}/${dn}/${dn}"
+einfo "Applying the genpatches"
 	cd "${BUILD_DIR}" || die
 	_filter_genpatches
 }
@@ -2125,49 +2150,49 @@ apply_gcc_full_pgo() {
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
-	if has pgo ${IUSE} ; then
+	if has pgo ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use pgo && [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
 			apply_gcc_full_pgo
 		fi
 	fi
 
-	if has rt ${IUSE} ; then
+	if has rt ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use rt ; then
 			apply_rt
 		fi
 	fi
 
-	if has uksm ${IUSE} ; then
+	if has uksm ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use uksm ; then
 			apply_uksm
 		fi
 	fi
 
-	if has multigen_lru ${IUSE} ; then
+	if has multigen_lru ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use multigen_lru ; then
 			apply_multigen_lru
 		fi
 	fi
 
-	if has zen-multigen_lru ${IUSE} ; then
+	if has zen-multigen_lru ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use zen-multigen_lru ; then
 			apply_zen_multigen_lru
 		fi
 	fi
 
-	if has bmq ${IUSE} ; then
+	if has bmq ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use bmq && [[ "${cpu_sched}" == "bmq" ]] ; then
 			apply_bmq
 		fi
 	fi
 
-	if has pds ${IUSE} ; then
+	if has pds ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use pds && [[ "${cpu_sched}" == "pds" ]] ; then
 			apply_pds
 		fi
 	fi
 
-	if has prjc ${IUSE} ; then
+	if has prjc ${IUSE_EFFECTIVE} ; then
 		if \
 		ot-kernel_use prjc \
 		&& \
@@ -2180,25 +2205,25 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has muqss ${IUSE} ; then
+	if has muqss ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use muqss && [[ "${cpu_sched}" == "muqss" ]] ; then
 			apply_ck
 		fi
 	fi
 
-	if has zen-muqss ${IUSE} ; then
+	if has zen-muqss ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use zen-muqss && [[ "${cpu_sched}" == "zen-muqss" ]] ; then
 			apply_zen_muqss
 		fi
 	fi
 
-	if has tresor ${IUSE} ; then
+	if has tresor ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use tresor ; then
 			apply_tresor
 		fi
 	fi
 
-	if has genpatches ${IUSE} ; then
+	if has genpatches ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use genpatches ; then
 			apply_genpatches
 		fi
@@ -2208,19 +2233,19 @@ apply_all_patchsets() {
 		apply_o3
 	fi
 
-	if has zen-sauce ${IUSE} ; then
+	if has zen-sauce ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use zen-sauce ; then
 			apply_zen_sauce
 		fi
 	fi
 
-	if has bbrv2 ${IUSE} ; then
+	if has bbrv2 ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use bbrv2 ; then
 			apply_bbrv2
 		fi
 	fi
 
-	if has bbrv3 ${IUSE} ; then
+	if has bbrv3 ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use bbrv3 ; then
 			apply_bbrv3
 		fi
@@ -2232,21 +2257,21 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has cfi ${IUSE} ; then
+	if has cfi ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use cfi && [[ "${arch}" == "x86_64" ]] ; then
 			apply_cfi
 		fi
 	fi
 
-	if has kcfi ${IUSE} ; then
+	if has kcfi ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use kcfi && [[ "${arch}" == "x86_64" ]] ; then
 			apply_kcfi
 		fi
 	fi
 
-	if has c2tcp ${IUSE} \
-		|| has deepcc ${IUSE} \
-		|| has orca ${IUSE} ; then
+	if has c2tcp ${IUSE_EFFECTIVE} \
+		|| has deepcc ${IUSE_EFFECTIVE} \
+		|| has orca ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use c2tcp \
 			|| ot-kernel_use deepcc \
 			|| ot-kernel_use orca ; then
@@ -2456,7 +2481,7 @@ ot-kernel_src_prepare() {
 
 	cd "${BUILD_DIR}" || die
 
-	if has tresor_sysfs ${IUSE} ; then
+	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			cat "${EDISTDIR}/tresor_sysfs.c" > "tresor_sysfs.c"
 		fi
@@ -2487,7 +2512,7 @@ ot-kernel_src_prepare() {
 		"drivers/gpu/drm/Kconfig" || die
 
 	if ver_test ${KV_MAJOR_MINOR} -ge 5.7 \
-		&& [[ "${IUSE}" =~ "exfat" ]] \
+		&& [[ "${IUSE_EFFECTIVE}" =~ "exfat" ]] \
 		&& ! use exfat ; then
 		ot-kernel_rm_exfat
 	fi
@@ -3120,7 +3145,7 @@ eerror
 	fi
 
 	if [[ -z "${OT_KERNEL_USE}" ]] ; then
-		export OT_KERNEL_USE="${IUSE}"
+		export OT_KERNEL_USE="${PKGUSE}"
 	fi
 
 	if [[ -z "${OT_KERNEL_BUILD}" ]] && ( use build || ot-kernel_use build ) ; then
@@ -3229,9 +3254,9 @@ ot-kernel_get_tcp_congestion_controls_default() {
 # Get the initial defaults for OT_KERNEL_TCP_CONGESTION_CONTROLS
 _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	local v
-	if has bbrv3 ${IUSE} && ot-kernel_use bbrv3 ; then
+	if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic dctcp hybla pcc vegas westwood"}
-	elif has bbrv2 ${IUSE} && ot-kernel_use bbrv2 ; then
+	elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 bbr cubic dctcp hybla pcc vegas westwood"}
 	else
 		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla pcc vegas westwood"}
@@ -3306,7 +3331,7 @@ ot-kernel_set_kconfig_set_tcp_congestion_controls() {
 				alg_canonical="bbr"
 			fi
 			if [[ "${alg}" == "bbr2" ]] ; then
-				if has bbrv2 ${IUSE} \
+				if has bbrv2 ${IUSE_EFFECTIVE} \
 					&& ! ot-kernel_use bbrv2 ; then
 					# Skip it if not patched.
 					continue
@@ -3331,7 +3356,7 @@ einfo "Adding ${alg}"
 			picked_alg_canonical="bbr"
 		fi
 		if [[ "${picked_alg}" == "bbr2" ]] ; then
-			if has bbrv2 ${IUSE} \
+			if has bbrv2 ${IUSE_EFFECTIVE} \
 				&& ! ot-kernel_use bbrv2 ; then
 				# Skip it if not patched.
 				return
@@ -3592,7 +3617,7 @@ ot-kernel_set_kconfig_cfi() {
 		:;
 	elif [[ "${hardening_level}" == "untrusted" \
 		|| "${hardening_level}" == "untrusted-distant" ]] \
-		&& has cfi ${IUSE} && ot-kernel_use cfi \
+		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) && die "CFI requires LLVM >= 12 on arm64"
 		[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 13 )) && die "CFI requires LLVM >= 13.0.1 on x86_64"
@@ -3610,7 +3635,7 @@ einfo "Disabling CFI support in the in the .config."
 
 	if [[ "${hardening_level}" == "untrusted" \
 		|| "${hardening_level}" == "untrusted-distant" ]] \
-		&& has cfi ${IUSE} && ot-kernel_use cfi \
+		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		# Need to recheck
 ewarn "You must manually set arm64 CFI in the .config."
@@ -3626,7 +3651,7 @@ ot-kernel_set_kconfig_kcfi() {
 		:;
 	elif [[ "${hardening_level}" == "untrusted" \
 		|| "${hardening_level}" == "untrusted-distant" ]] \
-		&& has kcfi ${IUSE} && ot-kernel_use kcfi \
+		&& has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
 		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
 		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on arm64"
 		[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on x86_64"
@@ -3654,7 +3679,7 @@ einfo "Disabling KCFI support in the in the .config."
 
 	if [[ "${hardening_level}" == "untrusted" \
 		|| "${hardening_level}" == "untrusted-distant" ]] \
-		&& has kcfi ${IUSE} && ot-kernel_use kcfi \
+		&& has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		# Need to recheck
 ewarn "You must manually set arm64 KCFI in the .config."
@@ -3839,10 +3864,10 @@ ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys
 ot-kernel_set_kconfig_compiler_toolchain() {
 	if \
 		( \
-		   ( has cfi ${IUSE} && ot-kernel_use cfi ) \
-		|| ( has kcfi ${IUSE} && ot-kernel_use kcfi ) \
-		|| ( has lto ${IUSE} && ot-kernel_use lto ) \
-		|| ( has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ) \
+		   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
+		|| ( has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ) \
+		|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
+		|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -4070,14 +4095,14 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 # Sets the CPU scheduler kernel config
 ot-kernel_set_kconfig_cpu_scheduler() {
 	local cpu_sched_config_applied=0
-	if has prjc ${IUSE} && ot-kernel_use prjc \
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "muqss" ]] ; then
 einfo "Changed .config to use MuQSS"
 		ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
 		cpu_sched_config_applied=1
 	fi
 
-	if has prjc ${IUSE} && ot-kernel_use prjc \
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "prjc" ]] ; then
 einfo "Changed .config to use Project C with BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
@@ -4091,7 +4116,7 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
-	if has prjc ${IUSE} && ot-kernel_use prjc \
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
 einfo "Changed .config to use Project C with BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
@@ -4105,7 +4130,7 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
-	if has prjc ${IUSE} && ot-kernel_use prjc \
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "prjc-pds" ]] ; then
 einfo "Changed .config to use Project C with PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
@@ -4119,14 +4144,14 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
 
-	if has bmq ${IUSE} && ot-kernel_use bmq \
+	if has bmq ${IUSE_EFFECTIVE} && ot-kernel_use bmq \
 		&& [[ "${cpu_sched}" == "bmq" ]] ; then
 einfo "Changed .config to use BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		cpu_sched_config_applied=1
 	fi
 
-	if has pds ${IUSE} && ot-kernel_use pds \
+	if has pds ${IUSE_EFFECTIVE} && ot-kernel_use pds \
 		&& [[ "${cpu_sched}" == "pds" ]] ; then
 einfo "Changed .config to use PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_PDS"
@@ -4138,7 +4163,7 @@ einfo "Changed .config to disable autogroup"
 		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
 	fi
 
-	if has cfs ${IUSE} && ot-kernel_use cfs \
+	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
 		&& [[ "${cpu_sched}" =~ "cfs" ]] ; then
 		if [[ "${cpu_sched}" =~ ("cfs-throughput"|"cfs-interactive"|"cfs-autogroup") ]] ; then
 			:;
@@ -4151,14 +4176,14 @@ einfo "Changed .config to use CFS with autogroup manually set."
 		ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
 	fi
 
-	if has cfs ${IUSE} && ot-kernel_use cfs \
+	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
 		&& [[ "${cpu_sched}" == "cfs-throughput" ]] ; then
 einfo "Changed .config to use CFS with disabled autogroup"
 		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
 		cpu_sched_config_applied=1
 	fi
 
-	if has cfs ${IUSE} && ot-kernel_use cfs \
+	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
 		&& [[ "${cpu_sched}" =~ ("cfs-interactive"|"cfs-autogroup") ]] ; then
 einfo "Changed .config to use CFS with autogroup"
 		ot-kernel_y_configopt "CONFIG_SCHED_AUTOGROUP"
@@ -4251,7 +4276,7 @@ einfo "Enabled the ep800 driver"
 # @DESCRIPTION:
 # Sets the kernel config for the exFAT driver
 ot-kernel_set_kconfig_exfat() {
-	if has exfat ${IUSE} && ot-kernel_use exfat ; then
+	if has exfat ${IUSE_EFFECTIVE} && ot-kernel_use exfat ; then
 		ot-kernel_y_configopt "CONFIG_EXFAT_FS"
 	else
 		ot-kernel_unset_configopt "CONFIG_EXFAT_FS"
@@ -4717,7 +4742,7 @@ einfo
 # @DESCRIPTION:
 # Sets the kernel config for the init systems
 ot-kernel_set_kconfig_init_systems() {
-	if has genpatches ${IUSE} && ot-kernel_use genpatches ; then
+	if has genpatches ${IUSE_EFFECTIVE} && ot-kernel_use genpatches ; then
 		ot-kernel_unset_configopt "CONFIG_GENTOO_PRINT_FIRMWARE_INFO" # Debug
 		if ot-kernel_has_version "sys-apps/openrc" ; then
 			ot-kernel_y_configopt "CONFIG_GENTOO_LINUX_INIT_SCRIPT"
@@ -4911,7 +4936,7 @@ eerror
 # @DESCRIPTION:
 # Sets the kernel config for Link Time Optimization (LTO)
 ot-kernel_set_kconfig_lto() {
-	if has lto ${IUSE} && ot-kernel_use lto ; then
+	if has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ; then
 		if (( ${llvm_slot} < 11 )) ; then
 			if [[ ! -e "/usr/lib/llvm/${slot}/bin/clang" ]] ; then
 				ot-kernel_show_llvm_requirement "Missing clang"
@@ -5137,8 +5162,8 @@ einfo "Modules support disabled"
 # @DESCRIPTION:
 # Sets the kernel config for Multi-Gen LRU
 ot-kernel_set_kconfig_multigen_lru() {
-	if ( has multigen_lru ${IUSE} && ot-kernel_use multigen_lru ) \
-		|| ( has zen-multigen_lru ${IUSE} && ot-kernel_use zen-multigen_lru ) ; then
+	if ( has multigen_lru ${IUSE_EFFECTIVE} && ot-kernel_use multigen_lru ) \
+		|| ( has zen-multigen_lru ${IUSE_EFFECTIVE} && ot-kernel_use zen-multigen_lru ) ; then
 einfo "Changed .config to use Multi-Gen LRU"
 		ot-kernel_y_configopt "CONFIG_LRU_GEN"
 		ot-kernel_y_configopt "CONFIG_LRU_GEN_ENABLED"
@@ -5192,7 +5217,7 @@ _ot-kernel_set_kconfig_pgo_clang() {
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 	local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
 	local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
-	if has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 		(( ${llvm_slot} < 13 )) && die "PGO requires LLVM >= 13"
 		local clang_pv=$(clang-${llvm_slot} --version | head -n 1 | cut -f 3 -d " ")
 		local clang_pv_major=$(echo "${clang_pv}" | cut -f 1 -d ".")
@@ -5347,7 +5372,7 @@ ot-kernel_set_kconfig_pgo() {
 	else
 		return
 	fi
-	if has clang ${IUSE} && use clang ; then
+	if has clang ${IUSE_EFFECTIVE} && use clang ; then
 		_ot-kernel_set_kconfig_pgo_clang
 	else
 		_ot-kernel_set_kconfig_pgo_gcc
@@ -5475,7 +5500,7 @@ ot-kernel_set_kconfig_scs() {
 		:;
 	elif [[ "${hardening_level}" == "untrusted" \
 		|| "${hardening_level}" == "untrusted-distant" ]] \
-		&& has shadowcallstack ${IUSE} && ot-kernel_use shadowcallstack \
+		&& has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack \
 		&& [[ "${arch}" == "arm64" ]] ; then
 		(( ${llvm_slot} < 10 )) && die "Shadow call stack (SCS) requires LLVM >= 10"
 einfo "Enabling SCS support in the in the .config."
@@ -5548,7 +5573,7 @@ einfo "Using manual swap settings"
 # @DESCRIPTION:
 # Sets the kernel config for TRESOR
 ot-kernel_set_kconfig_tresor() {
-	if has tresor_i686 ${IUSE} && ot-kernel_use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
+	if has tresor_i686 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
 einfo "Changed .config to use TRESOR (i686)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -5566,7 +5591,7 @@ einfo "Disabling boot output for TRESOR early prompt."
 		fi
 	fi
 
-	if has tresor_x86_64 ${IUSE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
+	if has tresor_x86_64 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
 einfo "Changed .config to use TRESOR (x86_64)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -5580,7 +5605,7 @@ einfo "Changed .config to use TRESOR (x86_64)"
 		fi
 	fi
 
-	if has tresor_aesni ${IUSE} && ot-kernel_use tresor_aesni && [[ "${arch}" == "x86_64" ]] ; then
+	if has tresor_aesni ${IUSE_EFFECTIVE} && ot-kernel_use tresor_aesni && [[ "${arch}" == "x86_64" ]] ; then
 einfo "Changed .config to use TRESOR (AES-NI)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -5593,7 +5618,7 @@ einfo "Changed .config to use TRESOR (AES-NI)"
 		fi
 	fi
 
-	if has tresor_sysfs ${IUSE} && ot-kernel_use tresor_sysfs && [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
+	if has tresor_sysfs ${IUSE_EFFECTIVE} && ot-kernel_use tresor_sysfs && [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
 einfo "Changed .config to use the TRESOR sysfs interface"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_SYSFS"
 
@@ -5605,7 +5630,7 @@ ewarn
 		ot-kernel_n_configopt "CONFIG_HIBERNATION"
 	fi
 
-	if has tresor_x86_64 ${IUSE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
+	if has tresor_x86_64 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
 		if ot-kernel_use tresor_prompt ; then
 			einfo "Disabling boot output for TRESOR early prompt."
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
@@ -5619,7 +5644,7 @@ ewarn
 # @DESCRIPTION:
 # Sets the kernel config for UKSM
 ot-kernel_set_kconfig_uksm() {
-	if has uksm ${IUSE} && ot-kernel_use uksm ; then
+	if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
 einfo "Changed .config to use UKSM"
 		ot-kernel_y_configopt "CONFIG_KSM"
 		ot-kernel_y_configopt "CONFIG_UKSM"
@@ -6456,22 +6481,6 @@ einfo "Changed .config to use the ${work_profile} work profile"
 		ot-kernel_set_kconfig_work_profile_init
 	fi
 
-	if [[ "${work_profile}" =~ "greenest" \
-		|| "${work_profile}" =~ "solar" ]] \
-		&& [[ "${CFLAGS}" == "-O3" ]] ; then
-ewarn
-ewarn "OT_KERNEL_WORK_PROFILE=${OT_KERNEL_WORK_PROFILE} should use USE=O3"
-ewarn "and OT_KERNEL_USE=O3 to improve energy reduction."
-ewarn
-	elif [[ "${work_profile}" =~ "green" \
-		&& "${CFLAGS}" =~ "-Os" ]] ; then
-ewarn
-ewarn "OT_KERNEL_WORK_PROFILE=${OT_KERNEL_WORK_PROFILE} should use CFLAGS=-O2"
-ewarn "or 'CFLAGS=-O3 and USE=O3 and OT_KERNEL_USE=O3' to improve energy"
-ewarn "reduction."
-ewarn
-	fi
-
 	if [[ "${work_profile}" =~ "green" \
 		|| "${work_profile}" =~ "solar" ]] \
 		&& ! use disable_debug ; then
@@ -7088,7 +7097,7 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 		ot-kernel_set_configopt "CONFIG_DRM_SIMPLEDRM" "m"
 	fi
 
-	if has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
+	if has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 ewarn "Enabling modules support for sys-kernel/rock-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
@@ -7491,7 +7500,7 @@ ewarn
 ewarn "The OT_KERNEL_LOGO_URI will restore the console log levels to defaults."
 ewarn "This may decrease security."
 ewarn
-		if has tresor ${IUSE} && ot-kernel_use tresor ; then
+		if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor ; then
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2"
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "1"
 		else
@@ -7767,7 +7776,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_kconfig_from_envvar_array
 
 	if [[ -e "${BUILD_DIR}/.config" ]] ; then
-		if has exfat ${IUSE} && ! use exfat ; then
+		if has exfat ${IUSE_EFFECTIVE} && ! use exfat ; then
 			sed -i -e "/CONFIG_EXFAT_FS/d" "${BUILD_DIR}/.config"
 		fi
 
@@ -7943,10 +7952,10 @@ einfo "Setting up the build toolchain"
 	fi
 	if \
 		( \
-			   ( has cfi ${IUSE} && ot-kernel_use cfi ) \
-			|| ( has kcfi ${IUSE} && ot-kernel_use kcfi ) \
-			|| ( has lto ${IUSE} && ot-kernel_use lto ) \
-			|| ( has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ) \
+			   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
+			|| ( has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ) \
+			|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
+			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -8037,7 +8046,7 @@ einfo
 		)
 	fi
 
-	if has tresor ${IUSE} && ot-kernel_use tresor && tc-is-clang ; then
+	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && tc-is-clang ; then
 		args+=(
 			"LLVM_IAS=0"
 		)
@@ -8065,7 +8074,7 @@ einfo "Passed check for ${x}"
 # @DESCRIPTION:
 # Builds the tresor_sysfs program.
 ot-kernel_build_tresor_sysfs() {
-	if has tresor_sysfs ${IUSE} ; then
+	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use tresor_sysfs ; then
 einfo "Running:  $(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o \
 tresor_sysfs"
@@ -8355,7 +8364,7 @@ ot-kernel_build_kernel() {
 		local llvm_slot=$(get_llvm_slot)
 		local pgo_phase # pgophase file
 		local makefile_pgo_phase
-		if has clang ${IUSE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+		if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 			local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
 			local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
@@ -8414,9 +8423,9 @@ einfo "Resuming as PGT since no profile generated"
 			fi
 		elif \
 			( \
-				( has clang ${IUSE} && ! ot-kernel_use clang ) \
+				( has clang ${IUSE_EFFECTIVE} && ! ot-kernel_use clang ) \
 				|| \
-				( ! has clang ${IUSE} ) \
+				( ! has clang ${IUSE_EFFECTIVE} ) \
 			) \
 			&& \
 			( \
@@ -8848,7 +8857,7 @@ OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0
 ot-kernel_src_install() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
-	if has tresor ${IUSE} ; then
+	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			docinto /usr/share/${PF}
 			dodoc "${EDISTDIR}/${TRESOR_README_FN}"
@@ -9035,7 +9044,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 			[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
 			[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
 			local pgo_phase_statefile
-			if has clang ${IUSE} && ot-kernel_use clang && use pgo ; then
+			if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && use pgo ; then
 				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 			elif use pgo ; then
 				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
@@ -9367,9 +9376,9 @@ EOF
 			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 		fi
 
-		if has c2tcp ${IUSE} \
-			|| has deepcc ${IUSE} \
-			|| has orca ${IUSE} ; then
+		if has c2tcp ${IUSE_EFFECTIVE} \
+			|| has deepcc ${IUSE_EFFECTIVE} \
+			|| has orca ${IUSE_EFFECTIVE} ; then
 			if ot-kernel_use c2tcp \
 				|| ot-kernel_use deepcc \
 				|| ot-kernel_use orca ; then
@@ -9471,7 +9480,7 @@ einfo "kernel folder."
 einfo
 	fi
 
-	if has tresor_sysfs ${IUSE} ; then
+	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			local highest_tresor_pv=$(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
 				| sed -r -e "s|sys-kernel/ot-sources-||" -e "s|-r[0-9]+||")
@@ -9500,7 +9509,7 @@ einfo
 einfo "Advanced users may use /sys/kernel/tresor/key instead."
 einfo
 		else
-			if has tresor ${IUSE} ; then
+			if has tresor ${IUSE_EFFECTIVE} ; then
 				if use tresor ; then
 ewarn
 ewarn "You can only enter a password that is 53 characters long without the null"
@@ -9511,7 +9520,7 @@ ewarn
 		fi
 	fi
 
-	if has tresor ${IUSE} ; then
+	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 einfo
 einfo "To prevent the prompt on boot from scrolling off the screen, you can do"
@@ -9626,17 +9635,17 @@ ewarn
 		-e "s|-r[0-9]+||" | cut -f 1 -d ".")
 	fi
 
-	if has cfi ${IUSE} ; then
+	if has cfi ${IUSE_EFFECTIVE} ; then
 		if use cfi ; then
 			wants_cfi=1
 		fi
 	fi
-	if has kcfi ${IUSE} ; then
+	if has kcfi ${IUSE_EFFECTIVE} ; then
 		if use kcfi ; then
 			wants_kcfi=1
 		fi
 	fi
-	if has lto ${IUSE} ; then
+	if has lto ${IUSE_EFFECTIVE} ; then
 		if use lto ; then
 			wants_lto=1
 		fi
@@ -9683,7 +9692,7 @@ einfo
 einfo "to optimize for newer microarchitectures."
 einfo
 
-	if has bbrv2 ${IUSE} ; then
+	if has bbrv2 ${IUSE_EFFECTIVE} ; then
 		if use bbrv2 ; then
 einfo
 einfo "To enable BBRv2 go to"
@@ -9697,7 +9706,7 @@ einfo
 		fi
 	fi
 
-	if has bbrv3 ${IUSE} ; then
+	if has bbrv3 ${IUSE_EFFECTIVE} ; then
 		if use bbrv3 ; then
 einfo
 einfo "To enable BBRv3 go to"
@@ -9723,7 +9732,7 @@ einfo "futex2 yields benefits of less than 5% CPU usage."
 einfo
 	fi
 
-	if has tresor ${IUSE} ; then
+	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 ewarn
 ewarn "TRESOR is currently not compatible with Integrated Assembler used by Clang/LLVM."
@@ -9732,7 +9741,7 @@ ewarn
 		fi
 	fi
 
-	if use pgo && has build ${IUSE} && use build ; then
+	if use pgo && has build ${IUSE_EFFECTIVE} && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -9749,7 +9758,7 @@ einfo "    8.  Reboot with optimized kernel"
 einfo
 einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
 einfo
-	elif has build ${IUSE} && use build ; then
+	elif has build ${IUSE_EFFECTIVE} && use build ; then
 einfo
 einfo "The kernel(s) still needs to complete the following steps:"
 einfo
@@ -9839,7 +9848,7 @@ einfo
 einfo "To optimize IMA hashing add iversion to fstab mount option for / (aka root)."
 einfo
 	fi
-	if has exfat ${IUSE} && use exfat ; then
+	if has exfat ${IUSE_EFFECTIVE} && use exfat ; then
 einfo
 einfo "exFAT users:  You must be a member of OIN and agree to the OIN license"
 einfo "for patent use legal protections and royalty free benefits."
@@ -9984,7 +9993,7 @@ einfo "Installing tcca"
 		chown root:root "${EROOT}/usr/bin/tcca"
 	fi
 
-	if has c2tcp ${IUSE} && use c2tcp ; then
+	if has c2tcp ${IUSE_EFFECTIVE} && use c2tcp ; then
 einfo
 einfo "C2TCP is disabled by default."
 einfo
@@ -9992,7 +10001,7 @@ einfo "See epkginfo -x sys-apps/c2tcp::oiledmachine-overlay for details about"
 einfo "enabling and the tunable target delay knob."
 einfo
 	fi
-	if has deepcc ${IUSE} && use deepcc ; then
+	if has deepcc ${IUSE_EFFECTIVE} && use deepcc ; then
 einfo
 einfo "DeepCC is disabled by default and needs the DRL Agent or learned models"
 einfo "loaded."
@@ -10002,7 +10011,7 @@ einfo "enabling and loading the DRL Agent and learned model(s) and tunable"
 einfo "target delay knob."
 einfo
 	fi
-	if has orca ${IUSE} && use orca ; then
+	if has orca ${IUSE_EFFECTIVE} && use orca ; then
 einfo
 einfo "Orca needs the DRL Agent or learned models loaded."
 einfo

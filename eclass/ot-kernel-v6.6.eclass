@@ -23,6 +23,7 @@ esac
 # For compiler versions, see
 # https://github.com/torvalds/linux/blob/v6.6/scripts/min-tool-version.sh#L26
 
+GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
 LINUX_SOURCES_FALLBACK_COMMIT="611da07b89fdd53f140d7b33013f255bf0ed8f34" # 2023-10-25 07:51:56 -1000
 if [[ "${PV}" =~ "9999" ]] ; then
 	KERNEL_RELEASE_DATE="99999999"
@@ -683,6 +684,17 @@ ewarn
 ewarn "Patches are not ready.  Please disable all patch USE flags for this"
 ewarn "series."
 ewarn
+
+	if [[ "${PV}" =~ "9999" ]] ; then
+ewarn
+ewarn "You are using the live kernel sources.  This may result in data loss,"
+ewarn "data format incompatibilities, or vulnerabilities."
+ewarn
+ewarn "The live sources is intended for people that want to submit"
+ewarn "commits/patches, to use security fixesm, for ebuild maintainers or modders"
+ewarn "to smooth out  updates before stable."
+ewarn
+	fi
 
 	if use shadowcallstack && ! use arm64 ; then
 ewarn

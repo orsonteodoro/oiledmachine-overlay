@@ -6383,9 +6383,9 @@ ot-kernel-pkgflags_nvtop() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version "sys-process/nvtop[video_cards_amdgpu]" ; then
-			if ! has rock-dkms ${IUSE} ; then
+			if ! has rock-dkms ${IUSE_EFFECTIVE} ; then
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-			elif has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
+			elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 				ot-kernel_y_configopt "CONFIG_MODULES"
 				ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
@@ -7647,9 +7647,9 @@ ot-kernel-pkgflags_roct() { # DONE
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
-		if ! has rock-dkms ${IUSE} ; then
+		if ! has rock-dkms ${IUSE_EFFECTIVE} ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-		elif has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
+		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
@@ -9513,9 +9513,9 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_MMU"
-		if ! has rock-dkms ${IUSE} ; then
+		if ! has rock-dkms ${IUSE_EFFECTIVE} ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-		elif has rock-dkms ${IUSE} && ot-kernel_use rock-dkms ; then
+		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
@@ -10327,7 +10327,7 @@ einfo "Added ${opt_raw}"
 # syscall.*__NR_futex.*31				; support dropped
 #
 _ot-kernel_set_futex() {
-	if has futex ${IUSE} && ot-kernel_use futex ; then
+	if has futex ${IUSE_EFFECTIVE} && ot-kernel_use futex ; then
 einfo "Enabling futex in .config"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
@@ -10345,7 +10345,7 @@ einfo "Enabling futex in .config"
 # syscall.*__NR_futex_waitv
 #
 _ot-kernel_set_futex2() {
-	if has futex2 ${IUSE} && ot-kernel_use futex2 ; then
+	if has futex2 ${IUSE_EFFECTIVE} && ot-kernel_use futex2 ; then
 einfo "Enabling futex2 in .config"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
