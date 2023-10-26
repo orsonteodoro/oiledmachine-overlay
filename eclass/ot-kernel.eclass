@@ -1966,6 +1966,11 @@ eerror
 eerror "Actual PV:  ${actual_pv}"
 eerror "Expected PV:  ${expected_pv}"
 eerror
+		if (( ${LIVE} == 1 )) ; then
+eerror
+eerror "Bump the live major and minor versions to ${c0}.${c1}."
+eerror
+		fi
 		die
 	fi
 }
