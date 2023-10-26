@@ -3490,51 +3490,6 @@ unset OT_KERNEL_PRIVATE_KEY
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
 
-
-
-    Environment variables for the cve_hotfix USE flag.
-
-    Several global env vars can be used to control this flag that
-    you set in your per extraversion env file:
-
-    CVE_ALLOW_CRASH_PREVENTION - is set to 1 to accept (default), 0 to reject
-         if to apply commits that prevent crashes, memory leaks, overflows, and
-         also adds data validations checks surrounding a fix for a CVE.
-    CVE_ALLOW_RISKY_BACKPORTS - is set to 0 (default) to not apply, 1 to apply
-         risky backport.  Risky backports are untested and may lead to data loss
-         or data corruption, non functioning driver/device, or irreversible
-         damage.
-    CVE_ALLOW_UNTAGGED_PATCHES - is set to 0 to not accept, 1 to accept
-         (default).  This is used to inspect patches or commits for viable
-         official fix from kernel.org or github.com/torvals if a url is not
-         marked Patch or Vendor Advisory.
-    CVE_BLACKLIST_FIXES - is a string of CVE ids to reject fixes indended if
-         runtime or compile time failure occurs.
-    CVE_DELAY - is set to 1 (default) to enable or 0 to disable the 30 second
-         delay per entry in the report.
-    CVE_FIX_REJECT_DISPUTED - is set to 0 to not reject (default), 1 to reject
-         to applying a CVE fix marked as disputed.
-    CVE_FIX_TRUST_LEVEL - an "inclusive or" bit mask that controls classes of 
-         cve hotfixes to accept.  See ot-kernel-cve.eclass for acceptable
-         values.  You will need to use the hex value equivalent since these
-         identifier constants are not initialized in the
-         env file.
-    CVE_LANG - Report language (default:  en)
-    CVE_MAX_BULK_CONNECTIONS - maximum large downloads at a time, 5 is default
-    CVE_MAX_PATCH_CONNECTIONS - maximum patch downloads at a time, 100 is
-         default
-    CVE_MIN_YEAR - starting patching-download-drytest year, default is 1999.
-
-    See the ot-kernel-cve eclass for details.
-
-    Examples:
-
-      CVE_FIX_TRUST_LEVEL=0x00050000 # Same as 0x00010000 | 0x00040000
-      CVE_BLACKLIST_FIXES="CVE-2019-14814 CVE-2019-14895"
-      CVE_DELAY=0
-      CVE_ALLOW_RISKY_BACKPORTS=1
-
-
     Please read the metadata.xml comments for more info.
   -->
   <upstream>
@@ -3600,22 +3555,6 @@ unset OT_KERNEL_PRIVATE_KEY
       This is a stronger check for those prefer Clang over GCC and to make sure
       the prerequisites are met.
     </flag>
-    <flag name="cve_hotfix">
-      Applies patches to resolve CVEs (Common Vulnerabilities and Exposures).
-      Not enabled by default.
-
-      Currently, not all patch fixes under code review, custom kernel vendors
-      from mobile hardware manufacturers, or major distro advisories,
-      get applied.
-
-      Newer CVE fixes should be automatically added and applied per emerge.
-
-      It uses an external script from
-
-        https://github.com/orsonteodoro/tuxparoni
-
-      This USE flag is experimental.
-    </flag>
     <flag name="deepcc">
       (WORK IN PROGRESS / DRAFT)
       DeepCC uses Deep Reinforced Learning (DRL) AI to improve existing
@@ -3639,6 +3578,9 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="exfat">
       Enables or removes exFAT
+    </flag>
+    <flag name="fallback-commit">
+      Rewind the commit backwards for live ebuilds to when patches were working.
     </flag>
     <flag name="genpatches">
       Applies the genkernel patch set.

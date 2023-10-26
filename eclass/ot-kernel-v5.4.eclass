@@ -219,7 +219,6 @@ DESCRIPTION="\
 A customizable kernel package with \
 BMQ, \
 C2TCP, \
-CVE fixes, \
 DeepCC, \
 genpatches, \
 kernel_compiler_patch, \
@@ -389,13 +388,13 @@ PDEPEND+="
 	)
 "
 
-if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-	:
+if [[ "${PV}" =~ "9999" ]] ; then
+	:;
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
-		${KERNEL_PATCH_URIS[@]}
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
+		${KERNEL_PATCH_URIS[@]}
 	"
 fi
 
@@ -692,8 +691,10 @@ ot-kernel_filter_patch_cb() {
 # @DESCRIPTION:
 # Filter
 ot-kernel_filter_genpatches_blacklist_cb() {
-	if ( ver_test $(ver_cut 1-3 "${PV}") -eq "5.4.85" ) \
-		&& ( ver_test "${GENPATCHES_VER}" -eq "87" ) ; then
+	if \
+		   ver_test $(ver_cut 1-3 "${PV}") -eq "5.4.85" \
+		&& ver_test "${GENPATCHES_VER}"    -eq "87" \
+	; then
 		echo "2400"
 	else
 		echo ""

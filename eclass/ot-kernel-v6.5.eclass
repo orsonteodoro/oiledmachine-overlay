@@ -293,7 +293,6 @@ A customizable kernel package with \
 BBRv2, \
 BBRv3, \
 C2TCP, \
-CVE fixes, \
 DeepCC, \
 genpatches, \
 kernel_compiler_patch, \
@@ -562,13 +561,13 @@ BDEPEND+="
 	)
 "
 
-if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-	:
+if [[ "${PV}" =~ "9999" ]] ; then
+	:;
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
 https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
-	   ${KERNEL_PATCH_URIS[@]}
+		${KERNEL_PATCH_URIS[@]}
 	"
 fi
 
@@ -642,11 +641,6 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
-ewarn
-ewarn "This ebuild series is a WIP / IN DEVELOPMENT."
-ewarn "Expect patchtime failures."
-ewarn
-
 	if use shadowcallstack && ! use arm64 ; then
 ewarn
 ewarn "ShadowCallStack is only offered on the arm64 platform."

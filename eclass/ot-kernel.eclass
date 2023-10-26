@@ -168,6 +168,12 @@ https://wiki.linuxfoundation.org/realtime/start
 https://www1.informatik.uni-erlangen.de/tresor
 "
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	LIVE=1
+else
+	LIVE=0
+fi
+
 OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:-"MAJOR_MINOR"}
 KEYWORDS=${KEYWORDS:-\
 "~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"}
@@ -185,8 +191,13 @@ linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5 xz zstd
 GCC_PKG="sys-devel/gcc"
 NEEDS_DEBUGFS=0
 PYTHON_COMPAT=( python3_{10..11} ) # Slots based on dev-python/selenium
-inherit check-reqs flag-o-matic python-r1 ot-kernel-cve ot-kernel-pkgflags
+inherit check-reqs flag-o-matic python-r1 ot-kernel-pkgflags
 inherit ot-kernel-kutils security-scan toolchain-funcs
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	inherit git-r3
+	IUSE+=" fallback-commit"
+fi
 
 # For firmware security update(s), see
 # https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
@@ -972,12 +983,10 @@ ewarn
 # @DESCRIPTION:
 # Check if sandbox is more lax when downloading in unpack phase
 _check_network_sandbox() {
-	# justifications
-	# cve-hotfix - requires to download patch URI linked from NVD website
 	if has network-sandbox ${FEATURES} ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to use live patches or to download logos."
+eerror "env to be able to use live sources or to download logos."
 eerror
 		die
 	fi
@@ -1122,7 +1131,6 @@ ewarn "more secure and higher performant configurations and to override the"
 ewarn "scheduler default."
 ewarn
 	_report_eol
-	ot-kernel-cve_setup
 
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
@@ -1133,10 +1141,8 @@ ewarn
 			zen_tune_setup
 		fi
 	fi
-	if has cve_hotfix ${IUSE} ; then
-		if use cve_hotfix ; then
-			_check_network_sandbox
-		fi
+	if [[ "${PV}" =~ "9999" ]] ; then
+		_check_network_sandbox
 	fi
 
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
@@ -1350,73 +1356,24 @@ get_current_commit_for_k_major_minor_branch() {
 	popd 2>/dev/null 1>/dev/null
 }
 
-# @FUNCTION: ot-kernel_fetch_linux_sources
+# @FUNCTION: ot-kernel_unpack_live
 # @DESCRIPTION:
-# Fetches a local copy of the linux kernel repo.
-ot-kernel_fetch_linux_sources() {
+# Fetches a live copy of the linux kernel repo.
+ot-kernel_unpack_live() {
 einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
-	cd "${EDISTDIR}" || die
-	d="${EDISTDIR}/ot-sources-src/linux"
-	b="${EDISTDIR}/ot-sources-src"
-	addwrite "${b}"
-	cd "${b}" || die
 
-	if [[ -d "${d}" ]] ; then
-		pushd "${d}" || die
-		if ! ( git remote -v | grep -F -e "${LINUX_REPO_URI}" ) \
-			> /dev/null ; \
-		then
-einfo "Removing ${d}"
-			rm -rf "${d}" || die
-		fi
-		popd
+	if use fallback-commit && [[ -n "${LINUX_SOURCES_FALLBACK_COMMIT}" ]] ; then
+		EGIT_COMMIT="${LINUX_SOURCES_FALLBACK_COMMIT}"
 	fi
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI=${EGIT_LINUX_SOURCES_URI:-"https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"}
+	EGIT_CHECKOUT_DIR="${S}"
 
-	addwrite "${b}"
+	git-r3_fetch
+	git-r3_checkout
 
-	if [[ ! -d "${d}" ]] ; then
-		mkdir -p "${d}" || die
-einfo "Cloning the vanilla Linux kernel project"
-		git clone "${LINUX_REPO_URI}" "${d}"
-		cd "${d}" || die
-		git checkout master
-		if [[ -n "${FETCH_VANILLA_SOURCES_BY_TAG}" \
-			&& "${FETCH_VANILLA_SOURCES_BY_TAG}" == "1" ]] ; then
-			git checkout -b v${PV} tags/v${PV}
-		elif [[ -n "${FETCH_VANILLA_SOURCES_BY_BRANCH}" \
-			&& "${FETCH_VANILLA_SOURCES_BY_BRANCH}" == "1" ]] ; then
-			git checkout -b linux-${KV_MAJOR_MINOR}.y \
-				origin/linux-${KV_MAJOR_MINOR}.y
-		fi
-	else
-		local G=$(find "${d}" -group "root")
-		if (( ${#G} > 0 )) ; then
-eerror "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
-			die
-		fi
-einfo "Updating the vanilla Linux kernel project"
-		cd "${d}" || die
-		git clean -fdx
-		git reset --hard master
-		git reset --hard origin/master
-		git checkout master
-		git pull
-		if [[ -n "${FETCH_VANILLA_SOURCES_BY_TAG}" \
-			&& "${FETCH_VANILLA_SOURCES_BY_TAG}" == "1" ]] ; then
-			git branch -D v${PV}
-			git checkout -b v${PV} tags/v${PV}
-		elif [[ -n "${FETCH_VANILLA_SOURCES_BY_BRANCH}" \
-			&& "${FETCH_VANILLA_SOURCES_BY_BRANCH}" == "1" ]] ; then
-			git branch -D linux-${KV_MAJOR_MINOR}.y
-			git checkout -b linux-${KV_MAJOR_MINOR}.y \
-				origin/linux-${KV_MAJOR_MINOR}.y
-		fi
-		git pull
-		if [[ -n "${TEST_REWIND_SOURCES_BACK_TO}" ]] ; then
-			git checkout ${TEST_REWIND_SOURCES_BACK_TO}
-		fi
-	fi
-	cd "${d}" || die
+	cd "${S}" || die
+	verify_point_release
 }
 
 # @FUNCTION: ot-kernel_unpack_tarball
@@ -2110,12 +2067,20 @@ einfo
 		_PATCHES+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
 
-	ot-kernel_unpack_tarball
+	if [[ "${PV}" =~ "9999" ]] ; then
+		ot-kernel_unpack_live
+	else
+		ot-kernel_unpack_tarball
+	fi
 einfo "Done unpacking."
 	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	mv "linux-${KV_MAJOR_MINOR}" "${BUILD_DIR}" || die
-	apply_vanilla_point_releases
-	verify_point_release
+	if [[ "${PV}" =~ "9999" ]] ; then
+		:;
+	else
+		apply_vanilla_point_releases
+		verify_point_release
+	fi
 }
 
 # @FUNCTION: apply_gcc_full_pgo
@@ -2517,22 +2482,6 @@ ot-kernel_src_prepare() {
 	fi
 
 	eapply_user
-
-	# This should be done immediately after all the kernel point releases.
-	if has cve_hotfix ${IUSE} ; then
-		if use cve_hotfix ; then
-			fetch_tuxparoni
-			unpack_tuxparoni
-			fetch_cve_hotfixes
-			get_cve_report
-			test_cve_hotfixes
-			apply_cve_hotfixes
-ewarn
-ewarn "Applying custom patchsets on top of cve_hotfix USE flag may fail to"
-ewarn "patch or fail to compile."
-ewarn
-		fi
-	fi
 
 	#if [[ -e "/lib/firmware/regulatory.db.p7s" ]] ; then
 	#	cp -a "/lib/firmware/regulatory.db.p7s" "${BUILD_DIR}/"
@@ -5283,7 +5232,6 @@ ewarn "The pgo USE flag uses debugfs and is a developer only config option.  It"
 ewarn "should be disabled to prevent abuse and a possible prerequisite for"
 ewarn "attacks.  It may be disabled in the PGO step if no dependency on this"
 ewarn "kernel option."
-# About one CVE per year related to debugfs.
 ewarn
 
 		# For ot_kernel_pgt_memory
