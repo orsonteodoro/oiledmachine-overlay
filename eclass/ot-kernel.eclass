@@ -1374,7 +1374,6 @@ einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	git-r3_checkout
 
 	cd "${S}" || die
-	verify_point_release
 }
 
 # @FUNCTION: ot-kernel_unpack_tarball
@@ -2073,20 +2072,16 @@ einfo
 		_PATCHES+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
 
+	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
 	if [[ "${PV}" =~ "9999" ]] ; then
 		ot-kernel_unpack_live
 	else
 		ot-kernel_unpack_tarball
+		mv "linux-${KV_MAJOR_MINOR}" "${BUILD_DIR}" || die
+		apply_vanilla_point_releases
 	fi
 einfo "Done unpacking."
-	export BUILD_DIR="${WORKDIR}/linux-${PV}-${K_EXTRAVERSION}"
-	mv "linux-${KV_MAJOR_MINOR}" "${BUILD_DIR}" || die
-	if [[ "${PV}" =~ "9999" ]] ; then
-		:;
-	else
-		apply_vanilla_point_releases
-		verify_point_release
-	fi
+	verify_point_release
 }
 
 # @FUNCTION: apply_gcc_full_pgo

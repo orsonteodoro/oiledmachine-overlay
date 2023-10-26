@@ -225,6 +225,14 @@ symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
 "
 
+if [[ "${PV}" =~ "9999" ]] ; then
+	REQUIRED_USE+="
+		!bbrv2
+		!bbrv3
+		!zen-sauce
+	"
+fi
+
 REQUIRED_USE+="
 	bbrv2? (
 		!bbrv3
