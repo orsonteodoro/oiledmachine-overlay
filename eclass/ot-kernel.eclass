@@ -2302,8 +2302,8 @@ apply_all_patchsets() {
 	ot-kernel_apply_kcp
 
 	if [[ "${PV}" =~ "9999" ]] ; then
-		# Remove + suffix
-		sed -i -e "s|\$short;|false;|g" "scripts/setlocalversion" || die
+		# Disable + suffix
+		sed -i -e "s|echo \"+\"|#echo \"+\"|g" "scripts/setlocalversion" || die
 	fi
 }
 
