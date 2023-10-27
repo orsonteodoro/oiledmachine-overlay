@@ -32,7 +32,7 @@ BDEPEND+="
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
 https://registry.npmjs.org/acorn/-/acorn-8.7.1.tgz -> npmpkg-acorn-8.7.1.tgz
-https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
+https://registry.npmjs.org/semver/-/semver-6.3.1.tgz -> npmpkg-semver-6.3.1.tgz
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
 SRC_URI="
