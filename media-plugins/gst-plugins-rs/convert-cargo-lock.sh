@@ -5,8 +5,8 @@
 
 CATEGORY="media-plugins"
 PN="gst-plugins-rs"
-PV="${1}"
-MY_PV="${2}"
+PV="${1}" # left
+MY_PV="${2}" # right
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
@@ -94,7 +94,7 @@ main() {
 	local s_nlive=""
 	local live_packages=()
 
-	# live
+	# live (GIT_CRATES)
 	local L=$(grep -l -F "git+" gst-plugins-rs-config*.txt)
 	for l in ${L[@]} ; do
 		local name=$(grep "name = " ${l} \
@@ -115,7 +115,7 @@ main() {
 		live_packages+=("${name}")
 	done
 
-	# non-live
+	# non-live (CRATES)
 	for l in ${NL[@]} ; do
 		local name=$(grep "name = " ${l} | cut -f 2 -d '"')
 		local version=$(grep "version = " ${l} | cut -f 2 -d '"')
