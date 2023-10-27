@@ -223,7 +223,7 @@ LICENSE="
 # || ( Unlicense MIT ) - cargo_home/gentoo/byteorder-1.4.3/COPYING
 # || ( MIT Apache-2.0 ) - cargo_home/gentoo/half-2.1.0/LICENSE
 
-SLOT="0"
+SLOT="0/sts"
 if [[ ${PV} != *_rc* ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos"
 fi
