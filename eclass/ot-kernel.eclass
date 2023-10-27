@@ -9432,9 +9432,8 @@ EOF
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		local arch="${OT_KERNEL_ARCH}"
 
-		local BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
-		[[ -e "${BUILD_DIR}/include/config/kernel.release" ]] || die
-		local target=$(cat "${BUILD_DIR}/include/config/kernel.release")
+		[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
+		local target=$(cat "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release")
 
 		mkdir -p "${ED}/lib/modules/${target}"
 		if [[ -e "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" ]] ; then
