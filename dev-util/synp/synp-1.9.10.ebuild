@@ -65,30 +65,37 @@ BDEPEND+="
 # grep "resolved" ${NPM_INSTALL_PATH}package-lock.npm | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
-https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.12.11.tgz -> npmpkg-@babel-code-frame-7.12.11.tgz
+https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.22.13.tgz -> npmpkg-@babel-code-frame-7.22.13.tgz
 https://registry.npmjs.org/@babel/core/-/core-7.12.10.tgz -> npmpkg-@babel-core-7.12.10.tgz
-https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
-https://registry.npmjs.org/@babel/generator/-/generator-7.12.11.tgz -> npmpkg-@babel-generator-7.12.11.tgz
-https://registry.npmjs.org/@babel/helper-function-name/-/helper-function-name-7.12.11.tgz -> npmpkg-@babel-helper-function-name-7.12.11.tgz
-https://registry.npmjs.org/@babel/helper-get-function-arity/-/helper-get-function-arity-7.12.10.tgz -> npmpkg-@babel-helper-get-function-arity-7.12.10.tgz
+https://registry.npmjs.org/semver/-/semver-5.7.2.tgz -> npmpkg-semver-5.7.2.tgz
+https://registry.npmjs.org/@babel/generator/-/generator-7.23.0.tgz -> npmpkg-@babel-generator-7.23.0.tgz
+https://registry.npmjs.org/@babel/helper-environment-visitor/-/helper-environment-visitor-7.22.20.tgz -> npmpkg-@babel-helper-environment-visitor-7.22.20.tgz
+https://registry.npmjs.org/@babel/helper-function-name/-/helper-function-name-7.23.0.tgz -> npmpkg-@babel-helper-function-name-7.23.0.tgz
+https://registry.npmjs.org/@babel/helper-hoist-variables/-/helper-hoist-variables-7.22.5.tgz -> npmpkg-@babel-helper-hoist-variables-7.22.5.tgz
 https://registry.npmjs.org/@babel/helper-member-expression-to-functions/-/helper-member-expression-to-functions-7.12.7.tgz -> npmpkg-@babel-helper-member-expression-to-functions-7.12.7.tgz
 https://registry.npmjs.org/@babel/helper-module-imports/-/helper-module-imports-7.12.5.tgz -> npmpkg-@babel-helper-module-imports-7.12.5.tgz
 https://registry.npmjs.org/@babel/helper-module-transforms/-/helper-module-transforms-7.12.1.tgz -> npmpkg-@babel-helper-module-transforms-7.12.1.tgz
 https://registry.npmjs.org/@babel/helper-optimise-call-expression/-/helper-optimise-call-expression-7.12.10.tgz -> npmpkg-@babel-helper-optimise-call-expression-7.12.10.tgz
 https://registry.npmjs.org/@babel/helper-replace-supers/-/helper-replace-supers-7.12.11.tgz -> npmpkg-@babel-helper-replace-supers-7.12.11.tgz
 https://registry.npmjs.org/@babel/helper-simple-access/-/helper-simple-access-7.12.1.tgz -> npmpkg-@babel-helper-simple-access-7.12.1.tgz
-https://registry.npmjs.org/@babel/helper-split-export-declaration/-/helper-split-export-declaration-7.12.11.tgz -> npmpkg-@babel-helper-split-export-declaration-7.12.11.tgz
-https://registry.npmjs.org/@babel/helper-validator-identifier/-/helper-validator-identifier-7.12.11.tgz -> npmpkg-@babel-helper-validator-identifier-7.12.11.tgz
+https://registry.npmjs.org/@babel/helper-split-export-declaration/-/helper-split-export-declaration-7.22.6.tgz -> npmpkg-@babel-helper-split-export-declaration-7.22.6.tgz
+https://registry.npmjs.org/@babel/helper-string-parser/-/helper-string-parser-7.22.5.tgz -> npmpkg-@babel-helper-string-parser-7.22.5.tgz
+https://registry.npmjs.org/@babel/helper-validator-identifier/-/helper-validator-identifier-7.22.20.tgz -> npmpkg-@babel-helper-validator-identifier-7.22.20.tgz
 https://registry.npmjs.org/@babel/helpers/-/helpers-7.12.5.tgz -> npmpkg-@babel-helpers-7.12.5.tgz
-https://registry.npmjs.org/@babel/highlight/-/highlight-7.10.4.tgz -> npmpkg-@babel-highlight-7.10.4.tgz
-https://registry.npmjs.org/@babel/parser/-/parser-7.12.11.tgz -> npmpkg-@babel-parser-7.12.11.tgz
-https://registry.npmjs.org/@babel/template/-/template-7.12.7.tgz -> npmpkg-@babel-template-7.12.7.tgz
-https://registry.npmjs.org/@babel/traverse/-/traverse-7.12.12.tgz -> npmpkg-@babel-traverse-7.12.12.tgz
-https://registry.npmjs.org/@babel/types/-/types-7.12.12.tgz -> npmpkg-@babel-types-7.12.12.tgz
+https://registry.npmjs.org/@babel/highlight/-/highlight-7.22.20.tgz -> npmpkg-@babel-highlight-7.22.20.tgz
+https://registry.npmjs.org/@babel/parser/-/parser-7.23.0.tgz -> npmpkg-@babel-parser-7.23.0.tgz
+https://registry.npmjs.org/@babel/template/-/template-7.22.15.tgz -> npmpkg-@babel-template-7.22.15.tgz
+https://registry.npmjs.org/@babel/traverse/-/traverse-7.23.2.tgz -> npmpkg-@babel-traverse-7.23.2.tgz
+https://registry.npmjs.org/@babel/types/-/types-7.23.0.tgz -> npmpkg-@babel-types-7.23.0.tgz
 https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-0.3.0.tgz -> npmpkg-@eslint-eslintrc-0.3.0.tgz
 https://registry.npmjs.org/globals/-/globals-12.4.0.tgz -> npmpkg-globals-12.4.0.tgz
 https://registry.npmjs.org/@istanbuljs/load-nyc-config/-/load-nyc-config-1.1.0.tgz -> npmpkg-@istanbuljs-load-nyc-config-1.1.0.tgz
 https://registry.npmjs.org/@istanbuljs/schema/-/schema-0.1.2.tgz -> npmpkg-@istanbuljs-schema-0.1.2.tgz
+https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.3.tgz -> npmpkg-@jridgewell-gen-mapping-0.3.3.tgz
+https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.1.tgz -> npmpkg-@jridgewell-resolve-uri-3.1.1.tgz
+https://registry.npmjs.org/@jridgewell/set-array/-/set-array-1.1.2.tgz -> npmpkg-@jridgewell-set-array-1.1.2.tgz
+https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.4.15.tgz -> npmpkg-@jridgewell-sourcemap-codec-1.4.15.tgz
+https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.20.tgz -> npmpkg-@jridgewell-trace-mapping-0.3.20.tgz
 https://registry.npmjs.org/@sinonjs/commons/-/commons-1.8.3.tgz -> npmpkg-@sinonjs-commons-1.8.3.tgz
 https://registry.npmjs.org/@sinonjs/fake-timers/-/fake-timers-6.0.1.tgz -> npmpkg-@sinonjs-fake-timers-6.0.1.tgz
 https://registry.npmjs.org/@sinonjs/samsam/-/samsam-5.3.1.tgz -> npmpkg-@sinonjs-samsam-5.3.1.tgz
@@ -182,7 +189,7 @@ https://registry.npmjs.org/p-try/-/p-try-1.0.0.tgz -> npmpkg-p-try-1.0.0.tgz
 https://registry.npmjs.org/path-exists/-/path-exists-3.0.0.tgz -> npmpkg-path-exists-3.0.0.tgz
 https://registry.npmjs.org/eslint-plugin-node/-/eslint-plugin-node-11.1.0.tgz -> npmpkg-eslint-plugin-node-11.1.0.tgz
 https://registry.npmjs.org/ignore/-/ignore-5.1.8.tgz -> npmpkg-ignore-5.1.8.tgz
-https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
+https://registry.npmjs.org/semver/-/semver-6.3.1.tgz -> npmpkg-semver-6.3.1.tgz
 https://registry.npmjs.org/eslint-plugin-promise/-/eslint-plugin-promise-5.1.1.tgz -> npmpkg-eslint-plugin-promise-5.1.1.tgz
 https://registry.npmjs.org/eslint-plugin-react/-/eslint-plugin-react-7.25.3.tgz -> npmpkg-eslint-plugin-react-7.25.3.tgz
 https://registry.npmjs.org/doctrine/-/doctrine-2.1.0.tgz -> npmpkg-doctrine-2.1.0.tgz
@@ -288,7 +295,7 @@ https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz -> npmpkg-isexe-2.0.0.tgz
 https://registry.npmjs.org/istanbul-lib-coverage/-/istanbul-lib-coverage-3.0.0.tgz -> npmpkg-istanbul-lib-coverage-3.0.0.tgz
 https://registry.npmjs.org/istanbul-lib-hook/-/istanbul-lib-hook-3.0.0.tgz -> npmpkg-istanbul-lib-hook-3.0.0.tgz
 https://registry.npmjs.org/istanbul-lib-instrument/-/istanbul-lib-instrument-4.0.3.tgz -> npmpkg-istanbul-lib-instrument-4.0.3.tgz
-https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
+https://registry.npmjs.org/semver/-/semver-6.3.1.tgz -> npmpkg-semver-6.3.1.tgz
 https://registry.npmjs.org/istanbul-lib-processinfo/-/istanbul-lib-processinfo-2.0.2.tgz -> npmpkg-istanbul-lib-processinfo-2.0.2.tgz
 https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.3.tgz -> npmpkg-cross-spawn-7.0.3.tgz
 https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz -> npmpkg-shebang-command-2.0.0.tgz
@@ -321,7 +328,7 @@ https://registry.npmjs.org/lodash.truncate/-/lodash.truncate-4.4.2.tgz -> npmpkg
 https://registry.npmjs.org/loose-envify/-/loose-envify-1.4.0.tgz -> npmpkg-loose-envify-1.4.0.tgz
 https://registry.npmjs.org/lru-cache/-/lru-cache-4.1.5.tgz -> npmpkg-lru-cache-4.1.5.tgz
 https://registry.npmjs.org/make-dir/-/make-dir-3.1.0.tgz -> npmpkg-make-dir-3.1.0.tgz
-https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
+https://registry.npmjs.org/semver/-/semver-6.3.1.tgz -> npmpkg-semver-6.3.1.tgz
 https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz -> npmpkg-minimatch-3.1.2.tgz
 https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz -> npmpkg-minimist-1.2.8.tgz
 https://registry.npmjs.org/ms/-/ms-2.1.2.tgz -> npmpkg-ms-2.1.2.tgz
@@ -331,7 +338,7 @@ https://registry.npmjs.org/nmtree/-/nmtree-1.0.6.tgz -> npmpkg-nmtree-1.0.6.tgz
 https://registry.npmjs.org/commander/-/commander-2.20.3.tgz -> npmpkg-commander-2.20.3.tgz
 https://registry.npmjs.org/node-preload/-/node-preload-0.2.1.tgz -> npmpkg-node-preload-0.2.1.tgz
 https://registry.npmjs.org/normalize-package-data/-/normalize-package-data-2.5.0.tgz -> npmpkg-normalize-package-data-2.5.0.tgz
-https://registry.npmjs.org/semver/-/semver-5.7.1.tgz -> npmpkg-semver-5.7.1.tgz
+https://registry.npmjs.org/semver/-/semver-5.7.2.tgz -> npmpkg-semver-5.7.2.tgz
 https://registry.npmjs.org/nyc/-/nyc-15.1.0.tgz -> npmpkg-nyc-15.1.0.tgz
 https://registry.npmjs.org/object-assign/-/object-assign-4.1.1.tgz -> npmpkg-object-assign-4.1.1.tgz
 https://registry.npmjs.org/object-inspect/-/object-inspect-1.12.0.tgz -> npmpkg-object-inspect-1.12.0.tgz
@@ -401,7 +408,7 @@ https://registry.npmjs.org/resolve-from/-/resolve-from-5.0.0.tgz -> npmpkg-resol
 https://registry.npmjs.org/resumer/-/resumer-0.0.0.tgz -> npmpkg-resumer-0.0.0.tgz
 https://registry.npmjs.org/rimraf/-/rimraf-3.0.2.tgz -> npmpkg-rimraf-3.0.2.tgz
 https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz -> npmpkg-safe-buffer-5.1.2.tgz
-https://registry.npmjs.org/semver/-/semver-7.3.5.tgz -> npmpkg-semver-7.3.5.tgz
+https://registry.npmjs.org/semver/-/semver-7.5.4.tgz -> npmpkg-semver-7.5.4.tgz
 https://registry.npmjs.org/lru-cache/-/lru-cache-6.0.0.tgz -> npmpkg-lru-cache-6.0.0.tgz
 https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz -> npmpkg-yallist-4.0.0.tgz
 https://registry.npmjs.org/set-blocking/-/set-blocking-2.0.0.tgz -> npmpkg-set-blocking-2.0.0.tgz
@@ -462,7 +469,7 @@ https://registry.npmjs.org/which-boxed-primitive/-/which-boxed-primitive-1.0.2.t
 https://registry.npmjs.org/which-collection/-/which-collection-1.0.1.tgz -> npmpkg-which-collection-1.0.1.tgz
 https://registry.npmjs.org/which-module/-/which-module-2.0.0.tgz -> npmpkg-which-module-2.0.0.tgz
 https://registry.npmjs.org/which-typed-array/-/which-typed-array-1.1.4.tgz -> npmpkg-which-typed-array-1.1.4.tgz
-https://registry.npmjs.org/word-wrap/-/word-wrap-1.2.3.tgz -> npmpkg-word-wrap-1.2.3.tgz
+https://registry.npmjs.org/word-wrap/-/word-wrap-1.2.5.tgz -> npmpkg-word-wrap-1.2.5.tgz
 https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-6.2.0.tgz -> npmpkg-wrap-ansi-6.2.0.tgz
 https://registry.npmjs.org/ansi-styles/-/ansi-styles-4.3.0.tgz -> npmpkg-ansi-styles-4.3.0.tgz
 https://registry.npmjs.org/color-convert/-/color-convert-2.0.1.tgz -> npmpkg-color-convert-2.0.1.tgz
