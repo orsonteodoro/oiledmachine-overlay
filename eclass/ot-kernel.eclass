@@ -8786,7 +8786,7 @@ eerror
 	local salt=$(dd if=/dev/random bs=40 count=1 2>/dev/null | sha256sum | cut -f 1 -d " ")
 
 ################################################################################
-	cat <<EOF > "${T}/etc/ot-sources/iosched/conf/${MY_PV}-${extraversion}-${arch}" || die
+	cat <<EOF > "${T}/etc/ot-sources/iosched/conf/${UPSTREAM_PV}-${extraversion}-${arch}" || die
 # See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay for details
 IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
 
@@ -9160,7 +9160,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		]] ; then
 einfo "Installing iosched script settings"
 			insinto "/etc/ot-sources/iosched/conf"
-			doins "${T}/etc/ot-sources/iosched/conf/${MY_PV}-${extraversion}-${arch}"
+			doins "${T}/etc/ot-sources/iosched/conf/${UPSTREAM_PV}-${extraversion}-${arch}"
 		fi
 
 		OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
