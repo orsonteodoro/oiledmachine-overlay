@@ -115,8 +115,9 @@ LLVM_SLOTS=( ${LLVM_SLOT} ) # Deleted 9 8 7 because asm.js support was dropped.
 # Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
 
 EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
-GDCORE_TESTS_NODEJS_PV="16.20.1" # Based on CI, For building GDCore tests
-GDEVELOP_JS_NODEJS_PV="14.18.2" # Based on CI, For building GDevelop.js.
+# node16 is EOL.  This means that this ebuild a candidate for deletion.
+GDCORE_TESTS_NODEJS_PV="16.20.2" # Based on CI, For building GDCore tests
+GDEVELOP_JS_NODEJS_PV="16.20.2" # Based on CI, For building GDevelop.js.
 #GDEVELOP_JS_NODEJS_PV="${GDCORE_TESTS_NODEJS_PV}" # For temporarly retrieving tarballs for offline install
 # emscripten 1.36.6 requires llvm10 for wasm, 4.1.1 nodejs
 EMSCRIPTEN_SLOT="${LLVM_SLOT}-${EMSCRIPTEN_PV%.*}"
