@@ -9404,7 +9404,7 @@ EOF
 			sed -i -e "s|__PV__|${MY_PV}|" "${T}/tcca" || die
 			sed -i -e "s|__ARCH__|${arch}|" "${T}/tcca" || die
 			insinto /etc
-			newins "${T}/tcca.conf" "tcca-${MY_PV}-${extraversion}-${arch}.conf"
+			newins "${T}/tcca.conf" "tcca-${UPSTREAM_PV}-${extraversion}-${arch}.conf"
 			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 		fi
 
