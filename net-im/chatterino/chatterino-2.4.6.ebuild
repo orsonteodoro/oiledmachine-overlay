@@ -76,12 +76,12 @@ REQUIRED_USE="
 	)
 "
 # For deps, see
-# https://github.com/Chatterino/chatterino2/blob/v2.4.2/.CI/CreateUbuntuDeb.sh
-# https://github.com/Chatterino/chatterino2/blob/v2.4.2/.github/workflows/build.yml#L204
-# https://github.com/Chatterino/chatterino2/blob/v2.4.2/BUILDING_ON_LINUX.md
+# https://github.com/Chatterino/chatterino2/blob/v2.4.6/.CI/CreateUbuntuDeb.sh
+# https://github.com/Chatterino/chatterino2/blob/v2.4.6/.github/workflows/build.yml#L204
+# https://github.com/Chatterino/chatterino2/blob/v2.4.6/BUILDING_ON_LINUX.md
 # Deps based on U 20.04 + CI override
 SRC_URI=""
-QT5_PV="5.12.2" # Based on CI
+QT5_PV="5.12.12" # Based on CI
 QT6_PV="6.2.4" # Based on CI
 # Upstream uses a live version for qtkeychain but downgraded in this ebuild with
 # the system-qtkeychain USE flag to test if it works.
