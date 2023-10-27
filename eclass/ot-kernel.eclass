@@ -8985,11 +8985,17 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
 			newins "${BUILD_DIR}/.config" $(basename "${default_config}")
 			# dosym src_relpath_real dest_abspath_symlink
+			local suffix=""
+			if [[ "${PV}" =~ "9999" ]] ; then
+				suffix="-${RC_PV}"
+			fi
+
+			# For genkernel
 			dosym $(basename "${default_config}") \
-				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})-${extraversion}-${arch}
+				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch}
 
 			# For linux-info.eclass config checks
-			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})-${extraversion}-${arch} \
+			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch} \
 				"/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config"
 
 			local cache="${T}/save_cache"
