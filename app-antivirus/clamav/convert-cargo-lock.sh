@@ -6,8 +6,8 @@
 CATEGORY="app-antivirus"
 PN="clamav"
 MY_PN="clamav-clamav"
-PV="${1}"
-MY_PV="${1}"
+PV="${1}" # left version in ${S}
+MY_PV="${1}" # right version in ${S}
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
