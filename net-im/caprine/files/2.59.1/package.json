@@ -1,7 +1,7 @@
 {
 	"name": "caprine",
 	"productName": "Caprine",
-	"version": "2.57.4",
+	"version": "2.59.1",
 	"description": "Elegant Facebook Messenger desktop app",
 	"license": "MIT",
 	"repository": "sindresorhus/caprine",
@@ -50,7 +50,7 @@
 		"@types/facebook-locales": "^1.0.0",
 		"@types/lodash": "^4.14.182",
 		"del-cli": "^5.0.0",
-		"electron": "^24.1.3",
+		"electron": "^24.8.6",
 		"electron-builder": "^23.4.0",
 		"husky": "^8.0.1",
 		"np": "^7.6.2",
@@ -110,7 +110,7 @@
 		"appId": "com.sindresorhus.caprine",
 		"mac": {
 			"category": "public.app-category.social-networking",
-			"icon": "build/icon.png",
+			"icon": "build/icon.icns",
 			"electronUpdaterCompatibility": ">=4.5.2",
 			"darkModeSupport": true,
 			"target": {
@@ -173,6 +173,11 @@
 		"win": {
 			"verifyUpdateCodeSignature": false,
 			"icon": "build/icon.png"
+		},
+		"nsis": {
+			"oneClick": false,
+			"perMachine": false,
+			"allowToChangeInstallationDirectory": true
 		}
 	},
 	"husky": {
