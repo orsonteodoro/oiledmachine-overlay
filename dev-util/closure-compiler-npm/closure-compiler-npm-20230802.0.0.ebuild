@@ -11,7 +11,7 @@ BAZEL_PV="5.3.0"
 GRAALVM_JAVA_PV=17
 GRAALVM_PV="22.3.2"
 NODE_ENV="development"
-NODE_VERSION=16 # Upstream uses 14 on linux but others 16, 18
+NODE_VERSION=18 # Upstream uses 14 on linux but others 16, 18
 inherit bazel check-reqs java-pkg-opt-2 graalvm npm
 
 DESCRIPTION="Check, compile, optimize and compress Javascript with \
@@ -37,7 +37,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm64"
 CC_PV=$(ver_cut 1 ${PV})
 SLOT="0/$(ver_cut 1-2 ${PV})"
-JAVA_SLOT="11"
+JAVA_SLOT="17"
 MY_PN="closure-compiler"
 IUSE+="
 	closure_compiler_java
@@ -60,9 +60,9 @@ REQUIRED_USE+="
 	)
 "
 # For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20230502.0.0/packages/google-closure-compiler/package.json#L67
+# https://github.com/google/closure-compiler-npm/blob/v20230802.0.0/packages/google-closure-compiler/package.json#L67
 # For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20230502.0.0/.github/workflows/build.yml
+# https://github.com/google/closure-compiler-npm/blob/v20230802.0.0/.github/workflows/build.yml
 # The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
 RDEPEND+="
 	!dev-lang/closure-compiler-bin
@@ -93,7 +93,7 @@ BDEPEND+="
 
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="${PN%-*}-${PV}.tar.gz"
-BAZELISK_PV="1.17.0" # From CI (Build Compiler)
+BAZELISK_PV="1.18.0" # From CI (Build Compiler)
 BAZELISK_ABIS="
 	amd64
 	arm64
@@ -111,7 +111,7 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 }
 
 # Initially generated from:
-#   grep "resolved" /var/tmp/portage/dev-util/closure-compiler-npm-20230502.0.0/work/closure-compiler-npm-20230502.0.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
+#   grep "resolved" /var/tmp/portage/dev-util/closure-compiler-npm-20230802.0.0/work/closure-compiler-npm-20230802.0.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
 https://registry.npmjs.org/@gulp-sourcemaps/identity-map/-/identity-map-1.0.2.tgz -> npmpkg-@gulp-sourcemaps-identity-map-1.0.2.tgz
@@ -204,7 +204,7 @@ https://registry.npmjs.org/d/-/d-1.0.0.tgz -> npmpkg-d-1.0.0.tgz
 https://registry.npmjs.org/dargs/-/dargs-7.0.0.tgz -> npmpkg-dargs-7.0.0.tgz
 https://registry.npmjs.org/debug/-/debug-4.3.4.tgz -> npmpkg-debug-4.3.4.tgz
 https://registry.npmjs.org/debug-fabulous/-/debug-fabulous-1.1.0.tgz -> npmpkg-debug-fabulous-1.1.0.tgz
-https://registry.npmjs.org/debug/-/debug-3.2.6.tgz -> npmpkg-debug-3.2.6.tgz
+https://registry.npmjs.org/debug/-/debug-3.2.7.tgz -> npmpkg-debug-3.2.7.tgz
 https://registry.npmjs.org/ms/-/ms-2.1.2.tgz -> npmpkg-ms-2.1.2.tgz
 https://registry.npmjs.org/decamelize/-/decamelize-4.0.0.tgz -> npmpkg-decamelize-4.0.0.tgz
 https://registry.npmjs.org/decode-uri-component/-/decode-uri-component-0.2.2.tgz -> npmpkg-decode-uri-component-0.2.2.tgz
@@ -492,7 +492,7 @@ https://registry.npmjs.org/resolve-url/-/resolve-url-0.2.1.tgz -> npmpkg-resolve
 https://registry.npmjs.org/ret/-/ret-0.1.15.tgz -> npmpkg-ret-0.1.15.tgz
 https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.2.1.tgz -> npmpkg-safe-buffer-5.2.1.tgz
 https://registry.npmjs.org/safe-regex/-/safe-regex-1.1.0.tgz -> npmpkg-safe-regex-1.1.0.tgz
-https://registry.npmjs.org/semver/-/semver-5.7.0.tgz -> npmpkg-semver-5.7.0.tgz
+https://registry.npmjs.org/semver/-/semver-5.7.2.tgz -> npmpkg-semver-5.7.2.tgz
 https://registry.npmjs.org/semver-greatest-satisfied-range/-/semver-greatest-satisfied-range-1.1.0.tgz -> npmpkg-semver-greatest-satisfied-range-1.1.0.tgz
 https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-6.0.0.tgz -> npmpkg-serialize-javascript-6.0.0.tgz
 https://registry.npmjs.org/set-blocking/-/set-blocking-2.0.0.tgz -> npmpkg-set-blocking-2.0.0.tgz
@@ -932,7 +932,7 @@ ewarn
 	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
 
 	# There is a bug that keeps popping up when building java packages:
-	# /var/lib/portage/home/ should be /var/tmp/portage/dev-util/closure-compiler-npm-20230502.0.0/homedir/
+	# /var/lib/portage/home/ should be /var/tmp/portage/dev-util/closure-compiler-npm-20230802.0.0/homedir/
 	#echo "bazel run --define \"maven_repo=file://$HOME/.m2/repository\"" >> "${T}/bazelrc" || die # Does not fix
 
 	cat "${T}/bazelrc" >> "${S}/compiler/.bazelrc" || die
