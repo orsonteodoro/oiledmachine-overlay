@@ -221,6 +221,8 @@ pkg_setup() {
 	python-any-r1_pkg_setup
 	linux-info_pkg_setup
 
+# See https://github.com/nodejs/release#release-schedule
+# See https://github.com/nodejs/release#end-of-life-releases
 einfo
 einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-09-11."
 einfo

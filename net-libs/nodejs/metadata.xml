@@ -18,10 +18,15 @@
 
     More info about LTS versions see:
     https://nodejs.org/en/about/releases/
+    https://github.com/nodejs/release#release-schedule
+
+    More info about EOL versions see:
+    https://github.com/nodejs/release#end-of-life-releases
 
     v16 EOL is 2024-09-11
     v18 EOL is 2025-04-30
     v20 EOL is 2026-04-30
+    v21 EOL is 2024-06-01
 
     The removal cycle is now delayed to better enjoy the product for those with
     longer compile times.  Minor versions before an announced security release
