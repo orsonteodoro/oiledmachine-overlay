@@ -471,6 +471,11 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
+	if use genpatches ; then
+ewarn
+ewarn "genpatches is EOL (End of Life) for the ${KV_MAJOR_MINOR} series."
+ewarn
+	fi
 	if use tresor ; then
 ewarn
 ewarn "TRESOR for ${MY_PV} is tested working.  See dmesg for details on correctness."

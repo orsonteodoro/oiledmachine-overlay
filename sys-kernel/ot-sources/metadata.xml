@@ -67,7 +67,7 @@
     or bugfixes for patchsets.  For reliable working builds, use the
     LTS series.
 
-    Kernel series | Patchset | 			     | LTS [1,2]
+    Kernel series | Patchset  			     | LTS [1,2]
     4.14 (LTS)						Y
 		    -ck / MuQSS				N
 		    -rt (RT_PREEMPT)			Y
@@ -96,7 +96,7 @@
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
 		    BMQ					N
-		    genpatches				Y
+		    genpatches				N
 		    kernel_compiler_patch		N
 		    TRESOR (AES-NI) [5]			t
 		    TRESOR (x86) [5]			t
