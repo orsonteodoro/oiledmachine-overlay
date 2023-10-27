@@ -74,7 +74,7 @@ https://registry.npmjs.org/cross-env/-/cross-env-7.0.2.tgz -> npmpkg-cross-env-7
 https://registry.npmjs.org/cross-spawn/-/cross-spawn-7.0.2.tgz -> npmpkg-cross-spawn-7.0.2.tgz
 https://registry.npmjs.org/cross-zip/-/cross-zip-3.1.0.tgz -> npmpkg-cross-zip-3.1.0.tgz
 https://registry.npmjs.org/cuint/-/cuint-0.2.2.tgz -> npmpkg-cuint-0.2.2.tgz
-https://registry.npmjs.org/debug/-/debug-4.1.1.tgz -> npmpkg-debug-4.1.1.tgz
+https://registry.npmjs.org/debug/-/debug-4.3.4.tgz -> npmpkg-debug-4.3.4.tgz
 https://registry.npmjs.org/decamelize/-/decamelize-1.2.0.tgz -> npmpkg-decamelize-1.2.0.tgz
 https://registry.npmjs.org/decompress-response/-/decompress-response-3.3.0.tgz -> npmpkg-decompress-response-3.3.0.tgz
 https://registry.npmjs.org/defer-to-connect/-/defer-to-connect-1.1.3.tgz -> npmpkg-defer-to-connect-1.1.3.tgz
@@ -121,7 +121,7 @@ https://registry.npmjs.org/ms/-/ms-2.0.0.tgz -> npmpkg-ms-2.0.0.tgz
 https://registry.npmjs.org/get-stream/-/get-stream-4.1.0.tgz -> npmpkg-get-stream-4.1.0.tgz
 https://registry.npmjs.org/glob/-/glob-7.1.6.tgz -> npmpkg-glob-7.1.6.tgz
 https://registry.npmjs.org/global-agent/-/global-agent-3.0.0.tgz -> npmpkg-global-agent-3.0.0.tgz
-https://registry.npmjs.org/semver/-/semver-7.3.7.tgz -> npmpkg-semver-7.3.7.tgz
+https://registry.npmjs.org/semver/-/semver-7.5.4.tgz -> npmpkg-semver-7.5.4.tgz
 https://registry.npmjs.org/global-tunnel-ng/-/global-tunnel-ng-2.7.1.tgz -> npmpkg-global-tunnel-ng-2.7.1.tgz
 https://registry.npmjs.org/globalthis/-/globalthis-1.0.1.tgz -> npmpkg-globalthis-1.0.1.tgz
 https://registry.npmjs.org/got/-/got-9.6.0.tgz -> npmpkg-got-9.6.0.tgz
@@ -157,9 +157,9 @@ https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz -> npmpkg-minimatch-3
 https://registry.npmjs.org/minimist/-/minimist-1.2.8.tgz -> npmpkg-minimist-1.2.8.tgz
 https://registry.npmjs.org/mkdirp/-/mkdirp-0.5.5.tgz -> npmpkg-mkdirp-0.5.5.tgz
 https://registry.npmjs.org/modify-filename/-/modify-filename-1.1.0.tgz -> npmpkg-modify-filename-1.1.0.tgz
-https://registry.npmjs.org/ms/-/ms-2.1.1.tgz -> npmpkg-ms-2.1.1.tgz
+https://registry.npmjs.org/ms/-/ms-2.1.2.tgz -> npmpkg-ms-2.1.2.tgz
 https://registry.npmjs.org/normalize-package-data/-/normalize-package-data-2.4.0.tgz -> npmpkg-normalize-package-data-2.4.0.tgz
-https://registry.npmjs.org/semver/-/semver-5.5.0.tgz -> npmpkg-semver-5.5.0.tgz
+https://registry.npmjs.org/semver/-/semver-5.7.2.tgz -> npmpkg-semver-5.7.2.tgz
 https://registry.npmjs.org/normalize-url/-/normalize-url-4.5.1.tgz -> npmpkg-normalize-url-4.5.1.tgz
 https://registry.npmjs.org/npm-conf/-/npm-conf-1.1.3.tgz -> npmpkg-npm-conf-1.1.3.tgz
 https://registry.npmjs.org/object-keys/-/object-keys-1.1.1.tgz -> npmpkg-object-keys-1.1.1.tgz
@@ -195,7 +195,7 @@ https://registry.npmjs.org/rimraf/-/rimraf-3.0.2.tgz -> npmpkg-rimraf-3.0.2.tgz
 https://registry.npmjs.org/roarr/-/roarr-2.15.4.tgz -> npmpkg-roarr-2.15.4.tgz
 https://registry.npmjs.org/safe-buffer/-/safe-buffer-5.1.2.tgz -> npmpkg-safe-buffer-5.1.2.tgz
 https://registry.npmjs.org/sanitize-filename/-/sanitize-filename-1.6.1.tgz -> npmpkg-sanitize-filename-1.6.1.tgz
-https://registry.npmjs.org/semver/-/semver-6.3.0.tgz -> npmpkg-semver-6.3.0.tgz
+https://registry.npmjs.org/semver/-/semver-6.3.1.tgz -> npmpkg-semver-6.3.1.tgz
 https://registry.npmjs.org/semver-compare/-/semver-compare-1.0.0.tgz -> npmpkg-semver-compare-1.0.0.tgz
 https://registry.npmjs.org/serialize-error/-/serialize-error-7.0.1.tgz -> npmpkg-serialize-error-7.0.1.tgz
 https://registry.npmjs.org/shebang-command/-/shebang-command-2.0.0.tgz -> npmpkg-shebang-command-2.0.0.tgz
