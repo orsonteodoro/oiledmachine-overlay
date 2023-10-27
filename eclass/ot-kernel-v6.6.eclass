@@ -607,10 +607,14 @@ NOT_READY_YET="
 
 if [[ "${PV}" =~ "9999" && "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
+		${RT_SRC_ALT_URI}
 		${ZEN_SAUCE_URIS}
 	"
 elif [[ "${PV}" =~ "9999" ]] ; then
 	SRC_URI+="
+		rt? (
+			${RT_SRC_ALT_URI}
+		)
 		zen-sauce? (
 			${ZEN_SAUCE_URIS}
 		)

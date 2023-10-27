@@ -3,9 +3,9 @@
 
 EAPI=8
 
-GENPATCHES_VER="10"
+GENPATCHES_VER="live"
 PATCH_PROJC_VER="6.5-r0"
-PATCH_RT_VER="6.5.2-rt8"
+PATCH_RT_VER="6.6-rc6-rt10"
 
 inherit ot-kernel-v6.6
 

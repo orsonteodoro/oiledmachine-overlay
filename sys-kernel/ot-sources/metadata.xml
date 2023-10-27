@@ -162,11 +162,11 @@
 		    zen-sauce				A
 
     6.6 (Master / Live)					A
-		    -rt	(RT_PREEMPT)			?
+		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    genpatches				D
 		    kernel_compiler_patch		X
-		    Project C				?
+		    Project C				D
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
 		    TRESOR (AES-NI) [5]			D
