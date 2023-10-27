@@ -19,7 +19,7 @@ inherit ot-kernel-v6.6
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.0.9999 (6.6.0-rc7 commit: 3a568e3a961ba330091cd031647e4c303fa0badb) (20231026) with builder profile, GCC_PGO_CFG instrumented with manual training
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.0.9999 (6.6.0-rc7 commit: 3a568e3a961ba330091cd031647e4c303fa0badb) (20231027) with builder profile
 
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
@@ -40,7 +40,7 @@ inherit ot-kernel-v6.6
 # emerge/compile test - pass
 # network - pass
 # streaming video playback - pass
-# initscript - fail
+# initscript - pass
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
