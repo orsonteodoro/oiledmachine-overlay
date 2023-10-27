@@ -8247,7 +8247,7 @@ ot-kernel_install_built_kernel() {
 
 	insinto "${kernel_dir}"
 	local system_map_spath="${BUILD_DIR}/System.map"
-	local system_map_dpath="System.map-${MY_PV}-${extraversion}-${arch}"
+	local system_map_dpath="System.map-${UPSTREAM_PV}-${extraversion}-${arch}"
 	newins "${system_map_spath}" "${system_map_dpath}"
 
 	local kimage_spath
@@ -8270,7 +8270,7 @@ ot-kernel_install_built_kernel() {
 	done
 
 	# FIXME:  Complete signing kernel
-	local kimage_dpath="${name}-${MY_PV}-${extraversion}-${arch}"
+	local kimage_dpath="${name}-${UPSTREAM_PV}-${extraversion}-${arch}"
 	if true ; then
 einfo "Installing unsigned kernel"
 		newins "${kimage_spath}" "${kimage_dpath}"
@@ -9427,27 +9427,31 @@ EOF
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		local arch="${OT_KERNEL_ARCH}"
 
-		mkdir -p "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}"
+		local BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
+		[[ -e "${BUILD_DIR}/include/config/kernel.release" ]] || die
+		local target=$(cat "${BUILD_DIR}/include/config/kernel.release")
+
+		mkdir -p "${ED}/lib/modules/${target}"
 		if [[ -e "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" ]] ; then
 			cp -a \
 				"${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}/"* \
-				"${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}" \
+				"${ED}/lib/modules/${target}" \
 				|| die
 		fi
 
 		rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" \
 			|| true
-		rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}/build" \
+		rm -rf "${ED}/lib/modules/${target}/build" \
 			|| true
-		rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}/source" \
+		rm -rf "${ED}/lib/modules/${target}/source" \
 			|| true
 
 		dosym \
 			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
-			"/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}/build"
+			"/lib/modules/${target}/build"
 		dosym \
 			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
-			"/lib/modules/${UPSTREAM_PV}-${extraversion}-${arch}/source"
+			"/lib/modules/${target}/source"
 
 	done
 
