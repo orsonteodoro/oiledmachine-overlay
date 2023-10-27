@@ -2300,6 +2300,11 @@ apply_all_patchsets() {
 	apply_custom_logo
 
 	ot-kernel_apply_kcp
+
+	if [[ "${PV}" =~ "9999" ]] ; then
+		# Remove + suffix
+		sed -i -e "s|\$short;|false;|g" "scripts/setlocalversion" || die
+	fi
 }
 
 # @FUNCTION: ot-kernel_rm_exfat
