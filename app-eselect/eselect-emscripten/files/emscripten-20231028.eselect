@@ -7,9 +7,12 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20230712"
+VERSION="20231028"
 PN="emscripten"
 
+# 3.1.46 llvm 18 ; node 10.19.0 ; binaryen 115
+# 3.1.45 llvm 18 ; node 10.19.0 ; binaryen 114
+# 3.1.44 llvm 17 ; node 10.19.0 ; binaryen 114
 # 3.1.43 llvm 17 ; node 10.19.0 ; binaryen 114
 # 3.1.42 llvm 17 ; node 10.19.0 ; binaryen 113
 # 3.1.39 llvm 17 ; node 10.19.0 ; binaryen 113
@@ -195,7 +198,11 @@ find_targets() {
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_pv}" | cut -f 1-2 -d '.')
 			# Also set the llvm conditional block in set_config()
-                        if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.31" \
+                        if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.45" \
+                            && [[ "${llvm_major}" -eq 18 ]] ; then
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.45" \
+                            && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.31" \
                             && [[ "${llvm_major}" -eq 17 ]] ; then
                             echo "emscripten-${em_pv},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.31" \
@@ -358,7 +365,10 @@ set_config() {
         __EMSDK_NODE_VERSION_MIN__="0.8.0"
     fi
 
-    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.43" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.46" ; then
+        __EMSDK_BINARYEN_VERSION__="115"
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.46" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.43" ; then
         __EMSDK_BINARYEN_VERSION__="114"
     elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.43" \
         && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.39" ; then
@@ -413,7 +423,10 @@ set_config() {
     fi
 
     # Also set the llvm conditional chain in find_targets()
-    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.31" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.45" ; then
+        __EMSDK_LLVM_VERSION__="18"
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.45" \
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.31" ; then
         __EMSDK_LLVM_VERSION__="17"
     elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.31" \
         && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.18" ; then
