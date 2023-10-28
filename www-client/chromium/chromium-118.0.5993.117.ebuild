@@ -51,7 +51,7 @@ te th tr uk ur vi zh-CN zh-TW
 # https://github.com/chromium/chromium/blob/118.0.5993.117/third_party/re2/README.chromium#L4						; older than generated_package_lists, (live)
 # https://github.com/chromium/chromium/blob/118.0.5993.117/third_party/zlib/zlib.h#L40
 # https://github.com/chromium/chromium/blob/118.0.5993.117/tools/rust/update_rust.py#L35							; commit
-#   https://github.com/rust-lang/rust/blob/34ccd0485966c3933288cd30a076bef63e3298c5/src/version						; live version
+#   https://github.com/rust-lang/rust/blob/006a26c0b546abc0fbef59a773639582b641e500/src/version						; live version
 # /var/tmp/portage/www-client/chromium-118.0.5993.117/work/chromium-118.0.5993.117/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-118.0.5993.117/work/chromium-118.0.5993.117/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-118.0.5993.117/work/chromium-118.0.5993.117/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
@@ -764,7 +764,7 @@ COMMON_SNAPSHOT_DEPEND="
 		>=media-libs/fontconfig-2.14.2:=[${MULTILIB_USEDEP}]
 	)
 	system-freetype? (
-		>=media-libs/freetype-2.13.1:=[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.13.2:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
 		>=media-libs/harfbuzz-7.3.0:0=[${MULTILIB_USEDEP},icu(-)]
@@ -949,7 +949,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-16.13.0[inspector]
 	>=sys-devel/bison-2.4.3
-	>=virtual/rust-1.73.0[${MULTILIB_USEDEP}]
+	>=virtual/rust-1.72.0[${MULTILIB_USEDEP}]
 	dev-lang/perl
 	dev-vcs/git
 	sys-devel/flex[${MULTILIB_USEDEP}]
