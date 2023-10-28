@@ -516,6 +516,8 @@ CDEPEND+="
 		)
 	)
 "
+# Re-add to pgo? section above if -Os gcc-kpgo changes implemented.
+# >=sys-devel/gcc-kpgo-${GCC_PV}
 
 RDEPEND+="
 	!build? (

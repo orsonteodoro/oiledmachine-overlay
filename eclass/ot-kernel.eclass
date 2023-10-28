@@ -1213,31 +1213,35 @@ eerror
 	dump_gcda
 
 	export PATH_ORIG="${PATH}"
-#	if has_version "sys-devel/gcc-kpgo" && use pgo ; then
-einfo "Detected sys-devel/gcc-kpgo"
-#		export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
-#		if [[ "${FEATURES}" =~ "ccache" ]] ; then
-#			export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
-#		fi
-#		GCC_PKG="sys-devel/gcc-kpgo"
-#	else
-		GCC_PKG="sys-devel/gcc"
-#	fi
 
-#	if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE_EFFECTIVE} && ! use clang ) \
-#		|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE_EFFECTIVE} ) ; then
-#ewarn
-#ewarn "ccache is not supported in FEATURES with GCC PGO."
-#ewarn "Trying to disable."
-#ewarn
-#	        einfo "PATH=${PATH} (before)"
-#		export PATH=$(echo "${PATH}" \
-#	                | tr ":" "\n" \
-#	                | sed -E -e "/ccache/d" \
-#	                | tr "\n" ":" \
-#	                | sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
-#	        einfo "PATH=${PATH} (after)"
-#	fi
+# TODO: place in build context
+	if [[ "${OT_KERNEL_USE_GCC_KPGO}" == "1" ]] ; then
+		if has_version "sys-devel/gcc-kpgo" && use pgo ; then
+einfo "Detected sys-devel/gcc-kpgo"
+			export PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin:${PATH}"
+			if [[ "${FEATURES}" =~ "ccache" ]] ; then
+				export CCACHE_PATH="${ESYSROOT}/usr/lib/gcc-kpgo/usr/bin"
+			fi
+			GCC_PKG="sys-devel/gcc-kpgo"
+		else
+			GCC_PKG="sys-devel/gcc"
+		fi
+
+		if ( has ccache ${FEATURES} && use pgo && has clang ${IUSE_EFFECTIVE} && ! use clang ) \
+			|| ( has ccache ${FEATURES} && use pgo && ! has clang ${IUSE_EFFECTIVE} ) ; then
+ewarn
+ewarn "ccache is not supported in FEATURES with GCC PGO."
+ewarn "Trying to disable."
+ewarn
+			einfo "PATH=${PATH} (before)"
+			export PATH=$(echo "${PATH}" \
+				| tr ":" "\n" \
+				| sed -E -e "/ccache/d" \
+				| tr "\n" ":" \
+				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
+			einfo "PATH=${PATH} (after)"
+		fi
+	fi
 }
 
 # @FUNCTION: dump_profraw
