@@ -22,6 +22,7 @@ LICENSE="GPL-3+"
 SLOT="0"
 VIDEO_CARDS=(
 	amdgpu
+	freedreno
 	intel
 	nvidia
 )
@@ -65,6 +66,7 @@ gen_kernel_repend() {
 }
 LINUX_KERNEL_AMDGPU_FDINFO_KV="5.14"
 LINUX_KERNEL_INTEL_FDINFO_KV="5.19"
+LINUX_KERNEL_MSM_FDINFO_KV="6.0"
 # *DEPENDS based on U 18.04
 RDEPEND="
 	>=sys-libs/ncurses-6.1:0=
@@ -90,6 +92,14 @@ RDEPEND="
 			)
 		)
 		>=x11-libs/libdrm-2.4.99[video_cards_amdgpu]
+	)
+	video_cards_freedreno?  (
+		!custom-kernel? (
+			|| (
+				$(gen_kernel_repend ${LINUX_KERNEL_MSM_FDINFO_KV})
+			)
+		)
+		>=x11-libs/libdrm-2.4.99[video_cards_freedreno]
 	)
 	video_cards_intel?  (
 		!custom-kernel? (
@@ -138,6 +148,18 @@ ewarn "Required kernel version:  ${LINUX_KERNEL_INTEL_FDINFO_KV} or later"
 ewarn
 		fi
 	fi
+	if use video_cards_freedreno ; then
+		CONFIG_CHECK+=" ~DRM_MSM"
+		local kv=$(uname -r | cut -f 1 -d "-")
+		if ver_test ${kv} -lt ${LINUX_KERNEL_MSM_FDINFO_KV} ; then
+ewarn
+ewarn "Kernel version requirements is not met for the running kernel."
+ewarn
+ewarn "Detected kernel version:  $(uname -r)"
+ewarn "Required kernel version:  ${LINUX_KERNEL_MSM_FDINFO_KV} or later"
+ewarn
+		fi
+	fi
 	if use video_cards_nvidia ; then
 		if [[ -e "${EROOT}/usr/"*"/libnvidia-ml.so"  ]] ; then
 			:;
@@ -168,6 +190,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
 		-DCURSES_NEED_WIDE=$(usex unicode)
 		-DINTEL_SUPPORT=$(usex video_cards_intel)
+		-DMSM_SUPPORT=$(usex video_cards_freedreno)
 		-DNVIDIA_SUPPORT=$(usex video_cards_nvidia)
 		-DUSE_LIBUDEV_OVER_LIBSYSTEMD=$(usex udev)
 	)

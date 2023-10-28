@@ -148,7 +148,7 @@ ewarn "Required kernel version:  ${LINUX_KERNEL_INTEL_FDINFO_KV} or later"
 ewarn
 		fi
 	fi
-	if use video_cards_msm ; then
+	if use video_cards_freedreno ; then
 		CONFIG_CHECK+=" ~DRM_MSM"
 		local kv=$(uname -r | cut -f 1 -d "-")
 		if ver_test ${kv} -lt ${LINUX_KERNEL_MSM_FDINFO_KV} ; then
