@@ -14,8 +14,9 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-# For deterministic builds and working patches
-FALLBACK_LLVM18_COMMIT="61ab106f82d187a30e83dcd4ce5832c3802a5438" # Aug 14, 2023
+# For deterministic builds and working patches.
+# Commits with green checkmarks used.
+FALLBACK_LLVM18_COMMIT="39b939555f959b93061b3c4c8fffc13a63737074" # Oct 28, 2023
 FALLBACK_LLVM17_COMMIT="d36324866ee1fb4d1c26552b6b686a463d2b448f" # Jun 28, 2023
 
 _LLVM_EBUILDS_ECLASS=1

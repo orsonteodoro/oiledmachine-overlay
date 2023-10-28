@@ -43,9 +43,9 @@ LICENSE="
 # 3. MD5 code: public-domain.
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE+="
-+binutils-plugin +debug debuginfod doc exegesis libedit +libffi ncurses test xar
++binutils-plugin debug debuginfod doc exegesis libedit +libffi ncurses test xar
 xml z3 zstd
 
 bolt bolt-heatmap -dump jemalloc tcmalloc r6
@@ -655,6 +655,14 @@ einfo
 
 		# disable OCaml bindings (now in dev-ml/llvm-ocaml)
 		-DOCAMLFIND=NO
+	)
+
+	# On the MacOS prefix, the distro doesn't split sys-libs/ncurses to
+	# libtinfo and libncurses, but llvm tries to use libtinfo before
+	# libncurses, and ends up using libtinfo (actually, libncurses.dylib)
+	# from system instead of prefix.
+	use kernel_Darwin && mycmakeargs+=(
+		-DTerminfo_LIBRARIES=-lncurses
 	)
 
 	local suffix=

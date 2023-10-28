@@ -626,6 +626,14 @@ einfo
 		-DOCAMLFIND=NO
 	)
 
+	# On the MacOS prefix, the distro doesn't split sys-libs/ncurses to
+	# libtinfo and libncurses, but llvm tries to use libtinfo before
+	# libncurses, and ends up using libtinfo (actually, libncurses.dylib)
+	# from system instead of prefix.
+	use kernel_Darwin && mycmakeargs+=(
+		-DTerminfo_LIBRARIES=-lncurses
+	)
+
 	local suffix=
 	if [[ -n ${EGIT_VERSION} && ${EGIT_BRANCH} != release/* ]]; then
 		# the ABI of the main branch is not stable, so let's include

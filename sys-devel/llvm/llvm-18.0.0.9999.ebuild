@@ -43,9 +43,8 @@ LICENSE="
 # 3. MD5 code: public-domain.
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
 IUSE+="
-+binutils-plugin +debug debuginfod doc exegesis libedit +libffi ncurses test xar
++binutils-plugin +debug debuginfod doc exegesis libedit +libffi ncurses test
 xml z3 zstd
 
 bolt bolt-heatmap -dump jemalloc tcmalloc r6
@@ -126,9 +125,6 @@ RDEPEND="
 	tcmalloc? (
 		dev-util/google-perftools
 	)
-	xar? (
-		app-arch/xar
-	)
 	xml? (
 		dev-libs/libxml2:2=[${MULTILIB_USEDEP}]
 	)
@@ -152,7 +148,7 @@ BDEPEND="
 	sys-devel/gnuconfig
 	doc? (
 		$(python_gen_any_dep '
-			dev-python/recommonmark[${PYTHON_USEDEP}]
+			dev-python/myst-parser[${PYTHON_USEDEP}]
 			dev-python/sphinx[${PYTHON_USEDEP}]
 		')
 	)
@@ -249,7 +245,7 @@ einfo
 python_check_deps() {
 	use doc || return 0
 
-	python_has_version -b "dev-python/recommonmark[${PYTHON_USEDEP}]" &&
+	python_has_version -b "dev-python/myst-parser[${PYTHON_USEDEP}]" &&
 	python_has_version -b "dev-python/sphinx[${PYTHON_USEDEP}]"
 }
 
@@ -647,13 +643,18 @@ einfo
 
 		-DFFI_INCLUDE_DIR="${ffi_cflags#-I}"
 		-DFFI_LIBRARY_DIR="${ffi_ldflags#-L}"
-		# used only for llvm-objdump tool
-		-DLLVM_HAVE_LIBXAR=$(multilib_native_usex xar 1 0)
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 
 		# disable OCaml bindings (now in dev-ml/llvm-ocaml)
 		-DOCAMLFIND=NO
+	)
+
+	# On Macos prefix, Gentoo doesn't split sys-libs/ncurses to libtinfo and
+	# libncurses, but llvm tries to use libtinfo before libncurses, and ends up
+	# using libtinfo (actually, libncurses.dylib) from system instead of prefix
+	use kernel_Darwin && mycmakeargs+=(
+		-DTerminfo_LIBRARIES=-lncurses
 	)
 
 	local suffix=
