@@ -97,6 +97,7 @@ c54af24c510bfb9b7d8a6950b2e90047e7578ba8
 42ed39f242d56b020842178623e059660c110155
 bf45053c965e9b8a0b6225c5d378493b5aaf1336
 e20ea0b7ce4b4cbf8927fe8746e46aa70de5cdd1
+363c628c01e7e1423c60bea0dc9b82a1f6e99ad7
 )
 
 # Avoid merge conflict.
@@ -527,7 +528,6 @@ CDEPEND+="
 	)
 	pgo? (
 		(
-			>=sys-devel/gcc-kpgo-${GCC_PV}
 			hppa? (
 				>=sys-devel/gcc-kpgo-12
 			)

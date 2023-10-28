@@ -548,7 +548,6 @@ CDEPEND+="
 	)
 	pgo? (
 		(
-			>=sys-devel/gcc-kpgo-${GCC_PV}
 			hppa? (
 				>=sys-devel/gcc-kpgo-12
 			)

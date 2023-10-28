@@ -359,7 +359,6 @@ CDEPEND+="
 		>=sys-kernel/linux-firmware-${KERNEL_RELEASE_DATE}
 	)
 	pgo? (
-		>=sys-devel/gcc-kpgo-${GCC_PV}
 		sys-devel/binutils[static-libs]
 		sys-libs/libunwind[static-libs]
 	)
