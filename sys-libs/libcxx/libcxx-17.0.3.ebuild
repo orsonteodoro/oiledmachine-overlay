@@ -36,7 +36,7 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~x64-macos"
 IUSE+="
 +libcxxabi +static-libs test
 

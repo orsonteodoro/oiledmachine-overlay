@@ -36,7 +36,6 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS=""
 IUSE+="
 +libcxxabi +static-libs test
 
