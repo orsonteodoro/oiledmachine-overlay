@@ -19,7 +19,7 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="
-~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86
+amd64 arm arm64 ~ppc ppc64 ~riscv x86
 "
 IUSE="
 debug test zstd

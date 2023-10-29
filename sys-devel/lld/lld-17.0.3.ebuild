@@ -34,9 +34,9 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 IUSE+="
-+debug test zstd
+debug test zstd
 
 default-full-relro +default-partial-relro default-no-relro
 hardened hardened-compat r1
