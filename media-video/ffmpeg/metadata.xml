@@ -904,6 +904,47 @@
   <flag name="mpl2_0">
     Checks MPL-2.0 license compatibility
   </flag>
+
+  <flag name="lgpl2_1_to_gpl2">
+    Relicense or use as GPL-2
+  </flag>
+  <flag name="lgpl2_1_to_gpl2x">
+    Relicense or use as GPL-2+
+  </flag>
+  <flag name="lgpl2_1_to_gpl3">
+    Relicense or use as GPL-3
+  </flag>
+  <flag name="lgpl2_1x_to_gpl2">
+    Relicense or use as GPL-2
+  </flag>
+  <flag name="lgpl2_1x_to_gpl2x">
+    Relicense or use as GPL-2+
+  </flag>
+  <flag name="lgpl2_1x_to_gpl3">
+    Relicense or use as GPL-3
+  </flag>
+  <flag name="lgpl2_1x_to_lgpl3">
+    Relicense or use as LGPL-3
+  </flag>
+  <flag name="lgpl2_1x_to_lgpl3x">
+    Relicense or use as LGPL-3+
+  </flag>
+  <flag name="lgpl2x_to_gpl2">
+    Relicense or use as GPL-2
+  </flag>
+  <flag name="lgpl2x_to_gpl3">
+    Relicense or use as GPL-3
+  </flag>
+  <flag name="lgpl2x_to_lgpl3x">
+    Relicense or use as GPL-3x
+  </flag>
+  <flag name="lgpl3_to_gpl3">
+    Relicense or use as GPL-3
+  </flag>
+  <flag name="lgpl3x_to_gpl3">
+    Relicense or use as GPL-3
+  </flag>
+
   <flag name="nonfree">
     Allows to compile against non-free packages that prevent redistribution.
   </flag>
