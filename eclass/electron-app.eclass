@@ -51,7 +51,7 @@ inherit chromium-2 desktop
 
 # [A] Supported versions (LTS) are listed in
 # https://www.electronjs.org/docs/latest/tutorial/electron-timelines
-ELECTRON_APP_ELECTRON_PV_SUPPORTED="22.0"
+ELECTRON_APP_ELECTRON_PV_SUPPORTED="25.0"
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:-"npm"} # can be npm, yarn
 ELECTRON_APP_ECLASS_DEBUG=${ELECTRON_APP_ECLASS_DEBUG:-"debug"} # debug or production
