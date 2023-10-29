@@ -864,6 +864,12 @@ REQUIRED_USE+="
 	fftools_cws2fws? (
 		zlib
 	)
+	gpl? (
+		|| (
+			gpl2
+			gpl2x
+		)
+	)
 	mold? (
 		!nonfree
 		!re-codecs
