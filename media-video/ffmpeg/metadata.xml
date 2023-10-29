@@ -936,7 +936,7 @@
     Relicense or use as GPL-3
   </flag>
   <flag name="lgpl2x_to_lgpl3x">
-    Relicense or use as GPL-3x
+    Relicense or use as LGPL-3+
   </flag>
   <flag name="lgpl3_to_gpl3">
     Relicense or use as GPL-3
