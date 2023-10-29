@@ -4,8 +4,25 @@
 
 EAPI=8
 
+if [[ ${PV} =~ 9999 ]] ; then
+IUSE+="
+	fallback-commit
+"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+einfo "Using fallback commit"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
 CMAKE_ECLASS="cmake"
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 
@@ -20,7 +37,7 @@ LICENSE="
 "
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~x64-macos"
-IUSE="
+IUSE+="
 +static-libs test
 
 hardened r9
