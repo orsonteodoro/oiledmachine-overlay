@@ -549,6 +549,7 @@ gen_relicense() {
 }
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
+# The distro has libcdio as GPL-3 only but the source is GPL-3+, LGPL-2.1+.
 # The distro has rtmpdump as LGPL-2.1 tools? ( GPL-2 ) but the source is LGPL-2.1+ tools? ( GPL-2+ ).
 # The distro has rubberband as GPL-2 only but the source is GPL-2+.
 # The distro has twolame as GPL-2 only but the source is LGPL-2.1+.
@@ -646,8 +647,8 @@ LICENSE_REQUIRED_USE="
 	)
 	gpl? (
 		|| (
-			gpl2
 			gpl2x
+			gpl3x
 		)
 	)
 	gpl2? (
@@ -806,7 +807,9 @@ CPU_REQUIRED_USE="
 # FIXME: fix missing symbols with -re-codecs
 REQUIRED_USE+="
 	${CPU_REQUIRED_USE}
-	${LICENSE_REQUIRED_USE}
+	!gpl? (
+		${LICENSE_REQUIRED_USE}
+	)
 	!kernel_linux? (
 		!trainer-av-streaming
 	)
@@ -1906,7 +1909,7 @@ append_all() {
 }
 
 _is_gpl() {
-	if use gpl2 || use gpl2x || use gpl3 || use gpl3x ; then
+	if use gpl || use gpl2 || use gpl2x || use gpl3 || use gpl3x ; then
 		return 0
 	fi
 	return 1

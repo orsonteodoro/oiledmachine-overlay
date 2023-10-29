@@ -861,7 +861,7 @@
     Relax license restrictions
   </flag>
   <flag name="gpl">
-    Synonym for the gpl2 USE flag to build a GPL-2.0 (only) package.  Certain
+    Synonym for the gpl2x USE flag to build a GPL-2.0+ package.  Certain
     license incompatibilities may be encountered.  This USE flag is kept for
     compatibility.
 
