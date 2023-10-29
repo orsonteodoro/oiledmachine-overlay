@@ -35,7 +35,6 @@ LICENSE="
 	)
 "
 SLOT="${LLVM_MAJOR}"
-KEYWORDS=""
 # base targets
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang +debug hexagon test

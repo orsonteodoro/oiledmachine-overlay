@@ -35,10 +35,10 @@ LICENSE="
 	)
 "
 SLOT="${LLVM_MAJOR}"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 # base targets
 IUSE+="
-+abi_x86_32 abi_x86_64 +clang +debug hexagon test
++abi_x86_32 abi_x86_64 +clang debug hexagon test
 
 +libfuzzer +memprof +orc +profile +xray r3
 "
