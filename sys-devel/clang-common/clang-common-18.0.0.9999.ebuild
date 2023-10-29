@@ -29,9 +29,8 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="0"
-KEYWORDS=""
 IUSE+="
-default-compiler-rt default-libcxx default-lld llvm-libunwind hardened stricter
+default-compiler-rt default-libcxx default-lld llvm-libunwind hardened
 "
 PDEPEND="
 	!default-compiler-rt? (
@@ -99,6 +98,36 @@ pkg_pretend() {
 	fi
 }
 
+doclang_cfg() {
+	local triple="${1}"
+
+	local tool
+	for tool in ${triple}-clang{,++}; do
+		newins - "${tool}.cfg" <<-EOF
+			# This configuration file is used by ${tool} driver.
+			@gentoo-common.cfg
+			@gentoo-common-ld.cfg
+		EOF
+	done
+
+	newins - "${triple}-clang-cpp.cfg" <<-EOF
+		# This configuration file is used by the ${triple}-clang-cpp driver.
+		@gentoo-common.cfg
+	EOF
+
+	# Install symlinks for triples with other vendor strings since some
+	# programs insist on mangling the triple.
+	local vendor
+	for vendor in gentoo pc unknown; do
+		local vendor_triple="${triple%%-*}-${vendor}-${triple#*-*-}"
+		for tool in clang{,++,-cpp}; do
+			if [[ ! -f "${ED}/etc/clang/${vendor_triple}-${tool}.cfg" ]]; then
+				dosym "${triple}-${tool}.cfg" "/etc/clang/${vendor_triple}-${tool}.cfg"
+			fi
+		done
+	done
+}
+
 src_install() {
 	newbashcomp bash-autocomplete.sh clang
 
@@ -127,6 +156,13 @@ src_install() {
 		-include "${EPREFIX}/usr/include/gentoo/maybe-stddefs.h"
 	EOF
 
+	# clang-cpp does not like link args being passed to it when directly
+	# invoked, so use a separate configuration file.
+	newins - gentoo-common-ld.cfg <<-EOF
+		# This file contains flags common to clang and clang++
+		@gentoo-hardened-ld.cfg
+	EOF
+
 	# Baseline hardening (bug #851111)
 	newins - gentoo-hardened.cfg <<-EOF
 		# Some of these options are added unconditionally, regardless of
@@ -135,6 +171,12 @@ src_install() {
 		-fstack-protector-strong
 		-fPIE
 		-include "${EPREFIX}/usr/include/gentoo/fortify.h"
+	EOF
+
+	newins - gentoo-hardened-ld.cfg <<-EOF
+		# Some of these options are added unconditionally, regardless of
+		# USE=hardened, for parity with sys-devel/gcc.
+		-Wl,-z,relro
 	EOF
 
 	dodir /usr/include/gentoo
@@ -162,12 +204,19 @@ src_install() {
 	#  define __GENTOO_HAS_FEATURE(x) 0
 	# endif
 	#
-	# if defined(__OPTIMIZE__) && __OPTIMIZE__ > 0
+	# if defined(__STDC_HOSTED__) && __STDC_HOSTED__ == 1
+	#  define __GENTOO_NOT_FREESTANDING 1
+	# else
+	#  define __GENTOO_NOT_FREESTANDING 0
+	# endif
+	#
+	# if defined(__OPTIMIZE__) && __OPTIMIZE__ > 0 && __GENTOO_NOT_FREESTANDING > 0
 	#  if !defined(__SANITIZE_ADDRESS__) && !__GENTOO_HAS_FEATURE(address_sanitizer) && !__GENTOO_HAS_FEATURE(memory_sanitizer)
 	#   define _FORTIFY_SOURCE ${fortify_level}
 	#  endif
 	# endif
 	# undef __GENTOO_HAS_FEATURE
+	# undef __GENTOO_NOT_FREESTANDING
 	#endif
 	EOF
 
@@ -178,38 +227,26 @@ src_install() {
 
 			# Analogue to GLIBCXX_ASSERTIONS
 			# https://libcxx.llvm.org/UsingLibcxx.html#assertions-mode
-			-D_LIBCPP_ENABLE_ASSERTIONS=1
+			# https://libcxx.llvm.org/Hardening.html#using-hardened-mode
+			-D_LIBCPP_ENABLE_HARDENED_MODE=1
+		EOF
+
+		cat >> "${ED}/etc/clang/gentoo-hardened-ld.cfg" <<-EOF || die
+			# Options below are conditional on USE=hardened.
+			-Wl,-z,now
 		EOF
 	fi
 
-	if use stricter; then
-		newins - gentoo-stricter.cfg <<-EOF
-			# This file increases the strictness of older clang versions
-			# to match the newest upstream version.
+	# We only install config files for supported ABIs because unprefixed tools
+	# might be used for crosscompilation where e.g. PIE may not be supported.
+	# See bug #912237 and bug #901247.
+	doclang_cfg "${CHOST}"
 
-			# clang-16 defaults
-			-Werror=implicit-function-declaration
-			-Werror=implicit-int
-			-Werror=incompatible-function-pointer-types
-
-			# constructs banned by C2x
-			-Werror=deprecated-non-prototype
-
-			# deprecated but large blast radius
-			#-Werror=strict-prototypes
-		EOF
-
-		cat >> "${ED}/etc/clang/gentoo-common.cfg" <<-EOF || die
-			@gentoo-stricter.cfg
-		EOF
-	fi
-
-	local tool
-	for tool in clang{,++,-cpp}; do
-		newins - "${tool}.cfg" <<-EOF
-			# This configuration file is used by ${tool} driver.
-			@gentoo-common.cfg
-		EOF
+	# Just ${CHOST} won't do due to bug #912685.
+	local abi
+	for abi in $(get_all_abis); do
+		local abi_chost=$(get_abi_CHOST "${abi}")
+		doclang_cfg "${abi_chost}"
 	done
 }
 
