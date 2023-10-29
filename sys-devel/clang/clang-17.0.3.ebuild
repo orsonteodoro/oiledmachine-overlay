@@ -4,14 +4,30 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..11} )
+if [[ ${PV} =~ 9999 ]] ; then
+IUSE+="
+	fallback-commit
+"
+fi
+
+inherit llvm-ebuilds
+
+_llvm_set_globals() {
+	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+einfo "Using fallback commit"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
+	fi
+}
+_llvm_set_globals
+unset -f _llvm_set_globals
+
+PYTHON_COMPAT=( python3_{10..12} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 inherit cmake llvm llvm.org multilib multilib-minimal prefix python-single-r1
 inherit toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
-inherit llvm-ebuilds
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -23,12 +39,9 @@ LICENSE="
 # MSVCSetupApi.h: MIT
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos
-"
-IUSE="
-debug doc +extra ieee-long-double +pie rocm_5_5 rocm_5_6 +static-analyzer test
-xml
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos"
+IUSE+="
+debug doc +extra ieee-long-double +pie rocm_5_7 +static-analyzer test xml
 
 default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4
@@ -100,12 +113,6 @@ REQUIRED_USE="
 		pie
 		ssp
 	)
-	rocm_5_5? (
-		!rocm_5_6
-	)
-	rocm_5_6? (
-		!rocm_5_5
-	)
 	ssp? (
 		!test
 	)
@@ -116,13 +123,8 @@ RDEPEND+="
 	ebolt? (
 		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},bolt,debug=]
 	)
-	rocm_5_5? (
-		dev-libs/rocm-device-libs:5.5
-		dev-libs/rocr-runtime:5.5
-	)
-	rocm_5_6? (
-		dev-libs/rocm-device-libs:5.6
-		dev-libs/rocr-runtime:5.6
+	rocm_5_7? (
+		dev-libs/rocm-device-libs:5.7
 	)
 	static-analyzer? (
 		dev-lang/perl:*
@@ -166,9 +168,7 @@ LLVM_COMPONENTS=(
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
-	"llvm/lib/Testing"
 	"llvm/utils"
-	"third-party"
 )
 LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
@@ -402,7 +402,7 @@ ewarn
 }
 
 fix_rocm_paths() {
-	eapply "${FILESDIR}/clang-16.0.6-rocm-path-changes.patch"
+	eapply "${FILESDIR}/clang-17.0.0.9999-rocm-path-changes.patch"
 	sed \
 		-i \
 		-e "s|@LIBDIR@|$(get_libdir)|g" \
@@ -410,21 +410,11 @@ fix_rocm_paths() {
 		"lib/Driver/ToolChains/AMDGPU.cpp" \
 		|| die
 
-	if use rocm_5_5 ; then
-		local rocm_slot="5.5"
+	if use rocm_5_7 ; then
+		local rocm_slot="5.7"
 		sed \
 			-i \
 			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			"lib/Driver/ToolChains/AMDGPU.cpp" \
-			|| die
-	elif use rocm_5_6 ; then
-		local rocm_slot="5.6"
-		sed \
-			-i \
-			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
-			-e "s|@EPREFIX_LLVM_PATH@|${EPREFIX}/usr/lib/llvm/${PV%%.*}|g" \
 			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
 			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
 			"lib/Driver/ToolChains/AMDGPU.cpp" \
@@ -757,14 +747,12 @@ einfo
 		-DLLVM_ENABLE_EH=ON
 		-DLLVM_ENABLE_RTTI=ON
 
-		-DCMAKE_DISABLE_FIND_PACKAGE_LibXml2=$(usex !xml)
-
 		# libgomp support fails to find headers without explicit -I
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
 
 		# Disable CUDA to autodetect GPU, so build for all.
-		-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=ON
+		-DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit=ON
 
 		# Disable linking to HSA to avoid automagic dep.
 		# Load it dynamically instead.
@@ -772,8 +760,10 @@ einfo
 
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex pie)
 
+		-DCLANG_ENABLE_LIBXML2=$(usex xml)
 		-DCLANG_ENABLE_ARCMT=$(usex static-analyzer)
 		-DCLANG_ENABLE_STATIC_ANALYZER=$(usex static-analyzer)
+		# TODO: CLANG_ENABLE_HLSL?
 
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
@@ -857,15 +847,6 @@ _src_compile() {
 
 	# Includes pgt_build_self
 	cmake_build distribution
-
-	# Provide a symlink for tests.
-	if [[ ! -L ${WORKDIR}/lib/clang ]]; then
-		mkdir -p "${WORKDIR}"/lib || die
-		ln -s \
-			"${BUILD_DIR}/$(get_libdir)/clang" \
-			"${WORKDIR}"/lib/clang \
-			|| die
-	fi
 }
 
 src_compile() {
@@ -954,9 +935,9 @@ multilib_src_install() {
 			"${ED}"/usr/include \
 			|| die
 	fi
-	if [[ -e "${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang ]] ; then
+	if [[ -e "${ED}"/usr/lib/clang ]] ; then
 		mv \
-			"${ED}"/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/clang \
+			"${ED}"/usr/lib/clang \
 			"${ED}"/usr/include/clangrt \
 			|| die
 	fi

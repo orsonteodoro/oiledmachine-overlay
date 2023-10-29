@@ -39,7 +39,6 @@ LICENSE="
 # MSVCSetupApi.h: MIT
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
 IUSE+="
 +debug doc +extra ieee-long-double +pie +static-analyzer test xml
 
@@ -140,7 +139,7 @@ BDEPEND="
 	>=dev-util/cmake-3.16
 	doc? (
 		$(python_gen_cond_dep '
-			dev-python/recommonmark[${PYTHON_USEDEP}]
+			dev-python/myst-parser[${PYTHON_USEDEP}]
 			dev-python/sphinx[${PYTHON_USEDEP}]
 		')
 	)
@@ -386,7 +385,7 @@ ewarn "The CET as default is in testing."
 ewarn
 	fi
 	patches_hardened+=(
-		"${FILESDIR}/clang-14.0.0.9999-cross-dso-cfi-link-with-shared.patch"
+		"${FILESDIR}/clang-18.0.0.9999-cross-dso-cfi-link-with-shared.patch"
 	)
 	eapply ${patches_hardened[@]}
 

@@ -1,0 +1,84 @@
+Subject:  Emit linker options when -fsanitize-cfi-cross-dso is used with -shared (v2)
+Patch Status:  Testing (more packages being tested)
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Fri Oct  8 01:21:21 PM PDT 2021 (Unix time: 1633724481)
+
+License header for clang/lib/Driver/ToolChains/CommonArgs.cpp:
+
+//===--- CommonArgs.cpp - Args handling for multiple toolchains -*- C++ -*-===//
+//
+// Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
+// See https://llvm.org/LICENSE.txt for license information.
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+//
+//===----------------------------------------------------------------------===//
+
+
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
+DO NOT APPLY THIS PATCH IN PRODUCTION UNTIL THE PATCH STATUS ABOVE IS SET TO WORKING.
+
+WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
+
+
+Fixes the below error when linking a shared library with -shared:
+ld.lld: error: undefined symbol: __cfi_slowpath
+
+To problems still exist:
+
+(1) The undefined __cfi_slowpath issue still happens with flac after this patch
+applies.
+
+(2) zlib runtime link and use works but causes configure-buildtime failures with
+libpng and ffmpeg below maybe fixed in a different past/future patch:
+cfi.cpp:161: void __cfi::ShadowBuilder::Add(__sanitizer::uptr, __sanitizer::uptr, __sanitizer::uptr): Assertion `(cfi_check & (kShadowAlign - 1)) == 0' failed
+The fix for this is to add -fno-sanitize-cfi-cross-dso for small programs (hello
+world sized) that are a page only.  The libpng test needs patching or the
+compiler needs to be patch to detect the size of the program and append
+-fno-sanitize-cfi-cross-dso.
+
+v2: Fix breakage when using built Cross-DSO zlib
+v1: Initial release
+
+--- clang/lib/Driver/ToolChains/Gnu.cpp.orig	2023-10-28 20:21:03.021593954 -0700
++++ clang/lib/Driver/ToolChains/Gnu.cpp	2023-10-28 20:23:43.508537703 -0700
+@@ -543,6 +543,11 @@ void tools::gnutools::Linker::ConstructJ
+     CmdArgs.push_back("--no-demangle");
+ 
+   bool NeedsSanitizerDeps = addSanitizerRuntimes(ToolChain, Args, CmdArgs);
++  // Prevent missing -pthread when reusing Cross-DSO CFIed zlib from           // oteodoro: Set flag to link -pthread and -ldl
++  // borking the system.                                                       // oteodoro: when -shared and -fsanitize-cfi-cross-dso
++  bool NeedsSanitizerCrossDsoCfiDeps =                                         // oteodoro: Begin section change
++      (Args.hasArg(options::OPT_fsanitize_cfi_cross_dso) &&                    // oteodoro: are used together.
++       Args.hasArg(options::OPT_shared));                                      // oteodoro: End section change
+   bool NeedsXRayDeps = addXRayRuntime(ToolChain, Args, CmdArgs);
+   addLinkerCompressDebugSectionsOption(ToolChain, Args, CmdArgs);
+   AddLinkerInputs(ToolChain, Inputs, Args, CmdArgs, JA);
+@@ -585,7 +590,7 @@ void tools::gnutools::Linker::ConstructJ
+       if (IsStatic || IsStaticPIE)
+         CmdArgs.push_back("--start-group");
+ 
+-      if (NeedsSanitizerDeps)
++      if (NeedsSanitizerDeps || NeedsSanitizerCrossDsoCfiDeps)
+         linkSanitizerRuntimeDeps(ToolChain, Args, CmdArgs);
+ 
+       if (NeedsXRayDeps)
+--- clang/lib/Driver/ToolChains/CommonArgs.cpp.orig	2023-10-28 20:20:55.465643717 -0700
++++ clang/lib/Driver/ToolChains/CommonArgs.cpp	2023-10-28 20:23:15.700720627 -0700
+@@ -1290,6 +1290,16 @@ bool tools::addSanitizerRuntimes(const T
+       CmdArgs.push_back("--android-memtag-stack");
+   }
+ 
++  if (Args.hasArg(options::OPT_fsanitize_cfi_cross_dso)                // oteodoro: Begin section add
++    && Args.hasArg(options::OPT_shared)) {                             // oteodoro:
++    CmdArgs.push_back("--whole-archive");                              // oteodoro:
++    if (SanArgs.needsCfiRt() && SanArgs.linkRuntimes())                // oteodoro:
++      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi"));       // oteodoro: Added section for -shared linkage
++    if (SanArgs.needsCfiDiagRt() && SanArgs.linkRuntimes())            // oteodoro: with -fsanitize-cfi-cross-dso
++      CmdArgs.push_back(TC.getCompilerRTArgString(Args, "cfi_diag"));  // oteodoro:
++    CmdArgs.push_back("--no-whole-archive");                           // oteodoro:
++  }                                                                    // oteodoro: End section add
++
+   return !StaticRuntimes.empty() || !NonWholeStaticRuntimes.empty();
+ }
+ 
