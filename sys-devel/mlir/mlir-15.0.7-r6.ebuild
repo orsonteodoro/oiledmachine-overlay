@@ -22,14 +22,28 @@ KEYWORDS="
 ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
 "
 IUSE="
-	debug test
+	debug rocm_5_3 rocm_5_4 test
 	r2
 "
 REQUIRED_USE="
+	rocm_5_3? (
+		!rocm_5_4
+	)
+	rocm_5_4? (
+		!rocm_5_3
+	)
 "
 RDEPEND="
 	sys-devel/clang:${SLOT}
 	sys-devel/llvm:${SLOT}
+	rocm_5_3? (
+		dev-libs/rocm-device-libs:5.3
+		dev-libs/rocr-runtime:5.3
+	)
+	rocm_5_4? (
+		dev-libs/rocm-device-libs:5.4
+		dev-libs/rocr-runtime:5.4
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -59,6 +73,11 @@ python_check_deps() {
 pkg_setup() {
 	llvm_pkg_setup # Init LLVM_SLOT
 	use test && python-any-r1_pkg_setup
+	if use rocm_5_3 ; then
+		export ROCM_SLOT="5.3"
+	elif use rocm_5_4 ; then
+		export ROCM_SLOT="5.4"
+	fi
 	rocm_pkg_setup
 }
 

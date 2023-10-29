@@ -38,7 +38,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS=""
 IUSE+="
-	debug test
+	debug rocm_5_7 test
 	r2
 "
 REQUIRED_USE="
@@ -46,6 +46,9 @@ REQUIRED_USE="
 RDEPEND="
 	sys-devel/clang:${SLOT}
 	sys-devel/llvm:${SLOT}
+	rocm_5_7? (
+		dev-libs/rocm-device-libs:5.7
+	)
 "
 DEPEND="
 	${RDEPEND}
@@ -74,6 +77,9 @@ pkg_setup() {
 	llvm_pkg_setup # Init LLVM_SLOT
 	if use test; then
 		python-single-r1_pkg_setup
+	fi
+	if use rocm_5_7 ; then
+		export ROCM_SLOT="5.7"
 	fi
 	rocm_pkg_setup
 }
