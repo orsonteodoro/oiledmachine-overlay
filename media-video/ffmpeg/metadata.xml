@@ -898,6 +898,9 @@
   <flag name="mpl2_0">
     Checks MPL-2.0 license compatibility
   </flag>
+  <flag name="nonfree">
+    Allows to compile against non-free packages that prevent the redistribution.
+  </flag>
 
   <flag name="rN">
     (FOR INTERNAL USE ONLY) Ebuild fork revision.
