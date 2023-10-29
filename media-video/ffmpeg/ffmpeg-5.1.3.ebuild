@@ -806,9 +806,7 @@ CPU_REQUIRED_USE="
 # FIXME: fix missing symbols with -re-codecs
 REQUIRED_USE+="
 	${CPU_REQUIRED_USE}
-	!gpl? (
-		${LICENSE_REQUIRED_USE}
-	)
+	${LICENSE_REQUIRED_USE}
 	!kernel_linux? (
 		!trainer-av-streaming
 	)
@@ -863,12 +861,6 @@ REQUIRED_USE+="
 	)
 	fftools_cws2fws? (
 		zlib
-	)
-	gpl? (
-		|| (
-			gpl2
-			gpl2x
-		)
 	)
 	mold? (
 		!nonfree
