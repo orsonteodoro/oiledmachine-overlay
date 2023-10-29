@@ -33,7 +33,6 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS=""
 IUSE+=" +clang +debug static-libs test"
 REQUIRED_USE="
 	test? (
@@ -102,6 +101,15 @@ multilib_src_configure() {
 	# https://github.com/gentoo/gentoo/pull/21516
 	local use_compiler_rt=OFF
 	[[ $(tc-get-c-rtlib) == compiler-rt ]] && use_compiler_rt=ON
+
+	# Respect upstream build type assumptions (bug #910436) where they do:
+	# -DLIBUNWIND_ENABLE_ASSERTIONS=ON =>
+	#       -DCMAKE_BUILD_TYPE=DEBUG  => -UNDEBUG
+	#       -DCMAKE_BUILD_TYPE!=debug => -DNDEBUG
+	# -DLIBUNWIND_ENABLE_ASSERTIONS=OFF =>
+	#       -UNDEBUG
+	# See also https://github.com/llvm/llvm-project/issues/86#issuecomment-1649668826.
+	use debug || append-cppflags -DNDEBUG
 
 	local mycmakeargs=(
 		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
