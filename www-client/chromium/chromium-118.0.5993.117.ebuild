@@ -36,7 +36,7 @@ te th tr uk ur vi zh-CN zh-TW
 
 # For depends see:
 # https://github.com/chromium/chromium/tree/118.0.5993.117/build/linux/sysroot_scripts/generated_package_lists				; Last update Jun 12, 2023
-# https://github.com/chromium/chromium/blob/118.0.5993.117/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/118.0.5993.117/build/install-build-deps.py
 
 #
 # Additional DEPENDS versioning info:
@@ -95,7 +95,7 @@ FFMPEG_LIBAVCODEC_SOVER="60.22.100" # third_party/ffmpeg/libavcodec/version*.h
 FFMPEG_LIBAVFORMAT_SOVER="60.10.100" # third_party/ffmpeg/libavformat/version*.h
 FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
 FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
-GCC_MIN="10.2.1"
+GCC_PV="10.2.1" # Minimum
 GCC_SLOTS=( 14 13 12 11 10 )
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
@@ -839,7 +839,7 @@ COMMON_DEPEND="
 	>=dev-libs/expat-2.2.10:=[${MULTILIB_USEDEP}]
 	>=net-misc/curl-7.88.1[${MULTILIB_USEDEP},ssl]
 	>=sys-apps/dbus-1.12.24:=[${MULTILIB_USEDEP}]
-	>=sys-devel/gcc-${GCC_MIN}
+	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/zlib-${ZLIB_PV}:=[${MULTILIB_USEDEP},minizip]
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
 	virtual/libc
@@ -1042,9 +1042,9 @@ python_check_deps() {
 _compiler_version_checks() {
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		local -x CPP="$(tc-getCXX) -E"
-		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge "${GCC_MIN}" ; then
+		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge "${GCC_PV}" ; then
 eerror
-eerror "At least gcc ${GCC_MIN} is required"
+eerror "At least gcc ${GCC_PV} is required"
 eerror
 			die
 		fi

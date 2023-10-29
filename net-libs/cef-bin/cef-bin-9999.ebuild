@@ -35,53 +35,55 @@ REQUIRED_USE+="
 "
 
 # For depends see:
-# https://github.com/chromium/chromium/tree/114.0.5735.110/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.110/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/tree/118.0.5993.119/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.py
+# https://github.com/chromiumembedded/cef/blob/5993/CMakeLists.txt.in
 
-DEPENDS_VERSION="114.0.5735.110"
+DEPENDS_VERSION="118.0.5993.119"
 
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/libpng/pnglibconf.h
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/node/update_node_binaries#L18
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/re2/README.chromium#L4						; older than generated_package_lists, (live)
-# https://github.com/chromium/chromium/blob/114.0.5735.110/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/114.0.5735.110/tools/clang/scripts/update.py#L42
-# https://github.com/chromium/chromium/blob/114.0.5735.110/tools/rust/update_rust.py#L35						; commit
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/libpng/pnglibconf.h
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/node/update_node_binaries#L18
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/re2/README.chromium#L4						; older than generated_package_lists, (live)
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/118.0.5993.119/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/118.0.5993.119/tools/rust/update_rust.py#L35						; commit
 #   https://github.com/rust-lang/rust/blob/17c11672167827b0dd92c88ef69f24346d1286dd/src/version						; live version
 #
 
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/icu/source/configure		L585	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/openh264/src/meson.build		L2
-# /var/tmp/portage/www-client/chromium-114.0.5735.110/work/chromium-114.0.5735.110/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/icu/source/configure		L585	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/openh264/src/meson.build		L2
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
 
 # *DEPENDs based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
 # For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/114.0.5735.110/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/114.0.5735.110/build/install-build-deps.sh#L151
+# Chromium runtime:  https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.sh#L237
+# Chromium buildtime:  https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.sh#L151
 CLANG_PV="17"
 FFMPEG_SLOT="0/58.60.60" # Same as 6.0
 GLIB_PV="2.66.8"
-GCC_PV="10.2.1"
+GCC_PV="10.2.1" # Minimum
 GTK3_PV="3.24.24"
+GTK4_PV="4.8.3"
 LIBXI_PV="1.7.10"
 MESA_PV="20.3.5"
 CHROMIUM_CDEPEND="
-	>=app-accessibility/at-spi2-atk-2.38.0
+	>=app-accessibility/at-spi2-atk-2.44.1:2
 	>=app-accessibility/speech-dispatcher-0.11.4
 	>=dev-db/sqlite-3.34.1
 	>=dev-libs/glib-${GLIB_PV}:2
@@ -99,7 +101,7 @@ CHROMIUM_CDEPEND="
 	>=x11-libs/cairo-1.16.0
 	>=x11-libs/gtk+-${GTK3_PV}:3
 	>=x11-libs/libXtst-1.2.3
-	>=x11-libs/libdrm-2.4.114
+	>=x11-libs/libdrm-2.4.115
 "
 # Unlisted based on ldd inspection not found in common_lib_list
 UNLISTED_RDEPEND="
@@ -111,7 +113,7 @@ UNLISTED_RDEPEND="
 	>=dev-libs/libunistring-0.9.10
 	>=dev-libs/nettle-3.7.3
 	>=media-gfx/graphite2-1.3.14
-	>=media-libs/harfbuzz-7.1.0
+	>=media-libs/harfbuzz-7.3.0
 	>=media-libs/libglvnd-1.3.2
 	>=media-libs/mesa-${MESA_PV}[egl(+)]
 	>=net-dns/libidn-1.33
@@ -131,9 +133,9 @@ CHROMIUM_RDEPEND="
 	>=dev-libs/nspr-4.29
 	>=dev-libs/wayland-1.18.0
 	>=media-libs/fontconfig-2.14.2
-	>=media-libs/freetype-2.13.0
+	>=media-libs/freetype-2.13.2
 	>=media-libs/libpng-1.6.37
-	>=sys-devel/gcc-10.2.1[cxx(+)]
+	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
 	>=sys-libs/zlib-1.2.13
 	>=x11-libs/libX11-1.7.2
 	>=x11-libs/libXau-1.0.9
@@ -172,7 +174,7 @@ INTEGRITY_CHECK_BDEPEND="
 " # From ebuild dev
 BDEPEND+="
 	${INTEGRITY_CHECK_BDEPEND}
-	>=dev-util/cmake-3.18.4
+	>=dev-util/cmake-3.21
 	test? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
