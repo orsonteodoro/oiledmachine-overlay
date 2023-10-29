@@ -899,7 +899,7 @@
     Checks MPL-2.0 license compatibility
   </flag>
   <flag name="nonfree">
-    Allows to compile against non-free packages that prevent the redistribution.
+    Allows to compile against non-free packages that prevent redistribution.
   </flag>
 
   <flag name="rN">
