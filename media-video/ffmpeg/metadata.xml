@@ -865,10 +865,10 @@
     license incompatibilities may be encountered.  This USE flag is kept for
     compatibility.
 
-    Enable makes gpl and nonfree USE flags inclusive-or which was the original
-    ebuild design.
+    Enabling makes the gpl and nonfree USE flags inclusive-or which was the
+    original ebuild design.
 
-    Disabling makes gpl and nonfree USE flags mutually exclusive for the new
+    Disabling makes the gpl and nonfree USE flags mutually exclusive for the new
     behavior.
   </flag>
   <flag name="gpl2">
