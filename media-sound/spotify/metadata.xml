@@ -14,9 +14,6 @@
 
   Ebuild fork for improved compatibility.
 
-  9999s: live stable
-  9999t: live testing
-
   -->
   <use>
     <flag name="beta">

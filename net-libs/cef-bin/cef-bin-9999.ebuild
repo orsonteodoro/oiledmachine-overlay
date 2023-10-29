@@ -4,6 +4,26 @@
 
 EAPI=8
 
+DEPENDS_VERSION="118.0.5993.119"
+# DEPENDS_VER_A="118"
+# DEPENDS_VER_B="0"
+# DEPENDS_VER_C="5993"
+# DEPENDS_VER_D="119"
+
+# Third party licenses:
+#
+# CEF uses the BSD license
+# CEF uses the Chromium source code and internal third party libraries/codecs which may be under additional licenses and copyright notices.
+# Additional copyright notices can be obtained from
+# CEF (tarball):        https://bitbucket.org/chromiumembedded/cef/get/<DEPENDS_VER_C>.tar.bz2
+# Chromium (tarball):   https://gsdview.appspot.com/chromium-browser-official/chromium-<DEPENDS_VERSION>.tar.xz
+# CEF (repo):           https://bitbucket.org/chromiumembedded/cef/src/<DEPENDS_VER_C>
+#                       https://github.com/chromiumembedded/cef/tree/<DEPENDS_VER_C>
+# Chromium (repo):      https://github.com/chromium/chromium/tree/<DEPENDS_VERSION>
+#
+# The repos may not contain all the third party modules.
+# Refer to the tarballs for more copyright notices and licenses for the third party packages.
+
 # This ebuild is provided to reduce ebuild security update lag.
 # Always update it weekly.
 
@@ -36,8 +56,6 @@ REQUIRED_USE+="
 		!minimal
 	)
 "
-
-DEPENDS_VERSION="118.0.5993.119"
 
 # For *DEPENDs see:
 # https://github.com/chromium/chromium/tree/118.0.5993.119/build/linux/sysroot_scripts/generated_package_lists
@@ -129,7 +147,8 @@ CHROMIUM_RDEPEND="
 	${OPTIONAL_RDEPEND}
 	>=dev-libs/atk-2.38.0
 	>=dev-libs/expat-2.2.10
-	>=dev-libs/libpcre-8.39
+	>=dev-libs/libpcre-8.39:3
+	>=dev-libs/libpcre2-10.36
 	>=dev-libs/nspr-4.29
 	>=dev-libs/wayland-1.18.0
 	>=media-libs/fontconfig-2.14.2

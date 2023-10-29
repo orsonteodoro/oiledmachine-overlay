@@ -3,42 +3,64 @@
 
 EAPI=8
 
-# Third Party Licenses:
-# CEF uses the BSD license
-# CEF depends on Blink and internal third party libraries/codecs.
-
-# For details see:
+#
+# For download details see:
+#
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# Stable: http://repository.spotify.com/dists/stable/Release
-# Testing: http://repository.spotify.com/dists/testing/Release
+# CEF_DEPENDS_VERSION="116.0.5845.190"
+# CEF_DEPENDS_VERSION_A="116"
+# CEF_DEPENDS_VERSION_B="0"
+# CEF_DEPENDS_VERSION_C="5845"
+# CEF_DEPENDS_VERSION_D="190"
+#
+# Third party licenses:
+#
+# CEF uses the BSD license
+# CEF uses the Chromium source code and internal third party libraries/codecs which may be under additional licenses and copyright notices.
+# Additional copyright notices can be obtained from
+# CEF (tarball):	https://bitbucket.org/chromiumembedded/cef/get/<CEF_DEPENDS_VERSION_C>.tar.bz2
+# Chromium (tarball):	https://gsdview.appspot.com/chromium-browser-official/chromium-<CEF_DEPENDS_VERSION>.tar.xz
+# CEF (repo):		https://bitbucket.org/chromiumembedded/cef/src/<CEF_DEPENDS_VERSION_C>
+#			https://github.com/chromiumembedded/cef/tree/<CEF_DEPENDS_VERSION_C>
+# Chromium (repo):	https://github.com/chromium/chromium/tree/<CEF_DEPENDS_VERSION>
+#
+# The repos may not contain all unmodified the third party modules.
+# Refer to the tarballs for more copyright notices and licenses for the unmodified third party packages.
+# There may be differences based on libcef.so file sizes.
+#
+#
+# Integrity hashes:
+#
+# http://repository.spotify.com/dists/stable/Release
+# http://repository.spotify.com/dists/testing/Release
 #
 # Requirements:
 #
-# Stable:
 # http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages
-#
-# Testing:
 # http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
 #
-
-# For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/115.0.5790.171/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/115.0.5790.171/build/install-build-deps.sh#L237
-# https://github.com/chromium/chromium/blob/115.0.5790.171/tools/clang/scripts/update.py#L42
-
+# For Chromium *DEPENDs and versioning see:
 #
-# Additional DEPENDS versioning info:
+# https://github.com/chromium/chromium/tree/116.0.5845.190/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/116.0.5845.190/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/116.0.5845.190/tools/clang/scripts/update.py#L42
 #
-# https://github.com/chromium/chromium/blob/115.0.5790.171/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/115.0.5790.171/third_party/zlib/zlib.h#L40
-# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-115.0.5790.171/work/chromium-115.0.5790.171/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# For vendored Chromium third party *DEPENDs versioning see:
+#
+# https://github.com/chromium/chromium/blob/116.0.5845.190/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/116.0.5845.190/third_party/zlib/zlib.h#L40
+#
+# Versions only obtainable through tarball:
+#
+# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/ffmpeg/libavformat/version*.h            ; do not use
+#
 
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
 
@@ -46,7 +68,7 @@ DESCRIPTION="A social music platform"
 HOMEPAGE="https://www.spotify.com"
 LICENSE="Spotify BSD"
 KEYWORDS="~amd64"
-DEFAULT_CONFIGURATION="testing"
+DEFAULT_CONFIGURATION="stable"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
@@ -57,7 +79,7 @@ SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X r4
 "
-if [[ ${PV} =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		-extra-dep-checks
 	"
@@ -84,15 +106,16 @@ ALSA_LIB="1.2.4"
 ATK_PV="2.38.0"
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
-FFMPEG_SLOT="0/57.59.59" # Same as 5.1 in chromium tarball [do not use]
-FONTCONFIG_PV="2.14.2"
-FREETYPE_PV="2.10.4"
+FFMPEG_SLOT="0/58.60.60" # Same as 5.1 in chromium tarball [do not use] ; 0/libavutil_major.libavcodec_major.libavformat_major
+FONTCONFIG_PV="2.14.2" # Use vendored list for versioning
+FREETYPE_PV="2.13.1" # Use vendored list for versioning
 GCC_PV="10.2.1"
 GLIB_PV="2.66.8"
 GLIBC_PV="2.31"
 GTK3_PV="3.24.24"
+GTK4_PV="4.8.3"
 LIBXI_PV="1.7.10"
-LIBXSCRNSAVER_PV="1.2.3"
+LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
 LIBXTST_PV="1.2.3"
 NSS_PV="3.61"
 MESA_PV="20.3.5"
@@ -132,6 +155,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 		>=gnome-extra/zenity-3.32.0
 	)
 "
+# zenity is not in generated_package_lists.
 
 # START CEF DEPENDS
 # Some *DEPENDs below are copy pasted and based on the cef-bin ebuild.
@@ -140,11 +164,9 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # U >=16.04 LTS assumed, supported only in CEF
 
 # For details see:
-# https://github.com/chromium/chromium/blob/115.0.5790.171/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/116.0.5845.190/build/install-build-deps.sh#L237
 
 # The version is obtained in src_prepare
-
-# libxss1 is x11-libs/libXScrnSaver
 
 CHROMIUM_CDEPEND="
 	>=app-accessibility/at-spi2-atk-2.38.0
@@ -161,7 +183,7 @@ CHROMIUM_CDEPEND="
 	>=sys-libs/pam-1.4.0
 	>=x11-libs/cairo-${CAIRO_PV}
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
-	>=x11-libs/libdrm-2.4.104
+	>=x11-libs/libdrm-2.4.115
 	wayland? (
 		>=dev-libs/wayland-1.18.0:=
 	)
@@ -169,6 +191,7 @@ CHROMIUM_CDEPEND="
 		>=x11-libs/libXtst-${LIBXTST_PV}
 	)
 "
+# For libdrm use vendored list for versioning
 
 # Possibly Nth level dependencies, but not direct.
 UNLISTED_RDEPEND="
@@ -180,9 +203,11 @@ UNLISTED_RDEPEND="
 	>=dev-libs/libtasn1-4.16.0
 	>=dev-libs/libunistring-0.9.10
 	>=dev-libs/nettle-3.7.3
-	>=media-libs/harfbuzz-2.7.4
+	>=media-libs/harfbuzz-7.3.0
 	>=media-libs/libglvnd-1.3.2
 "
+# For harfbuzz use vendored list for versioning
+# 
 
 # Not listed as either direct or Nth level library
 # Also the feature may not be present or reachable.
@@ -190,11 +215,14 @@ UNLISTED_RDEPEND="
 #	>=app-accessibility/speech-dispatcher-0.11.4
 #	>=dev-db/sqlite-3.34.1
 #	>=dev-libs/libappindicator-12.10
-#	gnome-keyring? ( >=gnome-base/gnome-keyring-3.12.0 )
+#	gnome-keyring? (
+#		>=gnome-base/gnome-keyring-3.12.0
+#	)
 #"
+# libappindicator and gnome-keyring not in generated_package_lists.
 
 #UNLISTED_SP_RDEPEND_DROPPED="
-#	>=x11-libs/libxshmfence-1.2
+#	>=x11-libs/libxshmfence-1.3
 #
 
 OPTIONAL_RDEPEND="
@@ -208,7 +236,8 @@ CHROMIUM_RDEPEND="
 	${UNLISTED_RDEPEND}
 	>=dev-libs/atk-${ATK_PV}
 	>=dev-libs/expat-2.2.10
-	>=dev-libs/libpcre-10.36
+	>=dev-libs/libpcre-8.39:3
+	>=dev-libs/libpcre2-10.36
 	>=dev-libs/nspr-4.29
 	>=media-libs/fontconfig-${FONTCONFIG_PV}
 	>=media-libs/freetype-${FREETYPE_PV}
@@ -234,6 +263,7 @@ CHROMIUM_RDEPEND="
 		>=x11-libs/libxcb-1.14
 	)
 "
+# Use zlib from vendored lists for versioning.
 
 CEFCLIENT_RDEPEND_NOT_LISTED="
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
@@ -280,6 +310,8 @@ RDEPEND+="
 		~dev-libs/openssl-1.0.2:0
 	)
 "
+# libayatana-appindicator is not in generated_package_lists but in Packages file.
+# gconf, xdg-utils not in generated_package_lists.
 
 #RDEPEND_LISTED_BUT_NOT_LINKED="
 #	>=x11-libs/libXScrnSaver-${LIBXSCRNSAVER_PV}
@@ -299,7 +331,7 @@ BDEPEND+="
 	)
 "
 
-if [[ ${PV} =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	BDEPEND+="
 		app-crypt/gnupg[ssl]
 	"
@@ -333,10 +365,10 @@ SRC_URI+="
 	${PUBLIC_KEY_URI}
 "
 
-if ! [[ ${PV} =~ 9999 ]] ; then
+if ! [[ "${PV}" =~ "9999" ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="g2a8a8a57"
+	BUILD_ID_AMD64="g794acc0a"
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
@@ -377,7 +409,7 @@ EXPECTED_DEPENDS_FINGERPRINT="\
 EXPECTED_CR_DEPENDS_FINGERPRINT="\
 27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
 89ce438d5e3c3df6230912b1eebf3c45c70bd9def0deb9fb047ed13256019a7c\
-" # Packages fingerprint of internal dependency (Cr/Blink) of CEF
+" # Packages fingerprint of internal dependency Chromium for CEF
 
 PKG_ARCH="amd64" # It can be amd64, i386, all.
 
@@ -408,7 +440,7 @@ declare -A atabs=(
 
 pkg_setup() {
 	local configuration_desc
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		CONFIGURATION="${DEFAULT_CONFIGURATION}"
 		export FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease"
 		export FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
@@ -438,7 +470,7 @@ ewarn
 		&& use extra-dep-checks ; then
 		require_network=1
 eerror
-eerror "Network access required to verify Cr/Blink dependencies."
+eerror "Network access required to verify Chromium dependencies."
 eerror
 	fi
 	if has "verify-gpg-key" ${IUSE} \
@@ -449,7 +481,7 @@ eerror
 eerror "Network access required to verify the public repository gpg key."
 eerror
 	fi
-	if [[ "${PV}" =~ 9999 ]] \
+	if [[ "${PV}" =~ "9999" ]] \
 		&& has "network-sandbox" ${FEATURES} ; then
 		require_network=1
 eerror
@@ -476,7 +508,7 @@ eerror
 verify_pubkey() {
 	# The keyring is sandboxed so redownload.
 	KEY_FN=$(basename ${PUBLIC_KEY_URI})
-	if ! [[ ${PV} =~ 9999 ]] ; then
+	if ! [[ "${PV}" =~ "9999" ]] ; then
 		cat "${EDISTDIR}/${KEY_FN}" > "${WORKDIR}/${KEY_FN}" || die
 	elif [[ -z "${EVCS_OFFLINE}" || "${EVCS_OFFLINE}" == "0" ]] ; then
 		wget "${PUBLIC_KEY_URI}" || die
@@ -570,7 +602,7 @@ eerror
 	fi
 
 	local external_key_check=0
-	if [[ "${PV}" =~ 9999 \
+	if [[ "${PV}" =~ "9999" \
 		&& ( -z "${EVCS_OFFLINE}" || "${EVCS_OFFLINE}" == "0" ) ]] ; then
 		external_key_check=1
 	fi
@@ -652,7 +684,7 @@ verify_package_list() {
 		| grep -e "non-free/binary-${PKG_ARCH}.*$" \
 		| sed -n 1p \
 		| cut -f 4 -d " ") #
-	if ! [[ ${PV} =~ 9999 ]] ; then
+	if ! [[ "${PV}" =~ "9999" ]] ; then
 		cat "${EDISTDIR}/${FN_PACKAGES}" > "${WORKDIR}/Packages" || die
 	elif [[ -z "${EVCS_OFFLINE}" || "${EVCS_OFFLINE}" == "0" ]] ; then
 		wget "${REPO_DOMAIN}/dists/${CONFIGURATION}/${PKG_LIST}" || die
@@ -771,7 +803,7 @@ eerror
 	check_client_depends
 
 	local archive_fn=$(_get_archive_fn)
-	if ! [[ ${PV} =~ 9999 ]] ; then
+	if ! [[ "${PV}" =~ "9999" ]] ; then
 		ln -s "${EDISTDIR}/${archive_fn}" "${WORKDIR}/${archive_fn}" || die
 	elif [[ -z "${EVCS_OFFLINE}" || "${EVCS_OFFLINE}" == "0" ]] ; then
 		local URI_FRAG=$(_get_uri_frag_from_packages)
@@ -807,7 +839,7 @@ verify_inrelease() {
 	# URI fragments (stable nonfree) are from the second line of
 	# https://www.spotify.com/us/download/linux/
 	# and from implications typical for external debian mirrors.
-	if ! [[ ${PV} =~ 9999 ]] ; then
+	if ! [[ "${PV}" =~ "9999" ]] ; then
 		cat "${EDISTDIR}/${FN_INRELEASE}" > "${WORKDIR}/InRelease" || die
 	elif [[ -z "${EVCS_OFFLINE}" || "${EVCS_OFFLINE}" == "0" ]] ; then
 		wget "${REPO_DOMAIN}/dists/${CONFIGURATION}/InRelease" || die
@@ -900,7 +932,7 @@ src_unpack() {
 	verify_inrelease
 	verify_package_list
 	verify_client_deb
-	if ! [[ ${PV} =~ 9999 ]] ; then
+	if ! [[ "${PV}" =~ "9999" ]] ; then
 		unpack_deb "${EDISTDIR}/${FN_CLIENT}"
 	elif [[ "${EVCS_OFFLINE}" == "1" ]] ; then
 		unpack_offline
@@ -910,8 +942,8 @@ src_unpack() {
 }
 
 check_cr() {
-	if [[ "${PV}" =~ 9999 ]] ; then
-		# Verify Cr/Blink DEPENDs
+	if [[ "${PV}" =~ "9999" ]] ; then
+		# Verify Chromium DEPENDs
 		# This is the minimal required but there are additional ones appended to lib_list.
 		local CEF_VERSION=$(\
 			  strings $(find "${ED}" -name "libcef.so") \
@@ -932,11 +964,11 @@ check_cr() {
 			| cut -f 1 -d " ")
 einfo
 einfo "CEF version:\t${CEF_VERSION}"
-einfo "CR version:\t${CR_VERSION}"
+einfo "Chromium version:\t${CR_VERSION}"
 einfo
 		if [[ "${EXPECTED_CR_DEPENDS_FINGERPRINT}" != "${ACTUAL_CR_DEPENDS_FINGERPRINT}" ]] ; then
 eerror
-eerror "Blink requirements changed for CEF"
+eerror "Chromium requirements changed for CEF"
 eerror
 eerror "Expected depends fingerprint:\t${EXPECTED_CR_DEPENDS_FINGERPRINT}"
 eerror "Actual depends fingerprint:\t${ACTUAL_CR_DEPENDS_FINGERPRINT}"
@@ -946,7 +978,7 @@ eerror
 eerror "  Update EXPECTED_CR_DEPENDS_FINGERPRINT"
 eerror "  Update *DEPENDs"
 eerror
-eerror "Cr/Blink DEPENDS:"
+eerror "Chromium DEPENDS:"
 eerror
 eerror "  ${CR_DEPENDS}"
 eerror
