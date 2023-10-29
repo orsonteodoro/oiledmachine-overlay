@@ -880,6 +880,9 @@
   <flag name="gpl3">
     Checks GPL-3 license compatibility
   </flag>
+  <flag name="gpl3x">
+    Checks GPL-3+ license compatibility
+  </flag>
   <flag name="lgpl2">
     Checks LGPL-2 license compatibility
   </flag>
@@ -894,6 +897,9 @@
   </flag>
   <flag name="lgpl3">
     Checks LGPL-3.0 license compatibility
+  </flag>
+  <flag name="lgpl3x">
+    Checks LGPL-3.0+ license compatibility
   </flag>
   <flag name="mpl2_0">
     Checks MPL-2.0 license compatibility

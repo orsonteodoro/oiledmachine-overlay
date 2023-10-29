@@ -408,8 +408,8 @@ trainer-video-lossless-quick
 
 apache2_0
 +gpl
-+gpl2
-gpl2x
+gpl2
++gpl2x
 gpl2x_to_gpl3
 gpl3
 gpl3x
