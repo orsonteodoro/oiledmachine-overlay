@@ -524,6 +524,9 @@
   <flag name="dav1d">
     Enables AV1 decoding via <pkg>media-libs/dav1d</pkg>.
   </flag>
+  <flag name="debug">
+    Add debugging symbols
+  </flag>
   <flag name="fallback-commit">
     Rewind the commits backwards to when when the all the patches worked and the
     same SOVERSION/SLOT this ebuild fork was tested.
@@ -856,9 +859,6 @@
   <!-- For license compatibility checking -->
   <flag name="apache2_0">
     Checks Apache-2.0 license compatibility
-  </flag>
-  <flag name="debug">
-    Relax license restrictions
   </flag>
   <flag name="gpl">
     Synonym for gpl2x/gpl3x USE flags to build a GPL-2.0+/GPL-3.0+ package.
