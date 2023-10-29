@@ -88,7 +88,6 @@ LICENSE="
 	)
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
