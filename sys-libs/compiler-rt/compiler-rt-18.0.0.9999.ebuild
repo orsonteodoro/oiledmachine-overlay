@@ -21,7 +21,7 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 PYTHON_COMPAT=( python3_{10..12} )
-inherit cmake flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
+inherit cmake crossdev flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
 HOMEPAGE="https://llvm.org/"
@@ -33,7 +33,6 @@ LICENSE="
 	)
 "
 SLOT="${LLVM_MAJOR}"
-KEYWORDS=""
 IUSE+=" +abi_x86_32 abi_x86_64 +clang +debug test"
 DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
@@ -83,10 +82,18 @@ pkg_setup() {
 	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm; then
 		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
+
+	if target_is_not_host || tc-is-cross-compiler ; then
+		# strips vars like CFLAGS="-march=x86_64-v3" for non-x86 architectures
+		CHOST=${CTARGET} strip-unsupported-flags
+		# overrides host docs otherwise
+		DOCS=()
+	fi
 	python-any-r1_pkg_setup
 }
 
 test_compiler() {
+	target_is_not_host && return
 	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" -o /dev/null -x c - \
 		<<<'int main() { return 0; }' &>/dev/null
 }
@@ -98,7 +105,7 @@ src_configure() {
 	# pre-set since we need to pass it to cmake
 	BUILD_DIR=${WORKDIR}/${P}_build
 
-	if use clang; then
+	if use clang && ! is_crosspkg ; then
 		# Only do this conditionally to allow overriding with
 		# e.g. CC=clang-13 in case of breakage
 		if ! tc-is-clang ; then
@@ -109,7 +116,7 @@ src_configure() {
 		strip-unsupported-flags
 	fi
 
-	if ! test_compiler; then
+	if ! test_compiler && ! test_compiler ; then
 		local nolib_flags=( -nodefaultlibs -lc )
 
 		if test_compiler "${nolib_flags[@]}"; then
@@ -139,10 +146,30 @@ src_configure() {
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 
-	if use amd64; then
+	if use amd64 && ! target_is_not_host ; then
 		mycmakeargs+=(
 			-DCAN_TARGET_i386=$(usex abi_x86_32)
 			-DCAN_TARGET_x86_64=$(usex abi_x86_64)
+		)
+	fi
+
+	if is_crosspkg; then
+		# Needed to target built libc headers
+		export CFLAGS="${CFLAGS} -isystem /usr/${CTARGET}/usr/include"
+		mycmakeargs+=(
+			# Without this, the compiler will compile a test program
+			# and fail due to no builtins.
+			-DCMAKE_C_COMPILER_WORKS=1
+			-DCMAKE_CXX_COMPILER_WORKS=1
+
+			# Without this, compiler-rt install location is not unique
+			# to target triples, only to architecture.
+			# Needed if you want to target multiple libcs for one arch.
+			-DLLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON
+
+			-DCMAKE_ASM_COMPILER_TARGET="${CTARGET}"
+			-DCMAKE_C_COMPILER_TARGET="${CTARGET}"
+			-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON
 		)
 	fi
 
