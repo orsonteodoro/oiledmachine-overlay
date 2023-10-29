@@ -16,9 +16,12 @@ inherit chromium-2 cmake flag-o-matic virtualx
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for \
 embedding Chromium-based browsers in other applications."
 LICENSE="BSD"
-HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
+HOMEPAGE="
+https://bitbucket.org/chromiumembedded/cef/src/master/
+https://github.com/chromiumembedded/cef
+https://cef-builds.spotifycdn.com/index.html
+"
 KEYWORDS="~arm ~arm64 ~amd64"
-# The download page can be found at https://cef-builds.spotifycdn.com/index.html
 
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" beta cefclient cefsimple debug minimal test"
@@ -34,15 +37,15 @@ REQUIRED_USE+="
 	)
 "
 
-# For depends see:
+DEPENDS_VERSION="118.0.5993.119"
+
+# For *DEPENDs see:
 # https://github.com/chromium/chromium/tree/118.0.5993.119/build/linux/sysroot_scripts/generated_package_lists
 # https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.py
 # https://github.com/chromiumembedded/cef/blob/5993/CMakeLists.txt.in
 
-DEPENDS_VERSION="118.0.5993.119"
-
 #
-# Additional DEPENDS versioning info:
+# Additional *DEPENDs versioning info:
 #
 # https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
 # https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/fontconfig/include/config.h#L290
@@ -55,7 +58,7 @@ DEPENDS_VERSION="118.0.5993.119"
 # https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/zlib/zlib.h#L40
 # https://github.com/chromium/chromium/blob/118.0.5993.119/tools/clang/scripts/update.py#L42
 # https://github.com/chromium/chromium/blob/118.0.5993.119/tools/rust/update_rust.py#L35						; commit
-#   https://github.com/rust-lang/rust/blob/17c11672167827b0dd92c88ef69f24346d1286dd/src/version						; live version
+#   https://github.com/rust-lang/rust/blob/006a26c0b546abc0fbef59a773639582b641e500/src/version						; live version
 #
 
 # /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
@@ -71,9 +74,6 @@ DEPENDS_VERSION="118.0.5993.119"
 # *DEPENDs based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
-# For details see:
-# Chromium runtime:  https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.sh#L237
-# Chromium buildtime:  https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.sh#L151
 CLANG_PV="17"
 FFMPEG_SLOT="0/58.60.60" # Same as 6.0
 GLIB_PV="2.66.8"
