@@ -9,10 +9,9 @@ DESCRIPTION="Meta-ebuild for clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
 LICENSE="metapackage"
 SLOT="${PV%%.*}"
-KEYWORDS=""
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos ~x64-macos"
 IUSE="+compiler-rt libcxx openmp +sanitize"
 REQUIRED_USE="sanitize? ( compiler-rt )"
-PROPERTIES="live"
 RDEPEND="
 	compiler-rt? (
 		~sys-libs/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]
