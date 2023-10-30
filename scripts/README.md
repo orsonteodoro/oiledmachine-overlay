@@ -5,6 +5,9 @@
 * rocm_find_missing_rpath - Finds missing rpaths for multislot ROCm ebuild packages
 * npm_dedupe.sh - Dedupes URIs in NPM_EXTERNAL_URIS.
 * yarn_dedupe.sh - Dedupes URIs in YARN_EXTERNAL_URIS.
+* check-ebuild-update - Checks if new versions are available
+* lintrepo - Checks if ebuilds have wrong syntax, possible red flags, or security weaknesses
+* use-linter - Checks for malformed metadata.xml
 
 ## Examples
 
@@ -153,3 +156,42 @@ CLANG_PHASES="PGI PGT PGO" CLANG_SLOTS="18" ./optimize.sh
 ```
 
 See metadata.xml for documentation.
+
+### check-ebuild-update
+
+* Purpose:  To find quickly new point releases to bump
+* Stakeholders:  ebuild developers
+
+```
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+cd "${OILEDMACHINE_OVERLAY_ROOT}"
+./check-ebuild-update
+```
+
+The script module check-ebuild-update-scrapers contains functions to obtain
+version info per ebuild package.
+
+The check-ebuild-update is a manger script that contains library functions or
+manages general version retrieval.
+
+### lintrepo
+
+* Purpose:  Find syntax, red flags, security weaknesses in .ebuild files
+* Stakeholders:  ebuild developers
+
+```
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+cd "${OILEDMACHINE_OVERLAY_ROOT}"
+./lintrepo
+```
+
+### use-linter
+
+* Purpose:  Find syntax errors in metadata.xml
+* Stakeholders:  ebuild developers
+
+```
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+cd "${OILEDMACHINE_OVERLAY_ROOT}"
+./use-linter
+```
