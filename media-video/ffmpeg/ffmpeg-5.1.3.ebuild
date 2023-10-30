@@ -552,6 +552,7 @@ gen_relicense() {
 # The distro has libcdio as GPL-3 only but the source is GPL-3+, LGPL-2.1+.
 # The distro has rtmpdump as LGPL-2.1 tools? ( GPL-2 ) but the source is LGPL-2.1+ tools? ( GPL-2+ ).
 # The distro has rubberband as GPL-2 only but the source is GPL-2+.
+# The distro has samba as GPL-3 only but the source is GPL-3+.
 # The distro has twolame as GPL-2 only but the source is LGPL-2.1+.
 # The distro has x264 as GPL-2 only but the source is GPL-2+.
 # The distro has x265 as GPL-2 only but the source is GPL-2+.
@@ -764,7 +765,7 @@ LICENSE_REQUIRED_USE="
 		$(gen_relicense gpl2x)
 	)
 	samba? (
-		gpl3
+		gpl3x
 	)
 	srt? (
 		mpl2_0
