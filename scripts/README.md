@@ -153,7 +153,7 @@ ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if overlay was added thr
 ```
 
 ```
-# Do the following in command line:
+# Do the following on the command line:
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd sys-devel/llvm-roc
@@ -176,7 +176,7 @@ PORTAGE_OVERLAY_DIR="/usr/portage" # if using old instructions
 ```
 
 ```
-# Do the following in command line:
+# Do the following on the command line:
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd sys-devel/clang
