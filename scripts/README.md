@@ -26,7 +26,7 @@ replace the default literals:
 * Stakeholders:  ebuild developers
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd media-gfx/upscayl
 PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
@@ -66,7 +66,7 @@ npm_updater_transform_uris.sh is used to help generate URIs and not intended to 
 * Stakeholders:  ebuild developers
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd dev-util/theia
 PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
@@ -106,7 +106,7 @@ yarn_updater_transform_uris.sh is used to help generate URIs and not intended to
 * Stakeholders:  ebuild developers
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd media-gfx/upscayl
 PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
@@ -119,7 +119,7 @@ NPM_UPDATER_VERSIONS="2.9.1" npm_dedupe.sh
 * Stakeholders:  ebuild developers
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd dev-util/theia
 PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
@@ -132,7 +132,7 @@ YARN_UPDATER_VERSIONS="1.43.0" yarn_dedupe.sh
 * Stakeholders:  ebuild developers
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
 rocm_find_missing_rpath.sh
@@ -153,7 +153,7 @@ ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if overlay was added thr
 ```
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd sys-devel/llvm-roc
 LLVM_ROC_PHASES="PGI PGT PGO" ROCM_SLOTS="5.5" ./optimize.sh
@@ -175,7 +175,7 @@ PORTAGE_OVERLAY_DIR="/usr/portage" # if using old instructions
 ```
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd sys-devel/clang
 CLANG_PHASES="PGI PGT PGO" CLANG_SLOTS="18" ./optimize.sh
@@ -189,7 +189,7 @@ See metadata.xml for documentation or customization.
 * Stakeholders:  ebuild developers
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./check-ebuild-update
 ```
@@ -206,7 +206,7 @@ manages general version retrieval.
 * Stakeholders:  ebuild developers
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./lintrepo
 ```
@@ -219,7 +219,7 @@ The name is pronounced [lint](https://en.wikipedia.org/wiki/Lint_(software)) rep
 * Stakeholders:  ebuild developers
 
 ```
-OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./use-linter
 ```
