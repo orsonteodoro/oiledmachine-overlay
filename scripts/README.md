@@ -146,9 +146,8 @@ equery b <libname>
 * Stakeholders:  end user admin
 
 ```
-# Add the following script settings /etc/portage/env/llvm-roc.conf:
+# Add the following script settings to /etc/portage/env/llvm-roc.conf:
 
-LLVM_ROC_TRAINERS="rocPRIM rocRAND rocSPARSE"
 #ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
 ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if overlay was added through eselect repository
 ```
