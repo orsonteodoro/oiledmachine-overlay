@@ -187,6 +187,8 @@ cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./lintrepo
 ```
 
+The name is pronounced [lint](https://en.wikipedia.org/wiki/Lint_(software)) repo.
+
 ### use-linter
 
 * Purpose:  Find syntax errors in metadata.xml
