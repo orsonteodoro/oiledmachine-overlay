@@ -10,6 +10,14 @@
 * use-linter - Checks for malformed metadata.xml
 * optimize.sh - A script found alongside an ebuild to automate or to simplify multiple emerge optimization
 
+## OILEDMACHINE_OVERLAY_ROOT
+
+In the examples below, you can change the root directory to the repositories or
+replace the default literals:
+
+* `OILEDMACHINE_OVERLAY_ROOT="/var/db/repos/oiledmachine-overlay"` for newer eselect repository instructions
+* `OILEDMACHINE_OVERLAY_ROOT="/usr/local/oiledmachine-overlay"` for older README.md instructions
+
 ## Examples
 
 ### npm_updater_update_locks.sh
@@ -138,18 +146,34 @@ equery b <libname>
 * Stakeholders:  end user admin
 
 ```
+# Add the following script settings /etc/portage/env/llvm-roc.conf:
+
+LLVM_ROC_TRAINERS="rocPRIM rocRAND rocSPARSE"
+#ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
+ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if overlay was added through eselect repository
+```
+
+```
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd sys-devel/llvm-roc
 LLVM_ROC_PHASES="PGI PGT PGO" ROCM_SLOTS="5.5" ./optimize.sh
 ```
 
-See metadata.xml for documentation.
+See metadata.xml for documentation or customization.
 
 ### optimize.sh for sys-devel/clang
 
 * Purpose:  To PGO or BOLT optimize clang, llvm, lld packages.
 * Stakeholders:  end user admin
+
+```
+# Add the following script settings to /etc/portage/env/clang-pgo-training.conf:
+
+#ROCM_OVERLAY_DIR="/usr/local/oiledmachine-overlay" # if using older README.md instructions
+ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if using eselect repository
+PORTAGE_OVERLAY_DIR="/usr/portage" # if using old instructions
+```
 
 ```
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
@@ -158,7 +182,7 @@ cd sys-devel/clang
 CLANG_PHASES="PGI PGT PGO" CLANG_SLOTS="18" ./optimize.sh
 ```
 
-See metadata.xml for documentation.
+See metadata.xml for documentation or customization.
 
 ### check-ebuild-update
 
@@ -200,3 +224,4 @@ OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./use-linter
 ```
+
