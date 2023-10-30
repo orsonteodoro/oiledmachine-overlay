@@ -4,6 +4,16 @@
 
 EAPI=8
 
+#
+# This package uses node16 which is EOL.  This means that this ebuild a
+# candidate for deletion.  The removal of the ebuild will be put on hold.
+#
+# There is some effort by the upstream community to update dependencies to both
+# emscripten to 3.x and nodejs 18.
+#
+# For details on the progress, see https://github.com/4ian/GDevelop/pull/5636
+#
+
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 
@@ -115,7 +125,6 @@ LLVM_SLOTS=( ${LLVM_SLOT} ) # Deleted 9 8 7 because asm.js support was dropped.
 # Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
 
 EMSCRIPTEN_PV="1.39.6" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
-# node16 is EOL.  This means that this ebuild a candidate for deletion.
 GDCORE_TESTS_NODEJS_PV="16.20.2" # Based on CI, For building GDCore tests
 GDEVELOP_JS_NODEJS_PV="16.20.2" # Based on CI, For building GDevelop.js.
 #GDEVELOP_JS_NODEJS_PV="${GDCORE_TESTS_NODEJS_PV}" # For temporarly retrieving tarballs for offline install
