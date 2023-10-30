@@ -30,7 +30,7 @@ PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
 YARN_UPDATER_VERSIONS="1.43.0" yarn_updater_update_locks.sh
 ```
 
-### rocm_find_missing_rpath
+### rocm_find_missing_rpath.sh
 
 Purpose:  To list all libraries containg missing rpaths.
 
@@ -43,7 +43,7 @@ rocm_find_missing_rpath.sh
 
 ### optimize.sh for sys-devel/llvm-roc
 
-Purpose:  To PGO or BOLT optimize llvm-roc.
+Purpose:  To PGO or BOLT optimize the llvm-roc package.
 
 ```
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
