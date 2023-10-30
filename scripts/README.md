@@ -141,7 +141,7 @@ equery b <libname>
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd sys-devel/llvm-roc
-LLVM_ROC_PHASES="PGI PGT PGO" ROCM_SLOT="5.5" ./optimize.sh
+LLVM_ROC_PHASES="PGI PGT PGO" ROCM_SLOTS="5.5" ./optimize.sh
 ```
 
 See metadata.xml for documentation.
