@@ -49,7 +49,7 @@ src_unpack() {
 }
 ```
 
-
+npm_updater_transform_uris.sh is used to help generate URIs and not intended to be called directly.
 
 ### yarn_updater_update_locks.sh
 
@@ -88,6 +88,8 @@ src_unpack() {
 	fi
 }
 ```
+
+yarn_updater_transform_uris.sh is used to help generate URIs and not intended to be called directly.
 
 ### npm_dedupe.sh
 
