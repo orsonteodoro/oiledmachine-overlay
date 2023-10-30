@@ -137,7 +137,7 @@ cd "${OILEDMACHINE_OVERLAY_ROOT}"
 PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
 rocm_find_missing_rpath.sh
 equery b <libname>
-# Add rocm_fix_rpath to ebuild's pkg_postinst()
+# Add rocm_fix_rpath to the ebuild's src_install()
 ```
 
 ### optimize.sh for sys-devel/llvm-roc
