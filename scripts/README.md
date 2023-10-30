@@ -19,6 +19,33 @@ PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
 NPM_UPDATER_VERSIONS="2.9.1" npm_updater_update_locks.sh
 ```
 
+New ebuilds that inherit npm eclass must have the following code template:
+```
+inherit npm
+
+# UPDATER_START_NPM_EXTERNAL_URIS
+NPM_EXTERNAL_URIS="
+"
+# UPDATER_END_NPM_EXTERNAL_URIS
+SRC_URI="
+${NPM_EXTERNAL_URIS}
+...
+"
+
+# Use the following template to manually update npm lockfiles controlling audit
+# fix and lock file generation.
+src_unpack() {
+        if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		#...
+		die
+	else
+		#...
+	fi
+}
+```
+
+
+
 ### yarn_updater_update_locks.sh
 
 * Purpose:  To save/update yarn.lock for packages using the yarn package manager.
@@ -30,6 +57,31 @@ cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd dev-util/theia
 PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
 YARN_UPDATER_VERSIONS="1.43.0" yarn_updater_update_locks.sh
+```
+
+New ebuilds that inherit yarn eclass must have the following code template:
+```
+inherit yarn
+
+# UPDATER_START_YARN_EXTERNAL_URIS
+YARN_EXTERNAL_URIS="
+"
+# UPDATER_END_YARN_EXTERNAL_URIS
+SRC_URI="
+${YARN_EXTERNAL_URIS}
+...
+"
+
+# Use the following template to manually update yarn lockfiles controlling audit
+# fix and lock file generation.
+src_unpack() {
+        if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+		#...
+		die
+	else
+		#...
+	fi
+}
 ```
 
 ### rocm_find_missing_rpath.sh
