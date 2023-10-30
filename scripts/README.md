@@ -1,12 +1,12 @@
-== Script purposes ==
+## Script purposes
 
 * npm_updater_update_locks.sh - Updates npm lockfiles for ebuilds
 * yarn_updater_update_locks.sh - Updates yarn lockfiles for ebuilds
 * rocm_find_missing_rpath - Finds missing rpaths for multislot ROCm ebuild packages
 
-== Examples ==
+## Examples
 
-=== npm_updater_update_locks.sh ===
+### npm_updater_update_locks.sh
 
 Purpose:  To save, update, fix some vulnerabilites in package-lock.json for packages using the yarn package manager.
 
@@ -18,7 +18,7 @@ PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
 NPM_UPDATER_VERSIONS="2.9.1" npm_updater_update_locks.sh
 ```
 
-=== yarn_updater_update_locks.sh ===
+### yarn_updater_update_locks.sh
 
 Purpose:  To save/update yarn.lock for packages using the yarn package manager.
 
@@ -30,7 +30,7 @@ PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
 YARN_UPDATER_VERSIONS="1.43.0" yarn_updater_update_locks.sh
 ```
 
-=== rocm_find_missing_rpath ===
+### rocm_find_missing_rpath
 
 Purpose:  To list all libraries containg missing rpaths.
 
@@ -41,7 +41,7 @@ PATH="${OILEDMACHINE_OVERLAY_ROOT}/scripts:${PATH}"
 rocm_find_missing_rpath.sh
 ```
 
-=== optimize.sh for sys-devel/llvm-roc ===
+### optimize.sh for sys-devel/llvm-roc
 
 Purpose:  To PGO or BOLT optimize llvm-roc.
 
@@ -54,7 +54,7 @@ LLVM_ROC_PHASES="PGI PGT PGO" ROCM_SLOT="5.5" ./optimize.sh
 
 See metadata.xml for documentation.
 
-=== optimize.sh for sys-devel/clang ===
+### optimize.sh for sys-devel/clang
 
 Purpose:  To PGO or BOLT optimize clang, llvm, lld packages.
 ```
