@@ -8,6 +8,7 @@
 * check-ebuild-update - Checks if new versions are available
 * lintrepo - Checks if ebuilds have wrong syntax, possible red flags, or security weaknesses
 * use-linter - Checks for malformed metadata.xml
+* optimize.sh - A script found alongside an ebuild to automate or to simplify multiple emerge optimization
 
 ## Examples
 
