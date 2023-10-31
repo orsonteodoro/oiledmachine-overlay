@@ -25,8 +25,7 @@ unset -f _blender_set_globals
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
 
-inherit cuda check-reqs cmake flag-o-matic llvm pax-utils python-single-r1
-inherit toolchain-funcs xdg uopts
+inherit cuda check-reqs cmake flag-o-matic llvm pax-utils python-single-r1 rocm toolchain-funcs xdg uopts
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
@@ -388,7 +387,6 @@ blender_pkg_setup() {
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
 	fi
-	use rocm && rocm_pkg_setup
 }
 
 check_portable_dependencies() {

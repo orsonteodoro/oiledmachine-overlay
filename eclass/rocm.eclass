@@ -1126,6 +1126,7 @@ rocm_get_libomp_path() {
 	echo "${libomp_path}"
 }
 
-EXPORT_FUNCTIONS pkg_setup src_prepare
+#Do it manually
+#EXPORT_FUNCTIONS pkg_setup src_prepare
 
 fi

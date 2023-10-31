@@ -32,7 +32,7 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.3.8/build_files/build_environment/install_deps.sh#L488
+# https://github.com/blender/blender/blob/v3.3.12/build_files/build_environment/install_deps.sh#L488
 FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
@@ -43,7 +43,7 @@ LLVM_MAX_UPSTREAM=13 # (inclusive)
 LLVM_SLOTS=( 14 13 12 11 ) # Upstream says 13 inclusive is max
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v3.3.8/build_files/build_environment/install_deps.sh#L382
+# https://github.com/blender/blender/blob/v3.3.12/build_files/build_environment/install_deps.sh#L382
 PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
 
 OPENVDB_ABIS_MAJOR_VERS=9
@@ -62,7 +62,7 @@ LEGACY_TBB_SLOT="2"
 ONETBB_SLOT="0"
 OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7 3.1.5"
 LIBOGG_PV="1.3.5"
-LIBSNDFILE_PV="1.1.0"
+LIBSNDFILE_PV="1.2.2"
 OSL_PV="1.11.17.0"
 PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
@@ -123,7 +123,7 @@ ${OPENVDB_ABIS[@]}
 r2
 "
 
-inherit blender rocm
+inherit blender
 
 # See the blender.eclass for the LICENSE variable.
 LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
@@ -335,17 +335,17 @@ REQUIRED_USE+="
 # no need to look past those dates.
 
 # Last change was Jul 29, 2022 for:
-# https://github.com/blender/blender/commits/v3.3.8/build_files/build_environment/install_deps.sh
+# https://github.com/blender/blender/commits/v3.3.12/build_files/build_environment/install_deps.sh
 
 # Last change was Aug 24, 2021 for:
-# https://github.com/blender/blender/commits/v3.3.8/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/commits/v3.3.12/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Nov 2, 2023 for:
-# https://github.com/blender/blender/commits/v3.3.8/build_files/build_environment/cmake/versions.cmake
+# Last change was Oct 16, 2023 for:
+# https://github.com/blender/blender/commits/v3.3.12/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v3.3.8/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v3.3.12/intern/cycles/cmake/external_libs.cmake#L47
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -450,6 +450,7 @@ gen_osl_depends()
 # The ffplay contradicts in
 # build_files/build_environment/cmake/ffmpeg.cmake : --enable-ffplay
 # build_files/build_environment/install_deps.sh : --disable-ffplay
+# The FFMPEG_VERSION_MEX is set to 6.0 but contradicts versions.cmake @ 96c5cc5.  _MEX means excludes the mentioned.
 CODECS="
 	aom? (
 		>=media-libs/libaom-3.3.0
@@ -498,7 +499,7 @@ RDEPEND+="
 	${CODECS}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
-	>=dev-lang/python-3.10.9
+	>=dev-lang/python-3.10.13
 	>=media-libs/freetype-${FREETYPE_PV}
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.37:0=
@@ -859,8 +860,8 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	rocm? (
 		|| (
-			~dev-util/hip-5.5.1:5.5[rocm]
-			~dev-util/hip-5.5.0:5.5[rocm]
+			~dev-util/hip-5.2.3:5.2[rocm]
+			~dev-util/hip-5.1.3:5.1[rocm]
 		)
 		dev-util/hip:=
 	)
@@ -884,7 +885,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		)
 	)
 	tiff? (
-		>=media-libs/tiff-4.5.0:0[jpeg,zlib]
+		>=media-libs/tiff-4.5.1:0[jpeg,zlib]
 	)
 	usd? (
 		<media-libs/openusd-23[imaging,monolithic]
@@ -988,6 +989,20 @@ check_multiple_llvm_versions_in_native_libs() {
 		llvm_ret="$?"
 		if [[ "${llvm_ret}" != "0" ]] ; then
 ewarn
+ewarn "Detected linking inconsistency:"
+ewarn
+ewarn "Requested LLVM blender USE flag:  llvm-${llvm_slot}"
+ewarn "Files inspected:  ${ESYSROOT}/usr/$(get_libdir)/dri/"*".so"
+ewarn "Actual LLVM linking:"
+ewarn
+		ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" \
+			| grep -e "LLVM-"
+ewarn
+ewarn "These should be the same to avoid a possible multiple LLVMs loaded bug."
+ewarn
+ewarn
+
+ewarn
 ewarn "Prebuilt binary video card drivers users:"
 ewarn
 ewarn "You need link media-libs/mesa with LLVM ${llvm_slot}.  See"
@@ -1063,6 +1078,28 @@ ewarn
 ewarn "Support for the cycles-device-oneapi may be incomplete because distro"
 ewarn "may be missing several packages."
 ewarn
+	fi
+
+	if use rocm ; then
+		if use llvm-14 && has_version "=dev-util/hip-5.2" ; then
+			export LLVM_MAX_SLOT=14
+		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
+			export LLVM_MAX_SLOT=14
+		elif use llvm-13 || use llvm-12 || use llvm-11 ; then
+eerror
+eerror "ROCm < 5.1 is not supported on the distro."
+eerror "Disable the rocm USE flag."
+eerror
+			die
+		else
+eerror
+eerror "No matching llvm/hip pair."
+eerror
+eerror "llvm-14 can only pair with hip 5.1.3, 5.2.3"
+eerror
+			die
+		fi
+		rocm_pkg_setup
 	fi
 }
 
@@ -1316,7 +1353,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.3.8/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.3.12/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

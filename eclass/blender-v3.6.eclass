@@ -34,7 +34,7 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.6.0/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v3.6.5/build_files/build_environment/install_linux_packages.py
 FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
@@ -53,7 +53,7 @@ OPENVDB_ABIS=(
 )
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v3.6.0/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v3.6.5/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
 
 BOOST_PV="1.80"
@@ -62,7 +62,7 @@ FREETYPE_PV="2.13.0"
 GCC_MIN="9.3"
 LEGACY_TBB_SLOT="2"
 LIBOGG_PV="1.3.5"
-LIBSNDFILE_PV="1.1.0"
+LIBSNDFILE_PV="1.2.2"
 ONETBB_SLOT="0"
 OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7"
 OSL_PV="1.11"
@@ -126,7 +126,7 @@ test +tiff +usd -valgrind +wayland
 r2
 "
 # hip is default ON upstream.
-inherit blender rocm
+inherit blender
 
 # See the blender.eclass for the LICENSE variable.
 LICENSE+=" CC-BY-4.0" # The splash screen is CC-BY stated in https://www.blender.org/download/demo-files/ )
@@ -338,18 +338,18 @@ REQUIRED_USE+="
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
-# Last change was Jun 21, 2023 for:
-# https://github.com/blender/blender/blob/v3.6.0/build_files/build_environment/install_linux_packages.py
+# Last change was Aug 9, 2023 for:
+# https://github.com/blender/blender/blob/v3.6.5/build_files/build_environment/install_linux_packages.py
 
 # Last change was May 15, 2023 for:
-# https://github.com/blender/blender/commits/v3.6.0/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/commits/v3.6.5/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
-# Last change was Jun 21, 2023 for:
-# https://github.com/blender/blender/commits/v3.6.0/build_files/build_environment/cmake/versions.cmake
+# Last change was Oct 9, 2023 for:
+# https://github.com/blender/blender/commits/v3.6.5/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v3.6.0/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v3.6.5/intern/cycles/cmake/external_libs.cmake#L47
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -409,7 +409,7 @@ gen_oiio_depends() {
 		echo "
 			${s}? (
 				<media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
-				>=media-libs/openimageio-2.4.11.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-2.4.15.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				>=dev-cpp/robin-map-0.6.2
 				>=dev-libs/libfmt-9.1.0
 			)
@@ -502,7 +502,7 @@ RDEPEND+="
 	${CODECS}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
-	>=dev-lang/python-3.10.12
+	>=dev-lang/python-3.10.13
 	>=dev-libs/fribidi-1.0.12
 	>=media-libs/freetype-${FREETYPE_PV}
 	>=media-libs/libpng-1.6.37:0=
@@ -864,8 +864,10 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	rocm? (
 		|| (
-			~dev-util/hip-5.5.1:5.5[rocm]
-			~dev-util/hip-5.5.0:5.5[rocm]
+			~dev-util/hip-5.4.3:5.4[rocm]
+			~dev-util/hip-5.3.3:5.3[rocm]
+			~dev-util/hip-5.2.3:5.2[rocm]
+			~dev-util/hip-5.1.3:5.1[rocm]
 		)
 		dev-util/hip:=
 	)
@@ -904,7 +906,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		>=gui-libs/libdecor-0.1.0
 	)
 	webp? (
-		>=media-libs/libwebp-1.2.2
+		>=media-libs/libwebp-1.3.2
 	)
 	X? (
 		x11-libs/libX11
@@ -1003,6 +1005,20 @@ check_multiple_llvm_versions_in_native_libs() {
 		llvm_ret="$?"
 		if [[ "${llvm_ret}" != "0" ]] ; then
 ewarn
+ewarn "Detected linking inconsistency:"
+ewarn
+ewarn "Requested LLVM blender USE flag:  llvm-${llvm_slot}"
+ewarn "Files inspected:  ${ESYSROOT}/usr/$(get_libdir)/dri/"*".so"
+ewarn "Actual LLVM linking:"
+ewarn
+		ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" \
+			| grep -e "LLVM-"
+ewarn
+ewarn "These should be the same to avoid a possible multiple LLVMs loaded bug."
+ewarn
+ewarn
+
+ewarn
 ewarn "Prebuilt binary video card drivers users:"
 ewarn
 ewarn "You need link media-libs/mesa with LLVM ${llvm_slot}.  See"
@@ -1078,6 +1094,37 @@ ewarn "Support for the cycles-device-oneapi may be incomplete because distro"
 ewarn "may be missing several packages."
 ewarn
 	fi
+
+	if use rocm ; then
+	# Upstream uses hip 5.5.0 external_libs.cmake which uses llvm 16.
+	# It is not possible because of version_mex is 16 in install_linux_packages.py.
+	# It will cause an emerge conflict.
+	# It may also trigger a multiple LLVMs loaded bug.
+		if use llvm-15 && has_version "=dev-util/hip-5.4" ; then
+			export LLVM_MAX_SLOT=15
+		elif use llvm-15 && has_version "=dev-util/hip-5.3" ; then
+			export LLVM_MAX_SLOT=15
+		elif use llvm-14 && has_version "=dev-util/hip-5.2" ; then
+			export LLVM_MAX_SLOT=14
+		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
+			export LLVM_MAX_SLOT=14
+		elif use llvm-13 || use llvm-12 ; then
+eerror
+eerror "ROCm < 5.1 is not supported on the distro."
+eerror "Disable the rocm USE flag."
+eerror
+			die
+		else
+eerror
+eerror "No matching llvm/hip pair."
+eerror
+eerror "llvm-15 can only pair with hip 5.3.3, 5.4.3"
+eerror "llvm-14 can only pair with hip 5.1.3, 5.2.3"
+eerror
+			die
+		fi
+		rocm_pkg_setup
+	fi
 }
 
 show_tbb_error() {
@@ -1129,6 +1176,21 @@ ewarn
 	if use rocm ; then
 		sed -e "s|/opt/rocm/hip/lib/libamdhip64.so|${EPREFIX}${EROCM_PATH}/$(get_libdir)/libamdhip64.so|" \
 			-i extern/hipew/src/hipew.c \
+			|| die
+
+		local rocm_version=""
+		if use llvm-15 && has_version "=dev-util/hip-5.4" ; then
+			rocm_version="5.4.3"
+		elif use llvm-15 && has_version "=dev-util/hip-5.3" ; then
+			rocm_version="5.3.3"
+		elif use llvm-14 && has_version "=dev-util/hip-5.2" ; then
+			rocm_version="5.2.3"
+		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
+			rocm_version="5.1.3"
+		fi
+
+		sed -i "s|HIP 5.5.0|HIP ${rocm_version}|g" \
+			-i intern/cycles/cmake/external_libs.cmake \
 			|| die
 	fi
 }
@@ -1350,7 +1412,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.6.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.6.5/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
