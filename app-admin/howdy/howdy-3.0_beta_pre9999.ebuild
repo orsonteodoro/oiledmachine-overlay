@@ -27,7 +27,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg +gtk pyv4l2 r5
++bash-completion cuda ffmpeg +gtk pyv4l2 r6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -270,7 +270,7 @@ ewarn "chmod 755 /usr/$(get_libdir)/howdy/recorders"
 ewarn
 
 ewarn
-ewarn "SECURITY"
+ewarn "SECURITY NOTICE"
 ewarn
 ewarn "The /etc/howdy/config.ini should edited as follows for security"
 ewarn "hardening:"
@@ -279,7 +279,7 @@ ewarn "[snapshot]"
 ewarn "capture_failed = false"
 ewarn "capture_successful = false"
 ewarn
-ewarn "Saved snapshots should be removed as well from"
+ewarn "Saved snapshots should be deleted with shred (secure wipe) as well from"
 ewarn "/$(get_libdir)/security/howdy/snapshots."
 ewarn
 }
