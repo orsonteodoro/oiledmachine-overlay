@@ -25,7 +25,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg pyv4l2 r9
++bash-completion cuda ffmpeg pyv4l2 r11
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -211,6 +211,70 @@ einfo "DIR: fperms 0755 ${x}"
 		"/$(get_libdir)/security/${PN}/config.ini"
 }
 
+verify_folder_permissions() {
+	local d
+
+	d="/usr/share/dlib-data"
+	if [[ -e "${d}" ]] ; then
+		local actual_file_permissions=$(stat -c "%a" "${d}")
+		local expected_file_permissions="755"
+		if [[ "${actual_file_permissions}" != "${expected_file_permissions}" ]] ; then
+eerror "${d} permissions are incorrect.  Do \`chmod 0${expected_file_permissions} ${d}\`"
+		fi
+	fi
+
+	d="/usr/$(get_libdir)/howdy/recorders"
+	if [[ -e "${d}" ]] ; then
+		local actual_file_permissions=$(stat -c "%a" "${d}")
+		local expected_file_permissions="755"
+		if [[ "${actual_file_permissions}" != "${expected_file_permissions}" ]] ; then
+eerror "${d} permissions are incorrect.  Do \`chmod 0${expected_file_permissions} ${d}\`"
+		fi
+	fi
+
+	d="/$(get_libdir)/security/howdy/models"
+	if [[ -e "${d}" ]] ; then
+		local actual_file_permissions=$(stat -c "%a" "${d}")
+		local expected_file_permissions="755"
+		if [[ "${actual_file_permissions}" != "${expected_file_permissions}" ]] ; then
+eerror "${d} permissions are incorrect.  Do \`chmod 0${expected_file_permissions} ${d}\`"
+		fi
+	fi
+
+	d="/etc/howdy/models"
+	if [[ -e "${d}" ]] ; then
+		local actual_file_permissions=$(stat -c "%a" "${d}")
+		local expected_file_permissions="755"
+		if [[ "${actual_file_permissions}" != "${expected_file_permissions}" ]] ; then
+eerror "${d} permissions are incorrect.  Do \`chmod 0${expected_file_permissions} ${d}\`"
+		fi
+	fi
+}
+
+verify_user_models_security() {
+einfo "Performing permission scan for data models"
+	IFS=$'\n'
+	local L=(
+		$(find "/$(get_libdir)/security/howdy/models" -type f 2>/dev/null)
+		$(find "/etc/howdy/models" -type f 2>/dev/null)
+	)
+	local path
+	for path in "${L[@]}" ; do
+		local actual_file_permissions=$(stat -c "%a" "${d}")
+		local expected_file_permissions="644"
+
+		local actual_owner=$(stat -c "%G:%U" "${path}")
+		local expected_owner="root:root"
+		if [[ "${actual_owner}" != "${expected_owner}" ]] ; then
+eerror "${path} has the wrong ownership.  Do \`chown ${expected_owner} ${path}\`. Expected owner:  ${expected_owner}, Actual owner:  ${actual_owner}"
+		fi
+		if [[ "${actual_file_permissions}" != "${expected_file_permissions}" ]] ; then
+eerror "${path} permissions are incorrect.  Do \`chmod 0${expected_file_permissions} ${path}\`. Expected file permissions:  ${expected_file_permissions},  Actual file permissions:  ${actual_file_permissions}"
+		fi
+	done
+	IFS=$' \t\n'
+}
+
 pkg_postinst() {
 einfo
 einfo "You need an IR camera for this to work properly."
@@ -247,14 +311,6 @@ einfo "  sudo ${PN} add"
 einfo
 
 ewarn
-ewarn "You need to do the following if the package manager fails to update"
-ewarn "folder permissions:"
-ewarn
-ewarn "chmod 0755 /$(get_libdir)/security/${PN}/dlib-data"
-ewarn "chmod 0755 /$(get_libdir)/security/${PN}/recorders"
-ewarn
-
-ewarn
 ewarn "You may consider using the =${CATEGORY}/${PN}-3* instead to reduce"
 ewarn "the attack surface introduced by sys-auth/pam-python."
 ewarn
@@ -272,14 +328,24 @@ ewarn "capture_successful = false"
 ewarn
 ewarn "Saved snapshots should be deleted with shred (secure wipe) as well from:"
 ewarn
-ewarn "  shred -fu \$(find /$(get_libdir)/security/howdy/snapshots -type f)  # For 2.x installs"
-ewarn "  shred -fu \$(find /var/log/howdy/snapshots -type f)                 # For 3.x installs"
+ewarn "  # For 2.x installs:"
+ewarn "  shred -fu \$(find /$(get_libdir)/security/howdy/snapshots -type f)"
+ewarn "  # For 3.x installs:"
+ewarn "  shred -fu \$(find /var/log/howdy/snapshots -type f)"
 ewarn
-ewarn "Models should be removed securely if transfering disk ownership with:"
+ewarn "The user models should be removed securely if transfering disk ownership"
+ewarn "with:"
 ewarn
-ewarn "  shred -fu \$(find /$(get_libdir)/security/howdy/models -type f)     # For 2.x installs"
-ewarn "  shred -fu \$(find /etc/howdy/models -type f)                        # For 3.x installs"
+ewarn "  # For 2.x installs:"
+ewarn "  shred -fu \$(find /$(get_libdir)/security/howdy/models -type f)"
+ewarn "  # For 3.x installs:"
+ewarn "  shred -fu \$(find /etc/howdy/models -type f)"
 ewarn
+ewarn "The user models (*.dat) files should never have write permissions for others"
+ewarn "to prevent hijack or weakness."
+ewarn
+	verify_user_models_security
+	verify_folder_permissions
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
