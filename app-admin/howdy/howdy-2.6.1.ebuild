@@ -177,6 +177,12 @@ einfo "FILE: fperms 0644 ${x}"
 		x="/$(get_libdir)/security/${PN}"
 einfo "DIR: fperms 0755 ${x}"
 		fperms 0755 "${x}"
+
+# It will work if you delete the folders first.
+# https://github.com/boltgolt/howdy/issues/208
+		fperms 0755 "/$(get_libdir)/security/${PN}/dlib-data"
+# https://github.com/boltgolt/howdy/issues/450
+		fperms 0755 "/$(get_libdir)/security/${PN}/recorders"
 	popd
 	exeinto /usr/bin
 	dosym ../../$(get_libdir)/security/${PN}/cli.py /usr/bin/${PN}
@@ -185,11 +191,6 @@ einfo "DIR: fperms 0755 ${x}"
 	doins autocomplete/howdy
 	dodir /usr/share/howdy
 	rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
-
-# https://github.com/boltgolt/howdy/issues/208
-	fperms 0755 /$(get_libdir)/security/howdy/dlib-data
-# https://github.com/boltgolt/howdy/issues/450
-	fperms 0755 /$(get_libdir)/security/howdy/recorders
 }
 
 pkg_postinst() {
@@ -226,6 +227,14 @@ einfo
 einfo "  # Add face"
 einfo "  sudo ${PN} add"
 einfo
+
+ewarn
+ewarn "The following may be manually changed if the package manager fails to"
+ewarn "update folder permissions."
+ewarn
+ewarn "chmod 755 /$(get_libdir)/security/${PN}/dlib-data"
+ewarn "chmod 755 /$(get_libdir)/security/${PN}/recorders"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
