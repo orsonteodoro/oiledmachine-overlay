@@ -191,6 +191,8 @@ See metadata.xml for documentation or customization.
 * Stakeholders:  ebuild developers
 
 ```
+PORTAGE_DIR="/usr/portage"
+STABLE_ARCH="amd64"
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./check-ebuild-update
@@ -208,6 +210,8 @@ manages general version retrieval.
 * Stakeholders:  ebuild developers
 
 ```
+PORTAGE_DIR="/usr/portage"
+LAYMAN_DIR="/var/lib/layman"
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./lintrepo

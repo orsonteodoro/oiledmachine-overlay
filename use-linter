@@ -1,4 +1,6 @@
-cd /usr/local/oiledmachine-overlay
+#!/bin/bash
+OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
+cd "${OILEDMACHINE_OVERLAY_ROOT}"
 for x in $(find */* -maxdepth 0 -type d | cut -f 1-2 -d "/") ; do
 	if equery u "${x}::oiledmachine-overlay" 2>&1 | grep -q "xml.etree.ElementTree.ParseError:" ; then
 		echo "${x} is malformed:"

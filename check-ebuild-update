@@ -31,13 +31,13 @@ if [[ -f .check-ebuild-update.config ]] ; then
 source .check-ebuild-update.config
 fi
 
-PORTAGE_DIR=${PORTAGE_DIR:="/usr/portage"}
-STABLE_ARCH=${STABLE_ARCH:="amd64"}
-SCRAPERS_FILE=${SCRAPERS_FILE:="check-ebuild-update-scrapers"}
-DEBUG=${DEBUG:="0"}
-REPO_TZ=${REPO_TZ:="America/Los_Angeles"}
-CACHE_EXPIRE=${CACHE_EXPIRE:=86400} # 1 day
-CACHE_DIR=${CACHE_DIR:="/tmp/check-ebuild-update"}
+PORTAGE_DIR=${PORTAGE_DIR:-"/usr/portage"}
+STABLE_ARCH=${STABLE_ARCH:-"amd64"}
+SCRAPERS_FILE=${SCRAPERS_FILE:-"check-ebuild-update-scrapers"}
+DEBUG=${DEBUG:-"0"}
+REPO_TZ=${REPO_TZ:-"America/Los_Angeles"}
+CACHE_EXPIRE=${CACHE_EXPIRE:-86400} # 1 day
+CACHE_DIR=${CACHE_DIR:-"/tmp/check-ebuild-update"}
 
 setup_cache() {
 	mkdir -p "${CACHE_DIR}"

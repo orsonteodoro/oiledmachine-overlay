@@ -1,3 +1,4 @@
+#!/bin/bash
 # This is this repository's linter script.  All it does it check for errors and potential risky
 # habits.  It's for pre-emerge quality control purposes.  It will not guarantee that a ebuild
 # will install or work without problems.
@@ -5,8 +6,8 @@
 CI=${CI:=0}
 VERBOSE=${VERBOSE:=0}
 GREP_ARGS=-q
-PORTAGE_DIR="/usr/portage"
-LAYMAN_DIR="/var/lib/layman"
+PORTAGE_DIR=${PORTAGE_DIR:-"/usr/portage"}
+LAYMAN_DIR=${LAYMAN_DIR:-"/var/lib/layman"}
 
 if [[ ${@} =~ (-v|--verbose) ]]; then
 	VERBOSE=1
