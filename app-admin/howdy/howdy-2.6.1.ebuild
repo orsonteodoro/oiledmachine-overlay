@@ -25,7 +25,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda ffmpeg pyv4l2
++bash-completion cuda ffmpeg pyv4l2
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -187,8 +187,10 @@ einfo "DIR: fperms 0755 ${x}"
 	exeinto /usr/bin
 	dosym ../../$(get_libdir)/security/${PN}/cli.py /usr/bin/${PN}
 	fperms 0755 /$(get_libdir)/security/${PN}/cli.py
-	insinto /usr/share/bash-completion/completions
-	doins autocomplete/howdy
+	if use bash-completion ; then
+		insinto /usr/share/bash-completion/completions
+		doins autocomplete/howdy
+	fi
 	dodir /usr/share/howdy
 	rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
 }

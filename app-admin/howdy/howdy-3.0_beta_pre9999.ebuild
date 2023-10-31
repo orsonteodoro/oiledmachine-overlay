@@ -27,7 +27,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-cuda ffmpeg gtk pyv4l2
++bash-completion cuda ffmpeg +gtk pyv4l2
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -185,80 +185,41 @@ src_configure() {
 		sed -i -e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
 			"pam/main.cc" || die
 	popd
-	pushd "${S}/howdy/src/pam" || die
-#		export EMESON_SOURCE="${S}/howdy/src/pam"
-#		export BUILD_DIR="${S}/howdy/src/pam-build"
-		export EMESON_SOURCE="${S}"
-		export BUILD_DIR="${S}-build"
-		local emesonargs=(
-			-Dinih:with_INIReader=true
-		)
-		meson_src_configure
-	popd
+	export EMESON_SOURCE="${S}"
+	export BUILD_DIR="${S}_build"
+	local emesonargs=(
+		-Dinih:with_INIReader=true
+	)
+	meson_src_configure
 }
 
 src_compile() {
 	meson_src_compile
 }
 
-install_howdy() {
-	insinto /$(get_libdir)/security/${PN}
-	doins -r src/*
-	insinto /$(get_libdir)/security/${PN}/dlib-data
+src_install() {
+	meson_src_install
+	dodir /$(get_libdir)/security
+	mv \
+		"${ED}/usr/$(get_libdir)/security/pam_howdy.so" \
+		"${ED}/$(get_libdir)/security" \
+		|| die
+	if ! use gtk ; then
+		rm -rf "${ED}/usr/$(get_libdir)/howdy-gtk" || die
+	fi
+	if ! use bash-completion ; then
+		rm -rf "${ED}/usr/share/bash-completion" || die
+	fi
+	fperms 0755 /usr/share/dlib-data
+	fperms 0755 /usr/$(get_libdir)/howdy/recorders
+
+	insinto /usr/share/dlib-data
 	doins "${WORKDIR}/dlib_face_recognition_resnet_model_v1.dat"
 	doins "${WORKDIR}/mmod_human_face_detector.dat"
 	doins "${WORKDIR}/shape_predictor_5_face_landmarks.dat"
-	pushd "${ED}" || die
-		local x
-		for x in $(find "$(get_libdir)/security/${PN}" -type d) ; do
-			x="/${x}"
-einfo "DIR: fperms 0744 ${x}"
-			fperms -R 0744 "/${x}"
-		done
-		for x in $(find "$(get_libdir)/security/${PN}" -type f) ; do
-			x="/${x}"
-einfo "FILE: fperms 0644 ${x}"
-			fperms -R 0644 "/${x}"
-		done
-		x="/$(get_libdir)/security/${PN}"
-einfo "DIR: fperms 0755 ${x}"
-		fperms 0755 "${x}"
 
-# It will work if you delete the folders first.
-# https://github.com/boltgolt/howdy/issues/208
-		fperms 0755 "/$(get_libdir)/security/${PN}/dlib-data"
-# https://github.com/boltgolt/howdy/issues/450
-		fperms 0755 "/$(get_libdir)/security/${PN}/recorders"
-	popd
-	exeinto /usr/bin
-	dosym ../../$(get_libdir)/security/${PN}/cli.py /usr/bin/${PN}
-	fperms 0755 /$(get_libdir)/security/${PN}/cli.py
-	pushd "${BUILD_DIR}" || die
-		insinto /usr/share/bash-completion/completions
-		doins howdy/src/autocomplete
-	popd || die
-	exeinto /$(get_libdir)/security
-	doexe "${BUILD_DIR}/howdy/src/pam/pam_howdy.so"
-	dodir /usr/share/howdy
-	rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
-}
-
-install_howdy_gtk() {
-	insinto /$(get_libdir)/${PN}-gtk
-	doins -r src/*
-}
-
-src_install() {
 	docinto licenses
 	dodoc LICENSE
-	pushd ${PN} || die
-		install_howdy
-	popd || die
-	if use gtk ; then
-		pushd ${PN}-gtk || die
-			install_howdy_gtk
-		popd || die
-	fi
 }
 
 pkg_postinst() {
@@ -300,8 +261,8 @@ ewarn
 ewarn "You need to do the following if the package manager fails to update"
 ewarn "folder permissions:"
 ewarn
-ewarn "chmod 755 /$(get_libdir)/security/${PN}/dlib-data"
-ewarn "chmod 755 /$(get_libdir)/security/${PN}/recorders"
+ewarn "chmod 755 /usr/share/dlib-data"
+ewarn "chmod 755 /usr/$(get_libdir)/howdy/recorders"
 ewarn
 }
 
