@@ -282,10 +282,10 @@ einfo "Performing permission scan for data models"
 		local actual_owner=$(stat -c "%G:%U" "${path}")
 		local expected_owner="root:root"
 		if [[ "${actual_owner}" != "${expected_owner}" ]] ; then
-eerror "${path} has the wrong ownership.  Do \`chown ${expected_owner} ${path}\`. Expected owner:  ${expected_owner}, Actual owner:  ${actual_owner}"
+eerror "${path} has the wrong ownership.  Do \`chown ${expected_owner} ${path}\` or consider deleting the potentially compromised file.  Expected owner:  ${expected_owner}, Actual owner:  ${actual_owner}"
 		fi
 		if [[ "${actual_file_permissions}" != "${expected_file_permissions}" ]] ; then
-eerror "${path} permissions are incorrect.  Do \`chmod 0${expected_file_permissions} ${path}\`. Expected file permissions:  ${expected_file_permissions},  Actual file permissions:  ${actual_file_permissions}"
+eerror "${path} permissions are incorrect.  Do \`chmod 0${expected_file_permissions} ${path}\`.  Expected file permissions:  ${expected_file_permissions},  Actual file permissions:  ${actual_file_permissions}"
 		fi
 	done
 	IFS=$' \t\n'
