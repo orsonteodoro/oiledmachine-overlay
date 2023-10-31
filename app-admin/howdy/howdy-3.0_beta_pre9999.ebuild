@@ -27,7 +27,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg +gtk pyv4l2 r8
++bash-completion cuda ffmpeg +gtk pyv4l2 r9
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -282,12 +282,12 @@ ewarn
 ewarn "Saved snapshots should be deleted with shred (secure wipe) as well from:"
 ewarn
 ewarn "  shred -fu \$(find /$(get_libdir)/security/howdy/snapshots -type f)  # For 2.x installs"
-ewarn "  shred -fu \$(find /var/log/howdy/snapshots -type -f)                # For 3.x installs"
+ewarn "  shred -fu \$(find /var/log/howdy/snapshots -type f)                 # For 3.x installs"
 ewarn
 ewarn "Models should be removed securely if transfering disk ownership with:"
 ewarn
-ewarn "  shred -fu \$(find /$(get_libdir)/security/howdy/models -type -f)    # For 2.x installs"
-ewarn "  shred -fu \$(find /etc/howdy/models -type -f)                       # For 3.x installs"
+ewarn "  shred -fu \$(find /$(get_libdir)/security/howdy/models -type f)     # For 2.x installs"
+ewarn "  shred -fu \$(find /etc/howdy/models -type f)                        # For 3.x installs"
 ewarn
 }
 
