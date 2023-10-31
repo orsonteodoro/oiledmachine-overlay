@@ -185,6 +185,11 @@ einfo "DIR: fperms 0755 ${x}"
 	doins autocomplete/howdy
 	dodir /usr/share/howdy
 	rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
+
+# https://github.com/boltgolt/howdy/issues/208
+	fperms 0755 /$(get_libdir)/security/howdy/dlib-data
+# https://github.com/boltgolt/howdy/issues/450
+	fperms 0755 /$(get_libdir)/security/howdy/recorders
 }
 
 pkg_postinst() {

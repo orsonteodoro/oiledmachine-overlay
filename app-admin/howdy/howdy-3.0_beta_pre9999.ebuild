@@ -119,7 +119,7 @@ ewarn
 
 src_unpack() {
 	if [[ ${PV} =~ 9999 ]] ; then
-		use fallback-commit && EGIT_COMMIT="30728a6d3634479c24ffd4e094c34a30bbb43058" # Mar 8, 2022
+		use fallback-commit && EGIT_COMMIT="c5b17665d5e27c92abaad988e1b229c8d558220b" # Sep 24, 2023
 		EGIT_BRANCH="beta"
 		EGIT_REPO_URI="https://github.com/boltgolt/howdy.git"
 		git-r3_fetch
@@ -186,7 +186,10 @@ src_configure() {
 			"pam/main.cc" || die
 	popd
 	pushd "${S}/howdy/src/pam" || die
-		export EMESON_SOURCE="${S}/howdy/src/pam"
+#		export EMESON_SOURCE="${S}/howdy/src/pam"
+#		export BUILD_DIR="${S}/howdy/src/pam-build"
+		export EMESON_SOURCE="${S}"
+		export BUILD_DIR="${S}-build"
 		local emesonargs=(
 			-Dinih:with_INIReader=true
 		)
@@ -224,12 +227,19 @@ einfo "DIR: fperms 0755 ${x}"
 	exeinto /usr/bin
 	dosym ../../$(get_libdir)/security/${PN}/cli.py /usr/bin/${PN}
 	fperms 0755 /$(get_libdir)/security/${PN}/cli.py
-	insinto /usr/share/bash-completion/completions
-	doins src/autocomplete/howdy
+	pushd "${BUILD_DIR}" || die
+		insinto /usr/share/bash-completion/completions
+		doins howdy/src/autocomplete
+	popd || die
 	exeinto /$(get_libdir)/security
-	doexe "${BUILD_DIR}/pam_howdy.so"
+	doexe "${BUILD_DIR}/howdy/src/pam/pam_howdy.so"
 	dodir /usr/share/howdy
 	rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
+
+# https://github.com/boltgolt/howdy/issues/208
+	fperms 0755 /$(get_libdir)/security/howdy/dlib-data
+# https://github.com/boltgolt/howdy/issues/450
+	fperms 0755 /$(get_libdir)/security/howdy/recorders
 }
 
 install_howdy_gtk() {
