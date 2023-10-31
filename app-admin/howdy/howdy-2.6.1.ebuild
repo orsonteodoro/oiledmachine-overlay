@@ -25,7 +25,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg pyv4l2 r4
++bash-completion cuda ffmpeg pyv4l2 r5
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -151,6 +151,7 @@ src_configure() {
 		sed -i \
 			-e "s|capture_failed = true|capture_failed = false|g" \
 			-e "s|capture_successful = true|capture_successful = false|g" \
+			config.ini \
 			|| die
 	popd
 }
@@ -259,12 +260,18 @@ ewarn "the attack surface introduced by sys-auth/pam-python."
 ewarn
 
 ewarn
+ewarn "SECURITY"
+ewarn
 ewarn "The /etc/howdy/config.ini should edited as follows for security"
-ewarn "hardening:"
+ewarn "hardening especially for previous installations of the 2.6"
+ewarn "series:"
 ewarn
 ewarn "[snapshot]"
 ewarn "capture_failed = false"
 ewarn "capture_successful = false"
+ewarn
+ewarn "Saved snapshots should be removed as well from"
+ewarn "/$(get_libdir)/security/howdy/snapshots."
 ewarn
 }
 
