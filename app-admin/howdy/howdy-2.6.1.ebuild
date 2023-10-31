@@ -25,7 +25,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg pyv4l2
++bash-completion cuda ffmpeg pyv4l2 r2
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -154,14 +154,8 @@ src_compile() {
 }
 
 src_install() {
-	docinto licenses
-	dodoc LICENSE
 	insinto /$(get_libdir)/security/${PN}
 	doins -r src/*
-	insinto /$(get_libdir)/security/${PN}/dlib-data
-	doins "${WORKDIR}/dlib_face_recognition_resnet_model_v1.dat"
-	doins "${WORKDIR}/mmod_human_face_detector.dat"
-	doins "${WORKDIR}/shape_predictor_5_face_landmarks.dat"
 	pushd "${ED}" || die
 		local x
 		for x in $(find "$(get_libdir)/security/${PN}" -type d) ; do
@@ -191,8 +185,23 @@ einfo "DIR: fperms 0755 ${x}"
 		insinto /usr/share/bash-completion/completions
 		doins autocomplete/howdy
 	fi
-	dodir /usr/share/howdy
+
+	insinto /$(get_libdir)/security/${PN}/dlib-data
+	doins "${WORKDIR}/dlib_face_recognition_resnet_model_v1.dat"
+	doins "${WORKDIR}/mmod_human_face_detector.dat"
+	doins "${WORKDIR}/shape_predictor_5_face_landmarks.dat"
+
 	rm -rf "${ED}/$(get_libdir)/security/howdy/pam-config"
+
+	docinto licenses
+	dodoc LICENSE
+
+	insinto /etc/howdy
+	doins src/config.ini
+	rm -rf "${ED}/$(get_libdir)/security/howdy/config.ini" || die
+	dosym \
+		"/etc/howdy/config.ini" \
+		"/$(get_libdir)/security/${PN}/config.ini"
 }
 
 pkg_postinst() {
@@ -236,6 +245,11 @@ ewarn "folder permissions:"
 ewarn
 ewarn "chmod 755 /$(get_libdir)/security/${PN}/dlib-data"
 ewarn "chmod 755 /$(get_libdir)/security/${PN}/recorders"
+ewarn
+
+ewarn
+ewarn "You may consider using the =${CATEGORY}/${PN}-3* instead to reduce"
+ewarn "the attack surface introduced by sys-auth/pam-python."
 ewarn
 }
 

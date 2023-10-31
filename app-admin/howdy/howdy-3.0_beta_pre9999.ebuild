@@ -27,7 +27,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg +gtk pyv4l2
++bash-completion cuda ffmpeg +gtk pyv4l2 r2
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -206,6 +206,7 @@ src_install() {
 		|| die
 	if ! use gtk ; then
 		rm -rf "${ED}/usr/$(get_libdir)/howdy-gtk" || die
+		rm -rf "${ED}/usr/bin/howdy-gtk" || die
 	fi
 	if ! use bash-completion ; then
 		rm -rf "${ED}/usr/share/bash-completion" || die
@@ -220,6 +221,9 @@ src_install() {
 
 	docinto licenses
 	dodoc LICENSE
+
+	insinto /etc/howdy
+	doins howdy/src/config.ini
 }
 
 pkg_postinst() {

@@ -56,5 +56,9 @@
     <flag name="pyv4l2">
       Uses pyv4l2 as a capture source.
     </flag>
+
+    <flag name="rN">
+      Ebuild revision
+    </flag>
   </use>
 </pkgmetadata>
