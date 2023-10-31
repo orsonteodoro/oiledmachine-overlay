@@ -212,7 +212,7 @@ einfo "DIR: fperms 0755 ${x}"
 }
 
 verify_folder_permissions() {
-einfo "Performing permission scan for folder"
+einfo "Performing permission scan for folders"
 	local d
 
 	d="/usr/share/dlib-data"

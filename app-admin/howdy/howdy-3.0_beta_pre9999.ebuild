@@ -227,7 +227,7 @@ src_install() {
 }
 
 verify_folder_permissions() {
-einfo "Performing permission scan for folder"
+einfo "Performing permission scan for folders"
 	local d
 
 	d="/usr/share/dlib-data"
