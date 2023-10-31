@@ -27,7 +27,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg +gtk pyv4l2 r6
++bash-completion cuda ffmpeg +gtk pyv4l2 r7
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -279,8 +279,10 @@ ewarn "[snapshot]"
 ewarn "capture_failed = false"
 ewarn "capture_successful = false"
 ewarn
-ewarn "Saved snapshots should be deleted with shred (secure wipe) as well from"
-ewarn "/$(get_libdir)/security/howdy/snapshots."
+ewarn "Saved snapshots should be deleted with shred (secure wipe) as well from:"
+ewarn
+ewarn "  /$(get_libdir)/security/howdy/snapshots"
+ewarn "  /var/log/howdy/snapshots"
 ewarn
 }
 
