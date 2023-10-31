@@ -25,7 +25,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg pyv4l2 r2
++bash-completion cuda ffmpeg pyv4l2 r4
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -146,6 +146,12 @@ src_configure() {
 			sed -i -e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
 				config.ini || die
 		fi
+
+		# Disable for security and privacy reasons
+		sed -i \
+			-e "s|capture_failed = true|capture_failed = false|g" \
+			-e "s|capture_successful = true|capture_successful = false|g" \
+			|| die
 	popd
 }
 
@@ -250,6 +256,15 @@ ewarn
 ewarn
 ewarn "You may consider using the =${CATEGORY}/${PN}-3* instead to reduce"
 ewarn "the attack surface introduced by sys-auth/pam-python."
+ewarn
+
+ewarn
+ewarn "The /etc/howdy/config.ini should edited as follows for security"
+ewarn "hardening:"
+ewarn
+ewarn "[snapshot]"
+ewarn "capture_failed = false"
+ewarn "capture_successful = false"
 ewarn
 }
 

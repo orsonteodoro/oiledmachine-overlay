@@ -27,7 +27,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg +gtk pyv4l2 r2
++bash-completion cuda ffmpeg +gtk pyv4l2 r4
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -267,6 +267,14 @@ ewarn "folder permissions:"
 ewarn
 ewarn "chmod 755 /usr/share/dlib-data"
 ewarn "chmod 755 /usr/$(get_libdir)/howdy/recorders"
+ewarn
+
+ewarn
+ewarn "The /etc/howdy/config.ini should edited as follows for security hardening:"
+ewarn
+ewarn "[snapshot]"
+ewarn "capture_failed = false"
+ewarn "capture_successful = false"
 ewarn
 }
 
