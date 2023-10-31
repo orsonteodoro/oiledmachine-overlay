@@ -297,8 +297,8 @@ einfo "  sudo ${PN} add"
 einfo
 
 ewarn
-ewarn "The following may be manually changed if the package manager fails to"
-ewarn "update folder permissions."
+ewarn "You need to do the following if the package manager fails to update"
+ewarn "folder permissions:"
 ewarn
 ewarn "chmod 755 /$(get_libdir)/security/${PN}/dlib-data"
 ewarn "chmod 755 /$(get_libdir)/security/${PN}/recorders"
