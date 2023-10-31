@@ -261,7 +261,7 @@ einfo "Performing permission scan for data models"
 	local path
 	for path in "${L[@]}" ; do
 		local actual_file_permissions=$(stat -c "%a" "${d}")
-		local expected_file_permissions="644"
+		local expected_file_permissions="644" # TODO:  re-review.  640 is preferred but /usr/bin/{howdy,howdy-gtk} may require 644.
 
 		local actual_owner=$(stat -c "%G:%U" "${path}")
 		local expected_owner="root:root"
