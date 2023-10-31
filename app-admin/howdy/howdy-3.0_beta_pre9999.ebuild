@@ -227,6 +227,7 @@ src_install() {
 }
 
 verify_folder_permissions() {
+einfo "Performing permission scan for folder"
 	local d
 
 	d="/usr/share/dlib-data"
@@ -266,7 +267,7 @@ eerror "${d} permissions are incorrect.  Do \`chmod 0${expected_file_permissions
 	fi
 }
 
-verify_user_models_security() {
+verify_user_models_permissions() {
 einfo "Performing permission scan for data models"
 	IFS=$'\n'
 	local L=(
@@ -353,7 +354,7 @@ ewarn
 ewarn "The user models (*.dat) files should never have write permissions for others"
 ewarn "to prevent hijack or weakness."
 ewarn
-	verify_user_models_security
+	verify_user_models_permissions
 	verify_folder_permissions
 }
 
