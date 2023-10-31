@@ -265,8 +265,8 @@ ewarn
 ewarn "You need to do the following if the package manager fails to update"
 ewarn "folder permissions:"
 ewarn
-ewarn "chmod 755 /usr/share/dlib-data"
-ewarn "chmod 755 /usr/$(get_libdir)/howdy/recorders"
+ewarn "chmod 0755 /usr/share/dlib-data"
+ewarn "chmod 0755 /usr/$(get_libdir)/howdy/recorders"
 ewarn
 
 ewarn

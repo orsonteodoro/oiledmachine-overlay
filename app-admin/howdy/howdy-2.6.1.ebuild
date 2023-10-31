@@ -250,8 +250,8 @@ ewarn
 ewarn "You need to do the following if the package manager fails to update"
 ewarn "folder permissions:"
 ewarn
-ewarn "chmod 755 /$(get_libdir)/security/${PN}/dlib-data"
-ewarn "chmod 755 /$(get_libdir)/security/${PN}/recorders"
+ewarn "chmod 0755 /$(get_libdir)/security/${PN}/dlib-data"
+ewarn "chmod 0755 /$(get_libdir)/security/${PN}/recorders"
 ewarn
 
 ewarn
