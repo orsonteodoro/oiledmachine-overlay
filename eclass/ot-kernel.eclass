@@ -9008,10 +9008,10 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 
 			# For genkernel
 			dosym $(basename "${default_config}") \
-				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch}
+				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${UPSTREAM_PV})${suffix}-${extraversion}-${arch}
 
 			# For linux-info.eclass config checks
-			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch} \
+			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${UPSTREAM_PV})${suffix}-${extraversion}-${arch} \
 				"/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config"
 
 			local cache="${T}/save_cache"
