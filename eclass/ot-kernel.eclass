@@ -9464,10 +9464,10 @@ EOF
 				"${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}/"* \
 				"${ED}/lib/modules/${target}" \
 				|| die
+			rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" \
+				|| true
 		fi
 
-		rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" \
-			|| true
 		rm -rf "${ED}/lib/modules/${target}/build" \
 			|| true
 		rm -rf "${ED}/lib/modules/${target}/source" \
