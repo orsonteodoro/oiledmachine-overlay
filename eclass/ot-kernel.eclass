@@ -2154,8 +2154,8 @@ apply_gcc_full_pgo() {
 eerror
 eerror "GCC full pgo is on hold indefinitely.  See metadata.xml."
 eerror
-eerror "Change OT_KERNEL_PGO_FLAVOR to either GCC_PGO_CFG or CLANG_PGO or"
-eerror "disable the pgo USE flag."
+eerror "Change OT_KERNEL_PGO_FLAVOR to either GCC_PGO_CFG, GCC_PDO, or"
+eerror "CLANG_PGO or disable the pgo USE flag."
 eerror
 	die
 	einfo "Applying patchset for Full PGO with GCC"
