@@ -28,12 +28,16 @@ LINUX_SOURCES_FALLBACK_COMMIT="611da07b89fdd53f140d7b33013f255bf0ed8f34" # 2023-
 # PV is for 9999 (live) context check
 if [[ "${PV}" =~ "9999" ]] ; then
 	KERNEL_RELEASE_DATE="99999999"
-	MY_PV=$(ver_cut 1-3 "${PV}")"_rc7" # ver_test context
-	RC_PV="rc7"
+	#RC_PV=${RC_PV:-"rc7"}
+	if [[ -n "${RC_PV}" ]] ; then
+		MY_PV=$(ver_cut 1-3 "${PV}")"_${RC_PV}" # ver_test context
+	else
+		MY_PV=$(ver_cut 1-3 "${PV}") # ver_test context
+	fi
 else
 	KERNEL_RELEASE_DATE="" # of first stable release
-	MY_PV="${PV}" # ver_test context
 	RC_PV=""
+	MY_PV="${PV}" # ver_test context
 fi
 UPSTREAM_PV="${MY_PV/_/-}" # file context
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.6/tools/build/feature/Makefile#L331

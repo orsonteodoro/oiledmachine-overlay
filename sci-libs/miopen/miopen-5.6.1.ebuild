@@ -331,7 +331,7 @@ src_configure() {
 		export CC="clang"
 		export CXX="clang++"
 	fi
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {
