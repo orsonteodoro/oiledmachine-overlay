@@ -17,7 +17,9 @@ else
 	MY_PV="${PV}"
 fi
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
+ROCM_SLOT="5.1"
 ROCM_VERSION="${PV}"
+
 inherit rocm unpacker
 
 SRC_URI=""
@@ -26,12 +28,13 @@ DESCRIPTION="Prebuilt kernels to reduce startup latency"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen#installing-miopen-kernels-package"
 LICENSE="MIT"
 KEYWORDS="~amd64"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 IUSE="r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
+	!sci-libs/miopenkernels:0
 "
 DEPEND="
 	${RDEPEND}
