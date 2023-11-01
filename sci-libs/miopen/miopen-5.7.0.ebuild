@@ -3,8 +3,6 @@
 
 EAPI=8
 
-MY_PV="${PV%.*}" # For /opt/rocm-5.6
-
 AMDGPU_TARGETS_COMPAT=(
 #	 gfx800
 #	 gfx802
@@ -260,7 +258,7 @@ ewarn "Please wait... Patching may take longer than usual."
 			$(get_amdgpu_flags \
 				| tr ";" " ")
 		)
-		cd "${ESYSROOT}/opt/rocm-${MY_PV}/share/miopen/db" || die
+		cd "${ESYSROOT}/opt/rocm-${PV}/share/miopen/db" || die
 einfo "Copying kernels"
 		local ma
 		for ma in ${MA[@]} ; do
