@@ -10,7 +10,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a
 	gfx1030
 )
-MAINTAINER_MODE=1
+MAINTAINER_MODE=0
 if [[ "${PV##*.}" == "0" ]] ; then
 	MY_PV=$(ver_cut 1-2 ${PV})
 else
