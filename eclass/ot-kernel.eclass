@@ -9458,7 +9458,8 @@ EOF
 		local target=$(cat "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release")
 
 		mkdir -p "${ED}/lib/modules/${target}"
-		if [[ -e "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" ]] ; then
+		if [[ -e "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" \
+			&& "${ED}/lib/modules/${target}" != "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" ]] ; then
 			cp -a \
 				"${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}/"* \
 				"${ED}/lib/modules/${target}" \
