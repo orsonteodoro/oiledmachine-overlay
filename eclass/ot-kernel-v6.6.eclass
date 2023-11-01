@@ -24,18 +24,19 @@ esac
 # https://github.com/torvalds/linux/blob/v6.6/scripts/min-tool-version.sh#L26
 
 GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="611da07b89fdd53f140d7b33013f255bf0ed8f34" # 2023-10-25 07:51:56 -1000
+LINUX_SOURCES_FALLBACK_COMMIT="8bc9e6515183935fa0cccaf67455c439afe4982b" # 2023-10-31 18:50:13 -1000
 # PV is for 9999 (live) context check
 if [[ "${PV}" =~ "9999" ]] ; then
 	KERNEL_RELEASE_DATE="99999999"
-	#RC_PV=${RC_PV:-"rc7"}
+	RC_PV=""
+	# MY_PV is in ver_test context
 	if [[ -n "${RC_PV}" ]] ; then
-		MY_PV=$(ver_cut 1-3 "${PV}")"_${RC_PV}" # ver_test context
+		MY_PV=$(ver_cut 1-3 "${PV}")"_${RC_PV}"
 	else
-		MY_PV=$(ver_cut 1-3 "${PV}") # ver_test context
+		MY_PV=$(ver_cut 1-3 "${PV}")
 	fi
 else
-	KERNEL_RELEASE_DATE="" # of first stable release
+	KERNEL_RELEASE_DATE="20231029" # of first stable release
 	RC_PV=""
 	MY_PV="${PV}" # ver_test context
 fi
@@ -585,6 +586,11 @@ RDEPEND+="
 		${CDEPEND}
 	)
 "
+if ! [[ "${PV}" =~ "9999" ]] ; then
+	RDEPEND+="
+		!=sys-kernel/ot-sources-${KV_MAJOR_MINOR}.0.9999
+	"
+fi
 
 DEPEND+="
 	${RDEPEND}
@@ -595,6 +601,11 @@ BDEPEND+="
 		${CDEPEND}
 	)
 "
+if ! [[ "${PV}" =~ "9999" ]] ; then
+	BDEPEND+="
+		!=sys-kernel/ot-sources-${KV_MAJOR_MINOR}.0.9999
+	"
+fi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	:;

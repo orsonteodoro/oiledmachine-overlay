@@ -8994,9 +8994,18 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 				suffix="-${RC_PV}"
 			fi
 
-			# For genkernel
-			dosym $(basename "${default_config}") \
-				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch}
+			local n_version_components=$(echo "${MY_PV}" \
+				| tr "." "\n" \
+				| wc -l)
+			if (( ${n_version_components} == 2 )) ; then
+				# For genkernel
+				dosym $(basename "${default_config}") \
+					$(dirname "${default_config}")/kernel-config-$(ver_cut 1-2 ${MY_PV}).0${suffix}-${extraversion}-${arch}
+			else
+				# For genkernel
+				dosym $(basename "${default_config}") \
+					$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch}
+			fi
 
 			# For linux-info.eclass config checks
 			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch} \
