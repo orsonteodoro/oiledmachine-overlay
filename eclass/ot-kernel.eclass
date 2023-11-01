@@ -2151,6 +2151,13 @@ einfo "Done unpacking."
 # @DESCRIPTION:
 # Applies a patchset for Full PGO with GCC.
 apply_gcc_full_pgo() {
+eerror
+eerror "GCC full pgo is on hold indefinitely.  See metadata.xml."
+eerror
+eerror "Change OT_KERNEL_PGO_FLAVOR to either GCC_PGO_CFG or CLANG_PGO or"
+eerror "disable the pgo USE flag."
+eerror
+	die
 	einfo "Applying patchset for Full PGO with GCC"
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
@@ -8450,7 +8457,9 @@ einfo "Building PGO"
 					"KCFLAGS=-fprofile-use=${profdata_dpath}"
 				)
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && ! -e "${profraw_dpath}" ]] ; then
-einfo "Resuming as PGT since no profile generated"
+einfo "Resuming as PGI since no profile generated"
+				echo "${PGO_PHASE_PGI}" > "${pgo_phase_statefile}" || die
+				ot-kernel_set_kconfig_pgo
 			fi
 		elif \
 			( \
@@ -8497,7 +8506,6 @@ eerror
 
 einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
 
-einfo "DEBUG:  -A"
 			local n_gcda=$(find "${pgo_profile_dir}" -name "*.gcda" 2>/dev/null | wc -l)
 			[[ -z "${n_gcda}" ]] && n_gcda=0
 			if [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGI}") ]] ; then
@@ -8508,7 +8516,6 @@ einfo "DEBUG:  -A"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
 					makefile_pgo_phase="GCC_PGI_CFG"
 				fi
-einfo "DEBUG:  A"
 einfo "Building ${pgo_phase}"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
@@ -8516,7 +8523,6 @@ einfo "Building ${pgo_phase}"
 					| sed -e "s|sys-devel/binutils-||g")
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
-einfo "DEBUG:  A1"
 					args+=(
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
 						"GCC_PGO_PHASE=${makefile_pgo_phase}"
@@ -8526,7 +8532,6 @@ einfo "DEBUG:  A1"
 						"LIBC_DIR=${LIBC_DIR}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
-einfo "DEBUG:  A2"
 					args+=(
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}"
 						"GCC_PGO_PHASE=${makefile_pgo_phase}"
@@ -8549,7 +8554,6 @@ eerror
 					die
 				fi
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} > 0 )) ; then
-einfo "DEBUG:  A3"
 				pgo_phase="PGO"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
@@ -8577,14 +8581,12 @@ einfo "Generating counter summary and histogram and adding to the PGO profile"
 					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
-einfo "DEBUG:  B"
 einfo "Building ${pgo_phase}"
 				args+=(
 					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
-einfo "DEBUG:  A4"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
@@ -8600,14 +8602,12 @@ einfo "DEBUG:  A4"
 					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 # For resuming or rebuilding as PDO phase
-einfo "DEBUG:  C"
 einfo "Building ${pgo_phase}"
 				args+=(
 					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} == 0 )) ; then
-einfo "DEBUG:  A5"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDI"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
@@ -8615,15 +8615,16 @@ einfo "DEBUG:  A5"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
 					makefile_pgo_phase="GCC_PGI_CFG"
 				fi
+				echo "${PGO_PHASE_PGI}" > "${pgo_phase_statefile}" || die
+				ot-kernel_set_kconfig_pgo
 
-einfo "Resuming as ${pgo_phase} since no profile generated"
+einfo "Resuming as ${makefile_pgo_phase} since no profile generated"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
 				local binutils_pv=$(best_version sys-devel/binutils \
 					| sed -e "s|sys-devel/binutils-||g")
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
-einfo "DEBUG:  A6"
 					args+=(
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
 						"GCC_PGO_PHASE=${makefile_pgo_phase}"
@@ -8633,7 +8634,6 @@ einfo "DEBUG:  A6"
 						"LIBC_DIR=${LIBC_DIR}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
-einfo "DEBUG:  A7"
 					args+=(
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}"
 						"GCC_PGO_PHASE=${makefile_pgo_phase}"

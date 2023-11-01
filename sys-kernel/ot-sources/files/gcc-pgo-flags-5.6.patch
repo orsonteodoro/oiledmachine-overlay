@@ -13,7 +13,7 @@ License identified in arch/x86/kernel/paravirt.c:
 // SPDX-License-Identifier: GPL-2.0-or-later
 --- a/Makefile.orig	2023-09-13 18:20:31.324243717 -0700
 +++ b/Makefile	2023-09-13 18:21:21.272242425 -0700
-@@ -762,10 +762,43 @@ endif # KBUILD_EXTMOD
+@@ -762,10 +762,46 @@ endif # KBUILD_EXTMOD
  # Defaults to vmlinux, but the arch makefile usually adds further targets
  all: vmlinux
  
@@ -24,38 +24,41 @@ License identified in arch/x86/kernel/paravirt.c:
 +CFLAGS_GCOV_DEFAULT	:= 1
 +
 +ifeq ($(GCC_PGO_PHASE),GCC_PDI)
-+CFLAGS_GCOV	+= -fprofile-arcs -fno-tree-loop-im
++CFLAGS_GCOV	:= -fprofile-arcs -fno-tree-loop-im
 +CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
 +ifeq ($(GCC_PGO_PHASE),GCC_PGI)
-+CFLAGS_GCOV	+= -fprofile-generate -fno-tree-loop-im
++CFLAGS_GCOV	:= -fprofile-generate -fno-tree-loop-im
 +CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
 +ifeq ($(GCC_PGO_PHASE),GCC_PGO_CFG)
-+CFLAGS_GCOV	+= -fprofile-arcs -fno-tree-loop-im
++CFLAGS_GCOV	:= -fprofile-arcs -fno-tree-loop-im
 +CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
 +ifeq ($(GCC_PGO_PHASE),GCC_PDO)
-+KCFLAGS	+= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++KCFLAGS	:= -fbranch-probabilities -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +CFLAGS_GCOV_DEFAULT	= 0
  endif
 +
 +ifeq ($(GCC_PGO_PHASE),GCC_PGO)
-+KCFLAGS	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++KCFLAGS	:= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
 +ifeq ($(GCC_PGO_PHASE),GCC_PGO_CFG)
-+KCFLAGS	+= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
++KCFLAGS	:= -fprofile-use -fprofile-dir=$(GCC_PGO_PROFILE_DIR) -fprofile-correction -Wno-error=missing-profile -Wno-error=coverage-mismatch
 +CFLAGS_GCOV_DEFAULT	= 0
 +endif
 +
 +ifeq ($(CFLAGS_GCOV_DEFAULT),1)
-+CFLAGS_GCOV	+= -fprofile-arcs -ftest-coverage
++CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
 +endif
++
++$(info "GCC_PGO_PHASE:  ${GCC_PGO_PHASE}")
++$(info "CFLAGS_GCOV:  ${CFLAGS_GCOV}")
 +
  export CFLAGS_GCOV
  
