@@ -17,7 +17,7 @@ else
 	MY_PV="${PV}"
 fi
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
-ROCM_SLOT="5.1"
+ROCM_SLOT="5.7"
 ROCM_VERSION="${PV}"
 
 inherit rocm unpacker
@@ -29,7 +29,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen#installing-miopen-kerne
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="r1"
+IUSE="r2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
