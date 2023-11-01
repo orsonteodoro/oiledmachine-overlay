@@ -40,7 +40,6 @@ else
 	RC_PV=""
 	MY_PV="${PV}" # ver_test context
 fi
-UPSTREAM_PV="${MY_PV/_/-}" # file context
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.6/tools/build/feature/Makefile#L331
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
@@ -52,6 +51,12 @@ EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
+if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
+	# Normalize versioning
+	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
+else
+	UPSTREAM_PV="${MY_PV/_/-}" # file context
+fi
 PATCH_ALLOW_O3_COMMIT="5cfe707ed5a04b88374c91937b8fb7fa020b96a8" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest

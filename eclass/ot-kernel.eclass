@@ -180,6 +180,7 @@ OT_KERNEL_PGO_DATA_DIR="/var/lib/ot-sources/${MY_PV}"
 IUSE+="
 bzip2 cpu_flags_arm_thumb graphicsmagick gtk gzip imagemagick intel-microcode
 linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs qt5 xz zstd
+${EBUILD_REV}
 "
 GCC_PKG="sys-devel/gcc"
 NEEDS_DEBUGFS=0
@@ -8496,6 +8497,7 @@ eerror
 
 einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
 
+einfo "DEBUG:  -A"
 			local n_gcda=$(find "${pgo_profile_dir}" -name "*.gcda" 2>/dev/null | wc -l)
 			[[ -z "${n_gcda}" ]] && n_gcda=0
 			if [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGI}") ]] ; then
@@ -8506,6 +8508,7 @@ einfo "GCC PATH:  "$(which ${CHOST}-gcc-${gcc_slot})
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
 					makefile_pgo_phase="GCC_PGI_CFG"
 				fi
+einfo "DEBUG:  A"
 einfo "Building ${pgo_phase}"
 				local gcc_slot=$(gcc-major-version)
 				local current_abi="LIBDIR_${DEFAULT_ABI}"
@@ -8513,6 +8516,7 @@ einfo "Building ${pgo_phase}"
 					| sed -e "s|sys-devel/binutils-||g")
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
+einfo "DEBUG:  A1"
 					args+=(
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
 						"GCC_PGO_PHASE=${makefile_pgo_phase}"
@@ -8522,6 +8526,7 @@ einfo "Building ${pgo_phase}"
 						"LIBC_DIR=${LIBC_DIR}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
+einfo "DEBUG:  A2"
 					args+=(
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}"
 						"GCC_PGO_PHASE=${makefile_pgo_phase}"
@@ -8544,6 +8549,7 @@ eerror
 					die
 				fi
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} > 0 )) ; then
+einfo "DEBUG:  A3"
 				pgo_phase="PGO"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
@@ -8571,12 +8577,14 @@ einfo "Generating counter summary and histogram and adding to the PGO profile"
 					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
+einfo "DEBUG:  B"
 einfo "Building ${pgo_phase}"
 				args+=(
 					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
+einfo "DEBUG:  A4"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
 					makefile_pgo_phase="GCC_PDO"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" && "${PGO_PHASE_PGO}" == "PGO" ]] ; then
@@ -8592,12 +8600,14 @@ einfo "Building ${pgo_phase}"
 					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
 # For resuming or rebuilding as PDO phase
+einfo "DEBUG:  C"
 einfo "Building ${pgo_phase}"
 				args+=(
 					"GCC_PGO_PHASE=${makefile_pgo_phase}"
 					"GCC_PGO_PROFILE_DIR=${pgo_profile_dir}"
 				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGT}") ]] && (( ${n_gcda} == 0 )) ; then
+einfo "DEBUG:  A5"
 				if [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PDO" ]] ; then
 					makefile_pgo_phase="GCC_PDI"
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
@@ -8613,6 +8623,7 @@ einfo "Resuming as ${pgo_phase} since no profile generated"
 					| sed -e "s|sys-devel/binutils-||g")
 				binutils_pv=$(ver_cut 1-2 "${binutils_pv}")
 				if [[ -n "${GCC_GCOV_DIR}" ]] ; then
+einfo "DEBUG:  A6"
 					args+=(
 						"GCC_GCOV_DIR=${GCC_GCOV_DIR}"
 						"GCC_PGO_PHASE=${makefile_pgo_phase}"
@@ -8622,6 +8633,7 @@ einfo "Resuming as ${pgo_phase} since no profile generated"
 						"LIBC_DIR=${LIBC_DIR}"
 					)
 				elif [[ "${arch}" == "x86_64" ]] ; then
+einfo "DEBUG:  A7"
 					args+=(
 						"GCC_GCOV_DIR=${ESYSROOT}/usr/lib/gcc/${CHOST_amd64}/${gcc_slot}"
 						"GCC_PGO_PHASE=${makefile_pgo_phase}"
@@ -8994,18 +9006,9 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 				suffix="-${RC_PV}"
 			fi
 
-			local n_version_components=$(echo "${MY_PV}" \
-				| tr "." "\n" \
-				| wc -l)
-			if (( ${n_version_components} == 2 )) ; then
-				# For genkernel
-				dosym $(basename "${default_config}") \
-					$(dirname "${default_config}")/kernel-config-$(ver_cut 1-2 ${MY_PV}).0${suffix}-${extraversion}-${arch}
-			else
-				# For genkernel
-				dosym $(basename "${default_config}") \
-					$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch}
-			fi
+			# For genkernel
+			dosym $(basename "${default_config}") \
+				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch}
 
 			# For linux-info.eclass config checks
 			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${MY_PV})${suffix}-${extraversion}-${arch} \

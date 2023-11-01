@@ -23,7 +23,6 @@ esac
 
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
-UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20201213" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.10/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT=13
@@ -35,6 +34,12 @@ EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
+if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
+	# Normalize versioning
+	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
+else
+	UPSTREAM_PV="${MY_PV/_/-}" # file context
+fi
 MUQSS_VER="0.205"
 PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c" # from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="2c85ebc57b3e1817b6ce1a6b703928e113a90442" # 5.10

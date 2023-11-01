@@ -23,7 +23,6 @@ esac
 
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
-UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20191124" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.4/tools/build/feature/Makefile#L318
 LLVM_MAX_SLOT=15
@@ -34,6 +33,12 @@ GENPATCHES_BLACKLIST=" 2400"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
+if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
+	# Normalize versioning
+	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
+else
+	UPSTREAM_PV="${MY_PV/_/-}" # file context
+fi
 MUQSS_VER="0.196"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/A^..D.patch \

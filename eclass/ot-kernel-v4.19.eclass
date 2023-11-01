@@ -23,7 +23,6 @@ esac
 
 # PV is for 9999 (live) context check
 MY_PV="${PV}" # ver_test context
-UPSTREAM_PV="${MY_PV/_/-}" # file context
 KERNEL_RELEASE_DATE="20220731" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v5.19/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT_ALT=13 # Without kernel-compiler-patch
@@ -34,6 +33,12 @@ EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
+if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
+	# Normalize versioning
+	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
+else
+	UPSTREAM_PV="${MY_PV/_/-}" # file context
+fi
 MUQSS_VER="0.180"
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
