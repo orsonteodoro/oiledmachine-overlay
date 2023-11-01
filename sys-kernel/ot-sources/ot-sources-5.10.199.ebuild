@@ -3,6 +3,7 @@
 
 EAPI=8
 
+EBUILD_REV="r1"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch" # FIXME
 GENPATCHES_VER="209"
 PRJC_LTS="-lts"

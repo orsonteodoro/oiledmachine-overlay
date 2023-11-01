@@ -9035,9 +9035,6 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 				"scripts/basic/fixdep"
 				"scripts/genksyms/genksyms"
 				"scripts/mod/modpost"
-
-	# For genkernel
-				"include/config/kernel.release"
 			)
 
 			local arches=(
@@ -9106,6 +9103,13 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 				fi
 			fi
 		fi
+
+		# kernel.release is used by genkernel.
+		# The file generated is missing the arch so replace it with ours.
+		# Add for genkernel because mrproper erases it
+		mkdir -p "include/config" || die
+		echo "${PV}-${extraversion}-${arch}" \
+			> include/config/kernel.release || die
 
 		cd "${BUILD_DIR}" || die
 		local logo_license_path=$(find "drivers/video/logo" \
