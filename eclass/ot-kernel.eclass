@@ -9459,30 +9459,30 @@ EOF
 		local arch="${OT_KERNEL_ARCH}"
 
 		[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
-		local target=$(cat "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release")
+		local non_canonical_target="${KV_MAJOR_MINOR}-${extraversion}" # ex. 6.6-builder-${arch}
+		local canonical_target=$(cat "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release") # ex. 6.6.0-builder-${arch}
 
-		mkdir -p "${ED}/lib/modules/${target}"
-		if [[ -e "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" \
-			&& "${ED}/lib/modules/${target}" != "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" ]] ; then
+		mkdir -p "${ED}/lib/modules/${canonical_target}"
+		if [[ -e "${ED}/lib/modules/${non_canonical_target}" ]] ; then
 			cp -a \
-				"${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}/"* \
+				"${ED}/lib/modules/${non_canonical_target}/"* \
 				"${ED}/lib/modules/${target}" \
 				|| die
-			rm -rf "${ED}/lib/modules/${UPSTREAM_PV}-${extraversion}" \
+			rm -rf "${ED}/lib/modules/${non_canonical_target}" \
 				|| true
 		fi
 
-		rm -rf "${ED}/lib/modules/${target}/build" \
+		rm -rf "${ED}/lib/modules/${canonical_target}/build" \
 			|| true
-		rm -rf "${ED}/lib/modules/${target}/source" \
+		rm -rf "${ED}/lib/modules/${canonical_target}/source" \
 			|| true
 
 		dosym \
 			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
-			"/lib/modules/${target}/build"
+			"/lib/modules/${canonical_target}/build"
 		dosym \
 			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
-			"/lib/modules/${target}/source"
+			"/lib/modules/${canonical_target}/source"
 
 	done
 
