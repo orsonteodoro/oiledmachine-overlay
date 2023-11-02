@@ -41,7 +41,7 @@ IUSE="
 +boost cairo cjk gtk +curl +cxx debug -doc gpgme +introspection +jpeg +jpeg2k
 +lcms nss png +qt5 +qt6 test tiff +utils
 
-r1
+r2
 "
 REQUIRED_USE+="
 	gtk? (
@@ -94,7 +94,7 @@ CDEPEND="
 		>=media-libs/lcms-2.9:2[${MULTILIB_USEDEP}]
 	)
 	nss? (
-		>=dev-libs/nss-3.49.1[${MULTILIB_USEDEP}]
+		>=dev-libs/nss-3.68[${MULTILIB_USEDEP}]
 	)
 	png? (
 		>=media-libs/libpng-1.6.37:0=[${MULTILIB_USEDEP}]
@@ -152,6 +152,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-23.10.0-qt-deps.patch"
 	"${FILESDIR}/${PN}-21.09.0-respect-cflags.patch"
 	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
+	"${FILESDIR}/${PN}-23.10.0-qt6.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -168,10 +169,12 @@ MULTILIB_WRAPPED_HEADERS=(
 
 src_unpack() {
 	unpack ${A}
-	mv \
-		"${WORKDIR}/test-${TEST_COMMIT}" \
-		"${WORKDIR}/test-data" \
-		|| die
+	if [[ -e "${WORKDIR}/test-${TEST_COMMIT}" ]] ; then
+		mv \
+			"${WORKDIR}/test-${TEST_COMMIT}" \
+			"${WORKDIR}/test-data" \
+			|| die
+	fi
 }
 
 src_prepare() {
@@ -192,24 +195,6 @@ src_prepare() {
 	else
 		einfo "policy(SET CMP0002 OLD) - workaround can be removed"
 	fi
-	if ! use qt6 ; then
-		:;
-	else
-		local pv=$(best_version "dev-qt/qtbase" \
-			| sed -e "s|dev-qt/qtbase-||g")
-		pv=$(ver_cut 1-2 "${pv}")
-einfo "Detected Qt ${pv}"
-		if [[ -z "${pv}" ]] ; then
-eerror
-eerror "Qt6 not detected.  Disable the qt6 USE flag or emerge dev-qt/qtbase:6."
-eerror
-			die
-		fi
-		sed -i -e "s|QT6_VERSION \"6\.2\"|QT6_VERSION \"${pv}\"|g" \
-			-e "s|QT_NO_CREATE_VERSIONLESS_TARGETS ON|QT_NO_CREATE_VERSIONLESS_TARGETS OFF|g" \
-			CMakeLists.txt \
-			|| die
-	fi
 }
 
 src_configure() {
@@ -223,8 +208,6 @@ src_configure() {
 			-DENABLE_QT6=OFF
 		")
 		$(multilib_is_native_abi && echo "
-			$(cmake_use_find_package qt5 Qt5Core)
-			$(cmake_use_find_package qt6 Qt6Core)
 			-DBUILD_QT5_TESTS=$(usex test $(usex qt5))
 			-DBUILD_QT6_TESTS=$(usex test $(usex qt6))
 			-DENABLE_QT5=$(usex qt5)
@@ -255,11 +238,6 @@ src_configure() {
 		-DWITH_JPEG=$(usex jpeg)
 		-DWITH_PNG=$(usex png)
 	)
-	if use qt6 && multilib_is_native_abi ; then
-		mycmakeargs+=(
-			-DQt6Core_DIR="/usr/$(get_libdir)/cmake/Qt6Core"
-		)
-	fi
 
 	cmake-multilib_src_configure
 }

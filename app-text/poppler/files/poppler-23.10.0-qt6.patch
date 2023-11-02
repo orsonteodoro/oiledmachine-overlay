@@ -1,0 +1,27 @@
+--- a/CMakeLists.txt.orig	2023-11-02 13:06:52.824307863 -0700
++++ b/CMakeLists.txt	2023-11-02 13:14:59.280320825 -0700
+@@ -217,10 +217,20 @@ find_soft_mandatory_package(BUILD_QT5_TE
+ 
+ set(QT6_VERSION "6.2")
+ SET(QT_NO_CREATE_VERSIONLESS_TARGETS ON)
+-find_soft_mandatory_package(ENABLE_QT6 Qt6Core ${QT6_VERSION})
+-find_soft_mandatory_package(ENABLE_QT6 Qt6Gui ${QT6_VERSION})
+-find_soft_mandatory_package(ENABLE_QT6_TESTS Qt6Widgets ${QT6_VERSION})
+-find_soft_mandatory_package(ENABLE_QT6_TESTS Qt6Test ${QT6_VERSION})
++if (ENABLE_QT6)
++  SET(QT_NO_CREATE_VERSIONLESS_TARGETS ON)
++  find_package(Qt6 6.2 COMPONENTS Core Gui)
++  if (NOT (Qt6Core_FOUND AND Qt6Gui_FOUND))
++    message("-- Package Qt6Core or Qt6Gui not found")
++    set(ENABLE_QT6 OFF)
++  endif()
++endif()
++if (ENABLE_QT6_TESTS)
++  find_package(Qt6 6.2 COMPONENTS Widgets Test)
++  if (NOT (Qt6Widgets_FOUND AND Qt6Test_FOUND))
++    message(FATAL_ERROR "-- Package Qt6Widgets or Qt6Test not found")
++  endif()
++endif()
+ 
+ # Check for Cairo rendering backend
+ macro_optional_find_package(Cairo ${CAIRO_VERSION})
