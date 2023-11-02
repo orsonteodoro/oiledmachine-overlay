@@ -26,11 +26,10 @@ https://poppler.freedesktop.org/${P}.tar.xz.sig
 		)
 	"
 	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
-~x64-solaris
+~alpha amd64 ~arm arm64 hppa ~ia64 ~loong ~mips ppc ~ppc64 ~riscv ~s390 ~sparc
+~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
 	"
-	SLOT="0/132"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	SLOT="0/131"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
@@ -59,7 +58,7 @@ REQUIRED_USE+="
 # CI uses U 20.04
 QT5_PV="5.12.8"
 QT6_PV="6.2.0"
-CDEPEND="
+COMMON_DEPEND="
 	>=media-libs/fontconfig-2.13.1[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.10.1[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
@@ -110,14 +109,12 @@ CDEPEND="
 		>=media-libs/tiff-4.1.0:=[${MULTILIB_USEDEP}]
 	)
 "
-RDEPEND="
-	${CDEPEND}
+RDEPEND="${COMMON_DEPEND}
 	cjk? (
 		>=app-text/poppler-data-0.4.9
 	)
 "
-DEPEND="
-	${CDEPEND}
+DEPEND="${COMMON_DEPEND}
 	boost? (
 		>=dev-libs/boost-1.71.0[${MULTILIB_USEDEP}]
 	)
@@ -147,7 +144,7 @@ fi
 DOCS=( AUTHORS NEWS README.md README-XPDF )
 
 PATCHES=(
-#	"${FILESDIR}/${PN}-23.10.0-qt-deps.patch"
+	"${FILESDIR}/${PN}-20.12.1-qt5-deps.patch"
 	"${FILESDIR}/${PN}-21.09.0-respect-cflags.patch"
 	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
 )
@@ -178,10 +175,7 @@ src_prepare() {
 	# Clang doesn't grok this flag, the configure nicely tests that, but
 	# cmake just uses it, so remove it if we use clang
 	if tc-is-clang ; then
-		sed \
-			-e 's/-fno-check-new//' \
-			-i cmake/modules/PopplerMacros.cmake \
-			|| die
+		sed -e 's/-fno-check-new//' -i cmake/modules/PopplerMacros.cmake || die
 	fi
 
 	if ! grep -Fq 'cmake_policy(SET CMP0002 OLD)' CMakeLists.txt ; then
@@ -189,24 +183,6 @@ src_prepare() {
 			-i CMakeLists.txt || die
 	else
 		einfo "policy(SET CMP0002 OLD) - workaround can be removed"
-	fi
-	if ! use qt6 ; then
-		:;
-	else
-		local pv=$(best_version "dev-qt/qtbase" \
-			| sed -e "s|dev-qt/qtbase-||g")
-		pv=$(ver_cut 1-2 "${pv}")
-einfo "Detected Qt ${pv}"
-		if [[ -z "${pv}" ]] ; then
-eerror
-eerror "Qt6 not detected.  Disable the qt6 USE flag or emerge dev-qt/qtbase:6."
-eerror
-			die
-		fi
-		sed -i -e "s|QT6_VERSION \"6\.2\"|QT6_VERSION \"${pv}\"|g" \
-			-e "s|QT_NO_CREATE_VERSIONLESS_TARGETS ON|QT_NO_CREATE_VERSIONLESS_TARGETS OFF|g" \
-			CMakeLists.txt \
-			|| die
 	fi
 }
 
@@ -235,29 +211,25 @@ src_configure() {
 		-DBUILD_GTK_TESTS=OFF
 		-DBUILD_MANUAL_TESTS=$(usex test)
 		-DENABLE_BOOST="$(usex boost)"
+		-DENABLE_CMS=$(usex lcms lcms2 none)
 		-DENABLE_CPP=$(usex cxx)
 		-DENABLE_DCTDECODER=$(usex jpeg libjpeg none)
-		-DENABLE_GPGME=$(multilib_native_usex gpgme)
 		-DENABLE_LIBCURL=$(usex curl)
 		-DENABLE_LIBOPENJPEG=$(usex jpeg2k openjpeg2 none)
-		-DENABLE_LIBTIFF=$(usex tiff)
-		-DENABLE_LCMS=$(usex lcms)
-		-DENABLE_NSS3=$(usex nss)
 		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON
 		-DENABLE_UTILS=$(usex utils)
+		-DENABLE_ZLIB=ON
 		-DENABLE_ZLIB_UNCOMPRESS=OFF
 		-DRUN_GPERF_IF_PRESENT=OFF
 		-DTESTDATADIR="${WORKDIR}/test-data"
 		-DUSE_FLOAT=OFF
 		-DWITH_Cairo=$(usex cairo)
+		-DWITH_Gpgmepp=$(multilib_native_usex gpgme)
 		-DWITH_JPEG=$(usex jpeg)
+		-DWITH_NSS3=$(usex nss)
 		-DWITH_PNG=$(usex png)
+		-DWITH_TIFF=$(usex tiff)
 	)
-	if use qt6 && multilib_is_native_abi ; then
-		mycmakeargs+=(
-			-DQt6Core_DIR="/usr/$(get_libdir)/cmake/Qt6Core"
-		)
-	fi
 
 	cmake-multilib_src_configure
 }
@@ -268,7 +240,7 @@ src_install() {
 	if use cairo && use doc && [[ ${PV} != *9999* ]]; then
 		# For now install gtk-doc there
 		insinto /usr/share/gtk-doc/html/poppler
-		doins -r "${S}/glib/reference/html/"*
+		doins -r "${S}"/glib/reference/html/*
 	fi
 }
 
