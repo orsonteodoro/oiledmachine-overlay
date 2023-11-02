@@ -40,6 +40,8 @@ LICENSE="GPL-2"
 IUSE="
 +boost cairo cjk gtk +curl +cxx debug -doc gpgme +introspection +jpeg +jpeg2k
 +lcms nss png +qt5 +qt6 test tiff +utils
+
+r1
 "
 REQUIRED_USE+="
 	gtk? (
@@ -147,7 +149,7 @@ fi
 DOCS=( AUTHORS NEWS README.md README-XPDF )
 
 PATCHES=(
-#	"${FILESDIR}/${PN}-23.10.0-qt-deps.patch"
+	"${FILESDIR}/${PN}-23.10.0-qt-deps.patch"
 	"${FILESDIR}/${PN}-21.09.0-respect-cflags.patch"
 	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
 )
