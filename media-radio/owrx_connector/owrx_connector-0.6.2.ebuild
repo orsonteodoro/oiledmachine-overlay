@@ -20,7 +20,8 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.0
-	virtual/pkgconfig"
+	virtual/pkgconfig
+"
 SRC_URI="
 https://github.com/jketterl/owrx_connector/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz"
