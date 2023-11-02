@@ -244,13 +244,6 @@ symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
 "
 
-if [[ "${PV}" =~ "9999" ]] ; then
-	REQUIRED_USE+="
-		!bbrv2
-		!bbrv3
-	"
-fi
-
 REQUIRED_USE+="
 	bbrv2? (
 		!bbrv3
@@ -630,9 +623,16 @@ if [[ "${PV}" =~ "9999" && "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 	SRC_URI+="
 		${RT_SRC_ALT_URI}
 		${ZEN_SAUCE_URIS}
+		${ZEN_SAUCE_URIS}
 	"
 elif [[ "${PV}" =~ "9999" ]] ; then
 	SRC_URI+="
+		bbrv2? (
+			${BBRV2_SRC_URIS}
+		)
+		bbrv3? (
+			${BBRV3_SRC_URIS}
+		)
 		rt? (
 			${RT_SRC_ALT_URI}
 		)
@@ -944,6 +944,10 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-1e924b1.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-1e924b1-fix-for-6.5.2.patch"
+
+	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-ba2274d.patch" ]] ; then
+		# Already added upstream
+		:;
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
