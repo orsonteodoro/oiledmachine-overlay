@@ -9458,9 +9458,14 @@ EOF
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		local arch="${OT_KERNEL_ARCH}"
 
+		local suffix=""
+		if [[ -n "${RC_PV}" ]] ; then
+			suffix="-${RC_PV}"
+		fi
+
 		[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
-		local non_canonical_target="${KV_MAJOR_MINOR}-${extraversion}" # ex. 6.6-builder-${arch}
-		local canonical_target=$(cat "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release") # ex. 6.6.0-builder-${arch}
+		local non_canonical_target="${KV_MAJOR_MINOR}${suffix}-${extraversion}" # ex. 6.6-builder-${arch}
+		local canonical_target="${UPSTREAM_PV}${suffix}-${extraversion}" # ex. 6.6.0-builder-${arch}
 
 		mkdir -p "${ED}/lib/modules/${canonical_target}"
 		if [[ -e "${ED}/lib/modules/${non_canonical_target}" ]] ; then
