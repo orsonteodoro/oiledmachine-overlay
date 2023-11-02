@@ -38,8 +38,8 @@ HOMEPAGE="https://poppler.freedesktop.org/"
 
 LICENSE="GPL-2"
 IUSE="
-+boost cairo cjk gtk +curl +cxx debug -doc gpgme +introspection +jpeg +jpeg2k
-+lcms nss png +qt5 +qt6 test tiff +utils
++boost cairo cjk gtk +curl +cxx debug -doc +gpgme +introspection +jpeg +jpeg2k
++lcms +nss png +qt5 +qt6 test +tiff +utils
 
 r2
 "
