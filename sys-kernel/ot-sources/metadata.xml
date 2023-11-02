@@ -161,14 +161,14 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
-    6.6 (Master / Live)					A
+    6.6 (Master / Live / Mainline)			A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
-		    genpatches				D
+		    genpatches				A
 		    kernel_compiler_patch		X
 		    Project C				D
-		    TCP BBR v2 [5]			D
-		    TCP BBR v3 [5]			D
+		    TCP BBR v2 [5]			E
+		    TCP BBR v3 [5]			E
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
