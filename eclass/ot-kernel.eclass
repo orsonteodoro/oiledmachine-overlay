@@ -9108,7 +9108,7 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 		# The file generated is missing the arch so replace it with ours.
 		# Add for genkernel because mrproper erases it
 		mkdir -p "include/config" || die
-		echo "${PV}-${extraversion}-${arch}" \
+		echo "${UPSTREAM_PV}-${extraversion}-${arch}" \
 			> include/config/kernel.release || die
 
 		cd "${BUILD_DIR}" || die
