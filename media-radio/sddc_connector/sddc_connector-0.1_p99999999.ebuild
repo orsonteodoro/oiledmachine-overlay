@@ -37,8 +37,8 @@ REQUIRED_USE="
 	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 "
 RDEPEND+="
-	media-radio/csdr
-	media-radio/owrx_connector
+	>=media-radio/csdr-0.19
+	>=media-radio/owrx_connector-0.7
 	cuda_targets_sm_60? (
 		|| (
 			=dev-util/nvidia-cuda-toolkit-8*:=
