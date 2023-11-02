@@ -10,10 +10,10 @@ if [[ ${PV} == *9999* ]] ; then
 	EGIT_REPO_URI="https://anongit.freedesktop.org/git/poppler/poppler.git"
 	SLOT="0/9999"
 else
-	VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/aacid.asc
+	VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/aacid.asc
 	inherit verify-sig
 
-	TEST_COMMIT="eea2a4a355eb49ca70d944afd5245b24578af287"
+	TEST_COMMIT="e3cdc82782941a8d7b8112f83b4a81b3d334601a"
 	SRC_URI="
 https://poppler.freedesktop.org/${P}.tar.xz
 		test? (
@@ -30,7 +30,7 @@ https://poppler.freedesktop.org/${P}.tar.xz.sig
 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
 ~x64-solaris
 	"
-	SLOT="0/129"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	SLOT="0/132"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
@@ -59,7 +59,7 @@ REQUIRED_USE+="
 # CI uses U 20.04
 QT5_PV="5.12.8"
 QT6_PV="6.2.0"
-COMMON_DEPEND="
+CDEPEND="
 	>=media-libs/fontconfig-2.13.1[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.10.1[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
@@ -110,12 +110,14 @@ COMMON_DEPEND="
 		>=media-libs/tiff-4.1.0:=[${MULTILIB_USEDEP}]
 	)
 "
-RDEPEND="${COMMON_DEPEND}
+RDEPEND="
+	${CDEPEND}
 	cjk? (
 		>=app-text/poppler-data-0.4.9
 	)
 "
-DEPEND="${COMMON_DEPEND}
+DEPEND="
+	${CDEPEND}
 	boost? (
 		>=dev-libs/boost-1.71.0[${MULTILIB_USEDEP}]
 	)
@@ -126,15 +128,18 @@ BDEPEND="
 	doc? (
 		dev-util/gtk-doc
 	)
-	qt5? (
-		>=dev-qt/qttest-${QT5_PV}:5
+	test? (
+		qt5? (
+			>=dev-qt/qttest-${QT5_PV}:5
+			>=dev-qt/qtwidgets-${QT5_PV}:5
+		)
 	)
 "
 
 if [[ ${PV} != *9999* ]] ; then
 	BDEPEND+="
 		verify-sig? (
-			>=sec-keys/openpgp-keys-aacid-20230313
+			>=sec-keys/openpgp-keys-aacid-20230907
 		)
 	"
 fi
@@ -142,10 +147,9 @@ fi
 DOCS=( AUTHORS NEWS README.md README-XPDF )
 
 PATCHES=(
-	"${FILESDIR}/${PN}-20.12.1-qt5-deps.patch"
+	"${FILESDIR}/${PN}-23.10.0-qt-deps.patch"
 	"${FILESDIR}/${PN}-21.09.0-respect-cflags.patch"
 	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
-	"${FILESDIR}/${P}-fix-tests.patch" # git master, 23.07.0
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -174,7 +178,10 @@ src_prepare() {
 	# Clang doesn't grok this flag, the configure nicely tests that, but
 	# cmake just uses it, so remove it if we use clang
 	if tc-is-clang ; then
-		sed -e 's/-fno-check-new//' -i cmake/modules/PopplerMacros.cmake || die
+		sed \
+			-e 's/-fno-check-new//' \
+			-i cmake/modules/PopplerMacros.cmake \
+			|| die
 	fi
 
 	if ! grep -Fq 'cmake_policy(SET CMP0002 OLD)' CMakeLists.txt ; then
@@ -196,8 +203,6 @@ src_configure() {
 			-DENABLE_QT6=OFF
 		")
 		$(multilib_is_native_abi && echo "
-			$(cmake_use_find_package qt5 Qt5Core)
-			$(cmake_use_find_package qt6 Qt6Core)
 			-DBUILD_QT5_TESTS=$(usex test $(usex qt5))
 			-DBUILD_QT6_TESTS=$(usex test $(usex qt6))
 			-DENABLE_QT5=$(usex qt5)
@@ -210,24 +215,23 @@ src_configure() {
 		-DBUILD_GTK_TESTS=OFF
 		-DBUILD_MANUAL_TESTS=$(usex test)
 		-DENABLE_BOOST="$(usex boost)"
-		-DENABLE_CMS=$(usex lcms lcms2 none)
 		-DENABLE_CPP=$(usex cxx)
 		-DENABLE_DCTDECODER=$(usex jpeg libjpeg none)
+		-DENABLE_GPGME=$(multilib_native_usex gpgme)
 		-DENABLE_LIBCURL=$(usex curl)
 		-DENABLE_LIBOPENJPEG=$(usex jpeg2k openjpeg2 none)
+		-DENABLE_LIBTIFF=$(usex tiff)
+		-DENABLE_LCMS=$(usex lcms)
+		-DENABLE_NSS3=$(usex nss)
 		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON
 		-DENABLE_UTILS=$(usex utils)
-		-DENABLE_ZLIB=ON
 		-DENABLE_ZLIB_UNCOMPRESS=OFF
 		-DRUN_GPERF_IF_PRESENT=OFF
 		-DTESTDATADIR="${WORKDIR}/test-data"
 		-DUSE_FLOAT=OFF
 		-DWITH_Cairo=$(usex cairo)
-		-DWITH_Gpgmepp=$(multilib_native_usex gpgme)
 		-DWITH_JPEG=$(usex jpeg)
-		-DWITH_NSS3=$(usex nss)
 		-DWITH_PNG=$(usex png)
-		-DWITH_TIFF=$(usex tiff)
 	)
 
 	cmake-multilib_src_configure
@@ -239,7 +243,7 @@ src_install() {
 	if use cairo && use doc && [[ ${PV} != *9999* ]]; then
 		# For now install gtk-doc there
 		insinto /usr/share/gtk-doc/html/poppler
-		doins -r "${S}"/glib/reference/html/*
+		doins -r "${S}/glib/reference/html/"*
 	fi
 }
 
