@@ -20,6 +20,7 @@ inherit ot-kernel-v6.6
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
 
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6 (20231101) with builder profile and GCC_PGI
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.0.9999 (6.6.0-rc7 commit: 3a568e3a961ba330091cd031647e4c303fa0badb) (20231027) with builder profile
 
 #
