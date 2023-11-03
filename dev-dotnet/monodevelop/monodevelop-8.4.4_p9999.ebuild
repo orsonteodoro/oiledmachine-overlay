@@ -299,6 +299,7 @@ src_compile() {
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 	export MAKEOPTS="-j1"
+	addpredict /etc/mono/registry/last-btime
 	_build_all
 }
 
