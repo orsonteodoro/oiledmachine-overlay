@@ -340,9 +340,9 @@ src_install() {
 	emake DESTDIR="${D}" install
 	_install_files
 	_make_wrapper
-	sanitize_permissions
 	dodoc README.md
 	lcnr_install_files
+	sanitize_permissions
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
