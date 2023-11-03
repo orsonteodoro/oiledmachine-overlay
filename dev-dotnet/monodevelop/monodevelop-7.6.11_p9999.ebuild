@@ -249,7 +249,15 @@ src_prepare() {
 #	_drop_projects
 }
 
-_use_msbuild() {
+_use_msbuild_mono() {
+	mkdir -p "${WORKDIR}/bin" || die
+	ln -s \
+		"/usr/bin/msbuild" \
+		"${WORKDIR}/bin/msbuild"
+	export PATH="${WORKDIR}/bin:${PATH}"
+}
+
+_use_msbuild_dotnet() {
 	mkdir -p "${WORKDIR}/bin" || die
 cat <<EOF > "${WORKDIR}/bin/msbuild" || die
 #!${EPREFIX}/bin/bash
@@ -267,12 +275,6 @@ cat <<EOF > "${WORKDIR}/bin/fsharpc" || die
 EOF
 	chmod +x "${WORKDIR}/bin/fsharpc" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-}
-
-_check_msbuild() {
-	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-	msbuild -version | grep -q -e "for .NET" || die
-	msbuild -version | grep -q -e "for Mono" && die
 }
 
 _set_csc() {
@@ -295,8 +297,8 @@ src_configure() {
 		sed -i -e "s|/usr/local/share/dotnet|${EPREFIX}/opt/${SDK}|g" "${f}" || die
 	done
 	_set_csc
-	_use_msbuild
-	_check_msbuild
+	_use_msbuild_mono
+	#_use_msbuild_dotnet
 	_make_fsharpc
 }
 

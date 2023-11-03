@@ -237,7 +237,15 @@ src_prepare() {
 	_drop_projects
 }
 
-_use_msbuild() {
+_use_msbuild_mono() {
+	mkdir -p "${WORKDIR}/bin" || die
+	ln -s \
+		"/usr/bin/msbuild" \
+		"${WORKDIR}/bin/msbuild"
+	export PATH="${WORKDIR}/bin:${PATH}"
+}
+
+_use_msbuild_dotnet() {
 	mkdir -p "${WORKDIR}/bin" || die
 cat <<EOF > "${WORKDIR}/bin/msbuild" || die
 #!${EPREFIX}/bin/bash
@@ -247,20 +255,14 @@ EOF
 	export PATH="${WORKDIR}/bin:${PATH}"
 }
 
-_check_msbuild() {
-	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-	msbuild -version | grep -q -e "for .NET" || die
-	msbuild -version | grep -q -e "for Mono" && die
-}
-
 src_configure() {
 	local f
 	for f in $(grep -r -l "${EPREFIX}/usr/local/share/dotnet") ; do
 		einfo "Edited ${f}:  ${EPREFIX}/usr/local/share/dotnet -> ${EPREFIX}/opt/${SDK}"
 		sed -i -e "s|/usr/local/share/dotnet|${EPREFIX}/opt/${SDK}|g" "${f}" || die
 	done
-	_use_msbuild
-	_check_msbuild
+	_use_msbuild_mono
+	#_use_msbuild_dotnet
 }
 
 _restore_all() {
