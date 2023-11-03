@@ -1,4 +1,4 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -45,7 +45,7 @@ LICENSE="
 #KEYWORDS="~amd64 ~x86" # Ebuild not finished
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-debugger developer test
+debug debugger developer test
 
 +fallback-commit
 "
@@ -87,9 +87,6 @@ BDEPEND="
 "
 RESTRICT="mirror"
 PATCHES=(
-##	"${FILESDIR}/${PN}-9999-use-monolauncher.patch"
-###	"${FILESDIR}/${PN}-9999-buildvariables-references.patch"
-##	"${FILESDIR}/${PN}-9999-AsyncQuickInfoDemo-references.patch"
 )
 
 # The dotnet-sdk-bin supports only 1 ABI at a time.
@@ -101,9 +98,6 @@ EXPECTED_BUILD_FILES="\
 "
 
 pkg_setup() {
-ewarn
-ewarn "This ebuild is unbuildable and incomplete."
-ewarn
 	if has network-sandbox ${FEATURES} ; then
 eerror
 eerror "Building requires network-sandbox to be disabled in FEATURES on a"
@@ -169,59 +163,23 @@ eerror
 		fi
 	fi
 	cd "${S}" || die
-}
 
-_fix_nuget_feeds() {
-	# Breaks restore
-	local BANNED_FEEDS=(
-		"myget.org/F/"
-		"devdiv.pkgs.visualstudio.com"
-	)
-	local f
-	local feed
-	for f in $(find "${S}" -iname "NuGet.config") ; do
-		for feed in ${BANNED_FEEDS[@]} ; do
-			if grep -q -e "${feed}" "${f}" ; then
-einfo "Editing ${f} to remove ${feed}"
-				sed -i \
-					-e "\|${feed}|d" \
-					"${f}" || die
-			fi
-		done
-	done
-}
-
-_attach_reference_assemblies_pack() {
-	IFS=$'\n'
-	local f
-	for f in $(find "${S}" -name "*.csproj") ; do
-		local loc=$(grep -n "<Reference Include=\"System" "${f}" | cut -f 1 -d ":" | head -n 1)
-		[[ -z "${loc}" ]] && continue
-einfo "Editing ${f}:  Attaching PackageReference to Microsoft.NETFramework.ReferenceAssemblies"
-		sed -i -e "${loc}i<PackageReference Include=\"Microsoft.NETFramework.ReferenceAssemblies\" Version=\"1.0.3\" />" "${f}" || die
-	done
-	IFS=$' \t\n'
-}
-
-_drop_projects() {
-	IFS=$'\n'
-	local f
-	for f in $(find "${S}" -name "*.sln") ; do
-		if ! use test ; then
-			sed -i -e '/^Project.*Test/i,/^EndProject/d' "${f}" || die
-		fi
-	done
-	IFS=$' \t\n'
+einfo "Importing GPG key into sandboxed keychain"
+	# See also
+	# https://keyserver.ubuntu.com/pks/lookup?search=3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF&fingerprint=on&op=index
+	local KEY_ID="3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+	local pub_keyserver=${GPG_PUBLIC_KEYSERVER:-"hkp://keyserver.ubuntu.com:80"}
+	_run gpg \
+		--batch \
+		--keyserver "${pub_keyserver}" \
+		--recv-keys "${KEY_ID}"
 }
 
 src_prepare() {
 	default
-#	_fix_nuget_feeds
-##	_attach_reference_assemblies_pack
-#	_drop_projects
 }
 
-_use_mono_msbuild() {
+_use_msbuild_mono() {
 	mkdir -p "${WORKDIR}/bin" || die
 	ln -s \
 		"/usr/bin/msbuild" \
@@ -229,56 +187,36 @@ _use_mono_msbuild() {
 	export PATH="${WORKDIR}/bin:${PATH}"
 }
 
-# Upstream uses the mono version but it doesn't work
-_use_msbuild_mono() {
-	mkdir -p "${WORKDIR}/bin" || die
-cat <<EOF > "${WORKDIR}/bin/msbuild" || die
-#!${EPREFIX}/bin/bash
-#	-p:UseMonoLauncher=1 \
-"${EPREFIX}/usr/bin/mono" \
-	$(realpath "${EPREFIX}/usr/share/msbuild/16/MSBuild.dll") \
-	-p:ReferencePath="${HOME}/.nuget/packages" \
-	"\${@}"
-EOF
-#	-p:FrameworkPathOverride="${HOME}/.nuget/packages/microsoft.netframework.referenceassemblies.net472/1.0.3/build/.NETFramework/v4.7.2" \
-	chmod +x "${WORKDIR}/bin/msbuild" || die
-	export PATH="${WORKDIR}/bin:${PATH}"
-}
-
 _use_msbuild_dotnet() {
 	mkdir -p "${WORKDIR}/bin" || die
 cat <<EOF > "${WORKDIR}/bin/msbuild" || die
 #!${EPREFIX}/bin/bash
-#	-p:UseMonoLauncher=1 \
 "${EPREFIX}/opt/${SDK}/dotnet" \
 	$(realpath "${EPREFIX}/opt/${SDK}/sdk/"*"/MSBuild.dll") \
 	-tv:Current \
 	-p:ReferencePath="${HOME}/.nuget/packages" \
+	-p:UseMonoLauncher=1 \
 	"\${@}"
 EOF
-#	-p:FrameworkPathOverride="${HOME}/.nuget/packages/microsoft.netframework.referenceassemblies.net472/1.0.3/build/.NETFramework/v4.7.2" \
 	chmod +x "${WORKDIR}/bin/msbuild" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
-}
-
-_check_msbuild() {
-	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-	msbuild -version | grep -q -e "for .NET" || die
-	msbuild -version | grep -q -e "for Mono" && die
 }
 
 src_configure() {
 	local f
 	for f in $(grep -r -l "${EPREFIX}/usr/local/share/dotnet") ; do
 		einfo "Edited ${f}:  ${EPREFIX}/usr/local/share/dotnet -> ${EPREFIX}/opt/${SDK}"
-		sed -i -e "s|/usr/local/share/dotnet|${EPREFIX}/opt/${SDK}|g" "${f}" || die
+		sed -i \
+			-e "s|/usr/local/share/dotnet|${EPREFIX}/opt/${SDK}|g" \
+			"${f}" \
+			|| die
 	done
-	_use_mono_msbuild
+	_use_msbuild_mono
 	#_use_msbuild_dotnet
-	#_check_msbuild
 	local msbuild_path=$(realpath "${EPREFIX}/opt/${SDK}/sdk/"*"/MSBuild.dll")
 	sed -i -e "s|XBUILD=msbuild|XBUILD=\"${WORKDIR}/bin/msbuild\"|g" \
-		main/xbuild.include || die
+		main/xbuild.include \
+		|| die
 }
 
 _restore_all() {
@@ -307,17 +245,19 @@ _build_all() {
 	local myconf=(
 		--profile=gnome
 		--prefix="${EPREFIX}/usr"
-#		--enable-release
 	)
+	if ! use debug ; then
+		myconf+=(
+			--enable-release
+		)
+	fi
 
 	./configure \
 		${myconf[@]}
 
-#einfo "Called print_config"
-#	emake print_config
-
-#einfo "Called all-recursive"
-#	emake all-recursive
+	pushd "${S}/main" || die
+		emake
+	popd
 }
 
 _build_debugger() {
@@ -340,29 +280,26 @@ _verify_toolchain() {
 }
 
 src_compile() {
-	local configuration="Release"
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 	export PATH="${EPREFIX}/opt/dotnet-sdk-bin-6.0:${PATH}"
 	export MAKEOPTS="-j1"
+	addpredict /etc/mono/registry/last-btime
 	_verify_toolchain
 	_build_all
 	use debugger && _build_debugger
-	pushd "${S}/main" || die
-		emake
-	popd
 }
 
-src_install() {
-	local configuration="Release"
-
-	die "src_install is unfinished"
+_make_wrapper() {
 cat <<EOF > "${ED}/usr/bin/dotdevelop"
 #!/bin/bash
 PATH="/usr/lib/dotdevelop:\${PATH}"
 mono main/build/bin/MonoDevelop.exe "\${@}"
 EOF
+}
 
+src_install() {
+	emake DESTDIR="${D}" install
 	dodoc README.md
 	lcnr_install_files
 }
