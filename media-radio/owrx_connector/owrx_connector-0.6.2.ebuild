@@ -6,6 +6,12 @@ EAPI=8
 
 inherit cmake
 
+SRC_URI="
+https://github.com/jketterl/owrx_connector/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
+
 DESCRIPTION="Direct conection layer for openwebrx"
 HOMEPAGE="https://github.com/jketterl/owrx_connector"
 LICENSE="GPL-3 LGPL-3+"
@@ -17,15 +23,13 @@ DEPEND+="
 	net-wireless/rtl-sdr
 	net-wireless/soapysdr
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	>=dev-util/cmake-3.0
 	virtual/pkgconfig
 "
-SRC_URI="
-https://github.com/jketterl/owrx_connector/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz"
-S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( LICENSE README.md )
 
