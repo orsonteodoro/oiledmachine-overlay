@@ -5,7 +5,17 @@
 EAPI=8
 
 DOTNET_PV="6.0"
+
 inherit git-r3 lcnr
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/dotdevelop/dotdevelop.git"
+	EGIT_BRANCH="main"
+	EGIT_COMMIT="HEAD"
+	MY_PV="${PV}"
+	SRC_URI=""
+	S="${WORKDIR}/${PN}-${PV}"
+fi
 
 DESCRIPTION="DotDevelop will hopefully be a full-featured integrated development \
 environment (IDE) for .NET using GTK."
@@ -42,52 +52,50 @@ REQUIRED_USE="
 	!debugger
 "
 CDEPEND="
-	>=dev-lang/mono-5.10
+	>=dev-lang/mono-6.12
 	>=dev-dotnet/gtk-sharp-2.12.8:2
 "
 RDEPEND="
 	${CDEPEND}
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
+#	>=dev-dotnet/dotnet-sdk-bin-3.1:3.1
 BDEPEND="
 	${CDEPEND}
-	  app-shells/bash
-	>=dev-dotnet/dotnet-sdk-bin-3.1:3.1
-	>=dev-dotnet/dotnet-sdk-bin-6.0:6.0
-	>=dev-dotnet/msbuild-bin-16:16
+	>=dev-dotnet/dotnet-sdk-bin-6.0.416:6.0
+	>=dev-dotnet/msbuild-bin-16.10.1:16
 	>=dev-util/cmake-2.8.12.2
-	  dev-util/intltool
-	  dev-vcs/git
+	>=dev-vcs/git-2.25.1
 	>=sys-devel/autoconf-2.53
 	>=sys-devel/automake-1.10
-	  sys-devel/gettext
-	  sys-devel/make
-	  virtual/pkgconfig
-	  x11-misc/shared-mime-info
-	debugger? ( dev-lang/python )
+	>=sys-devel/make-4.2.1
+	app-shells/bash
+	dev-util/intltool
+	sys-devel/gettext
+	virtual/pkgconfig
+	x11-misc/shared-mime-info
+	debugger? (
+		dev-lang/python
+	)
 	kernel_Darwin? (
 		dev-lang/ruby
 	)
 "
-SRC_URI=""
-S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-9999-use-monolauncher.patch"
 #	"${FILESDIR}/${PN}-9999-buildvariables-references.patch"
 	"${FILESDIR}/${PN}-9999-AsyncQuickInfoDemo-references.patch"
 )
-EGIT_REPO_URI="https://github.com/dotdevelop/dotdevelop.git"
-EGIT_BRANCH="main"
-EGIT_COMMIT="HEAD"
-MY_PV="${PV}"
 
 # The dotnet-sdk-bin supports only 1 ABI at a time.
 DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
 
 EXPECTED_BUILD_FILES="\
-95dbea87f666876c2fa0263a83291644e3c8cd521c961155f7073550701569ff\
-f1e851c34cbbbddf6c78522c59bc9d24f60a63e90e29e6e98505b4130d20ae0c\
+70f568daad6bc575e4c623312ec493836c02d0a72a6e116956bacc11640ecd9b\
+434efbe8222f89b8baf3f710aee37b8803264adee9faca34b98046cbc81e4a38\
 "
 
 pkg_setup() {
@@ -122,14 +130,15 @@ eerror
 }
 
 src_unpack() {
-	use fallback-commit && EGIT_COMMIT="5819e6e7ef5747ba6375cb9dfad0a75b6127d562"
-	git-r3_fetch
-	git-r3_checkout
-	cd "${S}" || die
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="ce0af42429434e9a0701b8af15bc7d26f6dd424b" # Sep 10, 2023
+		git-r3_fetch
+		git-r3_checkout
+		cd "${S}" || die
 
-	local actual_pv=$(grep -e "^Version=" "version.config" | cut -f 2 -d "=")
-	local expected_pv="8.6"
-	if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
+		local actual_pv=$(grep -e "^Version=" "version.config" | cut -f 2 -d "=")
+		local expected_pv="8.6"
+		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 eerror
 eerror "Version mismatch"
 eerror
@@ -137,25 +146,27 @@ eerror "Actual PV:  ${actual_pv}"
 eerror "Expected PV:  ${expected_pv}"
 eerror
 eerror
-		die
-	fi
+			die
+		fi
 
-	IFS=$'\n'
-	for f in $(find "${S}" -name "*.csproj" | sort) ; do
-		cat "${f}"
-	done | sha512sum | cut -f 1 -d " " > "${T}/h"
-	IFS=$' \t\n'
-	local actual_build_files=$(cat "${T}/h")
+		IFS=$'\n'
+		for f in $(find "${S}" -name "*.csproj" | sort) ; do
+			cat "${f}"
+		done | sha512sum | cut -f 1 -d " " > "${T}/h"
+		IFS=$' \t\n'
+		local actual_build_files=$(cat "${T}/h")
 
-	if [[ "${actual_build_files}" != "${EXPECTED_BUILD_FILES}" ]] ; then
+		if [[ "${actual_build_files}" != "${EXPECTED_BUILD_FILES}" ]] ; then
 eerror
 eerror "Build files change detected for dependencies"
 eerror
 eerror "Actual PV:  ${actual_build_files}"
 eerror "Expected PV:  ${EXPECTED_BUILD_FILES}"
 eerror
-		die
+			die
+		fi
 	fi
+	cd "${S}" || die
 }
 
 _fix_nuget_feeds() {
@@ -291,7 +302,6 @@ _build_all() {
 	./configure \
 		${myconf[@]}
 
-	export PATH="${EPREFIX}/opt/dotnet-sdk-bin-6.0:${PATH}"
 
 einfo "Called print_config"
 	emake print_config
@@ -305,10 +315,26 @@ _build_debugger() {
 	./build.sh
 }
 
+_run() {
+einfo "Running:  ${@}"
+	"${@}" || die
+}
+
+_verify_toolchain() {
+	_run uname -a
+	_run git --version
+	_run make --version
+	_run mono -V
+	_run msbuild -version
+	_run dotnet --info
+}
+
 src_compile() {
 	local configuration="Release"
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+	export PATH="${EPREFIX}/opt/dotnet-sdk-bin-6.0:${PATH}"
+	_verify_toolchain
 	_build_all
 	use debugger && _build_debugger
 }
