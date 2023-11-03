@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Version details:  main branch at HEAD ; develop/experimental
+
 DOTNET_PV="6.0"
 
 inherit git-r3 lcnr

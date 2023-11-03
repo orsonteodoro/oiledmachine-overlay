@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Version details:  7.6 branch at tip ; ebuild maybe to check if it works
+
 DOTNET_PV="3.0"
 
 inherit git-r3 lcnr

@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Version details:  8.3 branch at tip ; the latest of the second to last major release
+
 DOTNET_PV="6.0"
 
 inherit git-r3 lcnr
