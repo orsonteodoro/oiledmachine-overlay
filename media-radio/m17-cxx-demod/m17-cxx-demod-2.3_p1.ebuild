@@ -6,6 +6,12 @@ EAPI=8
 
 inherit cmake
 
+SRC_URI="
+https://github.com/mobilinkd/m17-cxx-demod/archive/refs/tags/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
+
 DESCRIPTION="M17 Demodulator in C++"
 HOMEPAGE="https://github.com/mobilinkd/m17-cxx-demod"
 LICENSE="GPL-3"
@@ -16,17 +22,17 @@ DEPEND+="
 	dev-libs/boost
 	media-libs/codec2
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	>=dev-util/cmake-3.9
 	dev-cpp/blaze
-	test? ( dev-cpp/gtest )
+	test? (
+		dev-cpp/gtest
+	)
 "
 EGIT_COMMIT="kalman-v1.0"
-SRC_URI="
-https://github.com/mobilinkd/m17-cxx-demod/archive/refs/tags/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz"
-S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( LICENSE README.md )
 
