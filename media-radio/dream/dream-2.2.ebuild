@@ -6,6 +6,9 @@ EAPI=8
 
 inherit flag-o-matic qmake-utils toolchain-funcs
 
+SRC_URI="mirror://sourceforge/drm/${PN}_${PV}.orig.tar.gz"
+S="${WORKDIR}/${PN}-${PV}"
+
 DESCRIPTION="A software radio for AM and Digital Radio Mondiale (DRM)"
 HOMEPAGE="https://sourceforge.net/projects/drm/"
 LICENSE="GPL-2+"
@@ -96,8 +99,6 @@ BDEPEND+="
 	sys-devel/gcc
 	sys-devel/make
 "
-SRC_URI="mirror://sourceforge/drm/${PN}_${PV}.orig.tar.gz"
-S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=(
 	AUTHORS
