@@ -8,4 +8,21 @@
   </maintainer>
   <longdescription lang="en">
   </longdescription>
+  <use>
+    <flag name="boost">
+      Use Boost for shared-memory parallelization
+    </flag>
+    <flag name="cxx11threads">
+      Use C++11 for shared-memory parallelization
+    </flag>
+    <flag name="hpx">
+      Use HPX for shared-memory parallelization
+    </flag>
+    <flag name="lapack">
+      Use LAPACK operations
+    </flag>
+    <flag name="openmp">
+      Use OpenMP for shared-memory parallelization
+    </flag>
+  </use>
 </pkgmetadata>
