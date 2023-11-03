@@ -6,7 +6,7 @@ EAPI=8
 
 DOTNET_PV="6.0"
 
-inherit git-r3 lcnr
+inherit git-r3 lcnr xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/dotdevelop/dotdevelop.git"
@@ -53,6 +53,7 @@ REQUIRED_USE="
 	!debugger
 "
 CDEPEND="
+	!dev-dotnet/monodevelop
 	>=dev-lang/mono-6.12
 	>=dev-dotnet/fsharp-mono-bin-5.0.0.0_p15
 	>=dev-dotnet/gtk-sharp-2.12.8:2

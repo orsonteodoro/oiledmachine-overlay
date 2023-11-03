@@ -8,7 +8,7 @@ EAPI=8
 
 DOTNET_PV="3.0"
 
-inherit git-r3 lcnr
+inherit git-r3 lcnr xdg
 
 SRC_URI=""
 S="${WORKDIR}/${PN}-${PV}"
@@ -48,6 +48,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE=" developer git monoextentions subversion test"
 REQUIRED_USE=" "
 CDEPEND="
+	!dev-dotnet/dotdevelop
 	>=dev-dotnet/gtk-sharp-2.12.8:2
 	>=dev-dotnet/fsharp-mono-bin-5.0.0.0_p15
 	>=dev-lang/mono-4
