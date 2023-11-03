@@ -6,6 +6,11 @@ EAPI=8
 
 inherit autotools cmake
 
+SRC_URI="
+https://github.com/jketterl/csdr/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+
 DESCRIPTION="A simple DSP library and command-line tool for Software Defined Radio."
 HOMEPAGE="https://github.com/jketterl/csdr"
 LICENSE="BSD GPL-3+"
@@ -15,11 +20,11 @@ DEPEND+="
 	>=sci-libs/fftw-3.3:=
 	>=media-libs/libsamplerate-0.1.8
 "
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" "
-SRC_URI="
-https://github.com/jketterl/csdr/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	>=dev-util/cmake-3.0
 "
 RESTRICT="mirror"
 DOCS=( README.md )
