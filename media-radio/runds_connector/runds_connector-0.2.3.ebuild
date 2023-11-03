@@ -6,6 +6,12 @@ EAPI=8
 
 inherit cmake
 
+SRC_URI="
+https://github.com/jketterl/runds_connector/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
+
 DESCRIPTION="OpenWebRX connector implementation for R&S EB200 or Ammos protocol based receivers"
 HOMEPAGE="https://github.com/jketterl/runds_connector"
 LICENSE="GPL-3"
@@ -14,13 +20,13 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND+="
 	media-radio/owrx_connector
 "
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-util/cmake-3.0
-	virtual/pkgconfig"
-SRC_URI="
-https://github.com/jketterl/runds_connector/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz"
-S="${WORKDIR}/${P}"
+RDEPEND+="
+	${DEPEND}
+"
+BDEPEND+="
+	>=dev-util/cmake-3.0
+	virtual/pkgconfig
+"
 RESTRICT="mirror"
 DOCS=( LICENSE )
 
