@@ -5,7 +5,11 @@
 EAPI=8
 
 DOTNET_PV="6.0"
+
 inherit git-r3 lcnr
+
+SRC_URI=""
+S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="MonoDevelop is a cross platform .NET IDE"
 HOMEPAGE="
@@ -42,34 +46,34 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE=" developer test"
 REQUIRED_USE=" "
 CDEPEND="
-	>=dev-lang/mono-5.10
 	>=dev-dotnet/gtk-sharp-2.12.8:2
+	>=dev-lang/mono-5.10
 "
 RDEPEND="
 	${CDEPEND}
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	${CDEPEND}
-	  app-shells/bash
 	>=dev-dotnet/dotnet-sdk-bin-3.1:3.1
 	>=dev-dotnet/dotnet-sdk-bin-6.0:6.0
 	>=dev-dotnet/msbuild-bin-16:16
 	>=dev-util/cmake-2.8.12.2
-	  dev-util/intltool
-	  dev-vcs/git
 	>=sys-devel/autoconf-2.53
 	>=sys-devel/automake-1.10
-	  sys-devel/gettext
-	  sys-devel/make
-	  virtual/pkgconfig
-	  x11-misc/shared-mime-info
+	app-shells/bash
+	dev-util/intltool
+	dev-vcs/git
+	sys-devel/gettext
+	sys-devel/make
+	virtual/pkgconfig
+	x11-misc/shared-mime-info
 	kernel_Darwin? (
 		dev-lang/ruby
 	)
 "
-SRC_URI=""
-S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-8.4.3_p9999-use-monolauncher.patch"
@@ -303,6 +307,7 @@ src_compile() {
 	local configuration="Release"
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+	export MAKEOPTS="-j1"
 	_build_all
 }
 
