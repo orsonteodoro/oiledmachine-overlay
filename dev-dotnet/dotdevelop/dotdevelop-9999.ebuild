@@ -221,7 +221,7 @@ src_prepare() {
 #	_drop_projects
 }
 
-_use_mono_msbuild_mono() {
+_use_mono_msbuild() {
 	mkdir -p "${WORKDIR}/bin" || die
 	ln -s \
 		"/usr/bin/msbuild" \
@@ -273,7 +273,7 @@ src_configure() {
 		einfo "Edited ${f}:  ${EPREFIX}/usr/local/share/dotnet -> ${EPREFIX}/opt/${SDK}"
 		sed -i -e "s|/usr/local/share/dotnet|${EPREFIX}/opt/${SDK}|g" "${f}" || die
 	done
-	_use_msbuild_mono
+	_use_mono_msbuild
 	#_use_msbuild_dotnet
 	#_check_msbuild
 	local msbuild_path=$(realpath "${EPREFIX}/opt/${SDK}/sdk/"*"/MSBuild.dll")
@@ -344,9 +344,13 @@ src_compile() {
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 	export PATH="${EPREFIX}/opt/dotnet-sdk-bin-6.0:${PATH}"
+	export MAKEOPTS="-j1"
 	_verify_toolchain
 	_build_all
 	use debugger && _build_debugger
+	pushd "${S}/main" || die
+		emake
+	popd
 }
 
 src_install() {
