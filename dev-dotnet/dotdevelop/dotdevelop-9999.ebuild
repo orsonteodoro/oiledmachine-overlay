@@ -26,6 +26,7 @@ LICENSE="
 	all-rights-reserved
 	Apache-2.0
 	GPL-2
+	GPL-2-with-linking-exception
 	LGPL-2.1
 	Ms-PL
 	ZLIB
@@ -86,9 +87,9 @@ BDEPEND="
 "
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/${PN}-9999-use-monolauncher.patch"
-#	"${FILESDIR}/${PN}-9999-buildvariables-references.patch"
-	"${FILESDIR}/${PN}-9999-AsyncQuickInfoDemo-references.patch"
+##	"${FILESDIR}/${PN}-9999-use-monolauncher.patch"
+###	"${FILESDIR}/${PN}-9999-buildvariables-references.patch"
+##	"${FILESDIR}/${PN}-9999-AsyncQuickInfoDemo-references.patch"
 )
 
 # The dotnet-sdk-bin supports only 1 ABI at a time.
@@ -306,18 +307,17 @@ _build_all() {
 	local myconf=(
 		--profile=gnome
 		--prefix="${EPREFIX}/usr"
-		--enable-release
+#		--enable-release
 	)
 
 	./configure \
 		${myconf[@]}
 
+#einfo "Called print_config"
+#	emake print_config
 
-einfo "Called print_config"
-	emake print_config
-
-einfo "Called all-recursive"
-	emake all-recursive
+#einfo "Called all-recursive"
+#	emake all-recursive
 }
 
 _build_debugger() {
