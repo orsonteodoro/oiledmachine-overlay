@@ -16,12 +16,12 @@ HOMEPAGE="https://github.com/jketterl/csdr"
 LICENSE="BSD GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-DEPEND+="
+RDEPEND+="
 	>=sci-libs/fftw-3.3:=
 	>=media-libs/libsamplerate-0.1.8
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-util/cmake-3.0
