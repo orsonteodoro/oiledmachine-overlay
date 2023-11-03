@@ -102,6 +102,9 @@ eerror
 eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
 eerror "to the default immediately after this package has been merged."
 eerror
+eerror "When you are done, immediately switch back to the systemwide"
+eerror "default slot for gcc."
+eerror
 		die
 	fi
 
