@@ -82,7 +82,6 @@ dev-util/ycm-generator
 www-misc/rainbowstream
 
 # Unfinished.  ebuild is pre-alpha
-dev-dotnet/dotdevelop
 dev-dotnet/monodevelop
 
 # End Of Life (EOL) on the distro.  Last update was Jan 20, 2021 on the upstream
