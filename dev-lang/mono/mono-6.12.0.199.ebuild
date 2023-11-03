@@ -150,7 +150,7 @@ ${PGO_TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
 
-r1
+r2
 "
 gen_pgo_trainers_required_use() {
 	local u
@@ -575,7 +575,7 @@ cat <<EOF > "${ED}/etc/ca-certificates/update.d/mono-keystore"
 echo "Updating mono keystore"
 /usr/bin/cert-sync /etc/ssl/certs/ca-certificates.crt || true
 EOF
-	fperms /etc/ca-certificates/update.d/mono-keystore
+	fperms 0750 /etc/ca-certificates/update.d/mono-keystore
 }
 
 src_install() {
