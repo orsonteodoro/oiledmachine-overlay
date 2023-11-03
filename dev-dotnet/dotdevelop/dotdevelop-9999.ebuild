@@ -48,7 +48,7 @@ IUSE="
 debug debugger developer test
 
 +fallback-commit
-r1
+r2
 "
 REQUIRED_USE="
 	!debugger
@@ -75,6 +75,7 @@ BDEPEND="
 	>=sys-devel/autoconf-2.53
 	>=sys-devel/automake-1.10
 	>=sys-devel/make-4.2.1
+	app-crypt/gnupg
 	app-shells/bash
 	dev-util/intltool
 	sys-devel/gettext
