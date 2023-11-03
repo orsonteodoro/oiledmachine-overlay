@@ -4,12 +4,11 @@
 
 EAPI=7
 
-EGO_PN="github.com/jancona/hpsdrconnector"
-
 inherit golang-build go-module
 
-LOGUTILS_PV="1.0.0"
 HPSDR_PV="0.6.0"
+LOGUTILS_PV="1.0.0"
+EGO_PN="github.com/jancona/hpsdrconnector"
 EGO_SUM=(
 	"github.com/hashicorp/logutils v${LOGUTILS_PV}"
 	"github.com/jancona/hpsdr v${HPSDR_PV}"
@@ -40,11 +39,18 @@ src_unpack() {
 
 src_prepare() {
 	default
-	ln -s "${GOMODCACHE}" "${GOMODCACHE}/src" || die
-	ln -s "${GOMODCACHE}/github.com/hashicorp/logutils@v${LOGUTILS_PV}" \
-		"${GOMODCACHE}/github.com/hashicorp/logutils" || die
-	ln -s "${GOMODCACHE}/github.com/jancona/hpsdr@v${HPSDR_PV}" \
-		"${GOMODCACHE}/github.com/jancona/hpsdr" || die
+	ln -s \
+		"${GOMODCACHE}" \
+		"${GOMODCACHE}/src" \
+		|| die
+	ln -s \
+		"${GOMODCACHE}/github.com/hashicorp/logutils@v${LOGUTILS_PV}" \
+		"${GOMODCACHE}/github.com/hashicorp/logutils" \
+		|| die
+	ln -s \
+		"${GOMODCACHE}/github.com/jancona/hpsdr@v${HPSDR_PV}" \
+		"${GOMODCACHE}/github.com/jancona/hpsdr" \
+		|| die
 }
 
 src_compile() {
