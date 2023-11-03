@@ -22,7 +22,10 @@ HOMEPAGE="https://mono-project.com"
 # found in the tarball.
 LICENSE="
 	MIT
-	( MIT UoI-NCSA )
+	(
+		MIT
+		UoI-NCSA
+	)
 	Apache-1.1
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -56,19 +59,25 @@ LICENSE="
 	SunPro
 	ZLIB
 	acceptance-tests-coreclr-trainer? (
-		( MIT all-rights-reserved )
+		(
+			all-rights-reserved
+			MIT
+		)
 		DOTNET-libraries-and-runtime-components-patents
 		MIT
 	)
 	acceptance-tests-microbench-trainer? (
-		( all-rights-reserved CDDL-1.1 )
+		(
+			all-rights-reserved
+			CDDL-1.1
+		)
 		all-rights-reserved
 		Apache-2.0
 		BSD
 		BSD-2
 		CDDL-1.1
-		MIT
 		GPL-2+
+		MIT
 	)
 	jemalloc? (
 		BSD-2
@@ -136,8 +145,13 @@ PGO_TRAINERS="
 	mono-native-trainer
 	mcs-trainer
 "
-IUSE+=" ${PGO_TRAINERS[@]}"
-IUSE+=" doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls pax-kernel xen"
+IUSE+="
+${PGO_TRAINERS[@]}
+doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
+pax-kernel xen
+
+r1
+"
 gen_pgo_trainers_required_use() {
 	local u
 	for u in ${PGO_TRAINERS[@]} ; do
@@ -554,6 +568,16 @@ multilib_src_test() {
 	emake check
 }
 
+gen_mono_keystore_updater() {
+	dodir /etc/ca-certificates/update.d
+cat <<EOF > "${ED}/etc/ca-certificates/update.d/mono-keystore"
+#!/bin/bash
+echo "Updating mono keystore"
+/usr/bin/cert-sync /etc/ssl/certs/ca-certificates.crt || true
+EOF
+	fperms /etc/ca-certificates/update.d/mono-keystore
+}
+
 src_install() {
 	install_abi() {
 		cd $(_get_build_dir) || die
@@ -572,6 +596,7 @@ src_install() {
 	}
 	multilib_foreach_abi install_abi
 	multilib_src_install_all
+	gen_mono_keystore_updater
 }
 
 multilib_src_install_all() {
@@ -589,7 +614,7 @@ multilib_src_install_all() {
 pkg_postinst() {
 	uopts_pkg_postinst
 	# bug #762265
-	cert-sync "${EROOT}"/etc/ssl/certs/ca-certificates.crt
+	cert-sync "${EROOT}/etc/ssl/certs/ca-certificates.crt"
 }
 
 # OILEDMACHINE-OVERLAY-META-TAGS:  PGO

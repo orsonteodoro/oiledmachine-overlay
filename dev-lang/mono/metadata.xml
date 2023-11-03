@@ -70,5 +70,9 @@
       Make mono generate code that is considerably faster on xen VMs but
       slightly slower on for normal systems.
     </flag>
+
+    <flag name="rN">
+      Ebuild revision
+    </flag>
   </use>
 </pkgmetadata>
