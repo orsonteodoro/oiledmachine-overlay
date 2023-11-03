@@ -6,7 +6,14 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/jketterl/js8py/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Python module for parsing messages from the 'js8' command line decoder"
 HOMEPAGE="https://github.com/jketterl/js8py"
@@ -21,11 +28,6 @@ DEPEND+="
 "
 BDEPEND+="
 "
-SRC_URI="
-https://github.com/jketterl/js8py/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( LICENSE README.md )
 
