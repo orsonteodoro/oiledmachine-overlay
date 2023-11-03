@@ -162,11 +162,11 @@ RDEPEND+="
 		>=media-radio/m17-cxx-demod-2.3
 	)
 	dream? (
-		media-radio/dream
+		>=media-radio/dream-2.1.1
 	)
 	js8? (
-		dev-python/js8py[${PYTHON_USEDEP}]
-		media-radio/js8call
+		>=dev-python/js8py-0.1.2[${PYTHON_USEDEP}]
+		>=media-radio/js8call-2.2.0
 	)
 	openwebrx_sdr_fifi_sdr? (
 		media-libs/alsa-lib
@@ -201,8 +201,8 @@ RDEPEND+="
 		net-wireless/soapyremote
 	)
 	packet? (
-		  media-radio/aprs-symbols
-		>=media-radio/direwolf-1.4
+		>=media-radio/direwolf-1.6
+		media-radio/aprs-symbols
 	)
 	pocsag? (
 		${DIGIHAM_DEPEND}
