@@ -6,29 +6,41 @@ EAPI=7
 
 inherit cmake user-info
 
+SRC_URI="
+https://github.com/jketterl/codecserver/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
+
 DESCRIPTION="Modular audio codec server"
 HOMEPAGE="https://github.com/jketterl/codecserver"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" openrc systemd"
-REQUIRED_USE="|| ( openrc systemd )"
-DEPEND+="
-	acct-group/dialout
-	>=dev-libs/protobuf-3.12.4
-	virtual/udev
-	openrc? ( sys-apps/openrc )
-	systemd? ( sys-apps/systemd )
+REQUIRED_USE="
+	|| (
+		openrc systemd
+	)
 "
-RDEPEND+=" ${DEPEND}"
+DEPEND+="
+	>=dev-libs/protobuf-3.12.4
+	acct-group/dialout
+	virtual/udev
+	openrc? (
+		sys-apps/openrc
+	)
+	systemd? (
+		sys-apps/systemd
+	)
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	>=dev-util/cmake-3.6
 	>=dev-libs/protobuf-3.0
 "
-SRC_URI="
-https://github.com/jketterl/codecserver/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz"
-S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( LICENSE README.md )
 
