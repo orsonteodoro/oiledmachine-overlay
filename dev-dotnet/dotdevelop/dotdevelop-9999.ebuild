@@ -53,6 +53,7 @@ REQUIRED_USE="
 "
 CDEPEND="
 	>=dev-lang/mono-6.12
+	>=dev-dotnet/fsharp-mono-bin-5.0.0.0_p15
 	>=dev-dotnet/gtk-sharp-2.12.8:2
 "
 RDEPEND="
@@ -65,7 +66,7 @@ DEPEND="
 BDEPEND="
 	${CDEPEND}
 	>=dev-dotnet/dotnet-sdk-bin-6.0.416:6.0
-	>=dev-dotnet/msbuild-bin-16.10.1:16
+	>=dev-dotnet/mono-msbuild-bin-16.10.1:16
 	>=dev-util/cmake-2.8.12.2
 	>=dev-vcs/git-2.25.1
 	>=sys-devel/autoconf-2.53
@@ -214,9 +215,17 @@ _drop_projects() {
 
 src_prepare() {
 	default
-	_fix_nuget_feeds
-#	_attach_reference_assemblies_pack
-	_drop_projects
+#	_fix_nuget_feeds
+##	_attach_reference_assemblies_pack
+#	_drop_projects
+}
+
+_use_mono_msbuild_mono() {
+	mkdir -p "${WORKDIR}/bin" || die
+	ln -s \
+		"/usr/bin/msbuild" \
+		"${WORKDIR}/bin/msbuild"
+	export PATH="${WORKDIR}/bin:${PATH}"
 }
 
 # Upstream uses the mono version but it doesn't work
@@ -224,9 +233,9 @@ _use_msbuild_mono() {
 	mkdir -p "${WORKDIR}/bin" || die
 cat <<EOF > "${WORKDIR}/bin/msbuild" || die
 #!${EPREFIX}/bin/bash
+#	-p:UseMonoLauncher=1 \
 "${EPREFIX}/usr/bin/mono" \
 	$(realpath "${EPREFIX}/usr/share/msbuild/16/MSBuild.dll") \
-	-p:UseMonoLauncher=1 \
 	-p:ReferencePath="${HOME}/.nuget/packages" \
 	"\${@}"
 EOF
@@ -239,10 +248,10 @@ _use_msbuild_dotnet() {
 	mkdir -p "${WORKDIR}/bin" || die
 cat <<EOF > "${WORKDIR}/bin/msbuild" || die
 #!${EPREFIX}/bin/bash
+#	-p:UseMonoLauncher=1 \
 "${EPREFIX}/opt/${SDK}/dotnet" \
 	$(realpath "${EPREFIX}/opt/${SDK}/sdk/"*"/MSBuild.dll") \
 	-tv:Current \
-	-p:UseMonoLauncher=1 \
 	-p:ReferencePath="${HOME}/.nuget/packages" \
 	"\${@}"
 EOF
@@ -263,7 +272,8 @@ src_configure() {
 		einfo "Edited ${f}:  ${EPREFIX}/usr/local/share/dotnet -> ${EPREFIX}/opt/${SDK}"
 		sed -i -e "s|/usr/local/share/dotnet|${EPREFIX}/opt/${SDK}|g" "${f}" || die
 	done
-	_use_msbuild_dotnet
+	_use_msbuild_mono
+	#_use_msbuild_dotnet
 	#_check_msbuild
 	local msbuild_path=$(realpath "${EPREFIX}/opt/${SDK}/sdk/"*"/MSBuild.dll")
 	sed -i -e "s|XBUILD=msbuild|XBUILD=\"${WORKDIR}/bin/msbuild\"|g" \
