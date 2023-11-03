@@ -301,7 +301,7 @@ src_configure() {
 	_set_csc
 	_use_msbuild_mono
 	#_use_msbuild_dotnet
-	_make_fsharpc
+	#_make_fsharpc
 }
 
 _restore_all() {

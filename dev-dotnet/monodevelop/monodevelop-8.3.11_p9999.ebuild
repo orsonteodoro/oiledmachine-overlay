@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Version details:  8.3 branch at tip ; the latest of the second to last major release
+# Version details:  8.3 branch at tip ; the latest of the second to last minor release
 
 DOTNET_PV="6.0"
 
