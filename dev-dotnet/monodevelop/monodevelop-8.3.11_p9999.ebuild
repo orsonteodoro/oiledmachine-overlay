@@ -47,6 +47,7 @@ IUSE=" developer test"
 REQUIRED_USE=" "
 CDEPEND="
 	>=dev-dotnet/gtk-sharp-2.12.8:2
+	>=dev-dotnet/fsharp-mono-bin-5.0.0.0_p15
 	>=dev-lang/mono-5.10
 "
 RDEPEND="
@@ -59,7 +60,7 @@ BDEPEND="
 	${CDEPEND}
 	>=dev-dotnet/dotnet-sdk-bin-3.1:3.1
 	>=dev-dotnet/dotnet-sdk-bin-6.0:6.0
-	>=dev-dotnet/msbuild-bin-16:16
+	>=dev-dotnet/mono-msbuild-bin-16.10.1
 	>=dev-util/cmake-2.8.12.2
 	>=sys-devel/autoconf-2.53
 	>=sys-devel/automake-1.10
