@@ -6,7 +6,14 @@ EAPI=7
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1 user-info
+
+SRC_URI="
+https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Open source, multi-user SDR receiver software with a web interface"
 HOMEPAGE="https://www.openwebrx.de/"
@@ -51,7 +58,10 @@ ${OPTIONAL_FEATURES[@]}
 openrc systemd
 "
 REQUIRED_USE+="
-|| ( openrc systemd )
+	|| (
+		openrc
+		systemd
+	)
 "
 SOAPY_DEVICES=(
 	airspy
@@ -66,8 +76,14 @@ SOAPY_DEVICES=(
 	soapy_remote
 	uhd
 )
+DIGIHAM_DEPEND="
+	(
+		>=dev-python/pydigiham-0.6.2[${PYTHON_USEDEP}]
+		>=media-radio/digiham-0.6.2
+	)
+"
 OWRX_CONNECTOR_DEPEND="
-	>=media-radio/owrx_connector-0.5
+	>=media-radio/owrx_connector-0.6.2
 "
 gen_soapy_depends() {
 	local d
@@ -130,16 +146,19 @@ RDEPEND_UNPACKAGED+="
 RDEPEND+="
 	${RDEPEND_UNPACKAGED}
 	$(gen_soapy_depends)
-	>=dev-python/pycsdr-0.18.1[${PYTHON_USEDEP}]
+	(
+		>=dev-python/pycsdr-0.18.2[${PYTHON_USEDEP}]
+		>=media-radio/csdr-0.18.2
+	)
 	digital_voice_digiham? (
+		${DIGIHAM_DEPEND}
 		>=media-radio/codecserver-0.2
-		>=media-radio/digiham-0.6
 	)
 	digital_voice_freedv? (
 		media-libs/codec2
 	)
 	digital_voice_m17? (
-		>=media-radio/digiham-0.5
+		${DIGIHAM_DEPEND}
 		>=media-radio/m17-cxx-demod-2.3
 	)
 	dream? (
@@ -170,7 +189,7 @@ RDEPEND+="
 		${OWRX_CONNECTOR_DEPEND}
 	)
 	openwebrx_sdr_runds? (
-		>=media-radio/runds_connector-0.2.1
+		>=media-radio/runds_connector-0.2.3
 	)
 	openwebrx_sdr_sddc? (
 		media-radio/sddc_connector
@@ -186,7 +205,7 @@ RDEPEND+="
 		>=media-radio/direwolf-1.4
 	)
 	pocsag? (
-		>=media-radio/digiham-0.5
+		${DIGIHAM_DEPEND}
 	)
 	systemd? (
 		sys-apps/systemd
@@ -202,11 +221,6 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-SRC_URI="
-https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
 DOCS=( CHANGELOG.md LICENSE.txt README.md )
 
 pkg_setup() {
