@@ -25,7 +25,7 @@ LICENSE="
 KEYWORDS="~amd64"
 RESTRICT="mirror"
 IUSE="
-r2
+r3
 "
 RDEPEND="
 	!dev-dotnet/fsharp

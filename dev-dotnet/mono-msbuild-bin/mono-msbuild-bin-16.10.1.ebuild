@@ -39,7 +39,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE="
-r2
+r3
 "
 REQUIRED_USE="
 "

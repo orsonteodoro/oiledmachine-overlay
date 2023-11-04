@@ -48,7 +48,7 @@ IUSE="
 debug debugger developer test
 
 +fallback-commit
-r5
+r6
 "
 REQUIRED_USE="
 	!debugger
