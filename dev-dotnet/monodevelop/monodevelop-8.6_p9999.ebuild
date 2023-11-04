@@ -14,7 +14,7 @@ EAPI=8
 
 DOTNET_PV="6.0"
 
-inherit git-r3 lcnr
+inherit git-r3 lcnr xdg
 
 SRC_URI=""
 S="${WORKDIR}/${PN}-${PV}"
@@ -255,39 +255,9 @@ einfo "Editing ${f} to remove ${feed}"
 	done
 }
 
-_attach_reference_assemblies_pack() {
-	IFS=$'\n'
-	local f
-	for f in $(find "${S}" -name "*.csproj") ; do
-		local loc=$(grep -n "<Reference Include=\"System" "${f}" | cut -f 1 -d ":" | head -n 1)
-		[[ -z "${loc}" ]] && continue
-einfo "Editing ${f}:  Attaching PackageReference to Microsoft.NETFramework.ReferenceAssemblies"
-		sed -i -e "${loc}i<PackageReference Include=\"Microsoft.NETFramework.ReferenceAssemblies\" Version=\"1.0.3\" />" "${f}" || die
-	done
-	IFS=$' \t\n'
-}
-
-_drop_projects() {
-	IFS=$'\n'
-	local f
-	for f in $(find "${S}" -name "*.sln") ; do
-		if ! use test ; then
-			local r=""
-			r=$(grep -e "^Project.*Test" "${f}")
-			if [[ -n "${r}" ]] ; then
-				einfo "Deleting test reference in ${f} -- Result:  ${r}"
-			fi
-			sed -i -e '/^Project.*Test/i,/^EndProject/d' "${f}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
 src_prepare() {
 	default
 	_fix_nuget_feeds
-	#_attach_reference_assemblies_pack
-	#_drop_projects
 }
 
 _use_msbuild_mono() {
