@@ -48,7 +48,7 @@ IUSE="
 debug debugger developer test
 
 +fallback-commit
-r2
+r3
 "
 REQUIRED_USE="
 	!debugger
@@ -326,9 +326,17 @@ einfo "Sanitizing file/folder permissions"
 			:;
 		elif file "${path}" | grep -q -e "POSIX shell script" ; then
 			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Bourne-Again shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32 executable (console)" ; then
+			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -F -e "PE32 executable (DLL)" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -F -e "PE32 executable (DLL) (console)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32 executable (GUI)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32+ executable (DLL) (GUI)" ; then
 			chmod 0755 "${path}" || die
 		else
 			chmod 0644 "${path}" || die

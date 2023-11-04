@@ -24,6 +24,9 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 RESTRICT="mirror"
+IUSE="
+r1
+"
 RDEPEND="
 	!dev-dotnet/fsharp
 	!dev-dotnet/fsharp-mono
@@ -55,6 +58,7 @@ sanitize_permissions() {
 einfo "Sanitizing file/folder permissions"
 	IFS=$'\n'
 	for path in $(find "${ED}") ; do
+		realpath "${path}" 2>/dev/null 1>/dev/null || continue
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
 			chmod 0755 "${path}" || die
@@ -64,9 +68,17 @@ einfo "Sanitizing file/folder permissions"
 			:;
 		elif file "${path}" | grep -q -e "POSIX shell script" ; then
 			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "Bourne-Again shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32 executable (console)" ; then
+			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -F -e "PE32 executable (DLL)" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -F -e "PE32 executable (DLL) (console)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32 executable (GUI)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32+ executable (DLL) (GUI)" ; then
 			chmod 0755 "${path}" || die
 		else
 			chmod 0644 "${path}" || die
