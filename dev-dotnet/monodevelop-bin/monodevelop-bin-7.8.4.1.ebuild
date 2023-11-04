@@ -186,5 +186,4 @@ pkg_postinst() {
 # /usr/bin/dotdevelop:  ?
 # /usr/bin/monodevelop:  ok
 # Form designer:  ok
-# Hello world GUI prototype:  ok
-# GtkSharp:  on
+# Hello world GUI prototype (GtkSharp:2):  ok
