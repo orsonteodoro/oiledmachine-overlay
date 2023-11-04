@@ -48,7 +48,7 @@ IUSE="
 debugger developer test
 
 +fallback-commit
-r7
+r8
 "
 REQUIRED_USE="
 	!debugger
@@ -355,7 +355,6 @@ src_install() {
 	emake DESTDIR="${D}" install
 	_install_files
 	gen_dotdevelop_wrapper
-	dosym /usr/bin/monodevelop /usr/bin/${PN}
 	dodoc README.md
 	lcnr_install_files
 	sanitize_permissions
