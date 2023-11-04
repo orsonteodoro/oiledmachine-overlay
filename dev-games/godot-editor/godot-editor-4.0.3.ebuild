@@ -127,7 +127,8 @@ ca-certs-relax +enet +jsonrpc +mbedtls +multiplayer +text-server-adv
 -text-server-fb +upnp +webrtc +websocket
 "
 IUSE_SCRIPTING="
-csharp-external-editor -gdscript gdscript_lsp -mono +visual-script vscode
+csharp-external-editor -gdscript gdscript_lsp -mono monodevelop +visual-script
+vscode
 "
 IUSE_SYSTEM="
 system-bullet system-embree system-enet system-freetype system-glslang
@@ -160,6 +161,7 @@ REQUIRED_USE+="
 	csharp-external-editor? (
 		mono
 		|| (
+			monodevelop
 			vscode
 		)
 	)
@@ -478,6 +480,9 @@ RDEPEND+="
 	mono? (
 		csharp-external-editor? (
 			|| (
+				monodevelop? (
+					dev-dotnet/monodevelop-bin
+				)
 				vscode? (
 					app-editors/vscode
 				)

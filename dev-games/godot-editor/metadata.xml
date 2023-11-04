@@ -213,6 +213,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="mono">
       Enables C# scripting support.
     </flag>
+    <flag name="monodevelop">
+      Use MonoDevelop as an external editor or IDE for C# scripting
+    </flag>
     <flag name="mp3">
       Enables MP3 support.
     </flag>
@@ -436,7 +439,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables use of volk library to reduce overhead.
     </flag>
     <flag name="vscode">
-      Use Visual Studio Code for C# scripting
+      Use Visual Studio Code as an external editor for C# scripting
     </flag>
     <flag name="xml">
       Enables XML support.
