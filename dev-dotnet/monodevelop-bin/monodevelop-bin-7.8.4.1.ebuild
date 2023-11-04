@@ -119,10 +119,8 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-#	>=dev-dotnet/dotnet-sdk-bin-3.1:3.1
 BDEPEND="
 	${CDEPEND}
-	>=dev-dotnet/dotnet-sdk-bin-6.0:6.0
 	>=dev-dotnet/mono-msbuild-bin-16.10.1
 	>=dev-util/cmake-2.8.12.2
 	>=sys-devel/autoconf-2.53
