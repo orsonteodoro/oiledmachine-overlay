@@ -98,6 +98,11 @@ EXPECTED_BUILD_FILES="\
 2d57428d64e3126d14ce87118d73906d402c93901dbf9e062d34f14fff929652\
 "
 
+_run() {
+einfo "Running:  ${@}"
+	"${@}" || die
+}
+
 pkg_setup() {
 ewarn
 ewarn "This ebuild is unbuildable and incomplete."
@@ -193,8 +198,28 @@ einfo "Importing GPG key into sandboxed keychain"
 _fix_nuget_feeds() {
 	# Breaks restore
 	local BANNED_FEEDS=(
-		"myget.org/F/"
-		"devdiv.pkgs.visualstudio.com"
+		# Avoids:  "Please provide credentials for: https://www.myget.org/F/vstest/"
+		# See also:  https://github.com/mono/monodevelop/issues/9675
+		"vstest"
+
+		# Dropped in dotdevelop
+		"Roslyn Nightlies"
+		"roslyn-analyzers"
+		"VS Editor Legacy"
+		"VSTest"
+		"Templating"
+		"Azure AppService"
+		"MSBuild"
+		"nuget-build"
+
+		# Found in
+		# main/NuGet.config
+		# main/external/Xamarin.PropertyEditing/Xamarin.PropertyEditing/Xamarin.PropertyEditing.csproj
+#		"myget.org/F/"
+
+		# Found in
+		# main/external/Xamarin.PropertyEditing/Xamarin.PropertyEditing/Xamarin.PropertyEditing.csproj
+#		"devdiv.pkgs.visualstudio.com"
 	)
 	local f
 	local feed
@@ -227,6 +252,11 @@ _drop_projects() {
 	local f
 	for f in $(find "${S}" -name "*.sln") ; do
 		if ! use test ; then
+			local r=""
+			r=$(grep -e "^Project.*Test" "${f}")
+			if [[ -n "${r}" ]] ; then
+				einfo "Deleting test reference in ${f} -- Result:  ${r}"
+			fi
 			sed -i -e '/^Project.*Test/i,/^EndProject/d' "${f}" || die
 		fi
 	done
@@ -235,7 +265,7 @@ _drop_projects() {
 
 src_prepare() {
 	default
-	#_fix_nuget_feeds
+	_fix_nuget_feeds
 	#_attach_reference_assemblies_pack
 	#_drop_projects
 }
@@ -268,28 +298,6 @@ src_configure() {
 	#_use_msbuild_dotnet
 }
 
-_restore_all() {
-	IFS=$'\n'
-	local f
-	for f in $(find "${S}" -name "*.csproj") ; do
-#		if ! use test && [[ "${f,,}" =~ ("test") ]] ; then
-#			continue
-#		fi
-#		if ! use kernel_Darwin && [[ "${f,,}" =~ ("mac"|"cocoa") ]] ; then
-#			continue
-#		fi
-		if grep -q -e "PackageReference" "${f}" ; then
-
-einfo "Restoring missing assemblies for ${f}"
-		"${EPREFIX}/opt/${SDK}/dotnet" msbuild \
-			-p:RestorePackagesConfig=true \
-			-t:restore \
-			"${f}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
 _build_all() {
 	local myconf=(
 		--profile=gnome
@@ -301,12 +309,6 @@ _build_all() {
 		${myconf[@]} || die
 
 	export PATH="${EPREFIX}/opt/dotnet-sdk-bin-6.0:${PATH}"
-
-#einfo "Called print_config"
-#	emake print_config
-
-#einfo "Called all-recursive"
-#	emake all-recursive
 
 	pushd "${S}/main" || die
 		emake
