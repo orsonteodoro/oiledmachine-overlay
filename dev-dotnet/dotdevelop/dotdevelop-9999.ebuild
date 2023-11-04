@@ -307,14 +307,15 @@ sanitize_permissions() {
 einfo "Sanitizing file/folder permissions"
 	IFS=$'\n'
 	for path in $(find "${ED}") ; do
+		if file "${path}" | grep -q -e "symbolic link" ; then
+			continue
+		fi
 		realpath "${path}" 2>/dev/null 1>/dev/null || continue
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q -e "directory" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
 			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "symbolic link" ; then
-			:;
 		elif file "${path}" | grep -q -e "POSIX shell script" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -F -e "Bourne-Again shell script" ; then
@@ -341,7 +342,6 @@ einfo "Sanitizing file/folder permissions"
 src_install() {
 	emake DESTDIR="${D}" install
 	_install_files
-	_make_wrapper
 	dosym /usr/bin/monodevelop /usr/bin/${PN}
 	dodoc README.md
 	lcnr_install_files

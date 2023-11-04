@@ -23,8 +23,8 @@ esac
 # For compiler versions, see
 # https://github.com/torvalds/linux/blob/v6.6/scripts/min-tool-version.sh#L26
 
-GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="8bc9e6515183935fa0cccaf67455c439afe4982b" # 2023-10-31 18:50:13 -1000
+#GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
+#LINUX_SOURCES_FALLBACK_COMMIT="8bc9e6515183935fa0cccaf67455c439afe4982b" # 2023-10-31 18:50:13 -1000
 # PV is for 9999 (live) context check
 if [[ "${PV}" =~ "9999" ]] ; then
 	KERNEL_RELEASE_DATE="99999999"
