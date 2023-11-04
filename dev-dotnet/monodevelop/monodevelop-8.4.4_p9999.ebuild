@@ -286,7 +286,6 @@ _build_all() {
 }
 
 src_compile() {
-	local configuration="Release"
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 	export MAKEOPTS="-j1"
