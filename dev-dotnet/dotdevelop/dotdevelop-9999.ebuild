@@ -48,7 +48,7 @@ IUSE="
 debug debugger developer test
 
 +fallback-commit
-r3
+r4
 "
 REQUIRED_USE="
 	!debugger
@@ -293,15 +293,6 @@ src_compile() {
 	use debugger && _build_debugger
 }
 
-_make_wrapper() {
-cat <<EOF > "${ED}/usr/bin/dotdevelop"
-#!/bin/bash
-PATH="/usr/lib/dotdevelop:\${PATH}"
-cd "/usr/lib/dotdevelop"
-mono bin/MonoDevelop.exe "\${@}"
-EOF
-}
-
 _install_files() {
 einfo "Copying files..."
 	dodir /usr/lib/monodevelop
@@ -349,6 +340,7 @@ src_install() {
 	emake DESTDIR="${D}" install
 	_install_files
 	_make_wrapper
+	dosym /usr/bin/monodevelop /usr/bin/${PN}
 	dodoc README.md
 	lcnr_install_files
 	sanitize_permissions
