@@ -45,7 +45,7 @@ LICENSE="
 #KEYWORDS="~amd64 ~x86" # Ebuild not finished
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-debug debugger developer test
+debugger developer test
 
 +fallback-commit
 r6
@@ -248,12 +248,8 @@ _build_all() {
 	local myconf=(
 		--profile=gnome
 		--prefix="${EPREFIX}/usr"
+#		--enable-release
 	)
-	if ! use debug ; then
-		myconf+=(
-			--enable-release
-		)
-	fi
 
 	./configure \
 		${myconf[@]}
