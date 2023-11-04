@@ -216,7 +216,6 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
 
 # Testing:
-# /usr/bin/dotdevelop:  ?
 # /usr/bin/monodevelop:  ok
 # Form designer:  ok
 # Hello world GUI prototype (GtkSharp:2):  ok

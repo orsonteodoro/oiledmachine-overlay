@@ -365,7 +365,7 @@ src_install() {
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
 
 # Testing:
-# /usr/bin/dotdevelop:  ?
+# /usr/bin/dotdevelop:  ok
 # /usr/bin/monodevelop:  ok
 # Form designer:  ok
 # Hello world GUI prototype (GtkSharp:2):  ok
