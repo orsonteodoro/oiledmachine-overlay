@@ -55,9 +55,14 @@ LICENSE="
 #
 KEYWORDS="~amd64 ~arm64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE=" "
+IUSE=" database debugger-gdb nunit versioncontrol"
 REQUIRED_USE=" "
+BIN_DEPEND="
+	>=media-libs/fontconfig-2.12
+	>=sys-libs/glibc-2.27
+"
 CDEPEND="
+	${BIN_DEPEND}
 	!dev-dotnet/dotdevelop
 	!dev-dotnet/monodevelop
 	>=dev-dotnet/gtk-sharp-2.12.8:2
@@ -66,6 +71,18 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
+	database? (
+		~dev-dotnet/monodevelop-database-bin-${PV}
+	)
+	debugger-gdb? (
+		~dev-dotnet/monodevelop-debugger-gdb-bin-${PV}
+	)
+	nunit? (
+		~dev-dotnet/monodevelop-nunit-bin-${PV}
+	)
+	versioncontrol? (
+		~dev-dotnet/monodevelop-versioncontrol-bin-${PV}
+	)
 "
 DEPEND="
 	${RDEPEND}
