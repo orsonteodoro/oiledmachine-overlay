@@ -248,6 +248,9 @@ _build_all() {
 	local myconf=(
 		--profile=gnome
 		--prefix="${EPREFIX}/usr"
+
+# Causes this:
+# DOWNLOADNUPKG : Ssl error : 1000007d:SSL routines:OPENSSL_internal:CERTIFICATE_VERIFY_FAILED [${S}/main/src/addins/MonoDevelop.UnitTesting.NUnit/NUnitRunner/NUnitRunner.csproj]
 #		--enable-release
 	)
 
@@ -282,7 +285,7 @@ src_compile() {
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
 	export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 	export PATH="${EPREFIX}/opt/dotnet-sdk-bin-6.0:${PATH}"
-	export MAKEOPTS="-j1"
+	export MAKEOPTS="-j1" # To avoid missing file problem.
 	addpredict /etc/mono/registry/last-btime
 	_verify_toolchain
 	_build_all
