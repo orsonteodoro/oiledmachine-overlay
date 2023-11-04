@@ -55,10 +55,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND+="
-	|| (
-		dev-dotnet/mono-msbuild-bin
-		dev-dotnet/msbuild-bin:16[symlink]
-	)
+	dev-dotnet/mono-msbuild-bin
 "
 SRC_URI=""
 S="${WORKDIR}/${P}"
