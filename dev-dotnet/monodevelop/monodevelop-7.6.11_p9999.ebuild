@@ -330,7 +330,7 @@ einfo "Restoring missing assemblies for ${f}"
 _build_all() {
 	local myconf=(
 		--prefix="${EPREFIX}/usr"
-		--enable-release
+#		--enable-release
 		$(use_enable git)
 		$(use_enable test tests)
 		$(use_enable monoextentions)

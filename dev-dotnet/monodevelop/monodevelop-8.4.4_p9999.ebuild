@@ -280,7 +280,7 @@ _build_all() {
 	local myconf=(
 		--profile=gnome
 		--prefix="${EPREFIX}/usr"
-		--enable-release
+#		--enable-release
 	)
 
 	./configure \
