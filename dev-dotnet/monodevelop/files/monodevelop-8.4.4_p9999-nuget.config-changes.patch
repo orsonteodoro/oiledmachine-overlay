@@ -1,0 +1,34 @@
+# Error:  "Please provide credentials for: https://www.myget.org/F/vstest/"
+# Fix:  Removed of VSTest line
+# See also:
+# https://github.com/mono/monodevelop/issues/9675
+
+# Error: NU1101: Unable to find package Microsoft.VisualStudio.CodingConventions
+# Fix:  Added dotnet-eng, dotnet-tools, dotnet5 lines
+# See also:
+# https://github.com/mono/monodevelop/issues/9675#issuecomment-825996755
+# https://github.com/dotdevelop/dotdevelop/blob/main/NuGet.config
+
+--- a/NuGet.config.orig	2023-11-04 11:09:10.283635049 -0700
++++ b/NuGet.config	2023-11-04 11:25:17.891666888 -0700
+@@ -2,17 +2,12 @@
+ <configuration>
+ 	<packageSources>
+ 		<add key="Nuget Official" value="https://api.nuget.org/v3/index.json" />
+-		<add key="Roslyn Nightlies" value="https://www.myget.org/F/roslyn/api/v3/index.json" />
+-		<add key="roslyn-analyzers" value="https://www.myget.org/F/roslyn-analyzers/api/v3/index.json" />
+ 		<add key="vssdk" value="https://pkgs.dev.azure.com/azure-public/vside/_packaging/vssdk/nuget/v3/index.json" />
+ 		<add key="vs-impl" value="https://pkgs.dev.azure.com/azure-public/vside/_packaging/vs-impl/nuget/v3/index.json" />
+-		<add key="VS Editor Legacy" value="https://www.myget.org/F/vs-editor/api/v3/index.json" />
+ 		<add key="NuGetizer3000" value="https://ci.appveyor.com/nuget/nugetizer3000" />
+-		<add key="VSTest" value="https://www.myget.org/F/vstest/" />
+-		<add key="Templating" value="https://www.myget.org/F/templating/" />
+ 		<add key="dotnet-core" value="https://dotnetfeed.blob.core.windows.net/dotnet-core/index.json" />
+-		<add key="Azure AppService" value="https://www.myget.org/F/azure-appservice/api/v3/index.json" />
+-		<add key="MSBuild" value="https://www.myget.org/F/msbuild/api/v3/index.json" />
+-		<add key="nuget-build" value="https://www.myget.org/F/nuget-build/api/v3/index.json" />
++		<add key="dotnet-eng" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-eng/nuget/v3/index.json" />
++		<add key="dotnet-tools" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" />
++		<add key="dotnet5" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json" />
+ 	</packageSources>
+ </configuration>

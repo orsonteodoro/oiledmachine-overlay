@@ -90,6 +90,7 @@ PATCHES=(
 ##	"${FILESDIR}/${PN}-8.4.3_p9999-buildvariables-references.patch"
 ###	"${FILESDIR}/${PN}-8.4.3_p9999-reference-assemblies.patch"
 ##	"${FILESDIR}/${PN}-8.4.3_p9999-AsyncQuickInfoDemo-references.patch"
+	"${FILESDIR}/${PN}-8.4.4_p9999-nuget.config-changes.patch"
 )
 EGIT_REPO_URI="https://github.com/mono/monodevelop.git"
 EGIT_BRANCH="main"
@@ -215,49 +216,8 @@ einfo "Importing GPG key into sandboxed keychain"
 	sed -i -e 's|dotnet.myget.org|www.myget.org|g' NuGet.config || die
 }
 
-_fix_nuget_feeds() {
-	# Breaks restore
-	local BANNED_FEEDS=(
-		# Avoids:  "Please provide credentials for: https://www.myget.org/F/vstest/"
-		# See also:  https://github.com/mono/monodevelop/issues/9675
-		"vstest"
-
-		# Dropped in dotdevelop
-		"Roslyn Nightlies"
-		"roslyn-analyzers"
-		"VS Editor Legacy"
-		"VSTest"
-		"Templating"
-		"Azure AppService"
-		"MSBuild"
-		"nuget-build"
-
-		# Found in
-		# main/NuGet.config
-		# main/external/Xamarin.PropertyEditing/Xamarin.PropertyEditing/Xamarin.PropertyEditing.csproj
-#		"myget.org/F/"
-
-		# Found in
-		# main/external/Xamarin.PropertyEditing/Xamarin.PropertyEditing/Xamarin.PropertyEditing.csproj
-#		"devdiv.pkgs.visualstudio.com"
-	)
-	local f
-	local feed
-	for f in $(find "${S}" -iname "NuGet.config") ; do
-		for feed in ${BANNED_FEEDS[@]} ; do
-			if grep -q -e "${feed}" "${f}" ; then
-einfo "Editing ${f} to remove ${feed}"
-				sed -i \
-					-e "\|${feed}|d" \
-					"${f}" || die
-			fi
-		done
-	done
-}
-
 src_prepare() {
 	default
-	_fix_nuget_feeds
 }
 
 _use_msbuild_mono() {
