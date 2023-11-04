@@ -55,6 +55,7 @@ REQUIRED_USE="
 "
 CDEPEND="
 	!dev-dotnet/monodevelop
+	!dev-dotnet/monodevelop-bin
 	>=dev-lang/mono-6.12
 	>=dev-dotnet/fsharp-mono-bin-5.0.0.0_p15
 	>=dev-dotnet/gtk-sharp-2.12.8:2

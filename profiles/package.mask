@@ -81,9 +81,6 @@ dev-util/bear
 dev-util/ycm-generator
 www-misc/rainbowstream
 
-# Unfinished.  ebuild is pre-alpha
-dev-dotnet/monodevelop
-
 # End Of Life (EOL) on the distro.  Last update was Jan 20, 2021 on the upstream
 # repo.  13 will be removed from this overlay when Python 3.10 EOLs or when
 # Blender 3.3 EOLs.  Use at your own risk.
