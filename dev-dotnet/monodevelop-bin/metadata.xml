@@ -9,4 +9,15 @@
   <upstream>
     <remote-id type="github">mono/monodevelop</remote-id>
   </upstream>
+  <use>
+    <flag name="database">
+      Adds the Database addin.
+    </flag>
+    <flag name="nunit">
+      Adds the NUnit addin.
+    </flag>
+    <flag name="versioncontrol">
+      Adds the VersionControl addin.
+    </flag>
+  <use>
 </pkgmetadata>
