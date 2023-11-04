@@ -4,11 +4,11 @@
 
 EAPI=8
 
-# Version details:  8.3 branch at tip ; the latest of the second to last minor release
+# Version details:  main branch at HEAD ; develop/experimental
 
 DOTNET_PV="6.0"
 
-inherit git-r3 lcnr xdg
+inherit git-r3 lcnr
 
 SRC_URI=""
 S="${WORKDIR}/${PN}-${PV}"
@@ -59,9 +59,9 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+#	>=dev-dotnet/dotnet-sdk-bin-3.1:3.1
 BDEPEND="
 	${CDEPEND}
-	>=dev-dotnet/dotnet-sdk-bin-3.1:3.1
 	>=dev-dotnet/dotnet-sdk-bin-6.0:6.0
 	>=dev-dotnet/mono-msbuild-bin-16.10.1
 	>=dev-util/cmake-2.8.12.2
@@ -80,13 +80,14 @@ BDEPEND="
 "
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/${PN}-8.4.3_p9999-use-monolauncher.patch"
-	"${FILESDIR}/${PN}-8.4.3_p9999-buildvariables-references.patch"
-	"${FILESDIR}/${PN}-8.4.3_p9999-AsyncQuickInfoDemo-references.patch"
+##	"${FILESDIR}/${PN}-8.4.3_p9999-use-monolauncher.patch"
+##	"${FILESDIR}/${PN}-8.4.3_p9999-buildvariables-references.patch"
+###	"${FILESDIR}/${PN}-8.4.3_p9999-reference-assemblies.patch"
+##	"${FILESDIR}/${PN}-8.4.3_p9999-AsyncQuickInfoDemo-references.patch"
 )
 EGIT_REPO_URI="https://github.com/mono/monodevelop.git"
-EGIT_BRANCH="release-$(ver_cut 1-2 ${PV})"
-#EGIT_COMMIT="HEAD"
+EGIT_BRANCH="main"
+EGIT_COMMIT="HEAD"
 EGIT_SUBMODULES=( '*' )
 MY_PV="${PV}"
 
@@ -94,8 +95,8 @@ MY_PV="${PV}"
 DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
 
 EXPECTED_BUILD_FILES="\
-df6783c5d87b3474c2b3824b10322650fa3399512e71413f3ea7f91ccf491031\
-542a6dc2c044c0a60ea2524a79198bcd4c19ec3668af25ef6ccb74d25bf25dca\
+ea69fec9392ef2dcff34dc288887a73766c04956dae952778de7e70fdbdb68fc\
+74241c6401c7d57ef16f5878c458f459f97d4275513e0aed4de116a4c4fa6a0f\
 "
 
 pkg_setup() {
@@ -158,6 +159,19 @@ src_unpack() {
 
 	cd "${S}" || die
 
+	local actual_pv=$(grep -e "^Version=" "version.config" | cut -f 2 -d "=")
+	local expected_pv=$(ver_cut 1-2 ${PV})
+	if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
+eerror
+eerror "Version mismatch"
+eerror
+eerror "Actual PV:  ${actual_pv}"
+eerror "Expected PV:  ${expected_pv}"
+eerror
+eerror
+		die
+	fi
+
 	IFS=$'\n'
 	for f in $(find "${S}" -name "*.csproj" | sort) ; do
 		cat "${f}"
@@ -174,6 +188,20 @@ eerror "Expected build files:  ${EXPECTED_BUILD_FILES}"
 eerror
 		die
 	fi
+
+einfo "Importing GPG key into sandboxed keychain"
+	# See also
+	# https://keyserver.ubuntu.com/pks/lookup?search=3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF&fingerprint=on&op=index
+	local KEY_ID="3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF"
+	local pub_keyserver=${GPG_PUBLIC_KEYSERVER:-"hkp://keyserver.ubuntu.com:80"}
+	_run gpg \
+		--batch \
+		--keyserver "${pub_keyserver}" \
+		--recv-keys "${KEY_ID}"
+
+	# Fixes CERTIFICATE_VERIFY_FAILED
+	# See https://github.com/mono/monodevelop/issues/9675
+	sed -i -e 's|dotnet.myget.org|www.myget.org|g' NuGet.config || die
 }
 
 _fix_nuget_feeds() {
@@ -221,9 +249,9 @@ _drop_projects() {
 
 src_prepare() {
 	default
-	_fix_nuget_feeds
-	_attach_reference_assemblies_pack
-	_drop_projects
+	#_fix_nuget_feeds
+	#_attach_reference_assemblies_pack
+	#_drop_projects
 }
 
 _use_msbuild_mono() {
@@ -288,11 +316,15 @@ _build_all() {
 
 	export PATH="${EPREFIX}/opt/dotnet-sdk-bin-6.0:${PATH}"
 
-einfo "Called print_config"
-	emake print_config
+#einfo "Called print_config"
+#	emake print_config
 
-einfo "Called all-recursive"
-	emake all-recursive
+#einfo "Called all-recursive"
+#	emake all-recursive
+
+	pushd "${S}/main" || die
+		emake
+	popd
 }
 
 src_compile() {
@@ -304,16 +336,53 @@ src_compile() {
 	_build_all
 }
 
-src_install() {
-	local configuration="Release"
-
-	die "src_install is not finished"
+gen_wrapper() {
 cat <<EOF > "${ED}/usr/bin/monodevelop"
 #!/bin/bash
 PATH="/usr/lib/monodevelop:\${PATH}"
 mono main/build/bin/MonoDevelop.exe "\${@}"
 EOF
+}
 
+sanitize_permissions() {
+	local path
+einfo "Sanitizing file/folder permissions"
+	IFS=$'\n'
+	for path in $(find "${ED}") ; do
+		if file "${path}" | grep -q -e "symbolic link" ; then
+			continue
+		fi
+		realpath "${path}" 2>/dev/null 1>/dev/null || continue
+		chown root:root "${path}" || die
+		if file "${path}" | grep -q -e "directory" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "POSIX shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "Bourne-Again shell script" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32 executable (console)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32 executable (DLL)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32 executable (DLL) (console)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32 executable (GUI)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32+ executable (DLL) (console)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32+ executable (DLL) (GUI)" ; then
+			chmod 0755 "${path}" || die
+		else
+			chmod 0644 "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+src_install() {
+	emake DESTDIR="${D}" install
 	dodoc README.md
 
 	LCNR_SOURCE="${HOME}/.nuget"
@@ -323,6 +392,7 @@ EOF
 	LCNR_SOURCE="${S}"
 	LCNR_TAG="sources"
 	lcnr_install_files
+	sanitize_permissions
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
