@@ -1,0 +1,80 @@
+# License identified in net/ipv4/tcp_bbr.c:
+Dual BSD/GPL
+
+--- a/net/ipv4/tcp_bbr.c.orig	2023-11-03 20:13:09.571073147 -0700
++++ b/net/ipv4/tcp_bbr.c	2023-11-03 20:23:21.539053490 -0700
+@@ -433,12 +433,13 @@ static unsigned long bbr_bw_to_pacing_ra
+ {
+ 	u64 rate = bw;
+ 
+-	rate = bbr_rate_bytes_per_sec(sk, rate, gain);
++	rate = bbr_rate_bytes_per_sec(sk, rate, gain,
++				      bbr_pacing_margin_percent);
+ 	rate = min_t(u64, rate, READ_ONCE(sk->sk_max_pacing_rate));
+ 	return rate;
+ }
+ 
+-/* Initialize pacing rate to: high_gain * init_cwnd / RTT. */
++/* Initialize pacing rate to: startup_pacing_gain * init_cwnd / RTT. */
+ static void bbr_init_pacing_rate_from_rtt(struct sock *sk)
+ {
+ 	struct tcp_sock *tp = tcp_sk(sk);
+@@ -455,7 +456,7 @@ static void bbr_init_pacing_rate_from_rt
+ 	bw = (u64)tcp_snd_cwnd(tp) * BW_UNIT;
+ 	do_div(bw, rtt_us);
+ 	WRITE_ONCE(sk->sk_pacing_rate,
+-		   bbr_bw_to_pacing_rate(sk, bw, bbr_high_gain));
++		   bbr_bw_to_pacing_rate(sk, bw, bbr_param(sk, startup_pacing_gain)));
+ }
+ 
+ /* Pace using current bw estimate and a gain factor. */
+@@ -471,31 +472,38 @@ static void bbr_set_pacing_rate(struct s
+ 		WRITE_ONCE(sk->sk_pacing_rate, rate);
+ }
+ 
+-/* override sysctl_tcp_min_tso_segs */
+-__bpf_kfunc static u32 bbr_min_tso_segs(struct sock *sk)
+-{
+-	return READ_ONCE(sk->sk_pacing_rate) < (bbr_min_tso_rate >> 3) ? 1 : 2;
+-}
+-
+-/* Return the number of segments BBR would like in a TSO/GSO skb, given
+- * a particular max gso size as a constraint.
++/* Return the number of segments BBR would like in a TSO/GSO skb, given a
++ * particular max gso size as a constraint. TODO: make this simpler and more
++ * consistent by switching bbr to just call tcp_tso_autosize().
+  */
+ static u32 bbr_tso_segs_generic(struct sock *sk, unsigned int mss_now,
+ 				u32 gso_max_size)
+ {
+-	u32 segs;
++	struct bbr *bbr = inet_csk_ca(sk);
++	u32 segs, r;
+ 	u64 bytes;
+ 
+ 	/* Budget a TSO/GSO burst size allowance based on bw (pacing_rate). */
+ 	bytes = sk->sk_pacing_rate >> sk->sk_pacing_shift;
+ 
++	/* Budget a TSO/GSO burst size allowance based on min_rtt. For every
++	 * K = 2^tso_rtt_shift microseconds of min_rtt, halve the burst.
++	 * The min_rtt-based burst allowance is: 64 KBytes / 2^(min_rtt/K)
++	 */
++	if (bbr_param(sk, tso_rtt_shift)) {
++		r = bbr->min_rtt_us >> bbr_param(sk, tso_rtt_shift);
++		if (r < BITS_PER_TYPE(u32))   /* prevent undefined behavior */
++			bytes += GSO_LEGACY_MAX_SIZE >> r;
++	}
++
+ 	bytes = min_t(u32, bytes, gso_max_size - 1 - MAX_TCP_HEADER);
+-	segs = max_t(u32, bytes / mss_now, bbr_min_tso_segs(sk));
++	segs = max_t(u32, bytes / mss_now,
++		     sock_net(sk)->ipv4.sysctl_tcp_min_tso_segs);
+ 	return segs;
+ }
+ 
+ /* Custom tcp_tso_autosize() for BBR, used at transmit time to cap skb size. */
+-static u32  bbr_tso_segs(struct sock *sk, unsigned int mss_now)
++__bpf_kfunc static u32 bbr_tso_segs(struct sock *sk, unsigned int mss_now)
+ {
+ 	return bbr_tso_segs_generic(sk, mss_now, sk->sk_gso_max_size);
+ }

@@ -3,10 +3,17 @@
 
 EAPI=8
 
-EBUILD_REV="r4"
+GENPATCHES_FALLBACK_COMMIT="dc67ca51dcde0aa0d217936bb08e650f5a0a8087" # 2023-10-30 07:29:50 -0400
+LINUX_SOURCES_FALLBACK_COMMIT="2c40c1c6adab90ee4660caf03722b3a3ec67767b" # 2023-11-03 16:00:42 -1000
+
+# See
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+
+EBUILD_REV="r5"
 GENPATCHES_VER="live"
 PATCH_PROJC_VER="6.5-r0"
-PATCH_RT_VER="6.6-rc6-rt10"
+PATCH_RT_VER="6.6-rt12"
 
 inherit ot-kernel-v6.6
 
