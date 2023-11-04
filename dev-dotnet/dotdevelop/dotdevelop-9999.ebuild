@@ -48,7 +48,7 @@ IUSE="
 debugger developer test
 
 +fallback-commit
-r6
+r7
 "
 REQUIRED_USE="
 	!debugger
@@ -338,9 +338,19 @@ einfo "Sanitizing file/folder permissions"
 	IFS=$' \t\n'
 }
 
+gen_dotdevelop_wrapper() {
+	dodir /usr/bin
+cat <<EOF > "${ED}/usr/bin/dotdevelop"
+#!/bin/bash
+/usr/bin/monodevelop "\${@}"
+EOF
+	fperms 755 /usr/bin/dotdevelop
+}
+
 src_install() {
 	emake DESTDIR="${D}" install
 	_install_files
+	gen_dotdevelop_wrapper
 	dosym /usr/bin/monodevelop /usr/bin/${PN}
 	dodoc README.md
 	lcnr_install_files
@@ -348,4 +358,11 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
+
+# Testing:
+# /usr/bin/dotdevelop:  ?
+# /usr/bin/monodevelop:  ok
+# Form designer:  ok
+# Hello world GUI prototype:  ok
+# GtkSharp:  on
