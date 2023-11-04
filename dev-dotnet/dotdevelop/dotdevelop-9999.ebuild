@@ -126,6 +126,13 @@ eerror "Supported SDK versions: ${DOTNET_SUPPORTED_SDKS[@]}"
 eerror
 		die
 	fi
+
+# Buggy:
+# DOWNLOADNUPKG : Ssl error : 1000007d:SSL routines:OPENSSL_internal:CERTIFICATE_VERIFY_FAILED [${S}/main/src/addins/MonoDevelop.UnitTesting.NUnit/NUnitRunner/NUnitRunner.csproj]
+ewarn
+ewarn "Random failures of the type CERTIFICATE_VERIFY_FAILED may happen.  Retry"
+ewarn "if encountered."
+ewarn
 }
 
 src_unpack() {
@@ -248,9 +255,6 @@ _build_all() {
 	local myconf=(
 		--profile=gnome
 		--prefix="${EPREFIX}/usr"
-
-# Causes this:
-# DOWNLOADNUPKG : Ssl error : 1000007d:SSL routines:OPENSSL_internal:CERTIFICATE_VERIFY_FAILED [${S}/main/src/addins/MonoDevelop.UnitTesting.NUnit/NUnitRunner/NUnitRunner.csproj]
 #		--enable-release
 	)
 
@@ -344,7 +348,7 @@ cat <<EOF > "${ED}/usr/bin/dotdevelop"
 #!/bin/bash
 /usr/bin/monodevelop "\${@}"
 EOF
-	fperms 755 /usr/bin/dotdevelop
+	fperms 0755 /usr/bin/dotdevelop
 }
 
 src_install() {
