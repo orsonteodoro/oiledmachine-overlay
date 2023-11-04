@@ -420,7 +420,10 @@ RDEPEND+="
 		csharp-external-editor? (
 			|| (
 				monodevelop? (
-					dev-dotnet/monodevelop-bin
+					|| (
+						dev-dotnet/monodevelop-bin
+						dev-dotnet/dotdevelop
+					)
 				)
 				vscode? (
 					app-editors/vscode
