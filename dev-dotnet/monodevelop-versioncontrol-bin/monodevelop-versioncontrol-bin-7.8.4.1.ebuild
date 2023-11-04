@@ -4,104 +4,58 @@
 
 EAPI=8
 
-# See also:
-# https://github.com/mono/monodevelop/issues/8006#issuecomment-561301244
-
 inherit xdg
 
 REV_PV="6"
 SRC_URI="
 amd64? (
-https://download.mono-project.com/repo/ubuntu/pool/main/m/monodevelop/monodevelop_${PV}-0xamarin${REV_PV}+ubuntu1804b1_amd64.deb
+https://download.mono-project.com/repo/ubuntu/pool/main/m/monodevelop/monodevelop-versioncontrol_${PV}-0xamarin${REV_PV}+ubuntu1804b1_amd64.deb
 )
 arm64? (
-https://download.mono-project.com/repo/ubuntu/pool/main/m/monodevelop/monodevelop_${PV}-0xamarin${REV_PV}+ubuntu1804b1_arm64.deb
+https://download.mono-project.com/repo/ubuntu/pool/main/m/monodevelop/monodevelop-versioncontrol_${PV}-0xamarin${REV_PV}+ubuntu1804b1_arm64.deb
 )
 x86? (
-https://download.mono-project.com/repo/ubuntu/pool/main/m/monodevelop/monodevelop_${PV}-0xamarin${REV_PV}+ubuntu1804b1_i386.deb
+https://download.mono-project.com/repo/ubuntu/pool/main/m/monodevelop/monodevelop-versioncontrol_${PV}-0xamarin${REV_PV}+ubuntu1804b1_i386.deb
 )
 "
 S="${WORKDIR}"
 
-DESCRIPTION="MonoDevelop is a cross platform .NET IDE"
+DESCRIPTION="VersionControl plugin for MonoDevelop"
 HOMEPAGE="
 https://www.monodevelop.com/
 https://github.com/mono/monodevelop
+https://github.com/mono/monodevelop/tree/monodevelop-7.8.4.1/main/src/addins/VersionControl
 "
 LICENSE="
-	LGPL-2.1
 	MIT
-	all-rights-reserved
-	Apache-2.0
-	BSD
-	GPL-2
-	GPL-2-with-linking-exception
-	LGPL-2.1
-	Ms-PL
-	ZLIB
 "
-#
-# sharpsvn-binary - Apache-2.0
-# fsharpbinding - Apache-2.0
-# libgit-binary - GPL-2-with-linking-exception, Apache-2.0, MIT, LGPL-2.1, ZLIB
-# libgit2 - GPL-2-with-linking-exception
-# libssh2 - BSD
-# macdoc (from monomac) - MIT Apache-2.0
-#   lib/AgilityPack.dll [Html Agility Pack] - MIT
-#   lib/Ionic.Zip.dll - Ms-PL
-# mdtestharness - all-rights-reserved (no explicit license and sources)
-# monotools - GPL-2, LGPL-2, MIT
-# nuget-binary - Apache-2.0
-#
 KEYWORDS="~amd64 ~arm64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE=" database nunit versioncontrol"
+IUSE=" "
 REQUIRED_USE=" "
-BIN_DEPEND="
-	>=media-libs/fontconfig-2.12
-	>=sys-libs/glibc-2.27
-"
 CDEPEND="
 	${BIN_DEPEND}
-	!dev-dotnet/dotdevelop
-	!dev-dotnet/monodevelop
-	>=dev-dotnet/gtk-sharp-2.12.8:2
-	>=dev-dotnet/fsharp-mono-bin-5.0.0.0_p15
-	>=dev-lang/mono-5.10
 "
 RDEPEND="
 	${CDEPEND}
-	database? (
-		dev-dotnet/monodevelop-database-bin
-	)
-	nunit? (
-		~dev-dotnet/monodevelop-nunit-bin-${PV}
-	)
-	versioncontrol? (
-		~dev-dotnet/monodevelop-versioncontrol-bin-${PV}
-	)
+	>=net-libs/libssh-1.7.0
+	>=net-misc/curl-3[gnutls]
+	>=sys-libs/glibc-2.27
+	>=sys-libs/zlib-1.1.4
+	>=dev-lang/mono-4
+	=dev-libs/openssl-1.0*:0
+	dev-libs/apr
+	dev-vcs/subversion
+	x11-libs/gtk+:2
 "
 DEPEND="
 	${RDEPEND}
 "
-#	>=dev-dotnet/dotnet-sdk-bin-3.1:3.1
 BDEPEND="
 	${CDEPEND}
-	>=dev-dotnet/dotnet-sdk-bin-6.0:6.0
-	>=dev-dotnet/mono-msbuild-bin-16.10.1
-	>=dev-util/cmake-2.8.12.2
-	>=sys-devel/autoconf-2.53
-	>=sys-devel/automake-1.10
-	app-shells/bash
-	dev-util/intltool
-	dev-vcs/git
-	sys-devel/gettext
-	sys-devel/make
-	virtual/pkgconfig
-	x11-misc/shared-mime-info
-	kernel_Darwin? (
-		dev-lang/ruby
-	)
+"
+PDEPEND="
+	~dev-dotnet/monodevelop-${PV}
 "
 RESTRICT="mirror nostrip binchecks"
 
@@ -123,11 +77,11 @@ unpack_deb() {
 
 src_unpack() {
 	if use amd64 ; then
-		unpack_deb "monodevelop_${PV}-0xamarin${REV_PV}+ubuntu1804b1_amd64.deb"
+		unpack_deb "monodevelop-versioncontrol_${PV}-0xamarin${REV_PV}+ubuntu1804b1_amd64.deb"
 	elif use arm64 ; then
-		unpack_deb "monodevelop_${PV}-0xamarin${REV_PV}+ubuntu1804b1_arm64.deb"
+		unpack_deb "monodevelop-versioncontrol_${PV}-0xamarin${REV_PV}+ubuntu1804b1_arm64.deb"
 	elif use x86 ; then
-		unpack_deb "monodevelop_${PV}-0xamarin${REV_PV}+ubuntu1804b1_i386.deb"
+		unpack_deb "monodevelop-versioncontrol_${PV}-0xamarin${REV_PV}+ubuntu1804b1_i386.deb"
 	fi
 }
 
@@ -180,11 +134,4 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
-
-# Testing:
-# /usr/bin/dotdevelop:  ?
-# /usr/bin/monodevelop:  ok
-# Form designer:  ok
-# Hello world GUI prototype:  ok
-# GtkSharp:  on
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  ebuild-needs-test
