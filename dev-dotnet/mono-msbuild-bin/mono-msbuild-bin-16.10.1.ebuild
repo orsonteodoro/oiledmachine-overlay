@@ -39,7 +39,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE="
-r1
+r2
 "
 REQUIRED_USE="
 "
@@ -83,7 +83,7 @@ einfo "Sanitizing file/folder permissions"
 			:;
 		elif file "${path}" | grep -q -e "POSIX shell script" ; then
 			chmod 0755 "${path}" || die
-		elif file "${path}" | grep -q -e "Bourne-Again shell script" ; then
+		elif file "${path}" | grep -q -F -e "Bourne-Again shell script" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -F -e "PE32 executable (console)" ; then
 			chmod 0755 "${path}" || die
@@ -92,6 +92,8 @@ einfo "Sanitizing file/folder permissions"
 		elif file "${path}" | grep -q -F -e "PE32 executable (DLL) (console)" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -F -e "PE32 executable (GUI)" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -F -e "PE32+ executable (DLL) (console)" ; then
 			chmod 0755 "${path}" || die
 		elif file "${path}" | grep -q -F -e "PE32+ executable (DLL) (GUI)" ; then
 			chmod 0755 "${path}" || die
