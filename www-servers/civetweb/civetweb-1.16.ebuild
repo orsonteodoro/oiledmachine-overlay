@@ -8,7 +8,7 @@ LUA_COMPAT=( lua5-{1..4} )
 inherit cmake flag-o-matic lua multilib-minimal
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
-HOMEPAGE="https://github.com/civetweb"
+HOMEPAGE="https://github.com/civetweb/civetweb"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~ppc ~x86"
