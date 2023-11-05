@@ -44,7 +44,7 @@ navigating to the .txt file to:
 
 Selected news items:
 
-* 2023-11-05 - ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize
+* 2023-11-05 - ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize (It addresses the GCC_PGO_PHASE message spam.)
 * 2020-07-19 - Manual removal of npm or electron based packages required
 
 ## Licenses
