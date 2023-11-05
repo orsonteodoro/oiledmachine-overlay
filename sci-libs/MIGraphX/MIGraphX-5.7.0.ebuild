@@ -35,7 +35,10 @@ DESCRIPTION="AMD's graph optimization engine"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="-cpu -fpga -hip-rtc -mlir +rocm system-llvm test"
+IUSE="
+-cpu -fpga -hip-rtc -mlir +rocm system-llvm test
+r2
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 	|| (
@@ -53,9 +56,9 @@ RDEPEND="
 	>=dev-cpp/msgpack-cxx-3.3.0
 	>=dev-cpp/nlohmann_json-3.8.0
 	>=dev-libs/half-1.12.0
+	>=dev-libs/protobuf-3.11:0/3.21
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
-	dev-libs/protobuf:0/32
 	cpu? (
 		dev-libs/oneDNN
 		sys-libs/libomp:${LLVM_MAX_SLOT}
