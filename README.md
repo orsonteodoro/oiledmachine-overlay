@@ -44,8 +44,8 @@ navigating to the .txt file at:
 
 Selected news items:
 
-* 2023-11-05 - ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize (It addresses the GCC_PGO_PHASE message spam also.)
-* 2020-07-19 - Manual removal of npm or electron based packages required
+* 2023-11-05 - ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize (It addresses the GCC_PGO_PHASE message spam also.) [link](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2023-11-05-fix-emerge-at-world/2023-11-05-fix-emerge-at-world.txt)
+* 2020-07-19 - Manual removal of npm or electron based packages required [link] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2020-07-19-manual-removal-npm-and-electron/2020-07-19-manual-removal-npm-and-electron.en.txt)
 
 ## Licenses
 
