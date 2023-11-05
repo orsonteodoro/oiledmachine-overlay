@@ -63,7 +63,9 @@ Linux distros in their community package sets with their LICENSE variable.
 It is a catch all used when no license template contains the exact phase
 or clause.  The ebuild will contain the keywords to find the custom license.
 You can use repo search feature in that project to find the license file
-and the location of the text before emerging the package.
+and the location of the text before emerging the package.  You may try to
+find the text in the monolithic license file (a file containing all the
+licenses and copyright notices) referenced in the LICENSE variable.
 
 Many of these packages especially non-free software also require you to 
 manually obtain the installer or files to install and may require you to 
