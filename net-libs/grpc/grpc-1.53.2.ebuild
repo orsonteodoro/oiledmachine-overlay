@@ -48,12 +48,12 @@ doc examples test
 r3
 "
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/27.149" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20230214
+SLOT="${SLOT_MAJ}/30.153" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20230213
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[${MULTILIB_USEDEP},cxx17(+)]
+	>=dev-cpp/abseil-cpp-20230125.0:0/20230125[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
-	>=dev-libs/re2-0.2021.09.01:=[${MULTILIB_USEDEP}]
+	>=dev-libs/re2-0.2022.04.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
 	dev-libs/protobuf:0/3.21[${MULTILIB_USEDEP}]
@@ -65,10 +65,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.5.1
+	>=dev-util/cmake-3.8
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
-		>=dev-cpp/benchmark-1.6.0
+		>=dev-cpp/benchmark-1.7.0
 	)
 "
 PDEPEND_DISABLE="

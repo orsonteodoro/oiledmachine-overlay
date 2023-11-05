@@ -9,6 +9,17 @@ EAPI=8
 
 inherit cmake multilib-minimal
 
+MY_PV="${PV//_pre/-pre}"
+OPENCENSUS_PROTO_PV="0.3.0"
+SRC_URI="
+https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/census-instrumentation/opencensus-proto/archive/v${OPENCENSUS_PROTO_PV}.tar.gz
+	-> opencensus-proto-${OPENCENSUS_PROTO_PV}.tar.gz
+"
+S_OPENCENSUS_PROTO="${WORKDIR}/opencensus-proto-${OPENCENSUS_PROTO_PV}"
+S="${WORKDIR}/${PN}-${MY_PV}"
+
 DESCRIPTION="Modern open source high performance RPC framework"
 HOMEPAGE="https://www.grpc.io"
 LICENSE="
@@ -34,24 +45,25 @@ ${LSRT_IUSE[@]/#/-}
 cxx
 doc examples test
 
-r2
+r3
 "
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/32.155" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20230518
+SLOT="${SLOT_MAJ}/31.154" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20230328
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[${MULTILIB_USEDEP},cxx17(+)]
+	>=dev-cpp/abseil-cpp-20230125.2:0/20230125[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2022.04.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:0/32[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:0/3.21[${MULTILIB_USEDEP}]
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
 # third_party/boringssl-with-bazel/src/include/openssl/base.h: OPENSSL_VERSION_NUMBER
-
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	>=dev-util/cmake-3.8
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -80,16 +92,6 @@ PDEPEND+="
 	)
 "
 RESTRICT="test"
-MY_PV="${PV//_pre/-pre}"
-OPENCENSUS_PROTO_PV="0.3.0"
-SRC_URI="
-https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/census-instrumentation/opencensus-proto/archive/v${OPENCENSUS_PROTO_PV}.tar.gz
-	-> opencensus-proto-${OPENCENSUS_PROTO_PV}.tar.gz
-"
-S_OPENCENSUS_PROTO="${WORKDIR}/opencensus-proto-0.3.0"
-S="${WORKDIR}/${PN}-${MY_PV}"
 DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
 
 soversion_check() {
