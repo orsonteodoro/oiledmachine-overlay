@@ -5,12 +5,19 @@ EAPI=8
 
 inherit cmake
 
+# From cmake/GoogleapisConfig.cmake
+GOOGLEAPIS_COMMIT="c0b5730937e56047dc11900463ff87be7c80e8cc"
+SRC_URI="
+https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
+https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_COMMIT}.tar.gz -> googleapis-${GOOGLEAPIS_COMMIT}.tar.gz
+"
+
 DESCRIPTION="Google Cloud Client Library for C++"
 HOMEPAGE="https://cloud.google.com/"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=" test r1"
+IUSE=" test r2"
 # Tests need a GCP account
 RESTRICT="test"
 # U 18.04
@@ -24,7 +31,7 @@ RDEPEND="
 	>=net-libs/grpc-1.49.3:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11
-	dev-libs/protobuf:0/32
+	dev-libs/protobuf:0/3.21
 "
 DEPEND="
 	${RDEPEND}
@@ -32,14 +39,6 @@ DEPEND="
 	test? (
 		>=dev-cpp/benchmark-1.7.0
 	)
-"
-
-# From cmake/GoogleapisConfig.cmake
-GOOGLEAPIS_COMMIT="c0b5730937e56047dc11900463ff87be7c80e8cc"
-
-SRC_URI="
-https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
-https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_COMMIT}.tar.gz -> googleapis-${GOOGLEAPIS_COMMIT}.tar.gz
 "
 DOCS=( README.md )
 PATCHES=(
