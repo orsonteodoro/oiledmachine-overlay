@@ -50,8 +50,8 @@ License identified in arch/x86/kernel/paravirt.c:
 +CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage -fno-tree-loop-im $(call cc-disable-warning,maybe-uninitialized,)
 +endif
 +
-+$(info "GCC_PGO_PHASE:  ${GCC_PGO_PHASE}")
-+$(info "CFLAGS_GCOV:  ${CFLAGS_GCOV}")
++#$(info "GCC_PGO_PHASE:  ${GCC_PGO_PHASE}")
++#$(info "CFLAGS_GCOV:  ${CFLAGS_GCOV}")
 +
  CFLAGS_KCOV	:= $(call cc-option,-fsanitize-coverage=trace-pc,)
  export CFLAGS_GCOV CFLAGS_KCOV

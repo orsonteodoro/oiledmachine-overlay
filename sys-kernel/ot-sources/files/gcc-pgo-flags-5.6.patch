@@ -57,8 +57,8 @@ License identified in arch/x86/kernel/paravirt.c:
 +CFLAGS_GCOV	:= -fprofile-arcs -ftest-coverage
 +endif
 +
-+$(info "GCC_PGO_PHASE:  ${GCC_PGO_PHASE}")
-+$(info "CFLAGS_GCOV:  ${CFLAGS_GCOV}")
++#$(info "GCC_PGO_PHASE:  ${GCC_PGO_PHASE}")
++#$(info "CFLAGS_GCOV:  ${CFLAGS_GCOV}")
 +
  export CFLAGS_GCOV
  
