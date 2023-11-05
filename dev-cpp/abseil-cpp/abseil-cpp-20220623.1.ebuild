@@ -4,7 +4,13 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit cmake-multilib python-any-r1
+
+SRC_URI="
+https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
 LICENSE="
@@ -24,11 +30,12 @@ BDEPEND+="
 		sys-libs/timezone-data
 	)
 "
-SRC_URI="
-https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
-	-> ${P}.tar.gz
+RESTRICT="
+	!test? (
+		test
+	)
+	mirror
 "
-RESTRICT="!test? ( test ) mirror"
 
 src_prepare() {
 	cmake_src_prepare

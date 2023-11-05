@@ -4,7 +4,17 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit cmake-multilib python-any-r1
+
+SRC_URI="
+https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/abseil/abseil-cpp/commit/807763a7f57dcf0ba4af7c3b218013e8f525e811.patch
+	-> ${PN}-807763a.patch
+"
+# 807763a - [PATCH] CMake: Install TESTONLY libraries and their dependencies when they are built
+#	for protobuff
 
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
 LICENSE="
@@ -24,15 +34,12 @@ BDEPEND+="
 		sys-libs/timezone-data
 	)
 "
-SRC_URI="
-https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/abseil/abseil-cpp/commit/807763a7f57dcf0ba4af7c3b218013e8f525e811.patch
-	-> ${PN}-807763a.patch
+RESTRICT="
+	!test? (
+		test
+	)
+	mirror
 "
-# 807763a - [PATCH] CMake: Install TESTONLY libraries and their dependencies when they are built
-#	for protobuff
-RESTRICT="!test? ( test ) mirror"
 PATCHES=(
 	"${DISTDIR}/${PN}-807763a.patch"
 )
