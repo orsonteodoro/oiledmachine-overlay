@@ -26,9 +26,11 @@ out the lines by adding a pound sign (#) as follows in the two lines below:
 
 Alternative ways to fix:
 
-* Try using `emerge -1vO =ot-sources-<pv>` in the same version matching the
-one referenced with realpath /usr/src/linux/Makefile`.
-* Temporarly remove /usr/src/linux symlink and do `emerge -1vO ot-sources`
+* Try using `emerge -1vO =ot-sources-<pv>` with the same version matching the
+one referenced with `realpath /usr/src/linux/Makefile`.
+* Temporarly remove /usr/src/linux symlink and do `emerge -1vO =ot-sources-<pv>`
+with the same version matching the one referenced with
+`realpath /usr/src/linux/Makefile`.
 
 The problem has been addressed by the package maintainer by disabling these
 lines in the patches.
