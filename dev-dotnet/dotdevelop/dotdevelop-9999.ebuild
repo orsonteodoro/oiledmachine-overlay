@@ -50,6 +50,15 @@ debugger developer test
 +fallback-commit
 r8
 "
+XTERMS_DEPEND="
+	|| (
+		x11-terms/xterm
+		x11-terms/gnome-terminal
+		x11-terms/mate-terminal
+		kde-apps/konsole
+		x11-terms/xfce4-terminal
+	)
+"
 REQUIRED_USE="
 	!debugger
 "
@@ -62,6 +71,7 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
+	${XTERMS_DEPEND}
 	x11-themes/adwaita-icon-theme
 	|| (
 		x11-themes/papirus-icon-theme

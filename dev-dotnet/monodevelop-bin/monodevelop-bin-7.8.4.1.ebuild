@@ -60,33 +60,10 @@ REQUIRED_USE=" "
 XTERMS_DEPEND="
 	|| (
 		x11-terms/xterm
-		x11-terms/st
-		x11-terms/alacritty
-		x11-terms/aterm
-		x11-terms/cool-retro-term
 		x11-terms/gnome-terminal
-		x11-terms/guake
-		x11-terms/kitty
-		x11-terms/kitty-shell-integration
-		x11-terms/kitty-terminfo
-		x11-terms/kterm
-		x11-terms/mlterm
-		x11-terms/qterminal
-		x11-terms/root-tail
-		x11-terms/roxterm
-		x11-terms/rxvt-unicode
-		x11-terms/sakura
-		x11-terms/st-terminfo
-		x11-terms/terminator
-		x11-terms/terminology
-		x11-terms/tilda
-		x11-terms/wezterm
-		x11-terms/xfce4-terminal
-		x11-terms/yeahconsole
-		x11-terms/zutty
-		lxde-base/lxterminal
+		x11-terms/mate-terminal
 		kde-apps/konsole
-		kde-apps/yakuake
+		x11-terms/xfce4-terminal
 	)
 "
 BIN_DEPEND="
