@@ -16,15 +16,18 @@ DESCRIPTION="NUnit plugin for MonoDevelop"
 HOMEPAGE="
 https://www.monodevelop.com/
 https://github.com/mono/monodevelop
-https://github.com/mono/monodevelop/tree/monodevelop-7.8.4.1/main/src/addins/MonoDevelop.UnitTesting.NUnit
-https://github.com/mono/monodevelop/tree/monodevelop-7.8.4.1/main/src/addins/MonoDevelop.UnitTesting.NUnit.Runners
+https://github.com/mono/monodevelop/tree/monodevelop-7.8.4.1/main/tests/TestRunner
+https://github.com/nunit/nunitv2/tree/2.6.4
 "
+# The paths in the copyright are old.
 LICENSE="
 	MIT
+	ZLIB
 "
+# ZLIB - NUnit
 KEYWORDS="~amd64 ~arm64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE=" "
+IUSE=" r1"
 REQUIRED_USE=" "
 CDEPEND="
 "
@@ -46,7 +49,7 @@ RESTRICT="mirror nostrip binchecks"
 
 _eol_warn() {
 ewarn
-ewarn "This project is End of Life (EOL) and hasn't been updated since May 2019."
+ewarn "This project is End of Life (EOL) and hasn't been updated since 2014."
 ewarn
 }
 
