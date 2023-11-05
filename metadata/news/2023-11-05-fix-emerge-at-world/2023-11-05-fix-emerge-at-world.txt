@@ -32,7 +32,8 @@ one referenced with `realpath /usr/src/linux/Makefile`.
 with the same version matching the one referenced with
 `realpath /usr/src/linux/Makefile`.
 * Delete /usr/src/linux/Makefile and do `emerge -1vO =ot-sources-<pv>`
-with the same version matching the one referenced with.
+with the same version matching the one referenced with
+`realpath /usr/src/linux/Makefile`.
 * Do `emerge -C ot-sources` and emerge again.
 
 The problem has been addressed by the package maintainer by disabling these
