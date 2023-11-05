@@ -67,7 +67,7 @@ and the location of the text before emerging the package.  You may try to
 find the text in the monolithic license file (a file containing all the
 licenses and copyright notices) referenced in the LICENSE variable.  If
 the license text is buried in a git submodule, you need to manually scan
-each module or try to search engine scan.  You can also try to do the
+each module or try to do a search engine scan.  You can also try to do the
 following in the command line template:
 
 ```
