@@ -38,7 +38,7 @@ Overlay bugs and fixes are addressed with the `eselect news` command, a feature
 that I almost never use.  The overlay uses this system to post serious bugs
 that cannot be simply fixed through automated means but required manual
 intervention.  You may find this manually and reading the full text by
-navigating to the .txt file to:
+navigating to the .txt file at:
 
 * https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/metadata/news
 
