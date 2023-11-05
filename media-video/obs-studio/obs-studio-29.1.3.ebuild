@@ -81,7 +81,7 @@ nvenc nvvfx oss +pipewire +pulseaudio +python qt5 qt6 +rtmps +speexdsp -test
 +v4l2 vaapi +vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf
 +whatsnew x264
 
-r4
+r5
 "
 REQUIRED_USE+="
 	!nvafx
@@ -308,7 +308,7 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 DEPEND_PLUGINS_OBS_FFMPEG="
 	>=sys-apps/pciutils-3.6.4
 	new-mpegts-output? (
-		>=net-libs/rist-0.2.7
+		>=net-libs/librist-0.2.7
 		>=net-libs/srt-1.4.0
 	)
 	nvenc? (
