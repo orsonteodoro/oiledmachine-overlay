@@ -51,12 +51,17 @@ The selected first 5 news items:
 
 Many of these packages have special licenses and EULAs attached to them.  I 
 recommend that you edit your /etc/portage/make.conf so it looks like this 
-ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can 
-be found in the licenses folder of this overlay and the remaining 
-[licenses](https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses) can be 
-found on the 
-[official gentoo overlay](https://gitweb.gentoo.org/repo/gentoo.git/tree/) 
-in their license folder too.
+ACCEPT_LICENSE="-*" and manually accept each of the licenses.
+
+Licenses can be found in the following locations:
+
+* [distro overlay license folder](https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses)
+* [oiledmachine-overlay license folder](https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/licenses)
+
+It is assumed that the distro license folders exists on the local system.
+
+The copyright notices are contained in the source code of downloaded
+tarballs and in the about section of the program.
 
 The identifier `custom` is recognized by this overlay and used in several
 Linux distros in their community package sets with their LICENSE variable.
