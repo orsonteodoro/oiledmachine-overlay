@@ -188,7 +188,7 @@ _src_configure() {
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 	)
-	if ( use epgo || use ebolt ) && tc-is-gcc ; then
+	if use epgo && tc-is-gcc ; then
 		local gcc_slot=$(gcc-major-version)
 		mycmakeargs+=(
 			-DCMAKE_STATIC_LINKER_FLAGS="/usr/lib/gcc/${CHOST}/${gcc_slot}/libgcov.a"
