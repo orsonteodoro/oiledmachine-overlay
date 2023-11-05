@@ -28,12 +28,12 @@ https://github.com/keras-team/keras
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=" test r1"
+IUSE=" test r2"
 # https://github.com/keras-team/keras/blob/v2.13.1/requirements.txt
 # https://github.com/keras-team/keras/blob/v2.13.1/WORKSPACE
 # https://github.com/keras-team/keras/blob/v2.13.1/.bazelversion
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
-PROTOBUF_SLOT="0/32"
+PROTOBUF_SLOT="0/3.21"
 # TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
 # These have moved in this package.
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
