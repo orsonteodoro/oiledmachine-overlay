@@ -81,7 +81,7 @@ OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachi
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd ${PN}
 ebuild ${PN}-${PV}.ebuild unpack
-grep -l -i -r -e "<KEYWORDS>" "<WORKDIR>"`
+grep -l -i -r -e "<KEYWORDS>" "<WORKDIR>"
 ```
 
 to scan the package locally to find the license file before merge.
