@@ -621,4 +621,4 @@ should be a bash script.
 
 ### Contributing ebuilds
 
-See CONTRIBUTING.md
+See [CONTRIBUTING.md](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/CONTRIBUTING.md)
