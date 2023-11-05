@@ -32,6 +32,22 @@ emaint sync --repo oiledmachine-overlay
 
 ## Important stuff
 
+## Overlay bugs and fixes
+
+Overlay bugs and fixes are address with the `eselect news` command, a feature
+that I almost never use.  The overlay uses this system to post serious bugs
+that cannot be simply fixed though automated means but required manual
+intervention.  You may find this manually by going to
+
+* https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/metadata/news
+
+Selected news items:
+
+* 2023-11-05 - ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize
+* 2020-07-19 - Manual removal of npm or electron based packages required
+
+## Licenses
+
 Many of these packages have special licenses and EULAs attached to them.  I 
 recommend that you edit your /etc/portage/make.conf so it looks like this 
 ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can 
@@ -44,10 +60,6 @@ in their license folder too.
 Many of these packages especially non-free software also require you to 
 manually obtain the installer or files to install and may require you to 
 register on their website.  The required files are listed in the ebuild.
-
-The dev-dotnet folder contains fixes for both dotnet overlay and shnurise 
-overlay ebuilds.  They many of the ebuilds in that folder in this overlay 
-are dependencies for the latest stable MonoDevelop and for MonoGame.
 
 ## Broken / Still in development
 

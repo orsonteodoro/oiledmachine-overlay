@@ -1,4 +1,4 @@
-Title: PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize
+Title: ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2023-11-05
