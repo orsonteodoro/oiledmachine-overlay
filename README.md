@@ -58,6 +58,13 @@ found on the
 [official gentoo overlay](https://gitweb.gentoo.org/repo/gentoo.git/tree/) 
 in their license folder too.
 
+The identifier `custom` is recognized by this overlay and used in several
+Linux distros in their community package sets with their LICENSE variable.
+It is a catch all used when no license template contains the exact phase
+or clause.  The ebuild will contain the keywords to find the custom license.
+You can use repo search feature in that project to find the license file
+and license before emerging the package.
+
 Many of these packages especially non-free software also require you to 
 manually obtain the installer or files to install and may require you to 
 register on their website.  The required files are listed in the ebuild.
