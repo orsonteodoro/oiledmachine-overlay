@@ -2,7 +2,7 @@ Title: ot-sources PGO patch debug output breaks emerge because the distro's linu
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2023-11-05
-Revision: 1
+Revision: 6
 News-Item-Format: 2.0
 Display-If-Installed: sys-kernel/ot-sources
 Display-If-Installed: virtual/ot-sources-stable
