@@ -4,7 +4,7 @@
 EAPI=8
 
 SDK_SLOT="$(ver_cut 1-2)"
-RUNTIME_SLOT="${SDK_SLOT}.12"
+RUNTIME_SLOT="${SDK_SLOT}.24" # This is the .NET Runtime
 
 SRC_URI="
 amd64? (
