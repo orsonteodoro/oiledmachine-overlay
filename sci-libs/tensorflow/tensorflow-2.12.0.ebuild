@@ -340,6 +340,8 @@ ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 alt-ssl clang cuda custom-optimization-level +hardened mpi +python rocm
 system-llvm test xla
+
+r1
 "
 gen_required_use_cuda_targets() {
 	local x
