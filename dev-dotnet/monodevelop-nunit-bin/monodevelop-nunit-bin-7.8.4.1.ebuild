@@ -49,7 +49,7 @@ RESTRICT="mirror nostrip binchecks"
 
 _eol_warn() {
 ewarn
-ewarn "This project is End of Life (EOL) and hasn't been updated since 2014."
+ewarn "This project is End of Life (EOL) and hasn't been updated since Dec 2014 (NUnit), Jun 2018 (TestRunner)."
 ewarn
 }
 
