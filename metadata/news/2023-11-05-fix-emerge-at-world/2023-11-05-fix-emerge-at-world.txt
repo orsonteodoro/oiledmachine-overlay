@@ -1,4 +1,4 @@
-Title: ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize (It addresses the GCC_PGO_PHASE message spam also.)
+Title: ot-sources PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't perform data validation (It addresses the GCC_PGO_PHASE message spam also.)
 Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2023-11-05
@@ -9,9 +9,9 @@ Display-If-Installed: virtual/ot-sources-stable
 Display-If-Installed: virtual/ot-sources-lts
 
 ot-sources introduced a gcc-pgo patch with debug info.  The linux-info eclass
-does not sanitize the Makefile output causing the emerge build system to break
-during call to get_version() in linux-info.eclass affecting the unsandboxed
-pkg_setup() phase.
+does not validate the correctness of the Makefile output or variables causing
+the emerge build system to break during call to get_version() in
+linux-info.eclass affecting the unsandboxed pkg_setup() phase.
 
 Commands affected:
 
