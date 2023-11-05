@@ -33,7 +33,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net opencl
 opencv +rocal +rocm +rpp system-llvm
-r1
+r2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -58,7 +58,7 @@ REQUIRED_USE="
 # GCC 12 (libstdcxx:12) required to fix:
 # libhsa-runtime64.so.1: undefined reference to `std::condition_variable::wait(std::unique_lock<std::mutex>&)@GLIBCXX_3.4.30'
 BOOST_PV="1.72.0"
-PROTOBUF_PV="3.12.4"
+PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
@@ -70,7 +70,7 @@ RDEPEND="
 		>=media-video/ffmpeg-4.0.4[fdk,gpl,libass,x264,x265,nonfree]
 	)
 	neural-net? (
-		>=dev-libs/protobuf-${PROTOBUF_PV}
+		>=dev-libs/protobuf-${PROTOBUF_PV}:=
 	)
 	opencl? (
 		virtual/opencl
@@ -83,7 +83,7 @@ RDEPEND="
 		!system-llvm? (
 			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		)
-		>=dev-libs/protobuf-${PROTOBUF_PV}
+		>=dev-libs/protobuf-${PROTOBUF_PV}:=
 		media-libs/libjpeg-turbo
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
