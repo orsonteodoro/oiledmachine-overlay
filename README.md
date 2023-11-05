@@ -68,7 +68,8 @@ register on their website.  The required files are listed in the ebuild.
 
 Several packages hard depend on Python 3.9 and will emit
 "No supported implementation in PYTHON_COMPAT" because of the eager version
-bump of this version which is not EOL until Oct 2025 but EOL on this distro.
+bump of this version which is not EOL until Oct 2025 by the Python language
+developers but EOL on this distro.
 
 You will need to uninstall these packages.
 
@@ -79,13 +80,6 @@ in python.py + proof of test (aka summary of the test result(s) passed)
 which are listed in the footer of the ebuild as the standard in this
 overlay.  This overlay may downgrade the PYTHON_COMPAT if no proof is
 provided.
-
-### Node / Electron apps
-
-These ebuilds are currently being converted to yarn for mostly offline install.
-
-These ebuilds will be `npm audit fix`ed without breaking changes before
-converted to yarn.lock.
 
 ### .NET Framework stack or .NET Core stack
 
