@@ -62,6 +62,11 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
+	x11-themes/adwaita-icon-theme
+	|| (
+		x11-themes/papirus-icon-theme
+		x11-themes/paper-icon-theme
+	)
 "
 DEPEND="
 	${RDEPEND}

@@ -94,7 +94,6 @@ BIN_DEPEND="
 	>=media-libs/fontconfig-2.12
 	>=sys-libs/glibc-2.27
 	virtual/pkgconfig
-	x11-themes/adwaita-icon-theme
 "
 CDEPEND="
 	${BIN_DEPEND}
@@ -106,6 +105,11 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
+	x11-themes/adwaita-icon-theme
+	|| (
+		x11-themes/papirus-icon-theme
+		x11-themes/paper-icon-theme
+	)
 	database? (
 		dev-dotnet/monodevelop-database-bin
 	)
