@@ -33,7 +33,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 cpu +debug +enhanced-message ffmpeg -fp16 +loom +migraphx +neural-net
 opencl opencv +rocal +rocal-python +rocm +rpp system-llvm
-r2
+r3
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -73,7 +73,7 @@ RDEPEND="
 		>=media-video/ffmpeg-4.4.2[fdk,gpl,libass,x264,x265,nonfree]
 	)
 	neural-net? (
-		>=dev-libs/protobuf-${PROTOBUF_PV}:=
+		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 	)
 	opencl? (
 		virtual/opencl
@@ -86,7 +86,7 @@ RDEPEND="
 		!system-llvm? (
 			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		)
-		>=dev-libs/protobuf-${PROTOBUF_PV}:=
+		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 		media-libs/libjpeg-turbo
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
