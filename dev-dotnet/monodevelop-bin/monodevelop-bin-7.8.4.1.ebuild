@@ -67,7 +67,6 @@ XTERMS_DEPEND="
 	)
 "
 BIN_DEPEND="
-	${XTERMS_DEPEND}
 	>=media-libs/fontconfig-2.12
 	>=sys-libs/glibc-2.27
 	virtual/pkgconfig
@@ -82,11 +81,10 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
+	${XTERMS_DEPEND}
+	app-shells/bash
+	x11-misc/xdg-utils
 	x11-themes/adwaita-icon-theme
-	|| (
-		x11-themes/papirus-icon-theme
-		x11-themes/paper-icon-theme
-	)
 	database? (
 		dev-dotnet/monodevelop-database-bin
 	)
@@ -95,6 +93,10 @@ RDEPEND="
 	)
 	versioncontrol? (
 		~dev-dotnet/monodevelop-versioncontrol-bin-${PV}
+	)
+	|| (
+		x11-themes/papirus-icon-theme
+		x11-themes/paper-icon-theme
 	)
 "
 DEPEND="

@@ -72,6 +72,8 @@ CDEPEND="
 RDEPEND="
 	${CDEPEND}
 	${XTERMS_DEPEND}
+	app-shells/bash
+	x11-misc/xdg-utils
 	x11-themes/adwaita-icon-theme
 	|| (
 		x11-themes/papirus-icon-theme
