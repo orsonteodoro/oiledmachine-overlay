@@ -32,9 +32,9 @@ emaint sync --repo oiledmachine-overlay
 
 ## Important stuff
 
-## Overlay bugs and fixes
+## Overlay bugs/fixes/news
 
-Overlay bugs and fixes are address with the `eselect news` command, a feature
+Overlay bugs and fixes are addressed with the `eselect news` command, a feature
 that I almost never use.  The overlay uses this system to post serious bugs
 that cannot be simply fixed though automated means but required manual
 intervention.  You may find this manually and reading the full text by
