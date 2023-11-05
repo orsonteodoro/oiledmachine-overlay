@@ -5,7 +5,7 @@
 This portage overlay contains various ebuilds for the Gentoo Linux
 distribution.  It focuses on optimized ebuilds, some game development, 
 software used in computer science courses, C#, Electron apps, and other legacy 
-software and hardware.
+software and hardware support packages.
 
 The name of the repo comes from "well-oiled machine."  A (Gentoo) computer 
 should not feel like molasses under high memory pressure or heavy IO 
