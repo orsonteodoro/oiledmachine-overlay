@@ -88,7 +88,8 @@ to scan the package locally to find the license file before merge.
 
 Many of these packages especially non-free software also require you to 
 manually obtain the installer or files to install and may require you to 
-register on their website.  The required files are listed in the ebuild.
+register on their website.  The required files are listed in the ebuild but
+may require some mental gynmanstics to find the exact name.
 
 ## Broken / Still in development
 
