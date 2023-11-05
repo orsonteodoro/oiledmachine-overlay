@@ -1,0 +1,30 @@
+Title: PGO patch debug output breaks emerge because the distro's linux-info eclass doesn't sanitize
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Content-Type: text/plain
+Posted: 2023-11-05
+Revision: 1
+News-Item-Format: 2.0
+Display-If-Installed: sys-kernel/ot-sources
+Display-If-Installed: virtual/ot-sources-stable
+Display-If-Installed: virtual/ot-sources-lts
+
+ot-sources introduced a gcc-pgo patch with debug info.  The linux-info eclass
+does not sanitize the Makefile output causing the emerge build system to break
+during call to get_version() in linux-info.eclass affecting the unsandboxed
+pkg_setup() phase.
+
+To fix this problem you can manually edit /usr/src/linux/Makefile and comment
+by adding a pound sign (#) as follows in the two lines below:
+
+#$(info "GCC_PGO_PHASE:  ${GCC_PGO_PHASE}")
+#$(info "CFLAGS_GCOV:  ${CFLAGS_GCOV}")
+
+Alternative ways to fix:
+
+* Try using `emerge -1vO =ot-sources-<pv>` in the same version matching the
+one referenced with realpath /usr/src/linux/Makefile`.
+* Temporarly remove /usr/src/linux symlink and do `emerge -1vO ot-sources`
+
+The problem has been addressed by the package maintainer by disabling these
+lines in the patches.
+
