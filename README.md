@@ -37,7 +37,8 @@ emaint sync --repo oiledmachine-overlay
 Overlay bugs and fixes are address with the `eselect news` command, a feature
 that I almost never use.  The overlay uses this system to post serious bugs
 that cannot be simply fixed though automated means but required manual
-intervention.  You may find this manually by going to
+intervention.  You may find this manually and reading the full text by
+navigating to the .txt file to:
 
 * https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/metadata/news
 
