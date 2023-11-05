@@ -55,8 +55,8 @@ ACCEPT_LICENSE="-*" and manually accept each of the licenses.
 
 Licenses can be found in the following locations:
 
-* [distro overlay license folder](https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses)
-* [oiledmachine-overlay license folder](https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/licenses)
+* [The distro overlay license folder](https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses)
+* [The oiledmachine-overlay license folder](https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/licenses)
 
 It is assumed that the distro license folders exists on the local system.
 
