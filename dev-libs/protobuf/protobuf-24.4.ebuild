@@ -23,11 +23,29 @@ HOMEPAGE="
 	https://github.com/protocolbuffers/protobuf
 "
 LICENSE="BSD"
-SLOT="0/22" # Based on highest .so file.
+INTERNAL_VERSION="4.24.4"
+SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
+# version : slot
+# 25 : 4.25 From CMakeLists.txt's protobuf_VERSION_STRING
+# 24 : 4.24 From CMakeLists.txt's protobuf_VERSION_STRING
+# 23 : 4.23 From CMakeLists.txt's protobuf_VERSION_STRING
+# 22.5 : 4.22 From CMakeLists.txt's protobuf_VERSION_STRING
+# 22.0 : 4.22 From CMakeLists.txt's protobuf_VERSION_STRING
+# 21.12 : 3.21 From AC_INIT
+# 21.0 : 3.21 From AC_INIT
+# 20.2 : 3.20 From AC_INIT
+# 19.5 : 3.19 From AC_INIT
+# 18.3 : 3.18 From AC_INIT
+# 16.2 : 3.16 From AC_INIT
+
 IUSE="emacs examples static-libs test zlib r1"
-RESTRICT="!test? ( test )"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20230125.0:0/20230125[${MULTILIB_USEDEP},test-helpers(-)]
+	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[${MULTILIB_USEDEP},test-helpers(-)]
 	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	zlib? (
 		sys-libs/zlib[${MULTILIB_USEDEP}]
@@ -36,7 +54,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.12.1[${MULTILIB_USEDEP}]
 	)
 "
 RDEPEND+="
@@ -44,7 +62,6 @@ RDEPEND+="
 		app-editors/emacs:*
 	)
 "
-# Abseil 20230125.rc3
 BDEPEND="
 	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	emacs? (

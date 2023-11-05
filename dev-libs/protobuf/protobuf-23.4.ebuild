@@ -23,7 +23,7 @@ HOMEPAGE="
 	https://github.com/protocolbuffers/protobuf
 "
 LICENSE="BSD"
-INTERNAL_VERSION="3.21.12"
+INTERNAL_VERSION="4.23.4"
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
 # 25 : 4.25 From CMakeLists.txt's protobuf_VERSION_STRING
@@ -45,6 +45,8 @@ RESTRICT="
 	)
 "
 RDEPEND="
+	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[${MULTILIB_USEDEP},test-helpers(-)]
+	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	zlib? (
 		sys-libs/zlib[${MULTILIB_USEDEP}]
 	)
@@ -52,7 +54,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	test? (
-		>=dev-cpp/gtest-1.9[${MULTILIB_USEDEP}]
+		>=dev-cpp/gtest-1.12.1[${MULTILIB_USEDEP}]
 	)
 "
 RDEPEND+="
@@ -61,17 +63,16 @@ RDEPEND+="
 	)
 "
 BDEPEND="
+	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	emacs? (
 		app-editors/emacs:*
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-3.19.0-disable_no-warning-test.patch"
-	"${FILESDIR}/${PN}-3.19.0-system_libraries.patch"
-	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
-	"${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
+	"${FILESDIR}/protobuf-22.3-zero_copy_stream_unittest-mutex-header.patch"
+	"${FILESDIR}/protobuf-22.3-utf8_range.patch"
 )
-DOCS=( CHANGES.txt CONTRIBUTORS.txt README.md )
+DOCS=( CONTRIBUTORS.txt README.md )
 
 src_unpack() {
 	unpack ${A}
@@ -118,10 +119,6 @@ src_configure() {
 		with_ccache=ON
 	fi
 
-	# Prevent ICE
-#src/google/protobuf/repeated_ptr_field.h:1571:13: internal compiler error: Segmentation fault
-# 1571 |   iterator& operator++() {
-#      |             ^~~~~~~~
 	replace-flags '-O0' '-O1'
 	append-flags -fPIC
 
