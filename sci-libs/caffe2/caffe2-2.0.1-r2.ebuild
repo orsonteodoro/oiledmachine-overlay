@@ -50,6 +50,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl -opencv +openmp
 rocm +qnnpack +tensorpipe +xnnpack
+r1
 "
 gen_cuda_required_use() {
 	local x
@@ -138,11 +139,11 @@ CUDA_PV="11.8" # 11.7 minimum required
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/glog-0.5.0
+	>=dev-libs/protobuf-3.13.1:0/3.21
 	>=sci-libs/onnx-1.12.0
 	dev-cpp/gflags:=
 	dev-libs/cpuinfo
 	dev-libs/libfmt
-	dev-libs/protobuf:=
 	dev-libs/pthreadpool
 	dev-libs/sleef
 	sci-libs/lapack
@@ -236,7 +237,7 @@ DEPEND="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 	')
 	${RDEPEND}
-	dev-cpp/eigen
+	>=dev-cpp/eigen-3.4
 	dev-libs/psimd
 	dev-libs/FP16
 	dev-libs/FXdiv
