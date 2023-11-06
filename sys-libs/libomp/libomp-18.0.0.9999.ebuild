@@ -328,6 +328,7 @@ ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
 	fi
+	ROCM_SLOT="5.7" # Placeholder
 	rocm_pkg_setup
 }
 

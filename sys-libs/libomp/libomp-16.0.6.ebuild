@@ -322,6 +322,11 @@ einfo "mkdir -p /etc/portage/profile"
 einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.force"
 einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/package.use.mask"
 einfo
+	if use rocm_5_5 ; then
+		ROCM_SLOT="5.5"
+	else
+		ROCM_SLOT="5.6"
+	fi
 	rocm_pkg_setup
 }
 
