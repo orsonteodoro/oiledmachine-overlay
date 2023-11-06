@@ -4,8 +4,18 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10..12} )
+
 inherit distutils-r1 flag-o-matic multiprocessing prefix
+
+GRPC_PN="grpc"
+GRPC_P="${GRPC_PN}-${PV}"
+MY_PV=$(ver_cut 1-3 ${PV})
+SRC_URI+="
+https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
+	-> ${GRPC_P}.tar.gz
+"
+S="${WORKDIR}/${GRPC_P}"
 
 DESCRIPTION="High-performance RPC framework (python libraries)"
 HOMEPAGE="https://grpc.io"
@@ -15,14 +25,14 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 IUSE+=" doc r1"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.55.1/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.55.1/third_party
-PROTOBUF_SLOT="0/32"
+# See https://github.com/grpc/grpc/blob/v1.59.2/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.59.2/third_party
+PROTOBUF_SLOT="0/4.24"
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[cxx17(+)]
+	>=dev-cpp/abseil-cpp-20230802.0:0/20230802[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2022.04.01:=
-	>=net-dns/c-ares-1.17.2:=
+	>=net-dns/c-ares-1.19.1:=
 	>=sys-libs/zlib-1.2.13:=
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 "
@@ -31,22 +41,14 @@ DEPEND+="
 "
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
-	>=dev-python/coverage-4[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29.35[${PYTHON_USEDEP}]
+	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.35:0[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-1.8.1[${PYTHON_USEDEP}]
 		dev-python/alabaster[${PYTHON_USEDEP}]
 	)
 "
-GRPC_PN="grpc"
-GRPC_P="${GRPC_PN}-${PV}"
-MY_PV=$(ver_cut 1-3 ${PV})
-SRC_URI+="
-https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
-	-> ${GRPC_P}.tar.gz
-"
-S="${WORKDIR}/${GRPC_P}"
 PATCHES=(
 )
 

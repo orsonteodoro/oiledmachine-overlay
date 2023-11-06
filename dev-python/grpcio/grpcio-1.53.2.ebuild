@@ -6,7 +6,7 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit distutils-r1 multiprocessing prefix
+inherit distutils-r1 flag-o-matic multiprocessing prefix
 
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
@@ -25,11 +25,11 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
 IUSE+=" doc r1"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
-# See https://github.com/grpc/grpc/blob/v1.52.2/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.52.2/third_party
+# See https://github.com/grpc/grpc/blob/v1.53.2/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.53.2/third_party
 PROTOBUF_SLOT="0/3.21"
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20220623.0:0/20220623[cxx17(+)]
+	>=dev-cpp/abseil-cpp-20230125.0:0/20230125[cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-)]
 	>=dev-libs/re2-0.2022.04.01:=
 	>=net-dns/c-ares-1.17.2:=
