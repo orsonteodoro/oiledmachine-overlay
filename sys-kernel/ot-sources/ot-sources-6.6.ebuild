@@ -20,7 +20,7 @@ inherit ot-kernel-v6.6
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6 (20231101) with builder profile and GCC_PGI with O3 and -march=native
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6 (20231101) with builder profile and GCC_PGI with -O3 and -march=native (performance flags)
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.0.9999 (6.6.0-rc7 commit: 3a568e3a961ba330091cd031647e4c303fa0badb) (20231027) with builder profile
 
 #
@@ -43,6 +43,7 @@ inherit ot-kernel-v6.6
 # network - pass
 # streaming video playback - pass
 # initscript - pass
+# runtime stability note:  may randomly freeze/deadlock during compile + media streaming during short run or long run (6.6)
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"

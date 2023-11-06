@@ -19,7 +19,7 @@ inherit ot-kernel-v5.15
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 5.15.137 (20231106) with builder profile and -O2
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 5.15.137 (20231106) with builder profile and -O2 -march=generic (stability flags)
 
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
@@ -41,6 +41,7 @@ inherit ot-kernel-v5.15
 # network - pass
 # streaming video playback - pass
 # initscript - pass
+# runtime stability note:  no freeze/deadlock encountered during building + media streaming during short run (5.15.137)
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"

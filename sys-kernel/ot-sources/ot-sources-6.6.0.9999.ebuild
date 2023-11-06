@@ -49,6 +49,7 @@ inherit ot-kernel-v6.6
 # network - pass
 # streaming video playback - pass
 # initscript - pass
+# runtime stability note:  may randomly freeze/deadlock during compile + media streaming during short run or long run (6.6.0-rc7, 6.6.0.9999)
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
