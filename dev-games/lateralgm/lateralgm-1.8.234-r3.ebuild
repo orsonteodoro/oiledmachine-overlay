@@ -49,7 +49,7 @@ DEPEND+="
 "
 RDEPEND+="
 	${CDEPEND}
-	dev-games/enigma
+	dev-games/enigma:0/lateralgm-d18d1c0
 "
 BDEPEND_LATERALGM="
 	virtual/jdk:${JAVA_SLOT}
