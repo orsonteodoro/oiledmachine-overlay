@@ -35,7 +35,7 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/rdc"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test r5"
+IUSE="+compile-commands doc +raslib +standalone systemd test r6"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -50,18 +50,8 @@ RDEPEND="
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	)
 	standalone? (
-		>=net-libs/grpc-1.28.1
-		dev-libs/protobuf:0/32
-		|| (
-			(
-				=net-libs/grpc-1.52.2*
-				dev-cpp/abseil-cpp:0/20220623
-			)
-			(
-				=net-libs/grpc-1.49.3*
-				dev-cpp/abseil-cpp:0/20220623
-			)
-		)
+		>=net-libs/grpc-1.28.1:=
+		>=dev-libs/protobuf-3.11.2:0/3.21
 	)
 	systemd? (
 		sys-apps/systemd
