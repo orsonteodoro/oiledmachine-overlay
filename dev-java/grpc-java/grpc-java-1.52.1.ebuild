@@ -68,13 +68,16 @@ LICENSE="
 
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~s390 ~x86"
-IUSE+=" android doc source test"
+IUSE+="
+android doc source test
+r1
+"
 #REQUIRED_USE+=" !android" # Cannot fix at the moment ANDROID_HOME="/var/lib/portage/home/.android" sandbox violation
 RESTRICT="mirror"
 GRADLE_PV="7.3.3" # https://github.com/grpc/grpc-java/blob/v1.52.1/gradle/wrapper/gradle-wrapper.properties
 JAVA_SLOT="11" # https://github.com/grpc/grpc-java/blob/v1.52.1/.github/workflows/testing.yml#L20
 RDEPEND+="
-	dev-libs/protobuf:0/32[static-libs]
+	dev-libs/protobuf:0/3.21[static-libs]
 	virtual/jre:${JAVA_SLOT}
 "
 DEPEND+=" ${RDEPEND}"
