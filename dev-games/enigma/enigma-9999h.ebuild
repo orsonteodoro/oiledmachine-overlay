@@ -16,28 +16,7 @@ is an open source cross-platform game development environment."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 
-# Live ebuilds don't get KEYWORDS
-
-# CI/install_emake_deps.sh
-H1_EXPECTED="\
-6aa51272355b17e5deb0a45fb273da7c89cb04310effe1b8af2c7157c97f9fd6\
-1134396a323c77de3199f5842792afdf8bd8fb537c7592f237f154891b6ade42\
-"
-# CI/solve_engine_deps.sh
-H2_EXPECTED="\
-7280ba40ef064b63a626626a35082d216e2cb705637ed87e9e707cdd28f1fa2d\
-7bdb2256a0c54413313eabf7b44d0ad2e7ed39f1a663a755bdbe28e202494193\
-"
-
-# a*-pipelines.yml
-H3_EXPECTED="\
-aba553d213834071ba6722e33d2ae67e94c874b5ef4d26be3697c839a6c5f98e\
-b435adef06cecfb14e9066356d76c0266dbcfe676d74d86e2b63f8932aab80b6\
-"
-
-ABI_FINGERPRINT="30a62b91f551c71d9e46c839fb3b422acb9d5cd5e58926270e3ab6ff1ae3a177"
-DEPENDS_FINGERPRINT="b91b3b87af85b4b8eaf33ed439f372ab1eb193a72e82c946075cb63d0db9f988"
-SLOT="0/${ABI_FINGERPRINT}"
+SLOT="0/head" # Required because of the grpc/protobuf.
 IUSE+="
 android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network +openal
@@ -167,44 +146,46 @@ REQUIRED_USE+="
 # grep -r -F -e "find_library(" -e "find_package("
 #
 # See CI for *DEPENDs
-ALURE_PV="1.2"
-BOX2D_PV_EMAX="2.4"
-CLANG_PV="10.0.0"
-BOOST_PV="1.79"
-BULLET_PV="3.24"
-CURL_PV="7.68"
-FLAC_PV="1.3.4"
-FREETYPE_PV="2.12.1"
-GCC_PV="10.3.0" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.
-GLEW_PV="2.2.0"
-GLM_PV="0.9.9.7"
-GME_PV="0.6.3"
-GTEST_PV="1.10.0"
-GTK2_PV="2.24.33"
-LIBFFI_PV="3.4.2"
+# Fallback U 22.04.3
+ALURE_PV="1.2" # missing in CI
+BOX2D_PV_EMAX="2.4" # missing in CI
+CLANG_PV="16.0.6"
+BOOST_PV="1.83.0"
+BULLET_PV="3.06" # missing in CI
+CURL_PV="8.3.0"
+FLAC_PV="1.4.3"
+FREETYPE_PV="2.13.2"
+GCC_PV="13.2.1" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this ebuild.
+GLEW_PV="2.2.0" # missing in CI
+GLM_PV="0.9.9.8" # missing in CI
+GME_PV="0.6.3" # missing in CI
+GTEST_PV="1.10.0" # missing in CI
+GTK2_PV="2.24.33" # missing in CI
+LIBFFI_PV="3.4.2" # missing in CI
 LIBMODPLUG_PV="0.8.9.0"
 LIBOGG_PV="1.3.5"
-LIBPNG_PV="1.6.37"
-LIBSDL2_PV="2.0.22"
-LIBSNDFILE_PV="1.1.0"
+LIBPNG_PV="1.6.40"
+LIBSDL2_PV="2.28.4"
+LIBSNDFILE_PV="1.2.2"
 LIBVORBIS_PV="1.3.7"
-LIBX11_PV="1.8.1"
-MESA_PV="22.1.2"
-MPG123_PV="1.25.13"
-OPENAL_PV="1.22.2"
-OPUS_PV="1.3.1"
+LIBX11_PV="1.8.7"
+MESA_PV="23.2.1"
+MPG123_PV="1.32.2"
+OPENAL_PV="1.23.1"
+OPUS_PV="1.4"
 PULSEAUDIO_PV="16.1"
-SDL2_MIXER_PV="2.6.1"
+SDL2_MIXER_PV="2.0.4" # missing in CI
 VIRTUAL_WINE_PV="0"
-WINE_PV="7.13"
+WINE_PV="6.0.3" # missing in CI
 WINE_STAGING_PV="${WINE_PV}"
 WINE_VANILLA_PV="${WINE_PV}"
-ZLIB_PV="1.2.12"
+ZLIB_PV="1.3"
 CDEPEND="
-	>=dev-libs/protobuf-3.21.1[${MULTILIB_USEDEP}]
 	>=sys-devel/gcc-${GCC_PV}
-	>=net-libs/grpc-1.47.0[${MULTILIB_USEDEP}]
+	>=net-libs/grpc-1.58.1[${MULTILIB_USEDEP}]
+	>=dev-libs/protobuf-24.3:0/4.24[${MULTILIB_USEDEP}]
 "
+# libepoxy missing in CI
 GLES_DEPEND="
 	>=media-libs/glm-${GLM_PV}
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
@@ -216,7 +197,7 @@ OPENGL_DEPEND="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 "
 
-LLVM_SLOTS=( 17 16 15 14 13 12 11 10 )
+LLVM_SLOTS=( 16 )
 gen_clang_deps() {
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
@@ -234,19 +215,26 @@ gen_clang_deps() {
 	done
 }
 
+# box2d missing in CI ; DEPENDs not updated in ebuild
+# dumb missing in CI
+# pcre missing in CI
+# gtk2 missing in CI
+# kdialog missing in CI
+# xinerama missing in CI
+# zenity missing in CI
 DEPEND+="
 	${CDEPEND}
-	>=dev-cpp/abseil-cpp-20211102.0:=[${MULTILIB_USEDEP}]
-	>=dev-cpp/yaml-cpp-0.7.0[${MULTILIB_USEDEP}]
+	>=dev-cpp/abseil-cpp-20230802.1:=[${MULTILIB_USEDEP}]
+	>=dev-cpp/yaml-cpp-0.8.0[${MULTILIB_USEDEP}]
 	>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]
-	>=dev-libs/double-conversion-3.2.0[${MULTILIB_USEDEP}]
-	>=dev-libs/libpcre2-10.40[${MULTILIB_USEDEP},pcre16]
-	>=dev-libs/openssl-1.1.1p[${MULTILIB_USEDEP}]
-	>=dev-libs/pugixml-1.12.1[${MULTILIB_USEDEP}]
+	>=dev-libs/double-conversion-3.3.0[${MULTILIB_USEDEP}]
+	>=dev-libs/libpcre2-10.39[${MULTILIB_USEDEP},pcre16]
+	>=dev-libs/openssl-3.1.3[${MULTILIB_USEDEP}]
+	>=dev-libs/pugixml-1.14[${MULTILIB_USEDEP}]
 	>=dev-libs/rapidjson-1.1.0
 	>=media-libs/glm-${GLM_PV}
-	>=media-libs/harfbuzz-4.4.1[${MULTILIB_USEDEP}]
-	>=net-dns/c-ares-1.18.1[${MULTILIB_USEDEP}]
+	>=media-libs/harfbuzz-8.2.1[${MULTILIB_USEDEP}]
+	>=net-dns/c-ares-1.20.1[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	virtual/jpeg[${MULTILIB_USEDEP}]
 	virtual/libc
@@ -282,7 +270,7 @@ DEPEND+="
 		>=media-libs/game-music-emu-${GME_PV}[${MULTILIB_USEDEP}]
 	)
 	gnome? (
-		>=gnome-extra/zenity-3.43.0
+		>=gnome-extra/zenity-3.42.0
 	)
 	gtk2? (
 		>=x11-libs/gtk+-2.24.33:2[${MULTILIB_USEDEP}]
@@ -291,14 +279,14 @@ DEPEND+="
 		>=dev-cpp/gtest-${GTEST_PV}[${MULTILIB_USEDEP}]
 	)
 	kde? (
-		>=kde-apps/kdialog-19.12.3
+		>=kde-apps/kdialog-21.12.3
 	)
 	network? (
 		>=net-misc/curl-${CURL_PV}[${MULTILIB_USEDEP}]
 	)
 	openal? (
 		>=media-libs/alure-${ALURE_PV}[${MULTILIB_USEDEP},dumb,vorbis]
-		>=media-libs/dumb-2.0.3[${MULTILIB_USEDEP}]
+		>=media-libs/dumb-0.9.3[${MULTILIB_USEDEP}]
 		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
 		>=media-libs/openal-${OPENAL_PV}[${MULTILIB_USEDEP}]
 	)
@@ -329,14 +317,14 @@ DEPEND+="
 	)
 	X? (
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
-		>=sys-process/procps-3.3.17[${MULTILIB_USEDEP}]
+		>=sys-process/procps-4.0.4[${MULTILIB_USEDEP}]
 		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 		>=x11-libs/libXinerama-1.1.4[${MULTILIB_USEDEP}]
 		xrandr? (
-			>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
+			>=x11-libs/libXrandr-1.5.4[${MULTILIB_USEDEP}]
 		)
 		xtest? (
-			>=x11-libs/libXtst-1.2.3[${MULTILIB_USEDEP}]
+			>=x11-libs/libXtst-1.2.4[${MULTILIB_USEDEP}]
 		)
 	)
 "
@@ -345,8 +333,8 @@ RDEPEND+="
 "
 BDEPEND+="
 	${CDEPEND}
-	>=dev-util/cmake-3.23.2
-	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-util/cmake-3.27.7
+	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-util/patchelf
 	clang? (
 		|| (
@@ -365,24 +353,6 @@ PATCHES=(
 	"${FILESDIR}/enigma-9999-change-sdl2-audio-linking.patch"
 	"${FILESDIR}/enigma-9999-fix-missing-workdir-references.patch"
 )
-
-_calculate_depends_fingerprint() {
-	local dfp=$(echo "${RDEPEND}:${DEPEND}:${BDEPEND}" \
-		| tr "\n" " " \
-		| sed -E -e "s|[[:space:]]+| |g" \
-		| sha256sum \
-		| cut -f 1 -d " ")
-	if [[ "${dfp}" != "${DEPENDS_FINGERPRINT}" ]] ; then
-		# No versioning.
-eerror
-eerror "CURRENT_DEPENDS_FINGERPRINT:   ${dfp}"
-eerror "EXPECTED_DEPENDS_FINGERPRINT:  ${DEPENDS_FINGERPRINT}"
-eerror
-eerror "Update the DEPENDS_FINGERPRINT."
-eerror
-		die
-	fi
-}
 
 crossdev_has_pkg_use() {
 	local p="${1}"
@@ -647,7 +617,6 @@ eerror "Switch the compiler."
 eerror
 		die
 	fi
-	_calculate_depends_fingerprint
 	use android && check_cross_android
 	use macos && check_cross_macos
 	use mingw32 && check_cross_mingw32
@@ -656,90 +625,15 @@ eerror
 
 src_prepare() {
 	default
-	_calculate_abi_fingerprint
 	# Typo?
 	sed -i -e "s|ANDROIS_LDLIBS|ANDROID_LDLIBS|g" \
 		ENIGMAsystem/SHELL/Makefile || die
 }
 
-_calculate_abi_fingerprint() {
-	#
-	# Generate fingerprint for ABI compatibility checks and subslot.
-	#
-	# libEGM -> EGM
-	# shared -> ENIGMAShared
-	# shared/protos -> Protocols
-	#
-	# The calculation for the ABI may change depending on the dependencies.
-	#
-	local H=()
-	local x
-
-	# Library ABI compatibility
-	for x in $(find \
-		"${S}/CommandLine/libEGM" \
-		"${S}/shared" \
-		-name "*.h" | sort) ; do
-		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-	done
-	for x in $(find "${S}/shared/protos/" -name "*.proto" | sort) ; do
-		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-	done
-
-	# Drag and drop actions
-	for x in $(find "${S}" -name "*.ey") ; do
-		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-	done
-
-	# File formats
-	local FFP=($(grep -E -l -r -e  "(Write|Load)Project\(" "${S}" \
-		| grep -e ".cpp" \
-		| grep -e "libEGM" \
-		| grep -v -e "file-format.cpp"))
-	for x in ${FFP} ; do
-		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-	done
-
-	# Command line option changes
-	H+=( $(sha256sum "${S}/CommandLine/emake/OptionsParser.cpp" | cut -f 1 -d " ") )
-
-	# Sometimes the minor versions of dependencies bump the project minor version.
-	#H+=( ${DEPENDS_FINGERPRINT} )
-
-	# No SOVER, no semver
-	local abi_fingerprint=$(echo "${H[@]}" \
-		| tr " " "\n" \
-		| sort \
-		| uniq \
-		| sha256sum \
-		| cut -f 1 -d " ")
-	if [[ "${abi_fingerprint}" != "${ABI_FINGERPRINT}" ]] ; then
-eerror
-eerror "CURRENT_ABI_FINGERPRINT:   ${abi_fingerprint}"
-eerror "EXPECTED_ABI_FINGERPRINT:  ${ABI_FINGERPRINT}"
-eerror
-eerror "Notify the ebuild maintainer to update the ABI_FINGERPRINT."
-eerror
-		die
-	fi
-}
-
 src_unpack() {
-	use fallback-commit && export EGIT_COMMIT="826b84c599aa3289b4d17533a17de1d14c625335" # Jul 8, 2023
+	use fallback-commit && export EGIT_COMMIT="3918af3dc40734465b355a7d52cb9f9f93f5a8d6" # Oct 10, 2023
 	git-r3_fetch
 	git-r3_checkout
-	cd "${S}" || die
-	h1=$(sha512sum "CI/install_emake_deps.sh" | cut -f 1 -d " ")
-	h2=$(sha512sum "CI/solve_engine_deps.sh" | cut -f 1 -d " ")
-	h3=$(sha512sum "azure-pipelines.yml" | cut -f 1 -d " ") # NDK
-	if [[ "${h1}" != "${H1_EXPECTED}" \
-		&& "${h2}" != "${H2_EXPECTED}" \
-		&& "${h3}" != "${H3_EXPECTED}" ]] ; then
-eerror
-eerror "The dependencies have changed.  Notify ebuild maintainer."
-eerror
-		die
-	fi
 }
 
 src_configure() {
@@ -784,8 +678,6 @@ src_install() {
 #		| xargs rm -vrf '{}' \; || die
 	insinto "${install_dir}"
 	exeinto "${install_dir}"
-	echo "${ABI_FINGERPRINT}" > "${T}/abi_fingerprint" || die
-	doins "${T}/abi_fingerprint"
 	BINS=(
 		"libcompileEGMf.so"
 		"libEGM.so"
