@@ -27,7 +27,10 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" australis doc experimental test"
+IUSE+="
+australis doc experimental test
+r1
+"
 # flax and tensorstore are missing in setup.py *_require sections but referenced
 # in experimental but not in tests folder.
 DEPEND+="
@@ -37,7 +40,7 @@ DEPEND+="
 	>=dev-python/scipy-1.7[${PYTHON_USEDEP}]
 	dev-python/opt-einsum[${PYTHON_USEDEP}]
 	australis? (
-		dev-libs/protobuf:=
+		dev-libs/protobuf:0/3.21
 	)
 	experimental? (
 		dev-python/tensorstore[${PYTHON_USEDEP}]
