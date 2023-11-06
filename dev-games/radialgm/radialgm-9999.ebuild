@@ -7,7 +7,6 @@ EAPI=8
 MY_PN="RadialGM"
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
-# enigma is downloaded twice to verify ABI compatibility.
 
 inherit cmake desktop git-r3 toolchain-funcs xdg
 
@@ -17,34 +16,35 @@ LICENSE="GPL-3+"
 HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="doc fallback-commit"
-ENIGMA_ABI_FINGERPRINT="30a62b91f551c71d9e46c839fb3b422acb9d5cd5e58926270e3ab6ff1ae3a177"
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
+# Upstream uses protobuf 3.17.3
 CDEPEND="
-	>=net-libs/grpc-1.47.0
-	>=sys-devel/gcc-10.3.0
-	dev-libs/protobuf:0/32
+	>=net-libs/grpc-1.39.1
+	>=sys-devel/gcc-11.1.0
+	>=dev-libs/protobuf-3.17.3:0/3.21
 "
-QT_PV="5.15.5"
+QT_PV="5.15.2"
 # Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.
+# pcre2 not listed in CI.
 DEPEND+="
 	${CDEPEND}
-	>=dev-cpp/yaml-cpp-0.7.0
-	>=dev-libs/double-conversion-3.2.0
+	>=dev-cpp/yaml-cpp-0.6.3
+	>=dev-libs/double-conversion-3.1.5
 	>=dev-libs/libpcre2-10.40[pcre16]
-	>=dev-libs/openssl-1.1.1p
-	>=dev-libs/pugixml-1.12.1
+	>=dev-libs/openssl-1.1.1l
+	>=dev-libs/pugixml-1.11.4
 	>=dev-libs/rapidjson-1.1.0
 	>=dev-qt/qtcore-${QT_PV}:5
 	>=dev-qt/qtgui-${QT_PV}:5[png]
 	>=dev-qt/qtmultimedia-${QT_PV}:5
 	>=dev-qt/qtprintsupport-${QT_PV}:5
 	>=dev-qt/qtwidgets-${QT_PV}:5[png]
-	>=media-libs/freetype-2.12.1
-	>=media-libs/harfbuzz-4.4.1
-	>=net-dns/c-ares-1.18.1
-	>=x11-libs/qscintilla-2.13
-	dev-games/enigma:0/${ENIGMA_ABI_FINGERPRINT}
+	>=media-libs/freetype-2.11.0
+	>=media-libs/harfbuzz-2.9.1
+	>=net-dns/c-ares-1.17.2
+	>=x11-libs/qscintilla-2.13.0
+	dev-games/enigma:0/radialgm-f30646f
 	virtual/jpeg
 "
 RDEPEND+="
@@ -70,73 +70,6 @@ pkg_setup() {
 
 S_ENIGMA="${S}/Submodules/enigma-dev"
 
-_verify_enigma_abi_fingerprint() {
-	#
-	# Generate fingerprint for ABI compatibility checks and subslot.
-	#
-	# libEGM -> EGM
-	# shared -> ENIGMAShared
-	# shared/protos -> Protocols
-	#
-	# The calculation for the ABI may change depending on the dependencies.
-	#
-	local H=()
-	local x
-
-	# Library ABI compatibility
-	for x in $(find \
-		"${S_ENIGMA}/CommandLine/libEGM" \
-		"${S_ENIGMA}/shared" \
-		-name "*.h" | sort) ; do
-
-		# It doesn't respect .gitignore
-		[[ "${x}" =~ ".eobjs" ]] && continue
-
-		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-	done
-	for x in $(find "${S_ENIGMA}/shared/protos/" -name "*.proto" | sort) ; do
-		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-	done
-
-	# Drag and drop actions
-	for x in $(find "${S_ENIGMA}" -name "*.ey") ; do
-		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-	done
-
-	# File formats
-	local FFP=($(grep -E -l -r -e  "(Write|Load)Project\(" "${S_ENIGMA}" \
-		| grep -e ".cpp" \
-		| grep -e "libEGM" \
-		| grep -v -e "file-format.cpp"))
-	for x in ${FFP} ; do
-		H+=( $(sha256sum "${x}" | cut -f 1 -d " ") )
-	done
-
-	# Command line option changes
-	H+=( $(sha256sum "${S_ENIGMA}/CommandLine/emake/OptionsParser.cpp" | cut -f 1 -d " ") )
-
-	# Sometimes the minor versions of dependencies bump the project minor version.
-	#H+=( ${DEPENDS_FINGERPRINT} )
-
-	# No SOVER, no semver
-	local submodule_enigma_abi_fingerprint=$(echo "${H[@]}" \
-		| tr " " "\n" \
-		| sort \
-		| uniq \
-		| sha256sum \
-		| cut -f 1 -d " ")
-	if [[ "${submodule_enigma_abi_fingerprint}" != "${ENIGMA_ABI_FINGERPRINT}" ]] ; then
-eerror
-eerror "SUBMODULE_ABI_FINGERPRINT:   ${submodule_enigma_abi_fingerprint}"
-eerror "EXPECTED_ABI_FINGERPRINT:  ${ENIGMA_ABI_FINGERPRINT}"
-eerror
-eerror "Notify the ebuild maintainer to update the enigma package"
-eerror "for ${PN}."
-eerror
-		die
-	fi
-}
-
 src_unpack() {
 	EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
 	EGIT_BRANCH="master"
@@ -150,7 +83,6 @@ src_prepare() {
 	rm -rf "${S}/Submodules/enigma-dev" || die
 	cp -a "${ENIGMA_INSTALL_DIR}" "${S}/Submodules" || die
 	mv "${S}/Submodules/enigma" "${S}/Submodules/enigma-dev" || die
-	_verify_enigma_abi_fingerprint
 }
 
 src_configure() {
