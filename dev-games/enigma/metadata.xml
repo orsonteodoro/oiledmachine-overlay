@@ -196,9 +196,9 @@
     <subslots>
       Determines compatibility.  It can be one of the following:
 
-      head - The latest commit.
-      enigma-COMMIT_ID - Enigma compatible.
-      lateralgm-COMMIT_ID - LateralGM compatible.
+      head - The latest commit.  Ebuild is marked with suffix h.
+      radialgm-COMMIT_ID - RadialGM compatible.  Ebuild is marked with suffix r.
+      lateralgm-COMMIT_ID - LateralGM compatible.  Ebuild is marked with suffix l.
     </subslots>
   </slot>
 </pkgmetadata>
