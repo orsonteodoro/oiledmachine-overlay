@@ -17,7 +17,10 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 HOMEPAGE="http://lateralgm.org/"
 SLOT="0"
-IUSE+=" libmaker"
+IUSE+="
+libmaker
+r1
+"
 
 JAVA_SLOT="1.8"
 JAVA_SRC_VER="1.7"
