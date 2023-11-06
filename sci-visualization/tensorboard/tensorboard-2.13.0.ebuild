@@ -22,7 +22,7 @@ LICENSE="
 " # The distro Apache-2.0 template doesn't have all-rights-reserved
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE+=" test r2"
+IUSE+=" test r3"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -31,7 +31,7 @@ PROPERTIES="live"
 # Not used:
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 # Requirements for dev-python/protobuf-python modified by this ebuild to avoid multi instance single slot issue.
-PROTOBUF_SLOT="0/32"
+PROTOBUF_SLOT="0/3.21"
 LLVM_MAX_SLOT=16
 LLVM_MIN_SLOT=15
 LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} )
