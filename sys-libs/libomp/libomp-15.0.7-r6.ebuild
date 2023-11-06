@@ -66,7 +66,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 debug hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
 rocm_5_3 rocm_5_4 rpc
-r4
+r5
 "
 gen_cuda_required_use() {
 	local x
@@ -222,7 +222,7 @@ RDEPEND="
 	)
 	rpc? (
 		>=net-libs/grpc-1.49.3:=
-		dev-libs/protobuf:0/32
+		dev-libs/protobuf:0/3.21
 	)
 "
 # tests:

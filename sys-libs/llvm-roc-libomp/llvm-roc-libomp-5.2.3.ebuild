@@ -101,7 +101,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda -offload -ompt +ompd -rpc
-r13
+r14
 "
 
 gen_cuda_required_use() {
@@ -226,7 +226,7 @@ RDEPEND="
 	)
 	rpc? (
 		>=net-libs/grpc-1.49.3:=
-		dev-libs/protobuf:0/32
+		dev-libs/protobuf:0/3.21
 	)
 "
 DEPEND="
