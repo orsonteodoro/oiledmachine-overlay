@@ -13,6 +13,7 @@ SRC_URI="
 https://github.com/deepmind/dm_control/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="DeepMind's software stack for physics-based simulation and \
 Reinforcement Learning environments, using MuJoCo."
@@ -22,7 +23,10 @@ https://github.com/deepmind/dm_control
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" hdf5 test"
+IUSE+="
+hdf5 test
+r1
+"
 # Needs packaging:
 # dm-env
 # dm-tree
@@ -37,7 +41,7 @@ DEPEND+="
 	>=dev-python/lxml-4.9.3[${PYTHON_USEDEP}]
 	>=dev-python/mujoco-2.3.7[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-python-3.19.4[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-python-3.19.4:0/3.21[${PYTHON_USEDEP}]
 	>=dev-python/pyglfw-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
 	>=dev-python/pyparsing-3.1.0[${PYTHON_USEDEP}]
@@ -62,7 +66,6 @@ BDEPEND+="
 		>=dev-python/pillow-10.0.0[${PYTHON_USEDEP}]
 	)
 "
-S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 distutils_enable_tests "nose"
