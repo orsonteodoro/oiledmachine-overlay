@@ -25,26 +25,24 @@ else
 	"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
 fi
+S="${WORKDIR}/${PARENT_P}/python"
 
 DESCRIPTION="Google's Protocol Buffers - Python bindings"
 HOMEPAGE="
 	https://developers.google.com/protocol-buffers/
 	https://pypi.org/project/protobuf/
 "
-
 LICENSE="BSD"
-SLOT="0/22"
-
-S="${WORKDIR}/${PARENT_P}/python"
-
-BDEPEND="
+SLOT="0/$(ver_cut 1-2 ${PV})"
+RDEPEND="
+	${PYTHON_DEPS}
+	dev-libs/protobuf:${SLOT}
 "
 DEPEND="
-	${PYTHON_DEPS}
+	${RDEPEND}
 "
-RDEPEND="
-	${BDEPEND}
-	dev-libs/protobuf:${SLOT}
+BDEPEND="
+	${PYTHON_DEPS}
 "
 
 distutils_enable_tests setup.py

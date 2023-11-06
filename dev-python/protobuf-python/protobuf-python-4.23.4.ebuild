@@ -4,15 +4,17 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PARENT_PN="${PN/-python/}"
-PARENT_PV="$(ver_cut 2-)"
-PARENT_P="${PARENT_PN}-${PARENT_PV}"
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream supports up to 3.10
+PYTHON_COMPAT=( python3_{10..11} ) # Upstream listed up to 3.10 but patch already applied for 3.11
 
 inherit distutils-r1
 
+PARENT_PN="${PN/-python/}"
+PARENT_PV="$(ver_cut 2-)"
+PARENT_P="${PARENT_PN}-${PARENT_PV}"
+
 if [[ "${PV}" == *9999 ]]; then
 	inherit git-r3
+
 	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
 	EGIT_SUBMODULES=()
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${PARENT_P}"
@@ -21,17 +23,17 @@ else
 		https://github.com/protocolbuffers/protobuf/archive/v${PARENT_PV}.tar.gz
 			-> ${PARENT_P}.tar.gz
 	"
-	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux ~x64-macos"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos"
 fi
+S="${WORKDIR}/${PARENT_P}/python"
 
 DESCRIPTION="Google's Protocol Buffers - Python bindings"
 HOMEPAGE="
 	https://developers.google.com/protocol-buffers/
 	https://pypi.org/project/protobuf/
 "
-
 LICENSE="BSD"
-SLOT="0/32"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="
 	${PYTHON_DEPS}
 	dev-libs/protobuf:${SLOT}
@@ -39,7 +41,9 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-S="${WORKDIR}/${PARENT_P}/python"
+BDEPEND="
+	${PYTHON_DEPS}
+"
 
 distutils_enable_tests setup.py
 
@@ -51,7 +55,6 @@ PARENT_PATCHES=(
 
 # Here for patches within "python/" subdirectory.
 PATCHES=(
-	"${FILESDIR}/${PN}-3.20.3-python311.patch"
 )
 
 python_prepare_all() {
@@ -59,7 +62,6 @@ python_prepare_all() {
 		[[ -n "${PARENT_PATCHES[@]}" ]] && eapply "${PARENT_PATCHES[@]}"
 		eapply_user
 	popd > /dev/null || die
-
 	distutils-r1_python_prepare_all
 }
 
