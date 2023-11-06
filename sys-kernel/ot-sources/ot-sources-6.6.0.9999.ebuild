@@ -33,7 +33,7 @@ inherit ot-kernel-v6.6
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
 #
 # USE="build cfs disable_debug genpatches kpgo-utils ncurses openssl pgo symlink
-# zen-sauce zstd -bbrv2 -bbrv3 -bzip2 (-c2tcp) -clang (-deepcc) -exfat
+# zen-sauce zstd -bbrv2 bbrv3 -bzip2 (-c2tcp) -clang (-deepcc) -exfat
 # -fallback-commit -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick
 # -intel-microcode -kcfi -linux-firmware -lto -lz4 -lzma -lzo (-orca) -pcc -prjc
 # (-qt5) -reiserfs -rt -rust -shadowcallstack -tresor -tresor_aesni -tresor_i686
@@ -70,7 +70,7 @@ inherit ot-kernel-v6.6
 # OT_KERNEL_SLAB_ALLOCATOR="slub"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
 
-# env file gamer profile sample:
+# env file gamer profile sample (disabled):
 # OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 # OT_KERNEL_CPU_SCHED="cfs-interactive"
 # OT_KERNEL_EXTRAVERSION="gaming"

@@ -58,7 +58,7 @@ inherit ot-kernel-v6.1
 # show logo:  passed
 # network:    passed
 
-# env file gamer profile sample:
+# env file gamer profile sample (disabled):
 # OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 # OT_KERNEL_CPU_SCHED="cfs-interactive"
 # OT_KERNEL_EXTRAVERSION="gaming"
