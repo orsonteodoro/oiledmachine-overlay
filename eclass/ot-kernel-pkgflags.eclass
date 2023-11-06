@@ -3176,8 +3176,10 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_CGROUP_NET_CLASSID"
 
 		ot-kernel_y_configopt "CONFIG_MD"
-		ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
-		ot-kernel_y_configopt "CONFIG_DM_THIN_PROVISIONING"
+		if has_version "app-containers/docker[device-mapper]" ; then
+			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
+			ot-kernel_y_configopt "CONFIG_DM_THIN_PROVISIONING"
+		fi
 		ot-kernel_y_configopt "CONFIG_NETDEVICES"
 		ot-kernel_y_configopt "CONFIG_NET_CORE"
 		ot-kernel_set_configopt "CONFIG_DUMMY" "m"
@@ -3274,6 +3276,27 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXT4_FS"
 		ot-kernel_y_configopt "CONFIG_EXT4_FS_POSIX_ACL"
 		ot-kernel_y_configopt "CONFIG_EXT4_FS_SECURITY"
+
+		ot-kernel_y_configopt "CONFIG_VXLAN"
+		ot-kernel_y_configopt "CONFIG_BRIDGE_VLAN_FILTERING"
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_AEAD"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_GCM"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_SEQIV"
+		ot-kernel_y_configopt "CONFIG_CRYPTO_GHASH"
+		ot-kernel_y_configopt "CONFIG_XFRM"
+		ot-kernel_y_configopt "CONFIG_XFRM_USER"
+		ot-kernel_y_configopt "CONFIG_XFRM_ALGO"
+		ot-kernel_y_configopt "CONFIG_INET_ESP"
+
+		if ver_test "${KV_MAJOR_MINOR}" -le "5.3" ; then
+			ot-kernel_y_configopt "CONFIG_INET_XFRM_MODE_TRANSPORT"
+		fi
+
+		ot-kernel_set_configopt "CONFIG_IPVLAN" "m"
+
+		ot-kernel_set_configopt "CONFIG_MACVLAN" "m"
+		ot-kernel_set_configopt "CONFIG_DUMMY" "m"
 
 		ot-kernel_y_configopt "CONFIG_NF_NAT_FTP"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_FTP"
