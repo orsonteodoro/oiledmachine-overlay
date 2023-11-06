@@ -16,7 +16,7 @@ is an open source cross-platform game development environment."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 
-SLOT="0/lateralgm-f30646f" # Required because of the grpc/protobuf.
+SLOT="0/lateralgm-d18d1c0" # Required because of the grpc/protobuf.
 IUSE+="
 android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network +openal
@@ -630,8 +630,8 @@ src_prepare() {
 }
 
 src_unpack() {
-	# From https://github.com/enigma-dev/enigma-dev/commits/master@{2023-05-23}
-	export EGIT_COMMIT="f30646facfea176aa3ce63e205a7eceebcbfa048" # May 22, 2023
+	# From https://github.com/enigma-dev/enigma-dev/commits/master@{2021-06-24}
+	export EGIT_COMMIT="d18d1c08c5fbfd16a80222d06650918318d7f6cd" # Jun 23, 2021
 	git-r3_fetch
 	git-r3_checkout
 	#verify_depends_is_the_same
