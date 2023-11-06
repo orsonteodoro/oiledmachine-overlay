@@ -29,7 +29,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 australis doc experimental test
-r1
+r2
 "
 # flax and tensorstore are missing in setup.py *_require sections but referenced
 # in experimental but not in tests folder.
@@ -50,7 +50,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-libs/protobuf:=
+	dev-libs/protobuf:0/3.21
 	dev-python/flake8[${PYTHON_USEDEP}]
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
