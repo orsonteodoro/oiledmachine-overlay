@@ -17,14 +17,17 @@ HOMEPAGE="https://github.com/jketterl/codecserver"
 LICENSE="GPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" openrc systemd"
+IUSE+="
+openrc systemd
+r1
+"
 REQUIRED_USE="
 	|| (
 		openrc systemd
 	)
 "
 DEPEND+="
-	>=dev-libs/protobuf-3.12.4
+	>=dev-libs/protobuf-3.12.4:0/3.21
 	acct-group/dialout
 	virtual/udev
 	openrc? (
@@ -39,7 +42,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=dev-util/cmake-3.6
-	>=dev-libs/protobuf-3.0
+	>=dev-libs/protobuf-3.12.4:0/3.21
 "
 RESTRICT="mirror"
 DOCS=( LICENSE README.md )
