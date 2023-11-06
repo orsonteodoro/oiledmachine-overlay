@@ -247,8 +247,8 @@ LICENSE="
 # it appears in the LICENSE file.
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test r1"
-PROTOBUF_SLOT="0/32"
+IUSE+=" test r2"
+PROTOBUF_SLOT="0/3.21"
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
