@@ -30,7 +30,10 @@ fi
 
 DESCRIPTION="A delightful community-driven framework for managing your zsh \
 configuration that includes optional plugins and themes."
-HOMEPAGE="http://ohmyz.sh/"
+HOMEPAGE="
+http://ohmyz.sh/
+https://github.com/ohmyzsh/ohmyzsh
+"
 LICENSE="
 	MIT
 	Apache-2.0

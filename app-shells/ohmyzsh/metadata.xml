@@ -29,9 +29,9 @@
 
   -->
   <upstream>
-    <bugs-to>https://github.com/robbyrussell/oh-my-zsh/issues</bugs-to>
-    <doc lang="en">https://github.com/robbyrussell/oh-my-zsh/wiki</doc>
-    <remote-id type="github">robbyrussell/oh-my-zsh</remote-id>
+    <bugs-to>https://github.com/ohmyzsh/ohmyzsh/issues</bugs-to>
+    <doc lang="en">https://github.com/ohmyzsh/ohmyzsh/wiki</doc>
+    <remote-id type="github">ohmyzsh/ohmyzsh</remote-id>
   </upstream>
   <use>
     <!-- See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes -->
