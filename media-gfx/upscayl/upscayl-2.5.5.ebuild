@@ -183,17 +183,47 @@ https://github.com/upscayl/upscayl/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Upscayl - Free and Open Source AI Image Upscaler for Linux, MacOS and Windows built with Linux-First philosophy."
 HOMEPAGE="https://upscayl.github.io/"
-# Upstream uses U 18.04.6 for CI
 THIRD_PARTY_LICENSES="
-	( Apache-2.0 all-rights-reserved )
-	( custom MIT Unicode-DFS-2016 CC-BY-4.0 W3C-Software-and-Document-Notice-and-License-2015 W3C-Community-Final-Specification-Agreement )
-	( MIT all-rights-reserved )
-	( MIT CC0-1.0 )
-	( MIT ISC BSD-2 BSD Apache-2.0 0BSD ( MIT all-rights-reserved ) )
-	( WTFPL-2 ISC )
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		CC-BY-4.0
+		custom
+		MIT
+		Unicode-DFS-2016
+		W3C-Community-Final-Specification-Agreement
+		W3C-Software-and-Document-Notice-and-License-2015
+	)
+	(
+		CC0-1.0
+		MIT
+	)
+	(
+		0BSD
+		Apache-2.0
+		BSD
+		BSD-2
+		ISC
+		MIT
+		(
+			all-rights-reserved
+			MIT
+		)
+	)
+	(
+		ISC
+		WTFPL-2
+	)
 	0BSD
 	Apache-2.0
 	BSD
@@ -204,18 +234,24 @@ THIRD_PARTY_LICENSES="
 	GPL-3
 	MIT
 	PSF-2.4
-	|| ( MIT GPL-2 )
-	|| ( MIT CC0-1.0 )
+	|| (
+		GPL-2
+		MIT
+	)
+	|| (
+		CC0-1.0
+		MIT
+	)
 "
 LICENSE="
-	AGPL-3
 	${ELECTRON_APP_LICENSES}
 	${THIRD_PARTY_LICENSES}
+	AGPL-3
 "
-
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE+=" r2"
+# Upstream uses U 18.04.6 for CI
 RDEPEND+="
 	media-libs/vulkan-loader
 "
@@ -223,7 +259,6 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 "
-S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 pkg_setup() {
