@@ -15,6 +15,9 @@
   <use>
     <flag name="system-vips">
       Use the system's version instead of the vendored for image processing.
+
+      Disabling requires a CPU with SSE 4.2 support.  Enabling can disable this
+      hard requirement.
     </flag>
   </use>
   <slots>

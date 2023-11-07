@@ -647,7 +647,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE+=" r2"
+IUSE+=" r3"
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
 	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[jpeg,png]
@@ -664,11 +664,12 @@ BDEPEND+="
 RESTRICT="mirror"
 
 pkg_setup() {
-# sharp or it's dependency requires SSE 4.2.
+	if ! use system-vips ; then
+# Vendored vips requires SSE 4.2.
 ewarn
-ewarn "You need a CPU with SSE 4.2 to use this version."
-ewarn "Use the 2.5.x series for older CPUs."
+ewarn "You need a CPU with SSE 4.2 to use system-vips USE flag disabled."
 ewarn
+	fi
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
@@ -732,6 +733,10 @@ upscayl
 		fperms 0755 "${NPM_INSTALL_PATH}/${f}"
 	done
 	lcnr_install_files
+
+	if use system-vips ; then
+		find "${ED}" "libvips-cpp.so*" -delete
+	fi
 }
 
 pkg_postinst() {
