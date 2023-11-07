@@ -667,14 +667,17 @@ src_install() {
 	# Generated from:
 	# find "${S}/dist" -executable -type f | cut -f 11- -d "/" | sort
 	local L=(
-chrome-sandbox
 chrome_crashpad_handler
+chrome-sandbox
 libEGL.so
-libGLESv2.so
 libffmpeg.so
+libGLESv2.so
 libvk_swiftshader.so
 libvulkan.so.1
-resources/bin/upscayl-realesrgan
+resources/app.asar.unpacked/node_modules/sharp/build/Release/sharp-linux-x64.node
+resources/app.asar.unpacked/node_modules/sharp/node_modules/node-addon-api/tools/conversion.js
+resources/app.asar.unpacked/node_modules/sharp/node_modules/semver/bin/semver.js
+resources/bin/upscayl-bin
 upscayl
 	)
 	for f in ${L[@]} ; do
