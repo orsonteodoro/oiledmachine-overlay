@@ -39,40 +39,114 @@ LICENSE="
 	Apache-2.0
 	unicode
 	Unicode-DFS-2016
-	omz_plugins_bazel? ( Apache-2.0 all-rights-reserved )
-	omz_plugins_kube-ps1? ( Apache-2.0 )
-	omz_plugins_sfdx? ( Apache-2.0 )
-	omz_plugins_coffee? ( BSD )
-	omz_plugins_docker? ( BSD )
-	omz_plugins_fd? ( BSD )
-	omz_plugins_history-substring-search? ( BSD )
-	omz_plugins_httpie? ( BSD )
-	omz_plugins_kitchen? ( BSD )
-	omz_plugins_ripgrep? ( BSD )
-	omz_plugins_scala? ( BSD )
-	omz_plugins_yarn? ( BSD )
-	omz_plugins_git-escape-magic? ( BSD-2 )
-	omz_plugins_gitfast? ( GPL-2 GPL-2+ )
-	omz_plugins_iterm2? ( GPL-2+ )
-	omz_plugins_pass? ( GPL-2+ all-rights-reserved )
-	omz_plugins_geeknote? ( GPL-3+ )
-	omz_plugins_term_tab? ( GPL-2+ )
-	omz_plugins_zbell? ( ISC )
-	omz_plugins_dotnet? ( all-rights-reserved MIT )
-	omz_plugins_aliases? ( MIT )
-	omz_plugins_gradle? ( MIT )
-	omz_plugins_grunt? ( MIT )
-	omz_plugins_gulp? ( MIT )
-	omz_plugins_ipfs? ( MIT )
-	omz_plugins_lando? ( MIT )
-	omz_plugins_macos? ( MIT )
-	omz_plugins_taskwarrior? ( MIT )
-	omz_plugins_wd? ( MIT )
-	omz_plugins_zsh-navigation-tools? ( MIT GPL-3 )
-	omz_plugins_zsh-interactive-cd? ( MPL-2.0 )
-	omz_plugins_shrink-path? ( WTFPL-2 )
-	omz_plugins_z? ( MIT WTFPL-2 )
-	omz_plugins_per-directory-history? ( ZLIB )
+	omz_plugins_aliases? (
+		MIT
+	)
+	omz_plugins_bazel? (
+		all-rights-reserved
+		Apache-2.0
+	)
+	omz_plugins_coffee? (
+		BSD
+	)
+	omz_plugins_docker? (
+		BSD
+	)
+	omz_plugins_dotnet? (
+		all-rights-reserved
+		MIT
+	)
+	omz_plugins_fd? (
+		BSD
+	)
+	omz_plugins_geeknote? (
+		GPL-3+
+	)
+	omz_plugins_git-escape-magic? (
+		BSD-2
+	)
+	omz_plugins_gitfast? (
+		GPL-2
+		GPL-2+
+	)
+	omz_plugins_gradle? (
+		MIT
+	)
+	omz_plugins_grunt? (
+		MIT
+	)
+	omz_plugins_gulp? (
+		MIT
+	)
+	omz_plugins_history-substring-search? (
+		BSD
+	)
+	omz_plugins_httpie? (
+		BSD
+	)
+	omz_plugins_ipfs? (
+		MIT
+	)
+	omz_plugins_iterm2? (
+		GPL-2+
+	)
+	omz_plugins_kitchen? (
+		BSD
+	)
+	omz_plugins_kube-ps1? (
+		Apache-2.0
+	)
+	omz_plugins_lando? (
+		MIT
+	)
+	omz_plugins_macos? (
+		MIT
+	)
+	omz_plugins_pass? (
+		all-rights-reserved
+		GPL-2+
+	)
+	omz_plugins_per-directory-history? (
+		ZLIB
+	)
+	omz_plugins_ripgrep? (
+		BSD
+	)
+	omz_plugins_scala? (
+		BSD
+	)
+	omz_plugins_sfdx? (
+		Apache-2.0
+	)
+	omz_plugins_shrink-path? (
+		WTFPL-2
+	)
+	omz_plugins_taskwarrior? (
+		MIT
+	)
+	omz_plugins_term_tab? (
+		GPL-2+
+	)
+	omz_plugins_wd? (
+		MIT
+	)
+	omz_plugins_yarn? (
+		BSD
+	)
+	omz_plugins_z? (
+		MIT
+		WTFPL-2
+	)
+	omz_plugins_zbell? (
+		ISC
+	)
+	omz_plugins_zsh-interactive-cd? (
+		MPL-2.0
+	)
+	omz_plugins_zsh-navigation-tools? (
+		GPL-3
+		MIT
+	)
 "
 
 # tools/install.sh - Apache-2.0
