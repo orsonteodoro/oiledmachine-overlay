@@ -11,6 +11,8 @@ ELECTRON_APP_MODE="npm"
 ELECTRON_APP_ELECTRON_PV="27.0.3"
 ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_REACT_PV="18.2.0"
+ELECTRON_APP_SHARP_PV="0.32.6"
+ELECTRON_APP_VIPS_PV="8.14.5"
 NODE_ENV="development"
 NODE_VERSION="16"
 
@@ -643,20 +645,30 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 	AGPL-3
 "
-#KEYWORDS="~amd64" # Illegal instruction during startup.
+KEYWORDS="~amd64"
 SLOT="0"
 IUSE+=" r2"
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
+	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[jpeg,png]
 	media-libs/vulkan-loader
+"
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	virtual/pkgconfig
 "
 RESTRICT="mirror"
 
 pkg_setup() {
+# sharp or it's dependency requires SSE 4.2.
+ewarn
+ewarn "You need a CPU with SSE 4.2 to use this version."
+ewarn "Use the 2.5.x series for older CPUs."
+ewarn
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
@@ -672,6 +684,7 @@ npm_update_lock_install_post() {
 }
 
 src_compile() {
+	electron-app_set_sharp_env
 	export NEXT_TELEMETRY_DISABLED=1
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die

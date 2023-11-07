@@ -634,6 +634,26 @@ elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
 	"
 fi
 
+# See also electron-set_sharp_env().
+if [[ -n "${ELECTRON_APP_SHARP_PV}" ]] ; then
+	ELECTRON_APP_VIPS_PV=${ELECTRON_APP_VIPS_PV:-"8.14.5"}
+	IUSE+=" +system-vips"
+	COMMON_DEPEND+="
+		>=net-libs/nodejs-14.15.0
+		elibc_glibc? (
+			>=sys-libs/glibc-2.17
+		)
+		elibc_musl? (
+			>=sys-libs/musl-1.1.24
+		)
+		system-vips? (
+			>=media-libs/vips-${ELECTRON_APP_VIPS_PV}
+		)
+	"
+	BDEPEND+="
+		virtual/pkgconfig
+	"
+fi
 
 # See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node
 # in the v13/index.d.ts, where v13 is a particular node version.
@@ -993,5 +1013,18 @@ electron-app_get_electron_platarch_args() {
 		args+=(
 			--x64
 		)
+	fi
+}
+
+# @FUNCTION: electron-app_set_sharp_env
+# @DESCRIPTION:
+# sharp env
+electron-app_set_sharp_env() {
+	export SHARP_IGNORE_GLOBAL_LIBVIPS=1
+	if use system-vips ; then
+		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
+einfo "Using system vips for sharp"
+	else
+einfo "Using vendored vips for sharp"
 	fi
 }

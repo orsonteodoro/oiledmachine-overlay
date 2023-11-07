@@ -12,6 +12,11 @@
     <bugs-to>https://github.com/upscayl/upscayl/issues</bugs-to>
     <remote-id type="github">upscayl/upscayl</remote-id>
   </upstream>
+  <use>
+    <flag name="system-vips">
+      Use the system's version instead of the vendored for image processing.
+    </flag>
+  </use>
   <slots>
     <slot name="0">
       The latest release
