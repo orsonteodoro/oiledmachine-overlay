@@ -21,14 +21,14 @@ LICENSE="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
-IUSE="deny-install skip-install"
+IUSE="deny-install skip-install r2"
 RDEPEND="
 	!dev-libs/hsa-amd-aqlprofile:0
 "
 DEPEND="
 	${RDEPEND}
 "
-RESTRICT="binchecks"
+RESTRICT="binchecks strip"
 S="${WORKDIR}"
 QA_PREBUILT="
 /opt/rocm-5.1.3/hsa-amd-aqlprofile/lib/libhsa-amd-aqlprofile64.so.1
