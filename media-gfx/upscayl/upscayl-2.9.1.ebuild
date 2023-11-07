@@ -608,7 +608,7 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 "
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Illegal instruction on start of upscayl.
 SLOT="0"
 IUSE+=" r2"
 RDEPEND+="
