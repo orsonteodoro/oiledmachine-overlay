@@ -213,9 +213,18 @@ yarn_pkg_setup() {
 		done
 		if (( ${found} == 0 )) ; then
 eerror
-eerror "Did not find an installed nodejs slot."
+eerror "Did not find the preferred nodejs slot."
 eerror "Expected node versions:  ${NODE_SLOTS}"
-eerror "See eselect nodejs for details."
+eerror
+eerror "Try one of the following:"
+eerror
+			local s
+			for s in ${NODE_SLOTS} ; do
+eerror "  eselect nodejs set node${s}"
+			done
+
+eerror
+eerror "See eselect nodejs for more details."
 eerror
 			die
 		fi
@@ -226,9 +235,14 @@ eerror
 		fi
 		if (( ${found} == 0 )) ; then
 eerror
-eerror "Did not find an installed nodejs slot."
+eerror "Did not find the preferred nodejs slot."
 eerror "Expected node version:  ${NODE_VERSION}"
-eerror "See eselect nodejs for details."
+eerror
+eerror "Try the following:"
+eerror
+eerror "  eselect nodejs set node$(ver_cut 1 ${NODE_VERSION})"
+eerror
+eerror "See eselect nodejs for more details."
 eerror
 			die
 		fi
