@@ -277,3 +277,8 @@ ewarn
 # fast real-esrgan:  passed
 # ultramix balanced:  passed
 # color theme (randomly chosen):  passed
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.7.5 with runtime black empty preview bug.
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.8.6 missing tsc, electron-builder.
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 2.9.1
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 2.9.0
