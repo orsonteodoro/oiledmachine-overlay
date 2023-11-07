@@ -7,7 +7,9 @@ EAPI=8
 ELECTRON_APP_ELECTRON_PV="13.6.9"
 ELECTRON_APP_VUE_PV="2.6.11"
 ELECTRON_APP_MODE="npm"
+ELECTRON_APP_SHARP_PV="0.29.3"
 ELECTRON_APP_SKIP_EXIT_CODE_CHECK="1"
+ELECTRON_APP_VIPS_PV="8.11.3"
 NODE_ENV="development"
 NODE_VERSION="16" # 14
 NPM_INSTALL_PATH="/opt/${PN}"
@@ -224,7 +226,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE+=" system-vips r2"
-REQUIRED_USE="
+REQUIRED_USE+="
 !wayland X
 "
 # wayland error:  /usr/bin/texturelab: line 13: 2993280 Trace/breakpoint trap
@@ -2555,7 +2557,7 @@ https://registry.npmjs.org/zip-stream/-/zip-stream-1.2.0.tgz -> npmpkg-zip-strea
 PHANTOMJS_PV="2.1.1"
 SENTRY_CLI_PV="1.75.0"
 SHARP_PV=""
-VIPS_PV="8.11.3"
+VIPS_PV="${ELECTRON_APP_VIPS_PV}"
 SRC_URI="
 $(electron-app_gen_electron_uris)
 ${NPM_EXTERNAL_URIS}
@@ -2566,7 +2568,7 @@ https://github.com/njbrown/texturelabdata/archive/${TEXTURELABDATA_COMMIT}.tar.g
 https://github.com/Medium/phantomjs/releases/download/v${PHANTOMJS_PV}/phantomjs-${PHANTOMJS_PV}-linux-x86_64.tar.bz2
 https://downloads.sentry-cdn.com/sentry-cli/${SENTRY_CLI_PV}/sentry-cli-Linux-x86_64 -> sentry-cli-Linux-x86_64.${SENTRY_CLI_PV}
 https://github.com/lovell/sharp-libvips/releases/download/v${VIPS_PV}/libvips-${VIPS_PV}-linux-x64.tar.br
-"
+" # the .br is not a mistake.
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 MY_PN="TextureLab"
@@ -2685,11 +2687,7 @@ cp_sharp_deps() {
 
 add_deps() {
 	cd "${S}" || die
-	export SHARP_IGNORE_GLOBAL_LIBVIPS=1
-	if use system-vips ; then
-		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
-		#enpm add "node-gyp@9.3.1"
-	fi
+	electron-app_set_sharp_env
 }
 
 src_unpack() {

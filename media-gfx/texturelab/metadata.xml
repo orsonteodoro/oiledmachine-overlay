@@ -9,4 +9,9 @@
     <bugs-to>https://github.com/njbrown/texturelab/issues</bugs-to>
     <remote-id type="github">njbrown/texturelab</remote-id>
   </upstream>
+  <use>
+    <flag name="system-vips">
+      Use the system's version instead of the vendored for image processing.
+    </flag>
+  </use>
 </pkgmetadata>

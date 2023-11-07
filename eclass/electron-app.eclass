@@ -637,12 +637,15 @@ fi
 # See also electron-set_sharp_env().
 if [[ -n "${ELECTRON_APP_SHARP_PV}" ]] ; then
 	ELECTRON_APP_VIPS_PV=${ELECTRON_APP_VIPS_PV:-"8.14.5"}
-	IUSE+=" +system-vips cpu_flags_x86_sse4_2"
-	REQUIRED_USE+="
-		!cpu_flags_x86_sse4_2? (
-			system-vips
-		)
-	"
+	IUSE+=" +system-vips"
+	if ver_test "${ELECTRON_APP_SHARP_PV}" -ge 0.30 ; then
+		IUSE+=" cpu_flags_x86_sse4_2"
+		REQUIRED_USE+="
+			!cpu_flags_x86_sse4_2? (
+				system-vips
+			)
+		"
+	fi
 	COMMON_DEPEND+="
 		>=net-libs/nodejs-14.15.0
 		elibc_glibc? (
