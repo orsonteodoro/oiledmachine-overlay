@@ -747,6 +747,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.5.5 (20230608)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.9.1 (20231107)
 # USE="X unpacked wayland -r2"
 # X:  passed
 # wayland:  passed
@@ -755,8 +756,7 @@ ewarn
 # fast real-esrgan:  passed
 # ultramix balanced:  passed
 # color theme (randomly chosen):  passed
+# notes:  the jpg with preview is broken for 2.9.1
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.7.5 with runtime black empty preview bug.
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.8.6 missing tsc, electron-builder.
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 2.9.1
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 2.9.0
