@@ -96,7 +96,7 @@ REQUIRED_USE+="
 		X
 	)
 "
-RESTRICT="mirror strip"
+RESTRICT="mirror strip binchecks"
 
 # Support based on D 10 with U 16.04 LTS as the fallback.
 
