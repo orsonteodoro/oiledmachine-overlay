@@ -1,7 +1,7 @@
 {
   "name": "upscayl",
   "private": true,
-  "version": "2.8.6",
+  "version": "2.5.5",
   "productName": "Upscayl",
   "homepage": "https://github.com/TGS963/upscayl",
   "contributors": [
@@ -46,26 +46,16 @@
     "dist:dmg": "tsc && npm run build && cross-env DEBUG=* electron-builder build -m dmg",
     "dist:msi": "tsc && npm run build && cross-env DEBUG=* electron-builder build -w nsis",
     "dist:pkg": "tsc && npm run build && cross-env DEBUG=* electron-builder build -m pkg",
-    "dist:mac": "tsc && npm run build && electron-builder --mac --universal",
-    "dist:mac-arm64": "tsc && npm run build && electron-builder --mac --arm64",
-    "dist:win": "tsc && npm run build && electron-builder --win",
-    "dist:linux": "tsc && npm run build && electron-builder --linux",
-    "publish-app": "tsc && npm run build && electron-builder -wlm --publish always",
+    "publish-app": "tsc && npm run build && electron-builder -wl --publish always",
     "publish-linux-app": "tsc && npm run build && electron-builder -l --publish always",
     "publish-win-app": "tsc && npm run build && electron-builder -w --publish always",
-    "publish-mac-universal-app": "tsc && npm run build && electron-builder --mac --universal --publish always",
-    "publish-mac-app": "tsc && npm run build && electron-builder --mac --x64 --publish always",
-    "publish-mac-arm-app": "tsc && npm run build && electron-builder --mac --arm64 --publish always"
+    "publish-mac-app": "tsc && npm run build && electron-builder -m --publish always"
   },
   "build": {
     "productName": "Upscayl",
     "appId": "org.upscayl.app",
     "artifactName": "${name}-${version}-${os}.${ext}",
-    "afterSign": "scripts/notarize.js",
     "asar": true,
-    "asarUnpack": [
-      "**/node_modules/sharp/**/*"
-    ],
     "extraFiles": [
       {
         "from": "resources/${os}/bin",
@@ -82,43 +72,36 @@
         ]
       },
       {
-        "from": "org.upscayl.Upscayl.desktop",
-        "to": "resources/org.upscayl.Upscayl.desktop"
+        "from": "resources/icon_128x128.png",
+        "to": "icon_128x128.png",
+        "filter": [
+          "**/*"
+        ]
       },
       {
-        "from": "resources/icons/128x128.png",
-        "to": "resources/128x128.png"
-      },
-      {
-        "from": "resources/icons/512x512.png",
-        "to": "resources/512x512.png"
+        "from": "resources/icon_512x512.png",
+        "to": "icon_512x512.png",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "mac": {
-      "category": "public.app-category.photography",
+      "type": "distribution",
       "hardenedRuntime": true,
+      "entitlements": "main/resources/entitlements.mac.plist",
+      "entitlementsInherit": "main/resources/entitlements.mac.plist",
       "gatekeeperAssess": false,
-      "entitlements": "resources/entitlements.mac.plist",
-      "entitlementsInherit": "resources/entitlements.mac.plist",
-      "mergeASARs": false,
       "target": [
         {
           "target": "dmg",
           "arch": [
-            "universal"
-          ]
-        },
-        {
-          "target": "zip",
-          "arch": [
-            "universal"
+            "x64"
           ]
         }
-      ],
-      "x64ArchFiles": "*"
+      ]
     },
     "dmg": {
-      "sign": "false",
       "contents": [
         {
           "x": 130,
@@ -145,8 +128,7 @@
       "maintainer": "Nayam Amarshe <simplelogin-newsletter.j1zez@aleeas.com>",
       "category": "Graphics;2DGraphics;RasterGraphics;ImageProcessing;",
       "synopsis": "AI Image Upscaler",
-      "description": "Free and Open Source AI Image Upscaler",
-      "icon": "resources/icons/512x512.png"
+      "description": "Free and Open Source AI Image Upscaler"
     },
     "win": {
       "publish": [
@@ -169,38 +151,37 @@
     ]
   },
   "devDependencies": {
-    "@electron/notarize": "^2.1.0",
     "@types/node": "^18.15.12",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
     "autoprefixer": "^10.4.14",
-    "cross-env": "^7.0.3",
-    "electron": "^25.8.1",
-    "electron-builder": "^24.6.4",
+    "electron": "^23.2.4",
+    "electron-builder": "^24.2.1",
     "next": "^13.3.0",
     "postcss": "^8.4.23",
-    "prettier": "^3.0.0",
-    "prettier-plugin-tailwindcss": "^0.4.1",
+    "prettier": "^2.8.7",
+    "prettier-plugin-tailwindcss": "^0.1.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tailwindcss": "^3.3.1",
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "daisyui": "^3.3.1",
-    "dotenv": "^16.3.1",
+    "app-root-dir": "^1.0.2",
+    "daisyui": "^2.51.4",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^5.0.0-beta.16",
     "electron-next": "^3.1.5",
-    "electron-updater": "^6.1.1",
-    "firebase": "^10.3.0",
-    "jotai": "^2.2.2",
+    "electron-updater": "^5.3.0",
+    "image-size": "^1.0.2",
+    "jotai": "^2.0.4",
     "react-compare-slider": "^2.2.0",
-    "react-select": "^5.7.4",
-    "react-tooltip": "^5.18.1",
-    "sharp": "^0.32.5",
-    "tailwind-scrollbar": "^3.0.4",
-    "theme-change": "^2.5.0"
+    "react-dropzone": "^14.2.3",
+    "react-image-zoom": "^1.3.1",
+    "react-select": "^5.6.0",
+    "react-tooltip": "^4.5.0",
+    "tailwind-scrollbar": "^2.0.1",
+    "theme-change": "^2.2.0"
   },
   "volta": {
     "node": "16.17.0"
