@@ -76,7 +76,7 @@ each module or try to do a search engine scan.  You can also try to do the
 following in the command line template:
 
 ```
-#OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"} # if using old README.md instructions
+#OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/usr/local/oiledmachine-overlay"} # if using the old README.md instructions
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"} # if using eselect repository
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
 cd ${PN}
