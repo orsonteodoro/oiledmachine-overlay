@@ -11,11 +11,13 @@ ant - Installs the ant plugin.
 apache2-macports - Installs the apache2-macports plugin.
 arcanist - Installs the arcanist plugin.
 archlinux - Installs the archlinux plugin.
+argocd - Installs the argocd plugin.
 asdf - Installs the asdf plugin.
 autoenv - Installs the autoenv plugin.
 autojump - Installs the autojump plugin.
 autopep8 - Installs the autopep8 plugin.
 aws - Installs the aws plugin.
+azure - Installs the azure plugin.
 battery - Installs the battery plugin.
 bazel - Installs the bazel plugin.
 bbedit - Installs the bbedit plugin.
@@ -24,6 +26,8 @@ bgnotify - Installs the bgnotify plugin.
 bower - Installs the bower plugin.
 branch - Installs the branch plugin.
 brew - Installs the brew plugin.
+bridgetown - Installs the bridgetown plugin.
+bun - Installs the bun plugin.
 bundler - Installs the bundler plugin.
 cabal - Installs the cabal plugin.
 cake - Installs the cake plugin.
@@ -51,6 +55,7 @@ copypath - Installs the copypath plugin.
 cp - Installs the cp plugin.
 cpanm - Installs the cpanm plugin.
 dash - Installs the dash plugin.
+dbt - Installs the dbt plugin.
 debian - Installs the debian plugin.
 deno - Installs the deno plugin.
 dircycle - Installs the dircycle plugin.
@@ -99,6 +104,7 @@ genpass - Installs the genpass plugin.
 gh - Installs the gh plugin.
 git - Installs the git plugin.
 git-auto-fetch - Installs the git-auto-fetch plugin.
+git-commit - Installs the git-commit plugin.
 git-escape-magic - Installs the git-escape-magic plugin.
 git-extras - Installs the git-extras plugin.
 git-flow - Installs the git-flow plugin.
@@ -123,6 +129,7 @@ hanami - Installs the hanami plugin.
 hasura - Installs the hasura plugin.
 helm - Installs the helm plugin.
 heroku - Installs the heroku plugin.
+heroku-alias - Installs the heroku-alias plugin.
 history - Installs the history plugin.
 history-substring-search - Installs the history-substring-search plugin.
 hitchhiker - Installs the hitchhiker plugin.
@@ -146,6 +153,7 @@ juju - Installs the juju plugin.
 jump - Installs the jump plugin.
 kate - Installs the kate plugin.
 keychain - Installs the keychain plugin.
+kind - Installs the kind plugin.
 kitchen - Installs the kitchen plugin.
 kn - Installs the kn plugin.
 knife - Installs the knife plugin.
@@ -169,6 +177,7 @@ macports - Installs the macports plugin.
 magic-enter - Installs the magic-enter plugin.
 man - Installs the man plugin.
 marked2 - Installs the marked2 plugin.
+marktext - Installs the marktext plugin.
 mercurial - Installs the mercurial plugin.
 meteor - Installs the meteor plugin.
 microk8s - Installs the microk8s plugin.
@@ -183,9 +192,11 @@ mvn - Installs the mvn plugin.
 mysql-macports - Installs the mysql-macports plugin.
 n98-magerun - Installs the n98-magerun plugin.
 nanoc - Installs the nanoc plugin.
+nats - Installs the nats plugin.
 ng - Installs the ng plugin.
 nmap - Installs the nmap plugin.
 node - Installs the node plugin.
+nodenv - Installs the nodenv plugin.
 nomad - Installs the nomad plugin.
 npm - Installs the npm plugin.
 nvm - Installs the nvm plugin.
@@ -207,7 +218,9 @@ pj - Installs the pj plugin.
 please - Installs the please plugin.
 pm2 - Installs the pm2 plugin.
 pod - Installs the pod plugin.
+podman - Installs the podman plugin.
 poetry - Installs the poetry plugin.
+poetry-env - Installs the poetry-env plugin.
 postgres - Installs the postgres plugin.
 pow - Installs the pow plugin.
 powder - Installs the powder plugin.
@@ -217,6 +230,8 @@ profiles - Installs the profiles plugin.
 pyenv - Installs the pyenv plugin.
 pylint - Installs the pylint plugin.
 python - Installs the python plugin.
+qodana - Installs the qodana plugin.
+qrcode - Installs the qrcode plugin.
 rails - Installs the rails plugin.
 rake - Installs the rake plugin.
 rake-fast - Installs the rake-fast plugin.
@@ -231,6 +246,7 @@ repo - Installs the repo plugin.
 ripgrep - Installs the ripgrep plugin.
 ros - Installs the ros plugin.
 rsync - Installs the rsync plugin.
+rtx - Installs the rtx plugin.
 ruby - Installs the ruby plugin.
 rust - Installs the rust plugin.
 rvm - Installs the rvm plugin.
@@ -250,10 +266,12 @@ shrink-path - Installs the shrink-path plugin.
 sigstore - Installs the sigstore plugin.
 singlechar - Installs the singlechar plugin.
 skaffold - Installs the skaffold plugin.
+snap - Installs the snap plugin.
 spring - Installs the spring plugin.
 sprunge - Installs the sprunge plugin.
 ssh-agent - Installs the ssh-agent plugin.
 stack - Installs the stack plugin.
+starship - Installs the starship plugin.
 sublime - Installs the sublime plugin.
 sublime-merge - Installs the sublime-merge plugin.
 sudo - Installs the sudo plugin.

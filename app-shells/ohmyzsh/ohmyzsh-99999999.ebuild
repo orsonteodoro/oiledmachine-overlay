@@ -3,12 +3,30 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+#GEN_EBUILD="1" # Uncomment to auto generate parts of the ebuild
+PYTHON_COMPAT=( python3_{10..11} )
 USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
 
 inherit python-r1 ruby-ng
 
-# GEN_EBUILD="1" # Uncomment to auto generate parts of the ebuild
+if [[ "${PV}" =~ "99999999" ]] ; then
+	EGIT_REPO_URI="https://github.com/ohmyzsh/ohmyzsh.git"
+	EGIT_BRANCH="master"
+	inherit git-r3
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${PN}-${PV}"
+else
+	EGIT_COMMIT="a3c579bf27b34942d4c6ad64e7cfd75788b05ea3"
+	FN_SRC="${EGIT_COMMIT}.zip"
+	FN_DST="${P}-${EGIT_COMMIT:0:7}.zip"
+	A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN_SRC}"
+	P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
+	SRC_URI="${A_URL} -> ${FN_DST}"
+	# Probably needs to be done because the archive contains the UNICODE data file.
+	# It should be addressed upstream to get rid of emoji-data.txt.
+	S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
+	RESTRICT+=" fetch"
+fi
 
 DESCRIPTION="A delightful community-driven framework for managing your zsh \
 configuration that includes optional plugins and themes."
@@ -32,6 +50,7 @@ LICENSE="
 	omz_plugins_yarn? ( BSD )
 	omz_plugins_git-escape-magic? ( BSD-2 )
 	omz_plugins_gitfast? ( GPL-2 GPL-2+ )
+	omz_plugins_iterm2? ( GPL-2+ )
 	omz_plugins_pass? ( GPL-2+ all-rights-reserved )
 	omz_plugins_geeknote? ( GPL-3+ )
 	omz_plugins_term_tab? ( GPL-2+ )
@@ -47,6 +66,7 @@ LICENSE="
 	omz_plugins_taskwarrior? ( MIT )
 	omz_plugins_wd? ( MIT )
 	omz_plugins_zsh-navigation-tools? ( MIT GPL-3 )
+	omz_plugins_zsh-interactive-cd? ( MPL-2.0 )
 	omz_plugins_shrink-path? ( WTFPL-2 )
 	omz_plugins_z? ( MIT WTFPL-2 )
 	omz_plugins_per-directory-history? ( ZLIB )
@@ -61,15 +81,6 @@ LICENSE="
 
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
-EGIT_COMMIT="a3c579bf27b34942d4c6ad64e7cfd75788b05ea3"
-FN_SRC="${EGIT_COMMIT}.zip"
-FN_DST="${P}-${EGIT_COMMIT:0:7}.zip"
-A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN_SRC}"
-P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
-SRC_URI="${A_URL} -> ${FN_DST}"
-# Probably needs to be done because the archive contains the UNICODE data file.
-# It should be addressed upstream to get rid of emoji-data.txt.
-RESTRICT+=" fetch"
 SLOT="0"
 OMZSH_THEMES=(
 3den Soliah adben af-magic afowler agnoster alanpeabody amuse apple arrow
@@ -82,47 +93,49 @@ jaischeema jbergantine jispwoso jnrowe jonathan josh jreese jtriley
 juanghurtado junkfood kafeitu kardan kennethreitz kiwi kolo kphoen lambda
 linuxonly lukerandall macovsky-ruby macovsky maran mgutz mh michelebologna
 mikeh miloshadzic minimal mira mlh mortalscumbag mrtazz murilasso muse nanotech
-nebirhos nicoulaj norm obraun peepcode philips pmcgee pygmalion-virtualenv
-pygmalion random re5et refined rgm risto rixius rkj-repos rkj robbyrussell
-sammy simonoff simple skaro smt sonicradish sorin sporty_256 steeef strug
-sunaku sunrise superjarin suvash takashiyoshida terminalparty theunraveler
-tjkirch tjkirch_mod tonotdo trapd00r wedisagree wezmx wezm wuffers
+nebirhos nicoulaj norm obraun oldgallois peepcode philips pmcgee
+pygmalion-virtualenv pygmalion random re5et refined rgm risto rixius rkj-repos
+rkj robbyrussell sammy simonoff simple skaro smt sonicradish sorin sporty_256
+steeef strug sunaku sunrise superjarin suvash takashiyoshida terminalparty
+theunraveler tjkirch tjkirch_mod tonotdo trapd00r wedisagree wezmx wezm wuffers
 xiong-chiamiov-plus xiong-chiamiov ys zhann
 )
 OMZSH_PLUGINS=(
 1password adb ag alias-finder aliases ansible ant apache2-macports arcanist
-archlinux asdf autoenv autojump autopep8 aws battery bazel bbedit bedtools
-bgnotify bower branch brew bundler cabal cake cakephp3 capistrano cask catimg
-celery charm chruby chucknorris cloudfoundry codeclimate coffee colemak
-colored-man-pages colorize command-not-found common-aliases compleat composer
-copybuffer copyfile copypath cp cpanm dash debian deno dircycle direnv
-dirhistory dirpersist dnf dnote docker docker-compose docker-machine doctl
-dotenv dotnet droplr drush eecms emacs ember-cli emoji emoji-clock emotty
-encode64 extract fabric fancy-ctrl-z fasd fastfile fbterm fd fig firewalld
-flutter fluxcd fnm forklift fossil frontend-search fzf gas gatsby gcloud
-geeknote gem genpass gh git git-auto-fetch git-escape-magic git-extras git-flow
-git-flow-avh git-hubflow git-lfs git-prompt gitfast github gitignore glassfish
-globalias gnu-utils golang gpg-agent gradle grails grc grunt gulp hanami hasura
-helm heroku history history-substring-search hitchhiker hitokoto homestead
-httpie invoke ionic ipfs isodate istioctl iterm2 jake-node jenv jfrog jhbuild
-jira jruby jsontools juju jump kate keychain kitchen kn knife knife_ssh kops
-kube-ps1 kubectl kubectx lando laravel laravel4 laravel5 last-working-dir lein
-lighthouse lol lpass lxd macos macports magic-enter man marked2 mercurial
-meteor microk8s minikube mix mix-fast mongo-atlas mongocli mosh multipass mvn
-mysql-macports n98-magerun nanoc ng nmap node nomad npm nvm oc octozen
-operator-sdk otp pass paver pep8 per-directory-history percol perl perms phing
-pip pipenv pj please pm2 pod poetry postgres pow powder powify pre-commit
-profiles pyenv pylint python rails rake rake-fast rand-quote rbenv rbfu rbw
-react-native rebar redis-cli repo ripgrep ros rsync ruby rust rvm safe-paste
-salt samtools sbt scala scd screen scw sdk sfdx sfffe shell-proxy shrink-path
-sigstore singlechar skaffold spring sprunge ssh-agent stack sublime
-sublime-merge sudo supervisor suse svcat svn svn-fast-info swiftpm symfony
-symfony2 systemadmin systemd taskwarrior term_tab terminitor terraform
-textastic textmate thefuck themes thor tig timer tmux tmux-cssh tmuxinator
-toolbox torrent transfer tugboat ubuntu ufw universalarchive urltools vagrant
-vagrant-prompt vault vi-mode vim-interaction virtualenv virtualenvwrapper volta
-vscode vundle wakeonlan watson wd web-search wp-cli xcode yarn yii yii2 yum z
-zbell zeus zoxide zsh-interactive-cd zsh-navigation-tools
+archlinux argocd asdf autoenv autojump autopep8 aws azure battery bazel bbedit
+bedtools bgnotify bower branch brew bridgetown bun bundler cabal cake cakephp3
+capistrano cask catimg celery charm chruby chucknorris cloudfoundry codeclimate
+coffee colemak colored-man-pages colorize command-not-found common-aliases
+compleat composer copybuffer copyfile copypath cp cpanm dash dbt debian deno
+dircycle direnv dirhistory dirpersist dnf dnote docker docker-compose
+docker-machine doctl dotenv dotnet droplr drush eecms emacs ember-cli emoji
+emoji-clock emotty encode64 extract fabric fancy-ctrl-z fasd fastfile fbterm fd
+fig firewalld flutter fluxcd fnm forklift fossil frontend-search fzf gas gatsby
+gcloud geeknote gem genpass gh git git-auto-fetch git-commit git-escape-magic
+git-extras git-flow git-flow-avh git-hubflow git-lfs git-prompt gitfast github
+gitignore glassfish globalias gnu-utils golang gpg-agent gradle grails grc
+grunt gulp hanami hasura helm heroku heroku-alias history
+history-substring-search hitchhiker hitokoto homestead httpie invoke ionic ipfs
+isodate istioctl iterm2 jake-node jenv jfrog jhbuild jira jruby jsontools juju
+jump kate keychain kind kitchen kn knife knife_ssh kops kube-ps1 kubectl
+kubectx lando laravel laravel4 laravel5 last-working-dir lein lighthouse lol
+lpass lxd macos macports magic-enter man marked2 marktext mercurial meteor
+microk8s minikube mix mix-fast mongo-atlas mongocli mosh multipass mvn
+mysql-macports n98-magerun nanoc nats ng nmap node nodenv nomad npm nvm oc
+octozen operator-sdk otp pass paver pep8 per-directory-history percol perl
+perms phing pip pipenv pj please pm2 pod podman poetry poetry-env postgres pow
+powder powify pre-commit profiles pyenv pylint python qodana qrcode rails rake
+rake-fast rand-quote rbenv rbfu rbw react-native rebar redis-cli repo ripgrep
+ros rsync rtx ruby rust rvm safe-paste salt samtools sbt scala scd screen scw
+sdk sfdx sfffe shell-proxy shrink-path sigstore singlechar skaffold snap spring
+sprunge ssh-agent stack starship sublime sublime-merge sudo supervisor suse
+svcat svn svn-fast-info swiftpm symfony symfony2 systemadmin systemd
+taskwarrior term_tab terminitor terraform textastic textmate thefuck themes
+thor tig timer tmux tmux-cssh tmuxinator toolbox torrent transfer tugboat
+ubuntu ufw universalarchive urltools vagrant vagrant-prompt vault vi-mode
+vim-interaction virtualenv virtualenvwrapper volta vscode vundle wakeonlan
+watson wd web-search wp-cli xcode yarn yii yii2 yum z zbell zeus zoxide
+zsh-interactive-cd zsh-navigation-tools
 )
 IUSE+="
 ${OMZSH_THEMES[@]/#/-omz_themes_}
@@ -199,6 +212,9 @@ PLUGINS_RDEPEND="
 	omz_plugins_aws? (
 		dev-python/awscli
 	)
+	omz_plugins_azure? (
+		app-misc/jq
+	)
 	omz_plugins_battery? (
 		sys-power/acpi
 	)
@@ -207,6 +223,15 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_bedtools? (
 		sci-biology/bedtools
+	)
+	omz_plugins_bgnotify? (
+		X? (
+			x11-apps/xprop
+		)
+		|| (
+			x11-libs/libnotify
+			kde-apps/kdialog
+		)
 	)
 	omz_plugins_bower? (
 		dev-nodejs/bower
@@ -391,8 +416,8 @@ PLUGINS_RDEPEND="
 	omz_plugins_kube-ps1? (
 		sys-cluster/kubernetes
 	)
-	omz_plugins_kubectl? (
-		sys-cluster/kubernetes
+	omz_plugins_kubectx? (
+		app-admin/kubectx
 	)
 	omz_plugins_laravel? (
 		dev-lang/php
@@ -422,6 +447,9 @@ PLUGINS_RDEPEND="
 		sys-cluster/minikube
 	)
 	omz_plugins_mix? (
+		dev-lang/elixir
+	)
+	omz_plugins_mix-fast? (
 		dev-lang/elixir
 	)
 	omz_plugins_mongocli? (
@@ -483,6 +511,9 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_pm2? (
 		sys-process/pm2
+	)
+	omz_plugins_podman? (
+		app-containers/podman
 	)
 	omz_plugins_poetry? (
 		dev-python/poetry
@@ -572,11 +603,17 @@ PLUGINS_RDEPEND="
 	omz_plugins_sigstore? (
 		app-containers/cosign
 	)
+	omz_plugins_snap? (
+		app-containers/snapd
+	)
 	omz_plugins_ssh-agent? (
 		virtual/ssh
 	)
 	omz_plugins_stack? (
 		dev-haskell/stack
+	)
+	omz_plugins_starship? (
+		app-shells/starship
 	)
 	omz_plugins_sublime? (
 		app-editors/sublime-text
@@ -833,7 +870,6 @@ BDEPEND+="
 		dev-perl/XML-LibXML
 	)
 "
-S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
 REQUIRED_USE+="
 	curl? (
 		|| (
@@ -914,7 +950,10 @@ REQUIRED_USE+="
 	omz_plugins_git-extras? (
 		git
 	)
-	omz_plugins_gitfast? (
+	omz_plugins_git-flow? (
+		git
+	)
+	omz_plugins_git-flow-avh? (
 		git
 	)
 	omz_plugins_git-hubflow? (
@@ -924,7 +963,7 @@ REQUIRED_USE+="
 		git
 		python
 	)
-	omz_plugins_git-flow? (
+	omz_plugins_gitfast? (
 		git
 	)
 	omz_plugins_history-substring-search? (
@@ -1241,7 +1280,15 @@ einfo
 
 MISSING_DEPENDS=()
 src_unpack() {
-	default
+	if [[ "${PV}" =~ "99999999" ]] ; then
+		if use fallback-commit ; then
+			EGIT_COMMIT="632ed413a9ce62747ded83d7736491b081be4b49" # Nov 2, 2023
+		fi
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 
 	cd "${S}" || die
 

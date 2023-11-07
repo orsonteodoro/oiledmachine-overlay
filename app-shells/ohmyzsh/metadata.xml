@@ -101,6 +101,13 @@
     <flag name="sudo">
       Checks for proper sudo support.
     </flag>
+    <flag name="tmux">
+      Use tmux for copy and paste
+    </flag>
+    <flag name="wayland">
+      Add support for wayland.
+      Adds copy and paste support if the clipboard USE flag is enabled.
+    </flag>
     <flag name="wget">
       Checks for proper wget support.
     </flag>
