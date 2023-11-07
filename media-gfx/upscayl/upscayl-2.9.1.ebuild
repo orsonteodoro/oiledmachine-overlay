@@ -658,7 +658,7 @@ src_install() {
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		-e "s|\${PN}|${PN}|g" \
 		"${ED}/usr/bin/${PN}" || die
-        newicon "main/build/icon.png" "${PN}.png"
+        newicon "build/icon.png" "${PN}.png"
         make_desktop_entry \
 		"/usr/bin/${PN}" \
 		"${MY_PN}" \
