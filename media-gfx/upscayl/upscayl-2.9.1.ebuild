@@ -756,6 +756,7 @@ ewarn
 # fast real-esrgan:  passed
 # ultramix balanced:  passed
 # color theme (randomly chosen):  passed
+# preview:  passed (with PNG), fail (with JPG)
 # notes:  the jpg with preview is broken for 2.9.1
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.7.5 with runtime black empty preview bug.
