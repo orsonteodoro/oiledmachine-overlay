@@ -51,7 +51,7 @@ HOMEPAGE="https://github.com/imsnif/synp"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test r2"
+IUSE+=" test r3"
 DEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 "
@@ -60,7 +60,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-	dev-util/npm
+	sys-apps/npm
 "
 # grep "resolved" ${NPM_INSTALL_PATH}package-lock.npm | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_NPM_EXTERNAL_URIS
