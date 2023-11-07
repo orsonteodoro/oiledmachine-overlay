@@ -647,7 +647,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE+=" r3"
+IUSE+=" r4"
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
 	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[jpeg,png]
@@ -735,7 +735,7 @@ upscayl
 	lcnr_install_files
 
 	if use system-vips ; then
-		find "${ED}" "libvips-cpp.so*" -delete
+		find "${ED}" -name "libvips-cpp.so*" -delete
 	fi
 }
 
