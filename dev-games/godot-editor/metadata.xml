@@ -246,6 +246,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="openssl">
       Enables OpenSSL support.
     </flag>
+    <flag name="openxr">
+      Enables the OpenXR driver.
+    </flag>
     <flag name="optimize-size">
       Optimizes the built program(s) for reduced size.
     </flag>

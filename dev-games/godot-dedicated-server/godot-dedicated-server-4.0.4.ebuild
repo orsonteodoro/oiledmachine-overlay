@@ -587,6 +587,7 @@ src_compile() {
 		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
 		minizip=$(usex minizip)
+		openxr=False
 		module_bmp_enabled=$(usex bmp)
 		module_camera_enabled=$(usex camera)
 		module_csg_enabled=$(usex csg)

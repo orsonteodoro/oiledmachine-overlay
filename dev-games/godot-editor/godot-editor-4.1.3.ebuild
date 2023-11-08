@@ -82,7 +82,7 @@ SANITIZERS=(
 
 IUSE_3D="
 +3d +csg +denoise +glslang +gltf +gridmap +lightmapper_rd +meshoptimizer
-+mobile-vr +msdfgen +raycast +recast +vhacd +xatlas
++mobile-vr +msdfgen +openxr +raycast +recast +vhacd +xatlas
 "
 IUSE_AUDIO="
 +alsa +pulseaudio +speech
@@ -967,6 +967,7 @@ src_compile() {
 		disable_advanced_gui=$(usex !advanced-gui)
 		graphite=$(usex graphite)
 		minizip=$(usex minizip)
+		openxr=$(usex openxr)
 		module_astcenc_enabled=$(usex astc)
 		module_bmp_enabled=$(usex bmp)
 		module_camera_enabled=$(usex camera)
