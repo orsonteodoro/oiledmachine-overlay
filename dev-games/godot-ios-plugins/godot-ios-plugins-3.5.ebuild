@@ -13,11 +13,37 @@ MY_PN="godot-ios-plugins"
 MY_P="${MY_PN}-${PV}"
 
 GODOT_PN="godot"
-GODOT_PV="3.4"
+GODOT_PV="$(ver_cut 1-2 ${PV})"
 GODOT_P="${GODOT_PN}-${GODOT_PV}"
 
 inherit godot-3.5
 inherit desktop flag-o-matic multilib-build python-any-r1 scons-utils
+
+if [[ "${AUPDATE}" == "1" ]] ; then
+	SRC_URI="
+https://github.com/godotengine/${MY_PN}/archive/refs/tags/${PV}-${STATUS}.tar.gz
+	-> ${MY_P}.tar.gz
+https://github.com/godotengine/${MY_PN}/releases/download/${PV}-${STATUS}/${PV}-${STATUS}.tar.gz
+	-> godot-extracted-headers-${PV}.zip
+https://github.com/godotengine/${GODOT_PN}/archive/${PV}-${STATUS}.tar.gz
+	-> ${GODOT_P}.tar.gz
+	"
+else
+	SRC_URI="
+https://github.com/godotengine/${MY_PN}/archive/refs/tags/${PV}-${STATUS}.tar.gz
+	-> ${MY_P}.tar.gz
+	pregenerated-headers? (
+https://github.com/godotengine/${MY_PN}/releases/download/${PV}-${STATUS}/${PV}-${STATUS}.tar.gz
+	-> godot-extracted-headers-${PV}.zip
+	)
+	!pregenerated-headers? (
+https://github.com/godotengine/${GODOT_PN}/archive/${PV}-${STATUS}.tar.gz
+	-> ${GODOT_P}.tar.gz
+	)
+	"
+fi
+RESTRICT="mirror"
+S="${WORKDIR}/godot-ios-plugins-${PV}-${STATUS}"
 
 DESCRIPTION="Godot export template for iOS"
 HOMEPAGE="http://godotengine.org"
@@ -58,56 +84,6 @@ LICENSE="
 
 #KEYWORDS=""
 
-GODOT_EXTRACTED_HEADERS_FN_SRC="extracted_headers.zip"
-GODOT_EXTRACTED_HEADERS_FN_DEST="godot-extracted-headers-${PV}.zip"
-
-GODOT_IOS_PLUGINS_FN_SRC="${PV}-${STATUS}.tar.gz"
-GODOT_IOS_PLUGINS_FN_DEST="${MY_P}.tar.gz"
-
-GODOT_FN_SRC="${PV}-${STATUS}.tar.gz"
-GODOT_FN_DEST="${GODOT_P}.tar.gz"
-
-GODOT_URI_ORG="https://github.com/godotengine"
-
-GODOT_IOS_PLUGINS_URI_PROJECT="${GODOT_URI_ORG}/${MY_PN}"
-GODOT_IOS_PLUGINS_URI_DL="${GODOT_IOS_PLUGINS_URI_PROJECT}/releases"
-GODOT_IOS_PLUGINS_URI_A="${GODOT_IOS_PLUGINS_URI_PROJECT}/archive/${PV}-${STATUS}.tar.gz"
-
-GODOT_URI_PROJECT="${GODOT_URI_ORG}/${GODOT_PN}"
-GODOT_URI_DL="${GODOT_URI_PROJECT}/releases"
-GODOT_URI_A="${GODOT_URI_PROJECT}/archive/${GODOT_PV}-${STATUS}.tar.gz"
-
-GODOT_EXTRACTED_HEADERS_URI_PROJECT="${GODOT_URI_ORG}/${MY_PN}"
-GODOT_EXTRACTED_HEADERS_URI_DL="${GODOT_EXTRACTED_HEADERS_URI_PROJECT}/releases"
-GODOT_EXTRACTED_HEADERS_URI_A="${GODOT_EXTRACTED_HEADERS_URI_PROJECT}/archive/extracted-headers.zip"
-
-# Alternative
-
-if [[ "${AUPDATE}" == "1" ]] ; then
-	# Used to generate hashes and download all assets.
-	SRC_URI="
-${GODOT_IOS_PLUGINS_URI_PROJECT}/archive/refs/tags/${GODOT_IOS_PLUGINS_FN_SRC}
-	-> ${GODOT_IOS_PLUGINS_FN_DEST}
-${GODOT_IOS_PLUGINS_URI_PROJECT}/releases/download/${PV}-${STATUS}/${GODOT_EXTRACTED_HEADERS_FN_SRC}
-	-> ${GODOT_EXTRACTED_HEADERS_FN_DEST}
-${GODOT_URI_PROJECT}/archive/${GODOT_FN_SRC}
-	-> ${GODOT_FN_DEST}
-	"
-else
-	SRC_URI="
-${GODOT_IOS_PLUGINS_URI_PROJECT}/archive/refs/tags/${GODOT_IOS_PLUGINS_FN_SRC}
-	-> ${GODOT_IOS_PLUGINS_FN_DEST}
-	pregenerated-headers? (
-${GODOT_IOS_PLUGINS_URI_PROJECT}/releases/download/${PV}-${STATUS}/${GODOT_EXTRACTED_HEADERS_FN_SRC}
-	-> ${GODOT_EXTRACTED_HEADERS_FN_DEST}
-	)
-	!pregenerated-headers? (
-${GODOT_URI_PROJECT}/archive/${GODOT_FN_SRC}
-	-> ${GODOT_FN_DEST}
-	)
-	"
-	RESTRICT="fetch mirror"
-fi
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
@@ -154,7 +130,6 @@ BDEPEND+="
 		net-misc/rsync
 	)
 "
-S="${WORKDIR}/godot-ios-plugins-${PV}-${STATUS}"
 PATCHES=(
 )
 
@@ -241,48 +216,6 @@ ewarn
 	check_sdk_versions
 
 	python-any-r1_pkg_setup
-}
-
-_no_fetch_godot() {
-einfo
-einfo "This package contains an all-rights-reserved for several third-party"
-einfo "packages and fetch restricted because the font doesn't come from the"
-einfo "originator's site.  Please read:"
-einfo "https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/all-rights-reserved"
-einfo
-einfo "If you agree, you may download"
-einfo "  - ${GODOT_FN_SRC}"
-einfo "from ${PN}'s GitHub page which the URL should be"
-einfo
-einfo "${GODOT_URI_DL}"
-einfo
-einfo "at the green download button and rename it to ${GODOT_FN_DEST} and place them"
-einfo "in ${distdir} or you can \`wget -O ${distdir}/${GODOT_FN_DEST} ${GODOT_URI_A}\`"
-einfo
-}
-
-_no_fetch_godot_ios_plugins() {
-einfo
-einfo "The godot-ios-plugins is not fetch restricted."
-einfo
-einfo "You can \`wget -O ${distdir}/${GODOT_IOS_PLUGINS_FN_DEST} ${GODOT_IOS_PLUGINS_URI_A}\`"
-einfo
-}
-
-_no_fetch_godot_extracted_headers() {
-einfo
-einfo "The extracted_headers is not fetch restricted."
-einfo
-einfo "You can \`wget -O ${distdir}/${GODOT_EXTRACTED_HEADERS_FN_DEST} ${GODOT_EXTRACTED_HEADERS_URI_A}\`"
-einfo
-}
-
-pkg_nofetch() {
-	# fetch restriction is on third party packages with all-rights-reserved in code
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	_no_fetch_godot_extracted_headers
-	_no_fetch_godot
-	_no_fetch_godot_ios_plugins
 }
 
 src_unpack() {

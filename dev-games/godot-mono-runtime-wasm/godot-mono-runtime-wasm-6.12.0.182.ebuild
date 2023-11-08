@@ -13,6 +13,20 @@ GODOT_SLOT_MAJOR="3"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic git-r3 python-any-r1
 
+EMSDK_PV="1.39.9"
+MONO_PV=$(ver_cut 1-4 "${PV}")
+SRC_URI="
+https://github.com/emscripten-core/emsdk/archive/refs/tags/${EMSDK_PV}.tar.gz
+	-> emsdk-${EMSDK_PV}.tar.gz
+"
+if ! [[ "${PV}" =~ "9999" ]] ; then
+	SRC_URI+="
+https://github.com/godotengine/godot-mono-builds/archive/refs/tags/release-${MY_PV}.tar.gz
+	-> ${MY_PN}-${MY_PV}.tar.gz
+	"
+fi
+S="${WORKDIR}/${MY_PN}-release-${MY_PV}"
+
 DESCRIPTION="Mono build scripts for Godot on WebAssembly"
 HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
@@ -46,7 +60,10 @@ CLOSURE_COMPILER_LICENSE="
 # See the dev-util/emscripten ebuild or the emscripten repo for details.
 EMSCRIPTEN_LICENSE="
 	${CLOSURE_COMPILER_LICENSE}
-	( all-rights-reserved MIT )
+	(
+		all-rights-reserved
+		MIT
+	)
 	UoI-NCSA
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -54,7 +71,6 @@ EMSCRIPTEN_LICENSE="
 	BSD
 	BSD-2
 	CC-BY-SA-3.0
-	|| ( FTL GPL-2 )
 	freeglut-teapot
 	GPL-2+
 	LGPL-2.1
@@ -65,6 +81,10 @@ EMSCRIPTEN_LICENSE="
 	PSF-2.4
 	Unlicense
 	ZLIB
+	|| (
+		FTL
+		GPL-2
+	)
 "
 LICENSE+=" ${EMSCRIPTEN_LICENSE}"
 
@@ -76,6 +96,10 @@ LICENSE+=" ${NODEJS_LICENSE}"
 # found in the tarball.
 MONO_LICENSE="
 	MIT
+	(
+		MIT
+		UoI-NCSA
+	)
 	Apache-1.1
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -100,7 +124,6 @@ MONO_LICENSE="
 	ISC
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
-	( MIT UoI-NCSA )
 	Mono-gc_allocator.h
 	Mono-patents
 	MPL-1.1
@@ -195,20 +218,7 @@ REQUIRED_USE="
 BDEPEND+="
 	${PYTHON_DEPS}
 "
-S="${WORKDIR}/${MY_PN}-release-${MY_PV}"
 PROPERTIES="live"
-EMSDK_PV="1.39.9"
-MONO_PV=$(ver_cut 1-4 "${PV}")
-SRC_URI="
-https://github.com/emscripten-core/emsdk/archive/refs/tags/${EMSDK_PV}.tar.gz
-	-> emsdk-${EMSDK_PV}.tar.gz
-"
-if [[ ! ( ${PV} =~ 9999 ) ]] ; then
-	SRC_URI+="
-https://github.com/godotengine/godot-mono-builds/archive/refs/tags/release-${MY_PV}.tar.gz
-	-> ${MY_PN}-${MY_PV}.tar.gz
-	"
-fi
 RESTRICT="strip"
 
 _unpack_emsdk() {
@@ -232,7 +242,7 @@ eerror
 }
 
 _unpack_godot_mono_builds() {
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		EGIT_REPO_URI="https://github.com/godotengine/godot-mono-builds.git"
 		EGIT_BRANCH="master"
 		EGIT_CHECKOUT_DIR="${S}"

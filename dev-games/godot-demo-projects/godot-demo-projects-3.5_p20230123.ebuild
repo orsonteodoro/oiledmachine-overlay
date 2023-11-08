@@ -6,7 +6,7 @@ EAPI=8
 
 STATUS="stable"
 
-if [[ ${PV} =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	S="${WORKDIR}/${P}"
 else
@@ -40,7 +40,7 @@ ewarn
 }
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		EGIT_REPO_URI="https://github.com/godotengine/godot-demo-projects.git"
 		EGIT_BRANCH="3.5"
 		EGIT_COMMIT="HEAD"

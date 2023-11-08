@@ -13,6 +13,16 @@ GODOT_SLOT_MAJOR="3"
 PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic git-r3 python-any-r1
 
+MONO_PV=$(ver_cut 1-4 "${PV}")
+SRC_URI=""
+if ! [[ "${PV}" =~ "9999" ]] ; then
+	SRC_URI+="
+https://github.com/godotengine/godot-mono-builds/archive/refs/tags/release-${MY_PV}.tar.gz
+	-> ${MY_PN}-${MY_PV}.tar.gz
+	"
+fi
+S="${WORKDIR}/${MY_PN}-release-${MY_PV}"
+
 DESCRIPTION="Mono build scripts for Godot on MonoTouch"
 HOMEPAGE="https://github.com/godotengine/godot-mono-builds"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
@@ -24,6 +34,10 @@ LICENSE="MIT"
 # found in the tarball.
 MONO_LICENSE="
 	MIT
+	(
+		MIT
+		UoI-NCSA
+	)
 	Apache-1.1
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -48,7 +62,6 @@ MONO_LICENSE="
 	ISC
 	LGPL-2.1
 	LGPL-2.1-with-linking-exception
-	( MIT UoI-NCSA )
 	Mono-gc_allocator.h
 	Mono-patents
 	MPL-1.1
@@ -119,20 +132,11 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	sys-devel/osxcross
 "
-S="${WORKDIR}/${MY_PN}-release-${MY_PV}"
 PROPERTIES="live"
-MONO_PV=$(ver_cut 1-4 "${PV}")
-SRC_URI=""
-if [[ ! ( ${PV} =~ 9999 ) ]] ; then
-	SRC_URI+="
-https://github.com/godotengine/godot-mono-builds/archive/refs/tags/release-${MY_PV}.tar.gz
-	-> ${MY_PN}-${MY_PV}.tar.gz
-	"
-fi
 RESTRICT="strip"
 
 _unpack_godot_mono_builds() {
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		EGIT_REPO_URI="https://github.com/godotengine/godot-mono-builds.git"
 		EGIT_BRANCH="master"
 		EGIT_CHECKOUT_DIR="${S}"
