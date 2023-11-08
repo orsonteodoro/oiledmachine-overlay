@@ -1,6 +1,6 @@
-diff -urp rocThrust-rocm-5.7.0.orig/cmake/FindROCMCmake.cmake rocThrust-rocm-5.7.0/cmake/FindROCMCmake.cmake
---- rocThrust-rocm-5.7.0.orig/cmake/FindROCMCmake.cmake	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/cmake/FindROCMCmake.cmake	2023-09-30 21:32:06.937266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/cmake/FindROCMCmake.cmake rocThrust-rocm-5.7.1/cmake/FindROCMCmake.cmake
+--- rocThrust-rocm-5.7.1.orig/cmake/FindROCMCmake.cmake	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/cmake/FindROCMCmake.cmake	2023-11-08 10:03:58.996829225 -0800
 @@ -11,13 +11,13 @@ include(cmake/DownloadProject.cmake)
  
  set(PROJECT_EXTERN_DIR ${CMAKE_CURRENT_BINARY_DIR}/extern)
@@ -18,9 +18,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/cmake/FindROCMCmake.cmake rocThrust-rocm-5.7
  if(NOT ROCM_FOUND)
    set(rocm_cmake_tag "master" CACHE STRING "rocm-cmake tag to download")
    set(rocm_cmake_url "https://github.com/RadeonOpenCompute/rocm-cmake/archive/${rocm_cmake_tag}.zip")
-diff -urp rocThrust-rocm-5.7.0.orig/cmake/ROCMExportTargetsHeaderOnly.cmake rocThrust-rocm-5.7.0/cmake/ROCMExportTargetsHeaderOnly.cmake
---- rocThrust-rocm-5.7.0.orig/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/cmake/ROCMExportTargetsHeaderOnly.cmake rocThrust-rocm-5.7.1/cmake/ROCMExportTargetsHeaderOnly.cmake
+--- rocThrust-rocm-5.7.1.orig/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/cmake/ROCMExportTargetsHeaderOnly.cmake	2023-11-08 10:03:58.996829225 -0800
 @@ -29,7 +29,7 @@ include(GNUInstallDirs)
  include(ROCMPackageConfigHelpers)
  include(ROCMInstallTargets)
@@ -47,9 +47,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/cmake/ROCMExportTargetsHeaderOnly.cmake rocT
      endif()
      set(CONFIG_PACKAGE_INSTALL_DIR ${LIB_INSTALL_DIR}/cmake/${PACKAGE_NAME_LOWER})
  
-diff -urp rocThrust-rocm-5.7.0.orig/cmake/VerifyCompiler.cmake rocThrust-rocm-5.7.0/cmake/VerifyCompiler.cmake
---- rocThrust-rocm-5.7.0.orig/cmake/VerifyCompiler.cmake	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/cmake/VerifyCompiler.cmake	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/cmake/VerifyCompiler.cmake rocThrust-rocm-5.7.1/cmake/VerifyCompiler.cmake
+--- rocThrust-rocm-5.7.1.orig/cmake/VerifyCompiler.cmake	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/cmake/VerifyCompiler.cmake	2023-11-08 10:03:58.996829225 -0800
 @@ -20,8 +20,8 @@
  # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  # SOFTWARE.
@@ -61,11 +61,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/cmake/VerifyCompiler.cmake rocThrust-rocm-5.
  
  if(HIP_COMPILER STREQUAL "nvcc")
      message(FATAL_ERROR "rocThrust does not support the CUDA backend.")
-Only in rocThrust-rocm-5.7.0/cmake: VerifyCompiler.cmake.orig
-Only in rocThrust-rocm-5.7.0/cmake: VerifyCompiler.cmake.rej
-diff -urp rocThrust-rocm-5.7.0.orig/CMakeLists.txt rocThrust-rocm-5.7.0/CMakeLists.txt
---- rocThrust-rocm-5.7.0.orig/CMakeLists.txt	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/CMakeLists.txt	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/CMakeLists.txt rocThrust-rocm-5.7.1/CMakeLists.txt
+--- rocThrust-rocm-5.7.1.orig/CMakeLists.txt	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/CMakeLists.txt	2023-11-08 10:03:58.996829225 -0800
 @@ -6,28 +6,28 @@ cmake_minimum_required(VERSION 3.10.2 FA
  
  # Install prefix
@@ -101,19 +99,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/CMakeLists.txt rocThrust-rocm-5.7.0/CMakeLis
    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "" "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
  endif()
  
-diff -urp rocThrust-rocm-5.7.0.orig/docs/setup/cmake_options.md rocThrust-rocm-5.7.0/docs/setup/cmake_options.md
---- rocThrust-rocm-5.7.0.orig/docs/setup/cmake_options.md	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/docs/setup/cmake_options.md	2023-09-30 21:32:06.941266227 -0700
-@@ -135,5 +135,5 @@ The CMake options are divided into these
- 
- - `THRUST_TBB_ROOT=<path to tbb root>`
-   - When the TBB system is requested, set this to the root of the TBB installation
--    (e.g. the location of `lib/`, `bin/` and `include/` for the TBB libraries).
-+    (e.g. the location of `@LIBDIR@/`, `bin/` and `include/` for the TBB libraries).
- 
-diff -urp rocThrust-rocm-5.7.0.orig/docs/setup/installing.rst rocThrust-rocm-5.7.0/docs/setup/installing.rst
---- rocThrust-rocm-5.7.0.orig/docs/setup/installing.rst	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/docs/setup/installing.rst	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/docs/setup/installing.rst rocThrust-rocm-5.7.1/docs/setup/installing.rst
+--- rocThrust-rocm-5.7.1.orig/docs/setup/installing.rst	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/docs/setup/installing.rst	2023-11-08 10:04:00.932829265 -0800
 @@ -24,7 +24,7 @@ For SLES::
  
      sudo dnf install rocthrust
@@ -141,9 +129,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/docs/setup/installing.rst rocThrust-rocm-5.7
      python rmake.py -i
      # The -c option will build all clients, including unit tests
      python rmake.py -c
-diff -urp rocThrust-rocm-5.7.0.orig/examples/cpp_integration/README rocThrust-rocm-5.7.0/examples/cpp_integration/README
---- rocThrust-rocm-5.7.0.orig/examples/cpp_integration/README	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/examples/cpp_integration/README	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/examples/cpp_integration/README rocThrust-rocm-5.7.1/examples/cpp_integration/README
+--- rocThrust-rocm-5.7.1.orig/examples/cpp_integration/README	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/examples/cpp_integration/README	2023-11-08 10:04:00.932829265 -0800
 @@ -10,12 +10,12 @@ we can use the following procedure to co
  program and link them together.
  
@@ -160,9 +148,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/examples/cpp_integration/README rocThrust-ro
 +  $ g++  -O2 -c host.cpp   -I@EPREFIX@/opt/cuda/include/
 +  $ g++ -o tester device.o host.o -L@EPREFIX@/opt/cuda/@LIBDIR@ -lcudart
  
-diff -urp rocThrust-rocm-5.7.0.orig/extra/CMakeLists.txt rocThrust-rocm-5.7.0/extra/CMakeLists.txt
---- rocThrust-rocm-5.7.0.orig/extra/CMakeLists.txt	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/extra/CMakeLists.txt	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/extra/CMakeLists.txt rocThrust-rocm-5.7.1/extra/CMakeLists.txt
+--- rocThrust-rocm-5.7.1.orig/extra/CMakeLists.txt	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/extra/CMakeLists.txt	2023-11-08 10:04:00.932829265 -0800
 @@ -11,8 +11,8 @@ project(rocThrust_package_install_test C
  # CMake modules
  list(APPEND CMAKE_MODULE_PATH
@@ -183,9 +171,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/extra/CMakeLists.txt rocThrust-rocm-5.7.0/ex
  
  # Build CXX flags
  set(CMAKE_CXX_STANDARD 14)
-diff -urp rocThrust-rocm-5.7.0.orig/.gitlab-ci.yml rocThrust-rocm-5.7.0/.gitlab-ci.yml
---- rocThrust-rocm-5.7.0.orig/.gitlab-ci.yml	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/.gitlab-ci.yml	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/.gitlab-ci.yml rocThrust-rocm-5.7.1/.gitlab-ci.yml
+--- rocThrust-rocm-5.7.1.orig/.gitlab-ci.yml	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/.gitlab-ci.yml	2023-11-08 10:04:00.932829265 -0800
 @@ -168,7 +168,7 @@ test:package:
        -G Ninja
        -D CMAKE_CXX_COMPILER=hipcc
@@ -204,10 +192,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/.gitlab-ci.yml rocThrust-rocm-5.7.0/.gitlab-
        -P $CI_PROJECT_DIR/cmake/GenerateResourceSpec.cmake
      - cat ./resources.json
      # Parallel execution (with other AMDGPU processes) can oversubscribe the SDMA queue.
-Only in rocThrust-rocm-5.7.0: .gitlab-ci.yml.orig
-diff -urp rocThrust-rocm-5.7.0.orig/install rocThrust-rocm-5.7.0/install
---- rocThrust-rocm-5.7.0.orig/install	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/install	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/install rocThrust-rocm-5.7.1/install
+--- rocThrust-rocm-5.7.1.orig/install	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/install	2023-11-08 10:04:00.932829265 -0800
 @@ -32,7 +32,7 @@ build_release=true
  build_type=Release
  build_hip_clang=false
@@ -229,10 +216,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/install rocThrust-rocm-5.7.0/install
          -DROCPRIM_ROOT=${rocm_path}/rocprim ${build_test}\
           ../../. # or cmake-gui ../.
  else
-Only in rocThrust-rocm-5.7.0: install.orig
-diff -urp rocThrust-rocm-5.7.0.orig/.jenkins/common.groovy rocThrust-rocm-5.7.0/.jenkins/common.groovy
---- rocThrust-rocm-5.7.0.orig/.jenkins/common.groovy	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/.jenkins/common.groovy	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/.jenkins/common.groovy rocThrust-rocm-5.7.1/.jenkins/common.groovy
+--- rocThrust-rocm-5.7.1.orig/.jenkins/common.groovy	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/.jenkins/common.groovy	2023-11-08 10:04:00.932829265 -0800
 @@ -19,7 +19,7 @@ def runCompileCommand(platform, project,
                  cd ${project.paths.project_build_prefix}
                  mkdir -p build/${buildTypeDir} && cd build/${buildTypeDir}
@@ -242,9 +228,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/.jenkins/common.groovy rocThrust-rocm-5.7.0/
                  make -j\$(nproc)
                  """
  
-diff -urp rocThrust-rocm-5.7.0.orig/README.md rocThrust-rocm-5.7.0/README.md
---- rocThrust-rocm-5.7.0.orig/README.md	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/README.md	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/README.md rocThrust-rocm-5.7.1/README.md
+--- rocThrust-rocm-5.7.1.orig/README.md	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/README.md	2023-11-08 10:04:00.932829265 -0800
 @@ -96,10 +96,10 @@ configuration files.
  
  ```cmake
@@ -259,9 +245,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/README.md rocThrust-rocm-5.7.0/README.md
  
  ...
  includes rocThrust headers and roc::rocprim_hip target
-diff -urp rocThrust-rocm-5.7.0.orig/rmake.py rocThrust-rocm-5.7.0/rmake.py
---- rocThrust-rocm-5.7.0.orig/rmake.py	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/rmake.py	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/rmake.py rocThrust-rocm-5.7.1/rmake.py
+--- rocThrust-rocm-5.7.1.orig/rmake.py	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/rmake.py	2023-11-08 10:04:00.932829265 -0800
 @@ -102,7 +102,7 @@ def config_cmd():
          # "-G \"Visual Studio 16 2019\" -A x64"  #  -G NMake ")  #
          cmake_options.append( generator )
@@ -271,9 +257,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/rmake.py rocThrust-rocm-5.7.0/rmake.py
          if (OS_info["ID"] in ['centos', 'rhel']):
            cmake_executable = "cmake3"
          else:
-diff -urp rocThrust-rocm-5.7.0.orig/thrust/cmake/FindTBB.cmake rocThrust-rocm-5.7.0/thrust/cmake/FindTBB.cmake
---- rocThrust-rocm-5.7.0.orig/thrust/cmake/FindTBB.cmake	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/thrust/cmake/FindTBB.cmake	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/thrust/cmake/FindTBB.cmake rocThrust-rocm-5.7.1/thrust/cmake/FindTBB.cmake
+--- rocThrust-rocm-5.7.1.orig/thrust/cmake/FindTBB.cmake	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/thrust/cmake/FindTBB.cmake	2023-11-08 10:04:00.932829265 -0800
 @@ -290,7 +290,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Darwin"
  
    if (USE_LIBCXX)
@@ -292,9 +278,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/thrust/cmake/FindTBB.cmake rocThrust-rocm-5.
      ${dir}/Libs)
    list(APPEND TBB_INC_SEARCH_PATH ${dir}/include ${dir}/Include
      ${dir}/include/tbb)
-diff -urp rocThrust-rocm-5.7.0.orig/thrust/CMakeLists.txt rocThrust-rocm-5.7.0/thrust/CMakeLists.txt
---- rocThrust-rocm-5.7.0.orig/thrust/CMakeLists.txt	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/thrust/CMakeLists.txt	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/thrust/CMakeLists.txt rocThrust-rocm-5.7.1/thrust/CMakeLists.txt
+--- rocThrust-rocm-5.7.1.orig/thrust/CMakeLists.txt	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/thrust/CMakeLists.txt	2023-11-08 10:04:00.932829265 -0800
 @@ -64,7 +64,7 @@ rocm_install(
  )
  
@@ -304,9 +290,9 @@ diff -urp rocThrust-rocm-5.7.0.orig/thrust/CMakeLists.txt rocThrust-rocm-5.7.0/t
  if (BUILD_FILE_REORG_BACKWARD_COMPATIBILITY AND NOT WIN32)
    rocm_install(
      DIRECTORY
-diff -urp rocThrust-rocm-5.7.0.orig/toolchain-linux.cmake rocThrust-rocm-5.7.0/toolchain-linux.cmake
---- rocThrust-rocm-5.7.0.orig/toolchain-linux.cmake	2023-07-13 15:54:53.000000000 -0700
-+++ rocThrust-rocm-5.7.0/toolchain-linux.cmake	2023-09-30 21:32:06.941266227 -0700
+diff -urp rocThrust-rocm-5.7.1.orig/toolchain-linux.cmake rocThrust-rocm-5.7.1/toolchain-linux.cmake
+--- rocThrust-rocm-5.7.1.orig/toolchain-linux.cmake	2023-09-20 11:21:25.000000000 -0700
++++ rocThrust-rocm-5.7.1/toolchain-linux.cmake	2023-11-08 10:04:00.932829265 -0800
 @@ -6,7 +6,7 @@
  if (DEFINED ENV{ROCM_PATH})
    set(rocm_bin "$ENV{ROCM_PATH}/bin")

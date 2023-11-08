@@ -80,7 +80,7 @@ RESTRICT="test"
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.7.0-toggle-aqlprofile.patch"
-	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.1-path-changes.patch"
 )
 
 python_check_deps() {

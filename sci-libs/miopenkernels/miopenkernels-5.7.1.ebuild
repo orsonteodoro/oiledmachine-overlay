@@ -17,7 +17,7 @@ else
 	MY_PV="${PV}"
 fi
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
-ROCM_SLOT="5.6"
+ROCM_SLOT="5.7"
 ROCM_VERSION="${PV}"
 
 inherit rocm unpacker
@@ -26,34 +26,50 @@ if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
 	:;
 elif [[ "${AUPDATE}" =~ "1" ]] ; then
 	SRC_URI="
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030-36kdb/miopen-hip-gfx1030-36kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-56kdb/miopen-hip-gfx900-56kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-64kdb/miopen-hip-gfx900-64kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-60kdb/miopen-hip-gfx906-60kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-64kdb/miopen-hip-gfx906-64kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908-120kdb/miopen-hip-gfx908-120kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-104kdb/miopen-hip-gfx90a-104kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.20.0.50601-93~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx1030kdb/miopen-hip-asan-gfx1030kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx900kdb/miopen-hip-asan-gfx900kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx906kdb/miopen-hip-asan-gfx906kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx908kdb/miopen-hip-asan-gfx908kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx90akdb/miopen-hip-asan-gfx90akdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_2.20.0.50701-98~20.04_amd64.deb
 	"
 else
 	SRC_URI="
+		asan? (
+			amdgpu_targets_gfx1030? (
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx1030kdb/miopen-hip-asan-gfx1030kdb_2.20.0.50701-98~20.04_amd64.deb
+			)
+			amdgpu_targets_gfx900? (
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx900kdb/miopen-hip-asan-gfx900kdb_2.20.0.50701-98~20.04_amd64.deb
+			)
+			amdgpu_targets_gfx906? (
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx906kdb/miopen-hip-asan-gfx906kdb_2.20.0.50701-98~20.04_amd64.deb
+			)
+			amdgpu_targets_gfx908? (
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx908kdb/miopen-hip-asan-gfx908kdb_2.20.0.50701-98~20.04_amd64.deb
+			)
+			amdgpu_targets_gfx90a? (
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-asan-gfx90akdb/miopen-hip-asan-gfx90akdb_2.20.0.50701-98~20.04_amd64.deb
+			)
+		)
 		amdgpu_targets_gfx1030? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030-36kdb/miopen-hip-gfx1030-36kdb_2.20.0.50601-93~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_2.20.0.50701-98~20.04_amd64.deb
 		)
 		amdgpu_targets_gfx900? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-56kdb/miopen-hip-gfx900-56kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-64kdb/miopen-hip-gfx900-64kdb_2.20.0.50601-93~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_2.20.0.50701-98~20.04_amd64.deb
 		)
 		amdgpu_targets_gfx906? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-60kdb/miopen-hip-gfx906-60kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-64kdb/miopen-hip-gfx906-64kdb_2.20.0.50601-93~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_2.20.0.50701-98~20.04_amd64.deb
 		)
 		amdgpu_targets_gfx908? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908-120kdb/miopen-hip-gfx908-120kdb_2.20.0.50601-93~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_2.20.0.50701-98~20.04_amd64.deb
 		)
 		amdgpu_targets_gfx90a? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-104kdb/miopen-hip-gfx90a-104kdb_2.20.0.50601-93~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.20.0.50601-93~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_2.20.0.50701-98~20.04_amd64.deb
 		)
 	"
 fi
@@ -63,7 +79,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen#installing-miopen-kerne
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="r2"
+IUSE="asan r2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -141,6 +157,9 @@ src_unpack() {
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
 		for y in $(echo "${SRC_URI}" | grep "deb") ; do
 			if use "amdgpu_targets_${x}" && [[ "${y}" =~ "${x}" ]] ; then
+				if [[ "${y}" =~ "asan" ]] && ! use asan ; then
+					continue
+				fi
 				local bn=$(basename "${y}")
 				[[ "${bn}" =~ "${PV}" ]] && continue # Skip duplicate
 				pushd "${WORKDIR}" || die

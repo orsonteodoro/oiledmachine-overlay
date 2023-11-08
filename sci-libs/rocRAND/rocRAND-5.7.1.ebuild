@@ -31,7 +31,7 @@ ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic llvm rocm
 
-HIPRAND_COMMIT_HASH="8babdbe0cf4dc330c9ec5a0231ac059187a7bc8a"
+HIPRAND_COMMIT_HASH="b7b91006d19c84cb742c75f19157ece72ab8f9ca"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/${PN}/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz

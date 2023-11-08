@@ -4,11 +4,12 @@
 EAPI=7
 
 DEB_OS_REL="22.04"
-DRIVER_PV="6.7" # Folder name
+DRIVER_PV="5.7.1" # Folder name
 KERNEL_PV="6.5" # For vanilla kernel
-ROCM_PV="5.7.0"
+ROCM_PV="5.7.1"
 ROCM_SLOT="${ROCM_PV%.*}"
-MY_PV="6.2.4.50700-1652687"  # The 4th component is the rock version 5.07.00 == 5.7.0.
+#https://repo.radeon.com/amdgpu/5.7.1/ubuntu/pool/main/a/amdgpu-dkms/amdgpu-dkms-firmware_6.2.4.50701-1664922.22.04_all.deb
+MY_PV="6.2.4.50701-1664922"  # The 4th component is the rock version 5.07.01 == 5.7.1.
 FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
 
 DESCRIPTION="Firmware blobs used by the amdgpu kernel driver"

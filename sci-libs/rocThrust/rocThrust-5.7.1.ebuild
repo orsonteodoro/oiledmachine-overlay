@@ -65,7 +65,7 @@ RESTRICT="
 S="${WORKDIR}/rocThrust-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.0-operator_new.patch"
-	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.1-path-changes.patch"
 )
 
 pkg_setup() {

@@ -4,12 +4,12 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.0/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.7.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="6.2.4.50700"
+AMDGPU_FIRMWARE_PV="6.2.4.50701"
 KERNEL_FIRMWARE_PV="99999999" # Based on linux-firmware commit logs ; not released yet, no 5.7 commit message
 KERNEL_PV="6.5"  # DC_VER = 3.2.241 ; KERNEL_PV is from linux-kernel not rock-dkms
-ROCM_VERSION="5.7.0" # DC_VER = ${PV}
+ROCM_VERSION="5.7.1" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
@@ -22,7 +22,7 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="~amd64 ~x86"
-IUSE="custom-kernel kernel rock-dkms strict-pairing"
+IUSE="custom-kernel kernel rock-dkms strict-pairing r1"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 RDEPEND="
 	!virtual/amdgpu-drm:0

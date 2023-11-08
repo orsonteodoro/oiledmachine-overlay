@@ -8,7 +8,7 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 inherit unpacker
 
 SRC_URI="
-hsa-amd-aqlprofile_1.0.0.50700.50700-63~22.04_amd64.deb
+hsa-amd-aqlprofile_1.0.0.50701.50701-98~22.04_amd64.deb
 "
 
 DESCRIPTION="AQLPROFILE library for AMD HSA runtime API extension support"
@@ -33,13 +33,13 @@ DEPEND="
 RESTRICT="binchecks strip fetch"
 S="${WORKDIR}"
 QA_PREBUILT="
-/opt/rocm-5.7.0/lib/libhsa-amd-aqlprofile64.so.1
-/opt/rocm-5.7.0/lib/hsa-amd-aqlprofile/librocprofv2_att.so
-/opt/rocm-5.7.0/lib/libhsa-amd-aqlprofile64.so.1.0.50700
-/opt/rocm-5.7.0/lib/libhsa-amd-aqlprofile64.so
-/opt/rocm-5.7.0/share/doc/hsa-amd-aqlprofile/EULA
-/opt/rocm-5.7.0/share/doc/hsa-amd-aqlprofile/DISCLAIMER.txt
-/opt/rocm-5.7.0/share/doc/hsa-amd-aqlprofile/LICENSE.md
+/opt/rocm-5.7.1/lib/libhsa-amd-aqlprofile64.so.1
+/opt/rocm-5.7.1/lib/hsa-amd-aqlprofile/librocprofv2_att.so
+/opt/rocm-5.7.1/lib/libhsa-amd-aqlprofile64.so.1.0.50701
+/opt/rocm-5.7.1/lib/libhsa-amd-aqlprofile64.so
+/opt/rocm-5.7.1/share/doc/hsa-amd-aqlprofile/EULA
+/opt/rocm-5.7.1/share/doc/hsa-amd-aqlprofile/DISCLAIMER.txt
+/opt/rocm-5.7.1/share/doc/hsa-amd-aqlprofile/LICENSE.md
 "
 
 pkg_nofetch() {
@@ -50,8 +50,8 @@ pkg_nofetch() {
 einfo
 einfo "Due to EULA restrictions.  You must manually download."
 einfo
-einfo "Go to https://repo.radeon.com/rocm/apt/5.7/pool/main/h/hsa-amd-aqlprofile/"
-einfo "Download hsa-amd-aqlprofile_1.0.0.50700.50700-63~22.04_amd64.deb"
+einfo "Go to https://repo.radeon.com/rocm/apt/5.7.1/pool/main/h/hsa-amd-aqlprofile/"
+einfo "Download hsa-amd-aqlprofile_1.0.0.50701.50701-98~22.04_amd64.deb"
 einfo "Place the download in ${distdir}"
 einfo
 }

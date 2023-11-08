@@ -135,7 +135,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-change-libjpeg-turbo-search-path.patch"
 #	"${FILESDIR}/${PN}-5.6.0-use-system-pybind11.patch"
-	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.1-path-changes.patch"
 )
 
 pkg_setup() {
