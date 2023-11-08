@@ -274,7 +274,7 @@ CDEPEND+="
 				)
 			)
 		)
-		dev-dotnet/dotnet-sdk-bin
+		dev-dotnet/dotnet-sdk-bin:6.0
 	)
 "
 CDEPEND_CLANG="
