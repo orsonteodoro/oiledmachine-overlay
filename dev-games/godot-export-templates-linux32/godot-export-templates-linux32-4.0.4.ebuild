@@ -49,11 +49,6 @@ LICENSE="
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
 
-# thirdparty/bullet/BulletCollision - zlib all-rights-reserved # \
-#   The ZLIB license does not have all rights reserved but the source does
-
-# thirdparty/bullet/BulletDynamics - all-rights-reserved || ( LGPL-2.1 BSD )
-
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
@@ -95,7 +90,7 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+3d +bullet +csg +denoise +glslang +gltf +gridmap +lightmapper_rd +mobile-vr
++3d +csg +denoise +glslang +gltf +gridmap +lightmapper_rd +mobile-vr
 +msdfgen +raycast +recast +vhacd +xatlas
 "
 IUSE_AUDIO="
@@ -106,8 +101,8 @@ ${SANITIZERS[@]}
 clang debug jit lld lto +neon +optimize-speed optimize-size portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+astc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg +opus
-+pvrtc +s3tc +svg +tga +theora +vorbis +webm webm-simd +webp
++astc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg
++pvrtc +s3tc +svg +tga +theora +vorbis +webp
 "
 IUSE_GUI="
 +advanced-gui +dbus
@@ -126,10 +121,10 @@ IUSE_SCRIPTING="
 -gdscript gdscript_lsp +mono +visual-script
 "
 IUSE_SYSTEM="
-system-bullet system-embree system-enet system-freetype system-glslang
+system-embree system-enet system-freetype system-glslang
 system-icu system-libogg system-libpng system-libtheora system-libvorbis
-system-libvpx system-libwebp system-libwebsockets system-mbedtls
-system-miniupnpc system-mono system-msdfgen system-opus system-pcre2
+system-libwebp system-libwebsockets system-mbedtls
+system-miniupnpc system-mono system-msdfgen system-pcre2
 system-recast system-squish system-wslay system-xatlas system-zlib
 system-zstd
 "
@@ -174,7 +169,6 @@ REQUIRED_USE+="
 	)
 	portable? (
 		!asan
-		!system-bullet
 		!system-embree
 		!system-enet
 		!system-freetype
@@ -184,14 +178,12 @@ REQUIRED_USE+="
 		!system-libpng
 		!system-libtheora
 		!system-libvorbis
-		!system-libvpx
 		!system-libwebp
 		!system-libwebsockets
 		!system-mbedtls
 		!system-miniupnpc
 		!system-mono
 		!system-msdfgen
-		!system-opus
 		!system-pcre2
 		!system-recast
 		!system-squish
@@ -366,9 +358,6 @@ DEPEND+="
 			)
 		)
 	)
-	system-bullet? (
-		>=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}]
-	)
 	system-enet? (
 		>=net-libs/enet-${ENET_PV}[${MULTILIB_USEDEP}]
 	)
@@ -396,9 +385,6 @@ DEPEND+="
 	system-libvorbis? (
 		>=media-libs/libvorbis-${LIBVORBIS_PV}[${MULTILIB_USEDEP}]
 	)
-	system-libvpx? (
-		>=media-libs/libvpx-${LIBVPX_PV}[${MULTILIB_USEDEP}]
-	)
 	system-libwebp? (
 		>=media-libs/libwebp-${LIBWEBP_PV}[${MULTILIB_USEDEP}]
 	)
@@ -410,10 +396,6 @@ DEPEND+="
 	)
 	system-msdfgen? (
 		>=media-libs/msdfgen-${MSDFGEN_PV}[${MULTILIB_USEDEP}]
-	)
-	system-opus? (
-		>=media-libs/opus-${OPUS_PV}[${MULTILIB_USEDEP}]
-		>=media-libs/opusfile-${OPUSFILE_PV}[${MULTILIB_USEDEP}]
 	)
 	system-pcre2? (
 		>=dev-libs/libpcre2-${LIBPCRE2_PV}[${MULTILIB_USEDEP},jit?]
@@ -450,9 +432,6 @@ BDEPEND+="
 	dev-util/scons
 	lld? (
 		sys-devel/lld
-	)
-	webm-simd? (
-		dev-lang/yasm
 	)
 	|| (
 		${CDEPEND_CLANG}
@@ -775,7 +754,6 @@ src_compile() {
 		vulkan=$(usex vulkan)
 	)
 	local options_modules_shared=(
-		builtin_bullet=$(usex !system-bullet)
 		builtin_embree=$(usex !system-embree)
 		builtin_enet=$(usex !system-enet)
 		builtin_freetype=$(usex !system-freetype)
@@ -784,13 +762,11 @@ src_compile() {
 		builtin_libpng=$(usex !system-libpng)
 		builtin_libtheora=$(usex !system-libtheora)
 		builtin_libvorbis=$(usex !system-libvorbis)
-		builtin_libvpx=$(usex !system-libvpx)
 		builtin_libwebp=$(usex !system-libwebp)
 		builtin_mbedtls=$(usex !system-mbedtls)
 		builtin_miniupnpc=$(usex !system-miniupnpc)
 		builtin_msdfgen=$(usex !system-msdfgen)
 		builtin_pcre2=$(usex !system-pcre2)
-		builtin_opus=$(usex !system-opus)
 		builtin_recast=$(usex !system-recast)
 		builtin_rvo2=True
 		builtin_squish=$(usex !system-squish)
@@ -805,7 +781,6 @@ src_compile() {
 "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
-		builtin_bullet=True
 		builtin_certs=True
 		builtin_embree=True
 		builtin_enet=True
@@ -815,13 +790,11 @@ src_compile() {
 		builtin_libpng=True
 		builtin_libtheora=True
 		builtin_libvorbis=True
-		builtin_libvpx=True
 		builtin_libwebp=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
 		builtin_msdfgen=True
 		builtin_pcre2=True
-		builtin_opus=True
 		builtin_recast=True
 		builtin_rvo2=True
 		builtin_squish=True
@@ -848,7 +821,6 @@ src_compile() {
 		minizip=$(usex minizip)
 		module_astcenc_enabled=$(usex astc)
 		module_bmp_enabled=$(usex bmp)
-		module_bullet_enabled=$(usex bullet)
 		module_camera_enabled=$(usex camera)
 		module_csg_enabled=$(usex csg)
 		module_cvtt_enabled=$(usex cvtt)
@@ -874,7 +846,6 @@ src_compile() {
 		module_navigation_enabled=$(usex recast)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
-		module_opus_enabled=$(usex opus)
 		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
@@ -890,7 +861,6 @@ src_compile() {
 		module_visual_script_enabled=$(usex visual-script)
 		module_vhacd_enabled=$(usex vhacd)
 		module_vorbis_enabled=$(usex vorbis)
-		module_webm_enabled=$(usex webm)
 		module_websocket_enabled=$(usex websocket)
 		module_webp_enabled=$(usex webp)
 		module_webrtc_enabled=$(usex webrtc)

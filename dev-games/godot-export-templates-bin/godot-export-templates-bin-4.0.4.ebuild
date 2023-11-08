@@ -62,11 +62,6 @@ LICENSE="
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
 
-# thirdparty/bullet/BulletCollision - zlib all-rights-reserved # \
-#   The ZLIB license does not have all rights reserved but the source does
-
-# thirdparty/bullet/BulletDynamics - all-rights-reserved || ( LGPL-2.1 BSD )
-
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 

@@ -50,11 +50,6 @@ LICENSE="
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # \
 #   The MIT license does not have all rights reserved but the source does
 
-# thirdparty/bullet/BulletCollision - zlib all-rights-reserved # \
-#   The ZLIB license does not have all rights reserved but the source does
-
-# thirdparty/bullet/BulletDynamics - all-rights-reserved || ( LGPL-2.1 BSD )
-
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # \
 #   libpng license does not contain all rights reserved, but this source does
 
@@ -107,7 +102,7 @@ SANITIZERS=(
 )
 
 IUSE_3D="
-+3d +bullet +csg +denoise +glslang +gltf +gridmap +lightmapper_rd +mobile-vr
++3d +csg +denoise +glslang +gltf +gridmap +lightmapper_rd +mobile-vr
 +msdfgen +raycast +recast +vhacd +xatlas
 "
 IUSE_BUILD="
@@ -115,8 +110,8 @@ ${SANITIZERS[@]}
 debug jit lto +neon +optimize-speed optimize-size +portable
 "
 IUSE_CONTAINERS_CODECS_FORMATS="
-+astc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg +opus
-+pvrtc +s3tc +svg +tga +theora +vorbis +webm webm-simd +webp
++astc +bmp +brotli +cvtt +dds +etc +exr +hdr +jpeg +minizip +mp3 +ogg
++pvrtc +s3tc +svg +tga +theora +vorbis +webp
 "
 IUSE_GUI="
 +advanced-gui
@@ -204,9 +199,6 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	app-arch/zip
 	dev-util/scons
-	webm-simd? (
-		dev-lang/yasm
-	)
 "
 PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
@@ -501,7 +493,6 @@ src_compile() {
 		vulkan=$(usex vulkan)
 	)
 	local options_modules_static=(
-		builtin_bullet=True
 		builtin_certs=True
 		builtin_embree=True
 		builtin_enet=True
@@ -511,13 +502,11 @@ src_compile() {
 		builtin_libpng=True
 		builtin_libtheora=True
 		builtin_libvorbis=True
-		builtin_libvpx=True
 		builtin_libwebp=True
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
 		builtin_msdfgen=True
 		builtin_pcre2=True
-		builtin_opus=True
 		builtin_recast=True
 		builtin_rvo2=True
 		builtin_squish=True
@@ -544,7 +533,6 @@ src_compile() {
 		minizip=$(usex minizip)
 		module_astcenc_enabled=$(usex astc)
 		module_bmp_enabled=$(usex bmp)
-		module_bullet_enabled=$(usex bullet)
 		module_camera_enabled=$(usex camera)
 		module_csg_enabled=$(usex csg)
 		module_cvtt_enabled=$(usex cvtt)
@@ -570,7 +558,6 @@ src_compile() {
 		module_navigation_enabled=$(usex recast)
 		module_ogg_enabled=$(usex ogg)
 		module_opensimplex_enabled=$(usex opensimplex)
-		module_opus_enabled=$(usex opus)
 		module_pvr_enabled=$(usex pvrtc)
 		module_raycast_enabled=$(usex raycast)
 		module_regex_enabled=$(usex pcre2)
@@ -586,7 +573,6 @@ src_compile() {
 		module_visual_script_enabled=$(usex visual-script)
 		module_vhacd_enabled=$(usex vhacd)
 		module_vorbis_enabled=$(usex vorbis)
-		module_webm_enabled=$(usex webm)
 		module_websocket_enabled=$(usex websocket)
 		module_webp_enabled=$(usex webp)
 		module_webrtc_enabled=$(usex webrtc)
