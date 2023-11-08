@@ -7,7 +7,7 @@ EAPI=7
 # https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 AMDGPU_FIRMWARE_PV="6.1.5.50601"
-KERNEL_FIRMWARE_PV="99999999" # Based on linux-firmware commit logs ; not released yet, no 5.6 commit message
+KERNEL_FIRMWARE_PV="99999999" # Based on linux-firmware commit logs ; not released yet, no 5.6 commit message.  It could be skipped.
 KERNEL_PV="6.4"  # DC_VER = 3.2.230 ; KERNEL_PV is from linux-kernel not rock-dkms
 ROCM_VERSION="5.6.1" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
