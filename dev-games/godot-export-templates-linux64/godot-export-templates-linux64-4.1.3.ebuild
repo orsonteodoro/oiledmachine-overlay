@@ -126,12 +126,12 @@ IUSE_SCRIPTING="
 -gdscript gdscript_lsp +mono +visual-script
 "
 IUSE_SYSTEM="
-system-bullet system-embree system-enet system-freetype system-glslang
-system-icu system-libogg system-libpng system-libtheora system-libvorbis
-system-libvpx system-libwebp system-libwebsockets system-mbedtls
-system-miniupnpc system-mono system-msdfgen system-opus system-pcre2
-system-recast system-squish system-wslay system-xatlas system-zlib
-system-zstd
+system-brotli system-bullet system-embree system-enet system-freetype
+system-glslang system-icu system-libogg system-libpng system-libtheora
+system-libvorbis system-libvpx system-libwebp system-libwebsockets
+system-mbedtls system-miniupnpc system-mono system-msdfgen system-openxr
+system-opus system-pcre2 system-recast system-squish system-wslay system-xatlas
+system-zlib system-zstd
 "
 IUSE+="
 	${IUSE_3D}
@@ -374,6 +374,9 @@ DEPEND+="
 			)
 		)
 	)
+	system-brotli? (
+		>=app-arch/brotli-${BROTLI_PV}[${MULTILIB_USEDEP}]
+	)
 	system-bullet? (
 		>=sci-physics/bullet-${BULLET_PV}[${MULTILIB_USEDEP}]
 	)
@@ -418,6 +421,9 @@ DEPEND+="
 	)
 	system-msdfgen? (
 		>=media-libs/msdfgen-${MSDFGEN_PV}[${MULTILIB_USEDEP}]
+	)
+	system-openxr? (
+		>=media-libs/openxr-${OPENXR_PV}
 	)
 	system-opus? (
 		>=media-libs/opus-${OPUS_PV}[${MULTILIB_USEDEP}]
@@ -781,6 +787,7 @@ src_compile() {
 		vulkan=$(usex vulkan)
 	)
 	local options_modules_shared=(
+		builtin_brotli=$(usex !system-brotli)
 		builtin_bullet=$(usex !system-bullet)
 		builtin_embree=$(usex !system-embree)
 		builtin_enet=$(usex !system-enet)
@@ -796,6 +803,7 @@ src_compile() {
 		builtin_miniupnpc=$(usex !system-miniupnpc)
 		builtin_msdfgen=$(usex !system-msdfgen)
 		builtin_pcre2=$(usex !system-pcre2)
+		builtin_openxr=$(usex !system-openxr)
 		builtin_opus=$(usex !system-opus)
 		builtin_recast=$(usex !system-recast)
 		builtin_rvo2=True
@@ -811,6 +819,7 @@ src_compile() {
 "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
+		builtin_brotli=True
 		builtin_bullet=True
 		builtin_certs=True
 		builtin_embree=True
@@ -827,6 +836,7 @@ src_compile() {
 		builtin_miniupnpc=True
 		builtin_msdfgen=True
 		builtin_pcre2=True
+		builtin_openxr=True
 		builtin_opus=True
 		builtin_recast=True
 		builtin_rvo2=True

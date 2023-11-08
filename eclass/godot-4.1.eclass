@@ -6,6 +6,7 @@ STATUS="stable"
 LLVM_SLOTS=(15 14 13) # See https://github.com/godotengine/godot/blob/4.1-stable/misc/hooks/pre-commit-clang-format#L79
 PYTHON_COMPAT=( python3_{8..11} )
 
+BROTLI_PV="1.0.9"
 BULLET_PV="3.17" # skip
 CA_CERTIFICATES_PV="20230602"
 ENET_PV="1.3.17"
@@ -26,6 +27,7 @@ MINIUPNPC_PV="2.2.5"
 MONO_PV="6.12.0.182" # same as godot-export-templates-bin # todo
 MONO_PV_MIN="6.0.0.176" # todo
 MSDFGEN_PV="1.10"
+OPENXR_PV="1.0.28"
 OPUS_PV="1.1.5" # skip
 OPUSFILE_PV="0.8" # skip
 PKGCONF_PV="1.3.7" # skip

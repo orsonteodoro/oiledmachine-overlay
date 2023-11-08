@@ -378,6 +378,7 @@ src_compile() {
 		vulkan=$(usex vulkan)
 	)
 	local options_modules_static=(
+		builtin_brotli=True
 		builtin_bullet=True
 		builtin_embree=True
 		builtin_enet=True
@@ -394,6 +395,7 @@ src_compile() {
 		builtin_miniupnpc=True
 		builtin_msdfgen=True
 		builtin_pcre2=True
+		builtin_openxr=True
 		builtin_opus=True
 		builtin_recast=True
 		builtin_rvo2=True

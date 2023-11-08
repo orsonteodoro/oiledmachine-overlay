@@ -575,6 +575,7 @@ src_compile() {
 "system_certs_path=/etc/ssl/certs/ca-certificates.crt")
 	)
 	local options_modules_static=(
+		builtin_brotli=True
 		builtin_bullet=True
 		builtin_certs=True
 		builtin_embree=True
@@ -589,6 +590,7 @@ src_compile() {
 		builtin_mbedtls=True
 		builtin_miniupnpc=True
 		builtin_pcre2=True
+		builtin_openxr=True
 		builtin_opus=True
 		builtin_recast=True
 		builtin_squish=True
