@@ -247,7 +247,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables OpenSSL support.
     </flag>
     <flag name="openxr">
-      Enables the OpenXR driver.
+      Enables the OpenXR driver for VR/AR devices.
     </flag>
     <flag name="optimize-size">
       Optimizes the built program(s) for reduced size.
