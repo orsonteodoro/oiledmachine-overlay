@@ -18,6 +18,7 @@ REQUIRED_USE="
 	!headless-server
 	!ios-plugins
 "
+#		dev-games/godot-demo-projects:${PV%%.*}/$(ver_cut 1-2 ${PV})
 RDEPEND="
 	!dev-games/godot
 	dev-games/godot-editor:${SLOT}
@@ -28,7 +29,7 @@ RDEPEND="
 		dev-games/godot-dedicated-server:${SLOT}
 	)
 	demos? (
-		dev-games/godot-demo-projects:${PV%%.*}/$(ver_cut 1-2 ${PV})
+		=dev-games/godot-demo-projects-9999
 	)
 	headless-server? (
 		dev-games/godot-headless-server:${SLOT}
