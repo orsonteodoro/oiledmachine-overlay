@@ -25,7 +25,7 @@ ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
 # and \
 # strings /var/tmp/portage/dev-games/gdevelop-5.2.178/work/GDevelop-5.2.178/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
 ELECTRON_APP_REACT_PV="16.14.0" # See \
-# The last supported for react 16.14.0 is 14.0. \
+# The last supported for react 16.14.0 is node 14.0. \
 # https://github.com/facebook/react/blob/v16.14.0/package.json#L100 \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.2.178/newIDE/app/package-lock.json
 NODE_ENV="development"
