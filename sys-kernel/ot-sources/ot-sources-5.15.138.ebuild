@@ -41,7 +41,7 @@ inherit ot-kernel-v5.15
 # network - pass
 # streaming video playback - pass
 # initscript - pass
-# runtime stability note:  no freeze/deadlock encountered during building + media streaming during short run (5.15.137)
+# runtime stability note:  freeze/deadlock encountered during building + media streaming after a day passed (5.15.137)
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
