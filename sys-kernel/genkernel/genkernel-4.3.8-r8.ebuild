@@ -37,7 +37,7 @@ VERSION_BUSYBOX="1.34.1"
 VERSION_COREUTILS="9.3"
 VERSION_CRYPTSETUP="2.4.1"
 VERSION_DMRAID="1.0.0.rc16-3"
-VERSION_DROPBEAR="2020.81"
+VERSION_DROPBEAR="2022.83"
 VERSION_EUDEV="3.2.10"
 VERSION_EXPAT="2.5.0"
 VERSION_E2FSPROGS="1.46.4"
@@ -47,7 +47,7 @@ VERSION_HWIDS="20210613"
 VERSION_ISCSI="2.1.8"
 VERSION_JSON_C="0.13.1"
 VERSION_KMOD="30"
-VERSION_LIBAIO="0.3.112"
+VERSION_LIBAIO="0.3.113"
 VERSION_LIBGCRYPT="1.9.4"
 VERSION_LIBGPGERROR="1.43"
 VERSION_LIBXCRYPT="4.4.36"
@@ -118,7 +118,7 @@ if [[ ${PV} == 9999* ]] ; then
 else
 	SRC_URI="https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}.tar.xz
 		${COMMON_URI}"
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ~ppc ppc64 ~riscv ~s390 sparc x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
