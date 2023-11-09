@@ -4,8 +4,6 @@
 
 EAPI=8
 
-#ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
-
 LLVM_MAX_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 UOPTS_SUPPORT_TBOLT=0
@@ -96,7 +94,7 @@ DEPEND="
 "
 BDEPEND="
 	sys-devel/gcc
-	sys-devel/binutils[gold]
+	sys-devel/lld:${LLVM_MAX_SLOT}
 "
 PATCHES=(
 )
@@ -173,7 +171,11 @@ _src_configure() {
 	)
 	uopts_src_configure
 	filter-flags "-fuse-ld=*"
-	append-ldflags -fuse-ld=gold
+
+# Fixes:
+# ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
+	append-ldflags -fuse-ld=lld
+
 #	strip-unsupported-flags # Broken, strips -fprofile-use
 
 	# Speed up composable_kernel, rocBLAS build times
