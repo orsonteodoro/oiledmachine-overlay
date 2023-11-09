@@ -21,8 +21,8 @@ esac
 _UOPTS_ECLASS=1
 
 # Stable versions preferred since the profile fingerprint (aka id) does not add
-# the experimental flag yet.  This is to eliminate rough draft BOLT profiles
-# formats which can cause bugs.
+# the experimental build flag yet for 9999 ebuilds.  This is to eliminate rough
+# draft BOLT profiles formats which can cause bugs.
 _UOPTS_LLVM_SLOTS=(17 16 15 14) # Bump every major version.
 
 
