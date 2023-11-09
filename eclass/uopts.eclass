@@ -20,11 +20,8 @@ esac
 
 _UOPTS_ECLASS=1
 
-# Stable versions preferred since the profile fingerprint (aka id) does not add
-# the experimental build flag yet for 9999 ebuilds.  This is to eliminate rough
-# draft BOLT profiles formats which can cause bugs.
-_UOPTS_LLVM_SLOTS=(17 16 15 14) # Bump every major version.
-
+# Bump every major version.  Also bump the BDEPENDs in *bolt eclasses.
+_UOPTS_LLVM_SLOTS=(18 17 16 15 14)
 
 UOPTS_SUPPORT_EPGO=${UOPTS_SUPPORT_EPGO:-1}
 UOPTS_SUPPORT_EBOLT=${UOPTS_SUPPORT_EBOLT:-1}

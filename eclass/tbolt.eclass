@@ -30,6 +30,7 @@ if [[ "${UOPTS_BOLT_DISABLE_BDEPEND}" != "1" ]] ; then
 BDEPEND+="
 	bolt? (
 		|| (
+			>=sys-devel/llvm-18[bolt]
 			>=sys-devel/llvm-17[bolt]
 			>=sys-devel/llvm-16[bolt]
 			>=sys-devel/llvm-15[bolt]
