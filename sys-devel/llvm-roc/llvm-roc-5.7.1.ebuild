@@ -4,6 +4,8 @@
 
 EAPI=8
 
+#ld.gold: internal error in do_layout, at /var/tmp/portage/sys-devel/binutils-2.40-r5/work/binutils-2.40/gold/object.cc:1939
+
 LLVM_MAX_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 UOPTS_SUPPORT_TBOLT=0

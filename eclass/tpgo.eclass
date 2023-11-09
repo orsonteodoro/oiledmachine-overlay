@@ -475,7 +475,7 @@ ewarn
 			local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
 			if [[ "${raw_pv}" =~ "9999" ]] ; then
 				# Live unstable ABI.
-				local build_timestamp=$(portageq metadata "/" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
+				local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
 				pgo_slot="${raw_pv}-${build_timestamp}"
 			elif [[ "${raw_pv}" =~ "_p" ]] ; then
 				# Live snapshot with unstable ABI.
@@ -636,7 +636,7 @@ tpgo_src_install() {
 			local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
 			if [[ "${raw_pv}" =~ "9999" ]] ; then
 				# Live unstable ABI.
-				local build_timestamp=$(portageq metadata "/" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
+				local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
 				pgo_slot="${raw_pv}-${build_timestamp}"
 			elif [[ "${raw_pv}" =~ "_p" ]] ; then
 				# Live snapshot with unstable ABI.
