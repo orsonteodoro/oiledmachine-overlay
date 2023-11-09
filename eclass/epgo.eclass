@@ -295,7 +295,9 @@ ewarn
 			|| die "You must call uopts_src_prepare before calling epgo_get_phase"
 		# Has same compiler?
 		if tc-is-gcc ; then
-			local actual=$(${_CC} -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local compiler_pv="$(gcc-version)" # major.minor
+			local triple=$(${_CC} -dumpmachine)
+			local actual="${compiler_pv};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
@@ -307,7 +309,9 @@ ewarn
 				return 1
 			fi
 		elif tc-is-clang ; then
-			local actual=$(${_CC} -dumpmachine | sha512sum | cut -f 1 -d " ")
+			local compiler_pv="$(clang-version)" # major.minor
+			local triple=$(${_CC} -dumpmachine)
+			local actual="${compiler_pv};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
@@ -381,14 +385,28 @@ epgo_src_install() {
 		CC="${CC% *}"
 
 		if tc-is-gcc ; then
-			${CC} -dumpmachine \
-				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
-			${CC} -dumpmachine | sha512sum | cut -f 1 -d " " \
+	# Profile compatibility is based on a byte string.
+	# 1 byte major version in hex
+	# 2 bytes minor version
+	# 1 byte development phase e - experimental, R for release found in gcc/DEV-PHASE
+	# 400e - 4.00.x experimental
+	# A00R - 10.00.x release
+			local compiler_pv="$(gcc-version)" # major.minor
+			local triple=$(${_CC} -dumpmachine)
+			local actual="${compiler_pv};${triple}"
+			echo "gcc ${compiler_pv}" \
+				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die
+			echo "${actual}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
 		elif tc-is-clang ; then
-			${CC} -dumpmachine \
-				> "${ED}/${pgo_data_suffix_dir}/compiler" || die
-			${CC} -dumpmachine | sha512sum | cut -f 1 -d " " \
+	# Compatibility based on either specific unmerged .profraw version or
+	# flexible merged .profdata version.  The latter is preferred.
+			local compiler_pv="$(clang-version)" # major.minor
+			local triple=$(${_CC} -dumpmachine)
+			local actual="${compiler_pv};${triple}"
+			echo "clang ${compiler_pv}" \
+				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die
+			echo "${actual}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
 		fi
 	fi

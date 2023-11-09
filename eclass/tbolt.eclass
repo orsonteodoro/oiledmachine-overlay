@@ -245,7 +245,9 @@ ewarn
 		fi
 
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
-		local actual=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " ")
+		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
+		local actual="${bolt_slot}"
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
@@ -545,9 +547,11 @@ tbolt_src_install() {
 			|| die
 
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
-		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
+		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
+		echo "llvm-bolt ${bolt_pv}" \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
-		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version | sha512sum | cut -f 1 -d " " \
+		echo "${bolt_slot}" \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_fingerprint" || die
 
 		# Never strip.  If you do it will segfault.
