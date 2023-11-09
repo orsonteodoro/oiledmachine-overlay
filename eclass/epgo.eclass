@@ -398,7 +398,7 @@ epgo_src_install() {
 			export CXX=$(tc-getCXX)
 		fi
 
-		CC="${CC% *}"
+		_CC="${CC% *}"
 
 		if tc-is-gcc ; then
 	# Profile compatibility is based on a byte string.

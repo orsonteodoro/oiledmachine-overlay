@@ -619,7 +619,7 @@ tpgo_src_install() {
 			"${ED}/${pgo_data_suffix_dir}" \
 			|| die
 
-		CC="${CC% *}"
+		_CC="${CC% *}"
 
 		if tc-is-gcc ; then
 	# Profile compatibility is based on a byte string.
