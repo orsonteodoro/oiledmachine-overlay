@@ -28,7 +28,14 @@ RESTRICT+=" strip" # Don't strip at all
 
 if [[ "${UOPTS_BOLT_DISABLE_BDEPEND}" != "1" ]] ; then
 BDEPEND+="
-	>=sys-devel/llvm-14[bolt]
+	bolt? (
+		|| (
+			>=sys-devel/llvm-17[bolt]
+			>=sys-devel/llvm-16[bolt]
+			>=sys-devel/llvm-15[bolt]
+			>=sys-devel/llvm-14[bolt]
+		)
+	)
 "
 fi
 
