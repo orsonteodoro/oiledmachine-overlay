@@ -279,8 +279,9 @@ ewarn
 			| sed -e "s|sys-devel/llvm-||g")
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
-			# Live with unstable ABI.  The commit should also be included.
-			bolt_slot="${raw_pv}"
+			# Live with unstable ABI.
+			local build_timestamp=$(portageq metadata "/" "installed" "sys-devel/llvm-${raw_pv}" "BUILD_TIME")
+			bolt_slot="${raw_pv}-${build_timestamp}"
 		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 			# Live snapshot with unstable ABI.
 			bolt_slot="${raw_pv}"
@@ -543,7 +544,8 @@ ebolt_src_install() {
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live with unstable ABI.
-			bolt_slot="${raw_pv}"
+			local build_timestamp=$(portageq metadata "/" "installed" "sys-devel/llvm-${raw_pv}" "BUILD_TIME")
+			bolt_slot="${raw_pv}-${build_timestamp}"
 		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 			# Live snapshot with unstable ABI.
 			bolt_slot="${raw_pv}"

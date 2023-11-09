@@ -5443,8 +5443,9 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 			| sed -e "s|sys-devel/gcc-||g")
 		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
-			# Live unstable ABI.  The commit should also be included.
-			pgo_slot="${raw_pv}"
+			# Live unstable ABI.
+			local build_timestamp=$(portageq metadata "/" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
+			pgo_slot="${raw_pv}-${build_timestamp}"
 		elif [[ "${raw_pv}" =~ "_p" ]] ; then
 			# Live snapshot with unstable ABI.
 			pgo_slot="${raw_pv}"
@@ -5481,8 +5482,9 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 			| sed -e "s|sys-devel/gcc-||g")
 		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
-			# Live unstable ABI.  The commit should also be included.
-			pgo_slot="${raw_pv}"
+			# Live unstable ABI.
+			local build_timestamp=$(portageq metadata "/" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
+			pgo_slot="${raw_pv}-${build_timestamp}"
 		elif [[ "${raw_pv}" =~ "_p" ]] ; then
 			# Live snapshot with unstable ABI.
 			pgo_slot="${raw_pv}"
