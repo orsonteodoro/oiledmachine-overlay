@@ -440,7 +440,6 @@ tpgo_src_configure() {
 	fi
 }
 
-
 # @FUNCTION: _tpgo_is_profile_reusable
 # @INTERNAL
 # @DESCRIPTION:
@@ -469,9 +468,20 @@ ewarn
 			|| die "You must call uopts_src_prepare before calling tpgo_src_compile"
 		# Has same compiler?
 		if tc-is-gcc ; then
+			local compile_major_pv="$(gcc-major-version)"
 			local compiler_pv="$(gcc-version)" # major.minor
+			local raw_pv=$(best_version "=sys-devel/gcc-${compile_major_pv}*" \
+				| sed -e "s|sys-devel/gcc-||g")
+			local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
+			if [[ "${raw_pv}" =~ "9999" ]] ; then
+				# Live unstable ABI.  The commit should also be included.
+				pgo_slot="${raw_pv}"
+			elif [[ "${raw_pv}" =~ "_p" ]] ; then
+				# Live snapshot with unstable ABI.
+				pgo_slot="${raw_pv}"
+			fi
 			local triple=$(${_CC} -dumpmachine)
-			local actual="${compiler_pv};${triple}"
+			local actual="${pgo_slot};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
@@ -483,9 +493,14 @@ ewarn
 				return 1
 			fi
 		elif tc-is-clang ; then
-			local compiler_pv="$(clang-version)" # major.minor
+			local clang_major_pv="$(clang-major-version)"
+			local sys_index_ver=$(grep -E \
+				-e " INSTR_PROF_INDEX_VERSION [0-9]+" \
+				"${ESYSROOT}/usr/lib/llvm/${clang_major_pv}/include/llvm/ProfileData/InstrProfData.inc" \
+	                        | cut -f 3 -d " ")
+			local pgo_slot="${sys_index_ver}"
 			local triple=$(${_CC} -dumpmachine)
-			local actual="${compiler_pv};${triple}"
+			local actual="${pgo_slot};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
@@ -613,22 +628,38 @@ tpgo_src_install() {
 	# 1 byte development phase e - experimental, R for release found in gcc/DEV-PHASE
 	# 400e - 4.00.x experimental
 	# A00R - 10.00.x release
+			local compile_major_pv="$(gcc-major-version)"
 			local compiler_pv="$(gcc-version)" # major.minor
+			local raw_pv=$(best_version "=sys-devel/gcc-${compile_major_pv}*" \
+				| sed -e "s|sys-devel/gcc-||g")
+			local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
+			if [[ "${raw_pv}" =~ "9999" ]] ; then
+				# Live unstable ABI.  The commit should also be included.
+				pgo_slot="${raw_pv}"
+			elif [[ "${raw_pv}" =~ "_p" ]] ; then
+				# Live snapshot with unstable ABI.
+				pgo_slot="${raw_pv}"
+			fi
 			local triple=$(${_CC} -dumpmachine)
-			local actual="${compiler_pv};${triple}"
-			echo "gcc ${compiler_pv}" \
+			local fingerprint="${pgo_slot};${triple}"
+			echo "gcc ${raw_pv}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die
-			echo "${actual}" \
+			echo "${fingerprint}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
 		elif tc-is-clang ; then
 	# Compatibility based on either specific unmerged .profraw version or
 	# flexible merged .profdata version.  The latter is preferred.
-			local compiler_pv="$(clang-version)" # major.minor
+			local clang_major_pv="$(clang-major-version)"
+			local sys_index_ver=$(grep -E \
+				-e " INSTR_PROF_INDEX_VERSION [0-9]+" \
+				"${ESYSROOT}/usr/lib/llvm/${clang_major_pv}/include/llvm/ProfileData/InstrProfData.inc" \
+	                        | cut -f 3 -d " ")
+			local pgo_slot="${sys_index_ver}"
 			local triple=$(${_CC} -dumpmachine)
-			local actual="${compiler_pv};${triple}"
+			local fingerprint="${pgo_slot};${triple}"
 			echo "clang ${compiler_pv}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die
-			echo "${actual}" \
+			echo "${fingerprint}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_fingerprint" || die
 		fi
 	fi

@@ -257,10 +257,29 @@ ewarn
 			return 2
 		fi
 
+		if [[ -z "${CC}" ]] ; then
+			export CC="${CHOST}-gcc"
+			export CXX="${CHOST}-g++"
+		fi
+
+		_CC="${CC% *}"
+
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
-		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
+			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+		local bolt_major_pv="${bolt_pv%%.*}"
+		local raw_pv=$(best_version "=sys-devel/llvm-${bolt_major_pv}*" \
+			| sed -e "s|sys-devel/llvm-||g")
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
-		local actual="${bolt_slot}"
+		if [[ "${raw_pv}" =~ "9999" ]] ; then
+			# Live with unstable ABI
+			bolt_slot="${raw_pv}"
+		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
+			# Snapshot with unstable ABI
+			bolt_slot="${raw_pv}"
+		fi
+		local triple=$(${_CC} -dumpmachine)
+		local actual="${bolt_slot};${triple}"
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
@@ -502,19 +521,31 @@ ebolt_src_install() {
 		fperms 0775 "${bolt_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then
-			# It should be done earlier.
-			export CC=$(tc-getCC)
-			export CXX=$(tc-getCXX)
+			export CC="${CHOST}-gcc"
+			export CXX="${CHOST}-g++"
 		fi
 
-		CC="${CC% *}"
+		_CC="${CC% *}"
 
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
-		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version | grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
+			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
+		local bolt_major_pv="${bolt_pv%%.*}"
+		local raw_pv=$(best_version "=sys-devel/llvm-${bolt_major_pv}*" \
+			| sed -e "s|sys-devel/llvm-||g")
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
-		echo "llvm-bolt ${bolt_pv}" \
+		if [[ "${raw_pv}" =~ "9999" ]] ; then
+			# Live with unstable ABI
+			bolt_slot="${raw_pv}"
+		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
+			# Snapshot with unstable ABI
+			bolt_slot="${raw_pv}"
+		fi
+		local triple=$(${_CC} -dumpmachine)
+		local fingerprint="${bolt_slot};${triple}"
+		echo "llvm-bolt ${raw_pv}" \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
-		echo "${bolt_slot}" \
+		echo "${fingerprint}" \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_fingerprint" || die
 
 		# Never strip.  If you do it will segfault.
