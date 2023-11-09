@@ -277,7 +277,7 @@ ewarn
 		local bolt_major_pv="${bolt_pv%%.*}"
 		local raw_pv=$(best_version "=sys-devel/llvm-${bolt_major_pv}*" \
 			| sed -e "s|sys-devel/llvm-||g")
-		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
+		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live with unstable ABI.
 			local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/llvm-${raw_pv}" "BUILD_TIME")
@@ -541,7 +541,7 @@ ebolt_src_install() {
 		local bolt_major_pv="${bolt_pv%%.*}"
 		local raw_pv=$(best_version "=sys-devel/llvm-${bolt_major_pv}*" \
 			| sed -e "s|sys-devel/llvm-||g")
-		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
+		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live with unstable ABI.
 			local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/llvm-${raw_pv}" "BUILD_TIME")

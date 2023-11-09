@@ -5336,7 +5336,7 @@ eerror
 				-e "INSTR_PROF_INDEX_VERSION [0-9]+" \
 				"${ESYSROOT}/usr/lib/llvm/${clang_slot}/include/llvm/ProfileData/InstrProfData.inc" \
 				| cut -f 3 -d " ")
-			local pgo_slot="${sys_index_ver}"
+			local pgo_slot="${sys_index_ver}" # For stable ABI.
 			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 			local actual="${pgo_slot};${triple}"
 			local expected=$(cat "${profdata_dpath}")
@@ -5383,7 +5383,7 @@ ewarn
 				-e "INSTR_PROF_INDEX_VERSION [0-9]+" \
 				"${ESYSROOT}/usr/lib/llvm/${clang_slot}/include/llvm/ProfileData/InstrProfData.inc" \
 				| cut -f 3 -d " ")
-			local pgo_slot="${sys_index_ver}"
+			local pgo_slot="${sys_index_ver}" # For stable ABI.
 			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 			local fingerprint="${pgo_slot};${triple}"
 			mkdir -p $(dirname "${pgo_compiler_fingerprint_file}")
@@ -5441,14 +5441,16 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 		local compiler_pv="$(gcc-version)" # major.minor
 		local raw_pv=$(best_version "=sys-devel/gcc-${compile_major_pv}*" \
 			| sed -e "s|sys-devel/gcc-||g")
-		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
+		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live unstable ABI.
 			local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
 			pgo_slot="${raw_pv}-${build_timestamp}"
-		elif [[ "${raw_pv}" =~ "_p" ]] ; then
+		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 			# Live snapshot with unstable ABI.
 			pgo_slot="${raw_pv}"
+		#elif [[ "${raw_pv}" =~ "_p"[0-9]+ ]] ; then
+			# Weekly snapshot of a stable branch.  ABI change unlikely.
 		fi
 		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 		local actual="${pgo_slot};${triple}"
@@ -5480,14 +5482,16 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 		local compiler_pv="$(gcc-version)" # major.minor
 		local raw_pv=$(best_version "=sys-devel/gcc-${compile_major_pv}*" \
 			| sed -e "s|sys-devel/gcc-||g")
-		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
+		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live unstable ABI.
 			local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
 			pgo_slot="${raw_pv}-${build_timestamp}"
-		elif [[ "${raw_pv}" =~ "_p" ]] ; then
+		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 			# Live snapshot with unstable ABI.
 			pgo_slot="${raw_pv}"
+		#elif [[ "${raw_pv}" =~ "_p"[0-9]+ ]] ; then
+			# Weekly snapshot of a stable branch.  ABI change unlikely.
 		fi
 		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 		local fingerprint="${pgo_slot};${triple}"
