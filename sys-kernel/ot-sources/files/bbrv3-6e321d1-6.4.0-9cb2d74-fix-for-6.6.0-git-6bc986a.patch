@@ -1,0 +1,17 @@
+License identified in include/net/tcp.h:
+/* SPDX-License-Identifier: GPL-2.0-or-later */
+
+--- a/include/net/tcp.h.orig	2023-11-08 17:10:40.509351174 -0800
++++ b/include/net/tcp.h	2023-11-08 17:10:38.765351138 -0800
+@@ -838,6 +838,11 @@ static inline u32 tcp_stamp_us_delta(u64
+ 	return max_t(s64, t1 - t0, 0);
+ }
+ 
++static inline u32 tcp_stamp32_us_delta(u32 t1, u32 t0)
++{
++	return max_t(s32, t1 - t0, 0);
++}
++
+ /* provide the departure time in us unit */
+ static inline u64 tcp_skb_timestamp_us(const struct sk_buff *skb)
+ {

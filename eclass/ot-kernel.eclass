@@ -2430,7 +2430,11 @@ einfo "Canceling ReiserFS"
 			|| die
 	fi
 
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
+	if ver_test ${KV_MAJOR_MINOR} -ge 6.0 && [[ "${PV}" =~ "9999" ]] ; then
+		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
+			"Documentation/arch/powerpc/eeh-pci-error-recovery.rst" \
+			|| die
+	elif ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
 		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
 			"Documentation/powerpc/eeh-pci-error-recovery.rst" \
 			|| die

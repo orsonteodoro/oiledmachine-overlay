@@ -952,6 +952,32 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-ba2274d.patch" ]] ; then
 		# Already added upstream
 		:;
+	elif [[ "${path}" =~ "zen-sauce-6.6.0-369ef2b.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.6.0-369ef2b-fix-for-6.6.0-git-6bc986a.patch"
+	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-9cb2d74.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-9cb2d74-fix-for-6.6.0-git-6bc986a.patch"
+	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-c20e56d.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-c20e56d-fix-for-6.6.0-git-6bc986a.patch"
+	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-a5cc006.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a5cc006-fix-for-6.6.0-git-6bc986a.patch"
+	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-4fef7ac.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-4fef7ac-fix-for-6.6.0-git-6bc986a.patch"
+	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-40f1ce9.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-40f1ce9-fix-for-6.6.0-git-6bc986a.patch"
+	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-aa27c22.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-aa27c22-fix-for-6.6.0-git-6bc986a.patch"
+	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-a1d32ad.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a1d32ad-fix-for-6.6.0-git-6bc986a.patch"
+#eerror "See ${path}"
+#		die
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
