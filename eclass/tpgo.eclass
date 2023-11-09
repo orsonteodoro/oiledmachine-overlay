@@ -484,7 +484,7 @@ ewarn
 				# Weekly snapshot of a stable branch.  ABI change unlikely.
 			fi
 			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
-			local actual="${pgo_slot};${triple}"
+			local actual="${pgo_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
@@ -503,7 +503,7 @@ ewarn
 	                        | cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}" # For stable ABI.
 			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
-			local actual="${pgo_slot};${triple}"
+			local actual="${pgo_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
 ewarn
@@ -647,7 +647,7 @@ tpgo_src_install() {
 				# Weekly snapshot of a stable branch.  ABI change unlikely.
 			fi
 			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
-			local fingerprint="${pgo_slot};${triple}"
+			local fingerprint="${pgo_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 			echo "gcc ${raw_pv}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die
 			echo "${fingerprint}" \
@@ -662,7 +662,7 @@ tpgo_src_install() {
 	                        | cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}" # For stable ABI.
 			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
-			local fingerprint="${pgo_slot};${triple}"
+			local fingerprint="${pgo_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 			echo "clang ${compiler_pv}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die
 			echo "${fingerprint}" \

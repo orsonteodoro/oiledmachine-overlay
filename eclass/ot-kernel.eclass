@@ -5338,7 +5338,7 @@ eerror
 				| cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}" # For stable ABI.
 			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
-			local actual="${pgo_slot};${triple}"
+			local actual="${pgo_slot};${ABI};${triple}"
 			local expected=$(cat "${profdata_dpath}")
 			if [[ "${actual}" != "${expected}" ]] ; then
 einfo "Detected compiler mismatch.  Restarting at PGI."
@@ -5385,7 +5385,7 @@ ewarn
 				| cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}" # For stable ABI.
 			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
-			local fingerprint="${pgo_slot};${triple}"
+			local fingerprint="${pgo_slot};${ABI};${triple}"
 			mkdir -p $(dirname "${pgo_compiler_fingerprint_file}")
 			echo "${fingerprint}" > "${pgo_compiler_fingerprint_file}"
 		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
@@ -5453,7 +5453,7 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 			# Weekly snapshot of a stable branch.  ABI change unlikely.
 		fi
 		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
-		local actual="${pgo_slot};${triple}"
+		local actual="${pgo_slot};${ABI};${triple}"
 		local expected=$(cat "${pgo_compiler_fingerprint_file}")
 		if [[ "${actual}" != "${expected}" ]] ; then
 einfo "Detected compiler mismatch.  Restarting at PGI."
@@ -5494,7 +5494,7 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 			# Weekly snapshot of a stable branch.  ABI change unlikely.
 		fi
 		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
-		local fingerprint="${pgo_slot};${triple}"
+		local fingerprint="${pgo_slot};${ABI};${triple}"
 		mkdir -p $(dirname "${pgo_compiler_fingerprint_file}")
 		echo "${fingerprint}" > "${pgo_compiler_fingerprint_file}"
 	elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") ]] && (( ${n_gcda} > 0 )) ; then
