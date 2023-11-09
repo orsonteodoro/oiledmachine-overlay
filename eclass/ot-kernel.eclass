@@ -5256,6 +5256,7 @@ ot-kernel_set_kconfig_pcie_mps() {
 # @DESCRIPTION:
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 _ot-kernel_set_kconfig_pgo_clang() {
+	local pgo_compiler_fingerprint_file="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/compiler_fingerprint"
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 	local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
 	local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
@@ -5328,11 +5329,35 @@ eerror
 		[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
 		[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
 		[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
+
+		if [[ -e "${profdata_dpath}" ]] ; then
+			local clang_slot=$(clang-major-version)
+			local sys_index_ver=$(grep -E \
+				-e "INSTR_PROF_INDEX_VERSION [0-9]+" \
+				"${ESYSROOT}/usr/lib/llvm/${clang_slot}/include/llvm/ProfileData/InstrProfData.inc" \
+				| cut -f 3 -d " ")
+			local pgo_slot="${sys_index_ver}"
+			local triple=$(${CC} -dumpmachine)
+			local actual="${pgo_slot};${triple}"
+			local expected=$(cat "${profdata_dpath}")
+			if [[ "${actual}" != "${expected}" ]] ; then
+einfo "Detected compiler mismatch.  Restarting at PGI."
+				pgo_phase="${PGO_PHASE_PGI}" # Restart
+			fi
+		fi
+
 #
-#            R      R      R       R      R = Resume
-#	    ___    ___    ___     ___     S = Start
-#	    | V    | V    | V     | V
-#	S-> PGI -> PGT -> PGO -> DONE
+#            R          R          R                       R    = Resume
+#	    ___        ___        ___                      S    = Start
+#	    | V        | V        | V                     V(p) = Verify same compiler of phase
+#	S-> PGI -----> PGT        PGO ------> DONE
+#           ^          |            ^         |  ^
+#           |          |            | y       |  |
+#           |          |            |         |  | R|y
+#           |          |----------> v(p) <----|  |
+#           |                       | |          |
+#           |_______________________| +----------+
+#                      n
 #
 		if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 einfo "Forcing PGI flags and config"
@@ -5347,8 +5372,17 @@ ewarn "attacks.  It may be disabled in the PGO step if no dependency on this"
 ewarn "kernel option."
 ewarn
 
-		# For ot_kernel_pgt_memory
-		ot-kernel_set_kconfig_dmesg "default"
+	# For ot_kernel_pgt_memory
+			ot-kernel_set_kconfig_dmesg "default"
+
+	# For profile compatibility checks
+	# Profile compatibility based on either specific .profraw version or
+	# flexible merged .prodata version.
+			local compiler_pv="$(gcc-version)"
+			local triple=$(${CC} -dumpmachine)
+			local fingerprint="${compiler_pv};${triple}"
+			mkdir -p $(dirname "${pgo_compiler_fingerprint_file}")
+			echo "${fingerprint}" > "${pgo_compiler_fingerprint_file}"
 
 		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 einfo "Forcing PGO flags and config"
@@ -5369,6 +5403,7 @@ einfo "debugfs disabled success"
 # @DESCRIPTION:
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 _ot-kernel_set_kconfig_pgo_gcc() {
+	local pgo_compiler_fingerprint_file="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/compiler_fingerprint"
 	local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 	local n_gcda=$(find "${WORKDIR}/pgodata/${extraversion}-${arch}/gcc" -name "*.gcda" 2>/dev/null | wc -l)
 	[[ -z "${n_gcda}" ]] && n_gcda=0
@@ -5385,11 +5420,29 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 	[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
 	[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
 #
-#            R      R      R       R      R = Resume
-#	    ___    ___    ___     ___     S = Start
-#	    | V    | V    | V     | V
-#	S-> PGI -> PGT -> PGO -> DONE
-#
+#            R          R          R                       R    = Resume
+#	    ___        ___        ___                      S    = Start
+#	    | V        | V        | V                     V(p) = Verify same compiler of phase
+#	S-> PGI -----> PGT        PGO ------> DONE
+#           ^          |            ^         |  ^
+#           |          |            | y       |  |
+#           |          |            |         |  | R|y
+#           |          |----------> v(p) <----|  |
+#           |                       | |          |
+#           |_______________________| +----------+
+#                      n
+
+	if [[ -e "${pgo_compiler_fingerprint_file}" ]] ; then
+		local pgo_slot="$(gcc-version)"
+		local triple=$(${CC} -dumpmachine)
+		local actual="${pgo_slot};${triple}"
+		local expected=$(cat "${pgo_compiler_fingerprint_file}")
+		if [[ "${actual}" != "${expected}" ]] ; then
+einfo "Detected compiler mismatch.  Restarting at PGI."
+			pgo_phase="${PGO_PHASE_PGI}"
+		fi
+	fi
+
 	if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_y_configopt "CONFIG_GCOV_KERNEL"
@@ -5398,6 +5451,20 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 			ot-kernel_y_configopt "CONFIG_GCOV_FORMAT_AUTODETECT"
 		fi
 		ot-kernel_n_configopt "CONFIG_COMPILE_TEST"
+
+	# For profile compatibility checks
+	# Profile compatibility based on a bytestring of the compiler version.
+	# 1 byte contains the hexadecimal major version.
+	# 2 bytes contains the minor version.
+	# 1 byte contains e for experimental build, or R for release version.
+	# Examples:
+	# 400e - 4.00.x experimental
+	# A01R - 10.1.x release
+		local pgo_slot="$(gcc-version)"
+		local triple=$(${CC} -dumpmachine)
+		local fingerprint="${pgo_slot};${triple}"
+		mkdir -p $(dirname "${pgo_compiler_fingerprint_file}")
+		echo "${fingerprint}" > "${pgo_compiler_fingerprint_file}"
 	elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") ]] && (( ${n_gcda} > 0 )) ; then
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_n_configopt "CONFIG_GCOV_KERNEL"
@@ -8021,8 +8088,8 @@ einfo "Using Clang ${llvm_slot}"
 			"HOSTLD=ld.lld"
 		)
 		# For flag-o-matic
-		CC="clang"
-		CXX="clang++"
+		CC="${CHOST}-clang-${llvm_slot}"
+		CXX="${CHOST}-clang++-${llvm_slot}"
 		LD="ld.lld"
 	else
 #		if has_version "sys-devel/gcc-kpgo" && use pgo ; then
@@ -8050,8 +8117,8 @@ einfo "Using Clang ${llvm_slot}"
 			"HOSTLD=${CBUILD}-ld.bfd"
 		)
 		# For flag-o-matic
-		CC="gcc"
-		CXX="g++"
+		CC="${CHOST}-gcc-${gcc_slot}"
+		CXX="${CHOST}-g++-${gcc_slot}"
 		LD="ld.bfd"
 	fi
 
@@ -8407,6 +8474,7 @@ ot-kernel_build_kernel() {
 		local pgo_phase # pgophase file
 		local makefile_pgo_phase
 		if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ; then
+			local pgo_compiler_fingerprint_file="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/compiler_fingerprint"
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
 			local profraw_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profraw"
 			local profdata_dpath="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/vmlinux.profdata"
@@ -8476,6 +8544,7 @@ einfo "Resuming as PGI since no profile generated"
 				   ot-kernel_use pgo \
 			) \
 		; then
+			local pgo_compiler_fingerprint_file="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/compiler_fingerprint"
 			local pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
 			local pgo_profile_dir="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc"
 			local pgo_phase="${PGO_PHASE_UNK}"

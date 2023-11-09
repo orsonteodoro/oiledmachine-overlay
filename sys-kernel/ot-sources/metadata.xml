@@ -276,6 +276,10 @@
       * The FORCE_PGO_PHASE environment variable may be used to unbreak or disable PGO.
       * PGI, PGT, PGO, PG0 are valid values.  PG0 means to disable/skip PGO.
       * PDI, PDT, PDO, PD0 are deprecated and will be removed in the next minor version.
+      * The ot-kernel.eclass contains a picture diagram of the state diagram.
+      * A verification of major.minor version is needed for profile compatibility.
+      * Restarting the process be required if the compiler's major and minor version is different.
+      * It is not recommeded to update or change the compiler to the middle during the PGO process.
 
     See also:
 
