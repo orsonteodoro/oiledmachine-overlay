@@ -976,8 +976,6 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-a1d32ad.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a1d32ad-fix-for-6.6.0-git-6bc986a.patch"
-#eerror "See ${path}"
-#		die
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
