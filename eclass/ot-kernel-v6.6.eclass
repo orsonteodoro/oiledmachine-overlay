@@ -27,7 +27,6 @@ esac
 #LINUX_SOURCES_FALLBACK_COMMIT="8bc9e6515183935fa0cccaf67455c439afe4982b" # 2023-10-31 18:50:13 -1000
 # PV is for 9999 (live) context check
 if [[ "${PV}" =~ "9999" ]] ; then
-	KERNEL_RELEASE_DATE="99999999"
 	RC_PV=""
 	# MY_PV is in ver_test context
 	if [[ -n "${RC_PV}" ]] ; then
@@ -36,10 +35,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 		MY_PV=$(ver_cut 1-3 "${PV}")
 	fi
 else
-	KERNEL_RELEASE_DATE="20231029" # of first stable release
 	RC_PV=""
 	MY_PV="${PV}" # ver_test context
 fi
+KERNEL_RELEASE_DATE="20231029" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.6/tools/build/feature/Makefile#L331
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
