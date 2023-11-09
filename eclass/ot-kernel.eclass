@@ -5337,7 +5337,7 @@ eerror
 				"${ESYSROOT}/usr/lib/llvm/${clang_slot}/include/llvm/ProfileData/InstrProfData.inc" \
 				| cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}"
-			local triple=$(${CC} -dumpmachine)
+			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 			local actual="${pgo_slot};${triple}"
 			local expected=$(cat "${profdata_dpath}")
 			if [[ "${actual}" != "${expected}" ]] ; then
@@ -5378,12 +5378,16 @@ ewarn
 	# For profile compatibility checks
 	# Profile compatibility based on either specific .profraw version or
 	# flexible merged .prodata version.
-			local compiler_pv="$(gcc-version)"
-			local triple=$(${CC} -dumpmachine)
-			local fingerprint="${compiler_pv};${triple}"
+			local clang_slot=$(clang-major-version)
+			local sys_index_ver=$(grep -E \
+				-e "INSTR_PROF_INDEX_VERSION [0-9]+" \
+				"${ESYSROOT}/usr/lib/llvm/${clang_slot}/include/llvm/ProfileData/InstrProfData.inc" \
+				| cut -f 3 -d " ")
+			local pgo_slot="${sys_index_ver}"
+			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
+			local fingerprint="${pgo_slot};${triple}"
 			mkdir -p $(dirname "${pgo_compiler_fingerprint_file}")
 			echo "${fingerprint}" > "${pgo_compiler_fingerprint_file}"
-
 		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 einfo "Forcing PGO flags and config"
 
@@ -5433,8 +5437,19 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 #                      n
 
 	if [[ -e "${pgo_compiler_fingerprint_file}" ]] ; then
-		local pgo_slot="$(gcc-version)"
-		local triple=$(${CC} -dumpmachine)
+		local compile_major_pv="$(gcc-major-version)"
+		local compiler_pv="$(gcc-version)" # major.minor
+		local raw_pv=$(best_version "=sys-devel/gcc-${compile_major_pv}*" \
+			| sed -e "s|sys-devel/gcc-||g")
+		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
+		if [[ "${raw_pv}" =~ "9999" ]] ; then
+			# Live unstable ABI.  The commit should also be included.
+			pgo_slot="${raw_pv}"
+		elif [[ "${raw_pv}" =~ "_p" ]] ; then
+			# Live snapshot with unstable ABI.
+			pgo_slot="${raw_pv}"
+		fi
+		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 		local actual="${pgo_slot};${triple}"
 		local expected=$(cat "${pgo_compiler_fingerprint_file}")
 		if [[ "${actual}" != "${expected}" ]] ; then
@@ -5460,8 +5475,19 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 	# Examples:
 	# 400e - 4.00.x experimental
 	# A01R - 10.1.x release
-		local pgo_slot="$(gcc-version)"
-		local triple=$(${CC} -dumpmachine)
+		local compile_major_pv="$(gcc-major-version)"
+		local compiler_pv="$(gcc-version)" # major.minor
+		local raw_pv=$(best_version "=sys-devel/gcc-${compile_major_pv}*" \
+			| sed -e "s|sys-devel/gcc-||g")
+		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}")
+		if [[ "${raw_pv}" =~ "9999" ]] ; then
+			# Live unstable ABI.  The commit should also be included.
+			pgo_slot="${raw_pv}"
+		elif [[ "${raw_pv}" =~ "_p" ]] ; then
+			# Live snapshot with unstable ABI.
+			pgo_slot="${raw_pv}"
+		fi
+		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 		local fingerprint="${pgo_slot};${triple}"
 		mkdir -p $(dirname "${pgo_compiler_fingerprint_file}")
 		echo "${fingerprint}" > "${pgo_compiler_fingerprint_file}"

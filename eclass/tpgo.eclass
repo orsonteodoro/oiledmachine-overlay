@@ -480,7 +480,7 @@ ewarn
 				# Live snapshot with unstable ABI.
 				pgo_slot="${raw_pv}"
 			fi
-			local triple=$(${_CC} -dumpmachine)
+			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
 			local actual="${pgo_slot};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
@@ -499,7 +499,7 @@ ewarn
 				"${ESYSROOT}/usr/lib/llvm/${clang_major_pv}/include/llvm/ProfileData/InstrProfData.inc" \
 	                        | cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}"
-			local triple=$(${_CC} -dumpmachine)
+			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
 			local actual="${pgo_slot};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
@@ -640,7 +640,7 @@ tpgo_src_install() {
 				# Live snapshot with unstable ABI.
 				pgo_slot="${raw_pv}"
 			fi
-			local triple=$(${_CC} -dumpmachine)
+			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
 			local fingerprint="${pgo_slot};${triple}"
 			echo "gcc ${raw_pv}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die
@@ -655,7 +655,7 @@ tpgo_src_install() {
 				"${ESYSROOT}/usr/lib/llvm/${clang_major_pv}/include/llvm/ProfileData/InstrProfData.inc" \
 	                        | cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}"
-			local triple=$(${_CC} -dumpmachine)
+			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
 			local fingerprint="${pgo_slot};${triple}"
 			echo "clang ${compiler_pv}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die

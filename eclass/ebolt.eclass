@@ -279,13 +279,13 @@ ewarn
 			| sed -e "s|sys-devel/llvm-||g")
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
-			# Live with unstable ABI
+			# Live with unstable ABI.  The commit should also be included.
 			bolt_slot="${raw_pv}"
 		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
-			# Snapshot with unstable ABI
+			# Live snapshot with unstable ABI.
 			bolt_slot="${raw_pv}"
 		fi
-		local triple=$(${_CC} -dumpmachine)
+		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
 		local actual="${bolt_slot};${triple}"
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
@@ -542,13 +542,13 @@ ebolt_src_install() {
 			| sed -e "s|sys-devel/llvm-||g")
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}")
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
-			# Live with unstable ABI
+			# Live with unstable ABI.
 			bolt_slot="${raw_pv}"
 		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
-			# Snapshot with unstable ABI
+			# Live snapshot with unstable ABI.
 			bolt_slot="${raw_pv}"
 		fi
-		local triple=$(${_CC} -dumpmachine)
+		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
 		local fingerprint="${bolt_slot};${triple}"
 		echo "llvm-bolt ${raw_pv}" \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
