@@ -339,7 +339,8 @@ einfo "Removing ccache from PATH to prevent override by system's clang..."
 			| tr "\n" ":")
 	fi
 
-	if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] ; then
+# Unbreak dev-libs/rocm-device-libs
+	if [[ "${LLVM_ROC_PGO_TRAINING}" == "1" ]] || true ; then
 	# Allow to create and write a PGO profile.
 		MULTILIB_ABI_FLAG=""
 		local path="/var/lib/pgo-profiles/sys-devel/llvm-roc/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
