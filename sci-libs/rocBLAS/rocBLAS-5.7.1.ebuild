@@ -3,6 +3,31 @@
 
 EAPI=8
 
+# Error:
+
+# Traceback (most recent call last):
+#   File "/usr/lib/python3.10/site-packages/loky/process_executor.py", line 463, in _process_worker
+#     r = call_item()
+#   File "/usr/lib/python3.10/site-packages/loky/process_executor.py", line 291, in __call__
+#     return self.fn(*self.args, **self.kwargs)
+#   File "/usr/lib/python3.10/site-packages/joblib/parallel.py", line 589, in __call__
+#     return [func(*args, **kwargs)
+#   File "/usr/lib/python3.10/site-packages/joblib/parallel.py", line 589, in <listcomp>
+#     return [func(*args, **kwargs)
+#   File "//usr/lib64/rocm/5.7/lib/python3.10/site-packages/Tensile/Parallel.py", line 53, in pcallWithGlobalParamsMultiArg
+#     return f(*args)
+#   File "//usr/lib64/rocm/5.7/lib/python3.10/site-packages/Tensile/TensileCreateLibrary.py", line 234, in buildSourceCodeObjectFile
+#     out = subprocess.check_output(compileArgs, stderr=subprocess.STDOUT)
+#   File "/usr/lib/python3.10/subprocess.py", line 421, in check_output
+#     return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+#   File "/usr/lib/python3.10/subprocess.py", line 503, in run
+#     with Popen(*popenargs, **kwargs) as process:
+#   File "/usr/lib/python3.10/subprocess.py", line 971, in __init__
+#     self._execute_child(args, executable, preexec_fn, close_fds,
+#   File "/usr/lib/python3.10/subprocess.py", line 1863, in _execute_child
+#     raise child_exception_type(errno_num, err_msg, err_filename)
+# OSError: [Errno 8] Exec format error: '//usr/lib64/rocm/5.7/bin/hipcc.bat'
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
