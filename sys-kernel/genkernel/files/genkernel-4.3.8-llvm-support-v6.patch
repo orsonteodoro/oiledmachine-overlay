@@ -27,9 +27,9 @@ v2 - Added utils support (experimental)
 v1.1 Utilize more of the llvm toolchain
 v1   Added llvm support
 
-diff -urp genkernel-4.2.3.orig/arch/ppc64le/config.sh genkernel-4.2.3/arch/ppc64le/config.sh
---- genkernel-4.2.3.orig/arch/ppc64le/config.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/arch/ppc64le/config.sh	2021-09-24 15:50:18.420398288 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/arch/ppc64le/config.sh genkernel-4.3.8/arch/ppc64le/config.sh
+--- genkernel-4.3.8.orig/arch/ppc64le/config.sh	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/arch/ppc64le/config.sh	2023-11-09 16:37:57.381239712 -0800
 @@ -14,13 +14,53 @@ DEFAULT_COMPRESS_INITRD_TYPE=best
  
  DEFAULT_MAKEOPTS="-j2"
@@ -89,9 +89,9 @@ diff -urp genkernel-4.2.3.orig/arch/ppc64le/config.sh genkernel-4.2.3/arch/ppc64
 +DEFAULT_UTILS_LLVM_RANLIB=llvm-ranlib
 +DEFAULT_UTILS_LLVM_READELF=llvm-readelf
 +DEFAULT_UTILS_LLVM_STRIP=llvm-strip
-diff -urp genkernel-4.2.3.orig/defaults/config.sh genkernel-4.2.3/defaults/config.sh
---- genkernel-4.2.3.orig/defaults/config.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/defaults/config.sh	2021-09-24 15:50:18.421398288 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/defaults/config.sh genkernel-4.3.8/defaults/config.sh
+--- genkernel-4.3.8.orig/defaults/config.sh	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/defaults/config.sh	2023-11-09 16:37:57.381239712 -0800
 @@ -41,28 +41,52 @@ DEFAULT_KERNEL_AS=as
  DEFAULT_KERNEL_AR=ar
  DEFAULT_KERNEL_CC=gcc
@@ -148,10 +148,10 @@ diff -urp genkernel-4.2.3.orig/defaults/config.sh genkernel-4.2.3/defaults/confi
 +
  PORTAGE_CHOST="$(portageq envvar CHOST)"
  DEFAULT_CHOST="${PORTAGE_CHOST:-$(${DEFAULT_UTILS_CC} -dumpmachine 2>/dev/null)}"
-diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
---- genkernel-4.2.3.orig/gen_cmdline.sh	2021-09-24 15:49:34.264396833 -0700
-+++ genkernel-4.2.3/gen_cmdline.sh	2021-09-24 16:06:33.933430434 -0700
-@@ -85,6 +85,17 @@ longusage() {
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/gen_cmdline.sh genkernel-4.3.8/gen_cmdline.sh
+--- genkernel-4.3.8.orig/gen_cmdline.sh	2023-11-09 16:37:43.353239873 -0800
++++ genkernel-4.3.8/gen_cmdline.sh	2023-11-09 16:37:57.381239712 -0800
+@@ -88,6 +88,17 @@ longusage() {
    echo "				Prefix to kernel module destination, modules"
    echo "				will be installed in <prefix>/lib/modules"
    echo "  Low-Level Compile settings"
@@ -168,8 +168,8 @@ diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
 +  echo "	--scs			Use Clang/LLVM to build a SCS protected kernel"
    echo "	--cross-compile=<target-triplet>"
    echo "				Target triple (i.e. aarch64-linux-gnu) to build for"
-   echo "	--kernel-as=<assembler>	Assembler to use for kernel"
-@@ -875,6 +886,38 @@ parse_cmdline() {
+   echo "	--kernel-cross-compile=<target-triplet>"
+@@ -919,6 +930,38 @@ parse_cmdline() {
  		--config=*)
  			print_info 3 "CMD_GK_CONFIG: "${*#*=}""
  			;;
@@ -208,10 +208,10 @@ diff -urp genkernel-4.2.3.orig/gen_cmdline.sh genkernel-4.2.3/gen_cmdline.sh
  		--nice)
  			CMD_NICE=10
  			print_info 3 "CMD_NICE: ${CMD_NICE}"
-diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
---- genkernel-4.2.3.orig/gen_compile.sh	2021-09-24 15:49:34.265396833 -0700
-+++ genkernel-4.2.3/gen_compile.sh	2021-09-24 15:50:18.422398288 -0700
-@@ -112,11 +112,22 @@ compile_generic() {
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/gen_compile.sh genkernel-4.3.8/gen_compile.sh
+--- genkernel-4.3.8.orig/gen_compile.sh	2023-11-09 16:37:43.353239873 -0800
++++ genkernel-4.3.8/gen_compile.sh	2023-11-09 16:37:57.381239712 -0800
+@@ -105,11 +105,22 @@ compile_generic() {
  			compile_cmd+=( "ARCH='${KERNEL_ARCH}'" )
  
  			local tc_var
@@ -235,9 +235,9 @@ diff -urp genkernel-4.2.3.orig/gen_compile.sh genkernel-4.2.3/gen_compile.sh
  			compile_cmd+=( "HOSTAR='$(tc-getBUILD_AR)'" )
  			compile_cmd+=( "HOSTCC='$(tc-getBUILD_CC)'" )
  			compile_cmd+=( "HOSTCXX='$(tc-getBUILD_CXX)'" )
-diff -urp genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configkernel.sh
---- genkernel-4.2.3.orig/gen_configkernel.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_configkernel.sh	2021-09-24 16:07:38.154432550 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/gen_configkernel.sh genkernel-4.3.8/gen_configkernel.sh
+--- genkernel-4.3.8.orig/gen_configkernel.sh	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/gen_configkernel.sh	2023-11-09 16:37:57.381239712 -0800
 @@ -1031,6 +1031,98 @@ config_kernel() {
  		fi
  	fi
@@ -337,26 +337,33 @@ diff -urp genkernel-4.2.3.orig/gen_configkernel.sh genkernel-4.2.3/gen_configker
  	if [ -f "${KCONFIG_MODIFIED_MARKER}" ]
  	then
  		if isTrue "${OLDCONFIG}"
-diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determineargs.sh
---- genkernel-4.2.3.orig/gen_determineargs.sh	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gen_determineargs.sh	2021-09-24 15:50:18.423398288 -0700
-@@ -293,6 +293,26 @@ determine_output_filenames() {
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/gen_determineargs.sh genkernel-4.3.8/gen_determineargs.sh
+--- genkernel-4.3.8.orig/gen_determineargs.sh	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/gen_determineargs.sh	2023-11-09 16:48:57.041232124 -0800
+@@ -293,6 +293,33 @@ determine_output_filenames() {
  	done
  }
  
 +kernel_default() {
 +	local gcc_default="${1}"
 +	local llvm_default="${2}"
-+	if [[ -n "${CMD_LLVM_KERNEL}" && "${CMD_LLVM_KERNEL}" == "1" ]] ; then
-+		echo "${llvm_default}"
++
++	if [[ -n "${KERNEL_CROSS_COMPILE}" ]] ; then
++		echo "${KERNEL_CROSS_COMPILE}-${gcc_default}"
 +	else
-+		echo "${gcc_default}"
++		if [[ -n "${CMD_LLVM_KERNEL}" && "${CMD_LLVM_KERNEL}" == "1" ]] ; then
++			echo "${llvm_default}"
++		else
++			echo "${gcc_default}"
++		fi
 +	fi
++
 +}
 +
 +utils_default() {
 +	local gcc_default="${1}"
 +	local llvm_default="${2}"
++
 +	if [[ -n "${CMD_LLVM_UTILS}" && "${CMD_LLVM_UTILS}" == "1" ]] ; then
 +		echo "${llvm_default}"
 +	else
@@ -367,32 +374,32 @@ diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determin
  determine_real_args() {
  	# Unset known variables which will interfere with _tc-getPROG().
  	local tc_var tc_varname_build tc_vars=$(get_tc_vars)
-@@ -353,32 +373,33 @@ determine_real_args() {
- 	set_config_with_override STRING CHOST                                 CMD_CHOST                                 "${DEFAULT_CHOST}"
+@@ -354,32 +381,33 @@ determine_real_args() {
  	set_config_with_override STRING MAKEOPTS                              CMD_MAKEOPTS                              "${DEFAULT_MAKEOPTS}"
  	set_config_with_override STRING NICE                                  CMD_NICE                                  "10"
--	set_config_with_override STRING KERNEL_AS                             CMD_KERNEL_AS                             "${DEFAULT_KERNEL_AS}"
--	set_config_with_override STRING KERNEL_AR                             CMD_KERNEL_AR                             "${DEFAULT_KERNEL_AR}"
--	set_config_with_override STRING KERNEL_CC                             CMD_KERNEL_CC                             "${DEFAULT_KERNEL_CC}"
+ 	set_config_with_override STRING KERNEL_CROSS_COMPILE                  CMD_KERNEL_CROSS_COMPILE
+-	set_config_with_override STRING KERNEL_AS                             CMD_KERNEL_AS                             "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_AS}" || echo "${DEFAULT_KERNEL_AS}")"
+-	set_config_with_override STRING KERNEL_AR                             CMD_KERNEL_AR                             "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_AR}" || echo "${DEFAULT_KERNEL_AR}")"
+-	set_config_with_override STRING KERNEL_CC                             CMD_KERNEL_CC                             "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_CC}" || echo "${DEFAULT_KERNEL_CC}")"
 +	set_config_with_override STRING KERNEL_AS                             CMD_KERNEL_AS                             $(kernel_default "${DEFAULT_KERNEL_AS}" "${DEFAULT_KERNEL_LLVM_AS}")
 +	set_config_with_override STRING KERNEL_AR                             CMD_KERNEL_AR                             $(kernel_default "${DEFAULT_KERNEL_AR}" "${DEFAULT_KERNEL_LLVM_AR}")
 +	set_config_with_override STRING KERNEL_CC                             CMD_KERNEL_CC                             $(kernel_default "${DEFAULT_KERNEL_CC}" "${DEFAULT_KERNEL_LLVM_CC}")
 +	set_config_with_override STRING KERNEL_CLANG_FLAGS                    CMD_KERNEL_CLANG_FLAGS                    "${DEFAULT_KERNEL_LLVM_CLANG_FLAGS}"
- 	set_config_with_override STRING KERNEL_CFLAGS                         CMD_KERNEL_CFLAGS                         "${DEFAULT_KERNEL_CFLAGS}"
  	set_config_with_override STRING KERNEL_CXX                            CMD_KERNEL_CXX                            "${DEFAULT_KERNEL_CXX}"
--	set_config_with_override STRING KERNEL_LD                             CMD_KERNEL_LD                             "${DEFAULT_KERNEL_LD}"
--	set_config_with_override STRING KERNEL_NM                             CMD_KERNEL_NM                             "${DEFAULT_KERNEL_NM}"
+ 	set_config_with_override STRING KERNEL_CFLAGS                         CMD_KERNEL_CFLAGS                         "${DEFAULT_KERNEL_CFLAGS}"
+-	set_config_with_override STRING KERNEL_LD                             CMD_KERNEL_LD                             "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_LD}" || echo "${DEFAULT_KERNEL_LD}")"
 +	set_config_with_override STRING KERNEL_LD                             CMD_KERNEL_LD                             $(kernel_default "${DEFAULT_KERNEL_LD}" "${DEFAULT_KERNEL_LLVM_LD}")
-+	set_config_with_override STRING KERNEL_NM                             CMD_KERNEL_NM                             $(kernel_default "${DEFAULT_KERNEL_NM}" "${DEFAULT_KERNEL_LLVM_NM}")
  	set_config_with_override STRING KERNEL_MAKE                           CMD_KERNEL_MAKE                           "${DEFAULT_KERNEL_MAKE}"
--	set_config_with_override STRING KERNEL_OBJCOPY                        CMD_KERNEL_OBJCOPY                        "${DEFAULT_KERNEL_OBJCOPY}"
--	set_config_with_override STRING KERNEL_OBJDUMP                        CMD_KERNEL_OBJDUMP                        "${DEFAULT_KERNEL_OBJDUMP}"
--	set_config_with_override STRING KERNEL_RANLIB                         CMD_KERNEL_RANLIB                         "${DEFAULT_KERNEL_RANLIB}"
--	set_config_with_override STRING KERNEL_READELF                        CMD_KERNEL_READELF                        "${DEFAULT_KERNEL_READELF}"
--	set_config_with_override STRING KERNEL_STRIP                          CMD_KERNEL_STRIP                          "${DEFAULT_KERNEL_STRIP}"
+-	set_config_with_override STRING KERNEL_NM                             CMD_KERNEL_NM                             "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_NM}" || echo "${DEFAULT_KERNEL_NM}")"
+-	set_config_with_override STRING KERNEL_OBJCOPY                        CMD_KERNEL_OBJCOPY                        "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_OBJCOPY}" || echo "${DEFAULT_KERNEL_OBJCOPY}")"
+-	set_config_with_override STRING KERNEL_OBJDUMP                        CMD_KERNEL_OBJDUMP                        "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_OBJDUMP}" || echo "${DEFAULT_KERNEL_OBJDUMP}")"
+-	set_config_with_override STRING KERNEL_RANLIB                         CMD_KERNEL_RANLIB                         "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_RANLIB}" || echo "${DEFAULT_KERNEL_RANLIB}")"
+-	set_config_with_override STRING KERNEL_READELF                        CMD_KERNEL_READELF                        "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_READELF}" || echo "${DEFAULT_KERNEL_READELF}")"
+-	set_config_with_override STRING KERNEL_STRIP                          CMD_KERNEL_STRIP                          "$([[ -n "${KERNEL_CROSS_COMPILE}" ]] && echo "${KERNEL_CROSS_COMPILE}-${DEFAULT_KERNEL_STRIP}" || echo "${DEFAULT_KERNEL_STRIP}")"
 -	set_config_with_override STRING UTILS_AS                              CMD_UTILS_AS                              "${DEFAULT_UTILS_AS}"
 -	set_config_with_override STRING UTILS_AR                              CMD_UTILS_AR                              "${DEFAULT_UTILS_AR}"
 -	set_config_with_override STRING UTILS_CC                              CMD_UTILS_CC                              "${DEFAULT_UTILS_CC}"
++	set_config_with_override STRING KERNEL_NM                             CMD_KERNEL_NM                             $(kernel_default "${DEFAULT_KERNEL_NM}" "${DEFAULT_KERNEL_LLVM_NM}")
 +	set_config_with_override STRING KERNEL_OBJCOPY                        CMD_KERNEL_OBJCOPY                        $(kernel_default "${DEFAULT_KERNEL_OBJCOPY}" "${DEFAULT_KERNEL_LLVM_OBJCOPY}")
 +	set_config_with_override STRING KERNEL_OBJDUMP                        CMD_KERNEL_OBJDUMP                        $(kernel_default "${DEFAULT_KERNEL_OBJDUMP}" "${DEFAULT_KERNEL_LLVM_OBJDUMP}")
 +	set_config_with_override STRING KERNEL_RANLIB                         CMD_KERNEL_RANLIB                         $(kernel_default "${DEFAULT_KERNEL_RANLIB}" "${DEFAULT_KERNEL_LLVM_RANLIB}")
@@ -422,12 +429,12 @@ diff -urp genkernel-4.2.3.orig/gen_determineargs.sh genkernel-4.2.3/gen_determin
  
  	set_config_with_override STRING CROSS_COMPILE                         CMD_CROSS_COMPILE
  	set_config_with_override STRING BOOTDIR                               CMD_BOOTDIR                               "/boot"
-diff -urp genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
---- genkernel-4.2.3.orig/genkernel	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/genkernel	2021-09-24 15:50:18.424398288 -0700
-@@ -352,6 +352,15 @@ if isTrue "${BUILD_RAMDISK}"
- then
- 	print_info 1 '' 1 0
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/genkernel genkernel-4.3.8/genkernel
+--- genkernel-4.3.8.orig/genkernel	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/genkernel	2023-11-09 16:37:57.381239712 -0800
+@@ -362,6 +362,15 @@ then
+ 		fi
+ 	fi
  
 +	if [[ -n "${CMD_LLVM_UTILS}" && "${CMD_LLVM_UTILS}" == "1" ]] ; then
 +		if [ -n "${CMD_LLVM_SLOT}" ] ; then
@@ -441,10 +448,10 @@ diff -urp genkernel-4.2.3.orig/genkernel genkernel-4.2.3/genkernel
  	# Compile initramfs
  	create_initramfs
  else
-diff -urp genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
---- genkernel-4.2.3.orig/genkernel.8	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/genkernel.8	2021-09-24 15:50:18.424398288 -0700
-@@ -358,6 +358,51 @@ Prefix to kernel module destination, mod
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/genkernel.8 genkernel-4.3.8/genkernel.8
+--- genkernel-4.3.8.orig/genkernel.8	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/genkernel.8	2023-11-09 16:37:57.381239712 -0800
+@@ -356,6 +356,51 @@ Prefix to kernel module destination, mod
  .RE
  .SS "LOW\-LEVEL COMPILATION OPTIONS"
  .PP
@@ -496,9 +503,9 @@ diff -urp genkernel-4.2.3.orig/genkernel.8 genkernel-4.2.3/genkernel.8
  \fB\-\-cross\-compile\fR=<target triplet>
  .RS 4
  Target triple (i\&.e\&. aarch64\-linux\-gnu) to build for\&. Only needed when the system running genkernel has a different architecture like the system which should boot the created kernel/initramfs\&.
-diff -urp genkernel-4.2.3.orig/gkbuilds/busybox.gkbuild genkernel-4.2.3/gkbuilds/busybox.gkbuild
---- genkernel-4.2.3.orig/gkbuilds/busybox.gkbuild	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gkbuilds/busybox.gkbuild	2021-09-24 15:50:18.425398288 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/gkbuilds/busybox.gkbuild genkernel-4.3.8/gkbuilds/busybox.gkbuild
+--- genkernel-4.3.8.orig/gkbuilds/busybox.gkbuild	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/gkbuilds/busybox.gkbuild	2023-11-09 16:37:57.381239712 -0800
 @@ -1,7 +1,28 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -528,9 +535,9 @@ diff -urp genkernel-4.2.3.orig/gkbuilds/busybox.gkbuild genkernel-4.2.3/gkbuilds
  	default
  
  	# flag cleanup
-diff -urp genkernel-4.2.3.orig/gkbuilds/lvm.gkbuild genkernel-4.2.3/gkbuilds/lvm.gkbuild
---- genkernel-4.2.3.orig/gkbuilds/lvm.gkbuild	2021-07-08 14:09:46.000000000 -0700
-+++ genkernel-4.2.3/gkbuilds/lvm.gkbuild	2021-09-24 15:50:18.425398288 -0700
+diff -x '*.orig' -x '*.rej' -urpN genkernel-4.3.8.orig/gkbuilds/lvm.gkbuild genkernel-4.3.8/gkbuilds/lvm.gkbuild
+--- genkernel-4.3.8.orig/gkbuilds/lvm.gkbuild	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/gkbuilds/lvm.gkbuild	2023-11-09 16:37:57.381239712 -0800
 @@ -1,7 +1,28 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2

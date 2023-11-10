@@ -486,11 +486,11 @@ src_prepare() {
 	fi
 
 	if use crypt_root_plain ; then
-		eapply "${FILESDIR}/${PN}-4.3.6-dmcrypt-plain-support-v3.patch" # oiledmachine-overlay patch
+		eapply "${FILESDIR}/${PN}-4.3.8-dmcrypt-plain-support-v3.patch" # oiledmachine-overlay patch
 	fi
 
 	if use llvm ; then
-		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support-v6.patch" # oiledmachine-overlay patch
+		eapply "${FILESDIR}/${PN}-4.3.8-llvm-support-v6.patch" # oiledmachine-overlay patch
 	fi
 
 	if use clang-pgo ; then

@@ -509,7 +509,7 @@ eerror
 		# prompt) and the encrypted device referencing issue (destroying the plausable
 		# deniability of plain).
 		eapply "${FILESDIR}/${PN}-4.3.6-entry-r1.patch" # oiledmachine-overlay patch
-		eapply "${FILESDIR}/${PN}-4.3.6-dmcrypt-plain-support-v3.patch" # oiledmachine-overlay patch
+		eapply "${FILESDIR}/${PN}-4.3.8-dmcrypt-plain-support-v3.patch" # oiledmachine-overlay patch
 		eapply "${FILESDIR}/${PN}-4.3.6-fallback.patch" # oiledmachine-overlay patch
 		ewarn
 		ewarn "The entry USE flag is in testing."
@@ -527,7 +527,7 @@ eerror
 	fi
 
 	if use llvm ; then
-		eapply "${FILESDIR}/${PN}-4.2.3-llvm-support-v6.patch" # oiledmachine-overlay patch
+		eapply "${FILESDIR}/${PN}-4.3.8-llvm-support-v6.patch" # oiledmachine-overlay patch
 	fi
 
 	if use clang-pgo ; then

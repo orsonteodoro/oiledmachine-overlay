@@ -1,7 +1,7 @@
-diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/initrd.scripts
---- genkernel-4.3.6.orig/defaults/initrd.scripts	2023-07-28 08:42:05.000000000 -0700
-+++ genkernel-4.3.6/defaults/initrd.scripts	2023-10-12 16:28:44.316783328 -0700
-@@ -1672,7 +1672,7 @@ start_volumes() {
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.3.8.orig/defaults/initrd.scripts genkernel-4.3.8/defaults/initrd.scripts
+--- genkernel-4.3.8.orig/defaults/initrd.scripts	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/defaults/initrd.scripts	2023-11-09 16:33:37.029242707 -0800
+@@ -1747,7 +1747,7 @@ start_volumes() {
  			then
  				good_msg "ZFS pool ${ZFS_POOL} already imported."
  
@@ -10,7 +10,7 @@ diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/
  				then
  					good_msg "LUKS detected. Reimporting ${ZFS_POOL} ..."
  
-@@ -1830,7 +1830,7 @@ openLUKS() {
+@@ -1906,7 +1906,7 @@ openLUKS() {
  	local KEY_ERROR=0 KEYDEV_ERROR=0
  	local mntheader="/mnt/header/" mntkey="/mnt/key/" crypt_filter_ret=
  
@@ -19,7 +19,7 @@ diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/
  	then
  		bad_msg "'crypt_${1}' kernel command-line argument is not set!"
  		exit 1
-@@ -1879,7 +1879,7 @@ openLUKS() {
+@@ -1955,7 +1955,7 @@ openLUKS() {
  			KEYDEV_ERROR=0
  		else
  			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
@@ -28,7 +28,7 @@ diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/
  			then
  				bad_msg "Failed to find LUKS device. If crypt_${1} kernel command-line argument is correct you are probably missing kernel support for your storage!" ${CRYPT_SILENT}
  				DEV_ERROR=1
-@@ -1955,7 +1955,7 @@ openLUKS() {
+@@ -2031,7 +2031,7 @@ openLUKS() {
  					fi
  				fi
  
@@ -37,7 +37,7 @@ diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/
  				then
  					bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
  					DEV_ERROR=1
-@@ -1966,7 +1966,7 @@ openLUKS() {
+@@ -2042,7 +2042,7 @@ openLUKS() {
  				good_msg "${LUKS_HEADER} on device ${REAL_LUKS_HEADERDEV} found" ${CRYPT_SILENT}
  
  				cryptsetup_options="${cryptsetup_options} --header ${mntheader}${LUKS_HEADER}"
@@ -46,21 +46,21 @@ diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/
  			then
  				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
  				DEV_ERROR=1
-@@ -2068,7 +2068,12 @@ openLUKS() {
+@@ -2157,7 +2157,12 @@ openLUKS() {
  			fi
  
  			# At this point, {header,key}file or not, we're ready!
--			crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
+-			crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}" "${ASK_PASS}"
 +			if [ -n "${CRYPT_ROOT_PLAIN}" ]
 +			then
-+				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} plainOpen ${CRYPT_ROOT_PLAIN} ${LUKS_NAME}"
++				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} plainOpen ${CRYPT_ROOT_PLAIN} ${LUKS_NAME}" "${ASK_PASS}"
 +			else
-+				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
++				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}" "${ASK_PASS}"
 +			fi
  			crypt_filter_ret=$?
  
  			[ -e /dev/tty.org ] \
-@@ -2503,7 +2508,7 @@ start_LUKS_root() {
+@@ -2592,7 +2597,7 @@ start_LUKS_root() {
  	[ -n "${CRYPT_ROOT_HEADER}" -a -z "${CRYPT_ROOT_HEADERDEV}" ] \
  		&& bootstrapHeader "ROOT"
  
@@ -69,12 +69,10 @@ diff -urp genkernel-4.3.6.orig/defaults/initrd.scripts genkernel-4.3.6/defaults/
  	then
  		openLUKS "root"
  		if [ -n "${REAL_ROOT}" ]
-Only in genkernel-4.3.6/defaults: initrd.scripts.orig
-Only in genkernel-4.3.6/defaults: initrd.scripts.rej
-diff -urp genkernel-4.3.6.orig/defaults/linuxrc genkernel-4.3.6/defaults/linuxrc
---- genkernel-4.3.6.orig/defaults/linuxrc	2023-07-28 08:42:05.000000000 -0700
-+++ genkernel-4.3.6/defaults/linuxrc	2023-10-12 16:23:15.536787110 -0700
-@@ -221,6 +221,10 @@ do
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.3.8.orig/defaults/linuxrc genkernel-4.3.8/defaults/linuxrc
+--- genkernel-4.3.8.orig/defaults/linuxrc	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/defaults/linuxrc	2023-11-09 16:29:36.901245469 -0800
+@@ -233,6 +233,10 @@ do
  		crypt_root_options=*)
  			CRYPT_ROOT_OPTIONS=$(echo ${CRYPT_ROOT_OPTIONS} ${x#*=} | sed -e 's/,/ /g')
  		;;
@@ -85,9 +83,9 @@ diff -urp genkernel-4.3.6.orig/defaults/linuxrc genkernel-4.3.6/defaults/linuxrc
  		crypt_swap=*)
  			CRYPT_SWAP=${x#*=}
  			USE_CRYPTSETUP=1
-diff -urp genkernel-4.3.6.orig/defaults/unlock-luks.sh genkernel-4.3.6/defaults/unlock-luks.sh
---- genkernel-4.3.6.orig/defaults/unlock-luks.sh	2023-07-28 08:42:05.000000000 -0700
-+++ genkernel-4.3.6/defaults/unlock-luks.sh	2023-10-12 16:23:15.536787110 -0700
+diff -x '*.rej' -x '*.orig' -urpN genkernel-4.3.8.orig/defaults/unlock-luks.sh genkernel-4.3.8/defaults/unlock-luks.sh
+--- genkernel-4.3.8.orig/defaults/unlock-luks.sh	2023-10-27 19:00:13.000000000 -0700
++++ genkernel-4.3.8/defaults/unlock-luks.sh	2023-11-09 16:29:36.901245469 -0800
 @@ -50,7 +50,7 @@ main() {
  	cryptsetup_options="$(trim "${cryptsetup_options}")"
  	eval local OPENED_LOCKFILE='"${CRYPT_'${TYPE}'_OPENED_LOCKFILE}"'
