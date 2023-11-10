@@ -661,6 +661,10 @@ rocm_src_configure() {
 	verify_libstdcxx
 	if [[ -n "${_CMAKE_ECLASS}" ]] ; then
 		if [[ "${CXX}" =~ "hipcc" || "${CXX}" =~ "clang++" ]] ; then
+			# For llvm-roc that is still in PGI phase
+			# Fixes:  ld.lld: error: undefined symbol: __gcov_indirect_call
+			append-flags -Wl,-lgcov
+
 			# Prevent configure test issues
 			append-flags \
 				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
