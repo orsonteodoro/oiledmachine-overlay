@@ -320,7 +320,7 @@ echo
 echo "WARN:  You may need to disable ebolt/epgo if the 3 step process is not"
 echo "WARN:  complete and want to merge normally."
 echo
-echo "WARN:  Not doing so may result in sandbox violations."
+echo "WARN:  Not doing so may result in emerge sandbox violations."
 echo
 	if [[ "${CLANG_WIPE_PGO_PROFILES}" == "1" ]] ; then
 		rm -rf /var/lib/pgo-profiles/sys-devel/llvm*
