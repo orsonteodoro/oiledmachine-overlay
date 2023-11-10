@@ -793,8 +793,6 @@ rocm_fix_rpath() {
 		local needs_rpath_patch_libomp=0
 		local needs_rpath_patch_llvm=0
 		local needs_rpath_patch_rocm=0
-einfo "path:  ${path}"
-einfo "file "$(file "${path}")
 		if (( ${is_so} || ${is_exe} )) ; then
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
