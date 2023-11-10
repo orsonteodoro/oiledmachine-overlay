@@ -45,7 +45,7 @@ inherit ot-kernel-v6.6
 # streaming video playback - pass
 # initscript - pass
 # runtime stability note:  may randomly freeze/deadlock during compile + media streaming during short run or long run (6.6)
-# runtime stability note:  no freeze/deadlock during compile + media streaming during short run or long run yet (6.6.1)
+# runtime stability note:  freeze/deadlock during compile within 2 days (6.6.1)
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
