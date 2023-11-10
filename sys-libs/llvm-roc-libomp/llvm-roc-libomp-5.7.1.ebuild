@@ -3,10 +3,6 @@
 
 EAPI=8
 
-# FIXME:
-# CMake Error at /var/tmp/portage/sys-libs/llvm-roc-libomp-5.7.1/work/llvm-project-rocm-5.7.1/openmp/libomptarget/src/CMakeLists.txt:58 (find_library):
-#   Could not find LLVM_OFFLOAD_ARCH using the following names: LLVMOffloadArch
-
 LLVM_TARGETS_CPU_COMPAT=(
 	llvm_targets_X86
 )
@@ -120,7 +116,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda -offload -ompt +ompd -rpc
-r14
+r15
 "
 
 gen_cuda_required_use() {
@@ -294,6 +290,10 @@ gen_nvptx_list() {
 		list="${list:1}"
 		echo "${list}"
 	fi
+}
+
+pkg_setup() {
+	rocm_pkg_setup
 }
 
 src_prepare() {

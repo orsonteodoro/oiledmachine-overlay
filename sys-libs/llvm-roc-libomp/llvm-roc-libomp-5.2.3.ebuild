@@ -101,7 +101,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda -offload -ompt +ompd -rpc
-r14
+r15
 "
 
 gen_cuda_required_use() {
@@ -259,6 +259,10 @@ gen_nvptx_list() {
 		list="${list:1}"
 		echo "${list}"
 	fi
+}
+
+pkg_setup() {
+	rocm_pkg_setup
 }
 
 src_prepare() {
