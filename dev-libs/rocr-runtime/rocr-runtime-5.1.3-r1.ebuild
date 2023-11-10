@@ -27,6 +27,7 @@ LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	+aqlprofile debug system-llvm
+	r2
 "
 CDEPEND="
 	dev-libs/elfutils
@@ -83,6 +84,7 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems

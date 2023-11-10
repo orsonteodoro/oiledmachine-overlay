@@ -26,7 +26,7 @@ CONFIG_CHECK="~HSA_AMD ~HMM_MIRROR ~ZONE_DEVICE ~DRM_AMDGPU ~DRM_AMDGPU_USERPTR"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-r1
+r2
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
@@ -40,6 +40,7 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.6.3
 	>=x11-libs/libdrm-2.4.114[video_cards_amdgpu]
+	dev-util/patchelf
 "
 CMAKE_BUILD_TYPE="Release"
 PATCHES=(

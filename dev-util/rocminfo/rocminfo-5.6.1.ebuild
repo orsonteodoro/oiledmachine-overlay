@@ -24,6 +24,7 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="UoI-NCSA"
 SLOT="${ROCM_SLOT}/${PV}"
+IUSE+=" r2"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 "
@@ -68,6 +69,7 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
