@@ -3,6 +3,10 @@
 
 EAPI=8
 
+# FIXME:
+# CMake Error at /var/tmp/portage/sys-libs/llvm-roc-libomp-5.7.1/work/llvm-project-rocm-5.7.1/openmp/libomptarget/src/CMakeLists.txt:58 (find_library):
+#   Could not find LLVM_OFFLOAD_ARCH using the following names: LLVMOffloadArch
+
 LLVM_TARGETS_CPU_COMPAT=(
 	llvm_targets_X86
 )
@@ -105,7 +109,7 @@ LICENSE="
 "
 # Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.7.0/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 LLVM_TARGETS=(
 	AMDGPU
@@ -619,5 +623,5 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
