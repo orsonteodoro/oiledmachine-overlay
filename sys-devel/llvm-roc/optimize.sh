@@ -155,6 +155,12 @@ echo "Checking if *DEPENDs was installed for slot :${ROCM_SLOT} trainers"
 }
 
 main() {
+echo
+echo "WARN:  You may need to disable ebolt/epgo if the 3 step process is not"
+echo "WARN:  complete and want to merge normally."
+echo
+echo "WARN:  Not doing so may result in sandbox violations."
+echo
 	if [[ "${LLVM_ROC_WIPE_PGO_PROFILES}" == "1" ]] ; then
                 rm -rf /var/lib/pgo-profiles/sys-devel/llvm-roc
 	fi

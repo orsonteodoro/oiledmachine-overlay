@@ -153,6 +153,12 @@ ROCM_OVERLAY_DIR="/var/db/repos/oiledmachine-overlay" # if overlay was added thr
 ```
 
 ```
+#
+# "WARN:  You may need to disable ebolt/epgo if the 3 step process is not"
+# "WARN:  complete and want to merge normally."
+#
+# "WARN:  Not doing so may result in sandbox violations."
+#
 # Do the following on the command line:
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
@@ -176,6 +182,12 @@ PORTAGE_OVERLAY_DIR="/usr/portage" # if using old instructions
 ```
 
 ```
+#
+# "WARN:  You may need to disable ebolt/epgo if the 3 step process is not"
+# "WARN:  complete and want to merge normally."
+#
+# "WARN:  Not doing so may result in sandbox violations."
+#
 # Do the following on the command line:
 OILEDMACHINE_OVERLAY_ROOT=${OILEDMACHINE_OVERLAY_ROOT:-"/var/db/repos/oiledmachine-overlay"}
 cd "${OILEDMACHINE_OVERLAY_ROOT}"
