@@ -759,9 +759,10 @@ rocm_fix_rpath() {
 	local rocm_libs=(
 		"libamdhip64.so"
 		"libhsa-runtime64.so"
+		"libhsakmt.so"
 		"librdc_bootstrap.so"
-		"librocm_smi64.so"
 		"librocm-dbgapi.so"
+		"librocm_smi64.so"
 		"librocrand.so"
 		"libroctracer64.so"
 	)
@@ -792,6 +793,8 @@ rocm_fix_rpath() {
 		local needs_rpath_patch_libomp=0
 		local needs_rpath_patch_llvm=0
 		local needs_rpath_patch_rocm=0
+einfo "path:  ${path}"
+einfo "file "$(file "${path}")
 		if (( ${is_so} || ${is_exe} )) ; then
 			for l in "${rocm_libs[@]}" ; do
 				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
@@ -928,6 +931,7 @@ rocm_verify_rpath_correctness() {
 	local rocm_libs=(
 		"libamdhip64.so"
 		"libhsa-runtime64.so"
+		"libhsakmt.so"
 		"librdc_bootstrap.so"
 		"librocm-dbgapi.so"
 		"librocm_smi64.so"

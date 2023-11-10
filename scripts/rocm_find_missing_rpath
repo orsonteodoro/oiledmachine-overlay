@@ -8,6 +8,7 @@ main() {
 	local rocm_libs=(
 		"libamdhip64.so"
 		"libhsa-runtime64.so"
+		"libhsakmt.so"
 		"librdc_bootstrap.so"
 		"librocm-dbgapi.so"
 		"librocm_smi64.so"

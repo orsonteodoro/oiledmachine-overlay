@@ -42,7 +42,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-system-llvm test r3
+system-llvm test r4
 "
 REQUIRED_USE="
 "

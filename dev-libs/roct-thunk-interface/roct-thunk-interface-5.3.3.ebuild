@@ -25,6 +25,9 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface"
 CONFIG_CHECK="~HSA_AMD ~HMM_MIRROR ~ZONE_DEVICE ~DRM_AMDGPU ~DRM_AMDGPU_USERPTR"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
+IUSE+="
+r1
+"
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
 	>=sys-apps/pciutils-3.9.0
@@ -71,9 +74,19 @@ src_configure() {
 	cmake_src_configure
 }
 
+_fix_rpath() {
+	local path="${1}"
+	einfo "Fixing rpath for ${path}"
+	patchelf \
+		--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
+		"${path}" \
+		|| die
+}
+
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	_fix_rpath "${ED}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)/libhsakmt.so.1.0.6"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
