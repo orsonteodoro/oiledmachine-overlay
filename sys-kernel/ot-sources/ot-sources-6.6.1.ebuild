@@ -22,6 +22,7 @@ inherit ot-kernel-v6.6
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6 (20231101) with builder profile and GCC_PGI with -O3 and -march=native (performance flags)
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.0.9999 (6.6.0-rc7 commit: 3a568e3a961ba330091cd031647e4c303fa0badb) (20231027) with builder profile
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.1 (20231109) with builder profile with -O2 and -march=generic (stable flags) and no PGI/PGO
 
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
@@ -44,6 +45,7 @@ inherit ot-kernel-v6.6
 # streaming video playback - pass
 # initscript - pass
 # runtime stability note:  may randomly freeze/deadlock during compile + media streaming during short run or long run (6.6)
+# runtime stability note:  no freeze/deadlock during compile + media streaming during short run or long run yet (6.6.1)
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
