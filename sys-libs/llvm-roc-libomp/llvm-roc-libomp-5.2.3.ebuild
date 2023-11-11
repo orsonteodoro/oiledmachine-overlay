@@ -64,9 +64,10 @@ CUDA_TARGETS_COMPAT=(
 	auto
 )
 LLVM_MAX_SLOT=14
+PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic rocm
+inherit cmake flag-o-matic python-single-r1 rocm
 
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
@@ -100,7 +101,7 @@ IUSE+="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-+archer -cuda -offload -ompt +ompd -rpc
++archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
 r15
 "
 
@@ -130,6 +131,10 @@ REQUIRED_USE="
 	offload
 	cuda? (
 		llvm_targets_NVPTX
+	)
+	gdb-plugin? (
+		${PYTHON_REQUIRED_USE}
+		ompd
 	)
 	llvm_targets_AMDGPU? (
 		${ROCM_REQUIRED_USE}
@@ -263,6 +268,7 @@ gen_nvptx_list() {
 
 pkg_setup() {
 	rocm_pkg_setup
+	python-single-r1_pkg_setup
 }
 
 src_prepare() {
@@ -348,13 +354,13 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
 		-DLIBOMP_OMPD_SUPPORT=$(usex ompd ON OFF)
 		-DLIBOMP_OMPT_SUPPORT=$(usex ompt ON OFF)
-		-DLLVM_BUILD_DOCS=NO
+		-DLLVM_BUILD_DOCS=OFF
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
 		-DLLVM_ENABLE_DOXYGEN=OFF
 		-DLLVM_ENABLE_OCAMLDOC=OFF
 		-DLLVM_ENABLE_PROJECTS="${PROJECTS}"
-		-DLLVM_ENABLE_SPHINX=NO
+		-DLLVM_ENABLE_SPHINX=OFF
 		-DLLVM_ENABLE_ZSTD=OFF # For mlir
 		-DLLVM_ENABLE_ZLIB=OFF # For mlir
 		-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD="${experimental_targets}"
@@ -364,7 +370,7 @@ src_configure() {
 #		-DLLVM_LINK_LLVM_DYLIB=ON
 		-DLLVM_TARGETS_TO_BUILD=""
 #		-DLLVM_VERSION_SUFFIX=roc
-		-DOCAMLFIND=NO
+		-DOCAMLFIND=OFF
 		-DOPENMP_ENABLE_LIBOMPTARGET=$(usex offload ON OFF)
 		-DOPENMP_LIBDIR_SUFFIX="${libdir#lib}"
 	)
