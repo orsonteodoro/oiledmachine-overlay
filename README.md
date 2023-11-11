@@ -452,15 +452,26 @@ Try epgo + ebolt try something like:
 ```
 #!/bin/bash
 emerge -1vuDN PN
-USE="epgo" emerge -1vO PN
+USE="epgo -ebolt" emerge -1vO PN
 echo "done training?" ; read
-USE="epgo ebolt" emerge -1vO PN  # You can combine at this point.
+
+#
+# You can combine at this point.  It is interpreted as follows:
+#
+# 1. Optimize the build for PGO first.
+# 2. Instrument the build for BOLT afterwards.
+#
+USE="epgo ebolt" emerge -1vO PN
+
 echo "done training?" ; read
 USE="epgo ebolt" emerge --config PN
 ```
 
 For those that do 3 step with USE="bolt pgo", the uopts.eclass will
 automatically handle all 6 steps if it fortunate enough to come with a trainer.
+
+An ebuild package may have an optimize.sh script along side the ebuild to take
+care of this.
 
 ### Custom trainer ###
 
