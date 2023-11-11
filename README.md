@@ -457,6 +457,8 @@ emerge -1vo PN
 
 # Instrument for PGI only.
 USE="epgo -ebolt" emerge -1vO PN
+
+# Perform PGO training.
 echo "done training?" ; read
 
 #
@@ -466,6 +468,9 @@ echo "done training?" ; read
 # 2. Instrument the build for BOLT afterwards.
 #
 USE="epgo ebolt" emerge -1vO PN
+
+# Perform BOLT training.
+echo "done training?" ; read
 
 # Optimize for PGO and BOLT.
 echo "done training?" ; read
