@@ -451,7 +451,11 @@ Try epgo + ebolt try something like:
 
 ```
 #!/bin/bash
-emerge -1vuDN PN
+# Emerge dependencies first except for PN.
+emerge -1vo PN
+# You may try emerge -1vuDNo PN for deeper dependencies.
+
+# Instrument for PGI only.
 USE="epgo -ebolt" emerge -1vO PN
 echo "done training?" ; read
 
@@ -463,6 +467,7 @@ echo "done training?" ; read
 #
 USE="epgo ebolt" emerge -1vO PN
 
+# Optimize for PGO and BOLT.
 echo "done training?" ; read
 USE="epgo ebolt" emerge --config PN
 ```
