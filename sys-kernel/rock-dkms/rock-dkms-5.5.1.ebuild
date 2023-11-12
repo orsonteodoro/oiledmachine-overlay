@@ -614,17 +614,12 @@ einfo "Switching to ${PV} firmware"
 			/usr/bin/install-rocm-firmware-${PV}.sh
 		fi
 	else
-		if [[ -e "/usr/bin/install-rocm-firmware-slot-${PV_MAJOR_MINOR}.sh" ]] ; then
-einfo "Switching to :${PV_MAJOR_MINOR} firmware"
-			/usr/bin/install-rocm-firmware-slot-${PV_MAJOR_MINOR}.sh
-		else
-			pv=$(best_version ">=sys-firmware/amdgpu-dkms-firmware-${PV}" \
-				| sed -e "s|sys-firmware/amdgpu-dkms-firmware-||g")
-			if [[ -n "${pv}" ]] ; then
-				if [[ -e "/usr/bin/install-rocm-firmware-${pv}.sh" ]] ; then
+		local pv=$(best_version ">=sys-firmware/amdgpu-dkms-firmware-${PV}" \
+			| sed -e "s|sys-firmware/amdgpu-dkms-firmware-||g")
+		if [[ -n "${pv}" ]] ; then
+			if [[ -e "/usr/bin/install-rocm-firmware-${pv}.sh" ]] ; then
 einfo "Switching to ${pv} firmware"
-					/usr/bin/install-rocm-firmware-${pv}.sh
-				fi
+				/usr/bin/install-rocm-firmware-${pv}.sh
 			fi
 		fi
 	fi
