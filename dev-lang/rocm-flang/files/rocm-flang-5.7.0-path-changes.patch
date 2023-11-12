@@ -1,6 +1,17 @@
-diff -urp flang-rocm-5.7.0.orig/CMakeLists.txt flang-rocm-5.7.0/CMakeLists.txt
---- flang-rocm-5.7.0.orig/CMakeLists.txt	2023-07-01 07:37:45.000000000 -0700
-+++ flang-rocm-5.7.0/CMakeLists.txt	2023-10-11 11:52:21.226983361 -0700
+diff -urp flang-rocm-5.7.1.orig/CMakeLists.txt flang-rocm-5.7.1/CMakeLists.txt
+--- flang-rocm-5.7.1.orig/CMakeLists.txt	2023-07-01 07:37:45.000000000 -0700
++++ flang-rocm-5.7.1/CMakeLists.txt	2023-11-11 20:39:52.808662083 -0800
+@@ -67,8 +67,8 @@ set(CMAKE_HOST_SYSTEM_PROCESSOR ${TARGET
+ # standalone project, using LLVM as an external library:
+ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR )
+   project(Flang)
+-  # Set default libdir to be "lib" for ROCm, distros will override this anyway:
+-  set(CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Library install directory")
++  # Set default libdir to be "@LIBDIR@" for ROCm, distros will override this anyway:
++  set(CMAKE_INSTALL_LIBDIR "@LIBDIR@" CACHE STRING "Library install directory")
+   include(GNUInstallDirs)
+   # Rely on llvm-config.
+   set(CONFIG_OUTPUT)
 @@ -118,12 +118,18 @@ if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURR
    endif()
  
@@ -53,9 +64,9 @@ diff -urp flang-rocm-5.7.0.orig/CMakeLists.txt flang-rocm-5.7.0/CMakeLists.txt
  add_definitions( -DPGFLANG )
  
  if (LLVM_INSTALL_RUNTIME)
-diff -urp flang-rocm-5.7.0.orig/flang-legacy/CMakeLists.txt flang-rocm-5.7.0/flang-legacy/CMakeLists.txt
---- flang-rocm-5.7.0.orig/flang-legacy/CMakeLists.txt	2023-07-01 07:37:45.000000000 -0700
-+++ flang-rocm-5.7.0/flang-legacy/CMakeLists.txt	2023-10-11 11:52:22.970983393 -0700
+diff -urp flang-rocm-5.7.1.orig/flang-legacy/CMakeLists.txt flang-rocm-5.7.1/flang-legacy/CMakeLists.txt
+--- flang-rocm-5.7.1.orig/flang-legacy/CMakeLists.txt	2023-07-01 07:37:45.000000000 -0700
++++ flang-rocm-5.7.1/flang-legacy/CMakeLists.txt	2023-11-11 20:39:31.928662323 -0800
 @@ -1,4 +1,4 @@
 -cmake_minimum_required(VERSION 3.13.4)
 +Ycmake_minimum_required(VERSION 3.13.4)
@@ -431,9 +442,9 @@ diff -urp flang-rocm-5.7.0.orig/flang-legacy/CMakeLists.txt flang-rocm-5.7.0/fla
    pthread
    dl
    tinfo
-diff -urp flang-rocm-5.7.0.orig/runtime/flang/CMakeLists.txt flang-rocm-5.7.0/runtime/flang/CMakeLists.txt
---- flang-rocm-5.7.0.orig/runtime/flang/CMakeLists.txt	2023-10-11 11:47:54.862978588 -0700
-+++ flang-rocm-5.7.0/runtime/flang/CMakeLists.txt	2023-10-11 11:49:45.350980568 -0700
+diff -urp flang-rocm-5.7.1.orig/runtime/flang/CMakeLists.txt flang-rocm-5.7.1/runtime/flang/CMakeLists.txt
+--- flang-rocm-5.7.1.orig/runtime/flang/CMakeLists.txt	2023-11-11 20:39:14.556662523 -0800
++++ flang-rocm-5.7.1/runtime/flang/CMakeLists.txt	2023-11-11 20:39:31.928662323 -0800
 @@ -563,7 +563,7 @@ set_property(TARGET flang_shared PROPERT
  #
  add_dependencies(flang_shared flang_static)
@@ -443,9 +454,9 @@ diff -urp flang-rocm-5.7.0.orig/runtime/flang/CMakeLists.txt flang-rocm-5.7.0/ru
  # Resolve symbols against libm and librt
  target_link_libraries(flang_shared m rt)
  
-diff -urp flang-rocm-5.7.0.orig/runtime/flangrti/CMakeLists.txt flang-rocm-5.7.0/runtime/flangrti/CMakeLists.txt
---- flang-rocm-5.7.0.orig/runtime/flangrti/CMakeLists.txt	2023-07-01 07:37:45.000000000 -0700
-+++ flang-rocm-5.7.0/runtime/flangrti/CMakeLists.txt	2023-10-11 11:49:45.350980568 -0700
+diff -urp flang-rocm-5.7.1.orig/runtime/flangrti/CMakeLists.txt flang-rocm-5.7.1/runtime/flangrti/CMakeLists.txt
+--- flang-rocm-5.7.1.orig/runtime/flangrti/CMakeLists.txt	2023-07-01 07:37:45.000000000 -0700
++++ flang-rocm-5.7.1/runtime/flangrti/CMakeLists.txt	2023-11-11 20:39:31.928662323 -0800
 @@ -97,7 +97,7 @@ if (NOT DEFINED LIBOMP_EXPORT_DIR)
      FLANG_LIBOMP
      libomp.so
@@ -464,9 +475,20 @@ diff -urp flang-rocm-5.7.0.orig/runtime/flangrti/CMakeLists.txt flang-rocm-5.7.0
  target_link_libraries(flangrti_shared ${LIBPGMATH} -Wl,-rpath,\$ORIGIN)
  target_link_libraries(flangrti_shared ${LIBQUADMATH_LOC})
  
-diff -urp flang-rocm-5.7.0.orig/runtime/libpgmath/CMakeLists.txt flang-rocm-5.7.0/runtime/libpgmath/CMakeLists.txt
---- flang-rocm-5.7.0.orig/runtime/libpgmath/CMakeLists.txt	2023-07-01 07:37:45.000000000 -0700
-+++ flang-rocm-5.7.0/runtime/libpgmath/CMakeLists.txt	2023-10-11 11:49:45.350980568 -0700
+diff -urp flang-rocm-5.7.1.orig/runtime/libpgmath/CMakeLists.txt flang-rocm-5.7.1/runtime/libpgmath/CMakeLists.txt
+--- flang-rocm-5.7.1.orig/runtime/libpgmath/CMakeLists.txt	2023-07-01 07:37:45.000000000 -0700
++++ flang-rocm-5.7.1/runtime/libpgmath/CMakeLists.txt	2023-11-11 20:40:40.408661536 -0800
+@@ -20,8 +20,8 @@ if(POLICY CMP0022)
+   cmake_policy(SET CMP0022 NEW) # Required when interacting with LLVM and Clang
+ endif()
+ 
+-# Set default libdir to be "lib" for ROCm, distros will override this anyway:
+-set(CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Library install directory")
++# Set default libdir to be "@LIBDIR@" for ROCm, distros will override this anyway:
++set(CMAKE_INSTALL_LIBDIR "@LIBDIR@" CACHE STRING "Library install directory")
+ include(GNUInstallDirs)
+ 
+ # Add path for custom modules
 @@ -113,7 +113,7 @@ set(LIBPGMATH_BASE_DIR ${CMAKE_CURRENT_S
  set(LIBPGMATH_SRC_DIR ${LIBPGMATH_BASE_DIR}/lib)
  set(LIBPGMATH_TOOLS_DIR ${LIBPGMATH_BASE_DIR}/tools)

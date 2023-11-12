@@ -33,7 +33,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test r1
+aocc doc test r2
 "
 REQUIRED_USE="
 "
@@ -66,7 +66,7 @@ RESTRICT="
 S="${WORKDIR}/flang-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/rocm-flang-5.6.0-rt-flang2-no-rule-fix.patch"
-	"${FILESDIR}/rocm-flang-5.1.3-path-changes.patch"
+	"${FILESDIR}/rocm-flang-5.3.3-path-changes.patch"
 )
 
 fmake() {
@@ -201,6 +201,8 @@ src_prepare() {
 		"${S}/runtime/flang/CMakeLists.txt"
 		"${S}/runtime/flangrti/CMakeLists.txt"
 		"${S}/runtime/libpgmath/CMakeLists.txt"
+		"${S}/runtime/libpgmath/cmake/modules/HandleOutOfTreeLLVM.cmake"
+		"${S}/runtime/libpgmath/lib/CMakeLists.txt"
 	)
 	rocm_src_prepare
 }
@@ -249,6 +251,7 @@ eerror
 		-G "${_cmake_generator[${CMAKE_MAKEFILE_GENERATOR}]}"
 		-DCMAKE_BUILD_TYPE="Release"
 		-DCMAKE_Fortran_COMPILER_ID="Flang"
+		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}"
 		-DENABLE_DEVEL_PACKAGE=OFF
 		-DENABLE_RUN_PACKAGE=OFF

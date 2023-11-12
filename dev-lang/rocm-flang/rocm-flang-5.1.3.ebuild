@@ -36,7 +36,7 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test r1
+aocc doc test r2
 "
 REQUIRED_USE="
 "
@@ -205,6 +205,8 @@ src_prepare() {
 		"${S}/runtime/flang/CMakeLists.txt"
 		"${S}/runtime/flangrti/CMakeLists.txt"
 		"${S}/runtime/libpgmath/CMakeLists.txt"
+		"${S}/runtime/libpgmath/cmake/modules/HandleOutOfTreeLLVM.cmake"
+		"${S}/runtime/libpgmath/lib/CMakeLists.txt"
 	)
 	rocm_src_prepare
 }
