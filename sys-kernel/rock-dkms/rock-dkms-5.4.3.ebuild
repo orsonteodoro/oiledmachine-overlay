@@ -589,12 +589,17 @@ signing_modules() {
 	fi
 }
 
+die_build() {
+	cat "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
+	die "${@}"
+}
+
 dkms_build() {
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k}\`"
-	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" || die
+	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" || die_build
 einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
-	dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force || die
+	dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force || die_build
 einfo "The modules were installed in $(get_modules_folder)/updates"
 	signing_modules "${k}"
 }
