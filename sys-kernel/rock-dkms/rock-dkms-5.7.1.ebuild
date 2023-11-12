@@ -465,9 +465,6 @@ src_prepare() {
 	einfo "DC_VER=${DC_VER}"
 	einfo "ROCK_VER=${ROCK_VER}"
 	chmod -v 0750 amd/dkms/autogen.sh || die
-	pushd amd/dkms || die
-		./autogen.sh || die
-	popd || die
 }
 
 src_configure() {
@@ -591,6 +588,7 @@ die_build() {
 }
 
 dkms_build() {
+	export MAKEOPTS="-j1"
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k}\`"
 	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" || die_build

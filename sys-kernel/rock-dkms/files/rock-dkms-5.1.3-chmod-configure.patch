@@ -1,22 +1,22 @@
 diff -urp amdgpu-5.1.orig/amd/dkms/pre-build.sh amdgpu-5.1/amd/dkms/pre-build.sh
 --- amdgpu-5.1.orig/amd/dkms/pre-build.sh	2022-05-16 23:48:39.000000000 -0700
 +++ amdgpu-5.1/amd/dkms/pre-build.sh	2023-11-12 06:59:12.457115071 -0800
-@@ -63,6 +63,7 @@ for config in $AMDGPU_CONFIG $TTM_CONFIG
+@@ -63,6 +63,6 @@ for config in $AMDGPU_CONFIG $TTM_CONFIG
  done
  
  export KERNELVER
-+pwd ; ./autogen.sh ; chmod -v 0750 configure amd/dkms/configure
- (cd $SRC && ./configure)
+-(cd $SRC && ./configure)
++pushd $SRC && ./autogen.sh && chmod -v 0750 configure && ./configure && popd
  
  # rename CFLAGS_<path>target.o to CFLAGS_target.o
 diff -urp amdgpu-5.1.orig/pre-build.sh amdgpu-5.1/pre-build.sh
 --- amdgpu-5.1.orig/pre-build.sh	2022-05-16 23:48:39.000000000 -0700
 +++ amdgpu-5.1/pre-build.sh	2023-11-12 06:59:14.809115011 -0800
-@@ -63,6 +63,7 @@ for config in $AMDGPU_CONFIG $TTM_CONFIG
+@@ -63,6 +63,6 @@ for config in $AMDGPU_CONFIG $TTM_CONFIG
  done
  
  export KERNELVER
-+pwd ; ./autogen.sh ; chmod -v 0750 configure amd/dkms/configure
- (cd $SRC && ./configure)
+-(cd $SRC && ./configure)
++pushd $SRC && ./autogen.sh && chmod -v 0750 configure && ./configure && popd
  
  # rename CFLAGS_<path>target.o to CFLAGS_target.o
