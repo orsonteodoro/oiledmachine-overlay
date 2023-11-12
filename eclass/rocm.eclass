@@ -773,9 +773,10 @@ rocm_fix_rpath() {
 		"libLLVMFrontendOpenMP.so"
 		"libLLVMOption.so"
 		"libLLVMSupport.so"
-		"libomptarget.rtl.amdgpu.so"
-		"libomptarget.rtl.x86_64.so"
-		"libomptarget.rtl.nvptx.so"
+		"libLLVMSupport.so.13git"
+		"libLLVMSupport.so.14git"
+		"libLLVMSupport.so.15git"
+		"libLLVMSupport.so.16git"
 	)
 	local clang_libs=(
 		"libclangBasic.so"
@@ -948,9 +949,10 @@ rocm_verify_rpath_correctness() {
 		"libLLVMFrontendOpenMP.so"
 		"libLLVMOption.so"
 		"libLLVMSupport.so"
-		"libomptarget.rtl.amdgpu.so"
-		"libomptarget.rtl.nvptx.so"
-		"libomptarget.rtl.x86_64.so"
+		"libLLVMSupport.so.13git"
+		"libLLVMSupport.so.14git"
+		"libLLVMSupport.so.15git"
+		"libLLVMSupport.so.16git"
 	)
 	local clang_libs=(
 		"libclangBasic.so"
