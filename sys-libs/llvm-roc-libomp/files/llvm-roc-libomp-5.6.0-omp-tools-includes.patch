@@ -1,10 +1,11 @@
 --- a/openmp/libomptarget/src/CMakeLists.txt.orig	2023-06-14 10:03:33.000000000 -0700
 +++ b/openmp/libomptarget/src/CMakeLists.txt	2023-09-16 19:18:49.754046556 -0700
-@@ -12,6 +12,8 @@
+@@ -12,6 +12,9 @@
  
  libomptarget_say("Building offloading runtime library libomptarget.")
  
 +set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
++set(_OMPT_HEADER_DIR "${PROJECT_SOURCE_DIR}/../openmp/runtime/exports/common.dia.ompt.optional/include")
 +
  add_llvm_library(omptarget
    SHARED
@@ -14,19 +15,20 @@
  find_library(LLVM_OFFLOAD_ARCH LLVMOffloadArch HINTS ${LLVM_LIBRARY_DIR} ${LLVM_BINARY_DIR} PATH_SUFFIXES lib REQUIRED)
  
 -target_include_directories(omptarget PRIVATE ${LIBOMPTARGET_INCLUDE_DIR})
-+target_include_directories(omptarget PRIVATE ${LIBOMPTARGET_INCLUDE_DIR} ${_OPENMP_RUNTIME_DIR})
++target_include_directories(omptarget PRIVATE ${LIBOMPTARGET_INCLUDE_DIR} ${_OPENMP_RUNTIME_DIR} ${_OMPT_HEADER_DIR})
  
  target_link_libraries(omptarget PRIVATE
    ${CMAKE_DL_LIBS}
 --- a/openmp/libomptarget/CMakeLists.txt.orig	2023-09-16 23:22:42.381576553 -0700
 +++ b/openmp/libomptarget/CMakeLists.txt	2023-09-16 23:51:18.641521426 -0700
-@@ -35,7 +35,8 @@ if (NOT LIBOMPTARGET_LLVM_INCLUDE_DIRS)
+@@ -35,7 +35,9 @@ if (NOT LIBOMPTARGET_LLVM_INCLUDE_DIRS)
    message(FATAL_ERROR "Missing definition for LIBOMPTARGET_LLVM_INCLUDE_DIRS")
  endif()
  
 -include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS})
 +set(_OPENMP_RUNTIME_DIR "${PROJECT_SOURCE_DIR}/../llvm_build/projects/openmp/runtime/src")
-+include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OPENMP_RUNTIME_DIR})
++set(_OMPT_HEADER_DIR "${PROJECT_SOURCE_DIR}/../openmp/runtime/exports/common.dia.ompt.optional/include")
++include_directories(${LIBOMPTARGET_LLVM_INCLUDE_DIRS} ${_OPENMP_RUNTIME_DIR} ${_OMPT_HEADER_DIR})
  
  # This is a list of all the targets that are supported/tested right now.
  set (LIBOMPTARGET_ALL_TARGETS "${LIBOMPTARGET_ALL_TARGETS} aarch64-unknown-linux-gnu")
