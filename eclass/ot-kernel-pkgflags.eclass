@@ -9524,8 +9524,9 @@ ot-kernel-pkgflags_xf86_input_synaptics() { # DONE
 # Applies kernel config flags for the xf86-video-amdgpu package
 ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Saffcbb4]}" == "1" ]] && return
-	if ot-kernel_has_version "x11-drivers/xf86-video-amdgpu" ; then
-		einfo "Applying kernel config flags for the xf86-video-amdgpu package (id: affcbb4)"
+	if ot-kernel_has_version "x11-drivers/xf86-video-amdgpu" \
+		|| ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+		einfo "Applying kernel config flags for the rock-dkms/xf86-video-amdgpu package (id: affcbb4)"
 		ot-kernel_y_configopt "CONFIG_MTRR"
 		ot-kernel_y_configopt "CONFIG_MEMORY_HOTPLUG"
 		ot-kernel_y_configopt "CONFIG_MEMORY_HOTREMOVE"
