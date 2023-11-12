@@ -266,7 +266,7 @@ eerror
 		)
 	else
 		export PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin:${PATH}"
-		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/lib"
+		export LD_LIBRARY_PATH="${ED}${EROCM_LLVM_PATH}/$(get_libdir)"
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang"
 			-DCMAKE_CXX_COMPILER="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
