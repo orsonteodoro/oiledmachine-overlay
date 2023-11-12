@@ -5076,12 +5076,12 @@ ot-kernel_set_kconfig_memstick() {
 			| cut -f 2 -d " ")
 	)
 	local x
-	ot-kernel_m_configopt "CONFIG_MEMSTICK"
+	ot-kernel_set_configopt "CONFIG_MEMSTICK" "m"
 	ot-kernel_y_configopt "CONFIG_BLOCK"
 	ot-kernel_y_configopt "CONFIG_MS_BLOCK"
 	ot-kernel_y_configopt "CONFIG_MSPRO_BLOCK"
 	for x in ${hosts[@]} ; do
-		ot-kernel_m_configopt "CONFIG_${x}"
+		ot-kernel_set_configopt "CONFIG_${x}" "m"
 	done
 	ot-kernel_unset_configopt "CONFIG_MEMSTICK_UNSAFE_RESUME"
 
@@ -5102,9 +5102,9 @@ ot-kernel_set_kconfig_mmc_sd_sdio() {
 			| cut -f 2 -d " ")
 	)
 	local x
-	ot-kernel_m_configopt "CONFIG_MMC"
+	ot-kernel_set_configopt "CONFIG_MMC" "m"
 	for x in ${hosts[@]} ; do
-		ot-kernel_m_configopt "CONFIG_${x}"
+		ot-kernel_set_configopt "CONFIG_${x}" "m"
 	done
 
 	# Depends
@@ -5866,7 +5866,7 @@ einfo "Adding USB mass storage support"
 		for y in ${not_tristate[@]} ; do
 			[[ "${x}" == "${y}" ]] && tristate=0
 		done
-		(( ${tristate} )) && ot-kernel_m_configopt "CONFIG_${x}"
+		(( ${tristate} )) && ot-kernel_set_configopt "CONFIG_${x}" "m"
 	done
 
 	# Depends
@@ -7243,12 +7243,12 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 ewarn "Enabling modules support for sys-kernel/rock-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
-		ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 	elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
 ewarn "Enabling modules support for sys-kernel/rock-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
-		ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 	fi
 }
 

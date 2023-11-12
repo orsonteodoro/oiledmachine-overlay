@@ -6411,10 +6411,10 @@ ot-kernel-pkgflags_nvtop() { # DONE
 			elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 				ot-kernel_y_configopt "CONFIG_MODULES"
-				ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+				ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 			elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
 				ot-kernel_y_configopt "CONFIG_MODULES"
-				ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+				ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 			else
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 			fi
@@ -7213,22 +7213,22 @@ _ot-kernel-pkgflags_cpu_pmu_events_perf() {
 		fi
 	fi
 	if [[ "${arch}" == "riscv" ]] ; then
-		ot-kernel_m_configopt "CONFIG_RISCV_BASE_PMU"
+		ot-kernel_set_configopt "CONFIG_RISCV_BASE_PMU" "m"
 	fi
 	if [[ "${arch}" =~ ("x86") ]] ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		# Guess based on hints from kconfig
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SUP_INTEL"
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_UNCORE"
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_CSTATE"
+			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_INTEL_UNCORE" "m"
+			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL" "m"
+			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_INTEL_CSTATE" "m"
 		fi
 		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SUP_AMD"
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_POWER"
-			ot-kernel_m_configopt "CONFIG_PERF_EVENTS_AMD_UNCORE"
+			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL" "m"
+			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_AMD_POWER" "m"
+			ot-kernel_set_configopt "CONFIG_PERF_EVENTS_AMD_UNCORE" "m"
 		fi
 
 		# Dependencies
@@ -7675,10 +7675,10 @@ ot-kernel-pkgflags_roct() { # DONE
 		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
-			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 		elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
 			ot-kernel_y_configopt "CONFIG_MODULES"
-			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		fi
@@ -9542,10 +9542,10 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
-			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 		elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
 			ot-kernel_y_configopt "CONFIG_MODULES"
-			ot-kernel_m_configopt "CONFIG_DRM_AMDGPU"
+			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		fi
