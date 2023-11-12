@@ -26,6 +26,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier custom-kernel directgma hybrid-graphics
 numa +sign-modules ssg strict-pairing
+r2
 "
 REQUIRED_USE="
 	hybrid-graphics? (
@@ -116,6 +117,7 @@ PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
 	"${FILESDIR}/rock-dkms-5.3.3-enable-mmu_notifier.patch"
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
+	"${FILESDIR}/rock-dkms-5.1.3-chmod-configure.patch"
 )
 
 pkg_setup_warn() {
@@ -460,7 +462,7 @@ src_prepare() {
 	default
 	einfo "DC_VER=${DC_VER}"
 	einfo "ROCK_VER=${ROCK_VER}"
-	chmod 0750 amd/dkms/autogen.sh || die
+	chmod -v 0750 amd/dkms/autogen.sh || die
 	pushd amd/dkms || die
 		./autogen.sh || die
 	popd || die
@@ -617,9 +619,9 @@ einfo "Switching to ${PV} firmware"
 		local pv=$(best_version ">=sys-firmware/amdgpu-dkms-firmware-${PV}" \
 			| sed -e "s|sys-firmware/amdgpu-dkms-firmware-||g")
 		if [[ -n "${pv}" ]] ; then
-			if [[ -e "/usr/bin/install-rocm-firmware-${pv}.sh" ]] ; then
+			if [[ -e "/usr/bin/install-amdgpu-dkms-firmware-${pv}.sh" ]] ; then
 einfo "Switching to ${pv} firmware"
-				/usr/bin/install-rocm-firmware-${pv}.sh
+				/usr/bin/install-amdgpu-dkms-firmware-${pv}.sh
 			fi
 		fi
 	fi

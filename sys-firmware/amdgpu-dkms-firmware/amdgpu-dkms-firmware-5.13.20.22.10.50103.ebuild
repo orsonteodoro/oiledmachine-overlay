@@ -28,7 +28,7 @@ RDEPEND="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r2"
+IUSE="si r3"
 REQUIRED_USE="
 "
 SRC_URI="
@@ -171,6 +171,7 @@ pkg_preinst() {
 gen_scripts() {
 	dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/install-${P}.sh"
+#!/bin/bash
 echo "Installing ${P} into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
@@ -178,6 +179,7 @@ cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
 EOF
 
 cat <<EOF > "${ED}/usr/bin/install-${P}-for-kernel-version-${KERNEL_PV}.sh"
+#!/bin/bash
 echo "Installing ${P} into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
@@ -185,6 +187,7 @@ cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
 EOF
 
 cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
+#!/bin/bash
 echo "Installing ROCm v${ROCM_PV} compatible firmware into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
@@ -192,6 +195,7 @@ cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
 EOF
 
 cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh"
+#!/bin/bash
 echo "Installing ROCm ${ROCM_SLOT} (slot) compatible firmware into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
