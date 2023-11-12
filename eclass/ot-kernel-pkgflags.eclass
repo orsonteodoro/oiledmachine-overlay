@@ -9548,6 +9548,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		fi
+		ot-kernel_y_configopt "CONFIG_AMD_IOMMU_V2" # For rock-dkms
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_SI"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_CIK"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_USERPTR"
