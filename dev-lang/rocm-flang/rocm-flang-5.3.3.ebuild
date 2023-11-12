@@ -333,6 +333,7 @@ src_install() {
 	dosym \
 		"${EROCM_LLVM_PATH}/bin/flang" \
 		"${EROCM_PATH}/bin/flang"
+	rocm_fix_rpath
 }
 
 pkg_postinst() {

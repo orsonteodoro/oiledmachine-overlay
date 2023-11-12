@@ -767,10 +767,15 @@ rocm_fix_rpath() {
 		"libroctracer64.so"
 	)
 	local llvm_libs=(
+		"libflang.so"
+		"libflangrti.so"
 		"libLLVMCore.so"
 		"libLLVMFrontendOpenMP.so"
 		"libLLVMOption.so"
 		"libLLVMSupport.so"
+		"libomptarget.rtl.amdgpu.so"
+		"libomptarget.rtl.x86_64.so"
+		"libomptarget.rtl.nvptx.so"
 	)
 	local clang_libs=(
 		"libclangBasic.so"
@@ -937,10 +942,15 @@ rocm_verify_rpath_correctness() {
 		"libroctracer64.so"
 	)
 	local llvm_libs=(
+		"libflang.so"
+		"libflangrti.so"
 		"libLLVMCore.so"
 		"libLLVMFrontendOpenMP.so"
 		"libLLVMOption.so"
 		"libLLVMSupport.so"
+		"libomptarget.rtl.amdgpu.so"
+		"libomptarget.rtl.nvptx.so"
+		"libomptarget.rtl.x86_64.so"
 	)
 	local clang_libs=(
 		"libclangBasic.so"
