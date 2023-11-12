@@ -479,19 +479,19 @@ src_install() {
 	dodir "usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
 	insinto "usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
 	doins -r "${S}/"*
+	local d="${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
 	local paths=(
-		"amd/dkms/post-remove.sh"
-		"amd/dkms/pre-build.sh"
-		"amd/dkms/config/install-sh"
-		"amd/dkms/configure"
-		"amd/dkms/autogen.sh"
+		"/usr/src/${d}/pre-build.sh"
+		"/usr/src/${d}/autogen.sh"
+		"/usr/src/${d}/amd/dkms/pre-build.sh"
+		"/usr/src/${d}/amd/dkms/autogen.sh"
+		"/usr/src/${d}/configure"
 	)
 	local path
 	for path in ${paths[@]} ; do
-		fperms 0750 "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/${path}"
+		[[ -e "${ED}/${path}" ]] || continue
+		fperms 0750 "${path}"
 	done
-	insinto /etc/modprobe.d
-	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
 }
 
 get_arch() {
@@ -608,8 +608,32 @@ ewarn
 	fi
 }
 
+switch_firmware() {
+	if use strict-pairing ; then
+		if [[ -e "/usr/bin/install-rocm-firmware-${PV}.sh" ]] ; then
+einfo "Switching to ${PV} firmware"
+			/usr/bin/install-rocm-firmware-${PV}.sh
+		fi
+	else
+		if [[ -e "/usr/bin/install-rocm-firmware-slot-${PV_MAJOR_MINOR}.sh" ]] ; then
+einfo "Switching to :${PV_MAJOR_MINOR} firmware"
+			/usr/bin/install-rocm-firmware-slot-${PV_MAJOR_MINOR}.sh
+		else
+			pv=$(best_version ">=sys-firmware/amdgpu-dkms-firmware-${PV}" \
+				| sed -e "s|sys-firmware/amdgpu-dkms-firmware-||g")
+			if [[ -n "${pv}" ]] ; then
+				if [[ -e "/usr/bin/install-rocm-firmware-${pv}.sh" ]] ; then
+einfo "Switching to ${pv} firmware"
+					/usr/bin/install-rocm-firmware-${pv}.sh
+				fi
+			fi
+		fi
+	fi
+}
+
 pkg_postinst() {
-	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
+	switch_firmware
+	dkms add "${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
 	if use build ; then
 		local k
 		for k in ${ROCK_DKMS_KERNELS_5_6} ; do
