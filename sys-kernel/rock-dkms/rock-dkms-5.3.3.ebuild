@@ -120,7 +120,6 @@ PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
 	"${FILESDIR}/rock-dkms-5.3.3-enable-mmu_notifier.patch"
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
-	"${FILESDIR}/rock-dkms-5.1.3-chmod-configure.patch"
 )
 
 pkg_setup_warn() {
@@ -136,6 +135,16 @@ ewarn "You are missing a .config file in your linux sources."
 	if ! linux_chkconfig_builtin "MODULES" ; then
 ewarn "You need loadable modules support in your .config."
 	fi
+
+	CONFIG_CHECK="DRM"
+	WARNING_DRM=\
+"CONFIG_DRM must be set to =y in the kernel."
+	check_extra_config
+
+	CONFIG_CHECK="KALLSYMS"
+	WARNING_KALLSYMS=\
+"CONFIG_KALLSYMS must be set to =y in the kernel."
+	check_extra_config
 
 	CONFIG_CHECK="!TRIM_UNUSED_KSYMS"
 	WARNING_TRIM_UNUSED_KSYMS=\
@@ -241,6 +250,16 @@ eerror
 	fi
 
 	check_modules_supported
+
+	CONFIG_CHECK="DRM"
+	ERROR_DRM=\
+"CONFIG_DRM must be set to =y in the kernel."
+	check_extra_config
+
+	CONFIG_CHECK="KALLSYMS"
+	ERROR_KALLSYMS=\
+"CONFIG_KALLSYMS must be set to =y in the kernel."
+	check_extra_config
 
 	CONFIG_CHECK="!TRIM_UNUSED_KSYMS"
 	ERROR_TRIM_UNUSED_KSYMS=\
@@ -626,7 +645,20 @@ die_build() {
 	die "${@}"
 }
 
+gen_configure() {
+	pushd "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms" || die
+		./autogen.sh || die
+	popd || die
+}
+
+dkms_prepare() {
+	export CONFIG_DRM=1
+	export CONFIG_KALLSYMS=1
+}
+
 dkms_build() {
+	dkms_prepare
+	gen_configure
 	set_cc
 	local n_cpus=$(get_n_cpus)
 	local args=( -j ${n_cpus} )
