@@ -9172,7 +9172,8 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 			done
 
 einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
-			make mrproper ARCH=${arch} || die
+			#make mrproper ARCH=${arch} || die # more agressive wipe
+			make clean ARCH=${arch} || die # For external modules
 
 			cp -aT "${cache}" ./ || true
 			rm -rf "${cache}" || true
