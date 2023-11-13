@@ -6412,9 +6412,6 @@ ot-kernel-pkgflags_nvtop() { # DONE
 	# For sys-kernel/rock-dkms not installed yet scenario.
 				ot-kernel_y_configopt "CONFIG_MODULES"
 				ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
-			elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
-				ot-kernel_y_configopt "CONFIG_MODULES"
-				ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 			else
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 			fi
@@ -7665,7 +7662,8 @@ ot-kernel-pkgflags_recoil() { # DONE
 # Applies kernel config flags for roct
 ot-kernel-pkgflags_roct() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2967135]}" == "1" ]] && return
-	if ot-kernel_has_version "dev-libs/roct-thunk-interface" ; then
+	if ot-kernel_has_version "dev-libs/roct-thunk-interface" \
+		|| ( has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ) ; then
 		einfo "Applying kernel config flags for roct (id: 2967135)"
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
@@ -7674,9 +7672,6 @@ ot-kernel-pkgflags_roct() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
-			ot-kernel_y_configopt "CONFIG_MODULES"
-			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
-		elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 		else
@@ -9525,7 +9520,7 @@ ot-kernel-pkgflags_xf86_input_synaptics() { # DONE
 ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Saffcbb4]}" == "1" ]] && return
 	if ot-kernel_has_version "x11-drivers/xf86-video-amdgpu" \
-		|| ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+		|| ( has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ) ; then
 		einfo "Applying kernel config flags for the rock-dkms/xf86-video-amdgpu package (id: affcbb4)"
 		ot-kernel_y_configopt "CONFIG_MTRR"
 		ot-kernel_y_configopt "CONFIG_MEMORY_HOTPLUG"
@@ -9541,9 +9536,6 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
-			ot-kernel_y_configopt "CONFIG_MODULES"
-			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
-		elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 		else
