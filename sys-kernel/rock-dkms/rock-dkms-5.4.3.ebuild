@@ -5,7 +5,7 @@ EAPI=8
 
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit linux-info
+inherit linux-info toolchain-funcs
 
 MAINTAINER_MODE=0
 
@@ -469,6 +469,10 @@ src_prepare() {
 	einfo "DC_VER=${DC_VER}"
 	einfo "ROCK_VER=${ROCK_VER}"
 	chmod -v 0750 amd/dkms/autogen.sh || die
+	sed -i -e "s|-j\$(num_cpu_cores)||g" \
+		dkms.conf \
+		amd/dkms/dkms.conf \
+		|| die
 }
 
 src_configure() {
@@ -586,16 +590,54 @@ signing_modules() {
 	fi
 }
 
+set_cc() {
+	local raw_text=$(grep "CONFIG_CC_VERSION_TEXT" "/usr/src/linux-${k}/.config" \
+		| cut -f 2 -d '"' \
+		| cut -f 1 -d " ")
+	export CC=$(echo "${raw_text}" | cut -f 1 -d " ")
+einfo "CC:  ${CC}"
+	sed -r \
+		-i \
+		-e "s/CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
+		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf" \
+		|| die
+	sed -r \
+		-i \
+		-e "s/CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
+		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
+		|| die
+	sed -i \
+		-e "s/make/make CC=${CC}/" \
+		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf" \
+		|| die
+	sed -i \
+		-e "s/make/make CC=${CC}/" \
+		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
+		|| die
+}
+
+get_n_cpus() {
+	local n_cpus=$(echo "${MAKEOPTS}" \
+		| grep -E -o -e "-j[ ]*[0-9]+" \
+		| sed -e "s|-j||")
+	[[ -z "${n_cpus}" ]] && n_cpus=1
+	n_cpus=1
+	echo "${n_cpus}"
+}
+
 die_build() {
 	cat "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
 	die "${@}"
 }
 
 dkms_build() {
-	export MAKEOPTS="-j1"
+	set_cc
+	local n_cpus=$(get_n_cpus)
+	local args=( -j ${n_cpus} )
+	args+=( --verbose )
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
-einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k}\`"
-	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" || die_build
+einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@]}\`"
+	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build
 einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
 	dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force || die_build
 einfo "The modules were installed in $(get_modules_folder)/updates"
