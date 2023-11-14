@@ -118,6 +118,7 @@ PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
 	"${FILESDIR}/rock-dkms-5.3.3-enable-mmu_notifier.patch"
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
+	"${FILESDIR}/rock-dkms-5.4.3-seq_printf-header.patch"
 )
 
 pkg_setup_warn() {
@@ -364,7 +365,7 @@ check_kernel() {
 	local k="${1}"
 	local kv=$(echo "${k}" \
 		| cut -f1 -d'-')
-	if [[ "${ROCK_DKMS_KERNELS+x}" != "x" ]] ; then
+	if [[ -n "${ROCK_DKMS_KERNELS}" ]] ; then
 eerror
 eerror "The ROCK_DKMS_KERNELS has been renamed to ROCK_DKMS_KERNELS_X_Y, where"
 eerror "X is the major version and Y is the minor version corresponding to this"
@@ -484,6 +485,14 @@ src_prepare() {
 	einfo "DC_VER=${DC_VER}"
 	einfo "ROCK_VER=${ROCK_VER}"
 	chmod -v 0750 amd/dkms/autogen.sh || die
+	sed -i -e "s|-j\$(num_cpu_cores)||g" \
+		dkms.conf \
+		amd/dkms/dkms.conf \
+		|| die
+	sed -i -e "s|\"make |\"make V=1 |g" \
+		dkms.conf \
+		amd/dkms/dkms.conf \
+		|| die
 }
 
 src_configure() {
@@ -643,22 +652,84 @@ die_build() {
 
 gen_configure() {
 	pushd "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms" || die
-		./autogen.sh || die
+		"./autogen.sh" || die
+		rm \
+			"../../Makefile" \
+			"../../Makefile.config" \
+			"../../dkms.conf" \
+			|| die
+		ln -s \
+			"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/Makefile" \
+			"../../Makefile" \
+			|| die
+		ln -s \
+			"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/Makefile.config" \
+			"../../Makefile.config" \
+			|| die
+		ln -s \
+			"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
+			"../../dkms.conf" \
+			|| die
 	popd || die
 }
 
+read_kernel_config() {
+	IFS=$'\n'
+	local x
+	for x in $(env | grep "^CONFIG.*=") ; do
+		local id="${x%%=*}"
+einfo "Unsetting ${id}"
+		unset "${id}"
+	done
+	# This just fixes cosmetic bugs.
+	# dkms or the build scripts are broken because it should include the .config file for the Makefile.
+	if [[ ! -e "${config_path}" ]] ; then
+eerror
+eerror "Missing ${config_path}"
+eerror
+		die
+	fi
+	for x in $(grep "^CONFIG_" "${config_path}") ; do
+		local key="${x%%=*}"
+		local value="${x#*=}"
+einfo "Running:  export ${key}=${value}"
+		export ${key}="${value}"
+	done
+	IFS=$' \t\n'
+}
+
 dkms_prepare() {
-	export CONFIG_DRM=1
-	export CONFIG_KALLSYMS=1
+	if tc-is-gcc ; then
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -e "/gcc-bin/d" \
+			| tr "\n" ":")
+		export gcc_slot=$("${CC}" --version \
+			| head -n 1 \
+			| cut -f 3 -d " " \
+			| cut -f 1 -d ".")
+		export CC="gcc" # The Makefile does a exact comparison so not multislot aware.
+		export PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${gcc_slot}:${PATH}"
+einfo "CC:  ${CC}"
+einfo "PATH:  ${PATH}"
+	fi
 }
 
 dkms_build() {
+	local kernel_source_path="/usr/src/linux-${k}"
+	local config_path="/usr/src/linux-${k}/.config"
+einfo "KERNEL_SOURCE_PATH:  ${kernel_source_path}"
+einfo "KERNEL_CONFIG_PATH:  ${config_path}"
+	read_kernel_config
+einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
+	set_cc
 	dkms_prepare
 	gen_configure
-	set_cc
 	local n_cpus=$(get_n_cpus)
 	local args=( -j ${n_cpus} )
 	args+=( --verbose )
+	args+=( --kernelsourcedir "${kernel_source_path}" )
+	args+=( --config "${config_path}" )
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@]}\`"
 	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build

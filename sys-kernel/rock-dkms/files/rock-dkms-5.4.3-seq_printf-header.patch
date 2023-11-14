@@ -1,0 +1,11 @@
+diff -urp amdgpu-5.4.orig/amd/amdkcl/kcl_fence.c amdgpu-5.4/amd/amdkcl/kcl_fence.c
+--- amdgpu-5.4.orig/amd/amdkcl/kcl_fence.c	2023-11-13 21:14:22.144549689 -0800
++++ amdgpu-5.4/amd/amdkcl/kcl_fence.c	2023-11-13 21:16:17.356549665 -0800
+@@ -22,6 +22,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/slab.h>
+ #include <kcl/kcl_fence.h>
++#include <kcl/kcl_seq_file.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include "kcl_fence_trace.h"
