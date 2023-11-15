@@ -497,7 +497,7 @@ src_prepare() {
 	sed -i \
 		-e "s|-j\$(num_cpu_cores)||g" \
 		-e "s|\"make |\"make V=1 |g" \
-		dkms.conf \
+		amd/dkms/dkms.conf \
 		|| die
 	cd amd/dkms/ || die
 	./autogen.sh || die
@@ -608,7 +608,7 @@ signing_modules() {
 
 		# If you get No such file or directory:  crypto/bio/bss_file.c,
 		# This means that the kernel module location changed.  Set below
-		# paths in dkms.conf.
+		# paths in amd/dkms/dkms.conf.
 
 		sign_module \
 			"${md}/kernel/drivers/gpu/drm/scheduler/amd-sched.ko" \
@@ -652,11 +652,11 @@ einfo "CC:  ${CC}"
 	sed -r \
 		-i \
 		-e "s/CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
-		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf" \
+		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
 		|| die
 	sed -i \
 		-e "s/make /make CC=${CC} /" \
-		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf" \
+		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
 		|| die
 }
 
