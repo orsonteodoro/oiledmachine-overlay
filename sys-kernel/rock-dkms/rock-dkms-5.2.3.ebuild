@@ -453,7 +453,7 @@ if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 fi
 }
 
-# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/drivers/gpu/drm/amd/dkms/sources
+# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.2.3/drivers/gpu/drm/amd/dkms/sources
 _reconstruct_tarball_layout() {
 einfo "Reconstructing tarball layout"
 	local tarball_root="${WORKDIR}/ROCK-Kernel-Driver-rocm-${PV}"
