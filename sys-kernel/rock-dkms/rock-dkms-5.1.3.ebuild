@@ -24,9 +24,10 @@ SUFFIX="${PV_MAJOR_MINOR}"
 KV="5.13.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.1.3/Makefile#L2
 KVS=(
 # Commented out means EOL kernel.
-	"5.4"  # U 20.04
+#	"5.8"  # U 20.04 HWE
+	"5.4"  # U 18.04 HWE, 20.04 generic
 #	"4.18" # R 8.4, 8.5, 8.6
-#	"4.15" # U 18.04
+#	"4.15" # U 18.04 generic
 #	"4.12" # S 15
 #	"3.10" # R 7.9
 )
@@ -99,7 +100,9 @@ CDEPEND="
 RDEPEND="
 	!sys-kernel/rock-dkms:0
 	${CDEPEND}
-	sys-kernel/dkms
+	>=sys-kernel/dkms-1.95
+	sys-devel/autoconf
+	sys-devel/automake
 "
 DEPEND="
 	${CDEPEND}
@@ -384,14 +387,14 @@ eerror
 eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_1"
 eerror "environmental variable."
 eerror
-		die
+#		die
 	fi
 	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
 eerror
 eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_1"
 eerror "environmental variable."
 eerror
-		die
+#		die
 	fi
 	KERNEL_DIR="/usr/src/linux-${k}"
 	get_version || die
@@ -668,7 +671,13 @@ get_n_cpus() {
 }
 
 die_build() {
-	cat "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
+	env > "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+eerror
+eerror "Log dumps:"
+eerror
+eerror "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+eerror "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
+eerror
 	die "${@}"
 }
 
@@ -709,9 +718,6 @@ einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 	local n_cpus=$(get_n_cpus)
 	local args=( -j ${n_cpus} )
 	args+=( --verbose )
-	args+=( --kernelsourcedir "${kernel_source_path}" )
-	args+=( --config "${config_path}" )
-	args+=( -c "${dkms_conf_path}" )
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@]}\`"
 	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build
@@ -893,3 +899,5 @@ einfo "Try again"
 	dkms_build
 	check_modprobe_conf
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.1.3, 20231115, kernel 5.15.138)

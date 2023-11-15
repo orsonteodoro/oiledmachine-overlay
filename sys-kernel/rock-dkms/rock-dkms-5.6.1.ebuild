@@ -24,10 +24,11 @@ SUFFIX="${PV_MAJOR_MINOR}"
 KV="6.1.11" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/Makefile#L2
 KVS=(
 # Commented out means EOL kernel.
-#	"5.17" # U 22.04 Desktop HWE
-	"5.15" # U 22.04 Server
+#	"5.17" # U 22.04 Desktop OEM
+	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
 #	"5.14" # S 15.4; R 9.1, 9.2
-	"5.4"  # U 20.04
+#	"5.8"  # U 20.04 HWE
+	"5.4"  # U 20.04 generic
 #	"5.3"  # S 15.3
 #	"4.18" # R 8.7, 8.8
 #	"3.10" # R 7.9
@@ -101,7 +102,9 @@ CDEPEND="
 RDEPEND="
 	!sys-kernel/rock-dkms:0
 	${CDEPEND}
-	sys-kernel/dkms
+	>=sys-kernel/dkms-1.95
+	sys-devel/autoconf
+	sys-devel/automake
 "
 DEPEND="
 	${CDEPEND}
@@ -671,7 +674,13 @@ get_n_cpus() {
 }
 
 die_build() {
-	cat "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
+	env > "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+eerror
+eerror "Log dumps:"
+eerror
+eerror "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+eerror "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
+eerror
 	die "${@}"
 }
 
@@ -712,9 +721,6 @@ einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 	local n_cpus=$(get_n_cpus)
 	local args=( -j ${n_cpus} )
 	args+=( --verbose )
-	args+=( --kernelsourcedir "${kernel_source_path}" )
-	args+=( --config "${config_path}" )
-	args+=( -c "${dkms_conf_path}" )
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@]}\`"
 	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build
@@ -896,3 +902,5 @@ einfo "Try again"
 	dkms_build
 	check_modprobe_conf
 }
+
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.6.1, 20231115, kernel 5.15.138)
