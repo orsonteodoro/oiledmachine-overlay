@@ -10,6 +10,17 @@ ROCM_PV="5.5.1"
 ROCM_SLOT="${ROCM_PV%.*}"
 MY_PV="6.0.5.50501-1593694" # The 4th component is the rock version 5.05.01 == 5.5.1.
 FN="amdgpu-dkms-firmware_${MY_PV}.${DEB_OS_REL}_all.deb"
+KVS=(
+# Commented out means EOL kernel.
+#	"5.17" # U 22.04 Desktop OEM
+	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
+#	"5.14" # S 15.4; R 9.0, 9.1, 9.2
+#	"5.8"  # U 20.04 HWE
+	"5.4"  # U 20.04 generic
+#	"5.3"  # S 15.3
+#	"4.18" # R 8.4, 8.5, 8.6, 8.7
+#	"3.10" # R 7.9
+)
 
 DESCRIPTION="Firmware blobs used by the amdgpu kernel driver"
 HOMEPAGE="
@@ -27,7 +38,7 @@ RDEPEND="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r3"
+IUSE="si r4"
 REQUIRED_USE="
 "
 SRC_URI="
@@ -177,13 +188,16 @@ mkdir -p /lib/firmware/amdgpu
 cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
 EOF
 
-cat <<EOF > "${ED}/usr/bin/install-${P}-for-kernel-version-${KERNEL_PV}.sh"
+	local kv_slot
+	for kv_slot in ${KVS[@]} ; do
+cat <<EOF > "${ED}/usr/bin/install-${P}-for-kernel-series-${kv_slot}.sh"
 #!/bin/bash
 echo "Installing ${P} into /lib/firmware/amdgpu"
 rm -f /lib/firmware/amdgpu/*
 mkdir -p /lib/firmware/amdgpu
 cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
 EOF
+	done
 
 cat <<EOF > "${ED}/usr/bin/install-rocm-firmware-${ROCM_PV}.sh"
 #!/bin/bash
@@ -202,7 +216,10 @@ cp -aT /lib/firmware/amdgpu-${MY_PV%-*} /lib/firmware/amdgpu
 
 EOF
 	fperms 0755 /usr/bin/install-${P}.sh
-	fperms 0755 /usr/bin/install-${P}-for-kernel-version-${KERNEL_PV}.sh
+	local kv_slot
+	for kv_slot in ${KVS[@]} ; do
+		fperms 0755 /usr/bin/install-${P}-for-kernel-series-${kv_slot}.sh
+	done
 	fperms 0755 /usr/bin/install-rocm-firmware-${ROCM_PV}.sh
 	fperms 0755 /usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh
 }
@@ -216,7 +233,10 @@ src_install() {
 	dodoc "LICENSE"
 	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-version-${ROCM_PV}"
 	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/rocm-slot-${ROCM_SLOT}"
-	touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/kernel-version-${KERNEL_PV}"
+	local kv_slot
+	for kv_slot in ${KVS[@]} ; do
+		touch "${ED}/lib/firmware/amdgpu-${MY_PV%-*}/kernel-series-${kv_slot}"
+	done
 	gen_scripts
 }
 
@@ -243,7 +263,10 @@ einfo "Manual install still required.  Use one of these helper scripts to"
 einfo "install:"
 einfo
 einfo "  install-${P}.sh"
-einfo "  install-${P}-for-kernel-version-${KERNEL_PV}.sh"
+	local kv_slot
+	for kv_slot in ${KVS[@]} ; do
+einfo "  install-${P}-for-kernel-series-${kv_slot}.sh"
+	done
 einfo "  install-rocm-firmware-${ROCM_PV}.sh"
 einfo "  install-rocm-firmware-slot-${ROCM_SLOT}.sh"
 einfo
