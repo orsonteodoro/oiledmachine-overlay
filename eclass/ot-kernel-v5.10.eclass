@@ -241,7 +241,7 @@ fe6b56a9c48b934d2ffaafd60eb89b9dae6e912d
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kpgo-utils muqss orca pgo prjc rock-dkms rt symlink tresor
+-genpatches_1510 kpgo-utils muqss orca pgo prjc rt symlink tresor
 tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support uksm zen-muqss zen-sauce
 "
@@ -454,13 +454,6 @@ BDEPEND+="
 "
 
 PDEPEND+="
-	rock-dkms? (
-		|| (
-			~sys-kernel/rock-dkms-5.4.3
-			~sys-kernel/rock-dkms-5.3.3
-			~sys-kernel/rock-dkms-5.1.3
-		)
-	)
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then

@@ -194,7 +194,7 @@ RUST_PV="1.62.0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rock-dkms rt -rust
+-genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rt -rust
 shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support zen-sauce
 "
@@ -541,11 +541,6 @@ BDEPEND+="
 "
 
 PDEPEND+="
-	rock-dkms? (
-		|| (
-			~sys-kernel/rock-dkms-5.6.0
-		)
-	)
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then
