@@ -2839,6 +2839,7 @@ einfo
 	local found_missing=0
 	local p
 	for p in ${fw_relpaths[@]} ; do
+		[[ "${p}" =~ "amdgpu-" ]] && continue
 		if [[ ! -e "/lib/firmware/${p}" ]] ; then
 eerror "Missing firmware file for /lib/firmware/${p}"
 			found_missing=1
