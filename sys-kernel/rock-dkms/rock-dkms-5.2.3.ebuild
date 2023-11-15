@@ -22,6 +22,17 @@ PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
 KV="5.16.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.2.3/Makefile#L2
+KVS=(
+# Commented out means EOL kernel.
+#	"5.17" # U 22.04 Desktop HWE
+	"5.15" # U 22.04 Server
+#	"5.14" # S 15.4
+	"5.4"  # U 20.04
+#	"5.3"  # S 15.3
+#	"4.18" # R 8.4, 8.5, 8.6
+#	"4.15" # U 18.04
+#	"3.10" # R 7.9
+)
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier custom-kernel directgma hybrid-graphics
@@ -36,10 +47,10 @@ REQUIRED_USE="
 if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 # For verification of patch correctness
 	KV_NOT_SUPPORTED_MAX="99999999"
-	KV_SUPPORTED_MIN="${KV%%.*}.0"
+	KV_SUPPORTED_MIN="3.10"
 else
-	KV_NOT_SUPPORTED_MAX="${KV%%.*}.$(($(ver_cut 2 ${KV}) + 1))"
-	KV_SUPPORTED_MIN="${KV%%.*}.0"
+	KV_NOT_SUPPORTED_MAX="5.18" # Exclusive
+	KV_SUPPORTED_MIN="5.4"
 fi
 gen_kernel_pairs() {
 	local FLAVORS=(
@@ -51,12 +62,6 @@ gen_kernel_pairs() {
 		"sys-kernel/rt-sources"
 		"sys-kernel/vanilla-sources"
 		"sys-kernel/zen-sources"
-	)
-	local KVS=(
-		"$(ver_cut 1-2 ${KV})"
-		"5.15"
-		"5.10"
-		"5.4"
 	)
 	local kv
 	for flavor in ${FLAVORS[@]} ; do
@@ -405,9 +410,7 @@ show_supported_kv() {
 ewarn
 ewarn "The following kernel versions are only supported for ${P}:"
 ewarn
-ewarn "Stable 5.16.x [EOL (End of Life)]"
 ewarn "LTS 5.15.x"
-ewarn "LTS 5.10.x"
 ewarn "LTS 5.4.x"
 ewarn
 }
