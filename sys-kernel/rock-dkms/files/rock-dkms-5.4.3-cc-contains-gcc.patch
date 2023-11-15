@@ -1,0 +1,12 @@
+diff -urp amdgpu-5.4.orig/amd/dkms/Makefile amdgpu-5.4/amd/dkms/Makefile
+--- amdgpu-5.4.orig/amd/dkms/Makefile	2023-11-14 17:51:16.636858964 -0800
++++ amdgpu-5.4/amd/dkms/Makefile	2023-11-14 17:55:10.828866670 -0800
+@@ -16,7 +16,7 @@ ifeq ($(call _is_kcl_macro_defined,HAVE_
+ $(error dma_resv->seq is missing., exit...)
+ endif
+ 
+-ifeq ($(CC), gcc)
++ifeq ($(findstring gcc,$(CC)),gcc)
+ GCCMAJ=$(shell echo __GNUC__ | $(CC) -E -x c - | tail -n 1)
+ GCCMIN=$(shell echo __GNUC_MINOR__ | $(CC) -E -x c - | tail -n 1)
+ GCCPAT=$(shell echo __GNUC_PATCHLEVEL__ | $(CC) -E -x c - | tail -n 1)

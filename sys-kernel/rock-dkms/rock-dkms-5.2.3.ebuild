@@ -118,9 +118,10 @@ DC_VER="3.2.181" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/b
 
 PATCHES=(
 	"${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
-	"${FILESDIR}/rock-dkms-5.1.3-enable-mmu_notifier.patch"
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-seq_printf-header.patch"
+	"${FILESDIR}/rock-dkms-5.4.3-cc-contains-gcc.patch"
+	"${FILESDIR}/rock-dkms-5.4.3-pre-build-change-kcl-defs.patch"
 )
 
 pkg_setup_warn() {
@@ -472,9 +473,13 @@ einfo "Reconstructing tarball layout"
 				"${base}/${dest}" \
 				|| die
 		done < "${WORKDIR}/ROCK-Kernel-Driver-rocm-${PV}/drivers/gpu/drm/amd/dkms/sources"
-		cp -a \
-			"${tarball_root}/drivers/gpu/drm/amd/dkms/"* \
-			"${base}" \
+		ln -s \
+			amd/dkms/dkms.conf \
+			dkms.conf \
+			|| die
+		ln -s \
+			amd/dkms/Makefile \
+			Makefile \
 			|| die
 	popd
 }
@@ -489,14 +494,14 @@ src_prepare() {
 	einfo "DC_VER=${DC_VER}"
 	einfo "ROCK_VER=${ROCK_VER}"
 	chmod -v 0750 amd/dkms/autogen.sh || die
-	sed -i -e "s|-j\$(num_cpu_cores)||g" \
+	sed -i \
+		-e "s|-j\$(num_cpu_cores)||g" \
+		-e "s|\"make |\"make V=1 |g" \
 		dkms.conf \
-		amd/dkms/dkms.conf \
 		|| die
-	sed -i -e "s|\"make |\"make V=1 |g" \
-		dkms.conf \
-		amd/dkms/dkms.conf \
-		|| die
+	cd amd/dkms/ || die
+	./autogen.sh || die
+	chmod -v 0750 configure || die
 }
 
 src_configure() {
@@ -507,7 +512,13 @@ src_compile() {
 	:;
 }
 
+install_examples() {
+	insinto "/usr/share/doc/${P}/examples"
+	doins "amd/dkms/docs/examples/wattman-example-script"
+}
+
 src_install() {
+	install_examples
 	dodir "usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
 	insinto "usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
 	doins -r "${S}/"*
@@ -597,7 +608,7 @@ signing_modules() {
 
 		# If you get No such file or directory:  crypto/bio/bss_file.c,
 		# This means that the kernel module location changed.  Set below
-		# paths in amd/dkms/dkms.conf.
+		# paths in dkms.conf.
 
 		sign_module \
 			"${md}/kernel/drivers/gpu/drm/scheduler/amd-sched.ko" \
@@ -618,25 +629,34 @@ set_cc() {
 	local raw_text=$(grep "CONFIG_CC_VERSION_TEXT" "/usr/src/linux-${k}/.config" \
 		| cut -f 2 -d '"' \
 		| cut -f 1 -d " ")
-	export CC=$(echo "${raw_text}" | cut -f 1 -d " ")
+	# Native CHOST only
+	if [[ "${raw_text}" =~ "gcc" ]] ; then
+		export gcc_slot=$(gcc --version \
+			| head -n 1 \
+			| cut -f 3 -d " " \
+			| cut -f 1 -d ".")
+		export CC="${CHOST}-gcc-${gcc_slot}"
+	elif [[ "${raw_text}" =~ "clang" ]] ; then
+		export clang_slot=$(clang --version \
+			| head -n 1 \
+			| cut -f 3 -d " " \
+			| cut -f 1 -d ".")
+		export CC="${CHOST}-clang-${clang_slot}"
+	else
+eerror
+eerror "Unsupported compiler"
+eerror
+		die
+	fi
 einfo "CC:  ${CC}"
 	sed -r \
 		-i \
 		-e "s/CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
 		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf" \
 		|| die
-	sed -r \
-		-i \
-		-e "s/CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
-		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
-		|| die
 	sed -i \
-		-e "s/make/make CC=${CC}/" \
+		-e "s/make /make CC=${CC} /" \
 		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf" \
-		|| die
-	sed -i \
-		-e "s/make/make CC=${CC}/" \
-		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
 		|| die
 }
 
@@ -652,29 +672,6 @@ get_n_cpus() {
 die_build() {
 	cat "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
 	die "${@}"
-}
-
-gen_configure() {
-	pushd "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms" || die
-		"./autogen.sh" || die
-		rm \
-			"../../Makefile" \
-			"../../Makefile.config" \
-			"../../dkms.conf" \
-			|| die
-		ln -s \
-			"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/Makefile" \
-			"../../Makefile" \
-			|| die
-		ln -s \
-			"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/Makefile.config" \
-			"../../Makefile.config" \
-			|| die
-		ln -s \
-			"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
-			"../../dkms.conf" \
-			|| die
-	popd || die
 }
 
 read_kernel_config() {
@@ -693,7 +690,7 @@ eerror "Missing ${config_path}"
 eerror
 		die
 	fi
-	for x in $(grep "^CONFIG_" "${config_path}") ; do
+	for x in $(grep "^CONFIG_" "${config_path}" | sort) ; do
 		local key="${x%%=*}"
 		local value="${x#*=}"
 einfo "Running:  export ${key}=${value}"
@@ -702,38 +699,21 @@ einfo "Running:  export ${key}=${value}"
 	IFS=$' \t\n'
 }
 
-dkms_prepare() {
-	if tc-is-gcc ; then
-		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -e "/gcc-bin/d" \
-			| tr "\n" ":")
-		export gcc_slot=$("${CC}" --version \
-			| head -n 1 \
-			| cut -f 3 -d " " \
-			| cut -f 1 -d ".")
-		export CC="gcc" # The Makefile does a exact comparison so not multislot aware.
-		export PATH="${ESYSROOT}/usr/${CHOST}/gcc-bin/${gcc_slot}:${PATH}"
-einfo "CC:  ${CC}"
-einfo "PATH:  ${PATH}"
-	fi
-}
-
 dkms_build() {
 	local kernel_source_path="/usr/src/linux-${k}"
 	local config_path="/usr/src/linux-${k}/.config"
+	local dkms_conf_path="/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf"
 einfo "KERNEL_SOURCE_PATH:  ${kernel_source_path}"
 einfo "KERNEL_CONFIG_PATH:  ${config_path}"
 	read_kernel_config
 einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 	set_cc
-	dkms_prepare
-	gen_configure
 	local n_cpus=$(get_n_cpus)
 	local args=( -j ${n_cpus} )
 	args+=( --verbose )
 	args+=( --kernelsourcedir "${kernel_source_path}" )
 	args+=( --config "${config_path}" )
+	args+=( -c "${dkms_conf_path}" )
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@]}\`"
 	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build
@@ -777,9 +757,26 @@ einfo "Switching to ${pv} firmware"
 	fi
 }
 
+add_env_files() {
+	mkdir -p "${EROOT}/etc/modprobe.d"
+cat <<EOF > "${EROOT}/etc/modprobe.d/blacklist-radeon.conf"
+blacklist radeon
+EOF
+	mkdir -p "${EROOT}/etc/udev/rules.d"
+cat <<EOF > "${EROOT}/etc/udev/rules.d/70-amdgpu.rules"
+KERNEL=="kfd", GROUP=="video", MODE="0660"
+EOF
+	chmod 0644 "${EROOT}/etc/modprobe.d/blacklist-radeon.conf"
+	chmod 0644 "${EROOT}/etc/udev/rules.d/70-amdgpu.rules"
+	chown root:root "${EROOT}/etc/modprobe.d/blacklist-radeon.conf"
+	chown root:root "${EROOT}/etc/udev/rules.d/70-amdgpu.rules"
+}
+
 pkg_postinst() {
+	add_env_files
 	switch_firmware
 	dkms add "${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+	chmod -v 0750 "${EROOT}/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/configure"
 	if use build ; then
 		local k
 		for k in ${ROCK_DKMS_KERNELS_5_2} ; do
