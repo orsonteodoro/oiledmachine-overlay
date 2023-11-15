@@ -25,7 +25,7 @@ KV="6.2.8" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/ro
 KVS=(
 # Commented out means EOL kernel.
 #	"5.17" # U 22.04 Desktop OEM
-	"5.15" # U 22.04 Desktop HWE, 22.04Server generic
+	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
 #	"5.14" # S 15.4; R 9.1, 9.2
 #	"5.8"  # U 20.04 HWE
 	"5.4"  # U 20.04 generic
