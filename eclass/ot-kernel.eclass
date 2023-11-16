@@ -2919,8 +2919,19 @@ einfo "Adding firmware"
 				-e "s|^[ ]+||g" \
 				-e 's|[ ]+$||g') # Trim mid/left/right spaces
 		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
-einfo "CONFIG_EXTRA_FIRMWARE:  "$(grep "CONFIG_EXTRA_FIRMWARE" \
-			"${BUILD_DIR}/.config" | head -n 1 | cut -f 2 -d "\"")
+
+		# Removes slotted firmware
+		firmware=$(echo "${firmware}" \
+			| tr " " "\n" \
+			| sed -e "/amdgpu-/d" \
+			| tr "\n" " " )
+		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
+
+		local list=$(grep "CONFIG_EXTRA_FIRMWARE" \
+			"${BUILD_DIR}/.config" \
+			| head -n 1 \
+			| cut -f 2 -d "\"")
+einfo "CONFIG_EXTRA_FIRMWARE:  ${list}"
 	fi
 }
 
