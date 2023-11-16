@@ -9532,6 +9532,18 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_MMU"
+		if ver_test ${KV_MAJOR} -ge 4.15 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC"
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN1_0"
+		fi
+		if ver_test ${KV_MAJOR} -ge 5.3 ; then
+			ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN2_0"
+		fi
+		if ver_test ${KV_MAJOR} -le 5.5 ; then
+			if ver_test ${KV_MAJOR} -ge 5.3 ; then
+				ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DSC_SUPPORT"
+			fi
+		fi
 		if ! has rock-dkms ${IUSE_EFFECTIVE} ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
