@@ -9539,18 +9539,9 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 
-			# For rock-kernel-driver 5.1.3 but not needed for KV_MAJOR_MINOR build 5.15.
-			if ver_test ${KV_MAJOR_MINOR} -ge 4.15 ; then
-				ot-kernel_y_configopt "CONFIG_DRM_AMD_DC"
-				ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN1_0"
-			fi
-			if ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
-				ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DCN2_0"
-			fi
 			if ver_test ${KV_MAJOR_MINOR} -le 5.5 ; then
-				if ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
-					ot-kernel_y_configopt "CONFIG_DRM_AMD_DC_DSC_SUPPORT"
-				fi
+				# Missing DP_UHBR20 in latest 5.4 but appears in 5.19
+				ot-kernel_n_configopt "CONFIG_DRM_AMD_DC_DSC_SUPPORT"
 			fi
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
