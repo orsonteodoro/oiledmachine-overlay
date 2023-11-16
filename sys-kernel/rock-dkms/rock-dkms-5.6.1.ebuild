@@ -145,27 +145,10 @@ ewarn "You need loadable modules support in your .config."
 	fi
 
 	# 5.5 Inclusive
-	CONFIG_CHECK="DRM_AMD_DC_DSC_SUPPORT"
+	CONFIG_CHECK="!DRM_AMD_DC_DSC_SUPPORT"
 	WARNING_DRM_AMD_DC_DSC_SUPPORT=\
-"DRM_AMD_DC_DSC_SUPPORT must be set to =y in the kernel."
+"CONFIG_DRM_AMD_DC_DSC_SUPPORT must be set to =n in the kernel."
 	check_extra_config
-
-	# Block is depends for DRM_AMD_DC_DSC_SUPPORT
-	if use amd64 || use x86 ; then
-		CONFIG_CHECK="DRM_AMD_DC"
-		WARNING_DRM_AMD_DC=\
-"DRM_AMD_DC must be set to =y in the kernel."
-		check_extra_config
-	fi
-		CONFIG_CHECK="DRM_AMD_DC_DCN1_0"
-		WARNING_DRM_AMD_DC_DCN1_0=\
-"DRM_AMD_DC_DCN1_0 must be set to =y in the kernel."
-		check_extra_config
-
-		CONFIG_CHECK="DRM_AMD_DC_DCN2_0"
-		WARNING_DRM_AMD_DC_DCN2_0=\
-"DRM_AMD_DC_DCN2_0 must be set to =y in the kernel."
-		check_extra_config
 
 	CONFIG_CHECK="DRM"
 	WARNING_DRM=\
@@ -283,27 +266,10 @@ eerror
 	check_modules_supported
 
 	# 5.5 Inclusive
-	CONFIG_CHECK="DRM_AMD_DC_DSC_SUPPORT"
-	WARNING_DRM_AMD_DC_DSC_SUPPORT=\
-"DRM_AMD_DC_DSC_SUPPORT must be set to =y in the kernel."
+	CONFIG_CHECK="!DRM_AMD_DC_DSC_SUPPORT"
+	ERROR_DRM_AMD_DC_DSC_SUPPORT=\
+"CONFIG_DRM_AMD_DC_DSC_SUPPORT must be set to =n in the kernel."
 	check_extra_config
-
-	# Block is depends for DRM_AMD_DC_DSC_SUPPORT
-	if use amd64 || use x86 ; then
-		CONFIG_CHECK="DRM_AMD_DC"
-		WARNING_DRM_AMD_DC=\
-"DRM_AMD_DC must be set to =y in the kernel."
-		check_extra_config
-	fi
-		CONFIG_CHECK="DRM_AMD_DC_DCN1_0"
-		WARNING_DRM_AMD_DC_DCN1_0=\
-"DRM_AMD_DC_DCN1_0 must be set to =y in the kernel."
-		check_extra_config
-
-		CONFIG_CHECK="DRM_AMD_DC_DCN2_0"
-		WARNING_DRM_AMD_DC_DCN2_0=\
-"DRM_AMD_DC_DCN2_0 must be set to =y in the kernel."
-		check_extra_config
 
 	CONFIG_CHECK="DRM"
 	ERROR_DRM=\
