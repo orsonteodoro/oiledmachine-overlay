@@ -642,35 +642,19 @@ set_cc() {
 	local raw_text
 
 	# For older kernels like 5.4.
-	if grep -r -e "Compiler:" "/usr/src/linux-${k}/.config" ; then
-		raw_text=$(grep -r -e "Compiler:" "/usr/src/linux-${k}/.config" \
+	if grep -q -e "Compiler:" "/usr/src/linux-${k}/.config" ; then
+		raw_text=$(grep -e "Compiler:" "/usr/src/linux-${k}/.config" \
 			| cut -f 3- -d " ")
 	else
-		raw_text=$(grep "CONFIG_CC_VERSION_TEXT" "/usr/src/linux-${k}/.config" \
+		raw_text=$(grep -e "CONFIG_CC_VERSION_TEXT" "/usr/src/linux-${k}/.config" \
 			| cut -f 2 -d '"' \
 			| cut -f 1 -d " ")
 	fi
 
-	# Native CHOST only
-	if [[ "${raw_text}" =~ "gcc" ]] ; then
-		export gcc_slot=$(gcc --version \
-			| head -n 1 \
-			| cut -f 3 -d " " \
-			| cut -f 1 -d ".")
-		export CC="${CHOST}-gcc-${gcc_slot}"
-	elif [[ "${raw_text}" =~ "clang" ]] ; then
-		export clang_slot=$(clang --version \
-			| head -n 1 \
-			| cut -f 3 -d " " \
-			| cut -f 1 -d ".")
-		export CC="${CHOST}-clang-${clang_slot}"
-	else
-eerror
-eerror "Unsupported compiler"
-eerror
-		die
-	fi
+	export CC=$(echo "${raw_text}" \
+		| cut -f 1 -d " ")
 einfo "CC:  ${CC}"
+
 	sed -r \
 		-i \
 		-e "s/CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
@@ -728,6 +712,9 @@ einfo "Running:  export ${key}=${value}"
 }
 
 dkms_build() {
+	# Fixes make[2]: /bin/sh: Argument list too long
+	# FIXME
+
 	local kernel_source_path="/usr/src/linux-${k}"
 	local config_path="/usr/src/linux-${k}/.config"
 	local dkms_conf_path="/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf"
