@@ -144,6 +144,29 @@ ewarn "You are missing a .config file in your linux sources."
 ewarn "You need loadable modules support in your .config."
 	fi
 
+	# 5.5 Inclusive
+	CONFIG_CHECK="DRM_AMD_DC_DSC_SUPPORT"
+	WARNING_DRM=\
+"DRM_AMD_DC_DSC_SUPPORT must be set to =y in the kernel."
+	check_extra_config
+
+	# Block is depends for DRM_AMD_DC_DSC_SUPPORT
+	if use amd64 || use x86 ; then
+		CONFIG_CHECK="DRM_AMD_DC"
+		WARNING_DRM=\
+"DRM_AMD_DC must be set to =y in the kernel."
+		check_extra_config
+	fi
+		CONFIG_CHECK="DRM_AMD_DC_DCN1_0"
+		WARNING_DRM=\
+"DRM_AMD_DC_DSC_SUPPORT must be set to =y in the kernel."
+		check_extra_config
+
+		CONFIG_CHECK="DRM_AMD_DC_DCN2_0"
+		WARNING_DRM=\
+"DRM_AMD_DC_DCN2_0 must be set to =y in the kernel."
+		check_extra_config
+
 	CONFIG_CHECK="DRM"
 	WARNING_DRM=\
 "CONFIG_DRM must be set to =y in the kernel."
@@ -258,6 +281,29 @@ eerror
 	fi
 
 	check_modules_supported
+
+	# 5.5 Inclusive
+	CONFIG_CHECK="DRM_AMD_DC_DSC_SUPPORT"
+	WARNING_DRM=\
+"DRM_AMD_DC_DSC_SUPPORT must be set to =y in the kernel."
+	check_extra_config
+
+	# Block is depends for DRM_AMD_DC_DSC_SUPPORT
+	if use amd64 || use x86 ; then
+		CONFIG_CHECK="DRM_AMD_DC"
+		WARNING_DRM=\
+"DRM_AMD_DC must be set to =y in the kernel."
+		check_extra_config
+	fi
+		CONFIG_CHECK="DRM_AMD_DC_DCN1_0"
+		WARNING_DRM=\
+"DRM_AMD_DC_DSC_SUPPORT must be set to =y in the kernel."
+		check_extra_config
+
+		CONFIG_CHECK="DRM_AMD_DC_DCN2_0"
+		WARNING_DRM=\
+"DRM_AMD_DC_DCN2_0 must be set to =y in the kernel."
+		check_extra_config
 
 	CONFIG_CHECK="DRM"
 	ERROR_DRM=\
@@ -630,9 +676,18 @@ signing_modules() {
 }
 
 set_cc() {
-	local raw_text=$(grep "CONFIG_CC_VERSION_TEXT" "/usr/src/linux-${k}/.config" \
-		| cut -f 2 -d '"' \
-		| cut -f 1 -d " ")
+	local raw_text
+
+	# For older kernels like 5.4.
+	if grep -r -e "Compiler:" "/usr/src/linux-${k}/.config" ; then
+		raw_text=$(grep -r -e "Compiler:" "/usr/src/linux-${k}/.config" \
+			| cut -f 3- -d " ")
+	else
+		raw_text=$(grep "CONFIG_CC_VERSION_TEXT" "/usr/src/linux-${k}/.config" \
+			| cut -f 2 -d '"' \
+			| cut -f 1 -d " ")
+	fi
+
 	# Native CHOST only
 	if [[ "${raw_text}" =~ "gcc" ]] ; then
 		export gcc_slot=$(gcc --version \
@@ -904,3 +959,4 @@ einfo "Try again"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.6.1, 20231115, kernel 5.15.138)
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.6.1, 20231115, kernel 5.4.260)
