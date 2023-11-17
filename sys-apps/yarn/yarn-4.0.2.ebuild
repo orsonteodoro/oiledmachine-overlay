@@ -4,26 +4,21 @@
 
 EAPI=8
 
-LOCKFILE_VER="3" # See https://docs.npmjs.com/cli/v10/configuring-npm/package-lock-json#lockfileversion
-# See also package-lock.json
-
-DESCRIPTION="The package manager for JavaScript"
+DESCRIPTION="Fast, reliable, and secure dependency management."
 HOMEPAGE="
-https://docs.npmjs.com/cli
-https://github.com/npm/cli
+https://yarnpkg.com/
+https://github.com/yarnpkg/berry
 "
 LICENSE="
-	Artistic-2
+	BSD-2
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl r1"
+SLOT_MAJOR="${PV%%.*}"
+SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
+IUSE+=" +ssl r2"
 CDEPEND+="
-	!sys-apps/npm:0
-	|| (
-		>=net-libs/nodejs-18.17:18[corepack,ssl?]
-		>=net-libs/nodejs-20.5[corepack,ssl?]
-	)
+	!sys-apps/yarn:0
+	>=net-libs/nodejs-18.12[corepack,ssl?]
 "
 DEPEND+="
 	${CDEPEND}
@@ -41,13 +36,13 @@ RESTRICT="mirror"
 pkg_postinst() {
 	corepack enable
 	mkdir -p "${EROOT}/usr/share/${PN}"
-	corepack prepare "${PN}@${PV}" -o="${EROOT}/usr/share/${PN}/${PN}-${LOCKFILE_VER}.tgz"
+	corepack prepare "${PN}@${PV}" -o="${EROOT}/usr/share/${PN}/${PN}-${SLOT_MAJOR}.tgz"
 }
 
 pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-einfo "Removing ${PN}-${LOCKFILE_VER}.tgz"
-		rm -rf "${EROOT}/usr/share/${PN}/${PN}-${LOCKFILE_VER}.tgz"
+einfo "Removing ${PN}-${SLOT_MAJOR}.tgz"
+		rm -rf "${EROOT}/usr/share/${PN}/${PN}-${SLOT_MAJOR}.tgz"
 	fi
 }
 

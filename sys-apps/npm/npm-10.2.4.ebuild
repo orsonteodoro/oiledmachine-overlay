@@ -4,8 +4,8 @@
 
 EAPI=8
 
-LOCKFILE_VER="2" # See https://docs.npmjs.com/cli/v9/configuring-npm/package-lock-json#lockfileversion
-# See also https://github.com/npm/cli/blob/v8.13.0/package-lock.json#L4
+LOCKFILE_VER="3" # See https://docs.npmjs.com/cli/v10/configuring-npm/package-lock-json#lockfileversion
+# See also https://github.com/npm/cli/blob/v10.2.4/package-lock.json#L4
 
 DESCRIPTION="The package manager for JavaScript"
 HOMEPAGE="
@@ -17,13 +17,12 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl r3"
+IUSE+=" +ssl r1"
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
-		>=net-libs/nodejs-12.13:12[corepack,ssl?]
-		>=net-libs/nodejs-14.15:14[corepack,ssl?]
-		>=net-libs/nodejs-16[corepack,ssl?]
+		>=net-libs/nodejs-18.17:18[corepack,ssl?]
+		>=net-libs/nodejs-20.5[corepack,ssl?]
 	)
 "
 DEPEND+="

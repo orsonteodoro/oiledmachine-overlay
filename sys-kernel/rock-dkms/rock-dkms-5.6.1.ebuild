@@ -657,6 +657,7 @@ set_cc() {
 	export CC=$(echo "${raw_text}" \
 		| cut -f 1 -d " ")
 einfo "CC:  ${CC}"
+	${CC} --version || die
 
 	sed -r \
 		-i \

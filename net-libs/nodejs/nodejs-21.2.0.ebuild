@@ -121,23 +121,23 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Oct 13, 2023
-ACORN_PV="8.10.0"
-COREPACK_PV="0.21.0"
-NGHTTP2_PV="1.57.0"
+# Last deps commit date:  Nov 14, 2023
+ACORN_PV="8.11.2"
+COREPACK_PV="0.23.0"
+NGHTTP2_PV="1.58.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
 	>=app-eselect/eselect-nodejs-20230521
 	>=dev-libs/libuv-1.46.0:=
-	>=net-dns/c-ares-1.19.1
+	>=net-dns/c-ares-1.20.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.2.13
 	system-icu? (
 		>=dev-libs/icu-73.2:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.10:0=
+		>=dev-libs/openssl-3.0.12:0=
 	)
 "
 DEPEND+="

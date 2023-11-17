@@ -5,7 +5,7 @@
 EAPI=8
 
 LOCKFILE_VER="3" # See https://docs.npmjs.com/cli/v9/configuring-npm/package-lock-json#lockfileversion
-# See also package-lock.json
+# See also https://github.com/npm/cli/blob/v9.9.2/package-lock.json
 
 DESCRIPTION="The package manager for JavaScript"
 HOMEPAGE="
