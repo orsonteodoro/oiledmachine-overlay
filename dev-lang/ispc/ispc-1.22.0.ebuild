@@ -245,6 +245,7 @@ _src_configure() {
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 	fi
+	unset LD
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 	uopts_src_configure
