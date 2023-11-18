@@ -729,7 +729,7 @@ einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 	args+=( --verbose )
 
 	# Fixes make[2]: /bin/sh: Argument list too long
-	addwrite /
+	# Installed in EROOT so make a temp build folder in EROOT.
 	mkdir -p "${EROOT}/dkms-build"
 	args+=( --dkmstree "${EROOT}/dkms-build" )
 	rm -rf "${EROOT}/dkms-build/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
