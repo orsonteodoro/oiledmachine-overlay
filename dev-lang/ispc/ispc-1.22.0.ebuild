@@ -230,8 +230,23 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure() {
-	export CC=$(tc-getCC)
-	export CXX=$(tc-getCXX)
+	local wants_llvm=0
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		if use llvm-${s} ; then
+			wants_llvm=1
+			break
+		fi
+	done
+	if use lto || (( ${wants_llvm} == 1 )) ; then
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	else
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+	fi
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 	uopts_src_configure
 	if use lto ; then
 		filter-flags \
