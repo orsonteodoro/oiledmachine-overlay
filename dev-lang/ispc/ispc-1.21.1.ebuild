@@ -95,6 +95,7 @@ gen_llvm_depends() {
 		echo "
 		llvm-${s}? (
 			sys-devel/clang:${s}=
+			sys-devel/llvm:${s}=[dump(+)]
 			lto? (
 				sys-devel/lld:${s}
 			)
