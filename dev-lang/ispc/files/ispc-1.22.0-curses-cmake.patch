@@ -1,0 +1,17 @@
+diff -urp ispc-1.22.0.orig/CMakeLists.txt ispc-1.22.0/CMakeLists.txt
+--- ispc-1.22.0.orig/CMakeLists.txt	2023-11-17 22:06:46.862834453 -0800
++++ ispc-1.22.0/CMakeLists.txt	2023-11-17 22:09:48.034829767 -0800
+@@ -648,10 +648,7 @@ else()
+         target_link_libraries(${PROJECT_NAME} pthread tinfo.a curses.a)
+     else()
+         find_package(Curses REQUIRED)
+-        if (CURSES_EXTRA_LIBRARY)
+-            # this contains the tinfo library, if found
+-            target_link_libraries(${PROJECT_NAME} ${CURSES_EXTRA_LIBRARY})
+-        endif()
++        set(CURSES_NEED_NCURSES ON)
+         # Recommended way to get Curses library is to use CURSES_LIBRARIES variable
+         # https://cmake.org/cmake/help/v3.27/module/FindCurses.html
+         # but it contains both libform.so and libcurses.so.
+Only in ispc-1.22.0: CMakeLists.txt.orig
+Only in ispc-1.22.0: CMakeLists.txt.rej

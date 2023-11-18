@@ -8,7 +8,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10..11} )
 LLVM_MAX_SLOT=15
-LLVM_SLOTS=( 15 14 13 ) # See https://github.com/ispc/ispc/blob/v1.19.0/src/ispc_version.h
+LLVM_SLOTS=( 15 14 13 ) # See https://github.com/ispc/ispc/blob/v1.20.0/src/ispc_version.h
 inherit cmake flag-o-matic python-any-r1 llvm toolchain-funcs
 
 if [[ ${PV} =~ 9999 ]]; then
@@ -89,6 +89,7 @@ gen_omp_depends() {
 	done
 }
 
+# Some versions obtained from CI.
 # U 22.04
 RDEPEND="
 	>=sys-libs/ncurses-6.3
@@ -96,14 +97,14 @@ RDEPEND="
 	openmp? (
 		|| (
 			$(gen_omp_depends)
-			>=sys-devel/gcc-11.2.0[openmp]
+			>=sys-devel/gcc-11.3[openmp]
 		)
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021.5.0:0
 	)
 	video_cards_intel? (
-		>=dev-libs/level-zero-1.9.4
+		>=dev-libs/level-zero-1.10.0
 	)
 	|| (
 		$(gen_llvm_depends)
@@ -117,14 +118,14 @@ BDEPEND="
 	>=sys-devel/bison-3.8.2
 	>=sys-devel/flex-2.6.4
 	video_cards_intel? (
-		>=dev-util/spirv-llvm-translator-14
-		>=dev-libs/intel-vc-intrinsics-0.13
+		>=dev-util/spirv-llvm-translator-15
+		>=dev-libs/intel-vc-intrinsics-0.12
 	)
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-1.19.0-llvm.patch"
-	"${FILESDIR}/${PN}-1.18.1-curses-cmake.patch"
+	"${FILESDIR}/${PN}-1.20.0-llvm.patch"
+	"${FILESDIR}/${PN}-1.22.0-curses-cmake.patch"
 )
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
@@ -144,9 +145,26 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ ${PV} =~ 9999 ]]; then
-		use fallback-commit && export EGIT_COMMIT="ee43967286215a0511c2bc090e604848b4a32bed" # Feb 27, 2023
+		use fallback-commit && export EGIT_COMMIT="14bd04aa7e68cd33eb1d96b33058cb64d7ef76f4" # May 5, 2023
 		git-r3_fetch
 		git-r3_checkout
+		cd "${S}" || die
+		local actual_pv=$(grep -r -e "ISPC_VERSION " common/version.h \
+			| sed -e "s|dev||g" \
+			| cut -f 2 -d '"')
+		local expected_pv=$(ver_cut 1-3 ${PV})
+		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
+eerror
+eerror "Version mismatch detected that might result in broken patches or"
+eerror "incompatible *DEPENDs."
+eerror
+eerror "Expected version:\t${expected_pv}"
+eerror "Actual version:\t${actual_pv}"
+eerror
+eerror "Use the fallback-commit USE flag to continue."
+eerror
+			die
+		fi
 	else
 		unpack ${A}
 	fi
