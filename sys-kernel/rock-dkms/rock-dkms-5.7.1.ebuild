@@ -660,7 +660,7 @@ einfo "CC:  ${CC}"
 
 	sed -r \
 		-i \
-		-e "s/CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
+		-e "s/ CC=('|\"|)[a-z0-9._-]+('|\"|)//g" \
 		"/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/dkms.conf" \
 		|| die
 	sed -i \
@@ -715,9 +715,6 @@ einfo "Running:  export ${key}=${value}"
 }
 
 dkms_build() {
-	# Fixes make[2]: /bin/sh: Argument list too long
-	# FIXME
-
 	local kernel_source_path="/usr/src/linux-${k}"
 	local config_path="/usr/src/linux-${k}/.config"
 	local dkms_conf_path="/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf"
@@ -729,13 +726,21 @@ einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 	local n_cpus=$(get_n_cpus)
 	local args=( -j ${n_cpus} )
 	args+=( --verbose )
+
+	# Fixes make[2]: /bin/sh: Argument list too long
+	addwrite /
+	mkdir -p "${EROOT}/dkms-build"
+	args+=( --dkmstree "${EROOT}/dkms-build" )
+	rm -rf "${EROOT}/dkms-build/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@]}\`"
 	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build
 einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
-	dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force || die_build
+	dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force ${args[@]} || die_build
 einfo "The modules were installed in $(get_modules_folder)/updates"
 	signing_modules "${k}"
+	rm -rf "${EROOT}/dkms-build/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
 }
 
 check_modprobe_conf() {
