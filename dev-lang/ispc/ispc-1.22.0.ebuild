@@ -6,17 +6,38 @@ EAPI=8
 # For the version, see
 # https://github.com/ispc/ispc/blob/main/common/version.h
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 PYTHON_COMPAT=( python3_{10..11} )
-LLVM_MAX_SLOT=15
-LLVM_SLOTS=( 15 14 13 ) # See https://github.com/ispc/ispc/blob/v1.20.0/src/ispc_version.h
-inherit cmake flag-o-matic python-any-r1 llvm toolchain-funcs
+LLVM_MAX_SLOT=18
+LLVM_SLOTS=( 18 17 16 15 14 ) # See https://github.com/ispc/ispc/blob/v1.22.0/src/ispc_version.h
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+inherit cmake flag-o-matic python-any-r1 llvm toolchain-funcs uopts
 
 if [[ ${PV} =~ 9999 ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/ispc/ispc.git"
 	IUSE+=" fallback-commit"
 else
-	SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+	BENCHMARK_COMMIT="e991355c02b93fe17713efe04cbc2e278e00fdbd"
+	GTEST_COMMIT="bf0701daa9f5b30e5882e2f8f9a5280bcba87e77"
+	SRC_URI="
+		https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+		bolt? (
+			https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT}.tar.gz
+				-> benchmark-${BENCHMARK_COMMIT:0:7}.tar.gz
+			https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
+				-> gtest-${GTEST_COMMIT:0:7}.tar.gz
+		)
+		pgo? (
+			https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT}.tar.gz
+				-> benchmark-${BENCHMARK_COMMIT:0:7}.tar.gz
+			https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
+				-> gtest-${GTEST_COMMIT:0:7}.tar.gz
+		)
+	"
 	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 fi
 
@@ -30,7 +51,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
-+cpu +examples -fast-math +openmp pthread tbb test +video_cards_intel -xe
++cpu +examples -fast-math lto +openmp pthread tbb test +video_cards_intel -xe
 r1
 "
 REQUIRED_USE+="
@@ -46,6 +67,11 @@ REQUIRED_USE+="
 			openmp
 			pthread
 			tbb
+		)
+	)
+	lto? (
+		|| (
+			${LLVM_SLOTS[@]/#/llvm-}
 		)
 	)
 	^^ (
@@ -69,6 +95,9 @@ gen_llvm_depends() {
 		echo "
 		llvm-${s}? (
 			sys-devel/clang:${s}=
+			lto? (
+				sys-devel/lld:${s}
+			)
 			openmp? (
 				sys-libs/libomp:${s}
 			)
@@ -141,6 +170,7 @@ pkg_setup() {
 
 	llvm_pkg_setup
 	python-any-r1_pkg_setup
+	uopts_setup
 }
 
 src_unpack() {
@@ -166,7 +196,21 @@ eerror
 			die
 		fi
 	else
-		unpack ${A}
+		unpack "${P}.tar.gz"
+		if use bolt || use pgo ; then
+			unpack "benchmark-${BENCHMARK_COMMIT:0:7}.tar.gz"
+			unpack "gtest-${GTEST_COMMIT:0:7}.tar.gz"
+			local d
+
+			d="${S}/benchmarks/vendor/google/benchmark"
+			mkdir -p "${d}" || die
+			mv "benchmark-${BENCHMARK_COMMIT}/"* "${d}" || die
+			ln -s "${S}/benchmarks" "${S}/benchmarks/benchmarks" || die
+
+			d="${S}/ispcrt/tests/vendor/google/googletest"
+			mkdir -p "${d}" || die
+			mv "googletest-${GTEST_COMMIT}/"* "${d}" || die
+		fi
 	fi
 }
 
@@ -180,11 +224,30 @@ src_prepare() {
 	fi
 
 	cmake_src_prepare
+	uopts_src_prepare
 }
 
-src_configure() {
+src_configure() { :; }
+
+_src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	uopts_src_configure
+	if use lto ; then
+		filter-flags \
+			'-flto=*' \
+			'-fuse-ld=*' \
+			'-Wl,-O3' \
+			'-Wl,--lto-O3' \
+			'-Wl,--icf=all'
+		append-flags \
+			'-flto=thin' \
+			'-fuse-ld=lld'
+		append-ldflags \
+			'-Wl,-O3' \
+			'-Wl,--lto-O3' \
+			'-Wl,--icf=all'
+	fi
 	local mycmakeargs=(
 		-DARM_ENABLED=$(usex arm)
 		-DBUILD_GPU=$(usex video_cards_intel)
@@ -200,6 +263,13 @@ src_configure() {
 	if is-flagq '-ffast-math' || is-flagq '-Ofast' || use fast-math ; then
 		mycmakeargs+=(
 			-DISPC_FAST_MATH=ON
+		)
+	fi
+	if use pgo || use bolt ; then
+		mycmakeargs+=(
+			-DISPC_INCLUDE_BENCHMARKS=ON
+			-DBENCHMARK_ENABLE_INSTALL=ON
+			-DISPC_INCLUDE_TESTS=ON
 		)
 	fi
 	if use tbb ; then
@@ -228,6 +298,25 @@ eerror
 	cmake_src_configure
 }
 
+_src_compile() {
+	cmake_src_compile
+}
+
+src_compile() {
+	uopts_src_compile
+}
+
+train_trainer_custom() {
+	local OPATH="${PATH}"
+	export PATH="${S}_build:${PATH}" # The instrumented ispc is here.
+	pushd "${S}_build" || die
+		emake check-all
+		emake ispc_benchmarks
+		emake test
+	popd
+	export PATH="${OPATH}"
+}
+
 src_test() {
 	# Inject path to prevent using system ispc
 	PATH="${BUILD_DIR}/bin:${PATH}" ${EPYTHON} ./run_tests.py || die "Testing failed under ${EPYTHON}"
@@ -241,4 +330,9 @@ src_install() {
 		docompress -x /usr/share/doc/${PF}/examples
 		dodoc -r examples
 	fi
+	uopts_src_install
+}
+
+pkg_postinst() {
+	uopts_pkg_postinst
 }

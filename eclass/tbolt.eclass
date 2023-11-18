@@ -145,10 +145,26 @@ _setup_malloc() {
 # @DESCRIPTION:
 # Setup PATH for llvm-bolt
 _setup_llvm() {
+	local s
 	if [[ -n "${UOPTS_BOLT_PATH}" ]] ; then
 		_UOPTS_BOLT_PATH="${UOPTS_BOLT_PATH}"
 	elif [[ -n "${UOPTS_BOLT_SLOT}" ]] ; then
 		_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${UOPTS_BOLT_SLOT}/bin"
+	elif [[ -n "${LLVM_SLOT}" ]] ; then
+		# uopts_pkg_setup called after llvm_pkg_setup
+		for s in $(seq 14 ${LLVM_SLOT} | tac) ; do
+			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+				break
+			fi
+		done
+	elif [[ -n "${LLVM_MAX_SLOT}" ]] ; then
+		for s in $(seq 14 ${LLVM_MAX_SLOT} | tac) ; do
+			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+				break
+			fi
+		done
 	elif [[ -z "${LLVM_MAX_SLOT}" ]] ; then
 		for s in ${_UOPTS_LLVM_SLOTS[@]} ; do
 			if has_version "sys-devel/llvm:${s}[bolt]" ; then
