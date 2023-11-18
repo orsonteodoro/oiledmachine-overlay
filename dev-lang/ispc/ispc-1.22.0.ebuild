@@ -282,6 +282,15 @@ einfo "CXX:  ${CXX}"
 		)
 	fi
 	if use pgo || use bolt ; then
+		if ! is-flagq '-O3' ; then
+ewarn "PGO has -O3 in CFLAGS as default ON upstream but not currently as a per-package CFLAGS."
+		fi
+	else
+		if ! is-flagq '-O3' ; then
+ewarn "PGO has -O3 in CFLAGS as default ON upstream for release builds but not currently as a per-package CFLAGS."
+		fi
+	fi
+	if use pgo || use bolt ; then
 		mycmakeargs+=(
 			-DISPC_INCLUDE_BENCHMARKS=ON
 			-DBENCHMARK_ENABLE_INSTALL=ON
