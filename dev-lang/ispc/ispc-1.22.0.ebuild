@@ -310,9 +310,9 @@ train_trainer_custom() {
 	local OPATH="${PATH}"
 	export PATH="${S}_build:${PATH}" # The instrumented ispc is here.
 	pushd "${S}_build" || die
-		emake check-all
-		emake ispc_benchmarks
-		emake test
+		make check-all || true
+		make ispc_benchmarks || true
+		make test || true
 	popd
 	export PATH="${OPATH}"
 }
