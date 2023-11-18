@@ -95,7 +95,6 @@ gen_llvm_depends() {
 		echo "
 		llvm-${s}? (
 			sys-devel/clang:${s}=
-			sys-devel/llvm:${s}=[dump(+)]
 			lto? (
 				sys-devel/lld:${s}
 			)
@@ -247,6 +246,9 @@ _src_configure() {
 		export CXX=$(tc-getCXX)
 	fi
 	unset LD
+	if ! has_version "sys-devel/llvm:${LLVM_SLOT}=[dump(+)]" ; then
+		append-cppflags -DNDEBUG
+	fi
 einfo "CC:  ${CC}"
 einfo "CXX:  ${CXX}"
 	uopts_src_configure
