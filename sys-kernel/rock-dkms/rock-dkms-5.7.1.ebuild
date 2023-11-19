@@ -28,7 +28,7 @@ KVS=(
 	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
 #	"5.14" # S 15.4; R 9.1, 9.2
 #	"5.8"  # U 20.04 HWE
-	"5.4"  # U 20.04 generic
+#	"5.4"  # U 20.04 generic ; Missing DRM_MODE_COLORIMETRY_BT601_YCC
 #	"4.18" # R 8.7, 8.8
 #	"3.10" # R 7.9
 )
@@ -49,7 +49,7 @@ if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 	KV_SUPPORTED_MIN="3.10"
 else
 	KV_NOT_SUPPORTED_MAX="5.18" # Exclusive
-	KV_SUPPORTED_MIN="5.4"
+	KV_SUPPORTED_MIN="5.15"
 fi
 gen_kernel_pairs() {
 	local FLAVORS=(
@@ -424,7 +424,7 @@ ewarn
 ewarn "The following kernel versions are only supported for ${P}:"
 ewarn
 ewarn "LTS 5.15.x"
-ewarn "LTS 5.4.x"
+#ewarn "LTS 5.4.x"
 ewarn
 }
 
