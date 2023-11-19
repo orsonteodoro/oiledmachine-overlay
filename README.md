@@ -314,6 +314,7 @@ the metadata.xml.
 
 * app-arch/zopfli
 * dev-games/box2d
+* dev-lang/ispc
 * dev-lang/lua
 * dev-lang/mono
 * media-libs/embree
