@@ -6,7 +6,7 @@ These changes are for dkms to reduce the length of abspaths generated for each
 
 --- a/scripts/Makefile.build.orig	2023-11-18 16:24:11.345131407 -0800
 +++ b/scripts/Makefile.build	2023-11-18 17:00:42.785074727 -0800
-@@ -428,9 +428,11 @@ endif
+@@ -428,9 +428,12 @@ endif
  # module is turned into a multi object module, $^ will contain header file
  # dependencies recorded in the .*.cmd file.
  quiet_cmd_link_multi-m = LD [M]  $@
@@ -17,5 +17,6 @@ These changes are for dkms to reduce the length of abspaths generated for each
 +	$(file >$@.in)
 +	$(foreach O,$(filter %.o,$^),$(file >>$(realpath $@.in),$O))
  	$(call if_changed,link_multi-m)
++	@rm $@.in
  $(call multi_depend, $(multi-used-m), .o, -objs -y -m)
  

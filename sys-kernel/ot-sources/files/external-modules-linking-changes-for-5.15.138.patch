@@ -6,7 +6,7 @@ These changes are for dkms to reduce the length of abspaths generated for each
 
 --- a/scripts/Makefile.build.orig	2023-11-18 17:47:51.741001557 -0800
 +++ b/scripts/Makefile.build	2023-11-18 17:53:24.256992956 -0800
-@@ -476,13 +476,15 @@ quiet_cmd_link_multi-m = AR [M]  $@
+@@ -476,13 +476,16 @@ quiet_cmd_link_multi-m = AR [M]  $@
  cmd_link_multi-m =						\
  	$(cmd_update_lto_symversions);				\
  	rm -f $@; 						\
@@ -22,5 +22,6 @@ These changes are for dkms to reduce the length of abspaths generated for each
 +	$(file >$@.in)
 +	$(foreach O,$(filter %.o,$^),$(file >>$(realpath $@.in),$O))
  	$(call if_changed,link_multi-m)
++	@rm $@.in
  $(call multi_depend, $(multi-obj-m), .o, -objs -y -m)
  
