@@ -680,12 +680,12 @@ get_n_cpus() {
 }
 
 die_build() {
-	env > "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+	env > "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
 eerror
 eerror "Log dumps:"
 eerror
-eerror "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
-eerror "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
+eerror "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+eerror "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
 eerror
 	die "${@}"
 }

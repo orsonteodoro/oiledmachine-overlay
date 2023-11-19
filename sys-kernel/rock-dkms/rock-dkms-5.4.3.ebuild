@@ -681,12 +681,12 @@ get_n_cpus() {
 }
 
 die_build() {
-	env > "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+	env > "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
 eerror
 eerror "Log dumps:"
 eerror
-eerror "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
-eerror "/var/lib/dkms/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
+eerror "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+eerror "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
 eerror
 	die "${@}"
 }
@@ -924,3 +924,4 @@ einfo "Try again"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.4.3, 20231115, kernel 5.15.138)
+# OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.4.3, 20231118, kernel 5.4.260)
