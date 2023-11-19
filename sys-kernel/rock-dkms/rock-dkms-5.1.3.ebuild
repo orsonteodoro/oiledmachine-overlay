@@ -714,8 +714,8 @@ einfo "Running:  export ${key}=${value}"
 }
 
 _dkms_build_clean() {
-	[[ -z "${DKMS_PKG_NAME}" ]] || die
-	[[ -z "${DKMS_PKG_VER}" ]] || die
+	[[ -z "${DKMS_PKG_NAME}" ]] && die
+	[[ -z "${DKMS_PKG_VER}" ]] && die
 	rm -rf "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
 }
 
