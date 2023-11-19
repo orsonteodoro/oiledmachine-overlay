@@ -129,6 +129,7 @@ PATCHES=(
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-seq_printf-header.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-pre-build-change-kcl-defs.patch"
+	"${FILESDIR}/rock-dkms-5.2.3-fix-ssg-in-amdgpu_ttm.patch"
 )
 
 pkg_setup_warn() {
@@ -923,5 +924,5 @@ einfo "Try again"
 	check_modprobe_conf
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.2.3, 20231115, kernel 5.15.138)
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.2.3, 20231119, kernel 5.15.138)
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.2.3, 20231118, kernel 5.4.260)
