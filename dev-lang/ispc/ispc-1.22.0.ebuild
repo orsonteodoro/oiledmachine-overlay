@@ -284,6 +284,9 @@ einfo "CXX:  ${CXX}"
 			-DISPC_FAST_MATH=ON
 		)
 	fi
+	if use pgo && tc-is-clang ; then
+		append-flags -mllvm -vp-counters-per-site=8
+	fi
 	if use pgo || use bolt ; then
 		if ! is-flagq '-O3' ; then
 ewarn "PGO has -O3 in CFLAGS as default ON upstream but not currently as a per-package CFLAGS."
@@ -294,11 +297,13 @@ ewarn "PGO has -O3 in CFLAGS as default ON upstream for release builds but not c
 		fi
 	fi
 	if use pgo || use bolt ; then
-		mycmakeargs+=(
-			-DISPC_INCLUDE_BENCHMARKS=ON
-			-DBENCHMARK_ENABLE_INSTALL=ON
-			-DISPC_INCLUDE_TESTS=ON
-		)
+		if [[ "${PGO_PHASE}" == "PGI" || "${BOLT_PHASE}" == "INST" ]] ; then
+			mycmakeargs+=(
+				-DISPC_INCLUDE_BENCHMARKS=ON
+				-DBENCHMARK_ENABLE_INSTALL=ON
+				-DISPC_INCLUDE_TESTS=ON
+			)
+		fi
 	fi
 	if use tbb ; then
 		mycmakeargs+=(
@@ -327,6 +332,7 @@ eerror
 }
 
 _src_compile() {
+einfo "BUILD_DIR:  ${BUILD_DIR}"
 	cmake_src_compile
 }
 

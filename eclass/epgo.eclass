@@ -435,6 +435,7 @@ epgo_src_install() {
 	# Compatibility based on either specific unmerged .profraw version or
 	# flexible merged .profdata version.  The latter is preferred.
 			local clang_major_pv="$(clang-major-version)"
+			local compiler_pv="$(clang-version)" # major.minor
 			local sys_index_ver=$(grep -E \
 				-e " INSTR_PROF_INDEX_VERSION [0-9]+" \
 				"${ESYSROOT}/usr/lib/llvm/${clang_major_pv}/include/llvm/ProfileData/InstrProfData.inc" \
