@@ -730,10 +730,9 @@ einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 	args+=( --verbose )
 
 	# Fixes make[2]: /bin/sh: Argument list too long
-	# Installed in EROOT so make a temp build folder in EROOT.
-	mkdir -p "${EROOT}/dkms-build"
-	args+=( --dkmstree "${EROOT}/dkms-build" )
-	rm -rf "${EROOT}/dkms-build/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+	# Fixes long abspaths for .o files before linking.
+	args+=( --dkmstree "/" )
+	rm -rf "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
 
 	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@]}\`"
@@ -742,7 +741,7 @@ einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --forc
 	dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force ${args[@]} || die_build
 einfo "The modules were installed in $(get_modules_folder)/updates"
 	signing_modules "${k}"
-	rm -rf "${EROOT}/dkms-build/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+	rm -rf "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
 }
 
 check_modprobe_conf() {
