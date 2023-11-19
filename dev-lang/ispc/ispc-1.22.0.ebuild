@@ -297,13 +297,12 @@ ewarn "PGO has -O3 in CFLAGS as default ON upstream for release builds but not c
 		fi
 	fi
 	if use pgo || use bolt ; then
-		if [[ "${PGO_PHASE}" == "PGI" || "${BOLT_PHASE}" == "INST" ]] ; then
-			mycmakeargs+=(
-				-DISPC_INCLUDE_BENCHMARKS=ON
-				-DBENCHMARK_ENABLE_INSTALL=ON
-				-DISPC_INCLUDE_TESTS=ON
-			)
-		fi
+		# These will need to be built in PGO phase for BOLT.
+		mycmakeargs+=(
+			-DISPC_INCLUDE_BENCHMARKS=ON
+			-DBENCHMARK_ENABLE_INSTALL=ON
+			-DISPC_INCLUDE_TESTS=ON
+		)
 	fi
 	if use tbb ; then
 		mycmakeargs+=(
