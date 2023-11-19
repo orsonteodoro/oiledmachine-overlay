@@ -2123,6 +2123,14 @@ einfo
 		patches+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
 
+	if ver_test "${KV_MAJOR_MINOR}" -eq 5.15 ; then
+		eapply "${FILESDIR}/external-modules-linking-changes-for-5.15.138.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -eq 5.10 ; then
+		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -eq 5.4 ; then
+		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
+	fi
+
 	if (( ${#patches[@]} > 0 )) ; then
 		eapply ${patches[@]}
 	fi
