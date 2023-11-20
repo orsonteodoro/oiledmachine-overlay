@@ -127,6 +127,7 @@ PATCHES=(
 	"${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-seq_printf-header.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-pre-build-change-kcl-defs.patch"
+	"${FILESDIR}/rock-dkms-5.6.1-fix-gpu_scheduler-MODULE_PARM_DESC.patch"
 )
 
 pkg_setup_warn() {

@@ -17,7 +17,7 @@ KVS=(
 	"5.15" # U 22.04 Desktop HWE, 22.04 Server generic
 #	"5.14" # S 15.4; R 9.1, 9.2
 #	"5.8"  # U 20.04 HWE
-#	"5.4"  # U 20.04 generic
+	"5.4"  # U 20.04 generic
 #	"4.18" # R 8.7, 8.8
 #	"3.10" # R 7.9
 )
@@ -38,7 +38,7 @@ RDEPEND="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r5"
+IUSE="si r6"
 REQUIRED_USE="
 "
 SRC_URI="

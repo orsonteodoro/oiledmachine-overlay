@@ -15,7 +15,7 @@ These changes are for dkms to reduce the length of abspaths generated for each
  
  $(multi-used-m): FORCE
 +	$(file >$@.in)
-+	$(foreach O,$(filter %.o,$^),$(file >>$(realpath $@.in),$O))
++	$(foreach O,$(filter %.o,$(realpath $^)),$(file >>$(realpath $@.in),$O))
  	$(call if_changed,link_multi-m)
 +	@rm $@.in
  $(call multi_depend, $(multi-used-m), .o, -objs -y -m)

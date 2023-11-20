@@ -15,12 +15,12 @@ These changes are for dkms to reduce the length of abspaths generated for each
  else
  quiet_cmd_link_multi-m = LD [M]  $@
 -      cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ $(filter %.o,$^)
-+      cmd_link_multi-m = $(LD) $(ld_flags) -r -o $@ @$@.in
++      cmd_link_multi-m = $(LD) $(strip $(ld_flags)) -r -o $@ @$@.in
  endif
  
  $(multi-obj-m): FORCE
 +	$(file >$@.in)
-+	$(foreach O,$(filter %.o,$^),$(file >>$(realpath $@.in),$O))
++	$(foreach O,$(filter %.o,$(realpath $^)),$(file >>$(realpath $@.in),$O))
  	$(call if_changed,link_multi-m)
 +	@rm $@.in
  $(call multi_depend, $(multi-obj-m), .o, -objs -y -m)
