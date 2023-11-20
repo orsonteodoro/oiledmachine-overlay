@@ -129,6 +129,7 @@ PATCHES=(
 	"${FILESDIR}/rock-dkms-5.4.3-seq_printf-header.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-cc-contains-gcc.patch"
 	"${FILESDIR}/rock-dkms-5.4.3-pre-build-change-kcl-defs.patch"
+	"${FILESDIR}/rock-dkms-5.4.3-fix-preprocessor-scope-in-amdgpu_dm.patch"
 )
 
 pkg_setup_warn() {
