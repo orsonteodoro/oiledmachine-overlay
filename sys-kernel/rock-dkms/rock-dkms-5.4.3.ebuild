@@ -924,5 +924,5 @@ einfo "Try again"
 	check_modprobe_conf
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.4.3, 20231115, kernel 5.15.138)
-# OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.4.3, 20231118, kernel 5.4.260)
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.4.3, 20231115, kernel 5.15.138)
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.4.3, 20231120, kernel 5.4.260)

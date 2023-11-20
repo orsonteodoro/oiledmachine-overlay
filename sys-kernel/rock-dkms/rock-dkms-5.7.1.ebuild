@@ -923,4 +923,7 @@ einfo "Try again"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.7.1, 20231115, kernel 5.15.138)
+# /bin/sh: Argument list too long
+
 # OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.7.1, 20231115, kernel 5.4.260)
+# DRM_MODE_COLORIMETRY_BT601_YCC is undefined
