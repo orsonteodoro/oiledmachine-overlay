@@ -38,7 +38,7 @@ RDEPEND="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 inherit unpacker
-IUSE="si r6"
+IUSE="si r7"
 REQUIRED_USE="
 "
 SRC_URI="
@@ -228,6 +228,7 @@ EOF
 	for kv_slot in ${KVS[@]} ; do
 		fperms 0755 /usr/bin/install-${P}-for-rock-kernel-module-slot-${kv_slot}.sh
 	done
+	fperms 0755 /usr/bin/install-${P}-for-vanilla-kernel-module-slot-${KERNEL_PV}.sh
 	fperms 0755 /usr/bin/install-rocm-firmware-${ROCM_PV}.sh
 	fperms 0755 /usr/bin/install-rocm-firmware-slot-${ROCM_SLOT}.sh
 }
