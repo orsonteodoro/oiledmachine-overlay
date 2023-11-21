@@ -752,7 +752,7 @@ _copy_modules() {
 		cp -a "${build_root}/${built_location}/${built_name}.ko" "${modules_path}${dest_location}" || die "Kernel module copy failed"
 
 		# For slot switch
-		# ${PV} is preferred over ${ROCM_SLOT} to avoid boot failure.
+		# ${PV} is preferred over ${ROCM_SLOT} to avoid boot failure with login display managers.
 		mkdir -p "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}"
 		rm -f "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}/${built_name}.ko"{,.gz,.xz,.zst}
 		cp -a "${build_root}/${built_location}/${built_name}.ko" "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}" || die "Kernel module copy failed"
