@@ -1093,4 +1093,5 @@ einfo "Try again"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.6.1, 20231119, kernel 5.15.138)
+# OILEDMACHINE-OVERLAY-TEST:  loadtime-failure (5.6.1, 20231121, kernel 5.15.138)
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.6.1, 20231119, kernel 5.4.260) w/ot-sources changes to /usr/src/linux-5.4.260-builder/scripts/Makefile.build at multi-used-m patch
