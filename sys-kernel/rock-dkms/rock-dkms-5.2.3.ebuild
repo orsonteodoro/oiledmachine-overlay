@@ -46,7 +46,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r4
+r5
 "
 REQUIRED_USE="
 	compress? (
@@ -830,9 +830,9 @@ kernel_release="${kernel_release}"
 modules_path="/lib/modules/\${kernel_release}"
 IFS=\$'\n'
 for x in \${DKMS_MODULES[@]} ; do
-	built_name=$(echo "\${x}" | cut -f 1 -d " ")
-	built_location=$(echo "\${x}" | cut -f 2 -d " ")
-	dest_location=$(echo "\${x}" | cut -f 3 -d " ")
+	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
+	built_location=\$(echo "\${x}" | cut -f 2 -d " ")
+	dest_location=\$(echo "\${x}" | cut -f 3 -d " ")
 	mkdir -p "\${modules_path}\${dest_location}"
 	cp -a "/lib/modules-rock/\${PV}/\${kernel_release}/\${dest_location}/\${built_name}.ko"* "\${modules_path}\${dest_location}"
 done
