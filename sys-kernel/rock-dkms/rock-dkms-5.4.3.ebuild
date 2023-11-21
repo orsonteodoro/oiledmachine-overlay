@@ -751,7 +751,7 @@ _copy_modules() {
 		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
 		mkdir -p "${modules_path}${dest_location}"
 		cp -a "${build_root}/${built_location}/${built_name}.ko" "${modules_path}${dest_location}" || die "Kernel module copy failed"
-		rm "${modules_path}${dest_location}/${built_name}.ko"{.gz,.xz,.zst}
+		rm -f "${modules_path}${dest_location}/${built_name}.ko"{.gz,.xz,.zst}
 	done
 	IFS=$' \t\n'
 }
@@ -767,7 +767,7 @@ _compress_modules() {
 		local built_location=$(echo "${x}" | cut -f 2 -d " ")
 		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
 		pushd "${modules_path}${dest_location}" || die
-			rm "${built_name}.ko"{.gz,.xz,.zst}
+			rm -f "${built_name}.ko"{.gz,.xz,.zst}
 			if [[ "${CONFIG_MODULE_COMPRESS_ZSTD}" == "y" ]] && has_version "sys-apps/kmod[zstd]" && has_version "app-arch/zstd" ; then
 				# .ko.zst
 				zstd -T0 --rm -f -q "${built_name}.ko"
