@@ -875,7 +875,6 @@ einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@
 		dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build
 einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
 		dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force ${args[@]} || die_build
-einfo "The modules were installed in ${modules_path}/updates"
 	else
 	# Do it this way to avoid the argument list too long bug caused by long abspaths.
 	# There may be a 32k limit in arg file with .o abspaths fed to ld.bfd.
@@ -950,6 +949,7 @@ EOF
 }
 
 pkg_postinst() {
+	local K=()
 	add_env_files
 	switch_firmware
 	if [[ "${USE_DKMS}" == "1" ]] ; then
@@ -980,6 +980,7 @@ pkg_postinst() {
 			else
 				dkms_build
 			fi
+			K+=( "${k}" )
 		done
 	else
 einfo
@@ -1036,6 +1037,19 @@ ewarn "It is recommended to load this module manually after rebooting to easily"
 ewarn "repair/update the driver if missed signing the module or avoid boot time"
 ewarn "reboot or a boot time freeze possibility."
 ewarn
+
+	if use build ; then
+einfo
+einfo "The following can be used to switch between ROCm slots/versions for the"
+einfo "rock-dkms (aka amdgpu-dkms) kernel driver:"
+einfo
+		local k
+		for k in ${K[@]} ; do
+einfo "/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
+einfo "/usr/bin/install-rock-dkms-slot-${ROCM_SLOT}-for-${k}.sh"
+		done
+einfo
+	fi
 }
 
 pkg_prerm() {
