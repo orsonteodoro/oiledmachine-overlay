@@ -15,8 +15,8 @@
 
     This package will build the kernel modules using the DKMS framework allowing
     for version agnostic compatibility meaning that you can compile this package 
-    against the latest point release of the long-term support kernel 5.4.x
-    kernel series only (for security update reasons).  The ROCk
+    against the latest point release of the long-term support kernel 5.4.x,
+    5.15.x kernel series only (for security update reasons).  The ROCk
     package has more GPU features like IPC related features (Memory sharing API,
     Signal sharing API); increasing GPU system memory limits from 3/8 of system 
     memory to 29/32 of system memory; RDMA (aka Remote Device Programming or 
@@ -25,9 +25,23 @@
     Graphic Memory Access) support.  ROCk is also a core component of the
     ROCm platform.
 
+    The amdgpu-dkms package has the same source code but different build files
+    as the rock-dkms package.
+
     This amdgpu module contains extra kernel parameters compared to the
     vanilla amdgpu module that can be used to tune ROCk, SSG, power savings,
     memory usage.  For details, do `modinfo amdgpu`.
+
+
+    Slot  Kernel version support
+    
+    5.1   5.4
+    5.2   5.4, 5.15
+    5.3   5.4, 5.15
+    5.4   5.4, 5.15
+    5.5   5.4, 5.15
+    5.6   5.4, 5.15
+    5.7   5.15
 
 
     It must look like:
