@@ -4,7 +4,8 @@
 EAPI=8
 
 GENPATCHES_FALLBACK_COMMIT="e47454f1268c89d9232c88ae0fd9580e30e52ac1" # 2023-11-08 06:51:46 -0500
-LINUX_SOURCES_FALLBACK_COMMIT="6bc986ab839c844e78a2333a02e55f02c9e57935" # 2023-11-08 13:39:16 -0800
+LINUX_SOURCES_FALLBACK_COMMIT="98b1cc82c4affc16f5598d4fa14b1858671b2263" # 2023-11-19 15:02:14 -0800
+RC_PV="rc2"
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
@@ -15,11 +16,11 @@ GENPATCHES_VER="live"
 PATCH_PROJC_VER="6.5-r0"
 PATCH_RT_VER="6.6-rt13"
 
-inherit ot-kernel-v6.6
+inherit ot-kernel-v6.7
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.5.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.7.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses

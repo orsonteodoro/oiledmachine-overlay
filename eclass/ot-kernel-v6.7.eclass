@@ -2,15 +2,15 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v6.6.eclass
+# @ECLASS: ot-kernel-v6.7.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: Eclass for patching the 6.6.x kernel
+# @BLURB: Eclass for patching the 6.7.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v6.6 eclass defines specific applicable patching for the 6.6.x
+# The ot-kernel-v6.7 eclass defines specific applicable patching for the 6.7.x
 # linux kernel.
 
 case ${EAPI:-0} in
@@ -19,15 +19,15 @@ case ${EAPI:-0} in
 esac
 
 # For *DEPENDs, see
-# https://github.com/torvalds/linux/blob/v6.6/Documentation/process/changes.rst
+# https://github.com/torvalds/linux/blob/v6.7/Documentation/process/changes.rst
 # For compiler versions, see
-# https://github.com/torvalds/linux/blob/v6.6/scripts/min-tool-version.sh#L26
+# https://github.com/torvalds/linux/blob/v6.7/scripts/min-tool-version.sh#L26
 
 #GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
 #LINUX_SOURCES_FALLBACK_COMMIT="8bc9e6515183935fa0cccaf67455c439afe4982b" # 2023-10-31 18:50:13 -1000
 # PV is for 9999 (live) context check
 if [[ "${PV}" =~ "9999" ]] ; then
-	RC_PV=""
+	#RC_PV="rc2"
 	# MY_PV is in ver_test context
 	if [[ -n "${RC_PV}" ]] ; then
 		MY_PV=$(ver_cut 1-3 "${PV}")"_${RC_PV}"
@@ -38,8 +38,8 @@ else
 	RC_PV=""
 	MY_PV="${PV}" # ver_test context
 fi
-KERNEL_RELEASE_DATE="20231029" # of first stable release
-CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.6/tools/build/feature/Makefile#L331
+KERNEL_RELEASE_DATE="99999999" # of first stable release
+CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.7/tools/build/feature/Makefile#L331
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
 LLVM_MAX_SLOT=16
@@ -118,7 +118,6 @@ c1ee9b8be367026cb13c8202e9297ea0de6b498d
 9a3bd63bdee9819618d36dbe52aa1d1544234887
 b774e19c2b9336cecdbc4a38bbc1d2a6addd9143
 f0d1b5037d24ee5b94bb79b790597ecf6897c447
-4deded679db72f26a78e8134688c20f9289367df
 )
 
 # Avoid merge conflict.
@@ -156,7 +155,6 @@ c1ee9b8be367026cb13c8202e9297ea0de6b498d
 9a3bd63bdee9819618d36dbe52aa1d1544234887
 b774e19c2b9336cecdbc4a38bbc1d2a6addd9143
 f0d1b5037d24ee5b94bb79b790597ecf6897c447
-4deded679db72f26a78e8134688c20f9289367df
 )
 PATCH_BFQ_DEFAULT="76cd9ca820dcf5780b2515ec29427e2442441854" # Single Queue
 PATCH_KYBER_DEFAULT="05e785fb1ebe9f939360c993637bf9790b0933ab" # Multi Queue
@@ -250,6 +248,8 @@ tresor_x86_64-256-bit-key-support zen-sauce
 "
 
 REQUIRED_USE+="
+	!genpatches
+	!zen-sauce
 	bbrv2? (
 		!bbrv3
 	)
