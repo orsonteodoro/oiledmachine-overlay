@@ -196,7 +196,7 @@ fi
 # For firmware security update(s), see
 # https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
 LINUX_FIRMWARE_PV="20230625_p20230724"
-INTEL_MICROCODE_PV="20230808_p20230804"
+INTEL_MICROCODE_PV="20231114_p20231114"
 RDEPEND+="
 	intel-microcode? (
 		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
