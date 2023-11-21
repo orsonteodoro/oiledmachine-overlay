@@ -46,7 +46,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r3
+r4
 "
 REQUIRED_USE="
 	compress? (
@@ -829,6 +829,7 @@ DKMS_MODULES=(
 
 kernel_release="${kernel_release}"
 modules_path="/lib/modules/\${kernel_release}"
+IFS=\$'\n'
 for x in \${DKMS_MODULES[@]} ; do
 	built_name=$(echo "\${x}" | cut -f 1 -d " ")
 	built_location=$(echo "\${x}" | cut -f 2 -d " ")
@@ -836,6 +837,7 @@ for x in \${DKMS_MODULES[@]} ; do
 	mkdir -p "\${modules_path}\${dest_location}"
 	cp -a "/lib/modules-rock/\${PV}/\${kernel_release}/\${dest_location}/\${built_name}.ko"* "\${modules_path}\${dest_location}"
 done
+IFS=\$' \t\n'
 EOF
 	chmod -v 0750 "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
 }
