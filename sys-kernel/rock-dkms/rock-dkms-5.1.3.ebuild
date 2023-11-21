@@ -43,7 +43,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r6
+r8
 "
 REQUIRED_USE="
 	compress? (
@@ -746,13 +746,13 @@ _copy_modules() {
 
 		# For default install
 		mkdir -p "${modules_path}${dest_location}"
+		rm -f "${modules_path}${dest_location}/${built_name}.ko"{,.gz,.xz,.zst}
 		cp -a "${build_root}/${built_location}/${built_name}.ko" "${modules_path}${dest_location}" || die "Kernel module copy failed"
 
 		# For slot switch
 		mkdir -p "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}"
+		rm -f "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}/${built_name}.ko"{,.gz,.xz,.zst}
 		cp -a "${build_root}/${built_location}/${built_name}.ko" "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}" || die "Kernel module copy failed"
-
-		rm -f "${modules_path}${dest_location}/${built_name}.ko"{.gz,.xz,.zst}
 	done
 	IFS=$' \t\n'
 }
@@ -761,8 +761,7 @@ _compress_modules() {
 	use compress || return
 	IFS=$'\n'
 	local x
-	local modules_path="/lib/modules/${kernel_release}"
-	local build_root="/rock_build/build"
+	local modules_path="${1}"
 	for x in ${DKMS_MODULES[@]} ; do
 		local built_name=$(echo "${x}" | cut -f 1 -d " ")
 		local built_location=$(echo "${x}" | cut -f 2 -d " ")
@@ -889,9 +888,10 @@ einfo "Running:  \`make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAM
 		make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAME=amdttm SCHED_NAME=amd-sched -C /lib/modules/${kernel_release}/build M=/rock_build/build
 		popd || die
 		_copy_modules
-		_compress_modules
 	fi
 	signing_modules "${k}"
+	_compress_modules "/lib/modules/${kernel_release}"
+	_compress_modules "/lib/modules-rock/${kernel_release}"
 	_build_clean
 	_gen_switch_wrapper
 }
