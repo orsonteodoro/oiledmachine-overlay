@@ -45,7 +45,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r5
+r6
 "
 REQUIRED_USE="
 	compress? (
@@ -837,6 +837,7 @@ done
 IFS=\$' \t\n'
 EOF
 	chmod -v 0750 "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
+	ln -sf "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh" "${EROOT}/usr/bin/install-rock-dkms-slot-${ROCM_SLOT}-for-${k}.sh"
 }
 
 dkms_build() {
