@@ -46,7 +46,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r8
+r9
 "
 REQUIRED_USE="
 	compress? (
@@ -754,9 +754,9 @@ _copy_modules() {
 		cp -a "${build_root}/${built_location}/${built_name}.ko" "${modules_path}${dest_location}" || die "Kernel module copy failed"
 
 		# For slot switch
-		mkdir -p "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}"
-		rm -f "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}/${built_name}.ko"{,.gz,.xz,.zst}
-		cp -a "${build_root}/${built_location}/${built_name}.ko" "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}" || die "Kernel module copy failed"
+		mkdir -p "/lib/modules-rock/${ROCM_SLOT}/${kernel_release}/${dest_location}"
+		rm -f "/lib/modules-rock/${ROCM_SLOT}/${kernel_release}/${dest_location}/${built_name}.ko"{,.gz,.xz,.zst}
+		cp -a "${build_root}/${built_location}/${built_name}.ko" "/lib/modules-rock/${ROCM_SLOT}/${kernel_release}/${dest_location}" || die "Kernel module copy failed"
 	done
 	IFS=$' \t\n'
 }
@@ -803,6 +803,7 @@ _gen_switch_wrapper() {
 cat <<EOF > "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
 #!/bin/bash
 PV="${PV}"
+ROCM_SLOT="${ROCM_SLOT}"
 strict_pairing="${strict_pairing}"
 best_pv="${best_pv}"
 if [[ "\${strict_pairing}" == "y" ]] ; then
@@ -833,7 +834,7 @@ for x in \${DKMS_MODULES[@]} ; do
 	built_location=\$(echo "\${x}" | cut -f 2 -d " ")
 	dest_location=\$(echo "\${x}" | cut -f 3 -d " ")
 	mkdir -p "\${modules_path}\${dest_location}"
-	cp -a "/lib/modules-rock/\${PV}/\${kernel_release}/\${dest_location}/\${built_name}.ko"* "\${modules_path}\${dest_location}"
+	cp -a "/lib/modules-rock/\${ROCM_SLOT}/\${kernel_release}/\${dest_location}/\${built_name}.ko"* "\${modules_path}\${dest_location}"
 done
 IFS=\$' \t\n'
 EOF
@@ -895,7 +896,7 @@ einfo "Running:  \`make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAM
 	fi
 	signing_modules "${k}"
 	_compress_modules "/lib/modules/${kernel_release}"
-	_compress_modules "/lib/modules-rock/${kernel_release}"
+	_compress_modules "/lib/modules-rock/${ROCM_SLOT}/${kernel_release}"
 	_build_clean
 	_gen_switch_wrapper
 }
