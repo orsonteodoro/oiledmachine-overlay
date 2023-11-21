@@ -47,7 +47,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r2
+r3
 "
 REQUIRED_USE="
 	compress? (
@@ -749,8 +749,15 @@ _copy_modules() {
 		local built_name=$(echo "${x}" | cut -f 1 -d " ")
 		local built_location=$(echo "${x}" | cut -f 2 -d " ")
 		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
+
+		# For default install
 		mkdir -p "${modules_path}${dest_location}"
 		cp -a "${build_root}/${built_location}/${built_name}.ko" "${modules_path}${dest_location}" || die "Kernel module copy failed"
+
+		# For slot switch
+		mkdir -p "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}"
+		cp -a "${build_root}/${built_location}/${built_name}.ko" "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}" || die "Kernel module copy failed"
+
 		rm -f "${modules_path}${dest_location}/${built_name}.ko"{.gz,.xz,.zst}
 	done
 	IFS=$' \t\n'
@@ -781,6 +788,33 @@ _compress_modules() {
 		popd
 	done
 	IFS=$' \t\n'
+}
+
+# For multiple slot support.
+_gen_switch_wrapper() {
+cat <<EOF > "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
+#!/bin/bash
+PV="${PV}"
+echo "Switching to rock-dkms ${PV}"
+DKMS_MODULES=(
+        "amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+        "amdttm ttm /kernel/drivers/gpu/drm/ttm"
+        "amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+        "amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
+        "amddrm_ttm_helper . /kernel/drivers/gpu/drm"
+)
+
+kernel_release="${kernel_release}"
+modules_path="/lib/modules/\${kernel_release}"
+for x in \${DKMS_MODULES[@]} ; do
+	built_name=$(echo "\${x}" | cut -f 1 -d " ")
+	built_location=$(echo "\${x}" | cut -f 2 -d " ")
+	dest_location=$(echo "\${x}" | cut -f 3 -d " ")
+	mkdir -p "\${modules_path}\${dest_location}"
+	cp -a "/lib/modules-rock/\${PV}/\${kernel_release}/\${dest_location}/\${built_name}.ko"* "\${modules_path}\${dest_location}"
+done
+EOF
+	chmod -v 0750 "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
 }
 
 dkms_build() {
@@ -838,6 +872,7 @@ einfo "Running:  \`make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAM
 	fi
 	signing_modules "${k}"
 	_build_clean
+	_gen_switch_wrapper
 }
 
 check_modprobe_conf() {
