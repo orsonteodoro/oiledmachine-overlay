@@ -7,7 +7,16 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit linux-info toolchain-funcs
 
+DKMS_MODULES=(
+	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
+	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+	"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
+	"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
+	"amddrm_buddy . /kernel/drivers/gpu/drm"
+)
 MAINTAINER_MODE=0
+USE_DKMS=0
 
 DESCRIPTION="ROCk DKMS kernel module"
 HOMEPAGE="
@@ -17,7 +26,7 @@ LICENSE="
 	GPL-2
 	MIT
 "
-#KEYWORDS="~amd64" # Ebuild not finished
+KEYWORDS="~amd64"
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCK_VER="${PV}"
 SUFFIX="${PV_MAJOR_MINOR}"
@@ -35,11 +44,18 @@ KVS=(
 )
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-acpi +build +check-mmu-notifier custom-kernel directgma hybrid-graphics
-numa +sign-modules ssg strict-pairing
+acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
+numa +sign-modules ssg strict-pairing xz zstd
 r2
 "
 REQUIRED_USE="
+	compress? (
+		|| (
+			gzip
+			xz
+			zstd
+		)
+	)
 	hybrid-graphics? (
 		acpi
 	)
@@ -102,10 +118,14 @@ CDEPEND="
 RDEPEND="
 	!sys-kernel/rock-dkms:0
 	${CDEPEND}
-	>=sys-kernel/dkms-1.95
 	sys-devel/autoconf
 	sys-devel/automake
 "
+if [[ "${USE_DKMS}" == "1" ]] ; then
+	RDEPEND+="
+		>=sys-kernel/dkms-1.95
+	"
+fi
 DEPEND="
 	${CDEPEND}
 	${RDEPEND}
@@ -113,6 +133,20 @@ DEPEND="
 BDEPEND="
 	${BDEPEND}
 	sys-apps/grep[pcre]
+	compress? (
+		gzip? (
+			sys-apps/kmod[zlib]
+			app-arch/gzip
+		)
+		xz? (
+			sys-apps/kmod[lzma]
+			app-arch/xz-utils
+		)
+		zstd? (
+			sys-apps/kmod[zstd]
+			app-arch/zstd
+		)
+	)
 "
 SRC_URI="
 https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/archive/refs/tags/rocm-${PV}.tar.gz
@@ -536,8 +570,7 @@ install_examples() {
 
 src_install() {
 	install_examples
-	dodir "usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
-	insinto "usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
+	insinto "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
 	doins -r "${S}/"*
 	local d="${DKMS_PKG_NAME}-${DKMS_PKG_VER}"
 	local paths=(
@@ -559,36 +592,6 @@ get_arch() {
 	echo $(uname -m)
 }
 
-get_modules_folder() {
-	local md
-	if [[ -d "/lib/modules/${k}-$(get_arch)" ]] ; then
-		md="/lib/modules/${k}-$(get_arch)"
-	elif [[ -d "/lib/modules/${k}" ]] ; then
-		md="/lib/modules/${k}"
-	else
-eerror
-eerror "Could not locate modules folder to sign."
-eerror
-		die
-	fi
-	echo "${md}"
-}
-
-git_modules_folder_suffix() {
-	local md
-	if [[ -d "/lib/modules/${k}-$(get_arch)" ]] ; then
-		md="-$(get_arch)"
-	elif [[ -d "/lib/modules/${k}" ]] ; then
-		md=""
-	else
-eerror
-eerror "Could not locate modules folder to sign."
-eerror
-		die
-	fi
-	echo "${md}"
-}
-
 sign_module() {
 	local module_path="${1}"
 	einfo "Signing $(basename ${module_path})"
@@ -601,44 +604,52 @@ sign_module() {
 }
 
 signing_modules() {
-	local k="${1}"
+	local k="${1}" # ${kv}-${extraversion}
 	KERNEL_DIR="/usr/src/linux-${k}"
 	get_version
 	linux_config_exists
 	if linux_chkconfig_builtin "MODULE_SIG" && use sign-modules ; then
-		local kd="/usr/src/linux-${k}"
-		local md=$(get_modules_folder)
+		local kernel_path="/usr/src/linux-${k}"
+		local kernel_release=$(cat "${kernel_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
+		if [[ -z "${kernel_release}" ]] ; then
+eerror
+eerror "${kernel_path}/include/config/kernel.release is not initalized"
+eerror
+eerror "It must contain a value like 5.15.138-builder-x86_64"
+eerror
+			die
+		fi
+		local modules_path="/lib/modules/${kernel_release}"
 		local module_sig_hash=$(grep \
 			-Po '(?<=CONFIG_MODULE_SIG_HASH=").*(?=")' \
-			"${kd}/.config")
+			"${kernel_path}/.config")
 		local module_sig_key=$(grep \
 			-Po '(?<=CONFIG_MODULE_SIG_KEY=").*(?=")' \
-			"${kd}/.config")
+			"${kernel_path}/.config")
 		module_sig_key="${module_sig_key:-certs/signing_key.pem}"
 		if [[ "${module_sig_key#pkcs11:}" == "${module_sig_key}" \
 			&& "${module_sig_key#/}" == "${module_sig_key}" ]]; then
-			local key_path="${kd}/${module_sig_key}"
+			local key_path="${kernel_path}/${module_sig_key}"
 		else
 			local key_path="${module_sig_key}"
 		fi
-		local cert_path="${kd}/certs/signing_key.x509"
+		local cert_path="${kernel_path}/certs/signing_key.x509"
 
 		# If you get No such file or directory:  crypto/bio/bss_file.c,
 		# This means that the kernel module location changed.  Set below
 		# paths in amd/dkms/dkms.conf.
 
-		sign_module \
-			"${md}/kernel/drivers/gpu/drm/scheduler/amd-sched.ko" \
-			|| die
-		sign_module \
-			"${md}/kernel/drivers/gpu/drm/ttm/amdttm.ko" \
-			|| die
-		sign_module \
-			"${md}/kernel/drivers/gpu/drm/amd/amdkcl/amdkcl.ko" \
-			|| die
-		sign_module \
-			"${md}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko" \
-			|| die
+		IFS=$'\n'
+		local x
+		for x in ${DKMS_MODULES[@]} ; do
+			local built_name=$(echo "${x}" | cut -f 1 -d " ")
+			local built_location=$(echo "${x}" | cut -f 2 -d " ")
+			local dest_location=$(echo "${x}" | cut -f 3 -d " ")
+			sign_module \
+				"${modules_path}${dest_location}/${built_name}.ko" \
+				|| die
+		done
+		IFS=$' \t\n'
 	fi
 }
 
@@ -681,12 +692,18 @@ get_n_cpus() {
 }
 
 die_build() {
-	env > "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
+	local build_root
+	if [[ "${USE_DKMS}" == "1" ]] ; then
+		build_root="/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+	else
+		build_root="/rock_build"
+	fi
+	env > "${build_root}/build/env.log"
 eerror
 eerror "Log dumps:"
 eerror
-eerror "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/env.log"
-eerror "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}/build/make.log"
+eerror "${build_root}/build/env.log"
+eerror "${build_root}/build/make.log"
 eerror
 	die "${@}"
 }
@@ -716,14 +733,74 @@ einfo "Running:  export ${key}=${value}"
 	IFS=$' \t\n'
 }
 
-_dkms_build_clean() {
-	[[ -z "${DKMS_PKG_NAME}" ]] && die
-	[[ -z "${DKMS_PKG_VER}" ]] && die
-	rm -rf "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+_build_clean() {
+	if [[ "${USE_DKMS}" == "1" ]] ; then
+		[[ -z "${DKMS_PKG_NAME}" ]] && die
+		[[ -z "${DKMS_PKG_VER}" ]] && die
+		[[ "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}" == "//" ]] && die
+		rm -rf "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+	else
+		rm -rf "/rock_build"
+	fi
+}
+
+_copy_modules() {
+	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.5.1/drivers/gpu/drm/amd/dkms/dkms.conf
+	IFS=$'\n'
+
+	local x
+	local modules_path="/lib/modules/${kernel_release}"
+	local build_root="/rock_build/build"
+	for x in ${DKMS_MODULES[@]} ; do
+		local built_name=$(echo "${x}" | cut -f 1 -d " ")
+		local built_location=$(echo "${x}" | cut -f 2 -d " ")
+		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
+		mkdir -p "${modules_path}${dest_location}"
+		cp -a "${build_root}/${built_location}/${built_name}.ko" "${modules_path}${dest_location}" || die "Kernel module copy failed"
+		rm "${modules_path}${dest_location}/${built_name}.ko"{.gz,.xz,.zst}
+	done
+	IFS=$' \t\n'
+}
+
+_compress_modules() {
+	use compress || return
+	IFS=$'\n'
+	local x
+	local modules_path="/lib/modules/${kernel_release}"
+	local build_root="/rock_build/build"
+	for x in ${DKMS_MODULES[@]} ; do
+		local built_name=$(echo "${x}" | cut -f 1 -d " ")
+		local built_location=$(echo "${x}" | cut -f 2 -d " ")
+		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
+		pushd "${modules_path}${dest_location}" || die
+			rm "${built_name}.ko"{.gz,.xz,.zst}
+			if [[ "${CONFIG_MODULE_COMPRESS_ZSTD}" == "y" ]] && has_version "sys-apps/kmod[zstd]" && has_version "app-arch/zstd" ; then
+				# .ko.zst
+				zstd -T0 --rm -f -q "${built_name}.ko"
+			elif [[ "${CONFIG_MODULE_COMPRESS_XZ}" == "y" ]] && has_version "sys-apps/kmod[lzma]" && has_version "app-arch/xz-utils" ; then
+				# .ko.xz
+				xz --lzma2=dict=2MiB -f "${built_name}.ko"
+			elif [[ "${CONFIG_MODULE_COMPRESS_GZIP}" == "y" ]] && has_version "sys-apps/kmod[zlib]" && has_version "app-arch/gzip" ; then
+				# .ko.gz
+				gzip -n -f "${built_name}.ko"
+			fi
+		popd
+	done
+	IFS=$' \t\n'
 }
 
 dkms_build() {
 	local kernel_source_path="/usr/src/linux-${k}"
+	local kernel_release=$(cat "${kernel_source_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
+	if [[ -z "${kernel_release}" ]] ; then
+eerror
+eerror "${kernel_source_path}/include/config/kernel.release is not initalized."
+eerror
+eerror "It must contain a value like 5.15.138-builder-x86_64"
+eerror
+		die
+	fi
+	local modules_path="/lib/modules/${kernel_release}"
 	local config_path="/usr/src/linux-${k}/.config"
 	local dkms_conf_path="/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/dkms.conf"
 einfo "KERNEL_SOURCE_PATH:  ${kernel_source_path}"
@@ -738,16 +815,35 @@ einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 	# Fixes make[2]: /bin/sh: Argument list too long
 	# Fixes long abspaths for .o files before linking.
 	args+=( --dkmstree "/" )
-	_dkms_build_clean
+	_build_clean
 
-	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
+	local _k="${kernel_release}/${ARCH}"
+	if [[ "${USE_DKMS}" == "1" ]] ; then
 einfo "Running:  \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} ${args[@]}\`"
-	dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build
+		dkms build "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" ${args[@]} || die_build
 einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
-	dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force ${args[@]} || die_build
-einfo "The modules were installed in $(get_modules_folder)/updates"
+		dkms install "${DKMS_PKG_NAME}/${DKMS_PKG_VER}" -k "${_k}" --force ${args[@]} || die_build
+einfo "The modules were installed in ${modules_path}/updates"
+	else
+	# Do it this way to avoid the argument list too long bug caused by long abspaths.
+	# There may be a 32k limit in arg file with .o abspaths fed to ld.bfd.
+		mkdir -p "/rock_build/build"
+		cp -aT "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}" "/rock_build/build"
+		ln -sf "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}" "/rock_build/source"
+		mkdir -p "/lib/modules/${kernel_release}"
+		ln -sf "/usr/src/linux-${k}" "/lib/modules/${kernel_release}/build"
+		ln -sf "/usr/src/linux-${k}" "/lib/modules/${kernel_release}/source"
+		pushd "/rock_build/build" || die
+	# Generate a /rock_build/build/include/rename_symbol.h first
+			amd/dkms/pre-build.sh ${kernel_release} || die
+einfo "Running:  \`make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAME=amdttm SCHED_NAME=amd-sched -C /lib/modules/${kernel_release}/build M=/rock_build/build\`"
+		make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAME=amdttm SCHED_NAME=amd-sched -C /lib/modules/${kernel_release}/build M=/rock_build/build
+		popd || die
+		_copy_modules
+		_compress_modules
+	fi
 	signing_modules "${k}"
-	_dkms_build_clean
+	_build_clean
 }
 
 check_modprobe_conf() {
@@ -802,7 +898,9 @@ EOF
 pkg_postinst() {
 	add_env_files
 	switch_firmware
-	dkms add "${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+	if [[ "${USE_DKMS}" == "1" ]] ; then
+		dkms add "${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
+	fi
 	chmod -v 0750 "${EROOT}/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/configure"
 	if use build ; then
 		local k

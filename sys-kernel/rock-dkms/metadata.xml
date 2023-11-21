@@ -65,6 +65,9 @@
     <flag name="check-mmu-notifier">
       Checks if the MMU_NOTIFIER is enabled.
     </flag>
+    <flag name="compress">
+      Compress the kernel modules if compression is available.
+    </flag>
     <flag name="custom-kernel">
       Bypass RDEPENDs check for a kernel package.
     </flag>
@@ -73,6 +76,9 @@
     </flag>
     <flag name="firmware">
       Pulls in the firmware package containing the latest firmware version.
+    </flag>
+    <flag name="gzip">
+      Compress the kernel modules with gzip.
     </flag>
     <flag name="hybrid-graphics">
       Checks if kernel config for proper support for PowerXpress, Hybrid
@@ -107,6 +113,12 @@
       (Note in recent versions 5.0 or later, the rock-dkms-firmware package has
       not been released separately like in older versions but the
       amdgpu-dkms-firmware matching the rocm version has been used instead.)
+    </flag>
+    <flag name="xz">
+      Compress the kernel modules with xz.
+    </flag>
+    <flag name="zstd">
+      Compress the kernel modules with zstd.
     </flag>
   </use>
 </pkgmetadata>
