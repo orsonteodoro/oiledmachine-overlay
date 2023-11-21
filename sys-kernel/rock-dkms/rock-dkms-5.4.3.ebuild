@@ -792,9 +792,33 @@ _compress_modules() {
 
 # For multiple slot support.
 _gen_switch_wrapper() {
+	local strict_pairing
+	local best_pv=""
+	if use strict-pairing ; then
+		strict_pairing="y"
+	else
+		strict_pairing="n"
+		local pv=$(best_version ">=sys-firmware/amdgpu-dkms-firmware-${PV}" \
+			| sed -e "s|sys-firmware/amdgpu-dkms-firmware-||g")
+		best_pv="${pv}"
+	fi
+
 cat <<EOF > "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
 #!/bin/bash
 PV="${PV}"
+strict_pairing="${strict_pairing}"
+best_pv="${best_pv}"
+if [[ "\${strict_pairing}" == "y" ]] ; then
+	if [[ -e "/usr/bin/install-rocm-firmware-\${PV}.sh" ]] ; then
+		/usr/bin/install-rocm-firmware-\${PV}.sh
+	fi
+else
+	if [[ -n "\${best_pv}" ]] ; then
+		if [[ -e "/usr/bin/install-amdgpu-dkms-firmware-\${best_pv}.sh" ]] ; then
+			/usr/bin/install-amdgpu-dkms-firmware-\${best_pv}.sh
+		fi
+	fi
+fi
 echo "Switching to rock-dkms ${PV}"
 DKMS_MODULES=(
         "amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
