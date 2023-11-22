@@ -45,7 +45,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r11
+r12
 "
 REQUIRED_USE="
 	compress? (
@@ -968,6 +968,7 @@ pkg_postinst() {
 				local v
 				for v in ${V} ; do
 					k="${v}"
+					K+=( "${k}" )
 					dkms_build
 				done
 			elif [[ "${k}" =~ "^" ]] ; then
@@ -977,11 +978,12 @@ pkg_postinst() {
 					| sort --version-sort -r \
 					| head -n 1 \
 					| sed -e "s|.*/linux-||")
+				K+=( "${k}" )
 				dkms_build
 			else
+				K+=( "${k}" )
 				dkms_build
 			fi
-			K+=( "${k}" )
 		done
 	else
 einfo
