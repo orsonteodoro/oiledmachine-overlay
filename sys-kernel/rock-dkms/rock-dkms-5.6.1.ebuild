@@ -46,7 +46,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r12
+r13
 "
 REQUIRED_USE="
 	compress? (
@@ -1062,7 +1062,7 @@ einfo
 			local kernel_release=$(cat "${kernel_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
 # Fixes missing symbols for amdgpu.ko.
 einfo "Updating /lib/modules/${kernel_release}/modules.dep for \`modprobe amdgpu\`."
-			depmod -a ${k} ${kernel_release}
+			depmod -a ${kernel_release}
 		done
 einfo
 	fi
