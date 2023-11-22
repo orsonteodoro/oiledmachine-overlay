@@ -9033,7 +9033,7 @@ KERNEL_MODULES=(
 	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 )
 
-# Entries from all versions of rock-dkms
+# Entries from all versions of the rock-dkms driver and the vanilla amdgpu kernel driver.
 _DKMS_MODULES=(
 	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm /kernel/drivers/gpu/drm/ttm"
