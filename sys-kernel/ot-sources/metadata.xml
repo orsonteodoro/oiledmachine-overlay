@@ -3232,6 +3232,11 @@ unset OT_KERNEL_PRIVATE_KEY
     (Auto detection would be nice, but may be counter productive if hardware
     already fixed or feature disabled.  This is why it is a manual setting.)
 
+    I915_GEN9_HWACCEL_LOW_POWER_VIDEO_ENCODING - Enable hardware accelerated low
+    power video encoding for Gen9/Gen9.5 where it is not the default ON.
+    This requires sys-kernel/linux-firmware.
+    Valid values:  0 (default), 1.
+
     IPTABLES_CLIENT - Add support for iptables client.
     Valid values:  0, 1 (default).
 

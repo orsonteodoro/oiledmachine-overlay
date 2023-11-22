@@ -6354,7 +6354,17 @@ ot-kernel-pkgflags_nv() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sf314ac3]}" == "1" ]] && return
 	if ot-kernel_has_version "x11-drivers/nvidia-drivers" ; then
 		einfo "Applying kernel config flags for the nv driver (id: f314ac3)"
-
+		ot-kernel_y_configopt "CONFIG_MODULES"
+		ot-kernel_y_configopt "CONFIG_MTRR"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
+		ot-kernel_y_configopt "CONFIG_AGP"
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_AGP_INTEL"
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
+		fi
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
@@ -9528,9 +9538,16 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
 		ot-kernel_y_configopt "CONFIG_DEVICE_PRIVATE"
 		ot-kernel_y_configopt "CONFIG_DRM_FBDEV_EMULATION"
-		ot-kernel_y_configopt "CONFIG_AGP"
-		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
+		ot-kernel_y_configopt "CONFIG_AGP"
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_AGP_INTEL"
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
+		fi
+		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_MMU"
 		if ! has rock-dkms ${IUSE_EFFECTIVE} ; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
@@ -9618,18 +9635,28 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2c2d347]}" == "1" ]] && return
 	if ot-kernel_has_version "x11-drivers/xf86-video-ati" ; then
 		einfo "Applying kernel config flags for the xf86-video-ati package (id: 2c2d347)"
+		ot-kernel_y_configopt "CONFIG_MTRR"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_PCIEPORTBUS"
+		ot-kernel_y_configopt "CONFIG_AGP"
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+			ot-kernel_y_configopt "CONFIG_AGP_INTEL"
+		fi
+		if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
+			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
+		fi
 		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_DRM_RADEON"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "3.9" ; then
 			ot-kernel_unset_configopt "CONFIG_DRM_RADEON_UMS"
-			ot-kernel_unset_configopt "CONFIG_FB_RADEON"
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_RADEON_KMS"
-			ot-kernel_unset_configopt "CONFIG_FB_RADEON"
 		fi
+		ot-kernel_unset_configopt "CONFIG_FB_RADEON"
 
 		ot-kernel_y_configopt "CONFIG_SOUND"
 		ot-kernel_y_configopt "CONFIG_SND"
-		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_PATCH_LOADER"
@@ -9669,13 +9696,15 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_I915_USERPTR"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
-			ot-kernel_y_configopt "CONFIG_DRM_I915_CAPTURE_ERROR"
+			warn_lowered_security "bc32011"
+			ot-kernel_y_configopt "CONFIG_DRM_I915_CAPTURE_ERROR" # Debug
 			ot-kernel_y_configopt "CONFIG_DRM_I915_COMPRESS_ERROR"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" \
 			&& ver_test "${KV_MAJOR_MINOR}" -lt "4.19" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915_ALPHA_SUPPORT"
 		fi
+
 		# For vaapi
 		ot-kernel_y_configopt "CONFIG_ACPI"
 		ot-kernel_y_configopt "CONFIG_PCI_MSI"
@@ -9683,6 +9712,42 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 		ot-kernel_y_configopt "CONFIG_INTEL_IOMMU"
 		ot-kernel_y_configopt "CONFIG_INTEL_IOMMU_DEFAULT_ON"
 		ot-kernel_y_configopt "CONFIG_INTEL_IOMMU_SCALABLE_MODE_DEFAULT_ON" # Default on
+
+		if ver_test "sys-kernel/linux-firmware" ; then
+			if [[ "${I915_GEN9_HWACCEL_LOW_POWER_VIDEO_ENCODING:-0}" == "1" ]] ; then
+				if ver_test "${KV_MAJOR_MINOR}" -ge "4.16" ; then
+					ot-kernel_set_kconfig_kernel_cmdline "i915.enable_guc=3"
+				else
+					ot-kernel_set_kconfig_kernel_cmdline "i915.enable_guc_loading=1"
+				fi
+			else
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "i915.enable_guc=[0-9]"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "i915.enable_guc_loading=[0-9]"
+			fi
+
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
+				# For DG2 firmware for HW accelerated media decoding
+				ot-kernel_y_configopt "CONFIG_DRM_I915_PXP"
+				ot-kernel_y_configopt "CONFIG_INTEL_MEI"
+				ot-kernel_y_configopt "CONFIG_INTEL_MEI_ME"
+				ot-kernel_y_configopt "CONFIG_INTEL_MEI_PXP"
+				ot-kernel_y_configopt "CONFIG_INTEL_MEI_GSC"
+				ot-kernel_y_configopt "CONFIG_INTEL_MEI_PXP"
+			fi
+		else
+			if [[ "${I915_GEN9_HWACCEL_LOW_POWER_VIDEO_ENCODING}" == "1" ]] ; then
+ewarn
+ewarn "Install sys-kernel/linux-firmware for low power video HW accelerated"
+ewarn "encoding."
+ewarn
+			fi
+
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
+ewarn
+ewarn "Install sys-kernel/linux-firmware for HW accelerated media decoding."
+ewarn
+			fi
+		fi
 	fi
 }
 
