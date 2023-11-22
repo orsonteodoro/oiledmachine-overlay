@@ -9025,14 +9025,33 @@ ot-kernel_add_amdgpu_wrapper() {
 dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
 #!/bin/bash
+echo "Switching to the vanilla amdgpu kernel module for \${kernel_release}"
 kernel_release="${canonical_target}"
 modules_path="/lib/modules/\${kernel_release}"
-echo "Switching to the vanilla amdgpu kernel module for \${kernel_release}"
+
 KERNEL_MODULES=(
 	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 )
 
+# Entries from all versions of rock-dkms
+_DKMS_MODULES=(
+	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+	"amdttm /kernel/drivers/gpu/drm/ttm"
+	"amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+	"amd-sched /kernel/drivers/gpu/drm/scheduler"
+	"amddrm_ttm_helper /kernel/drivers/gpu/drm"
+	"amddrm_buddy /kernel/drivers/gpu/drm"
+	"amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+)
+
 IFS=\$'\n'
+
+for x in \${_DKMS_MODULES[@]} ; do
+	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
+	dest_location=\$(echo "\${x}" | cut -f 2 -d " ")
+	rm -fv "\${modules_path}\${dest_location}/\${built_name}.ko"*
+done
+
 for x in \${KERNEL_MODULES[@]} ; do
 	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
 	dest_location=\$(echo "\${x}" | cut -f 2 -d " ")
@@ -9050,7 +9069,9 @@ for x in \${KERNEL_MODULES[@]} ; do
 		fi
 	done
 done
+
 IFS=\$' \t\n'
+
 echo "Updating /lib/modules/\${kernel_release}/module.dep for \`modprobe amdgpu\`"
 depmod -a \${kernel_release}
 EOF
