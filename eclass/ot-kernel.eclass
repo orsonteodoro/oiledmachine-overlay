@@ -3691,7 +3691,6 @@ ot-kernel-set_mobo_audio() {
 		ot-kernel_set_configopt "CONFIG_SND_CTXFI" "m" # 2005
 		ot-kernel_set_configopt "CONFIG_SND_EMU10K1" "m" # 1998
 		ot-kernel_set_configopt "CONFIG_SND_INTEL8X0" "m" # 1999
-		ot-kernel_set_configopt "CONFIG_SND_INTEL8X0M" "m" # 1999
 		ot-kernel_set_configopt "CONFIG_SND_CA0106" "m" # 2004
 		ot-kernel_set_configopt "CONFIG_SND_VIA82XX" "m" # 2002
 	fi
