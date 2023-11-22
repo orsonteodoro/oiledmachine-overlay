@@ -9543,6 +9543,9 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 				# Missing DP_UHBR20 in latest 5.4 but appears in 5.19
 				ot-kernel_n_configopt "CONFIG_DRM_AMD_DC_DSC_SUPPORT"
 			fi
+
+			# For better multislot support.
+			ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		fi

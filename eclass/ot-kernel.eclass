@@ -9017,6 +9017,89 @@ ot-kernel_is_full_sources_required() {
 	return 1
 }
 
+# @FUNCTION: ot-kernel_add_amdgpu_wrapper
+# @DESCRIPTION:
+# Add a wrapper for install of vanilla amdgpu kernel driver as a fallback.
+ot-kernel_add_amdgpu_wrapper() {
+# For multiple slot support.
+dodir /usr/bin
+cat <<EOF > "${ED}/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
+#!/bin/bash
+kernel_release="${canonical_target}"
+modules_path="/lib/modules/\${kernel_release}"
+echo "Switching to the vanilla amdgpu kernel module for \${kernel_release}"
+DKMS_MODULES=(
+	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
+	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+	"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
+	"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
+	"amddrm_buddy . /kernel/drivers/gpu/drm"
+	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+)
+
+IFS=\$'\n'
+for x in \${DKMS_MODULES[@]} ; do
+	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
+	built_location=\$(echo "\${x}" | cut -f 2 -d " ")
+	dest_location=\$(echo "\${x}" | cut -f 3 -d " ")
+	FN=(
+		"\${built_name}.ko"
+		"\${built_name}.ko.gz"
+		"\${built_name}.ko.xz"
+		"\${built_name}.ko.zst"
+	)
+	for fn in \${FN[@]} ; do
+		if [[ -e "/lib/modules-amdgpu/\${kernel_release}/\${dest_location}/\${fn}" ]] ; then
+			mkdir -p "\${modules_path}\${dest_location}"
+			rm -f "\${modules_path}\${dest_location}/\${built_name}.ko"{,.gz,.xz,.zst}
+			cp -a "/lib/modules-amdgpu/\${kernel_release}/\${dest_location}/\${fn}" "\${modules_path}\${dest_location}"
+		fi
+	done
+done
+IFS=\$' \t\n'
+EOF
+	fperms 0750 "/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
+}
+
+# @FUNCTION: ot-kernel_slotify_amdgpu
+# @DESCRIPTION:
+# Backup the amdgpu modules as a fallback for the rock-dkms ebuild.
+ot-kernel_slotify_amdgpu() {
+	local DKMS_MODULES=(
+		"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+		"amdttm ttm /kernel/drivers/gpu/drm/ttm"
+		"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+		"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
+		"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
+		"amddrm_buddy . /kernel/drivers/gpu/drm"
+		"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+	)
+	local x
+	IFS=$'\n'
+	for x in ${DKMS_MODULES[@]} ; do
+		local built_name=$(echo "${x}" | cut -f 1 -d " ")
+		local built_location=$(echo "${x}" | cut -f 2 -d " ")
+		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
+		local FN=(
+			"${built_name}.ko"
+			"${built_name}.ko.gz"
+			"${built_name}.ko.xz"
+			"${built_name}.ko.zst"
+		)
+		local fn
+		for fn in ${FN[@]} ; do
+			if [[ -e "${ED}/lib/modules/${canonical_target}${dest_location}/${fn}" ]] ; then
+				dodir "/lib/modules-amdgpu/${canonical_target}${dest_location}"
+				cp -a \
+					"${ED}/lib/modules/${canonical_target}${dest_location}/${fn}" \
+					"${ED}/lib/modules-amdgpu/${canonical_target}${dest_location}"
+			fi
+		done
+	done
+	IFS=$' \t\n'
+}
+
 # @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
@@ -9615,6 +9698,10 @@ EOF
 			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
 			"/lib/modules/${canonical_target}/source"
 
+		if has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
+			ot-kernel_slotify_amdgpu
+			ot-kernel_add_amdgpu_wrapper
+		fi
 	done
 
 	if use pgo ; then
