@@ -46,7 +46,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r14
+r15
 "
 REQUIRED_USE="
 	compress? (
@@ -806,6 +806,8 @@ cat <<EOF > "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
 #!/bin/bash
 PV="${PV}"
 ROCM_SLOT="${ROCM_SLOT}"
+kernel_release="${kernel_release}"
+modules_path="/lib/modules/\${kernel_release}"
 strict_pairing="${strict_pairing}"
 best_pv="${best_pv}"
 if [[ "\${strict_pairing}" == "y" ]] ; then
@@ -828,9 +830,25 @@ DKMS_MODULES=(
         "amddrm_ttm_helper . /kernel/drivers/gpu/drm"
 )
 
-kernel_release="${kernel_release}"
-modules_path="/lib/modules/\${kernel_release}"
+# Entries from all versions
+_DKMS_MODULES=(
+	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
+	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+	"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
+	"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
+	"amddrm_buddy . /kernel/drivers/gpu/drm"
+	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+)
+
 IFS=\$'\n'
+
+for x in \${_DKMS_MODULES[@]} ; do
+        built_name=\$(echo "\${x}" | cut -f 1 -d " ")
+        dest_location=\$(echo "\${x}" | cut -f 3 -d " ")
+        rm -fv "\${modules_path}\${dest_location}/\${built_name}.ko"*
+done
+
 for x in \${DKMS_MODULES[@]} ; do
 	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
 	built_location=\$(echo "\${x}" | cut -f 2 -d " ")
@@ -838,6 +856,7 @@ for x in \${DKMS_MODULES[@]} ; do
 	mkdir -p "\${modules_path}\${dest_location}"
 	cp -a "/lib/modules-rock/\${PV}/\${kernel_release}/\${dest_location}/\${built_name}.ko"* "\${modules_path}\${dest_location}"
 done
+
 IFS=\$' \t\n'
 echo "Updating /lib/modules/\${kernel_release}/module.dep for \`modprobe amdgpu\`"
 depmod -a \${kernel_release}
