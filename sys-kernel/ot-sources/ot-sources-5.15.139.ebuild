@@ -43,6 +43,7 @@ inherit ot-kernel-v5.15
 # streaming video playback - pass
 # initscript - pass
 # runtime stability note:  freeze/deadlock encountered during building + media streaming after a day passed (5.15.137)
+# runtime stability note:  freeze/deadlock less than a day passed (5.15.139) with rock-dkms:5.7 driver and with USE="disable_debug genpatches rock-dkms cfs" enabled and others USE flag disabled while listening and watching video stream.
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
