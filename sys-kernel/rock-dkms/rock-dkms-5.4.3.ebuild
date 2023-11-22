@@ -47,7 +47,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r13
+r14
 "
 REQUIRED_USE="
 	compress? (
@@ -841,6 +841,8 @@ for x in \${DKMS_MODULES[@]} ; do
 	cp -a "/lib/modules-rock/\${PV}/\${kernel_release}/\${dest_location}/\${built_name}.ko"* "\${modules_path}\${dest_location}"
 done
 IFS=\$' \t\n'
+echo "Updating /lib/modules/\${kernel_release}/module.dep for \`modprobe amdgpu\`"
+depmod -a \${kernel_release}
 EOF
 	chmod -v 0750 "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
 	ln -sf "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh" "${EROOT}/usr/bin/install-rock-dkms-slot-${ROCM_SLOT}-for-${k}.sh"
