@@ -46,7 +46,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r10
+r11
 "
 REQUIRED_USE="
 	compress? (
@@ -118,14 +118,13 @@ CDEPEND="
 RDEPEND="
 	!sys-kernel/rock-dkms:0
 	${CDEPEND}
+	sys-apps/kmod[tools]
 	sys-devel/autoconf
 	sys-devel/automake
-"
-if [[ "${USE_DKMS}" == "1" ]] ; then
-	RDEPEND+="
+	!build? (
 		>=sys-kernel/dkms-1.95
-	"
-fi
+	)
+"
 DEPEND="
 	${CDEPEND}
 	${RDEPEND}
@@ -450,8 +449,10 @@ eerror
 	linux_config_exists
 	if use build || [[ "${EBUILD_PHASE_FUNC}" == "pkg_config" ]]; then
 		pkg_setup_error
+		USE_DKMS=0
 	else
 		pkg_setup_warn
+		USE_DKMS=1
 	fi
 }
 
@@ -1053,6 +1054,16 @@ einfo "/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
 einfo "/usr/bin/install-rock-dkms-slot-${ROCM_SLOT}-for-${k}.sh"
 		done
 einfo
+
+einfo
+		for k in ${K[@]} ; do
+			local kernel_path="/usr/src/linux-${k}"
+			local kernel_release=$(cat "${kernel_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
+# Fixes missing symbols for amdgpu.ko.
+einfo "Updating /lib/modules/${kernel_release}/modules.dep for \`modprobe amdgpu\`."
+			depmod -a ${k} ${kernel_release}
+		done
+einfo
 	fi
 }
 
@@ -1094,7 +1105,7 @@ einfo "Try again"
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.7.1, 20231120, kernel 5.15.138)
-# OILEDMACHINE-OVERLAY-TEST:  loadtime-failure (5.7.1, 20231121, kernel 5.15.138)
+# OILEDMACHINE-OVERLAY-TEST:  needs-retest (5.7.1, 20231121, kernel 5.15.138)
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.7.1, 20231115, kernel 5.4.260)
 # DRM_MODE_COLORIMETRY_BT601_YCC is undefined
