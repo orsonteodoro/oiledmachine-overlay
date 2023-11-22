@@ -3113,6 +3113,8 @@ ot-kernel_clear_env() {
 
 	# Unset ot-kernel-pkgflags.
 	# These fields toggle the building of additional sets of kernel configs.
+	unset AMDGPU_DEEP_COLOR
+	unset AMDGPU_DIRECT_DMA_FOR_SSG
 	unset ALSA_PC_SPEAKER
 	unset BPF_JIT
 	unset CRYPTSETUP_CIPHERS
@@ -3138,10 +3140,13 @@ ot-kernel_clear_env() {
 	unset MDADM_RAID
 	unset MICROCODE_SIGNATURES
 	unset MICROCODE_BLACKLIST
+	unset MOBO_AUDIO
+	unset MOBO_AUDIO_LEGACY
 	unset NFS_CLIENT
 	unset NFS_SERVER
 	unset OSS
 	unset OSS_MIDI
+	unset RADEON_DEEP_COLOR
 	unset SANE_SCSI
 	unset SANE_USB
 	unset SQUASHFS_4K_BLOCK_SIZE
@@ -3652,6 +3657,43 @@ ot-kernel_set_kconfig_set_net_qos_schedulers() {
 		picked_alg="${picked_alg,,}"
 einfo "Using ${picked_alg} as the default network QoS"
 		ot-kernel_y_configopt "CONFIG_DEFAULT_${picked_alg^^}"
+	fi
+}
+
+# @FUNCTION: ot-kernel-set_mobo_audio
+# @DESCRIPTION:
+# Common motherboard audio, pci cards for budget gamer, or laptop audio.
+ot-kernel-set_mobo_audio() {
+	# 2005 - present (2023)
+	if [[ "${MOBO_AUDIO:-1}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_SND_PCI"
+		ot-kernel_set_configopt "CONFIG_SND_HDA_INTEL" "m"
+		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_CA0110" "m" # 2008
+		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_CA0132" "m" # 2011
+		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_REALTEK" "m" # 2004
+		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_SIGMATEL" "m" # 2005
+		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_VIA" "m" # 2006-2009
+		ot-kernel_set_configopt "CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
+		ot-kernel_set_configopt "CONFIG_SND_VIRTUOSO" "m" # 2008
+	fi
+	# 1997 - 2004
+	if [[ "${MOBO_AUDIO_LEGACY:-0}" == "1" ]] ; then
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_SND_PCI"
+		ot-kernel_set_configopt "CONFIG_SND_ATIIXP" "m" # 2003-2004
+		ot-kernel_set_configopt "CONFIG_SND_AU8810" "m" # 1999
+		ot-kernel_set_configopt "CONFIG_SND_AU8820" "m" # 1997
+		ot-kernel_set_configopt "CONFIG_SND_AU8830" "m" # 1998
+		ot-kernel_set_configopt "CONFIG_SND_CTXFI" "m" # 2005
+		ot-kernel_set_configopt "CONFIG_SND_EMU10K1" "m" # 1998
+		ot-kernel_set_configopt "CONFIG_SND_INTEL8X0" "m" # 1999
+		ot-kernel_set_configopt "CONFIG_SND_INTEL8X0M" "m" # 1999
+		ot-kernel_set_configopt "CONFIG_SND_CA0106" "m" # 2004
+		ot-kernel_set_configopt "CONFIG_SND_VIA82XX" "m" # 2002
 	fi
 }
 
@@ -5369,7 +5411,7 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 #
 #            R          R          R                       R    = Resume
 #	    ___        ___        ___                      S    = Start
-#	    | V        | V        | V                     V(p) = Verify same compiler of phase
+#	    | V        | V        | V                     V(p) = Verify it is the same compiler major.minor or PGO profile compatibility of that phase
 #	S-> PGI -----> PGT        PGO ------> DONE
 #           ^          |            ^         |  ^
 #           |          |            | y       |  |
@@ -5446,7 +5488,7 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 #
 #            R          R          R                       R    = Resume
 #	    ___        ___        ___                      S    = Start
-#	    | V        | V        | V                     V(p) = Verify same compiler of phase
+#	    | V        | V        | V                     V(p) = Verify it is the same compiler major.minor or PGO profile compatibility of that phase
 #	S-> PGI -----> PGT        PGO ------> DONE
 #           ^          |            ^         |  ^
 #           |          |            | y       |  |
@@ -7881,6 +7923,8 @@ einfo
 
 	ot-kernel_set_kconfig_firmware
 	ot-kernel_check_firmware
+
+	ot-kernel-set_mobo_audio
 
 	#
 	# hardening_level meanings:

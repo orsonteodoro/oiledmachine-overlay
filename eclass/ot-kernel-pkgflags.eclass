@@ -9546,9 +9546,31 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 
 			# For better multislot support.
 			ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
+
+
+			if [[ "${AMDGPU_DIRECT_DMA_FOR_SSG:-0}" == "1" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "amdgpu.ssg=1"
+				ot-kernel_set_kconfig_kernel_cmdline "amdgpu.direct_gma_size=96"
+			else
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.ssg=(1|0)"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.direct_gma_size=[0-9]+"
+			fi
 		else
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
 		fi
+
+		if [[ "${AMDGPU_DEEP_COLOR:-0}" == "1" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.deep_color=1"
+		else
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.deep_color=(0|1)"
+		fi
+
+		if [[ "${AMDGPU_EXP_HW_SUPPORT:-0}" == "1" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.exp_hw_support=1"
+		else
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.exp_hw_support=1"
+		fi
+
 		ot-kernel_y_configopt "CONFIG_AMD_IOMMU_V2" # For rock-dkms
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_SI"
 		ot-kernel_y_configopt "CONFIG_DRM_AMDGPU_CIK"
@@ -9584,7 +9606,6 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		ot-kernel_y_configopt "CONFIG_SND_PCI"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
 		ot-kernel_y_configopt "CONFIG_SND_HDA_CODEC_HDMI"
-		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_VIA" "m"
 		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_HDMI" "m"
 		ot-kernel_set_configopt "CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
 	fi
@@ -9597,6 +9618,7 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S2c2d347]}" == "1" ]] && return
 	if ot-kernel_has_version "x11-drivers/xf86-video-ati" ; then
 		einfo "Applying kernel config flags for the xf86-video-ati package (id: 2c2d347)"
+		ot-kernel_y_configopt "CONFIG_DRM"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "3.9" ; then
 			ot-kernel_unset_configopt "CONFIG_DRM_RADEON_UMS"
 			ot-kernel_unset_configopt "CONFIG_FB_RADEON"
@@ -9604,6 +9626,22 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_RADEON_KMS"
 			ot-kernel_unset_configopt "CONFIG_FB_RADEON"
 		fi
+
+		ot-kernel_y_configopt "CONFIG_SOUND"
+		ot-kernel_y_configopt "CONFIG_SND"
+		ot-kernel_y_configopt "CONFIG_PCI"
+		ot-kernel_y_configopt "CONFIG_SND_PCI"
+		ot-kernel_y_configopt "CONFIG_SND_HDA_INTEL"
+		ot-kernel_y_configopt "CONFIG_SND_HDA_PATCH_LOADER"
+		ot-kernel_set_configopt "CONFIG_SND_HDA_CODEC_HDMI" "m"
+		ot-kernel_set_configopt "CONFIG_SND_HDA_PREALLOC_SIZE" "2048"
+
+		if [[ "${RADEON_DEEP_COLOR:-0}" == "1" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "radeon.deep_color=1"
+		else
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "radeon.deep_color=(0|1)"
+		fi
+
 	fi
 }
 

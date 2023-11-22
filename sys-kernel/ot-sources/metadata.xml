@@ -3123,11 +3123,31 @@ unset OT_KERNEL_PRIVATE_KEY
     multiple reference, or is likely independent; it is likely an implied
     disabled.
 
+    AMDGPU_DEEP_COLOR - Add support for more than 8 Bits Per Pixel for utilities
+    querying capabilities.  For HDMI connections, it may be beneficial to set to
+    1.  0 is the upstream default.
+    Valid values:  0 (default), 1
+
+    AMDGPU_DIRECT_DMA_FOR_SSG - Enable Direct DMA for SSG.  This requires the
+    rock-dkms USE flag.
+    Valid values:  0 (default), 1
+
+    AMDGPU_EXP_HW_SUPPORT - Enable kernel driver support for experimental hardware.
+    Valid values:  0 (default), 1
+    This setting affects the following kernels and devices under these codenames:
+
+      For the basic kernel driver:
+
+        Kernel 5.4 for Arcturus, Renoir, Navi 12
+        Kernel 4.19 for Vega20
+        Kernel 4.14 for Vega10, Raven
+
+      For the rock-dkms kernel driver:
+
+        Does not apply or fully supported
+
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
-
-    Valid values:
-
-      0 (default), 1
+    Valid values:  0 (default), 1
 
     BPF_JIT - Support for BPF JIT used in network packet filtering or
     wine-staging improving long run runtime performance but increasing initial
@@ -3140,10 +3160,7 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:  DVD
 
     CRYPTSETUP_CIPHERS - Space separated list block ciphers.
-
-    Valid values:
-
-      aes, anubis, camellia, cast6, serpent, twofish.
+    Valid values:  aes, anubis, camellia, cast6, serpent, twofish.
 
     If unset, it adds aes.
 
@@ -3164,10 +3181,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     CRYPTSETUP_INTEGRITIES - Space separated of AEAD ciphers used for
     additional encryption with data integrity.  Only for LUKS2.
-
-    Valid values:
-
-      poly1305, hmac-sha256, hmac-sha512
+    Valid values:  poly1305, hmac-sha256, hmac-sha512
 
     Unset by default.  (Restricted pairings: chacha20 with poly1305,
     aes-xts-plain64 with hmac-sha256 or hmac-sha512.)  For weaknesses, see
@@ -3295,6 +3309,12 @@ unset OT_KERNEL_PRIVATE_KEY
     Examples:
       MICROCODE_BLACKLIST="-s !0x000406f1"
 
+    MOBO_AUDIO - Add support for motherboard audio, gamer grade PCI audio, or laptop audio.
+    Valid values:  1 (default), 0
+
+    MOBO_AUDIO_LEGACY - Add support for legacy motherboard audio or gamer grade PCI audio.
+    Valid values:  1, 0 (default)
+
     OPENRGB_RESOLVE_ACPI_SMBUS_CONFLICT - Add additional kernel command line
     args to fix ACPI and SMBUS conficts.
     Valid values:  0 (default), 1.
@@ -3325,6 +3345,12 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0 (default), 1.
 
     QEMU_ETHERNET_BRIDGING - Add support for ethernet bridging.
+    Valid values:  0 (default), 1.
+
+    RADEON_DEEP_COLOR - Add support for more than 8 Bits Per Pixel for utilities
+    querying capabilities.  For HDMI connections, it may be beneficial to set to
+    1.  0 is the upstream default.
+
     Valid values:  0 (default), 1.
 
     SQUASHFS_4K_BLOCK_SIZE - Operate in 4k blocks instead of 1k blocks
