@@ -9028,21 +9028,14 @@ cat <<EOF > "${ED}/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion
 kernel_release="${canonical_target}"
 modules_path="/lib/modules/\${kernel_release}"
 echo "Switching to the vanilla amdgpu kernel module for \${kernel_release}"
-DKMS_MODULES=(
-	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
-	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
-	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
-	"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
-	"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
-	"amddrm_buddy . /kernel/drivers/gpu/drm"
-	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+KERNEL_MODULES=(
+	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 )
 
 IFS=\$'\n'
-for x in \${DKMS_MODULES[@]} ; do
+for x in \${KERNEL_MODULES[@]} ; do
 	built_name=\$(echo "\${x}" | cut -f 1 -d " ")
-	built_location=\$(echo "\${x}" | cut -f 2 -d " ")
-	dest_location=\$(echo "\${x}" | cut -f 3 -d " ")
+	dest_location=\$(echo "\${x}" | cut -f 2 -d " ")
 	FN=(
 		"\${built_name}.ko"
 		"\${built_name}.ko.gz"
@@ -9058,6 +9051,7 @@ for x in \${DKMS_MODULES[@]} ; do
 	done
 done
 IFS=\$' \t\n'
+depmod -a \${kernel_release}
 EOF
 	fperms 0750 "/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
 }
@@ -9066,21 +9060,14 @@ EOF
 # @DESCRIPTION:
 # Backup the amdgpu modules as a fallback for the rock-dkms ebuild.
 ot-kernel_slotify_amdgpu() {
-	local DKMS_MODULES=(
-		"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
-		"amdttm ttm /kernel/drivers/gpu/drm/ttm"
-		"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
-		"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
-		"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
-		"amddrm_buddy . /kernel/drivers/gpu/drm"
-		"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+	local KERNEL_MODULES=(
+		"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	)
 	local x
 	IFS=$'\n'
-	for x in ${DKMS_MODULES[@]} ; do
+	for x in ${KERNEL_MODULES[@]} ; do
 		local built_name=$(echo "${x}" | cut -f 1 -d " ")
-		local built_location=$(echo "${x}" | cut -f 2 -d " ")
-		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
+		local dest_location=$(echo "${x}" | cut -f 2 -d " ")
 		local FN=(
 			"${built_name}.ko"
 			"${built_name}.ko.gz"
