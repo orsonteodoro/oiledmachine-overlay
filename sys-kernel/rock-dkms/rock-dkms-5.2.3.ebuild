@@ -1130,4 +1130,3 @@ einfo "Try again"
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.2.3, 20231119, kernel 5.15.138)
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.2.3, 20231118, kernel 5.4.261)
-# OILEDMACHINE-OVERLAY-TEST:  passed (5.2.3, 20231121, kernel 5.4.261) with USE=-compress

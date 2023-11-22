@@ -1130,8 +1130,10 @@ einfo "Try again"
 	check_modprobe_conf
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.7.1, 20231120, kernel 5.15.138)
-# OILEDMACHINE-OVERLAY-TEST:  needs-retest (5.7.1, 20231121, kernel 5.15.138)
+# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems (5.7.1, 20231122, kernel 5.15.139)
+
+# OILEDMACHINE-OVERLAY-TEST:  passed (5.7.1, 20231122, kernel 5.15.139)
+# USE="build compress zstd -acpi -check-mmu-notifier -custom-kernel -directgma -gzip -hybrid-graphics -numa -r15 -sign-modules -ssg -strict-pairing -xz"
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-failure (5.7.1, 20231115, kernel 5.4.260)
 # DRM_MODE_COLORIMETRY_BT601_YCC is undefined
