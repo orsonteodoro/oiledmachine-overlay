@@ -804,12 +804,14 @@ _gen_switch_wrapper() {
 
 cat <<EOF > "${EROOT}/usr/bin/install-rock-dkms-${PV}-for-${k}.sh"
 #!/bin/bash
+echo "Switching to rock-dkms ${PV}"
 PV="${PV}"
 ROCM_SLOT="${ROCM_SLOT}"
 kernel_release="${kernel_release}"
 modules_path="/lib/modules/\${kernel_release}"
 strict_pairing="${strict_pairing}"
 best_pv="${best_pv}"
+
 if [[ "\${strict_pairing}" == "y" ]] ; then
 	if [[ -e "/usr/bin/install-rocm-firmware-\${PV}.sh" ]] ; then
 		/usr/bin/install-rocm-firmware-\${PV}.sh
@@ -821,7 +823,7 @@ else
 		fi
 	fi
 fi
-echo "Switching to rock-dkms ${PV}"
+
 DKMS_MODULES=(
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
@@ -831,22 +833,22 @@ DKMS_MODULES=(
 	"amddrm_buddy . /kernel/drivers/gpu/drm"
 )
 
-# Entries from all versions
+# Entries from all versions of the rock-dkms driver and the vanilla amdgpu kernel driver.
 _DKMS_MODULES=(
-	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
-	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
-	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
-	"amd-sched scheduler /kernel/drivers/gpu/drm/scheduler"
-	"amddrm_ttm_helper . /kernel/drivers/gpu/drm"
-	"amddrm_buddy . /kernel/drivers/gpu/drm"
-	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
+	"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
+	"amdttm /kernel/drivers/gpu/drm/ttm"
+	"amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
+	"amd-sched /kernel/drivers/gpu/drm/scheduler"
+	"amddrm_ttm_helper /kernel/drivers/gpu/drm"
+	"amddrm_buddy /kernel/drivers/gpu/drm"
+	"amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
 
 IFS=\$'\n'
 
 for x in \${_DKMS_MODULES[@]} ; do
         built_name=\$(echo "\${x}" | cut -f 1 -d " ")
-        dest_location=\$(echo "\${x}" | cut -f 3 -d " ")
+        dest_location=\$(echo "\${x}" | cut -f 2 -d " ")
         rm -fv "\${modules_path}\${dest_location}/\${built_name}.ko"*
 done
 
@@ -859,6 +861,7 @@ for x in \${DKMS_MODULES[@]} ; do
 done
 
 IFS=\$' \t\n'
+
 echo "Updating /lib/modules/\${kernel_release}/module.dep for \`modprobe amdgpu\`"
 depmod -a \${kernel_release}
 EOF
