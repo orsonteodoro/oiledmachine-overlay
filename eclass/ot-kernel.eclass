@@ -9051,6 +9051,7 @@ for x in \${KERNEL_MODULES[@]} ; do
 	done
 done
 IFS=\$' \t\n'
+echo "Updating /lib/modules/\${kernel_release}/module.dep for \`modprobe amdgpu\`"
 depmod -a \${kernel_release}
 EOF
 	fperms 0750 "/usr/bin/install-amdgpu-kernel-module-for-${PV}-${extraversion}.sh"
