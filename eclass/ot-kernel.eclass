@@ -2973,7 +2973,22 @@ ot-kernel_get_envs() {
 # @DESCRIPTION:
 # Check if the variable name is still being used.
 check_environment_variable_renames() {
-	if [[ "${ZENSAUCE_BLACKLIST+x}" == "x" || "${ZENSAUCE_WHITELIST+x}" == "x" ]] ; then
+	if [[ -n "${OT_KERNEL_EP800}" ]] ; then
+eerror
+eerror "OT_KERNEL_EP800 new name is now CAMERAS=\"ep800\".  Please rename to continue."
+eerror
+	fi
+	if [[ -n "${WEBCAMS}" ]] ; then
+eerror
+eerror "WEBCAMS new name is now CAMERAS.  Please rename to continue."
+eerror
+	fi
+	if [[ -n "${WEBCAMS_UVC_SNAPSHOT_BUTTON}" ]] ; then
+eerror
+eerror "WEBCAMS_UVC_SNAPSHOT_BUTTON new name is now CAMERAS_SNAPSHOT_BUTTON.  Please rename to continue."
+eerror
+	fi
+	if [[ -n "${ZENSAUCE_BLACKLIST}" || -n "${ZENSAUCE_WHITELIST}" ]] ; then
 eerror
 eerror "ZENSAUCE_BLACKLIST new name is now ZEN_SAUCE_BLACKLIST.  Please rename to continue."
 eerror "ZENSAUCE_WHITELIST new name is now ZEN_SAUCE_WHITELIST.  Please rename to continue."
@@ -3117,6 +3132,8 @@ ot-kernel_clear_env() {
 	unset AMDGPU_DIRECT_DMA_FOR_SSG
 	unset ALSA_PC_SPEAKER
 	unset BPF_JIT
+	unset CAMERAS
+	unset CAMERAS_SNAPSHOT_BUTTON
 	unset CRYPTSETUP_CIPHERS
 	unset CRYPTSETUP_INTEGRITIES
 	unset CRYPTSETUP_HASHES
@@ -3170,7 +3187,6 @@ ot-kernel_clear_env() {
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset WATCHDOG_DRIVERS
-	unset WEBCAMS
 	unset X86_MICROARCH_OVERRIDE
 	unset XEN_PCI_PASSTHROUGH
 	unset YUBIKEY
@@ -3700,14 +3716,14 @@ ot-kernel_set_mobo_audio() {
 
 # @FUNCTION: ot-kernel_set_webcam
 # @DESCRIPTION:
-# Enable common webcam drivers.
+# Enable webcam drivers.
 ot-kernel_set_webcam() {
 	cd "${BUILD_DIR}" || die
 	local wants_gspca=0
 	local wants_usb_webcam=0
 	local wants_uvc_webcam=0
-	local webcams="${WEBCAMS,,}"
-	if [[ "${webcams}" == "gspca" || "${webcams}" == "all" ]] ; then
+	local cameras="${CAMERAS,,}"
+	if [[ "${cameras}" == "gspca" || "${cameras}" == "all" ]] ; then
 		wants_gspca=1
 		local ALL_GSPCA=(
 			$(grep -r -e "config USB_GSPCA" $(find drivers/media/usb -name "Kconfig*") \
@@ -3729,7 +3745,7 @@ ot-kernel_set_webcam() {
 	fi
 
 	# Add requested GSPCA drivers
-	if [[ -n "${webcams}" ]] ; then
+	if [[ -n "${cameras}" ]] ; then
 		local ALL_GSPCA=(
 			$(grep -r -e "config USB_GSPCA" $(find drivers/media/usb -name "Kconfig*") \
 				| cut -f 2 -d ":" \
@@ -3742,11 +3758,11 @@ ot-kernel_set_webcam() {
 			"USB_STV06XX"
 		)
 		local x
-		for x in ${webcam^^} ; do
+		for x in ${cameras^^} ; do
 			local m
 			for m in ${ALL_GSPCA[@]} ; do
 				if [[ "${x}" =~ "${m}" ]] ; then
-					ot-kernel_set_configopt "CONFIG_${x}" "m"
+					ot-kernel_set_configopt "CONFIG_${m}" "m"
 					wants_usb_webcam=1
 					wants_gspca=1
 				fi
@@ -3754,15 +3770,15 @@ ot-kernel_set_webcam() {
 		done
 	fi
 
-	if [[ "${webcams}" =~ ("all"|"pwc") ]] ; then
+	if [[ "${cameras}" =~ ("all"|"pwc") ]] ; then
 		ot-kernel_set_configopt "CONFIG_USB_PWC" "m"
 		wants_usb_webcam=1
 	fi
 
-	if [[ "${webcams}" =~ ("all"|"uvc") ]] ; then
+	if [[ "${cameras}" =~ ("all"|"uvc") ]] ; then
 		ot-kernel_set_configopt "CONFIG_USB_VIDEO_CLASS" "m"
 		wants_usb_webcam=1
-		if [[ "${WEBCAMS_UVC_SNAPSHOT_BUTTON:-1}" == "1" ]] ; then
+		if [[ "${CAMERAS_SNAPSHOT_BUTTON:-1}" == "1" ]] ; then
 			# Take snapshot button
 			ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
 			ot-kernel_y_configopt "CONFIG_INPUT"
@@ -3780,6 +3796,43 @@ ot-kernel_set_webcam() {
 
 	if (( ${wants_gspca} == 1 )) ; then
 		ot-kernel_m_configopt "CONFIG_USB_GSPCA" "m"
+	fi
+
+	# For testing build time breakage
+	ot-kernel_set_kconfig_ep800
+}
+
+# @FUNCTION: ot-kernel_set_mobile_camera
+# @DESCRIPTION:
+# Enable camera drivers for smartphone or mobile devices
+ot-kernel_set_mobile_camera() {
+	cd "${BUILD_DIR}" || die
+	local cameras="${CAMERAS,,}"
+	local wants_i2c_camera=0
+	if [[ "${cameras}" == "i2c" || "${cameras}" == "all" ]] ; then
+		local ALL_I2C_CAMERAS=(
+			$(grep -r -e "^config VIDEO_" $(find drivers/media/i2c -name "Kconfig*") \
+				| cut -f 2- -d ":" \
+				| cut -f 2 -d " " \
+				| sort)
+		)
+		local x
+		for x in ${cameras^^} ; do
+			local m
+			for m in ${ALL_I2C_CAMERAS[@]} ; do
+				if [[ "${x}" =~ "${m}" ]] ; then
+					ot-kernel_set_configopt "CONFIG_${m}" "m"
+					wants_i2c_camera=0
+				fi
+			done
+		done
+	fi
+	if (( ${wants_i2c_camera} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_VIDEO_CAMERA_SENSOR"
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_I2C"
 	fi
 }
 
@@ -4446,7 +4499,7 @@ ot-kernel_set_kconfig_dmesg() {
 # Sets the kernel config for the ep800 driver
 ot-kernel_set_kconfig_ep800() {
 	[[ -e "${BUILD_DIR}/drivers/media/usb/gspca/ep800.c" ]] || return
-	if [[ "${OT_KERNEL_EP800}" == "1" ]] ; then
+	if [[ "${CAMERAS,,}" =~ "ep800" ]] ; then
 		# Added driver to test driver across all LTS versions
 einfo "Enabled the ep800 driver"
 		ot-kernel_y_configopt "CONFIG_INPUT"
@@ -8012,6 +8065,7 @@ einfo
 
 	ot-kernel_set_mobo_audio
 	ot-kernel_set_webcam
+	ot-kernel_set_mobile_camera
 
 	#
 	# hardening_level meanings:
@@ -8025,7 +8079,6 @@ einfo
 	ot-kernel_set_at_system
 	ot-kernel_set_tcca
 	ot-kernel_set_iosched_kconfig
-	ot-kernel_set_kconfig_ep800 # For testing build time breakage
 
 	is_firmware_ready
 

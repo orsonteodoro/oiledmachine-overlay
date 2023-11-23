@@ -1282,17 +1282,6 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_EP800 - adds and enables the ep800 webcam driver.
-
-    It is used for testing driver breakage between LTS versions and stable for
-    the media-video/epcam package.
-
-    Acceptable values:
-
-      1, 0, unset
-
-
-
     OT_KERNEL_EXTRAVERSION - initials or name of the kernel.
 
     See also:
@@ -3155,6 +3144,35 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0 (default), 1, unset [same as 0]
     Enabling may lower security.
 
+    CAMERAS - Add webcam support.  Multiple drivers are space separated.
+    Valid values:
+      all - support all USB or I2C based webcams.
+      ep800 - support the EP800 USB sensor.
+      gl860 - support the GL860 USB sensor.
+      gspca - support all USB based gspca webcams.
+      i2c - support all i2c cameras used in smartphone or mobile devices.
+      m5602 - support the m5602 USB sensor.
+      name - a specific driver listed in one of the following lists:
+        https://docs.kernel.org/admin-guide/media/gspca-cardlist.html
+        https://github.com/torvalds/linux/blob/master/drivers/media/i2c/Kconfig
+        https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/gl860/Kconfig
+        https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/m5602/Kconfig
+        https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/stv06xx/Kconfig
+        https://github.com/torvalds/linux/blob/master/drivers/media/usb/pwc/Kconfig
+      none (default) - do not support webcams.  Same as unset.
+      pwc - support pwc USB cameras.  See the above link.
+      stv06xx - support STV06xx USB camera.
+      uvc - support UVC based cameras (recommended)
+      
+    Examples:
+      CAMERAS="all"
+      CAMERAS="uvc"
+      CAMERAS="ov519 zc3xx m5602"
+      CAMERAS="imx355"
+
+    CAMERAS_SNAPSHOT_BUTTON - Add support for the take snapshot button.
+    Valid values:  0, 1 (default if uvc is added)
+
     CDROM - Support for CDROM, CD-R, CD-RW
     Valid values:  0, 1 (default)
     See also:  DVD
@@ -3424,26 +3442,6 @@ unset OT_KERNEL_PRIVATE_KEY
 
     WATCHDOG_WAYOUT - Allow to stop the watchdog timer after it has started.
     Valid values:  1 - yes way out (default), 0 - no way out
-
-    WEBCAMS - Add webcam support.  Multiple drivers are space separated.
-    Valid values:
-      all - support all usb based webcams
-      gl860 - support GL860.  See https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/gl860/Kconfig
-      gspca - support all gspca webcams.  See https://docs.kernel.org/admin-guide/media/gspca-cardlist.html
-      m5602 - support m5602.  See https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/m5602/Kconfig
-      name - a specific gspca driver listed in https://docs.kernel.org/admin-guide/media/gspca-cardlist.html
-      none (default) - do not support webcams.  Same as unset.
-      pwc - support cameras listed in https://github.com/torvalds/linux/blob/master/drivers/media/usb/pwc/Kconfig
-      stv06xx - support STV06xx.  See https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/stv06xx/Kconfig
-      uvc - support UVC based cameras (recommended)
-      
-    Examples:
-      WEBCAMS="all"
-      WEBCAMS="uvc"
-      WEBCAMS="ov519 zc3xx m5602"
-
-    WEBCAMS_UVC_SNAPSHOT_BUTTON - Add support for the take snapshot button.
-    Valid values:  0, 1 (default if uvc is added)
 
     X86_MICROARCH_OVERRIDE - Override the -march=native or -march=generic.  With
     the help of the kernel_compiler_patch, more march values are exposed based
