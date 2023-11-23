@@ -13,7 +13,6 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 
 inherit git-r3 meson python-single-r1
-inherit cflags-depends
 
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"
@@ -122,10 +121,6 @@ PATCHES=(
 	"${FILESDIR}/howdy-3.0_beta_pre9999-howdy-gtk-fix-camera-id.patch"
 )
 
-declare -A CFLAGS_RDEPEND=(
-	["sci-libs/dlib"]="-O2" # -O0 skippy 1 FPS
-)
-
 pkg_setup()
 {
 	if use ffmpeg && use pyv4l2 ; then
@@ -135,7 +130,6 @@ ewarn "all."
 ewarn
 	fi
 	python_setup
-	cflags-depends_check
 }
 
 src_unpack() {
@@ -191,7 +185,7 @@ einfo "Editing ${f}"
 	done
 
 einfo "Changing python3 -> ${EPYTHON}"
-	sed -i \
+	true -i \
 		-e "s|python3|${EPYTHON}|g" \
 		howdy/src/cli.py \
 		howdy/src/compare.py \

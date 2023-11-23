@@ -13,7 +13,6 @@ EAPI=8
 PYTHON_COMPAT=( python3_{8..11} )
 
 inherit python-single-r1
-inherit cflags-depends
 
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"
@@ -102,10 +101,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.6.1-use-py3-pythonparser.patch"
 )
 
-declare -A CFLAGS_RDEPEND=(
-	["sci-libs/dlib"]="-O2" # -O0 skippy 1 FPS
-)
-
 pkg_setup()
 {
 	if use ffmpeg && use pyv4l2 ; then
@@ -115,7 +110,6 @@ ewarn "all."
 ewarn
 	fi
 	python_setup
-	cflags-depends_check
 }
 
 src_unpack() {
