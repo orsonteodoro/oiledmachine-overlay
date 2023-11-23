@@ -67,3 +67,8 @@ media-video/sr -pretrained
 
 # The gold linker prevents this.
 =sys-devel/llvm-roc-5.7.0 bolt ebolt
+
+# recording_plugin = ffmpeg in /etc/howdy/config.ini is broken
+# recording_plugin = pyv4l2 in /etc/howdy/config.ini is broken
+# Use recording_plugin = opencv instead.
+app-admin/howdy ffmpeg pyv4l2

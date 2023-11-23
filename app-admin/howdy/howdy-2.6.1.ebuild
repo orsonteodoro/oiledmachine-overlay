@@ -25,7 +25,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda ffmpeg pyv4l2 r11
++bash-completion cuda -ffmpeg -pyv4l2 r11
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
