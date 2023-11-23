@@ -58,6 +58,7 @@ DEPEND+="
 		media-video/ffmpeg[v4l]
 	)
 	gtk? (
+		dev-libs/gobject-introspection[${PYTHON_USEDEP}]
 		dev-python/elevate[${PYTHON_USEDEP}]
 		x11-libs/gtk+:3[introspection]
 	)
