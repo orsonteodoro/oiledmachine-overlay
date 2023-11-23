@@ -13,14 +13,8 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" policykit sudo"
-IUSE+=" enlightenment gnome gtk kde lxde lxqt mate xfce"
+IUSE+=" enlightenment gnome kde lxde lxqt mate xfce"
 REQUIRED_USE+="
-	gnome? (
-		gtk
-	)
-	lxde? (
-		gtk
-	)
 	policykit? (
 		|| (
 			enlightenment
