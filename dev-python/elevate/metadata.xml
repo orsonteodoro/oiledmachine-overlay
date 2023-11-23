@@ -35,7 +35,7 @@
       Support for agnostic elevated privileges via console or GUI.
     </flag>
     <flag name="sudo">
-      Prompt for privileges priveleges via terminal.
+      Prompt for privileges via terminal.
     </flag>
     <flag name="xfce">
       Support for a XFCE policykit agent with XFCE widgets.
