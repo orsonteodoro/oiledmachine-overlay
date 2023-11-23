@@ -400,3 +400,4 @@ ewarn
 # sudo howdy add:  pass
 # sudo howdy-gtk:  pass
 # real world test:  fail
+# /etc/pam.d/su message test:  fail

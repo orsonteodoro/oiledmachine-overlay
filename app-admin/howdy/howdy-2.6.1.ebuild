@@ -385,3 +385,4 @@ ewarn
 # sudo howdy test:  fail
 # sudo howdy add:  pass
 # real world test:  fail
+# /etc/pam.d/su message test:  pass
