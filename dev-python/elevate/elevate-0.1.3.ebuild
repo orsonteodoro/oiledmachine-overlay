@@ -50,10 +50,7 @@ RDEPEND+="
 			kde-plasma/polkit-kde-agent
 		)
 		lxde? (
-			|| (
-				lxde-base/lxsession
-				lxqt-base/lxqt-policykit
-			)
+			lxde-base/lxsession
 		)
 		lxqt? (
 			lxqt-base/lxqt-policykit

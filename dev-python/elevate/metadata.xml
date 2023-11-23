@@ -20,6 +20,9 @@
     <flag name="enlightenment">
       Support for a Enlightenment policykit agent with Enlightenment widgets.
     </flag>
+    <flag name="gtk">
+      Prefer GTK widgets between ambiguous counterparts.
+    </flag>
     <flag name="lxde">
       Support for a LXDE policykit agent with LXDE widgets and lightweight
       memory footprint.
