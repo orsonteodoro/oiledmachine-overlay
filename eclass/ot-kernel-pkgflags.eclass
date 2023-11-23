@@ -5030,7 +5030,7 @@ ot-kernel-pkgflags_linux_enable_ir_emitter() {
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa3e323a]}" == "1" ]] && return
 	if ot-kernel_has_version "media-video/linux-enable-ir-emitter" ; then
 		einfo "Applying kernel config flags for the media-video/linux-enable-ir-emitter package (id: a3e323a)"
-		# Assumes udev, openrc ^ systemd kernel config has been already applied.
+		# Assumes udev, ^^ ( openrc systemd ) kernel config has been already applied.
 		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
