@@ -70,8 +70,10 @@ media-video/sr -pretrained
 
 # recording_plugin = ffmpeg in /etc/howdy/config.ini is broken - \
 #   bugs:  returns 0 for read() in recorders/ffmpeg_reader.py always, so it always fails for read_frame() in recorders/video_capture.py.
+#   error: Failed to read camera specified in the 'device_path' config option, aborting
 # recording_plugin = pyv4l2 in /etc/howdy/config.ini is broken - \
 #   bugs:  returned image size is not constant meaning it could be compressed.
 #          the array is not 0 padded before reshaping.
+#   error: ValueError: cannot reshape array of size 84237 into shape (352,352,3)
 # Use recording_plugin = opencv instead.
 app-admin/howdy ffmpeg pyv4l2
