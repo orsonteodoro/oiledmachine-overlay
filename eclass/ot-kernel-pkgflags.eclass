@@ -378,6 +378,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_lightdm
 	ot-kernel-pkgflags_likwid
 	ot-kernel-pkgflags_linux_atm
+	ot-kernel-pkgflags_linux_enable_ir_emitter
 	ot-kernel-pkgflags_linux_smaps
 	ot-kernel-pkgflags_linuxptp
 	ot-kernel-pkgflags_lirc
@@ -5019,6 +5020,22 @@ ot-kernel-pkgflags_linux_atm() { # DONE
 	if ot-kernel_has_version "net-dialup/linux-atm" ; then
 		einfo "Applying kernel config flags for the linux-atm package (id: 6df59e4)"
 		ot-kernel_y_configopt "CONFIG_ATM"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_linux_enable_ir_emitter
+# @DESCRIPTION:
+# Applies kernel config flags for the linux-enable-ir-emitter package
+ot-kernel-pkgflags_linux_enable_ir_emitter() {
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sa3e323a]}" == "1" ]] && return
+	if ot-kernel_has_version "media-video/linux-enable-ir-emitter" ; then
+		einfo "Applying kernel config flags for the media-video/linux-enable-ir-emitter package (id: a3e323a)"
+		# Assumes udev, openrc ^ systemd kernel config has been already applied.
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 	fi
 }
 
