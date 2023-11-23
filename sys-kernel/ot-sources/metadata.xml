@@ -3146,7 +3146,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     CAMERAS - Add camera support.  Multiple drivers are space separated.
     Valid values:
-      all - support all USB or I2C based webcams.
+      all - support all USB or I2C based cameras.
       ep800 - support the EP800 USB sensor.
       gl860 - support the GL860 USB sensor.
       gspca - support all USB based gspca webcams.
