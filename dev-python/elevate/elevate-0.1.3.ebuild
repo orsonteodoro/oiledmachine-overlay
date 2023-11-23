@@ -91,8 +91,8 @@ einfo "correctness."
 einfo
 einfo "Use \`equery f <pkgname>\` to see the name of the polkit agent."
 einfo
-einfo "gnome:		gnome-extra/polkit-gnome"
 einfo "enlightenment:	x11-wm/enlightenment"
+einfo "gnome:		gnome-extra/polkit-gnome"
 einfo "kde:		kde-plasma/polkit-kde-agent"
 einfo "lxde:		lxde-base/lxsession"
 einfo "			lxqt-base/lxqt-policykit"
