@@ -49,7 +49,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda -ffmpeg +gtk -pyv4l2 r12
++bash-completion cuda -ffmpeg +gtk -pyv4l2 r13
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -85,6 +85,12 @@ DEPEND+="
 		')
 		dev-python/elevate[${PYTHON_USEDEP}]
 		x11-libs/gtk+:3[introspection]
+		|| (
+			media-fonts/liberation-fonts
+			media-fonts/urw-fonts
+			media-fonts/ttf-bitstream-vera
+			media-fonts/corefonts
+		)
 	)
 	pyv4l2? (
 		dev-python/pyv4l2[${PYTHON_USEDEP}]
@@ -113,11 +119,6 @@ pkg_setup()
 ewarn
 ewarn "Only one capture source is allowed.  Disable either ffmpeg, pyv4l2, or"
 ewarn "all."
-ewarn
-	fi
-	if has_version "dev-python/ffmpeg-python" && ! use ffmpeg ; then
-ewarn
-ewarn "You must enable the ffmpeg USE flag or unemerge ffmpeg-python."
 ewarn
 	fi
 	python_setup
@@ -169,41 +170,47 @@ src_prepare() {
 	for f in ${F[@]} ; do
 		[[ "${f}" =~ ("debian"|"archlinux") ]] && continue
 einfo "Editing ${f}"
-		sed -i -e "s|/lib/security|/$(get_libdir)/security|g" \
-			"${f}" || die
+		sed -i \
+			-e "s|/lib/security|/$(get_libdir)/security|g" \
+			"${f}" \
+			|| die
 	done
 }
 
 src_configure() {
 	pushd "${S}/howdy/src" || die
 		if use cuda ; then
-			sed -i -e "s|use_cnn = false|use_cnn = true|g" \
+			sed -i \
+				-e "s|use_cnn = false|use_cnn = true|g" \
 				config.ini \
 				|| die
 		fi
 		if use ffmpeg ; then
-			sed -i -e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" \
+			sed -i \
+				-e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" \
 				config.ini \
 				|| die
 		fi
 		if use pyv4l2 ; then
-			sed -i -e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
+			sed -i \
+				-e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
 				config.ini \
 				|| die
 		fi
-		sed -i -e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
+		sed -i \
+			-e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
 			"pam/main.cc" \
 			|| die
 
 		# Set default camera
 		sed -i \
-			sed -i -e "s|device_path = none|device_path = /dev/video0|g" \
+			-e "s|device_path = none|device_path = /dev/video0|g" \
 			config.ini \
 			|| die
 
 		# Increase match
 		sed -i \
-			sed -i -e "s|certainty = 3.5|certainty = 4.4|g" \
+			-e "s|certainty = 3.5|certainty = 4|g" \
 			config.ini \
 			|| die
 
@@ -211,9 +218,27 @@ src_configure() {
 		# Women false positives are around 4.9-7.9.
 		# Men false positives are around 4.50-7.2.
 		sed -i \
-			sed -i -e "s|from 1 to 10, values above 5 are not recommended|from 1 to 5, values above 5 must not be used|g" \
+			-e "s|from 1 to 10, values above 5 are not recommended|from 1 to 5, values above 5 must not be used|g" \
 			config.ini \
 			|| die
+	popd
+	pushd "${S}" || die
+		if has_version "media-fonts/liberation-fonts" ; then
+			sed -i \
+				-e "s|Arial|Liberation Sans|g" \
+				howdy-gtk/src/authsticky.py \
+				|| die
+		elif has_version "media-fonts/urw-fonts" ; then
+			sed -i \
+				-e "s|Arial|Nimbus Sans|g" \
+				howdy-gtk/src/authsticky.py \
+				|| die
+		elif has_version "media-fonts/ttf-bitstream-vera" ; then
+			sed -i \
+				-e "s|Arial|Bitstream Vera Sans|g" \
+				howdy-gtk/src/authsticky.py \
+				|| die
+		fi
 	popd
 	export EMESON_SOURCE="${S}"
 	export BUILD_DIR="${S}_build"
@@ -306,7 +331,7 @@ einfo "Performing permission scan for data models"
 	)
 	local path
 	for path in "${L[@]}" ; do
-		local actual_file_permissions=$(stat -c "%a" "${d}")
+		local actual_file_permissions=$(stat -c "%a" "${path}")
 		local expected_file_permissions="640"
 
 		local actual_owner=$(stat -c "%G:%U" "${path}")

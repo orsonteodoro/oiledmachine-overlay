@@ -42,7 +42,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda -ffmpeg -pyv4l2 r12
++bash-completion cuda -ffmpeg -pyv4l2 r13
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -102,11 +102,6 @@ ewarn "Only one capture source is allowed.  Disable either ffmpeg, pyv4l2, or"
 ewarn "all."
 ewarn
 	fi
-	if has_version "dev-python/ffmpeg-python" && ! use ffmpeg ; then
-ewarn
-ewarn "You must enable the ffmpeg USE flag or unemerge ffmpeg-python."
-ewarn
-	fi
 	python_setup
 }
 
@@ -129,25 +124,30 @@ src_prepare() {
 	for f in ${F[@]} ; do
 		[[ "${f}" =~ ("debian"|"archlinux") ]] && continue
 einfo "Editing ${f}"
-		sed -i -e "s|/lib/security|/$(get_libdir)/security|g" \
-			"${f}" || die
+		sed -i \
+			-e "s|/lib/security|/$(get_libdir)/security|g" \
+			"${f}" \
+			|| die
 	done
 }
 
 src_configure() {
 	pushd "${S}/src" || die
 		if use cuda ; then
-			sed -i -e "s|use_cnn = false|use_cnn = true|g" \
+			sed -i \
+				-e "s|use_cnn = false|use_cnn = true|g" \
 				config.ini \
 				|| die
 		fi
 		if use ffmpeg ; then
-			sed -i -e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" \
+			sed -i \
+				-e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" \
 				config.ini \
 				|| die
 		fi
 		if use pyv4l2 ; then
-			sed -i -e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
+			sed -i \
+				-e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
 				config.ini \
 				|| die
 		fi
@@ -161,13 +161,13 @@ src_configure() {
 
 		# Set default camera
 		sed -i \
-			sed -i -e "s|device_path = none|device_path = /dev/video0|g" \
+			-e "s|device_path = none|device_path = /dev/video0|g" \
 			config.ini \
 			|| die
 
 		# Increase match
 		sed -i \
-			sed -i -e "s|certainty = 3.5|certainty = 4.4|g" \
+			sed -i -e "s|certainty = 3.5|certainty = 4|g" \
 			config.ini \
 			|| die
 
@@ -286,7 +286,7 @@ einfo "Performing permission scan for data models"
 	)
 	local path
 	for path in "${L[@]}" ; do
-		local actual_file_permissions=$(stat -c "%a" "${d}")
+		local actual_file_permissions=$(stat -c "%a" "${path}")
 		local expected_file_permissions="640"
 
 		local actual_owner=$(stat -c "%G:%U" "${path}")
