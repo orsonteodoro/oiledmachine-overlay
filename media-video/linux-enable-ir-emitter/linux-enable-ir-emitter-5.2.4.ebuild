@@ -21,7 +21,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-openrc systemd
+openrc systemd r1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -34,10 +34,12 @@ REQUIRED_USE="
 GCC_PV="11.4.0"
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=sys-devel/gcc-${GCC_PV}
-	>=x11-libs/gtk+-3.24.33:3
+	>=media-libs/opencv-4.8.1[gtk3,v4l]
 	>=sys-apps/kmod-29[tools]
+	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/glibc-2.35
+	>=x11-libs/gtk+-3.24.33:3
+	virtual/udev
 	openrc? (
 		sys-apps/openrc
 	)
@@ -52,9 +54,8 @@ BDEPEND+="
 	>=dev-util/cmake-3.22.1
 	>=dev-util/meson-1.0.0
 	>=dev-util/ninja-1.10.1
-	>=media-libs/opencv-4.8.1
-	>=sys-devel/gcc-${GCC_PV}
 	>=net-misc/curl-7.81.0
+	>=sys-devel/gcc-${GCC_PV}
 	virtual/pkgconfig
 "
 RESTRICT="mirror"
