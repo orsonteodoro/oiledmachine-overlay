@@ -137,6 +137,9 @@ einfo "Editing ${f}"
 			|| die
 	done
 
+ewarn
+ewarn "If howdy segfaults, try recompiling dlib with -O0."
+ewarn
 einfo "Changing python3 -> ${EPYTHON}"
 	sed -i \
 		-e "s|python3|${EPYTHON}|g" \
