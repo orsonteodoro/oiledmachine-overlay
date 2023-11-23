@@ -12,7 +12,8 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit python-r1
+inherit python-single-r1
+inherit cflags-depends
 
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
 DLIB_MODELS_DATE="20210412"
@@ -57,25 +58,32 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
 		sys-auth/pam-python[${PYTHON_SINGLE_USEDEP}]
+		>=sci-libs/dlib-19.16[${PYTHON_USEDEP},python]
+		dev-libs/boost[${PYTHON_USEDEP},python]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
 	')
 	>=dev-libs/inih-52
 	app-admin/sudo
-	dev-libs/boost[${PYTHON_USEDEP},python]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
 	sys-libs/pam
 	cuda_targets_sm_50? (
-		>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
+		$(python_gen_cond_dep '
+			>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
+		')
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	ffmpeg? (
-		dev-python/ffmpeg-python[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/ffmpeg-python[${PYTHON_USEDEP}]
+		')
 		media-video/ffmpeg[v4l]
 	)
 	pyv4l2? (
-		dev-python/pyv4l2[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/pyv4l2[${PYTHON_USEDEP}]
+		')
 		media-libs/libv4l
 	)
 "
@@ -94,6 +102,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.6.1-use-py3-pythonparser.patch"
 )
 
+declare -A CFLAGS_RDEPEND=(
+	["sci-libs/dlib"]="-O2" # -O0 skippy 1 FPS
+)
+
 pkg_setup()
 {
 	if use ffmpeg && use pyv4l2 ; then
@@ -103,6 +115,7 @@ ewarn "all."
 ewarn
 	fi
 	python_setup
+	cflags-depends_check
 }
 
 src_unpack() {
@@ -129,6 +142,15 @@ einfo "Editing ${f}"
 			"${f}" \
 			|| die
 	done
+
+einfo "Changing python3 -> ${EPYTHON}"
+	sed -i \
+		-e "s|python3|${EPYTHON}|g" \
+		tests/importing.sh \
+		tests/compare.sh \
+		src/cli.py \
+		src/pam.py \
+		|| die
 }
 
 src_configure() {
