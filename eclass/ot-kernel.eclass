@@ -3822,7 +3822,7 @@ ot-kernel_set_mobile_camera() {
 			for m in ${ALL_I2C_CAMERAS[@]} ; do
 				if [[ "${x}" =~ "${m}" ]] ; then
 					ot-kernel_set_configopt "CONFIG_${m}" "m"
-					wants_i2c_camera=0
+					wants_i2c_camera=1
 				fi
 			done
 		done
