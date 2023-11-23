@@ -352,6 +352,10 @@ einfo "You need a v4l compatible camera for this to work properly."
 einfo "IR cameras are recommended for it to work in the dark or mitigate against replay attack."
 einfo "RGB/grayscale cameras require sufficent lighting for it to work."
 einfo
+einfo "The use of rubber stamps can introduce another factor of authentication"
+einfo "(aka what you know) that be used to mitigate against stolen face images."
+einfo
+einfo "  https://github.com/boltgolt/howdy/wiki/Rubber-Stamp-Guide"
 einfo
 einfo "The pam configuration can be found in"
 einfo
