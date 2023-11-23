@@ -1,0 +1,22 @@
+diff -urp howdy-3.0_beta_pre9999.orig/howdy-gtk/src/tab_video.py howdy-3.0_beta_pre9999/howdy-gtk/src/tab_video.py
+--- howdy-3.0_beta_pre9999.orig/howdy-gtk/src/tab_video.py	2023-11-23 12:17:44.440298856 -0800
++++ howdy-3.0_beta_pre9999/howdy-gtk/src/tab_video.py	2023-11-23 12:18:48.708300568 -0800
+@@ -14,7 +14,7 @@ MAX_WIDTH = 300
+ 
+ def on_page_switch(self, notebook, page, page_num):
+ 	if page_num == 1:
+-		path = "/dev/video1"
++		path = "/dev/video0"
+ 
+ 		try:
+ 			self.config = configparser.ConfigParser()
+@@ -30,7 +30,8 @@ def on_page_switch(self, notebook, page,
+ 			print(_("Can't import OpenCV2"))
+ 
+ 		try:
+-			self.capture = cv2.VideoCapture(self.config.get("video", "device_path"))
++			path = self.config.get("video", "device_path")
++			self.capture = cv2.VideoCapture(path)
+ 		except Exception:
+ 			print(_("Can't open camera"))
+ 

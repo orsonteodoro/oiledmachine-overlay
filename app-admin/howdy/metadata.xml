@@ -51,7 +51,7 @@
       issues occur with OpenCV, use the ffmpeg USE flag instead.
     </flag>
     <flag name="gtk">
-      Used for sticky floating window authentication.
+      Add admin control panel or sticky floating window authentication.
     </flag>
     <flag name="pyv4l2">
       Uses pyv4l2 as a capture source.

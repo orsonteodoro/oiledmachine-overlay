@@ -11,7 +11,29 @@ EAPI=8
 # https://github.com/boltgolt/howdy/blob/beta/howdy/src/cli.py#L122
 
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit git-r3 meson python-r1
+
+EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
+DLIB_MODELS_DATE="20210412"
+if [[ ${PV} =~ 9999 ]] ; then
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${PN}-${PV}"
+else
+	SRC_URI+="
+https://github.com/boltgolt/howdy/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+	S="${WORKDIR}/${PN}-${PV}"
+fi
+SRC_URI+="
+https://github.com/davisking/dlib-models/raw/master/dlib_face_recognition_resnet_model_v1.dat.bz2
+	-> dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
+https://github.com/davisking/dlib-models/raw/master/mmod_human_face_detector.dat.bz2
+	-> mmod_human_face_detector-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
+https://github.com/davisking/dlib-models/raw/master/shape_predictor_5_face_landmarks.dat.bz2
+	-> shape_predictor_5_face_landmarks-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
+"
 
 DESCRIPTION="Facial authentication for Linux"
 HOMEPAGE="https://github.com/boltgolt/howdy"
@@ -47,7 +69,7 @@ DEPEND+="
 	app-admin/sudo
 	dev-libs/boost[${PYTHON_USEDEP},python]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},contribhdf,python,v4l]
+	media-libs/opencv[${PYTHON_USEDEP},contribhdf,png,python,v4l]
 	sys-libs/pam
 	cuda_targets_sm_50? (
 		>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
@@ -58,7 +80,9 @@ DEPEND+="
 		media-video/ffmpeg[v4l]
 	)
 	gtk? (
-		dev-libs/gobject-introspection[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			dev-libs/gobject-introspection[${PYTHON_SINGLE_USEDEP}]
+		')
 		dev-python/elevate[${PYTHON_USEDEP}]
 		x11-libs/gtk+:3[introspection]
 	)
@@ -78,29 +102,10 @@ BDEPEND+="
 		>=sys-devel/clang-3.4
 	)
 "
-PATCHES=(
-)
-EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
-DLIB_MODELS_DATE="20210412"
-if [[ ${PV} =~ 9999 ]] ; then
-	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${PN}-${PV}"
-else
-	SRC_URI+="
-https://github.com/boltgolt/howdy/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-	"
-	S="${WORKDIR}/${PN}-${PV}"
-fi
-SRC_URI+="
-https://github.com/davisking/dlib-models/raw/master/dlib_face_recognition_resnet_model_v1.dat.bz2
-	-> dlib_face_recognition_resnet_model_v1-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
-https://github.com/davisking/dlib-models/raw/master/mmod_human_face_detector.dat.bz2
-	-> mmod_human_face_detector-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
-https://github.com/davisking/dlib-models/raw/master/shape_predictor_5_face_landmarks.dat.bz2
-	-> shape_predictor_5_face_landmarks-${EGIT_COMMIT_DLIB_MODELS:0:7}.dat.bz2
-"
 RESTRICT="mirror"
+PATCHES=(
+	"${FILESDIR}/howdy-3.0_beta_pre9999-howdy-gtk-fix-camera-id.patch"
+)
 
 pkg_setup()
 {
@@ -173,18 +178,42 @@ src_configure() {
 	pushd "${S}/howdy/src" || die
 		if use cuda ; then
 			sed -i -e "s|use_cnn = false|use_cnn = true|g" \
-				config.ini || die
+				config.ini \
+				|| die
 		fi
 		if use ffmpeg ; then
 			sed -i -e "s|recording_plugin = opencv|recording_plugin = ffmpeg|g" \
-				config.ini || die
+				config.ini \
+				|| die
 		fi
 		if use pyv4l2 ; then
 			sed -i -e "s|recording_plugin = opencv|recording_plugin = pyv4l2|g" \
-				config.ini || die
+				config.ini \
+				|| die
 		fi
 		sed -i -e "s|/lib/security/howdy/config.ini|/$(get_libdir)/security/howdy/config.ini|g" \
-			"pam/main.cc" || die
+			"pam/main.cc" \
+			|| die
+
+		# Set default camera
+		sed -i \
+			sed -i -e "s|device_path = none|device_path = /dev/video0|g" \
+			config.ini \
+			|| die
+
+		# Increase match
+		sed -i \
+			sed -i -e "s|certainty = 3.5|certainty = 4.4|g" \
+			config.ini \
+			|| die
+
+		# Change message
+		# Women false positives are around 4.9-7.9.
+		# Men false positives are around 4.50-7.2.
+		sed -i \
+			sed -i -e "s|from 1 to 10, values above 5 are not recommended|from 1 to 5, values above 5 must not be used|g" \
+			config.ini \
+			|| die
 	popd
 	export EMESON_SOURCE="${S}"
 	export BUILD_DIR="${S}_build"
@@ -294,7 +323,9 @@ eerror "${path} permissions are incorrect.  Do \`chmod 0${expected_file_permissi
 
 pkg_postinst() {
 einfo
-einfo "You need an IR camera for this to work properly."
+einfo "You need a v4l compatible camera for this to work properly."
+einfo "IR cameras are recommended for it to work in the dark or mitigate against replay attack."
+einfo "RGB/grayscale cameras require sufficent lighting for it to work."
 einfo
 einfo
 einfo "The pam configuration can be found in"
@@ -325,6 +356,9 @@ einfo "  sudo ${PN} config"
 einfo
 einfo "  # Add face"
 einfo "  sudo ${PN} add"
+einfo
+einfo "  # Verify face recogniton works"
+einfo "  sudo ${PN} test"
 einfo
 
 ewarn
@@ -360,3 +394,9 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  failed
+# howdy reads config.ini:  pass
+# sudo howdy test:  pass
+# sudo howdy add:  pass
+# sudo howdy-gtk:  pass
+# real world test:  fail
