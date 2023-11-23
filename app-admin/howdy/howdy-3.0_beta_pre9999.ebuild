@@ -49,7 +49,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda -ffmpeg +gtk -pyv4l2 r11
++bash-completion cuda -ffmpeg +gtk -pyv4l2 r12
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -307,7 +307,7 @@ einfo "Performing permission scan for data models"
 	local path
 	for path in "${L[@]}" ; do
 		local actual_file_permissions=$(stat -c "%a" "${d}")
-		local expected_file_permissions="644" # TODO:  re-review.  640 is preferred but /usr/bin/{howdy,howdy-gtk} may require 644.
+		local expected_file_permissions="640"
 
 		local actual_owner=$(stat -c "%G:%U" "${path}")
 		local expected_owner="root:root"
