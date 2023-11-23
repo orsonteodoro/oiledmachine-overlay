@@ -81,5 +81,35 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DOCS=( COPYING.txt README.rst )
 
+pkg_postinst() {
+einfo
+einfo "A polkit agent needs to be running in the background in the desktop"
+einfo "before this can work."
+einfo
+einfo "Alternative desktops should test for graphical sudo via pkexec to ensure"
+einfo "correctness."
+einfo
+einfo "Use \`equery f <pkgname>\` to see the name of the polkit agent."
+einfo
+einfo "gnome:		gnome-extra/polkit-gnome"
+einfo "enlightenment:	x11-wm/enlightenment"
+einfo "kde:		kde-plasma/polkit-kde-agent"
+einfo "lxde:		lxde-base/lxsession"
+einfo "			lxqt-base/lxqt-policykit"
+einfo "lxqt:		lxqt-base/lxqt-policykit"
+einfo "mate:		mate-extra/mate-polkit"
+einfo "sudo:		app-admin/sudo"
+einfo "xfce4:		xfce-base/xfce4-session"
+einfo
+einfo "You may place the agent in ~/.xinitrc as follows for X:"
+einfo "<agent> &"
+einfo
+einfo "You may need to manually run the agent for Wayland based desktops:"
+einfo "<agent> &"
+einfo
+einfo "sudo does not need to be run in the background."
+einfo
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-REVDEP:  howdy
