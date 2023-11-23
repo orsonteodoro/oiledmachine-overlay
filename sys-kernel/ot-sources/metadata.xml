@@ -3144,7 +3144,7 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0 (default), 1, unset [same as 0]
     Enabling may lower security.
 
-    CAMERAS - Add webcam support.  Multiple drivers are space separated.
+    CAMERAS - Add camera support.  Multiple drivers are space separated.
     Valid values:
       all - support all USB or I2C based webcams.
       ep800 - support the EP800 USB sensor.
