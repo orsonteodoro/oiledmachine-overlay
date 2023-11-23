@@ -3423,8 +3423,27 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:  https://github.com/torvalds/linux/blob/master/drivers/watchdog/Kconfig
 
     WATCHDOG_WAYOUT - Allow to stop the watchdog timer after it has started.
-    1 - yes way out (default)
-    0 - no way out
+    Valid values:  1 - yes way out (default), 0 - no way out
+
+    WEBCAMS - Add webcam support.  Multiple drivers are space separated.
+    Valid values:
+      all - support all usb based webcams
+      gl860 - support GL860.  See https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/gl860/Kconfig
+      gspca - support all gspca webcams.  See https://docs.kernel.org/admin-guide/media/gspca-cardlist.html
+      m5602 - support m5602.  See https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/m5602/Kconfig
+      name - a specific gspca driver listed in https://docs.kernel.org/admin-guide/media/gspca-cardlist.html
+      none (default) - do not support webcams.  Same as unset.
+      pwc - support cameras listed in https://github.com/torvalds/linux/blob/master/drivers/media/usb/pwc/Kconfig
+      stv06xx - support STV06xx.  See https://github.com/torvalds/linux/blob/master/drivers/media/usb/gspca/stv06xx/Kconfig
+      uvc - support UVC based cameras (recommended)
+      
+    Examples:
+      WEBCAMS="all"
+      WEBCAMS="uvc"
+      WEBCAMS="ov519 zc3xx m5602"
+
+    WEBCAMS_UVC_SNAPSHOT_BUTTON - Add support for the take snapshot button.
+    Valid values:  0, 1 (default if uvc is added)
 
     X86_MICROARCH_OVERRIDE - Override the -march=native or -march=generic.  With
     the help of the kernel_compiler_patch, more march values are exposed based

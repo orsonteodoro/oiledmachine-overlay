@@ -3170,6 +3170,7 @@ ot-kernel_clear_env() {
 	unset VIRTUALBOX_GUEST_LINUX
 	unset VSYSCALL_MODE
 	unset WATCHDOG_DRIVERS
+	unset WEBCAMS
 	unset X86_MICROARCH_OVERRIDE
 	unset XEN_PCI_PASSTHROUGH
 	unset YUBIKEY
@@ -3661,10 +3662,10 @@ einfo "Using ${picked_alg} as the default network QoS"
 	fi
 }
 
-# @FUNCTION: ot-kernel-set_mobo_audio
+# @FUNCTION: ot-kernel_set_mobo_audio
 # @DESCRIPTION:
 # Common motherboard audio, pci cards for budget gamer, or laptop audio.
-ot-kernel-set_mobo_audio() {
+ot-kernel_set_mobo_audio() {
 	# 2005 - present (2023)
 	if [[ "${MOBO_AUDIO:-1}" == "1" ]] ; then
 		ot-kernel_y_configopt "CONFIG_SOUND"
@@ -3694,6 +3695,91 @@ ot-kernel-set_mobo_audio() {
 		ot-kernel_set_configopt "CONFIG_SND_INTEL8X0" "m" # 1999
 		ot-kernel_set_configopt "CONFIG_SND_CA0106" "m" # 2004
 		ot-kernel_set_configopt "CONFIG_SND_VIA82XX" "m" # 2002
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_webcam
+# @DESCRIPTION:
+# Enable common webcam drivers.
+ot-kernel_set_webcam() {
+	cd "${BUILD_DIR}" || die
+	local wants_gspca=0
+	local wants_usb_webcam=0
+	local wants_uvc_webcam=0
+	local webcams="${WEBCAMS,,}"
+	if [[ "${webcams}" == "gspca" || "${webcams}" == "all" ]] ; then
+		wants_gspca=1
+		local ALL_GSPCA=(
+			$(grep -r -e "config USB_GSPCA" $(find drivers/media/usb -name "Kconfig*") \
+				| cut -f 2 -d ":" \
+				| cut -f 2 -d " " \
+				| cut -f 3 -d "_" \
+				| sort \
+				| sed -e "/^$/d")
+			"USB_GL860"
+			"USB_M5602"
+			"USB_STV06XX"
+		)
+		local m # gspca module
+		for m in ${ALL_GSPCA[@]} ; do
+			ot-kernel_set_configopt "CONFIG_${m}" "m"
+			wants_usb_webcam=1
+			wants_gspca=1
+		done
+	fi
+
+	# Add requested GSPCA drivers
+	if [[ -n "${webcams}" ]] ; then
+		local ALL_GSPCA=(
+			$(grep -r -e "config USB_GSPCA" $(find drivers/media/usb -name "Kconfig*") \
+				| cut -f 2 -d ":" \
+				| cut -f 2 -d " " \
+				| cut -f 3 -d "_" \
+				| sort \
+				| sed -e "/^$/d")
+			"USB_GL860"
+			"USB_M5602"
+			"USB_STV06XX"
+		)
+		local x
+		for x in ${webcam^^} ; do
+			local m
+			for m in ${ALL_GSPCA[@]} ; do
+				if [[ "${x}" =~ "${m}" ]] ; then
+					ot-kernel_set_configopt "CONFIG_${x}" "m"
+					wants_usb_webcam=1
+					wants_gspca=1
+				fi
+			done
+		done
+	fi
+
+	if [[ "${webcams}" =~ ("all"|"pwc") ]] ; then
+		ot-kernel_set_configopt "CONFIG_USB_PWC" "m"
+		wants_usb_webcam=1
+	fi
+
+	if [[ "${webcams}" =~ ("all"|"uvc") ]] ; then
+		ot-kernel_set_configopt "CONFIG_USB_VIDEO_CLASS" "m"
+		wants_usb_webcam=1
+		if [[ "${WEBCAMS_UVC_SNAPSHOT_BUTTON:-1}" == "1" ]] ; then
+			# Take snapshot button
+			ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
+			ot-kernel_y_configopt "CONFIG_INPUT"
+			ot-kernel_y_configopt "CONFIG_CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV"
+		fi
+	fi
+
+	if (( ${wants_usb_webcam} == 1 )) ; then
+		ot-kernel_y_configopt "CONFIG_MEDIA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB"
+		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
+	fi
+
+	if (( ${wants_gspca} == 1 )) ; then
+		ot-kernel_m_configopt "CONFIG_USB_GSPCA" "m"
 	fi
 }
 
@@ -7924,7 +8010,8 @@ einfo
 	ot-kernel_set_kconfig_firmware
 	ot-kernel_check_firmware
 
-	ot-kernel-set_mobo_audio
+	ot-kernel_set_mobo_audio
+	ot-kernel_set_webcam
 
 	#
 	# hardening_level meanings:

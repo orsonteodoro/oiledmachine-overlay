@@ -609,6 +609,7 @@ ot-kernel-pkgflags_apply() {
 	# Post apply
 	# General commonly used kernel features goes here.
 	_ot-kernel-pkgflags_squashfs
+	_ot-kernel-pkgflags_webcam
 	_ot-kernel_set_futex
 	_ot-kernel_set_futex2
 	_ot-kernel_set_ldt
