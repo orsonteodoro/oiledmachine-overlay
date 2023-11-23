@@ -68,7 +68,10 @@ media-video/sr -pretrained
 # The gold linker prevents this.
 =sys-devel/llvm-roc-5.7.0 bolt ebolt
 
-# recording_plugin = ffmpeg in /etc/howdy/config.ini is broken
-# recording_plugin = pyv4l2 in /etc/howdy/config.ini is broken
+# recording_plugin = ffmpeg in /etc/howdy/config.ini is broken - \
+#   bugs:  returns 0 for read() in recorders/ffmpeg_reader.py always, so it always fails for read_frame() in recorders/video_capture.py.
+# recording_plugin = pyv4l2 in /etc/howdy/config.ini is broken - \
+#   bugs:  returned image size is not constant meaning it could be compressed.
+#          the array is not 0 padded before reshaping.
 # Use recording_plugin = opencv instead.
 app-admin/howdy ffmpeg pyv4l2
