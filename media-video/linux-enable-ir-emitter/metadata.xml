@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+  oiledmachine-overlay notes:
+  -->
+  <upstream>
+    <doc lang="en">https://github.com/EmixamPP/linux-enable-ir-emitter/tree/master/docs</doc>
+  </upstream>
+  <use>
+    <flag name="">
+    </flag>    
+  </use>
+  <upstream>
+    <remote-id type="github">EmixamPP/linux-enable-ir-emitter</remote-id>
+  </upstream>
+</pkgmetadata>
