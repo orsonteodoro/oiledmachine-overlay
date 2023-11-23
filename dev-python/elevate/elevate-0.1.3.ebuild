@@ -15,10 +15,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" policykit sudo"
 IUSE+=" enlightenment gnome gtk kde lxde lxqt mate xfce"
 REQUIRED_USE+="
-	|| (
-		policykit
-		sudo
-	)
 	gnome? (
 		gtk
 	)
@@ -27,27 +23,31 @@ REQUIRED_USE+="
 	)
 	policykit? (
 		|| (
-			kde
-			gnome
 			enlightenment
+			gnome
+			kde
 			lxde
 			lxqt
 			mate
 			xfce
 		)
 	)
+	|| (
+		policykit
+		sudo
+	)
 "
 RDEPEND+="
 	policykit? (
 		sys-auth/polkit[kde?]
-		kde? (
-			kde-plasma/polkit-kde-agent
+		enlightenment? (
+			x11-wm/enlightenment[policykit]
 		)
 		gnome? (
 			gnome-extra/polkit-gnome
 		)
-		enlightenment? (
-			x11-wm/enlightenment[policykit]
+		kde? (
+			kde-plasma/polkit-kde-agent
 		)
 		lxde? (
 			|| (
@@ -109,6 +109,13 @@ einfo "<agent> &"
 einfo
 einfo "sudo does not need to be run in the background."
 einfo
+ewarn
+ewarn "SECURITY NOTICE"
+ewarn
+ewarn "Using insecure widgets or agents that do not sanitize sensitive data,"
+ewarn "lock sensitive data in volatile memory, or use widgets or data types"
+ewarn "that are not designed to store sensitive data can weaken security."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

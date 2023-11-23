@@ -10,4 +10,35 @@
     <remote-id type="github">barneygale/elevate</remote-id>
     <bugs-to>https://github.com/barneygale/elevate/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="kde">
+      Support for a KDE policykit agent with a KDE widgets.
+    </flag>
+    <flag name="gnome">
+      Support for a Gnome policykit agent with Gnome widgets.
+    </flag>
+    <flag name="enlightenment">
+      Support for a Enlightenment policykit agent with Enlightenment widgets.
+    </flag>
+    <flag name="lxde">
+      Support for a LXDE policykit agent with LXDE widgets and lightweight
+      memory footprint.
+    </flag>
+    <flag name="lxqt">
+      Support for a LXQt policykit agent with Qt widgets and lightweight memory
+      footprint.
+    </flag>
+    <flag name="mate">
+      Support for a MATE policykit agent with MATE widgets.
+    </flag>
+    <flag name="policykit">
+      Support for agnostic elevated privileges via console or GUI.
+    </flag>
+    <flag name="sudo">
+      Prompt for privileges priveleges via terminal.
+    </flag>
+    <flag name="xfce">
+      Support for a XFCE policykit agent with XFCE widgets.
+    </flag>
+  </use>
 </pkgmetadata>
