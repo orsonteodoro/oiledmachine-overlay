@@ -119,7 +119,6 @@ BDEPEND+="
 RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/howdy-3.0_beta_pre9999-howdy-gtk-fix-camera-id.patch"
-	"${FILESDIR}/howdy-3.0_beta_pre9999-disable-authsticky.patch"
 )
 
 pkg_setup()
