@@ -1,0 +1,646 @@
+diff -urp sddm-0.20.0.orig/CMakeLists.txt sddm-0.20.0/CMakeLists.txt
+--- sddm-0.20.0.orig/CMakeLists.txt	2023-11-24 15:20:16.726325856 -0800
++++ sddm-0.20.0/CMakeLists.txt	2023-11-24 15:20:32.226326075 -0800
+@@ -29,6 +29,8 @@ option(ENABLE_JOURNALD "Enable logging t
+ option(NO_SYSTEMD "Disable systemd support" OFF)
+ option(USE_ELOGIND "Use elogind instead of logind" OFF)
+ option(BUILD_WITH_QT6 "Build with Qt 6" OFF)
++option(BUILD_WITH_WAYLAND "Build with Wayland" ON)
++option(BUILD_WITH_X "Build with X" ON)
+ 
+ set(CMAKE_CXX_STANDARD 17)
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+@@ -76,26 +78,28 @@ find_package(PkgConfig)
+ # PAM
+ find_package(PAM REQUIRED)
+ 
+-# XAU
+-pkg_check_modules(LIBXAU REQUIRED "xau")
++if(BUILD_WITH_X)
++	# XAU
++	pkg_check_modules(LIBXAU REQUIRED "xau")
+ 
+-# XCB
+-find_package(XCB REQUIRED)
++	# XCB
++	find_package(XCB REQUIRED)
+ 
+-# XKB
+-find_package(XKB REQUIRED)
++	# XKB
++	find_package(XKB REQUIRED)
++endif()
+ 
+ # Qt
+ if(BUILD_WITH_QT6)
+     set(QT_MAJOR_VERSION 6)
+     message(STATUS "Building Qt 6 version")
++    find_package(Qt${QT_MAJOR_VERSION} 6.4.2 CONFIG REQUIRED Core DBus Gui Qml Quick LinguistTools QuickTest)
+ else()
+     set(QT_MAJOR_VERSION 5)
+     message(STATUS "Building Qt 5 version")
++    find_package(Qt${QT_MAJOR_VERSION} 5.15.8 CONFIG REQUIRED Core DBus Gui Qml Quick LinguistTools QuickTest)
+ endif()
+ 
+-find_package(Qt${QT_MAJOR_VERSION} 5.15.0 CONFIG REQUIRED Core DBus Gui Qml Quick LinguistTools Test QuickTest)
+-
+ # find qt5 imports dir
+ get_target_property(QMAKE_EXECUTABLE Qt${QT_MAJOR_VERSION}::qmake LOCATION)
+ if(NOT QT_IMPORTS_DIR)
+diff -urp sddm-0.20.0.orig/src/daemon/CMakeLists.txt sddm-0.20.0/src/daemon/CMakeLists.txt
+--- sddm-0.20.0.orig/src/daemon/CMakeLists.txt	2023-06-23 05:28:38.000000000 -0700
++++ sddm-0.20.0/src/daemon/CMakeLists.txt	2023-11-24 15:20:32.226326075 -0800
+@@ -1,10 +1,20 @@
++if(BUILD_WITH_X)
++    add_definitions(-DUSE_X)
++endif()
++if(BUILD_WITH_WAYLAND)
++    add_definitions(-DUSE_WAYLAND)
++endif()
+ include_directories(
+     "${CMAKE_SOURCE_DIR}/src/common"
+     "${CMAKE_SOURCE_DIR}/src/auth"
+     "${CMAKE_BINARY_DIR}/src/common"
+-    ${LIBXAU_INCLUDE_DIRS}
+-    "${LIBXCB_INCLUDE_DIR}"
+ )
++if(BUILD_WITH_X)
++    include_directories(
++        ${LIBXAU_INCLUDE_DIRS}
++        "${LIBXCB_INCLUDE_DIR}"
++    )
++endif()
+ 
+ configure_file(config.h.in config.h IMMEDIATE @ONLY)
+ set(DAEMON_SOURCES
+@@ -15,7 +25,6 @@ set(DAEMON_SOURCES
+     ${CMAKE_SOURCE_DIR}/src/common/ThemeMetadata.cpp
+     ${CMAKE_SOURCE_DIR}/src/common/Session.cpp
+     ${CMAKE_SOURCE_DIR}/src/common/SocketWriter.cpp
+-    ${CMAKE_SOURCE_DIR}/src/common/XAuth.cpp
+     ${CMAKE_SOURCE_DIR}/src/common/SignalHandler.cpp
+     ${CMAKE_SOURCE_DIR}/src/auth/Auth.cpp
+     ${CMAKE_SOURCE_DIR}/src/auth/AuthPrompt.cpp
+@@ -31,12 +40,23 @@ set(DAEMON_SOURCES
+     Seat.cpp
+     SeatManager.cpp
+     SocketServer.cpp
+-    XorgDisplayServer.cpp
+-    XorgUserDisplayServer.cpp
+-    XorgUserDisplayServer.h
+-    WaylandDisplayServer.cpp
+-    WaylandDisplayServer.h
+ )
++if(BUILD_WITH_X)
++    set(DAEMON_SOURCES
++        ${DAEMON_SOURCES}
++        ${CMAKE_SOURCE_DIR}/src/common/XAuth.cpp
++        XorgDisplayServer.cpp
++        XorgUserDisplayServer.cpp
++        XorgUserDisplayServer.h
++    )
++endif()
++if(BUILD_WITH_WAYLAND)
++    set(DAEMON_SOURCES
++        ${DAEMON_SOURCES}
++        WaylandDisplayServer.cpp
++        WaylandDisplayServer.h
++    )
++endif()
+ 
+ list(APPEND DAEMON_SOURCES ${CMAKE_SOURCE_DIR}/src/common/VirtualTerminal.cpp)
+ 
+@@ -63,9 +83,13 @@ add_executable(sddm ${DAEMON_SOURCES})
+ target_link_libraries(sddm
+                       Qt${QT_MAJOR_VERSION}::DBus
+                       Qt${QT_MAJOR_VERSION}::Network
+-                      Qt${QT_MAJOR_VERSION}::Qml
+-                      ${LIBXAU_LINK_LIBRARIES}
+-                      ${LIBXCB_LIBRARIES})
++                      Qt${QT_MAJOR_VERSION}::Qml)
++if(BUILD_WITH_X)
++    target_link_libraries(sddm
++        ${LIBXAU_LINK_LIBRARIES}
++        ${LIBXCB_LIBRARIES}
++    )
++endif()
+ if(PAM_FOUND)
+     target_link_libraries(sddm ${PAM_LIBRARIES})
+ else()
+diff -urp sddm-0.20.0.orig/src/daemon/Display.cpp sddm-0.20.0/src/daemon/Display.cpp
+--- sddm-0.20.0.orig/src/daemon/Display.cpp	2023-06-23 05:28:38.000000000 -0700
++++ sddm-0.20.0/src/daemon/Display.cpp	2023-11-24 15:20:32.226326075 -0800
+@@ -24,8 +24,10 @@
+ #include "Configuration.h"
+ #include "DaemonApp.h"
+ #include "DisplayManager.h"
+-#include "XorgDisplayServer.h"
+-#include "XorgUserDisplayServer.h"
++#ifdef USE_X
++#    include "XorgDisplayServer.h"
++#    include "XorgUserDisplayServer.h"
++#endif
+ #include "Seat.h"
+ #include "SocketServer.h"
+ #include "Greeter.h"
+@@ -50,7 +52,9 @@
+ #include "Login1Manager.h"
+ #include "Login1Session.h"
+ #include "VirtualTerminal.h"
+-#include "WaylandDisplayServer.h"
++#ifdef USE_WAYLAND
++#    include "WaylandDisplayServer.h"
++#endif
+ #include "config.h"
+ 
+ static int s_ttyFailures = 0;
+@@ -91,17 +95,29 @@ namespace SDDM {
+     {
+         const QString &displayServerType = mainConfig.DisplayServer.get().toLower();
+         DisplayServerType ret;
++#if defined(USE_X)
+         if (displayServerType == QStringLiteral("x11-user")) {
+             ret = X11UserDisplayServerType;
+-        } else if (displayServerType == QStringLiteral("wayland")) {
++        }
++#endif
++#if defined(USE_X) && defined(USE_WAYLAND)
++        else
++#endif
++#if defined(USE_WAYLAND)
++        if (displayServerType == QStringLiteral("wayland")) {
+             ret = WaylandDisplayServerType;
+-        } else {
++        }
++#endif
++#if defined(USE_X)
++        else
++        {
+             if (displayServerType != QLatin1String("x11")) {
+                 qWarning("\"%s\" is an invalid value for General.DisplayServer: fall back to \"x11\"",
+                     qPrintable(displayServerType));
+             }
+             ret = X11DisplayServerType;
+         }
++#endif
+         return ret;
+     }
+ 
+@@ -115,6 +131,7 @@ namespace SDDM {
+     {
+         // Create display server
+         switch (m_displayServerType) {
++#ifdef USE_X
+         case X11DisplayServerType:
+             m_terminalId = VirtualTerminal::setUpNewVt();
+             m_displayServer = new XorgDisplayServer(this);
+@@ -124,11 +141,14 @@ namespace SDDM {
+             m_displayServer = new XorgUserDisplayServer(this);
+             m_greeter->setDisplayServerCommand(XorgUserDisplayServer::command(this));
+             break;
++#endif
++#ifdef USE_WAYLAND
+         case WaylandDisplayServerType:
+             m_terminalId = fetchAvailableVt();
+             m_displayServer = new WaylandDisplayServer(this);
+             m_greeter->setDisplayServerCommand(mainConfig.Wayland.CompositorCommand.get());
+             break;
++#endif
+         }
+ 
+         qDebug("Using VT %d", m_terminalId);
+@@ -437,12 +457,18 @@ namespace SDDM {
+         env.insert(QStringLiteral("XDG_SESSION_DESKTOP"), session.desktopNames());
+ #endif
+ 
++#if defined(USE_X)
+         if (session.xdgSessionType() == QLatin1String("x11")) {
+           if (m_displayServerType == X11DisplayServerType)
+             env.insert(QStringLiteral("DISPLAY"), name());
+           else
+             m_auth->setDisplayServerCommand(XorgUserDisplayServer::command(this));
+-        } else {
++        }
++#endif
++#if defined(USE_X) && defined(USE_WAYLAND)
++        else
++#endif
++        {
+             m_auth->setDisplayServerCommand(QStringLiteral());
+ 	}
+         m_auth->setUser(user);
+@@ -462,10 +488,14 @@ namespace SDDM {
+                 manager.UnlockSession(m_reuseSessionId);
+                 manager.ActivateSession(m_reuseSessionId);
+                 m_started = true;
+-            } else {
++            }
++#ifdef USE_X
++            else
++            {
+                 if (qobject_cast<XorgDisplayServer *>(m_displayServer))
+                     m_auth->setCookie(qobject_cast<XorgDisplayServer *>(m_displayServer)->cookie());
+             }
++#endif
+ 
+             // save last user and last session
+             if (mainConfig.Users.RememberLastUser.get())
+diff -urp sddm-0.20.0.orig/src/daemon/Greeter.cpp sddm-0.20.0/src/daemon/Greeter.cpp
+--- sddm-0.20.0.orig/src/daemon/Greeter.cpp	2023-06-23 05:28:38.000000000 -0700
++++ sddm-0.20.0/src/daemon/Greeter.cpp	2023-11-24 15:20:32.226326075 -0800
+@@ -27,9 +27,13 @@
+ #include "ThemeConfig.h"
+ #include "ThemeMetadata.h"
+ #include "Display.h"
+-#include "XorgDisplayServer.h"
+-#include "XorgUserDisplayServer.h"
+-#include "WaylandDisplayServer.h"
++#ifdef USE_X
++#    include "XorgDisplayServer.h"
++#    include "XorgUserDisplayServer.h"
++#endif
++#ifdef USE_WAYLAND
++#    include "WaylandDisplayServer.h"
++#endif
+ 
+ #include <QtCore/QDebug>
+ #include <QtCore/QProcess>
+@@ -128,6 +132,7 @@ namespace SDDM {
+ 
+             args << QStringLiteral("--test-mode");
+ 
++#ifdef USE_X
+             if (m_display->displayServerType() == Display::X11DisplayServerType) {
+                 // set process environment
+                 QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+@@ -138,6 +143,7 @@ namespace SDDM {
+                     env.insert(QStringLiteral("XCURSOR_SIZE"), xcursorSize);
+                 m_process->setProcessEnvironment(env);
+             }
++#endif
+             // Greeter command
+             m_process->start(QStringLiteral("%1/sddm-greeter").arg(QStringLiteral(BIN_INSTALL_DIR)), args);
+ 
+@@ -201,14 +207,22 @@ namespace SDDM {
+                 env.insert(QStringLiteral("XDG_VTNR"), QString::number(m_display->terminalId()));
+             env.insert(QStringLiteral("XDG_SESSION_CLASS"), QStringLiteral("greeter"));
+             env.insert(QStringLiteral("XDG_SESSION_TYPE"), m_display->sessionType());
++#ifdef USE_X
+             if (m_display->displayServerType() == Display::X11DisplayServerType) {
+                 env.insert(QStringLiteral("DISPLAY"), m_display->name());
+                 env.insert(QStringLiteral("QT_QPA_PLATFORM"), QStringLiteral("xcb"));
+                 m_auth->setCookie(qobject_cast<XorgDisplayServer*>(displayServer)->cookie());
+-            } else if (m_display->displayServerType() == Display::WaylandDisplayServerType) {
++            }
++#endif
++#if defined(USE_X) && defined(USE_WAYLAND)
++            else
++#endif
++#ifdef USE_WAYLAND
++            if (m_display->displayServerType() == Display::WaylandDisplayServerType) {
+                 env.insert(QStringLiteral("QT_QPA_PLATFORM"), QStringLiteral("wayland"));
+                 env.insert(QStringLiteral("QT_WAYLAND_SHELL_INTEGRATION"), QStringLiteral("fullscreen-shell-v1"));
+             }
++#endif
+             m_auth->insertEnvironment(env);
+ 
+             // log message
+@@ -289,13 +303,17 @@ namespace SDDM {
+     {
+         auto *displayServer = m_display->displayServer();
+ 
++#ifdef USE_X
+         auto *xorgUser = qobject_cast<XorgUserDisplayServer *>(displayServer);
+         if (xorgUser)
+             xorgUser->setDisplayName(displayName);
++#endif
+ 
++#ifdef USE_WAYLAND
+         auto *wayland = qobject_cast<WaylandDisplayServer *>(displayServer);
+         if (wayland)
+             wayland->setDisplayName(displayName);
++#endif
+     }
+ 
+     void Greeter::onHelperFinished(Auth::HelperExitStatus status) {
+diff -urp sddm-0.20.0.orig/src/greeter/CMakeLists.txt sddm-0.20.0/src/greeter/CMakeLists.txt
+--- sddm-0.20.0.orig/src/greeter/CMakeLists.txt	2023-06-23 05:28:38.000000000 -0700
++++ sddm-0.20.0/src/greeter/CMakeLists.txt	2023-11-24 15:20:32.226326075 -0800
+@@ -1,8 +1,18 @@
++if(BUILD_WITH_X)
++    add_definitions(-DUSE_X)
++endif()
++if(BUILD_WITH_WAYLAND)
++    add_definitions(-DUSE_WAYLAND)
++endif()
+ include_directories(
+     "${CMAKE_SOURCE_DIR}/src/common"
+     "${CMAKE_BINARY_DIR}/src/common"
+-    "${LIBXCB_INCLUDE_DIR}"
+ )
++if(BUILD_WITH_X)
++    include_directories(
++        "${LIBXCB_INCLUDE_DIR}"
++    )
++endif()
+ 
+ set(GREETER_SOURCES
+     ${CMAKE_SOURCE_DIR}/src/common/Configuration.cpp
+@@ -19,20 +29,35 @@ set(GREETER_SOURCES
+     ScreenModel.cpp
+     SessionModel.cpp
+     UserModel.cpp
+-    waylandkeyboardbackend.cpp
+-    waylandkeyboardbackend.h
+-    XcbKeyboardBackend.cpp
+ )
+ 
++if(BUILD_WITH_X)
++    set(GREETER_SOURCES
++        ${GREETER_SOURCES}
++        XcbKeyboardBackend.cpp
++    )
++endif()
++if(BUILD_WITH_WAYLAND)
++    set(GREETER_SOURCES
++        ${GREETER_SOURCES}
++        waylandkeyboardbackend.cpp
++        waylandkeyboardbackend.h
++    )
++endif()
++
+ configure_file("theme.qrc" "theme.qrc")
+ 
+ qt_add_resources(RESOURCES ${CMAKE_CURRENT_BINARY_DIR}/theme.qrc)
+ 
+ add_executable(sddm-greeter ${GREETER_SOURCES} ${RESOURCES})
+ target_link_libraries(sddm-greeter
+-                      Qt${QT_MAJOR_VERSION}::Quick
+-                      ${LIBXCB_LIBRARIES}
+-                      ${LIBXKB_LIBRARIES})
++                      Qt${QT_MAJOR_VERSION}::Quick)
++if(BUILD_WITH_X)
++    target_link_libraries(sddm-greeter
++        ${LIBXCB_LIBRARIES}
++        ${LIBXKB_LIBRARIES}
++    )
++endif()
+ 
+ if(JOURNALD_FOUND)
+     target_link_libraries(sddm-greeter ${JOURNALD_LIBRARIES})
+diff -urp sddm-0.20.0.orig/src/greeter/GreeterApp.cpp sddm-0.20.0/src/greeter/GreeterApp.cpp
+--- sddm-0.20.0.orig/src/greeter/GreeterApp.cpp	2023-11-24 15:20:16.722325856 -0800
++++ sddm-0.20.0/src/greeter/GreeterApp.cpp	2023-11-24 15:20:32.230326076 -0800
+@@ -319,7 +319,13 @@ int main(int argc, char **argv)
+         platform = QString::fromUtf8(qgetenv("QT_QPA_PLATFORM"));
+     }
+     if (platform.isEmpty()) {
++#if defined(USE_X) && defined(USE_WAYLAND)
+         platform = qEnvironmentVariableIsSet("WAYLAND_DISPLAY") ? QStringLiteral("wayland") : QStringLiteral("xcb");
++#elif defined(USE_X)
++        platform = QStringLiteral("xcb");
++#elif defined(USE_WAYLAND)
++        platform = QStringLiteral("wayland");
++#endif
+     }
+ 
+     // Install message handler
+@@ -328,10 +334,17 @@ int main(int argc, char **argv)
+ 
+     // HiDPI
+     bool hiDpiEnabled = false;
++#ifdef USE_X
+     if (platform == QStringLiteral("xcb"))
+         hiDpiEnabled = SDDM::mainConfig.X11.EnableHiDPI.get();
+-    else if (platform.startsWith(QStringLiteral("wayland")))
++#endif
++#if defined(USE_X) && defined(USE_WAYLAND)
++    else
++#endif
++#ifdef USE_WAYLAND
++    if (platform.startsWith(QStringLiteral("wayland")))
+         hiDpiEnabled = SDDM::mainConfig.Wayland.EnableHiDPI.get();
++#endif
+     if (hiDpiEnabled) {
+         qDebug() << "High-DPI autoscaling Enabled";
+         QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+diff -urp sddm-0.20.0.orig/src/greeter/KeyboardModel.cpp sddm-0.20.0/src/greeter/KeyboardModel.cpp
+--- sddm-0.20.0.orig/src/greeter/KeyboardModel.cpp	2023-06-23 05:28:38.000000000 -0700
++++ sddm-0.20.0/src/greeter/KeyboardModel.cpp	2023-11-24 15:20:32.230326076 -0800
+@@ -22,8 +22,12 @@
+ 
+ #include "KeyboardModel.h"
+ #include "KeyboardModel_p.h"
+-#include "waylandkeyboardbackend.h"
+-#include "XcbKeyboardBackend.h"
++#ifdef USE_WAYLAND
++#    include "waylandkeyboardbackend.h"
++#endif
++#ifdef USE_X
++#    include "XcbKeyboardBackend.h"
++#endif
+ 
+ namespace SDDM {
+     /**********************************************/
+@@ -31,14 +35,22 @@ namespace SDDM {
+     /**********************************************/
+ 
+     KeyboardModel::KeyboardModel() : d(new KeyboardModelPrivate) {
++#ifdef USE_X
+         if (QGuiApplication::platformName() == QLatin1String("xcb")) {
+             m_backend = new XcbKeyboardBackend(d);
+             m_backend->init();
+             m_backend->connectEventsDispatcher(this);
+-        } else if (QGuiApplication::platformName().contains(QLatin1String("wayland"))) {
++        }
++#endif
++#if defined(USE_X) && defined(USE_WAYLAND)
++        else
++#endif
++#ifdef USE_WAYLAND
++        if (QGuiApplication::platformName().contains(QLatin1String("wayland"))) {
+             m_backend = new WaylandKeyboardBackend(d);
+             m_backend->init();
+         }
++#endif
+     }
+ 
+     KeyboardModel::~KeyboardModel() {
+diff -urp sddm-0.20.0.orig/src/helper/CMakeLists.txt sddm-0.20.0/src/helper/CMakeLists.txt
+--- sddm-0.20.0.orig/src/helper/CMakeLists.txt	2023-06-23 05:28:38.000000000 -0700
++++ sddm-0.20.0/src/helper/CMakeLists.txt	2023-11-24 15:23:08.514328284 -0800
+@@ -1,17 +1,27 @@
+ include(CheckLibraryExists)
+ 
++if(BUILD_WITH_X)
++    add_definitions(-DUSE_X)
++endif()
++if(BUILD_WITH_WAYLAND)
++    add_definitions(-DUSE_WAYLAND)
++endif()
++
+ include_directories(
+     "${CMAKE_SOURCE_DIR}/src/common"
+     "${CMAKE_SOURCE_DIR}/src/auth"
+-    ${LIBXAU_INCLUDE_DIRS}
+ )
++if(BUILD_WITH_X)
++    include_directories(
++        ${LIBXAU_INCLUDE_DIRS}
++    )
++endif()
+ include_directories("${CMAKE_BINARY_DIR}/src/common")
+ 
+ set(HELPER_SOURCES
+     ${CMAKE_SOURCE_DIR}/src/common/Configuration.cpp
+     ${CMAKE_SOURCE_DIR}/src/common/ConfigReader.cpp
+     ${CMAKE_SOURCE_DIR}/src/common/SafeDataStream.cpp
+-    ${CMAKE_SOURCE_DIR}/src/common/XAuth.cpp
+     ${CMAKE_SOURCE_DIR}/src/common/SignalHandler.cpp
+     ${CMAKE_SOURCE_DIR}/src/auth/Auth.cpp
+     ${CMAKE_SOURCE_DIR}/src/auth/AuthRequest.cpp
+@@ -20,6 +30,12 @@ set(HELPER_SOURCES
+     HelperApp.cpp
+     UserSession.cpp
+ )
++if(BUILD_WITH_X)
++    set(HELPER_SOURCES
++        ${HELPER_SOURCES}
++        ${CMAKE_SOURCE_DIR}/src/common/XAuth.cpp
++    )
++endif()
+ 
+ list(APPEND HELPER_SOURCES ${CMAKE_SOURCE_DIR}/src/common/VirtualTerminal.cpp)
+ 
+@@ -33,8 +49,12 @@ add_executable(sddm-helper ${HELPER_SOUR
+ target_link_libraries(sddm-helper
+                       Qt${QT_MAJOR_VERSION}::Network
+                       Qt${QT_MAJOR_VERSION}::DBus
+-                      Qt${QT_MAJOR_VERSION}::Qml
+-                      ${LIBXAU_LINK_LIBRARIES})
++                      Qt${QT_MAJOR_VERSION}::Qml)
++if(BUILD_WITH_X)
++    target_link_libraries(sddm-helper
++        ${LIBXAU_LINK_LIBRARIES}
++    )
++endif()
+ if("${CMAKE_SYSTEM_NAME}" STREQUAL "FreeBSD")
+     # On FreeBSD (possibly other BSDs as well), we want to use
+     # setusercontext() to set up the login configuration from login.conf
+@@ -55,22 +75,30 @@ endif()
+ 
+ install(TARGETS sddm-helper RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}")
+ 
+-add_executable(sddm-helper-start-wayland HelperStartWayland.cpp waylandsocketwatcher.cpp waylandhelper.cpp ${CMAKE_SOURCE_DIR}/src/common/SignalHandler.cpp)
+-target_link_libraries(sddm-helper-start-wayland Qt${QT_MAJOR_VERSION}::Core)
+-install(TARGETS sddm-helper-start-wayland RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}")
++if(BUILD_WITH_WAYLAND)
++    add_executable(sddm-helper-start-wayland HelperStartWayland.cpp waylandsocketwatcher.cpp waylandhelper.cpp ${CMAKE_SOURCE_DIR}/src/common/SignalHandler.cpp)
++    target_link_libraries(sddm-helper-start-wayland Qt${QT_MAJOR_VERSION}::Core)
++    install(TARGETS sddm-helper-start-wayland RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}")
++endif()
+ 
+-add_executable(sddm-helper-start-x11user HelperStartX11User.cpp xorguserhelper.cpp
++if(BUILD_WITH_X)
++    add_executable(sddm-helper-start-x11user HelperStartX11User.cpp xorguserhelper.cpp
+                                                 ${CMAKE_SOURCE_DIR}/src/common/ConfigReader.cpp
+                                                 ${CMAKE_SOURCE_DIR}/src/common/Configuration.cpp
+                                                 ${CMAKE_SOURCE_DIR}/src/common/XAuth.cpp
+                                                 ${CMAKE_SOURCE_DIR}/src/common/SignalHandler.cpp
+                                                 )
+-target_link_libraries(sddm-helper-start-x11user Qt${QT_MAJOR_VERSION}::Core
++    target_link_libraries(sddm-helper-start-x11user Qt${QT_MAJOR_VERSION}::Core
+                                                 ${LIBXAU_LINK_LIBRARIES})
+-install(TARGETS sddm-helper-start-x11user RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}")
++    install(TARGETS sddm-helper-start-x11user RUNTIME DESTINATION "${CMAKE_INSTALL_LIBEXECDIR}")
++endif()
+ 
+ if(JOURNALD_FOUND)
+     target_link_libraries(sddm-helper ${JOURNALD_LIBRARIES})
+-    target_link_libraries(sddm-helper-start-x11user ${JOURNALD_LIBRARIES})
+-    target_link_libraries(sddm-helper-start-wayland ${JOURNALD_LIBRARIES})
++    if(BUILD_WITH_X)
++        target_link_libraries(sddm-helper-start-x11user ${JOURNALD_LIBRARIES})
++    endif()
++    if(BUILD_WITH_WAYLAND)
++        target_link_libraries(sddm-helper-start-wayland ${JOURNALD_LIBRARIES})
++    endif()
+ endif()
+diff -urp sddm-0.20.0.orig/src/helper/UserSession.cpp sddm-0.20.0/src/helper/UserSession.cpp
+--- sddm-0.20.0.orig/src/helper/UserSession.cpp	2023-06-23 05:28:38.000000000 -0700
++++ sddm-0.20.0/src/helper/UserSession.cpp	2023-11-24 15:20:32.230326076 -0800
+@@ -26,7 +26,9 @@
+ #include "UserSession.h"
+ #include "HelperApp.h"
+ #include "VirtualTerminal.h"
++#ifdef USE_X
+ #include "XAuth.h"
++#endif
+ 
+ #include <functional>
+ #include <sys/types.h>
+@@ -59,6 +61,7 @@ namespace SDDM {
+ 
+         bool isWaylandGreeter = false;
+ 
++#if defined(USE_X)
+         // If the Xorg display server was already started, write the passed
+         // auth cookie to /tmp/xauth_XXXXXX. This is done in the parent process
+         // so that it can clean up the file on session end.
+@@ -112,7 +115,13 @@ namespace SDDM {
+             }
+             QProcess::start();
+ 
+-        } else if (env.value(QStringLiteral("XDG_SESSION_TYPE")) == QLatin1String("wayland")) {
++        }
++#endif
++#if defined(USE_X) and defined(USE_WAYLAND)
++        else
++#endif
++#if defined(USE_WAYLAND)
++        if (env.value(QStringLiteral("XDG_SESSION_TYPE")) == QLatin1String("wayland")) {
+             if (env.value(QStringLiteral("XDG_SESSION_CLASS")) == QLatin1String("greeter")) {
+                 Q_ASSERT(!m_displayServerCmd.isEmpty());
+                 setProgram(QStringLiteral(LIBEXEC_INSTALL_DIR "/sddm-helper-start-wayland"));
+@@ -127,7 +136,10 @@ namespace SDDM {
+                 closeWriteChannel();
+                 closeReadChannel(QProcess::StandardOutput);
+             }
+-        } else {
++        }
++#endif
++        else
++        {
+             qCritical() << "Unable to run user session: unknown session type";
+         }
+ 
+@@ -269,11 +281,13 @@ namespace SDDM {
+             exit(Auth::HELPER_OTHER_ERROR);
+         }
+ 
++#ifdef USE_X
+         const int xauthHandle = m_xauthFile.handle();
+         if (xauthHandle != -1 && fchown(xauthHandle, pw.pw_uid, pw.pw_gid) != 0) {
+             qCritical() << "fchown failed for" << m_xauthFile.fileName();
+             exit(Auth::HELPER_OTHER_ERROR);
+         }
++#endif
+ 
+ #if defined(Q_OS_FREEBSD)
+         // execve() uses the environment prepared in Backend::openSession(),
+diff -urp sddm-0.20.0.orig/src/helper/UserSession.h sddm-0.20.0/src/helper/UserSession.h
+--- sddm-0.20.0.orig/src/helper/UserSession.h	2023-06-23 05:28:38.000000000 -0700
++++ sddm-0.20.0/src/helper/UserSession.h	2023-11-24 15:20:32.230326076 -0800
+@@ -28,8 +28,12 @@
+ 
+ namespace SDDM {
+     class HelperApp;
++#ifdef USE_X
+     class XOrgUserHelper;
++#endif
++#ifdef USE_WAYLAND
+     class WaylandHelper;
++#endif
+     class UserSession : public QProcess
+     {
+         Q_OBJECT

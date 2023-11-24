@@ -79,3 +79,6 @@ media-video/sr -pretrained
 #   issue: https://github.com/boltgolt/howdy/issues/188
 # Use recording_plugin = opencv instead.
 app-admin/howdy ffmpeg pyv4l2
+
+# crash
+x11-misc/sddm wayland
