@@ -1,4 +1,4 @@
-# Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -408,7 +408,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  ok works
 # howdy reads config.ini:  pass
-# sudo howdy test:  fail
+# sudo howdy test:  pass (It is always red in this version based on the source code.)
 # sudo howdy add:  pass
 # sudo -k nano test:  pass
 # pkexec nano test:  fail
