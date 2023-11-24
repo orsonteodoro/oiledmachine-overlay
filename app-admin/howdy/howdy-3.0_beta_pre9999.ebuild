@@ -461,6 +461,11 @@ ewarn
 # howdy-gtk --start-auth-ui:  incomplete
 # sudo -k nano test:  pass
 # pkexec nano test:  failed
+# gdm:  TBA
+# sddm:  TBA
+# greetd:  TBA
+# slim:  TBA
+# lxdm:  TBA
 
 # Contents of /etc/pam.d/sudo used for testing:
 # auth    sufficient              /lib64/security/pam_howdy.so

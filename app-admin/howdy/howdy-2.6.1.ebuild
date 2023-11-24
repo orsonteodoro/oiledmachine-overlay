@@ -413,6 +413,11 @@ ewarn
 # real world test:  fail
 # sudo -k nano test:  pass
 # pkexec nano test:  failed
+# gdm:  TBA
+# sddm:  TBA
+# greetd:  TBA
+# slim:  TBA
+# lxdm:  TBA
 
 # Contents of /etc/pam.d/sudo used for testing:
 # auth    sufficient              pam_python.so /lib64/security/howdy/pam.py
