@@ -439,7 +439,7 @@ ewarn
 # session substack                system-local-login
 
 # Contents of /etc/pam.d/lxdm used for testing:
-# %PAM-1.0
+# #%PAM-1.0
 # auth       sufficient   pam_python.so /lib64/security/howdy/pam.py
 # auth	     substack     system-auth
 # auth	     optional     pam_gnome_keyring.so
