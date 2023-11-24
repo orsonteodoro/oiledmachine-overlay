@@ -138,7 +138,7 @@ einfo "Editing ${f}"
 	done
 
 ewarn
-ewarn "If howdy segfaults, try recompiling dlib with -O0."
+ewarn "If howdy breaks with an illegal instruction, try recompiling dlib with -O0."
 ewarn
 einfo "Changing python3 -> ${EPYTHON}"
 	sed -i \
