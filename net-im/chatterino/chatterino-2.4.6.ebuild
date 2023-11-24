@@ -54,7 +54,7 @@ IUSE+="
 -benchmarks -coverage -crashpad -lto -plugins -system-libcommuni
 -system-qtkeychain -test +qt5 -qt6 +qtkeychain wayland X
 
-r3
+r4
 "
 # Building benchmarks is broken
 REQUIRED_USE="
@@ -125,6 +125,9 @@ DEPEND="
 BDEPEND="
 	qt5? (
 		>=dev-qt/linguist-tools-${QT5_PV}:5
+	)
+	qt6? (
+		>=dev-qt/qttools-${QT6_PV}:6[linguist]
 	)
 	>=dev-libs/boost-1.71.0
 	>=dev-libs/rapidjson-1.1.0
