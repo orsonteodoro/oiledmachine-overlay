@@ -415,7 +415,7 @@ ewarn
 # gdm:  TBA
 # sddm:  TBA
 # greetd:  TBA
-# slim:  RETESTING
+# slim:  pass
 # lxdm:  TBA
 
 # Contents of /etc/pam.d/sudo used for testing:
