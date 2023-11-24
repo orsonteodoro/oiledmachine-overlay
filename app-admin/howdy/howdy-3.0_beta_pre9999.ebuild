@@ -452,7 +452,7 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  failed
+# OILEDMACHINE-OVERLAY-TEST:  ok works
 # howdy reads config.ini:  pass
 # sudo howdy test:  pass
 # sudo howdy add:  pass
