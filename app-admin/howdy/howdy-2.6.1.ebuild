@@ -186,7 +186,7 @@ src_configure() {
 
 		# Increase match
 		sed -i \
-			sed -i -e "s|certainty = 3.5|certainty = 4|g" \
+			-i -e "s|certainty = 3.5|certainty = 4|g" \
 			config.ini \
 			|| die
 
@@ -194,7 +194,7 @@ src_configure() {
 		# Women false positives are around 4.9-7.9.
 		# Men false positives are around 4.50-7.2.
 		sed -i \
-			sed -i -e "s|from 1 to 10, values above 5 are not recommended|from 1 to 5, values above 5 must not be used|g" \
+			-i -e "s|from 1 to 10, values above 5 are not recommended|from 1 to 5, values above 5 must not be used|g" \
 			config.ini \
 			|| die
 	popd
