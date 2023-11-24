@@ -412,11 +412,11 @@ ewarn
 # sudo howdy add:  pass
 # sudo -k nano test:  pass
 # pkexec nano test:  fail
-# gdm:  TBA
-# sddm:  TBA
+# gdm:  TBA (on hold.  bugged without howdy)
+# sddm:  TBA (on hold.  requires qt5)
 # greetd:  TBA
 # slim:  pass
-# lxdm:  TBA
+# lxdm:  fail
 
 # Contents of /etc/pam.d/sudo used for testing:
 # auth    sufficient              pam_python.so /lib64/security/howdy/pam.py
@@ -425,7 +425,7 @@ ewarn
 # session substack                system-auth
 
 # Contents of /etc/pam.d/polkit-1 used for testing:
-# %PAM-1.0
+# #%PAM-1.0
 # auth	     sufficient pam_python.so /lib64/security/howdy/pam.py
 # auth	     include	system-auth
 # account    include	system-auth
@@ -437,3 +437,18 @@ ewarn
 # auth    substack                system-local-login
 # account substack                system-local-login
 # session substack                system-local-login
+
+# Contents of /etc/pam.d/lxdm used for testing:
+# %PAM-1.0
+# auth       sufficient   pam_python.so /lib64/security/howdy/pam.py
+# auth	     substack     system-auth
+# auth	     optional     pam_gnome_keyring.so
+# Fails also if howdy's pam.py placed here also
+# account    include      system-auth
+# -session   optional     pam_systemd.so class=greeter
+# -session   optional     pam_elogind.so class=greeter
+# session    optional     pam_keyinit.so force revoke
+# session    include      system-auth
+# #session   optional     pam_console.so
+# session    optional     pam_gnome_keyring.so auto_start
+# session    optional     pam_selinux.so
