@@ -360,6 +360,13 @@ einfo "  # Verify face recogniton works"
 einfo "  sudo ${PN} test"
 einfo
 
+einfo
+einfo "Apps that want to add howdy n-factor authentication need to have the pam"
+einfo "USE flag enabled with the pam config changes."
+einfo
+einfo "For pam settings, see the ebuild."
+einfo
+
 ewarn
 ewarn "You may consider using the =${CATEGORY}/${PN}-3* instead to reduce"
 ewarn "the attack surface introduced by sys-auth/pam-python."
@@ -404,4 +411,19 @@ ewarn
 # sudo howdy test:  fail
 # sudo howdy add:  pass
 # real world test:  fail
-# /etc/pam.d/su message test:  pass
+# sudo -k nano test:  pass
+# pkexec nano test:  failed
+
+# Contents of /etc/pam.d/sudo used for testing:
+# auth    sufficient              pam_python.so /lib64/security/howdy/pam.py
+# auth    substack                system-auth
+# account substack                system-auth
+# session substack                system-auth
+
+# Contents of /etc/pam.d/polkit-1 used for testing:
+# %PAM-1.0
+# auth	     sufficient pam_python.so /lib64/security/howdy/pam.py
+# auth	     include	system-auth
+# account    include	system-auth
+# password   include	system-auth
+# session    include	system-auth

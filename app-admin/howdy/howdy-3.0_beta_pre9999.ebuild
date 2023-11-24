@@ -412,6 +412,13 @@ einfo "  # Verify face recogniton works"
 einfo "  sudo ${PN} test"
 einfo
 
+einfo
+einfo "Apps that want to add howdy n-factor authentication need to have the pam"
+einfo "USE flag enabled with the pam config changes."
+einfo
+einfo "For pam settings, see the ebuild."
+einfo
+
 ewarn
 ewarn "SECURITY NOTICE"
 ewarn
@@ -451,5 +458,20 @@ ewarn
 # sudo howdy add:  pass
 # sudo howdy-gtk:  pass
 # real world test:  fail
-# /etc/pam.d/su message test:  fail
 # howdy-gtk --start-auth-ui:  incomplete
+# sudo -k nano test:  pass
+# pkexec nano test:  failed
+
+# Contents of /etc/pam.d/sudo used for testing:
+# auth    sufficient              /lib64/security/pam_howdy.so
+# auth    substack                system-auth
+# account substack                system-auth
+# session substack                system-auth
+
+# Contents of /etc/pam.d/polkit-1 used for testing:
+# %PAM-1.0
+# auth       sufficient  /lib64/security/pam_howdy.so
+# auth	     include	system-auth
+# account    include	system-auth
+# password   include	system-auth
+# session    include	system-auth
