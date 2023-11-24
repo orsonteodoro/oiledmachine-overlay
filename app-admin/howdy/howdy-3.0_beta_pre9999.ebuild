@@ -457,8 +457,6 @@ ewarn
 # sudo howdy test:  pass
 # sudo howdy add:  pass
 # sudo howdy-gtk:  pass
-# real world test:  fail
-# howdy-gtk --start-auth-ui:  incomplete
 # sudo -k nano test:  pass
 # pkexec nano test:  failed
 # gdm:  TBA

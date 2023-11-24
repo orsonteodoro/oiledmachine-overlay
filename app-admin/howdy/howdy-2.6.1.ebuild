@@ -410,7 +410,6 @@ ewarn
 # howdy reads config.ini:  pass
 # sudo howdy test:  fail
 # sudo howdy add:  pass
-# real world test:  fail
 # sudo -k nano test:  pass
 # pkexec nano test:  failed
 # gdm:  TBA
