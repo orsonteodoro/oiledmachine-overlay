@@ -462,7 +462,7 @@ ewarn
 # gdm:  TBA
 # sddm:  TBA
 # greetd:  TBA
-# slim:  fail
+# slim:  pass
 # lxdm:  TBA
 
 # Contents of /etc/pam.d/sudo used for testing:
@@ -478,3 +478,9 @@ ewarn
 # account    include	system-auth
 # password   include	system-auth
 # session    include	system-auth
+
+# Contents of /etc/pam.d/slim used for testing:
+# auth    sufficient              /lib64/security/pam_howdy.so
+# auth    substack                system-local-login
+# account substack                system-local-login
+# session substack                system-local-login
