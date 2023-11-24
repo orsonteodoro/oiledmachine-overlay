@@ -411,11 +411,11 @@ ewarn
 # sudo howdy test:  fail
 # sudo howdy add:  pass
 # sudo -k nano test:  pass
-# pkexec nano test:  failed
+# pkexec nano test:  fail
 # gdm:  TBA
 # sddm:  TBA
 # greetd:  TBA
-# slim:  TBA
+# slim:  fail
 # lxdm:  TBA
 
 # Contents of /etc/pam.d/sudo used for testing:
