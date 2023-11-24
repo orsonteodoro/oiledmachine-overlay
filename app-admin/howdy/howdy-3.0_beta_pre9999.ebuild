@@ -490,7 +490,7 @@ ewarn
 # auth       sufficient   /lib64/security/pam_howdy.so
 # auth	     substack     system-auth
 # auth	     optional     pam_gnome_keyring.so
-# Fails also if howdy's pam.py placed here also
+# Fails also at this location if howdy's pam.py placed here.
 # account    include      system-auth
 # -session   optional     pam_systemd.so class=greeter
 # -session   optional     pam_elogind.so class=greeter
