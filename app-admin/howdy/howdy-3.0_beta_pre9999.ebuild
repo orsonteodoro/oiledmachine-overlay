@@ -464,6 +464,7 @@ ewarn
 # greetd:  TBA
 # slim:  pass
 # lxdm:  fail
+# /bin/login:  pass (with terminal under X)
 
 # Contents of /etc/pam.d/sudo used for testing:
 # auth    sufficient              /lib64/security/pam_howdy.so
@@ -499,3 +500,11 @@ ewarn
 # #session   optional     pam_console.so
 # session    optional     pam_gnome_keyring.so auto_start
 # session    optional     pam_selinux.so
+
+# Contents of /etc/pam.d/login used for testing:
+# auth            sufficient      /lib64/security/pam_howdy.so
+# auth            include         system-local-login
+# account         include         system-local-login
+# password        include         system-local-login
+# session         optional        pam_lastlog.so
+# session         include         system-local-login
