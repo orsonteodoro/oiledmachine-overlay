@@ -754,7 +754,7 @@ eerror
 }
 
 _verify_magic_all() {
-	local actual_kernel_modules_root_path="${1}" # /lib/modules or /lib/modules-rock/${ROCM_SLOT}
+	local actual_kernel_modules_root_path="${1}" # /lib/modules or /lib/modules-rock/${PV}
 	local expected_source_path="${2}" # "/usr/src/linux-${k}"
         local kernel_release=$(cat "${expected_source_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
 
