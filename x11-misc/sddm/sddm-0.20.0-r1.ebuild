@@ -236,6 +236,7 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-TEST: ok
+# USE="X qt6 systemd -elogind (-qt5) -test -wayland -weston"
 # qt5:  untested
 # qt6:  pass
 # wayland:  fail
