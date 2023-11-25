@@ -210,16 +210,10 @@ einfo "  ${EROOT}/usr/bin/sddm --example-config"
 einfo
 einfo "Use ${EROOT}/etc/sddm.conf.d/ directory to override specific options."
 einfo
-einfo "For more information on how to configure SDDM, please visit the wiki:"
+einfo "For more information on how to configuring or troubleshooting, see"
 einfo
 einfo "  https://wiki.gentoo.org/wiki/SDDM"
-einfo
-	if has_version x11-drivers/nvidia-drivers; then
-ewarn
-ewarn "Nvidia GPU owners in particular should pay attention to the"
-ewarn "troubleshooting section."
-ewarn
-	fi
+einfo "  https://github.com/sddm/sddm#troubleshooting"
 einfo
 	optfeature "Weston DisplayServer support (EXPERIMENTAL)" dev-libs/weston
 	optfeature "KWin DisplayServer support (EXPERIMENTAL)" kde-plasma/kwin
