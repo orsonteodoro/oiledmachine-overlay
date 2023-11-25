@@ -460,10 +460,10 @@ ewarn
 # sudo -k nano test:  pass
 # pkexec nano test:  fail
 # gdm:  TBA (on hold.  bugged without howdy)
-# sddm:  TBA (on hold.  requires qt5)
+# sddm:  fails with default theme
 # greetd:  TBA
 # slim:  pass
-# lxdm:  fail
+# lxdm:  fails with default theme
 # /bin/login:  pass (with terminal under X)
 
 # Contents of /etc/pam.d/sudo used for testing:
