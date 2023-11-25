@@ -32,7 +32,7 @@ REQUIRED_USE="
 "
 # If you have a custom kernel, it is recommended to maintain a local copy to add
 # your own kernel to the list below for auto rebuilds.
-RDEPEND+="
+CDEPEND="
 	!custom-kernel? (
 	        || (
 			sys-kernel/gentoo-kernel:=
@@ -51,9 +51,14 @@ RDEPEND+="
 		)
 	)
 "
+RDEPEND+="
+	${CDEPEND}
+"
 DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
+	${CDEPEND}
 	|| (
 		sys-devel/gcc
 		sys-devel/clang
