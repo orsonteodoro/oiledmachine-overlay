@@ -33,7 +33,7 @@ LICENSE="
 "
 SLOT="0"
 IUSE="
-+elogind systemd qt5 qt6 test wayland X
+elogind systemd +qt5 qt6 test wayland weston +X
 "
 
 REQUIRED_USE="
@@ -88,6 +88,9 @@ COMMON_DEPEND="
 	wayland? (
 		>=x11-misc/xkeyboard-config-2.38
 	)
+	weston? (
+		>=dev-libs/weston-10.0.1[fullscreen,gles2,wayland-compositor]
+	)
 	X? (
 		>=x11-libs/libXau-1.0.9
 		>=x11-libs/libxcb-1.15:=
@@ -137,7 +140,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.20.0-greeter-platform-detection.patch"
 	"${FILESDIR}/${PN}-0.20.0-no-qtvirtualkeyboard-on-wayland.patch"
 	"${FILESDIR}/${PN}-0.20.0-dbus-policy-in-usr.patch"
-
 	# oiledmachine-overlay patches
 	"${FILESDIR}/${PN}-0.20.0-r1-qt6-x-changes.patch"
 )
@@ -148,8 +150,8 @@ pkg_setup() {
 }
 
 gen_config() {
-	touch 01gentoo.conf || die
-cat <<-EOF >> 01gentoo.conf
+	touch "01gentoo.conf" || die
+cat <<-EOF >> "01gentoo.conf"
 [General]
 # Remove qtvirtualkeyboard as InputMethod default
 InputMethod=
@@ -163,7 +165,7 @@ src_prepare() {
 	if ! use test ; then
 		sed \
 			-e "/^find_package/s/ Test//" \
-			-i CMakeLists.txt \
+			-i "CMakeLists.txt" \
 			|| die
 		cmake_comment_add_subdirectory test
 	fi
@@ -186,7 +188,7 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	insinto /etc/sddm.conf.d/
-	doins "${S}"/01gentoo.conf
+	doins "${S}/01gentoo.conf"
 }
 
 pkg_postinst() {
@@ -219,6 +221,14 @@ ewarn
 	optfeature "Weston DisplayServer support (EXPERIMENTAL)" dev-libs/weston
 	optfeature "KWin DisplayServer support (EXPERIMENTAL)" kde-plasma/kwin
 	systemd_reenable sddm.service
+	if use wayland && ! use weston ; then
+ewarn
+ewarn "You are responsible for setting the CompositorCommand under [Wayland]"
+ewarn "in /etc/sddm.conf/50-wayland.  For details, see"
+ewarn
+ewarn "  https://github.com/sddm/sddm/blob/v0.20.0/data/man/sddm.conf.rst.in"
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-TEST: ok

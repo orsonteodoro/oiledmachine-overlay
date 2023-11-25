@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
   <maintainer type="project">
     <!-- Ebuild originators -->
     <email>lxqt@gentoo.org</email>
@@ -16,6 +21,18 @@
     It uses modern technologies like QtQuick, which gives the designer the
     ability to create smooth, animated UIs.
   </longdescription>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild will allow to run with qt6 only dependencies.
+  Wayland support is a Work In Progress (WIP)
+
+  qt6 - works
+  qt5 - untested
+  wayland - crashes
+
+  -->
   <upstream>
     <remote-id type="cpe">cpe:/a:sddm_project:sddm</remote-id>
     <remote-id type="github">sddm/sddm</remote-id>
