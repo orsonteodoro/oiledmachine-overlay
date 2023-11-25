@@ -215,7 +215,6 @@ einfo
 einfo "  https://wiki.gentoo.org/wiki/SDDM"
 einfo "  https://github.com/sddm/sddm#troubleshooting"
 einfo
-	optfeature "Weston DisplayServer support (EXPERIMENTAL)" dev-libs/weston
 	optfeature "KWin DisplayServer support (EXPERIMENTAL)" kde-plasma/kwin
 	systemd_reenable sddm.service
 einfo
