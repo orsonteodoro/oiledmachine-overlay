@@ -6,7 +6,9 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
 
     Performance-oriented Congestion Control (PCC) is a congestion
     control algorithm.  Both PCC Allegro and PCC Vivace are TCP variations
@@ -66,7 +68,22 @@
     overlay due to modularity issues.  It is better used as an internal
     dependency.
 
-  </longdescription>
+
+    Pre-merge configuration
+
+    You must define PCC_KERNELS in /etc/portage/make.conf or as a
+    per-package environment variable."
+
+    Examples:
+
+      PCC_KERNELS=\"5.4.^-builder 5.15.^-builder\" # for latest installed point release
+      PCC_KERNELS=\"5.4.*-builder 5.15.*-builder\" # for all installed point releases
+      PCC_KERNELS=\"5.4.261-builder 5.15.139-builder\" # for exact point releases
+      PCC_KERNELS=\"5.4.261-builder 5.15.^-builder 6.1.*-builder\" # for all three cases releases
+
+    This is to allow to support LTS, stable, and live kernels at the same time."
+
+  -->
   <upstream>
     <bugs-to>https://github.com/PCCproject/PCC-Kernel/issues</bugs-to>
     <remote-id type="github">PCCproject/PCC-Kernel</remote-id>
