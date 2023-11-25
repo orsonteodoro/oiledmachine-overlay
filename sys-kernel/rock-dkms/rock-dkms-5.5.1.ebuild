@@ -785,7 +785,7 @@ _verify_magic_all() {
 		local built_name=$(echo "${x}" | cut -f 1 -d " ")
 		local built_location=$(echo "${x}" | cut -f 2 -d " ")
 		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
-		_verify_magic $(realpath "${modules_path}${dest_location}/${built_name}.ko"*)
+		_verify_magic $(realpath "${modules_path}${dest_location}/${built_name}.ko"*) "${expected_source_path}"
 	done
 	IFS=$' \t\n'
 }
