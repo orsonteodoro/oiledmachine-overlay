@@ -20,10 +20,8 @@ https://github.com/${PN}/${PN}/archive/refs/tags/v${PV}.tar.gz
 	KEYWORDS="amd64 ~arm arm64 ~loong ~ppc64 ~riscv x86"
 fi
 
-
 DESCRIPTION="Simple Desktop Display Manager"
 HOMEPAGE="https://github.com/sddm/sddm"
-
 LICENSE="
 	GPL-2+
 	CC-BY-3.0
@@ -37,7 +35,6 @@ SLOT="0"
 IUSE="
 -elogind +systemd +qt5 -qt6 test -wayland -weston +X
 "
-
 REQUIRED_USE="
 	^^ (
 		elogind
@@ -57,7 +54,6 @@ RESTRICT="
 		test
 	)
 "
-
 # U 23.04
 COMMON_DEPEND="
 	!systemd? (
@@ -129,7 +125,6 @@ BDEPEND="
 		>=dev-qt/qttools-${QT6_PV}:6[linguist]
 	)
 "
-
 PATCHES=(
 	# Downstream patches
 	"${FILESDIR}/${PN}-0.20.0-respect-user-flags.patch"
