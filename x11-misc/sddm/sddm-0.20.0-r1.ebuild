@@ -220,9 +220,11 @@ ewarn "Nvidia GPU owners in particular should pay attention to the"
 ewarn "troubleshooting section."
 ewarn
 	fi
+einfo
 	optfeature "Weston DisplayServer support (EXPERIMENTAL)" dev-libs/weston
 	optfeature "KWin DisplayServer support (EXPERIMENTAL)" kde-plasma/kwin
 	systemd_reenable sddm.service
+einfo
 	if use wayland && ! use weston ; then
 ewarn
 ewarn "You are responsible for setting the CompositorCommand under [Wayland]"
