@@ -760,8 +760,8 @@ eerror
 eerror
 eerror "Inconsistent build detected"
 eerror
-eerror "actual_kernel_release:  ${actual_kernel_release}"
-eerror "expected_kernel_release:  ${expected_kernel_release}"
+eerror "Actual kernel module release:  ${actual_kernel_release}"
+eerror "Expected kernel module release:  ${expected_kernel_release}"
 eerror
 		die
 	fi
