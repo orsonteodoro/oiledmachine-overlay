@@ -46,7 +46,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r15
+r16
 "
 REQUIRED_USE="
 	compress? (
@@ -745,6 +745,41 @@ _build_clean() {
 	fi
 }
 
+_verify_magic() {
+	local actual_ko_path="${1}" # abspath to a single .ko* file
+	local expected_source_path="${2}" # "/usr/src/linux-${k}"
+        local kernel_release=$(cat "${expected_kernel_source_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
+	local actual_kernel_release=$(modinfo -F vermagic "${actual_ko_path}" \
+		| cut -f 1 -d " ")
+	local expected_kernel_release="${kernel_release}"
+	if [[ "${actual_kernel_release}" != "${expected_kernel_release}" ]] ; then
+eerror
+eerror "Inconsistent build detected"
+eerror
+eerror "actual_kernel_release:  ${actual_kernel_release}"
+eerror "expected_kernel_release:  ${expected_kernel_release}"
+eerror
+		die
+	fi
+}
+
+_verify_magic_all() {
+	local actual_kernel_modules_root_path="${1}" # /lib/modules or /lib/modules-rock/${ROCM_SLOT}
+	local expected_source_path="${2}" # "/usr/src/linux-${k}"
+        local kernel_release=$(cat "${expected_source_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
+
+	IFS=$'\n'
+	local modules_path="${actual_kernel_modules_root_path}/${kernel_release}"
+	local x
+	for x in ${DKMS_MODULES[@]} ; do
+		local built_name=$(echo "${x}" | cut -f 1 -d " ")
+		local built_location=$(echo "${x}" | cut -f 2 -d " ")
+		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
+		_verify_magic "${modules_path}${dest_location}/${built_name}.ko"
+	done
+	IFS=$' \t\n'
+}
+
 _copy_modules() {
 	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.5.1/drivers/gpu/drm/amd/dkms/dkms.conf
 	IFS=$'\n'
@@ -767,6 +802,27 @@ _copy_modules() {
 		mkdir -p "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}"
 		rm -f "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}/${built_name}.ko"{,.gz,.xz,.zst}
 		cp -a "${build_root}/${built_location}/${built_name}.ko" "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}" || die "Kernel module copy failed"
+	done
+	IFS=$' \t\n'
+}
+
+_copy_modules_dkms() {
+	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-5.6.1/drivers/gpu/drm/amd/dkms/dkms.conf
+	IFS=$'\n'
+
+	local x
+	local modules_path="/lib/modules/${kernel_release}"
+	local build_root="/rock_build/build"
+	for x in ${DKMS_MODULES[@]} ; do
+		local built_name=$(echo "${x}" | cut -f 1 -d " ")
+		local built_location=$(echo "${x}" | cut -f 2 -d " ")
+		local dest_location=$(echo "${x}" | cut -f 3 -d " ")
+
+		# For slot switch
+		# ${PV} is preferred over ${ROCM_SLOT} to avoid boot failure with login display managers.
+		mkdir -p "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}"
+		rm -f "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}/${built_name}.ko"{,.gz,.xz,.zst}
+		cp -a "/lib/modules/${kernel_release}/${built_name}.ko" "/lib/modules-rock/${PV}/${kernel_release}/${dest_location}" || die "Kernel module copy failed"
 	done
 	IFS=$' \t\n'
 }
@@ -926,11 +982,21 @@ einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --forc
 einfo "Running:  \`make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAME=amdttm SCHED_NAME=amd-sched -C /lib/modules/${kernel_release}/build M=/rock_build/build\`"
 		make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAME=amdttm SCHED_NAME=amd-sched -C /lib/modules/${kernel_release}/build M=/rock_build/build
 		popd || die
-		_copy_modules
 	fi
 	signing_modules "${k}"
+	if [[ "${USE_DKMS}" == "1" ]] ; then
+		# Already copied to production
+		# Copy for slotification
+		_copy_modules_dkms
+	else
+		# Copy to production
+		# Copy for slotification
+		_copy_modules
+	fi
 	_compress_modules "/lib/modules/${kernel_release}"
-	_compress_modules "/lib/modules-rock/${PV}/${kernel_release}"
+	_compress_modules "/lib/modules-rock/${PV}/${kernel_release}" # slotified path
+	_verify_magic_all "/lib/modules/${kernel_release}" "/usr/src/linux-${k}"
+	_verify_magic_all "/lib/modules-rock/${PV}/${kernel_release}" "/usr/src/linux-${k}"
 	_build_clean
 	_gen_switch_wrapper
 }
