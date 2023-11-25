@@ -741,8 +741,18 @@ _build_clean() {
 
 _verify_magic() {
 	local actual_ko_path="${1}" # abspath to a single .ko* file
+	[[ -e "${actual_ko_path}" ]] || die "Path is missing"
 	local expected_source_path="${2}" # "/usr/src/linux-${k}"
+	[[ -e "${expected_source_path}" ]] || die "Path is missing"
         local kernel_release=$(cat "${expected_source_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
+	if [[ -z "${kernel_release}" ]] ; then
+eerror
+eerror "${expected_source_path}/include/config/kernel.release needs to be generated."
+eerror
+eerror "Rebuild kernel."
+eerror
+		die
+	fi
 	local actual_kernel_release=$(modinfo -F vermagic "${actual_ko_path}" \
 		| cut -f 1 -d " ")
 	local expected_kernel_release="${kernel_release}"
@@ -988,8 +998,8 @@ einfo "Running:  \`make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAM
 	fi
 	_compress_modules "/lib/modules/${kernel_release}"
 	_compress_modules "/lib/modules-rock/${PV}/${kernel_release}" # slotified path
-	_verify_magic_all "/lib/modules/${kernel_release}" "/usr/src/linux-${k}"
-	_verify_magic_all "/lib/modules-rock/${PV}/${kernel_release}" "/usr/src/linux-${k}"
+	_verify_magic_all "/lib/modules" "/usr/src/linux-${k}"
+	_verify_magic_all "/lib/modules-rock/${PV}" "/usr/src/linux-${k}"
 	_build_clean
 	_gen_switch_wrapper
 }
