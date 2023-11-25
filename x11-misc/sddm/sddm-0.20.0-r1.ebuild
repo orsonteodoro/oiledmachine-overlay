@@ -32,8 +32,10 @@ LICENSE="
 	public-domain
 "
 SLOT="0"
+# Test is default ON upstream.
+# systemd is the fallback default upstream.
 IUSE="
-elogind +systemd +qt5 qt6 test wayland weston +X
+-elogind +systemd +qt5 -qt6 test -wayland -weston +X
 "
 
 REQUIRED_USE="
