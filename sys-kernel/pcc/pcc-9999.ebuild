@@ -23,11 +23,33 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" allegro doc +vivace r1"
+IUSE+=" allegro custom-kernel doc +vivace r1"
 REQUIRED_USE="
-	^^ ( allegro vivace )
+	^^ (
+		allegro
+		vivace
+	)
 "
+# If you have a custom kernel, it is recommended to maintain a local copy to add
+# your own kernel to the list below for auto rebuilds.
 RDEPEND+="
+	!custom-kernel? (
+	        || (
+			sys-kernel/gentoo-kernel:=
+			sys-kernel/gentoo-kernel-bin:=
+			sys-kernel/gentoo-sources:=
+			sys-kernel/git-sources:=
+			sys-kernel/linux-next:=
+			sys-kernel/mips-sources:=
+			sys-kernel/ot-sources:=
+			sys-kernel/pf-sources:=
+			sys-kernel/raspberrypi-sources:=
+			sys-kernel/rt-sources:=
+			sys-kernel/vanilla-kernel:=
+			sys-kernel/vanilla-sources:=
+			sys-kernel/zen-sources:=
+		)
+	)
 "
 DEPEND+="
 "
