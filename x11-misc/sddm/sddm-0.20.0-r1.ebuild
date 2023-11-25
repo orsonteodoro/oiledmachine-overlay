@@ -33,7 +33,7 @@ LICENSE="
 "
 SLOT="0"
 IUSE="
-elogind systemd +qt5 qt6 test wayland weston +X
+elogind +systemd +qt5 qt6 test wayland weston +X
 "
 
 REQUIRED_USE="
