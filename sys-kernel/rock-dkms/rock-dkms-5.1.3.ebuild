@@ -736,7 +736,7 @@ _build_clean() {
 _verify_magic() {
 	local actual_ko_path="${1}" # abspath to a single .ko* file
 	local expected_source_path="${2}" # "/usr/src/linux-${k}"
-        local kernel_release=$(cat "${expected_kernel_source_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
+        local kernel_release=$(cat "${expected_source_path}/include/config/kernel.release") # ${PV}-${EXTRAVERSION}-${ARCH}
 	local actual_kernel_release=$(modinfo -F vermagic "${actual_ko_path}" \
 		| cut -f 1 -d " ")
 	local expected_kernel_release="${kernel_release}"
