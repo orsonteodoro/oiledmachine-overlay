@@ -3795,7 +3795,7 @@ ot-kernel_set_webcam() {
 	fi
 
 	if (( ${wants_gspca} == 1 )) ; then
-		ot-kernel_m_configopt "CONFIG_USB_GSPCA" "m"
+		ot-kernel_set_configopt "CONFIG_USB_GSPCA" "m"
 	fi
 
 	# For testing build time breakage
