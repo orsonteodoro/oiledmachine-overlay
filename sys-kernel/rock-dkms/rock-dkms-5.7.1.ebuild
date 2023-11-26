@@ -685,12 +685,6 @@ get_n_cpus() {
 }
 
 die_build() {
-	local build_root
-	if [[ "${USE_DKMS}" == "1" ]] ; then
-		build_root="/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
-	else
-		build_root="/rock_build"
-	fi
 	env > "${build_root}/build/env.log"
 eerror
 eerror "Log dumps:"
@@ -733,7 +727,7 @@ _build_clean() {
 		[[ "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}" == "//" ]] && die
 		rm -rf "/${DKMS_PKG_NAME}/${DKMS_PKG_VER}"
 	else
-		rm -rf "/rock_build"
+		rm -rf "${build_root}"
 	fi
 }
 
@@ -788,7 +782,7 @@ _copy_modules() {
 
 	local x
 	local modules_path="/lib/modules/${kernel_release}"
-	local build_root="/rock_build/build"
+	local build_root="${build_root}/build"
 	for x in ${DKMS_MODULES[@]} ; do
 		local built_name=$(echo "${x}" | cut -f 1 -d " ")
 		local built_location=$(echo "${x}" | cut -f 2 -d " ")
@@ -814,7 +808,7 @@ _copy_modules_dkms() {
 
 	local x
 	local modules_path="/lib/modules/${kernel_release}"
-	local build_root="/rock_build/build"
+	local build_root="${build_root}/build"
 	for x in ${DKMS_MODULES[@]} ; do
 		local built_name=$(echo "${x}" | cut -f 1 -d " ")
 		local built_location=$(echo "${x}" | cut -f 2 -d " ")
@@ -961,7 +955,17 @@ einfo "CONFIG_GCC_VERSION:  ${CONFIG_GCC_VERSION}"
 
 	# Fixes make[2]: /bin/sh: Argument list too long
 	# Fixes long abspaths for .o files before linking.
-	args+=( --dkmstree "/" )
+	local kv="${k%%-*}"
+	local build_root
+	if ver_test ${kv} -ge 5.15 ; then
+		args+=( --dkmstree "/" )
+		build_root="/rock_build"
+	else
+		# "/" breaks with 5.4
+		# Default M=/var/lib/dkms/amdgpu/5.7/build
+		args+=( --dkmstree "/" )
+		build_root="/rock_build"
+	fi
 	_build_clean
 
 	local _k="${kernel_release}/${ARCH}"
@@ -973,17 +977,29 @@ einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --forc
 	else
 	# Do it this way to avoid the argument list too long bug caused by long abspaths.
 	# There may be a 32k limit in arg file with .o abspaths fed to ld.bfd.
-		mkdir -p "/rock_build/build"
-		cp -aT "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}" "/rock_build/build"
-		ln -sf "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}" "/rock_build/source"
+		mkdir -p "${build_root}/build"
+		cp -aT "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}" "${build_root}/build"
+		ln -sf "/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}" "${build_root}/source"
 		mkdir -p "/lib/modules/${kernel_release}"
 		ln -sf "/usr/src/linux-${k}" "/lib/modules/${kernel_release}/build"
 		ln -sf "/usr/src/linux-${k}" "/lib/modules/${kernel_release}/source"
-		pushd "/rock_build/build" || die
-	# Generate a /rock_build/build/include/rename_symbol.h first
+		pushd "${build_root}/build" || die
+	# Generate a ${build_root}/build/include/rename_symbol.h first
 			amd/dkms/pre-build.sh ${kernel_release} || die
-einfo "Running:  \`make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAME=amdttm SCHED_NAME=amd-sched -C /lib/modules/${kernel_release}/build M=/rock_build/build\`"
-		make -j1 KERNELRELEASE=${kernel_release} CC=${CC} V=1 TTM_NAME=amdttm SCHED_NAME=amd-sched -C /lib/modules/${kernel_release}/build M=/rock_build/build
+			local mymakeargs=(
+				-C "/lib/modules/${kernel_release}/build"
+				-j1
+				ARCH="$(tc-arch-kernel)"
+				CC="${CC}"
+				KDIR="/lib/modules/${kernel_release}/build"
+				KERNELRELEASE="${kernel_release}"
+				M="${build_root}/build"
+				SCHED_NAME="amd-sched"
+				TTM_NAME="amdttm"
+				V=1
+			)
+			einfo "Running:  \`make ${mymakeargs[@]}\`"
+			make "${mymakeargs[@]}"
 		popd || die
 	fi
 	signing_modules "${k}"
