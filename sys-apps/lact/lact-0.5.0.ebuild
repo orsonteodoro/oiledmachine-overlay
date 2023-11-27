@@ -281,8 +281,8 @@ CARGO_THIRD_PARTY="
 	Unicode-DFS-2016
 	ZLIB
 	|| (
-		Unlicense
 		MIT
+		Unlicense
 	)
 	|| (
 		Apache-2.0
@@ -297,12 +297,6 @@ LICENSE="
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" openrc +systemd"
-REQUIRED_USE+="
-	|| (
-		openrc
-		systemd
-	)
-"
 # U 22.04
 RDEPEND+="
 	>=gui-libs/gtk-4.6.2:4
@@ -329,15 +323,19 @@ src_install() {
 	if use systemd ; then
 		insinto /usr/lib/systemd/system
 		doins res/lactd.service
-	elif use openrc ; then
+	fi
+	if use openrc ; then
 ewarn
 ewarn "The OpenRC script is untested.  USE AT YOUR OWN RISK."
 ewarn "If the OpenRC works, send an issue request to remove this warning."
 ewarn
 		exeinto /etc/init.d
 		doexe "${FILESDIR}/lactd"
-	else
+	fi
+	if ! use systemd && ! use openrc ; then
+ewarn
 ewarn "You must create the service file for the init system."
+ewarn
 	fi
 	insinto /usr/share/applications
 	doins res/io.github.lact-linux.desktop
