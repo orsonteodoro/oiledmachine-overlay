@@ -4,6 +4,12 @@
 
 EAPI=8
 
+CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
+LUA_COMPAT=( luajit )
+PYTHON_COMPAT=( python3_{8..10} )
+
+inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
+
 EGIT_COMMIT="${PV}"
 EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
 EGIT_SUBMODULES=(
@@ -11,11 +17,7 @@ EGIT_SUBMODULES=(
 	'-plugins/win-dshow'
 	'-plugins/enc-amf'
 )
-
-CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
-LUA_COMPAT=( luajit )
-PYTHON_COMPAT=( python3_{8..10} )
-inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
+SRC_URI=""
 
 DESCRIPTION="Software for live streaming and screen recording"
 HOMEPAGE="https://obsproject.com"
@@ -562,9 +564,6 @@ DEPEND+="
 # For some details on FTL support and possible deprecation see:
 #  https://github.com/obsproject/obs-studio/discussions/4021
 #  The module is licensed as MIT.
-
-
-SRC_URI=""
 
 RESTRICT="mirror" # Speed up download of the latest release.
 MAKEOPTS="-j1"
