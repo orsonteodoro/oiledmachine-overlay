@@ -255,7 +255,7 @@ zvariant_derive-3.15.0
 zvariant_utils-1.0.1
 "
 
-inherit cargo
+inherit cargo lcnr
 
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
@@ -296,7 +296,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" openrc +systemd"
+IUSE+=" openrc +systemd r1"
 # U 22.04
 RDEPEND+="
 	>=gui-libs/gtk-4.6.2:4
@@ -341,6 +341,14 @@ ewarn
 	doins res/io.github.lact-linux.desktop
 	insinto /usr/share/pixmaps
 	doins res/io.github.lact-linux.png
+
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party_cargo"
+	lcnr_install_files
+
+	LCNR_SOURCE="${S}"
+	LCNR_TAG="sources"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
