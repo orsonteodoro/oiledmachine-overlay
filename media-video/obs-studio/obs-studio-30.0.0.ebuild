@@ -375,6 +375,7 @@ DEPEND_PLUGINS_WEBSOCKET="
 	>=dev-cpp/nlohmann_json-3.7.3
 	>=dev-cpp/websocketpp-0.8.1
 	websocket? (
+		>=dev-libs/qr-code-generator-1.7.0
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[network,widgets]
 			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
