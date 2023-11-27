@@ -72,7 +72,7 @@ _pkg_setup_one() {
 	local k="${1}"
 	KERNEL_DIR="/usr/src/linux-${k}"
 	[[ "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
-	if ! realpath /boot/vmlinuz-${k}* ; then
+	if ! realpath /boot/vmlinuz-${k}* 2>/dev/null 1>/dev/null ; then
 		die "The kernel needs to be built first for ${k}."
 	fi
 }
