@@ -82,7 +82,7 @@ nvenc nvvfx oss +pipewire +pulseaudio +python qt6 +rtmps +speexdsp -test
 +v4l2 vaapi +vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf
 +whatsnew x264
 
-r5
+r6
 "
 REQUIRED_USE+="
 	!nvafx
@@ -148,19 +148,19 @@ REQUIRED_USE+="
 # 103 is EOL.  The current Cr version is 113.
 CEF_PV="103"
 # See also
-# https://github.com/obsproject/obs-studio/blob/29.1.1/.github/workflows/main.yml#L20
+# https://github.com/obsproject/obs-studio/blob/30.0.0/build-aux/modules/99-cef.json
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 
 # U 22.04
 
-FFMPEG_PV="4.4"
-LIBVA_PV="2.7.0"
-LIBX11_PV="1.6.9"
-MESA_PV="20.0.4"
-QT6_PV="6.4.3"
+FFMPEG_PV="4.4.2"
+LIBVA_PV="2.14.0"
+LIBX11_PV="1.7.5"
+MESA_PV="22.0.1"
+QT6_PV="6.2.4"
 QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
-SWIG_PV="4.0.1"
+SWIG_PV="4.0.2"
 
 # Based on 20.04 See
 # azure-pipelines.yml
@@ -169,8 +169,8 @@ SWIG_PV="4.0.1"
 # deps/obs-scripting/obspython/CMakeLists.txt
 BDEPEND+="
 	>=app-misc/jq-1.6
-	>=dev-util/cmake-3.5
-	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
+	>=dev-util/cmake-3.22.1
+	>=dev-util/pkgconf-1.8.0[pkg-config(+)]
 	lua? (
 		>=dev-lang/swig-${SWIG_PV}
 	)
@@ -181,7 +181,7 @@ BDEPEND+="
 	test? (
 		>=dev-util/cmocka-1.1.5
 		websocket? (
-			>=dev-libs/boost-1.71.0
+			>=dev-libs/boost-1.74.0
 		)
 	)
 "
@@ -197,7 +197,7 @@ DEPEND_LIBX11="
 "
 
 DEPEND_LIBX264="
-	>=media-libs/x264-0.0.20180806
+	>=media-libs/x264-0.0.20210613
 "
 
 DEPEND_LIBXCB="
@@ -205,13 +205,13 @@ DEPEND_LIBXCB="
 "
 
 DEPEND_JANSSON="
-	>=dev-libs/jansson-2.12
+	>=dev-libs/jansson-2.13.1
 "
 
 DEPEND_WAYLAND="
 	wayland? (
-		>=dev-libs/wayland-1.18.0
-		>=x11-libs/libxkbcommon-0.10.0
+		>=dev-libs/wayland-1.20.0
+		>=x11-libs/libxkbcommon-1.4.0
 	)
 "
 
@@ -240,7 +240,7 @@ DEPEND_PLUGINS_RNNOISE="
 DEPEND_PLUGINS_SNDIO="
 	sndio? (
 		${DEPEND_LIBOBS}
-		>=media-sound/sndio-1.5.0
+		>=media-sound/sndio-1.8.1
 	)
 "
 
@@ -289,13 +289,13 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 	${DEPEND_LIBX11}
 	${DEPEND_LIBXCB}
         >=x11-libs/libXcomposite-0.4.5
-        >=x11-libs/libXfixes-5.0.3
+        >=x11-libs/libXfixes-6.0.0
         >=x11-libs/libXinerama-1.1.4
         >=x11-libs/libXrandr-1.5.2
 	pipewire? (
-		>=media-video/pipewire-0.3.33
-		>=dev-libs/glib-2.64.6:2
-		>=x11-libs/libdrm-2.4.101
+		>=media-video/pipewire-0.3.48
+		>=dev-libs/glib-2.72.0:2
+		>=x11-libs/libdrm-2.4.110
 	)
 "
 
@@ -304,10 +304,10 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # From inspection, the video_cards_nouveau supports h264 decode but not h264
 # encode.  This is why it is omitted below in the vaapi driver section.
 DEPEND_PLUGINS_OBS_FFMPEG="
-	>=sys-apps/pciutils-3.6.4
+	>=sys-apps/pciutils-3.7.0
 	new-mpegts-output? (
 		>=net-libs/librist-0.2.7
-		>=net-libs/srt-1.4.0
+		>=net-libs/srt-1.4.4
 	)
 	nvenc? (
 		>=media-video/ffmpeg-4[nvenc]
@@ -320,13 +320,13 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 "
 
 DEPEND_CURL="
-	>=net-misc/curl-7.68
+	>=net-misc/curl-7.81.0
 "
 
 DEPEND_PLUGINS_OBS_OUTPUTS="
 	${DEPEND_LIBOBS}
 	${DEPEND_ZLIB}
-	>=net-libs/mbedtls-2.16.4:=
+	>=net-libs/mbedtls-2.28.0:=
 	ftl? (
 		${DEPEND_CURL}
 		${DEPEND_JANSSON}
@@ -374,9 +374,9 @@ DEPEND_PLUGINS_VST="
 
 DEPEND_PLUGINS_WEBSOCKET="
 	websocket? (
-		>=dev-cpp/asio-1.12.2
-		>=dev-cpp/nlohmann_json-3.7.3
-		>=dev-cpp/websocketpp-0.8.1
+		>=dev-cpp/asio-1.18.1
+		>=dev-cpp/nlohmann_json-3.10.5
+		>=dev-cpp/websocketpp-0.8.2
 		>=dev-libs/qr-code-generator-1.7.0
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[network,widgets]
@@ -419,14 +419,14 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_VST}
 	>=media-video/ffmpeg-${FFMPEG_PV}:=[x264]
 	alsa? (
-		>=media-libs/alsa-lib-1.0.25
+		>=media-libs/alsa-lib-1.2.6.1
 	)
 	fdk? (
-		>=media-libs/fdk-aac-0.6.3:=
+		>=media-libs/fdk-aac-2.0.2:=
 	)
 	freetype? (
 		>=media-libs/fontconfig-2.13.1
-		>=media-libs/freetype-2.10.1
+		>=media-libs/freetype-2.11.1
 	)
 	jack? (
 		virtual/jack
@@ -436,12 +436,12 @@ DEPEND_PLUGINS="
 	)
 	v4l2? (
 		${DEPEND_FFMPEG}
-		>=media-libs/libv4l-1.18.0
-		>=media-tv/v4l-utils-1.18.0
+		>=media-libs/libv4l-1.22.1
+		>=media-tv/v4l-utils-1.22.1
 		virtual/udev
 	)
 	vlc? (
-		>=media-video/vlc-3.0.9.2:=
+		>=media-video/vlc-3.0.16:=
 	)
 "
 
@@ -463,9 +463,9 @@ DEPEND_LIBOBS="
 	${DEPEND_LIBX11}
 	${DEPEND_LIBXCB}
 	${DEPEND_ZLIB}
-	>=sys-apps/dbus-1.12.16
+	>=sys-apps/dbus-1.12.20
 	pulseaudio? (
-		>=media-sound/pulseaudio-13.99.1
+		>=media-sound/pulseaudio-15.99.1
 	)
 "
 
@@ -499,7 +499,7 @@ DEPEND_MESA="
 DEPEND_GLAD="
 	${DEPEND_MESA}
 	${DEPEND_LIBX11}
-	>=media-libs/libglvnd-1.3.1
+	>=media-libs/libglvnd-1.4.0
 	>=media-libs/mesa-${MESA_PV}[egl(+)]
 "
 
@@ -828,6 +828,7 @@ einfo
 		-DENABLE_PIPEWIRE=$(usex pipewire)
 		-DENABLE_PLUGINS=ON
 		-DENABLE_PULSEAUDIO=$(usex pulseaudio)
+		-DENABLE_QSV11=$(usex qsv)
 		-DENABLE_RNNOISE=$(usex rnnoise)
 		-DENABLE_RTMPS=$(usex rtmps)
 		-DENABLE_SNDIO=$(usex sndio)
@@ -838,6 +839,7 @@ einfo
 		-DENABLE_VLC=$(usex vlc)
 		-DENABLE_VST=$(usex vst)
 		-DENABLE_WAYLAND=$(usex wayland)
+		-DENABLE_WEBRTC=OFF # Requires libdatachannel.
 		-DENABLE_WEBSOCKET=$(usex websocket)
 		-DENABLE_WINMF=$(usex win-mf)
 		-DENABLE_WHATSNEW=$(usex whatsnew)
@@ -902,8 +904,8 @@ src_compile() {
 
 src_install() {
 	cmake_src_install
-	# External plugins may need some things not installed by default,"
-	# install them here
+	# External plugins may need some things not installed by default"
+	# Install them here.
 	insinto /usr/include/obs/UI/obs-frontend-api
 	doins UI/obs-frontend-api/obs-frontend-api.h
 
