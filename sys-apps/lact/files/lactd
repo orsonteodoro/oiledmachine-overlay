@@ -1,0 +1,32 @@
+#!/sbin/openrc-run
+# This file is part of the lact package.
+
+description="AMDGPU Control Daemon"
+
+depend()
+{
+        need localmount
+        after bootmisc
+}
+
+start()
+{
+	ebegin "Starting LACT"
+		start-stop-daemon \
+			--start \
+			--pidfile /run/lact.pid \
+			--background \
+			--exec /usr/bin/lact -- daemon
+	eend $?
+}
+
+stop()
+        local retval
+	ebegin "Stopping LACT"
+		start-stop-daemon \
+			--stop \
+			--pidfile /run/lact.pid
+	        retval=$?
+        eend ${retval}
+        return ${retval}
+}
