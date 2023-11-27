@@ -294,7 +294,7 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
         >=x11-libs/libXrandr-1.5.2
 	pipewire? (
 		>=media-video/pipewire-0.3.48
-		>=dev-libs/glib-2.72.0:2
+		>=dev-libs/glib-2.72.4:2
 		>=x11-libs/libdrm-2.4.110
 	)
 "
@@ -310,7 +310,7 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 		>=net-libs/srt-1.4.4
 	)
 	nvenc? (
-		>=media-video/ffmpeg-4[nvenc]
+		>=media-video/ffmpeg-${FFMPEG_PV}[nvenc]
 	)
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}[X,wayland?]
