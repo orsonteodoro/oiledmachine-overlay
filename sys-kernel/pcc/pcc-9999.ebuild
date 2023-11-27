@@ -68,6 +68,16 @@ S="${WORKDIR}"
 RESTRICT="mirror"
 MAKEOPTS="-j1"
 
+_pkg_setup_one() {
+	local k="${1}"
+	KERNEL_DIR="/usr/src/linux-${k}"
+	[[ "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
+	[[ "/boot/.config" ]] || die "Missing .config for ${k}"
+	if ! ls /boot/vmlinuz-${k}* >/dev/null ; then
+		die "The kernel needs to be built first for ${k}."
+	fi
+}
+
 pkg_setup() {
 	linux-info_pkg_setup
 	linux-mod-r1_pkg_setup
@@ -98,12 +108,7 @@ eerror
 			local v
 			for v in ${V} ; do
 				k="${v}"
-				KERNEL_DIR="/usr/src/linux-${k}"
-				[[ "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
-				[[ "/boot/.config" ]] || die "Missing .config for ${k}"
-				if ! ls /boot/vmlinuz-${k}* >/dev/null ; then
-					die "The kernel needs to be built first for ${k}."
-				fi
+				_pkg_setup_one "${k}"
 			done
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
@@ -112,18 +117,9 @@ eerror
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||")
-			KERNEL_DIR="/usr/src/linux-${k}"
-			[[ "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
-			if ! ls /boot/vmlinuz-${k}* >/dev/null ; then
-				die "The kernel needs to be built first for ${k}."
-			fi
-			check_kernel_built
+			_pkg_setup_one "${k}"
 		else
-			KERNEL_DIR="/usr/src/linux-${k}"
-			[[ "${KERNEL_DIR}/.config" ]] || die "Missing .config for ${k}"
-			if ! ls /boot/vmlinuz-${k}* >/dev/null ; then
-				die "The kernel needs to be built first for {k}."
-			fi
+			_pkg_setup_one "${k}"
 		fi
 	done
 }
@@ -147,6 +143,16 @@ src_unpack() {
 	fi
 }
 
+_src_prepare_one() {
+	local k="${1}"
+	if use allegro ; then
+		cp -av "${WORKDIR}/allegro" "${WORKDIR}/allegro-${k}"
+	fi
+	if use vivace ; then
+		cp -av "${WORKDIR}/vivace" "${WORKDIR}/vivace-${k}"
+	fi
+}
+
 src_prepare() {
 	default
 	local k
@@ -159,12 +165,7 @@ src_prepare() {
 			local v
 			for v in ${V} ; do
 				k="${v}"
-				if use allegro ; then
-					cp -av "${WORKDIR}/allegro" "${WORKDIR}/allegro-${k}"
-				fi
-				if use vivace ; then
-					cp -av "${WORKDIR}/vivace" "${WORKDIR}/vivace-${k}"
-				fi
+				_src_prepare_one "${k}"
 			done
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
@@ -173,21 +174,37 @@ src_prepare() {
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||")
-			if use allegro ; then
-				cp -av "${WORKDIR}/allegro" "${WORKDIR}/allegro-${k}"
-			fi
-			if use vivace ; then
-				cp -av "${WORKDIR}/vivace" "${WORKDIR}/vivace-${k}"
-			fi
+			_src_prepare_one "${k}"
 		else
-			if use allegro ; then
-				cp -av "${WORKDIR}/allegro" "${WORKDIR}/allegro-${k}"
-			fi
-			if use vivace ; then
-				cp -av "${WORKDIR}/vivace" "${WORKDIR}/vivace-${k}"
-			fi
+			_src_prepare_one "${k}"
 		fi
 	done
+}
+
+_src_compile_one() {
+	local k="${1}"
+	local modlist=()
+	if use allegro ; then
+		modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
+		d="${WORKDIR}/allegro-${k}"
+	fi
+	if use vivace ; then
+		modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
+		d="${WORKDIR}/vivace-${k}"
+	fi
+	cd "${d}" || die
+	KERNEL_DIR="/usr/src/linux-${k}"
+	local modargs=( NIH_SOURCE="${KERNEL_DIR}" )
+	KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
+	MODULES_MAKEARGS=(
+		V=1
+		ARCH=$(tc-arch-kernel)
+		KDIR="/lib/modules/${KV_FULL}/build"
+		NIH_KDIR="${KERNEL_DIR}"
+		NIH_KSRC="${KERNEL_DIR}"
+	)
+	linux-mod-r1_src_compile
+
 }
 
 src_compile() {
@@ -202,27 +219,7 @@ src_compile() {
 			local v
 			for v in ${V} ; do
 				k="${v}"
-				local modlist=()
-				if use allegro ; then
-					modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
-					d="${WORKDIR}/allegro-${k}"
-				fi
-				if use vivace ; then
-					modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
-					d="${WORKDIR}/vivace-${k}"
-				fi
-				cd "${d}" || die
-				KERNEL_DIR="/usr/src/linux-${k}"
-				local modargs=( NIH_SOURCE="${KERNEL_DIR}" )
-				KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-				MODULES_MAKEARGS=(
-					V=1
-					ARCH=$(tc-arch-kernel)
-					KDIR="/lib/modules/${KV_FULL}/build"
-					NIH_KDIR="${KERNEL_DIR}"
-					NIH_KSRC="${KERNEL_DIR}"
-				)
-				linux-mod-r1_src_compile
+				_src_compile_one "${k}"
 			done
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
@@ -231,50 +228,40 @@ src_compile() {
 				| sort --version-sort -r \
 				| head -n 1 \
 				| sed -e "s|.*/linux-||")
-			local modlist=()
-			if use allegro ; then
-				modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
-				d="${WORKDIR}/allegro-${k}"
-			fi
-			if use vivace ; then
-				modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
-				d="${WORKDIR}/vivace-${k}"
-			fi
-			cd "${d}" || die
-			KERNEL_DIR="/usr/src/linux-${k}"
-			local modargs=( NIH_SOURCE="${KERNEL_DIR}" )
-			KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-			MODULES_MAKEARGS=(
-				V=1
-				ARCH=$(tc-arch-kernel)
-				KDIR="/lib/modules/${KV_FULL}/build"
-				NIH_KDIR="${KERNEL_DIR}"
-				NIH_KSRC="${KERNEL_DIR}"
-			)
-			linux-mod-r1_src_compile
+			_src_compile_one "${k}"
 		else
-			local modlist=()
-			if use allegro ; then
-				modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
-				d="${WORKDIR}/allegro-${k}"
-			fi
-			if use vivace ; then
-				modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
-				d="${WORKDIR}/vivace-${k}"
-			fi
-			cd "${d}" || die
-			KERNEL_DIR="/usr/src/linux-${k}"
-			KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-			MODULES_MAKEARGS=(
-				V=1
-				ARCH=$(tc-arch-kernel)
-				KDIR="/lib/modules/${KV_FULL}/build"
-				NIH_KDIR="${KERNEL_DIR}"
-				NIH_KSRC="${KERNEL_DIR}"
-			)
-			linux-mod-r1_src_compile
+			_src_compile_one "${k}"
 		fi
 	done
+}
+
+_src_install_one() {
+	local k="${1}"
+	local modlist=()
+	if use allegro ; then
+		modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
+		d="${WORKDIR}/allegro-${k}"
+	fi
+	if use vivace ; then
+		modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
+		d="${WORKDIR}/vivace-${k}"
+	fi
+	cd "${d}" || die
+	KERNEL_DIR="/usr/src/linux-${k}"
+	KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
+	MODULES_MAKEARGS=(
+		V=1
+		ARCH=$(tc-arch-kernel)
+		KDIR="/lib/modules/${KV_FULL}/build"
+		NIH_KDIR="${KERNEL_DIR}"
+		NIH_KSRC="${KERNEL_DIR}"
+	)
+	einfo "KV_FULL:  ${KV_FULL}"
+	einfo "ARCH:  $(tc-arch-kernel)"
+	# Do it this way because linux-mod-r1_src_compile is bugged
+	insinto "/lib/modules/${KV_FULL}/kernel/net/ipv4"
+	doins "${WORKDIR}/vivace-${k}/src/tcp_pcc.ko"
+	modules_post_process
 }
 
 src_install() {
@@ -290,31 +277,7 @@ src_install() {
 			local v
 			for v in ${V} ; do
 				k="${v}"
-				local modlist=()
-				if use allegro ; then
-					modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
-					d="${WORKDIR}/allegro-${k}"
-				fi
-				if use vivace ; then
-					modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
-					d="${WORKDIR}/vivace-${k}"
-				fi
-				cd "${d}" || die
-				KERNEL_DIR="/usr/src/linux-${k}"
-				KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-				MODULES_MAKEARGS=(
-					V=1
-					ARCH=$(tc-arch-kernel)
-					KDIR="/lib/modules/${KV_FULL}/build"
-					NIH_KDIR="${KERNEL_DIR}"
-					NIH_KSRC="${KERNEL_DIR}"
-				)
-				einfo "KV_FULL:  ${KV_FULL}"
-				einfo "ARCH:  $(tc-arch-kernel)"
-				# Do it this way because linux-mod-r1_src_compile is bugged
-				insinto /lib/modules/${KV_FULL}/kernel/net/ipv4
-				doins "${WORKDIR}/vivace-${k}/src/tcp_pcc.ko"
-				modules_post_process
+				_src_install_one "${k}"
 			done
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
@@ -324,57 +287,9 @@ src_install() {
 				| head -n 1 \
 				| sed -e "s|.*/linux-||" \
 				| sed -e "/^$/d")
-			local modlist=()
-			if use allegro ; then
-				modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
-				d="${WORKDIR}/allegro-${k}"
-			fi
-			if use vivace ; then
-				modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
-				d="${WORKDIR}/vivace-${k}"
-			fi
-			cd "${d}" || die
-			KERNEL_DIR="/usr/src/linux-${k}"
-			KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-			MODULES_MAKEARGS=(
-				V=1
-				ARCH=$(tc-arch-kernel)
-				KDIR="/lib/modules/${KV_FULL}/build"
-				NIH_KDIR="${KERNEL_DIR}"
-				NIH_KSRC="${KERNEL_DIR}"
-			)
-			einfo "KV_FULL:  ${KV_FULL}"
-			einfo "ARCH:  $(tc-arch-kernel)"
-			# Do it this way because linux-mod-r1_src_compile is bugged
-			insinto /lib/modules/${KV_FULL}/kernel/net/ipv4
-			doins "${WORKDIR}/vivace-${k}/src/tcp_pcc.ko"
-			modules_post_process
+			_src_install_one "${k}"
 		else
-			local modlist=()
-			if use allegro ; then
-				modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/allegro-${k}/src:${WORKDIR}/allegro-${k}/src:default" )
-				d="${WORKDIR}/allegro-${k}"
-			fi
-			if use vivace ; then
-				modlist=( tcp_pcc="kernel/net/ipv4:${WORKDIR}/vivace-${k}/src:${WORKDIR}/vivace-${k}/src:default" )
-				d="${WORKDIR}/vivace-${k}"
-			fi
-			cd "${d}" || die
-			KERNEL_DIR="/usr/src/linux-${k}"
-			KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-			MODULES_MAKEARGS=(
-				V=1
-				ARCH=$(tc-arch-kernel)
-				KDIR="/lib/modules/${KV_FULL}/build"
-				NIH_KDIR="${KERNEL_DIR}"
-				NIH_KSRC="${KERNEL_DIR}"
-			)
-			einfo "KV_FULL:  ${KV_FULL}"
-			einfo "ARCH:  $(tc-arch-kernel)"
-			# Do it this way because linux-mod-r1_src_compile is bugged
-			insinto /lib/modules/${KV_FULL}/kernel/net/ipv4
-			doins "${WORKDIR}/vivace-${k}/src/tcp_pcc.ko"
-			modules_post_process
+			_src_install_one "${k}"
 		fi
 	done
 
@@ -392,6 +307,13 @@ src_install() {
 	fi
 }
 
+_pkg_postinst_one() {
+	local k="${1}"
+	KERNEL_DIR="/usr/src/linux-${k}"
+	KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
+	linux-mod-r1_pkg_postinst
+}
+
 pkg_postinst() {
 	# Do it this way because linux-mod-r1_pkg_postinst is bugged
 	local d
@@ -406,9 +328,7 @@ pkg_postinst() {
 			local v
 			for v in ${V} ; do
 				k="${v}"
-				KERNEL_DIR="/usr/src/linux-${k}"
-				KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-				linux-mod-r1_pkg_postinst
+				_pkg_postinst_one "${k}"
 			done
 		elif [[ "${k}" =~ "^" ]] ; then
 			# Pick the highest version:  6.1.^-zen
@@ -418,13 +338,9 @@ pkg_postinst() {
 				| head -n 1 \
 				| sed -e "s|.*/linux-||" \
 				| sed -e "/^$/d")
-			KERNEL_DIR="/usr/src/linux-${k}"
-			KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-			linux-mod-r1_pkg_postinst
+			_pkg_postinst_one "${k}"
 		else
-			KERNEL_DIR="/usr/src/linux-${k}"
-			KV_FULL=$(cat "${KERNEL_DIR}/include/config/kernel.release")
-			linux-mod-r1_pkg_postinst
+			_pkg_postinst_one "${k}"
 		fi
 	done
 }
