@@ -9,7 +9,6 @@ EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
 EGIT_SUBMODULES=(
 	'*'
 	'-plugins/win-dshow'
-	'-plugins/mac-syphon'
 	'-plugins/enc-amf'
 )
 
@@ -76,7 +75,7 @@ SLOT="0"
 IUSE+="
 +alsa aja amf +browser +browser-panels coreaudio-encoder
 -decklink -fdk +freetype ftl +ipv6 jack libaom +lua +new-mpegts-output nvafx
-nvenc nvvfx oss +pipewire +pulseaudio +python qt5 qt6 +rtmps +speexdsp -test
+nvenc nvvfx oss +pipewire +pulseaudio +python qt6 +rtmps +speexdsp -test
 +hevc mac-syphon qsv +rnnoise +service-updates -sndio +speexdsp svt-av1
 +v4l2 vaapi +vlc +virtualcam +vst +wayland win-dshow +websocket -win-mf
 +whatsnew x264
@@ -107,6 +106,7 @@ REQUIRED_USE+="
 		!vaapi
 		!wayland
 	)
+	qt6
 	ftl? (
 		|| (
 			amf
@@ -131,10 +131,6 @@ REQUIRED_USE+="
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
-	^^ (
-		qt5
-		qt6
-	)
 "
 
 #
@@ -154,12 +150,12 @@ CEF_PV="103"
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 
-FFMPEG_PV="4.2.2"
+# U 22.04
+
+FFMPEG_PV="4.4"
 LIBVA_PV="2.7.0"
 LIBX11_PV="1.6.9"
 MESA_PV="20.0.4"
-QT5_PV="5.12.8" # Found in CI logs
-QT5_SLOT="$(ver_cut 1 ${QT5_PV})"
 QT6_PV="6.4.3"
 QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
 SWIG_PV="4.0.1"
@@ -171,7 +167,7 @@ SWIG_PV="4.0.1"
 # deps/obs-scripting/obspython/CMakeLists.txt
 BDEPEND+="
 	>=app-misc/jq-1.6
-	>=dev-util/cmake-3.25
+	>=dev-util/cmake-3.5
 	>=dev-util/pkgconf-1.3.7[pkg-config(+)]
 	lua? (
 		>=dev-lang/swig-${SWIG_PV}
@@ -182,12 +178,6 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-util/cmocka-1.1.5
-		qt5? (
-			>=dev-qt/qttest-${QT5_PV}:${QT5_SLOT}=
-		)
-		qt6? (
-			>=dev-qt/qttest-${QT6_PV}:${QT6_SLOT}=
-		)
 		websocket? (
 			>=dev-libs/boost-1.71.0
 		)
@@ -231,8 +221,9 @@ DEPEND_PLUGINS_AJA="
 	aja? (
 		${DEPEND_LIBX11}
 		media-libs/ntv2
-		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
+		qt6? (
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui]
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
 		)
 	)
 "
@@ -255,8 +246,8 @@ DEPEND_PLUGINS_SNDIO="
 DEPEND_PLUGINS_DECKLINK_CAPTIONS="
 	decklink? (
 		${DEPEND_LIBX11}
-		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
+		qt6? (
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
 		)
 	)
 "
@@ -265,8 +256,9 @@ DEPEND_PLUGINS_DECKLINK_CAPTIONS="
 DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	decklink? (
 		${DEPEND_LIBX11}
-		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
+		qt6? (
+			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui]
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
 		)
 	)
 "
@@ -282,6 +274,10 @@ DEPEND_PLUGINS_DECKLINK="
 # See UI/frontend-plugins/frontend-tools/CMakeLists.txt
 DEPEND_PLUGINS_FRONTEND_TOOLS="
 	${DEPEND_LIBX11}
+	qt6? (
+		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui]
+		>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
+	)
 "
 
 # See plugins/linux-capture/CMakeLists.txt
@@ -337,8 +333,8 @@ DEPEND_PLUGINS_OBS_OUTPUTS="
 
 DEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
-		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
+		qt6? (
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
 		)
 		|| (
 			>=net-libs/cef-bin-${CEF_PV}:=
@@ -351,6 +347,7 @@ DEPEND_PLUGINS_OBS_BROWSER="
 #		>=media-libs/intel-mediasdk-21.1
 DEPEND_PLUGINS_QSV="
 	qsv? (
+		>=media-libs/oneVPL-2022.1.0
 		elibc_mingw? (
 			dev-util/mingw64-runtime
 		)
@@ -367,8 +364,8 @@ DEPEND_PLUGINS_RTMP="
 DEPEND_PLUGINS_VST="
 	vst? (
 		${DEPEND_LIBOBS}
-		qt5? (
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
+		qt6? (
+			>=dev-qt/qtwidgets-${QT6_PV}:${QT6_SLOT}=[X]
 		)
 	)
 "
@@ -378,12 +375,6 @@ DEPEND_PLUGINS_WEBSOCKET="
 	>=dev-cpp/nlohmann_json-3.7.3
 	>=dev-cpp/websocketpp-0.8.1
 	websocket? (
-		qt5? (
-			>=dev-qt/qtcore-${QT5_PV}:${QT5_SLOT}=
-			>=dev-qt/qtnetwork-${QT5_PV}:${QT5_SLOT}=
-			>=dev-qt/qtsvg-${QT5_PV}:${QT5_SLOT}=
-			>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
-		)
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[network,widgets]
 			>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
@@ -455,12 +446,6 @@ DEPEND_PLUGINS="
 # but could not find headers in obs source for these packages.
 # They were mentioned in the original ebuild.
 DEPEND_UNSOURCED="
-	qt5? (
-		>=dev-qt/qtdeclarative-${QT5_PV}:${QT5_SLOT}=
-		>=dev-qt/qtmultimedia-${QT5_PV}:${QT5_SLOT}=
-		>=dev-qt/qtquickcontrols-${QT5_PV}:${QT5_SLOT}=
-		>=dev-qt/qtsql-${QT5_PV}:${QT5_SLOT}=
-	)
 	qt6? (
 		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[sql]
 		>=dev-qt/qtdeclarative-${QT6_PV}:${QT6_SLOT}=
@@ -487,17 +472,6 @@ DEPEND_UI="
 	${DEPEND_CURL}
 	${DEPEND_FFMPEG}
 	${DEPEND_LIBOBS}
-	qt5? (
-		>=dev-qt/qtcore-${QT5_PV}:${QT5_SLOT}=
-		>=dev-qt/qtgui-${QT5_PV}:${QT5_SLOT}=[X,wayland?]
-		>=dev-qt/qtnetwork-${QT5_PV}:${QT5_SLOT}=
-		>=dev-qt/qtsvg-${QT5_PV}:${QT5_SLOT}=
-		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
-		>=dev-qt/qtxml-${QT5_PV}:${QT5_SLOT}=
-		wayland? (
-			>=dev-qt/qtwayland-${QT5_PV}:${QT5_SLOT}=
-		)
-	)
 	qt6? (
 		>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}=[gui,network,wayland?,widgets,X,xml]
 		>=dev-qt/qtsvg-${QT6_PV}:${QT6_SLOT}=
@@ -572,9 +546,6 @@ RDEPEND+="
 	${DEPEND_DEPS}
 	${DEPEND_PLUGINS}
 	${DEPEND_UI}
-	qt5? (
-		>=dev-qt/qtwidgets-${QT5_PV}:${QT5_SLOT}=[X]
-	)
 	test? (
 		${DEPEND_LIBOBS}
 	)
@@ -673,7 +644,6 @@ sanitize_login_tokens() {
 }
 
 pkg_setup() {
-	use qt5 && qt_check 5
 	use qt6 && qt_check 6
 	use lua && lua-single_pkg_setup
 	use python && python-single-r1_pkg_setup
@@ -770,15 +740,6 @@ einfo
 src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
-	if use kernel_Darwin ; then
-		if use mac-syphon ; then
-			EGIT_SUBMODULES=( '*' )
-			EGIT_CHECKOUT_DIR="${S}/plugins/mac-syphon/syphon-framework"
-			EGIT_COMMIT="01b144811f6f7080b70b2d7cc729da071f86f9d7"
-			git-r3_fetch
-			git-r3_checkout
-		fi
-	fi
 }
 
 src_prepare() {
@@ -841,11 +802,7 @@ einfo
 	# obs-browser-source.cpp:25:10: fatal error: QApplication: No such file or directory
 	# browser-client.cpp:27:10: fatal error: QThread: No such file or directory
 	if use browser ; then
-		if use qt5 ; then
-			append-cppflags -I"${ESYSROOT}/usr/include/qt5"
-			append-cppflags -I"${ESYSROOT}/usr/include/qt5/QtWidgets"
-			append-cppflags -I"${ESYSROOT}/usr/include/qt5/QtCore"
-		elif use qt6 ; then
+		if use qt6 ; then
 			append-cppflags -I"${ESYSROOT}/usr/include/qt6"
 			append-cppflags -I"${ESYSROOT}/usr/include/qt6/QtWidgets"
 			append-cppflags -I"${ESYSROOT}/usr/include/qt6/QtCore"
