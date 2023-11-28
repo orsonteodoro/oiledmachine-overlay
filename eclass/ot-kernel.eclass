@@ -3130,6 +3130,8 @@ ot-kernel_clear_env() {
 	# These fields toggle the building of additional sets of kernel configs.
 	unset AMDGPU_DEEP_COLOR
 	unset AMDGPU_DIRECT_DMA_FOR_SSG
+	unset AMDGPU_EXP_HW_SUPPORT
+	unset AMDGPU_OVERDRIVE
 	unset ALSA_PC_SPEAKER
 	unset BPF_JIT
 	unset CAMERAS
@@ -7986,6 +7988,42 @@ ot-kernel_set_rust() {
 	fi
 }
 
+
+# @FUNCTION: ot-kernel_set_kconfig_amdgpu_override_mask
+# @DESCRIPTION:
+#
+# !!! DANGEROUS:  EXPERTS ONLY !!!
+#
+# Enable or disable the flag to allow for overclocking or voltage changes.
+#
+ot-kernel_set_kconfig_amdgpu_override_mask() {
+	ver_test ${KV_MAJOR_MINOR} -lt 4.18 && return
+	if [[ "${AMDGPU_OVERDRIVE}" == "1" ]] ; then
+		if [[ -e "/sys/module/amdgpu/parameters/ppfeaturemask" ]] ; then
+ewarn "Enabling overdrive on the amdgpu driver."
+			local current_value=$(cat /sys/module/amdgpu/parameters/ppfeaturemask)
+			local pp_override_mask="0x00004000"
+			local result=$((${current_value} | ${pp_override_mask}))
+# https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/include/amd_shared.h#L222
+			result=$((${result} & 0xffffffff)) # Truncate to 32 bits
+			result=$(printf 'amdgpu.ppfeaturemask=0x%x\n' ${result})
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.ppfeaturemask=[x0-9]+"
+			ot-kernel_set_kconfig_kernel_cmdline "${result}"
+		fi
+	elif [[ "${AMDGPU_OVERDRIVE}" == "0" ]] ; then
+		if [[ -e "/sys/module/amdgpu/parameters/ppfeaturemask" ]] ; then
+einfo "Disabling overdrive on the amdgpu driver."
+			local current_value=$(cat /sys/module/amdgpu/parameters/ppfeaturemask)
+			local pp_override_mask="0x00004000"
+			local result=$((${current_value} & ~${pp_override_mask}))
+			result=$((${result} & 0xffffffff)) # Truncate to 32 bits
+			result=$(printf 'amdgpu.ppfeaturemask=0x%x\n' ${result})
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.ppfeaturemask=[x0-9]+"
+			ot-kernel_set_kconfig_kernel_cmdline "${result}"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -8059,6 +8097,7 @@ einfo
 	ot-kernel_set_kconfig_mmc_sd_sdio
 	ot-kernel_set_kconfig_memstick
 	ot-kernel_set_kconfig_exfat
+	ot-kernel_set_kconfig_amdgpu_override_mask
 
 	ot-kernel_set_kconfig_firmware
 	ot-kernel_check_firmware

@@ -3135,6 +3135,18 @@ unset OT_KERNEL_PRIVATE_KEY
 
         Does not apply or fully supported
 
+    AMDGPU_OVERDRIVE - Set the overdrive flag (aka overclocking flag) to allow
+    to set GPU clocks via the sysfs interface for the amdgpu driver.  This flag
+    may also allow to control voltage.  This will embed amdgpu.ppfeaturemask in
+    the kernel cmdline.  0 means disable the overclock bit, 1 is to enable the
+    overclock bit.  Unset means to manually customize it.  If you already set
+    amdgpu.ppfeaturemask, leave it unset.
+    EXPERTS ONLY.  CHANGING THE CLOCK FREQUENCY MAY CAUSE DAMAGE AND VOID
+    HARDWARE WARRANTY.  SETTING CLOCKS TOO HIGH OR INADEQUATE COOLING MAY CAUSE
+    IRREVERSABLE DAMAGE.
+    THIS ECLASS VARIABLE IS EXPERIMENTAL.
+    Valid values:  0, 1, unset (default).
+
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
     Valid values:  0 (default), 1
 
