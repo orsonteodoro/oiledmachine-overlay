@@ -3140,11 +3140,15 @@ unset OT_KERNEL_PRIVATE_KEY
     may also allow to control voltage.  This will embed amdgpu.ppfeaturemask in
     the kernel cmdline.  0 means disable the overclock bit, 1 is to enable the
     overclock bit.  Unset means to manually customize it.  If you already set
-    amdgpu.ppfeaturemask, leave it unset.
-    EXPERTS ONLY.  CHANGING THE CLOCK FREQUENCY MAY CAUSE DAMAGE AND VOID
+    amdgpu.ppfeaturemask, leave it unset.  The estimated benefit is between
+    maybe 1-5 FPS with risk of instability (e.g. freezing or artifacts),
+    or permanent instability, or permanent damage.
+    !!! EXPERTS ONLY !!!
+    CHANGING THE CLOCK FREQUENCY MAY CAUSE DAMAGE AND VOID
     HARDWARE WARRANTY.  SETTING CLOCKS TOO HIGH OR HAVING INADEQUATE COOLING MAY
-    CAUSE IRREVERSABLE DAMAGE.  TOO MUCH HEAT WILL SHORTEN THE LIFESPAN OF THE
-    DEVICE.
+    CAUSE IRREVERSABLE DAMAGE.  SETTING THE VOLTAGE JUST A LITTLE TOO MUCH CAN
+    CAUSE DAMAGE OR VISUAL ARTIFIACTS.  RESET BACK SETTINGS IF VISUAL ARTIFACTS
+    ENCOUNTERED.  TOO MUCH HEAT WILL SHORTEN THE LIFESPAN OF THE DEVICE.
     THIS ECLASS VARIABLE IS EXPERIMENTAL.
     Valid values:  0, 1, unset (default).
 
