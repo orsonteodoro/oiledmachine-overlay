@@ -3142,8 +3142,9 @@ unset OT_KERNEL_PRIVATE_KEY
     overclock bit.  Unset means to manually customize it.  If you already set
     amdgpu.ppfeaturemask, leave it unset.  The estimated benefit is between
     maybe 1-5 FPS with risk of temprorary to permanent instability (e.g.
-    freezing or artifacts), or permanent damage.  It should only be used as a
-    last resort.  Vsync off or monitor hz changes should be used first.
+    freezing), or permanent damage (aka artifacts or bricking).  It should only
+    be used as a last resort.  Vsync off or monitor hz changes should be used
+    first.
     !!! EXPERTS ONLY !!!
     CHANGING THE CLOCK FREQUENCY MAY CAUSE DAMAGE AND VOID
     HARDWARE WARRANTY.  SETTING CLOCKS TOO HIGH OR HAVING INADEQUATE COOLING MAY
