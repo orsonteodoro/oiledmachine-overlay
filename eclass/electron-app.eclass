@@ -491,7 +491,9 @@ elif [[ -n "${ELECTRON_APP_ANGULAR_PV}" ]] && ( \
 fi
 
 # See https://github.com/facebook/react/blob/master/package.json
-if [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
+if [[ "${ELECTRON_APP_REACT_PV}" == "ignore" ]] ; then
+	:;
+elif [[ -n "${ELECTRON_APP_REACT_PV}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -ge 0.3 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_PV}") -le 0.13 ) ; then
 	COMMON_DEPEND+="
