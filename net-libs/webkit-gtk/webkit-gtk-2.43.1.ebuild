@@ -10,7 +10,7 @@ EAPI=8
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 LLVM_MAX_SLOT=16 # This should not be more than Mesa's package LLVM_MAX_SLOT
@@ -300,9 +300,9 @@ SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
 # WEBKITGTK_API_VERSION is 4.0
-CURRENT="104"
+CURRENT="105"
 #REVISION=""
-AGE="67"
+AGE="68"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${API_VERSION%.*}/${SOVERSION}"
 # SLOT=6/4    GTK4 SOUP3
@@ -323,7 +323,7 @@ tr uk vi zh_CN
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 GST_ACODECS_IUSE="
 aac
@@ -357,7 +357,7 @@ MSE_VCODECS_IUSE="
 "
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS="
 +a52
 -aac
@@ -655,17 +655,17 @@ REQUIRED_USE+="
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.42.0/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.43.1/Tools/glib/dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
@@ -712,7 +712,7 @@ MESA_PV="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
@@ -1039,8 +1039,8 @@ einfo
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		if ! test-flag-CXX -std=c++${CXX_STD} ; then
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/cmake/WebKitCommon.cmake#L72
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.0/Source/cmake/OptionsCommon.cmake
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/cmake/WebKitCommon.cmake#L72
+# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.1/Source/cmake/OptionsCommon.cmake
 eerror
 eerror "You need at least GCC ${GCC_PV} or Clang >= ${CLANG_PV} for"
 eerror "C++${CXX_STD} specific compiler flags"
@@ -1433,6 +1433,7 @@ eerror
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
+		-DUSE_LIBBACKTRACE=OFF
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
