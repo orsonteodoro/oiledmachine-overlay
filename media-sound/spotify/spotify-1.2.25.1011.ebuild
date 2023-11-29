@@ -161,7 +161,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # Some *DEPENDs below are copy pasted and based on the cef-bin ebuild.
 
 # *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
-# U >=16.04 LTS assumed, supported only in CEF
+# U >= 18.04 LTS and D 11 are assumed
 
 # For details see:
 # https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.sh#L237
