@@ -1167,7 +1167,8 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.8.923 (20230608)
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.11.916 (20230712) with kernel 6.1.38, 6.4.2
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.13.661 (20230712) with kernel 6.1.38
-# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.22.982 (20230712)
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.22.982 (20230712) ; Sorting playlists by creator is broken.
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.25.1011 (20231123) ; Sorting playlists by creator is broken.
 # X:  pass
 # wayland:  pass
 # audio podcasts:  pass
