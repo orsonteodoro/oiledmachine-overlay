@@ -9,11 +9,11 @@ EAPI=8
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# CEF_DEPENDS_VERSION="116.0.5845.190"
-# CEF_DEPENDS_VERSION_A="116"
+# CEF_DEPENDS_VERSION="118.0.5993.119"
+# CEF_DEPENDS_VERSION_A="118"
 # CEF_DEPENDS_VERSION_B="0"
-# CEF_DEPENDS_VERSION_C="5845"
-# CEF_DEPENDS_VERSION_D="190"
+# CEF_DEPENDS_VERSION_C="5993"
+# CEF_DEPENDS_VERSION_D="119"
 #
 # Third party licenses:
 #
@@ -43,23 +43,23 @@ EAPI=8
 #
 # For Chromium *DEPENDs and versioning see:
 #
-# https://github.com/chromium/chromium/tree/116.0.5845.190/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/116.0.5845.190/build/install-build-deps.py
-# https://github.com/chromium/chromium/blob/116.0.5845.190/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/118.0.5993.119/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/118.0.5993.119/tools/clang/scripts/update.py#L42
 #
 # For vendored Chromium third party *DEPENDs versioning see:
 #
-# https://github.com/chromium/chromium/blob/116.0.5845.190/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/116.0.5845.190/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
-# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-116.0.5845.190/work/chromium-116.0.5845.190/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
 
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
@@ -77,7 +77,7 @@ SLOT="0/${DEFAULT_CONFIGURATION}"
 # Dropped systray USE flag because of license.
 
 IUSE+="
-emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X r4
+emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -164,7 +164,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # U >=16.04 LTS assumed, supported only in CEF
 
 # For details see:
-# https://github.com/chromium/chromium/blob/116.0.5845.190/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.sh#L237
 
 # The version is obtained in src_prepare
 
@@ -368,7 +368,7 @@ SRC_URI+="
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="g794acc0a"
+	BUILD_ID_AMD64="g0348b2ea" # Change this after every bump
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
@@ -403,8 +403,8 @@ PUBKEY_BLAKE2B="\
 "
 
 EXPECTED_DEPENDS_FINGERPRINT="\
-68aa0f7d5f1b944e59be1354b86b0353d18fc662beb7eb1b7af01f7473341dcd\
-63d61878bf15f39f0d132793741d027a69e66fffff3cf2efcb1bbd7c64d4ee0c\
+66f65b594d1f2ec6a090d02b1a12178eb92925f9121b59517f8ef9338b0dda1d\
+1833b1792d29d10312a8463597ac2478c744d6555fb32f0bdd617cbdf5687ef0\
 " # Packages fingerprint for client
 EXPECTED_CR_DEPENDS_FINGERPRINT="\
 27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
