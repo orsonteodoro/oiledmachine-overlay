@@ -22,9 +22,9 @@ ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  W
 NODE_ENV="development"
 NODE_VERSION=16
 NPM_MULTI_LOCKFILE=1
-NPM_OFFLINE=0 # Offline is broken.  It says that tarballs are corrupt.
+NPM_OFFLINE=1 # Offline is broken.  It says that tarballs are corrupt.
 NPM_AUDIT_FIX=0
-PYTHON_COMPAT=( python3_10 ) # CI uses 3.8, 3.9
+PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
 
 inherit check-reqs desktop electron-app evar_dump flag-o-matic npm
 inherit python-r1 toolchain-funcs xdg
@@ -6952,8 +6952,8 @@ src_prepare() {
 "${FILESDIR}/${PN}-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
 	eapply \
 "${FILESDIR}/${PN}-5.0.0_beta108-unix-make.patch"
-	eapply \
-"${FILESDIR}/${PN}-5.0.127-fix-cmake-cxx-tests.patch"
+#	eapply \
+#"${FILESDIR}/${PN}-5.0.127-fix-cmake-cxx-tests.patch"
 	eapply --binary \
 "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
 	eapply \
