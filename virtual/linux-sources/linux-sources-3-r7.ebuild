@@ -10,7 +10,9 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv
 IUSE="custom-kernel firmware"
 
 RDEPEND="
-	firmware? ( sys-kernel/linux-firmware )
+	firmware? (
+		sys-kernel/linux-firmware
+	)
 !custom-kernel? (
 	|| (
 		sys-kernel/gentoo-sources
@@ -24,8 +26,10 @@ RDEPEND="
 		sys-kernel/gentoo-kernel
 		sys-kernel/gentoo-kernel-bin
 		sys-kernel/vanilla-kernel
+		sys-kernel/linux-next
 	)
-)"
+)
+"
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  anti-vendor-lock-in, customization, crap-kernels

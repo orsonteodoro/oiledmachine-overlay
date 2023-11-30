@@ -84,6 +84,7 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.4/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.5/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -100,6 +101,7 @@
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.4...zen-kernel:6.4/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.5...zen-kernel:6.5/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -2123,13 +2125,13 @@ einfo
 		patches+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
 
-	if ver_test "${KV_MAJOR_MINOR}" -eq 5.15 ; then
-		eapply "${FILESDIR}/external-modules-linking-changes-for-5.15.138.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -eq 5.10 ; then
-		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
-	elif ver_test "${KV_MAJOR_MINOR}" -eq 5.4 ; then
-		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
-	fi
+#	if ver_test "${KV_MAJOR_MINOR}" -eq 5.15 ; then
+#		eapply "${FILESDIR}/external-modules-linking-changes-for-5.15.138.patch"
+#	elif ver_test "${KV_MAJOR_MINOR}" -eq 5.10 ; then
+#		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
+#	elif ver_test "${KV_MAJOR_MINOR}" -eq 5.4 ; then
+#		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
+#	fi
 
 	if (( ${#patches[@]} > 0 )) ; then
 		eapply ${patches[@]}
