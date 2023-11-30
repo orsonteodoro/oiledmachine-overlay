@@ -22,7 +22,7 @@ ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  W
 NODE_ENV="development"
 NODE_VERSION=16
 NPM_MULTI_LOCKFILE=1
-NPM_OFFLINE=1 # Offline is broken.  It says that tarballs are corrupt.
+NPM_OFFLINE=0 # Offline is broken.  It says that tarballs are corrupt.
 NPM_AUDIT_FIX=0
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
 
@@ -6659,6 +6659,16 @@ CHECKREQS_DISK_USR="2736M"
 CMAKE_BUILD_TYPE=Release
 EMBUILD_DIR="${WORKDIR}/build"
 
+check_network_sandbox() {
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
+eerror "to download micropackages."
+eerror
+		die
+	fi
+}
+
 pkg_pretend() {
 	check-reqs_pkg_setup
 }
@@ -6709,6 +6719,9 @@ pkg_setup() {
 	check-reqs_pkg_setup
 	npm_pkg_setup
 	python_setup
+
+	# It still breaks when NPM_OFFLINE=1.
+	check_network_sandbox
 }
 
 # @FUNCTION: __npm_src_unpack_default
