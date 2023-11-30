@@ -195,9 +195,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 fi
 
-# For firmware security update(s), see
+# For firmware security update availability, see
 # https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
-LINUX_FIRMWARE_PV="20230625_p20230724"
+LINUX_FIRMWARE_PV="20230625_p20230724" # Based on latest available patch level cross referenced to the μcode column.
+LINUX_FIRMWARE_TIMESTAMP="2023-07-24 08:29:07 -0400" # Same as above from the git log.
 INTEL_MICROCODE_PV="20231114_p20231114"
 RDEPEND+="
 	intel-microcode? (
@@ -2952,11 +2953,11 @@ ot-kernel_check_firmware() {
 	[[ "${OT_KERNEL_CHECK_FIRMWARE_VULNERABILITY_FIXES:-1}" == "1" ]] || return
 	if has_version "=sys-kernel/linux-firmware-99999999" ; then
 		local current_firmware_update=$(cat "${EROOT}/var/db/pkg/sys-kernel/linux-firmware"*"/BUILD_TIME")
-		local fix_firmware_date=$(date -d "2023-07-24 08:29:07 -0400" "+%s")
+		local fix_firmware_date=$(date -d "${LINUX_FIRMWARE_TIMESTAMP}" "+%s")
 		if (( ${current_firmware_update} < ${fix_firmware_date} )) ; then
 eerror
-eerror "Re-emerge =sys-kernel/linux-firmware-99999999 and CPU microcode for the"
-eerror "Zenbleed mitigations."
+eerror "Re-emerge =sys-kernel/linux-firmware-99999999 for CPU microcode security"
+eerror "updates."
 eerror
 		fi
 		die
