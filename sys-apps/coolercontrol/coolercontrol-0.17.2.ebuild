@@ -31,13 +31,13 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	~dev-python/coolercontrol-liqctld-${PV}[${PYTHON_USEDEP}]
+	~sys-apps/coolercontrol-liqctld-${PV}[${PYTHON_USEDEP}]
 	~sys-apps/coolercontrold-${PV}
 	gtk3? (
 		~sys-apps/coolercontrol-ui-${PV}
 	)
 	qt6? (
-		~dev-python/coolercontrol-gui-${PV}[${PYTHON_USEDEP}]
+		~sys-apps/coolercontrol-gui-${PV}[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
