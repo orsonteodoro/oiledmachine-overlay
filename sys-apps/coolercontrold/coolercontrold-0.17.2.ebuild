@@ -834,7 +834,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" openrc systemd"
 # U 20.04
 RDEPEND+="
-	${RUST_BINDINGS_DEPEND}
 	~sys-apps/coolercontrol-liqctld-${PV}
 "
 DEPEND+="
@@ -844,7 +843,6 @@ VUE_DEPEND="
 	>=net-libs/nodejs-18.12.0[npm]
 "
 BDEPEND+="
-	${RUST_BINDINGS_BDEPEND}
 	${VUE_DEPEND}
 	>=sys-devel/make-4.2.1
 	virtual/pkgconfig
