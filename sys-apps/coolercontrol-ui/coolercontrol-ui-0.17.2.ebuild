@@ -946,8 +946,8 @@ VUE_DEPEND="
 	>=net-libs/nodejs-18.12.0[npm]
 "
 BDEPEND+="
-	${RUST_BINDINGS_BDEPEND}
 	${COOLERCONTROL_UI_BDEPEND}
+	${RUST_BINDINGS_BDEPEND}
 	${VUE_DEPEND}
 	>=sys-devel/make-4.2.1
 "
