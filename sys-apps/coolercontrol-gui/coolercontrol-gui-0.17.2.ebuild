@@ -44,6 +44,7 @@ RDEPEND+="
 	>=dev-python/setproctitle-1.3.3[${PYTHON_USEDEP}]
 	>=dev-qt/qtbase-6.6.0[wayland?,X?]
 	>=media-libs/mesa-20.0.4
+	~sys-apps/coolercontrold-${PV}
 "
 DEPEND+="
 	${RDEPEND}
@@ -56,12 +57,19 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 
-python_compile() {
+# Using nuitka is broken
+_python_compile() {
 ewarn "Do no emerge this package directly.  Emerge sys-apps/coolercontrol instead."
-	poetry install || die
-	poetry run python3 -m nuitka coolercontrol.py || die
-	mv coolercontrol.dist/coolercontrol.bin coolercontrol.dist/coolercontrol-gui || die
-	mv coolercontrol.dist/coolercontrol_data coolercontrol.dist/coolercontrol || die
+	${EPYTHON} -m nuitka --static-libpython=no --enable-plugins=pyside6 coolercontrol.py || die
+	mv \
+		coolercontrol.dist/coolercontrol.bin \
+		coolercontrol.dist/coolercontrol-gui \
+		|| die
+	mv \
+		coolercontrol.dist/coolercontrol_data \
+		coolercontrol.dist/coolercontrol \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.17.2, 20231201)

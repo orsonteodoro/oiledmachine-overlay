@@ -834,6 +834,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" openrc systemd"
 # U 20.04
 RDEPEND+="
+	~sys-apps/coolercontrol-liqctld-${PV}
 "
 DEPEND+="
 	${RDEPEND}
@@ -946,3 +947,4 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.17.2, 20231201)
