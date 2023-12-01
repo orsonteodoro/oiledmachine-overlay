@@ -24,7 +24,13 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" wayland X"
+REQUIRED_USE="
+	|| (
+		wayland
+		X
+	)
+"
 # U 20.04
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -36,6 +42,7 @@ RDEPEND+="
 	>=dev-python/pyside6-6.6.0[${PYTHON_USEDEP},svg,widgets,xml]
 	>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 	>=dev-python/setproctitle-1.3.3[${PYTHON_USEDEP}]
+	>=dev-qt/qtbase-6.6.0[wayland?,X?]
 	>=media-libs/mesa-20.0.4
 "
 DEPEND+="

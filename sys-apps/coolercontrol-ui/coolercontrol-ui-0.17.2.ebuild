@@ -903,10 +903,11 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" wayland X"
 # U 20.04
 RDEPEND+="
 	~sys-apps/coolercontrold-${PV}
+	x11-libs/gtk+[wayland?,X?]
 "
 DEPEND+="
 	${RDEPEND}
