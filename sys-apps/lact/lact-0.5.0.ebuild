@@ -296,10 +296,24 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" openrc +systemd r1"
+IUSE+=" openrc +systemd wayland X r1"
 # U 22.04
+RUST_BINDINGS_DEPENDS="
+	>=dev-libs/glib-2.56:2
+	>=media-libs/graphene-1.10
+	>=x11-libs/cairo-1.14
+	>=x11-libs/gdk-pixbuf-2.36.8
+	>=x11-libs/pango-1.40
+	elibc_glibc? (
+		>=sys-libs/glibc-2.35
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.1.24
+	)
+"
 RDEPEND+="
-	>=gui-libs/gtk-4.6.2:4
+	${RUST_BINDINGS_DEPENDS}
+	>=gui-libs/gtk-4.6.2:4[wayland?,X?]
 	>=sys-apps/hwdata-0.357
 	>=x11-libs/libdrm-2.4.110
 	systemd? (
