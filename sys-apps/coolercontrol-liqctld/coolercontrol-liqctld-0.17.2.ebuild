@@ -46,13 +46,16 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 
-python_compile() {
+# Disabled
+_python_compile() {
 ewarn "Do no emerge this package directly.  Emerge sys-apps/coolercontrol instead."
-	poetry install
+	#poetry install
 	poetry run ${EPYTHON} -m nuitka coolercontrol-liqctld.py
 }
 
 python_install_all() {
+	distutils-r1_python_install_all
+	python_optimize
 	if use openrc ; then
 ewarn
 ewarn "The OpenRC script is experimental for ${CATEGORY}/${PN}."
@@ -74,3 +77,4 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.17.2, 20131201)
