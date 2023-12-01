@@ -906,8 +906,10 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" wayland X"
 # U 20.04
 RDEPEND+="
+	>=dev-libs/glib-2.64.2:2
+	>=net-libs/webkit-gtk-2.28.1:4.0[wayland?,X?]
+	>=x11-libs/gtk+-3.24.18:3[wayland?,X?]
 	~sys-apps/coolercontrold-${PV}
-	x11-libs/gtk+[wayland?,X?]
 "
 DEPEND+="
 	${RDEPEND}
