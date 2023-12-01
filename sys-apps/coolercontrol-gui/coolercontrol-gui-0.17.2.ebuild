@@ -7,7 +7,7 @@ EAPI=8
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( python3_{10..11} ) # Can support 3.12 but limited by Nuitka
 
-inherit lcnr distutils-r1
+inherit desktop distutils-r1 xdg
 
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
@@ -57,9 +57,13 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 
+pkg_setup() {
+ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
+	python_setup
+}
+
 # Using nuitka is broken
 _python_compile() {
-ewarn "Do no emerge this package directly.  Emerge sys-apps/coolercontrol instead."
 	${EPYTHON} -m nuitka --static-libpython=no --enable-plugins=pyside6 coolercontrol.py || die
 	mv \
 		coolercontrol.dist/coolercontrol.bin \
@@ -68,6 +72,24 @@ ewarn "Do no emerge this package directly.  Emerge sys-apps/coolercontrol instea
 	mv \
 		coolercontrol.dist/coolercontrol_data \
 		coolercontrol.dist/coolercontrol \
+		|| die
+}
+
+src_install() {
+	distutils-r1_python_install_all
+	python_optimize
+	mv "${ED}/usr/bin/coolercontrol"{,-qt6} || die
+	make_desktop_entry \
+		"/usr/bin/coolercontrol-qt6" \
+		"CoolerControl (Qt6)" \
+		"org.coolercontrol.CoolerControl" \
+		"Utility;"
+}
+
+pkg_postinst() {
+	ln -sf \
+		"${EROOT}/usr/bin/coolercontrol-qt6" \
+		"${EROOT}/usr/bin/coolercontrol" \
 		|| die
 }
 

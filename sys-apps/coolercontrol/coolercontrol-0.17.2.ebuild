@@ -8,7 +8,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10,11} ) # Can support 3.12 but limited by Nuitka
 
-inherit python-r1
+inherit python-r1 xdg
 
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
@@ -64,11 +64,16 @@ src_install() {
 	insinto "/usr/share/icons/hicolor/256x256/apps"
 	doins "metadata/org.coolercontrol.CoolerControl.png"
 
-	insinto "/usr/share/applications"
-	doins "metadata/org.coolercontrol.CoolerControl.desktop"
-
 	insinto "/usr/share/metainfo"
 	doins "metadata/org.coolercontrol.CoolerControl.metainfo.xml"
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+}
+
+pkg_postrm() {
+	xdg_pkg_postrm
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

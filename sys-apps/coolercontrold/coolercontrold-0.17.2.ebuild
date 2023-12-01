@@ -851,6 +851,7 @@ BDEPEND+="
 RESTRICT="mirror"
 
 pkg_setup() {
+ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
 	npm_pkg_setup
 }
 
@@ -944,6 +945,14 @@ ewarn "You are responsible to creating the init service for ${PN} for your"
 ewarn "init system."
 ewarn
 	fi
+
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party_cargo"
+	lcnr_install_files
+
+	LCNR_SOURCE="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/node_modules"
+	LCNR_TAG="third_party_npm"
+	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

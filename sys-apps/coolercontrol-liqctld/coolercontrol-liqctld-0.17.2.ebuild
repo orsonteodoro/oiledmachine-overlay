@@ -46,9 +46,13 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 
+pkg_setup() {
+ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
+	python_setup
+}
+
 # Disabled
 _python_compile() {
-ewarn "Do no emerge this package directly.  Emerge sys-apps/coolercontrol instead."
 	#poetry install
 	poetry run ${EPYTHON} -m nuitka coolercontrol-liqctld.py
 }

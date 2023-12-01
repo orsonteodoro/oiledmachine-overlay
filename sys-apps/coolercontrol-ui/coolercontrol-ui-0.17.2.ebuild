@@ -4,6 +4,11 @@
 
 EAPI=8
 
+declare -A GIT_CRATES=(
+[tauri-plugin-autostart]="https://github.com/tauri-apps/plugins-workspace;68d77f999c72fd260b86ff57f8fd64755de04361;plugins-workspace-%commit%/plugins/autostart" # 0.0.0
+[tauri-plugin-single-instance]="https://github.com/tauri-apps/plugins-workspace;68d77f999c72fd260b86ff57f8fd64755de04361;plugins-workspace-%commit%/plugins/single-instance" # 0.0.0
+)
+
 CRATES="
 addr2line-0.21.0
 adler-1.0.2
@@ -884,7 +889,7 @@ https://registry.npmjs.org/zrender/-/zrender-5.4.4.tgz -> npmpkg-zrender-5.4.4.t
 NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
 PYTHON_COMPAT=( python3_{10,11} ) # Can support 3.12 but limited by Nuitka
 
-inherit cargo lcnr npm
+inherit cargo desktop lcnr npm xdg
 
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
@@ -954,6 +959,7 @@ BDEPEND+="
 RESTRICT="mirror"
 
 pkg_setup() {
+ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
 	npm_pkg_setup
 }
 
@@ -999,11 +1005,25 @@ _cargo_src_unpack() {
 }
 
 src_unpack() {
-ewarn "Do no emerge this package directly.  Emerge sys-apps/coolercontrol instead."
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
 	npm_src_unpack
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri" \
 	_cargo_src_unpack
+
+	# Bugged
+	local commit="68d77f999c72fd260b86ff57f8fd64755de04361"
+	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/autostart" || die
+	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/single-instance" || die
+	cd "${WORKDIR}" || die
+	unpack "${DISTDIR}/plugins-workspace-${commit}.gh.tar.gz"
+	cp -aT \
+		"${WORKDIR}/plugins-workspace-${commit}/plugins/autostart" \
+		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/autostart" \
+		|| die
+	cp -aT \
+		"${WORKDIR}/plugins-workspace-${commit}/plugins/single-instance" \
+		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/single-instance" \
+		|| die
 }
 
 src_configure() {
@@ -1012,6 +1032,7 @@ src_configure() {
 }
 
 src_compile() {
+	npm_hydrate
 	pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" || die
 einfo "PWD: $(pwd)"
 		S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
@@ -1026,12 +1047,28 @@ einfo "PWD: $(pwd)"
 src_install() {
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri" \
 	cargo_src_install
+	mv "${ED}/usr/bin/coolercontrol"{,-gtk3}
+	make_desktop_entry \
+		"/usr/bin/coolercontrol-gtk3" \
+		"CoolerControl (GTK3)" \
+		"org.coolercontrol.CoolerControl" \
+		"Utility;"
 
-	pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri" || die
-		:;
-		#exeinto /usr/bin
-		#doexe target/release/coolercontrol
-	popd
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party_cargo"
+	lcnr_install_files
+
+	LCNR_SOURCE="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/node_modules"
+	LCNR_TAG="third_party_npm"
+	lcnr_install_files
+}
+
+pkg_postinst() {
+	ln -sf \
+		"${EROOT}/usr/bin/coolercontrol-gtk3" \
+		"${EROOT}/usr/bin/coolercontrol" \
+		|| die
+	xdg_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
