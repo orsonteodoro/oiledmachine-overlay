@@ -716,6 +716,7 @@ elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_PV}" ]] \
 fi
 
 # https://github.com/vuejs/vue/blob/v2.7.10/package.json
+# https://github.com/vuejs/core/blob/v3.3.9/package.json
 # Some are based on @types/node
 if [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 0.6.0 \
@@ -759,16 +760,33 @@ elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.6.10 ) ; then
 	# based on @types/node restriction
 	COMMON_DEPEND+=" =net-libs/nodejs-10*" # ^10.12.18
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.6.11 ; then
+elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.6.11 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.6.14 ) ; then
 	# based on @types/node restriction
 	# dev branch
 	COMMON_DEPEND+=" =net-libs/nodejs-12*" # ^12.12.0
-elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] \
-	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.7 ; then
+elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 2.7 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 2.7.15 ) ; then
 	# based on @types/node restriction
 	# dev branch
 	COMMON_DEPEND+=" =net-libs/nodejs-17*" # ^17.0.41
+elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 3.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 3.2.6 ) ; then
+	COMMON_DEPEND+=" >=net-libs/nodejs-10"
+elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 3.2.7 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 3.2.37 ) ; then
+	COMMON_DEPEND+=" >=net-libs/nodejs-16.5"
+elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 3.2.38 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -le 3.3.4 ) ; then
+	COMMON_DEPEND+=" >=net-libs/nodejs-16.11"
+elif [[ -n "${ELECTRON_APP_VUE_PV}" ]] && \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_PV}") -ge 3.3.5 ; then
+	COMMON_DEPEND+=" >=net-libs/nodejs-18.12"
 fi
 
 if [[ -n "${ELECTRON_APP_VUE_CORE_PV}" ]] &&

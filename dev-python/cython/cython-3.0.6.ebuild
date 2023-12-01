@@ -7,8 +7,8 @@ EAPI=8
 MY_PV="${PV/_beta/b}"
 MY_PV="${PV/_rc/rc}"
 
-DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{10..11} pypy3 )
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( python3_{10..12} pypy3 )
 PYTHON_REQ_USE="threads(+)"
 
 inherit distutils-r1 toolchain-funcs elisp-common
@@ -34,29 +34,57 @@ KEYWORDS="
 "
 IUSE="emacs test"
 RESTRICT="!test? ( test )"
-
+# U 20.04
 RDEPEND="
 	app-eselect/eselect-cython
 	emacs? (
 		>=app-editors/emacs-23.1:*
 	)
 "
+# <dev-python/setuptools-60[${PYTHON_USEDEP}] relaxed for python3_11
 BDEPEND="
 	${RDEPEND}
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	' python3_{10..11})
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	' python3_12)
 	doc? (
 		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-tabs-3.4.0[${PYTHON_USEDEP}]
-		dev-python/jupyter[${PYTHON_USEDEP}]
 	)
 	test? (
+		$(python_gen_any_dep '
+			dev-python/setuptools[${PYTHON_USEDEP}]
+			dev-python/coverage[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pycodestyle[${PYTHON_USEDEP}]
+		')
 		$(python_gen_cond_dep '
-			<dev-python/setuptools-60[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
+			dev-python/setuptools[${PYTHON_USEDEP}]
+		' python3_12)
+		$(python_gen_cond_dep '
+			dev-python/coverage[${PYTHON_USEDEP}]
+			dev-python/line-profiler[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pycodestyle[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
 		' python3_{10..11})
+		doc? (
+			$(python_gen_cond_dep '
+				dev-python/jupyter[${PYTHON_USEDEP}]
+			' python3_{10..11})
+		)
 	)
 "
 PATCHES=(
@@ -66,7 +94,7 @@ PATCHES=(
 )
 S="${WORKDIR}/${PN}-${MY_PV}"
 
-SITEFILE=50cython-gentoo.el
+SITEFILE="50cython-gentoo.el"
 
 distutils_enable_sphinx \
 	"docs" \

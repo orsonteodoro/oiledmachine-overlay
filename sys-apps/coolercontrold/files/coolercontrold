@@ -1,0 +1,32 @@
+#!/sbin/openrc-run
+# This file is part of the coolercontrold package.
+
+description="Cooler Control Daemon"
+
+depend()
+{
+        need localmount
+        after bootmisc
+}
+
+start()
+{
+	ebegin "Starting coolercontrold"
+		start-stop-daemon \
+			--start \
+			--pidfile /run/coolercontrold.pid \
+			--background \
+			--exec /usr/bin/coolercontrold
+	eend $?
+}
+
+stop()
+        local retval
+	ebegin "Stopping coolercontrold"
+		start-stop-daemon \
+			--stop \
+			--pidfile /run/coolercontrold.pid
+	        retval=$?
+        eend ${retval}
+        return ${retval}
+}

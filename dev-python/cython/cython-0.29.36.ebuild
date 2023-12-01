@@ -4,7 +4,7 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517=setuptools
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} pypy3 )
 PYTHON_REQ_USE="threads(+)"
 
@@ -31,26 +31,39 @@ KEYWORDS="
 "
 IUSE="emacs test"
 RESTRICT="!test? ( test )"
-
+# U 20.04
 RDEPEND="
 	app-eselect/eselect-cython
 	emacs? (
 		>=app-editors/emacs-23.1:*
 	)
 "
+# <dev-python/setuptools-60[${PYTHON_USEDEP}] relaxed for python3_11
 BDEPEND="
 	${RDEPEND}
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	' python3_{10..11})
 	doc? (
 		>=dev-python/sphinx-3.5.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-issues-1.2.0[${PYTHON_USEDEP}]
-		dev-python/jupyter[${PYTHON_USEDEP}]
 	)
 	test? (
-		$(python_gen_cond_dep '
+		$(python_gen_any_dep '
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/pycodestyle[${PYTHON_USEDEP}]
+		')
+		$(python_gen_cond_dep '
+			dev-python/line-profiler[${PYTHON_USEDEP}]
 		' python3_{10..11})
+		doc? (
+			$(python_gen_cond_dep '
+				dev-python/jupyter[${PYTHON_USEDEP}]
+			' python3_{10..11})
+		)
 	)
 "
 
@@ -60,7 +73,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.29.23-pythran-parallel-install.patch"
 )
 
-SITEFILE=50cython-gentoo.el
+SITEFILE="50cython-gentoo.el"
 
 distutils_enable_sphinx \
 	"docs"

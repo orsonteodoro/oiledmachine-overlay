@@ -37,7 +37,6 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 BENCHMARK_TYPES=(
 	assert
 	async_hooks
-	blob
 	buffers
 	child_process
 	cluster
@@ -86,10 +85,10 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-+npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
+npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo r3
+man pgo r9
 "
 
 gen_required_use_pgo() {
@@ -121,23 +120,23 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Oct 13, 2023
+# Last deps commit date:  Nov 27, 2023
 ACORN_PV="8.10.0"
-COREPACK_PV="0.20.0"
+COREPACK_PV="0.22.0"
 NGHTTP2_PV="1.57.0"
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.0.9
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.46.0:=
-	>=net-dns/c-ares-1.19.1
+	>=dev-libs/libuv-1.44.2:=
+	>=net-dns/c-ares-1.20.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.2.13
 	system-icu? (
 		>=dev-libs/icu-73.2:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.10:0=
+		>=dev-libs/openssl-3.0.12:0=
 	)
 "
 DEPEND+="
@@ -159,6 +158,9 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
+	systemtap? (
+		dev-util/systemtap
+	)
 	test? (
 		net-misc/curl
 	)
@@ -169,18 +171,16 @@ PDEPEND+="
 		=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})*
 	)
 "
-SRC_URI="
-https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
-"
+SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
-	"${FILESDIR}/${PN}-20.2.0-global-npm-config.patch"
+	"${FILESDIR}/${PN}-18.17.0-global-npm-config.patch"
 	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
-	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-18.17.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_PV="10.1.0" # See https://github.com/nodejs/node/blob/v20.9.0/deps/npm/package.json
+NPM_PV="10.2.3" # See https://github.com/nodejs/node/blob/v18.19.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
@@ -219,7 +219,7 @@ pkg_setup() {
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
 einfo
 
 	# Prevent merge conflicts
@@ -482,6 +482,7 @@ ewarn "If moldlto fails for gcc, try clang."
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}"/usr \
 		--dest-cpu=${myarch} \
+		$(use_with systemtap dtrace) \
 		"${myconf[@]}" || die
 
 	# Prevent double build on install.
@@ -688,6 +689,13 @@ src_install() {
 	rm -rf "${ED}/usr/bin/npx"
 
 	mv "${ED}"/usr/share/doc/node "${ED}"/usr/share/doc/${PF} || die
+
+	if use systemtap ; then
+		# Move tapset to avoid conflict
+		mv "${ED}/usr/share/systemtap/tapset/"node${,${SLOT_MAJOR}}.stp || die
+	else
+		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
+	fi
 
 	# Let eselect-nodejs handle switching corepack
 	dodir /usr/$(get_libdir)/corepack

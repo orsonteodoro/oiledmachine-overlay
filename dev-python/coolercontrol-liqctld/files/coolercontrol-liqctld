@@ -1,0 +1,32 @@
+#!/sbin/openrc-run
+# This file is part of the coolercontrol-liqctld package.
+
+description="Cooler Control Liquidctl Daemon"
+
+depend()
+{
+        need localmount
+        after bootmisc
+}
+
+start()
+{
+	ebegin "Starting coolercontrol-liqctld"
+		start-stop-daemon \
+			--start \
+			--pidfile /run/coolercontrol-liqctld.pid \
+			--background \
+			--exec /usr/bin/coolercontrol-liqctld
+	eend $?
+}
+
+stop()
+        local retval
+	ebegin "Stopping coolercontrol-liqctld"
+		start-stop-daemon \
+			--stop \
+			--pidfile /run/coolercontrol-liqctld.pid
+	        retval=$?
+        eend ${retval}
+        return ${retval}
+}
