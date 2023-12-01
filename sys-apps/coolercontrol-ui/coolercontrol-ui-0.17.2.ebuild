@@ -908,6 +908,7 @@ IUSE+=" tray wayland X"
 RUST_BINDINGS_DEPEND="
 	>=app-accessibility/at-spi2-core-2.35.1[introspection]
 	>=dev-libs/glib-2.48:2
+	>=dev-libs/gobject-introspection-1.64.0
 	>=net-libs/webkit-gtk-2.28.1:4[introspection,wayland?,X?]
 	>=net-libs/libsoup-2.70.0:2.4[introspection]
 	>=x11-libs/cairo-1.14
