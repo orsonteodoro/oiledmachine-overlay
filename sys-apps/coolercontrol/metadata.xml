@@ -10,4 +10,12 @@
     <remote-id type="gitlab">coolercontrol/coolercontrol</remote-id>
     <bugs-to>https://gitlab.com/coolercontrol/coolercontrol/-/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="qt6">
+      Use the older user interface
+    </flag>
+    <flag name="gtk3">
+      Use the newer user interface
+    </flag>
+  </use>
 </pkgmetadata>
