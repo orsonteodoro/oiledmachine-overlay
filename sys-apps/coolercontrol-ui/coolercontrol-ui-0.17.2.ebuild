@@ -903,12 +903,35 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" wayland X"
+IUSE+=" tray wayland X"
 # U 20.04
+RUST_BINDINGS_DEPEND="
+	>=app-accessibility/at-spi2-core-2.35.1[introspection]
+	>=dev-libs/glib-2.48:2
+	>=net-libs/webkit-gtk-2.28.1:4[introspection,wayland?,X?]
+	>=net-libs/libsoup-2.70.0:2.4[introspection]
+	>=x11-libs/cairo-1.14
+	>=x11-libs/gdk-pixbuf-2.32[introspection]
+	>=x11-libs/gtk+-3.18:3[introspection,wayland?,X?]
+	>=x11-libs/pango-1.38[introspection]
+	elibc_glibc? (
+		>=sys-libs/glibc-2.31
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.1.24
+	)
+	tray? (
+		|| (
+			>=dev-libs/libappindicator-12.10.1_p20200408:3
+			>=dev-libs/libayatana-appindicator-0.5.4
+		)
+	)
+"
+RUST_BINDINGS_BDEPEND="
+	virtual/pkgconfig
+"
 RDEPEND+="
-	>=dev-libs/glib-2.64.2:2
-	>=net-libs/webkit-gtk-2.28.1:4[wayland?,X?]
-	>=x11-libs/gtk+-3.24.18:3[wayland?,X?]
+	${RUST_BINDINGS_DEPEND}
 	~sys-apps/coolercontrold-${PV}
 "
 DEPEND+="
@@ -922,6 +945,7 @@ VUE_DEPEND="
 	>=net-libs/nodejs-18.12.0[npm]
 "
 BDEPEND+="
+	${RUST_BINDINGS_BDEPEND}
 	${COOLERCONTROL_UI_BDEPEND}
 	${VUE_DEPEND}
 	>=sys-devel/make-4.2.1
