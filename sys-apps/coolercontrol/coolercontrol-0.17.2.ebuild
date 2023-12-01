@@ -24,7 +24,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" gtk3 qt6 wayland X"
+IUSE+=" gtk3 openrc qt6 systemd wayland X r1"
 REQUIRED_USE="
 	gtk3? (
 		|| (
@@ -44,8 +44,8 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	~sys-apps/coolercontrol-liqctld-${PV}[${PYTHON_USEDEP}]
-	~sys-apps/coolercontrold-${PV}
+	~sys-apps/coolercontrol-liqctld-${PV}[${PYTHON_USEDEP},openrc?,systemd?]
+	~sys-apps/coolercontrold-${PV}[openrc?,systemd?]
 	gtk3? (
 		~sys-apps/coolercontrol-ui-${PV}[wayland?,X?]
 	)

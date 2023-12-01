@@ -908,7 +908,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" tray wayland X"
+IUSE+=" tray wayland X r1"
 # U 20.04
 RUST_BINDINGS_DEPEND="
 	>=app-accessibility/at-spi2-core-2.35.1[introspection]

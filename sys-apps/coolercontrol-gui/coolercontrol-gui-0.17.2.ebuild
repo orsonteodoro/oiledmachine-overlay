@@ -24,7 +24,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" wayland X"
+IUSE+=" wayland X r1"
 REQUIRED_USE="
 	|| (
 		wayland

@@ -831,7 +831,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" openrc systemd"
+IUSE+=" openrc systemd r1"
 # U 20.04
 RDEPEND+="
 	~sys-apps/coolercontrol-liqctld-${PV}
