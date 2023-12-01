@@ -3,6 +3,8 @@
 
 description="Cooler Control Liquidctl Daemon"
 
+COOLERCONTROL_LOG="INFO"
+
 depend()
 {
         need localmount
@@ -16,7 +18,7 @@ start()
 			--start \
 			--pidfile /run/coolercontrol-liqctld.pid \
 			--background \
-			--exec /usr/bin/coolercontrol-liqctld
+			--exec /usr/bin/coolercontrol-liqctld -- --daemon
 	eend $?
 }
 

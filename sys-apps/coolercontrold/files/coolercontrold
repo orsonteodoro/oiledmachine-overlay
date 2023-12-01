@@ -3,6 +3,8 @@
 
 description="Cooler Control Daemon"
 
+COOLERCONTROL_LOG="INFO"
+
 depend()
 {
         need localmount
