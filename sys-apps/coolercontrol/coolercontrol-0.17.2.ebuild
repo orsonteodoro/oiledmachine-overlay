@@ -6,12 +6,13 @@ EAPI=8
 
 # This is a meta package
 
-MY_PN="CoolerControl"
 PYTHON_COMPAT=( python3_{10,11} ) # Can support 3.12 but limited by Nuitka
 
 inherit python-r1
 
-SRC_URI=""
+SRC_URI="
+https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
+"
 S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="Cooling device control for Linux"
