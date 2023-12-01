@@ -6,7 +6,7 @@ description="Cooler Control Daemon"
 depend()
 {
         need localmount
-        after bootmisc
+        after bootmisc coolercontrol-liqctld net
 }
 
 start()

@@ -6,7 +6,7 @@ description="Cooler Control Liquidctl Daemon"
 depend()
 {
         need localmount
-        after bootmisc
+        after bootmisc net
 }
 
 start()
