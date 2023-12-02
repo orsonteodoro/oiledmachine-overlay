@@ -32,33 +32,40 @@ esac
 # Example:
 #
 # declare -A CFLAGS_RDEPEND=(
-#	["foo/bar"]="-O2"
-#	["category/package-name"]="-O2"
+#	["foo/bar"]=">=;-O2"			# Same as x >= -O2
+#	["category/package-name"]="<;-O3"	# Same as x < -O3
 # )
 
-# @FUNCTION: _cflags-depends_is_exact
+# @FUNCTION: _cflags-depends_weigh
 # @INTERNAL
 # @DESCRIPTION:
-# Check if arg 1 is exactly one of varargs
-_cflags-depends_is_exact() {
-	local needle="${1}"
-	shift
-	local haystack=($@)
-	local turd
-	for turd in ${haystack[@]} ; do
-		[[ "${x}" == "${turd}" ]] && return 0
-	done
-	return 1
+# Convert the symbol to a numerical weight.
+_cflags-depends_weigh() {
+	local a="${1}"
+	# O0 < Og < O1 < Oz < Os < O2 < O3 < Ofast
+	if [[ "${a}" == "0" ]] ; then
+		echo "0"
+	elif [[ "${a}" == "1" ]] ; then
+		echo "1"
+	elif [[ "${a}" == "z" ]] ; then
+		echo "2"
+	elif [[ "${a}" == "s" ]] ; then
+		echo "3"
+	elif [[ "${a}" == "2" ]] ; then
+		echo "4"
+	elif [[ "${a}" == "3" ]] ; then
+		echo "5"
+	elif [[ "${a}" == "4" ]] ; then
+		echo "5"
+	elif [[ "${a}" == "fast" ]] ; then
+		echo "6"
+	fi
 }
 
-# @FUNCTION: _cflags-depends_is_opt_lt
+# @FUNCTION: _cflags-depends_is_eq
 # @INTERNAL
 # @DESCRIPTION:
-# Check if a <= b, with a and b optimization flags.
-# Examples
-# _cflags-depends_is_opt_lt -O1 -O3 # same as -O1 < -O3 which returns 0.
-# _cflags-depends_is_opt_lt -O3 -O1 # same as -O1 < -O3 which returns 1.
-_cflags-depends_is_opt_lt() {
+_cflags-depends_is_eq() {
 	local a="${1}"
 	local b="${2}"
 
@@ -68,25 +75,129 @@ _cflags-depends_is_opt_lt() {
 	a="${a/O}"
 	b="${b/O}"
 
-	a="${a/4/3}"
-	b="${b/4/3}"
+	a=$(_cflags-depends_weigh "${a}")
+	b=$(_cflags-depends_weigh "${b}")
 
-	# O0 < Og < O1 < Oz < Os < O2 < O3 < Ofast
-
-	if _cflags-depends_is_exact "${a}" "0" "g" "1" "z" "s" "2" "3" && [[ "${b}" == "fast" ]] ; then
+	if [[ "${a}" -eq "${b}" ]] ; then
 		return 0
-	elif _cflags-depends_is_exact "${a}" "0" "g" "1" "z" "s" "2"  && [[ "${b}" == "3" ]] ; then
-		return 0
-	elif _cflags-depends_is_exact "${a}" "0" "g" "1" "z" "s" && [[ "${b}" == "2" ]] ; then
-		return 0
-	elif _cflags-depends_is_exact "${a}" "0" "g" "1" "z" && [[ "${b}" == "s" ]] ; then
-		return 0
-	elif _cflags-depends_is_exact "${a}" "0" "g" && [[ "${b}" == "1" ]] ; then
-		return 0
-	elif _cflags-depends_is_exact "${a}" "0" && [[ "${b}" == "g" ]] ; then
-		return 0
+	else
+		return 1
 	fi
-	return 1
+}
+
+# @FUNCTION: _cflags-depends_is_ne
+# @INTERNAL
+# @DESCRIPTION:
+_cflags-depends_is_ne() {
+	local a="${1}"
+	local b="${2}"
+
+	a="${a/-}"
+	b="${b/-}"
+
+	a="${a/O}"
+	b="${b/O}"
+
+	a=$(_cflags-depends_weigh "${a}")
+	b=$(_cflags-depends_weigh "${b}")
+
+	if [[ "${a}" -ne "${b}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _cflags-depends_is_lt
+# @INTERNAL
+# @DESCRIPTION:
+_cflags-depends_is_lt() {
+	local a="${1}"
+	local b="${2}"
+
+	a="${a/-}"
+	b="${b/-}"
+
+	a="${a/O}"
+	b="${b/O}"
+
+	a=$(_cflags-depends_weigh "${a}")
+	b=$(_cflags-depends_weigh "${b}")
+
+	if [[ "${a}" -lt "${b}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _cflags-depends_is_le
+# @INTERNAL
+# @DESCRIPTION:
+_cflags-depends_is_le() {
+	local a="${1}"
+	local b="${2}"
+
+	a="${a/-}"
+	b="${b/-}"
+
+	a="${a/O}"
+	b="${b/O}"
+
+	a=$(_cflags-depends_weigh "${a}")
+	b=$(_cflags-depends_weigh "${b}")
+
+	if [[ "${a}" -le "${b}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _cflags-depends_is_gt
+# @INTERNAL
+# @DESCRIPTION:
+_cflags-depends_is_gt() {
+	local a="${1}"
+	local b="${2}"
+
+	a="${a/-}"
+	b="${b/-}"
+
+	a="${a/O}"
+	b="${b/O}"
+
+	a=$(_cflags-depends_weigh "${a}")
+	b=$(_cflags-depends_weigh "${b}")
+
+	if [[ "${a}" -gt "${b}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: _cflags-depends_is_ge
+# @INTERNAL
+# @DESCRIPTION:
+_cflags-depends_is_ge() {
+	local a="${1}"
+	local b="${2}"
+
+	a="${a/-}"
+	b="${b/-}"
+
+	a="${a/O}"
+	b="${b/O}"
+
+	a=$(_cflags-depends_weigh "${a}")
+	b=$(_cflags-depends_weigh "${b}")
+
+	if [[ "${a}" -ge "${b}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 # @FUNCTION: _cflags-depends_get_last_oflag
@@ -112,6 +223,16 @@ _cflags-depends_get_last_oflag() {
 	echo "-O0"
 }
 
+# @FUNCTION: _cflags-depends_error_msg
+# @DESCRIPTION:
+# Show the error message
+_cflags-depends_error_msg(){
+eerror
+eerror "Recompile ${p} with ${op} ${b}"
+eerror
+			die
+}
+
 # @FUNCTION: cflags-depends_check
 # @DESCRIPTION:
 # Checks the cflags to meet performance and quality standards.
@@ -122,15 +243,48 @@ cflags-depends_check() {
 	local p
 	for p in ${PKGS[@]} ; do
 		! has_version "${p}" && continue
-		local actual_oflag=$(_cflags-depends_get_last_oflag "${p}")
-		local required_oflag="${CFLAGS_RDEPEND[${p}]}"
-einfo "Actual oflag:\t   ${actual_oflag} (${p})"
-einfo "Required oflag:\t>= ${required_oflag} (${p})"
-		if _cflags-depends_is_opt_lt "${actual_oflag}" "${required_oflag}" ; then
-eerror
-eerror "Recompile ${p} with ${required_oflag} or better"
-eerror
-			die
+		local a=$(_cflags-depends_get_last_oflag "${p}")
+		local t="${CFLAGS_RDEPEND[${p}]}"
+		local op="${t%;*}"
+		local b="${t#*;}"
+einfo "Actual oflag:\t   ${a} (${p})"
+einfo "Required oflag:\t${op} ${b} (${p})"
+		if [[ "${op}" == "!=" ]] ; then
+			if _cflags-depends_is_ne "${a}" "${b}" ; then
+				:;
+			else
+				_cflags-depends_error_msg
+			fi
+		elif [[ "${op}" == "<" ]] ; then
+			if _cflags-depends_is_lt "${a}" "${b}" ; then
+				:;
+			else
+				_cflags-depends_error_msg
+			fi
+		elif [[ "${op}" == "<=" ]] ; then
+			if _cflags-depends_is_le "${a}" "${b}" ; then
+				:;
+			else
+				_cflags-depends_error_msg
+			fi
+		elif [[ "${op}" == "==" ]] ; then
+			if _cflags-depends_is_eq "${a}" "${b}" ; then
+				:;
+			else
+				_cflags-depends_error_msg
+			fi
+		elif [[ "${op}" == ">" ]] ; then
+			if _cflags-depends_is_gt "${a}" "${b}" ; then
+				:;
+			else
+				_cflags-depends_error_msg
+			fi
+		elif [[ "${op}" == ">=" ]] ; then
+			if _cflags-depends_is_ge "${a}" "${b}" ; then
+				:;
+			else
+				_cflags-depends_error_msg
+			fi
 		fi
 	done
 }
