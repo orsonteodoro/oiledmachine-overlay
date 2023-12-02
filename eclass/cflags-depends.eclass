@@ -230,7 +230,7 @@ _cflags-depends_get_last_oflag() {
 # Show the error message
 _cflags-depends_error_msg(){
 eerror
-eerror "Recompile ${p} with {C,CXX}FLAGS ${op} ${b}"
+eerror "Recompile ${p} with CFLAGS/CXXFLAGS ${op} ${b}"
 eerror
 			die
 }
