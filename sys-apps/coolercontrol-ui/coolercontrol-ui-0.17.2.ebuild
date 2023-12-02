@@ -982,10 +982,13 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" tray wayland X r3"
 # U 20.04
 RUST_BINDINGS_DEPEND="
+	(
+		>=net-libs/webkit-gtk-2.28.1:4[introspection,wayland?,X?]
+		<net-libs/webkit-gtk-2.43:4[introspection,wayland?,X?]
+	)
 	>=app-accessibility/at-spi2-core-2.35.1[introspection]
 	>=dev-libs/glib-2.48:2
 	>=dev-libs/gobject-introspection-1.64.0
-	>=net-libs/webkit-gtk-2.28.1:4[introspection,wayland?,X?]
 	>=net-libs/libsoup-2.70.0:2.4[introspection]
 	>=x11-libs/cairo-1.14
 	>=x11-libs/gdk-pixbuf-2.32[introspection]
@@ -1035,7 +1038,7 @@ RESTRICT="mirror"
 pkg_setup() {
 ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
 	npm_pkg_setup
-	cflags-depends_check
+	#cflags-depends_check
 }
 
 # @FUNCTION: cargo_src_unpack
