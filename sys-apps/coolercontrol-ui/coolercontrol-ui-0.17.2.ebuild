@@ -981,11 +981,23 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" tray wayland X r3"
 # U 20.04
+WEBKIT_GTK_STABLE=(
+	"2.42"
+	"2.40"
+	"2.38"
+	"2.36"
+	"2.34"
+	"2.32"
+	"2.30"
+	"2.28"
+)
+gen_webkit_depend() {
+	local s
+	for s in ${WEBKIT_GTK_STABLE[@]} ; do
+		echo "=net-libs/webkit-gtk-${s}*:4[introspection,wayland?,X?]"
+	done
+}
 RUST_BINDINGS_DEPEND="
-	(
-		>=net-libs/webkit-gtk-2.28.1:4[introspection,wayland?,X?]
-		<net-libs/webkit-gtk-2.43:4[introspection,wayland?,X?]
-	)
 	>=app-accessibility/at-spi2-core-2.35.1[introspection]
 	>=dev-libs/glib-2.48:2
 	>=dev-libs/gobject-introspection-1.64.0
@@ -1005,6 +1017,9 @@ RUST_BINDINGS_DEPEND="
 			>=dev-libs/libappindicator-12.10.1_p20200408:3
 			>=dev-libs/libayatana-appindicator-0.5.4
 		)
+	)
+	|| (
+		$(gen_webkit_depend)
 	)
 "
 RUST_BINDINGS_BDEPEND="
