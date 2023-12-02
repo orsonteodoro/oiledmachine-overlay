@@ -890,6 +890,7 @@ NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
 PYTHON_COMPAT=( python3_{10,11} ) # Can support 3.12 but limited by Nuitka
 
 inherit cargo desktop lcnr npm xdg
+inherit cflags-depends
 
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
@@ -1006,6 +1007,9 @@ RUST_BINDINGS_DEPEND="
 RUST_BINDINGS_BDEPEND="
 	virtual/pkgconfig
 "
+declare -A CFLAGS_RDEPEND=(
+	["net-libs/webkit-gtk"]="<=;-O2" # -O3 and -Ofast freezes
+)
 RDEPEND+="
 	${RUST_BINDINGS_DEPEND}
 	~sys-apps/coolercontrold-${PV}
@@ -1031,6 +1035,7 @@ RESTRICT="mirror"
 pkg_setup() {
 ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
 	npm_pkg_setup
+	cflags-depends_check
 }
 
 # @FUNCTION: cargo_src_unpack
@@ -1099,6 +1104,11 @@ src_unpack() {
 src_configure() {
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri" \
 	cargo_src_configure
+	sed -i \
+		-e "s|localhost:5173|localhost:11987|g" \
+		-e "s|../dist|localhost:11987|g" \
+		"${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri/tauri.conf.json" \
+		|| die
 }
 
 src_compile() {
@@ -1112,7 +1122,7 @@ einfo "PWD: $(pwd)"
 	popd
 	[[ -e "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/dist/index.html" ]] || die
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri" \
-	cargo_src_compile --release -F custom-protocol
+	cargo_src_compile -F custom-protocol
 }
 
 src_install() {
