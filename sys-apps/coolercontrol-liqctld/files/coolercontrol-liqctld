@@ -23,6 +23,7 @@ start()
 }
 
 stop()
+{
         local retval
 	ebegin "Stopping coolercontrol-liqctld"
 		start-stop-daemon \
