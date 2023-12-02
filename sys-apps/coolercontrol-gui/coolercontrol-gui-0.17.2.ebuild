@@ -24,7 +24,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" wayland X r1"
+IUSE+=" wayland X r2"
 REQUIRED_USE="
 	|| (
 		wayland
@@ -75,10 +75,24 @@ _python_compile() {
 		|| die
 }
 
-src_install() {
+gen_wrapper() {
+	# dev-lang/python-exec requires exact name for it to work.
+	# A workaround for using a different name.
+cat <<EOF > "${ED}/usr/bin/coolercontrol-qt6"
+#!/bin/bash
+EPYTHON="${EPYTHON:-${EPYTHON}}"
+\${EPYTHON} -m coolercontrol "\${@}"
+EOF
+ewarn "coolercontrol-qt6 is using the same file permissions as unwrapped."
+# Some fan programs require elevated priveleges I think.
+	fperms 0755 "/usr/bin/coolercontrol-qt6"
+}
+
+python_install_all() {
 	distutils-r1_python_install_all
 	python_optimize
-	mv "${ED}/usr/bin/coolercontrol"{,-qt6} || die
+	rm "${ED}/usr/bin/coolercontrol" || die
+	gen_wrapper
 	make_desktop_entry \
 		"/usr/bin/coolercontrol-qt6" \
 		"CoolerControl (Qt6)" \
