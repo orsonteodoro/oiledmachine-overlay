@@ -960,16 +960,16 @@ NPM_PACKAGES_LICENSES="
 	MIT
 	ISC
 "
-# ( Apache-2.0, all-rights-reserved ) coolercontrol-ui/node_modules/reflect-metadata/CopyrightNotice.txt ; The distro's Apache-2.0 license template does not have all rights reserved
-# ( MIT all-rights-reserved ) coolercontrol-ui/node_modules/sass/LICENSE
-# ( ISC MIT openssl SSLeay )
+# ( all-rights-reserved, Apache-2.0 ) - coolercontrol-ui/node_modules/reflect-metadata/CopyrightNotice.txt ; The distro's Apache-2.0 license template does not have all rights reserved
+# ( all-rights-reserved, MIT ) - coolercontrol-ui/node_modules/sass/LICENSE
+# ( ISC MIT openssl SSLeay ) - cargo_home/gentoo/ring-0.17.5/LICENSE
 # 0BSD - coolercontrol-ui/node_modules/tslib/CopyrightNotice.txt
+# Apache-2.0, MIT - coolercontrol-ui/node_modules/@mdi/js/LICENSE
 # Boost-1.0 - cargo_home/gentoo/ryu-1.0.15/LICENSE-BOOST
+# CC-BY-4.0, MIT, Unicode-DFS-2016, W3C-Community-Final-Specification-Agreement - coolercontrol-ui/node_modules/typescript/ThirdPartyNoticeText.txt
 # CC0-1.0 - coolercontrol-ui/node_modules/csso/node_modules/mdn-data/LICENSE
 # custom - coolercontrol-ui/node_modules/jackspeak/LICENSE.md
 #   keywords:  "This license gives everyone as much permission to work with"
-# Apache-2.0, MIT - coolercontrol-ui/node_modules/@mdi/js/LICENSE
-# CC-BY-4.0, MIT, Unicode-DFS-2016, W3C-Community-Final-Specification-Agreement - coolercontrol-ui/node_modules/typescript/ThirdPartyNoticeText.txt
 # GPL-3+, HPND-Pbmplus - cargo_home/gentoo/imagequant-4.2.2/COPYRIGHT
 LICENSE="
 	${CARGO_PACKAGES_LICENSES}
