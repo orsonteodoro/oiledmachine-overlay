@@ -1714,6 +1714,8 @@ eerror
 	replace-flags "-O1" "-O3"
 	replace-flags "-Os" "-O3"
 	replace-flags "-O2" "-O3"
+	replace-flags "-Ofast" "-O3" # freezes on coolcontrol-gtk3
+	filter-flags '-ffast-math'
 
 	if is-flagq "-Ofast" ; then
 		# Precaution
