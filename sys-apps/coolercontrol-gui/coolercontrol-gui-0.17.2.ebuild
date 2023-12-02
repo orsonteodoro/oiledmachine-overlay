@@ -47,7 +47,7 @@ RDEPEND+="
 	hwmon? (
 		>=sys-apps/lm-sensors-3.6.0
 	)
-	~sys-apps/coolercontrold-${PV}
+	~sys-apps/coolercontrold-${PV}[hwmon?]
 "
 DEPEND+="
 	${RDEPEND}
