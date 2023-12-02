@@ -291,7 +291,7 @@ LICENSE="
 # || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) Source/WTF/wtf/DateMath.h
 # * The public-domain is not presented in LICENSE variable to not give
 #   the wrong impression that the entire package is released in the public domain.
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
+#KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 
 API_VERSION="4.1"
 UOPTS_IMPLS="_${API_VERSION}"
@@ -1176,7 +1176,7 @@ ewarn
 
 pkg_setup() {
 einfo
-einfo "This is the stable branch."
+einfo "This is the unstable branch."
 einfo
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -1717,7 +1717,7 @@ eerror
 	replace-flags "-O2" "-O2"
 	replace-flags "-O3" "-O2"
 	replace-flags "-O4" "-O2"
-	replace-flags "-Ofast" "-O2" # freezes on coolcontrol-gtk3
+	replace-flags "-Ofast" "-O2"
 	filter-flags '-ffast-math'
 
 	if is-flagq "-Ofast" ; then
