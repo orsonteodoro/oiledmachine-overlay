@@ -1,0 +1,109 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "tutorial",
+    "version-helper",
+
+    "audio/audiofx",
+    "audio/claxon",
+    "audio/csound",
+    "audio/lewton",
+    "audio/spotify",
+
+    "generic/file",
+    "generic/sodium",
+    "generic/threadshare",
+
+    "mux/flavors",
+    "mux/fmp4",
+    "mux/mp4",
+
+    "net/aws",
+    "net/hlssink3",
+    "net/ndi",
+    "net/onvif",
+    "net/raptorq",
+    "net/reqwest",
+    "net/rtp",
+    "net/webrtchttp",
+    "net/webrtc",
+    "net/webrtc/protocol",
+    "net/webrtc/signalling",
+
+    "text/ahead",
+    "text/json",
+    "text/regex",
+    "text/wrap",
+
+    "utils/fallbackswitch",
+    "utils/livesync",
+    "utils/togglerecord",
+    "utils/tracers",
+    "utils/uriplaylistbin",
+
+    "video/cdg",
+    "video/closedcaption",
+    "video/dav1d",
+    "video/ffv1",
+    "video/gif",
+    "video/gtk4",
+    "video/hsv",
+    "video/png",
+    "video/rav1e",
+    "video/videofx",
+    "video/webp",
+]
+
+# Only plugins without external dependencies
+default-members = [
+    "version-helper",
+
+    "audio/audiofx",
+    "audio/claxon",
+    "audio/lewton",
+
+    "generic/threadshare",
+
+    "mux/fmp4",
+    "mux/mp4",
+
+    "net/aws",
+    "net/hlssink3",
+    "net/onvif",
+    "net/raptorq",
+    "net/reqwest",
+    "net/rtp",
+    "net/webrtchttp",
+    "net/webrtc",
+    "net/webrtc/protocol",
+    "net/webrtc/signalling",
+    "net/ndi",
+
+    "text/ahead",
+    "text/json",
+    "text/regex",
+    "text/wrap",
+
+    "utils/fallbackswitch",
+    "utils/livesync",
+    "utils/togglerecord",
+    "utils/tracers",
+    "utils/uriplaylistbin",
+
+    "video/cdg",
+    "video/ffv1",
+    "video/gif",
+    "video/hsv",
+    "video/png",
+    "video/rav1e",
+]
+
+[profile.release]
+lto = true
+opt-level = 3
+debug = true
+panic = 'unwind'
+
+[profile.dev]
+opt-level = 1
