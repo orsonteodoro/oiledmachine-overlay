@@ -826,15 +826,58 @@ HOMEPAGE="
 https://gitlab.com/coolercontrol/coolercontrol
 https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrold
 "
+CARGO_PACKAGES_LICENSES="
+	(
+		Apache-2.0
+		BSD
+		CC-BY-3.0
+		MIT
+	)
+	(
+		ISC
+		MIT
+		openssl
+		SSLeay
+	)
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	Boost-1.0
+	BSD-2
+	GPL-3+
+	HPND-Pbmplus
+	ISC
+	MIT
+	MPL-2.0
+	Unicode-DFS-2016
+	ZLIB
+	|| (
+		Apache-2.0
+		MIT
+	)
+	|| (
+		Apache-2.0
+		Apache-2.0-with-LLVM-exceptions
+		MIT
+	)
+"
+# CC-BY-3.0 - cargo_home/gentoo/crossbeam-channel-0.5.8/LICENSE-THIRD-PARTY
+# HPND-Pbmplus - cargo_home/gentoo/imagequant-4.2.2/COPYRIGHT
+# MPL-2.0 - cargo_home/gentoo/webpki-roots-0.25.3/LICENSE
+# openssl, SSLeay - cargo_home/gentoo/ring-0.17.5/LICENSE
+# Unicode-DFS-2016 - gentoo/regex-syntax-0.8.2/src/unicode_tables/LICENSE-UNICODE
 LICENSE="
+	${CARGO_PACKAGES_LICENSES}
 	GPL-3+
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" openrc systemd r1"
+IUSE+=" hwmon openrc systemd r1"
 # U 20.04
 RDEPEND+="
 	~sys-apps/coolercontrol-liqctld-${PV}
+	hwmon? (
+		>=sys-apps/lm-sensors-3.6.0
+	)
 "
 DEPEND+="
 	${RDEPEND}

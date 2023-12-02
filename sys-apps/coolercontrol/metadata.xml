@@ -11,11 +11,14 @@
     <bugs-to>https://gitlab.com/coolercontrol/coolercontrol/-/issues</bugs-to>
   </upstream>
   <use>
-    <flag name="qt6">
-      Use the older user interface
-    </flag>
     <flag name="gtk3">
-      Use the newer user interface
+      Use the newer user interface.  (EXPERIMENTAL/WIP)
+    </flag>
+    <flag name="hwmon">
+      Add support for CPU and motherboard fan/temperature monitoring.
+    </flag>
+    <flag name="qt6">
+      Use the older user interface.
     </flag>
   </use>
 </pkgmetadata>

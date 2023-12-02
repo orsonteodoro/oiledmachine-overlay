@@ -24,7 +24,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" wayland X r2"
+IUSE+=" hwmon wayland X r2"
 REQUIRED_USE="
 	|| (
 		wayland
@@ -44,6 +44,9 @@ RDEPEND+="
 	>=dev-python/setproctitle-1.3.3[${PYTHON_USEDEP}]
 	>=dev-qt/qtbase-6.6.0[wayland?,X?]
 	>=media-libs/mesa-20.0.4
+	hwmon? (
+		>=sys-apps/lm-sensors-3.6.0
+	)
 	~sys-apps/coolercontrold-${PV}
 "
 DEPEND+="
