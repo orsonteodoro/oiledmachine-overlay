@@ -1860,3 +1860,10 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
+
+# OILEDMACHINE-OVERLAY-TEST:
+# with -O2:
+#   minibrowser:  passed
+#   search engine(s):  passed
+#   video site(s):  fail
+#   wiki(s):  passed
