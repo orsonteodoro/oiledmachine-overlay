@@ -23,6 +23,7 @@ start()
 }
 
 stop()
+{
         local retval
 	ebegin "Stopping coolercontrold"
 		start-stop-daemon \
