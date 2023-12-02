@@ -849,6 +849,7 @@ CARGO_PACKAGES_LICENSES="
 	MIT
 	MPL-2.0
 	Unicode-DFS-2016
+	Unlicense
 	ZLIB
 	|| (
 		Apache-2.0
@@ -860,13 +861,43 @@ CARGO_PACKAGES_LICENSES="
 		MIT
 	)
 "
+NPM_PACKAGES_LICENSES="
+	(
+		CC-BY-4.0
+		MIT
+		Unicode-DFS-2016
+		W3C-Community-Final-Specification-Agreement
+		W3C-Software-and-Document-Notice-and-License
+	)
+	(
+		Apache-2.0
+		MIT
+	)
+	(
+		Apache-2.0
+		all-rights-reserved
+	)
+	0BSD
+	CC0-1.0
+	custom
+"
+# ( Apache-2.0, all-rights-reserved ) coolercontrol-ui/node_modules/reflect-metadata/CopyrightNotice.txt ; The distro's Apache-2.0 license template does not have all rights reserved
+# ( MIT all-rights-reserved ) coolercontrol-ui/node_modules/sass/LICENSE
+# 0BSD - coolercontrol-ui/node_modules/tslib/CopyrightNotice.txt
+# CC0-1.0 - coolercontrol-ui/node_modules/csso/node_modules/mdn-data/LICENSE
+# custom - coolercontrol-ui/node_modules/jackspeak/LICENSE.md
+#   keywords:  "This license gives everyone as much permission to work with"
+# Apache-2.0, MIT - coolercontrol-ui/node_modules/@mdi/js/LICENSE
+# CC-BY-4.0, MIT, Unicode-DFS-2016, W3C-Community-Final-Specification-Agreement - coolercontrol-ui/node_modules/typescript/ThirdPartyNoticeText.txt
 # CC-BY-3.0 - cargo_home/gentoo/crossbeam-channel-0.5.8/LICENSE-THIRD-PARTY
 # HPND-Pbmplus - cargo_home/gentoo/imagequant-4.2.2/COPYRIGHT
 # MPL-2.0 - cargo_home/gentoo/webpki-roots-0.25.3/LICENSE
 # openssl, SSLeay - cargo_home/gentoo/ring-0.17.5/LICENSE
 # Unicode-DFS-2016 - gentoo/regex-syntax-0.8.2/src/unicode_tables/LICENSE-UNICODE
+# Unlicense - cargo_home/gentoo/memchr-2.6.4/UNLICENSE
 LICENSE="
 	${CARGO_PACKAGES_LICENSES}
+	${NPM_PACKAGES_LICENSES}
 	GPL-3+
 "
 KEYWORDS="~amd64"

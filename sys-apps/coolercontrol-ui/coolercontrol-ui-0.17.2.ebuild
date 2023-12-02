@@ -903,7 +903,36 @@ HOMEPAGE="
 https://gitlab.com/coolercontrol/coolercontrol
 https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrol-ui
 "
+NPM_PACKAGES_LICENSES="
+	(
+		CC-BY-4.0
+		MIT
+		Unicode-DFS-2016
+		W3C-Community-Final-Specification-Agreement
+		W3C-Software-and-Document-Notice-and-License
+	)
+	(
+		Apache-2.0
+		MIT
+	)
+	(
+		Apache-2.0
+		all-rights-reserved
+	)
+	0BSD
+	CC0-1.0
+	custom
+"
+# ( Apache-2.0, all-rights-reserved ) coolercontrol-ui/node_modules/reflect-metadata/CopyrightNotice.txt ; The distro's Apache-2.0 license template does not have all rights reserved
+# ( MIT all-rights-reserved ) coolercontrol-ui/node_modules/sass/LICENSE
+# 0BSD - coolercontrol-ui/node_modules/tslib/CopyrightNotice.txt
+# CC0-1.0 - coolercontrol-ui/node_modules/csso/node_modules/mdn-data/LICENSE
+# custom - coolercontrol-ui/node_modules/jackspeak/LICENSE.md
+#   keywords:  "This license gives everyone as much permission to work with"
+# Apache-2.0, MIT - coolercontrol-ui/node_modules/@mdi/js/LICENSE
+# CC-BY-4.0, MIT, Unicode-DFS-2016, W3C-Community-Final-Specification-Agreement - coolercontrol-ui/node_modules/typescript/ThirdPartyNoticeText.txt
 LICENSE="
+	${NPM_PACKAGES_LICENSES}
 	GPL-3+
 "
 KEYWORDS="~amd64"
