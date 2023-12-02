@@ -57,15 +57,23 @@ DEPEND+="
 	${RDEPEND}
 "
 
+src_configure() {
+	default
+}
+
+src_configure() { :; }
+
+src_compile() { :; }
+
 src_install() {
 	insinto "/usr/share/icons/hicolor/scalable/apps"
-	doins "metadata/org.coolercontrol.CoolerControl.svg"
+	doins "packaging/metadata/org.coolercontrol.CoolerControl.svg"
 
 	insinto "/usr/share/icons/hicolor/256x256/apps"
-	doins "metadata/org.coolercontrol.CoolerControl.png"
+	doins "packaging/metadata/org.coolercontrol.CoolerControl.png"
 
 	insinto "/usr/share/metainfo"
-	doins "metadata/org.coolercontrol.CoolerControl.metainfo.xml"
+	doins "packaging/metadata/org.coolercontrol.CoolerControl.metainfo.xml"
 }
 
 pkg_postinst() {
