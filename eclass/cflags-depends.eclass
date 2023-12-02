@@ -59,6 +59,8 @@ _cflags-depends_weigh() {
 		echo "5"
 	elif [[ "${a}" == "fast" ]] ; then
 		echo "6"
+	else
+		echo "0"
 	fi
 }
 
