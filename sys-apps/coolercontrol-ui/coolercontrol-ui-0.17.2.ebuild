@@ -976,9 +976,9 @@ LICENSE="
 	${NPM_PACKAGES_LICENSES}
 	GPL-3+
 "
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # The standalone version freezes.
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" tray wayland X r1"
+IUSE+=" tray wayland X r2"
 # U 20.04
 RUST_BINDINGS_DEPEND="
 	>=app-accessibility/at-spi2-core-2.35.1[introspection]
@@ -1097,6 +1097,9 @@ src_unpack() {
 }
 
 src_configure() {
+	sed -i -e "s|localhost:5173|localhost:11987|g" \
+		"${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri/tauri.conf.json" \
+		|| die
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri" \
 	cargo_src_configure
 }
