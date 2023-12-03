@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit autotools git-r3
+inherit autotools git-r3 multilib-minimal
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
@@ -47,7 +47,7 @@ RDEPEND="
 	sys-devel/gcc
 	virtual/libc
 	system-libunwind? (
-		sys-libs/libunwind
+		sys-libs/libunwind[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -73,14 +73,15 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+	multilib_copy_sources
 }
 
-src_prepare() {
+multilib_src_prepare() {
 	default
 	eautoreconf
 }
 
-src_configure() {
+multilib_src_configure() {
 	local mymakeargs=(
 		--enable-shared
 		$(use_enable static{-libs,})
@@ -93,7 +94,7 @@ src_configure() {
 	econf "${mymakeargs[@]}"
 }
 
-src_install() {
+multilib_src_install() {
 	default
 	find "${D}" -name '*.la' -delete || die
 	einstalldocs
