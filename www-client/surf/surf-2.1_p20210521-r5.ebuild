@@ -631,3 +631,12 @@ pkg_config() {
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
+# OILEDMACHINE-OVERLAY-TEST:  passed (webkit-gtk 2.42.2:4/37, 20231202)
+# USE="gtk3 smoothscrolling -curl -doc -geolocation -gtk4 -mod_adblock
+# -mod_adblock_easylist -mod_adblock_spam404 -mod_autoopen -mod_link_hints
+# -mod_searchengines -mod_simple_bookmarking_redux -mpv -plumb -pointer-lock
+# -pulseaudio -savedconfig -tabbed -update_adblock -url-bar -v4l"
+# ABI_X86="(64) -32 (-x32)" PYTHON_TARGETS="python3_10 -python3_11"
+# search engine(s):  passed
+# video site(s):  passed
+# wiki(s):  passed
