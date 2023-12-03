@@ -50,7 +50,7 @@ ${EXTERNAL_IUSE}
 alsa curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
-+pulseaudio savedconfig -smoothscrolling +url-bar +v4l -webgl
++pulseaudio savedconfig -smoothscrolling +url-bar +v4l +webgl
 r1
 "
 REQUIRED_USE+="
