@@ -176,12 +176,12 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  		} else {
  			context = webkit_web_context_new_with_website_data_manager(
  			          webkit_website_data_manager_new(
-+//#if ( defined(WEBKIT_WPE) && WEBKIT_WPE == 1 && defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500 )
-+//				  "process-swap-on-cross-site-navigation-enabled", TRUE,
-+//#endif
-+//#if !defined(WEBKIT_API_VERSION) || (defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500)
-+//				  "use-system-appearance-for-scrollbars", FALSE,
-+//#endif
++#if ( defined(WEBKIT_WPE) && WEBKIT_WPE == 1 && defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500 )
++				  "process-swap-on-cross-site-navigation-enabled", TRUE,
++#endif
++#if !defined(WEBKIT_API_VERSION) || (defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500)
++				  "use-system-appearance-for-scrollbars", FALSE,
++#endif
  			          "base-cache-directory", cachedir,
  			          "base-data-directory", cachedir,
  			          NULL));
