@@ -50,7 +50,7 @@ ${EXTERNAL_IUSE}
 alsa curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
-+pulseaudio savedconfig -smoothscrolling +url-bar +v4l
++pulseaudio savedconfig -smoothscrolling +url-bar +v4l -webgl
 r1
 "
 REQUIRED_USE+="
@@ -114,12 +114,12 @@ RDEPEND+="
 		|| (
 			(
 				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-				net-libs/webkit-gtk:4[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,X]
+				net-libs/webkit-gtk:4[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 			)
 			(
 				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-				net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,X]
+				net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 			)
 		)
@@ -129,12 +129,12 @@ RDEPEND+="
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,X]
+				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			)
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,X]
+				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,webgl?,X]
 			)
 		)
 	)
@@ -453,6 +453,14 @@ eerror
 	else
 		sed -i -e "s|\[SmoothScrolling\]     =       { { .i = [01] },     },|\[SmoothScrolling\]     =       { { .i = 0 },     },|g" "config.def.h" || die
 		sed -i -e "s|\[SmoothScrolling\]     =       { { .i = [01] },     },|\[SmoothScrolling\]     =       { { .i = 0 },     },|g" "${config_file}" || die
+	fi
+
+	if use webgl ; then
+		sed -i -e "s|\[WebGL\]               =       { { .i = [01] },     },|\[WebGL\]               =       { { .i = 1 },     },|g" "config.def.h" || die
+		sed -i -e "s|\[WebGL\]               =       { { .i = [01] },     },|\[WebGL\]               =       { { .i = 1 },     },|g" "${config_file}" || die
+	else
+		sed -i -e "s|\[WebGL\]               =       { { .i = [01] },     },|\[WebGL\]               =       { { .i = 0 },     },|g" "config.def.h" || die
+		sed -i -e "s|\[WebGL\]               =       { { .i = [01] },     },|\[WebGL\]               =       { { .i = 0 },     },|g" "${config_file}" || die
 	fi
 
 	eapply "${FILESDIR}/surf-2.1-gtk4.patch"

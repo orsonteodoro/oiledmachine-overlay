@@ -85,14 +85,17 @@
       Reuses an existing config.  Primarily for header only mods, custom
       search engine keyword search, custom button configuration.
     </flag>
-    <flag name="v4l">
-      Adds camera support.
-    </flag>
     <flag name="url-bar">
       Adds support for a URL bar and find-on-page feature.
 
       Otherwise, pass the URL as an argument in command line.
       (e.g. surf http://suckless.org)
+    </flag>
+    <flag name="v4l">
+      Adds camera support.
+    </flag>
+    <flag name="webgl">
+      Add support for WebGL.
     </flag>
   </use>
 </pkgmetadata>
