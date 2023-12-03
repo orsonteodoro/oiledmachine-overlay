@@ -384,6 +384,7 @@ DEFAULT_GST_PLUGINS="
 # alsa is disabled on D11, enabled on A/L, enabled in F/L
 # D11, A/L, F/L are currently not distributing stateless vaapi decoding.
 # Using dav1d because aom is slow for decoding.
+# libbacktrace is enabled upstream but disabled for security reasons.
 
 IUSE+="
 ${LANGS[@]/#/l10n_}
@@ -397,8 +398,8 @@ ${DEFAULT_GST_PLUGINS}
 aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
 -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer
 gstwebrtc hardened +introspection +javascriptcore +jit +journald +jpeg2k +jpegxl
-+lcms +libhyphen -libwebrtc -mediarecorder -mediastream +minibrowser mold
-+opengl openmp proprietary-codecs proprietary-codecs-disable
++lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder -mediastream
++minibrowser mold +opengl openmp proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
 -seccomp speech-synthesis -spell test thunder +unified-builds +variation-fonts
 wayland +webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl
@@ -869,6 +870,9 @@ RDEPEND+="
 	)
 	jpegxl? (
 		>=media-libs/libjxl-0.7.0[${MULTILIB_USEDEP}]
+	)
+	libbacktrace? (
+		sys-libs/libbacktrace[${MULTILIB_USEDEP}]
 	)
 	libhyphen? (
 		>=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}]
@@ -1433,7 +1437,7 @@ eerror
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
-		-DUSE_LIBBACKTRACE=OFF
+		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)

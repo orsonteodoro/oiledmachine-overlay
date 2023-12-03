@@ -240,6 +240,9 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       execution.  Disable for increased compatibility on alternative ARCHs and
       ABIs.
     </flag>
+    <flag name="libbacktrace">
+      Enables backtracing to list what last function(s) may caused the crash.
+    </flag>
     <flag name="libsoup3">
       Link to libsoup3.  It consequently enables HTTP/2 by default when libsoup3
       is 2.99.8 or newer.
