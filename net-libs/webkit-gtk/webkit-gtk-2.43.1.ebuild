@@ -1719,14 +1719,14 @@ eerror
 	# Forced >= -O3 to be about same relative performance to other browser engines.
 	# -O2 feels like C- grade relative other browser engines.
 
-	replace-flags "-O0" "-O2"
-	replace-flags "-O1" "-O2"
-	replace-flags "-Oz" "-O2"
-	replace-flags "-Os" "-O2"
-	replace-flags "-O2" "-O2"
-	replace-flags "-O3" "-O2"
-	replace-flags "-O4" "-O2"
-	replace-flags "-Ofast" "-O2"
+	replace-flags "-O0" "-O3"
+	replace-flags "-O1" "-O3"
+	replace-flags "-Oz" "-O3"
+	replace-flags "-Os" "-O3"
+	replace-flags "-O2" "-O3"
+	replace-flags "-O3" "-O3"
+	replace-flags "-O4" "-O3"
+	replace-flags "-Ofast" "-O3"
 	filter-flags '-ffast-math'
 
 	if is-flagq "-Ofast" ; then
