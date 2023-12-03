@@ -147,12 +147,14 @@ diff -urp surf-2.1_p20210521.orig/surf.c surf-2.1_p20210521/surf.c
  
  	gdpy = gdk_display_get_default();
  
-@@ -444,6 +482,8 @@ setup(void)
+@@ -444,6 +482,10 @@ setup(void)
  	acceptedNotificationOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
  	acceptedPointerLockOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
  	permissionRequests = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
 +
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
 +	certwin = NULL;
++#endif
  }
  
  void
