@@ -58,8 +58,14 @@ REQUIRED_USE+="
 		gtk3
 		gtk4
 	)
+	alsa? (
+		!pulseaudio
+	)
 	gtk4? (
 		!mod_adblock
+	)
+	mod_adblock? (
+		${PYTHON_REQUIRED_USE}
 	)
 	mod_adblock_easylist? (
 		mod_adblock
@@ -73,11 +79,11 @@ REQUIRED_USE+="
 	mod_simple_bookmarking_redux? (
 		savedconfig
 	)
+	pulseaudio? (
+		!alsa
+	)
 	update_adblock? (
 		mod_adblock
-	)
-	mod_adblock? (
-		${PYTHON_REQUIRED_USE}
 	)
 "
 SET_PROP_RDEPEND="
