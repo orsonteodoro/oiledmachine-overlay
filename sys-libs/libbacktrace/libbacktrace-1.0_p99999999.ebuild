@@ -62,13 +62,14 @@ BDEPEND="
 "
 PATCHES=(
 )
+DOCS=( README.md )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="14818b7783eeb9a56c3f0fca78cefd3143f8c5f6"
 		git-r3_fetch
 		git-r3_checkout
-		grep -r -e "This is version 1.0." "${S}/README.md" || die "Bump version"
+		grep -q -r -e "This is version 1.0." "${S}/README.md" || die "Bump version"
 	else
 		unpack ${A}
 	fi
@@ -95,4 +96,7 @@ src_configure() {
 src_install() {
 	default
 	find "${D}" -name '*.la' -delete || die
+	einstalldocs
+	docinto licenses
+	dodoc LICENSE
 }
