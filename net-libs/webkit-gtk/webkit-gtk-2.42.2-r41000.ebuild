@@ -1867,7 +1867,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
 
 # OILEDMACHINE-OVERLAY-TEST:
-# with -O1, clang-15.0.7 (2.42.2, 20231202):
+# with -O1, clang 15.0.7 (2.42.2, 20231202):
 #   minibrowser:  passed
 #   search engine(s):  passed
 #   video site(s):  fail (minibrowser), passed (surf)
