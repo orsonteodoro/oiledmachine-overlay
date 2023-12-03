@@ -55,9 +55,9 @@ DEPEND="
 "
 BDEPEND="
 	test? (
-		app-arch/xz-utils
-		app-arch/zstd
-		sys-libs/zlib
+		app-arch/xz-utils[${MULTILIB_USEDEP}]
+		app-arch/zstd[${MULTILIB_USEDEP}]
+		sys-libs/zlib[${MULTILIB_USEDEP}]
 	)
 "
 PATCHES=(
