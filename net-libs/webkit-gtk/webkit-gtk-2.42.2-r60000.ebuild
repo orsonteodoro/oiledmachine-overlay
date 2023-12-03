@@ -1888,3 +1888,18 @@ ewarn
 #   audio:  pass (alsa), pass (pulseaudio)
 #   stability:  less crashy overall
 #     freeze with coolercontrold, coolercontrol-ui
+
+# with -O3, clang 15.0.7 (2.42.2, 20231203):
+#   minibrowser:  passed
+#   search engine(s):  passed
+#   video site(s):  fail (minibrowser), passed (surf)
+#     vpx (streaming):  passed
+#     vpx (on demand):  passed (25 fps, 60 fps)
+#     opus:  passed
+#   wiki(s):  passed
+#   audio:  TBA (alsa), pass (pulseaudio)
+#   stability:  less crashy overall
+#     freeze with coolercontrold, coolercontrol-ui
+#   canvasmark 2013:  passed, but slow (10-35 FPS)
+#   gpu shader experiments:  failed
+#   webgl aquarium:  failed
