@@ -539,6 +539,7 @@ NON_FREE_REQUIRED_USE="
 REQUIRED_USE+="
 	${NON_FREE_REQUIRED_USE}
 	alsa? (
+		!pulseaudio
 		gstreamer
 	)
 	cpu_flags_arm_thumb2? (
@@ -590,6 +591,7 @@ REQUIRED_USE+="
 		!gles2
 	)
 	pulseaudio? (
+		!alsa
 		gstreamer
 	)
 	thunder? (
@@ -790,6 +792,9 @@ RDEPEND+="
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
+	alsa? (
+		!media-plugins/gst-plugins-pulse
+	)
 	avif? (
 		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
 	)
@@ -1878,8 +1883,8 @@ ewarn
 #   video site(s):  fail (minibrowser), passed (surf)
 #     vpx (streaming):  passed
 #     vpx (on demand):  passed (25 fps, 60 fps)
-#     opus:  failed
+#     opus:  passed
 #   wiki(s):  passed
-#   audio:  more fail than pass
+#   audio:  pass (alsa), pass (pulseaudio)
 #   stability:  less crashy overall
 #     freeze with coolercontrold, coolercontrol-ui
