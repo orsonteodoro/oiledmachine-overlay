@@ -1873,7 +1873,7 @@ ewarn
 #   video site(s):  fail (minibrowser), passed (surf)
 #   wiki(s):  passed
 
-# with -O2, gcc 12.3.1 (2.42.2, 20231202):
+# with -O2, gcc 12.3.1 (2.42.2, 20231203):
 #   minibrowser:  passed
 #   search engine(s):  passed
 #   video site(s):  fail (minibrowser), passed (surf)
