@@ -1866,8 +1866,20 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
 
 # OILEDMACHINE-OVERLAY-TEST:
-# with -O1 (2.42.2, 20231202):
+# with -O1, clang-15.0.7 (2.42.2, 20231202):
 #   minibrowser:  passed
 #   search engine(s):  passed
 #   video site(s):  fail (minibrowser), passed (surf)
 #   wiki(s):  passed
+
+# with -O2, gcc 12.3.1 (2.42.2, 20231202):
+#   minibrowser:  passed
+#   search engine(s):  passed
+#   video site(s):  fail (minibrowser), passed (surf)
+#     vpx (streaming):  passed
+#     vpx (on demand):  passed (25 fps, 60 fps)
+#     opus:  failed
+#   wiki(s):  passed
+#   audio:  more fail than pass
+#   stability:  less crashy overall
+#     freeze with coolercontrold, coolercontrol-ui
