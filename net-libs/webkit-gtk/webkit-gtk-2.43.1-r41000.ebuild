@@ -1866,8 +1866,11 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
 
 # OILEDMACHINE-OVERLAY-TEST:
-# with -O2 (2.43.1, 20231202):
+# with -O2 (2.43.1, 20231203):
 #   minibrowser:  passed
 #   search engine(s):  passed
-#   video site(s):  fail (minibrowser)
+#   video site(s):  fail (minibrowser), passed (surf)
+#     vpx:  passed
 #   wiki(s):  passed
+#   audio:  more fail than pass
+#   stability:  crashy within a few minutes
