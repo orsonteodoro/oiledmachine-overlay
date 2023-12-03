@@ -52,6 +52,7 @@ media-sound/spotify beta
 net-im/chatterino crashpad
 net-libs/cef-bin beta
 www-client/firefox telemetry
+net-libs/webkit-gtk libbacktrace
 
 # Untested
 www-client/chromium qt6

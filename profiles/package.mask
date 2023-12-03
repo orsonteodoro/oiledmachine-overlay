@@ -26,6 +26,9 @@ dev-dotnet/xwt
 # Masked for security reasons
 #-------------------------------------------------------------------------------
 
+# precaution
+sys-libs/libbacktrace
+
 # ebuilds not updated since 2020
 app-text/pdfchain
 media-gfx/nvidia-texture-tools
