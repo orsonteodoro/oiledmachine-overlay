@@ -140,7 +140,7 @@ DEPEND="
 	>=dev-python/cryptography-3.4.8[${PYTHON_USEDEP}]
 	>=dev-python/dulwich-${DULWICH_PV}[${PYTHON_USEDEP}]
 	>=dev-python/fastbencode-0.0.5[${PYTHON_USEDEP}]
-	>=dev-python/urllib3-1.26.5[${PYTHON_USEDEP}]
+	>=dev-python/urllib3-1.24.1[${PYTHON_USEDEP}]
 	>=dev-python/merge3-0.0.8[${PYTHON_USEDEP}]
 	>=dev-python/patiencediff-0.2.13[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-5.4.1[${PYTHON_USEDEP}]
@@ -169,14 +169,14 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/setuptools-59.6.0[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-60[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-rust-1.2.0[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-gettext-0.1.1[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-gettext-0.1.4[${PYTHON_USEDEP}]
 	>=dev-python/flake8-${FLAKE8_PV}[${PYTHON_USEDEP}]
 	>=dev-python/mypy-0.942[${PYTHON_USEDEP}]
 	>=dev-python/packaging-21.3[${PYTHON_USEDEP}]
 	cext? (
-		>=dev-python/cython-0.29.28[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.29[${PYTHON_USEDEP}]
 	)
 	doc? (
 		>=dev-python/docutils-0.17.1[${PYTHON_USEDEP}]
