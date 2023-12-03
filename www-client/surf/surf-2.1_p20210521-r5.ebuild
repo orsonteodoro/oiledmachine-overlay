@@ -47,7 +47,7 @@ KEYWORDS="
 SLOT="0"
 IUSE+="
 ${EXTERNAL_IUSE}
-curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
+alsa curl doc gtk3 gtk4 +geolocation mod_adblock mod_adblock_spam404
 mod_adblock_easylist mod_autoopen mod_link_hints mod_searchengines
 mod_simple_bookmarking_redux mpv tabbed update_adblock plumb -pointer-lock
 +pulseaudio savedconfig -smoothscrolling +url-bar +v4l
@@ -91,6 +91,15 @@ RDEPEND+="
 	sys-apps/grep
 	x11-apps/xprop
 	x11-libs/libX11[${MULTILIB_USEDEP}]
+	alsa? (
+		!media-plugins/gst-plugins-pulse
+		media-libs/gst-plugins-base:1.0[alsa]
+		media-plugins/gst-plugins-meta:1.0[-pulseaudio]
+	)
+	pulseaudio? (
+		media-libs/gst-plugins-base:1.0[-alsa]
+		media-plugins/gst-plugins-meta:1.0[pulseudio]
+	)
 	curl? (
 		net-misc/curl[${MULTILIB_USEDEP}]
 		x11-terms/st
@@ -99,12 +108,12 @@ RDEPEND+="
 		|| (
 			(
 				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-				net-libs/webkit-gtk:4[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?,X]
+				net-libs/webkit-gtk:4[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,X]
 				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 			)
 			(
 				app-crypt/gcr:0[gtk,${MULTILIB_USEDEP}]
-				net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?,X]
+				net-libs/webkit-gtk:4.1[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,X]
 				x11-libs/gtk+:3[${MULTILIB_USEDEP},X]
 			)
 		)
@@ -114,12 +123,12 @@ RDEPEND+="
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?,X]
+				net-libs/webkit-gtk:5[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,X]
 			)
 			(
 				app-crypt/gcr:4[gtk,${MULTILIB_USEDEP}]
 				gui-libs/gtk:4[X]
-				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},geolocation?,pulseaudio?,v4l?,X]
+				net-libs/webkit-gtk:6[${MULTILIB_USEDEP},alsa?,geolocation?,pulseaudio?,v4l?,X]
 			)
 		)
 	)
