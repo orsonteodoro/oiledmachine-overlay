@@ -1900,6 +1900,6 @@ ewarn
 #   audio:  TBA (alsa), pass (pulseaudio)
 #   stability:  less crashy overall
 #     freeze with coolercontrold, coolercontrol-ui
-#   canvasmark 2013:  passed, but slow (10-35 FPS)
-#   gpu shader experiments:  failed
-#   webgl aquarium:  failed
+#   canvasmark 2013:  passed but slow (10-35 FPS, surf), passed but slow (17-41 FPS, minibrowser)
+#   gpu shader experiments:  failed (surf), passed (minibrowser)
+#   webgl aquarium:  failed (surf), passed (minibrowser)
