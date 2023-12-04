@@ -21,8 +21,9 @@ PYTHON_COMPAT=( python3_{8..11} )
 USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
-inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr linux-info llvm \
-multilib-minimal pax-utils python-any-r1 ruby-single toolchain-funcs uopts
+inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr
+inherit linux-info llvm multilib-minimal pax-utils python-any-r1 ruby-single
+inherit toolchain-funcs uopts
 inherit cflags-depends
 
 DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/1.1 support)"
@@ -1550,30 +1551,30 @@ eerror
 				-DENABLE_SAMPLING_PROFILER=OFF
 			)
 		fi
-		jit_enabled="0"
-	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && use jit ; then
+		jit_enabled=0
+	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=$(usex ftl-jit)
-			-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			-DENABLE_SAMPLING_PROFILER=ON
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 && use jit ; then
+	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=OFF
-			-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			-DENABLE_SAMPLING_PROFILER=ON
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ABI}" == "n32" ]] && use jit ; then
+	elif [[ "${ABI}" == "n32" ]] ; then
 		# mips32
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
@@ -1583,9 +1584,9 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
-			-DUSE_SYSTEM_MALLOC=$(usex jit OFF $(usex !bmalloc))
+			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ARCH}" == "riscv" && ( "${ABI}" == "lp64d" || "${ABI}" == "lp64" ) ]] && use jit ; then
+	elif [[ "${ARCH}" == "riscv" && ( "${ABI}" == "lp64d" || "${ABI}" == "lp64" ) ]] ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -1594,7 +1595,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
-			-DUSE_SYSTEM_MALLOC=$(usex jit OFF $(usex !bmalloc))
+			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	else
 einfo
@@ -1608,14 +1609,14 @@ einfo
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
-			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
+			-DUSE_SYSTEM_MALLOC=ON
 		)
-		jit_enabled="0"
+		jit_enabled=0
 	fi
 
 	# Arches without JIT support also need this to really disable it in all
 	# places
-	if [[ "${jit_enabled}" == "0" ]] ; then
+	if (( ${jit_enabled} == 0 )) ; then
 einfo
 einfo "Disabled YARR (regex) JIT"
 einfo
