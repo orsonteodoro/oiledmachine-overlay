@@ -383,6 +383,11 @@ ewarn "[snapshot]"
 ewarn "capture_failed = false"
 ewarn "capture_successful = false"
 ewarn
+ewarn "[video]"
+ewarn "# This value needs to be re-tuned to the lowest possible for your face"
+ewarn "# to reduce false positives while still able to detect your face."
+ewarn "certainty = 4.0"
+ewarn
 ewarn "Saved snapshots should be deleted with shred (secure wipe) as well from:"
 ewarn
 ewarn "  # For 2.x installs:"
