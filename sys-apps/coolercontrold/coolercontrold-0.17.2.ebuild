@@ -902,12 +902,15 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" hwmon openrc systemd r1"
+IUSE+=" hwmon video_cards_nvidia openrc systemd r1"
 # U 20.04
 RDEPEND+="
 	~sys-apps/coolercontrol-liqctld-${PV}
 	hwmon? (
 		>=sys-apps/lm-sensors-3.6.0
+	)
+	video_cards_nvidia? (
+		x11-drivers/nvidia-drivers[tools]
 	)
 "
 DEPEND+="
