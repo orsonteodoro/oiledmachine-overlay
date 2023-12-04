@@ -552,6 +552,7 @@ REQUIRED_USE+="
 	)
 	dfg-jit? (
 		jit
+		yarr-jit
 	)
 	ftl-jit? (
 		jit
@@ -1259,6 +1260,44 @@ eerror
 eerror "-fuse-ld=mold requires the mold USE flag."
 eerror
 		die
+	fi
+
+	if use 64kb-page-block ; then
+		if use arm64 ; then
+			CONFIG_CHECK="~ARM64_64K_PAGES ~!ARM64_4K_PAGES ~!ARM64_16K_PAGES"
+			WARNING_ARM64_64K_PAGES=\
+"CONFIG_ARM64_64K_PAGES must be set to =y in the kernel."
+			WARNING_ARM64_16K_PAGES=\
+"CONFIG_ARM64_16K_PAGES must be set to =n in the kernel."
+			WARNING_ARM64_4K_PAGES=\
+"CONFIG_ARM64_4K_PAGES must be set to =n in the kernel."
+			check_extra_config
+		elif use ia64 ; then
+			CONFIG_CHECK="~IA64_PAGE_SIZE_64KB ~!IA64_PAGE_SIZE_16KB ~!IA64_PAGE_SIZE_8KB ~!IA64_PAGE_SIZE_4KB"
+			WARNING_IA64_PAGE_SIZE_64KB=\
+"CONFIG_IA64_PAGE_SIZE_64KB must be set to =y in the kernel."
+			WARNING_IA64_PAGE_SIZE_16KB=\
+"CONFIG_IA64_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_8KB=\
+"CONFIG_IA64_PAGE_SIZE_8KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_4KB=\
+"CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
+			check_extra_config
+		elif use powerpc ; then
+			CONFIG_CHECK="~PPC_256K_PAGES ~PPC_64K_PAGES ~!PPC_16K_PAGES ~!PPC_4K_PAGES"
+			WARNING_PPC_256K_PAGES=\
+"CONFIG_PPC_256K_PAGES is an undefined scenario that may result in undefined "\
+"behavior.  For deterministic behavior, either set both CONFIG_PPC_64K_PAGES=y "\
+"and set CONFIG_PPC_256K_PAGES=n, or disable the 64kb-page-block USE flag."
+			WARNING_PPC_64K_PAGES=\
+"CONFIG_PPC_64K_PAGES must be set to =y in the kernel."
+			WARNING_PPC_16K_PAGES=\
+"CONFIG_PPC_16K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_4K_PAGES=\
+"CONFIG_PPC_4K_PAGES must be set to =n in the kernel."
+			check_extra_config
+
+		fi
 	fi
 
 	verify_codecs
