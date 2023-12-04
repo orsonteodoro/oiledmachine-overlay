@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python3_{8..11} )
 inherit flag-o-matic git-r3 multilib-minimal python-r1 toolchain-funcs
 
 EGIT_BRANCH="surf-webkit2"
-EGIT_COMMIT="761ea9e4c6c4d8aba4a4d39da9c9b4db8ac471b1" # 2021-05-20 22:16
+EGIT_COMMIT="30f5464eb11b96f740b124816cbcfa55f125cf53" # 2023-11-18 11:40
 EGIT_REPO_URI="https://git.suckless.org/surf"
 AUTOOPEN_FN="surf-0.3-autoopen.diff"
 LINK_HINTS_FN="surf-9999-link-hints.diff"
@@ -323,7 +323,7 @@ eerror
 
 	if use mod_adblock ; then
 		check_savedconfig_path
-		eapply "${FILESDIR}/${PN}-9999-adblock.patch"
+		eapply "${FILESDIR}/${PN}-2.1_p20231118-adblock.patch"
 		if ! grep -q -F -e "PAGE_LOAD_COMMITTED" \
 			"${SAVEDCONFIG_PATH}" ; then
 eerror
@@ -397,10 +397,10 @@ ewarn
 	fi
 
 	if use mod_adblock ; then
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v3-01.patch"
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v3-02.patch"
+		eapply "${FILESDIR}/surf-2.1_p20231118-permission-requests-rework-v3-01.patch"
+		eapply "${FILESDIR}/surf-2.1_p20231118-permission-requests-rework-v3-02.patch"
 	else
-		eapply "${FILESDIR}/surf-2.1-permission-requests-rework-v3.patch"
+		eapply "${FILESDIR}/surf-2.1_p20231118-permission-requests-rework-v3.patch"
 	fi
 
 	if use savedconfig ; then
@@ -482,7 +482,7 @@ eerror
 	sed -E -i -e "s|\[ZoomLevel\]           =       \{ \{ .f = [.0-9]+ \},   \},|\[ZoomLevel\]           =       { { .f = ${SURF_ZOOM_LEVEL} },   },|g" "config.def.h" || die
 	sed -E -i -e "s|\[ZoomLevel\]           =       \{ \{ .f = [.0-9]+ \},   \},|\[ZoomLevel\]           =       { { .f = ${SURF_ZOOM_LEVEL} },   },|g" "${config_file}" || die
 
-	eapply "${FILESDIR}/surf-2.1-gtk4.patch"
+	eapply "${FILESDIR}/surf-2.1_p20231118-gtk4.patch"
 
 	if has_version "net-libs/webkit-gtk:6" && use gtk4 ; then
 einfo "Switching to webkit-gtk:6"

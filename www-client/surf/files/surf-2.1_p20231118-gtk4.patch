@@ -1,0 +1,703 @@
+Subject:  Add GTK 4 support
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch status:  In Testing
+
+See main.c sections for compatibility
+https://github.com/WebKit/WebKit/commit/94be12a42fa1ad0b89aba0e4bb55943c182f86bf
+https://github.com/WebKit/WebKit/commit/5b5c7d2947db90873bab1714a42a9b78d6d83f1c
+https://github.com/WebKit/WebKit/commit/7b4a16ec6138701a2caad89bd243fdbb2863151a
+
+Changes:
+gtk3 -> gtk4
+gcr3 -> gcr4
+Show digital certificate using gcr4 with custom window.
+URL bar (with SETPROP) is done externally outside window instead of using GtkPlug
+which was removed in GTK 4.
+
+It requires manual changes to config.mk.
+
+diff -urp surf-2.1_p20231118.orig/config.def.h surf-2.1_p20231118/config.def.h
+--- surf-2.1_p20231118.orig/config.def.h	2023-12-03 17:36:03.841750030 -0800
++++ surf-2.1_p20231118/config.def.h	2023-12-03 17:36:17.933749860 -0800
+@@ -65,6 +65,16 @@ static WebKitFindOptions findopts = WEBK
+ #define PROMPT_FIND "Find:"
+ 
+ /* SETPROP(readprop, setprop, prompt)*/
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++#define SETPROP(r, s, p) { \
++        .v = (const char *[]){ "/bin/sh", "-c", \
++             "prop=\"$(printf '%b' \"$(xprop -id $1 $2 " \
++             "| sed \"s/^$2(STRING) = //;s/^\\\"\\(.*\\)\\\"$/\\1/\")\" " \
++             "| dmenu -p \"$4\")\" && xprop -id $1 -f $3 8s -set $3 \"$prop\"", \
++             "surf-setprop", winid, r, s, p, NULL \
++        } \
++}
++#else
+ #define SETPROP(r, s, p) { \
+         .v = (const char *[]){ "/bin/sh", "-c", \
+              "prop=\"$(printf '%b' \"$(xprop -id $1 "r" " \
+@@ -75,6 +85,7 @@ static WebKitFindOptions findopts = WEBK
+              "surf-setprop", winid, NULL \
+         } \
+ }
++#endif
+ 
+ /* DOWNLOAD(URI, referer) */
+ #define DOWNLOAD(u, r) { \
+Only in surf-2.1_p20231118: config.def.h.orig
+diff -urp surf-2.1_p20231118.orig/surf.c surf-2.1_p20231118/surf.c
+--- surf-2.1_p20231118.orig/surf.c	2023-12-03 17:36:03.801750031 -0800
++++ surf-2.1_p20231118/surf.c	2023-12-03 17:38:17.757748409 -0800
+@@ -20,14 +20,23 @@
+ 
+ #include <gdk/gdk.h>
+ #include <gdk/gdkkeysyms.h>
+-#include <gdk/gdkx.h>
+ #include <gio/gunixfdlist.h>
+ #include <glib/gstdio.h>
+ #include <gtk/gtk.h>
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++#include <gdk/x11/gdkx.h>
++#include <gcr-4/gcr/gcr.h>
++#else
++#include <gdk/gdkx.h>
+ #include <gtk/gtkx.h>
+ #include <gcr/gcr.h>
++#endif
+ #include <JavaScriptCore/JavaScript.h>
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0600
++#include <webkit/webkit.h>
++#else
+ #include <webkit2/webkit2.h>
++#endif
+ #include <X11/X.h>
+ #include <X11/Xatom.h>
+ #include <glib.h>
+@@ -198,10 +207,19 @@ static WebKitWebView *newview(Client *c,
+ static void initwebextensions(WebKitWebContext *wc, Client *c);
+ static GtkWidget *createview(WebKitWebView *v, WebKitNavigationAction *a,
+                              Client *c);
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++static void buttonreleased(GtkGestureClick *self, gint n_press, gdouble x, gdouble y, Client *c);
++static gboolean winevent_key_pressed(GtkEventControllerKey *self, guint keyval, guint keycode, GdkModifierType state, Client *c);
++static void winevent_enter(GtkEventControllerMotion *self, gdouble x, gdouble y, Client *c);
++static void winevent_leave(GtkEventControllerMotion *self, Client *c);
++static void winevent_notify(GObject *self, GParamSpec *pspec, Client *c);
++static gboolean processx(GdkX11Display* self, gpointer e, gpointer d);
++#else
+ static gboolean buttonreleased(GtkWidget *w, GdkEvent *e, Client *c);
+ static GdkFilterReturn processx(GdkXEvent *xevent, GdkEvent *event,
+                                 gpointer d);
+ static gboolean winevent(GtkWidget *w, GdkEvent *e, Client *c);
++#endif
+ static gboolean readsock(GIOChannel *s, GIOCondition ioc, gpointer unused);
+ static void showview(WebKitWebView *v, Client *c);
+ static GtkWidget *createwindow(Client *c);
+@@ -235,7 +253,11 @@ static void closeview(WebKitWebView *v,
+ static void destroywin(GtkWidget* w, Client *c);
+ 
+ /* Hotkeys */
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++static void pasteuri(GObject *source_object, GAsyncResult *res, gpointer d);
++#else
+ static void pasteuri(GtkClipboard *clipboard, const char *text, gpointer d);
++#endif
+ static void reload(Client *c, const Arg *a);
+ static void print(Client *c, const Arg *a);
+ static void showcert(Client *c, const Arg *a);
+@@ -255,12 +277,20 @@ static void find(Client *c, const Arg *a
+ static void clicknavigate(Client *c, const Arg *a, WebKitHitTestResult *h);
+ static void clicknewwindow(Client *c, const Arg *a, WebKitHitTestResult *h);
+ static void clickexternplayer(Client *c, const Arg *a, WebKitHitTestResult *h);
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++static void clickclosecert(GtkButton* self, Client *c);
++#endif
+ 
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++GtkWidget *certwin;
++#endif
+ static char winid[64];
+ static char togglestats[11];
+ static char pagestats[2];
+ static Atom atoms[AtomLast];
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500
+ static Window embed;
++#endif
+ static int showxid;
+ static int cookiepolicy;
+ static Display *dpy;
+@@ -280,6 +310,10 @@ static GHashTable *acceptedNotificationO
+ static GHashTable *acceptedPointerLockOrigins;
+ static GHashTable *permissionRequests;
+ 
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++static GMainLoop *mainloop;
++#endif
++
+ static ParamName loadtransient[] = {
+ 	Certificate,
+ 	CookiePolicies,
+@@ -371,7 +405,11 @@ setup(void)
+ 	atoms[AtomPointerLock] = XInternAtom(dpy, "_SURF_POLK", False);
+ 	atoms[AtomDrm] = XInternAtom(dpy, "_SURF_DRM", False);
+ 
++#if defined(WEBKIT_API_VERSION) && ( WEBKIT_API_VERSION >= 0500 )
++	gtk_init();
++#else
+ 	gtk_init(NULL, NULL);
++#endif
+ 
+ 	gdpy = gdk_display_get_default();
+ 
+@@ -453,6 +491,10 @@ setup(void)
+ 	acceptedNotificationOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+ 	acceptedPointerLockOrigins = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+ 	permissionRequests = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref);
++
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++	certwin = NULL;
++#endif
+ }
+ 
+ void
+@@ -1051,11 +1093,13 @@ newwindow(Client *c, const Arg *a, int n
+ 		cmd[i++] = stylefile;
+ 	}
+ 	cmd[i++] = curconfig[DiskCache].val.i ? "-D" : "-d";
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500
+ 	if (embed && !noembed) {
+ 		cmd[i++] = "-e";
+ 		snprintf(tmp, LENGTH(tmp), "%lu", embed);
+ 		cmd[i++] = tmp;
+ 	}
++#endif
+ 	cmd[i++] = curconfig[RunInFullscreen].val.i ? "-F" : "-f" ;
+ 	cmd[i++] = curconfig[Geolocation].val.i ?     "-G" : "-g" ;
+ 	cmd[i++] = curconfig[LoadImages].val.i ?      "-I" : "-i" ;
+@@ -1196,6 +1240,12 @@ newview(Client *c, WebKitWebView *rv)
+ 		} else {
+ 			context = webkit_web_context_new_with_website_data_manager(
+ 			          webkit_website_data_manager_new(
++#if ( defined(WEBKIT_WPE) && WEBKIT_WPE == 1 && defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500 )
++				  "process-swap-on-cross-site-navigation-enabled", TRUE,
++#endif
++#if !defined(WEBKIT_API_VERSION) || (defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500)
++				  "use-system-appearance-for-scrollbars", FALSE,
++#endif
+ 			          "base-cache-directory", cachedir,
+ 			          "base-data-directory", cachedir,
+ 			          NULL));
+@@ -1248,8 +1298,17 @@ newview(Client *c, WebKitWebView *rv)
+ 			 G_CALLBACK(progresschanged), c);
+ 	g_signal_connect(G_OBJECT(v), "notify::title",
+ 			 G_CALLBACK(titlechanged), c);
++
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++	GtkEventController *ec = GTK_EVENT_CONTROLLER(gtk_gesture_click_new());
++	gtk_widget_add_controller(GTK_WIDGET(v), ec);
++	g_signal_connect(G_OBJECT(ec), "released",
++	                 G_CALLBACK(buttonreleased), c);
++#else
+ 	g_signal_connect(G_OBJECT(v), "button-release-event",
+ 			 G_CALLBACK(buttonreleased), c);
++#endif
++
+ 	g_signal_connect(G_OBJECT(v), "close",
+ 			G_CALLBACK(closeview), c);
+ 	g_signal_connect(G_OBJECT(v), "create",
+@@ -1339,6 +1398,28 @@ createview(WebKitWebView *v, WebKitNavig
+ 	return GTK_WIDGET(n->view);
+ }
+ 
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++void
++buttonreleased(GtkGestureClick *self, gint n_press, gdouble x, gdouble y, Client *c)
++{
++	WebKitHitTestResultContext element;
++	int i;
++
++	element = webkit_hit_test_result_get_context(c->mousepos);
++
++	guint button = gtk_gesture_single_get_button(GTK_GESTURE_SINGLE(self));
++	GdkModifierType state = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(self));
++	for (i = 0; i < LENGTH(buttons); ++i) {
++		if (element & buttons[i].target &&
++		    button == buttons[i].button &&
++		    CLEANMASK(state) == CLEANMASK(buttons[i].mask) &&
++		    buttons[i].func) {
++			buttons[i].func(c, &buttons[i].arg, c->mousepos);
++			return buttons[i].stopevent;
++		}
++	}
++}
++#else
+ gboolean
+ buttonreleased(GtkWidget *w, GdkEvent *e, Client *c)
+ {
+@@ -1359,6 +1440,7 @@ buttonreleased(GtkWidget *w, GdkEvent *e
+ 
+ 	return FALSE;
+ }
++#endif
+ 
+ void
+ addpermissiondomain(const char *raw, const char *nprop, GHashTable *acceptedOrigins)
+@@ -1398,6 +1480,62 @@ addpermissiondomain(const char *raw, con
+ 	g_object_unref(oldvalue);
+ }
+ 
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++gboolean
++processx(GdkX11Display* self, gpointer e, gpointer d)
++{
++	Client *c = (Client *)d;
++	XPropertyEvent *ev;
++	Arg a;
++
++	if (e != NULL && ((XEvent *)e)->type == PropertyNotify) {
++		ev = &((XEvent *)e)->xproperty;
++		if (ev->state == PropertyNewValue) {
++			if (ev->atom == atoms[AtomFind]) {
++				find(c, NULL);
++
++				return TRUE;
++			} else if (ev->atom == atoms[AtomGo]) {
++				a.v = getatom(c, AtomGo);
++				loaduri(c, &a);
++
++				return TRUE;
++			} else if (ev->atom == atoms[AtomDrm]) {
++				a.v = getatom(c, AtomDrm);
++				addpermissiondomain((const char *)a.v, "_SURF_DRM", acceptedDrmOrigins);
++
++				return TRUE;
++			} else if (ev->atom == atoms[AtomGeolocation]) {
++				a.v = getatom(c, AtomGeolocation);
++				addpermissiondomain((const char *)a.v, "_SURF_GEOL", acceptedGeolocationOrigins);
++
++				return TRUE;
++			} else if (ev->atom == atoms[AtomMediaStream]) {
++				a.v = getatom(c, AtomMediaStream);
++				addpermissiondomain((const char *)a.v, "_SURF_MEST", acceptedMediaStreamOrigins);
++
++				return TRUE;
++			} else if (ev->atom == atoms[AtomInputQuery]) {
++				a.v = getatom(c, AtomInputQuery);
++				addpermissiondomain((const char *)a.v, "_SURF_INQU", acceptedInputQueryOrigins);
++
++				return TRUE;
++			} else if (ev->atom == atoms[AtomNotification]) {
++				a.v = getatom(c, AtomNotification);
++				addpermissiondomain((const char *)a.v, "_SURF_NOTI", acceptedNotificationOrigins);
++
++				return TRUE;
++			} else if (ev->atom == atoms[AtomPointerLock]) {
++				a.v = getatom(c, AtomPointerLock);
++				addpermissiondomain((const char *)a.v, "_SURF_POLK", acceptedPointerLockOrigins);
++
++				return TRUE;
++			}
++		}
++	}
++	return FALSE;
++}
++#else
+ GdkFilterReturn
+ processx(GdkXEvent *e, GdkEvent *event, gpointer d)
+ {
+@@ -1452,7 +1590,50 @@ processx(GdkXEvent *e, GdkEvent *event,
+ 	}
+ 	return GDK_FILTER_CONTINUE;
+ }
++#endif
++
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++void
++winevent_enter(GtkEventControllerMotion *self, gdouble x, gdouble y, Client *c)
++{
++	c->overtitle = c->targeturi;
++	updatetitle(c);
++}
++
++void
++winevent_leave(GtkEventControllerMotion *self, Client *c)
++{
++	c->overtitle = NULL;
++	updatetitle(c);
++}
++
++gboolean
++winevent_key_pressed(GtkEventControllerKey *self, guint keyval, guint keycode, GdkModifierType state, Client *c)
++{
++	int i;
++	if (!curconfig[KioskMode].val.i) {
++		for (i = 0; i < LENGTH(keys); ++i) {
++			if (gdk_keyval_to_lower(keyval) ==
++			    keys[i].keyval &&
++			    CLEANMASK(state) == keys[i].mod &&
++			    keys[i].func) {
++				updatewinid(c);
++				keys[i].func(c, &(keys[i].arg));
++				return TRUE;
++			}
++		}
++	}
++
++	return FALSE; /* if not handled */
++}
++
++void
++winevent_notify(GObject *self, GParamSpec *pspec, Client *c)
++{
++	c->fullscreen = gtk_window_is_fullscreen(GTK_WINDOW(c->win));
++}
+ 
++#else
+ gboolean
+ winevent(GtkWidget *w, GdkEvent *e, Client *c)
+ {
+@@ -1492,6 +1673,58 @@ winevent(GtkWidget *w, GdkEvent *e, Clie
+ 
+ 	return FALSE;
+ }
++#endif
++
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++void
++showview(WebKitWebView *v, Client *c)
++{
++	GdkRGBA bgcolor = { 0 };
++	GdkSurface *gsurf;
++
++	c->finder = webkit_web_view_get_find_controller(c->view);
++	c->inspector = webkit_web_view_get_inspector(c->view);
++
++	c->pageid = webkit_web_view_get_page_id(c->view);
++	c->win = createwindow(c);
++
++	gtk_window_set_child(GTK_WINDOW(c->win), GTK_WIDGET(c->view));
++
++	gtk_widget_show(c->win);
++	gtk_window_present(GTK_WINDOW(c->win));
++	gtk_widget_grab_focus(GTK_WIDGET(c->view));
++
++	gtk_widget_realize(c->win);
++	gsurf = gtk_native_get_surface(gtk_widget_get_native(GTK_WIDGET(c->win)));
++	c->xid = gdk_x11_surface_get_xid(gsurf);
++	updatewinid(c);
++	if (showxid) {
++		gdk_display_sync(gtk_widget_get_display(c->win));
++		puts(winid);
++		fflush(stdout);
++	}
++
++	if (curconfig[HideBackground].val.i)
++		webkit_web_view_set_background_color(c->view, &bgcolor);
++
++	if (!curconfig[KioskMode].val.i) {
++		GdkDisplay *gdisp = gdk_surface_get_display(gsurf);
++		g_signal_connect(G_OBJECT(gdisp), "xevent",
++		                 G_CALLBACK(processx), c);
++	}
++
++	if (curconfig[RunInFullscreen].val.i)
++		togglefullscreen(c, NULL);
++
++	if (curconfig[ZoomLevel].val.f != 1.0)
++		webkit_web_view_set_zoom_level(c->view,
++		                               curconfig[ZoomLevel].val.f);
++
++	setatom(c, AtomFind, "");
++	setatom(c, AtomUri, "about:blank");
++}
++
++#else
+ 
+ void
+ showview(WebKitWebView *v, Client *c)
+@@ -1537,6 +1770,46 @@ showview(WebKitWebView *v, Client *c)
+ 	setatom(c, AtomUri, "about:blank");
+ }
+ 
++#endif
++
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++GtkWidget *
++createwindow(Client *c)
++{
++	char *wmstr;
++	GtkEventController *ec;
++	GtkWidget *w;
++
++	w = gtk_window_new();
++
++	gtk_window_set_default_size(GTK_WINDOW(w), winsize[0], winsize[1]);
++
++	/* destroy */
++	g_signal_connect(G_OBJECT(w), "destroy",
++	                 G_CALLBACK(destroywin), c);
++
++	/* key-press-event */
++	ec = gtk_event_controller_key_new();
++	gtk_widget_add_controller(w, ec);
++	g_signal_connect(G_OBJECT(ec), "key-pressed",
++	                 G_CALLBACK(winevent_key_pressed), c);
++
++	/* enter-notify-event */
++	/* leave-notify-event */
++	ec = gtk_event_controller_motion_new();
++	gtk_widget_add_controller(w, ec);
++	g_signal_connect(G_OBJECT(ec), "enter",
++	                 G_CALLBACK(winevent_enter), c);
++	g_signal_connect(G_OBJECT(ec), "leave",
++	                 G_CALLBACK(winevent_leave), c);
++
++	/* window-state-event */
++	g_signal_connect(G_OBJECT(w), "notify",
++	                 G_CALLBACK(winevent_notify), c);
++
++	return w;
++}
++#else
+ GtkWidget *
+ createwindow(Client *c)
+ {
+@@ -1572,6 +1845,7 @@ createwindow(Client *c)
+ 
+ 	return w;
+ }
++#endif
+ 
+ gboolean
+ loadfailedtls(WebKitWebView *v, gchar *uri, GTlsCertificate *cert,
+@@ -2067,7 +2341,11 @@ webprocessterminated(WebKitWebView *v, W
+ void
+ closeview(WebKitWebView *v, Client *c)
+ {
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++	gtk_window_destroy(GTK_WINDOW(c->win));
++#else
+ 	gtk_widget_destroy(c->win);
++#endif
+ }
+ 
+ void
+@@ -2075,9 +2353,27 @@ destroywin(GtkWidget* w, Client *c)
+ {
+ 	destroyclient(c);
+ 	if (!clients)
++	{
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++		g_main_loop_quit(mainloop);
++		g_main_loop_unref(mainloop);
++#else
+ 		gtk_main_quit();
++#endif
++	}
+ }
+ 
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++void
++pasteuri(GObject *source_object, GAsyncResult *res, gpointer d)
++{
++	char *text = gdk_clipboard_read_text_finish(GDK_CLIPBOARD(source_object),
++	                                            res, NULL);
++	Arg a = {.v = text };
++	if (text)
++		loaduri((Client *) d, &a);
++}
++#else
+ void
+ pasteuri(GtkClipboard *clipboard, const char *text, gpointer d)
+ {
+@@ -2085,6 +2381,7 @@ pasteuri(GtkClipboard *clipboard, const
+ 	if (text)
+ 		loaduri((Client *) d, &a);
+ }
++#endif
+ 
+ void
+ reload(Client *c, const Arg *a)
+@@ -2102,6 +2399,108 @@ print(Client *c, const Arg *a)
+ 	                                  GTK_WINDOW(c->win));
+ }
+ 
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++
++void
++clickclosecert(GtkButton* self, Client *c)
++{
++	gtk_window_close(GTK_WINDOW(certwin));
++	certwin = NULL;
++}
++
++void
++showcert(Client *c, const Arg *a)
++{
++	GTlsCertificate *cert = c->failedcert ? c->failedcert : c->cert;
++	GcrCertificate *gcrt;
++	GByteArray *crt;
++	GDateTime *date;
++
++	if (certwin) /* One at a time only */
++		return;
++
++	if (!cert)
++		return;
++
++	g_object_get(cert, "certificate", &crt, NULL);
++	gcrt = gcr_simple_certificate_new(crt->data, crt->len);
++	g_byte_array_unref(crt);
++
++	certwin = gtk_window_new();
++
++	GtkBox *box = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 5));
++
++	GString *content = g_string_new(NULL);
++
++	g_string_append_printf(content, "\n");
++	GList *msections = gcr_certificate_get_interface_elements(gcrt);
++	GList *msection;
++	for (msection = msections; msection != NULL ; msection = msection->next) {
++		GcrCertificateSection *section = msection->data;
++		GListModel *fields;
++		fields = gcr_certificate_section_get_fields(section);
++		guint fields_len = g_list_model_get_n_items(fields);
++		for (guint i = 0; i < fields_len; i++) {
++			GcrCertificateField *field = g_list_model_get_item(fields, i);
++			GValue v = G_VALUE_INIT;
++			GType vt;
++			vt = gcr_certificate_field_get_value_type(field);
++			g_value_init(&v, vt);
++			gcr_certificate_field_get_value(field, &v);
++			gchar *val;
++			GString *bstr = g_string_new(NULL);
++			if (g_type_is_a(vt, G_TYPE_STRING))
++				val = g_value_get_string(&v);
++			else if (g_type_is_a(vt, G_TYPE_STRV))
++				val = g_strjoinv("\n", (gchar**)g_value_get_boxed(&v));
++			else if (g_type_is_a(vt, G_TYPE_BYTES)) {
++				gsize raw_len;
++				GBytes *raw = g_value_get_boxed(&v);
++				const char *p = g_bytes_get_data(raw, &raw_len);
++				for (gsize j = 0; j < raw_len ; j++) {
++					guchar b = *(p++);
++					g_string_append_printf(bstr, "%02X ", b);
++				}
++				val = bstr->str;
++			}
++			if (gcr_certificate_section_get_flags(section) & GCR_CERTIFICATE_SECTION_IMPORTANT)
++				g_string_append_printf(content, "%s:  %s\n", gcr_certificate_field_get_label(field), val);
++			else
++				g_string_append_printf(content, "\t%s:  %s\n", gcr_certificate_field_get_label(field), val);
++			if (g_type_is_a(vt, G_TYPE_STRV))
++				g_free(val);
++			else if (g_type_is_a(vt, G_TYPE_BYTES))
++				g_string_free(bstr, TRUE);
++			g_object_unref(field);
++		}
++	}
++	g_list_free_full(msections, (GDestroyNotify)g_object_unref);
++
++	GtkButton *button = GTK_BUTTON(gtk_button_new_with_label("Close"));
++	gtk_box_append(GTK_BOX(box), GTK_WIDGET(button));
++
++	GtkWidget *scrollwin = gtk_scrolled_window_new();
++	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrollwin), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
++	GtkTextBuffer *buffer = gtk_text_buffer_new(NULL);
++	gtk_text_buffer_set_text(buffer, content->str, -1);
++	GtkWidget *textview = gtk_text_view_new_with_buffer(buffer);
++	gtk_text_view_set_editable(GTK_TEXT_VIEW(textview), FALSE);
++	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview), GTK_WRAP_WORD);
++	gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scrollwin), GTK_WIDGET(textview));
++	gtk_box_append(GTK_BOX(box), GTK_WIDGET(scrollwin));
++
++	g_signal_connect(G_OBJECT(button), "clicked",
++	                 G_CALLBACK(clickclosecert), c);
++
++	g_object_unref(gcrt);
++
++	gtk_window_set_child(GTK_WINDOW(certwin), GTK_WIDGET(box));
++	gtk_window_present(GTK_WINDOW(certwin));
++	int height = gdk_surface_get_height(gtk_native_get_surface(gtk_widget_get_native(GTK_WIDGET(c->win))));
++	gtk_scrolled_window_set_min_content_height(GTK_SCROLLED_WINDOW(scrollwin), height-50);
++	gtk_scrolled_window_set_max_content_height(GTK_SCROLLED_WINDOW(scrollwin), height-50);
++}
++#else
+ void
+ showcert(Client *c, const Arg *a)
+ {
+@@ -2125,10 +2524,21 @@ showcert(Client *c, const Arg *a)
+ 	gtk_container_add(GTK_CONTAINER(win), GTK_WIDGET(wcert));
+ 	gtk_widget_show_all(win);
+ }
++#endif
+ 
+ void
+ clipboard(Client *c, const Arg *a)
+ {
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0500
++	GdkDisplay *gdpy = gtk_widget_get_display(c->win);
++	if (a->i) { /* load clipboard uri */
++		gdk_clipboard_read_text_async(gdk_display_get_primary_clipboard(gdpy),
++		                              NULL, pasteuri, c);
++	} else { /* copy uri */
++		gdk_clipboard_set_text(gdk_display_get_primary_clipboard(gdpy),
++		                       c->targeturi ? c->targeturi : geturi(c));
++	}
++#else
+ 	if (a->i) { /* load clipboard uri */
+ 		gtk_clipboard_request_text(gtk_clipboard_get(
+ 		                           GDK_SELECTION_PRIMARY),
+@@ -2138,6 +2548,7 @@ clipboard(Client *c, const Arg *a)
+ 		                       GDK_SELECTION_PRIMARY), c->targeturi
+ 		                       ? c->targeturi : geturi(c), -1);
+ 	}
++#endif
+ }
+ 
+ void
+@@ -2323,9 +2734,11 @@ main(int argc, char *argv[])
+ 		defconfig[DiskCache].val.i = 1;
+ 		defconfig[DiskCache].prio = 2;
+ 		break;
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500
+ 	case 'e':
+ 		embed = strtol(EARGF(usage()), NULL, 0);
+ 		break;
++#endif
+ 	case 'f':
+ 		defconfig[RunInFullscreen].val.i = 0;
+ 		defconfig[RunInFullscreen].prio = 2;
+@@ -2436,7 +2849,12 @@ main(int argc, char *argv[])
+ 	loaduri(c, &arg);
+ 	updatetitle(c);
+ 
++#if !defined(WEBKIT_API_VERSION) || (defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION < 0500)
+ 	gtk_main();
++#else
++	mainloop = g_main_loop_new(NULL, TRUE);
++	g_main_loop_run(mainloop);
++#endif
+ 	cleanup();
+ 
+ 	return 0;
+Only in surf-2.1_p20231118: surf.c.orig
+Only in surf-2.1_p20231118: surf.c.rej
+diff -urp surf-2.1_p20231118.orig/webext-surf.c surf-2.1_p20231118/webext-surf.c
+--- surf-2.1_p20231118.orig/webext-surf.c	2023-12-03 17:36:03.281750037 -0800
++++ surf-2.1_p20231118/webext-surf.c	2023-12-03 17:38:55.757747949 -0800
+@@ -8,7 +8,11 @@
+ 
+ #include <gio/gio.h>
+ #include <gio/gunixfdlist.h>
++#if defined(WEBKIT_API_VERSION) && WEBKIT_API_VERSION >= 0600
++#include <webkit/webkit-web-extension.h>
++#else
+ #include <webkit2/webkit-web-extension.h>
++#endif
+ #include <webkitdom/webkitdom.h>
+ #include <webkitdom/WebKitDOMDOMWindowUnstable.h>
+ 
+Only in surf-2.1_p20231118: webext-surf.c.orig
+Only in surf-2.1_p20231118: webext-surf.c.rej

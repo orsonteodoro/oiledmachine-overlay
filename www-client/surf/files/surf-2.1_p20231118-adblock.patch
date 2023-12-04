@@ -1,0 +1,86 @@
+diff -urp surf-2.1_p20231118.orig/surf.c surf-2.1_p20231118/surf.c
+--- surf-2.1_p20231118.orig/surf.c	2023-12-03 17:42:48.685745128 -0800
++++ surf-2.1_p20231118/surf.c	2023-12-03 17:43:58.909744278 -0800
+@@ -38,7 +38,7 @@
+ #define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
+ #define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
+ 
+-enum { AtomFind, AtomGo, AtomUri, AtomUTF8, AtomLast };
++enum { AtomFind, AtomGo, AtomUri, AtomUTF8, AtomScriptFile, AtomLast };
+ 
+ enum {
+ 	OnDoc   = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
+@@ -172,7 +172,7 @@ static const char *getcert(const char *u
+ static void setcert(Client *c, const char *file);
+ static const char *getstyle(const char *uri);
+ static void setstyle(Client *c, const char *file);
+-static void runscript(Client *c);
++static void runscript(Client *c, const char *scriptfile);
+ static void evalscript(Client *c, const char *jsstr, ...);
+ static void updatewinid(Client *c);
+ static void handleplumb(Client *c, const char *uri);
+@@ -347,6 +347,7 @@ setup(void)
+ 	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
+ 	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
+ 	atoms[AtomUTF8] = XInternAtom(dpy, "UTF8_STRING", False);
++	atoms[AtomScriptFile] = XInternAtom(dpy, "_SURF_SCRIPT", False);
+ 
+ 	gtk_init(NULL, NULL);
+ 
+@@ -592,6 +593,7 @@ loaduri(Client *c, const Arg *a)
+ 
+ 	setatom(c, AtomUri, url);
+ 
++	updatewinid(c);
+ 	if (strcmp(url, geturi(c)) == 0) {
+ 		reload(c, a);
+ 	} else {
+@@ -962,7 +964,7 @@ setstyle(Client *c, const char *file)
+ }
+ 
+ void
+-runscript(Client *c)
++runscript(Client *c, const char *scriptfile)
+ {
+ 	gchar *script;
+ 	gsize l;
+@@ -1338,6 +1340,12 @@ processx(GdkXEvent *e, GdkEvent *event,
+ 				loaduri(c, &a);
+ 
+ 				return GDK_FILTER_REMOVE;
++			} else if(ev->atom == atoms[AtomScriptFile]) {
++				gchar *scriptpath;
++				scriptpath = getatom(c, AtomScriptFile);
++				runscript(c, scriptpath);
++				g_unlink(scriptpath);
++				return GDK_FILTER_REMOVE;
+ 			}
+ 		}
+ 	}
+@@ -1426,6 +1434,7 @@ showview(WebKitWebView *v, Client *c)
+ 
+ 	setatom(c, AtomFind, "");
+ 	setatom(c, AtomUri, "about:blank");
++	setatom(c, AtomScriptFile, "");
+ }
+ 
+ GtkWidget *
+@@ -1540,6 +1549,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
+ 		seturiparameters(c, uri, loadcommitted);
+ 		c->https = webkit_web_view_get_tls_info(c->view, &c->cert,
+ 		                                        &c->tlserr);
++		PAGE_LOAD_COMMITTED(c);
+ 		break;
+ 	case WEBKIT_LOAD_FINISHED:
+ 		seturiparameters(c, uri, loadfinished);
+@@ -1548,7 +1558,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
+ 		evalscript(c, "document.documentElement.style.overflow = '%s'",
+ 		    enablescrollbars ? "auto" : "hidden");
+ 		*/
+-		runscript(c);
++		runscript(c, scriptfile);
+ 		break;
+ 	}
+ 	updatetitle(c);
+Only in surf-2.1_p20231118: surf.c.orig
+Only in surf-2.1_p20231118: surf.c.rej
