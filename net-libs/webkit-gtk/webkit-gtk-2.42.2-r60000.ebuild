@@ -1895,7 +1895,9 @@ ewarn
 #   video site(s):  fail (minibrowser), passed (surf)
 #     vpx (streaming):  passed
 #     vpx (on demand):  passed (25 fps, 60 fps)
+#     av1/dav1d (on demand):  passed (30 fps)
 #     opus:  passed
+#     aac-lc:  passed
 #   wiki(s):  passed
 #   audio:  TBA (alsa), pass (pulseaudio)
 #   stability:  less crashy overall
