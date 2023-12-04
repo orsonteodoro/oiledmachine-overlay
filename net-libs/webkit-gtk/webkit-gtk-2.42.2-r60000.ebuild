@@ -1288,7 +1288,7 @@ ewarn "You are enabling 64kb-page-block USE flag which may degrade performance s
 			WARNING_IA64_PAGE_SIZE_4KB=\
 "CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
 			check_extra_config
-		elif use powerpc ; then
+		elif use ppc64 ; then
 			CONFIG_CHECK="~!PPC_256K_PAGES ~PPC_64K_PAGES ~!PPC_16K_PAGES ~!PPC_4K_PAGES"
 			WARNING_PPC_256K_PAGES=\
 "Either set both CONFIG_PPC_256K_PAGES=n and CONFIG_PPC_64K_PAGES=y in the "\
@@ -1312,7 +1312,7 @@ ewarn "You are enabling 64kb-page-block USE flag which may degrade performance s
 			WARNING_IA64_PAGE_SIZE_64KB=\
 "CONFIG_IA64_PAGE_SIZE_64KB must be set to =n in the kernel or enable 64kb-page-block USE flag."
 			check_extra_config
-		elif use powerpc ; then
+		elif use ppc64 ; then
 			CONFIG_CHECK="~!PPC_64K_PAGES"
 			WARNING_PPC_64K_PAGES=\
 "CONFIG_PPC_64K_PAGES must be set to =n in the kernel or enable 64kb-page-block USE flag."
