@@ -10,6 +10,14 @@
     <remote-id type="gitlab">coolercontrol/coolercontrol</remote-id>
     <bugs-to>https://gitlab.com/coolercontrol/coolercontrol/-/issues</bugs-to>
   </upstream>
+  <!--
+
+  Build per-package environment variables
+
+  COOLERCONTROL_GUI_PORT
+  COOLERCONTROL_LIQCTLD_PORT
+
+  -->
   <use>
     <flag name="hwmon">
       Add support for CPU and motherboard fan/temperature monitoring.

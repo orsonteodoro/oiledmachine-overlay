@@ -51,6 +51,35 @@ ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/cooler
 	python_setup
 }
 
+set_gui_port() {
+	local L=(
+		"coolercontrol-liqctld/coolercontrol_liqctld/server.py"
+	)
+	local port=${COOLERCONTROL_GUI_PORT:-11987}
+	local p
+	for p in "${L[@]}" ; do
+		sed -i -e "s|11987|${port}|g" "${p}" || die
+	done
+}
+
+set_liqctld_port() {
+	local L=(
+		"coolercontrol-liqctld/coolercontrol_liqctld/server.py"
+	)
+	local port=${COOLERCONTROL_LIQCTLD_PORT:-11986}
+	local p
+	for p in "${L[@]}" ; do
+		sed -i -e "s|11986|${port}|g" "${p}" || die
+	done
+}
+
+python_configure() {
+	pushd "${WORKDIR}/${PN}-${PV}" || die
+		set_gui_port
+		set_liqctld_port
+	popd
+}
+
 # Disabled
 _python_compile() {
 	#poetry install

@@ -980,9 +980,35 @@ src_unpack() {
 	_cargo_src_unpack
 }
 
+set_gui_port() {
+	local L=(
+		"coolercontrold/src/api/mod.rs"
+	)
+	local port=${COOLERCONTROL_GUI_PORT:-11987}
+	local p
+	for p in "${L[@]}" ; do
+		sed -i -e "s|11987|${port}|g" "${p}" || die
+	done
+}
+
+set_liqctld_port() {
+	local L=(
+		"coolercontrold/src/repositories/liquidctl/liquidctl_repo.rs"
+	)
+	local port=${COOLERCONTROL_LIQCTLD_PORT:-11986}
+	local p
+	for p in "${L[@]}" ; do
+		sed -i -e "s|11986|${port}|g" "${p}" || die
+	done
+}
+
 src_configure() {
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
 	cargo_src_configure
+	pushd "${WORKDIR}/${PN}-${PV}" || die
+		set_gui_port
+		set_liqctld_port
+	popd
 }
 
 src_compile() {

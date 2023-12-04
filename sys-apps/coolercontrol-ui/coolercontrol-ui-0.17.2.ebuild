@@ -1119,12 +1119,39 @@ src_unpack() {
 		|| die
 }
 
+set_gui_port() {
+	local L=(
+		"coolercontrol-liqctld/coolercontrol_liqctld/server.py"
+	)
+	local port=${COOLERCONTROL_GUI_PORT:-11987}
+	local p
+	for p in "${L[@]}" ; do
+		sed -i -e "s|11987|${port}|g" "${p}" || die
+	done
+}
+
+set_liqctld_port() {
+	local L=(
+		"coolercontrol-liqctld/coolercontrol_liqctld/server.py"
+	)
+	local port=${COOLERCONTROL_LIQCTLD_PORT:-11986}
+	local p
+	for p in "${L[@]}" ; do
+		sed -i -e "s|11986|${port}|g" "${p}" || die
+	done
+}
+
 src_configure() {
+	pushd "${WORKDIR}/${PN}-${PV}" || die
+		set_gui_port
+		set_liqctld_port
+	popd
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri" \
 	cargo_src_configure
+	local port=${COOLERCONTROL_GUI_PORT:-11987}
 	sed -i \
-		-e "s|localhost:5173|localhost:11987|g" \
-		-e "s|../dist|localhost:11987|g" \
+		-e "s|localhost:5173|localhost:${port}|g" \
+		-e "s|../dist|localhost:${port}|g" \
 		"${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri/tauri.conf.json" \
 		|| die
 }

@@ -65,6 +65,23 @@ ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/cooler
 	python_setup
 }
 
+set_gui_port() {
+	local L=(
+		"coolercontrol-gui/coolercontrol/repositories/daemon_repo.py"
+	)
+	local port=${COOLERCONTROL_GUI_PORT:-11987}
+	local p
+	for p in "${L[@]}" ; do
+		sed -i -e "s|11987|${port}|g" "${p}" || die
+	done
+}
+
+python_configure() {
+	pushd "${WORKDIR}/${PN}-${PV}" || die
+		set_gui_port
+	popd
+}
+
 # Using nuitka is broken
 _python_compile() {
 	${EPYTHON} -m nuitka --static-libpython=no --enable-plugins=pyside6 coolercontrol.py || die
