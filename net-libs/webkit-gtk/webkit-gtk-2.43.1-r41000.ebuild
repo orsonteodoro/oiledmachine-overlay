@@ -1266,7 +1266,10 @@ eerror
 	fi
 
 	if use 64kb-page-block ; then
-ewarn "You are enabling 64kb-page-block USE flag which may degrade performance severely."
+ewarn
+ewarn "You are enabling the 64kb-page-block USE flag which may degrade"
+ewarn "performance severely and decrease security."
+ewarn
 		if use arm64 ; then
 			CONFIG_CHECK="~ARM64_64K_PAGES ~!ARM64_4K_PAGES ~!ARM64_16K_PAGES"
 			WARNING_ARM64_64K_PAGES=\
