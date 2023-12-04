@@ -10,9 +10,19 @@
     <remote-id type="gitlab">coolercontrol/coolercontrol</remote-id>
     <bugs-to>https://gitlab.com/coolercontrol/coolercontrol/-/issues</bugs-to>
   </upstream>
+  <!--
+
+  Build time per-package environment variables:
+
+  COOLERCONTROL_BROWSER - The default web browser or www launcher command.
+
+  -->
   <use>
     <flag name="gtk3">
       Use the newer user interface.  (EXPERIMENTAL/WIP)
+    </flag>
+    <flag name="html">
+      Use the web browser to access cooler control.
     </flag>
     <flag name="hwmon">
       Add support for CPU and motherboard fan/temperature monitoring.

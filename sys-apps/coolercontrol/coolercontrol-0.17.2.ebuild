@@ -24,7 +24,7 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" gtk3 hwmon openrc qt6 systemd wayland X r1"
+IUSE+=" gtk3 html hwmon openrc qt6 systemd wayland X r1"
 REQUIRED_USE="
 	gtk3? (
 		|| (
@@ -40,6 +40,7 @@ REQUIRED_USE="
 	)
 	|| (
 		gtk3
+		html
 		qt6
 	)
 "
@@ -65,6 +66,19 @@ src_configure() { :; }
 
 src_compile() { :; }
 
+gen_html_wrapper() {
+	local www_browser="xdg-open"
+	if [[ -n "${COOLERCONTROL_BROWSER}" ]] ; then
+		www_browser="${COOLERCONTROL_BROWSER}"
+	fi
+	dodir /usr/bin
+cat <<EOF > "${ED}/usr/bin/coolercontrol-html"
+#!/bin/bash
+${www_browser} "http://localhost:11987"
+EOF
+	fperms 0755 /usr/bin/coolercontrol-html
+}
+
 src_install() {
 	insinto "/usr/share/icons/hicolor/scalable/apps"
 	doins "packaging/metadata/org.coolercontrol.CoolerControl.svg"
@@ -74,10 +88,25 @@ src_install() {
 
 	insinto "/usr/share/metainfo"
 	doins "packaging/metadata/org.coolercontrol.CoolerControl.metainfo.xml"
+
+	if use html ; then
+		gen_html_wrapper
+		make_desktop_entry \
+			"/usr/bin/coolercontrol-html" \
+			"CoolerControl (html)" \
+			"org.coolercontrol.CoolerControl" \
+			"Utility;"
+	fi
 }
 
 pkg_postinst() {
 	xdg_pkg_postinst
+	if use html ; then
+		ln -sf \
+			"${EROOT}/usr/bin/coolercontrol-html5" \
+			"${EROOT}/usr/bin/coolercontrol" \
+			|| die
+	fi
 }
 
 pkg_postrm() {
