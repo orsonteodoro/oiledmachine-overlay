@@ -186,8 +186,10 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Enables AVIF image support.
     </flag>
     <flag name="bmalloc">
-      Uses a mmap based page allocator to improve overall performance.  Disable
-      to use the system allocator.
+      Prefer the built in dynamic memory allocator improve overall performance
+      and security isolation, and type confusion mitigation.
+
+      Disable to use the system dynamic memory allocaton that is less secure.
     </flag>
     <flag name="cache-partitioning">
       Enable cache parititioning to block third party tracking

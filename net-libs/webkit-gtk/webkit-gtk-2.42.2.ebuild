@@ -544,9 +544,11 @@ REQUIRED_USE+="
 		!pulseaudio
 		gstreamer
 	)
+	64kb-page-block? (
+		!bmalloc
+	)
 	cpu_flags_arm_thumb2? (
 		!ftl-jit
-		bmalloc
 	)
 	dash? (
 		gstreamer
@@ -587,7 +589,6 @@ REQUIRED_USE+="
 		gstreamer
 	)
 	jit? (
-		bmalloc
 		dfg-jit
 	)
 	opengl? (
@@ -1528,6 +1529,7 @@ eerror
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
 	if use 64kb-page-block ; then
+		use bmalloc && die "bmalloc USE flag must be disabled."
 		mycmakeargs+=(
 			-DENABLE_JIT=OFF
 			-DENABLE_DFG_JIT=OFF
@@ -1595,8 +1597,9 @@ eerror
 		)
 	else
 einfo
-einfo "Disabling JIT for ${ABI}"
+einfo "Disabling JIT for ${ABI}."
 einfo
+		use bmalloc && die "bmalloc USE flag must be disabled."
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=ON
 			-DENABLE_JIT=OFF
@@ -1608,6 +1611,12 @@ einfo
 			-DUSE_SYSTEM_MALLOC=ON
 		)
 		jit_enabled=0
+	fi
+
+	if ! use bmalloc ; then
+ewarn
+ewarn "Disabling bmalloc may lower security."
+ewarn
 	fi
 
 	# Arches without JIT support also need this to really disable it in all
