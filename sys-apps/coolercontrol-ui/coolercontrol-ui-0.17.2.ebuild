@@ -898,7 +898,7 @@ https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${P
 "
 S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri"
 
-DESCRIPTION="coolercontrol-ui is a new UI using Tauri, GTK 3, Rust, Vue 3, webkit2gtk"
+DESCRIPTION="coolercontrol-ui is the new UI for coolercontrol using Tauri, GTK 3, Rust, Vue 3, webkit2gtk"
 HOMEPAGE="
 https://gitlab.com/coolercontrol/coolercontrol
 https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrol-ui
