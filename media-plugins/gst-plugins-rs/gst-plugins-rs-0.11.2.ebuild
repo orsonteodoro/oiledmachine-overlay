@@ -11,7 +11,7 @@ MY_PV="0.11.2"
 if [[ "${MY_PV}" =~ 9999 ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_COMMIT="HEAD"
-	EGIT_COMMIT_FALLBACK="b78269285b2b3795aedd12f8cecbbd470e0ae0f2" # Oct 9, 2023
+	EGIT_COMMIT_FALLBACK="ab093e4218cd65792bb374b950c8b9b626425c45" # Nov 11, 2023
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git"
 	MY_PV="9999"
 	inherit git-r3
@@ -639,7 +639,6 @@ MODULES=(
 	gtk4
 	hlssink3
 	hsv
-	inter
 	json
 	lewton
 	livesync
