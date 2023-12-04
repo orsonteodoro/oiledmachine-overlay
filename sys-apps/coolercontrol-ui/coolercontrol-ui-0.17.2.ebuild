@@ -890,7 +890,6 @@ NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
 PYTHON_COMPAT=( python3_{10,11} ) # Can support 3.12 but limited by Nuitka
 
 inherit cargo desktop lcnr npm xdg
-inherit cflags-depends
 
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
@@ -994,7 +993,20 @@ WEBKIT_GTK_STABLE=(
 gen_webkit_depend() {
 	local s
 	for s in ${WEBKIT_GTK_STABLE[@]} ; do
-		echo "=net-libs/webkit-gtk-${s}*:4[introspection,wayland?,X?]"
+	# There is a bug with jit that causes it to crash.
+
+	# The following are temprorary disabled for the search for the source of
+	# the crash:
+
+	# -dfg-jit
+	# -ftl-jit
+	# -jit
+	# -yarr-jit
+	# -webassembly
+	# -webassembly-b3-jit
+	# -webassembly-bbq-jit
+
+		echo "=net-libs/webkit-gtk-${s}*:4[-dfg-jit,-ftl-jit,-jit,-yarr-jit,-webassembly,-webassembly-b3-jit,-webassembly-bbq-jit,introspection,wayland?,X?]"
 	done
 }
 RUST_BINDINGS_DEPEND="
@@ -1025,9 +1037,6 @@ RUST_BINDINGS_DEPEND="
 RUST_BINDINGS_BDEPEND="
 	virtual/pkgconfig
 "
-declare -A CFLAGS_RDEPEND=(
-	["net-libs/webkit-gtk"]="<=;-O2" # -O3 and -Ofast freezes
-)
 RDEPEND+="
 	${RUST_BINDINGS_DEPEND}
 	~sys-apps/coolercontrold-${PV}
@@ -1053,7 +1062,6 @@ RESTRICT="mirror"
 pkg_setup() {
 ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
 	npm_pkg_setup
-	#cflags-depends_check
 }
 
 # @FUNCTION: cargo_src_unpack
@@ -1198,3 +1206,4 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  passed
