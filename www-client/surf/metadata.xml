@@ -18,6 +18,7 @@
     Build time environment variables:
 
       SAVEDCONFIG_PATH - absolute path to config.h
+      SURF_ZOOM_LEVEL - zoom level as a decimal
 
     Bugs:
 

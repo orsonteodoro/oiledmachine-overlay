@@ -463,6 +463,10 @@ eerror
 		sed -i -e "s|\[WebGL\]               =       { { .i = [01] },     },|\[WebGL\]               =       { { .i = 0 },     },|g" "${config_file}" || die
 	fi
 
+	SURF_ZOOM_LEVEL=${SURF_ZOOM_LEVEL:-"1.2"} # Fix tiny wiki tables
+	sed -E -i -e "s|\[ZoomLevel\]           =       \{ \{ .f = [.0-9]+ \},   \},|\[ZoomLevel\]           =       { { .f = ${SURF_ZOOM_LEVEL} },   },|g" "config.def.h" || die
+	sed -E -i -e "s|\[ZoomLevel\]           =       \{ \{ .f = [.0-9]+ \},   \},|\[ZoomLevel\]           =       { { .f = ${SURF_ZOOM_LEVEL} },   },|g" "${config_file}" || die
+
 	eapply "${FILESDIR}/surf-2.1-gtk4.patch"
 
 	if has_version "net-libs/webkit-gtk:6" && use gtk4 ; then
