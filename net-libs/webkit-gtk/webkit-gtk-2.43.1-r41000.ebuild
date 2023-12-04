@@ -395,15 +395,16 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 ${DEFAULT_GST_PLUGINS}
 
-aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2 dash +dfg-jit +doc
--eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring +gstreamer
-gstwebrtc hardened +introspection +javascriptcore +jit +journald +jpeg2k +jpegxl
-+lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder -mediastream
-+minibrowser mold +opengl openmp proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
--seccomp speech-synthesis -spell test thunder +unified-builds +variation-fonts
-wayland +webassembly +webassembly-b3-jit +webcore +webcrypto -webdriver +webgl
-+webgl2 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
+-64kb-page-block aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2
+dash +dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
++gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
++jpeg2k +jpegxl +lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder
+-mediastream +minibrowser mold +opengl openmp proprietary-codecs
+proprietary-codecs-disable proprietary-codecs-disable-nc-developer
+proprietary-codecs-disable-nc-user -seccomp speech-synthesis -spell test thunder
++unified-builds +variation-fonts wayland +webassembly +webassembly-b3-jit
++webassembly-bbq-jit +webcore +webcrypto -webdriver +webgl webm-eme -webrtc
+webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -609,14 +610,14 @@ REQUIRED_USE+="
 		ftl-jit
 		webassembly
 	)
+	webassembly-bbq-jit? (
+		webassembly
+	)
 	webgl? (
 		|| (
 			gles2
 			opengl
 		)
-	)
-	webgl2? (
-		webgl
 	)
 	webm-eme? (
 		eme
@@ -1344,8 +1345,11 @@ _src_configure() {
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
 
-	filter-flags -DENABLE_JIT=* -DENABLE_YARR_JIT=* -DENABLE_ASSEMBLER=*
-	filter-flags '-fprofile*'
+	filter-flags \
+		'-DENABLE_ASSEMBLER=*' \
+		'-DENABLE_JIT=*' \
+		'-DENABLE_YARR_JIT=*' \
+		'-fprofile*'
 
 	# It does not compile on alpha without this in LDFLAGS
 	# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=648761
@@ -1430,7 +1434,6 @@ eerror
 		-DENABLE_WEBCORE=$(usex webcore)
 		-DENABLE_WEBDRIVER=$(usex webdriver)
 		-DENABLE_WEBGL=$(usex webgl)
-		-DENABLE_WEBGL2=$(usex webgl2)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
 		-DUSE_ANGLE_WEBGL=OFF
@@ -1474,7 +1477,28 @@ eerror
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
-	if [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && use jit ; then
+	if use 64kb-page-block ; then
+		mycmakeargs+=(
+			-DENABLE_JIT=OFF
+			-DENABLE_DFG_JIT=OFF
+			-DENABLE_FTL_JIT=OFF
+			-DENABLE_WEBASSEMBLY_B3JIT=OFF
+			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DUSE_SYSTEM_MALLOC=ON
+		)
+		if [[ "${ABI}" == "arm64"  ]] ; then
+			mycmakeargs+=(
+				-DENABLE_C_LOOP=OFF
+				-DENABLE_SAMPLING_PROFILER=ON
+			)
+		else
+			mycmakeargs+=(
+				-DENABLE_C_LOOP=ON
+				-DENABLE_SAMPLING_PROFILER=OFF
+			)
+		fi
+		jit_enabled="0"
+	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] && use jit ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -1482,6 +1506,7 @@ eerror
 			-DENABLE_FTL_JIT=$(usex ftl-jit)
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
+			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 && use jit ; then
@@ -1492,6 +1517,7 @@ eerror
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
+			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "n32" ]] && use jit ; then
@@ -1503,6 +1529,18 @@ eerror
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
+			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DUSE_SYSTEM_MALLOC=$(usex jit OFF $(usex !bmalloc))
+		)
+	elif [[ "${ARCH}" == "riscv" && ( "${ABI}" == "lp64d" || "${ABI}" == "lp64" ) ]] && use jit ; then
+		mycmakeargs+=(
+			-DENABLE_C_LOOP=$(usex !jit)
+			-DENABLE_JIT=$(usex jit)
+			-DENABLE_DFG_JIT=$(usex dfg-jit)
+			-DENABLE_FTL_JIT=$(usex ftl-jit)
+			-DENABLE_SAMPLING_PROFILER=OFF
+			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
+			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex jit OFF $(usex !bmalloc))
 		)
 	else
@@ -1516,6 +1554,7 @@ einfo
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
+			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 		jit_enabled="0"
@@ -1527,8 +1566,10 @@ einfo
 einfo
 einfo "Disabled YARR (regex) JIT"
 einfo
-		append-cppflags -DENABLE_JIT=0 -DENABLE_YARR_JIT=0 \
-			-DENABLE_ASSEMBLER=0
+		append-cppflags \
+			-DENABLE_ASSEMBLER=0 \
+			-DENABLE_JIT=0 \
+			-DENABLE_YARR_JIT=0
 	else
 		if use yarr-jit ; then
 einfo
@@ -1538,7 +1579,8 @@ einfo
 einfo
 einfo "Disabled YARR (regex) JIT"
 einfo
-			append-cppflags -DENABLE_YARR_JIT=0
+			append-cppflags \
+				-DENABLE_YARR_JIT=0
 		fi
 	fi
 einfo

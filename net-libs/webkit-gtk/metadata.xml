@@ -175,6 +175,10 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
 
   </longdescription>
   <use>
+    <flag name="64kb-page-block">
+      Enables support for 64 KB page block systems with a big penalty on
+      JavaScript performance.
+    </flag>
     <flag name="alsa">
       Enables ALSA sound support.
     </flag>
@@ -379,8 +383,13 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       customized PGO training, controlling the web browser through scripting.
     </flag>
     <flag name="webassembly-b3-jit">
-      Enables the B3 JIT support that does additional optimizations beyond
-      ftl-jit.
+      Enables and chooses the B3 JIT as the FTL JIT backend for faster
+      compilation with additional optimizations for WebAssembly.
+
+      If disabled it will use LLVM as the backend for FTL JIT.
+    </flag>
+    <flag name="webassembly-bbq-jit">
+      Enables the BBQ JIT for quick execution of hot code for WebAssembly.
     </flag>
     <flag name="webcrypto">
       Enables WebCrypto SubtleCrypto API support for low level cryptographic
