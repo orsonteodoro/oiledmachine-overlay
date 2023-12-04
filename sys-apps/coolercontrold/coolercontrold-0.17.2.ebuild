@@ -1005,7 +1005,7 @@ set_liqctld_port() {
 src_configure() {
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
 	cargo_src_configure
-	pushd "${WORKDIR}/${PN}-${PV}" || die
+	pushd "${WORKDIR}/coolercontrol-${PV}" || die
 		set_gui_port
 		set_liqctld_port
 	popd

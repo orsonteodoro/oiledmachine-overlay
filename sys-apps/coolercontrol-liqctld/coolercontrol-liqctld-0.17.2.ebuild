@@ -74,7 +74,7 @@ set_liqctld_port() {
 }
 
 python_configure() {
-	pushd "${WORKDIR}/${PN}-${PV}" || die
+	pushd "${WORKDIR}/coolercontrol-${PV}" || die
 		set_gui_port
 		set_liqctld_port
 	popd
