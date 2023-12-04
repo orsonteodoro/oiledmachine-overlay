@@ -604,9 +604,6 @@ REQUIRED_USE+="
 		gstreamer
 		mediastream
 	)
-	webassembly? (
-		jit
-	)
 	webassembly-b3-jit? (
 		ftl-jit
 		webassembly
@@ -1979,4 +1976,3 @@ ewarn
 #   wiki(s):  passed
 #   audio:  TBA
 #   stability:  crashy within a few minutes
-#     freeze with coolercontrold, coolercontrol-ui
