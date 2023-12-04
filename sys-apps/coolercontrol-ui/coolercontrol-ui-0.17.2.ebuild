@@ -993,20 +993,8 @@ WEBKIT_GTK_STABLE=(
 gen_webkit_depend() {
 	local s
 	for s in ${WEBKIT_GTK_STABLE[@]} ; do
-	# There is a bug with jit that causes it to crash.
-
-	# The following are temprorary disabled for the search for the source of
-	# the crash:
-
-	# -dfg-jit
-	# -ftl-jit
-	# -jit
-	# -yarr-jit
-	# -webassembly
-	# -webassembly-b3-jit
-	# -webassembly-bbq-jit
-
-		echo "=net-libs/webkit-gtk-${s}*:4[-dfg-jit,-ftl-jit,-jit,-yarr-jit,-webassembly,-webassembly-b3-jit,-webassembly-bbq-jit,introspection,wayland?,X?]"
+	# There is a bug with webkit-gtk's jit that causes it to crash.
+		echo "=net-libs/webkit-gtk-${s}*:4[-dfg-jit,-ftl-jit,-jit,-yarr-jit,introspection,wayland?,X?]"
 	done
 }
 RUST_BINDINGS_DEPEND="
