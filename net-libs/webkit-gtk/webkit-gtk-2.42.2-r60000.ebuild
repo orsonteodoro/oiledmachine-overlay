@@ -1532,8 +1532,8 @@ eerror
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
+	local system_malloc=$(usex !bmalloc "1" "0")
 	if use 64kb-page-block ; then
-		use bmalloc && die "bmalloc USE flag must be disabled."
 		mycmakeargs+=(
 			-DENABLE_JIT=OFF
 			-DENABLE_DFG_JIT=OFF
@@ -1554,6 +1554,7 @@ eerror
 			)
 		fi
 		jit_enabled=0
+		system_malloc=1
 	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
@@ -1603,7 +1604,6 @@ eerror
 einfo
 einfo "Disabling JIT for ${ABI}."
 einfo
-		use bmalloc && die "bmalloc USE flag must be disabled."
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=ON
 			-DENABLE_JIT=OFF
@@ -1615,11 +1615,12 @@ einfo
 			-DUSE_SYSTEM_MALLOC=ON
 		)
 		jit_enabled=0
+		system_malloc=1
 	fi
 
-	if ! use bmalloc ; then
+	if (( ${system_malloc} == 1 )) ; then
 ewarn
-ewarn "Disabling bmalloc may lower security."
+ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
 ewarn
 	fi
 
@@ -1627,25 +1628,24 @@ ewarn
 	# places
 	if (( ${jit_enabled} == 0 )) ; then
 einfo
-einfo "Disabled YARR (regex) JIT"
+einfo "Disabled JIT"
 einfo
 		append-cppflags \
 			-DENABLE_ASSEMBLER=0 \
-			-DENABLE_JIT=0 \
-			-DENABLE_YARR_JIT=0
-	else
-		if use yarr-jit ; then
+			-DENABLE_JIT=0
+	fi
+	if use yarr-jit ; then
 einfo
 einfo "Enabled YARR (regex) JIT" # default
 einfo
-		else
+	else
 einfo
 einfo "Disabled YARR (regex) JIT"
 einfo
-			append-cppflags \
-				-DENABLE_YARR_JIT=0
-		fi
+		append-cppflags \
+			-DENABLE_YARR_JIT=0
 	fi
+
 einfo
 einfo "CPPFLAGS=${CPPFLAGS}"
 einfo
