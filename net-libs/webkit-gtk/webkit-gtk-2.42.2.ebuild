@@ -1263,6 +1263,13 @@ eerror
 		die
 	fi
 
+# See
+# https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
+# https://github.com/WebKit/WebKit/blob/main/Source/cmake/WebKitFeatures.cmake#L76
+#
+# Anything beyond the programmed ceiling with do a planned forced crash
+# according to upstream.
+#
 	if use 64kb-page-block ; then
 ewarn
 ewarn "You are enabling the 64kb-page-block USE flag which may degrade"
@@ -1288,11 +1295,10 @@ ewarn
 			WARNING_IA64_PAGE_SIZE_4KB=\
 "CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
 			check_extra_config
-		elif use ppc64 ; then
+		elif use ppc || use ppc64 ; then
 			CONFIG_CHECK="~!PPC_256K_PAGES ~PPC_64K_PAGES ~!PPC_16K_PAGES ~!PPC_4K_PAGES"
 			WARNING_PPC_256K_PAGES=\
-"Either set both CONFIG_PPC_256K_PAGES=n and CONFIG_PPC_64K_PAGES=y in the "\
-"kernel, or disable the 64kb-page-block USE flag."
+"CONFIG_PPC_256K_PAGES must be set to =n in the kernel."
 			WARNING_PPC_64K_PAGES=\
 "CONFIG_PPC_64K_PAGES must be set to =y in the kernel."
 			WARNING_PPC_16K_PAGES=\
@@ -1300,24 +1306,74 @@ ewarn
 			WARNING_PPC_4K_PAGES=\
 "CONFIG_PPC_4K_PAGES must be set to =n in the kernel."
 			check_extra_config
+		elif \
+			[[ \
+				   "${ARCH}" == "loong" \
+				|| "${ARCH}" == "mips" \
+				|| "${ARCH}" == "mips64" \
+				|| "${ARCH}" == "mips64el" \
+				|| "${ARCH}" == "mipsel" \
+			]] \
+				|| \
+			( \
+				[[ "${ARCH}" == "riscv" ]] \
+					&& \
+				( \
+					   use lp64d \
+					|| use lp64 \
+				) \
+			)
+		then
+eerror
+eerror "The 64kb-page-block USE flag must be disabled."
+eerror
+			die
+		else
+ewarn
+ewarn "You are responsible for ensuring that the kernel page size to 64 KB."
+ewarn
 		fi
 	else
-		if use arm64 ; then
-			CONFIG_CHECK="~!ARM64_64K_PAGES"
+		if use arm ; then
+			:; # 4K pages
+		elif use loong ; then
+			:; # 16K pages
+		elif use arm64 ; then
+			CONFIG_CHECK="~!ARM64_64K_PAGES ~!ARM64_4K_PAGES ~ARM64_16K_PAGES"
 			WARNING_ARM64_64K_PAGES=\
-"CONFIG_ARM64_64K_PAGES must be set to =n in the kernel or enable 64kb-page-block USE flag."
+"CONFIG_ARM64_64K_PAGES must be set to =n in the kernel."
+			WARNING_ARM64_16K_PAGES=\
+"CONFIG_ARM64_16K_PAGES must be set to =y in the kernel."
+			WARNING_ARM64_4K_PAGES=\
+"CONFIG_ARM64_4K_PAGES must be set to =n in the kernel."
 			check_extra_config
-		elif use ia64 ; then
-			CONFIG_CHECK="~!IA64_PAGE_SIZE_64KB"
-			WARNING_IA64_PAGE_SIZE_64KB=\
-"CONFIG_IA64_PAGE_SIZE_64KB must be set to =n in the kernel or enable 64kb-page-block USE flag."
+		elif [[ "${ARCH}" == "mips" || "${ARCH}" == "mips64" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64el" ]] ; then
+			CONFIG_CHECK="~!PAGE_SIZE_64KB ~!PAGE_SIZE_32KB ~PAGE_SIZE_16KB ~!PAGE_SIZE_8KB ~!PAGE_SIZE_4KB"
+			WARNING_PAGE_SIZE_64KB=\
+"CONFIG_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_32KB=\
+"CONFIG_PAGE_SIZE_32KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_16KB=\
+"CONFIG_PAGE_SIZE_16KB must be set to =y in the kernel."
+			WARNING_PAGE_SIZE_8KB=\
+"CONFIG_PAGE_SIZE_8KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_4KB=\
+"CONFIG_PAGE_SIZE_4KB must be set to =n in the kernel."
 			check_extra_config
-		elif use ppc64 ; then
-			CONFIG_CHECK="~!PPC_64K_PAGES"
-			WARNING_PPC_64K_PAGES=\
-"CONFIG_PPC_64K_PAGES must be set to =n in the kernel or enable 64kb-page-block USE flag."
-			check_extra_config
+		elif [[ "${ARCH}" == "riscv" ]] && ( use lp64d || use lp64 ) ; then
+			:; # 4K pages
+		else
+# Covers ppc, ppc64
+# Covers UNKNOWN CPU arches; see also 79862e474cb3760e4f77a3ff8d8dec815740f69e
+eerror
+eerror "The 64kb-page-block USE flag must be enabled."
+eerror
+			die
 		fi
+	fi
+	if [[ "${ARCH}" == "riscv" ]] ; then
+		use ilp32d && die "Disable the unsupported ilp32d ABI"
+		use ilp32 && die "Disable the unsupported ilp32 ABI"
 	fi
 
 	verify_codecs
@@ -1581,8 +1637,7 @@ eerror
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ABI}" == "n32" ]] ; then
-		# mips32
+	elif [[ "${ARCH}" == "mips" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
