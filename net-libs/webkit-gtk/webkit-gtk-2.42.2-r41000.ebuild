@@ -1498,6 +1498,7 @@ eerror
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
 		-DUSE_GTK4=OFF
 		-DUSE_JPEGXL=$(usex jpegxl)
+		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBBACKTRACE=OFF

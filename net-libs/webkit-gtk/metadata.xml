@@ -219,6 +219,9 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="gamepad">
       Enable gamepad input support via <pkg>dev-libs/libmanette</pkg>.
     </flag>
+    <flag name="gbm">
+      Enable hardware acceleration for WebGL.
+    </flag>
     <flag name="geolocation">
       Enable geolocation support through <pkg>app-misc/geoclue</pkg>.
     </flag>
