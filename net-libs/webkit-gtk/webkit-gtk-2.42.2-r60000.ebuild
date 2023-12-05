@@ -1579,8 +1579,8 @@ eerror
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
-			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
-			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_B3JIT=OFF
+			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "n32" ]] ; then
@@ -1591,8 +1591,8 @@ eerror
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_SAMPLING_PROFILER=OFF
-			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
-			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_B3JIT=OFF
+			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ARCH}" == "riscv" && ( "${ABI}" == "lp64d" || "${ABI}" == "lp64" ) ]] ; then
