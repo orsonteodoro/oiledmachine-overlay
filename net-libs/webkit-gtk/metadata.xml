@@ -377,8 +377,9 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       Build support for the WebGL HTML API using <pkg>virtual/opengl</pkg>.
     </flag>
     <flag name="webassembly">
-      Enables support for WebAssembly used for example in web games.  Disable to
-      decrease the attack surface.
+      Enables support for WebAssembly used for example in web games.
+
+      Disable the webassembly USE flag to decrease the attack surface.
     </flag>
     <flag name="webdriver">
       Enable WebDriver support for Selenium.  This allows for automated testing,

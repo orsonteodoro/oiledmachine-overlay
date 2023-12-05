@@ -1533,7 +1533,7 @@ eerror
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DUSE_SYSTEM_MALLOC=ON
 		)
-		if [[ "${ABI}" == "arm64"  ]] ; then
+		if [[ "${ABI}" == "arm64" ]] ; then
 			mycmakeargs+=(
 				-DENABLE_C_LOOP=OFF
 				-DENABLE_SAMPLING_PROFILER=ON
@@ -1617,6 +1617,14 @@ einfo
 			-DENABLE_WEBASSEMBLY=$(usex webassembly)
 		)
 	else
+ewarn
+ewarn "WebAssembly disabled.  The following steps are required to easily enable"
+ewarn "it:"
+ewarn
+ewarn "(1) Enable the jit USE flag."
+ewarn "(2) Disable the 64kb-page-block USE flag."
+ewarn "(3) Change the kernel config to use page sizes less than 64 KB."
+ewarn
 		mycmakeargs+=(
 			-DENABLE_WEBASSEMBLY=OFF
 		)
