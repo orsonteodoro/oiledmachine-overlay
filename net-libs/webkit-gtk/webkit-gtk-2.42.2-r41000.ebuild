@@ -573,6 +573,7 @@ REQUIRED_USE+="
 		!opengl
 	)
 	gstreamer? (
+		bmalloc
 		|| (
 			gles2
 			opengl
