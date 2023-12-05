@@ -1338,10 +1338,10 @@ ewarn "You are responsible for ensuring that the kernel page size to 64 KB."
 ewarn
 		fi
 	else
-		if use arm ; then
+		if use amd64 ; then
 			:; # 4K pages
-		elif use loong ; then
-			:; # 16K pages
+		elif use arm ; then
+			:; # 4K pages
 		elif use arm64 ; then
 			CONFIG_CHECK="~!ARM64_64K_PAGES ~!ARM64_4K_PAGES ~ARM64_16K_PAGES"
 			WARNING_ARM64_64K_PAGES=\
@@ -1351,6 +1351,10 @@ ewarn
 			WARNING_ARM64_4K_PAGES=\
 "CONFIG_ARM64_4K_PAGES must be set to =n in the kernel."
 			check_extra_config
+		elif use loong ; then
+			:; # 16K pages
+		elif use x86 ; then
+			:; # 4K pages
 		elif [[ "${ARCH}" == "mips" || "${ARCH}" == "mips64" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64el" ]] ; then
 			CONFIG_CHECK="~!PAGE_SIZE_64KB ~!PAGE_SIZE_32KB ~PAGE_SIZE_16KB ~!PAGE_SIZE_8KB ~!PAGE_SIZE_4KB"
 			WARNING_PAGE_SIZE_64KB=\
