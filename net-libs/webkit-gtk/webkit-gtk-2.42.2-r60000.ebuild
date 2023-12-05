@@ -1488,7 +1488,6 @@ eerror
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
 		-DENABLE_WEB_CRYPTO=$(usex webcrypto)
 		-DENABLE_WEB_RTC=$(usex webrtc)
-		-DENABLE_WEBASSEMBLY=$(usex webassembly)
 		-DENABLE_WEBCORE=$(usex webcore)
 		-DENABLE_WEBDRIVER=$(usex webdriver)
 		-DENABLE_WEBGL=$(usex webgl)
@@ -1537,6 +1536,7 @@ eerror
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
 	local system_malloc=$(usex !bmalloc "1" "0")
+	local webassembly_allowed=$(usex jit "1" "0")
 	if use 64kb-page-block ; then
 		mycmakeargs+=(
 			-DENABLE_JIT=OFF
@@ -1551,11 +1551,13 @@ eerror
 				-DENABLE_C_LOOP=OFF
 				-DENABLE_SAMPLING_PROFILER=ON
 			)
+			webassembly_allowed=1
 		else
 			mycmakeargs+=(
 				-DENABLE_C_LOOP=ON
 				-DENABLE_SAMPLING_PROFILER=OFF
 			)
+			webassembly_allowed=0
 		fi
 		jit_enabled=0
 		system_malloc=1
@@ -1565,7 +1567,7 @@ eerror
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=$(usex ftl-jit)
-			-DENABLE_SAMPLING_PROFILER=ON
+			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
@@ -1576,7 +1578,7 @@ eerror
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=OFF
-			-DENABLE_SAMPLING_PROFILER=ON
+			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
@@ -1588,7 +1590,7 @@ eerror
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=OFF
-			-DENABLE_SAMPLING_PROFILER=OFF
+			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
@@ -1599,7 +1601,7 @@ eerror
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=$(usex ftl-jit)
-			-DENABLE_SAMPLING_PROFILER=OFF
+			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
@@ -1620,6 +1622,17 @@ einfo
 		)
 		jit_enabled=0
 		system_malloc=1
+		webassembly_allowed=0
+	fi
+
+	if (( ${webassembly_allowed} == 1 )) ; then
+		mycmakeargs+=(
+			-DENABLE_WEBASSEMBLY=$(usex webassembly)
+		)
+	else
+		mycmakeargs+=(
+			-DENABLE_WEBASSEMBLY=OFF
+		)
 	fi
 
 	if (( ${system_malloc} == 1 )) ; then
