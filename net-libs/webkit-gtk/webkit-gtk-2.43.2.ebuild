@@ -6,7 +6,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (6.0)
+# ab = WEBKITGTK_API_VERSION version (4.0)
 # c = reserved
 # de = ebuild revision
 
@@ -26,7 +26,7 @@ inherit linux-info llvm multilib-minimal pax-utils python-any-r1 ruby-single
 inherit toolchain-funcs uopts
 inherit cflags-depends
 
-DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/1.1 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -294,16 +294,16 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 #KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="6.0"
+API_VERSION="4.0"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 6.0
-CURRENT="9"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="105"
 #REVISION=""
-AGE="5"
+AGE="68"
 SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${API_VERSION%.*}/${SOVERSION}"
 # SLOT=6/4    GTK4 SOUP3
@@ -693,11 +693,6 @@ REQUIRED_USE+="
 #
 # >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE
 #  [Media Source Extensions])
-# gstreamer requires >=libwpe-1.9.0 but gtk wpe renderer requires >=1.3.0
-WPE_DEPEND="
-	>=gui-libs/libwpe-1.9.0:1.0[${MULTILIB_USEDEP}]
-	>=gui-libs/wpebackend-fdo-1.6.0:1.0[${MULTILIB_USEDEP}]
-"
 # TODO: gst-plugins-base[X] is only needed when build configuration ends up with
 #   GLX set, but that's a bit automagic too to fix
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
@@ -707,7 +702,7 @@ CAIRO_PV="1.16.0"
 CLANG_PV="13"
 CXX_STD="20"
 GCC_PV="10.2.0"
-GLIB_PV="2.70.0"
+GLIB_PV="2.56.4"
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
@@ -782,17 +777,17 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk-4.4.0:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
-	>=media-libs/libepoxy-1.4.0[${MULTILIB_USEDEP}]
+	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
+	>=net-libs/libsoup-2.54.0:2.4[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
+	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	alsa? (
 		!media-plugins/gst-plugins-pulse
@@ -933,7 +928,6 @@ RDEPEND+="
 		>=x11-libs/cairo-1.16:=[${MULTILIB_USEDEP},X?]
 	)
 	wayland? (
-		${WPE_DEPEND}
 		>=dev-libs/wayland-1.15.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
@@ -961,7 +955,6 @@ RDEPEND+="
 # For ${OCDM_WV}, \
 #   You need a license, the proprietary SDK, and OCDM plugin.
 # see https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L97
-unset WPE_DEPEND
 DEPEND+=" ${RDEPEND}"
 # paxctl is needed for bug #407085
 # It needs real bison, not yacc.
@@ -1185,10 +1178,6 @@ ewarn
 }
 
 pkg_setup() {
-ewarn
-ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
-ewarn "It is currently not recommended due to rendering bug(s)."
-ewarn
 einfo
 einfo "This is the unstable branch."
 einfo
@@ -1503,7 +1492,7 @@ eerror
 		-DUSE_GBM=$(usex gbm)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=ON
+		-DUSE_GTK4=OFF
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
@@ -1511,7 +1500,7 @@ eerror
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
+		-DUSE_SOUP2=ON
 		-DUSE_WOFF2=$(usex woff2)
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
@@ -1524,16 +1513,6 @@ eerror
 	else
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_EGL=ON
-		)
-	fi
-
-	if use opengl || use gles2 ; then
-		mycmakeargs+=(
-			-DUSE_OPENGL_OR_ES=ON
-		)
-	else
-		mycmakeargs+=(
-			-DUSE_OPENGL_OR_ES=OFF
 		)
 	fi
 
@@ -1884,7 +1863,7 @@ multilib_src_install() {
 	cmake_src_install
 
 	# Prevent crashes on PaX systems, bug #522808
-	local d="${ED}/usr/$(get_libdir)/misc/webkitgtk-${API_VERSION}"
+	local d="${ED}/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
 	# usr/libexec is not multilib this is why it is changed.
 	pax-mark m "${d}/WebKitPluginProcess"
 	pax-mark m "${d}/WebKitWebProcess"
@@ -1892,7 +1871,7 @@ multilib_src_install() {
 
 	if use minibrowser ; then
 		make_desktop_entry \
-			/usr/$(get_libdir)/misc/webkitgtk-${API_VERSION}/MiniBrowser \
+			/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
 			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" \
 			"Network;WebBrowser"
@@ -1932,7 +1911,7 @@ pkg_postinst() {
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
 			ln -sf \
-"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkitgtk-${API_VERSION}/MiniBrowser" \
+"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser" \
 				"${EROOT}/usr/bin/minibrowser" || die
 		}
 		multilib_foreach_abi create_minibrowser_symlink_abi
@@ -1941,8 +1920,8 @@ einfo "The symlink for the minibrowser may need to change manually to select"
 einfo "the preferred ABI and/or API version which can be 4.0, 4.1, 5.0."
 einfo "Examples,"
 einfo
-einfo "\`ln -sf /usr/lib64/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
-einfo "\`ln -sf /usr/lib/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
 einfo
 	fi
 	check_geolocation

@@ -693,11 +693,6 @@ REQUIRED_USE+="
 #
 # >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE
 #  [Media Source Extensions])
-# gstreamer requires >=libwpe-1.9.0 but gtk wpe renderer requires >=1.3.0
-WPE_DEPEND="
-	>=gui-libs/libwpe-1.9.0:1.0[${MULTILIB_USEDEP}]
-	>=gui-libs/wpebackend-fdo-1.6.0:1.0[${MULTILIB_USEDEP}]
-"
 # TODO: gst-plugins-base[X] is only needed when build configuration ends up with
 #   GLX set, but that's a bit automagic too to fix
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
@@ -786,7 +781,7 @@ RDEPEND+="
 	>=media-libs/freetype-${FREETYPE_PV}:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
-	>=media-libs/libepoxy-1.4.0[${MULTILIB_USEDEP}]
+	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
@@ -933,7 +928,6 @@ RDEPEND+="
 		>=x11-libs/cairo-1.16:=[${MULTILIB_USEDEP},X?]
 	)
 	wayland? (
-		${WPE_DEPEND}
 		>=dev-libs/wayland-1.15.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
@@ -961,7 +955,6 @@ RDEPEND+="
 # For ${OCDM_WV}, \
 #   You need a license, the proprietary SDK, and OCDM plugin.
 # see https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L97
-unset WPE_DEPEND
 DEPEND+=" ${RDEPEND}"
 # paxctl is needed for bug #407085
 # It needs real bison, not yacc.
@@ -1520,16 +1513,6 @@ eerror
 	else
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_EGL=ON
-		)
-	fi
-
-	if use opengl || use gles2 ; then
-		mycmakeargs+=(
-			-DUSE_OPENGL_OR_ES=ON
-		)
-	else
-		mycmakeargs+=(
-			-DUSE_OPENGL_OR_ES=OFF
 		)
 	fi
 
