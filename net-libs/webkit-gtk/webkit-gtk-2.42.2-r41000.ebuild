@@ -611,6 +611,7 @@ REQUIRED_USE+="
 	)
 	webassembly-bbq-jit? (
 		webassembly
+		webassembly-b3-jit
 	)
 	webgl? (
 		|| (

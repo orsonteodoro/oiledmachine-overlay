@@ -404,8 +404,8 @@ dash +dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user -seccomp speech-synthesis -spell test thunder
 +unified-builds +variation-fonts wayland +webassembly +webassembly-b3-jit
-+webassembly-bbq-jit +webcore +webcrypto -webdriver +webgl webm-eme -webrtc
-webvtt -webxr +woff2 +X +yarr-jit
++webassembly-bbq-jit +webassembly-omg-jit +webcore +webcrypto -webdriver +webgl
+webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -612,6 +612,11 @@ REQUIRED_USE+="
 	)
 	webassembly-bbq-jit? (
 		webassembly
+		webassembly-b3-jit
+	)
+	webassembly-omg-jit? (
+		webassembly
+		webassembly-b3-jit
 	)
 	webgl? (
 		|| (
@@ -1530,6 +1535,7 @@ eerror
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=ON
 		)
 		if [[ "${ABI}" == "arm64"  ]] ; then
@@ -1554,6 +1560,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=ON
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ; then
@@ -1565,6 +1572,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=ON
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "n32" ]] ; then
@@ -1577,6 +1585,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ARCH}" == "riscv" && ( "${ABI}" == "lp64d" || "${ABI}" == "lp64" ) ]] ; then
@@ -1588,6 +1597,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	else
@@ -1602,6 +1612,7 @@ einfo
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=ON
 		)
 		jit_enabled=0

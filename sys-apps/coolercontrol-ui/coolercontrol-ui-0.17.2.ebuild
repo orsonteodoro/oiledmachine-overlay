@@ -1145,11 +1145,11 @@ src_configure() {
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri" \
 	cargo_src_configure
 	local port=${COOLERCONTROL_GUI_PORT:-11987}
-	sed -i \
-		-e "s|localhost:5173|localhost:${port}|g" \
-		-e "s|../dist|localhost:${port}|g" \
-		"${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri/tauri.conf.json" \
-		|| die
+#	sed -i \
+#		-e "s|localhost:5173|localhost:${port}|g" \
+#		-e "s|../dist|localhost:${port}|g" \
+#		"${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui/src-tauri/tauri.conf.json" \
+#		|| die
 }
 
 src_compile() {

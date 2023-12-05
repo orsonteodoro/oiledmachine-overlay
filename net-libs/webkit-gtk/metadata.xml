@@ -391,7 +391,10 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
       If disabled it will use LLVM as the backend for FTL JIT.
     </flag>
     <flag name="webassembly-bbq-jit">
-      Enables the BBQ JIT for quick execution of hot code for WebAssembly.
+      Enables the BBQ JIT for quick execution for WebAssembly.
+    </flag>
+    <flag name="webassembly-omg-jit">
+      Enables the OMG JIT for optimized runtime throughput for WebAssembly.
     </flag>
     <flag name="webcrypto">
       Enables WebCrypto SubtleCrypto API support for low level cryptographic
