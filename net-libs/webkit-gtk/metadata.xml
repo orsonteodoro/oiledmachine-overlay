@@ -387,8 +387,6 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
     <flag name="webassembly-b3-jit">
       Enables and chooses the B3 JIT as the FTL JIT backend for faster
       compilation with additional optimizations for WebAssembly.
-
-      If disabled it will use LLVM as the backend for FTL JIT.
     </flag>
     <flag name="webassembly-bbq-jit">
       Enables the BBQ JIT for initial quick code generation, reduced startup
