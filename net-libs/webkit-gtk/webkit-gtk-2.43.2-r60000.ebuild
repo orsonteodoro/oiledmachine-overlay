@@ -1584,7 +1584,7 @@ eerror
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=OFF
-			-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
@@ -1596,7 +1596,7 @@ eerror
 			-DENABLE_JIT=$(usex jit)
 			-DENABLE_DFG_JIT=$(usex dfg-jit)
 			-DENABLE_FTL_JIT=$(usex ftl-jit)
-			-DENABLE_SAMPLING_PROFILER=$(usex jit)
+			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
 			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
