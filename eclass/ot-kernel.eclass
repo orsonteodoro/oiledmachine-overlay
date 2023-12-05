@@ -50,7 +50,6 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.4
-#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.5
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
@@ -83,8 +82,8 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.4/
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.5/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.7/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
