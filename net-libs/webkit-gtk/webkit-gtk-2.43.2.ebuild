@@ -1531,6 +1531,7 @@ eerror
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=ON
 		)
 		if [[ "${ABI}" == "arm64" ]] ; then
@@ -1557,6 +1558,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ; then
@@ -1568,6 +1570,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "n32" ]] ; then
@@ -1580,6 +1583,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ARCH}" == "riscv" && ( "${ABI}" == "lp64d" || "${ABI}" == "lp64" ) ]] ; then
@@ -1591,6 +1595,7 @@ eerror
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	else
@@ -1605,6 +1610,7 @@ einfo
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=ON
 		)
 		jit_enabled=0
