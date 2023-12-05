@@ -1,0 +1,20 @@
+--- a/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in.orig	2023-12-04 01:26:46.700829300 -0800
++++ b/Source/WebKit/Shared/WebCoreArgumentCoders.serialization.in	2023-12-05 10:19:32.433190866 -0800
+@@ -6765,6 +6765,8 @@ header: <WebCore/Font.h>
+ [Nested] enum class WebCore::FontVisibility : bool;
+ [Nested] enum class WebCore::FontIsOrientationFallback : bool;
+ 
++#if ENABLE(VIDEO)
++
+ header: <WebCore/CaptionUserPreferences.h>
+ enum class WebCore::CaptionUserPreferencesDisplayMode : uint8_t {
+     Automatic,
+@@ -6773,6 +6775,8 @@ enum class WebCore::CaptionUserPreferenc
+     Manual,
+ };
+ 
++#endif
++
+ header: <WebCore/InspectorClient.h>
+ enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
+     PrivateClickMeasurementDebugModeEnabled,

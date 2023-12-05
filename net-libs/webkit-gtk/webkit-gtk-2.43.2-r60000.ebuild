@@ -1032,6 +1032,7 @@ RESTRICT="test"
 S="${WORKDIR}/webkitgtk-${PV}"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 _PATCHES=(
+	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
 )
 
 pkg_pretend() {
@@ -1374,7 +1375,7 @@ ewarn
 
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.90-linkers.patch"
 
-	#eapply "${_PATCHES[@]}"
+	eapply "${_PATCHES[@]}"
 	cmake_src_prepare
 	gnome2_src_prepare
 
@@ -2010,3 +2011,6 @@ ewarn
 #   wiki(s):  passed
 #   audio:  TBA
 #   stability:  crashy within a few minutes
+
+# with -O3 -jit* -gstreamer, clang 15.0.7 (2.43.2, 20231205):
+#   startup:  fail
