@@ -1334,7 +1334,7 @@ eerror
 			die
 		else
 ewarn
-ewarn "You are responsible for ensuring that the kernel page size to 64 KB."
+ewarn "You are responsible for ensuring that the kernel page size is 64 KB."
 ewarn
 		fi
 	else
