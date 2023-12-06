@@ -1649,25 +1649,29 @@ eerror
 
 	if (( ${known} == 1 )) ; then
 		:;
-	elif (( ${page_size} == 64 )) ; then
-		:;
 	else
 		if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
-eerror
-eerror "Invalid value for CUSTOM_PAGE_SIZE."
-eerror
-eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
-eerror "Expected values:  64"
-eerror
-				die
+ewarn
+ewarn "UNKNOWN arch encountered.  Cannot validate CUSTOM_PAGE_SIZE correctness."
+ewarn "You are responsible for the correctness of CUSTOM_PAGE_SIZE for CHOST."
+ewarn
+ewarn "See metadata.xml for details."
+ewarn
+ewarn "Actual value:  ${CUSTOM_PAGE_SIZE}"
+ewarn
 		else
-eerror
-eerror "QA:  Invalid value for page_size."
-eerror
-eerror "Actual value:  ${page_size}"
-eerror "Expected values:  64"
-eerror
-			die
+ewarn
+ewarn "UNKNOWN arch encountered.  Cannot validate page_size correctness."
+ewarn "${page_size} KB is assumed, but you may supply the correct page size"
+ewarn "value of CUSTOM_PAGE_SIZE.  If the actual page size is larger, you are"
+ewarn "required to set CUSTOM_PAGE_SIZE to the actual value of the CHOST"
+ewarn "machine to avoid a crash."
+ewarn
+ewarn "See metadata.xml for details."
+ewarn
+ewarn "Assumed value:  ${CUSTOM_PAGE_SIZE}"
+ewarn "Actual value:  $(($(getconf PAGE_SIZE)/1024))"
+ewarn
 		fi
 	fi
 	WK_PAGE_SIZE=${page_size}
