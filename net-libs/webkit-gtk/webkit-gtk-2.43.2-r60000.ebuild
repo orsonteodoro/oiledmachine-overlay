@@ -1657,14 +1657,14 @@ ewarn
 	else
 		if ! tc-is-cross-compiler ; then
 			local actual_page_size=$(($(getconf PAGE_SIZE)/1024))
-			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] && (( ${actual_page_size} >= ${CUSTOM_PAGE_SIZE} )) ; then
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] && (( ${actual_page_size} > ${CUSTOM_PAGE_SIZE} )) ; then
 eerror
 eerror "Invalid value for CUSTOM_PAGE_SIZE."
 eerror
 eerror "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
 eerror "Expected value:  ${actual_page_size}"
 eerror
-			elif (( ${actual_page_size} >= ${page_size} )) ; then
+			elif (( ${actual_page_size} > ${page_size} )) ; then
 eerror
 eerror "You must set CUSTOM_PAGE_SIZE to the actual page size.  The default"
 eerror "page size is unfortunately incorrect and is too small."
