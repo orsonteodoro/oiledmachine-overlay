@@ -1655,7 +1655,8 @@ ewarn "You are responsible for the correctness of CUSTOM_PAGE_SIZE for CHOST."
 ewarn
 ewarn "See metadata.xml for details."
 ewarn
-ewarn "Actual value:  ${CUSTOM_PAGE_SIZE}"
+ewarn "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
+ewarn "Actual value on CBUILD:  $(($(getconf PAGE_SIZE)/1024))"
 ewarn
 		else
 ewarn
@@ -1667,8 +1668,8 @@ ewarn "machine to avoid a crash."
 ewarn
 ewarn "See metadata.xml for details."
 ewarn
-ewarn "Assumed value:  ${CUSTOM_PAGE_SIZE}"
-ewarn "Actual value:  $(($(getconf PAGE_SIZE)/1024))"
+ewarn "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
+ewarn "Actual value on CBUILD:  $(($(getconf PAGE_SIZE)/1024))"
 ewarn
 		fi
 	fi
