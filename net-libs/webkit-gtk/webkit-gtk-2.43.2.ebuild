@@ -2006,7 +2006,8 @@ eerror
 	local jit_enabled=$(usex jit "1" "0")
 	local system_malloc=$(usex !bmalloc "1" "0")
 	local webassembly_allowed=$(usex jit "1" "0")
-	if (( ${WK_PAGE_SIZE} == 64 )) ; then
+
+	_jit_off() {
 		mycmakeargs+=(
 			-DENABLE_JIT=OFF
 			-DENABLE_DFG_JIT=OFF
@@ -2016,7 +2017,7 @@ eerror
 			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=ON
 		)
-		if [[ "${ABI}" == "arm64" ]] ; then
+		if [[ "${ABI}" == "arm64" ]] && (( ${WK_PAGE_SIZE} == 64 )) ; then
 			mycmakeargs+=(
 				-DENABLE_C_LOOP=OFF
 				-DENABLE_SAMPLING_PROFILER=ON
@@ -2031,6 +2032,10 @@ eerror
 		fi
 		jit_enabled=0
 		system_malloc=1
+	}
+
+	if (( ${WK_PAGE_SIZE} == 64 )) ; then
+		_jit_off
 	elif [[ "${ABI}" == "amd64" || "${ABI}" == "arm64" ]] ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
@@ -2084,20 +2089,7 @@ eerror
 einfo
 einfo "Disabling JIT for ${ABI}."
 einfo
-		mycmakeargs+=(
-			-DENABLE_C_LOOP=ON
-			-DENABLE_JIT=OFF
-			-DENABLE_DFG_JIT=OFF
-			-DENABLE_FTL_JIT=OFF
-			-DENABLE_SAMPLING_PROFILER=OFF
-			-DENABLE_WEBASSEMBLY_B3JIT=OFF
-			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
-			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
-			-DUSE_SYSTEM_MALLOC=ON
-		)
-		jit_enabled=0
-		system_malloc=1
-		webassembly_allowed=0
+		_jit_off
 	fi
 
 	if (( ${webassembly_allowed} == 1 )) ; then
