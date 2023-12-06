@@ -1183,91 +1183,7 @@ ewarn
 	fi
 }
 
-pkg_setup() {
-ewarn
-ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
-ewarn "It is currently not recommended due to rendering bug(s)."
-ewarn
-einfo
-einfo "This is the unstable branch."
-einfo
-	if [[ ${MERGE_TYPE} != "binary" ]] \
-		&& is-flagq "-g*" \
-		&& ! is-flagq "-g*0" ; then
-		check-reqs_pkg_setup
-	fi
-	python-any-r1_pkg_setup
-
-	check_geolocation
-	cflags-depends_check
-
-	if ( use arm || use arm64 ) && ! use gles2 ; then
-ewarn
-ewarn "gles2 is the default on upstream."
-ewarn
-	fi
-
-	if use openmp ; then
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
-einfo "CC:\t\t\t${CC}"
-einfo "CXX:\t\t\t${CXX}"
-		${CC} --version
-		tc-check-openmp
-	fi
-
-	tc-is-clang && llvm_pkg_setup
-
-	if ! use pulseaudio ; then
-ewarn
-ewarn "Microphone support requires pulseaudio USE flag enabled."
-ewarn
-	fi
-
-	if use v4l ; then
-		local gst_plugins_v4l2_repo=\
-$(cat "${EROOT}/var/db/pkg/media-plugins/gst-plugins-v4l2-"*"/repository")
-einfo
-einfo "gst-plugins-v4l2 repo:  ${gst_plugins_v4l2_repo}"
-einfo
-		if [[ "${gst_plugins_v4l2_repo}" != "oiledmachine-overlay" ]] ; then
-ewarn
-ewarn "Please only use the media-plugins/gst-plugins-v4l2::oiledmachine-overlay"
-ewarn
-ewarn "  or"
-ewarn
-ewarn "Add \"export GST_V4L2_USE_LIBV4L2=1\" to your .bashrc and relog."
-ewarn
-		fi
-	fi
-
-	if use webrtc ; then
-ewarn
-ewarn "WebRTC support is currently in development and feature incomplete."
-ewarn
-	fi
-
-	if ! use webcore ; then
-ewarn
-ewarn "Disabling webcore disables rendering support."
-ewarn "Only disable if you want JavaScript support."
-ewarn
-	fi
-
-	if ! use javascriptcore ; then
-ewarn
-ewarn "Disabling webcore disables website scripts completely"
-ewarn "or any contemporary websites."
-ewarn
-	fi
-
-	if ! use mold && is-flagq '-fuse-ld=mold' ; then
-eerror
-eerror "-fuse-ld=mold requires the mold USE flag."
-eerror
-		die
-	fi
-
+check_page_size() {
 # See
 # https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
 # https://github.com/WebKit/WebKit/blob/main/Source/cmake/WebKitFeatures.cmake#L76
@@ -1394,11 +1310,99 @@ eerror
 			die
 		fi
 	fi
+}
+
+pkg_setup() {
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
+einfo
+einfo "This is the unstable branch."
+einfo
+	if [[ ${MERGE_TYPE} != "binary" ]] \
+		&& is-flagq "-g*" \
+		&& ! is-flagq "-g*0" ; then
+		check-reqs_pkg_setup
+	fi
+	python-any-r1_pkg_setup
+
+	check_geolocation
+	cflags-depends_check
+
+	if ( use arm || use arm64 ) && ! use gles2 ; then
+ewarn
+ewarn "gles2 is the default on upstream."
+ewarn
+	fi
+
+	if use openmp ; then
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+einfo "CC:\t\t\t${CC}"
+einfo "CXX:\t\t\t${CXX}"
+		${CC} --version
+		tc-check-openmp
+	fi
+
+	tc-is-clang && llvm_pkg_setup
+
+	if ! use pulseaudio ; then
+ewarn
+ewarn "Microphone support requires pulseaudio USE flag enabled."
+ewarn
+	fi
+
+	if use v4l ; then
+		local gst_plugins_v4l2_repo=\
+$(cat "${EROOT}/var/db/pkg/media-plugins/gst-plugins-v4l2-"*"/repository")
+einfo
+einfo "gst-plugins-v4l2 repo:  ${gst_plugins_v4l2_repo}"
+einfo
+		if [[ "${gst_plugins_v4l2_repo}" != "oiledmachine-overlay" ]] ; then
+ewarn
+ewarn "Please only use the media-plugins/gst-plugins-v4l2::oiledmachine-overlay"
+ewarn
+ewarn "  or"
+ewarn
+ewarn "Add \"export GST_V4L2_USE_LIBV4L2=1\" to your .bashrc and relog."
+ewarn
+		fi
+	fi
+
+	if use webrtc ; then
+ewarn
+ewarn "WebRTC support is currently in development and feature incomplete."
+ewarn
+	fi
+
+	if ! use webcore ; then
+ewarn
+ewarn "Disabling webcore disables rendering support."
+ewarn "Only disable if you want JavaScript support."
+ewarn
+	fi
+
+	if ! use javascriptcore ; then
+ewarn
+ewarn "Disabling webcore disables website scripts completely"
+ewarn "or any contemporary websites."
+ewarn
+	fi
+
+	if ! use mold && is-flagq '-fuse-ld=mold' ; then
+eerror
+eerror "-fuse-ld=mold requires the mold USE flag."
+eerror
+		die
+	fi
+
 	if [[ "${ARCH}" == "riscv" ]] ; then
 		use ilp32d && die "Disable the unsupported ilp32d ABI"
 		use ilp32 && die "Disable the unsupported ilp32 ABI"
 	fi
 
+	check_page_size
 	verify_codecs
 	uopts_setup
 }
