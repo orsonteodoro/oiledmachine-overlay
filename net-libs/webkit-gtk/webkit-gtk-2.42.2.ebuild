@@ -1034,6 +1034,9 @@ SRC_URI="
 RESTRICT="test"
 S="${WORKDIR}/webkitgtk-${PV}"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
+_PATCHES=(
+	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
+)
 
 pkg_pretend() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
@@ -1431,6 +1434,7 @@ ewarn
 
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.90-linkers.patch"
 
+	eapply "${_PATCHES[@]}"
 	cmake_src_prepare
 	gnome2_src_prepare
 
@@ -1589,6 +1593,10 @@ eerror
 		mycmakeargs+=(
 			-DUSE_OPENGL_OR_ES=OFF
 		)
+	fi
+
+	if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
+		append-cppflags -DCUSTOM_PAGE_SIZE=${CUSTOM_PAGE_SIZE}
 	fi
 
 	# See Source/cmake/WebKitFeatures.cmake

@@ -1033,6 +1033,7 @@ S="${WORKDIR}/webkitgtk-${PV}"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 _PATCHES=(
 	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
+	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
 pkg_pretend() {
@@ -1581,6 +1582,10 @@ eerror
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_EGL=ON
 		)
+	fi
+
+	if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
+		append-cppflags -DCUSTOM_PAGE_SIZE=${CUSTOM_PAGE_SIZE}
 	fi
 
 	# See Source/cmake/WebKitFeatures.cmake

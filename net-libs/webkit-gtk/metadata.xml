@@ -26,6 +26,14 @@
     2.39.90+ - Unstable branch (Undergoing stabilization)
 
 
+    Build time environment variables:
+
+    CUSTOM_PAGE_SIZE -- This value should match kernel value.  4, 16, 64 are
+    common values.  Using values beyond 64 may break.  For more details, see
+
+      https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.2/Source/WTF/wtf/PageBlock.h#L33
+
+
     EPGO (Event Based PGO)
 
     PGO is event based.  You can use gcc or clang.  I call it 1 step PGO (but
