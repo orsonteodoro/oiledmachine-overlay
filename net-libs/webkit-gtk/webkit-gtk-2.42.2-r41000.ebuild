@@ -1186,6 +1186,7 @@ ewarn
 }
 
 check_page_size() {
+	[[ -n "${CUSTOM_PAGE_SIZE}" ]] && return
 # See
 # https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
 # https://github.com/WebKit/WebKit/blob/main/Source/cmake/WebKitFeatures.cmake#L76
