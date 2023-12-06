@@ -1348,8 +1348,21 @@ ewarn
 			WARNING_ARM64_4K_PAGES=\
 "CONFIG_ARM64_4K_PAGES must be set to =n in the kernel."
 			check_extra_config
+einfo "You may set CUSTOM_PAGE_SIZE instead.  See metadata.xml."
 		elif use loong ; then
 			:; # 16K pages
+		elif use ppc || use ppc64 ; then
+			if [[ -z "${CUSTOM_PAGE_SIZE}" ]] ; then
+eerror
+eerror "You need to set CUSTOM_PAGE_SIZE."
+eerror
+eerror "Using 256 KB in the kernel config will crash if CUSTOM_PAGE_SIZE is not"
+eerror "set to 256."
+eerror
+eerror "See metadata.xml for details."
+eerror
+				die
+			fi
 		elif use x86 ; then
 			:; # 4K pages
 		elif [[ "${ARCH}" == "mips" || "${ARCH}" == "mips64" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64el" ]] ; then
@@ -1365,6 +1378,7 @@ ewarn
 			WARNING_PAGE_SIZE_4KB=\
 "CONFIG_PAGE_SIZE_4KB must be set to =n in the kernel."
 			check_extra_config
+einfo "You may set CUSTOM_PAGE_SIZE instead.  See metadata.xml."
 		elif [[ "${ARCH}" == "riscv" ]] && ( use lp64d || use lp64 ) ; then
 			:; # 4K pages
 		else
