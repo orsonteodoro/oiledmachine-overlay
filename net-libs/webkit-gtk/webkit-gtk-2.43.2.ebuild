@@ -1181,54 +1181,7 @@ ewarn
 }
 
 WK_PAGE_SIZE=64
-check_page_size() {
-# See
-# https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
-# https://github.com/WebKit/WebKit/blob/main/Source/cmake/WebKitFeatures.cmake#L76
-#
-# Anything beyond the programmed ceiling will do a planned forced crash
-# according to links above.
-#
-	local page_size
-	local default_page_size=64
-
-	# These are based on the kernel defaults.
-	if [[ "${ARCH}" == "arm64" ]] ; then
-		# Based in the kernel Kconfig
-		default_page_size=64
-	elif [[ \
-		   "${ARCH}" == "loong" \
-	]] ; then
-		default_page_size=16
-	elif [[ \
-		   "${ARCH}" == "amd64" \
-		|| "${ARCH}" == "arm" \
-		|| "${ARCH}" == "ppc" \
-		|| "${ARCH}" == "ppc64" \
-		|| "${ARCH}" == "mips" \
-		|| "${ARCH}" == "mips64" \
-		|| "${ARCH}" == "mips64el" \
-		|| "${ARCH}" == "mipsel" \
-		|| "${ARCH}" == "riscv" \
-		|| "${ARCH}" == "x86" \
-	]] ; then
-		default_page_size=4
-	fi
-
-	if [[ -z "${CUSTOM_PAGE_SIZE}" ]] ; then
-		page_size=${default_page_size}
-	else
-		page_size=${CUSTOM_PAGE_SIZE}
-	fi
-
-	if (( ${page_size} == 64 )) ; then
-ewarn
-ewarn "You using 64 KB pages which may degrade performance severely and"
-ewarn "decrease security."
-ewarn
-	fi
-
-	local known=0
+_check_page_size_known_set() {
 	if use arm64 ; then
 		known=1
 		if (( ${page_size} == 64 )) ; then
@@ -1644,11 +1597,84 @@ eerror
 			fi
 		fi
 	fi
+}
+
+check_page_size() {
+# See
+# https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
+# https://github.com/WebKit/WebKit/blob/main/Source/cmake/WebKitFeatures.cmake#L76
+#
+# Anything beyond the programmed ceiling will do a planned forced crash
+# according to links above.
+#
+	local page_size
+	local default_page_size=64
+
+	# These are based on the kernel defaults.
+	if [[ "${ARCH}" == "arm64" ]] ; then
+		# Based in the kernel Kconfig
+		default_page_size=64
+	elif [[ \
+		   "${ARCH}" == "loong" \
+	]] ; then
+		default_page_size=16
+	elif [[ \
+		   "${ARCH}" == "amd64" \
+		|| "${ARCH}" == "arm" \
+		|| "${ARCH}" == "ppc" \
+		|| "${ARCH}" == "ppc64" \
+		|| "${ARCH}" == "mips" \
+		|| "${ARCH}" == "mips64" \
+		|| "${ARCH}" == "mips64el" \
+		|| "${ARCH}" == "mipsel" \
+		|| "${ARCH}" == "riscv" \
+		|| "${ARCH}" == "x86" \
+	]] ; then
+		default_page_size=4
+	fi
+
+	if [[ -z "${CUSTOM_PAGE_SIZE}" ]] ; then
+		page_size=${default_page_size}
+	else
+		page_size=${CUSTOM_PAGE_SIZE}
+	fi
+
+	if (( ${page_size} == 64 )) ; then
+ewarn
+ewarn "You using 64 KB pages which may degrade performance severely and"
+ewarn "decrease security."
+ewarn
+	fi
+
+	local known=0
+
+	if ! tc-is-cross-compiler ; then
+		_check_page_size_known_set
+	fi
 
 	if (( ${known} == 1 )) ; then
 		:;
 	else
-		if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
+		if ! tc-is-cross-compiler ; then
+			local actual_page_size=$(($(getconf PAGE_SIZE)/1024))
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] && (( ${actual_page_size} >= ${CUSTOM_PAGE_SIZE} )) ; then
+eerror
+eerror "Invalid value for CUSTOM_PAGE_SIZE."
+eerror
+eerror "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
+eerror "Expected value:  ${actual_page_size}"
+eerror
+			elif (( ${actual_page_size} >= ${page_size} )) ; then
+eerror
+eerror "You must set CUSTOM_PAGE_SIZE to the actual page size.  The default"
+eerror "page size is unfortunately incorrect and is too small."
+eerror
+eerror "Actual page size:  ${actual_page_size}"
+eerror "Default page size:  ${page_size}"
+eerror
+			fi
+		else
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
 ewarn
 ewarn "UNKNOWN arch encountered.  Cannot validate CUSTOM_PAGE_SIZE correctness."
 ewarn "You are responsible for the correctness of CUSTOM_PAGE_SIZE for CHOST."
@@ -1656,9 +1682,8 @@ ewarn
 ewarn "See metadata.xml for details."
 ewarn
 ewarn "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
-ewarn "Actual value on CBUILD:  $(($(getconf PAGE_SIZE)/1024))"
 ewarn
-		else
+			else
 ewarn
 ewarn "UNKNOWN arch encountered.  Cannot validate page_size correctness."
 ewarn "${page_size} KB is assumed, but you may supply the correct page size"
@@ -1669,8 +1694,8 @@ ewarn
 ewarn "See metadata.xml for details."
 ewarn
 ewarn "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
-ewarn "Actual value on CBUILD:  $(($(getconf PAGE_SIZE)/1024))"
 ewarn
+			fi
 		fi
 	fi
 	WK_PAGE_SIZE=${page_size}
