@@ -1554,7 +1554,7 @@ eerror
 			if [[ -z "${CUSTOM_PAGE_SIZE}" ]] ; then
 				die "CUSTOM_PAGE_SIZE=256 must be set as an environment variable to avoid crash."
 			fi
-			if [[ "${CUSTOM_PAGE_SIZE}" != "256" ]] ; then
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "256" ]] ; then
 				die "CUSTOM_PAGE_SIZE=256 must be set as an environment variable."
 			fi
 		elif (( ${page_size} == 64 )) ; then
@@ -1568,7 +1568,7 @@ eerror
 			WARNING_PPC_4K_PAGES=\
 "CONFIG_PPC_4K_PAGES must be set to =n in the kernel."
 			check_extra_config
-			if [[ "${CUSTOM_PAGE_SIZE}" != "64" ]] ; then
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "64" ]] ; then
 				die "CUSTOM_PAGE_SIZE=64 must be set as an environment variable."
 			fi
 		elif (( ${page_size} == 16 )) ; then
@@ -1582,7 +1582,7 @@ eerror
 			WARNING_PPC_4K_PAGES=\
 "CONFIG_PPC_4K_PAGES must be set to =n in the kernel."
 			check_extra_config
-			if [[ "${CUSTOM_PAGE_SIZE}" != "16" ]] ; then
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "16" ]] ; then
 				die "CUSTOM_PAGE_SIZE=16 must be set as an environment variable."
 			fi
 		elif (( ${page_size} == 4 )) ; then
@@ -1596,7 +1596,7 @@ eerror
 			WARNING_PPC_4K_PAGES=\
 "CONFIG_PPC_4K_PAGES must be set to =y in the kernel."
 			check_extra_config
-			if [[ "${CUSTOM_PAGE_SIZE}" != "4" ]] ; then
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "4" ]] ; then
 				die "CUSTOM_PAGE_SIZE=4 must be set as an environment variable."
 			fi
 		else
