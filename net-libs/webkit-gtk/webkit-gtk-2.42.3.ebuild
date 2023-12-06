@@ -6,7 +6,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (4.0)
 # c = reserved
 # de = ebuild revision
 
@@ -26,7 +26,7 @@ inherit linux-info llvm multilib-minimal pax-utils python-any-r1 ruby-single
 inherit toolchain-funcs uopts
 inherit cflags-depends
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/1.1 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -294,18 +294,18 @@ LICENSE="
 #   the wrong impression that the entire package is released in the public domain.
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="4.1"
+API_VERSION="4.0"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-CURRENT="12"
+# WEBKITGTK_API_VERSION is 4.0
+CURRENT="104"
 #REVISION=""
-AGE="12"
+AGE="67"
 SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${API_VERSION}/${SOVERSION}"
+SLOT="${API_VERSION%.*}/${SOVERSION}"
 # SLOT=6/4    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
@@ -704,7 +704,7 @@ WPE_DEPEND="
 CAIRO_PV="1.16.0"
 CLANG_PV="13"
 CXX_STD="20"
-GCC_PV="10.2.0"
+GCC_PV="12.2"
 GLIB_PV="2.56.4"
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 FONTCONFIG_PV="2.13.0"
@@ -787,7 +787,7 @@ RDEPEND+="
 	>=media-libs/libepoxy-1.4.0[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
+	>=net-libs/libsoup-2.54.0:2.4[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
@@ -1036,7 +1036,7 @@ _PATCHES=(
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
-_set_cc() {
+_set_cxx() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 	# Based on D 11, D 12, U 22.04
@@ -1067,7 +1067,7 @@ einfo
 			check-reqs_pkg_pretend
 		fi
 	fi
-	_set_cc
+	_set_cxx
 
 	if ! use opengl && ! use gles2; then
 ewarn
@@ -1715,7 +1715,7 @@ pkg_setup() {
 einfo
 einfo "This is the stable branch."
 einfo
-	_set_cc
+	_set_cxx
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
@@ -1984,7 +1984,7 @@ eerror
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=OFF
+		-DUSE_SOUP2=ON
 		-DUSE_WOFF2=$(usex woff2)
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)

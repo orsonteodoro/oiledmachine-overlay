@@ -1034,7 +1034,7 @@ _PATCHES=(
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
-_set_cc() {
+_set_cxx() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 	# Based on D 11, D 12, U 22.04
@@ -1050,6 +1050,7 @@ _set_cc() {
 			fi
 		fi
 		if tc-is-clang && has_version "sys-devel/clang:14" ; then
+ewarn "Building for clang may be broken.  Use gcc instead by changing CC=gcc CXX=g++."
 			export CC="${CHOST}-clang-14"
 			export CXX="${CHOST}-clang++-14"
 		fi
@@ -1065,7 +1066,7 @@ einfo
 			check-reqs_pkg_pretend
 		fi
 	fi
-	_set_cc
+	_set_cxx
 
 	if ! use opengl && ! use gles2; then
 ewarn
@@ -1713,7 +1714,7 @@ pkg_setup() {
 einfo
 einfo "This is the unstable branch."
 einfo
-	_set_cc
+	_set_cxx
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then

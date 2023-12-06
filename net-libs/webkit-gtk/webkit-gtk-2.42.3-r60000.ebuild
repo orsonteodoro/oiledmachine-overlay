@@ -1036,7 +1036,7 @@ _PATCHES=(
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
-_set_cc() {
+_set_cxx() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 	# Based on D 11, D 12, U 22.04
@@ -1067,7 +1067,7 @@ einfo
 			check-reqs_pkg_pretend
 		fi
 	fi
-	_set_cc
+	_set_cxx
 
 	if ! use opengl && ! use gles2; then
 ewarn
@@ -1719,7 +1719,7 @@ ewarn
 einfo
 einfo "This is the stable branch."
 einfo
-	_set_cc
+	_set_cxx
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
