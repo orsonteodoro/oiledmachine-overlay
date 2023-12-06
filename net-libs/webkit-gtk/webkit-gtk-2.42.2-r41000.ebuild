@@ -1646,6 +1646,14 @@ ewarn
 ewarn "You using 64 KB pages which may degrade performance severely and"
 ewarn "decrease security."
 ewarn
+ewarn "Steps to remedy:"
+ewarn
+ewarn "(1) Change the kernel config to use a smaller memory page size if"
+ewarn "    suppored by ARCH."
+ewarn "(2) Set CUSTOM_PAGE_SIZE to the same value."
+ewarn
+ewarn "See metadata.xml for details."
+ewarn
 	fi
 
 	local known=0
@@ -2107,7 +2115,7 @@ ewarn "WebAssembly disabled.  The following steps are required to easily enable"
 ewarn "it:"
 ewarn
 ewarn "(1) Enable the jit USE flag."
-ewarn "(2) Change the kernel config to use page sizes less than 64 KB."
+ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
 ewarn
 		mycmakeargs+=(

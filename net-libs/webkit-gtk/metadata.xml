@@ -33,13 +33,16 @@
 
     CUSTOM_PAGE_SIZE -- This value should match kernel value for consistency
     reasons.  4, 16, 64 are common values.  Based on the assert, it is safe to
-    have the current kernel page size less than or equal to CUSTOM_PAGE_SIZE.
-    If the current page size is greater than CUSTOM_PAGE_SIZE it will result in
-    a forced crash if asserts are enabled.  It should be the same CHOST that
-    will run these libraries if cross compiling.  For more details, see
+    have the current memory page size in the kernel config less than or equal to
+    CUSTOM_PAGE_SIZE.  If the current page size is greater than CUSTOM_PAGE_SIZE
+    it will result in a forced crash if asserts are enabled.  It should be the
+    same CHOST that will run these libraries if cross compiling.  For more
+    details, see
 
       https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.2/Source/WTF/wtf/PageBlock.h#L33
       https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.2/Source/WTF/wtf/PageBlock.cpp#L65
+
+    Increasing the memory page size may also decrease security.
 
 
     EPGO (Event Based PGO)
