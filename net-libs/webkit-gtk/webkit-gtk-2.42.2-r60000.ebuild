@@ -13,8 +13,8 @@ EAPI=8
 # See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.2/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
-LLVM_MAX_SLOT=16 # This should not be more than Mesa's package LLVM_MAX_SLOT
-LLVM_SLOTS=( 16 15 14 13 )
+LLVM_MAX_SLOT=14
+LLVM_SLOTS=( 14 )
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{8..11} )
@@ -994,7 +994,8 @@ BDEPEND+="
 	)
 	|| (
 		$(gen_depend_llvm)
-		>=sys-devel/gcc-${GCC_PV}
+		>=sys-devel/gcc-12.2.0:12
+		>=sys-devel/gcc-11.2:11
 	)
 "
 #	test? (
@@ -1035,6 +1036,28 @@ _PATCHES=(
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
+_set_cc() {
+	if [[ ${MERGE_TYPE} != "binary" ]] ; then
+	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
+	# Based on D 11, D 12, U 22.04
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+		if tc-is-gcc ; then
+			if has_version "sys-devel/gcc:12" ; then
+				export CC="${CHOST}-gcc-12"
+				export CXX="${CHOST}-g++-12"
+			elif has_version "sys-devel/gcc:11" ; then
+				export CC="${CHOST}-gcc-11"
+				export CXX="${CHOST}-g++-11"
+			fi
+		fi
+		if tc-is-clang && has_version "sys-devel/clang:14" ; then
+			export CC="${CHOST}-clang-14"
+			export CXX="${CHOST}-clang++-14"
+		fi
+	fi
+}
+
 pkg_pretend() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 		if is-flagq "-g*" && ! is-flagq "-g*0" ; then
@@ -1043,31 +1066,8 @@ einfo "Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
 einfo
 			check-reqs_pkg_pretend
 		fi
-
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
-		if ! test-flag-CXX -std=c++${CXX_STD} ; then
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.2/Source/cmake/WebKitCommon.cmake#L72
-# See https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.2/Source/cmake/OptionsCommon.cmake
-eerror
-eerror "You need at least GCC ${GCC_PV} or Clang >= ${CLANG_PV} for"
-eerror "C++${CXX_STD} specific compiler flags"
-eerror
-			die
-		fi
-
-		if tc-is-gcc && ver_test $(gcc-fullversion) -lt ${GCC_PV} ; then
-eerror
-eerror "You need at least GCC ${GCC_PV}.  Switch to a newer version."
-eerror
-		fi
-
-		if tc-is-clang && ver_test $(clang-fullversion) -lt ${CLANG_PV} ; then
-eerror
-eerror "You need at least Clang ${CLANG_PV}.  Switch to a newer version."
-eerror
-		fi
 	fi
+	_set_cc
 
 	if ! use opengl && ! use gles2; then
 ewarn
@@ -1719,6 +1719,7 @@ ewarn
 einfo
 einfo "This is the stable branch."
 einfo
+	_set_cc
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
