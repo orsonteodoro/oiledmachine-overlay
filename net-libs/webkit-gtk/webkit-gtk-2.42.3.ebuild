@@ -2098,7 +2098,8 @@ einfo "Disabling JIT for ${ABI}."
 		_jit_off
 	fi
 
-	if (( $(tc-get-ptr-size) == 8 )) ; then
+	if (( $(tc-get-ptr-size) != 8 )) ; then
+ewarn "WASM not supported for ABI=${ABI}"
 		webassembly_allowed=0
 	fi
 
@@ -2114,8 +2115,6 @@ ewarn
 ewarn "(1) Enable the jit USE flag."
 ewarn "(2) Change the kernel config to use memory page sizes less than 64 KB."
 ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
-ewarn
-ewarn "Only 64-bit ABIs with 64-bit pointers are supported for WASM."
 ewarn
 		mycmakeargs+=(
 			-DENABLE_WEBASSEMBLY=OFF
