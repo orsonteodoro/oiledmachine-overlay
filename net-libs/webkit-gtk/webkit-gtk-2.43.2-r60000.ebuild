@@ -1922,7 +1922,6 @@ eerror
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DPORT=GTK
-		-DUSE_64KB_PAGE_BLOCK=$(usex 64kb-page-block)
 		-DUSE_ANGLE_WEBGL=OFF
 		-DUSE_AVIF=$(usex avif)
 		-DUSE_GBM=$(usex gbm)
