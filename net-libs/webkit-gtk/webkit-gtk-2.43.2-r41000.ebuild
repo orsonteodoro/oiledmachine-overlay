@@ -1667,20 +1667,26 @@ ewarn
 		if ! tc-is-cross-compiler ; then
 			local actual_page_size=$(($(getconf PAGE_SIZE)/1024))
 			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] && (( ${actual_page_size} > ${CUSTOM_PAGE_SIZE} )) ; then
-eerror
-eerror "Invalid value for CUSTOM_PAGE_SIZE."
-eerror
-eerror "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
-eerror "Expected value:  ${actual_page_size}"
-eerror
+ewarn
+ewarn "Invalid value for CUSTOM_PAGE_SIZE."
+ewarn
+ewarn "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
+ewarn "Expected value:  ${actual_page_size}"
+ewarn
+ewarn "You are responsible to either fixing CUSTOM_PAGE_SIZE or configuring"
+ewarn "the kernel to use the CUSTOM_PAGE_SIZE value."
+ewarn
 			elif (( ${actual_page_size} > ${page_size} )) ; then
-eerror
-eerror "You must set CUSTOM_PAGE_SIZE to the actual page size.  The default"
-eerror "page size is unfortunately incorrect and is too small."
-eerror
-eerror "Actual page size:  ${actual_page_size}"
-eerror "Default page size:  ${page_size}"
-eerror
+ewarn
+ewarn "You must set CUSTOM_PAGE_SIZE to the actual page size.  The default"
+ewarn "page size is unfortunately incorrect and is too small."
+ewarn
+ewarn "Actual page size:  ${actual_page_size}"
+ewarn "Default page size:  ${page_size}"
+ewarn
+ewarn "You are responsible to either fixing CUSTOM_PAGE_SIZE or configuring"
+ewarn "the kernel to use the CUSTOM_PAGE_SIZE value."
+ewarn
 			fi
 		else
 			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
@@ -1701,8 +1707,6 @@ ewarn "required to set CUSTOM_PAGE_SIZE to the actual value of the CHOST"
 ewarn "machine to avoid a crash."
 ewarn
 ewarn "See metadata.xml for details."
-ewarn
-ewarn "CUSTOM_PAGE_SIZE value:  ${CUSTOM_PAGE_SIZE}"
 ewarn
 			fi
 		fi
