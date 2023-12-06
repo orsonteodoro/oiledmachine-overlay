@@ -11,7 +11,10 @@
     <email>gnome@gentoo.org</email>
     <name>Gentoo GNOME Desktop</name>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     The purpose of this ebuild fork was originally to provide multilib support
     for the ebuild fork for the surf web browser on the oiledmachine-overlay.
     Currently the motivations are to provide latest stable as quickly as possible
@@ -185,7 +188,7 @@ emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
 
       https://github.com/WebKit/WebKit/commit/790a01a3ec741d8752990a809d1ab489d9637e3d
 
-  </longdescription>
+  -->
   <use>
     <flag name="64kb-page-block">
       Enables support for 64 KB page block systems with a big penalty on
