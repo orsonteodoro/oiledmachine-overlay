@@ -1060,9 +1060,7 @@ ewarn "Building for clang may be broken.  Use gcc instead by changing CC=gcc CXX
 pkg_pretend() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 		if is-flagq "-g*" && ! is-flagq "-g*0" ; then
-einfo
 einfo "Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
-einfo
 			check-reqs_pkg_pretend
 		fi
 	fi
@@ -1738,8 +1736,8 @@ ewarn
 	if use openmp ; then
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
-einfo "CC:\t\t\t${CC}"
-einfo "CXX:\t\t\t${CXX}"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 		${CC} --version
 		tc-check-openmp
 	fi
@@ -1755,9 +1753,7 @@ ewarn
 	if use v4l ; then
 		local gst_plugins_v4l2_repo=\
 $(cat "${EROOT}/var/db/pkg/media-plugins/gst-plugins-v4l2-"*"/repository")
-einfo
 einfo "gst-plugins-v4l2 repo:  ${gst_plugins_v4l2_repo}"
-einfo
 		if [[ "${gst_plugins_v4l2_repo}" != "oiledmachine-overlay" ]] ; then
 ewarn
 ewarn "Please only use the media-plugins/gst-plugins-v4l2::oiledmachine-overlay"
@@ -2092,9 +2088,7 @@ eerror
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	else
-einfo
 einfo "Disabling JIT for ${ABI}."
-einfo
 		_jit_off
 	fi
 
@@ -2122,31 +2116,24 @@ ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
 ewarn
 	fi
 
-	# Arches without JIT support also need this to really disable it in all
-	# places
-	if (( ${jit_enabled} == 0 )) ; then
-einfo
-einfo "Disabled JIT"
-einfo
+	if (( ${jit_enabled} == 1 )) || use yarr-jit ; then
+		append-cppflags \
+			-DENABLE_ASSEMBLER=1 \
+	else
 		append-cppflags \
 			-DENABLE_ASSEMBLER=0 \
-			-DENABLE_JIT=0
+
 	fi
+
 	if use yarr-jit ; then
-einfo
-einfo "Enabled YARR (regex) JIT" # default
-einfo
+einfo "Enabled YARR JIT (aka RegEx JIT)" # default
 	else
-einfo
-einfo "Disabled YARR (regex) JIT"
-einfo
+einfo "Disabled YARR JIT (aka RegEx JIT)"
 		append-cppflags \
 			-DENABLE_YARR_JIT=0
 	fi
 
-einfo
-einfo "CPPFLAGS=${CPPFLAGS}"
-einfo
+einfo "CPPFLAGS:  ${CPPFLAGS}"
 
 	if use eme ; then
 		sed -i -e "s|ENABLE_ENCRYPTED_MEDIA PRIVATE|ENABLE_ENCRYPTED_MEDIA PUBLIC|g" \
@@ -2351,8 +2338,8 @@ src_compile() {
 	compile_abi() {
 		export CC=$(tc-getCC ${CTARGET:-${CHOST}})
 		export CXX=$(tc-getCXX ${CTARGET:-${CHOST}})
-einfo "CC:\t\t${CC}"
-einfo "CXX:\t\t${CXX}"
+einfo "CC:  ${CC}"
+einfo "CXX:  ${CXX}"
 		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
