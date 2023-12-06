@@ -990,11 +990,11 @@ BDEPEND+="
 		>=dev-util/gperf-3.0.1
 	)
 	|| (
-		$(gen_depend_llvm)
 		>=sys-devel/gcc-12.2.0:12
 		>=sys-devel/gcc-11.2:11
 	)
 "
+#		$(gen_depend_llvm)
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
 #		>=x11-themes/hicolor-icon-theme-0.17
@@ -1040,7 +1040,7 @@ _set_cxx() {
 	# Based on D 11, D 12, U 22.04
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
-		if tc-is-gcc ; then
+		if true || tc-is-gcc ; then
 			if has_version "sys-devel/gcc:12" ; then
 				export CC="${CHOST}-gcc-12"
 				export CXX="${CHOST}-g++-12"
@@ -1049,7 +1049,7 @@ _set_cxx() {
 				export CXX="${CHOST}-g++-11"
 			fi
 		fi
-		if tc-is-clang && has_version "sys-devel/clang:14" ; then
+		if false && tc-is-clang && has_version "sys-devel/clang:14" ; then
 ewarn "Building for clang may be broken.  Use gcc instead by changing CC=gcc CXX=g++."
 			export CC="${CHOST}-clang-14"
 			export CXX="${CHOST}-clang++-14"

@@ -1662,6 +1662,7 @@ ewarn
 		_check_page_size_known_set
 	fi
 
+	local actual_page_size=$(($(getconf PAGE_SIZE)/1024))
 	if (( ${known} == 1 )) ; then
 		:;
 	else
