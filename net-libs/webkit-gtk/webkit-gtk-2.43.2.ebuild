@@ -1186,8 +1186,8 @@ check_page_size() {
 # https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
 # https://github.com/WebKit/WebKit/blob/main/Source/cmake/WebKitFeatures.cmake#L76
 #
-# Anything beyond the programmed ceiling with do a planned forced crash
-# according to upstream.
+# Anything beyond the programmed ceiling will do a planned forced crash
+# according to links above.
 #
 	local page_size
 	local default_page_size=64
