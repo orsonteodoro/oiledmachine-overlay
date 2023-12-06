@@ -395,7 +395,7 @@ ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 ${DEFAULT_GST_PLUGINS}
 
--64kb-page-block aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2
+aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2
 dash +dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
 +gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
 +jpeg2k +jpegxl +lcms +libhyphen -libwebrtc -mediarecorder -mediastream
@@ -543,9 +543,6 @@ REQUIRED_USE+="
 	alsa? (
 		!pulseaudio
 		gstreamer
-	)
-	64kb-page-block? (
-		!bmalloc
 	)
 	cpu_flags_arm_thumb2? (
 		!ftl-jit
@@ -1185,8 +1182,8 @@ ewarn
 	fi
 }
 
+WK_PAGE_SIZE=64
 check_page_size() {
-	[[ -n "${CUSTOM_PAGE_SIZE}" ]] && return
 # See
 # https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
 # https://github.com/WebKit/WebKit/blob/main/Source/cmake/WebKitFeatures.cmake#L76
@@ -1194,13 +1191,50 @@ check_page_size() {
 # Anything beyond the programmed ceiling with do a planned forced crash
 # according to upstream.
 #
-	if use 64kb-page-block ; then
+	local page_size
+	local default_page_size=64
+
+	# These are based on the kernel defaults.
+	if [[ "${ARCH}" == "arm64" ]] ; then
+		# Based in the kernel Kconfig
+		default_page_size=64
+	elif [[ \
+		   "${ARCH}" == "loong" \
+	]] ; then
+		default_page_size=16
+	elif [[ \
+		   "${ARCH}" == "amd64" \
+		|| "${ARCH}" == "arm" \
+		|| "${ARCH}" == "ppc" \
+		|| "${ARCH}" == "ppc64" \
+		|| "${ARCH}" == "mips" \
+		|| "${ARCH}" == "mips64" \
+		|| "${ARCH}" == "mips64el" \
+		|| "${ARCH}" == "mipsel" \
+		|| "${ARCH}" == "riscv" \
+		|| "${ARCH}" == "x86" \
+	]] ; then
+		default_page_size=4
+	fi
+
+	if [[ -z "${CUSTOM_PAGE_SIZE}" ]] ; then
+		page_size=${default_page_size}
+	else
+		page_size=${CUSTOM_PAGE_SIZE}
+	fi
+
+	if (( ${page_size} == 64 )) ; then
 ewarn
-ewarn "You are enabling the 64kb-page-block USE flag which may degrade"
-ewarn "performance severely and decrease security."
+ewarn "You using 64 KB pages which may degrade performance severely and"
+ewarn "decrease security."
 ewarn
-		if use arm64 ; then
-			CONFIG_CHECK="~ARM64_64K_PAGES ~!ARM64_4K_PAGES ~!ARM64_16K_PAGES"
+	fi
+
+	local known=0
+	if use arm64 ; then
+		known=1
+		if (( ${page_size} == 64 )) ; then
+			CONFIG_CHECK="~ARM64_64K_PAGES ~!ARM64_16K_PAGES ~!ARM64_4K_PAGES"
 			WARNING_ARM64_64K_PAGES=\
 "CONFIG_ARM64_64K_PAGES must be set to =y in the kernel."
 			WARNING_ARM64_16K_PAGES=\
@@ -1208,7 +1242,57 @@ ewarn
 			WARNING_ARM64_4K_PAGES=\
 "CONFIG_ARM64_4K_PAGES must be set to =n in the kernel."
 			check_extra_config
-		elif use ia64 ; then
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "64" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=64 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 16 )) ; then
+			CONFIG_CHECK="~!ARM64_64K_PAGES ~ARM64_16K_PAGES ~!ARM64_4K_PAGES"
+			WARNING_ARM64_64K_PAGES=\
+"CONFIG_ARM64_64K_PAGES must be set to =n in the kernel."
+			WARNING_ARM64_16K_PAGES=\
+"CONFIG_ARM64_16K_PAGES must be set to =y in the kernel."
+			WARNING_ARM64_4K_PAGES=\
+"CONFIG_ARM64_4K_PAGES must be set to =n in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "16" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=16 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 4 )) ; then
+			CONFIG_CHECK="~!ARM64_64K_PAGES ~!ARM64_16K_PAGES ~ARM64_4K_PAGES"
+			WARNING_ARM64_64K_PAGES=\
+"CONFIG_ARM64_64K_PAGES must be set to =n in the kernel."
+			WARNING_ARM64_16K_PAGES=\
+"CONFIG_ARM64_16K_PAGES must be set to =n in the kernel."
+			WARNING_ARM64_4K_PAGES=\
+"CONFIG_ARM64_4K_PAGES must be set to =y in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "4" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=4 must be set as an environment variable"
+			fi
+		else
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
+eerror
+eerror "Invalid value for CUSTOM_PAGE_SIZE."
+eerror
+eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
+eerror "Expected values:  4, 16, 64"
+eerror
+				die
+			else
+eerror
+eerror "QA:  Invalid value for page_size."
+eerror
+eerror "Actual value:  ${page_size}"
+eerror "Expected values:  4, 16, 64"
+eerror
+				die
+			fi
+		fi
+	fi
+
+	if use ia64 ; then
+		known=1
+		if (( ${page_size} == 64 )) ; then
 			CONFIG_CHECK="~IA64_PAGE_SIZE_64KB ~!IA64_PAGE_SIZE_16KB ~!IA64_PAGE_SIZE_8KB ~!IA64_PAGE_SIZE_4KB"
 			WARNING_IA64_PAGE_SIZE_64KB=\
 "CONFIG_IA64_PAGE_SIZE_64KB must be set to =y in the kernel."
@@ -1219,76 +1303,166 @@ ewarn
 			WARNING_IA64_PAGE_SIZE_4KB=\
 "CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
 			check_extra_config
-		elif use ppc || use ppc64 ; then
-			CONFIG_CHECK="~!PPC_256K_PAGES ~PPC_64K_PAGES ~!PPC_16K_PAGES ~!PPC_4K_PAGES"
-			WARNING_PPC_256K_PAGES=\
-"CONFIG_PPC_256K_PAGES must be set to =n in the kernel."
-			WARNING_PPC_64K_PAGES=\
-"CONFIG_PPC_64K_PAGES must be set to =y in the kernel."
-			WARNING_PPC_16K_PAGES=\
-"CONFIG_PPC_16K_PAGES must be set to =n in the kernel."
-			WARNING_PPC_4K_PAGES=\
-"CONFIG_PPC_4K_PAGES must be set to =n in the kernel."
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "64" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=64 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 16 )) ; then
+			CONFIG_CHECK="~IA64_PAGE_SIZE_64KB ~IA64_PAGE_SIZE_16KB ~!IA64_PAGE_SIZE_8KB ~!IA64_PAGE_SIZE_4KB"
+			WARNING_IA64_PAGE_SIZE_64KB=\
+"CONFIG_IA64_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_16KB=\
+"CONFIG_IA64_PAGE_SIZE_16KB must be set to =y in the kernel."
+			WARNING_IA64_PAGE_SIZE_8KB=\
+"CONFIG_IA64_PAGE_SIZE_8KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_4KB=\
+"CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
 			check_extra_config
-		elif \
-			[[ \
-				   "${ARCH}" == "loong" \
-				|| "${ARCH}" == "mips" \
-				|| "${ARCH}" == "mips64" \
-				|| "${ARCH}" == "mips64el" \
-				|| "${ARCH}" == "mipsel" \
-			]] \
-				|| \
-			( \
-				[[ "${ARCH}" == "riscv" ]] \
-					&& \
-				( \
-					   use lp64d \
-					|| use lp64 \
-				) \
-			)
-		then
-eerror
-eerror "The 64kb-page-block USE flag must be disabled."
-eerror
-			die
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "16" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=16 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 8 )) ; then
+			CONFIG_CHECK="~!IA64_PAGE_SIZE_64KB ~!IA64_PAGE_SIZE_16KB ~IA64_PAGE_SIZE_8KB ~!IA64_PAGE_SIZE_4KB"
+			WARNING_IA64_PAGE_SIZE_64KB=\
+"CONFIG_IA64_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_16KB=\
+"CONFIG_IA64_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_8KB=\
+"CONFIG_IA64_PAGE_SIZE_8KB must be set to =y in the kernel."
+			WARNING_IA64_PAGE_SIZE_4KB=\
+"CONFIG_IA64_PAGE_SIZE_4KB must be set to =n in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "8" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=8 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 4 )) ; then
+			CONFIG_CHECK="~!IA64_PAGE_SIZE_64KB ~!IA64_PAGE_SIZE_16KB ~!IA64_PAGE_SIZE_8KB ~IA64_PAGE_SIZE_4KB"
+			WARNING_IA64_PAGE_SIZE_64KB=\
+"CONFIG_IA64_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_16KB=\
+"CONFIG_IA64_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_8KB=\
+"CONFIG_IA64_PAGE_SIZE_8KB must be set to =n in the kernel."
+			WARNING_IA64_PAGE_SIZE_4KB=\
+"CONFIG_IA64_PAGE_SIZE_4KB must be set to =y in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "4" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=4 must be set as an environment variable"
+			fi
 		else
-ewarn
-ewarn "You are responsible for ensuring that the kernel page size is 64 KB."
-ewarn
-		fi
-	else
-		if use amd64 ; then
-			:; # 4K pages
-		elif use arm ; then
-			:; # 4K pages
-		elif use arm64 ; then
-			CONFIG_CHECK="~!ARM64_64K_PAGES ~!ARM64_4K_PAGES ~ARM64_16K_PAGES"
-			WARNING_ARM64_64K_PAGES=\
-"CONFIG_ARM64_64K_PAGES must be set to =n in the kernel."
-			WARNING_ARM64_16K_PAGES=\
-"CONFIG_ARM64_16K_PAGES must be set to =y in the kernel."
-			WARNING_ARM64_4K_PAGES=\
-"CONFIG_ARM64_4K_PAGES must be set to =n in the kernel."
-			check_extra_config
-einfo "You may set CUSTOM_PAGE_SIZE instead.  See metadata.xml."
-		elif use loong ; then
-			:; # 16K pages
-		elif use ppc || use ppc64 ; then
-			if [[ -z "${CUSTOM_PAGE_SIZE}" ]] ; then
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
 eerror
-eerror "You need to set CUSTOM_PAGE_SIZE."
+eerror "Invalid value for CUSTOM_PAGE_SIZE."
 eerror
-eerror "Using 256 KB in the kernel config will crash if CUSTOM_PAGE_SIZE is not"
-eerror "set to 256."
+eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
+eerror "Expected values:  4, 8, 16, 64"
 eerror
-eerror "See metadata.xml for details."
+				die
+			else
+eerror
+eerror "QA:  Invalid value for page_size."
+eerror
+eerror "Actual value:  ${page_size}"
+eerror "Expected values:  4, 8, 16, 64"
 eerror
 				die
 			fi
-		elif use x86 ; then
-			:; # 4K pages
-		elif [[ "${ARCH}" == "mips" || "${ARCH}" == "mips64" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64el" ]] ; then
+		fi
+	fi
+
+	if use loong ; then
+		known=1
+		if (( ${page_size} == 64 )) ; then
+			CONFIG_CHECK="~PAGE_SIZE_64KB ~!PAGE_SIZE_16KB ~!PAGE_SIZE_4KB"
+			WARNING_PAGE_SIZE_64KB=\
+"CONFIG_PAGE_SIZE_64KB must be set to =y in the kernel."
+			WARNING_PAGE_SIZE_16KB=\
+"CONFIG_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_4KB=\
+"CONFIG_PAGE_SIZE_4KB must be set to =n in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "64" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=64 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 16 )) ; then
+			CONFIG_CHECK="~!PAGE_SIZE_64KB ~PAGE_SIZE_16KB ~!PAGE_SIZE_4KB"
+			WARNING_PAGE_SIZE_64KB=\
+"CONFIG_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_16KB=\
+"CONFIG_PAGE_SIZE_16KB must be set to =y in the kernel."
+			WARNING_PAGE_SIZE_4KB=\
+"CONFIG_PAGE_SIZE_4KB must be set to =n in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "16" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=16 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 4 )) ; then
+			CONFIG_CHECK="~!PAGE_SIZE_64KB ~!PAGE_SIZE_16KB ~PAGE_SIZE_4KB"
+			WARNING_PAGE_SIZE_64KB=\
+"CONFIG_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_16KB=\
+"CONFIG_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_4KB=\
+"CONFIG_PAGE_SIZE_4KB must be set to =y in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "4" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=4 must be set as an environment variable"
+			fi
+		else
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
+eerror
+eerror "Invalid value for CUSTOM_PAGE_SIZE."
+eerror
+eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
+eerror "Expected values:  4, 16, 64"
+eerror
+				die
+			else
+eerror
+eerror "QA:  Invalid value for page_size."
+eerror
+eerror "Actual value:  ${page_size}"
+eerror "Expected values:  4, 16, 64"
+eerror
+				die
+			fi
+		fi
+	fi
+
+	if use mips ; then
+		known=1
+		if (( ${page_size} == 64 )) ; then
+			CONFIG_CHECK="~PAGE_SIZE_64KB ~!PAGE_SIZE_32KB ~!PAGE_SIZE_16KB ~!PAGE_SIZE_8KB ~!PAGE_SIZE_4KB"
+			WARNING_PAGE_SIZE_64KB=\
+"CONFIG_PAGE_SIZE_64KB must be set to =y in the kernel."
+			WARNING_PAGE_SIZE_32KB=\
+"CONFIG_PAGE_SIZE_32KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_16KB=\
+"CONFIG_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_8KB=\
+"CONFIG_PAGE_SIZE_8KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_4KB=\
+"CONFIG_PAGE_SIZE_4KB must be set to =n in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "64" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=64 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 32 )) ; then
+			CONFIG_CHECK="~!PAGE_SIZE_64KB ~PAGE_SIZE_32KB ~!PAGE_SIZE_16KB ~!PAGE_SIZE_8KB ~!PAGE_SIZE_4KB"
+			WARNING_PAGE_SIZE_64KB=\
+"CONFIG_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_32KB=\
+"CONFIG_PAGE_SIZE_32KB must be set to =y in the kernel."
+			WARNING_PAGE_SIZE_16KB=\
+"CONFIG_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_8KB=\
+"CONFIG_PAGE_SIZE_8KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_4KB=\
+"CONFIG_PAGE_SIZE_4KB must be set to =n in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "32" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=32 must be set as an environment variable"
+			fi
+		elif (( ${page_size} == 16 )) ; then
 			CONFIG_CHECK="~!PAGE_SIZE_64KB ~!PAGE_SIZE_32KB ~PAGE_SIZE_16KB ~!PAGE_SIZE_8KB ~!PAGE_SIZE_4KB"
 			WARNING_PAGE_SIZE_64KB=\
 "CONFIG_PAGE_SIZE_64KB must be set to =n in the kernel."
@@ -1301,18 +1475,190 @@ eerror
 			WARNING_PAGE_SIZE_4KB=\
 "CONFIG_PAGE_SIZE_4KB must be set to =n in the kernel."
 			check_extra_config
-einfo "You may set CUSTOM_PAGE_SIZE instead.  See metadata.xml."
-		elif [[ "${ARCH}" == "riscv" ]] && ( use lp64d || use lp64 ) ; then
-			:; # 4K pages
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "16" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=16 must be set as an environment variable."
+			fi
+		elif (( ${page_size} == 8 )) ; then
+			CONFIG_CHECK="~!PAGE_SIZE_64KB ~!PAGE_SIZE_32KB ~!PAGE_SIZE_16KB ~PAGE_SIZE_8KB ~!PAGE_SIZE_4KB"
+			WARNING_PAGE_SIZE_64KB=\
+"CONFIG_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_32KB=\
+"CONFIG_PAGE_SIZE_32KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_16KB=\
+"CONFIG_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_8KB=\
+"CONFIG_PAGE_SIZE_8KB must be set to =y in the kernel."
+			WARNING_PAGE_SIZE_4KB=\
+"CONFIG_PAGE_SIZE_4KB must be set to =n in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "8" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=8 must be set as an environment variable."
+			fi
+		elif (( ${page_size} == 4 )) ; then
+			CONFIG_CHECK="~!PAGE_SIZE_64KB ~!PAGE_SIZE_32KB ~!PAGE_SIZE_16KB ~!PAGE_SIZE_8KB ~PAGE_SIZE_4KB"
+			WARNING_PAGE_SIZE_64KB=\
+"CONFIG_PAGE_SIZE_64KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_32KB=\
+"CONFIG_PAGE_SIZE_32KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_16KB=\
+"CONFIG_PAGE_SIZE_16KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_8KB=\
+"CONFIG_PAGE_SIZE_8KB must be set to =n in the kernel."
+			WARNING_PAGE_SIZE_4KB=\
+"CONFIG_PAGE_SIZE_4KB must be set to =y in the kernel."
+			check_extra_config
+			if [[ -n "${CUSTOM_PAGE_SIZE}" && "${CUSTOM_PAGE_SIZE}" != "4" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=4 must be set as an environment variable."
+			fi
 		else
-# Covers ppc, ppc64
-# Covers UNKNOWN CPU arches; see also 79862e474cb3760e4f77a3ff8d8dec815740f69e
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
 eerror
-eerror "The 64kb-page-block USE flag must be enabled."
+eerror "Invalid value for CUSTOM_PAGE_SIZE."
+eerror
+eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
+eerror "Expected values:  4, 8, 16, 32, 64"
+eerror
+				die
+			else
+eerror
+eerror "QA:  Invalid value for page_size."
+eerror
+eerror "Actual value:  ${page_size}"
+eerror "Expected values:  4, 8, 16, 32, 64"
+eerror
+				die
+			fi
+		fi
+	fi
+
+	if use ppc || use ppc64 ; then
+		known=1
+		if (( ${page_size} == 256 )) ; then
+			CONFIG_CHECK="~PPC_256K_PAGES ~!PPC_64K_PAGES ~!PPC_16K_PAGES ~!PPC_4K_PAGES"
+			WARNING_PPC_256K_PAGES=\
+"CONFIG_PPC_256K_PAGES must be set to =y in the kernel."
+			WARNING_PPC_64K_PAGES=\
+"CONFIG_PPC_64K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_16K_PAGES=\
+"CONFIG_PPC_16K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_4K_PAGES=\
+"CONFIG_PPC_4K_PAGES must be set to =n in the kernel."
+			check_extra_config
+			if [[ "${CUSTOM_PAGE_SIZE}" != "256" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=256 must be set as an environment variable."
+			fi
+		elif (( ${page_size} == 64 )) ; then
+			CONFIG_CHECK="~!PPC_256K_PAGES ~PPC_64K_PAGES ~!PPC_16K_PAGES ~!PPC_4K_PAGES"
+			WARNING_PPC_256K_PAGES=\
+"CONFIG_PPC_256K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_64K_PAGES=\
+"CONFIG_PPC_64K_PAGES must be set to =y in the kernel."
+			WARNING_PPC_16K_PAGES=\
+"CONFIG_PPC_16K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_4K_PAGES=\
+"CONFIG_PPC_4K_PAGES must be set to =n in the kernel."
+			check_extra_config
+			if [[ "${CUSTOM_PAGE_SIZE}" != "64" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=64 must be set as an environment variable."
+			fi
+		elif (( ${page_size} == 16 )) ; then
+			CONFIG_CHECK="~!PPC_256K_PAGES ~!PPC_64K_PAGES ~PPC_16K_PAGES ~!PPC_4K_PAGES"
+			WARNING_PPC_256K_PAGES=\
+"CONFIG_PPC_256K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_64K_PAGES=\
+"CONFIG_PPC_64K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_16K_PAGES=\
+"CONFIG_PPC_16K_PAGES must be set to =y in the kernel."
+			WARNING_PPC_4K_PAGES=\
+"CONFIG_PPC_4K_PAGES must be set to =n in the kernel."
+			check_extra_config
+			if [[ "${CUSTOM_PAGE_SIZE}" != "16" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=16 must be set as an environment variable."
+			fi
+		elif (( ${page_size} == 4 )) ; then
+			CONFIG_CHECK="~!PPC_256K_PAGES ~!PPC_64K_PAGES ~!PPC_16K_PAGES ~PPC_4K_PAGES"
+			WARNING_PPC_256K_PAGES=\
+"CONFIG_PPC_256K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_64K_PAGES=\
+"CONFIG_PPC_64K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_16K_PAGES=\
+"CONFIG_PPC_16K_PAGES must be set to =n in the kernel."
+			WARNING_PPC_4K_PAGES=\
+"CONFIG_PPC_4K_PAGES must be set to =y in the kernel."
+			check_extra_config
+			if [[ "${CUSTOM_PAGE_SIZE}" != "4" ]] ; then
+				ewarn "CUSTOM_PAGE_SIZE=4 must be set as an environment variable."
+			fi
+		else
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
+eerror
+eerror "Invalid value for CUSTOM_PAGE_SIZE."
+eerror
+eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
+eerror "Expected values:  4, 16, 64, 256"
+eerror
+				die
+			else
+eerror
+eerror "QA:  Invalid value for page_size."
+eerror
+eerror "Actual value:  ${page_size}"
+eerror "Expected values:  4, 16, 64, 256"
+eerror
+				die
+			fi
+		fi
+	fi
+
+	if use amd64 || use arm ; then
+		known=1
+		if (( ${page_size} == 4 )) ; then
+			:;
+		else
+			if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
+eerror
+eerror "Invalid value for CUSTOM_PAGE_SIZE."
+eerror
+eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
+eerror "Expected values:  4"
+eerror
+				die
+			else
+eerror
+eerror "QA:  Invalid value for page_size."
+eerror
+eerror "Actual value:  ${page_size}"
+eerror "Expected values:  4"
+eerror
+				die
+			fi
+		fi
+	fi
+
+	if (( ${known} == 1 )) ; then
+		:;
+	elif (( ${page_size} == 64 )) ; then
+		:;
+	else
+		if [[ -n "${CUSTOM_PAGE_SIZE}" ]] ; then
+eerror
+eerror "Invalid value for CUSTOM_PAGE_SIZE."
+eerror
+eerror "Actual value:  ${CUSTOM_PAGE_SIZE}"
+eerror "Expected values:  64"
+eerror
+				die
+		else
+eerror
+eerror "QA:  Invalid value for page_size."
+eerror
+eerror "Actual value:  ${page_size}"
+eerror "Expected values:  64"
 eerror
 			die
 		fi
 	fi
+	WK_PAGE_SIZE=${page_size}
 }
 
 pkg_setup() {
@@ -1626,7 +1972,7 @@ eerror
 	local jit_enabled=$(usex jit "1" "0")
 	local system_malloc=$(usex !bmalloc "1" "0")
 	local webassembly_allowed=$(usex jit "1" "0")
-	if use 64kb-page-block ; then
+	if (( ${WK_PAGE_SIZE} == 64 )) ; then
 		mycmakeargs+=(
 			-DENABLE_JIT=OFF
 			-DENABLE_DFG_JIT=OFF
@@ -1683,7 +2029,8 @@ eerror
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ARCH}" == "riscv" && ( "${ABI}" == "lp64d" || "${ABI}" == "lp64" ) ]] ; then
+	elif [[ "${ARCH}" == "riscv" ]] ; then
+		# 64-bit only
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -1723,8 +2070,8 @@ ewarn "WebAssembly disabled.  The following steps are required to easily enable"
 ewarn "it:"
 ewarn
 ewarn "(1) Enable the jit USE flag."
-ewarn "(2) Disable the 64kb-page-block USE flag."
-ewarn "(3) Change the kernel config to use page sizes less than 64 KB."
+ewarn "(2) Change the kernel config to use page sizes less than 64 KB."
+ewarn "(3) Set CUSTOM_PAGE_SIZE environment variable less than 64 KB."
 ewarn
 		mycmakeargs+=(
 			-DENABLE_WEBASSEMBLY=OFF
