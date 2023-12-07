@@ -53,6 +53,7 @@
 
           https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.2/Source/WTF/wtf/PageBlock.h#L33
           https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.2/Source/WTF/wtf/PageBlock.cpp#L65
+          https://wiki.gentoo.org/wiki//etc/portage/package.env
 
         Increasing the memory page size may also decrease security.
 
