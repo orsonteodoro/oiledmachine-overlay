@@ -1613,6 +1613,8 @@ check_page_size() {
 	# These are based on the kernel defaults.
 	if [[ "${ARCH}" == "loong" ]] ; then
 		default_page_size=16
+	elif [[ "${ARCH}" == "ia64" ]] ; then
+		default_page_size=16
 	elif [[ "${ARCH}" == "ppc64" ]] ; then
 		if tc-is-cross-compiler ; then
 			default_page_size=64
