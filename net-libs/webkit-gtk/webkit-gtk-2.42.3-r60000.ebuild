@@ -1599,6 +1599,170 @@ eerror
 	fi
 }
 
+_get_actual_page_size() {
+	# Upstream doesn't do a comprehensive job.
+	if [[ "${ARCH}" == "alpha" ]] ; then
+		echo "8"
+	elif [[ "${ARCH}" == "arm" ]] ; then
+		echo "4"
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		if linux_config_exists ; then
+			if linux_chkconfig_builtin ARM64_4K_PAGES ; then
+				echo "4"
+			elif linux_chkconfig_builtin ARM64_16K_PAGES ; then
+				echo "16"
+			elif linux_chkconfig_builtin ARM64_64K_PAGES ; then
+				echo "64"
+			else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+				die
+			fi
+		else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+			die
+		fi
+	elif [[ "${ARCH}" == "ia64" ]] ; then
+		if linux_config_exists ; then
+			if linux_chkconfig_builtin IA64_PAGE_SIZE_4KB ; then
+				echo "4"
+			elif linux_chkconfig_builtin IA64_PAGE_SIZE_8KB ; then
+				echo "8"
+			elif linux_chkconfig_builtin IA64_PAGE_SIZE_16KB ; then
+				echo "16"
+			elif linux_chkconfig_builtin IA64_PAGE_SIZE_64KB ; then
+				echo "64"
+			else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+				die
+			fi
+		else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+			die
+		fi
+	elif [[ "${ARCH}" == "hppa" ]] ; then
+		if linux_config_exists ; then
+			if linux_chkconfig_builtin PARISC_PAGE_SIZE_4KB ; then
+				echo "4"
+			elif linux_chkconfig_builtin PARISC_PAGE_SIZE_16KB ; then
+				echo "16"
+			elif linux_chkconfig_builtin PARISC_PAGE_SIZE_64KB ; then
+				echo "64"
+			else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+				die
+			fi
+		else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+			die
+		fi
+	elif [[ "${ARCH}" == "loong" ]] ; then
+		if linux_config_exists ; then
+			if linux_chkconfig_builtin PAGE_SIZE_4KB ; then
+				echo "4"
+			elif linux_chkconfig_builtin PAGE_SIZE_16KB ; then
+				echo "16"
+			elif linux_chkconfig_builtin PAGE_SIZE_64KB ; then
+				echo "64"
+			else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+				die
+			fi
+		else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+			die
+		fi
+	elif [[ "${ARCH}" == "m68k" ]] ; then
+		if linux_config_exists ; then
+			if linux_chkconfig_builtin SUN3 ; then
+				echo "8"
+			elif linux_chkconfig_builtin COLDFIRE ; then
+				echo "8"
+			else
+				echo "4"
+			fi
+		else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+			die
+		fi
+	elif [[ "${ARCH}" == "ppc" || "${ARCH}" == "ppc64" ]] ; then
+		if linux_config_exists ; then
+			if linux_chkconfig_builtin PPC_4K_PAGES ; then
+				echo "4"
+			elif linux_chkconfig_builtin PPC_16K_PAGES ; then
+				echo "16"
+			elif linux_chkconfig_builtin PPC_64K_PAGES" ; then
+				echo "64"
+			elif linux_chkconfig_builtin PPC_256K_PAGES" ; then
+				echo "256"
+			else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+				die
+			fi
+		else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+			die
+		fi
+	elif [[ "${ARCH}" == "mips" ]] ; then
+		if linux_config_exists ; then
+			if linux_chkconfig_builtin PAGE_SIZE_4KB ; then
+				echo "4"
+			elif linux_chkconfig_builtin PAGE_SIZE_8KB ; then
+				echo "8"
+			elif linux_chkconfig_builtin PAGE_SIZE_16KB ; then
+				echo "16"
+			elif linux_chkconfig_builtin PAGE_SIZE_32KB ; then
+				echo "32"
+			elif linux_chkconfig_builtin PAGE_SIZE_64KB ; then
+				echo "64"
+			else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+				die
+			fi
+		else
+eerror
+eerror "Run menuconfig to fix the kernel config."
+eerror
+			die
+		fi
+	elif [[ "${ARCH}" == "riscv" ]] ; then
+		echo "4"
+	elif [[ "${ARCH}" == "s390" ]] ; then
+		echo "4"
+	elif [[ "${ARCH}" == "sparc" ]] ; then
+		if tc-cpp-is-true "defined(__sparc__) && defined(__arch64__)" ; then
+			echo "8"
+		else
+			echo "4"
+		fi
+	elif [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		echo "4"
+	fi
+}
+
 check_page_size() {
 # See
 # https://github.com/WebKit/WebKit/blob/main/Source/WTF/wtf/PageBlock.h
@@ -1648,6 +1812,32 @@ check_page_size() {
 		page_size=${default_page_size}
 	else
 		page_size=${CUSTOM_PAGE_SIZE}
+	fi
+
+	if ! tc-is-cross-compiler && [[ "${page_size}" == "kconfig" ]] ; then
+		# Use the exact page size
+		page_size=$(_get_actual_page_size)
+		WK_PAGE_SIZE=${page_size}
+		CUSTOM_PAGE_SIZE=${page_size}
+		return
+	elif ! tc-is-cross-compiler && [[ "${page_size}" == "getconf" ]] ; then
+		# Use the exact page size
+		page_size=$(($(getconf PAGE_SIZE)/1024))
+		WK_PAGE_SIZE=${page_size}
+		CUSTOM_PAGE_SIZE=${page_size}
+		return
+	elif tc-is-cross-compiler && [[ "${page_size}" == "kconfig" ]] ; then
+eerror
+eerror "CUSTOM_PAGE_SIZE=kconfig cannot be used while cross compiling."
+eerror "Use a numerical value instead."
+eerror
+		die
+	elif tc-is-cross-compiler && [[ "${page_size}" == "getconf" ]] ; then
+eerror
+eerror "CUSTOM_PAGE_SIZE=getconf cannot be used while cross compiling."
+eerror "Use a numerical value instead."
+eerror
+		die
 	fi
 
 	if (( ${page_size} == 64 )) ; then
@@ -2042,6 +2232,8 @@ eerror
 	local pointer_size=$(tc-get-ptr-size)
 	local system_malloc=$(usex !bmalloc "1" "0")
 	local webassembly_allowed=$(usex jit "1" "0")
+
+einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 
 	_jit_off() {
 		mycmakeargs+=(
