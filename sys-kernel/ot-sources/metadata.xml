@@ -2222,7 +2222,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
         loongarch:  4, 16, 64
         m68k:  4, 8                          8 for CONFIG_SUN3=y or CONFIG_COLDFIRE=y; 4 for others
         parisc:  4, 16, 64                   (2)
-        powerpc*:  4, 16, 64, 256            (1)
+        powerpc:  4, 16, 64, 256             (1)
         mips:  4, 8, 16, 32                  (1)
         riscv:  4
         s390:  4
