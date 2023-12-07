@@ -571,7 +571,6 @@ REQUIRED_USE+="
 		!opengl
 	)
 	gstreamer? (
-		bmalloc
 		|| (
 			gles2
 			opengl
@@ -1610,16 +1609,14 @@ check_page_size() {
 	local default_page_size=64
 
 	# These are based on the kernel defaults.
-	if [[ "${ARCH}" == "arm64" ]] ; then
-		# Based in the kernel Kconfig
-		default_page_size=64
-	elif [[ \
+	if [[ \
 		   "${ARCH}" == "loong" \
 	]] ; then
 		default_page_size=16
 	elif [[ \
 		   "${ARCH}" == "amd64" \
 		|| "${ARCH}" == "arm" \
+		|| "${ARCH}" == "arm64" \
 		|| "${ARCH}" == "ppc" \
 		|| "${ARCH}" == "ppc64" \
 		|| "${ARCH}" == "mips" \
