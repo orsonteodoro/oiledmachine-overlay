@@ -2017,6 +2017,7 @@ eerror
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local jit_enabled=$(usex jit "1" "0")
+	local pointer_size=$(tc-get-ptr-size)
 	local system_malloc=$(usex !bmalloc "1" "0")
 	local webassembly_allowed=$(usex jit "1" "0")
 
@@ -2070,7 +2071,9 @@ eerror
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ARCH}" == "mips" ]] ; then
+	elif [[ "${ARCH}" == "mips" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64" || "${ARCH}" == "mips64el" ]] \
+			&& \
+		(( ${pointer_size} == 4 )) ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2081,8 +2084,7 @@ eerror
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
-	elif [[ "${ARCH}" == "riscv" ]] ; then
-		# 64-bit only
+	elif [[ "${ARCH}" == "riscv" ]] && (( ${pointer_size} == 8 )) ; then
 		mycmakeargs+=(
 			-DENABLE_C_LOOP=$(usex !jit)
 			-DENABLE_JIT=$(usex jit)
@@ -2098,7 +2100,7 @@ einfo "Disabling JIT for ${ABI}."
 		_jit_off
 	fi
 
-	if (( $(tc-get-ptr-size) != 8 )) ; then
+	if (( ${pointer_size} != 8 )) ; then
 ewarn "WASM not supported for ABI=${ABI}"
 		webassembly_allowed=0
 	fi
