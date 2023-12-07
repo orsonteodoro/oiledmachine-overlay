@@ -1,0 +1,34 @@
+diff -urp coreboot-4.22.01.orig/util/ifdtool/Makefile.inc coreboot-4.22.01/util/ifdtool/Makefile.inc
+--- coreboot-4.22.01.orig/util/ifdtool/Makefile.inc	2023-11-23 15:29:19.000000000 -0800
++++ coreboot-4.22.01/util/ifdtool/Makefile.inc	2023-12-06 21:29:33.255756105 -0800
+@@ -16,4 +16,4 @@ $(objutil)/ifdtool/%.o: $(top)/util/cbfs
+ 
+ $(objutil)/ifdtool/ifdtool: $(addprefix $(objutil)/ifdtool/,$(ifdtoolobj))
+ 	printf "   IFDTOOL\n"
+-	$(HOSTCC) ${LDFLAGS} $(addprefix $(objutil)/ifdtool/,$(ifdtoolobj)) -o $@
++	$(HOSTCC) $(LDFLAGS) $(addprefix $(objutil)/ifdtool/,$(ifdtoolobj)) -o $@
+diff -urp coreboot-4.22.01.orig/util/nvramtool/Makefile coreboot-4.22.01/util/nvramtool/Makefile
+--- coreboot-4.22.01.orig/util/nvramtool/Makefile	2023-11-23 15:29:19.000000000 -0800
++++ coreboot-4.22.01/util/nvramtool/Makefile	2023-12-06 21:28:23.015754276 -0800
+@@ -11,7 +11,7 @@ PROGRAM = nvramtool
+ CC     ?= gcc
+ INSTALL = /usr/bin/env install
+ PREFIX  = /usr/local
+-CFLAGS  = -O2 -g -Wall -Wextra -Wmissing-prototypes -I. -DCMOS_HAL=1
++CFLAGS  += -O2 -g -Wall -Wextra -Wmissing-prototypes -I. -DCMOS_HAL=1
+ #CFLAGS  = -Os -Wall
+ 
+ CLI_OBJS = cli/nvramtool.o cli/opts.o
+diff -urp coreboot-4.22.01.orig/util/pmh7tool/Makefile coreboot-4.22.01/util/pmh7tool/Makefile
+--- coreboot-4.22.01.orig/util/pmh7tool/Makefile	2023-11-23 15:29:19.000000000 -0800
++++ coreboot-4.22.01/util/pmh7tool/Makefile	2023-12-06 21:28:54.279755090 -0800
+@@ -1,7 +1,7 @@
+ ## SPDX-License-Identifier: GPL-2.0-only
+ 
+-CC = gcc
+-CFLAGS = -O2 -Wall -Wextra -Werror
++CC ?= gcc
++CFLAGS ?= -O2 -Wall -Wextra -Werror
+ PROGRAM = pmh7tool
+ INSTALL = /usr/bin/env install
+ PREFIX	= /usr/local

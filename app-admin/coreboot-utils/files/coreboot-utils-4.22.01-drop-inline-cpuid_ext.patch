@@ -1,0 +1,11 @@
+--- coreboot-4.22.01/util/inteltool/cpu.c.orig	2023-11-23 15:29:19.000000000 -0800
++++ coreboot-4.22.01/util/inteltool/cpu.c	2023-12-06 21:22:13.527744652 -0800
+@@ -53,7 +53,7 @@ unsigned int cpuid(unsigned int op)
+ 	return ret;
+ }
+ 
+-inline cpuid_result_t cpuid_ext(int op, unsigned int ecx)
++cpuid_result_t cpuid_ext(int op, unsigned int ecx)
+ {
+ 	cpuid_result_t result;
+ 
