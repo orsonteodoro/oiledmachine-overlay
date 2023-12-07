@@ -2236,6 +2236,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       min - smallest page size supported by hardware in kernel config
       performance - lower page faults
       security - increased page isolation
+      unset - same as custom
 
     (1) The values listed may have dependencies or not work in certain configurations.
     (2) 16, 64 are marked broken upstream
@@ -2252,6 +2253,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       effect when setting this value.
     - Non numerical values are only supported in non fixed page size
       architectures.
+    - Because it may create new bugs in userspace apps, the default if
+      not set is custom.
 
 
 
