@@ -2154,7 +2154,7 @@ einfo "CPPFLAGS:  ${CPPFLAGS}"
 		-DUSE_LD_LLD=OFF
 	)
 
-einfo "Add -flto with one of -fuse-ld=<bfd|gold|lld|mold> for LTO optimization"
+einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS for LTO optimization."
 	local linker_type=$(check-linker_get_lto_type)
 	if [[ \
 		    "${linker_type}" =~ ("bfdlto"|"goldlto"|"moldlto"|"thinlto") \
