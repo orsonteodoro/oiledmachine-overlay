@@ -2133,7 +2133,7 @@ ewarn
 	if use yarr-jit ; then
 einfo "Enabled YARR JIT (aka RegEx JIT)" # default
 	else
-einfo "Disabled YARR JIT (aka Regex JIT)"
+einfo "Disabled YARR JIT (aka RegEx JIT)"
 		append-cppflags \
 			-DENABLE_YARR_JIT=0
 	fi
