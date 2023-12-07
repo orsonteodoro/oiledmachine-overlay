@@ -7512,10 +7512,10 @@ ot-kernel_menuconfig() {
 				menuconfig_colors="MENUCONFIG_COLOR=${OT_KERNEL_MENUCONFIG_COLORS}"
 			fi
 			if [[ \
-				"${menuconfig_ui,,}" == "menuconfig" ||  \
-				"${menuconfig_ui,,}" == "gconfig" ||  \
-				"${menuconfig_ui,,}" == "nconfig" ||  \
-				"${menuconfig_ui,,}" == "xconfig" ||  \
+				   "${menuconfig_ui,,}" == "menuconfig"  \
+				|| "${menuconfig_ui,,}" == "gconfig"  \
+				|| "${menuconfig_ui,,}" == "nconfig"  \
+				|| "${menuconfig_ui,,}" == "xconfig"  \
 			]] ; then
 				:;
 			else
