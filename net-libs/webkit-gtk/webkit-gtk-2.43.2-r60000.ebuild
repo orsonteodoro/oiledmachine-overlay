@@ -1765,6 +1765,12 @@ eerror
 		fi
 	elif [[ "${ARCH}" == "x86" || "${ARCH}" == "amd64" ]] ; then
 		echo "4"
+	else
+eerror
+eerror "ARCH not supported.  Provide a numerical value for CUSTOM_PAGE_SIZE"
+eerror "or unset CUSTOM_PAGE_SIZE."
+eerror
+		die
 	fi
 }
 
