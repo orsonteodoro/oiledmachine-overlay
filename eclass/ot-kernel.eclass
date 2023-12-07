@@ -7511,6 +7511,22 @@ ot-kernel_menuconfig() {
 			if [[ -n "${menuconfig_ui}" ]] ; then
 				menuconfig_colors="MENUCONFIG_COLOR=${OT_KERNEL_MENUCONFIG_COLORS}"
 			fi
+			if [[ \
+				"${menuconfig_ui,,}" == "menuconfig" ||  \
+				"${menuconfig_ui,,}" == "gconfig" ||  \
+				"${menuconfig_ui,,}" == "nconfig" ||  \
+				"${menuconfig_ui,,}" == "xconfig" ||  \
+			]] ; then
+				:;
+			else
+eerror
+eerror "Detected OT_KERNEL_MENUCONFIG_UI as invalid value."
+eerror
+eerror "Actual value:  ${OT_KERNEL_MENUCONFIG_UI}"
+eerror "Valid values:  menuconfig, nconfig, xconfig, none, disable, unset"
+eerror
+				die
+			fi
 einfo "Running:  ARCH=${arch} make ${menuconfig_ui} ${menuconfig_colors} ${args[@]}"
 			cat <<EOF > "${BUILD_DIR}/menuconfig.sh" || die
 #!/bin/bash
