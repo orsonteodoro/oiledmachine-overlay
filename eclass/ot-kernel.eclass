@@ -8438,13 +8438,13 @@ einfo "HOSTLDFLAGS=${HOSTLDFLAGS}"
 einfo
 	if tc-is-cross-compiler ; then
 		args+=(
-			"HOSTCFLAGS=-O1 -pipe"
-			"HOSTLDFLAGS=-O1 -pipe"
+			"'HOSTCFLAGS=-O1 -pipe'"
+			"'HOSTLDFLAGS=-O1 -pipe'"
 		)
 	else
 		args+=(
-			"HOSTCFLAGS=${HOSTCFLAGS}"
-			"HOSTLDFLAGS=${HOSTLDFLAGS}"
+			"'HOSTCFLAGS=${HOSTCFLAGS}'"
+			"'HOSTLDFLAGS=${HOSTLDFLAGS}'"
 		)
 	fi
 
