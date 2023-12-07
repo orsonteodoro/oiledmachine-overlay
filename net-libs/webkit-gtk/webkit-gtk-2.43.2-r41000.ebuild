@@ -1723,7 +1723,12 @@ eerror "Run menuconfig to fix the kernel config."
 eerror
 			die
 		fi
-	elif [[ "${ARCH}" == "mips" ]] ; then
+	elif [[ \
+		   "${ARCH}" == "mips" \
+		|| "${ARCH}" == "mips64" \
+		|| "${ARCH}" == "mips64el" \
+		|| "${ARCH}" == "mipsel" \
+	]] ; then
 		if linux_config_exists ; then
 			if linux_chkconfig_builtin PAGE_SIZE_4KB ; then
 				echo "4"
@@ -1757,7 +1762,7 @@ eerror
 		else
 			echo "4"
 		fi
-	elif [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+	elif [[ "${ARCH}" == "x86" || "${ARCH}" == "amd64" ]] ; then
 		echo "4"
 	fi
 }
