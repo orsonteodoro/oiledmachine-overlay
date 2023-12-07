@@ -616,6 +616,7 @@ REQUIRED_USE+="
 		webassembly-b3-jit
 	)
 	webgl? (
+		gbm
 		|| (
 			gles2
 			opengl
@@ -1806,6 +1807,14 @@ eerror
 		use ilp32d && die "Disable the unsupported ilp32d ABI"
 		use ilp32 && die "Disable the unsupported ilp32 ABI"
 	fi
+
+einfo
+einfo "To disable the distro hard USE block on gstreamer and decrease the"
+einfo "attack surface, do the following:"
+einfo
+einfo "mkdir -p /etc/portage/profile"
+einfo "echo \"net-libs/webkit-gtk -gstreamer\" >> /etc/portage/profile/package.use.force"
+einfo
 
 	check_page_size
 	verify_codecs
