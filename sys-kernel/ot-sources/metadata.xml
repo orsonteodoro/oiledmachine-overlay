@@ -2207,40 +2207,51 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
 
-    OT_KERNEL_PA_BITS - the address space of the dynamic memory (e.g. RAM).
-    PA_BITS correspond to N in the 2^N physical address space.
+    OT_KERNEL_PAGE_SIZE - Change the page size for reasons of performance,
+    energy savings, security.  This may require certain software to be
+    recompiled if this information is gained at compile time.  The numbers
+    are in KB.
 
     Acceptable values:
 
-      a number (e.g. 32, 48, etc.), auto, unset, max
+      A number:
+        alpha:  4
+        arm:  4
+        arm64:  4, 16, 64
+        ia64:  4, 8, 16, 64                  (1)
+        loongarch:  4, 16, 64
+        m68k:  4, 8                          8 for CONFIG_SUN3=y or CONFIG_COLDFIRE=y; 4 for others
+        parisc:  4, 16, 64                   (2)
+        powerpc*:  4, 16, 64, 256            (1)
+        mips:  4, 8, 16, 32                  (1)
+        riscv:  4
+        s390:  4
+        sparc:  4, 8                         8 for a 64-bit compiler, 4 for others
+        x86:  4
+      custom - use current kernel config values
+      default - use upstream defaults
+      disable - skip setting but use custom values
+      low-power - fewest CPU cycles wasted on managing the page table and page metadata
+      max - largest page size supported by hardware in kernel config
+      min - smallest page size supported by hardware in kernel config
+      performance - lower page faults
+      security - increased page isolation
 
-    max uses the max size.  auto will auto configure but requires obtaining
-    data from full built so two rebuilts.  unset is the same as manual.
+    (1) The values listed may have dependencies or not work in certain configurations.
+    (2) 16, 64 are marked broken upstream
+    (3) Performance for parisc (aka hppa) implies (2)
 
-    See also:
+    Notes:
 
-      OT_KERNEL_PAGE_SIZE
-      OT_KERNEL_VA_BITS
-
-
-
-    OT_KERNEL_PAGE_SIZE - memory block transferred between hard drive and
-    physical memory.  All transfers must be page sized.  The page size
-    is architecture dependent.  Small page sizes store memory in physical more
-    efficiently.  Large page sizes reduce page faults (fetching from storage).
-
-    Acceptable values:
-
-      a number (e.g. 4, 16, 64, etc.) in KiB, auto, unset, max, min, mid
-
-    max uses the maximum page size.  min uses minimum page size,  mid uses
-    the middle value.  auto will auto configure but requires obtaining data
-    from full built so two rebuilds.  Unset is the same as upstream defaults.
-
-    See also:
-
-      OT_KERNEL_PA_BITS
-      OT_KERNEL_VA_BITS
+    - Using this feature may disable options that decrease the index
+      range or addressable range, meaning that the physical memory may
+      not be fully utilized.
+    - Changing the page size may require emerging packages that obtain
+      page size information during configure time or build time.
+    - Some architectures use a fixed page size with 1 or 2 values that has no
+      effect when setting this value.
+    - Non numerical values are only supported in non fixed page size
+      architectures.
 
 
 
@@ -2930,23 +2941,6 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_VA_BITS - the address space of the virtual memory (which includes
-    RAM + SWAP).  PB_BITS correspond to N in the 2^N virtual address space.
-
-    Acceptable values:
-
-      a number (e.g. 32, 48, etc.), auto, unset, max
-
-    full uses the max size.  auto will auto configure but requires obtaining
-    data from full built.  unset is the same as manual.
-
-    See also:
-
-      OT_KERNEL_PA_BITS
-      OT_KERNEL_PAGE_SIZE
-
-
-
     OT_KERNEL_VERBOSITY=N (optional) - presentation of compiler and build
     invocation.  This will print out the compiler flags used during 
     compilation.  Using 1 will print as if you are compiling a typical ebuild
@@ -3041,6 +3035,7 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:
 
       OT_KERNEL_HARDENING_LEVEL
+      OT_KERNEL_PAGE_SIZE
 
 
 

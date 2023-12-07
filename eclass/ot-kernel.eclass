@@ -3074,6 +3074,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_NET_QOS_ACTIONS
 	unset OT_KERNEL_NET_QOS_CLASSIFIERS
 	unset OT_KERNEL_NET_QOS_SCHEDULERS
+	unset OT_KERNEL_PAGE_SIZE
 	unset OT_KERNEL_PCIE_MPS
 	unset OT_KERNEL_PGO_FLAVOR
 	unset OT_KERNEL_PHYS_MEM_TOTAL_GIB
@@ -5436,6 +5437,547 @@ einfo "Setting .config with -Os from CFLAGS"
 	else
 einfo "Setting .config with -O2 from CFLAGS"
 		ot-kernel_y_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_page_size
+# @DESCRIPTION:
+# Controls the page size.  This setting has security and performance
+# implications.
+# High values - lowered security, less page faults, more energy savings
+# Low values - higher security, more overhead, more energy waste
+ot-kernel_set_kconfig_page_size() {
+	local page_size
+	if [[ -n "${1}" ]] ; then
+		page_size="${1}"
+	else
+		page_size="${OT_KERNEL_PAGE_SIZE:-custom}"
+	fi
+	if [[ "${page_size}" == "custom" || "${page_size}" =~ "disable" ]] ; then
+		return
+	fi
+	if [[ "${arch}" == "alpha" ]] ; then
+einfo "Page size:  8 KB"
+	fi
+	if [[ "${arch}" == "arm" ]] ; then
+einfo "Page size:  4 KB"
+	fi
+	if [[ "${arch}" == "arm64" ]] ; then
+		if [[ \
+			   "${page_size}" == "4" \
+			|| "${page_size}" == "default" \
+			|| "${page_size}" == "min" \
+			|| "${page_size}" == "security" \
+		]] ; then
+einfo "Page size:  4 KB"
+			ot-kernel_y_configopt "CONFIG_ARM64_4K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_ARM64_16K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_ARM64_64K_PAGES"
+		elif [[ \
+			"${page_size}" == "16" \
+		]] ; then
+einfo "Page size:  16 KB"
+			ot-kernel_unset_configopt "CONFIG_ARM64_4K_PAGES"
+			ot-kernel_y_configopt "CONFIG_ARM64_16K_PAGES"
+			ot-kernel_uset_configopt "CONFIG_ARM64_64K_PAGES"
+		elif [[ \
+			   "${page_size}" == "64" \
+			|| "${page_size}" == "max" \
+			|| "${page_size}" == "low-power" \
+			|| "${page_size}" == "performance" \
+		]] ; then
+einfo "Page size:  64 KB"
+			ot-kernel_unset_configopt "CONFIG_ARM64_4K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_ARM64_16K_PAGES"
+			ot-kernel_y_configopt "CONFIG_ARM64_64K_PAGES"
+		else
+eerror
+eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
+eerror
+eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
+eerror "Expected:  default, min, max, performance, security, low-power, 4, 16, 64"
+eerror
+			die
+		fi
+	fi
+	if [[ "${arch}" == "ia64" ]] ; then
+		if [[ \
+			   "${page_size}" == "4" \
+			|| "${page_size}" == "min" \
+			|| "${page_size}" == "security" \
+		]] ; then
+einfo "Page size:  4 KB"
+			ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
+		elif [[ \
+			"${page_size}" == "8" \
+		]] ; then
+einfo "Page size:  8 KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
+			ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
+		elif [[ \
+			   "${page_size}" == "16" \
+			|| "${page_size}" == "default" \
+		]] ; then
+einfo "Page size:  16 KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
+			ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
+		elif [[ \
+			"${page_size}" == "64" \
+		]] ; then
+einfo "Page size:  64 KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
+			ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
+
+			if grep -q -E -e "^CONFIG_ITANIUM=y" "${path_config}" ; then
+eerror
+eerror "64 KB pages is not suppored for CONFIG_ITANIUM=y"
+eerror
+				die
+			fi
+		elif [[ \
+			   "${page_size}" == "max" \
+			|| "${page_size}" == "low-power" \
+			|| "${page_size}" == "performance" \
+		]] ; then
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
+
+			if ! grep -q -E -e "^CONFIG_ITANIUM=y" "${path_config}" ; then
+einfo "Page size:  64 KB"
+				ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
+			else
+einfo "Page size:  16 KB"
+				ot-kernel_y_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
+			fi
+		else
+eerror
+eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
+eerror
+eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
+eerror "Expected:  default, min, max, performance, security, low-power, 4, 8, 16, 64"
+eerror
+			die
+		fi
+	fi
+	if [[ "${arch}" == "loongarch" ]] ; then
+		if [[ \
+			   "${page_size}" == "4" \
+			|| "${page_size}" == "min" \
+			|| "${page_size}" == "security" \
+		]] ; then
+einfo "Page size:  4 KB"
+			ot-kernel_unset_configopt "CONFIG_4KB_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_4KB_4LEVEL"
+			ot-kernel_unset_configopt "CONFIG_16KB_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_16KB_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_64KB_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_64KB_3LEVEL"
+
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_64KB"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_4LEVEL"
+
+			if grep -q -E -e "^CONFIG_64BIT=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_4KB_3LEVEL"
+				ot-kernel_y_configopt "CONFIG_PAGE_SIZE_4KB"
+				ot-kernel_y_configopt "CONFIG_PGTABLE_3LEVEL"
+			else
+				ot-kernel_y_configopt "CONFIG_4KB_4LEVEL"
+				ot-kernel_y_configopt "CONFIG_PAGE_SIZE_4KB"
+				ot-kernel_y_configopt "CONFIG_PGTABLE_4LEVEL"
+			fi
+		elif [[ \
+			   "${page_size}" == "16" \
+			|| "${page_size}" == "default" \
+		]] ; then
+einfo "Page size:  16 KB"
+			ot-kernel_unset_configopt "CONFIG_4KB_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_4KB_4LEVEL"
+			ot-kernel_unset_configopt "CONFIG_16KB_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_16KB_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_64KB_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_64KB_3LEVEL"
+
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_64KB"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_4LEVEL"
+
+			if grep -q -E -e "^CONFIG_64BIT=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_16KB_3LEVEL"
+				ot-kernel_y_configopt "CONFIG_PAGE_SIZE_16KB"
+				ot-kernel_y_configopt "CONFIG_PGTABLE_3LEVEL"
+			else
+				ot-kernel_y_configopt "CONFIG_16KB_2LEVEL"
+				ot-kernel_y_configopt "CONFIG_PAGE_SIZE_16KB"
+				ot-kernel_y_configopt "CONFIG_PGTABLE_2LEVEL"
+			fi
+		elif [[ \
+			   "${page_size}" == "64" \
+			|| "${page_size}" == "low-power" \
+			|| "${page_size}" == "max" \
+			|| "${page_size}" == "performance" \
+		]] ; then
+einfo "Page size:  64 KB"
+			ot-kernel_unset_configopt "CONFIG_4KB_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_4KB_4LEVEL"
+			ot-kernel_unset_configopt "CONFIG_16KB_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_16KB_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_64KB_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_64KB_3LEVEL"
+
+			ot-kernel_unser_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_64KB"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_2LEVEL"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_3LEVEL"
+			ot-kernel_unset_configopt "CONFIG_PGTABLE_4LEVEL"
+
+			if grep -q -E -e "^CONFIG_64BIT=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_64KB_2LEVEL"
+				ot-kernel_y_configopt "CONFIG_PAGE_SIZE_64KB"
+				ot-kernel_y_configopt "CONFIG_PGTABLE_2LEVEL"
+			else
+				ot-kernel_y_configopt "CONFIG_64KB_3LEVEL"
+				ot-kernel_y_configopt "CONFIG_PAGE_SIZE_64KB"
+				ot-kernel_y_configopt "CONFIG_PGTABLE_3LEVEL"
+			fi
+		else
+eerror
+eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
+eerror
+eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
+eerror "Expected:  default, min, max, performance, security, low-power, 4, 16, 64"
+eerror
+			die
+		fi
+	fi
+	if [[ "${arch}" == "m68k" ]] ; then
+		if grep -q -E -e "^CONFIG_SUN3=y" "${path_config}" \
+		|| grep -q -E -e "^CONFIG_COLDFIRE=y" "${path_config}" ; then
+einfo "Page size:  8 KB"
+		else
+einfo "Page size:  4 KB"
+		fi
+	fi
+	if [[ "${arch}" == "parisc" ]] ; then
+		# hppa
+		if [[ \
+			   "${page_size}" == "4" \
+			|| "${page_size}" == "default" \
+			|| "${page_size}" == "min" \
+			|| "${page_size}" == "security" \
+		]] ; then
+einfo "Page size:  4 KB"
+			ot-kernel_y_configopt "CONFIG_PARISC_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PARISC_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PARISC_PAGE_SIZE_64KB"
+		elif [[ \
+			    "${page_size}" == "16" \
+		]] ; then
+			if grep -q -E -e "^CONFIG_PA8X00=y" "${path_config}" ; then
+ewarn "Page size:  16 KB.  Marked broken upstream."
+				ot-kernel_unset_configopt "CONFIG_PARISC_PAGE_SIZE_4KB"
+				ot-kernel_y_configopt "CONFIG_PARISC_PAGE_SIZE_16KB"
+				ot-kernel_unset_configopt "CONFIG_PARISC_PAGE_SIZE_64KB"
+				ot-kernel_y_configopt "CONFIG_BROKEN"
+			fi
+		elif [[ \
+			   "${page_size}" == "64" \
+			|| "${page_size}" == "low-power" \
+			|| "${page_size}" == "max" \
+			|| "${page_size}" == "performance" \
+		]] ; then
+			if grep -q -E -e "^CONFIG_PA8X00=y" "${path_config}" ; then
+ewarn "Page size:  64 KB.  Marked broken upstream."
+				ot-kernel_unset_configopt "CONFIG_PARISC_PAGE_SIZE_4KB"
+				ot-kernel_unset_configopt "CONFIG_PARISC_PAGE_SIZE_16KB"
+				ot-kernel_y_configopt "CONFIG_PARISC_PAGE_SIZE_64KB"
+				ot-kernel_y_configopt "CONFIG_BROKEN"
+			fi
+		else
+eerror
+eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
+eerror
+eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
+eerror "Expected:  default, min, max, performance, security, low-power, 4, 16, 64"
+eerror
+			die
+		fi
+	fi
+	if [[ "${arch}" == "powerpc" ]] ; then
+		if [[ \
+			   "${page_size}" == "4" \
+			|| "${page_size}" == "min" \
+			|| "${page_size}" == "security" \
+		]] ; then
+einfo "Page size:  4 KB"
+			ot-kernel_y_configopt "CONFIG_PPC_4K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_256K_PAGES"
+		elif [[ \
+			"${page_size}" == "16" \
+		]] ; then
+einfo "Page size:  16 KB"
+			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
+			ot-kernel_y_configopt "CONFIG_PPC_16K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_256K_PAGES"
+			if grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
+			|| grep -q -E -e "^CONFIG_PPC_8xx=y" "${path_config}" ; then
+				:;
+			else
+eerror
+eerror "16 KB pages not supported and it requires CONFIG_44x=y or CONFIG_PPC_8xx=y"
+eerror
+				die
+			fi
+		elif [[ \
+			"${page_size}" == "64" \
+		]] ; then
+einfo "Page size:  64 KB"
+			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
+			ot-kernel_y_configopt "CONFIG_PPC_64K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_256K_PAGES"
+			if grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
+			|| grep -q -E -e "^CONFIG_PPC_BOOK3S_64=y" "${path_config}" ; then
+				:;
+			else
+eerror
+eerror "64 KB pages not supported and it requires CONFIG_44x=y or CONFIG_PPC_BOOK3S_64=y"
+eerror
+				die
+			fi
+		elif [[ \
+			"${page_size}" == "256" \
+		]] ; then
+einfo "Page size:  256 KB"
+			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
+			ot-kernel_y_configopt "CONFIG_PPC_256K_PAGES"
+			if   grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
+			&& ! grep -q -E -e "^CONFIG_PPC_47x=y" "${path_config}" ; then
+				:;
+			else
+eerror
+eerror "256 KB pages not supported and it requires CONFIG_44x=y and CONFIG_PPC_47x=n"
+eerror
+				die
+			fi
+		elif [[ \
+			"${page_size}" == "default" \
+		]] ; then
+			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_256K_PAGES"
+
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_64KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_256KB"
+
+			if grep -q -E -e "^CONFIG_PPC_BOOK3S_64=y" "${path_config}" ; then
+einfo "Page size:  64 KB"
+				ot-kernel_y_configopt "CONFIG_PPC_64K_PAGES"
+				ot-kernel_y_configopt "CONFIG_PAGE_SIZE_64KB"
+			else
+einfo "Page size:  4 KB"
+				ot-kernel_y_configopt "CONFIG_PPC_4K_PAGES"
+				ot-kernel_y_configopt "CONFIG_PAGE_SIZE_4KB"
+			fi
+		elif [[ \
+			   "${page_size}" == "max" \
+			|| "${page_size}" == "low-power" \
+			|| "${page_size}" == "performance" \
+		]] ; then
+einfo "Page size:  256 KB"
+			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
+			ot-kernel_unset_configopt "CONFIG_PPC_256K_PAGES"
+			if   grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
+			&& ! grep -q -E -e "^CONFIG_PPC_47x=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PPC_256K_PAGES"
+			elif grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
+			||   grep -q -E -e "^CONFIG_PPC_BOOK3S_64=y" "${path_config}" ; then
+				ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
+			elif grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
+			||   grep -q -E -e "^CONFIG_PPC_8xx=y" "${path_config}" ; then
+				ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
+			else
+				ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
+			fi
+		else
+eerror
+eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
+eerror
+eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
+eerror "Expected:  default, min, max, performance, security, low-power, 4, 16, 64, 256"
+eerror
+			die
+		fi
+	fi
+	if [[ "${arch}" == "mips" ]] ; then
+		if [[ \
+			   "${page_size}" == "4" \
+			|| "${page_size}" == "default" \
+			|| "${page_size}" == "min" \
+			|| "${page_size}" == "security" \
+		]] ; then
+einfo "Page size:  4 KB"
+			ot-kernel_y_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_8KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_32KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_64KB"
+
+			# Conflict
+			ot-kernel_unset_configopt "CONFIG_CPU_MIPS32_R5_XPA"
+ewarn "Disabling CONFIG_CPU_MIPS32_R5_XPA.  This will affect allocation and indexing."
+
+			if grep -q -E -e "^CONFIG_CPU_LOONGSON2=y" "${path_config}" ; then
+eerror
+eerror "4 KB pages are not suppored with CONFIG_CPU_LOONGSON2=y"
+eerror
+				die
+			fi
+			if grep -q -E -e "^CONFIG_CPU_LOONGSON3=y" "${path_config}" ; then
+eerror
+eerror "4 KB pages are not suppored with CONFIG_CPU_LOONGSON3=y"
+eerror
+				die
+			fi
+		elif [[ \
+			"${page_size}" == "8" \
+		]] ; then
+einfo "Page size:  8 KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_y_configopt "CONFIG_PAGE_SIZE_8KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_32KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_64KB"
+
+			# Conflict
+			ot-kernel_unset_configopt "CONFIG_MIPS_VA_BITS_48"
+
+			if ! grep -q -E -e "^CONFIG_CPU_CAVIUM_OCTEON=y" "${path_config}" ; then
+eerror
+eerror "8 KB pages requires CONFIG_CPU_CAVIUM_OCTEON=y"
+eerror
+				die
+			fi
+		elif [[ \
+			"${page_size}" == "16" \
+		]] ; then
+einfo "Page size:  16 KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_8KB"
+			ot-kernel_y_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_32KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_64KB"
+
+			if grep -q -E -e "^CONFIG_CPU_R3000=y" "${path_config}" ; then
+eerror
+eerror "16 KB pages is not suppored for CONFIG_CPU_R3000=y"
+eerror
+				die
+			fi
+			if grep -q -E -e "^CONFIG_CPU_TX39XX=y" "${path_config}" ; then
+eerror
+eerror "16 KB pages is not suppored for CONFIG_CPU_TX39XX=y"
+eerror
+				die
+			fi
+		elif [[ \
+			"${page_size}" == "32" \
+		]] ; then
+einfo "Page size:  32 KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_8KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_y_configopt "CONFIG_PAGE_SIZE_32KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_64KB"
+
+			# Conflict
+			ot-kernel_unset_configopt "CONFIG_MIPS_VA_BITS_48"
+
+			if ! grep -q -E -e "^CONFIG_CPU_CAVIUM_OCTEON=y" "${path_config}" ; then
+eerror
+eerror "8 KB pages requires CONFIG_CPU_CAVIUM_OCTEON=y"
+eerror
+				die
+			fi
+		elif [[ \
+			   "${page_size}" == "64" \
+			|| "${page_size}" == "low-power" \
+			|| "${page_size}" == "max" \
+			|| "${page_size}" == "performance" \
+		]] ; then
+einfo "Page size:  64 KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_8KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_16KB"
+			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_32KB"
+			ot-kernel_y_configopt "CONFIG_PAGE_SIZE_64KB"
+
+			if grep -q -E -e "^CONFIG_CPU_R3000=y" "${path_config}" ; then
+eerror
+eerror "64 KB pages is not suppored for CONFIG_CPU_R3000=y"
+eerror
+				die
+			fi
+			if grep -q -E -e "^CONFIG_CPU_TX39XX=y" "${path_config}" ; then
+eerror
+eerror "64 KB pages is not suppored for CONFIG_CPU_TX39XX=y"
+eerror
+				die
+			fi
+		else
+eerror
+eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
+eerror
+eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
+eerror "Expected:  default, min, max, performance, security, low-power, 4, 8, 16, 64"
+eerror
+			die
+		fi
+	fi
+	if [[ "${arch}" == "riscv" ]] ; then
+einfo "Page size:  4 KB"
+	fi
+	if [[ "${arch}" == "s390" ]] ; then
+einfo "Page size:  4 KB"
+	fi
+	if [[ "${arch}" == "sparc" ]] ; then
+# Based on the compiler
+		if tc-cpp-is-true "defined(__sparc__) && defined(__arch64__)" ; then
+einfo "Page size:  8 KB" # 64-bit
+		else
+einfo "Page size:  4 KB" # 32-bit
+		fi
+	fi
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+einfo "Page size:  4 KB"
 	fi
 }
 
@@ -8094,6 +8636,7 @@ einfo
 	ot-kernel_set_kconfig_init_systems
 	ot-kernel_set_kconfig_boot_args
 	ot-kernel_set_kconfig_processor_class
+	ot-kernel_set_kconfig_page_size
 	ot-kernel_set_kconfig_auto_set_slab_allocator
 	ot-kernel_set_kconfig_cpu_scheduler
 	ot-kernel_set_kconfig_multigen_lru
