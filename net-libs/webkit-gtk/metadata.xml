@@ -42,7 +42,7 @@
       Additional notes:   
 
         If CUSTOM_PAGE_SIZE is not set, it will use a best guess strategy that
-        upstream provides (either 4, 16, 64), which pages do not perfectly align
+        upstream provides (either 4, 16, 64), which pages may not perfectly align
         or may crash.
 
         Based on the assert, it is safe to have the current memory page size in
