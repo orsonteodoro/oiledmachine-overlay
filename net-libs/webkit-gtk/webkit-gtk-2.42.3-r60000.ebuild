@@ -1611,16 +1611,25 @@ check_page_size() {
 	local default_page_size=64
 
 	# These are based on the kernel defaults.
-	if [[ \
-		   "${ARCH}" == "loong" \
-	]] ; then
+	if [[ "${ARCH}" == "loong" ]] ; then
 		default_page_size=16
+	elif [[ "${ARCH}" == "ppc64" ]] ; then
+		if tc-is-cross-compiler ; then
+			default_page_size=64
+		else
+			if ! linux_config_exists ; then
+				default_page_size=64
+			elif linux_chkconfig_builtin PPC_BOOK3S_64 ; then
+				default_page_size=64
+			else
+				default_page_size=4
+			fi
+		fi
 	elif [[ \
 		   "${ARCH}" == "amd64" \
 		|| "${ARCH}" == "arm" \
 		|| "${ARCH}" == "arm64" \
 		|| "${ARCH}" == "ppc" \
-		|| "${ARCH}" == "ppc64" \
 		|| "${ARCH}" == "mips" \
 		|| "${ARCH}" == "mips64" \
 		|| "${ARCH}" == "mips64el" \
