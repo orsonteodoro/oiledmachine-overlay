@@ -1610,6 +1610,8 @@ check_page_size() {
 	local page_size
 	local default_page_size=64
 
+	linux-info_pkg_setup
+
 	# These are based on the kernel defaults.
 	if [[ "${ARCH}" == "loong" ]] ; then
 		default_page_size=16
