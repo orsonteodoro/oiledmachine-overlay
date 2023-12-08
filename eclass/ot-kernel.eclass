@@ -5482,9 +5482,9 @@ einfo "Page size:  16 KB"
 			ot-kernel_uset_configopt "CONFIG_ARM64_64K_PAGES"
 		elif [[ \
 			   "${page_size}" == "64" \
+			|| "${page_size}" == "big-data" \
 			|| "${page_size}" == "max" \
 			|| "${page_size}" == "low-power" \
-			|| "${page_size}" == "performance" \
 		]] ; then
 einfo "Page size:  64 KB"
 			ot-kernel_unset_configopt "CONFIG_ARM64_4K_PAGES"
@@ -5495,7 +5495,7 @@ eerror
 eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
 eerror
 eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
-eerror "Expected:  default, min, max, performance, security, low-power, 4, 16, 64"
+eerror "Expected:  default, min, max, big-data, security, low-power, 4, 16, 64"
 eerror
 			die
 		fi
@@ -5545,8 +5545,8 @@ eerror
 			fi
 		elif [[ \
 			   "${page_size}" == "max" \
+			|| "${page_size}" == "big-data" \
 			|| "${page_size}" == "low-power" \
-			|| "${page_size}" == "performance" \
 		]] ; then
 			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
 			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_8KB"
@@ -5565,7 +5565,7 @@ eerror
 eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
 eerror
 eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
-eerror "Expected:  default, min, max, performance, security, low-power, 4, 8, 16, 64"
+eerror "Expected:  default, min, max, big-data, security, low-power, 4, 8, 16, 64"
 eerror
 			die
 		fi
@@ -5630,9 +5630,9 @@ einfo "Page size:  16 KB"
 			fi
 		elif [[ \
 			   "${page_size}" == "64" \
+			|| "${page_size}" == "big-data" \
 			|| "${page_size}" == "low-power" \
 			|| "${page_size}" == "max" \
-			|| "${page_size}" == "performance" \
 		]] ; then
 einfo "Page size:  64 KB"
 			ot-kernel_unset_configopt "CONFIG_4KB_3LEVEL"
@@ -5663,7 +5663,7 @@ eerror
 eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
 eerror
 eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
-eerror "Expected:  default, min, max, performance, security, low-power, 4, 16, 64"
+eerror "Expected:  default, min, max, big-data, security, low-power, 4, 16, 64"
 eerror
 			die
 		fi
@@ -5700,9 +5700,9 @@ ewarn "Page size:  16 KB.  Marked broken upstream."
 			fi
 		elif [[ \
 			   "${page_size}" == "64" \
+			|| "${page_size}" == "big-data" \
 			|| "${page_size}" == "low-power" \
 			|| "${page_size}" == "max" \
-			|| "${page_size}" == "performance" \
 		]] ; then
 			if grep -q -E -e "^CONFIG_PA8X00=y" "${path_config}" ; then
 ewarn "Page size:  64 KB.  Marked broken upstream."
@@ -5716,7 +5716,7 @@ eerror
 eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
 eerror
 eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
-eerror "Expected:  default, min, max, performance, security, low-power, 4, 16, 64"
+eerror "Expected:  default, min, max, big-data, security, low-power, 4, 16, 64"
 eerror
 			die
 		fi
@@ -5750,7 +5750,9 @@ eerror
 				die
 			fi
 		elif [[ \
-			"${page_size}" == "64" \
+			   "${page_size}" == "64" \
+			|| "${page_size}" == "big-data" \
+			|| "${page_size}" == "low-power" \
 		]] ; then
 einfo "Page size:  64 KB"
 			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
@@ -5769,7 +5771,13 @@ eerror
 		elif [[ \
 			"${page_size}" == "256" \
 		]] ; then
-einfo "Page size:  256 KB"
+ewarn
+ewarn "Page size:  256 KB.  This requires a crossdev built binutils with"
+ewarn "bfd/elf32-ppc.c modifications for MAXPAGESIZE=0x40000."
+ewarn
+ewarn "Please use 64 KB instead if the system was built with the distro's"
+ewarn "stage3 tarball."
+ewarn
 			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
 			ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
 			ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
@@ -5807,10 +5815,7 @@ einfo "Page size:  4 KB"
 			fi
 		elif [[ \
 			   "${page_size}" == "max" \
-			|| "${page_size}" == "low-power" \
-			|| "${page_size}" == "performance" \
 		]] ; then
-einfo "Page size:  256 KB"
 			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
 			ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
 			ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
@@ -5818,13 +5823,22 @@ einfo "Page size:  256 KB"
 			if   grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
 			&& ! grep -q -E -e "^CONFIG_PPC_47x=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_PPC_256K_PAGES"
+ewarn
+ewarn "Page size:  256 KB.  This requires a crossdev built binutils with"
+ewarn "bfd/elf32-ppc.c modifications for MAXPAGESIZE=0x40000."
+ewarn
+ewarn "Please use 64 KB instead if the system was built with the distro's"
+ewarn "stage3 tarball."
+ewarn
 			elif grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
 			||   grep -q -E -e "^CONFIG_PPC_BOOK3S_64=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
 			elif grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
 			||   grep -q -E -e "^CONFIG_PPC_8xx=y" "${path_config}" ; then
+einfo "Page size:  16 KB"
 				ot-kernel_unset_configopt "CONFIG_PPC_16K_PAGES"
 			else
+einfo "Page size:  4 KB"
 				ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
 			fi
 		else
@@ -5832,7 +5846,7 @@ eerror
 eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
 eerror
 eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
-eerror "Expected:  default, min, max, performance, security, low-power, 4, 16, 64, 256"
+eerror "Expected:  default, min, max, big-data, security, low-power, 4, 16, 64, 256"
 eerror
 			die
 		fi
@@ -5929,9 +5943,9 @@ eerror
 			fi
 		elif [[ \
 			   "${page_size}" == "64" \
+			|| "${page_size}" == "big-data" \
 			|| "${page_size}" == "low-power" \
 			|| "${page_size}" == "max" \
-			|| "${page_size}" == "performance" \
 		]] ; then
 einfo "Page size:  64 KB"
 			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
@@ -5957,7 +5971,7 @@ eerror
 eerror "Incorrect value for OT_KERNEL_PAGE_SIZE."
 eerror
 eerror "Actual:  ${OT_KERNEL_PAGE_SIZE}"
-eerror "Expected:  default, min, max, performance, security, low-power, 4, 8, 16, 64"
+eerror "Expected:  default, min, max, big-data, security, low-power, 4, 8, 16, 64"
 eerror
 			die
 		fi

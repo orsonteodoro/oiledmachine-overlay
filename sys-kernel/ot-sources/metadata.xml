@@ -2228,13 +2228,13 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
         s390:  4
         sparc:  4, 8                         8 for a 64-bit compiler, 4 for others
         x86:  4
+      big-data - optimized for HPC
       custom - use current kernel config values
       default - use upstream defaults
       disable - skip setting but use custom values
       low-power - fewest CPU cycles wasted on managing the page table and page metadata
       max - largest page size supported by hardware in kernel config
       min - smallest page size supported by hardware in kernel config
-      performance - lower page faults
       security - increased page isolation
       unset - same as custom
 
@@ -2244,6 +2244,18 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     (4) Only 64kb supported.
         It may likely require a modified bintools built with crossdev.
         (https://lore.kernel.org/all/200710181108.19413.yur@emcraft.com/T/#u)
+    (5) If using a database package, both the database page size and the
+        kernel's memory page size should be the same and the largest
+        supported by the CPU and the linker.  For example,
+
+          bfd supports 64 KB pages maxiumum.
+          A database supports 16 KB, 32 KB, 64 KB pages.
+          The CPU supports 64 KB and 256 KB.
+          The largest common denominator is 64 KB.
+
+    (6) For storage efficiency, use min.
+
+
 
     Notes:
 
