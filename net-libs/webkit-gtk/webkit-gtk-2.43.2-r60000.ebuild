@@ -607,6 +607,7 @@ REQUIRED_USE+="
 	webassembly-b3-jit? (
 		ftl-jit
 		webassembly
+		webassembly-omg-jit
 	)
 	webassembly-bbq-jit? (
 		webassembly
