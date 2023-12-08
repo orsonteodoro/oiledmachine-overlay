@@ -614,6 +614,7 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_set_futex2
 	_ot-kernel_set_ldt
 	_ot-kernel_set_multiuser
+	_ot-kernel_realtime_packages
 
 	# Out of source modules
 }
@@ -936,10 +937,7 @@ ot-kernel-pkgflags_bcm_sta() { # DONE
 			ewarn "Cannot use PREEMPT_RCU OR PREEMPT with bcm-sta"
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_RCU"
 			# This package does not like PREEMPT
-			ot-kernel_unset_configopt "CONFIG_PREEMPT"
-			ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
-			ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
-			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		elif ver_test "${MY_PV}" -ge "2.6.32" ; then
 			_s1
 			_s2
@@ -1639,7 +1637,7 @@ ot-kernel-pkgflags_clamav() { # DONE
 		# ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		# ot-kernel_y_configopt "CONFIG_TIMERFD"
 
-		# _ot-kernel_set_thp # References it in cargo package but not really used
+		# _ot-kernel_y_thp # References it in cargo package but not really used
 	fi
 }
 
@@ -1951,7 +1949,7 @@ ot-kernel-pkgflags_cr() { # DONE
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
 
-		# _ot-kernel_set_thp # References it but unknown apparent performance gain/loss
+		# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
 		# LDT referenced
 	fi
 }
@@ -2980,7 +2978,7 @@ ot-kernel-pkgflags_dietlibc() { # DONE
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
-		# _ot-kernel_set_thp # References it but unknown apparent performance gain/loss
+		# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
 		# LDT Referenced in dev-libs/dietlibc
 	fi
 }
@@ -3216,7 +3214,7 @@ ot-kernel-pkgflags_docker() { # DONE
 
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
-#		# _ot-kernel_set_thp # References it but no madvise/fadvise
+#		# _ot-kernel_y_thp # References it but no madvise/fadvise
 		# LDT referenced
 
 		if ver_test "${KV_MAJOR_MINOR}" -le "4.8" ; then
@@ -3476,7 +3474,7 @@ ot-kernel-pkgflags_embree() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S121bc50]}" == "1" ]] && return
 	if ot-kernel_has_version "media-libs/embree" ; then
 		einfo "Applying kernel config flags for the embree package (id: 121bc50)"
-		_ot-kernel_set_thp # ~5 - ~10% improvement
+		_ot-kernel_y_thp # ~5 - ~10% improvement
 	fi
 }
 
@@ -3622,7 +3620,7 @@ ot-kernel-pkgflags_ff() { # DONE
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
 
-		# _ot-kernel_set_thp # References it but unknown apparent performance gain/loss
+		# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
 	fi
 }
 
@@ -3864,7 +3862,7 @@ ot-kernel-pkgflags_gcc() { # DONE
 		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
-		# _ot-kernel_set_thp # Referenced but no noted performance gain/loss
+		# _ot-kernel_y_thp # Referenced but no noted performance gain/loss
 	fi
 }
 
@@ -3960,7 +3958,7 @@ ot-kernel-pkgflags_glibc() { # DONE
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
-		_ot-kernel_set_thp # 14-18% improvement
+		_ot-kernel_y_thp # 14-18% improvement
 		# ldt Referenced in sys-libs/glibc
 	fi
 }
@@ -4000,7 +3998,7 @@ ot-kernel-pkgflags_go() { # DONE
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		# _ot-kernel_set_thp # References it but not used
+		# _ot-kernel_y_thp # References it but not used
 	fi
 }
 
@@ -4448,10 +4446,8 @@ ot-kernel-pkgflags_lkrg() { # DONE
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_JUMP_LABEL"
 		ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
-		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
-		# This package doesn't like PREEMPT_RT.
 ewarn "app-antivirus/lkrg does not like PREEMPT_RT"
-		_ot-kernel_dump_preempt_rt
+		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ban_disable_debug "70df33c"
 		ot-kernel_y_configopt "CONFIG_STACKTRACE"
 	fi
@@ -4466,7 +4462,7 @@ ot-kernel-pkgflags_llvm() { # DONE
 		einfo "Applying kernel config flags for the llvm package (id: 8f5a656)"
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 		if ot-kernel_has_version "sys-devel/llvm[bolt]" ; then
-			_ot-kernel_set_thp # for bolt --hugify
+			_ot-kernel_y_thp # for bolt --hugify
 		fi
 	fi
 }
@@ -4736,7 +4732,7 @@ ot-kernel-pkgflags_jemalloc() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S8cc11b9]}" == "1" ]] && return
 	if ot-kernel_has_version "dev-libs/jemalloc" ; then
 		einfo "Applying kernel config flags for the jemalloc package (id: 8cc11b9)"
-		_ot-kernel_set_thp # Supported but not on by default.
+		_ot-kernel_y_thp # Supported but not on by default.
 	fi
 }
 
@@ -5895,7 +5891,7 @@ ot-kernel-pkgflags_mesa() { # DONE
 		fi
 		if ot-kernel_has_version "media-libs/mesa[video_cards_vmware]" ; then
 			ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
-			_ot-kernel_set_thp # See 8afe12b2
+			_ot-kernel_y_thp # See 8afe12b2
 		fi
 	fi
 }
@@ -6111,7 +6107,7 @@ ot-kernel-pkgflags_musl() { # DONE
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
-		# _ot-kernel_set_thp # Has THP symbol but not used within lib.
+		# _ot-kernel_y_thp # Has THP symbol but not used within lib.
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
@@ -6249,7 +6245,7 @@ ot-kernel-pkgflags_nodejs() { # DONE
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 
-		_ot-kernel_set_thp # See issue 16198
+		_ot-kernel_y_thp # See issue 16198
 		if ot-kernel_has_version "net-libs/nodejs[-system-ssl]" ; then
 			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_AIO"
@@ -7101,7 +7097,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 			ot-kernel_y_configopt "CONFIG_SHMEM"
 		fi
 
-		# _ot-kernel_set_thp # slower but supported
+		# _ot-kernel_y_thp # slower but supported
 	fi
 }
 
@@ -7328,7 +7324,7 @@ ot-kernel-pkgflags_php() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S98e977e]}" == "1" ]] && return
 	if ot-kernel_has_version "dev-lang/php" ; then
 		einfo "Applying kernel config flags for the php package (id: 98e977e)"
-		_ot-kernel_set_thp # ~3% improvement
+		_ot-kernel_y_thp # ~3% improvement
 	fi
 }
 
@@ -7491,7 +7487,7 @@ ot-kernel-pkgflags_python() { # DONE
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 		if ot-kernel_has_version ">=dev-lang/python-3.8" ; then
-			_ot-kernel_set_thp # Has symbol but not used
+			_ot-kernel_y_thp # Has symbol but not used
 		fi
 	fi
 }
@@ -7768,7 +7764,7 @@ ot-kernel-pkgflags_rtirq() { # DONE
 	if ot-kernel_has_version "sys-process/rtirq" ; then
 		einfo "Applying kernel config flags for rtirq (id: 7a6a27c)"
 		if grep -q -e "config PREEMPT_RT" "${BUILD_DIR}/kernel/Kconfig.preempt" ; then
-			ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 		else
 			ot-kernel_unset_configopt "CONFIG_IRQ_FORCED_THREADING" # Set by the arch
 			ot-kernel_set_kconfig_kernel_cmdline "threadirqs"
@@ -9502,7 +9498,7 @@ ot-kernel-pkgflags_xen() { # DONE
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_y_configopt "CONFIG_TIMERFD"
-		# _ot-kernel_set_thp # References it but unknown apparent performance gain/loss
+		# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
 
 		# LDT referenced
 	fi
@@ -10613,69 +10609,117 @@ eerror
 	fi
 }
 
-# @FUNCTION: _ot-kernel_dump_preempt_rt
+# @FUNCTION: ot-kernel_supports_rt
 # @DESCRIPTION:
-# Replace CONFIG_PREEMPT_RT with PREEMPT_NONE OR PREEMPT_VOLUNTARY
-_ot-kernel_dump_preempt_rt() {
-	if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+# Reports if rt patchset is supported.
+ot-kernel_supports_rt() {
+	if [[ \
+		   "${arch}" == "arm" \
+		|| "${arch}" == "arm64" \
+		|| "${arch}" == "powerpc" \
+		|| "${arch}" == "x86" \
+		|| "${arch}" == "x86_64" \
+	]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_preempt
+# @DESCRIPTION:
+# Wrapper to set kernel config preempt
+ot-kernel_set_preempt() {
+	local preempt_option="${1}"
+	if [[ \
+		   "${arch}" == "um" \
+		|| "${arch}" == "alpha" \
+		|| "${arch}" == "m86k" \
+		|| "${arch}" == "hexagon" \
+	]] ; then
+	# Arches that do not support preempt
 		ot-kernel_unset_configopt "CONFIG_PREEMPT"
-		ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
-	# Next best alternatives
-		if ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
-			if grep -q -e "^CONFIG_PREEMPT=y" "${path_config}" ; then
-				:;
-			elif grep -q -e "^CONFIG_PREEMPT_VOLUNTARY=y" "${path_config}" ; then
-				:;
-			elif grep -q -e "^CONFIG_PREEMPT_NONE=y" "${path_config}" ; then
-				:;
-			elif ! grep -q -e "^CONFIG_ARCH_NO_PREEMPT=y" "${path_config}" ; then
-	# Balanced throughput-latency
-	# Assuming work profile not set yet.
-ewarn "Changing PREEMPT_RT to PREEMPT_VOLUNTARY"
-				ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
-			else
-	# Arches that cannot preempt
-ewarn "Changing PREEMPT_RT to PREEMPT_NONE"
-				ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
-			fi
+		if ot-kernel_use rt ; then
+ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NONE=y.  Remove rt from OT_KERNEL_USE to silence this error."
+		fi
+	else
+		if ot-kernel_supports_rt && ot-kernel_use rt ; then
+	# Real time cannot be stopped or dropped.
+			ot-kernel_unset_configopt "CONFIG_PREEMPT"
+			ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+			ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+			ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 		else
-			if grep -q -e "^CONFIG_PREEMPT=y" "${path_config}" ; then
-				:;
-			elif grep -q -e "^CONFIG_PREEMPT_VOLUNTARY=y" "${path_config}" ; then
-				:;
-			elif grep -q -e "^CONFIG_PREEMPT_NONE=y" "${path_config}" ; then
-				:;
+	# Non RT case
+			ot-kernel_unset_configopt "CONFIG_PREEMPT" # Low latency
+			ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+			ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+			ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY" # Balanced
+			if [[ "${preempt_option}" == "CONFIG_PREEMPT_RT" ]] ; then
+	# Downgrade
+				ot-kernel_y_configopt "CONFIG_PREEMPT"
 			else
-				if [[ \
-					   "${arch}" == "um" \
-					|| "${arch}" == "alpha" \
-					|| "${arch}" == "m86k" \
-					|| "${arch}" == "hexagon" \
-				]] ; then
-	# Arches that cannot preempt
-ewarn "Changing PREEMPT_RT to PREEMPT_NONE"
-					ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
-				else
-	# Balanced throughput-latency
-	# Assuming work profile not set yet.
-ewarn "Changing PREEMPT_RT to PREEMPT_VOLUNTARY"
-					ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
-				fi
+				ot-kernel_y_configopt "${preempt_option}"
 			fi
+		fi
+	fi
+	if grep -q -e "^CONFIG_TRANSPARENT_HUGEPAGE=y" "${path_config}" && grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+	fi
+}
+
+# @FUNCTION: _ot-kernel_y_thp
+# @DESCRIPTION:
+# Enables transparent huge pages
+_ot-kernel_y_thp() {
+	if   grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" \
+	&& ! grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+	else
+		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+	fi
+}
+
+# @FUNCTION: _ot-kernel_realtime_pkg
+# @DESCRIPTION:
+# Handle SCHED_FIFO/SCHED_RR package.
+_ot-kernel_realtime_pkg() {
+	local pkg="${1}"
+	local prio_class="${2}"
+	if has_version "${pkg}" ; then
+		if ot-kernel_use rt ; then
+eerror "Detected ${prio_class} package for ${pkg}.  Using PREEMPT_RT=y"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+		else
+eerror "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
+			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		fi
 	fi
 }
 
-# @FUNCTION: _ot-kernel_set_thp
+# @FUNCTION: _ot-kernel_realtime_packages
 # @DESCRIPTION:
-# Enables transparent huge pages
-_ot-kernel_set_thp() {
-	if grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" "${path_config}" ; then
-ewarn "Transparent HugePages (THP) doesn't work with PREEMPT_RT"
-		_ot-kernel_dump_preempt_rt
-		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+# Change the kernel for realtime programs
+_ot-kernel_realtime_packages() {
+	_ot-kernel_realtime_pkg "dev-lang/faust" "SCHED_FIFO|SCHED_RR"
+	_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
+	_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
+	_ot-kernel_realtime_pkg "media-sound/6pm" "SCHED_FIFO"
+	_ot-kernel_realtime_pkg "media-sound/ardour" "SCHED_FIFO"
+	_ot-kernel_realtime_pkg "media-sound/jack-audio-connection-kit" "SCHED_FIFO"
+	_ot-kernel_realtime_pkg "media-sound/lmms" "SCHED_FIFO"
+	_ot-kernel_realtime_pkg "media-sound/terminatorx" "SCHED_FIFO"
+	_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO"
+	_ot-kernel_realtime_pkg "sys-apps/das_watchdog" "SCHED_RR"
+	_ot-kernel_realtime_pkg "sys-auth/rtkit" "SCHED_FIFO|SCHED_RR"
+	if [[ "${OT_KERNEL_WORK_PROFILE:-manual}" == "digital-audio-workstation" ]] ; then
+		_ot-kernel_realtime_pkg "media-libs/libpulse" "SCHED_RR" # optional or situational
+	fi
+	if [[ "${OT_KERNEL_WORK_PROFILE:-manual}" == "digital-audio-workstation" ]] ; then
+		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR" # optional or situational
 	fi
 }
 

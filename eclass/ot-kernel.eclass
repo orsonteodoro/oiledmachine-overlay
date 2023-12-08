@@ -1399,7 +1399,18 @@ ot-kernel_unpack_point_releases() {
 # @DESCRIPTION:
 # Apply the PREEMPT_RT patches.
 apply_rt() {
-	einfo "Applying PREEMPT_RT patches"
+	if [[ \
+		   "${arch}" == "arm" \
+		|| "${arch}" == "arm64" \
+		|| "${arch}" == "powerpc" \
+		|| "${arch}" == "x86" \
+		|| "${arch}" == "x86_64" \
+	]] ; then
+einfo "Applying PREEMPT_RT patches"
+	else
+einfo "Skipping PREEMPT_RT patches which is not supported for ARCH=${arch}"
+		return
+	fi
 	mkdir -p "${T}/rt" || die
 	pushd "${T}/rt" || die
 		if [[ -e "${EDISTDIR}/${RT_FN}" ]] ; then
@@ -7410,9 +7421,19 @@ ewarn "USE=disable_debug to improve energy reduction."
 ewarn
 	fi
 
-	if [[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] ; then
+	if [[ \
+		-z "${work_profile}" \
+		|| "${work_profile}" == "custom" \
+		|| "${work_profile}" == "manual" \
+	]] ; then
 		ot-kernel_iosched_custom
-	elif [[ "${work_profile}" =~ ("sbc"|"smartphone"|"tablet"|"video-smartphone"|"video-tablet") ]] ; then
+	elif [[ \
+		   "${work_profile}" == "sbc" \
+		|| "${work_profile}" == "smartphone" \
+		|| "${work_profile}" == "tablet" \
+		|| "${work_profile}" == "video-smartphone" \
+		|| "${work_profile}" == "video-tablet" \
+	]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
@@ -7423,17 +7444,23 @@ ewarn
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
-	elif [[ "${work_profile}" =~ ("laptop"|"green-pc"|"greenest-pc"|"touchscreen-laptop"|"solar-desktop") ]] ; then
+	elif [[ \
+		   "${work_profile}" == "green-pc" \
+		|| "${work_profile}" == "greenest-pc" \
+		|| "${work_profile}" == "laptop" \
+		|| "${work_profile}" == "solar-desktop" \
+		|| "${work_profile}" == "touchscreen-laptop" \
+	]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		if [[ "${work_profile}" =~ ("touchscreen-laptop") ]] ; then
+		if [[ "${work_profile}" == "touchscreen-laptop" ]] ; then
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
 		else
@@ -7463,14 +7490,18 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
 			ot-kernel_y_configopt "CONFIG_ACPI_AC"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
-		if [[ "${work_profile}" =~ "laptop" ]] ; then
+		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		if [[ "${work_profile}" == "laptop" ]] ; then
 			ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
 		fi
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
-	elif [[ "${work_profile}" =~ ("casual-gaming-laptop"|"gpu-gaming-laptop"|"solar-gaming") ]] ; then
+	elif [[ \
+		   "${work_profile}" == "casual-gaming-laptop" \
+		|| "${work_profile}" == "gpu-gaming-laptop" \
+		|| "${work_profile}" == "solar-gaming" \
+	]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -7491,8 +7522,8 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
 			ot-kernel_y_configopt "CONFIG_ACPI_AC"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
-		if [[ "${work_profile}" =~ "gpu-gaming-laptop" ]] ; then
+		ot-kernel_set_preempt "CONFIG_PREEMPT"
+		if [[ "${work_profile}" == "gpu-gaming-laptop" ]] ; then
 			ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
 		fi
 		ot-kernel_y_configopt "CONFIG_PM"
@@ -7500,7 +7531,9 @@ ewarn
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
-	elif [[ "${work_profile}" =~ ("casual-gaming") ]] ; then
+	elif [[ \
+		"${work_profile}" == "casual-gaming" \
+	]] ; then
 		# Assumes on desktop
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
@@ -7511,16 +7544,24 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
+		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
-	elif [[ "${work_profile}" =~ ("desktop-guest-vm"|"gaming-guest-vm") ]] ; then
+	elif [[ \
+		   "${work_profile}" == "desktop-guest-vm" \
+		|| "${work_profile}" == "gaming-guest-vm" \
+	]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
+		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_iosched "none" "none"
-	elif [[ "${work_profile}" =~ ("arcade"|"pro-gaming"|"tournament"|"presentation") ]] ; then
+	elif [[ \
+		   "${work_profile}" == "arcade" \
+		|| "${work_profile}" == "pro-gaming" \
+		|| "${work_profile}" == "tournament" \
+		|| "${work_profile}" == "presentation" \
+	]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -7532,19 +7573,25 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
+		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
-	elif [[ "${work_profile}" == "digital-audio-workstation" \
+	elif [[ \
+		   "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "gamedev" \
-		|| "${work_profile}" == "workstation" ]] ; then
-		[[ "${work_profile}" == "digital-audio-workstation" \
-			|| "${work_profile}" == "gamedev" ]] \
-			&& ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering, reduce skippy input
-		[[ "${work_profile}" == "workstation" ]] \
-			&& ot-kernel_set_kconfig_set_video_timer_hz # For video production
+		|| "${work_profile}" == "workstation" \
+	]] ; then
+		if [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "gamedev" \
+		]] ; then
+			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering, reduce skippy input
+		fi
+		if [[ "${work_profile}" == "workstation" ]] ; then
+			ot-kernel_set_kconfig_set_video_timer_hz # For video production
+		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -7553,7 +7600,11 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
+		if ot-kernel_supports_rt && ot-kernel_use rt && [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+		else
+			ot-kernel_set_preempt "CONFIG_PREEMPT"
+		fi
 		[[ "${work_profile}" == "digital-audio-workstation" \
 			|| "${work_profile}" == "gamedev" ]] \
 			&& ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
@@ -7564,13 +7615,16 @@ ewarn
 		else
 			ot-kernel_iosched_interactive
 		fi
-	elif [[ "${work_profile}" =~ ("builder-dedicated"|"builder-interactive") ]] ; then
-		if [[ "${work_profile}" =~ ("builder-dedicated") ]] ; then
+	elif [[ \
+		   "${work_profile}" == "builder-dedicated" \
+		|| "${work_profile}" == "builder-interactive" \
+	]] ; then
+		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 			ot-kernel_y_configopt "CONFIG_NONE"
 		else
 			ot-kernel_set_kconfig_set_default_timer_hz
-			ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -7585,8 +7639,10 @@ ewarn
 		else
 			ot-kernel_iosched_custom_interactive
 		fi
-	elif [[ "${work_profile}" == "renderfarm-dedicated" \
-		|| "${work_profile}" == "renderfarm-workstation" ]] ; then
+	elif [[ \
+		   "${work_profile}" == "renderfarm-dedicated" \
+		|| "${work_profile}" == "renderfarm-workstation" \
+	]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -7597,17 +7653,22 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		if [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
-			ot-kernel_y_configopt "CONFIG_PREEMPT"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		else
-			ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		fi
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
 			ot-kernel_iosched_max_throughput
 		else
 			ot-kernel_iosched_interactive
 		fi
-	elif [[ "${work_profile}" =~ ("distributed-computing-server"|"file-server"|"media-server"|"web-server") ]] ; then
-		if [[ "${work_profile}" =~ "media-server" ]] ; then
+	elif [[ \
+		   "${work_profile}" == "distributed-computing-server" \
+		|| "${work_profile}" == "file-server" \
+		|| "${work_profile}" == "media-server" \
+		|| "${work_profile}" == "web-server" \
+	]] ; then
+		if [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
@@ -7619,16 +7680,26 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
-		if [[ "${work_profile}" == "web-server" \
-			|| "${work_profile}" == "distributed-computing-server" ]] ; then
+		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
+		if [[ \
+			   "${work_profile}" == "web-server" \
+			|| "${work_profile}" == "distributed-computing-server" \
+		]] ; then
 			ot-kernel_iosched_max_tps
 		elif [[ "${work_profile}" == "file-server" ]] ; then
 			ot-kernel_iosched_max_throughput
 		else
 			ot-kernel_iosched_interactive
 		fi
-	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
+	elif [[ \
+		   "${work_profile}" == "streamer-desktop" \
+		|| "${work_profile}" == "streamer-reporter" \
+		|| "${work_profile}" == "streamer-gamer" \
+	]] ; then
+		if [[ "${work_profile}" == "streamer-desktop" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use streamer-reporter or streamer-gamer instead."
+			work_profile="streamer-reporter"
+		fi
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -7638,13 +7709,26 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
+		if [[ "${work_profile}" == "streamer-reporter" ]] ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		else
+			ot-kernel_set_preempt "CONFIG_PREEMPT"
+		fi
 		ot-kernel_iosched_interactive
-	elif [[ "${work_profile}" =~ ("dvr"|"jukebox"|"mainstream-desktop") ]] ; then
-		[[ "${work_profile}" =~ ("dvr"|"mainstream-desktop") ]] \
-			&& ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
-		[[ "${work_profile}" == "jukebox" ]] \
-			&& ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
+	elif [[ \
+		   "${work_profile}" == "dvr" \
+		|| "${work_profile}" == "jukebox" \
+		|| "${work_profile}" == "mainstream-desktop" \
+	]] ; then
+		if [[ \
+			   "${work_profile}" == "dvr" \
+			|| "${work_profile}" == "mainstream-desktop" \
+		]] ; then
+			ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
+		fi
+		if [[ "${work_profile}" == "jukebox" ]] ; then
+			ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -7652,10 +7736,12 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_iosched_streaming
-	elif [[ "${work_profile}" == "cryptocurrency-miner-dedicated" ]] ; then
+	elif [[ \
+		"${work_profile}" == "cryptocurrency-miner-dedicated" \
+	]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
@@ -7669,11 +7755,13 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
-	elif [[ "${work_profile}" == "cryptocurrency-miner-workstation" ]] ; then
+	elif [[ \
+		"${work_profile}" == "cryptocurrency-miner-workstation" \
+	]] ; then
 		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
@@ -7688,13 +7776,17 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
-	elif [[ "${work_profile}" =~ ("hpc"|"green-hpc"|"greenest-hpc") ]] ; then
+	elif [[ \
+		   "${work_profile}" == "hpc" \
+		|| "${work_profile}" == "green-hpc" \
+		|| "${work_profile}" == "greenest-hpc" \
+	]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
-		if [[ "${work_profile}" =~ "hpc" ]] ; then
+		if [[ "${work_profile}" == "hpc" ]] ; then
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_kconfig_set_tcp_congestion_control_default "dctcp"
 			ot-kernel_set_kconfig_slab_allocator "slub"
@@ -7722,9 +7814,11 @@ ewarn
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
-		if [[ "${work_profile}" == "green-hpc" \
-			|| "${work_profile}" == "greenest-hpc" ]] ; then
+		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
+		if [[ \
+			   "${work_profile}" == "green-hpc" \
+			|| "${work_profile}" == "greenest-hpc" \
+		]] ; then
 			ot-kernel_y_configopt "CONFIG_PM"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
@@ -7732,7 +7826,9 @@ ewarn
 			ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 			ot-kernel_iosched_max_throughput
 		fi
-	elif [[ "${work_profile}" == "distributed-computing-client" ]] ; then
+	elif [[ \
+		"${work_profile}" == "distributed-computing-client" \
+	]] ; then
 		# Example: BOINC
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -7742,7 +7838,7 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_y_configopt "CONFIG_PREEMPT"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_iosched_interactive
 	fi
 
@@ -7750,7 +7846,11 @@ ewarn
 	local sata_lpm_mid="${OT_KERNEL_SATA_LPM_MID:-0}"
 	local sata_lpm_min="${OT_KERNEL_SATA_LPM_MIN:-0}"
 
-	if [[ -z "${work_profile}" || "${work_profile}" =~ ("custom"|"manual") ]] ; then
+	if [[ \
+		-z "${work_profile}" \
+		|| "${work_profile}" == "custom" \
+		|| "${work_profile}" == "manual" \
+	]] ; then
 		:;
 	elif \
 		   grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y" "${path_config}" \
@@ -8681,7 +8781,7 @@ einfo
 	ot-kernel_set_kconfig_set_net_qos_classifiers
 	ot-kernel_set_kconfig_set_net_qos_actions
 	# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
-	ot-kernel_set_kconfig_work_profile
+	ot-kernel_set_kconfig_work_profile # Sets PREEMPT*
 	ot-kernel_set_kconfig_pcie_mps
 	ot-kernel_set_kconfig_usb_autosuspend
 	ot-kernel_set_kconfig_usb_flash_disk
@@ -8707,7 +8807,8 @@ einfo
 	#   untrusted-distant - some hardening applied except for physical access mitigation
 	#
 	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
-		ot-kernel-pkgflags_apply
+	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
+		ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
 	ot-kernel_set_at_system
 	ot-kernel_set_tcca
 	ot-kernel_set_iosched_kconfig
