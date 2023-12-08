@@ -2229,13 +2229,16 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
         sparc:  4, 8                         8 for a 64-bit compiler, 4 for others
         x86:  4
       big-data - optimized for HPC
+      compact - produce the least wasted space
       custom - use current kernel config values
       default - use upstream defaults
       disable - skip setting but use custom values
       low-power - fewest CPU cycles wasted on managing the page table and page metadata
       max - largest page size supported by hardware in kernel config
       min - smallest page size supported by hardware in kernel config
+      pgsql - Match PostgreSQL default page size
       security - increased page isolation
+      sql - Match InnoDB default page size
       unset - same as custom
 
     (1) The values listed may have dependencies or not work in certain configurations.
@@ -2253,9 +2256,10 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
           The CPU supports 64 KB and 256 KB.
           The largest common denominator is 64 KB.
 
-    (6) For storage efficiency, use min.
-
-
+    (6) If the DB supports a larger size than what is available by the CPU
+        the half sized granularity is chosen.  For example a DB uses 8 KB
+        as the page size, but the cpu supports only 4 KB an 16 KB.  4 KB
+        will be preferred for that symbolic value.
 
     Notes:
 
@@ -2270,6 +2274,12 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       architectures.
     - Because it may create new bugs in userspace apps, the default if
       not set is custom.
+    - You can choose only one value.
+
+    Examples:
+
+      OT_KERNEL_PAGE_SIZE="64"
+      OT_KERNEL_PAGE_SIZE="sql"
 
 
 

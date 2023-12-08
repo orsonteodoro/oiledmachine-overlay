@@ -5465,8 +5465,10 @@ einfo "Page size:  4 KB"
 	if [[ "${arch}" == "arm64" ]] ; then
 		if [[ \
 			   "${page_size}" == "4" \
+			|| "${page_size}" == "compact" \
 			|| "${page_size}" == "default" \
 			|| "${page_size}" == "min" \
+			|| "${page_size}" == "pgsql" \
 			|| "${page_size}" == "security" \
 		]] ; then
 einfo "Page size:  4 KB"
@@ -5474,7 +5476,8 @@ einfo "Page size:  4 KB"
 			ot-kernel_unset_configopt "CONFIG_ARM64_16K_PAGES"
 			ot-kernel_unset_configopt "CONFIG_ARM64_64K_PAGES"
 		elif [[ \
-			"${page_size}" == "16" \
+			   "${page_size}" == "16" \
+			|| "${page_size}" == "sql" \
 		]] ; then
 einfo "Page size:  16 KB"
 			ot-kernel_unset_configopt "CONFIG_ARM64_4K_PAGES"
@@ -5503,6 +5506,7 @@ eerror
 	if [[ "${arch}" == "ia64" ]] ; then
 		if [[ \
 			   "${page_size}" == "4" \
+			|| "${page_size}" == "compact" \
 			|| "${page_size}" == "min" \
 			|| "${page_size}" == "security" \
 		]] ; then
@@ -5512,7 +5516,8 @@ einfo "Page size:  4 KB"
 			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_16KB"
 			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_64KB"
 		elif [[ \
-			"${page_size}" == "8" \
+			   "${page_size}" == "8" \
+			|| "${page_size}" == "pgsql" \
 		]] ; then
 einfo "Page size:  8 KB"
 			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
@@ -5522,6 +5527,7 @@ einfo "Page size:  8 KB"
 		elif [[ \
 			   "${page_size}" == "16" \
 			|| "${page_size}" == "default" \
+			|| "${page_size}" == "sql" \
 		]] ; then
 einfo "Page size:  16 KB"
 			ot-kernel_unset_configopt "CONFIG_IA64_PAGE_SIZE_4KB"
@@ -5573,7 +5579,9 @@ eerror
 	if [[ "${arch}" == "loongarch" ]] ; then
 		if [[ \
 			   "${page_size}" == "4" \
+			|| "${page_size}" == "compact" \
 			|| "${page_size}" == "min" \
+			|| "${page_size}" == "pgsql" \
 			|| "${page_size}" == "security" \
 		]] ; then
 einfo "Page size:  4 KB"
@@ -5603,6 +5611,7 @@ einfo "Page size:  4 KB"
 		elif [[ \
 			   "${page_size}" == "16" \
 			|| "${page_size}" == "default" \
+			|| "${page_size}" == "sql" \
 		]] ; then
 einfo "Page size:  16 KB"
 			ot-kernel_unset_configopt "CONFIG_4KB_3LEVEL"
@@ -5680,8 +5689,10 @@ einfo "Page size:  4 KB"
 		# hppa
 		if [[ \
 			   "${page_size}" == "4" \
+			|| "${page_size}" == "compact" \
 			|| "${page_size}" == "default" \
 			|| "${page_size}" == "min" \
+			|| "${page_size}" == "pgsql" \
 			|| "${page_size}" == "security" \
 		]] ; then
 einfo "Page size:  4 KB"
@@ -5689,7 +5700,8 @@ einfo "Page size:  4 KB"
 			ot-kernel_unset_configopt "CONFIG_PARISC_PAGE_SIZE_16KB"
 			ot-kernel_unset_configopt "CONFIG_PARISC_PAGE_SIZE_64KB"
 		elif [[ \
-			    "${page_size}" == "16" \
+			   "${page_size}" == "16" \
+			|| "${page_size}" == "sql" \
 		]] ; then
 			if grep -q -E -e "^CONFIG_PA8X00=y" "${path_config}" ; then
 ewarn "Page size:  16 KB.  Marked broken upstream."
@@ -5724,7 +5736,9 @@ eerror
 	if [[ "${arch}" == "powerpc" ]] ; then
 		if [[ \
 			   "${page_size}" == "4" \
+			|| "${page_size}" == "compact" \
 			|| "${page_size}" == "min" \
+			|| "${page_size}" == "pgsql" \
 			|| "${page_size}" == "security" \
 		]] ; then
 einfo "Page size:  4 KB"
@@ -5733,7 +5747,8 @@ einfo "Page size:  4 KB"
 			ot-kernel_unset_configopt "CONFIG_PPC_64K_PAGES"
 			ot-kernel_unset_configopt "CONFIG_PPC_256K_PAGES"
 		elif [[ \
-			"${page_size}" == "16" \
+			   "${page_size}" == "16" \
+			|| "${page_size}" == "sql" \
 		]] ; then
 einfo "Page size:  16 KB"
 			ot-kernel_unset_configopt "CONFIG_PPC_4K_PAGES"
@@ -5854,6 +5869,7 @@ eerror
 	if [[ "${arch}" == "mips" ]] ; then
 		if [[ \
 			   "${page_size}" == "4" \
+			|| "${page_size}" == "compact" \
 			|| "${page_size}" == "default" \
 			|| "${page_size}" == "min" \
 			|| "${page_size}" == "security" \
@@ -5882,7 +5898,8 @@ eerror
 				die
 			fi
 		elif [[ \
-			"${page_size}" == "8" \
+			   "${page_size}" == "8" \
+			|| "${page_size}" == "pgsql" \
 		]] ; then
 einfo "Page size:  8 KB"
 			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
@@ -5901,7 +5918,8 @@ eerror
 				die
 			fi
 		elif [[ \
-			"${page_size}" == "16" \
+			   "${page_size}" == "16" \
+			|| "${page_size}" == "sql" \
 		]] ; then
 einfo "Page size:  16 KB"
 			ot-kernel_unset_configopt "CONFIG_PAGE_SIZE_4KB"
