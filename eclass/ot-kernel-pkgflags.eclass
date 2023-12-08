@@ -10704,23 +10704,35 @@ eerror "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
 # @DESCRIPTION:
 # Change the kernel for realtime programs
 _ot-kernel_realtime_packages() {
-	_ot-kernel_realtime_pkg "dev-lang/faust" "SCHED_FIFO|SCHED_RR"
 	_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
-	_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
-	_ot-kernel_realtime_pkg "media-sound/6pm" "SCHED_FIFO"
-	_ot-kernel_realtime_pkg "media-sound/ardour" "SCHED_FIFO"
-	_ot-kernel_realtime_pkg "media-sound/jack-audio-connection-kit" "SCHED_FIFO"
-	_ot-kernel_realtime_pkg "media-sound/lmms" "SCHED_FIFO"
-	_ot-kernel_realtime_pkg "media-sound/terminatorx" "SCHED_FIFO"
+	# Boost based on profile
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+		_ot-kernel_realtime_pkg "dev-lang/faust" "SCHED_FIFO|SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/6pm" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/ardour" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/guitarix" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/jack-audio-connection-kit" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/jack2" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/lmms" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/terminatorx" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/fluidsynth" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/timidity++[alsa]" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-libs/libpulse" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
+		_ot-kernel_realtime_pkg "sys-apps/das_watchdog" "SCHED_RR" # Used in audio overlay
+		_ot-kernel_realtime_pkg "sys-auth/rtkit" "SCHED_FIFO|SCHED_RR"
+	fi
+	if [[ \
+		|| "${work_profile}" == "streamer-reporter" \
+	]] ; then
+		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
+	fi
+
+	# TODO:  create a work profile that demands realtime analysis
+	# The question is but why?  Benefits?
 	_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO"
-	_ot-kernel_realtime_pkg "sys-apps/das_watchdog" "SCHED_RR"
-	_ot-kernel_realtime_pkg "sys-auth/rtkit" "SCHED_FIFO|SCHED_RR"
-	if [[ "${OT_KERNEL_WORK_PROFILE:-manual}" == "digital-audio-workstation" ]] ; then
-		_ot-kernel_realtime_pkg "media-libs/libpulse" "SCHED_RR" # optional or situational
-	fi
-	if [[ "${OT_KERNEL_WORK_PROFILE:-manual}" == "digital-audio-workstation" ]] ; then
-		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR" # optional or situational
-	fi
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
