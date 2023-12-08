@@ -716,17 +716,10 @@ CARGO_BINDINGS_DEPENDS_GTK4="
 	>=x11-libs/gdk-pixbuf-2.36.8[introspection]
 "
 
-# Fallback
-GST_PLUGINS_META="
-	>=media-libs/gstreamer-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-	>=media-libs/gst-plugins-base-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-	>=media-libs/gst-plugins-good-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-"
-#	>=media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
-
 RDEPEND+="
 	${CARGO_BINDINGS_DEPENDS_GLIB}
 	${GST_PLUGINS_META}
+	>=media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	aws? (
 		>=dev-libs/openssl-1.1[${MULTILIB_USEDEP}]
 	)
