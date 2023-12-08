@@ -2347,11 +2347,10 @@ ewarn
 
 	if (( ${jit_enabled} == 1 )) || use yarr-jit ; then
 		append-cppflags \
-			-DENABLE_ASSEMBLER=1 \
+			-DENABLE_ASSEMBLER=1
 	else
 		append-cppflags \
-			-DENABLE_ASSEMBLER=0 \
-
+			-DENABLE_ASSEMBLER=0
 	fi
 
 	if use yarr-jit ; then
