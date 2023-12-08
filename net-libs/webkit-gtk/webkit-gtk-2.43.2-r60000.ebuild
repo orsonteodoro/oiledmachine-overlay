@@ -2705,5 +2705,9 @@ ewarn
 #   audio:  TBA
 #   stability:  crashy within a few minutes
 
-# with -O3 -jit* -gstreamer, clang 15.0.7 (2.43.2, 20231205):
-#   startup:  fail
+# with -O3 -jit* -gstreamer, gcc 12.3.1 (2.43.2, 20231207): pass
+# with -O3 -jit* +gstreamer, gcc 12.3.1 (2.43.2, 20231207): pass
+#   startup:  pass
+#   performance:  slow
+#   wiki:  pass
+#   video sites(s):  slow
