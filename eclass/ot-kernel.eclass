@@ -7405,20 +7405,43 @@ ot-kernel_set_kconfig_work_profile() {
 einfo "Using the ${work_profile} work profile"
 	if [[ -z "${work_profile}" ]] ; then
 		:
-	elif [[ "${work_profile}" =~ ("custom"|"manual") ]] ; then
+	elif [[ \
+		   "${work_profile}" == "custom" \
+		|| "${work_profile}" == "manual" \
+	]] ; then
 		:
 	else
 einfo "Changed .config to use the ${work_profile} work profile"
 		ot-kernel_set_kconfig_work_profile_init
 	fi
 
-	if [[ "${work_profile}" =~ "green" \
-		|| "${work_profile}" =~ "solar" ]] \
-		&& ! use disable_debug ; then
+	if [[ \
+		   "${work_profile}" =~ "green" \
+		|| "${work_profile}" =~ "solar" \
+	]] \
+		&& \
+	! use disable_debug ; then
 ewarn
 ewarn "OT_KERNEL_WORK_PROFILE=${OT_KERNEL_WORK_PROFILE} should use"
 ewarn "USE=disable_debug to improve energy reduction."
 ewarn
+	fi
+
+	if ot-kernel_use rt ; then
+		if [[ \
+			-z "${work_profile}" \
+			|| "${work_profile}" == "custom" \
+			|| "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "live-video-reporting" \
+			|| "${work_profile}" == "manual" \
+			|| "${work_profile}" == "radio-broadcaster" \
+			|| "${work_profile}" == "video-conferencing" \
+			|| "${work_profile}" == "voip" \
+		]] ; then
+			:;
+		else
+ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}"
+		fi
 	fi
 
 	if [[ \
@@ -7705,11 +7728,11 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			ot-kernel_iosched_interactive
 		fi
 	elif [[ \
-		   "${work_profile}" == "radio-broadcaster" \
+		   "${work_profile}" == "live-streaming-gamer" \
+		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "radio-broadcaster" \
 		|| "${work_profile}" == "streamer-desktop" \
 		|| "${work_profile}" == "streamer-reporter" \
-		|| "${work_profile}" == "live-streaming-gamer" \
-		|| "${work_profile}" == "live-video-reporting" \
 		|| "${work_profile}" == "video-conferencing" \
 		|| "${work_profile}" == "voip" \
 	]] ; then
@@ -7770,6 +7793,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-l
 		if [[ \
 			   "${work_profile}" == "jukebox" \
 			|| "${work_profile}" == "pi-audio-player" \
+			|| "${work_profile}" == "sdr" \
 		]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
 		fi

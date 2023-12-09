@@ -10704,7 +10704,6 @@ eerror "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
 # @DESCRIPTION:
 # Change the kernel for realtime programs
 _ot-kernel_realtime_packages() {
-	_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
 	# Boost based on profile
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
@@ -10761,6 +10760,8 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "net-voip/umurmur" "SCHED_RR"
+		# _ot-kernel_realtime_pkg "net-voip/twinkle" "SCHED_FIFO" # present but disabled in source code
 	fi
 
 	if [[ "${work_profile}" == "jukebox" ]] ; then
@@ -10770,6 +10771,18 @@ _ot-kernel_realtime_packages() {
 
 	if [[ "${work_profile}" == "sdr" ]] ; then
 		_ot-kernel_realtime_pkg "net-wireless/gnuradio" "SCHED_FIFO|SCHED_RR"
+	fi
+
+	if [[ \
+		   "${work_profile}" == "arcade" \
+		|| "${work_profile}" == "pro-gaming" \
+		|| "${work_profile}" == "tournament" \
+	]] ; then
+		_ot-kernel_realtime_pkg "media-libs/openal" "SCHED_RR" # Assumes PREEMPT=y
+	fi
+
+	if [[ "${work_profile}" == "web-server" ]] ; then
+		_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
 	fi
 
 	# TODO:  create a work profile that demands realtime analysis

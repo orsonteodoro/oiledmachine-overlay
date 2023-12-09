@@ -3033,6 +3033,7 @@ unset OT_KERNEL_PRIVATE_KEY
       remote-tournament
       renderfarm-dedicated
       renderfarm-workstation
+      sdr
       smartphone
       solar-desktop
       solar-gaming
