@@ -7430,10 +7430,23 @@ ewarn
 	elif [[ \
 		   "${work_profile}" == "sbc" \
 		|| "${work_profile}" == "smartphone" \
+		|| "${work_profile}" == "pi" \
 		|| "${work_profile}" == "tablet" \
 		|| "${work_profile}" == "video-smartphone" \
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
+		if [[ "${work_profile}" == "sbc" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi instead."
+			die
+		fi
+		if [[ "${work_profile}" == "video-smartphone" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=video-smartphone is deprecated.  Use smartphone instead."
+			die
+		fi
+		if [[ "${work_profile}" == "video-tablet" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
+			die
+		fi
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
@@ -7697,13 +7710,25 @@ ewarn
 			ot-kernel_iosched_interactive
 		fi
 	elif [[ \
-		   "${work_profile}" == "streamer-desktop" \
+		   "${work_profile}" == "radio-broadcaster" \
+		|| "${work_profile}" == "streamer-desktop" \
 		|| "${work_profile}" == "streamer-reporter" \
-		|| "${work_profile}" == "streamer-gamer" \
+		|| "${work_profile}" == "live-streaming-gamer" \
+		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "video-conferencing" \
+		|| "${work_profile}" == "voip" \
 	]] ; then
 		if [[ "${work_profile}" == "streamer-desktop" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use streamer-reporter or streamer-gamer instead."
-			work_profile="streamer-reporter"
+ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use live-video-reporter or streamer-gamer instead."
+			die
+		fi
+		if [[ "${work_profile}" == "streamer-gamer" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=streamer-gamer is deprecated.  Use live-gamer-streamer instead."
+			die
+		fi
+		if [[ "${work_profile}" == "streamer-reporter" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-reporting instead."
+			die
 		fi
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -7714,8 +7739,13 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use streamer-repo
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if [[ "${work_profile}" == "streamer-reporter" ]] ; then
-			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		if [[ \
+			   "${work_profile}" == "radio-broadcaster" \
+			|| "${work_profile}" == "live-video-reporter" \
+			|| "${work_profile}" == "video-conferencing" \
+			|| "${work_profile}" == "voip" \
+		]] ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		fi
@@ -7747,7 +7777,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use streamer-repo
 	elif [[ \
 		"${work_profile}" == "cryptocurrency-miner-dedicated" \
 	]] ; then
-		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -7767,7 +7796,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use streamer-repo
 	elif [[ \
 		"${work_profile}" == "cryptocurrency-miner-workstation" \
 	]] ; then
-		# GPU yes, CPU no.  Maximize hash/watt
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"

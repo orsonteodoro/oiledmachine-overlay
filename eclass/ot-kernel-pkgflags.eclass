@@ -10710,7 +10710,9 @@ _ot-kernel_realtime_packages() {
 	if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
 		_ot-kernel_realtime_pkg "dev-lang/faust" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/libpulse" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/libsoundio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-plugins/distrho-ports" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-plugins/ir_lv2" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-plugins/nekobi" "SCHED_FIFO|SCHED_RR"
@@ -10721,6 +10723,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/ardour" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/bristol" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/carla" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/csound" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/fluidsynth" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/guitarix" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/helm" "SCHED_RR"
@@ -10731,6 +10734,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/lmms" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/mixxx" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/mpd" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/museseq" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/pulseeffects" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/pure-data" "SCHED_FIFO"
@@ -10738,6 +10742,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/sc3-plugins" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/seq24" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/sequencer64" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/supercollider" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/terminatorx" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/timidity++[alsa]" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/yoshimi" "SCHED_FIFO"
@@ -10746,8 +10751,20 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "sys-apps/das_watchdog" "SCHED_RR" # Used in audio overlay
 		_ot-kernel_realtime_pkg "sys-auth/rtkit" "SCHED_FIFO|SCHED_RR"
 	fi
-	if [[ "${work_profile}" == "streamer-reporter" ]] ; then
+	if [[ \
+		   "${work_profile}" == "radio-broadcaster" \
+		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "video-conferencing" \
+		|| "${work_profile}" == "voip" \
+	]] ; then
+		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
+	fi
+
+	if [[ "${work_profile}" == "jukebox" ]] ; then
+		_ot-kernel_realtime_pkg "media-sound/mpg123" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/sndpeek" "SCHED_RR"
 	fi
 
 	# TODO:  create a work profile that demands realtime analysis

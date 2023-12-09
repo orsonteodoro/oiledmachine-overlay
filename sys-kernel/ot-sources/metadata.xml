@@ -3014,25 +3014,26 @@ unset OT_KERNEL_PRIVATE_KEY
       jukebox
       lan-tournament
       laptop
+      live-streaming-gamer
+      live-video-reporting
       mainstream-desktop
       manual
       media-player
       media-server
+      pi
       presentation
       pro-gaming
+      radio-broadcaster
       remote-tournament
       renderfarm-dedicated
       renderfarm-workstation
-      sbc
       smartphone
-      streamer-gamer
-      streamer-reporter
       solar-desktop
       solar-gaming
       tablet
       touchscreen-laptop
-      video-smartphone
-      video-tablet
+      video-conferencing
+      voip
       web-server
       workstation
 
