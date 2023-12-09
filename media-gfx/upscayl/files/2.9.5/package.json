@@ -1,8 +1,13 @@
 {
   "name": "upscayl",
   "private": true,
-  "version": "2.9.1",
+  "version": "2.9.5",
   "productName": "Upscayl",
+  "author": {
+    "name": "Nayam Amarshe",
+    "email": "nayam.emikx@aleeas.com",
+    "url": "https://github.com/NayamAmarshe"
+  },
   "homepage": "https://github.com/TGS963/upscayl",
   "contributors": [
     {
@@ -49,7 +54,8 @@
     "dist:pkg": "tsc && npm run build && cross-env DEBUG=* electron-builder build -m pkg",
     "dist:mac": "tsc && npm run build && electron-builder --mac --universal",
     "dist:mac-arm64": "tsc && npm run build && electron-builder --mac --arm64",
-    "dist:mac-mas": "tsc && npm run build && electron-builder --mac mas --universal",
+    "dist:mas": "tsc && npm run build && electron-builder --mac mas --universal -c mas.json",
+    "dist:mas-dev": "tsc && npm run build && electron-builder --mac mas-dev --universal -c mas-dev.json",
     "dist:win": "tsc && npm run build && electron-builder --win",
     "dist:linux": "tsc && npm run build && electron-builder --linux",
     "publish-app": "tsc && npm run build && electron-builder -wlm --publish always",
@@ -64,8 +70,9 @@
     "productName": "Upscayl",
     "appId": "org.upscayl.Upscayl",
     "artifactName": "${name}-${version}-${os}.${ext}",
-    "afterSign": "scripts/notarize.js",
+    "afterSign": "./notarize.js",
     "asar": true,
+    "buildVersion": "23.11.4",
     "asarUnpack": [
       "**/node_modules/sharp/**/*"
     ],
@@ -99,7 +106,9 @@
     ],
     "mas": {
       "hardenedRuntime": false,
-      "type": "distribution",
+      "electronLanguages": [
+        "en"
+      ],
       "category": "public.app-category.photography",
       "entitlements": "resources/entitlements.mas.plist",
       "entitlementsInherit": "resources/entitlements.mas.inherit.plist",
@@ -118,14 +127,14 @@
       ]
     },
     "mac": {
-      "type": "distribution",
-      "category": "public.app-category.photography",
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
+      "mergeASARs": false,
+      "x64ArchFiles": "*",
+      "category": "public.app-category.photography",
       "entitlements": "resources/entitlements.mac.plist",
       "entitlementsInherit": "resources/entitlements.mac.plist",
       "provisioningProfile": "embedded.provisionprofile",
-      "mergeASARs": false,
       "target": [
         {
           "target": "dmg",
@@ -139,8 +148,7 @@
             "universal"
           ]
         }
-      ],
-      "x64ArchFiles": "*"
+      ]
     },
     "dmg": {
       "sign": "false",
@@ -174,6 +182,7 @@
       "icon": "resources/icons/512x512.png"
     },
     "win": {
+      "publisherName": "Upscayl Team",
       "publish": [
         "github"
       ],
@@ -195,6 +204,7 @@
   },
   "devDependencies": {
     "@electron/notarize": "^2.1.0",
+    "@tailwindcss/typography": "^0.5.10",
     "@types/node": "^18.15.12",
     "@types/react": "^18.0.37",
     "@types/react-dom": "^18.0.11",
@@ -217,17 +227,21 @@
     "electron-is-dev": "^2.0.0",
     "electron-log": "^5.0.0-beta.16",
     "electron-next": "^3.1.5",
-    "electron-updater": "^6.1.1",
+    "electron-settings": "^4.0.2",
+    "electron-updater": "^6.1.4",
     "firebase": "^10.3.0",
+    "gray-matter": "^4.0.3",
     "jotai": "^2.2.2",
     "react-compare-slider": "^2.2.0",
+    "react-markdown": "^9.0.1",
     "react-select": "^5.7.4",
     "react-tooltip": "^5.18.1",
-    "sharp": "^0.32.5",
+    "remark-gfm": "^4.0.0",
+    "sharp": "^0.32.6",
     "tailwind-scrollbar": "^3.0.4",
     "theme-change": "^2.5.0"
   },
   "volta": {
-    "node": "16.17.0"
+    "node": "18.17.0"
   }
 }
