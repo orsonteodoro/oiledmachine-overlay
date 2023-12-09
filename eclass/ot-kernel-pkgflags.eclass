@@ -10778,6 +10778,7 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "tournament" \
 	]] ; then
+		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/openal" "SCHED_RR" # Assumes PREEMPT=y
 	fi
 
