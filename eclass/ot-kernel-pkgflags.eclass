@@ -10712,17 +10712,23 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/6pm" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/aeolus" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/amsynth" "SCHED_FIFO" # needs ebuild changes to explicitly enable
 		_ot-kernel_realtime_pkg "media-sound/ardour" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/bristol" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/fluidsynth" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/guitarix" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/helm" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/jack-audio-connection-kit" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/jack2" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/linuxsampler" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/lmms" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/pulseeffects" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/terminatorx" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/timidity++[alsa]" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/yoshimi" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/libpulse" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "sys-apps/das_watchdog" "SCHED_RR" # Used in audio overlay
 		_ot-kernel_realtime_pkg "sys-auth/rtkit" "SCHED_FIFO|SCHED_RR"
 	fi
@@ -10734,7 +10740,9 @@ _ot-kernel_realtime_packages() {
 
 	# TODO:  create a work profile that demands realtime analysis
 	# The question is but why?  Benefits?
-	_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO"
+	#_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO" # Disabled for security.
+
+	#_ot-kernel_realtime_pkg "dev-db/mysql" "SCHED_FIFO|SCHED_RR" # contains realtime references, #718068
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
