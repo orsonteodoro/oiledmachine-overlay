@@ -10756,8 +10756,11 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "video-conferencing" \
 		|| "${work_profile}" == "voip" \
 	]] ; then
-		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/libtgvoip" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/tg_owt" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-libs/webrtc-audio-processing" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/umurmur" "SCHED_RR"
