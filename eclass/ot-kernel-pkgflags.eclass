@@ -10715,6 +10715,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-plugins/distrho-ports" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-plugins/ir_lv2" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-plugins/nekobi" "SCHED_FIFO|SCHED_RR"
+		_ot-kernel_realtime_pkg "media-plugins/x42-avldrums" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-plugins/x42-plugins" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/6pm" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/aeolus" "SCHED_FIFO"
@@ -10723,6 +10724,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/bristol" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/carla" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/csound" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/drumstick" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/fluidsynth" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/guitarix" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/helm" "SCHED_RR"
@@ -10764,6 +10766,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/umurmur" "SCHED_RR"
+		_ot-kernel_realtime_pkg "net-voip/yate" "SCHED_FIFO|SCHED_RR"
 		# _ot-kernel_realtime_pkg "net-voip/twinkle" "SCHED_FIFO" # present but disabled in source code
 	fi
 
@@ -10794,6 +10797,8 @@ _ot-kernel_realtime_packages() {
 	#_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO" # Disabled for security.
 
 	#_ot-kernel_realtime_pkg "dev-db/mysql" "SCHED_FIFO|SCHED_RR" # contains realtime references, #718068
+
+	# _ot-kernel_realtime_pkg "media-video/dvgrab" "SCHED_RR"
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
