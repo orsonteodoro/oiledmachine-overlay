@@ -7430,7 +7430,6 @@ ewarn
 	elif [[ \
 		   "${work_profile}" == "smartphone" \
 		|| "${work_profile}" == "tablet" \
-		|| "${work_profile}" == "pi-web-browser" \
 		|| "${work_profile}" == "video-smartphone" \
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
@@ -7750,21 +7749,28 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 		   "${work_profile}" == "dvr" \
 		|| "${work_profile}" == "jukebox" \
 		|| "${work_profile}" == "mainstream-desktop" \
-		|| "${work_profile}" == "pi-media-player" \
+		|| "${work_profile}" == "pi-audio-player" \
+		|| "${work_profile}" == "pi-video-player" \
+		|| "${work_profile}" == "pi-web-browser" \
 		|| "${work_profile}" == "sbc" \
 		|| "${work_profile}" == "sdr" \
 	]] ; then
 		if [[ "${work_profile}" == "sbc" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-deep-learning, pi-gaming, pi-media-player, pi-music-production, pi-web-browser instead."
+ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-learning, pi-gaming, pi-music-production, pi-video-player, pi-web-browser instead."
 			die
 		fi
 		if [[ \
 			   "${work_profile}" == "dvr" \
 			|| "${work_profile}" == "mainstream-desktop" \
+			|| "${work_profile}" == "pi-video-player" \
+			|| "${work_profile}" == "pi-web-browser" \
 		]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz # Minimize dropped frames
 		fi
-		if [[ "${work_profile}" == "jukebox" ]] ; then
+		if [[ \
+			   "${work_profile}" == "jukebox" \
+			|| "${work_profile}" == "pi-audio-player" \
+		]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
 		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
@@ -7775,7 +7781,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-deep-learning, pi-gamin
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
-		if [[ "${work_profile}" == "mainstream-desktop" ]] ; then
+		if [[ \
+			   "${work_profile}" == "mainstream-desktop" \
+			|| "${work_profile}" == "pi-web-browser" \
+		]] ; then
 			ot-kernel_y_configopt "CONFIG_PM"
 		else
 			ot-kernel_unset_configopt "CONFIG_PM"
