@@ -7602,7 +7602,11 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		ot-kernel_set_preempt "CONFIG_PREEMPT" # It won't be downgraded for rt patchset.
+		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+		else
+			ot-kernel_set_preempt "CONFIG_PREEMPT"
+		fi
 		[[ "${work_profile}" == "digital-audio-workstation" \
 			|| "${work_profile}" == "gamedev" ]] \
 			&& ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
