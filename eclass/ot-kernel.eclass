@@ -7755,7 +7755,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 		|| "${work_profile}" == "sdr" \
 	]] ; then
 		if [[ "${work_profile}" == "sbc" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-deep-learning, pi-media-player, pi-gaming, pi-web-browser instead."
+ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-deep-learning, pi-gaming, pi-media-player, pi-music-production, pi-web-browser instead."
 			die
 		fi
 		if [[ \
@@ -7881,7 +7881,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-deep-learning, pi-media
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_iosched_interactive
 	elif [[ \
-		"${work_profile}" == "pi-deep-learning" \
+		   "${work_profile}" == "pi-deep-learning" \
+		|| "${work_profile}" == "pi-music-production" \
 	]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
