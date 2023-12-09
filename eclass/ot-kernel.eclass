@@ -7607,9 +7607,12 @@ ewarn
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		fi
-		[[ "${work_profile}" == "digital-audio-workstation" \
-			|| "${work_profile}" == "gamedev" ]] \
-			&& ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
+		if [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "gamedev" \
+		]] ; then
+			ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
+		fi
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
