@@ -3020,7 +3020,10 @@ unset OT_KERNEL_PRIVATE_KEY
       manual
       media-player
       media-server
-      pi
+      pi-deep-learning
+      pi-gaming
+      pi-media-player
+      pi-web-browser
       presentation
       pro-gaming
       radio-broadcaster

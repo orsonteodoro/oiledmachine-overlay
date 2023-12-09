@@ -7428,17 +7428,12 @@ ewarn
 	]] ; then
 		ot-kernel_iosched_custom
 	elif [[ \
-		   "${work_profile}" == "sbc" \
-		|| "${work_profile}" == "smartphone" \
-		|| "${work_profile}" == "pi" \
+		   "${work_profile}" == "smartphone" \
 		|| "${work_profile}" == "tablet" \
+		|| "${work_profile}" == "pi-web-browser" \
 		|| "${work_profile}" == "video-smartphone" \
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
-		if [[ "${work_profile}" == "sbc" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi instead."
-			die
-		fi
 		if [[ "${work_profile}" == "video-smartphone" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=video-smartphone is deprecated.  Use smartphone instead."
 			die
@@ -7513,6 +7508,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 	elif [[ \
 		   "${work_profile}" == "casual-gaming-laptop" \
 		|| "${work_profile}" == "gpu-gaming-laptop" \
+		|| "${work_profile}" == "pi-gaming" \
 		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
@@ -7754,7 +7750,14 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 		   "${work_profile}" == "dvr" \
 		|| "${work_profile}" == "jukebox" \
 		|| "${work_profile}" == "mainstream-desktop" \
+		|| "${work_profile}" == "pi-media-player" \
+		|| "${work_profile}" == "sbc" \
+		|| "${work_profile}" == "sdr" \
 	]] ; then
+		if [[ "${work_profile}" == "sbc" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-deep-learning, pi-media-player, pi-gaming, pi-web-browser instead."
+			die
+		fi
 		if [[ \
 			   "${work_profile}" == "dvr" \
 			|| "${work_profile}" == "mainstream-desktop" \
@@ -7772,7 +7775,11 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
-		ot-kernel_y_configopt "CONFIG_PM"
+		if [[ "${work_profile}" == "mainstream-desktop" ]] ; then
+			ot-kernel_y_configopt "CONFIG_PM"
+		else
+			ot-kernel_unset_configopt "CONFIG_PM"
+		fi
 		ot-kernel_iosched_streaming
 	elif [[ \
 		"${work_profile}" == "cryptocurrency-miner-dedicated" \
@@ -7873,6 +7880,18 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		ot-kernel_iosched_interactive
+	elif [[ \
+		"${work_profile}" == "pi-deep-learning" \
+	]] ; then
+		ot-kernel_set_kconfig_set_default_timer_hz
+		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
+		ot-kernel_iosched_streaming
 	fi
 
 	local sata_lpm_max="${OT_KERNEL_SATA_LPM_MAX:-1}"
