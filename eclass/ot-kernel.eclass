@@ -7573,6 +7573,8 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		ot-kernel_unset_configopt "CONFIG_CFG80211_DEFAULT_PS"
+	# The presentation could just be slides with few clicks or a gaming demo
+	# with a lot of clicks.
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
@@ -7600,11 +7602,7 @@ ewarn
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if ot-kernel_supports_rt && ot-kernel_use rt && [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
-			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-		else
-			ot-kernel_set_preempt "CONFIG_PREEMPT"
-		fi
+		ot-kernel_set_preempt "CONFIG_PREEMPT" # It won't be downgraded for rt patchset.
 		[[ "${work_profile}" == "digital-audio-workstation" \
 			|| "${work_profile}" == "gamedev" ]] \
 			&& ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
