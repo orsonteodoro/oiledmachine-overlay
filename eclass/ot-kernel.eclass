@@ -7728,7 +7728,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		|| "${work_profile}" == "builder-interactive" \
 	]] ; then
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
-			ot-kernel_set_kconfig_set_lowest_timer_hz
+			ot-kernel_set_kconfig_set_lowest_timer_hz # For decreased build times
 			ot-kernel_y_configopt "CONFIG_NONE"
 		else
 			ot-kernel_set_kconfig_set_default_timer_hz
@@ -7751,7 +7751,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		   "${work_profile}" == "renderfarm-dedicated" \
 		|| "${work_profile}" == "renderfarm-workstation" \
 	]] ; then
-		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
@@ -7761,8 +7760,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		if [[ "${work_profile}" == "renderfarm-workstation" ]] ; then
+			ot-kernel_set_kconfig_set_default_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		else
+			ot-kernel_set_kconfig_set_lowest_timer_hz
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		fi
 		if [[ "${work_profile}" == "builder-dedicated" ]] ; then
@@ -7878,7 +7879,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 	elif [[ \
 		"${work_profile}" == "cryptocurrency-miner-dedicated" \
 	]] ; then
-		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
+		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
@@ -7952,7 +7953,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			   "${work_profile}" == "hpc" \
 			|| "${work_profile}" == "throughput-hpc" \
 		]] ; then
-			ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel space time, maximize user space time
+			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_set_tcp_congestion_control_default "dctcp"
 			ot-kernel_set_kconfig_slab_allocator "slub"
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
