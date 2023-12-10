@@ -7456,7 +7456,7 @@ ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
 		if [[ "${work_profile}" == "video-smartphone" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=video-smartphone is deprecated.  Use smartphone instead."
+ewarn "OT_KERNEL_WORK_PROFILE=video-smartphone is deprecated.  Use smartphone or smartphone-voice instead."
 			die
 		fi
 		if [[ "${work_profile}" == "video-tablet" ]] ; then
