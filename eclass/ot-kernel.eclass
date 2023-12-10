@@ -7481,7 +7481,16 @@ ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work
 		fi
 	fi
 
-	if [[ "${work_profile}" == "sbc" ]] ; then
+	if [[ "${work_profile}" == "arcade" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=arcade is deprecated.  Use either pi-gaming or pro-gaming instead."
+		die
+	elif [[ "${work_profile}" == "lan-tournament" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=lan-tournament is deprecated.  Use pro-gaming instead."
+		die
+	elif [[ "${work_profile}" == "tournament" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=tournament is deprecated.  Use pro-gaming instead."
+		die
+	elif [[ "${work_profile}" == "sbc" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-learning, pi-gaming, pi-music-production, pi-video-player, pi-web-browser instead."
 		die
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
@@ -7655,9 +7664,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_iosched "none" "none"
 	elif [[ \
-		   "${work_profile}" == "arcade" \
-		|| "${work_profile}" == "pro-gaming" \
-		|| "${work_profile}" == "tournament" \
+		   "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "presentation" \
 	]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering

@@ -10630,7 +10630,6 @@ ot-kernel_supports_rt() {
 # Which is more important?  audio, input, power, jitter, throughput-headless, throughput-interactive, video
 unset WORK_PROFILE_LATENCY_BIAS_KEY
 declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
-	["arcade"]="input"
         ["builder-dedicated"]="throughput-headless"
         ["builder-interactive"]="throughput-interactive"
         ["cryptocurrency-miner-dedicated"]="throughput-headless"
@@ -10652,7 +10651,6 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["greenest-hpc"]="power"
         ["greenest-pc"]="power"
         ["jukebox"]="audio"
-        ["lan-tournament"]="input"
         ["laptop"]="power"
         ["live-streaming-gamer"]="input"
         ["live-video-reporting"]="audio"
@@ -10946,9 +10944,9 @@ _ot-kernel_realtime_packages() {
 	fi
 
 	if [[ \
-		   "${work_profile}" == "arcade" \
+		   "${work_profile}" == "gpu-gaming-laptop" \
 		|| "${work_profile}" == "pro-gaming" \
-		|| "${work_profile}" == "tournament" \
+		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/openal" "SCHED_RR" # Assumes PREEMPT=y

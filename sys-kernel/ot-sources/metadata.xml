@@ -2992,7 +2992,6 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-      arcade
       builder-dedicated
       builder-interactive
       cryptocurrency-miner-dedicated
@@ -3016,7 +3015,6 @@ unset OT_KERNEL_PRIVATE_KEY
       hpc
       realtime-hpc
       jukebox
-      lan-tournament
       laptop
       live-streaming-gamer
       live-video-reporting
@@ -3045,6 +3043,7 @@ unset OT_KERNEL_PRIVATE_KEY
       tablet
       throughput-hpc
       touchscreen-laptop
+      tournament
       video-conferencing
       voip
       web-server
