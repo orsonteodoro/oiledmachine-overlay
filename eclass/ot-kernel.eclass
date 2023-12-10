@@ -7593,14 +7593,16 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			   "${work_profile}" == "gpu-gaming-laptop" \
 			|| "${work_profile}" == "solar-gaming" \
 		]] ; then
-	# 3D allowed
+	# 3D allowed, intense worse case
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		else
-	# 2D mostly
+	# 2D mostly, less intense
+	# Avoid leg burn on long use
 			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
@@ -7628,7 +7630,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		"${work_profile}" == "casual-gaming" \
 	]] ; then
 	# Assumes on desktop
-	# 2D mostly
+	# 2D mostly, less intense
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
