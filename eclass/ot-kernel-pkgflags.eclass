@@ -10628,7 +10628,7 @@ ot-kernel_supports_rt() {
 
 # Non canonical value -> intermediate value
 # Which is more important?  audio, input, power, throughput-headless, throughput-interactive, video
-unset WORK_PROFILE_LATENCY_BIAS
+unset WORK_PROFILE_LATENCY_BIAS_KEY
 declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
 	["arcade"]="input"
         ["builder-dedicated"]="throughput-headless"
