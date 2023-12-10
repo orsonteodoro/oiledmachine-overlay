@@ -10723,23 +10723,35 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 		fi
 	else
 		if ot-kernel_supports_rt && ot-kernel_use rt ; then
-			ot-kernel_unset_configopt "CONFIG_PREEMPT"
-			ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
-			ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
-			ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 			if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
 	# Real time cannot be stopped or dropped.
 				:;
 			else
 	# Promote/demote
-				ot-kernel_y_configopt "${preempt_option}"
+				if [[ "${preempt_option}" == "CONFIG_PREEMPT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_PREEMPT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_NONE" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_PREEMPT"
+					ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_RT" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_PREEMPT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_VOLUNTARY" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_PREEMPT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
+				fi
 			fi
 		else
 	# Non RT case
-			ot-kernel_unset_configopt "CONFIG_PREEMPT" # Low latency
-			ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
-			ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
-			ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY" # Balanced
 			if [[ \
 				   "${preempt_option}" == "CONFIG_PREEMPT_RT" \
 				|| "${preempt_option}" == "CONFIG_PREEMPT_AUTOMAGIC" \
@@ -10755,18 +10767,71 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 	# Downgrade latency based on user hint
 					local setting="${WORK_PROFILE_LATENCY_BIAS_SETTING[${key}]}"
 					ot-kernel_y_configopt "${setting}"
+					if [[ "${setting}" == "CONFIG_PREEMPT" ]] ; then
+						ot-kernel_y_configopt "CONFIG_PREEMPT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+					elif [[ "${setting}" == "CONFIG_PREEMPT_NONE" ]] ; then
+						ot-kernel_unset_configopt "CONFIG_PREEMPT"
+						ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+					elif [[ "${setting}" == "CONFIG_PREEMPT_RT" ]] ; then
+						ot-kernel_unset_configopt "CONFIG_PREEMPT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+						ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+					elif [[ "${setting}" == "CONFIG_PREEMPT_VOLUNTARY" ]] ; then
+						ot-kernel_unset_configopt "CONFIG_PREEMPT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+						ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
+					fi
 				else
 	# Downgrade
 					ot-kernel_y_configopt "CONFIG_PREEMPT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				fi
 			else
 	# Promote/demote
-				ot-kernel_y_configopt "${preempt_option}"
+				if [[ "${preempt_option}" == "CONFIG_PREEMPT" ]] ; then
+					ot-kernel_y_configopt "CONFIG_PREEMPT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_NONE" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_PREEMPT"
+					ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_RT" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_PREEMPT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_VOLUNTARY" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_PREEMPT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
+				fi
 			fi
 		fi
 	fi
 	if grep -q -e "^CONFIG_TRANSPARENT_HUGEPAGE=y" "${path_config}" && grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
 		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+	fi
+	if grep -q -e "^CONFIG_PREEMPT_NONE=y" "${path_config}" ; then
+einfo "Using PREEMPT_NONE"
+	elif grep -q -e "^CONFIG_PREEMPT=y" "${path_config}" ; then
+einfo "Using PREEMPT"
+	elif grep -q -e "^CONFIG_PREEMPT_VOLUNTARY=y" "${path_config}" ; then
+einfo "Using PREEMPT_VOLUNTARY"
+	elif grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+einfo "Using PREEMPT_RT"
 	fi
 }
 
@@ -10788,12 +10853,12 @@ _ot-kernel_y_thp() {
 _ot-kernel_realtime_pkg() {
 	local pkg="${1}"
 	local prio_class="${2}"
-	if has_version "${pkg}" ; then
+	if ot-kernel_has_version "${pkg}" ; then
 		if ot-kernel_use rt ; then
-eerror "Detected ${prio_class} package for ${pkg}.  Using PREEMPT_RT=y"
+ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT_RT=y"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 		else
-eerror "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
+ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		fi
 	fi
