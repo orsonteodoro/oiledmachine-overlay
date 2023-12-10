@@ -7413,11 +7413,27 @@ ot-kernel_set_kconfig_fallback_preempt() {
 	else
 		if [[ -n "${FALLBACK_PREEMPT}" ]] ; then
 			ot-kernel_set_preempt "${FALLBACK_PREEMPT}"
-			FALLBACK_PREEMPT=""
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
+		if ot-kernel_use rt ; then
+ewarn "No realtime packages detected.  Consider removing rt from OT_KERNEL_USE."
+		fi
 	fi
+}
+
+# @FUNCTION: ot-kernel_set_rt_rcu
+# @DESCRIPTION:
+# Optimize RCU for realtime.
+# RCU manages the destruction and pre read access to data marked to be destroyed.
+ot-kernel_set_rt_rcu() {
+	ot-kernel_y_configopt "CONFIG_RCU_EXPERT"
+
+	ot-kernel_y_configopt "CONFIG_PREEMPT_RCU"
+	ot-kernel_y_configopt "CONFIG_RCU_BOOST"
+
+	ot-kernel_y_configopt "CONFIG_TREE_RCU"
+	ot-kernel_y_configopt "CONFIG_RCU_FAST_NO_HZ"
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
@@ -7465,6 +7481,26 @@ ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work
 		fi
 	fi
 
+	if [[ "${work_profile}" == "sbc" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-learning, pi-gaming, pi-music-production, pi-video-player, pi-web-browser instead."
+		die
+	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use live-video-reporter or streamer-gamer instead."
+		die
+	elif [[ "${work_profile}" == "streamer-gamer" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=streamer-gamer is deprecated.  Use live-gamer-streamer instead."
+		die
+	elif [[ "${work_profile}" == "streamer-reporter" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-reporting instead."
+		die
+	elif [[ "${work_profile}" == "video-smartphone" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=video-smartphone is deprecated.  Use smartphone or smartphone-voice instead."
+		die
+	elif [[ "${work_profile}" == "video-tablet" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
+		die
+	fi
+
 	if [[ \
 		-z "${work_profile}" \
 		|| "${work_profile}" == "custom" \
@@ -7478,16 +7514,8 @@ ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work
 		|| "${work_profile}" == "video-smartphone" \
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
-		if [[ "${work_profile}" == "video-smartphone" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=video-smartphone is deprecated.  Use smartphone or smartphone-voice instead."
-			die
-		fi
-		if [[ "${work_profile}" == "video-tablet" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
-			die
-		fi
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -7505,14 +7533,14 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
 	elif [[ \
-		   "${work_profile}" == "green-pc" \
+		   "${work_profile}" == "laptop" \
+		|| "${work_profile}" == "green-pc" \
 		|| "${work_profile}" == "greenest-pc" \
-		|| "${work_profile}" == "laptop" \
 		|| "${work_profile}" == "solar-desktop" \
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -7585,7 +7613,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		fi
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
-		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 	elif [[ \
@@ -7593,7 +7620,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 	]] ; then
 		# Assumes on desktop
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
@@ -7603,7 +7630,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
-		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 	elif [[ \
@@ -7634,7 +7660,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 	# with a lot of clicks.
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
-		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 	elif [[ \
@@ -7642,16 +7667,26 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		|| "${work_profile}" == "gamedev" \
 		|| "${work_profile}" == "workstation" \
 	]] ; then
-		if [[ \
-			   "${work_profile}" == "digital-audio-workstation" \
-			|| "${work_profile}" == "gamedev" \
-		]] ; then
+		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+			ot-kernel_set_kconfig_no_hz_full
+			ot-kernel_set_rt_rcu
+			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
+			ot-kernel_unset_configopt "CONFIG_SWAP"
+			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
+				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+			else
+	# Fallback to disable Hard RT if nothing uses it.
+				FALLBACK_PREEMPT="CONFIG_PREEMPT"
+			fi
+		elif [[ "${work_profile}" == "gamedev" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering, reduce skippy input
-		fi
-		if [[ "${work_profile}" == "workstation" ]] ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		elif [[ "${work_profile}" == "workstation" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			ot-kernel_set_kconfig_set_video_timer_hz # For video production
+			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
@@ -7659,24 +7694,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
-		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
-			ot-kernel_unset_configopt "CONFIG_SWAP"
-			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
-				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-			else
-	# It auto downgrades if rt is off.
-				FALLBACK_PREEMPT="CONFIG_PREEMPT_RT"
-			fi
-		else
-			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
-		fi
-		if [[ \
-			   "${work_profile}" == "digital-audio-workstation" \
-			|| "${work_profile}" == "gamedev" \
-		]] ; then
-			ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
-		fi
-		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
 			ot-kernel_iosched_streaming
@@ -7741,7 +7759,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
@@ -7768,18 +7786,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		|| "${work_profile}" == "video-conferencing" \
 		|| "${work_profile}" == "voip" \
 	]] ; then
-		if [[ "${work_profile}" == "streamer-desktop" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use live-video-reporter or streamer-gamer instead."
-			die
-		fi
-		if [[ "${work_profile}" == "streamer-gamer" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=streamer-gamer is deprecated.  Use live-gamer-streamer instead."
-			die
-		fi
-		if [[ "${work_profile}" == "streamer-reporter" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-reporting instead."
-			die
-		fi
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -7798,8 +7804,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			else
-	# It auto downgrades if rt is off.
-				FALLBACK_PREEMPT="CONFIG_PREEMPT_RT"
+	# Fallback to disable Hard RT if nothing uses it.
+				FALLBACK_PREEMPT="CONFIG_PREEMPT"
 			fi
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
@@ -7812,13 +7818,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 		|| "${work_profile}" == "pi-audio-player" \
 		|| "${work_profile}" == "pi-video-player" \
 		|| "${work_profile}" == "pi-web-browser" \
-		|| "${work_profile}" == "sbc" \
 		|| "${work_profile}" == "sdr" \
 	]] ; then
-		if [[ "${work_profile}" == "sbc" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-learning, pi-gaming, pi-music-production, pi-video-player, pi-web-browser instead."
-			die
-		fi
 		if [[ \
 			   "${work_profile}" == "dvr" \
 			|| "${work_profile}" == "mainstream-desktop" \
@@ -7834,7 +7835,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-l
 		]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
 		fi
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_ONDEMAND"
@@ -7855,7 +7856,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-l
 		"${work_profile}" == "cryptocurrency-miner-dedicated" \
 	]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize OS overhead and energy cost, maximize app time
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_POWERSAVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
@@ -7874,7 +7875,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-l
 		"${work_profile}" == "cryptocurrency-miner-workstation" \
 	]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz # For balance
-		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
@@ -7891,49 +7892,59 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-l
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
 	elif [[ \
-		   "${work_profile}" == "hpc" \
-		|| "${work_profile}" == "green-hpc" \
+		   "${work_profile}" == "green-hpc" \
 		|| "${work_profile}" == "greenest-hpc" \
+		|| "${work_profile}" == "hpc" \
+		|| "${work_profile}" == "realtime-hpc" \
+		|| "${work_profile}" == "throughput-hpc" \
 	]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
-		if [[ "${work_profile}" == "hpc" ]] ; then
-			ot-kernel_set_kconfig_no_hz_full
-			ot-kernel_set_kconfig_set_tcp_congestion_control_default "dctcp"
-			ot-kernel_set_kconfig_slab_allocator "slub"
-		else
-			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
-		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		if [[ "${work_profile}" == "greenest-hpc" ]] ; then
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
-			fi
-		elif [[ "${work_profile}" == "green-hpc" ]] ; then
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
-			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
-			fi
-		else
-			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
-			fi
-		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
-		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-		if [[ \
-			   "${work_profile}" == "green-hpc" \
-			|| "${work_profile}" == "greenest-hpc" \
-		]] ; then
+		if [[ "${work_profile}" == "green-hpc" ]] ; then
+			ot-kernel_set_kconfig_no_hz_full
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
+			fi
 			ot-kernel_y_configopt "CONFIG_PM"
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
-		else
-			ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		elif [[ "${work_profile}" == "greenest-hpc" ]] ; then
+			ot-kernel_set_kconfig_no_hz_full
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
+			fi
+			ot-kernel_y_configopt "CONFIG_PM"
+			ot-kernel_set_rcu_powersave
+			ot-kernel_iosched_lowest_power
+		elif [[ \
+			   "${work_profile}" == "hpc" \
+			|| "${work_profile}" == "throughput-hpc" \
+		]] ; then
+			ot-kernel_set_kconfig_set_tcp_congestion_control_default "dctcp"
+			ot-kernel_set_kconfig_slab_allocator "slub"
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
+			ot-kernel_iosched_max_throughput
+		elif [[ "${work_profile}" == "realtime-hpc" ]] ; then
+			ot-kernel_set_kconfig_no_hz_full
+			ot-kernel_set_rt_rcu
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
+			fi
 			ot-kernel_iosched_max_throughput
 		fi
 	elif [[ \
@@ -7955,12 +7966,12 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-l
 		|| "${work_profile}" == "pi-music-production" \
 	]] ; then
 		ot-kernel_set_kconfig_set_default_timer_hz
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+		ot-kernel_set_kconfig_no_hz_full
+		ot-kernel_set_rt_rcu
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-		ot-kernel_unset_configopt "CONFIG_RCU_FAST_NO_HZ"
+		# ML/DL case for self-driving car/drone
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
 	fi
@@ -8839,13 +8850,20 @@ einfo "Disabling overdrive on the amdgpu driver."
 	fi
 }
 
-# @FUNCTION: ot-kernel_rt_disable_swap
+# @FUNCTION: ot-kernel_optimize_realtime
 # @DESCRIPTION:
-# Disable swap when PREEMPT_RT is being used.
-ot-kernel_rt_disable_swap() {
+# Remove sources of latency and jitter
+ot-kernel_optimize_realtime() {
 	if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
 ewarn "Disabling swap for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
 		ot-kernel_unset_configopt "CONFIG_SWAP"
+
+# TODO:  Disable HyperThreading
+
+		if grep -q -e "^CONFIG_TRANSPARENT_HUGEPAGE=y" "${path_config}" ; then
+ewarn "Disabling Transparent HugePage for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
+			ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+		fi
 	fi
 }
 
@@ -8913,6 +8931,7 @@ einfo
 	ot-kernel_set_kconfig_set_net_qos_schedulers
 	ot-kernel_set_kconfig_set_net_qos_classifiers
 	ot-kernel_set_kconfig_set_net_qos_actions
+	FALLBACK_PREEMPT="" # Must be before work_profile and pkgflags_apply.
 	# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
 	ot-kernel_set_kconfig_work_profile # Sets PREEMPT*
 	ot-kernel_set_kconfig_pcie_mps
@@ -8943,7 +8962,7 @@ einfo
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 		ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
 	ot-kernel_set_kconfig_fallback_preempt
-	ot-kernel_rt_disable_swap
+	ot-kernel_optimize_realtime
 	ot-kernel_set_at_system
 	ot-kernel_set_tcca
 	ot-kernel_set_iosched_kconfig

@@ -10627,7 +10627,7 @@ ot-kernel_supports_rt() {
 }
 
 # Non canonical value -> intermediate value
-# Which is more important?  audio, input, power, throughput-headless, throughput-interactive, video
+# Which is more important?  audio, input, power, jitter, throughput-headless, throughput-interactive, video
 unset WORK_PROFILE_LATENCY_BIAS_KEY
 declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
 	["arcade"]="input"
@@ -10651,7 +10651,6 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["green-pc"]="power"
         ["greenest-hpc"]="power"
         ["greenest-pc"]="power"
-        ["hpc"]="throughput"
         ["jukebox"]="audio"
         ["lan-tournament"]="input"
         ["laptop"]="power"
@@ -10662,7 +10661,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["media-player"]="video"
         ["media-server"]="server"
         ["pi-audio-player"]="audio"
-        ["pi-deep-learning"]="input"
+        ["pi-deep-learning"]="jitter"
         ["pi-gaming"]="input"
         ["pi-media-player"]="video"
         ["pi-music-production"]="audio"
@@ -10671,6 +10670,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["presentation"]="video"
         ["pro-gaming"]="input"
         ["radio-broadcaster"]="audio"
+        ["realtime-hpc"]="jitter"
         ["renderfarm-dedicated"]="throughput-headless"
         ["renderfarm-workstation"]="throughput-interactive"
         ["sdr"]="audio"
@@ -10679,6 +10679,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["solar-desktop"]="input"
         ["solar-gaming"]="input"
         ["tablet"]="power"
+        ["throughput-hpc"]="throughput"
         ["touchscreen-laptop"]="video"
         ["video-conferencing"]="audio"
         ["voip"]="audio"
@@ -10691,6 +10692,7 @@ unset WORK_PROFILE_LATENCY_BIAS_SETTING
 declare -A WORK_PROFILE_LATENCY_BIAS_SETTING=(
 	["audio"]="CONFIG_PREEMPT"
 	["input"]="CONFIG_PREEMPT"
+	["jitter"]="CONFIG_PREEMPT"
 	["power"]="CONFIG_PREEMPT_NONE"
 	["server"]="CONFIG_PREEMPT_NONE"
 	["throughput-headless"]="CONFIG_PREEMPT_NONE"
