@@ -7638,7 +7638,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		fi
 		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
 			ot-kernel_unset_configopt "CONFIG_SWAP"
-			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "0" ]] ; then
+			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			else
 				:; # Added on demand via pkgflags
@@ -7771,7 +7771,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 			|| "${work_profile}" == "video-conferencing" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
-			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "0" ]] ; then
+			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			else
 				:; # Added on demand via pkgflags
