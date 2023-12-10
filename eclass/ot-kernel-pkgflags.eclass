@@ -4447,7 +4447,7 @@ ot-kernel-pkgflags_lkrg() { # DONE
 		ot-kernel_y_configopt "CONFIG_JUMP_LABEL"
 		ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
 ewarn "app-antivirus/lkrg does not like PREEMPT_RT"
-		ot-kernel_set_preempt "CONFIG_PREEMPT"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_AUTOMAGIC"
 		ban_disable_debug "70df33c"
 		ot-kernel_y_configopt "CONFIG_STACKTRACE"
 	fi
@@ -10626,6 +10626,77 @@ ot-kernel_supports_rt() {
 	fi
 }
 
+# Non canonical value -> intermediate value
+# Which is more important?  audio, input, power, throughput-headless, throughput-interactive, video
+unset WORK_PROFILE_LATENCY_BIAS
+declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
+	["arcade"]="input"
+        ["builder-dedicated"]="throughput-headless"
+        ["builder-interactive"]="throughput-interactive"
+        ["cryptocurrency-miner-dedicated"]="throughput-headless"
+        ["cryptocurrency-miner-workstation"]="throughput-interactive"
+        ["casual-gaming"]="input"
+        ["casual-gaming-laptop"]="input"
+        ["custom"]="input" # placeholder
+        ["digital-audio-workstation"]="audio"
+        ["distributed-computing-server"]="server"
+        ["distributed-computing-client"]="throughput-interactive"
+        ["desktop-guest-vm"]="video"
+        ["dvr"]="video"
+        ["file-server"]="server"
+        ["gamedev"]="input"
+        ["gaming-guest-vm"]="input"
+        ["gpu-gaming-laptop"]="input"
+        ["green-hpc"]="power"
+        ["green-pc"]="power"
+        ["greenest-hpc"]="power"
+        ["greenest-pc"]="power"
+        ["hpc"]="throughput"
+        ["jukebox"]="audio"
+        ["lan-tournament"]="input"
+        ["laptop"]="power"
+        ["live-streaming-gamer"]="input"
+        ["live-video-reporting"]="audio"
+        ["mainstream-desktop"]="video"
+        ["manual"]="input" # placeholder
+        ["media-player"]="video"
+        ["media-server"]="server"
+        ["pi-audio-player"]="audio"
+        ["pi-deep-learning"]="throughput-headless"
+        ["pi-gaming"]="input"
+        ["pi-media-player"]="video"
+        ["pi-music-production"]="audio"
+        ["pi-video-player"]="video"
+        ["pi-web-browser"]="video"
+        ["presentation"]="video"
+        ["pro-gaming"]="input"
+        ["radio-broadcaster"]="audio"
+        ["renderfarm-dedicated"]="throughput-headless"
+        ["renderfarm-workstation"]="throughput-interactive"
+        ["sdr"]="audio"
+        ["smartphone"]="video"
+        ["solar-desktop"]="input"
+        ["solar-gaming"]="input"
+        ["tablet"]="power"
+        ["touchscreen-laptop"]="video"
+        ["video-conferencing"]="audio"
+        ["voip"]="audio"
+        ["web-server"]="server"
+        ["workstation"]="input"
+)
+
+# intermediate value -> canonical value without PREEMPT_RT
+unset WORK_PROFILE_LATENCY_BIAS_SETTING
+declare -A WORK_PROFILE_LATENCY_BIAS_SETTING=(
+	["audio"]="CONFIG_PREEMPT"
+	["input"]="CONFIG_PREEMPT"
+	["power"]="CONFIG_PREEMPT_NONE"
+	["server"]="CONFIG_PREEMPT_NONE"
+	["throughput-headless"]="CONFIG_PREEMPT_NONE"
+	["throughput-interactive"]="CONFIG_PREEMPT_VOLUNTARY"
+	["video"]="CONFIG_PREEMPT_VOLUNTARY"
+)
+
 # @FUNCTION: ot-kernel_set_preempt
 # @DESCRIPTION:
 # Wrapper to set kernel config preempt
@@ -10668,9 +10739,25 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY" # Balanced
-			if [[ "${preempt_option}" == "CONFIG_PREEMPT_RT" ]] ; then
-	# Downgrade latency
-				ot-kernel_y_configopt "CONFIG_PREEMPT"
+			if [[ \
+				   "${preempt_option}" == "CONFIG_PREEMPT_RT" \
+				|| "${preempt_option}" == "CONFIG_PREEMPT_AUTOMAGIC" \
+			]] ; then
+				local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+				local key="${WORK_PROFILE_LATENCY_BIAS_KEY[work_profile]}"
+				if [[ \
+					   "${work_profile}" == "custom" \
+					|| "${work_profile}" == "manual" \
+				]] ; then
+					:;
+				elif [[ -n "${key}" ]] ; then
+	# Downgrade latency based on user hint
+					local setting="${WORK_PROFILE_LATENCY_BIAS_SETTING[${key}]}"
+					ot-kernel_y_configopt "${setting}"
+				else
+	# Downgrade
+					ot-kernel_y_configopt "CONFIG_PREEMPT"
+				fi
 			else
 	# Promote/demote
 				ot-kernel_y_configopt "${preempt_option}"

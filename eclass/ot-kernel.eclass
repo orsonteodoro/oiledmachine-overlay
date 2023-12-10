@@ -7403,13 +7403,11 @@ ot-kernel_iosched_lowest_power() {
 ot-kernel_set_kconfig_work_profile() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 einfo "Using the ${work_profile} work profile"
-	if [[ -z "${work_profile}" ]] ; then
-		:
-	elif [[ \
+	if [[ \
 		   "${work_profile}" == "custom" \
 		|| "${work_profile}" == "manual" \
 	]] ; then
-		:
+		:;
 	else
 einfo "Changed .config to use the ${work_profile} work profile"
 		ot-kernel_set_kconfig_work_profile_init
@@ -7474,7 +7472,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
-		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
@@ -7520,7 +7518,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
 			ot-kernel_y_configopt "CONFIG_ACPI_AC"
 		fi
-		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		if [[ "${work_profile}" == "laptop" ]] ; then
 			ot-kernel_y_configopt "CONFIG_VGA_SWITCHEROO"
 		fi
@@ -7640,7 +7638,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 				:; # Added on demand via pkgflags
 			fi
 		else
-			ot-kernel_set_preempt "CONFIG_PREEMPT"
+			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
 		if [[ \
 			   "${work_profile}" == "digital-audio-workstation" \
@@ -7812,7 +7810,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-l
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
-		ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		if [[ \
 			   "${work_profile}" == "mainstream-desktop" \
 			|| "${work_profile}" == "pi-web-browser" \
