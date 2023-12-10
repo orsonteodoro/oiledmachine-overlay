@@ -7450,6 +7450,7 @@ ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work
 		ot-kernel_iosched_custom
 	elif [[ \
 		   "${work_profile}" == "smartphone" \
+		|| "${work_profile}" == "smartphone-voice" \
 		|| "${work_profile}" == "tablet" \
 		|| "${work_profile}" == "video-smartphone" \
 		|| "${work_profile}" == "video-tablet" \
@@ -7472,7 +7473,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
-		if [[ "${work_profile}" == "smartphone" ]] ; then
+		if [[ "${work_profile}" == "smartphone-voice" ]] ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
