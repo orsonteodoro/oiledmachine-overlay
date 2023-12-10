@@ -7397,6 +7397,29 @@ ot-kernel_iosched_lowest_power() {
 	ot-kernel_set_iosched "none" "bfq-throughput"
 }
 
+FALLBACK_PREEMPT=""
+# @FUNCTION: ot-kernel_set_kconfig_fallback_preempt
+# @DESCRIPTION:
+# Set the preempt to the fallback setting.
+ot-kernel_set_kconfig_fallback_preempt() {
+	if grep -q -E -e "^CONFIG_PREEMPT=y" "${path_config}" ; then
+		:;
+	elif grep -q -E -e "^CONFIG_PREEMPT_NONE=y" "${path_config}" ; then
+		:;
+	elif grep -q -E -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+		:;
+	elif grep -q -E -e "^CONFIG_PREEMPT_VOLUNTARY=y" "${path_config}" ; then
+		:;
+	else
+		if [[ -n "${FALLBACK_PREEMPT}" ]] ; then
+			ot-kernel_set_preempt "${FALLBACK_PREEMPT}"
+			FALLBACK_PREEMPT=""
+		else
+			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_work_profile
 # @DESCRIPTION:
 # Configures the default power policies and latencies for the kernel.
@@ -7641,7 +7664,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			else
-				:; # Added on demand via pkgflags
+	# It auto downgrades if rt is off.
+				FALLBACK_PREEMPT="CONFIG_PREEMPT_RT"
 			fi
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
@@ -7774,7 +7798,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-r
 			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			else
-				:; # Added on demand via pkgflags
+	# It auto downgrades if rt is off.
+				FALLBACK_PREEMPT="CONFIG_PREEMPT_RT"
 			fi
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
@@ -8917,6 +8942,7 @@ einfo
 	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 		ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
+	ot-kernel_set_kconfig_fallback_preempt
 	ot-kernel_rt_disable_swap
 	ot-kernel_set_at_system
 	ot-kernel_set_tcca
