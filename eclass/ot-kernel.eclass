@@ -8819,7 +8819,7 @@ einfo "Disabling overdrive on the amdgpu driver."
 # Disable swap when PREEMPT_RT is being used.
 ot-kernel_rt_disable_swap() {
 	if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
-ewarn "Disabling swap for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE=y."
+ewarn "Disabling swap for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
 		ot-kernel_unset_configopt "CONFIG_SWAP"
 	fi
 }
