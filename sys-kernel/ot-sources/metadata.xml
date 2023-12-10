@@ -2685,9 +2685,8 @@ unset OT_KERNEL_PRIVATE_KEY
     recommended to use swap if the peak memory exceeds the RAM.  Otherwise,
     it should be disabled.  Peak memory is usually around 12 GB.
 
-    When using OT_KERNEL_CONFIG_MODE="assist" with PREEMPT_RT=y as a result of
-    OT_KERNEL_USE="rt" or OT_KERNEL_WORK_PROFILE="digital-audio-workstation",
-    swap will always be disabled.
+    When using OT_KERNEL_CONFIG_MODE="assist" with PREEMPT_RT=y, swap will
+    always be disabled.
 
 
 
@@ -3855,11 +3854,10 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="rt">
       Patches the kernel with the PREEMPT_RT patch which tries to minimize
-      non-preemptible parts of the kernel.  It's experimental when combined with
-      other USE flags and patchsets.  Realtime is not recommended for desktop
-      use but for dedicated and isolated setups.  Never give untrusted apps
-      realtime access.  The rt patchset is used by music producers that require
-      low latency audio.
+      non-preemptible parts of the kernel.  The rt patchset is used for music
+      production and robotics and other realtime packages.
+
+      SECURITY:  Never give untrusted apps realtime access.  
     </flag>
     <flag name="rust">
       Add support for drivers written in Rust and kernel config options related
