@@ -7639,6 +7639,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
 			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "0" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+				ot-kernel_unset_configopt "CONFIG_SWAP"
 			else
 				:; # Added on demand via pkgflags
 			fi
