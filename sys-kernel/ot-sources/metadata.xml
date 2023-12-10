@@ -3052,6 +3052,8 @@ unset OT_KERNEL_PRIVATE_KEY
         provide flexibility.
       - You can only use one OT_KERNEL_WORK_PROFILE per profile/extraversion.
       - It's recommended to have a separate profile/extraversion per profile.
+      - digital-audio-workstation disables swap, it is recommended to build a
+        builder kernel with swap enabled to build the entire userland.
 
     Examples:
 
