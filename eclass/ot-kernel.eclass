@@ -7589,7 +7589,16 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 	]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+		if [[ \
+			   "${work_profile}" == "gpu-gaming-laptop" \
+			|| "${work_profile}" == "solar-gaming" \
+		]] ; then
+	# 3D allowed
+			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+		else
+	# 2D mostly
+			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
@@ -7618,9 +7627,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 	elif [[ \
 		"${work_profile}" == "casual-gaming" \
 	]] ; then
-		# Assumes on desktop
+	# Assumes on desktop
+	# 2D mostly
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
-		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
+		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
