@@ -7557,8 +7557,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
-			if [[ "${work_profile}" == "solar-desktop" \
-				|| "${work_profile}" == "greenest-pc" ]] ; then
+			if [[ \
+				   "${work_profile}" == "solar-desktop" \
+				|| "${work_profile}" == "greenest-pc" \
+			]] ; then
 				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWER_SUPERSAVE"
 			else
 				ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
@@ -7980,10 +7982,11 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		ot-kernel_set_kconfig_set_default_timer_hz
 		ot-kernel_set_kconfig_no_hz_full
 		ot-kernel_set_rt_rcu
+		# ML/DL case for self-driving car/drone
+		ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
-		# ML/DL case for self-driving car/drone
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_streaming
 	fi
