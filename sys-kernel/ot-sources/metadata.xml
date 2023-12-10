@@ -3037,6 +3037,7 @@ unset OT_KERNEL_PRIVATE_KEY
       radio-broadcaster
       renderfarm-dedicated
       renderfarm-workstation
+      ros
       sdr
       smartphone
       smartphone-voice

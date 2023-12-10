@@ -7539,7 +7539,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		|| "${work_profile}" == "solar-desktop" \
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
-		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
+		ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
 		ot-kernel_y_configopt "CONFIG_HIBERNATION"
@@ -7590,17 +7590,18 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
 		# It is assumed that the other laptop/solar-desktop profile is built also.
-		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		if [[ \
 			   "${work_profile}" == "gpu-gaming-laptop" \
 			|| "${work_profile}" == "solar-gaming" \
 		]] ; then
 	# 3D allowed, intense worse case
+			ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		else
 	# 2D mostly, less intense
 	# Avoid leg burn on long use
+			ot-kernel_set_kconfig_set_video_timer_hz # For power savings
 			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		fi
@@ -7834,6 +7835,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		|| "${work_profile}" == "pi-web-browser" \
 		|| "${work_profile}" == "sdr" \
 	]] ; then
+	# sdr = radio
 		if [[ \
 			   "${work_profile}" == "dvr" \
 			|| "${work_profile}" == "mainstream-desktop" \
@@ -7912,13 +7914,13 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		|| "${work_profile}" == "realtime-hpc" \
 		|| "${work_profile}" == "throughput-hpc" \
 	]] ; then
-		ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel overhead, maximize computation time
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 		if [[ "${work_profile}" == "green-hpc" ]] ; then
+			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
@@ -7929,6 +7931,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
 		elif [[ "${work_profile}" == "greenest-hpc" ]] ; then
+			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
@@ -7942,6 +7945,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			   "${work_profile}" == "hpc" \
 			|| "${work_profile}" == "throughput-hpc" \
 		]] ; then
+			ot-kernel_set_kconfig_set_lowest_timer_hz # Minimize kernel space time, maximize user space time
 			ot-kernel_set_kconfig_set_tcp_congestion_control_default "dctcp"
 			ot-kernel_set_kconfig_slab_allocator "slub"
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -7952,6 +7956,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			fi
 			ot-kernel_iosched_max_throughput
 		elif [[ "${work_profile}" == "realtime-hpc" ]] ; then
+			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
@@ -7978,8 +7983,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 	elif [[ \
 		   "${work_profile}" == "pi-deep-learning" \
 		|| "${work_profile}" == "pi-music-production" \
+		|| "${work_profile}" == "ros" \
 	]] ; then
-		ot-kernel_set_kconfig_set_default_timer_hz
+	# ros ~ robotics
+		ot-kernel_set_kconfig_set_highest_timer_hz
 		ot-kernel_set_kconfig_no_hz_full
 		ot-kernel_set_rt_rcu
 		# ML/DL case for self-driving car/drone
