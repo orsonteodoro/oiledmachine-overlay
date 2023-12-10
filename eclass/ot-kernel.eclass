@@ -7637,9 +7637,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 		fi
 		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+			ot-kernel_unset_configopt "CONFIG_SWAP"
 			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "0" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-				ot-kernel_unset_configopt "CONFIG_SWAP"
 			else
 				:; # Added on demand via pkgflags
 			fi
@@ -8814,6 +8814,16 @@ einfo "Disabling overdrive on the amdgpu driver."
 	fi
 }
 
+# @FUNCTION: ot-kernel_rt_disable_swap
+# @DESCRIPTION:
+# Disable swap when PREEMPT_RT is being used.
+ot-kernel_rt_disable_swap() {
+	if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+ewarn "Disabling swap for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE=y."
+		ot-kernel_unset_configopt "CONFIG_SWAP"
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -8907,6 +8917,7 @@ einfo
 	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 		ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
+	ot-kernel_rt_disable_swap
 	ot-kernel_set_at_system
 	ot-kernel_set_tcca
 	ot-kernel_set_iosched_kconfig
