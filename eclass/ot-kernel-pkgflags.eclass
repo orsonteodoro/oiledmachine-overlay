@@ -10644,7 +10644,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["desktop-guest-vm"]="video"
         ["dvr"]="video"
         ["file-server"]="server"
-        ["gamedev"]="input"
+        ["gamedev"]="throughput-interactive"
         ["gaming-guest-vm"]="input"
         ["gpu-gaming-laptop"]="input"
         ["green-hpc"]="power"
@@ -10662,7 +10662,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["media-player"]="video"
         ["media-server"]="server"
         ["pi-audio-player"]="audio"
-        ["pi-deep-learning"]="throughput-headless"
+        ["pi-deep-learning"]="input"
         ["pi-gaming"]="input"
         ["pi-media-player"]="video"
         ["pi-music-production"]="audio"
@@ -10674,7 +10674,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["renderfarm-dedicated"]="throughput-headless"
         ["renderfarm-workstation"]="throughput-interactive"
         ["sdr"]="audio"
-        ["smartphone"]="video"
+        ["smartphone"]="audio"
         ["solar-desktop"]="input"
         ["solar-gaming"]="input"
         ["tablet"]="power"
@@ -10682,7 +10682,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["video-conferencing"]="audio"
         ["voip"]="audio"
         ["web-server"]="server"
-        ["workstation"]="input"
+        ["workstation"]="throughput-interactive"
 )
 
 # intermediate value -> canonical value without PREEMPT_RT

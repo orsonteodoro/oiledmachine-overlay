@@ -7472,7 +7472,11 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		if grep -q -E -e "^CONFIG_CFG80211=(y|m)" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_DEFAULT_PS"
 		fi
-		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
+		if [[ "${work_profile}" == "smartphone" ]] ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT"
+		else
+			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
+		fi
 		ot-kernel_y_configopt "CONFIG_PM"
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
