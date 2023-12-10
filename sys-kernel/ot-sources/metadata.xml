@@ -2685,6 +2685,10 @@ unset OT_KERNEL_PRIVATE_KEY
     recommended to use swap if the peak memory exceeds the RAM.  Otherwise,
     it should be disabled.  Peak memory is usually around 12 GB.
 
+    When using OT_KERNEL_CONFIG_MODE="assist" with PREEMPT_RT=y as a result of
+    OT_KERNEL_USE="rt" or OT_KERNEL_WORK_PROFILE="digital-audio-workstation",
+    swap will always be disabled.
+
 
 
     OT_KERNEL_TARGET_TRIPLE - The target triple (CHOST) to use when
