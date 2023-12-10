@@ -10631,10 +10631,14 @@ ot-kernel_supports_rt() {
 # Wrapper to set kernel config preempt
 ot-kernel_set_preempt() {
 	local preempt_option="${1}"
+	local coldfire="0"
+	if grep -q -e "^CONFIG_COLDFIRE=y" "${path_config}" ; then
+		coldfire="1"
+	fi
 	if [[ \
-		   "${arch}" == "um" \
+		 ( "${arch}" == "m86k" && "${coldfire}" == "0" ) \
+		|| "${arch}" == "um" \
 		|| "${arch}" == "alpha" \
-		|| "${arch}" == "m86k" \
 		|| "${arch}" == "hexagon" \
 	]] ; then
 	# Arches that do not support preempt
@@ -10647,11 +10651,17 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 		fi
 	else
 		if ot-kernel_supports_rt && ot-kernel_use rt ; then
-	# Real time cannot be stopped or dropped.
 			ot-kernel_unset_configopt "CONFIG_PREEMPT"
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 			ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
+			if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+	# Real time cannot be stopped or dropped.
+				:;
+			else
+	# Promote/demote
+				ot-kernel_y_configopt "${preempt_option}"
+			fi
 		else
 	# Non RT case
 			ot-kernel_unset_configopt "CONFIG_PREEMPT" # Low latency
@@ -10659,9 +10669,10 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY" # Balanced
 			if [[ "${preempt_option}" == "CONFIG_PREEMPT_RT" ]] ; then
-	# Downgrade
+	# Downgrade latency
 				ot-kernel_y_configopt "CONFIG_PREEMPT"
 			else
+	# Promote/demote
 				ot-kernel_y_configopt "${preempt_option}"
 			fi
 		fi
