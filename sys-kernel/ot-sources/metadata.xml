@@ -608,8 +608,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     The example builder profile above assumes stability and minimal downtime.
 
     The gaming profile above is similar to my gaming experience and principles
-    in the mid to late 2000s.  Frames Per Second (FPS) is equally important to
-    input latency.  Both are more important than security.
+    in the mid to late 2000s.  Frames Per Second (FPS) is as equally important
+    as input latency.  Both are more important than security.
 
     The USE flag controls downloading and the OT_KERNEL_USE controls applying
     the patch per profile.
