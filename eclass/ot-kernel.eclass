@@ -9094,8 +9094,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
 ewarn
 	if [[ "${hardening_level}" =~ "untrusted" ]] ; then
 eerror
-eerror "Please change OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove all"
-eerror "hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
+eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
 eerror
 		die
 	fi
@@ -9167,8 +9167,8 @@ eerror
 
 		if [[ "${hardening_level}" =~ "untrusted" ]] ; then
 eerror
-eerror "Please change OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove all"
-eerror "hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
+eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
 eerror
 			die
 		fi
