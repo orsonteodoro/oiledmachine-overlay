@@ -1495,7 +1495,11 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       trusted - no hardening applied.  Used for single user presentation,
         LAN tournaments, pure performance like in house renderfarm setups.
 
-      unset - use practically secure settings with defaults.
+      unset - use practically secure settings with defaults.  If modified
+        previously, it uses the previous existing settings.
+
+      practical - reset back to the practical secure defaults. (UNIMPLEMENTED,
+        PLANNED)
 
       untrusted - full hardening.  Used for multiuser computer not in locked room
         such as on the road or traveling. 
