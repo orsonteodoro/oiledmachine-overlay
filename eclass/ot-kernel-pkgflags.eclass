@@ -10650,6 +10650,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["desktop-guest-vm"]="video"
         ["dvr"]="video"
         ["file-server"]="server"
+        ["gaming-tournament"]="input"
         ["gamedev"]="throughput-interactive"
         ["gaming-guest-vm"]="input"
         ["gpu-gaming-laptop"]="input"

@@ -7666,10 +7666,7 @@ ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work
 ewarn "OT_KERNEL_WORK_PROFILE=\"arcade\" is deprecated.  Use either pi-gaming or pro-gaming instead."
 		die
 	elif [[ "${work_profile}" == "lan-tournament" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=\"lan-tournament\" is deprecated.  Use pro-gaming instead."
-		die
-	elif [[ "${work_profile}" == "tournament" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=\"tournament\" is deprecated.  Use pro-gaming instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"lan-tournament\" is deprecated.  Use gaming-tournament instead."
 		die
 	elif [[ "${work_profile}" == "sbc" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"sbc\" is deprecated.  Use pi-audio-player, pi-deep-learning, pi-gaming, pi-music-production, pi-video-player, pi-web-browser instead."
@@ -7682,6 +7679,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-gamer\" is deprecated.  Use live-gamer-
 		die
 	elif [[ "${work_profile}" == "streamer-reporter" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-reporter\" is deprecated.  Use live-video-reporting instead."
+		die
+	elif [[ "${work_profile}" == "tournament" ]] ; then
+# Prevent ambiguous connection to robotics tournament.
+ewarn "OT_KERNEL_WORK_PROFILE=\"tournament\" is deprecated.  Use gaming-tournament instead."
 		die
 	elif [[ "${work_profile}" == "video-smartphone" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"video-smartphone\" is deprecated.  Use smartphone or smartphone-voice instead."
@@ -7845,7 +7846,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instea
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_iosched "none" "none"
 	elif [[ \
-		   "${work_profile}" == "pro-gaming" \
+		   "${work_profile}" == "gaming-tournament" \
+		|| "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "presentation" \
 	]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
@@ -7865,6 +7867,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instea
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
+		if [[ "${work_profile}" == "gaming-tournament" ]] ; then
+			ot-kernel_optimize_gaming_tornament
+		fi
 	elif [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "gamedev" \
@@ -9061,6 +9066,36 @@ einfo "Disabling overdrive on the amdgpu driver."
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.ppfeaturemask=[x0-9]+"
 			ot-kernel_set_kconfig_kernel_cmdline "${result}"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_optimize_gaming_tournament
+# @DESCRIPTION:
+# Optimize the kernel for gaming performance.
+ot-kernel_optimize_gaming_tornament() {
+ewarn
+ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
+ewarn
+	if [[ "${hardening_level}" =~ "untrusted" ]] ; then
+eerror
+eerror "Please change OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove all"
+eerror "hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror
+		die
+	fi
+	if [[ "${OT_KERNEL_CPU_MICROCODE}" == "1" ]] ; then
+ewarn "Disabling microcode for OT_KERNEL_WORK_PROFILE=\"${work_profile}\".  If you do not like this, use the pro-gaming profile instead."
+# Drops FPS.
+		ot-kernel_unset_configopt "CONFIG_MICROCODE"
+	fi
+	if ot-kernel_use uksm ; then
+# Remove the unintended consequences of applying the patch.
+# UKSM also thrashes a lot so lets get rid of that.
+eerror
+eerror "Please remove uksm from OT_KERNEL_USE in"
+eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror
+		die
 	fi
 }
 

@@ -3011,6 +3011,7 @@ unset OT_KERNEL_PRIVATE_KEY
       file-server
       gamedev
       gaming-guest-vm
+      gaming-tournament
       gpu-gaming-laptop
       green-hpc
       green-pc
@@ -3047,7 +3048,6 @@ unset OT_KERNEL_PRIVATE_KEY
       tablet
       throughput-hpc
       touchscreen-laptop
-      tournament
       video-conferencing
       voip
       web-server
