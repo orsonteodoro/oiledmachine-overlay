@@ -622,6 +622,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     the systemwide values.  Upstream has a negative attitude for -O3 and
     criticize the code quality.
 
+    To generate the kernel config, you may set OT_KERNEL_MENUCONFIG_UI to
+    menuconfig then emerge, then change it back to disabled then emerge.
+
 
 
     Environment variables overview:
