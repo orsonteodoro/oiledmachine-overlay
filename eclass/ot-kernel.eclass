@@ -3872,30 +3872,60 @@ ot-kernel_set_kconfig_boot_args() {
 # Sets the kernel config for Control Flow Integrity (CFI)
 ot-kernel_set_kconfig_cfi() {
 	_ot-kernel_validate_hardening_level
-	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
+	if \
+		[[ \
+			   "${hardening_level}" == "custom" \
+			|| "${hardening_level}" == "manual" \
+		]] \
+	; then
 		:;
-	elif [[ "${hardening_level}" == "untrusted" \
-		|| "${hardening_level}" == "untrusted-distant" ]] \
-		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
-		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
-		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) && die "CFI requires LLVM >= 12 on arm64"
-		[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 13 )) && die "CFI requires LLVM >= 13.0.1 on x86_64"
+	elif \
+		[[ \
+			   "${hardening_level}" == "untrusted" \
+			|| "${hardening_level}" == "untrusted-distant" \
+		]] \
+			&&
+		has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
+			&& \
+		[[ \
+			   "${arch}" == "x86_64"
+			|| "${arch}" == "arm64" \
+		]] \
+	; then
+		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) ; then
+eerror
+eerror "CFI requires LLVM >= 12 on arm64"
+eerror
+			die
+		fi
+		if [[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 13 )) ; then
+eerror
+eerror "CFI requires LLVM >= 13.0.1 on x86_64"
+eerror
+			die
+		fi
 einfo "Enabling CFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_ARCH_SUPPORTS_CFI_CLANG"
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG"
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-	elif [[ "${hardening_level}" == "performance" \
-		|| "${hardening_level}" == "trusted" ]] ; then
+	elif [[ \
+		   "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "trusted" \
+	]] ; then
 einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
-	if [[ "${hardening_level}" == "untrusted" \
-		|| "${hardening_level}" == "untrusted-distant" ]] \
+	if \
+		[[ \
+			   "${hardening_level}" == "untrusted" \
+			|| "${hardening_level}" == "untrusted-distant" \
+		]] \
 		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
-		&& [[ "${arch}" == "arm64" ]] ; then
+		&& [[ "${arch}" == "arm64" ]] \
+	; then
 		# Need to recheck
 ewarn "You must manually set arm64 CFI in the .config."
 	fi
@@ -3906,14 +3936,35 @@ ewarn "You must manually set arm64 CFI in the .config."
 # Sets the kernel config for Control Flow Integrity (CFI)
 ot-kernel_set_kconfig_kcfi() {
 	_ot-kernel_validate_hardening_level
-	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
+	if \
+		[[ \
+			   "${hardening_level}" == "custom" \
+			|| "${hardening_level}" == "manual" \
+		]] \
+	; then
 		:;
-	elif [[ "${hardening_level}" == "untrusted" \
-		|| "${hardening_level}" == "untrusted-distant" ]] \
-		&& has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
-		&& [[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] ; then
-		[[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on arm64"
-		[[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 15 )) && die "CFI requires LLVM >= 15 on x86_64"
+	elif \
+		[[ \
+			   "${hardening_level}" == "untrusted" \
+			|| "${hardening_level}" == "untrusted-distant" \
+		]] \
+			&& \
+		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
+			&& \
+		[[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] \
+	; then
+		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) ; then
+eerror
+eerror "CFI requires LLVM >= 15 on arm64"
+eerror
+			die
+		fi
+		if [[ "${arch}" == "x86_64" ]] && (( ${llvm_slot} < 15 )) ; then
+eerror
+eerror "CFI requires LLVM >= 15 on x86_64"
+eerror
+			die
+		fi
 		if ! test-flags -fsanitize=kcfi ; then
 eerror
 eerror "Both >=sys-devel/clang-15 and >=sys-devel/llvm-15 must be patched for"
@@ -3930,16 +3981,26 @@ einfo "Enabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-	elif [[ "${hardening_level}" == "performance" \
-		|| "${hardening_level}" == "trusted" ]] ; then
+	elif \
+		[[ \
+			   "${hardening_level}" == "performance" \
+			|| "${hardening_level}" == "trusted" \
+		]] \
+	; then
 einfo "Disabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
 
-	if [[ "${hardening_level}" == "untrusted" \
-		|| "${hardening_level}" == "untrusted-distant" ]] \
-		&& has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
-		&& [[ "${arch}" == "arm64" ]] ; then
+	if \
+		[[ \
+			   "${hardening_level}" == "untrusted" \
+			|| "${hardening_level}" == "untrusted-distant" \
+		]] \
+			&& \
+		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
+			&& \
+		[[ "${arch}" == "arm64" ]] \
+	; then
 		# Need to recheck
 ewarn "You must manually set arm64 KCFI in the .config."
 	fi
@@ -4747,6 +4808,18 @@ eerror
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "1"
 		fi
+	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
+		ot-kernel_unset_configopt "CONFIG_KSM"
+		ot-kernel_unset_configopt "CONFIG_UKSM"
+		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+# This disables patching with uksm or unintended consequences of patching with"
+# it.
+eerror
+eerror "Please disable uksm for OT_KERNEL_HARDENING_LEVEL=${hardening_level}"
+eerror "for OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
+eerror
+			die
+		fi
 	elif [[ \
 		"${hardening_level}" == "untrusted" \
 	]] ; then
@@ -4835,6 +4908,18 @@ eerror
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "1"
+		fi
+	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
+		ot-kernel_unset_configopt "CONFIG_KSM"
+		ot-kernel_unset_configopt "CONFIG_UKSM"
+		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+# This disables patching with uksm or unintended consequences of patching with
+# it.
+eerror
+eerror "Please disable uksm for OT_KERNEL_HARDENING_LEVEL=${hardening_level}"
+eerror "for OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
+eerror
+			die
 		fi
 	fi
 }
@@ -6631,6 +6716,13 @@ ewarn
 # Sets the kernel config for UKSM
 ot-kernel_set_kconfig_uksm() {
 	if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+eerror
+eerror "Please remove uksm from OT_KERNEL_USE for OT_KERNEL_USE=\"rt\" for"
+eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
+eerror
+		die
+	fi
+	if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
 einfo "Changed .config to use UKSM"
 		ot-kernel_y_configopt "CONFIG_KSM"
 		ot-kernel_y_configopt "CONFIG_UKSM"
@@ -7506,7 +7598,7 @@ ot-kernel_set_kconfig_fallback_preempt() {
 			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
 		fi
 		if ot-kernel_use rt ; then
-ewarn "No realtime packages detected.  Consider removing rt from OT_KERNEL_USE."
+ewarn "No realtime packages detected.  Consider removing rt from OT_KERNEL_USE from OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
 		fi
 	fi
 }
@@ -7566,7 +7658,7 @@ ewarn
 		]] ; then
 			:;
 		else
-ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}"
+ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} and for OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
 		fi
 	fi
 
@@ -9001,8 +9093,33 @@ ewarn "Disabling smt for PREEMPT_RT=y.  If you do not like this, disable rt from
 		fi
 
 		if grep -q -e "^CONFIG_TRANSPARENT_HUGEPAGE=y" "${path_config}" ; then
-ewarn "Disabling Transparent HugePage for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
+ewarn "Disabling Transparent HugePage (THP) for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
 			ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
+		fi
+
+		if grep -q -e "^CONFIG_KSM=y" "${path_config}" ; then
+ewarn "Disabling Kernel Samepage Merging (KSM) for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
+			ot-kernel_unset_configopt "CONFIG_KSM"
+		fi
+		if grep -q -e "^CONFIG_UKSM=y" "${path_config}" ; then
+ewarn "Disabling Ultra Kernel Samepage Merging (UKSM) for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
+			ot-kernel_unset_configopt "CONFIG_UKSM"
+		fi
+		if ot-kernel_use uksm ; then
+# Remove any unintended consequences or latency from patches.
+eerror
+eerror "Please remove uksm from OT_KERNEL_USE in"
+eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror
+			die
+		fi
+
+		if [[ "${hardening_level}" =~ "untrusted" ]] ; then
+eerror
+eerror "Please change OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove all"
+eerror "hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror
+			die
 		fi
 	else
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt"
@@ -9047,6 +9164,15 @@ einfo
 einfo "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
 einfo
 	fi
+
+	#
+	# hardening_level meanings:
+	#
+	#   trusted - no hardening applied
+	#   untrusted - full hardening applied
+	#   untrusted-distant - some hardening applied except for physical access mitigation
+	#
+	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 
 	local llvm_slot=$(get_llvm_slot)
 	local gcc_slot=$(get_gcc_slot)
@@ -9094,16 +9220,8 @@ einfo
 	ot-kernel_set_webcam
 	ot-kernel_set_mobile_camera
 
-	#
-	# hardening_level meanings:
-	#
-	#   trusted - no hardening applied
-	#   untrusted - full hardening applied
-	#   untrusted-distant - some hardening applied except for physical access mitigation
-	#
-	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
-		ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
+	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
 	ot-kernel_set_kconfig_fallback_preempt
 	ot-kernel_optimize_realtime
 	ot-kernel_set_at_system
@@ -11449,8 +11567,8 @@ ewarn "For full L1TF mitigation for HT processors, read the Wikipedia article."
 ewarn "https://en.wikipedia.org/wiki/Foreshadow"
 ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/core-scheduling.html"
 ewarn
-ewarn "Partial mitgation is enabled for OT_KERNEL_HARDENING_LEVEL=untrusted"
-ewarn "OT_KERNEL_HARDENING_LEVEL=untrusted-distant"
+ewarn "Partial mitgation is enabled for OT_KERNEL_HARDENING_LEVEL=\"untrusted\""
+ewarn "OT_KERNEL_HARDENING_LEVEL=\"untrusted-distant\""
 ewarn
 
 ewarn
@@ -11466,8 +11584,8 @@ ewarn "  https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability"
 ewarn
 ewarn "Requirements to mitigate:"
 ewarn
-ewarn "  (1) AMD CPUs:    USE=linux-firmware"
-ewarn "      Intel CPUs:  USE=intel-microcode"
+ewarn "  (1) AMD CPUs:    USE=\"linux-firmware\""
+ewarn "      Intel CPUs:  USE=\"intel-microcode\""
 ewarn "  (2) For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
 ewarn "      For config custom mode, see"
 ewarn "      https://wiki.gentoo.org/wiki/AMD_microcode"
