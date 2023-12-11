@@ -4564,7 +4564,7 @@ ot-kernel_set_kconfig_l1tf_mitigations() {
 		fi
 
 		if [[ "${mode}" == "1" ]] ; then
-	# SMT on, full hypervisor mitigation
+	# SMT off, full hypervisor mitigation
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "l1tf=full,force"
 		else
 	# SMT on, no mitigation
