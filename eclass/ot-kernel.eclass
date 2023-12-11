@@ -3965,7 +3965,7 @@ eerror "CFI requires LLVM >= 15 on x86_64"
 eerror
 			die
 		fi
-		if ! test-flags -fsanitize=kcfi ; then
+		if ! test-flags -fsanitize=kcfi 2>/dev/null 1>/dev/null ; then
 eerror
 eerror "Both >=sys-devel/clang-15 and >=sys-devel/llvm-15 must be patched for"
 eerror "-fsanitize=kcfi support."
@@ -4782,7 +4782,7 @@ eerror
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
 			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
-			if ! test-flags "-mfunction-return=thunk-extern" ; then
+			if ! test-flags "-mfunction-return=thunk-extern" 2>/dev/null 1>/dev/null ; then
 				# For rethunk
 eerror
 eerror "Please rebuild =clang-15.0.0.9999 or switch to >= gcc-8.1"
@@ -4883,7 +4883,7 @@ eerror
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 			ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
-			if ! test-flags "-mfunction-return=thunk-extern" ; then
+			if ! test-flags "-mfunction-return=thunk-extern" 2>/dev/null 1>/dev/null ; then
 				# For rethunk
 eerror
 eerror "Please rebuild =clang-15.0.0.9999 or switch to >= gcc-8.1"
@@ -5096,7 +5096,7 @@ ewarn
 				| grep -e "${kflag}" \
 				| grep -E -o -e "(-march=|-mtune=)[a-z0-9_.-]+"))
 			for x in ${march_flags[@]} ; do
-				if ! test-flags "${x}" ; then
+				if ! test-flags "${x}" 2>/dev/null 1>/dev/null ; then
 					# This test is for kernel_compiler_patch.
 eerror
 eerror "Failed compiler flag test for ${x}."
@@ -5573,6 +5573,8 @@ einfo "Changed .config to use Multi-Gen LRU"
 # @DESCRIPTION:
 # Sets the kernel config for the compiler flag based on CFLAGS.
 ot-kernel_set_kconfig_oflag() {
+	ot-kernel_optimize_gaming_oflag
+	ot-kernel_optimize_gaming_tornament_oflag
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_SIZE"
 	ot-kernel_unset_configopt "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE_O3"
@@ -7883,7 +7885,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instea
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
-		if [[ "${work_profile}" == "gaming-tournament" ]] ; then
+		if [[ "${work_profile}" == "pro-gaming" ]] ; then
+			ot-kernel_optimize_gaming
+		elif [[ "${work_profile}" == "gaming-tournament" ]] ; then
 			ot-kernel_optimize_gaming_tornament
 		fi
 	elif [[ \
@@ -9085,9 +9089,54 @@ einfo "Disabling overdrive on the amdgpu driver."
 	fi
 }
 
+# @FUNCTION: ot-kernel_optimize_gaming_oflag
+# @DESCRIPTION:
+# Set gaming optimizations before main set.
+ot-kernel_optimize_gaming_oflag() {
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	[[ "${work_profile}" == "pro-gaming" ]] || return
+	filter-flags '-O*'
+	append-flags '-O3'
+}
+
 # @FUNCTION: ot-kernel_optimize_gaming_tournament
 # @DESCRIPTION:
-# Optimize the kernel for gaming performance.
+# Optimize the kernel for gaming performance for the top 10%.
+ot-kernel_optimize_gaming() {
+ewarn
+ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
+ewarn
+	if [[ "${hardening_level}" =~ "untrusted" ]] ; then
+eerror
+eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
+eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror
+		die
+	fi
+	if ot-kernel_use uksm ; then
+# Remove the unintended consequences of applying the patch.
+# UKSM also thrashes a lot so lets get rid of that.
+eerror
+eerror "Please remove uksm from OT_KERNEL_USE in"
+eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
+eerror
+		die
+	fi
+}
+
+# @FUNCTION: ot-kernel_optimize_gaming_tournament_oflag
+# @DESCRIPTION:
+# Set game-tournament optimizations before main set
+ot-kernel_optimize_gaming_tornament_oflag() {
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	[[ "${work_profile}" == "gaming-tournament" ]] || return
+	filter-flags '-O*'
+	append-flags '-O3'
+}
+
+# @FUNCTION: ot-kernel_optimize_gaming_tournament
+# @DESCRIPTION:
+# Optimize the kernel for gaming performance for the top 1%.
 ot-kernel_optimize_gaming_tornament() {
 ewarn
 ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
@@ -9599,7 +9648,7 @@ einfo
 	local march_flags=($(echo "${CFLAGS}" \
 		| grep -E -e "(-march=[^[:space:]]+|-mcpu=[^[:space:]]+)"))
 	for x in ${march_flags[@]} ; do
-		if ! test-flags "${x}" ; then
+		if ! test-flags "${x}" 2>/dev/null 1>/dev/null ; then
 			# This test is for kernel_compiler_patch.
 eerror
 eerror "Failed compiler flag test for ${x}."

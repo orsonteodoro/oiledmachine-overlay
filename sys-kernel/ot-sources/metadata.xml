@@ -524,46 +524,103 @@
 
 
 
-    An example env file located in /etc/portage/ot-sources/5.16/ot/x86_64/env:
+    An example of a *builder* env file located in /etc/portage/ot-sources/6.1/builder/x86_64/env:
 
-CRYPTSETUP_CIPHERS="aes anubis camellia cast6 twofish serpent"
-CRYPTSETUP_MODES="adiantum cbc ctr ofb xts"
+CFLAGS="-O2 -pipe"
+CXXFLAGS="-O2 -pipe"
+LDFLAGS="-O2"
 OT_KERNEL_ARCH="x86_64"
 OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS="1"
-OT_KERNEL_BOOT_ARGS="delayacct nohz_full=1-7"
+OT_KERNEL_BOOT_ARGS="delayacct"
 OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
-OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"	# For early KMS.  Disable line if using external kernel driver package.
+OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"
 OT_KERNEL_BUILD="1"
 OT_KERNEL_BUILD_ALL_MODULES_AS="y"
-OT_KERNEL_CONFIG="/etc/kernels/kernel-config-5.16-ot-x86_64"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.1-builder-x86_64"
 OT_KERNEL_CONFIG_MODE="assist"
 OT_KERNEL_CPU_MICROCODE="1"
-OT_KERNEL_CPU_SCHED="cfs"
+OT_KERNEL_CPU_SCHED="cfs-throughput"
 OT_KERNEL_DISABLE="0"
-OT_KERNEL_EXTRAVERSION="ot"
-OT_KERNEL_FIRMWARE="regulatory"
-OT_KERNEL_HARDENING_LEVEL="untrusted"
+OT_KERNEL_EXTRAVERSION="builder"
+OT_KERNEL_FIRMWARE="polaris10 regulatory"
+#OT_KERNEL_HARDENING_LEVEL=""
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
 OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
-OT_KERNEL_LOGO_COUNT=1
-OT_KERNEL_LOGO_FOOTNOTES="Photo:  Comet 2023.01.27 C-22-E3-ZTF 500 F5.  Credits: Auvo Korpi.  License: CC-BY-2.0."
-OT_KERNEL_LOGO_FOOTNOTES_ON_INIT="1"
-OT_KERNEL_LOGO_MAGICK_ARGS="-geometry 480x -colors 224"
-OT_KERNEL_LOGO_URI="https://upload.wikimedia.org/wikipedia/commons/4/42/Comet_2023.01.27_C-22-E3-ZTF_500_F5.jpg"
 OT_KERNEL_LSMS="auto"
-OT_KERNEL_MESSAGE="Return lost computer to ... at address ... call me at ..."
+OT_KERNEL_MESSAGE="I :heart: builder kernel"
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
+OT_KERNEL_MENUCONFIG_COLORS="blackbg"
 OT_KERNEL_MENUCONFIG_RUN_AT="pre"
 OT_KERNEL_MENUCONFIG_UI="disabled"
-OT_KERNEL_PKGFLAGS_ACCEPT[S05309e2]=1
-OT_KERNEL_PKGFLAGS_ACCEPT[S351365c]=1
-OT_KERNEL_PKGFLAGS_REJECT[S7422820]=1
 OT_KERNEL_SIGN_MODULES="1"
+OT_KERNEL_SLAB_ALLOCATOR="slub"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
-OT_KERNEL_WORK_PROFILE="workstation"
+OT_KERNEL_USE="genpatches -lto -pgo -zen-sauce"
+OT_KERNEL_VERBOSITY=1
+OT_KERNEL_WORK_PROFILE="builder"
 OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
+
+    An example of a *gaming* env file located in /etc/portage/ot-sources/6.1/gaming/x86_64/env:
+
+CFLAGS="-march=native -O3 -flto -pipe"
+CXXFLAGS="-march=native -O3 -flto -pipe"
+LDFLAGS="-march=native -O3 -fuse=lld"
+OT_KERNEL_ARCH="x86_64"
+OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS="1"
+OT_KERNEL_BOOT_ARGS="delayacct"
+OT_KERNEL_BOOT_DECOMPRESSOR="zstd"
+OT_KERNEL_BOOT_SUBSYSTEMS_APPEND="drivers/char/agp drivers/gpu drivers/video"
+OT_KERNEL_BUILD="1"
+OT_KERNEL_BUILD_ALL_MODULES_AS="y"
+OT_KERNEL_CONFIG="/etc/kernels/kernel-config-6.1-gaming-x86_64"
+OT_KERNEL_CONFIG_MODE="assist"
+OT_KERNEL_CPU_MICROCODE="0"
+OT_KERNEL_CPU_SCHED="prjc-bmq"
+OT_KERNEL_DISABLE="0"
+OT_KERNEL_EXTRAVERSION="gaming"
+OT_KERNEL_FIRMWARE="polaris10 regulatory"
+OT_KERNEL_HARDENING_LEVEL="performance"
+OT_KERNEL_INSTALL_SOURCE_CODE="1"
+OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
+OT_KERNEL_LSMS="auto"
+OT_KERNEL_MESSAGE="I :heart: tourney kernel"
+OT_KERNEL_MODULES_SUPPORT="1"
+OT_KERNEL_MODULES_COMPRESSOR="zstd"
+OT_KERNEL_MENUCONFIG_COLORS="blackbg"
+OT_KERNEL_MENUCONFIG_RUN_AT="pre"
+OT_KERNEL_MENUCONFIG_UI="disabled"
+OT_KERNEL_PGO_FLAVOR="GCC_PDO"
+OT_KERNEL_SIGN_MODULES="1"
+OT_KERNEL_SLAB_ALLOCATOR="slab"
+OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
+OT_KERNEL_VERBOSITY=1
+OT_KERNEL_USE="genpatches lto pgo zen-sauce"
+OT_KERNEL_WORK_PROFILE="gaming-tournament"
+OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
+OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
+
+
+
+    Commentary about the above settings:
+
+    The example builder profile above assumes stability and minimal downtime.
+
+    The gaming profile above is similar to my gaming experience and principles
+    in the mid to late 2000s.  Frames Per Second (FPS) is equally important to
+    input latency.  Both are more important than security.
+
+    The USE flag controls downloading and the OT_KERNEL_USE controls applying
+    the patch per profile.
+
+    Slub is used for high memory use which is typical for compiling.  Slab
+    is preferred for caching and runtime performance.
+
+    The CFLAGS, CXXFLAGS, LDFLAGS should be set per profile to properly
+    control the stability and performance.  If they are not set, they will use
+    the systemwide values.  Upstream has a negative attitude for -O3 and
+    criticize the code quality.
 
 
 
@@ -1437,6 +1494,8 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       trusted - no hardening applied.  Used for single user presentation,
         LAN tournaments, pure performance like in house renderfarm setups.
+
+      unset - use practically secure settings with defaults.
 
       untrusted - full hardening.  Used for multiuser computer not in locked room
         such as on the road or traveling. 
