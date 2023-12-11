@@ -2621,7 +2621,7 @@ ot-kernel_src_prepare() {
 		check_zen_tune_deps
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
-		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
+		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 
 		if use pgo ; then
 			if [[ -e "${OT_KERNEL_PGO_DATA_DIR}/${extraversion}-${arch}" ]] ; then
@@ -2668,7 +2668,7 @@ eerror
 		ot-kernel_load_config
 		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
-		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
+		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 		local cpu_sched="${OT_KERNEL_CPU_SCHED}"
 		[[ -z "${cpu_sched}" ]] && cpu_sched="cfs"
 		ot-kernel_use rt && cpu_sched="cfs"
@@ -3995,7 +3995,7 @@ einfo "Using lazy as the default IOMMU domain type for mitigation against DMA at
 
 		# Don't use lscpu/cpuinfo autodetect if using distcc or
 		# Cross-compile but use the config itself to guestimate.
-		if [[ "${arch}" =~ "x86" ]] ; then
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			local found=0
 			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
 einfo "Adding IOMMU support (VT-d)"
@@ -4292,7 +4292,7 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 	done
 
 	# The BCJ filters improves compression ratios.
-	if [[ "${arch}" =~ ("x86"|"x86_64") ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
 		ot-kernel_y_configopt "CONFIG_XZ_DEC_X86"
 	fi
 
@@ -4300,7 +4300,7 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 		ot-kernel_y_configopt "CONFIG_XZ_DEC_POWERPC"
 	fi
 
-	if [[ "${arch}" == "arm" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
+	if [[ "${arch}" == "arm" || "${arch}" == "arm64" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
 		ot-kernel_y_configopt "CONFIG_XZ_DEC_ARM"
 	fi
 
@@ -4308,7 +4308,7 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 		ot-kernel_y_configopt "CONFIG_XZ_DEC_ARMTHUMB"
 	fi
 
-	if [[ "${arch}" == "sparc" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc32" || "${arch}" == "sparc64" ]] && grep -q -E -e "^CONFIG_XZ_DEC=y" "${path_config}" ; then
 		ot-kernel_y_configopt "CONFIG_XZ_DEC_SPARC"
 	fi
 
@@ -4482,25 +4482,25 @@ ot-kernel_set_kconfig_dmesg() {
 		dmesg="${OT_KERNEL_DMESG:-0}"
 	fi
 	ot-kernel_y_configopt "CONFIG_EXPERT"
-	if [[ "${arch}" == "x86" ]] ; then
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
 		ot-kernel_unset_configopt "CONFIG_X86_VERBOSE_BOOTUP"
 	fi
 	if [[ "${dmesg}" == "1" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PRINTK"
-#		if [[ "${arch}" == "x86" ]] ; then
+#		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 #			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
 #		fi
 	elif [[ "${dmesg}" == "0" ]] ; then
 		ot-kernel_unset_configopt "CONFIG_PRINTK"
-		if [[ "${arch}" == "x86" ]] ; then
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_unset_configopt "CONFIG_EARLY_PRINTK"
 			ot-kernel_unset_configopt "CONFIG_X86_VERBOSE_BOOTUP"
 		fi
 		_OT_KERNEL_PRINK_DISABLED=1
 	elif [[ "${dmesg}" == "default" ]] ; then
 		ot-kernel_y_configopt "CONFIG_PRINTK"
-#		if [[ "${arch}" == "x86" ]] ; then
+#		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 #			ot-kernel_y_configopt "CONFIG_EARLY_PRINTK"
 #		fi
 		# See https://www.kernel.org/doc/html/latest/core-api/printk-basics.html
@@ -4539,6 +4539,15 @@ ot-kernel_set_kconfig_exfat() {
 		ot-kernel_y_configopt "CONFIG_EXFAT_FS"
 	else
 		ot-kernel_unset_configopt "CONFIG_EXFAT_FS"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_l1tf
+# @DESCRIPTION:
+# Set or remove the l1tf mitigation
+ot-kernel_set_kconfig_l1tf() {
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		:;
 	fi
 }
 
@@ -4633,7 +4642,7 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
-		if [[ "${arch}" == "x86" ]] ; then
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 		fi
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
@@ -4645,7 +4654,7 @@ einfo "Using ${hardening_level} hardening level"
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_OFF"
 			ot-kernel_y_configopt "CONFIG_EXPOLINE_AUTO"
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
-		elif [[ "${arch}" == "x86" ]] ; then
+		elif [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
 			local ready=0
 			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
@@ -4694,7 +4703,7 @@ eerror
 			elif [[ $(ot-kernel_get_cpu_mfg_id) == "hygon" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 			fi
-			if [[ "${arch}" == "x86" ]] ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 		fi
@@ -4715,7 +4724,9 @@ eerror
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 		ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
-		if [[ "${arch}" == "x86" ]] ; then
+		if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
+			ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
+		elif [[ "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
 		fi
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
@@ -4727,7 +4738,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_OFF"
 			ot-kernel_y_configopt "CONFIG_EXPOLINE_AUTO"
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
-		elif [[ "${arch}" == "x86" ]] ; then
+		elif [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
 			local ready=0
 			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
@@ -4776,7 +4787,7 @@ eerror
 			elif [[ $(ot-kernel_get_cpu_mfg_id) == "hygon" ]] ; then
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
 			fi
-			if [[ "${arch}" == "x86" ]] ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 		fi
@@ -4912,7 +4923,7 @@ ot-kernel_set_kconfig_iommu_domain_type() {
 # Sets the kernel config for the -march associated with the microarchitecture.
 # Takes in consideration the kernel_compiler_patch.
 ot-kernel_set_kconfig_march() {
-	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		if [[ "${X86_MICROARCH_OVERRIDE}" =~ ("manual"|"custom") ]] ; then
 einfo "Setting .config with ${X86_MICROARCH_OVERRIDE} march setting"
 		else
@@ -4975,7 +4986,7 @@ einfo "Passed check for ${x}"
 		fi
 	fi
 
-	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		if tc-is-cross-compiler ; then
 			# Cannot use -march=native if doing distcc.
 			if grep "^CONFIG_MNATIVE" "${path_config}" ; then
@@ -5696,7 +5707,7 @@ einfo "Page size:  8 KB"
 einfo "Page size:  4 KB"
 		fi
 	fi
-	if [[ "${arch}" == "parisc" ]] ; then
+	if [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
 		# hppa
 		if [[ \
 			   "${page_size}" == "4" \
@@ -6011,7 +6022,7 @@ einfo "Page size:  4 KB"
 	if [[ "${arch}" == "s390" ]] ; then
 einfo "Page size:  4 KB"
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc32" || "${arch}" == "sparc64" ]] ; then
 # Based on the compiler
 		if tc-cpp-is-true "defined(__sparc__) && defined(__arch64__)" ; then
 einfo "Page size:  8 KB" # 64-bit
@@ -6549,7 +6560,7 @@ einfo "Changed .config to use TRESOR (AES-NI)"
 		fi
 	fi
 
-	if has tresor_sysfs ${IUSE_EFFECTIVE} && ot-kernel_use tresor_sysfs && [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] ; then
+	if has tresor_sysfs ${IUSE_EFFECTIVE} && ot-kernel_use tresor_sysfs && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 einfo "Changed .config to use the TRESOR sysfs interface"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_TRESOR_SYSFS"
 
@@ -6820,13 +6831,39 @@ ot-kernel_set_kconfig_set_lowest_timer_hz() {
 # @DESCRIPTION:
 # Initializes the work kernel config
 ot-kernel_set_kconfig_work_profile_init() {
-	if [[ "${arch}" == "alpha" ]] ; then
+	if [[ \
+		"${arch}" == "alpha" \
+	]] ; then
 		ot-kernel_set_kconfig_reset_timer_hz_alpha
-	elif [[ "${arch}" == "arm" ]] ; then
+	elif [[ \
+		"${arch}" == "arm" \
+	]] ; then
 		ot-kernel_set_kconfig_reset_timer_hz_arm
-	elif [[ "${arch}" == "mips" ]] ; then
+	elif [[ \
+		"${arch}" == "mips" \
+	]] ; then
 		ot-kernel_set_kconfig_reset_timer_hz_mips
-	elif [[ "${arch}" =~ ("arm64"|"csky"|"hexagon"|"ia64"|"microblaze"|"nds32"|"nios2"|"openrisc"|"parisc"|"powerpc"|"riscv"|"s390"|"sh"|"sparc"|"x86") ]] ; then
+	elif [[ \
+		   "${arch}" == "arm64" \
+		|| "${arch}" == "csky" \
+		|| "${arch}" == "hexagon" \
+		|| "${arch}" == "ia64" \
+		|| "${arch}" == "microblaze" \
+		|| "${arch}" == "nds32" \
+		|| "${arch}" == "nios2" \
+		|| "${arch}" == "openrisc" \
+		|| "${arch}" == "parisc" \
+		|| "${arch}" == "parisc64" \
+		|| "${arch}" == "powerpc" \
+		|| "${arch}" == "riscv" \
+		|| "${arch}" == "s390" \
+		|| "${arch}" == "sh" \
+		|| "${arch}" == "sparc" \
+		|| "${arch}" == "sparc32" \
+		|| "${arch}" == "sparc64" \
+		|| "${arch}" == "x86" \
+		|| "${arch}" == "x86_64" \
+	]] ; then
 		ot-kernel_set_kconfig_reset_timer_hz
 	fi
 
@@ -6949,11 +6986,11 @@ ot-kernel_set_kconfig_abis() {
 	local lib_bitness=""
 	# Assumes stage3 tarball installed
 	[[ -e "/usr/lib/libbz2.so" ]] && lib_bitness=$(ot-kernel_get_lib_bitness $(readlink -f /usr/lib/libbz2.so))
-	if [[ "${arch}" =~ "alpha" ]] ; then
+	if [[ "${arch}" == "alpha" ]] ; then
 einfo "Added support for alpha"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 	fi
-	if [[ "${arch}" =~ "arm" ]] ; then
+	if [[ "${arch}" == "arm" || "${arch}" == "arm64" ]] ; then
 		if [[ "${OT_KERNEL_ABIS,,}" == "arm64" \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib64" ) ]] ; then
@@ -6969,11 +7006,17 @@ einfo "Added support for arm"
 		fi
 		ot-kernel_set_kconfig_endianess
 	fi
-	if [[ "${arch}" =~ "ia64" ]] ; then
+	if [[ "${arch}" == "i386" ]] ; then
+eerror
+eerror "OT_KERNEL_ARCH=\"i386\" is not supported.  Use OT_KERNEL_ARCH=\"x86\" instead."
+eerror
+		die
+	fi
+	if [[ "${arch}" == "ia64" ]] ; then
 einfo "Added support for ia64"
 		ot-kernel_y_configopt "CONFIG_64BIT"
 	fi
-	if [[ "${arch}" =~ "m68k" ]] ; then
+	if [[ "${arch}" == "m68k" ]] ; then
 einfo "Added support for m68k"
 		ot-kernel_unset_configopt "CONFIG_64BIT"
 		ot-kernel_n_configopt "CONFIG_CPU_BIG_ENDIAN"
@@ -7004,7 +7047,7 @@ einfo "Added support for n64"
 		fi
 		ot-kernel_set_kconfig_endianess
 	fi
-	if [[ "${arch}" =~ "parisc" ]] ; then
+	if [[ "${arch}" == "parisc" || "${arch}" == "parisc64" ]] ; then
 einfo "Added support for hppa"
 		if [[ "${lib_bitness}" == "64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_PA8X00"
@@ -7080,7 +7123,7 @@ einfo "Added support for s390"
 		ot-kernel_y_configopt "CONFIG_CPU_BIG_ENDIAN"
 		ot-kernel_unset_configopt "CONFIG_CPU_LITTLE_ENDIAN"
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if [[ "${OT_KERNEL_ABIS,,}" =~ "sparc64" \
 			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "64" ) \
 			]] ; then
@@ -7103,10 +7146,12 @@ einfo "Added support for x86_64"
 einfo "Added support for x32"
 			ot-kernel_y_configopt "CONFIG_X86_X32"
 		fi
-		if [[ "${OT_KERNEL_ABIS,,}" =~ "x86" \
-			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -e "/usr/lib32" ) \
-			|| ( "${OT_KERNEL_ABIS,,}" =~ "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
-			]] ; then
+		if [[ \
+		           ( "${OT_KERNEL_ABIS,,}" == "x86" ) \
+		        || ( "${OT_KERNEL_ABIS,,}" == "x86_64" ) \
+			|| ( "${OT_KERNEL_ABIS,,}" == "auto" && -e "/usr/lib32" ) \
+			|| ( "${OT_KERNEL_ABIS,,}" == "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
+		]] ; then
 einfo "Added support for x86"
 			ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
 		fi
@@ -7482,31 +7527,31 @@ ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work
 	fi
 
 	if [[ "${work_profile}" == "arcade" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=arcade is deprecated.  Use either pi-gaming or pro-gaming instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"arcade\" is deprecated.  Use either pi-gaming or pro-gaming instead."
 		die
 	elif [[ "${work_profile}" == "lan-tournament" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=lan-tournament is deprecated.  Use pro-gaming instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"lan-tournament\" is deprecated.  Use pro-gaming instead."
 		die
 	elif [[ "${work_profile}" == "tournament" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=tournament is deprecated.  Use pro-gaming instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"tournament\" is deprecated.  Use pro-gaming instead."
 		die
 	elif [[ "${work_profile}" == "sbc" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=sbc is deprecated.  Use pi-audio-player, pi-deep-learning, pi-gaming, pi-music-production, pi-video-player, pi-web-browser instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"sbc\" is deprecated.  Use pi-audio-player, pi-deep-learning, pi-gaming, pi-music-production, pi-video-player, pi-web-browser instead."
 		die
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=streamer-desktop is deprecated.  Use live-video-reporter or streamer-gamer instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-desktop\" is deprecated.  Use live-video-reporter or streamer-gamer instead."
 		die
 	elif [[ "${work_profile}" == "streamer-gamer" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=streamer-gamer is deprecated.  Use live-gamer-streamer instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-gamer\" is deprecated.  Use live-gamer-streamer instead."
 		die
 	elif [[ "${work_profile}" == "streamer-reporter" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=streamer-reporter is deprecated.  Use live-video-reporting instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-reporter\" is deprecated.  Use live-video-reporting instead."
 		die
 	elif [[ "${work_profile}" == "video-smartphone" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=video-smartphone is deprecated.  Use smartphone or smartphone-voice instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"video-smartphone\" is deprecated.  Use smartphone or smartphone-voice instead."
 		die
 	elif [[ "${work_profile}" == "video-tablet" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instead."
 		die
 	fi
 
@@ -8892,19 +8937,19 @@ ewarn "Disabling swap for PREEMPT_RT=y.  If you do not like this, disable rt fro
 		ot-kernel_unset_configopt "CONFIG_SWAP"
 
 ewarn "Disabling smt for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "mips" || "${arch}" == "ppc" || "${arch}" == "s390" ]] ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "mips" || "${arch}" == "powerpc" || "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "x86" || "${arch}" == "ppc" ]] ; then
+		elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "x86" || "${arch}" == "x86_64" || "${arch}" == "powerpc" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
 		elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${arch}" == "mips" || "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${arch}" == "x86" ]] ; then
+		elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
 		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 && [[ "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 && [[ "${arch}" == "x86" ]] ; then
+		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
 		elif ver_test ${KV_MAJOR_MINOR} -eq 4.10 && [[ "${arch}" == "s390" ]] ; then
@@ -8948,7 +8993,7 @@ ewarn "Missing ${path_config} so generating a new default config."
 einfo "Changing config options for -${extraversion}"
 	[[ -e "${path_config}" ]] || die ".config is missing"
 
-	if [[ "${arch}" =~ "x86" ]] ; then
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		local mfg=$(ot-kernel_get_cpu_mfg_id)
 # It is wrong when CBUILD != CHOST/CTARGET.
 einfo
@@ -9142,7 +9187,7 @@ ot-kernel_src_configure() {
 
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local config="${OT_KERNEL_CONFIG}"
-		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
+		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 		local default_config="/etc/kernels/kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
 		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
@@ -9478,12 +9523,7 @@ ot-kernel_install_built_kernel() {
 	dodir "${kernel_dir}"
 	[[ -z "${kernel_dir}" ]] && die "OT_KERNEL_KERNEL_DIR cannot be empty"
 
-	local arch_
-	if [[ "${arch}" == "x86_64" ]] ; then
-		arch_="x86"
-	else
-		arch_="${arch}"
-	fi
+	local arch_=$(ot-kernel_get_my_arch "${arch}")
 	local zimage_paths=(
 		$(find "${BUILD_DIR}/arch/${arch_}${kernel_dir}" \
 			"${BUILD_DIR}" \
@@ -9931,7 +9971,7 @@ ot-kernel_src_compile() {
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local config="${OT_KERNEL_CONFIG}"
-		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
+		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 		local default_config="/etc/kernels/kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
 		[[ -z "${config}" ]] && config="${default_config}"
 		local target_triple="${OT_KERNEL_TARGET_TRIPLE}"
@@ -10087,12 +10127,13 @@ ot-kernel_get_nprocs() {
 	echo "${nprocs}"
 }
 
-# @FUNCTION: ot-kernel_get_nprocs
+# @FUNCTION: ot-kernel_get_my_arch
 # @INTERNAL
 # @DESCRIPTION:
-# Gets the corresponding arch value to OT_KERNEL_ARCH
+# Gets the /usr/src/linux/arch folder name from OT_KERNEL_ARCH in raw form.
 ot-kernel_get_my_arch() {
-	case ${OT_KERNEL_ARCH} in
+	local arch="${1}"
+	case "${arch}" in
 		parisc64)
 			echo "parisc" ;;
 		sparc32|sparc64)
@@ -10104,7 +10145,7 @@ ot-kernel_get_my_arch() {
 		tilepro|tilegx)
 			echo "tile" ;;
 		*)
-			echo "${OT_KERNEL_ARCH}" ;;
+			echo "${arch}" ;;
 	esac
 }
 
@@ -10113,7 +10154,7 @@ ot-kernel_get_my_arch() {
 # Deletes source code for other arches in the arch folder from ${BUILD_DIR}.
 ot-kernel_prune_arches() {
 	local is_final="${1}"
-	local my_arch=$(ot-kernel_get_my_arch)
+	local my_arch=$(ot-kernel_get_my_arch "${OT_KERNEL_ARCH}")
 	local all_arches=($(ls arch \
 		| sed -e "/Kconfig/d"))
 	local arch
@@ -10268,7 +10309,7 @@ ot-kernel_src_install() {
 				build_config="0"
 			fi
 		fi
-		local arch="${OT_KERNEL_ARCH}" # Name of folders in /usr/src/linux/arch
+		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 		cd "${BUILD_DIR}" || die
 
@@ -10324,7 +10365,7 @@ ewarn "Preserving copyright notices.  This may take hours."
 				INSTALL_MOD_PATH="${ED}"
 				INSTALL_PATH="${ED}${kernel_dir}"
 				${MAKEOPTS}
-				ARCH=${arch}
+				ARCH="${arch}"
 			)
 
 			ot-kernel_install_built_kernel # It works the same as make install.
@@ -10410,7 +10451,7 @@ einfo "Saving the config for ${extraversion} to ${default_config}"
 
 einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
 			#make mrproper ARCH=${arch} || die # more agressive wipe
-			make clean ARCH=${arch} || die # For external modules
+			make clean ARCH="${arch}" || die # For external modules
 
 			cp -aT "${cache}" ./ || true
 			rm -rf "${cache}" || true
@@ -10799,7 +10840,7 @@ EOF
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
-		local arch="${OT_KERNEL_ARCH}"
+		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 
 		local suffix=""
 		if [[ -n "${RC_PV}" ]] ; then

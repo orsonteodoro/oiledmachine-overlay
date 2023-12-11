@@ -2125,7 +2125,7 @@ _ot-kernel-pkgflags_aes() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_PAES_S390"
 		fi
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			if [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_AES_SPARC64"
@@ -2203,7 +2203,7 @@ _ot-kernel-pkgflags_camellia() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_X86_64"
 		fi
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			if [[ "${modes}" =~ ("CBC"|"ECB") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_SPARC64"
@@ -2318,7 +2318,7 @@ _ot-kernel-pkgflags_crc32c() {
 	if [[ "${arch}" == "s390" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32_S390"
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CRC32C_SPARC64"
 		fi
@@ -2362,7 +2362,7 @@ _ot-kernel-pkgflags_des() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_DES_S390"
 		fi
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			if [[ "${modes}" =~ ("CBC"|"ECB") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_DES_SPARC64"
@@ -2384,7 +2384,7 @@ _ot-kernel-pkgflags_des3_ede() {
 			ot-kernel_y_configopt "CONFIG_CRYPTO_DES_S390"
 		fi
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			if [[ "${modes}" =~ ("CBC"|"ECB") ]] ; then
 				ot-kernel_y_configopt "CONFIG_CRYPTO_DES_SPARC64"
@@ -2438,7 +2438,7 @@ _ot-kernel-pkgflags_md5() {
 	if [[ "${arch}" == "powerpc" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO_MD5_PPC"
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_MD5_SPARC64"
 		fi
@@ -2479,7 +2479,7 @@ _ot-kernel-pkgflags_sha1() {
 	if [[ "${arch}" == "s390" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_S390"
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA1_SPARC64"
 		fi
@@ -2531,7 +2531,7 @@ _ot-kernel-pkgflags_sha256() {
 	if [[ "${arch}" == "s390" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_S390"
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA256_SPARC64"
 		fi
@@ -2594,7 +2594,7 @@ _ot-kernel-pkgflags_sha512() {
 	if [[ "${arch}" == "s390" ]] ; then
 		ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_S390"
 	fi
-	if [[ "${arch}" == "sparc" ]] ; then
+	if [[ "${arch}" == "sparc" || "${arch}" == "sparc64" ]] ; then
 		if grep -q -E -e "^CONFIG_SPARC64=y" "${path_config}" ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_SHA512_SPARC64"
 		fi

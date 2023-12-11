@@ -652,9 +652,13 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     /etc/portage/ot-sources/${KV_MAJOR_MINOR}/${extraversion}/${arch}/env) and
     the OT_KERNEL_ARCH need to be the same.
 
+    More arches are supported by the kernel but not supported by the distro.
+    See https://github.com/gentoo-mirror/gentoo/tree/stable/profiles/arch
+
     Acceptable values:
 
-      arm, arm64, mips, powerpc, riscv, s390, sparc, x86
+      alpha, arm, arm64, loongarch, m68k, mips, parisc, parisc64, powerpc,
+      riscv, s390, sparc, sparc32, sparc64, x86, x86_64
 
 
 
