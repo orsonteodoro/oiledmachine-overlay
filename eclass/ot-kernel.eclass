@@ -4542,12 +4542,35 @@ ot-kernel_set_kconfig_exfat() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_l1tf
+# @FUNCTION: ot-kernel_set_kconfig_l1tf_mitigations
 # @DESCRIPTION:
-# Set or remove the l1tf mitigation
-ot-kernel_set_kconfig_l1tf() {
+# Set or remove the l1tf mitigation.
+ot-kernel_set_kconfig_l1tf_mitigations() {
+	local mode="${1}" # 1=enable, 0=disable
+	[[ $(ot-kernel_get_cpu_mfg_id) != "intel" ]] && return
 	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		:;
+		local family
+		if tc-is-cross-compiler ; then
+			family=6
+		else
+			family=$(cat /proc/cpuinfo \
+				| grep "cpu family" \
+				| grep -Eo "[0-9]+" \
+				| head -n 1)
+		fi
+		if (( ${family} != 6 )) ; then
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "l1tf=off"
+			return
+		fi
+
+		if [[ "${mode}" == "1" ]] ; then
+	# SMT on, full hypervisor mitigation
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "l1tf=full,force"
+		else
+	# SMT on, no mitigation
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "l1tf=off"
+		fi
+	# Upstream uses SMT on, partial hypervisor mitigation.
 	fi
 }
 
@@ -4578,10 +4601,15 @@ einfo "Using ${hardening_level} hardening level"
 		clang_minor_v=$(echo "${clang_pv}" | cut -f 2 -d ".")
 	fi
 
-	if [[ "${hardening_level}" =~ ("custom"|"manual") ]] ; then
-		:
-	elif [[ "${hardening_level}" == "trusted" \
-		|| "${hardening_level}" == "performance" ]] ; then
+	if [[ \
+		   "${hardening_level}" == "custom" \
+		|| "${hardening_level}" == "manual" \
+	]] ; then
+		:;
+	elif [[ \
+		   "${hardening_level}" == "trusted" \
+		|| "${hardening_level}" == "performance" \
+	]] ; then
 		# Disable all hardening
 		# All randomization is disabled because it increases instruction latency or adds more noise to pipeline
 		# CFI and SCS handled later
@@ -4629,7 +4657,12 @@ einfo "Using ${hardening_level} hardening level"
 			ot-kernel_unset_configopt "CONFIG_RETHUNK"
 			ot-kernel_unset_configopt "CONFIG_SLS"
 		fi
-	elif [[ "${hardening_level}" == "untrusted-distant" ]] ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
+			ot-kernel_set_kconfig_l1tf_mitigations "0"
+		fi
+	elif [[ \
+		"${hardening_level}" == "untrusted-distant" \
+	]] ; then
 		# Some all hardening (All except physical attacks)
 		# CFI and SCS handled later
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
@@ -4711,7 +4744,12 @@ eerror
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
 			ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 		fi
-	elif [[ "${hardening_level}" == "untrusted" ]] ; then
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
+			ot-kernel_set_kconfig_l1tf_mitigations "1"
+		fi
+	elif [[ \
+		"${hardening_level}" == "untrusted" \
+	]] ; then
 		# All hardening
 		# CFI and SCS handled later
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
@@ -4794,6 +4832,9 @@ eerror
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|unret)"
 			ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
+		fi
+		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
+			ot-kernel_set_kconfig_l1tf_mitigations "1"
 		fi
 	fi
 }
