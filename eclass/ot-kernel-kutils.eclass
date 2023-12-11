@@ -20,6 +20,8 @@ esac
 
 if [[ -z "${OT_KERNEL_KUTILS_ECLASS}" ]] ; then
 
+inherit toolchain-funcs
+
 # @FUNCTION: ot-kernel_has_version
 # @DESCRIPTION:
 # Use the fewest steps to check for the existence of package instead of
@@ -202,6 +204,12 @@ ot-kernel_get_cpu_mfg_id() {
 	if [[ -n "${CPU_MFG}" ]] ; then
 		echo "${CPU_MFG,,}"
 		return
+	fi
+	if tc-is-cross-compiler ; then
+eerror
+eerror "You must set CPU_MFG to the vendor name.  See metadata.xml for details."
+eerror
+		die
 	fi
 	# Autodetect by /proc/cpuinfo
 	# Least portable since CBUILD is not always equal to CHOST/CTARGET.

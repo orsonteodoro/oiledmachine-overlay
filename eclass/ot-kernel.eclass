@@ -1147,7 +1147,7 @@ ewarn
 	fi
 
 	if has tresor ${IUSE_EFFECTIVE} ; then
-		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor ; then
+		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor && ! tc-is-cross-compiler ; then
 			if use tresor_i686 && ! grep -F -q "sse2" /proc/cpuinfo ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
 eerror "tresor_i686 requires SSE2 CPU support"
@@ -5287,7 +5287,8 @@ ot-kernel_set_kconfig_memory_protection() {
 	if [[ "${arch}" == "x86_64" ]] ; then
 		local has_sgx=0
 		if [[ "${OT_KERNEL_SGX:-auto}" == "auto" ]] ; then
-			if grep -q -e " sgx " "/proc/cpuinfo" ; then
+			if !  tc-is-cross-compiler  \
+			   && grep -q -e " sgx " "/proc/cpuinfo" ; then
 				has_sgx=1
 			fi
 		fi
@@ -5301,7 +5302,8 @@ einfo "Disabling SGX"
 		ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
 		local has_sme=0
 		if [[ "${OT_KERNEL_SME:-auto}" == "auto" ]] ; then
-			if grep -q -e " sme " "/proc/cpuinfo" ; then
+			if !  tc-is-cross-compiler  \
+			   && grep -q -e " sme " "/proc/cpuinfo" ; then
 				has_sme=1
 			fi
 		fi
@@ -5320,7 +5322,8 @@ einfo "Disallowing SME"
 		fi
 		local has_pku=0
 		if [[ "${OT_KERNEL_PKU:-auto}" == "auto" ]] ; then
-			if grep -q -e " pku " "/proc/cpuinfo" ; then
+			if ! tc-is-cross-compiler \
+			   && grep -q -e " pku " "/proc/cpuinfo" ; then
 				has_pku=1
 			fi
 		fi

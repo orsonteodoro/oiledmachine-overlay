@@ -24,7 +24,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-inherit ot-kernel-kutils
+inherit ot-kernel-kutils toolchain-funcs
 
 # These are discovered by doing one of the following:
 # grep -E -r --exclude-dir=.git --exclude-dir=metadata --exclude=Manifest.gz -e "(CHECK_CONFIG|CONFIG_CHECK)(\+|=)" -e "linux_chkconfig_" /usr/portage | sort
@@ -5051,6 +5051,12 @@ ot-kernel-pkgflags_linux_firmware() {
 				path="${OT_KERNEL_CPU_MICROCODE}"
 			else
 				path="/proc/cpuinfo"
+				if tc-is-cross-compiler ; then
+eerror
+eerror "You must set OT_KERNEL_CPU_MICROCODE.  See metadata.xml for details."
+eerror
+					die
+				fi
 			fi
 			for o in $(cat "${path}" | sed -e "s|^$|;|") ; do
 				# Support multiple sockets / NUMA
@@ -7222,9 +7228,10 @@ _ot-kernel-pkgflags_cpu_pmu_events_perf() {
 			ot-kernel_y_configopt "CONFIG_FSL_EMB_PERF_EVENT_E500"
 		fi
 		if [[ "${E300C3:-0}" == "1" || "${E300C4:-0}" == "1" ]] \
-			|| (
+			|| ( \
 				     grep -q -E -e "^CONFIG_PPC_83xx=y" "${path_config}" \
 				&& ! grep -q -E -e "^CONFIG_FSL_EMB_PERF_EVENT=y" "${path_config}" \
+				&& ! tc-is-cross-compiler \
 				&& ( cat /proc/cpuinfo | grep -E -q -e "(e300c3|e300c4)" ) \
 			)
 		then
