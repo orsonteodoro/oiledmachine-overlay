@@ -7994,6 +7994,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=video-tablet is deprecated.  Use tablet instead."
 		|| "${work_profile}" == "ros" \
 	]] ; then
 	# ros ~ robotics
+		if [[ "${work_profile}" == "ros" ]] ; then
+			ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
+		fi
 		ot-kernel_set_kconfig_set_highest_timer_hz
 		ot-kernel_set_kconfig_no_hz_full
 		ot-kernel_set_rt_rcu
@@ -8888,12 +8891,33 @@ ot-kernel_optimize_realtime() {
 ewarn "Disabling swap for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
 		ot-kernel_unset_configopt "CONFIG_SWAP"
 
-# TODO:  Disable HyperThreading
+ewarn "Disabling smt for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "mips" || "${arch}" == "ppc" || "${arch}" == "s390" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
+		elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "x86" || "${arch}" == "ppc" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
+
+		elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${arch}" == "mips" || "${arch}" == "s390" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
+		elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${arch}" == "x86" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
+
+		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 && [[ "${arch}" == "s390" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
+		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 && [[ "${arch}" == "x86" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
+
+		elif ver_test ${KV_MAJOR_MINOR} -eq 4.10 && [[ "${arch}" == "s390" ]] ; then
+			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
+		fi
 
 		if grep -q -e "^CONFIG_TRANSPARENT_HUGEPAGE=y" "${path_config}" ; then
 ewarn "Disabling Transparent HugePage for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
 			ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
 		fi
+	else
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt=force"
 	fi
 }
 
