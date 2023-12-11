@@ -6928,9 +6928,25 @@ einfo "Timer frequency is ${x} Hz"
 # @DESCRIPTION:
 # Fits the HZ based on FPS
 ot-kernel_set_kconfig_set_video_timer_hz() {
-	if [[ "${OT_KERNEL_FPS}" =~ ("30"|"60"|"90"|"120"|"150"|"180"|"210"|"240"|"300") ]] ; then
+	if [[ \
+		   "${OT_KERNEL_FPS}" == "30" \
+		|| "${OT_KERNEL_FPS}" == "60" \
+		|| "${OT_KERNEL_FPS}" == "90" \
+		|| "${OT_KERNEL_FPS}" == "120" \
+		|| "${OT_KERNEL_FPS}" == "150" \
+		|| "${OT_KERNEL_FPS}" == "180" \
+		|| "${OT_KERNEL_FPS}" == "210" \
+		|| "${OT_KERNEL_FPS}" == "240" \
+		|| "${OT_KERNEL_FPS}" == "300" \
+	]] ; then
 		ot-kernel_set_kconfig_set_timer_hz "300"
-	elif [[ "${OT_KERNEL_FPS}" =~ ("25"|"50"|"100"|"200"|"250") ]] ; then
+	elif [[ \
+		   "${OT_KERNEL_FPS}" == "25" \
+		|| "${OT_KERNEL_FPS}" == "50" \
+		|| "${OT_KERNEL_FPS}" == "100" \
+		|| "${OT_KERNEL_FPS}" == "200" \
+		|| "${OT_KERNEL_FPS}" == "250" \
+	]] ; then
 		ot-kernel_set_kconfig_set_timer_hz "250"
 	else
 		if [[ "${arch}" == "mips" ]] ; then
