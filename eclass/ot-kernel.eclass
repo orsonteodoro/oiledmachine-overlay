@@ -4700,6 +4700,8 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_unset_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
 
+		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
+
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
@@ -4815,6 +4817,21 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY"
 		ot-kernel_unset_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_unset_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
+
+		if \
+			tc-is-gcc \
+				&& \
+			test -e $(${CHOST}-${gcc_slot} -print-file-name=plugin)/include/plugin-version.h \
+				&& \
+			grep -q -E -e "^CONFIG_HAVE_GCC_PLUGINS=y" "${path_config}" \
+				&& \
+			! ot-kernel_use rust \
+		; then
+			ot-kernel_y_configopt "CONFIG_GCC_PLUGINS"
+		else
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
+		fi
+
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 			if grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
@@ -5002,6 +5019,20 @@ eerror
 		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
 
+		if \
+			tc-is-gcc \
+				&& \
+			test -e $(${CHOST}-${gcc_slot} -print-file-name=plugin)/include/plugin-version.h \
+				&& \
+			grep -q -E -e "^CONFIG_HAVE_GCC_PLUGINS=y" "${path_config}" \
+				&& \
+			! ot-kernel_use rust \
+		; then
+			ot-kernel_y_configopt "CONFIG_GCC_PLUGINS"
+		else
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
+		fi
+
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
@@ -5088,13 +5119,11 @@ eerror
 		fi
 
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
-			if tc-is-gcc ; then
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGINS"
+			if tc-is-gcc && grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
 			else
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
@@ -5232,6 +5261,20 @@ eerror
 		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
 		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
 
+		if \
+			tc-is-gcc \
+				&& \
+			test -e $(${CHOST}-${gcc_slot} -print-file-name=plugin)/include/plugin-version.h \
+				&& \
+			grep -q -E -e "^CONFIG_HAVE_GCC_PLUGINS=y" "${path_config}" \
+				&& \
+			! ot-kernel_use rust \
+		; then
+			ot-kernel_y_configopt "CONFIG_GCC_PLUGINS"
+		else
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
+		fi
+
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
@@ -5318,13 +5361,11 @@ eerror
 		fi
 
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
-			if tc-is-gcc ; then
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGINS"
+			if tc-is-gcc && grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
 			else
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
