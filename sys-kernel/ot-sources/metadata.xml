@@ -543,7 +543,7 @@ OT_KERNEL_CPU_SCHED="cfs-throughput"
 OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="builder"
 OT_KERNEL_FIRMWARE="polaris10 regulatory"
-#OT_KERNEL_HARDENING_LEVEL=""
+OT_KERNEL_HARDENING_LEVEL="practical"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
 OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
 OT_KERNEL_LSMS="auto"
@@ -1501,8 +1501,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       unset - use practically secure settings with defaults.  If modified
         previously, it uses the previous existing settings.
 
-      practical - reset back to the practical secure defaults. (UNIMPLEMENTED,
-        PLANNED)
+      practical - reset back to the practical secure defaults.
 
       untrusted - full hardening.  Used for multiuser computer not in locked room
         such as on the road or traveling. 
