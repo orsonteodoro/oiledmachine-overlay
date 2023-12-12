@@ -4796,6 +4796,11 @@ einfo "Using ${hardening_level} hardening level"
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
 			ot-kernel_unset_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_ADDRESS_MASKING"
+			fi
+		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
 			ot-kernel_unset_configopt "CONFIG_CPU_SRSO"
 		fi
@@ -4976,6 +4981,11 @@ eerror
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
+		fi
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING"
+			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SRSO"
@@ -5185,6 +5195,11 @@ eerror
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
+		fi
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING"
+			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
 			if [[ "${arch}" == "x86_64" ]] && grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
@@ -5411,6 +5426,11 @@ eerror
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING"
+			fi
+		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
 			if [[ "${arch}" == "x86_64" ]] && grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
@@ -5418,6 +5438,7 @@ eerror
 				fi
 			fi
 		fi
+
 	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
 		ot-kernel_unset_configopt "CONFIG_KSM"
 		ot-kernel_unset_configopt "CONFIG_UKSM"
@@ -9686,6 +9707,7 @@ eerror
 ewarn "Disabling microcode for OT_KERNEL_WORK_PROFILE=\"${work_profile}\".  If you do not like this, use the pro-gaming profile instead."
 # Drops FPS.
 		ot-kernel_unset_configopt "CONFIG_MICROCODE"
+		ot-kernel_unset_configopt "CONFIG_MICROCODE_LATE_LOADING"
 	fi
 	if ot-kernel_use uksm ; then
 # Remove the unintended consequences of applying the patch.
