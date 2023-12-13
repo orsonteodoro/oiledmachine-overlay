@@ -216,10 +216,11 @@ DEPEND+="
 		>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
 	)
 "
-
+# lscpu needs sys-apps/util-linux
 BDEPEND+="
 	dev-util/patchutils
 	sys-apps/findutils
+	sys-apps/util-linux
 	imagemagick? (
 		media-gfx/imagemagick
 		app-crypt/rhash
@@ -4426,36 +4427,177 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler
+# @FUNCTION: _ot-kernel_set_kconfig_muqss
 # @DESCRIPTION:
-# Sets the CPU scheduler kernel config
-ot-kernel_set_kconfig_cpu_scheduler() {
-	local cpu_sched_config_applied=0
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
-		&& [[ "${cpu_sched}" == "muqss" ]] ; then
-		if [[ \
-			   "${arch}" == "alpha" \
-			|| "${arch}" == "arm" \
-			|| "${arch}" == "arm64" \
-			|| "${arch}" == "powerpc" \
-			|| "${arch}" == "x86" \
-			|| "${arch}" == "x86" \
-		]] ; then
-			:;
-		else
+# Set muqss kernel config flags
+_ot-kernel_set_kconfig_muqss() {
+	if has muqss ${IUSE_EFFECTIVE} && ot-kernel_use muqss ; then
+		:;
+	else
+		return
+	fi
+
+	if [[ \
+		   "${arch}" == "alpha" \
+		|| "${arch}" == "arm" \
+		|| "${arch}" == "arm64" \
+		|| "${arch}" == "powerpc" \
+		|| "${arch}" == "x86" \
+		|| "${arch}" == "x86" \
+	]] ; then
+		:;
+	else
 eerror
 eerror "MuQSS is not supported on ARCH=${arch}.  Remove muqss from"
 eerror "OT_KERNEL_USE."
 eerror
-			die
-		fi
+		die
+	fi
+
 einfo "Changed .config to use MuQSS"
-		ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
-		cpu_sched_config_applied=1
+	ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
+	cpu_sched_config_applied=1
+
+	ot-kernel_unset_pat_kconfig_kernel_cmdline "rqshare=(none|smt|mc|llc|smp|all)"
+
+	_set_muqss_mc() {
+		ot-kernel_unset_configopt "CONFIG_RQ_NONE"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMT"
+		ot-kernel_y_configopt "CONFIG_RQ_MC"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC_LLC"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMP"
+		ot-kernel_unset_configopt "CONFIG_RQ_ALL"
+		ot-kernel_set_kconfig_kernel_cmdline "rqshare=none"
+	}
+	_set_muqss_mc_llc() {
+		ot-kernel_unset_configopt "CONFIG_RQ_NONE"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMT"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC"
+		ot-kernel_y_configopt "CONFIG_RQ_MC_LLC"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMP"
+		ot-kernel_unset_configopt "CONFIG_RQ_ALL"
+		ot-kernel_set_kconfig_kernel_cmdline "rqshare=llc"
+	}
+	_set_muqss_none() {
+		ot-kernel_y_configopt "CONFIG_RQ_NONE"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMT"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC_LLC"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMP"
+		ot-kernel_unset_configopt "CONFIG_RQ_ALL"
+		ot-kernel_set_kconfig_kernel_cmdline "rqshare=none"
+	}
+	_set_muqss_numa() {
+		ot-kernel_unset_configopt "CONFIG_RQ_NONE"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMT"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC_LLC"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMP"
+		ot-kernel_y_configopt "CONFIG_RQ_ALL" # 1 runqueue period
+		ot-kernel_set_kconfig_kernel_cmdline "rqshare=all"
+	}
+	_set_muqss_smp() {
+		ot-kernel_unset_configopt "CONFIG_RQ_NONE"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMT"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC_LLC"
+		ot-kernel_y_configopt "CONFIG_RQ_SMP"
+		ot-kernel_unset_configopt "CONFIG_RQ_ALL"
+		ot-kernel_set_kconfig_kernel_cmdline "rqshare=smp"
+	}
+	_set_muqss_smt() {
+		ot-kernel_unset_configopt "CONFIG_RQ_NONE"
+		ot-kernel_y_configopt "CONFIG_RQ_SMT"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC"
+		ot-kernel_unset_configopt "CONFIG_RQ_MC_LLC"
+		ot-kernel_unset_configopt "CONFIG_RQ_SMP"
+		ot-kernel_unset_configopt "CONFIG_RQ_ALL"
+		ot-kernel_set_kconfig_kernel_cmdline "rqshare=smt"
+	}
+
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	if [[ \
+		   "${work_profile}" == "realtime-hpc" \
+	]] ; then
+	# Low latency
+		_set_muqss_numa
+	elif [[ \
+		   "${work_profile}" == "gamedev" \
+		|| "${work_profile}" == "hpc" \
+		|| "${work_profile}" == "throughput-hpc" \
+		|| "${work_profile}" == "workstation" \
+	]] ; then
+	# Throughput
+		if [[ "${hardening_level}" == "performance" ]] ; then
+			if ! tc-is-cross-compiler ; then
+				local tpc=$(lscpu \
+					| grep  -e "Thread(s) per core:.*" \
+					| head -n 1 \
+					| grep -E -o "[0-9]+")
+				if (( tpc > 1 )) ; then
+					_set_muqss_smt
+				else
+					_set_muqss_none
+				fi
+			else
+				_set_muqss_none
+			fi
+		else
+			_set_muqss_none
+		fi
+	elif [[ \
+		   "${work_profile}" == "digital-audio-workstation" \
+		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "radio-broadcaster" \
+		|| "${work_profile}" == "video-conferencing" \
+		|| "${work_profile}" == "voip" \
+	]] ; then
+	# Low latency
+		if \
+			! tc-is-cross-compiler \
+				&& \
+			lscpu | grep -q -E "L3.*[0-9]+" \
+				&&
+			grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" \
+		; then
+	# Multicore with L3 cache
+	# The documentation is kind of cryptic.
+			_set_muqss_mc_llc
+		elif grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" ; then
+	# Multicore without L3 cache
+			_set_muqss_mc
+		elif grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
+	# SMP
+			_set_muqss_smp
+		else
+	# Unicore
+			_set_muqss_none
+		fi
+	else
+		if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
+	# Multicore (default)
+			_set_muqss_mc
+		else
+	# Unicore
+			_set_muqss_none
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel_set_kconfig_prjc
+# @DESCRIPTION:
+# Set prjc kernel config flags
+_ot-kernel_set_kconfig_prjc() {
+	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc ; then
+		:;
+	else
+		return
 	fi
 
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
-		&& [[ "${cpu_sched}" == "prjc" ]] ; then
+	if [[ \
+		   "${cpu_sched}" == "prjc" \
+		|| "${cpu_sched}" == "prjc-bmq" \
+	]] ; then
 einfo "Changed .config to use Project C with BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
@@ -4466,24 +4608,7 @@ ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by projec
 ewarn "Lowers security in SMT/HT"
 ewarn
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
-	fi
-
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
-		&& [[ "${cpu_sched}" == "prjc-bmq" ]] ; then
-einfo "Changed .config to use Project C with BMQ"
-		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
-		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
-		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
-		cpu_sched_config_applied=1
-ewarn
-ewarn "Changed .config to disable SCHED_CORE on Project C (unsupported by project)"
-ewarn "Lowers security in SMT/HT"
-ewarn
-		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
-	fi
-
-	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
-		&& [[ "${cpu_sched}" == "prjc-pds" ]] ; then
+	elif [[ "${cpu_sched}" == "prjc-pds" ]] ; then
 einfo "Changed .config to use Project C with PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
@@ -4495,54 +4620,91 @@ ewarn "Lowers security in SMT/HT"
 ewarn
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 	fi
+}
 
-	if has bmq ${IUSE_EFFECTIVE} && ot-kernel_use bmq \
-		&& [[ "${cpu_sched}" == "bmq" ]] ; then
+# @FUNCTION: _ot-kernel_set_kconfig_bmq
+# @DESCRIPTION:
+# Set bmq kernel config flags
+_ot-kernel_set_kconfig_bmq() {
+	if \
+		has bmq ${IUSE_EFFECTIVE} && ot-kernel_use bmq \
+			&& \
+		[[ "${cpu_sched}" == "bmq" ]] \
+	; then
 einfo "Changed .config to use BMQ"
 		ot-kernel_y_configopt "CONFIG_SCHED_BMQ"
 		cpu_sched_config_applied=1
 	fi
+}
 
-	if has pds ${IUSE_EFFECTIVE} && ot-kernel_use pds \
-		&& [[ "${cpu_sched}" == "pds" ]] ; then
+# @FUNCTION: _ot-kernel_set_kconfig_pds
+# @DESCRIPTION:
+# Set pds kernel config flags
+_ot-kernel_set_kconfig_pds() {
+	if \
+		has pds ${IUSE_EFFECTIVE} && ot-kernel_use pds \
+			&& \
+		[[ "${cpu_sched}" == "pds" ]] \
+	; then
 einfo "Changed .config to use PDS"
 		ot-kernel_y_configopt "CONFIG_SCHED_PDS"
 		cpu_sched_config_applied=1
 	fi
+}
 
-	if [[ "${cpu_sched}" =~ ("muqss"|"prjc"|"bmq"|"pds") ]] ; then
-einfo "Changed .config to disable autogroup"
-		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
+# @FUNCTION: _ot-kernel_set_kconfig_cfs
+# @DESCRIPTION:
+# Set cfs kernel config flags
+_ot-kernel_set_kconfig_cfs() {
+	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs ; then
+		:;
+	else
+		return
 	fi
 
-	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
-		&& [[ "${cpu_sched}" =~ "cfs" ]] ; then
-		if [[ "${cpu_sched}" =~ ("cfs-throughput"|"cfs-interactive"|"cfs-autogroup") ]] ; then
-			:;
-		else
-einfo "Changed .config to use CFS with autogroup manually set."
-		fi
+	if [[ \
+		   "${cpu_sched}" == "cfs-throughput" \
+		|| "${cpu_sched}" == "cfs-interactive" \
+		|| "${cpu_sched}" == "cfs-autogroup" \
+	]] ; then
 		ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
 		ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
 		ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
 	fi
 
-	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
-		&& [[ "${cpu_sched}" == "cfs-throughput" ]] ; then
-einfo "Changed .config to use CFS with disabled autogroup"
-		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
-		cpu_sched_config_applied=1
-	fi
-
-	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs \
-		&& [[ "${cpu_sched}" =~ ("cfs-interactive"|"cfs-autogroup") ]] ; then
+	if [[ \
+		   "${cpu_sched}" == "cfs-autogroup" \
+		|| "${cpu_sched}" == "cfs-interactive" \
+	]] ; then
 einfo "Changed .config to use CFS with autogroup"
 		ot-kernel_y_configopt "CONFIG_SCHED_AUTOGROUP"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
 		ot-kernel_y_configopt "CONFIG_FAIR_GROUP_SCHED"
 		cpu_sched_config_applied=1
+	elif [[ "${cpu_sched}" == "cfs-throughput" ]] ; then
+einfo "Changed .config to use CFS without autogroup"
+		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
+		cpu_sched_config_applied=1
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler
+# @DESCRIPTION:
+# Sets the CPU scheduler kernel config
+ot-kernel_set_kconfig_cpu_scheduler() {
+	local cpu_sched_config_applied=0
+
+	_ot-kernel_set_kconfig_bmq
+	_ot-kernel_set_kconfig_cfs
+	_ot-kernel_set_kconfig_muqss
+	_ot-kernel_set_kconfig_pds
+	_ot-kernel_set_kconfig_prjc
+
+	if [[ "${cpu_sched}" =~ ("muqss"|"prjc"|"bmq"|"pds") ]] ; then
+einfo "Changed .config to disable autogroup"
+		ot-kernel_unset_configopt "CONFIG_SCHED_AUTOGROUP"
 	fi
 
 	if (( ${cpu_sched_config_applied} == 0 )) \
@@ -4728,6 +4890,7 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "ssbd=(force-on|force-off|kernel)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "tsx=(on|off|auto)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "tsx_async_abort=(full|full,nosmt|off)"
+	# For setters, it is stated twice for CONFIG_CMDLINE_FORCE=y.
 	fi
 
 	if [[ \
