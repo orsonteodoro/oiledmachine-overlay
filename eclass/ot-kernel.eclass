@@ -9909,7 +9909,7 @@ ot-kernel_optimize_gaming_oflag() {
 	[[ "${work_profile}" == "pro-gaming" ]] || return
 	filter-flags '-O*'
 	append-flags '-O3' # This is in testing
-	if ot-kernel_use zen-sauce ; then
+	if ! ot-kernel_use zen-sauce ; then
 ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
 	fi
 }
@@ -9966,7 +9966,7 @@ ot-kernel_optimize_gaming_tornament_oflag() {
 	filter-flags '-O*'
 	# Stability is more important that FPS.
 	append-flags '-O3' # This is in testing.
-	if ot-kernel_use zen-sauce ; then
+	if ! ot-kernel_use zen-sauce ; then
 ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
 	fi
 }
