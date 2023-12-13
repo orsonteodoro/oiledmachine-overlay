@@ -9817,7 +9817,7 @@ eerror
 				| grep  -e "Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
-		if (( tpc > 1 )) ; then
+		if (( tpc > 1 )) && ver_test ${KV_MAJOR_MINOR} -ge 4.10 ; then
 			# Already set in ot-kernel_set_kconfig_processor_class
 			# ot-kernel_y_configopt "CONFIG_SMP"
 			# ot-kernel_y_configopt "CONFIG_SCHED_MC"
@@ -9875,7 +9875,7 @@ eerror
 				| grep  -e "Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
-		if (( tpc > 1 )) ; then
+		if (( tpc > 1 )) && ver_test ${KV_MAJOR_MINOR} -ge 4.10 ; then
 			# Already set in ot-kernel_set_kconfig_processor_class
 			# ot-kernel_y_configopt "CONFIG_SMP"
 			# ot-kernel_y_configopt "CONFIG_SCHED_MC"
