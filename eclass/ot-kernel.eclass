@@ -4806,6 +4806,23 @@ einfo "Changed .config to use CFS without autogroup"
 
 # @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler
 # @DESCRIPTION:
+# Unbreak build for incompatible flags
+ot-kernel_set_kconfig_cpu_scheduler_post() {
+	if [[ "${cpu_sched}" =~ "muqss" ]] ; then
+		if grep -q -E -e "^CONFIG_CPUSETS=y" "${path_config}" ; then
+ewarn "Dropping CONFIG_CPUSETS for muqss.  If you do not like this, switch to change to cfs or other scheduler."
+			# Drop references to dl_bw_free, dl_bw_alloc from kernel/sched/deadline.c
+			ot-kernel_unset_configopt "CONFIG_CPUSETS"
+		fi
+		if grep -q -E -e "^CONFIG_PROC_PID_CPUSET=y" "${path_config}" ; then
+ewarn "Dropping CONFIG_PROC_PID_CPUSET for muqss.  If you do not like this, switch to change to cfs or other scheduler."
+			ot-kernel_unset_configopt "CONFIG_PROC_PID_CPUSET"
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler
+# @DESCRIPTION:
 # Sets the CPU scheduler kernel config
 ot-kernel_set_kconfig_cpu_scheduler() {
 	local cpu_sched_config_applied=0
@@ -10233,6 +10250,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	ot-kernel_set_message
 
 	ot-kernel_set_rust
+	ot-kernel_set_kconfig_cpu_scheduler_post
 
 	ot-kernel_set_kconfig_from_envvar_array
 
