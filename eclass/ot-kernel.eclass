@@ -4528,7 +4528,10 @@ einfo "Changed .config to use MuQSS"
 		|| "${work_profile}" == "workstation" \
 	]] ; then
 	# Throughput
-		if [[ "${hardening_level}" == "performance" ]] ; then
+		if [[ \
+			   "${hardening_level}" == "performance" \
+			|| "${hardening_level}" == "trusted" \
+		]] ; then
 			if ! tc-is-cross-compiler ; then
 				local tpc=$(lscpu \
 					| grep  -e "Thread(s) per core:.*" \
@@ -4899,8 +4902,8 @@ einfo "Using ${hardening_level} hardening level"
 	]] ; then
 		:;
 	elif [[ \
-		   "${hardening_level}" == "trusted" \
-		|| "${hardening_level}" == "performance" \
+		   "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "trusted" \
 	]] ; then
 	# Disable all hardening
 	# All randomization is disabled because it increases instruction latency
@@ -7261,8 +7264,12 @@ eerror
 einfo "Enabling SCS support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
 		ot-kernel_y_configopt "CONFIG_MODULES"
-	elif [[ "${hardening_level}" == "performance" \
-		|| "${hardening_level}" == "trusted" ]] ; then
+	elif \
+		[[ \
+			   "${hardening_level}" == "performance" \
+			|| "${hardening_level}" == "trusted" \
+		]] \
+	; then
 einfo "Disabling SCS support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 	fi

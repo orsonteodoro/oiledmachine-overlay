@@ -10595,14 +10595,21 @@ _ot-kernel_set_posix_mqueue() {
 #   https://en.wikipedia.org/wiki/Io_uring#Security
 #
 _ot-kernel_set_io_uring() {
-	if [[ "${hardening_level}" =~ ("manual"|"custom") ]] ; then
+	if [[ \
+		   "${hardening_level}" =~ "custom" \
+		|| "${hardening_level}" =~ "manual" \
+	]] ; then
 		:;
-	elif [[ "${hardening_level}" == "untrusted" \
-		|| "${hardening_level}" == "untrusted-distant" ]] ; then
+	elif [[ \
+		   "${hardening_level}" == "untrusted" \
+		|| "${hardening_level}" == "untrusted-distant" \
+	]] ; then
 	# Increased security
 		ot-kernel_unset_configopt "CONFIG_IO_URING"
-	elif [[ "${hardening_level}" == "performance" \
-		|| "${hardening_level}" == "trusted" ]] ; then
+	elif [[ \
+		   "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "trusted" \
+	]] ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_IO_URING"
 	else
