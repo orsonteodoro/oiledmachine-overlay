@@ -1,0 +1,67 @@
+# License identified for kernel/sched/MuQSS.c:
+// SPDX-License-Identifier: GPL-2.0
+/*
+ *  kernel/sched/MuQSS.c, was kernel/sched.c
+ *
+ *  Kernel scheduler and related syscalls
+ *
+ *  Copyright (C) 1991-2002  Linus Torvalds
+ *
+
+--- a/kernel/sched/MuQSS.c.orig	2023-12-13 00:57:02.268934337 -0800
++++ b/kernel/sched/MuQSS.c	2023-12-13 01:08:58.844930144 -0800
+@@ -2331,7 +2331,7 @@ int sched_fork(unsigned long __maybe_unu
+ 	return 0;
+ }
+ 
+-void sched_post_fork(struct task_struct *p)
++void sched_post_fork(struct task_struct *p, struct kernel_clone_args *kargs)
+ {
+ }
+ 
+@@ -5052,7 +5052,7 @@ recheck:
+ 	}
+ 
+ 	if (pi)
+-		cpuset_read_lock();
++		cpuset_lock();
+ 
+ 	/*
+ 	 * Make sure no PI-waiters arrive (or leave) while we are
+@@ -5086,7 +5086,7 @@ recheck:
+ 		policy = oldpolicy = -1;
+ 		task_rq_unlock(rq, p, &rf);
+ 		if (pi)
+-			cpuset_read_unlock();
++			cpuset_unlock();
+ 		goto recheck;
+ 	}
+ 	p->sched_reset_on_fork = reset_on_fork;
+@@ -5098,7 +5098,7 @@ recheck:
+ 	task_rq_unlock(rq, p, &rf);
+ 
+ 	if (pi) {
+-		cpuset_read_unlock();
++		cpuset_unlock();
+ 		rt_mutex_adjust_pi(p);
+ 	}
+ 	preempt_enable();
+@@ -5108,7 +5108,7 @@ out:
+ unlock:
+ 	task_rq_unlock(rq, p, &rf);
+ 	if (pi)
+-		cpuset_read_unlock();
++		cpuset_unlock();
+ 	return retval;
+ }
+ 
+@@ -6222,8 +6222,7 @@ int cpuset_cpumask_can_shrink(const stru
+ 	return 1;
+ }
+ 
+-int task_can_attach(struct task_struct *p,
+-		    const struct cpumask *cs_cpus_allowed)
++int task_can_attach(struct task_struct *p)
+ {
+ 	int ret = 0;
+ 

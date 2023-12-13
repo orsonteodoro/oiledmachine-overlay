@@ -729,6 +729,11 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/ck-0.205-5.10.0-35f6640-fix-for-5.10.194.patch"
 
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.205-5.10.0-35f6640-fix-header-section-for-5.10.203.patch"
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.205-5.10.0-35f6640-fix-renames-for-5.10.203.patch"
+
 	elif [[ "${path}" =~ "ck-0.205-5.10.0-04468a7.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
