@@ -4451,7 +4451,7 @@ _ot-kernel_set_kconfig_muqss() {
 		|| "${arch}" == "arm64" \
 		|| "${arch}" == "powerpc" \
 		|| "${arch}" == "x86" \
-		|| "${arch}" == "x86_86" \
+		|| "${arch}" == "x86_64" \
 	]] ; then
 		:;
 	else
