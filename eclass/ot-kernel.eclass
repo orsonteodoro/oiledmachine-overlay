@@ -7392,6 +7392,7 @@ eerror
 		|| "${hardening_level}" == "default" \
 		|| "${hardening_level}" == "manual" \
 		|| "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "practical" \
 		|| "${hardening_level}" == "untrusted" \
 		|| "${hardening_level}" == "untrusted-distant" \
 		|| "${hardening_level}" == "trusted" \
