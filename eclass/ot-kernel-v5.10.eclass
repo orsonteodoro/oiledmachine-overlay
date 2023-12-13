@@ -743,12 +743,20 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "zen-sauce-5.10.0-28eaff6.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/zen-sauce-5.10.0-28eaff6-fix-for-5.10.194.patch"
+			"${FILESDIR}/zen-sauce-5.10.0-28eaff6-fix-for-5.10.203.patch"
 
 	elif [[ "${path}" =~ "zen-sauce-5.10.0-e1b127a.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.10.0-e1b127a-fix-for-5.10.194.patch"
+
+	elif [[ "${path}" =~ "zen-sauce-5.10.0-973d42f.patch" ]] ; then
+		if ot-kernel_use zen-sauce ; then
+			# Already applied
+			:;
+		else
+			_dpatch "${PATCH_OPTS}" "${path}"
+		fi
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
