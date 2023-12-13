@@ -4433,6 +4433,22 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 	local cpu_sched_config_applied=0
 	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc \
 		&& [[ "${cpu_sched}" == "muqss" ]] ; then
+		if [[ \
+			   "${arch}" == "alpha" \
+			|| "${arch}" == "arm" \
+			|| "${arch}" == "arm64" \
+			|| "${arch}" == "powerpc" \
+			|| "${arch}" == "x86" \
+			|| "${arch}" == "x86" \
+		]] ; then
+			:;
+		else
+eerror
+eerror "MuQSS is not supported on ARCH=${arch}.  Remove muqss from"
+eerror "OT_KERNEL_USE."
+eerror
+			die
+		fi
 einfo "Changed .config to use MuQSS"
 		ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
 		cpu_sched_config_applied=1
