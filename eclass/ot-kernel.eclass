@@ -5964,10 +5964,48 @@ einfo "Using the default LSM settings"
 einfo "Using the auto LSM settings"
 		OT_KERNEL_USE_LSM_UPSTREAM_ORDER="1"
 		ot_kernel_lsms="integrity"
-		ot-kernel_has_version "sys-apps/apparmor" && ot_kernel_lsms+=",apparmor"
-		ot-kernel_has_version "sys-apps/tomoyo-tools" && ot_kernel_lsms+=",tomoyo"
-		ot-kernel_has_version "sec-policy/selinux-base" && ot_kernel_lsms+=",selinux"
-		ot_kernel_lsms+=",bpf"
+		if ot-kernel_has_version "sec-policy/selinux-base" ; then
+			ot_kernel_lsms+=",selinux"
+			if ot-kernel_has_version "sys-apps/smack-utils" ; then
+				ot_kernel_lsms+=",smack"
+			fi
+			if ot-kernel_has_version "sys-apps/tomoyo-tools" ; then
+				ot_kernel_lsms+=",tomoyo"
+			fi
+			if ot-kernel_has_version "sys-apps/apparmor" ; then
+				ot_kernel_lsms+=",apparmor"
+			fi
+			ot_kernel_lsms+=",bpf"
+		elif ot-kernel_has_version "sys-apps/smack-utils" ; then
+			ot_kernel_lsms+=",smack"
+			if ot-kernel_has_version "sec-policy/selinux-base" ; then
+				ot_kernel_lsms+=",selinux"
+			fi
+			if ot-kernel_has_version "sys-apps/tomoyo-tools" ; then
+				ot_kernel_lsms+=",tomoyo"
+			fi
+			if ot-kernel_has_version "sys-apps/apparmor" ; then
+				ot_kernel_lsms+=",apparmor"
+			fi
+			ot_kernel_lsms+=",bpf"
+		elif ot-kernel_has_version "sys-apps/tomoyo-tools" ; then
+			ot_kernel_lsms+=",tomoyo"
+			ot_kernel_lsms+=",bpf"
+		elif ot-kernel_has_version "sys-apps/apparmor" ; then
+			ot_kernel_lsms+=",apparmor"
+			if ot-kernel_has_version "sec-policy/selinux-base" ; then
+				ot_kernel_lsms+=",selinux"
+			fi
+			if ot-kernel_has_version "sys-apps/smack-utils" ; then
+				ot_kernel_lsms+=",smack"
+			fi
+			if ot-kernel_has_version "sys-apps/tomoyo-tools" ; then
+				ot_kernel_lsms+=",tomoyo"
+			fi
+			ot_kernel_lsms+=",bpf"
+		else
+			ot_kernel_lsms+=",bpf"
+		fi
 	else
 		ot_kernel_lsms="${OT_KERNEL_LSMS}"
 		ot_kernel_lsms="${ot_kernel_lsms,,}"
