@@ -4686,13 +4686,47 @@ einfo "Using ${hardening_level} hardening level"
 		|| "${hardening_level}" == "manual" \
 	]] ; then
 		:;
+	else
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "mitigations=(off|auto|auto,nosmt)" # no mitigations=full?
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "gather_data_sampling=(force|off)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kpti=(1|0)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm-intel.vmentry_l1d_flush=(always|cond|never)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm.nx_huge_pages=(force|off|auto)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "l1tf=(full|full,force|flush|flush,nosmt|flush,nowarn|off)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "no_entry_flush"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "no_uaccess_flush"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "mds=(full|full,nosmt|off)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "mmio_stale_data=(full|full,nosmt|off)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nobp=(0|1)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nopti"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospec_store_bypass_disable" # Same as spec_store_bypass_disable=off
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospectre_bhb"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospectre_v1"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospectre_v2"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|auto,nosmt|ibpb|ibpb,nosmt|unret|unret,nosmt)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "spec_store_bypass_disable=(on|off|auto|prctl|seccomp)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "spectre_v2=(on|off|auto)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "spectre_v2=(retpoline|retpoline,generic|retpoline,lfence|retpoline,amd|eibrs|eibrs,retpoline|eibrs,lfence|ibrs)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "spectre_v2_user=(on|off|prctl|prctl,ibpb|seccomp|seccomp,ibpb|auto)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "ssbd=(force-on|force-off|kernel)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "tsx=(on|off|auto)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "tsx_async_abort=(full|full,nosmt|off)"
+	fi
+
+	if [[ \
+		   "${hardening_level}" == "custom" \
+		|| "${hardening_level}" == "manual" \
+	]] ; then
+		:;
 	elif [[ \
 		   "${hardening_level}" == "trusted" \
 		|| "${hardening_level}" == "performance" \
 	]] ; then
-		# Disable all hardening
-		# All randomization is disabled because it increases instruction latency or adds more noise to pipeline
-		# CFI and SCS handled later
+	# Disable all hardening
+	# All randomization is disabled because it increases instruction latency
+	# or adds more noise to the pipeline.
+	# CFI and SCS handled later
 		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
@@ -4762,8 +4796,53 @@ einfo "Using ${hardening_level} hardening level"
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 		if ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
+			if [[ "${arch}" == "arm64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "kpti=0"
+				ot-kernel_set_kconfig_kernel_cmdline "nospectre_v2"
+				ot-kernel_set_kconfig_kernel_cmdline "ssbd=force-off"
+			fi
+
+			if [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "nopti"
+				if grep -q -E -e "^CONFIG_PPC_E500=y" "${path_config}" ; then # >= 6.2
+					ot-kernel_set_kconfig_kernel_cmdline "nospectre_v1"
+				elif grep -q -E -e "^CONFIG_PPC_FSL_BOOK3E=y" "${path_config}" ; then # < 6.1
+					ot-kernel_set_kconfig_kernel_cmdline "nospectre_v1"
+				fi
+				ot-kernel_set_kconfig_kernel_cmdline "nospectre_v2"
+				ot-kernel_set_kconfig_kernel_cmdline "no_entry_flush"
+				ot-kernel_set_kconfig_kernel_cmdline "no_uaccess_flush"
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=off" # Based on mitigations=off documentation
+			fi
+
+			if [[ "${arch}" == "s390" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "nospectre_v2"
+				ot-kernel_unset_configopt "CONFIG_KERNEL_NOBP"
+				ot-kernel_set_kconfig_kernel_cmdline "nobp=0"
+			fi
+
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "nospectre_v1"
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=off" # Based on mitigations=off documentation
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_v2_user=off"
+				if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
+					ot-kernel_set_kconfig_kernel_cmdline "kvm.nx_huge_pages=off"
+				fi
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_OFF"
+					ot-kernel_y_configopt "CONFIG_X86_INTEL_TSX_MODE_ON"
+					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_AUTO"
+					ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
+					ot-kernel_set_kconfig_kernel_cmdline "gather_data_sampling=off"
+					ot-kernel_set_kconfig_kernel_cmdline "mds=off"
+					ot-kernel_set_kconfig_kernel_cmdline "mmio_stale_data=off"
+					ot-kernel_set_kconfig_kernel_cmdline "srbds=off"
+					ot-kernel_set_kconfig_kernel_cmdline "tsx=on"
+					ot-kernel_set_kconfig_kernel_cmdline "tsx_async_abort=off"
+					if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
+						ot-kernel_set_kconfig_kernel_cmdline "kvm-intel.vmentry_l1d_flush=never"
+					fi
+				fi
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
@@ -4781,12 +4860,10 @@ einfo "Using ${hardening_level} hardening level"
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|auto,nosmt|ibpb|ibpb,nosmt|unret|unret,nosmt)"
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
 			fi
 		elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto)"
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
 			fi
 		fi
@@ -4795,12 +4872,17 @@ einfo "Using ${hardening_level} hardening level"
 				ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
 			fi
 		fi
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.1 ; then
+			if [[ "${arch}" == "arm64" ]] ; then
+				ot-kernel_unset_configopt "nospectre_bhb"
+			fi
+		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
 			ot-kernel_unset_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_ADDRESS_MASKING"
+				ot-kernel_y_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
@@ -4810,7 +4892,8 @@ einfo "Using ${hardening_level} hardening level"
 		   "${hardening_level}" == "default" \
 		|| "${hardening_level}" == "practical" \
 	]] ; then
-		# Resets back to upstream defaults.
+	# Resets back to upstream defaults.
+
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
@@ -4932,7 +5015,7 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
 		ot-kernel_unset_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
 		if [[ "${arch}" == "s390" ]] ; then
-			ot-kernel_unset_configopt "CONFIG_EXPOLINE"
+			ot-kernel_y_configopt "CONFIG_EXPOLINE"
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_OFF"
 			ot-kernel_y_configopt "CONFIG_EXPOLINE_AUTO"
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
@@ -4963,8 +5046,42 @@ eerror
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
 		if ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
+			if [[ "${arch}" == "arm64" ]] ; then
+	# KPTI:  This assumes unforced default
+	# SSBD:  Rely on automagic
+				:;
+			fi
+
+			if [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
+			fi
+
+			if [[ "${arch}" == "s390" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_KERNEL_NOBP"
+				#ot-kernel_set_kconfig_kernel_cmdline "nobp=0"
+			fi
+
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_v2=auto"
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_v2_user=auto"
+				if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
+					ot-kernel_set_kconfig_kernel_cmdline "kvm.nx_huge_pages=auto"
+				fi
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_y_configopt "CONFIG_X86_INTEL_TSX_MODE_OFF"
+					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_ON"
+					ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_AUTO"
+	# GDS:  Rely on automagic
+					ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
+					ot-kernel_set_kconfig_kernel_cmdline "mds=full"
+					ot-kernel_set_kconfig_kernel_cmdline "mmio_stale_data=full"
+					ot-kernel_set_kconfig_kernel_cmdline "tsx=off"
+					ot-kernel_set_kconfig_kernel_cmdline "tsx_async_abort=full"
+					if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
+						ot-kernel_set_kconfig_kernel_cmdline "kvm-intel.vmentry_l1d_flush=cond"
+					fi
+				fi
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
@@ -4982,12 +5099,10 @@ eerror
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|auto,nosmt|ibpb|ibpb,nosmt|unret|unret,nosmt)"
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
 		elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
-			if [[ "${arch}" == "x86_64" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto)"
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
 		fi
@@ -5001,17 +5116,18 @@ eerror
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING"
+				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 		fi
 	elif [[ \
-		"${hardening_level}" == "untrusted-distant" \
+		   "${hardening_level}" == "untrusted" \
+		|| "${hardening_level}" == "untrusted-distant" \
 	]] ; then
-		# Some all hardening (All except physical attacks)
-		# CFI and SCS handled later
+	# CFI and SCS handled later
+
 		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
@@ -5173,8 +5289,44 @@ eerror
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				:; #ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
+			if [[ "${arch}" == "arm64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "kpti=1"
+				ot-kernel_set_kconfig_kernel_cmdline "ssbd=force-on"
+			fi
+
+			if [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
+			fi
+
+			if [[ "${arch}" == "s390" ]] ; then
+				ot-kernel_y_configopt "CONFIG_KERNEL_NOBP"
+				ot-kernel_set_kconfig_kernel_cmdline "nobp=1"
+			fi
+
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_X86_INTEL_TSX_MODE_OFF"
+				ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_ON"
+				ot-kernel_unset_configopt "CONFIG_X86_INTEL_TSX_MODE_AUTO"
+				ot-kernel_set_kconfig_kernel_cmdline "spec_store_bypass_disable=auto"
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_v2=auto"
+				ot-kernel_set_kconfig_kernel_cmdline "spectre_v2_user=auto"
+				ot-kernel_set_kconfig_kernel_cmdline "tsx=off"
+				if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
+					ot-kernel_set_kconfig_kernel_cmdline "kvm.nx_huge_pages=auto"
+				fi
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					if ot-kernel_has_version "sys-firmware/intel-microcode" ; then
+						ot-kernel_unset_configopt "CONFIG_GDS_FORCE_MITIGATION"
+					elif ot-kernel_use cpu_flags_x86_avx ; then
+						ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
+					fi
+					ot-kernel_set_kconfig_kernel_cmdline "mds=full"
+					ot-kernel_set_kconfig_kernel_cmdline "mmio_stale_data=full,nosmt"
+					ot-kernel_set_kconfig_kernel_cmdline "tsx_async_abort=full,nosmt"
+					if grep -q -E -e "^CONFIG_KVM=y" "${path_config}" ; then
+						ot-kernel_set_kconfig_kernel_cmdline "kvm-intel.vmentry_l1d_flush=always"
+					fi
+				fi
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
@@ -5207,13 +5359,11 @@ eerror
 			ot-kernel_set_kconfig_l1tf_mitigations "1"
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
-			if [[  "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|auto,nosmt|ibpb|ibpb,nosmt|unret|unret,nosmt)"
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
 		elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
-			if [[  "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto)"
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
 		fi
@@ -5227,7 +5377,7 @@ eerror
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING"
+				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
@@ -5242,249 +5392,6 @@ eerror
 		ot-kernel_unset_configopt "CONFIG_UKSM"
 		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
 # This disables patching with uksm or unintended consequences of patching with"
-# it.
-eerror
-eerror "Please disable uksm for OT_KERNEL_HARDENING_LEVEL=${hardening_level}"
-eerror "for OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
-eerror
-			die
-		fi
-	elif [[ \
-		"${hardening_level}" == "untrusted" \
-	]] ; then
-		# All hardening
-		# CFI and SCS handled later
-		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
-		ot-kernel_y_configopt "CONFIG_FORTIFY_SOURCE"
-		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
-		ot-kernel_y_configopt "CONFIG_HARDENED_USERCOPY"
-		ot-kernel_y_configopt "CONFIG_INIT_ON_ALLOC_DEFAULT_ON"
-		ot-kernel_y_configopt "CONFIG_INIT_ON_FREE_DEFAULT_ON"
-
-		if \
-			tc-is-gcc \
-				&& \
-			test -e $(${CHOST}-${gcc_slot} -print-file-name=plugin)/include/plugin-version.h \
-				&& \
-			grep -q -E -e "^CONFIG_HAVE_GCC_PLUGINS=y" "${path_config}" \
-				&& \
-			! ot-kernel_use rust \
-		; then
-			ot-kernel_y_configopt "CONFIG_GCC_PLUGINS"
-		else
-			ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
-		fi
-
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
-			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-			elif grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-			elif grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-			else
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
-			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 5.9 ; then
-			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-			elif grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-			else
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
-			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
-			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-			elif grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-			else
-				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
-				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
-			fi
-		fi
-
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
-			if tc-is-gcc && grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
-				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
-				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
-				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
-			else
-				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
-				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
-				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
-			fi
-			if [[ "${arch}" == "x86" ]] && grep -q -E -e "^CONFIG_X86_PAE=y" "${path_config}" ; then
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
-			elif [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_PAGE_TABLE_ISOLATION"
-			fi
-		fi
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
-		ot-kernel_y_configopt "CONFIG_RELOCATABLE"
-		ot-kernel_y_configopt "CONFIG_RANDOMIZE_BASE"
-		ot-kernel_y_configopt "CONFIG_RANDOMIZE_KSTACK_OFFSET_DEFAULT"
-		if [[ "${arch}" == "s390" ]] ; then
-			ot-kernel_y_configopt "CONFIG_EXPOLINE"
-			ot-kernel_unset_configopt "CONFIG_EXPOLINE_OFF"
-			ot-kernel_y_configopt "CONFIG_EXPOLINE_AUTO"
-			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
-		elif [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-			ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
-			ot-kernel_y_configopt "CONFIG_RETPOLINE"
-			local ready=0
-			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
-				ready=1
-			elif tc-is-clang && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
-				ready=1
-			fi
-			if (( ${ready} == 0 )) ; then
-eerror
-eerror "Switch to >=gcc-8.1 or >=clang-7 for retpoline support"
-eerror
-				die
-			fi
-		fi
-		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
-		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
-		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_RANDOM"
-		ot-kernel_unset_configopt "CONFIG_SLAB_MERGE_DEFAULT"
-		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR"
-		ot-kernel_y_configopt "CONFIG_STACKPROTECTOR_STRONG"
-		if tc-is-gcc ; then
-			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
-		fi
-		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" =~ ("1"|"2") ]] ; then
-			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
-		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				:; #ot-kernel_y_configopt "CONFIG_GDS_FORCE_MITIGATION"
-			fi
-		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
-			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
-			fi
-			ot-kernel_y_configopt "CONFIG_RETHUNK"
-			if ! test-flags "-mfunction-return=thunk-extern" 2>/dev/null 1>/dev/null ; then
-				# For rethunk
-eerror
-eerror "Please rebuild =clang-15.0.0.9999 or switch to >= gcc-8.1"
-eerror
-				die
-			fi
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
-				ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
-				if [[ "${arch}" == "x86_64" ]] ; then
-					ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
-				fi
-			elif [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
-			elif [[ $(ot-kernel_get_cpu_mfg_id) == "hygon" ]] ; then
-				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
-			fi
-			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_SLS"
-			fi
-		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
-			ot-kernel_set_kconfig_l1tf_mitigations "1"
-		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
-			if [[  "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|auto,nosmt|ibpb|ibpb,nosmt|unret|unret,nosmt)"
-				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
-			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
-			if [[  "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto)"
-				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
-			fi
-		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.18 ; then
-			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_X86_KERNEL_IBT"
-			fi
-		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
-			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
-		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
-			if [[ "${arch}" == "x86_64" ]] ; then
-				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING"
-			fi
-		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
-			if [[ "${arch}" == "x86_64" ]] && grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
-					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
-				fi
-			fi
-		fi
-
-	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
-		ot-kernel_unset_configopt "CONFIG_KSM"
-		ot-kernel_unset_configopt "CONFIG_UKSM"
-		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
-# This disables patching with uksm or unintended consequences of patching with
 # it.
 eerror
 eerror "Please disable uksm for OT_KERNEL_HARDENING_LEVEL=${hardening_level}"
@@ -9822,9 +9729,13 @@ eerror
 # It does mutex locking.
 ewarn "Disabling 16-bit support.  If you do not like this, disable rt from OT_KERNEL_USE."
 		ot-kernel_unset_configopt "CONFIG_MODIFY_LDT_SYSCALL"
+
+# My drain battery faster
+		ot-kernel_set_kconfig_kernel_cmdline "skew_tick=1"
 	else
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt=force"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "skew_tick=(0|1)"
 	fi
 }
 
