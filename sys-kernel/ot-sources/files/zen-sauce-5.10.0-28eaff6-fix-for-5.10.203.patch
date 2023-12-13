@@ -1,0 +1,20 @@
+# License identified in drivers/cpufreq/intel_pstate.c:
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * intel_pstate.c: Native P state management for Intel processors
+ *
+ * (C) Copyright 2012 Intel Corporation
+ * Author: Dirk Brandewie <dirk.j.brandewie@intel.com>
+ */
+
+--- a/drivers/cpufreq/intel_pstate.c.orig	2023-12-13 00:10:02.260950838 -0800
++++ b/drivers/cpufreq/intel_pstate.c	2023-12-13 00:11:09.884950442 -0800
+@@ -3136,6 +3136,8 @@ static int __init intel_pstate_setup(cha
+ 	if (!strcmp(str, "no_hwp"))
+ 		no_hwp = 1;
+ 
++	if (!strcmp(str, "enable"))
++		no_load = 0;
+ 	if (!strcmp(str, "force"))
+ 		force_load = 1;
+ 	if (!strcmp(str, "hwp_only"))
