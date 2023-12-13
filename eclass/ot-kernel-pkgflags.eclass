@@ -10607,7 +10607,9 @@ _ot-kernel_set_io_uring() {
 	# Increased security
 		ot-kernel_unset_configopt "CONFIG_IO_URING"
 	elif [[ \
-		   "${hardening_level}" == "performance" \
+		   "${hardening_level}" == "default" \
+		|| "${hardening_level}" == "performance" \
+		|| "${hardening_level}" == "practical" \
 		|| "${hardening_level}" == "trusted" \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -10616,7 +10618,7 @@ _ot-kernel_set_io_uring() {
 eerror
 eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
 eerror
-eerror "Acceptable values:  custom, manual, performance, trusted, untrusted, untrusted-distant"
+eerror "Acceptable values:  custom, default, manual, performance, practical, trusted, untrusted, untrusted-distant"
 eerror "Actual value:  ${hardening_level}"
 eerror
 		die
