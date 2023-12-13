@@ -4462,6 +4462,10 @@ eerror
 		die
 	fi
 
+	# Drop references to dl_bw_free, dl_bw_alloc from kernel/sched/deadline.c
+	ot-kernel_unset_configopt "CONFIG_CPUSETS"
+	ot-kernel_unset_configopt "CONFIG_PROC_PID_CPUSET"
+
 einfo "Changed .config to use MuQSS"
 	ot-kernel_y_configopt "CONFIG_SCHED_MUQSS"
 	cpu_sched_config_applied=1
