@@ -716,11 +716,6 @@ ewarn "This ebuild series is a WIP / IN DEVELOPMENT."
 ewarn "Expect patchtime failures."
 ewarn
 
-ewarn
-ewarn "Patches are not ready.  Please disable all patch USE flags for this"
-ewarn "series."
-ewarn
-
 	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
 ewarn "You are using the live kernel sources.  This may result in data loss,"
