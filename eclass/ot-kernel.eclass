@@ -4527,40 +4527,46 @@ einfo "Changed .config to use MuQSS"
 	local processor_class="${OT_KERNEL_PROCESSOR_CLASS,,}"
 
 	local multicore=0
-	if grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" ; then
-		multicore=1
-	fi
-
-	local nnuma=0
-	nnuma=$(lscpu \
-		| grep "NUMA node(s)" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9]+")
-	[[ -z "${nnuma}" ]] && nnuma=0
-
-	local smt=0
-	local tpc=$(lscpu \
-		| grep  -e "Thread(s) per core:.*" \
-		| head -n 1 \
-		| grep -E -o "[0-9]+")
-	(( ${tpc} > 1 )) && smt=1
-
-	local smp=1
-	local ncpus=$(lscpu \
-		| grep "CPU(s)" \
-		| head -n 1 \
-		| grep -E -o -e "[0-9]+")
-	(( ${ncpus} > 0 )) && smp=1
-
 	local multicore_with_level3_cache=0
-	if \
-		! tc-is-cross-compiler \
-			&& \
-		lscpu | grep -q -E "L3.*[0-9]+" \
-			&&
-		grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" \
-	; then
-		multicore_with_level3_cache=1
+	local ncpus=1
+	local nnuma=0
+	local smp=0
+	local smt=0
+	local tpc=1
+
+	if ! tc-is-cross-compiler ; then
+		ncpus=$(lscpu \
+			| grep "CPU(s)" \
+			| head -n 1 \
+			| grep -E -o -e "[0-9]+")
+		(( ${ncpus} > 0 )) && smp=1
+
+		nnuma=$(lscpu \
+			| grep "NUMA node(s)" \
+			| head -n 1 \
+			| grep -E -o -e "[0-9]+")
+		[[ -z "${nnuma}" ]] && nnuma=0
+
+		tpc=$(lscpu \
+			| grep  -e "Thread(s) per core:.*" \
+			| head -n 1 \
+			| grep -E -o "[0-9]+")
+		(( ${tpc} > 1 )) && smt=1
+
+
+		local ncores=$(cat /proc/cpuinfo \
+			| grep "cpu cores" \
+			| grep -E -o "[0-9]+" \
+			| head -n 1)
+		(( ${ncores} > 1 )) && multicore=1
+
+		if \
+			lscpu | grep -q -E "L3.*[0-9]+" \
+				&&
+			(( ${multicore} == 1 )) \
+		; then
+			multicore_with_level3_cache=1
+		fi
 	fi
 
 	if [[ \
