@@ -9811,6 +9811,23 @@ eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
 eerror
 		die
 	fi
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		if ! tc-is-cross-compiler ; then
+			local tpc=$(lscpu \
+				| grep  -e "Thread(s) per core:.*" \
+				| head -n 1 \
+				| grep -E -o "[0-9]+")
+		if (( tpc > 1 )) ; then
+			# Already set in ot-kernel_set_kconfig_processor_class
+			# ot-kernel_y_configopt "CONFIG_SMP"
+			# ot-kernel_y_configopt "CONFIG_SCHED_MC"
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
+			else
+				ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
+			fi
+		fi
+	fi
 }
 
 # @FUNCTION: ot-kernel_optimize_gaming_tournament_oflag
@@ -9851,6 +9868,23 @@ eerror "Please remove uksm from OT_KERNEL_USE in"
 eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
 eerror
 		die
+	fi
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		if ! tc-is-cross-compiler ; then
+			local tpc=$(lscpu \
+				| grep  -e "Thread(s) per core:.*" \
+				| head -n 1 \
+				| grep -E -o "[0-9]+")
+		if (( tpc > 1 )) ; then
+			# Already set in ot-kernel_set_kconfig_processor_class
+			# ot-kernel_y_configopt "CONFIG_SMP"
+			# ot-kernel_y_configopt "CONFIG_SCHED_MC"
+			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
+			else
+				ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
+			fi
+		fi
 	fi
 }
 
