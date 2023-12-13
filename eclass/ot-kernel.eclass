@@ -2256,7 +2256,15 @@ apply_all_patchsets() {
 	fi
 
 	if has muqss ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use muqss && [[ "${cpu_sched}" == "muqss" ]] ; then
+		if \
+			ot-kernel_use muqss \
+				&& \
+			[[ \
+				   "${cpu_sched}" == "muqss" \
+				|| "${cpu_sched}" == "muqss-latency" \
+				|| "${cpu_sched}" == "muqss-throughput" \
+			]] \
+		; then
 			apply_ck
 		fi
 	fi
@@ -4516,6 +4524,45 @@ einfo "Changed .config to use MuQSS"
 	}
 
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	local processor_class="${OT_KERNEL_PROCESSOR_CLASS,,}"
+
+	local multicore=0
+	if grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" ; then
+		multicore=1
+	fi
+
+	local nnuma=0
+	nnuma=$(lscpu \
+		| grep "NUMA node(s)" \
+		| head -n 1 \
+		| grep -E -o -e "[0-9]+")
+	[[ -z "${nnuma}" ]] && nnuma=0
+
+	local smt=0
+	local tpc=$(lscpu \
+		| grep  -e "Thread(s) per core:.*" \
+		| head -n 1 \
+		| grep -E -o "[0-9]+")
+	(( ${tpc} > 1 )) && smt=1
+
+	local smp=1
+	local ncpus=$(lscpu \
+		| grep "CPU(s)" \
+		| head -n 1 \
+		| grep -E -o -e "[0-9]+")
+	(( ${ncpus} > 0 )) && smp=1
+
+	local multicore_with_level3_cache=0
+	if \
+		! tc-is-cross-compiler \
+			&& \
+		lscpu | grep -q -E "L3.*[0-9]+" \
+			&&
+		grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" \
+	; then
+		multicore_with_level3_cache=1
+	fi
+
 	if [[ \
 		   "${work_profile}" == "realtime-hpc" \
 	]] ; then
@@ -4528,26 +4575,7 @@ einfo "Changed .config to use MuQSS"
 		|| "${work_profile}" == "workstation" \
 	]] ; then
 	# Throughput
-		if [[ \
-			   "${hardening_level}" == "performance" \
-			|| "${hardening_level}" == "trusted" \
-		]] ; then
-			if ! tc-is-cross-compiler ; then
-				local tpc=$(lscpu \
-					| grep  -e "Thread(s) per core:.*" \
-					| head -n 1 \
-					| grep -E -o "[0-9]+")
-				if (( tpc > 1 )) ; then
-					_set_muqss_smt
-				else
-					_set_muqss_none
-				fi
-			else
-				_set_muqss_none
-			fi
-		else
-			_set_muqss_none
-		fi
+		_set_muqss_none
 	elif [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "live-video-reporting" \
@@ -4556,32 +4584,105 @@ einfo "Changed .config to use MuQSS"
 		|| "${work_profile}" == "voip" \
 	]] ; then
 	# Low latency
-		if \
-			! tc-is-cross-compiler \
-				&& \
-			lscpu | grep -q -E "L3.*[0-9]+" \
-				&&
-			grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" \
+		if [[ \
+			   "${hardening_level}" == "performance" \
+			|| "${hardening_level}" == "trusted" \
+		]] ; then
+			if \
+				[[ \
+					   "${smt}" == "1" \
+					|| "${processor_class}" == "multicore-smt" \
+				]] \
+			; then
+				_set_muqss_smt
+			elif \
+				[[ \
+					   "${multicore}" == "1" \
+					|| "${processor_class}" =~ "multicore" \
+				]] \
+			; then
+				_set_muqss_mc
+			elif \
+				[[ \
+					   "${processor_class}" =~ "smp" \
+					|| "${smp}" == "1" \
+				]] \
+			; then
+				_set_muqss_smp
+			else
+				_set_muqss_none
+			fi
+		elif \
+			[[ \
+				"${multicore_with_level3_cache}" == "1" \
+			]] \
 		; then
-	# Multicore with L3 cache
 	# The documentation is kind of cryptic.
 			_set_muqss_mc_llc
-		elif grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" ; then
-	# Multicore without L3 cache
+		elif \
+			[[ \
+				   "${multicore}" == "1" \
+				|| "${processor_class}" =~ "multicore" \
+			]] \
+		; then
 			_set_muqss_mc
-		elif grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
-	# SMP
+		elif \
+			[[ \
+				   "${processor_class}" =~ "smp" \
+				|| "${smp}" == "1" \
+			]] \
+		; then
 			_set_muqss_smp
 		else
-	# Unicore
 			_set_muqss_none
 		fi
 	else
-		if grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
-	# Multicore (default)
-			_set_muqss_mc
+		if [[ "${cpu_sched}" == "muqss" || "${cpu_sched}" == "muqss-latency" ]] ; then
+			if \
+				[[ \
+					   "${nnuma}" -gt "1" \
+					|| "${processor_class}" =~ "numa" \
+				]] \
+			; then
+				_set_muqss_numa
+			elif \
+				[[ \
+					( \
+						   "${hardening_level}" == "performance" \
+						|| "${hardening_level}" == "trusted" \
+					) \
+						&& \
+					( \
+						   "${processor_class}" == "multicore-smt" \
+						|| "${smt}" == "1" \
+					) \
+				]] \
+			; then
+				_set_muqss_smt
+			elif \
+				[[ \
+					   "${multicore_with_level3_cache}" == "1" \
+				]] \
+			; then
+				_set_muqss_mc_llc
+			elif \
+				[[ \
+					   "${multicore}" == "1" \
+					|| "${processor_class}" =~ "multicore" \
+				]] \
+			; then
+				_set_muqss_mc
+			elif \
+				[[ \
+					   "${processor_class}" =~ "smp" \
+					|| "${smp}" == "1" \
+				]] \
+			; then
+				_set_muqss_smp
+			else
+				_set_muqss_none
+			fi
 		else
-	# Unicore
 			_set_muqss_none
 		fi
 	fi
@@ -7119,9 +7220,14 @@ ot-kernel_set_kconfig_processor_class() {
 	local processor_class="${OT_KERNEL_PROCESSOR_CLASS,,}"
 	if [[ -z "${processor_class}" ]] ; then
 		:
-	elif [[ "${processor_class}" =~ ("manual"|"custom") ]] ; then
+	elif [[ \
+		   "${processor_class}" == "custom" \
+		|| "${processor_class}" == "manual" \
+	]] ; then
 		:
-	elif [[ "${processor_class}" == "auto" ]] ; then
+	elif [[ \
+		   "${processor_class}" == "auto" \
+	]] ; then
 		local ncpus=$(lscpu | grep "CPU(s):" \
 			| head -n 1 \
 			| grep -o -E -e "[0-9]+") # ncores * nsockets * tpc
@@ -7157,27 +7263,38 @@ ot-kernel_set_kconfig_processor_class() {
 			ot-kernel_set_configopt "CONFIG_NODES_SHIFT" \
 				$(python -c "import math; print(math.ceil(math.log(${nsockets})/math.log(2)))")
 		fi
-	elif [[ "${processor_class}" == "uniprocessor" \
-		|| "${processor_class}" == "unicore" ]] ; then
+	elif [[ \
+		   "${processor_class}" == "unicore" \
+		|| "${processor_class}" == "uniprocessor" \
+	]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_unset_configopt "CONFIG_SMP"
-	elif [[ "${processor_class}" == "smp" \
+	elif [[ \
+		   "${processor_class}" == "smp" \
+		|| "${processor_class}" == "smp-legacy" \
 		|| "${processor_class}" == "smp-unicore" \
-		|| "${processor_class}" == "smp-legacy" ]] ; then
+	]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
-	elif [[ "${processor_class}" == "multicore" ]] ; then
+	elif [[ \
+		   "${processor_class}" == "multicore" \
+		|| "${processor_class}" == "multicore-smt" \
+	]] ; then
 		ot-kernel_unset_configopt "CONFIG_NUMA"
 		ot-kernel_y_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
-	elif [[ "${processor_class}" == "numa-unicore" ]] ; then
+	elif [[ \
+		   "${processor_class}" == "numa-unicore" \
+	]] ; then
 		ot-kernel_y_configopt "CONFIG_NUMA"
 		ot-kernel_unset_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
-	elif [[ "${processor_class}" == "numa-multicore" \
-		|| "${processor_class}" == "numa" ]] ; then
+	elif [[ \
+		   "${processor_class}" == "numa" \
+		|| "${processor_class}" == "numa-multicore" \
+	]] ; then
 		ot-kernel_y_configopt "CONFIG_NUMA"
 		ot-kernel_y_configopt "CONFIG_SCHED_MC"
 		ot-kernel_y_configopt "CONFIG_SMP"
@@ -9817,14 +9934,15 @@ eerror
 				| grep  -e "Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
-		if (( tpc > 1 )) && ver_test ${KV_MAJOR_MINOR} -ge 4.10 ; then
-			# Already set in ot-kernel_set_kconfig_processor_class
-			# ot-kernel_y_configopt "CONFIG_SMP"
-			# ot-kernel_y_configopt "CONFIG_SCHED_MC"
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
-			else
-				ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
+			if (( tpc > 1 )) && ver_test ${KV_MAJOR_MINOR} -ge 4.10 ; then
+				# Already set in ot-kernel_set_kconfig_processor_class
+				# ot-kernel_y_configopt "CONFIG_SMP"
+				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
+				else
+					ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
+				fi
 			fi
 		fi
 	fi
@@ -9875,14 +9993,15 @@ eerror
 				| grep  -e "Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
-		if (( tpc > 1 )) && ver_test ${KV_MAJOR_MINOR} -ge 4.10 ; then
-			# Already set in ot-kernel_set_kconfig_processor_class
-			# ot-kernel_y_configopt "CONFIG_SMP"
-			# ot-kernel_y_configopt "CONFIG_SCHED_MC"
-			if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-				ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
-			else
-				ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
+			if (( tpc > 1 )) && ver_test ${KV_MAJOR_MINOR} -ge 4.10 ; then
+				# Already set in ot-kernel_set_kconfig_processor_class
+				# ot-kernel_y_configopt "CONFIG_SMP"
+				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
+				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
+					ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
+				else
+					ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
+				fi
 			fi
 		fi
 	fi

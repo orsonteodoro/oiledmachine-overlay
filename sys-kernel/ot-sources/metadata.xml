@@ -963,9 +963,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
     OT_KERNEL_CPU_SCHED - can be one of the below depending on the kernel version.
 
-      4.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, pds
-      4.19: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, pds
-      5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, prjc, prjc-bmq, prjc-pds
+      4.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, pds
+      4.19: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, pds
+      5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, prjc, prjc-bmq, prjc-pds
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
       6.7: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
@@ -2507,8 +2507,9 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Acceptable values:
 
-      uniprocessor, unicore, multicore, smp, smp-unicore, smp-legacy, multicore,
-      numa-multicore, numa-unicore, auto, custom, manual, unset
+      uniprocessor, unicore, multicore, multicore-smt, smp, smp-unicore,
+      smp-legacy, multicore, numa-multicore, numa-unicore, auto, custom, manual,
+      unset
 
     Unset is equivalent to manual.
 
