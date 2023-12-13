@@ -9908,7 +9908,10 @@ ot-kernel_optimize_gaming_oflag() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	[[ "${work_profile}" == "pro-gaming" ]] || return
 	filter-flags '-O*'
-	append-flags '-O3'
+	append-flags '-O3' # This is in testing
+	if ot-kernel_use zen-sauce ; then
+ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
+	fi
 }
 
 # @FUNCTION: ot-kernel_optimize_gaming_tournament
@@ -9961,7 +9964,11 @@ ot-kernel_optimize_gaming_tornament_oflag() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	[[ "${work_profile}" == "gaming-tournament" ]] || return
 	filter-flags '-O*'
-	append-flags '-O3'
+	# Stability is more important that FPS.
+	append-flags '-O3' # This is in testing.
+	if ot-kernel_use zen-sauce ; then
+ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
+	fi
 }
 
 # @FUNCTION: ot-kernel_optimize_gaming_tournament

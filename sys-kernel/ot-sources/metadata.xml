@@ -994,6 +994,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
           BMQ allowing to choose either scheduler.  C means cross.
         - Project C's version of PDS is not the same as PDS-mq.
 	- prjc is the same as prjc-bmq.
+        - muqss-latency configures the runqueue for low latency.
+        - muqss-latency and muqss-throughput only apply as a fallback for
+          work profiles matching or custom/manual work profiles.
 
       The following is discussed in great detail because it affects use of
       scheduling apps that only discuss or assume CFS.  These small details
