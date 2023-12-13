@@ -6070,26 +6070,26 @@ einfo "Default LSM: ${l}"
 		[[ "${ot_kernel_lsms}" =~ "loadpin" ]] && lsms+=( loadpin )
 		[[ "${ot_kernel_lsms}" =~ "safesetid" ]] && lsms+=( safesetid )
 		[[ "${ot_kernel_lsms}" =~ "integrity" ]] && lsms+=( integrity )
-		if [[ "${ot_kernel_lsms}" =~ "smack" ]] ; then
+		if [[ "${ot_kernel_lsms}" =~ "selinux" ]] ; then
+			lsms+=( selinux )
+			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( smack )
+			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
+			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( apparmor )
+			lsms+=( bpf )
+		elif [[ "${ot_kernel_lsms}" =~ "smack" ]] ; then
 			lsms+=( smack )
 			[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( selinux )
 			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
 			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( apparmor )
+			lsms+=( bpf )
+		elif [[ "${ot_kernel_lsms}" =~ "tomoyo" ]] ; then
+			lsms+=( tomoyo )
 			lsms+=( bpf )
 		elif [[ "${ot_kernel_lsms}" =~ "apparmor" ]] ; then
 			lsms+=( apparmor )
 			[[ "${ot_kernel_lsms}" =~ "selinux" ]] && lsms+=( selinux )
 			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( smack )
 			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
-			lsms+=( bpf )
-		elif [[ "${ot_kernel_lsms}" =~ "tomoyo" ]] ; then
-			lsms+=( tomoyo )
-			lsms+=( bpf )
-		elif [[ "${ot_kernel_lsms}" =~ "selinux" ]] ; then
-			lsms+=( selinux )
-			[[ "${ot_kernel_lsms}" =~ "smack" ]] && lsms+=( smack )
-			[[ "${ot_kernel_lsms}" =~ "tomoyo" ]] && lsms+=( tomoyo )
-			[[ "${ot_kernel_lsms}" =~ "apparmor" ]] && lsms+=( apparmor )
 			lsms+=( bpf )
 		elif [[ "${ot_kernel_lsms}" =~ "bpf" ]] ; then
 			lsms+=( bpf )
