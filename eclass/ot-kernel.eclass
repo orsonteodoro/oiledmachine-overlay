@@ -9361,13 +9361,22 @@ ewarn "Early KMS is disabled for the simpledrm driver."
 		ot-kernel_set_configopt "CONFIG_DRM_SIMPLEDRM" "m"
 	fi
 
-	if has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
+	if \
+		has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms \
+	; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 ewarn "Enabling modules support for sys-kernel/rock-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
-	elif ot-kernel_has_version "sys-kernel/rock-dkms" ; then
+	elif \
+		   has rock-dkms ${IUSE_EFFECTIVE} \
+		&& ot-kernel_use rock-dkms \
+		&& ( \
+			   ver_test "${KV_MAJOR_MINOR}" -eq "5.4" \
+			|| ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+		) \
+	; then
 ewarn "Enabling modules support for sys-kernel/rock-dkms."
 ewarn "Early KMS is disabled for the amdgpu driver."
 		ot-kernel_y_configopt "CONFIG_MODULES"

@@ -6436,9 +6436,18 @@ ot-kernel-pkgflags_nvtop() { # DONE
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		if ot-kernel_has_version "sys-process/nvtop[video_cards_amdgpu]" ; then
-			if ! has rock-dkms ${IUSE_EFFECTIVE} ; then
+			if \
+				 ! has rock-dkms ${IUSE_EFFECTIVE} \
+			; then
 				ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-			elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
+			elif \
+				   has rock-dkms ${IUSE_EFFECTIVE} \
+				&& ot-kernel_use rock-dkms \
+				&& ( \
+					   ver_test "${KV_MAJOR_MINOR}" -eq "5.4" \
+					|| ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+				) \
+			; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 				ot-kernel_y_configopt "CONFIG_MODULES"
 				ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
@@ -7699,9 +7708,18 @@ ot-kernel-pkgflags_roct() { # DONE
 		ot-kernel_y_configopt "CONFIG_HSA_AMD"
 		ot-kernel_y_configopt "CONFIG_HMM_MIRROR"
 		ot-kernel_y_configopt "CONFIG_ZONE_DEVICE"
-		if ! has rock-dkms ${IUSE_EFFECTIVE} ; then
+		if \
+			 ! has rock-dkms ${IUSE_EFFECTIVE} \
+		; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
+		elif \
+			   has rock-dkms ${IUSE_EFFECTIVE} \
+			&& ot-kernel_use rock-dkms \
+			&& ( \
+				   ver_test "${KV_MAJOR_MINOR}" -eq "5.4" \
+				|| ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+			) \
+		; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
@@ -9570,9 +9588,18 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 		fi
 		ot-kernel_y_configopt "CONFIG_DRM"
 		ot-kernel_y_configopt "CONFIG_MMU"
-		if ! has rock-dkms ${IUSE_EFFECTIVE} ; then
+		if \
+			 ! has rock-dkms ${IUSE_EFFECTIVE} \
+		; then
 			ot-kernel_y_configopt "CONFIG_DRM_AMDGPU"
-		elif has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
+		elif \
+			   has rock-dkms ${IUSE_EFFECTIVE} \
+			&& ot-kernel_use rock-dkms \
+			&& ( \
+				   ver_test "${KV_MAJOR_MINOR}" -eq "5.4" \
+				|| ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+			) \
+		; then
 	# For sys-kernel/rock-dkms not installed yet scenario.
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
