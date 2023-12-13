@@ -10106,8 +10106,7 @@ ewarn "Disabling 16-bit support.  If you do not like this, disable rt from OT_KE
 # This may drain the battery faster.
 		ot-kernel_set_kconfig_kernel_cmdline "skew_tick=1"
 	else
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt=force"
+# nosmt is resetted in ot-kernel_set_kconfig_hardening_level()
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "skew_tick=(0|1)"
 	fi
 }
