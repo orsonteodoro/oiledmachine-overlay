@@ -998,7 +998,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 	- prjc is the same as prjc-bmq.
         - muqss-latency configures the runqueue for low latency.
         - muqss-latency and muqss-throughput only apply as a fallback for
-          work profiles matching or custom/manual work profiles.
+          work profiles not matching or custom/manual work profiles.
 
       The following is discussed in great detail because it affects use of
       scheduling apps that only discuss or assume CFS.  These small details
