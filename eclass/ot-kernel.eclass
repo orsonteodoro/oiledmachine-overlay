@@ -5024,6 +5024,39 @@ einfo "Using ${hardening_level} hardening level"
 	# For setters, it is stated twice for CONFIG_CMDLINE_FORCE=y.
 	fi
 
+	_y_retpoline() {
+		ot-kernel_y_configopt "CONFIG_RETPOLINE"
+		local ready=0
+		if tc-is-gcc && ver_test $(gcc-version) -ge 8.1 ; then
+			ready=1
+		elif tc-is-gcc && ver_test $(clang-version) -ge 7 ; then
+			ready=1
+		fi
+		if (( ${ready} == 0 )) ; then
+eerror
+eerror "Switch to >=gcc-8.1 or >=clang-7 for retpoline support"
+eerror
+			die
+		fi
+	}
+
+	_y_ibt() {
+		ot-kernel_y_configopt "CONFIG_X86_KERNEL_IBT"
+		local ready=0
+		if tc-is-gcc && ver_test $(gcc-version) -ge 9 && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
+			ready=1
+		elif tc-is-gcc && ver_test $(clang-version) -ge 14 ; then
+			ready=1
+		fi
+		if (( ${ready} == 0 )) ; then
+eerror
+eerror "Switch to >=gcc-9 with >=binutils-2.2.9, or >=clang-14 for IBT support"
+eerror
+			die
+		fi
+	}
+
+
 	if [[ \
 		   "${hardening_level}" == "custom" \
 		|| "${hardening_level}" == "manual" \
@@ -5281,19 +5314,7 @@ einfo "Using ${hardening_level} hardening level"
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
 		elif [[ "${arch}" == "x86"  || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
-			ot-kernel_y_configopt "CONFIG_RETPOLINE"
-			local ready=0
-			if tc-is-gcc && ver_test $(gcc-version) -ge 8.1 ; then
-				ready=1
-			elif tc-is-clang && ver_test $(clang-version) -ge 7 ; then
-				ready=1
-			fi
-			if (( ${ready} == 0 )) ; then
-eerror
-eerror "Switch to >=gcc-8.1 or >=clang-7 for retpoline support"
-eerror
-				die
-			fi
+			_y_retpoline
 		fi
 		ot-kernel_unset_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_unset_configopt "CONFIG_SLAB_FREELIST_HARDENED"
@@ -5368,7 +5389,7 @@ eerror
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.18 ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_X86_KERNEL_IBT"
+				_y_ibt
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
@@ -5522,19 +5543,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_EXPOLINE_ON"
 		elif [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
-			ot-kernel_y_configopt "CONFIG_RETPOLINE"
-			local ready=0
-			if tc-is-gcc && ver_test $(gcc-version) -ge 8.1 ; then
-				ready=1
-			elif tc-is-gcc && ver_test $(clang-version) -ge 7 ; then
-				ready=1
-			fi
-			if (( ${ready} == 0 )) ; then
-eerror
-eerror "Switch to >=gcc-8.1 or >=clang-7 for retpoline support"
-eerror
-				die
-			fi
+			_y_retpoline
 		fi
 		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
@@ -5629,7 +5638,7 @@ eerror
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.18 ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				ot-kernel_y_configopt "CONFIG_X86_KERNEL_IBT"
+				_y_ibt
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
