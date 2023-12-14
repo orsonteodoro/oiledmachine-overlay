@@ -11524,22 +11524,22 @@ einfo "Running:  make modules_install ${args[@]}"
 				ot-kernel_keep_keys
 			fi
 
-			local default_config="/etc/kernels/kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
+			local default_config_bn="kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
+			local default_config_dir="/etc/kernels"
+			local default_config="${default_config_dir}/${default_config_bn}"
 einfo "Saving the config for ${extraversion} to ${default_config}"
 			insinto /etc/kernels
-			newins "${BUILD_DIR}/.config" $(basename "${default_config}")
+			newins "${BUILD_DIR}/.config" "${default_config_bn}"
 			# dosym src_relpath_real dest_abspath_symlink
-			local suffix=""
-			if [[ "${PV}" =~ "9999" ]] ; then
-				suffix="-${RC_PV}"
-			fi
 
 			# For genkernel
-			dosym $(basename "${default_config}") \
-				$(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${UPSTREAM_PV})${suffix}-${extraversion}-${arch}
+			dosym \
+				"${default_config_bn}" \
+				"${default_config_dir}/kernel-config-${UPSTREAM_PV}-${extraversion}-${arch}"
 
 			# For linux-info.eclass config checks
-			dosym $(dirname "${default_config}")/kernel-config-$(ver_cut 1-3 ${UPSTREAM_PV})${suffix}-${extraversion}-${arch} \
+			dosym \
+				"${default_config_dir}/kernel-config-${UPSTREAM_PV}-${extraversion}-${arch}" \
 				"/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config"
 
 			local cache="${T}/save_cache"
@@ -11987,14 +11987,14 @@ EOF
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
 		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
 
-		local suffix=""
+		local NC_VERSION=""
 		if [[ -n "${RC_PV}" ]] ; then
-			suffix="-${RC_PV}"
+			NC_VERSION="${KV_MAJOR_MINOR}-${RC_PV}"
 		fi
 
 		[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
-		local non_canonical_target="${KV_MAJOR_MINOR}${suffix}-${extraversion}-${arch}" # ex. 6.6-builder-${arch}
-		local canonical_target="${UPSTREAM_PV}${suffix}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
+		local non_canonical_target="${NC_VERSION}-${extraversion}-${arch}" # ex. 6.6-builder-${arch}
+		local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
 
 		mkdir -p "${ED}/lib/modules/${canonical_target}"
 		if [[ -e "${ED}/lib/modules/${non_canonical_target}" ]] ; then
