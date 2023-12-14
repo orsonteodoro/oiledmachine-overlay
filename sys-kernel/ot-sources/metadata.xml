@@ -2809,7 +2809,7 @@ unset OT_KERNEL_PRIVATE_KEY
                 | Tensorflow [heavy dependency], high memory footprint
       pcc       | Send throughput, low requirements, better stability over time
                 | Higher CPU usage
-      scalable  | Throughput [loss based]
+      scalable  | Throughput
                 | High packet loss
       veno      | Throughput with wireless
       yeah      | Throughput, high network utilization and internal fairness for high BDP/RTT
