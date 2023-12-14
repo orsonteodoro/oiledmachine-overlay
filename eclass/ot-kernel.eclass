@@ -5214,7 +5214,7 @@ einfo "Using ${hardening_level} hardening level"
 		if \
 			tc-is-gcc \
 				&& \
-			test -e $(${CHOST}-${gcc_slot} -print-file-name=plugin)/include/plugin-version.h \
+			test -e $(${CHOST}-gcc-${gcc_slot} -print-file-name=plugin)/include/plugin-version.h \
 				&& \
 			grep -q -E -e "^CONFIG_HAVE_GCC_PLUGINS=y" "${path_config}" \
 				&& \
