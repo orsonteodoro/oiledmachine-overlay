@@ -2796,7 +2796,7 @@ unset OT_KERNEL_PRIVATE_KEY
       clear     | Do not add any (Ebuild only)
       dctcp     | High throughput and fairness for data centers
                 | High latency for KiB RPC payloads
-      deepcc    | Throughput, optimized cubic
+      deepcc    | Throughput, optimized BBR, Cubic, Illinois, Westwood
                 | Tensorflow [heavy dependency], high memory footprint
       cubic     | Throughput, ubiquitous (de facto standard)
       hstcp     | Throughput
