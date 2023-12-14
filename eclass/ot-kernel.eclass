@@ -5285,7 +5285,7 @@ einfo "Using ${hardening_level} hardening level"
 			local ready=0
 			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
 				ready=1
-			elif tc-is-clang && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
+			elif tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
 				ready=1
 			fi
 			if (( ${ready} == 0 )) ; then
@@ -5526,7 +5526,7 @@ eerror
 			local ready=0
 			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
 				ready=1
-			elif tc-is-clang && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
+			elif tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
 				ready=1
 			fi
 			if (( ${ready} == 0 )) ; then
