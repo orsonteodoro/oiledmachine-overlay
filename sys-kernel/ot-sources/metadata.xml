@@ -2776,49 +2776,52 @@ unset OT_KERNEL_PRIVATE_KEY
     add.  A space separated list may be used.  The first option
     is the fallback default.  (EXPERIMENTAL)
 
+    The goal of TCP congestion control (TCC) is to avoid the penalties
+    associated with bad quality of service (longer delays or increased packet
+    loss).
+
     Acceptable values:
 
-      bic
-      cubic     - For large downloads, download completely before video play,
-                  upstream default, most used and tested
-      westwood  - For streaming playback with high average bitrates for high
-                  resolutions or for higher average quality video frames, instead
-                  of blurry on average video frames
-      htcp      - For secondary flows when VoIP or streaming with LFNs [ADSL2+,
-                  cable, or larger]
-      hstcp
-      hybla     - For satellite internet, road trips, micropackage downloads,
-                  faster streaming seek times
-      vegas     - For the lowest ping times
-      nv
-      scalable
-      lp
-      veno
-      yeah      - For VoIP or low bitrate radio as the secondary flow during
-                  gaming
-      illinois
-      dctcp     - For data centers, HPC, high capacity streaming media
-      cdg
-      bbr       - For video streaming services, higher throughput,
-                  more greedy* (production ready, deprecated)
-      bbr2      - For video streaming services, lower latency,
-                  high fairness* (alpha still, experimental, deprecated),
-                  ECN support.
-      bbr3      - For video streaming services, higher throughput,
-                  better coexistance with reno/cubic, 0.2% less latency for
-                  short requests, ECN support fixes.
+      Algorithm | Benefit (first row) / Cost (second row)
+      ----------+---------------------------------------------------------------------------------
+      bic       | RPC goodput for MiB+ payloads
+      bbr       | Latency, streaming goodput, production code quality
+                | Greedy, deprecated, high latency for small RPC payloads
+      bbr2      | Latency, fair, ECN support
+                | Alpha code quality, experimental, deprecated
+      bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming goodput, fair, ECN support, actively maintained
+                | Not mainlined
+      c2tcp     | Lowest latencies and lowest jitter
+      cdg       | Throughput with latency improvement
+      clear     | Do not add any (Ebuild only)
+      dctcp     | High throughput and fairness for data centers
+                | High latency for KiB RPC payloads
+      deepcc    | Throughput, optimized cubic
+                | Tensorflow [heavy dependency], high memory footprint
+      cubic     | Throughput, ubiquitous (de facto standard)
+      hstcp     | Throughput
+      htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]
+      hybla     | Throughput over satellite
+      illinois  | Throughput
+      lp        | Full bandwidth utilization
+      nv        | RPC goodput and low latency for KiB payloads
+      orca      | Low CPU usage, consistent high performance in different networks
+                | Tensorflow [heavy dependency], high memory footprint
+      pcc       | Send throughput, low requirements, better stability over time
+                | Higher CPU usage
+      scalable  | Throughput [loss based]
+                | High packet loss
+      veno      | Throughput with wireless
+      yeah      | Throughput, high network utilization and internal fairness for high BDP/RTT
+      vegas     | Lower latency, lower packet loss
+      westwood  | Throughput over wireless
 
-      * Due to router's smaller buffer size.
 
-      clear     - Do not add any (Ebuild only)
+      * Throughput alone implies high throughput.
 
-      For descriptions, see
+    Example:
 
-        https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
-
-      For BBRv3 ECN support, see
-
-        https://github.com/google/bbr/tree/v3#enabling-ecn-support
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="clear"
 
     Defaults (EXPERIMENTAL):
 
@@ -2843,20 +2846,20 @@ unset OT_KERNEL_PRIVATE_KEY
       secondary flow to be more slightly greedy for a higher bitrate and to
       be less skippy.
 
-    Example:
-
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="clear"
-
     Notes:
 
-      (DRAFT / EXPERIMENTAL)
-
-      - TCP Congestion Control is a misnomer.  Some algorithms are congestion
-        avoidant than control based.
       - The bbr2 patch used is the baseline bbr2 with optimal fairness.
       - Switching to different algorithms can mess up the fair throughput of
         other programs with the exception of illinois.  Often fairness is
         undesirable except for web servers.
+      - For descriptions, see
+
+          https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
+
+      - For BBRv3 ECN support, see
+
+          https://github.com/google/bbr/tree/v3#enabling-ecn-support
+
       - The throughput unfairness may be desirable and necessary when
         multitasking.
 
