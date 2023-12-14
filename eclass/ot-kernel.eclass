@@ -5283,9 +5283,9 @@ einfo "Using ${hardening_level} hardening level"
 			ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
 			local ready=0
-			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
+			if tc-is-gcc && ver_test $(gcc-version) -ge 8.1 ; then
 				ready=1
-			elif tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
+			elif tc-is-clang && ver_test $(clang-version) -ge 7 ; then
 				ready=1
 			fi
 			if (( ${ready} == 0 )) ; then
@@ -5524,9 +5524,9 @@ eerror
 			ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
 			ot-kernel_y_configopt "CONFIG_RETPOLINE"
 			local ready=0
-			if tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 8.1 ; then
+			if tc-is-gcc && ver_test $(gcc-version) -ge 8.1 ; then
 				ready=1
-			elif tc-is-gcc && ver_test ${gcc_pv_major}.${gcc_pv_minor} -ge 7 ; then
+			elif tc-is-gcc && ver_test $(clang-version) -ge 7 ; then
 				ready=1
 			fi
 			if (( ${ready} == 0 )) ; then
