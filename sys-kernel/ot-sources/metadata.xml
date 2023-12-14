@@ -2818,6 +2818,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
       * Throughput alone implies high throughput.
+      * Latency alone implies low latency.
 
     Example:
 
