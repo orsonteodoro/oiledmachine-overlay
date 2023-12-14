@@ -556,7 +556,7 @@ OT_KERNEL_MENUCONFIG_UI="disabled"
 OT_KERNEL_SIGN_MODULES="1"
 OT_KERNEL_SLAB_ALLOCATOR="slub"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
-OT_KERNEL_TCP_CONGESTION_CONTROLS="cubic bbr dctcp hybla pcc vegas westwood"
+OT_KERNEL_TCP_CONGESTION_CONTROLS="lp cubic bbr hybla pcc vegas westwood"
 OT_KERNEL_USE="disable_debug genpatches -lto -pgo -zen-sauce"
 OT_KERNEL_VERBOSITY=1
 OT_KERNEL_WORK_PROFILE="builder-interactive"
@@ -2826,117 +2826,49 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Defaults (EXPERIMENTAL):
 
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr3 cubic dctcp hybla pcc vegas westwood"      # if USE=bbrv3 and OT_KERNEL_USE=bbrv3
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic dctcp hybla pcc vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic dctcp hybla pcc vegas westwood"       # otherwise
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr3 cubic lp hybla pcc vegas westwood"      # if USE=bbrv3 and OT_KERNEL_USE=bbrv3
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic lp hybla pcc vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic lp hybla pcc vegas westwood"       # otherwise
 
       For allowed defaults, see
 
         https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L682
 
-      Cubic alone is the upstream default.
-
-      These defaults are to maximize the quality experience based on the
-      descriptions in the acceptable values section and to cap or make less
-      greedy certain flows.
-
-      Again, the first option listed is the fallback default.
+      The first option listed is the fallback default.
 
       The OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_* can be used to select
       the secondary flow.  For example, one may need to increase the
       secondary flow to be more slightly greedy for a higher bitrate and to
       be less skippy.
 
-    Notes:
+    Recommendations:
 
-      - The bbr2 patch used is the baseline bbr2 with optimal fairness.
-      - Switching to different algorithms can mess up the fair throughput of
-        other programs with the exception of illinois.  Often fairness is
-        undesirable except for web servers.
-      - For descriptions, see
+      Audio streaming:  bbr
+      Datacenter - dctcp, bbr
+      Dedicated large downloads:  cubic, hybla
+      distcc on LAN:  nv, bbr, vegas
+      Gaming with VoIP:  bbr
+      Gaming without VoIP:  vegas
+      Big data HPC - dctcp
+      Live broadcasting:  c2tcp, bbr
+      On demand upload:  pcc, any delay based TCC
+      Social games:  vegas
+      Video streaming while downloading:  lp
+      Web browsing:  vegas
+      
+      * bbr means any version.
+      * Use the tcca script to change these.
 
-          https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
+    Further reading:
 
-      - For BBRv3 ECN support, see
-
-          https://github.com/google/bbr/tree/v3#enabling-ecn-support
-
-      - The throughput unfairness may be desirable and necessary when
-        multitasking.
-
-        2 flow pairing recommendations (left-to-right launch order) with
-        estimated bandwidth:
-
-            fixed/static connections, dynamic connections
-          * radio:bbr2, gaming:bbr2      # This is okay if not live streamer
-          * radio:bbr, gaming:bbr        # This is okay if not live streamer
-          * radio:vegas, gaming:vegas    # This is okay if not live streamer
-          * video-streaming:cubic, micropackage-downloads(s):bbr
-          * single-download:vegas, video-stream(s):cubic
-          * single-download:vegas, video-stream(s):yeah
-
-        Sub-notes:
-
-          * Old school games consume about 64 kbps or less.  This is about 6.4%
-            of 1 Mbps.
-          * Online RPGs consume on the order of 21 kbps.  This is about 2.1% of
-            1 Mbps.
-          * Since there is evidence that gaming does not require a lot of
-            bandwidth, you may choose higher audio bitrates if you have
-            available downstream kbps.
-          * It is recommended to set the static set first followed by the
-            dynamic set so the newly created connections inherit the TCP
-            Congestion Controls setting.
-          * There is no obvious technique to control the placement of the
-            primary and secondary flows of two process that spawn new
-            connections at the same time.  (e.g. new players that enter the
-            scene and new VoIP connections)  It is probably better to choose a
-            fair algorithm or the same algorithm.
-
-          Most VoIP is UDP, so these suggestions may not apply.
-
-        Further reading:
-
-          Table I. "TCP Congestion Control Comparison", Esterhuizen and Krzesinski.
-          Fig 10. "Statistical Learning Based Congestion Control for Real-time Video Communication", Dai et al.
-
-      - For single flow, the recommendations change to
-
-        Gaming (performance with ~150 ms RTT or less with more than 2+ flows):  vegas, bbr, yeah, westwood, veno *
-        Gaming (grinding under bad connection):  hybla
-        Audio or video streaming:  westwood, hstcp, cubic, bbr, bbr2
-
-        * The algorithms for gaming are ordered from low-to-high RTT.
-        * Most gamers will use cubic and do not mess with these settings.
-        * In reality, more than one connection is involved so this section
-          needs to be revised.
-        * Many games will use UDP not TCP so these settings may not apply,
-          but TCP based [browser] games do exist.
-        * There seems to be a tradeoff between latency and throughput in
-          algorithm choice for audio / video streaming.
-        * Use any loss feedback based algorithm (like cubic) for support for
-          higher resolutions or better average image quality.
-        * Hybla may be better on initial start of the stream.
-
-      - For 4 flows and above, the recommendations change to
-
-        * FTP servers (home):  bbr2 or dctcp
-        * Parallel micropackage downloads (receiver):  hybla
-        * WWW/HTTP servers (home, low capacity):  bbr2 or vegas
-        * WWW/HTTP servers (600 or less flows, mid capacity):  dctcp
-        * WWW/HTTP servers (600+ flows, very high capacity):  bbr2
-        * WWW client browsing only (for lower link click latency and faster image gallery loading):  vegas
-
-        Notes:
-
-          * BBRv2 and BBRv1 exhibit similiar fairness patterns when coexisting with cubic.
-
-        Further reading:
-
-          Table V, VII, and XI. "Fifty Shades of Congestion Control: A Performance and Interactions Evaluation". Turkovic et al.
-          Slide 21. "BBR v2: A Model-based Congestion Control Performance Optimizations". Cardwell et al.
-          P 14. "Comparison of TCP Congestion Control Performance over a Satellite Network". Claypool et al.
-          P 9. "An Emulation-based Evaluation of TCP BBRv2 Alpha for Wired Broadband". Kfoury et al.
+      [TCP descriptions] https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L480
+      [BBRv3 ECN] https://github.com/google/bbr/tree/v3#enabling-ecn-support
+      P 9. "An Emulation-based Evaluation of TCP BBRv2 Alpha for Wired Broadband". Kfoury et al.
+      P 14. "Comparison of TCP Congestion Control Performance over a Satellite Network". Claypool et al.
+      Fig 10. "Statistical Learning Based Congestion Control for Real-time Video Communication", Dai et al.
+      Slide 21. "BBR v2: A Model-based Congestion Control Performance Optimizations". Cardwell et al.
+      Table I. "TCP Congestion Control Comparison", Esterhuizen and Krzesinski.
+      Table V, VII, and XI. "Fifty Shades of Congestion Control: A Performance and Interactions Evaluation". Turkovic et al.
 
     See also:
 
