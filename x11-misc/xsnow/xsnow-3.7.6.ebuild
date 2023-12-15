@@ -9,7 +9,10 @@ SRC_URI="https://www.ratrabbit.nl/downloads/xsnow/${P}.tar.gz"
 
 DESCRIPTION="let it snow on your desktop and windows"
 HOMEPAGE="https://www.ratrabbit.nl/ratrabbit/xsnow/"
-LICENSE="GPL-3+"
+LICENSE="
+	GPL-3+
+	CC0-1.0
+"
 # muslim-woman-keffiyeh.xpm CC0-1.0
 #   https://openclipart.org/detail/256949/muslim-woman-variation-2
 #   https://openclipart.org/detail/284445/keffiyeh-pattern-conversion-freebassel-request
