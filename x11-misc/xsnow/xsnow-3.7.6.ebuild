@@ -10,11 +10,15 @@ SRC_URI="https://www.ratrabbit.nl/downloads/xsnow/${P}.tar.gz"
 DESCRIPTION="let it snow on your desktop and windows"
 HOMEPAGE="https://www.ratrabbit.nl/ratrabbit/xsnow/"
 LICENSE="GPL-3+"
+# muslim-woman-keffiyeh.xpm CC0-1.0
+#   https://openclipart.org/detail/256949/muslim-woman-variation-2
+#   https://openclipart.org/detail/284445/keffiyeh-pattern-conversion-freebassel-request
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
-IUSE="+ukraine-flag palestine-flag custom-image no-flag"
+IUSE="+ukraine-flag palestine-flag keffiyeh-woman custom-image no-flag"
 REQUIRED_USE="
 	|| (
+		keffiyeh-woman
 		ukraine-flag
 		palestine-flag
 		custom-image
@@ -55,6 +59,9 @@ src_prepare() {
 	fi
 	if use palestine-flag ; then
 		cat "${FILESDIR}/palestine-flag.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
+	fi
+	if use keffiyeh-woman ; then
+		cat "${FILESDIR}/muslim-woman-keffiyeh.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
 	fi
 	if use custom-image ; then
 		local path="/etc/portage/savedconfig/${CATEGORY}/${PN}/custom.xpm"
