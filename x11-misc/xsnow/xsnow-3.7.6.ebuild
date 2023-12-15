@@ -12,6 +12,7 @@ HOMEPAGE="https://www.ratrabbit.nl/ratrabbit/xsnow/"
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
+IUSE="+ukraine-flag custom-image"
 RDEPEND="
 	dev-libs/glib:2
 	sci-libs/gsl:=
@@ -41,6 +42,18 @@ PATCHES=(
 src_prepare() {
 	default
 	eautoreconf
+	if ! use ukraine-flag ; then
+		cp -a "${FILESDIR}/blank.xpm" "${S}/src/Pixmaps/extratree.xpm"
+	fi
+	if use custom-image ; then
+		local path="/etc/portage/savedconfig/${CATEGORY}/${PN}/custom.xpm"
+		if [[ -e "${path}" ]] ; then
+			cp -a "/etc/portage/savedconfig/${CATEGORY}/${PN}/custom.xpm" "${S}/src/Pixmaps/extratree.xpm"
+		else
+eerror "The custom image (of maybe 72x72 px) must be placed in ${path}"
+			die
+		fi
+	fi
 }
 
 gen_wrappers() {
