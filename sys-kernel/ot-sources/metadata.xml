@@ -2846,7 +2846,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Audio streaming:  bbr
       Datacenter - dctcp, bbr
       Dedicated large downloads:  cubic, hybla
-      distcc on LAN:  nv, vegas
+      distcc on LAN:  nv
       Gaming with VoIP:  bbr
       Gaming without VoIP:  vegas
       Big data HPC - dctcp
