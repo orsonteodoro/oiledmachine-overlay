@@ -2809,6 +2809,8 @@ unset OT_KERNEL_PRIVATE_KEY
                 | Tensorflow [heavy dependency], high memory footprint
       pcc       | Send throughput, low requirements, better stability over time
                 | Higher CPU usage
+      reno      | Fallback algorithm
+                | Old algorithm
       scalable  | Throughput
                 | High packet loss
       veno      | Throughput with wireless
@@ -2817,6 +2819,8 @@ unset OT_KERNEL_PRIVATE_KEY
       westwood  | Throughput over wireless
 
 
+      * bbr2, c2tcp, deepcc, hstcp, illinois, lp, nv, orca, pcc, scalable, yeah cannot be made the default.
+      * c2tcp, deep, orca has not been tested in this overlay yet.
       * Throughput alone implies high throughput.
       * Latency alone implies low latency.
 
@@ -2846,7 +2850,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Audio streaming:  bbr
       Datacenter - dctcp, bbr
       Dedicated large downloads:  cubic, hybla
-      distcc on LAN:  nv
+      distcc on LAN:  reno
       Gaming with VoIP:  bbr
       Gaming without VoIP:  vegas
       Big data HPC - dctcp
