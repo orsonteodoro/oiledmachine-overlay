@@ -12,7 +12,15 @@ HOMEPAGE="https://www.ratrabbit.nl/ratrabbit/xsnow/"
 LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
-IUSE="+ukraine-flag custom-image"
+IUSE="+ukraine-flag palestine-flag custom-image no-flag"
+REQUIRED_USE="
+	|| (
+		ukraine-flag
+		palestine-flag
+		custom-image
+		no-flag
+	)
+"
 RDEPEND="
 	dev-libs/glib:2
 	sci-libs/gsl:=
@@ -43,14 +51,17 @@ src_prepare() {
 	default
 	eautoreconf
 	if ! use ukraine-flag ; then
-		cp -a "${FILESDIR}/blank.xpm" "${S}/src/Pixmaps/extratree.xpm"
+		cat "${FILESDIR}/blank.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
+	fi
+	if use palestine-flag ; then
+		cat "${FILESDIR}/palestine-flag.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
 	fi
 	if use custom-image ; then
 		local path="/etc/portage/savedconfig/${CATEGORY}/${PN}/custom.xpm"
 		if [[ -e "${path}" ]] ; then
-			cp -a "/etc/portage/savedconfig/${CATEGORY}/${PN}/custom.xpm" "${S}/src/Pixmaps/extratree.xpm"
+			cat "/etc/portage/savedconfig/${CATEGORY}/${PN}/custom.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
 		else
-eerror "The custom image (of maybe 72x72 px) must be placed in ${path}"
+eerror "The custom image (of maybe 72x72 px with extratree_xpm variable name in file) must be placed in ${path}"
 			die
 		fi
 	fi
