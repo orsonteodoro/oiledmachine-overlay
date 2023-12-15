@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originator -->
+    <email>dilfridge@gentoo.org</email>
+  </maintainer>
+  <!-- 
+
+  oiledmachine-overlay notes:
+
+  Added missing xcompmgr dependency.
+ 
+  -->
+  <upstream>
+    <remote-id type='sourceforge'>xsnow</remote-id>
+    <changelog>https://www.ratrabbit.nl/ratrabbit/xsnow/changelog/</changelog>
+  </upstream>
+</pkgmetadata>
