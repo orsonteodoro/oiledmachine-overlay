@@ -9,7 +9,7 @@ SRC_URI="https://www.ratrabbit.nl/downloads/xsnow/${P}.tar.gz"
 
 DESCRIPTION="let it snow on your desktop and windows"
 HOMEPAGE="https://www.ratrabbit.nl/ratrabbit/xsnow/"
-LICENSE="freedist"
+LICENSE="GPL-3+"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 RDEPEND="
