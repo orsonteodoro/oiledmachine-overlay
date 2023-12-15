@@ -16,16 +16,19 @@ LICENSE="
 # muslim-woman-keffiyeh.xpm CC0-1.0
 #   https://openclipart.org/detail/256949/muslim-woman-variation-2
 #   https://openclipart.org/detail/284445/keffiyeh-pattern-conversion-freebassel-request
+# menorah.xpm CC0-1.0
+#   https://openclipart.org/detail/291738/hannukah-symbol
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
-IUSE="+ukraine-flag palestine-flag keffiyeh-woman custom-image no-flag"
+IUSE="custom-image keffiyeh-woman menorah palestine-flag +ukraine-flag no-flag"
 REQUIRED_USE="
 	|| (
-		keffiyeh-woman
-		ukraine-flag
-		palestine-flag
 		custom-image
+		keffiyeh-woman
+		menorah
 		no-flag
+		palestine-flag
+		ukraine-flag
 	)
 "
 RDEPEND="
@@ -65,6 +68,9 @@ src_prepare() {
 	fi
 	if use keffiyeh-woman ; then
 		cat "${FILESDIR}/muslim-woman-keffiyeh.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
+	fi
+	if use menorah ; then
+		cat "${FILESDIR}/menorah.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
 	fi
 	if use custom-image ; then
 		local path="/etc/portage/savedconfig/${CATEGORY}/${PN}/custom.xpm"
