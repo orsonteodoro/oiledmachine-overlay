@@ -889,7 +889,7 @@ gen_wrapper() {
 cat <<EOF > "${ED}/usr/bin/git-light"
 #!/bin/bash
 mkdir -p "\${HOME}/.cache/git-light"
-XDG_RUNTIME_DIR="\${HOME}/.cache/gitlight" git-light-bin "$@"
+XDG_RUNTIME_DIR="\${HOME}/.cache/gitlight" git-light-bin "\$@"
 EOF
 	fperms 0755 /usr/bin/git-light
 }
