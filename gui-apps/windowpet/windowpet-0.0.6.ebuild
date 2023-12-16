@@ -604,6 +604,31 @@ DESCRIPTION="Pet overlay app built with tauri and react that lets you have adora
 HOMEPAGE="
 https://github.com/SeakMengs/WindowPet
 "
+# From cargo or npm packages
+THIRD_PARTY_LICENSES="
+	0BSD
+	Apache-2.0
+	Apache-2.0-with-LLVM-exceptions
+	BSD
+	BSD-2
+	BZIP2
+	MIT
+	Boost-1.0
+	CC0-1.0
+	CC-BY-3.0
+	CC-BY-4.0
+	ISC
+	Unicode-DFS-2016
+	Unlicense
+	UoI-NCSA
+	W3C-Community-Final-Specification-Agreement
+	W3C-Software-and-Document-Notice-and-License
+	ZLIB
+	|| (
+		Apache-2.0
+		MIT
+	)
+"
 LICENSE="
 	MIT
 "
