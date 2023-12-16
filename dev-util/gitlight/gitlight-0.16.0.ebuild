@@ -803,7 +803,15 @@ einfo "Unpacking tauri side"
 src_configure() {
 	if [[ ! -e "${GITLIGHT_CREDENTIALS_PATH}" ]] ; then
 eerror
-eerror "You need to create your own API keys/tokens to use this software"
+eerror "You need to create your own OAuth tokens to use this software."
+eerror
+eerror "  GitHub:  https://github.com/settings/applications/new"
+eerror "  GitLab:  https://gitlab.com/-/profile/applications"
+eerror
+eerror "For complete details details, see:"
+eerror
+eerror "  https://github.com/colinlienard/gitlight/blob/main/CONTRIBUTING.md#github-oauth-app"
+eerror
 eerror
 eerror "You must set GITLIGHT_CREDENTIALS_PATH as an environment variable"
 eerror "pointing to a single file with the following variables:"
@@ -814,12 +822,14 @@ eerror "  AUTH_GITHUB_ID=\"<GITHUB_ID>\""
 eerror "  AUTH_GITHUB_SECRET=\"<GITHUB_SECRET>\""
 eerror "  AUTH_GITLAB_ID=\"<GITLAB_ID>\""
 eerror "  AUTH_GITLAB_SECRET=\"<GITLAB_SECRET>\""
-eerror "  ..."
+eerror "  "
+eerror "  # Generated from https://generate-secret.vercel.app/32"
+eerror "  AUTH_SECRET=\"<paste here>\""
+eerror "  PUBLIC_SITE_URL=http://localhost:5173"
 eerror
 eerror "For the full list of environment variables, see"
 eerror
 eerror "  https://github.com/colinlienard/gitlight/blob/gitlight-v0.16.0/.env.example"
-eerror "  https://github.com/colinlienard/gitlight/blob/main/CONTRIBUTING.md#github-oauth-app"
 eerror
 eerror
 eerror "Security Notices:"

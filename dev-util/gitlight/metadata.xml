@@ -10,4 +10,11 @@
     <remote-id type="github">colinlienard/gitlight</remote-id>
     <bugs-to>https://gitlab.com/colinlienard/gitlight/-/issues</bugs-to>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  See ebuild for instructions to add OAuth tokens.
+
+  -->
 </pkgmetadata>
