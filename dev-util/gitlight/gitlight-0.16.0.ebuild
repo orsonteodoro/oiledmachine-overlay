@@ -869,17 +869,17 @@ einfo "Secure deleting copied tokens/credentials at ${S}/.env"
 
 src_install() {
 	exeinto /usr/bin
-	doexe src-tauri/target/release/gitlight
+	doexe src-tauri/target/release/git-light
 
 	make_desktop_entry \
-		"gitlight" \
+		"git-light" \
 		"${PN}" \
-		"gitlight" \
+		"GitLight" \
 		"Development;RevisionControl"
 
-	newicon -s 32 assets/logo.png gitlight.png
-	newicon -s 128 assets/logo.png gitlight.png
-	newicon -s 256 assets/logo.png gitlight.png
+	newicon -s 32 assets/logo.png git-light.png
+	newicon -s 128 assets/logo.png git-light.png
+	newicon -s 256 assets/logo.png git-light.png
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
