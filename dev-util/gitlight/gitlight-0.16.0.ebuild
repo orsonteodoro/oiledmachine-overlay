@@ -491,7 +491,7 @@ zvariant_utils-1.0.1
 "
 
 MY_PN="gitlight-gitlight"
-NODE_SLOTS="21"
+NODE_SLOTS="18"
 NPM_AUDIT_FIX=0
 NPM_OFFLINE=1 # Build failures if offline
 NPM_INSTALL_UNPACK_ARGS="--legacy-peer-deps"
@@ -826,9 +826,8 @@ einfo "Building tauri side"
 }
 
 src_install() {
-	die
 	exeinto /usr/bin
-	newexe src-tauri/target/release/window-pet window-pet-bin
+	doexe src-tauri/target/release/gitlight
 
 	make_desktop_entry \
 		"gitlight" \
