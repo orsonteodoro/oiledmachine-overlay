@@ -625,7 +625,7 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 	MIT
 "
-#KEYWORDS="~amd64" # Ebuild still in development
+KEYWORDS="~amd64 ~arm64" # tauri supports also x86 and arm
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" tray wayland +X"
 REQUIRED_USE="
@@ -881,25 +881,10 @@ EOF
 	fperms 0755 /usr/bin/git-light
 }
 
-_get_tauri_arch() {
-	if use amd64 ; then
-		echo "amd64"
-	elif use arm ; then
-		echo "armhf"
-	elif use arm64 ; then
-		echo "aarch64"
-	elif use x86 ; then
-		echo "i386"
-	else
-eerror "ARCH=${arch} is not supported."
-		die
-	fi
-}
-
 src_install() {
 	exeinto /usr/bin
 	newexe \
-		src-tauri/target/release/bundle/deb/git-light_${PV}_$(_get_tauri_arch)/data/usr/bin/git-light \
+		src-tauri/target/release/git-light \
 		git-light-bin
 	gen_wrapper
 
