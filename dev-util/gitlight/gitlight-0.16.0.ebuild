@@ -493,7 +493,7 @@ zvariant_utils-1.0.1
 MY_PN="gitlight-gitlight"
 NODE_SLOTS="18"
 NPM_AUDIT_FIX=0
-NPM_OFFLINE=1 # Build failures if offline
+NPM_OFFLINE=1
 NPM_INSTALL_UNPACK_ARGS="--legacy-peer-deps"
 inherit cargo desktop lcnr npm xdg
 
@@ -803,6 +803,8 @@ einfo "Unpacking tauri side"
 src_configure() {
 	if [[ ! -e "${GITLIGHT_CREDENTIALS_PATH}" ]] ; then
 eerror
+eerror "You need to create your own API keys/tokens to use this software"
+eerror
 eerror "You must set GITLIGHT_CREDENTIALS_PATH as an environment variable"
 eerror "pointing to a single file with the following variables:"
 eerror
@@ -817,12 +819,13 @@ eerror
 eerror "  https://github.com/colinlienard/gitlight/blob/gitlight-v0.16.0/.env.example"
 eerror "  https://github.com/colinlienard/gitlight/blob/main/CONTRIBUTING.md#github-oauth-app"
 eerror
-eerror "You need to create your own API keys/tokens."
-eerror
 eerror
 eerror "Security Notices:"
 eerror
-eerror "You should only define this in a per-package env file."
+eerror "The credentials should be stored in a secure location."
+eerror
+eerror
+eerror "Setting up the GITLIGHT_CREDENTIALS_PATH via per-package env..."
 eerror
 eerror "Contents of /etc/portage/env/gitlight.conf:"
 eerror
@@ -834,6 +837,7 @@ eerror "  ${CATEGORY}/${PN} gitlight.conf"
 eerror
 		die
 	else
+# Can we symlink or does it copy it in the binary?
 einfo "Copying API tokens/credentials to ${S}/.env"
 		cat "${GITLIGHT_CREDENTIALS_PATH}" > "${S}/.env" || die
 	fi
@@ -849,7 +853,7 @@ einfo "Building npm side"
 	npm_src_compile
 	grep -e "- error TS" "${T}/build.log" && die "Detected error.  Emerge again."
 einfo "Building tauri side"
-	enpm run tauri build
+	enpm run build:tauri
 #
 # Running cargo_src_compile doesn't work because tauri.conf.json with tauri does
 # more extra build steps.
