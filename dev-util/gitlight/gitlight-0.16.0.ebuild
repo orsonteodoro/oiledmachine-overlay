@@ -716,7 +716,6 @@ DEPEND+="
 "
 BDEPEND="
 	${RUST_BINDINGS_BDEPEND}
-	>=dev-util/patchelf-0.14.3
 "
 
 pkg_setup() {
@@ -788,15 +787,15 @@ einfo "Unpacking tauri side"
 		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/autostart" \
 		|| die
 	cp -aT \
-		"${WORKDIR}/plugins-workspace-${commit}/plugins/log" \
+		"${WORKDIR}/plugins-workspace-${commit}/plugins/deep-link" \
 		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/deep-link" \
 		|| die
 	cp -aT \
-		"${WORKDIR}/plugins-workspace-${commit}/plugins/single-instance" \
+		"${WORKDIR}/plugins-workspace-${commit}/plugins/positioner" \
 		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/positioner" \
 		|| die
 	cp -aT \
-		"${WORKDIR}/plugins-workspace-${commit}/plugins/store" \
+		"${WORKDIR}/plugins-workspace-${commit}/plugins/windowstate" \
 		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/windowstate" \
 		|| die
 }
@@ -835,11 +834,11 @@ src_install() {
 		"gitlight" \
 		"${PN}" \
 		"gitlight" \
-		"Office;"
+		"Development;RevisionControl"
 
-#	newicon -s 32 public/media/icon.png window-pet.png
-#	newicon -s 128 public/media/icon.png window-pet.png
-#	newicon -s 256 public/media/icon.png window-pet.png
+	newicon -s 32 assets/logo.png gitlight.png
+	newicon -s 128 assets/logo.png gitlight.png
+	newicon -s 256 assets/logo.png gitlight.png
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
