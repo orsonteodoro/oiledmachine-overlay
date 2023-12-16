@@ -842,9 +842,9 @@ cat <<EOF > "${ED}/usr/bin/window-pet"
 if ! pgrep "xcompmgr" && -n "${DISPLAY}" ; then
 	xcompmgr 2>/dev/null &
 	window-pet-bin
-	killall xcompmgr
+	killall xcompmgr "\$@"
 else
-	window-pet-bin
+	window-pet-bin "\$@"
 fi
 EOF
 	fperms 0755 /usr/bin/window-pet

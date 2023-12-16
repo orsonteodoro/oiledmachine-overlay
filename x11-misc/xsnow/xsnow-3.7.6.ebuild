@@ -20,7 +20,7 @@ LICENSE="
 #   https://openclipart.org/detail/291738/hannukah-symbol
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
-IUSE="custom-image keffiyeh-woman menorah palestine-flag +ukraine-flag no-flag"
+IUSE="custom-image keffiyeh-woman menorah palestine-flag +ukraine-flag no-flag r1"
 REQUIRED_USE="
 	|| (
 		custom-image
@@ -90,10 +90,10 @@ newexe - xsnow <<-EOF
 if ! pgrep "xcompmgr" ; then
 	xcompmgr 2>/dev/null &
 	sleep 0.1
-	"${EPREFIX}/usr/bin/xsnow-bin" $@
+	"${EPREFIX}/usr/bin/xsnow-bin" "\$@"
 	killall xcompmgr
 else
-	"${EPREFIX}/usr/bin/xsnow-bin" $@
+	"${EPREFIX}/usr/bin/xsnow-bin" "\$@"
 fi
 EOF
 
