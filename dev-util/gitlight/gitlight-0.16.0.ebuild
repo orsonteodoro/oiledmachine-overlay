@@ -808,11 +808,13 @@ eerror
 eerror "You must set GITLIGHT_CREDENTIALS_PATH as an environment variable"
 eerror "pointing to a single file with the following variables:"
 eerror
-eerror "AUTH_GITHUB_ID=\"<GITHUB_ID>\""
-eerror "AUTH_GITHUB_SECRET=\"<GITHUB_SECRET>\""
-eerror "AUTH_GITLAB_ID=\"<GITLAB_ID>\""
-eerror "AUTH_GITLAB_SECRET=\"<GITLAB_SECRET>\""
-eerror "..."
+eerror "Contents of /mnt/encrypted-usb/gitlight-tokens.conf:"
+eerror
+eerror "  AUTH_GITHUB_ID=\"<GITHUB_ID>\""
+eerror "  AUTH_GITHUB_SECRET=\"<GITHUB_SECRET>\""
+eerror "  AUTH_GITLAB_ID=\"<GITLAB_ID>\""
+eerror "  AUTH_GITLAB_SECRET=\"<GITLAB_SECRET>\""
+eerror "  ..."
 eerror
 eerror "For the full list, see"
 eerror
@@ -829,7 +831,7 @@ eerror "Setting up the GITLIGHT_CREDENTIALS_PATH via per-package env..."
 eerror
 eerror "Contents of /etc/portage/env/gitlight.conf:"
 eerror
-eerror "  GITLIGHT_CREDENTIALS_PATH=\"secure storage path\""
+eerror "  GITLIGHT_CREDENTIALS_PATH=\"/mnt/encrypted-usb/gitlight-tokens.conf\""
 eerror
 eerror "Contents of /etc/portage/package.env:"
 eerror
