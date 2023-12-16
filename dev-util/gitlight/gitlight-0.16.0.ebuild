@@ -816,7 +816,7 @@ eerror "  AUTH_GITLAB_ID=\"<GITLAB_ID>\""
 eerror "  AUTH_GITLAB_SECRET=\"<GITLAB_SECRET>\""
 eerror "  ..."
 eerror
-eerror "For the full list, see"
+eerror "For the full list of environment variables, see"
 eerror
 eerror "  https://github.com/colinlienard/gitlight/blob/gitlight-v0.16.0/.env.example"
 eerror "  https://github.com/colinlienard/gitlight/blob/main/CONTRIBUTING.md#github-oauth-app"
@@ -869,9 +869,22 @@ einfo "Secure deleting copied tokens/credentials at ${S}/.env"
 	shred -f "${S}/.env" || die
 }
 
+gen_wrapper() {
+	dodir /usr/bin
+# Fixes:
+# Failed to create a temp folder for icon: Os { code: 13, kind: PermissionDenied, message: "Permission denied" }
+cat <<EOF > "${ED}/usr/bin/git-light"
+#!/bin/bash
+mkdir -p "\${HOME}/.cache/git-light"
+XDG_RUNTIME_DIR="\${HOME}/.cache/gitlight" git-light-bin "$@"
+EOF
+	fperms 0755 /usr/bin/git-light
+}
+
 src_install() {
 	exeinto /usr/bin
-	doexe src-tauri/target/release/git-light
+	newexe src-tauri/target/release/git-light git-light-bin
+	gen_wrapper
 
 	make_desktop_entry \
 		"git-light" \
