@@ -827,6 +827,9 @@ eerror "  # Generated from https://generate-secret.vercel.app/32"
 eerror "  AUTH_SECRET=\"<paste here>\""
 eerror "  PUBLIC_SITE_URL=http://localhost:5173"
 eerror
+eerror "You may use placeholder text like \"skip\" if you do not want to use"
+eerror "that service."
+eerror
 eerror "For the full list of environment variables, see"
 eerror
 eerror "  https://github.com/colinlienard/gitlight/blob/gitlight-v0.16.0/.env.example"
