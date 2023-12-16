@@ -810,10 +810,12 @@ eerror "AUTH_GITHUB_ID=\"<GITHUB_ID>\""
 eerror "AUTH_GITHUB_SECRET=\"<GITHUB_SECRET>\""
 eerror "AUTH_GITLAB_ID=\"<GITLAB_ID>\""
 eerror "AUTH_GITLAB_SECRET=\"<GITLAB_SECRET>\""
+eerror "..."
 eerror
-eerror "See"
-eerror "https://github.com/colinlienard/gitlight/blob/gitlight-v0.16.0/.env.example"
-eerror "https://github.com/colinlienard/gitlight/blob/main/CONTRIBUTING.md#github-oauth-app"
+eerror "For the full list, see"
+eerror
+eerror "  https://github.com/colinlienard/gitlight/blob/gitlight-v0.16.0/.env.example"
+eerror "  https://github.com/colinlienard/gitlight/blob/main/CONTRIBUTING.md#github-oauth-app"
 eerror
 eerror "You need to create your own API keys/tokens."
 eerror
