@@ -614,6 +614,7 @@ einfo "Called yarn_src_unpack"
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
 	grep -q -e " An unexpected error occurred" "${T}/build.log" && die "Detected error"
+	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: yarn_src_compile
@@ -636,6 +637,7 @@ yarn_src_compile() {
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
+	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: yarn_src_test
