@@ -37,6 +37,10 @@ fi
 
 _npm_set_globals() {
 	NPM_TRIES="${NPM_TRIES:-10}"
+	NPM_NETWORK_FETCH_RETRIES=${NPM_NETWORK_FETCH_RETRIES:-"7"}
+	NPM_NETWORK_RETRY_MINTIMEOUT=${NPM_NETWORK_RETRY_MINTIMEOUT:-"100000"}
+	NPM_NETWORK_RETRY_MAXTIMEOUT=${NPM_NETWORK_RETRY_MAXTIMEOUT:-"300000"}
+	NPM_NETWORK_MAX_SOCKETS=${NPM_NETWORK_MAX_SOCKETS:-"1"}
 }
 _npm_set_globals
 unset -f _npm_set_globals
@@ -449,6 +453,20 @@ einfo "Running __npm_patch() for NPM_SLOT=${npm_slot}"
 	fi
 }
 
+# @FUNCTION: npm_network_settings
+# @DESCRIPTION:
+# Smooth out network settings
+npm_network_settings() {
+# https://docs.npmjs.com/cli/v10/using-npm/config#fetch-retries
+	npm config set fetch-retries ${NPM_NETWORK_FETCH_RETRIES} || die # 2 -> 7
+# https://docs.npmjs.com/cli/v10/using-npm/config#fetch-retry-mintimeout
+	npm config set fetch-retry-mintimeout ${NPM_NETWORK_RETRY_MINTIMEOUT} || die # 10 sec -> 1 min
+# https://docs.npmjs.com/cli/v10/using-npm/config#fetch-retry-maxtimeout
+	npm config set fetch-retry-maxtimeout ${NPM_NETWORK_RETRY_MAXTIMEOUT} || die # 1 min -> 5 min
+# https://docs.npmjs.com/cli/v10/using-npm/config#maxsockets
+	npm config set maxsockets ${NPM_NETWORK_MAX_SOCKETS} || die # 15 -> 1 ; smoother network multitasking
+}
+
 # @FUNCTION: npm_hydrate
 # @DESCRIPTION:
 # Load the package manager in the sandbox.
@@ -473,6 +491,8 @@ einfo "Hydrating npm..."
 	__npm_patch
 	local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
 	export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
+
+	npm_network_settings
 }
 
 # @FUNCTION: _npm_src_unpack

@@ -60,6 +60,14 @@ _yarn_set_globals() {
 	NPM_TRIES="${NPM_TRIES:-10}"
 	YARN_TRIES="${YARN_TRIES:-10}"
 	YARN_SLOT="${YARN_SLOT:-1}"
+
+	YARN_NETWORK_CONCURRENT_CONNECTIONS=${YARN_NETWORK_CONCURRENT_CONNECTIONS:-"1"}
+	YARN_NETWORK_TIMEOUT=${YARN_NETWORK_TIMEOUT:-"300000"}
+	NPM_NETWORK_FETCH_RETRIES=${NPM_NETWORK_FETCH_RETRIES:-"7"}
+	NPM_NETWORK_RETRY_MINTIMEOUT=${NPM_NETWORK_RETRY_MINTIMEOUT:-"100000"}
+	NPM_NETWORK_RETRY_MAXTIMEOUT=${NPM_NETWORK_RETRY_MAXTIMEOUT:-"300000"}
+	NPM_NETWORK_MAX_SOCKETS=${NPM_NETWORK_MAX_SOCKETS:-"1"}
+
 }
 _yarn_set_globals
 unset -f _yarn_set_globals
@@ -373,7 +381,10 @@ _yarn_src_unpack_default_upstream() {
 	if declare -f yarn_unpack_install_pre > /dev/null ; then
 		yarn_unpack_install_pre
 	fi
+
 	eyarn install \
+		--network-concurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS} \
+		--network-timeout ${YARN_NETWORK_TIMEOUT} \
 		--prefer-offline \
 		--pure-lockfile \
 		--verbose \
@@ -545,6 +556,37 @@ einfo "Running __npm_patch() for NPM_SLOT=${npm_slot}"
 	fi
 }
 
+# @FUNCTION: npm_network_settings
+# @DESCRIPTION:
+# Smooth out network settings
+npm_network_settings() {
+# https://docs.npmjs.com/cli/v10/using-npm/config#fetch-retries
+	npm config set fetch-retries ${NPM_NETWORK_FETCH_RETRIES} || die # 2 -> 7
+# https://docs.npmjs.com/cli/v10/using-npm/config#fetch-retry-mintimeout
+	npm config set fetch-retry-mintimeout ${NPM_NETWORK_RETRY_MINTIMEOUT} || die # 10 sec -> 1 min
+# https://docs.npmjs.com/cli/v10/using-npm/config#fetch-retry-maxtimeout
+	npm config set fetch-retry-maxtimeout ${NPM_NETWORK_RETRY_MAXTIMEOUT} || die # 1 min -> 5 min
+# https://docs.npmjs.com/cli/v10/using-npm/config#maxsockets
+	npm config set maxsockets ${NPM_NETWORK_MAX_SOCKETS} || die # 15 -> 1 ; smoother network multitasking
+}
+
+# @FUNCTION: yarn_network_settings
+# @DESCRIPTION:
+# Smooth out network settings
+yarn_network_settings() {
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
+# https://github.com/yarnpkg/yarn/blob/v1.22.21/src/constants.js#L40
+		echo "network-timeout ${YARN_NETWORK_TIMEOUT}" >> .yarnrc || die # 30 sec -> 5 min
+# https://github.com/yarnpkg/yarn/blob/v1.22.21/src/constants.js#L37C14-L37C33
+		echo "networkConcurrency: ${YARN_NETWORK_CONCURRENT_CONNECTIONS}" >> .yarnrc || die # 8 -> 1
+	else
+# https://github.com/yarnpkg/berry/blob/%40yarnpkg/types/4.0.0/packages/yarnpkg-core/sources/Configuration.ts#L389
+		echo "httpTimeout: ${YARN_NETWORK_TIMEOUT}" >> .yarnrc || die # 1 min -> 5 min
+# https://github.com/yarnpkg/berry/blob/%40yarnpkg/types/4.0.0/packages/yarnpkg-core/sources/Configuration.ts#L399
+		echo "networkConcurrency: ${YARN_NETWORK_CONCURRENT_CONNECTIONS}" >> .yarnrc || die # 50 -> 1 ; smoother network multitasking
+	fi
+}
+
 # @FUNCTION: yarn_hydrate
 # @DESCRIPTION:
 # Load the package manager in the sandbox.
@@ -583,6 +625,7 @@ einfo "Hydrating yarn..."
 	local yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
 	export PATH="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
 	export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
+	npm_network_settings
 }
 
 # @FUNCTION: _yarn_src_unpack

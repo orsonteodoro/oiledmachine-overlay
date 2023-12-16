@@ -6,7 +6,7 @@ EAPI=8
 
 declare -A GIT_CRATES=(
 [tauri-plugin-autostart]="https://github.com/tauri-apps/plugins-workspace;cdb77c4b650a81a9c44c4b5db5a46c31954dd7f9;plugins-workspace-%commit%/plugins/autostart" # 0.0.0
-[tauri-plugin-deep-link]="https://github.com/tauri-apps/plugins-workspace;cdb77c4b650a81a9c44c4b5db5a46c31954dd7f9;plugins-workspace-%commit%/plugins/deep-link" # 0.0.0
+#[tauri-plugin-deep-link]="https://github.com/tauri-apps/plugins-workspace;cdb77c4b650a81a9c44c4b5db5a46c31954dd7f9;plugins-workspace-%commit%/plugins/deep-link" # 0.0.0
 [tauri-plugin-positioner]="https://github.com/tauri-apps/plugins-workspace;cdb77c4b650a81a9c44c4b5db5a46c31954dd7f9;plugins-workspace-%commit%/plugins/positioner" # 0.1.0
 [tauri-plugin-window-state]="https://github.com/tauri-apps/plugins-workspace;cdb77c4b650a81a9c44c4b5db5a46c31954dd7f9;plugins-workspace-%commit%/plugins/window-state" # 0.1.0
 )
@@ -778,29 +778,63 @@ einfo "Unpacking tauri side"
 	cd "${WORKDIR}" || die
 	local commit="cdb77c4b650a81a9c44c4b5db5a46c31954dd7f9"
 	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/autostart" || die
-	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/deep-link" || die
+#	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/deep-link" || die
 	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/positioner" || die
-	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/windowstate" || die
+	mkdir -p "${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/window-state" || die
 	unpack "${DISTDIR}/plugins-workspace-${commit}.gh.tar.gz"
 	cp -aT \
 		"${WORKDIR}/plugins-workspace-${commit}/plugins/autostart" \
 		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/autostart" \
 		|| die
-	cp -aT \
-		"${WORKDIR}/plugins-workspace-${commit}/plugins/deep-link" \
-		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/deep-link" \
-		|| die
+#	cp -aT \
+#		"${WORKDIR}/plugins-workspace-${commit}/plugins/deep-link" \
+#		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/deep-link" \
+#		|| die
 	cp -aT \
 		"${WORKDIR}/plugins-workspace-${commit}/plugins/positioner" \
 		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/positioner" \
 		|| die
 	cp -aT \
-		"${WORKDIR}/plugins-workspace-${commit}/plugins/windowstate" \
-		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/windowstate" \
+		"${WORKDIR}/plugins-workspace-${commit}/plugins/window-state" \
+		"${WORKDIR}/cargo_home/gentoo/plugins-workspace-${commit}/plugins/window-state" \
 		|| die
 }
 
 src_configure() {
+	if [[ ! -e "${GITLIGHT_CREDENTIALS_PATH}" ]] ; then
+eerror
+eerror "You must set GITLIGHT_CREDENTIALS_PATH as an environment variable"
+eerror "pointing to a single file with the following variables:"
+eerror
+eerror "AUTH_GITHUB_ID=\"<GITHUB_ID>\""
+eerror "AUTH_GITHUB_SECRET=\"<GITHUB_SECRET>\""
+eerror "AUTH_GITLAB_ID=\"<GITLAB_ID>\""
+eerror "AUTH_GITLAB_SECRET=\"<GITLAB_SECRET>\""
+eerror
+eerror "See"
+eerror "https://github.com/colinlienard/gitlight/blob/gitlight-v0.16.0/.env.example"
+eerror "https://github.com/colinlienard/gitlight/blob/main/CONTRIBUTING.md#github-oauth-app"
+eerror
+eerror "You need to create your own API keys/tokens."
+eerror
+eerror
+eerror "Security Notices:"
+eerror
+eerror "You should only define this in a per-package env file."
+eerror
+eerror "Contents of /etc/portage/env/gitlight.conf:"
+eerror
+eerror "  GITLIGHT_CREDENTIALS_PATH=\"secure storage path\""
+eerror
+eerror "Contents of /etc/portage/package.env:"
+eerror
+eerror "  ${CATEGORY}/${PN} gitlight.conf"
+eerror
+		die
+	else
+einfo "Copying API tokens/credentials to ${S}/.env"
+		cat "${GITLIGHT_CREDENTIALS_PATH}" > "${S}/.env" || die
+	fi
 	pushd "${WORKDIR}/${MY_PN}-v${PV}/src-tauri" || die
 		S="${WORKDIR}/${MY_PN}-v${PV}/src-tauri" \
 		cargo_src_configure
@@ -823,6 +857,8 @@ einfo "Building tauri side"
 #		S="${WORKDIR}/${MY_PN}-v${PV}/src-tauri" \
 #		cargo_src_compile
 #	popd
+einfo "Secure deleting copied tokens/credentials at ${S}/.env"
+	shred -f "${S}/.env" || die
 }
 
 src_install() {
