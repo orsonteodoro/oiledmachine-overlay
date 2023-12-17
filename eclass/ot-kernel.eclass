@@ -11971,7 +11971,7 @@ einfo "Installing iosched script settings"
 				fi
 				echo "${tcc}"
 			}
-			local tcca_hs_throughput=$(_tcc_home_server_throughput)
+			local tcca_hs_throughput=$(_tcc_hs_throughput)
 
 
 			# UCDC - ultra cap data center O(100,000) - top 500 supercomputers
