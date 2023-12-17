@@ -134,7 +134,7 @@ _npm_check_errors() {
 	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
 	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
 	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
-	grep -q -e "error during build:" && die "Detected error"
+	grep -q -e "error during build:" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: npm_pkg_setup
