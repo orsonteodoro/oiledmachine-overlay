@@ -20,11 +20,12 @@ LICENSE="
 #   https://openclipart.org/detail/291738/hannukah-symbol
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
-IUSE="custom-image keffiyeh-woman menorah palestine-flag +ukraine-flag no-flag r1"
+IUSE="custom-image keffiyeh-woman keffiyeh-woman-mask-on menorah palestine-flag +ukraine-flag no-flag r1"
 REQUIRED_USE="
 	|| (
 		custom-image
 		keffiyeh-woman
+		keffiyeh-woman-mask-on
 		menorah
 		no-flag
 		palestine-flag
@@ -68,6 +69,9 @@ src_prepare() {
 	fi
 	if use keffiyeh-woman ; then
 		cat "${FILESDIR}/muslim-woman-keffiyeh.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
+	fi
+	if use keffiyeh-woman-mask-on ; then
+		cat "${FILESDIR}/muslim-woman-keffiyeh-mask-on.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
 	fi
 	if use menorah ; then
 		cat "${FILESDIR}/menorah.xpm" > "${S}/src/Pixmaps/extratree.xpm" || die
