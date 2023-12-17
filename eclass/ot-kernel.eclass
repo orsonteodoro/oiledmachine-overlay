@@ -12099,7 +12099,7 @@ einfo "Installing iosched script settings"
 			}
 			local tcca_streaming=$(_tcc_streaming)
 
-			# Should not be loss based.
+			# It should not be loss based.
 			_tcc_low_latency() {
 				local tcc
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
