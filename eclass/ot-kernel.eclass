@@ -11890,32 +11890,32 @@ einfo "Installing iosched script settings"
 				local tcc
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 					tcc="vegas"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-					tcc="bic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-					tcc="htcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-					tcc="westwood"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
-					tcc="yeah"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
 					tcc="hstcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-					tcc="reno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+					tcc="htcp"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
 					tcc="illinois"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+					tcc="hybla"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+					tcc="bic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+					tcc="westwood"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+					tcc="reno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+					tcc="yeah"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+					tcc="veno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+					tcc="cubic"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
 					tcc="bbr3"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 					tcc="bbr2"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-					tcc="hybla"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
-					tcc="veno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-					tcc="cubic"
 				else
 					tcc="${default_tcca}"
 				fi
@@ -12102,7 +12102,9 @@ einfo "Installing iosched script settings"
 			# It should not be loss based.
 			_tcc_low_latency() {
 				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then
+					tcc="c2tcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
 					tcc="bbr3"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
 					tcc="bbr2"

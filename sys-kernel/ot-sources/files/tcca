@@ -50,7 +50,7 @@ TCCA_WWW="${TCCA_WWW:-vegas}"
 
 # Home server
 TCCA_HS_FAIR="${TCCA_HS_FAIR:-vegas}"
-TCCA_HS_REALTIME="${TCCA_HS_REALTIME:-vegas}"
+TCCA_HS_REALTIME="${TCCA_HS_REALTIME:-bbr}"
 TCCA_HS_THROUGHPUT="${TCCA_HS_THROUGHPUT:-cubic}"
 
 # Intra data center refined
