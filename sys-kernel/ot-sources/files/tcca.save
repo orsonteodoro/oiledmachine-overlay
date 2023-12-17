@@ -31,48 +31,37 @@ if [[ -e /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf ]] ; then
 fi
 
 # TCCA - TCP Congestion Control Algorithm
-# Client
+# HC O(10,000) - high cap data center, big tech data center
+# MC O(1,000) - md cap data center, university super computer
+# LC O(100) - low cap data center, university HPC
 TCCA_BROADCAST="${TCCA_BROADCAST:-bbr}"
-TCCA_DISTCC="${TCCA_DISTCC:-vegas}"
+TCCA_DEFAULT="${TCCA_DEFAULT:-bbr}"
+TCCA_DISTCC="${TCCA_DISTCC:-reno}"
+TCCA_HCDC_FAIR="${TCCA_HCDC_FAIR:-bbr}"
+TCCA_HCDC_REALTIME="${TCCA_HCDC_THROUGHPUT:-bbr}"
+TCCA_HCDC_THROUGHPUT="${TCCA_HCDC_THROUGHPUT:-dctcp}"
+TCCA_HOME_SERVER_FAIR="${TCCA_HOME_SERVER_FAIR:-reno}"
+TCCA_HOME_SERVER_REALTIME="${TCCA_HOME_SERVER_REALTIME:-reno}"
+TCCA_HOME_SERVER_THROUGHPUT="${TCCA_HOME_SERVER_THROUGHPUT:-cdg}"
 TCCA_FTP="${TCCA_FTP:-cubic}"
 TCCA_GAMING="${TCCA_GAMING:-vegas}"
+TCCA_LCDC_FAIR="${TCCA_LCDC_FAIR:-bbr}"
+TCCA_LCDC_REALTIME="${TCCA_LCDC_THROUGHPUT:-bbr}"
+TCCA_LCDC_THROUGHPUT="${TCCA_LCDC_THROUGHPUT:-dctcp}"
+TCCA_MCDC_FAIR="${TCCA_MCDC_FAIR:-bbr}"
+TCCA_MCDC_REALTIME="${TCCA_MCDC_THROUGHPUT:-bbr}"
+TCCA_MCDC_THROUGHPUT="${TCCA_MCDC_THROUGHPUT:-bbr}"
 TCCA_MUSIC="${TCCA_MUSIC:-bbr}"
 TCCA_P2P="${TCCA_P2P:-cubic}"
-TCCA_PODCAST="${TCCA_PODCAST:-bbr2}"
+TCCA_PODCASTS="${TCCA_PODCASTS:-bbr2}"
 TCCA_PODCAST_UPLOAD="${TCCA_PODCAST_UPLOAD:-cubic}"
-TCCA_SOCIAL_GAME="${TCCA_SOCIAL_GAME:-vegas}"
+TCCA_SOCIAL_GAMES="${TCCA_SOCIAL_GAMES:-vegas}"
 TCCA_STREAMING="${TCCA_STREAMING:-bbr}"
 TCCA_TORRENT="${TCCA_TORRENT:-cubic}"
 TCCA_VIDEO_CHAT="${TCCA_VIDEO_CHAT:-bbr}"
 TCCA_VIDEO_UPLOAD="${TCCA_VIDEO_UPLOAD:-bbr}"
 TCCA_VOIP="${TCCA_VOIP:-bbr}"
 TCCA_WWW="${TCCA_WWW:-vegas}"
-
-# Home server
-TCCA_HS_FAIR="${TCCA_HS_FAIR:-vegas}"
-TCCA_HS_REALTIME="${TCCA_HS_REALTIME:-vegas}"
-TCCA_HS_THROUGHPUT="${TCCA_HS_THROUGHPUT:-cubic}"
-
-# Intra data center refined
-TCCA_LCDC_FAIR="${TCCA_LCDC_FAIR:-dctcp}"
-TCCA_LCDC_REALTIME="${TCCA_LCDC_THROUGHPUT:-bbr}"
-TCCA_LCDC_THROUGHPUT="${TCCA_LCDC_THROUGHPUT:-dctcp}"
-TCCA_MCDC_FAIR="${TCCA_MCDC_FAIR:-bbr}"
-TCCA_MCDC_REALTIME="${TCCA_MCDC_THROUGHPUT:-bbr}"
-TCCA_MCDC_THROUGHPUT="${TCCA_MCDC_THROUGHPUT:-dctcp}"
-TCCA_HCDC_FAIR="${TCCA_HCDC_FAIR:-bbr}"
-TCCA_HCDC_REALTIME="${TCCA_HCDC_THROUGHPUT:-bbr}"
-TCCA_HCDC_THROUGHPUT="${TCCA_HCDC_THROUGHPUT:-dctcp}"
-TCCA_UCDC_FAIR="${TCCA_HCDC_FAIR:-bbr}"
-TCCA_UCDC_REALTIME="${TCCA_HCDC_THROUGHPUT:-bbr}"
-TCCA_UCDC_THROUGHPUT="${TCCA_HCDC_THROUGHPUT:-dctcp}"
-
-# General
-TCCA_HIGH_BDP="${TCCA_HIGH_BDP:-cubic}"
-TCCA_INTER_DC="${TCCA_INTER_DC:-illinois}"
-TCCA_INTRA_DC="${TCCA_INTRA_DC:-dctcp}"
-TCCA_SATELLITE="${TCCA_SATELLITE:-hybla}"
-TCCA_WIRELESS="${TCCA_WIRELESS:-westwood}"
 
 # This is for loading modules or TCP CC selection from non-root user.
 # sudo is for command line only
@@ -99,64 +88,29 @@ echo "${MY_NAME} [use-case|menu-item] [cmd] [args]"
 echo "${MY_NAME} [use-case|menu-item]"
 	fi
 echo
-echo "Client"
+echo "Use cases:"
 echo
 echo "  broadcast - For live broadcasting"
-echo "  distcc - For at home compile farm"
 echo "  ftp - For file downloads"
 echo "  gaming - For gaming clients"
+echo "  distcc - For at home compile farm"
 echo "  music - For music service"
 echo "  p2p - For decentralized downloads"
-echo "  podcast - For downloading podcasts"
-echo "  podcast-upload - For podcast uploading"
-echo "  social-game - For social gaming"
+echo "  social-gaming - For social gaming"
 echo "  streaming - For streaming audio/video downloads"
 echo "  torrent - For decentralized downloads"
+echo "  podcasts - For downloading podcasts"
+echo "  podcast-upload - For podcast uploading"
 echo "  video-chat - For audio/video chat"
 echo "  video-upload - For video uploading"
 echo "  voip - For voice over IP"
 echo "  www - For web browsing"
-echo
-echo "Home server"
-echo
-echo "  hs-fair - For fair home server"
-echo "  hs-realtime - For realtime home server"
-echo "  hs-throughput - For throughput home server"
-echo
-echo "Intra datacenter refinement:"
-echo
-echo "  lcdc-fair - For fair low capacity datacenter"
-echo "  lcdc-realtime - For realtime low capacity datacenter"
-echo "  lcdc-throughput - For throughput low capacity datacenter"
-echo "  mcdc-fair - For fair mid capacity datacenter"
-echo "  mcdc-realtime - For realtime mid capacity datacenter"
-echo "  mcdc-throughput - For throughput mid capacity datacenter"
-echo "  hcdc-fair - For fair high capacity datacenter"
-echo "  hcdc-realtime - For realtime high capacity datacenter"
-echo "  hcdc-throughput - For throughput high capacity datacenter"
-echo "  ucdc-fair - For fair ultra capacity datacenter"
-echo "  ucdc-realtime - For realtime ultra capacity datacenter"
-echo "  ucdc-throughput - For throughput ultra capacity datacenter"
-echo
-echo "  lcdc - low cap data center O(100) - university HPC/ML/DL"
-echo "  mcdc - mid cap data center O(1,000) - university super computer"
-echo "  hcdc - high cap data center O(10,000) - big tech"
-echo "  ucdc - ultra cap data center O(100,000) - top 500 supercomputers"
-
-echo "General cases:"
-echo
-echo "  high-bdp - For high BDP networks"
-echo "  inter-dc - For inside datacenters"
-echo "  intra-dc - For between datacenters"
-echo "  satellite - For satellite connections"
-echo "  wireless - For wireless connections"
 echo
 echo "Menu item:"
 echo
 echo "  --help - Print this help"
 echo "  --status - For printing TCP Congestion Control details"
 echo "  --use=<alg> - For using the algorithm directly"
-echo "  --set=<alg> - For using the algorithm directly"
 echo
 	if [[ "${TCCA_ELEVATE_PRIV}" =~ ("pkexec"|"polkit"|"sudo") ]] ; then
 echo "[cmd]    - program to run (optional)"
@@ -171,40 +125,68 @@ declare -A TCCA_MAP=(
 	["distcc"]="${TCCA_DISTCC}"
 	["ftp"]="${TCCA_FTP}"
 	["gaming"]="${TCCA_GAMING}"
+	["home-server-fair"]="${TCCA_HOME_SERVER_FAIR}"
+	["home-server-throughput"]="${TCCA_HOME_SERVER_THROUGHPUT}"
 	["music"]="${TCCA_MUSIC}"
 	["p2p"]="${TCCA_P2P}"
-	["podcast"]="${TCCA_PODCAST}"
+	["podcasts"]="${TCCA_PODCASTS}"
 	["podcast-upload"]="${TCCA_PODCAST_UPLOAD}"
-	["social-game"]="${TCCA_SOCIAL_GAME}"
+	["social-gaming"]="${TCCA_SOCIAL_GAMING}"
 	["streaming"]="${TCCA_STREAMING}"
 	["torrent"]="${TCCA_TORRENT}"
-	["video-chat"]="${TCCA_VIDEO_CHAT}"
 	["video-upload"]="${TCCA_VIDEO_UPLOAD}"
+	["video-chat"]="${TCCA_VIDEO_CHAT}"
 	["voip"]="${TCCA_VOIP}"
-	["www"]="${TCCA_WWW}"
+	["www"]="${TCCA_WWW_CLIENT}"
 
-	["hs-fair"]="${TCCA_HS_FAIR}"
-	["hs-realtime"]="${TCCA_HS_REALTIME}"
-	["hs-throughput"]="${TCCA_HS_THROUGHPUT}"
+	["bulk"]="${TCCA_BULK_FG}"
+	["bulk-download"]="${TCCA_BULK_FG}"
+	["download"]="${TCCA_BULK_FG}"
 
-	["lcdc-fair"]="${TCCA_LCDC_FAIR}"
-	["lcdc-realtime"]="${TCCA_LCDC_REALTIME}"
-	["lcdc-throughput"]="${TCCA_LCDC_THROUGHPUT}"
-	["mcdc-fair"]="${TCCA_MCDC_FAIR}"
-	["mcdc-realtime"]="${TCCA_MCDC_REALTIME}"
-	["mcdc-throughput"]="${TCCA_MCDC_THROUGHPUT}"
-	["hcdc-fair"]="${TCCA_HCDC_FAIR}"
-	["hcdc-realtime"]="${TCCA_HCDC_REALTIME}"
-	["hcdc-throughput"]="${TCCA_HCDC_THROUGHPUT}"
-	["ucdc-fair"]="${TCCA_UCDC_FAIR}"
-	["ucdc-realtime"]="${TCCA_UCDC_REALTIME}"
-	["ucdc-throughput"]="${TCCA_UCDC_THROUGHPUT}"
+	["bulk-send"]="${TCCA_BULK_SEND}"
 
-	["high-bdp"]="${TCCA_HIGH_BDP}"
-	["inter-dc"]="${TCCA_INTER_DC}"
-	["intra-dc"]="${TCCA_INTRA_DC}"
-	["satellite"]="${TCCA_SATELLITE}"
-	["wireless"]="${TCCA_WIRELESS}"
+	["multi-large"]="${TCCA_MULTI_LARGE}"
+
+	["multi-small"]="${TCCA_MULTI_SMALL}"
+
+	["http-server"]="${TCCA_FAIR_SERVER}"
+	["gaming-server"]="${TCCA_FAIR_SERVER}"
+
+	["gaming"]="${TCCA_GAMING}"
+	["gaming-client"]="${TCCA_GAMING}"
+
+	["reliable"]="${TCCA_RELIABLE}"
+
+	["reset"]="${TCCA_RESET}"
+
+	["multi"]="${TCCA_MULTI_BG}"
+	["multi-download"]="${TCCA_MULTI_BG}"
+	["ftp-server"]="${TCCA_MULTI_BG}"
+	["p2p"]="${TCCA_MULTI_BG}"
+	["torrent"]="${TCCA_MULTI_BG}"
+
+	["rec"]="${TCCA_STREAMING_REC}"
+	["streamer"]="${TCCA_STREAMING_REC}"
+	["voip"]="${TCCA_STREAMING_REC}"
+
+	["rural"]="${TCCA_RURAL}"
+	["satellite"]="${TCCA_RURAL}"
+
+	["streaming"]="${TCCA_STREAMING}"
+	["live"]="${TCCA_STREAMING}"
+	["live-streaming"]="${TCCA_STREAMING}"
+	["online-radio"]="${TCCA_STREAMING}"
+	["radio"]="${TCCA_STREAMING}"
+
+	["streaming-server"]="${TCCA_THROUGHPUT_SERVER}"
+	["media-server"]="${TCCA_THROUGHPUT_SERVER}"
+
+	["bad"]="${TCCA_BAD}"
+	["packet-loss"]="${TCCA_BAD}"
+
+	["www"]="${TCCA_WWW_CLIENT}"
+	["www-client"]="${TCCA_WWW_CLIENT}"
+	["http-client"]="${TCCA_WWW_CLIENT}"
 )
 
 print_status() {
@@ -237,7 +219,7 @@ process_options() {
 				print_status
 				exit 0
 				;;
-			--use=*|--set=*)
+			--use=*)
 				set_tcca $(echo "${x}" | cut -f 2 -d "=" | sed -e "s|^tcp_||g")
 				exit 0
 				;;

@@ -2785,16 +2785,16 @@ unset OT_KERNEL_PRIVATE_KEY
       Algorithm | Benefit (first row) / Cost (second row)
       ----------+---------------------------------------------------------------------------------
       bic       | RPC goodput for MiB+ payloads
-      bbr       | Latency, streaming goodput, production code quality
+      bbr       | Latency, streaming, production code quality
                 | Greedy, deprecated, high latency for small RPC payloads
       bbr2      | Latency, fair, ECN support
                 | Alpha code quality, experimental, deprecated
-      bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming goodput, fair, ECN support, actively maintained
+      bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming, fair, ECN support, actively maintained
                 | Not mainlined
       c2tcp     | Lowest latencies and lowest jitter
       cdg       | Throughput with latency improvement
       clear     | Do not add any (Ebuild only)
-      dctcp     | High throughput and fairness for data centers
+      dctcp     | High throughput and low cap datacenter low-latency
                 | High latency for KiB RPC payloads
       deepcc    | Throughput, optimized BBR, Cubic, Illinois, Westwood
                 | Tensorflow [heavy dependency], high memory footprint
@@ -2802,7 +2802,7 @@ unset OT_KERNEL_PRIVATE_KEY
       hstcp     | Throughput
       htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]
       hybla     | Throughput over satellite
-      illinois  | Throughput
+      illinois  | Throughput between inter datacenters
       lp        | Full bandwidth utilization
       nv        | RPC goodput and low latency for KiB payloads
       orca      | Low CPU usage, consistent high performance in different networks
@@ -2824,15 +2824,11 @@ unset OT_KERNEL_PRIVATE_KEY
       * Throughput alone implies high throughput.
       * Latency alone implies low latency.
 
-    Example:
+    Examples:
 
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="clear"
-
-    Defaults (EXPERIMENTAL):
-
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr3 cubic lp hybla pcc vegas westwood"      # if USE=bbrv3 and OT_KERNEL_USE=bbrv3
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr2 bbr cubic lp hybla pcc vegas westwood"  # if USE=bbrv2 and OT_KERNEL_USE=bbrv2
-      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr cubic lp hybla pcc vegas westwood"       # otherwise
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="clear"                              # Fallback to cubic and reno
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr3 htcp hybla lp vegas westwood"  # Similar to fallback defaults
+      OT_KERNEL_TCP_CONGESTION_CONTROLS="dctcp bbr3 illinois"                # Similar to HPC defaults
 
       For allowed defaults, see
 
@@ -2845,12 +2841,14 @@ unset OT_KERNEL_PRIVATE_KEY
       secondary flow to be more slightly greedy for a higher bitrate and to
       be less skippy.
 
+      The default fallback will take into consideration OT_KERNEL_WORK_PROFILE.
+
     Recommendations:
 
       Audio streaming:  bbr
       Datacenter - dctcp, bbr
       Dedicated large downloads:  cubic, hybla
-      distcc on LAN:  reno
+      distcc on LAN:  vegas
       Gaming with VoIP:  bbr
       Gaming without VoIP:  vegas
       Big data HPC - dctcp
@@ -2901,20 +2899,53 @@ unset OT_KERNEL_PRIVATE_KEY
 
     The following set the default TCP Congestion Control algorithm for the tcca wrapper:
 
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD - For bad connections with packet loss. (Default:  bbr2)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG - For large downloads downloaded serially as foreground. (Default:  cubic)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND - For large uploads serially as foreground. (Default:  pcc)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER - For fair throughput servers.  (Default:  bbr2)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING - Full screen games while streaming music or VoIPing.  (Default:  bbr2)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG - For non-disruptive multi downloads in the background. (Default:  vegas)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE - For multiple large downloads that each take more than 20s as foreground to complete. (Default:  bbr)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL - For multiple small downloads that each take less than 20s as foreground to complete. (Default:  hybla)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC - For live stream production or VoIP.  (Default:  bbr)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE - For a bug-free experience.  (Default:  cubic)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL - For rural or satellite connections.  (Default:  hybla)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For playing streaming audio or video.  (Default:  westwood)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER - For higher thoughput with some fairness.  (Default:  dctcp)
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT - For web browsing without streaming.  (Default:  vegas)
+    Clients:
+
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST - For broadcasting content producers.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_DEFAULT - For general use.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT - Full screen games while streaming music or VoIPing.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC - For music service.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P - For decentralized distribution.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST - For downloading podcasts.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD - For uploading podcasts.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING - For playing streaming audio or video.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT - For decentralized distribution.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VIDEO_UPLOAD - For uploading videos.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP - For VoIP.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW - For web browsing without streaming.
+
+    Home server:
+
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_FAIR - For fair servers at home.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_THROUGHPUT - For throughput servers at home.
+
+    Intra datacenter refined:
+
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_FAIR - For fair low capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_REALTIME - For realtime low capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_THROUGHPUT - For throughput low capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_FAIR - For fair mid capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_REALTIME - For realtime mid capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_THROUGHPUT - For throughput mid capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_FAIR - For fair high capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_REALTIME - For realtime high capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_THROUGHPUT - For throughput high capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_FAIR - For fair ultra capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_REALTIME - For realtime ultra capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_THROUGHPUT - For throughput ultra capacity datacenter.
+
+    UCDC - ultra cap data center O(100,000) - top 500 supercomputers
+    HCDC - high cap data center O(10,000) - big tech
+    MCDC - mid cap data center O(1,000) - university super computer
+    LCDC - low cap data center O(100) - university HPC/ML/DL
+
+    General cases:
+
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HIGH_BDP - For high BDP networks.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC - For inside datacenters.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC - For between datacenters.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE - For satellite networks.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS - For wireless networks.
 
     Acceptable values:
 
@@ -2927,17 +2958,6 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Notes:
 
-      - For web browser games, consider changing
-        OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING to vegas instead of
-        bbr2.  The perceived link-click latency of vegas felt faster than bbr.
-      - The OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING_REC should not be
-        changed for deterministic reasons.  Only change if you are sure if
-        that algorithm can dominate the one in
-        OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING.
-      - The above defaults may change based on availablity in
-        OT_KERNEL_TCP_CONGESTION_CONTROLS, but fallback to the next best option.
-      - The defaults are chosen based on multiple flows bandwidth allocation with
-        a primary flow (active focused process) and auxilitary flows (background).
       - The wrapper will be found in /usr/bin/tcca
       - The wrapper configuration may be changed in /etc/tcca-${PV}-${EXTRAVERSION}-${ARCH}.conf
       - The wrapper script requires sys-auth/polkit.  Use the gnome or kde USE
@@ -2946,20 +2966,6 @@ unset OT_KERNEL_PRIVATE_KEY
         the kernel module, and the other to change the algorithm.
       - See the contents of the tcca (TCP Congestion Control Algorithm) script to
         learn how to use it.
-      - For OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING you can choose
-        either to target average bitrate (westwood, cubic), low latency load or
-        seek (hybla, vegas), or the well rounded middle (bbr, bbr2).  By
-        default, it will choose the highest average bitrate/thoughput available
-        for max hardware compatibility.
-      - OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_DOWNLOAD should only be
-        vegas.  This is so that it submits to flows using
-        cubic/westwood which should dominate.
-      - bbr is to maximize throughput
-      - bbr2 is to maximize multi flow fairness
-      - It is disallowed to use a loss based TCP congestion control algorithm
-        (like cubic) for OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD.  Doing so
-        may cut throughput prematurely or suffer low thoughput for long periods
-        of time.
 
 
 

@@ -2996,19 +2996,13 @@ ot-kernel_get_envs() {
 # Check if the variable name is still being used.
 check_environment_variable_renames() {
 	if [[ -n "${OT_KERNEL_EP800}" ]] ; then
-eerror
 eerror "OT_KERNEL_EP800 new name is now CAMERAS=\"ep800\".  Please rename to continue."
-eerror
 	fi
 	if [[ -n "${WEBCAMS}" ]] ; then
-eerror
 eerror "WEBCAMS new name is now CAMERAS.  Please rename to continue."
-eerror
 	fi
 	if [[ -n "${WEBCAMS_UVC_SNAPSHOT_BUTTON}" ]] ; then
-eerror
 eerror "WEBCAMS_UVC_SNAPSHOT_BUTTON new name is now CAMERAS_SNAPSHOT_BUTTON.  Please rename to continue."
-eerror
 	fi
 	if [[ -n "${ZENSAUCE_BLACKLIST}" || -n "${ZENSAUCE_WHITELIST}" ]] ; then
 eerror
@@ -3017,6 +3011,52 @@ eerror "ZENSAUCE_WHITELIST new name is now ZEN_SAUCE_WHITELIST.  Please rename t
 eerror "See metadata.xml for details."
 eerror
 		die
+	fi
+
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HOME_SERVER_FAIR.  Please rename to continue."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES.  Please rename to continue."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMES has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING.  Please rename to continue."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP.  Please rename to continue."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RESET}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RESET has been removed."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HOME_SERVER_THROUGHPUT.  Please rename to continue."
+	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW.  Please rename to continue."
 	fi
 }
 
@@ -3127,20 +3167,44 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TARGET_TRIPLE
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SOCIAL_GAMES
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VIDEO_CHAT
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VIDEO_UPLOAD
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW
+
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_FAIR
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_REALTIME
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_THROUGHPUT
+
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_FAIR
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_REALTIME
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_THROUGHPUT
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_FAIR
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_REALTIME
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_THROUGHPUT
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_FAIR
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_REALTIME
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_THROUGHPUT
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_FAIR
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_REALTIME
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_THROUGHPUT
+
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HIGH_BDP
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS_DC
+
 	unset OT_KERNEL_USE
 	unset OT_KERNEL_VERBOSITY
 	unset OT_KERNEL_WORK_PROFILE
@@ -3364,13 +3428,46 @@ ot-kernel_get_tcp_congestion_controls_default() {
 # Get the initial defaults for OT_KERNEL_TCP_CONGESTION_CONTROLS
 _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	local v
-	if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic dctcp hybla pcc vegas westwood"}
-	elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 bbr cubic dctcp hybla pcc vegas westwood"}
+
+	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	if [[ \
+		   "${work_profile}" == "custom" \
+		|| "${work_profile}" == "manual" \
+	]] ; then
+		:;
+	elif [[ "${work_profile}" =~ "hpc" ]] ; then
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr3 illinois"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr2 illinois"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr illinois"}
+		fi
+	elif [[ \
+		   "${work_profile}" == "dvr" \
+		|| "${work_profile}" == "jukebox" \
+		|| "${work_profile}" == "pi-audio-player" \
+		|| "${work_profile}" == "pi-video-player" \
+		|| "${work_profile}" == "pi-web-browser" \
+		|| "${work_profile}" == "sdr" \
+	]] ; then
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
+		fi
 	else
-		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic dctcp hybla pcc vegas westwood"}
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 htcp hybla lp vegas westwood"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 htcp hybla lp vegas westwood"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
+		fi
 	fi
+
 	echo "${v}"
 }
 
@@ -8991,7 +9088,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instea
 			|| "${work_profile}" == "throughput-hpc" \
 		]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
-			ot-kernel_set_kconfig_set_tcp_congestion_control_default "dctcp"
 			ot-kernel_set_kconfig_slab_allocator "slub"
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
@@ -11726,211 +11822,374 @@ einfo "Installing iosched script settings"
 			&& -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" ]] ; then
 			# Each kernel config may have different a combo.
 
-
 			local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
 
-			local tcca_fair_server
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
-				tcca_fair_server="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_fair_server="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-				tcca_fair_server="dctcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_fair_server="vegas"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcca_fair_server="bbr" # greedy
-			else
-				tcca_fair_server="${default_tcca}"
-			fi
 
-			local tcca_multi_bg
-			# BBR* dominates cubic when too many flows.
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_multi_bg="vegas"
-			else
-				tcca_multi_bg="${default_tcca}"
-			fi
 
-			# Sorted by RTT (lowest top) with many flows
-			local tcca_gaming
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
-				tcca_gaming="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_gaming="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcca_gaming="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_gaming="vegas"
-			else
-				tcca_gaming="${default_tcca}"
-			fi
+			_tcc_intra_dc() {
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_intra_dc=$(_tcc_intra_dc)
 
-			local tcca_rural
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-				tcca_rural="hybla"
-			else
-				tcca_rural="${default_tcca}"
-			fi
+			_tcc_inter_dc() {
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+					tcc="illinois"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_inter_dc=$(_tcc_inter_dc)
+
+			_tcc_satellite() {
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+					tcc="hybla"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_satellite=$(_tcc_satellite)
+
+			_tcc_wireless() {
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+					tcc="westwood"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+					tcc="veno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcc="vegas"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_wireless=$(_tcc_wireless)
+
+			_tcc_high_bdp() {
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+					tcc="htcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+					tcc="bic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+					tcc="cubic"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_high_bdp=$(_tcc_high_bdp)
+
+
+
+			_tcc_home_server_fair() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcc="vegas"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+					tcc="bic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+					tcc="htcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+					tcc="westwood"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+					tcc="yeah"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+					tcc="hstcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+					tcc="reno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+					tcc="illinois"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+					tcc="hybla"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+					tcc="veno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+					tcc="cubic"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_home_server_fair=$(_tcc_home_server_fair)
+
+			_tcc_home_server_realtime() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then
+					tcc="c2tcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+					tcc="westwood"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+					tcc="cubic"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_home_server_realtime=$(_tcc_home_server_realtime)
+
+			_tcc_home_server_throughput() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+					tcc="bic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+					tcc="yeah"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "scalable" ]] ; then
+					tcc="scalable"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+					tcc="cubic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+					tcc="htcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+					tcc="hstcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcc="vegas"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_home_server_throughput=$(_tcc_home_server_throughput)
+
+
+			# UCDC - ultra cap data center O(100,000) - top 500 supercomputers
+			# HCDC - high cap data center O(10,000) - big tech
+			# MCDC - mid cap data center O(1,000) - university super computer
+			# LCDC - low cap data center O(100) - university HPC/ML/DL
+
+			_tcc_lcdc_fair() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+
+			_tcc_lcdc_realtime() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+
+			_tcc_lcdc_throughput() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+
+
+			_tcc_mcdc_fair() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+
+			_tcc_mcdc_realtime() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+
+			_tcc_mcdc_throughput() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+
+			local tcca_lcdc_fair=$(_tcc_lcdc_fair)
+			local tcca_lcdc_realtime=$(_tcc_lcdc_realtime)
+			local tcca_lcdc_throughput=$(_tcc_lcdc_throughput)
+
+			local tcca_mcdc_fair=$(_tcc_mcdc_fair)
+			local tcca_mcdc_realtime=$(_tcc_mcdc_realtime)
+			local tcca_mcdc_throughput=$(_tcc_mcdc_throughput)
+
+			local tcca_hcdc_fair=$(_tcc_mcdc_fair)
+			local tcca_hcdc_realtime=$(_tcc_mcdc_realtime)
+			local tcca_hcdc_throughput=$(_tcc_mcdc_throughput)
+
+			local tcca_ucdc_fair=$(_tcc_mcdc_fair)
+			local tcca_ucdc_realtime=$(_tcc_mcdc_realtime)
+			local tcca_ucdc_throughput=$(_tcc_mcdc_throughput)
 
 			# Ordered by lowest http-link latency followed by lowest image gallery completion time.
-			local tcca_web_client
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_web_client="vegas"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
-				tcca_web_client="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_web_client="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcca_web_client="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-				tcca_web_client="hybla"
-			else
-				tcca_web_client="${default_tcca}"
-			fi
-
-			local tcca_bulk_fg
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-				tcca_bulk_fg="cubic"
-			else
-				tcca_bulk_fg="${default_tcca}"
-			fi
+			_tcc_ll_fair() { # low latency fair
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcc="vegas"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+					tcc="hybla"
+				else
+					tcc="${default_tcca}"
+				fi
+			}
+			local tcca_www=$(_tcc_ll_fair)
 
 			# Sorted by average thoughput for support for high video resolutions.
-			local tcca_streaming
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-				tcca_streaming="westwood"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
-				tcca_streaming="illinois"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-				tcca_streaming="hstcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-				tcca_streaming="cubic"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-				tcca_streaming="htcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-				tcca_streaming="hybla"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-				tcca_streaming="bic"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-				tcca_streaming="reno"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcca_streaming="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
-				tcca_streaming="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_streaming="bbr2"
-			else
-				tcca_streaming="${default_tcca}"
-			fi
+			_tcc_streaming() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_streaming=$(_tcc_streaming)
 
 			# Should not be loss based.
-			local tcca_rec
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
-				tcca_rec="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_rec="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcca_rec="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_rec="vegas"
-			else
-				tcca_rec="${default_tcca}"
-			fi
+			_tcc_low_latency() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcc="vegas"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_broadcast=$(_tcc_low_latency)
+			local tcca_music=$(_tcc_low_latency)
+			local tcca_gaming=$(_tcc_low_latency)
+			local tcca_podcast=$(_tcc_low_latency)
+			local tcca_social_games=$(_tcc_low_latency)
+			local tcca_streaming=$(_tcc_low_latency)
+			local tcca_video_chat=$(_tcc_low_latency)
+			local tcca_voip=$(_tcc_low_latency)
 
-			# Sorted by througput with respect to high flows
-			local tcca_server_throughput
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-				tcca_server_throughput="dctcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcca_server_throughput="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
-				tcca_server_throughput="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_server_throughput="bbr2"
-			else
-				tcca_server_throughput="${default_tcca}"
-			fi
-
-			# Sorted by throughput in the first 20 seconds.
-			local tcca_multi_small
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-				tcca_multi_small="hybla"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
-				tcca_multi_small="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-				tcca_multi_small="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-				tcca_multi_small="bbr2"
-			else
-				tcca_multi_small="${default_tcca}"
-			fi
-
-			# bbr may dominate in cubic with many flows in
-			# throughput in the long run (> 20s).
-			local tcca_multi_large
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
-				tcca_multi_large="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-				tcca_multi_large="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-				tcca_multi_large="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-				tcca_multi_large="cubic"
-			else
-				tcca_multi_large="${default_tcca}"
-			fi
-
-			# Any delay based but not loss based feedback otherwise throughput
-			# maybe be cut in half
-			local tcca_bad
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-				tcca_bad="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-				tcca_bad="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr" ]] ; then
-				tcca_bad="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_bad="vegas"
-			else
-				tcca_bad="${default_tcca}"
-			fi
-
+			# sendrate ~ avg throughput based on self clocking.
 			# Sorted by completion time, then avg send rate
-			local tcc_bulk_send
-			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
-				tcca_bulk_send="pcc"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-				tcca_bulk_send="westwood"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-				tcca_bulk_send="hybla"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-				tcca_bulk_send="reno"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-				tcca_bulk_send="hstcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
-				tcca_bulk_send="veno"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
-				tcca_bulk_send="illinois"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-				tcca_bulk_send="htcp"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-				tcca_bulk_send="bic"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
-				tcca_bulk_send="yeah"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-				tcca_bulk_send="cubic"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-				tcca_bulk_send="bbr"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
-				tcca_bulk_send="bbr3"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-				tcca_bulk_send="bbr2"
-			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-				tcca_bulk_send="vegas"
-			else
-				tcca_bad="${default_tcca}"
-			fi
+			_tcc_send_rate() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+					tcc="pcc"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+					tcc="westwood"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+					tcc="hybla"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+					tcc="reno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+					tcc="hstcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+					tcc="veno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+					tcc="illinois"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+					tcc="htcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+					tcc="bic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+					tcc="yeah"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+					tcc="cubic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
+					tcc="bbr3"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
+					tcc="bbr2"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" ]] ; then
+					tcc="nv"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcc="vegas"
+				else
+					tcc="${default_tcca}"
+				fi
+				echo "${tcc}"
+			}
+			local tcca_ftp=$(_tcc_send_rate)
+			local tcca_p2p=$(_tcc_send_rate)
+			local tcca_podcast_upload=$(_tcc_send_rate)
+			local tcca_torrent=$(_tcc_send_rate)
+			local tcca_video_upload=$(_tcc_send_rate)
 
 			tcca_elevate_priv="none" # Same as already root
 			if ot-kernel_has_version "sys-auth/polkit" ; then
@@ -11940,21 +12199,47 @@ einfo "Installing iosched script settings"
 			fi
 
 			cat <<EOF > "${T}/tcca.conf" || die
-TCCA_BAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BAD:-${tcca_bad}}"
-TCCA_BULK_FG="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_FG:-${tcca_bulk_fg}}"
-TCCA_BULK_SEND="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BULK_SEND:-${tcca_bulk_send}}"
-TCCA_FAIR_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FAIR_SERVER:-${tcca_fair_server}}"
+# Client
+TCCA_BROADCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST:-${tcca_broadcast}}"
+TCCA_FTP="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP:-${tcca_ftp}}"
 TCCA_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING:-${tcca_gaming}}"
-TCCA_MULTI_BG="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_BG:-${tcca_multi_bg}}"
-TCCA_MULTI_LARGE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE:-${tcca_multi_small}}"
-TCCA_MULTI_SMALL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL:-${tcca_multi_large}}"
-TCCA_REC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC:-${tcca_rec}}"
-TCCA_RELIABLE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RELIABLE:-cubic}"
-TCCA_RESET="${default_tcca}"
+TCCA_MUSIC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC:-${tcca_music}}"
+TCCA_P2P="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P:-${tcca_p2p}}"
+TCCA_PODCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST:-${tcca_podcast}}"
+TCCA_PODCAST_UPLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD:-${tcca_podcast_upload}}"
+TCCA_SOCIAL_GAMES="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SOCIAL_GAMES:-${tcca_social_games}}"
 TCCA_STREAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING:-${tcca_streaming}}"
-TCCA_THROUGHPUT_SERVER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER:-${tcca_server_throughput}}"
-TCCA_RURAL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_RURAL:-${tcca_rural}}"
-TCCA_WWW_CLIENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT:-${tcca_web_client}}"
+TCCA_TORRENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT:-${tcca_torrent}}"
+TCCA_VIDEO_CHAT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VIDEO_CHAT:-${tcca_video_chat}}"
+TCCA_VIDEO_UPLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VIDEO_UPLOAD:-${tcca_video_upload}}"
+TCCA_VOIP="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP:-${tcca_voip}}"
+TCCA_WWW="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW:-${tcca_www}}"
+
+# Home server
+TCCA_HS_FAIR="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_FAIR:-${tcca_hs_fair}}"
+TCCA_HS_REALTIME="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_REALTIME:-${tcca_hs_realtime}}"
+TCCA_HS_THROUGHPUT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_THROUGHPUT:-${tcca_hs_throughput}}"
+
+# Intra datacenter refined
+TCCA_LCDC_FAIR="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_FAIR:-${tcca_lcdc_fair}}"
+TCCA_LCDC_REALTIME="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_REALTIME:-${tcca_lcdc_realtime}}"
+TCCA_LCDC_THROUGHPUT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_THROUGHPUT:-${tcca_lcdc_throughput}}"
+TCCA_MCDC_FAIR="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_FAIR:-${tcca_mcdc_fair}}"
+TCCA_MCDC_REALTIME="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_REALTIME:-${tcca_mcdc_realtime}}"
+TCCA_MCDC_THROUGHPUT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_THROUGHPUT:-${tcca_mcdc_throughput}}"
+TCCA_HCDC_FAIR="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_FAIR:-${tcca_hcdc_fair}}"
+TCCA_HCDC_REALTIME="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_REALTIME:-${tcca_hcdc_realtime}}"
+TCCA_HCDC_THROUGHPUT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_THROUGHPUT:-${tcca_hcdc_throughput}}"
+TCCA_UCDC_FAIR="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_FAIR:-${tcca_ucdc_fair}}"
+TCCA_UCDC_REALTIME="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_REALTIME:-${tcca_ucdc_realtime}}"
+TCCA_UCDC_THROUGHPUT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_THROUGHPUT:-${tcca_ucdc_throughput}}"
+
+# General
+TCCA_HIGH_BDP="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HIGH_BDP:-${tcca_high_bdp}}"
+TCCA_INTER_DC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC:-${tcca_inter_dc}}"
+TCCA_INTRA_DC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC:-${tcca_intra_dc}}"
+TCCA_SATELLITE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE:-${tcca_satellite}}"
+TCCA_WIRELESS="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS:-${tcca_wireless}}"
 TCCA_ELEVATE_PRIV="${tcca_elevate_priv}"
 EOF
 			cat "${FILESDIR}/tcca" > "${T}/tcca" || die
@@ -11966,10 +12251,10 @@ EOF
 			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
 		fi
 
-		if has c2tcp ${IUSE_EFFECTIVE} \
+		if         has c2tcp ${IUSE_EFFECTIVE} \
 			|| has deepcc ${IUSE_EFFECTIVE} \
 			|| has orca ${IUSE_EFFECTIVE} ; then
-			if ot-kernel_use c2tcp \
+			if         ot-kernel_use c2tcp \
 				|| ot-kernel_use deepcc \
 				|| ot-kernel_use orca ; then
 				if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
