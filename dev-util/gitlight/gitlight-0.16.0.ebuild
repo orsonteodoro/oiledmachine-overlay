@@ -929,6 +929,6 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  fail
+# OILEDMACHINE-OVERLAY-TEST:  fail (0.16.0, 20231216)
 # npm run build + npm run build:tauri + run git-light (standalone):  fail (login fail)
 # npm run build + npm run preview (vite + web browser):  pass

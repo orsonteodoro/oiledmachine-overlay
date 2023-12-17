@@ -425,6 +425,19 @@ einfo "Removing ${node_modules_path}"
 	IFS=$' \t\n'
 }
 
+# @FUNCTION: _npm_check_errors
+# @DESCRIPTION:
+# Check for build errors
+_npm_check_errors() {
+	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
+	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
+	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
+	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
+	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
+	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
+	grep -q -e "error during build:" && die "Detected error"
+}
+
 # @FUNCTION: enpm
 # @DESCRIPTION:
 # Wrapper for the npm command.
@@ -453,10 +466,7 @@ einfo "Running:\tnpm ${cmd[@]}"
 		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
-	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
-	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
-	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
+	_npm_check_errors
 }
 
 # @FUNCTION: eyarn
