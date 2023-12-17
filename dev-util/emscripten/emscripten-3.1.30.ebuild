@@ -129,7 +129,7 @@ IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
 
-r1
+r2
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -207,6 +207,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.1.20-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-3.1.28-includes.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
+	"${FILESDIR}/${PN}-3.1.30-disable-stack-protector.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 
