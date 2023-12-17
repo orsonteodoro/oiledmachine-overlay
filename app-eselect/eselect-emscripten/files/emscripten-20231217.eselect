@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20231028"
+VERSION="20231217"
 PN="emscripten"
 
 # 3.1.46 llvm 18 ; node 10.19.0 ; binaryen 115
@@ -554,14 +554,22 @@ EOF
     . /etc/profile
 
     local emscripten_root="${EROOT}/usr/share/emscripten-${PV}"
-    export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
+        export EM_BINARYEN_ROOT="${EMSDK_BINARYEN_BASE_PATH}"
+    else
+        export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
+    fi
     export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
     export EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     export EMCC_WASM_BACKEND=${__EMCC_WASM_BACKEND__}
     export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 
     echo
-    echo -e "BINARYEN:\t\t${BINARYEN}"
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
+        echo -e "EM_BINARYEN_ROOT:\t\t${EM_BINARYEN_ROOT}"
+    else
+        echo -e "BINARYEN:\t\t${BINARYEN}"
+    fi
     echo -e "CLOSURE_COMPILER:\t${EMSDK_CLOSURE_COMPILER}"
     echo -e "EM_CONFIG:\t\t${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     echo -e "EMCC_WASM_BACKEND:\t${__EMCC_WASM_BACKEND__}"
@@ -581,7 +589,7 @@ EOF
     pushd "${sandbox}"
         cp "/usr/share/eselect-emscripten/hello_world.cpp" ./
         export EM_CACHE="${sandbox}/cache"
-
+        export EMCC
         /usr/share/emscripten-${PV}/emcc \
             -stdlib=libc++ \
             hello_world.cpp \

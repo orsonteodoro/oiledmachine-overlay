@@ -207,6 +207,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-3.1.20-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-3.1.28-includes.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
+	"${FILESDIR}/${PN}-3.1.44-disable-stack-protector.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"
 

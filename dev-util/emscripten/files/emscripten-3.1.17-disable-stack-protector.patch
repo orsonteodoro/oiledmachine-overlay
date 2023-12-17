@@ -1,0 +1,39 @@
+diff -urp emscripten-3.1.17.orig/tools/system_libs.py emscripten-3.1.17/tools/system_libs.py
+--- emscripten-3.1.17.orig/tools/system_libs.py	2023-12-17 09:22:23.560742938 -0800
++++ emscripten-3.1.17/tools/system_libs.py	2023-12-17 09:23:37.348288321 -0800
+@@ -554,6 +554,7 @@ class NoExceptLibrary(Library):
+ 
+   def get_cflags(self):
+     cflags = super().get_cflags()
++    cflags += ['-fno-stack-protector'] # oteodoro - fix undefined symbol: __stack_chk_guard
+     if self.eh_mode == Exceptions.NONE:
+       cflags += ['-fno-exceptions']
+     elif self.eh_mode == Exceptions.EMSCRIPTEN:
+@@ -719,6 +720,8 @@ class libc(MuslInternalLibrary,
+              '-Wno-string-plus-int',
+              '-Wno-pointer-sign']
+ 
++  cflags += ['-fno-stack-protector'] # oteodoro - fix undefined symbol: __stack_chk_guard
++
+   def __init__(self, **kwargs):
+     self.non_lto_files = self.get_libcall_files()
+     super().__init__(**kwargs)
+@@ -1277,6 +1280,8 @@ class libcxx(NoExceptLibrary, MTLibrary)
+     '-std=c++20',
+   ]
+ 
++  cflags += ['-fno-stack-protector'] # oteodoro - fix undefined symbol: __stack_chk_guard
++
+   includes = ['system/include/compat', 'system/lib/libcxx/include', 'system/lib/libcxxabi/include', 'system/lib/libc/musl/include', 'system/lib/libc/musl/arch/emscripten', 'system/lib/libcxx/src']
+ 
+   src_dir = 'system/lib/libcxx/src'
+@@ -1354,6 +1359,7 @@ class libmalloc(MTLibrary):
+ 
+   def get_cflags(self):
+     cflags = super().get_cflags()
++    cflags += ['-fno-stack-protector'] # oteodoro - fix undefined symbol: __stack_chk_guard
+     if self.memvalidate:
+       cflags += ['-DEMMALLOC_MEMVALIDATE']
+     if self.verbose:
+Only in emscripten-3.1.17/tools: system_libs.py.orig
+Only in emscripten-3.1.17/tools: system_libs.py.rej
