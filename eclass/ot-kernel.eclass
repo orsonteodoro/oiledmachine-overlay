@@ -11886,7 +11886,7 @@ einfo "Installing iosched script settings"
 
 
 
-			_tcc_home_server_fair() {
+			_tcc_hs_fair() {
 				local tcc
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 					tcc="vegas"
@@ -11921,9 +11921,9 @@ einfo "Installing iosched script settings"
 				fi
 				echo "${tcc}"
 			}
-			local tcca_home_server_fair=$(_tcc_home_server_fair)
+			local tcca_hs_fair=$(_tcc_hs_fair)
 
-			_tcc_home_server_realtime() {
+			_tcc_hs_realtime() {
 				local tcc
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then
 					tcc="c2tcp"
@@ -11940,9 +11940,9 @@ einfo "Installing iosched script settings"
 				fi
 				echo "${tcc}"
 			}
-			local tcca_home_server_realtime=$(_tcc_home_server_realtime)
+			local tcca_hs_realtime=$(_tcc_hs_realtime)
 
-			_tcc_home_server_throughput() {
+			_tcc_hs_throughput() {
 				local tcc
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
 					tcc="bic"
@@ -11971,7 +11971,7 @@ einfo "Installing iosched script settings"
 				fi
 				echo "${tcc}"
 			}
-			local tcca_home_server_throughput=$(_tcc_home_server_throughput)
+			local tcca_hs_throughput=$(_tcc_home_server_throughput)
 
 
 			# UCDC - ultra cap data center O(100,000) - top 500 supercomputers
@@ -12084,26 +12084,6 @@ einfo "Installing iosched script settings"
 			local tcca_ucdc_realtime=$(_tcc_mcdc_realtime)
 			local tcca_ucdc_throughput=$(_tcc_mcdc_throughput)
 
-			# Ordered by lowest http-link latency followed by lowest image gallery completion time.
-			_tcc_ll_fair() { # low latency fair
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-					tcc="vegas"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3"( |$) ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2"( |$) ]] ; then
-					tcc="bbr2"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-					tcc="hybla"
-				else
-					tcc="${default_tcca}"
-				fi
-			}
-			local tcca_www=$(_tcc_ll_fair)
-
-			# Sorted by average thoughput for support for high video resolutions.
 			_tcc_streaming() {
 				local tcc
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
@@ -12135,12 +12115,14 @@ einfo "Installing iosched script settings"
 				fi
 				echo "${tcc}"
 			}
+
+			local tcca_music=$(_tcc_streaming)
+			local tcca_podcast=$(_tcc_streaming)
+			local tcca_streaming=$(_tcc_streaming)
+
 			local tcca_broadcast=$(_tcc_low_latency)
-			local tcca_music=$(_tcc_low_latency)
 			local tcca_gaming=$(_tcc_low_latency)
-			local tcca_podcast=$(_tcc_low_latency)
 			local tcca_social_games=$(_tcc_low_latency)
-			local tcca_streaming=$(_tcc_low_latency)
 			local tcca_video_chat=$(_tcc_low_latency)
 			local tcca_voip=$(_tcc_low_latency)
 
