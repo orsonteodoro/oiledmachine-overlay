@@ -6803,9 +6803,9 @@ eerror
 		"${EMBUILD_DIR}/emscripten.config" || die
 #	export EMMAKEN_CFLAGS='-std=gnu++11'
 #	export EMCC_CFLAGS='-std=gnu++11'
-#	if ver_test ${em_pv} -ge 3 ; then
-#		export EMCC_CFLAGS="-stdlib=libc++"
-#	fi
+	if ver_test ${em_pv} -ge 3 ; then
+		export EMCC_CFLAGS="-stdlib=libc++"
+	fi
         export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
 	export CC="emcc"
 	export CXX="em++"
