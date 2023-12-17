@@ -124,6 +124,19 @@ eerror
 	fi
 }
 
+# @FUNCTION: _npm_check_errors
+# @DESCRIPTION:
+# Check for build errors
+_npm_check_errors() {
+	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
+	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
+	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
+	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
+	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
+	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
+	grep -q -e "error during build:" && die "Detected error"
+}
+
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
 # Checks node slot required for building
@@ -422,9 +435,7 @@ einfo "Running:\tnpm ${cmd[@]}"
 		rm -rf "${HOME}/.npm/_logs"
 	done
 	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
-	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
-	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
-	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
+	_npm_check_errors
 }
 
 # @FUNCTION: __npm_patch
@@ -544,12 +555,7 @@ npm_src_unpack() {
 		fi
 		_npm_src_unpack_default
 	fi
-	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
-	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
-	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
-	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
-	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
-	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
+	_npm_check_errors
 }
 
 # @FUNCTION: npm_src_compile
@@ -569,11 +575,7 @@ npm_src_compile() {
 	npm run ${cmd} \
 		${extra_args[@]} \
 		|| die
-	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
-	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"
-	grep -q -e "MODULE_NOT_FOUND" "${T}/build.log" && die "Detected error"
-	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
-	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
+	_npm_check_errors
 }
 
 # @FUNCTION: npm_src_test

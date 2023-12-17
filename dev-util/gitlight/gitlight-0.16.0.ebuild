@@ -625,7 +625,7 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 	MIT
 "
-KEYWORDS="~amd64 ~arm64" # tauri supports also x86 and arm
+#KEYWORDS="~amd64 ~arm64" # tauri supports also x86 and arm
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" tray wayland +X"
 REQUIRED_USE="
@@ -868,7 +868,7 @@ einfo "Building npm side"
 	npm_src_compile
 	grep -e "- error TS" "${T}/build.log" && die "Detected error.  Emerge again."
 einfo "Building tauri side"
-	enpm run build:tauri
+	enpm run build:tauri --release
 #
 # Running cargo_src_compile doesn't work because tauri.conf.json with tauri does
 # more extra build steps.
@@ -911,13 +911,13 @@ src_install() {
 	newicon -s 128 assets/logo.png git-light.png
 	newicon -s 256 assets/logo.png git-light.png
 
-	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
-	LCNR_TAG="third_party_cargo"
-	lcnr_install_files
+#	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+#	LCNR_TAG="third_party_cargo"
+#	lcnr_install_files
 
-	LCNR_SOURCE="${WORKDIR}/${MY_PN}-v${PV}/node_modules"
-	LCNR_TAG="third_party_npm"
-	lcnr_install_files
+#	LCNR_SOURCE="${WORKDIR}/${MY_PN}-v${PV}/node_modules"
+#	LCNR_TAG="third_party_npm"
+#	lcnr_install_files
 }
 
 pkg_postinst() {
@@ -929,4 +929,6 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  TBA
+# OILEDMACHINE-OVERLAY-TEST:  fail
+# npm run build + npm run build:tauri + run git-light (standalone):  fail (login fail)
+# npm run build + npm run preview (vite + web browser):  pass
