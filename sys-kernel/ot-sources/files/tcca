@@ -142,7 +142,7 @@ echo "  lcdc - low cap data center O(100) - university HPC/ML/DL"
 echo "  mcdc - mid cap data center O(1,000) - university super computer"
 echo "  hcdc - high cap data center O(10,000) - big tech"
 echo "  ucdc - ultra cap data center O(100,000) - top 500 supercomputers"
-
+echo
 echo "General cases:"
 echo
 echo "  high-bdp - For high BDP networks"
