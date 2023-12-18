@@ -6660,6 +6660,11 @@ pkg_setup() {
 # Addresses:
 # FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS="--max-old-space-size=8192"
+
+# Addresses:
+# Failed to parse source map
+# Issue #5270
+	export GENERATE_SOURCEMAP=false
 }
 
 # @FUNCTION: __npm_src_unpack_default
