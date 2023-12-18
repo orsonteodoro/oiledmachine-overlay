@@ -3174,6 +3174,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_POWER
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SOCIAL_GAMES
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT
@@ -3435,13 +3436,30 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		|| "${work_profile}" == "manual" \
 	]] ; then
 		:;
-	elif [[ "${work_profile}" =~ "hpc" ]] ; then
+	elif [[ \
+		   "${work_profile}" == "hpc" \
+		|| "${work_profile}" == "realtime-hpc" \
+		|| "${work_profile}" == "throughput-hpc" \
+	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr3 illinois"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr2 illinois"}
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr illinois"}
+		fi
+	elif [[ \
+		   "${work_profile}" == "green-hpc" \
+		|| "${work_profile}" == "greenest-hpc" \
+	]] ; then
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+ewarn "Replacing bbr3 with bbr for energy efficency"
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+ewarn "Replacing bbr2 with bbr for energy efficency"
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
 		fi
 	elif [[ \
 		   "${work_profile}" == "dvr" \
@@ -3457,6 +3475,41 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
+		fi
+	elif [[ \
+		   "${work_profile}" == "smartphone" \
+		|| "${work_profile}" == "smartphone-voice" \
+		|| "${work_profile}" == "tablet" \
+		|| "${work_profile}" == "video-smartphone" \
+		|| "${work_profile}" == "video-tablet" \
+	]] ; then
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+ewarn "Replacing bbr3 with bbr for energy efficency"
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla vegas westwood"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+ewarn "Replacing bbr2 with bbr for energy efficency"
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla vegas westwood"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla vegas westwood"}
+		fi
+	elif [[ \
+		   "${work_profile}" == "casual-gaming-laptop" \
+		|| "${work_profile}" == "green-pc" \
+		|| "${work_profile}" == "greenest-pc" \
+		|| "${work_profile}" == "gpu-gaming-laptop" \
+		|| "${work_profile}" == "laptop" \
+		|| "${work_profile}" == "solar-desktop" \
+		|| "${work_profile}" == "solar-gaming" \
+		|| "${work_profile}" == "touchscreen-laptop" \
+	]] ; then
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+ewarn "Replacing bbr3 with bbr for energy efficency"
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+ewarn "Replacing bbr2 with bbr for energy efficency"
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
 		fi
 	else
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
@@ -8648,8 +8701,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instea
 		   "${work_profile}" == "smartphone" \
 		|| "${work_profile}" == "smartphone-voice" \
 		|| "${work_profile}" == "tablet" \
-		|| "${work_profile}" == "video-smartphone" \
-		|| "${work_profile}" == "video-tablet" \
 	]] ; then
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
@@ -12175,6 +12226,31 @@ einfo "Installing iosched script settings"
 			local tcca_torrent=$(_tcc_send_rate)
 			local tcca_video_upload=$(_tcc_send_rate)
 
+			_tcc_power() {
+				local tcc
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+					tcc="bbr"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+					tcc="westwood"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+					tcc="hstcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "scalable" ]] ; then
+					tcc="scalable"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+					tcc="reno"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+					tcc="vegas"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+					tcc="dctcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic"( |$) ]] ; then
+					tcc="cubic"
+				else
+					tcc="${default_tcca}"
+				fi
+			}
+
+			local tcca_power=$(_tcc_power)
+
 			tcca_elevate_priv="none" # Same as already root
 			if ot-kernel_has_version "sys-auth/polkit" ; then
 				tcca_elevate_priv="polkit"
@@ -12191,6 +12267,7 @@ TCCA_MUSIC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC:-${tcca_music}}"
 TCCA_P2P="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P:-${tcca_p2p}}"
 TCCA_PODCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST:-${tcca_podcast}}"
 TCCA_PODCAST_UPLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD:-${tcca_podcast_upload}}"
+TCCA_POWER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_POWER:-${tcca_power}}"
 TCCA_SOCIAL_GAMES="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SOCIAL_GAMES:-${tcca_social_games}}"
 TCCA_STREAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING:-${tcca_streaming}}"
 TCCA_TORRENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT:-${tcca_torrent}}"
