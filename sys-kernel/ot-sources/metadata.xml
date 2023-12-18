@@ -2788,7 +2788,7 @@ unset OT_KERNEL_PRIVATE_KEY
       bbr       | Latency, streaming, production code quality
                 | Greedy, deprecated, high latency for small RPC payloads
       bbr2      | Latency, fair, ECN support
-                | Alpha code quality, experimental, deprecated
+                | Alpha code quality, experimental, deprecated, energy inefficient
       bbr3      | BBR v1 upgraded with latency improvement with higher throughput, streaming, fair, ECN support, actively maintained
                 | Not mainlined
       c2tcp     | Lowest latencies and lowest jitter
