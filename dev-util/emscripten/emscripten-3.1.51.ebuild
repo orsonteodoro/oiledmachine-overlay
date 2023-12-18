@@ -204,8 +204,8 @@ RESTRICT="mirror"
 DEST="/usr/share/"
 TEST="${WORKDIR}/test/"
 _PATCHES=(
-	"${FILESDIR}/${PN}-3.1.20-set-wrappers-path.patch"
-	"${FILESDIR}/${PN}-3.1.28-includes.patch"
+	"${FILESDIR}/${PN}-3.1.51-set-wrappers-path.patch"
+	"${FILESDIR}/${PN}-3.1.51-includes.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
 )
 EMSCRIPTEN_CONFIG_V="2.0.26"

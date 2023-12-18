@@ -1,0 +1,34 @@
+diff -urp emscripten-3.1.51.orig/tools/maint/gen_struct_info.py emscripten-3.1.51/tools/maint/gen_struct_info.py
+--- emscripten-3.1.51.orig/tools/maint/gen_struct_info.py	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/tools/maint/gen_struct_info.py	2023-12-17 16:39:23.788540819 -0800
+@@ -416,6 +416,8 @@ def main(args):
+     '-I' + utils.path_from_root('system/lib/libcxxabi/src'),
+     '-D__USING_EMSCRIPTEN_EXCEPTIONS__',
+     '-I' + utils.path_from_root('system/lib/wasmfs/'),
++    '-I' + utils.path_from_root('system/lib/libcxx/include/'),
++    '-I' + utils.path_from_root('system/lib/libcxxabi/include/'),
+     '-std=c++17',
+   ]
+ 
+diff -urp emscripten-3.1.51.orig/tools/system_libs.py emscripten-3.1.51/tools/system_libs.py
+--- emscripten-3.1.51.orig/tools/system_libs.py	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/tools/system_libs.py	2023-12-17 16:38:43.848794142 -0800
+@@ -1516,7 +1516,7 @@ class libcxxabi(NoExceptLibrary, MTLibra
+       '-DLIBCXXABI_NON_DEMANGLING_TERMINATE',
+       '-std=c++20',
+     ]
+-  includes = ['system/lib/libcxx/src']
++  includes = ['system/include/compat', 'system/lib/libcxx/include', 'system/lib/libcxxabi/include', 'system/lib/libc/musl/include', 'system/lib/libc/musl/arch/emscripten', 'system/lib/libcxx/src']
+ 
+   def __init__(self, **kwargs):
+     super().__init__(**kwargs)
+@@ -1594,7 +1594,7 @@ class libcxx(NoExceptLibrary, MTLibrary)
+     '-std=c++20',
+   ]
+ 
+-  includes = ['system/lib/libcxx/src']
++  includes = ['system/include/compat', 'system/lib/libcxx/include', 'system/lib/libcxxabi/include', 'system/lib/libc/musl/include', 'system/lib/libc/musl/arch/emscripten', 'system/lib/libcxx/src']
+ 
+   src_dir = 'system/lib/libcxx/src'
+   src_glob = '**/*.cpp'
+Only in emscripten-3.1.51/tools: system_libs.py.orig

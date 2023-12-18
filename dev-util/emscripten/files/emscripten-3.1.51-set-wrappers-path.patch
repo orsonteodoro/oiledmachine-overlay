@@ -1,0 +1,222 @@
+diff -urp emscripten-3.1.51.orig/em++ emscripten-3.1.51/em++
+--- emscripten-3.1.51.orig/em++	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/em++	2023-12-17 16:35:32.798004838 -0800
+@@ -33,8 +33,8 @@ if [ -z "$PYTHON" ]; then
+ fi
+ 
+ if [ -z "$_EMCC_CCACHE" ]; then
+-  exec "$PYTHON" -E "$0.py" "$@"
++  exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+ else
+   unset _EMCC_CCACHE
+-  exec ccache "$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
+ fi
+diff -urp emscripten-3.1.51.orig/emar emscripten-3.1.51/emar
+--- emscripten-3.1.51.orig/emar	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emar	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/embuilder emscripten-3.1.51/embuilder
+--- emscripten-3.1.51.orig/embuilder	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/embuilder	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emcc emscripten-3.1.51/emcc
+--- emscripten-3.1.51.orig/emcc	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emcc	2023-12-17 16:35:32.798004838 -0800
+@@ -33,8 +33,8 @@ if [ -z "$PYTHON" ]; then
+ fi
+ 
+ if [ -z "$_EMCC_CCACHE" ]; then
+-  exec "$PYTHON" -E "$0.py" "$@"
++  exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+ else
+   unset _EMCC_CCACHE
+-  exec ccache "$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
+ fi
+diff -urp emscripten-3.1.51.orig/emcmake emscripten-3.1.51/emcmake
+--- emscripten-3.1.51.orig/emcmake	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emcmake	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/em-config emscripten-3.1.51/em-config
+--- emscripten-3.1.51.orig/em-config	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/em-config	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emconfigure emscripten-3.1.51/emconfigure
+--- emscripten-3.1.51.orig/emconfigure	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emconfigure	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emdump emscripten-3.1.51/emdump
+--- emscripten-3.1.51.orig/emdump	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emdump	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$(dirname $0)/tools/emdump.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/tools/emdump.py" "$@"
+diff -urp emscripten-3.1.51.orig/emdwp emscripten-3.1.51/emdwp
+--- emscripten-3.1.51.orig/emdwp	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emdwp	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$(dirname $0)/tools/emdwp.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/tools/emdwp.py" "$@"
+diff -urp emscripten-3.1.51.orig/emmake emscripten-3.1.51/emmake
+--- emscripten-3.1.51.orig/emmake	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emmake	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emnm emscripten-3.1.51/emnm
+--- emscripten-3.1.51.orig/emnm	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emnm	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$(dirname $0)/tools/emnm.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/tools/emnm.py" "$@"
+diff -urp emscripten-3.1.51.orig/emprofile emscripten-3.1.51/emprofile
+--- emscripten-3.1.51.orig/emprofile	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emprofile	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$(dirname $0)/tools/emprofile.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/tools/emprofile.py" "$@"
+diff -urp emscripten-3.1.51.orig/emranlib emscripten-3.1.51/emranlib
+--- emscripten-3.1.51.orig/emranlib	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emranlib	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emrun emscripten-3.1.51/emrun
+--- emscripten-3.1.51.orig/emrun	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emrun	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emscons emscripten-3.1.51/emscons
+--- emscripten-3.1.51.orig/emscons	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emscons	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emsize emscripten-3.1.51/emsize
+--- emscripten-3.1.51.orig/emsize	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emsize	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emstrip emscripten-3.1.51/emstrip
+--- emscripten-3.1.51.orig/emstrip	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emstrip	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/emsymbolizer emscripten-3.1.51/emsymbolizer
+--- emscripten-3.1.51.orig/emsymbolizer	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/emsymbolizer	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/test/runner emscripten-3.1.51/test/runner
+--- emscripten-3.1.51.orig/test/runner	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/test/runner	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/tools/file_packager emscripten-3.1.51/tools/file_packager
+--- emscripten-3.1.51.orig/tools/file_packager	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/tools/file_packager	2023-12-17 16:35:32.798004838 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/tools/maint/run_python_compiler.sh emscripten-3.1.51/tools/maint/run_python_compiler.sh
+--- emscripten-3.1.51.orig/tools/maint/run_python_compiler.sh	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/tools/maint/run_python_compiler.sh	2023-12-17 16:36:33.325621471 -0800
+@@ -33,8 +33,8 @@ if [ -z "$PYTHON" ]; then
+ fi
+ 
+ if [ -z "$_EMCC_CCACHE" ]; then
+-  exec "$PYTHON" -E "$0.py" "$@"
++  exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+ else
+   unset _EMCC_CCACHE
+-  exec ccache "$0" "$@"
++  exec ccache "$(dirname $(readlink -f $0))/$(basename $0)" "$@"
+ fi
+diff -urp emscripten-3.1.51.orig/tools/maint/run_python.sh emscripten-3.1.51/tools/maint/run_python.sh
+--- emscripten-3.1.51.orig/tools/maint/run_python.sh	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/tools/maint/run_python.sh	2023-12-17 16:36:53.241495287 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
+diff -urp emscripten-3.1.51.orig/tools/webidl_binder emscripten-3.1.51/tools/webidl_binder
+--- emscripten-3.1.51.orig/tools/webidl_binder	2023-12-13 05:53:17.000000000 -0800
++++ emscripten-3.1.51/tools/webidl_binder	2023-12-17 16:35:38.425969199 -0800
+@@ -32,4 +32,4 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" -E "$0.py" "$@"
++exec "$PYTHON" -E "$(dirname $(readlink -f $0))/$(basename $0).py" "$@"
