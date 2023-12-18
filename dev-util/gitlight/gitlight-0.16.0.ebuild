@@ -1379,7 +1379,6 @@ pushd "/opt/gitlight"
 	wait "\${PID}"
 popd
 EOF
-	fperms 0755 /usr/bin/git-light-html
 }
 
 gen_wrapper_gtk3() {
@@ -1391,8 +1390,6 @@ cat <<EOF > "${ED}/usr/bin/git-light-gtk3"
 mkdir -p "\${HOME}/.cache/git-light"
 XDG_RUNTIME_DIR="\${HOME}/.cache/gitlight" git-light-bin "\$@"
 EOF
-	fperms 0755 /usr/bin/git-light-gtk3
-	fowners root:gitlight /usr/bin/git-light-gtk3
 }
 
 sanitize_permissions() {
@@ -1467,6 +1464,11 @@ ewarn "The gtk3/tauri version login is broken."
 		sanitize_permissions
 		fowners "root:${PN}" "/opt/${PN}"
 		fperms 0775 "/opt/${PN}"
+		fperms 0755 /usr/bin/git-light-html
+	fi
+	if use gtk3 ; then
+		fperms 0755 /usr/bin/git-light-gtk3
+		fowners root:gitlight /usr/bin/git-light-gtk3
 	fi
 }
 
