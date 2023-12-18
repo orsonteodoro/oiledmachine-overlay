@@ -1070,7 +1070,7 @@ LICENSE="
 "
 #KEYWORDS="~amd64 ~arm64" # tauri supports also x86 and arm
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -gtk3 +html tray wayland +X r1"
+IUSE+=" -gtk3 +html tray wayland +X r2"
 REQUIRED_USE="
 	|| (
 		html
@@ -1381,9 +1381,10 @@ pushd "/opt/gitlight"
 	PID="\$!"
 	echo "PID: \${PID}"
 	sleep 5
-	xdg-open "http://localhost:5173/"
-	wait "\${PID}"
+	xdg-open "http://localhost:5173/" &
+	wait \$!
 popd
+cleanup
 EOF
 }
 
