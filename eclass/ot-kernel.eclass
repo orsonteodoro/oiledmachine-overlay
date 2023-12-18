@@ -3453,9 +3453,9 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		|| "${work_profile}" == "greenest-hpc" \
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-# Power savings is unknown yet.
+# Power savings is unknown.
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE."
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}."
 eerror
 			die
 ewarn "Replacing bbr3 with bbr for energy efficency"
@@ -3490,7 +3490,7 @@ ewarn "Replacing bbr2 with bbr for energy efficency"
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE."
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}."
 eerror
 			die
 ewarn "Replacing bbr3 with bbr for energy efficency"
@@ -3513,7 +3513,7 @@ ewarn "Replacing bbr2 with bbr for energy efficency"
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE."
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}."
 eerror
 			die
 ewarn "Replacing bbr3 with bbr for energy efficency"
