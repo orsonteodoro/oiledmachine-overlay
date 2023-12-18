@@ -81,5 +81,8 @@ media-video/sr -pretrained
 # Use recording_plugin = opencv instead.
 app-admin/howdy ffmpeg pyv4l2
 
-# crash
+# Crash
 x11-misc/sddm wayland
+
+# Still pre-alpha.  Broken in 0.16.0, 0.15.3
+dev-util/gitlight gtk3
