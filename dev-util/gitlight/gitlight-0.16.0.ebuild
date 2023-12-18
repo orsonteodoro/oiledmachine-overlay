@@ -1464,6 +1464,8 @@ ewarn "The gtk3/tauri version login is broken."
 		sanitize_permissions
 		fowners "root:${PN}" "/opt/${PN}"
 		fperms 0775 "/opt/${PN}"
+# When it installs, emerge doesn't set the proper folder permissions.
+ewarn "You need to manually do \`chmod 0775 /opt/${PN}\`"
 		fperms 0755 /usr/bin/git-light-html
 	fi
 	if use gtk3 ; then
