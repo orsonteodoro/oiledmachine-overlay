@@ -2918,6 +2918,7 @@ unset OT_KERNEL_PRIVATE_KEY
     Home server:
 
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_FAIR - For fair servers at home.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_REALTIME - For realtime servers at home.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_THROUGHPUT - For throughput servers at home.
 
     Intra datacenter refined:
@@ -2967,6 +2968,9 @@ unset OT_KERNEL_PRIVATE_KEY
         the kernel module, and the other to change the algorithm.
       - See the contents of the tcca (TCP Congestion Control Algorithm) script to
         learn how to use it.
+      - Fair means distribution of bandwidth equally.
+      - Realtime can be used in place of low latency.
+      - Throughput means preserves maximum throughput property.
 
 
 
