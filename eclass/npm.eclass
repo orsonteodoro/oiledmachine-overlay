@@ -135,6 +135,7 @@ _npm_check_errors() {
 	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
 	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
 	grep -q -e "error during build:" "${T}/build.log" && die "Detected error"
+	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: npm_pkg_setup

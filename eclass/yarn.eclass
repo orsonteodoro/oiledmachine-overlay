@@ -436,6 +436,7 @@ _npm_check_errors() {
 	grep -q -e "git dep preparation failed" "${T}/build.log" && die "Detected error"
 	grep -q -e "- error TS" "${T}/build.log" && die "Detected error"
 	grep -q -e "error during build:" "${T}/build.log" && die "Detected error"
+	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: enpm
@@ -469,6 +470,13 @@ einfo "Running:\tnpm ${cmd[@]}"
 	_npm_check_errors
 }
 
+# @FUNCTION: _yarn_check_errors
+# @DESCRIPTION:
+# Check for errors
+_yarn_check_errors() {
+	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
+}
+
 # @FUNCTION: eyarn
 # @DESCRIPTION:
 # Wrapper for yarn command.
@@ -476,6 +484,7 @@ eyarn() {
 	local cmd=("${@}")
 einfo "Running:\tyarn ${cmd[@]}"
 	yarn "${cmd[@]}" || die
+	_yarn_check_errors
 }
 
 # @FUNCTION: _yarn_src_unpack_update_ebuild
