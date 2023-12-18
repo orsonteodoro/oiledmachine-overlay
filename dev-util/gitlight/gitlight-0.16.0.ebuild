@@ -1070,7 +1070,7 @@ LICENSE="
 "
 #KEYWORDS="~amd64 ~arm64" # tauri supports also x86 and arm
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -gtk3 +html tray wayland +X"
+IUSE+=" -gtk3 +html tray wayland +X r1"
 REQUIRED_USE="
 	|| (
 		html
@@ -1370,6 +1370,12 @@ cat <<EOF > "${ED}/usr/bin/git-light-html"
 export PATH="/opt/gitlight/node_modules/.bin:${PATH}"
 mkdir -p "\${HOME}/.cache/git-light"
 PID=""
+cleanup() {
+echo "Called cleanup"
+	kill -9 \${PID}
+}
+trap cleanup SIGINT SIGKILL SIGTERM SIGQUIT SIGHUP
+
 pushd "/opt/gitlight"
 	vite preview &
 	PID="\$!"
@@ -1449,13 +1455,13 @@ ewarn "The gtk3/tauri version login is broken."
 	newicon -s 128 assets/logo.png git-light.png
 	newicon -s 256 assets/logo.png git-light.png
 
-#	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
-#	LCNR_TAG="third_party_cargo"
-#	lcnr_install_files
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party_cargo"
+	lcnr_install_files
 
-#	LCNR_SOURCE="${WORKDIR}/${MY_PN}-v${PV}/node_modules"
-#	LCNR_TAG="third_party_npm"
-#	lcnr_install_files
+	LCNR_SOURCE="${WORKDIR}/${MY_PN}-v${PV}/node_modules"
+	LCNR_TAG="third_party_npm"
+	lcnr_install_files
 
 	if use html ; then
 		rm -rf "src-tauri/target/release" || true
