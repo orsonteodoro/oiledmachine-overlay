@@ -1382,7 +1382,7 @@ EOF
 	fperms 0755 /usr/bin/git-light-html
 }
 
-gen_wrapper_gtk() {
+gen_wrapper_gtk3() {
 	dodir /usr/bin
 # Fixes:
 # Failed to create a temp folder for icon: Os { code: 13, kind: PermissionDenied, message: "Permission denied" }
@@ -1422,9 +1422,6 @@ sanitize_permissions() {
 
 src_install() {
 	exeinto /usr/bin
-	newexe \
-		src-tauri/target/release/git-light \
-		git-light-bin
 	if use html ; then
 		gen_wrapper_html
 		dosym \
@@ -1432,6 +1429,9 @@ src_install() {
 			/usr/bin/git-light
 	fi
 	if use gtk3 ; then
+		newexe \
+			src-tauri/target/release/git-light \
+			git-light-bin
 # It will break when you create a new user in the OS.
 ewarn "The gtk3/tauri version login is broken."
 		gen_wrapper_gtk3
