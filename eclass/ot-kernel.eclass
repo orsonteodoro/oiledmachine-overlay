@@ -3453,6 +3453,11 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		|| "${work_profile}" == "greenest-hpc" \
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+# Power savings is unknown yet.
+eerror
+eerror "Remove bbrv3 from OT_KERNEL_USE."
+eerror
+			die
 ewarn "Replacing bbr3 with bbr for energy efficency"
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
@@ -3484,6 +3489,10 @@ ewarn "Replacing bbr2 with bbr for energy efficency"
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+eerror
+eerror "Remove bbrv3 from OT_KERNEL_USE."
+eerror
+			die
 ewarn "Replacing bbr3 with bbr for energy efficency"
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla vegas westwood"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
@@ -3503,6 +3512,10 @@ ewarn "Replacing bbr2 with bbr for energy efficency"
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+eerror
+eerror "Remove bbrv3 from OT_KERNEL_USE."
+eerror
+			die
 ewarn "Replacing bbr3 with bbr for energy efficency"
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
