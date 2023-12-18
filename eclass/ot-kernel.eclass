@@ -3518,6 +3518,8 @@ eerror
 		fi
 	elif [[ \
 		   "${work_profile}" == "casual-gaming-laptop" \
+		|| "${work_profile}" == "cryptocurrency-miner-dedicated" \
+		|| "${work_profile}" == "cryptocurrency-miner-workstation" \
 		|| "${work_profile}" == "green-pc" \
 		|| "${work_profile}" == "greenest-pc" \
 		|| "${work_profile}" == "gpu-gaming-laptop" \
