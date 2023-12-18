@@ -1453,6 +1453,7 @@ ewarn "The gtk3/tauri version login is broken."
 #	lcnr_install_files
 
 	if use html ; then
+		rm -rf "src-tauri/target/release" || true
 		insinto "/opt/${PN}"
 		doins -r .
 		sanitize_permissions
