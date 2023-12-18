@@ -1297,10 +1297,14 @@ eerror "  AUTH_GITHUB_ID=\"<GITHUB_ID>\""
 eerror "  AUTH_GITHUB_SECRET=\"<GITHUB_SECRET>\""
 eerror "  AUTH_GITLAB_ID=\"<GITLAB_ID>\""
 eerror "  AUTH_GITLAB_SECRET=\"<GITLAB_SECRET>\""
-eerror "  "
+eerror
 eerror "  # Generated from https://generate-secret.vercel.app/32"
 eerror "  AUTH_SECRET=\"<paste here>\""
-eerror "  PUBLIC_SITE_URL=http://localhost:5173"
+eerror
+eerror "  # Keep these variables empty:"
+eerror "  PUBLIC_SITE_URL=\"\""
+eerror "  TAURI_PRIVATE_KEY=\"\""
+eerror "  TAURI_KEY_PASSWORD=\"\""
 eerror
 eerror "You may use placeholder text like \"skip\" if you do not want to use"
 eerror "that service."
