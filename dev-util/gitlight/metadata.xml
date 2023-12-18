@@ -17,4 +17,12 @@
   See ebuild for instructions to add OAuth tokens.
 
   -->
+  <use>
+    <flag name="html">
+      Use GitLight under a web browser.  (RECOMMENDED)
+    </flag>
+    <flag name="gtk3">
+      Use GitLight under a standalone GTK+3 with webkit-gtk.  (BROKEN)
+    </flag>
+  </use>
 </pkgmetadata>
