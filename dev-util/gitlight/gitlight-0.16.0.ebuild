@@ -1399,6 +1399,8 @@ sanitize_permissions() {
 	IFS=$'\n'
 	local path
 	for path in $(find "${ED}") ; do
+		[[ -e "${path}" ]] || continue
+		[[ -L "${path}" ]] && continue # Avoid realpaths to unsandboxed files.
 		chown root:root "${path}" || die
 		if file "${path}" | grep -q "directory" ; then
 			chmod 0755 "${path}" || die
@@ -1464,7 +1466,7 @@ ewarn "The gtk3/tauri version login is broken."
 		doins -r .
 		sanitize_permissions
 		fowners "root:${PN}" "/opt/${PN}"
-		fperms 775 "/opt/${PN}"
+		fperms 0775 "/opt/${PN}"
 	fi
 }
 
