@@ -7,6 +7,7 @@ EAPI=8
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 
+CHECKREQS_MEMORY="8192M"
 export NPM_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
@@ -6654,6 +6655,11 @@ pkg_setup() {
 
 	# It still breaks when NPM_OFFLINE=1.
 	check_network_sandbox
+
+
+# Addresses:
+# FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+	export NODE_OPTIONS="--max-old-space-size=8192"
 }
 
 # @FUNCTION: __npm_src_unpack_default
