@@ -122,7 +122,7 @@ LICENSE="
 #   system/include/GL/gl.h -- all-rights-reserved MIT
 #   system/lib/libcxx/src/ryu/f2s.cpp -- Apache-2.0-with-LLVM-exceptions, Boost-1.0
 #
-KEYWORDS="~amd64 ~arm64 ~x86" # See tests/clang_native.py for supported arches
+#KEYWORDS="~amd64 ~arm64 ~x86" # See tests/clang_native.py for supported arches
 SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 CLOSURE_COMPILER_SLOT="0"
 IUSE+="
