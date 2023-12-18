@@ -7062,6 +7062,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.162 (20230520)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.163 (20230525)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.164 (20230604)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.185 (20231217) load test only
 # wayland:                    failed
 # X:                          passed
 # command-line wrapper:       passed
