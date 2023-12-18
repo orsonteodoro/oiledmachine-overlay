@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20231217-r1"
+VERSION="20231217-r2"
 PN="emscripten"
 
 # 3.1.46 llvm 18 ; node 10.19.0 ; binaryen 115
@@ -374,7 +374,7 @@ set_config() {
         && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.39" ; then
         __EMSDK_BINARYEN_VERSION__="113"
     elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.39" \
-        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.23" ; then
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.33" ; then
         __EMSDK_BINARYEN_VERSION__="112"
     elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.1.33" \
         && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.27" ; then
@@ -395,7 +395,7 @@ set_config() {
         && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.0.1" ; then
         __EMSDK_BINARYEN_VERSION__="103"
     elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "3.0.1" \
-        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.15" ; then
+        && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.18" ; then
         __EMSDK_BINARYEN_VERSION__="101"
     elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0.18" \
         && is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "2.0.15" ; then
