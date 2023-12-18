@@ -32,6 +32,7 @@ fi
 
 # TCCA - TCP Congestion Control Algorithm
 # Client
+TCCA_BGDL="${TCCA_BGDL:-lp}"
 TCCA_BROADCAST="${TCCA_BROADCAST:-bbr}"
 TCCA_DISTCC="${TCCA_DISTCC:-vegas}"
 TCCA_FTP="${TCCA_FTP:-cubic}"
@@ -102,6 +103,7 @@ echo "${MY_NAME} [use-case|menu-item]"
 echo
 echo "Client"
 echo
+echo "  bgdl - For background downloads"
 echo "  broadcast - For live broadcasting"
 echo "  distcc - For at home compile farm"
 echo "  ftp - For file downloads"
@@ -174,6 +176,7 @@ echo
 
 unset TCCA_MAP
 declare -A TCCA_MAP=(
+	["bgdl"]="${TCCA_BGDL}"
 	["broadcast"]="${TCCA_BROADCAST}"
 	["distcc"]="${TCCA_DISTCC}"
 	["ftp"]="${TCCA_FTP}"

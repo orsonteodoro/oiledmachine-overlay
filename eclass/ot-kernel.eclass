@@ -3170,6 +3170,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TARGET_TRIPLE
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP
@@ -12269,6 +12270,15 @@ einfo "Installing iosched script settings"
 
 			local tcca_green=$(_tcc_green)
 
+			_tcc_bgdl() {
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "lp" ]] ; then
+					tcc="lp"
+				else
+					tcc="${default_tcca}"
+				fi
+			}
+			local tcca_bgdl=$(_tcc_bgdl)
+
 			tcca_elevate_priv="none" # Same as already root
 			if ot-kernel_has_version "sys-auth/polkit" ; then
 				tcca_elevate_priv="polkit"
@@ -12278,6 +12288,7 @@ einfo "Installing iosched script settings"
 
 			cat <<EOF > "${T}/tcca.conf" || die
 # Client
+TCCA_BGDL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL:-${tcca_bgdl}}"
 TCCA_BROADCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST:-${tcca_broadcast}}"
 TCCA_FTP="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP:-${tcca_ftp}}"
 TCCA_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING:-${tcca_gaming}}"

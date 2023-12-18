@@ -2804,6 +2804,7 @@ unset OT_KERNEL_PRIVATE_KEY
       hybla     | Throughput over satellite
       illinois  | Throughput between inter datacenters
       lp        | Full bandwidth utilization
+                | May studder sound
       nv        | RPC goodput and low latency for KiB payloads
       orca      | Low CPU usage, consistent high performance in different networks
                 | Tensorflow [heavy dependency], high memory footprint
@@ -2901,6 +2902,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Clients:
 
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL - For background downloads.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST - For broadcasting content producers.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_DEFAULT - For general use.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING_CLIENT - Full screen games while streaming music or VoIPing.
@@ -2971,6 +2973,10 @@ unset OT_KERNEL_PRIVATE_KEY
       - Fair means distribution of bandwidth equally.
       - Realtime can be used in place of low latency.
       - Throughput means preserves maximum throughput property.
+      - Background downloads require less attention but by design allow the
+        primary flow to continue smoothly uninterrupted.  An example would be a
+        music video in the foreground without studder or FPS drop and the
+        background a large emerge file being downloaded.
 
 
 
