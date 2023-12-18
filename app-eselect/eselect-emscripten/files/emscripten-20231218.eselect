@@ -1,0 +1,467 @@
+# -*-eselect-*-  vim: ft=eselect
+# Copyright 2019-2022 Orson Teodoro
+# Copyright 2005-2012 Gentoo Foundation
+# Distributed under the terms of the GNU GPL version 2 or later
+
+inherit multilib
+
+DESCRIPTION="Manages the 99emscripten and emscripten.config files"
+MAINTAINER="orsonteodoro@hotmail.com"
+VERSION="20231218"
+PN="emscripten"
+
+# version tests
+# x < y
+is_x_lt_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f 1 -d $' ')
+	if [[ "${result}" == "${x}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_le_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f 1 -d $' ')
+	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_gt_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f 1 -d $' ')
+	if [[ "${result}" != "${x}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_ge_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f 1 -d $' ')
+	if [[ "${result}" != "${x}" || "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_eq_y() {
+	local x="${1}"
+	local y="${2}"
+	if [[ "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_ne_y() {
+	local x="${1}"
+	local y="${2}"
+	if [[ "${x}" != "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+is_x_op_y() {
+	local x="${1}"
+	local op="${2}"
+	local y="${3}"
+
+	if [[ "${op}" == "<" ]] ; then
+		is_x_lt_y "${x}" "${y}"
+	elif [[ "${op}" == "<=" ]] ; then
+		is_x_le_y "${x}" "${y}"
+	elif [[ "${op}" == ">" ]] ; then
+		is_x_gt_y "${x}" "${y}"
+	elif [[ "${op}" == ">=" ]] ; then
+		is_x_ge_y "${x}" "${y}"
+	elif [[ "${op}" == "==" ]] ; then
+		is_x_eq_y "${x}" "${y}"
+	elif [[ "${op}" == "!=" ]] ; then
+		is_x_ne_y "${x}" "${y}"
+	fi
+}
+
+# Permute emscripten, emscripten-fastcomp (asm.js), llvm (wasm) targets
+find_targets() {
+    local f
+    EMSCRIPTEN_VERSIONS=$(find "${EROOT}/usr/share" -maxdepth 1 \
+        -regextype 'posix-egrep' -regex ".*emscripten-[0-9.]+" | sort -V \
+        | cut -f 4 -d "/" | sed -e "s|^${EROOT}||" | sed -e "s|emscripten-||g")
+    LLVM_VERSIONS=$(find "${EROOT}/usr/lib/llvm" -maxdepth 1 \
+        -regextype 'posix-egrep' -regex ".*[0-9.]+" | sed -e "s|^${EROOT}||" \
+        | sort -V | cut -f 5 -d "/")
+
+    for em_pv in ${EMSCRIPTEN_VERSIONS} ; do
+        [[ ! -f "${EROOT}/usr/share/emscripten-${em_pv}/emcc" ]] && continue
+        local use_path=$(realpath --canonicalize-missing \
+            "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_pv}*/USE)
+        [[ ! -f "${use_path}" ]] && continue
+        for compiler in fastcomp llvm ; do
+            if [[ "${compiler}" == "fastcomp" ]] ; then
+                if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "<" "2.0" ; then
+                    echo "emscripten-${em_pv},emscripten-fastcomp-${em_pv}"
+                fi
+            elif [[ "${compiler}" == "llvm" ]] ; then
+                for llvm_slot in ${LLVM_VERSIONS} ; do
+                    if grep -q -F -e "llvm_targets_WebAssembly" \
+                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_slot}*/USE) \
+                       && grep -q -F -e "llvm_targets_WebAssembly" \
+                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*/USE) ; then
+			llvm_pv=$(basename $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*) \
+				| sed -e "s|clang-||")
+                        llvm_major="${llvm_slot}"
+                        llvm_major_minor=$(echo "${llvm_pv}" | cut -f 1-2 -d '.')
+			# Also set the llvm conditional block in set_config()
+
+                        local metadata_path="/usr/share/emscripten-${em_pv}/eselect.metadata"
+                        [[ -e "${metadata_path}" ]] || continue
+                        local llvm_slot_required=$(grep "LLVM_SLOT" "${metadata_path}" | cut -f 2 -d "=")
+                        if [[ "${llvm_major}" -eq "${llvm_slot_required}" ]] ; then
+                            echo "emscripten-${em_pv},llvm-${llvm_slot}"
+                        fi
+                    fi
+                done
+            fi
+        done
+    done
+}
+
+# remove the emscripten files
+remove_symlink() {
+    rm "${EROOT}/etc/env.d/99emscripten" 2>/dev/null 1>/dev/null || true
+    rm "${EROOT}/usr/share/emscripten-"*"/emscripten.config" \
+        2>/dev/null 1>/dev/null || true
+}
+
+# write out 99emscripten and emscripten.config
+set_config() {
+    local target=$1
+    local em
+    local fc
+    local llvm
+    local compiler
+
+    # to set
+    local __EMCC_WASM_BACKEND__=
+    local __EMSDK_LLVM_ROOT__=
+    local __EMSDK_CLOSURE_COMPILER__=
+    local PYTHON_EXE_ABSPATH=
+    local PV=
+
+    if is_number "${target}"; then
+        local targets=( $(find_targets) )
+        target=${targets[target-1]}
+        em=$(echo "${target}" | cut -f 1 -d ",")
+        em_pv=${em#*-}
+        PV=${em_pv}
+        compiler=$(echo "${target}" | cut -f 2 -d ",")
+        if [[ "${compiler}" =~ "llvm" ]] ; then
+            llvm_pv=$(echo "${compiler}" | cut -f 2 -d "-")
+            __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_pv}/bin
+            __EMCC_WASM_BACKEND__=1
+        elif [[ "${compiler}" =~ "emscripten-fastcomp" ]] ; then
+            fc_p="${compiler}"
+            __LLVM_BIN_PATH__=/usr/share/${fc_p}/bin
+            __EMCC_WASM_BACKEND__=0
+        fi
+    elif [[ "${target}" =~ emscripten- \
+        && "${target}" =~ (llvm-|emscripten-fastcomp-) ]] ; then
+        em=$(echo "${target}" | cut -f 1 -d ",")
+        em_pv=${em#*-}
+        PV=${em_pv}
+        compiler=$(echo "${target}" | cut -f 2 -d ",")
+        if [[ "${compiler}" =~ "llvm" ]] ; then
+            llvm_pv=$(echo "${compiler}" | cut -f 2 -d "-")
+            __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_pv}/bin
+            __EMCC_WASM_BACKEND__=1
+        elif [[ "${compiler}" =~ "emscripten-fastcomp" ]] ; then
+            fc_p="${compiler}"
+            __LLVM_BIN_PATH__=/usr/share/${fc_p}/bin
+            __EMCC_WASM_BACKEND__=0
+        fi
+    else
+        echo "Failed to set config and is now gone."
+        return
+    fi
+
+    local metadata_path="/usr/share/emscripten-${em_pv}/eselect.metadata"
+
+    local use_path=$(realpath --canonicalize-missing \
+        "${EROOT}"/var/db/pkg/dev-util/emscripten-${PV}*/USE)
+    if [[ ! -f "${use_path}" ]] ; then
+        echo "emscripten ${PV} is not installed."
+        return 1
+    fi
+    if grep -q -F -e "closure_compiler_java" "${use_path}" ; then
+        __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler-java
+    elif grep -q -F -e "closure_compiler_nodejs" "${use_path}" ; then
+        __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler-node
+    elif grep -q -F -e "closure_compiler_native" "${use_path}" ; then
+        __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler
+    else
+        __EMSDK_CLOSURE_COMPILER__=
+    fi
+
+    local python_slot=$(grep "PYTHON_SLOT" "${metadata_path}" | cut -f 2 -d "=")
+    PYTHON_EXE_ABSPATH="/usr/bin/python${python_slot}"
+
+    local nodejs_slot=$(grep "NODEJS_SLOT" "${metadata_path}" | cut -f 2 -d "=")
+    __EMSDK_NODE_VERSION_MIN__="${nodejs_slot}"
+
+    local binaryen_slot=$(grep "BINARYEN_SLOT" "${metadata_path}" | cut -f 2 -d "=")
+    __EMSDK_BINARYEN_VERSION__="${binaryen_slot}"
+
+    # Also set the llvm conditional chain in find_targets()
+    local llvm_slot=$(grep "LLVM_SLOT" "${metadata_path}" | cut -f 2 -d "=")
+    __EMSDK_LLVM_VERSION__="${llvm_slot}"
+
+    T_ENV=$(mktemp)
+    cat << EOF > "${T_ENV}" || die
+EM_CONFIG="/usr/share/emscripten-${PV}/emscripten.config"
+EMSCRIPTEN="/usr/share/emscripten-${PV}"
+EMSDK_BINARYEN_VERSION="${__EMSDK_BINARYEN_VERSION__}"
+EMSDK_BINARYEN_BASE_PATH="/usr/$(get_libdir)/binaryen/${__EMSDK_BINARYEN_VERSION__}"
+EMSDK_BINARYEN_LIB_PATH="/usr/$(get_libdir)/binaryen/${__EMSDK_BINARYEN_VERSION__}/lib"
+EMSDK_CLOSURE_COMPILER="${__EMSDK_CLOSURE_COMPILER__}"
+EMSDK_LLVM_ROOT="${__LLVM_BIN_PATH__}"
+EMSDK_LLVM_VERSION="${__EMSDK_LLVM_VERSION__}"
+EMSDK_NODE="/usr/bin/node"
+EMSDK_NODE_VERSION_MIN="${__EMSDK_NODE_VERSION_MIN__}"
+EMSDK_PYTHON="${PYTHON_EXE_ABSPATH}"
+EMSCRIPTEN_NATIVE_OPTIMIZER="/usr/share/emscripten-${PV}/optimizer"
+PATH="/usr/share/emscripten-${PV}"
+EMCC_WASM_BACKEND="${__EMCC_WASM_BACKEND__}"
+EOF
+    cat "${T_ENV}" > "${EROOT}/etc/env.d/99emscripten"
+    rm ${T_ENV}
+
+    [[ -z "${__EMSDK_CLOSURE_COMPILER__}" ]] && sed -i "/EMSDK_CLOSURE_COMPILER/d" \
+        "${EROOT}/etc/env.d/99emscripten"
+
+    if ! grep -q -F -e "native-optimizer" "${use_path}" ; then
+        sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
+            "${EROOT}/etc/env.d/99emscripten"
+    fi
+
+    BINARYEN_SLOT=$(grep -F -e "BINARYEN_V=" "${EROOT}/var/db/pkg/dev-util/emscripten-${PV}"*/*ebuild \
+			| sed -e "s|BINARYEN_V=||" -e "s|\"||g" | cut -f 1 -d " ")
+
+    T_CONFIG=$(mktemp)
+    cat << EOF > "${T_CONFIG}" || die
+import os
+EMSCRIPTEN_ROOT = os.path.expanduser(os.getenv('EMSCRIPTEN') or '/usr/share/emscripten-${PV}')
+LLVM_ROOT = os.path.expanduser(os.getenv('LLVM') or '${__LLVM_BIN_PATH__}')
+BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '') or '/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}')
+NODE_JS = os.path.expanduser(os.getenv('NODE') or '/usr/bin/node')
+JAVA = 'java'
+TEMP_DIR = '/tmp'
+EOF
+    cat "${T_CONFIG}" > "${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
+    rm ${T_CONFIG}
+
+    echo "Setting up symlinks"
+    additional_tools=()
+    if is_x_op_y $(echo "${PV}" | cut -f 1 -d "-") ">=" 1.39.13 ; then
+        additional_tools+=( embuilder emsize )
+    fi
+    for tool in em++ em-config emar emcc emcmake emconfigure emmake \
+        emranlib emrun emscons ${additional_tools[@]} ; do
+        if [[ ! -f "${EROOT}/usr/share/emscripten-${PV}/${tool}" ]] ; then
+            echo \
+"Missing ${EROOT}/usr/share/emscripten-${PV}/${tool}.  Failed to set toolchain."
+            return 1
+        fi
+        ln -sf "${EROOT}/usr/share/emscripten-${PV}/${tool}" \
+            "${EROOT}/usr/bin/${tool}"
+    done
+
+    env-update
+    . /etc/profile
+
+    local emscripten_root="${EROOT}/usr/share/emscripten-${PV}"
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
+        export EM_BINARYEN_ROOT="${EMSDK_BINARYEN_BASE_PATH}"
+    else
+        export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
+    fi
+    export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
+    export EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
+    export EMCC_WASM_BACKEND=${__EMCC_WASM_BACKEND__}
+    export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+
+    echo
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
+        echo -e "EM_BINARYEN_ROOT:\t\t${EM_BINARYEN_ROOT}"
+    else
+        echo -e "BINARYEN:\t\t${BINARYEN}"
+    fi
+    echo -e "CLOSURE_COMPILER:\t${EMSDK_CLOSURE_COMPILER}"
+    echo -e "EM_CONFIG:\t\t${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
+    echo -e "EMCC_WASM_BACKEND:\t${__EMCC_WASM_BACKEND__}"
+    echo -e "EROOT:\t\t${EROOT}"
+    echo -e "LLVM_ROOT:\t\t${EMSDK_LLVM_ROOT}"
+    echo
+
+    /usr/bin/emcc -v
+    /usr/bin/em++ -v
+
+    if [[ "${__EMCC_WASM_BACKEND__}" == "1" ]] ; then
+        echo "Please wait.  Pre-generating a emscripten.config_sanity_wasm file."
+    else
+        echo "Please wait.  Pre-generating a emscripten.config_sanity file."
+    fi
+    local sandbox=$(mktemp -d)
+    pushd "${sandbox}"
+        cp "/usr/share/eselect-emscripten/hello_world.cpp" ./
+        export EM_CACHE="${sandbox}/cache"
+        export EMCC
+        export EMCC_CFLAGS=" -fno-stack-protector"
+        /usr/share/emscripten-${PV}/emcc \
+            -stdlib=libc++ \
+            hello_world.cpp \
+            -o hello_world.js
+    popd
+    rm -rf "${sandbox}"
+
+    echo
+    echo "You need to run the following before using the emscripten toolchain:"
+    echo
+    echo "env-update"
+    echo ". /etc/profile"
+    echo "export BINARYEN=\"\${EMSDK_BINARYEN_BASE_PATH}\""
+    # The CLOSURE_COMPILER is reserved for the closure-compiler package,
+    # the emscripten package has no right to it.
+    echo "export CLOSURE_COMPILER=\"\${EMSDK_CLOSURE_COMPILER}\""
+    # The LLVM_ prefix is reserved for the package llvm package only, \
+    # the emscripten package has no right to it.
+    echo "export LLVM_ROOT=\"\${EMSDK_LLVM_ROOT}\""
+    echo
+    echo "You may need to add -stdlib=libc++ when invoking emc++."
+    echo
+}
+
+### show action ###
+
+describe_show() {
+    echo "Show the current emscripten, emscripten-fastcomp, llvm combination"
+}
+
+do_show() {
+    write_list_start "Current emscritpen, emscripten-fastcomp, llvm combo:"
+
+    [[ ! -f /etc/env.d/99emscripten ]] && return
+    em_pv=$(basename $(grep -F -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
+        | sed -e "s|emscripten-||g")
+    is_llvm=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | grep -q -F -e "/usr/lib/llvm" ; echo "$?")
+    is_fc=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | grep -q -F -e "/usr/share/emscripten-fastcomp" ; echo "$?")
+
+    llvm_pv=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
+    fc_pv=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" \
+        -e "s|/bin||")
+
+    if [[ "${is_llvm}" == "0" ]] ; then
+        local k_node_src="emscripten-${em_pv}"
+        local k_node_dest="llvm-${llvm_pv}"
+        write_kv_list_entry "${k_node_src%/}" "${k_node_dest%/}"
+    elif [[ "${is_fc}" == "0" ]]; then
+        local k_node_src="emscripten-${em_pv}"
+        local k_node_dest="emscripten-fastcomp-${fc_pv}"
+        write_kv_list_entry "${k_node_src%/}" "${k_node_dest%/}"
+    else
+        write_kv_list_entry "(unset)" ""
+    fi
+}
+
+### list action ###
+
+describe_list() {
+    echo "List available emscripten, emscripten-fastcomp, llvm combo targets"
+}
+
+do_list() {
+    local i targets=( $(find_targets) )
+
+    if [[ -f /etc/env.d/99emscripten ]] ; then
+        em_pv=$(basename $(grep -F -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
+            | sed -e "s|emscripten-||g")
+        is_llvm=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | grep -q -F -e "/usr/lib/llvm" ; echo "$?")
+        is_fc=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | grep -q -F -e "/usr/share/emscripten-fastcomp" ; echo "$?")
+
+        llvm_pv=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
+        fc_pv=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" \
+            -e "s|/bin||")
+
+        expected_highligted_line="emscripten-${em_pv}"
+        if [[ "${is_llvm}" == "0" ]] ; then
+            expected_highligted_line+=",llvm-${llvm_pv}"
+        elif [[ "${is_fc}" == "0" ]] ; then
+            expected_highligted_line+=",emscripten-fastcomp-${fc_pv}"
+        fi
+    fi
+
+    write_list_start "Available emscripten, emscripten-fastcomp, llvm combo targets:"
+
+    if [[ -f /etc/env.d/99emscripten ]] ; then
+        for (( i = 0; i < ${#targets[@]}; i++ )); do
+            # highlight the target where the symlink is pointing to
+                [[ ${targets[i]} = \
+                     ${expected_highligted_line} ]] \
+                     && targets[i]=$(highlight_marker "${targets[i]}")
+        done
+    fi
+    write_numbered_list -m "(none found)" "${targets[@]}"
+}
+
+### set action ###
+
+describe_set() {
+    echo "Set a new emscripten, emscripten-fastcomp, llvm combo target"
+}
+
+describe_set_parameters() {
+    echo "\"<emscripten-pv> <llvm-pv|emscripten-fastcomp-pv>\""
+}
+
+describe_set_options() {
+    echo "emscripten-pv : emscripten-\${PV}, see list"
+    echo "llvm-pv : llvm-\${PV}, see list"
+    echo "emscripten-fastcomp-pv : emscripten-fastcomp-\${PV}, see list"
+}
+
+do_set() {
+    [[ -z $1 ]] && die -q "You didn't tell me what to set the symlink to"
+    [[ $# -gt 1 ]] && die -q "Too many parameters"
+
+    if [[ -L ${EROOT}/usr/include/node ]]; then
+        # existing symlink
+        remove_symlink || die -q "Couldn't remove existing symlink"
+        set_config "$1" || die -q "Couldn't set a new symlink"
+    elif [[ -e ${EROOT}/usr/include/node ]]; then
+        # we have something strange
+        die -q "${EROOT}/usr/include/node exists but is not a symlink"
+    else
+        set_config "$1" || die -q "Couldn't set a new symlink"
+    fi
+}

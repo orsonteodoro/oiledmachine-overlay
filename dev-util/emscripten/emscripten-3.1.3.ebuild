@@ -7,11 +7,11 @@ EAPI=8
 # https://github.com/emscripten-core/emscripten/blob/3.1.3/tools/config_template.py
 
 # TC = toolchain
-BINARYEN_PV=104 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
+BINARYEN_SLOT=104 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
 JAVA_SLOT=11
 LLVM_SLOT=14
 LLVM_MAX_SLOT=${LLVM_SLOT}
-
+NODEJS_SLOT="4"
 PYTHON_COMPAT=( python3_{8..11} ) # emsdk lists 3.9, 3.7.
 # See also
 # https://github.com/emscripten-core/emsdk/blob/3.1.3/emsdk#L11
@@ -127,7 +127,7 @@ IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
 
-r3
+r4
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -173,7 +173,7 @@ ${CLOSURE_COMPILER_SLOT}\
 			virtual/jre:${JAVA_SLOT}
 		)
 	)
-	dev-util/binaryen:${BINARYEN_PV}
+	dev-util/binaryen:${BINARYEN_SLOT}
 	>=net-libs/nodejs-4.1.1
 	(
 		>=sys-devel/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
@@ -245,7 +245,7 @@ prepare_file() {
 		-e "s|__EMCC_WASM_BACKEND__|1|" \
 		-e "s|__LLVM_BIN_PATH__|${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}/bin|" \
 		-e "s|\$(get_libdir)|$(get_libdir)|" \
-		-e "s|\${BINARYEN_SLOT}|${BINARYEN_PV}|" \
+		-e "s|\${BINARYEN_SLOT}|${BINARYEN_SLOT}|" \
 		"${dest_dir}/${source_filename}" || die
 	sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
 		"${dest_dir}/${source_filename}" || die
@@ -321,7 +321,7 @@ src_test() {
 		elif use closure-compiler ; then
 			cc_cmd="" # use defaults
 		fi
-		BINARYEN="${BROOT}/usr/$(get_libdir)/binaryen/${BINARYEN_PV}" \
+		BINARYEN="${BROOT}/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}" \
 		CLOSURE_COMPILER="${cc_cmd}" \
 		LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
 		../"${P}/emcc" "${TEST}/hello_world.cpp" \
@@ -342,6 +342,17 @@ src_test() {
 	fi
 }
 
+# For eselect-emscripten
+gen_metadata() {
+cat <<EOF > "${ED}/${DEST}/${P}/eselect.metadata" || die
+PV=${PV}
+BINARYEN_SLOT=${BINARYEN_SLOT}
+LLVM_SLOT=${LLVM_SLOT}
+NODE_SLOT=${NODEJS_SLOT}
+PYTHON_SLOT=${EPYTHON/python}
+EOF
+}
+
 src_install() {
 	dodir "${DEST}/${P}"
 	# See tools/install.py
@@ -360,6 +371,7 @@ src_install() {
 		-exec rm -vrf "{}" \;
 	#	-o -name "node_modules" was included but removed for closure-compiler
 	cp -R "${S}/" "${D}/${DEST}" || die "Could not install files"
+	gen_metadata
 }
 
 pkg_postinst() {
@@ -374,3 +386,6 @@ ewarn "closure-compiler for Java."
 ewarn
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  TBA (3.1.3)
+# hello world test - TBA
