@@ -3461,7 +3461,7 @@ eerror
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 # Patching may cause an unintended consequence (e.g. performance regression).
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead"
+eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead"
 eerror
 			die
 		else
@@ -3496,7 +3496,7 @@ eerror
 			die
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead"
+eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead"
 eerror
 			die
 		else
@@ -3519,7 +3519,7 @@ eerror
 			die
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
+eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 eerror
 			die
 		else
