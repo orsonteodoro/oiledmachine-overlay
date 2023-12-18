@@ -3455,14 +3455,15 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 # Power savings is unknown.
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}."
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead."
 eerror
 			die
-ewarn "Replacing bbr3 with bbr for energy efficency"
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-ewarn "Replacing bbr2 with bbr for energy efficency"
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
+# Patching may cause an unintended consequence (e.g. performance regression).
+eerror
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead"
+eerror
+			die
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
 		fi
@@ -3490,14 +3491,14 @@ ewarn "Replacing bbr2 with bbr for energy efficency"
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}."
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 eerror
 			die
-ewarn "Replacing bbr3 with bbr for energy efficency"
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla vegas westwood"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-ewarn "Replacing bbr2 with bbr for energy efficency"
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla vegas westwood"}
+eerror
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead"
+eerror
+			die
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla vegas westwood"}
 		fi
@@ -3513,14 +3514,14 @@ ewarn "Replacing bbr2 with bbr for energy efficency"
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 eerror
-eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}."
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
 eerror
 			die
-ewarn "Replacing bbr3 with bbr for energy efficency"
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-ewarn "Replacing bbr2 with bbr for energy efficency"
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
+eerror
+eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
+eerror
+			die
 		else
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
 		fi
