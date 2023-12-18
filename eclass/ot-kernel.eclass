@@ -3040,6 +3040,9 @@ eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_LARGE has been removed."
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MULTI_SMALL has been removed."
 	fi
+	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_POWER}" ]] ; then
+eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_POWER has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN.  Please rename to continue"
+	fi
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_REC has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_VOIP.  Please rename to continue."
 	fi
@@ -3168,13 +3171,13 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST
+	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD
-	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_POWER
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SOCIAL_GAMES
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING
 	unset OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT
@@ -3453,13 +3456,14 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		|| "${work_profile}" == "greenest-hpc" \
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-# Power savings is unknown.
+# Energy savings is unknown.
+# We are interested in deterministic power savings.
 eerror
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead."
 eerror
 			die
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-# Patching may cause an unintended consequence (e.g. performance regression).
+# Patching may cause an unintended consequence (e.g. increased energy use).
 eerror
 eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead"
 eerror
@@ -12240,7 +12244,7 @@ einfo "Installing iosched script settings"
 			local tcca_torrent=$(_tcc_send_rate)
 			local tcca_video_upload=$(_tcc_send_rate)
 
-			_tcc_power() {
+			_tcc_green() {
 				local tcc
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 					tcc="bbr"
@@ -12263,7 +12267,7 @@ einfo "Installing iosched script settings"
 				fi
 			}
 
-			local tcca_power=$(_tcc_power)
+			local tcca_green=$(_tcc_green)
 
 			tcca_elevate_priv="none" # Same as already root
 			if ot-kernel_has_version "sys-auth/polkit" ; then
@@ -12277,11 +12281,11 @@ einfo "Installing iosched script settings"
 TCCA_BROADCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST:-${tcca_broadcast}}"
 TCCA_FTP="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_FTP:-${tcca_ftp}}"
 TCCA_GAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GAMING:-${tcca_gaming}}"
+TCCA_GREEN="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_GREEN:-${tcca_green}}"
 TCCA_MUSIC="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MUSIC:-${tcca_music}}"
 TCCA_P2P="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_P2P:-${tcca_p2p}}"
 TCCA_PODCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST:-${tcca_podcast}}"
 TCCA_PODCAST_UPLOAD="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_PODCAST_UPLOAD:-${tcca_podcast_upload}}"
-TCCA_POWER="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_POWER:-${tcca_power}}"
 TCCA_SOCIAL_GAMES="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SOCIAL_GAMES:-${tcca_social_games}}"
 TCCA_STREAMING="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_STREAMING:-${tcca_streaming}}"
 TCCA_TORRENT="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_TORRENT:-${tcca_torrent}}"
