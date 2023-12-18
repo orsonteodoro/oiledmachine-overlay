@@ -1342,8 +1342,10 @@ einfo "Building npm side"
 	S="${WORKDIR}/${MY_PN}-v${PV}" \
 	npm_src_compile
 	grep -e "- error TS" "${T}/build.log" && die "Detected error.  Emerge again."
+	if use gtk3 ; then
 einfo "Building tauri side"
-	enpm run build:tauri --debug
+		enpm run build:tauri --debug
+	fi
 #
 # Running cargo_src_compile doesn't work because tauri.conf.json with tauri does
 # more extra build steps.
