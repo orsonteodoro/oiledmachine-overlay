@@ -3441,8 +3441,17 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	]] ; then
 		:;
 	elif [[ \
+		   "${work_profile}" == "realtime-hpc" \
+	]] ; then
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 dctcp illinois"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 dctcp illinois"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
+		fi
+	elif [[ \
 		   "${work_profile}" == "hpc" \
-		|| "${work_profile}" == "realtime-hpc" \
 		|| "${work_profile}" == "throughput-hpc" \
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
