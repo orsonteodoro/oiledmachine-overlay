@@ -611,7 +611,7 @@ yarn_network_settings() {
 # Load the package manager in the sandbox.
 yarn_hydrate() {
 	if [[ "${YARN_OFFLINE:-1}" == "0" ]] ; then
-		COREPACK_ENABLE_NETWORK="1"
+		COREPACK_ENABLE_NETWORK="1" # It still requires online.
 	else
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
