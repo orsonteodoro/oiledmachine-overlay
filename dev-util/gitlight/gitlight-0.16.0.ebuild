@@ -1071,7 +1071,7 @@ LICENSE="
 "
 #KEYWORDS="~amd64 ~arm64" # tauri supports also x86 and arm
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -gtk3 +html tray wayland +X r2"
+IUSE+=" -gtk3 +html tray wayland +X r3"
 REQUIRED_USE="
 	|| (
 		html
@@ -1368,7 +1368,7 @@ gen_wrapper_html() {
 	dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/git-light-html"
 #!/bin/bash
-export PATH="/opt/gitlight/node_modules/.bin:${PATH}"
+export PATH="/opt/gitlight/node_modules/.bin:\${PATH}"
 mkdir -p "\${HOME}/.cache/git-light"
 PID=""
 cleanup() {
