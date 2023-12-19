@@ -8,7 +8,7 @@ EAPI=8
 
 # TC = toolchain
 BINARYEN_SLOT=94 # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC compatibility.
-JAVA_SLOT=8
+JAVA_SLOT=1.8
 LLVM_SLOT=14 # Upstream requires 12 for wasm and 6 for asmjs.
 LLVM_MAX_SLOT=${LLVM_SLOT}
 NODEJS_SLOT="4"
