@@ -420,6 +420,13 @@ einfo "Removing ${node_modules_path}"
 	IFS=$' \t\n'
 }
 
+# @FUNCTION: epnpm
+# @DESCRIPTION:
+# Wrapper for the pnpm command.
+epnpm() {
+	pnpm "$@" || die
+}
+
 # @FUNCTION: enpm
 # @DESCRIPTION:
 # Wrapper for the npm command.
