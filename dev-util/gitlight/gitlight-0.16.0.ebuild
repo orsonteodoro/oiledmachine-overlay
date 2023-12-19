@@ -1425,7 +1425,6 @@ sanitize_permissions() {
 	IFS=$' \t\n'
 }
 
-
 src_install() {
 	exeinto /usr/bin
 	if use html ; then
@@ -1439,7 +1438,9 @@ src_install() {
 			src-tauri/target/release/git-light \
 			git-light-bin
 # It will break when you create a new user in the OS.
+ewarn
 ewarn "The gtk3/tauri version login is broken."
+ewarn
 		gen_wrapper_gtk3
 		dosym \
 			/usr/bin/git-light-gtk3 \
@@ -1472,7 +1473,9 @@ ewarn "The gtk3/tauri version login is broken."
 		fowners "root:${PN}" "/opt/${PN}"
 		fperms 0775 "/opt/${PN}"
 # When it installs, emerge doesn't set the proper folder permissions.
+ewarn
 ewarn "You need to manually do \`chmod 0775 /opt/${PN}\`"
+ewarn
 		fperms 0755 /usr/bin/git-light-html
 	fi
 	if use gtk3 ; then
@@ -1486,7 +1489,9 @@ pkg_postinst() {
 	if use html ; then
 # There is a bug that it needs to write
 # /opt/gitlight/vite.config.ts.timestamp-*-*.mjs
+ewarn
 ewarn "You must add the user to the ${PN} group."
+ewarn
 	fi
 }
 
