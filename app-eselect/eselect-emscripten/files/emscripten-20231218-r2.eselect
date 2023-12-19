@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20231218-r1"
+VERSION="20231218-r2"
 PN="emscripten"
 
 # version tests
@@ -201,7 +201,7 @@ set_config() {
     local metadata_path="/usr/share/emscripten-${em_pv}/eselect.metadata"
 
     local use_path=$(realpath --canonicalize-missing \
-        "${EROOT}"/var/db/pkg/dev-util/emscripten-${PV}*/USE)
+        "${EROOT}"/var/db/pkg/dev-util/emscripten-${PV}/USE)
     if [[ ! -f "${use_path}" ]] ; then
         echo "emscripten ${PV} is not installed."
         return 1
