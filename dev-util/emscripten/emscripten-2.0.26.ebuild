@@ -383,3 +383,6 @@ ewarn "closure-compiler for Java."
 ewarn
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  passed (2.0.26, 20231218)
+# hello world test - passed
