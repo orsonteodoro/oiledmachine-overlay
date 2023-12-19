@@ -2269,8 +2269,15 @@ ewarn "${p} is blacklisted.  Skipping..."
 		if [[ "${CFLAGS}" =~ "-march=westmere" ]] ; then
 einfo "Keeping -march=westmere from Clear Linux patch."
 		else
-ewarn "Removing -march=westmere from Clear Linux patch.  Set CFLAGS=-march=westmere to keep it."
+ewarn "Removing -march=westmere from Clear Linux patch.  Set CFLAGS with -march=westmere to keep it."
 			sed -i -e "s|-march=westmere||g" "arch/x86/Makefile" || die
+		fi
+
+		if [[ "${CFLAGS}" =~ "-O3" ]] ; then
+einfo "Keeping -O3 from Clear Linux patch."
+		else
+ewarn "Removing -O3 from Clear Linux patch.  Set CFLAGS with -O3 to keep it."
+			sed -i -e "s|-O3||g" "arch/x86/Makefile" || die
 		fi
 	else
 ewarn
