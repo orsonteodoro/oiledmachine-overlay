@@ -151,6 +151,7 @@
     6.6 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
+		    Clear Linux patchset		A
 		    genpatches				A
 		    kernel_compiler_patch		X
 		    Project C				D
@@ -916,6 +917,28 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
       OT_KERNEL_CPU_MICROCODE
       OT_KERNEL_FIRMWARE
+
+
+
+    OT_KERNEL_CLEAR_LINUX_PATCHSET_BLACKLIST - a space separated list of
+    patches to skip.  These are just basenames.
+
+    Example:
+
+      OT_KERNEL_CLEAR_LINUX_PATCHSET_BLACKLIST="0109-initialize-ata-before-graphics.patch"
+
+
+
+    OT_KERNEL_CLEAR_LINUX_PATCHSET_EXTRA - a space separated list of patches to
+    apply that didn't get applied unconditionally.  Any patch that doesn't have
+    Patch[0-9]+: in front of it in linux.spec are candidates for inclusion.
+    They get applied from left to right order.
+
+    See https://github.com/clearlinux-pkgs/linux for details.
+
+    Example:
+
+      OT_KERNEL_CLEAR_LINUX_PATCHSET_EXTRA="sched-hybrid1.patch sched-hybrid2.patch sched-hybrid3.patch sched-hybrid4.patch"
 
 
 
@@ -3720,6 +3743,10 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="clang">
       This is a stronger check for those prefer Clang over GCC and to make sure
       the prerequisites are met.
+    </flag>
+    <flag name="clear">
+      Add the Clear Linux patchset containing optimizations, tweaks,
+      workarounds, fixes, corrections.
     </flag>
     <flag name="deepcc">
       (WORK IN PROGRESS / DRAFT)

@@ -499,6 +499,9 @@ if [[ -n "${C2TCP_VER}" ]] ; then
 	"
 fi
 
+CLEAR_LINUX_PATCHES_FN="clear-linux-patches-${CLEAR_LINUX_PATCHES_VER}.tar.gz"
+CLEAR_LINUX_PATCHES_URI="https://github.com/clearlinux-pkgs/linux/archive/refs/tags/${CLEAR_LINUX_PATCHES_VER}.tar.gz -> ${CLEAR_LINUX_PATCHES_FN}"
+
 GENPATCHES_URI_BASE_URI="https://gitweb.gentoo.org/proj/linux-patches.git/snapshot/"
 GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
@@ -2196,10 +2199,99 @@ eerror
 	fi
 }
 
+# @FUNCTION: apply_clear_linux_patches
+# @DESCRIPTION:
+# Applies Clear Linux patches
+apply_clear_linux_patches() {
+	einfo "Applying Clear Linux patches"
+	if ver_test ${PV} -eq ${CLEAR_LINUX_PATCHES_VER%-*} ; then
+		mkdir -p "${T}/clear-linux-patches"
+		pushd "${T}/clear-linux-patches" || die
+			unpack "${CLEAR_LINUX_PATCHES_FN}"
+		popd
+		local P=(
+			$(grep -E -e "^Patch[0-9]+:" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/linux.spec" \
+				| cut -f 2 -d ":" \
+				| sed -E -e "s|^[ ]+||g")
+		)
+		local p
+		local blacklisted="${OT_KERNEL_CLEAR_LINUX_PATCHSET_BLACKLIST}"
+		local upstream_blacklisted=$(grep -E -e "#%?patch[0-9]+" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/linux.spec" \
+			| cut -f 1 -d " " \
+			| sed -r -e "s|#%?patch||g")
+		for p in ${P[@]} ; do
+			local is_blacklisted=0
+			local bl
+			for bl in ${upstream_blacklisted} ; do
+				local fn=$(grep -E -e "^Patch${bl}" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/linux.spec" \
+					| cut -f 2 -d " ")
+				if [[ "${p}" == "${fn}" ]] ; then
+					is_blacklisted=1
+					break
+				fi
+			done
+
+			for bl in ${blacklisted} ; do
+				if [[ "${p}" == "${bl}" ]] ; then
+					is_blacklisted=1
+					break
+				fi
+			done
+			if [[ "${cpu_sched}" =~ "cfs" ]] ; then
+				:;
+			else
+				if grep -q -F -e "kernel/sched" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}" ; then
+ewarn "Skipping ${p} which makes reference to kernel/sched implying CFS.  ${cpu_sched} != cfs"
+					is_blacklisted=1
+				fi
+			fi
+			if (( ${is_blacklisted} == 1 )) ; then
+ewarn "${p} is blacklisted.  Skipping..."
+				continue
+			fi
+			_fpatch "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}"
+		done
+
+		# Apply extra patches after official
+		local P=(
+			"${OT_KERNEL_CLEAR_LINUX_PATCHSET_EXTRA}"
+		)
+		for p in ${P[@]} ; do
+			local bl=""
+			for bl in ${blacklisted} ; do
+				if [[ "${p}" == "${bl}" ]] ; then
+					continue
+				fi
+			done
+			_fpatch "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}"
+		done
+
+		if [[ "${CFLAGS}" =~ "-march=westmere" ]] ; then
+einfo "Keeping -march=westmere from Clear Linux patch."
+		else
+ewarn "Removing -march=westmere from Clear Linux patch.  Set CFLAGS=-march=westmere to keep it."
+			sed -i -e "s|-march=westmere||g" "arch/x86/Makefile" || die
+		fi
+	else
+ewarn
+ewarn "The Clear Linux patches version mismatch.  Skipping."
+ewarn
+ewarn "Expected version:  ${CLEAR_LINUX_PATCHES_VER%-*}"
+ewarn "Actual version:  ${PV}"
+ewarn
+	fi
+}
+
 # @FUNCTION: apply_all_patchsets
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
 apply_all_patchsets() {
+	if has clear ${IUSE_EFFECTIVE} ; then
+		if ot-kernel_use clear ; then
+			apply_clear_linux_patches
+		fi
+	fi
+
 	if has pgo ${IUSE_EFFECTIVE} ; then
 		if ot-kernel_use pgo && [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO" ]] ; then
 			apply_gcc_full_pgo
