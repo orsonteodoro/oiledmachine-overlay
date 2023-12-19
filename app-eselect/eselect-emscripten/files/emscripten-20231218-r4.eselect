@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20231218-r3"
+VERSION="20231218-r4"
 PN="emscripten"
 
 # version tests
@@ -304,7 +304,9 @@ EOF
     export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 
     echo
-    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "==" "2.0.26" ; then
+        echo -e "EM_BINARYEN_ROOT:\t\t${EM_BINARYEN_ROOT}"
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
         echo -e "EM_BINARYEN_ROOT:\t\t${EM_BINARYEN_ROOT}"
     else
         echo -e "BINARYEN:\t\t${BINARYEN}"
@@ -342,7 +344,9 @@ EOF
     echo
     echo "env-update"
     echo ". /etc/profile"
-    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "==" "2.0.26" ; then
+        echo "export EM_BINARYEN_ROOT=\"\${EMSDK_BINARYEN_BASE_PATH}\""
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
         echo "export EM_BINARYEN_ROOT=\"\${EMSDK_BINARYEN_BASE_PATH}\""
     else
         echo "export BINARYEN=\"\${EMSDK_BINARYEN_BASE_PATH}\""
