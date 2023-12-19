@@ -354,7 +354,7 @@ EOF
     # the emscripten package has no right to it.
     echo "export LLVM_ROOT=\"\${EMSDK_LLVM_ROOT}\""
     echo
-    echo "You may need to add -stdlib=libc++ when invoking emc++ or to EMCC_CFLAGS."
+    echo "You may need to add -stdlib=libc++ when invoking emc++, emcc, and/or to EMCC_CFLAGS."
     echo "You may need to add -fno-stack-protector to EMCC_CFLAGS."
     echo
 }
