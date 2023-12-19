@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20231218"
+VERSION="20231218-r1"
 PN="emscripten"
 
 # version tests
@@ -108,7 +108,7 @@ find_targets() {
     for em_pv in ${EMSCRIPTEN_VERSIONS} ; do
         [[ ! -f "${EROOT}/usr/share/emscripten-${em_pv}/emcc" ]] && continue
         local use_path=$(realpath --canonicalize-missing \
-            "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_pv}*/USE)
+            "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_pv}/USE)
         [[ ! -f "${use_path}" ]] && continue
         for compiler in fastcomp llvm ; do
             if [[ "${compiler}" == "fastcomp" ]] ; then
@@ -328,12 +328,12 @@ EOF
     pushd "${sandbox}"
         cp "/usr/share/eselect-emscripten/hello_world.cpp" ./
         export EM_CACHE="${sandbox}/cache"
-        export EMCC
         export EMCC_CFLAGS=" -fno-stack-protector"
-        /usr/share/emscripten-${PV}/emcc \
-            -stdlib=libc++ \
+        /usr/share/emscripten-${PV}/em++ \
             hello_world.cpp \
             -o hello_world.js
+
+#            -stdlib=libc++ \
     popd
     rm -rf "${sandbox}"
 
@@ -342,7 +342,11 @@ EOF
     echo
     echo "env-update"
     echo ". /etc/profile"
-    echo "export BINARYEN=\"\${EMSDK_BINARYEN_BASE_PATH}\""
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
+        echo "export EM_BINARYEN_ROOT=\"\${EMSDK_BINARYEN_BASE_PATH}\""
+    else
+        echo "export BINARYEN=\"\${EMSDK_BINARYEN_BASE_PATH}\""
+    fi
     # The CLOSURE_COMPILER is reserved for the closure-compiler package,
     # the emscripten package has no right to it.
     echo "export CLOSURE_COMPILER=\"\${EMSDK_CLOSURE_COMPILER}\""
@@ -350,7 +354,8 @@ EOF
     # the emscripten package has no right to it.
     echo "export LLVM_ROOT=\"\${EMSDK_LLVM_ROOT}\""
     echo
-    echo "You may need to add -stdlib=libc++ when invoking emc++."
+    echo "You may need to add -stdlib=libc++ when invoking emc++ or to EMCC_CFLAGS."
+    echo "You may need to add -fno-stack-protector to EMCC_CFLAGS."
     echo
 }
 
