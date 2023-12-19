@@ -293,7 +293,9 @@ EOF
     . /etc/profile
 
     local emscripten_root="${EROOT}/usr/share/emscripten-${PV}"
-    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
+    if is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") "==" "2.0.26" ; then
+        export EM_BINARYEN_ROOT="${EMSDK_BINARYEN_BASE_PATH}"
+    elif is_x_op_y $(echo "${em_pv}" | cut -f 1 -d "-") ">=" "3.1.44" ; then
         export EM_BINARYEN_ROOT="${EMSDK_BINARYEN_BASE_PATH}"
     else
         export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
