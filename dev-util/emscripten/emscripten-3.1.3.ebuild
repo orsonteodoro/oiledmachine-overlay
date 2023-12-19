@@ -387,5 +387,5 @@ ewarn
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  TBA (3.1.3)
-# hello world test - TBA
+# OILEDMACHINE-OVERLAY-TEST:  passed (3.1.3, 20231218)
+# hello world test - passed
