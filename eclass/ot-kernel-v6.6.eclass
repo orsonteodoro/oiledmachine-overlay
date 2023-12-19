@@ -244,7 +244,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 fi
 IUSE+="
 bbrv2 bbrv3 build c2tcp +cfs clang clear deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rt -rust shadowcallstack
+-genpatches_1510 kcfi kpgo-utils lto nest orca pgo prjc rt -rust shadowcallstack
 symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
 "
@@ -356,6 +356,7 @@ LICENSE+=" clear? ( GPL-2 )"
 LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" kcfi? ( GPL-2 )"
+LICENSE+=" nest? ( GPL-2 )"
 LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
@@ -689,6 +690,9 @@ else
 		genpatches? (
 			${GENPATCHES_URI}
 		)
+		nest? (
+			${NEST_URI}
+		)
 		orca? (
 			${C2TCP_URIS}
 		)
@@ -993,6 +997,9 @@ einfo "Already applied ${path} upstream"
 			_dpatch "${PATCH_OPTS}" "${path}"
 		fi
 
+	elif [[ "${path}" =~ "Nest_v6.6.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/nest-6.6-fix-for-6.6.7.patch"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

@@ -1,0 +1,28 @@
+--- a/kernel/sched/core.c.orig	2023-12-19 10:54:57.228061793 -0800
++++ b/kernel/sched/core.c	2023-12-19 10:55:44.347715307 -0800
+@@ -5696,6 +5696,11 @@ void scheduler_tick(void)
+ 		wq_worker_tick(curr);
+ 
+ #ifdef CONFIG_SMP
++	smp_mb__before_atomic();
++	atomic_dec_if_positive(&rq->should_spin);
++	if (atomic_fetch_add_unless(&rq->drop_expand_ctr,-1,0) == 1)
++		rq->drop_expand = 1;
++	smp_mb__after_atomic();
+ 	rq->idle_balance = idle_cpu(cpu);
+ 	trigger_load_balance(rq);
+ #endif
+--- a/kernel/sched/fair.c.orig	2023-12-19 10:54:57.232061763 -0800
++++ b/kernel/sched/fair.c	2023-12-19 10:59:00.982271755 -0800
+@@ -7413,8 +7413,10 @@ static int select_idle_cpu(struct task_s
+ 				return i;
+ 
+ 		} else {
+-			if (!--nr)
++			if (!--nr) {
++				set_left_off(target, cpu);
+ 				return -1;
++			}
+ 			idle_cpu = __select_idle_cpu(cpu, p);
+ 			if ((unsigned int)idle_cpu < nr_cpumask_bits)
+ 				break;

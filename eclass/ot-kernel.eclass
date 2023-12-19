@@ -28,6 +28,8 @@
 #	https://github.com/Soheil-ab/c2tcp
 # CFI:
 #	https://github.com/torvalds/linux/compare/v5.15...samitolvanen:cfi-5.15
+# Clear Linux patches:
+#       https://github.com/clearlinux-pkgs/linux
 # PGO (clang) support:
 #	Upstream acquaintances used 5.13.0_rc2
 #       https://patchwork.kernel.org/project/linux-kbuild/patch/20210407211704.367039-1-morbo@google.com/mbox/			# Earlier Clang PGO v9.
@@ -61,6 +63,10 @@
 # Multigenerational LRU:
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/lru
 #	https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/mglru
+# Nest:
+#       https://gitlab.inria.fr/nest-public/nest-artifact
+#       https://gitlab.inria.fr/nest-public/nest-artifact/-/tree/main/extras
+#       https://gitlab.inria.fr/nest-public/nest-artifact/-/tree/main/image_creation
 # O3 (Allow O3):
 #	https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e	# 5.4
 #	https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c	# 5.10
@@ -645,6 +651,13 @@ fi
 
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
+
+NEST_FN="Nest_v${KV_MAJOR_MINOR}.patch"
+if [[ "${KV_MAJOR_MINOR}" == "5.15" ]] ; then
+NEST_URI="https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v${KV_MAJOR_MINOR}_patch?inline=false -> ${NEST_FN}"
+elif [[ "${KV_MAJOR_MINOR}" == "6.6" ]] ; then
+NEST_URI="https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v${KV_MAJOR_MINOR}.patch?inline=false -> ${NEST_FN}"
+fi
 
 O3_SRC_URI="https://github.com/torvalds/linux/commit/"
 O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT:0:7}.patch"
@@ -1969,6 +1982,7 @@ einfo "Applying some of the zen-kernel MuQSS patches"
 # @DESCRIPTION:
 # Apply the PGO patch for use with clang
 apply_clang_pgo() {
+	einfo "Applying the Clang PGO patch"
 	_fpatch "${FILESDIR}/${CLANG_PGO_FN}"
 }
 
@@ -2216,6 +2230,9 @@ apply_clear_linux_patches() {
 		)
 		local p
 		local blacklisted="${OT_KERNEL_CLEAR_LINUX_PATCHSET_BLACKLIST}"
+		if ! [[ "${cpu_sched}" =~ "cfs" ]] ; then
+			blacklisted+=" 0001-mm-memcontrol-add-some-branch-hints-based-on-gcov-an.patch"
+		fi
 		local upstream_blacklisted=$(grep -E -e "#%?patch[0-9]+" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/linux.spec" \
 			| cut -f 1 -d " " \
 			| sed -r -e "s|#%?patch||g")
@@ -2237,9 +2254,7 @@ apply_clear_linux_patches() {
 					break
 				fi
 			done
-			if [[ "${cpu_sched}" =~ "cfs" ]] ; then
-				:;
-			else
+			if ! [[ "${cpu_sched}" =~ "cfs" ]] ; then
 				if grep -q -F -e "kernel/sched" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}" ; then
 ewarn "Skipping ${p} which makes reference to kernel/sched implying CFS.  ${cpu_sched} != cfs"
 					is_blacklisted=1
@@ -2287,6 +2302,14 @@ ewarn "Expected version:  ${CLEAR_LINUX_PATCHES_VER%-*}"
 ewarn "Actual version:  ${PV}"
 ewarn
 	fi
+}
+
+# @FUNCTION: apply_nest
+# @DESCRIPTION:
+# Apply the Nest scheduler.
+apply_nest() {
+	einfo "Applying the Nest scheduler patch"
+	_fpatch "${DISTDIR}/${NEST_FN}"
 }
 
 # @FUNCTION: apply_all_patchsets
@@ -2435,6 +2458,12 @@ apply_all_patchsets() {
 			if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
 				apply_c2tcp_v2
 			fi
+		fi
+	fi
+
+	if has nest ${IUSE_EFFECTIVE} ; then
+		if ot-kernel_use nest && [[ "${cpu_sched}" == "nest" ]] ; then
+			apply_nest
 		fi
 	fi
 
@@ -3232,6 +3261,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_MESSAGE
 	unset OT_KERNEL_MODULE_SUPPORT
 	unset OT_KERNEL_MODULES_COMPRESSOR
+	unset OT_KERNEL_NEST_FREQ_GOV
 	unset OT_KERNEL_NET_NETFILTER
 	unset OT_KERNEL_NET_QOS_ACTIONS
 	unset OT_KERNEL_NET_QOS_CLASSIFIERS
@@ -5083,7 +5113,7 @@ einfo "Changed .config to use CFS without autogroup"
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler
+# @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler_post
 # @DESCRIPTION:
 # Unbreak build for incompatible flags
 ot-kernel_set_kconfig_cpu_scheduler_post() {
@@ -5098,6 +5128,59 @@ ewarn "Dropping CONFIG_PROC_PID_CPUSET for muqss.  If you do not like this, swit
 			ot-kernel_unset_configopt "CONFIG_PROC_PID_CPUSET"
 		fi
 	fi
+	if [[ "${cpu_sched}" == "nest" ]] ; then
+# Based on the graphs, schedutil has 6 highest bars versus performance with 3
+# highest bars.  Both are provided for flexiblity during runtime.  The best
+# choice between schedutil and performance depends on the application,  but it
+# is marginal.
+		local freq_gov="${OT_KERNEL_NEST_FREQ_GOV:-schedutil}"
+		if [[ "${freq_gov}" == "schedutil" ]] ; then
+einfo "Optimizing Nest with OT_KERNEL_NEST_FREQ_GOV=schedutil"
+			ot-kernel_y_configopt "CONFIG_SMP"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+		else
+einfo "Optimizing Nest with OT_KERNEL_NEST_FREQ_GOV=performance"
+			ot-kernel_y_configopt "CONFIG_SMP"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+		fi
+	fi
+}
+
+# @FUNCTION: _ot-kernel_set_kconfig_nest
+# @DESCRIPTION:
+# Set CPU scheduler to Nest for low latency
+_ot-kernel_set_kconfig_nest() {
+	[[ "${cpu_sched}" =~ "nest" ]] || return
+	if ! grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
+eerror
+eerror "Nest requires SMP.  Remove nest from OT_KERNEL_USE and OT_KERNEL_CPU_SCHED.  Pick another CPU scheduler."
+eerror
+		die
+	fi
+	if ! grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" ; then
+eerror
+eerror "Nest requires SCHED_MC.  Remove nest from OT_KERNEL_USE and OT_KERNEL_CPU_SCHED.  Pick another CPU scheduler."
+eerror
+		die
+	fi
+
+	ot-kernel_unset_configopt "CONFIG_SCHED_ALT"
+	ot-kernel_unset_configopt "CONFIG_SCHED_BMQ"
+	ot-kernel_unset_configopt "CONFIG_SCHED_PDS"
+	ot-kernel_unset_configopt "CONFIG_SCHED_MUQSS"
+# Same as grid5000_config.patch
+einfo "Changed .config to use NEST with autogroup"
+	ot-kernel_y_configopt "CONFIG_SCHED_AUTOGROUP"
+	ot-kernel_y_configopt "CONFIG_CGROUPS"
+	ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
+	ot-kernel_y_configopt "CONFIG_FAIR_GROUP_SCHED"
+	cpu_sched_config_applied=1
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_cpu_scheduler
@@ -5109,6 +5192,7 @@ ot-kernel_set_kconfig_cpu_scheduler() {
 	_ot-kernel_set_kconfig_bmq
 	_ot-kernel_set_kconfig_cfs
 	_ot-kernel_set_kconfig_muqss
+	_ot-kernel_set_kconfig_nest
 	_ot-kernel_set_kconfig_pds
 	_ot-kernel_set_kconfig_prjc
 
@@ -6466,7 +6550,7 @@ einfo "Allowing SME"
 ewarn "Set OT_KERNEL_SME_DEFAULT_ON=1 when testing is successful."
 			fi
 		else
-einfo "Disallowing SME"
+einfo "Disabling SME"
 			ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT"
 		fi
 		local has_pku=0

@@ -127,6 +127,7 @@
 		    kernel_compiler_patch		A
 		    genpatches				A
 		    multigen_lru			N
+		    Nest				R
 		    Project C				N
 		    TCP BBR v2 [5]			E
 		    TRESOR (AES-NI) [5]			D
@@ -155,6 +156,7 @@
 		    genpatches				A
 		    kernel_compiler_patch		X
 		    Project C				D
+		    Nest				R
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
 		    TRESOR (AES-NI) [5]			D
@@ -992,8 +994,9 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
       4.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, pds
       4.19: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, pds
       5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, prjc, prjc-bmq, prjc-pds
-      5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.7: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
 
       The reason why for this flexibility is to allow for multiple
@@ -1274,6 +1277,7 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     See also
 
       HT
+      OT_KERNEL_NEST_FREQ_GOV
 
 
 
@@ -2267,6 +2271,16 @@ OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
     disabled; but can be overrided by explicitly setting it to one of the
     acceptable values.
 
+
+
+    OT_KERNEL_NEST_FREQ_GOV - change the default for the frequency governor.
+    This sets the default.  Overall schedutil dominates performance with nest
+    based on benchmarks,  but you can refine optimizing the performance by
+    selecting either one during runtime.
+
+    Acceptable values:
+
+      performance, schedutil
 
 
     OT_KERNEL_NETFILTER - a space delimited list of kernel config symbols.
@@ -3795,6 +3809,12 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="graphicsmagick">
       Adds build time logo conversion support.
+    </flag>
+    <flag name="nest">
+      Adds the per-core Nest task scheduler for 10% to 2x the benefit.
+      It uses autogrouped CFS and as a fallback for secondary nest expansion.
+      Essentially it place tasks on hot cores (primary nest) at higher
+      frequencies first followed by previously warm cores (warm nest).
     </flag>
     <flag name="kpgo-utils">
       Adds support for Full PGO for GCC compilers.

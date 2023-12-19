@@ -1,0 +1,35 @@
+--- a/include/linux/sched/topology.h.orig	2023-12-19 11:28:57.812867254 -0800
++++ b/include/linux/sched/topology.h	2023-12-19 11:33:15.830967466 -0800
+@@ -75,6 +75,8 @@ struct sched_domain_shared {
+ 	atomic_t	nr_busy_cpus;
+ 	int		has_idle_cores;
+ 	int		nr_idle_scan;
++	int		has_idle_threads;
++	int		left_off;
+ };
+ 
+ struct sched_domain {
+--- a/kernel/sched/fair.c.orig	2023-12-19 11:30:57.151987730 -0800
++++ b/kernel/sched/fair.c	2023-12-19 11:32:08.795460411 -0800
+@@ -6560,7 +6560,7 @@ static inline int select_idle_smt(struct
+ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, bool has_idle_core, int target)
+ {
+ 	struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_idle_mask);
+-	int i, cpu, idle_cpu = -1, nr = INT_MAX;
++	int i, cpu, idle_cpu = -1, nr = INT_MAX, newtarget;
+ 	struct sched_domain_shared *sd_share;
+ 	struct rq *this_rq = this_rq();
+ 	int this = smp_processor_id();
+@@ -6704,9 +6704,11 @@ static inline bool asym_fits_cpu(unsigne
+ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ {
+ 	bool has_idle_core = false;
+-	struct sched_domain *sd;
++	struct sched_domain *sd, *sd1;
++	struct sched_group *group, *group0;
+ 	unsigned long task_util, util_min, util_max;
+ 	int i, recent_used_cpu;
++	int otarget = target;
+ 
+ 	/*
+ 	 * On asymmetric system, update task utilization because we will check

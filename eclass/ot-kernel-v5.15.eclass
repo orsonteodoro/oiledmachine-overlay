@@ -216,7 +216,7 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 build c2tcp cfi +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kpgo-utils lto multigen_lru orca pgo prjc rock-dkms rt
+-genpatches_1510 kpgo-utils lto nest multigen_lru orca pgo prjc rock-dkms rt
 shadowcallstack symlink tresor tresor_aesni tresor_i686 tresor_prompt
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm
 zen-multigen_lru zen-sauce
@@ -335,6 +335,7 @@ LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Lega
 LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
+LICENSE+=" nest? ( GPL-2 )"
 LICENSE+=" multigen_lru? ( GPL-2 )"
 LICENSE+=" orca? ( MIT )"
 LICENSE+=" pgo? ( GPL-2 GPL-2+ )" # GCC_PGO kernel patch only
@@ -643,6 +644,9 @@ else
 		genpatches? (
 			${GENPATCHES_URI}
 		)
+		nest? (
+			${NEST_URI}
+		)
 		multigen_lru? (
 			${MULTIGEN_LRU_SRC_URI}
 		)
@@ -924,6 +928,10 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/uksm-5.15-fix-for-5.15.131.patch"
+
+	elif [[ "${path}" =~ "Nest_v5.15.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 3 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/nest-5.15-fix-for-5.15.143.patch"
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
