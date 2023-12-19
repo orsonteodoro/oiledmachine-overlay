@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20231218-r2"
+VERSION="20231218-r3"
 PN="emscripten"
 
 # version tests
@@ -330,10 +330,10 @@ EOF
         export EM_CACHE="${sandbox}/cache"
         export EMCC_CFLAGS=" -fno-stack-protector"
         /usr/share/emscripten-${PV}/em++ \
+            -stdlib=libc++ \
             hello_world.cpp \
             -o hello_world.js
 
-#            -stdlib=libc++ \
     popd
     rm -rf "${sandbox}"
 
