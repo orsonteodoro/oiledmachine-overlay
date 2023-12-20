@@ -164,7 +164,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
-    6.6 (Master / Live / Mainline)			A
+    6.7 (Master / Live / Mainline)			A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    genpatches				A
