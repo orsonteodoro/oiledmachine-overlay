@@ -388,6 +388,7 @@ src_prepare() {
 
 src_configure() {
 	llvm-ebuilds_fix_toolchain
+
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
@@ -398,6 +399,9 @@ src_configure() {
 		local -x CC=${CHOST}-clang
 		local -x CXX=${CHOST}-clang++
 		strip-unsupported-flags
+ewarn
+ewarn "Disable the clang USE flag if \"Assumed value of MB_LEN_MAX wrong\" pops up."
+ewarn
 	fi
 
 	local flag want_sanitizer=OFF
