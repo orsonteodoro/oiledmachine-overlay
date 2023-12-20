@@ -384,6 +384,9 @@ src_configure() {
 		local -x CC=${CHOST}-clang
 		local -x CXX=${CHOST}-clang++
 		strip-unsupported-flags
+ewarn
+ewarn "Disable the clang USE flag if \"Assumed value of MB_LEN_MAX wrong\" pops up."
+ewarn
 	fi
 
 	local flag want_sanitizer=OFF

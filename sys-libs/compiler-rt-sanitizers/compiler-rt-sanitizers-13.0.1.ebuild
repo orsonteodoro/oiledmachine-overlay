@@ -355,6 +355,9 @@ src_configure() {
 		local -x CXX=${CHOST}-clang++
 		strip-unsupported-flags
 		append-cppflags -I"${ESYSROOT}"/usr/lib/clang/${LLVM_VERSION}/include
+ewarn
+ewarn "Disable the clang USE flag if \"Assumed value of MB_LEN_MAX wrong\" pops up."
+ewarn
 	fi
 
 	local flag want_sanitizer=OFF
