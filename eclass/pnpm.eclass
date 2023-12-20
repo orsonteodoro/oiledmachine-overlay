@@ -23,11 +23,12 @@ _PNPM_ECLASS=1
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile
 
 _pnpm_set_globals() {
-	PNPM_TRIES="${PNPM_TRIES:-10}"
-	PNPM_NETWORK_FETCH_RETRIES=${PNPM_NETWORK_FETCH_RETRIES:-"7"}
-	PNPM_NETWORK_RETRY_MINTIMEOUT=${PNPM_NETWORK_RETRY_MINTIMEOUT:-"100000"}
-	PNPM_NETWORK_RETRY_MAXTIMEOUT=${PNPM_NETWORK_RETRY_MAXTIMEOUT:-"300000"}
-	PNPM_NETWORK_MAX_SOCKETS=${PNPM_NETWORK_MAX_SOCKETS:-"1"}
+	export PNPM_NETWORK_NETWORK_CONCURRENCY=${PNPM_NETWORK_NETWORK_CONCURRENCY:-1}
+	export PNPM_NETWORK_MAXSOCKETS=${PNPM_NETWORK_MAXSOCKETS:-1}
+	export PNPM_NETWORK_FETCH_RETRIES=${PNPM_NETWORK_FETCH_RETRIES:-7}
+	export PNPM_NETWORK_FETCH_RETRY_MINTIMEOUT=${PNPM_NETWORK_FETCH_RETRY_MINTIMEOUT:-60000}
+	export PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT=${PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT:-300000}
+	export PNPM_NETWORK_FETCH_TIMEOUT=${PNPM_NETWORK_FETCH_TIMEOUT:-300000}
 }
 _pnpm_set_globals
 unset -f _pnpm_set_globals
@@ -63,6 +64,17 @@ epnpm() {
 	pnpm "$@" || die
 }
 
+# @FUNCTION: pnpm_network_settings
+# @DESCRIPTION:
+# Smooth out network settings.
+pnpm_network_settings() {
+	pnpm config set network-concurrency ${PNPM_NETWORK_NETWORK_CONCURRENCY} || die # 16 -> 1
+	pnpm config set maxsockets ${PNPM_NETWORK_MAXSOCKETS} || die # 3 * network-concurrency -> 1
+	pnpm config set fetch-retries ${PNPM_NETWORK_FETCH_RETRIES} || die # 2 -> lucky number 7
+	pnpm config set fetch-retry-mintimeout ${PNPM_NETWORK_FETCH_RETRY_MINTIMEOUT} || die # 10 s -> 1 min
+	pnpm config set fetch-retry-maxtimeout ${PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT} || die # 1 min -> 5 min
+	pnpm config set fetch-timeout ${PNPM_NETWORK_FETCH_TIMEOUT} || die # 1 min -> 5 min
+}
 
 # @FUNCTION: pnpm_hydrate
 # @DESCRIPTION:
@@ -90,6 +102,7 @@ einfo "Hydrating pnpm..."
 	corepack hydrate "${ESYSROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz" || die
 	local pnpm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/pnpm/"*))
 	export PATH=".:${HOME}/.cache/node/corepack/pnpm/${pnpm_pv}/bin:${PATH}"
+	pnpm_network_settings
 }
 
 # @FUNCTION: pnpm_pkg_setup
