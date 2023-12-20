@@ -82,7 +82,7 @@ pnpm_network_settings() {
 pnpm_hydrate() {
 # Cannot use pnpm for offline install with distfiles yet, so always online.
 # This is why pnpm is avoided.
-	npm_check_network_sandbox
+	pnpm_check_network_sandbox
 	if [[ "${NPM_OFFLINE:-1}" == "0" ]] ; then
 		COREPACK_ENABLE_NETWORK="1" # It still requires online.
 	else

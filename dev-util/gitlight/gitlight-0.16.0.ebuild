@@ -1361,7 +1361,7 @@ einfo "Copying API tokens/credentials to ${S}/.env"
 	fi
 	pushd "${WORKDIR}/${MY_PN}-v${PV}/src-tauri" || die
 		S="${WORKDIR}/${MY_PN}-v${PV}/src-tauri" \
-		cargo_src_configure
+		:; #cargo_src_configure  # for *_npm path
 	popd
 }
 
@@ -1389,7 +1389,7 @@ einfo "Secure deleting copied tokens/credentials at ${S}/.env"
 
 _compile_pnpm() {
 einfo "Building npm side"
-	enpm run build
+	epnpm run build
 	if use gtk3 ; then
 einfo "Building tauri side"
 		epnpm run tauri build #--debug
