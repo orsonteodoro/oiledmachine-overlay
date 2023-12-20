@@ -3813,8 +3813,7 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="nest">
       Adds the per-core Nest task scheduler for 10% to 2x the benefit.
       It uses autogrouped CFS and as a fallback for secondary nest expansion.
-      Essentially it place tasks on hot cores (primary nest) at higher
-      frequencies first followed by previously warm cores (warm nest).
+      This may only apply to CPUs with independent frequences per core.
     </flag>
     <flag name="kpgo-utils">
       Adds support for Full PGO for GCC compilers.
