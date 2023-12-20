@@ -9,10 +9,10 @@ EAPI=8
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# CEF_DEPENDS_VERSION="118.0.5993.119"
-# CEF_DEPENDS_VERSION_A="118"
+# CEF_DEPENDS_VERSION="119.0.6045.199"
+# CEF_DEPENDS_VERSION_A="119"
 # CEF_DEPENDS_VERSION_B="0"
-# CEF_DEPENDS_VERSION_C="5993"
+# CEF_DEPENDS_VERSION_C="6045"
 # CEF_DEPENDS_VERSION_D="119"
 #
 # Third party licenses:
@@ -43,23 +43,23 @@ EAPI=8
 #
 # For Chromium *DEPENDs and versioning see:
 #
-# https://github.com/chromium/chromium/tree/118.0.5993.119/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.py
-# https://github.com/chromium/chromium/blob/118.0.5993.119/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/119.0.6045.199/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/119.0.6045.199/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/119.0.6045.199/tools/clang/scripts/update.py#L42
 #
 # For vendored Chromium third party *DEPENDs versioning see:
 #
-# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/118.0.5993.119/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/119.0.6045.199/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/119.0.6045.199/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
-# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-118.0.5993.119/work/chromium-118.0.5993.119/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
 
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
@@ -163,7 +163,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
 
 # For details see:
-# https://github.com/chromium/chromium/blob/118.0.5993.119/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/119.0.6045.199/build/install-build-deps.sh#L237
 
 # The version is obtained in src_prepare
 
@@ -367,7 +367,7 @@ SRC_URI+="
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="g0348b2ea" # Change this after every bump
+	BUILD_ID_AMD64="g36b715a1" # Change this after every bump
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
