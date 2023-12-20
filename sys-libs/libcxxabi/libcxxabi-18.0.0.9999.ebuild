@@ -54,7 +54,7 @@ BDEPEND+="
 	!test? (
 		${PYTHON_DEPS}
 	)
-	>=sys-devel/gcc-${GCC_SLOT}:${GCC_SLOT}
+	>=sys-devel/gcc-${GCC_SLOT}
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
 	)
@@ -91,11 +91,11 @@ check_libstdcxx() {
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
 
-	if ver_test "${GCC_SLOT}" -ne "${gcc_current_profile_slot}" ; then
+	if ver_test "${gcc_current_profile_slot}" -lt "${GCC_SLOT}" ; then
 # Fixes:
 # warning "Libc++ only supports GCC 13 and later"
 eerror
-eerror "You must switch to == GCC ${GCC_SLOT}.  Do"
+eerror "You must switch to >= GCC ${GCC_SLOT}.  Do"
 eerror
 eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
 eerror "  source /etc/profile"
