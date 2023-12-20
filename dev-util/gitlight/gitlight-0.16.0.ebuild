@@ -493,7 +493,7 @@ zvariant_utils-1.0.1
 MY_PN="gitlight-gitlight"
 NODE_SLOTS="18"
 NPM_AUDIT_FIX=0
-NPM_OFFLINE=0
+NPM_OFFLINE=1
 NPM_INSTALL_UNPACK_ARGS="--legacy-peer-deps"
 inherit cargo desktop lcnr npm user-info xdg
 
