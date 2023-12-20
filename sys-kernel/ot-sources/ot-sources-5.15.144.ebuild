@@ -4,32 +4,29 @@
 EAPI=8
 
 EBUILD_REV=""
-CLEAR_LINUX_PATCHES_VER="6.6.7-1392"
-GENPATCHES_VER="9"
-PATCH_PROJC_VER="6.5-r0"
-PATCH_RT_VER="6.6.7-rt18"
+GENPATCHES_VER="153"
+PATCH_PROJC_VER="5.15-r1"
+PATCH_RT_VER="5.15.141-rt72"
 
-inherit ot-kernel-v6.6
+inherit ot-kernel-v5.15
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.5.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v5.15.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
-
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6 (20231101) with builder profile and GCC_PGI with -O3 and -march=native (performance flags)
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.0.9999 (6.6.0-rc7 commit: 3a568e3a961ba330091cd031647e4c303fa0badb) (20231027) with builder profile
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.1 (20231109) with builder profile with -O2 and -march=generic (stable flags) and no PGI/PGO
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 5.15.137 (20231106) with builder profile and -O2 -march=generic (stability flags)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 5.15.139 (20231121) with builder profile and -O2 -march=generic (stability flags)
 
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
 #
-# USE="build cfs disable_debug genpatches kpgo-utils ncurses openssl pgo symlink
-# zen-sauce zstd -bbrv2 bbrv3 -bzip2 (-c2tcp) -clang (-deepcc) -exfat
+# USE="build cfs disable_debug genpatches kpgo-utils ncurses openssl -pgo symlink
+# zen-sauce zstd -bbrv2 -bbrv3 -bzip2 (-c2tcp) -clang (-deepcc) -exfat
 # -fallback-commit -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick
 # -intel-microcode -kcfi -linux-firmware -lto -lz4 -lzma -lzo (-orca) -pcc -prjc
 # (-qt5) -reiserfs -rt -rust -shadowcallstack -tresor -tresor_aesni -tresor_i686
@@ -45,14 +42,14 @@ inherit ot-kernel-v6.6
 # network - pass
 # streaming video playback - pass
 # initscript - pass
-# runtime stability note:  may randomly freeze/deadlock during compile + media streaming during short run or long run (6.6)
-# runtime stability note:  freeze/deadlock during compile within 2 days (6.6.1)
+# runtime stability note:  freeze/deadlock encountered during building + media streaming after a day passed (5.15.137)
+# runtime stability note:  freeze/deadlock less than a day passed (5.15.139) with rock-dkms:5.7 driver and with USE="disable_debug genpatches rock-dkms cfs" enabled and others USE flag disabled while listening and watching video stream.
 
 # env file builder profile sample:
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
-# OT_KERNEL_USE="-rt c2tcp O3 -bbrv2 bbrv3 disable_debug -tresor -tresor_sysfs
+# OT_KERNEL_USE="-rt c2tcp -O3 -bbrv2 -bbrv3 disable_debug -tresor -tresor_sysfs
 # -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
-# kernel_compiler_patch futex futex-proton multigen_lru genpatches -clang pgo
+# kernel_compiler_patch futex futex-proton multigen_lru genpatches -clang -pgo
 # -zen-muqss zen-sauce -cfi -kcfi -zen-multigen_lru -genpatches_1510 build zstd
 # openssl -lto ncurses"
 # OT_KERNEL_VERBOSITY=1
