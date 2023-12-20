@@ -199,11 +199,24 @@ BDEPEND+="
 	>=dev-util/cmake-3.4.3
 "
 FN_DEST="${P}.tar.gz"
-SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
+SRC_URI="
+	https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}
+	https://github.com/emscripten-core/emscripten/pull/20930/commits/72dd53cb20f421d7036680319b0e66489378df8e.patch -> emscripten-commit-72dd53c.patch
+"
+# 72dd53c - Define __LONG_MAX in alltypes.h
+#   Fix for:
+#  /usr/share/emscripten-3.1.51/system/lib/libc/musl/arch/emscripten/bits/alltypes.h:7:9: error: 'LONG_MAX' macro redefined [-Werror,-Wmacro-redefined]
+#      7 | #define LONG_MAX  __LONG_MAX__
+#        |         ^
+#  /usr/share/emscripten-3.1.51/system/lib/libc/musl/include/limits.h:29:9: note: previous definition is here
+#     29 | #define LONG_MAX __LONG_MAX
+#        |         ^
+
 RESTRICT="mirror"
 DEST="/usr/share/"
 TEST="${WORKDIR}/test/"
 _PATCHES=(
+	"${DISTDIR}/emscripten-commit-72dd53c.patch"
 	"${FILESDIR}/${PN}-3.1.51-set-wrappers-path.patch"
 	"${FILESDIR}/${PN}-3.1.51-includes.patch"
 	"${FILESDIR}/${PN}-3.1.28-libcxxabi_no_exceptions-already-defined.patch"
