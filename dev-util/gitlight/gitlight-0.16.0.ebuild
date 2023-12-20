@@ -1392,7 +1392,7 @@ einfo "Building npm side"
 	epnpm run build
 	if use gtk3 ; then
 einfo "Building tauri side"
-		epnpm run tauri build #--debug
+		tauri build #--debug
 	fi
 }
 
