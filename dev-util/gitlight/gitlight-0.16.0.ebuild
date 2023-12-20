@@ -1175,10 +1175,18 @@ PATCHES=(
 #	"${FILESDIR}/gitlight-0.16.0-login-uri.patch"
 )
 
-pkg_setup() {
+_pkg_setup_npm() {
 	npm_pkg_setup
 	npm_check_network_sandbox
+}
 
+_pkg_setup_pnpm() {
+	pnpm_pkg_setup
+	pnpm_check_network_sandbox
+}
+
+pkg_setup() {
+	_pkg_setup_pnpm
 	if use html && ! egetent group "${PN}" ; then
 eerror
 eerror "You must add the ${PN} group to the system."
