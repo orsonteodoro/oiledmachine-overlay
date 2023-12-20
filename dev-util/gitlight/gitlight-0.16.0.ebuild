@@ -1413,7 +1413,7 @@ EOF
 
 gen_wrapper_gtk3() {
 	dodir /usr/bin
-cat <<EOF > "${ED}/usr/bin/git-light-html"
+cat <<EOF > "${ED}/usr/bin/git-light-gtk3"
 #!/bin/bash
 export PATH="/opt/gitlight/node_modules/.bin:\${PATH}"
 mkdir -p "\${HOME}/.cache/git-light"
@@ -1499,11 +1499,11 @@ ewarn
 
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
-	lcnr_install_files
+#	lcnr_install_files
 
 	LCNR_SOURCE="${WORKDIR}/${MY_PN}-v${PV}/node_modules"
 	LCNR_TAG="third_party_npm"
-	lcnr_install_files
+#	lcnr_install_files
 
 	if use html ; then
 		rm -rf "src-tauri/target/release" || true
