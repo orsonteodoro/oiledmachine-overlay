@@ -493,10 +493,10 @@ zvariant_utils-1.0.1
 MY_PN="gitlight-gitlight"
 NODE_SLOTS="18"
 NPM_AUDIT_FIX=0
-NPM_OFFLINE=1
-USE_PNPM=1
+NPM_OFFLINE=0
 NPM_INSTALL_UNPACK_ARGS="--legacy-peer-deps"
-inherit cargo desktop lcnr npm user-info xdg
+inherit desktop lcnr pnpm user-info xdg
+#inherit cargo npm
 
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
@@ -1028,9 +1028,12 @@ https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-q
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
 
+#_SRC_URI_DISABLE="
+#$(cargo_crate_uris ${CRATES})
+#${NPM_EXTERNAL_URIS}
+#"
+
 SRC_URI="
-$(cargo_crate_uris ${CRATES})
-${NPM_EXTERNAL_URIS}
 https://github.com/colinlienard/gitlight/archive/refs/tags/gitlight-v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
@@ -1227,7 +1230,7 @@ _cargo_src_unpack() {
 	cargo_gen_config
 }
 
-src_unpack() {
+_src_unpack_npm() {
 einfo "Unpacking npm side"
 	S="${WORKDIR}/${MY_PN}-v${PV}" \
 	npm_src_unpack
@@ -1263,17 +1266,29 @@ einfo "Unpacking tauri side"
 		|| die
 }
 
+_src_unpack_pnpm() {
+	unpack ${P}.tar.gz
+	pnpm_hydrate
+	cd "${S}" || die
+	epnpm install
+}
+
+src_unpack() {
+	_src_unpack_pnpm
+}
+
 src_prepare() {
 	default
 #	sed -i \
 #		-e "s|ssr = true|ssr = false|g" \
 #		"./src/routes/+layout.ts" \
 #		|| die
-	sed -i \
-		-e "s|pnpm build|npm run build|g" \
-		-e "s|pnpm dev|npm run dev|g" \
-		"src-tauri/tauri.conf.json" \
-		|| die
+
+#	sed -i \
+#		-e "s|pnpm build|npm run build|g" \
+#		-e "s|pnpm dev|npm run dev|g" \
+#		"src-tauri/tauri.conf.json" \
+#		|| die
 }
 
 src_configure() {
@@ -1342,7 +1357,7 @@ einfo "Copying API tokens/credentials to ${S}/.env"
 	popd
 }
 
-src_compile() {
+_compile_npm() {
 einfo "Building npm side"
 	S="${WORKDIR}/${MY_PN}-v${PV}" \
 	npm_src_compile
@@ -1362,6 +1377,19 @@ einfo "Building tauri side"
 #	popd
 einfo "Secure deleting copied tokens/credentials at ${S}/.env"
 	shred -f "${S}/.env" || die
+}
+
+_compile_pnpm() {
+einfo "Building npm side"
+	enpm run build
+	if use gtk3 ; then
+einfo "Building tauri side"
+		epnpm run tauri build #--debug
+	fi
+}
+
+src_compile() {
+	_compile_pnpm
 }
 
 gen_wrapper_html() {
