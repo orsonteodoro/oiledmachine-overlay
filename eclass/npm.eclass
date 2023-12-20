@@ -35,18 +35,6 @@ else
 	"
 fi
 
-if [[ "${USE_PNPM:-0}" != "1" ]] ; then
-	:;
-elif [[ -n "${PNPM_SLOT}" ]] ; then
-	BDEPEND+="
-		sys-apps/pnpm:${PNPM_SLOT}
-	"
-else
-	BDEPEND+="
-		sys-apps/pnpm:8
-	"
-fi
-
 _npm_set_globals() {
 	NPM_TRIES="${NPM_TRIES:-10}"
 	NPM_NETWORK_FETCH_RETRIES=${NPM_NETWORK_FETCH_RETRIES:-"7"}
@@ -420,13 +408,6 @@ einfo "Removing ${node_modules_path}"
 	IFS=$' \t\n'
 }
 
-# @FUNCTION: epnpm
-# @DESCRIPTION:
-# Wrapper for the pnpm command.
-epnpm() {
-	pnpm "$@" || die
-}
-
 # @FUNCTION: enpm
 # @DESCRIPTION:
 # Wrapper for the npm command.
@@ -526,41 +507,11 @@ einfo "Hydrating npm..."
 	npm_network_settings
 }
 
-# @FUNCTION: pnpm_hydrate
-# @DESCRIPTION:
-# Load pnpm in the sandbox.
-pnpm_hydrate() {
-	[[ "${USE_PNPM:-0}" != "1" ]] && return
-# Cannot use pnpm with distfiles yet, so always online.
-# This is why pnpm is avoided.
-	npm_check_network_sandbox
-	if [[ "${NPM_OFFLINE:-1}" == "0" ]] ; then
-		COREPACK_ENABLE_NETWORK="1" # It still requires online.
-	else
-		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
-	fi
-	local pnpm_slot="${PNPM_SLOT:-8}"
-	if [[ ! -f "${EROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz" ]] ; then
-eerror
-eerror "Missing ${EROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz"
-eerror
-eerror "You must install sys-apps/pnpm:${pnpm_slot}::oiledmachine-overlay to"
-eerror "continue."
-eerror
-		die
-	fi
-einfo "Hydrating pnpm..."
-	corepack hydrate "${ESYSROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz" || die
-	local pnpm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/pnpm/"*))
-	export PATH=".:${HOME}/.cache/node/corepack/pnpm/${pnpm_pv}/bin:${PATH}"
-}
-
 # @FUNCTION: _npm_src_unpack
 # @DESCRIPTION:
 # Unpacks a npm application.
 npm_src_unpack() {
 	npm_hydrate
-	pnpm_hydrate
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		if [[ ${PV} =~ 9999 ]] ; then
@@ -613,7 +564,6 @@ npm_src_unpack() {
 # Builds a npm application.
 npm_src_compile() {
 	npm_hydrate
-	pnpm_hydrate
 	[[ "${NPM_BUILD_SCRIPT}" == "none" ]] && return
 	[[ "${NPM_BUILD_SCRIPT}" == "null" ]] && return
 	[[ "${NPM_BUILD_SCRIPT}" == "skip" ]] && return
