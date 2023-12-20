@@ -1391,8 +1391,9 @@ _compile_pnpm() {
 einfo "Building npm side"
 	epnpm run build
 	if use gtk3 ; then
+		export PATH="${S}/node_modules/.bin:${PATH}"
 einfo "Building tauri side"
-		tauri build #--debug
+		tauri build || die #--debug
 	fi
 }
 
