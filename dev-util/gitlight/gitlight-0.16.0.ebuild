@@ -495,8 +495,7 @@ NODE_SLOTS="18"
 NPM_AUDIT_FIX=0
 NPM_OFFLINE=0
 NPM_INSTALL_UNPACK_ARGS="--legacy-peer-deps"
-inherit desktop lcnr pnpm user-info xdg
-#inherit cargo npm
+inherit cargo desktop lcnr npm user-info xdg
 
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
@@ -1028,12 +1027,9 @@ https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-q
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
 
-#_SRC_URI_DISABLE="
-#$(cargo_crate_uris ${CRATES})
-#${NPM_EXTERNAL_URIS}
-#"
-
 SRC_URI="
+$(cargo_crate_uris ${CRATES})
+${NPM_EXTERNAL_URIS}
 https://github.com/colinlienard/gitlight/archive/refs/tags/gitlight-v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
@@ -1076,6 +1072,9 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" -gtk3 +html tray wayland +X r3"
 REQUIRED_USE="
+	gtk3? (
+		html
+	)
 	|| (
 		html
 		gtk3
@@ -1175,18 +1174,9 @@ PATCHES=(
 #	"${FILESDIR}/gitlight-0.16.0-login-uri.patch"
 )
 
-_pkg_setup_npm() {
+pkg_setup() {
 	npm_pkg_setup
 	npm_check_network_sandbox
-}
-
-_pkg_setup_pnpm() {
-	pnpm_pkg_setup
-	pnpm_check_network_sandbox
-}
-
-pkg_setup() {
-	_pkg_setup_pnpm
 	if use html && ! egetent group "${PN}" ; then
 eerror
 eerror "You must add the ${PN} group to the system."
@@ -1238,7 +1228,7 @@ _cargo_src_unpack() {
 	cargo_gen_config
 }
 
-_src_unpack_npm() {
+src_unpack() {
 einfo "Unpacking npm side"
 	S="${WORKDIR}/${MY_PN}-v${PV}" \
 	npm_src_unpack
@@ -1274,15 +1264,8 @@ einfo "Unpacking tauri side"
 		|| die
 }
 
-_src_unpack_pnpm() {
-	unpack ${P}.tar.gz
-	pnpm_hydrate
-	cd "${S}" || die
-	epnpm install
-}
-
-src_unpack() {
-	_src_unpack_pnpm
+get_gitlight_port() {
+	echo "${GITLIGHT_PORT:-5173}"
 }
 
 src_prepare() {
@@ -1292,9 +1275,23 @@ src_prepare() {
 #		"./src/routes/+layout.ts" \
 #		|| die
 
-#	sed -i \
-#		-e "s|pnpm build|npm run build|g" \
-#		-e "s|pnpm dev|npm run dev|g" \
+	sed -i \
+		-e "s|pnpm build|npm run build|g" \
+		-e "s|pnpm dev|npm run dev|g" \
+		"src-tauri/tauri.conf.json" \
+		|| die
+
+	sed -i -e "s|http://localhost:5173|http://localhost:$(get_gitlight_port)|g" \
+		"src-tauri/tauri.conf.json" \
+		|| die
+	sed -i -e "s|5173|$(get_gitlight_port)|g" \
+		"vite.config.ts" \
+		|| die
+
+#	sed -i -e "s|https://gitlight.app|https://localhost:$(get_gitlight_port)|g" \
+#		"src/lib/components/landing/DownloadButton.svelte" \
+#		|| die
+#	sed -i -e "s|https://gitlight.app|https://localhost:$(get_gitlight_port)|g" \
 #		"src-tauri/tauri.conf.json" \
 #		|| die
 }
@@ -1325,8 +1322,10 @@ eerror
 eerror "  # Generated from https://generate-secret.vercel.app/32"
 eerror "  AUTH_SECRET=\"<paste here>\""
 eerror
+eerror "  # Required to communicate to vite dev server:"
+eerror "  PUBLIC_SITE_URL=\"http://localhost:$(get_gitlight_port)\""
+eerror
 eerror "  # Keep these variables empty:"
-eerror "  PUBLIC_SITE_URL=\"\""
 eerror "  TAURI_PRIVATE_KEY=\"\""
 eerror "  TAURI_KEY_PASSWORD=\"\""
 eerror
@@ -1365,7 +1364,7 @@ einfo "Copying API tokens/credentials to ${S}/.env"
 	popd
 }
 
-_compile_npm() {
+src_compile() {
 einfo "Building npm side"
 	S="${WORKDIR}/${MY_PN}-v${PV}" \
 	npm_src_compile
@@ -1387,20 +1386,6 @@ einfo "Secure deleting copied tokens/credentials at ${S}/.env"
 	shred -f "${S}/.env" || die
 }
 
-_compile_pnpm() {
-einfo "Building npm side"
-	epnpm run build
-	if use gtk3 ; then
-		export PATH="${S}/node_modules/.bin:${PATH}"
-einfo "Building tauri side"
-		tauri build || die #--debug
-	fi
-}
-
-src_compile() {
-	_compile_pnpm
-}
-
 gen_wrapper_html() {
 	dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/git-light-html"
@@ -1419,7 +1404,7 @@ pushd "/opt/gitlight"
 	PID="\$!"
 	echo "PID: \${PID}"
 	sleep 5
-	xdg-open "http://localhost:5173/" &
+	xdg-open "http://localhost:$(get_gitlight_port)/" &
 	wait \$!
 popd
 cleanup
@@ -1428,12 +1413,29 @@ EOF
 
 gen_wrapper_gtk3() {
 	dodir /usr/bin
-# Fixes:
-# Failed to create a temp folder for icon: Os { code: 13, kind: PermissionDenied, message: "Permission denied" }
-cat <<EOF > "${ED}/usr/bin/git-light-gtk3"
+cat <<EOF > "${ED}/usr/bin/git-light-html"
 #!/bin/bash
+export PATH="/opt/gitlight/node_modules/.bin:\${PATH}"
 mkdir -p "\${HOME}/.cache/git-light"
-XDG_RUNTIME_DIR="\${HOME}/.cache/gitlight" git-light-bin "\$@"
+PID=""
+cleanup() {
+echo "Called cleanup"
+	kill -9 \${PID}
+}
+trap cleanup SIGINT SIGKILL SIGTERM SIGQUIT SIGHUP
+
+pushd "/opt/gitlight"
+	vite preview &
+	PID="\$!"
+	echo "PID: \${PID}"
+	sleep 5
+# Setting XDG_RUNTIME_DIR fixes:
+# Failed to create a temp folder for icon: Os { code: 13, kind: PermissionDenied, message: "Permission denied" }
+	mkdir -p "\${HOME}/.cache/git-light"
+	XDG_RUNTIME_DIR="\${HOME}/.cache/gitlight" git-light-bin "\$@"
+	wait \$!
+popd
+cleanup
 EOF
 }
 

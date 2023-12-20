@@ -16,6 +16,11 @@
 
   See ebuild for instructions to add OAuth tokens.
 
+
+  Environment variables:
+
+    GITLIGHT_PORT - port for client/server.  Default 5173.
+
   -->
   <use>
     <flag name="html">
