@@ -186,6 +186,7 @@ FFMPEG_FLAG_MAP=(
 	frei0r
 	vmaf:libvmaf
 	fribidi:libfribidi
+	glslang:libglslang
 	fontconfig
 	ladspa
 	lcms:lcms2
@@ -194,8 +195,10 @@ FFMPEG_FLAG_MAP=(
 	libtesseract
 	lv2
 	truetype:libfreetype
+	truetype:libharfbuzz
 	vidstab:libvidstab
 	rubberband:librubberband
+	shaderc:libshaderc
 	tensorflow:libtensorflow
 	zeromq:libzmq
 	zimg:libzimg
@@ -827,6 +830,9 @@ REQUIRED_USE+="
 		proprietary-codecs-disable-nc-developer
 		proprietary-codecs-disable-nc-user
 	)
+	chromium? (
+		opus
+	)
 	cuda? (
 		|| (
 			cuda-filters
@@ -865,6 +871,14 @@ REQUIRED_USE+="
 	)
 	fftools_cws2fws? (
 		zlib
+	)
+	glslang? (
+		!shaderc
+		vulkan
+	)
+	shaderc? (
+		!glslang
+		vulkan
 	)
 	mold? (
 		!nonfree
@@ -1033,7 +1047,7 @@ RDEPEND+="
 		media-libs/codec2[${MULTILIB_USEDEP}]
 	)
 	cuda? (
-		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
+		media-libs/nv-codec-headers
 	)
 	cuda-nvcc? (
 		cuda_targets_sm_60? (
@@ -1044,14 +1058,14 @@ RDEPEND+="
 		)
 	)
 	dav1d? (
-		>=media-libs/dav1d-0.4.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-0.5.0:0=[${MULTILIB_USEDEP}]
 	)
 	encode? (
 		amrenc? (
 			>=media-libs/vo-amrwbenc-0.1.2-r1[${MULTILIB_USEDEP}]
 		)
 		kvazaar? (
-			>=media-libs/kvazaar-1.2.0[${MULTILIB_USEDEP}]
+			>=media-libs/kvazaar-2.0.0[${MULTILIB_USEDEP}]
 		)
 		mp3? (
 			>=media-sound/lame-3.99.5-r1[${MULTILIB_USEDEP}]
@@ -1060,7 +1074,7 @@ RDEPEND+="
 			>=media-libs/openh264-1.4.0-r1:=[${MULTILIB_USEDEP}]
 		)
 		rav1e? (
-			>=media-video/rav1e-0.4:=[capi]
+			>=media-video/rav1e-0.5:=[capi]
 		)
 		snappy? (
 			>=app-arch/snappy-1.1.2-r1:=[${MULTILIB_USEDEP}]
@@ -1103,6 +1117,9 @@ RDEPEND+="
 	gcrypt? (
 		>=dev-libs/libgcrypt-1.6:0=[${MULTILIB_USEDEP}]
 	)
+	glslang? (
+		dev-util/glslang:=[${MULTILIB_USEDEP}]
+	)
 	gme? (
 		>=media-libs/game-music-emu-0.6.0[${MULTILIB_USEDEP}]
 	)
@@ -1128,7 +1145,7 @@ RDEPEND+="
 		virtual/jack[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
-		>=media-libs/openjpeg-2:2[${MULTILIB_USEDEP}]
+		>=media-libs/openjpeg-2.1:2[${MULTILIB_USEDEP}]
 	)
 	jpegxl? (
 		>=media-libs/libjxl-0.7.0[$MULTILIB_USEDEP]
@@ -1192,7 +1209,7 @@ RDEPEND+="
 		virtual/opencl[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
+		media-libs/libglvnd[X,${MULTILIB_USEDEP}]
 	)
 	openssl? (
 		!apache2_0? (
@@ -1207,7 +1224,7 @@ RDEPEND+="
 		>=media-libs/opus-1.0.2-r2[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
-		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP},gdbm?]
+		media-libs/libpulse[${MULTILIB_USEDEP}]
 	)
 	qsv? (
 		media-libs/oneVPL[${MULTILIB_USEDEP}]
@@ -1221,6 +1238,9 @@ RDEPEND+="
 	sdl? (
 		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads,video,wayland?,X?]
 	)
+	shaderc? (
+		media-libs/shaderc[${MULTILIB_USEDEP}]
+	)
 	sndio? (
 		media-sound/sndio:=[${MULTILIB_USEDEP}]
 	)
@@ -1231,11 +1251,14 @@ RDEPEND+="
 		>=net-libs/srt-1.3.0:=[${MULTILIB_USEDEP}]
 	)
 	ssh? (
-		>=net-libs/libssh-0.5.5:=[sftp,${MULTILIB_USEDEP}]
+		>=net-libs/libssh-0.6.0:=[sftp,${MULTILIB_USEDEP}]
 	)
 	svg? (
 		gnome-base/librsvg:2=[${MULTILIB_USEDEP}]
 		x11-libs/cairo[${MULTILIB_USEDEP}]
+	)
+	nvenc? (
+		>=media-libs/nv-codec-headers-11.1.5.3
 	)
 	svt-av1? (
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
@@ -1245,6 +1268,7 @@ RDEPEND+="
 	)
 	truetype? (
 		>=media-libs/freetype-2.5.0.1:2[${MULTILIB_USEDEP}]
+		media-libs/harfbuzz:=[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
 		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X?]
@@ -1267,7 +1291,7 @@ RDEPEND+="
 		>=media-libs/libvpx-1.4.0:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.2.189:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-1.3.255:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
@@ -1279,7 +1303,7 @@ RDEPEND+="
 		!media-libs/libpostproc
 	)
 	zeromq? (
-		>=net-libs/zeromq-4.1.6
+		>=net-libs/zeromq-4.2.1
 	)
 	zimg? (
 		>=media-libs/zimg-2.7.4:=[${MULTILIB_USEDEP}]
@@ -1301,6 +1325,9 @@ DEPEND+="
 	)
 	v4l? (
 		sys-kernel/linux-headers
+	)
+	vulkan? (
+		>=dev-util/vulkan-headers-1.3.255
 	)
 "
 
@@ -1361,20 +1388,22 @@ S_orig="${WORKDIR}/${P/_/-}"
 N_SAMPLES=1
 
 PATCHES=(
-	"${FILESDIR}/chromium-r1.patch"
-	"${FILESDIR}/${P}-DECLARE_ALIGNED.patch"
+	"${FILESDIR}/chromium-r2.patch"
+	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
+	"${FILESDIR}/${PN}-6.1-0001-avcodec-fft-Use-av_mallocz-to-avoid-invalid-free-uni.patch"
+	"${FILESDIR}/${PN}-6.1-0002-avcoded-fft-Fix-memory-leak-if-ctx2-is-used.patch"
+	"${FILESDIR}/${PN}-6.1-0003-avcodec-decode-validate-hw_frames_ctx-when-AVHWAccel.patch"
+	"${FILESDIR}/${PN}-6.1-0004-lavc-dvdsubenc-only-check-canvas-size-when-it-is-act.patch"
+	"${FILESDIR}/${PN}-6.1-0005-lavc-Makefile-build-vulkan-decode-code-if-vulkan_av1.patch"
+	"${FILESDIR}/${PN}-6.1-0006-hwcontext_vulkan-guard-unistd.h-include.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
-	"${FILESDIR}/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
+	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/libavutil/avconfig.h
 )
-
-build_separate_libffmpeg() {
-	use opencl
-}
 
 get_av_device_ids() {
 	local types=(
@@ -1789,6 +1818,7 @@ src_prepare() {
 	# will ignore user's preference.
 	sed -i -e '/check_cflags -fdiagnostics-color=auto/d' configure || die
 
+	ln -snf "${FILESDIR}"/chromium.c chromium.c || die
 	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> Makefile || die
 
 einfo "Copying sources, please wait"
@@ -2139,6 +2169,12 @@ eerror
 		use ${i%:*} || myconf+=( --disable-${i#*:} )
 	done
 
+	# Bug #917277, #917278
+	myconf+=(
+		--disable-dotprod
+		--disable-i8mm
+	)
+
 	if use pic ; then
 		myconf+=( --enable-pic )
 		# disable asm code if PIC is required
@@ -2159,9 +2195,20 @@ eerror
 	done
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
+	#if [[ ${ABI} != x86 ]] && is-flagq "-flto*"; then
+	#	# Respect -flto value, e.g -flto=thin
+	#	local v="$(get-flag flto)"
+	#	if [[ -n ${v} ]] ; then
+	#		myconf+=( "--enable-lto=${v}" )
+	#	else
+	#		myconf+=( "--enable-lto" )
+	#	fi
+	#fi
+	#filter-lto
 
 	# Mandatory configuration
 	myconf=(
+		--disable-libaribcaption # libaribcaption is not packaged (yet?)
 		--enable-avfilter
 		--disable-stripping
 		# This is only for hardcoded cflags; those are used in configure checks that may
@@ -2267,20 +2314,6 @@ einfo
 		${EXTRA_FFMPEG_CONF}
 	echo "${@}"
 	"${@}" || die
-
-	if multilib_is_native_abi && use chromium && build_separate_libffmpeg ; then
-einfo "Configuring for Chromium"
-		mkdir -p ../chromium || die
-		pushd ../chromium >/dev/null || die
-			set -- "${@}" \
-				--disable-shared \
-				--enable-static \
-				--enable-pic \
-				--disable-opencl
-			echo "${@}"
-			"${@}" || die
-		popd >/dev/null || die
-	fi
 }
 
 _adecode() {
@@ -4016,16 +4049,8 @@ _src_compile() {
 			fi
 		done
 
-		if use chromium; then
-			if build_separate_libffmpeg; then
-einfo "Compiling for Chromium"
-				pushd ../chromium >/dev/null || die
-					emake V=1 libffmpeg
-				popd >/dev/null || die
-			else
-				emake V=1 libffmpeg
-			fi
-		fi
+		use chromium &&
+			emake V=1 libffmpeg
 	fi
 }
 
@@ -4140,20 +4165,8 @@ einfo "Running dobin tools/${i}$(get_exeext)"
 			fi
 		done
 
-		if use chromium; then
-			if build_separate_libffmpeg; then
-einfo "Installing for Chromium"
-				pushd ../chromium >/dev/null || die
-					emake V=1 DESTDIR="${D}" install-libffmpeg
-				popd >/dev/null || die
-			else
-				emake V=1 DESTDIR="${D}" install-libffmpeg
-
-				# When not built separately, libffmpeg has no code of
-				# its own so this QA check raises a false positive.
-				QA_FLAGS_IGNORED+=" usr/$(get_libdir)/chromium/.*"
-			fi
-		fi
+		use chromium &&
+			emake V=1 DESTDIR="${D}" install-libffmpeg
 	fi
 }
 

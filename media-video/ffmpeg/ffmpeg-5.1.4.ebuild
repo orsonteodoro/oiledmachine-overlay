@@ -13,7 +13,7 @@ EAPI=8
 # changes its ABI then this package will be rebuilt needlessly. Hence, such a
 # package is free _not_ to := depend on FFmpeg but I would strongly encourage
 # doing so since such a case is unlikely.
-FFMPEG_SUBSLOT=56.58.58
+FFMPEG_SUBSLOT=57.59.59
 
 SCM=""
 if [ "${PV#9999}" != "${PV}" ] ; then
@@ -119,8 +119,7 @@ FFMPEG_FLAG_MAP=(
 	+iconv
 	libxml2
 	lzma
-	+network
-	opencl
+	+network opencl
 	openssl
 	+postproc
 	samba:libsmbclient
@@ -156,6 +155,7 @@ FFMPEG_FLAG_MAP=(
 	+dav1d:libdav1d
 	fdk:libfdk-aac
 	jpeg2k:libopenjpeg
+	jpegxl:libjxl
 	bluray:libbluray
 	gme:libgme
 	gsm:libgsm
@@ -189,12 +189,15 @@ FFMPEG_FLAG_MAP=(
 	fontconfig
 	glslang:libglslang
 	ladspa
+	lcms:lcms2
 	libass
+	libplacebo
 	libtesseract
 	lv2
 	truetype:libfreetype
 	vidstab:libvidstab
 	rubberband:librubberband
+	shaderc:libshaderc
 	tensorflow:libtensorflow
 	zeromq:libzmq
 	zimg:libzimg
@@ -202,8 +205,8 @@ FFMPEG_FLAG_MAP=(
 	# libswresample options
 	libsoxr
 
-	# Threads
-	# we only support pthread for now but FFmpeg supports more.
+	# Threads.
+	# We only support pthread for now but FFmpeg supports more.
 	+threads:pthreads
 )
 
@@ -856,9 +859,6 @@ REQUIRED_USE+="
 		cuda
 		cuda-nvcc
 	)
-	glslang? (
-		vulkan
-	)
 	gnutls? (
 		!openssl
 	)
@@ -869,6 +869,11 @@ REQUIRED_USE+="
 		zlib
 	)
 	glslang? (
+		!shaderc
+		vulkan
+	)
+	shaderc? (
+		!glslang
 		vulkan
 	)
 	mold? (
@@ -898,6 +903,9 @@ REQUIRED_USE+="
 			trainer-video-lossless
 			trainer-video-lossless-quick
 		)
+	)
+	proprietary-codecs? (
+		re-codecs
 	)
 	proprietary-codecs-disable? (
 		!amr
@@ -940,10 +948,10 @@ REQUIRED_USE+="
 	trainer-audio-cbr? (
 		pgo
 	)
-	trainer-audio-vbr? (
+	trainer-audio-lossless? (
 		pgo
 	)
-	trainer-audio-lossless? (
+	trainer-audio-vbr? (
 		pgo
 	)
 	trainer-av-streaming? (
@@ -1135,6 +1143,12 @@ RDEPEND+="
 	jpeg2k? (
 		>=media-libs/openjpeg-2:2[${MULTILIB_USEDEP}]
 	)
+	jpegxl? (
+		>=media-libs/libjxl-0.7.0[$MULTILIB_USEDEP]
+	)
+	lcms? (
+		>=media-libs/lcms-2.13:2[$MULTILIB_USEDEP]
+	)
 	libaom? (
 		>=media-libs/libaom-1.0.0-r1:=[${MULTILIB_USEDEP}]
 	)
@@ -1142,7 +1156,7 @@ RDEPEND+="
 		>=media-libs/aribb24-1.0.3-r2[${MULTILIB_USEDEP}]
 	)
 	libass? (
-		>=media-libs/libass-0.10.2:=[${MULTILIB_USEDEP}]
+		>=media-libs/libass-0.11.0:=[${MULTILIB_USEDEP}]
 	)
 	libcaca? (
 		>=media-libs/libcaca-0.99_beta18-r1[${MULTILIB_USEDEP}]
@@ -1152,6 +1166,9 @@ RDEPEND+="
 	)
 	libilbc? (
 		>=media-libs/libilbc-2[${MULTILIB_USEDEP}]
+	)
+	libplacebo? (
+		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP]
 	)
 	librtmp? (
 		>=media-video/rtmpdump-2.4_p20131018[${MULTILIB_USEDEP}]
@@ -1188,7 +1205,7 @@ RDEPEND+="
 		virtual/opencl[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
+		media-libs/libglvnd[X,${MULTILIB_USEDEP}]
 	)
 	openssl? (
 		!apache2_0? (
@@ -1203,7 +1220,7 @@ RDEPEND+="
 		>=media-libs/opus-1.0.2-r2[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
-		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP},gdbm?]
+		media-libs/libpulse[${MULTILIB_USEDEP}]
 	)
 	qsv? (
 		media-libs/intel-mediasdk[${MULTILIB_USEDEP}]
@@ -1216,6 +1233,9 @@ RDEPEND+="
 	)
 	sdl? (
 		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads,video,wayland?,X?]
+	)
+	shaderc? (
+		media-libs/shaderc[${MULTILIB_USEDEP}]
 	)
 	sndio? (
 		media-sound/sndio:=[${MULTILIB_USEDEP}]
@@ -1234,7 +1254,7 @@ RDEPEND+="
 		x11-libs/cairo[${MULTILIB_USEDEP}]
 	)
 	svt-av1? (
-		>=media-libs/svt-av1-0.8.4[${MULTILIB_USEDEP}]
+		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
 	)
 	tensorflow? (
 		sci-libs/tensorflow
@@ -1253,7 +1273,7 @@ RDEPEND+="
 		>=media-libs/vidstab-1.1.0[${MULTILIB_USEDEP}]
 	)
 	vmaf? (
-		media-libs/libvmaf[${MULTILIB_USEDEP}]
+		>=media-libs/libvmaf-2.0.0[${MULTILIB_USEDEP}]
 	)
 	vorbis? (
 		>=media-libs/libvorbis-1.3.3-r1[${MULTILIB_USEDEP}]
@@ -1263,13 +1283,16 @@ RDEPEND+="
 		>=media-libs/libvpx-1.4.0:=[${MULTILIB_USEDEP}]
 	)
 	vulkan? (
-		>=media-libs/vulkan-loader-1.1.97:=[${MULTILIB_USEDEP}]
+		>=media-libs/vulkan-loader-1.2.189:=[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.4:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libXv-1.0.10[${MULTILIB_USEDEP}]
+	)
+	postproc? (
+		!media-libs/libpostproc
 	)
 	zeromq? (
 		>=net-libs/zeromq-4.1.6
@@ -1317,12 +1340,11 @@ BDEPEND+="
 		sys-devel/mold
 	)
 	test? (
-		net-misc/wget
-		sys-devel/bc
+		net-misc/wget sys-devel/bc
 	)
 	trainer-av-streaming? (
 		vaapi? (
-			>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},X,drm(+)]
+			>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X]
 			media-video/libva-utils[vainfo]
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
@@ -1354,25 +1376,12 @@ S="${WORKDIR}/${P/_/-}"
 S_orig="${WORKDIR}/${P/_/-}"
 N_SAMPLES=1
 
-SRC_URI+="
-https://github.com/FFmpeg/FFmpeg/commit/c6fdbe26ef30fff817581e5ed6e078d96111248a.patch
-	-> ${PN}-c6fdbe2.patch
-"
-
-# c6fdbe2 - configure: fix SDL2 version check for pkg_config fallback
-# e5163b1 - configure: extend SDL check to accept all 2.x versions
-
 PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
-	"${FILESDIR}/${PN}-5.0-backport-ranlib-build-fix.patch"
-	"${FILESDIR}/${PN}-4.4.3-clang-14-ff_seek_frame_binary-crash.patch"
-	"${FILESDIR}/${PN}-4.4.3-get_cabac_inline_x86-32-bit.patch"
-	"${FILESDIR}/${PN}-4.4.4-wint-conversion-vulkan.patch"
-	"${FILESDIR}/${PN}-4.4.4-fix-build-svt-av1-1.5.0.patch"
-	"${FILESDIR}/${PN}-5.1.3-binutils-2.41.patch"
-	"${DISTDIR}/${PN}-c6fdbe2.patch"
-	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"				# Added by oiledmachine-overlay
-	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"		# Added by oiledmachine-overlay
+	"${FILESDIR}/${PN}-5.1.2-get_cabac_inline_x86-32-bit.patch"
+	"${FILESDIR}/${PN}-6.0-libplacebo-remove-deprecated-field.patch"
+	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
+	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 )
 
@@ -1668,13 +1677,12 @@ ewarn
 		sleep 15
 	fi
 
-	# The GLFW does not allow for software rendering.
-	# This is why hardware rendering is required.
 	if use trainer-av-streaming \
 		&& ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
 eerror
-eerror "You must disable the pid-sandbox for USE=trainer-av-streaming"
-eerror "for screencast PGO/BOLT training."
+eerror "You must disable the pid-sandbox and ipc-sandbox on a per-package"
+eerror "level for the USE=trainer-av-streaming for screencast PGO/BOLT"
+eerror "training."
 eerror
 eerror "pid-sandbox is required for checking if X11 is being used."
 eerror "ipc-sandbox is required for x11grab."
@@ -1719,6 +1727,20 @@ eerror
 		die
 	fi
 
+	# ffmpeg[chromaprint] depends on chromaprint, and chromaprint[tools] depends on ffmpeg.
+	# May cause breakage while updating, #862996, #625210, #833821.
+	if has_version media-libs/chromaprint[tools] && use chromaprint ; then
+ewarn
+ewarn "You have media-libs/chromaprint installed with 'tools' USE flag, which "
+ewarn "links to ffmpeg, and you have enabled 'chromaprint' USE flag for ffmpeg, "
+ewarn "which links to chromaprint. This may cause issues while rebuilding ffmpeg."
+ewarn
+ewarn "If your build fails to 'ERROR: chromaprint not found', rebuild chromaprint "
+ewarn "without the 'tools' use flag first, then rebuild ffmpeg, and then finally enable "
+ewarn "'tools' USE flag for chromaprint. See #862996."
+ewarn
+	fi
+
 	if ! use pic && is-flagq '-flto*' ; then
 ewarn
 ewarn "USE=pic may required for LTO"
@@ -1752,10 +1774,10 @@ verify_subslot() {
 	local c0=$(grep -e "LIBAVUTIL_VERSION_MAJOR" "${S}/libavutil/version.h" \
 		| head -n 1 \
 		| awk '{print $3}')
-	local c1=$(grep -r -e "LIBAVCODEC_VERSION_MAJOR" "${S}/libavcodec/version.h" \
+	local c1=$(grep -r -e "LIBAVCODEC_VERSION_MAJOR" "${S}/libavcodec/version_major.h" \
 		| head -n 1 \
 		| awk '{print $3}')
-	local c2=$(grep -r -e "LIBAVFORMAT_VERSION_MAJOR" "${S}/libavformat/version.h" \
+	local c2=$(grep -r -e "LIBAVFORMAT_VERSION_MAJOR" "${S}/libavformat/version_major.h" \
 		| head -n 1 \
 		| awk '{print $3}')
 	local actual_subslot="${c0}.${c1}.${c2}"
@@ -1775,8 +1797,6 @@ src_prepare() {
 	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
 		export revision=git-N-${FFMPEG_REVISION}
 	fi
-
-	eapply "${FILESDIR}/vmaf-models-default-path.patch"
 
 	default
 
@@ -2126,7 +2146,7 @@ eerror
 
 	# (temporarily) disable non-multilib deps
 	if ! multilib_is_native_abi; then
-		for i in librav1e libzmq ; do
+		for i in librav1e libmfx libzmq ; do
 			myconf+=( --disable-${i} )
 		done
 	fi
@@ -2163,7 +2183,6 @@ eerror
 	# Mandatory configuration
 	myconf=(
 		--enable-avfilter
-		--enable-avresample
 		--disable-stripping
 		# This is only for hardcoded cflags; those are used in configure checks that may
 		# interfere with proper detections, bug #671746 and bug #645778
@@ -2201,6 +2220,13 @@ eerror
 		$(multilib_native_enable manpages)
 	)
 
+	# Fixed in 5.0.1? Waiting for verification from someone who hit the issue.
+	if use arm || use ppc || use mips || [[ ${CHOST} == *i486* ]] ; then
+		# bug #782811
+		# bug #790590
+		extra_libs+=( --extra-libs="$(test-flags-CCLD -latomic)" )
+	fi
+
 	local static_args=()
 	if [[ "${lib_type}" == "static" ]] ; then
 		static_args=( --enable-static --disable-shared )
@@ -2226,7 +2252,6 @@ eerror
 			--nvccflags="${FFMPEG_NVCCFLAGS}"
 		)
 	fi
-
 
 einfo
 	export CC=$(tc-getCC)
@@ -3717,6 +3742,7 @@ ewarn "Skipping ${id}"
 			2>/dev/null \
 			1>/dev/null \
 		; then
+ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
 			continue
 		fi
 
@@ -3809,6 +3835,7 @@ ewarn "Skipping ${id}"
 			2>/dev/null \
 			1>/dev/null \
 		; then
+ewarn "Skipping ${id} with path ${audio_sample_path}.  Decoding not possible or bad file."
 			continue
 		fi
 

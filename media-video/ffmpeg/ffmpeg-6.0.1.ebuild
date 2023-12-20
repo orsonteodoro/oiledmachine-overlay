@@ -13,7 +13,7 @@ EAPI=8
 # changes its ABI then this package will be rebuilt needlessly. Hence, such a
 # package is free _not_ to := depend on FFmpeg but I would strongly encourage
 # doing so since such a case is unlikely.
-FFMPEG_SUBSLOT=57.59.59
+FFMPEG_SUBSLOT=58.60.60
 
 SCM=""
 if [ "${PV#9999}" != "${PV}" ] ; then
@@ -163,7 +163,7 @@ FFMPEG_FLAG_MAP=(
 	mmal
 	modplug:libmodplug
 	opus:libopus
-	qsv:libmfx
+	qsv:libvpl
 	libilbc
 	librtmp
 	ssh:libssh
@@ -393,7 +393,7 @@ alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs test v4l wayland r14
++re-codecs sndio sr static-libs test v4l wayland r13
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1033,7 +1033,7 @@ RDEPEND+="
 		media-libs/codec2[${MULTILIB_USEDEP}]
 	)
 	cuda? (
-		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
+		media-libs/nv-codec-headers
 	)
 	cuda-nvcc? (
 		cuda_targets_sm_60? (
@@ -1192,7 +1192,7 @@ RDEPEND+="
 		virtual/opencl[${MULTILIB_USEDEP}]
 	)
 	opengl? (
-		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
+		media-libs/libglvnd[X,${MULTILIB_USEDEP}]
 	)
 	openssl? (
 		!apache2_0? (
@@ -1207,10 +1207,10 @@ RDEPEND+="
 		>=media-libs/opus-1.0.2-r2[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? (
-		>=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP},gdbm?]
+		media-libs/libpulse[${MULTILIB_USEDEP}]
 	)
 	qsv? (
-		media-libs/intel-mediasdk[${MULTILIB_USEDEP}]
+		media-libs/oneVPL[${MULTILIB_USEDEP}]
 	)
 	rubberband? (
 		>=media-libs/rubberband-1.8.1-r1[${MULTILIB_USEDEP}]
@@ -1362,12 +1362,10 @@ N_SAMPLES=1
 
 PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
-	"${FILESDIR}/${PN}-5.1.2-get_cabac_inline_x86-32-bit.patch"
+	"${FILESDIR}/${PN}-6.0-libplacebo-remove-deprecated-field.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
-	"${FILESDIR}/${PN}-5.1.3-fix-build-svt-av1-1.5.0.patch"
-	"${FILESDIR}/${PN}-5.1.3-svt-av1.patch"
-	"${FILESDIR}/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
+	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -2161,6 +2159,9 @@ eerror
 	done
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
+	# LTO support, bug #566282, bug #754654, bug #772854
+	#[[ ${ABI} != x86 ]] && is-flagq "-flto*" && myconf+=( "--enable-lto" )
+	#filter-lto
 
 	# Mandatory configuration
 	myconf=(
