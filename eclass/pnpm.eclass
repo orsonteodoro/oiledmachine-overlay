@@ -2,7 +2,7 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: npm.eclass
+# @ECLASS: pnpm.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
@@ -32,9 +32,7 @@ _pnpm_set_globals() {
 _pnpm_set_globals
 unset -f _pnpm_set_globals
 
-if [[ "${USE_PNPM:-0}" != "1" ]] ; then
-	:;
-elif [[ -n "${PNPM_SLOT}" ]] ; then
+if [[ -n "${PNPM_SLOT}" ]] ; then
 	BDEPEND+="
 		sys-apps/pnpm:${PNPM_SLOT}
 	"
@@ -70,8 +68,7 @@ epnpm() {
 # @DESCRIPTION:
 # Load pnpm in the sandbox.
 pnpm_hydrate() {
-	[[ "${USE_PNPM:-0}" != "1" ]] && return
-# Cannot use pnpm with distfiles yet, so always online.
+# Cannot use pnpm for offline install with distfiles yet, so always online.
 # This is why pnpm is avoided.
 	npm_check_network_sandbox
 	if [[ "${NPM_OFFLINE:-1}" == "0" ]] ; then
@@ -153,9 +150,8 @@ eerror
 
 # @FUNCTION: pnpm_src_unpack
 # @DESCRIPTION:
-# Unpacks a npm application.
+# Unpacks a pnpm application.
 pnpm_src_unpack() {
-	npm_hydrate
 	pnpm_hydrate
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	epnpm install
@@ -163,7 +159,7 @@ pnpm_src_unpack() {
 
 # @FUNCTION: pnpm_src_compile
 # @DESCRIPTION:
-# Builds a npm application.
+# Builds a pnpm application.
 pnpm_src_compile() {
 	epnpm run build
 }
