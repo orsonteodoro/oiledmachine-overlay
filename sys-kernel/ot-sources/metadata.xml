@@ -2894,7 +2894,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Live broadcasting:  c2tcp, bbr
       On demand upload:  pcc, any delay based TCC
       Social games:  vegas
-      Video streaming while downloading:  lp
+      Downloading while video streaming:  lp
       Web browsing:  vegas
 
     Recommened as default choice (sorted by high to low throughput)
