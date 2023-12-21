@@ -3611,8 +3611,23 @@ eerror
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
 		fi
 	elif [[ \
-		   "${work_profile}" == "dvr" \
+		   "${work_profile}" == "http-server" \
+	]] ; then
+	# vegas for production mode
+	# bbr for maintenance mode
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr3"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr2"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr"}
+		fi
+	elif [[ \
+		   "${work_profile}" == "distributed-computing-server" \
+		|| "${work_profile}" == "dvr" \
+		|| "${work_profile}" == "file-server" \
 		|| "${work_profile}" == "jukebox" \
+		|| "${work_profile}" == "media-server" \
 		|| "${work_profile}" == "pi-audio-player" \
 		|| "${work_profile}" == "pi-video-player" \
 		|| "${work_profile}" == "pi-web-browser" \
@@ -8902,6 +8917,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-smartphone\" is deprecated.  Use smartphon
 	elif [[ "${work_profile}" == "video-tablet" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instead."
 		die
+	elif [[ "${work_profile}" == "web-server" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distributed-computing-server, http-server, file-server, media-server instead."
+		die
 	fi
 
 	if [[ \
@@ -9172,8 +9190,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instea
 	elif [[ \
 		   "${work_profile}" == "distributed-computing-server" \
 		|| "${work_profile}" == "file-server" \
+		|| "${work_profile}" == "http-server" \
 		|| "${work_profile}" == "media-server" \
-		|| "${work_profile}" == "web-server" \
 	]] ; then
 		if [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
@@ -9189,7 +9207,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instea
 		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		if [[ \
-			   "${work_profile}" == "web-server" \
+			   "${work_profile}" == "http-server" \
 			|| "${work_profile}" == "distributed-computing-server" \
 		]] ; then
 			ot-kernel_iosched_max_tps
@@ -12088,8 +12106,6 @@ einfo "Installing iosched script settings"
 
 			local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
 
-
-
 			_tcc_intra_dc() {
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
 					tcc="dctcp"
@@ -12137,10 +12153,10 @@ einfo "Installing iosched script settings"
 			_tcc_high_bdp() {
 				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
 					tcc="htcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-					tcc="bic"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
 					tcc="cubic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+					tcc="bic"
 				else
 					tcc="${default_tcca}"
 				fi
@@ -12189,9 +12205,7 @@ einfo "Installing iosched script settings"
 
 			_tcc_hs_realtime() {
 				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then
-					tcc="c2tcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
 					tcc="bbr3"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 					tcc="bbr"
@@ -12208,8 +12222,22 @@ einfo "Installing iosched script settings"
 
 			_tcc_hs_throughput() {
 				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+					tcc="westwood"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+					tcc="hstcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+					tcc="illinois"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+					tcc="cubic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+					tcc="htcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+					tcc="hybla"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
 					tcc="bic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+					tcc="reno"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
 					tcc="bbr3"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
@@ -12218,16 +12246,8 @@ einfo "Installing iosched script settings"
 					tcc="bbr2"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
 					tcc="yeah"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "scalable" ]] ; then
-					tcc="scalable"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-					tcc="cubic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-					tcc="htcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-					tcc="hstcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+					tcc="veno"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 					tcc="vegas"
 				else
@@ -12400,32 +12420,30 @@ einfo "Installing iosched script settings"
 					tcc="pcc"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
 					tcc="westwood"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-					tcc="hybla"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-					tcc="reno"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
 					tcc="hstcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
-					tcc="veno"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
 					tcc="illinois"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-					tcc="htcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-					tcc="bic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
-					tcc="yeah"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
 					tcc="cubic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+					tcc="htcp"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+					tcc="hybla"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+					tcc="bic"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+					tcc="reno"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
 					tcc="bbr3"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
 					tcc="bbr"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
 					tcc="bbr2"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "nv" ]] ; then
-					tcc="nv"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+					tcc="yeah"
+				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+					tcc="veno"
 				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
 					tcc="vegas"
 				else

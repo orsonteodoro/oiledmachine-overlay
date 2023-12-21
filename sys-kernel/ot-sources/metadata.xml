@@ -2831,7 +2831,7 @@ unset OT_KERNEL_PRIVATE_KEY
       c2tcp     | Lowest latencies and lowest jitter
       cdg       | Throughput with latency improvement
       clear     | Do not add any (Ebuild only)
-      dctcp     | High throughput and low cap datacenter low-latency
+      dctcp     | High throughput and low cap data center low-latency
                 | High latency for KiB RPC payloads
       deepcc    | Throughput, optimized BBR, Cubic, Illinois, Westwood
                 | Tensorflow [heavy dependency], high memory footprint
@@ -2839,7 +2839,7 @@ unset OT_KERNEL_PRIVATE_KEY
       hstcp     | Throughput
       htcp      | Throughput and internal fairness for LFNs (Large Fat Networks) [ADSL2+, cable, or larger]
       hybla     | Throughput over satellite
-      illinois  | Throughput between inter datacenters
+      illinois  | Throughput between inter data centers
       lp        | Full bandwidth utilization
                 | May studder sound
       nv        | RPC goodput and low latency for KiB payloads
@@ -2884,8 +2884,8 @@ unset OT_KERNEL_PRIVATE_KEY
     Recommendations:
 
       Audio streaming:  bbr
-      Datacenter - dctcp, bbr
-      Dedicated large downloads:  cubic, hybla
+      Data center - dctcp, bbr
+      Dedicated large downloads:  See recommended default choice section below excluding vegas
       distcc on LAN:  vegas
       Gaming with VoIP:  bbr
       Gaming without VoIP:  vegas
@@ -2895,7 +2895,16 @@ unset OT_KERNEL_PRIVATE_KEY
       Social games:  vegas
       Video streaming while downloading:  lp
       Web browsing:  vegas
-      
+
+    Recommened as default choice (sorted by high to low throughput)
+
+      Inter data center:  illinois
+      Intra data center:  dctcp, bbr
+      High BDP:  htcp, bic, cubic
+      Satellite:  hybla
+      Wireless:  westwood, veno, vegas
+
+      * The left most value in OT_KERNEL_TCP_CONGESTION_CONTROLS makes it the default.
       * bbr means any version.
       * Use the tcca script to change these.
 
@@ -2960,20 +2969,20 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_REALTIME - For realtime servers at home.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HS_THROUGHPUT - For throughput servers at home.
 
-    Intra datacenter refined:
+    Intra data center refined:
 
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_FAIR - For fair low capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_REALTIME - For realtime low capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_THROUGHPUT - For throughput low capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_FAIR - For fair mid capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_REALTIME - For realtime mid capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_THROUGHPUT - For throughput mid capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_FAIR - For fair high capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_REALTIME - For realtime high capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_THROUGHPUT - For throughput high capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_FAIR - For fair ultra capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_REALTIME - For realtime ultra capacity datacenter.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_THROUGHPUT - For throughput ultra capacity datacenter.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_FAIR - For fair low capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_REALTIME - For realtime low capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_LCDC_THROUGHPUT - For throughput low capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_FAIR - For fair mid capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_REALTIME - For realtime mid capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_MCDC_THROUGHPUT - For throughput mid capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_FAIR - For fair high capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_REALTIME - For realtime high capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HCDC_THROUGHPUT - For throughput high capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_FAIR - For fair ultra capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_REALTIME - For realtime ultra capacity data center.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_UCDC_THROUGHPUT - For throughput ultra capacity data center.
 
     UCDC - ultra cap data center O(100,000) - top 500 supercomputers
     HCDC - high cap data center O(10,000) - big tech
@@ -2983,8 +2992,8 @@ unset OT_KERNEL_PRIVATE_KEY
     General cases:
 
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_HIGH_BDP - For high BDP networks.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC - For inside datacenters.
-    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC - For between datacenters.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTRA_DC - For inside data centers.
+    OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INTER_DC - For between data centers.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE - For satellite networks.
     OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS - For wireless networks.
 
@@ -3083,6 +3092,7 @@ unset OT_KERNEL_PRIVATE_KEY
       greenest-hpc
       greenest-pc
       hpc
+      http-server
       realtime-hpc
       jukebox
       laptop
@@ -3115,7 +3125,6 @@ unset OT_KERNEL_PRIVATE_KEY
       touchscreen-laptop
       video-conferencing
       voip
-      web-server
       workstation
 
     Notes:
