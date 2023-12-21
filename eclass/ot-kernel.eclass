@@ -2301,6 +2301,8 @@ ewarn
 ewarn "Expected version:  ${CLEAR_LINUX_PATCHES_VER%-*}"
 ewarn "Actual version:  ${PV}"
 ewarn
+ewarn "The patchset estimated bump is 2-7 days after the point release."
+ewarn
 	fi
 }
 
