@@ -1177,5 +1177,5 @@ pkg_postrm() {
 # UK audio podcast(s):  pass with ffmpeg 4.4.x with 1.2.8.923, 1.2.13.661
 # video podcasts:  fail
 # typical songs:  pass
-# openrc:  fail ; blank window on start, socket warnings
+# openrc:  fail ; blank window on start, socket warnings.  seatd sets wrong owner for /var/run/user/$(id -u)
 # systemd:  pass
