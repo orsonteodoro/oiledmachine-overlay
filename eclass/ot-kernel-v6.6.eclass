@@ -250,6 +250,7 @@ tresor_x86_64-256-bit-key-support zen-sauce
 "
 
 REQUIRED_USE+="
+	!prjc
 	bbrv2? (
 		!bbrv3
 	)
