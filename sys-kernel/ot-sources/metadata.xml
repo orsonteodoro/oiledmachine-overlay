@@ -2885,16 +2885,16 @@ unset OT_KERNEL_PRIVATE_KEY
     Recommendations:
 
       Audio streaming:  bbr
+      Big data HPC - dctcp
       Data center - dctcp, bbr
       Dedicated large downloads:  See recommended default choice section below excluding vegas
+      Downloading while video streaming:  lp
       distcc on LAN:  vegas
       Gaming with VoIP:  bbr
       Gaming without VoIP:  vegas
-      Big data HPC - dctcp
       Live broadcasting:  c2tcp, bbr
       On demand upload:  pcc, any delay based TCC
       Social games:  vegas
-      Downloading while video streaming:  lp
       Web browsing:  vegas
 
     Recommened as default choice (sorted by high to low throughput)
