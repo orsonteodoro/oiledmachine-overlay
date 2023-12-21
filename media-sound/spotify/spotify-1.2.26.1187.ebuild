@@ -297,6 +297,7 @@ RDEPEND+="
 	>=net-misc/curl-7.88.1[ssl,gnutls]
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
 	>=x11-misc/xdg-utils-1.1.1
+	>=sys-apps/systemd-252.5
 	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/glibc-${GLIBC_PV}
 	X? (
@@ -1168,10 +1169,13 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.13.661 (20230712) with kernel 6.1.38
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.22.982 (20230712) ; Sorting playlists by creator is broken.
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.25.1011 (20231123) ; Sorting playlists by creator is broken.
+# OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.26.1187 (20231221) ; Sorting playlists by creator is broken.
 # X:  pass
 # wayland:  pass
 # audio podcasts:  pass
 # emoji render:  pass
 # UK audio podcast(s):  pass with ffmpeg 4.4.x with 1.2.8.923, 1.2.13.661
-# video podcasts:  pass
+# video podcasts:  fail
 # typical songs:  pass
+# openrc:  fail ; blank window on start, socket warnings
+# systemd:  pass
