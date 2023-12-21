@@ -2872,7 +2872,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
         https://github.com/torvalds/linux/blob/master/net/ipv4/Kconfig#L682
 
-      The first option listed is the fallback default.
+      The left most choice is the default, and the values listed overrides the
+      fallback values.
 
       The OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_* can be used to select
       the secondary flow.  For example, one may need to increase the
