@@ -11,7 +11,7 @@ RC_PV="rc6" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.7
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-EBUILD_REV="r5"
+EBUILD_REV="r6"
 GENPATCHES_VER="live"
 PATCH_PROJC_VER="6.5-r0"
 PATCH_RT_VER="6.7-rc5-rt5"
