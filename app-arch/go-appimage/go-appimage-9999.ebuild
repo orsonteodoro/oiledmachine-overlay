@@ -74,7 +74,7 @@ THIRD_PARTY_LICENSES="
 	MIT
 	MPL-2.0
 	W3C-Test-Suite-Licence
-	force-musl? (
+	musl? (
 		(
 			Apache-2.0
 			Apache-2.0-with-LLVM-exceptions
@@ -171,50 +171,48 @@ LICENSE="
 
 # Static executables follow below
 # aid = included in appimaged ; ait = included in appimagetool
-# LICENSE is already handled and accepted in other packages when
-# system-binaries USE is enabled.
-LICENSE+=" !system-binaries? ( OPENLDAP GPL-2 LGPL-2.1 )" # appstreamcli # ait
-LICENSE+=" !system-binaries? ( BSD BSD-2 BSD-4 public-domain )" # libarchive (bsdtar) aid
-LICENSE+=" !system-binaries? ( GPL-2 )" # squashfs-tools ait aid
-LICENSE+=" !system-binaries? ( GPL-2+ )" # desktop-file-utils ait
-LICENSE+=" !system-binaries? ( GPL-3 )" # patchelf # ait
-LICENSE+=" !system-binaries? ( all-rights-reserved MIT )" # \
+# LICENSE is already handled and accepted in other packages when the musl USE
+# flag is disabled.
+LICENSE+=" musl? ( OPENLDAP GPL-2 LGPL-2.1 )" # appstreamcli # ait
+LICENSE+=" musl? ( BSD BSD-2 BSD-4 public-domain )" # libarchive (bsdtar) aid
+LICENSE+=" musl? ( GPL-2 )" # squashfs-tools ait aid
+LICENSE+=" musl? ( GPL-2+ )" # desktop-file-utils ait
+LICENSE+=" musl? ( GPL-3 )" # patchelf # ait
+LICENSE+=" musl? ( all-rights-reserved MIT )" # \
 # The runtime archive comes from runtime.c from the AppImageKit project. \
 # The MIT license template does not have all rights reserved, but the BSD \
 # template does.
 LICENSE+=" MIT" # upload tool
-LICENSE+=" !system-binaries? ( MIT LGPL-2 GPL-2 )" # From the musl libc package
+LICENSE+=" musl? ( MIT LGPL-2 GPL-2 )" # From the musl libc package
 
 [[ ${PV} =~ 9999 ]] && IUSE+=" fallback-commit"
 IUSE+="
-appimaged appimagetool disable_watching_desktop_folder
-disable_watching_downloads_folder firejail gnome kde mkappimage openrc
-+system-binaries systemd travis-ci
-
-force-musl
+firejail musl gnome kde systemd
 "
 REQUIRED_USE+="
 	!elibc_musl? (
-		force-musl? (
-			!system-binaries
+		musl? (
+			musl
 		)
 	)
-	openrc? ( appimaged )
-	systemd? ( appimaged )
-	|| ( appimaged appimagetool mkappimage )
-	|| ( gnome kde )
+	|| (
+		gnome
+		kde
+	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
+TRAVIS_CI_DEPENDS="
+	dev-libs/openssl
+	dev-vcs/git
+"
 RDEPEND+="
+	${TRAVIS_CI}
+	!app-arch/appimaged
 	>=sys-fs/squashfs-tools-4.4:=
+	app-arch/AppImageKit
 	sys-apps/dbus
 	sys-fs/udisks[daemon]
-	appimaged? (
-		!app-arch/appimaged
-	)
-	appimagetool? (
-		app-arch/AppImageKit[-appimagetool]
-	)
+	sys-apps/systemd
 	firejail? (
 		sys-apps/firejail
 	)
@@ -224,10 +222,7 @@ RDEPEND+="
 	kde? (
 		kde-frameworks/solid
 	)
-	openrc? (
-		sys-apps/openrc[bash]
-	)
-	system-binaries? (
+	!musl? (
 		>=app-arch/libarchive-3.3.2:=
 		>=dev-libs/appstream-0.12.9:=
 		>=dev-util/desktop-file-utils-0.27:=
@@ -237,13 +232,6 @@ RDEPEND+="
 			app-arch/static-tools
 			app-arch/AppImageKit[runtime]
 		)
-	)
-	systemd? (
-		sys-apps/systemd
-	)
-	travis-ci? (
-		dev-libs/openssl
-		dev-vcs/git
 	)
 "
 # U 22.04 used for static-tools
@@ -358,7 +346,7 @@ gen_binary_uris()
 	local arch="${2}"
 	local zigarch="${3}"
 	echo "
-		!system-binaries? (
+		musl? (
 			${garch}? (
 https://github.com/probonopd/static-tools/releases/download/continuous/appstreamcli-${arch}
 	-> static-tools-appstreamcli-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
@@ -376,7 +364,7 @@ https://github.com/probonopd/static-tools/releases/download/continuous/unsquashf
 	-> static-tools-unsquashfs-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
 			)
 		)
-		force-musl? (
+		musl? (
 			${garch}? (
 https://ziglang.org/download/0.10.0/zig-linux-${zigarch}-${ZIG_LINUX_PV}.tar.xz
 			)
@@ -406,32 +394,32 @@ PATCHES=(
 get_build_sh_arch()
 {
 	use amd64 && echo "amd64"
-	use x86 && echo "386"
 	use arm && echo "arm"
 	use arm64 && echo "arm64"
+	use x86 && echo "386"
 }
 
 get_appimage_arch()
 {
 	use amd64 && echo "x86_64"
-	use x86 && echo "i686"
 	use arm && echo "armhf"
 	use arm64 && echo "aarch64"
+	use x86 && echo "i686"
 }
 
 get_distro_arch()
 {
 	use amd64 && echo "amd64"
-	use x86 && echo "x86"
 	use arm && echo "arm"
 	use arm64 && echo "arm64"
+	use x86 && echo "x86"
 }
 
 get_zig_arch() {
 	use amd64 && echo "x86_64"
-	use x86 && echo "i386"
 	use arm && echo "armv7a"
 	use arm64 && echo "aarch64"
+	use x86 && echo "i386"
 }
 
 pkg_setup() {
@@ -505,13 +493,11 @@ ewarn
 ewarn
 ewarn "This package is a Work In Progress (WIP) upstream."
 ewarn
-	if use appimaged ; then
 ewarn
 ewarn "The appimaged in this package is not production quality and may random"
 ewarn "quit at random times.  An auto-restart for this daemon has not been"
 ewarn "implemented.  Use the appimaged package instead."
 ewarn
-	fi
 	# Server only
 
 	if ! egetent group ${PN} ; then
@@ -531,12 +517,12 @@ eerror
 		die
 	fi
 
-	if ! use system-binaries ; then
+	if use musl ; then
 ewarn
 ewarn "This ebuild may fail when checking checksums since there is no way to"
 ewarn "download a specific version/commit or cached older server builds."
 ewarn
-ewarn "It is recommended to use the system-binaries USE flag if downloading"
+ewarn "It is recommended to disable the musl USE flag if downloading"
 ewarn "is a problem."
 ewarn
 	fi
@@ -733,8 +719,10 @@ src_unpack() {
 
 	if [[ ${PV} =~ 9999 ]] ; then
 		if use fallback-commit ; then
-			export EGIT_COMMIT="bb5081a46c15ebb828b5cb0bb0445e1e2f6484ad"
-			export EGIT_COMMIT_TIMESTAMP="Sat, 17 Dec 2022 13:18:55 +0100" # See header for obtaining this
+			export EGIT_COMMIT="09fd0186774aefa2351c42b4bb22f92ce0c4f235"
+
+	 # See the header Date: field for obtaining this.
+			export EGIT_COMMIT_TIMESTAMP="Wed, 20 Dec 2023 22:55:40 +0100"
 		fi
 		EGIT_REPO_URI="https://github.com/probonopd/${PN}.git"
 		EGIT_BRANCH="master"
@@ -744,11 +732,11 @@ src_unpack() {
 		if ! use fallback-commit ; then
 			verify_build_files
 			export EGIT_COMMIT=$(git ls-remote \
-					https://github.com/probonopd/go-appimage.git \
+				https://github.com/probonopd/go-appimage.git \
                                 | grep HEAD \
-                                | cut -c 1-40)
+				| cut -c 1-40)
 			export EGIT_COMMIT_TIMESTAMP=$(wget -q -O - \
-					https://github.com/probonopd/go-appimage/commit/${EGIT_COMMIT}.patch \
+				https://github.com/probonopd/go-appimage/commit/${EGIT_COMMIT}.patch \
 				| grep "^Date:" \
 				| head -n 1 \
 				| cut -f 2- -d " ")
@@ -770,13 +758,13 @@ src_unpack() {
 	# required for mounting when calling:
 	#   ./appimagetool-2020-08-17_00:47:34-amd64.AppImage ./appimaged.AppDir
 	addwrite /dev/fuse
-	if use disable_watching_downloads_folder ; then
+	if [[ "${GO_APPIMAGE_DISABLE_WATCHDOG_DOWNLOADS_FOLDER:-1}" == "1" ]] ; then
 		export USE_DISABLE_WATCHING_DOWNLOADS_FOLDER=1
 	fi
-	if use disable_watching_desktop_folder ; then
+	if [[ "${GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER:-1}" == "1" ]] ; then
 		export USE_DISABLE_WATCHING_DESKTOP_FOLDER=1
 	fi
-	if use system-binaries ; then
+	if ! use musl ; then
 		export USE_SYSTEM_BINARIES=1
 		export GET_LIBDIR=$(get_libdir)
 	else
@@ -796,7 +784,7 @@ _apply_patches() {
 	eapply "${FILESDIR}/${PN}-9999_p20200829-git-root-envvar.patch"
 	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-check-systemd-installed.patch"
 #	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-skip-watching-mountpoints-not-owned.patch"
-	eapply "${FILESDIR}/${PN}-9999_p20210429-add-watch-opt-appimage.patch"
+	eapply "${FILESDIR}/${PN}-9999_p20231220-add-watch-opt-appimage.patch"
 	if [[ -n "${USE_DISABLE_WATCHING_DOWNLOADS_FOLDER}" && "${USE_DISABLE_WATCHING_DOWNLOADS_FOLDER}" == "1" ]] ; then
 		echo "Modding appimaged.d (for disable_watching_download_folder USE flag)"
 		sed -i -e "/xdg.UserDirs.Download/d" "src/appimaged/appimaged.go"
@@ -831,7 +819,7 @@ src_compile() {
 	use x86 && export GARCH="x86"
 	use arm64 && export GARCH="arm64"
 	use arm && export GARCH="arm"
-	use force-musl && export FORCE_MUSL="1"
+	use musl && export FORCE_MUSL="1"
 	export GO_APPIMAGE_PV="${MY_PV}"
 	export GOPATH="${WORKDIR}/go_build"
 	export GO111MODULE=auto
@@ -861,24 +849,12 @@ src_install() {
 	local appimaged_fn="appimaged-${timestamp}-${ai_arch}.AppImage"
 	local appimagetool_fn="appimagetool-${timestamp}-${ai_arch}.AppImage"
 	local mkappimage_fn="mkappimage-${timestamp}-${ai_arch}.AppImage"
-	if use appimaged ; then
-		doexe "${BUILD_DIR}/${appimaged_fn}"
-		dosym ../../../usr/bin/${appimaged_fn} /usr/bin/appimaged
-		if use openrc ; then
-			cp "${FILESDIR}/${PN}-openrc" \
-				"${T}/${PN}" || die
-			exeinto /etc/init.d
-			doexe "${T}/${PN}"
-		fi
-	fi
-	if use appimagetool ; then
-		doexe "${BUILD_DIR}/${appimagetool_fn}"
-		dosym ../../../usr/bin/${appimagetool_fn} /usr/bin/appimagetool
-	fi
-	if use mkappimage ; then
-		doexe "${BUILD_DIR}/${mkappimage_fn}"
-		dosym ../../../usr/bin/${mkappimage_fn} /usr/bin/mkappimage
-	fi
+	doexe "${BUILD_DIR}/${appimaged_fn}"
+	dosym ../../../usr/bin/${appimaged_fn} /usr/bin/appimaged
+	doexe "${BUILD_DIR}/${appimagetool_fn}"
+	dosym ../../../usr/bin/${appimagetool_fn} /usr/bin/appimagetool
+	doexe "${BUILD_DIR}/${mkappimage_fn}"
+	dosym ../../../usr/bin/${mkappimage_fn} /usr/bin/mkappimage
 	LCNR_SOURCE="${BUILD_DIR}"
 	lcnr_install_files
 	docinto readme
@@ -896,15 +872,6 @@ src_install() {
 }
 
 pkg_postinst() {
-	if use openrc ; then
-ewarn
-ewarn "OpenRC support is experimental.  It may or not work for encrypted home."
-ewarn "Do \`rc-update add appimaged\` to run the service on boot."
-ewarn
-ewarn "You can \`/etc/init.d/${PN} start\` to start it now."
-ewarn
-	fi
-	if use systemd ; then
 einfo
 einfo "You must run appimaged as non-root to generate the systemd service files"
 einfo "in ~/."
@@ -914,7 +881,6 @@ einfo "to add the service on login."
 einfo
 einfo "You can \`systemctl --user start appimaged\` to start it now."
 einfo
-	fi
 einfo
 einfo "The appimaged daemon will randomly quit when watching files and needs to"
 einfo "be restarted."

@@ -1,0 +1,13 @@
+diff -urp go-appimage.orig/src/appimaged/appimaged.go go-appimage/src/appimaged/appimaged.go
+--- go-appimage.orig/src/appimaged/appimaged.go	2023-12-21 15:06:50.466640693 -0800
++++ go-appimage/src/appimaged/appimaged.go	2023-12-21 15:07:36.586641922 -0800
+@@ -84,6 +84,7 @@ var candidateDirectories = append(
+ 		home + "/Applications",
+ 		"/opt",
+ 		"/usr/local/bin",
++		"/opt/AppImage",
+ 	}...,
+ )
+ 
+Only in go-appimage/src/appimaged: appimaged.go.orig
+Only in go-appimage/src/appimaged: appimaged.go.rej

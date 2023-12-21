@@ -6,7 +6,10 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     go-appimage is appimaged and appimagetool implemented in the Go language.
     It is planned as the replacement package for those older packages.
 
@@ -31,7 +34,7 @@
 
     You may need to mod
 
-https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#L79
+      https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#L79
 
     in order to support a different location.
 
@@ -42,29 +45,26 @@ https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#
 
     Old appimages may have vulnerabilities.  Make sure you use
     an up-to-date version or a well maintained alternative.
-  </longdescription>
+
+
+
+    Build time environment variables:
+
+    GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER - Disable watching the ~/Desktop
+      folder for new .AppImages.  This may speed up loading.
+    GO_APPIMAGE_DISABLE_WATCHDOG_DOWNLOADS_FOLDER - Disable watching ~/Downloads
+      for new .AppImages.  This may speed up loading.
+
+  -->
   <use>
-    <flag name="appimaged">
-      Installs appimaged, an daemon to integrate AppImages into the system.
-    </flag>
-    <flag name="appimagetool">
-      Installs appimagetool, an AppImage creation tool from AppDirs.
-    </flag>
-    <flag name="disable_watching_desktop_folder">
-      Disable watching the ~/Desktop folder for new .AppImages.  This may speed
-      up loading.
-    </flag>
-    <flag name="disable_watching_user_downloads_folder">
-      Disable watching ~/Downloads for new .AppImages.  This may speed up
-      loading.
-    </flag>
     <flag name="firejail">
       Checks for Firejail support for sandbox support.
     </flag>
-    <flag name="force-musl">
+    <flag name="musl">
       Forces the use of the zig compiler using internal musl along with
       static-tools (internal prebuilt static builds of dependencies built with
-      musl libc).
+      musl libc).  It assumes that you are building from glibc to a sandboxed
+      musl libc.
 
       It is the upstream default, but disabled by the ebuild author.  The distro
       does not typically run musl binaries on a glibc built system.  The distro
@@ -74,6 +74,14 @@ https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#
       See also:
 
         https://github.com/probonopd/go-appimage/pull/207
+
+      If force musl it will do the following instead:
+
+      Use the system packages and binaries instead of the older static binaries
+      from the Alpine operating system statically linked with musl.  If enabled,
+      it will allow for determinstic build or downloads since upstream does not
+      archive old builds of these static packages.  Disable to increase
+      portability with possibility of download failures in fetch stage.
 
     </flag>
     <flag name="gnome">
@@ -94,16 +102,6 @@ https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#
     <flag name="systemd">
       Checks for systemd support.  It's the default upstream.
       (RECOMMENDED)
-    </flag>
-    <flag name="system-binaries">
-      Uses the system packages and binaries instead of the older static binaries
-      from the Alpine operating system statically linked with musl.  If enabled,
-      it will allow for determinstic build or downloads since upstream does not
-      archive old builds of these static packages.  Disable to increase
-      portability with possibility of download failures in fetch stage.
-    </flag>
-    <flag name="travis-ci">
-      Adds support for Travis CI.
     </flag>
   </use>
 </pkgmetadata>
