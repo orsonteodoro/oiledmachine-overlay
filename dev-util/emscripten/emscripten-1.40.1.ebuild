@@ -372,8 +372,7 @@ src_install() {
 }
 
 pkg_postinst() {
-# Breaks inherit
-#	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
+	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
 einfo
 einfo "You must manually do:"
 einfo
@@ -389,3 +388,6 @@ ewarn "closure-compiler for Java."
 ewarn
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  passed (1.40.1, 20231220)
+# hello world test - passed

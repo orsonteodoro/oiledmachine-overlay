@@ -403,5 +403,5 @@ ewarn
 	fi
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  failed (3.1.51)
-# hello world test - failed (with older clang/llvm)
+# OILEDMACHINE-OVERLAY-TEST:  passed (3.1.51)
+# hello world test - passed

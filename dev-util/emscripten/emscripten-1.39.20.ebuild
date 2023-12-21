@@ -372,8 +372,7 @@ src_install() {
 }
 
 pkg_postinst() {
-# Breaks inherit
-#	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
+	eselect emscripten set "emscripten-${PV},llvm-${LLVM_SLOT}"
 einfo
 einfo "You must manually do:"
 einfo
@@ -391,4 +390,5 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (in production use) 1.39.20 (20230520)
+# hello world - passed
 # game engine - passed
