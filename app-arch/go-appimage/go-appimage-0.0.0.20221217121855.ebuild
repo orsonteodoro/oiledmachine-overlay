@@ -4,6 +4,8 @@
 
 EAPI=7
 
+inherit git-r3 lcnr linux-info user-info
+
 # GEN_EBUILD=1 # Uncomment to generate ebuild
 
 if ! [[ ${PV} =~ 9999 ]] ; then
@@ -27,45 +29,101 @@ else
 	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 fi
 
-inherit git-r3 lcnr linux-info user-info
 
 DESCRIPTION="Purely experimental playground for Go implementation of AppImage \
 tools"
 HOMEPAGE="https://github.com/probonopd/go-appimage"
 
 THIRD_PARTY_LICENSES="
-	( BSD CC-BY-SA-1.0 CC-BY-SA-2.0 CC-BY-SA-2.5 CC-BY-SA-3.0 )
-	( BSD-2 ISC )
-	( EPL-2.0 BSD )
-	( MIT all-rights-reserved )
-	( || ( EPL-2.0 BSD ) BSD-2 BSD )
+	(
+		BSD
+		CC-BY-SA-1.0
+		CC-BY-SA-2.0
+		CC-BY-SA-2.5
+		CC-BY-SA-3.0
+	)
+	(
+		BSD-2
+		ISC
+	)
+	(
+		BSD
+		EPL-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		BSD
+		BSD-2
+		|| (
+			BSD
+			EPL-2.0
+		)
+	)
+	Apache-2.0
 	BSD
 	BSD-2
-	MIT
-	MIT
-	Apache-2.0
-	custom
-	custom BSD W3C-Test-Suite-Licence
 	CC-BY-3.0
 	CC0-1.0
+	custom
 	GO-PATENTS
-	GPL-3
 	GPL-2
+	GPL-3
+	MIT
 	MPL-2.0
+	W3C-Test-Suite-Licence
 	force-musl? (
-		( Apache-2.0 || ( CC0-1.0 BSD-2 MIT ) Apache-2.0-with-LLVM-exceptions Apache-2.0 MIT )
-		( Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT ) )
-		( BSD-4 HPND ISC BSD inner-net totd ( all-rights-reserved HPND ) PCRE LGPL-2.1+ )
-		( custom public-domain )
-		( MIT BSD BSD-2 public-domain )
+		(
+			Apache-2.0
+			Apache-2.0-with-LLVM-exceptions
+			MIT
+			|| (
+				BSD-2
+				CC0-1.0
+				MIT
+			)
+		)
+		(
+			Apache-2.0-with-LLVM-exceptions
+			|| (
+				MIT
+				UoI-NCSA
+			)
+		)
+		(
+			(
+				all-rights-reserved
+				HPND
+			)
+			BSD
+			BSD-4
+			HPND
+			inner-net
+			ISC
+			LGPL-2.1+
+			PCRE
+			totd
+		)
+		(
+			custom
+			public-domain
+		)
+		(
+			BSD
+			BSD-2
+			MIT
+			public-domain
+		)
 		Apache-2.0-with-LLVM-exceptions
 		ZPL
 	)
 "
 
-LICENSE="MIT" # go-appimage project's default license
-LICENSE+="
+LICENSE="
 	${THIRD_PARTY_LICENSES}
+	MIT
 "
 
 # ( Apache-2.0 || ( CC0-1.0 BSD-2 MIT ) Apache-2.0-with-LLVM-exceptions Apache-2.0 MIT ) - work/go_build/src/zig/lib/libc/wasi/LICENSE
@@ -141,10 +199,21 @@ REQUIRED_USE+="
 			!system-binaries
 		)
 	)
-	openrc? ( appimaged )
-	systemd? ( appimaged )
-	|| ( appimaged appimagetool mkappimage )
-	|| ( gnome kde )
+	openrc? (
+		appimaged
+	)
+	systemd? (
+		appimaged
+	)
+	|| (
+		appimaged
+		appimagetool
+		mkappimage
+	)
+	|| (
+		gnome
+		kde
+	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
@@ -176,8 +245,8 @@ RDEPEND+="
 		>=dev-util/patchelf-0.9:=
 		>=sys-fs/squashfs-tools-4.4:=[zstd]
 		|| (
-			app-arch/static-tools
 			app-arch/AppImageKit[runtime]
+			app-arch/static-tools
 		)
 	)
 	systemd? (
