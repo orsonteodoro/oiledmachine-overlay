@@ -122,9 +122,5 @@
     <flag name="overlayfs">
       Checks for OverlayFS support.
     </flag>
-    <flag name="systemd">
-      Checks for systemd support.  It's the default upstream.
-      (RECOMMENDED)
-    </flag>
   </use>
 </pkgmetadata>
