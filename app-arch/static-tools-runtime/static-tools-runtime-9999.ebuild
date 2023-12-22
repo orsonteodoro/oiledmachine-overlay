@@ -6,32 +6,19 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
-inherit git-r3
-
-SRC_URI="
-	https://www.libarchive.org/downloads/libarchive-${PV}.tar.gz
-"
-
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-DESCRIPTION="bsdtar for static-tools"
-HOMEPAGE="
-	https://github.com/probonopd/static-tools
-	https://github.com/libarchive/libarchive
-"
+DESCRIPTION="static-tools runtime"
+HOMEPAGE="https://github.com/probonopd/static-tools"
 LICENSE="
-	BSD
-	BSD-2
-	BSD-4
-	public-domain
+	all-rights-reserved
+	MIT
 "
-IUSE=""
+IUSE="fallback-commit +runtime"
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
-	app-arch/bzip2[static-libs]
-	app-arch/xz-utils[static-libs]
-	sys-libs/zlib[static-libs]
+	>=sys-fs/squashfuse-0.1.105[static-libs,zstd]
 "
 DEPEND+="
 	${RDEPEND}
@@ -48,6 +35,14 @@ RESTRICT="mirror"
 PATCHES=(
 )
 
+src_unpack() {
+	if use fallback-commit ; then
+		EGIT_COMMIT="9bf80ec81e5a8e4a6556c3422001ec48b040b68d"
+	fi
+	git-r3_fetch
+	git-r3_checkout
+}
+
 get_arch() {
 	if use arm ; then
 		echo "armhf"
@@ -60,7 +55,7 @@ get_arch() {
 	fi
 }
 
-src_compile() {
+build_runtime() {
 # MIT License
 #
 # Copyright (c) 2019 probonopd
@@ -82,52 +77,30 @@ src_compile() {
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+	export GIT_COMMIT=$(cat src/runtime/version)
+	cd src/runtime || die
+	make runtime-fuse2 || die
+	file runtime-fuse2 || die
+	strip runtime-fuse2 || die
+	ls -lh runtime-fuse2 || die
+	echo -ne 'AI\x02' | dd of="runtime-fuse2" bs=1 count=3 seek=8 conv="notrunc" || die # magic bytes, always do AFTER strip
+	cd - || die
+	mkdir -p out || die
+	cp src/runtime/runtime-fuse2 out/runtime-fuse2-${ARCHITECTURE} || die
+}
+
+src_compile() {
 	if ! use elibc_musl ; then
 ewarn "Upstream intends that artifacts be built from a musl chroot or container."
 	fi
 	local ARCHITECTURE=$(get_arch)
-
-	# Build static bsdtar
-	tar xf libarchive-*.tar.gz || die
-	cd libarchive-*/ || die
-	./configure \
-		--disable-shared \
-		--enable-bsdtar=static \
-		--disable-bsdcat \
-		--disable-bsdcpio \
-		--with-zlib \
-		--without-bz2lib \
-		--disable-maintainer-mode \
-		--disable-dependency-tracking \
-		CFLAGS=-no-pie \
-		LDFLAGS=-static \
-		|| die
-	emake
-	${CC} \
-		-static \
-		-o bsdtar \
-		tar/bsdtar-bsdtar.o \
-		tar/bsdtar-cmdline.o \
-		tar/bsdtar-creation_set.o \
-		tar/bsdtar-read.o \
-		tar/bsdtar-subst.o \
-		tar/bsdtar-util.o \
-		tar/bsdtar-write.o \
-		.libs/libarchive.a \
-		.libs/libarchive_fe.a \
-		/lib/libz.a \
-		-llzma \
-		|| die
-	strip bsdtar || die
-	cd - || die
-	mkdir -p out || die
-	cp libarchive-*/bsdtar out/bsdtar-${ARCHITECTURE} || die
+	build_runtime
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
 	exeinto /usr/share/static-tools
-	doexe out/bsdtar-${ARCHITECTURE}
+	doexe out/runtime-fuse2-${ARCHITECTURE}
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

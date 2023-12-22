@@ -6,16 +6,12 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
-inherit git-r3
-
 SRC_URI="
 	https://github.com/NixOS/patchelf/archive/${PV}.tar.gz
 "
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-DESCRIPTION="
-bsdtar for static-tools
-"
+DESCRIPTION="patchelf for static-tools"
 HOMEPAGE="
 	https://github.com/NixOS/patchelf
 "
