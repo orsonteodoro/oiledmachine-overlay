@@ -106,6 +106,7 @@ get_libc() {
 	else
 		libc="native"
 	fi
+	echo "${libc}"
 }
 
 src_install() {
