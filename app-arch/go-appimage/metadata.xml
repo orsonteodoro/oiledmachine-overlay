@@ -38,7 +38,7 @@
       ~/usr/local/bin
       /run/user/0 # for the Live CD mount point (This could be a bug.  It should
         be ${ROOT} [aka /]?)
-      /opt/AppImage # A system-wide Gentoo addition (tentative / testing)
+      /opt/AppImage # A modded ebuild addition (tentative / testing)
 
     You may need to mod
 
