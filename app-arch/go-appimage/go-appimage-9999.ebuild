@@ -226,7 +226,7 @@ RDEPEND+="
 	kde? (
 		>=kde-frameworks/solid-5.68.0
 	)
-	"
+"
 DEPEND+="
 	${RDEPEND}
 "
@@ -766,7 +766,8 @@ src_unpack() {
 		fi
 		export GET_LIBDIR=$(get_libdir)
 	else
-		export STATIC_TOOLS_LIBC="musl"
+		export STATIC_TOOLS_LIBC="musl" # Natively built.
+		#export STATIC_TOOLS_LIBC="upstream-musl" # Prebuilt from upstream
 	fi
 	export EGIT_COMMIT_STATIC_TOOLS
 	export EGIT_COMMIT_UPLOADTOOL

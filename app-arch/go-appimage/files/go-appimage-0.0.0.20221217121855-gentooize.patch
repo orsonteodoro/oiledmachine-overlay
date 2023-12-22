@@ -65,9 +65,9 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/ ; ln -s usr/bin/$PROG AppRun)
    cp $PROJECT/data/appimage.png $BUILDDIR/$PROG-$ARCH.AppDir/
    if [ $PROG == appimaged ]; then
-+    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/bsdtar-$AIARCH" > bsdtar )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/mksquashfs-$AIARCH" > unsquashfs )
++    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" || "${STATIC_TOOLS_LIBC}" == "musl" ]] ; then
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/bsdtar-$AIARCH" > bsdtar )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/mksquashfs-$AIARCH" > unsquashfs )
 +    else
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/bsdtar-$AIARCH -O bsdtar )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-$AIARCH -O unsquashfs )
@@ -79,13 +79,13 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
  NoDisplay=true
  EOF
    elif [ $PROG == appimagetool ]; then
-+    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/appstreamcli-$AIARCH" > appstreamcli )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/desktop-file-validate-$AIARCH" > desktop-file-validate )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/mksquashfs-$AIARCH" > mksquashfs )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/patchelf-$AIARCH" > patchelf )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/runtime-fuse2-$AIARCH" > runtime-$AIARCH )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/uploadtool-upload.sh" > uploadtool )
++    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" || "${STATIC_TOOLS_LIBC}" == "musl" ]] ; then
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/appstreamcli-$AIARCH" > appstreamcli )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/desktop-file-validate-$AIARCH" > desktop-file-validate )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/mksquashfs-$AIARCH" > mksquashfs )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/patchelf-$AIARCH" > patchelf )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/runtime-fuse2-$AIARCH" > runtime-$AIARCH )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}/uploadtool-upload.sh" > uploadtool )
 +    else
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/appstreamcli-$AIARCH -O appstreamcli )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-$AIARCH -O desktop-file-validate )
@@ -102,14 +102,14 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
  NoDisplay=true
  EOF
    elif [ $PROG == mkappimage ]; then
-+    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/desktop-file-validate-$AIARCH" > desktop-file-validate )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/mksquashfs-$AIARCH" > mksquashfs )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/patchelf-$AIARCH" > patchelf )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/runtime-fuse2-$AIARCH" > runtime-$AIARCH )
++    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" || "${STATIC_TOOLS_LIBC}" == "musl" ]] ; then
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/desktop-file-validate-$AIARCH" > desktop-file-validate )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/mksquashfs-$AIARCH" > mksquashfs )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/patchelf-$AIARCH" > patchelf )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/runtime-fuse2-$AIARCH" > runtime-$AIARCH )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}/uploadtool-upload.sh" > uploadtool )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/bsdtar-$AIARCH" > bsdtar )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/unsquashfs-$AIARCH" > unsquashfs )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/bsdtar-$AIARCH" > bsdtar )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/unsquashfs-$AIARCH" > unsquashfs )
 +    else
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-$AIARCH -O desktop-file-validate )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/mksquashfs-$AIARCH -O mksquashfs )
