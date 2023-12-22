@@ -24,7 +24,7 @@ REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
-	app-arch/static-tools-squashfuse:=[fuse3?]
+	app-arch/static-tools-squashfuse:=[fuse3=]
 	app-arch/xz-utils:=[static-libs]
 "
 DEPEND+="

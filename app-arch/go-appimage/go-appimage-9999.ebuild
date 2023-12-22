@@ -193,9 +193,12 @@ LICENSE+=" !system-static-tools? ( MIT LGPL-2 GPL-2 )" # From the musl libc pack
 # -system-static-tools is upstream default.
 # +musl is upstream default.
 IUSE+="
-firejail gnome kde -musl +system-static-tools
+firejail fuse3 gnome kde -musl +system-static-tools
 "
 REQUIRED_USE+="
+	fuse3? (
+		system-static-tools
+	)
 	|| (
 		gnome
 		kde
@@ -217,7 +220,7 @@ RDEPEND+="
 	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-apps/systemd-245.4
 	system-static-tools? (
-		app-arch/static-tools
+		app-arch/static-tools:=[fuse3=]
 	)
 	firejail? (
 		>=sys-apps/firejail-0.9.62
@@ -771,6 +774,11 @@ src_unpack() {
 		export GET_LIBDIR=$(get_libdir)
 	else
 		export STATIC_TOOLS_LIBC="alpine-musl"
+	fi
+	if use fuse3 ; then
+		export FUSE_SLOT=3
+	else
+		export FUSE_SLOT=2
 	fi
 	export EGIT_COMMIT_STATIC_TOOLS
 	export EGIT_COMMIT_UPLOADTOOL

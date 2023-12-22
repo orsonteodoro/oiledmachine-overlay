@@ -93,10 +93,8 @@
       Adds the core AppImage creation tool.
     </flag>
     <flag name="musl">
-      Forces the use of the zig compiler using internal musl along with
-      static-tools (internal prebuilt static builds of dependencies built with
-      musl libc).  It assumes that you are building from glibc to a sandboxed
-      musl libc.
+      Forces the use of the zig compiler using internal musl.  It assumes that
+      you are cross-compiling go-appimage from glibc to musl libc.
 
       Enabling the musl USE flag is the upstream default, but it is disabled by
       the ebuild maintainer.  The distro does not typically run musl binaries on
