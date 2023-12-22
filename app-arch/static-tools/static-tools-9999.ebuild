@@ -26,7 +26,7 @@ REQUIRED_USE+="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	runtime? (
-		>=sys-fs/squashfuse-0.1.105[static-libs,zlib,zstd]
+		>=sys-fs/squashfuse-0.1.105[static-libs,zstd]
 	)
 "
 DEPEND+="
