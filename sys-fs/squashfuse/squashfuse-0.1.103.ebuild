@@ -9,6 +9,17 @@ EAPI=8
 
 inherit autotools flag-o-matic
 
+COMMIT_SQUASHFUSE_PATCHES="ae0258ab484c1259facc8fd85aaa8c7857c3e155"
+SRC_URI="
+https://github.com/vasi/squashfuse/releases/download/${PV}/${P}.tar.gz
+	appimage? (
+https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.c
+	-> squashfuse_dlopen.c.${COMMIT_SQUASHFUSE_PATCHES:0:7}
+https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.h
+	-> squashfuse_dlopen.h.${COMMIT_SQUASHFUSE_PATCHES:0:7}
+	)
+"
+
 DESCRIPTION="FUSE filesystem to mount squashfs archives"
 HOMEPAGE="https://github.com/vasi/squashfuse"
 LICENSE="BSD-2"
@@ -20,9 +31,21 @@ lz4 lzma lzo static-libs +zlib zstd
 r7
 "
 REQUIRED_USE+="
-	|| ( lz4 lzma lzo zlib zstd )
-	|| ( vanilla appimage )
-	appimage? ( lzma static-libs )
+	appimage? (
+		lzma
+		static-libs
+	)
+	|| (
+		lz4
+		lzma
+		lzo
+		zlib
+		zstd
+	)
+	|| (
+		appimage
+		vanilla
+	)
 "
 DEPEND+="
 	>=sys-fs/fuse-2.8.6:0=
@@ -52,16 +75,6 @@ RDEPEND+="
 BDEPEND+="
 	sys-devel/automake:1.15
 	virtual/pkgconfig
-"
-COMMIT_SQUASHFUSE_PATCHES="ae0258ab484c1259facc8fd85aaa8c7857c3e155"
-SRC_URI="
-https://github.com/vasi/squashfuse/releases/download/${PV}/${P}.tar.gz
-	appimage? (
-https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.c
-	-> squashfuse_dlopen.c.${COMMIT_SQUASHFUSE_PATCHES:0:7}
-https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.h
-	-> squashfuse_dlopen.h.${COMMIT_SQUASHFUSE_PATCHES:0:7}
-	)
 "
 RESTRICT="mirror"
 

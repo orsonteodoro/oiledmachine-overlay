@@ -9,6 +9,18 @@ EAPI=8
 
 inherit autotools flag-o-matic
 
+COMMIT_SQUASHFUSE_PATCHES="718cfda5a1f668059d8e34cf28a037e7ec0ce200"
+SRC_URI="
+https://github.com/vasi/squashfuse/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+	appimage? (
+https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.c
+	-> squashfuse_dlopen.c.${COMMIT_SQUASHFUSE_PATCHES:0:7}
+https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.h
+	-> squashfuse_dlopen.h.${COMMIT_SQUASHFUSE_PATCHES:0:7}
+	)
+"
+
 DESCRIPTION="FUSE filesystem to mount squashfs archives"
 HOMEPAGE="https://github.com/vasi/squashfuse"
 LICENSE="BSD-2"
@@ -21,10 +33,26 @@ lz4 lzma lzo static-libs +zlib zstd
 r7
 "
 REQUIRED_USE+="
-	^^ ( fuse3 fuse2 )
-	appimage? ( fuse2 lzma static-libs )
-	|| ( lz4 lzma lzo zlib zstd )
-	|| ( vanilla appimage )
+	^^ (
+		fuse3
+		fuse2
+	)
+	appimage? (
+		fuse2
+		lzma
+		static-libs
+	)
+	|| (
+		lz4
+		lzma
+		lzo
+		zlib
+		zstd
+	)
+	|| (
+		appimage
+		vanilla
+	)
 "
 DEPEND+="
 	appimage? (
@@ -58,17 +86,6 @@ RDEPEND+="
 BDEPEND+="
 	sys-devel/automake:1.15
 	virtual/pkgconfig
-"
-COMMIT_SQUASHFUSE_PATCHES="718cfda5a1f668059d8e34cf28a037e7ec0ce200"
-SRC_URI="
-https://github.com/vasi/squashfuse/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-	appimage? (
-https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.c
-	-> squashfuse_dlopen.c.${COMMIT_SQUASHFUSE_PATCHES:0:7}
-https://raw.githubusercontent.com/AppImage/libappimage/${COMMIT_SQUASHFUSE_PATCHES}/src/patches/squashfuse_dlopen.h
-	-> squashfuse_dlopen.h.${COMMIT_SQUASHFUSE_PATCHES:0:7}
-	)
 "
 RESTRICT="mirror strip"
 
