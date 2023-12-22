@@ -6,13 +6,70 @@ EAPI=7
 
 inherit git-r3 lcnr linux-info user-info
 
-if ! [[ ${PV} =~ 9999 ]] ; then
+# GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
+
+gen_go_dl_gh_url()
+{
+	local pkg_name="${1}"
+	local uri_frag="${2}"
+	local tag="${3}"
+	unset tag_split
+	readarray -d - -t tag_split <<<"${tag}"
+	local tag_commit="${tag_split[2]}"
+	local dest_name="${pkg_name//\//-}-${tag//\//-}"
+
+	if [[ -n "${tag_commit}" ]] ; then
+		echo "
+https://codeload.github.com/${uri_frag}/tar.gz/${tag_commit}
+	-> ${dest_name}.tar.gz
+		"
+	else
+		echo "
+https://github.com/${uri_frag}/archive/refs/tags/${tag//+incompatible}.tar.gz
+	-> ${dest_name}.tar.gz
+		"
+	fi
+
+}
+
+gen_binary_uris()
+{
+	local garch="${1}"
+	local arch="${2}"
+	local zigarch="${3}"
+	echo "
+		!system-static-tools? (
+			${garch}? (
+https://github.com/probonopd/static-tools/releases/download/continuous/appstreamcli-${arch}
+	-> static-tools-appstreamcli-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
+https://github.com/probonopd/static-tools/releases/download/continuous/bsdtar-${arch}
+	-> static-tools-bsdtar-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
+https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-${arch}
+	-> static-tools-desktop-file-validate-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
+https://github.com/probonopd/static-tools/releases/download/continuous/mksquashfs-${arch}
+	-> static-tools-mksquashfs-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
+https://github.com/probonopd/static-tools/releases/download/continuous/patchelf-${arch}
+	-> static-tools-patchelf-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
+https://github.com/probonopd/static-tools/releases/download/continuous/runtime-fuse2-${arch}
+	-> static-tools-runtime-fuse2-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
+https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-${arch}
+	-> static-tools-unsquashfs-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
+			)
+		)
+		musl? (
+			${garch}? (
+https://ziglang.org/download/0.10.0/zig-linux-${zigarch}-${ZIG_LINUX_PV}.tar.xz
+			)
+		)
+	"
+}
+
+if [[ ${PV} =~ 9999 ]] ; then
+	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+	S="${WORKDIR}/${PN}-9999"
+else
 	export OFFLINE="1"
-fi
 
-# GEN_EBUILD=1 # Uncomment to generate ebuild
-
-if ! [[ ${PV} =~ 9999 ]] ; then
 	# See also
 	# https://pkg.go.dev/github.com/probonopd/go-appimage?tab=versions
 	export EGIT_COMMIT="bb5081a46c15ebb828b5cb0bb0445e1e2f6484ad" # Dec 17, 2022 # Same as the 8 char hash below
@@ -29,15 +86,95 @@ if ! [[ ${PV} =~ 9999 ]] ; then
 	TIMESTAMP_HHMMSS="121855" # UTC
 	MY_PV="v0.0.0-${TIMESTAMP_YYMMDD}${TIMESTAMP_HHMMSS}-${EGIT_COMMIT:0:12}"
 	# Live ebuilds do not get KEYWORDS.  Distro policy.
-else
-	KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+
+# These must be inspected and updated on every ebuild update since
+# they are live upstream.  No known way to reference them statically.
+# The continuous git tag below in gen_binary_uris() changes.
+	EGIT_COMMIT_STATIC_TOOLS="6e1f76764d334490ddedeb1075a8cd66c270e8e2" # Oct 15, 2022
+	EGIT_COMMIT_UPLOADTOOL="58f20d2b86197faddd7ffb531a2fab0dad28dedd" # Jul 23, 2022
+	TAG_AIK="13" # Dec 31, 2020
+	ZIG_LINUX_PV="0.10.0" # Oct 31, 2022 ; musl 1.2.3 (Apr 7, 2022) from zig programming language project
+
+	if [[ -z "${GEN_EBUILD}" ]] ; then
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/probonopd/go-appimage probonopd/go-appimage ${MY_PV})
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/CalebQ42/squashfs CalebQ42/squashfs v0.6.2)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/acobaugh/osrelease acobaugh/osrelease v0.1.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/adrg/xdg adrg/xdg v0.4.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/alokmenghrajani/gpgeez alokmenghrajani/gpgeez v0.0.0-20161206084504-1a06f1c582f9)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/coreos/go-systemd/v22 coreos/go-systemd v22.4.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/eclipse/paho.mqtt.golang eclipse/paho.mqtt.golang v1.4.1)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/esiqveland/notify esiqveland/notify v0.11.1)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/godbus/dbus/v5 godbus/dbus v5.1.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/google/go-github google/go-github v17.0.0+incompatible)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/grandcat/zeroconf grandcat/zeroconf v1.0.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/h2non/go-is-svg h2non/go-is-svg v0.0.0-20160927212452-35e8c4b0612c)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/hashicorp/go-version hashicorp/go-version v1.6.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/mgord9518/imgconv mgord9518/imgconv v0.0.0-20211227113402-4a8e0ad15713)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/otiai10/copy otiai10/copy v1.7.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/probonopd/go-zsyncmake probonopd/go-zsyncmake v0.0.0-20181008012426-5db478ac2be7)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/prometheus/procfs prometheus/procfs v0.8.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/rjeczalik/notify rjeczalik/notify v0.9.2)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/sabhiram/png-embed sabhiram/png-embed v0.0.0-20180421025336-149afe9a3ccb)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/shirou/gopsutil shirou/gopsutil v3.21.11+incompatible)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/shuheiktgw/go-travis shuheiktgw/go-travis v0.3.1)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/srwiley/oksvg srwiley/oksvg v0.0.0-20221002174631-3742d547bf3c)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/srwiley/rasterx srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/urfave/cli/v2 urfave/cli v2.17.1)
+		SRC_URI+=" "$(gen_go_dl_gh_url go.lsp.dev/uri go-language-server/uri v0.3.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/crypto golang/crypto v0.0.0-20221005025214-4161e89ecf1b)
+		SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sys golang/sys v0.0.0-20221006211917-84dc82d7e875)
+		SRC_URI+=" "$(gen_go_dl_gh_url gopkg.in/ini.v1 go-ini/ini v1.67.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url gopkg.in/src-d/go-git.v4 src-d/go-git v4.13.1)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/cenkalti/backoff cenkalti/backoff v2.2.1+incompatible)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/cpuguy83/go-md2man/v2 cpuguy83/go-md2man v2.0.2)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/emirpasic/gods emirpasic/gods v1.12.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/gabriel-vasile/mimetype gabriel-vasile/mimetype v1.4.1)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/go-ole/go-ole go-ole/go-ole v1.2.6)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/google/go-querystring google/go-querystring v0.0.0-20170111101155-53e6ce116135)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/gorilla/websocket gorilla/websocket v1.4.2)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/jbenet/go-context jbenet/go-context v0.0.0-20150711004518-d14ea06fba99)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/kevinburke/ssh_config kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/klauspost/compress klauspost/compress v1.15.9)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/miekg/dns miekg/dns v1.1.27)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/mitchellh/go-homedir mitchellh/go-homedir v1.1.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/pierrec/lz4/v4 pierrec/lz4 v4.1.15)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/rasky/go-lzo rasky/go-lzo v0.0.0-20200203143853-96a758eda86e)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/russross/blackfriday/v2 russross/blackfriday v2.1.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/rustyoz/Mtransform rustyoz/Mtransform v0.0.0-20190224104252-60c8c35a3681)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/rustyoz/genericlexer rustyoz/genericlexer v0.0.0-20190224115003-eb82fd2987bd)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/rustyoz/svg rustyoz/svg v0.0.0-20200706102315-fe1aeca2ba20)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/sabhiram/pngr sabhiram/pngr v0.0.0-20180419043407-2df49b015d4b)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/sergi/go-diff sergi/go-diff v1.0.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/src-d/gcfg src-d/gcfg v1.4.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/therootcompany/xz therootcompany/xz v1.0.1)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/tklauser/go-sysconf tklauser/go-sysconf v0.3.10)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/tklauser/numcpus tklauser/numcpus v0.4.0)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/ulikunitz/xz ulikunitz/xz v0.5.10)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/xanzy/ssh-agent xanzy/ssh-agent v0.2.1)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/xrash/smetrics xrash/smetrics v0.0.0-20201216005158-039620a65673)
+		SRC_URI+=" "$(gen_go_dl_gh_url github.com/yusufpapurcu/wmi yusufpapurcu/wmi v1.2.2)
+		SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/image golang/image v0.0.0-20211028202545-6944b10bf410)
+		SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/net golang/net v0.0.0-20220624214902-1bab6f366d9e)
+		SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.0.0-20220601150217-0de741cfad7f)
+		SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/text golang/text v0.3.7)
+		SRC_URI+=" "$(gen_go_dl_gh_url gopkg.in/src-d/go-billy.v4 src-d/go-billy v4.3.2)
+		SRC_URI+=" "$(gen_go_dl_gh_url gopkg.in/warnings.v0 go-warnings/warnings v0.1.2)
+		SRC_URI+=" "$(gen_binary_uris amd64 x86_64 x86_64)
+		SRC_URI+=" "$(gen_binary_uris x86 i686 i386)
+		SRC_URI+=" "$(gen_binary_uris arm armhf armv7a)
+		SRC_URI+=" "$(gen_binary_uris amd64 aarch64 aarch64)
+		SRC_URI+="
+https://raw.githubusercontent.com/probonopd/uploadtool/${EGIT_COMMIT_UPLOADTOOL}/upload.sh
+	-> uploadtool-upload.sh-${EGIT_COMMIT_UPLOADTOOL:0:7}
+		"
+	fi
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
 
 
 DESCRIPTION="Purely experimental playground for Go implementation of AppImage \
 tools"
 HOMEPAGE="https://github.com/probonopd/go-appimage"
-
 THIRD_PARTY_LICENSES="
 	(
 		BSD
@@ -124,12 +261,10 @@ THIRD_PARTY_LICENSES="
 		ZPL
 	)
 "
-
 LICENSE="
 	${THIRD_PARTY_LICENSES}
 	MIT
 "
-
 # ( Apache-2.0 || ( CC0-1.0 BSD-2 MIT ) Apache-2.0-with-LLVM-exceptions Apache-2.0 MIT ) - work/go_build/src/zig/lib/libc/wasi/LICENSE
 # ( Apache-2.0-with-LLVM-exceptions || ( UoI-NCSA MIT ) ) - go_build/src/zig/lib/libcxx/LICENSE.TXT
 # ( BSD CC-BY-SA-1.0 CC-BY-SA-2.0 CC-BY-SA-2.5 CC-BY-SA-3.0 ) - go_build/src/golang.org/x/text/unicode/norm/normalize_test.go
@@ -238,151 +373,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-lang/go-1.18.10:=
 "
-
-gen_go_dl_gh_url()
-{
-	local pkg_name="${1}"
-	local uri_frag="${2}"
-	local tag="${3}"
-	unset tag_split
-	readarray -d - -t tag_split <<<"${tag}"
-	local tag_commit="${tag_split[2]}"
-	local dest_name="${pkg_name//\//-}-${tag//\//-}"
-
-	if [[ -n "${tag_commit}" ]] ; then
-		echo "
-https://codeload.github.com/${uri_frag}/tar.gz/${tag_commit}
-	-> ${dest_name}.tar.gz
-		"
-	else
-		echo "
-https://github.com/${uri_frag}/archive/refs/tags/${tag//+incompatible}.tar.gz
-	-> ${dest_name}.tar.gz
-		"
-	fi
-
-}
-
-if [[ -z "${GEN_EBUILD}" ]] && ! [[ ${PV} =~ 9999 ]] ; then
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/probonopd/go-appimage probonopd/go-appimage ${MY_PV})
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/CalebQ42/squashfs CalebQ42/squashfs v0.6.2)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/acobaugh/osrelease acobaugh/osrelease v0.1.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/adrg/xdg adrg/xdg v0.4.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/alokmenghrajani/gpgeez alokmenghrajani/gpgeez v0.0.0-20161206084504-1a06f1c582f9)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/coreos/go-systemd/v22 coreos/go-systemd v22.4.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/eclipse/paho.mqtt.golang eclipse/paho.mqtt.golang v1.4.1)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/esiqveland/notify esiqveland/notify v0.11.1)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/godbus/dbus/v5 godbus/dbus v5.1.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/google/go-github google/go-github v17.0.0+incompatible)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/grandcat/zeroconf grandcat/zeroconf v1.0.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/h2non/go-is-svg h2non/go-is-svg v0.0.0-20160927212452-35e8c4b0612c)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/hashicorp/go-version hashicorp/go-version v1.6.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/mgord9518/imgconv mgord9518/imgconv v0.0.0-20211227113402-4a8e0ad15713)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/otiai10/copy otiai10/copy v1.7.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/probonopd/go-zsyncmake probonopd/go-zsyncmake v0.0.0-20181008012426-5db478ac2be7)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/prometheus/procfs prometheus/procfs v0.8.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/rjeczalik/notify rjeczalik/notify v0.9.2)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/sabhiram/png-embed sabhiram/png-embed v0.0.0-20180421025336-149afe9a3ccb)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/shirou/gopsutil shirou/gopsutil v3.21.11+incompatible)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/shuheiktgw/go-travis shuheiktgw/go-travis v0.3.1)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/srwiley/oksvg srwiley/oksvg v0.0.0-20221002174631-3742d547bf3c)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/srwiley/rasterx srwiley/rasterx v0.0.0-20220730225603-2ab79fcdd4ef)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/urfave/cli/v2 urfave/cli v2.17.1)
-	SRC_URI+=" "$(gen_go_dl_gh_url go.lsp.dev/uri go-language-server/uri v0.3.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/crypto golang/crypto v0.0.0-20221005025214-4161e89ecf1b)
-	SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sys golang/sys v0.0.0-20221006211917-84dc82d7e875)
-	SRC_URI+=" "$(gen_go_dl_gh_url gopkg.in/ini.v1 go-ini/ini v1.67.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url gopkg.in/src-d/go-git.v4 src-d/go-git v4.13.1)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/cenkalti/backoff cenkalti/backoff v2.2.1+incompatible)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/cpuguy83/go-md2man/v2 cpuguy83/go-md2man v2.0.2)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/emirpasic/gods emirpasic/gods v1.12.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/gabriel-vasile/mimetype gabriel-vasile/mimetype v1.4.1)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/go-ole/go-ole go-ole/go-ole v1.2.6)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/google/go-querystring google/go-querystring v0.0.0-20170111101155-53e6ce116135)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/gorilla/websocket gorilla/websocket v1.4.2)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/jbenet/go-context jbenet/go-context v0.0.0-20150711004518-d14ea06fba99)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/kevinburke/ssh_config kevinburke/ssh_config v0.0.0-20190725054713-01f96b0aa0cd)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/klauspost/compress klauspost/compress v1.15.9)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/miekg/dns miekg/dns v1.1.27)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/mitchellh/go-homedir mitchellh/go-homedir v1.1.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/pierrec/lz4/v4 pierrec/lz4 v4.1.15)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/rasky/go-lzo rasky/go-lzo v0.0.0-20200203143853-96a758eda86e)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/russross/blackfriday/v2 russross/blackfriday v2.1.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/rustyoz/Mtransform rustyoz/Mtransform v0.0.0-20190224104252-60c8c35a3681)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/rustyoz/genericlexer rustyoz/genericlexer v0.0.0-20190224115003-eb82fd2987bd)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/rustyoz/svg rustyoz/svg v0.0.0-20200706102315-fe1aeca2ba20)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/sabhiram/pngr sabhiram/pngr v0.0.0-20180419043407-2df49b015d4b)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/sergi/go-diff sergi/go-diff v1.0.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/src-d/gcfg src-d/gcfg v1.4.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/therootcompany/xz therootcompany/xz v1.0.1)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/tklauser/go-sysconf tklauser/go-sysconf v0.3.10)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/tklauser/numcpus tklauser/numcpus v0.4.0)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/ulikunitz/xz ulikunitz/xz v0.5.10)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/xanzy/ssh-agent xanzy/ssh-agent v0.2.1)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/xrash/smetrics xrash/smetrics v0.0.0-20201216005158-039620a65673)
-	SRC_URI+=" "$(gen_go_dl_gh_url github.com/yusufpapurcu/wmi yusufpapurcu/wmi v1.2.2)
-	SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/image golang/image v0.0.0-20211028202545-6944b10bf410)
-	SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/net golang/net v0.0.0-20220624214902-1bab6f366d9e)
-	SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/sync golang/sync v0.0.0-20220601150217-0de741cfad7f)
-	SRC_URI+=" "$(gen_go_dl_gh_url golang.org/x/text golang/text v0.3.7)
-	SRC_URI+=" "$(gen_go_dl_gh_url gopkg.in/src-d/go-billy.v4 src-d/go-billy v4.3.2)
-	SRC_URI+=" "$(gen_go_dl_gh_url gopkg.in/warnings.v0 go-warnings/warnings v0.1.2)
-fi
-
-# These must be inspected and updated on every ebuild update since
-# they are live upstream.  No known way to reference them statically.
-# The continuous git tag below in gen_binary_uris() changes.
-EGIT_COMMIT_STATIC_TOOLS="6e1f76764d334490ddedeb1075a8cd66c270e8e2" # Oct 15, 2022
-EGIT_COMMIT_UPLOADTOOL="58f20d2b86197faddd7ffb531a2fab0dad28dedd" # Jul 23, 2022
-TAG_AIK="13" # Dec 31, 2020
-ZIG_LINUX_PV="0.10.0" # Oct 31, 2022 ; musl 1.2.3 (Apr 7, 2022) from zig programming language project
-
-gen_binary_uris()
-{
-	local garch="${1}"
-	local arch="${2}"
-	local zigarch="${3}"
-	echo "
-		!system-static-tools? (
-			${garch}? (
-https://github.com/probonopd/static-tools/releases/download/continuous/appstreamcli-${arch}
-	-> static-tools-appstreamcli-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
-https://github.com/probonopd/static-tools/releases/download/continuous/bsdtar-${arch}
-	-> static-tools-bsdtar-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
-https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-${arch}
-	-> static-tools-desktop-file-validate-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
-https://github.com/probonopd/static-tools/releases/download/continuous/mksquashfs-${arch}
-	-> static-tools-mksquashfs-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
-https://github.com/probonopd/static-tools/releases/download/continuous/patchelf-${arch}
-	-> static-tools-patchelf-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
-https://github.com/probonopd/static-tools/releases/download/continuous/runtime-fuse2-${arch}
-	-> static-tools-runtime-fuse2-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
-https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-${arch}
-	-> static-tools-unsquashfs-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
-			)
-		)
-		musl? (
-			${garch}? (
-https://ziglang.org/download/0.10.0/zig-linux-${zigarch}-${ZIG_LINUX_PV}.tar.xz
-			)
-		)
-	"
-}
-
-if [[ ${PV} =~ 9999 ]] ; then
-	S="${WORKDIR}/${PN}-9999"
-elif [[ -z "${GEN_EBUILD}" ]] && ! [[ ${PV} =~ 9999 ]] ; then
-	SRC_URI+=" "$(gen_binary_uris amd64 x86_64 x86_64)
-	SRC_URI+=" "$(gen_binary_uris x86 i686 i386)
-	SRC_URI+=" "$(gen_binary_uris arm armhf armv7a)
-	SRC_URI+=" "$(gen_binary_uris amd64 aarch64 aarch64)
-	SRC_URI+="
-https://raw.githubusercontent.com/probonopd/uploadtool/${EGIT_COMMIT_UPLOADTOOL}/upload.sh
-	-> uploadtool-upload.sh-${EGIT_COMMIT_UPLOADTOOL:0:7}
-	"
-	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-fi
-
 RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-0.0.0.20221217121855-gentooize.patch"
@@ -648,7 +638,10 @@ eerror "Missing get_col2_unpack() entry for ${uri}"
 }
 
 generate_ebuild_snapshot() {
-	wget -q -O "${T}/go.mod" https://raw.githubusercontent.com/probonopd/${PN}/${EGIT_COMMIT}/go.mod
+	wget -q \
+		-O "${T}/go.mod" \
+		"https://raw.githubusercontent.com/probonopd/${PN}/${EGIT_COMMIT}/go.mod" \
+		|| die
 	IFS=$'\n'
 	L=(
 		"github.com/probonopd/${PN} MY_PV"
@@ -739,9 +732,16 @@ src_unpack() {
 				| cut -f 2- -d " ")
 		fi
 
-		wget -O "${DISTDIR}/uploadtool-upload.sh" "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
+		wget \
+			-O "${WORKDIR}/uploadtool-upload.sh" \
+			"https://github.com/probonopd/uploadtool/raw/master/upload.sh" \
+			|| die
 	else
 		unpack_go
+		cp -a \
+			"${DISTDIR}/uploadtool-upload.sh-${EGIT_COMMIT_UPLOADTOOL:0:7}" \
+			"${WORKDIR}/uploadtool-upload.sh" \
+			|| die
 	fi
 
 	# go_build/src/github.com/probonopd/go-appimage/scripts/build.sh

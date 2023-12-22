@@ -85,7 +85,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/mksquashfs-$AIARCH" > mksquashfs )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/patchelf-$AIARCH" > patchelf )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/runtime-fuse$FUSE_SLOT-$AIARCH" > runtime-$AIARCH )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}/uploadtool-upload.sh" > uploadtool )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${WORKDIR}/uploadtool-upload.sh" > uploadtool )
 +    else
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/appstreamcli-$AIARCH -O appstreamcli )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-$AIARCH -O desktop-file-validate )
@@ -107,7 +107,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/mksquashfs-$AIARCH" > mksquashfs )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/patchelf-$AIARCH" > patchelf )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/runtime-fuse$FUSE_SLOT-$AIARCH" > runtime-$AIARCH )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}/uploadtool-upload.sh" > uploadtool )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${WORKDIR}/uploadtool-upload.sh" > uploadtool )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/bsdtar-$AIARCH" > bsdtar )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/usr/share/${STATIC_TOOLS_LIBC}/unsquashfs-$AIARCH" > unsquashfs )
 +    else
