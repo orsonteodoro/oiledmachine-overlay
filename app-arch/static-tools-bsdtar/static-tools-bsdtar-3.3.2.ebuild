@@ -23,13 +23,14 @@ LICENSE="
 	BSD-4
 	public-domain
 "
-IUSE=""
+IUSE="libcxx"
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	app-arch/bzip2:=[static-libs]
 	app-arch/xz-utils:=[static-libs]
+	dev-libs/icu:=[static-libs]
 	sys-libs/zlib:=[static-libs]
 "
 DEPEND+="
@@ -86,6 +87,14 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	fi
 	local ARCHITECTURE=$(get_arch)
 
+	local LIBSTDCXX_LIBS=""
+	local LIBCXX_LIBS=""
+	if use libcxx ; then
+		LIBCXX_LIBS="-lc++"
+	else
+		LIBSTDCXX_LIBS="-lstdc++"
+	fi
+
 	# Build static bsdtar
 	./configure \
 		--disable-shared \
@@ -96,10 +105,13 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		--without-bz2lib \
 		--disable-maintainer-mode \
 		--disable-dependency-tracking \
-		CFLAGS=-no-pie \
-		LDFLAGS=-static \
+		CFLAGS="-no-pie" \
+		CPPFLAGS="-DU_STATIC_IMPLEMENTATION" \
+		LIBS="-licuuc -licudata ${LIBCXX_LIBS} ${LIBSTDCXX_LIBS} -lm" \
+		LDFLAGS="-static" \
 		|| die
 	emake
+	[[ -z "${CC}" ]] && CC="gcc"
 	${CC} \
 		-static \
 		-o bsdtar \
@@ -112,7 +124,7 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		tar/bsdtar-write.o \
 		.libs/libarchive.a \
 		.libs/libarchive_fe.a \
-		/lib/libz.a \
+		"${ESYSROOT}/usr/$(get_libdir)/libz.a" \
 		-llzma \
 		|| die
 	strip bsdtar || die

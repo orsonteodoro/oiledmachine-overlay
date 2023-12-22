@@ -110,17 +110,17 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	sed -i -e "s|subdir('tests/')||" meson.build || die
 	# -no-pie is required to statically link to libc
 
-	local LIBSTDCXX_LDFLAGS=""
-	local LIBCXX_LDFLAGS=""
+	local LIBSTDCXX_LIBS=""
+	local LIBCXX_LIBS=""
 	if use libcxx ; then
-		LIBCXX_LDFLAGS="-lc++"
+		LIBCXX_LIBS="-lc++"
 	else
-		LIBSTDCXX_LDFLAGS="-lstdc++"
+		LIBSTDCXX_LIBS="-lstdc++"
 	fi
 
 	CFLAGS="-no-pie -I'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb'" \
 	CPPFLAGS="-DU_STATIC_IMPLEMENTATION" \
-	LDFLAGS="-static -L'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb' ${LIBSTDCXX_LDFLAGS} ${LIBCXX_LDFLAGS}" \
+	LDFLAGS="-static -L'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb' ${LIBSTDCXX_LIBS} ${LIBCXX_LIBS}" \
 	meson setup build \
 		--buildtype=release \
 		--default-library=static \
