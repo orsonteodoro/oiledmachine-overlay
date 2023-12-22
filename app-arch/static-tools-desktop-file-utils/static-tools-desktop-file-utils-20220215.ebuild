@@ -22,6 +22,7 @@ HOMEPAGE="
 "
 LICENSE="
 	GPL-2+
+	GPL-3+-with-autoconf-exception
 "
 IUSE=""
 REQUIRED_USE+="
