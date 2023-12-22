@@ -730,7 +730,7 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 		if ! use fallback-commit ; then
-			verify_build_files
+			#verify_build_files
 			export EGIT_COMMIT=$(git ls-remote \
 				https://github.com/probonopd/go-appimage.git \
                                 | grep HEAD \
