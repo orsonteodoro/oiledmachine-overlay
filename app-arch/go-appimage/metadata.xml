@@ -45,6 +45,15 @@
       https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#L79
 
 
+    Porting:
+
+      If you plan to port your AppImage to glibc platforms, you should port in a
+      chroot or a Gentoo docker image with just -O2 CFLAGS and -march=generic or
+      -march=x86-64.  If you do not want to port but just want to load
+      AppImages, then you do not need to worry about CFLAGS and the chroot
+      thing.  It is recommended to use the CI to produce it instead.
+
+
     SECURITY NOTICE:
 
       Do not download/run AppImages from untrusted sites.
@@ -62,7 +71,6 @@
       version or a well maintained alternative.
 
 
-
     Build time environment variables:
 
       GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER - Disable watching the
@@ -74,6 +82,13 @@
   <use>
     <flag name="firejail">
       Checks for Firejail support for sandbox support.
+    </flag>
+    <flag name="system-static-tools">
+      Use the system's static-tools instead of the prebuilt upstream binaries
+      statically against Alpine's musl. (aka Hardened musl).
+
+      It is *strongly* recommended to use this flag for security and
+      full transparency reasons.
     </flag>
     <flag name="musl">
       Forces the use of the zig compiler using internal musl along with
@@ -90,20 +105,6 @@
 
         https://github.com/probonopd/go-appimage/pull/207
 
-      If the musl USE flag is disabled it will do the following instead:
-
-      It will use the system packages and binaries instead of the older static
-      binaries from the Alpine operating system statically linked with musl.  If
-      musl USE flag is disabled, it will allow for determinstic build or
-      downloads since upstream does not archive old builds of these static
-      packages.
-
-      If you disable musl USE flag and plan to port your AppImage to glibc
-      platforms, you should port in a chroot or a Gentoo docker image with
-      just -O2 CFLAGS and -march=generic or -march=x86-64.  If you do not want
-      to port but just want to load AppImages, then you do not need to worry
-      about CFLAGS and the chroot thing.  It is recommended to use the CI
-      to produce it instead.
     </flag>
     <flag name="gnome">
       Checks support for udisk support in Gnome.

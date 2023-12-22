@@ -177,21 +177,23 @@ LICENSE="
 # aid = included in appimaged ; ait = included in appimagetool
 # LICENSE is already handled and accepted in other packages when the musl USE
 # flag is disabled.
-LICENSE+=" musl? ( OPENLDAP GPL-2 LGPL-2.1 )" # appstreamcli # ait
-LICENSE+=" musl? ( BSD BSD-2 BSD-4 public-domain )" # libarchive (bsdtar) aid
-LICENSE+=" musl? ( GPL-2 )" # squashfs-tools ait aid
-LICENSE+=" musl? ( GPL-2+ )" # desktop-file-utils ait
-LICENSE+=" musl? ( GPL-3 )" # patchelf # ait
-LICENSE+=" musl? ( all-rights-reserved MIT )" # \
+LICENSE+=" !system-static-tools? ( OPENLDAP GPL-2 LGPL-2.1 )" # appstreamcli # ait
+LICENSE+=" !system-static-tools? ( BSD BSD-2 BSD-4 public-domain )" # libarchive (bsdtar) aid
+LICENSE+=" !system-static-tools? ( GPL-2 )" # squashfs-tools ait aid
+LICENSE+=" !system-static-tools? ( GPL-2+ )" # desktop-file-utils ait
+LICENSE+=" !system-static-tools? ( GPL-3 )" # patchelf # ait
+LICENSE+=" !system-static-tools? ( all-rights-reserved MIT )" # \
 # The runtime archive comes from runtime.c from the AppImageKit project. \
 # The MIT license template does not have all rights reserved, but the BSD \
 # template does.
 LICENSE+=" MIT" # upload tool
-LICENSE+=" musl? ( MIT LGPL-2 GPL-2 )" # From the musl libc package
+LICENSE+=" !system-static-tools? ( MIT LGPL-2 GPL-2 )" # From the musl libc package
 
 [[ ${PV} =~ 9999 ]] && IUSE+=" fallback-commit"
+# -system-static-tools is upstream default.
+# +musl is upstream default.
 IUSE+="
-firejail -musl gnome kde
+firejail gnome kde -musl +system-static-tools
 "
 REQUIRED_USE+="
 	|| (
@@ -205,7 +207,7 @@ TRAVIS_CI_DEPENDS="
 	>=dev-vcs/git-2.43.0
 "
 # U 20.04 for go-appimage project
-# Upstream uses A 3.15 for static-tools aka !musl section
+# Upstream uses A 3.15 for static-tools
 RDEPEND+="
 	${TRAVIS_CI_DEPENDS}
 	!app-arch/appimaged
@@ -214,7 +216,7 @@ RDEPEND+="
 	>=sys-apps/dbus-1.12.16
 	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-apps/systemd-245.4
-	!musl? (
+	system-static-tools? (
 		app-arch/static-tools
 	)
 	firejail? (
@@ -338,7 +340,7 @@ gen_binary_uris()
 	local arch="${2}"
 	local zigarch="${3}"
 	echo "
-		musl? (
+		!system-static-tools? (
 			${garch}? (
 https://github.com/probonopd/static-tools/releases/download/continuous/appstreamcli-${arch}
 	-> static-tools-appstreamcli-${arch}-${EGIT_COMMIT_STATIC_TOOLS:0:7}
@@ -509,12 +511,12 @@ eerror
 		die
 	fi
 
-	if use musl ; then
+	if use alpine-musl ; then
 ewarn
 ewarn "This ebuild may fail when checking checksums since there is no way to"
 ewarn "download a specific version/commit or cached older server builds."
 ewarn
-ewarn "It is recommended to disable the musl USE flag if downloading"
+ewarn "It is recommended to disable the alpine-musl USE flag if downloading"
 ewarn "is a problem."
 ewarn
 	fi
@@ -758,16 +760,17 @@ src_unpack() {
 	if [[ "${GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER:-1}" == "1" ]] ; then
 		export USE_DISABLE_WATCHING_DESKTOP_FOLDER=1
 	fi
-	if ! use musl ; then
+	if use alpine-musl ; then
+		export STATIC_TOOLS_LIBC="alpine-musl"
+	else
 		if use elibc_glibc ; then
 			export STATIC_TOOLS_LIBC="glibc"
+		elif use elibc_musl ; then
+			export STATIC_TOOLS_LIBC="musl"
 		else
 			export STATIC_TOOLS_LIBC="native"
 		fi
 		export GET_LIBDIR=$(get_libdir)
-	else
-		export STATIC_TOOLS_LIBC="musl" # Natively built.
-		#export STATIC_TOOLS_LIBC="upstream-musl" # Prebuilt from upstream
 	fi
 	export EGIT_COMMIT_STATIC_TOOLS
 	export EGIT_COMMIT_UPLOADTOOL
