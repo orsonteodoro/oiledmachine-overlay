@@ -33,6 +33,11 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	dev-util/strace
+	sys-apps/util-linux
+	sys-devel/autoconf
+	sys-devel/automake
+	sys-devel/libtool
 "
 SRC_URI=" "
 RESTRICT="mirror"
