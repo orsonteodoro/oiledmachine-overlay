@@ -84,17 +84,21 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 
 	# Build static squashfs-tools
 	sed -i -e 's|#ZSTD_SUPPORT = 1|ZSTD_SUPPORT = 1|g' Makefile || die
-	make -j$(nproc) LDFLAGS="-static" || die
+	emake \
+		LDFLAGS="-static" \
+		|| die
 	file mksquashfs unsquashfs || die
 	strip mksquashfs unsquashfs || die
 	mkdir -p out
-	cp squashfs-tools/mksquashfs out/mksquashfs-${ARCHITECTURE} || die
-	cp squashfs-tools/unsquashfs out/unsquashfs-${ARCHITECTURE} || die
+	cp mksquashfs out/mksquashfs-${ARCHITECTURE} || die
+	cp unsquashfs out/unsquashfs-${ARCHITECTURE} || die
+	emake \
+		INSTALL_PREFIX="$(pwd)/out" \
+		install
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	emake install || die
 	exeinto /usr/share/static-tools
 	doexe out/mksquashfs-${ARCHITECTURE}
 	doexe out/unsquashfs-${ARCHITECTURE}
