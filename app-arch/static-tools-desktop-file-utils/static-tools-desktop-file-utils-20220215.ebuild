@@ -29,7 +29,9 @@ REQUIRED_USE+="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	dev-libs/glib:=[static-libs]
-	dev-libs/libintl:=[static-libs]
+	elibc_musl? (
+		dev-libs/libintl:=[static-libs]
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -97,11 +99,15 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		|| die
 	emake
 	cd src/ || die
-	gcc -static -o desktop-file-validate keyfileutils.o validate.o validator.o mimeutils.o -lglib-2.0 -lintl || die
-	gcc -static -o update-desktop-database  update-desktop-database.o mimeutils.o -lglib-2.0 -lintl || die
-	gcc -static -o desktop-file-install keyfileutils.o validate.o install.o mimeutils.o -lglib-2.0 -lintl || die
+	local LIBS=""
+	if use elibc_musl ; then
+		LIBS="-lintl"
+	fi
+	gcc -static -o desktop-file-validate keyfileutils.o validate.o validator.o mimeutils.o -lglib-2.0 ${LIBS} || die
+	gcc -static -o update-desktop-database  update-desktop-database.o mimeutils.o -lglib-2.0 ${LIBS} || die
+	gcc -static -o desktop-file-install keyfileutils.o validate.o install.o mimeutils.o -lglib-2.0 ${LIBS} || die
 	strip desktop-file-install desktop-file-validate update-desktop-database || die
-	cd ../.. || die
+	cd ../
 	mkdir -p out || die
 	cp src/desktop-file-install out/desktop-file-install-${ARCHITECTURE} || die
 	cp src/desktop-file-validate out/desktop-file-validate-${ARCHITECTURE} || die
