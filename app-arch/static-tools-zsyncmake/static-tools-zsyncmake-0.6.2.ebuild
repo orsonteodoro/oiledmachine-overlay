@@ -19,6 +19,9 @@ HOMEPAGE="
 "
 LICENSE="
 	Artistic-2
+	BSD
+	GPL-2+-with-autoconf-exception
+	HPND
 "
 IUSE=""
 REQUIRED_USE+="
