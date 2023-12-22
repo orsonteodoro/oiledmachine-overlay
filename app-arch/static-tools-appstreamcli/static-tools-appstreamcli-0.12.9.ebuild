@@ -4,8 +4,6 @@
 
 EAPI=7
 
-inherit flag-o-matic
-
 # You can build this in a musl container to get strictly musl libs.
 
 LMDB_PV="0.9.29"
@@ -112,9 +110,8 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	sed -i -e "s|subdir('tests/')||" meson.build || die
 	# -no-pie is required to statically link to libc
 
-	append-flags -no-pie -I"${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb"
-	append-ldflags -static -L"${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb" -lstdc++
-
+	CFLAGS="-no-pie -I'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb'" \
+	LDFLAGS="-static -L'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb' -lstdc++"
 	meson setup build \
 		--buildtype=release \
 		--default-library=static \
