@@ -24,7 +24,7 @@ LICENSE="
 	LGPL-2.1+
 	GPL-2+
 "
-IUSE=""
+IUSE="-libcxx"
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -110,8 +110,17 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	sed -i -e "s|subdir('tests/')||" meson.build || die
 	# -no-pie is required to statically link to libc
 
+	local LIBSTDCXX_LDFLAGS=""
+	local LIBCXX_LDFLAGS=""
+	if use libcxx ; then
+		LIBCXX_LDFLAGS="-lc++"
+	else
+		LIBSTDCXX_LDFLAGS="-lstdc++"
+	fi
+
 	CFLAGS="-no-pie -I'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb'" \
-	LDFLAGS="-static -L'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb' -lstdc++"
+	CPPFLAGS="-DU_STATIC_IMPLEMENTATION" \
+	LDFLAGS="-static -L'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb' ${LIBSTDCXX_LDFLAGS} ${LIBCXX_LDFLAGS}" \
 	meson setup build \
 		--buildtype=release \
 		--default-library=static \
