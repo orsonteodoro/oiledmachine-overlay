@@ -227,7 +227,7 @@ RDEPEND+="
 		>=dev-libs/appstream-0.12.9:=
 		>=dev-util/desktop-file-utils-0.27:=
 		>=dev-util/patchelf-0.9:=
-		>=sys-fs/squashfs-tools-4.4:=[zstd]
+		>=sys-fs/squashfs-tools-4.5.1:=[zstd]
 		|| (
 			app-arch/static-tools
 			app-arch/AppImageKit[runtime]
