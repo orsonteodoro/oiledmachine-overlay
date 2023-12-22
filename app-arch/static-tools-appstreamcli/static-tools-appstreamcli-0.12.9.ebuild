@@ -15,16 +15,14 @@ S_LMDB="${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb"
 S="${WORKDIR}/appstream-${PV}"
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-DESCRIPTION="bsdtar for static-tools"
+DESCRIPTION="appstreamcli for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
-	https://github.com/libarchive/libarchive
+	https://github.com/ximion/appstream
 "
 LICENSE="
-	BSD
-	BSD-2
-	BSD-4
-	public-domain
+	LGPL-2.1+
+	GPL-2+
 "
 IUSE=""
 REQUIRED_USE+="

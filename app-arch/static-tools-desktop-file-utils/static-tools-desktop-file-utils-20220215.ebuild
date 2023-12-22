@@ -21,10 +21,7 @@ HOMEPAGE="
 	https://gitlab.freedesktop.org/xdg/desktop-file-utils
 "
 LICENSE="
-	BSD
-	BSD-2
-	BSD-4
-	public-domain
+	GPL-2+
 "
 IUSE=""
 REQUIRED_USE+="
