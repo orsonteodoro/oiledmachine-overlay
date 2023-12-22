@@ -220,7 +220,7 @@ RDEPEND+="
 		>=dev-util/desktop-file-utils-0.27:=
 		>=dev-util/patchelf-0.9:=
 		>=sys-fs/squashfs-tools-4.5.1:=[zstd]
-		app-arch/static-tools[runtime]
+		app-arch/static-tools
 	)
 	firejail? (
 		>=sys-apps/firejail-0.9.62

@@ -25,9 +25,7 @@ REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
-	runtime? (
-		>=sys-fs/squashfuse-0.1.105[static-libs,zstd]
-	)
+	>=sys-fs/squashfuse-0.1.105[static-libs,zstd]
 "
 DEPEND+="
 	${RDEPEND}
@@ -64,10 +62,7 @@ get_arch() {
 	fi
 }
 
-src_compile() {
-	if ! use elibc_musl ; then
-ewarn "Upstream intends that artifacts be built from a musl chroot or container."
-	fi
+build_runtime() {
 # MIT License
 #
 # Copyright (c) 2019 probonopd
@@ -89,27 +84,30 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-	local ARCHITECTURE=$(get_arch)
-	if use runtime ; then
-		export GIT_COMMIT=$(cat src/runtime/version)
-		cd src/runtime || die
-		make runtime-fuse2 || die
-		file runtime-fuse2 || die
-		strip runtime-fuse2 || die
-		ls -lh runtime-fuse2 || die
-		echo -ne 'AI\x02' | dd of="runtime-fuse2" bs=1 count=3 seek=8 conv="notrunc" || die # magic bytes, always do AFTER strip
-		cd - || die
-		mkdir -p out || die
-		cp src/runtime/runtime-fuse2 out/runtime-fuse2-${ARCHITECTURE} || die
+	export GIT_COMMIT=$(cat src/runtime/version)
+	cd src/runtime || die
+	make runtime-fuse2 || die
+	file runtime-fuse2 || die
+	strip runtime-fuse2 || die
+	ls -lh runtime-fuse2 || die
+	echo -ne 'AI\x02' | dd of="runtime-fuse2" bs=1 count=3 seek=8 conv="notrunc" || die # magic bytes, always do AFTER strip
+	cd - || die
+	mkdir -p out || die
+	cp src/runtime/runtime-fuse2 out/runtime-fuse2-${ARCHITECTURE} || die
+}
+
+src_compile() {
+	if ! use elibc_musl ; then
+ewarn "Upstream intends that artifacts be built from a musl chroot or container."
 	fi
+	local ARCHITECTURE=$(get_arch)
+	build_runtime
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	if use runtime ; then
-		exeinto /usr/share/static-tools
-		doexe out/runtime-fuse2-${ARCHITECTURE}
-	fi
+	exeinto /usr/share/static-tools
+	doexe out/runtime-fuse2-${ARCHITECTURE}
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
