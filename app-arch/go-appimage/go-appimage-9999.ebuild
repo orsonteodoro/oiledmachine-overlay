@@ -187,7 +187,7 @@ LICENSE+=" musl? ( MIT LGPL-2 GPL-2 )" # From the musl libc package
 
 [[ ${PV} =~ 9999 ]] && IUSE+=" fallback-commit"
 IUSE+="
-firejail musl gnome kde systemd
+firejail -musl gnome kde systemd
 "
 REQUIRED_USE+="
 	!elibc_musl? (
