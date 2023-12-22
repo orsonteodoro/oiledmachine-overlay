@@ -1,0 +1,15 @@
+diff -urp squashfuse-e51978cd6bb5c4d16fae9eee43d0b258f570bb0f.orig/m4/squashfuse_fuse.m4 squashfuse-e51978cd6bb5c4d16fae9eee43d0b258f570bb0f/m4/squashfuse_fuse.m4
+--- squashfuse-e51978cd6bb5c4d16fae9eee43d0b258f570bb0f.orig/m4/squashfuse_fuse.m4	2021-12-10 19:07:02.000000000 -0800
++++ squashfuse-e51978cd6bb5c4d16fae9eee43d0b258f570bb0f/m4/squashfuse_fuse.m4	2023-12-22 10:41:25.904518599 -0800
+@@ -144,7 +144,10 @@ AC_DEFUN([SQ_FIND_FUSE],[
+ 	])
+ 	
+ 	# Use pkgconfig to look for fuse3.
+-	AS_IF([test "x$sq_fuse_found" = xyes],,[
++	AC_ARG_ENABLE([fuse3],
++		AS_HELP_STRING([--enable-fuse3], [enable FUSE3]),[sq_fuse3=yes],
++		[sq_fuse3=no])
++	AS_IF([test "x$sq_fuse3" = xyes],,[
+ 		SQ_SAVE_FLAGS
+ 		SQ_PKG([fuse3],[fuse3 >= 3.2],
+ 			[ AC_DEFINE([FUSE_USE_VERSION], [32], [Version of FUSE API to use])

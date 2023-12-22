@@ -21,13 +21,18 @@ HOMEPAGE="
 LICENSE="
 	BSD-2
 "
-IUSE=""
+IUSE="-fuse3"
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# A uses fuse-2.9.9
+# A uses fuse-2.9.9, U supports only fuse-2.9.9
 RDEPEND+="
-	<sys-fs/fuse-3:=[static-libs]
+	!fuse3? (
+		=sys-fs/fuse-2*:=[static-libs]
+	)
+	fuse3? (
+		=sys-fs/fuse-3*:=[static-libs]
+	)
 	sys-libs/zlib:=[static-libs]
 	app-arch/zstd:=[static-libs]
 "
@@ -44,6 +49,7 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 PATCHES=(
+	"${FILESDIR}/static-tools-squashfuse-20211010-fuse3-enablement.patch"
 )
 
 get_arch() {
@@ -86,18 +92,26 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-	# export PKG_CONFIG_PATH=""
+	export PKG_CONFIG_PATH="${ESYSROOT}/usr/$(get_libdir)/pkgconfig"
 	# Build static squashfuse
 	./autogen.sh || die
 	./configure --help || die
-	./configure CFLAGS=-no-pie LDFLAGS=-static || die
+	local fuse3_arg=$(usex fuse3 "--enable-fuse3" "--disable-fuse3")
+	./configure \
+		CFLAGS="-no-pie" \
+		LDFLAGS="-static" \
+		${fuse3_arg} \
+		--prefix="/usr/share/static-tools/squashfuse" \
+		--datarootdir="/usr/share/static-tools/squashfuse/share" \
+		--libdir="/usr/share/static-tools/squashfuse/$(get_libdir)" \
+		|| die
 	emake || die
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	emake install || die
-	exeinto /usr/share/static-tools/squashfuse/include
+	emake DESTDIR="${ED}" install || die
+	insinto /usr/share/static-tools/squashfuse/include
 	doins *.h
 }
 
