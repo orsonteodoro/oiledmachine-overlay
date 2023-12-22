@@ -4,6 +4,8 @@
 
 EAPI=7
 
+inherit flag-o-matic
+
 # You can build this in a musl container to get strictly musl libs.
 
 LMDB_PV="0.9.29"
@@ -30,9 +32,12 @@ REQUIRED_USE+="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
 	dev-libs/glib:=[static-libs]
+	dev-libs/icu:=[static-libs]
+	dev-libs/libffi:=[static-libs]
 	dev-libs/libxml2
 	dev-util/gperf
 	dev-python/pyyaml
+	sys-apps/util-linux:=[static-libs]
 "
 # pyyaml should be static
 DEPEND+="
@@ -90,16 +95,14 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	fi
 	local ARCHITECTURE=$(get_arch)
 
+	unset SCCACHE_DIR
+	unset RUSTC_WRAPPER
 
 	# Build appstreamcli
 	# Compile liblmdb from source as Alpine only ship it as a .so
 	cd "${S_LMDB}" || die
 	emake liblmdb.a || die
-	insinto /usr/share/static-tools/lmdb/lib
-	doins liblmdb.a
-	insinto /usr/share/static-tools/lmdb/include
-	doins lmdb.h
-	cd - || die
+
 	cd "${S}" || die
 	# Ask for static dependencies
 	sed -i -E -e "s|(dependency\('.*')|\1, static: true|g" meson.build || die
@@ -108,12 +111,14 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	sed -i -e "s|subdir('docs/')||" meson.build || die
 	sed -i -e "s|subdir('tests/')||" meson.build || die
 	# -no-pie is required to statically link to libc
-	CFLAGS="-no-pie" \
-	LDFLAGS="-static" \
+
+	append-flags -no-pie -I"${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb"
+	append-ldflags -static -L"${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb" -lstdc++
+
 	meson setup build \
 		--buildtype=release \
 		--default-library=static \
-		--prefix="$(pwd)/prefix" \
+		--prefix="/prefix" \
 		--strip \
 		-Db_lto=true \
 		-Db_ndebug=if-release \
@@ -122,10 +127,10 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		-Dapidocs=false \
 		|| die
 	# Install in a staging enviroment
-	meson install -C build || die
-	file prefix/bin/appstreamcli || die
 	mkdir -p out || die
-	cp prefix/bin/appstreamcli out/appstreamcli-${ARCHITECTURE} || die
+	DESTDIR="out" meson install -C build || die
+	file build/out/prefix/bin/appstreamcli || die
+	cp build/out/prefix/bin/appstreamcli out/appstreamcli-${ARCHITECTURE} || die
 }
 
 src_install() {
