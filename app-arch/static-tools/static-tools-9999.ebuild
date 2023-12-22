@@ -25,6 +25,7 @@ RDEPEND+="
 	>=app-arch/static-tools-desktop-file-utils-20220215
 	>=app-arch/static-tools-patchelf-0.9
 	>=app-arch/static-tools-runtime-9999
+	>=app-arch/static-tools-squashfs-tools-4.5.1
 	>=app-arch/static-tools-squashfuse-20211010
 	>=app-arch/static-tools-zsyncmake-0.6.2
 "
