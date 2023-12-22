@@ -36,7 +36,7 @@
       ~/Applications
       ~/opt
       ~/usr/local/bin
-      /run/user/0 # for the Live CD mount point (This could be a bug.  It should
+      /run/user/0 # A Live CD mount point (This could be a bug.  It should
         be ${ROOT} [aka /]?)
       /opt/AppImage # A modded ebuild addition (tentative / testing)
 
