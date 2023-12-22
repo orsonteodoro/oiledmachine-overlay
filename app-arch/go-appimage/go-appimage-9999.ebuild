@@ -511,13 +511,13 @@ eerror
 		die
 	fi
 
-	if use alpine-musl ; then
+	if ! use system-static-tools ; then
 ewarn
 ewarn "This ebuild may fail when checking checksums since there is no way to"
 ewarn "download a specific version/commit or cached older server builds."
 ewarn
-ewarn "It is recommended to disable the alpine-musl USE flag if downloading"
-ewarn "is a problem."
+ewarn "It is recommended to enable the system-static-tools USE flag if"
+ewarn "downloading is a problem."
 ewarn
 	fi
 	export S_GO="${WORKDIR}/go_build"
@@ -760,9 +760,7 @@ src_unpack() {
 	if [[ "${GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER:-1}" == "1" ]] ; then
 		export USE_DISABLE_WATCHING_DESKTOP_FOLDER=1
 	fi
-	if use alpine-musl ; then
-		export STATIC_TOOLS_LIBC="alpine-musl"
-	else
+	if use system-static-tools ; then
 		if use elibc_glibc ; then
 			export STATIC_TOOLS_LIBC="glibc"
 		elif use elibc_musl ; then
@@ -771,6 +769,8 @@ src_unpack() {
 			export STATIC_TOOLS_LIBC="native"
 		fi
 		export GET_LIBDIR=$(get_libdir)
+	else
+		export STATIC_TOOLS_LIBC="alpine-musl"
 	fi
 	export EGIT_COMMIT_STATIC_TOOLS
 	export EGIT_COMMIT_UPLOADTOOL

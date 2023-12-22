@@ -83,12 +83,14 @@
     <flag name="firejail">
       Checks for Firejail support for sandbox support.
     </flag>
-    <flag name="system-static-tools">
-      Use the system's static-tools instead of the prebuilt upstream binaries
-      statically against Alpine's musl. (aka Hardened musl).
-
-      It is *strongly* recommended to use this flag for security and
-      full transparency reasons.
+    <flag name="gnome">
+      Checks support for udisk support in Gnome.
+    </flag>
+    <flag name="kde">
+      Checks support for udisk support in KDE.
+    </flag>
+    <flag name="mkappimage">
+      Adds the core AppImage creation tool.
     </flag>
     <flag name="musl">
       Forces the use of the zig compiler using internal musl along with
@@ -106,20 +108,18 @@
         https://github.com/probonopd/go-appimage/pull/207
 
     </flag>
-    <flag name="gnome">
-      Checks support for udisk support in Gnome.
-    </flag>
-    <flag name="kde">
-      Checks support for udisk support in KDE.
-    </flag>
-    <flag name="mkappimage">
-      Adds the core AppImage creation tool.
-    </flag>
     <flag name="openrc">
       Adds OpenRC support.  (EXPERIMENTAL)
     </flag>
     <flag name="overlayfs">
       Checks for OverlayFS support.
+    </flag>
+    <flag name="system-static-tools">
+      Use the system's static-tools instead of the prebuilt upstream binaries
+      statically against Alpine's musl. (aka Hardened musl).
+
+      It is *strongly* recommended to use this flag for security and
+      full transparency reasons.
     </flag>
   </use>
 </pkgmetadata>
