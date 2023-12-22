@@ -69,7 +69,11 @@ src_compile() {
 ewarn "Upstream intends that artifacts be built from a musl chroot or container."
 	fi
 	local ARCHITECTURE=$(get_arch)
-
+	if use fuse3 ; then
+ewarn
+ewarn "You are enabling the fuse3 USE flag which is not portable or widely used."
+ewarn
+	fi
 # MIT License
 #
 # Copyright (c) 2019 probonopd
