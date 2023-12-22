@@ -1,6 +1,6 @@
 diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
---- go-appimage.orig/scripts/build.sh	2022-12-17 04:18:55.000000000 -0800
-+++ go-appimage/scripts/build.sh	2023-01-15 23:38:47.150167988 -0800
+--- go-appimage.orig/scripts/build.sh	2023-12-21 17:53:08.342906566 -0800
++++ go-appimage/scripts/build.sh	2023-12-21 17:59:52.054917323 -0800
 @@ -9,9 +9,9 @@ set -x
  # Architectures are using GOARCH values, specifically
  # amd64, arm64, arm, and 386
@@ -65,7 +65,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/ ; ln -s usr/bin/$PROG AppRun)
    cp $PROJECT/data/appimage.png $BUILDDIR/$PROG-$ARCH.AppDir/
    if [ $PROG == appimaged ]; then
-+    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" ]] ; then
++    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" || "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which bsdtar) > bsdtar )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which unsquashfs) > unsquashfs )
 +    elif [[ "${OFFLINE}" == "1" ]] ; then
@@ -82,7 +82,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
  NoDisplay=true
  EOF
    elif [ $PROG == appimagetool ]; then
-+    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" ]] ; then
++    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" || "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which appstreamcli) > appstreamcli )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which desktop-file-validate) > desktop-file-validate )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which mksquashfs) > mksquashfs )
@@ -112,7 +112,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
  NoDisplay=true
  EOF
    elif [ $PROG == mkappimage ]; then
-+    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" ]] ; then
++    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" || "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which desktop-file-validate) > desktop-file-validate )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which mksquashfs) > mksquashfs )
 +    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which patchelf) > patchelf )
@@ -140,7 +140,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
      cat > $BUILDDIR/$PROG-$ARCH.AppDir/mkappimage.desktop <<\EOF
  [Desktop Entry]
  Type=Application
-@@ -172,9 +219,6 @@ EOF
+@@ -176,9 +223,6 @@ EOF
  
  while [ $# -gt 0 ]; do
    case $1 in
@@ -150,7 +150,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
      -o)
        BUILDDIR=$2
        shift;;
-@@ -204,7 +248,11 @@ done
+@@ -208,7 +252,11 @@ done
  #############################################################
  
  # Export version and build number
@@ -163,7 +163,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
    export COMMIT="${GITHUB_RUN_NUMBER}"
    export VERSION=$((GITHUB_RUN_NUMBER+646))
  else
-@@ -222,9 +270,7 @@ if [ -z $BUILDTOOL ]; then
+@@ -226,9 +274,7 @@ if [ -z $BUILDTOOL ]; then
    BUILDTOOL=(appimaged appimagetool mkappimage)
  fi
  
@@ -174,7 +174,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
  
  # Get the directories ready
  if [ $GITHUB_ACTIONS ]; then
-@@ -241,33 +287,38 @@ fi
+@@ -245,33 +291,38 @@ fi
  mkdir -p $BUILDDIR || true
  cd $BUILDDIR
  
@@ -229,3 +229,4 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
  fi
  
  if [ -z $DONTCLEAN ]; then
+Only in go-appimage/scripts: build.sh.orig

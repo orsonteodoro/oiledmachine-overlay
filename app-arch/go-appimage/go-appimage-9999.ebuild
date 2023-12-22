@@ -6,6 +6,10 @@ EAPI=7
 
 inherit git-r3 lcnr linux-info user-info
 
+if ! [[ ${PV} =~ 9999 ]] ; then
+	export OFFLINE="1"
+fi
+
 # GEN_EBUILD=1 # Uncomment to generate ebuild
 
 if ! [[ ${PV} =~ 9999 ]] ; then
@@ -210,15 +214,6 @@ RDEPEND+="
 	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-apps/systemd-245.4
 	app-arch/AppImageKit[-appimagetool]
-	firejail? (
-		>=sys-apps/firejail-0.9.62
-	)
-	gnome? (
-		>=gnome-base/gvfs-1.44.1[udisks]
-	)
-	kde? (
-		>=kde-frameworks/solid-5.68.0
-	)
 	!musl? (
 		>=app-arch/libarchive-3.3.2:=
 		>=dev-libs/appstream-0.12.9:=
@@ -230,7 +225,16 @@ RDEPEND+="
 			app-arch/AppImageKit[runtime]
 		)
 	)
-"
+	firejail? (
+		>=sys-apps/firejail-0.9.62
+	)
+	gnome? (
+		>=gnome-base/gvfs-1.44.1[udisks]
+	)
+	kde? (
+		>=kde-frameworks/solid-5.68.0
+	)
+	"
 DEPEND+="
 	${RDEPEND}
 "
@@ -384,7 +388,7 @@ fi
 
 RESTRICT="mirror"
 PATCHES=(
-	"${FILESDIR}/${PN}-0.0.0.20221217121855-gentooize.patch"
+	"A${FILESDIR}/${PN}-0.0.0.20221217121855-gentooize.patch"
 )
 
 get_build_sh_arch()
@@ -761,10 +765,14 @@ src_unpack() {
 		export USE_DISABLE_WATCHING_DESKTOP_FOLDER=1
 	fi
 	if ! use musl ; then
-		export USE_SYSTEM_BINARIES=1
+		if use elibc_glibc ; then
+			export STATIC_TOOLS_LIBC="glibc"
+		else
+			export STATIC_TOOLS_LIBC="native"
+		fi
 		export GET_LIBDIR=$(get_libdir)
 	else
-		export USE_SYSTEM_BINARIES=0
+		export STATIC_TOOLS_LIBC="musl"
 	fi
 	export EGIT_COMMIT_STATIC_TOOLS
 	export EGIT_COMMIT_UPLOADTOOL
@@ -821,7 +829,6 @@ src_compile() {
 	export GO111MODULE=auto
 	local args=()
 	if ! [[ ${PV} =~ 9999 ]] ; then
-		export OFFLINE="1"
 		args+=(
 			-o "${WORKDIR}/go_build/src"
 		)
