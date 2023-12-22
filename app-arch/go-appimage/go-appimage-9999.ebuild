@@ -385,7 +385,7 @@ fi
 
 RESTRICT="mirror"
 PATCHES=(
-	"A${FILESDIR}/${PN}-0.0.0.20221217121855-gentooize.patch"
+	"${FILESDIR}/${PN}-0.0.0.20221217121855-gentooize.patch"
 )
 
 get_build_sh_arch()
