@@ -209,11 +209,11 @@ TRAVIS_CI_DEPENDS="
 RDEPEND+="
 	${TRAVIS_CI_DEPENDS}
 	!app-arch/appimaged
+	!app-arch/AppImageKit
 	>=sys-fs/squashfs-tools-4.4:=
 	>=sys-apps/dbus-1.12.16
 	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-apps/systemd-245.4
-	app-arch/AppImageKit[-appimagetool]
 	!musl? (
 		>=app-arch/libarchive-3.3.2:=
 		>=dev-libs/appstream-0.12.9:=
