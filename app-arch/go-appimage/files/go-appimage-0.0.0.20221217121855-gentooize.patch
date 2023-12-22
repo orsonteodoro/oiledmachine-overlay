@@ -1,6 +1,6 @@
 diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
---- go-appimage.orig/scripts/build.sh	2023-12-21 17:53:08.342906566 -0800
-+++ go-appimage/scripts/build.sh	2023-12-21 17:59:52.054917323 -0800
+--- go-appimage.orig/scripts/build.sh	2023-12-21 21:22:16.415240925 -0800
++++ go-appimage/scripts/build.sh	2023-12-21 21:33:46.411259311 -0800
 @@ -9,9 +9,9 @@ set -x
  # Architectures are using GOARCH values, specifically
  # amd64, arm64, arm, and 386
@@ -61,16 +61,13 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
    CGO_ENABLED=1 go build -o $BUILDDIR -v -trimpath -ldflags="-linkmode=external -extldflags \"-static\" -s -w -X main.commit=$COMMIT" $PROJECT/src/$PROG
    ls -lh $PROG
    file $PROG
-@@ -105,8 +110,16 @@ build () {
+@@ -105,8 +110,13 @@ build () {
    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/ ; ln -s usr/bin/$PROG AppRun)
    cp $PROJECT/data/appimage.png $BUILDDIR/$PROG-$ARCH.AppDir/
    if [ $PROG == appimaged ]; then
-+    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" || "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which bsdtar) > bsdtar )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which unsquashfs) > unsquashfs )
-+    elif [[ "${OFFLINE}" == "1" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-bsdtar-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > bsdtar )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-unsquashfs-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > unsquashfs )
++    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/bsdtar-$AIARCH" > bsdtar )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/mksquashfs-$AIARCH" > unsquashfs )
 +    else
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/bsdtar-$AIARCH -O bsdtar )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-$AIARCH -O unsquashfs )
@@ -78,29 +75,22 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
      cat > $BUILDDIR/$PROG-$ARCH.AppDir/appimaged.desktop <<\EOF
  [Desktop Entry]
  Type=Application
-@@ -119,6 +132,21 @@ Terminal=true
+@@ -119,6 +129,14 @@ Terminal=true
  NoDisplay=true
  EOF
    elif [ $PROG == appimagetool ]; then
-+    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" || "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which appstreamcli) > appstreamcli )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which desktop-file-validate) > desktop-file-validate )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which mksquashfs) > mksquashfs )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which patchelf) > patchelf )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}"/usr/$(get_libdir)/AppImageKit/runtime-$AIARCH > runtime-$AIARCH )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/uploadtool-upload.sh-${EGIT_COMMIT_UPLOADTOOL:0:7} > uploadtool )
-+    elif [[ "${OFFLINE}" == "1" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-appstreamcli-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > appstreamcli )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-desktop-file-validate-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > desktop-file-validate )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-mksquashfs-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > mksquashfs )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-patchelf-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > patchelf )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-runtime-fuse2-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > runtime-$AIARCH )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/uploadtool-upload.sh-${EGIT_COMMIT_UPLOADTOOL:0:7} > uploadtool )
++    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/appstreamcli-$AIARCH" > appstreamcli )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/desktop-file-validate-$AIARCH" > desktop-file-validate )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/mksquashfs-$AIARCH" > mksquashfs )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/patchelf-$AIARCH" > patchelf )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/runtime-fuse2-$AIARCH" > runtime-$AIARCH )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/uploadtool-upload.sh" > uploadtool )
 +    else
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/appstreamcli-$AIARCH -O appstreamcli )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-$AIARCH -O desktop-file-validate )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/mksquashfs-$AIARCH -O mksquashfs )
-@@ -128,6 +156,7 @@ EOF
+@@ -128,6 +146,7 @@ EOF
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/runtime-fuse2-i686 -O runtime-i686 )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/runtime-fuse2-x86_64 -O runtime-x86_64 )     
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh -O uploadtool )
@@ -108,31 +98,23 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
      cat > $BUILDDIR/$PROG-$ARCH.AppDir/appimagetool.desktop <<\EOF
  [Desktop Entry]
  Type=Application
-@@ -140,6 +169,23 @@ Terminal=true
+@@ -140,6 +159,15 @@ Terminal=true
  NoDisplay=true
  EOF
    elif [ $PROG == mkappimage ]; then
-+    if [[ "${OFFLINE}" == "1" && "${USE_SYSTEM_BINARIES}" == "1" || "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which desktop-file-validate) > desktop-file-validate )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which mksquashfs) > mksquashfs )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which patchelf) > patchelf )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}"/usr/$(get_libdir)/AppImageKit/runtime-$AIARCH > runtime-$AIARCH )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/uploadtool-upload.sh-${EGIT_COMMIT_UPLOADTOOL:0:7} > uploadtool )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which bsdtar) > bsdtar )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat $(which unsquashfs) > unsquashfs )
-+    elif [[ "${OFFLINE}" == "1" ]] ; then
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-desktop-file-validate-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > desktop-file-validate )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-mksquashfs-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > mksquashfs )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-patchelf-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > patchelf )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-runtime-fuse2-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > runtime-$AIARCH )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/uploadtool-upload.sh-${EGIT_COMMIT_UPLOADTOOL:0:7} > uploadtool )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-bsdtar-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > bsdtar )
-+    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}"/static-tools-unsquashfs-$AIARCH-${EGIT_COMMIT_STATIC_TOOLS:0:7} > unsquashfs )
++    if [[ "${STATIC_TOOLS_LIBC}" == "native" || "${STATIC_TOOLS_LIBC}" == "glibc" ]] ; then
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/desktop-file-validate-$AIARCH" > desktop-file-validate )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/mksquashfs-$AIARCH" > mksquashfs )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/patchelf-$AIARCH" > patchelf )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/runtime-fuse2-$AIARCH" > runtime-$AIARCH )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${DISTDIR}/uploadtool-upload.sh" > uploadtool )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/bsdtar-$AIARCH" > bsdtar )
++    ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; cat "${ESYSROOT}/unsquashfs-$AIARCH" > unsquashfs )
 +    else
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-$AIARCH -O desktop-file-validate )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/mksquashfs-$AIARCH -O mksquashfs )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/patchelf-$AIARCH -O patchelf )
-@@ -150,6 +196,7 @@ EOF
+@@ -150,6 +178,7 @@ EOF
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh -O uploadtool )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/bsdtar-$AIARCH -O bsdtar )
      ( cd $BUILDDIR/$PROG-$ARCH.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/unsquashfs-$AIARCH -O unsquashfs )
@@ -140,7 +122,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
      cat > $BUILDDIR/$PROG-$ARCH.AppDir/mkappimage.desktop <<\EOF
  [Desktop Entry]
  Type=Application
-@@ -176,9 +223,6 @@ EOF
+@@ -176,9 +205,6 @@ EOF
  
  while [ $# -gt 0 ]; do
    case $1 in
@@ -150,7 +132,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
      -o)
        BUILDDIR=$2
        shift;;
-@@ -208,7 +252,11 @@ done
+@@ -208,7 +234,11 @@ done
  #############################################################
  
  # Export version and build number
@@ -163,7 +145,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
    export COMMIT="${GITHUB_RUN_NUMBER}"
    export VERSION=$((GITHUB_RUN_NUMBER+646))
  else
-@@ -226,9 +274,7 @@ if [ -z $BUILDTOOL ]; then
+@@ -226,9 +256,7 @@ if [ -z $BUILDTOOL ]; then
    BUILDTOOL=(appimaged appimagetool mkappimage)
  fi
  
@@ -174,7 +156,7 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
  
  # Get the directories ready
  if [ $GITHUB_ACTIONS ]; then
-@@ -245,33 +291,38 @@ fi
+@@ -245,33 +273,38 @@ fi
  mkdir -p $BUILDDIR || true
  cd $BUILDDIR
  
@@ -229,4 +211,3 @@ diff -urp go-appimage.orig/scripts/build.sh go-appimage/scripts/build.sh
  fi
  
  if [ -z $DONTCLEAN ]; then
-Only in go-appimage/scripts: build.sh.orig

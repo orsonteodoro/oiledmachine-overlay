@@ -738,6 +738,8 @@ src_unpack() {
 				| head -n 1 \
 				| cut -f 2- -d " ")
 		fi
+
+		wget -O "${DISTDIR}/uploadtool-upload.sh" "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
 	else
 		unpack_go
 	fi
