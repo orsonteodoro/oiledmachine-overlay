@@ -123,9 +123,8 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	# Install in a staging enviroment
 	meson install -C build || die
 	file prefix/bin/appstreamcli || die
-	cd - || die
 	mkdir -p out || die
-	cp appstream-*/prefix/bin/appstreamcli out/appstreamcli-${ARCHITECTURE} || die
+	cp prefix/bin/appstreamcli out/appstreamcli-${ARCHITECTURE} || die
 }
 
 src_install() {

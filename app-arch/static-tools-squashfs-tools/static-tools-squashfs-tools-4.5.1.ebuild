@@ -86,10 +86,9 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	make -j$(nproc) LDFLAGS="-static" || die
 	file mksquashfs unsquashfs || die
 	strip mksquashfs unsquashfs || die
-	cd - || die
 	mkdir -p out
-	cp squashfs-tools-*/squashfs-tools/mksquashfs out/mksquashfs-${ARCHITECTURE} || die
-	cp squashfs-tools-*/squashfs-tools/unsquashfs out/unsquashfs-${ARCHITECTURE} || die
+	cp squashfs-tools/mksquashfs out/mksquashfs-${ARCHITECTURE} || die
+	cp squashfs-tools/unsquashfs out/unsquashfs-${ARCHITECTURE} || die
 }
 
 src_install() {

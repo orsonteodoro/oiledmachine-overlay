@@ -94,7 +94,7 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		CFLAGS="-no-pie" \
 		LDFLAGS="-static" \
 		|| die
-	emake || die
+	emake
 	cd src/ || die
 	gcc -static -o desktop-file-validate keyfileutils.o validate.o validator.o mimeutils.o -lglib-2.0 -lintl || die
 	gcc -static -o update-desktop-database  update-desktop-database.o mimeutils.o -lglib-2.0 -lintl || die
@@ -102,9 +102,9 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	strip desktop-file-install desktop-file-validate update-desktop-database || die
 	cd ../.. || die
 	mkdir -p out || die
-	cp desktop-file-utils-*/src/desktop-file-install out/desktop-file-install-${ARCHITECTURE} || die
-	cp desktop-file-utils-*/src/desktop-file-validate out/desktop-file-validate-${ARCHITECTURE} || die
-	cp desktop-file-utils-*/src/update-desktop-database out/update-desktop-database-${ARCHITECTURE} || die
+	cp src/desktop-file-install out/desktop-file-install-${ARCHITECTURE} || die
+	cp src/desktop-file-validate out/desktop-file-validate-${ARCHITECTURE} || die
+	cp src/update-desktop-database out/update-desktop-database-${ARCHITECTURE} || die
 }
 
 src_install() {

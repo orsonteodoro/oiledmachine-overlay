@@ -115,9 +115,8 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		-llzma \
 		|| die
 	strip bsdtar || die
-	cd - || die
 	mkdir -p out || die
-	cp libarchive-*/bsdtar out/bsdtar-${ARCHITECTURE} || die
+	cp bsdtar out/bsdtar-${ARCHITECTURE} || die
 }
 
 src_install() {

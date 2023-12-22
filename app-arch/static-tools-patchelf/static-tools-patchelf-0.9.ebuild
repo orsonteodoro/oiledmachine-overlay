@@ -91,7 +91,7 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	strip patchelf || die
 	ls -lh patchelf || die
 	mkdir -p out || die
-	cp "${S}/patchelf" out/patchelf-${ARCHITECTURE} || die
+	cp patchelf out/patchelf-${ARCHITECTURE} || die
 }
 
 src_install() {

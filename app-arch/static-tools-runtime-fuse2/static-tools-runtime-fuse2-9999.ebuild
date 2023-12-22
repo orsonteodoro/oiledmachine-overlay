@@ -89,7 +89,6 @@ build_runtime() {
 	strip runtime-fuse2 || die
 	ls -lh runtime-fuse2 || die
 	echo -ne 'AI\x02' | dd of="runtime-fuse2" bs=1 count=3 seek=8 conv="notrunc" || die # magic bytes, always do AFTER strip
-	cd - || die
 	mkdir -p out || die
 	cp src/runtime/runtime-fuse2 out/runtime-fuse2-${ARCHITECTURE} || die
 }

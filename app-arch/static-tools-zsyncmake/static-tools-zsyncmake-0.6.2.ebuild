@@ -90,9 +90,8 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	emake -j$(nproc) || die
 	file zsyncmake || die
 	strip zsyncmake || die
-	cd - || die
 	mkdir -p out || die
-	cp zsync-*/zsyncmake out/zsyncmake-${ARCHITECTURE} || die
+	cp zsyncmake out/zsyncmake-${ARCHITECTURE} || die
 }
 
 src_install() {
