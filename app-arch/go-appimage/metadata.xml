@@ -47,8 +47,9 @@
 
     SECURITY NOTICE:
 
-      Do not download AppImages from untrusted sites.
-      Do not download AppImages that have End of Life (EOL) libraries.
+      Do not download/run AppImages from untrusted sites.
+      Do not download/run AppImages that have End of Life (EOL) libraries.
+      Do not download/run AppImages with critical vulnerabilities.
 
 
       A project page on GitHub will sometimes list a AppImage, these are most

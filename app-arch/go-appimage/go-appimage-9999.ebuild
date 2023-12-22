@@ -891,8 +891,9 @@ einfo
 einfo
 einfo "SECURITY NOTICE:"
 einfo
-einfo "Do not download AppImages from untrusted sites."
-einfo "Do not download AppImages with End of Life (EOL) libraries."
+einfo "Do not download/run AppImages from untrusted sites."
+einfo "Do not download/run AppImages with End of Life (EOL) libraries."
+einfo "Do not download/run AppImages with critical vulnerabilities."
 einfo
 }
 
