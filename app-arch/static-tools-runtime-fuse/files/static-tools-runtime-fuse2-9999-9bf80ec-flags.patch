@@ -1,0 +1,24 @@
+diff -urp a/src/runtime/Makefile b/src/runtime/Makefile
+--- a/src/runtime/Makefile	2023-12-22 11:15:49.308573581 -0800
++++ b/src/runtime/Makefile	2023-12-22 11:17:56.984576983 -0800
+@@ -6,16 +6,16 @@ all: runtime-fuse2 runtime-fuse3
+ 
+ # Compile runtime
+ runtime-fuse2.o: runtime.c
+-	$(CC) -I/usr/local/include/squashfuse -I/usr/include/fuse -o runtime-fuse2.o -c $(CFLAGS) $^
++	$(CC) ${SQUASHFUSE_INCLUDES} ${FUSE2_INCLUDES} -o runtime-fuse2.o -c $(CFLAGS) $^
+ 
+ runtime-fuse2: runtime-fuse2.o
+-	$(CC) $(CFLAGS) $^ $(LIBS) -lfuse -o runtime-fuse2
++	$(CC) $(CFLAGS) $^ -L${SQUASHFUSE_LIBDIR} $(LIBS) -L${FUSE2_LIBDIR} -lfuse -o runtime-fuse2
+ 
+ runtime-fuse3.o: runtime.c
+-	$(CC) -I/usr/local/include/squashfuse -I/usr/include/fuse3 -o runtime-fuse3.o -c $(CFLAGS) $^
++	$(CC) ${SQUASHFUSE_INCLUDES} ${FUSE3_INCLUDES} -o runtime-fuse3.o -c $(CFLAGS) $^
+ 
+ runtime-fuse3: runtime-fuse3.o
+-	$(CC) $(CFLAGS) $^ $(LIBS) -lfuse3 -o runtime-fuse3
++	$(CC) $(CFLAGS) $^ -L${SQUASHFUSE_LIBDIR} $(LIBS) -L${FUSE3_LIBDIR} -lfuse3 -o runtime-fuse3
+ 
+ clean:
+ 	rm -f *.o runtime-fuse2 runtime-fuse3

@@ -19,13 +19,14 @@ LICENSE="
 	all-rights-reserved
 	MIT
 "
-IUSE="fallback-commit"
+IUSE="fallback-commit fuse3"
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # >=sys-fs/squashfuse-0.1.105[static-libs,zstd]
 RDEPEND+="
-	app-arch/static-tools-squashfuse:=
+	app-arch/static-tools-squashfuse:=[fuse3?]
+	app-arch/xz-utils:=[static-libs]
 "
 DEPEND+="
 	${RDEPEND}
@@ -40,6 +41,8 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 PATCHES=(
+	"${FILESDIR}/static-tools-runtime-fuse2-9999-9bf80ec-flags.patch"
+	"${FILESDIR}/static-tools-runtime-fuse2-9999-9bf80ec-link-to-lzma.patch" # Required by squashfuse
 )
 
 src_unpack() {
@@ -62,7 +65,12 @@ get_arch() {
 	fi
 }
 
-build_runtime() {
+src_compile() {
+	if ! use elibc_musl ; then
+ewarn "Upstream intends that artifacts be built from a musl chroot or container."
+	fi
+	local ARCHITECTURE=$(get_arch)
+
 # MIT License
 #
 # Copyright (c) 2019 probonopd
@@ -85,28 +93,45 @@ build_runtime() {
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 	export GIT_COMMIT=$(cat src/runtime/version)
+# /usr/share/static-tools/squashfuse/lib64/pkgconfig
+	export CPPFLAGS="-I/usr/share/static-tools/squashfuse/include"
+	export LDFLAGS="-L/usr/share/static-tools/squashfuse/lib64"
 	cd src/runtime || die
-	make runtime-fuse2 || die
-	file runtime-fuse2 || die
-	strip runtime-fuse2 || die
-	ls -lh runtime-fuse2 || die
-	echo -ne 'AI\x02' | dd of="runtime-fuse2" bs=1 count=3 seek=8 conv="notrunc" || die # magic bytes, always do AFTER strip
-	mkdir -p out || die
-	cp src/runtime/runtime-fuse2 out/runtime-fuse2-${ARCHITECTURE} || die
-}
-
-src_compile() {
-	if ! use elibc_musl ; then
-ewarn "Upstream intends that artifacts be built from a musl chroot or container."
+	local fuse_slot
+	export SQUASHFUSE_INCLUDES="-I/usr/share/static-tools/squashfuse/include"
+	export SQUASHFUSE_LIBDIR="/usr/share/static-tools/squashfuse/$(get_libdir)"
+	if use fuse3 ; then
+ewarn
+ewarn "fuse3 is not widely portable."
+ewarn
+		export FUSE3_INCLUDES="-I/usr/include/fuse3"
+		export FUSE3_LIBDIR="/usr/$(get_libdir)"
+		fuse_slot=3
+	else
+		export FUSE2_INCLUDES="-I/usr/include/fuse"
+		export FUSE2_LIBDIR="/usr/$(get_libdir)"
+		fuse_slot=2
 	fi
-	local ARCHITECTURE=$(get_arch)
-	build_runtime
+	make runtime-fuse${fuse_slot} || die
+	file runtime-fuse${fuse_slot} || die
+	strip runtime-fuse${fuse_slot} || die
+	ls -lh runtime-fuse${fuse_slot} || die
+	echo -ne 'AI\x02' | dd of="runtime-fuse${fuse_slot}" bs=1 count=3 seek=8 conv="notrunc" || die # magic bytes, always do AFTER strip
+	cd "${S}" || die
+	mkdir -p out || die
+	cp src/runtime/runtime-fuse${fuse_slot} out/runtime-fuse${fuse_slot}-${ARCHITECTURE} || die
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
 	exeinto /usr/share/static-tools
-	doexe out/runtime-fuse2-${ARCHITECTURE}
+	local fuse_slot
+	if use fuse3 ; then
+		fuse_slot=3
+	else
+		fuse_slot=2
+	fi
+	doexe out/runtime-fuse${fuse_slot}-${ARCHITECTURE}
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
