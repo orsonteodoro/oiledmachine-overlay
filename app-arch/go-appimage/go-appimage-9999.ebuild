@@ -202,25 +202,26 @@ REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 TRAVIS_CI_DEPENDS="
-	dev-libs/openssl
-	dev-vcs/git
+	>=dev-libs/openssl-1.1.1f
+	>=dev-vcs/git-2.43.0
 "
+# U 20.04
 RDEPEND+="
 	${TRAVIS_CI}
 	!app-arch/appimaged
 	>=sys-fs/squashfs-tools-4.4:=
-	app-arch/AppImageKit
-	sys-apps/dbus
-	sys-fs/udisks[daemon]
-	sys-apps/systemd
+	>=sys-apps/dbus-1.12.16
+	>=sys-fs/udisks-2.8.4[daemon]
+	>=sys-apps/systemd-245.4
+	app-arch/AppImageKit[-appimagetool]
 	firejail? (
-		sys-apps/firejail
+		>=sys-apps/firejail-0.9.62
 	)
 	gnome? (
-		gnome-base/gvfs[udisks]
+		>=gnome-base/gvfs-1.44.1[udisks]
 	)
 	kde? (
-		kde-frameworks/solid
+		>=kde-frameworks/solid-5.68.0
 	)
 	!musl? (
 		>=app-arch/libarchive-3.3.2:=
@@ -239,7 +240,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-lang/go-1.19:=
+	>=dev-lang/go-1.18.10:=
 "
 
 gen_go_dl_gh_url()
