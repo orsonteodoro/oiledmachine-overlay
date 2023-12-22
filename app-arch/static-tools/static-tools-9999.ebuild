@@ -4,15 +4,18 @@
 
 EAPI=7
 
+# You can build this in a musl container to get strictly musl libs.
+
 inherit git-r3
 
 EGIT_REPO_URI="https://github.com/probonopd/static-tools.git"
 EGIT_BRANCH="master"
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-DESCRIPTION="Purely experimental playground for Go implementation of AppImage \
-tools"
-HOMEPAGE="https://github.com/probonopd/go-appimage"
+DESCRIPTION="
+Building static binaries of some tools using an Alpine chroot with musl
+"
+HOMEPAGE="https://github.com/probonopd/static-tools"
 LICENSE="
 	all-rights-reserved
 	MIT
@@ -57,6 +60,9 @@ get_arch() {
 }
 
 src_compile() {
+	if ! use elibc_musl ; then
+ewarn "Upstream intends that artifacts be built from a musl chroot or container."
+	fi
 # MIT License
 #
 # Copyright (c) 2019 probonopd
