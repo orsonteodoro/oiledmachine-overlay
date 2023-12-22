@@ -77,10 +77,10 @@
       musl libc).  It assumes that you are building from glibc to a sandboxed
       musl libc.
 
-      It is the upstream default, but disabled by the ebuild author.  The distro
-      does not typically run musl binaries on a glibc built system.  The distro
-      prefers to build *everything* from source code and without prebuilt
-      anything.
+      Enabling the musl USE flag is the upstream default, but it is disabled by
+      the ebuild maintainer.  The distro does not typically run musl binaries on
+      a glibc built system.  The distro prefers to build *everything* from
+      source code and without prebuilt anything and with the same libc library.
 
       See also:
 
