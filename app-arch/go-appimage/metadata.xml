@@ -13,12 +13,12 @@
     go-appimage is appimaged and appimagetool implemented in the Go language.
     It is planned as the replacement package for those older packages.
 
-    An AppImage is an archive containing the project files, dependencies, and
-    other glue libraries and executables.  You place the AppImage file in a
-    watched folder listed below, appimaged will add a link to the desktop or
-    menu to the appimage.  When you click the link, it will mount the image in
-    its own chroot (with or without) a Firejail sandbox protected additionally
-    AppArmor.
+    An AppImage is an archive containing the prebuilt project, lib/exe
+    dependencies, and other glue libraries and executables.  You place the
+    AppImage file in a watched folder listed below, appimaged will add a link to
+    the desktop or menu to the appimage.  When you click the link, it will mount
+    the image in its own chroot (with or without) a Firejail sandbox protected
+    additionally AppArmor.
 
     appimaged is a daemon that automatically installs .AppImages for
     a user.
