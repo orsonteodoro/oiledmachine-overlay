@@ -9,7 +9,7 @@ EAPI=7
 inherit git-r3
 
 SRC_URI="
-	https://www.libarchive.org/downloads/libarchive-${PV}.tar.gz
+	https://github.com/NixOS/patchelf/archive/${PV}.tar.gz
 "
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
@@ -17,23 +17,16 @@ DESCRIPTION="
 bsdtar for static-tools
 "
 HOMEPAGE="
-	https://github.com/probonopd/static-tools
-	https://github.com/libarchive/libarchive
+	https://github.com/NixOS/patchelf
 "
 LICENSE="
-	BSD
-	BSD-2
-	BSD-4
-	public-domain
+	GPL-3
 "
 IUSE=""
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
-	app-arch/bzip2[static-libs]
-	app-arch/xz-utils[static-libs]
-	sys-libs/zlib[static-libs]
 "
 DEPEND+="
 	${RDEPEND}
@@ -89,47 +82,24 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	fi
 	local ARCHITECTURE=$(get_arch)
 
-	# Build static bsdtar
-	tar xf libarchive-*.tar.gz || die
-	cd libarchive-*/ || die
-	./configure \
-		--disable-shared \
-		--enable-bsdtar=static \
-		--disable-bsdcat \
-		--disable-bsdcpio \
-		--with-zlib \
-		--without-bz2lib \
-		--disable-maintainer-mode \
-		--disable-dependency-tracking \
-		CFLAGS=-no-pie \
-		LDFLAGS=-static \
-		|| die
-	emake
-	${CC} \
-		-static \
-		-o bsdtar \
-		tar/bsdtar-bsdtar.o \
-		tar/bsdtar-cmdline.o \
-		tar/bsdtar-creation_set.o \
-		tar/bsdtar-read.o \
-		tar/bsdtar-subst.o \
-		tar/bsdtar-util.o \
-		tar/bsdtar-write.o \
-		.libs/libarchive.a \
-		.libs/libarchive_fe.a \
-		/lib/libz.a \
-		-llzma \
-		|| die
-	strip bsdtar || die
+	cd patchelf-*/ || die
+	./bootstrap.sh || die
+	./configure --prefix=/usr CFLAGS=-no-pie LDFLAGS=-static || die
+	emake -j$(nproc) || die
+	mv src/patchelf . || die
+	file patchelf || die
+	strip patchelf || die
+	ls -lh patchelf || die
 	cd - || die
+
 	mkdir -p out || die
-	cp libarchive-*/bsdtar out/bsdtar-${ARCHITECTURE} || die
+	cp patchelf-*/patchelf out/patchelf-${ARCHITECTURE} || die
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
 	exeinto /usr/share/static-tools
-	doexe out/bsdtar-${ARCHITECTURE}
+	doexe out/patchelf-${ARCHITECTURE}
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
