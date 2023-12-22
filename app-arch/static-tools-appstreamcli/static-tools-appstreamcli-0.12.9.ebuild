@@ -135,14 +135,27 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	# Install in a staging enviroment
 	mkdir -p out || die
 	DESTDIR="out" meson install -C build || die
-	file build/out/prefix/bin/appstreamcli || die
-	cp build/out/prefix/bin/appstreamcli out/appstreamcli-${ARCHITECTURE} || die
+	file "build/out/prefix/bin/appstreamcli" || die
+	cp "build/out/prefix/bin/appstreamcli" "out/appstreamcli-${ARCHITECTURE}" || die
+}
+
+get_libc() {
+	local libc
+	if use elibc_glibc ; then
+		libc="glibc"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+		libc="native"
+	fi
+	echo "${libc}"
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	exeinto /usr/share/static-tools
-	doexe out/appstreamcli-${ARCHITECTURE}
+	local libc=$(get_libc)
+	exeinto "/usr/share/static-tools/${libc}"
+	doexe "out/appstreamcli-${ARCHITECTURE}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

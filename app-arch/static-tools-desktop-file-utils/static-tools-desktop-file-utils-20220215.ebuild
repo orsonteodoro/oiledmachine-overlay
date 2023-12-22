@@ -110,17 +110,30 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	strip desktop-file-install desktop-file-validate update-desktop-database || die
 	cd ../
 	mkdir -p out || die
-	cp src/desktop-file-install out/desktop-file-install-${ARCHITECTURE} || die
-	cp src/desktop-file-validate out/desktop-file-validate-${ARCHITECTURE} || die
-	cp src/update-desktop-database out/update-desktop-database-${ARCHITECTURE} || die
+	cp "src/desktop-file-install" "out/desktop-file-install-${ARCHITECTURE}" || die
+	cp "src/desktop-file-validate" "out/desktop-file-validate-${ARCHITECTURE}" || die
+	cp "src/update-desktop-database" "out/update-desktop-database-${ARCHITECTURE}" || die
+}
+
+get_libc() {
+	local libc
+	if use elibc_glibc ; then
+		libc="glibc"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+		libc="native"
+	fi
+	echo "${libc}"
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	exeinto /usr/share/static-tools
-	doexe out/desktop-file-install-${ARCHITECTURE}
-	doexe out/desktop-file-validate-${ARCHITECTURE}
-	doexe out/update-desktop-database-${ARCHITECTURE}
+	local libc=$(get_libc)
+	exeinto "/usr/share/static-tools/${libc}"
+	doexe "out/desktop-file-install-${ARCHITECTURE}"
+	doexe "out/desktop-file-validate-${ARCHITECTURE}"
+	doexe "out/update-desktop-database-${ARCHITECTURE}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

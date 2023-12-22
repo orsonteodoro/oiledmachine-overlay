@@ -64,6 +64,18 @@ get_arch() {
 	fi
 }
 
+get_libc() {
+	local libc
+	if use elibc_glibc ; then
+		libc="glibc"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+		libc="native"
+	fi
+	echo "${libc}"
+}
+
 src_compile() {
 	if ! use elibc_musl ; then
 ewarn "Upstream intends that artifacts be built from a musl chroot or container."
@@ -97,8 +109,9 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	export LDFLAGS="-L/usr/share/static-tools/squashfuse/lib64"
 	cd src/runtime || die
 	local fuse_slot
-	export SQUASHFUSE_INCLUDES="-I/usr/share/static-tools/squashfuse/include"
-	export SQUASHFUSE_LIBDIR="/usr/share/static-tools/squashfuse/$(get_libdir)"
+	local libc=$(get_libc)
+	export SQUASHFUSE_INCLUDES="-I/usr/share/static-tools/${libc}/squashfuse/include"
+	export SQUASHFUSE_LIBDIR="/usr/share/static-tools/${libc}/squashfuse/$(get_libdir)"
 	if use fuse3 ; then
 ewarn
 ewarn "fuse3 is not widely portable."
@@ -111,26 +124,32 @@ ewarn
 		export FUSE2_LIBDIR="/usr/$(get_libdir)"
 		fuse_slot=2
 	fi
-	make runtime-fuse${fuse_slot} || die
-	file runtime-fuse${fuse_slot} || die
-	strip runtime-fuse${fuse_slot} || die
-	ls -lh runtime-fuse${fuse_slot} || die
-	echo -ne 'AI\x02' | dd of="runtime-fuse${fuse_slot}" bs=1 count=3 seek=8 conv="notrunc" || die # magic bytes, always do AFTER strip
+	make "runtime-fuse${fuse_slot}" || die
+	file "runtime-fuse${fuse_slot}" || die
+	strip "runtime-fuse${fuse_slot}" || die
+	ls -lh "runtime-fuse${fuse_slot}" || die
+	echo -ne 'AI\x02' \
+		| dd of="runtime-fuse${fuse_slot}" bs=1 count=3 seek=8 conv="notrunc" \
+		|| die # magic bytes, always do AFTER strip
 	cd "${S}" || die
 	mkdir -p out || die
-	cp src/runtime/runtime-fuse${fuse_slot} out/runtime-fuse${fuse_slot}-${ARCHITECTURE} || die
+	cp \
+		"src/runtime/runtime-fuse${fuse_slot}" \
+		"out/runtime-fuse${fuse_slot}-${ARCHITECTURE}" \
+		|| die
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	exeinto /usr/share/static-tools
+	local libc=$(get_libc)
+	exeinto "/usr/share/static-tools/${libc}"
 	local fuse_slot
 	if use fuse3 ; then
 		fuse_slot=3
 	else
 		fuse_slot=2
 	fi
-	doexe out/runtime-fuse${fuse_slot}-${ARCHITECTURE}
+	doexe "out/runtime-fuse${fuse_slot}-${ARCHITECTURE}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

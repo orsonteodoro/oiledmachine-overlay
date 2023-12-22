@@ -82,7 +82,7 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 
 	./bootstrap.sh || die
 	./configure \
-		--prefix=/usr \
+		--prefix="/usr" \
 		CFLAGS="-no-pie" \
 		LDFLAGS="-static" \
 		|| die
@@ -92,13 +92,26 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	strip patchelf || die
 	ls -lh patchelf || die
 	mkdir -p out || die
-	cp patchelf out/patchelf-${ARCHITECTURE} || die
+	cp "patchelf" "out/patchelf-${ARCHITECTURE}" || die
+}
+
+get_libc() {
+	local libc
+	if use elibc_glibc ; then
+		libc="glibc"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+		libc="native"
+	fi
+	echo "${libc}"
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	exeinto /usr/share/static-tools
-	doexe out/patchelf-${ARCHITECTURE}
+	local libc=$(get_libc)
+	exeinto "/usr/share/static-tools/${libc}"
+	doexe "out/patchelf-${ARCHITECTURE}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

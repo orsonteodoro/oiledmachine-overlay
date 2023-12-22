@@ -86,22 +86,39 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 
 	# Build static zsyncmake
 	find . -type f -exec sed -i -e 's|off_t|size_t|g' {} \; || die
+	local arch=$(arch)
 	./configure \
-		CFLAGS=-no-pie \
-		LDFLAGS=-static \
-		--build=$(arch)-unknown-linux-gnu \
+		CFLAGS="-no-pie" \
+		LDFLAGS="-static" \
+		--build="${arch}-unknown-linux-gnu" \
 		|| die
 	emake -j$(nproc) || die
 	file zsyncmake || die
 	strip zsyncmake || die
 	mkdir -p out || die
-	cp zsyncmake out/zsyncmake-${ARCHITECTURE} || die
+	cp \
+		"zsyncmake" \
+		"out/zsyncmake-${ARCHITECTURE}" \
+		|| die
+}
+
+get_libc() {
+	local libc
+	if use elibc_glibc ; then
+		libc="glibc"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+		libc="native"
+	fi
+	echo "${libc}"
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	exeinto /usr/share/static-tools
-	doexe out/zsyncmake-${ARCHITECTURE}
+	local libc=$(get_libc)
+	exeinto "/usr/share/static-tools/${libc}"
+	doexe "out/zsyncmake-${ARCHITECTURE}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

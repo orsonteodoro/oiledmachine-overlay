@@ -90,18 +90,30 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	file mksquashfs unsquashfs || die
 	strip mksquashfs unsquashfs || die
 	mkdir -p out
-	cp mksquashfs out/mksquashfs-${ARCHITECTURE} || die
-	cp unsquashfs out/unsquashfs-${ARCHITECTURE} || die
+	cp "mksquashfs" "out/mksquashfs-${ARCHITECTURE}" || die
+	cp "unsquashfs" "out/unsquashfs-${ARCHITECTURE}" || die
 	emake \
 		INSTALL_PREFIX="$(pwd)/out" \
 		install
 }
 
+get_libc() {
+	local libc
+	if use elibc_glibc ; then
+		libc="glibc"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+		libc="native"
+	fi
+}
+
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	exeinto /usr/share/static-tools
-	doexe out/mksquashfs-${ARCHITECTURE}
-	doexe out/unsquashfs-${ARCHITECTURE}
+	local libc=$(get_libc)
+	exeinto "/usr/share/static-tools/${libc}"
+	doexe "out/mksquashfs-${ARCHITECTURE}"
+	doexe "out/unsquashfs-${ARCHITECTURE}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

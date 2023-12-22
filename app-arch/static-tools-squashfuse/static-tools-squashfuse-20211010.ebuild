@@ -64,6 +64,18 @@ get_arch() {
 	fi
 }
 
+get_libc() {
+	local libc
+	if use elibc_glibc ; then
+		libc="glibc"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+		libc="native"
+	fi
+	echo "${libc}"
+}
+
 src_compile() {
 	if ! use elibc_musl ; then
 ewarn "Upstream intends that artifacts be built from a musl chroot or container."
@@ -101,13 +113,14 @@ ewarn
 	./autogen.sh || die
 	./configure --help || die
 	local fuse3_arg=$(usex fuse3 "--enable-fuse3" "--disable-fuse3")
+	local libc=$(get_libc)
 	./configure \
 		CFLAGS="-no-pie" \
 		LDFLAGS="-static" \
 		${fuse3_arg} \
-		--prefix="/usr/share/static-tools/squashfuse" \
-		--datarootdir="/usr/share/static-tools/squashfuse/share" \
-		--libdir="/usr/share/static-tools/squashfuse/$(get_libdir)" \
+		--prefix="/usr/share/static-tools/${libc}/squashfuse" \
+		--datarootdir="/usr/share/static-tools/${libc}/squashfuse/share" \
+		--libdir="/usr/share/static-tools/${libc}/squashfuse/$(get_libdir)" \
 		|| die
 	emake || die
 }
@@ -115,8 +128,11 @@ ewarn
 src_install() {
 	local ARCHITECTURE=$(get_arch)
 	emake DESTDIR="${ED}" install || die
-	insinto /usr/share/static-tools/squashfuse/include
+	local libc=$(get_libc)
+	insinto "/usr/share/static-tools/${libc}/squashfuse/include"
 	doins *.h
+	insinto "/usr/share/static-tools/${libc}/squashfuse/include/squashfuse"
+	doins fuseprivate.h
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

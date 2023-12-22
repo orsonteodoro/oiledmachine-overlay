@@ -129,13 +129,26 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		|| die
 	strip bsdtar || die
 	mkdir -p out || die
-	cp bsdtar out/bsdtar-${ARCHITECTURE} || die
+	cp "bsdtar" "out/bsdtar-${ARCHITECTURE}" || die
+}
+
+get_libc() {
+	local libc
+	if use elibc_glibc ; then
+		libc="glibc"
+	elif use elibc_musl ; then
+		libc="musl"
+	else
+		libc="native"
+	fi
+	echo "${libc}"
 }
 
 src_install() {
 	local ARCHITECTURE=$(get_arch)
-	exeinto /usr/share/static-tools
-	doexe out/bsdtar-${ARCHITECTURE}
+	local libc=$(get_libc)
+	exeinto "/usr/share/static-tools/${libc}"
+	doexe "out/bsdtar-${ARCHITECTURE}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
