@@ -4,14 +4,16 @@
 
 EAPI=7
 
+COMMIT="e51978cd6bb5c4d16fae9eee43d0b258f570bb0f"
 SRC_URI="
-https://github.com/vasi/squashfuse/archive/e51978c.tar.gz -> squashfuse-e51978c.tar.gz
+https://github.com/vasi/squashfuse/archive/e51978c.tar.gz -> squashfuse-${COMMIT:0:7}.tar.gz
 "
+S="${WORKDIR}/squashfuse-${COMMIT}"
 
 # You can build this in a musl container to get strictly musl libs.
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-DESCRIPTION="static-tools squashfuse"
+DESCRIPTION="squashfuse for static-tools"
 HOMEPAGE="
 	https://github.com/probonopd/static-tools
 	https://github.com/vasi/squashfuse
@@ -83,16 +85,10 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 # SOFTWARE.
 
 	# Build static squashfuse
-	apk add fuse-dev fuse-static zstd-dev zstd-static zlib-dev zlib-static # fuse3-static fuse3-dev
-
-	wget -c -q "https://github.com/vasi/squashfuse/archive/e51978c.tar.gz"
-	tar xf e51978c.tar.gz || die
-	cd squashfuse-*/ || die
 	./autogen.sh || die
 	./configure --help || die
 	./configure CFLAGS=-no-pie LDFLAGS=-static || die
 	emake || die
-
 }
 
 src_install() {

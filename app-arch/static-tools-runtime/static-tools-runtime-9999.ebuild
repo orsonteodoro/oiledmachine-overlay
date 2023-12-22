@@ -4,6 +4,12 @@
 
 EAPI=7
 
+inherit git-r3
+
+EGIT_REPO_URI="https://github.com/probonopd/static-tools.git"
+EGIT_BRANCH="master"
+SRC_URI=""
+
 # You can build this in a musl container to get strictly musl libs.
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
@@ -13,7 +19,7 @@ LICENSE="
 	all-rights-reserved
 	MIT
 "
-IUSE="fallback-commit +runtime"
+IUSE="fallback-commit"
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -30,7 +36,6 @@ BDEPEND+="
 	sys-devel/automake
 	sys-devel/libtool
 "
-SRC_URI=" "
 RESTRICT="mirror"
 PATCHES=(
 )

@@ -6,10 +6,7 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
-inherit git-r3
-
-EGIT_REPO_URI="https://github.com/probonopd/static-tools.git"
-EGIT_BRANCH="master"
+SRC_URI=" "
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="Building static binaries of some tools using an Alpine chroot with musl"
@@ -27,15 +24,13 @@ RDEPEND+="
 	>=app-arch/static-tools-patchelf-0.9
 	>=app-arch/static-tools-runtime-9999
 	>=app-arch/static-tools-squashfuse-20211010
+	>=app-arch/static-tools-zsyncmake-0.6.2
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 "
-SRC_URI=" "
 RESTRICT="mirror"
-PATCHES=(
-)
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

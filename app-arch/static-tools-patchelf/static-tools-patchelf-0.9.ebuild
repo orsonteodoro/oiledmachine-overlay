@@ -7,12 +7,14 @@ EAPI=7
 # You can build this in a musl container to get strictly musl libs.
 
 SRC_URI="
-	https://github.com/NixOS/patchelf/archive/${PV}.tar.gz
+	https://github.com/NixOS/patchelf/archive/${PV}.tar.gz -> patchelf-${PV}.tar.gz
 "
+S="${WORKDIR}/patchelf-${PV}"
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="patchelf for static-tools"
 HOMEPAGE="
+	https://github.com/probonopd/static-tools
 	https://github.com/NixOS/patchelf
 "
 LICENSE="
@@ -34,7 +36,6 @@ BDEPEND+="
 	sys-devel/automake
 	sys-devel/libtool
 "
-SRC_URI=" "
 RESTRICT="mirror"
 PATCHES=(
 )
@@ -78,16 +79,18 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	fi
 	local ARCHITECTURE=$(get_arch)
 
-	cd patchelf-*/ || die
 	./bootstrap.sh || die
-	./configure --prefix=/usr CFLAGS=-no-pie LDFLAGS=-static || die
-	emake -j$(nproc) || die
+	./configure \
+		--prefix=/usr \
+		CFLAGS="-no-pie" \
+		LDFLAGS="-static" \
+		|| die
+	emake || die
 	mv src/patchelf . || die
 	file patchelf || die
 	strip patchelf || die
 	ls -lh patchelf || die
 	cd - || die
-
 	mkdir -p out || die
 	cp patchelf-*/patchelf out/patchelf-${ARCHITECTURE} || die
 }

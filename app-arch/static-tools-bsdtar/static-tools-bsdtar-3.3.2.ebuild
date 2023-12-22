@@ -6,11 +6,10 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
-inherit git-r3
-
 SRC_URI="
 	https://www.libarchive.org/downloads/libarchive-${PV}.tar.gz
 "
+S="${WORKDIR}/libarchive-${PV}"
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 DESCRIPTION="bsdtar for static-tools"
@@ -43,7 +42,6 @@ BDEPEND+="
 	sys-devel/automake
 	sys-devel/libtool
 "
-SRC_URI=" "
 RESTRICT="mirror"
 PATCHES=(
 )
@@ -88,8 +86,6 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	local ARCHITECTURE=$(get_arch)
 
 	# Build static bsdtar
-	tar xf libarchive-*.tar.gz || die
-	cd libarchive-*/ || die
 	./configure \
 		--disable-shared \
 		--enable-bsdtar=static \
