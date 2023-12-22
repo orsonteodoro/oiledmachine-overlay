@@ -13,7 +13,7 @@ SRC_URI=""
 # You can build this in a musl container to get strictly musl libs.
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-DESCRIPTION="static-tools runtime"
+DESCRIPTION="runtime-fuse for static-tools"
 HOMEPAGE="https://github.com/probonopd/static-tools"
 LICENSE="
 	all-rights-reserved
