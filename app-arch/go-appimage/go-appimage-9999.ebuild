@@ -785,11 +785,11 @@ _apply_patches() {
 	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-check-systemd-installed.patch"
 #	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-skip-watching-mountpoints-not-owned.patch"
 	eapply "${FILESDIR}/${PN}-9999_p20231220-add-watch-opt-appimage.patch"
-	if [[ -n "${USE_DISABLE_WATCHING_DOWNLOADS_FOLDER}" && "${USE_DISABLE_WATCHING_DOWNLOADS_FOLDER}" == "1" ]] ; then
+	if [[ "${USE_DISABLE_WATCHING_DOWNLOADS_FOLDER}" == "1" ]] ; then
 		echo "Modding appimaged.d (for disable_watching_download_folder USE flag)"
 		sed -i -e "/xdg.UserDirs.Download/d" "src/appimaged/appimaged.go"
 	fi
-	if [[ -n "${USE_DISABLE_WATCHING_DESKTOP_FOLDER}" && "${USE_DISABLE_WATCHING_DESKTOP_FOLDER}" == "1" ]] ; then
+	if [[ "${USE_DISABLE_WATCHING_DESKTOP_FOLDER}" == "1" ]] ; then
 		echo "Modding appimaged.d (for disable_watching_desktop_folder USE flag)"
 		sed -i -e "/xdg.UserDirs.Desktop/d" "src/appimaged/appimaged.go"
 	fi
