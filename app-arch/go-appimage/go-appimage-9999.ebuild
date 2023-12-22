@@ -190,11 +190,6 @@ IUSE+="
 firejail -musl gnome kde
 "
 REQUIRED_USE+="
-	!elibc_musl? (
-		musl? (
-			musl
-		)
-	)
 	|| (
 		gnome
 		kde
@@ -205,9 +200,10 @@ TRAVIS_CI_DEPENDS="
 	>=dev-libs/openssl-1.1.1f
 	>=dev-vcs/git-2.43.0
 "
-# U 20.04
+# U 20.04 for go-appimage project
+# Upstream uses A 3.15 for static-tools aka !musl section
 RDEPEND+="
-	${TRAVIS_CI}
+	${TRAVIS_CI_DEPENDS}
 	!app-arch/appimaged
 	>=sys-fs/squashfs-tools-4.4:=
 	>=sys-apps/dbus-1.12.16
@@ -235,7 +231,6 @@ RDEPEND+="
 		)
 	)
 "
-# U 22.04 used for static-tools
 DEPEND+="
 	${RDEPEND}
 "
