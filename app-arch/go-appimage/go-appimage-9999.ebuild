@@ -215,11 +215,6 @@ RDEPEND+="
 	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-apps/systemd-245.4
 	!musl? (
-		>=app-arch/libarchive-3.3.2:=
-		>=dev-libs/appstream-0.12.9:=
-		>=dev-util/desktop-file-utils-0.27:=
-		>=dev-util/patchelf-0.9:=
-		>=sys-fs/squashfs-tools-4.5.1:=[zstd]
 		app-arch/static-tools
 	)
 	firejail? (
