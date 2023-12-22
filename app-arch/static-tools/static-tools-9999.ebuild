@@ -26,6 +26,7 @@ RDEPEND+="
 	>=app-arch/static-tools-bsdtar-3.3.2
 	>=app-arch/static-tools-patchelf-0.9
 	>=app-arch/static-tools-runtime-9999
+	>=app-arch/static-tools-squashfuse-20211010
 "
 DEPEND+="
 	${RDEPEND}
