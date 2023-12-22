@@ -25,10 +25,11 @@ IUSE=""
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
+# A uses fuse-2.9.9
 RDEPEND+="
-	sys-fs/fuse[static-libs]
-	sys-libs/zlib[static-libs]
-	app-arch/zstd[static-libs]
+	<sys-fs/fuse-3:=[static-libs]
+	sys-libs/zlib:=[static-libs]
+	app-arch/zstd:=[static-libs]
 "
 DEPEND+="
 	${RDEPEND}
@@ -85,6 +86,7 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+	# export PKG_CONFIG_PATH=""
 	# Build static squashfuse
 	./autogen.sh || die
 	./configure --help || die

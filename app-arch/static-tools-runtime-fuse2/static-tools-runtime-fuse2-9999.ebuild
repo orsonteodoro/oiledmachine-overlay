@@ -23,8 +23,9 @@ IUSE="fallback-commit"
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
+# >=sys-fs/squashfuse-0.1.105[static-libs,zstd]
 RDEPEND+="
-	>=sys-fs/squashfuse-0.1.105[static-libs,zstd]
+	app-arch/static-tools-squashfuse:=
 "
 DEPEND+="
 	${RDEPEND}

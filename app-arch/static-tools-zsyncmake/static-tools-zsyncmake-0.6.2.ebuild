@@ -25,7 +25,7 @@ REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
-	dev-libs/glib[static-libs]
+	dev-libs/glib:=[static-libs]
 "
 DEPEND+="
 	${RDEPEND}

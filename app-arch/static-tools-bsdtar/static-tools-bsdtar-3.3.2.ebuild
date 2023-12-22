@@ -28,9 +28,9 @@ REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
-	app-arch/bzip2[static-libs]
-	app-arch/xz-utils[static-libs]
-	sys-libs/zlib[static-libs]
+	app-arch/bzip2:=[static-libs]
+	app-arch/xz-utils:=[static-libs]
+	sys-libs/zlib:=[static-libs]
 "
 DEPEND+="
 	${RDEPEND}

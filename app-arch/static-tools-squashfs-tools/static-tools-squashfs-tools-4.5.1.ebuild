@@ -25,7 +25,7 @@ REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND+="
-	sys-libs/zlib[static-libs]
+	sys-libs/zlib:=[static-libs]
 "
 DEPEND+="
 	${RDEPEND}
