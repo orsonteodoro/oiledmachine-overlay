@@ -41,6 +41,7 @@ DEPEND+="
 BDEPEND+="
 	dev-util/meson
 	dev-util/strace
+	sys-apps/file
 	sys-apps/util-linux
 	sys-devel/autoconf
 	sys-devel/automake
