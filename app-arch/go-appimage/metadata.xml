@@ -40,36 +40,34 @@
         be ${ROOT} [aka /]?)
       /opt/AppImage # A modded ebuild addition (tentative / testing)
 
-    You may need to mod
+    In order to support a different location, you may need to modify
 
       https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#L79
-
-    in order to support a different location.
 
 
     SECURITY NOTICE:
 
-    Do not download AppImages from untrusted sites.
-    Do not download AppImages that have End of Life (EOL) libraries.
+      Do not download AppImages from untrusted sites.
+      Do not download AppImages that have End of Life (EOL) libraries.
 
 
-    A project page on GitHub will sometimes list a AppImage, these are most
-    likely safe to use.
+      A project page on GitHub will sometimes list a AppImage, these are most
+      likely safe to use.
 
-    AppImageHub, a portal site for AppImage downloads mentioned in appimagetool,
-    can be found at https://appimage.github.io/
+      AppImageHub, a portal site for AppImage downloads mentioned in
+      appimagetool that can be found at https://appimage.github.io/
 
-    Old appimages may have vulnerabilities.  Make sure you use an up-to-date
-    version or a well maintained alternative.
+      Old appimages may have vulnerabilities.  Make sure you use an up-to-date
+      version or a well maintained alternative.
 
 
 
     Build time environment variables:
 
-    GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER - Disable watching the ~/Desktop
-      folder for new .AppImages.  This may speed up loading.
-    GO_APPIMAGE_DISABLE_WATCHDOG_DOWNLOADS_FOLDER - Disable watching ~/Downloads
-      for new .AppImages.  This may speed up loading.
+      GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER - Disable watching the
+        ~/Desktop folder for new .AppImages.  This may speed up loading.
+      GO_APPIMAGE_DISABLE_WATCHDOG_DOWNLOADS_FOLDER - Disable watching
+        ~/Downloads for new .AppImages.  This may speed up loading.
 
   -->
   <use>
@@ -105,7 +103,6 @@
       to port but just want to load AppImages, then you do not need to worry
       about CFLAGS and the chroot thing.  It is recommended to use the CI
       to produce it instead.
-
     </flag>
     <flag name="gnome">
       Checks support for udisk support in Gnome.
