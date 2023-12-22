@@ -118,7 +118,7 @@
       Use the system's static-tools instead of the prebuilt upstream binaries
       statically against Alpine Linux's musl (aka hardened musl).
 
-      It is *strongly* recommended to use this flag for security and
+      It is *strongly* recommended to enable this flag for security and
       full transparency reasons.
     </flag>
   </use>
