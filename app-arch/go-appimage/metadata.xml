@@ -103,7 +103,8 @@
       platforms, you should port in a chroot or a Gentoo docker image with
       just -O2 CFLAGS and -march=generic or -march=x86-64.  If you do not want
       to port but just want to load AppImages, then you do not need to worry
-      about CFLAGS and the chroot thing.
+      about CFLAGS and the chroot thing.  It is recommended to use the CI
+      to produce it instead.
 
     </flag>
     <flag name="gnome">
