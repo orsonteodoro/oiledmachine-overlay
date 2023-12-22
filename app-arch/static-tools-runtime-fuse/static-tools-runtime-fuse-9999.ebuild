@@ -23,7 +23,6 @@ IUSE="fallback-commit fuse3"
 REQUIRED_USE+="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# >=sys-fs/squashfuse-0.1.105[static-libs,zstd]
 RDEPEND+="
 	app-arch/static-tools-squashfuse:=[fuse3?]
 	app-arch/xz-utils:=[static-libs]
