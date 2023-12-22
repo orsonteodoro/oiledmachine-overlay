@@ -888,13 +888,11 @@ einfo
 einfo "The user may need to be added to the \"disk\" group in order for"
 einfo "firejail rules to work."
 einfo
-einfo "Security:  Do not download AppImages from untrusted sites."
 einfo
-einfo "AppImageHub, a portal site for AppImage downloads mentioned in"
-einfo "appimagetool, can be found at https://appimage.github.io/"
+einfo "SECURITY NOTICE:"
 einfo
-einfo "Old appimages may have vulnerabilities.  Make sure you use an up-to-date"
-einfo "version or a well maintained alternative."
+einfo "Do not download AppImages from untrusted sites."
+einfo "Do not download AppImages with End of Life (EOL) libraries."
 einfo
 }
 

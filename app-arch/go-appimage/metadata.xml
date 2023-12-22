@@ -46,7 +46,12 @@
 
     in order to support a different location.
 
-    Security:  Do not download AppImages from untrusted sites.
+
+    SECURITY NOTICE:
+
+    Do not download AppImages from untrusted sites.
+    Do not download AppImages that have End of Life (EOL) libraries.
+
 
     A project page on GitHub will sometimes list a AppImage, these are most
     likely safe to use.
@@ -54,8 +59,8 @@
     AppImageHub, a portal site for AppImage downloads mentioned in appimagetool,
     can be found at https://appimage.github.io/
 
-    Old appimages may have vulnerabilities.  Make sure you use
-    an up-to-date version or a well maintained alternative.
+    Old appimages may have vulnerabilities.  Make sure you use an up-to-date
+    version or a well maintained alternative.
 
 
 
