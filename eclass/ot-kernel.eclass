@@ -4914,6 +4914,7 @@ einfo "Changed .config to use MuQSS"
 		_set_muqss_none
 	elif [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
+		|| "${work_profile}" == "musical-live-performance" \
 		|| "${work_profile}" == "live-video-reporting" \
 		|| "${work_profile}" == "radio-broadcaster" \
 		|| "${work_profile}" == "video-conferencing" \
@@ -8881,6 +8882,7 @@ ewarn
 			|| "${work_profile}" == "digital-audio-workstation" \
 			|| "${work_profile}" == "live-video-reporting" \
 			|| "${work_profile}" == "manual" \
+			|| "${work_profile}" == "musical-live-performance" \
 			|| "${work_profile}" == "radio-broadcaster" \
 			|| "${work_profile}" == "video-conferencing" \
 			|| "${work_profile}" == "voip" \
@@ -9105,9 +9107,13 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distribu
 	elif [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "gamedev" \
+		|| "${work_profile}" == "musical-live-performance" \
 		|| "${work_profile}" == "workstation" \
 	]] ; then
-		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+		if [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "musical-live-performance" \
+		]] ; then
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
@@ -9136,7 +9142,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distribu
 		fi
 		ot-kernel_set_configopt "CONFIG_USB_AUTOSUSPEND_DELAY" "-1" # disable
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
-		if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+		if [[ \
+			   "${work_profile}" == "digital-audio-workstation" \
+			|| "${work_profile}" == "musical-live-performance" \
+		]] ; then
 			ot-kernel_iosched_streaming
 		else
 			ot-kernel_iosched_interactive
@@ -10478,7 +10487,7 @@ eerror
 			die
 		fi
 
-		if [[ "${hardening_level}" =~ "untrusted" ]] ; then
+		if [[ "${hardening_level}" != "performance" ]] ; then
 eerror
 eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
 eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
