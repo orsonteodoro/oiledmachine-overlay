@@ -929,6 +929,7 @@ einfo
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  passed (commit 09fd018, 20231222)
+# USE="gnome system-static-tools -firejail -fuse3 -kde -musl"
 # appimaged:  passed
 # lmms:  passed
 # auto menu test:  passed
