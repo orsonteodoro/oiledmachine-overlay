@@ -38,7 +38,8 @@
       ~/usr/local/bin
       /run/user/0 # A Live CD mount point (This could be a bug.  It should
         be ${ROOT} [aka /]?)
-      /opt/AppImage # A modded ebuild addition for systemwide install (tentative / testing)
+      /opt/AppImage # A modded ebuild addition for systemwide install (tentative
+        / testing)
 
     In order to support a different location, you may need to modify
 
