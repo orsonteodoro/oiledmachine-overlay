@@ -114,6 +114,10 @@
     <flag name="firejail">
       Checks for Firejail support for sandbox support.
     </flag>
+    <flag name="fuse3">
+      Support the newer fuse3 library.  If porting, it is recommended to disable
+      as major distros are still using fuse2.
+    </flag>
     <flag name="gnome">
       Checks support for udisk support in Gnome.
     </flag>

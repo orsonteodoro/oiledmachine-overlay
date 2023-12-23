@@ -324,7 +324,7 @@ LICENSE+=" MIT" # upload tool
 # -system-static-tools is upstream default.
 # +musl is upstream default.
 IUSE+="
-firejail fuse3 gnome kde -musl +system-static-tools
+firejail -fuse3 gnome kde -musl +system-static-tools
 "
 REQUIRED_USE+="
 	fuse3? (
