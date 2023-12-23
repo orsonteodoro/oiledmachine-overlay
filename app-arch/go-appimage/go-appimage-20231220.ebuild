@@ -914,6 +914,7 @@ einfo "Do not download/run AppImages from untrusted sites."
 einfo "Do not download/run AppImages with End of Life (EOL) libraries."
 einfo "Do not download/run AppImages with critical vulnerabilities."
 einfo
+einfo
 einfo "The following may be required to show status information:"
 einfo
 	optfeature "gnome desktop notifications" x11-misc/notification-daemon
