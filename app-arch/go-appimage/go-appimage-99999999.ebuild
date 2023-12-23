@@ -628,7 +628,6 @@ _apply_patches() {
 	eapply "${FILESDIR}/${PN}-9999_p20200829-git-root-envvar.patch"
 	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-check-systemd-installed.patch"
 #	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-skip-watching-mountpoints-not-owned.patch"
-	eapply "${FILESDIR}/${PN}-9999_p20231220-fix-application-caps.patch"
 	local paths_line_num=$(grep -n "xdg.UserDirs.Download" "src/appimaged/appimaged.go" \
 		| cut -f 1 -d ":")
 	if [[ "${GO_APPIMAGE_ALLOW_WATCHING_DESKTOP:-1}" == "1" ]] ; then
