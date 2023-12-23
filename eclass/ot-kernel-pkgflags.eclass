@@ -10681,12 +10681,13 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["casual-gaming-laptop"]="input"
         ["custom"]="input" # placeholder
         ["digital-audio-workstation"]="audio"
-        ["distributed-computing-server"]="server"
         ["distributed-computing-client"]="throughput-interactive"
+        ["distributed-computing-server"]="sleepy-server"
         ["desktop-guest-vm"]="video"
         ["dvr"]="video"
-        ["file-server"]="server"
+        ["file-server"]="sleepy-server"
         ["gaming-tournament"]="input"
+        ["game-server"]="alert-server"
         ["gamedev"]="throughput-interactive"
         ["gaming-guest-vm"]="input"
         ["gpu-gaming-laptop"]="input"
@@ -10694,6 +10695,9 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["green-pc"]="power"
         ["greenest-hpc"]="power"
         ["greenest-pc"]="power"
+        ["hpc"]="throughput-headless"
+        ["http-server-busy"]="alert-server"
+        ["http-server-relaxed"]="relaxed-server"
         ["jukebox"]="audio"
         ["laptop"]="power"
         ["live-streaming-gamer"]="input"
@@ -10701,7 +10705,8 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["mainstream-desktop"]="video"
         ["manual"]="input" # placeholder
         ["media-player"]="video"
-        ["media-server"]="server"
+        ["media-server"]="relaxed-server"
+        ["musical-live-performance"]="audio"
         ["pi-audio-player"]="audio"
         ["pi-deep-learning"]="jitter"
         ["pi-gaming"]="input"
@@ -10715,6 +10720,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["realtime-hpc"]="jitter"
         ["renderfarm-dedicated"]="throughput-headless"
         ["renderfarm-workstation"]="throughput-interactive"
+        ["ros"]="jitter"
         ["sdr"]="audio"
         ["smartphone"]="power"
         ["smartphone-voice"]="audio"
@@ -10725,18 +10731,19 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["touchscreen-laptop"]="video"
         ["video-conferencing"]="audio"
         ["voip"]="audio"
-        ["web-server"]="server"
         ["workstation"]="throughput-interactive"
 )
 
 # intermediate value -> canonical value without PREEMPT_RT
 unset WORK_PROFILE_LATENCY_BIAS_SETTING
 declare -A WORK_PROFILE_LATENCY_BIAS_SETTING=(
+	["alert-server"]="CONFIG_PREEMPT"
 	["audio"]="CONFIG_PREEMPT"
 	["input"]="CONFIG_PREEMPT"
 	["jitter"]="CONFIG_PREEMPT"
 	["power"]="CONFIG_PREEMPT_NONE"
-	["server"]="CONFIG_PREEMPT_NONE"
+	["relaxed-server"]="CONFIG_PREEMPT_VOLUNTARY"
+	["sleepy-server"]="CONFIG_PREEMPT_NONE"
 	["throughput-headless"]="CONFIG_PREEMPT_NONE"
 	["throughput-interactive"]="CONFIG_PREEMPT_VOLUNTARY"
 	["video"]="CONFIG_PREEMPT_VOLUNTARY"
@@ -11008,8 +11015,22 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/openal" "SCHED_RR" # Assumes PREEMPT=y
 	fi
 
-	if [[ "${work_profile}" == "web-server" ]] ; then
+	if [[ \
+		    "${work_profile}" == "distributed-computing-server" \
+		||  "${work_profile}" == "http-server-busy" \
+		||  "${work_profile}" == "http-server-relaxed" \
+		||  "${work_profile}" == "file-server" \
+		||  "${work_profile}" == "game-server" \
+		||  "${work_profile}" == "media-server" \
+	]] ; then
+		# Assumes PREEMPT=y
+		_ot-kernel_realtime_pkg "sys-apps/watchdogd" "SCHED_RR"
+	fi
+
+	if [[ "${work_profile}" == "http-server-busy" ]] ; then
+		# Assumes PREEMPT=y
 		_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
+		_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO"
 	fi
 
 	# Discovered but not required for boosting.
@@ -11017,7 +11038,6 @@ _ot-kernel_realtime_packages() {
 	# _ot-kernel_realtime_pkg "dev-lang/mono" "SCHED_FIFO"
 	# _ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
 	# _ot-kernel_realtime_pkg "media-video/dvgrab" "SCHED_RR"
-	# _ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO" # Disabled for security.
 	# _ot-kernel_realtime_pkg "www-client/chromium" "SCHED_RR" # For testing
 }
 

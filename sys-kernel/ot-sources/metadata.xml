@@ -3084,6 +3084,7 @@ unset OT_KERNEL_PRIVATE_KEY
       desktop-guest-vm
       dvr
       file-server
+      game-server
       gamedev
       gaming-guest-vm
       gaming-tournament
@@ -3093,7 +3094,8 @@ unset OT_KERNEL_PRIVATE_KEY
       greenest-hpc
       greenest-pc
       hpc
-      http-server
+      http-server-busy
+      http-server-relaxed
       realtime-hpc
       jukebox
       laptop

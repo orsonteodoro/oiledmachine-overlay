@@ -3613,7 +3613,9 @@ eerror
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
 		fi
 	elif [[ \
-		   "${work_profile}" == "http-server" \
+		   "${work_profile}" == "game-server" \
+		|| "${work_profile}" == "http-server-busy" \
+		|| "${work_profile}" == "http-server-relaxed" \
 	]] ; then
 	# vegas for production mode
 	# bbr for maintenance mode
@@ -8193,6 +8195,36 @@ ot-kernel_set_kconfig_set_lowest_timer_hz() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_kconfig_set_mouse_hz
+# @DESCRIPTION:
+# Fits the HZ to mouse scroll (>= 125 Hz)
+ot-kernel_set_kconfig_set_mouse_hz() {
+	if [[ "${arch}" == "alpha" ]] ; then
+		ot-kernel_set_kconfig_set_timer_hz "128"
+	elif [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_set_kconfig_set_timer_hz "100"
+	elif [[ "${arch}" == "mips" ]] ; then
+		ot-kernel_set_kconfig_set_timer_hz "128"
+	else
+		ot-kernel_set_kconfig_set_timer_hz "100"
+	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_keypress_hz
+# @DESCRIPTION:
+# Fits the HZ to keypress (>= 15.6 Hz)
+ot-kernel_set_kconfig_set_keypress_hz() {
+	if [[ "${arch}" == "alpha" ]] ; then
+		ot-kernel_set_kconfig_set_timer_hz "32"
+	elif [[ "${arch}" == "arm" ]] ; then
+		ot-kernel_set_kconfig_set_timer_hz "100"
+	elif [[ "${arch}" == "mips" ]] ; then
+		ot-kernel_set_kconfig_set_timer_hz "24"
+	else
+		ot-kernel_set_kconfig_set_timer_hz "100"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_work_profile_init
 # @DESCRIPTION:
 # Initializes the work kernel config
@@ -8922,7 +8954,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-smartphone\" is deprecated.  Use smartphon
 ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instead."
 		die
 	elif [[ "${work_profile}" == "web-server" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distributed-computing-server, http-server, file-server, media-server instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distributed-computing-server, http-server-busy, http-server-relaxed, file-server, media-server instead."
+		die
+	elif [[ "${work_profile}" == "http-server" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-server-busy, http-server-relaxed instead."
 		die
 	fi
 
@@ -9079,14 +9114,20 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distribu
 		ot-kernel_set_iosched "none" "none"
 	elif [[ \
 		   "${work_profile}" == "gaming-tournament" \
+		|| "${work_profile}" == "game-server" \
 		|| "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "presentation" \
 	]] ; then
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		if [[ "${work_profile}" == "game-server" ]] ; then
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
+		else
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_USERSPACE"
 		if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -9201,10 +9242,16 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distribu
 	elif [[ \
 		   "${work_profile}" == "distributed-computing-server" \
 		|| "${work_profile}" == "file-server" \
-		|| "${work_profile}" == "http-server" \
+		|| "${work_profile}" == "http-server-busy" \
+		|| "${work_profile}" == "http-server-relaxed" \
 		|| "${work_profile}" == "media-server" \
 	]] ; then
-		if [[ "${work_profile}" == "media-server" ]] ; then
+		if [[ \
+			   "${work_profile}" == "http-server-busy" \
+			|| "${work_profile}" == "http-server-relaxed" \
+		]] ; then
+			ot-kernel_set_kconfig_set_keypress_hz
+		elif [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
@@ -9217,10 +9264,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distribu
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-		if [[ \
-			   "${work_profile}" == "http-server" \
-			|| "${work_profile}" == "distributed-computing-server" \
-		]] ; then
+		if [[ "${work_profile}" == "http-server-busy" ]] ; then
 			ot-kernel_iosched_max_tps
 		elif [[ "${work_profile}" == "file-server" ]] ; then
 			ot-kernel_iosched_max_throughput
