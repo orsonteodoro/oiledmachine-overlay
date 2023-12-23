@@ -336,8 +336,9 @@ REQUIRED_USE+="
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
+OPENSSL_PV="1.1.1f"
 TRAVIS_CI_DEPENDS="
-	>=dev-libs/openssl-1.1.1f
+	>=dev-libs/openssl-${OPENSSL_PV}
 	>=dev-vcs/git-2.43.0
 "
 # U 20.04 for go-appimage project
@@ -346,10 +347,13 @@ RDEPEND+="
 	${TRAVIS_CI_DEPENDS}
 	!app-arch/appimaged
 	!app-arch/AppImageKit
+	>=dev-libs/openssl-${OPENSSL_PV}
 	>=sys-fs/squashfs-tools-4.4:=
 	>=sys-apps/dbus-1.12.16
 	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-apps/systemd-245.4
+	>=sys-process/procps-3.3.16
+	app-alternatives/sh
 	system-static-tools? (
 		app-arch/static-tools:=[fuse3=]
 	)
@@ -511,6 +515,7 @@ einfo "Unpacking ${dest_name}.tar.gz"
 unpack_go()
 {
 	unpack_go_pkg github.com/probonopd/go-appimage probonopd/go-appimage ${MY_PV}
+die
 	unpack_go_pkg github.com/CalebQ42/squashfs CalebQ42/squashfs v0.7.8
 	unpack_go_pkg github.com/acobaugh/osrelease acobaugh/osrelease v0.1.0
 	unpack_go_pkg github.com/adrg/xdg adrg/xdg v0.4.0
