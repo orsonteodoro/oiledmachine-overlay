@@ -923,6 +923,7 @@ einfo
 	optfeature "mate desktop notifications" x11-misc/mate-notification-daemon
 	optfeature "sway desktop notifications" gui-apps/swaync
 	optfeature "unity desktop notifications" x11-misc/notify-osd
+	optfeature "wayland desktop notifications" gui-apps/mako
 	optfeature "wlroots desktop notifications" gui-apps/fnott
 	optfeature "xfce desktop notifications" xfce-extra/xfce4-notifyd
 einfo
