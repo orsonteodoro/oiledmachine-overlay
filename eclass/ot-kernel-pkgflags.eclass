@@ -10992,6 +10992,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/mpd" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/mpg123" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/sndpeek" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/strawberry[gstreamer]" "SCHED_RR"
 	fi
 
 	if [[ "${work_profile}" == "sdr" ]] ; then
@@ -11011,14 +11012,12 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
 	fi
 
-	# TODO:  create a work profile that demands realtime analysis
-	# The question is but why?  Benefits?
-	# _ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO" # Disabled for security.
-
+	# Discovered but not required for boosting.
 	# _ot-kernel_realtime_pkg "dev-db/mysql" "SCHED_FIFO|SCHED_RR" # #718068
-
-	# _ot-kernel_realtime_pkg "media-video/dvgrab" "SCHED_RR"
 	# _ot-kernel_realtime_pkg "dev-lang/mono" "SCHED_FIFO"
+	# _ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
+	# _ot-kernel_realtime_pkg "media-video/dvgrab" "SCHED_RR"
+	# _ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO" # Disabled for security.
 	# _ot-kernel_realtime_pkg "www-client/chromium" "SCHED_RR" # For testing
 }
 
