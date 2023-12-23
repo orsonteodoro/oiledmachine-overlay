@@ -130,7 +130,7 @@
     </flag>
     <flag name="system-static-tools">
       Use the system's static-tools instead of the prebuilt upstream binaries
-      statically against Alpine Linux's musl (aka hardened musl).
+      statically linked against Alpine Linux's musl (aka hardened musl).
 
       It is *strongly* recommended to enable this flag for security and
       full transparency reasons.
