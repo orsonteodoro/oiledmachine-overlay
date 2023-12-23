@@ -515,7 +515,6 @@ einfo "Unpacking ${dest_name}.tar.gz"
 unpack_go()
 {
 	unpack_go_pkg github.com/probonopd/go-appimage probonopd/go-appimage ${MY_PV}
-die
 	unpack_go_pkg github.com/CalebQ42/squashfs CalebQ42/squashfs v0.7.8
 	unpack_go_pkg github.com/acobaugh/osrelease acobaugh/osrelease v0.1.0
 	unpack_go_pkg github.com/adrg/xdg adrg/xdg v0.4.0
