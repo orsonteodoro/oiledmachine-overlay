@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit git-r3 lcnr linux-info optfeature
+inherit git-r3 lcnr linux-info
 
 # GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
 
@@ -838,6 +838,16 @@ src_compile() {
 	"${S}/scripts/build.sh" -dc ${args[@]} || die
 }
 
+gen_wrapper() {
+	dodir /usr/bin
+cat <<EOF > "${ED}/usr/bin/appimaged"
+#!/bin/bash
+ln -sf "/usr/bin/${appimaged_fn}" "\${HOME}/appimaged"
+"/usr/bin/${appimaged_fn}" "\$@"
+EOF
+	fperms 0755 /usr/bin/appimaged
+}
+
 src_install() {
 	local ai_arch=$(get_appimage_arch)
 	exeinto /usr/bin
@@ -854,11 +864,12 @@ src_install() {
 	local appimagetool_fn="appimagetool-${timestamp}-${ai_arch}.AppImage"
 	local mkappimage_fn="mkappimage-${timestamp}-${ai_arch}.AppImage"
 	doexe "${BUILD_DIR}/${appimaged_fn}"
-	dosym ../../../usr/bin/${appimaged_fn} /usr/bin/appimaged
+	#dosym ../../../usr/bin/${appimaged_fn} /usr/bin/appimaged
 	doexe "${BUILD_DIR}/${appimagetool_fn}"
 	dosym ../../../usr/bin/${appimagetool_fn} /usr/bin/appimagetool
 	doexe "${BUILD_DIR}/${mkappimage_fn}"
 	dosym ../../../usr/bin/${mkappimage_fn} /usr/bin/mkappimage
+	gen_wrapper
 	LCNR_SOURCE="${BUILD_DIR}"
 	lcnr_install_files
 	docinto readme
@@ -873,6 +884,13 @@ src_install() {
 		|| die
 	dodoc "${T}/appimaged-README.md"
 	dodoc "${T}/appimagetool-README.md"
+}
+
+# The the stock optfeature is ugly af.
+optfeature() {
+	local msg="${1}"
+	local pkg="${2}"
+	einfo "${pkg} for ${msg}"
 }
 
 pkg_postinst() {
@@ -897,6 +915,7 @@ einfo "Do not download/run AppImages with End of Life (EOL) libraries."
 einfo "Do not download/run AppImages with critical vulnerabilities."
 einfo
 einfo "The following may be required to show status information:"
+einfo
 	optfeature "gnome desktop notifications" x11-misc/notification-daemon
 	optfeature "lightweight desktop notifications" x11-misc/dunst
 	optfeature "lxqt desktop notifications" lxqt-base/lxqt-notificationd
@@ -905,6 +924,7 @@ einfo "The following may be required to show status information:"
 	optfeature "unity desktop notifications" x11-misc/notify-osd
 	optfeature "wlroots desktop notifications" gui-apps/fnott
 	optfeature "xfce desktop notifications" xfce-extra/xfce4-notifyd
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
