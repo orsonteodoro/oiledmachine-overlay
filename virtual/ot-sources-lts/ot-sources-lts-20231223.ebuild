@@ -25,7 +25,7 @@ RDEPEND="
 		~sys-kernel/ot-sources-5.10.205
 	)
 	5_15? (
-		~sys-kernel/ot-sources-5.15.144
+		~sys-kernel/ot-sources-5.15.145
 	)
 	6_1? (
 		~sys-kernel/ot-sources-6.1.69
