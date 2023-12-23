@@ -766,13 +766,13 @@ _apply_patches() {
 #	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-skip-watching-mountpoints-not-owned.patch"
 	local paths_line_num=$(grep -n "xdg.UserDirs.Download" "src/appimaged/appimaged.go" \
 		| cut -f 1 -d ":")
-	if [[ "${GO_APPIMAGE_ALLOW_WATCHING_DESKTOP}" == "1" ]] ; then
+	if [[ "${GO_APPIMAGE_ALLOW_WATCHING_DESKTOP:-1}" == "1" ]] ; then
 		einfo "Allow watching \$XDG_DESKTOP_DIR for AppImages?:  Enabled"
 	else
 		einfo "Allow watching \$XDG_DESKTOP_DIR for AppImages?:  Disabled"
 		sed -i -e "/xdg.UserDirs.Desktop/d" "src/appimaged/appimaged.go" || die
 	fi
-	if [[ "${GO_APPIMAGE_ALLOW_WATCHING_DOWNLOADS}" == "1" ]] ; then
+	if [[ "${GO_APPIMAGE_ALLOW_WATCHING_DOWNLOADS:-1}" == "1" ]] ; then
 		einfo "Allow watching \$XDG_DOWNLOAD_DIR for AppImages?:  Enabled"
 	else
 		einfo "Allow watching \$XDG_DOWNLOAD_DIR for AppImages?:  Disabled"
@@ -901,14 +901,11 @@ src_install() {
 
 pkg_postinst() {
 einfo
-einfo "You must run appimaged as non-root to generate the systemd service files"
-einfo "in ~/."
+einfo "You must run appimaged inside the user account to add the user service."
+einfo "It will automatically enable and start it."
 einfo
-einfo "You must \`systemctl --user enable appimaged\` inside the user account"
-einfo "to add the service on login."
-einfo
-einfo "You can \`systemctl --user start appimaged\` to start it now."
-einfo
+einfo "To stop it do \`systemctl --user stop appimaged\`."
+einfo "To disable it do \`systemctl --user disable appimaged\`."
 einfo
 einfo "The appimaged daemon will randomly quit when watching files and needs to"
 einfo "be restarted."
@@ -926,3 +923,5 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:
+# appimaged:  passed
