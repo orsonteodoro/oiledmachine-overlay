@@ -923,5 +923,6 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  WIP (commit 09fd018, 20231222)
+# OILEDMACHINE-OVERLAY-TEST:  passed (commit 09fd018, 20231222)
 # appimaged:  passed
+# lmms:  passed

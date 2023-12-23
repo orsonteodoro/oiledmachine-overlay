@@ -13,19 +13,19 @@
     go-appimage is appimaged and appimagetool implemented in the Go language.
     It is planned as the replacement package for those older packages.
 
-    An AppImage is an archive containing the prebuilt project, lib/exe
-    dependencies, and other glue libraries and executables.  You place the
-    AppImage file in a watched folder listed below, appimaged will add a link to
-    the desktop or menu to the appimage.  When you click the link, it will mount
-    the image in its own chroot, with or without a Firejail sandbox protection,
-    with or without AppArmor security protections.
-
     appimaged is a daemon that automatically installs .AppImages for
     a user.
 
     The appimagetool is a publishing tool that produces AppImages that are
     signed for distribution.  Only Type 2 SquashFS based AppImages are
     supported by this tool.  gzip and zstd are the supported for compression.
+
+    An AppImage is an archive containing the prebuilt project, lib/exe
+    dependencies, and other glue libraries and executables.  You place the
+    AppImage file in a watched folder listed below, appimaged will add a link to
+    the desktop or menu to the appimage.  When you click the link, it will mount
+    the image in its own chroot, with or without a Firejail sandbox protection,
+    with or without AppArmor security protections.
 
     appimaged will watch these folders for new .AppImage(s):
 
@@ -44,6 +44,17 @@
     In order to support a different location, you may need to modify
 
       https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#L79
+
+
+    Usage example
+
+      The watch feature seems to not work.  Lets walk through with LMMS's Appimage.
+      1. Grab https://github.com/LMMS/lmms/releases/tag/v1.2.2 from GH from the
+         assets section.
+      2. Do `chmod +x lmms-1.2.2-linux-x86_64.AppImage` from terminal in X.
+      3. Run it by doing `./lmms-1.2.2-linux-x86_64.AppImage`
+
+      Simple as that.
 
 
     Porting:
