@@ -307,7 +307,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-lang/go-1.18.10:=
 "
-RESTRICT="mirror"
+RESTRICT="mirror strip"
 PATCHES=(
 	"${FILESDIR}/${PN}-0.0.0.20221217121855-gentooize.patch"
 )
