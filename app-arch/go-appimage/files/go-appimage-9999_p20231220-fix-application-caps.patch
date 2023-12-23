@@ -1,0 +1,236 @@
+diff -urp go-appimage.orig/internal/helpers/helpers.go go-appimage/internal/helpers/helpers.go
+--- go-appimage.orig/internal/helpers/helpers.go	2023-12-22 22:12:59.205624240 -0800
++++ go-appimage/internal/helpers/helpers.go	2023-12-22 22:17:25.253631330 -0800
+@@ -207,10 +207,10 @@ func CheckIfExecFileExists(desktopfilepa
+ }
+ 
+ // DeleteDesktopFilesWithNonExistingTargets deletes desktop files
+-// in xdg.DataHome + "/applications/"
++// in xdg.DataHome + "/Applications/"
+ // that point to non-existing Exec= entries
+ func DeleteDesktopFilesWithNonExistingTargets() {
+-	files, e := os.ReadDir(xdg.DataHome + "/applications/")
++	files, e := os.ReadDir(xdg.DataHome + "/Applications/")
+ 	LogError("desktop", e)
+ 	if e != nil {
+ 		return
+@@ -218,10 +218,10 @@ func DeleteDesktopFilesWithNonExistingTa
+ 
+ 	for _, file := range files {
+ 		if strings.HasSuffix(file.Name(), ".desktop") && strings.HasPrefix(file.Name(), "appimagekit_") {
+-			exists := CheckIfExecFileExists(xdg.DataHome + "/applications/" + file.Name())
++			exists := CheckIfExecFileExists(xdg.DataHome + "/Applications/" + file.Name())
+ 			if exists == false {
+-				log.Println("Deleting", xdg.DataHome+"/applications/"+file.Name())
+-				e = os.Remove(xdg.DataHome + "/applications/" + file.Name())
++				log.Println("Deleting", xdg.DataHome+"/Applications/"+file.Name())
++				e = os.Remove(xdg.DataHome + "/Applications/" + file.Name())
+ 				LogError("desktop", e)
+ 			}
+ 		}
+@@ -229,10 +229,10 @@ func DeleteDesktopFilesWithNonExistingTa
+ }
+ 
+ // GetValuesForAllDesktopFiles gets the values for a given key from all desktop files
+-// in xdg.DataHome + "/applications/"
++// in xdg.DataHome + "/Applications/"
+ func GetValuesForAllDesktopFiles(key string) []string {
+ 	var results []string
+-	files, e := os.ReadDir(xdg.DataHome + "/applications/")
++	files, e := os.ReadDir(xdg.DataHome + "/Applications/")
+ 	LogError("GetValuesForAllDesktopFiles", e)
+ 	if e != nil {
+ 		return results
+@@ -240,10 +240,10 @@ func GetValuesForAllDesktopFiles(key str
+ 
+ 	for _, file := range files {
+ 		if strings.HasSuffix(file.Name(), ".desktop") {
+-			exists := CheckIfExecFileExists(xdg.DataHome + "/applications/" + file.Name())
++			exists := CheckIfExecFileExists(xdg.DataHome + "/Applications/" + file.Name())
+ 			if exists == true {
+ 				cfg, e := ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true}, // Do not cripple lines hat contain ";"
+-					xdg.DataHome+"/applications/"+file.Name())
++					xdg.DataHome+"/Applications/"+file.Name())
+ 				LogError("GetValuesForAllDesktopFiles", e)
+ 				dst := cfg.Section("Desktop Entry").Key(key).String()
+ 				if dst != "" {
+diff -urp go-appimage.orig/src/appimaged/appimaged.go go-appimage/src/appimaged/appimaged.go
+--- go-appimage.orig/src/appimaged/appimaged.go	2023-12-22 22:13:00.641624279 -0800
++++ go-appimage/src/appimaged/appimaged.go	2023-12-22 22:17:14.165631034 -0800
+@@ -280,10 +280,10 @@ func updateMenu() error {
+ 	// Run update-desktop-database
+ 	// "Build cache database of MIME types handled by desktop files."
+ 	if helpers.IsCommandAvailable("update-desktop-database") {
+-		cmd := exec.Command("update-desktop-database", xdg.DataHome+"/applications/")
++		cmd := exec.Command("update-desktop-database", xdg.DataHome+"/Applications/")
+ 		err := cmd.Run()
+ 		if err == nil {
+-			log.Println("Ran", "update-desktop-database "+xdg.DataHome+"/applications/")
++			log.Println("Ran", "update-desktop-database "+xdg.DataHome+"/Applications/")
+ 		} else {
+ 			helpers.LogError("main", err)
+ 		}
+diff -urp go-appimage.orig/src/appimaged/appimage.go go-appimage/src/appimaged/appimage.go
+--- go-appimage.orig/src/appimaged/appimage.go	2023-12-22 22:12:59.209624240 -0800
++++ go-appimage/src/appimaged/appimage.go	2023-12-22 22:17:50.437632001 -0800
+@@ -47,7 +47,7 @@ func NewAppImage(path string) (ai *AppIm
+ 	ai.uri = strings.TrimSpace(string(uri.File(filepath.Clean(ai.Path))))
+ 	ai.md5 = ai.calculateMD5filenamepart() // Need this also for non-existing AppImages for removal
+ 	ai.desktopfilename = "appimagekit_" + ai.md5 + ".desktop"
+-	ai.desktopfilepath = filepath.Join(xdg.DataHome, "applications", ai.desktopfilename)
++	ai.desktopfilepath = filepath.Join(xdg.DataHome, "Applications", ai.desktopfilename)
+ 	ai.thumbnailfilename = ai.md5 + ".png"
+ 	ai.thumbnailfilepath = filepath.Join(ThumbnailsDirNormal, ai.thumbnailfilename)
+ 	if err != nil {
+@@ -240,7 +240,7 @@ func FindMostRecentAppImageWithMatchingU
+ // FindAppImagesWithMatchingUpdateInformation finds registered AppImages
+ // that have matching upate information embedded
+ func FindAppImagesWithMatchingUpdateInformation(updateinformation string) []string {
+-	files, err := os.ReadDir(xdg.DataHome + "/applications/")
++	files, err := os.ReadDir(xdg.DataHome + "/Applications/")
+ 	helpers.LogError("desktop", err)
+ 	var results []string
+ 	if err != nil {
+@@ -250,12 +250,12 @@ func FindAppImagesWithMatchingUpdateInfo
+ 		if strings.HasSuffix(file.Name(), ".desktop") && strings.HasPrefix(file.Name(), "appimagekit_") {
+ 
+ 			cfg, e := ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true}, // Do not cripple lines hat contain ";"
+-				xdg.DataHome+"/applications/"+file.Name())
++				xdg.DataHome+"/Applications/"+file.Name())
+ 			helpers.LogError("desktop", e)
+ 			dst := cfg.Section("Desktop Entry").Key(ExecLocationKey).String()
+ 			_, err = os.Stat(dst)
+ 			if os.IsNotExist(err) {
+-				log.Println(dst, "does not exist, it is mentioned in", xdg.DataHome+"/applications/"+file.Name())
++				log.Println(dst, "does not exist, it is mentioned in", xdg.DataHome+"/Applications/"+file.Name())
+ 				continue
+ 			}
+ 			ai, err := NewAppImage(dst)
+diff -urp go-appimage.orig/src/appimaged/appwrapper.go go-appimage/src/appimaged/appwrapper.go
+--- go-appimage.orig/src/appimaged/appwrapper.go	2023-12-22 22:12:59.209624240 -0800
++++ go-appimage/src/appimaged/appwrapper.go	2023-12-22 22:17:17.493631123 -0800
+@@ -147,7 +147,7 @@ func sendErrorDesktopNotification(title
+ // which have Exec= entries pointing to the executable
+ func findDesktopFilesPointingToExecutable(executablefilepath string) ([]string, error) {
+ 	var results []string
+-	files, e := os.ReadDir(xdg.DataHome + "/applications/")
++	files, e := os.ReadDir(xdg.DataHome + "/Applications/")
+ 	helpers.LogError("desktop", e)
+ 	if e != nil {
+ 		return results, e
+@@ -157,7 +157,7 @@ func findDesktopFilesPointingToExecutabl
+ 			var cfg *ini.File
+ 			info, _ := file.Info()
+ 			if info.Mode()&os.ModeSymlink != 0 { // Check if it's a symlink
+-				linkfile, err := os.Readlink(xdg.DataHome + "/applications/" + file.Name()) // Read the symlink target
++				linkfile, err := os.Readlink(xdg.DataHome + "/Applications/" + file.Name()) // Read the symlink target
+ 				if err != nil {
+ 					log.Printf("Readlink error %s on file %s", err, linkfile)
+ 					continue
+@@ -169,9 +169,9 @@ func findDesktopFilesPointingToExecutabl
+ 				}
+ 			} else { // If not a symlink then load the file directly
+ 				cfg, _ = ini.LoadSources(ini.LoadOptions{IgnoreInlineComment: true}, // Do not cripple lines hat contain ";"
+-					xdg.DataHome+"/applications/"+file.Name())
++					xdg.DataHome+"/Applications/"+file.Name())
+ 			}
+-			// log.Println(xdg.DataHome + "/applications/" + file.Name())
++			// log.Println(xdg.DataHome + "/Applications/" + file.Name())
+ 			s := cfg.Section("Desktop Entry").Key("Exec").String()
+ 			// dst = strings.Replace(dst, os.Args[0]+" "+os.Args[1]+" ", "", -1)
+ 			// log.Println(s)
+@@ -191,7 +191,7 @@ func checkDesktopFiles(executablefilepat
+ 	helpers.PrintError("checkDesktopFiles", err)
+ 	for _, dfile := range dfiles {
+ 		// log.Println(dfile)
+-		err := helpers.ValidateDesktopFile(xdg.DataHome + "/applications/" + dfile)
++		err := helpers.ValidateDesktopFile(xdg.DataHome + "/Applications/" + dfile)
+ 		if err != nil {
+ 			sendErrorDesktopNotification("Invalid desktop file", executablefilepath+"\n\n"+err.Error())
+ 		}
+diff -urp go-appimage.orig/src/appimaged/prerequisites.go go-appimage/src/appimaged/prerequisites.go
+--- go-appimage.orig/src/appimaged/prerequisites.go	2023-12-22 22:13:00.625624278 -0800
++++ go-appimage/src/appimaged/prerequisites.go	2023-12-22 22:17:20.261631197 -0800
+@@ -89,7 +89,7 @@ func checkPrerequisites() {
+ 	// This is useful for debugging
+ 	if *cleanPtr {
+ 		var files []string
+-		files, err = filepath.Glob(filepath.Join(xdg.DataHome, "applications", "appimagekit_*"))
++		files, err = filepath.Glob(filepath.Join(xdg.DataHome, "Applications", "appimagekit_*"))
+ 		helpers.LogError("main:", err)
+ 		for _, file := range files {
+ 			if *verbosePtr {
+@@ -99,21 +99,21 @@ func checkPrerequisites() {
+ 			helpers.LogError("main:", err)
+ 		}
+ 		if *verbosePtr {
+-			log.Println("Deleted", len(files), "desktop files from", xdg.DataHome+"/applications/")
++			log.Println("Deleted", len(files), "desktop files from", xdg.DataHome+"/Applications/")
+ 		} else {
+-			log.Println("Deleted", len(files), "desktop files from", xdg.DataHome+"/applications/; use -v to see details")
++			log.Println("Deleted", len(files), "desktop files from", xdg.DataHome+"/Applications/; use -v to see details")
+ 		}
+ 	}
+ 
+ 	// E.g., on Xubuntu this directory is not there by default
+ 	// but luckily it starts working right away without
+ 	// the desktop needing to be restarted
+-	err = os.MkdirAll(xdg.DataHome+"/applications/", os.ModePerm)
++	err = os.MkdirAll(xdg.DataHome+"/Applications/", os.ModePerm)
+ 	helpers.LogError("main:", err)
+ 	err = os.MkdirAll(ThumbnailsDirNormal, os.ModePerm)
+ 	helpers.LogError("main:", err)
+ 	home, _ := os.UserHomeDir()
+-	err = os.MkdirAll(home+"/.cache/applications/", os.ModePerm)
++	err = os.MkdirAll(home+"/.cache/Applications/", os.ModePerm)
+ 	helpers.LogError("main:", err)
+ 
+ 	// Some systems may expect thumbnails in another (old?) location. Use that old location if it exists and the new location does not exist
+diff -urp go-appimage.orig/src/appimaged/README.md go-appimage/src/appimaged/README.md
+--- go-appimage.orig/src/appimaged/README.md	2023-12-22 22:12:59.209624240 -0800
++++ go-appimage/src/appimaged/README.md	2023-12-22 22:17:18.997631163 -0800
+@@ -12,7 +12,7 @@ systemctl --user stop appimaged.service
+ sudo apt-get -y remove appimagelauncher || true
+ 
+ # Clear cache
+-rm "$HOME"/.local/share/applications/appimage*
++rm "$HOME"/.local/share/Applications/appimage*
+ [ -f ~/.config/systemd/user/default.target.wants/appimagelauncherd.service ] && rm ~/.config/systemd/user/default.target.wants/appimagelauncherd.service
+ 
+ # Optionally, install Firejail (if you want sandboxing functionality)
+@@ -31,7 +31,7 @@ chmod +x ~/Applications/appimaged-*.AppI
+ ```bash
+ systemctl --user disable --now appimaged.service || true
+ rm ~/.config/systemd/user/appimaged.service
+-rm ~/.local/share/applications/appimagekit*.desktop
++rm ~/.local/share/Applications/appimagekit*.desktop
+ rm ~/Applications/appimaged-*-x86_64.AppImage
+ ```
+ 
+diff -urp go-appimage.orig/src/appimagetool/cli.go go-appimage/src/appimagetool/cli.go
+--- go-appimage.orig/src/appimagetool/cli.go	2023-12-22 22:12:59.213624241 -0800
++++ go-appimage/src/appimagetool/cli.go	2023-12-22 22:17:21.557631231 -0800
+@@ -26,7 +26,7 @@ func bootstrapAppImageDeploy(c *cli.Cont
+ 	if c.NArg() != 1 {
+ 		log.Println("Please supply the path to a desktop file in an FHS-like AppDir")
+ 		log.Println("a FHS-like structure, e.g.:")
+-		log.Println(os.Args[0], "appdir/usr/share/applications/myapp.desktop")
++		log.Println(os.Args[0], "appdir/usr/share/Applications/myapp.desktop")
+ 		log.Fatal("Terminated.")
+ 	}
+ 	options = DeployOptions{
+diff -urp go-appimage.orig/src/appimagetool/README.md go-appimage/src/appimagetool/README.md
+--- go-appimage.orig/src/appimagetool/README.md	2023-12-22 22:12:59.213624241 -0800
++++ go-appimage/src/appimagetool/README.md	2023-12-22 22:17:23.077631272 -0800
+@@ -9,9 +9,9 @@ Assuming you are using a 64-bit Intel ma
+ ```bash
+ wget -c https://github.com/$(wget -q https://github.com/probonopd/go-appimage/releases/expanded_assets/continuous -O - | grep "appimagetool-.*-x86_64.AppImage" | head -n 1 | cut -d '"' -f 2)
+ chmod +x appimagetool-*.AppImage
+-./appimagetool-*.AppImage -s deploy appdir/usr/share/applications/*.desktop # Bundle EVERYTHING
++./appimagetool-*.AppImage -s deploy appdir/usr/share/Applications/*.desktop # Bundle EVERYTHING
+ # or 
+-./appimagetool-*.AppImage deploy appdir/usr/share/applications/*.desktop # Bundle everything expect what comes with the base system
++./appimagetool-*.AppImage deploy appdir/usr/share/Applications/*.desktop # Bundle everything expect what comes with the base system
+ # and
+ VERSION=1.0 ./appimagetool-*.AppImage ./Some.AppDir # turn AppDir into AppImage
+ ```
