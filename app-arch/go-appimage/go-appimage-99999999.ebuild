@@ -286,10 +286,10 @@ RDEPEND+="
 	!app-arch/appimaged
 	!app-arch/AppImageKit
 	>=dev-libs/openssl-${OPENSSL_PV}
-	>=sys-fs/squashfs-tools-4.4:=
 	>=sys-apps/dbus-1.12.16
-	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-apps/systemd-245.4
+	>=sys-fs/squashfs-tools-4.4:=
+	>=sys-fs/udisks-2.8.4[daemon]
 	>=sys-process/procps-3.3.16
 	app-alternatives/sh
 	system-static-tools? (
