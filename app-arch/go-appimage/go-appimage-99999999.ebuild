@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit git-r3 lcnr linux-info user-info
+inherit git-r3 lcnr linux-info
 
 # GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
 
@@ -420,23 +420,6 @@ ewarn "quit at random times.  An auto-restart for this daemon has not been"
 ewarn "implemented.  Use the appimaged package instead."
 ewarn
 	# Server only
-
-	if ! egetent group ${PN} ; then
-eerror
-eerror "You must add the ${PN} group to the system."
-eerror
-eerror "  groupadd ${PN}"
-eerror
-		die
-	fi
-	if ! egetent passwd ${PN} ; then
-eerror
-eerror "You must add the ${PN} user to the system."
-eerror
-eerror "  useradd ${PN} -g ${PN} -d /var/lib/${PN}"
-eerror
-		die
-	fi
 
 	if ! use system-static-tools ; then
 ewarn
