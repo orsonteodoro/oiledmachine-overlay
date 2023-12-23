@@ -10914,12 +10914,26 @@ ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
 _ot-kernel_realtime_packages() {
 	# Boost based on profile
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
-	if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
-		_ot-kernel_realtime_pkg "dev-lang/faust" "SCHED_FIFO|SCHED_RR"
+	if [[ \
+		   "${work_profile}" == "digital-audio-workstation" \
+		|| "${work_profile}" == "jukebox" \
+		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "musical-live-performance" \
+		|| "${work_profile}" == "radio-broadcaster" \
+		|| "${work_profile}" == "sdr" \
+		|| "${work_profile}" == "video-conferencing" \
+		|| "${work_profile}" == "voip" \
+	]] ; then
 		_ot-kernel_realtime_pkg "media-libs/libpulse" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/libsoundio" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
+	fi
+
+	if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+		_ot-kernel_realtime_pkg "dev-lang/faust" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-plugins/distrho-ports" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-plugins/ir_lv2" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-plugins/nekobi" "SCHED_FIFO|SCHED_RR"
@@ -10942,9 +10956,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/linuxsampler" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/lmms" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/mixxx" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-sound/mpd" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/museseq" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/pulseeffects" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/pure-data" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/rosegarden" "SCHED_FIFO"
@@ -10956,9 +10968,8 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/timidity++[alsa]" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/yoshimi" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/zynaddsubfx[alsa]" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "sys-apps/das_watchdog" "SCHED_RR" # Used in audio overlay
-		_ot-kernel_realtime_pkg "sys-auth/rtkit" "SCHED_FIFO|SCHED_RR"
+		_ot-kernel_realtime_pkg "sys-auth/rtkit" "SCHED_FIFO|SCHED_RR" # No dependencies
 	fi
 	if [[ \
 		   "${work_profile}" == "radio-broadcaster" \
@@ -10967,11 +10978,9 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "voip" \
 	]] ; then
 		_ot-kernel_realtime_pkg "media-libs/libtgvoip" "SCHED_FIFO|SCHED_RR"
-		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/tg_owt" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/webrtc-audio-processing" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/umurmur" "SCHED_RR"
 		_ot-kernel_realtime_pkg "net-voip/yate" "SCHED_FIFO|SCHED_RR"
@@ -10980,6 +10989,7 @@ _ot-kernel_realtime_packages() {
 
 	if [[ "${work_profile}" == "jukebox" || "${work_profile}" == "musical-live-performance" ]] ; then
 		_ot-kernel_realtime_pkg "media-sound/cmus" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/mpd" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/mpg123" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/sndpeek" "SCHED_RR"
 	fi
