@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit git-r3 lcnr linux-info
+inherit git-r3 lcnr linux-info optfeature
 
 # GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
 
@@ -774,6 +774,15 @@ einfo "Do not download/run AppImages from untrusted sites."
 einfo "Do not download/run AppImages with End of Life (EOL) libraries."
 einfo "Do not download/run AppImages with critical vulnerabilities."
 einfo
+einfo "The following may be required to show status information:"
+	optfeature "gnome desktop notifications" x11-misc/notification-daemon
+	optfeature "lightweight desktop notifications" x11-misc/dunst
+	optfeature "lxqt desktop notifications" lxqt-base/lxqt-notificationd
+	optfeature "mate desktop notifications" x11-misc/mate-notification-daemon
+	optfeature "sway desktop notifications" gui-apps/swaync
+	optfeature "unity desktop notifications" x11-misc/notify-osd
+	optfeature "wlroots desktop notifications" gui-apps/fnott
+	optfeature "xfce desktop notifications" xfce-extra/xfce4-notifyd
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
