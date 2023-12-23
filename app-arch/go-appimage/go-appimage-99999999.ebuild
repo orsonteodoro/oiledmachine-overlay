@@ -768,7 +768,7 @@ src_install() {
 optfeature() {
 	local msg="${1}"
 	local pkg="${2}"
-	einfo "${pkg} for ${msg}"
+	einfo "For ${msg}, use ${pkg}"
 }
 
 pkg_postinst() {
