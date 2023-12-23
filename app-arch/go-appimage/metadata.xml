@@ -29,8 +29,8 @@
 
     appimaged will watch these folders for new .AppImage(s):
 
-      ~/Downloads
-      ~/Desktop
+      ~/Downloads (specifically $XDG_DOWNLOAD_DIR)
+      ~/Desktop (specifically $XDG_DESKTOP_DIR)
       ~/.local/bin
       ~/bin
       ~/Applications
@@ -38,7 +38,7 @@
       ~/usr/local/bin
       /run/user/0 # A Live CD mount point (This could be a bug.  It should
         be ${ROOT} [aka /]?)
-      /opt/AppImage # A modded ebuild addition (tentative / testing)
+      /opt/AppImage # A modded ebuild addition for systemwide install (tentative / testing)
 
     In order to support a different location, you may need to modify
 
@@ -73,10 +73,17 @@
 
     Build time environment variables:
 
-      GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER - Disable watching the
+      GO_APPIMAGE_ALLOW_WATCHING_DESKTOP - Allow/disallow watching the
         ~/Desktop folder for new .AppImages.  This may speed up loading.
-      GO_APPIMAGE_DISABLE_WATCHDOG_DOWNLOADS_FOLDER - Disable watching
+        Valid values:  1 - allow, 0 - disallow.
+      GO_APPIMAGE_ALLOW_WATCHING_DOWNLOADS - Allow/disallow watching
         ~/Downloads for new .AppImages.  This may speed up loading.
+        Valid values:  1 - allow, 0 - disallow.
+      GO_APPIMAGE_ADDITIONAL_WATCH_PATHS - a space separated paths for monitoring.
+
+    Examples:
+
+      GO_APPIMAGE_ADD_WATCH_PATHS="~/games /opt/appimage-games /opt/ /mnt/usb"
 
   -->
   <use>
@@ -88,9 +95,6 @@
     </flag>
     <flag name="kde">
       Checks support for udisk support in KDE.
-    </flag>
-    <flag name="mkappimage">
-      Adds the core AppImage creation tool.
     </flag>
     <flag name="musl">
       Forces the use of the zig compiler using internal musl.  It assumes that

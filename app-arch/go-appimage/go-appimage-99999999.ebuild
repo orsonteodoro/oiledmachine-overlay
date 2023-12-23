@@ -641,15 +641,35 @@ _apply_patches() {
 	eapply "${FILESDIR}/${PN}-9999_p20200829-git-root-envvar.patch"
 	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-check-systemd-installed.patch"
 #	eapply "${FILESDIR}/${PN}-0.0.0.20221217121855-skip-watching-mountpoints-not-owned.patch"
-	eapply "${FILESDIR}/${PN}-9999_p20231220-add-watch-opt-appimage.patch"
-	if [[ "${USE_DISABLE_WATCHING_DOWNLOADS_FOLDER}" == "1" ]] ; then
-		echo "Modding appimaged.d (for disable_watching_download_folder USE flag)"
-		sed -i -e "/xdg.UserDirs.Download/d" "src/appimaged/appimaged.go"
+	local paths_line_num=$(grep -n "xdg.UserDirs.Download" "src/appimaged/appimaged.go" \
+		| cut -f 1 -d ":")
+	if [[ "${GO_APPIMAGE_ALLOW_WATCHING_DESKTOP}" == "1" ]] ; then
+		einfo "Allow watching \$XDG_DESKTOP_DIR for AppImages?:  Enabled"
+	else
+		einfo "Allow watching \$XDG_DESKTOP_DIR for AppImages?:  Disabled"
+		sed -i -e "/xdg.UserDirs.Desktop/d" "src/appimaged/appimaged.go" || die
 	fi
-	if [[ "${USE_DISABLE_WATCHING_DESKTOP_FOLDER}" == "1" ]] ; then
-		echo "Modding appimaged.d (for disable_watching_desktop_folder USE flag)"
-		sed -i -e "/xdg.UserDirs.Desktop/d" "src/appimaged/appimaged.go"
+	if [[ "${GO_APPIMAGE_ALLOW_WATCHING_DOWNLOADS}" == "1" ]] ; then
+		einfo "Allow watching \$XDG_DOWNLOAD_DIR for AppImages?:  Enabled"
+	else
+		einfo "Allow watching \$XDG_DOWNLOAD_DIR for AppImages?:  Disabled"
+		sed -i -e "/xdg.UserDirs.Download/d" "src/appimaged/appimaged.go" || die
 	fi
+	IFS=$' '
+	GO_APPIMAGE_ADD_WATCH_PATHS+=" /opt/AppImage"
+	local path
+	for path in ${GO_APPIMAGE_ADD_WATCH_PATHS} ; do
+		if [[ "${path}" =~ "~/" ]] ; then
+			local rel_path=$(echo "${path}" | cut -f 2- -d "/")
+einfo "Adding ~/${rel_path} to watch path"
+			# \\\t\t is a quirk for two tabs
+			sed -i -e "${paths_line_num}i \\\t\thome + \"${rel_path}\"," "src/appimaged/appimaged.go" || die
+		else
+einfo "Adding ${path} to watch path"
+			sed -i -e "${paths_line_num}i \\\t\t\"${path}\"," "src/appimaged/appimaged.go" || die
+		fi
+	done
+	IFS=$' \t\n'
 }
 
 src_prepare() {
@@ -680,11 +700,15 @@ src_compile() {
 	export GO_APPIMAGE_PV="${MY_PV}"
 	export GOPATH="${WORKDIR}/go_build"
 	export GO111MODULE=auto
-	if [[ "${GO_APPIMAGE_DISABLE_WATCHDOG_DOWNLOADS_FOLDER:-1}" == "1" ]] ; then
-		export USE_DISABLE_WATCHING_DOWNLOADS_FOLDER=1
+	if [[ "${GO_APPIMAGE_WATCHDOG_DOWNLOADS_FOLDER:-1}" == "1" ]] ; then
+		export USE_WATCHING_DOWNLOADS_FOLDER=1
+	else
+		export USE_WATCHING_DOWNLOADS_FOLDER=0
 	fi
-	if [[ "${GO_APPIMAGE_DISABLE_WATCHDOG_DESKTOP_FOLDER:-1}" == "1" ]] ; then
-		export USE_DISABLE_WATCHING_DESKTOP_FOLDER=1
+	if [[ "${GO_APPIMAGE_WATCHDOG_DESKTOP_FOLDER:-1}" == "1" ]] ; then
+		export USE_WATCHING_DESKTOP_FOLDER=1
+	else
+		export USE_WATCHING_DESKTOP_FOLDER=0
 	fi
 	if use system-static-tools ; then
 		if use elibc_glibc ; then
