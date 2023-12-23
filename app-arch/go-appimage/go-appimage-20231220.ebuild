@@ -823,16 +823,6 @@ src_compile() {
 	export GO_APPIMAGE_PV="${MY_PV}"
 	export GOPATH="${WORKDIR}/go_build"
 	export GO111MODULE=auto
-	if [[ "${GO_APPIMAGE_WATCHDOG_DOWNLOADS_FOLDER:-1}" == "1" ]] ; then
-		export USE_WATCHING_DOWNLOADS_FOLDER=1
-	else
-		export USE_WATCHING_DOWNLOADS_FOLDER=0
-	fi
-	if [[ "${GO_APPIMAGE_WATCHDOG_DESKTOP_FOLDER:-1}" == "1" ]] ; then
-		export USE_WATCHING_DESKTOP_FOLDER=1
-	else
-		export USE_WATCHING_DESKTOP_FOLDER=0
-	fi
 	if use system-static-tools ; then
 		if use elibc_glibc ; then
 			export STATIC_TOOLS_LIBC="glibc"
