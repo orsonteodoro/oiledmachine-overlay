@@ -109,8 +109,8 @@
       Checks support for udisk support in KDE.
     </flag>
     <flag name="musl">
-      Forces the use of the zig compiler using internal musl.  It assumes that
-      you are cross-compiling go-appimage from glibc to musl libc.
+      Forces the use of the prebuilt zig compiler using internal musl.  It
+      assumes that you are cross-compiling go-appimage from glibc to musl libc.
 
       Enabling the musl USE flag is the upstream default, but it is disabled by
       the ebuild maintainer.  The distro does not typically run musl binaries on
@@ -120,6 +120,9 @@
       See also:
 
         https://github.com/probonopd/go-appimage/pull/207
+
+      It is recommended to disable it until a security audit on the prebuilts
+      are completed.
 
     </flag>
     <flag name="openrc">
