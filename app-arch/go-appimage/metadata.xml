@@ -23,9 +23,9 @@
     An AppImage is an archive containing the prebuilt project, lib/exe
     dependencies, and other glue libraries and executables.  You place the
     AppImage file in a watched folder listed below, appimaged will add a link to
-    the desktop or menu to the appimage.  When you click the link, it will mount
-    the image in its own chroot, with or without a Firejail sandbox protection,
-    with or without AppArmor security protections.
+    the menu to the appimage.  When you click the link, it will mount the image
+    in its own chroot, with or without a Firejail sandbox protection, with or
+    without AppArmor security protections.
 
     appimaged will watch these folders for new .AppImage(s):
 
@@ -49,10 +49,14 @@
     Usage example
 
       The watch feature seems to not work.  Lets walk through with LMMS's Appimage.
-      1. Grab https://github.com/LMMS/lmms/releases/tag/v1.2.2 from GH from the
+      1. Run `appimaged` in the non-root account to install and run the
+         systemd user service.
+      2. Grab https://github.com/LMMS/lmms/releases/tag/v1.2.2 from GH from the
          assets section.
-      2. Do `chmod +x lmms-1.2.2-linux-x86_64.AppImage` from terminal in X.
-      3. Run it by doing `./lmms-1.2.2-linux-x86_64.AppImage`
+      3. mkdir ~/Applications
+      4. Place lmms-1.2.2-linux-x86_64.AppImage into ~/Applications
+      5. Run it by doing `~/Applications/lmms-1.2.2-linux-x86_64.AppImage` or
+         running it through the window manager menu launcher.
 
       Simple as that.
 

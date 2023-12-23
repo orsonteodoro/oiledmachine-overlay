@@ -931,3 +931,5 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  passed (commit 09fd018, 20231222)
 # appimaged:  passed
 # lmms:  passed
+# auto menu test:  passed
+# notifications test:  passed
