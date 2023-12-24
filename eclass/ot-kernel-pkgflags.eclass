@@ -10944,7 +10944,7 @@ _ot-kernel_realtime_packages() {
 	# * On demand if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 	# * Blanket policy if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=0
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
-	# General realtime/low-latency support
+	# General realtime/low-latency support for audio
 	if [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "jukebox" \
