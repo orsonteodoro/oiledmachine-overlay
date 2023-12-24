@@ -10940,7 +10940,9 @@ ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
 # @DESCRIPTION:
 # Change the kernel for realtime programs
 _ot-kernel_realtime_packages() {
-	# Boost based on profile
+	# This is how realtime/preemption is changed.
+	# * On demand if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
+	# * Blanket policy if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=0
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 	# General realtime/low-latency support
 	if [[ \
