@@ -10961,6 +10961,12 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
+
+		# Disabled since no well known examples.
+		# It is used for web based synthesizers like learning music sites.
+		#_ot-kernel_realtime_pkg "net-libs/webkit-gtk" "SCHED_RR" # For AudioWorklet
+		#_ot-kernel_realtime_pkg "www-client/chromium" "SCHED_RR" # For AudioWorklet
+		# TODO:  Include all blink browsers
 	fi
 
 	# Music producers
@@ -11035,6 +11041,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/mpd" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/mpg123" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/sndpeek" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/squeezelite" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/strawberry[gstreamer]" "SCHED_RR"
 	fi
 
@@ -11069,10 +11076,12 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
 		# Assumes PREEMPT=y
+		_ot-kernel_realtime_pkg "app-emulation/basiliskii" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "app-emulation/wine-staging" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "app-emulation/wine-proton" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "app-emulation/wine-vanilla" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "games-emulation/dosbox-x" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "games-emulation/fceux" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/oaml" "SCHED_RR"
 		#_ot-kernel_realtime_pkg "media-sound/pianobooster" "SCHED_FIFO" # Default off unless built with -DUSE_REALTIME_PRIORITY=1
