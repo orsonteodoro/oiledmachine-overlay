@@ -7931,7 +7931,21 @@ ewarn
 # @DESCRIPTION:
 # Sets the kernel config for UKSM
 ot-kernel_set_kconfig_uksm() {
-	if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+	if [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N"]] ; then
+einfo "Disabling UKSM"
+		ot-kernel_unset_configopt "CONFIG_KSM"
+		ot-kernel_unset_configopt "CONFIG_UKSM"
+		if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm ; then
+eerror
+eerror "Please remove uksm from OT_KERNEL_USE for OT_KERNEL_USE=\"uksm\" for"
+eerror "OT_KERNEL_SWAP=\"0\"."
+eerror
+			die
+		fi
+
+		return
+	fi
+	if has uksm ${IUSE_EFFECTIVE} && ot-kernel_use uksm && has rt ${IUSE_EFFECTIVE} && ot-kernel_use rt ; then
 eerror
 eerror "Please remove uksm from OT_KERNEL_USE for OT_KERNEL_USE=\"rt\" for"
 eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
@@ -9528,6 +9542,24 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 # @DESCRIPTION:
 # Sets the kernel config for ZSWAP (aka compressed swap)
 ot-kernel_set_kconfig_zswap() {
+	if [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N" ]] ; then
+einfo "Disabling swap compressors"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZO"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_842"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_LZ4HC"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_ZSTD"
+
+		ot-kernel_unset_configopt "CONFIG_ZPOOL"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_Z3FOLD"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD"
+		ot-kernel_unset_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC"
+		ot-kernel_unset_configopt "CONFIG_ZBUD"
+		ot-kernel_unset_configopt "CONFIG_Z3FOLD"
+		return
+	fi
 	if [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "MANUAL" ]] ; then
 einfo "Using manual zswap compressor"
 	elif [[ -n "${OT_KERNEL_ZSWAP_COMPRESSOR}" ]] ; then
@@ -10617,9 +10649,6 @@ einfo
 	ot-kernel_set_kconfig_cpu_scheduler
 	ot-kernel_set_kconfig_multigen_lru
 	ot-kernel_set_kconfig_compressors
-	ot-kernel_set_kconfig_swap
-	ot-kernel_set_kconfig_zswap
-	ot-kernel_set_kconfig_uksm
 	ot-kernel_set_kconfig_set_tcp_congestion_controls # Place before ot-kernel_set_kconfig_work_profile
 	ot-kernel_set_kconfig_set_net_qos_schedulers
 	ot-kernel_set_kconfig_set_net_qos_classifiers
@@ -10646,6 +10675,9 @@ einfo
 
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
+	ot-kernel_set_kconfig_swap
+	ot-kernel_set_kconfig_zswap
+	ot-kernel_set_kconfig_uksm
 	ot-kernel_set_kconfig_fallback_preempt
 	ot-kernel_optimize_realtime
 	ot-kernel_set_at_system
