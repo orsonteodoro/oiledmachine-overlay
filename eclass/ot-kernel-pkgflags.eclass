@@ -10965,6 +10965,10 @@ _ot-kernel_realtime_packages() {
 
 	# Music producers
 	if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
+		if ot-kernel_has_version "media-sound/fluidsynth"
+			_ot-kernel_realtime_pkg "app-emulation/wine-staging" "SCHED_FIFO"
+			_ot-kernel_realtime_pkg "app-emulation/wine-vanilla" "SCHED_FIFO"
+		fi
 		_ot-kernel_realtime_pkg "dev-lang/faust" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-plugins/distrho-ports" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-plugins/ir_lv2" "SCHED_FIFO"
@@ -11066,6 +11070,11 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
 		# Assumes PREEMPT=y
+		if ot-kernel_has_version "media-sound/fluidsynth"
+			_ot-kernel_realtime_pkg "app-emulation/wine-staging" "SCHED_FIFO"
+			_ot-kernel_realtime_pkg "app-emulation/wine-proton" "SCHED_FIFO"
+			_ot-kernel_realtime_pkg "app-emulation/wine-vanilla" "SCHED_FIFO"
+		fi
 		_ot-kernel_realtime_pkg "games-emulation/dosbox-x" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/oaml" "SCHED_RR"
