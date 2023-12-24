@@ -11018,6 +11018,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/libtgvoip" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/mediastreamer2" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/svt-av1" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/tg_owt" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/webrtc-audio-processing" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
