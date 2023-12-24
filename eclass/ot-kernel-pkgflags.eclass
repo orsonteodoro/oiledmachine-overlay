@@ -11024,6 +11024,7 @@ _ot-kernel_realtime_packages() {
 		||  "${work_profile}" == "media-server" \
 	]] ; then
 		# Assumes PREEMPT=y
+		_ot-kernel_realtime_pkg "dev-db/keydb" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
 		_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/chrony" "SCHED_FIFO"
