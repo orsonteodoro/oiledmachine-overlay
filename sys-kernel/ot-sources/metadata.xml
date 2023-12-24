@@ -2824,9 +2824,10 @@ unset OT_KERNEL_PRIVATE_KEY
       video-conferencing
       voip
 
-    Memory intensive scenarios should always enable swap.  If you need swap
-    use any work profile not mentioned with OT_KERNEL_SWAP=1.  It is assumed
-    that you have 4G RAM or more for forced swap disabled.
+    Memory intensive scenarios should always enable swap.  If you need swap use
+    any work profile not mentioned in OT_KERNEL_WORK_PROFILE with
+    OT_KERNEL_SWAP=1.  It is assumed that you have 4G RAM or more for forced
+    swap disabled.
 
 
 
