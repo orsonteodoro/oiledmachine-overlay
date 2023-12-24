@@ -11063,6 +11063,7 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
+		# Assumes PREEMPT=y
 		_ot-kernel_realtime_pkg "games-emulation/dosbox-x" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/oaml" "SCHED_RR"
@@ -11074,8 +11075,9 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "solar-gaming" \
 	]] ; then
+		# Assumes PREEMPT=y
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-libs/openal" "SCHED_RR" # Assumes PREEMPT=y
+		_ot-kernel_realtime_pkg "media-libs/openal" "SCHED_RR"
 	fi
 
 	# Servers
