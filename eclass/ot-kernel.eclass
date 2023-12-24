@@ -9561,6 +9561,8 @@ einfo "Disabling swap compressors"
 		ot-kernel_unset_configopt "CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC"
 		ot-kernel_unset_configopt "CONFIG_ZBUD"
 		ot-kernel_unset_configopt "CONFIG_Z3FOLD"
+
+		ot-kernel_unset_configopt "CONFIG_FRONTSWAP"
 		return
 	fi
 	if [[ "${OT_KERNEL_ZSWAP_COMPRESSOR^^}" == "MANUAL" ]] ; then
