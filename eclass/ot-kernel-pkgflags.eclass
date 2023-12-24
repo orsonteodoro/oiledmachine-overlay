@@ -10929,7 +10929,7 @@ ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
 			) ; then
 				ot-kernel_unset_configopt "CONFIG_HZ_24"
 				ot-kernel_unset_configopt "CONFIG_HZ_48"
-				ot-kernel_y_configopt "100"
+				ot-kernel_y_configopt "CONFIG_HZ_100"
 				ot-kernel_set_configopt "CONFIG_HZ" "100"
 			fi
 		fi
@@ -11074,6 +11074,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "games-emulation/dosbox-x" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/oaml" "SCHED_RR"
+		#_ot-kernel_realtime_pkg "media-sound/pianobooster" "SCHED_FIFO" # Default off unless built with -DUSE_REALTIME_PRIORITY=1
 	fi
 
 	# High end gaming
