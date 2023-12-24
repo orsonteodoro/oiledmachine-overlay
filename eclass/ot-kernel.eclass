@@ -7931,7 +7931,7 @@ ewarn
 # @DESCRIPTION:
 # Sets the kernel config for UKSM
 ot-kernel_set_kconfig_uksm() {
-	if [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N"]] ; then
+	if [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N" ]] ; then
 einfo "Disabling UKSM"
 		ot-kernel_unset_configopt "CONFIG_KSM"
 		ot-kernel_unset_configopt "CONFIG_UKSM"
