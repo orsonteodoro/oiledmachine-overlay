@@ -10984,6 +10984,7 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "video-conferencing" \
 		|| "${work_profile}" == "voip" \
 	]] ; then
+		_ot-kernel_realtime_pkg "kde-plasma/kwin" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/libtgvoip" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/tg_owt" "SCHED_FIFO"
@@ -10991,6 +10992,8 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/umurmur" "SCHED_RR"
 		_ot-kernel_realtime_pkg "net-voip/yate" "SCHED_FIFO|SCHED_RR"
+		_ot-kernel_realtime_pkg "x11-misc/picom" "SCHED_RR"
+		_ot-kernel_realtime_pkg "x11-wm/ukui-kwin" "SCHED_RR"
 		# _ot-kernel_realtime_pkg "net-voip/twinkle" "SCHED_FIFO" # present but disabled in source code
 	fi
 
@@ -11016,12 +11019,12 @@ _ot-kernel_realtime_packages() {
 	fi
 
 	if [[ \
-		    "${work_profile}" == "distributed-computing-server" \
-		||  "${work_profile}" == "http-server-busy" \
-		||  "${work_profile}" == "http-server-relaxed" \
-		||  "${work_profile}" == "file-server" \
-		||  "${work_profile}" == "game-server" \
-		||  "${work_profile}" == "media-server" \
+		   "${work_profile}" == "distributed-computing-server" \
+		|| "${work_profile}" == "http-server-busy" \
+		|| "${work_profile}" == "http-server-relaxed" \
+		|| "${work_profile}" == "file-server" \
+		|| "${work_profile}" == "game-server" \
+		|| "${work_profile}" == "media-server" \
 	]] ; then
 		# Assumes PREEMPT=y
 		_ot-kernel_realtime_pkg "dev-db/keydb" "SCHED_FIFO"
@@ -11030,6 +11033,12 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "net-misc/chrony" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/ntp" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "sys-apps/watchdogd" "SCHED_RR"
+	fi
+
+	if [[ \
+		   "${work_profile}" == "realtime-hpc" \
+	]] ; then
+		_ot-kernel_realtime_pkg "sys-cluster/keepalived" "SCHED_RR"
 	fi
 
 	# Discovered but not required for boosting.
