@@ -8241,10 +8241,10 @@ ot-kernel_set_kconfig_set_keypress_hz() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_kconfig_work_profile_init
+# @FUNCTION: ot-kernel_set_kconfig_clear_hz
 # @DESCRIPTION:
-# Initializes the work kernel config
-ot-kernel_set_kconfig_work_profile_init() {
+# Clears the current hz setting
+ot-kernel_set_kconfig_clear_hz() {
 	if [[ \
 		"${arch}" == "alpha" \
 	]] ; then
@@ -8280,6 +8280,13 @@ ot-kernel_set_kconfig_work_profile_init() {
 	]] ; then
 		ot-kernel_set_kconfig_reset_timer_hz
 	fi
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_work_profile_init
+# @DESCRIPTION:
+# Initializes the work kernel config
+ot-kernel_set_kconfig_work_profile_init() {
+	ot-kernel_set_kconfig_clear_hz
 
 	local TIMERS=(
 		HZ_PERIODIC

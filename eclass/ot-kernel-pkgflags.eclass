@@ -10912,6 +10912,27 @@ ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT_RT=y"
 ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
 		fi
+
+		# SCHED_RR is 100 ms here but can be changed with sched_rr_timeslice_ms.
+		if [[ "${prio_class}" =~ "SCHED_RR" ]] ; then
+			if [[ "${arch}" == "alpha" ]] && ( \
+				   grep -q -E -e "^CONFIG_HZ_32=y" "${path_config}" \
+				|| grep -q -E -e "^CONFIG_HZ_64=y" "${path_config}" \
+			) ; then
+				ot-kernel_unset_configopt "CONFIG_HZ_32"
+				ot-kernel_unset_configopt "CONFIG_HZ_64"
+				ot-kernel_y_configopt "CONFIG_HZ_128"
+				ot-kernel_set_configopt "CONFIG_HZ" "128"
+			elif [[ "${arch}" == "mips" ]] && ( \
+				   grep -q -E -e "^CONFIG_HZ_24=y" "${path_config}" \
+				|| grep -q -E -e "^CONFIG_HZ_48=y" "${path_config}" \
+			) ; then
+				ot-kernel_unset_configopt "CONFIG_HZ_24"
+				ot-kernel_unset_configopt "CONFIG_HZ_48"
+				ot-kernel_y_configopt "100"
+				ot-kernel_set_configopt "CONFIG_HZ" "100"
+			fi
+		fi
 	fi
 }
 
