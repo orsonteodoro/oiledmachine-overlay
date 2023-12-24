@@ -4917,7 +4917,7 @@ einfo "Changed .config to use MuQSS"
 	elif [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "musical-live-performance" \
-		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "live-video-reporter" \
 		|| "${work_profile}" == "radio-broadcaster" \
 		|| "${work_profile}" == "video-conferencing" \
 		|| "${work_profile}" == "voip" \
@@ -8928,10 +8928,14 @@ ewarn
 			-z "${work_profile}" \
 			|| "${work_profile}" == "custom" \
 			|| "${work_profile}" == "digital-audio-workstation" \
-			|| "${work_profile}" == "live-video-reporting" \
+			|| "${work_profile}" == "live-video-reporter" \
 			|| "${work_profile}" == "manual" \
 			|| "${work_profile}" == "musical-live-performance" \
+			|| "${work_profile}" == "pi-deep-learning" \
+			|| "${work_profile}" == "pi-music-production" \
 			|| "${work_profile}" == "radio-broadcaster" \
+			|| "${work_profile}" == "realtime-hpc" \
+			|| "${work_profile}" == "ros" \
 			|| "${work_profile}" == "video-conferencing" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
@@ -8953,11 +8957,14 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"sbc\" is deprecated.  Use pi-audio-player, pi-de
 	elif [[ "${work_profile}" == "streamer-desktop" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-desktop\" is deprecated.  Use live-video-reporter or streamer-gamer instead."
 		die
+	elif [[ "${work_profile}" == "live-video-reporting" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"live-video-reporting\" is deprecated.  Use live-video-reporter instead."
+		die
 	elif [[ "${work_profile}" == "streamer-gamer" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-gamer\" is deprecated.  Use live-gamer-streamer instead."
 		die
 	elif [[ "${work_profile}" == "streamer-reporter" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-reporter\" is deprecated.  Use live-video-reporting instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"streamer-reporter\" is deprecated.  Use live-video-reporter instead."
 		die
 	elif [[ "${work_profile}" == "tournament" ]] ; then
 # Prevent ambiguous connection to robotics tournament.
@@ -9132,8 +9139,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
 		ot-kernel_set_iosched "none" "none"
 	elif [[ \
-		   "${work_profile}" == "gaming-tournament" \
-		|| "${work_profile}" == "game-server" \
+		   "${work_profile}" == "game-server" \
+		|| "${work_profile}" == "gaming-tournament" \
 		|| "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "presentation" \
 	]] ; then
@@ -9295,9 +9302,8 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		fi
 	elif [[ \
 		   "${work_profile}" == "live-streaming-gamer" \
-		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "live-video-reporter" \
 		|| "${work_profile}" == "radio-broadcaster" \
-		|| "${work_profile}" == "streamer-desktop" \
 		|| "${work_profile}" == "streamer-reporter" \
 		|| "${work_profile}" == "video-conferencing" \
 		|| "${work_profile}" == "voip" \

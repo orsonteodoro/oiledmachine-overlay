@@ -10701,7 +10701,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["jukebox"]="audio"
         ["laptop"]="power"
         ["live-streaming-gamer"]="input"
-        ["live-video-reporting"]="audio"
+        ["live-video-reporter"]="audio"
         ["mainstream-desktop"]="video"
         ["manual"]="input" # placeholder
         ["media-player"]="video"
@@ -10921,10 +10921,11 @@ ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT=y"
 _ot-kernel_realtime_packages() {
 	# Boost based on profile
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	# General realtime/low-latency support
 	if [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
 		|| "${work_profile}" == "jukebox" \
-		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "live-video-reporter" \
 		|| "${work_profile}" == "musical-live-performance" \
 		|| "${work_profile}" == "radio-broadcaster" \
 		|| "${work_profile}" == "sdr" \
@@ -10939,6 +10940,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 	fi
 
+	# Music producers
 	if [[ "${work_profile}" == "digital-audio-workstation" ]] ; then
 		_ot-kernel_realtime_pkg "dev-lang/faust" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-plugins/distrho-ports" "SCHED_RR"
@@ -10952,6 +10954,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/ardour" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/bristol" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/carla" "SCHED_FIFO|SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/chuck" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/csound" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/drumstick" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/fluidsynth" "SCHED_FIFO"
@@ -10978,14 +10981,17 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "sys-apps/das_watchdog" "SCHED_RR" # Used in audio overlay
 		_ot-kernel_realtime_pkg "sys-auth/rtkit" "SCHED_FIFO|SCHED_RR" # No dependencies
 	fi
+
+	# Live voice
 	if [[ \
 		   "${work_profile}" == "radio-broadcaster" \
-		|| "${work_profile}" == "live-video-reporting" \
+		|| "${work_profile}" == "live-video-reporter" \
 		|| "${work_profile}" == "video-conferencing" \
 		|| "${work_profile}" == "voip" \
 	]] ; then
 		_ot-kernel_realtime_pkg "kde-plasma/kwin" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/libtgvoip" "SCHED_FIFO|SCHED_RR"
+		_ot-kernel_realtime_pkg "media-libs/mediastreamer2" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/tg_owt" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/webrtc-audio-processing" "SCHED_FIFO"
@@ -10997,6 +11003,7 @@ _ot-kernel_realtime_packages() {
 		# _ot-kernel_realtime_pkg "net-voip/twinkle" "SCHED_FIFO" # present but disabled in source code
 	fi
 
+	# Live music
 	if [[ "${work_profile}" == "jukebox" || "${work_profile}" == "musical-live-performance" ]] ; then
 		_ot-kernel_realtime_pkg "media-sound/cmus" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/mpd" "SCHED_FIFO"
@@ -11005,10 +11012,42 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/strawberry[gstreamer]" "SCHED_RR"
 	fi
 
+	# Radio
 	if [[ "${work_profile}" == "sdr" ]] ; then
+		_ot-kernel_realtime_pkg "net-wireless/cubicsdr" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-wireless/gnuradio" "SCHED_FIFO|SCHED_RR"
 	fi
 
+	# Video editing
+	if [[ \
+		   "${work_profile}" == "live-streaming-gamer" \
+		|| "${work_profile}" == "live-video-reporter" \
+		|| "${work_profile}" == "streamer-reporter" \
+		|| "${work_profile}" == "video-conferencing" \
+		|| "${work_profile}" == "voip" \
+	]] ; then
+		_ot-kernel_realtime_pkg "media-libs/mlt" "SCHED_FIFO|SCHED_RR"
+		_ot-kernel_realtime_pkg "media-video/dvgrab" "SCHED_RR"
+	fi
+
+	# General gaming
+	if [[ \
+		   "${work_profile}" == "casual-gaming" \
+		|| "${work_profile}" == "casual-gaming-laptop" \
+		|| "${work_profile}" == "game-server" \
+		|| "${work_profile}" == "gamedev" \
+		|| "${work_profile}" == "gaming-tournament" \
+		|| "${work_profile}" == "gpu-gaming-laptop" \
+		|| "${work_profile}" == "pi-gaming" \
+		|| "${work_profile}" == "pro-gaming" \
+		|| "${work_profile}" == "solar-gaming" \
+	]] ; then
+		_ot-kernel_realtime_pkg "games-emulation/dosbox-x" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/oaml" "SCHED_RR"
+	fi
+
+	# High end gaming
 	if [[ \
 		   "${work_profile}" == "gpu-gaming-laptop" \
 		|| "${work_profile}" == "pro-gaming" \
@@ -11018,6 +11057,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/openal" "SCHED_RR" # Assumes PREEMPT=y
 	fi
 
+	# Servers
 	if [[ \
 		   "${work_profile}" == "distributed-computing-server" \
 		|| "${work_profile}" == "http-server-busy" \
@@ -11025,6 +11065,7 @@ _ot-kernel_realtime_packages() {
 		|| "${work_profile}" == "file-server" \
 		|| "${work_profile}" == "game-server" \
 		|| "${work_profile}" == "media-server" \
+		|| "${work_profile}" == "realtime-hpc" \
 	]] ; then
 		# Assumes PREEMPT=y
 		_ot-kernel_realtime_pkg "dev-db/keydb" "SCHED_FIFO"
@@ -11033,19 +11074,13 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "net-misc/chrony" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/ntp" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "sys-apps/watchdogd" "SCHED_RR"
-	fi
-
-	if [[ \
-		   "${work_profile}" == "realtime-hpc" \
-	]] ; then
 		_ot-kernel_realtime_pkg "sys-cluster/keepalived" "SCHED_RR"
+		_ot-kernel_realtime_pkg "www-servers/civetweb" "SCHED_RR"
 	fi
 
 	# Discovered but not required for boosting.
 	# _ot-kernel_realtime_pkg "dev-db/mysql" "SCHED_FIFO|SCHED_RR" # #718068
 	# _ot-kernel_realtime_pkg "dev-lang/mono" "SCHED_FIFO"
-	# _ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
-	# _ot-kernel_realtime_pkg "media-video/dvgrab" "SCHED_RR"
 	# _ot-kernel_realtime_pkg "www-client/chromium" "SCHED_RR" # For testing
 }
 
