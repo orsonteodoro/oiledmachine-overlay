@@ -8988,6 +8988,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		|| "${work_profile}" == "smartphone-voice" \
 		|| "${work_profile}" == "tablet" \
 	]] ; then
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_video_timer_hz # For webcams or streaming video
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_SUSPEND"
@@ -9079,6 +9080,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_CONSERVATIVE"
 		fi
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_CONSERVATIVE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
@@ -9108,6 +9110,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 	]] ; then
 	# Assumes on desktop
 	# 2D mostly, less intense
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Lower temperature and fan noise
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -9134,6 +9137,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		|| "${work_profile}" == "pro-gaming" \
 		|| "${work_profile}" == "presentation" \
 	]] ; then
+		if [[ "${work_profile}" != "game-server" ]] ; then
+			_OT_KERNEL_FORCE_SWAP_OFF="1"
+		fi
 		ot-kernel_set_kconfig_set_highest_timer_hz # For input and reduced audio studdering
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -9171,10 +9177,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			   "${work_profile}" == "digital-audio-workstation" \
 			|| "${work_profile}" == "musical-live-performance" \
 		]] ; then
+			_OT_KERNEL_FORCE_SWAP_OFF="1"
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
-			_OT_KERNEL_FORCE_SWAP_OFF="1"
 			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			else
@@ -9296,6 +9302,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		|| "${work_profile}" == "video-conferencing" \
 		|| "${work_profile}" == "voip" \
 	]] ; then
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_video_timer_hz
 		ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -9346,6 +9353,12 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
 		fi
+		if [[ \
+			   "${work_profile}" == "mainstream-desktop" \
+			|| "${work_profile}" == "pi-web-browser" \
+		]] ; then
+			_OT_KERNEL_FORCE_SWAP_OFF="1"
+		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND"
@@ -9366,6 +9379,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 	elif [[ \
 		"${work_profile}" == "cryptocurrency-miner-dedicated" \
 	]] ; then
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_lowest_timer_hz # For energy and throughput
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -9483,6 +9497,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		if [[ "${work_profile}" == "ros" ]] ; then
 			ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
 		fi
+		_OT_KERNEL_FORCE_SWAP_OFF="1"
 		ot-kernel_set_kconfig_set_highest_timer_hz
 		ot-kernel_set_kconfig_no_hz_full
 		ot-kernel_set_rt_rcu
