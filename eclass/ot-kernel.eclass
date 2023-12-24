@@ -7845,6 +7845,7 @@ einfo "Using ${x}"
 # @DESCRIPTION:
 # Sets the kernel config for swap file support
 ot-kernel_set_kconfig_swap() {
+	[[ "${_OT_KERNEL_FORCE_SWAP_OFF}" == "1" ]] && OT_KERNEL_SWAP="0"
 	if [[ "${OT_KERNEL_SWAP}" == "1" || "${OT_KERNEL_SWAP^^}" == "Y" ]] ; then
 einfo "Swap enabled"
 		ot-kernel_y_configopt "CONFIG_SWAP"
@@ -7931,6 +7932,7 @@ ewarn
 # @DESCRIPTION:
 # Sets the kernel config for UKSM
 ot-kernel_set_kconfig_uksm() {
+	[[ "${_OT_KERNEL_FORCE_SWAP_OFF}" == "1" ]] && OT_KERNEL_SWAP=0
 	if [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N" ]] ; then
 einfo "Disabling UKSM"
 		ot-kernel_unset_configopt "CONFIG_KSM"
@@ -9172,7 +9174,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
-			ot-kernel_unset_configopt "CONFIG_SWAP"
+			_OT_KERNEL_FORCE_SWAP_OFF="1"
 			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			else
@@ -9542,6 +9544,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 # @DESCRIPTION:
 # Sets the kernel config for ZSWAP (aka compressed swap)
 ot-kernel_set_kconfig_zswap() {
+	[[ "${_OT_KERNEL_FORCE_SWAP_OFF}" == "1" ]] && OT_KERNEL_SWAP="0"
 	if [[ "${OT_KERNEL_SWAP}" == "0" || "${OT_KERNEL_SWAP^^}" == "N" ]] ; then
 einfo "Disabling swap compressors"
 		ot-kernel_unset_configopt "CONFIG_ZSWAP_COMPRESSOR_DEFAULT_DEFLATE"
@@ -10518,9 +10521,9 @@ eerror
 # Remove sources of latency and jitter
 ot-kernel_optimize_realtime() {
 	if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
-ewarn "Disabling swap for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
-		ot-kernel_unset_configopt "CONFIG_SWAP"
+		_OT_KERNEL_FORCE_SWAP_OFF=1
 
+# Avoid lock contention penalty
 ewarn "Disabling smt for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "mips" || "${arch}" == "powerpc" || "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
@@ -10546,23 +10549,6 @@ ewarn "Disabling Transparent HugePage (THP) for PREEMPT_RT=y.  If you do not lik
 			ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
 		fi
 
-		if grep -q -e "^CONFIG_KSM=y" "${path_config}" ; then
-ewarn "Disabling Kernel Samepage Merging (KSM) for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
-			ot-kernel_unset_configopt "CONFIG_KSM"
-		fi
-		if grep -q -e "^CONFIG_UKSM=y" "${path_config}" ; then
-ewarn "Disabling Ultra Kernel Samepage Merging (UKSM) for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
-			ot-kernel_unset_configopt "CONFIG_UKSM"
-		fi
-		if ot-kernel_use uksm ; then
-# Remove any unintended consequences or latency from patches.
-eerror
-eerror "Please remove uksm from OT_KERNEL_USE in"
-eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
-eerror
-			die
-		fi
-
 		if [[ "${hardening_level}" != "performance" ]] ; then
 eerror
 eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
@@ -10582,6 +10568,8 @@ ewarn "Disabling 16-bit support.  If you do not like this, disable rt from OT_KE
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "skew_tick=(0|1)"
 	fi
 }
+
+_OT_KERNEL_FORCE_SWAP_OFF=0
 
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
@@ -10673,13 +10661,15 @@ einfo
 	ot-kernel_set_webcam
 	ot-kernel_set_mobile_camera
 
+	_OT_KERNEL_FORCE_SWAP_OFF=0
+
 	# The ot-kernel-pkgflags_apply has higher weight than ot-kernel_set_kconfig_work_profile for PREEMPT*
 	ot-kernel-pkgflags_apply # Sets PREEMPT*, uses hardening_level
+	ot-kernel_set_kconfig_fallback_preempt
+	ot-kernel_optimize_realtime
 	ot-kernel_set_kconfig_swap
 	ot-kernel_set_kconfig_zswap
 	ot-kernel_set_kconfig_uksm
-	ot-kernel_set_kconfig_fallback_preempt
-	ot-kernel_optimize_realtime
 	ot-kernel_set_at_system
 	ot-kernel_set_tcca
 	ot-kernel_set_iosched_kconfig
