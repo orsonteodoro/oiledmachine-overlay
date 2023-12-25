@@ -16,7 +16,7 @@ if [[ "${PV}" =~ 9999 || 1 ]] ; then
 	EGIT_REPO_URI="https://github.com/aiortc/pylsqpack.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
-	IUSE+=" fallback-commit"
+#	IUSE+=" fallback-commit"
 else
 	SRC_URI="
 https://github.com/aiortc/pylsqpack/archive/refs/tags/${PV}.tar.gz
@@ -54,8 +54,10 @@ RESTRICT="mirror"
 DOCS=( docs/index.rst README.rst )
 
 src_unpack() {
+# git metadata required I think.
 	if [[ "${PV}" =~ 9999 || 1 ]] ; then
-		use fallback-commit && EGIT_COMMIT="8d6acefcfdd1d4feebc2c0653f51407ecc577263"
+#		use fallback-commit && EGIT_COMMIT="8d6acefcfdd1d4feebc2c0653f51407ecc577263"
+		EGIT_COMMIT="8d6acefcfdd1d4feebc2c0653f51407ecc577263"
 		git-r3_fetch
 		git-r3_checkout
 		grep -q -e "__version__ = \"${PV}\"" "${S}/src/pylsqpack/__init__.py" \
