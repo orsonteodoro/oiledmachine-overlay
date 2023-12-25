@@ -8868,11 +8868,15 @@ FALLBACK_PREEMPT=""
 # @DESCRIPTION:
 # Set the preempt to the fallback setting.
 ot-kernel_set_kconfig_fallback_preempt() {
-	if grep -q -E -e "^CONFIG_PREEMPT=y" "${path_config}" ; then
+	if   grep -q -E -e "^CONFIG_PREEMPT=y" "${path_config}" ; then
 		:;
 	elif grep -q -E -e "^CONFIG_PREEMPT_NONE=y" "${path_config}" ; then
 		:;
 	elif grep -q -E -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+		:;
+	elif grep -q -E -e "^CONFIG_PREEMPT_RT_BASE=y" "${path_config}" ; then # < 5.0 for debugging
+		:;
+	elif grep -q -E -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" ; then # < 5.0 for production
 		:;
 	elif grep -q -E -e "^CONFIG_PREEMPT_VOLUNTARY=y" "${path_config}" ; then
 		:;
@@ -9195,8 +9199,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
-			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
+			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			else
 	# Fallback to disable Hard RT if nothing uses it.
 				FALLBACK_PREEMPT="CONFIG_PREEMPT"
@@ -9331,8 +9337,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			|| "${work_profile}" == "video-conferencing" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
-			if [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] ; then
+			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			else
 	# Fallback to disable Hard RT if nothing uses it.
 				FALLBACK_PREEMPT="CONFIG_PREEMPT"
@@ -9481,7 +9489,11 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+			if   ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+			elif ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
+			fi
 			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_PCIEASPM_PERFORMANCE"
 			fi
@@ -9515,7 +9527,11 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_set_kconfig_no_hz_full
 		ot-kernel_set_rt_rcu
 		# ML/DL case for self-driving car/drone
-		ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+		if   ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
+		elif ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+			ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
+		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
@@ -10550,7 +10566,11 @@ eerror
 # @DESCRIPTION:
 # Remove sources of latency and jitter
 ot-kernel_optimize_realtime() {
-	if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+	if \
+		   grep -q -e "^CONFIG_PREEMPT_RT=y"      "${path_config}" \
+		|| grep -q -e "^CONFIG_PREEMPT_RT_BASE=y" "${path_config}" \
+		|| grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" \
+	; then
 		_OT_KERNEL_FORCE_SWAP_OFF=1
 
 # Avoid lock contention penalty
@@ -12902,10 +12922,16 @@ ewarn "Futher mitigation recommendations can be found at"
 ewarn
 ewarn "  https://en.wikipedia.org/wiki/Cold_boot_attack#Mitigation"
 ewarn
+	local rt_option
+	if   ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+		rt_option="CONFIG_PREEMPT_RT"
+	elif ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+		rt_option="CONFIG_PREEMPT_RT_FULL"
+	fi
 	if has rt ${FEATURES} ; then
 		if use rt ; then
 einfo
-einfo "Don't forget to set CONFIG_PREEMPT_RT found at \"General setup\" in"
+einfo "Don't forget to set ${rt_option} found at \"General setup\" in"
 einfo "newer kernels or in \"Processor type and features\" in older kernels"
 einfo "> Preemption Model >  Fully Preemptible Kernel (Real-Time)."
 einfo

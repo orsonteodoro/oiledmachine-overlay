@@ -10749,6 +10749,20 @@ declare -A WORK_PROFILE_LATENCY_BIAS_SETTING=(
 	["video"]="CONFIG_PREEMPT_VOLUNTARY"
 )
 
+# 4.14:
+# 4.19:
+#   PREEMPT__LL [aka PREEMPT]
+#   PREEMPT_RTB
+#   PREEMPT_RT_BASE [aka Basic RT for debugging]
+#   PREEMPT_RT_FULL
+# 5.4+:
+#   PREEMPT_RT
+#
+# TODO:  init script
+#   For SCHED_OTHER -> SCHED_OTHER
+#   echo NO_PREEMPT_LAZY >/sys/kernel/debug/sched_features [low-latency determinism]
+#   echo PREEMPT_LAZY >/sys/kernel/debug/sched_features (default on) [higher throughput]
+
 # @FUNCTION: ot-kernel_set_preempt
 # @DESCRIPTION:
 # Wrapper to set kernel config preempt
@@ -10768,13 +10782,18 @@ ot-kernel_set_preempt() {
 		ot-kernel_unset_configopt "CONFIG_PREEMPT"
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
+		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 		if ot-kernel_use rt ; then
 ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NONE=y.  Remove rt from OT_KERNEL_USE to silence this error."
 		fi
 	else
 		if ot-kernel_supports_rt && ot-kernel_use rt ; then
-			if grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+			if         grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" \
+				|| grep -q -e "^CONFIG_PREEMPT_RT_BASE=y" "${path_config}" \
+				|| grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" \
+			; then
 	# Real time cannot be stopped or dropped.
 				:;
 			else
@@ -10783,21 +10802,32 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 					ot-kernel_y_configopt "CONFIG_PREEMPT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_NONE" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_PREEMPT"
 					ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_RT" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_PREEMPT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
-					ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+					if ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+						ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+					else
+						ot-kernel_y_configopt "CONFIG_PREEMPT_RT_FULL"
+					fi
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_VOLUNTARY" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_PREEMPT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 					ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				fi
 			fi
@@ -10822,51 +10852,55 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 						ot-kernel_y_configopt "CONFIG_PREEMPT"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 					elif [[ "${setting}" == "CONFIG_PREEMPT_NONE" ]] ; then
 						ot-kernel_unset_configopt "CONFIG_PREEMPT"
 						ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
-						ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
-					elif [[ "${setting}" == "CONFIG_PREEMPT_RT" ]] ; then
-						ot-kernel_unset_configopt "CONFIG_PREEMPT"
-						ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
-						ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 					elif [[ "${setting}" == "CONFIG_PREEMPT_VOLUNTARY" ]] ; then
 						ot-kernel_unset_configopt "CONFIG_PREEMPT"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 						ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 					fi
 				else
-	# Downgrade
+	# Downgrade to low latency
 					ot-kernel_y_configopt "CONFIG_PREEMPT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				fi
 			else
-	# Promote/demote
+	# Non-realtime direct change
 				if [[ "${preempt_option}" == "CONFIG_PREEMPT" ]] ; then
 					ot-kernel_y_configopt "CONFIG_PREEMPT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_NONE" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_PREEMPT"
 					ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
-					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
-				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_RT" ]] ; then
-					ot-kernel_unset_configopt "CONFIG_PREEMPT"
-					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
-					ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				elif [[ "${preempt_option}" == "CONFIG_PREEMPT_VOLUNTARY" ]] ; then
 					ot-kernel_unset_configopt "CONFIG_PREEMPT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
+					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
 					ot-kernel_y_configopt "CONFIG_PREEMPT_VOLUNTARY"
 				fi
 			fi
@@ -10883,6 +10917,10 @@ einfo "Using PREEMPT"
 einfo "Using PREEMPT_VOLUNTARY"
 	elif grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
 einfo "Using PREEMPT_RT"
+	elif grep -q -e "^CONFIG_PREEMPT_RT_BASE=y" "${path_config}" ; then
+einfo "Using PREEMPT_RT_BASE"
+	elif grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" ; then
+einfo "Using PREEMPT_RT_FULL"
 	fi
 }
 
@@ -10890,8 +10928,17 @@ einfo "Using PREEMPT_RT"
 # @DESCRIPTION:
 # Enables transparent huge pages
 _ot-kernel_y_thp() {
-	if   grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" \
-	&& ! grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
+	local is_rt=0
+
+	if \
+		   grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" \
+		|| grep -q -e "^CONFIG_PREEMPT_RT_BASIC=y" "${path_config}" \
+		|| grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" \
+	; then
+		is_rt=1
+	fi
+
+	if grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" && (( ${is_rt} != 1 )) ; then
 		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
 	else
 		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
@@ -10946,6 +10993,9 @@ _ot-kernel_realtime_packages() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
 
 	# TODO:  hard realtime packages.
+
+	# Disabling network could remove it as a source of latency.
+	# If a package requires network, the profile could be demoted to PREEMPT=y.
 
 	# General realtime/low-latency support for audio
 	if [[ \
