@@ -2829,8 +2829,9 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_SWAP=1.  It is assumed that have enough memory for professional
     production.  This is what is assumed:
 
-    Gaming:  8 GiB
-    Gamer live streaming:  16-32 GiB recommended (8 GiB for gaming + 4 GiB at 1080p)
+    Casual games:  2-4 GiB
+    Gaming on major titles:  4-8 GiB depending on the title
+    Live stream gaming:  16-32 GiB (8 GiB for gaming + 4 GiB at 1080p)
 
 
 
