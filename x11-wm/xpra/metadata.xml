@@ -241,6 +241,9 @@
     <flag name="qrencode">
       Adds support for QR code creation.
     </flag>
+    <flag name="quic">
+      Adds support for the quic protocol.
+    </flag>
     <flag name="rencode">
       Adds support for deprecated rencode encoding of data structures.
     </flag>

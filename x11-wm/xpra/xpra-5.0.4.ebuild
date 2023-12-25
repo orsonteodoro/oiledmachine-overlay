@@ -60,21 +60,21 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${GSTREAMER_IUSE}
 
-aes appindicator +avahi avif brotli +client +clipboard cpu-percent +csc_cython
-csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython +dbus +doc -drm
-ffmpeg evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip
-html5_brotli ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4 lzo
-+mdns mysql +netdev +notifications nvenc nvfbc nvjpeg +opengl openrc osmesa +pam
-pinentry png proc +proxy pyinotify qrencode -rencode +rencodeplus +rfb sd_listen
-selinux +server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl
-systemd +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland
-+webcam webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml
-zeroconf zlib
+aes appindicator +audio +avahi avif brotli +client +clipboard cpu-percent
++csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython +dbus
++doc -drm ffmpeg evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip
+html5_brotli +http ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4
+lzo +mdns mysql +netdev +notifications nvenc nvfbc nvjpeg +opengl +openh264
+openrc osmesa +pam pinentry png proc +proxy pyinotify qrencode +quic -rencode
++rencodeplus +rfb sd_listen selinux +server +socks sound-forwarding spng sqlite
++ssh sshpass +ssl systemd +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx
+vsock -wayland +webcam webcam-forwarding webp +websockets +X x264 -x265 +xdg
++xinput yaml zeroconf zlib
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
 
-# See https://github.com/Xpra-org/xpra/blob/v4.4.6/docs/Build/Dependencies.md
+# See https://github.com/Xpra-org/xpra/blob/v5.0.4/docs/Build/Dependencies.md
 CLIENT_OPTIONS="
 	ffmpeg? (
 		client
@@ -147,6 +147,9 @@ REQUIRED_USE+="
 	${CLIENT_OPTIONS}
 	${SERVER_OPTIONS}
 	gtk3
+	audio? (
+		pulseaudio
+	)
 	avahi? (
 		dbus
 		mdns
@@ -243,9 +246,6 @@ REQUIRED_USE+="
 	sd_listen? (
 		systemd
 	)
-	sound? (
-		pulseaudio
-	)
 	sound-forwarding? (
 		pulseaudio
 	)
@@ -300,6 +300,27 @@ RDEPEND+="
 	appindicator? (
 		dev-libs/libappindicator[introspection]
 		gnome-base/librsvg[introspection]
+	)
+	audio? (
+		dev-python/gst-python:1.0[${PYTHON_USEDEP}]
+		media-libs/gst-plugins-bad:1.0[introspection]
+		media-libs/gst-plugins-base:1.0[introspection]
+		media-libs/gstreamer:1.0[introspection]
+		media-plugins/gst-plugins-meta:1.0\
+[aac?,alsa?,flac?,jack?,lame?,ogg?,opus?,oss?,pulseaudio?,vorbis?,wavpack?]
+		aac? (
+			media-plugins/gst-plugins-faac:1.0
+			media-plugins/gst-plugins-faad:1.0
+		)
+		matroska? (
+			media-libs/gst-plugins-good:1.0
+		)
+		speex? (
+			media-plugins/gst-plugins-speex:1.0
+		)
+		twolame? (
+			media-plugins/gst-plugins-twolame:1.0
+		)
 	)
 	avif? (
 		>=media-libs/libavif-0.9
@@ -439,6 +460,9 @@ RDEPEND+="
 			media-libs/mesa[osmesa?]
 		)
 	)
+	openh264? (
+		media-libs/openh264
+	)
 	openrc? (
 		sys-apps/net-tools
 		sys-apps/openrc[bash]
@@ -464,6 +488,9 @@ RDEPEND+="
 	qrencode? (
 		media-gfx/qrencode[${PYTHON_USEDEP}]
 	)
+	quic? (
+		dev-python/aioquic[${PYTHON_USEDEP}]
+	)
 	rencode? (
 		>=dev-python/rencode-${RENCODE_PV}[${PYTHON_USEDEP}]
 	)
@@ -485,26 +512,6 @@ RDEPEND+="
 	)
 	spng? (
 		>=media-libs/libspng-0.7
-	)
-	sound? (
-		dev-python/gst-python:1.0[${PYTHON_USEDEP}]
-		media-libs/gst-plugins-base:1.0[introspection]
-		media-libs/gstreamer:1.0[introspection]
-		media-plugins/gst-plugins-meta:1.0\
-[aac?,alsa?,flac?,jack?,lame?,ogg?,opus?,oss?,pulseaudio?,vorbis?,wavpack?]
-		aac? (
-			media-plugins/gst-plugins-faac:1.0
-			media-plugins/gst-plugins-faad:1.0
-		)
-		matroska? (
-			media-libs/gst-plugins-good:1.0
-		)
-		speex? (
-			media-plugins/gst-plugins-speex:1.0
-		)
-		twolame? (
-			media-plugins/gst-plugins-twolame:1.0
-		)
 	)
 	ssh? (
 		dev-python/dnspython[${PYTHON_USEDEP}]
@@ -769,6 +776,7 @@ eerror
 		setup.py || die
 
 	mydistutilsargs=(
+		$(use_with audio)
 		$(use_with avif)
 		$(use_with brotli)
 		$(use_with client)
@@ -807,7 +815,6 @@ eerror
 		$(use_with server)
 		$(use_with server service)
 		$(use_with server shadow)
-		$(use_with sound)
 		$(use_with spng spng_decoder)
 		$(use_with spng spng_encoder)
 		$(use_with sd_listen)
