@@ -11120,11 +11120,11 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "dev-db/keydb" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
 		_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "net-fs/samba[ads]" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/chrony" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/ntp" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "sys-apps/watchdogd" "SCHED_RR"
 		_ot-kernel_realtime_pkg "sys-cluster/keepalived" "SCHED_RR"
-		_ot-kernel_realtime_pkg "net-fs/samba[ads]" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "www-servers/civetweb" "SCHED_RR"
 	fi
 
