@@ -10944,6 +10944,9 @@ _ot-kernel_realtime_packages() {
 	# * On demand if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 	# * Blanket policy if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=0
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+
+	# TODO:  hard realtime packages.
+
 	# General realtime/low-latency support for audio
 	if [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
@@ -11121,14 +11124,25 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "net-misc/ntp" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "sys-apps/watchdogd" "SCHED_RR"
 		_ot-kernel_realtime_pkg "sys-cluster/keepalived" "SCHED_RR"
+		_ot-kernel_realtime_pkg "net-fs/samba[ads]" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "www-servers/civetweb" "SCHED_RR"
 	fi
 
-	# Discovered but not required for boosting.
-	# _ot-kernel_realtime_pkg "app-benchmarks/interbench" "SCHED_FIFO"
+	# The packages above hint that low latency may be necessary.
+
+	# Discovered but not required for low-latency boosting.
+	# Candidates for proactive boost.
+	# _ot-kernel_realtime_pkg "dev-util/trace-cmd" "SCHED_FIFO"
 	# _ot-kernel_realtime_pkg "dev-db/mysql" "SCHED_FIFO|SCHED_RR" # #718068
-	# _ot-kernel_realtime_pkg "dev-lang/mono" "SCHED_FIFO"
-	# _ot-kernel_realtime_pkg "www-client/chromium" "SCHED_RR" # For testing
+
+	# Denied proactive change.
+	# These inherit existing preempt setting instead.
+	# _ot-kernel_realtime_pkg "app-benchmarks/interbench" "SCHED_FIFO"
+	# _ot-kernel_realtime_pkg "app-benchmarks/stress-ng" "SCHED_FIFO|SCHED_RR"
+	# _ot-kernel_realtime_pkg "dev-lang/mono" "SCHED_FIFO" # Inherit from app project
+	# _ot-kernel_realtime_pkg "net-p2p/cpuminer-opt" "SCHED_RR"
+	# _ot-kernel_realtime_pkg "sys-apps/openrc" "SCHED_FIFO|SCHED_RR"
+	# _ot-kernel_realtime_pkg "sys-apps/systemd" "SCHED_FIFO|SCHED_RR"
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
