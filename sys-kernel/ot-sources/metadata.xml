@@ -2826,8 +2826,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Memory intensive scenarios should always enable swap.  If you need swap use
     any work profile not mentioned in OT_KERNEL_WORK_PROFILE with
-    OT_KERNEL_SWAP=1.  It is assumed that you have 4G RAM or more for forced
-    swap disabled.
+    OT_KERNEL_SWAP=1.  It is assumed that have enough memory for professional
+    production.  This is what is assumed:
+
+    Gaming:  8 GiB
+    Gamer live streaming:  16-32 GiB recommended (8 GiB for gaming + 4 GiB at 1080p)
 
 
 
