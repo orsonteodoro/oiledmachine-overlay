@@ -10960,6 +10960,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/bluez-alsa" "SCHED_RR" # It requires bluealsa.service changes.
+		_ot-kernel_realtime_pkg "media-sound/jacktrip" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 
@@ -11030,6 +11031,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/svt-vp9" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/tg_owt" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/webrtc-audio-processing" "SCHED_FIFO"
+		# _ot-kernel_realtime_pkg "net-libs/ortp" "SCHED_FIFO|SCHED_RR" # Set through environment variable.  Default disabled.
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/umurmur" "SCHED_RR"
 		_ot-kernel_realtime_pkg "net-voip/yate" "SCHED_FIFO|SCHED_RR"
@@ -11123,6 +11125,7 @@ _ot-kernel_realtime_packages() {
 	fi
 
 	# Discovered but not required for boosting.
+	# _ot-kernel_realtime_pkg "app-benchmarks/interbench" "SCHED_FIFO"
 	# _ot-kernel_realtime_pkg "dev-db/mysql" "SCHED_FIFO|SCHED_RR" # #718068
 	# _ot-kernel_realtime_pkg "dev-lang/mono" "SCHED_FIFO"
 	# _ot-kernel_realtime_pkg "www-client/chromium" "SCHED_RR" # For testing
