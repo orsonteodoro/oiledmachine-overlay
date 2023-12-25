@@ -10959,6 +10959,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/libsoundio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/bluez-alsa" "SCHED_RR" # It requires bluealsa.service.in changes.
 		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 
@@ -10981,7 +10982,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-plugins/x42-plugins" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/6pm" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/aeolus" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-sound/amsynth" "SCHED_FIFO" # needs ebuild changes to explicitly enable
+		_ot-kernel_realtime_pkg "media-sound/amsynth" "SCHED_FIFO" # It needs ebuild changes to explicitly enable.
 		_ot-kernel_realtime_pkg "media-sound/ardour" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/bristol" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/carla" "SCHED_FIFO|SCHED_RR"
@@ -11025,6 +11026,8 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/mediastreamer2" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/rtaudio" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-libs/svt-av1" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-libs/svt-hevc" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-libs/svt-vp9" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/tg_owt" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/webrtc-audio-processing" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-voip/mumble" "SCHED_FIFO"
@@ -11032,7 +11035,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "net-voip/yate" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "x11-misc/picom" "SCHED_RR"
 		_ot-kernel_realtime_pkg "x11-wm/ukui-kwin" "SCHED_RR"
-		# _ot-kernel_realtime_pkg "net-voip/twinkle" "SCHED_FIFO" # present but disabled in source code
+		# _ot-kernel_realtime_pkg "net-voip/twinkle" "SCHED_FIFO" # It's present but disabled in source code.
 	fi
 
 	# Live music
@@ -11084,7 +11087,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "games-emulation/fceux" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/oaml" "SCHED_RR"
-		#_ot-kernel_realtime_pkg "media-sound/pianobooster" "SCHED_FIFO" # Default off unless built with -DUSE_REALTIME_PRIORITY=1
+		#_ot-kernel_realtime_pkg "media-sound/pianobooster" "SCHED_FIFO" # It's default off unless built with -DUSE_REALTIME_PRIORITY=1
 	fi
 
 	# High end gaming
