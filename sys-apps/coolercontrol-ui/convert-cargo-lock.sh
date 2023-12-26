@@ -12,7 +12,9 @@ MY_PV="${1}"
 # - has ambiguous means
 declare -A CARGO_PATHS=(
 [tauri-plugin-autostart]="plugins-workspace-%commit%/plugins/autostart" # 0.0.0
+[tauri-plugin-localhost]="plugins-workspace-%commit%/plugins/localhost" # 0.0.0
 [tauri-plugin-single-instance]="plugins-workspace-%commit%/plugins/single-instance" # 0.0.0
+[tauri-plugin-window-state]="plugins-workspace-%commit%/plugins/window-state" # 0.0.0
 )
 
 main() {
