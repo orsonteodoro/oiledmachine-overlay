@@ -8932,7 +8932,6 @@ ewarn
 			-z "${work_profile}" \
 			|| "${work_profile}" == "custom" \
 			|| "${work_profile}" == "digital-audio-workstation" \
-			|| "${work_profile}" == "live-video-reporter" \
 			|| "${work_profile}" == "manual" \
 			|| "${work_profile}" == "musical-live-performance" \
 			|| "${work_profile}" == "pi-deep-learning" \
@@ -8940,7 +8939,6 @@ ewarn
 			|| "${work_profile}" == "radio-broadcaster" \
 			|| "${work_profile}" == "realtime-hpc" \
 			|| "${work_profile}" == "ros" \
-			|| "${work_profile}" == "video-conferencing" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
 			:;
@@ -9329,8 +9327,6 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		fi
 		if [[ \
 			   "${work_profile}" == "radio-broadcaster" \
-			|| "${work_profile}" == "live-video-reporter" \
-			|| "${work_profile}" == "video-conferencing" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
 			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
