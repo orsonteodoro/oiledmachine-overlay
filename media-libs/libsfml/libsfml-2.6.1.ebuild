@@ -5,14 +5,33 @@
 
 EAPI=8
 
-inherit cmake-multilib git-r3
+inherit cmake-multilib
+if [[ "${PV}" =~ "9999" ]] ; then
+	export EGIT_BRANCH="2.6.x"
+	export EGIT_REPO_URI="https://github.com/SFML/SFML.git"
+	inherit git-r3
+	SRC_URI=""
+	S="${WORKDIR}/${P}"
+else
+	SRC_URI="
+https://github.com/SFML/SFML/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+	S="${WORKDIR}/SFML-${PV}"
+fi
 
 DESCRIPTION="Simple and Fast Multimedia Library (SFML)"
-HOMEPAGE="https://www.sfml-dev.org/ https://github.com/SFML/SFML"
+HOMEPAGE="
+	https://www.sfml-dev.org/
+	https://github.com/SFML/SFML
+"
 LICENSE="
 	ZLIB
+	(
+		all-rights-reserved
+		Boost-1.0
+	)
 	BSD
-	( all-rights-reserved Boost-1.0 )
 	CC0-1.0
 	FTL
 	LGPL-2
@@ -31,13 +50,26 @@ vulkan
 
 fallback-commit
 "
-VULKAN_LINUX_DRIVERS=( amdgpu intel nvidia radeonsi )
+VULKAN_LINUX_DRIVERS=(
+	amdgpu
+	intel
+	nvidia
+	radeonsi
+)
 IUSE+=" ${VULKAN_LINUX_DRIVERS[@]/#/video_cards_} "
 REQUIRED_USE+="
-	drm? ( kernel_linux window )
-	graphics? ( window )
+	drm? (
+		kernel_linux
+		window
+	)
+	graphics? (
+		window
+	)
 	kernel_linux? (
-		^^ ( X drm )
+		^^ (
+			X
+			drm
+		)
 		vulkan? (
 			|| (
 				video_cards_amdgpu
@@ -47,40 +79,49 @@ REQUIRED_USE+="
 			)
 		)
 	)
-	udev? ( kernel_linux window )
-	X? ( kernel_linux window )
+	udev? (
+		kernel_linux
+		window
+	)
+	X? (
+		kernel_linux
+		window
+	)
 "
-# DEPENDs last check: Dec 22, 2022
+# U 20.04
+# *DEPENDs last check: Dec 22, 2022
+MESA_PV="21.2.6"
 NV_DRIVER_VERSION_VULKAN="390.132"
+XORG_SERVER_PV="1.20.13"
 VULKAN_LINUX_RDEPEND="
 	|| (
 		video_cards_amdgpu? (
-			media-libs/mesa[video_cards_radeonsi,vulkan]
-			x11-base/xorg-drivers[video_cards_amdgpu]
+			>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
+			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_amdgpu]
 		)
 		video_cards_intel? (
-			media-libs/mesa[video_cards_intel,vulkan]
-			x11-base/xorg-drivers[video_cards_intel]
+			>=media-libs/mesa-${MESA_PV}[video_cards_intel,vulkan]
+			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_intel]
 		)
 		video_cards_nvidia? (
 			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 		)
 		video_cards_radeonsi? (
-			media-libs/mesa[video_cards_radeonsi,vulkan]
-			x11-base/xorg-drivers[video_cards_radeonsi]
+			>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
+			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_radeonsi]
 		)
 	)
 "
 
 RDEPEND+="
 	audio? (
-		media-libs/flac[${MULTILIB_USEDEP}]
-		media-libs/libogg[${MULTILIB_USEDEP}]
-		media-libs/libvorbis[${MULTILIB_USEDEP}]
-		media-libs/openal[${MULTILIB_USEDEP}]
+		>=media-libs/flac-1.3.3[${MULTILIB_USEDEP}]
+		>=media-libs/libogg-1.3.4[${MULTILIB_USEDEP}]
+		>=media-libs/libvorbis-1.3.6[${MULTILIB_USEDEP}]
+		>=media-libs/openal-1.19.1[${MULTILIB_USEDEP}]
 	)
 	graphics? (
-		media-libs/freetype:2[${MULTILIB_USEDEP}]
+		>=media-libs/freetype-2.10.1:2[${MULTILIB_USEDEP}]
 		elibc_bionic? (
 			sys-libs/zlib[${MULTILIB_USEDEP}]
 		)
@@ -102,20 +143,22 @@ RDEPEND+="
 		kernel_linux? (
 			virtual/libudev:0[${MULTILIB_USEDEP}]
 			virtual/libc
-
 			drm? (
-				media-libs/libglvnd[${MULTILIB_USEDEP}]
-				media-libs/mesa[${MULTILIB_USEDEP}]
-				x11-libs/libdrm[${MULTILIB_USEDEP}]
+				>=media-libs/libglvnd-1.3.2[${MULTILIB_USEDEP}]
+				>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
+				>=x11-libs/libdrm-2.4.107[${MULTILIB_USEDEP}]
 			)
-			vulkan? ( || ( ${VULKAN_LINUX_RDEPEND} ) )
+			vulkan? (
+				|| (
+					${VULKAN_LINUX_RDEPEND}
+				)
+			)
 			X? (
-				x11-libs/libX11[${MULTILIB_USEDEP}]
-				x11-libs/libXrandr[${MULTILIB_USEDEP}]
-				x11-libs/libXcursor[${MULTILIB_USEDEP}]
-
-				x11-libs/libxcb[${MULTILIB_USEDEP}]
-				x11-libs/xcb-util-image[${MULTILIB_USEDEP}]
+				>=x11-libs/libX11-${XORG_SERVER_PV}[${MULTILIB_USEDEP}]
+				>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
+				>=x11-libs/libxcb-1.14[${MULTILIB_USEDEP}]
+				>=x11-libs/libXcursor-1.2.0[${MULTILIB_USEDEP}]
+				>=x11-libs/xcb-util-image-0.4.0[${MULTILIB_USEDEP}]
 			)
 		)
 	)
@@ -125,14 +168,14 @@ RDEPEND+="
 "
 DEPEND="
 	${RDEPEND}
-	doc? ( app-doc/doxygen )
+	doc? (
+		>=app-doc/doxygen-1.8.17
+	)
 "
 BDEPEND+="
-	sys-devel/gcc
+	>=sys-devel/gcc-9.3.0
 "
 DOCS=( changelog.md readme.md )
-SRC_URI=""
-S="${WORKDIR}/${P}"
 EXPECTED_DEPENDS="\
 d20820befb877ea0a4ccc22452988dfeb0933b9a4d1041386493ef86f3aa634a\
 0a1f20c1f6c3e34e1363e2d18812d4cc24c4b48c279fd44e370c412a98e63548\
@@ -162,39 +205,49 @@ eerror
 }
 
 src_unpack() {
-	export EGIT_BRANCH="2.6.x"
-	export EGIT_REPO_URI="https://github.com/SFML/SFML.git"
-	use fallback-commit && EGIT_COMMIT="37db7a83f3d767287f60b63c1edcd1a997225902" # Dec 22, 2022
-	git-r3_fetch
-	git-r3_checkout
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="37db7a83f3d767287f60b63c1edcd1a997225902" # Dec 22, 2022
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 	cd "${S}" || die
-	#verify_version
-	local actual_depends=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" | sort) \
-		| sha512sum \
-		| cut -f 1 -d " ")
-	if [[ "${actual_depends}" != "${EXPECTED_DEPENDS}" ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
+		#verify_version
+		local actual_depends=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" | sort) \
+			| sha512sum \
+			| cut -f 1 -d " ")
+		if [[ "${actual_depends}" != "${EXPECTED_DEPENDS}" ]] ; then
 eerror
 eerror "The package needs an IUSE or *DEPENDs review"
 eerror
 eerror "Expected depends:\t${EXPECTED_DEPENDS}"
 eerror "Actual depends:\t${actual_depends}"
 eerror
-		die
+			die
+		fi
 	fi
 }
 
 src_prepare() {
-	sed -i "s:DESTINATION .*:DESTINATION ${EPREFIX}/usr/share/doc/${PF}:" \
-		"doc/CMakeLists.txt" || die
+	sed -i \
+		"s:DESTINATION .*:DESTINATION ${EPREFIX}/usr/share/doc/${PF}:" \
+		"doc/CMakeLists.txt" \
+		|| die
 	find "examples" -name "CMakeLists.txt" -delete || die
-
-	sed -i "s|VERSION_MAJOR 2|VERSION_MAJOR 2|g" \
-		"CMakeLists.txt" || die
-	sed -i "s|VERSION_MINOR 5|VERSION_MINOR 6|g" \
-		"CMakeLists.txt" || die
-	sed -i "s|VERSION_PATCH 1|VERSION_PATCH 0|g" \
-		"CMakeLists.txt" || die
-
+	sed -i \
+		"s|VERSION_MAJOR 2|VERSION_MAJOR 2|g" \
+		"CMakeLists.txt" \
+		|| die
+	sed -i \
+		"s|VERSION_MINOR 5|VERSION_MINOR 6|g" \
+		"CMakeLists.txt" \
+		|| die
+	sed -i \
+		"s|VERSION_PATCH 1|VERSION_PATCH 0|g" \
+		"CMakeLists.txt" \
+		|| die
 	cmake_src_prepare
 }
 
@@ -208,10 +261,16 @@ src_configure() {
 		-DSFML_BUILD_NETWORK=$(usex network)
 		-DSFML_BUILD_TEST_SUITE=$(usex test)
 		-DSFML_BUILD_WINDOW=$(usex window)
-		-DSFML_USE_SYSTEM_DEPS=TRUE
 		-DSFML_INSTALL_PKGCONFIG_FILES=TRUE
+		-DSFML_USE_SYSTEM_DEPS=TRUE
 	)
-	if use elibc_bionic || ( use elibc_Darwin && use ios ) ; then
+	if \
+		use elibc_bionic \
+		|| ( \
+			   use elibc_Darwin \
+			&& use ios \
+		) \
+	; then
 		mycmakeargs+=( -DSFML_OPENGL_ES=TRUE )
 	else
 		mycmakeargs+=( -DSFML_OPENGL_ES=FALSE )
