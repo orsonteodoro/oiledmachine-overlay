@@ -12,6 +12,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	SRC_URI=""
 	S="${WORKDIR}/${P}"
+	IUSE+=" fallback-commit"
 else
 	SRC_URI="
 https://github.com/SFML/SFML/archive/refs/tags/${PV}.tar.gz
@@ -39,10 +40,8 @@ LICENSE="
 #KEYWORDS="~arm ~arm64 ~amd64 ~x86" # Live ebuilds don't get KEYWORDed
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-audio X debug doc drm examples flac graphics ios network test udev window
-vulkan
-
-fallback-commit
+audio debug doc drm examples flac graphics ios network test udev window
+vulkan X
 "
 VULKAN_LINUX_DRIVERS=(
 	amdgpu
@@ -167,12 +166,13 @@ DEPEND="
 	)
 "
 BDEPEND+="
+	>=dev-util/cmake-3.24
 	>=sys-devel/gcc-11.2.0
 "
 DOCS=( changelog.md readme.md )
 EXPECTED_DEPENDS="\
-e7d413080c2b19addc8a1b00f549251f82cee73e1f9d284be7acc3708ab43681\
-5abf3e8afff3acf14f5f913c5633e2fe77c8fdbbe1a94ddb40ce3edaff8839a7\
+0e5f94b63a76f9bb2e29f16f851b7544749c7e938d46de68d9f47844c78a099d\
+fb05d9599b8f5dd7ce06783fe22959e8a53e13d862350e5c91b629fbc5ce7769\
 "
 RESTRICT="" # See headers for copyright notices
 PATCHES=(
@@ -204,7 +204,7 @@ pkg_setup() {
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="50d86e4755cfb0fecc191bd9d5e226f6a7ebf18a" # Dec 22, 2022
+		use fallback-commit && EGIT_COMMIT="cf3f4e8d89904d6d9da52e0aadf212932f9a9b3f" # 20231223
 		git-r3_fetch
 		git-r3_checkout
 	else
