@@ -10780,6 +10780,7 @@ ot-kernel_set_preempt() {
 	]] ; then
 	# Arches that do not support preempt
 		ot-kernel_unset_configopt "CONFIG_PREEMPT"
+		ot-kernel_unset_configopt "CONFIG_PREEMPT__LL"
 		ot-kernel_y_configopt "CONFIG_PREEMPT_NONE"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_FULL"
@@ -10799,7 +10800,13 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 			else
 	# Promote/demote
 				if [[ "${preempt_option}" == "CONFIG_PREEMPT" ]] ; then
-					ot-kernel_y_configopt "CONFIG_PREEMPT"
+					if ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+						ot-kernel_y_configopt "CONFIG_PREEMPT"
+						ot-kernel_unset_configopt "CONFIG_PREEMPT__LL"
+					else
+						ot-kernel_unset_configopt "CONFIG_PREEMPT"
+						ot-kernel_y_configopt "CONFIG_PREEMPT__LL"
+					fi
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
@@ -10913,14 +10920,16 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 einfo "Using PREEMPT_NONE"
 	elif grep -q -e "^CONFIG_PREEMPT=y" "${path_config}" ; then
 einfo "Using PREEMPT"
+	elif grep -q -e "^CONFIG_PREEMPT__LL=y" "${path_config}" ; then
+einfo "Using PREEMPT__LL" # Same as PREEMPT in < 5.4
 	elif grep -q -e "^CONFIG_PREEMPT_VOLUNTARY=y" "${path_config}" ; then
 einfo "Using PREEMPT_VOLUNTARY"
 	elif grep -q -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
 einfo "Using PREEMPT_RT"
 	elif grep -q -e "^CONFIG_PREEMPT_RT_BASE=y" "${path_config}" ; then
-einfo "Using PREEMPT_RT_BASE"
+einfo "Using PREEMPT_RT_BASE" # For debugging in < 5.4
 	elif grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" ; then
-einfo "Using PREEMPT_RT_FULL"
+einfo "Using PREEMPT_RT_FULL" # For production in < 5.4
 	fi
 }
 
@@ -10952,6 +10961,7 @@ _ot-kernel_realtime_pkg() {
 	local pkg="${1}"
 	local prio_class="${2}"
 	if ot-kernel_has_version "${pkg}" ; then
+		ot-kernel_y_configopt "CONFIG_RT_PACKAGE_FOUND"
 		if ot-kernel_use rt ; then
 ewarn "Detected ${prio_class} package for ${pkg}.  Using PREEMPT_RT=y"
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
@@ -10991,6 +11001,7 @@ _ot-kernel_realtime_packages() {
 	# * On demand if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 	# * Blanket policy if OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=0
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	ot-kernel_unset_configopt "CONFIG_RT_PACKAGE_FOUND"
 
 	# TODO:  hard realtime packages.
 

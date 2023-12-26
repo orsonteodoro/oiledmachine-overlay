@@ -8864,30 +8864,21 @@ ot-kernel_iosched_lowest_power() {
 }
 
 FALLBACK_PREEMPT=""
+FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=0
 # @FUNCTION: ot-kernel_set_kconfig_fallback_preempt
 # @DESCRIPTION:
-# Set the preempt to the fallback setting.
+# Demote/reset to the fallback setting if no realtime packages detected.
 ot-kernel_set_kconfig_fallback_preempt() {
-	if   grep -q -E -e "^CONFIG_PREEMPT=y" "${path_config}" ; then
-		:;
-	elif grep -q -E -e "^CONFIG_PREEMPT_NONE=y" "${path_config}" ; then
-		:;
-	elif grep -q -E -e "^CONFIG_PREEMPT_RT=y" "${path_config}" ; then
-		:;
-	elif grep -q -E -e "^CONFIG_PREEMPT_RT_BASE=y" "${path_config}" ; then # < 5.0 for debugging
-		:;
-	elif grep -q -E -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" ; then # < 5.0 for production
-		:;
-	elif grep -q -E -e "^CONFIG_PREEMPT_VOLUNTARY=y" "${path_config}" ; then
-		:;
-	else
-		if [[ -n "${FALLBACK_PREEMPT}" ]] ; then
+	[[ -z "${FALLBACK_PREEMPT}" ]] && return
+	if ! grep -q -E -e "^CONFIG_RT_PACKAGE_FOUND=y" "${path_config}" ; then
+		if [[ "${FALLBACK_PREEMPT}" == "CONFIG_PREEMPT" && "${FALLBACK_PREEMPT_IS_RT_WORK_PROFILE}" == "1" ]] ; then
 			ot-kernel_set_preempt "${FALLBACK_PREEMPT}"
-		else
-			ot-kernel_set_preempt "CONFIG_PREEMPT_VOLUNTARY"
-		fi
-		if ot-kernel_use rt ; then
+			if ot-kernel_use rt ; then
 ewarn "No realtime packages detected.  Consider removing rt from OT_KERNEL_USE from OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
+			fi
+		else
+eerror "ot-kernel_set_kconfig_fallback_preempt():  Add new case"
+			die
 		fi
 	fi
 }
@@ -8911,6 +8902,8 @@ ot-kernel_set_rt_rcu() {
 # Configures the default power policies and latencies for the kernel.
 ot-kernel_set_kconfig_work_profile() {
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
+	FALLBACK_PREEMPT=""
+	FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=0
 einfo "Using the ${work_profile} work profile"
 	if [[ \
 		   "${work_profile}" == "custom" \
@@ -9200,12 +9193,15 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_rt_rcu
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
 			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			else
-	# Fallback to disable Hard RT if nothing uses it.
+	# Fallback to disable Hard RT if nothing uses it during auto configure.
 				FALLBACK_PREEMPT="CONFIG_PREEMPT"
+				FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=1
 			fi
 		elif [[ "${work_profile}" == "gamedev" ]] ; then
 			ot-kernel_y_configopt "CONFIG_HZ_PERIODIC"
@@ -9338,12 +9334,15 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			|| "${work_profile}" == "voip" \
 		]] ; then
 			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
 			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			else
-	# Fallback to disable Hard RT if nothing uses it.
+	# Fallback to disable Hard RT if nothing uses it during auto configure.
 				FALLBACK_PREEMPT="CONFIG_PREEMPT"
+				FALLBACK_PREEMPT_IS_RT_WORK_PROFILE=1
 			fi
 		else
 			ot-kernel_set_preempt "CONFIG_PREEMPT"
@@ -10691,7 +10690,6 @@ einfo
 	ot-kernel_set_kconfig_set_net_qos_schedulers
 	ot-kernel_set_kconfig_set_net_qos_classifiers
 	ot-kernel_set_kconfig_set_net_qos_actions
-	FALLBACK_PREEMPT="" # Must be before work_profile and pkgflags_apply.
 	# See also ot-kernel-pkgflags.eclass: _ot-kernel_set_netfilter()
 	ot-kernel_set_kconfig_work_profile # Sets PREEMPT*
 	ot-kernel_set_kconfig_pcie_mps
