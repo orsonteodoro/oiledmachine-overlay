@@ -7,6 +7,7 @@ EAPI=8
 MY_PV="$(ver_cut 1-4)"
 
 DISTUTILS_USE_PEP517="setuptools"
+DISTUTILS_EXT=1
 PYTHON_COMPAT=( python3_10 ) # Upstream only tests with 3.10
 
 inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
@@ -146,6 +147,7 @@ REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
 	${CLIENT_OPTIONS}
 	${SERVER_OPTIONS}
+	doc
 	gtk3
 	audio? (
 		pulseaudio
@@ -783,6 +785,7 @@ eerror
 		$(use_with clipboard)
 		$(use_with cython)
 		$(use_with doc docs)
+		$(use_with doc pandoc_lua)
 		$(use_with drm)
 		$(use_with netdev)
 		$(use_with nvenc cuda_kernels)
@@ -871,9 +874,16 @@ eerror
 
 python_install_all() {
 	distutils-r1_python_install_all
-	fperms 0750 /etc/init.d/xpra
-	dodir /etc/X11
-	cp "${D}"/etc/xpra/xorg.conf "${D}"/etc/X11/xorg.dummy.conf || die
+	if use openrc ; then
+		fperms 0750 /etc/init.d/xpra
+	fi
+	if use X && has_version "x11-base/xorg-drivers[video_cards_dummy]" ; then
+		dodir /etc/X11
+		cp \
+			"${ED}/etc/xpra/xorg.conf" \
+			"${ED}/etc/X11/xorg.dummy.conf" \
+			|| die
+	fi
 	if ! use openrc ; then
 		[[ -e "${ED}/etc/init.d/${PN}" ]] \
 			&& rm "${ED}/etc/init.d/${PN}"
