@@ -34,7 +34,7 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.6.5/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v3.6.7/build_files/build_environment/install_linux_packages.py
 FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
@@ -53,7 +53,7 @@ OPENVDB_ABIS=(
 )
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v3.6.5/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v3.6.7/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
 
 BOOST_PV="1.80"
@@ -339,17 +339,17 @@ REQUIRED_USE+="
 # no need to look past those dates.
 
 # Last change was Aug 9, 2023 for:
-# https://github.com/blender/blender/blob/v3.6.5/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v3.6.7/build_files/build_environment/install_linux_packages.py
 
 # Last change was May 15, 2023 for:
-# https://github.com/blender/blender/commits/v3.6.5/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/commits/v3.6.7/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Oct 9, 2023 for:
-# https://github.com/blender/blender/commits/v3.6.5/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/commits/v3.6.7/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v3.6.5/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v3.6.7/intern/cycles/cmake/external_libs.cmake#L47
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -1412,7 +1412,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.6.5/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.6.7/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
