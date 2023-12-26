@@ -2,13 +2,15 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v3.3.eclass
+# @ECLASS: blender-v3.6.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v3.3.eclass helps reduce code duplication across ebuilds
+# The blender-v3.6.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
+
+# FIXME:  alembic requires imath
 
 # Upstream uses LLVM 12.0.0 for Linux.  For prebuilt binary only addons, this may be
 # problematic so avoid them.
@@ -32,21 +34,17 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.3.14/build_files/build_environment/install_deps.sh#L488
+# https://github.com/blender/blender/blob/v4.0.2/build_files/build_environment/install_linux_packages.py
 FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
 
-LLVM_MAX_UPSTREAM=13 # (inclusive)
+LLVM_MAX_UPSTREAM=15 # (inclusive)
 
-# FAIL!  Distro only has >= 14.
-LLVM_SLOTS=( 14 13 12 11 ) # Upstream says 13 inclusive is max
+LLVM_SLOTS=( 15 14 13 12 )
 
-# For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v3.3.14/build_files/build_environment/install_deps.sh#L382
-PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
-
-OPENVDB_ABIS_MAJOR_VERS=9
+# Platform defaults based on CMakeList.txt
+OPENVDB_ABIS_MAJOR_VERS=10
 OPENVDB_ABIS=(
 	${OPENVDB_ABIS_MAJOR_VERS/#/abi}
 )
@@ -54,16 +52,20 @@ OPENVDB_ABIS=(
 	${OPENVDB_ABIS[@]/%/-compat}
 )
 
-BOOST_PV="1.78"
+# For the max exclusive Python supported (and others), see \
+# https://github.com/blender/blender/blob/v4.0.2/build_files/build_environment/install_linux_packages.py#L693 \
+PYTHON_COMPAT=( python3_{10,11} ) # <= 3.11.
+
+BOOST_PV="1.80"
 CLANG_MIN="8.0"
+FREETYPE_PV="2.13.0"
 GCC_MIN="9.3"
-FREETYPE_PV="2.12.1"
 LEGACY_TBB_SLOT="2"
-ONETBB_SLOT="0"
-OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7 3.1.5"
 LIBOGG_PV="1.3.5"
 LIBSNDFILE_PV="1.2.2"
-OSL_PV="1.11.17.0"
+ONETBB_SLOT="0"
+OPENEXR_V3_PV="3.1.9 3.1.8 3.1.7"
+OSL_PV="1.11"
 PUGIXML_PV="1.10"
 THEORA_PV="1.1.1"
 
@@ -78,12 +80,12 @@ CUDA_TARGETS_COMPAT=(
 	sm_70
 	sm_75
 	sm_86
-	compute_75
+	sm_89
+	compute_89
 )
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
-	gfx906
 	gfx90c
 	gfx902
 	gfx1010
@@ -99,7 +101,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 
-# gen_llvm_iuse is same as Mesa and LLVM latest stable keyword.
+# gen_llvm_iuse is the same as Mesa and LLVM latest stable keyword.
 gen_llvm_iuse()
 {
 	local s
@@ -114,15 +116,16 @@ ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
 ${OPENVDB_ABIS[@]}
-+X +abi9-compat +alembic -asan +boost +bullet +collada +color-management
--cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug doc +draco
-+elbeem +embree +ffmpeg +fftw flac +gmp +hdr +jack +jemalloc +jpeg2k -llvm
--man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
-+openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
-+pulseaudio release -rocm +sdl +sndfile +tbb test +tiff +usd -valgrind
++X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
+-cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
+-debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +hydra +jack
++jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
++opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
++openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile +tbb
+test +tiff +usd -valgrind +wayland
 r2
 "
-
+# hip is default ON upstream.
 inherit blender
 
 # See the blender.eclass for the LICENSE variable.
@@ -165,10 +168,10 @@ REQUIRED_USE+="
 	$(gen_required_use_rocm_targets)
 	!boost? (
 		!alembic
+		!color-management
 		!cycles
 		!nls
 		!openvdb
-		!color-management
 	)
 	!tbb? (
 		!cycles
@@ -191,7 +194,6 @@ REQUIRED_USE+="
 	cuda? (
 		^^ (
 			nvcc
-			nvrtc
 		)
 		cycles
 		|| (
@@ -204,8 +206,18 @@ REQUIRED_USE+="
 	cycles-device-oneapi? (
 		cycles
 	)
+	dbus? (
+		wayland
+	)
 	embree? (
 		cycles
+	)
+	hydra? (
+		usd
+	)
+	materialx? (
+		!python_single_target_python3_10
+		python_single_target_python3_11
 	)
 	mp3? (
 		ffmpeg
@@ -219,12 +231,6 @@ REQUIRED_USE+="
 		)
 	)
 	nvcc? (
-		|| (
-			cuda
-			optix
-		)
-	)
-	nvrtc? (
 		|| (
 			cuda
 			optix
@@ -266,6 +272,7 @@ REQUIRED_USE+="
 		collada
 		color-management
 		cycles
+		cycles-path-guiding
 		dds
 		draco
 		elbeem
@@ -334,18 +341,18 @@ REQUIRED_USE+="
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # no need to look past those dates.
 
-# Last change was Jul 29, 2022 for:
-# https://github.com/blender/blender/commits/v3.3.14/build_files/build_environment/install_deps.sh
+# Last change was Sep 21, 2023 for:
+# https://github.com/blender/blender/blob/v4.0.2/build_files/build_environment/install_linux_packages.py
 
-# Last change was Aug 24, 2021 for:
-# https://github.com/blender/blender/commits/v3.3.14/build_files/cmake/config/blender_release.cmake
+# Last change was Oct 10, 2023 for:
+# https://github.com/blender/blender/commits/v4.0.2/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Oct 16, 2023 for:
-# https://github.com/blender/blender/commits/v3.3.14/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/commits/v4.0.2/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v3.3.14/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v4.0.2/intern/cycles/cmake/external_libs.cmake#L47
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -404,10 +411,10 @@ gen_oiio_depends() {
 	for s in ${OPENVDB_ABIS[@]} ; do
 		echo "
 			${s}? (
-				<media-libs/openimageio-2.4[${s}(+),color-management?,jpeg2k?,png,webp?]
+				<media-libs/openimageio-2.5[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
+				>=media-libs/openimageio-2.4.15.0[${PYTHON_SINGLE_USEDEP},${s}(+),color-management?,jpeg2k?,png,python,tools(+),webp?]
 				>=dev-cpp/robin-map-0.6.2
-				>=dev-libs/libfmt-8
-				>=media-libs/openimageio-2.3.20.0[${s}(+),color-management?,jpeg2k?,png,webp?]
+				>=dev-libs/libfmt-9.1.0
 			)
 		"
 	done
@@ -429,7 +436,7 @@ gen_openvdb_depends() {
 	local s=${OPENVDB_ABIS_MAJOR_VERS}
 	echo "
 		abi${s}-compat? (
-			=media-gfx/openvdb-${s}.0*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc]
+			=media-gfx/openvdb-${s}.0*[${PYTHON_SINGLE_USEDEP},abi${s}-compat,blosc,numpy]
 		)
 	"
 }
@@ -449,8 +456,7 @@ gen_osl_depends()
 
 # The ffplay contradicts in
 # build_files/build_environment/cmake/ffmpeg.cmake : --enable-ffplay
-# build_files/build_environment/install_deps.sh : --disable-ffplay
-# The FFMPEG_VERSION_MEX is set to 6.0 but contradicts versions.cmake @ 96c5cc5.  _MEX means excludes the mentioned.
+# build_files/build_environment/install_linux_packages.py : --disable-ffplay
 CODECS="
 	aom? (
 		>=media-libs/libaom-3.3.0
@@ -484,25 +490,28 @@ CODECS="
 "
 
 # The distro's llvm 14 for mesa is 22.05.
-# The required openjpeg version is different for security update.  It is not tagged but newer commit.
-
+# Missing OCLOC
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
 		>=dev-python/charset-normalizer-2.0.6[${PYTHON_USEDEP}]
 		>=dev-python/idna-3.2[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.21.2[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
+		>=dev-python/pybind11-2.10.1[${PYTHON_USEDEP}]
+		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
 		>=dev-python/urllib3-1.26.7[${PYTHON_USEDEP}]
-		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 	')
 	${CODECS}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
 	>=dev-lang/python-3.10.13
+	>=dev-libs/fribidi-1.0.12
 	>=media-libs/freetype-${FREETYPE_PV}
-	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.37:0=
+	>=media-libs/shaderc-2022.3
+	>=media-libs/vulkan-loader-1.2.198
+	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.2.13
 	dev-libs/lzo:2
 	media-libs/libglvnd
@@ -518,12 +527,12 @@ RDEPEND+="
 		)
 	)
 	collada? (
-		dev-libs/libpcre:=[static-libs]
 		>=media-libs/opencollada-1.6.68:=
+		dev-libs/libpcre:=[static-libs]
 	)
 	color-management? (
 		>=dev-libs/expat-2.5.0
-		>=media-libs/opencolorio-2.1.1[cpu_flags_x86_sse2?]
+		>=media-libs/opencolorio-2.2.0[cpu_flags_x86_sse2?,python]
 	)
 	cuda? (
 		cuda_targets_sm_30? (
@@ -548,6 +557,7 @@ RDEPEND+="
 		)
 		cuda_targets_sm_50? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
@@ -555,6 +565,7 @@ RDEPEND+="
 		)
 		cuda_targets_sm_52? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
@@ -562,6 +573,7 @@ RDEPEND+="
 		)
 		cuda_targets_sm_60? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
@@ -569,6 +581,7 @@ RDEPEND+="
 		)
 		cuda_targets_sm_61? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
@@ -576,6 +589,7 @@ RDEPEND+="
 		)
 		cuda_targets_sm_70? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
@@ -583,6 +597,7 @@ RDEPEND+="
 		)
 		cuda_targets_sm_75? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
@@ -590,42 +605,62 @@ RDEPEND+="
 		)
 		cuda_targets_sm_86? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
-		cuda_targets_compute_75? (
+		cuda_targets_sm_89? (
 			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
+				=dev-util/nvidia-cuda-toolkit-11*:=
+				=dev-util/nvidia-cuda-toolkit-10.2*:=
+				=dev-util/nvidia-cuda-toolkit-10.1*:=
+			)
+		)
+		cuda_targets_compute_89? (
+			|| (
+				=dev-util/nvidia-cuda-toolkit-12*:=
 				=dev-util/nvidia-cuda-toolkit-11*:=
 				=dev-util/nvidia-cuda-toolkit-10.2*:=
 				=dev-util/nvidia-cuda-toolkit-10.1*:=
 			)
 		)
 		|| (
+			=dev-util/nvidia-cuda-toolkit-12*:=
 			=dev-util/nvidia-cuda-toolkit-11*:=
 			=dev-util/nvidia-cuda-toolkit-10.2*:=
 			=dev-util/nvidia-cuda-toolkit-10.1*:=
 		)
 	)
 	cycles? (
+		cycles-path-guiding? (
+			(
+				<media-libs/openpgl-0.6[tbb?]
+				>=media-libs/openpgl-0.5[tbb?]
+			)
+		)
 		osl? (
 			>=dev-libs/pugixml-${PUGIXML_PV}
 		)
 	)
 	cycles-device-oneapi? (
 		<dev-libs/level-zero-2
-		>=dev-libs/level-zero-1.7.15
+		>=dev-libs/level-zero-1.8.8
+	)
+	dbus? (
+		sys-apps/dbus
 	)
 	embree? (
-		>=media-libs/embree-3.13.4:=\
+		>=media-libs/embree-4.1.0:=\
 [-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
 cpu_flags_x86_sse4_2?,\
 cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tbb?]
-		<media-libs/embree-4
+		<media-libs/embree-5
 	)
 	ffmpeg? (
-		<media-video/ffmpeg-6:=\
+		<media-video/ffmpeg-7:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
 		>=media-video/ffmpeg-4:=\
 [encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
@@ -651,51 +686,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	llvm? (
 		$(gen_llvm_depends)
 	)
-	llvm-11? (
-		|| (
-			~media-libs/mesa-20.2.3[X?]
-			~media-libs/mesa-20.2.4[X?]
-			~media-libs/mesa-20.2.5[X?]
-			~media-libs/mesa-20.2.6[X?]
-			~media-libs/mesa-20.3.0[X?]
-			~media-libs/mesa-20.3.1[X?]
-			~media-libs/mesa-20.3.2[X?]
-			~media-libs/mesa-20.3.3[X?]
-			~media-libs/mesa-20.3.4[X?]
-			~media-libs/mesa-20.3.5[X?]
-			~media-libs/mesa-21.0.0[X?]
-			~media-libs/mesa-21.0.1[X?]
-			~media-libs/mesa-21.0.2[X?]
-			~media-libs/mesa-21.0.3[X?]
-			~media-libs/mesa-21.1.0[X?]
-			~media-libs/mesa-21.1.1[X?]
-			~media-libs/mesa-21.1.2[X?]
-			~media-libs/mesa-21.1.3[X?]
-			~media-libs/mesa-21.1.4[X?]
-			~media-libs/mesa-21.1.5[X?]
-			~media-libs/mesa-21.1.6[X?]
-			~media-libs/mesa-21.1.7[X?]
-			~media-libs/mesa-21.1.8[X?]
-			~media-libs/mesa-21.2.0[X?]
-			~media-libs/mesa-21.2.1[X?]
-			~media-libs/mesa-21.2.2[X?]
-			~media-libs/mesa-21.2.5[X?]
-			~media-libs/mesa-21.2.6[X?]
-			~media-libs/mesa-21.3.0[X?]
-			~media-libs/mesa-21.3.1[X?]
-			~media-libs/mesa-21.3.2[X?]
-			~media-libs/mesa-21.3.3[X?]
-			~media-libs/mesa-21.3.4[X?]
-			~media-libs/mesa-21.3.5[X?]
-			~media-libs/mesa-21.3.6[X?]
-			~media-libs/mesa-21.3.7[X?]
-			~media-libs/mesa-21.3.8[X?]
-			~media-libs/mesa-22.0.0[X?]
-			~media-libs/mesa-22.0.1[X?]
-			~media-libs/mesa-22.0.2[X?]
-		)
-		sys-libs/libomp:11
-	)
 	llvm-12? (
 		|| (
 			~media-libs/mesa-21.1.0[X?]
@@ -716,14 +706,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-21.3.1[X?]
 			~media-libs/mesa-21.3.2[X?]
 			~media-libs/mesa-21.3.3[X?]
-			~media-libs/mesa-21.3.5[X?]
 			~media-libs/mesa-21.3.4[X?]
+			~media-libs/mesa-21.3.5[X?]
 			~media-libs/mesa-21.3.6[X?]
 			~media-libs/mesa-21.3.7[X?]
 			~media-libs/mesa-21.3.8[X?]
 			~media-libs/mesa-22.0.0[X?]
 			~media-libs/mesa-22.0.2[X?]
-			~media-libs/mesa-22.0.1[X?]
 			~media-libs/mesa-22.0.3[X?]
 			~media-libs/mesa-22.0.4[X?]
 			~media-libs/mesa-22.0.5[X?]
@@ -742,13 +731,12 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-21.3.1[X?]
 			~media-libs/mesa-21.3.2[X?]
 			~media-libs/mesa-21.3.3[X?]
-			~media-libs/mesa-21.3.5[X?]
 			~media-libs/mesa-21.3.4[X?]
+			~media-libs/mesa-21.3.5[X?]
 			~media-libs/mesa-21.3.6[X?]
 			~media-libs/mesa-21.3.7[X?]
 			~media-libs/mesa-21.3.8[X?]
 			~media-libs/mesa-22.0.0[X?]
-			~media-libs/mesa-22.0.1[X?]
 			~media-libs/mesa-22.0.2[X?]
 			~media-libs/mesa-22.0.3[X?]
 			~media-libs/mesa-22.0.4[X?]
@@ -756,8 +744,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.1.0[X?]
 			~media-libs/mesa-22.1.1[X?]
 			~media-libs/mesa-22.1.2[X?]
-			~media-libs/mesa-22.1.3[X?]
-			~media-libs/mesa-22.1.3[X?]
 			~media-libs/mesa-22.1.5[X?]
 			~media-libs/mesa-22.1.6[X?]
 			~media-libs/mesa-22.1.7[X?]
@@ -779,7 +765,6 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			~media-libs/mesa-22.1.0[X?]
 			~media-libs/mesa-22.1.1[X?]
 			~media-libs/mesa-22.1.2[X?]
-			~media-libs/mesa-22.1.3[X?]
 			~media-libs/mesa-22.1.5[X?]
 			~media-libs/mesa-22.1.6[X?]
 			~media-libs/mesa-22.1.7[X?]
@@ -795,8 +780,29 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		)
 		sys-libs/libomp:14
 	)
+	llvm-15? (
+		|| (
+			~media-libs/mesa-22.2.0[X?]
+			~media-libs/mesa-22.2.1[X?]
+			~media-libs/mesa-22.2.2[X?]
+			~media-libs/mesa-22.2.3[X?]
+			~media-libs/mesa-22.2.5[X?]
+			~media-libs/mesa-22.3.1[X?]
+			~media-libs/mesa-22.3.2[X?]
+			~media-libs/mesa-22.3.3[X?]
+			~media-libs/mesa-22.3.6[X?]
+			~media-libs/mesa-22.3.5[X?]
+			 ~media-libs/mesa-22.3.7[X?]
+			=media-libs/mesa-22.3*[X?]
+			=media-libs/mesa-9999[X?]
+		)
+		sys-libs/libomp:15
+	)
+	materialx? (
+		media-libs/materialx[${PYTHON_SINGLE_USEDEP},python]
+	)
 	ndof? (
-		>=dev-libs/libspnav-0.2.3
+		>=dev-libs/libspnav-1.1
 		app-misc/spacenavd
 	)
 	nls? (
@@ -828,13 +834,13 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		)
 	)
 	opensubdiv? (
-		>=media-libs/opensubdiv-3.4.4:=[cuda=,opencl=,opengl(+),tbb?]
+		>=media-libs/opensubdiv-3.5.0:=[cuda=,opencl=,opengl(+),tbb?]
 	)
 	openvdb? (
 		$(gen_openvdb_depends)
 		>=dev-libs/c-blosc-1.21.1[zlib]
 		nanovdb? (
-			~media-gfx/nanovdb-32.3.3_p20211029:0=
+			~media-gfx/nanovdb-32.4.2_p20221027:0=
 		)
 	)
 	openxr? (
@@ -857,9 +863,12 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	release? (
 		>=media-libs/freetype-${FREETYPE_PV}[brotli,bzip2,harfbuzz,png]
+		media-libs/harfbuzz[truetype]
 	)
 	rocm? (
 		|| (
+			~dev-util/hip-5.4.3:5.4[rocm]
+			~dev-util/hip-5.3.3:5.3[rocm]
 			~dev-util/hip-5.2.3:5.2[rocm]
 			~dev-util/hip-5.1.3:5.1[rocm]
 		)
@@ -888,14 +897,19 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		>=media-libs/tiff-4.5.1:0[jpeg,zlib]
 	)
 	usd? (
-		<media-libs/openusd-23[imaging,monolithic]
-		>=media-libs/openusd-22.03[imaging,monolithic]
+		<media-libs/openusd-24[imaging,monolithic,opengl,openvdb,openimageio,python]
+		>=media-libs/openusd-23.05[imaging,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
 		dev-util/valgrind
 	)
+	wayland? (
+		>=dev-libs/wayland-1.22.0
+		>=dev-libs/wayland-protocols-1.31
+		>=gui-libs/libdecor-0.1.0
+	)
 	webp? (
-		>=media-libs/libwebp-1.2.2
+		>=media-libs/libwebp-1.3.2
 	)
 	X? (
 		x11-libs/libX11
@@ -915,13 +929,18 @@ DEPEND+="
 	${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3=
 "
+# Missing SSE2NEON
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
-		>=dev-python/cython-0.29.26[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
+		>=dev-python/autopep8-1.6.0[${PYTHON_USEDEP}]
+		>=dev-python/pycodestyle-2.8.0[${PYTHON_USEDEP}]
 	')
-	>=dev-cpp/yaml-cpp-0.6.3
+	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-util/cmake-3.10
+	>=dev-util/meson-0.63.0
+	>=dev-util/vulkan-headers-1.2.198
 	dev-util/patchelf
 	virtual/pkgconfig
 	asan? (
@@ -960,17 +979,16 @@ BDEPEND+="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
-	"${FILESDIR}/${PN}-3.0.0-install-paths-change.patch"
-	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-python.patch"
+	"${FILESDIR}/${PN}-4.0.2-install-paths-change.patch"
+	"${FILESDIR}/${PN}-3.5.1-openusd-21.11-python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
 	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
 #	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
-	"${FILESDIR}/${PN}-3.3.7-tbb-rpath.patch"
-	"${FILESDIR}/${PN}-3.3.8-hip-flags.patch"
+	"${FILESDIR}/${PN}-3.5.1-tbb-rpath.patch"
+	"${FILESDIR}/${PN}-3.6.0-hip-flags.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -1015,8 +1033,6 @@ eerror
 eerror "(1) Use media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay"
 eerror "instead if it exists."
 eerror "(2) Disable the osl USE flag."
-eerror "(3) Use >=${CATEGORY}/${PN}-3.6.0 with"
-eerror "media-libs/mesa[llvm,llvm-${llvm_slot}]::oiledmachine-overlay."
 eerror
 				die
 			fi
@@ -1050,9 +1066,10 @@ _blender_pkg_setup() {
 	# TODO: ldd oiio for webp and warn user if missing
 	# Needs OpenCL 1.2 (GCN 2)
 	check_multiple_llvm_versions_in_native_libs
-einfo
-einfo "This version a Long Term Support (LTS) version till Sep 2024."
-einfo
+ewarn
+ewarn "This version is not a Long Term Support (LTS) version."
+ewarn "Consider using 2.93.x or 3.3.x series instead."
+ewarn
 
 	local found=0
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -1081,11 +1098,19 @@ ewarn
 	fi
 
 	if use rocm ; then
-		if use llvm-14 && has_version "=dev-util/hip-5.2" ; then
+	# Upstream uses hip 5.5.0 external_libs.cmake which uses llvm 16.
+	# It is not possible because of version_mex is 16 in install_linux_packages.py.
+	# It will cause an emerge conflict.
+	# It may also trigger a multiple LLVMs loaded bug.
+		if use llvm-15 && has_version "=dev-util/hip-5.4" ; then
+			export LLVM_MAX_SLOT=15
+		elif use llvm-15 && has_version "=dev-util/hip-5.3" ; then
+			export LLVM_MAX_SLOT=15
+		elif use llvm-14 && has_version "=dev-util/hip-5.2" ; then
 			export LLVM_MAX_SLOT=14
 		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
 			export LLVM_MAX_SLOT=14
-		elif use llvm-13 || use llvm-12 || use llvm-11 ; then
+		elif use llvm-13 || use llvm-12 ; then
 eerror
 eerror "ROCm < 5.1 is not supported on the distro."
 eerror "Disable the rocm USE flag."
@@ -1095,6 +1120,7 @@ eerror
 eerror
 eerror "No matching llvm/hip pair."
 eerror
+eerror "llvm-15 can only pair with hip 5.3.3, 5.4.3"
 eerror "llvm-14 can only pair with hip 5.1.3, 5.2.3"
 eerror
 			die
@@ -1119,7 +1145,7 @@ eerror
 
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-3.2.2-findtbb2.patch"
-	eapply "${FILESDIR}/blender-3.2.0-parent-datafiles-dir-change.patch"
+	eapply "${FILESDIR}/blender-4.0.2-parent-datafiles-dir-change.patch"
 	if \
 		( \
 			has_version "<dev-cpp/tbb-2021:0" \
@@ -1139,7 +1165,7 @@ _src_prepare_patches() {
 		has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" && \
 		has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" && \
 		use usd ; then
-		eapply "${FILESDIR}/blender-2.93.10-tbb2-usd.patch"
+		eapply "${FILESDIR}/blender-3.5.1-tbb2-usd.patch"
 	elif use usd ;then
 ewarn
 ewarn "Untested tbb configuration.  It is assumed"
@@ -1153,6 +1179,21 @@ ewarn
 		sed -e "s|/opt/rocm/hip/lib/libamdhip64.so|${EPREFIX}${EROCM_PATH}/$(get_libdir)/libamdhip64.so|" \
 			-i extern/hipew/src/hipew.c \
 			|| die
+
+		local rocm_version=""
+		if use llvm-15 && has_version "=dev-util/hip-5.4" ; then
+			rocm_version="5.4.3"
+		elif use llvm-15 && has_version "=dev-util/hip-5.3" ; then
+			rocm_version="5.3.3"
+		elif use llvm-14 && has_version "=dev-util/hip-5.2" ; then
+			rocm_version="5.2.3"
+		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
+			rocm_version="5.1.3"
+		fi
+
+		sed -i "s|HIP 5.5.0|HIP ${rocm_version}|g" \
+			-i intern/cycles/cmake/external_libs.cmake \
+			|| die
 	fi
 }
 
@@ -1160,6 +1201,13 @@ _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"
 	cd "${CMAKE_USE_DIR}" || die
+
+	if has_version "dev-libs/wayland" && ! use wayland ; then
+eerror
+eerror "You must enable the wayland USE flag or uninstall wayland."
+eerror
+		die
+	fi
 
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
@@ -1205,20 +1253,22 @@ _src_configure() {
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES_HIP_BINARIES=$(usex rocm)
+		-DWITH_CYCLES_DEVICE_HIPRT=NO # No package yet
+		-DWITH_CYCLES_PATH_GUIDING=$(usex cycles-path-guiding)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_DRACO=$(usex draco)
-		-DWITH_GHOST_WAYLAND_DYNLOAD=OFF
+		-DWITH_GHOST_WAYLAND_DBUS=$(usex dbus)
+		-DWITH_GHOST_WAYLAND_DYNLOAD=$(usex wayland)
 		-DWITH_GMP=$(usex gmp)
+		-DWITH_HYDRA=$(usex hydra)
 		-DWITH_IK_SOLVER=ON
 		-DWITH_INPUT_IME=OFF
-		-DWITH_IMAGE_DDS=$(usex dds)
-		-DWITH_IMAGE_HDR=$(usex hdr)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
-		-DWITH_IMAGE_TIFF=$(usex tiff)
 		-DWITH_INTERNATIONAL=$(usex nls)
 		-DWITH_HARU=$(usex pdf)
 		-DWITH_LLVM=$(usex llvm)
+		-DWITH_MATERIALX=$(usex materialx)
 		-DWITH_MEM_JEMALLOC=$(usex jemalloc)
 		-DWITH_MEM_VALGRIND=$(usex valgrind)
 		-DWITH_MOD_FLUID=$(usex elbeem)
@@ -1277,6 +1327,12 @@ einfo "CUDA_TARGETS:  ${targets}"
 einfo "AMDGPU_TARGETS:  ${targets}"
 	fi
 
+	local llvm_slot
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		use "llvm-${s}" && llvm_slot=${s}
+	done
+
 	if use openmp && tc-is-clang ; then
 		local llvm_slot
 		local s
@@ -1328,6 +1384,12 @@ eerror
 		)
 	fi
 
+	if use materialx ; then
+		mycmakeargs+=(
+			-DMaterialX_DIR:PATH="${ESYSROOT}/usr/$(get_libdir)/materialx/lib/cmake/MaterialX"
+		)
+	fi
+
 	if use usd ; then
 		blender_configure_openusd
 	fi
@@ -1353,12 +1415,11 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.3.14/build_files/cmake/config
+# https://github.com/blender/blender/tree/v4.0.2/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES=$(usex cycles)
-			-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
 			-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 			-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 			-DWITH_CYCLES_DEVICE_ONEAPI=$(usex cycles-device-oneapi)

@@ -29,8 +29,8 @@
 
     oiledmachine-overlay notes:
 
-    3.3.x         - LTS (Long Term Support)
-    3.4 and later - Stable
+    3.6.x         - LTS (Long Term Support)
+    4.0 and later - Stable
 
     Information about Cycles network rendering can be found at:
     https://wiki.blender.org/wiki/Source/Render/Cycles/Network_Render
@@ -284,6 +284,9 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="hip">
       Adds support for primarily AMD GPUs via the HIP render device with the
       Cycles renderer.
+    </flag>
+    <flag name="hydra">
+      Use USD hydra for rendering and for a performance benefit.
     </flag>
     <flag name="joystick">
       Adds support for a joystick through SDL used for the Blender Game Engine

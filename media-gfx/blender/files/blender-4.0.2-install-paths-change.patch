@@ -1,0 +1,21 @@
+diff -urp blender-4.0.2.orig/source/creator/CMakeLists.txt blender-4.0.2/source/creator/CMakeLists.txt
+--- blender-4.0.2.orig/source/creator/CMakeLists.txt	2023-12-01 16:44:47.000000000 -0800
++++ blender-4.0.2/source/creator/CMakeLists.txt	2023-12-25 23:17:09.440804660 -0800
+@@ -685,7 +685,7 @@ if(UNIX AND NOT APPLE)
+     set(BLENDER_BIN "bin/blender")
+     install(
+       TARGETS blender
+-      DESTINATION "./bin"
++      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+     )
+ 
+     # Misc files.
+@@ -708,7 +708,7 @@ if(UNIX AND NOT APPLE)
+     if(WITH_BLENDER_THUMBNAILER)
+       install(
+         TARGETS blender-thumbnailer
+-        DESTINATION "./bin"
++        DESTINATION "${CMAKE_INSTALL_BINDIR}"
+       )
+     endif()
+   endif()

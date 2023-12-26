@@ -1,0 +1,154 @@
+diff -urp blender-4.0.2.orig/build_files/cmake/macros.cmake blender-4.0.2/build_files/cmake/macros.cmake
+--- blender-4.0.2.orig/build_files/cmake/macros.cmake	2023-10-30 17:42:11.000000000 -0700
++++ blender-4.0.2/build_files/cmake/macros.cmake	2023-12-25 23:21:32.976801628 -0800
+@@ -984,6 +984,7 @@ function(get_blender_version)
+   # - BLENDER_VERSION_MINOR
+   # - BLENDER_VERSION_PATCH
+   # - BLENDER_VERSION_CYCLE (alpha, beta, rc, release)
++  # - BLENDER_VERSION_TAG (_filmic) to indicate type of mod
+ 
+   # So CMAKE depends on `BKE_blender.h`, beware of infinite-loops!
+   configure_file(
+@@ -1008,6 +1009,10 @@ function(get_blender_version)
+     REGEX REPLACE ".*#define[ \t]+BLENDER_VERSION_CYCLE[ \t]+([a-z]+).*" "\\1"
+     _out_version_cycle "${_contents}"
+   )
++  string(
++    REGEX REPLACE ".*#define[ \t]+BLENDER_VERSION_TAG[ \t]+([a-z_]*).*" "\\1"
++    _out_version_tag "${_contents}"
++  )
+ 
+   if(NOT ${_out_version} MATCHES "[0-9]+")
+     message(FATAL_ERROR "Version parsing failed for BLENDER_VERSION")
+@@ -1021,6 +1026,10 @@ function(get_blender_version)
+     message(FATAL_ERROR "Version parsing failed for BLENDER_VERSION_CYCLE")
+   endif()
+ 
++  #if(NOT ${_out_version_tag} MATCHES "[a-z_]+")
++  #	message(FATAL_ERROR "Version parsing failed for BLENDER_VERSION_TAG")
++  #endif()
++
+   math(EXPR _out_version_major "${_out_version} / 100")
+   math(EXPR _out_version_minor "${_out_version} % 100")
+ 
+@@ -1030,6 +1039,7 @@ function(get_blender_version)
+   set(BLENDER_VERSION_MINOR "${_out_version_minor}" PARENT_SCOPE)
+   set(BLENDER_VERSION_PATCH "${_out_version_patch}" PARENT_SCOPE)
+   set(BLENDER_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
++  set(BLENDER_VERSION_TAG "${_out_version_tag}" PARENT_SCOPE)
+ 
+ endfunction()
+ 
+Only in blender-4.0.2/build_files/cmake: macros.cmake.orig
+Only in blender-4.0.2/build_files/cmake: macros.cmake.rej
+diff -urp blender-4.0.2.orig/source/blender/blenkernel/BKE_blender_version.h blender-4.0.2/source/blender/blenkernel/BKE_blender_version.h
+--- blender-4.0.2.orig/source/blender/blenkernel/BKE_blender_version.h	2023-12-05 06:05:56.000000000 -0800
++++ blender-4.0.2/source/blender/blenkernel/BKE_blender_version.h	2023-12-25 23:20:30.356802349 -0800
+@@ -26,6 +26,8 @@ extern "C" {
+ #define BLENDER_VERSION_PATCH 2
+ /** Blender release cycle stage: alpha/beta/rc/release. */
+ #define BLENDER_VERSION_CYCLE release
++/* tag or flavor */
++#define BLENDER_VERSION_TAG   
+ 
+ /* Blender file format version. */
+ #define BLENDER_FILE_VERSION BLENDER_VERSION
+Only in blender-4.0.2/source/blender/blenkernel: BKE_blender_version.h.orig
+diff -urp blender-4.0.2.orig/source/blender/blenkernel/intern/appdir.cc blender-4.0.2/source/blender/blenkernel/intern/appdir.cc
+--- blender-4.0.2.orig/source/blender/blenkernel/intern/appdir.cc	2023-10-30 17:42:12.000000000 -0700
++++ blender-4.0.2/source/blender/blenkernel/intern/appdir.cc	2023-12-25 23:23:56.768799974 -0800
+@@ -113,9 +113,9 @@ void BKE_appdir_exit()
+  */
+ static char *blender_version_decimal(const int version)
+ {
+-  static char version_str[5];
++  static char version_str[6];
+   BLI_assert(version < 1000);
+-  SNPRINTF(version_str, "%d.%d", version / 100, version % 100);
++  SNPRINTF(version_str, "%d.%d.%s%s", version / 100, version % 100, STRINGIFY(BLENDER_VERSION_PATCH), STRINGIFY(BLENDER_VERSION_TAG));
+   return version_str;
+ }
+ 
+diff -urp blender-4.0.2.orig/source/creator/CMakeLists.txt blender-4.0.2/source/creator/CMakeLists.txt
+--- blender-4.0.2.orig/source/creator/CMakeLists.txt	2023-12-25 23:20:14.620802530 -0800
++++ blender-4.0.2/source/creator/CMakeLists.txt	2023-12-25 23:22:43.552800817 -0800
+@@ -364,20 +364,20 @@ if(UNIX AND NOT APPLE)
+   if(WITH_PYTHON_MODULE)
+     if(WITH_INSTALL_PORTABLE)
+       set(TARGETDIR_BPY "./bpy")
+-      set(TARGETDIR_VER "./bpy/${BLENDER_VERSION}")
++      set(TARGETDIR_VER "./bpy/${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}")
+       set(TARGETDIR_LIB "./bpy/lib")
+     else()
+       set(TARGETDIR_BPY ${PYTHON_SITE_PACKAGES}/bpy)
+-      set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/bpy/${BLENDER_VERSION})
++      set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/bpy/${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG})
+       set(TARGETDIR_LIB ${PYTHON_SITE_PACKAGES}/bpy/lib)
+     endif()
+   else()
+     if(WITH_INSTALL_PORTABLE)
+-      set(TARGETDIR_VER "./${BLENDER_VERSION}")
++      set(TARGETDIR_VER "./${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}")
+       set(TARGETDIR_TEXT ".")
+       set(TARGETDIR_LIB "./lib")
+     else()
+-      set(TARGETDIR_VER "./share/blender/${BLENDER_VERSION}")
++      set(TARGETDIR_VER "./share/blender/${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}")
+       set(TARGETDIR_TEXT "./share/doc/blender")
+     endif()
+   endif()
+@@ -1132,7 +1132,7 @@ elseif(WIN32)
+ 
+       install(
+         DIRECTORY ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/lib
+-        DESTINATION ${BLENDER_VERSION}/python/
++        DESTINATION ${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}/python/
+         CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+         PATTERN ".svn" EXCLUDE
+         PATTERN "*_d.*" EXCLUDE                 # * debug libraries *
+@@ -1143,7 +1143,7 @@ elseif(WIN32)
+ 
+       install(
+         DIRECTORY ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/lib
+-        DESTINATION ${BLENDER_VERSION}/python/
++        DESTINATION ${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}/python/
+         CONFIGURATIONS Debug
+         PATTERN ".svn" EXCLUDE
+         PATTERN "__pycache__" EXCLUDE           # * any cache *
+@@ -1153,7 +1153,7 @@ elseif(WIN32)
+ 
+       install(
+         DIRECTORY ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/DLLs
+-        DESTINATION ${BLENDER_VERSION}/python
++        DESTINATION ${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}/python
+         CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+         PATTERN "*.pdb" EXCLUDE
+         PATTERN "*_d.*" EXCLUDE
+@@ -1161,7 +1161,7 @@ elseif(WIN32)
+ 
+       install(
+         DIRECTORY ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/DLLs
+-        DESTINATION ${BLENDER_VERSION}/python
++        DESTINATION ${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}/python
+         CONFIGURATIONS Debug
+       )
+ 
+@@ -1169,14 +1169,14 @@ elseif(WIN32)
+         FILES
+           ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}.dll
+           ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python.exe
+-        DESTINATION ${BLENDER_VERSION}/python/bin
++        DESTINATION ${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}/python/bin
+         CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+       )
+       install(
+         FILES
+           ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python${_PYTHON_VERSION_NO_DOTS}_d.dll
+           ${LIBDIR}/python/${_PYTHON_VERSION_NO_DOTS}/bin/python_d.exe
+-        DESTINATION ${BLENDER_VERSION}/python/bin
++        DESTINATION ${BLENDER_VERSION}.${BLENDER_VERSION_PATCH}${BLENDER_VERSION_TAG}/python/bin
+         CONFIGURATIONS Debug
+       )
+ 
+Only in blender-4.0.2/source/creator: CMakeLists.txt.orig
+Only in blender-4.0.2/source/creator: CMakeLists.txt.rej
