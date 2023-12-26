@@ -768,7 +768,7 @@ eerror
 	-e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
 		setup.py || die
 
-	DISTUTILS_ARGS=(
+	local DISTUTILS_ARGS=(
 		$(use_with avif)
 		$(use_with brotli)
 		$(use_with client)
