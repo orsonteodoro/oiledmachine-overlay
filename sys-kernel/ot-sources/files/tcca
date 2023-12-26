@@ -145,8 +145,8 @@ echo
 echo "General cases"
 echo
 echo "  high-bdp - For high BDP networks"
-echo "  inter-dc - For inside datacenters"
-echo "  intra-dc - For between datacenters"
+echo "  inter-dc - For between datacenters"
+echo "  intra-dc - For inside datacenters"
 echo "  satellite - For satellite connections"
 echo "  wireless - For wireless connections"
 echo

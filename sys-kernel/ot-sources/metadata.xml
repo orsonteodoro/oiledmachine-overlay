@@ -3976,9 +3976,14 @@ unset OT_KERNEL_PRIVATE_KEY
       package.
     </flag>
     <flag name="rt">
-      Patches the kernel with the PREEMPT_RT patch which tries to minimize
-      non-preemptible parts of the kernel.  The rt patchset is used for music
-      production and robotics and other realtime packages.
+      Applies the the PREEMPT_RT patchset which makes the kernel program fully
+      preemptable (aka pausable everywhere) so that realtime threads can benefit
+      as in maybe reduced lag time between kernel-user space context switches.
+      The patchset trades off lower latency at the expense of throughput.
+      Kernel realtime work profiles supports
+
+        primary uses:  music production, audio broadcasting
+      secondary uses:  robotics
 
       SECURITY:  Never give untrusted apps realtime access.  
     </flag>
