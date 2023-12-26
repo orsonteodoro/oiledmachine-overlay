@@ -62,7 +62,7 @@ BDEPEND+="
 	)
 "
 PDEPEND+="
-	x11-wm/xpra
+	>=x11-wm/xpra-5
 "
 SRC_URI="
 https://github.com/Xpra-org/xpra-html5/archive/refs/tags/v${PV}.tar.gz
