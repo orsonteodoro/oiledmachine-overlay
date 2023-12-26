@@ -625,11 +625,11 @@ BDEPEND+="
 RESTRICT="mirror"
 S="${WORKDIR}/${P}"
 PATCHES=(
-	"${FILESDIR}/${PN}-3.0.2_ignore-gentoo-no-compile.patch"
+	"${FILESDIR}/${PN}-5.0.4_ignore-gentoo-no-compile.patch"
 	"${FILESDIR}/${PN}-4.3-openrc-init-fix-v3.patch"
 	"${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
-	"${FILESDIR}/${PN}-4.2-udev-path.patch"
-	"${FILESDIR}/${PN}-4.4.3-translate-flags.patch"
+	"${FILESDIR}/${PN}-5.0.4-udev-path.patch"
+	"${FILESDIR}/${PN}-5.0.4-translate-flags.patch"
 )
 
 check_cython() {
@@ -775,7 +775,7 @@ eerror
 	-e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
 		setup.py || die
 
-	mydistutilsargs=(
+	DISTUTILS_ARGS=(
 		$(use_with audio)
 		$(use_with avif)
 		$(use_with brotli)
@@ -839,22 +839,22 @@ eerror
 	)
 
 	if use jpeg || use png || use tiff || use webp || use test ; then
-		mydistutilsargs+=(
+		DISTUTILS_ARGS+=(
 			--with-pillow
 		)
 	else
-		mydistutilsargs+=(
+		DISTUTILS_ARGS+=(
 			--without-pillow
 		)
 	fi
 
 	if use gtk3 ; then
-		mydistutilsargs+=(
+		DISTUTILS_ARGS+=(
 			--with-gtk3
 			--with-gtk_x11
 		)
 	else
-		mydistutilsargs+=(
+		DISTUTILS_ARGS+=(
 			--without-gtk3
 			--without-gtk_x11
 		)

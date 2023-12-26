@@ -768,7 +768,7 @@ eerror
 	-e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
 		setup.py || die
 
-	mydistutilsargs=(
+	DISTUTILS_ARGS=(
 		$(use_with avif)
 		$(use_with brotli)
 		$(use_with client)
@@ -832,22 +832,22 @@ eerror
 	)
 
 	if use jpeg || use png || use tiff || use webp || use test ; then
-		mydistutilsargs+=(
+		DISTUTILS_ARGS+=(
 			--with-pillow
 		)
 	else
-		mydistutilsargs+=(
+		DISTUTILS_ARGS+=(
 			--without-pillow
 		)
 	fi
 
 	if use gtk3 ; then
-		mydistutilsargs+=(
+		DISTUTILS_ARGS+=(
 			--with-gtk3
 			--with-gtk_x11
 		)
 	else
-		mydistutilsargs+=(
+		DISTUTILS_ARGS+=(
 			--without-gtk3
 			--without-gtk_x11
 		)

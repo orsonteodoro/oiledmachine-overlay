@@ -1,0 +1,14 @@
+diff -urp xpra-5.0.4.orig/setup.py xpra-5.0.4/setup.py
+--- xpra-5.0.4.orig/setup.py	2023-12-26 00:02:56.932773056 -0800
++++ xpra-5.0.4/setup.py	2023-12-26 00:03:32.212772650 -0800
+@@ -663,7 +663,7 @@ if modules_ENABLED:
+ 
+ def add_cython_ext(*args, **kwargs):
+     if "--no-compile" in sys.argv and not ("build" in sys.argv and "install" in sys.argv):
+-        return
++        pass
+     if not cython_ENABLED:
+         raise ValueError(f"cannot build {args}: cython compilation is disabled")
+     if cython_tracing_ENABLED:
+Only in xpra-5.0.4: setup.py.orig
+Only in xpra-5.0.4: setup.py.rej
