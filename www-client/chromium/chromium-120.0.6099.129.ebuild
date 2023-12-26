@@ -92,9 +92,9 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1698206754" # Cached.  Use below to obtain this. \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 # Change also CR_CLANG_SLOT_OFFICIAL
 
-FFMPEG_LIBAVUTIL_SOVER="58.14.100" # third_party/ffmpeg/libavutil/version.h
-FFMPEG_LIBAVCODEC_SOVER="60.22.100" # third_party/ffmpeg/libavcodec/version*.h
-FFMPEG_LIBAVFORMAT_SOVER="60.10.100" # third_party/ffmpeg/libavformat/version*.h
+FFMPEG_LIBAVUTIL_SOVER="58.27.100" # third_party/ffmpeg/libavutil/version.h
+FFMPEG_LIBAVCODEC_SOVER="60.28.100" # third_party/ffmpeg/libavcodec/version*.h
+FFMPEG_LIBAVFORMAT_SOVER="60.14.100" # third_party/ffmpeg/libavformat/version*.h
 FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
 FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
 GCC_PV="10.2.1" # Minimum
