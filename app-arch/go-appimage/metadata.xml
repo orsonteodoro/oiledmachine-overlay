@@ -48,7 +48,8 @@
 
     Usage example
 
-      The watch feature seems to not work.  Lets walk through with LMMS's Appimage.
+      Lets walk through with the LMMS's Appimage.
+
       1. Run `appimaged` in the non-root account to install and run the
          systemd user service.
       2. Grab https://github.com/LMMS/lmms/releases/tag/v1.2.2 from GH from the
