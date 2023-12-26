@@ -259,6 +259,20 @@ ebolt_src_configure() {
 	fi
 }
 
+
+# @FUNCTION: _ebolt_get_build_time
+# @DESCRIPTION:
+# Gets the build time
+_ebolt_get_build_time() {
+# Same as portageq metadata "/${BROOT}" "installed" "sys-devel/llvm-${raw_pv}" "BUILD_TIME"
+	local f="/${BROOT}/var/db/pkg/sys-devel/llvm-${raw_pv}/BUILD_TIME"
+	if [[ -e "${f}" ]] ; then
+		cat "${f}"
+	else
+		echo "0"
+	fi
+}
+
 # @FUNCTION: _ebolt_meets_bolt_requirements
 # @INTERNAL
 # @DESCRIPTION:
@@ -297,7 +311,7 @@ ewarn
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live with unstable ABI.
-			local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/llvm-${raw_pv}" "BUILD_TIME")
+			local build_timestamp=$(_ebolt_get_build_time)
 			bolt_slot="${raw_pv}-${build_timestamp}"
 		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 			# Live snapshot with unstable ABI.
@@ -561,7 +575,7 @@ ebolt_src_install() {
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live with unstable ABI.
-			local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/llvm-${raw_pv}" "BUILD_TIME")
+			local build_timestamp=$(_ebolt_get_build_time)
 			bolt_slot="${raw_pv}-${build_timestamp}"
 		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 			# Live snapshot with unstable ABI.

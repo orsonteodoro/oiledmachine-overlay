@@ -267,6 +267,19 @@ epgo_src_configure() {
 	_epgo_configure
 }
 
+# @FUNCTION: _epgo_get_build_time
+# @DESCRIPTION:
+# Gets the build time
+_epgo_get_build_time() {
+# Same as portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME"
+	local f="/${BROOT}/var/db/pkg/sys-devel/gcc-${raw_pv}/BUILD_TIME"
+	if [[ -e "${f}" ]] ; then
+		cat "${f}"
+	else
+		echo "0"
+	fi
+}
+
 # @FUNCTION: _epgo_meets_pgo_requirements
 # @INTERNAL
 # @DESCRIPTION:
@@ -302,7 +315,7 @@ ewarn
 			local pgo_slot=$(ver_cut 1-2 "${compiler_pv}") # For stable ABI.
 			if [[ "${raw_pv}" =~ "9999" ]] ; then
 				# Live unstable ABI.
-				local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
+				local build_timestamp=$(_epgo_get_build_time)
 				pgo_slot="${raw_pv}-${build_timestamp}"
 			elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 				# Live snapshot with unstable ABI.
@@ -417,7 +430,7 @@ epgo_src_install() {
 			local pgo_slot=$(ver_cut 1-2 "${compiler_pv}") # For stable ABI.
 			if [[ "${raw_pv}" =~ "9999" ]] ; then
 				# Live unstable ABI.
-				local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
+				local build_timestamp=$(_epgo_get_build_time)
 				pgo_slot="${raw_pv}-${build_timestamp}"
 			elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 				# Live snapshot with unstable ABI.

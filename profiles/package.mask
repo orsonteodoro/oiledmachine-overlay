@@ -46,6 +46,11 @@ media-gfx/upscayl # Electron 21.2.2 with Chromium 106.0.5249.168 parts
 net-im/caprine # Electron 21.3.3 with Chromium 106.0.5249.199 parts
 www-misc/instatron # Electron 18.3.15 with Chromium 100.0.4896.160 parts
 
+# These ebuilds are updated rarely in this overlay.
+# I personally use the -bin versions due to limited time.
+www-client/chromium
+www-client/firefox
+
 # Masked for ebuild quality control reasons
 #-------------------------------------------------------------------------------
 
@@ -119,4 +124,3 @@ www-misc/rainbowstream
 
 # Old dependencies
 <dev-util/ycmd-45
-

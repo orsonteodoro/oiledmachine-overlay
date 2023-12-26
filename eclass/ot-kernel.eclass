@@ -7503,6 +7503,22 @@ einfo "debugfs disabled success"
 	fi
 }
 
+# @FUNCTION: _ot-kernel_get_build_time
+# @DESCRIPTION:
+# Gets the build time
+_ot-kernel_get_build_time() {
+# Same as portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME"
+	local root="${1}"
+	local p="${2}"
+	local fn="${3}"
+	local f="/${BROOT}/var/db/pkg/sys-devel/gcc-${raw_pv}/BUILD_TIME"
+	if [[ -e "${f}" ]] ; then
+		cat "${f}"
+	else
+		echo "0"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_gcc
 # @DESCRIPTION:
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
@@ -7544,7 +7560,7 @@ _ot-kernel_set_kconfig_pgo_gcc() {
 		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live unstable ABI.
-			local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
+			local build_timestamp=$(_ot-kernel_get_build_time)
 			pgo_slot="${raw_pv}-${build_timestamp}"
 		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 			# Live snapshot with unstable ABI.
@@ -7585,7 +7601,7 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 		local pgo_slot=$(ver_cut 1-2 "${compiler_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live unstable ABI.
-			local build_timestamp=$(portageq metadata "/${BROOT}" "installed" "sys-devel/gcc-${raw_pv}" "BUILD_TIME")
+			local build_timestamp=$(_ot-kernel_get_build_time)
 			pgo_slot="${raw_pv}-${build_timestamp}"
 		elif [[ "${raw_pv}" =~ "_pre" ]] ; then
 			# Live snapshot with unstable ABI.
