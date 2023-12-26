@@ -185,7 +185,7 @@ python_test() {
 
 python_install() {
 	# https://github.com/numpy/numpy/issues/16005
-	local mydistutilsargs=( build_src )
+	local DISTUTILS_ARGS=( build_src )
 	distutils-r1_python_install ${NUMPY_FCONFIG}
 	python_optimize
 }
