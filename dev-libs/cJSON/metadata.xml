@@ -2,9 +2,17 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild originator -->
     <email>mattst88@gentoo.org</email>
     <name>Matt Turner</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Made changes for multilib support.
+
+  -->
   <upstream>
     <remote-id type="github">DaveGamble/cJSON</remote-id>
   </upstream>

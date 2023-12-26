@@ -1,17 +1,17 @@
-# Copyright 2021-2022 Gentoo Authors
+# Copyright 2021-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 inherit cmake-multilib
 
-DESCRIPTION="Ultralightweight JSON parser in ANSI C"
-HOMEPAGE="https://github.com/DaveGamble/cJSON"
 SRC_URI="https://github.com/DaveGamble/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
+DESCRIPTION="Ultralightweight JSON parser in ANSI C"
+HOMEPAGE="https://github.com/DaveGamble/cJSON"
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64 arm ~arm64 x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE="test"
 RESTRICT="!test? ( test )"
 
