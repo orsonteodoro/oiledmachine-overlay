@@ -184,6 +184,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     <flag name="jpeg">
       Enables JPEG support.
     </flag>
+    <flag name="ktx">
+      Enables KTX texture container support.
+    </flag>
     <flag name="lightmapper_cpu">
       Enables the CPU based lightmapper generator module.
     </flag>
@@ -220,6 +223,12 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
     </flag>
     <flag name="mono">
       Enables C# scripting support.
+    </flag>
+    <flag name="mp1">
+      Enables MP1 support.
+    </flag>
+    <flag name="mp2">
+      Enables MP2 support.
     </flag>
     <flag name="mp3">
       Enables MP3 support.
@@ -305,6 +314,9 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enable SVG vector image format support.
     </flag>
     <flag name="system-bullet">
+      Uses the system's external library instead of the internal version.
+    </flag>
+    <flag name="system-clipper2">
       Uses the system's external library instead of the internal version.
     </flag>
     <flag name="system-embree">
