@@ -3,9 +3,13 @@
 
 EAPI=8
 
+MY_P="SDL2-${PV}"
+
 inherit autotools flag-o-matic linux-info toolchain-funcs multilib-minimal
 
-MY_P="SDL2-${PV}"
+SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
+S="${WORKDIR}/${MY_P}"
+
 DESCRIPTION="Simple Direct Media Layer"
 HOMEPAGE="https://www.libsdl.org/"
 LICENSE_HIDAPI="
@@ -76,7 +80,13 @@ LICENSE="
 #   contain all rights reserved without mentioned terms or corresponding license
 #   and are transported with the tarball.
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
+RESTRICT="
+	!test? (
+		test
+	)
+	mirror
+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 ARM_CPU_FLAGS=(
 	-armv6-simd
@@ -250,6 +260,9 @@ DEPEND="
 	ibus? (
 		>=dev-libs/glib-2.72.1:2[${MULTILIB_USEDEP}]
 	)
+	test? (
+		x11-libs/libX11[${MULTILIB_USEDEP}]
+	)
 	vulkan? (
 		dev-util/vulkan-headers
 	)
@@ -274,13 +287,9 @@ MULTILIB_WRAPPED_HEADERS=(
 	/usr/include/SDL2/SDL_config.h
 	/usr/include/SDL2/SDL_platform.h
 )
-SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}/${PN}-2.0.16-static-libs.patch"
 )
-
-S="${WORKDIR}/${MY_P}"
-RESTRICT="mirror"
 
 pkg_setup() {
 	if use hidapi-hidraw ; then
@@ -303,6 +312,13 @@ src_prepare() {
 	# Unbundle some headers.
 	rm -r src/video/khronos || die
 	ln -s "${ESYSROOT}/usr/include" src/video/khronos || die
+
+	if ! use vulkan ; then
+		sed -i \
+			'/testvulkan$(EXE) \\/d' \
+			"test/Makefile.in" \
+			|| die
+	fi
 
 	# SDL seems to customize SDL_config.h.in to remove macros like
 	# PACKAGE_NAME. Add AT_NOEAUTOHEADER="yes" to prevent those macros from
@@ -388,6 +404,7 @@ multilib_src_configure() {
 		--disable-fusionsound-shared
 		--disable-jack-shared
 		--disable-kmsdrm-shared
+		--disable-libsamplerate-shared
 		--disable-nas-shared
 		--disable-pipewire-shared
 		--disable-pulseaudio-shared
@@ -409,6 +426,7 @@ multilib_src_configure() {
 		--enable-render
 		--enable-system-iconv
 		--enable-timers
+		ac_cv_header_libunwind_h=no
 	)
 
 	if use armv6-simd && use cpu_flags_arm_v6 ; then
@@ -454,25 +472,35 @@ multilib_src_configure() {
 
 	ECONF_SOURCE="${S}" \
 	econf "${myeconfargs[@]}"
-	if use test ; then
-		pushd test || die
-			econf
-		popd
+
+	if use test; then
+		# Most of these workarounds courtesy Debian
+		# https://salsa.debian.org/sdl-team/libsdl2/-/blob/debian/latest/debian/rules
+		local mytestargs=(
+			--x-includes="/usr/include"
+			--x-libraries="/usr/$(get_libdir)"
+			SDL_CFLAGS="-I${S}/include"
+			SDL_LIBS="-L${BUILD_DIR}/build/.libs -lSDL2"
+			ac_cv_lib_SDL2_ttf_TTF_Init=no
+			CFLAGS="${CPPFLAGS} ${CFLAGS} ${LDFLAGS}"
+		)
+
+		mkdir "${BUILD_DIR}/test" || die
+		cd "${BUILD_DIR}/test" || die
+		ECONF_SOURCE="${S}/test" \
+		econf "${mytestargs[@]}"
 	fi
 }
 
 multilib_src_compile() {
-	emake V=1
+	emake all V=1
 	if use test ; then
-		pushd test || die
-			emake
-		popd
+		emake -C test all V=1
 	fi
 }
 
 src_compile() {
 	multilib-minimal_src_compile
-
 	if use doc; then
 		cd docs || die
 		doxygen || die
@@ -481,9 +509,8 @@ src_compile() {
 
 multilib_src_test() {
 	if use test ; then
-		pushd test || die
-			emake check
-		popd
+		LD_LIBRARY_PATH="${BUILD_DIR}/build/.libs" \
+		emake -C test check V=1
 	fi
 }
 
