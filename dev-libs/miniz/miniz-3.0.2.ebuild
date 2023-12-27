@@ -11,13 +11,9 @@ DESCRIPTION="A lossless, high performance data compression library"
 HOMEPAGE="https://github.com/richgel999/miniz"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="amd64 ~arm ~arm64 ~ia64 ppc ppc64 sparc x86"
+KEYWORDS="~amd64 ~arm64 ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE="static-libs"
 PATCHES=(
-	# https://bugs.gentoo.org/849578
-	# https://github.com/richgel999/miniz/pull/239
-	"${FILESDIR}/${PN}-2.2.0-fixpcpath.patch"
-	"${FILESDIR}/${PN}-2.2.0-fixincdir.patch"
 )
 DOCS=( ChangeLog.md readme.md )
 
