@@ -28,8 +28,8 @@ LICENSE="
 SLOT="0/${PV%.*}.1"
 if [[ ${PV} != *_rc* ]] ; then
 	KEYWORDS="
-~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
-sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris
 	"
 fi
 IUSE="debug doc examples static-libs test r1"
@@ -65,7 +65,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-65.1-remove-bashisms.patch"
 	"${FILESDIR}/${PN}-64.2-darwin.patch"
 	"${FILESDIR}/${PN}-68.1-nonunicode.patch"
-	"${FILESDIR}/${PN}-73.2-fix-TestHebrewCalendarInTemporalLeapYear-test.patch"
 	"${FILESDIR}/extra/${PN}-69.1-extra-so-flags.patch" # oiledmachine-overlay added
 )
 
