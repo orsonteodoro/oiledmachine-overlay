@@ -404,7 +404,7 @@ eerror "Smoke-test failed: did interpreter initialization fail?"
 	fi
 
 	if use sparc; then
-		# https://salsa.debian.org/gnome-team/mozjs/-/blob/debian/102/master/debian/patches/tests-Use-DEB_HOST_ARCH_BITS-to-skip-some-tests-on-64-bit.patch
+	# https://salsa.debian.org/gnome-team/mozjs/-/blob/debian/102/master/debian/patches/tests-Use-DEB_HOST_ARCH_BITS-to-skip-some-tests-on-64-bit.patch
 		echo "non262/Array/regress-157652.js" >> "${T}/known_failures.list"
 		echo "non262/Array/regress-330812.js" >> "${T}/known_failures.list"
 		echo "non262/regress/regress-422348.js" >> "${T}/known_failures.list"
