@@ -8,13 +8,12 @@ MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 
 MY_MAJOR=$(ver_cut 1)
 
-MOZ_ESR=yes
+MOZ_ESR="yes"
 
 MOZ_PV=${PV}
 MOZ_PV_SUFFIX=
 if [[ ${PV} =~ (_(alpha|beta|rc).*)$ ]] ; then
 	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
-
 	# Convert the ebuild version to the upstream Mozilla version
 	MOZ_PV="${MOZ_PV/_alpha/a}" # Handle alpha for SRC_URI
 	MOZ_PV="${MOZ_PV/_beta/b}"  # Handle beta for SRC_URI
@@ -286,11 +285,19 @@ src_prepare() {
 		python/mozbuild/mozbuild/configure/check_debug_ranges.py \
 		|| die "sed failed to set toolchain prefix"
 
-	# use prefix shell in wrapper linker scripts, bug #789660
+	# Use prefix shell in wrapper linker scripts, bug #789660
 	hprefixify "${S}"/../../build/cargo-{,host-}linker
 
 einfo "Removing pre-built binaries ..."
-	find third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
+	find third_party \
+		-type f \
+		\( \
+			   -name '*.so' \
+			-o -name '*.o' \
+		\) \
+		-print \
+		-delete \
+		|| die
 
 	MOZJS_BUILDDIR="${WORKDIR}/build"
 	mkdir "${MOZJS_BUILDDIR}" || die
