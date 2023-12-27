@@ -19,12 +19,15 @@ SO_R=3
 SO_A=16
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 SLOT="1/${SO_MAJOR}"
+# Auto defaults based on CI, but distro assumes auto means disabled.
+# Going with the CI tested interpretation.
+# CI disables deprecated but enabled by default in meson_options.txt
 IUSE+="
-+analyze aom cairo cgif +cxx debug +deprecated -doxygen +examples exif fftw fits
-fuzz-testing +gif graphicsmagick gsf -gtk-doc fontconfig +hdr heif +imagemagick
-imagequant +introspection jpeg jpeg2k jxl lcms libde265 matio -minimal nifti
-openexr openslide orc pangocairo png poppler python rav1e +ppm spng static-libs
-svg test tiff +vala webp x265 zlib
++analyze +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples +exif +fftw
++fits fuzz-testing +gif -graphicsmagick +gsf -gtk-doc +fontconfig +hdr +heif
++imagemagick +imagequant +introspection +jpeg +jpeg2k -jxl +lcms +libde265
++matio -minimal -nifti +openexr +openslide +orc +pangocairo +png +poppler
++python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265 +zlib
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -45,12 +48,14 @@ REQUIRED_USE="
 	)
 "
 # Assumed U 22.04.1
-# See also https://github.com/libvips/libvips/blob/v8.11.0/.github/workflows/ci.yml
+# See also https://github.com/libvips/libvips/blob/v8.14.5/.github/workflows/ci.yml
 LIBJPEG_TURBO_V="2.1.2"
 # See CI for versioning
 RDEPEND+="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep '>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]')
+	$(python_gen_any_dep '
+		>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]
+	')
 	>=dev-libs/glib-2.72.4:2[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.4.7[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
@@ -215,11 +220,13 @@ BDEPEND+="
 		>=dev-util/gtk-doc-1.33.2
 	)
 	test? (
-		$(python_gen_any_dep '>=dev-python/pip-22.0.2[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/setuptools-59.6.0[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/pyvips[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			>=dev-python/pip-22.0.2[${PYTHON_USEDEP}]
+			>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
+			>=dev-python/setuptools-59.6.0[${PYTHON_USEDEP}]
+			>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
+			dev-python/pyvips[${PYTHON_USEDEP}]
+		')
 		|| (
 			$(gen_llvm_test_bdepend)
 		)

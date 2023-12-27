@@ -9,31 +9,26 @@ PYTHON_COMPAT=( python3_{8..11} )
 
 inherit flag-o-matic llvm meson-multilib multilib-minimal vala
 inherit python-r1 toolchain-funcs
-inherit linux-info
-
-# Should be set
-#CONFIG_CHECK="MTRRA" # Example of fatal error ; required
-#CONFIG_CHECK="~MTRRA" # Example of non fatal error ; optional
-
-# Should not be set
-CONFIG_CHECK="!MTRR" # Example of fatal ; required
-CONFIG_CHECK="~!MTRR" # Example of non fatal error ; optional
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
-SO_C=57
-SO_R=3
-SO_A=15
+SO_C=59
+SO_R=0
+SO_A=17
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 SLOT="1/${SO_MAJOR}"
+# Auto defaults based on CI, but distro assumes auto means disabled.
+# Going with the CI tested interpretation.
+# CI disables deprecated but enabled by default in meson_options.txt
 IUSE+="
-+analyze aom cairo cgif debug +deprecated -doxygen exif fftw fits fuzz-testing
-+gif graphicsmagick gsf -gtk-doc fontconfig +hdr heif +imagemagick imagequant
-+introspection jpeg jpeg2k jxl lcms libde265 matio -minimal nifti openexr
-openslide orc pangocairo png poppler python rav1e +ppm spng static-libs
-svg test tiff +vala webp x265 zlib
++analyze +archive +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples
++exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc +fontconfig
++hdr +heif -highway +imagemagick +imagequant +introspection +jpeg +jpeg2k -jxl
++lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
++poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
++zlib
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -54,17 +49,22 @@ REQUIRED_USE="
 	)
 "
 # Assumed U 22.04.1
-# See also https://github.com/libvips/libvips/blob/v8.11.0/.github/workflows/ci.yml
+# See also https://github.com/libvips/libvips/blob/v8.15.1/.github/workflows/ci.yml
 LIBJPEG_TURBO_V="2.1.2"
 # See CI for versioning
 RDEPEND+="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep '>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]')
+	$(python_gen_any_dep '
+		>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]
+	')
 	>=dev-libs/glib-2.72.4:2[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.4.7[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
 	>=sci-libs/gsl-2.7.1
 	sys-libs/libomp:14[${MULTILIB_USEDEP}]
+	archive? (
+		>=app-arch/libarchive-3.6.0[${MULTILIB_USEDEP}]
+	)
 	cairo? (
 		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
 	)
@@ -86,14 +86,14 @@ RDEPEND+="
 	gif? (
 		media-libs/libnsgif[${MULTILIB_USEDEP}]
 	)
-	gsf? (
-		>=gnome-extra/libgsf-1.14.47
-	)
 	heif? (
 		>=media-libs/libheif-1.12.0[aom?,libde265?,rav1e?,x265?,${MULTILIB_USEDEP}]
 		libde265? (
 			>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
 		)
+	)
+	highway? (
+		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP}]
 	)
 	imagemagick? (
 		!graphicsmagick? (
@@ -107,10 +107,7 @@ RDEPEND+="
 		>=media-gfx/libimagequant-2.17.0
 	)
 	jpeg? (
-		|| (
-			virtual/jpeg:0=[${MULTILIB_USEDEP}]
-			>=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}[${MULTILIB_USEDEP}]
-		)
+		virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
@@ -227,11 +224,13 @@ BDEPEND+="
 		>=dev-util/gtk-doc-1.33.2
 	)
 	test? (
-		$(python_gen_any_dep '>=dev-python/pip-22.0.2[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/setuptools-59.6.0[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep '>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]')
-		$(python_gen_any_dep 'dev-python/pyvips[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			>=dev-python/pip-22.0.2[${PYTHON_USEDEP}]
+			>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
+			>=dev-python/setuptools-59.6.0[${PYTHON_USEDEP}]
+			>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
+			dev-python/pyvips[${PYTHON_USEDEP}]
+		')
 		|| (
 			$(gen_llvm_test_bdepend)
 		)
@@ -253,7 +252,7 @@ SRC_URI="
 https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
 S="${WORKDIR}/libvips-${PV}"
-DOCS=( AUTHORS ChangeLog NEWS README.md THANKS )
+DOCS=( ChangeLog README.md )
 
 pkg_setup() {
 	use test && python_setup
@@ -359,7 +358,7 @@ _apply_env()
 		:;
 	elif [[ "${configuration}" == "test" ]] ; then
 		export ASAN_OPTIONS=\
-"suppressions=${S}/suppressions/asan.supp:fast_unwind_on_malloc=0:allocator_may_return_null=1:detect_leaks=${detect_leaks}"
+"suppressions=${S}/suppressions/asan.supp:fast_unwind_on_malloc=0:allocator_may_return_null=1:intercept_tls_get_addr=0:detect_leaks=${detect_leaks}"
 		export ASAN_SYMBOLIZER_PATH=\
 "$(get_llvm_prefix)/bin/llvm-symbolizer"
 		export LDSHARED=\
@@ -499,15 +498,15 @@ eerror
 		-Dmodules=enabled
 		-Dpdfium=disabled
 		-Dquantizr=disabled
+		$(meson_feature archive)
 		$(meson_feature fits cfitsio)
-		$(meson_feature cgif)
 		$(meson_feature exif)
 		$(meson_feature fftw)
 		$(meson_feature fontconfig)
-		$(meson_feature gsf)
 		$(meson_feature heif)
 #		$(meson_feature heif-module)
 		$(meson_feature imagequant)
+		$(meson_feature highway)
 		$(meson_feature jpeg)
 		$(meson_feature jxl jpeg-xl)
 #		$(meson_feature jpeg-xl-module)
@@ -531,8 +530,10 @@ eerror
 		$(meson_native_use_bool gtk-doc gtk_doc)
 		$(meson_native_use_bool introspection)
 		$(meson_use analyze)
+		$(meson_use cxx cplusplus)
 		$(meson_use debug)
 		$(meson_use deprecated)
+		$(meson_use examples)
 		$(meson_use gif nsgif)
 		$(meson_use ppm)
 		$(meson_use hdr radiance)
@@ -669,6 +670,17 @@ src_install_abi() {
 	cd "${BUILD_DIR}" || die
 	meson_install
 	multilib_check_headers
+	if use examples && multilib_is_native_abi ; then
+einfo "Inside src_install_abi ${ABI}"
+		local EXAMPLES=(
+			$(find "${BUILD_DIR}/examples" -maxdepth 1 -executable -type f)
+		)
+		exeinto /usr/share/${PN}/examples/bin
+		local path
+		for path in ${EXAMPLES[@]} ; do
+			doexe "${path}"
+		done
+	fi
 }
 
 src_install() {
@@ -687,7 +699,11 @@ multilib_src_install_all() {
 	einstalldocs
 	find "${ED}" -name '*.la' -delete || die
 	docinto licenses
-	dodoc COPYING
+	dodoc LICENSE
+	if use examples ; then
+		insinto /usr/share/${PN}
+		doins -r "${S}/examples"
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-REVDEP:  texturelab[system-vips]
