@@ -25,7 +25,7 @@ SLOT="1/${SO_MAJOR}"
 IUSE+="
 +analyze +archive +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples
 +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc +fontconfig
-+hdr +heif -highway +imagemagick +imagequant +introspection +jpeg +jpeg2k -jxl
++hdr +heif -highway +imagemagick +imagequant -introspection +jpeg +jpeg2k -jxl
 +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
 +poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
 +zlib
