@@ -5,7 +5,13 @@
 
 EAPI=8
 
+LIBX11_PV="1.7.5"
+MESA_PV="22.0.1"
+NV_DRIVER_VERSION_VULKAN="390.132"
+XORG_SERVER_PV="21.1.4"
+
 inherit cmake-multilib
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	export EGIT_BRANCH="master"
 	export EGIT_REPO_URI="https://github.com/SFML/SFML.git"
@@ -83,9 +89,6 @@ REQUIRED_USE+="
 "
 # U 22.04
 # *DEPENDS last check:  Dec 22, 2022
-MESA_PV="22.0.1"
-NV_DRIVER_VERSION_VULKAN="390.132"
-XORG_SERVER_PV="21.1.4"
 VULKAN_LINUX_RDEPEND="
 	|| (
 		video_cards_amdgpu? (
@@ -146,7 +149,7 @@ RDEPEND+="
 				)
 			)
 			X? (
-				>=x11-libs/libX11-${XORG_SERVER_PV}[${MULTILIB_USEDEP}]
+				>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 				>=x11-libs/libXrandr-1.5.2[${MULTILIB_USEDEP}]
 				>=x11-libs/libxcb-1.14[${MULTILIB_USEDEP}]
 				>=x11-libs/libXcursor-1.2.0[${MULTILIB_USEDEP}]

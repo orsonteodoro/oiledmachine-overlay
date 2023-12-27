@@ -7,7 +7,10 @@ EAPI=8
 
 # DO NOT DELETE.  Required by CSFML.
 
+NV_DRIVER_VERSION_VULKAN="390.132"
+
 inherit cmake-multilib
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	export EGIT_BRANCH="2.5.x"
 	export EGIT_REPO_URI="https://github.com/SFML/SFML.git"
@@ -81,7 +84,6 @@ REQUIRED_USE+="
 		window
 	)
 "
-NV_DRIVER_VERSION_VULKAN="390.132"
 VULKAN_LINUX_RDEPEND="
 	|| (
 		video_cards_amdgpu? (
