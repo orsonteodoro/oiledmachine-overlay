@@ -5,6 +5,9 @@ EAPI=8
 
 inherit cmake-multilib
 
+SRC_URI="https://github.com/zeux/${PN}/releases/download/v${PV}/${P}.tar.gz"
+S="${WORKDIR}/${PN}-$(ver_cut 1-2 ${PV})"
+
 DESCRIPTION=\
 "Light-weight, simple, and fast XML parser for C++ with XPath support"
 HOMEPAGE="https://pugixml.org/ https://github.com/zeux/pugixml/"
@@ -14,24 +17,27 @@ amd64 ~arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux
 "
 IUSE+=" doc static-libs"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-DEPEND+=" virtual/libc"
-RDEPEND+=" ${DEPEND}"
+# U 22.04
+DEPEND+="
+	virtual/libc
+"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	|| (
-		sys-devel/clang
-		sys-devel/gcc
+		>=sys-devel/clang-14.0
+		>=sys-devel/gcc-11.2.0
 	)
-	>=dev-util/cmake-3.4
+	>=dev-util/cmake-3.5
 "
-SRC_URI="https://github.com/zeux/${PN}/releases/download/v${PV}/${P}.tar.gz"
 RESTRICT="mirror"
 DOCS=( docs readme.txt )
-S="${WORKDIR}/${PN}-$(ver_cut 1-2 ${PV})"
 
 src_configure() {
 	local mycmakeargs=(
-		-DPUGIXML_BUILD_SHARED_AND_STATIC_LIBS=$(usex static-libs)
 		-DBUILD_SHARED_LIBS=ON
+		-DPUGIXML_BUILD_SHARED_AND_STATIC_LIBS=$(usex static-libs)
 	)
 	cmake-multilib_src_configure
 }
