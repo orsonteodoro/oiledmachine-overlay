@@ -7,89 +7,16 @@ EAPI=8
 # TODO:  complete bazel offline install.
 # All builds require npm/node.
 
-BAZEL_PV="5.3.0"
+BAZEL_PV="5.3.0" # Upstream used 4.2.2
+CLOSURE_COMPILER_MAJOR_VER=$(ver_cut 1 ${PV})
 GRAALVM_JAVA_PV=17
 GRAALVM_PV="22.3.2"
-NODE_ENV="development"
-NODE_VERSION=18 # Upstream uses 14 on linux but others 16, 18
-inherit bazel check-reqs java-pkg-opt-2 graalvm npm
-
-DESCRIPTION="Check, compile, optimize and compress Javascript with \
-Closure-Compiler"
-HOMEPAGE="
-https://developers.google.com/closure/compiler/
-https://github.com/google/closure-compiler-npm
-"
-
-LICENSE="
-	Apache-2.0
-	BSD
-	CPL-1.0
-	GPL-2+
-	LGPL-2.1+
-	MIT
-	MPL-2.0
-	NPL-1.1
-	closure_compiler_native? (
-		${GRAAL_VM_CE_LICENSES}
-	)
-"
-KEYWORDS="~amd64 ~arm64"
-CC_PV=$(ver_cut 1 ${PV})
-SLOT="0/$(ver_cut 1-2 ${PV})"
 JAVA_SLOT="17"
 MY_PN="closure-compiler"
-IUSE+="
-	closure_compiler_java
-	closure_compiler_native
-	closure_compiler_nodejs
-	doc
-	java
-	test
-	r1
-"
-REQUIRED_USE+="
-	java
-	closure_compiler_nodejs? (
-		closure_compiler_java
-	)
-	|| (
-		closure_compiler_java
-		closure_compiler_native
-		closure_compiler_nodejs
-	)
-"
-# For the node version, see
-# https://github.com/google/closure-compiler-npm/blob/v20230802.0.0/packages/google-closure-compiler/package.json#L67
-# For dependencies, see
-# https://github.com/google/closure-compiler-npm/blob/v20230802.0.0/.github/workflows/build.yml
-# The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
-RDEPEND+="
-	!dev-lang/closure-compiler-bin
-	closure_compiler_java? (
-		virtual/jre:${JAVA_SLOT}
-	)
-	closure_compiler_nodejs? (
-		virtual/jre:${JAVA_SLOT}
-		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-		>=net-libs/nodejs-${NODE_VERSION}[npm]
-	)
-"
-DEPEND+="
-	${RDEPEND}
-	virtual/jdk:${JAVA_SLOT}
-"
-BDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-	>=net-libs/nodejs-${NODE_VERSION}[npm]
-	=dev-util/bazel-$(ver_cut 1 ${BAZEL_PV})*
-	dev-java/maven-bin
-	dev-vcs/git
-	virtual/jdk:${JAVA_SLOT}
-	closure_compiler_native? (
-		${GRAALVM_CE_DEPENDS}
-	)
-"
+NODE_ENV="development"
+NODE_VERSION=18 # Upstream uses 14 on linux but others 16, 18
+
+inherit bazel check-reqs java-pkg-opt-2 graalvm npm
 
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="${PN%-*}-${PV}.tar.gz"
@@ -111,7 +38,7 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 }
 
 # Initially generated from:
-#   grep "resolved" /var/tmp/portage/dev-util/closure-compiler-npm-20230802.0.0/work/closure-compiler-npm-20230802.0.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
+#   grep "resolved" /var/tmp/portage/dev-util/closure-compiler-npm-20231112.0.0/work/closure-compiler-npm-20231112.0.0/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
 https://registry.npmjs.org/@gulp-sourcemaps/identity-map/-/identity-map-1.0.2.tgz -> npmpkg-@gulp-sourcemaps-identity-map-1.0.2.tgz
@@ -263,7 +190,7 @@ https://registry.npmjs.org/fragment-cache/-/fragment-cache-0.2.1.tgz -> npmpkg-f
 https://registry.npmjs.org/fs-mkdirp-stream/-/fs-mkdirp-stream-1.0.0.tgz -> npmpkg-fs-mkdirp-stream-1.0.0.tgz
 https://registry.npmjs.org/through2/-/through2-2.0.3.tgz -> npmpkg-through2-2.0.3.tgz
 https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz -> npmpkg-fs.realpath-1.0.0.tgz
-https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz -> npmpkg-fsevents-2.3.2.tgz
+https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz -> npmpkg-fsevents-2.3.3.tgz
 https://registry.npmjs.org/function-bind/-/function-bind-1.1.1.tgz -> npmpkg-function-bind-1.1.1.tgz
 https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz -> npmpkg-get-caller-file-2.0.5.tgz
 https://registry.npmjs.org/get-intrinsic/-/get-intrinsic-1.1.1.tgz -> npmpkg-get-intrinsic-1.1.1.tgz
@@ -281,8 +208,6 @@ https://registry.npmjs.org/chokidar/-/chokidar-2.1.8.tgz -> npmpkg-chokidar-2.1.
 https://registry.npmjs.org/extend-shallow/-/extend-shallow-2.0.1.tgz -> npmpkg-extend-shallow-2.0.1.tgz
 https://registry.npmjs.org/fill-range/-/fill-range-4.0.0.tgz -> npmpkg-fill-range-4.0.0.tgz
 https://registry.npmjs.org/fsevents/-/fsevents-1.2.13.tgz -> npmpkg-fsevents-1.2.13.tgz
-https://registry.npmjs.org/glob-parent/-/glob-parent-3.1.0.tgz -> npmpkg-glob-parent-3.1.0.tgz
-https://registry.npmjs.org/is-glob/-/is-glob-3.1.0.tgz -> npmpkg-is-glob-3.1.0.tgz
 https://registry.npmjs.org/is-binary-path/-/is-binary-path-1.0.1.tgz -> npmpkg-is-binary-path-1.0.1.tgz
 https://registry.npmjs.org/is-extendable/-/is-extendable-0.1.1.tgz -> npmpkg-is-extendable-0.1.1.tgz
 https://registry.npmjs.org/is-number/-/is-number-3.0.0.tgz -> npmpkg-is-number-3.0.0.tgz
@@ -313,6 +238,9 @@ https://registry.npmjs.org/yargs-parser/-/yargs-parser-13.1.2.tgz -> npmpkg-yarg
 https://registry.npmjs.org/camelcase/-/camelcase-5.3.1.tgz -> npmpkg-camelcase-5.3.1.tgz
 https://registry.npmjs.org/gulp-filter/-/gulp-filter-6.0.0.tgz -> npmpkg-gulp-filter-6.0.0.tgz
 https://registry.npmjs.org/gulp-mocha/-/gulp-mocha-8.0.0.tgz -> npmpkg-gulp-mocha-8.0.0.tgz
+https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.1.tgz -> npmpkg-brace-expansion-2.0.1.tgz
+https://registry.npmjs.org/minimatch/-/minimatch-5.0.1.tgz -> npmpkg-minimatch-5.0.1.tgz
+https://registry.npmjs.org/mocha/-/mocha-10.2.0.tgz -> npmpkg-mocha-10.2.0.tgz
 https://registry.npmjs.org/gulp-sourcemaps/-/gulp-sourcemaps-2.6.5.tgz -> npmpkg-gulp-sourcemaps-2.6.5.tgz
 https://registry.npmjs.org/through2/-/through2-2.0.3.tgz -> npmpkg-through2-2.0.3.tgz
 https://registry.npmjs.org/gulplog/-/gulplog-1.0.0.tgz -> npmpkg-gulplog-1.0.0.tgz
@@ -445,7 +373,6 @@ https://registry.npmjs.org/parse-json/-/parse-json-2.2.0.tgz -> npmpkg-parse-jso
 https://registry.npmjs.org/parse-node-version/-/parse-node-version-1.0.1.tgz -> npmpkg-parse-node-version-1.0.1.tgz
 https://registry.npmjs.org/parse-passwd/-/parse-passwd-1.0.0.tgz -> npmpkg-parse-passwd-1.0.0.tgz
 https://registry.npmjs.org/pascalcase/-/pascalcase-0.1.1.tgz -> npmpkg-pascalcase-0.1.1.tgz
-https://registry.npmjs.org/path-dirname/-/path-dirname-1.0.2.tgz -> npmpkg-path-dirname-1.0.2.tgz
 https://registry.npmjs.org/path-exists/-/path-exists-4.0.0.tgz -> npmpkg-path-exists-4.0.0.tgz
 https://registry.npmjs.org/path-is-absolute/-/path-is-absolute-1.0.1.tgz -> npmpkg-path-is-absolute-1.0.1.tgz
 https://registry.npmjs.org/path-key/-/path-key-3.1.1.tgz -> npmpkg-path-key-3.1.1.tgz
@@ -681,15 +608,89 @@ ${bazel_external_uris}
 ${NPM_EXTERNAL_URIS}
 https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz
 	-> ${FN_DEST}
-https://github.com/google/closure-compiler/archive/v${CC_PV}.tar.gz
+https://github.com/google/closure-compiler/archive/v${CLOSURE_COMPILER_MAJOR_VER}.tar.gz
 	-> ${FN_DEST2}
 "
 SRC_URI+="
 	$(gen_bazelisk_src_uris)
 "
 S="${WORKDIR}/${PN}-${PV}"
-S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CC_PV}"
+S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CLOSURE_COMPILER_MAJOR_VER}"
+
+DESCRIPTION="Check, compile, optimize and compress Javascript with \
+Closure-Compiler"
+HOMEPAGE="
+https://developers.google.com/closure/compiler/
+https://github.com/google/closure-compiler-npm
+"
+LICENSE="
+	Apache-2.0
+	BSD
+	CPL-1.0
+	GPL-2+
+	LGPL-2.1+
+	MIT
+	MPL-2.0
+	NPL-1.1
+	closure_compiler_native? (
+		${GRAAL_VM_CE_LICENSES}
+	)
+"
+KEYWORDS="~amd64 ~arm64"
 RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+="
+	closure_compiler_java
+	closure_compiler_native
+	closure_compiler_nodejs
+	doc
+	java
+	test
+	r1
+"
+REQUIRED_USE+="
+	java
+	closure_compiler_nodejs? (
+		closure_compiler_java
+	)
+	|| (
+		closure_compiler_java
+		closure_compiler_native
+		closure_compiler_nodejs
+	)
+"
+# For the node version, see
+# https://github.com/google/closure-compiler-npm/blob/v20231112.0.0/packages/google-closure-compiler/package.json#L67
+# For dependencies, see
+# https://github.com/google/closure-compiler-npm/blob/v20231112.0.0/.github/workflows/build.yml
+# The virtual/jdk not virtual/jre must be in DEPENDs for the eclass not to be stupid.
+# U 22.04
+RDEPEND+="
+	!dev-lang/closure-compiler-bin
+	closure_compiler_java? (
+		virtual/jre:${JAVA_SLOT}
+	)
+	closure_compiler_nodejs? (
+		>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
+		>=net-libs/nodejs-${NODE_VERSION}[npm]
+		virtual/jre:${JAVA_SLOT}
+	)
+"
+DEPEND+="
+	${RDEPEND}
+	virtual/jdk:${JAVA_SLOT}
+"
+BDEPEND+="
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
+	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	=dev-util/bazel-$(ver_cut 1 ${BAZEL_PV})*
+	dev-java/maven-bin
+	dev-vcs/git
+	virtual/jdk:${JAVA_SLOT}
+	closure_compiler_native? (
+		${GRAALVM_CE_DEPENDS}
+	)
+"
 PATCHES=(
 	"${FILESDIR}/closure-compiler-npm-20230228.0.0-maven_install-m2Local.patch"
 )
@@ -932,7 +933,7 @@ ewarn
 	echo 'build --subcommands' >> "${T}/bazelrc" || die # Increase verbosity
 
 	# There is a bug that keeps popping up when building java packages:
-	# /var/lib/portage/home/ should be /var/tmp/portage/dev-util/closure-compiler-npm-20230802.0.0/homedir/
+	# /var/lib/portage/home/ should be /var/tmp/portage/dev-util/closure-compiler-npm-20231112.0.0/homedir/
 	#echo "bazel run --define \"maven_repo=file://$HOME/.m2/repository\"" >> "${T}/bazelrc" || die # Does not fix
 
 	cat "${T}/bazelrc" >> "${S}/compiler/.bazelrc" || die
