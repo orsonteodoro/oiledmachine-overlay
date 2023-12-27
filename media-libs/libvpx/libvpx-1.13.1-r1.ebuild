@@ -1,36 +1,46 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# TODO:  live streamer trainers will be added after portage secure wipe hooks [aka bash exit/abort traps] are implemented/fixed.
+# TODO:  live streamer trainers will be added after portage secure wipe hooks
+# [aka bash exit/abort traps] are implemented/fixed.
 
 EAPI=8
 inherit flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 
+#
 # To create a new testdata tarball:
+#
 # 1. Unpack source tarball or checkout git tag
 # 2. mkdir libvpx-testdata
 # 3. export LIBVPX_TEST_DATA_PATH=libvpx-testdata
 # 4. configure --enable-unit-tests --enable-vp9-highbitdepth
 # 5. make testdata
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
+#
 
 LIBVPX_TESTDATA_VER=1.13.1
+SRC_URI="
+	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+	test? (
+		https://dev.gentoo.org/~whissi/dist/libvpx/${PN}-testdata-${LIBVPX_TESTDATA_VER}.tar.xz
+	)
+"
+S="${WORKDIR}/${P}"
+S_orig="${WORKDIR}/${P}"
+N_SAMPLES=1
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
-SRC_URI="
-	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	test? ( https://dev.gentoo.org/~whissi/dist/libvpx/${PN}-testdata-${LIBVPX_TESTDATA_VER}.tar.xz )
-"
-
 LICENSE="BSD"
 SLOT="0/7"
-KEYWORDS="~amd64 ~arm ~arm64 ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux"
-IUSE="cpu_flags_ppc_vsx3 doc +highbitdepth postproc static-libs test +threads"
-IUSE+=" svc +examples"
-IUSE+="
-	chromium
-	pgo
+KEYWORDS="
+~amd64 ~arm ~arm64 ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+~amd64-linux ~x86-linux
+"
+PPC_IUSE="
+	cpu_flags_ppc_vsx3
+"
+TRAINER_IUSE="
 	trainer-2-pass-constrained-quality
 	trainer-2-pass-constrained-quality-quick
 	trainer-constrained-quality
@@ -38,34 +48,57 @@ IUSE+="
 	trainer-lossless
 	trainer-lossless-quick
 "
+IUSE="
+${PPC_IUSE}
+${TRAINER_IUSE}
+chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
+"
 REQUIRED_USE="
 	pgo? (
 		|| (
-			trainer-2-pass-constrained-quality
-			trainer-2-pass-constrained-quality-quick
-			trainer-constrained-quality
-			trainer-constrained-quality-quick
-			trainer-lossless
-			trainer-lossless-quick
+			${TRAINER_IUSE}
 		)
 	)
-	trainer-2-pass-constrained-quality? ( pgo )
-	trainer-2-pass-constrained-quality-quick? ( pgo )
-	trainer-constrained-quality? ( pgo )
-	trainer-constrained-quality-quick? ( pgo )
-	trainer-lossless? ( pgo )
-	trainer-lossless-quick? ( pgo )
-	test? ( threads )
+	test? (
+		threads
+	)
+	trainer-2-pass-constrained-quality? (
+		pgo
+	)
+	trainer-2-pass-constrained-quality-quick? (
+		pgo
+	)
+	trainer-constrained-quality? (
+		pgo
+	)
+	trainer-constrained-quality-quick? (
+		pgo
+	)
+	trainer-lossless? (
+		pgo
+	)
+	trainer-lossless-quick? (
+		pgo
+	)
 "
-
 # Disable test phase when USE="-test"
-RESTRICT="!test? ( test ) strip"
-
+RESTRICT="
+	!test? (
+		test
+	)
+	strip
+"
 BDEPEND="
 	dev-lang/perl
-	abi_x86_32? ( dev-lang/yasm )
-	abi_x86_64? ( dev-lang/yasm )
-	abi_x86_x32? ( dev-lang/yasm )
+	abi_x86_32? (
+		dev-lang/yasm
+	)
+	abi_x86_64? (
+		dev-lang/yasm
+	)
+	abi_x86_x32? (
+		dev-lang/yasm
+	)
 	chromium? (
 		>=dev-lang/nasm-2.14
 	)
@@ -74,22 +107,16 @@ BDEPEND="
 		dev-lang/php
 	)
 "
-
 PDEPEND="
 	pgo? (
 		media-video/ffmpeg[${MULTILIB_USEDEP},encode,vpx]
 	)
 "
-
 PATCHES=(
 	"${FILESDIR}/${PN}-1.3.0-sparc-configure.patch" # 501010
 	"${FILESDIR}/${PN}-1.10.0-exeldflags.patch"
-
 	"${FILESDIR}/${PN}-1.13.1-allow-fortify-source.patch"
 )
-S="${WORKDIR}/${P}"
-S_orig="${WORKDIR}/${P}"
-N_SAMPLES=1
 
 get_asset_ids() {
 	local types=(
