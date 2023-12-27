@@ -15,15 +15,15 @@ LICENSE="Boost-1.0"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="doc test"
-# U 20.04
+# U 22.04
 BDEPEND="
-	>=dev-util/cmake-3.14
+	>=dev-util/cmake-3.22.1
 	test? (
-		>=dev-cpp/doctest-2.4.3
+		>=dev-cpp/doctest-2.4.9
 	)
 	|| (
-		>=sys-devel/gcc-4.9
-		>=sys-devel/clang-4
+		>=sys-devel/gcc-7
+		>=sys-devel/clang-11
 	)
 "
 SRC_URI="
