@@ -5,18 +5,25 @@ EAPI=8
 
 inherit cmake-multilib
 
-DESCRIPTION="Encode/decode WOFF2 font format"
-HOMEPAGE="https://github.com/google/woff2"
 SRC_URI="https://github.com/google/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
+DESCRIPTION="Encode/decode WOFF2 font format"
+HOMEPAGE="https://github.com/google/woff2"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-macos ~x86-macos ~x64-solaris"
-
-RDEPEND+=" app-arch/brotli[${MULTILIB_USEDEP}]"
-DEPEND+=" ${RDEPEND}"
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~s390 ~sparc ~x86 ~amd64-linux
+~x86-linux ~x64-macos ~x86-macos ~x64-solaris
+"
+RDEPEND+="
+	app-arch/brotli[${MULTILIB_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]"
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+"
 
 src_configure() {
 	local mycmakeargs=(
@@ -28,7 +35,6 @@ src_configure() {
 
 src_install() {
 	cmake-multilib_src_install
-
 	install_bin() {
 		if multilib_is_native_abi ; then
 			dobin "${BUILD_DIR}/woff2_compress"
