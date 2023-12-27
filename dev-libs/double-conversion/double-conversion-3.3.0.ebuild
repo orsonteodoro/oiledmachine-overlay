@@ -5,13 +5,16 @@ EAPI=8
 
 inherit cmake-multilib flag-o-matic
 
-DESCRIPTION="Binary-decimal and decimal-binary conversion routines for IEEE doubles"
-HOMEPAGE="https://github.com/google/double-conversion"
 SRC_URI="https://github.com/google/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
+DESCRIPTION="Binary-decimal and decimal-binary conversion routines for IEEE doubles"
+HOMEPAGE="https://github.com/google/double-conversion"
 LICENSE="BSD"
 SLOT="0/3"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
+~sparc ~x86 ~amd64-linux ~x86-linux
+"
 IUSE="test"
 
 src_configure() {
@@ -25,11 +28,9 @@ src_configure() {
 #8/9 Test #9: test_strtod ......................Subprocess aborted***Exception:   0.01 sec
 	replace-flags '-O0' '-O1'	# Bump to next fastest
 	replace-flags '-Ofast' '-O3'	# Downgrade to next slowest
-
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
 	)
-
 	cmake-multilib_src_configure
 }
 
