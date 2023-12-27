@@ -21,6 +21,14 @@ HOMEPAGE="
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+IUSE="doc"
+BDEPEND="
+	>=dev-python/setuptools-38.3.0[${PYTHON_USEDEP}]
+	dev-python/wheel
+	doc? (
+		dev-python/sphinx-rtd-theme
+	)
+"
 
 distutils_enable_tests "pytest"
 distutils_enable_sphinx "docs" "dev-python/sphinx-rtd-theme"
