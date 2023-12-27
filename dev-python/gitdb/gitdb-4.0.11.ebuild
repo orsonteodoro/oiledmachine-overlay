@@ -7,7 +7,7 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{10..12} )
 inherit distutils-r1
 
 DESCRIPTION="IO of git-style object databases"
@@ -24,24 +24,25 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-DEPEND+="
+# U 22.04
+RDEPEND+="
 	(
 		<dev-python/smmap-6[${PYTHON_USEDEP}]
-		>=dev-python/smmap-3.0.1[${PYTHON_USEDEP}]
+		>=dev-python/smmap-5.0.1[${PYTHON_USEDEP}]
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	doc? (
-		dev-python/sphinx[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.2[${PYTHON_USEDEP}]
 	)
 "
-SMMAP_COMMIT="334ef84a05c953ed5dbec7b9c6d4310879eeab5a"
+SMMAP_COMMIT="256c5a21de2d14aca02c9689d7d63f78c4e0ef61"
 SRC_URI="
 https://github.com/gitpython-developers/gitdb/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
