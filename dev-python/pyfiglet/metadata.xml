@@ -25,8 +25,8 @@
   </upstream>
   <use>
     <flag name="minimal">
-      If enabled, installs with standard fonts.
-      If disabled, Installs with additional contrib fonts
+      If enabled, it installs with standard fonts.
+      If disabled, it installs with additional contrib fonts.
     </flag>
   </use>
 </pkgmetadata>

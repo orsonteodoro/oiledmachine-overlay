@@ -5,7 +5,20 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 git-r3
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	inherit git-r3
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/pwaller/pyfiglet.git"
+	SRC_URI=""
+else
+	SRC_URI="
+https://github.com/pwaller/pyfiglet/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
+
+inherit distutils-r1
 
 DESCRIPTION="An implementation of figlet written in Python"
 HOMEPAGE="https://github.com/pwaller/pyfiglet"
@@ -19,23 +32,23 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+# U 22.04
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/build[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-68.0.0[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/subprocess32[${PYTHON_USEDEP}]
 	)
 "
-EGIT_BRANCH="master"
-EGIT_REPO_URI="https://github.com/pwaller/pyfiglet.git"
-SRC_URI=""
 PROPERTIES="live"
 RESTRICT="mirror test" # test requires subprocess32 which is EOL
 MY_PV="0.8.post1"
 
 distutils_enable_tests "pytest"
 
-src_unpack() {
+live_unpack() {
 	git-r3_fetch
 	git-r3_checkout
 	if ! grep -E -o -e "${MY_PV}" "${S}/pyfiglet/version.py" ; then
@@ -43,6 +56,14 @@ einfo
 einfo "Bump the version in the ebuild."
 einfo
 		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		live_unpack
+	else
+		unpack ${A}
 	fi
 }
 
