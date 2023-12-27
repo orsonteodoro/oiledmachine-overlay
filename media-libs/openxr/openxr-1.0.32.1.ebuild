@@ -3,8 +3,20 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
+MESA_PV="22.0.1"
+MY_PN="OpenXR-SDK-Source"
+NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( python3_{8..11} )
+XORG_SERVER_PV="21.1.4"
+ORG_GH="https://github.com/KhronosGroup"
+
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
+
+SRC_URI="
+${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 LICENSE="
@@ -16,14 +28,8 @@ LICENSE="
 # See also https://github.com/KhronosGroup/OpenXR-SDK-Source/blob/release-1.0.18/.reuse/dep5
 KEYWORDS="~amd64"
 HOMEPAGE="https://khronos.org/openxr"
-ORG_GH="https://github.com/KhronosGroup"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-MY_PN="OpenXR-SDK-Source"
-SRC_URI="
-${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-NV_DRIVER_VERSION_VULKAN="390.132"
 IUSE+="
 doc gles2 +system-jsoncpp video_cards_amdgpu video_cards_intel
 video_cards_nvidia video_cards_radeonsi wayland xcb +xlib
@@ -41,6 +47,7 @@ REQUIRED_USE+="
 		video_cards_radeonsi
 	)
 "
+# U 22.04
 DEPEND+="
 	${PYTHON_DEPS}
 	media-libs/mesa[egl(+),gles2?,libglvnd(+)]
@@ -50,35 +57,35 @@ DEPEND+="
 		dev-libs/jsoncpp
 	)
 	xcb? (
-		x11-libs/libxcb
-		x11-libs/xcb-util-keysyms
-		x11-libs/xcb-util-wm
+		>=x11-libs/libxcb-1.14
+		>=x11-libs/xcb-util-keysyms-0.4.0
+		>=x11-libs/xcb-util-wm-0.4.1
 	)
 	xlib? (
 		x11-base/xorg-proto
-		x11-libs/libX11
+		>=x11-libs/libX11-1.7.5
 	)
 	wayland? (
-		dev-libs/wayland
-		dev-libs/wayland-protocols
+		>=dev-libs/wayland-1.20.0
+		>=dev-libs/wayland-protocols-1.25
 		dev-util/wayland-scanner
-		media-libs/mesa[egl(+)]
+		>=media-libs/mesa-${MESA_PV}[egl(+)]
 	)
 	|| (
 		video_cards_amdgpu? (
-			media-libs/mesa[video_cards_radeonsi,vulkan]
-			x11-base/xorg-drivers[video_cards_amdgpu]
+			>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
+			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_amdgpu]
 		)
 		video_cards_intel? (
-			media-libs/mesa[video_cards_intel,vulkan]
-			x11-base/xorg-drivers[video_cards_intel]
+			>=media-libs/mesa-${MESA_PV}[video_cards_intel,vulkan]
+			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_intel]
 		)
 		video_cards_nvidia? (
 			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 		)
 		video_cards_radeonsi? (
-			media-libs/mesa[video_cards_radeonsi,vulkan]
-			x11-base/xorg-drivers[video_cards_radeonsi]
+			>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
+			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_radeonsi]
 		)
 	)
 "
@@ -87,16 +94,16 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep '>=dev-python/jinja-2[${PYTHON_USEDEP}]')
-	>=dev-util/cmake-3.0
+	$(python_gen_any_dep '
+		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
+	')
+	>=dev-util/cmake-3.22.1
 	virtual/pkgconfig
 	|| (
-		sys-devel/clang
-		sys-devel/gcc
+		>=sys-devel/clang-14.0
+		>=sys-devel/gcc-11.2.0
 	)
 "
-CMAKE_BUILD_TYPE="Release"
-RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
 
 src_configure() {
