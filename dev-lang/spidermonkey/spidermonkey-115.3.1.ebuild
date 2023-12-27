@@ -480,18 +480,17 @@ eerror "Smoke-test failed: did interpreter initialization fail?"
 		"${MOZJS_BUILDDIR}/js/src/js" \
 		|| die
 
-	if use jit ; then
-		${EPYTHON} "${S}/tests/jstests.py" \
-			-d \
-			-s \
-			-t 1800 \
-			--wpt=disabled \
-			--no-progress \
-			--exclude-file="${T}/known_failures.list" \
-			"${MOZJS_BUILDDIR}/js/src/js" \
-			basic \
-			|| die
-	fi
+	use jit && \
+	${EPYTHON} "${S}/tests/jstests.py" \
+		-d \
+		-s \
+		-t 1800 \
+		--wpt=disabled \
+		--no-progress \
+		--exclude-file="${T}/known_failures.list" \
+		"${MOZJS_BUILDDIR}/js/src/js" \
+		basic \
+		|| die
 }
 
 src_install() {
