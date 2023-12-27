@@ -1,4 +1,4 @@
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # TODO:  live streamer trainers will be added after portage secure wipe hooks [aka bash exit/abort traps] are implemented/fixed.
@@ -7,9 +7,9 @@ EAPI=8
 
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_TBOLT=1
-
-CMAKE_ECLASS=cmake
+CMAKE_ECLASS="cmake"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit cmake-multilib flag-o-matic flag-o-matic-om python-any-r1
 inherit toolchain-funcs uopts
 
@@ -17,24 +17,51 @@ if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
-	SRC_URI="https://storage.googleapis.com/aom-releases/${P}.tar.gz"
+	# To update test data tarball, follow these steps:
+	# 1.  Clone the upstream repo and check out the relevant tag, or
+	#     download the release tarball
+	# 2.  Regular cmake configure (options don't matter here):
+	#     cd build && cmake ..
+	# 3.  Set LIBAOM_TEST_DATA_PATH to the directory you want and
+	#     run the "make testdata" target:
+	#     LIBAOM_TEST_DATA_PATH=../libaom-3.7.1-testdata make testdata
+	#     This will download the test data from the internet.
+	# 4.  Create a tarball out of that directory.
+	#     cd .. && tar cvaf libaom-3.7.1-testdata.tar.xz libaom-3.7.1-testdata
+	SRC_URI="
+https://storage.googleapis.com/aom-releases/${P}.tar.gz
+	"
+# Fork ebuild and add to SRC_URI if you want testing.
+#		test? (
+#https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-testdata.tar.xz
+#		)
 	S="${WORKDIR}/${P}"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
-
 LICENSE="BSD-2"
 SLOT="0/3"
-IUSE="doc examples lossless static-libs test"
-IUSE="${IUSE} cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 cpu_flags_x86_ssse3"
-IUSE="${IUSE} cpu_flags_x86_sse4_1 cpu_flags_x86_sse4_2 cpu_flags_x86_avx cpu_flags_x86_avx2"
-IUSE="${IUSE} cpu_flags_arm_neon"
-IUSE+=" +asm"
-IUSE+="
-	chromium
-	pgo
+ARM_IUSE="
+	cpu_flags_arm_crc32
+	cpu_flags_arm_neon
+"
+PPC_IUSE="
+	cpu_flags_ppc_vsx
+"
+X86_IUSE="
+	cpu_flags_x86_mmx
+	cpu_flags_x86_sse
+	cpu_flags_x86_sse2
+	cpu_flags_x86_sse3
+	cpu_flags_x86_ssse3
+	cpu_flags_x86_sse4_1
+	cpu_flags_x86_sse4_2
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+"
+PGO_TRAINERS="
 	trainer-2-pass-constrained-quality
 	trainer-2-pass-constrained-quality-quick
 	trainer-constrained-quality
@@ -42,51 +69,78 @@ IUSE+="
 	trainer-lossless
 	trainer-lossless-quick
 "
+IUSE="
+${ARM_IUSE}
+${PPC_IUSE}
+${PGO_TRAINERS}
+${X86_IUSE}
++asm big-endian chromium doc +examples lossless pgo static-libs test
+"
 REQUIRED_USE="
-	cpu_flags_x86_sse2? ( cpu_flags_x86_mmx )
-	cpu_flags_x86_ssse3? ( cpu_flags_x86_sse2 )
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_mmx
+	)
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_sse2
+	)
 	pgo? (
 		|| (
-			trainer-2-pass-constrained-quality
-			trainer-2-pass-constrained-quality-quick
-			trainer-constrained-quality
-			trainer-constrained-quality-quick
-			trainer-lossless
-			trainer-lossless-quick
+			${PGO_TRAINERS}
 		)
 	)
-	trainer-2-pass-constrained-quality? ( pgo )
-	trainer-2-pass-constrained-quality-quick? ( pgo )
-	trainer-constrained-quality? ( pgo )
-	trainer-constrained-quality-quick? ( pgo )
-	trainer-lossless? ( pgo )
-	trainer-lossless-quick? ( pgo )
+	trainer-2-pass-constrained-quality? (
+		pgo
+	)
+	trainer-2-pass-constrained-quality-quick? (
+		pgo
+	)
+	trainer-constrained-quality? (
+		pgo
+	)
+	trainer-constrained-quality-quick? (
+		pgo
+	)
+	trainer-lossless? (
+		pgo
+	)
+	trainer-lossless-quick? (
+		pgo
+	)
 "
-
 BDEPEND+="
 	>=dev-util/cmake-3.7
-	abi_x86_32? ( dev-lang/yasm )
-	abi_x86_64? ( dev-lang/yasm )
-	abi_x86_x32? ( dev-lang/yasm )
-	chromium? ( >=dev-lang/nasm-2.14 )
-	doc? ( app-doc/doxygen )
+	abi_x86_32? (
+		dev-lang/yasm
+	)
+	abi_x86_64? (
+		dev-lang/yasm
+	)
+	abi_x86_x32? (
+		dev-lang/yasm
+	)
+	chromium? (
+		>=dev-lang/nasm-2.14
+	)
+	doc? (
+		app-doc/doxygen
+	)
 "
-
 PDEPEND="
 	pgo? (
 		media-video/ffmpeg[${MULTILIB_USEDEP},encode,libaom]
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.0.1-aom_sadXXXxh-are-ssse3.patch"
+#	"${FILESDIR}/${PN}-2.0.1-aom_sadXXXxh-are-ssse3.patch"
 	"${FILESDIR}/${PN}-3.1.2-cfi-rework.patch"
 	"${FILESDIR}/${PN}-3.4.0-posix-c-source-ftello.patch"
+	"${FILESDIR}/${PN}-3.7.0-allow-fortify-source.patch"
 )
 
 # The PATENTS file is required to be distributed with this package bug #682214.
 DOCS=( PATENTS )
 # Don't strip CFI
-RESTRICT="strip"
+RESTRICT="strip test"
 # Tests need more wiring up
 RESTRICT+=" !test? ( test ) test"
 N_SAMPLES=1
@@ -358,26 +412,35 @@ _src_configure() {
 		)
 
 	local mycmakeargs=(
+	# https://bugs.chromium.org/p/aomedia/issues/detail?id=3487 shows that \
+	# big endian detection doesn't work. \
+		-DCONFIG_BIG_ENDIAN=$(usex big-endian 1 0)
+	# It needs libjxl which is currently unpackaged. \
+		-DCONFIG_TUNE_BUTTERAUGLI=0
 		-DENABLE_DOCS=$(multilib_native_usex doc ON OFF)
 		-DENABLE_TESTS=$(usex test)
 		-DENABLE_TOOLS=ON
 		-DENABLE_WERROR=OFF
-
-		# Needs libjxl, currently unpackaged.
-		-DCONFIG_TUNE_BUTTERAUGLI=0
-
-		# neon support is assumed to be always enabled on arm64
-		-DENABLE_NEON=$(usex cpu_flags_arm_neon ON $(usex arm64 ON OFF))
 		# ENABLE_DSPR2 / ENABLE_MSA for mips
+		-DENABLE_ARM_CRC32=$(usex cpu_flags_arm_crc32 ON OFF)
+		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
+		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
 		-DENABLE_MMX=$(usex cpu_flags_x86_mmx ON OFF)
+	# Neon support is assumed to be always enabled on arm64 \
+		-DENABLE_NEON=$(usex cpu_flags_arm_neon ON $(usex arm64 ON OFF))
+	# Bug #917277 \
+		-DENABLE_NEON_DOTPROD=OFF
+	# Bug #917278 \
+		-DENABLE_NEON_I8MM=OFF
 		-DENABLE_SSE=$(usex cpu_flags_x86_sse ON OFF)
 		-DENABLE_SSE2=$(usex cpu_flags_x86_sse2 ON OFF)
 		-DENABLE_SSE3=$(usex cpu_flags_x86_sse3 ON OFF)
-		-DENABLE_SSSE3=$(usex cpu_flags_x86_ssse3 ON OFF)
 		-DENABLE_SSE4_1=$(usex cpu_flags_x86_sse4_1 ON OFF)
 		-DENABLE_SSE4_2=$(usex cpu_flags_x86_sse4_2 ON OFF)
-		-DENABLE_AVX=$(usex cpu_flags_x86_avx ON OFF)
-		-DENABLE_AVX2=$(usex cpu_flags_x86_avx2 ON OFF)
+		-DENABLE_SSSE3=$(usex cpu_flags_x86_ssse3 ON OFF)
+	# Bug #920474 \
+		-DENABLE_SVE=OFF
+		-DENABLE_VSX=$(usex cpu_flags_ppc_vsx ON OFF)
 	)
 
 	# Prevent Illegal instruction with /usr/bin/aomdec --help
