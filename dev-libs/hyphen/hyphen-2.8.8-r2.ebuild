@@ -2,6 +2,13 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
+inherit multilib-minimal
+
+SRC_URI="
+mirror://sourceforge/hunspell/${P}.tar.gz
+"
+
 DESCRIPTION="ALTLinux hyphenation library"
 HOMEPAGE="http://hunspell.github.io/"
 LICENSE="
@@ -14,16 +21,12 @@ KEYWORDS="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="static-libs"
-inherit multilib-minimal
 RDEPEND="
 	app-text/hunspell[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 	dev-lang/perl
-"
-SRC_URI="
-mirror://sourceforge/hunspell/${P}.tar.gz
 "
 DOCS=(
 	AUTHORS
