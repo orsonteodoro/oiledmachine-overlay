@@ -18,8 +18,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc"
 DEPEND+="
 	(
-		<dev-python/RapidFuzz-3
-		>=dev-python/RapidFuzz-2.3
+		<dev-python/RapidFuzz-4
+		>=dev-python/RapidFuzz-3.1.0
 	)
 "
 RDEPEND+="
@@ -27,7 +27,7 @@ RDEPEND+="
 "
 # See CI
 BDEPEND+="
-	>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
+	>=dev-python/cython-3.0.0_beta3[${PYTHON_USEDEP}]
 	>=dev-python/packaging-21.3[${PYTHON_USEDEP}]
 	>=dev-python/scikit-build-0.13.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-63.1.0[${PYTHON_USEDEP}]
@@ -52,7 +52,7 @@ src_configure() {
 		| sed -e "s|a|_alpha|g" \
 		| sed -e "s|b|_beta|g" \
 		| sed -e "s|rc|_rc|g")
-	local expected_cython_pv="3.0.0_alpha11"
+	local expected_cython_pv="3.0.0_beta3"
 	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
 	if ver_test ${actual_cython_pv} -lt ${required_cython_major} ; then
 eerror
