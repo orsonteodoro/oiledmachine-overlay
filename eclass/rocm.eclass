@@ -249,10 +249,7 @@ eerror
 	fi
 
 	if [[ "${ROCM_SLOT+x}" != "x" ]] ; then
-eerror
-eerror "ROCM_SLOT must be defined."
-eerror
-#		die
+ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
 	llvm_pkg_setup # Init LLVM_SLOT
