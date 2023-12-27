@@ -252,7 +252,7 @@ eerror
 eerror
 eerror "ROCM_SLOT must be defined."
 eerror
-		die
+#		die
 	fi
 
 	llvm_pkg_setup # Init LLVM_SLOT
