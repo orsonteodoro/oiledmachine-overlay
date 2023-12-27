@@ -4,7 +4,14 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit cmake flag-o-matic multilib-build python-any-r1 toolchain-funcs
+
+SRC_URI="
+https://github.com/nanodbc/${PN}/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="A small C++ wrapper for the native C ODBC API"
 HOMEPAGE="https://nanodbc.github.io/nanodbc/"
@@ -12,6 +19,7 @@ LICENSE="MIT"
 
 # Live ebuilds/snapshots won't get KEYWORed.
 
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 -boost doxygen +debug html +examples -handle_nodata_bug +libcxx man pdf -unicode
@@ -19,20 +27,24 @@ IUSE+="
 "
 REQUIRED_USE+=" !libcxx" # static-libs not supported unless boost has static-libs support
 #building with USE libcxx is broken?
-DEPEND+="
+RDEPEND+="
 	dev-libs/boost:=[${MULTILIB_USEDEP},nls]
 	dev-db/unixODBC[${MULTILIB_USEDEP}]
 	libcxx? (
 		sys-libs/libcxx[${MULTILIB_USEDEP}]
 	)
 "
-RDEPEND+=" ${DEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 DEPEND_SPHINX="
 	${PYTHON_DEPS}
-	$(python_gen_any_dep 'dev-python/rstcheck[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep 'dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]')
-	$(python_gen_any_dep '<dev-python/breathe-4.29.1[${PYTHON_USEDEP}]')
+	$(python_gen_any_dep '
+		<dev-python/breathe-4.29.1[${PYTHON_USEDEP}]
+		dev-python/rstcheck[${PYTHON_USEDEP}]
+		dev-python/sphinx[${PYTHON_USEDEP}]
+		dev-python/sphinx_rtd_theme[${PYTHON_USEDEP}]
+	')
 "
 BDEPEND+="
 	>=dev-util/cmake-2.6
@@ -47,7 +59,9 @@ BDEPEND+="
 	)
 	pdf? (
 		${DEPEND_SPHINX}
-		$(python_gen_any_dep 'dev-python/sphinx[${PYTHON_USEDEP},latex]')
+		$(python_gen_any_dep '
+			dev-python/sphinx[${PYTHON_USEDEP},latex]
+		')
 		dev-tex/latexmk
 	)
 	singlehtml? (
@@ -57,12 +71,6 @@ BDEPEND+="
 		${DEPEND_SPHINX}
 	)
 "
-SRC_URI="
-https://github.com/nanodbc/${PN}/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 pkg_setup() {
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
