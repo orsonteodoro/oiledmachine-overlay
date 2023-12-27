@@ -7,10 +7,10 @@ inherit cmake-multilib multilib-minimal
 
 DESCRIPTION="A brokerless kernel"
 HOMEPAGE="https://zeromq.org/"
-LICENSE="LGPL-3"
+LICENSE="MPL-2.0"
 KEYWORDS="
-~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux
-~x86-linux ~x64-macos
+~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
+sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~x64-macos
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
@@ -41,42 +41,43 @@ REQUIRED_USE+="
 		curve
 	)
 "
+# U 22.04
 RDEPEND+="
 	libbsd? (
-		dev-libs/libbsd[${MULTILIB_USEDEP}]
+		>=dev-libs/libbsd-0.11.5[${MULTILIB_USEDEP}]
 	)
 	pgm? (
-		~net-libs/openpgm-5.2.122[${MULTILIB_USEDEP}]
+		>=net-libs/openpgm-5.3.128[${MULTILIB_USEDEP}]
 	)
 	norm? (
-		net-libs/norm[${MULTILIB_USEDEP}]
+		>=net-libs/norm-1.5.9[${MULTILIB_USEDEP}]
 	)
 	nss? (
 		>=dev-libs/nss-3[${MULTILIB_USEDEP}]
 	)
 	sodium? (
-		dev-libs/libsodium:=[${MULTILIB_USEDEP},static-libs?]
+		>=dev-libs/libsodium-1.0.18:=[${MULTILIB_USEDEP},static-libs?]
 	)
 	tls? (
-		>=net-libs/gnutls-3.6.7[${MULTILIB_USEDEP}]
+		>=net-libs/gnutls-3.7.3[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=dev-util/cmake-2.8.12
+	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-util/cmake-3.22.1
 	doc? (
-		app-text/asciidoc
-		app-text/xmlto
+		>=app-text/asciidoc-10.1.2
+		>=app-text/xmlto-0.0.28
 	)
 "
 SRC_URI="
 https://github.com/zeromq/libzmq/releases/download/v${PV}/${P}.tar.gz
 "
 PATCHES=(
-	"${FILESDIR}/zeromq-4.3.4-build-curve_keygen.patch"
+	"${FILESDIR}/${PN}-4.3.5-c99.patch"
 )
 RESTRICT="!test? ( test )"
 
@@ -130,5 +131,5 @@ src_test() {
 
 src_install() {
 	cmake-multilib_src_install
-	find "${ED}"/usr/lib* -name '*.la' -delete || die
+	find "${ED}" -type f -name '*.la' -delete || die
 }
