@@ -7,10 +7,15 @@ EAPI=8
 
 inherit cmake multilib-build
 
+SRC_URI="
+https://github.com/SFML/CSFML/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/CSFML-${PV}"
+
 DESCRIPTION="Official binding of SFML for C"
 HOMEPAGE="https://www.sfml-dev.org/ https://github.com/SFML/CSFML/"
 LICENSE="ZLIB"
-
 KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
@@ -24,15 +29,12 @@ RDEPEND+="
 DEPEND="
 	${RDEPEND}
 "
+# U 22.04
 BDEPEND+="
-	sys-devel/gcc
+	>=dev-util/cmake-3.7.2
+	>=sys-devel/gcc-11.2.0
 "
 DOCS=( readme.txt )
-SRC_URI="
-https://github.com/SFML/CSFML/archive/refs/tags/2.5.1.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/CSFML-${PV}"
 PATCHES=(
 )
 
