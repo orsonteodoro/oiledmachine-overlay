@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} pypy3 )
+PYTHON_COMPAT=( python3_{10..12} pypy3 )
 
 inherit distutils-r1 pypi
 
@@ -22,17 +22,19 @@ IUSE="doc test"
 # dev-python/flake8-bugbear
 # dev-python/flake8-import-order
 BDEPEND="
+	>=dev-python/setuptools-68.2.2[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.41.2[${PYTHON_USEDEP}]
 	doc? (
-		dev-python/sphinx[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-7.2.6[${PYTHON_USEDEP}]
 	)
 	test? (
-		dev-python/black[${PYTHON_USEDEP}]
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/flake8-black[${PYTHON_USEDEP}]
-		dev-python/flake8-bugbear[${PYTHON_USEDEP}]
-		dev-python/flake8-import-order[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
+		>=dev-python/black-22.12.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-6.1.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-black-0.3.6[${PYTHON_USEDEP}]
+		>=dev-python/flake8-bugbear-23.9.16[${PYTHON_USEDEP}]
+		>=dev-python/flake8-import-order-0.18.2[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.2[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
 	)
 "
 RESTRICT="test"
