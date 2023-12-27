@@ -5,7 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..11} pypy3 )
+PYTHON_COMPAT=( python3_{10..12} pypy3 )
 PYTHON_REQ_USE="threads(+)"
 
 inherit distutils-r1 toolchain-funcs elisp-common
@@ -47,8 +47,9 @@ BDEPEND="
 		dev-python/wheel[${PYTHON_USEDEP}]
 	' python3_{10..11})
 	doc? (
-		>=dev-python/sphinx-3.5.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-issues-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
+		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
 	)
 	test? (
 		$(python_gen_any_dep '
