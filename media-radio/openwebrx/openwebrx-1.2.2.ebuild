@@ -143,6 +143,7 @@ RDEPEND_UNPACKAGED+="
 		net-wireless/rockprog
 	)
 " # Package it yourself
+# Upstream uses codec2 with deprecade code, but the distro uses the recent one.
 RDEPEND+="
 	${RDEPEND_UNPACKAGED}
 	$(gen_soapy_depends)
