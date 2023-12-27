@@ -1,0 +1,19 @@
+diff -urp aspell-0.60.8.1.orig/test/warning-settings.cpp aspell-0.60.8.1/test/warning-settings.cpp
+--- aspell-0.60.8.1.orig/test/warning-settings.cpp	2023-12-19 14:54:05.000000000 -0800
++++ aspell-0.60.8.1/test/warning-settings.cpp	2023-12-26 21:41:40.632987957 -0800
+@@ -38,6 +38,13 @@ int main() {
+     // the length of word in strchr(word, ' ') (in suggest.cpp, Sugs::transfer)
+     // is a very large value and exceeds the maximum object size.
+   }
++  if (sizeof(void *) == 4) {
++    disable_gcc_warning("class-memaccess");
++    disable_gcc_warning("restrict");
++    disable_gcc_error("alloc-size-larger-than=");
++  } else {
++    disable_gcc_error("class-memaccess");
++  }
+   disable_clang_warning("return-type-c-linkage");
+   disable_clang_warning("tautological-compare");
+   printf("\n");
+Only in aspell-0.60.8.1/test: warning-settings.cpp.orig
+Only in aspell-0.60.8.1/test: warning-settings.cpp.rej

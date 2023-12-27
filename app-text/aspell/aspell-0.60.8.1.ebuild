@@ -1,10 +1,21 @@
 # Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
+MY_P="${P/_/-}"
+TEST_TARBALL="aspell6-en-2018.04.16-0.tar.bz2"
+
 inherit autotools flag-o-matic libtool multilib-minimal toolchain-funcs
+
+SRC_URI="
+mirror://gnu/aspell/${MY_P}.tar.gz
+test? (
+	ftp://ftp.gnu.org/gnu/aspell/dict/en/${TEST_TARBALL}
+)
+"
+S="${WORKDIR}/${MY_P}"
 
 DESCRIPTION="Free and Open Source spell checker designed to replace Ispell"
 HOMEPAGE="
@@ -36,11 +47,10 @@ LICENSE="
 # MIT - install-sh
 # myspell-en_CA-KevinAtkinson - common/lsort.hpp
 #			      - common/clone_ptr-t.hpp
-
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~ia64 ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~x86-solaris
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
 IUSE+=" nls regex test unicode"
 # All available language app-dicts/aspell-* packages.
@@ -82,23 +92,14 @@ BDEPEND+="
 		sys-devel/gettext[${MULTILIB_USEDEP}]
 	)
 "
-MY_P="${P/_/-}"
-TEST_TARBALL="aspell6-en-2018.04.16-0.tar.bz2"
-SRC_URI="
-mirror://gnu/aspell/${MY_P}.tar.gz
-test? (
-	ftp://ftp.gnu.org/gnu/aspell/dict/en/${TEST_TARBALL}
-)
-"
 PATCHES=(
 	"${FILESDIR}/${PN}-0.60.5-nls.patch"
 	"${FILESDIR}/${PN}-0.60.5-solaris.patch"
 	"${FILESDIR}/${PN}-0.60.6-darwin-bundles.patch"
 	"${FILESDIR}/${PN}-0.60.6.1-clang.patch"
 	"${FILESDIR}/${PN}-0.60.6.1-unicode.patch"
-	"${FILESDIR}/${PN}-0.60.8-gcc.patch" # For the test USE flag, oiledmachine-overlay added
+	"${FILESDIR}/${PN}-0.60.8.1-gcc.patch" # For the test USE flag, oiledmachine-overlay added
 )
-S="${WORKDIR}/${MY_P}"
 
 get_build_type() {
 	echo "production"
