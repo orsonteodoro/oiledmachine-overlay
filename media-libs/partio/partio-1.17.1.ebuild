@@ -4,6 +4,7 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{9..10} )
+
 inherit cmake python-single-r1
 
 if [[ ${PV} == *9999 ]]; then
@@ -17,8 +18,9 @@ fi
 DESCRIPTION="Library for particle IO and manipulation"
 HOMEPAGE="http://partio.us/"
 LICENSE="BSD"
+RESTRICT="test"
 SLOT="0"
-IUSE="doc"
+IUSE="doc test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -42,6 +44,9 @@ BDEPEND="
 		dev-texlive/texlive-fontutils
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
+	)
+	test? (
+		dev-cpp/gtest
 	)
 "
 
