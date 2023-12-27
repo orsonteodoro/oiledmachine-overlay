@@ -5,21 +5,31 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/pkkid/python-plexapi/archive/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Python bindings for the Plex API."
 HOMEPAGE="https://github.com/pkkid/python-plexapi"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
-DEPEND+="
+RDEPEND+="
 	>=dev-python/requests-2.28.2[${PYTHON_USEDEP}]
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinx_rtd_theme-1.2.1[${PYTHON_USEDEP}]
@@ -37,13 +47,8 @@ BDEPEND+="
 		>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.65.0[${PYTHON_USEDEP}]
 		>=dev-python/websocket-client-1.5.2[${PYTHON_USEDEP}]
-	)"
-SRC_URI="
-https://github.com/pkkid/python-plexapi/archive/${PV}.tar.gz
-	-> ${P}.tar.gz
+	)
 "
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 
 distutils_enable_sphinx "docs"
 distutils_enable_tests "pytest"

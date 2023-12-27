@@ -20,33 +20,37 @@ LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+=" alert doc test"
 RDEPEND+="
 	>=dev-python/requests-2.28.2[${PYTHON_USEDEP}]
+	alert? (
+		>=dev-python/websocket-client-1.3.3
+	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/twine[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
-		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx_rtd_theme-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-7.1.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinx_rtd_theme-2.0.0[${PYTHON_USEDEP}]
 	)
 	test? (
-		<dev-python/pytest-mock-3.10.1[${PYTHON_USEDEP}]
+		<dev-python/pytest-mock-3.12.0[${PYTHON_USEDEP}]
 		>=dev-python/coveralls-3.3.1[${PYTHON_USEDEP}]
-		>=dev-python/flake8-5.0.4[${PYTHON_USEDEP}]
-		>=dev-python/pillow-9.4.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.2.2[${PYTHON_USEDEP}]
+		>=dev-python/flake8-6.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pillow-10.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-7.4.3[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cache-1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-4.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
 		>=dev-python/recommonmark-0.7.1[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.28.2[${PYTHON_USEDEP}]
-		>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
-		>=dev-python/tqdm-4.65.0[${PYTHON_USEDEP}]
-		>=dev-python/websocket-client-1.5.1[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
+		>=dev-python/requests-mock-1.11.0[${PYTHON_USEDEP}]
+		>=dev-python/tqdm-4.66.1[${PYTHON_USEDEP}]
+		>=dev-python/websocket-client-1.7.0[${PYTHON_USEDEP}]
 	)
 "
 
