@@ -266,6 +266,11 @@ src_prepare() {
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
+
+#/usr/include/bits/stdlib.h:86:3: error: "Assumed value of MB_LEN_MAX wrong"
+## error "Assumed value of MB_LEN_MAX wrong"
+	ewarn "If \"Assumed value of MB_LEN_MAX wrong\" is encountered, switch to gcc."
+
 	if tc-is-clang \
 		&& has_version "sys-devel/lld" \
 		&& [[ "${CFLAGS}" =~ "-flto" ]] ; then
