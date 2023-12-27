@@ -17,6 +17,7 @@ THIRD_PARTY_LICENSES="
 	LGPL-3
 	MIT
 	Unlicense
+	ZLIB
 "
 LICENSE="
 	${THIRD_PARTY_LICENSES}
@@ -43,14 +44,14 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.12
+	>=dev-util/cmake-3.14
 	test? (
 		dev-cpp/gtest
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.2.2-disable-failing-tests.patch"
-	"${FILESDIR}/${PN}-5.2.5-fix-version.patch"
+	"${FILESDIR}/${PN}-5.3.1-fix-version.patch"
 )
 DOCS=( CodeConventions.md Readme.md )
 

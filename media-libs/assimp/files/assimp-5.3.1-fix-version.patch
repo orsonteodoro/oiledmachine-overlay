@@ -1,0 +1,28 @@
+diff -urp assimp-5.3.1.orig/CMakeLists.txt assimp-5.3.1/CMakeLists.txt
+--- assimp-5.3.1.orig/CMakeLists.txt	2023-09-25 07:46:51.000000000 -0700
++++ assimp-5.3.1/CMakeLists.txt	2023-12-27 00:40:52.616729698 -0800
+@@ -55,7 +55,7 @@ IF(ASSIMP_HUNTER_ENABLED)
+   add_definitions(-DASSIMP_USE_HUNTER)
+ ENDIF()
+ 
+-PROJECT(Assimp VERSION 5.3.0)
++PROJECT(Assimp VERSION 5.3.1)
+ 
+ # All supported options ###############################################
+ 
+Only in assimp-5.3.1: CMakeLists.txt.orig
+Only in assimp-5.3.1: CMakeLists.txt.rej
+diff -urp assimp-5.3.1.orig/test/unit/utVersion.cpp assimp-5.3.1/test/unit/utVersion.cpp
+--- assimp-5.3.1.orig/test/unit/utVersion.cpp	2023-12-27 00:40:24.868730364 -0800
++++ assimp-5.3.1/test/unit/utVersion.cpp	2023-12-27 00:42:02.616728017 -0800
+@@ -61,7 +61,7 @@ TEST_F( utVersion, aiGetVersionMajorTest
+ }
+ 
+ TEST_F( utVersion, aiGetVersionPatchTest ) {
+-    EXPECT_EQ(aiGetVersionPatch(), 0U );
++    EXPECT_EQ(aiGetVersionPatch(), 1U );
+ }
+ 
+ TEST_F( utVersion, aiGetCompileFlagsTest ) {
+Only in assimp-5.3.1/test/unit: utVersion.cpp.orig
+Only in assimp-5.3.1/test/unit: utVersion.cpp.rej
