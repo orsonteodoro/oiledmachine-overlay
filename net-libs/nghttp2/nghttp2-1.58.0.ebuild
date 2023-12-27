@@ -5,9 +5,18 @@ EAPI=8
 
 inherit cmake-multilib
 
+SRC_URI="
+https://github.com/nghttp2/nghttp2/releases/download/v${PV}/${P}.tar.xz
+"
+
 DESCRIPTION="HTTP/2 C Library"
 HOMEPAGE="https://nghttp2.org/"
 LICENSE="MIT"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="0/1.14" # 1.<SONAME>
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
@@ -54,14 +63,6 @@ DEPEND="
 BDEPEND="
 	>dev-util/cmake-3.0
 	virtual/pkgconfig
-"
-RESTRICT="
-	!test? (
-		test
-	)
-"
-SRC_URI="
-https://github.com/nghttp2/nghttp2/releases/download/v${PV}/${P}.tar.xz
 "
 
 multilib_src_configure() {
