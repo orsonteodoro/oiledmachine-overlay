@@ -3,26 +3,12 @@
 
 EAPI=8
 
-inherit cmake-multilib
-
 # To find test archive version, see
 # https://github.com/nlohmann/json/blob/develop/cmake/download_test_data.cmake
 TEST_VERSION="3.1.0"
 
-DESCRIPTION="JSON for Modern C++"
-HOMEPAGE="https://github.com/nlohmann/json https://nlohmann.github.io/json/"
-LICENSE="MIT"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
-IUSE="doc test"
-BDEPEND="
-	>=dev-util/cmake-2.8.12
-	doc? ( app-doc/doxygen )
-"
-# Need to report failing tests upstream
-# Tests only just added, large test suite, majority pass
-#RESTRICT="!test? ( test )"
-RESTRICT="test"
+inherit cmake-multilib
+
 SRC_URI="
 https://github.com/nlohmann/json/archive/v${PV}.tar.gz -> ${P}.tar.gz
 test? (
@@ -31,6 +17,25 @@ https://github.com/nlohmann/json_test_data/archive/v${TEST_VERSION}.tar.gz
 )
 "
 S="${WORKDIR}/json-${PV}"
+
+DESCRIPTION="JSON for Modern C++"
+HOMEPAGE="
+	https://github.com/nlohmann/json
+	https://nlohmann.github.io/json/
+"
+LICENSE="MIT"
+RESTRICT="test"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
+IUSE="doc test"
+# U 22.04
+BDEPEND="
+	>=dev-util/cmake-3.22.1
+	virtual/pkgconfig
+	doc? (
+		>=app-doc/doxygen-1.9.1
+	)
+"
 DOCS=( ChangeLog.md README.md )
 
 src_configure() {
