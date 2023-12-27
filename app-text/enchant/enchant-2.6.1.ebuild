@@ -14,8 +14,8 @@ HOMEPAGE="https://abiword.github.io/enchant/"
 LICENSE="LGPL-2.1+"
 SLOT="2/${PV}"
 KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux ~ppc-macos
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
+~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos
 "
 # Default enabled is based on CI.
 # test is enabled in CI.
@@ -58,6 +58,8 @@ BDEPEND+="
 "
 QA_CONFIG_IMPL_DECL_SKIP=(
 	alignof
+	static_assert
+	unreachable
 )
 
 src_prepare() {
