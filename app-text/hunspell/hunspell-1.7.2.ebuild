@@ -7,11 +7,20 @@ LANGS="
 af bg ca cs cy da de de-1901 el en eo es et fo fr ga gl he hr hu ia id is it kk
 km ku lt lv mi mk ms nb nl nn pl pt pt-BR ro ru sk sl sq sv sw tn uk zu
 "
+
 inherit autotools flag-o-matic multilib-minimal
+
+SRC_URI="
+https://github.com/hunspell/hunspell/releases/download/v${PV}/${P}.tar.gz
+"
 
 DESCRIPTION="Spell checker, morphological analyzer library and command-line tool"
 HOMEPAGE="https://hunspell.github.io/"
-LICENSE="MPL-1.1 GPL-2 LGPL-2.1"
+LICENSE="
+	MPL-1.1
+	GPL-2
+	LGPL-2.1
+"
 SLOT="0/$(ver_cut 1-2)"
 IUSE="ncurses nls readline static-libs test"
 KEYWORDS="
@@ -41,14 +50,13 @@ for lang in ${LANGS}; do
 		pt-BR)   dict="pt-br"   ;;
 		*)       dict="${lang}" ;;
 	esac
-	PDEPEND+=" l10n_${lang}? ( app-dicts/myspell-${dict} )"
+	PDEPEND+="
+		l10n_${lang}? (
+			app-dicts/myspell-${dict}
+		)
+	"
 done
 unset dict lang LANGS
-SRC_URI="
-https://github.com/hunspell/hunspell/releases/download/v${PV}/${P}.tar.gz
-"
-DOCS=( AUTHORS ChangeLog license.{hunspell,myspell} NEWS README THANKS )
-
 PATCHES=(
 	# Upstream package creates some executables which names are too generic
 	# to be placed in /usr/bin - this patch prefixes them with 'hunspell-'.
@@ -56,6 +64,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.7.0-renameexes.patch"
 	"${FILESDIR}/${PN}-1.7.0-tinfo.patch" # bug #692614
 )
+DOCS=( AUTHORS ChangeLog license.{hunspell,myspell} NEWS README THANKS )
 
 src_prepare() {
 	default
@@ -84,7 +93,7 @@ multilib_src_install() {
 	default
 	einstalldocs
 	find "${ED}" -type f -name '*.la' -delete || die
-	# bug #342449
+	# Bug #342449
 	pushd "${ED}"/usr/$(get_libdir)/ >/dev/null || die
 		ln -s lib${PN}{-$(ver_cut 1).$(ver_cut 2).so.0.0.1,.so} || die
 	popd >/dev/null || die
@@ -109,4 +118,3 @@ multilib_src_install() {
 # # XPASS: 0
 # # ERROR: 0
 # ============================================================================
-
