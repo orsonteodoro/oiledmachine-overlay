@@ -32,7 +32,7 @@ DEPEND+="
 		>=media-libs/libpng-1.6
 	)
 	zlib? (
-		sys-libs/zlib:=[static-libs?,${MULTILIB_USEDEP}]
+		sys-libs/zlib:=[${MULTILIB_USEDEP},static-libs?]
 	)
 "
 RDEPEND+=" ${DEPEND}"
@@ -48,7 +48,7 @@ BDEPEND+="
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
 SRC_URI="
-	https://github.com/randy408/libspng/archive/v${PV}.tar.gz
+https://github.com/randy408/libspng/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	pgo? (
 https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/medium_rgb8.png
