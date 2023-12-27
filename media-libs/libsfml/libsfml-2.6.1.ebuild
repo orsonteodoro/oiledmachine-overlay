@@ -111,7 +111,6 @@ VULKAN_LINUX_RDEPEND="
 		)
 	)
 "
-
 RDEPEND+="
 	audio? (
 		>=media-libs/flac-1.3.3[${MULTILIB_USEDEP}]
