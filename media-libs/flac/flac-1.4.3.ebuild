@@ -3,20 +3,27 @@
 
 EAPI=8
 
-inherit flag-o-matic multilib-minimal toolchain-funcs
-inherit autotools
+inherit autotools flag-o-matic multilib-minimal toolchain-funcs
+
+SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
+S="${WORKDIR}/${P}"
+S_orig="${WORKDIR}/${P}"
 
 DESCRIPTION="free lossless audio encoder and decoder"
 HOMEPAGE="https://xiph.org/flac/"
-SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"
 LICENSE="BSD FDL-1.2 GPL-2 LGPL-2.1"
 SLOT="0"
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-solaris
 "
+X86_IUSE="
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+"
 IUSE="
-+cxx debug ogg cpu_flags_x86_avx cpu_flags_x86_avx2 static-libs
+${X86_IUSE}
++cxx debug ogg static-libs
 "
 # AVX configure switch is for both AVX & AVX2
 REQUIRED_USE="
@@ -24,25 +31,27 @@ REQUIRED_USE="
 		cpu_flags_x86_avx
 	)
 "
+# U 22.04
 RDEPEND="
 	ogg? (
-		>=media-libs/libogg-1.3.0[${MULTILIB_USEDEP}]
+		>=media-libs/libogg-1.3.5[${MULTILIB_USEDEP}]
 	)
 "
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND+="
+	>=app-arch/xz-utils-5.2.5
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	app-arch/xz-utils
-	sys-devel/gettext
+	>=sys-devel/gettext-0.21
 	virtual/pkgconfig
 	abi_x86_32? (
-		dev-lang/nasm
+		>=dev-lang/nasm-2.15.05
 	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.3-fPIC.patch"
 )
-S="${WORKDIR}/${P}"
-S_orig="${WORKDIR}/${P}"
 
 get_lib_types() {
 	echo "shared"
