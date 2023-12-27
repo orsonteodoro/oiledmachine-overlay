@@ -47,6 +47,7 @@ PATCH_URIS=(
 )
 
 LLVM_MAX_SLOT=17
+LLVM_SLOTS=(17 16 15)
 
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
@@ -72,6 +73,20 @@ RESTRICT="
 		test
 	)
 "
+gen_clang_bdepend() {
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/llvm:${s}
+				clang? (
+					sys-devel/lld:${s}
+					sys-devel/clang:${s}
+					virtual/rust:0/llvm-${s}
+				)
+			)
+		"
+	done
+}
 BDEPEND="
 	!clang? (
 		virtual/rust
@@ -84,30 +99,7 @@ BDEPEND="
 		')
 	)
 	|| (
-		(
-			sys-devel/llvm:17
-			clang? (
-				sys-devel/lld:17
-				sys-devel/clang:17
-				virtual/rust:0/llvm-17
-			)
-		)
-		(
-			sys-devel/llvm:16
-			clang? (
-				sys-devel/lld:16
-				sys-devel/clang:16
-				virtual/rust:0/llvm-16
-			)
-		)
-		(
-			sys-devel/llvm:15
-			clang? (
-				sys-devel/lld:15
-				sys-devel/clang:15
-				virtual/rust:0/llvm-15
-			)
-		)
+		$(gen_clang_bdepend)
 	)
 "
 DEPEND="
