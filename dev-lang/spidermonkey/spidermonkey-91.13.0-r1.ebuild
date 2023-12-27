@@ -459,17 +459,26 @@ eerror "Smoke-test failed: did interpreter initialization fail?"
 		echo "test262/built-ins/TypedArray/prototype/set/typedarray-arg-set-values-same-buffer-other-type.js" >> "${T}/known_failures.list"
 	fi
 
-	${EPYTHON} \
-		"${S}/tests/jstests.py" -d -s -t 1800 --wpt=disabled --no-progress \
+	${EPYTHON} "${S}/tests/jstests.py" \
+		-d \
+		-s \
+		-t 1800 \
+		--wpt=disabled \
+		--no-progress \
 		--exclude-file="${T}/known_failures.list" \
 		"${MOZJS_BUILDDIR}/js/src/js" \
 		|| die
 
 	if use jit ; then
-		${EPYTHON} \
-			"${S}/tests/jstests.py" -d -s -t 1800 --wpt=disabled --no-progress \
+		${EPYTHON} "${S}/tests/jstests.py" \
+			-d \
+			-s \
+			-t 1800 \
+			--wpt=disabled \
+			--no-progress \
 			--exclude-file="${T}/known_failures.list" \
-			"${MOZJS_BUILDDIR}/js/src/js" basic \
+			"${MOZJS_BUILDDIR}/js/src/js" \
+			basic \
 			|| die
 	fi
 }

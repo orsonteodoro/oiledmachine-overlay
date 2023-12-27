@@ -424,17 +424,26 @@ eerror "Smoke-test failed: did interpreter initialization fail?"
 		echo "test262/language/types/number/S8.5_A2.2.js" >> "${T}/known_failures.list"
 	fi
 
-	${EPYTHON} \
-		"${S}/tests/jstests.py" -d -s -t 1800 --wpt=disabled --no-progress \
+	${EPYTHON} "${S}/tests/jstests.py" \
+		-d \
+		-s \
+		-t 1800 \
+		--wpt=disabled \
+		--no-progress \
 		--exclude-file="${T}/known_failures.list" \
 		"${MOZJS_BUILDDIR}/js/src/js" \
 		|| die
 
 	if use jit ; then
-		${EPYTHON} \
-			"${S}/tests/jstests.py" -d -s -t 1800 --wpt=disabled --no-progress \
+		${EPYTHON} "${S}/tests/jstests.py" \
+			-d \
+			-s \
+			-t 1800 \
+			--wpt=disabled \
+			--no-progress \
 			--exclude-file="${T}/known_failures.list" \
-			"${MOZJS_BUILDDIR}/js/src/js" basic \
+			"${MOZJS_BUILDDIR}/js/src/js" \
+			basic \
 			|| die
 	fi
 }
