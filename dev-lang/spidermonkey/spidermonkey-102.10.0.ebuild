@@ -393,9 +393,10 @@ src_compile() {
 
 src_test() {
 	if "${MOZJS_BUILDDIR}/js/src/js" -e 'print("Hello world!")'; then
-		einfo "Smoke-test successful, continuing with full test suite"
+einfo "Smoke-test successful, continuing with full test suite"
 	else
-		die "Smoke-test failed: did interpreter initialization fail?"
+eerror "Smoke-test failed: did interpreter initialization fail?"
+		die
 	fi
 
 	cp "${FILESDIR}/spidermonkey-${SLOT}-known-test-failures.txt" "${T}/known_failures.list" || die

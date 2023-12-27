@@ -253,7 +253,7 @@ src_prepare() {
 	# use prefix shell in wrapper linker scripts, bug #789660
 	hprefixify "${S}"/../../build/cargo-{,host-}linker
 
-	einfo "Removing pre-built binaries ..."
+einfo "Removing pre-built binaries ..."
 	find third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	MOZJS_BUILDDIR="${WORKDIR}/build"
@@ -265,10 +265,10 @@ src_prepare() {
 
 src_configure() {
 	# Show flags set at the beginning
-	einfo "Current CFLAGS:    ${CFLAGS}"
-	einfo "Current CXXFLAGS:  ${CXXFLAGS}"
-	einfo "Current LDFLAGS:   ${LDFLAGS}"
-	einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
+einfo "Current CFLAGS:    ${CFLAGS}"
+einfo "Current CXXFLAGS:  ${CXXFLAGS}"
+einfo "Current LDFLAGS:   ${LDFLAGS}"
+einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
 
 	local have_switched_compiler=
 	if use clang; then
@@ -392,9 +392,10 @@ src_compile() {
 
 src_test() {
 	if "${MOZJS_BUILDDIR}/js/src/js" -e 'print("Hello world!")'; then
-		einfo "Smoke-test successful, continuing with full test suite"
+einfo "Smoke-test successful, continuing with full test suite"
 	else
-		die "Smoke-test failed: did interpreter initialization fail?"
+eerror "Smoke-test failed: did interpreter initialization fail?"
+		die
 	fi
 
 	cp "${FILESDIR}/spidermonkey-${SLOT}-known-test-failures.txt" "${T}/known_failures.list" || die
