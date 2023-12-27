@@ -30,7 +30,7 @@ https://poppler.freedesktop.org/${P}.tar.xz.sig
 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
 ~x64-solaris
 	"
-	SLOT="0/132"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
+	SLOT="0/133"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 fi
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
@@ -106,7 +106,7 @@ CDEPEND="
 		>=dev-qt/qtwidgets-${QT5_PV}:5
 	)
 	qt6? (
-		>=dev-qt/qtbase-${QT5_PV}:6[gui,widgets]
+		>=dev-qt/qtbase-${QT6_PV}:6[gui,widgets]
 	)
 	tiff? (
 		>=media-libs/tiff-4.1.0:=[${MULTILIB_USEDEP}]
@@ -134,6 +134,9 @@ BDEPEND="
 		qt5? (
 			>=dev-qt/qttest-${QT5_PV}:5
 			>=dev-qt/qtwidgets-${QT5_PV}:5
+		)
+		qt6? (
+			>=dev-qt/qtbase-${QT6_PV}:6[widgets]
 		)
 	)
 "
