@@ -5,6 +5,10 @@
 # [aka bash exit/abort traps] are implemented/fixed.
 
 EAPI=8
+
+LIBVPX_TESTDATA_VER=1.13.1
+N_SAMPLES=1
+
 inherit flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 
 #
@@ -18,7 +22,6 @@ inherit flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
 #
 
-LIBVPX_TESTDATA_VER=1.13.1
 SRC_URI="
 	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
@@ -27,7 +30,6 @@ SRC_URI="
 "
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
-N_SAMPLES=1
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
