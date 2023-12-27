@@ -5,12 +5,18 @@ EAPI=8
 
 inherit autotools desktop flag-o-matic toolchain-funcs xdg
 
+SRC_URI="
+https://gitlab.com/gambas/gambas/-/archive/${PV}/gambas-${PV}.tar.bz2
+"
+S="${WORKDIR}/${PN}-${PV}"
+
 DESCRIPTION="Gambas is a free development environment and a full powerful \
 development platform based on a Basic interpreter with object extensionsand form \
 designer."
 HOMEPAGE="http://gambas.sourceforge.net/en/main.html"
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0"
 GAMBAS_MODULES=(
 bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 htmlview httpd
@@ -228,7 +234,6 @@ DEPEND+="
 	)
 	pdf? (
 		>=app-text/poppler-0.58
-		<app-text/poppler-23
 	)
 	poppler? (
 		>=app-text/poppler-0.20
@@ -310,12 +315,7 @@ BDEPEND+="
 	>=sys-devel/automake-1.11.1
 	>=sys-devel/libtool-2.4
 "
-SRC_URI="
-https://gitlab.com/gambas/gambas/-/archive/${PV}/gambas-${PV}.tar.bz2
-"
-S="${WORKDIR}/${PN}-${PV}"
 DOCS=( AUTHORS ChangeLog README )
-RESTRICT="mirror"
 
 declare -Ax USE_FLAG_TO_MODULE_NAME=(
 	[bzip2]="bzlib2"
