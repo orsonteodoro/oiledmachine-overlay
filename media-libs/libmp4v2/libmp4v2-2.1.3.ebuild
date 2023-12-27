@@ -5,7 +5,14 @@ EAPI=8
 
 MY_P="${P/lib}"
 PYTHON_COMPAT=( python3_{10..11} )
+
 inherit autotools libtool flag-o-matic multilib-minimal python-any-r1
+
+SRC_URI="
+https://github.com/enzo1982/mp4v2/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${MY_P}"
 
 DESCRIPTION="A C/C++ library to create, modify and read MP4 files"
 HOMEPAGE="
@@ -14,7 +21,10 @@ https://github.com/enzo1982/mp4v2
 "
 LICENSE="MPL-1.1"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~alpha amd64 arm ~arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris"
+KEYWORDS="
+~alpha amd64 arm ~arm64 ~hppa ~ia64 ~mips ppc ppc64 ~riscv sparc x86
+~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
+"
 IUSE="doc static-libs test utils"
 REQUIRED_USE="
 	test? (
@@ -36,11 +46,6 @@ BDEPEND="
 		sys-apps/help2man
 	)
 "
-SRC_URI="
-https://github.com/enzo1982/mp4v2/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${MY_P}"
 PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-unsigned-int-cast.patch"
 )
@@ -57,7 +62,10 @@ pkg_setup() {
 src_prepare() {
 	# Make it static to avoid Header checksum mismatch, aborting.
 	eautoreconf
-	sed -i -e "s|PROJECT_build=\"\`date\`\"|PROJECT_build=\"$(date)\"|" configure || die
+	sed -i \
+		-e "s|PROJECT_build=\"\`date\`\"|PROJECT_build=\"$(date)\"|" \
+		configure \
+		|| die
 	default
 	elibtoolize
 	multilib_copy_sources
@@ -82,9 +90,18 @@ multilib_src_compile() {
 multilib_src_test() {
 	local expected_passes=88
 	make check || die
-	grep -q -e "unexpected" testlog/main.sum && die "Test failed"
-	grep -E -q -e " expected passes["$'\t'"]+${expected_passes}$" testlog/main.sum || die "Test failed"
-	grep -E -q -e " expected passes["$'\t'"]+${expected_passes}$" testlog/main.sum && einfo "Test passed"
+	grep -q \
+		-e "unexpected" \
+		testlog/main.sum \
+		&& die "Test failed"
+	grep -E -q \
+		-e " expected passes["$'\t'"]+${expected_passes}$" \
+		testlog/main.sum \
+		|| die "Test failed"
+	grep -E -q \
+		-e " expected passes["$'\t'"]+${expected_passes}$" \
+		testlog/main.sum \
+		&& einfo "Test passed"
 }
 
 multilib_src_install() {
