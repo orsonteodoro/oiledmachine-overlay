@@ -6,45 +6,6 @@ EAPI=8
 
 inherit flag-o-matic meson multilib-build toolchain-funcs uopts
 
-DESCRIPTION="libspng is a C library for reading and writing Portable Network \
-Graphics (PNG) format files with a focus on security and ease of use."
-HOMEPAGE="https://libspng.org"
-LICENSE="
-	BSD-2
-	test? (
-		libpng2
-	)
-"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc examples +opt -static-libs -test -threads zlib"
-REQUIRED_USE+="
-	pgo? (
-		examples
-	)
-"
-DEPEND+="
-	!zlib? (
-		dev-libs/miniz:=[static-libs?]
-	)
-	virtual/libc
-	test? (
-		>=media-libs/libpng-1.6
-	)
-	zlib? (
-		sys-libs/zlib:=[${MULTILIB_USEDEP},static-libs?]
-	)
-"
-RDEPEND+=" ${DEPEND}"
-BDEPEND+="
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=dev-util/meson-0.54.0
-	dev-util/meson-format-array
-	doc? (
-		dev-python/mkdocs
-		dev-python/mkdocs-material
-	)
-"
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
 SRC_URI="
@@ -60,12 +21,54 @@ https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/large
 	)
 "
 S="${WORKDIR}/${P}"
+
+DESCRIPTION="libspng is a C library for reading and writing Portable Network \
+Graphics (PNG) format files with a focus on security and ease of use."
+HOMEPAGE="https://libspng.org"
+LICENSE="
+	BSD-2
+	test? (
+		libpng2
+	)
+"
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 RESTRICT="mirror"
-DOCS=( "${S}/CONTRIBUTING.md" "${S}/README.md" "${S}/docs" )
-HTML_DOCS=( "${S}/site" )
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" doc examples +opt -static-libs -test -threads zlib"
+REQUIRED_USE+="
+	pgo? (
+		examples
+	)
+"
+RDEPEND+="
+	!zlib? (
+		dev-libs/miniz:=[static-libs?]
+	)
+	virtual/libc
+	test? (
+		>=media-libs/libpng-1.6
+	)
+	zlib? (
+		sys-libs/zlib:=[${MULTILIB_USEDEP},static-libs?]
+	)
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
+	>=dev-util/meson-0.54.0
+	dev-util/meson-format-array
+	doc? (
+		dev-python/mkdocs
+		dev-python/mkdocs-material
+	)
+"
 PATCHES=(
 	"${FILESDIR}/libspng-0.7.4-disable-target-clones.patch"
 )
+DOCS=( "${S}/CONTRIBUTING.md" "${S}/README.md" "${S}/docs" )
+HTML_DOCS=( "${S}/site" )
 
 pkg_setup() {
 	uopts_setup
