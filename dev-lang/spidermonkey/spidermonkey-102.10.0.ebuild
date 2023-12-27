@@ -310,27 +310,23 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 	export SHELL="${EPREFIX}/bin/bash"
 
 	local -a myeconfargs=(
-		--host="${CBUILD:-${CHOST}}"
-		--target="${CHOST}"
-
+		$(use_enable debug)
+		$(use_enable jit)
+		$(use_enable test tests)
 		--disable-ctype
 		--disable-jemalloc
 		--disable-smoosh
 		--disable-strip
-
 		--enable-readline
 		--enable-release
 		--enable-shared-js
-
+		--host="${CBUILD:-${CHOST}}"
+		--target="${CHOST}"
 		--with-intl-api
 		--with-system-icu
 		--with-system-nspr
 		--with-system-zlib
 		--with-toolchain-prefix="${CHOST}-"
-
-		$(use_enable debug)
-		$(use_enable jit)
-		$(use_enable test tests)
 	)
 
 	if use debug; then
