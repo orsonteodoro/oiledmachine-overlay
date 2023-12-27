@@ -7,12 +7,12 @@ PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake python-single-r1
 
+SRC_URI="https://github.com/alembic/alembic/archive/${PV}.tar.gz -> ${P}.tar.gz"
+
+HOMEPAGE="https://www.alembic.io/"
 DESCRIPTION="Alembic is an open framework for storing and sharing scene data \
 that includes a C++ library, a file format, and client plugins and \
 applications."
-HOMEPAGE="https://www.alembic.io/"
-SRC_URI="https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
@@ -20,11 +20,13 @@ IUSE="examples hdf5 python test"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
-RESTRICT="!test? ( test )"
-
+RESTRICT="
+	!test? (
+		test
+	)
+"
 OPENEXR_V2_PV="2.5.8 2.5.4"
 OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
-
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V3_PV} ; do
@@ -44,7 +46,6 @@ gen_openexr_pairs() {
 		"
 	done
 }
-
 gen_openexr_py_pairs() {
 	local pv
 	for pv in ${OPENEXR_V3_PV} ; do
@@ -56,7 +57,6 @@ gen_openexr_py_pairs() {
 		"
 	done
 }
-
 RDEPEND+="
 	${PYTHON_DEPS}
 	hdf5? (
@@ -87,9 +87,7 @@ BDEPEND+="
 		')
 	)
 "
-
 PATCHES=( "${FILESDIR}/${PN}-1.8.5-set-correct-libdir.patch" )
-
 DOCS=( ACKNOWLEDGEMENTS.txt FEEDBACK.txt NEWS.txt README.txt )
 
 src_configure() {
