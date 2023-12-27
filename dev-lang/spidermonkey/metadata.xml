@@ -18,6 +18,9 @@
     <flag name="clang">
       Use Clang compiler instead of GCC
     </flag>
+    <flag name="simd">
+      Enable explicit SIMD in Rust code (BUGGY DURING BUILDTIME / EXPERIMENTAL)
+    </flag>
     <flag name="debug">
       Enable assertions to allow for easier debugging of programs that link to
       spidermonkey -- note this will often crash software on regular end-user
