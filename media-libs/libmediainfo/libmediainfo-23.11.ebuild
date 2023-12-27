@@ -3,9 +3,13 @@
 
 EAPI=8
 
+MY_PN="MediaInfo"
+
 inherit autotools edos2unix flag-o-matic multilib-minimal
 
-MY_PN="MediaInfo"
+SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.xz"
+S="${WORKDIR}/${MY_PN}Lib"
+
 DESCRIPTION="MediaInfo libraries"
 HOMEPAGE="
 https://mediaarea.net/mediainfo/
@@ -13,34 +17,33 @@ https://github.com/MediaArea/MediaInfoLib
 "
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
+# Tests try to fetch data from online sources.
+RESTRICT="test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" curl doc mms static-libs"
-# U 20.04
+# D 9-12
 # See MediaInfoLib/Project/GNU/libmediainfo.dsc
 DEPEND+="
-	>=dev-libs/tinyxml2-7.0.0:=[${MULTILIB_USEDEP}]
-	>=media-libs/libzen-0.4.12:=[${MULTILIB_USEDEP},static-libs=]
-	>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.9.14:=[${MULTILIB_USEDEP}]
+	>=media-libs/libzen-0.4.41:=[${MULTILIB_USEDEP},static-libs=]
+	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	curl? (
-		>=net-misc/curl-7.68.0[${MULTILIB_USEDEP}]
+		>=net-misc/curl-7.88.1[${MULTILIB_USEDEP}]
 	)
 	mms? (
-		>=media-libs/libmms-0.6.4:=[static-libs=,${MULTILIB_USEDEP}]
+		>=media-libs/libmms-0.6.4:=[${MULTILIB_USEDEP},static-libs=]
 	)
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-util/pkgconf-1.6.3[${MULTILIB_USEDEP},pkg-config(+)]
+	>=app-text/tofrodos-1.7.13
+	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? (
-		>=app-doc/doxygen-1.8.17
+		>=app-doc/doxygen-1.9.4
 	)
 "
-SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.xz"
-# tests try to fetch data from online sources
-RESTRICT="test"
-S="${WORKDIR}/${MY_PN}Lib"
 
 src_prepare() {
 	cd "${S}/Project/GNU/Library" || die
