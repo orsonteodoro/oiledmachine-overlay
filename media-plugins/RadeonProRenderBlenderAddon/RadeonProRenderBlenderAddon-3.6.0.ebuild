@@ -531,7 +531,7 @@ verify_addon() {
 	IFS=$'\n'
 	local p
 	for p in ${L[@]} ; do
-		if unzip -l "${p}" | grep "libMIOpen.so" ; then
+		if unzip -l "${p}" | grep "libMIOpen.so" 2>/dev/null 1>/dev/null ; then
 einfo "${p} passed"
 		else
 eerror "Failed to build ${p}.  Make sure your dependencies are installed first."
