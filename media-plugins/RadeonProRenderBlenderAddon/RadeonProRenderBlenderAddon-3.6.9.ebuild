@@ -3,6 +3,8 @@
 
 EAPI=8
 
+EBUILD_MAINTAINER_MODE=1
+
 LLVM_MAX_SLOT=15
 LLVM_SLOTS=( 15 14 13 12 11 )
 # =media-gfx/blender-9999 (4.0.1) :: 15 14 13 12 11
@@ -228,12 +230,7 @@ RDEPEND_NOT_LISTED="
 "
 # See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.9/README-LNX.md#addon-runuse-linux-ubuntu-requirements
 
-RDEPEND+="
-	${CDEPEND_NOT_LISTED}
-	${RDEPEND_NOT_LISTED}
-	>=media-libs/embree-2.12.0
-	>=media-libs/openimageio-1.6
-	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
+BLENDER_RDEPEND="
 	blender-3_3? (
 		$(python_gen_any_dep "
 			=media-gfx/blender-3.3*["'${PYTHON_SINGLE_USEDEP}'"]
@@ -249,6 +246,16 @@ RDEPEND+="
 			=media-gfx/blender-3.5*["'${PYTHON_SINGLE_USEDEP}'"]
 		")
 	)
+"
+
+(( ${EBUILD_MAINTAINER_MODE} == 0 )) && RDEPEND+=" ${BLENDER_RDEPEND}"
+
+RDEPEND+="
+	${CDEPEND_NOT_LISTED}
+	${RDEPEND_NOT_LISTED}
+	>=media-libs/embree-2.12.0
+	>=media-libs/openimageio-1.6
+	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
 	matlib? (
 		media-plugins/RadeonProRenderMaterialLibrary
 	)
@@ -304,8 +311,8 @@ BDEPEND+="
 	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.11
 	app-arch/makeself
+	dev-libs/castxml
 	dev-util/patchelf
-	dev-cpp/castxml
 	dev-vcs/git
 "
 PATCHES=(
