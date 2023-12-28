@@ -185,10 +185,10 @@ einfo "Using systemd as the default init"
 einfo "Using OpenRC as the default init"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
 	elif [[ "${init}" == "auto" ]] ; then
-		if ot-kernel_has_version "sys-apps/systemd" ; then
+		if has_version "sys-apps/systemd" ; then
 einfo "Using systemd as the default init"
 			ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
-		elif ot-kernel_has_version "sys-apps/openrc" ; then
+		elif has_version "sys-apps/openrc" ; then
 einfo "Using OpenRC as the default init"
 			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
 		fi
