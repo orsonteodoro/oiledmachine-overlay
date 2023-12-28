@@ -30,7 +30,9 @@ CONFIGURATION="release"
 # Ceiling values based on python compatibility matching the particular Blender
 # version.
 MIN_BLENDER_PV="2.80"
-MAX_BLENDER_PV="3.5" # exclusive
+MAX_BLENDER_PV="3.5" # Exclusive
+NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
+NV_DRIVER_VERSION_VULKAN="390.132"
 BLENDER_SLOTS="
 	blender-3_3
 	blender-3_4
@@ -63,8 +65,10 @@ S_RPIPSDK="${WORKDIR}/${P}/RadeonProImageProcessingSDK"
 S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_COMMIT}"
 S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${RPRSC_COMMIT}"
 
-DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
-Blender"
+DESCRIPTION="This hardware-agnostic rendering plug-in for Blender uses \
+accurate ray-tracing technology to produce images and animations of your \
+scenes, and provides real-time interactive rendering and continuous adjustment \
+of effects."
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
 # The default license is Apache-2.0, the rest are third party.
 RPIPSDK_LICENSE="
@@ -110,8 +114,6 @@ ${BLENDER_SLOTS}
 ${VIDEO_CARDS}
 denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide +vulkan
 "
-NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
-NV_DRIVER_VERSION_VULKAN="390.132"
 # Systemwide is preferred but currently doesn't work but did in the past in <2.0
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
