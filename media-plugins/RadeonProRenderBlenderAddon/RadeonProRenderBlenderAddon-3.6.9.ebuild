@@ -79,27 +79,27 @@ RPIPSDK_LICENSE="
 "
 RPRSC_LICENSE="
 	Apache-2.0
-	MIT
-	BSD
-	MPL-2.0
 	Boost-1.0
+	BSD
+	MIT
+	MPL-2.0
 "
 RPRSDK_LICENSE="
 	Apache-2.0
 	BSD
-	MIT
-	Khronos-IP-framework
 	BSD-2
+	Khronos-IP-framework
+	MIT
 "
 # See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.6.9/src/rprblender/EULA.html
 RPRBLENDER_EULA_LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
-	SPA-DISCLAIMER-DATA-AND-SOFTWARE
-	PSF-2
-	CC-BY
 	BSD
-	MIT
+	CC-BY
 	Khronos-IP-framework
+	MIT
+	PSF-2
+	SPA-DISCLAIMER-DATA-AND-SOFTWARE
 "
 LICENSE="
 	Apache-2.0
