@@ -27,6 +27,9 @@ inherit toolchain-funcs
 # Use the fewest steps to check for the existence of package instead of
 # using has_version if possible.  There is a big slow down introducted by
 # emerge.
+# BUG:  If the results could ambigous and be fatal, use has_version instead.
+# Example sys-apps/systemd vs sys-apps/systemd-utils.
+# You may ignore this recommendation if the first case below.
 ot-kernel_has_version() {
 	local pkg="${1}"
 	local ret
@@ -41,11 +44,8 @@ ot-kernel_has_version() {
 	else
 		# Upstream uses EROOT for pickled merged package database not ESYSROOT.
 		# No guarantee of atomic tree but very fast.
-		local n=$(
-			find "${ESYSROOT}/var/db/pkg/" -regex ".*/${pkg}-[a-z0-9.-_]+/CONTENTS" \
-				| wc -l
-		)
-		if (( ${n} > 1 )) ; then
+		# find is slow.  Don't use it.
+		if ls "${ESYSROOT}/var/db/pkg/${pkg}"*"/CONTENTS" 2>/dev/null 1>/dev/null ; then
 			return 0
 		fi
 	fi
@@ -64,10 +64,9 @@ ot-kernel_has_version_use() {
 	local x
 	local y
 
-	local path=$(find "${ESYSROOT}/var/db/pkg/" -regex ".*/${pkg}-[a-z0-9.-_]+/USE")
-
+	# Find is slow.  Don't use it.
 	local Y=(
-		$(cat "${path}" 2>/dev/null)
+		$(cat "${ESYSROOT}/var/db/pkg/${pkg}"*"/USE" 2>/dev/null)
 	)
 
 	X=$(echo "${pkg_raw}" | sed -e "s|.*\[||g" -e "s|\].*||g" | tr "," " ")
