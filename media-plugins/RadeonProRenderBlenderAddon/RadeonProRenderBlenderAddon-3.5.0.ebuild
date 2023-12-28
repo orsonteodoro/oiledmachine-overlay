@@ -527,7 +527,7 @@ ewarn
 ewarn "You must enable the addon manually."
 ewarn
 
-	# Denoiser may need libiomp.so.5
+	# The denoiser may need libiomp.so.5 from sys-libs/libomp.
 
 	if use systemwide ; then
 einfo
