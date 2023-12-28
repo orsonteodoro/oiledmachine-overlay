@@ -173,6 +173,35 @@ eerror
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_init
+# @DESCRIPTION:
+# Add the init to the internal kernel command line.
+ot-kernel_set_init() {
+	local init="${OT_KERNEL_INIT:-custom}"
+	if [[ "${init}" == "systemd" ]] ; then
+einfo "Using systemd as the default init"
+		ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
+	elif [[ "${init}" == "openrc" ]] ; then
+einfo "Using OpenRC as the default init"
+		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
+	elif [[ "${init}" == "auto" ]] ; then
+		if ot-kernel_has_version "sys-apps/systemd" ; then
+einfo "Using systemd as the default init"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
+		elif ot-kernel_has_version "sys-apps/openrc" ; then
+einfo "Using OpenRC as the default init"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
+		fi
+	elif [[ "${init}" =~ ^"/" ]] ; then
+		ot-kernel_set_kconfig_kernel_cmdline "init=${init}"
+	else
+ewarn
+ewarn "No default init system selected.  You must configure the bootloader"
+ewarn "with init= kernel command line."
+ewarn
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_apply
 # @DESCRIPTION:
 # The main function to apply all kernel config flags in preparation for using the package.
@@ -615,6 +644,7 @@ ot-kernel-pkgflags_apply() {
 	_ot-kernel_set_ldt
 	_ot-kernel_set_multiuser
 	_ot-kernel_realtime_packages
+	_ot-kernel_set_init
 
 	# Out of source modules
 }

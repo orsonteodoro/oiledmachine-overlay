@@ -547,6 +547,7 @@ OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="builder"
 OT_KERNEL_FIRMWARE="polaris10 regulatory"
 OT_KERNEL_HARDENING_LEVEL="practical"
+OT_KERNEL_INIT="auto"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
 OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
 OT_KERNEL_LSMS="auto"
@@ -586,6 +587,7 @@ OT_KERNEL_DISABLE="0"
 OT_KERNEL_EXTRAVERSION="gaming"
 OT_KERNEL_FIRMWARE="polaris10 regulatory"
 OT_KERNEL_HARDENING_LEVEL="performance"
+OT_KERNEL_INIT="auto"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
 OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
 OT_KERNEL_LSMS="bpf"
@@ -1690,6 +1692,32 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       OT_KERNEL_IMA_POLICIES="tcb"
       OT_KERNEL_IMA_POLICIES="tcb tcb_appraise"
       OT_KERNEL_IMA_POLICIES="tcb tcb_appraise secure_boot"
+
+
+
+    OT_KERNEL_INIT - Set the value for init= as an arg to the internal built-in
+    kernel command line.
+
+    Acceptable values:
+
+    a path - The absolute path to the init program.
+    auto - Automatically detect based on the presence of init package installed.
+    custom (default) - You will manually set via /etc/default/grub
+    openrc - Add init=/sbin/openrc-init to internal kernel command line
+    systemd - Add init=/lib/systemd/systemd to internal kernel command line
+
+    Examples
+
+      OT_KERNEL_INIT="/sbin/openrc-init"
+      OT_KERNEL_INIT="openrc"
+      OT_KERNEL_INIT="auto"
+
+    Notes
+
+      * auto is recommended but the common practice is to configure
+        /etc/default/grub.
+      * For security configurations, it is recommended to use openrc.
+      * For realtime configurations, it is recommended to use openrc.
 
 
 
