@@ -760,6 +760,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
       KVM_ADD_IGNORE_MSRS_EQ_1
       KVMGT
+      OT_KERNEL_BOOT_ARGS_LOCKDOWN
 
 
 
