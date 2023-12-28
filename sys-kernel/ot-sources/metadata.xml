@@ -753,8 +753,14 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     OT_KERNEL_BOOT_ARGS - Set and embed the kernel command line into the
     kernel instead of the bootloader.
 
-    iotop users:  You may remove delayacct from the kernel command line if you
-    decide not to keep the app.
+    Notes
+
+      If lockdown is not enabled, it will use the appended values from the
+      bootloader.
+
+      You may remove delayacct from the kernel command line if you decide not to
+      keep iotop.
+
 
     See also
 
