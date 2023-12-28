@@ -28,7 +28,7 @@ inherit toolchain-funcs
 # using has_version if possible.  There is a big slow down introducted by
 # emerge.
 # BUG:  If the results could ambigous and be fatal, use has_version instead.
-# Example sys-apps/systemd vs sys-apps/systemd-utils.
+# Example sys-apps/systemd vs sys-apps/systemd-utils and openrc.
 # You may ignore this recommendation if the first case below.
 ot-kernel_has_version() {
 	local pkg="${1}"
