@@ -37,14 +37,14 @@
     <doc lang="en">https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/about.html</doc>
   </upstream>
   <use>
-    <flag name="blender-lts-3_3">
+    <flag name="blender-3_3">
       Build the plugin for Blender 3.3.x LTS (Long Term Support) series.
     </flag>
-    <flag name="blender-master">
-      Build the plugin for Blender with the latest commit.
+    <flag name="blender-3_4">
+      Build the plugin for Blender 3.4.x series.
     </flag>
-    <flag name="blender-stable">
-      Build the plugin for Blender stable releases.
+    <flag name="blender-3_5">
+      Build the plugin for Blender 3.5.x series.
     </flag>
     <flag name="denoiser">
       Checks for dynamic libraries that may be required to use the denoiser.
