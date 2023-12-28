@@ -3,8 +3,6 @@
 
 EAPI=8
 
-EBUILD_MAINTAINER_MODE=1
-
 LLVM_MAX_SLOT=15
 LLVM_SLOTS=( 15 14 13 12 11 )
 # =media-gfx/blender-9999 (4.0.1) :: 15 14 13 12 11
@@ -48,7 +46,7 @@ VIDEO_CARDS="
 
 inherit check-reqs git-r3 linux-info llvm python-r1 unpacker
 
-#KEYWORDS="~amd64" # Missing .so files
+KEYWORDS="~amd64"
 
 # Download limits?
 #https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter/archive/${RPIPSDK_COMMIT}.tar.gz
@@ -234,9 +232,8 @@ BLENDER_RDEPEND="
 	)
 "
 
-(( ${EBUILD_MAINTAINER_MODE} == 0 )) && RDEPEND+=" ${BLENDER_RDEPEND}"
-
 RDEPEND+="
+	${BLENDER_RDEPEND}
 	${CDEPEND_NOT_LISTED}
 	${RDEPEND_NOT_LISTED}
 	>=media-libs/embree-2.12.0
@@ -297,6 +294,7 @@ BDEPEND+="
 	$(python_gen_cond_dep '>=dev-python/pytest-3[${PYTHON_USEDEP}]')
 	>=dev-util/cmake-3.11
 	app-arch/makeself
+	app-arch/unzip
 	dev-libs/castxml
 	dev-util/patchelf
 	dev-vcs/git
@@ -510,6 +508,23 @@ einfo "Installing addon in shared"
 	newins "${S}/BlenderPkg/.build/${D_FN}" "addon.zip"
 }
 
+verify_addon() {
+	local L=(
+		$(find "${ED}" -name "*.zip")
+	)
+	IFS=$'\n'
+	local p
+	for p in ${L[@]} ; do
+		if unzip -l "${p}" | grep "libMIOpen.so" ; then
+einfo "${p} passed"
+		else
+eerror "Failed to build ${p}.  Make sure your dependencies are installed first."
+			die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
 src_install() {
 	if use systemwide ; then
 		src_install_systemwide_plugin_unpacked
@@ -526,6 +541,7 @@ src_install() {
 	docinto licenses/RadeonProRenderBlenderAddon
 	dodoc "${S}/LICENSE.txt"
 	dodoc "${S}/src/${PLUGIN_NAME}/EULA.html"
+	verify_addon
 }
 
 pkg_postinst() {
