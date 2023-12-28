@@ -1714,8 +1714,12 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     a path - The absolute path to the init program.
     auto - Automatically detect based on the presence of init package installed.
     custom (default) - You will manually set via /etc/default/grub
-    openrc - Add init=/sbin/openrc-init to internal kernel command line
-    systemd - Add init=/lib/systemd/systemd to internal kernel command line
+    dinit - Use init=/sbin/dinit
+    epoch - Use init=/usr/sbin/epoch-init
+    openrc - Use init=/sbin/openrc-init
+    runit - Use init=/sbin/runit-init
+    systemd - Use init=/lib/systemd/systemd
+    sysvinit - Use init=/sbin/init
 
     Examples
 
@@ -1726,11 +1730,15 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     Notes
 
       * auto is recommended but the common practice is to configure
-        /etc/default/grub.
-      * For security configurations, it is recommended to use openrc.
-      * For realtime configurations, it is recommended to use openrc.
+        /etc/default/grub.  It can only be used when not cross compiling.
+      * For the fastest boot, use systemd.
+      * For security configurations, use openrc.
+      * For realtime configurations, use openrc.
       * If init= is provided by the bootloader, it will override this internal
         setting except when lockdown is enabled.
+      * It is recommended to set it to auto and remove the init=
+        from boot.
+      * The explicit values are provided for cross compiling.
 
     See also
 
