@@ -3,20 +3,82 @@
 
 EAPI=8
 
-# It supports Python 3.7 but 3.7 is deprecated in this distro in python-utils-r1.eclass.
-PYTHON_COMPAT=( python3_{9..11} )
 LLVM_MAX_SLOT=15
-# =media-gfx/blender-9999 :: 15 14 13 12 11
-# =media-gfx/blender-3.6* :: 15 14 13 12 11
-# =media-gfx/blender-3.3* :: 13 12 11
 LLVM_SLOTS=( 15 14 13 12 11 )
+# =media-gfx/blender-9999 (4.0.1) :: 15 14 13 12 11
+# =media-gfx/blender-3.4* :: 15 14 13 12 11
+# =media-gfx/blender-3.6* :: 15 14 13 12 11
+# =media-gfx/blender-3.5* :: 13 12 11
+# =media-gfx/blender-3.4* :: 13 12 11
+# =media-gfx/blender-3.3* :: 13 12 11
+
+# Commits based on left side.  The commit associated with the message (right) differs
+# with the commit associated with the folder (left) on the GitHub website.
+HIPBIN_COMMIT="1fc712e1e5912db2a732bbe046691523e64fd93c"
+RPIPSDK_COMMIT="76068b7ca29aa8a7f29f65475f334981f0dd5e53"
+RPRSC_COMMIT="6608117fcddd783e81b2aedc2c1abdf0b449d465"
+RPRSDK_COMMIT="c61d7d3d56b0953d052ad561259d58e9c9a96f8f"
+HIPBIN_DF="RadeonProRenderSDKKernels-${HIPBIN_COMMIT:0:7}.tar.gz"
+RPIPSDK_DF="RadeonImageFilter-${RPIPSDK_COMMIT:0:7}.tar.gz"
+RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_COMMIT:0:7}.tar.gz"
+RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_COMMIT:0:7}.tar.gz"
+
+# It supports Python 3.7 to 3.10, but they are deprecated in this distro in
+# python-utils-r1.eclass.
+PYTHON_COMPAT=( python3_11 )
+
+PLUGIN_NAME="rprblender"
+CONFIGURATION="release"
+# Ceiling values based on python compatibility matching the particular Blender
+# version
+MIN_BLENDER_PV="2.80"
+MAX_BLENDER_PV="3.6" # exclusive
+BLENDER_SLOTS="
+	blender-3_3
+	blender-3_4
+	blender-3_5
+"
+VIDEO_CARDS="
+	video_cards_amdgpu
+	video_cards_intel
+	video_cards_nvidia
+	video_cards_radeonsi
+"
 
 inherit check-reqs git-r3 linux-info llvm python-r1 unpacker
 
-DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for
+KEYWORDS="~amd64"
+
+# Download limits?
+#https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter/archive/${RPIPSDK_COMMIT}.tar.gz
+#	-> ${RPIPSDK_DF}
+
+SRC_URI="
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDK/archive/${RPRSDK_COMMIT}.tar.gz
+	-> ${RPRSDK_DF}
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/archive/${RPRSC_COMMIT}.tar.gz
+	-> ${RPRSC_DF}
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDKKernels/archive/${HIPBIN_COMMIT}.tar.gz
+	-> ${HIPBIN_DF}
+"
+S="${WORKDIR}/${P}"
+S_HIPBIN="${WORKDIR}/RadeonProRenderSDKKernels-${HIPBIN_COMMIT}"
+S_RPIPSDK="${WORKDIR}/${P}/RadeonProImageProcessingSDK"
+S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_COMMIT}"
+S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${RPRSC_COMMIT}"
+#S_HIPBIN="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_COMMIT}"
+
+DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
 # The default license is Apache-2.0, the rest are third party.
+RPIPSDK_LICENSE="
+	Apache-2.0
+	MIT
+	UoI-NCSA
+"
 RPRSC_LICENSE="
 	Apache-2.0
 	MIT
@@ -31,12 +93,7 @@ RPRSDK_LICENSE="
 	Khronos-IP-framework
 	BSD-2
 "
-RIF_LICENSE="
-	Apache-2.0
-	MIT
-	UoI-NCSA
-"
-# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.3.5/src/rprblender/EULA.html
+# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.6.0/src/rprblender/EULA.html
 RPRBLENDER_EULA_LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
 	SPA-DISCLAIMER-DATA-AND-SOFTWARE
@@ -50,20 +107,15 @@ LICENSE="
 	Apache-2.0
 	${RPRSC_LICENSE}
 	${RPRSDK_LICENSE}
-	${RIF_LICENSE}
+	${RPIPSDK_LICENSE}
 	${RPRBLENDER_EULA_LICENSE}
 "
-# KEYWORDS="~amd64" ebuild is still a Work In Progress (WIP) and needs testing.
-PLUGIN_NAME="rprblender"
-# Ceiling values based on python compatibility matching the particular Blender
-# version
-MIN_BLENDER_PV="2.80"
-MAX_BLENDER_PV="3.5" # exclusive
-SLOT="0"
+RESTRICT="mirror strip"
+SLOT="0/${CONFIGURATION}"
 IUSE+="
-blender-lts-3_3 blender-master blender-stable denoiser
-intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide video_cards_amdgpu
-video_cards_intel video_cards_nvidia video_cards_radeonsi +vulkan
+${BLENDER_SLOTS}
+${VIDEO_CARDS}
+denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide +vulkan
 "
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
@@ -71,16 +123,13 @@ NV_DRIVER_VERSION_VULKAN="390.132"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!systemwide
-	blender-lts-3_3? (
-		python_targets_python3_10
+	blender-3_3? (
 		python_targets_python3_11
 	)
-	blender-master? (
-		python_targets_python3_10
+	blender-3_4? (
 		python_targets_python3_11
 	)
-	blender-stable? (
-		python_targets_python3_10
+	blender-3_5? (
 		python_targets_python3_11
 	)
 	opencl_orca? (
@@ -97,9 +146,7 @@ REQUIRED_USE+="
 		)
 	)
 	|| (
-		blender-lts-3_3
-		blender-master
-		blender-stable
+		${BLENDER_SLOTS}
 	)
 "
 # Assumes U 18.04.03 minimal
@@ -108,7 +155,7 @@ CDEPEND_NOT_LISTED="
 	sys-devel/gcc[openmp]
 "
 DEPEND_NOT_LISTED=""
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3.5/README-LNX.md#build-requirements
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.0/README-LNX.md#build-requirements
 DEPEND+="
 	${CDEPEND_NOT_LISTED}
 	${DEPEND_NOT_LISTED}
@@ -178,7 +225,7 @@ RDEPEND_NOT_LISTED="
 		)
 	)
 "
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.3.5/README-LNX.md#addon-runuse-linux-ubuntu-requirements
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.0/README-LNX.md#addon-runuse-linux-ubuntu-requirements
 
 RDEPEND+="
 	${CDEPEND_NOT_LISTED}
@@ -186,20 +233,19 @@ RDEPEND+="
 	>=media-libs/embree-2.12.0
 	>=media-libs/openimageio-1.6
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
-	blender-lts-3_3? (
+	blender-3_3? (
 		$(python_gen_any_dep "
 			=media-gfx/blender-3.3*["'${PYTHON_SINGLE_USEDEP}'"]
 		")
 	)
-	blender-master? (
+	blender-3_4? (
 		$(python_gen_any_dep "
-			=media-gfx/blender-9999*["'${PYTHON_SINGLE_USEDEP}'"]
+			=media-gfx/blender-3.4*["'${PYTHON_SINGLE_USEDEP}'"]
 		")
 	)
-	blender-stable? (
+	blender-3_5? (
 		$(python_gen_any_dep "
-			<media-gfx/blender-9999["'${PYTHON_SINGLE_USEDEP}'"]
-			>=media-gfx/blender-3.4["'${PYTHON_SINGLE_USEDEP}'"]
+			=media-gfx/blender-3.5*["'${PYTHON_SINGLE_USEDEP}'"]
 		")
 	)
 	matlib? (
@@ -261,36 +307,6 @@ BDEPEND+="
 	dev-cpp/castxml
 	dev-vcs/git
 "
-RIF_PV="1.7.2"
-RPRSDK_PV="2.2.17"
-RPRSC_PV="9999"
-# Commits based on left side.  The commit associated with the message (right) differs
-# with the commit associated with the folder (left) on the GitHub website.
-EGIT_COMMIT_RIF="76068b7ca29aa8a7f29f65475f334981f0dd5e53"
-EGIT_COMMIT_RPRSC="6608117fcddd783e81b2aedc2c1abdf0b449d465"
-EGIT_COMMIT_RPRSDK="19c1663c9db0050e94048573a45abe08ce4c5b04"
-RIF_DF="RadeonImageFilter-${RIF_PV}-${EGIT_COMMIT_RIF:0:7}.tar.gz"
-RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_PV}-${EGIT_COMMIT_RPRSC:0:7}.tar.gz"
-RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_PV}-${EGIT_COMMIT_RPRSDK:0:7}.tar.gz"
-GH_ORG_BURI="https://github.com/GPUOpen-LibrariesAndSDKs"
-
-# Download limits?
-#${GH_ORG_BURI}/RadeonImageFilter/archive/${EGIT_COMMIT_RIF}.tar.gz
-#	-> ${RIF_DF}
-
-SRC_URI="
-${GH_ORG_BURI}/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-${GH_ORG_BURI}/RadeonProRenderSDK/archive/${EGIT_COMMIT_RPRSDK}.tar.gz
-	-> ${RPRSDK_DF}
-${GH_ORG_BURI}/RadeonProRenderSharedComponents/archive/${EGIT_COMMIT_RPRSC}.tar.gz
-	-> ${RPRSC_DF}
-"
-RESTRICT="mirror strip"
-S="${WORKDIR}/${P}"
-S_RIF="${WORKDIR}/RadeonImageFilter-${EGIT_COMMIT_RIF}"
-S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${EGIT_COMMIT_RPRSDK}"
-S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${EGIT_COMMIT_RPRSC}"
 PATCHES=(
 	"${FILESDIR}/rpr-3.1.6-gentoo-skip-libs_cffi_backend.patch"
 	"${FILESDIR}/rpr-3.3-disable-download-wheel-boto3.patch"
@@ -327,9 +343,9 @@ pkg_setup() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 
-	use blender-lts-3_3 && export LLVM_MAX_SLOT=15
-	use blender-master && export LLVM_MAX_SLOT=15
-	use blender-stable && export LLVM_MAX_SLOT=13
+	use blender-3_3 && export LLVM_MAX_SLOT=13
+	use blender-3_4 && export LLVM_MAX_SLOT=13
+	use blender-3_5 && export LLVM_MAX_SLOT=13
 
 	llvm_pkg_setup
 	check_iomp5
@@ -356,14 +372,12 @@ ewarn
 	fi
 
 	# We know because of embree and may be statically linked.
-	if cat /proc/cpuinfo | grep sse2 2>/dev/null 1>/dev/null ; then
-einfo
+	if tc-is-cross-compiler ; then
+		:;
+	elif cat /proc/cpuinfo | grep sse2 2>/dev/null 1>/dev/null ; then
 einfo "CPU is compatible."
-einfo
 	else
-ewarn
 ewarn "CPU may not be compatible.  ${PN} requires SSE2."
-ewarn
 	fi
 
 	if use opencl_rocr ; then
@@ -379,9 +393,9 @@ ewarn
 	fi
 }
 
-get_rif() {
+get_rpipsdk() {
 	EGIT_MIN_CLONE_TYPE="single"
-	EGIT_COMMIT="${EGIT_COMMIT_RIF}"
+	EGIT_COMMIT="${RPIPSDK_COMMIT}"
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${S}/RadeonProImageProcessingSDK"
 	EGIT_REPO_URI="https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter.git"
@@ -392,20 +406,34 @@ get_rif() {
 src_unpack() {
 	unpack ${A}
 	cd "${S}" || die
-	rm -rf RadeonProImageProcessingSDK \
+	rm -rf \
+		RadeonProImageProcessingSDK \
 		RadeonProRenderSDK \
-		RadeonProRenderSharedComponents || die
-#	ln -s "${S_RIF}" "RadeonProImageProcessingSDK" || die
+		RadeonProRenderSharedComponents \
+		|| die
+#	ln -s "${S_RPIPSDK}" "RadeonProImageProcessingSDK" || die
 	ln -s "${S_RPRSDK}" "RadeonProRenderSDK" || die
+	ln -s "${S_HIPBIN}" "RadeonProRenderSDK/hipbin" || die
 	ln -s "${S_RPRSC}" "RadeonProRenderSharedComponents" || die
-	get_rif
+	get_rpipsdk
+}
+
+fix_version() {
+	local line_num=$(grep -n -e "\"version\"" "src/rprblender/__init__.py" \
+		| cut -f 1 -d ":")
+	einfo "line_num:  ${line_num}"
+	sed -i -e "${line_num}d" "src/rprblender/__init__.py" || die
+	local ver_major=$(ver_cut 1 ${PV})
+	local ver_minor=$(ver_cut 2 ${PV})
+	local ver_patch=$(ver_cut 3 ${PV})
+	sed -i -e "${line_num}i \ \ \ \ \"version\": (${ver_major}, ${ver_minor}, ${ver_patch})," "src/rprblender/__init__.py" || die
 }
 
 src_prepare() {
-	ewarn "This is the weekly development build."
+	ewarn "This is the ${CONFIGURATION} build."
 	default
+	fix_version
 	eapply "${FILESDIR}/rpr-3.5.2-more-generic-call-python3.patch"
-	eapply "${FILESDIR}/rpr-${PV}-bump-version.patch"
 	git init || die
 	touch dummy || die
 	git config user.email "name@example.com" || die
@@ -419,11 +447,9 @@ src_configure() {
 	default
 	cd "${S}" || die
 
-	if ! use python_targets_python3_9 ; then
-		einfo "Disabled python 3.9 bindings"
-		sed -i -e "/python3.9 build.py/d" \
-			build.sh || die
-	fi
+	einfo "Disabled python 3.9 bindings"
+	sed -i -e "/python3.9 build.py/d" \
+		build.sh || die
 }
 
 src_compile() {
@@ -485,9 +511,7 @@ src_install_packed_shared() {
 	popd
 	D_FN="${PLUGIN_NAME}-${PV}-${head_commit:0:7}-linux.zip"
 
-einfo
 einfo "Installing addon in shared"
-einfo
 
 	cd "${S}" || die
 	insinto "/usr/share/${PN}"
@@ -506,15 +530,16 @@ src_install() {
 	docinto licenses/RadeonProRenderSDK
 	dodoc "${S_RPRSDK}/license.txt"
 	docinto licenses/RadeonImageFilter
-	dodoc "${S_RIF}/License.md"
+	dodoc "${S_RPIPSDK}/License.md"
 	docinto licenses/RadeonProRenderBlenderAddon
 	dodoc "${S}/LICENSE.txt"
 	dodoc "${S}/src/${PLUGIN_NAME}/EULA.html"
 }
 
 pkg_postinst() {
-	einfo
-	einfo "You must enable the addon manually."
+ewarn
+ewarn "You must enable the addon manually."
+ewarn
 
 	# Denoiser may need libiomp.so.5
 

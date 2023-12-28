@@ -5,7 +5,6 @@ EAPI=8
 
 LLVM_MAX_SLOT=15
 LLVM_SLOTS=( 15 14 13 12 11 )
-# =media-gfx/blender-9999 (4.0.1) :: 15 14 13 12 11
 # =media-gfx/blender-3.4* :: 15 14 13 12 11
 # =media-gfx/blender-3.6* :: 15 14 13 12 11
 # =media-gfx/blender-3.5* :: 13 12 11
@@ -14,9 +13,11 @@ LLVM_SLOTS=( 15 14 13 12 11 )
 
 # Commits based on left side.  The commit associated with the message (right) differs
 # with the commit associated with the folder (left) on the GitHub website.
-RPIPSDK_COMMIT="76068b7ca29aa8a7f29f65475f334981f0dd5e53"
+HIPBIN_COMMIT="ff60e3beadd870bbc0870ef6344193976d9ba17c"
+RPIPSDK_COMMIT="31b926e462a097e54efd653f2ed8ba5a4fad2d8c"
 RPRSC_COMMIT="6608117fcddd783e81b2aedc2c1abdf0b449d465"
-RPRSDK_COMMIT="c6424e29169743cd5a05c10593a2665dfedb185c"
+RPRSDK_COMMIT="440580074009d48b18019da1331d2494a253a96d"
+HIPBIN_DF="RadeonProRenderSDKKernels-${HIPBIN_COMMIT:0:7}.tar.gz"
 RPIPSDK_DF="RadeonImageFilter-${RPIPSDK_COMMIT:0:7}.tar.gz"
 RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_COMMIT:0:7}.tar.gz"
 RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_COMMIT:0:7}.tar.gz"
@@ -26,14 +27,15 @@ RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_COMMIT:0:7}.tar.gz"
 PYTHON_COMPAT=( python3_11 )
 
 PLUGIN_NAME="rprblender"
-CONFIGURATION="release"
+CONFIGURATION="weekly"
 # Ceiling values based on python compatibility matching the particular Blender
-# version.
+# version
 MIN_BLENDER_PV="2.80"
-MAX_BLENDER_PV="3.5" # exclusive
+MAX_BLENDER_PV="3.6" # exclusive
 BLENDER_SLOTS="
 	blender-3_3
 	blender-3_4
+	blender-3_5
 "
 VIDEO_CARDS="
 	video_cards_amdgpu
@@ -57,8 +59,11 @@ https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDK/archive/${RPRSDK_
 	-> ${RPRSDK_DF}
 https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/archive/${RPRSC_COMMIT}.tar.gz
 	-> ${RPRSC_DF}
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDKKernels/archive/${HIPBIN_COMMIT}.tar.gz
+	-> ${HIPBIN_DF}
 "
 S="${WORKDIR}/${P}"
+S_HIPBIN="${WORKDIR}/RadeonProRenderSDKKernels-${HIPBIN_COMMIT}"
 S_RPIPSDK="${WORKDIR}/${P}/RadeonProImageProcessingSDK"
 S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_COMMIT}"
 S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${RPRSC_COMMIT}"
@@ -86,7 +91,7 @@ RPRSDK_LICENSE="
 	Khronos-IP-framework
 	BSD-2
 "
-# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.5.0/src/rprblender/EULA.html
+# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.6.9/src/rprblender/EULA.html
 RPRBLENDER_EULA_LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
 	SPA-DISCLAIMER-DATA-AND-SOFTWARE
@@ -122,6 +127,9 @@ REQUIRED_USE+="
 	blender-3_4? (
 		python_targets_python3_11
 	)
+	blender-3_5? (
+		python_targets_python3_11
+	)
 	opencl_orca? (
 		video_cards_amdgpu
 	)
@@ -145,7 +153,7 @@ CDEPEND_NOT_LISTED="
 	sys-devel/gcc[openmp]
 "
 DEPEND_NOT_LISTED=""
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.5.0/README-LNX.md#build-requirements
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.9/README-LNX.md#build-requirements
 DEPEND+="
 	${CDEPEND_NOT_LISTED}
 	${DEPEND_NOT_LISTED}
@@ -215,7 +223,7 @@ RDEPEND_NOT_LISTED="
 		)
 	)
 "
-# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.5.0/README-LNX.md#addon-runuse-linux-ubuntu-requirements
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.6.9/README-LNX.md#addon-runuse-linux-ubuntu-requirements
 
 RDEPEND+="
 	${CDEPEND_NOT_LISTED}
@@ -231,6 +239,11 @@ RDEPEND+="
 	blender-3_4? (
 		$(python_gen_any_dep "
 			=media-gfx/blender-3.4*["'${PYTHON_SINGLE_USEDEP}'"]
+		")
+	)
+	blender-3_5? (
+		$(python_gen_any_dep "
+			=media-gfx/blender-3.5*["'${PYTHON_SINGLE_USEDEP}'"]
 		")
 	)
 	matlib? (
@@ -330,6 +343,7 @@ pkg_setup() {
 
 	use blender-3_3 && export LLVM_MAX_SLOT=13
 	use blender-3_4 && export LLVM_MAX_SLOT=13
+	use blender-3_5 && export LLVM_MAX_SLOT=13
 
 	llvm_pkg_setup
 	check_iomp5
@@ -397,6 +411,7 @@ src_unpack() {
 		|| die
 #	ln -s "${S_RPIPSDK}" "RadeonProImageProcessingSDK" || die
 	ln -s "${S_RPRSDK}" "RadeonProRenderSDK" || die
+	ln -s "${S_HIPBIN}" "RadeonProRenderSDK/hipbin" || die
 	ln -s "${S_RPRSC}" "RadeonProRenderSharedComponents" || die
 	get_rpipsdk
 }
@@ -513,7 +528,6 @@ src_install() {
 	docinto licenses/RadeonProRenderSDK
 	dodoc "${S_RPRSDK}/license.txt"
 	docinto licenses/RadeonImageFilter
-RadeonProRenderBlenderAddon-3.6.9/RadeonProImageProcessingSDK/License.md
 	dodoc "${S_RPIPSDK}/License.md"
 	docinto licenses/RadeonProRenderBlenderAddon
 	dodoc "${S}/LICENSE.txt"
