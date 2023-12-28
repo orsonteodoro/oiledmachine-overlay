@@ -1729,8 +1729,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
         /etc/default/grub.
       * For security configurations, it is recommended to use openrc.
       * For realtime configurations, it is recommended to use openrc.
-      * If init= is provided by bootloader, it will override the
-        internal setting.
+      * If init= is provided by the bootloader, it will override this internal
+        setting except when lockdown is enabled.
 
     See also
 
