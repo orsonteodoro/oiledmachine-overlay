@@ -60,6 +60,11 @@ gen_imath() {
 	done
 }
 
+# minizip-ng 3.0.10 causes
+#error: user-defined literal in preprocessor expression
+#  229 | #if MZ_VERSION_BUILD >= 040000
+#      |     ^~~~~~~~~~~~~~~~
+
 # See https://github.com/AcademySoftwareFoundation/OpenColorIO/blob/v2.2.1/docs/quick_start/installation.rst#building-from-source
 RDEPEND="
 	>=dev-cpp/yaml-cpp-0.7.0:=
