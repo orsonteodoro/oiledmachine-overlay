@@ -44,7 +44,7 @@ ot-kernel_has_version() {
 	else
 		# Upstream uses EROOT for pickled merged package database not ESYSROOT.
 		# No guarantee of atomic tree but very fast.
-		# find is slow.  Don't use it.
+		# The find command is slow.  Don't use it.
 		if ls "${ESYSROOT}/var/db/pkg/${pkg}"*"/CONTENTS" 2>/dev/null 1>/dev/null ; then
 			return 0
 		fi
@@ -64,7 +64,7 @@ ot-kernel_has_version_use() {
 	local x
 	local y
 
-	# Find is slow.  Don't use it.
+	# The find command is slow.  Don't use it.
 	local Y=(
 		$(cat "${ESYSROOT}/var/db/pkg/${pkg}"*"/USE" 2>/dev/null)
 	)
