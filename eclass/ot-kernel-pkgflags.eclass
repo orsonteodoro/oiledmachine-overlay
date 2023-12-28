@@ -178,44 +178,44 @@ eerror
 # Add the init to the internal kernel command line.
 _ot-kernel_set_init() {
 	local init="${OT_KERNEL_INIT:-custom}"
-	if [[ "${init}" == "systemd" ]] ; then
-einfo "init: systemd"
-		ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
-	elif [[ "${init}" == "openrc" ]] ; then
+	if [[ "${init}" == "auto" ]] ; then
+		if ot-kernel_has_version "sys-process/dinit" ; then
+einfo "init: dinit"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/dinit"
+		elif ot-kernel_has_version "sys-apps/epoch" ; then
+einfo "init: Epoch"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/usr/sbin/epoch-init"
+		elif ot-kernel_has_version "sys-apps/openrc" ; then
 einfo "init: OpenRC"
-		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
+		elif ot-kernel_has_version "sys-process/runit" ; then
+einfo "init: runit"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/runit-init"
+		elif has_version "sys-apps/systemd" ; then
+einfo "init: systemd"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
+		elif ot-kernel_has_version "sys-apps/sysvinit" ; then
+einfo "init: sysvinit"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/init"
+		fi
 	elif [[ "${init}" == "dinit" ]] ; then
 einfo "init: dinit"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/dinit"
 	elif [[ "${init}" == "epoch" ]] ; then
 einfo "init: Epoch"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/usr/sbin/epoch-init"
+	elif [[ "${init}" == "openrc" ]] ; then
+einfo "init: OpenRC"
+		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
 	elif [[ "${init}" == "runit" ]] ; then
 einfo "init: runit"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/runit-init"
+	elif [[ "${init}" == "systemd" ]] ; then
+einfo "init: systemd"
+		ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
 	elif [[ "${init}" == "sysvinit" ]] ; then
 einfo "init: sysvinit"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/init"
-	elif [[ "${init}" == "auto" ]] ; then
-		if has_version "sys-apps/systemd" ; then
-einfo "init: systemd"
-			ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
-		elif ot-kernel_has_version "sys-apps/openrc" ; then
-einfo "init: OpenRC"
-			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
-		elif ot-kernel_has_version "sys-process/dinit" ; then
-einfo "init: dinit"
-			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/dinit"
-		elif ot-kernel_has_version "sys-apps/epoch" ; then
-einfo "init: Epoch"
-			ot-kernel_set_kconfig_kernel_cmdline "init=/usr/sbin/epoch-init"
-		elif ot-kernel_has_version "sys-process/runit" ; then
-einfo "init: runit"
-			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/runit-init"
-		elif ot-kernel_has_version "sys-apps/sysvinit" ; then
-einfo "init: sysvinit"
-			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/init"
-		fi
 	elif [[ "${init}" =~ ^"/" ]] ; then
 		ot-kernel_set_kconfig_kernel_cmdline "init=${init}"
 	else
