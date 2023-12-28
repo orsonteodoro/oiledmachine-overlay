@@ -48,7 +48,7 @@ RDEPEND="
 	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[${MULTILIB_USEDEP},test-helpers(-)]
 	dev-libs/utf8_range[${MULTILIB_USEDEP}]
 	zlib? (
-		sys-libs/zlib[${MULTILIB_USEDEP}]
+		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="

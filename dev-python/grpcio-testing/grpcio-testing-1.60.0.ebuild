@@ -4,7 +4,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..12} )
 
 inherit distutils-r1
 
@@ -22,7 +22,7 @@ HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-PROTOBUF_SLOT="0/4.24"
+PROTOBUF_SLOT="0/4.25"
 RDEPEND="
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]

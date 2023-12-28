@@ -46,7 +46,7 @@ RESTRICT="
 "
 RDEPEND="
 	zlib? (
-		sys-libs/zlib[${MULTILIB_USEDEP}]
+		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
