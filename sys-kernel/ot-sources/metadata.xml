@@ -775,6 +775,10 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       0 - disable
       unset - manual settings
 
+    See also
+
+      OT_KERNEL_BOOT_ARGS
+
 
 
     OT_KERNEL_BOOT_DECOMPRESSOR - chooses the main boot decompressor for both
@@ -1718,6 +1722,13 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
         /etc/default/grub.
       * For security configurations, it is recommended to use openrc.
       * For realtime configurations, it is recommended to use openrc.
+      * If init= is provided by bootloader, it will override the
+        internal setting.
+
+    See also
+
+      OT_KERNEL_BOOT_ARGS
+      OT_KERNEL_BOOT_ARGS_LOCKDOWN
 
 
 
