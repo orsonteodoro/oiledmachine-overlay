@@ -188,7 +188,7 @@ einfo "Using OpenRC as the default init"
 		if has_version "sys-apps/systemd" ; then
 einfo "Using systemd as the default init"
 			ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
-		elif has_version "sys-apps/openrc" ; then
+		elif ot-kernel_has_version "sys-apps/openrc" ; then
 einfo "Using OpenRC as the default init"
 			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
 		fi
@@ -8430,7 +8430,7 @@ ot-kernel-pkgflags_sysdig_kmod() { # DONE
 # Applies kernel config flags for the systemd package
 ot-kernel-pkgflags_systemd() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S297eb15]}" == "1" ]] && return
-	if ot-kernel_has_version "sys-apps/systemd" ; then
+	if has_version "sys-apps/systemd" ; then
 		einfo "Applying kernel config flags for the systemd package (id: 297eb15)"
 		ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
 		ot-kernel_y_configopt "CONFIG_BINFMT_MISC"

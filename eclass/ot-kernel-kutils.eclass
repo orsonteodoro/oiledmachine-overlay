@@ -27,6 +27,9 @@ inherit toolchain-funcs
 # Use the fewest steps to check for the existence of package instead of
 # using has_version if possible.  There is a big slow down introducted by
 # emerge.
+# Bug:  Use has_version instead if the package looks ambiguous like
+# sys-apps/systemd vs sys-apps/systemd-utils and the outcome could be fatal.
+# This recommendation doesn't apply if the first case below.
 ot-kernel_has_version() {
 	local pkg="${1}"
 	local ret
