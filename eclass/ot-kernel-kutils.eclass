@@ -44,7 +44,11 @@ ot-kernel_has_version() {
 	else
 		# Upstream uses EROOT for pickled merged package database not ESYSROOT.
 		# No guarantee of atomic tree but very fast.
-		if ls "${ESYSROOT}/var/db/pkg/${pkg}-"*"/CONTENTS" 2>/dev/null 1>/dev/null ; then
+		local n=$(
+			find "${ESYSROOT}/var/db/pkg/" -regex ".*/${pkg}-[a-z0-9.-_]+/CONTENTS" \
+				| wc -l
+		)
+		if (( ${n} > 1 )) ; then
 			return 0
 		fi
 	fi
@@ -63,8 +67,10 @@ ot-kernel_has_version_use() {
 	local x
 	local y
 
+	local path=$(find "${ESYSROOT}/var/db/pkg/" -regex ".*/${pkg}-[a-z0-9.-_]+/USE")
+
 	local Y=(
-		$(cat "${ESYSROOT}/var/db/pkg/${pkg}-"*"/USE" 2>/dev/null)
+		$(cat "${path}" 2>/dev/null)
 	)
 
 	X=$(echo "${pkg_raw}" | sed -e "s|.*\[||g" -e "s|\].*||g" | tr "," " ")
