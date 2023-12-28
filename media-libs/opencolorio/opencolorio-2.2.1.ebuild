@@ -62,7 +62,7 @@ gen_imath() {
 
 # See https://github.com/AcademySoftwareFoundation/OpenColorIO/blob/v2.2.1/docs/quick_start/installation.rst#building-from-source
 RDEPEND="
-	>=dev-cpp/yaml-cpp-0.7.0:=
+	~dev-cpp/yaml-cpp-0.7.0:=
 	>=dev-libs/expat-2.4.1
 	>=dev-cpp/pystring-1.1.3
 	>=sys-libs/minizip-ng-3.0.7
