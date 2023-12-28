@@ -51,7 +51,7 @@ VIDEO_CARDS="
 
 inherit check-reqs git-r3 linux-info llvm python-r1 unpacker
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Missing .so files
 
 # Download limits?
 #https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter/archive/${RPIPSDK_COMMIT}.tar.gz
