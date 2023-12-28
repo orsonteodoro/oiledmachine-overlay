@@ -173,10 +173,10 @@ eerror
 	fi
 }
 
-# @FUNCTION: ot-kernel_set_init
+# @FUNCTION: _ot-kernel_set_init
 # @DESCRIPTION:
 # Add the init to the internal kernel command line.
-ot-kernel_set_init() {
+_ot-kernel_set_init() {
 	local init="${OT_KERNEL_INIT:-custom}"
 	if [[ "${init}" == "systemd" ]] ; then
 einfo "Using systemd as the default init"
