@@ -1718,14 +1718,20 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     epoch - Use init=/usr/sbin/epoch-init
     openrc - Use init=/sbin/openrc-init
     runit - Use init=/sbin/runit-init
+    s6 - Use init=/sbin/init
     systemd - Use init=/lib/systemd/systemd
     sysvinit - Use init=/sbin/init
 
     Examples
 
+      OT_KERNEL_INIT="/sbin/init"            # From the s6 quickstart.html instructions
+      OT_KERNEL_INIT="/sbin/s6-imkr-init"    # From the "s6-linux-init (package)" instructions
+      OT_KERNEL_INIT="/sbin/s6-init"         # From the "User:Capezotte/s6 on Gentoo" instructions
+      OT_KERNEL_INIT="/sbin/s6-gentoo-init"  # From the "s6 and s6-rc-based init system" instructions
       OT_KERNEL_INIT="/sbin/openrc-init"
       OT_KERNEL_INIT="openrc"
       OT_KERNEL_INIT="auto"
+    
 
     Notes
 
@@ -1739,6 +1745,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       * It is recommended to set it to auto and remove the init=
         from boot.
       * The explicit values are provided for cross compiling.
+      * There are four s6 instructions.  Insane!  The s6 or auto options uses
+        the quckstart.html upstream instructions.
 
     See also
 

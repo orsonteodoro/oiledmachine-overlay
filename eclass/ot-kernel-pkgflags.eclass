@@ -191,6 +191,9 @@ einfo "init: OpenRC"
 		elif ot-kernel_has_version "sys-process/runit" ; then
 einfo "init: runit"
 			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/runit-init"
+		elif ot-kernel_has_version "sys-apps/s6-linux-init" ; then
+einfo "init: s6"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/init"
 		elif has_version "sys-apps/systemd" ; then
 einfo "init: systemd"
 			ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
@@ -210,6 +213,9 @@ einfo "init: OpenRC"
 	elif [[ "${init}" == "runit" ]] ; then
 einfo "init: runit"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/runit-init"
+	elif [[ "${init}" == "s6" ]] ; then
+einfo "init: s6"
+		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/init"
 	elif [[ "${init}" == "systemd" ]] ; then
 einfo "init: systemd"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/lib/systemd/systemd"
