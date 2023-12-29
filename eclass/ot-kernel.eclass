@@ -11921,6 +11921,7 @@ ot-kernel_slotify_amdgpu() {
 	local KERNEL_MODULES=(
 		"amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	)
+	local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
 	local x
 	IFS=$'\n'
 	for x in ${KERNEL_MODULES[@]} ; do
@@ -12440,6 +12441,8 @@ ot-kernel_fix_modules() {
 	local NC_VERSION=""
 	if [[ -n "${RC_PV}" ]] ; then
 		NC_VERSION="${KV_MAJOR_MINOR}-${RC_PV}"
+	else
+		NC_VERSION="${KV_MAJOR_MINOR}"
 	fi
 
 	[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
