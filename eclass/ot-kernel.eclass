@@ -12728,6 +12728,7 @@ EOF
 
 		[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
 		local non_canonical_target="${NC_VERSION}-${extraversion}-${arch}" # ex. 6.6-builder-${arch}
+		local non_canonical_target2="${NC_VERSION}-${extraversion}" # ex. 6.6-builder
 		local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
 
 		mkdir -p "${ED}/lib/modules/${canonical_target}"
@@ -12737,6 +12738,14 @@ EOF
 				"${ED}/lib/modules/${target}" \
 				|| die
 			rm -rf "${ED}/lib/modules/${non_canonical_target}" \
+				|| true
+		fi
+		if [[ -e "${ED}/lib/modules/${non_canonical_target2}" ]] ; then
+			cp -a \
+				"${ED}/lib/modules/${non_canonical_target2}/"* \
+				"${ED}/lib/modules/${target}" \
+				|| die
+			rm -rf "${ED}/lib/modules/${non_canonical_target2}" \
 				|| true
 		fi
 
