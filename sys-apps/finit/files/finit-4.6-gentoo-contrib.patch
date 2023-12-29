@@ -12,14 +12,14 @@ diff -urpN finit-4.6.orig/configure.ac finit-4.6/configure.ac
 diff -urpN finit-4.6.orig/contrib/gentoo/build.sh finit-4.6/contrib/gentoo/build.sh
 --- finit-4.6.orig/contrib/gentoo/build.sh	1969-12-31 16:00:00.000000000 -0800
 +++ finit-4.6/contrib/gentoo/build.sh	2023-12-29 14:18:44.814622433 -0800
-@@ -0,0 +1,61 @@
+@@ -0,0 +1,62 @@
 +#!/bin/sh
 +#
 +# This script configures Finit for Gentoo, which needs a few more plugins
 +# and tweaks than an embedded system usually does.
 +#
 +# Usage:
-+#         user@jessie:~/finit$ contrib/gentoo/build.sh
++#         user@gentoo:~/finit$ contrib/gentoo/build.sh
 +#
 +
 +echo
@@ -39,6 +39,7 @@ diff -urpN finit-4.6.orig/contrib/gentoo/build.sh finit-4.6/contrib/gentoo/build
 +./configure								\
 +    --prefix=/usr                     --exec-prefix=			\
 +    --sysconfdir=/etc                 --localstatedir=/var		\
++    --bindir=/bin                     --sbindir=/sbin                  \
 +    --enable-dbus-plugin              --enable-x11-common-plugin	\
 +    --enable-alsa-utils-plugin	      --with-keventd			\
 +    --with-random-seed=/var/lib/urandom/random-seed
