@@ -36,6 +36,7 @@ PLUGINS=(
 	urandom
 	X
 )
+# TODO:  properly set default ON for these USE flags
 IUSE+="
 ${PLUGINS[@]}
 auto-reload bash-completion +contrib doc kernel-cmdline fastboot fsckfix keventd
@@ -146,7 +147,7 @@ src_configure() {
 	# https://en.wikipedia.org/wiki/Runlevel#Gentoo_Linux
 	# https://github.com/troglobit/finit/tree/master/doc#runlevels
 	#
-	# si internal, sys init (mount all)				Same as pre S [hidden] in finit defined in src/finit.c.  No cryptsetup support.  #74
+	# si internal, sys init (mount all)				Same as pre S [hidden] in finit defined in src/finit.c.  No cryptsetup support (Issue #74)
 	# rc boot, run everything in /etc/runlevels/boot/		Same as S in finit
 	# 0 internal, shutdown
 	# 1 user defined, single (aka recovery)
