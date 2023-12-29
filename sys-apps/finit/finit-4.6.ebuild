@@ -39,8 +39,14 @@ PLUGINS=(
 # TODO:  properly set default ON for these USE flags
 IUSE+="
 ${PLUGINS[@]}
-auto-reload bash-completion +contrib doc kernel-cmdline fastboot fsckfix keventd
-logrotate plugins redirect rescue sulogin test watchdog
+auto-reload bash-completion +contrib doc kernel-cmdline fastboot fsckfix mdev keventd
+logrotate plugins redirect rescue sulogin test udev watchdog
+"
+REQUIRED_USE="
+	^^ (
+		mdev
+		udev
+	)
 "
 INIT_SYSTEMS_DEPENDS="
 	!sys-apps/epoch
@@ -65,6 +71,12 @@ RDEPEND+="
 	sys-apps/util-linux
 	bash-completion? (
 		app-shells/bash-completion
+	)
+	mdev? (
+		sys-apps/busybox[mdev]
+	)
+	udev? (
+		sys-apps/systemd-utils[udev]
 	)
 "
 DEPEND+="
