@@ -13224,7 +13224,7 @@ einfo
 # Send messages for clang built linux
 ot-kernel_postinst_clang_built_linux() {
 	local has_llvm=0
-	local llvm_v_maj=12 # set to highest kcp arch requirement
+	local llvm_ver_maj=12 # set to highest kcp arch requirement
 	local wants_cfi=0
 	local wants_kcfi=0
 	local wants_lto=0
@@ -13233,7 +13233,7 @@ ot-kernel_postinst_clang_built_linux() {
 		-e "s|-r[0-9]+||"| cut -f 1-3 -d ".")
 	if ot-kernel_has_version "sys-devel/clang" ; then
 		has_llvm=1
-		llvm_v_maj=$(best_version "sys-devel/clang" \
+		llvm_ver_maj=$(best_version "sys-devel/clang" \
 		| sed -r -e "s|sys-devel/clang-||g" \
 		-e "s|-r[0-9]+||" | cut -f 1 -d ".")
 	fi
@@ -13262,11 +13262,11 @@ einfo
 einfo "To present the (K)CFI/LTO options, you must:"
 einfo
 einfo "  \`make menuconfig \
-AR=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-ar \
-AS=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-as \
-CC=clang-${llvm_v_maj} \
+AR=/usr/lib/llvm/${llvm_ver_maj}/bin/llvm-ar \
+AS=/usr/lib/llvm/${llvm_ver_maj}/bin/llvm-as \
+CC=clang-${llvm_ver_maj} \
 LD=/usr/bin/ld.lld \
-NM=/usr/lib/llvm/${llvm_v_maj}/bin/llvm-nm"
+NM=/usr/lib/llvm/${llvm_ver_maj}/bin/llvm-nm"
 einfo
 einfo "(K)CFI or LTO requires that the menuconfig settings are changed to:"
 einfo
