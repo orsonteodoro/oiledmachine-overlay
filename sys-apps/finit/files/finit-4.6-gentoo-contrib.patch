@@ -450,8 +450,8 @@ diff -urpN finit-4.6.orig/contrib/gentoo/README.md finit-4.6/contrib/gentoo/READ
 +You can also use a standard [/etc/rc.local](rc.local) for one-shot tasks
 +and initialization like keyboard language etc.
 +
-+> **NOTE:** X Window system, you may need to `sudo emerge elogind`
-+> (Bullseye and later), followed by `initctl reload` to activate it (it
++> **NOTE:** X Window system, you may need to `sudo emerge elogind`,
++> followed by `initctl reload` to activate it (it
 +> is enabled by default), and logout/login again.  The elogind daemon
 +> ensures a regular non-root user can start and interact with an X
 +> session, otherwise keyboard and mouse won't work.  When you're happy,
