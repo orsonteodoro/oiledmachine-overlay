@@ -11945,698 +11945,411 @@ ot-kernel_slotify_amdgpu() {
 	IFS=$' \t\n'
 }
 
-# @FUNCTION: ot-kernel_src_install
+
+# @FUNCTION: ot-kernel_install_tcca
 # @DESCRIPTION:
-# Removes patch cruft.
-OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0
-ot-kernel_src_install() {
-	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
-	if has tresor ${IUSE_EFFECTIVE} ; then
-		if use tresor ; then
-			docinto /usr/share/${PF}
-			dodoc "${EDISTDIR}/${TRESOR_README_FN}"
-			dodoc "${EDISTDIR}/${TRESOR_PDF_FN}"
-		fi
-	fi
+# Configure and install tcca
+ot-kernel_install_tcca() {
+	OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
+	if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" \
+		&& -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" ]] ; then
+		# Each kernel config may have different a combo.
 
-	local env_path
-	for env_path in $(ot-kernel_get_envs) ; do
-		[[ -e "${env_path}" ]] || continue
-		ot-kernel_clear_env
-		declare -A OT_KERNEL_KCONFIG
-		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
-		declare -A OT_KERNEL_PKGFLAGS_REJECT
-		ot-kernel_load_config
-		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
-		local extraversion="${OT_KERNEL_EXTRAVERSION}"
-		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
-		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
-		if [[ -z "${build_config}" ]] ; then
-			if ot-kernel_is_build ; then
-				build_config="1"
+		local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
+
+		_tcc_intra_dc() {
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcc="dctcp"
 			else
-				build_config="0"
+				tcc="${default_tcca}"
 			fi
-		fi
-		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
-		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
-		cd "${BUILD_DIR}" || die
+			echo "${tcc}"
+		}
+		local tcca_intra_dc=$(_tcc_intra_dc)
 
-		if ot-kernel_is_full_sources_required ; then
-			# Everything will be installed
-			:;
-		else
-			if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
-				&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-				# This is allowed if no external modules.
-
-				# Prune all config arches
-				# Prune now for a faster source code install or header preservation
-
-				# Preserve build files because they are mostly unconditional includes.
-				# Save arch/um/scripts/Makefile.rules for make mrproper.
-				cp --parents -a arch/um/scripts/Makefile.rules \
-					"${T}/pruned" || die
-				ot-kernel_prune_arches
-				# Restore arch/um/scripts/Makefile.rules for make mrproper.
-				cp -aT "${T}/pruned" \
-					"${BUILD_DIR}" || die
-				rm -rf $(find arch -name "Kconfig*") # Delete if not using any make *config.
-			fi
-
-			if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
-				&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-				local last_version=$(best_version "=sys-kernel/${PN}-${KV_MAJOR_MINOR}*" \
-					| sed -e "s|sys-kernel/${PN}-||g")
-				local license_preserve_path_src="/usr/share/${PN}/${last_version}-${extraversion}/licenses"
-				local license_preserve_path_dest="/usr/share/${PN}/${MY_PV}-${extraversion}/licenses"
-				dodir "${license_preserve_path_dest}"
-				if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
-					&& -e "${license_preserve_path_src}" ]] ; then
-ewarn "Preserving copyright notices (cached)."
-					cp -aT "${license_preserve_path_src}" \
-						"${ED}/${license_preserve_path_dest}" || die
-				else
-ewarn "Preserving copyright notices.  This may take hours."
-					cat "${FILESDIR}/header-preserve-kernel" \
-						> "${BUILD_DIR}/header-preserve-kernel" || die
-					pushd "${BUILD_DIR}" || die
-						export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path_dest}"
-						chmod +x header-preserve-kernel || die
-						./header-preserve-kernel || die
-					popd
-				fi
-			fi
-		fi
-
-		if ot-kernel_is_build ; then
-			local args=(
-				INSTALL_MOD_PATH="${ED}"
-				INSTALL_PATH="${ED}${kernel_dir}"
-				${MAKEOPTS}
-				ARCH="${arch}"
-			)
-
-			ot-kernel_install_built_kernel # It works the same as make install.
-			cd "${BUILD_DIR}" || die
-einfo "Running:  make modules_install ${args[@]}"
-			make modules_install "${args[@]}" || die
-			if [[ "${arch}" =~ "arm" ]] ; then
-				make dtbs_install "${args[@]}" || die
-			fi
-			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
-				ot-kernel_keep_keys
-			fi
-
-			local default_config_bn="kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
-			local default_config_dir="/etc/kernels"
-			local default_config="${default_config_dir}/${default_config_bn}"
-einfo "Saving the config for ${extraversion} to ${default_config}"
-			insinto /etc/kernels
-			newins "${BUILD_DIR}/.config" "${default_config_bn}"
-			# dosym src_relpath_real dest_abspath_symlink
-
-			# For genkernel
-			dosym \
-				"${default_config_bn}" \
-				"${default_config_dir}/kernel-config-${UPSTREAM_PV}-${extraversion}-${arch}"
-
-			# For linux-info.eclass config checks
-			dosym \
-				"${default_config_dir}/kernel-config-${UPSTREAM_PV}-${extraversion}-${arch}" \
-				"/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config"
-
-			local cache="${T}/save_cache"
-			mkdir -p "${cache}" || true
-
-	# Save files before wiped by mrproper.
-			local save_paths=(
-	# For module checks in linux-mod-r1.eclass.
-				"Module.symvers"
-
-	# Save generated headers
-				"include/generated"
-				"tools/virtio/generated"
-				"tools/testing/radix-tree/generated"
-				"tools/net/ynl/generated"
-
-	# For app-emulation/virtualbox-modules
-				"include/config"
-				"include/generated"
-				"scripts"
-				"scripts/basic/fixdep"
-				"scripts/genksyms/genksyms"
-				"scripts/mod/modpost"
-			)
-
-			local arches=(
-				$(ls arch)
-			)
-			local _arch # arch already defined
-			for _arch in "${arches[@]}" ; do
-	# Save generated headers, required for app-emulation/virtualbox-modules
-				save_paths+=(
-					"arch/${_arch}/include/generated"
-#					"arch/${_arch}/include/generated/asm/rwonce.h"
-				)
-			done
-
-			local path
-			for path in "${save_paths[@]}" ; do
-				[[ -e "${path}" ]] || continue
-				if [[ -d "${path}" ]] ; then
-					mkdir -p "${cache}/${path}" || true
-					cp -aT "${path}" "${cache}/${path}" || true
-				elif [[ -f "${path}" || -x "${path}" ]] ; then
-					local d=$(dirname "${path}")
-					if [[ "${d}" == "." ]] ; then
-						cp -a "${path}" "${cache}" || true
-					else
-						mkdir -p "${cache}/${d}" || true
-						cp -a "${path}" "${cache}/${d}" || true
-					fi
-				fi
-			done
-
-einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
-			#make mrproper ARCH=${arch} || die # more agressive wipe
-			make clean ARCH="${arch}" || die # For external modules
-
-			cp -aT "${cache}" ./ || true
-			rm -rf "${cache}" || true
-
-			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
-				ot-kernel_restore_keys
-			fi
-			local pgo_phase # pgophase file
-			if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
-				pgo_phase="${FORCE_PGO_PHASE}"
-			elif [[ ! -e "${pgo_phase_statefile}" ]] ; then
-				pgo_phase="${PGO_PHASE_PGI}"
+		_tcc_inter_dc() {
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+				tcc="illinois"
 			else
-				pgo_phase=$(cat "${pgo_phase_statefile}")
+				tcc="${default_tcca}"
 			fi
-			# Convert deprecated
-			[[ "${pgo_phase}" == "PDI" ]] && pgo_phase="PGI"
-			[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
-			[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
-			[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
-			local pgo_phase_statefile
-			if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && use pgo ; then
-				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
-			elif use pgo ; then
-				pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
+			echo "${tcc}"
+		}
+		local tcca_inter_dc=$(_tcc_inter_dc)
+
+		_tcc_satellite() {
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcc="hybla"
+			else
+				tcc="${default_tcca}"
 			fi
-			if [[ -n "${pgo_phase_statefile}" ]] ; then
-				mkdir -p $(dirname "${pgo_phase_statefile}")
-				if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
-					echo "${PGO_PHASE_PGT}" > "${pgo_phase_statefile}" || die
-				elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
-					echo "${PGO_PHASE_DONE}" > "${pgo_phase_statefile}" || die
-				fi
+			echo "${tcc}"
+		}
+		local tcca_satellite=$(_tcc_satellite)
+
+		_tcc_wireless() {
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcc="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+				tcc="veno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcc="vegas"
+			else
+				tcc="${default_tcca}"
 			fi
+			echo "${tcc}"
+		}
+		local tcca_wireless=$(_tcc_wireless)
+
+		_tcc_high_bdp() {
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+				tcc="htcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcc="cubic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				tcc="bic"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+		local tcca_high_bdp=$(_tcc_high_bdp)
+
+
+
+		_tcc_hs_fair() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcc="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+				tcc="hstcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+				tcc="htcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+				tcc="illinois"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcc="hybla"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				tcc="bic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcc="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+				tcc="reno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+				tcc="yeah"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+				tcc="veno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcc="cubic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+		local tcca_hs_fair=$(_tcc_hs_fair)
+
+		_tcc_hs_realtime() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcc="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcc="cubic"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+		local tcca_hs_realtime=$(_tcc_hs_realtime)
+
+		_tcc_hs_throughput() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcc="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+				tcc="hstcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+				tcc="illinois"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcc="cubic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+				tcc="htcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcc="hybla"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				tcc="bic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+				tcc="reno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+				tcc="yeah"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+				tcc="veno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcc="vegas"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+		local tcca_hs_throughput=$(_tcc_hs_throughput)
+
+
+		# UCDC - ultra cap data center O(100,000) - top 500 supercomputers
+		# HCDC - high cap data center O(10,000) - big tech
+		# MCDC - mid cap data center O(1,000) - university super computer
+		# LCDC - low cap data center O(100) - university HPC/ML/DL
+
+		_tcc_lcdc_fair() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcc="dctcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+
+		_tcc_lcdc_realtime() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcc="dctcp"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+
+		_tcc_lcdc_throughput() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcc="dctcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+
+
+		_tcc_mcdc_fair() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcc="dctcp"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+
+		_tcc_mcdc_realtime() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcc="dctcp"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+
+		_tcc_mcdc_throughput() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcc="dctcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+
+		local tcca_lcdc_fair=$(_tcc_lcdc_fair)
+		local tcca_lcdc_realtime=$(_tcc_lcdc_realtime)
+		local tcca_lcdc_throughput=$(_tcc_lcdc_throughput)
+
+		local tcca_mcdc_fair=$(_tcc_mcdc_fair)
+		local tcca_mcdc_realtime=$(_tcc_mcdc_realtime)
+		local tcca_mcdc_throughput=$(_tcc_mcdc_throughput)
+
+		local tcca_hcdc_fair=$(_tcc_mcdc_fair)
+		local tcca_hcdc_realtime=$(_tcc_mcdc_realtime)
+		local tcca_hcdc_throughput=$(_tcc_mcdc_throughput)
+
+		local tcca_ucdc_fair=$(_tcc_mcdc_fair)
+		local tcca_ucdc_realtime=$(_tcc_mcdc_realtime)
+		local tcca_ucdc_throughput=$(_tcc_mcdc_throughput)
+
+		_tcc_streaming() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+		local tcca_streaming=$(_tcc_streaming)
+
+		# It should not be loss based.
+		_tcc_low_latency() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then
+				tcc="c2tcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcc="vegas"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+
+		local tcca_music=$(_tcc_streaming)
+		local tcca_podcast=$(_tcc_streaming)
+		local tcca_streaming=$(_tcc_streaming)
+
+		local tcca_broadcast=$(_tcc_low_latency)
+		local tcca_gaming=$(_tcc_low_latency)
+		local tcca_social_games=$(_tcc_low_latency)
+		local tcca_video_chat=$(_tcc_low_latency)
+		local tcca_voip=$(_tcc_low_latency)
+
+		# sendrate ~ avg throughput based on self clocking.
+		# Sorted by completion time, then avg send rate
+		_tcc_send_rate() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
+				tcc="pcc"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcc="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+				tcc="hstcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
+				tcc="illinois"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcc="cubic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
+				tcc="htcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
+				tcc="hybla"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
+				tcc="bic"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+				tcc="reno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
+				tcc="bbr3"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
+				tcc="bbr2"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
+				tcc="yeah"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
+				tcc="veno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcc="vegas"
+			else
+				tcc="${default_tcca}"
+			fi
+			echo "${tcc}"
+		}
+		local tcca_ftp=$(_tcc_send_rate)
+		local tcca_p2p=$(_tcc_send_rate)
+		local tcca_podcast_upload=$(_tcc_send_rate)
+		local tcca_torrent=$(_tcc_send_rate)
+		local tcca_video_upload=$(_tcc_send_rate)
+
+		_tcc_green() {
+			local tcc
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
+				tcc="bbr"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
+				tcc="westwood"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
+				tcc="hstcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "scalable" ]] ; then
+				tcc="scalable"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
+				tcc="reno"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
+				tcc="vegas"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
+				tcc="dctcp"
+			elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
+				tcc="cubic"
+			else
+				tcc="${default_tcca}"
+			fi
+		}
+
+		local tcca_green=$(_tcc_green)
+
+		_tcc_bgdl() {
+			if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "lp" ]] ; then
+				tcc="lp"
+			else
+				tcc="${default_tcca}"
+			fi
+		}
+		local tcca_bgdl=$(_tcc_bgdl)
+
+		tcca_elevate_priv="none" # Same as already root
+		if ot-kernel_has_version "sys-auth/polkit" ; then
+			tcca_elevate_priv="polkit"
+		elif ot-kernel_has_version "app-admin/sudo" ; then
+			tcca_elevate_priv="sudo"
 		fi
 
-		# kernel.release is used by genkernel.
-		# The file generated is missing the arch so replace it with ours.
-		# Add for genkernel because mrproper erases it
-		mkdir -p "include/config" || die
-		echo "${UPSTREAM_PV}-${extraversion}-${arch}" \
-			> include/config/kernel.release || die
-
-		cd "${BUILD_DIR}" || die
-		local logo_license_path=$(find "drivers/video/logo" \
-			-name "logo_custom_*.*.license" \
-			2>/dev/null)
-		if [[ -n "${logo_license_path}" && -e "${logo_license_path}" ]] ; then
-			insinto "/usr/share/${PN}/${MY_PV}-${extraversion}/licenses/logo"
-			doins "${logo_license_path}"
-			if [[ -n "${OT_KERNEL_LOGO_FOOTNOTES}" ]] ; then
-				echo "${OT_KERNEL_LOGO_FOOTNOTES}" > "${T}/logo_footnotes" || die
-				doins "${T}/logo_footnotes"
-			fi
-
-		fi
-
-		if ot-kernel_is_full_sources_required ; then
-			ot-kernel_install_source_code
-		else
-			if ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
-				# No longer building (binary only)
-				rm -rf arch/um/scripts/Makefile.rules
-			fi
-
-			cd "${BUILD_DIR}" || die
-
-			# Required for genkernel
-			insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
-			doins "Makefile" # Also required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
-			insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config"
-			doins "include/config/kernel.release"
-
-			# Required for building external modules
-			insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/certs"
-			ls "certs/"*".pem" 2>/dev/null 1>/dev/null \
-				&& doins "certs/"*".pem"
-			ls "certs/"*".x509" 2>/dev/null 1>/dev/null \
-				&& doins "certs/"*".x509"
-			ls "certs/"*".genkey" 2>/dev/null 1>/dev/null \
-				&& doins "certs/"*".genkey"
-		fi
-
-		local cert
-		for cert in $(find certs -type f) ; do
-			fperms 600 "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/${cert}"
-		done
-
-		if ot-kernel_is_full_sources_required ; then
-			# Everything already installed
-			:;
-		else
-			# Add files to pass version and kernel config checks for linux-info.eclass.
-			# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
-			local ed_kernel_path="${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
-			insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/scripts"
-			doins scripts/Kbuild.include
-			doins scripts/Makefile.extrawarn
-			doins scripts/subarch.include
-			local path
-			for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
-				insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/"$(dirname "${path}")
-				doins "${path}"
-			done
-		fi
-
-		if [[ \
-			   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
-			|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
-		]] ; then
-einfo "Installing iosched script settings"
-			insinto "/etc/ot-sources/iosched/conf"
-			doins "${T}/etc/ot-sources/iosched/conf/${UPSTREAM_PV}-${extraversion}-${arch}"
-		fi
-
-		OT_KERNEL_TCP_CONGESTION_CONTROLS=$(_ot-kernel_set_kconfig_get_init_tcp_congestion_controls)
-		if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT:-1}" == "1" \
-			&& -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" ]] ; then
-			# Each kernel config may have different a combo.
-
-			local default_tcca=$(ot-kernel_get_tcp_congestion_controls_default)
-
-			_tcc_intra_dc() {
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_intra_dc=$(_tcc_intra_dc)
-
-			_tcc_inter_dc() {
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
-					tcc="illinois"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_inter_dc=$(_tcc_inter_dc)
-
-			_tcc_satellite() {
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-					tcc="hybla"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_satellite=$(_tcc_satellite)
-
-			_tcc_wireless() {
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-					tcc="westwood"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
-					tcc="veno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-					tcc="vegas"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_wireless=$(_tcc_wireless)
-
-			_tcc_high_bdp() {
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-					tcc="htcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-					tcc="cubic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-					tcc="bic"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_high_bdp=$(_tcc_high_bdp)
-
-
-
-			_tcc_hs_fair() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-					tcc="vegas"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-					tcc="hstcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-					tcc="htcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
-					tcc="illinois"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-					tcc="hybla"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-					tcc="bic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-					tcc="westwood"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-					tcc="reno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
-					tcc="yeah"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
-					tcc="veno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-					tcc="cubic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_hs_fair=$(_tcc_hs_fair)
-
-			_tcc_hs_realtime() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-					tcc="westwood"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-					tcc="cubic"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_hs_realtime=$(_tcc_hs_realtime)
-
-			_tcc_hs_throughput() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-					tcc="westwood"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-					tcc="hstcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
-					tcc="illinois"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-					tcc="cubic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-					tcc="htcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-					tcc="hybla"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-					tcc="bic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-					tcc="reno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
-					tcc="yeah"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
-					tcc="veno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-					tcc="vegas"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_hs_throughput=$(_tcc_hs_throughput)
-
-
-			# UCDC - ultra cap data center O(100,000) - top 500 supercomputers
-			# HCDC - high cap data center O(10,000) - big tech
-			# MCDC - mid cap data center O(1,000) - university super computer
-			# LCDC - low cap data center O(100) - university HPC/ML/DL
-
-			_tcc_lcdc_fair() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-
-			_tcc_lcdc_realtime() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-
-			_tcc_lcdc_throughput() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-
-
-			_tcc_mcdc_fair() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-
-			_tcc_mcdc_realtime() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-
-			_tcc_mcdc_throughput() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-
-			local tcca_lcdc_fair=$(_tcc_lcdc_fair)
-			local tcca_lcdc_realtime=$(_tcc_lcdc_realtime)
-			local tcca_lcdc_throughput=$(_tcc_lcdc_throughput)
-
-			local tcca_mcdc_fair=$(_tcc_mcdc_fair)
-			local tcca_mcdc_realtime=$(_tcc_mcdc_realtime)
-			local tcca_mcdc_throughput=$(_tcc_mcdc_throughput)
-
-			local tcca_hcdc_fair=$(_tcc_mcdc_fair)
-			local tcca_hcdc_realtime=$(_tcc_mcdc_realtime)
-			local tcca_hcdc_throughput=$(_tcc_mcdc_throughput)
-
-			local tcca_ucdc_fair=$(_tcc_mcdc_fair)
-			local tcca_ucdc_realtime=$(_tcc_mcdc_realtime)
-			local tcca_ucdc_throughput=$(_tcc_mcdc_throughput)
-
-			_tcc_streaming() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_streaming=$(_tcc_streaming)
-
-			# It should not be loss based.
-			_tcc_low_latency() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "c2tcp" ]] ; then
-					tcc="c2tcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-					tcc="vegas"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-
-			local tcca_music=$(_tcc_streaming)
-			local tcca_podcast=$(_tcc_streaming)
-			local tcca_streaming=$(_tcc_streaming)
-
-			local tcca_broadcast=$(_tcc_low_latency)
-			local tcca_gaming=$(_tcc_low_latency)
-			local tcca_social_games=$(_tcc_low_latency)
-			local tcca_video_chat=$(_tcc_low_latency)
-			local tcca_voip=$(_tcc_low_latency)
-
-			# sendrate ~ avg throughput based on self clocking.
-			# Sorted by completion time, then avg send rate
-			_tcc_send_rate() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "pcc" ]] ; then
-					tcc="pcc"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-					tcc="westwood"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-					tcc="hstcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "illinois" ]] ; then
-					tcc="illinois"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-					tcc="cubic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "htcp" ]] ; then
-					tcc="htcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hybla" ]] ; then
-					tcc="hybla"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bic" ]] ; then
-					tcc="bic"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-					tcc="reno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr3" ]] ; then
-					tcc="bbr3"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr2" ]] ; then
-					tcc="bbr2"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "yeah" ]] ; then
-					tcc="yeah"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "veno" ]] ; then
-					tcc="veno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-					tcc="vegas"
-				else
-					tcc="${default_tcca}"
-				fi
-				echo "${tcc}"
-			}
-			local tcca_ftp=$(_tcc_send_rate)
-			local tcca_p2p=$(_tcc_send_rate)
-			local tcca_podcast_upload=$(_tcc_send_rate)
-			local tcca_torrent=$(_tcc_send_rate)
-			local tcca_video_upload=$(_tcc_send_rate)
-
-			_tcc_green() {
-				local tcc
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "bbr"( |$) ]] ; then
-					tcc="bbr"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "westwood" ]] ; then
-					tcc="westwood"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "hstcp" ]] ; then
-					tcc="hstcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "scalable" ]] ; then
-					tcc="scalable"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "reno" ]] ; then
-					tcc="reno"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "vegas" ]] ; then
-					tcc="vegas"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "dctcp" ]] ; then
-					tcc="dctcp"
-				elif [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "cubic" ]] ; then
-					tcc="cubic"
-				else
-					tcc="${default_tcca}"
-				fi
-			}
-
-			local tcca_green=$(_tcc_green)
-
-			_tcc_bgdl() {
-				if [[ "${OT_KERNEL_TCP_CONGESTION_CONTROLS}" =~ "lp" ]] ; then
-					tcc="lp"
-				else
-					tcc="${default_tcca}"
-				fi
-			}
-			local tcca_bgdl=$(_tcc_bgdl)
-
-			tcca_elevate_priv="none" # Same as already root
-			if ot-kernel_has_version "sys-auth/polkit" ; then
-				tcca_elevate_priv="polkit"
-			elif ot-kernel_has_version "app-admin/sudo" ; then
-				tcca_elevate_priv="sudo"
-			fi
-
-			cat <<EOF > "${T}/tcca.conf" || die
+		cat <<EOF > "${T}/tcca.conf" || die
 # Client
 TCCA_BGDL="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BGDL:-${tcca_bgdl}}"
 TCCA_BROADCAST="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_BROADCAST:-${tcca_broadcast}}"
@@ -12682,31 +12395,358 @@ TCCA_SATELLITE="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_SATELLITE:-${tcca_sat
 TCCA_WIRELESS="${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WIRELESS:-${tcca_wireless}}"
 TCCA_ELEVATE_PRIV="${tcca_elevate_priv}"
 EOF
-			cat "${FILESDIR}/tcca" > "${T}/tcca" || die
-			sed -i -e "s|__EXTRAVERSION__|${extraversion}|" "${T}/tcca" || die
-			sed -i -e "s|__PV__|${MY_PV}|" "${T}/tcca" || die
-			sed -i -e "s|__ARCH__|${arch}|" "${T}/tcca" || die
-			insinto /etc
-			newins "${T}/tcca.conf" "tcca-${UPSTREAM_PV}-${extraversion}-${arch}.conf"
-			OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
-		fi
+		cat "${FILESDIR}/tcca" > "${T}/tcca" || die
+		sed -i -e "s|__EXTRAVERSION__|${extraversion}|" "${T}/tcca" || die
+		sed -i -e "s|__PV__|${MY_PV}|" "${T}/tcca" || die
+		sed -i -e "s|__ARCH__|${arch}|" "${T}/tcca" || die
+		insinto /etc
+		newins "${T}/tcca.conf" "tcca-${UPSTREAM_PV}-${extraversion}-${arch}.conf"
+		OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=1
+	fi
 
-		if         has c2tcp ${IUSE_EFFECTIVE} \
-			|| has deepcc ${IUSE_EFFECTIVE} \
-			|| has orca ${IUSE_EFFECTIVE} ; then
-			if         ot-kernel_use c2tcp \
-				|| ot-kernel_use deepcc \
-				|| ot-kernel_use orca ; then
-				if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
-					docinto licenses
-					dodoc "${EDISTDIR}/copyright.c2tcp.${C2TCP_COMMIT:0:7}"
-				fi
+	if         has c2tcp ${IUSE_EFFECTIVE} \
+		|| has deepcc ${IUSE_EFFECTIVE} \
+		|| has orca ${IUSE_EFFECTIVE} ; then
+		if         ot-kernel_use c2tcp \
+			|| ot-kernel_use deepcc \
+			|| ot-kernel_use orca ; then
+			if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
+				docinto licenses
+				dodoc "${EDISTDIR}/copyright.c2tcp.${C2TCP_COMMIT:0:7}"
+			fi
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_install_iosched_scripts
+# @DESCRIPTION:
+# Install iosched scripts
+ot-kernel_install_iosched_scripts() {
+	if [[ \
+		   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
+		|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
+	]] ; then
+einfo "Installing iosched script settings"
+		insinto "/etc/ot-sources/iosched/conf"
+		doins "${T}/etc/ot-sources/iosched/conf/${UPSTREAM_PV}-${extraversion}-${arch}"
+	fi
+}
+
+
+# @FUNCTION: ot-kernel_fix_modules
+# @DESCRIPTION:
+# Fix modules folders
+ot-kernel_fix_modules() {
+	local NC_VERSION=""
+	if [[ -n "${RC_PV}" ]] ; then
+		NC_VERSION="${KV_MAJOR_MINOR}-${RC_PV}"
+	fi
+
+	[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
+	local non_canonical_target="${NC_VERSION}-${extraversion}-${arch}" # ex. 6.6-builder-${arch}
+	local non_canonical_target2="${NC_VERSION}-${extraversion}" # ex. 6.6-builder
+	local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
+
+	mkdir -p "${ED}/lib/modules/${canonical_target}"
+	if [[ -e "${ED}/lib/modules/${non_canonical_target}" ]] ; then
+		cp -a \
+			"${ED}/lib/modules/${non_canonical_target}/"* \
+			"${ED}/lib/modules/${target}" \
+			|| die
+		rm -rf "${ED}/lib/modules/${non_canonical_target}" \
+			|| true
+	fi
+	if [[ -e "${ED}/lib/modules/${non_canonical_target2}" ]] ; then
+		cp -a \
+			"${ED}/lib/modules/${non_canonical_target2}/"* \
+			"${ED}/lib/modules/${target}" \
+			|| die
+		rm -rf "${ED}/lib/modules/${non_canonical_target2}" \
+			|| true
+	fi
+
+	rm -rf "${ED}/lib/modules/${canonical_target}/build" \
+		|| true
+	rm -rf "${ED}/lib/modules/${canonical_target}/source" \
+		|| true
+
+	dosym \
+		"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
+		"/lib/modules/${canonical_target}/build"
+	dosym \
+		"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
+		"/lib/modules/${canonical_target}/source"
+}
+
+# @FUNCTION: ot_kernel_install_logos
+# @DESCRIPTION:
+# Install logos
+ot_kernel_install_logos() {
+	cd "${BUILD_DIR}" || die
+	local logo_license_path=$(find "drivers/video/logo" \
+		-name "logo_custom_*.*.license" \
+		2>/dev/null)
+	if [[ -n "${logo_license_path}" && -e "${logo_license_path}" ]] ; then
+		insinto "/usr/share/${PN}/${MY_PV}-${extraversion}/licenses/logo"
+		doins "${logo_license_path}"
+		if [[ -n "${OT_KERNEL_LOGO_FOOTNOTES}" ]] ; then
+			echo "${OT_KERNEL_LOGO_FOOTNOTES}" > "${T}/logo_footnotes" || die
+			doins "${T}/logo_footnotes"
+		fi
+	fi
+}
+
+# @FUNCTION: ot_kernel_fix_kernel_release
+# @DESCRIPTION:
+# Fixes the kernel.release file
+ot_kernel_fix_kernel_release() {
+	# kernel.release is used by genkernel.
+	# The file generated is missing the arch so replace it with ours.
+	# Add for genkernel because mrproper erases it
+	mkdir -p "include/config" || die
+	echo "${UPSTREAM_PV}-${extraversion}-${arch}" \
+		> include/config/kernel.release || die
+}
+
+# @FUNCTION: ot-kernel_fix_certs_permissions
+# @DESCRIPTION:
+# Fix the certs file permissions
+ot-kernel_fix_certs_permissions() {
+	local cert
+	for cert in $(find certs -type f) ; do
+		fperms 600 "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/${cert}"
+	done
+}
+
+# @FUNCTION: ot-kernel_install_genkernel_required
+# @DESCRIPTION:
+# Install genkernel required files
+ot-kernel_install_genkernel_required() {
+	if ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+		# No longer building (binary only)
+		rm -rf arch/um/scripts/Makefile.rules
+	fi
+
+	cd "${BUILD_DIR}" || die
+
+	# Required for genkernel
+	insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
+	doins "Makefile" # Also required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
+	insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config"
+	doins "include/config/kernel.release"
+
+	# Required for building external modules
+	insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/certs"
+	ls "certs/"*".pem" 2>/dev/null 1>/dev/null \
+		&& doins "certs/"*".pem"
+	ls "certs/"*".x509" 2>/dev/null 1>/dev/null \
+		&& doins "certs/"*".x509"
+	ls "certs/"*".genkey" 2>/dev/null 1>/dev/null \
+		&& doins "certs/"*".genkey"
+
+	# Add files to pass version and kernel config checks for linux-info.eclass.
+	# Required for linux-info.eclass: getfilevar() VARNAME ${KERNEL_MAKEFILE}
+	local ed_kernel_path="${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}"
+	insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/scripts"
+	doins scripts/Kbuild.include
+	doins scripts/Makefile.extrawarn
+	doins scripts/subarch.include
+	local path
+	for path in $(find arch/* -maxdepth 1 -name "Makefile") ; do
+		insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/"$(dirname "${path}")
+		doins "${path}"
+	done
+}
+
+# @FUNCTION: ot_kernel_serialize_pgo_state
+# @DESCRIPTION:
+# Saves the pgo state
+ot_kernel_serialize_pgo_state() {
+	local pgo_phase # pgophase file
+	if [[ -n "${FORCE_PGO_PHASE}" ]] ; then
+		pgo_phase="${FORCE_PGO_PHASE}"
+	elif [[ ! -e "${pgo_phase_statefile}" ]] ; then
+		pgo_phase="${PGO_PHASE_PGI}"
+	else
+		pgo_phase=$(cat "${pgo_phase_statefile}")
+	fi
+	# Convert deprecated
+	[[ "${pgo_phase}" == "PDI" ]] && pgo_phase="PGI"
+	[[ "${pgo_phase}" == "PDT" ]] && pgo_phase="PGT"
+	[[ "${pgo_phase}" == "PDO" ]] && pgo_phase="PGO"
+	[[ "${pgo_phase}" == "PD0" ]] && pgo_phase="PG0"
+	local pgo_phase_statefile
+	if has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && use pgo ; then
+		pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/llvm/pgophase"
+	elif use pgo ; then
+		pgo_phase_statefile="${WORKDIR}/pgodata/${extraversion}-${arch}/gcc/pgophase"
+	fi
+	if [[ -n "${pgo_phase_statefile}" ]] ; then
+		mkdir -p $(dirname "${pgo_phase_statefile}")
+		if [[ "${pgo_phase}" == "${PGO_PHASE_PGI}" ]] ; then
+			echo "${PGO_PHASE_PGT}" > "${pgo_phase_statefile}" || die
+		elif [[ "${pgo_phase}" == "${PGO_PHASE_PGO}" ]] ; then
+			echo "${PGO_PHASE_DONE}" > "${pgo_phase_statefile}" || die
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_strink_install
+# @DESCRIPTION:
+# Shrink install by pruning
+ot-kernel_strink_install() {
+	if [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
+		&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+		# This is allowed if no external modules.
+
+		# Prune all config arches
+		# Prune now for a faster source code install or header preservation
+
+		# Preserve build files because they are mostly unconditional includes.
+		# Save arch/um/scripts/Makefile.rules for make mrproper.
+		cp --parents -a arch/um/scripts/Makefile.rules \
+			"${T}/pruned" || die
+		ot-kernel_prune_arches
+		# Restore arch/um/scripts/Makefile.rules for make mrproper.
+		cp -aT "${T}/pruned" \
+			"${BUILD_DIR}" || die
+		rm -rf $(find arch -name "Kconfig*") # Delete if not using any make *config.
+	fi
+
+	if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES:-0}" == "1" ]] \
+		&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
+		local last_version=$(best_version "=sys-kernel/${PN}-${KV_MAJOR_MINOR}*" \
+			| sed -e "s|sys-kernel/${PN}-||g")
+		local license_preserve_path_src="/usr/share/${PN}/${last_version}-${extraversion}/licenses"
+		local license_preserve_path_dest="/usr/share/${PN}/${MY_PV}-${extraversion}/licenses"
+		dodir "${license_preserve_path_dest}"
+		if [[ "${OT_KERNEL_PRESERVE_HEADER_NOTICES_CACHED:-1}" == "1" \
+			&& -e "${license_preserve_path_src}" ]] ; then
+ewarn "Preserving copyright notices (cached)."
+			cp -aT "${license_preserve_path_src}" \
+				"${ED}/${license_preserve_path_dest}" || die
+		else
+ewarn "Preserving copyright notices.  This may take hours."
+			cat "${FILESDIR}/header-preserve-kernel" \
+				> "${BUILD_DIR}/header-preserve-kernel" || die
+			pushd "${BUILD_DIR}" || die
+				export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path_dest}"
+				chmod +x header-preserve-kernel || die
+				./header-preserve-kernel || die
+			popd
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel_push_clean
+# @DESCRIPTION:
+# Save files before wiped by mrproper.
+ot-kernel_push_clean() {
+	save_paths=(
+	# For module checks in linux-mod-r1.eclass.
+		"Module.symvers"
+
+	# Save generated headers
+		"include/generated"
+		"tools/virtio/generated"
+		"tools/testing/radix-tree/generated"
+		"tools/net/ynl/generated"
+
+	# For app-emulation/virtualbox-modules
+		"include/config"
+		"include/generated"
+		"scripts"
+		"scripts/basic/fixdep"
+		"scripts/genksyms/genksyms"
+		"scripts/mod/modpost"
+	)
+
+	local arches=(
+		$(ls arch)
+	)
+	local _arch # arch already defined
+	for _arch in "${arches[@]}" ; do
+	# Save generated headers, required for app-emulation/virtualbox-modules
+		save_paths+=(
+			"arch/${_arch}/include/generated"
+#			"arch/${_arch}/include/generated/asm/rwonce.h"
+		)
+	done
+
+	local path
+	for path in "${save_paths[@]}" ; do
+		[[ -e "${path}" ]] || continue
+		if [[ -d "${path}" ]] ; then
+			mkdir -p "${cache}/${path}" || true
+			cp -aT "${path}" "${cache}/${path}" || true
+		elif [[ -f "${path}" || -x "${path}" ]] ; then
+			local d=$(dirname "${path}")
+			if [[ "${d}" == "." ]] ; then
+				cp -a "${path}" "${cache}" || true
+			else
+				mkdir -p "${cache}/${d}" || true
+				cp -a "${path}" "${cache}/${d}" || true
 			fi
 		fi
 	done
+}
 
-	# The make install* screws up the symlinks using ${BUILD_DIR} instead of
-	# /usr/src/linux-${UPSTREAM_PV}-${EXTRAVERSION}.
+# @FUNCTION: ot-kernel_pop_clean
+# @DESCRIPTION:
+# Restore the important files
+ot-kernel_pop_clean() {
+	cp -aT "${cache}" ./ || true
+	rm -rf "${cache}" || true
+}
+
+# @FUNCTION: ot-kernel_install_kernel_config
+# @DESCRIPTION:
+# Install config
+ot-kernel_install_kernel_config() {
+	local default_config_bn="kernel-config-${KV_MAJOR_MINOR}-${extraversion}-${arch}"
+	local default_config_dir="/etc/kernels"
+	local default_config="${default_config_dir}/${default_config_bn}"
+einfo "Saving the config for ${extraversion} to ${default_config}"
+	insinto /etc/kernels
+	newins "${BUILD_DIR}/.config" "${default_config_bn}"
+	# dosym src_relpath_real dest_abspath_symlink
+
+	# For genkernel
+	dosym \
+		"${default_config_bn}" \
+		"${default_config_dir}/kernel-config-${UPSTREAM_PV}-${extraversion}-${arch}"
+
+	# For linux-info.eclass config checks
+	dosym \
+		"${default_config_dir}/kernel-config-${UPSTREAM_PV}-${extraversion}-${arch}" \
+		"/usr/src/linux-${UPSTREAM_PV}-${extraversion}/.config"
+}
+
+# @FUNCTION: ot-kernel_install_pgo_state
+# @DESCRIPTION:
+# Installs the pgo state data
+ot-kernel_install_pgo_state() {
+	if use pgo ; then
+		insinto "${OT_KERNEL_PGO_DATA_DIR}"
+		doins -r "${WORKDIR}/pgodata/"* # Sanitize file permissions
+	fi
+}
+
+# @FUNCTION: ot-kernel_src_install
+# @DESCRIPTION:
+# Removes patch cruft.
+OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL=0
+ot-kernel_src_install() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	export STRIP="/bin/true" # See https://github.com/torvalds/linux/blob/v5.16/init/Kconfig#L2169
+	if has tresor ${IUSE_EFFECTIVE} ; then
+		if use tresor ; then
+			docinto /usr/share/${PF}
+			dodoc "${EDISTDIR}/${TRESOR_README_FN}"
+			dodoc "${EDISTDIR}/${TRESOR_PDF_FN}"
+		fi
+	fi
+
 	local env_path
 	for env_path in $(ot-kernel_get_envs) ; do
 		[[ -e "${env_path}" ]] || continue
@@ -12719,47 +12759,81 @@ EOF
 		local extraversion="${OT_KERNEL_EXTRAVERSION}"
 		local build_flag="${OT_KERNEL_BUILD}" # Can be 0, 1, true, false, yes, no, nobuild, build, unset
 		local kernel_dir="${OT_KERNEL_KERNEL_DIR:-/boot}"
+		if [[ -z "${build_config}" ]] ; then
+			if ot-kernel_is_build ; then
+				build_config="1"
+			else
+				build_config="0"
+			fi
+		fi
 		local arch="${OT_KERNEL_ARCH}" # ARCH in raw form.
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
+		cd "${BUILD_DIR}" || die
 
-		local NC_VERSION=""
-		if [[ -n "${RC_PV}" ]] ; then
-			NC_VERSION="${KV_MAJOR_MINOR}-${RC_PV}"
+		if ot-kernel_is_full_sources_required ; then
+	# Everything will be installed
+			:;
+		else
+			ot-kernel_strink_install
 		fi
 
-		[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
-		local non_canonical_target="${NC_VERSION}-${extraversion}-${arch}" # ex. 6.6-builder-${arch}
-		local non_canonical_target2="${NC_VERSION}-${extraversion}" # ex. 6.6-builder
-		local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
+		if ot-kernel_is_build ; then
+			local args=(
+				INSTALL_MOD_PATH="${ED}"
+				INSTALL_PATH="${ED}${kernel_dir}"
+				${MAKEOPTS}
+				ARCH="${arch}"
+			)
 
-		mkdir -p "${ED}/lib/modules/${canonical_target}"
-		if [[ -e "${ED}/lib/modules/${non_canonical_target}" ]] ; then
-			cp -a \
-				"${ED}/lib/modules/${non_canonical_target}/"* \
-				"${ED}/lib/modules/${target}" \
-				|| die
-			rm -rf "${ED}/lib/modules/${non_canonical_target}" \
-				|| true
+			ot-kernel_install_built_kernel # It works the same as make install.
+			cd "${BUILD_DIR}" || die
+einfo "Running:  make modules_install ${args[@]}"
+			make modules_install "${args[@]}" || die
+			if [[ "${arch}" =~ "arm" ]] ; then
+				make dtbs_install "${args[@]}" || die
+			fi
+			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
+				ot-kernel_keep_keys
+			fi
+
+			ot-kernel_install_kernel_config
+
+	# The cache is used to save/restore important data required by ebuild system, external modules before cleaning.
+			local cache="${T}/save_cache"
+			mkdir -p "${cache}" || true
+
+			local save_paths=()
+
+			ot-kernel_push_clean
+
+einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before make menuconfig
+			#make mrproper ARCH=${arch} || die # more agressive wipe
+			make clean ARCH="${arch}" || die # For external modules
+
+			ot-kernel_pop_clean
+
+			if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" && -z "${OT_KERNEL_PRIVATE_KEY}" ]] ; then
+				ot-kernel_restore_keys
+			fi
+
+			ot_kernel_serialize_pgo_state
 		fi
-		if [[ -e "${ED}/lib/modules/${non_canonical_target2}" ]] ; then
-			cp -a \
-				"${ED}/lib/modules/${non_canonical_target2}/"* \
-				"${ED}/lib/modules/${target}" \
-				|| die
-			rm -rf "${ED}/lib/modules/${non_canonical_target2}" \
-				|| true
+
+		ot_kernel_fix_kernel_release
+
+		cd "${BUILD_DIR}" || die
+		ot_kernel_install_logos
+
+		if ot-kernel_is_full_sources_required ; then
+			ot-kernel_install_source_code
+		else
+			ot-kernel_install_genkernel_required
 		fi
 
-		rm -rf "${ED}/lib/modules/${canonical_target}/build" \
-			|| true
-		rm -rf "${ED}/lib/modules/${canonical_target}/source" \
-			|| true
-
-		dosym \
-			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
-			"/lib/modules/${canonical_target}/build"
-		dosym \
-			"/usr/src/linux-${UPSTREAM_PV}-${extraversion}" \
-			"/lib/modules/${canonical_target}/source"
+		ot-kernel_fix_certs_permissions
+		ot-kernel_install_iosched_scripts
+		ot-kernel_install_tcca
+		ot-kernel_fix_modules
 
 		if has rock-dkms ${IUSE_EFFECTIVE} && ot-kernel_use rock-dkms ; then
 			ot-kernel_slotify_amdgpu
@@ -12767,10 +12841,7 @@ EOF
 		fi
 	done
 
-	if use pgo ; then
-		insinto "${OT_KERNEL_PGO_DATA_DIR}"
-		doins -r "${WORKDIR}/pgodata/"* # Sanitize file permissions
-	fi
+	ot-kernel_install_pgo_state
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst
