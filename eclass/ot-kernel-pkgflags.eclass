@@ -204,6 +204,8 @@ einfo "init: sysvinit"
 	elif [[ "${init}" == "dinit" ]] ; then
 einfo "init: dinit"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/dinit"
+	elif [[ "${init}" == "none" ]] ; then
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "init=[A-Za-z0-9/_.-]+"
 	elif [[ "${init}" == "epoch" ]] ; then
 einfo "init: Epoch"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/usr/sbin/epoch-init"
