@@ -1717,6 +1717,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     custom (default) - You will manually set via /etc/default/grub
     dinit - Use init=/sbin/dinit
     epoch - Use init=/usr/sbin/epoch-init
+    finit - Use init=/sbin/finit
     none - Removes init= from the built-in kernel command line
     openrc - Use init=/sbin/openrc-init
     runit - Use init=/sbin/runit-init

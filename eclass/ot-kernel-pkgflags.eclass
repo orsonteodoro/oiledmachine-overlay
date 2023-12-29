@@ -185,6 +185,9 @@ einfo "init:  dinit"
 		elif ot-kernel_has_version "sys-apps/epoch" ; then
 einfo "init:  Epoch"
 			ot-kernel_set_kconfig_kernel_cmdline "init=/usr/sbin/epoch-init"
+		elif ot-kernel_has_version "sys-apps/finit" ; then
+einfo "init:  finit"
+			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/finit"
 		elif ot-kernel_has_version "sys-apps/openrc" ; then
 einfo "init:  OpenRC"
 			ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
@@ -209,6 +212,9 @@ einfo "init:  dinit"
 	elif [[ "${init}" == "epoch" ]] ; then
 einfo "init:  Epoch"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/usr/sbin/epoch-init"
+	elif [[ "${init}" == "finit" ]] ; then
+einfo "init:  finit"
+		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/finit"
 	elif [[ "${init}" == "openrc" ]] ; then
 einfo "init:  OpenRC"
 		ot-kernel_set_kconfig_kernel_cmdline "init=/sbin/openrc-init"
