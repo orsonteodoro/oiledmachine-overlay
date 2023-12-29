@@ -12844,50 +12844,10 @@ einfo "Running:  make mrproper ARCH=${arch}" # Reverts everything back to before
 	ot-kernel_install_pgo_state
 }
 
-# @FUNCTION: ot-kernel_pkg_postinst
+# @FUNCTION: ot-kernel_postinst_tresor
 # @DESCRIPTION:
-# Present warnings and avoid collision checks.
-#
-# ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
-#
-ot-kernel_pkg_postinst() {
-	local env_path
-	for env_path in $(ot-kernel_get_envs) ; do
-		[[ -e "${env_path}" ]] || continue
-		ot-kernel_clear_env
-		declare -A OT_KERNEL_KCONFIG
-		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
-		declare -A OT_KERNEL_PKGFLAGS_REJECT
-		ot-kernel_load_config
-		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
-		local extraversion="${OT_KERNEL_EXTRAVERSION}"
-		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
-		if [[ -e "${BUILD_DIR}/certs/signing_key.pem" ]] ; then
-			cd "${BUILD_DIR}" || die
-einfo "Secure wiping the private key in build directory for ${extraversion}"
-			# Secure wipe the private keys if custom config bypassing envvars as well
-			shred -f "${BUILD_DIR}/certs/signing_key.pem" || die
-		fi
-	done
-
-	local main_extraversion=${OT_KERNEL_PRIMARY_EXTRAVERSION:-ot}
-	local main_extraversion_with_tresor=${OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR:-ot}
-
-	local highest_pv=$(best_version "sys-kernel/ot-sources" \
-			| sed -r -e "s|sys-kernel/ot-sources-||" -e "s|-r[0-9]+||")
-
-	if use symlink ; then
-		# dosym src_relpath_real dest_abspath_symlink
-		dosym linux-${highest_pv}-${main_extraversion} /usr/src/linux
-	fi
-
-	if use disable_debug ; then
-einfo
-einfo "The disable debug scripts have been placed in the root folder of the"
-einfo "kernel folder."
-einfo
-	fi
-
+# Send user messages for tresor
+ot-kernel_postinst_tresor() {
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			local highest_tresor_pv=$(best_version "sys-kernel/ot-sources[tresor_sysfs]" \
@@ -12984,7 +12944,246 @@ ewarn "fix."
 ewarn
 		fi
 	fi
+	if has tresor ${IUSE_EFFECTIVE} ; then
+		if use tresor ; then
+ewarn
+ewarn "TRESOR is currently not compatible with Integrated Assembler used by Clang/LLVM."
+ewarn "Add LLVM_IAS=0 to make all to build it with Clang/LLVM."
+ewarn
+		fi
+	fi
+ewarn
+ewarn "Please migrate your data outside the XTS(tresor) partitions into a different"
+ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
+ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"
+ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
+ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
+ewarn "change will not be backwards compatible."
+}
 
+# @FUNCTION: ot-kernel_postinst_exfat
+# @DESCRIPTION:
+# Send user message about exfat
+ot-kernel_postinst_exfat() {
+	if has exfat ${IUSE_EFFECTIVE} && use exfat ; then
+einfo
+einfo "exFAT users:  You must be a member of OIN and agree to the OIN license"
+einfo "for patent use legal protections and royalty free benefits."
+einfo
+einfo "An overview of the legal status of exFAT can be found at"
+einfo "https://en.wikipedia.org/wiki/ExFAT#Legal_status"
+einfo
+einfo "An exFAT patent license can also be obtained from"
+einfo "https://www.microsoft.com/en-us/legal/intellectualproperty/mtl/exfat-licensing.aspx"
+einfo
+	fi
+}
+
+# @FUNCTION: ot-kernel_postinst_network
+# @DESCRIPTION:
+# Send user messages about network modules
+ot-kernel_postinst_network() {
+	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
+einfo "Installing tcca"
+		cat "${FILESDIR}/tcca" \
+			> "${EROOT}/usr/bin/tcca"
+		chmod 0755 "${EROOT}/usr/bin/tcca"
+		chown root:root "${EROOT}/usr/bin/tcca"
+	fi
+
+	if has bbrv2 ${IUSE_EFFECTIVE} ; then
+		if use bbrv2 ; then
+einfo
+einfo "To enable BBRv2 go to"
+einfo
+einfo "  Networking support > Networking options >  TCP: advanced congestion control > BBR2 TCP"
+einfo
+einfo "To make BBRv2 the default go to"
+einfo
+einfo "  Networking support > Networking options >  TCP: advanced congestion control > Default TCP congestion control > BBR2"
+einfo
+		fi
+	fi
+
+	if has bbrv3 ${IUSE_EFFECTIVE} ; then
+		if use bbrv3 ; then
+einfo
+einfo "To enable BBRv3 go to"
+einfo
+einfo "  Networking support > Networking options >  TCP: advanced congestion control > BBR TCP"
+einfo
+einfo "To make BBRv3 the default go to"
+einfo
+einfo "  Networking support > Networking options >  TCP: advanced congestion control > Default TCP congestion control > BBR"
+einfo
+einfo "[BBR is not a typo for choosing BBRv3.]"
+einfo
+		fi
+	fi
+
+	if has c2tcp ${IUSE_EFFECTIVE} && use c2tcp ; then
+einfo
+einfo "C2TCP is disabled by default."
+einfo
+einfo "See epkginfo -x sys-apps/c2tcp::oiledmachine-overlay for details about"
+einfo "enabling and the tunable target delay knob."
+einfo
+	fi
+	if has deepcc ${IUSE_EFFECTIVE} && use deepcc ; then
+einfo
+einfo "DeepCC is disabled by default and needs the DRL Agent or learned models"
+einfo "loaded."
+einfo
+einfo "See epkginfo -x sys-apps/deepcc::oiledmachine-overlay for details about"
+einfo "enabling and loading the DRL Agent and learned model(s) and tunable"
+einfo "target delay knob."
+einfo
+	fi
+	if has orca ${IUSE_EFFECTIVE} && use orca ; then
+einfo
+einfo "Orca needs the DRL Agent or learned models loaded."
+einfo
+einfo "See epkginfo -x sys-apps/orca::oiledmachine-overlay for details about"
+einfo "loading the DRL Agent with learned model."
+einfo
+	fi
+}
+
+# @FUNCTION: ot-kernel_postinst_initramfs
+# @DESCRIPTION:
+# Send user message about initramfs
+ot-kernel_postinst_initramfs() {
+	if has build ${IUSE_EFFECTIVE} && use build ; then
+einfo
+einfo "The kernel(s) still needs to complete the following steps:"
+einfo
+einfo "    1.  Run etc-update"
+einfo "    2.  Build and install the initramfs per each kernel."
+einfo "    3.  Update the bootloader with the new entries"
+einfo "    4.  Reboot with the new kernel"
+einfo
+einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+einfo
+	fi
+}
+
+# @FUNCTION: ot-kernel_postinst_pgo
+# @DESCRIPTION:
+# Send user message about pgo
+ot-kernel_postinst_pgo() {
+	if use pgo && has build ${IUSE_EFFECTIVE} && use build ; then
+einfo
+einfo "The kernel(s) still needs to complete the following steps:"
+einfo
+einfo "    1.  Run etc-update"
+einfo "    2.  Build and install the initramfs per each kernel."
+einfo "    3.  Update the bootloader with a new entries"
+einfo "    4.  Reboot with the PGIed kernel"
+einfo "    5.  mount -t debugfs none /sys/kernel/debug"
+einfo "        (For GCC PGO if /sys/kernel/debug is not mounted yet by init"
+einfo "        scripts.)"
+einfo "    6.  Train the kernel with benchmarks or the typical uses"
+einfo "    7.  Re-emerging the package"
+einfo "    8.  Reboot with optimized kernel"
+einfo
+einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+einfo
+	fi
+	if use pgo ; then
+einfo
+einfo "The pgo-trainer.sh has been provided in the root directory of the kernel"
+einfo "sources for PGO training.  The script can be customized for automation."
+einfo "if modded keep it in /home/\${USER} or /etc/portage folder.  This"
+einfo "customization is used to capture typical use, but any non-typical use"
+einfo "can result in performance degration.  It should only be run as a"
+einfo "non-root user because it does PGO training on the network code as well."
+einfo
+einfo "You can add an additional pgo-custom.sh in the same directory as the"
+einfo "script to extend PGO training."
+einfo
+einfo "Additional packages are required to run this particular"
+einfo "automated trainer and can be found in"
+einfo
+einfo "  https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279"
+einfo
+einfo "You can use your own training scripts or test suites to perform PGO training."
+einfo
+	fi
+}
+
+# @FUNCTION: ot-kernel_postinst_iosched
+# @DESCRIPTION:
+# Send user message about iosched scripts
+ot-kernel_postinst_iosched() {
+	if [[ "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" ]] ; then
+		einfo "Installing ot-kernel-iosched (systemd)"
+		# Installed here to avoid merge conflict.
+		mkdir -p "${EROOT}/lib/systemd/system"
+		cat \
+			"${FILESDIR}/ot-kernel-iosched.service" \
+			> \
+			"${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
+		chmod 0755 "${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
+		chown root:root "${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
+
+ewarn
+ewarn "You need to do the following to make the work profile fully effective:"
+ewarn
+ewarn "  systemctl enable ot-kernel-iosched.service"
+ewarn "  systemctl start ot-kernel-iosched.service"
+ewarn
+	fi
+
+	if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
+		einfo "Installing ot-kernel-iosched (openrc)"
+		# Installed here to avoid merge conflict.
+		mkdir -p "${EROOT}/etc/init.d"
+		cat \
+			"${FILESDIR}/ot-kernel-iosched.openrc" \
+			> \
+			"${EROOT}/etc/init.d/ot-kernel-iosched"
+		chmod 0755 "${EROOT}/etc/init.d/ot-kernel-iosched"
+		chown root:root "${EROOT}/etc/init.d/ot-kernel-iosched"
+
+ewarn
+ewarn "The iosched has been changed to ${EPREFIX}/etc/init.d/ot-kernel-iosched"
+ewarn "You need to do the following to make the work profile fully effective:"
+ewarn
+ewarn "  rc-update add ot-kernel-iosched"
+ewarn "  /etc/init.d/ot-kernel-iosched start"
+ewarn
+	fi
+
+	if [[ \
+		   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
+		|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
+	]] ; then
+		# Installed here to avoid merge conflict.
+		cat \
+			"${FILESDIR}/ot-kernel-iosched.sh" \
+			> \
+			"${EROOT}/usr/bin/ot-kernel-iosched.sh"
+		chmod 0755 "${EROOT}/usr/bin/ot-kernel-iosched.sh"
+		chown root:root "${EROOT}/usr/bin/ot-kernel-iosched.sh"
+	fi
+}
+
+# @FUNCTION: ot-kernel_postinst_disable_debug
+# @DESCRIPTION:
+# Send user mesage about disable_debug
+ot-kernel_postinst_disable_debug() {
+	if use disable_debug ; then
+einfo
+einfo "The disable debug scripts have been placed in the root folder of the"
+einfo "kernel folder."
+einfo
+	fi
+}
+
+# @FUNCTION: ot-kernel_postinst_initramfs_compression
+# @DESCRIPTION:
+# Send user mesage about initramfs compression
+ot-kernel_postinst_initramfs_compression() {
 einfo
 einfo "For Genkernel users.  It's recommended to add either"
 einfo
@@ -12997,22 +13196,12 @@ einfo
 einfo "to genkernel invocation if the compression type is present in the"
 einfo "kernel series."
 einfo
+}
 
-	if declare -f ot-kernel_pkg_postinst_cb > /dev/null ; then
-		ot-kernel_pkg_postinst_cb
-	fi
-
-ewarn
-ewarn "Any crypto algorithm or password store that stores keys in memory or"
-ewarn "registers are vulnerable.  This includes TRESOR as well."
-ewarn
-ewarn "To properly use full disk encryption, do not use suspend to RAM and"
-ewarn "shutdown the computer immediately on idle."
-ewarn
-ewarn "Futher mitigation recommendations can be found at"
-ewarn
-ewarn "  https://en.wikipedia.org/wiki/Cold_boot_attack#Mitigation"
-ewarn
+# @FUNCTION: ot-kernel_postinst_rt_patchset
+# @DESCRIPTION:
+# Send user message about rt patchset
+ot-kernel_postinst_rt_patchset() {
 	local rt_option
 	if   ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
 		rt_option="CONFIG_PREEMPT_RT"
@@ -13033,7 +13222,12 @@ ewarn "Dated: Jun 16, 2021"
 ewarn
 		fi
 	fi
+}
 
+# @FUNCTION: ot-kernel_postinst_clang_built_linux
+# @DESCRIPTION:
+# Send messages for clang built linux
+ot-kernel_postinst_clang_built_linux() {
 	local has_llvm=0
 	local llvm_v_maj=12 # set to highest kcp arch requirement
 	local wants_cfi=0
@@ -13105,37 +13299,12 @@ einfo "  with the --llvm argument passed to genkernel"
 einfo
 einfo "to optimize for newer microarchitectures."
 einfo
+}
 
-	if has bbrv2 ${IUSE_EFFECTIVE} ; then
-		if use bbrv2 ; then
-einfo
-einfo "To enable BBRv2 go to"
-einfo
-einfo "  Networking support > Networking options >  TCP: advanced congestion control > BBR2 TCP"
-einfo
-einfo "To make BBRv2 the default go to"
-einfo
-einfo "  Networking support > Networking options >  TCP: advanced congestion control > Default TCP congestion control > BBR2"
-einfo
-		fi
-	fi
-
-	if has bbrv3 ${IUSE_EFFECTIVE} ; then
-		if use bbrv3 ; then
-einfo
-einfo "To enable BBRv3 go to"
-einfo
-einfo "  Networking support > Networking options >  TCP: advanced congestion control > BBR TCP"
-einfo
-einfo "To make BBRv3 the default go to"
-einfo
-einfo "  Networking support > Networking options >  TCP: advanced congestion control > Default TCP congestion control > BBR"
-einfo
-einfo "[BBR is not a typo for choosing BBRv3.]"
-einfo
-		fi
-	fi
-
+# @FUNCTION: ot-kernel_postinst_proton
+# @DESCRIPTION:
+# Send message about proton
+ot-kernel_postinst_proton() {
 	if has_version "app-emulation/wine-proton" \
 		&& ver_test ${KV_MAJOR_MINOR} -ge 5.16 ; then
 einfo
@@ -13145,45 +13314,23 @@ einfo
 einfo "futex2 yields benefits of less than 5% CPU usage."
 einfo
 	fi
+}
 
-	if has tresor ${IUSE_EFFECTIVE} ; then
-		if use tresor ; then
+# @FUNCTION: ot-kernel_postinst_security_notices
+# @DESCRIPTION:
+# Send user messages about security
+ot-kernel_postinst_security_notices() {
 ewarn
-ewarn "TRESOR is currently not compatible with Integrated Assembler used by Clang/LLVM."
-ewarn "Add LLVM_IAS=0 to make all to build it with Clang/LLVM."
+ewarn "Any crypto algorithm or password store that stores keys in memory or"
+ewarn "registers are vulnerable.  This includes TRESOR as well."
 ewarn
-		fi
-	fi
-
-	if use pgo && has build ${IUSE_EFFECTIVE} && use build ; then
-einfo
-einfo "The kernel(s) still needs to complete the following steps:"
-einfo
-einfo "    1.  Run etc-update"
-einfo "    2.  Build and install the initramfs per each kernel."
-einfo "    3.  Update the bootloader with a new entries"
-einfo "    4.  Reboot with the PGIed kernel"
-einfo "    5.  mount -t debugfs none /sys/kernel/debug"
-einfo "        (For GCC PGO if /sys/kernel/debug is not mounted yet by init"
-einfo "        scripts.)"
-einfo "    6.  Train the kernel with benchmarks or the typical uses"
-einfo "    7.  Re-emerging the package"
-einfo "    8.  Reboot with optimized kernel"
-einfo
-einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
-einfo
-	elif has build ${IUSE_EFFECTIVE} && use build ; then
-einfo
-einfo "The kernel(s) still needs to complete the following steps:"
-einfo
-einfo "    1.  Run etc-update"
-einfo "    2.  Build and install the initramfs per each kernel."
-einfo "    3.  Update the bootloader with the new entries"
-einfo "    4.  Reboot with the new kernel"
-einfo
-einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
-einfo
-	fi
+ewarn "To properly use full disk encryption, do not use suspend to RAM and"
+ewarn "shutdown the computer immediately on idle."
+ewarn
+ewarn "Futher mitigation recommendations can be found at"
+ewarn
+ewarn "  https://en.wikipedia.org/wiki/Cold_boot_attack#Mitigation"
+ewarn
 
 ewarn
 ewarn "Multiple built kernels require a corresponding initramfs especially if"
@@ -13191,26 +13338,6 @@ ewarn "modules are signed with their corresponding build's private key and"
 ewarn "embedded in the initramfs."
 ewarn
 
-	if use pgo ; then
-einfo
-einfo "The pgo-trainer.sh has been provided in the root directory of the kernel"
-einfo "sources for PGO training.  The script can be customized for automation."
-einfo "if modded keep it in /home/\${USER} or /etc/portage folder.  This"
-einfo "customization is used to capture typical use, but any non-typical use"
-einfo "can result in performance degration.  It should only be run as a"
-einfo "non-root user because it does PGO training on the network code as well."
-einfo
-einfo "You can add an additional pgo-custom.sh in the same directory as the"
-einfo "script to extend PGO training."
-einfo
-einfo "Additional packages are required to run this particular"
-einfo "automated trainer and can be found in"
-einfo
-einfo "  https://github.com/orsonteodoro/oiledmachine-overlay/blob/6de2332092a475bc2bc4f4aff350c36fce8f4c85/sys-kernel/genkernel/genkernel-4.2.6-r2.ebuild#L279"
-einfo
-einfo "You can use your own training scripts or test suites to perform PGO training."
-einfo
-	fi
 	if [[ "${OT_KERNEL_SIGN_MODULES}" == "1" ]] ; then
 ewarn
 ewarn "The private key in the /usr/src/linux/certs folder should be kept in a"
@@ -13239,18 +13366,6 @@ elog "Detected the following previous install or partial build of the ${PN}"
 elog "package with these private keys: ${private_keys[@]}"
 elog "Please run shred -f on every file listed as a precaution."
 	fi
-ewarn
-ewarn "Please migrate your data outside the XTS(tresor) partitions into a different"
-ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
-ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"
-ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
-ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
-ewarn "change will not be backwards compatible."
-ewarn
-ewarn "The ot-kernel is always considered experimental grade.  Always have a"
-ewarn "rescue/fallback kernel with possibly an older version or with another"
-ewarn "kernel package."
-ewarn
 	if [[ "${OT_KERNEL_SME}" == "1" && "${OT_KERNEL_SME_DEFAULT_ON}" != "1" ]] ; then
 ewarn
 ewarn "SME is allowed but requires testing before permanent setting on."
@@ -13260,18 +13375,6 @@ ewarn
 	if [[ "${_OT_KERNEL_IMA_USED}" == "1" ]] ; then
 einfo
 einfo "To optimize IMA hashing add iversion to fstab mount option for / (aka root)."
-einfo
-	fi
-	if has exfat ${IUSE_EFFECTIVE} && use exfat ; then
-einfo
-einfo "exFAT users:  You must be a member of OIN and agree to the OIN license"
-einfo "for patent use legal protections and royalty free benefits."
-einfo
-einfo "An overview of the legal status of exFAT can be found at"
-einfo "https://en.wikipedia.org/wiki/ExFAT#Legal_status"
-einfo
-einfo "An exFAT patent license can also be obtained from"
-einfo "https://www.microsoft.com/en-us/legal/intellectualproperty/mtl/exfat-licensing.aspx"
 einfo
 	fi
 	if [[ "${OT_KERNEL_DMA_ATTACK_MITIGATIONS_ENABLED}" == "1" ]] ; then
@@ -13313,57 +13416,6 @@ ewarn "with dmesg disabled."
 ewarn
 	fi
 
-	if [[ "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" ]] ; then
-		einfo "Installing ot-kernel-iosched (systemd)"
-		# Installed here to avoid merge conflict.
-		mkdir -p "${EROOT}/lib/systemd/system"
-		cat \
-			"${FILESDIR}/ot-kernel-iosched.service" \
-			> \
-			"${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
-		chmod 0755 "${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
-		chown root:root "${EROOT}/lib/systemd/system/ot-kernel-iosched.service"
-
-ewarn
-ewarn "You need to do the following to make the work profile fully effective:"
-ewarn
-ewarn "  systemctl enable ot-kernel-iosched.service"
-ewarn "  systemctl start ot-kernel-iosched.service"
-ewarn
-	fi
-
-	if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
-		einfo "Installing ot-kernel-iosched (openrc)"
-		# Installed here to avoid merge conflict.
-		mkdir -p "${EROOT}/etc/init.d"
-		cat \
-			"${FILESDIR}/ot-kernel-iosched.openrc" \
-			> \
-			"${EROOT}/etc/init.d/ot-kernel-iosched"
-		chmod 0755 "${EROOT}/etc/init.d/ot-kernel-iosched"
-		chown root:root "${EROOT}/etc/init.d/ot-kernel-iosched"
-
-ewarn
-ewarn "The iosched has been changed to ${EPREFIX}/etc/init.d/ot-kernel-iosched"
-ewarn "You need to do the following to make the work profile fully effective:"
-ewarn
-ewarn "  rc-update add ot-kernel-iosched"
-ewarn "  /etc/init.d/ot-kernel-iosched start"
-ewarn
-	fi
-
-	if [[ \
-		   "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" \
-		|| "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" \
-	]] ; then
-		# Installed here to avoid merge conflict.
-		cat \
-			"${FILESDIR}/ot-kernel-iosched.sh" \
-			> \
-			"${EROOT}/usr/bin/ot-kernel-iosched.sh"
-		chmod 0755 "${EROOT}/usr/bin/ot-kernel-iosched.sh"
-		chown root:root "${EROOT}/usr/bin/ot-kernel-iosched.sh"
-	fi
 
 ewarn
 ewarn "For full L1TF mitigation for HT processors, read the Wikipedia article."
@@ -13399,40 +13451,74 @@ ewarn "  (5) Build/update initramfs"
 ewarn "  (6) Reboot into new kernels"
 ewarn
 ewarn
-	if (( ${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_INSTALL} == 1 )) ; then
-einfo "Installing tcca"
-		cat "${FILESDIR}/tcca" \
-			> "${EROOT}/usr/bin/tcca"
-		chmod 0755 "${EROOT}/usr/bin/tcca"
-		chown root:root "${EROOT}/usr/bin/tcca"
+
+}
+
+# @FUNCTION: ot-kernel_postinst_experimental_kernel
+# @DESCRIPTION:
+# Sends a user message to always have a backup kernel
+ot-kernel_postinst_experimental_kernel() {
+ewarn
+ewarn "The ot-kernel is always considered experimental grade.  Always have a"
+ewarn "rescue/fallback kernel with possibly an older version or with another"
+ewarn "kernel package."
+ewarn
+}
+
+# @FUNCTION: ot-kernel_pkg_postinst
+# @DESCRIPTION:
+# Present warnings and avoid collision checks.
+#
+# ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
+#
+ot-kernel_pkg_postinst() {
+	local env_path
+	for env_path in $(ot-kernel_get_envs) ; do
+		[[ -e "${env_path}" ]] || continue
+		ot-kernel_clear_env
+		declare -A OT_KERNEL_KCONFIG
+		declare -A OT_KERNEL_PKGFLAGS_ACCEPT
+		declare -A OT_KERNEL_PKGFLAGS_REJECT
+		ot-kernel_load_config
+		[[ "${OT_KERNEL_DISABLE}" == "1" ]] && continue
+		local extraversion="${OT_KERNEL_EXTRAVERSION}"
+		BUILD_DIR="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
+		if [[ -e "${BUILD_DIR}/certs/signing_key.pem" ]] ; then
+			cd "${BUILD_DIR}" || die
+einfo "Secure wiping the private key in build directory for ${extraversion}"
+			# Secure wipe the private keys if custom config bypassing envvars as well
+			shred -f "${BUILD_DIR}/certs/signing_key.pem" || die
+		fi
+	done
+
+	local main_extraversion=${OT_KERNEL_PRIMARY_EXTRAVERSION:-ot}
+	local main_extraversion_with_tresor=${OT_KERNEL_PRIMARY_EXTRAVERSION_WITH_TRESOR:-ot}
+
+	local highest_pv=$(best_version "sys-kernel/ot-sources" \
+			| sed -r -e "s|sys-kernel/ot-sources-||" -e "s|-r[0-9]+||")
+
+	if use symlink ; then
+		# dosym src_relpath_real dest_abspath_symlink
+		dosym linux-${highest_pv}-${main_extraversion} /usr/src/linux
 	fi
 
-	if has c2tcp ${IUSE_EFFECTIVE} && use c2tcp ; then
-einfo
-einfo "C2TCP is disabled by default."
-einfo
-einfo "See epkginfo -x sys-apps/c2tcp::oiledmachine-overlay for details about"
-einfo "enabling and the tunable target delay knob."
-einfo
+	if declare -f ot-kernel_pkg_postinst_cb > /dev/null ; then
+		ot-kernel_pkg_postinst_cb
 	fi
-	if has deepcc ${IUSE_EFFECTIVE} && use deepcc ; then
-einfo
-einfo "DeepCC is disabled by default and needs the DRL Agent or learned models"
-einfo "loaded."
-einfo
-einfo "See epkginfo -x sys-apps/deepcc::oiledmachine-overlay for details about"
-einfo "enabling and loading the DRL Agent and learned model(s) and tunable"
-einfo "target delay knob."
-einfo
-	fi
-	if has orca ${IUSE_EFFECTIVE} && use orca ; then
-einfo
-einfo "Orca needs the DRL Agent or learned models loaded."
-einfo
-einfo "See epkginfo -x sys-apps/orca::oiledmachine-overlay for details about"
-einfo "loading the DRL Agent with learned model."
-einfo
-	fi
+
+	ot-kernel_postinst_security_notices
+	ot-kernel_postinst_tresor
+	ot-kernel_postinst_disable_debug
+	ot-kernel_postinst_initramfs_compression
+	ot-kernel_postinst_rt_patchset
+	ot-kernel_postinst_clang_built_linux
+	ot-kernel_postinst_pgo
+	ot-kernel_postinst_initramfs
+	ot-kernel_postinst_iosched
+	ot-kernel_postinst_network
+	ot-kernel_postinst_exfat
+	ot-kernel_postinst_proton
+	ot-kernel_postinst_experimental_kernel
 }
 
 # @FUNCTION: pkg_prerm
