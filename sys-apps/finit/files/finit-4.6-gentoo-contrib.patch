@@ -1,0 +1,487 @@
+diff -urpN finit-4.6.orig/configure.ac finit-4.6/configure.ac
+--- finit-4.6.orig/configure.ac	2023-11-12 22:03:30.000000000 -0800
++++ finit-4.6/configure.ac	2023-12-29 14:19:22.138283473 -0800
+@@ -10,6 +10,7 @@ AC_CONFIG_FILES([Makefile
+ 	contrib/Makefile
+ 	contrib/alpine/Makefile contrib/alpine/finit.d/Makefile contrib/alpine/finit.d/available/Makefile
+ 	contrib/debian/Makefile contrib/debian/finit.d/Makefile contrib/debian/finit.d/available/Makefile
++	contrib/gentoo/Makefile contrib/gentoo/finit.d/Makefile contrib/gentoo/finit.d/available/Makefile
+ 	contrib/void/Makefile   contrib/void/finit.d/Makefile   contrib/void/finit.d/available/Makefile
+ 	doc/Makefile
+ 	man/Makefile
+diff -urpN finit-4.6.orig/contrib/gentoo/build.sh finit-4.6/contrib/gentoo/build.sh
+--- finit-4.6.orig/contrib/gentoo/build.sh	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/build.sh	2023-12-29 14:18:44.814622433 -0800
+@@ -0,0 +1,61 @@
++#!/bin/sh
++#
++# This script configures Finit for Gentoo, which needs a few more plugins
++# and tweaks than an embedded system usually does.
++#
++# Usage:
++#         user@jessie:~/finit$ contrib/gentoo/build.sh
++#
++
++echo
++echo "*** Configuring Finit for Gentoo"
++
++if [ ! -e configure ]; then
++    echo "    The configure script is missing, maybe you're using a version from GIT?"
++    echo "    Attempting to run the autogen.sh script, you will need these tools:"
++    echo "    autoconf, automake, libtool, pkg-config ..."
++    echo
++    ./autogen.sh
++fi
++echo
++
++# The plugins are optional, but you may need D-Bus and X11 if you want
++# to run X-Window, the other configure flags are however required.
++./configure								\
++    --prefix=/usr                     --exec-prefix=			\
++    --sysconfdir=/etc                 --localstatedir=/var		\
++    --enable-dbus-plugin              --enable-x11-common-plugin	\
++    --enable-alsa-utils-plugin	      --with-keventd			\
++    --with-random-seed=/var/lib/urandom/random-seed
++
++if [ $? -ne 0 ]; then
++    echo
++    echo "*** Configure script failed, have you installed libuEv and libite?"
++    echo
++    exit 1
++fi
++
++echo
++echo "*** Building ..."
++echo
++make
++
++if [ $? -ne 0 ]; then
++    echo
++    echo "*** The build failed for some reason"
++    echo
++    exit 1
++fi
++
++echo
++echo "*** Done"
++echo
++
++read -p "*** Run (sudo) install script (y/N)? " yorn
++if [ "x$yorn" = "xy" -o "x$yorn" = "xY" ]; then
++    sudo contrib/gentoo/install.sh
++else
++    echo
++    echo "*** Use 'sudo contrib/gentoo/install.sh' later to install Finit"
++    echo
++fi
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.conf finit-4.6/contrib/gentoo/finit.conf
+--- finit-4.6.orig/contrib/gentoo/finit.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.conf	2023-12-29 14:18:44.814622433 -0800
+@@ -0,0 +1,26 @@
++# /etc/finit.conf: Example for Gentoo Linux
++# See /etc/finit.d/*.conf and `initctl list` for other services
++
++## Runlevel to start after bootstrap, runlevel 'S'
++# Default is 2
++#runlevel 2
++
++# Top-level cgroups and their default settings.  All groups mandatory
++# but more can be added, max 8 groups in total currently.  The cgroup
++# 'root' is also available, reserved for RT processes.  Settings are
++# as-is, only one shorthand 'mem.' exists, other than that it's the
++# cgroup v2 controller default names.
++#cgroup init   cpu.weight:100
++#cgroup user   cpu.weight:100
++#cgroup system cpu.weight:9700
++
++# Task to run if ctrl-alt-del is pressed.  This condition is asserted by
++# Finit upon receiving SIGINT (from the kernel).
++#task <sys/key/ctrlaltdel> [12345789] initctl reboot -- Rebooting system
++
++# Task to run if the kernel gets a power fail condition is pressed.
++# Asserted by Finit upon receiving SIGPWR (from the kernel).
++#task <sys/pwr/fail> [12345789] initctl poweroff -- Shutting down system
++
++## Bootstrap services and tasks
++# Can be listed here or in /etc/finit.d/*.conf
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/acpid.conf finit-4.6/contrib/gentoo/finit.d/available/acpid.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/acpid.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/acpid.conf	2023-12-29 14:18:44.814622433 -0800
+@@ -0,0 +1,3 @@
++# Handle PWR button to shutdown/reboot -- useful in Qemu (virt-manager)
++# Depends on a syslog daemon having started. Redirect any output to log.
++service [2345] <pid/syslogd> env:-/etc/conf.d/acpid log acpid -f $ACPID_ARGS -- ACPI daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/anacron.conf finit-4.6/contrib/gentoo/finit.d/available/anacron.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/anacron.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/anacron.conf	2023-12-29 14:18:44.814622433 -0800
+@@ -0,0 +1 @@
++task [2345] <sys/pwr/ac,pid/syslogd> halt:usr1 env:-/etc/conf.d/anacron anacron -d -q $ANACRON_ARGS -- Anacron jobs
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/apparmor.conf finit-4.6/contrib/gentoo/finit.d/available/apparmor.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/apparmor.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/apparmor.conf	2023-12-29 14:18:44.814622433 -0800
+@@ -0,0 +1,2 @@
++sysv [S] /etc/init.d/apparmor -- AppArmor initialization
++
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/avahi-daemon.conf finit-4.6/contrib/gentoo/finit.d/available/avahi-daemon.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/avahi-daemon.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/avahi-daemon.conf	2023-12-29 14:18:44.814622433 -0800
+@@ -0,0 +1 @@
++service [345] env:-/etc/conf.d/avahi-daemon avahi-daemon -s $AVAHI_DAEMON_OPTS -- Avahi mDNS/DNS-SD Stack
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/bluetooth.conf finit-4.6/contrib/gentoo/finit.d/available/bluetooth.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/bluetooth.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/bluetooth.conf	2023-12-29 14:18:44.814622433 -0800
+@@ -0,0 +1,4 @@
++# To ignore errors like "org.freedesktop.hostname1", update the env file with
++# "--noplugin=hostname", i.e. append to BLUETOOTHD_OPTS
++# For net-wireless/bluez
++service [2345] log:null env:-/etc/conf.d/bluetooth /usr/libexec/bluetooth/bluetoothd -n $BLUETOOTH_OPTS -- Bluetooth service
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/consolefont.conf finit-4.6/contrib/gentoo/finit.d/available/consolefont.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/consolefont.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/consolefont.conf	2023-12-29 14:18:44.814622433 -0800
+@@ -0,0 +1,13 @@
++# sys-apps/kbd
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty1 -- Setting up console font consolefont for tty1
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty2 -- Setting up console font consolefont for tty2
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty3 -- Setting up console font consolefont for tty3
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty4 -- Setting up console font consolefont for tty4
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty5 -- Setting up console font consolefont for tty5
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty6 -- Setting up console font consolefont for tty6
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty7 -- Setting up console font consolefont for tty7
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty8 -- Setting up console font consolefont for tty8
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty9 -- Setting up console font consolefont for tty9
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty10 -- Setting up console font consolefont for tty10
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty11 -- Setting up console font consolefont for tty11
++task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty12 -- Setting up console font consolefont for tty12
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/cron.conf finit-4.6/contrib/gentoo/finit.d/available/cron.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/cron.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/cron.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1 @@
++service [2345] <sys/pwr/ac,pid/syslogd> env:-/etc/conf.d/cron cron -f $EXTRA_OPTS -- Background job processing daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/dhcpcd.conf finit-4.6/contrib/gentoo/finit.d/available/dhcpcd.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/dhcpcd.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/dhcpcd.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1 @@
++service [345] dhcpcd -B -M -- DHCP client
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/dmeventd.conf finit-4.6/contrib/gentoo/finit.d/available/dmeventd.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/dmeventd.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/dmeventd.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1 @@
++service [S12345] dmeventd -f -- Device mapper event daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/dropbear.conf finit-4.6/contrib/gentoo/finit.d/available/dropbear.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/dropbear.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/dropbear.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1,2 @@
++# Start SSH daemon as soon as basic networking comes up
++service [345] env:-/etc/conf.d/dropbear dropbear -R -F $DROPBEAR_OPTS -- Dropbear SSH daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/elogind.conf finit-4.6/contrib/gentoo/finit.d/available/elogind.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/elogind.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/elogind.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1,4 @@
++# On some systems, bootstrap can be really quick and cause elogind
++# to not start before a user has managed to log in.  To prevent
++# this, add <pid/elogind> as condition to your TTYs in getty.conf
++service [2345] <pid/syslogd> /lib64/elogind/elogind -- Login manager
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/getty.conf finit-4.6/contrib/gentoo/finit.d/available/getty.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/getty.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/getty.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1,7 @@
++# Consoles to start getty on when system is up
++tty [12345] /dev/tty1 linux noclear nowait
++tty [2345]  /dev/tty2 linux nowait
++tty [2345]  /dev/tty3 linux nowait
++tty [2345]  /dev/tty4 linux nowait
++tty [2345]  /dev/tty5 linux nowait
++tty [2345]  /dev/tty6 linux nowait
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/keymap.conf finit-4.6/contrib/gentoo/finit.d/available/keymap.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/keymap.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/keymap.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1,3 @@
++# Oneshot task to run once at bootstrap
++# sys-apps/kbd
++task [S] env:/etc/conf.d/loadkmap loadkeys -q $wkeys $keymap $extended_keymaps -- Loading keymap
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/lightdm.conf finit-4.6/contrib/gentoo/finit.d/available/lightdm.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/lightdm.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/lightdm.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1 @@
++service [2345] lightdm -- Light Display Manager
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/lxdm.conf finit-4.6/contrib/gentoo/finit.d/available/lxdm.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/lxdm.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/lxdm.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1 @@
++service [2345] lxdm -- Lightweight Login Manager
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/Makefile.am finit-4.6/contrib/gentoo/finit.d/available/Makefile.am
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/Makefile.am	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/Makefile.am	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1,9 @@
++docsdir   := @docdir@/contrib/gentoo/finit.d/available
++docs_DATA  = acpid.conf anacron.conf apparmor.conf avahi-daemon.conf    \
++	     bluetooth.conf consolefont.conf cron.conf dhcpcd.conf      \
++	     dmeventd.conf elogind.conf getty.conf keymap.conf          \
++	     lightdm.conf lxdm.conf modules.conf ntpd.conf              \
++	     plymouth-quit.conf rsyslogd.conf sntpd.conf sshd.conf      \
++	     syslogd.conf uuidd.conf xdm.conf
++EXTRA_DIST = $(docs_DATA)
++
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/modules.conf finit-4.6/contrib/gentoo/finit.d/available/modules.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/modules.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/modules.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1,8 @@
++## Linux kernel modules to load
++#module fbcon
++#module button
++#module evdev
++#module loop
++#module psmouse
++#module mousedev
++#module 8139cp
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/networkmanager.conf finit-4.6/contrib/gentoo/finit.d/available/networkmanager.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/networkmanager.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/networkmanager.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1 @@
++service [345] env:-/etc/conf.d/NetworkManager NetworkManager -- NetworkManager daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/ntpd.conf finit-4.6/contrib/gentoo/finit.d/available/ntpd.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/ntpd.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/ntpd.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1,2 @@
++# Busybox ntpd has no option to use syslog when running in foreground
++service [345] <pid/syslogd> env:-/etc/conf.d/ntpd log ntpd -n $NTPD_OPTS -- NTP daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/plymouth-quit.conf finit-4.6/contrib/gentoo/finit.d/available/plymouth-quit.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/plymouth-quit.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/plymouth-quit.conf	2023-12-29 14:18:44.818622398 -0800
+@@ -0,0 +1,2 @@
++# Need to stop plymouth, or it'll block stdin on tty1
++task [S] /usr/bin/plymouth quit -- Stopping Plymouth Boot Screen
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/rsyslogd.conf finit-4.6/contrib/gentoo/finit.d/available/rsyslogd.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/rsyslogd.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/rsyslogd.conf	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,3 @@
++# Start rsyslogd as soon as possible, should always run
++# Provides pid/syslogd condition
++service [S12345] name:syslogd env:-/etc/conf.d/rsyslog rsyslogd -n $RSYSLOG_OPTS -- Reliable syslog daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/sntpd.conf finit-4.6/contrib/gentoo/finit.d/available/sntpd.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/sntpd.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/sntpd.conf	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,2 @@
++# Simple NTP client (SNTP)
++service [345] <net/route/default> env:-/etc/conf.d/sntpd sntpd -n $SNTPD_OPTS -- SNTP client
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/sshd.conf finit-4.6/contrib/gentoo/finit.d/available/sshd.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/sshd.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/sshd.conf	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,2 @@
++# Start SSH daemon as soon as basic networking comes up
++service [345] <net/lo/up> env:-/etc/conf.d/ssh /usr/sbin/sshd -D $SSHD_OPTS -- OpenSSH daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/syslogd.conf finit-4.6/contrib/gentoo/finit.d/available/syslogd.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/syslogd.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/syslogd.conf	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,2 @@
++# Start sysklogd as soon as possible, should always run if enabled
++service [S123456789] env:-/etc/conf.d/sysklogd syslogd -F $SYSLOGD -- System logging daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/uuidd.conf finit-4.6/contrib/gentoo/finit.d/available/uuidd.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/uuidd.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/uuidd.conf	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1 @@
++service @uuidd:uuidd [2345] uuidd -F -- UUID generation daemon
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/watchdog.conf finit-4.6/contrib/gentoo/finit.d/available/watchdog.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/watchdog.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/watchdog.conf	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1 @@
++service [S123456789] env:-/etc/conf.d/watchdog watchdog $WATCHDOG_OPTS -- System watchdog
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/xdm.conf finit-4.6/contrib/gentoo/finit.d/available/xdm.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/xdm.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/xdm.conf	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,4 @@
++# Here we use XDM since it has few dependencies (relatively speaking).
++# It is also an example of a service without a -- description.
++# service [2345] lxdm -- Lightweight Login Manager
++service [2345] xdm -nodaemon -- X Display Manager
+diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/Makefile.am finit-4.6/contrib/gentoo/finit.d/Makefile.am
+--- finit-4.6.orig/contrib/gentoo/finit.d/Makefile.am	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/Makefile.am	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,24 @@
++SUBDIRS    = available
++docsdir   := @docdir@/contrib/gentoo/finit.d
++d_LINKS    = acpid.conf apparmor.conf avahi-daemon.conf		\
++	     bluetooth.conf console-setup.conf elogind.conf 	\
++	     getty.conf keyboard-setup.conf modules.conf	\
++	     plymouth-quit.conf rsyslogd.conf sshd.conf
++
++install-exec-hook:
++	@$(MKDIR_P) $(DESTDIR)$(docsdir)/available
++	@$(MKDIR_P) $(DESTDIR)$(docsdir)/enabled
++	@for file in $(d_LINKS); do				\
++		lnk=$(DESTDIR)$(docsdir)/enabled/$$file;	\
++		src=available/$$file;				\
++		rm -f $$lnk;					\
++		$(LN_S) ../$$src $$lnk;				\
++	done
++
++
++uninstall-hook:
++	@for file in $(d_LINKS); do				\
++		lnk=$(DESTDIR)$(docsdir)/enabled/$$file;	\
++		src=available/$$file;				\
++		$(RM) -f $$lnk;					\
++	done
+diff -urpN finit-4.6.orig/contrib/gentoo/install.sh finit-4.6/contrib/gentoo/install.sh
+--- finit-4.6.orig/contrib/gentoo/install.sh	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/install.sh	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,52 @@
++#!/bin/sh
++
++if [ "x`id -u`" != "x0" ]; then
++    echo
++    echo "*** This script must run as root"
++    echo
++    exit 1
++fi
++
++# Adjust base directory
++grep -q gentoo Makefile 2>/dev/null
++if [ $? -eq 0 ]; then
++    cd ../..
++elif [ ! -e configure.ac ]; then
++    echo "*** Please run this script from the Finit base directory."
++    exit 1
++fi
++
++echo
++echo "*** Install Finit on Gentoo Linux"
++echo "========================================================================"
++echo "/sbin/finit           - PID 1"
++echo "/lib/finit/plugins/*  - All enabled Finit plugins"
++echo "/etc/finit.conf       - Finit configuration file"
++echo "/etc/finit.d/         - Finit services"
++echo
++read -p "Do you want to continue (y/N)? " yorn
++echo
++
++if [ "x$yorn" = "xy" -o "x$yorn" = "xY" ]; then
++    echo "Installing Finit files ..."
++    make install
++    cd /usr/share/doc/finit/contrib/gentoo
++    for file in finit.conf; do
++	install -vbD $file /etc/$file
++    done
++    cp -va finit.d /etc/
++
++    read -p "*** Install Finit as the system default Init (y/N)? " yorn
++    if [ "x$yorn" = "xy" -o "x$yorn" = "xY" ]; then
++	echo "*** Updating /sbin/init symlink --> finit ..."
++	cd /sbin
++	rm init
++	ln -s finit init
++    fi
++    echo "*** Done"
++    echo
++else
++    echo
++    echo "*** Aborting install."
++    echo
++fi
+diff -urpN finit-4.6.orig/contrib/gentoo/Makefile.am finit-4.6/contrib/gentoo/Makefile.am
+--- finit-4.6.orig/contrib/gentoo/Makefile.am	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/Makefile.am	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,4 @@
++SUBDIRS    = finit.d
++docsdir   := @docdir@/contrib/gentoo
++docs_DATA  = README.md finit.conf build.sh install.sh rc.local
++EXTRA_DIST = $(docs_DATA)
+diff -urpN finit-4.6.orig/contrib/gentoo/rc.local finit-4.6/contrib/gentoo/rc.local
+--- finit-4.6.orig/contrib/gentoo/rc.local	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/rc.local	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,7 @@
++#!/bin/sh
++# This script is executed once at boot, at the very end,
++# right before starting the TTYs.
++#
++# Each line is run in sequence.
++#
++# NOTE: Remember to set the executable bit!
+diff -urpN finit-4.6.orig/contrib/gentoo/README.md finit-4.6/contrib/gentoo/README.md
+--- finit-4.6.orig/contrib/gentoo/README.md	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/README.md	2023-12-29 14:18:44.822622361 -0800
+@@ -0,0 +1,63 @@
++HowTo: Finit on Gentoo Linux
++================================
++
++HowTo use Finit to boot a [Gentoo Linux][] system.  It is assumed that
++the user has already installed a compiler, C library header files, and
++other tools needed to build a GNU configure based project.  I.e., at
++the very least:
++
++    root@gentoo:~# emerge @system
++
++Like the [Alpine HowTo](../alpine/), you need to install [libuEv][] and
++[libite][], but since this is Gentoo — which takes infinite care of its
++users ♥ ♥ ♥ we don't need to worry about `pkg-config`, except for having
++it installed so it can locate the uEv and lite libraries.
++
++> With Gentoo everything just works!™
++
++... just make sure to install the following, so `ifup` and other basic
++tools pre-systemd work as intended.
++
++    root@gentoo:~# emerge sys-apps/kbd net-misc/networkmanager sys-apps/systemd-utils
++
++> **Note:** as of Gentoo's rolling release, libuev and libite are part of
++> the main section of Gentoo.  So just install the -dev packages :)
++
++The following script can then be used to configure, build, install and
++set up your system to run Finit:
++
++    user@gentoo:~/finit$ contrib/gentoo/build.sh
++
++However, since `/sbin/init` already exists on your system, the script
++creates another entry in your GRUB config by updating `$SUPPORTED_INITS`
++in `/etc/grub.d/10_inux` and run `update-grub`.  On reboot you will find
++a (finit) entry in the "Advanced options for Gentoo Linux" section.
++It is of course also possible to change the default init to Finit:
++
++    user@gentoo:~/finit# cd /sbin
++    user@gentoo:/sbin# sudo mv init oldinit
++    user@gentoo:/sbin# sudo ln -s finit init
++
++Before rebooting, check the default [/etc/finit.conf](finit.conf) and
++`/etc/finit.d/*.conf` files.  The build + install script above provides
++a few sample `.conf` files.  See `initctl ls` after boot for a list of
++enabled and available services, you can then use `enable` and `disable`
++comands to `initctl`, followed by `reload` to activate your changes.
++
++You can also use a standard [/etc/rc.local](rc.local) for one-shot tasks
++and initialization like keyboard language etc.
++
++> **NOTE:** X Window system, you may need to `sudo emerge elogind`
++> (Bullseye and later), followed by `initctl reload` to activate it (it
++> is enabled by default), and logout/login again.  The elogind daemon
++> ensures a regular non-root user can start and interact with an X
++> session, otherwise keyboard and mouse won't work.  When you're happy,
++> you can enable the lightdm.conf, change the default runlevel to 3, and
++> presto!  you have a desktop again.
++
++
++Have fun!  
++ /Joachim ツ
++
++[libuEv]: https://github.com/troglobit/libuev
++[libite]: https://github.com/troglobit/libite
+diff -urpN finit-4.6.orig/contrib/Makefile.am finit-4.6/contrib/Makefile.am
+--- finit-4.6.orig/contrib/Makefile.am	2023-11-12 22:03:30.000000000 -0800
++++ finit-4.6/contrib/Makefile.am	2023-12-29 14:18:44.822622361 -0800
+@@ -1,4 +1,4 @@
+-SUBDIRS    = alpine debian void
++SUBDIRS    = alpine debian gentoo void
+ bin_SCRIPT = service
+ docsdir   := @docdir@/contrib
+ docs_DATA  = README.md finit.conf procmon.sh
+diff -urpN finit-4.6.orig/contrib/README.md finit-4.6/contrib/README.md
+--- finit-4.6.orig/contrib/README.md	2023-11-12 22:03:30.000000000 -0800
++++ finit-4.6/contrib/README.md	2023-12-29 14:18:44.826622324 -0800
+@@ -6,6 +6,8 @@ install and try out Finit on various Lin
+ 
+ * [Alpine](alpine/)
+ * [Debian](debian/)
++* [Gentoo](gentoo/)
++* [Void](void/)
+ 
+ If you have ideas on how to simplify, extend, or even add new example
+ configurations for other distributions you are most welcome! :)
