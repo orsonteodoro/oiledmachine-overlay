@@ -13215,11 +13215,6 @@ einfo "Don't forget to set ${rt_option} found at \"General setup\" in"
 einfo "newer kernels or in \"Processor type and features\" in older kernels"
 einfo "> Preemption Model >  Fully Preemptible Kernel (Real-Time)."
 einfo
-ewarn
-ewarn "The rt patchset for this package may drop anytime if lack of update"
-ewarn "activity after several months due to project funding problems."
-ewarn "Dated: Jun 16, 2021"
-ewarn
 		fi
 	fi
 }
