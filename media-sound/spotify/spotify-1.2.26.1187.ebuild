@@ -287,6 +287,7 @@ RDEPEND+="
 RDEPEND+="
 	${OPTIONAL_RDEPENDS_LISTED}
 	${OPTIONAL_RDEPENDS_UNLISTED}
+	>=sys-apps/systemd-252.5
 	>=dev-libs/atk-${ATK_PV}
 	>=dev-libs/glib-${GLIB_PV}:2
 	>=dev-libs/libayatana-appindicator-0.5.3
@@ -297,7 +298,6 @@ RDEPEND+="
 	>=net-misc/curl-7.88.1[ssl,gnutls]
 	>=x11-libs/gtk+-${GTK3_PV}:3[wayland?,X?]
 	>=x11-misc/xdg-utils-1.1.1
-	>=sys-apps/systemd-252.5
 	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/glibc-${GLIBC_PV}
 	X? (
@@ -1178,4 +1178,9 @@ pkg_postrm() {
 # video podcasts:  fail
 # typical songs:  pass
 # openrc:  fail ; blank window on start, socket warnings.  elogind sets wrong owner for /var/run/user/$(id -u)
+# rinit:  fail ; same as above
 # systemd:  pass
+
+# Errors:
+# libayatana-appindicator-WARNING **: 13:02:36.657: Unable to get the session bus: Unknown or unsupported transport “disabled” for address “disabled:”
+# LIBDBUSMENU-GLIB-WARNING **: 13:02:36.657: Unable to get session bus: Unknown or unsupported transport “disabled” for address “disabled:”
