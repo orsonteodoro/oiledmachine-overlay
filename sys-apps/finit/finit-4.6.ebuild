@@ -245,12 +245,15 @@ ewarn "linux-4.9-inotify-in-mask-create.patch should be applied to kernel versio
 ewarn
 ewarn "You should almost always enable getty.conf"
 ewarn
+ewarn "This init system is still in testing."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  passed (4.6, 20231230)
-# build - pass
+# build - passed
 # urandom save/restore service - passes after it saves seed
 # NetworkManager - passed
 # getty - passed
+# sound - fail
 # performance note:  finit is very fast when few services run.
