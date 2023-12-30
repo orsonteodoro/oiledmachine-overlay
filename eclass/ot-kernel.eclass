@@ -139,7 +139,6 @@ LICENSE+=" ( all-rights-reserved MIT || ( GPL-2 MIT ) )" # See drivers/gpu/drm/t
 LICENSE+=" ( custom GPL-2+ )" # See drivers/scsi/esas2r/esas2r_main.c, ... ; # \
 	# Samples warranty/liability paragraphs from maybe EPL-2.0
 LICENSE+=" 0BSD" # See lib/math/cordic.c
-LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
 
 # It is missing SPDX: compared to the other all-rights-reserved files.
 LICENSE+=" all-rights-reserved" # See lib/dynamic_debug.c
@@ -159,6 +158,7 @@ LICENSE+=" Unlicense" # See tools/usb/ffs-aio-example/multibuff/device_app/aio_m
 LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
 
 LICENSE+=" || ( BSD GPL-2 )" # See lib/test_parman.c
+LICENSE+=" || ( GPL-2 Apache-2.0 )" # See drivers/net/wireless/silabs/wfx/hif_api_cmd.h
 LICENSE+=" || ( GPL-2 MIT )" # See lib/crypto/poly1305-donna32.c
 LICENSE+=" || ( GPL-2 BSD-2 )" # See arch/x86/crypto/sha512-ssse3-asm.S
 
@@ -12446,24 +12446,30 @@ ot-kernel_fix_modules() {
 	fi
 
 	[[ -e "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}/include/config/kernel.release" ]] || die
-	local non_canonical_target="${NC_VERSION}-${extraversion}-${arch}" # ex. 6.6-builder-${arch}
+	local non_canonical_target1="${NC_VERSION}-${extraversion}-${arch}" # ex. 6.6-builder-${arch}
 	local non_canonical_target2="${NC_VERSION}-${extraversion}" # ex. 6.6-builder
 	local non_canonical_target3="${UPSTREAM_PV}-${extraversion}" # ex. 6.6.0-builder
+	local non_canonical_target4="${MY_PV}-${extraversion}" # ex. 6.6.8-builder
 	local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
 
+	einfo "non_canonical_target1:  ${non_canonical_target1}"
+	einfo "non_canonical_target2:  ${non_canonical_target2}"
+	einfo "non_canonical_target3:  ${non_canonical_target3}"
+	einfo "non_canonical_target4:  ${non_canonical_target4}"
+
 	mkdir -p "${ED}/lib/modules/${canonical_target}"
-	if [[ -e "${ED}/lib/modules/${non_canonical_target}" ]] ; then
+	if [[ -e "${ED}/lib/modules/${non_canonical_target1}" ]] ; then
 		cp -a \
-			"${ED}/lib/modules/${non_canonical_target}/"* \
-			"${ED}/lib/modules/${target}" \
+			"${ED}/lib/modules/${non_canonical_target1}/"* \
+			"${ED}/lib/modules/${canonical_target}" \
 			|| die
-		rm -rf "${ED}/lib/modules/${non_canonical_target}" \
+		rm -rf "${ED}/lib/modules/${non_canonical_target1}" \
 			|| true
 	fi
 	if [[ -e "${ED}/lib/modules/${non_canonical_target2}" ]] ; then
 		cp -a \
 			"${ED}/lib/modules/${non_canonical_target2}/"* \
-			"${ED}/lib/modules/${target}" \
+			"${ED}/lib/modules/${canonical_target}" \
 			|| die
 		rm -rf "${ED}/lib/modules/${non_canonical_target2}" \
 			|| true
@@ -12471,9 +12477,17 @@ ot-kernel_fix_modules() {
 	if [[ -e "${ED}/lib/modules/${non_canonical_target3}" ]] ; then
 		cp -a \
 			"${ED}/lib/modules/${non_canonical_target3}/"* \
-			"${ED}/lib/modules/${target}" \
+			"${ED}/lib/modules/${canonical_target}" \
 			|| die
 		rm -rf "${ED}/lib/modules/${non_canonical_target3}" \
+			|| true
+	fi
+	if [[ -e "${ED}/lib/modules/${non_canonical_target4}" ]] ; then
+		cp -a \
+			"${ED}/lib/modules/${non_canonical_target4}/"* \
+			"${ED}/lib/modules/${canonical_target}" \
+			|| die
+		rm -rf "${ED}/lib/modules/${non_canonical_target4}" \
 			|| true
 	fi
 

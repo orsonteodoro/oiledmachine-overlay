@@ -23,21 +23,8 @@ esac
 # For compiler versions, see
 # https://github.com/torvalds/linux/blob/v6.6/scripts/min-tool-version.sh#L26
 
-#GENPATCHES_FALLBACK_COMMIT="acbfddfa35863bb536010294d1284ee857b9e13b" # 2023-10-08 10:56:26 -0400
-#LINUX_SOURCES_FALLBACK_COMMIT="8bc9e6515183935fa0cccaf67455c439afe4982b" # 2023-10-31 18:50:13 -1000
 # PV is for 9999 (live) context check
-if [[ "${PV}" =~ "9999" ]] ; then
-	RC_PV=""
-	# MY_PV is in ver_test context
-	if [[ -n "${RC_PV}" ]] ; then
-		MY_PV=$(ver_cut 1-3 "${PV}")"_${RC_PV}"
-	else
-		MY_PV=$(ver_cut 1-3 "${PV}")
-	fi
-else
-	RC_PV=""
-	MY_PV="${PV}" # ver_test context
-fi
+MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20231029" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.6/tools/build/feature/Makefile#L331
 GCC_MAX_SLOT=13
