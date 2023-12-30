@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">troglobit/finit</remote-id>
+    <bugs-to>
+      https://github.com/troglobit/finit/issues
+    </bugs-to>
+  </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Build time environment variables:
+
+  FINIT_HOSTNAME - The hostname to use.  localhost is the default.
+
+  -->
+  <use>
+    <flag name="alsa">
+      Save and restore ALSA sound settings using alsactl
+    </flag>
+    <flag name="auto-reload">
+      Automatic reload on any .conf change
+    </flag>
+    <flag name="contrib">
+      Build and install of contrib section
+    </flag>
+    <flag name="dbus">
+      Setup and start system message bus, D-Bus
+    </flag>
+    <flag name="bash-completion">
+      Add support for bash completion
+    </flag>
+    <flag name="kernel-cmdline">
+      Parse init args from /proc/cmdline (don't use!)
+    </flag>
+    <flag name="fastboot">
+      Skip fsck check on filesystems listed in /etc/fstab
+    </flag>
+    <flag name="fsckfix">
+      Run fsck fix mode (options: -yf) on filesystems listed in /etc/fstab
+    </flag>
+    <flag name="keventd">
+      Use built-in keventd
+    </flag>
+    <flag name="logrotate">
+      Use built-in rotation of /var/log/wtmp
+    </flag>
+    <flag name="modprobe">
+      Coldplug modules using modalias magic
+    </flag>
+    <flag name="modules-load">
+      Scans /etc/modules-load.d for modules to load
+    </flag>
+    <flag name="redirect">
+      Use redirection of service output to /dev/null
+    </flag>
+    <flag name="test">
+      Run test suite
+    </flag>
+    <flag name="hook-scripts">
+      Trigger script execution from hook points
+    </flag>
+    <flag name="hotplug">
+      Start udevd or mdev kernel event datamon
+    </flag>
+    <flag name="netlink">
+      Basic netlink plugin for IFUP/IFDN and GW events.  It can be replaced with
+      externally built plugin that links with libnl or similar.
+    </flag>
+    <flag name="rtc">
+      Save and restore RTC using hwclock
+    </flag>
+    <flag name="rescue">
+      Enable/Disable potentially unsafe rescue mode
+    </flag>
+    <flag name="resolvconf">
+      Setup necessary files for resolvconf
+    </flag>
+    <flag name="sulogin">
+      Enable built-in sulogin
+    </flag>
+    <flag name="tty">
+      Automatically activate new TTYs, e.g. USB-to-serial
+    </flag>
+    <flag name="urandom">
+      Setup and save random seed at boot/shutdown
+    </flag>
+    <flag name="testserv">
+      Test plugin to start test serv daemon
+    </flag>
+    <flag name="watchdog">
+      Use built-in watchdog
+    </flag>
+    <flag name="X">
+      Console setup (for X)
+    </flag>
+  </use>
+</pkgmetadata>

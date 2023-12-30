@@ -40,7 +40,7 @@ PLUGINS=(
 # auto's final value determined by CI
 IUSE+="
 ${PLUGINS[@]}
-+bash-completion +contrib +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
++bash-completion +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
 +logrotate +redirect +rescue -sulogin test udev -watchdog
 "
 REQUIRED_USE="
@@ -48,7 +48,6 @@ REQUIRED_USE="
 		mdev
 		udev
 	)
-	contrib
 "
 INIT_SYSTEMS_DEPENDS="
 	!sys-apps/epoch
@@ -74,6 +73,7 @@ RDEPEND+="
 	sys-apps/shadow
 	sys-apps/util-linux
 	sys-process/procps
+	sys-apps/finit-d
 	alsa? (
 		media-sound/alsa-utils
 	)
@@ -106,10 +106,6 @@ BDEPEND+="
 		>=app-misc/jq-1.6
 	)
 "
-PATCHES=(
-	"${FILESDIR}/${PN}-4.6-gentoo-contrib.patch"
-	"${FILESDIR}/${PN}-4.6-scripts-typo.patch"
-)
 
 pkg_setup() {
 	if has_version "sys-apps/busybox[mdev]" && has_version "sys-apps/systemd-utils[udev]" ; then
@@ -127,22 +123,6 @@ ewarn
 src_prepare() {
 	default
 	sed -i \
-		-e "s|alpine||g" \
-		-e "s|debian||g" \
-		-e "s|void||g" \
-		"contrib/Makefile.am" \
-		|| die
-	local libdir=$(get_libdir)
-	sed -i \
-		-e "s|lib64|${libdir}|g" \
-		"contrib/gentoo/finit.d/available/elogind.conf" \
-		|| die
-	# Avoid install time compression
-	sed -i \
-		-e "s|/usr/share/doc/finit/|/usr/share/${P}/|g" \
-		"contrib/gentoo/install.sh" \
-		|| die
-	sed -i \
 		-e "s|/sbin/sysctl|/usr/sbin/sysctl|g" \
 		"plugins/procps.c" \
 		|| die
@@ -157,7 +137,6 @@ src_configure() {
 		$(use_enable alsa alsa-utils-plugin)
 		$(use_enable dbus dbus-plugin)
 		$(use_enable doc)
-		$(use_enable contrib)
 		$(use_enable hook-scripts hook-scripts-plugin)
 		$(use_enable fastboot)
 		$(use_enable fsckfix)
@@ -178,6 +157,7 @@ src_configure() {
 		$(use_with keventd)
 		$(use_with sulogin)
 		$(use_with watchdog)
+		--enable-contrib # For service script
 		--disable-auto-reload # Breaks emerge update of the same package.
 		--disable-static # Breaks X startup.
 		--docdir="/usr/share/${P}"
@@ -209,37 +189,15 @@ src_configure() {
 
 src_install_contrib() {
 einfo "Installing contrib"
-	emake DESTDIR="${D}" -C contrib/gentoo install
-	pushd "contrib/gentoo" || die
-		insinto /etc
-		doins finit.conf
-		doins rc.local
-		doins -r finit.d
-	popd || die
+	exeinto /bin
+	doexe contrib/service
 	insinto /usr/share/${P}
 	doins -r contrib/patches
-	dodir /etc/finit.d/enabled
-	local L
-	pushd contrib/gentoo/finit.d/available || die
-		L=(
-			$(ls *.conf)
-		)
-	popd
-	for fn in ${L[@]} ; do
-		dosym \
-			"/etc/finit.d/available/${fn}" \
-			"/etc/finit.d/enabled/${fn}"
-	done
-	find "${ED}/etc" -name "Makefile*" -delete
-# Dedupe
-	rm -rf "${ED}/usr/share/${P}/contrib/gentoo" || die
-	rm -rf "${ED}/usr/share/${P}/contrib/finit.conf" || die
-	rm -rf "${ED}/usr/share/${P}/finit.conf" || die
 }
 
 src_install() {
 	emake DESTDIR="${D}" install
-	use contrib && src_install_contrib
+	src_install_contrib
 }
 
 src_test() {
