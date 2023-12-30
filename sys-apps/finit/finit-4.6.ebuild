@@ -93,7 +93,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.6-gentoo-contrib.patch"
+	"A${FILESDIR}/${PN}-4.6-gentoo-contrib.patch"
 	"${FILESDIR}/${PN}-4.6-scripts-typo.patch"
 )
 

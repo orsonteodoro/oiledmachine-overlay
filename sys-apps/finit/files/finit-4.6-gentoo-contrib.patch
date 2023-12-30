@@ -220,12 +220,12 @@ diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/Makefile.am finit-4.6
 +++ finit-4.6/contrib/gentoo/finit.d/available/Makefile.am	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,9 @@
 +docsdir   := @docdir@/contrib/gentoo/finit.d/available
-+docs_DATA  = acpid.conf anacron.conf apparmor.conf avahi-daemon.conf    \
++docs_DATA  = acpid.conf anacron.conf apparmor.conf avahi-daemon.conf   \
 +	     bluetooth.conf consolefont.conf cron.conf dhcpcd.conf      \
 +	     dmeventd.conf elogind.conf getty.conf keymap.conf          \
-+             lightdm.conf lxdm.conf modules.conf ntpd.conf              \
-+             plymouth-quit.conf rsyslogd.conf seat.d sntpd.conf         \
-+             sshd.conf syslogd.conf uuidd.conf xdm.conf
++	     lightdm.conf lxdm.conf modules.conf ntpd.conf              \
++	     plymouth-quit.conf rsyslogd.conf seatd.conf sntpd.conf     \
++	     sshd.conf syslogd.conf uuidd.conf xdm.conf
 +EXTRA_DIST = $(docs_DATA)
 +
 diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/modules.conf finit-4.6/contrib/gentoo/finit.d/available/modules.conf
