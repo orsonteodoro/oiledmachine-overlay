@@ -52,6 +52,9 @@
     <flag name="lightdm">
       Add support for LightDM, a graphical login manager
     </flag>
+    <flag name="lm_sensors">
+      Add support for lm_sensors
+    </flag>
     <flag name="lxdm">
       Add support for LXDM, a graphical login manager
     </flag>

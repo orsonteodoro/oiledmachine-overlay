@@ -34,6 +34,7 @@ SERVICES=(
 	hostname
 	keymap
 	lightdm
+	lm_sensors
 	lxdm
 	modules
 	networkmanager
