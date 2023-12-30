@@ -28,6 +28,9 @@
     <flag name="cron">
       Add support for cron
     </flag>
+    <flag name="cupsd">
+      Add support for cupsd
+    </flag>
     <flag name="dhcpcd">
       Add support for dhcpcd
     </flag>

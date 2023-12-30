@@ -25,6 +25,7 @@ SERVICES=(
 	avahi-daemon
 	bluetooth
 	consolefont
+	cupsd
 	cron
 	dhcpcd
 	dmeventd
@@ -60,9 +61,9 @@ src_unpack() {
 	cp -a "${FILESDIR}"/* "${WORKDIR}" || die
 	local libdir=$(get_libdir)
 	sed -i \
-                -e "s|lib64|${libdir}|g" \
-                "elogind.conf" \
-                || die
+		-e "s|lib64|${libdir}|g" \
+		"confs/elogind.conf" \
+		|| die
 }
 
 src_install() {
@@ -70,16 +71,38 @@ src_install() {
 	for svc in ${SERVICES[@]} ; do
 		if use ${svc} ; then
 			insinto /etc/finit.d/available
-			doins "${FILESDIR}/${svc}.conf"
+			doins "${WORKDIR}/confs/${svc}.conf"
 			dodir /etc/finit.d/enabled
 			dosym \
 				"/etc/finit.d/available/${svc}.conf" \
 				"/etc/finit.d/enabled/${svc}.conf"
+			if [[ -e "${WORKDIR}/scripts/${svc}-pre.sh" ]] ; then
+				exeinto /etc/finit.d/scripts
+				doexe "${WORKDIR}/scripts/${svc}-pre.sh"
+				fowners root:root "/etc/finit.d/scripts/${svc}-pre.sh"
+				fperms 750 "/etc/finit.d/scripts/${svc}-pre.sh"
+			fi
+			if [[ -e "${WORKDIR}/scripts/${svc}.sh" ]] ; then
+				exeinto /etc/finit.d/scripts
+				doexe "${WORKDIR}/scripts/${svc}.sh"
+				fowners root:root "/etc/finit.d/scripts/${svc}.sh"
+				fperms 750 "/etc/finit.d/scripts/${svc}.sh"
+			fi
+			if [[ -e "${WORKDIR}/scripts/${svc}-post.sh" ]] ; then
+				exeinto /etc/finit.d/scripts
+				doexe "${WORKDIR}/scripts/${svc}-post.sh"
+				fowners root:root "/etc/finit.d/scripts/${svc}-post.sh"
+				fperms 750 "/etc/finit.d/scripts/${svc}-post.sh"
+			fi
 		fi
 	done
 	insinto /etc
-	doins "${FILESDIR}/rc.local"
-	doins "${FILESDIR}/finit.conf"
+	doins "${WORKDIR}/rc.local"
+	doins "${WORKDIR}/finit.conf"
+}
+
+pkg_postinst() {
+einfo "This package is always in development or live."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
