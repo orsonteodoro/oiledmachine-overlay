@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit autotools
+inherit autotools flag-o-matic
 
 SRC_URI="
 https://github.com/troglobit/finit/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz
@@ -20,13 +20,14 @@ LICENSE="
 	MIT
 "
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Needs test
-RESTRICT="mirror"
+RESTRICT="mirror strip"
 SLOT="0"
 PLUGINS=(
 	-alsa
 	-dbus
 	-hook-scripts
 	+hotplug
+	-modprobe
 	-modules-load
 	+netlink
 	-resolvconf
@@ -59,7 +60,7 @@ INIT_SYSTEMS_DEPENDS="
 	!sys-process/runit
 "
 # U 22.04
-# sys-apps/util-linux - for getty.conf contrib
+# sys-apps/util-linux - for getty.conf contrib, swapoff
 # sys-apps/kbd - for keymap.conf in contrib
 RDEPEND+="
 	${INIT_SYSTEMS_DEPENDS}
@@ -69,11 +70,21 @@ RDEPEND+="
 	sys-apps/kbd
 	sys-apps/shadow
 	sys-apps/util-linux
+	sys-process/procps
+	alsa? (
+		media-sound/alsa-utils
+	)
 	bash-completion? (
 		app-shells/bash-completion
 	)
+	dbus? (
+		sys-apps/dbus
+	)
 	mdev? (
 		sys-apps/busybox[mdev]
+	)
+	modules-load? (
+		sys-apps/kmod
 	)
 	udev? (
 		sys-apps/systemd-utils[udev]
@@ -131,10 +142,17 @@ src_prepare() {
 		-e "s|/usr/share/doc/finit/|/usr/share/${P}/|g" \
 		"contrib/gentoo/install.sh" \
 		|| die
+	sed -i \
+		-e "s|/sbin/sysctl|/usr/sbin/sysctl|g" \
+		"plugins/procps.c" \
+		|| die
 }
 
 src_configure() {
 	eautoreconf
+
+	replace-flags '-O*' '-O2'
+
 	local myconf=(
 		$(use_enable alsa alsa-utils-plugin)
 		$(use_enable auto-reload auto_reload)
@@ -147,6 +165,7 @@ src_configure() {
 		$(use_enable hotplug hotplug-plugin)
 		$(use_enable kernel-cmdline kernel_cmdline)
 		$(use_enable logrotate)
+		$(use_enable modprobe modprobe-plugin)
 		$(use_enable modules-load modules-load-plugin)
 		$(use_enable netlink netlink-plugin)
 		$(use_enable redirect)
@@ -215,4 +234,10 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  untested
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-TEST:  fail (4.6, 20231229)
+# build - pass
+# urandom save/restore service - fail
+# note: determinism problems.  dbus and udev plugins were disabled but still
+# shows up during init.  They were were not present in the plugin folder but
+# strings "D-Bus message bus daemon" still pop up.

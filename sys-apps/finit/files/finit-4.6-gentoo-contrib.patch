@@ -83,8 +83,8 @@ diff -Nurp finit-4.6.orig/contrib/gentoo/finit.conf finit-4.6/contrib/gentoo/fin
 +# See /etc/finit.d/*.conf and `initctl list` for other services
 +
 +## Runlevel to start after bootstrap, runlevel 'S'
-+# Default is 2
-+#runlevel 2
++# Default is 3
++#runlevel 3
 +
 +# Top-level cgroups and their default settings.  All groups mandatory
 +# but more can be added, max 8 groups in total currently.  The cgroup

@@ -42,6 +42,9 @@
     <flag name="logrotate">
       Use built-in rotation of /var/log/wtmp
     </flag>
+    <flag name="modprobe">
+      Coldplug modules using modalias magic
+    </flag>
     <flag name="modules-load">
       Scans /etc/modules-load.d for modules to load
     </flag>
