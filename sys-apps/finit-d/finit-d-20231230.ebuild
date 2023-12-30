@@ -7,7 +7,7 @@ EAPI=8
 SRC_URI=""
 S="${WORKDIR}"
 
-DESCRIPTION="finit.d/*.conf files for finit init system"
+DESCRIPTION="finit.d/*.conf files for the finit init system"
 HOMEPAGE="
 https://troglobit.com/projects/finit/
 https://github.com/troglobit/finit
@@ -21,31 +21,31 @@ SLOT="0"
 SERVICES=(
 	acpid
 	apparmor
-	bluetooth
-	cron
-	dmeventd
-	elogind
-	hostname
-	lightdm
-	modules
-	ntpd
-	rsyslogd
-	sntpd
-	syslogd
-	watchdog
 	anacron
 	avahi-daemon
+	bluetooth
 	consolefont
+	cron
 	dhcpcd
+	dmeventd
 	dropbear
+	elogind
 	getty
+	hostname
 	keymap
+	lightdm
 	lxdm
+	modules
 	networkmanager
+	ntpd
 	plymouth-quit
+	rsyslogd
 	seatd
+	sntpd
 	sshd
+	syslogd
 	uuidd
+	watchdog
 	xdm
 )
 IUSE+="

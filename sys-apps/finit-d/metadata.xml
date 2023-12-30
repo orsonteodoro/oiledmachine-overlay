@@ -6,100 +6,90 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <upstream>
-    <remote-id type="github">troglobit/finit</remote-id>
-    <bugs-to>
-      https://github.com/troglobit/finit/issues
-    </bugs-to>
-  </upstream>
-  <!--
-
-  oiledmachine-overlay notes:
-
-  Build time environment variables:
-
-  FINIT_HOSTNAME - The hostname to use.  localhost is the default.
-
-  -->
   <use>
-    <flag name="alsa">
-      Save and restore ALSA sound settings using alsactl
+    <flag name="acpid">
+      Add support for acpid
     </flag>
-    <flag name="auto-reload">
-      Automatic reload on any .conf change
+    <flag name="apparmor">
+      Add support for AppArmor
     </flag>
-    <flag name="contrib">
-      Build and install of contrib section
+    <flag name="anacron">
+      Add support for anacron system logger
     </flag>
-    <flag name="dbus">
-      Setup and start system message bus, D-Bus
+    <flag name="avahi-daemon">
+      Add support for the Avahi daemon
     </flag>
-    <flag name="bash-completion">
-      Add support for bash completion
+    <flag name="bluetooth">
+      Add support for BlueZ
     </flag>
-    <flag name="kernel-cmdline">
-      Parse init args from /proc/cmdline (don't use!)
+    <flag name="consolefont">
+      Add support for changing the console font
     </flag>
-    <flag name="fastboot">
-      Skip fsck check on filesystems listed in /etc/fstab
+    <flag name="cron">
+      Add support for cron
     </flag>
-    <flag name="fsckfix">
-      Run fsck fix mode (options: -yf) on filesystems listed in /etc/fstab
+    <flag name="dhcpcd">
+      Add support for dhcpcd
     </flag>
-    <flag name="keventd">
-      Use built-in keventd
+    <flag name="dmeventd">
+      Add support for dmeventd
     </flag>
-    <flag name="logrotate">
-      Use built-in rotation of /var/log/wtmp
+    <flag name="dropbear">
+      Add support for dropbear SSH
     </flag>
-    <flag name="modprobe">
-      Coldplug modules using modalias magic
+    <flag name="elogind">
+      Add support for elogind
     </flag>
-    <flag name="modules-load">
-      Scans /etc/modules-load.d for modules to load
+    <flag name="getty">
+      Add support for ttys
     </flag>
-    <flag name="redirect">
-      Use redirection of service output to /dev/null
+    <flag name="hostname">
+      Add support for changing hostname
     </flag>
-    <flag name="test">
-      Run test suite
+    <flag name="keymap">
+      Add support for changing console keymap
     </flag>
-    <flag name="hook-scripts">
-      Trigger script execution from hook points
+    <flag name="lightdm">
+      Add support for LightDM, a graphical login manager
     </flag>
-    <flag name="hotplug">
-      Start udevd or mdev kernel event datamon
+    <flag name="lxdm">
+      Add support for LXDM, a graphical login manager
     </flag>
-    <flag name="netlink">
-      Basic netlink plugin for IFUP/IFDN and GW events.  It can be replaced with
-      externally built plugin that links with libnl or similar.
+    <flag name="modules">
+      Add example for loading external modules
     </flag>
-    <flag name="rtc">
-      Save and restore RTC using hwclock
+    <flag name="networkmanager">
+      Add support for NetworkManager
     </flag>
-    <flag name="rescue">
-      Enable/Disable potentially unsafe rescue mode
+    <flag name="ntpd">
+      Add support for ntpd
     </flag>
-    <flag name="resolvconf">
-      Setup necessary files for resolvconf
+    <flag name="plymouth-quit">
+      Add support for plymouth
     </flag>
-    <flag name="sulogin">
-      Enable built-in sulogin
+    <flag name="rsyslogd">
+      Add support for rsyslogd system logger
     </flag>
-    <flag name="tty">
-      Automatically activate new TTYs, e.g. USB-to-serial
+    <flag name="seatd">
+      Add support for seatd
     </flag>
-    <flag name="urandom">
-      Setup and save random seed at boot/shutdown
+    <flag name="sshd">
+      Add support for sshd
     </flag>
-    <flag name="testserv">
-      Test plugin to start test serv daemon
+    <flag name="sntpd">
+      Add support for sntpd
+    </flag>
+    <flag name="syslogd">
+      Add support for syslogd
+    </flag>
+    <flag name="uuidd">
+      Add support for uuidd
     </flag>
     <flag name="watchdog">
-      Use built-in watchdog
+      Add support for watchdog
     </flag>
-    <flag name="X">
-      Console setup (for X)
+    <flag name="xdm">
+      Add support for xdm
     </flag>
   </use>
 </pkgmetadata>
