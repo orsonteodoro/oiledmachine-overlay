@@ -76,7 +76,7 @@ RDEPEND+="
 		media-sound/alsa-utils
 	)
 	bash-completion? (
-		app-shells/bash-completion
+		>=app-shells/bash-completion-2.0
 	)
 	dbus? (
 		sys-apps/dbus
