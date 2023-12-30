@@ -15,7 +15,7 @@ https://github.com/troglobit/finit
 LICENSE="
 	MIT
 "
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Needs test
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 RESTRICT="mirror test"
 SLOT="0"
 SERVICES=(
