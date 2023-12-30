@@ -159,7 +159,7 @@ src_configure() {
 		$(use_with watchdog)
 		--disable-auto-reload # Breaks emerge update of the same package.
 		--disable-static # Breaks X
-		--enable-contrib # For service script
+		--disable-contrib # For service script
 		--docdir="/usr/share/${P}"
 		--bindir="/bin"
 		--sbindir="/sbin"
