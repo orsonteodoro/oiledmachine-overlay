@@ -12,6 +12,15 @@
       https://github.com/troglobit/finit/issues
     </bugs-to>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Build time environment variables:
+
+  FINIT_HOSTNAME - The hostname to use.  localhost is the default.
+
+  -->
   <use>
     <flag name="alsa">
       Save and restore ALSA sound settings using alsactl

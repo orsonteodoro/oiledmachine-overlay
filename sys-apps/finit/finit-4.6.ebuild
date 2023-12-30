@@ -40,7 +40,7 @@ PLUGINS=(
 # auto's final value determined by CI
 IUSE+="
 ${PLUGINS[@]}
--auto-reload +bash-completion +contrib +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
++bash-completion +contrib +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
 +logrotate +redirect +rescue -sulogin test udev -watchdog
 "
 REQUIRED_USE="
@@ -48,6 +48,7 @@ REQUIRED_USE="
 		mdev
 		udev
 	)
+	contrib
 "
 INIT_SYSTEMS_DEPENDS="
 	!sys-apps/epoch
@@ -109,9 +110,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-ewarn "========================================================================"
-ewarn "Ebuild still in development.  DO NOT USE."
-ewarn "========================================================================"
 	if has_version "sys-apps/busybox[mdev]" && has_version "sys-apps/systemd-utils[udev]" ; then
 ewarn
 ewarn "mdev and udev should not be installed at the same time."
@@ -151,11 +149,10 @@ src_prepare() {
 src_configure() {
 	eautoreconf
 
-	replace-flags '-O*' '-O2'
+	replace-flags '-O*' '-O3' # It's still slow.
 
 	local myconf=(
 		$(use_enable alsa alsa-utils-plugin)
-		$(use_enable auto-reload auto_reload)
 		$(use_enable dbus dbus-plugin)
 		$(use_enable doc)
 		$(use_enable contrib)
@@ -163,7 +160,7 @@ src_configure() {
 		$(use_enable fastboot)
 		$(use_enable fsckfix)
 		$(use_enable hotplug hotplug-plugin)
-		$(use_enable kernel-cmdline kernel_cmdline)
+		$(use_enable kernel-cmdline)
 		$(use_enable logrotate)
 		$(use_enable modprobe modprobe-plugin)
 		$(use_enable modules-load modules-load-plugin)
@@ -179,9 +176,11 @@ src_configure() {
 		$(use_with keventd)
 		$(use_with sulogin)
 		$(use_with watchdog)
+		--disable-auto-reload # breaks emerge update of same package
 		--docdir="/usr/share/${P}"
 		--bindir="/bin"
 		--sbindir="/sbin"
+		--with-hostname="${FINIT_HOSTNAME:-localhost}"
 	# See
 	# https://wiki.gentoo.org/wiki/Handbook:X86/Working/Initscripts#Booting_the_system
 	# https://en.wikipedia.org/wiki/Runlevel#Gentoo_Linux
@@ -216,6 +215,19 @@ einfo "Installing contrib"
 	popd || die
 	insinto /usr/share/${P}
 	doins -r contrib/patches
+	dodir /etc/finit.d/enabled
+	local L
+	pushd contrib/gentoo/finit.d/available || die
+		L=(
+			$(ls *.conf)
+		)
+	popd
+	for fn in ${L[@]} ; do
+		dosym \
+			"/etc/finit.d/available/${fn}" \
+			"/etc/finit.d/enabled/${fn}"
+	done
+	find "${ED}/etc" -name "Makefile*" -delete
 # Dedupe
 	rm -rf "${ED}/usr/share/${P}/contrib/gentoo" || die
 	rm -rf "${ED}/usr/share/${P}/contrib/finit.conf" || die
@@ -231,14 +243,14 @@ pkg_postinst() {
 ewarn
 ewarn "linux-4.9-inotify-in-mask-create.patch should be applied to kernel versions <= 4.18.x "
 ewarn
+ewarn "You should almost always enable getty.conf"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-# OILEDMACHINE-OVERLAY-TEST:  fail (4.6, 20231229)
+# OILEDMACHINE-OVERLAY-TEST:  passed (4.6, 20231230)
 # build - pass
-# urandom save/restore service - fail
-# note: determinism problems.  dbus and udev plugins were disabled but still
-# shows up during init.  They were were not present in the plugin folder but
-# strings "D-Bus message bus daemon" still pop up.
-# performance note:  init is very slow compared to openrc non parallel mode even at -O2.
+# urandom save/restore service - passes after it saves seed
+# NetworkManager - passed
+# getty - passed
+# performance note:  finit is very fast when few services run.
