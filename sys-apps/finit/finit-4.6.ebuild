@@ -255,5 +255,5 @@ ewarn
 # urandom save/restore service - passes after it saves seed
 # NetworkManager - passed
 # getty - passed
-# sound - passed if driver loaded with /tmp/xdg-runtime-$(id -u) ownership correction.  Bug in logind/seatd.
+# sound - passed if driver loaded with /tmp/xdg-runtime-$(id -u) ownership correction.  It's a bug in elogind in connection with XDG_RUNTIME_DIR, but the ownership bug doesn't exist in systemd.
 # performance note:  finit is very fast when few services run.
