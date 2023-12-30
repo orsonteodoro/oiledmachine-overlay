@@ -1,6 +1,6 @@
-diff -urpN finit-4.6.orig/configure.ac finit-4.6/configure.ac
+diff -Nurp finit-4.6.orig/configure.ac finit-4.6/configure.ac
 --- finit-4.6.orig/configure.ac	2023-11-12 22:03:30.000000000 -0800
-+++ finit-4.6/configure.ac	2023-12-29 15:31:22.906592469 -0800
++++ finit-4.6/configure.ac	2023-12-29 15:59:11.826846938 -0800
 @@ -10,6 +10,7 @@ AC_CONFIG_FILES([Makefile
  	contrib/Makefile
  	contrib/alpine/Makefile contrib/alpine/finit.d/Makefile contrib/alpine/finit.d/available/Makefile
@@ -9,9 +9,9 @@ diff -urpN finit-4.6.orig/configure.ac finit-4.6/configure.ac
  	contrib/void/Makefile   contrib/void/finit.d/Makefile   contrib/void/finit.d/available/Makefile
  	doc/Makefile
  	man/Makefile
-diff -urpN finit-4.6.orig/contrib/gentoo/build.sh finit-4.6/contrib/gentoo/build.sh
+diff -Nurp finit-4.6.orig/contrib/gentoo/build.sh finit-4.6/contrib/gentoo/build.sh
 --- finit-4.6.orig/contrib/gentoo/build.sh	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/build.sh	2023-12-29 15:31:22.906592469 -0800
++++ finit-4.6/contrib/gentoo/build.sh	2023-12-29 15:59:11.826846938 -0800
 @@ -0,0 +1,62 @@
 +#!/bin/sh
 +#
@@ -75,9 +75,9 @@ diff -urpN finit-4.6.orig/contrib/gentoo/build.sh finit-4.6/contrib/gentoo/build
 +    echo "*** Use 'sudo contrib/gentoo/install.sh' later to install Finit"
 +    echo
 +fi
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.conf finit-4.6/contrib/gentoo/finit.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.conf finit-4.6/contrib/gentoo/finit.conf
 --- finit-4.6.orig/contrib/gentoo/finit.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.conf	2023-12-29 15:31:22.906592469 -0800
++++ finit-4.6/contrib/gentoo/finit.conf	2023-12-29 15:59:11.826846938 -0800
 @@ -0,0 +1,26 @@
 +# /etc/finit.conf: Example for Gentoo Linux
 +# See /etc/finit.d/*.conf and `initctl list` for other services
@@ -105,40 +105,40 @@ diff -urpN finit-4.6.orig/contrib/gentoo/finit.conf finit-4.6/contrib/gentoo/fin
 +
 +## Bootstrap services and tasks
 +# Can be listed here or in /etc/finit.d/*.conf
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/acpid.conf finit-4.6/contrib/gentoo/finit.d/available/acpid.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/acpid.conf finit-4.6/contrib/gentoo/finit.d/available/acpid.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/acpid.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/acpid.conf	2023-12-29 15:31:22.906592469 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/acpid.conf	2023-12-29 15:59:11.826846938 -0800
 @@ -0,0 +1,3 @@
 +# Handle PWR button to shutdown/reboot -- useful in Qemu (virt-manager)
 +# Depends on a syslog daemon having started. Redirect any output to log.
 +service [2345] <pid/syslogd> env:-/etc/conf.d/acpid log acpid -f $ACPID_ARGS -- ACPI daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/anacron.conf finit-4.6/contrib/gentoo/finit.d/available/anacron.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/anacron.conf finit-4.6/contrib/gentoo/finit.d/available/anacron.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/anacron.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/anacron.conf	2023-12-29 15:31:22.906592469 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/anacron.conf	2023-12-29 15:59:11.826846938 -0800
 @@ -0,0 +1 @@
 +task [2345] <sys/pwr/ac,pid/syslogd> halt:usr1 env:-/etc/conf.d/anacron anacron -d -q $ANACRON_ARGS -- Anacron jobs
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/apparmor.conf finit-4.6/contrib/gentoo/finit.d/available/apparmor.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/apparmor.conf finit-4.6/contrib/gentoo/finit.d/available/apparmor.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/apparmor.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/apparmor.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/apparmor.conf	2023-12-29 15:59:11.826846938 -0800
 @@ -0,0 +1,2 @@
 +sysv [S] /etc/init.d/apparmor -- AppArmor initialization
 +
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/avahi-daemon.conf finit-4.6/contrib/gentoo/finit.d/available/avahi-daemon.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/avahi-daemon.conf finit-4.6/contrib/gentoo/finit.d/available/avahi-daemon.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/avahi-daemon.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/avahi-daemon.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/avahi-daemon.conf	2023-12-29 15:59:11.826846938 -0800
 @@ -0,0 +1 @@
 +service [345] env:-/etc/conf.d/avahi-daemon avahi-daemon -s $AVAHI_DAEMON_OPTS -- Avahi mDNS/DNS-SD Stack
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/bluetooth.conf finit-4.6/contrib/gentoo/finit.d/available/bluetooth.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/bluetooth.conf finit-4.6/contrib/gentoo/finit.d/available/bluetooth.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/bluetooth.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/bluetooth.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/bluetooth.conf	2023-12-29 15:59:11.826846938 -0800
 @@ -0,0 +1,4 @@
 +# To ignore errors like "org.freedesktop.hostname1", update the env file with
 +# "--noplugin=hostname", i.e. append to BLUETOOTHD_OPTS
 +# For net-wireless/bluez
 +service [2345] log:null env:-/etc/conf.d/bluetooth /usr/libexec/bluetooth/bluetoothd -n $BLUETOOTH_OPTS -- Bluetooth service
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/consolefont.conf finit-4.6/contrib/gentoo/finit.d/available/consolefont.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/consolefont.conf finit-4.6/contrib/gentoo/finit.d/available/consolefont.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/consolefont.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/consolefont.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/consolefont.conf	2023-12-29 15:59:11.830846899 -0800
 @@ -0,0 +1,13 @@
 +# sys-apps/kbd
 +task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty1 -- Setting up console font consolefont for tty1
@@ -153,38 +153,38 @@ diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/consolefont.conf fini
 +task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty10 -- Setting up console font consolefont for tty10
 +task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty11 -- Setting up console font consolefont for tty11
 +task [S] env:-/etc/conf.d/consolefont setfont $CONSOLEFONT $SETFONT_PARAMS -C /dev/tty12 -- Setting up console font consolefont for tty12
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/cron.conf finit-4.6/contrib/gentoo/finit.d/available/cron.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/cron.conf finit-4.6/contrib/gentoo/finit.d/available/cron.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/cron.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/cron.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/cron.conf	2023-12-29 15:59:11.830846899 -0800
 @@ -0,0 +1 @@
 +service [2345] <sys/pwr/ac,pid/syslogd> env:-/etc/conf.d/cron cron -f $EXTRA_OPTS -- Background job processing daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/dhcpcd.conf finit-4.6/contrib/gentoo/finit.d/available/dhcpcd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/dhcpcd.conf finit-4.6/contrib/gentoo/finit.d/available/dhcpcd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/dhcpcd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/dhcpcd.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/dhcpcd.conf	2023-12-29 15:59:11.834846860 -0800
 @@ -0,0 +1 @@
 +service [345] dhcpcd -B -M -- DHCP client
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/dmeventd.conf finit-4.6/contrib/gentoo/finit.d/available/dmeventd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/dmeventd.conf finit-4.6/contrib/gentoo/finit.d/available/dmeventd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/dmeventd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/dmeventd.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/dmeventd.conf	2023-12-29 15:59:11.834846860 -0800
 @@ -0,0 +1 @@
 +service [S12345] dmeventd -f -- Device mapper event daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/dropbear.conf finit-4.6/contrib/gentoo/finit.d/available/dropbear.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/dropbear.conf finit-4.6/contrib/gentoo/finit.d/available/dropbear.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/dropbear.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/dropbear.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/dropbear.conf	2023-12-29 15:59:11.834846860 -0800
 @@ -0,0 +1,2 @@
 +# Start SSH daemon as soon as basic networking comes up
 +service [345] env:-/etc/conf.d/dropbear dropbear -R -F $DROPBEAR_OPTS -- Dropbear SSH daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/elogind.conf finit-4.6/contrib/gentoo/finit.d/available/elogind.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/elogind.conf finit-4.6/contrib/gentoo/finit.d/available/elogind.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/elogind.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/elogind.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/elogind.conf	2023-12-29 15:59:11.834846860 -0800
 @@ -0,0 +1,4 @@
 +# On some systems, bootstrap can be really quick and cause elogind
 +# to not start before a user has managed to log in.  To prevent
 +# this, add <pid/elogind> as condition to your TTYs in getty.conf
 +service [2345] <pid/syslogd> /lib64/elogind/elogind -- Login manager
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/getty.conf finit-4.6/contrib/gentoo/finit.d/available/getty.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/getty.conf finit-4.6/contrib/gentoo/finit.d/available/getty.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/getty.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/getty.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/getty.conf	2023-12-29 15:59:11.834846860 -0800
 @@ -0,0 +1,7 @@
 +# Consoles to start getty on when system is up
 +tty [12345] /dev/tty1 linux noclear nowait
@@ -193,26 +193,31 @@ diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/getty.conf finit-4.6/
 +tty [2345]  /dev/tty4 linux nowait
 +tty [2345]  /dev/tty5 linux nowait
 +tty [2345]  /dev/tty6 linux nowait
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/keymap.conf finit-4.6/contrib/gentoo/finit.d/available/keymap.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/hostname.conf finit-4.6/contrib/gentoo/finit.d/available/hostname.conf
+--- finit-4.6.orig/contrib/gentoo/finit.d/available/hostname.conf	1969-12-31 16:00:00.000000000 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/hostname.conf	2023-12-29 16:02:40.592815402 -0800
+@@ -0,0 +1 @@
++task [S] env:-/etc/conf.d/hostname hostname $hostname -- Hostname
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/keymap.conf finit-4.6/contrib/gentoo/finit.d/available/keymap.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/keymap.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/keymap.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/keymap.conf	2023-12-29 15:59:11.834846860 -0800
 @@ -0,0 +1,3 @@
 +# Oneshot task to run once at bootstrap
 +# sys-apps/kbd
 +task [S] env:/etc/conf.d/loadkmap loadkeys -q $wkeys $keymap $extended_keymaps -- Loading keymap
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/lightdm.conf finit-4.6/contrib/gentoo/finit.d/available/lightdm.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/lightdm.conf finit-4.6/contrib/gentoo/finit.d/available/lightdm.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/lightdm.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/lightdm.conf	2023-12-29 15:31:22.910592433 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/lightdm.conf	2023-12-29 15:59:11.834846860 -0800
 @@ -0,0 +1 @@
 +service [2345] lightdm -- Light Display Manager
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/lxdm.conf finit-4.6/contrib/gentoo/finit.d/available/lxdm.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/lxdm.conf finit-4.6/contrib/gentoo/finit.d/available/lxdm.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/lxdm.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/lxdm.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/lxdm.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1 @@
 +service [2345] lxdm -- Lightweight Login Manager
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/Makefile.am finit-4.6/contrib/gentoo/finit.d/available/Makefile.am
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/Makefile.am finit-4.6/contrib/gentoo/finit.d/available/Makefile.am
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/Makefile.am	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/Makefile.am	2023-12-29 15:36:47.967685366 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/Makefile.am	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,9 @@
 +docsdir   := @docdir@/contrib/gentoo/finit.d/available
 +docs_DATA  = acpid.conf anacron.conf apparmor.conf avahi-daemon.conf    \
@@ -223,9 +228,9 @@ diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/Makefile.am finit-4.6
 +             sshd.conf syslogd.conf uuidd.conf xdm.conf
 +EXTRA_DIST = $(docs_DATA)
 +
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/modules.conf finit-4.6/contrib/gentoo/finit.d/available/modules.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/modules.conf finit-4.6/contrib/gentoo/finit.d/available/modules.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/modules.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/modules.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/modules.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,8 @@
 +## Linux kernel modules to load
 +#module fbcon
@@ -235,74 +240,74 @@ diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/modules.conf finit-4.
 +#module psmouse
 +#module mousedev
 +#module 8139cp
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/networkmanager.conf finit-4.6/contrib/gentoo/finit.d/available/networkmanager.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/networkmanager.conf finit-4.6/contrib/gentoo/finit.d/available/networkmanager.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/networkmanager.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/networkmanager.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/networkmanager.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1 @@
 +service [345] env:-/etc/conf.d/NetworkManager NetworkManager -- NetworkManager daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/ntpd.conf finit-4.6/contrib/gentoo/finit.d/available/ntpd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/ntpd.conf finit-4.6/contrib/gentoo/finit.d/available/ntpd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/ntpd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/ntpd.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/ntpd.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,2 @@
 +# Busybox ntpd has no option to use syslog when running in foreground
 +service [345] <pid/syslogd> env:-/etc/conf.d/ntpd log ntpd -n $NTPD_OPTS -- NTP daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/plymouth-quit.conf finit-4.6/contrib/gentoo/finit.d/available/plymouth-quit.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/plymouth-quit.conf finit-4.6/contrib/gentoo/finit.d/available/plymouth-quit.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/plymouth-quit.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/plymouth-quit.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/plymouth-quit.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,2 @@
 +# Need to stop plymouth, or it'll block stdin on tty1
 +task [S] /usr/bin/plymouth quit -- Stopping Plymouth Boot Screen
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/rsyslogd.conf finit-4.6/contrib/gentoo/finit.d/available/rsyslogd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/rsyslogd.conf finit-4.6/contrib/gentoo/finit.d/available/rsyslogd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/rsyslogd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/rsyslogd.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/rsyslogd.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,3 @@
 +# Start rsyslogd as soon as possible, should always run
 +# Provides pid/syslogd condition
 +service [S12345] name:syslogd env:-/etc/conf.d/rsyslog rsyslogd -n $RSYSLOG_OPTS -- Reliable syslog daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/seatd.conf finit-4.6/contrib/gentoo/finit.d/available/seatd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/seatd.conf finit-4.6/contrib/gentoo/finit.d/available/seatd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/seatd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/seatd.conf	2023-12-29 15:33:48.045295391 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/seatd.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1 @@
 +service [345] seatd -g seat -- seatd
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/sntpd.conf finit-4.6/contrib/gentoo/finit.d/available/sntpd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/sntpd.conf finit-4.6/contrib/gentoo/finit.d/available/sntpd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/sntpd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/sntpd.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/sntpd.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,2 @@
 +# Simple NTP client (SNTP)
 +service [345] <net/route/default> env:-/etc/conf.d/sntpd sntpd -n $SNTPD_OPTS -- SNTP client
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/sshd.conf finit-4.6/contrib/gentoo/finit.d/available/sshd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/sshd.conf finit-4.6/contrib/gentoo/finit.d/available/sshd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/sshd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/sshd.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/sshd.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,2 @@
 +# Start SSH daemon as soon as basic networking comes up
 +service [345] <net/lo/up> env:-/etc/conf.d/ssh /usr/sbin/sshd -D $SSHD_OPTS -- OpenSSH daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/syslogd.conf finit-4.6/contrib/gentoo/finit.d/available/syslogd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/syslogd.conf finit-4.6/contrib/gentoo/finit.d/available/syslogd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/syslogd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/syslogd.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/syslogd.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1,2 @@
 +# Start sysklogd as soon as possible, should always run if enabled
 +service [S123456789] env:-/etc/conf.d/sysklogd syslogd -F $SYSLOGD -- System logging daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/uuidd.conf finit-4.6/contrib/gentoo/finit.d/available/uuidd.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/uuidd.conf finit-4.6/contrib/gentoo/finit.d/available/uuidd.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/uuidd.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/uuidd.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/uuidd.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1 @@
 +service @uuidd:uuidd [2345] uuidd -F -- UUID generation daemon
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/watchdog.conf finit-4.6/contrib/gentoo/finit.d/available/watchdog.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/watchdog.conf finit-4.6/contrib/gentoo/finit.d/available/watchdog.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/watchdog.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/watchdog.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/watchdog.conf	2023-12-29 15:59:11.838846821 -0800
 @@ -0,0 +1 @@
 +service [S123456789] env:-/etc/conf.d/watchdog watchdog $WATCHDOG_OPTS -- System watchdog
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/available/xdm.conf finit-4.6/contrib/gentoo/finit.d/available/xdm.conf
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/available/xdm.conf finit-4.6/contrib/gentoo/finit.d/available/xdm.conf
 --- finit-4.6.orig/contrib/gentoo/finit.d/available/xdm.conf	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/available/xdm.conf	2023-12-29 15:31:22.914592397 -0800
++++ finit-4.6/contrib/gentoo/finit.d/available/xdm.conf	2023-12-29 15:59:11.842846782 -0800
 @@ -0,0 +1,4 @@
 +# Here we use XDM since it has few dependencies (relatively speaking).
 +# It is also an example of a service without a -- description.
 +# service [2345] lxdm -- Lightweight Login Manager
 +service [2345] xdm -nodaemon -- X Display Manager
-diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/Makefile.am finit-4.6/contrib/gentoo/finit.d/Makefile.am
+diff -Nurp finit-4.6.orig/contrib/gentoo/finit.d/Makefile.am finit-4.6/contrib/gentoo/finit.d/Makefile.am
 --- finit-4.6.orig/contrib/gentoo/finit.d/Makefile.am	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/finit.d/Makefile.am	2023-12-29 15:31:22.918592361 -0800
++++ finit-4.6/contrib/gentoo/finit.d/Makefile.am	2023-12-29 15:59:11.842846782 -0800
 @@ -0,0 +1,24 @@
 +SUBDIRS    = available
 +docsdir   := @docdir@/contrib/gentoo/finit.d
@@ -328,9 +333,9 @@ diff -urpN finit-4.6.orig/contrib/gentoo/finit.d/Makefile.am finit-4.6/contrib/g
 +		src=available/$$file;				\
 +		$(RM) -f $$lnk;					\
 +	done
-diff -urpN finit-4.6.orig/contrib/gentoo/install.sh finit-4.6/contrib/gentoo/install.sh
+diff -Nurp finit-4.6.orig/contrib/gentoo/install.sh finit-4.6/contrib/gentoo/install.sh
 --- finit-4.6.orig/contrib/gentoo/install.sh	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/install.sh	2023-12-29 15:31:22.918592361 -0800
++++ finit-4.6/contrib/gentoo/install.sh	2023-12-29 15:59:11.842846782 -0800
 @@ -0,0 +1,52 @@
 +#!/bin/sh
 +
@@ -384,17 +389,17 @@ diff -urpN finit-4.6.orig/contrib/gentoo/install.sh finit-4.6/contrib/gentoo/ins
 +    echo "*** Aborting install."
 +    echo
 +fi
-diff -urpN finit-4.6.orig/contrib/gentoo/Makefile.am finit-4.6/contrib/gentoo/Makefile.am
+diff -Nurp finit-4.6.orig/contrib/gentoo/Makefile.am finit-4.6/contrib/gentoo/Makefile.am
 --- finit-4.6.orig/contrib/gentoo/Makefile.am	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/Makefile.am	2023-12-29 15:31:22.918592361 -0800
++++ finit-4.6/contrib/gentoo/Makefile.am	2023-12-29 15:59:11.842846782 -0800
 @@ -0,0 +1,4 @@
 +SUBDIRS    = finit.d
 +docsdir   := @docdir@/contrib/gentoo
 +docs_DATA  = README.md finit.conf build.sh install.sh rc.local
 +EXTRA_DIST = $(docs_DATA)
-diff -urpN finit-4.6.orig/contrib/gentoo/rc.local finit-4.6/contrib/gentoo/rc.local
+diff -Nurp finit-4.6.orig/contrib/gentoo/rc.local finit-4.6/contrib/gentoo/rc.local
 --- finit-4.6.orig/contrib/gentoo/rc.local	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/rc.local	2023-12-29 15:31:22.918592361 -0800
++++ finit-4.6/contrib/gentoo/rc.local	2023-12-29 15:59:11.842846782 -0800
 @@ -0,0 +1,7 @@
 +#!/bin/sh
 +# This script is executed once at boot, at the very end,
@@ -403,9 +408,9 @@ diff -urpN finit-4.6.orig/contrib/gentoo/rc.local finit-4.6/contrib/gentoo/rc.lo
 +# Each line is run in sequence.
 +#
 +# NOTE: Remember to set the executable bit!
-diff -urpN finit-4.6.orig/contrib/gentoo/README.md finit-4.6/contrib/gentoo/README.md
+diff -Nurp finit-4.6.orig/contrib/gentoo/README.md finit-4.6/contrib/gentoo/README.md
 --- finit-4.6.orig/contrib/gentoo/README.md	1969-12-31 16:00:00.000000000 -0800
-+++ finit-4.6/contrib/gentoo/README.md	2023-12-29 15:31:22.918592361 -0800
++++ finit-4.6/contrib/gentoo/README.md	2023-12-29 15:59:11.842846782 -0800
 @@ -0,0 +1,63 @@
 +HowTo: Finit on Gentoo Linux
 +================================
@@ -470,18 +475,18 @@ diff -urpN finit-4.6.orig/contrib/gentoo/README.md finit-4.6/contrib/gentoo/READ
 +
 +[libuEv]: https://github.com/troglobit/libuev
 +[libite]: https://github.com/troglobit/libite
-diff -urpN finit-4.6.orig/contrib/Makefile.am finit-4.6/contrib/Makefile.am
+diff -Nurp finit-4.6.orig/contrib/Makefile.am finit-4.6/contrib/Makefile.am
 --- finit-4.6.orig/contrib/Makefile.am	2023-11-12 22:03:30.000000000 -0800
-+++ finit-4.6/contrib/Makefile.am	2023-12-29 15:31:22.918592361 -0800
++++ finit-4.6/contrib/Makefile.am	2023-12-29 15:59:11.842846782 -0800
 @@ -1,4 +1,4 @@
 -SUBDIRS    = alpine debian void
 +SUBDIRS    = alpine debian gentoo void
  bin_SCRIPT = service
  docsdir   := @docdir@/contrib
  docs_DATA  = README.md finit.conf procmon.sh
-diff -urpN finit-4.6.orig/contrib/README.md finit-4.6/contrib/README.md
+diff -Nurp finit-4.6.orig/contrib/README.md finit-4.6/contrib/README.md
 --- finit-4.6.orig/contrib/README.md	2023-11-12 22:03:30.000000000 -0800
-+++ finit-4.6/contrib/README.md	2023-12-29 15:31:22.922592325 -0800
++++ finit-4.6/contrib/README.md	2023-12-29 15:59:11.846846743 -0800
 @@ -6,6 +6,8 @@ install and try out Finit on various Lin
  
  * [Alpine](alpine/)

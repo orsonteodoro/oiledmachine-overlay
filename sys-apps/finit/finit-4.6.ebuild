@@ -23,27 +23,27 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 PLUGINS=(
-	alsa
-	dbus
-	hook-scripts
-	hotplug
-	modules-load
-	netlink
-	resolvconf
-	rtc
-	testserv
-	tty
-	urandom
-	X
+	-alsa
+	-dbus
+	-hook-scripts
+	+hotplug
+	-modules-load
+	+netlink
+	-resolvconf
+	+rtc
+	-testserv
+	+tty
+	+urandom
+	-X
 )
-# TODO:  properly set default ON for these USE flags
+# auto determined by CI
 IUSE+="
 ${PLUGINS[@]}
-auto-reload bash-completion +contrib doc kernel-cmdline fastboot fsckfix mdev keventd
-logrotate plugins redirect rescue sulogin test udev watchdog
+-auto-reload +bash-completion +contrib +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
++logrotate +redirect +rescue -sulogin test udev -watchdog
 "
 REQUIRED_USE="
-	^^ (
+	?? (
 		mdev
 		udev
 	)

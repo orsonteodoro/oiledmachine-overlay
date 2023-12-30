@@ -45,9 +45,6 @@
     <flag name="modules-load">
       Scans /etc/modules-load.d for modules to load
     </flag>
-    <flag name="plugins">
-      Use all plugins
-    </flag>
     <flag name="redirect">
       Use redirection of service output to /dev/null
     </flag>
