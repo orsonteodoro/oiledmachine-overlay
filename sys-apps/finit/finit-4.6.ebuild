@@ -101,6 +101,16 @@ pkg_setup() {
 ewarn "========================================================================"
 ewarn "Ebuild still in development.  DO NOT USE."
 ewarn "========================================================================"
+	if has_version "sys-apps/busybox[mdev]" && has_version "sys-apps/systemd-utils[udev]" ; then
+ewarn
+ewarn "mdev and udev should not be installed at the same time."
+ewarn
+ewarn "Conflicting packages:"
+ewarn
+ewarn "  sys-apps/busybox[mdev]"
+ewarn "  sys-apps/systemd-utils[udev]"
+ewarn
+	fi
 }
 
 src_prepare() {
