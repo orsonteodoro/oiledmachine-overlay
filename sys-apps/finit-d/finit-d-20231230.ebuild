@@ -23,7 +23,7 @@ SERVICES=(
 	apparmor
 	anacron
 	avahi-daemon
-	bluetooth
+	bluez
 	consolefont
 	cupsd
 	cron

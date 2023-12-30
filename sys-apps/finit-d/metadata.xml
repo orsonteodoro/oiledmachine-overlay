@@ -19,7 +19,7 @@
     <flag name="avahi-daemon">
       Add support for the Avahi daemon
     </flag>
-    <flag name="bluetooth">
+    <flag name="bluez">
       Add support for BlueZ
     </flag>
     <flag name="consolefont">
