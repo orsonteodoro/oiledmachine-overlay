@@ -35,6 +35,7 @@
       Setup and start system message bus, D-Bus
     </flag>
     <flag name="bash-completion">
+      Add support for bash completion
     </flag>
     <flag name="kernel-cmdline">
       Parse init args from /proc/cmdline (don't use!)
