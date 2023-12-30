@@ -157,9 +157,9 @@ src_configure() {
 		$(use_with keventd)
 		$(use_with sulogin)
 		$(use_with watchdog)
-		--enable-contrib # For service script
 		--disable-auto-reload # Breaks emerge update of the same package.
-		--disable-static # Breaks X startup.
+		--disable-static # Breaks X
+		--enable-contrib # For service script
 		--docdir="/usr/share/${P}"
 		--bindir="/bin"
 		--sbindir="/sbin"
