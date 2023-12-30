@@ -20,7 +20,7 @@ LICENSE="
 	MIT
 "
 #KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Needs test
-RESTRICT="mirror strip"
+RESTRICT="mirror strip test" # Test attempts to download
 SLOT="0"
 PLUGINS=(
 	-alsa
@@ -244,6 +244,10 @@ einfo "Installing contrib"
 src_install() {
 	emake DESTDIR="${D}" install
 	use contrib && src_install_contrib
+}
+
+src_test() {
+	emake check
 }
 
 pkg_postinst() {
