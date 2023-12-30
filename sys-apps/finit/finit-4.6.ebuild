@@ -241,3 +241,4 @@ ewarn
 # note: determinism problems.  dbus and udev plugins were disabled but still
 # shows up during init.  They were were not present in the plugin folder but
 # strings "D-Bus message bus daemon" still pop up.
+# performance note:  init is very slow compared to openrc non parallel mode even at -O2.
