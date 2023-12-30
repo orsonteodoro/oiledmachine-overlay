@@ -66,11 +66,9 @@ INIT_SYSTEMS_DEPENDS="
 LIBITE_PV="2.2.0"
 LIBUEV_PV="2.2.0"
 RDEPEND+="
-	!static? (
-		>=dev-libs/libite-${LIBITE_PV}
-		>=dev-libs/libuev-${LIBUEV_PV}
-	)
 	${INIT_SYSTEMS_DEPENDS}
+	>=dev-libs/libite-${LIBITE_PV}
+	>=dev-libs/libuev-${LIBUEV_PV}
 	app-alternatives/sh
 	sys-apps/kbd
 	sys-apps/shadow
