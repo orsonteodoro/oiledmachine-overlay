@@ -41,7 +41,7 @@ PLUGINS=(
 IUSE+="
 ${PLUGINS[@]}
 +bash-completion +contrib +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
-+logrotate +redirect +rescue -sulogin test udev -watchdog
++logrotate +redirect +rescue -sulogin -static test udev -watchdog
 "
 REQUIRED_USE="
 	?? (
@@ -63,10 +63,14 @@ INIT_SYSTEMS_DEPENDS="
 # U 22.04
 # sys-apps/util-linux - for getty.conf contrib, swapoff
 # sys-apps/kbd - for keymap.conf in contrib
+LIBITE_PV="2.2.0"
+LIBUEV_PV="2.2.0"
 RDEPEND+="
+	!static? (
+		>=dev-libs/libite-${LIBITE_PV}
+		>=dev-libs/libuev-${LIBUEV_PV}
+	)
 	${INIT_SYSTEMS_DEPENDS}
-	>=dev-libs/libite-2.2.0
-	>=dev-libs/libuev-2.2.0
 	app-alternatives/sh
 	sys-apps/kbd
 	sys-apps/shadow
@@ -86,6 +90,10 @@ RDEPEND+="
 	)
 	modules-load? (
 		sys-apps/kmod
+	)
+	static? (
+		>=dev-libs/libite-${LIBITE_PV}[static-libs]
+		>=dev-libs/libuev-${LIBUEV_PV}[static-libs]
 	)
 	udev? (
 		sys-apps/systemd-utils[udev]
@@ -169,6 +177,7 @@ src_configure() {
 		$(use_enable rescue)
 		$(use_enable resolvconf resolvconf-plugin)
 		$(use_enable rtc rtc-plugin)
+		$(use_enable static)
 		$(use_enable tty tty-plugin)
 		$(use_enable testserv testserv-plugin)
 		$(use_enable urandom urandom-plugin)

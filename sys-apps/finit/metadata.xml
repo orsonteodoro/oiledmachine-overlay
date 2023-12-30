@@ -61,6 +61,10 @@
     <flag name="redirect">
       Use redirection of service output to /dev/null
     </flag>
+    <flag name="static">
+      Build Finit statically.  The plugins will be built-ins (.o files) and all
+      external libraries, except the C library will be linked statically.
+    </flag>
     <flag name="test">
       Run test suite
     </flag>
