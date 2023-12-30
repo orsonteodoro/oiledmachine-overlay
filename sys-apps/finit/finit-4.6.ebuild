@@ -41,7 +41,7 @@ PLUGINS=(
 IUSE+="
 ${PLUGINS[@]}
 +bash-completion +contrib +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
-+logrotate +redirect +rescue -sulogin -static test udev -watchdog
++logrotate +redirect +rescue -sulogin test udev -watchdog
 "
 REQUIRED_USE="
 	?? (
@@ -88,10 +88,6 @@ RDEPEND+="
 	)
 	modules-load? (
 		sys-apps/kmod
-	)
-	static? (
-		>=dev-libs/libite-${LIBITE_PV}[static-libs]
-		>=dev-libs/libuev-${LIBUEV_PV}[static-libs]
 	)
 	udev? (
 		sys-apps/systemd-utils[udev]
@@ -175,7 +171,6 @@ src_configure() {
 		$(use_enable rescue)
 		$(use_enable resolvconf resolvconf-plugin)
 		$(use_enable rtc rtc-plugin)
-		$(use_enable static)
 		$(use_enable tty tty-plugin)
 		$(use_enable testserv testserv-plugin)
 		$(use_enable urandom urandom-plugin)
@@ -183,7 +178,8 @@ src_configure() {
 		$(use_with keventd)
 		$(use_with sulogin)
 		$(use_with watchdog)
-		--disable-auto-reload # breaks emerge update of same package
+		--disable-auto-reload # Breaks emerge update of the same package.
+		--disable-static # Breaks X startup.
 		--docdir="/usr/share/${P}"
 		--bindir="/bin"
 		--sbindir="/sbin"
