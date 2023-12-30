@@ -17,7 +17,7 @@ for row in ${L[@]} ; do
 		chown "${owner}" "${path}"
 		chmod "${mod}" "${path}"
 	elif [[ "${type}" == "d" && -d "${path}" ]] ; then
-		chown -R "${owner}" "${path}"
-		chmod -R "${mod}" "${path}"
+		chown "${owner}" "${path}"
+		chmod "${mod}" "${path}"
 	fi
 done
