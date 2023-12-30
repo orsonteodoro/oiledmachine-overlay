@@ -36,7 +36,7 @@ PLUGINS=(
 	+urandom
 	-X
 )
-# auto determined by CI
+# auto's final value determined by CI
 IUSE+="
 ${PLUGINS[@]}
 -auto-reload +bash-completion +contrib +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
