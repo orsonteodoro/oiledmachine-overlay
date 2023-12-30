@@ -149,7 +149,6 @@ src_configure() {
 		$(use_enable logrotate)
 		$(use_enable modules-load modules-load-plugin)
 		$(use_enable netlink netlink-plugin)
-		$(use_enable plugins all-plugins)
 		$(use_enable redirect)
 		$(use_enable rescue)
 		$(use_enable resolvconf resolvconf-plugin)
