@@ -1181,6 +1181,7 @@ pkg_postrm() {
 # rinit:  fail ; same as above
 # systemd:  pass
 
-# Errors:
+# Warnings that should errors:
+# They do not appear in the systemd environment.
 # libayatana-appindicator-WARNING **: 13:02:36.657: Unable to get the session bus: Unknown or unsupported transport “disabled” for address “disabled:”
 # LIBDBUSMENU-GLIB-WARNING **: 13:02:36.657: Unable to get session bus: Unknown or unsupported transport “disabled” for address “disabled:”
