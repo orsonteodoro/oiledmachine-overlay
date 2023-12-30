@@ -94,6 +94,12 @@ src_install() {
 				fowners root:root "/etc/finit.d/scripts/${svc}-post.sh"
 				fperms 750 "/etc/finit.d/scripts/${svc}-post.sh"
 			fi
+			if [[ -e "${WORKDIR}/scripts/${svc}-shutdown.sh" ]] ; then
+				exeinto /etc/finit.d/scripts
+				doexe "${WORKDIR}/scripts/${svc}-shutdown.sh"
+				fowners root:root "/etc/finit.d/scripts/${svc}-shutdown.sh"
+				fperms 750 "/etc/finit.d/scripts/${svc}-shutdown.sh"
+			fi
 		fi
 	done
 	insinto /etc
