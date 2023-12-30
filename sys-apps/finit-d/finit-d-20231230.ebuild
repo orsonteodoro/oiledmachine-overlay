@@ -40,7 +40,7 @@ SERVICES=(
 	modules
 	networkmanager
 	ntpd
-	plymouth-quit
+	plymouth
 	rsyslogd
 	seatd
 	sntpd

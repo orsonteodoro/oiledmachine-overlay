@@ -70,8 +70,8 @@
     <flag name="ntpd">
       Add support for ntpd
     </flag>
-    <flag name="plymouth-quit">
-      Add support for plymouth
+    <flag name="plymouth">
+      Resolve plymouth-tty issue
     </flag>
     <flag name="rsyslogd">
       Add support for rsyslogd system logger
