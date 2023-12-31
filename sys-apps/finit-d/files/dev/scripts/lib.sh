@@ -43,8 +43,16 @@ ebegin() {
 }
 
 eend() {
-	local arg
-	return ${arg}
+	local ret="${1}"
+	local message="${2}"
+	if [[ -n "${message}" ]] ; then
+		is_debug && echo "${message}"
+	fi
+	if (( ${ret} == 0 )) ; then
+		true
+	else
+		false
+	fi
 }
 
 eerror() {
