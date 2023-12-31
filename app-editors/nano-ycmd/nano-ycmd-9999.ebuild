@@ -1,5 +1,5 @@
 # Copyright 2022 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2022 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # This fork of nano is based on 5.6.1_p20210415 from the master branch
