@@ -43,6 +43,7 @@ SERVICES=(
 	git
 	hdparm
 	hostname
+	icecast
 	inspircd
 	keymap
 	lightdm

@@ -73,6 +73,9 @@
     <flag name="hostname">
       Add support for changing hostname
     </flag>
+    <flag name="icecast">
+      Add support for icecast
+    </flag>
     <flag name="inspircd">
       Add support for InspIRCd
     </flag>
