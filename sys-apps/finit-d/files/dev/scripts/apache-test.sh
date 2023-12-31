@@ -9,7 +9,7 @@ source /etc/finit.d/scripts/lib.sh
 source /etc/finit.d/scripts/apache-lib.sh
 
 configtest() {
-	ebegin "Checking ${SVCNAME} configuration"
+	ebegin "Checking apache configuration"
 	checkconfig
 	eend $?
 }

@@ -13,11 +13,11 @@ stop() {
 
 	PID=$(cat "${PIDFILE}" 2>/dev/null)
 	if [[ -z "${PID}" ]] ; then
-		einfo "${SVCNAME} not running (no pid file)"
+		einfo "apache not running (no pid file)"
 		return 0
 	fi
 
-	ebegin "Stopping ${SVCNAME}"
+	ebegin "Stopping apache"
 	${APACHE2} ${APACHE2_OPTS} -k stop
 
 	local i=0 retval=0

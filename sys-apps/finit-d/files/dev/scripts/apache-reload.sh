@@ -12,14 +12,14 @@ reload() {
 	checkconfig || return 1
 
 	if [[ "${RELOAD_TYPE}" = "restart" ]] ; then
-		ebegin "Restarting ${SVCNAME}"
+		ebegin "Restarting apache"
 		${APACHE2} ${APACHE2_OPTS} -k restart
 		eend $?
 	elif [[ "${RELOAD_TYPE}" = "graceful" ]] ; then
-		ebegin "Gracefully restarting ${SVCNAME}"
+		ebegin "Gracefully restarting apache"
 		${APACHE2} ${APACHE2_OPTS} -k graceful
 		eend $?
 	else
-		eerror "${RELOAD_TYPE} is not a valid RELOAD_TYPE. Please edit /etc/conf.d/${SVCNAME}"
+		eerror "${RELOAD_TYPE} is not a valid RELOAD_TYPE. Please edit /etc/conf.d/apache"
 	fi
 }

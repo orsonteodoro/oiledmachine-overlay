@@ -10,7 +10,7 @@ source /etc/finit.d/scripts/apache-lib.sh
 
 gracefulstop() {
 	checkconfig || return 1
-	ebegin "Gracefully stopping ${SVCNAME}"
+	ebegin "Gracefully stopping apache"
 	${APACHE2} ${APACHE2_OPTS} -k graceful-stop
 	eend $?
 }

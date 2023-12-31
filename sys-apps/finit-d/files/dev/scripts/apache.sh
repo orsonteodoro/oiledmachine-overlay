@@ -17,7 +17,7 @@ start() {
 		APACHE2_OPTS="${APACHE2_OPTS} -E ${STARTUPERRORLOG}"
 	fi
 
-	ebegin "Starting ${SVCNAME}"
+	ebegin "Starting apache"
 	# Use start stop daemon to apply system limits #347301
 	${APACHE2} ${APACHE2_OPTS} -k start
 

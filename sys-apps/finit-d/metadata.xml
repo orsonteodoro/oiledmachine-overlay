@@ -130,6 +130,9 @@
     <flag name="spacenavd">
       Add support for spacenavd
     </flag>
+    <flag name="squid">
+      Add support for Squid Web Proxy Cache
+    </flag>
     <flag name="sshd">
       Add support for sshd
     </flag>

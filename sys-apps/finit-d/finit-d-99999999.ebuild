@@ -63,6 +63,7 @@ SERVICES=(
 	seatd
 	sntpd
 	spacenavd
+	squid
 	sshd
 	syslogd
 	uuidd
@@ -131,15 +132,33 @@ src_install() {
 			if [[ -e "${WORKDIR}/scripts/${svc}-shutdown.sh" ]] ; then
 				install_script "${svc}-shutdown.sh"
 			fi
+			if [[ -e "${WORKDIR}/scripts/${svc}-test.sh" ]] ; then
+				install_script "${svc}-test.sh"
+			fi
+			if [[ -e "${WORKDIR}/scripts/${svc}-lib.sh" ]] ; then
+				install_script "${svc}-lib.sh"
+			fi
 		fi
 	done
 	insinto /etc
 	doins "${WORKDIR}/rc.local"
 	doins "${WORKDIR}/finit.conf"
 	install_script "lib.sh"
+	if use apache ; then
+		install_script "apache-configdump.sh"
+		install_script "apache-fullstatus.sh"
+		install_script "apache-graceful.sh"
+		install_script "apache-graceful-stop.sh"
+		install_script "apache-virtualhosts.sh"
+	fi
+	if use mysql ; then
+		install_script "mysql-bootstrap-galera.sh"
+	fi
 	if use nginx ; then
 		install_script "nginx-upgrade.sh"
-		install_script "nginx-test.sh"
+	fi
+	if use squid ; then
+		install_script "squid-rotate.sh"
 	fi
 }
 

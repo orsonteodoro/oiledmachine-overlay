@@ -9,8 +9,6 @@ MAINTENANCE_MODE="0"
 source /etc/conf.d/apache2
 source /etc/finit.d/scripts/lib.sh
 
-SVC_NAME="apache2"
-
 # Apply default values for some conf.d variables.
 PIDFILE="${PIDFILE:-/var/run/apache2.pid}"
 TIMEOUT=${TIMEOUT:-15}
@@ -42,7 +40,7 @@ checkconfig() {
 	OUTPUT=$( ${APACHE2} ${APACHE2_OPTS} -t 2>&1 )
 	ret=$?
 	if [[ $ret -ne 0 ]] ; then
-		eerror "${SVCNAME} has detected an error in your setup:"
+		eerror "apache has detected an error in your setup:"
 		printf "%s\n" "${OUTPUT}"
 	fi
 
@@ -50,7 +48,7 @@ checkconfig() {
 }
 
 apache_configtest() {
-	ebegin "Checking ${SVCNAME} configuration"
+	ebegin "Checking apache configuration"
 	checkconfig
 	eend $?
 }
