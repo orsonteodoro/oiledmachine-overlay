@@ -5,7 +5,7 @@
 EAPI=7
 
 USE_DOTNET="net45"
-inherit dotnet eutils
+inherit dotnet
 
 DESCRIPTION="FNA - Accuracy-focused XNA4 reimplementation for open platforms"
 HOMEPAGE="http://fna-xna.github.io/"
