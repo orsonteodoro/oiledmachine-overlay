@@ -39,6 +39,7 @@ SERVICES=(
 	fancontrol
 	getty
 	git
+	hdparm
 	hostname
 	keymap
 	lightdm
