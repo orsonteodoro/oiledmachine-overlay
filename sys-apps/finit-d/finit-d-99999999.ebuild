@@ -70,6 +70,7 @@ SERVICES=(
 	squid
 	sshd
 	syslogd
+	thermald
 	uuidd
 	watchdog
 	xdm

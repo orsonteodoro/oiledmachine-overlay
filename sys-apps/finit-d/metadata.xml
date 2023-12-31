@@ -151,6 +151,9 @@
     <flag name="syslogd">
       Add support for syslogd
     </flag>
+    <flag name="thermald">
+      Add support for thermald
+    </flag>
     <flag name="uuidd">
       Add support for uuidd
     </flag>
