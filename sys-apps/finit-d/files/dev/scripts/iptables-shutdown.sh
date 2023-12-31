@@ -1,0 +1,4 @@
+#!/bin/bash
+# Copyright 1999-2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+# Script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-firewall/iptables/files

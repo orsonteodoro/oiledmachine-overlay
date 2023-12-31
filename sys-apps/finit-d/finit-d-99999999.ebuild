@@ -45,6 +45,7 @@ SERVICES=(
 	hostname
 	icecast
 	inspircd
+	iperf3
 	keymap
 	lightdm
 	lm_sensors

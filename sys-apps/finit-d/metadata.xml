@@ -79,6 +79,9 @@
     <flag name="inspircd">
       Add support for InspIRCd
     </flag>
+    <flag name="iperf3">
+      Add support for iPerf3
+    </flag>
     <flag name="keymap">
       Add support for changing console keymap
     </flag>
