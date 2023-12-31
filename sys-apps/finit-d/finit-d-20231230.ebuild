@@ -120,5 +120,5 @@ einfo "Send issues/requests to oiledmachine-overlay instead."
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  passed (4.6, 20231230)
 # cupsd - passed
-# NetworkManager - passed
 # getty - passed
+# NetworkManager - passed
