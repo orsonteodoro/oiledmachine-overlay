@@ -1,0 +1,13 @@
+--- a/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2023-11-19 19:52:32.322573367 -0800
++++ b/amd/display/amdgpu_dm/amdgpu_dm.c	2023-11-19 23:46:07.870210860 -0800
+@@ -9209,9 +9209,9 @@ static void amdgpu_dm_atomic_commit_tail
+ 					crtc, dm_new_crtc_state, cur_crc_src))
+ 					DRM_DEBUG_DRIVER("Failed to configure crc source");
+ 			}
++		}
+ #endif
+ #endif
+-		}
+ 	}
+ 
+ #if !defined(for_each_new_crtc_in_state)

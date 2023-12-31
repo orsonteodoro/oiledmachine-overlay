@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    The rock-dkms package contains the ROCK-Kernel-Driver.
+  </longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    This package will build the kernel modules using the DKMS framework allowing
+    for version agnostic compatibility meaning that you can compile this package 
+    against the latest point release of the long-term support kernel 5.4.x,
+    5.15.x kernel series only (for security update reasons).  The ROCk
+    package has more GPU features like IPC related features (Memory sharing API,
+    Signal sharing API); increasing GPU system memory limits from 3/8 of system 
+    memory to 29/32 of system memory; RDMA (aka Remote Device Programming or 
+    ROCmRDMA) to allow other PCIe kernel modules and devices DMA access to GPU
+    memory, KFD (Kernel Fusion Driver) features, and DirectGMA (Direct 
+    Graphic Memory Access) support.  ROCk is also a core component of the
+    ROCm platform.
+
+    The amdgpu-dkms package has the same source code but different build files
+    as the rock-dkms package.
+
+    This amdgpu module contains extra kernel parameters compared to the
+    vanilla amdgpu module that can be used to tune ROCk, SSG, power savings,
+    memory usage.  For details, do `modinfo amdgpu`.
+
+
+    Slot  Kernel version support
+    
+    5.1   5.4
+    5.2   5.4, 5.15
+    5.3   5.4, 5.15
+    5.4   5.4, 5.15
+    5.5   5.4, 5.15
+    5.6   5.4, 5.15
+    5.7   5.15
+
+
+    It must look like:
+
+    ROCK_DKMS_KERNELS_5_7="6.1.53-builder 6.1.^-gaming 6.1.^-pf"
+
+    * 5_7 comes from the package major/minor version for this package.
+    ROCK_DKMS_KERNELS_X_Y contains a X the major version and Y the minor
+    version.  sys-kernel/rocm-dkms-5.7.0 would correspond to
+    ROCK_DKMS_KERNELS_5_7.
+
+    Use:
+
+    * to build all point releases
+    Examples: 5.2.*-builder
+
+    ^ to build only the highest point release
+    Examples: 5.2.^-builder
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver</bugs-to>
+    <remote-id type="github">RadeonOpenCompute/ROCK-Kernel-Driver</remote-id>
+  </upstream>
+  <use>
+    <flag name="acpi">
+      Checks if ACPI support is enabled in the kernel.  Enabling ACPI may
+      enhance multigpu detection with PowerXpress (multigpu laptops), provide
+      more sysfs info, access to ACPI events for laptops, dynamic PCI-e
+      frequency tuning.
+    </flag>
+    <flag name="build">
+      Builds the kernel module.
+    </flag>
+    <flag name="check-mmu-notifier">
+      Checks if the MMU_NOTIFIER is enabled.
+    </flag>
+    <flag name="compress">
+      Compress the kernel modules if compression is available.
+    </flag>
+    <flag name="custom-kernel">
+      Bypass RDEPENDs check for a kernel package.
+    </flag>
+    <flag name="directgma">
+      Checks kernel config for DirectGMA support.
+    </flag>
+    <flag name="firmware">
+      Pulls in the firmware package containing the latest firmware version.
+    </flag>
+    <flag name="gzip">
+      Compress the kernel modules with gzip.
+    </flag>
+    <flag name="hybrid-graphics">
+      Checks if kernel config for proper support for PowerXpress, Hybrid
+      Graphics (i.e. IGP and dGPU on laptop).
+    </flag>
+    <flag name="numa">
+      Fills the IO-LINKS' sysfs interface at
+      /sys/class/kfd/topology/nodes/N/io_links/X/node_to
+      using the NUMA data structure.  For more info see
+      https://rocm-documentation.readthedocs.io/en/latest/ROCm_System_Managment/topo3.html#sysfsclasskfdtopologynodes0iolinks01
+      https://rocm-documentation.readthedocs.io/en/latest/ROCm_System_Managment/ROCm-System-Managment.html#io-links
+    </flag>
+    <flag name="rt">
+      Applies a PREEMPT_RT patch to prevent a kernel hang.  This requires the a
+      kernel with the rt patch already applied to complete the other half of the
+      patch.  This requirement currently applies to 5.6.x kernel series or
+      earlier.
+    </flag>
+    <flag name="sign-modules">
+      Signs the modules if necessary.
+    </flag>
+    <flag name="ssg">
+      Checks kernel config for SSG (Solid State Graphics) support.
+    </flag>
+    <flag name="strict-pairing">
+      Ensures that the equivalent firmware used is the same one as the release
+      of this package.  Meaning that the firmware is the same such that for
+      example 5.6.0 kernel driver is paired with the 5.6 firmware.  Otherwise,
+      the kernel driver is paired with a version greater than or equal to
+      the firmware version.
+
+      (Note in recent versions 5.0 or later, the rock-dkms-firmware package has
+      not been released separately like in older versions but the
+      amdgpu-dkms-firmware matching the rocm version has been used instead.)
+    </flag>
+    <flag name="xz">
+      Compress the kernel modules with xz.
+    </flag>
+    <flag name="zstd">
+      Compress the kernel modules with zstd.
+    </flag>
+  </use>
+</pkgmetadata>

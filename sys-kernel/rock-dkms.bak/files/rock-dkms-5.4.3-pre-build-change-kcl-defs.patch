@@ -1,0 +1,21 @@
+diff -urp amdgpu-5.4.orig/amd/dkms/pre-build.sh amdgpu-5.4/amd/dkms/pre-build.sh
+--- amdgpu-5.4.orig/amd/dkms/pre-build.sh	2023-01-27 18:49:53.000000000 -0800
++++ amdgpu-5.4/amd/dkms/pre-build.sh	2023-11-14 15:56:15.996631898 -0800
+@@ -52,6 +52,8 @@ for file in $FILES; do
+ 	}' $file | sort -u >>$INC/rename_symbol.h
+ done
+ 
++if [[ "${KCL:-0}" == "1" ]] ; then
++
+ # rename CONFIG_xxx to CONFIG_xxx_AMDKCL
+ # otherwise kernel config would override dkms package config
+ AMDGPU_CONFIG=$(find -name Kconfig -exec grep -h '^config' {} + | sed 's/ /_/' | tr 'a-z' 'A-Z')
+@@ -64,6 +66,8 @@ for config in $AMDGPU_CONFIG $TTM_CONFIG
+ 	sed -i "/${config}$/s/$/_AMDKCL/" amd/dkms/Makefile
+ done
+ 
++fi
++
+ export KERNELVER
+ (cd $SRC && ./configure)
+ 

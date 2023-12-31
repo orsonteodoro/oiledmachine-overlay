@@ -1,0 +1,13 @@
+diff -urp amdgpu-3.10-27.orig/amd/dkms/Makefile amdgpu-3.10-27/amd/dkms/Makefile
+--- amdgpu-3.10-27.orig/amd/dkms/Makefile	2020-11-03 09:07:18.000000000 -0800
++++ amdgpu-3.10-27/amd/dkms/Makefile	2020-12-05 20:37:18.077761162 -0800
+@@ -43,6 +43,9 @@ RHEL_MINOR := $(shell $(call get_rhel_ve
+ ifneq (,$(RHEL_MAJOR))
+ OS_NAME = "rhel"
+ OS_VERSION = "$(RHEL_MAJOR).$(RHEL_MINOR)"
++else ifeq (gentoo,$(shell grep "^ID=" /etc/os-release | cut -f 2 -d "="))
++OS_NAME = "gentoo"
++OS_VERSION = $(shell cat /etc/gentoo-release | cut -f5 -d' ')
+ else ifneq (,$(wildcard /etc/os-release))
+ OS_NAME = "$(shell sed -n 's/^ID=\(.*\)/\1/p' /etc/os-release | tr -d '\"')"
+ # On CentOS/RHEL, users could have installed a kernel not distributed from RHEL

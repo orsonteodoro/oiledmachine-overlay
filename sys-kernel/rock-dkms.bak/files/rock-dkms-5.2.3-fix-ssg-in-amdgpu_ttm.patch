@@ -1,0 +1,18 @@
+Fixes:
+amdgpu_ttm.c:2313:31: error: incompatible types when assigning to type 'struct percpu_ref' from type 'struct percpu_ref *'
+
+--- a/amd/amdgpu/amdgpu_ttm.c.orig	2022-08-11 11:23:43.000000000 -0700
++++ b/amd/amdgpu/amdgpu_ttm.c	2023-11-19 11:00:52.183398453 -0800
+@@ -2310,7 +2310,11 @@ static int amdgpu_ssg_init(struct amdgpu
+ 	adev->ssg.pgmap.res.end = res.end;
+ 	adev->ssg.pgmap.res.name = res.name;
+ #endif
+-	adev->ssg.pgmap.ref = &adev->ssg.ref;
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 15, 0)
++	adev->ssg.pgmap.ref = adev->ssg.ref;
++#else
++	adev->ssg.pgmap.ref = &adev->ssg.ref;
++#endif
+ 	addr = devm_memremap_pages(adev->dev, &adev->ssg.pgmap);
+ #else
+ 	addr = devm_memremap_pages(adev->dev, &res, &adev->ssg.ref, NULL);

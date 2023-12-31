@@ -1,0 +1,10 @@
+--- a/scheduler/sched_main.c.orig	2023-11-19 13:29:17.179168129 -0800
++++ b/scheduler/sched_main.c	2023-11-19 13:27:53.531170292 -0800
+@@ -49,6 +49,7 @@
+ #include <linux/sched.h>
+ #include <linux/completion.h>
+ #include <linux/dma-resv.h>
++#include <linux/module.h>
+ #include <uapi/linux/sched/types.h>
+ 
+ #include <drm/drm_print.h>
