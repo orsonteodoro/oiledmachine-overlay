@@ -75,7 +75,7 @@ start() {
 	local piddir="${pidfile%/*}"
 	get_ready_dir "0755" "mysql:mysql" "$piddir"
 	rc=$?
-	if [[ $rc -ne 0 ]] ; then
+	if (( $rc -ne 0 )) ; then
 		eerror "Directory $piddir for pidfile does not exist and cannot be created"
 		return 1
 	fi
@@ -88,7 +88,7 @@ start() {
 	"${basedir}/sbin/mysqld" --defaults-file="${MY_CNF}" ${MY_ARGS}
 
 	local ret=$?
-	if [[ ${ret} -ne 0 ]] ; then
+	if (( ${ret} -ne 0 )) ; then
 		eend ${ret}
 		return ${ret}
 	fi

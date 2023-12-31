@@ -27,7 +27,7 @@ checkconfig() {
 
 		# If the above command does not return 0,
 		# then there is an error to echo to the user
-		if [[ $? -ne 0 ]] ; then
+		if (( $? -ne 0 )) ; then
 			"${basedir}/sbin/mysqld" --defaults-file="${my_cnf}" --help --verbose > /dev/null
 		fi
 	fi

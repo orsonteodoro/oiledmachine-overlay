@@ -39,7 +39,7 @@ checkconfig() {
 
 	OUTPUT=$( ${APACHE2} ${APACHE2_OPTS} -t 2>&1 )
 	ret=$?
-	if [[ $ret -ne 0 ]] ; then
+	if (( $ret -ne 0 )) ; then
 		eerror "apache has detected an error in your setup:"
 		printf "%s\n" "${OUTPUT}"
 	fi

@@ -35,14 +35,14 @@ set_table_policy() {
 	local chain
 	for chain in ${chains} ; do
 		${iptables_bin} --wait ${iptables_lock_wait_time} -t ${table} -P ${chain} ${policy}
-		[ $? -ne 0 ] && has_errors=1
+		(( $? -ne 0 )) && has_errors=1
 	done
 
 	return ${has_errors}
 }
 
 checkkernel() {
-	if [ ! -e ${iptables_proc} ] ; then
+	if (( ! -e ${iptables_proc} )) ; then
 		eerror "Your kernel lacks ${iptables_name} support, please load"
 		eerror "appropriate modules and try again."
 		return 1
@@ -51,7 +51,7 @@ checkkernel() {
 }
 
 checkconfig() {
-	if [ -z "${iptables_save}" -o ! -f "${iptables_save}" ] ; then
+	if [[ -z "${iptables_save}" || ! -f "${iptables_save}" ]] ; then
 		eerror "Not starting ${iptables_name}.  First create some rules then run:"
 		eerror "/etc/init.d/${iptables_name} save"
 		return 1
