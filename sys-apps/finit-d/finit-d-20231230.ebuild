@@ -42,6 +42,7 @@ SERVICES=(
 	git
 	hdparm
 	hostname
+	inspircd
 	keymap
 	lightdm
 	lm_sensors

@@ -70,6 +70,9 @@
     <flag name="hostname">
       Add support for changing hostname
     </flag>
+    <flag name="inspircd">
+      Add support for InspIRCd
+    </flag>
     <flag name="keymap">
       Add support for changing console keymap
     </flag>
