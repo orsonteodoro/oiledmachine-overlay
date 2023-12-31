@@ -46,6 +46,9 @@
     <flag name="dhcpcd">
       Add support for dhcpcd
     </flag>
+    <flag name="distccd">
+      Add support for distccd
+    </flag>
     <flag name="dmeventd">
       Add support for dmeventd
     </flag>

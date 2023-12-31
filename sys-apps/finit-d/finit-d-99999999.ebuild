@@ -34,6 +34,7 @@ SERVICES=(
 	cron
 	containerd
 	dhcpcd
+	distccd
 	dmeventd
 	docker
 	dropbear
