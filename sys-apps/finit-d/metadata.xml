@@ -10,6 +10,9 @@
     <flag name="acpid">
       Add support for acpid
     </flag>
+    <flag name="actkbd">
+      Add support for actkbd
+    </flag>
     <flag name="apparmor">
       Add support for AppArmor
     </flag>

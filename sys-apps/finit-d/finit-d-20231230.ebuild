@@ -21,6 +21,7 @@ RESTRICT="mirror test"
 SLOT="0"
 SERVICES=(
 	acpid
+	actkbd
 	apparmor
 	anacron
 	avahi-daemon
