@@ -22,6 +22,9 @@
     <flag name="avahi-daemon">
       Add support for the Avahi daemon
     </flag>
+    <flag name="bitlbee">
+      Add support for BitlBee
+    </flag>
     <flag name="bluez">
       Add support for BlueZ
     </flag>

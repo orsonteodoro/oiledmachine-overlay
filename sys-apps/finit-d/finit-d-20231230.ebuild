@@ -25,6 +25,7 @@ SERVICES=(
 	apparmor
 	anacron
 	avahi-daemon
+	bitlbee
 	bluez
 	consolefont
 	cups-browsed
