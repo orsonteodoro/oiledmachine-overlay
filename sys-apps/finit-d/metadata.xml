@@ -85,6 +85,9 @@
     <flag name="redis-sentinel">
       Add support for Redis Sentinel
     </flag>
+    <flag name="rtkit">
+      Add support for RealtimeKit
+    </flag>
     <flag name="rsyslogd">
       Add support for rsyslogd system logger
     </flag>

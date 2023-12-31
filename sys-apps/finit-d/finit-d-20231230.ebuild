@@ -45,6 +45,7 @@ SERVICES=(
 	nginx
 	redis
 	redis-sentinel
+	rtkit
 	ntpd
 	plymouth
 	rsyslogd
@@ -61,6 +62,11 @@ IUSE+="
 "
 REQUIRED_USE="
 	getty
+"
+PDEPEND="
+	rtkit? (
+		sys-apps/finit[dbus]
+	)
 "
 
 src_unpack() {
