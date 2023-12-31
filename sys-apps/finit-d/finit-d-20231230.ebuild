@@ -40,7 +40,7 @@ SERVICES=(
 	lxdm
 	modules
 	networkmanager
-	ngnix
+	nginx
 	redis
 	redis-sentinel
 	ntpd
