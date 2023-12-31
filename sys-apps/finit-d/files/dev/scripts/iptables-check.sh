@@ -5,8 +5,5 @@
 
 source /etc/finit.d/scripts/iptables-lib.sh
 
-start_pre() {
-	checkconfig || exit 1
-}
-
-start_pre
+# Short name for users of init.d script.
+checkrules

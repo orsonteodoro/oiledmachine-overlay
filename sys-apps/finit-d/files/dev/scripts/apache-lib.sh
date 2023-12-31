@@ -34,7 +34,7 @@ checkconfd() {
 }
 
 checkconfig() {
-	get_ready_dir "0775;root:root;/run/apache_ssl_mutex"
+	get_ready_dir "0775" "root:root" "/run/apache_ssl_mutex"
 	checkconfd || return 1
 
 	OUTPUT=$( ${APACHE2} ${APACHE2_OPTS} -t 2>&1 )
