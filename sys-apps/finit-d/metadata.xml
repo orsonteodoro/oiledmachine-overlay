@@ -46,6 +46,9 @@
     <flag name="elogind">
       Add support for elogind
     </flag>
+    <flag name="fancontrol">
+      Add support for fancontrol provided by lm_sensors
+    </flag>
     <flag name="getty">
       Add support for ttys
     </flag>
@@ -93,6 +96,9 @@
     </flag>
     <flag name="seatd">
       Add support for seatd
+    </flag>
+    <flag name="spacenavd">
+      Add support for spacenavd
     </flag>
     <flag name="sshd">
       Add support for sshd

@@ -34,6 +34,7 @@ SERVICES=(
 	dmeventd
 	dropbear
 	elogind
+	fancontrol
 	getty
 	hostname
 	keymap
@@ -51,6 +52,7 @@ SERVICES=(
 	rsyslogd
 	seatd
 	sntpd
+	spacenavd
 	sshd
 	syslogd
 	uuidd
