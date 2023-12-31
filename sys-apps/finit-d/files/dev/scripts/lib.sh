@@ -29,3 +29,25 @@ get_ready_file() {
 		chmod "${mod}" "${path}"
 	fi
 }
+
+is_debug() {
+	if [[ "${MAINTENANCE_MODE}" == "1" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+ebegin() {
+	is_debug && echo "${1}"
+}
+
+eend() {
+	local arg
+	return ${arg}
+}
+
+eerror() {
+	is_debug && echo "${1}"
+	exit 1
+}

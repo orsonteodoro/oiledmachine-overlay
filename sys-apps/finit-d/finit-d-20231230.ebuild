@@ -68,6 +68,7 @@ SERVICES=(
 )
 IUSE+="
 	${SERVICES[@]}
+	r1
 "
 REQUIRED_USE="
 	getty
@@ -127,11 +128,15 @@ src_install() {
 			if [[ -e "${WORKDIR}/scripts/${svc}-shutdown.sh" ]] ; then
 				install_script "${svc}-shutdown.sh"
 			fi
+			if [[ -e "${WORKDIR}/scripts/${svc}-lib.sh" ]] ; then
+				install_script "${svc}-lib.sh"
+			fi
 		fi
 	done
 	insinto /etc
 	doins "${WORKDIR}/rc.local"
 	doins "${WORKDIR}/finit.conf"
+	install_script "lib.sh"
 	if use nginx ; then
 		install_script "nginx-upgrade.sh"
 		install_script "nginx-test.sh"

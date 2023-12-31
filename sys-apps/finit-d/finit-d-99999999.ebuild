@@ -22,6 +22,7 @@ SLOT="0"
 SERVICES=(
 	acpid
 	actkbd
+	apache
 	apparmor
 	anacron
 	avahi-daemon
@@ -48,6 +49,7 @@ SERVICES=(
 	lm_sensors
 	lxdm
 	modules
+	mysql
 	networkmanager
 	nginx
 	redis
@@ -132,6 +134,7 @@ src_install() {
 	insinto /etc
 	doins "${WORKDIR}/rc.local"
 	doins "${WORKDIR}/finit.conf"
+	install_script "lib.sh"
 	if use nginx ; then
 		install_script "nginx-upgrade.sh"
 		install_script "nginx-test.sh"

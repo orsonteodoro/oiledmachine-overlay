@@ -13,6 +13,9 @@
     <flag name="actkbd">
       Add support for actkbd
     </flag>
+    <flag name="apache">
+      Add support for Apache HTTP Server
+    </flag>
     <flag name="apparmor">
       Add support for AppArmor
     </flag>
@@ -87,6 +90,9 @@
     </flag>
     <flag name="modules">
       Add example for loading external modules
+    </flag>
+    <flag name="mysql">
+      Add support for MySQL or MariaDB
     </flag>
     <flag name="networkmanager">
       Add support for NetworkManager
