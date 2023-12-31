@@ -26,6 +26,7 @@ SERVICES=(
 	avahi-daemon
 	bluez
 	consolefont
+	cups-browsed
 	cupsd
 	cron
 	dhcpcd
