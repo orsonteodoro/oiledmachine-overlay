@@ -55,6 +55,7 @@ SERVICES=(
 	nginx
 	redis
 	redis-sentinel
+	rsyncd
 	rtkit
 	ntpd
 	plymouth
