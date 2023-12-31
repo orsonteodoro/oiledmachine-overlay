@@ -30,12 +30,15 @@ SERVICES=(
 	cups-browsed
 	cupsd
 	cron
+	containerd
 	dhcpcd
 	dmeventd
+	docker
 	dropbear
 	elogind
 	fancontrol
 	getty
+	git
 	hostname
 	keymap
 	lightdm
@@ -64,6 +67,9 @@ IUSE+="
 "
 REQUIRED_USE="
 	getty
+	docker? (
+		containerd
+	)
 "
 PDEPEND="
 	rtkit? (

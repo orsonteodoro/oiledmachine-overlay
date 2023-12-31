@@ -28,6 +28,9 @@
     <flag name="consolefont">
       Add support for changing the console font
     </flag>
+    <flag name="containerd">
+      Add support for containerd
+    </flag>
     <flag name="cron">
       Add support for cron
     </flag>
@@ -40,6 +43,9 @@
     <flag name="dmeventd">
       Add support for dmeventd
     </flag>
+    <flag name="docker">
+      Add support for Docker
+    </flag>
     <flag name="dropbear">
       Add support for dropbear SSH
     </flag>
@@ -51,6 +57,9 @@
     </flag>
     <flag name="getty">
       Add support for ttys
+    </flag>
+    <flag name="git">
+      Add support for the git daemon
     </flag>
     <flag name="hostname">
       Add support for changing hostname
