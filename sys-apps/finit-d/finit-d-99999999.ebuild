@@ -16,7 +16,7 @@ LICENSE="
 	MIT
 	GPL-2
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 RESTRICT="mirror test"
 SLOT="0"
 SERVICES=(
@@ -82,11 +82,11 @@ PDEPEND="
 "
 
 pkg_setup() {
-einfo "This is the live snapshot version."
+einfo "This is the dev version."
 }
 
 src_unpack() {
-	cp -a "${FILESDIR}/${PV}/"* "${WORKDIR}" || die
+	cp -a "${FILESDIR}/dev/"* "${WORKDIR}" || die
 	local libdir=$(get_libdir)
 	sed -i \
 		-e "s|lib64|${libdir}|g" \
