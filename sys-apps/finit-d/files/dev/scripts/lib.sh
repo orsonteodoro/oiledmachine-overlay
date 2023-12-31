@@ -43,13 +43,14 @@ ebegin() {
 eend() {
 	local ret="${1}"
 	local message="${2}"
-	if [[ -n "${message}" ]] ; then
-		is_debug && echo "${message}"
-	fi
-	if (( ${ret} == 0 )) ; then
-		true
+	if [[ -n "${message}" ]] && (( ${ret} == 0 )) ; then
+		is_debug && echo "${message} [OK]"
+	elif [[ -n "${message}" ]] && (( ${ret} != 0 )) ; then
+		is_debug && echo "${message} [FAIL]"
+	elif (( ${ret} == 0 )) ; then
+		is_debug && echo -n "[OK]"
 	else
-		false
+		is_debug && echo -n "[FAIL]"
 	fi
 }
 

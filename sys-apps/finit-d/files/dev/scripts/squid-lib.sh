@@ -12,22 +12,42 @@ SQUID_SVCNAME=$( echo "squid" | tr -cd '[a-zA-Z0-9]' )
 checkconfig() {
 	local CONFFILES="/etc/squid/squid.conf /etc/squid/squid.include /etc/squid/squid.include.*"
 	if [[ ! -f /etc/squid/squid.conf ]] ; then
+eerror
 eerror "You need to create /etc/squid/squid.conf first."
-eerror "The main configuration file and all included file names should have the following format:"
-eerror "${CONFFILES}"
+eerror
+eerror "The main configuration file and all included file names should have the"
+eerror "following format:"
+eerror
+eerror "  /etc/squid/squid.conf"
+eerror "  /etc/squid/squid.include"
+eerror "  /etc/squid/squid.include.*"
+eerror
 eerror "An example can be found in /etc/squid/squid.conf.default"
+eerror
 		return 1
 	fi
 
-	local PIDFILE=$(cat ${CONFFILES} 2>/dev/null 3>/dev/null | awk '/^[ \t]*pid_filename[ \t]+/ { print $2 }')
+	local PIDFILE=$(cat ${CONFFILES} 2>/dev/null 3>/dev/null \
+		| awk '/^[ \t]*pid_filename[ \t]+/ { print $2 }')
 	[[ -z ${PIDFILE} ]] && PIDFILE=/run/squid.pid
 	if [[ /run/squid.pid != ${PIDFILE} ]] ; then
+eerror
 eerror "/etc/squid/squid.conf must set pid_filename to"
+eerror
 eerror "   /run/squid.pid"
-eerror "CAUTION: http_port, cache_dir and *_log parameters must be different than"
-eerror "         in any other instance of squid."
-eerror "Make sure the main configuration file and all included file names have the following format:"
-eerror "${CONFFILES}"
+eerror
+eerror "CAUTION:"
+eerror
+eerror "http_port, cache_dir and *_log parameters must be different than in any"
+eerror "other instance of squid."
+eerror
+eerror "Make sure the main configuration file and all included file names have"
+eerror "the following format:"
+eerror
+eerror "  /etc/squid/squid.conf"
+eerror "  /etc/squid/squid.include"
+eerror "  /etc/squid/squid.include.*"
+eerror
 		return 1
 	fi
 
