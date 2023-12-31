@@ -36,8 +36,9 @@ is_debug() {
 	fi
 }
 
+# Assumes eend called to add either [OK] or [FAILED]
 ebegin() {
-	is_debug && echo "${1}"
+	is_debug && echo -n "${1}"
 }
 
 eend() {
@@ -48,9 +49,9 @@ eend() {
 	elif [[ -n "${message}" ]] && (( ${ret} != 0 )) ; then
 		is_debug && echo "${message} [FAIL]"
 	elif (( ${ret} == 0 )) ; then
-		is_debug && echo -n "[OK]"
+		is_debug && echo "[  OK  ]"
 	else
-		is_debug && echo -n "[FAIL]"
+		is_debug && echo "[FAILED]"
 	fi
 }
 

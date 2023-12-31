@@ -47,7 +47,9 @@ SERVICES=(
 	icecast
 	inspircd
 	iperf3
+	iptables
 	keymap
+	laptop_mode
 	lightdm
 	lm_sensors
 	lxdm
@@ -152,6 +154,12 @@ src_install() {
 		install_script "apache-graceful.sh"
 		install_script "apache-graceful-stop.sh"
 		install_script "apache-virtualhosts.sh"
+	fi
+	if use iptables ; then
+		install_script "iptables-check.sh"
+		install_script "iptables-panic.sh"
+		install_script "iptables-save.sh"
+		install_script "iptables-shutdown-pre.sh"
 	fi
 	if use mysql ; then
 		install_script "mysql-bootstrap-galera.sh"

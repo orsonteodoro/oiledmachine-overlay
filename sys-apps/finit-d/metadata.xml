@@ -77,7 +77,7 @@
       Add support for changing hostname
     </flag>
     <flag name="icecast">
-      Add support for icecast
+      Add support for Icecast
     </flag>
     <flag name="inspircd">
       Add support for InspIRCd
@@ -87,6 +87,9 @@
     </flag>
     <flag name="keymap">
       Add support for changing console keymap
+    </flag>
+    <flag name="laptop_mode">
+      Add support for Laptop Mode Tools
     </flag>
     <flag name="lightdm">
       Add support for LightDM, a graphical login manager
