@@ -39,6 +39,7 @@ SERVICES=(
 	lxdm
 	modules
 	networkmanager
+	ngnix
 	ntpd
 	plymouth
 	rsyslogd

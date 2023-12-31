@@ -67,6 +67,9 @@
     <flag name="networkmanager">
       Add support for NetworkManager
     </flag>
+    <flag name="ngnix">
+      Add support for NGINX
+    </flag>
     <flag name="ntpd">
       Add support for ntpd
     </flag>
