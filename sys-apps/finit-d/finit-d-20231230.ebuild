@@ -62,6 +62,7 @@ SERVICES=(
 	uuidd
 	watchdog
 	xdm
+	znc
 )
 IUSE+="
 	${SERVICES[@]}

@@ -130,5 +130,8 @@
     <flag name="xdm">
       Add support for xdm
     </flag>
+    <flag name="znc">
+      Add support for znc
+    </flag>
   </use>
 </pkgmetadata>
