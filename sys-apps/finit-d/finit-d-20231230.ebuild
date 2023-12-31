@@ -14,6 +14,7 @@ https://github.com/troglobit/finit
 "
 LICENSE="
 	MIT
+	GPL-2
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 RESTRICT="mirror test"
@@ -40,6 +41,8 @@ SERVICES=(
 	modules
 	networkmanager
 	ngnix
+	redis
+	redis-sentinel
 	ntpd
 	plymouth
 	rsyslogd
@@ -67,6 +70,14 @@ src_unpack() {
 		|| die
 }
 
+install_script() {
+	local script_name="${1}"
+	exeinto /etc/finit.d/scripts
+	doexe "${WORKDIR}/scripts/${script_name}"
+	fowners root:root "/etc/finit.d/scripts/${script_name}"
+	fperms 750 "/etc/finit.d/scripts/${script_name}"
+}
+
 src_install() {
 	local svc
 	for svc in ${SERVICES[@]} ; do
@@ -78,34 +89,27 @@ src_install() {
 				"/etc/finit.d/available/${svc}.conf" \
 				"/etc/finit.d/enabled/${svc}.conf"
 			if [[ -e "${WORKDIR}/scripts/${svc}-pre.sh" ]] ; then
-				exeinto /etc/finit.d/scripts
-				doexe "${WORKDIR}/scripts/${svc}-pre.sh"
-				fowners root:root "/etc/finit.d/scripts/${svc}-pre.sh"
-				fperms 750 "/etc/finit.d/scripts/${svc}-pre.sh"
+				install_script "${svc}-pre.sh"
 			fi
 			if [[ -e "${WORKDIR}/scripts/${svc}.sh" ]] ; then
-				exeinto /etc/finit.d/scripts
-				doexe "${WORKDIR}/scripts/${svc}.sh"
-				fowners root:root "/etc/finit.d/scripts/${svc}.sh"
-				fperms 750 "/etc/finit.d/scripts/${svc}.sh"
+				install_script "${svc}.sh"
 			fi
 			if [[ -e "${WORKDIR}/scripts/${svc}-post.sh" ]] ; then
-				exeinto /etc/finit.d/scripts
-				doexe "${WORKDIR}/scripts/${svc}-post.sh"
-				fowners root:root "/etc/finit.d/scripts/${svc}-post.sh"
-				fperms 750 "/etc/finit.d/scripts/${svc}-post.sh"
+				install_script "${svc}-post.sh"
 			fi
 			if [[ -e "${WORKDIR}/scripts/${svc}-shutdown.sh" ]] ; then
-				exeinto /etc/finit.d/scripts
-				doexe "${WORKDIR}/scripts/${svc}-shutdown.sh"
-				fowners root:root "/etc/finit.d/scripts/${svc}-shutdown.sh"
-				fperms 750 "/etc/finit.d/scripts/${svc}-shutdown.sh"
+				install_script "${svc}-shutdown.sh"
 			fi
 		fi
 	done
 	insinto /etc
 	doins "${WORKDIR}/rc.local"
 	doins "${WORKDIR}/finit.conf"
+	if use nginx ; then
+		install_script "nginx-reload.sh"
+		install_script "nginx-upgrade.sh"
+		install_script "nginx-test-config.sh"
+	fi
 }
 
 pkg_postinst() {
