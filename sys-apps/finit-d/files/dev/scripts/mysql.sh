@@ -1,9 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 # Scripts from dev-db/mysql-init-scripts at https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-db/mysql-init-scripts
-
-source /etc/finit.d/scripts/mysql-lib.sh
 
 start() {
 	# Check for old conf.d variables that mean migration was not yet done.
@@ -12,14 +10,14 @@ start() {
 	# Yes, MYSQL_INIT_I_KNOW_WHAT_I_AM_DOING is a hidden variable.
 	# It does have a use in testing, as it is possible to build a config file
 	# that works with both the old and new init scripts simulateously.
-	if [[ "${rc}" = 0 -a -z "${MYSQL_INIT_I_KNOW_WHAT_I_AM_DOING}" ]] ; then
+	if [ "${rc}" = 0 -a -z "${MYSQL_INIT_I_KNOW_WHAT_I_AM_DOING}" ]; then
 		eerror "You have not updated your conf.d for the new mysql-init-scripts-2 revamp."
 		eerror "Not proceeding because it may be dangerous."
 		return 1
 	fi
 
 	# Check the config or die
-	if [[ ${RC_CMD} != "restart" ]] ; then
+	if [ ${RC_CMD} != "restart" ] ; then
 		checkconfig || return 1
 	fi
 
@@ -28,7 +26,7 @@ start() {
 
 	MY_CNF="${MY_CNF:-/etc/${SVCNAME}/my.cnf}"
 
-	if [[ ! -r "${MY_CNF}" ]] ; then
+	if [ ! -r "${MY_CNF}" ] ; then
 		eerror "Cannot read the configuration file \`${MY_CNF}'"
 		return 1
 	fi
@@ -41,28 +39,28 @@ start() {
 	local wsrep="$(get_config "${MY_CNF}" 'wsrep[_-]on' | tail -n1 | awk '{print tolower($0)}')"
 	local wsrep_new=$(get_config "${MY_CNF}" 'wsrep-new-cluster' | tail -n1)
 
-	if [[ -n "${chroot}" ]] ; then
+	if [ -n "${chroot}" ] ; then
 		socket="${chroot}/${socket}"
 		pidfile="${chroot}/${pidfile}"
 	fi
 
 	# Galera: Only check datadir if not starting a new cluster and galera is enabled
 	# wsrep_on is not on or wsrep-new-cluster exists in the config or MY_ARGS
-	[[ "${wsrep}" = "1" ]] && wsrep="on"
-	if [[ "${wsrep}" != "on" || -n "${wsrep_new}" ]] || stringContain 'wsrep-new-cluster' "${MY_ARGS}" ; then
+	[ "${wsrep}" = "1" ] && wsrep="on"
+	if [ "${wsrep}" != "on" ] || [ -n "${wsrep_new}" ] || stringContain 'wsrep-new-cluster' "${MY_ARGS}" ; then
 
 		local datadir=$(get_config "${MY_CNF}" datadir | tail -n1)
-		if [[ ! -d "${datadir}" ]] ; then
+		if [ ! -d "${datadir}" ] ; then
 			eerror "MySQL datadir \`${datadir}' is empty or invalid"
 			eerror "Please check your config file \`${MY_CNF}'"
 			return 1
 		fi
 
-		if [[ ! -d "${datadir}"/mysql ]] ; then
+		if [ ! -d "${datadir}"/mysql ] ; then
 			# find which package is installed to report an error
 			local EROOT=$(portageq envvar EROOT)
 			local DBPKG_P=$(portageq match ${EROOT} $(portageq expand_virtual ${EROOT} virtual/mysql | head -n1))
-			if [[ -z ${DBPKG_P} ]] ; then
+			if [ -z ${DBPKG_P} ] ; then
 				eerror "You don't appear to have a server package installed yet."
 			else
 				eerror "You don't appear to have the mysql database installed yet."
@@ -75,7 +73,7 @@ start() {
 	local piddir="${pidfile%/*}"
 	get_ready_dir "0755" "mysql:mysql" "$piddir"
 	rc=$?
-	if (( $rc -ne 0 )) ; then
+	if [ $rc -ne 0 ]; then
 		eerror "Directory $piddir for pidfile does not exist and cannot be created"
 		return 1
 	fi
@@ -84,11 +82,9 @@ start() {
 	local startup_early_timeout=${STARTUP_EARLY_TIMEOUT:-1000}
 	local tmpnice="${NICE:+"--nicelevel "}${NICE}"
 	local tmpionice="${IONICE:+"--ionice "}${IONICE}"
-
-	"${basedir}/sbin/mysqld" --defaults-file="${MY_CNF}" ${MY_ARGS}
-
+	"${basedir}"/sbin/mysqld --defaults-file="${MY_CNF}" ${MY_ARGS}
 	local ret=$?
-	if (( ${ret} -ne 0 )) ; then
+	if [ ${ret} -ne 0 ] ; then
 		eend ${ret}
 		return ${ret}
 	fi
@@ -99,3 +95,5 @@ start() {
 	save_options pidfile "${pidfile}"
 	save_options basedir "${basedir}"
 }
+
+start

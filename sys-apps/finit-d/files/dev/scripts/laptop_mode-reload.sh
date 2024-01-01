@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # Script from https://gitweb.gentoo.org/repo/gentoo.git/tree/app-laptop/laptop-mode-tools
@@ -6,8 +6,8 @@
 source /etc/finit.d/scripts/laptop_mode-lib.sh
 
 reload() {
-	if ! service_started "laptop_mode" ; then
-		eerror "laptop_mode has not yet been started"
+	if ! service_started "${SVCNAME}" ; then
+		eerror "${SVCNAME} has not yet been started"
 		return 1
 	fi
 

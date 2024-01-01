@@ -1,9 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-fs/cryptsetup
 
-source /etc/finit.d/scripts/dmcrypt-lib.sh
+source /etc/conf.d/dmcrypt
+source /etc/finit.d/scripts/lib.sh
 
 start() {
 	local print_header=true cryptfs_status=0
@@ -40,7 +41,7 @@ start() {
 			;;
 
 		gpg_options=*|remdev=*|key=*|loop_file=*|options=*|pre_mount=*|post_mount=*|wait=*|source=*|header=*)
-			if [[ -z "${target}${swap}" ]] ; then
+			if [ -z "${target}${swap}" ] ; then
 				ewarn "Ignoring setting outside target/swap section: ${targetline}"
 				continue
 			fi

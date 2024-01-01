@@ -1,16 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-fs/cryptsetup
+# =sys-fs/cryptsetup-2.6.1:0/12::gentoo
 
-source /etc/conf.d/dmcrypt
-source /etc/finit.d/scripts/lib.sh
+SVCNAME=${SVCNAME:-"dmcrypt"}
 
 # We support multiple dmcrypt instances based on $SVCNAME
 conf_file="/etc/conf.d/${SVCNAME}"
 
 # Get splash helpers if available.
-if [[ -e /sbin/splash-functions.sh ]] ; then
+if [ -e /sbin/splash-functions.sh ] ; then
 	. /sbin/splash-functions.sh
 fi
 
@@ -19,7 +19,7 @@ fi
 dm_crypt_execute() {
 	local dev ret mode foo source_dev
 
-	if [[ -z "${target}" && -z "${swap}" ]] ; then
+	if [ -z "${target}" -a -z "${swap}" ] ; then
 		return
 	fi
 
@@ -30,14 +30,14 @@ dm_crypt_execute() {
 	: ${wait:=5}
 
 	# Handle automatic look up of the source path.
-	if [[ -z "${source}" && -n "${loop_file}" ]] ; then
+	if [ -z "${source}" -a -n "${loop_file}" ] ; then
 		source=$(losetup --show -f "${loop_file}")
 	fi
 	case ${source} in
 	*=*)
 		i=0
-		while (( ${i} < ${wait} )) ; do
-			if source_dev="$(blkid -l -t "${source}" -o device)" ; then
+		while [ ${i} -lt ${wait} ]; do
+			if source_dev="$(blkid -l -t "${source}" -o device)"; then
 				source="${source_dev}"
 				break
 			fi
@@ -47,21 +47,21 @@ dm_crypt_execute() {
 		done
 		;;
 	esac
-	if [[ -z "${source}" ]] || [[ ! -e "${source}" ]] ; then
+	if [ -z "${source}" ] || [ ! -e "${source}" ] ; then
 		ewarn "source \"${source}\" for ${target} missing, skipping..."
 		return
 	fi
 
-	if [[ -n "${header}" ]] ; then
+	if [ -n "${header}" ] ; then
 		header_opt="--header=${header}"
 
 		i=0
-		while [[ ! -e "${header}" ]] && (( ${i} < ${wait} )) ; do
+		while [ ! -e "${header}" ] && [ ${i} -lt ${wait} ] ; do
 			: $((i += 1))
 			einfo "Waiting for header ${header} to appear for ${target} ${i}/${dmcrypt_max_timeout} ..."
 			sleep 1
 		done
-		if (( ${i} > ${wait} || ${i} == ${wait} )) ; then
+		if [ ${i} -gt ${wait} ] || [ ${i} -eq ${wait} ] ; then
 			ewarn "Waited ${i} times for header file ${header}. Aborting ${target}."
 			return
 		fi
@@ -69,10 +69,10 @@ dm_crypt_execute() {
 		header_opt=""
 	fi
 
-	if [[ -n "${target}" ]] ; then
+	if [ -n "${target}" ] ; then
 		# let user set options, otherwise leave empty
 		: ${options:=' '}
-	elif [[ -n "${swap}" ]] ; then
+	elif [ -n "${swap}" ] ; then
 		if cryptsetup ${header_opt} isLuks ${source} 2>/dev/null ; then
 			ewarn "The swap you have defined is a LUKS partition. Aborting crypt-swap setup."
 			return
@@ -84,7 +84,7 @@ dm_crypt_execute() {
 		: ${pre_mount:='mkswap ${dev}'}
 	fi
 
-	if [[ -n "${loop_file}" ]] ; then
+	if [ -n "${loop_file}" ] ; then
 		dev="/dev/mapper/${target}"
 		ebegin "  Setting up loop device ${source}"
 		losetup ${source} ${loop_file}
@@ -111,11 +111,11 @@ dm_crypt_execute() {
 	splash svc_input_begin ${SVCNAME} >/dev/null 2>&1
 
 	# Handle keys
-	if [[ -n "${key}" ]] ; then
+	if [ -n "${key}" ] ; then
 		read_abort() {
 			# some colors
 			local ans savetty resettty
-			[[ -z "${NORMAL}" ]] && eval $(eval_ecolors)
+			[ -z "${NORMAL}" ] && eval $(eval_ecolors)
 			einfon "  $1? (${WARN}yes${NORMAL}/${GOOD}No${NORMAL}) "
 			shift
 			# This is ugly as s**t.  But POSIX doesn't provide `read -t`, so
@@ -127,7 +127,7 @@ dm_crypt_execute() {
 			stty min 0 time "$(( $2 * 10 ))"
 			ans=$(dd count=1 bs=1 2>/dev/null) || ans=''
 			eval "${resettty}"
-			if [[ -z "${ans}" ]] ; then
+			if [ -z "${ans}" ] ; then
 				printf '\r'
 			else
 				echo
@@ -139,15 +139,15 @@ dm_crypt_execute() {
 		}
 
 		# Notes: sed not used to avoid case where /usr partition is encrypted.
-		mode=${key##*:} && ( [[ "${mode}" == "${key}" || -z "${mode}" ]] ) && mode=reg
+		mode=${key##*:} && ( [ "${mode}" = "${key}" ] || [ -z "${mode}" ] ) && mode=reg
 		key=${key%:*}
 		case "${mode}" in
 		gpg|reg)
 			# handle key on removable device
-			if [[ -n "${remdev}" ]] ; then
+			if [ -n "${remdev}" ] ; then
 				# temp directory to mount removable device
 				local mntrem="${RC_SVCDIR}/dm-crypt-remdev.$$"
-				if [[ ! -d "${mntrem}" ]] ; then
+				if [ ! -d "${mntrem}" ] ; then
 					if ! mkdir -p "${mntrem}" ; then
 						ewarn "${source} will not be decrypted ..."
 						einfo "Reason: Unable to create temporary mount point '${mntrem}'"
@@ -156,11 +156,11 @@ dm_crypt_execute() {
 				fi
 				i=0
 				einfo "Please insert removable device for ${target}"
-				while (( ${i} < ${dmcrypt_max_timeout} )) ; do
+				while [ ${i} -lt ${dmcrypt_max_timeout} ] ; do
 					foo=""
 					if mount -n -o ro "${remdev}" "${mntrem}" 2>/dev/null >/dev/null ; then
 						# keyfile exists?
-						if [[ ! -e "${mntrem}${key}" ]] ; then
+						if [ ! -e "${mntrem}${key}" ] ; then
 							umount -n "${mntrem}"
 							rmdir "${mntrem}"
 							einfo "Cannot find ${key} on removable media."
@@ -170,7 +170,7 @@ dm_crypt_execute() {
 							break
 						fi
 					else
-						[[ -e "${remdev}" ]] \
+						[ -e "${remdev}" ] \
 							&& foo="mount failed" \
 							|| foo="mount source not found"
 					fi
@@ -178,7 +178,7 @@ dm_crypt_execute() {
 					read_abort "Stop waiting after $i attempts (${foo})" -t 1 && return
 				done
 			else    # keyfile ! on removable device
-				if [[ ! -e "${key}" ]] ; then
+				if [ ! -e "${key}" ] ; then
 					ewarn "${source} will not be decrypted ..."
 					einfo "Reason: keyfile ${key} does not exist."
 					return
@@ -195,19 +195,19 @@ dm_crypt_execute() {
 		mode=none
 	fi
 	ebegin "  ${target} using: ${header_opt} ${options} ${arg1} ${arg2} ${arg3}"
-	if [[ "${mode}" == "gpg" ]] ; then
+	if [ "${mode}" = "gpg" ] ; then
 		: ${gpg_options:='-q -d'}
 		# gpg available ?
 		if command -v gpg >/dev/null ; then
 			i=0
-			while (( ${i} < ${dmcrypt_retries} )) ; do
+			while [ ${i} -lt ${dmcrypt_retries} ] ; do
 				# paranoid, don't store key in a variable, pipe it so it stays very little in ram unprotected.
 				# save stdin stdout stderr "values"
 				timeout ${dmcrypt_max_timeout} gpg ${gpg_options} ${key} 2>/dev/null | \
 					cryptsetup ${header_opt} --key-file - ${options} ${arg1} ${arg2} ${arg3}
 				ret=$?
 				# The timeout command exits 124 when it times out.
-				(( ${ret} == 0 || ${ret} == 124 )) && break
+				[ ${ret} -eq 0 -o ${ret} -eq 124 ] && break
 				: $(( i += 1 ))
 			done
 			eend ${ret} "failure running cryptsetup"
@@ -218,7 +218,7 @@ dm_crypt_execute() {
 			einfo "If you have /usr on its own partition, try copying gpg to /bin ."
 		fi
 	else
-		if [[ "${mode}" == "reg" ]] ; then
+		if [ "${mode}" = "reg" ] ; then
 			cryptsetup ${header_opt} ${options} -d ${key} ${arg1} ${arg2} ${arg3}
 			ret=$?
 			eend ${ret} "failure running cryptsetup"
@@ -228,16 +228,16 @@ dm_crypt_execute() {
 			eend ${ret} "failure running cryptsetup"
 		fi
 	fi
-	if [[ -d "${mntrem}" ]] ; then
+	if [ -d "${mntrem}" ] ; then
 		umount -n ${mntrem} 2>/dev/null >/dev/null
 		rmdir ${mntrem} 2>/dev/null >/dev/null
 	fi
 	splash svc_input_end ${SVCNAME} >/dev/null 2>&1
 
-	if (( ${ret} != 0 )) ; then
+	if [ ${ret} -ne 0 ] ; then
 		cryptfs_status=1
 	else
-		if [[ -n "${pre_mount}" ]] ; then
+		if [ -n "${pre_mount}" ] ; then
 			dev="/dev/mapper/${target}"
 			eval ebegin \""    pre_mount: ${pre_mount}"\"
 			eval "${pre_mount}" > /dev/null

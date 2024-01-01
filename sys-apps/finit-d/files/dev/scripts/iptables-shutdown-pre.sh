@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 # Script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-firewall/iptables/files
@@ -6,7 +6,7 @@
 source /etc/finit.d/scripts/iptables-lib.sh
 
 stop_pre() {
-	checkkernel || exit 1
+	checkkernel || return 1
 }
 
 stop_pre

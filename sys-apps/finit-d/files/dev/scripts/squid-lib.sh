@@ -1,53 +1,34 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# Script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
+# Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
 
 source /etc/conf.d/squid
 source /etc/finit.d/scripts/lib.sh
 
-RC_SVCNAME="squid"
-SQUID_SVCNAME=$( echo "squid" | tr -cd '[a-zA-Z0-9]' )
+SVCNAME=${SVCNAME:-"squid"}
+RC_SVCNAME=${RC_SVCNAME:-"squid"}
+SQUID_SVCNAME=$( echo "${RC_SVCNAME}" | tr -cd '[a-zA-Z0-9]' )
 
 checkconfig() {
-	local CONFFILES="/etc/squid/squid.conf /etc/squid/squid.include /etc/squid/squid.include.*"
-	if [[ ! -f /etc/squid/squid.conf ]] ; then
-eerror
-eerror "You need to create /etc/squid/squid.conf first."
-eerror
-eerror "The main configuration file and all included file names should have the"
-eerror "following format:"
-eerror
-eerror "  /etc/squid/squid.conf"
-eerror "  /etc/squid/squid.include"
-eerror "  /etc/squid/squid.include.*"
-eerror
-eerror "An example can be found in /etc/squid/squid.conf.default"
-eerror
+	local CONFFILES="/etc/squid/${RC_SVCNAME}.conf /etc/squid/${RC_SVCNAME}.include /etc/squid/${RC_SVCNAME}.include.*"
+	if [ ! -f /etc/squid/${RC_SVCNAME}.conf ]; then
+		eerror "You need to create /etc/squid/${RC_SVCNAME}.conf first."
+		eerror "The main configuration file and all included file names should have the following format:"
+		eerror "${CONFFILES}"
+		eerror "An example can be found in /etc/squid/squid.conf.default"
 		return 1
 	fi
 
-	local PIDFILE=$(cat ${CONFFILES} 2>/dev/null 3>/dev/null \
-		| awk '/^[ \t]*pid_filename[ \t]+/ { print $2 }')
-	[[ -z ${PIDFILE} ]] && PIDFILE=/run/squid.pid
-	if [[ /run/squid.pid != ${PIDFILE} ]] ; then
-eerror
-eerror "/etc/squid/squid.conf must set pid_filename to"
-eerror
-eerror "   /run/squid.pid"
-eerror
-eerror "CAUTION:"
-eerror
-eerror "http_port, cache_dir and *_log parameters must be different than in any"
-eerror "other instance of squid."
-eerror
-eerror "Make sure the main configuration file and all included file names have"
-eerror "the following format:"
-eerror
-eerror "  /etc/squid/squid.conf"
-eerror "  /etc/squid/squid.include"
-eerror "  /etc/squid/squid.include.*"
-eerror
+	local PIDFILE=$(cat ${CONFFILES} 2>/dev/null 3>/dev/null | awk '/^[ \t]*pid_filename[ \t]+/ { print $2 }')
+	[ -z ${PIDFILE} ] && PIDFILE=/run/squid.pid
+	if [ /run/${RC_SVCNAME}.pid != ${PIDFILE} ]; then
+		eerror "/etc/squid/${RC_SVCNAME}.conf must set pid_filename to"
+		eerror "   /run/${RC_SVCNAME}.pid"
+		eerror "CAUTION: http_port, cache_dir and *_log parameters must be different than"
+		eerror "         in any other instance of squid."
+		eerror "Make sure the main configuration file and all included file names have the following format:"
+		eerror "${CONFFILES}"
 		return 1
 	fi
 
@@ -60,20 +41,12 @@ eerror
 	# there is no need for ulimit calls in the init script.
 	# Use max_filedescriptors in squid.conf instead.
 
-	local CACHE_SWAP=$(cat ${CONFFILES} 2>/dev/null 3>/dev/null | awk \
-'/^[ \t]*cache_dir[ \t]+/ {'\
-' if ( $2 == "rock" )'\
-'   printf "%s/rock ", $3;'\
-' else if ( $2 == "coss" )'\
-'   printf "%s/stripe ", $3;'\
-' else'\
-'   printf "%s/00 ", $3;'\
-' }')
-	[[ -z "$CACHE_SWAP" ]] && CACHE_SWAP="/var/cache/squid/00"
+	local CACHE_SWAP=$(cat ${CONFFILES} 2>/dev/null 3>/dev/null | awk '/^[ \t]*cache_dir[ \t]+/ { if ( $2 == "rock" ) printf "%s/rock ", $3; else if ( $2 == "coss" ) printf "%s/stripe ", $3; else printf "%s/00 ", $3; }')
+	[ -z "$CACHE_SWAP" ] && CACHE_SWAP="/var/cache/squid/00"
 
 	local x
 	for x in $CACHE_SWAP ; do
-		if [[ ! -e $x ]] ; then
+		if [ ! -e $x ] ; then
 			ebegin "Initializing cache directory ${x%/*}"
 			local ORIG_UMASK=$(umask)
 			umask 027
@@ -83,8 +56,8 @@ eerror
 				return 1
 			fi
 
-			local INIT_CACHE_RESPONSE="$(/usr/sbin/squid -z -N -f /etc/squid/squid.conf -n squid 2>&1)"
-			if [[ $? != 0 ]] || echo "$INIT_CACHE_RESPONSE" | grep -q "erminated abnormally" ; then
+			local INIT_CACHE_RESPONSE="$(/usr/sbin/squid -z -N -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME} 2>&1)"
+			if [ $? != 0 ] || echo "$INIT_CACHE_RESPONSE" | grep -q "erminated abnormally" ; then
 				umask $ORIG_UMASK
 				eend 1
 				echo "$INIT_CACHE_RESPONSE"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
@@ -11,11 +11,11 @@ configdump() {
 
 	checkconfd || return 1
 
-	if ! command -v $(set -- ${LYNX}; echo $1) 2>&1 >/dev/null ; then
+	if ! command -v $(set -- ${LYNX}; echo $1) 2>&1 >/dev/null; then
 		eerror "lynx not found! you need to emerge www-client/lynx"
 	else
 		echo "${APACHE2} started with '${APACHE2_OPTS}'"
-		for i in config server list ; do
+		for i in config server list; do
 			${LYNX} "${INFOURL}/?${i}" | sed '/Apache Server Information/d;/^[[:space:]]\+[_]\+$/Q'
 		done
 	fi

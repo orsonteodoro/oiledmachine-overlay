@@ -1,9 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-fs/cryptsetup
 
-source /etc/finit.d/scripts/dmcrypt-lib.sh
+source /etc/conf.d/dmcrypt
+source /etc/finit.d/scripts/lib.sh
 
 stop() {
 	local line print_header
@@ -18,8 +19,8 @@ stop() {
 		target= swap=
 		eval ${line}
 
-		[[ -n "${swap}" ]] && target=${swap}
-		if [[ -z "${target}" ]] ; then
+		[ -n "${swap}" ] && target=${swap}
+		if [ -z "${target}" ] ; then
 			ewarn "invalid line in ${conf_file}: ${line}"
 			continue
 		fi

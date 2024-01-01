@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# Script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
+# Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
 
 source /etc/finit.d/scripts/squid-lib.sh
 
 rotate() {
-	initctl | grep "running" | grep "squid" || return 1
-	ebegin "Rotating squid logs with /usr/sbin/squid -k rotate -f /etc/squid/squid.conf -n squid"
-	/usr/sbin/squid -k rotate -f /etc/squid/squid.conf -n squid
+	service_started ${RC_SVCNAME} || return 1
+	ebegin "Rotating ${RC_SVCNAME} logs with /usr/sbin/squid -k rotate -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}"
+	/usr/sbin/squid -k rotate -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}
 	eend $?
 }
 

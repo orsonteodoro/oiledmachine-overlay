@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# Script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
+# Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
 
 source /etc/finit.d/scripts/squid-lib.sh
 
 reload() {
 	checkconfig || return 1
-	ebegin "Reloading squid with /usr/sbin/squid -k reconfigure -f /etc/squid/squid.conf -n squid"
-	/usr/sbin/squid -k reconfigure -f /etc/squid/squid.conf -n squid
+	ebegin "Reloading ${RC_SVCNAME} with /usr/sbin/squid -k reconfigure -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}"
+	/usr/sbin/squid -k reconfigure -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}
 	eend $?
 }
 

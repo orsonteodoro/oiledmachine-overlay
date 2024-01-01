@@ -1,18 +1,22 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
+# Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-apps/hdparm
 
 source /etc/conf.d/hdparm
+source /etc/finit.d/scripts/lib.sh
 
 do_hdparm() {
 	local e=
 	eval e=\$${extra_args}
-	[[ -z "${args}${all_args}${e}" ]] && return 0
-
-	if [[ -n "${args:=${all_args} ${e}}" ]] ; then
+	[ -z "${args}${all_args}${e}" ] && return 0
+	
+	if [ -n "${args:=${all_args} ${e}}" ] ; then
 		local orgdevice=$(readlink -f "${device}")
-		if [[ -b "${orgdevice}" ]] ; then
+		if [ -b "${orgdevice}" ] ; then
+			ebegin "Running hdparm on ${device}"
 			hdparm ${args} "${device}" > /dev/null
+			eend $?
 		fi
 	fi
 }
@@ -21,14 +25,10 @@ scan_nondevfs() {
 	# non-devfs compatible system
 	local device
 
-	local L=(
-		$(realpath /dev/hd* /dev/sd* /dev/cdrom* | sed "/*/d")
-	)
-
-	device_step() {
-		[[ -e "${device}" ]] || continue
+	for device in /dev/hd* /dev/sd* /dev/cdrom* ; do
+		[ -e "${device}" ] || continue
 		case "${device}" in
-			*[0-9]) return ;;
+			*[0-9]) continue ;;
 			/dev/hd*)  extra_args="pata_all_args" ;;
 			/dev/sd*)  extra_args="sata_all_args" ;;
 			*)         extra_args="_no_xtra_args" ;;
@@ -42,28 +42,21 @@ scan_nondevfs() {
 		case ${errmsg} in
 		    *": No medium found") nomed=0;;
 		esac
-		if [[ -b "${device}" ]] && [[ "${status}" = "0" || "${nomed}" = "0" ]] ; then
+		if [ -b "${device}" ] && [ "${status}" = "0" -o "${nomed}" = "0" ] ; then
 			local conf_var="${device##*/}_args"
 			eval args=\$${conf_var}
 			do_hdparm
 		fi
-	}
-
-	for device in ${L[@]} ; do
-		device_step &
 	done
 }
 
-get_bootparam() {
-	local arg="${1}"
-	grep -q "${arg}" /proc/cmdline
-}
-
-main() {
+start() {
 	if get_bootparam "nohdparm" ; then
+		ewarn "Skipping hdparm init as requested in kernel cmdline"
 		return 0
 	fi
+
 	scan_nondevfs
 }
 
-main
+start

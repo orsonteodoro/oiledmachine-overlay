@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 # Scripts from dev-db/mysql-init-scripts at https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-db/mysql-init-scripts
@@ -6,7 +6,7 @@
 source /etc/finit.d/scripts/mysql-lib.sh
 
 stop() {
-	if [[ ${RC_CMD} = "restart" ]] ; then
+	if [ ${RC_CMD} = "restart" ] ; then
 		checkconfig || return 1
 	fi
 
@@ -16,7 +16,7 @@ stop() {
 	local basedir="$(get_options basedir)"
 	local stop_timeout=${STOP_TIMEOUT:-120}
 
-	"${basedir}/sbin/mysqld"
+	kill -SIGQUIT $(cat "${pidfile}")
 	eend $?
 }
 

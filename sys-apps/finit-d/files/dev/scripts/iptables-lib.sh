@@ -1,10 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 # Script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-firewall/iptables/files
+# =net-firewall/iptables-1.8.9:0/1.8.3::gentoo
 
 source /etc/conf.d/iptables
 source /etc/finit.d/scripts/lib.sh
+
+SVCNAME=${SVCNAME:-"iptables"}
 
 iptables_lock_wait_time=${IPTABLES_LOCK_WAIT_TIME:-"60"}
 iptables_lock_wait_interval=${IPTABLES_LOCK_WAIT_INTERVAL:-"1000"}
@@ -35,14 +38,14 @@ set_table_policy() {
 	local chain
 	for chain in ${chains} ; do
 		${iptables_bin} --wait ${iptables_lock_wait_time} -t ${table} -P ${chain} ${policy}
-		(( $? -ne 0 )) && has_errors=1
+		[ $? -ne 0 ] && has_errors=1
 	done
 
 	return ${has_errors}
 }
 
 checkkernel() {
-	if (( ! -e ${iptables_proc} )) ; then
+	if [ ! -e ${iptables_proc} ] ; then
 		eerror "Your kernel lacks ${iptables_name} support, please load"
 		eerror "appropriate modules and try again."
 		return 1
@@ -51,7 +54,7 @@ checkkernel() {
 }
 
 checkconfig() {
-	if [[ -z "${iptables_save}" || ! -f "${iptables_save}" ]] ; then
+	if [ -z "${iptables_save}" -o ! -f "${iptables_save}" ] ; then
 		eerror "Not starting ${iptables_name}.  First create some rules then run:"
 		eerror "/etc/init.d/${iptables_name} save"
 		return 1
@@ -59,11 +62,17 @@ checkconfig() {
 	return 0
 }
 
+checkrules() {
+	ebegin "Checking rules"
+	${iptables_bin}-restore --test ${SAVE_RESTORE_OPTIONS} < "${iptables_save}"
+	eend $?
+}
+
 save() {
 	ebegin "Saving ${iptables_name} state"
 	local dir=$(dirname "${iptables_save}")
-	get_ready_dir "0775" "root:root" "${dir}"
-	get_ready_file "0600" "root:root" "${iptables_save}"
+	get_ready_dir "0775" "-" "${dir}"
+	get_ready_file "0600" "-" "${iptables_save}"
 	${iptables_bin}-save ${SAVE_RESTORE_OPTIONS} > "${iptables_save}"
 	eend $?
 }
