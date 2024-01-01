@@ -34,3 +34,5 @@ reload() {
 
 	eend 0
 }
+
+reload
