@@ -50,6 +50,7 @@ SERVICES=(
 	inspircd
 	iperf3
 	iptables
+	ip6tables
 	keymap
 	laptop_mode
 	lightdm
@@ -87,6 +88,9 @@ REQUIRED_USE="
 	getty
 	docker? (
 		containerd
+	)
+	ip6tables? (
+		iptables
 	)
 "
 PDEPEND="

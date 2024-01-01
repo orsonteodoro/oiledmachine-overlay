@@ -10,7 +10,7 @@ source /etc/finit.d/scripts/lib.sh
 SVCNAME=${SVCNAME:-"mysql"}
 
 get_config() {
-	#FIXME:  not portable
+# FIXME:  my_print_defaults is not portable in init system
 	my_print_defaults --defaults-file="$1" mysqld server mariadb |
 	sed -n -e "s/^--$2=//p"
 }
@@ -26,9 +26,16 @@ mysql_svcname() {
 
 stringContain() { [ -z "${2##*$1*}" ] && [ -z "$1" -o -n "$2" ]; }
 
+start() {
+# Workaround:  cannot get net.lo via initctl
+	ifconfig | grep "^lo:"
+}
+
 bootstrap_galera() {
 	MY_ARGS="--wsrep-new-cluster ${MY_ARGS}"
+# FIXME: mark_* is not portable in init system
 	mark_service_starting
+# FIXME: mark_* is not portable in init system
 	if start ; then
 		mark_service_started
 		return 0

@@ -45,9 +45,9 @@ eend() {
 	local ret="${1}"
 	local message="${2}"
 	if [ -n "${message}" ] && [ ${ret} -eq 0 ] ; then
-		is_debug && echo "${message} [OK]"
+		is_debug && echo "${message} [  OK  ]"
 	elif [ -n "${message}" ] && [ ${ret} -ne 0 ] ; then
-		is_debug && echo "${message} [FAIL]"
+		is_debug && echo "${message} [FAILED]"
 	elif [ ${ret} -eq 0 ] ; then
 		is_debug && echo "[  OK  ]"
 	else
