@@ -187,6 +187,15 @@
     <flag name="uuidd">
       Add support for uuidd
     </flag>
+    <flag name="varnishd">
+      Add support for Varnish Cache
+    </flag>
+    <flag name="varnishlog">
+      Add support for varnishlog
+    </flag>
+    <flag name="varnishncsd">
+      Add support for varnishncsd
+    </flag>
     <flag name="watchdog">
       Add support for watchdog
     </flag>

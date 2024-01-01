@@ -81,6 +81,9 @@ SERVICES=(
 	tor
 	twistd
 	uuidd
+	varnishd
+	varnishlog
+	varnishncsd
 	watchdog
 	xdm
 	znc
