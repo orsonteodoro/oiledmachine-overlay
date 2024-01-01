@@ -53,6 +53,7 @@ SERVICES=(
 	iperf3
 	iptables
 	ip6tables
+	iwd
 	keepalived
 	keymap
 	laptop_mode

@@ -103,6 +103,9 @@
     <flag name="ip6tables">
       Add support for ip6tables firewall for IPv6
     </flag>
+    <flag name="iwd">
+      Add support for iwd (iNet Wireless Daemon)
+    </flag>
     <flag name="keepalived">
       Add support for keepalived
     </flag>
