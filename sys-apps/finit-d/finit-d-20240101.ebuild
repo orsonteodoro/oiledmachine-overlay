@@ -84,7 +84,7 @@ SERVICES=(
 )
 IUSE+="
 	${SERVICES[@]}
-	r1
+	r2
 "
 REQUIRED_USE="
 	getty

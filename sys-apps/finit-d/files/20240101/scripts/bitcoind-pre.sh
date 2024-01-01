@@ -14,3 +14,5 @@ start_pre() {
 
         checkconfig
 }
+
+start_pre
