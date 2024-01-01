@@ -95,7 +95,6 @@ ewaitfile() {
 		if [ ${now} -gt ${sf} ] ; then
 			return 1
 		fi
-		sleep 1
 	done
 	return 1
 }
