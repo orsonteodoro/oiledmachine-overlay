@@ -11,7 +11,7 @@ do_hdparm() {
 	local e=
 	eval e=\$${extra_args}
 	[ -z "${args}${all_args}${e}" ] && return 0
-	
+
 	if [ -n "${args:=${all_args} ${e}}" ] ; then
 		local orgdevice=$(readlink -f "${device}")
 		if [ -b "${orgdevice}" ] ; then

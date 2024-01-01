@@ -3,8 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-fs/cryptsetup
 
-source /etc/conf.d/dmcrypt
-source /etc/finit.d/scripts/lib.sh
+source /etc/finit.d/scripts/dmcrypt-lib.sh
 
 stop() {
 	local line print_header

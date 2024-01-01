@@ -4,6 +4,9 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-power/cpupower
 # =sys-power/cpupower-5.18::gentoo
 
+source /etc/conf.d/cpupower
+source /etc/finit.d/scripts/lib.sh
+
 SVCNAME=${SVCNAME:-"cpupower"}
 
 CPUFREQ_SYSFS=/sys/devices/system/cpu/cpufreq
