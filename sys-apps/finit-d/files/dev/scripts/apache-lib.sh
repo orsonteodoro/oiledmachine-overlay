@@ -1,8 +1,7 @@
 #!/bin/bash
 # Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# Modified script from www-servers/apache package
-# Initscript tarball:  https://dev.gentoo.org/~graaff/dist/apache/
+# Original script from https://dev.gentoo.org/~graaff/dist/apache/
 
 MAINTENANCE_MODE="0"
 

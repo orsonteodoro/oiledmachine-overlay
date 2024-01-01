@@ -164,6 +164,7 @@ src_install() {
 		install_script "apache-fullstatus.sh"
 		install_script "apache-graceful.sh"
 		install_script "apache-graceful-stop.sh"
+		install_script "apache-modules.sh"
 		install_script "apache-virtualhosts.sh"
 	fi
 	if use iptables ; then
