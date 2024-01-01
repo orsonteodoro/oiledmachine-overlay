@@ -182,7 +182,7 @@ src_install() {
 		install_script "iptables-shutdown-pre.sh"
 	fi
 	if use mysql ; then
-		install_script "mysql-bootstrap-galera.sh"
+		install_script "mysql-bootstrap_galera.sh"
 	fi
 	if use nginx ; then
 		install_script "nginx-upgrade.sh"
