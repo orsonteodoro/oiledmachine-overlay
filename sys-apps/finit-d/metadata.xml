@@ -37,6 +37,9 @@
     <flag name="containerd">
       Add support for containerd
     </flag>
+    <flag name="cpupower">
+      Add support for cpupower
+    </flag>
     <flag name="cron">
       Add support for cron
     </flag>

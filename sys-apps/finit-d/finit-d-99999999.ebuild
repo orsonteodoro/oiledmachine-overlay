@@ -29,6 +29,7 @@ SERVICES=(
 	bitlbee
 	bluez
 	consolefont
+	cpupower
 	cups-browsed
 	cupsd
 	cron
