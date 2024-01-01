@@ -6,8 +6,9 @@
 source /etc/finit.d/scripts/mysql-lib.sh
 
 stop() {
+	RC_CMD="${1}" # finit-d addition
 	if [ ${RC_CMD} = "restart" ] ; then
-		checkconfig || return 1
+		checkconfig "${RC_CMD}" || return 1
 	fi
 
 	ebegin "Stopping $(mysql_svcname)"
@@ -20,4 +21,4 @@ stop() {
 	eend $?
 }
 
-stop
+stop "${1}"

@@ -4,6 +4,7 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-db/mysql-init-scripts
 
 start() {
+	RC_CMD="start" # finit-d addition
 	# Check for old conf.d variables that mean migration was not yet done.
 	set | grep -Esq '^(mysql_slot_|MYSQL_BLOG_PID_FILE|STOPTIMEOUT)'
 	rc=$?
@@ -18,7 +19,7 @@ start() {
 
 	# Check the config or die
 	if [ ${RC_CMD} != "restart" ] ; then
-		checkconfig || return 1
+		checkconfig "${RC_CMD}" || return 1
 	fi
 
 	# Now we can startup

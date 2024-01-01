@@ -6,4 +6,4 @@
 
 source /etc/finit.d/scripts/mysql-lib.sh
 
-checkconfig
+checkconfig "${1}"

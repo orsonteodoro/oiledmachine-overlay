@@ -6,6 +6,7 @@
 source /etc/finit.d/scripts/apache-lib.sh
 
 stop() {
+	RC_CMD="${1}" # finit-d addition
 	if [ "${RC_CMD}" = "restart" ]; then
 		checkconfig || return 1
 	fi
@@ -29,4 +30,4 @@ stop() {
 	eend ${retval}
 }
 
-stop
+stop "${1}"

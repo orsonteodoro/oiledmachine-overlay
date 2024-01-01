@@ -39,6 +39,7 @@ bootstrap_galera() {
 }
 
 checkconfig() {
+	RC_CMD="${1}" # finit-d addition
 	local my_cnf="${MY_CNF:-/etc/${SVCNAME}/my.cnf}"
 	local basedir=$(get_config "${my_cnf}" basedir | tail -n1)
 	local svc_name=$(mysql_svcname)
