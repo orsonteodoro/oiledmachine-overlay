@@ -53,6 +53,7 @@ SERVICES=(
 	iperf3
 	iptables
 	ip6tables
+	keepalived
 	keymap
 	laptop_mode
 	lightdm
