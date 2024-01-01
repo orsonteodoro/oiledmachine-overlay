@@ -171,6 +171,10 @@ src_install() {
 		install_script "apache-modules.sh"
 		install_script "apache-virtualhosts.sh"
 	fi
+	if use inspircd ; then
+		install_script "inspircd-rehash.sh"
+		install_script "inspircd-version.sh"
+	fi
 	if use iptables ; then
 		install_script "iptables-check.sh"
 		install_script "iptables-panic.sh"
