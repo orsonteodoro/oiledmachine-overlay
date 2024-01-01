@@ -15,7 +15,7 @@ panic() {
 	fi
 
 	if service_started ${iptables_name}; then
-		rc-service ${iptables_name} stop
+		initctl stop ${iptables_name}
 	fi
 
 	local has_errors=0 a

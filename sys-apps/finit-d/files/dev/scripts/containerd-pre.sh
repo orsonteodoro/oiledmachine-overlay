@@ -4,8 +4,9 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/app-containers/containerd
 # =app-containers/containerd-1.7.1-r1::gentoo
 
+source /etc/finit.d/scripts/lib.sh
+
 start_pre() {
-	source /etc/finit.d/scripts/lib.sh
 	get_ready_dir "0750" "-" "/var/log/containerd"
 	ulimit -n 1048576 -u unlimited
 }
