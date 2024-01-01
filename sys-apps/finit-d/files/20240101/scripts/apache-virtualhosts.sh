@@ -10,3 +10,5 @@ virtualhosts() {
 	checkconfig || return 1
 	${APACHE2} ${APACHE2_OPTS} -S
 }
+
+virtualhosts
