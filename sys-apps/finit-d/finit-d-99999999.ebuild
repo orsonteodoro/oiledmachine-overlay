@@ -90,6 +90,9 @@ PDEPEND="
 	rtkit? (
 		sys-apps/finit[dbus]
 	)
+	thermald? (
+		sys-apps/finit[dbus]
+	)
 "
 
 pkg_setup() {
