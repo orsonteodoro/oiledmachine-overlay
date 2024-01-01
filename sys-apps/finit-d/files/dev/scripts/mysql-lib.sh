@@ -10,7 +10,7 @@ source /etc/finit.d/scripts/lib.sh
 SVCNAME=${SVCNAME:-"mysql"}
 
 get_config() {
-# FIXME:  my_print_defaults is not portable in init system
+	# my_print_defaults is a binary from *sql package
 	my_print_defaults --defaults-file="$1" mysqld server mariadb |
 	sed -n -e "s/^--$2=//p"
 }
