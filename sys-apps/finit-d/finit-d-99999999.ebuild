@@ -102,6 +102,9 @@ REQUIRED_USE="
 	)
 "
 PDEPEND="
+	iwd? (
+		sys-apps/finit[dbus]
+	)
 	networkmanager? (
 		sys-apps/finit[dbus]
 	)
