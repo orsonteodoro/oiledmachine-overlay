@@ -84,20 +84,20 @@ ewaitfile() {
 	local s0=$(date +"%s")
 	local sf=$(( ${s0} + ${duration} ))
 	while true ; do
-		local now=$(date +"%s")
-		if [ ${now} -ge ${sf} ] ; then
-			break
+		local c=0
+		for x in ${L[@]} ; do
+			[ -e "${x}" ] && c=$(( ${c} + 1 ))
+		done
+		if [ ${c} -eq ${#L[@]} ] ; then
+			return 0
 		fi
+		local now=$(date +"%s")
+		if [ ${now} -gt ${sf} ] ; then
+			return 1
+		fi
+		sleep 1
 	done
-	local c=0
-	for x in ${L[@]} ; do
-		[ -e "${x}" ] && c=$(( ${c} + 1 ))
-	done
-	if [ ${c} -eq ${#L[@]} ] ; then
-		return 0
-	else
-		return 1
-	fi
+	return 1
 }
 
 service_started() {
