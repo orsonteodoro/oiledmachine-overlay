@@ -106,7 +106,7 @@ PDEPEND="
 "
 
 pkg_setup() {
-einfo "This is the dev version."
+einfo "This is the snapshot version."
 }
 
 src_unpack() {
