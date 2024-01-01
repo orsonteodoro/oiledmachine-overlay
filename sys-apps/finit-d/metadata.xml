@@ -25,6 +25,9 @@
     <flag name="avahi-daemon">
       Add support for the Avahi daemon
     </flag>
+    <flag name="avahi-dnsconfd">
+      Add support for the Avahi DNS configuration daemon
+    </flag>
     <flag name="bitlbee">
       Add support for BitlBee
     </flag>

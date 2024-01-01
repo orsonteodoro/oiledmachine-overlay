@@ -26,6 +26,7 @@ SERVICES=(
 	apparmor
 	anacron
 	avahi-daemon
+	avahi-dnsconfd
 	bitlbee
 	bluez
 	consolefont
