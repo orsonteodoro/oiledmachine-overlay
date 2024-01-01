@@ -71,6 +71,7 @@ SERVICES=(
 	squid
 	sshd
 	syslogd
+	svnserve
 	thermald
 	tor
 	uuidd

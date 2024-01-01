@@ -154,6 +154,9 @@
     <flag name="syslogd">
       Add support for syslogd
     </flag>
+    <flag name="svnserve">
+      Add support for Subversion server
+    </flag>
     <flag name="thermald">
       Add support for thermald
     </flag>
