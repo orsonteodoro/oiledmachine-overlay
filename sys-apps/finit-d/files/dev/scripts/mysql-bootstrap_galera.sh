@@ -5,4 +5,8 @@
 
 source /etc/finit.d/scripts/mysql-lib.sh
 
-start "normal"
+if bootstrap_galera ; then
+	if initctl | grep "stopped" | grep "${SVCNAME}" ; then
+		start "galera"
+	fi
+fi
