@@ -2,6 +2,7 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-apps/hdparm
+# =sys-apps/hdparm-9.65-r2::gentoo
 
 source /etc/conf.d/hdparm
 source /etc/finit.d/scripts/lib.sh

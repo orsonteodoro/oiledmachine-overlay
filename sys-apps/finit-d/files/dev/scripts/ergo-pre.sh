@@ -1,4 +1,5 @@
 #!/bin/sh
+# =net-irc/ergo-2.12.0::gentoo
 source /etc/finit.d/scripts/lib.sh
 
 start_pre() {
