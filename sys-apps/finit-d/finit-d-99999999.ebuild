@@ -27,6 +27,7 @@ SERVICES=(
 	anacron
 	avahi-daemon
 	avahi-dnsconfd
+	bitcoind
 	bitlbee
 	bluez
 	consolefont

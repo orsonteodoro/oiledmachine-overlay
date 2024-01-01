@@ -16,7 +16,7 @@ LICENSE="
 	MIT
 	GPL-2
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 RESTRICT="mirror test"
 SLOT="0"
 SERVICES=(
@@ -27,6 +27,7 @@ SERVICES=(
 	anacron
 	avahi-daemon
 	avahi-dnsconfd
+	bitcoind
 	bitlbee
 	bluez
 	consolefont
@@ -83,6 +84,7 @@ SERVICES=(
 )
 IUSE+="
 	${SERVICES[@]}
+	r1
 "
 REQUIRED_USE="
 	getty
