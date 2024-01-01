@@ -97,6 +97,12 @@
     <flag name="iperf3">
       Add support for iPerf3
     </flag>
+    <flag name="iptables">
+      Add support for iptables firewall for IPv4
+    </flag>
+    <flag name="ip6tables">
+      Add support for ip6tables firewall for IPv6
+    </flag>
     <flag name="keymap">
       Add support for changing console keymap
     </flag>
