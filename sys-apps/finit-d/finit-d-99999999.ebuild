@@ -77,6 +77,7 @@ SERVICES=(
 	svnserve
 	thermald
 	tor
+	twistd
 	uuidd
 	watchdog
 	xdm

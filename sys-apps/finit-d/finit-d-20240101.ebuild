@@ -77,6 +77,7 @@ SERVICES=(
 	svnserve
 	thermald
 	tor
+	twistd
 	uuidd
 	watchdog
 	xdm
@@ -84,7 +85,7 @@ SERVICES=(
 )
 IUSE+="
 	${SERVICES[@]}
-	r3
+	r4
 "
 REQUIRED_USE="
 	getty
