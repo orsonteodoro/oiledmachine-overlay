@@ -72,6 +72,7 @@ SERVICES=(
 	sshd
 	syslogd
 	thermald
+	tor
 	uuidd
 	watchdog
 	xdm
@@ -87,6 +88,9 @@ REQUIRED_USE="
 	)
 "
 PDEPEND="
+	networkmanager? (
+		sys-apps/finit[dbus]
+	)
 	rtkit? (
 		sys-apps/finit[dbus]
 	)
@@ -174,6 +178,9 @@ src_install() {
 	fi
 	if use squid ; then
 		install_script "squid-rotate.sh"
+	fi
+	if use tor ; then
+		install_script "tor-checkconfig.sh"
 	fi
 }
 

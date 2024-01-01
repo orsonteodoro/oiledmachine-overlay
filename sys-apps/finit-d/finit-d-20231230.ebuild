@@ -77,6 +77,9 @@ REQUIRED_USE="
 	)
 "
 PDEPEND="
+	networkmanager? (
+		sys-apps/finit[dbus]
+	)
 	rtkit? (
 		sys-apps/finit[dbus]
 	)

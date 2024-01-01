@@ -157,6 +157,9 @@
     <flag name="thermald">
       Add support for thermald
     </flag>
+    <flag name="tor">
+      Add support for Tor
+    </flag>
     <flag name="uuidd">
       Add support for uuidd
     </flag>
