@@ -43,6 +43,9 @@
     <flag name="containerd">
       Add support for containerd
     </flag>
+    <flag name="coolercontrol">
+      Add support for CoolerControl
+    </flag>
     <flag name="cpupower">
       Add support for cpupower
     </flag>

@@ -31,11 +31,12 @@ SERVICES=(
 	bitlbee
 	bluez
 	consolefont
+	containerd
+	coolercontrol
 	cpupower
 	cups-browsed
 	cupsd
 	cron
-	containerd
 	dhcpcd
 	distccd
 	dmeventd
