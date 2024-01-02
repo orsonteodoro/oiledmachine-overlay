@@ -239,7 +239,8 @@ einfo "Send issues/requests to oiledmachine-overlay instead."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  passed (4.6, 20231230)
+# OILEDMACHINE-OVERLAY-TEST:  passed (4.6, 20230101)
+# coolercontrol - passed
 # cupsd - passed
 # getty - passed
 # NetworkManager - passed
