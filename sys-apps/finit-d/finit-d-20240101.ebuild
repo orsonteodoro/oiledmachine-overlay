@@ -97,14 +97,47 @@ REQUIRED_USE="
 	)
 "
 PDEPEND="
+	apache? (
+		sys-apps/finit[netlink]
+	)
+	bitcoind? (
+		sys-apps/finit[netlink]
+	)
+	coolercontrol? (
+		sys-apps/finit[netlink]
+	)
+	distccd? (
+		sys-apps/finit[netlink]
+	)
+	icecast? (
+		sys-apps/finit[netlink]
+	)
+	nginx? (
+		sys-apps/finit[netlink]
+	)
 	networkmanager? (
 		sys-apps/finit[dbus]
+	)
+	ntpd? (
+		sys-apps/finit[netlink]
 	)
 	rtkit? (
 		sys-apps/finit[dbus]
 	)
+	sntpd? (
+		sys-apps/finit[netlink]
+	)
+	svnserve? (
+		sys-apps/finit[netlink]
+	)
 	thermald? (
 		sys-apps/finit[dbus]
+	)
+	twistd? (
+		sys-apps/finit[netlink]
+	)
+	varnishd? (
+		sys-apps/finit[netlink]
 	)
 "
 
