@@ -269,7 +269,7 @@ pkg_postinst() {
 einfo "Send issues/requests to oiledmachine-overlay instead."
 ewarn
 ewarn "Your configs must be correct and exist or you may see crash listed in"
-ewarn "initctl."
+ewarn "initctl.  Debug messages are disabled."
 ewarn
 	check_daemon_configs
 }
