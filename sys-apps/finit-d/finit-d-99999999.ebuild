@@ -70,6 +70,7 @@ SERVICES=(
 	rtkit
 	ntpd
 	plymouth
+	rp-pppoe
 	rsyslogd
 	seatd
 	sntpd

@@ -148,6 +148,9 @@
     <flag name="redis-sentinel">
       Add support for Redis Sentinel
     </flag>
+    <flag name="rp-pppoe">
+      Add support for rp-pppoe server
+    </flag>
     <flag name="rsyncd">
       Add support for rsyncd
     </flag>
