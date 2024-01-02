@@ -95,6 +95,7 @@ RDEPEND+="
 "
 DEPEND+="
 	${DEPEND}
+	sys-kernel/linux-headers
 "
 BDEPEND+="
 	>=sys-devel/autoconf-2.71
