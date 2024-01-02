@@ -11,7 +11,7 @@ start() {
 	ebegin "Starting laptop_mode"
 	# bug #342049 fix
 	# check if dir exists and creates if it doesn't
-	get_ready_dir "755" "-" "/var/run/laptop-mode-tools"
+	checkpath "d" "-" "755" "/var/run/laptop-mode-tools"
 	touch /var/run/laptop-mode-tools/enabled
 	/usr/sbin/laptop_mode auto >/dev/null
 	eend $?

@@ -149,7 +149,7 @@ start() {
 	fi
 
 	local piddir="${pidfile%/*}"
-	get_ready_dir "0755" "mysql:mysql" "$piddir"
+	checkpath "d" "mysql:mysql" "0755" "$piddir"
 	rc=$?
 	if [ $rc -ne 0 ]; then
 		eerror "Directory $piddir for pidfile does not exist and cannot be created"

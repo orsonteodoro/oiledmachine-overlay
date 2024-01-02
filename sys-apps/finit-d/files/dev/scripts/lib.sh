@@ -1,35 +1,42 @@
 #!/bin/sh
-get_ready_dir() {
-	local mod="${1}"
+checkpath() {
+	local type="${1}"
 	local owner="${2}"
-	local path="${3}"
-	if [ ! -e "${path}" ] ; then
-		mkdir -p "${path}"
-		[ "${owner}" -ne "-" ] && chown "${owner}" "${path}"
-		chmod "${mod}" "${path}"
-	elif [ -d "${path}" ] ; then
-		[ "${owner}" -ne "-" ] && chown "${owner}" "${path}"
-		chmod "${mod}" "${path}"
-	fi
-}
+	local mode="${3}"
+	local path="${4}"
+	path=$(realpath "${path}")
 
-get_ready_file() {
-	local mod="${1}"
-	local owner="${2}"
-	local path="${3}"
-	if [ ! -e "${path}" ] ; then
+	if [ "${type}" = "d" ] && [ ! -d "${path}" ] ; then
+		if [ "${path}" = "/" ] ; then
+			exit 1
+		fi
+		rm -rf "${path}"
+		mkdir -p "${path}"
+	fi
+
+	if [ "${type}" = "f" ] && [ ! -f "${path}" ] ; then
+		if [ "${path}" = "/" ] ; then
+			exit 1
+		fi
+		rm -rf "${path}"
 		mkdir -p $(dirname "${path}")
-		touch $(basename "${path}")
-		[ "${owner}" -ne "-" ] && chown "${owner}" "${path}"
-		chmod "${mod}" "${path}"
-	elif [ -f "${path}" ] ; then
-		[ "${owner}" -ne "-" ] && chown "${owner}" "${path}"
-		chmod "${mod}" "${path}"
+		touch "${path}"
+	fi
+
+	if [ "${owner}" != "-" ] ; then
+		chown "${owner}" "${path}"
+	fi
+	if [ "${mode}" != "-" ] ; then
+		chmod "${mode}" "${path}"
+	elif [ "${type}" = "d" ] ; then
+		chmod "0775" "${path}"
+	elif [ "${type}" = "f" ] ; then
+		chmod "0644" "${path}"
 	fi
 }
 
 is_debug() {
-	if [ "${MAINTENANCE_MODE}" -eq "1" ] ; then
+	if [ "${MAINTENANCE_MODE}" = "1" ] ; then
 		return 0
 	else
 		return 1
@@ -42,7 +49,7 @@ ebegin() {
 }
 
 eend() {
-	local ret="${1}"
+	local ret=${1}
 	local message="${2}"
 	if [ -n "${message}" ] && [ ${ret} -eq 0 ] ; then
 		is_debug && echo "${message} [  OK  ]"
@@ -77,7 +84,7 @@ einfon() {
 }
 
 ewaitfile() {
-	local duration="${1}"
+	local duration=${1}
 	shift
 	L=( ${@} )
 	sleep ${duration}
@@ -86,7 +93,9 @@ ewaitfile() {
 	while true ; do
 		local c=0
 		for x in ${L[@]} ; do
-			[ -e "${x}" ] && c=$(( ${c} + 1 ))
+			if [ -e "${x}" ] ; then
+				c=$(( ${c} + 1 ))
+			fi
 		done
 		if [ ${c} -eq ${#L[@]} ] ; then
 			return 0
@@ -101,7 +110,9 @@ ewaitfile() {
 
 service_started() {
 	local name="${1}"
-	if initctl | grep "running" | grep "${name}" 2>/dev/null 1>/dev/null ; then
+	if initctl \
+		| grep "running" \
+		| grep "${name}" 2>/dev/null 1>/dev/null ; then
 		true
 	else
 		false

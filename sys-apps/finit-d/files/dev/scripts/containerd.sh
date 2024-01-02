@@ -15,15 +15,12 @@ command_args="${command_args:-}"
 pidfile="${pidfile:-/run/${RC_SVCNAME}.pid}"
 
 start_pre() {
-	get_ready_dir "0750" "-" "/var/log/containerd"
+	checkpath "d" "-" "0750" "/var/log/containerd"
 	ulimit -n 1048576 -u unlimited
 }
 
 start() {
-	"${command}" ${command_args} 2>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log" 1>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log" &
-	pid="$!"
-	echo "${pid}" > "${pidfile}"
-	kill -SIGCONT ${pid}
+	exec "${command}" ${command_args} 2>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log" 1>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log"
 }
 
 start_pre

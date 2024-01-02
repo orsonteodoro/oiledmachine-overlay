@@ -15,7 +15,7 @@ DOCKER_OUTFILE="${DOCKER_OUTFILE:-${DOCKER_LOGFILE}}"
 rc_ulimit="${DOCKER_ULIMIT:--c unlimited -n 1048576 -u unlimited}"
 
 start_pre() {
-	get_ready_file "0644" "root:docker" "$DOCKER_LOGFILE"
+	checkpath "f" "root:docker" "0644" "$DOCKER_LOGFILE"
 }
 
 start() {

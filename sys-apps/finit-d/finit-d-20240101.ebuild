@@ -240,8 +240,23 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  passed (4.6, 20230101)
+# OILEDMACHINE-OVERLAY-TEST:  pass-fail (99999999, 20230102)
+# actkbd - passed
+# apache - fail
+# avahi-daemon - passed
+# bitlbee - passed
+# bluetoothd - fail (needs kernel config)
+# containerd - passed
 # coolercontrol - passed
 # cupsd - passed
+# distccd - fail
+# elogind - fail
+# fancontrol - passed
 # getty - passed
+# lm_sensors - passed
+# mysql - fail
 # NetworkManager - passed
+# ntpd - passed
+# redis - fail
+# seatd - passed
+# znc - passed

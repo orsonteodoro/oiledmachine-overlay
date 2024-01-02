@@ -7,10 +7,10 @@ pidfile="${BITCOIND_PIDFILE}"
 in_background_fake="start"
 
 start_pre() {
-	get_ready_file "0660" "${BITCOIND_USER}:${BITCOIND_GROUP}" "${BITCOIND_CONFIGFILE}"
-	get_ready_dir "0750" "${BITCOIND_USER}:${BITCOIND_GROUP}" "${BITCOIND_DATADIR}"
-	get_ready_dir "0755" "${BITCOIND_USER}:${BITCOIND_GROUP}" "${BITCOIND_LOGDIR}"
-	get_ready_dir "0755" "${BITCOIND_USER}:${BITCOIND_GROUP}" "${BITCOIND_PIDDIR}"
+	checkpath "f" "${BITCOIND_USER}:${BITCOIND_GROUP}" "0660" "${BITCOIND_CONFIGFILE}"
+	checkpath "d" "${BITCOIND_USER}:${BITCOIND_GROUP}" "0750" "${BITCOIND_DATADIR}"
+	checkpath "d" "${BITCOIND_USER}:${BITCOIND_GROUP}" "0755" "${BITCOIND_LOGDIR}"
+	checkpath "d" "${BITCOIND_USER}:${BITCOIND_GROUP}" "0755" "${BITCOIND_PIDDIR}"
 
         checkconfig
 }

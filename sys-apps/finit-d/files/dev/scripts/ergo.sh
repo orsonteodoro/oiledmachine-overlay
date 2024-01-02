@@ -13,8 +13,8 @@ output_log="/var/log/${RC_SVCNAME}.out"
 error_log="/var/log/${RC_SVCNAME}.err"
 
 start_pre() {
-	get_ready_file "0640" "ergo:ergo" "/var/log/ergo.out" &
-	get_ready_file "0640" "ergo:ergo" "/var/log/ergo.err"
+	checkpath "f" "ergo:ergo" "0640" "/var/log/ergo.out" &
+	checkpath "f" "ergo:ergo" "0640" "/var/log/ergo.err"
 }
 
 start() {

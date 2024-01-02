@@ -7,7 +7,7 @@ source /etc/finit.d/scripts/squid-lib.sh
 
 start() {
 	checkconfig || return 1
-	get_ready_dir "0750" "squid:squid" "/run/${RC_SVCNAME}"
+	checkpath "d" "squid:squid" "0750" "/run/${RC_SVCNAME}"
 
 	# see https://wiki.squid-cache.org/MultipleInstances
 	ebegin "Starting ${RC_SVCNAME} (service name ${SQUID_SVCNAME}) with KRB5_KTNAME=\"${SQUID_KEYTAB}\" /usr/sbin/squid ${SQUID_OPTS} -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}"

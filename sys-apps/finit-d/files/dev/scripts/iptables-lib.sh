@@ -71,8 +71,8 @@ checkrules() {
 save() {
 	ebegin "Saving ${iptables_name} state"
 	local dir=$(dirname "${iptables_save}")
-	get_ready_dir "0775" "-" "${dir}"
-	get_ready_file "0600" "-" "${iptables_save}"
+	checkpath "d" "-" "0775" "${dir}"
+	checkpath "f" "-" "0600" "${iptables_save}"
 	${iptables_bin}-save ${SAVE_RESTORE_OPTIONS} > "${iptables_save}"
 	eend $?
 }

@@ -7,7 +7,7 @@ source /etc/finit.d/scripts/tor-lib.sh
 
 start_pre() {
 	checkconfig || return 1
-	get_ready_dir "0755" "tor:tor" "/run/tor"
+	checkpath "d" "tor:tor" "0755" "/run/tor"
 }
 
 start() {

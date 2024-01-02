@@ -6,10 +6,10 @@ source /etc/finit.d/scripts/lib.sh
 pidfile="/run/cupsd.pid"
 
 start_pre() {
-	get_ready_dir "0755" "root:lp" "/run/cups"
-	get_ready_dir "0511" "lp:lpadmin" "/run/cups/certs" &
-	get_ready_dir "0775" "root:lp" "/var/cache/cups"
-	get_ready_dir "0775" "root:lp" "/var/cache/cups/rss" &
+	checkpath "d" "root:lp"    "0755" "/run/cups"
+	checkpath "d" "lp:lpadmin" "0511" "/run/cups/certs" &
+	checkpath "d" "root:lp"    "0775" "/var/cache/cups"
+	checkpath "d" "root:lp"    "0775" "/var/cache/cups/rss" &
 }
 
 start() {

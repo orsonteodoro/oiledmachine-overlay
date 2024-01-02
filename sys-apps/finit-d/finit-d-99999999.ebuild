@@ -234,18 +234,64 @@ src_install() {
 	fi
 }
 
+check_daemon_configs() {
+	if use actkbd && [ ! -e "${EROOT}/etc/actkbd.conf" ] ; then
+ewarn
+ewarn "Missing /etc/actkbd.conf which can list actkbd in initctl as crashed."
+		local pv=$(best_version "app-misc/actkbd" \
+			| sed -i -e "s|app-misc/actkbd-||g")
+ewarn "Use the following to generate it:"
+ewarn
+ewarn "  bzcat /usr/share/doc/actkbd-${pv}/samples/actkbd.conf.bz2 > /etc/actkbd.conf"
+ewarn
+	fi
+	if use actkbd && grep -F "<DEVICE>" "${EROOT}/etc/conf.d/actkbd" >/dev/null ; then
+ewarn
+ewarn "Detected <DEVICE> in /etc/conf.d/actkbd which can list actkbd in initctl"
+ewarn "as crashed."
+ewarn
+	fi
+	if use fancontrol && [ ! -e "/etc/fancontrol" ] ; then
+ewarn
+ewarn "Missing /etc/fancontrol which can list fancontrol in initctl as crashed."
+ewarn "Use pwmconfig to fix this."
+ewarn
+	fi
+	if use znc && [ ! -e "${EROOT}/var/lib/znc/configs/znc.conf" ] ; then
+ewarn
+ewarn "Missing /var/lib/znc/configs/znc.conf which can list znc in initctl as"
+ewarn "crashed."
+ewarn
+	fi
+}
+
 pkg_postinst() {
 einfo "Send issues/requests to oiledmachine-overlay instead."
 ewarn
 ewarn "Your configs must be correct and exist or you may see crash listed in"
 ewarn "initctl."
 ewarn
+	check_daemon_configs
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  passed (4.6, 20230101)
+# OILEDMACHINE-OVERLAY-TEST:  pass-fail (99999999, 20230102)
 # actkbd - passed
+# apache - fail
+# avahi-daemon - passed
+# bitlbee - passed
+# bluetoothd - fail (needs kernel config)
+# containerd - passed
 # coolercontrol - passed
 # cupsd - passed
+# distccd - fail
+# elogind - fail
+# fancontrol - passed
 # getty - passed
+# lm_sensors - passed
+# mysql - fail
 # NetworkManager - passed
+# ntpd - passed
+# redis - fail
+# seatd - passed
+# znc - passed
