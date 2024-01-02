@@ -94,7 +94,7 @@ RDEPEND+="
 	)
 "
 DEPEND+="
-	${DEPEND}
+	${RDEPEND}
 	sys-kernel/linux-headers
 "
 BDEPEND+="
