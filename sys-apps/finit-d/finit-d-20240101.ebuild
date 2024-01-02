@@ -233,6 +233,10 @@ src_install() {
 
 pkg_postinst() {
 einfo "Send issues/requests to oiledmachine-overlay instead."
+ewarn
+ewarn "Your configs must be correct and exist or you may see crash listed in"
+ewarn "initctl."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
