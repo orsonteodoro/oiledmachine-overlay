@@ -8,4 +8,9 @@ start_pre() {
 	get_ready_dir "0750" "inspircd:inspircd" "/run/inspircd/"
 }
 
+start() {
+	"${command}" ${command_args}
+}
+
 start_pre
+start

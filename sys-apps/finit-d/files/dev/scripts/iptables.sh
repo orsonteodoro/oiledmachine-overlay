@@ -5,10 +5,15 @@
 
 source /etc/finit.d/scripts/iptables-lib.sh
 
+start_pre() {
+	checkconfig || return 1
+}
+
 start() {
 	ebegin "Loading ${iptables_name} state and starting firewall"
 	${iptables_bin}-restore --wait ${iptables_lock_wait_time} ${SAVE_RESTORE_OPTIONS} < "${iptables_save}"
 	eend $?
 }
 
+start_pre
 start

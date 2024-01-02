@@ -3,6 +3,8 @@
 
 source /etc/finit.d/scripts/lib.sh
 
+pidfile="/run/cupsd.pid"
+
 start_pre() {
 	get_ready_dir "0755" "root:lp" "/run/cups"
 	get_ready_dir "0511" "lp:lpadmin" "/run/cups/certs" &
@@ -10,4 +12,9 @@ start_pre() {
 	get_ready_dir "0775" "root:lp" "/var/cache/cups/rss" &
 }
 
+start() {
+	cupsd -f -c /etc/cups/cupsd.conf -s /etc/cups/cups-files.conf
+}
+
 start_pre
+start

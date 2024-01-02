@@ -8,7 +8,7 @@ source /etc/conf.d/squid
 source /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"squid"}
-RC_SVCNAME=${RC_SVCNAME:-"squid"}
+RC_SVCNAME="${SVCNAME}"
 SQUID_SVCNAME=$( echo "${RC_SVCNAME}" | tr -cd '[a-zA-Z0-9]' )
 
 checkconfig() {

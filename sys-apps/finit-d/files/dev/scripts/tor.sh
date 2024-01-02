@@ -10,4 +10,9 @@ start_pre() {
 	get_ready_dir "0755" "tor:tor" "/run/tor"
 }
 
+start() {
+	"${command}" ${command_args}
+}
+
 start_pre
+start

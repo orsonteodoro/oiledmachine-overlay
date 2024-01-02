@@ -4,11 +4,27 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/app-containers/containerd
 # =app-containers/containerd-1.7.1-r1::gentoo
 
+source /etc/conf.d/containerd
 source /etc/finit.d/scripts/lib.sh
+
+SVCNAME=${SVCNAME:-"containerd"}
+RC_SVCNAME=${SVCNAME}
+
+command="/usr/bin/containerd"
+command_args="${command_args:-}"
+pidfile="${pidfile:-/run/${RC_SVCNAME}.pid}"
 
 start_pre() {
 	get_ready_dir "0750" "-" "/var/log/containerd"
 	ulimit -n 1048576 -u unlimited
 }
 
+start() {
+	"${command}" ${command_args} 2>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log" 1>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log" &
+	pid="$!"
+	echo "${pid}" > "${pidfile}"
+	kill -SIGCONT ${pid}
+}
+
 start_pre
+start

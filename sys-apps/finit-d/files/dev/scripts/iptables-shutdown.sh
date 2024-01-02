@@ -5,6 +5,10 @@
 
 source /etc/finit.d/scripts/iptables-lib.sh
 
+stop_pre() {
+	checkkernel || return 1
+}
+
 stop() {
 	if [ "${SAVE_ON_STOP}" = "yes" ] ; then
 		save || return 1
@@ -25,4 +29,5 @@ stop() {
 	eend ${has_errors}
 }
 
+stop_pre
 stop

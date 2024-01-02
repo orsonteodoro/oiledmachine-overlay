@@ -11,4 +11,9 @@ stop_pre() {
 	fi
 }
 
+stop() {
+	kill -k -SIGTERM  $(cat "${VARNISHD_PID}")
+}
+
 stop_pre
+stop

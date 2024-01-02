@@ -147,14 +147,8 @@ src_install() {
 			dosym \
 				"/etc/finit.d/available/${svc}.conf" \
 				"/etc/finit.d/enabled/${svc}.conf"
-			if [[ -e "${WORKDIR}/scripts/${svc}-pre.sh" ]] ; then
-				install_script "${svc}-pre.sh"
-			fi
 			if [[ -e "${WORKDIR}/scripts/${svc}.sh" ]] ; then
 				install_script "${svc}.sh"
-			fi
-			if [[ -e "${WORKDIR}/scripts/${svc}-post.sh" ]] ; then
-				install_script "${svc}-post.sh"
 			fi
 			if [[ -e "${WORKDIR}/scripts/${svc}-reload.sh" ]] ; then
 				install_script "${svc}-reload.sh"

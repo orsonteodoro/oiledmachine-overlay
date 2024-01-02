@@ -9,4 +9,9 @@ start_pre() {
 	checkconfig || return 1
 }
 
+start() {
+	"${command}" ${command_args}
+}
+
 start_pre
+start
