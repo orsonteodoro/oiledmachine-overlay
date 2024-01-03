@@ -40,7 +40,7 @@ PLUGINS=(
 # auto's final value determined by CI
 IUSE+="
 ${PLUGINS[@]}
-+bash-completion +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
++bash-completion dash +doc -kernel-cmdline -fastboot -fsckfix mdev -keventd
 +logrotate +redirect +rescue -sulogin test udev -watchdog
 "
 REQUIRED_USE="
@@ -80,6 +80,9 @@ RDEPEND+="
 	bash-completion? (
 		>=app-shells/bash-completion-2.0
 	)
+	dash? (
+		app-shells/dash
+	)
 	dbus? (
 		sys-apps/dbus
 	)
@@ -107,6 +110,9 @@ BDEPEND+="
 		>=app-misc/jq-1.6
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-4.6-override-bshell.patch"
+)
 
 pkg_setup() {
 	if has_version "sys-apps/busybox[mdev]" && has_version "sys-apps/systemd-utils[udev]" ; then
@@ -127,6 +133,16 @@ src_prepare() {
 		-e "s|/sbin/sysctl|/usr/sbin/sysctl|g" \
 		"plugins/procps.c" \
 		|| die
+	if [ -n "$FINIT_SHELL" ] ; then
+einfo "Using $FINIT_SHELL as the default init shell."
+		sed -i -e "s|__DISTRO_BSHELL__|$FINIT_SHELL|g" "src/finit.h" || die
+	elif use dash ; then
+einfo "Using /bin/dash as the default init shell."
+		sed -i -e "s|__DISTRO_BSHELL__|/bin/dash|g" "src/finit.h" || die
+	else
+einfo "Using /bin/sh as the default init shell."
+		sed -i -e "s|__DISTRO_BSHELL__|/bin/sh|g" "src/finit.h" || die
+	fi
 }
 
 src_configure() {

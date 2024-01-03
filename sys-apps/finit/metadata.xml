@@ -19,6 +19,11 @@
   Build time environment variables:
 
   FINIT_HOSTNAME - The hostname to use.  localhost is the default.
+  FINIT_SHELL - The Absolute path to a custom shell.
+
+  Examples:
+
+  FINIT_SHELL="/bin/dash"
 
   -->
   <use>
@@ -30,6 +35,12 @@
     </flag>
     <flag name="contrib">
       Build and install of contrib section
+    </flag>
+    <flag name="dash">
+      Use DASH (Almquist shell) for a performance boost.  (EXPERIMENTAL)
+
+      [For users that want to keep sh (Bash) as default shell but use DASH for
+      the init system]
     </flag>
     <flag name="dbus">
       Setup and start system message bus, D-Bus
