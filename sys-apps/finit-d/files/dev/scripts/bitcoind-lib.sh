@@ -1,7 +1,7 @@
 #!/bin/sh
 
-source /etc/conf.d/bitcoind
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/bitcoind
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"bitcoind"}
 

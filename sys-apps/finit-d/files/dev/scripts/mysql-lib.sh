@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-db/mysql-init-scripts
 # =dev-db/mysql-init-scripts-2.3-r6::gentoo
 
-source /etc/conf.d/mysql
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/mysql
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"mysql"}
 

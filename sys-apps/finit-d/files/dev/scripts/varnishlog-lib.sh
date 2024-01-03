@@ -3,8 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script obtained from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-servers/varnish
 
-source /etc/conf.d/varnishlog
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/varnishlog
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"varnishlog"}
 

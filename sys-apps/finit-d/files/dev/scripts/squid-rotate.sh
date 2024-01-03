@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
 
-source /etc/finit.d/scripts/squid-lib.sh
+. /etc/finit.d/scripts/squid-lib.sh
 
 rotate() {
 	service_started ${RC_SVCNAME} || return 1

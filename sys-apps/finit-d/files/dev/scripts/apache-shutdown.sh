@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 stop() {
 	RC_CMD="${1}" # finit-d addition

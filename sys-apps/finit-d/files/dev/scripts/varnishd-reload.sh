@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script obtained from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-servers/varnish
 
-source /etc/finit.d/scripts/varnishd-lib.sh
+. /etc/finit.d/scripts/varnishd-lib.sh
 
 reload() {
 	checkconfig || return 1

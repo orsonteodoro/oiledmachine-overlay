@@ -2,7 +2,7 @@
 # Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License, v2 or later
 
-source /etc/conf.d/pppoe-server
+. /etc/conf.d/pppoe-server
 pidfile="/run/pppoe-server.pid"
 
 start() {

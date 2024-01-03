@@ -4,7 +4,7 @@
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
 # Dumps the configuration of the runing apache server. Requires server-info to be enabled and www-client/lynx.
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 configdump() {
 	INFOURL="${INFOURL:-http://localhost/server-info}"

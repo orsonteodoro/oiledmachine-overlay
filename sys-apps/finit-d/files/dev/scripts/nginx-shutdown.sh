@@ -6,7 +6,7 @@
 
 RC_CMD="${1}"
 
-source /etc/finit.d/scripts/nginx-lib.sh
+. /etc/finit.d/scripts/nginx-lib.sh
 
 stop_pre() {
 	if [ "${RC_CMD}" = "restart" ]; then

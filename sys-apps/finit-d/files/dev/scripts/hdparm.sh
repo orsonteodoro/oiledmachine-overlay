@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-apps/hdparm
 # =sys-apps/hdparm-9.65-r2::gentoo
 
-source /etc/conf.d/hdparm
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/hdparm
+. /etc/finit.d/scripts/lib.sh
 
 do_hdparm() {
 	local e=

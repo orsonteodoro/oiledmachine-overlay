@@ -7,8 +7,8 @@
 
 MAINTENANCE_MODE="0"
 
-source /etc/conf.d/apache2
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/apache2
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"apache2"}
 

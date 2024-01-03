@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-firewall/iptables/files
 # =net-firewall/iptables-1.8.9:0/1.8.3::gentoo
 
-source /etc/conf.d/iptables
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/iptables
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"iptables"}
 

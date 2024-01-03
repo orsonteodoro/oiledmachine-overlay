@@ -3,8 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # =dev-db/redis-7.2.3::gentoo
 
-source /etc/conf.d/redis-sentinel
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/redis-sentinel
+. /etc/finit.d/scripts/lib.sh
 
 : ${REDIS_SENTINEL_DIR:=/tmp}
 : ${REDIS_SENTINEL_CONF:=/etc/redis/sentinel.conf}

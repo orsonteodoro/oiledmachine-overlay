@@ -2,8 +2,8 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License, v2 or later
 
-source /etc/conf.d/svnserve
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/svnserve
+. /etc/finit.d/scripts/lib.sh
 
 pidfile="/var/run/svnserve.pid"
 command="/usr/bin/svnserve"

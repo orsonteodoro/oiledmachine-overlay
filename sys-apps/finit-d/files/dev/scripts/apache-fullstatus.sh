@@ -4,7 +4,7 @@
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
 # Gives the full status of the server. Requires lynx and server-status to be enabled.
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 fullstatus() {
 	if ! command -v $(set -- ${LYNX}; echo $1) 2>&1 >/dev/null; then

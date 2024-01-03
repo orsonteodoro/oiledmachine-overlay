@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
 # =net-proxy/squid-6.5::gentoo
 
-source /etc/conf.d/squid
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/squid
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"squid"}
 RC_SVCNAME="${SVCNAME}"

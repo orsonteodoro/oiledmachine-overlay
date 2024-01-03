@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-servers/nginx/files
 # =www-servers/nginx-1.25.3:mainline::gentoo
 
-source /etc/conf.d/nginx
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/nginx
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"nginx"}
 

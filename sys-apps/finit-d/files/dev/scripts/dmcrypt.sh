@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-fs/cryptsetup
 
-source /etc/finit.d/scripts/dmcrypt-lib.sh
+. /etc/finit.d/scripts/dmcrypt-lib.sh
 
 start() {
 	local print_header=true cryptfs_status=0

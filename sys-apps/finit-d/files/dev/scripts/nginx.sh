@@ -4,7 +4,7 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-servers/nginx/files
 # =www-servers/nginx-1.25.3:mainline::gentoo
 
-source /etc/finit.d/scripts/nginx-lib.sh
+. /etc/finit.d/scripts/nginx-lib.sh
 
 RC_CMD="start"
 start_pre() {

@@ -3,8 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # =app-containers/docker-24.0.5::gentoo
 
-source /etc/conf.d/docker
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/docker
+. /etc/finit.d/scripts/lib.sh
 
 command="${DOCKERD_BINARY:-/usr/bin/dockerd}"
 pidfile="${DOCKER_PIDFILE:-/run/${RC_SVCNAME}.pid}"

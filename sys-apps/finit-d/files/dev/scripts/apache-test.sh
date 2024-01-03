@@ -4,6 +4,6 @@
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
 # Run syntax tests for configuration files.
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 configtest

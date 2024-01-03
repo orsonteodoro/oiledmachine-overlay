@@ -4,7 +4,7 @@
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
 # A graceful stop advises the children to exit after the current request and stops the server.
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 gracefulstop() {
 	checkconfig || return 1

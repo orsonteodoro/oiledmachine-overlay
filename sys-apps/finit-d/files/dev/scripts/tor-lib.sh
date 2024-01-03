@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-vpn/tor
 # =net-vpn/tor-0.4.7.16::gentoo
 
-source /etc/conf.d/tor
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/tor
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"tor"}
 

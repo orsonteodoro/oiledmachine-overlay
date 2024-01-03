@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/app-containers/containerd
 # =app-containers/containerd-1.7.1-r1::gentoo
 
-source /etc/conf.d/containerd
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/containerd
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"containerd"}
 RC_SVCNAME=${SVCNAME}

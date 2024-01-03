@@ -1,7 +1,7 @@
 #!/bin/sh
 # =net-irc/ergo-2.12.0::gentoo
 
-source /etc/finit.d/scripts/lib.sh
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"ergo"}
 RC_SVCNAME="${SVCNAME}"

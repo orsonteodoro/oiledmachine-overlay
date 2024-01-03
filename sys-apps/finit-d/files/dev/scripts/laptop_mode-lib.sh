@@ -4,7 +4,7 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/app-laptop/laptop-mode-tools
 # =app-laptop/laptop-mode-tools-1.74::gentoo
 
-source /etc/finit.d/scripts/lib.sh
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"laptop_mode"}
 

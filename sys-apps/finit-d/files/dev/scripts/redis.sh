@@ -3,8 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # =dev-db/redis-7.2.3::gentoo
 
-source /etc/conf.d/redis
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/redis
+. /etc/finit.d/scripts/lib.sh
 
 : ${REDIS_DIR:=/var/lib/redis}
 : ${REDIS_CONF:=/etc/redis/redis.conf}

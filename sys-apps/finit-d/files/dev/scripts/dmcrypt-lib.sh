@@ -6,8 +6,8 @@
 
 SVCNAME=${SVCNAME:-"dmcrypt"}
 
-source /etc/conf.d/dmcrypt
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/dmcrypt
+. /etc/finit.d/scripts/lib.sh
 
 # We support multiple dmcrypt instances based on $SVCNAME
 conf_file="/etc/conf.d/${SVCNAME}"

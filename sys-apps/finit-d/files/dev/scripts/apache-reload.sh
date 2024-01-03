@@ -4,7 +4,7 @@
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
 # Kills all children and reloads the configuration.
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 reload() {
 	checkconfig || return 1

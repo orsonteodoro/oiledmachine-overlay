@@ -4,7 +4,7 @@
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
 # A graceful restart advises the children to exit after the current request and reloads the configuration.
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 graceful() {
 	checkconfig || return 1
