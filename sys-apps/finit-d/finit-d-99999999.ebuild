@@ -291,7 +291,7 @@ ewarn
 # containerd - passed
 # coolercontrol - passed
 # cupsd - passed
-# distccd - failed
+# distccd - passed
 # docker - passed
 # elogind - passed
 # fancontrol - passed
