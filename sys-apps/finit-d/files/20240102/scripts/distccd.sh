@@ -13,7 +13,7 @@ command_args="--user distcc --daemon --no-detach ${DISTCCD_OPTS}"
 
 start() {
 	export TMPDIR="${TMPDIR:-/tmp}"
-	"${command}" ${command_args}
+	exec "${command}" ${command_args}
 }
 
 start
