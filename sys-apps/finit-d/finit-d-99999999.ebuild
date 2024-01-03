@@ -91,6 +91,7 @@ SERVICES=(
 	znc
 )
 IUSE+="
+	dash
 	${SERVICES[@]}
 "
 REQUIRED_USE="
@@ -100,6 +101,11 @@ REQUIRED_USE="
 	)
 	ip6tables? (
 		iptables
+	)
+"
+RDEPEND="
+	dash? (
+		app-shells/dash
 	)
 "
 PDEPEND="
@@ -165,6 +171,22 @@ src_unpack() {
 		-e "s|lib64|${libdir}|g" \
 		"confs/elogind.conf" \
 		|| die
+}
+
+src_prepare() {
+	default
+	IFS=$'\n'
+	local L=(
+		$(grep -r -l '#!/bin/sh' ./)
+	)
+	local path
+	for path in ${L[@]} ; do
+		if ! grep "^# BASH ME" "${path}" ; then
+einfo "Editing ${path} for DASH"
+			sed -i -e 's|#!/bin/sh|#!/bin/dash|g' "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
 }
 
 install_script() {
@@ -288,6 +310,8 @@ einfo "Send issues/requests to oiledmachine-overlay instead."
 ewarn
 ewarn "Your configs must be correct and exist or you may see crash listed in"
 ewarn "initctl.  Debug messages are disabled."
+ewarn
+ewarn "You must use etc-update for changes to take effect."
 ewarn
 	check_daemon_configs
 }

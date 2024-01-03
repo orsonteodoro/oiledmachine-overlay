@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 # =net-print/cups-2.4.7-r1::gentoo
 
 source /etc/finit.d/scripts/lib.sh

@@ -92,6 +92,7 @@ SERVICES=(
 )
 IUSE+="
 	${SERVICES[@]}
+	r1
 "
 REQUIRED_USE="
 	getty
@@ -288,6 +289,8 @@ einfo "Send issues/requests to oiledmachine-overlay instead."
 ewarn
 ewarn "Your configs must be correct and exist or you may see crash listed in"
 ewarn "initctl.  Debug messages are disabled."
+ewarn
+ewarn "You must use etc-update for changes to take effect."
 ewarn
 	check_daemon_configs
 }

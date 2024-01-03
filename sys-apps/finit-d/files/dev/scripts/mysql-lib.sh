@@ -170,6 +170,7 @@ start() {
 	ewaitfile ${startup_timeout} "${socket}"
 	eend $? || return 1
 
+# FIXME:  save_options is not portable
 	save_options pidfile "${pidfile}"
 	save_options basedir "${basedir}"
 }

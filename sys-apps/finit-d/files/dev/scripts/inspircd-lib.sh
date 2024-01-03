@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # =net-irc/inspircd-3.16.1::gentoo
