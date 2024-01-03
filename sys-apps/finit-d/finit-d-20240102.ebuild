@@ -92,7 +92,7 @@ SERVICES=(
 )
 IUSE+="
 	${SERVICES[@]}
-	r3
+	r4
 "
 REQUIRED_USE="
 	getty
@@ -309,7 +309,7 @@ ewarn
 # rtkit - passed
 # seatd - passed
 # spacenavd - passed
-# squid - failed
+# squid - passed
 # twistd - failed (upstream broken)
 # varnishd - failed
 # znc - passed

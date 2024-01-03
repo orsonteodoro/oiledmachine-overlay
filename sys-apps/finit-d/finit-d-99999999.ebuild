@@ -308,7 +308,7 @@ ewarn
 # rtkit - passed
 # seatd - passed
 # spacenavd - passed
-# squid - failed
+# squid - passed
 # twistd - failed (upstream broken)
 # varnishd - failed
 # znc - passed
