@@ -11,7 +11,7 @@ SVCNAME=${SVCNAME:-"nginx"}
 
 NGINX_CONFIGFILE=${NGINX_CONFIGFILE:-/etc/nginx/nginx.conf}
 command="/usr/sbin/nginx"
-command_args="-c \"${NGINX_CONFIGFILE}\""
+command_args="-g 'daemon off;' -c \"${NGINX_CONFIGFILE}\""
 start_stop_daemon_args=${NGINX_SSDARGS:-"--wait 1000"}
 pidfile=${NGINX_PIDFILE:-/run/nginx.pid}
 user=${NGINX_USER:-nginx}

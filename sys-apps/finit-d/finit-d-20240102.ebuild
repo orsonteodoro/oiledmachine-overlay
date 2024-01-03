@@ -264,6 +264,18 @@ ewarn "Missing /etc/fancontrol which can list fancontrol in initctl as crashed."
 ewarn "Use pwmconfig to fix this."
 ewarn
 	fi
+	if use nginx ; then
+		if has_version "www-servers/nginx[-http]" ; then
+ewarn
+ewarn "www-servers/nginx[-http] may list nginx as crashed in initctl."
+ewarn
+		fi
+		if has_version "www-servers/nginx[-nginx_modules_http_gzip]" ; then
+ewarn
+ewarn "www-servers/nginx[-nginx_modules_http_gzip] may list nginx as crashed in initctl."
+ewarn
+		fi
+	fi
 	if use znc && [ ! -e "${EROOT}/var/lib/znc/configs/znc.conf" ] ; then
 ewarn
 ewarn "Missing /var/lib/znc/configs/znc.conf which can list znc in initctl as"

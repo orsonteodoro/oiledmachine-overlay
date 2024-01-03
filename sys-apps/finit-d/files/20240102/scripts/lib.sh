@@ -60,6 +60,7 @@ eend() {
 	else
 		is_debug && echo "[FAILED]"
 	fi
+	return ${ret}
 }
 
 ewend() {
