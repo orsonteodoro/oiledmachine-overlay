@@ -284,7 +284,7 @@ ewarn
 # containerd - passed
 # coolercontrol - passed
 # cupsd - passed
-# distccd - fail
+# distccd - passed
 # elogind - passed
 # fancontrol - passed
 # getty - passed
