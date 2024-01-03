@@ -134,10 +134,10 @@ src_prepare() {
 		"plugins/procps.c" \
 		|| die
 	if [ -n "$FINIT_SHELL" ] ; then
-einfo "Using $FINIT_SHELL as the default init shell."
+ewarn "Using $FINIT_SHELL as the default init shell.  (EXPERIMENTAL)"
 		sed -i -e "s|__DISTRO_BSHELL__|$FINIT_SHELL|g" "src/finit.h" || die
 	elif use dash ; then
-einfo "Using /bin/dash as the default init shell."
+ewarn "Using /bin/dash as the default init shell.  (EXPERIMENTAL)"
 		sed -i -e "s|__DISTRO_BSHELL__|/bin/dash|g" "src/finit.h" || die
 	else
 einfo "Using /bin/sh as the default init shell."
