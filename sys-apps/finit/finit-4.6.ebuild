@@ -132,7 +132,7 @@ src_prepare() {
 src_configure() {
 	eautoreconf
 
-	replace-flags '-O*' '-O3' # It's still slow.
+	replace-flags '-O*' '-O2'
 
 	local myconf=(
 		$(use_enable alsa alsa-utils-plugin)
@@ -212,6 +212,15 @@ ewarn
 ewarn "You should almost always enable getty.conf"
 ewarn
 ewarn "This init system is still in testing."
+ewarn
+ewarn
+ewarn "SECURITY NOTICE"
+ewarn
+ewarn "Changing user/group with @user:group may be broken/inconsistent for both"
+ewarn "script or direct executable cases which may result in users coerced into"
+ewarn "running a daemon as root:root or user:root."
+ewarn
+ewarn "Use openrc/systemd if that is an issue."
 ewarn
 }
 
