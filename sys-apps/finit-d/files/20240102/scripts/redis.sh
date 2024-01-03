@@ -21,10 +21,7 @@ command_args="${REDIS_OPTS} --daemonize no"
 pidfile="/run/${RC_SVCNAME}.pid"
 
 start() {
-	"${command}" ${command_args} &
-	pid="$!"
-	echo "${pid}" > "${pidfile}"
-	kill -SIGCONT ${pid}
+	exec "${command}" ${command_args}
 }
 
 start

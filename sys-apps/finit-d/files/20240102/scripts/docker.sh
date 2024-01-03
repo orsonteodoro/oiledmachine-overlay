@@ -20,10 +20,7 @@ start_pre() {
 
 start() {
 	ulimit ${rc_ulimit}
-	"${command}" ${command_args} 2>"${DOCKER_ERRFILE}" 1>"${DOCKER_OUTFILE}" &
-	pid="$!"
-	echo "${pid}" > "${pidfile}"
-	kill -SIGCONT ${pid}
+	exec "${command}" ${command_args} 2>"${DOCKER_ERRFILE}" 1>"${DOCKER_OUTFILE}"
 }
 
 start_pre

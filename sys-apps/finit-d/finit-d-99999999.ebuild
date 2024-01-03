@@ -151,7 +151,11 @@ PDEPEND="
 "
 
 pkg_setup() {
+	if [[ "${PV}" =~ "99999999" ]] ; then
 einfo "This is the dev version."
+	else
+einfo "This is the live snapshot version."
+	fi
 }
 
 src_unpack() {
@@ -278,6 +282,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  pass-fail (99999999, 20230102)
+# acpid - passed
 # actkbd - passed
 # apache - fail
 # avahi-daemon - passed
@@ -302,8 +307,8 @@ ewarn
 # redis - fail
 # rtkit - passed
 # seatd - passed
-# spacenavd - failed
+# spacenavd - passed
 # squid - failed
-# twistd - failed
+# twistd - failed (upstream broken)
 # varnishd - failed
 # znc - passed
