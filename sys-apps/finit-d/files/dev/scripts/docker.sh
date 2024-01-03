@@ -20,7 +20,8 @@ start_pre() {
 
 start() {
 	ulimit ${rc_ulimit}
-	exec "${command}" ${command_args} 2>"${DOCKER_ERRFILE}" 1>"${DOCKER_OUTFILE}"
+	declare -a "args=(${command_args})"
+	exec "${command}" "${args[@]}" 2>"${DOCKER_ERRFILE}" 1>"${DOCKER_OUTFILE}"
 }
 
 start_pre

@@ -14,7 +14,8 @@ start() {
 	# lock filesystems when being run from such a location.
 	cd /
 
-	exec "${command}" ${command_args}
+	declare -a "args=(${command_args})"
+	exec "${command}" "${args[@]}"
 }
 
 start

@@ -9,7 +9,8 @@ start_pre() {
 }
 
 start() {
-	"${command}" ${command_args}
+	declare -a "args=(${command_args})"
+	"${command}" "${args[@]}"
 }
 
 start_pre

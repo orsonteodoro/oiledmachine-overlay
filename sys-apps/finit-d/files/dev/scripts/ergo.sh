@@ -13,7 +13,8 @@ output_log="/var/log/${RC_SVCNAME}.out"
 error_log="/var/log/${RC_SVCNAME}.err"
 
 start() {
-	exec "${command}" ${command_args} 2>"${error_log}" 1>"${output_log}"
+	declare -a "args=(${command_args})"
+	exec "${command}" "${args[@]}" 2>"${error_log}" 1>"${output_log}"
 }
 
 start

@@ -14,7 +14,8 @@ start_pre() {
 }
 
 start() {
-	exec "${command}" ${command_args}
+	declare -a "args=(${command_args})"
+	exec "${command}" "${args[@]}"
 }
 
 if start_pre ; then

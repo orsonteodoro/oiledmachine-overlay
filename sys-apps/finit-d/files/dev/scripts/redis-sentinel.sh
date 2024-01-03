@@ -20,7 +20,8 @@ command_args="${REDIS_SENTINEL_CONF}"
 pidfile="/run/${RC_SVCNAME}.pid"
 
 start() {
-	exec "${command}" ${command_args}
+	declare -a "args=(${command_args})"
+	exec "${command}" "${args[@]}"
 }
 
 start
