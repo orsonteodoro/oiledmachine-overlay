@@ -56,8 +56,8 @@
       Add support for cups-browsed
     </flag>
     <flag name="dash">
-      Change the shebang for Dash (Almquist shell)
-      [For people that prefer sh (bash) as the default but DASH for init.]
+      Change the shebang for DASH (Almquist shell)
+      [For people that prefer sh (Bash) as the systemwide default but DASH for init.]
     </flag>
     <flag name="dhcpcd">
       Add support for dhcpcd
