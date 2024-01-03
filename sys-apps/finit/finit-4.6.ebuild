@@ -135,6 +135,10 @@ src_prepare() {
 		|| die
 	if [ -n "$FINIT_SHELL" ] ; then
 ewarn "Using $FINIT_SHELL as the default init shell.  (EXPERIMENTAL)"
+		if [ ! -e "$FINIT_SHELL" ] ; then
+eerror "FINIT_SHELL=$FINIT_SHELL not found."
+			die
+		fi
 		sed -i -e "s|__DISTRO_BSHELL__|$FINIT_SHELL|g" "src/finit.h" || die
 	elif use dash ; then
 ewarn "Using /bin/dash as the default init shell.  (EXPERIMENTAL)"
@@ -243,6 +247,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  passed (4.6, 20231230)
 # build - passed
+# dash - passed
 # urandom save/restore service - passes after it saves seed
 # NetworkManager - passed
 # getty - passed
