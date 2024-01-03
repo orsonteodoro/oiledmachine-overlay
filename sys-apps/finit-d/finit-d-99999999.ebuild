@@ -181,6 +181,9 @@ src_install() {
 			dosym \
 				"/etc/finit.d/available/${svc}.conf" \
 				"/etc/finit.d/enabled/${svc}.conf"
+			if [[ -e "${WORKDIR}/scripts/${svc}-pre.sh" ]] ; then
+				install_script "${svc}-pre.sh"
+			fi
 			if [[ -e "${WORKDIR}/scripts/${svc}.sh" ]] ; then
 				install_script "${svc}.sh"
 			fi
@@ -211,7 +214,6 @@ src_install() {
 		install_script "apache-virtualhosts.sh"
 	fi
 	if use inspircd ; then
-		install_script "inspircd-rehash.sh"
 		install_script "inspircd-version.sh"
 	fi
 	if use iptables ; then
@@ -284,14 +286,24 @@ ewarn
 # containerd - passed
 # coolercontrol - passed
 # cupsd - passed
-# distccd - passed
+# distccd - failed
+# docker - passed
 # elogind - passed
 # fancontrol - passed
 # getty - passed
+# icecast - passed
+# inspircd - failed
+# iperf3 - passed
 # lm_sensors - passed
 # mysql - fail
 # NetworkManager - passed
+# nginx - fail
 # ntpd - passed
 # redis - fail
+# rtkit - passed
 # seatd - passed
+# spacenavd - failed
+# squid - failed
+# twistd - failed
+# varnishd - failed
 # znc - passed

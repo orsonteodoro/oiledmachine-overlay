@@ -12,17 +12,8 @@ pidfile="/var/run/${RC_SVCNAME}.pid"
 output_log="/var/log/${RC_SVCNAME}.out"
 error_log="/var/log/${RC_SVCNAME}.err"
 
-start_pre() {
-	checkpath "f" "ergo:ergo" "0640" "/var/log/ergo.out" &
-	checkpath "f" "ergo:ergo" "0640" "/var/log/ergo.err"
-}
-
 start() {
-	"${command}" ${command_args} 2>"${error_log}" 1>"${output_log}" &
-	pid="$!"
-	echo "${pid}" > "${pidfile}"
-	kill -SIGCONT ${pid}
+	exec "${command}" ${command_args} 2>"${error_log}" 1>"${output_log}"
 }
 
-start_pre
 start

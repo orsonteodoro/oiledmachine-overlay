@@ -6,10 +6,7 @@ source /etc/conf.d/pppoe-server
 pidfile="/run/pppoe-server.pid"
 
 start() {
-	pppoe-server -I ${PPPOE_INTERFACE:-eth0} -C ${AC_NAME:-$(hostname)} -S ${SERVICE_NAME:-default} -N ${MAX_SESSIONS:-64} -x ${MAX_SESESSION_PER_MAC:-1} -L ${LOCAL_IP:-10.0.0.1.} -k -F ${OTHER_OPTIONS} &
-	pid="$!"
-	echo "${pid}" > "${pidfile}"
-	kill -SIGCONT ${pid}
+	exec pppoe-server -I ${PPPOE_INTERFACE:-eth0} -C ${AC_NAME:-$(hostname)} -S ${SERVICE_NAME:-default} -N ${MAX_SESSIONS:-64} -x ${MAX_SESESSION_PER_MAC:-1} -L ${LOCAL_IP:-10.0.0.1.} -k -F ${OTHER_OPTIONS}
 }
 
 start

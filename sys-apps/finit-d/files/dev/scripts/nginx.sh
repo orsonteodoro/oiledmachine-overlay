@@ -14,10 +14,7 @@ start_pre() {
 }
 
 start() {
-	"${command}" ${command_args} &
-	pid="$!"
-	echo "${pid}" > "${pidfile}"
-	kill -SIGCONT ${pid}
+	exec "${command}" ${command_args}
 }
 
 if start_pre ; then
