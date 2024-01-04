@@ -40,7 +40,7 @@ dm_crypt_execute() {
 	*=*)
 		i=0
 		while [ ${i} -lt ${wait} ]; do
-			if source_dev="$(blkid -l -t "${source}" -o device)"; then
+			if source_dev=$(blkid -l -t "${source}" -o "device") ; then
 				source="${source_dev}"
 				break
 			fi
@@ -97,7 +97,7 @@ dm_crypt_execute() {
 	# open   <device> <name>      # <device> is $source
 	# create <name>   <device>    # <name>   is $target
 	local arg1="create" arg2="${target}" arg3="${source}"
-	if cryptsetup ${header_opt} isLuks ${source} 2>/dev/null ; then
+	if cryptsetup ${header_opt} isLuks "${source}" 2>/dev/null ; then
 		arg1="open"
 		arg2="${source}"
 		arg3="${target}"
@@ -107,7 +107,7 @@ dm_crypt_execute() {
 	#	${target} is active:
 	# Newer versions report:
 	#	${target} is active[ and is in use.]
-	if cryptsetup ${header_opt} status ${target} | grep -E -q ' is active' ; then
+	if cryptsetup ${header_opt} status "${target}" | grep -E -q ' is active' ; then
 		einfo "dm-crypt mapping ${target} is already configured"
 		return
 	fi
@@ -206,7 +206,7 @@ dm_crypt_execute() {
 			while [ ${i} -lt ${dmcrypt_retries} ] ; do
 				# paranoid, don't store key in a variable, pipe it so it stays very little in ram unprotected.
 				# save stdin stdout stderr "values"
-				timeout ${dmcrypt_max_timeout} gpg ${gpg_options} ${key} 2>/dev/null | \
+				timeout ${dmcrypt_max_timeout} gpg ${gpg_options} "${key}" 2>/dev/null | \
 					cryptsetup ${header_opt} --key-file - ${options} ${arg1} ${arg2} ${arg3}
 				ret=$?
 				# The timeout command exits 124 when it times out.
@@ -222,7 +222,7 @@ dm_crypt_execute() {
 		fi
 	else
 		if [ "${mode}" = "reg" ] ; then
-			cryptsetup ${header_opt} ${options} -d ${key} ${arg1} ${arg2} ${arg3}
+			cryptsetup ${header_opt} ${options} -d "${key}" ${arg1} ${arg2} ${arg3}
 			ret=$?
 			eend ${ret} "failure running cryptsetup"
 		else
@@ -232,8 +232,8 @@ dm_crypt_execute() {
 		fi
 	fi
 	if [ -d "${mntrem}" ] ; then
-		umount -n ${mntrem} 2>/dev/null >/dev/null
-		rmdir ${mntrem} 2>/dev/null >/dev/null
+		umount -n "${mntrem}" 2>/dev/null >/dev/null
+		rmdir "${mntrem}" 2>/dev/null >/dev/null
 	fi
 	splash svc_input_end "${SVCNAME}" >/dev/null 2>&1
 

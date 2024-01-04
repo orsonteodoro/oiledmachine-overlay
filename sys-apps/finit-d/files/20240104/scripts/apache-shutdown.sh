@@ -7,12 +7,12 @@
 
 stop() {
 	RC_CMD="${1}" # finit-d addition
-	if [ "${RC_CMD}" = "restart" ]; then
+	if [ "${RC_CMD}" = "restart" ] ; then
 		checkconfig || return 1
 	fi
 
 	PID=$(cat "${PIDFILE}" 2>/dev/null)
-	if [ -z "${PID}" ]; then
+	if [ -z "${PID}" ] ; then
 		einfo "${SVCNAME} not running (no pid file)"
 		return 0
 	fi
@@ -22,7 +22,7 @@ stop() {
 
 	local i=0 retval=0
 	while ( test -f "${PIDFILE}" || pgrep -P ${PID} apache2 >/dev/null ) \
-		&& [ $i -lt ${TIMEOUT} ]; do
+		&& [ $i -lt ${TIMEOUT} ] ; do
 		sleep 1 && i=$(expr $i + 1)
 	done
 	[ -e "${PIDFILE}" ] && retval=1

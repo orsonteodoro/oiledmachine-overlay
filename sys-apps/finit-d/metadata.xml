@@ -22,12 +22,12 @@
     net/<IFNAME>/up         ; requires sys-apps/finit[netlink]
     net/<IFNAME>/running    ; requires sys-apps/finit[netlink]
     hook/net/up             ; requires sys-apps/finit[hook-scripts]
-    
 
   Examples:
 
     FINIT_COND_NETWORK="net/lo/running"
     FINIT_COND_NETWORK="net/wlan0/running"
+    FINIT_COND_LOGGER="rsyslogd"
 
   -->
   <use>

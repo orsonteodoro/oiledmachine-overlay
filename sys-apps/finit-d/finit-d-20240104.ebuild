@@ -95,7 +95,6 @@ IUSE+="
 	dash
 	hook-scripts
 	netlink
-	r3
 "
 NEEDS_NETWORK="
 	apache
@@ -111,7 +110,7 @@ NEEDS_NETWORK="
 	varnishd
 "
 gen_required_use_network() {
-	local pkg
+	local
 	for pkg in ${NEEDS_NETWORK[@]} ; do
 		echo "
 			${pkg}? (
@@ -132,6 +131,10 @@ REQUIRED_USE="
 	?? (
 		hook-scripts
 		netlink
+	)
+	?? (
+		rsyslogd
+		syslogd
 	)
 	docker? (
 		containerd
@@ -214,10 +217,21 @@ einfo "Using net/route/default for network up for ${path}.  This conditon is bug
 	IFS=$' \t\n'
 }
 
+edit_sql() {
+	use mysql || return
+	if ! has_version "dev-db/mysql" ; then
+		sed -i -e "/__MYSQL__/d" confs/mysql.conf || die
+	fi
+	if ! has_version "dev-db/mariadb" ; then
+		sed -i -e "/__MARIADB__/d" confs/mysql.conf || die
+	fi
+}
+
 src_prepare() {
 	default
 	edit_dash
 	edit_cond_network
+	edit_sql
 }
 
 install_script() {
@@ -316,6 +330,31 @@ ewarn "Missing /etc/fancontrol which can list fancontrol in initctl as crashed."
 ewarn "Use pwmconfig to fix this."
 ewarn
 	fi
+	if use mysql && has_version "dev-db/mariadb[-server]" ; then
+ewarn
+ewarn "dev-db/mariadb[server] is required for init script."
+ewarn
+	fi
+	if use mysql && has_version "dev-db/mysql[-server]" ; then
+ewarn
+ewarn "dev-db/mysql[server] is required for init script."
+ewarn
+	fi
+	if use mysql && [ ! -e "${EROOT}/var/lib/mysql" ] ; then
+ewarn
+ewarn "Missing /var/lib/mysql folder"
+ewarn
+ewarn "You need to"
+ewarn
+ewarn "  \`emerge dev-db/mariadb --config\`"
+ewarn
+ewarn "or"
+ewarn
+ewarn "  \`emerge dev-db/mysql --config\`"
+ewarn
+ewarn "or you may get a crash in initctl."
+ewarn
+	fi
 	if use nginx ; then
 		if has_version "www-servers/nginx[-http]" ; then
 ewarn
@@ -378,7 +417,7 @@ ewarn
 # iperf3 - passed
 # laptop_mode - passed
 # lm_sensors - passed
-# mysql - fail
+# mysql - passed
 # NetworkManager - passed
 # nginx - passed with security issue
 # ntpd - passed

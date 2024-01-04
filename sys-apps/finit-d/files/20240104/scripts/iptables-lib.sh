@@ -12,23 +12,23 @@ SVCNAME=${SVCNAME:-"iptables"}
 iptables_lock_wait_time=${IPTABLES_LOCK_WAIT_TIME:-"60"}
 iptables_lock_wait_interval=${IPTABLES_LOCK_WAIT_INTERVAL:-"1000"}
 
-iptables_name=${SVCNAME}
-case ${iptables_name} in
+iptables_name="${SVCNAME}"
+case "${iptables_name}" in
 	iptables|ip6tables) ;;
 	*) iptables_name="iptables" ;;
 esac
 
 iptables_bin="/sbin/${iptables_name}"
-case ${iptables_name} in
+case "${iptables_name}" in
 	iptables)  iptables_proc="/proc/net/ip_tables_names"
-	           iptables_save=${IPTABLES_SAVE};;
+	           iptables_save="${IPTABLES_SAVE}";;
 	ip6tables) iptables_proc="/proc/net/ip6_tables_names"
-	           iptables_save=${IP6TABLES_SAVE};;
+	           iptables_save="${IP6TABLES_SAVE}";;
 esac
 
 set_table_policy() {
 	local has_errors=0 chains table="$1" policy="$2"
-	case ${table} in
+	case "${table}" in
 		nat)    chains="PREROUTING POSTROUTING OUTPUT";;
 		mangle) chains="PREROUTING INPUT FORWARD OUTPUT POSTROUTING";;
 		filter) chains="INPUT FORWARD OUTPUT";;
@@ -37,7 +37,7 @@ set_table_policy() {
 
 	local chain
 	for chain in ${chains} ; do
-		"${iptables_bin}" --wait ${iptables_lock_wait_time} -t ${table} -P ${chain} ${policy}
+		"${iptables_bin}" --wait ${iptables_lock_wait_time} -t "${table}" -P "${chain}" "${policy}"
 		[ $? -ne 0 ] && has_errors=1
 	done
 

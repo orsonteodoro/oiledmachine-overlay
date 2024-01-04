@@ -7,7 +7,7 @@
 
 stop() {
 	RC_CMD="${1}" # finit-d addition
-	if [ ${RC_CMD} = "restart" ] ; then
+	if [ "${RC_CMD}" = "restart" ] ; then
 		checkconfig "${RC_CMD}" || return 1
 	fi
 

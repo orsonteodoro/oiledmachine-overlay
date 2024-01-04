@@ -9,11 +9,11 @@ stop() {
 	local line print_header
 
 	# Break down all mappings
-	print_header=true
+	print_header="true"
 	grep -E "^(target|swap)=" "${conf_file}" | \
 	while read line ; do
-		${print_header} && einfo "Removing dm-crypt mappings"
-		print_header=false
+		"${print_header}" && einfo "Removing dm-crypt mappings"
+		print_header="false"
 
 		target= swap=
 		eval ${line}
@@ -30,11 +30,11 @@ stop() {
 	done
 
 	# Break down loop devices
-	print_header=true
+	print_header="true"
 	grep '^source=./dev/loop' "${conf_file}" | \
 	while read line ; do
-		${print_header} && einfo "Detaching dm-crypt loop devices"
-		print_header=false
+		"${print_header}" && einfo "Detaching dm-crypt loop devices"
+		print_header="false"
 
 		source=
 		eval ${line}

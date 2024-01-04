@@ -16,8 +16,8 @@ start() {
 	fi
 
 	ebegin "Starting ${SVCNAME}"
-	# Use start stop daemon to apply system limits #347301 
-	${APACHE2} ${APACHE2_OPTS} -k start
+	# Use start stop daemon to apply system limits #347301
+	"${APACHE2}" ${APACHE2_OPTS} -k start
 
 	local i=0 retval=1
 	while [ $i -lt ${TIMEOUT} ] ; do
