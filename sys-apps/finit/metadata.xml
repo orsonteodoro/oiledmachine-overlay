@@ -84,6 +84,8 @@
     <flag name="netlink">
       Basic netlink plugin for IFUP/IFDN and GW events.  It can be replaced with
       externally built plugin that links with libnl or similar.
+
+      [Do not use for wireless.  Use hook-scripts USE flag instead.]
     </flag>
     <flag name="rtc">
       Save and restore RTC using hwclock
