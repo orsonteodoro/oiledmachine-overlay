@@ -6,7 +6,7 @@
 . /etc/finit.d/scripts/varnishncsa-lib.sh
 
 start() {
-	set -- -D -P "${VARNISHNCSA_PID}" ${VARNISHNCSA_OPTS}
+	set -- -P "${VARNISHNCSA_PID}" ${VARNISHNCSA_OPTS}
 	exec "${command}" "$@"
 }
 

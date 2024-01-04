@@ -308,7 +308,7 @@ src_install() {
 }
 
 check_daemon_configs() {
-	if use apache && ! grep "ServerName localhost" "${EROOT}/etc/apache2/httpd.conf" ; then
+	if use apache && ! grep "ServerName localhost" "${EROOT}/etc/apache2/httpd.conf" >/dev/null ; then
 ewarn
 ewarn "Apache needs \`ServerName localhost\` in /etc/apache2/httpd.conf for"
 ewarn "localhost testers or developers."
@@ -399,13 +399,20 @@ ewarn
 		fi
 		if has_version "www-servers/nginx[-nginx_modules_http_gzip]" ; then
 ewarn
-ewarn "www-servers/nginx[-nginx_modules_http_gzip] may list nginx as crashed in initctl."
+ewarn "www-servers/nginx[-nginx_modules_http_gzip] may list nginx as crashed in"
+ewarn "initctl."
 ewarn
 		fi
 	fi
 	if use svnserve && [ ! -e "${EROOT}/var/svn" ] ; then
 ewarn
 ewarn "Missing /var/svn which can list svnserve in initctl as waiting."
+ewarn
+	fi
+	if use varnishd && [ ! -e "${EROOT}/etc/varnish/default.vcl" ] ; then
+ewarn
+ewarn "Missing /etc/varnish/default.vcl which can list varnish in initctl as"
+ewarn "waiting."
 ewarn
 	fi
 	if use znc && [ ! -e "${EROOT}/var/lib/znc/configs/znc.conf" ] ; then
@@ -425,6 +432,12 @@ ewarn
 ewarn "You must use etc-update for changes to take effect."
 ewarn "Save your work before running \`initctl reload\`."
 ewarn
+	if use netlink ; then
+ewarn
+ewarn "You may need to disconnect/reconnect not by automated means in order to"
+ewarn "trigger network up event."
+ewarn
+	fi
 	check_daemon_configs
 }
 
@@ -434,6 +447,7 @@ ewarn
 # actkbd - passed
 # apache - passed
 # avahi-daemon - passed
+# avahi-dnsconfd - failed
 # bitlbee - passed
 # bluetoothd - fail (needs kernel config)
 # containerd - passed
@@ -465,9 +479,9 @@ ewarn
 # svnserve - failed
 # thermald - passed (on test mode ; hardware not supported on dev machine)
 # twistd - failed (upstream broken)
-# varnishd - failed
-# varnishlog - failed
-# varnishncsa - failed
+# varnishd - passed
+# varnishlog - passed
+# varnishncsa - passed
 # znc - passed
 
 # Daemon permissions audit-review for required (99999999, 20230103)

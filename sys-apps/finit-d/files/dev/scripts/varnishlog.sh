@@ -6,7 +6,7 @@
 . /etc/finit.d/scripts/varnishlog-lib.sh
 
 start() {
-	set -- -D -P "${VARNISHLOG_PID}" ${VARNISHLOG_OPTS}
+	set -- -P "${VARNISHLOG_PID}" ${VARNISHLOG_OPTS}
 	exec "${command}" "$@"
 }
 

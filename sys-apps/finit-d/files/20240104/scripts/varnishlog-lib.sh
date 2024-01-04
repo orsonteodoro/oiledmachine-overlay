@@ -11,7 +11,6 @@ SVCNAME=${SVCNAME:-"varnishlog"}
 VARNISHLOG_PID=${VARNISHLOG_PID:-"/run/${SVCNAME}.pid"}
 
 command=${VARNISHLOG:-"/usr/bin/varnishlog"}
-command_args="-D -P ${VARNISHLOG_PID} ${VARNISHLOG_OPTS}"
 pidfile="${VARNISHLOG_PID}"
 
 rotate() {

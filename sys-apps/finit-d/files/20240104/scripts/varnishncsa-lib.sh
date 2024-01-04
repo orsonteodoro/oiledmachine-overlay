@@ -11,7 +11,6 @@ SVCNAME=${SVCNAME:-"varnishncsa"}
 VARNISHNCSA_PID=${VARNISHNCSA_PID:-"/run/${SVCNAME}.pid"}
 
 command=${VARNISHNCSA:-"/usr/bin/varnishncsa"}
-command_args="-D -P ${VARNISHNCSA_PID} ${VARNISHNCSA_OPTS}"
 pidfile="${VARNISHNCSA_PID}"
 
 rotate() {
