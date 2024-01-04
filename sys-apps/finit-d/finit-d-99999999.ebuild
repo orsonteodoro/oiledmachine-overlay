@@ -467,7 +467,7 @@ ewarn
 # avahi-daemon - passed
 # avahi-dnsconfd - failed
 # bitlbee - passed
-# bluetoothd - fail (needs kernel config)
+# bluetoothd/bluez - passed
 # containerd - passed
 # coolercontrol - passed
 # cupsd - passed
@@ -483,6 +483,7 @@ ewarn
 # icecast - passed
 # inspircd - failed
 # iperf3 - passed
+# iwd - passed
 # laptop_mode - passed
 # lm_sensors - passed
 # mysql - passed
@@ -522,6 +523,7 @@ ewarn
 # Daemon permissions audit-review for not required (99999999, 20230103)
 # acpid - not required ; show root:root
 # actkbd - not required ; shows root:root
+# bluetoothd - not required ; shows root:root
 # containerd - not required ; shows root:root
 # coolercontrol - required? ; shows root:root
 # coolercontrol-liqctld - required? ; shows root:root
@@ -531,6 +533,7 @@ ewarn
 # elogind - not required ; shows root:root
 # fancontrol - not required ; shows root:root
 # iperf3 - not required ; shows root:root
+# iwd - not required ; shows root:root
 # networkmanager - not required ; shows root:root
 # ntpd - not required ; shows root:root ; acct-user/openntpd has it
 # seatd - not required ; shows root:root
