@@ -129,6 +129,12 @@ ewarn "  sys-apps/busybox[mdev]"
 ewarn "  sys-apps/systemd-utils[udev]"
 ewarn
 	fi
+	if use netlink ; then
+ewarn
+ewarn "The netlink USE flag is not recommended for wireless, instead use"
+ewarn "the hook-scripts USE flag."
+ewarn
+	fi
 }
 
 src_prepare() {

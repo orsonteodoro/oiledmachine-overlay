@@ -173,6 +173,17 @@ einfo "This is the dev version."
 	else
 einfo "This is the live snapshot version."
 	fi
+	if use netlink ; then
+ewarn
+ewarn "The netlink USE flag is not recommended for wireless, instead use"
+ewarn "the hook-scripts USE flag with the one of the following below."
+ewarn
+ewarn "FINIT_COND_NETWORK=\"hook/net/up\""
+ewarn "FINIT_COND_NETWORK=\"net/<IFNAME>/up\""
+ewarn "FINIT_COND_NETWORK=\"net/wlan0/up\""
+ewarn "FINIT_COND_NETWORK=\"net/eth0/up\""
+ewarn
+	fi
 }
 
 src_unpack() {
