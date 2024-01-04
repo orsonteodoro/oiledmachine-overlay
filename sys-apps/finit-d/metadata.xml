@@ -163,8 +163,6 @@
     </flag>
     <flag name="netlink">
       Prefer net/route/default for the network up event.
-
-      [Do not use for wireless.  Use hook-scripts USE flag instead.]
     </flag>
     <flag name="networkmanager">
       Add support for NetworkManager
