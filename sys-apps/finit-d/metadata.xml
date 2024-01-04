@@ -6,6 +6,30 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Build time environment variables:
+
+  FINIT_COND_NETWORK - Use a network expression as the event to trigger network
+  is up.
+
+  Valid values:
+
+    net/route/default       ; requires sys-apps/finit[netlink]
+    net/<IFNAME>/exist      ; requires sys-apps/finit[netlink]
+    net/<IFNAME>/up         ; requires sys-apps/finit[netlink]
+    net/<IFNAME>/running    ; requires sys-apps/finit[netlink]
+    hook/net/up             ; requires sys-apps/finit[hook-scripts]
+    
+
+  Examples:
+
+    FINIT_COND_NETWORK="net/lo/running"
+    FINIT_COND_NETWORK="net/wlan0/running"
+
+  -->
   <use>
     <flag name="acpid">
       Add support for acpid
@@ -89,6 +113,9 @@
     <flag name="hdparm">
       Add support hdparm
     </flag>
+    <flag name="hook-scripts">
+      Prefer hook/net/up for the network up event.
+    </flag>
     <flag name="hostname">
       Add support for changing hostname
     </flag>
@@ -133,6 +160,9 @@
     </flag>
     <flag name="mysql">
       Add support for MySQL or MariaDB
+    </flag>
+    <flag name="netlink">
+      Prefer net/route/default for the network up event
     </flag>
     <flag name="networkmanager">
       Add support for NetworkManager

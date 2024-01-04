@@ -91,11 +91,47 @@ SERVICES=(
 	znc
 )
 IUSE+="
-	dash
 	${SERVICES[@]}
+	dash
+	hook-scripts
+	netlink
+"
+NEEDS_NETWORK="
+	apache
+	bitcoind
+	coolercontrol
+	distccd
+	icecast
+	nginx
+	ntpd
+	sntpd
+	svnserve
+	twistd
+	varnishd
+"
+gen_required_use_network() {
+	local
+	for pkg in ${NEEDS_NETWORK[@]} ; do
+		echo "
+			${pkg}? (
+				^^ (
+					hook-scripts
+					netlink
+				)
+			)
+		"
+	done
+}
+REQUIRED_USE_NETWORK="
+	$(gen_required_use_network)
 "
 REQUIRED_USE="
+	${REQUIRED_USE_NETWORK}
 	getty
+	?? (
+		hook-scripts
+		netlink
+	)
 	docker? (
 		containerd
 	)
@@ -109,47 +145,18 @@ RDEPEND="
 	)
 "
 PDEPEND="
-	apache? (
-		sys-apps/finit[netlink]
-	)
-	bitcoind? (
-		sys-apps/finit[netlink]
-	)
-	coolercontrol? (
-		sys-apps/finit[netlink]
-	)
-	distccd? (
-		sys-apps/finit[netlink]
-	)
-	icecast? (
-		sys-apps/finit[netlink]
-	)
-	nginx? (
-		sys-apps/finit[netlink]
-	)
+	sys-apps/finit[hook-scripts?,netlink?]
 	iwd? (
 		sys-apps/finit[dbus]
 	)
 	networkmanager? (
 		sys-apps/finit[dbus]
 	)
-	ntpd? (
-		sys-apps/finit[netlink]
-	)
 	rtkit? (
 		sys-apps/finit[dbus]
 	)
-	sntpd? (
-		sys-apps/finit[netlink]
-	)
-	svnserve? (
-		sys-apps/finit[netlink]
-	)
 	thermald? (
 		sys-apps/finit[dbus]
-	)
-	twistd? (
-		sys-apps/finit[netlink]
 	)
 	varnishd? (
 		sys-apps/finit[netlink]
@@ -173,8 +180,7 @@ src_unpack() {
 		|| die
 }
 
-src_prepare() {
-	default
+edit_dash() {
 	IFS=$'\n'
 	local L=(
 		$(grep -r -l '#!/bin/sh' ./)
@@ -187,6 +193,30 @@ einfo "Editing ${path} for DASH"
 		fi
 	done
 	IFS=$' \t\n'
+}
+
+edit_cond_network() {
+	IFS=$'\n'
+	local L=(
+		$(grep -r -l '__FINIT_COND_NETWORK__' ./)
+	)
+	local path
+	for path in ${L[@]} ; do
+		if [ -n "${FINIT_COND_NETWORK}" ] ; then
+einfo "Using ${FINIT_COND_NETWORK} for network up for ${path}."
+			sed -i -e "s|__FINIT_COND_NETWORK__|${FINIT_COND_NETWORK}|g" "${path}" || die
+		else
+einfo "Using net/route/default for network up for ${path}.  This conditon is bugged.  See metadata.xml for details on FINIT_COND_NETWORK."
+			sed -i -e "s|__FINIT_COND_NETWORK__|net/route/default|g" "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+src_prepare() {
+	default
+	edit_dash
+	edit_cond_network
 }
 
 install_script() {

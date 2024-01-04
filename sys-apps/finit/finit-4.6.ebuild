@@ -48,6 +48,10 @@ REQUIRED_USE="
 		mdev
 		udev
 	)
+	?? (
+		hook-scripts
+		netlink
+	)
 "
 INIT_SYSTEMS_DEPENDS="
 	!sys-apps/epoch
@@ -152,7 +156,7 @@ einfo "Using /bin/sh as the default init shell."
 src_configure() {
 	eautoreconf
 
-	replace-flags '-O*' '-O2'
+	replace-flags '-O*' '-O3'
 
 	local myconf=(
 		$(use_enable alsa alsa-utils-plugin)
