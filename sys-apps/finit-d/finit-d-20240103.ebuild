@@ -380,7 +380,7 @@ ewarn
 # lm_sensors - passed
 # mysql - fail
 # NetworkManager - passed
-# nginx - fail
+# nginx - passed with security issue
 # ntpd - passed
 # redis - fail
 # rtkit - passed
@@ -404,7 +404,7 @@ ewarn
 # git - pass ; needs nobody:nobody
 # icecast - passed
 # inspircd - tba ; needs inspircd:?
-# nginx - fail ; needs nginx:nginx for all process ; tested for both direct exe and through script
+# nginx - fail ; needs nginx:nginx for all process ; sets parent process to root:root and child with nginx:nginx ; tested for both direct exe and through script
 # redis - tba ; needs redis:redis
 # redis-sentinel - tba ; needs redis:redis
 # rtkit - passed
