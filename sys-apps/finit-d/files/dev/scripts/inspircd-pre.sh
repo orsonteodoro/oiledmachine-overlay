@@ -4,9 +4,8 @@
 
 . /etc/finit.d/scripts/inspircd-lib.sh
 
-start() {
-	set -- ${INSPIRCD_OPTS} --config "${INSPIRCD_CONFIGFILE}"
-	exec "${command}" $@
+start_pre() {
+	checkpath "d" "inspircd:inspircd" "0750" "/run/inspircd/"
 }
 
-start
+start_pre

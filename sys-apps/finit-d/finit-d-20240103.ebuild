@@ -85,7 +85,7 @@ SERVICES=(
 	uuidd
 	varnishd
 	varnishlog
-	varnishncsd
+	varnishncsa
 	watchdog
 	xdm
 	znc
@@ -276,6 +276,11 @@ ewarn "www-servers/nginx[-nginx_modules_http_gzip] may list nginx as crashed in 
 ewarn
 		fi
 	fi
+	if use svnserve && [ ! -e "${EROOT}/var/svn" ] ; then
+ewarn
+ewarn "Missing /var/svn which can list svnserve in initctl as waiting."
+ewarn
+	fi
 	if use znc && [ ! -e "${EROOT}/var/lib/znc/configs/znc.conf" ] ; then
 ewarn
 ewarn "Missing /var/lib/znc/configs/znc.conf which can list znc in initctl as"
@@ -305,6 +310,7 @@ ewarn
 # bluetoothd - fail (needs kernel config)
 # containerd - passed
 # coolercontrol - passed
+# cpupower - passed
 # cupsd - passed
 # distccd - passed
 # docker - passed

@@ -85,7 +85,7 @@ SERVICES=(
 	uuidd
 	varnishd
 	varnishlog
-	varnishncsd
+	varnishncsa
 	watchdog
 	xdm
 	znc
@@ -297,6 +297,11 @@ ewarn "www-servers/nginx[-nginx_modules_http_gzip] may list nginx as crashed in 
 ewarn
 		fi
 	fi
+	if use svnserve && [ ! -e "${EROOT}/var/svn" ] ; then
+ewarn
+ewarn "Missing /var/svn which can list svnserve in initctl as waiting."
+ewarn
+	fi
 	if use znc && [ ! -e "${EROOT}/var/lib/znc/configs/znc.conf" ] ; then
 ewarn
 ewarn "Missing /var/lib/znc/configs/znc.conf which can list znc in initctl as"
@@ -327,14 +332,19 @@ ewarn
 # containerd - passed
 # coolercontrol - passed
 # cupsd - passed
+# cpupower - passed
+# dhcpcd - passed
 # distccd - passed
+# dmeventd - passed
 # docker - passed
 # elogind - passed
 # fancontrol - passed
 # getty - passed
+# git - passed
 # icecast - passed
 # inspircd - failed
 # iperf3 - passed
+# laptop_mode - failed
 # lm_sensors - passed
 # mysql - fail
 # NetworkManager - passed
@@ -345,8 +355,12 @@ ewarn
 # seatd - passed
 # spacenavd - passed
 # squid - passed
+# svnserve - failed
+# thermald - passed (on test mode ; hardware not supported on dev machine)
 # twistd - failed (upstream broken)
 # varnishd - failed
+# varnishlog - failed
+# varnishncsa - failed
 # znc - passed
 
 # Daemon permissions audit-review for required (99999999, 20230103)
@@ -355,9 +369,9 @@ ewarn
 # bitlbee - passed ; needs bitlbee:bitlbee
 # distcc - passed ; needs distcc:?
 # ergo - tba ; needs ergo:ergo
-# git - tba ; needs nobody:nobody
+# git - pass ; needs nobody:nobody
 # icecast - passed
-# inspircd - tba ; needs inspircd:inspircd
+# inspircd - tba ; needs inspircd:?
 # nginx - fail ; needs nginx:nginx for all process ; tested for both direct exe and through script
 # redis - tba ; needs redis:redis
 # redis-sentinel - tba ; needs redis:redis
@@ -372,6 +386,7 @@ ewarn
 # coolercontrol - required? ; shows root:root
 # coolercontrol-liqctld - required? ; shows root:root
 # cupsd - not required ; shows root:root
+# dhcpcd ; shows root:root
 # docker ; shows root:root ; has acct-group/docker but not in openrc init script
 # elogind - not required ; shows root:root
 # fancontrol - not required ; shows root:root

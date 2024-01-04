@@ -203,8 +203,8 @@
     <flag name="varnishlog">
       Add support for varnishlog
     </flag>
-    <flag name="varnishncsd">
-      Add support for varnishncsd
+    <flag name="varnishncsa">
+      Add support for varnishncsa
     </flag>
     <flag name="watchdog">
       Add support for watchdog
