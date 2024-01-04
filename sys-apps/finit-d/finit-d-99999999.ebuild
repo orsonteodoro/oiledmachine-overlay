@@ -362,6 +362,7 @@ ewarn
 # redis - tba ; needs redis:redis
 # redis-sentinel - tba ; needs redis:redis
 # rtkit - passed
+# squid - passed
 # znc - passed ; needs znc:znc
 
 # Daemon permissions audit-review for not required (99999999, 20230103)
