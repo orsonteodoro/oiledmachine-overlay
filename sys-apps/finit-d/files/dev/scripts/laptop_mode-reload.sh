@@ -12,9 +12,9 @@ reload() {
 	fi
 
 	ebegin "Reloading laptop_mode"
-	"/usr/sbin/laptop_mode" stop >/dev/null
+	"/usr/sbin/laptop_mode" "stop" >/dev/null
 	rm -f "/var/run/laptop-mode-tools/"*
-	"/usr/sbin/laptop_mode" auto force >/dev/null
+	"/usr/sbin/laptop_mode" "auto" "force" >/dev/null
 	eend $?
 }
 

@@ -6,7 +6,7 @@
 . /etc/finit.d/scripts/varnishd-lib.sh
 
 stop_pre() {
-	if [ "${RC_CMD}" = "restart" ]; then
+	if [ "${RC_CMD}" = "restart" ] ; then
 		checkconfig || return 1
 	fi
 }

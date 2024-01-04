@@ -36,7 +36,7 @@ configtest() {
 }
 
 checkconfd() {
-	if [ ! -d "${SERVERROOT}" ]; then
+	if [ ! -d "${SERVERROOT}" ] ; then
 		eerror "SERVERROOT does not exist: ${SERVERROOT}"
 		return 1
 	fi
@@ -48,7 +48,7 @@ checkconfig() {
 
 	OUTPUT=$( "${APACHE2}" ${APACHE2_OPTS} -t 2>&1 )
 	ret=$?
-	if [ $ret -ne 0 ]; then
+	if [ $ret -ne 0 ] ; then
 		eerror "${SVCNAME} has detected an error in your setup:"
 		printf "%s\n" "${OUTPUT}"
 	fi

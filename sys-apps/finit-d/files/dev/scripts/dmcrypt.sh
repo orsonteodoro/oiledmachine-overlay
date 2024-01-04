@@ -6,7 +6,7 @@
 . /etc/finit.d/scripts/dmcrypt-lib.sh
 
 start() {
-	local print_header=true cryptfs_status=0
+	local print_header="true" cryptfs_status=0
 	local gpg_options key loop_file target targetline options pre_mount post_mount source swap remdev
 
 	local x
@@ -26,8 +26,8 @@ start() {
 		rc_*) continue ;;
 		esac
 
-		${print_header} && ebegin "Setting up dm-crypt mappings"
-		print_header=false
+		"${print_header}" && ebegin "Setting up dm-crypt mappings"
+		print_header="false"
 
 		# check for the start of a new target/swap
 		case ${targetline} in

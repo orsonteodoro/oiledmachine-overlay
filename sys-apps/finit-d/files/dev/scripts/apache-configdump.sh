@@ -11,7 +11,7 @@ configdump() {
 
 	checkconfd || return 1
 
-	if ! command -v $(set -- ${LYNX}; echo $1) 2>&1 >/dev/null; then
+	if ! command -v $(set -- ${LYNX} ; echo $1) 2>&1 >/dev/null ; then
 		eerror "lynx not found! you need to emerge www-client/lynx"
 	else
 		echo "${APACHE2} started with '${APACHE2_OPTS}'"

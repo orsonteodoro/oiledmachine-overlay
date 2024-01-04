@@ -40,7 +40,7 @@ mark_service_started() {
 }
 
 mark_service_stopped() {
-	initctl stop ${SVCNAME}
+	initctl stop "${SVCNAME}"
 }
 
 bootstrap_galera() {
@@ -59,11 +59,11 @@ bootstrap_galera() {
 checkconfig() {
 	RC_CMD="${1}" # finit-d addition
 	local my_cnf="${MY_CNF:-/etc/${SVCNAME}/my.cnf}"
-	local basedir=$(get_config "${my_cnf}" basedir | tail -n1)
+	local basedir=$(get_config "${my_cnf}" basedir | tail -n 1)
 	local svc_name=$(mysql_svcname)
 	ebegin "Checking mysqld configuration for ${svc_name}"
 
-	if [ ${RC_CMD} = "checkconfig" ] ; then
+	if [ "${RC_CMD}" = "checkconfig" ] ; then
 		# We are calling checkconfig specifically.  Print warnings regardless.
 		"${basedir}/sbin/mysqld" --defaults-file="${my_cnf}" --help --verbose > /dev/null
 	else
@@ -95,7 +95,7 @@ start() {
 	fi
 
 	# Check the config or die
-	if [ ${RC_CMD} != "restart" ] ; then
+	if [ "${RC_CMD}" != "restart" ] ; then
 		checkconfig "${RC_CMD}" || return 1
 	fi
 
@@ -109,13 +109,13 @@ start() {
 		return 1
 	fi
 
-	# tail -n1 is critical as these we only want the last instance of the option
-	local basedir=$(get_config "${MY_CNF}" basedir | tail -n1)
-	local pidfile=$(get_config "${MY_CNF}" 'pid[_-]file' | tail -n1)
-	local socket=$(get_config "${MY_CNF}" socket | tail -n1)
-	local chroot=$(get_config "${MY_CNF}" chroot | tail -n1)
-	local wsrep=$(get_config "${MY_CNF}" 'wsrep[_-]on' | tail -n1 | awk '{print tolower($0)}')
-	local wsrep_new=$(get_config "${MY_CNF}" 'wsrep-new-cluster' | tail -n1)
+	# tail -n 1 is critical as these we only want the last instance of the option
+	local basedir=$(get_config "${MY_CNF}" basedir | tail -n 1)
+	local pidfile=$(get_config "${MY_CNF}" 'pid[_-]file' | tail -n 1)
+	local socket=$(get_config "${MY_CNF}" socket | tail -n 1)
+	local chroot=$(get_config "${MY_CNF}" chroot | tail -n 1)
+	local wsrep=$(get_config "${MY_CNF}" 'wsrep[_-]on' | tail -n 1 | awk '{print tolower($0)}')
+	local wsrep_new=$(get_config "${MY_CNF}" 'wsrep-new-cluster' | tail -n 1)
 
 	if [ -n "${chroot}" ] ; then
 		socket="${chroot}/${socket}"
@@ -127,17 +127,17 @@ start() {
 	[ "${wsrep}" = "1" ] && wsrep="on"
 	if [ "${wsrep}" != "on" ] || [ -n "${wsrep_new}" ] || stringContain 'wsrep-new-cluster' "${MY_ARGS}" ; then
 
-		local datadir=$(get_config "${MY_CNF}" datadir | tail -n1)
+		local datadir=$(get_config "${MY_CNF}" "datadir" | tail -n 1)
 		if [ ! -d "${datadir}" ] ; then
 			eerror "MySQL datadir \`${datadir}' is empty or invalid"
 			eerror "Please check your config file \`${MY_CNF}'"
 			return 1
 		fi
 
-		if [ ! -d "${datadir}"/mysql ] ; then
+		if [ ! -d "${datadir}/mysql" ] ; then
 			# find which package is installed to report an error
-			local EROOT=$(portageq envvar EROOT)
-			local DBPKG_P=$(portageq match "${EROOT}" $(portageq expand_virtual "${EROOT}" virtual/mysql | head -n1))
+			local EROOT=$(portageq envvar "EROOT")
+			local DBPKG_P=$(portageq match "${EROOT}" $(portageq expand_virtual "${EROOT}" "virtual/mysql" | head -n 1))
 			if [ -z "${DBPKG_P}" ] ; then
 				eerror "You don't appear to have a server package installed yet."
 			else

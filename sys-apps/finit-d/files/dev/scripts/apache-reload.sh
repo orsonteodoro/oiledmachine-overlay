@@ -9,11 +9,11 @@
 reload() {
 	checkconfig || return 1
 
-	if [ "${RELOAD_TYPE}" = "restart" ]; then
+	if [ "${RELOAD_TYPE}" = "restart" ] ; then
 		ebegin "Restarting ${SVCNAME}"
 		"${APACHE2}" ${APACHE2_OPTS} -k restart
 		eend $?
-	elif [ "${RELOAD_TYPE}" = "graceful" ]; then
+	elif [ "${RELOAD_TYPE}" = "graceful" ] ; then
 		ebegin "Gracefully restarting ${SVCNAME}"
 		"${APACHE2}" ${APACHE2_OPTS} -k graceful
 		eend $?
