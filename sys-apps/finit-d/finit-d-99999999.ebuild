@@ -317,7 +317,7 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  pass-fail (99999999, 20230102)
+# OILEDMACHINE-OVERLAY-TEST:  pass-fail (99999999, 20230103)
 # acpid - passed
 # actkbd - passed
 # apache - fail
@@ -349,7 +349,7 @@ ewarn
 # varnishd - failed
 # znc - passed
 
-# Daemon permissions audit-review for required
+# Daemon permissions audit-review for required (99999999, 20230103)
 # avahi - passed ; shows avahi:avahi
 # bitcoin - tba ; needs bitcoin:bitcoin
 # bitlbee - passed ; needs bitlbee:bitlbee
@@ -364,7 +364,7 @@ ewarn
 # rtkit - passed
 # znc - passed ; needs znc:znc
 
-# Daemon permissions audit-review for not required
+# Daemon permissions audit-review for not required (99999999, 20230103)
 # acpid - not required ; show root:root
 # actkbd - not required ; shows root:root
 # containerd - not required ; shows root:root
