@@ -20,7 +20,7 @@ pidfile="/run/${RC_SVCNAME}.pid"
 
 start() {
 	set -- "${REDIS_SENTINEL_CONF}"
-	exec "${command}" $@
+	exec "${command}" "$@"
 }
 
 start

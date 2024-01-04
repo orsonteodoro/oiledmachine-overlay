@@ -4,12 +4,12 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-power/cpupower
 # =sys-power/cpupower-5.18::gentoo
 
-source /etc/conf.d/cpupower
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/cpupower
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"cpupower"}
 
-CPUFREQ_SYSFS=/sys/devices/system/cpu/cpufreq
+CPUFREQ_SYSFS="/sys/devices/system/cpu/cpufreq"
 
 change() {
 	local c ret=0 opts="$1"
@@ -19,10 +19,10 @@ change() {
 			: $(( ret += $? ))
 		eend ${ret}
 
-		if [ -d ${CPUFREQ_SYSFS} ] && [ -n "${SYSFS_EXTRA}" ] ; then
+		if [ -d "${CPUFREQ_SYSFS}" ] && [ -n "${SYSFS_EXTRA}" ] ; then
 			c=1
 			einfo "Setting extra options: ${SYSFS_EXTRA}"
-			if cd ${CPUFREQ_SYSFS} ; then
+			if cd "${CPUFREQ_SYSFS}" ; then
 				local o v
 				for o in ${SYSFS_EXTRA} ; do
 					v=${o#*=}

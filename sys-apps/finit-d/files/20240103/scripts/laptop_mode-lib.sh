@@ -4,12 +4,12 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/app-laptop/laptop-mode-tools
 # =app-laptop/laptop-mode-tools-1.74::gentoo
 
-source /etc/finit.d/scripts/lib.sh
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"laptop_mode"}
 
 checkconfig() {
-	if [ ! -f /proc/sys/vm/laptop_mode ] ; then
+	if [ ! -f "/proc/sys/vm/laptop_mode" ] ; then
 		eerror "Kernel does not support laptop_mode"
 		return 1
 	fi

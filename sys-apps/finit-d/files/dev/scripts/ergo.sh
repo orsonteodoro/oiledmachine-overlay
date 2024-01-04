@@ -13,7 +13,7 @@ error_log="/var/log/${RC_SVCNAME}.err"
 
 start() {
 	set -- run --conf ${ERGO_CONFIGFILE:-"/etc/ergo/ircd.yaml"}
-	exec "${command}" $@ 2>"${error_log}" 1>"${output_log}"
+	exec "${command}" "$@" 2>"${error_log}" 1>"${output_log}"
 }
 
 start

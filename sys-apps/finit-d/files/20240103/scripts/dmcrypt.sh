@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-fs/cryptsetup
 
-source /etc/finit.d/scripts/dmcrypt-lib.sh
+. /etc/finit.d/scripts/dmcrypt-lib.sh
 
 start() {
 	local print_header=true cryptfs_status=0
@@ -58,7 +58,7 @@ start() {
 
 		# Queue this setting for the next call to dm_crypt_execute
 		eval "${targetline}"
-	done 3< ${conf_file}
+	done 3< "${conf_file}"
 
 	# If we have a target queued up, then execute it
 	dm_crypt_execute

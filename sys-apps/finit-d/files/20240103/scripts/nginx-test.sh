@@ -4,6 +4,6 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-servers/nginx/files
 # Run nginx' internal config check.
 
-source /etc/finit.d/scripts/nginx-lib.sh
+. /etc/finit.d/scripts/nginx-lib.sh
 
 configtest

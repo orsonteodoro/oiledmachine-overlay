@@ -91,8 +91,9 @@ SERVICES=(
 	znc
 )
 IUSE+="
+	dash
 	${SERVICES[@]}
-	r1
+	r2
 "
 REQUIRED_USE="
 	getty
@@ -101,6 +102,11 @@ REQUIRED_USE="
 	)
 	ip6tables? (
 		iptables
+	)
+"
+RDEPEND="
+	dash? (
+		app-shells/dash
 	)
 "
 PDEPEND="
@@ -166,6 +172,22 @@ src_unpack() {
 		-e "s|lib64|${libdir}|g" \
 		"confs/elogind.conf" \
 		|| die
+}
+
+src_prepare() {
+	default
+	IFS=$'\n'
+	local L=(
+		$(grep -r -l '#!/bin/sh' ./)
+	)
+	local path
+	for path in ${L[@]} ; do
+		if ! grep "^# BASH ME" "${path}" ; then
+einfo "Editing ${path} for DASH"
+			sed -i -e 's|#!/bin/sh|#!/bin/dash|g' "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
 }
 
 install_script() {
@@ -296,12 +318,13 @@ ewarn "Your configs must be correct and exist or you may see crash listed in"
 ewarn "initctl.  Debug messages are disabled."
 ewarn
 ewarn "You must use etc-update for changes to take effect."
+ewarn "Save your work before running \`initctl reload\`."
 ewarn
 	check_daemon_configs
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  pass-fail (99999999, 20230102)
+# OILEDMACHINE-OVERLAY-TEST:  pass-fail (99999999, 20230103)
 # acpid - passed
 # actkbd - passed
 # apache - fail
@@ -310,13 +333,16 @@ ewarn
 # bluetoothd - fail (needs kernel config)
 # containerd - passed
 # coolercontrol - passed
-# cpupower - passed
 # cupsd - passed
+# cpupower - passed
+# dhcpcd - passed
 # distccd - passed
+# dmeventd - passed
 # docker - passed
 # elogind - passed
 # fancontrol - passed
 # getty - passed
+# git - passed
 # icecast - passed
 # inspircd - failed
 # iperf3 - passed
@@ -331,6 +357,44 @@ ewarn
 # seatd - passed
 # spacenavd - passed
 # squid - passed
+# svnserve - failed
+# thermald - passed (on test mode ; hardware not supported on dev machine)
 # twistd - failed (upstream broken)
 # varnishd - failed
+# varnishlog - failed
+# varnishncsa - failed
 # znc - passed
+
+# Daemon permissions audit-review for required (99999999, 20230103)
+# avahi - passed ; shows avahi:avahi
+# bitcoin - tba ; needs bitcoin:bitcoin
+# bitlbee - passed ; needs bitlbee:bitlbee
+# distcc - passed ; needs distcc:?
+# ergo - tba ; needs ergo:ergo
+# git - pass ; needs nobody:nobody
+# icecast - passed
+# inspircd - tba ; needs inspircd:?
+# nginx - fail ; needs nginx:nginx for all process ; tested for both direct exe and through script
+# redis - tba ; needs redis:redis
+# redis-sentinel - tba ; needs redis:redis
+# rtkit - passed
+# squid - passed
+# znc - passed ; needs znc:znc
+
+# Daemon permissions audit-review for not required (99999999, 20230103)
+# acpid - not required ; show root:root
+# actkbd - not required ; shows root:root
+# containerd - not required ; shows root:root
+# coolercontrol - required? ; shows root:root
+# coolercontrol-liqctld - required? ; shows root:root
+# cupsd - not required ; shows root:root
+# dhcpcd ; shows root:root
+# docker ; shows root:root ; has acct-group/docker but not in openrc init script
+# elogind - not required ; shows root:root
+# fancontrol - not required ; shows root:root
+# iperf3 - not required ; shows root:root
+# networkmanager - not required ; shows root:root
+# ntpd - not required ; shows root:root ; acct-user/openntpd has it
+# seatd - not required ; shows root:root
+# spacenavd - not required ; shows root:root
+# wpa-supplicant - not required ; shows root:root

@@ -13,7 +13,7 @@ pidfile="/run/${RC_SVCNAME}.pid"
 start() {
 	export TMPDIR=${TMPDIR:-"/tmp"}
 	set -- --user "distcc" --daemon --no-detach ${DISTCCD_OPTS}
-	exec "${command}" $@
+	exec "${command}" "$@"
 }
 
 start

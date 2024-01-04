@@ -14,7 +14,7 @@ start() {
 	cd /
 
 	set -- --foreground --daemon ${SVNSERVE_OPTS:-"--root=/var/svn"}
-	exec "${command}" $@
+	exec "${command}" "$@"
 }
 
 start

@@ -4,10 +4,8 @@
 
 . /etc/finit.d/scripts/inspircd-lib.sh
 
-version() {
-	ebegin "Retrieve InspIRCd version"
-	"${command}" --version
-	eend $?
+start_pre() {
+	checkpath "d" "inspircd:inspircd" "0750" "/run/inspircd/"
 }
 
-version
+start_pre

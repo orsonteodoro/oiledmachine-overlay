@@ -1,6 +1,6 @@
 #!/bin/sh
 
-source /etc/finit.d/scripts/bitcoind-lib.sh
+. /etc/finit.d/scripts/bitcoind-lib.sh
 
 required_files="${BITCOIND_CONFIGFILE}"
 pidfile="${BITCOIND_PIDFILE}"

@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/app-laptop/laptop-mode-tools
 
-source /etc/finit.d/scripts/laptop_mode-lib.sh
+. /etc/finit.d/scripts/laptop_mode-lib.sh
 
 reload() {
 	if ! service_started "${SVCNAME}" ; then
@@ -12,9 +12,9 @@ reload() {
 	fi
 
 	ebegin "Reloading laptop_mode"
-	/usr/sbin/laptop_mode stop >/dev/null
-	rm -f /var/run/laptop-mode-tools/*
-	/usr/sbin/laptop_mode auto force >/dev/null
+	"/usr/sbin/laptop_mode" stop >/dev/null
+	rm -f "/var/run/laptop-mode-tools/"*
+	"/usr/sbin/laptop_mode" auto force >/dev/null
 	eend $?
 }
 

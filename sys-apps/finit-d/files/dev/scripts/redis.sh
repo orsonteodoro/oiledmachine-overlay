@@ -21,7 +21,7 @@ pidfile="/run/${RC_SVCNAME}.pid"
 
 start() {
 	set -- ${REDIS_OPTS} --daemonize "no"
-	exec "${command}" $@
+	exec "${command}" "$@"
 }
 
 start

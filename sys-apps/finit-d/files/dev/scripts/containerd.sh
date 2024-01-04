@@ -20,7 +20,7 @@ start_pre() {
 
 start() {
 	set -- ${command_args:-""}
-	exec "${command}" $@ 2>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log" 1>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log"
+	exec "${command}" "$@" 2>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log" 1>"/var/log/${RC_SVCNAME}/${RC_SVCNAME}.log"
 }
 
 start_pre

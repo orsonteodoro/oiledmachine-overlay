@@ -3,14 +3,14 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script obtained from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-servers/varnish
 
-source /etc/finit.d/scripts/varnishd-lib.sh
+. /etc/finit.d/scripts/varnishd-lib.sh
 
 reload() {
 	checkconfig || return 1
 
 	ebegin "Reloading varnish"
 
-	$VARNISHADM vcl.list >/dev/null 2>&1
+	"$VARNISHADM" "vcl.list" >/dev/null 2>&1
 	ret=$?
 	if [ $ret -ne 0 ]; then
 		eerror "${SVCNAME} cannot list configuration"
@@ -18,14 +18,14 @@ reload() {
 	fi
 
 	new_config="reload_$(date +%FT%H:%M:%S)"
-	$VARNISHADM vcl.load $new_config $CONFIGFILE >/dev/null 2>&1
+	"$VARNISHADM" "vcl.load" "$new_config" $CONFIGFILE >/dev/null 2>&1
 	ret=$?
 	if [ $ret -ne 0 ]; then
 		eerror "${SVCNAME} cannot load configuration"
 		return 1
 	fi
 
-	$VARNISHADM vcl.use $new_config >/dev/null 2>&1
+	"$VARNISHADM" "vcl.use" "$new_config" >/dev/null 2>&1
 	ret=$?
 	if [ $ret -ne 0 ]; then
 		eerror "${SVCNAME} cannot switch configuration"

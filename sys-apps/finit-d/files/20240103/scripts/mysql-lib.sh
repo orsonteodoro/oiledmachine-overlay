@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-db/mysql-init-scripts
 # =dev-db/mysql-init-scripts-2.3-r6::gentoo
 
-source /etc/conf.d/mysql
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/mysql
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"mysql"}
 
@@ -65,15 +65,15 @@ checkconfig() {
 
 	if [ ${RC_CMD} = "checkconfig" ] ; then
 		# We are calling checkconfig specifically.  Print warnings regardless.
-		"${basedir}"/sbin/mysqld --defaults-file="${my_cnf}" --help --verbose > /dev/null
+		"${basedir}/sbin/mysqld" --defaults-file="${my_cnf}" --help --verbose > /dev/null
 	else
 		# Suppress output to check the return value
-		"${basedir}"/sbin/mysqld --defaults-file="${my_cnf}" --help --verbose > /dev/null 2>&1
+		"${basedir}/sbin/mysqld" --defaults-file="${my_cnf}" --help --verbose > /dev/null 2>&1
 
 		# If the above command does not return 0,
 		# then there is an error to echo to the user
 		if [ $? -ne 0 ] ; then
-			"${basedir}"/sbin/mysqld --defaults-file="${my_cnf}" --help --verbose > /dev/null
+			"${basedir}/sbin/mysqld" --defaults-file="${my_cnf}" --help --verbose > /dev/null
 		fi
 	fi
 
@@ -114,7 +114,7 @@ start() {
 	local pidfile=$(get_config "${MY_CNF}" 'pid[_-]file' | tail -n1)
 	local socket=$(get_config "${MY_CNF}" socket | tail -n1)
 	local chroot=$(get_config "${MY_CNF}" chroot | tail -n1)
-	local wsrep="$(get_config "${MY_CNF}" 'wsrep[_-]on' | tail -n1 | awk '{print tolower($0)}')"
+	local wsrep=$(get_config "${MY_CNF}" 'wsrep[_-]on' | tail -n1 | awk '{print tolower($0)}')
 	local wsrep_new=$(get_config "${MY_CNF}" 'wsrep-new-cluster' | tail -n1)
 
 	if [ -n "${chroot}" ] ; then
@@ -137,8 +137,8 @@ start() {
 		if [ ! -d "${datadir}"/mysql ] ; then
 			# find which package is installed to report an error
 			local EROOT=$(portageq envvar EROOT)
-			local DBPKG_P=$(portageq match ${EROOT} $(portageq expand_virtual ${EROOT} virtual/mysql | head -n1))
-			if [ -z ${DBPKG_P} ] ; then
+			local DBPKG_P=$(portageq match "${EROOT}" $(portageq expand_virtual "${EROOT}" virtual/mysql | head -n1))
+			if [ -z "${DBPKG_P}" ] ; then
 				eerror "You don't appear to have a server package installed yet."
 			else
 				eerror "You don't appear to have the mysql database installed yet."
@@ -158,9 +158,9 @@ start() {
 
 	local startup_timeout=${STARTUP_TIMEOUT:-900}
 	local startup_early_timeout=${STARTUP_EARLY_TIMEOUT:-1000}
-	local tmpnice="${NICE:+"--nicelevel "}${NICE}"
-	local tmpionice="${IONICE:+"--ionice "}${IONICE}"
-	"${basedir}"/sbin/mysqld --defaults-file="${MY_CNF}" ${MY_ARGS}
+	local tmpnice=${NICE:+"--nicelevel "}"${NICE}"
+	local tmpionice=${IONICE:+"--ionice "}"${IONICE}"
+	"${basedir}/sbin/mysqld" --defaults-file="${MY_CNF}" ${MY_ARGS}
 	local ret=$?
 	if [ ${ret} -ne 0 ] ; then
 		eend ${ret}
@@ -170,6 +170,7 @@ start() {
 	ewaitfile ${startup_timeout} "${socket}"
 	eend $? || return 1
 
+# FIXME:  save_options is not portable
 	save_options pidfile "${pidfile}"
 	save_options basedir "${basedir}"
 }

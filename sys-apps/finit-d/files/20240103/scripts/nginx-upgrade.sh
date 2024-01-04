@@ -4,7 +4,7 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-servers/nginx/files
 # Upgrade the nginx binary without losing connections.
 
-source /etc/finit.d/scripts/nginx-lib.sh
+. /etc/finit.d/scripts/nginx-lib.sh
 
 upgrade() {
 	configtest || return 1

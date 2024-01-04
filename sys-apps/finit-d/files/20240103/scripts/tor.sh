@@ -3,7 +3,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-vpn/tor
 
-source /etc/finit.d/scripts/tor-lib.sh
+. /etc/finit.d/scripts/tor-lib.sh
 
 start_pre() {
 	checkconfig || return 1
@@ -11,8 +11,8 @@ start_pre() {
 }
 
 start() {
-	declare -a "args=(${command_args})"
-	"${command}" "${args[@]}"
+	set -- --user "distcc" --daemon --no-detach ${DISTCCD_OPTS}
+	exec "${command}" "$@"
 }
 
 start_pre

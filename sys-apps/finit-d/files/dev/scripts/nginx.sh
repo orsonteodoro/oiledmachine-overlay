@@ -15,7 +15,7 @@ start_pre() {
 
 start() {
 	set -- -g "daemon off;" -c "${NGINX_CONFIGFILE}"
-	exec "${command}" $@
+	exec "${command}" "$@"
 }
 
 if start_pre ; then

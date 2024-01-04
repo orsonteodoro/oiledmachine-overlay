@@ -20,7 +20,7 @@ start_pre() {
 start() {
 	ulimit ${rc_ulimit}
 	set -- -p "${pidfile}" ${DOCKER_OPTS}
-	exec "${command}" $@ 2>"${DOCKER_ERRFILE}" 1>"${DOCKER_OUTFILE}"
+	exec "${command}" "$@" 2>"${DOCKER_ERRFILE}" 1>"${DOCKER_OUTFILE}"
 }
 
 start_pre

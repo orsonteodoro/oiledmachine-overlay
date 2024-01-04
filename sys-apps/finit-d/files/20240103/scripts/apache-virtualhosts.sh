@@ -4,11 +4,11 @@
 # Original script from https://dev.gentoo.org/~graaff/dist/apache/
 # Show the settings as parsed from the config file (currently only shows the virtualhost settings).
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 virtualhosts() {
 	checkconfig || return 1
-	${APACHE2} ${APACHE2_OPTS} -S
+	"${APACHE2}" ${APACHE2_OPTS} -S
 }
 
 virtualhosts

@@ -4,11 +4,11 @@
 # Original script from tarball:  https://dev.gentoo.org/~graaff/dist/apache/
 # Dump a list of loaded Static and Shared Modules.
 
-source /etc/finit.d/scripts/apache-lib.sh
+. /etc/finit.d/scripts/apache-lib.sh
 
 modules() {
 	checkconfig || return 1
-	${APACHE2} ${APACHE2_OPTS} -M 2>&1
+	"${APACHE2}" ${APACHE2_OPTS} -M 2>&1
 }
 
 modules

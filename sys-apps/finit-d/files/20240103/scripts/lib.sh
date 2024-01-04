@@ -87,13 +87,12 @@ einfon() {
 ewaitfile() {
 	local duration=${1}
 	shift
-	L=( ${@} )
 	sleep ${duration}
 	local s0=$(date +"%s")
 	local sf=$(( ${s0} + ${duration} ))
 	while true ; do
 		local c=0
-		for x in ${L[@]} ; do
+		for x in "$@" ; do
 			if [ -e "${x}" ] ; then
 				c=$(( ${c} + 1 ))
 			fi

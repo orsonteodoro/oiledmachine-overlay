@@ -4,6 +4,6 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-db/mysql-init-scripts
 # Verify the server's configuration
 
-source /etc/finit.d/scripts/mysql-lib.sh
+. /etc/finit.d/scripts/mysql-lib.sh
 
 checkconfig "${1}"

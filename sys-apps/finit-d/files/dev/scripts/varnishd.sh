@@ -11,7 +11,7 @@ start_pre() {
 
 start() {
 	set -- -j "unix,user=varnish" -P "${VARNISHD_PID}" -f "${CONFIGFILE}" ${VARNISHD_OPTS}
-	exec "${command}" $@
+	exec "${command}" "$@"
 }
 
 start_pre

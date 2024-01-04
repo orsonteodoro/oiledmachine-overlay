@@ -3,15 +3,15 @@
 # Distributed under the terms of the GNU General Public License v2
 # Original script obtained from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-servers/varnish
 
-source /etc/finit.d/scripts/varnishd-lib.sh
+. /etc/finit.d/scripts/varnishd-lib.sh
 
 start_pre() {
 	checkconfig || return 1
 }
 
 start() {
-	declare -a "args=(${command_args})"
-	"${command}" "${args[@]}"
+	set -- -j "unix,user=varnish" -P "${VARNISHD_PID}" -f "${CONFIGFILE}" ${VARNISHD_OPTS}
+	exec "${command}" "$@"
 }
 
 start_pre

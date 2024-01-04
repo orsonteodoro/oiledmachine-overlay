@@ -6,7 +6,7 @@
 
 start() {
 	set -- ${INSPIRCD_OPTS} --config "${INSPIRCD_CONFIGFILE}"
-	exec "${command}" $@
+	exec "${command}" "$@"
 }
 
 start

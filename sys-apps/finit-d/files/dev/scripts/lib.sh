@@ -92,7 +92,7 @@ ewaitfile() {
 	local sf=$(( ${s0} + ${duration} ))
 	while true ; do
 		local c=0
-		for x in $@ ; do
+		for x in "$@" ; do
 			if [ -e "${x}" ] ; then
 				c=$(( ${c} + 1 ))
 			fi

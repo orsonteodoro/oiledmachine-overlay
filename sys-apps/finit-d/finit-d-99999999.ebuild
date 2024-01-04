@@ -317,6 +317,7 @@ ewarn "Your configs must be correct and exist or you may see crash listed in"
 ewarn "initctl.  Debug messages are disabled."
 ewarn
 ewarn "You must use etc-update for changes to take effect."
+ewarn "Save your work before running \`initctl reload\`."
 ewarn
 	check_daemon_configs
 }

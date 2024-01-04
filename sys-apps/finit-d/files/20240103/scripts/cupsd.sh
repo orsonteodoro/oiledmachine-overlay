@@ -1,7 +1,7 @@
 #!/bin/sh
 # =net-print/cups-2.4.7-r1::gentoo
 
-source /etc/finit.d/scripts/lib.sh
+. /etc/finit.d/scripts/lib.sh
 
 pidfile="/run/cupsd.pid"
 
@@ -13,7 +13,7 @@ start_pre() {
 }
 
 start() {
-	cupsd -f -c /etc/cups/cupsd.conf -s /etc/cups/cups-files.conf
+	exec cupsd -f -c "/etc/cups/cupsd.conf" -s "/etc/cups/cups-files.conf"
 }
 
 start_pre

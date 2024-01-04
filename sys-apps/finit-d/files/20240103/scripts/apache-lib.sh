@@ -7,19 +7,19 @@
 
 MAINTENANCE_MODE="0"
 
-source /etc/conf.d/apache2
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/apache2
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"apache2"}
 
 # Apply default values for some conf.d variables.
-PIDFILE="${PIDFILE:-/var/run/apache2.pid}"
+PIDFILE=${PIDFILE:-"/var/run/apache2.pid"}
 TIMEOUT=${TIMEOUT:-15}
-SERVERROOT="${SERVERROOT:-/usr/lib64/apache2}"
-CONFIGFILE="${CONFIGFILE:-/etc/apache2/httpd.conf}"
-LYNX="${LYNX:-lynx -dump}"
-STATUSURL="${STATUSURL:-http://localhost/server-status}"
-RELOAD_TYPE="${RELOAD_TYPE:-graceful}"
+SERVERROOT=${SERVERROOT:-"/usr/lib64/apache2"}
+CONFIGFILE=${CONFIGFILE:-"/etc/apache2/httpd.conf"}
+LYNX=${LYNX:-"lynx -dump"}
+STATUSURL=${STATUSURL:-"http://localhost/server-status"}
+RELOAD_TYPE=${RELOAD_TYPE:-"graceful"}
 
 # Append the server root and configuration file parameters to the
 # user's APACHE2_OPTS.
@@ -36,7 +36,7 @@ configtest() {
 }
 
 checkconfd() {
-	if [ ! -d ${SERVERROOT} ]; then
+	if [ ! -d "${SERVERROOT}" ]; then
 		eerror "SERVERROOT does not exist: ${SERVERROOT}"
 		return 1
 	fi
@@ -46,7 +46,7 @@ checkconfig() {
 	checkpath "d" "-" "0775" "/run/apache_ssl_mutex"
 	checkconfd || return 1
 
-	OUTPUT=$( ${APACHE2} ${APACHE2_OPTS} -t 2>&1 )
+	OUTPUT=$( "${APACHE2}" ${APACHE2_OPTS} -t 2>&1 )
 	ret=$?
 	if [ $ret -ne 0 ]; then
 		eerror "${SVCNAME} has detected an error in your setup:"

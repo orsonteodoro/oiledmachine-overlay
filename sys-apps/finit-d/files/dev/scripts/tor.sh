@@ -12,7 +12,7 @@ start_pre() {
 
 start() {
 	set -- --user "distcc" --daemon --no-detach ${DISTCCD_OPTS}
-	exec "${command}" $@
+	exec "${command}" "$@"
 }
 
 start_pre

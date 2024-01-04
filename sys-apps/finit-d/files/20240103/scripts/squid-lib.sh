@@ -4,8 +4,8 @@
 # Original script from https://gitweb.gentoo.org/repo/gentoo.git/tree/net-proxy/squid
 # =net-proxy/squid-6.5::gentoo
 
-source /etc/conf.d/squid
-source /etc/finit.d/scripts/lib.sh
+. /etc/conf.d/squid
+. /etc/finit.d/scripts/lib.sh
 
 SVCNAME=${SVCNAME:-"squid"}
 RC_SVCNAME="${SVCNAME}"
@@ -13,7 +13,7 @@ SQUID_SVCNAME=$( echo "${RC_SVCNAME}" | tr -cd '[a-zA-Z0-9]' )
 
 checkconfig() {
 	local CONFFILES="/etc/squid/${RC_SVCNAME}.conf /etc/squid/${RC_SVCNAME}.include /etc/squid/${RC_SVCNAME}.include.*"
-	if [ ! -f /etc/squid/${RC_SVCNAME}.conf ]; then
+	if [ ! -f "/etc/squid/${RC_SVCNAME}.conf" ]; then
 		eerror "You need to create /etc/squid/${RC_SVCNAME}.conf first."
 		eerror "The main configuration file and all included file names should have the following format:"
 		eerror "${CONFFILES}"
@@ -22,8 +22,8 @@ checkconfig() {
 	fi
 
 	local PIDFILE=$(cat ${CONFFILES} 2>/dev/null 3>/dev/null | awk '/^[ \t]*pid_filename[ \t]+/ { print $2 }')
-	[ -z ${PIDFILE} ] && PIDFILE=/run/squid.pid
-	if [ /run/${RC_SVCNAME}.pid != ${PIDFILE} ]; then
+	[ -z "${PIDFILE}" ] && PIDFILE="/run/squid.pid"
+	if [ "/run/${RC_SVCNAME}.pid" != "${PIDFILE}" ]; then
 		eerror "/etc/squid/${RC_SVCNAME}.conf must set pid_filename to"
 		eerror "   /run/${RC_SVCNAME}.pid"
 		eerror "CAUTION: http_port, cache_dir and *_log parameters must be different than"

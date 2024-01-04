@@ -15,6 +15,5 @@ SVCNAME=${SVCNAME:-"inspircd"}
 pidfile="${INSPIRCD_PIDFILE}"
 
 command="/usr/bin/inspircd"
-command_args="${INSPIRCD_OPTS} --config \"${INSPIRCD_CONFIGFILE}\""
 
-source /etc/finit.d/scripts/lib.sh
+. /etc/finit.d/scripts/lib.sh
