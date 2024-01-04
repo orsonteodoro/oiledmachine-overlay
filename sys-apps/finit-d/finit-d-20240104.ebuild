@@ -174,7 +174,6 @@ einfo "This is the dev version."
 	else
 einfo "This is the live snapshot version."
 	fi
-	if use netlink ; then
 ewarn
 ewarn "For wireless, is recommended to use one of the following instead:"
 ewarn
@@ -188,7 +187,6 @@ ewarn "Prohibited for wireless:"
 ewarn
 ewarn "  FINIT_COND_NETWORK=\"net/route/default\""
 ewarn
-	fi
 }
 
 src_unpack() {
