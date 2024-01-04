@@ -177,13 +177,19 @@ ewarn
 ewarn "For wireless, it is recommended to use one of the following instead:"
 ewarn
 ewarn "  FINIT_COND_NETWORK=\"hook/net/up\"      # needs sys-apps/finit[hook-scripts]"
-ewarn "  FINIT_COND_NETWORK=\"net/<IFNAME>/up\"  # needs sys-apps/finit[netlink]"
 ewarn "  FINIT_COND_NETWORK=\"net/wlan0/up\"     # needs sys-apps/finit[netlink]"
 ewarn "  FINIT_COND_NETWORK=\"net/eth0/up\"      # needs sys-apps/finit[netlink]"
 ewarn
 ewarn "Prohibited for wireless:"
 ewarn
 ewarn "  FINIT_COND_NETWORK=\"net/route/default\""
+ewarn
+ewarn
+ewarn "Place one of the above in /etc/portage/env/finit-d.conf"
+ewarn
+ewarn "Place the following in /etc/portage/package.env:"
+ewarn
+ewarn "  ${CATEGORY}/${PN} finit-d.conf"
 ewarn
 }
 
