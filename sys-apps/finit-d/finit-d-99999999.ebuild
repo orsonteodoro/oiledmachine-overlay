@@ -308,6 +308,42 @@ src_install() {
 }
 
 check_daemon_configs() {
+	if use apache && ! grep "ServerName localhost" "${EROOT}/etc/apache2/httpd.conf" ; then
+ewarn
+ewarn "Apache needs \`ServerName localhost\` in /etc/apache2/httpd.conf for"
+ewarn "localhost testers or developers."
+ewarn
+
+	fi
+	if use apache && has_version "www-servers/apache[-apache2_modules_authz_core]" ; then
+ewarn
+ewarn "Apache requires apache2_modules_authz_core USE flag to avoid waiting"
+ewarn "state in initctl."
+ewarn
+	fi
+	if use apache && has_version "www-servers/apache[-apache2_modules_dir]" ; then
+ewarn
+ewarn "Apache requires apache2_modules_dir USE flag to avoid waiting state in"
+ewarn "initctl."
+ewarn
+	fi
+	if use apache && has_version "www-servers/apache[-apache2_modules_socache_shmcb]" ; then
+ewarn
+ewarn "Apache requires apache2_modules_socache_shmcb USE flag to avoid waiting"
+ewarn "state in initctl."
+ewarn
+	fi
+	if use apache && has_version "www-servers/apache[-apache2_modules_unixd]" ; then
+ewarn
+ewarn "Apache requires apache2_modules_unixd USE flag to avoid waiting state in"
+ewarn "initctl."
+ewarn
+	fi
+	if use apache && has_version "www-servers/apache[-ssl]" ; then
+ewarn
+ewarn "Apache requires ssl USE flag to avoid waiting state in initctl."
+ewarn
+	fi
 	if use actkbd && [ ! -e "${EROOT}/etc/actkbd.conf" ] ; then
 		local pv=$(best_version "app-misc/actkbd" \
 			| sed -i -e "s|app-misc/actkbd-||g")
@@ -330,16 +366,6 @@ ewarn "Missing /etc/fancontrol which can list fancontrol in initctl as crashed."
 ewarn "Use pwmconfig to fix this."
 ewarn
 	fi
-	if use mysql && has_version "dev-db/mariadb[-server]" ; then
-ewarn
-ewarn "dev-db/mariadb[server] is required for init script."
-ewarn
-	fi
-	if use mysql && has_version "dev-db/mysql[-server]" ; then
-ewarn
-ewarn "dev-db/mysql[server] is required for init script."
-ewarn
-	fi
 	if use mysql && [ ! -e "${EROOT}/var/lib/mysql" ] ; then
 ewarn
 ewarn "Missing /var/lib/mysql folder"
@@ -353,6 +379,16 @@ ewarn
 ewarn "  \`emerge dev-db/mysql --config\`"
 ewarn
 ewarn "or you may get a crash in initctl."
+ewarn
+	fi
+	if use mysql && has_version "dev-db/mariadb[-server]" ; then
+ewarn
+ewarn "dev-db/mariadb[server] is required for init script."
+ewarn
+	fi
+	if use mysql && has_version "dev-db/mysql[-server]" ; then
+ewarn
+ewarn "dev-db/mysql[server] is required for init script."
 ewarn
 	fi
 	if use nginx ; then
@@ -396,7 +432,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  pass-fail (99999999, 20230103)
 # acpid - passed
 # actkbd - passed
-# apache - fail
+# apache - passed
 # avahi-daemon - passed
 # bitlbee - passed
 # bluetoothd - fail (needs kernel config)
