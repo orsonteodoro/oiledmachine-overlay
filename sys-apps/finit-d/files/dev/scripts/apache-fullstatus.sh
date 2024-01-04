@@ -10,7 +10,7 @@ fullstatus() {
 	if ! command -v $(set -- ${LYNX}; echo $1) 2>&1 >/dev/null; then
 		eerror "lynx not found! you need to emerge www-client/lynx"
 	else
-		${LYNX} ${STATUSURL}
+		${LYNX} "${STATUSURL}"
 	fi
 }
 

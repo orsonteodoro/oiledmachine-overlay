@@ -7,17 +7,17 @@
 
 stop() {
 	ebegin "Stopping ${RC_SVCNAME} with /usr/sbin/squid -k shutdown -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}"
-	if /usr/sbin/squid -k shutdown -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME} ; then
+	if "/usr/sbin/squid" -k "shutdown" -f "/etc/squid/${RC_SVCNAME}.conf" -n "${SQUID_SVCNAME}" ; then
 		if [ "x${SQUID_FAST_SHUTDOWN}" = "xyes" ]; then
 			einfo "Attempting fast shutdown."
-			/usr/sbin/squid -k shutdown -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}
+			"/usr/sbin/squid" -k "shutdown" -f "/etc/squid/${RC_SVCNAME}.conf" -n "${SQUID_SVCNAME}"
 		fi
 		# Now we have to wait until squid has _really_ stopped.
 		sleep 1
-		if [ -f /run/${RC_SVCNAME}.pid ] ; then
+		if [ -f "/run/${RC_SVCNAME}.pid" ] ; then
 			einfon "Waiting for squid to shutdown ."
 			cnt=0
-			while [ -f /run/${RC_SVCNAME}.pid ] ; do
+			while [ -f "/run/${RC_SVCNAME}.pid" ] ; do
 				cnt=$(expr $cnt + 1)
 				if [ $cnt -gt 60 ] ; then
 					# Waited 120 seconds now. Fail.

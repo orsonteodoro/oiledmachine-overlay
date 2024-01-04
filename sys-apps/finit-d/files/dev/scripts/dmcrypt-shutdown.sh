@@ -10,7 +10,7 @@ stop() {
 
 	# Break down all mappings
 	print_header=true
-	grep -E "^(target|swap)=" ${conf_file} | \
+	grep -E "^(target|swap)=" "${conf_file}" | \
 	while read line ; do
 		${print_header} && einfo "Removing dm-crypt mappings"
 		print_header=false
@@ -18,20 +18,20 @@ stop() {
 		target= swap=
 		eval ${line}
 
-		[ -n "${swap}" ] && target=${swap}
+		[ -n "${swap}" ] && target="${swap}"
 		if [ -z "${target}" ] ; then
 			ewarn "invalid line in ${conf_file}: ${line}"
 			continue
 		fi
 
 		ebegin "  ${target}"
-		cryptsetup ${header_opt} remove ${target}
+		cryptsetup ${header_opt} remove "${target}"
 		eend $?
 	done
 
 	# Break down loop devices
 	print_header=true
-	grep '^source=./dev/loop' ${conf_file} | \
+	grep '^source=./dev/loop' "${conf_file}" | \
 	while read line ; do
 		${print_header} && einfo "Detaching dm-crypt loop devices"
 		print_header=false

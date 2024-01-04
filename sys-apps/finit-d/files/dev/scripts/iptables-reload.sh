@@ -10,11 +10,11 @@ reload() {
 	checkrules || return 1
 	ebegin "Flushing firewall"
 	local has_errors=0 a
-	for a in $(cat ${iptables_proc}) ; do
-		${iptables_bin} --wait ${iptables_lock_wait_time} -F -t $a
+	for a in $(cat "${iptables_proc}") ; do
+		"${iptables_bin}" --wait ${iptables_lock_wait_time} -F -t "$a"
 		[ $? -ne 0 ] && has_errors=1
 
-		${iptables_bin} --wait ${iptables_lock_wait_time} -X -t $a
+		"${iptables_bin}" --wait ${iptables_lock_wait_time} -X -t "$a"
 		[ $? -ne 0 ] && has_errors=1
 	done
 	eend ${has_errors}

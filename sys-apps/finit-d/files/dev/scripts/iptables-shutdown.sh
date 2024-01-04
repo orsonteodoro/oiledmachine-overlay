@@ -16,14 +16,14 @@ stop() {
 
 	ebegin "Stopping firewall"
 	local has_errors=0 a
-	for a in $(cat ${iptables_proc}) ; do
-		set_table_policy $a ACCEPT
+	for a in $(cat "${iptables_proc}") ; do
+		set_table_policy "$a" "ACCEPT"
 		[ $? -ne 0 ] && has_errors=1
 
-		${iptables_bin} --wait ${iptables_lock_wait_time} -F -t $a
+		"${iptables_bin}" --wait ${iptables_lock_wait_time} -F -t "$a"
 		[ $? -ne 0 ] && has_errors=1
 
-		${iptables_bin} --wait ${iptables_lock_wait_time} -X -t $a
+		"${iptables_bin}" --wait ${iptables_lock_wait_time} -X -t "$a"
 		[ $? -ne 0 ] && has_errors=1
 	done
 	eend ${has_errors}

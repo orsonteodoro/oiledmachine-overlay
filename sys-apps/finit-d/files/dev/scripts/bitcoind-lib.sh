@@ -5,14 +5,14 @@
 
 SVCNAME=${SVCNAME:-"bitcoind"}
 
-: ${BITCOIND_CONFIGFILE:=/etc/bitcoin/bitcoin.conf}
-: ${BITCOIND_PIDDIR:=/run/bitcoind}
-: ${BITCOIND_PIDFILE:=${BITCOIND_PIDDIR}/${SVCNAME}.pid}
-: ${BITCOIND_DATADIR:=/var/lib/bitcoind}
-: ${BITCOIND_LOGDIR:=/var/log/bitcoind}
-: ${BITCOIND_USER:=${BITCOIN_USER:-bitcoin}}
-: ${BITCOIND_GROUP:=bitcoin}
-: ${BITCOIND_BIN:=/usr/bin/bitcoind}
+: ${BITCOIND_CONFIGFILE:="/etc/bitcoin/bitcoin.conf"}
+: ${BITCOIND_PIDDIR:="/run/bitcoind"}
+: ${BITCOIND_PIDFILE:="${BITCOIND_PIDDIR}/${SVCNAME}.pid"}
+: ${BITCOIND_DATADIR:="/var/lib/bitcoind"}
+: ${BITCOIND_LOGDIR:="/var/log/bitcoind"}
+: ${BITCOIND_USER:=${BITCOIN_USER:-"bitcoin"}}
+: ${BITCOIND_GROUP:="bitcoin"}
+: ${BITCOIND_BIN:="/usr/bin/bitcoind"}
 : ${BITCOIND_NICE:=${NICELEVEL:-0}}
 : ${BITCOIND_OPTS=${BITCOIN_OPTS}}
 

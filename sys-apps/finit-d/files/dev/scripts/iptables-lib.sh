@@ -27,7 +27,7 @@ case ${iptables_name} in
 esac
 
 set_table_policy() {
-	local has_errors=0 chains table=$1 policy=$2
+	local has_errors=0 chains table="$1" policy="$2"
 	case ${table} in
 		nat)    chains="PREROUTING POSTROUTING OUTPUT";;
 		mangle) chains="PREROUTING INPUT FORWARD OUTPUT POSTROUTING";;
@@ -37,7 +37,7 @@ set_table_policy() {
 
 	local chain
 	for chain in ${chains} ; do
-		${iptables_bin} --wait ${iptables_lock_wait_time} -t ${table} -P ${chain} ${policy}
+		"${iptables_bin}" --wait ${iptables_lock_wait_time} -t ${table} -P ${chain} ${policy}
 		[ $? -ne 0 ] && has_errors=1
 	done
 
@@ -45,7 +45,7 @@ set_table_policy() {
 }
 
 checkkernel() {
-	if [ ! -e ${iptables_proc} ] ; then
+	if [ ! -e "${iptables_proc}" ] ; then
 		eerror "Your kernel lacks ${iptables_name} support, please load"
 		eerror "appropriate modules and try again."
 		return 1
@@ -64,7 +64,7 @@ checkconfig() {
 
 checkrules() {
 	ebegin "Checking rules"
-	${iptables_bin}-restore --test ${SAVE_RESTORE_OPTIONS} < "${iptables_save}"
+	"${iptables_bin}-restore" --test ${SAVE_RESTORE_OPTIONS} < "${iptables_save}"
 	eend $?
 }
 
@@ -73,6 +73,6 @@ save() {
 	local dir=$(dirname "${iptables_save}")
 	checkpath "d" "-" "0775" "${dir}"
 	checkpath "f" "-" "0600" "${iptables_save}"
-	${iptables_bin}-save ${SAVE_RESTORE_OPTIONS} > "${iptables_save}"
+	"${iptables_bin}-save" ${SAVE_RESTORE_OPTIONS} > "${iptables_save}"
 	eend $?
 }

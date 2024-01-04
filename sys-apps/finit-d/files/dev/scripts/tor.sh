@@ -11,8 +11,8 @@ start_pre() {
 }
 
 start() {
-	declare -a "args=(${command_args})"
-	"${command}" "${args[@]}"
+	set -- --user "distcc" --daemon --no-detach ${DISTCCD_OPTS}
+	exec "${command}" $@
 }
 
 start_pre

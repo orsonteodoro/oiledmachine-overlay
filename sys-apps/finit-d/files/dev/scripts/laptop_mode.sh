@@ -12,8 +12,8 @@ start() {
 	# bug #342049 fix
 	# check if dir exists and creates if it doesn't
 	checkpath "d" "-" "755" "/var/run/laptop-mode-tools"
-	touch /var/run/laptop-mode-tools/enabled
-	/usr/sbin/laptop_mode auto >/dev/null
+	touch "/var/run/laptop-mode-tools/enabled"
+	"/usr/sbin/laptop_mode" auto >/dev/null
 	eend $?
 }
 

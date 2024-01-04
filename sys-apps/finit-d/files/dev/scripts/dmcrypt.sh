@@ -58,7 +58,7 @@ start() {
 
 		# Queue this setting for the next call to dm_crypt_execute
 		eval "${targetline}"
-	done 3< ${conf_file}
+	done 3< "${conf_file}"
 
 	# If we have a target queued up, then execute it
 	dm_crypt_execute

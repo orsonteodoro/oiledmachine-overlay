@@ -8,7 +8,7 @@
 
 modules() {
 	checkconfig || return 1
-	${APACHE2} ${APACHE2_OPTS} -M 2>&1
+	"${APACHE2}" ${APACHE2_OPTS} -M 2>&1
 }
 
 modules

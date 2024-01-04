@@ -7,8 +7,8 @@
 
 stop() {
 	ebegin "Stopping laptop_mode"
-	rm -f /var/run/laptop-mode-tools/enabled
-	/usr/sbin/laptop_mode stop >/dev/null
+	rm -f "/var/run/laptop-mode-tools/enabled"
+	"/usr/sbin/laptop_mode" stop >/dev/null
 	eend $?
 }
 

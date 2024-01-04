@@ -11,7 +11,7 @@ start() {
 
 	# see https://wiki.squid-cache.org/MultipleInstances
 	ebegin "Starting ${RC_SVCNAME} (service name ${SQUID_SVCNAME}) with KRB5_KTNAME=\"${SQUID_KEYTAB}\" /usr/sbin/squid ${SQUID_OPTS} -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}"
-	KRB5_KTNAME="${SQUID_KEYTAB}" /usr/sbin/squid ${SQUID_OPTS} -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}
+	KRB5_KTNAME="${SQUID_KEYTAB}" "/usr/sbin/squid" ${SQUID_OPTS} -f "/etc/squid/${RC_SVCNAME}.conf" -n "${SQUID_SVCNAME}"
 	eend $? && sleep 1
 }
 

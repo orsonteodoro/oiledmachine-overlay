@@ -9,8 +9,8 @@ start_pre() {
 }
 
 start() {
-	declare -a "args=(${command_args})"
-	"${command}" "${args[@]}"
+	set -- ${INSPIRCD_OPTS} --config "${INSPIRCD_CONFIGFILE}"
+	exec "${command}" $@
 }
 
 start_pre

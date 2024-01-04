@@ -11,7 +11,7 @@ start_pre() {
 
 start() {
 	ebegin "Loading ${iptables_name} state and starting firewall"
-	${iptables_bin}-restore --wait ${iptables_lock_wait_time} ${SAVE_RESTORE_OPTIONS} < "${iptables_save}"
+	"${iptables_bin}-restore" --wait ${iptables_lock_wait_time} ${SAVE_RESTORE_OPTIONS} < "${iptables_save}"
 	eend $?
 }
 

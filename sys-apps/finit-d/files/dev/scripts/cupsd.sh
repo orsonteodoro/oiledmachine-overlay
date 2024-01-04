@@ -13,7 +13,7 @@ start_pre() {
 }
 
 start() {
-	cupsd -f -c /etc/cups/cupsd.conf -s /etc/cups/cups-files.conf
+	cupsd -f -c "/etc/cups/cupsd.conf" -s "/etc/cups/cups-files.conf"
 }
 
 start_pre

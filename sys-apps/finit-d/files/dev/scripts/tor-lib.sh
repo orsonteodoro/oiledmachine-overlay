@@ -9,15 +9,14 @@
 
 SVCNAME=${SVCNAME:-"tor"}
 
-command=/usr/bin/tor
-pidfile=/run/tor/tor.pid
-command_args="--hush --runasdaemon 1 --pidfile \"${pidfile}\""
+command="/usr/bin/tor"
+pidfile="/run/tor/tor.pid"
 retry=${GRACEFUL_TIMEOUT:-60}
-stopsig=INT
-command_progress=yes
+stopsig="INT"
+command_progress="yes"
 
 checkconfig() {
-	${command} --verify-config --hush > /dev/null 2>&1
+	"${command}" --verify-config --hush > /dev/null 2>&1
 	if [ $? -ne 0 ] ; then
 		eerror "Tor configuration (/etc/tor/torrc) is not valid."
 		eerror "Example is in /etc/tor/torrc.sample"

@@ -6,23 +6,22 @@
 . /etc/conf.d/redis
 . /etc/finit.d/scripts/lib.sh
 
-: ${REDIS_DIR:=/var/lib/redis}
-: ${REDIS_CONF:=/etc/redis/redis.conf}
+: ${REDIS_DIR:="/var/lib/redis"}
+: ${REDIS_CONF:="/etc/redis/redis.conf"}
 : ${REDIS_OPTS:="${REDIS_CONF}"}
-: ${REDIS_USER:=redis}
-: ${REDIS_GROUP:=redis}
+: ${REDIS_USER:="redis"}
+: ${REDIS_GROUP:="redis"}
 : ${REDIS_TIMEOUT:=30}
 
 SVCNAME=${SVCNAME:-"redis"}
 RC_SVCNAME="${SVCNAME}"
 
 command="/usr/sbin/redis-server"
-command_args="${REDIS_OPTS} --daemonize no"
 pidfile="/run/${RC_SVCNAME}.pid"
 
 start() {
-	declare -a "args=(${command_args})"
-	exec "${command}" "${args[@]}"
+	set -- ${REDIS_OPTS} --daemonize "no"
+	exec "${command}" $@
 }
 
 start

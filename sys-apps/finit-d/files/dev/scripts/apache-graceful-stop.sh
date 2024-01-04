@@ -9,7 +9,7 @@
 gracefulstop() {
 	checkconfig || return 1
 	ebegin "Gracefully stopping ${SVCNAME}"
-	${APACHE2} ${APACHE2_OPTS} -k graceful-stop
+	"${APACHE2}" ${APACHE2_OPTS} -k "graceful-stop"
 	eend $?
 }
 

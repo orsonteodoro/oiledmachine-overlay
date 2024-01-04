@@ -9,7 +9,7 @@
 SVCNAME=${SVCNAME:-"laptop_mode"}
 
 checkconfig() {
-	if [ ! -f /proc/sys/vm/laptop_mode ] ; then
+	if [ ! -f "/proc/sys/vm/laptop_mode" ] ; then
 		eerror "Kernel does not support laptop_mode"
 		return 1
 	fi

@@ -8,7 +8,7 @@
 reload() {
 	checkconfig || return 1
 	ebegin "Reloading ${RC_SVCNAME} with /usr/sbin/squid -k reconfigure -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}"
-	/usr/sbin/squid -k reconfigure -f /etc/squid/${RC_SVCNAME}.conf -n ${SQUID_SVCNAME}
+	"/usr/sbin/squid" -k "reconfigure" -f "/etc/squid/${RC_SVCNAME}.conf" -n "${SQUID_SVCNAME}"
 	eend $?
 }
 

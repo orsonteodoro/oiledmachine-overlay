@@ -6,7 +6,7 @@
 
 version() {
 	ebegin "Retrieve InspIRCd version"
-	${command} --version
+	"${command}" --version
 	eend $?
 }
 

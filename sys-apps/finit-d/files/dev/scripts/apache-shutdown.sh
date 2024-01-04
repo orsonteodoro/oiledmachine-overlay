@@ -18,7 +18,7 @@ stop() {
 	fi
 
 	ebegin "Stopping ${SVCNAME}"
-	${APACHE2} ${APACHE2_OPTS} -k stop
+	"${APACHE2}" ${APACHE2_OPTS} -k stop
 
 	local i=0 retval=0
 	while ( test -f "${PIDFILE}" || pgrep -P ${PID} apache2 >/dev/null ) \

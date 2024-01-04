@@ -76,11 +76,11 @@ dm_crypt_execute() {
 		# let user set options, otherwise leave empty
 		: ${options:=' '}
 	elif [ -n "${swap}" ] ; then
-		if cryptsetup ${header_opt} isLuks ${source} 2>/dev/null ; then
+		if cryptsetup ${header_opt} isLuks "${source}" 2>/dev/null ; then
 			ewarn "The swap you have defined is a LUKS partition. Aborting crypt-swap setup."
 			return
 		fi
-		target=${swap}
+		target="${swap}"
 		# swap contents do not need to be preserved between boots, luks not required.
 		# suspend2 users should have initramfs's init handling their swap partition either way.
 		: ${options:='-c aes -h sha1 -d /dev/urandom'}
@@ -90,7 +90,7 @@ dm_crypt_execute() {
 	if [ -n "${loop_file}" ] ; then
 		dev="/dev/mapper/${target}"
 		ebegin "  Setting up loop device ${source}"
-		losetup ${source} ${loop_file}
+		losetup "${source}" "${loop_file}"
 	fi
 
 	# cryptsetup:
@@ -111,7 +111,7 @@ dm_crypt_execute() {
 		einfo "dm-crypt mapping ${target} is already configured"
 		return
 	fi
-	splash svc_input_begin ${SVCNAME} >/dev/null 2>&1
+	splash svc_input_begin "${SVCNAME}" >/dev/null 2>&1
 
 	# Handle keys
 	if [ -n "${key}" ] ; then
@@ -235,7 +235,7 @@ dm_crypt_execute() {
 		umount -n ${mntrem} 2>/dev/null >/dev/null
 		rmdir ${mntrem} 2>/dev/null >/dev/null
 	fi
-	splash svc_input_end ${SVCNAME} >/dev/null 2>&1
+	splash svc_input_end "${SVCNAME}" >/dev/null 2>&1
 
 	if [ ${ret} -ne 0 ] ; then
 		cryptfs_status=1

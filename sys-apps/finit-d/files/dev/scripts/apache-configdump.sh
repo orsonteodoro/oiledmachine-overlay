@@ -7,7 +7,7 @@
 . /etc/finit.d/scripts/apache-lib.sh
 
 configdump() {
-	INFOURL="${INFOURL:-http://localhost/server-info}"
+	INFOURL=${INFOURL:-"http://localhost/server-info"}
 
 	checkconfd || return 1
 

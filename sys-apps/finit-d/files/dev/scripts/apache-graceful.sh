@@ -9,7 +9,7 @@
 graceful() {
 	checkconfig || return 1
 	ebegin "Gracefully restarting ${SVCNAME}"
-	${APACHE2} ${APACHE2_OPTS} -k graceful
+	"${APACHE2}" ${APACHE2_OPTS} -k "graceful"
 	eend $?
 }
 
