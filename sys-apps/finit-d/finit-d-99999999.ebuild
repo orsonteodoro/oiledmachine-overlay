@@ -350,7 +350,7 @@ ewarn
 # znc - passed
 
 # Daemon permissions audit-review for required
-# avahi - passed ; shows avahi:avai
+# avahi - passed ; shows avahi:avahi
 # bitcoin - tba ; needs bitcoin:bitcoin
 # bitlbee - passed ; needs bitlbee:bitlbee
 # distcc - passed ; needs distcc:?
