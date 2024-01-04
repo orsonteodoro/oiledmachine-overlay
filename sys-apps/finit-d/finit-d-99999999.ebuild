@@ -344,7 +344,7 @@ ewarn
 # icecast - passed
 # inspircd - failed
 # iperf3 - passed
-# laptop_mode - failed
+# laptop_mode - passed
 # lm_sensors - passed
 # mysql - fail
 # NetworkManager - passed
