@@ -180,7 +180,6 @@ ewarn "  FINIT_COND_NETWORK=\"hook/net/up\"      # needs sys-apps/finit[hook-scr
 ewarn "  FINIT_COND_NETWORK=\"net/<IFNAME>/up\"  # needs sys-apps/finit[netlink]"
 ewarn "  FINIT_COND_NETWORK=\"net/wlan0/up\"     # needs sys-apps/finit[netlink]"
 ewarn "  FINIT_COND_NETWORK=\"net/eth0/up\"      # needs sys-apps/finit[netlink]"
-ewarn "  FINIT_COND_NETWORK=\"net/eth0/up\"      # needs sys-apps/finit[netlink]"
 ewarn
 ewarn "Prohibited for wireless:"
 ewarn
