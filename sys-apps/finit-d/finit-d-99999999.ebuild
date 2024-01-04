@@ -348,3 +348,35 @@ ewarn
 # twistd - failed (upstream broken)
 # varnishd - failed
 # znc - passed
+
+# Daemon permissions audit-review for required
+# avahi - passed ; shows avahi:avai
+# bitcoin - tba ; needs bitcoin:bitcoin
+# bitlbee - passed ; needs bitlbee:bitlbee
+# distcc - passed ; needs distcc:?
+# ergo - tba ; needs ergo:ergo
+# git - tba ; needs nobody:nobody
+# icecast - passed
+# inspircd - tba ; needs inspircd:inspircd
+# nginx - fail ; needs nginx:nginx for all process ; tested for both direct exe and through script
+# redis - tba ; needs redis:redis
+# redis-sentinel - tba ; needs redis:redis
+# rtkit - passed
+# znc - passed ; needs znc:znc
+
+# Daemon permissions audit-review for not required
+# acpid - not required ; show root:root
+# actkbd - not required ; shows root:root
+# containerd - not required ; shows root:root
+# coolercontrol - required? ; shows root:root
+# coolercontrol-liqctld - required? ; shows root:root
+# cupsd - not required ; shows root:root
+# docker ; shows root:root ; has acct-group/docker but not in openrc init script
+# elogind - not required ; shows root:root
+# fancontrol - not required ; shows root:root
+# iperf3 - not required ; shows root:root
+# networkmanager - not required ; shows root:root
+# ntpd - not required ; shows root:root ; acct-user/openntpd has it
+# seatd - not required ; shows root:root
+# spacenavd - not required ; shows root:root
+# wpa-supplicant - not required ; shows root:root
