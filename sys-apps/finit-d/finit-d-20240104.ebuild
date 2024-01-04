@@ -175,7 +175,7 @@ einfo "This is the dev version."
 einfo "This is the live snapshot version."
 	fi
 ewarn
-ewarn "For wireless, is recommended to use one of the following instead:"
+ewarn "For wireless, it is recommended to use one of the following instead:"
 ewarn
 ewarn "  FINIT_COND_NETWORK=\"hook/net/up\"      # needs sys-apps/finit[hook-scripts]"
 ewarn "  FINIT_COND_NETWORK=\"net/<IFNAME>/up\"  # needs sys-apps/finit[netlink]"
