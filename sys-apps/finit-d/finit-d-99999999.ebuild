@@ -498,6 +498,7 @@ ewarn
 # svnserve - failed
 # thermald - passed (on test mode ; hardware not supported on dev machine)
 # twistd - failed (upstream broken)
+# tor - passed
 # varnishd - passed
 # varnishlog - passed
 # varnishncsa - passed
@@ -518,6 +519,7 @@ ewarn
 # redis-sentinel - tba ; needs redis:redis
 # rtkit - passed
 # squid - passed
+# tor - passed ; shows tor:tor
 # znc - passed ; needs znc:znc
 
 # Daemon permissions audit-review for not required (99999999, 20230103)

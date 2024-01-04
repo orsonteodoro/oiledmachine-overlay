@@ -5,15 +5,9 @@
 
 . /etc/finit.d/scripts/tor-lib.sh
 
-start_pre() {
-	checkconfig || return 1
-	checkpath "d" "tor:tor" "0755" "/run/tor"
-}
-
 start() {
-	set -- --user "distcc" --daemon --no-detach ${DISTCCD_OPTS}
+	set -- --hush --runasdaemon 0 --pidfile "${pidfile}"
 	exec "${command}" "$@"
 }
 
-start_pre
 start
