@@ -110,6 +110,7 @@ IUSE+="
 NEEDS_NETWORK="
 	apache
 	bitcoind
+	caddy
 	coolercontrol
 	distccd
 	icecast
