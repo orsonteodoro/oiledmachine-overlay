@@ -13,6 +13,7 @@ https://troglobit.com/projects/finit/
 https://github.com/troglobit/finit
 "
 LICENSE="
+	BSD-2
 	MIT
 	GPL-2
 "
