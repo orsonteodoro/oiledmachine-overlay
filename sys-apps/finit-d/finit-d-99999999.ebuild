@@ -85,6 +85,7 @@ SERVICES=(
 	sshd
 	syslogd
 	svnserve
+	timidity
 	thermald
 	tor
 	twistd
@@ -495,6 +496,14 @@ ewarn
 	fi
 }
 
+check_timidity() {
+	if use timidity && has_version "media-sound/timidity++[-alsa]" ; then
+ewarn
+ewarn "The timidity USE flag requires media-sound/timidity++[alsa]."
+ewarn
+	fi
+}
+
 check_varnishd() {
 	if use varnishd && [ ! -e "${EROOT}/etc/varnish/default.vcl" ] ; then
 ewarn
@@ -520,6 +529,7 @@ check_daemon_configs() {
 	check_pure_ftpd
 	check_pure_uploadscript
 	check_nginx
+	check_timidity
 	check_varnishd
 	check_znc
 }

@@ -240,14 +240,17 @@
     <flag name="svnserve">
       Add support for Subversion server
     </flag>
-    <flag name="twistd">
-      Add support for Twistd Daemon
+    <flag name="timidity">
+      Add support for timidity++[alsa]
     </flag>
     <flag name="thermald">
       Add support for thermald
     </flag>
     <flag name="tor">
       Add support for Tor
+    </flag>
+    <flag name="tox-dht-daemon">
+      Add support for net-libs/tox[daemon]
     </flag>
     <flag name="uuidd">
       Add support for uuidd
