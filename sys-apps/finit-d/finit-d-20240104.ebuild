@@ -64,14 +64,20 @@ SERVICES=(
 	mysql
 	networkmanager
 	nginx
+	openvpn
 	redis
 	redis-sentinel
 	rsyncd
 	rtkit
 	ntpd
 	plymouth
+	proftpd
+	pure-ftpd
+	pure-uploadscript
+	pydoc
 	rp-pppoe
 	rsyslogd
+	saned
 	seatd
 	sntpd
 	spacenavd
@@ -79,6 +85,7 @@ SERVICES=(
 	sshd
 	syslogd
 	svnserve
+	timidity
 	thermald
 	tor
 	twistd
@@ -86,7 +93,9 @@ SERVICES=(
 	varnishd
 	varnishlog
 	varnishncsa
+	vsftpd
 	watchdog
+	wg-quick
 	xdm
 	znc
 )
@@ -95,7 +104,7 @@ IUSE+="
 	dash
 	hook-scripts
 	netlink
-	r3
+	r4
 "
 NEEDS_NETWORK="
 	apache
@@ -105,10 +114,13 @@ NEEDS_NETWORK="
 	icecast
 	nginx
 	ntpd
+	openvpn
+	proftpd
 	sntpd
 	svnserve
 	twistd
 	varnishd
+	wg-quick
 "
 gen_required_use_network() {
 	local
@@ -203,21 +215,6 @@ src_unpack() {
 		|| die
 }
 
-edit_dash() {
-	IFS=$'\n'
-	local L=(
-		$(grep -r -l '#!/bin/sh' ./)
-	)
-	local path
-	for path in ${L[@]} ; do
-		if ! grep "^# BASH ME" "${path}" ; then
-einfo "Editing ${path} for DASH"
-			sed -i -e 's|#!/bin/sh|#!/bin/dash|g' "${path}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
 edit_cond_network() {
 	IFS=$'\n'
 	local L=(
@@ -236,6 +233,27 @@ einfo "Using net/route/default for network up for ${path}.  This conditon is bug
 	IFS=$' \t\n'
 }
 
+edit_dash() {
+	IFS=$'\n'
+	local L=(
+		$(grep -r -l '#!/bin/sh' ./)
+	)
+	local path
+	for path in ${L[@]} ; do
+		if ! grep "^# BASH ME" "${path}" ; then
+einfo "Editing ${path} for DASH"
+			sed -i -e 's|#!/bin/sh|#!/bin/dash|g' "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+edit_pydoc() {
+	has_version "dev-lang/python:3.10" || sed -i -e "/__PYDOC_3_10__/d" confs/pydoc.conf || die
+	has_version "dev-lang/python:3.11" || sed -i -e "/__PYDOC_3_11__/d" confs/pydoc.conf || die
+	has_version "dev-lang/python:3.12" || sed -i -e "/__PYDOC_3_12__/d" confs/pydoc.conf || die
+}
+
 edit_sql() {
 	use mysql || return
 	if ! has_version "dev-db/mysql" ; then
@@ -248,8 +266,9 @@ edit_sql() {
 
 src_prepare() {
 	default
-	edit_dash
 	edit_cond_network
+	edit_dash
+	edit_pydoc
 	edit_sql
 }
 
@@ -321,13 +340,18 @@ src_install() {
 	if use squid ; then
 		install_script "squid-rotate.sh"
 	fi
+	if use pydoc ; then
+		has_version "dev-lang/python:3.10" && install_script "pydoc-3.10.sh"
+		has_version "dev-lang/python:3.11" && install_script "pydoc-3.11.sh"
+		has_version "dev-lang/python:3.12" && install_script "pydoc-3.12.sh"
+	fi
 	if use tor ; then
 		install_script "tor-checkconfig.sh"
 	fi
 }
 
-check_daemon_configs() {
-	if use apache && ! grep "ServerName localhost" "${EROOT}/etc/apache2/httpd.conf" >/dev/null ; then
+check_apache() {
+	if use apache && ! grep -q -e "ServerName localhost" "${EROOT}/etc/apache2/httpd.conf" ; then
 ewarn
 ewarn "Apache needs \`ServerName localhost\` in /etc/apache2/httpd.conf for"
 ewarn "localhost testers or developers."
@@ -363,6 +387,9 @@ ewarn
 ewarn "Apache requires ssl USE flag to avoid waiting state in initctl."
 ewarn
 	fi
+}
+
+check_actkbd() {
 	if use actkbd && [ ! -e "${EROOT}/etc/actkbd.conf" ] ; then
 		local pv=$(best_version "app-misc/actkbd" \
 			| sed -i -e "s|app-misc/actkbd-||g")
@@ -373,18 +400,24 @@ ewarn
 ewarn "  bzcat /usr/share/doc/actkbd-${pv}/samples/actkbd.conf.bz2 > /etc/actkbd.conf"
 ewarn
 	fi
-	if use actkbd && grep -F "<DEVICE>" "${EROOT}/etc/conf.d/actkbd" >/dev/null ; then
+	if use actkbd && grep -q -F -e "<DEVICE>" "${EROOT}/etc/conf.d/actkbd" >/dev/null ; then
 ewarn
 ewarn "Detected <DEVICE> in /etc/conf.d/actkbd which can list actkbd in initctl"
 ewarn "as crashed."
 ewarn
 	fi
+}
+
+check_fancontrol() {
 	if use fancontrol && [ ! -e "/etc/fancontrol" ] ; then
 ewarn
 ewarn "Missing /etc/fancontrol which can list fancontrol in initctl as crashed."
 ewarn "Use pwmconfig to fix this."
 ewarn
 	fi
+}
+
+check_mysql() {
 	if use mysql && [ ! -e "${EROOT}/var/lib/mysql" ] ; then
 ewarn
 ewarn "Missing /var/lib/mysql folder"
@@ -410,6 +443,9 @@ ewarn
 ewarn "dev-db/mysql[server] is required for init script."
 ewarn
 	fi
+}
+
+check_nginx() {
 	if use nginx ; then
 		if has_version "www-servers/nginx[-http]" ; then
 ewarn
@@ -423,23 +459,80 @@ ewarn "initctl."
 ewarn
 		fi
 	fi
+}
+
+check_pure_ftpd() {
+	if use pure-ftpd && [ ! -f "/etc/pure-ftpd.conf" ] ; then
+ewarn
+ewarn "/etc/pure-ftpd.conf needs to be created"
+ewarn
+	fi
+}
+
+check_pure_uploadscript() {
+	ftpd_configfile="/etc/pure-ftpd.conf"
+	if use pure-ftpd && grep -q -e "# UPLOADSCRIPT" "/etc/conf.d/pure-uploadscript" ; then
+ewarn
+ewarn "UPLOADSCRIPT needs to be uncommented and point to the script to run."
+ewarn
+	fi
+	if use pure-ftpd && ! grep -q -e "UPLOADSCRIPT" "/etc/conf.d/pure-uploadscript" ; then
+ewarn
+ewarn "UPLOADSCRIPT needs to be added to /etc/conf.d/pure-uploadscript and"
+ewarn "point to the script to run."
+ewarn
+	fi
+	if ! grep -q -e "^CallUploadScript" "${ftpd_configfile}" ; then
+ewarn
+ewarn "Enable CallUploadScript in ${ftpd_configfile}"
+ewarn
+	fi
+}
+
+check_svnserve() {
 	if use svnserve && [ ! -e "${EROOT}/var/svn" ] ; then
 ewarn
 ewarn "Missing /var/svn which can list svnserve in initctl as waiting."
 ewarn
 	fi
+}
+
+check_timidity() {
+	if use timidity && has_version "media-sound/timidity++[-alsa]" ; then
+ewarn
+ewarn "The timidity USE flag requires media-sound/timidity++[alsa]."
+ewarn
+	fi
+}
+
+check_varnishd() {
 	if use varnishd && [ ! -e "${EROOT}/etc/varnish/default.vcl" ] ; then
 ewarn
 ewarn "Missing /etc/varnish/default.vcl which can list varnish in initctl as"
 ewarn "waiting."
 ewarn
 	fi
+}
+
+check_znc() {
 	if use znc && [ ! -e "${EROOT}/var/lib/znc/configs/znc.conf" ] ; then
 ewarn
 ewarn "Missing /var/lib/znc/configs/znc.conf which can list znc in initctl as"
 ewarn "crashed."
 ewarn
 	fi
+}
+
+check_daemon_configs() {
+	check_apache
+	check_actkbd
+	check_mysql
+	check_pure_ftpd
+	check_pure_uploadscript
+	check_nginx
+	check_timidity
+	check_varnishd
+	check_znc
 }
 
 pkg_postinst() {
