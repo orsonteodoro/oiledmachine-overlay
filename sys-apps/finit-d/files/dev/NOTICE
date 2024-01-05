@@ -15,6 +15,7 @@
 # confs/apache.conf
 # confs/avahi-dnsconfd.conf
 # confs/bitlbee.conf
+# confs/caddy.conf
 # confs/containerd.conf
 # confs/coolercontrol.conf
 # confs/cups-browsed.conf

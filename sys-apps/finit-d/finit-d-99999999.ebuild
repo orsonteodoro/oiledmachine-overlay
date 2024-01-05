@@ -31,6 +31,7 @@ SERVICES=(
 	bitcoind
 	bitlbee
 	bluez
+	caddy
 	consolefont
 	containerd
 	coolercontrol
@@ -602,6 +603,7 @@ ewarn
 # avahi - passed ; shows avahi:avahi
 # bitcoin - tba ; needs bitcoin:bitcoin
 # bitlbee - passed ; needs bitlbee:bitlbee
+# caddy - tba ; needs http:http
 # distcc - passed ; needs distcc:?
 # ergo - tba ; needs ergo:ergo
 # git - pass ; needs nobody:nobody
