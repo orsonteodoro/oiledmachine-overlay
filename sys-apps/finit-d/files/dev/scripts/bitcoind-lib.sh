@@ -1,4 +1,5 @@
 #!/bin/sh
+# =net-p2p/bitcoin-core-25.1-r1::gentoo
 
 . /etc/conf.d/bitcoind
 . /etc/finit.d/scripts/lib.sh

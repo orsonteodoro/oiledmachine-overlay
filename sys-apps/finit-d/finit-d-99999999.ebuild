@@ -64,6 +64,7 @@ SERVICES=(
 	mysql
 	networkmanager
 	nginx
+	openvpn
 	redis
 	redis-sentinel
 	rsyncd
@@ -87,6 +88,7 @@ SERVICES=(
 	varnishlog
 	varnishncsa
 	watchdog
+	wg-quick
 	xdm
 	znc
 )

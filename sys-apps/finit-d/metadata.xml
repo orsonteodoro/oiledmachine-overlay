@@ -173,6 +173,9 @@
     <flag name="ntpd">
       Add support for ntpd
     </flag>
+    <flag name="openvpn">
+      Add support for OpenVPN
+    </flag>
     <flag name="plymouth">
       Resolve plymouth-tty issue
     </flag>
@@ -238,6 +241,9 @@
     </flag>
     <flag name="watchdog">
       Add support for watchdog
+    </flag>
+    <flag name="wg-quick">
+      Add support for wg-quick
     </flag>
     <flag name="xdm">
       Add support for xdm
