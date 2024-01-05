@@ -207,6 +207,7 @@ src_configure() {
 	# Run sequence:
 	# si -> rc -> 3 for 99% of the time when operating normally
 	# si -> rc -> 1 for 1% of the time when broken
+	# ctrl-alt-delete -> s6 -> s0
 		--with-runlevel=3
 	)
 	econf ${myconf[@]}

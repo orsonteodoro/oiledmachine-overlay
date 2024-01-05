@@ -95,7 +95,7 @@ IUSE+="
 	dash
 	hook-scripts
 	netlink
-	r2
+	r3
 "
 NEEDS_NETWORK="
 	apache
