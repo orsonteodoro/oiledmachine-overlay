@@ -71,6 +71,7 @@ SERVICES=(
 	rtkit
 	ntpd
 	plymouth
+	pydoc
 	rp-pppoe
 	rsyslogd
 	seatd
@@ -106,10 +107,12 @@ NEEDS_NETWORK="
 	icecast
 	nginx
 	ntpd
+	openvpn
 	sntpd
 	svnserve
 	twistd
 	varnishd
+	wg-quick
 "
 gen_required_use_network() {
 	local
@@ -204,21 +207,6 @@ src_unpack() {
 		|| die
 }
 
-edit_dash() {
-	IFS=$'\n'
-	local L=(
-		$(grep -r -l '#!/bin/sh' ./)
-	)
-	local path
-	for path in ${L[@]} ; do
-		if ! grep "^# BASH ME" "${path}" ; then
-einfo "Editing ${path} for DASH"
-			sed -i -e 's|#!/bin/sh|#!/bin/dash|g' "${path}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
 edit_cond_network() {
 	IFS=$'\n'
 	local L=(
@@ -237,6 +225,27 @@ einfo "Using net/route/default for network up for ${path}.  This conditon is bug
 	IFS=$' \t\n'
 }
 
+edit_dash() {
+	IFS=$'\n'
+	local L=(
+		$(grep -r -l '#!/bin/sh' ./)
+	)
+	local path
+	for path in ${L[@]} ; do
+		if ! grep "^# BASH ME" "${path}" ; then
+einfo "Editing ${path} for DASH"
+			sed -i -e 's|#!/bin/sh|#!/bin/dash|g' "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+edit_pydoc() {
+	has_version "dev-lang/python:3.10" || sed -i -e "/__PYDOC_3_10__/d" confs/pydoc.conf || die
+	has_version "dev-lang/python:3.11" || sed -i -e "/__PYDOC_3_11__/d" confs/pydoc.conf || die
+	has_version "dev-lang/python:3.12" || sed -i -e "/__PYDOC_3_12__/d" confs/pydoc.conf || die
+}
+
 edit_sql() {
 	use mysql || return
 	if ! has_version "dev-db/mysql" ; then
@@ -249,8 +258,9 @@ edit_sql() {
 
 src_prepare() {
 	default
-	edit_dash
 	edit_cond_network
+	edit_dash
+	edit_pydoc
 	edit_sql
 }
 
@@ -321,6 +331,11 @@ src_install() {
 	fi
 	if use squid ; then
 		install_script "squid-rotate.sh"
+	fi
+	if use pydoc ; then
+		has_version "dev-lang/python:3.10" && install_script "pydoc-3.10.sh"
+		has_version "dev-lang/python:3.11" && install_script "pydoc-3.11.sh"
+		has_version "dev-lang/python:3.12" && install_script "pydoc-3.12.sh"
 	fi
 	if use tor ; then
 		install_script "tor-checkconfig.sh"

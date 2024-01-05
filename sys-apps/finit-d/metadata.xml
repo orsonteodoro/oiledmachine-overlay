@@ -179,6 +179,9 @@
     <flag name="plymouth">
       Resolve plymouth-tty issue
     </flag>
+    <flag name="pydoc">
+      Add support for pydoc server
+    </flag>
     <flag name="redis">
       Add support for Redis
     </flag>
