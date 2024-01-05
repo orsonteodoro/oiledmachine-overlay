@@ -77,6 +77,7 @@ SERVICES=(
 	pydoc
 	rp-pppoe
 	rsyslogd
+	saned
 	seatd
 	sntpd
 	spacenavd

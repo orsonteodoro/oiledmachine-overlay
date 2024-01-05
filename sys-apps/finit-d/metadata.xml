@@ -215,6 +215,10 @@
     <flag name="rsyslogd">
       Add support for rsyslogd system logger
     </flag>
+    <flag name="saned">
+      Add support saned from sane-backends to allow LAN users to access image
+      acquistion devices on the local host.
+    </flag>
     <flag name="seatd">
       Add support for seatd
     </flag>
