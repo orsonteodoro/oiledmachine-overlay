@@ -13,7 +13,6 @@
 # The above copyright notice applies to configs for:
 # confs/actkbd.conf
 # confs/apache.conf
-# confs/avahi-daemon.conf
 # confs/avahi-dnsconfd.conf
 # confs/bitlbee.conf
 # confs/containerd.conf
@@ -67,6 +66,7 @@
 # confs/acpid.conf
 # confs/anacron.conf
 # confs/apparmor.conf
+# confs/avahi-daemon.conf
 # confs/bluez.conf (formerly bluetooth.conf)
 # confs/cron.conf
 # confs/dhcpcd.conf
