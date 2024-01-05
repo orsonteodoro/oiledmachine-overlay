@@ -32,6 +32,7 @@ SERVICES=(
 	bitlbee
 	bluez
 	caddy
+	clamd
 	consolefont
 	containerd
 	coolercontrol

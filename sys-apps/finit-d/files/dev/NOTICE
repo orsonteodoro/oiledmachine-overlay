@@ -4,6 +4,7 @@
 
 # The above copyright notice applies to scripts/configs for:
 # {confs,scripts}/bitcoind*.{.conf,.sh}
+# {confs,scripts}/clamav*.{.conf,.sh}
 # {confs,scripts}/cupsd*.{.conf,.sh}
 # {confs,scripts}/ergo*.{.conf,.sh}
 # {confs,scripts}/fancontrol*.{.conf,.sh}

@@ -64,6 +64,9 @@
     <flag name="caddy">
       Add support for Caddy
     </flag>
+    <flag name="clamd">
+      Add support for clamd
+    </flag>
     <flag name="consolefont">
       Add support for changing the console font
     </flag>
