@@ -71,6 +71,9 @@ SERVICES=(
 	rtkit
 	ntpd
 	plymouth
+	proftpd
+	pure-ftpd
+	pure-uploadscript
 	pydoc
 	rp-pppoe
 	rsyslogd
@@ -88,6 +91,7 @@ SERVICES=(
 	varnishd
 	varnishlog
 	varnishncsa
+	vsftpd
 	watchdog
 	wg-quick
 	xdm
@@ -108,6 +112,7 @@ NEEDS_NETWORK="
 	nginx
 	ntpd
 	openvpn
+	proftpd
 	sntpd
 	svnserve
 	twistd
@@ -342,8 +347,8 @@ src_install() {
 	fi
 }
 
-check_daemon_configs() {
-	if use apache && ! grep "ServerName localhost" "${EROOT}/etc/apache2/httpd.conf" >/dev/null ; then
+check_apache() {
+	if use apache && ! grep -q -e "ServerName localhost" "${EROOT}/etc/apache2/httpd.conf" ; then
 ewarn
 ewarn "Apache needs \`ServerName localhost\` in /etc/apache2/httpd.conf for"
 ewarn "localhost testers or developers."
@@ -379,6 +384,9 @@ ewarn
 ewarn "Apache requires ssl USE flag to avoid waiting state in initctl."
 ewarn
 	fi
+}
+
+check_actkbd() {
 	if use actkbd && [ ! -e "${EROOT}/etc/actkbd.conf" ] ; then
 		local pv=$(best_version "app-misc/actkbd" \
 			| sed -i -e "s|app-misc/actkbd-||g")
@@ -389,18 +397,24 @@ ewarn
 ewarn "  bzcat /usr/share/doc/actkbd-${pv}/samples/actkbd.conf.bz2 > /etc/actkbd.conf"
 ewarn
 	fi
-	if use actkbd && grep -F "<DEVICE>" "${EROOT}/etc/conf.d/actkbd" >/dev/null ; then
+	if use actkbd && grep -q -F -e "<DEVICE>" "${EROOT}/etc/conf.d/actkbd" >/dev/null ; then
 ewarn
 ewarn "Detected <DEVICE> in /etc/conf.d/actkbd which can list actkbd in initctl"
 ewarn "as crashed."
 ewarn
 	fi
+}
+
+check_fancontrol() {
 	if use fancontrol && [ ! -e "/etc/fancontrol" ] ; then
 ewarn
 ewarn "Missing /etc/fancontrol which can list fancontrol in initctl as crashed."
 ewarn "Use pwmconfig to fix this."
 ewarn
 	fi
+}
+
+check_mysql() {
 	if use mysql && [ ! -e "${EROOT}/var/lib/mysql" ] ; then
 ewarn
 ewarn "Missing /var/lib/mysql folder"
@@ -426,6 +440,9 @@ ewarn
 ewarn "dev-db/mysql[server] is required for init script."
 ewarn
 	fi
+}
+
+check_nginx() {
 	if use nginx ; then
 		if has_version "www-servers/nginx[-http]" ; then
 ewarn
@@ -439,23 +456,71 @@ ewarn "initctl."
 ewarn
 		fi
 	fi
+}
+
+check_pure_ftpd() {
+	if use pure-ftpd && [ ! -f "/etc/pure-ftpd.conf" ] ; then
+ewarn
+ewarn "/etc/pure-ftpd.conf needs to be created"
+ewarn
+	fi
+}
+
+check_pure_uploadscript() {
+	ftpd_configfile="/etc/pure-ftpd.conf"
+	if use pure-ftpd && grep -q -e "# UPLOADSCRIPT" "/etc/conf.d/pure-uploadscript" ; then
+ewarn
+ewarn "UPLOADSCRIPT needs to be uncommented and point to the script to run."
+ewarn
+	fi
+	if use pure-ftpd && ! grep -q -e "UPLOADSCRIPT" "/etc/conf.d/pure-uploadscript" ; then
+ewarn
+ewarn "UPLOADSCRIPT needs to be added to /etc/conf.d/pure-uploadscript and"
+ewarn "point to the script to run."
+ewarn
+	fi
+	if ! grep -q -e "^CallUploadScript" "${ftpd_configfile}" ; then
+ewarn
+ewarn "Enable CallUploadScript in ${ftpd_configfile}"
+ewarn
+	fi
+}
+
+check_svnserve() {
 	if use svnserve && [ ! -e "${EROOT}/var/svn" ] ; then
 ewarn
 ewarn "Missing /var/svn which can list svnserve in initctl as waiting."
 ewarn
 	fi
+}
+
+check_varnishd() {
 	if use varnishd && [ ! -e "${EROOT}/etc/varnish/default.vcl" ] ; then
 ewarn
 ewarn "Missing /etc/varnish/default.vcl which can list varnish in initctl as"
 ewarn "waiting."
 ewarn
 	fi
+}
+
+check_znc() {
 	if use znc && [ ! -e "${EROOT}/var/lib/znc/configs/znc.conf" ] ; then
 ewarn
 ewarn "Missing /var/lib/znc/configs/znc.conf which can list znc in initctl as"
 ewarn "crashed."
 ewarn
 	fi
+}
+
+check_daemon_configs() {
+	check_apache
+	check_actkbd
+	check_mysql
+	check_pure_ftpd
+	check_pure_uploadscript
+	check_nginx
+	check_varnishd
+	check_znc
 }
 
 pkg_postinst() {

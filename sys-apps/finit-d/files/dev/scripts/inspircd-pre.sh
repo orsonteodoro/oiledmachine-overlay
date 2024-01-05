@@ -5,7 +5,7 @@
 . /etc/finit.d/scripts/inspircd-lib.sh
 
 start_pre() {
-	checkpath "d" "inspircd:inspircd" "0750" "/run/inspircd/"
+	checkpath "d" "inspircd:inspircd" "0750" "/run/inspircd"
 }
 
 start_pre

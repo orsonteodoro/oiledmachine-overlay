@@ -176,8 +176,23 @@
     <flag name="openvpn">
       Add support for OpenVPN
     </flag>
+    <flag name="pure-ftpd">
+      Add support for Pure-FTPd
+    </flag>
+    <flag name="pure-uploadscript">
+      Add support for the Pure-FTPd upload script to run a program after upload
+    </flag>
     <flag name="plymouth">
       Resolve plymouth-tty issue
+    </flag>
+    <flag name="proftpd">
+      Add support for proftpd
+    </flag>
+    <flag name="pure-ftpd">
+      Add support for pure-ftpd
+    </flag>
+    <flag name="pure-uploadscript">
+      Add support for pure-uploadscript
     </flag>
     <flag name="pydoc">
       Add support for pydoc server
@@ -244,6 +259,9 @@
     </flag>
     <flag name="watchdog">
       Add support for watchdog
+    </flag>
+    <flag name="vsftpd">
+      Add support for vsftpd
     </flag>
     <flag name="wg-quick">
       Add support for wg-quick
