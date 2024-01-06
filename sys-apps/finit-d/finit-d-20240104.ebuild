@@ -208,7 +208,11 @@ ewarn
 }
 
 src_unpack() {
-	cp -a "${FILESDIR}/dev/"* "${WORKDIR}" || die
+	if [[ "${PV}" =~ "99999999" ]] ; then
+		cp -a "${FILESDIR}/dev/"* "${WORKDIR}" || die
+	else
+		cp -a "${FILESDIR}/${PV}/"* "${WORKDIR}" || die
+	fi
 	local libdir=$(get_libdir)
 	sed -i \
 		-e "s|lib64|${libdir}|g" \
