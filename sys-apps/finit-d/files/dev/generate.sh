@@ -1,23 +1,32 @@
 #!/bin/bash
 
-DEFAULT_SHELL=${DEFAULT_SHELL:-"/bin/dash"}
+FINIT_SHELL=${FINIT_SHELL:-"/bin/sh"}
+FINIT_COND_NETWORK=${FINIT_COND_NETWORK:-"net/route/default"}
+
+die() {
+	echo "${1}"
+	exit 1
+}
 
 main() {
-	echo > pkgs.txt
-	echo > services.txt
-	echo > needs_net.txt
-	echo > needs_dbus.txt
-	rm -rf confs
-	mkdir -p confs
-	rm -rf scripts
-	mkdir -p scripts
-	SCRIPTS_PATH="$(pwd)/scripts"
+	rm -rf confs || die "ERR:  $LINENO"
+	mkdir -p confs || die "ERR:  $LINENO"
+	rm -rf scripts || die "ERR:  $LINENO"
+	mkdir -p scripts || die "ERR:  $LINENO"
+
 	CONFS_PATH="$(pwd)/confs"
 	NEEDS_NET_PATH="$(pwd)/needs_net.txt"
-	SERVICES_PATH="$(pwd)/services.txt"
-	PKGS_PATH="$(pwd)/pkgs.txt"
 	NEEDS_DBUS_PATH="$(pwd)/needs_dbus.txt"
-	cd "${SCRIPTS_PATH}"
+	PKGS_PATH="$(pwd)/pkgs.txt"
+	SCRIPTS_PATH="$(pwd)/scripts"
+	SERVICES_PATH="$(pwd)/services.txt"
+
+	echo > "${PKGS_PATH}" || die "ERR:  $LINENO"
+	echo > "${SERVICES_PATH}" || die "ERR:  $LINENO"
+	echo > "${NEEDS_NET_PATH}" || die "ERR:  $LINENO"
+	echo > "${NEEDS_DBUS_PATH}" || die "ERR:  $LINENO"
+
+	cd "${SCRIPTS_PATH}" || die "ERR:  $LINENO"
 	IFS=$'\n'
 		local OVERLAYS=()
 		if [[ -e "/usr/portage" ]] ; then
@@ -38,7 +47,7 @@ main() {
 		fi
 		for overlay in ${OVERLAYS[@]} ; do
 			echo "Processing ${overlay} overlay"
-			cd "${overlay}"
+			cd "${overlay}" || die "ERR:  $LINENO"
 			L=(
 				grep -F -l '#!/sbin/openrc-run' $(find ./ -name "*init*")
 			)
@@ -58,85 +67,85 @@ main() {
 
 				# Variations
 				# Exact set
-				fn=$(echo "${fn}" | sed -r -e "s|^([a-z-]+)-[0-9]+-r[0-9]+\.initd$|\1|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^([a-z]+)-[0-9.]+-r[0-9]+\.initd$|\1|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^[0-9.]+-([a-z]+)\.init-r[0-9]+$|\1|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init\.d\.([A-Za-Z]+)-r[0-9]$|\1|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^${pn}\.init-r[0-9]+\.d$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init\.d\.([a-z]+)\.[0-9]+$|\1|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init\.d-${pn}-r[0-9]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^initd-[0-9.]+-[0-9.]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^([a-z_]+)-r[0-9]+.initd$|\1|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^initd-${pn}-[0-9]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^${pn}-initd-r[0-9]$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^${pn}[0-9]+.initd$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^initd-[0-9.]+[a]$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^${pn}.init[0-9]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^initd-r[0-9]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^initd-[0-9]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init-r[0-9]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init-[0-9.]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init\.${pn}$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^${pn}_initd$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^${pn}\.rc$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^initd-[0-9.]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init.d$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^initd$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init$|${pn}|g")
+				fn=$(echo "${fn}" | sed -r -e "s|^([a-z-]+)-[0-9]+-r[0-9]+\.initd$|\1|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^([a-z]+)-[0-9.]+-r[0-9]+\.initd$|\1|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^[0-9.]+-([a-z]+)\.init-r[0-9]+$|\1|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init\.d\.([A-Za-z]+)-r[0-9]+$|\1|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^${pn}\.init-r[0-9]+\.d$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init\.d\.([a-z]+)\.[0-9]+$|\1|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init\.d-${pn}-r[0-9]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^initd-[0-9.]+-[0-9.]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^([a-z_]+)-r[0-9]+.initd$|\1|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^initd-${pn}-[0-9]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^${pn}-initd-r[0-9]$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^${pn}[0-9]+.initd$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^initd-[0-9.]+[a]$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^${pn}.init[0-9]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^initd-r[0-9]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^initd-[0-9]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init-r[0-9]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init-[0-9.]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init\.${pn}$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^${pn}_initd$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^${pn}\.rc$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^initd-[0-9.]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init.d$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^initd$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init$|${pn}|g") || die "ERR:  $LINENO"
 				# Inexact set
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d\.[0-9.]+-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-initd-[0-9.]+[a]-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d-[0-9]+-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.initd-[0-9.]+-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+\.initd-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|^rc_${pn}-r[0-9]+$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|-initd-[0-9.]+-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.[0-9]+-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init-[0-9.]+-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|^${pn}-[0-9.]+-init\.d-||g")
-				fn=$(echo "${fn}" | sed -r -e "s|${pn}d\.initd$|${pn}d|g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d\.[0-9.]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|${pn}\.initd$|${pn}|g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|([a-z])\.initd$|\1|g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d-[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-init\.d-[0-9.]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|_init\.d_[0-9.]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-init\.d\.[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+-init\.d$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|_init\.d_[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.initd-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.initd-[0-9.]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.initd\.[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+\.initd$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-init\.d-r[0-9]$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|_initd-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-r[0-9]+\.init$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init-[0-9.]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+-initd$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+\.init$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-initd-[0-9.]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.initd[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init-[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+-init$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-[0-9]+\.init$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-init-r[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-initd-[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d\.ng$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-init\.[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-init-[0-9]+$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init[0-9]+||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.initd-new$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|.initscript$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|^init\.d_||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-init\.d$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-initrc$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-initd$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|\.init$||g")
-				fn=$(echo "${fn}" | sed -r -e "s|-init$||g")
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d\.[0-9.]+-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-initd-[0-9.]+[a]-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d-[0-9]+-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.initd-[0-9.]+-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+\.initd-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^rc_${pn}-r[0-9]+$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-initd-[0-9.]+-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.[0-9]+-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init-[0-9.]+-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^${pn}-[0-9.]+-init\.d-||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|${pn}d\.initd$|${pn}d|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d\.[0-9.]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|${pn}\.initd$|${pn}|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|([a-z])\.initd$|\1|g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d-[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-init\.d-[0-9.]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|_init\.d_[0-9.]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-init\.d\.[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+-init\.d$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|_init\.d_[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.initd-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.initd-[0-9.]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.initd\.[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+\.initd$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-init\.d-r[0-9]$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|_initd-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-r[0-9]+\.init$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init-[0-9.]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+-initd$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+\.init$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-initd-[0-9.]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.initd[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init-[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-[0-9.]+-init$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-[0-9]+\.init$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-init-r[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-initd-[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d\.ng$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-init\.[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-init-[0-9]+$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init[0-9]+||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.initd-new$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|.initscript$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init\.d$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|^init\.d_||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-init\.d$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-initrc$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-initd$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|\.init$||g") || die "ERR:  $LINENO"
+				fn=$(echo "${fn}" | sed -r -e "s|-init$||g") || die "ERR:  $LINENO"
 
 				# Init script fragments.  Needs manual evaluation
 				[[ "${init_path}" =~ "qemu-binfmt" ]] && continue
@@ -198,10 +207,10 @@ main() {
 				#fi
 
 				cat "${init_path}" > "${dest}"
-				sed -i -e "s|#!/sbin/openrc-run|#!${DEFAULT_SHELL}|g" "${dest}"
+				sed -i -e "s|#!/sbin/openrc-run|#!${FINIT_SHELL}|g" "${dest}" || die "ERR:  $LINENO"
 
 				if [[ "${init_path}" =~ "sys-apps/dbus" ]] && echo "${fn}" | grep -q -E -e "dbus.initd.in" ; then
-					sed -i -e "s|@rundir@|/run|g" "${dest}"
+					sed -i -e "s|@rundir@|/run|g" "${dest}" || die "ERR:  $LINENO"
 				fi
 
 
@@ -209,22 +218,22 @@ main() {
 				local top_ln=$(grep -n "# Distributed under" "${dest}" | cut -f 1 -d ":")
 				local top_ln_fallback=$(grep -n "#!/sbin/openrc-run" "${dest}" | cut -f 1 -d ":")
 				if [[ -n "${top_ln}" ]] ; then
-					sed -i -e "${top_ln}a . /lib/finit/scripts/lib.sh" "${dest}"
+					sed -i -e "${top_ln}a . /lib/finit/scripts/lib.sh" "${dest}" || die "ERR:  $LINENO"
 					if grep -q "RC_SVCNAME" "${dest}" ; then
 						sed -i -e "${top_ln}a RC_SVCNAME=\"${pn}\"" "${dest}"
 					fi
-					sed -i -e "${top_ln}a SVCNAME=\"${pn}\"" "${dest}"
-					sed -i -e "${top_ln}a FN=\"\$1\"" "${dest}"
+					sed -i -e "${top_ln}a SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
+					sed -i -e "${top_ln}a FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
 				else
-					sed -i -e "${top_ln_fallback}a . /lib/finit/scripts/lib.sh" "${dest}"
+					sed -i -e "${top_ln_fallback}a . /lib/finit/scripts/lib.sh" "${dest}" || die "ERR:  $LINENO"
 					if grep -q "RC_SVCNAME" "${dest}" ; then
-						sed -i -e "${top_ln_fallback}a RC_SVCNAME=\"${pn}\"" "${dest}"
+						sed -i -e "${top_ln_fallback}a RC_SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
 					fi
-					sed -i -e "${top_ln_fallback}a SVCNAME=\"${pn}\"" "${dest}"
-					sed -i -e "${top_ln_fallback}a FN=\"\$1\"" "${dest}"
+					sed -i -e "${top_ln_fallback}a SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
+					sed -i -e "${top_ln_fallback}a FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
 				fi
 				local bottom_ln=$(cat "${dest}" | wc -l)
-				sed -i -e "${bottom_ln}a . /lib/finit/scripts/event_handlers.sh" "${dest}"
+				sed -i -e "${bottom_ln}a . /lib/finit/scripts/event_handlers.sh" "${dest}" || die "ERR:  $LINENO"
 
 				local needs_syslog=0
 				local cond=""
@@ -310,13 +319,13 @@ main() {
 		done
 	IFS=$' \t\n'
 
-	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t
-	mv "${NEEDS_NET_PATH}"{.t,}
+	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  $LINENO"
+	mv "${NEEDS_NET_PATH}"{.t,} || die "ERR:  $LINENO"
 
-	cat "${SERVICES_PATH}" | sort | uniq > "${SERVICES_PATH}".t
-	mv "${SERVICES_PATH}"{.t,}
+	cat "${SERVICES_PATH}" | sort | uniq > "${SERVICES_PATH}".t || die "ERR:  $LINENO"
+	mv "${SERVICES_PATH}"{.t,} || die "ERR:  $LINENO"
 
-	cat "${PKGS_PATH}" | sort | uniq > "${PKGS_PATH}".t
-	mv "${PKGS_PATH}"{.t,}
+	cat "${PKGS_PATH}" | sort | uniq > "${PKGS_PATH}".t || die "ERR:  $LINENO"
+	mv "${PKGS_PATH}"{.t,} || die "ERR:  $LINENO"
 }
 main

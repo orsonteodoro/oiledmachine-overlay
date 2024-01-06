@@ -92,8 +92,8 @@ src_prepare() {
 
 src_compile() {
 	chmod +x generate.sh
-	use dash && export DEFAULT_SHELL="/bin/dash"
-	use dash || export DEFAULT_SHELL="/bin/sh"
+	use dash && export FINIT_SHELL="/bin/dash"
+	use dash || export FINIT_SHELL="/bin/sh"
 	if [ -n "${FINIT_COND_NETWORK}" ] ; then
 einfo "Using ${FINIT_COND_NETWORK} for network up for ${path}."
 		export FINIT_COND_NETWORK
@@ -102,7 +102,6 @@ einfo "Using net/route/default for network up for ${path}.  This conditon is bug
 		export FINIT_COND_NETWORK="net/route/default"
 	fi
 	./generate.sh
-	edit_cond_network
 	local n=$(cat "${WORKDIR}/needs_net.txt" | wc -l)
 	if (( n > 1 )) && ! use hook-scripts && ! use netlink ; then
 eerror "You need to enable either hook-scripts or netlink USE flag."
