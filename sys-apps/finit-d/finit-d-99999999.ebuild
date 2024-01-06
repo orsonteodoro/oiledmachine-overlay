@@ -143,7 +143,7 @@ eerror "You need to enable the dbus USE flag."
 install_scripts() {
 	local pkg="${1}"
 	dodir "/lib/finit.d/scripts/${pkg}"
-	cp -a "${WORKDIR}/scripts/${pkg}" "/lib/finit.d/scripts/${pkg}" || die
+	cp -a "${WORKDIR}/scripts/${pkg}/"* "/lib/finit.d/scripts/${pkg}" || die
 	chown root:root "/lib/finit.d/scripts/${pkg}/"*
 	chmod 0750 "/lib/finit.d/scripts/${pkg}/"*
 }
