@@ -432,7 +432,12 @@ elif [[ -n "\${kill_signal}" ]] ; then
 else
 	kill -s SIGTERM \${MAINPID}
 fi
-ps \${MAINPID} && sleep \${timeout_stop_sec}
+now=$(date +"%s")
+time_final=$(( ${now} + ${timeout_stop_sec} ))
+while [ \${now} -lt \${time_final} ] ; do
+	ps \${MAINPID} || return 0
+	now=$(date +"%s")
+done
 if [[ -n "\${final_kill_signal}" ]] ; then
 	kill -s \${final_kill_signal} \${MAINPID}
 else
@@ -574,14 +579,14 @@ convert_systemd() {
 			echo "task [0] name:${svc_name}-stop ${exec_stop} -- ${svc_name} stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 		fi
 		if [[ -n "${exec_stop_post}" ]] ; then
-			echo "run [0] name:${svc_name}-post-stop /lib/finit.d/${c}/${pn}/${svc_name}-stop.sh -- ${svc_name} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+			echo "run [0] name:${svc_name}-post-stop /lib/finit/${c}/${pn}/${svc_name}-stop.sh -- ${svc_name} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			gen_systemd_stop_wrapper
 		fi
 
 		if [[ -n "${exec_reload}" ]] ; then
 			local x="reload"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
-			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit.d/${c}/${pn}/${svc_name}-reload.sh \"${x}\" -- ${svc_name} ${x}" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}-reload.sh \"${x}\" -- ${svc_name} ${x}" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			gen_systemd_reload_wrapper
 		fi
 	done

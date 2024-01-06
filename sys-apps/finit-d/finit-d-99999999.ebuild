@@ -121,12 +121,12 @@ eerror "You need to enable the dbus USE flag."
 
 install_scripts() {
 	local pkg="${1}"
-	exeinto "/lib/finit.d/scripts/${pkg}"
+	exeinto "/lib/finit/scripts/${pkg}"
 	pushd "${WORKDIR}/scripts/${pkg}" >/dev/null 2>&1 || die
 		for script in $(ls) ; do
 			doexe "${script}"
-			fowners root:root "/lib/finit.d/scripts/${pkg}/${script}"
-			fperms 0750 "/lib/finit.d/scripts/${pkg}/${script}"
+			fowners root:root "/lib/finit/scripts/${pkg}/${script}"
+			fperms 0750 "/lib/finit/scripts/${pkg}/${script}"
 		done
 	popd >/dev/null 2>&1
 }
@@ -134,10 +134,10 @@ install_scripts() {
 install_script() {
 	local script="${1}"
 	pkg="${CATEGORY}/${PN}"
-	exeinto "/lib/finit.d/scripts/${pkg}"
+	exeinto "/lib/finit/scripts/${pkg}"
 	doexe "${script}"
-	fowners root:root "/lib/finit.d/scripts/${pkg}/${script}"
-	fperms 0750 "/lib/finit.d/scripts/${pkg}/${script}"
+	fowners root:root "/lib/finit/scripts/${pkg}/${script}"
+	fperms 0750 "/lib/finit/scripts/${pkg}/${script}"
 }
 
 src_install() {
