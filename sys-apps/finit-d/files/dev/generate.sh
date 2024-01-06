@@ -228,8 +228,11 @@ main() {
 				local bottom_ln=$(cat "${dest}" | wc -l)
 				sed -i -e "${bottom_ln}a . /lib/finit/scripts/event_handlers.sh" "${dest}"
 
+				local needs_syslog=0
+				local cond=""
 				local runlevels=""
 				if grep -q -e "need.*net" "${init_path}" ; then
+					cond="__FINIT_COND_NETWORK__"
 					runlevels="345"
 					echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
 				else
@@ -238,6 +241,14 @@ main() {
 
 				if grep -q -e "need.*dbus" "${init_path}" ; then
 					echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
+				fi
+
+				if grep -q -e "need.*logger" "${init_path}" ; then
+					if [[ -n "${cond}" ]] ; then
+						cond="${cond},syslogd"
+					else
+						cond="${cond}"
+					fi
 				fi
 
 				local pidfile=""
@@ -260,7 +271,8 @@ main() {
 					echo "run [${runlevels}] name:${pn}-pre-start /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start_pre\" -- ${pn} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 				fi
 				if grep -q -e "^start" "${init_path}" ; then
-					echo "service [${runlevels}] name:${pn}-start ${pidfile} /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start\" -- ${pn} start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+					[[ -n "${cond}" ]] && cond="<${cond}>"
+					echo "service [${runlevels}] ${cond} name:${pn}-start ${pidfile} /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start\" -- ${pn} start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 				fi
 				if grep -q -e "^start_post" "${init_path}" ; then
 					echo "run [${runlevels}] name:${pn}-post-start /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start_post\" -- ${pn} post-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
