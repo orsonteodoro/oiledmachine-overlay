@@ -259,7 +259,7 @@ fi
 				sed -i -e "${top_ln}a SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
 				sed -i -e "${top_ln}a FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
 			else
-				sed -i -e "${top_ln_fallback}a . /lib/finit/scripts/lib.sh" "${dest}" || die "ERR:  $LINENO"
+				sed -i -e "${top_ln_fallback}a . /lib/finit/scripts/lib/lib.sh" "${dest}" || die "ERR:  $LINENO"
 				if grep -q "RC_SVCNAME" "${dest}" ; then
 					sed -i -e "${top_ln_fallback}a RC_SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
 				fi
@@ -267,7 +267,7 @@ fi
 				sed -i -e "${top_ln_fallback}a FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
 			fi
 			local bottom_ln=$(cat "${dest}" | wc -l)
-			sed -i -e "${bottom_ln}a . /lib/finit/scripts/event_handlers.sh" "${dest}" || die "ERR:  $LINENO"
+			sed -i -e "${bottom_ln}a . /lib/finit/scripts/lib/event.sh" "${dest}" || die "ERR:  $LINENO"
 
 			sed -i -e "s|#!/sbin/openrc-run|#!${FINIT_SHELL}|g" "${dest}" || die "ERR:  $LINENO"
 

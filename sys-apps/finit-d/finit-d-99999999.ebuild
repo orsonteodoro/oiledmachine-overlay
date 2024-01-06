@@ -131,13 +131,12 @@ install_scripts() {
 	popd >/dev/null 2>&1
 }
 
-install_script() {
+install_lib() {
 	local script="${1}"
-	pkg="${CATEGORY}/${PN}"
-	exeinto "/lib/finit/scripts/${pkg}"
+	exeinto "/lib/finit/scripts/lib"
 	doexe "${script}"
-	fowners root:root "/lib/finit/scripts/${pkg}/${script}"
-	fperms 0750 "/lib/finit/scripts/${pkg}/${script}"
+	fowners root:root "/lib/finit/scripts/lib/${script}"
+	fperms 0750 "/lib/finit/scripts/lib/${script}"
 }
 
 src_install() {
@@ -167,8 +166,8 @@ src_install() {
 	insinto /etc
 	doins "${WORKDIR}/rc.local"
 	doins "${WORKDIR}/finit.conf"
-	install_script "lib.sh"
-	install_script "lib.sh"
+	install_lib "lib.sh"
+	install_lib "event.sh"
 }
 
 pkg_postinst() {
