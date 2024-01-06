@@ -387,7 +387,7 @@ convert_systemd() {
 	SERVICES_PATH="$(pwd)/services.txt"
 
 	local path
-	for init_path in $(find /lib/systemd/system/ -name "*.service") ; do
+	for init_path in $(find /lib/systemd/system /usr/lib/systemd/system -name "*.service") ; do
 		[[ "${init_path}" == "./" ]] && continue
 		local pkg=$(grep -l $(realpath "${init_path}") $(realpath "/var/db/pkg/"*"/"*"/CONTENTS") | cut -f 5-6 -d "/")
 		if [[ ! -f $(realpath "/var/db/pkg/${pkg}/environment.bz2") ]] ; then
