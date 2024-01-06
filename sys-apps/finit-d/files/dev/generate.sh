@@ -394,11 +394,14 @@ cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-reload.sh"
 #!${FINIT_SHELL}
 svc_name="${svc_name}"
 pidfile="${pidfile}"
+exec_start="${exec_start}"
 exec_reload="${exec_reload}"
 if [[ -n "\${pidfile}" ]] ; then
 	MAINPID=\$(cat "\${pidfile}")
 else
-	MAINPID=\$(pgrep "\${svc_name}")
+	exe_name=$(echo "${exec_start}" | cut -f 1 -d " ")
+	exe_name=$(basename "${exe_name}")
+	MAINPID=\$(pgrep "\${exe_name}")
 fi
 \${exec_reload}
 EOF
@@ -409,6 +412,7 @@ gen_systemd_stop_wrapper() {
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-stop.sh"
 #!${FINIT_SHELL}
 svc_name="${svc_name}"
+exec_start="${exec_start}"
 exec_stop="${exec_stop}"
 final_kill_signal="${final_kill_signal}"
 kill_signal="${kill_signal}"
@@ -417,7 +421,9 @@ timeout_stop_sec="${timeout_stop_sec}"
 if [[ -n "\${pidfile}" ]] ; then
 	MAINPID=\$(cat "\${pidfile}")
 else
-	MAINPID=\$(pgrep "\${svc_name}")
+	exe_name=$(echo "${exec_start}" | cut -f 1 -d " ")
+	exe_name=$(basename "${exe_name}")
+	MAINPID=\$(pgrep "\${exe_name}")
 fi
 if [[ -n "\${exec_stop}" ]] ; then
 	\${exec_stop}
