@@ -392,8 +392,15 @@ gen_systemd_reload_wrapper() {
 	mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-reload.sh"
 #!${FINIT_SHELL}
-MAINPID=\$(pgrep "${svc_name}")
-${exec_reload}
+svc_name="${svc_name}"
+pidfile="${pidfile}"
+exec_reload="${exec_reload}"
+if [[ -n "\${pidfile}" ]] ; then
+	MAINPID=\$(cat "\${pidfile}")
+else
+	MAINPID=\$(pgrep "\${svc_name}")
+fi
+\${exec_reload}
 EOF
 }
 
@@ -401,27 +408,29 @@ gen_systemd_stop_wrapper() {
 	mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-stop.sh"
 #!${FINIT_SHELL}
-pidfile="${pidfile}"
+svc_name="${svc_name}"
 exec_stop="${exec_stop}"
-kill_signal="${kill_signal}"
 final_kill_signal="${final_kill_signal}"
-if [[ -n "${PIDFILE}" ]] ; then
-	MAINPID=\$(cat "${pidfile}")
+kill_signal="${kill_signal}"
+pidfile="${pidfile}"
+timeout_stop_sec="${timeout_stop_sec}"
+if [[ -n "\${pidfile}" ]] ; then
+	MAINPID=\$(cat "\${pidfile}")
 else
-	MAINPID=\$(pgrep "${svc_name}")
+	MAINPID=\$(pgrep "\${svc_name}")
 fi
-if [[ -n "${exec_stop}" ]] ; then
-	${exec_stop}
-elif [[ -n "${kill_signal}" ]] ; then
-	kill -s ${kill_signal} ${MAINPID}
+if [[ -n "\${exec_stop}" ]] ; then
+	\${exec_stop}
+elif [[ -n "\${kill_signal}" ]] ; then
+	kill -s \${kill_signal} \${MAINPID}
 else
-	kill -s SIGTERM ${MAINPID}
+	kill -s SIGTERM \${MAINPID}
 fi
-ps ${MAINPID} && sleep ${timeout_stop_sec}
-if [[ -n "${final_kill_signal}" ]] ; then
-	kill -s ${final_kill_signal} ${MAINPID}
+ps \${MAINPID} && sleep \${timeout_stop_sec}
+if [[ -n "\${final_kill_signal}" ]] ; then
+	kill -s \${final_kill_signal} \${MAINPID}
 else
-	kill -s SIGKILL ${MAINPID}
+	kill -s SIGKILL \${MAINPID}
 fi
 EOF
 }
