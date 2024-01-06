@@ -125,6 +125,8 @@ src_prepare() {
 
 src_compile() {
 	chmod +x generate.sh
+	use dash && export DEFAULT_SHELL="/bin/dash"
+	use dash || export DEFAULT_SHELL="/bin/sh"
 	./generate.sh
 	use dash && edit_dash
 	edit_cond_network

@@ -542,7 +542,7 @@ start-stop-daemon() {
 		:;
 	else
 		# Bring to foreground
-		kill -SIGCONT $_pid
+		fg
 	fi
 }
 
