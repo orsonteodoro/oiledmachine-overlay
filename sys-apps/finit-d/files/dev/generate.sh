@@ -218,14 +218,14 @@ main() {
 						sed -i -e "${top_ln}a RC_SVCNAME=\"${pn}\"" "${dest}"
 					fi
 					sed -i -e "${top_ln}a SVCNAME=\"${pn}\"" "${dest}"
-					sed -i -e "${top_ln}a FN=\"$1\"" "${dest}"
+					sed -i -e "${top_ln}a FN=\"\$1\"" "${dest}"
 				else
 					sed -i -e "${top_ln_fallback}a . /lib/finit/scripts/lib.sh" "${dest}"
 					if grep -q "RC_SVCNAME" "${dest}" ; then
 						sed -i -e "${top_ln_fallback}a RC_SVCNAME=\"${pn}\"" "${dest}"
 					fi
 					sed -i -e "${top_ln_fallback}a SVCNAME=\"${pn}\"" "${dest}"
-					sed -i -e "${top_ln_fallback}a FN=\"$1\"" "${dest}"
+					sed -i -e "${top_ln_fallback}a FN=\"\$1\"" "${dest}"
 				fi
 				local bottom_ln=$(cat "${dest}" | wc -l)
 				sed -i -e "${bottom_ln}a . /lib/finit/scripts/event_handlers.sh" "${dest}"
