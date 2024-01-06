@@ -71,7 +71,7 @@ checkpath() {
 	local type=""
 	local writeable=0
 	while [ -n "$1" ] ; do
-		case in $1
+		case $1 in
 			--directory|-d)
 				type="d"
 				;;
@@ -235,7 +235,7 @@ start-stop-daemon() {
 	local stdout=""
 	local user=""
 	while [ -n "$1" ] ; do
-		case in $1
+		case $1 in
 			--)
 				shift
 				break
