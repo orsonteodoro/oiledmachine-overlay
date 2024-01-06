@@ -28,7 +28,7 @@ SLOT="0"
 IUSE+="
 	${SERVICES[@]}
 	dash
-	dbus
+	+dbus
 	hook-scripts
 	netlink
 "
