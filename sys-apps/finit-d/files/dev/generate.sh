@@ -378,9 +378,119 @@ fi
 	mv "${PKGS_PATH}"{.t,} || die "ERR:  $LINENO"
 }
 
-# TODO: systemd
 convert_systemd() {
-	:;
+	#rm -rf confs || die "ERR:  $LINENO"
+	mkdir -p confs || die "ERR:  $LINENO"
+	#rm -rf scripts || die "ERR:  $LINENO"
+	mkdir -p scripts || die "ERR:  $LINENO"
+
+	CONFS_PATH="$(pwd)/confs"
+	NEEDS_NET_PATH="$(pwd)/needs_net.txt"
+	NEEDS_DBUS_PATH="$(pwd)/needs_dbus.txt"
+	PKGS_PATH="$(pwd)/pkgs.txt"
+	SCRIPTS_PATH="$(pwd)/scripts"
+	SERVICES_PATH="$(pwd)/services.txt"
+
+	local path
+	for init_path in $(find /lib/systemd/system/ -name "*.service") ; do
+		[[ "${init_path}" == "./" ]] && continue
+		local pkg=$(grep -l $(realpath "${init_path}") $(realpath "/var/db/pkg/"*"/"*"/CONTENTS") | cut -f 5-6 -d "/")
+		if [[ ! -f $(realpath "/var/db/pkg/${pkg}/environment.bz2") ]] ; then
+			local c="unknown"
+			local pn="unknown"
+			pkg="${c}/${pn}"
+			echo "Missing environment.bz2 for pkg:${pkg} for ${init_path}"
+		else
+			local c=$(bzcat "/var/db/pkg/${pkg}/environment.bz2" | grep "declare -x CATEGORY=" | cut -f 2 -d '"')
+			local pn=$(bzcat "/var/db/pkg/${pkg}/environment.bz2" | grep "declare -x PN=" | cut -f 2 -d '"')
+		fi
+		init_path=$(realpath "${script_dir}/${init_path}")
+
+		local pidfile=""
+		if grep "^PIDFile" ; then
+			pidfile=$(grep "^PIDFile" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+		local exec_start_pre=""
+		if grep "^ExecStartPre=" ; then
+			exec_start_pre=$(grep "^ExecStartPre=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+		local exec_start=""
+		if grep "^ExecStart=" ; then
+			exec_start=$(grep "^ExecStart=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+		local exec_start_post=""
+		if grep "^ExecStartPost=" ; then
+			exec_start_post=$(grep "^ExecStartPost=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+		local exec_stop=""
+		if grep "^ExecStop=" ; then
+			exec_stop=$(grep "^ExecStop=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+		local exec_reload=""
+		if grep "^ExecReload=" ; then
+			exec_reload=$(grep "^ExecReload=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+
+		local user=""
+		if grep "^User=" ; then
+			user=$(grep "^User=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+
+		local group=""
+		if grep "^Group=" ; then
+			group=$(grep "^Group=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+
+		local needs_syslog=0
+		local cond=""
+		local runlevels=""
+		if grep -q -e "^Wants=.*network.target" "${init_path}" ; then
+			cond="${FINIT_COND_NETWORK}"
+			runlevels="345"
+			echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
+		else
+			runlevels="2345"
+		fi
+
+		if grep -q -e "^Type=dbus" "${init_path}" ; then
+			echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
+		fi
+
+		if grep -q -E -e "^StandardOutput=syslog" "${init_path}" \
+			|| grep -q -E -e "^StandardError=syslog" "${init_path}" ; then
+			if [[ -n "${cond}" ]] ; then
+				cond="${cond},syslogd"
+			else
+				cond="${cond}"
+			fi
+		fi
+
+		if [[ -n "${exec_start_pre}" ]] ; then
+			echo "run [${runlevels}] name:${pn}-pre-start ${exec_start_pre} -- ${pn} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+		fi
+		if [[ -n "${exec_start}" ]] ; then
+			[[ -n "${cond}" ]] && cond="<${cond}>"
+			local user_group="@"
+			[[ -n "${user}" ]] && user_group="${user}"
+			[[ -n "${user}" ]] && user_group=":${group}"
+			echo "service [${runlevels}] ${cond} ${user_group} name:${pn}-start ${notify} ${pidfile} ${exec_start} \"start\" -- ${pn} start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+		fi
+		if [[ -n "${exec_start_post}" ]] ; then
+			echo "run [${runlevels}] name:${pn}-post-start ${exec_start_post} -- ${pn} post-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+		fi
+		if [[ -n "${exec_stop_pre}" ]] ; then
+			echo "run [0] name:${pn}-pre-stop ${exec_stop_pre} -- ${pn} pre-stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+		fi
+		if [[ -n "${exec_stop}" ]] ; then
+			echo "task [0] name:${pn}-stop ${exec_stop} -- ${pn} stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+		fi
+		if [[ -n "${exec_stop_post}" ]] ; then
+			echo "run [0] name:${pn}-post-stop ${exec_stop_post} -- ${pn} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+		fi
+
+		mkdir -p "${CONFS_PATH}/${c}/${pn}"
+		cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+	done
 }
 
 main() {
