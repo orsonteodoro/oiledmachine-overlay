@@ -234,7 +234,7 @@ main() {
 				local cond=""
 				local runlevels=""
 				if grep -q -e "need.*net" "${init_path}" ; then
-					cond="__FINIT_COND_NETWORK__"
+					cond="${FINIT_COND_NETWORK}"
 					runlevels="345"
 					echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
 				else

@@ -86,39 +86,6 @@ src_unpack() {
 	fi
 }
 
-edit_cond_network() {
-	IFS=$'\n'
-	local L=(
-		$(grep -r -l '__FINIT_COND_NETWORK__' ./)
-	)
-	local path
-	for path in ${L[@]} ; do
-		if [ -n "${FINIT_COND_NETWORK}" ] ; then
-einfo "Using ${FINIT_COND_NETWORK} for network up for ${path}."
-			sed -i -e "s|__FINIT_COND_NETWORK__|${FINIT_COND_NETWORK}|g" "${path}" || die
-		else
-einfo "Using net/route/default for network up for ${path}.  This conditon is bugged.  See metadata.xml for details on FINIT_COND_NETWORK."
-			sed -i -e "s|__FINIT_COND_NETWORK__|net/route/default|g" "${path}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
-edit_dash() {
-	IFS=$'\n'
-	local L=(
-		$(grep -r -l '#!/bin/sh' ./)
-	)
-	local path
-	for path in ${L[@]} ; do
-		if ! grep "^# BASH ME" "${path}" ; then
-einfo "Editing ${path} for DASH"
-			sed -i -e 's|#!/bin/sh|#!/bin/dash|g' "${path}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
 src_prepare() {
 	default
 }
@@ -127,8 +94,14 @@ src_compile() {
 	chmod +x generate.sh
 	use dash && export DEFAULT_SHELL="/bin/dash"
 	use dash || export DEFAULT_SHELL="/bin/sh"
+	if [ -n "${FINIT_COND_NETWORK}" ] ; then
+einfo "Using ${FINIT_COND_NETWORK} for network up for ${path}."
+		export FINIT_COND_NETWORK
+	else
+einfo "Using net/route/default for network up for ${path}.  This conditon is bugged.  See metadata.xml for details on FINIT_COND_NETWORK."
+		export FINIT_COND_NETWORK="net/route/default"
+	fi
 	./generate.sh
-	use dash && edit_dash
 	edit_cond_network
 	local n=$(cat "${WORKDIR}/needs_net.txt" | wc -l)
 	if (( n > 1 )) && ! use hook-scripts && ! use netlink ; then
