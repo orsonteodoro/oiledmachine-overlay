@@ -317,9 +317,7 @@ fi
 			fi
 
 			# TODO:  systemd support
-			if grep -q -e "^ExecStart" "${init_path}" ; then
-				notify="notify:systemd"
-			elif grep -q -e "^WantedBy" "${init_path}" ; then
+			if grep -F -q -e "^[Unit]" "${init_path}" ; then
 				notify="notify:systemd"
 			fi
 
