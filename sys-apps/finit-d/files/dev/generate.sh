@@ -316,47 +316,62 @@ fi
 				notify="notify:s6"
 			fi
 
+			# FIXME:
+			local user=""
+			local group=""
+
+			local basename_fn=$(basename "${fn}")
+			local svc_name=$(echo "${basename_fn}" | sed -e "s|.sh$||")
+
 			mkdir -p "${CONFS_PATH}/${c}/${pn}"
-			cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+			cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			if grep -q -e "^start_pre" "${init_path}" ; then
-				echo "run [${runlevels}] name:${pn}-pre-start /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start_pre\" -- ${pn} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+				echo "run [${runlevels}] name:${svc_name}-pre-start /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			fi
 			if grep -q -e "^start" "${init_path}" ; then
 				[[ -n "${cond}" ]] && cond="<${cond}>"
-				echo "service [${runlevels}] ${cond} name:${pn}-start ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start\" -- ${pn} start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+				local user_group=""
+				if [[ -n "${user}" && -n "${group}" ]] ; then
+					user_group="@${user}:${group}"
+				elif [[ -n "${user}" ]] ; then
+					user_group="@${user}"
+				elif [[ -n "${group}" ]] ; then
+					user_group="@:${group}"
+				fi
+				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name} start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
-				echo "run [${runlevels}] name:${pn}-post-start /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start_post\" -- ${pn} post-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+				echo "run [${runlevels}] name:${svc_name}-post-start /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post-start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			fi
 			if grep -q -e "^stop_pre" "${init_path}" ; then
-				echo "run [0] name:${pn}-pre-stop /lib/finit/scripts/${c}/${pn}/${pn}.sh \"stop_pre\" -- ${pn} pre-stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+				echo "run [0] name:${svc_name}-pre-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_pre\" -- ${svc_name} pre-stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			fi
 			if grep -q -e "^stop" "${init_path}" ; then
-				echo "task [0] name:${pn}-stop /lib/finit/scripts/${c}/${pn}/${pn}.sh \"stop\" -- ${pn} stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+				echo "task [0] name:${svc_name}-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" -- ${svc_name} stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			fi
 			if grep -q -e "^stop_post" "${init_path}" ; then
-				echo "run [0] name:${pn}-post-stop /lib/finit/scripts/${c}/${pn}/${pn}.sh \"stop_post\" -- ${pn} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+				echo "run [0] name:${svc_name}-post-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_post\" -- ${svc_name} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			fi
 			if grep -q -e "^extra_commands" "${init_path}" ; then
 				local list=$(grep "extra_commands" "${init_path}" | cut -f 2 -d '"')
 				local list
 				for x in ${list} ; do
-					echo "# Run as:  initctl cond set ${pn}-${x}" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
-					echo "run [${runlevels}] <usr/${pn}-${x}> /lib/finit/scripts/${c}/${pn}/${pn}.sh \"${x}\" -- ${pn} ${x}" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+					echo "# Run as:  initctl cond set ${svc_name}-${x}" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+					echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 				done
 			fi
 			if grep -q -e "^extra_started_commands" "${init_path}" ; then
 				local list=$(grep "extra_started_commands" "${init_path}" | cut -f 2 -d '"')
 				for x in ${list} ; do
-					echo "# Run as:  initctl cond set ${pn}-${x}  # For started service only" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
-					echo "run [${runlevels}] <usr/${pn}-${x}> /lib/finit/scripts/${c}/${pn}/${pn}.sh \"${x}\" -- ${pn} ${x}" >> 	"${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+					echo "# Run as:  initctl cond set ${svc_name}-${x}  # For started service only" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+					echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> 	"${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 				done
 			fi
 			if grep -q -e "^extra_stopped_commands" "${init_path}" ; then
 				local list=$(grep "extra_started_commands" "${init_path}" | cut -f 2 -d '"')
 				for x in ${list} ; do
-					echo "# Run as:  initctl cond set ${pn}-${x}  # For stopped service only" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
-					echo "run [${runlevels}] <usr/${pn}-${x}> /lib/finit/scripts/${c}/${pn}/${pn}.sh \"${x}\" -- ${pn} ${x}" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+					echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+					echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 				done
 			fi
 		done
@@ -371,6 +386,15 @@ fi
 
 	cat "${PKGS_PATH}" | sort | uniq > "${PKGS_PATH}".t || die "ERR:  $LINENO"
 	mv "${PKGS_PATH}"{.t,} || die "ERR:  $LINENO"
+}
+
+gen_systemd_reload_wrapper() {
+	mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
+cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-reload.sh"
+#!${FINIT_SHELL}
+MAINPID=\$(pgrep "${svc_name}")
+${exec_reload}
+EOF
 }
 
 convert_systemd() {
@@ -388,6 +412,7 @@ convert_systemd() {
 
 	local path
 	for init_path in $(find /lib/systemd/system /usr/lib/systemd/system -name "*.service") ; do
+		local svc_name=$(basename "${init_path}" | sed -e "s|.service$||g")
 		[[ "${init_path}" == "./" ]] && continue
 		local pkg=$(grep -l $(realpath "${init_path}") $(realpath "/var/db/pkg/"*"/"*"/CONTENTS") | cut -f 5-6 -d "/")
 		if [[ ! -f $(realpath "/var/db/pkg/${pkg}/environment.bz2") ]] ; then
@@ -463,29 +488,41 @@ convert_systemd() {
 		notify="notify:systemd"
 
 		mkdir -p "${CONFS_PATH}/${c}/${pn}"
-		cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+		cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 
 		if [[ -n "${exec_start_pre}" ]] ; then
 			echo "run [${runlevels}] name:${pn}-pre-start ${exec_start_pre} -- ${pn} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 		fi
 		if [[ -n "${exec_start}" ]] ; then
 			[[ -n "${cond}" ]] && cond="<${cond}>"
-			local user_group="@"
-			[[ -n "${user}" ]] && user_group="${user}"
-			[[ -n "${user}" ]] && user_group=":${group}"
-			echo "service [${runlevels}] ${cond} ${user_group} name:${pn}-start ${notify} ${pidfile} ${exec_start} \"start\" -- ${pn} start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+			local user_group=""
+			if [[ -n "${user}" && -n "${group}" ]] ; then
+				user_group="@${user}:${group}"
+			elif [[ -n "${user}" ]] ; then
+				user_group="@${user}"
+			elif [[ -n "${group}" ]] ; then
+				user_group="@:${group}"
+			fi
+			echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${pidfile} ${exec_start} \"start\" -- ${n} start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 		fi
 		if [[ -n "${exec_start_post}" ]] ; then
-			echo "run [${runlevels}] name:${pn}-post-start ${exec_start_post} -- ${pn} post-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+			echo "run [${runlevels}] name:${svc_name}-post-start ${exec_start_post} -- ${svc_name} post-start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 		fi
 		if [[ -n "${exec_stop_pre}" ]] ; then
-			echo "run [0] name:${pn}-pre-stop ${exec_stop_pre} -- ${pn} pre-stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+			echo "run [0] name:${svc_name}-pre-stop ${exec_stop_pre} -- ${svc_name} pre-stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 		fi
 		if [[ -n "${exec_stop}" ]] ; then
-			echo "task [0] name:${pn}-stop ${exec_stop} -- ${pn} stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+			echo "task [0] name:${svc_name}-stop ${exec_stop} -- ${svc_name} stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 		fi
 		if [[ -n "${exec_stop_post}" ]] ; then
-			echo "run [0] name:${pn}-post-stop ${exec_stop_post} -- ${pn} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+			echo "run [0] name:${svc_name}-post-stop ${exec_stop_post} -- ${svc_name} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+		fi
+
+		if [[ -n "${exec_reload}" ]] ; then
+			local x="reload"
+			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit.d/${c}/${pn}/${svc_name}-reload.sh \"${x}\" -- ${svc_name} ${x}" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+			gen_systemd_reload_wrapper
 		fi
 	done
 
