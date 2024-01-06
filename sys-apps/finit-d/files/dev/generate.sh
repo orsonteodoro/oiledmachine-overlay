@@ -23,10 +23,23 @@ main() {
 	NEEDS_DBUS_PATH="$(pwd)/needs_dbus.txt"
 	cd "${SCRIPTS_PATH}"
 	IFS=$'\n'
-		local OVERLAYS=(
-			"/usr/portage"
-			$(realpath /var/db/repos/*)
-		)
+		local OVERLAYS=()
+		if [[ -e "/usr/portage" ]] ; then
+			OVERLAYS+=(
+				"/usr/portage"
+			)
+		fi
+		if [[ -e "/var/db/repos" ]] ; then
+			OVERLAYS+=(
+				$(realpath /var/db/repos/*)
+			)
+		fi
+		if [[ -n "${CUSTOM_OVERLAY_LIST}" ]] ; then
+	# Example:  CUSTOM_OVERLAY_LIST="/usr/portage /var/db/repos/guru"
+			OVERLAYS+=(
+				${FINIT_CUSTOM_OVERLAY_LIST}
+			)
+		fi
 		for overlay in ${OVERLAYS[@]} ; do
 			echo "Processing ${overlay} overlay"
 			cd "${overlay}"

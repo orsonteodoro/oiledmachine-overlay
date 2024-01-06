@@ -15,6 +15,9 @@
   FINIT_COND_NETWORK - Use a network expression as the event to trigger network
   is up.
 
+  FINIT_CUSTOM_OVERLAY_LIST - Space separated list of absolute paths to the repo
+  folder containing categories.
+
   Valid values:
 
     net/route/default       ; requires sys-apps/finit[netlink], not recommended for wireless
@@ -28,6 +31,7 @@
     FINIT_COND_NETWORK="net/lo/running"
     FINIT_COND_NETWORK="net/wlan0/running"
     FINIT_COND_LOGGER="rsyslogd"
+    FINIT_CUSTOM_OVERLAY_LIST="/usr/portage /var/db/repos/guru"
 
   -->
   <use>
