@@ -134,7 +134,7 @@ eerror "You need to enable either hook-scripts or netlink USE flag."
 		die
 	fi
 	local n=$(cat "${WORKDIR}/needs_dbus.txt" | wc -l)
-	if (( n > 1 )) && ! use hook-scripts && ! use netlink ; then
+	if (( n > 1 )) && ! use dbus ; then
 eerror "You need to enable the dbus USE flag."
 		die
 	fi
