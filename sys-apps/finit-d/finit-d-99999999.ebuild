@@ -95,13 +95,18 @@ src_compile() {
 	use dash && export FINIT_SHELL="/bin/dash"
 	use dash || export FINIT_SHELL="/bin/sh"
 	if [ -n "${FINIT_COND_NETWORK}" ] ; then
-einfo "Using ${FINIT_COND_NETWORK} for network up for ${path}."
+einfo "Using ${FINIT_COND_NETWORK} for network up."
 		export FINIT_COND_NETWORK
 	else
-einfo "Using net/route/default for network up for ${path}.  This conditon is bugged.  See metadata.xml for details on FINIT_COND_NETWORK."
+einfo "Using net/route/default for network up.  This conditon is bugged.  See metadata.xml for details on FINIT_COND_NETWORK."
 		export FINIT_COND_NETWORK="net/route/default"
 	fi
+
+	# Save before wipe
+	cp -a "${WORKDIR}/confs/getty.conf" "${WORKDIR}" || die
 	./generate.sh
+	cp -a "${WORKDIR}/getty.conf" "${WORKDIR}/confs" || die
+
 	local n=$(cat "${WORKDIR}/needs_net.txt" | wc -l)
 	if (( n > 1 )) && ! use hook-scripts && ! use netlink ; then
 eerror "You need to enable either hook-scripts or netlink USE flag."
@@ -116,25 +121,40 @@ eerror "You need to enable the dbus USE flag."
 
 install_scripts() {
 	local pkg="${1}"
-	dodir "/lib/finit.d/scripts/${pkg}"
-	cp -a "${WORKDIR}/scripts/${pkg}/"* "/lib/finit.d/scripts/${pkg}" || die
-	chown root:root "/lib/finit.d/scripts/${pkg}/"*
-	chmod 0750 "/lib/finit.d/scripts/${pkg}/"*
+	exeinto "/lib/finit.d/scripts/${pkg}"
+	pushd "${WORKDIR}/scripts/${pkg}" >/dev/null 2>&1 || die
+		for script in $(ls) ; do
+			doexe "${script}"
+			fowners root:root "/lib/finit.d/scripts/${pkg}/${script}"
+			fperms 0750 "/lib/finit.d/scripts/${pkg}/${script}"
+		done
+	popd >/dev/null 2>&1
+}
+
+install_script() {
+	local script="${1}"
+	pkg="${CATEGORY}/${PN}"
+	exeinto "/lib/finit.d/scripts/${pkg}"
+	doexe "${script}"
+	fowners root:root "/lib/finit.d/scripts/${pkg}/${script}"
+	fperms 0750 "/lib/finit.d/scripts/${pkg}/${script}"
 }
 
 src_install() {
 	local PKGS=( $(cat "${WORKDIR}/pkgs.txt") )
 	local pkgs
 	for pkg in ${PKGS[@]} ; do
-		if has_version "${pkg}" ; then
-			insinto /etc/finit.d/available
-			doins "${WORKDIR}/confs/${svc}.conf"
-			dodir /etc/finit.d/enabled
-			dosym \
-				"/etc/finit.d/available/${svc}.conf" \
-				"/etc/finit.d/enabled/${svc}.conf"
-			install_scripts "${pkg}"
-		fi
+		insinto /etc/finit.d/available
+		pushd "${WORKDIR}/confs/${pkg}" || die
+			for svc in $(ls) ; do
+				doins "${svc}"
+				dodir /etc/finit.d/enabled
+				dosym \
+					"/etc/finit.d/available/${pkg}/${svc}" \
+					"/etc/finit.d/enabled/${svc}"
+			done
+		popd
+		install_scripts "${pkg}"
 	done
 
 	insinto /etc/finit.d/available
