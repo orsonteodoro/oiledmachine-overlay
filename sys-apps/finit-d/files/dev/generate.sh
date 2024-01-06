@@ -316,11 +316,6 @@ fi
 				notify="notify:s6"
 			fi
 
-			# TODO:  systemd support
-			if grep -F -q -e "^[Unit]" "${init_path}" ; then
-				notify="notify:systemd"
-			fi
-
 			mkdir -p "${CONFS_PATH}/${c}/${pn}"
 			cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 			if grep -q -e "^start_pre" "${init_path}" ; then
@@ -464,6 +459,8 @@ convert_systemd() {
 				cond="${cond}"
 			fi
 		fi
+
+		notify="notify:systemd"
 
 		if [[ -n "${exec_start_pre}" ]] ; then
 			echo "run [${runlevels}] name:${pn}-pre-start ${exec_start_pre} -- ${pn} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
