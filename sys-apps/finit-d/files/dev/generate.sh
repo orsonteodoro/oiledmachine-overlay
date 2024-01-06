@@ -320,7 +320,7 @@ fi
 			local user=""
 			local group=""
 
-			local basename_fn=$(basename "${fn}")
+			local basename_fn=$(basename "${dest}")
 			local svc_name=$(echo "${basename_fn}" | sed -e "s|.sh$||")
 
 			mkdir -p "${CONFS_PATH}/${c}/${pn}"
