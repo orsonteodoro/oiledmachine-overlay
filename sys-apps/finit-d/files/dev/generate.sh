@@ -462,6 +462,9 @@ convert_systemd() {
 
 		notify="notify:systemd"
 
+		mkdir -p "${CONFS_PATH}/${c}/${pn}"
+		cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+
 		if [[ -n "${exec_start_pre}" ]] ; then
 			echo "run [${runlevels}] name:${pn}-pre-start ${exec_start_pre} -- ${pn} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 		fi
@@ -484,10 +487,16 @@ convert_systemd() {
 		if [[ -n "${exec_stop_post}" ]] ; then
 			echo "run [0] name:${pn}-post-stop ${exec_stop_post} -- ${pn} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 		fi
-
-		mkdir -p "${CONFS_PATH}/${c}/${pn}"
-		cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 	done
+
+	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  $LINENO"
+	mv "${NEEDS_NET_PATH}"{.t,} || die "ERR:  $LINENO"
+
+	cat "${SERVICES_PATH}" | sort | uniq > "${SERVICES_PATH}".t || die "ERR:  $LINENO"
+	mv "${SERVICES_PATH}"{.t,} || die "ERR:  $LINENO"
+
+	cat "${PKGS_PATH}" | sort | uniq > "${PKGS_PATH}".t || die "ERR:  $LINENO"
+	mv "${PKGS_PATH}"{.t,} || die "ERR:  $LINENO"
 }
 
 main() {
