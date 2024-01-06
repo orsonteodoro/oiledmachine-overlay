@@ -2,10 +2,6 @@
 
 DEFAULT_SHELL=${DEFAULT_SHELL:-"/bin/dash"}
 
-add_overlays() {
-	$(realpath /var/db/repos/*/*/*/*)
-}
-
 main() {
 	echo > pkgs.txt
 	echo > services.txt
