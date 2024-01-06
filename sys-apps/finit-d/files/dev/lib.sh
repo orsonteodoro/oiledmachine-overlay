@@ -96,7 +96,7 @@ checkpath() {
 			--quiet|-q)
 				quiet=1
 				;;
-			--truncate|-F)
+			--file-truncate|-F)
 				type="f"
 				truncate_file=1
 				;;
@@ -106,7 +106,7 @@ checkpath() {
 			--writable|-W)
 				writeable=1
 				;;
-			/*)
+			*)
 				break
 				;;
 		esac
