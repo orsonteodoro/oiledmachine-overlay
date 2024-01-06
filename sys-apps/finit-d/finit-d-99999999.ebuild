@@ -28,6 +28,7 @@ SLOT="0"
 IUSE+="
 	${SERVICES[@]}
 	dash
+	dbus
 	hook-scripts
 	netlink
 "
@@ -43,8 +44,7 @@ RDEPEND="
 	)
 "
 PDEPEND="
-	sys-apps/finit[hook-scripts?,netlink?]
-	sys-apps/finit[dbus]
+	sys-apps/finit[dbus?,hook-scripts?,netlink?]
 "
 
 pkg_setup() {
@@ -128,6 +128,16 @@ src_compile() {
 	./generate.sh
 	use dash && edit_dash
 	edit_cond_network
+	local n=$(cat "${WORKDIR}/needs_net.txt" | wc -l)
+	if (( n > 1 )) && ! use hook-scripts && ! use netlink ; then
+eerror "You need to enable either hook-scripts or netlink USE flag."
+		die
+	fi
+	local n=$(cat "${WORKDIR}/needs_dbus.txt" | wc -l)
+	if (( n > 1 )) && ! use hook-scripts && ! use netlink ; then
+eerror "You need to enable the dbus USE flag."
+		die
+	fi
 }
 
 install_scripts() {

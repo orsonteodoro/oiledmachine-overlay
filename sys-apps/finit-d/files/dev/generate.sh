@@ -10,6 +10,7 @@ main() {
 	echo > pkgs.txt
 	echo > services.txt
 	echo > needs_net.txt
+	echo > needs_dbus.txt
 	rm -rf confs
 	mkdir -p confs
 	rm -rf scripts
@@ -19,6 +20,7 @@ main() {
 	NEEDS_NET_PATH="$(pwd)/needs_net.txt"
 	SERVICES_PATH="$(pwd)/services.txt"
 	PKGS_PATH="$(pwd)/pkgs.txt"
+	NEEDS_DBUS_PATH="$(pwd)/needs_dbus.txt"
 	cd "${SCRIPTS_PATH}"
 	IFS=$'\n'
 		local OVERLAYS=(
@@ -219,6 +221,10 @@ main() {
 					echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
 				else
 					runlevels="2345"
+				fi
+
+				if grep -q -e "need.*dbus" "${init_path}" ; then
+					echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
 				fi
 
 				local pidfile=""
