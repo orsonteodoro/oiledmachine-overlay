@@ -397,6 +397,35 @@ ${exec_reload}
 EOF
 }
 
+gen_systemd_stop_wrapper() {
+	mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
+cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-stop.sh"
+#!${FINIT_SHELL}
+pidfile="${pidfile}"
+exec_stop="${exec_stop}"
+kill_signal="${kill_signal}"
+final_kill_signal="${final_kill_signal}"
+if [[ -n "${PIDFILE}" ]] ; then
+	MAINPID=\$(cat "${pidfile}")
+else
+	MAINPID=\$(pgrep "${svc_name}")
+fi
+if [[ -n "${exec_stop}" ]] ; then
+	${exec_stop}
+elif [[ -n "${kill_signal}" ]] ; then
+	kill -s ${kill_signal} ${MAINPID}
+else
+	kill -s SIGTERM ${MAINPID}
+fi
+ps ${MAINPID} && sleep ${timeout_stop_sec}
+if [[ -n "${final_kill_signal}" ]] ; then
+	kill -s ${final_kill_signal} ${MAINPID}
+else
+	kill -s SIGKILL ${MAINPID}
+fi
+EOF
+}
+
 convert_systemd() {
 	#rm -rf confs || die "ERR:  $LINENO"
 	mkdir -p confs || die "ERR:  $LINENO"
@@ -449,6 +478,21 @@ convert_systemd() {
 		local exec_reload=""
 		if grep "^ExecReload=" ; then
 			exec_reload=$(grep "^ExecReload=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+
+		local kill_signal=""
+		if grep "^KillSignal=" ; then
+			kill_signal=$(grep "^KillSignal=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+
+		local final_kill_signal=""
+		if grep "^FinalKillSignal=" ; then
+			final_kill_signal=$(grep "^FinalKillSignal=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+
+		local timeout_stop_sec="90"
+		if grep "^TimeoutStopSec=" ; then
+			timeout_stop_sec=$(grep "^TimeoutStopSec=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
 		fi
 
 		local user=""
@@ -515,7 +559,8 @@ convert_systemd() {
 			echo "task [0] name:${svc_name}-stop ${exec_stop} -- ${svc_name} stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 		fi
 		if [[ -n "${exec_stop_post}" ]] ; then
-			echo "run [0] name:${svc_name}-post-stop ${exec_stop_post} -- ${svc_name} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+			echo "run [0] name:${svc_name}-post-stop /lib/finit.d/${c}/${pn}/${svc_name}-stop.sh -- ${svc_name} post-stop" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+			gen_systemd_stop_wrapper
 		fi
 
 		if [[ -n "${exec_reload}" ]] ; then
