@@ -2,16 +2,17 @@
 
 # The comprehensive version for ebuild developers.  Users should use generate-local.sh instead.
 
-FINIT_SHELL=${FINIT_SHELL:-"/bin/sh"}
 FINIT_COND_NETWORK=${FINIT_COND_NETWORK:-"net/route/default"}
-MAINTAINER_MODE=0
+FINIT_SCRIPT_SOURCE=${FINIT_SCRIPT_SOURCE:-"openrc"}
+FINIT_SHELL=${FINIT_SHELL:-"/bin/sh"}
+MAINTAINER_MODE=${MAINTAINER_MODE:-0}
 
 die() {
 	echo "${1}"
 	exit 1
 }
 
-main() {
+convert_openrc() {
 	rm -rf confs || die "ERR:  $LINENO"
 	mkdir -p confs || die "ERR:  $LINENO"
 	rm -rf scripts || die "ERR:  $LINENO"
@@ -298,13 +299,28 @@ fi
 				pidfile="pid:/run/${pn}.pid"
 			fi
 
+			local notify=""
 			if grep -q -e "^pidfile=\"" "${init_path}" ; then
 				local p=$(grep "^pidfile=\"" "${init_path}" | head -n 1 | cut -f 2 -d '"')
 				pidfile="pid:!${p}"
-			fi
-			if grep -q -e "^pidfile=" "${init_path}" ; then
+				notify="notify:pid"
+			elif grep -q -e "^pidfile=" "${init_path}" ; then
 				local p=$(grep "^pidfile=" "${init_path}" | head -n 1 | cut -f 2 -d "=")
 				pidfile="pid:!${p}"
+				notify="notify:pid"
+			else
+				notify="notify:none"
+			fi
+
+			if grep -q -e "^supervisor=.*s6" "${init_path}" ; then
+				notify="notify:s6"
+			fi
+
+			# TODO:  systemd support
+			if grep -q -e "^ExecStart" "${init_path}" ; then
+				notify="notify:systemd"
+			elif grep -q -e "^WantedBy" "${init_path}" ; then
+				notify="notify:systemd"
 			fi
 
 			mkdir -p "${CONFS_PATH}/${c}/${pn}"
@@ -314,7 +330,7 @@ fi
 			fi
 			if grep -q -e "^start" "${init_path}" ; then
 				[[ -n "${cond}" ]] && cond="<${cond}>"
-				echo "service [${runlevels}] ${cond} name:${pn}-start ${pidfile} /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start\" -- ${pn} start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+				echo "service [${runlevels}] ${cond} name:${pn}-start ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start\" -- ${pn} start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
 				echo "run [${runlevels}] name:${pn}-post-start /lib/finit/scripts/${c}/${pn}/${pn}.sh \"start_post\" -- ${pn} post-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
@@ -363,4 +379,15 @@ fi
 	cat "${PKGS_PATH}" | sort | uniq > "${PKGS_PATH}".t || die "ERR:  $LINENO"
 	mv "${PKGS_PATH}"{.t,} || die "ERR:  $LINENO"
 }
+
+# TODO: systemd
+convert_systemd() {
+	:;
+}
+
+main() {
+	[[ "${FINIT_SCRIPT_SOURCE}" =~ "openrc" ]] && convert_openrc
+	[[ "${FINIT_SCRIPT_SOURCE}" =~ "systemd" ]] && convert_systemd
+}
+
 main
