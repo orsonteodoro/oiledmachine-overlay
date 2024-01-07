@@ -203,14 +203,6 @@ service_started() {
         fi
 }
 
-default_start() {
-	if [ "$command_background" = "true" ] || [ "$command_background" = "1" ] ; then
-		"${command}" ${command_args} &
-	else
-		"${command}" ${command_args}
-	fi
-}
-
 is_pid_alive() {
 	local pid=$1
 	if [ -e /proc/$pid ] ; then
@@ -646,4 +638,17 @@ start-stop-daemon() {
 
 supervise-daemon() {
 	start-stop-daemon "$@"
+}
+
+default_start() {
+	local args=""
+	if [ "$command_background" = "true" ] || [ "$command_background" = "1" ] ; then
+		args="--background"
+	fi
+	start-stop-daemon \
+		--exec "${command}" \
+		${start_stop_daemon_args} \
+		${args} \
+		-- \
+		${command_args}
 }

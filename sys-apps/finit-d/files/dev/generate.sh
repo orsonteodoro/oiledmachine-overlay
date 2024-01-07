@@ -352,7 +352,15 @@ fi
 			if grep -q -e "^start_pre" "${init_path}" ; then
 				echo "run [${runlevels}] name:${svc_name}-pre-start /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			fi
-			if grep -q -e "^start" "${init_path}" ; then
+
+			needs_openrc_default_start() {
+				if ! grep -q -e "^start" "${init_path}" && grep -q -e "^command=" "${init_path}" ; then
+					return 0
+				fi
+				return 1
+			}
+
+			if grep -q -e "^start" "${init_path}" || needs_openrc_default_start ; then
 				[[ -n "${cond}" ]] && cond="<${cond}>"
 				local user_group=""
 				if [[ -n "${user}" && -n "${group}" ]] ; then
