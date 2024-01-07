@@ -248,28 +248,30 @@ fi
 			fi
 
 			# ln = line number
-			local top_ln=$(grep -n "# Distributed under" "${dest}" | cut -f 1 -d ":")
-			local top_ln_fallback=$(grep -n "#!/sbin/openrc-run" "${dest}" | cut -f 1 -d ":")
-			if [[ -n "${top_ln}" ]] ; then
-				sed -i -e "${top_ln}a . /lib/finit/scripts/lib/lib.sh" "${dest}" || die "ERR:  $LINENO"
-				if grep -q "RC_SVCNAME" "${dest}" ; then
-					sed -i -e "${top_ln}a RC_SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
-				fi
-				sed -i -e "${top_ln}a SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
-				sed -i -e "${top_ln}a FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
+			local top_ln_copyright_notice=$(grep -n "# Distributed under" "${dest}" | cut -f 1 -d ":")
+			local top_ln_shebang=$(grep -n "#!/sbin/openrc-run" "${dest}" | cut -f 1 -d ":")
+			local top_ln=""
+			if [[ -n "${top_ln_copyright_notice}" ]] ; then
+				top_ln="${top_ln_copyright_notice}"
 			else
-				sed -i -e "${top_ln_fallback}a . /lib/finit/scripts/lib/lib.sh" "${dest}" || die "ERR:  $LINENO"
-				if grep -q "RC_SVCNAME" "${dest}" ; then
-					sed -i -e "${top_ln_fallback}a RC_SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
-				fi
-				sed -i -e "${top_ln_fallback}a SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
-				sed -i -e "${top_ln_fallback}a FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
+				top_ln="${top_ln_shebang}"
 			fi
+			sed -i -e "${top_ln_fallback}a . /lib/finit/scripts/lib/lib.sh" "${dest}" || die "ERR:  $LINENO"
+			if grep -q "RC_SVCNAME" "${dest}" ; then
+				sed -i -e "${top_ln_fallback}a RC_SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
+			fi
+			sed -i -e "${top_ln_fallback}a export SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
+			sed -i -e "${top_ln_fallback}a export FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
+			if ! grep -F -q -e "^start(" "${dest}" ; then
+				sed -i -e "${top_ln_fallback}a missing_start_fn=1" "${dest}" || die "ERR:  $LINENO"
+			fi
+
 			local bottom_ln=$(cat "${dest}" | wc -l)
 			sed -i -e "${bottom_ln}a . /lib/finit/scripts/lib/event.sh" "${dest}" || die "ERR:  $LINENO"
 
 			sed -i -e "s|#!/sbin/openrc-run|#!${FINIT_SHELL}|g" "${dest}" || die "ERR:  $LINENO"
 			sed -i -e "s|start-stop-daemon|start_stop_daemon|g" "${dest}" || die "ERR:  $LINENO"
+			sed -i -e "s|supervise-daemon|supervise_daemon|g" "${dest}" || die "ERR:  $LINENO"
 
 			local needs_syslog=0
 			local cond=""

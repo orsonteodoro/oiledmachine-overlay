@@ -243,6 +243,7 @@ start_stop_daemon() {
 			--)
 				shift
 				break
+				;;
 			--background|-b)
 				background=1
 				;;
@@ -264,7 +265,7 @@ start_stop_daemon() {
 			--groups|--group|-g)
 				shift
 				group="$1"
-				:;
+				;;
 			--iosched|-I)
 				shift
 				iosched_arg="$1"
@@ -288,7 +289,7 @@ start_stop_daemon() {
 			--nice=*)
 				nicelevel="${1#*=}"
 				;;
-			--nicelevel|N)
+			--nicelevel|-N)
 				shift
 				nicelevel="$1"
 				;;
@@ -304,9 +305,11 @@ start_stop_daemon() {
 			--pidfile|-p)
 				shift
 				pidfile_path="$1"
+				;;
 			--procsched|-P)
 				shift
 				procsched_arg="$1"
+				;;
 			--quiet|-q)
 				quiet=1
 				;;
@@ -326,10 +329,10 @@ start_stop_daemon() {
 				;;
 			--start|-S)
 				phase="start"
-				:;
+				;;
 			--status|-T)
 				status=1
-				:;
+				;;
 			--stderr)
 				shift
 				stderr="$1"
@@ -347,14 +350,14 @@ start_stop_daemon() {
 			--user|-u)
 				shift
 				user="$1"
-				:;
+				;;
 			--verbose|-v)
 				quiet=0
-				:;
+				;;
 			--version|-V)
-				:;
+				;;
 			--help|-H)
-				:;
+				;;
 		esac
 		shift
 	done
