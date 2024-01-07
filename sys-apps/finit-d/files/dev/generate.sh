@@ -31,7 +31,6 @@ convert_openrc() {
 	echo > "${NEEDS_DBUS_PATH}" || die "ERR:  $LINENO"
 
 	cd "${SCRIPTS_PATH}" || die "ERR:  $LINENO"
-	IFS=$'\n'
 	local OVERLAYS=()
 	if [[ -e "/usr/portage" ]] ; then
 		OVERLAYS+=(
@@ -386,7 +385,6 @@ fi
 			fi
 			if grep -q -e "^extra_commands" "${init_path}" ; then
 				local list=$(grep "extra_commands" "${init_path}" | cut -f 2 -d '"')
-				local list
 				for x in ${list} ; do
 					echo "# Run as:  initctl cond set ${svc_name}-${x}" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 					echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
@@ -408,7 +406,6 @@ fi
 			fi
 		done
 	done
-	IFS=$' \t\n'
 
 	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  $LINENO"
 	mv "${NEEDS_NET_PATH}"{.t,} || die "ERR:  $LINENO"
