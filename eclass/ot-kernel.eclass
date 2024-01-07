@@ -2046,7 +2046,11 @@ eerror
 		die
 	fi
 	if [[ "${PV}" == "9999" ]] ; then
-		if ! grep -q -o -e "EXTRAVERSION = -${RC_PV}" "Makefile" ; then
+		local rc_pv=""
+		if [[ -n "${RC_PV}" ]] ; then
+			rc_pr="-${RC_PV}"
+		fi
+		if ! grep -q -o -e "EXTRAVERSION = ${rc_pv}" "Makefile" ; then
 			local actual_suffix=$(grep -e "EXTRAVERSION =" \
 				| cut -f 2 -d "=" \
 				| sed -e "s| -||g")
@@ -2820,7 +2824,11 @@ einfo
 		cd "${BUILD_DIR}" || die
 einfo "Setting the extra version for the -${extraversion} build"
 		if [[ "${PV}" =~ "9999" ]] ; then
-			sed -i -e "s|EXTRAVERSION = -${RC_PV}\$|EXTRAVERSION = -${RC_PV}-${extraversion}|g" \
+			local rc_pv=""
+			if [[ -n "${RC_PV}" ]] ; then
+				rc_pv="-${RC_PV}"
+			fi
+			sed -i -e "s|EXTRAVERSION = ${rc_pv}\$|EXTRAVERSION = ${rc_pv}-${extraversion}|g" \
 				"Makefile" || die
 		else
 			sed -i -e "s|EXTRAVERSION =\$|EXTRAVERSION = -${extraversion}|g" \
