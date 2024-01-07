@@ -380,6 +380,7 @@ start-stop-daemon() {
 			local ug_args=""
 			[[ -n "${group}" ]] && ug_args=" -g ${group}"
 			[[ -n "${user}" ]] && ug_args=" ${user}"
+			[[ -n "${user}" ]] || ug_args=" root"
 			su ${ug_args} -c "${exec_path} $@" &
 			su_pid=$!
 			service_pid=$(pgrep -P ${su_pid})
