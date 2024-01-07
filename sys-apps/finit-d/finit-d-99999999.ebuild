@@ -91,7 +91,7 @@ src_prepare() {
 }
 
 src_compile() {
-	chmod +x generate.sh
+	chmod +x generate.sh || die
 	use dash && export FINIT_SHELL="/bin/dash"
 	use dash || export FINIT_SHELL="/bin/sh"
 	if [ -n "${FINIT_COND_NETWORK}" ] ; then
@@ -104,7 +104,7 @@ einfo "Using net/route/default for network up.  This conditon is bugged.  See me
 
 	# Save before wipe
 	cp -a "${WORKDIR}/confs/getty.conf" "${WORKDIR}" || die
-	./generate.sh
+	./generate.sh || die
 	cp -a "${WORKDIR}/getty.conf" "${WORKDIR}/confs" || die
 
 	local n=$(cat "${WORKDIR}/needs_net.txt" | wc -l)

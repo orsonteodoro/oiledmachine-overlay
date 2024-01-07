@@ -248,14 +248,13 @@ fi
 				sed -i -e "s|@rundir@|/run|g" "${dest}" || die "ERR:  $LINENO"
 			fi
 
-
 			# ln = line number
 			local top_ln=$(grep -n "# Distributed under" "${dest}" | cut -f 1 -d ":")
 			local top_ln_fallback=$(grep -n "#!/sbin/openrc-run" "${dest}" | cut -f 1 -d ":")
 			if [[ -n "${top_ln}" ]] ; then
 				sed -i -e "${top_ln}a . /lib/finit/scripts/lib.sh" "${dest}" || die "ERR:  $LINENO"
 				if grep -q "RC_SVCNAME" "${dest}" ; then
-					sed -i -e "${top_ln}a RC_SVCNAME=\"${pn}\"" "${dest}"
+					sed -i -e "${top_ln}a RC_SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
 				fi
 				sed -i -e "${top_ln}a SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
 				sed -i -e "${top_ln}a FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
@@ -320,7 +319,7 @@ fi
 			local user=""
 			local group=""
 			if grep -q -e "^command_user=" "${init_path}" ; then
-				command_user=$(grep -e "^command_user=" "${init_path}" | cut -f 2 -d "=" | sed -e '|"||g')
+				command_user=$(grep -e "^command_user=" "${init_path}" | cut -f 2 -d "=" | sed -e 's|"||g') || die "ERR:  $LINENO"
 				if [[ "${command_user}" =~ "$" ]] ; then
 					command_user="" # Temporary ignore
 				else
@@ -329,10 +328,10 @@ fi
 				fi
 			else
 				if grep -q -e "^user=" "${init_path}" ; then
-					user=$(grep -e "^user=" "${init_path}" | cut -f 2 -d "=" | sed -e '|"||g')
+					user=$(grep -e "^user=" "${init_path}" | cut -f 2 -d "=" | sed -e 's|"||g') || die "ERR:  $LINENO"
 				fi
 				if grep -q -e "^group=" "${init_path}" ; then
-					group=$(grep -e "^group=" "${init_path}" | cut -f 2 -d "=" | sed -e '|"||g')
+					group=$(grep -e "^group=" "${init_path}" | cut -f 2 -d "=" | sed -e 's|"||g') || die "ERR:  $LINENO"
 				fi
 			fi
 
@@ -345,7 +344,7 @@ fi
 			fi
 
 			local basename_fn=$(basename "${dest}")
-			local svc_name=$(echo "${basename_fn}" | sed -e "s|.sh$||")
+			local svc_name=$(echo "${basename_fn}" | sed -e "s|\.sh$||") || die "ERR:  $LINENO"
 
 			mkdir -p "${CONFS_PATH}/${c}/${pn}"
 			cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
@@ -496,7 +495,7 @@ convert_systemd() {
 
 	local path
 	for init_path in $(find /lib/systemd/system /usr/lib/systemd/system -name "*.service") ; do
-		local svc_name=$(basename "${init_path}" | sed -e "s|.service$||g")
+		local svc_name=$(basename "${init_path}" | sed -e "s|\.service$||g") || die "ERR:  $LINENO"
 		[[ "${init_path}" == "./" ]] && continue
 		local pkg=$(grep -l $(realpath "${init_path}") $(realpath "/var/db/pkg/"*"/"*"/CONTENTS") | cut -f 5-6 -d "/")
 		if [[ ! -f $(realpath "/var/db/pkg/${pkg}/environment.bz2") ]] ; then
@@ -512,57 +511,57 @@ convert_systemd() {
 
 		local pidfile=""
 		if grep "^PIDFile" ; then
-			pidfile=$(grep "^PIDFile" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			pidfile=$(grep "^PIDFile" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 		local exec_start_pre=""
 		if grep "^ExecStartPre=" ; then
-			exec_start_pre=$(grep "^ExecStartPre=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			exec_start_pre=$(grep "^ExecStartPre=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 		local exec_start=""
 		if grep "^ExecStart=" ; then
-			exec_start=$(grep "^ExecStart=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			exec_start=$(grep "^ExecStart=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 		local exec_start_post=""
 		if grep "^ExecStartPost=" ; then
-			exec_start_post=$(grep "^ExecStartPost=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			exec_start_post=$(grep "^ExecStartPost=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 		local exec_stop=""
 		if grep "^ExecStop=" ; then
-			exec_stop=$(grep "^ExecStop=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			exec_stop=$(grep "^ExecStop=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 		local exec_reload=""
 		if grep "^ExecReload=" ; then
-			exec_reload=$(grep "^ExecReload=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			exec_reload=$(grep "^ExecReload=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 
 		local kill_signal=""
 		if grep "^KillSignal=" ; then
-			kill_signal=$(grep "^KillSignal=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			kill_signal=$(grep "^KillSignal=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 
 		local final_kill_signal=""
 		if grep "^FinalKillSignal=" ; then
-			final_kill_signal=$(grep "^FinalKillSignal=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			final_kill_signal=$(grep "^FinalKillSignal=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 
 		local timeout_stop_sec="90"
 		if grep "^TimeoutStopSec=" ; then
-			timeout_stop_sec=$(grep "^TimeoutStopSec=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			timeout_stop_sec=$(grep "^TimeoutStopSec=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 
 		local user=""
 		if grep "^User=" ; then
-			user=$(grep "^User=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			user=$(grep "^User=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 
 		local group=""
 		if grep "^Group=" ; then
-			group=$(grep "^Group=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			group=$(grep "^Group=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 
 		local environment_file=""
 		if grep "^EnvironmentFile=" ; then
-			environment_file=$(grep "^EnvironmentFile=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+			environment_file=$(grep "^EnvironmentFile=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##") || die "ERR:  $LINENO"
 		fi
 
 		# Calls setenv() from c which is assumed literal
@@ -600,7 +599,7 @@ convert_systemd() {
 		notify="notify:systemd"
 
 		if grep -q -E -e "^Environment=" "${init_path}" ; then
-			ROWS=$(grep -r -e "^Environment" "${init_path}" | cut -f 2- -d "=" | sed -e 's|^\"||' -e 's|"$||g')
+			ROWS=$(grep -r -e "^Environment" "${init_path}" | cut -f 2- -d "=" | sed -e 's|^\"||' -e 's|"$||g') || die "ERR:  $LINENO"
 			for row in ${ROWS[@]} ; do
 				echo "set ${row}" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 			done
