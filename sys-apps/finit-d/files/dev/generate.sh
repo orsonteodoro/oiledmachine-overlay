@@ -634,7 +634,7 @@ convert_systemd() {
 			elif [[ -n "${group}" ]] ; then
 				user_group="@:${group}"
 			fi
-			echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} ${exec_start} \"start\" -- ${n} start" >> "${init_conf}"
+			echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${n} start" >> "${init_conf}"
 		fi
 		if [[ -n "${exec_start_post}" ]] ; then
 			echo "run [${runlevels}] name:${svc_name}-post-start ${exec_start_post} -- ${svc_name} post-start" >> "${init_conf}"
@@ -653,7 +653,7 @@ convert_systemd() {
 		if [[ -n "${exec_reload}" ]] ; then
 			local x="reload"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}-reload.sh \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
+			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}-reload.sh -- ${svc_name} ${x}" >> "${init_conf}"
 			gen_systemd_reload_wrapper
 		fi
 	done
