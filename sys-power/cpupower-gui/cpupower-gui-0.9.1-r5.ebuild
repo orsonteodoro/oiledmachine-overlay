@@ -61,6 +61,9 @@ src_prepare() {
 }
 
 src_configure() {
+	# patch positional argument for >=meson-0.60
+	sed -i '15d' "$S/data/meson.build"
+
 	local emesonargs=(
 		$(meson_use pkla)
 		-Dsystemddir=${CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR}
