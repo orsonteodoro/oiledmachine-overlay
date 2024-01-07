@@ -251,7 +251,7 @@ fi
 			local top_ln=$(grep -n "# Distributed under" "${dest}" | cut -f 1 -d ":")
 			local top_ln_fallback=$(grep -n "#!/sbin/openrc-run" "${dest}" | cut -f 1 -d ":")
 			if [[ -n "${top_ln}" ]] ; then
-				sed -i -e "${top_ln}a . /lib/finit/scripts/lib.sh" "${dest}" || die "ERR:  $LINENO"
+				sed -i -e "${top_ln}a . /lib/finit/scripts/lib/lib.sh" "${dest}" || die "ERR:  $LINENO"
 				if grep -q "RC_SVCNAME" "${dest}" ; then
 					sed -i -e "${top_ln}a RC_SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
 				fi
