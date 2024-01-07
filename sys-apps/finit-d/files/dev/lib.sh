@@ -234,6 +234,8 @@ start-stop-daemon() {
 	local stderr=""
 	local stdout=""
 	local user=""
+	local service_pid=0
+	local su_pid
 	while [ -n "$1" ] ; do
 		case $1 in
 			--)
@@ -375,8 +377,12 @@ start-stop-daemon() {
 		if [ $? -eq 0 ] ; then
 			return 1
 		else
-			"${exec_path}" "$@" &
-			_pid=$!
+			local ug_args=""
+			[[ -n "${group}" ]] && ug_args=" -g ${group}"
+			[[ -n "${user}" ]] && ug_args=" ${user}"
+			su ${ug_args} -c "${exec_path} $@" &
+			su_pid=$!
+			service_pid=$(pgrep -P ${su_pid})
 		fi
 	elif [ "${phase}" = "stop" ] ; then
 		if [ $pid -gt 0 ] ; then
@@ -445,6 +451,10 @@ start-stop-daemon() {
 		fi
 	fi
 
+	if [ $make_pidfile -eq 1 ] ; then
+		echo "${service_pid}" > "${pidfile_path}"
+	fi
+
 	if [ -n "${iosched_arg}" ] ; then
 		local class="${iosched_arg%:*}"
 		local priority="${iosched_arg#*:}"
@@ -455,11 +465,14 @@ start-stop-daemon() {
 			priority=4
 		fi
 		local args=""
-		if [ -n "$pid" ] ; then
+		if [ $pid -gt 0 ] ; then
 			args+=" -p $pid"
 		fi
-		if [ -n "$ppid" ] ; then
+		if [ $ppid -gt 0 ] ; then
 			args+=" -p $ppid"
+		fi
+		if [ $service_pid -gt 0 ] ; then
+			args+=" -p ${service_pid}"
 		fi
 		if [ -n "$pidfile" ] ; then
 			args+=" -p "$(cat "${pidfile}")
@@ -486,11 +499,14 @@ start-stop-daemon() {
 			priority=0
 		fi
 		local args=""
-		if [ -n "$pid" ] ; then
+		if [ $pid -gt 0 ] ; then
 			args+=" $pid"
 		fi
-		if [ -n "$ppid" ] ; then
+		if [ $ppid -gt 0 ] ; then
 			args+=" $ppid"
+		fi
+		if [ $service_pid -gt 0 ] ; then
+			args+=" ${service_pid}"
 		fi
 		if [ -n "$pidfile" ] ; then
 			args+=" "$(cat "${pidfile}")
@@ -507,16 +523,23 @@ start-stop-daemon() {
 		if [ -n $name ] ; then
 			args+=" "$(pgrep $name)
 		fi
-		chrt --${policy} -p $priority ${args}
+		set -- ${args}
+		local x
+		for x in $@ ; do
+			chrt --${policy} -p $priority ${x}
+		done
 	fi
 
 	if [ -n "$nicelevel" ] ; then
 		local args=""
-		if [ -n "$pid" ] ; then
+		if [ $pid -gt 0 ] ; then
 			args+=" -p $pid"
 		fi
-		if [ -n "$ppid" ] ; then
+		if [ $ppid -gt 0 ] ; then
 			args+=" -p $ppid"
+		fi
+		if [ $service_pid -gt 0 ] ; then
+			args+=" -p ${service_pid}"
 		fi
 		if [ -n "$pidfile" ] ; then
 			args+=" -p "$(cat "${pidfile}")
@@ -534,9 +557,6 @@ start-stop-daemon() {
 			args+="-p "$(pgrep $name)
 		fi
 		renice -n $nicelevel ${args}
-	fi
-	if [ $make_pidfile -eq 1 ] ; then
-		echo "${_pid}" > "${pidfile_path}"
 	fi
 	if [ $daemon -eq 1 ] || [ $background -eq 1 ] ; then
 		:;
