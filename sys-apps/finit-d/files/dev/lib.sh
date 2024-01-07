@@ -399,13 +399,14 @@ start_stop_daemon() {
 
 			# Avoid racing bug without altering last PID
 			sudo ${ug_args} -- "${exec_path}" $@ &
+			sudo_pid=$!
 			local c=0
 			while [ $c -lt 1000000 ] ; do
-				c=$((${c} + 1))
+				service_pid=$(pgrep -P ${su_pid} 2>/dev/null)
+				[ -z "${service_pid}" ] && continue
+				[ $service_pid -gt 0 ] && break
 			done
 
-			sudo_pid=$!
-			service_pid=$(pgrep -P ${su_pid})
 			if [ -z "${service_pid}" ] ; then
 				return 1
 			fi
