@@ -123,6 +123,7 @@ eerror "You need to enable the dbus USE flag."
 install_scripts() {
 	local pkg="${1}"
 	exeinto "/lib/finit/scripts/${pkg}"
+	[[ -e "${WORKDIR}/scripts/${pkg}" ]] || return
 	pushd "${WORKDIR}/scripts/${pkg}" >/dev/null 2>&1 || die
 		for script in $(ls) ; do
 			doexe "${script}"
