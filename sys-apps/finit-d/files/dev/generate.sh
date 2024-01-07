@@ -260,7 +260,7 @@ fi
 			if grep -q "RC_SVCNAME" "${dest}" ; then
 				sed -i -e "${top_ln}a RC_SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
 			fi
-			sed -i -e "${top_lna export SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
+			sed -i -e "${top_ln}a export SVCNAME=\"${pn}\"" "${dest}" || die "ERR:  $LINENO"
 			sed -i -e "${top_ln}a export FN=\"\$1\"" "${dest}" || die "ERR:  $LINENO"
 			if ! grep -F -q -e "^start(" "${dest}" ; then
 				sed -i -e "${top_ln}a missing_start_fn=1" "${dest}" || die "ERR:  $LINENO"
