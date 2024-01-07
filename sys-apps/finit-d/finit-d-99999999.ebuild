@@ -143,6 +143,10 @@ src_install() {
 	local PKGS=( $(cat "${WORKDIR}/pkgs.txt") )
 	local pkgs
 	for pkg in ${PKGS[@]} ; do
+		# Duplicate, already done by finit
+		[[ "${pkg}" == "sys-apps/dbus" ]] && continue
+		[[ "${pkg}" == "sys-fs/udev-init-scripts" ]] && continue
+
 		insinto "/etc/finit.d/available/${pkg}"
 		pushd "${WORKDIR}/confs/${pkg}" || die
 			for svc in $(ls) ; do
