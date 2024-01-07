@@ -39,6 +39,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	app-admin/sudo
 	dash? (
 		app-shells/dash[libedit]
 	)
