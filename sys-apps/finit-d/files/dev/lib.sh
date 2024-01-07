@@ -479,16 +479,16 @@ start-stop-daemon() {
 			args+=" -p "$(cat "${pidfile}")
 		fi
 		if [ -n $exec_path ] ; then
-			args+="-p "$(pgrep $(basename "${exec_path}"))
+			args+=" -p "$(pgrep $(basename "${exec_path}"))
 		fi
 		if [ -n $user ] ; then
-			args+="-p "$(pgrep -U $(basename "${user}"))
+			args+=" -p "$(pgrep -U $(basename "${user}"))
 		fi
 		if [ -n $group ] ; then
-			args+="-p "$(pgrep -G $(basename "${group}"))
+			args+=" -p "$(pgrep -G $(basename "${group}"))
 		fi
 		if [ -n $name ] ; then
-			args+="-p "$(pgrep $name)
+			args+=" -p "$(pgrep $name)
 		fi
 		ionice -c ${class} -n ${priority} ${args}
 	fi
@@ -546,16 +546,16 @@ start-stop-daemon() {
 			args+=" -p "$(cat "${pidfile}")
 		fi
 		if [ -n $exec_path ] ; then
-			args+="-p "$(pgrep $(basename "${exec_path}"))
+			args+=" -p "$(pgrep $(basename "${exec_path}"))
 		fi
 		if [ -n $user ] ; then
-			args+="-p "$(pgrep -u $(basename "${user}"))
+			args+=" -p "$(pgrep -u $(basename "${user}"))
 		fi
 		if [ -n $group ] ; then
-			args+="-p "$(pgrep -G $(basename "${group}"))
+			args+=" -p "$(pgrep -G $(basename "${group}"))
 		fi
 		if [ -n $name ] ; then
-			args+="-p "$(pgrep $name)
+			args+=" -p "$(pgrep $name)
 		fi
 		renice -n $nicelevel ${args}
 	fi
