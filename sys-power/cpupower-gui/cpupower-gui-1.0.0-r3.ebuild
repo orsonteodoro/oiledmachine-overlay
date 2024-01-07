@@ -18,7 +18,7 @@ SLOT="0"
 LANGS=( el_GR en en_GB hu it nl zh_CN )
 IUSE+="
 ${LANGS[@]/#/l10n_}
-+l10n_en -libexec -pkla wayland X
++l10n_en -use_libexec -pkla wayland X
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -65,7 +65,7 @@ src_prepare() {
 src_configure() {
 	local emesonargs=(
 		$(meson_use pkla)
-		$(meson_use libexec)
+		$(meson_use use_libexec)
 		-Dsystemddir=${CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR}
 	)
 	meson_src_configure
