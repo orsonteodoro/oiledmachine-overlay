@@ -460,7 +460,7 @@ fi
 now=$(date +"%s")
 time_final=$(( ${now} + ${timeout_stop_sec} ))
 while [ \${now} -lt \${time_final} ] ; do
-	ps \${MAINPID} || return 0
+	[ -e /proc/\${MAINPID} ] || exit 0
 	now=$(date +"%s")
 done
 if [[ -n "\${final_kill_signal}" ]] ; then
@@ -468,6 +468,8 @@ if [[ -n "\${final_kill_signal}" ]] ; then
 else
 	kill -s SIGKILL \${MAINPID}
 fi
+[ -e /proc/\${MAINPID} ] || exit 0
+exit 0
 EOF
 }
 
