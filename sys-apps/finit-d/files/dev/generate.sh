@@ -552,6 +552,11 @@ convert_systemd() {
 			group=$(grep "^Group=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
 		fi
 
+		local environment_file=""
+		if grep "^EnvironmentFile=" ; then
+			environment_file=$(grep "^EnvironmentFile=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
+		fi
+
 		# Calls setenv() from c which is assumed literal
 		if [[ "${user}" =~ ("$"|"%") ]] ; then
 			user=""
@@ -600,6 +605,7 @@ convert_systemd() {
 			echo "run [${runlevels}] name:${pn}-pre-start ${exec_start_pre} -- ${pn} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
 		fi
 		if [[ -n "${exec_start}" ]] ; then
+			[[ -n "${environment_file}" ]] && environment_file="env:${environment_file}"
 			[[ -n "${cond}" ]] && cond="<${cond}>"
 			local user_group=""
 			if [[ -n "${user}" && -n "${group}" ]] ; then
@@ -609,7 +615,7 @@ convert_systemd() {
 			elif [[ -n "${group}" ]] ; then
 				user_group="@:${group}"
 			fi
-			echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${pidfile} ${exec_start} \"start\" -- ${n} start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+			echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} ${exec_start} \"start\" -- ${n} start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 		fi
 		if [[ -n "${exec_start_post}" ]] ; then
 			echo "run [${runlevels}] name:${svc_name}-post-start ${exec_start_post} -- ${svc_name} post-start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
