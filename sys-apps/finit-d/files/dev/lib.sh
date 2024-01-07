@@ -36,7 +36,7 @@ _checkpath_once() {
 	fi
 
 	if [ "${type}" = "s" ] ; then
-		if [ -s "${path}" ] ;
+		if [ -s "${path}" ] ; then
 			return 0
 		else
 			return 1

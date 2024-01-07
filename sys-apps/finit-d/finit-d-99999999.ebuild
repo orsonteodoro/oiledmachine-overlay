@@ -135,7 +135,7 @@ install_lib() {
 	local script="${1}"
 	exeinto "/lib/finit/scripts/lib"
 	doexe "${script}"
-	fowners root:root "/lib/finit/scripts/lib/${script}"
+	fowners "root:root" "/lib/finit/scripts/lib/${script}"
 	fperms 0750 "/lib/finit/scripts/lib/${script}"
 }
 
@@ -151,7 +151,7 @@ src_install() {
 		pushd "${WORKDIR}/confs/${pkg}" || die
 			for svc in $(ls) ; do
 				doins "${svc}"
-				dodir /etc/finit.d/enabled
+				dodir "/etc/finit.d/enabled"
 				dosym \
 					"/etc/finit.d/available/${pkg}/${svc}" \
 					"/etc/finit.d/enabled/${svc}"
@@ -160,14 +160,14 @@ src_install() {
 		install_scripts "${pkg}"
 	done
 
-	insinto /etc/finit.d/available
+	insinto "/etc/finit.d/available/${CATEGORY}/${PN}"
 	doins "${WORKDIR}/confs/getty.conf"
-	dodir /etc/finit.d/enabled
+	dodir "/etc/finit.d/enabled"
 	dosym \
-		"/etc/finit.d/available/getty.conf" \
+		"/etc/finit.d/available/${CATEGORY}/${PN}/getty.conf" \
 		"/etc/finit.d/enabled/getty.conf"
 
-	insinto /etc
+	insinto "/etc"
 	doins "${WORKDIR}/rc.local"
 	doins "${WORKDIR}/finit.conf"
 	install_lib "lib.sh"
