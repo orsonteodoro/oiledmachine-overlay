@@ -97,6 +97,8 @@ fi
 			[[ "${c}/${pn}" = "metadata/md5-cache" ]] && continue
 			local fn=$(basename "${init_path}")
 
+			grep -q "#!/sbin/openrc-run" "${init_path}" || continue
+
 if [[ "${MAINTAINER_MODE}" == 1 ]] ; then
 			# Variations
 			# Exact set
@@ -183,9 +185,6 @@ if [[ "${MAINTAINER_MODE}" == 1 ]] ; then
 
 			# Init script fragments.  Needs manual evaluation
 			[[ "${init_path}" =~ "qemu-binfmt" ]] && continue
-fi
-
-			grep -q "#!/sbin/openrc-run" "${init_path}" || continue
 
 			if [[ "${init_path}" =~ "app-admin/supervisor" ]] && echo "${fn}" | grep -q -E -e "init\.d-r[0-9]+" ; then
 				fn="supervisord"
@@ -230,6 +229,8 @@ fi
 				echo "${init_path} needs a case.  fn = ${fn}"
 				exit 1
 			fi
+fi
+
 			echo "Generating init for ${c}/${pn}/${fn}.sh from ${init_path}"
 			mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
 			dest="${SCRIPTS_PATH}/${c}/${pn}/${fn}.sh"
