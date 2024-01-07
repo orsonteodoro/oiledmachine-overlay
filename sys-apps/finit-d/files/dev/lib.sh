@@ -212,7 +212,7 @@ is_pid_alive() {
 	fi
 }
 
-start-stop-daemon() {
+start_stop_daemon() {
 	local background=0
 	local daemon=0
 	local chdir_path=""
@@ -636,7 +636,7 @@ start-stop-daemon() {
 	fi
 }
 
-supervise-daemon() {
+supervise_daemon() {
 	start-stop-daemon "$@"
 }
 

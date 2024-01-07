@@ -269,6 +269,7 @@ fi
 			sed -i -e "${bottom_ln}a . /lib/finit/scripts/lib/event.sh" "${dest}" || die "ERR:  $LINENO"
 
 			sed -i -e "s|#!/sbin/openrc-run|#!${FINIT_SHELL}|g" "${dest}" || die "ERR:  $LINENO"
+			sed -i -e "s|start-stop-daemon|start_stop_daemon|g" "${dest}" || die "ERR:  $LINENO"
 
 			local needs_syslog=0
 			local cond=""
