@@ -563,25 +563,25 @@ start_stop_daemon() {
 		fi
 		if [ -n "${pidfile_path}" ] ; then
 			local t=$(cat "${pidfile_path}")
-			[ -n ${t} ] && args="${args} -p ${t}"
+			[ -n "${t}" ] && args="${args} -p ${t}"
 		fi
 		if [ -n "${exec_path}" ] ; then
 			local t=$(pgrep $(basename "${exec_path}"))
-			[ -n ${t} ] && args="${args} -p ${t}"
+			[ -n "${t}" ] && args="${args} -p ${t}"
 		fi
 		if [ -n "${user}" ] ; then
 			local t=$(pgrep -U "${user}")
-			[ -n ${t} ] && args="${args} -p ${t}"
+			[ -n "${t}" ] && args="${args} -p ${t}"
 		fi
 		if [ -n "${group}" ] ; then
 			local t=$(pgrep -G "${group}")
-			[ -n ${t} ] && args="${args} -p ${t}"
+			[ -n "${t}" ] && args="${args} -p ${t}"
 		fi
 		if [ -n "${name}" ] ; then
 			local t=$(pgrep "${name}")
-			[ -n ${t} ] && args="${args} -p ${t}"
+			[ -n "${t}" ] && args="${args} -p ${t}"
 		fi
-		[ -n $args ] && ionice -c ${class} -n ${priority} ${args}
+		[ -n "${args}" ] && ionice -c ${class} -n ${priority} ${args}
 	fi
 
 	if [ -n "${procsched_arg}" ] ; then
@@ -605,19 +605,19 @@ start_stop_daemon() {
 		fi
 		if [ -n "${exec_path}" ] ; then
 			local t=$(pgrep $(basename "${exec_path}"))
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
 		if [ -n "${user}" ] ; then
 			local t=$(pgrep -U "${user}")
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
 		if [ -n "${group}" ] ; then
 			local t=$(pgrep -G "${group}")
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
 		if [ -n "${name}" ] ; then
 			local t=$(pgrep "${name}")
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
 		set -- ${args}
 		local x
@@ -639,25 +639,25 @@ start_stop_daemon() {
 		fi
 		if [ -n "${pidfile_path}" ] ; then
 			local t=$(cat "${pidfile_path}")
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
 		if [ -n "${exec_path}" ] ; then
 			local t=$(pgrep $(basename "${exec_path}"))
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
 		if [ -n "${user}" ] ; then
 			local t=$(pgrep -u "${user}")
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
 		if [ -n "${group}" ] ; then
 			local t=$(pgrep -G "${group}")
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
 		if [ -n "${name}" ] ; then
 			local t=$(pgrep "${name}")
-			[ -n $t ] && args="${args} ${t}"
+			[ -n "${t}" ] && args="${args} ${t}"
 		fi
-		[ -n $args ] && renice -n $nicelevel -p ${args}
+		[ -n "${args}" ] && renice -n $nicelevel -p ${args}
 	fi
 	if [ "${phase}" = "start" ] ; then
 		if ! is_pid_alive $service_pid ; then
@@ -689,7 +689,7 @@ supervise_daemon() {
 
 default_start() {
 	local args=""
-	if [ "$command_background" = "true" ] || [ "$command_background" = "1" ] ; then
+	if [ "${command_background}" = "true" ] || [ "${command_background}" = "1" ] ; then
 		args="--background"
 	fi
 	start_stop_daemon \
