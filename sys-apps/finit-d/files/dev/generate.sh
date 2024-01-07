@@ -659,6 +659,7 @@ convert_systemd() {
 main() {
 	[[ "${FINIT_SCRIPT_SOURCE}" =~ "openrc" ]] && convert_openrc
 	[[ "${FINIT_SCRIPT_SOURCE}" =~ "systemd" ]] && convert_systemd
+	exit 0
 }
 
 main
