@@ -11,24 +11,24 @@ _checkpath_once() {
 	path=$(realpath "${path}")
 
 	if [ $truncate_dir -eq 1 ] ; then
+		if [ "${path}" = "/" ] ; then
+			exit 1
+		fi
 		rm -rf "${path}"
 	fi
 
 	if [ $truncate_file -eq 1 ] ; then
+		if [ "${path}" = "/" ] ; then
+			exit 1
+		fi
 		rm -rf "${path}"
 	fi
 
 	if [ "${type}" = "d" ] && [ ! -d "${path}" ] ; then
-		if [ "${path}" = "/" ] ; then
-			exit 1
-		fi
 		mkdir -p "${path}"
 	fi
 
 	if [ "${type}" = "f" ] && [ ! -f "${path}" ] ; then
-		if [ "${path}" = "/" ] ; then
-			exit 1
-		fi
 		if echo "${path}" | grep -q "/" ; then
 			mkdir -p $(dirname "${path}")
 		fi
