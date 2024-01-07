@@ -143,7 +143,7 @@ src_install() {
 	local PKGS=( $(cat "${WORKDIR}/pkgs.txt") )
 	local pkgs
 	for pkg in ${PKGS[@]} ; do
-		insinto /etc/finit.d/available
+		insinto "/etc/finit.d/available/${pkg}"
 		pushd "${WORKDIR}/confs/${pkg}" || die
 			for svc in $(ls) ; do
 				doins "${svc}"

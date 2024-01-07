@@ -316,9 +316,32 @@ fi
 				notify="notify:s6"
 			fi
 
-			# FIXME:
 			local user=""
 			local group=""
+			if grep -q -e "^command_user=" "${init_path}" ; then
+				command_user=$(grep -e "^command_user=" "${init_path}" | cut -f 2 -d "=" | sed -e '|"||g')
+				if [[ "${command_user}" =~ "$" ]] ; then
+					command_user="" # Temporary ignore
+				else
+					user=$(echo "${command_user}" | cut -f 1 -d ":")
+					group=$(echo "${command_user}" | cut -f 1 -d ":")
+				fi
+			else
+				if grep -q -e "^user=" "${init_path}" ; then
+					user=$(grep -e "^user=" "${init_path}" | cut -f 2 -d "=" | sed -e '|"||g')
+				fi
+				if grep -q -e "^group=" "${init_path}" ; then
+					group=$(grep -e "^group=" "${init_path}" | cut -f 2 -d "=" | sed -e '|"||g')
+				fi
+			fi
+
+			# Calls setenv() from c which is assumed literal
+			if [[ "${user}" =~ "$" ]] ; then
+				user=""
+			fi
+			if [[ "${group}" =~ "$" ]] ; then
+				group=""
+			fi
 
 			local basename_fn=$(basename "${dest}")
 			local svc_name=$(echo "${basename_fn}" | sed -e "s|.sh$||")
@@ -336,7 +359,8 @@ fi
 				elif [[ -n "${user}" ]] ; then
 					user_group="@${user}"
 				elif [[ -n "${group}" ]] ; then
-					user_group="@:${group}"
+					# Based on https://github.com/troglobit/finit/blob/4.6/src/service.c#L1443
+					user_group="@root:${group}"
 				fi
 				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name} start" >> "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 			fi
@@ -525,6 +549,14 @@ convert_systemd() {
 			group=$(grep "^Group=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|+)##")
 		fi
 
+		# Calls setenv() from c which is assumed literal
+		if [[ "${user}" =~ ("$"|"%") ]] ; then
+			user=""
+		fi
+		if [[ "${group}" =~ ("$"|"%") ]] ; then
+			group=""
+		fi
+
 		local needs_syslog=0
 		local cond=""
 		local runlevels=""
@@ -550,6 +582,13 @@ convert_systemd() {
 		fi
 
 		notify="notify:systemd"
+
+		if grep -q -E -e "^Environment=" "${init_path}" ; then
+			ROWS=$(grep -r -e "^Environment" "${init_path}" | cut -f 2- -d "=" | sed -e 's|^\"||' -e 's|"$||g')
+			for row in ${ROWS[@]} ; do
+				echo "set ${row}" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+			done
+		fi
 
 		mkdir -p "${CONFS_PATH}/${c}/${pn}"
 		cat /dev/null > "${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
