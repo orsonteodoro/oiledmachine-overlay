@@ -613,7 +613,7 @@ convert_systemd() {
 		echo "${pn}" >> "${SERVICES_PATH}"
 
 		if grep -q -e "^Environment=" "${init_path}" ; then
-			local ROWS=( $(grep -e "^Environment" "${init_path}" | cut -f 2- -d "=" | sed -e 's|^\"||' -e 's|"$||g') ) || die "ERR:  line number - $LINENO"
+			local ROWS=( $(grep -e "^Environment" "${init_path}" | cut -f 2- -d "=") ) || die "ERR:  line number - $LINENO"
 			local row
 			for row in ${ROWS[@]} ; do
 				echo "set ${row}" >> "${init_conf}"
