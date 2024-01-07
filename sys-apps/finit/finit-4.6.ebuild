@@ -85,7 +85,7 @@ RDEPEND+="
 		>=app-shells/bash-completion-2.0
 	)
 	dash? (
-		app-shells/dash
+		app-shells/dash[libedit]
 	)
 	dbus? (
 		sys-apps/dbus

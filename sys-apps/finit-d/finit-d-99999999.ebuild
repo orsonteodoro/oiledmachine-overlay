@@ -40,7 +40,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	dash? (
-		app-shells/dash
+		app-shells/dash[libedit]
 	)
 "
 PDEPEND="

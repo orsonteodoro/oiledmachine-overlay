@@ -237,7 +237,7 @@ start_stop_daemon() {
 	local stdout=""
 	local user=""
 	local service_pid=0
-	local su_pid
+	local sudo_pid
 	while [ -n "$1" ] ; do
 		case $1 in
 			--)
@@ -363,35 +363,50 @@ start_stop_daemon() {
 	done
 
 	if [ -n "${chdir_path}" ] ; then
+		chdir_path=$(echo "${chdir_path}" | sed -e 's|"||g')
 		cd "${chdir_path}"
 	fi
 
 	local _pid=0
 	if [ "${phase}" = "start" ] ; then
 		if [ $pid -gt 0 ] ; then
-			is_pid_alive $pid >/dev/null
+			is_pid_alive $pid
 		elif [ $ppid -gt 0 ] ; then
-			is_pid_alive $ppid >/dev/null
-		elif [ -n $pidfile ] ; then
-			is_pid_alive $(cat "${pidfile}") >/dev/null
-		elif [ -n $exec_path ] ; then
+			is_pid_alive $ppid
+		elif [ -n "${pidfile_path}" ] ; then
+			is_pid_alive $(cat "${pidfile_path}")
+		elif [ -n "${exec_path}" ] ; then
 			pgrep $(basename "${exec_path}") >/dev/null
-		elif [ -n $user ] ; then
+		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null
-		elif [ -n $group ] ; then
+		elif [ -n "${group}" ] ; then
 			pgrep -G "${group}" >/dev/null
 		fi
 
-		if [ $? -eq 0 ] ; then
+		if [ $? -ne 0 ] ; then
 			return 1
 		else
 			local ug_args=""
-			[[ -n "${group}" ]] && ug_args=" -g ${group}"
-			[[ -n "${user}" ]] && ug_args=" ${user}"
-			[[ -n "${user}" ]] || ug_args=" root"
-			su ${ug_args} -c "${exec_path} $@" &
-			su_pid=$!
+			[ -n "${user}" ] && ug_args="${ug_args} -u ${user}"
+			[ -n "${user}" ] || ug_args="${ug_args} -u root"
+			[ -n "${group}" ] && ug_args="${ug_args} -g ${group}"
+
+			local exec_args="$@"
+			set --
+			for x in ${exec_args} ; do
+				set -- $@ $(echo "${x}" | sed -e 's|"||g')
+			done
+
+			sudo ${ug_args} -- "${exec_path}" $@ &
+			local c=0
+			while [ $c -lt 2000000 ] ; do
+				c=$((${c} + 1))
+			done
+			sudo_pid=$!
 			service_pid=$(pgrep -P ${su_pid})
+			if [ -z "${service_pid}" ] ; then
+				return 1
+			fi
 		fi
 
 		if [ $make_pidfile -eq 1 ] ; then
@@ -399,19 +414,17 @@ start_stop_daemon() {
 		fi
 	elif [ "${phase}" = "stop" ] ; then
 		if [ $pid -gt 0 ] ; then
-			is_pid_alive $pid >/dev/null
+			is_pid_alive $pid
 		elif [ $ppid -gt 0 ] ; then
-			is_pid_alive $ppid >/dev/null
-		elif [ -n $pidfile ] ; then
-			pgrep $(cat "${pidfile}") >/dev/null
-		elif [ -n $exec_path ] ; then
+			is_pid_alive $ppid
+		elif [ -n "${pidfile_path}" ] ; then
+			is_pid_alive $(cat "${pidfile_path}")
+		elif [ -n "${exec_path}" ] ; then
 			pgrep $(basename "${exec_path}") >/dev/null
-		elif [ -n $user ] ; then
+		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null
-		elif [ -n $group ] ; then
+		elif [ -n "${group}" ] ; then
 			pgrep -G "${group}" >/dev/null
-		elif [ -e $pidfile ] ; then
-			is_pid_alive $(cat "${pidfile}") >/dev/null
 		else
 			return 0
 		fi
@@ -430,18 +443,18 @@ start_stop_daemon() {
 		elif [ $ppid -gt 0 ] ; then
 			service_pid=$ppid
 			kill -s ${_signal} $service_pid
-		elif [ -e $pidfile ] ; then
-			service_pid=$(cat "${pidfile}")
+		elif [ -e "${pidfile_path}" ] ; then
+			service_pid=$(cat "${pidfile_path}")
 			kill -s ${_signal} $service_pid
-		elif [ -n "$user" ] ; then
+		elif [ -n "${user}" ] ; then
 			service_pid=$(pgrep -U "${user}")
 			kill -s ${_signal} $service_pid
-		elif [ -n "$group" ] ; then
+		elif [ -n "${group}" ] ; then
 			service_pid=$(pgrep -G "${group}")
 			kill -s ${_signal} $service_pid
 		fi
 
-		is_pid_alive ${service_pid} >/dev/null || return 0
+		is_pid_alive ${service_pid} || return 0
 
 		if [ -n "${retry}" ] && echo "${retry}" | grep -q "/" ; then
 			local _retry=$(echo "${retry}" | sed -e "s| |/|g")
@@ -459,7 +472,7 @@ start_stop_daemon() {
 			time_final=$(( ${now} + ${duration} ))
 			kill -s ${sig} ${service_pid}
 			while [ $now -lt ${time_final} ] ; do
-				is_pid_alive ${service_pid} >/dev/null || return 0
+				is_pid_alive ${service_pid} || return 0
 				now=$(date +"%s")
 			done
 
@@ -470,7 +483,7 @@ start_stop_daemon() {
 				time_final=$(( ${now} + ${duration} ))
 				kill -s ${sig} ${service_pid}
 				while [ $now -lt ${time_final} ] ; do
-					is_pid_alive ${service_pid} >/dev/null || return 0
+					is_pid_alive ${service_pid} || return 0
 					now=$(date +"%s")
 				done
 			fi
@@ -481,7 +494,7 @@ start_stop_daemon() {
 			time_final=$(( ${now} + ${duration} ))
 			kill -s ${sig} ${service_pid}
 			while [ $now -lt ${time_final} ] ; do
-				is_pid_alive ${service_pid} >/dev/null || return 0
+				is_pid_alive ${service_pid} || return 0
 				now=$(date +"%s")
 			done
 		else
@@ -491,7 +504,7 @@ start_stop_daemon() {
 			time_final=$(( ${now} + ${duration} ))
 			kill -s ${sig} ${service_pid}
 			while [ $now -lt ${time_final} ] ; do
-				is_pid_alive ${service_pid} >/dev/null || return 0
+				is_pid_alive ${service_pid} || return 0
 				now=$(date +"%s")
 			done
 		fi
@@ -500,23 +513,21 @@ start_stop_daemon() {
 			rm -f "${pidfile_path}"
 		fi
 
-		is_pid_alive ${service_pid} >/dev/null || return 2
+		is_pid_alive ${service_pid} || return 2
 		return 0
 	elif [ "${status}" -eq 1 ] ; then
 		if [ $pid -gt 0 ] ; then
-			is_pid_alive $pid >/dev/null
+			is_pid_alive $pid
 		elif [ $ppid -gt 0 ] ; then
-			is_pid_alive $ppid >/dev/null
-		elif [ -n $pidfile ] ; then
-			pgrep $(cat "${pidfile}") >/dev/null
-		elif [ -n $exec_path ] ; then
+			is_pid_alive $ppid
+		elif [ -n "${pidfile_path}" ] ; then
+			pgrep $(cat "${pidfile_path}") >/dev/null
+		elif [ -n "${exec_path}" ] ; then
 			pgrep $(basename "${exec_path}") >/dev/null
-		elif [ -n $user ] ; then
+		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null
-		elif [ -n $group ] ; then
+		elif [ -n "${group}" ] ; then
 			pgrep -G "${group}" >/dev/null
-		elif [ -e $pidfile ] && grep -q -E "[0-9]" "$pidfile" ; then
-			true
 		else
 			false
 		fi
@@ -539,30 +550,35 @@ start_stop_daemon() {
 		fi
 		local args=""
 		if [ $pid -gt 0 ] ; then
-			args+=" -p $pid"
+			args="${args} -p $pid"
 		fi
 		if [ $ppid -gt 0 ] ; then
-			args+=" -p $ppid"
+			args="${args} -p $ppid"
 		fi
 		if [ $service_pid -gt 0 ] ; then
-			args+=" -p ${service_pid}"
+			args="${args} -p ${service_pid}"
 		fi
-		if [ -n "$pidfile" ] ; then
-			args+=" -p "$(cat "${pidfile}")
+		if [ -n "${pidfile_path}" ] ; then
+			local t=$(cat "${pidfile_path}")
+			[ -n ${t} ] && args="${args} -p ${t}"
 		fi
-		if [ -n $exec_path ] ; then
-			args+=" -p "$(pgrep $(basename "${exec_path}"))
+		if [ -n "${exec_path}" ] ; then
+			local t=$(pgrep $(basename "${exec_path}"))
+			[ -n ${t} ] && args="${args} -p ${t}"
 		fi
-		if [ -n $user ] ; then
-			args+=" -p "$(pgrep -U "${user}")
+		if [ -n "${user}" ] ; then
+			local t=$(pgrep -U "${user}")
+			[ -n ${t} ] && args="${args} -p ${t}"
 		fi
-		if [ -n $group ] ; then
-			args+=" -p "$(pgrep -G "${group}")
+		if [ -n "${group}" ] ; then
+			local t=$(pgrep -G "${group}")
+			[ -n ${t} ] && args="${args} -p ${t}"
 		fi
-		if [ -n $name ] ; then
-			args+=" -p "$(pgrep $name)
+		if [ -n "${name}" ] ; then
+			local t=$(pgrep "${name}")
+			[ -n ${t} ] && args="${args} -p ${t}"
 		fi
-		ionice -c ${class} -n ${priority} ${args}
+		[ -n $args ] && ionice -c ${class} -n ${priority} ${args}
 	fi
 
 	if [ -n "${procsched_arg}" ] ; then
@@ -573,28 +589,32 @@ start_stop_daemon() {
 		fi
 		local args=""
 		if [ $pid -gt 0 ] ; then
-			args+=" $pid"
+			args="${args} $pid"
 		fi
 		if [ $ppid -gt 0 ] ; then
-			args+=" $ppid"
+			args="${args} $ppid"
 		fi
 		if [ $service_pid -gt 0 ] ; then
-			args+=" ${service_pid}"
+			args="${args} ${service_pid}"
 		fi
-		if [ -n "$pidfile" ] ; then
-			args+=" "$(cat "${pidfile}")
+		if [ -n "${pidfile_path}" ] ; then
+			args="${args} "$(cat "${pidfile_path}")
 		fi
-		if [ -n $exec_path ] ; then
-			args+=" "$(pgrep $(basename "${exec_path}"))
+		if [ -n "${exec_path}" ] ; then
+			local t=$(pgrep $(basename "${exec_path}"))
+			[ -n $t ] && args="${args} ${t}"
 		fi
-		if [ -n $user ] ; then
-			args+=" "$(pgrep -U "${user}")
+		if [ -n "${user}" ] ; then
+			local t=$(pgrep -U "${user}")
+			[ -n $t ] && args="${args} ${t}"
 		fi
-		if [ -n $group ] ; then
-			args+=" "$(pgrep -G "${group}")
+		if [ -n "${group}" ] ; then
+			local t=$(pgrep -G "${group}")
+			[ -n $t ] && args="${args} ${t}"
 		fi
-		if [ -n $name ] ; then
-			args+=" "$(pgrep $name)
+		if [ -n "${name}" ] ; then
+			local t=$(pgrep "${name}")
+			[ -n $t ] && args="${args} ${t}"
 		fi
 		set -- ${args}
 		local x
@@ -606,41 +626,62 @@ start_stop_daemon() {
 	if [ -n "$nicelevel" ] ; then
 		local args=""
 		if [ $pid -gt 0 ] ; then
-			args+=" -p $pid"
+			args="${args} $pid"
 		fi
 		if [ $ppid -gt 0 ] ; then
-			args+=" -p $ppid"
+			args="${args} $ppid"
 		fi
 		if [ $service_pid -gt 0 ] ; then
-			args+=" -p ${service_pid}"
+			args="${args} ${service_pid}"
 		fi
-		if [ -n "$pidfile" ] ; then
-			args+=" -p "$(cat "${pidfile}")
+		if [ -n "${pidfile_path}" ] ; then
+			local t=$(cat "${pidfile_path}")
+			[ -n $t ] && args="${args} ${t}"
 		fi
-		if [ -n $exec_path ] ; then
-			args+=" -p "$(pgrep $(basename "${exec_path}"))
+		if [ -n "${exec_path}" ] ; then
+			local t=$(pgrep $(basename "${exec_path}"))
+			[ -n $t ] && args="${args} ${t}"
 		fi
-		if [ -n $user ] ; then
-			args+=" -p "$(pgrep -u "${user}")
+		if [ -n "${user}" ] ; then
+			local t=$(pgrep -u "${user}")
+			[ -n $t ] && args="${args} ${t}"
 		fi
-		if [ -n $group ] ; then
-			args+=" -p "$(pgrep -G "${group}")
+		if [ -n "${group}" ] ; then
+			local t=$(pgrep -G "${group}")
+			[ -n $t ] && args="${args} ${t}"
 		fi
-		if [ -n $name ] ; then
-			args+=" -p "$(pgrep $name)
+		if [ -n "${name}" ] ; then
+			local t=$(pgrep "${name}")
+			[ -n $t ] && args="${args} ${t}"
 		fi
-		renice -n $nicelevel ${args}
+		[ -n $args ] && renice -n $nicelevel -p ${args}
 	fi
-	if [ $daemon -eq 1 ] || [ $background -eq 1 ] ; then
-		:;
-	else
-		# Bring to foreground
-		fg
+	if [ "${phase}" = "start" ] ; then
+		if ! is_pid_alive $service_pid ; then
+			echo "Did not detect pid"
+			return 1
+		fi
+		echo "service_pid:  $service_pid"
+		if [ $daemon -eq 1 ] || [ $background -eq 1 ] ; then
+			if jobs | wc -l | grep -q "0" ; then
+				return 1
+			# else
+	# Keep as background
+			fi
+		else
+			if jobs | wc -l | grep -q "0" ; then
+				return 1
+			else
+	# Bring to foreground
+				fg
+			fi
+		fi
 	fi
+	return 0
 }
 
 supervise_daemon() {
-	start-stop-daemon "$@"
+	start_stop_daemon "$@"
 }
 
 default_start() {
@@ -648,7 +689,7 @@ default_start() {
 	if [ "$command_background" = "true" ] || [ "$command_background" = "1" ] ; then
 		args="--background"
 	fi
-	start-stop-daemon \
+	start_stop_daemon \
 		--exec "${command}" \
 		${start_stop_daemon_args} \
 		${args} \
