@@ -1712,18 +1712,18 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
     Acceptable values:
 
-    a path - The absolute path to the init program.
-    auto - Automatically detect based on the presence of init package installed.
-    custom (default) - You will manually set via /etc/default/grub
-    dinit - Use init=/sbin/dinit
-    epoch - Use init=/usr/sbin/epoch-init
-    finit - Use init=/sbin/finit
-    none - Removes init= from the built-in kernel command line
-    openrc - Use init=/sbin/openrc-init
-    runit - Use init=/sbin/runit-init
-    s6 - Use init=/sbin/init
-    systemd - Use init=/lib/systemd/systemd
-    sysvinit - Use init=/sbin/init
+     a path - The absolute path to the init program.
+     auto - Automatically detect based on the presence of init package installed.
+     custom (default) - You will manually set via /etc/default/grub
+     dinit - Use init=/sbin/dinit
+     epoch - Use init=/usr/sbin/epoch-init
+     finit - Use init=/sbin/finit
+     none - Removes init= from the built-in kernel command line
+     openrc - Use init=/sbin/openrc-init
+     runit - Use init=/sbin/runit-init
+     s6 - Use init=/sbin/init
+     systemd - Use init=/lib/systemd/systemd
+     sysvinit - Use init=/sbin/init
 
     Examples
 
