@@ -616,6 +616,9 @@ convert_systemd() {
 			local ROWS=( $(grep -e "^Environment" "${init_path}" | cut -f 2- -d "=") ) || die "ERR:  line number - $LINENO"
 			local row
 			for row in ${ROWS[@]} ; do
+				if grep -q -e "^\"" ; then
+					row=$(echo "${row}" | sed -e 's|^"||' -e 's|"$||g')
+				fi
 				echo "set ${row}" >> "${init_conf}"
 			done
 		fi

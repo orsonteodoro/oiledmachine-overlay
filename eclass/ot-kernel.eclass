@@ -2480,6 +2480,9 @@ apply_all_patchsets() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		# Disable + suffix
 		sed -i -e "s|echo \"+\"|#echo \"+\"|g" "scripts/setlocalversion" || die
+
+		# Disable -dirty
+		sed -i -e "s|\${scm_version}||" "scripts/setlocalversion" || die
 	fi
 }
 
