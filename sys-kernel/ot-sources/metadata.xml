@@ -1767,9 +1767,10 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       * The explicit values are provided for cross compiling.
       * There are four s6 instructions.  Insane!  The s6 or auto options uses
         the quckstart.html upstream instructions.
-      * The speed of the init may vary on each machine based on the order and
-        enabled bit of the service.  It is possible to start the tty login
-        before the network service start.
+      * The speed of the init may vary on each machine based on several factors
+        such as the starting order, enabled bit, service support for that init
+        system.  It is possible to start the tty login before the blocking
+        network service (e.g. NetworkManager, netifrc) start.
 
 
     See also
