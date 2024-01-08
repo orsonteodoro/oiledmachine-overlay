@@ -484,6 +484,7 @@ exit 0
 EOF
 }
 
+# TODO:  The wrapper required for systemd capabilities.
 gen_systemd_start_wrapper() {
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-stop.sh"
 #!${FINIT_SHELL}
