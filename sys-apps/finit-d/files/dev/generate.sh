@@ -484,14 +484,17 @@ exit 0
 EOF
 }
 
-# TODO:  The wrapper required for systemd capabilities.
+# TODO:  The wrapper is required for systemd capabilities.
 gen_systemd_start_wrapper() {
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-stop.sh"
 #!${FINIT_SHELL}
+ambient_capabilities="${ambient_capabilities}"
+bounding_capabilities="${bounding_capabilities}"
 command="${command}"
 command_args="${command_args}"
 missing_start_fn=1
-
+not_ambient_capabilities="${not_ambient_capabilities}"
+not_bounding_capabilities="${not_bounding_capabilities}"
 exit 0
 EOF
 }

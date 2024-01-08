@@ -723,19 +723,19 @@ default_start() {
 	if [ "${command_background}" = "true" ] || [ "${command_background}" = "1" ] ; then
 		args="--background"
 	fi
-	local prefix=$(echo "${CAPBND}" | cut -c 1)
-	if [ -n "${CAPBND}" ] && [ "${prefix}" != "-" ] ; then
-		args="--capability-bounding-set ${CAPBND}"
+	local prefix=$(echo "${ambient_capabilities}" | cut -c 1)
+	if [ -n "${ambient_capabilities}" ] && [ "${prefix}" != "-" ] ; then
+		args="--ambient-capabilities ${ambient_capabilities}"
 	fi
-	if [ -n "${NCAPBND}" ] && [ "${prefix}" = "-" ] ; then
-		args="--not-capability-bounding-set ${NCAPBND}"
+	if [ -n "${not_ambient_capabilities}" ] && [ "${prefix}" = "-" ] ; then
+		args="--not-ambient-capabilities ${not_ambient_capabilities}"
 	fi
-	local prefix=$(echo "${CAPAMB}" | cut -c 1)
-	if [ -n "${CAPAMB}" ] && [ "${prefix}" != "-" ] ; then
-		args="--capability-bounding-set ${CAPAMB}"
+	local prefix=$(echo "${bounding_capabilities}" | cut -c 1)
+	if [ -n "${bounding_capabilities}" ] && [ "${prefix}" != "-" ] ; then
+		args="--bounding-capabilities ${bounding_capabilities}"
 	fi
-	if [ -n "${NCAPAMB}" ] && [ "${prefix}" = "-" ] ; then
-		args="--not-capability-bounding-set ${NCAPAMB}"
+	if [ -n "${not_bounding_capabilities}" ] && [ "${prefix}" = "-" ] ; then
+		args="--not-bounding-capabilities ${not_bounding_capabilities}"
 	fi
 	start_stop_daemon \
 		--exec "${command}" \
