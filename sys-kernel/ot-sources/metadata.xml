@@ -1751,7 +1751,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     Meaning:
 
       supervisor - has a tool (e.g. systemctl, initctl) to stop or start services
-      sandboxing - isolation from live system
+      sandboxing - filesystem isolation, root/network privileges between services.
       realtime - able to change services to realtime priority class
     
       [1] - achieveable with openrc compatibility wrappers but not native
