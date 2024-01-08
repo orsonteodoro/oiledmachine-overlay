@@ -1750,7 +1750,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     
     Meaning:
 
-      supervisor - has a tool a tool (e.g. systemctl, initctl) to stop or start services
+      supervisor - has a tool (e.g. systemctl, initctl) to stop or start services
       sandboxing - isolation from live system
       realtime - able to change services to realtime priority class
     
