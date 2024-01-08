@@ -261,7 +261,7 @@ fi
 			svc_name=$(echo "${svc_name}" | sed -e "s|\.sh$||g")
 
 			if grep -q "RC_SVCNAME" "${init_sh}" ; then
-				sed -i -e "${top_ln}a RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a export RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 			sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			sed -i -e "${top_ln}a export FN=\"\$1\"" "${init_sh}" || die "ERR:  line number - $LINENO"
