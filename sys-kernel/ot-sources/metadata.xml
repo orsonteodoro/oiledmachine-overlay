@@ -1742,7 +1742,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       * auto is recommended but the common practice is to configure
         /etc/default/grub.  It can only be used when not cross compiling.
       * For the fastest boot, use finit.
-      * For security configurations, use openrc.
+      * For security configurations, use systemd.
       * For realtime configurations, use openrc.
       * If init= is provided by the bootloader, it will override this internal
         setting except when lockdown is enabled.
