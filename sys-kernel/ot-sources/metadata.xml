@@ -1739,14 +1739,14 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     Features
 
       init system | supervisor | sandboxing | realtime | socket service | user services | init speed
-      dinit            y             n           n            n                 n              ?
-      epoch            y             n           n            n                 n              ?
-      finit            y             n           n[1]         n                 n            fast[3]
-      openrc           y             y[2]        y            n                 n            slow even with parallel enabled
-      runit            y             y[2]        n            n                 n            fast
-      systemd          y             y           n            y                 y            fast
-      s6               y             n           n            n                 n              ?
-      sysvinit         n             n           n            n                 n              ?
+      dinit            y             n           n            n                 n             ?
+      epoch            y             n           n            n                 n             ?
+      finit            y             n           n[1]         n                 n           fast[3]
+      openrc           y         partial[2]      y            n                 n           slow even with parallel enabled
+      runit            y         partial[2]      n            n                 n           fast
+      systemd          y            full         n            y                 y           fast
+      s6               y             n           n            n                 n             ?
+      sysvinit         n             n           n            n                 n             ?
     
     Meaning:
 
