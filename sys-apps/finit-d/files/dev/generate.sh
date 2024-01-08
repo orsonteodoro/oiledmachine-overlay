@@ -484,6 +484,17 @@ exit 0
 EOF
 }
 
+gen_systemd_start_wrapper() {
+cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-stop.sh"
+#!${FINIT_SHELL}
+command="${command}"
+command_args="${command_args}"
+missing_start_fn=1
+
+exit 0
+EOF
+}
+
 convert_systemd() {
 	#rm -rf confs || die "ERR:  line number - $LINENO"
 	mkdir -p confs || die "ERR:  line number - $LINENO"
@@ -619,6 +630,26 @@ convert_systemd() {
 				if echo "${row}" | grep -q -e '^"' && echo "${row}" | grep -q -e '"$' ; then
 					row=$(echo "${row}" | sed -r -e 's|"(.*)"|\1|g')
 				fi
+				echo "set ${row}" >> "${init_conf}"
+			done
+			IFS=$' \t\n'
+		fi
+
+		if grep -q -e "^CapabilityBoundingSet=" "${init_path}" ; then
+			IFS=$'\n'
+			local ROWS=( $(grep -e "^CapabilityBoundingSet" "${init_path}" | cut -f 2- -d "=") ) || die "ERR:  line number - $LINENO"
+			local row
+			for row in ${ROWS[@]} ; do
+				echo "set ${row}" >> "${init_conf}"
+			done
+			IFS=$' \t\n'
+		fi
+
+		if grep -q -e "^AmbientCapabilities=" "${init_path}" ; then
+			IFS=$'\n'
+			local ROWS=( $(grep -e "^AmbientCapabilities" "${init_path}" | cut -f 2- -d "=") ) || die "ERR:  line number - $LINENO"
+			local row
+			for row in ${ROWS[@]} ; do
 				echo "set ${row}" >> "${init_conf}"
 			done
 			IFS=$' \t\n'

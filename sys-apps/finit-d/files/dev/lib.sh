@@ -213,6 +213,13 @@ is_pid_alive() {
 }
 
 start_stop_daemon() {
+	# systemd
+	local ambient_capabilities=""
+	local not_ambient_capabilities=""
+	local bounding_capabilities=""
+	local not_bounding_capabilities=""
+
+	# openrc
 	local background=0
 	local daemon=0
 	local chdir_path=""
@@ -237,15 +244,21 @@ start_stop_daemon() {
 	local stdout=""
 	local user=""
 	local service_pid=0
-	local sudo_pid
+	local capsh_pid
 	while [ -n "$1" ] ; do
 		case $1 in
 			--)
 				shift
 				break
 				;;
+			--ambient-capabilities=*)
+				ambient_capabilities="${1#*=}"
+				;;
 			--background|-b)
 				background=1
+				;;
+			--bounding-capabilities=*)
+				bounding_capabilities="${1#*=}"
 				;;
 			--chdir=*)
 				chdir_path="${1#*=}"
@@ -292,6 +305,12 @@ start_stop_daemon() {
 			--nicelevel|-N)
 				shift
 				nicelevel="$1"
+				;;
+			--not-ambient-capabilities=*)
+				not_ambient_capabilities="${1#*=}"
+				;;
+			--not-bounding-capabilities=*)
+				not_bounding_capabilities="${1#*=}"
 				;;
 			--pid)
 				pid="$1"
@@ -387,9 +406,18 @@ start_stop_daemon() {
 			return 1
 		else
 			local ug_args=""
-			[ -n "${user}" ] && ug_args="${ug_args} -u ${user}"
-			[ -n "${user}" ] || ug_args="${ug_args} -u root"
-			[ -n "${group}" ] && ug_args="${ug_args} -g ${group}"
+			if [ -n "${user}" ] ; then
+				local uid=$(getent passwd "${user}" | cut -f 3 -d ":")
+				ug_args="${ug_args} --uid=\"${uid}\""
+			fi
+			if [ -z "${user}" ] ; then
+				local uid=$(getent passwd "root" | cut -f 3 -d ":")
+				ug_args="${ug_args} --uid=\"${uid}\""
+			fi
+			if [ -n "${group}" ] ; then
+				local gid=$(getent group "${group}" | cut -f 3 -d ":")
+				 ug_args="${ug_args} --gid=${gid}"
+			fi
 
 			local exec_args="$@"
 			set --
@@ -397,12 +425,15 @@ start_stop_daemon() {
 				set -- $@ $(echo "${x}" | sed -e 's|"||g')
 			done
 
+
+			if [ -n ""
+
 			# Avoid racing bug without altering last PID
-			sudo ${ug_args} -- "${exec_path}" $@ &
-			sudo_pid=$!
+			capsh ${ug_args} --shell="${exec_path}" -- "$@" &
+			capsh_pid=$!
 			local c=0
 			while [ $c -lt 1000000 ] ; do
-				service_pid=$(pgrep -P ${su_pid} 2>/dev/null)
+				service_pid=$(pgrep -P ${capsh_pid} 2>/dev/null)
 				[ -z "${service_pid}" ] && continue
 				[ $service_pid -gt 0 ] && break
 			done
@@ -691,6 +722,20 @@ default_start() {
 	local args=""
 	if [ "${command_background}" = "true" ] || [ "${command_background}" = "1" ] ; then
 		args="--background"
+	fi
+	local prefix=$(echo "${CAPBND}" | cut -c 1)
+	if [ -n "${CAPBND}" ] && [ "${prefix}" != "-" ] ; then
+		args="--capability-bounding-set ${CAPBND}"
+	fi
+	if [ -n "${NCAPBND}" ] && [ "${prefix}" = "-" ] ; then
+		args="--not-capability-bounding-set ${NCAPBND}"
+	fi
+	local prefix=$(echo "${CAPAMB}" | cut -c 1)
+	if [ -n "${CAPAMB}" ] && [ "${prefix}" != "-" ] ; then
+		args="--capability-bounding-set ${CAPAMB}"
+	fi
+	if [ -n "${NCAPAMB}" ] && [ "${prefix}" = "-" ] ; then
+		args="--not-capability-bounding-set ${NCAPAMB}"
 	fi
 	start_stop_daemon \
 		--exec "${command}" \
