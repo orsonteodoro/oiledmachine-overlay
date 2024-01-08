@@ -1736,28 +1736,27 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       OT_KERNEL_INIT="auto"
       OT_KERNEL_INIT="none"
     
-
     Features
 
-    init system | supervisor | sandboxing | realtime | init speed
-    dinit            y             n           n          ?
-    epoch            y             n           n          ?
-    finit            y             n           n[1]      fast[3]
-    openrc           y             y[2]        y         slow
-    runit            y             y[2]        n         fast
-    systemd          y             y           n         fast
-    s6               y             n           n          ?
-    sysvinit         n             n           n          ?
+      init system | supervisor | sandboxing | realtime | init speed
+      dinit            y             n           n          ?
+      epoch            y             n           n          ?
+      finit            y             n           n[1]      fast[3]
+      openrc           y             y[2]        y         slow even with parallel enabled
+      runit            y             y[2]        n         fast
+      systemd          y             y           n         fast
+      s6               y             n           n          ?
+      sysvinit         n             n           n          ?
     
     Meaning:
 
-    supervisor - has a tool a tool (e.g. systemctl, initctl) to stop or start services
-    sandboxing - isolation from live system
-    realtime - able to change services to realtime priority class
+      supervisor - has a tool a tool (e.g. systemctl, initctl) to stop or start services
+      sandboxing - isolation from live system
+      realtime - able to change services to realtime priority class
     
-    [1] - achieveable with openrc compatibility wrappers but not native
-    [2] - via chroot, but not kernel side sandboxing with capabilities
-    [3] - only if a few services started
+      [1] - achieveable with openrc compatibility wrappers but not native
+      [2] - via chroot, but not kernel side sandboxing with capabilities
+      [3] - only if a few services started
 
     Notes
 
