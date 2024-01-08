@@ -265,7 +265,7 @@ fi
 			fi
 			sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			sed -i -e "${top_ln}a export FN=\"\$1\"" "${init_sh}" || die "ERR:  line number - $LINENO"
-			if ! grep -F -q -e "^start(" "${init_sh}" ; then
+			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a missing_start_fn=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
