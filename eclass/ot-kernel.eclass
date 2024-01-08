@@ -12461,12 +12461,8 @@ ot-kernel_fix_modules() {
 	local non_canonical_target2="${NC_VERSION}-${extraversion}" # ex. 6.6-builder
 	local non_canonical_target3="${UPSTREAM_PV}-${extraversion}" # ex. 6.6.0-builder
 	local non_canonical_target4="${MY_PV}-${extraversion}" # ex. 6.6.8-builder
+	local non_canonical_target5="${MY_PV}-${arch}" # ex. 6.6.8-${arch}
 	local canonical_target="${UPSTREAM_PV}-${extraversion}-${arch}" # ex. 6.6.0-builder-${arch}
-
-	einfo "non_canonical_target1:  ${non_canonical_target1}"
-	einfo "non_canonical_target2:  ${non_canonical_target2}"
-	einfo "non_canonical_target3:  ${non_canonical_target3}"
-	einfo "non_canonical_target4:  ${non_canonical_target4}"
 
 	mkdir -p "${ED}/lib/modules/${canonical_target}"
 	if [[ -e "${ED}/lib/modules/${non_canonical_target1}" ]] ; then
@@ -12499,6 +12495,14 @@ ot-kernel_fix_modules() {
 			"${ED}/lib/modules/${canonical_target}" \
 			|| die
 		rm -rf "${ED}/lib/modules/${non_canonical_target4}" \
+			|| true
+	fi
+	if [[ -e "${ED}/lib/modules/${non_canonical_target5}" ]] ; then
+		cp -a \
+			"${ED}/lib/modules/${non_canonical_target5}/"* \
+			"${ED}/lib/modules/${canonical_target}" \
+			|| die
+		rm -rf "${ED}/lib/modules/${non_canonical_target5}" \
 			|| true
 	fi
 
