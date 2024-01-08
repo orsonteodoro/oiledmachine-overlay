@@ -1738,15 +1738,15 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     
     Features
 
-      init system | supervisor | sandboxing | realtime | socket service | user services | init speed
-      dinit            y             n           n            n                 n             ?
-      epoch            y             n           n            n                 n             ?
-      finit            y             n           n[1]         n                 n           fast[3]
-      openrc           y         partial[2]      y            n                 n           slow even with parallel enabled
-      runit            y         partial[2]      n            n                 n           fast
-      systemd          y            full         n            y                 y           fast
-      s6               y             n           n            n                 n             ?
-      sysvinit         n             n           n            n                 n             ?
+      init system | supervisor | sandboxing | realtime | socket service | user services
+      dinit            y             n           n            n                 n
+      epoch            y             n           n            n                 n
+      finit            y             n           n[1]         n                 n
+      openrc           y         partial[2]      y            n                 n
+      runit            y         partial[2]      n            n                 n
+      systemd          y            full         n            y                 y
+      s6               y             n           n            n                 n
+      sysvinit         n             n           n            n                 n
     
     Meaning:
 
@@ -1758,7 +1758,6 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     
       [1] - achieveable with openrc compatibility wrappers but not native
       [2] - via chroot, but not kernel side sandboxing with capabilities
-      [3] - only if a few services started
 
     Notes
 
@@ -1766,11 +1765,14 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
         /etc/default/grub.  It can only be used when not cross compiling.
       * If init= is provided by the bootloader, it will override this internal
         setting except when lockdown is enabled.
-      * It is recommended to set it to auto and remove the init=
-        from boot.
+      * It is recommended to set it to auto and remove the init= from boot.
       * The explicit values are provided for cross compiling.
       * There are four s6 instructions.  Insane!  The s6 or auto options uses
         the quckstart.html upstream instructions.
+      * The speed of the init may vary on each machine based on the order and
+        enabled bit of the service.  It is possible to start the tty login
+        before the network service start.
+
 
     See also
 
