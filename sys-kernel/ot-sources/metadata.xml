@@ -1756,7 +1756,6 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
         limits between services.
       realtime - able to change services to realtime priority class
 
-       a - For academic research
        e - For embedded
        D - For data centers
        d - For desktop users
