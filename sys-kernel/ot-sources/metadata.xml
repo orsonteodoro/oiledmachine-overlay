@@ -1761,7 +1761,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
        e - For embedded
        l - For legacy or software museum
        m - For music production
-       s - For small capacity server farm or home server
+       s - For LAN server, home server, or SOHO
     
       [1] - achieveable with openrc compatibility wrappers but not native
       [2] - via chroot, but not kernel side sandboxing with capabilities
