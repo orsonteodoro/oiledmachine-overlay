@@ -1738,21 +1738,23 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     
     Features
 
-      init system | supervisor | sandboxing | realtime | init speed
-      dinit            y             n           n          ?
-      epoch            y             n           n          ?
-      finit            y             n           n[1]      fast[3]
-      openrc           y             y[2]        y         slow even with parallel enabled
-      runit            y             y[2]        n         fast
-      systemd          y             y           n         fast
-      s6               y             n           n          ?
-      sysvinit         n             n           n          ?
+      init system | supervisor | sandboxing | realtime | socket service | user services | init speed
+      dinit            y             n           n            n                 n              ?
+      epoch            y             n           n            n                 n              ?
+      finit            y             n           n[1]         n                 n            fast[3]
+      openrc           y             y[2]        y            n                 n            slow even with parallel enabled
+      runit            y             y[2]        n            n                 n            fast
+      systemd          y             y           n            y                 y            fast
+      s6               y             n           n            n                 n              ?
+      sysvinit         n             n           n            n                 n              ?
     
     Meaning:
 
       supervisor - has a tool (e.g. systemctl, initctl) to stop or start services
       sandboxing - filesystem isolation, root/network privileges between services.
       realtime - able to change services to realtime priority class
+      socket service - able to spawn a heavy service on demand on socket connection
+      user services - able to spawn a service on login for that user
     
       [1] - achieveable with openrc compatibility wrappers but not native
       [2] - via chroot, but not kernel side sandboxing with capabilities
