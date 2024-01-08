@@ -1738,23 +1738,21 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     
     Features
 
-      init system | supervisor | sandboxing | realtime | socket service | user services
-      dinit            y             n           n            n                 n
-      epoch            y             n           n            n                 n
-      finit            y             n           n[1]         n                 n
-      openrc           y         partial[2]      y            n                 n
-      runit            y         partial[2]      n            n                 n
-      systemd          y            full         n            y                 y
-      s6               y             n           n            n                 n
-      sysvinit         n             n           n            n                 n
+      init system | supervisor | sandboxing | realtime | additional features
+      dinit            y             n           n
+      epoch            y             n           n
+      finit            y             n           n[1]
+      openrc           y         partial[2]      y
+      runit            y         partial[2]      n
+      systemd          y            full         n       Support for on demand user or on demand socket services
+      s6               y             n           n
+      sysvinit         n             n           n
     
     Meaning:
 
       supervisor - has a tool (e.g. systemctl, initctl) to stop or start services
       sandboxing - filesystem isolation, root/network privileges, resource limits between services.
       realtime - able to change services to realtime priority class
-      socket service - able to spawn a heavy service on demand on socket connection
-      user services - able to spawn a service on login for that user
     
       [1] - achieveable with openrc compatibility wrappers but not native
       [2] - via chroot, but not kernel side sandboxing with capabilities
