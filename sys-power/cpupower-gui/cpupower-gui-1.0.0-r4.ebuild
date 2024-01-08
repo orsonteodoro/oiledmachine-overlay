@@ -15,10 +15,10 @@ HOMEPAGE="https://github.com/vagnum08/cpupower-gui"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-LANGS=( el_GR en en_GB hu nl zh_CN )
+LANGS=( el_GR en en_GB hu it nl zh_CN )
 IUSE+="
 ${LANGS[@]/#/l10n_}
-+l10n_en -pkla wayland X
++l10n_en -libexec -pkla wayland X
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -27,9 +27,11 @@ REQUIRED_USE+="
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/pygobject-3.30[${PYTHON_USEDEP}]
+	>=gui-libs/libhandy-1
 	dev-libs/glib:2
 	dev-libs/libappindicator:3
 	dev-python/dbus-python[${PYTHON_USEDEP}]
+	dev-python/pyxdg[${PYTHON_USEDEP}]
 	sys-auth/polkit
 	x11-libs/gtk+:3[wayland?,X?]
 	x11-themes/hicolor-icon-theme
@@ -61,8 +63,12 @@ src_prepare() {
 }
 
 src_configure() {
+	# patch positional argument for >=meson-0.60
+	sed -i '15d' "$S/data/meson.build"
+
 	local emesonargs=(
 		$(meson_use pkla)
+		$(meson_use libexec use_libexec)
 		-Dsystemddir=${CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR}
 	)
 	meson_src_configure
