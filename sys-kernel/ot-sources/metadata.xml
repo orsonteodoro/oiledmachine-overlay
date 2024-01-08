@@ -1756,12 +1756,12 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
         limits between services.
       realtime - able to change services to realtime priority class
 
-       e - For embedded
        D - For data centers
        d - For desktop users
+       e - For embedded
+       l - For legacy or software museum
        m - For music production
        s - For small capacity server farm or home server
-       l - For legacy or software museum
     
       [1] - achieveable with openrc compatibility wrappers but not native
       [2] - via chroot, but not kernel side sandboxing with capabilities
