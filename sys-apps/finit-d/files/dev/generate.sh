@@ -517,58 +517,37 @@ convert_systemd() {
 
 		local pidfile=""
 		if grep -q "^PIDFile" "${init_path}" ; then
-			pidfile=$(grep "^PIDFile" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
-		fi
-		local exec_start_pre=""
-		if grep -q "^ExecStartPre=" "${init_path}" ; then
-			exec_start_pre=$(grep "^ExecStartPre=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
-		fi
-		local exec_start=""
-		if grep -q "^ExecStart=" "${init_path}" ; then
-			exec_start=$(grep "^ExecStart=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
-		fi
-		local exec_start_post=""
-		if grep -q "^ExecStartPost=" "${init_path}" ; then
-			exec_start_post=$(grep "^ExecStartPost=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
-		fi
-
-		local exec_stop=""
-		if grep -q "^ExecStop=" "${init_path}" ; then
-			exec_stop=$(grep "^ExecStop=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
-		fi
-		local exec_reload=""
-		if grep -q "^ExecReload=" "${init_path}" ; then
-			exec_reload=$(grep "^ExecReload=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
+			pidfile=$(grep "^PIDFile" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		local kill_signal=""
 		if grep -q "^KillSignal=" "${init_path}" ; then
-			kill_signal=$(grep "^KillSignal=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
+			kill_signal=$(grep "^KillSignal=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		local final_kill_signal=""
 		if grep -q "^FinalKillSignal=" "${init_path}" ; then
-			final_kill_signal=$(grep "^FinalKillSignal=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
+			final_kill_signal=$(grep "^FinalKillSignal=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		local timeout_stop_sec="90"
 		if grep -q "^TimeoutStopSec=" "${init_path}" ; then
-			timeout_stop_sec=$(grep "^TimeoutStopSec=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
+			timeout_stop_sec=$(grep "^TimeoutStopSec=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		local user=""
 		if grep -q "^User=" "${init_path}" ; then
-			user=$(grep "^User=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
+			user=$(grep "^User=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		local group=""
 		if grep -q "^Group=" "${init_path}" ; then
-			group=$(grep "^Group=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
+			group=$(grep "^Group=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		local environment_file=""
 		if grep -q "^EnvironmentFile=" "${init_path}" ; then
-			environment_file=$(grep "^EnvironmentFile=" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s#^(-|[+])##") || die "ERR:  line number - $LINENO"
+			environment_file=$(grep "^EnvironmentFile=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		# Calls setenv() from c which is assumed literal
@@ -590,6 +569,26 @@ convert_systemd() {
 			runlevels="2345"
 		fi
 
+		local type=""
+		if grep -q "^Type=" "${init_path}" ; then
+			type=$(grep "^Type=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+		if [[ "${type}" == "oneshot" ]] ; then
+			notify=""
+		elif [[ "${type}" == "notify" || "${type}" == "notify-reload" ]] ; then
+			notify="notify:systemd"
+		elif [[ "${type}" == "notify" ]] ; then
+			notify="notify:systemd"
+		elif [[ "${type}" == "simple" ]] ; then
+			notify="notify:none"
+		else
+			notify="notify:pid"
+		fi
+
+		if [[ "${type}" == "dbus" ]] ; then
+			echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
+		fi
+
 		if grep -q -e "^Type=dbus" "${init_path}" ; then
 			echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
 		fi
@@ -603,8 +602,6 @@ convert_systemd() {
 			fi
 		fi
 
-		notify="notify:systemd"
-
 		local init_conf="${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
 		mkdir -p $(dirname "${init_conf}")
 		echo "Generating ${c}/${pn}/${svc_name}.conf"
@@ -613,52 +610,106 @@ convert_systemd() {
 		echo "${pn}" >> "${SERVICES_PATH}"
 
 		if grep -q -e "^Environment=" "${init_path}" ; then
+			IFS=$'\n'
 			local ROWS=( $(grep -e "^Environment" "${init_path}" | cut -f 2- -d "=") ) || die "ERR:  line number - $LINENO"
 			local row
 			for row in ${ROWS[@]} ; do
-				if grep -q -e "^\"" ; then
-					row=$(echo "${row}" | sed -e 's|^"||' -e 's|"$||g')
+				if echo "${row}" | grep -q -e '^"' && echo "${row}" | grep -q -e '"$' ; then
+					row=$(echo "${row}" | sed -r -e 's|"(.*)"|\1|g')
 				fi
 				echo "set ${row}" >> "${init_conf}"
 			done
+			IFS=$' \t\n'
 		fi
 
-		if [[ -n "${exec_start_pre}" ]] ; then
-			echo "run [${runlevels}] name:${pn}-pre-start ${exec_start_pre} -- ${pn} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
-		fi
-		if [[ -n "${exec_start}" ]] ; then
-			[[ -n "${environment_file}" ]] && environment_file="env:${environment_file}"
-			[[ -n "${cond}" ]] && cond="<${cond}>"
-			local user_group=""
-			if [[ -n "${user}" && -n "${group}" ]] ; then
-				user_group="@${user}:${group}"
-			elif [[ -n "${user}" ]] ; then
-				user_group="@${user}"
-			elif [[ -n "${group}" ]] ; then
-				user_group="@:${group}"
+		IFS=$'\n'
+		local row
+		for row in $(grep -E -e "^(ExecStartPre|ExecStart|ExecStartPost|ExecStop|ExecStopPost|ExecReload)=" "${init_path}") ; do
+			local exec_start_pre=""
+			if echo "${row}" | grep -q "^ExecStartPre=" ; then
+				exec_start_pre=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+
+				# TODO: process prefix:
+				echo "${exec_start_pre}" | grep -q "^@"
+				echo "${exec_start_pre}" | grep -q "^-"
+				echo "${exec_start_pre}" | grep -q "^[+]"
+				echo "${exec_start_pre}" | grep -q '^[!]'
+				echo "${exec_start_pre}" | grep -q '^[!!]'
+
+				exec_start_pre=$(echo "${exec_start_pre}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
 			fi
-			echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${n} start" >> "${init_conf}"
-		fi
-		if [[ -n "${exec_start_post}" ]] ; then
-			echo "run [${runlevels}] name:${svc_name}-post-start ${exec_start_post} -- ${svc_name} post-start" >> "${init_conf}"
-		fi
-		if [[ -n "${exec_stop_pre}" ]] ; then
-			echo "run [0] name:${svc_name}-pre-stop ${exec_stop_pre} -- ${svc_name} pre-stop" >> "${init_conf}"
-		fi
-		if [[ -n "${exec_stop}" ]] ; then
-			echo "task [0] name:${svc_name}-stop ${exec_stop} -- ${svc_name} stop" >> "${init_conf}"
-		fi
-		if [[ -n "${exec_stop_post}" ]] ; then
-			echo "run [0] name:${svc_name}-post-stop /lib/finit/${c}/${pn}/${svc_name}-stop.sh -- ${svc_name} post-stop" >> "${init_conf}"
-			gen_systemd_stop_wrapper
-		fi
+			local exec_start=""
+			if echo "${row}" | grep -q "^ExecStart=" ; then
+				exec_start=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+				exec_start=$(echo "${exec_start}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+			fi
+			local exec_start_post=""
+			if echo "${row}" | grep -q "^ExecStartPost=" ; then
+				exec_start_post=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+				exec_start_post=$(echo "${exec_start_post}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+			fi
 
-		if [[ -n "${exec_reload}" ]] ; then
-			local x="reload"
-			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}-reload.sh -- ${svc_name} ${x}" >> "${init_conf}"
-			gen_systemd_reload_wrapper
-		fi
+			local exec_stop=""
+			if echo "${row}" | grep -q "^ExecStop=" ; then
+				exec_stop=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+				exec_stop=$(echo "${exec_stop}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+			fi
+
+			# FIXME
+			local exec_stop_post=""
+			if echo "${row}" | grep -q "^ExecStopPost=" ; then
+				exec_stop_post=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+				exec_stop_post=$(echo "${exec_stop_post}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+			fi
+
+			local exec_reload=""
+			if echo "${row}" | grep -q "^ExecReload=" ; then
+				exec_reload=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+				exec_reload=$(echo "${exec_reload}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+			fi
+
+			if [[ -n "${exec_start_pre}" ]] ; then
+				echo "run [${runlevels}] name:${pn}-pre-start ${exec_start_pre} -- ${svc_name} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
+			fi
+			if [[ -n "${exec_start}" ]] ; then
+				[[ -n "${environment_file}" ]] && environment_file="env:${environment_file}"
+				[[ -n "${cond}" ]] && cond="<${cond}>"
+				local user_group=""
+				if [[ -n "${user}" && -n "${group}" ]] ; then
+					user_group="@${user}:${group}"
+				elif [[ -n "${user}" ]] ; then
+					user_group="@${user}"
+				elif [[ -n "${group}" ]] ; then
+					user_group="@:${group}"
+				fi
+				if [[ "${type}" == "oneshot" ]] ; then
+					echo "run [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${svc_name} oneshot" >> "${init_conf}"
+				else
+					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${svc_name} start" >> "${init_conf}"
+				fi
+			fi
+			if [[ -n "${exec_start_post}" ]] ; then
+				echo "run [${runlevels}] name:${svc_name}-post-start ${exec_start_post} -- ${svc_name} post-start" >> "${init_conf}"
+			fi
+			if [[ -n "${exec_stop_pre}" ]] ; then
+				echo "run [0] name:${svc_name}-pre-stop ${exec_stop_pre} -- ${svc_name} pre-stop" >> "${init_conf}"
+			fi
+			if [[ -n "${exec_stop}" ]] ; then
+				echo "task [0] name:${svc_name}-stop ${exec_stop} -- ${svc_name} stop" >> "${init_conf}"
+			fi
+			if [[ -n "${exec_stop_post}" ]] ; then
+				echo "run [0] name:${svc_name}-post-stop /lib/finit/${c}/${pn}/${svc_name}-stop.sh -- ${svc_name} post-stop" >> "${init_conf}"
+				gen_systemd_stop_wrapper
+			fi
+
+			if [[ -n "${exec_reload}" ]] ; then
+				local x="reload"
+				echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
+				echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}-reload.sh -- ${svc_name} ${x}" >> "${init_conf}"
+				gen_systemd_reload_wrapper
+			fi
+		done
+		IFS=$' \t\n'
 	done
 
 	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  line number - $LINENO"
