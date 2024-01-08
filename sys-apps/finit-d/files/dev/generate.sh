@@ -682,7 +682,10 @@ convert_systemd() {
 				elif [[ -n "${group}" ]] ; then
 					user_group="@:${group}"
 				fi
-				if [[ "${type}" == "oneshot" ]] ; then
+				if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
+					echo "task [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${svc_name} oneshot" >> "${init_conf}"
+				elif [[ "${type}" == "oneshot" ]] ; then
+					# It is unknown if they must be run sequentially if more than 1.
 					echo "run [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${svc_name} oneshot" >> "${init_conf}"
 				else
 					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${svc_name} start" >> "${init_conf}"
