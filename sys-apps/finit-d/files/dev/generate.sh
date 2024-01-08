@@ -257,10 +257,13 @@ fi
 				top_ln="${top_ln_shebang}"
 			fi
 			sed -i -e "${top_ln}a . /lib/finit/scripts/lib/lib.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
+			local svc_name=$(basename "${init_path}")
+			svc_name=$(echo "${svc_name}" | sed -e "s|\.sh$||g")
+
 			if grep -q "RC_SVCNAME" "${init_sh}" ; then
-				sed -i -e "${top_ln}a RC_SVCNAME=\"${pn}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			sed -i -e "${top_ln}a export SVCNAME=\"${pn}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+			sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			sed -i -e "${top_ln}a export FN=\"\$1\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			if ! grep -F -q -e "^start(" "${init_sh}" ; then
 				sed -i -e "${top_ln}a missing_start_fn=1" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -346,7 +349,6 @@ fi
 			fi
 
 			local basename_fn=$(basename "${init_sh}")
-			local svc_name=$(echo "${basename_fn}" | sed -e "s|\.sh$||") || die "ERR:  line number - $LINENO"
 
 			mkdir -p "${CONFS_PATH}/${c}/${pn}"
 			local init_conf="${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
