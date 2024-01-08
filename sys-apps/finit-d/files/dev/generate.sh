@@ -433,8 +433,8 @@ exec_reload="${exec_reload}"
 if [[ -n "\${pidfile}" ]] ; then
 	MAINPID=\$(cat "\${pidfile}")
 else
-	exe_name=$(echo "${exec_start}" | cut -f 1 -d " ")
-	exe_name=$(basename "${exe_name}")
+	exe_name=\$(echo "\${exec_start}" | cut -f 1 -d " ")
+	exe_name=\$(basename "\${exe_name}")
 	MAINPID=\$(pgrep "\${exe_name}")
 fi
 \${exec_reload}
@@ -455,8 +455,8 @@ timeout_stop_sec="${timeout_stop_sec}"
 if [[ -n "\${pidfile}" ]] ; then
 	MAINPID=\$(cat "\${pidfile}")
 else
-	exe_name=$(echo "${exec_start}" | cut -f 1 -d " ")
-	exe_name=$(basename "${exe_name}")
+	exe_name=\$(echo "\${exec_start}" | cut -f 1 -d " ")
+	exe_name=\$(basename "\${exe_name}")
 	MAINPID=\$(pgrep "\${exe_name}")
 fi
 if [[ -n "\${exec_stop}" ]] ; then
@@ -466,11 +466,11 @@ elif [[ -n "\${kill_signal}" ]] ; then
 else
 	kill -s SIGTERM \${MAINPID}
 fi
-now=$(date +"%s")
-time_final=$(( ${now} + ${timeout_stop_sec} ))
+now=\$(date +"%s")
+time_final=\$(( \${now} + \${timeout_stop_sec} ))
 while [ \${now} -lt \${time_final} ] ; do
 	[ -e /proc/\${MAINPID} ] || exit 0
-	now=$(date +"%s")
+	now=\$(date +"%s")
 done
 if [[ -n "\${final_kill_signal}" ]] ; then
 	kill -s \${final_kill_signal} \${MAINPID}
