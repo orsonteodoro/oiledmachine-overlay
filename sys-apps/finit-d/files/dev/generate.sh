@@ -456,7 +456,6 @@ cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 svc_name="${svc_name}"
 ambient_capabilities="${ambient_capabilities}"
 bounding_capabilities="${bounding_capabilities}"
-missing_start_fn=1
 command="${command}"
 command_args="${command_args}"
 pidfile="${pidfile}"
