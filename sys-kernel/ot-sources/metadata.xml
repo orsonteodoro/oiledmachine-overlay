@@ -1742,7 +1742,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       dinit            y             n           n              p
       epoch            y             n           n           e 
       finit            y             n           n[1]       d   p
-      openrc           y            full         y          d  m s
+      openrc           y           full[3]       y          d  m s
       runit            y         partial[2]      n              p
       s6               y             n           n           e 
       systemd          y            full         n         Dd    s    Support for on demand user or on demand socket services
@@ -1761,11 +1761,12 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
        e - For embedded
        l - For legacy or software museum
        m - For music production
-       p - For non-sensitive data servers such as dedicate game server
-       s - For sensitive data servers on LAN server, home server, or SOHO
+       p - For non-sensitive data servers such as dedicated game server
+       s - For sensitive data servers on LAN server, home server, SOHO, SSH server
     
       [1] - achieveable with openrc compatibility wrappers but not native
       [2] - via chroot, but not kernel side sandboxing with capabilities
+      [3] - there is more capabilities coverage on systemd compared to openrc
 
     Notes
 
