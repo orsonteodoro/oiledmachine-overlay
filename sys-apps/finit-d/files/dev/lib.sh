@@ -285,6 +285,7 @@ chroot_start() {
 		service_pid=\$(pgrep -P \${capsh_pid} 2>/dev/null)
 		[ -z "\${service_pid}" ] && continue
 		[ \$service_pid -gt 0 ] && break
+		c=\$(( \${c} + 1 ))
 	done
 
 	if [ -z "\${service_pid}" ] ; then
@@ -361,6 +362,7 @@ start_stop_daemon() {
 	local daemon=0
 	local chdir_path=""
 	local chroot_path=""
+	local chuid=""
 	local dirmode=""
 	local exec_path=""
 	local group=""
@@ -414,6 +416,10 @@ start_stop_daemon() {
 			--chroot|-r)
 				shift
 				chroot_path="$1"
+				;;
+			--chuid|-c)
+				shift
+				chuid="$1"
 				;;
 			--daemon)
 				daemon=1
@@ -499,6 +505,11 @@ start_stop_daemon() {
 			--start|-S)
 				phase="start"
 				;;
+			--startas|-a)
+				shift
+				phase="start"
+				exec_path="$1"
+				;;
 			--status|-T)
 				status=1
 				;;
@@ -534,6 +545,11 @@ start_stop_daemon() {
 		esac
 		shift
 	done
+
+	if [[ -n "${chuid}" ]] ; then
+		user=$(echo "${chuid}" | cut -f 1 -d ":")
+		if [[ -n "${}"
+	fi
 
 	local _pid=0
 	if [ "${phase}" = "start" ] ; then
@@ -598,6 +614,7 @@ start_stop_daemon() {
 				service_pid=$(pgrep -P ${capsh_pid} 2>/dev/null)
 				[ -z "${service_pid}" ] && continue
 				[ $service_pid -gt 0 ] && break
+				c=$(( ${c} + 1 ))
 			done
 
 			if [ -z "${service_pid}" ] ; then
