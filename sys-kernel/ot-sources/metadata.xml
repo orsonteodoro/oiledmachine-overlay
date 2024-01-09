@@ -1752,8 +1752,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
       supervisor - has a tool (e.g. systemctl, initctl) to communicate to the
         supervisor process to stop or start services
-      sandboxing - filesystem isolation, root/network privileges, resource
-        limits between services.
+      sandboxing - filesystem isolation, root/network privilege management [aka
+        capabilities], resource limits between services.
       realtime - able to change services to realtime priority class
 
        D - For data centers
