@@ -1742,7 +1742,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       dinit            y             n           n              s
       epoch            y             n           n           e 
       finit            y             n           n[1]       d   s
-      openrc           y         partial[2]      y          d  ms
+      openrc           y            full         y          d  ms
       runit            y         partial[2]      n              s
       s6               y             n           n           e 
       systemd          y            full         n         Dd   s    Support for on demand user or on demand socket services
