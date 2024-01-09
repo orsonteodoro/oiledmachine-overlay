@@ -297,37 +297,7 @@ chroot_start() {
 		if [ \$class -ne 3 ] && [ -z "\$priority" ] ; then
 			priority=4
 		fi
-		local args=""
-		if [ \$pid -gt 0 ] ; then
-			args="\${args} -p \$pid"
-		fi
-		if [ \$ppid -gt 0 ] ; then
-			args="\${args} -p \$ppid"
-		fi
-		if [ \$service_pid -gt 0 ] ; then
-			args="\${args} -p \${service_pid}"
-		fi
-		if [ -n "\${pidfile_path}" ] ; then
-			local t=\$(cat "\${pidfile_path}")
-			[ -n "\${t}" ] && args="\${args} -p \${t}"
-		fi
-		if [ -n "\${exec_path}" ] ; then
-			local t=\$(pgrep \$(basename "\${exec_path}"))
-			[ -n "\${t}" ] && args="\${args} -p \${t}"
-		fi
-		if [ -n "\${user}" ] ; then
-			local t=\$(pgrep -U "\${user}")
-			[ -n "\${t}" ] && args="\${args} -p \${t}"
-		fi
-		if [ -n "\${group}" ] ; then
-			local t=\$(pgrep -G "\${group}")
-			[ -n "\${t}" ] && args="\${args} -p \${t}"
-		fi
-		if [ -n "\${name}" ] ; then
-			local t=\$(pgrep "\${name}")
-			[ -n "\${t}" ] && args="\${args} -p \${t}"
-		fi
-		[ -n "\${args}" ] && ionice -c \${class} -n \${priority} \${args}
+		ionice -c \${class} -n \${priority} \${service_pid}
 	fi
 
 	if [ -n "\${procsched_arg}" ] ; then
@@ -336,74 +306,11 @@ chroot_start() {
 		if [ -z "\${priority}" ] ; then
 			priority=0
 		fi
-		local args=""
-		if [ \$pid -gt 0 ] ; then
-			args="\${args} \$pid"
-		fi
-		if [ \$ppid -gt 0 ] ; then
-			args="\${args} \$ppid"
-		fi
-		if [ \$service_pid -gt 0 ] ; then
-			args="\${args} \${service_pid}"
-		fi
-		if [ -n "\${pidfile_path}" ] ; then
-			args="\${args} "\$(cat "\${pidfile_path}")
-		fi
-		if [ -n "\${exec_path}" ] ; then
-			local t=\$(pgrep \$(basename "\${exec_path}"))
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		if [ -n "\${user}" ] ; then
-			local t=\$(pgrep -U "\${user}")
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		if [ -n "\${group}" ] ; then
-			local t=\$(pgrep -G "\${group}")
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		if [ -n "\${name}" ] ; then
-			local t=\$(pgrep "\${name}")
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		set -- \${args}
-		local x
-		for x in \$@ ; do
-			chrt --\${policy} -p \$priority \${x}
-		done
+		chrt --\${policy} -p \$priority \${service_pid}
 	fi
 
 	if [ -n "\$nicelevel" ] ; then
-		local args=""
-		if [ \$pid -gt 0 ] ; then
-			args="\${args} \$pid"
-		fi
-		if [ \$ppid -gt 0 ] ; then
-			args="\${args} \$ppid"
-		fi
-		if [ \$service_pid -gt 0 ] ; then
-			args="\${args} \${service_pid}"
-		fi
-		if [ -n "\${pidfile_path}" ] ; then
-			local t=\$(cat "\${pidfile_path}")
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		if [ -n "\${exec_path}" ] ; then
-			local t=\$(pgrep \$(basename "\${exec_path}"))
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		if [ -n "\${user}" ] ; then
-			local t=\$(pgrep -u "\${user}")
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		if [ -n "\${group}" ] ; then
-			local t=\$(pgrep -G "\${group}")
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		if [ -n "\${name}" ] ; then
-			local t=\$(pgrep "\${name}")
-			[ -n "\${t}" ] && args="\${args} \${t}"
-		fi
-		[ -n "\${args}" ] && renice -n \$nicelevel -p \${args}
+		renice -n \$nicelevel -p \${service_pid}
 	fi
 
 	if [ "\${phase}" = "start" ] ; then
@@ -634,14 +541,14 @@ start_stop_daemon() {
 			is_pid_alive $pid
 		elif [ $ppid -gt 0 ] ; then
 			is_pid_alive $ppid
-		elif [ -n "${pidfile_path}" ] ; then
+		elif [ -e "${pidfile_path}" ] ; then
 			is_pid_alive $(cat "${pidfile_path}")
 		elif [ -n "${exec_path}" ] ; then
 			pgrep $(basename "${exec_path}") >/dev/null
+		elif [ -n "${name}" ] ; then
+			pgrep "${name}" >/dev/null
 		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null
-		elif [ -n "${group}" ] ; then
-			pgrep -G "${group}" >/dev/null
 		fi
 
 		if [ $? -ne 0 ] ; then
@@ -692,14 +599,14 @@ start_stop_daemon() {
 			is_pid_alive $pid
 		elif [ $ppid -gt 0 ] ; then
 			is_pid_alive $ppid
-		elif [ -n "${pidfile_path}" ] ; then
+		elif [ -e "${pidfile_path}" ] ; then
 			is_pid_alive $(cat "${pidfile_path}")
 		elif [ -n "${exec_path}" ] ; then
 			pgrep $(basename "${exec_path}") >/dev/null
+		elif [ -n "${name}" ] ; then
+			pgrep "${name}" >/dev/null
 		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null
-		elif [ -n "${group}" ] ; then
-			pgrep -G "${group}" >/dev/null
 		else
 			return 0
 		fi
@@ -721,11 +628,13 @@ start_stop_daemon() {
 		elif [ -e "${pidfile_path}" ] ; then
 			service_pid=$(cat "${pidfile_path}")
 			kill -s ${_signal} $service_pid
+		elif [ -n "${exec_path}" ] ; then
+			pgrep $(basename "${exec_path}") >/dev/null
+		elif [ -n "${name}" ] ; then
+			service_pid=$(pgrep "${name}")
+			kill -s ${_signal} $service_pid
 		elif [ -n "${user}" ] ; then
 			service_pid=$(pgrep -U "${user}")
-			kill -s ${_signal} $service_pid
-		elif [ -n "${group}" ] ; then
-			service_pid=$(pgrep -G "${group}")
 			kill -s ${_signal} $service_pid
 		fi
 
@@ -784,7 +693,7 @@ start_stop_daemon() {
 			done
 		fi
 
-		if [ $remove_pidfile -eq 1 ] && [ -n "${pidfile_path}" ] ; then
+		if [ $remove_pidfile -eq 1 ] && [ -e "${pidfile_path}" ] ; then
 			rm -f "${pidfile_path}"
 		fi
 
@@ -795,14 +704,14 @@ start_stop_daemon() {
 			is_pid_alive $pid
 		elif [ $ppid -gt 0 ] ; then
 			is_pid_alive $ppid
-		elif [ -n "${pidfile_path}" ] ; then
+		elif [ -e "${pidfile_path}" ] ; then
 			pgrep $(cat "${pidfile_path}") >/dev/null
 		elif [ -n "${exec_path}" ] ; then
 			pgrep $(basename "${exec_path}") >/dev/null
+		elif [ -n "${name}" ] ; then
+			pgrep "${name}" >/dev/null
 		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null
-		elif [ -n "${group}" ] ; then
-			pgrep -G "${group}" >/dev/null
 		else
 			false
 		fi
@@ -823,37 +732,7 @@ start_stop_daemon() {
 		if [ $class -ne 3 ] && [ -z "$priority" ] ; then
 			priority=4
 		fi
-		local args=""
-		if [ $pid -gt 0 ] ; then
-			args="${args} -p $pid"
-		fi
-		if [ $ppid -gt 0 ] ; then
-			args="${args} -p $ppid"
-		fi
-		if [ $service_pid -gt 0 ] ; then
-			args="${args} -p ${service_pid}"
-		fi
-		if [ -n "${pidfile_path}" ] ; then
-			local t=$(cat "${pidfile_path}")
-			[ -n "${t}" ] && args="${args} -p ${t}"
-		fi
-		if [ -n "${exec_path}" ] ; then
-			local t=$(pgrep $(basename "${exec_path}"))
-			[ -n "${t}" ] && args="${args} -p ${t}"
-		fi
-		if [ -n "${user}" ] ; then
-			local t=$(pgrep -U "${user}")
-			[ -n "${t}" ] && args="${args} -p ${t}"
-		fi
-		if [ -n "${group}" ] ; then
-			local t=$(pgrep -G "${group}")
-			[ -n "${t}" ] && args="${args} -p ${t}"
-		fi
-		if [ -n "${name}" ] ; then
-			local t=$(pgrep "${name}")
-			[ -n "${t}" ] && args="${args} -p ${t}"
-		fi
-		[ -n "${args}" ] && ionice -c ${class} -n ${priority} ${args}
+		ionice -c ${class} -n ${priority} -p ${service_pid}
 	fi
 
 	if [ -n "${procsched_arg}" ] ; then
@@ -862,74 +741,11 @@ start_stop_daemon() {
 		if [ -z "${priority}" ] ; then
 			priority=0
 		fi
-		local args=""
-		if [ $pid -gt 0 ] ; then
-			args="${args} $pid"
-		fi
-		if [ $ppid -gt 0 ] ; then
-			args="${args} $ppid"
-		fi
-		if [ $service_pid -gt 0 ] ; then
-			args="${args} ${service_pid}"
-		fi
-		if [ -n "${pidfile_path}" ] ; then
-			args="${args} "$(cat "${pidfile_path}")
-		fi
-		if [ -n "${exec_path}" ] ; then
-			local t=$(pgrep $(basename "${exec_path}"))
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		if [ -n "${user}" ] ; then
-			local t=$(pgrep -U "${user}")
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		if [ -n "${group}" ] ; then
-			local t=$(pgrep -G "${group}")
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		if [ -n "${name}" ] ; then
-			local t=$(pgrep "${name}")
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		set -- ${args}
-		local x
-		for x in $@ ; do
-			chrt --${policy} -p $priority ${x}
-		done
+		chrt --${policy} -p $priority ${service_pid}
 	fi
 
 	if [ -n "$nicelevel" ] ; then
-		local args=""
-		if [ $pid -gt 0 ] ; then
-			args="${args} $pid"
-		fi
-		if [ $ppid -gt 0 ] ; then
-			args="${args} $ppid"
-		fi
-		if [ $service_pid -gt 0 ] ; then
-			args="${args} ${service_pid}"
-		fi
-		if [ -n "${pidfile_path}" ] ; then
-			local t=$(cat "${pidfile_path}")
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		if [ -n "${exec_path}" ] ; then
-			local t=$(pgrep $(basename "${exec_path}"))
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		if [ -n "${user}" ] ; then
-			local t=$(pgrep -u "${user}")
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		if [ -n "${group}" ] ; then
-			local t=$(pgrep -G "${group}")
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		if [ -n "${name}" ] ; then
-			local t=$(pgrep "${name}")
-			[ -n "${t}" ] && args="${args} ${t}"
-		fi
-		[ -n "${args}" ] && renice -n $nicelevel -p ${args}
+		renice -n $nicelevel -p ${service_pid}
 	fi
 	if [ "${phase}" = "start" ] ; then
 		if ! is_pid_alive $service_pid ; then
