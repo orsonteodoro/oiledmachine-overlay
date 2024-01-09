@@ -1752,8 +1752,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
       supervisor - has a tool (e.g. systemctl, initctl) to communicate to the
         supervisor process to stop or start services
-      sandboxing - filesystem isolation, root/network privilege management [aka
-        capabilities], resource limits between services.
+      sandboxing - chroot filesystem isolation, root/network capability
+        management, resource limits between services.
       realtime - able to change services to realtime priority class
 
        D - For data centers
@@ -1762,11 +1762,13 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
        l - For legacy or software museum
        m - For music production
        p - For non-sensitive data servers such as dedicated game server
-       s - For sensitive data servers on LAN server, home server, SOHO, SSH server
+       s - For sensitive data servers on LAN server, home server, SOHO,
+           SSH server
     
-      [1] - achieveable with openrc compatibility wrappers but not native
-      [2] - via chroot, but not kernel side sandboxing with capabilities
-      [3] - there are more capabilities coverage with init files on systemd compared to openrc
+      [1] - achieveable with OpenRC compatibility wrappers but not native
+      [2] - chroot yes, capabilities no
+      [3] - there are more capabilities coverage with init files on systemd
+            compared to OpenRC
 
     Notes
 
