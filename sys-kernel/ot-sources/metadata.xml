@@ -1766,7 +1766,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     
       [1] - achieveable with openrc compatibility wrappers but not native
       [2] - via chroot, but not kernel side sandboxing with capabilities
-      [3] - there is more capabilities coverage on systemd compared to openrc
+      [3] - there are more capabilities coverage on systemd compared to openrc
 
     Notes
 
