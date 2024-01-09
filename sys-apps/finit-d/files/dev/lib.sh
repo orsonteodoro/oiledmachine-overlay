@@ -229,6 +229,7 @@ group="${group}"
 iosched_arg="${iosched_arg}"
 nicelevel=${nicelevel}
 pid=${pid}
+pidfile_path="${pidfile_path}"
 ppid=${ppid}
 phase="start"
 service_pid=0
@@ -243,7 +244,7 @@ is_pid_alive() {
 	fi
 }
 
-main() {
+chroot_start() {
 	if [ -n "\${chdir_path}" ] ; then
 		chdir_path=\$(echo "\${chdir_path}" | sed -e 's|"||g')
 		cd "\${chdir_path}"
@@ -284,6 +285,8 @@ main() {
 	if [ -z "\${service_pid}" ] ; then
 		return 1
 	fi
+
+	"\${service_pid}" > "\${pidfile_path}"
 
 	if [ -n "\${iosched_arg}" ] ; then
 		local class="\${iosched_arg%:*}"
@@ -425,10 +428,10 @@ main() {
 		fi
 	fi
 }
-main
+chroot_start
 
 EOF
-	chmod +x "/tmp/run.sh"
+	chmod +x "${chroot_dir}/tmp/run.sh"
 	chroot "${chroot_dir}" "/tmp/run.sh"
 
 }
