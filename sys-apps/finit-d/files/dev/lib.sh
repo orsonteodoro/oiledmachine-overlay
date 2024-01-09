@@ -233,6 +233,7 @@ pidfile_path="${pidfile_path}"
 ppid=${ppid}
 phase="start"
 service_pid=0
+umask="${umask}"
 user="${user}"
 
 is_pid_alive() {
@@ -271,6 +272,10 @@ chroot_start() {
 	for x in \${exec_args} ; do
 		set -- \$@ \$(echo "\${x}" | sed -e 's|"||g')
 	done
+
+	if [ -n "${umask}" ] ; then
+		umask ${umask}
+	fi
 
 	# Avoid racing bug without altering last PID
 	capsh \${ug_args} --shell="\${exec_path}" -- "\$@" &
@@ -375,6 +380,7 @@ start_stop_daemon() {
 	local status=0
 	local stderr=""
 	local stdout=""
+	local umask=""
 	local user=""
 	local service_pid=0
 	local capsh_pid
@@ -507,6 +513,10 @@ start_stop_daemon() {
 			--stop|-K)
 				phase="stop"
 				;;
+			--umask|-k)
+				shift
+				umask="$1"
+				;;
 			--user=*)
 				user="${1#*=}"
 				;;
@@ -575,6 +585,10 @@ start_stop_daemon() {
 			for x in ${exec_args} ; do
 				set -- $@ $(echo "${x}" | sed -e 's|"||g')
 			done
+
+			if [ -n "${umask}" ] ; then
+				umask ${umask}
+			fi
 
 			# Avoid racing bug without altering last PID
 			capsh ${ug_args} --shell="${exec_path}" -- "$@" &
