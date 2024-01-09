@@ -75,13 +75,3 @@ License identified in arch/x86/kernel/paravirt.c:
  ccflags-y := -DSRCTREE='"$(srctree)"' -DOBJTREE='"$(objtree)"'
  
  obj-y := base.o fs.o
---- a/arch/x86/kernel/paravirt.c.orig	2023-08-27 14:49:51.000000000 -0700
-+++ b/arch/x86/kernel/paravirt.c	2023-09-13 16:01:12.052459926 -0700
-@@ -38,6 +38,7 @@
-  * nop stub, which must not clobber anything *including the stack* to
-  * avoid confusing the entry prologues.
-  */
-+//
- DEFINE_PARAVIRT_ASM(_paravirt_nop, "", .entry.text);
- 
- /* stub always returning 0. */
