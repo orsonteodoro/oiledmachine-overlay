@@ -212,6 +212,227 @@ is_pid_alive() {
 	fi
 }
 
+gen_chroot_start() {
+	mkdir -p "${chroot_dir}/tmp"
+	rm -f "${chroot_dir}/tmp/run.sh"
+	: ${FINIT_SHELL:=/bin/sh}
+	# TODO:
+cat <<EOF >"${chroot_dir}/tmp/run.sh"
+#!${FINIT_SHELL}
+background=${background}
+capabilities="${capabilities}"
+chdir_path="${chdir_path}"
+daemon=${daemon}
+exec_path="${exec_path}"
+exec_args="${exec_args}"
+group="${group}"
+iosched_arg="${iosched_arg}"
+nicelevel=${nicelevel}
+pid=${pid}
+ppid=${ppid}
+phase="start"
+service_pid=0
+user="${user}"
+
+is_pid_alive() {
+	local pid=\$1
+	if [ -e /proc/\$pid ] ; then
+		true
+	else
+		false
+	fi
+}
+
+main() {
+	if [ -n "\${chdir_path}" ] ; then
+		chdir_path=\$(echo "\${chdir_path}" | sed -e 's|"||g')
+		cd "\${chdir_path}"
+	fi
+
+	local ug_args=""
+	if [ -n "\${user}" ] ; then
+		local uid=\$(getent passwd "\${user}" | cut -f 3 -d ":")
+		ug_args="\${ug_args} --uid=\"\${uid}\""
+	fi
+	if [ -z "\${user}" ] ; then
+		local uid=\$(getent passwd "root" | cut -f 3 -d ":")
+		ug_args="\${ug_args} --uid=\"\${uid}\""
+	fi
+	if [ -n "\${group}" ] ; then
+		local gid=\$(getent group "\${group}" | cut -f 3 -d ":")
+		 ug_args="\${ug_args} --gid=\${gid}"
+	fi
+
+	# TODO:  add capabilities
+
+	local exec_args="\$@"
+	set --
+	for x in \${exec_args} ; do
+		set -- \$@ \$(echo "\${x}" | sed -e 's|"||g')
+	done
+
+	# Avoid racing bug without altering last PID
+	capsh \${ug_args} --shell="\${exec_path}" -- "\$@" &
+	capsh_pid=\$!
+	local c=0
+	while [ \$c -lt 1000000 ] ; do
+		service_pid=\$(pgrep -P \${capsh_pid} 2>/dev/null)
+		[ -z "\${service_pid}" ] && continue
+		[ \$service_pid -gt 0 ] && break
+	done
+
+	if [ -z "\${service_pid}" ] ; then
+		return 1
+	fi
+
+	if [ -n "\${iosched_arg}" ] ; then
+		local class="\${iosched_arg%:*}"
+		local priority="\${iosched_arg#*:}"
+		if [ \$class -eq 3 ] && [ -z "\$priority" ] ; then
+			priority=7
+		fi
+		if [ \$class -ne 3 ] && [ -z "\$priority" ] ; then
+			priority=4
+		fi
+		local args=""
+		if [ \$pid -gt 0 ] ; then
+			args="\${args} -p \$pid"
+		fi
+		if [ \$ppid -gt 0 ] ; then
+			args="\${args} -p \$ppid"
+		fi
+		if [ \$service_pid -gt 0 ] ; then
+			args="\${args} -p \${service_pid}"
+		fi
+		if [ -n "\${pidfile_path}" ] ; then
+			local t=\$(cat "\${pidfile_path}")
+			[ -n "\${t}" ] && args="\${args} -p \${t}"
+		fi
+		if [ -n "\${exec_path}" ] ; then
+			local t=\$(pgrep \$(basename "\${exec_path}"))
+			[ -n "\${t}" ] && args="\${args} -p \${t}"
+		fi
+		if [ -n "\${user}" ] ; then
+			local t=\$(pgrep -U "\${user}")
+			[ -n "\${t}" ] && args="\${args} -p \${t}"
+		fi
+		if [ -n "\${group}" ] ; then
+			local t=\$(pgrep -G "\${group}")
+			[ -n "\${t}" ] && args="\${args} -p \${t}"
+		fi
+		if [ -n "\${name}" ] ; then
+			local t=\$(pgrep "\${name}")
+			[ -n "\${t}" ] && args="\${args} -p \${t}"
+		fi
+		[ -n "\${args}" ] && ionice -c \${class} -n \${priority} \${args}
+	fi
+
+	if [ -n "\${procsched_arg}" ] ; then
+		local policy="\${procsched_arg%:*}"
+		local priority="\${procsched_arg#*:}"
+		if [ -z "\${priority}" ] ; then
+			priority=0
+		fi
+		local args=""
+		if [ \$pid -gt 0 ] ; then
+			args="\${args} \$pid"
+		fi
+		if [ \$ppid -gt 0 ] ; then
+			args="\${args} \$ppid"
+		fi
+		if [ \$service_pid -gt 0 ] ; then
+			args="\${args} \${service_pid}"
+		fi
+		if [ -n "\${pidfile_path}" ] ; then
+			args="\${args} "\$(cat "\${pidfile_path}")
+		fi
+		if [ -n "\${exec_path}" ] ; then
+			local t=\$(pgrep \$(basename "\${exec_path}"))
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		if [ -n "\${user}" ] ; then
+			local t=\$(pgrep -U "\${user}")
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		if [ -n "\${group}" ] ; then
+			local t=\$(pgrep -G "\${group}")
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		if [ -n "\${name}" ] ; then
+			local t=\$(pgrep "\${name}")
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		set -- \${args}
+		local x
+		for x in \$@ ; do
+			chrt --\${policy} -p \$priority \${x}
+		done
+	fi
+
+	if [ -n "\$nicelevel" ] ; then
+		local args=""
+		if [ \$pid -gt 0 ] ; then
+			args="\${args} \$pid"
+		fi
+		if [ \$ppid -gt 0 ] ; then
+			args="\${args} \$ppid"
+		fi
+		if [ \$service_pid -gt 0 ] ; then
+			args="\${args} \${service_pid}"
+		fi
+		if [ -n "\${pidfile_path}" ] ; then
+			local t=\$(cat "\${pidfile_path}")
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		if [ -n "\${exec_path}" ] ; then
+			local t=\$(pgrep \$(basename "\${exec_path}"))
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		if [ -n "\${user}" ] ; then
+			local t=\$(pgrep -u "\${user}")
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		if [ -n "\${group}" ] ; then
+			local t=\$(pgrep -G "\${group}")
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		if [ -n "\${name}" ] ; then
+			local t=\$(pgrep "\${name}")
+			[ -n "\${t}" ] && args="\${args} \${t}"
+		fi
+		[ -n "\${args}" ] && renice -n \$nicelevel -p \${args}
+	fi
+
+	if [ "\${phase}" = "start" ] ; then
+		if ! is_pid_alive \$service_pid ; then
+			echo "Did not detect pid"
+			return 1
+		fi
+		echo "service_pid:  \$service_pid"
+		if [ \$daemon -eq 1 ] || [ \$background -eq 1 ] ; then
+			if jobs | wc -l | grep -q "0" ; then
+				return 1
+			# else
+	# Keep as background
+			fi
+		else
+			if jobs | wc -l | grep -q "0" ; then
+				return 1
+			else
+	# Bring to foreground
+				fg
+			fi
+		fi
+	fi
+}
+main
+
+EOF
+	chmod +x "/tmp/run.sh"
+	chroot "${chroot_dir}" "/tmp/run.sh"
+
+}
+
 start_stop_daemon() {
 	# systemd
 	local ambient_capabilities=""
@@ -221,8 +442,10 @@ start_stop_daemon() {
 
 	# openrc
 	local background=0
+	local capabilities=""
 	local daemon=0
 	local chdir_path=""
+	local chroot_path=""
 	local dirmode=""
 	local exec_path=""
 	local group=""
@@ -251,14 +474,19 @@ start_stop_daemon() {
 				shift
 				break
 				;;
+			# TODO:  deprecate and use --capabilities
 			--ambient-capabilities=*)
 				ambient_capabilities="${1#*=}"
 				;;
 			--background|-b)
 				background=1
 				;;
+			# TODO:  deprecate and use --capabilities
 			--bounding-capabilities=*)
 				bounding_capabilities="${1#*=}"
+				;;
+			--capabilities=*)
+				capabilities="${1#*=}"
 				;;
 			--chdir=*)
 				chdir_path="${1#*=}"
@@ -266,6 +494,10 @@ start_stop_daemon() {
 			--chdir|-d)
 				shift
 				chdir_path="$1"
+				;;
+			--chroot|-r)
+				shift
+				chroot_path="$1"
 				;;
 			--daemon)
 				daemon=1
@@ -306,9 +538,11 @@ start_stop_daemon() {
 				shift
 				nicelevel="$1"
 				;;
+			# TODO:  deprecate and use --capabilities
 			--not-ambient-capabilities=*)
 				not_ambient_capabilities="${1#*=}"
 				;;
+			# TODO:  deprecate and use --capabilities
 			--not-bounding-capabilities=*)
 				not_bounding_capabilities="${1#*=}"
 				;;
@@ -381,13 +615,18 @@ start_stop_daemon() {
 		shift
 	done
 
-	if [ -n "${chdir_path}" ] ; then
-		chdir_path=$(echo "${chdir_path}" | sed -e 's|"||g')
-		cd "${chdir_path}"
-	fi
-
 	local _pid=0
 	if [ "${phase}" = "start" ] ; then
+		if [ -n "${chroot_dir}" ] ; then
+			gen_chroot_start
+			return 0
+		fi
+
+		if [ -n "${chdir_path}" ] ; then
+			chdir_path=$(echo "${chdir_path}" | sed -e 's|"||g')
+			cd "${chdir_path}"
+		fi
+
 		if [ $pid -gt 0 ] ; then
 			is_pid_alive $pid
 		elif [ $ppid -gt 0 ] ; then
@@ -418,6 +657,8 @@ start_stop_daemon() {
 				local gid=$(getent group "${group}" | cut -f 3 -d ":")
 				 ug_args="${ug_args} --gid=${gid}"
 			fi
+
+			# TODO:  capabilities
 
 			local exec_args="$@"
 			set --
