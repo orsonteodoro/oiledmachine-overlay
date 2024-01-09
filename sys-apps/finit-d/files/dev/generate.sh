@@ -424,78 +424,113 @@ fi
 	mv "${PKGS_PATH}"{.t,} || die "ERR:  line number - $LINENO"
 }
 
-gen_systemd_reload_wrapper() {
+gen_systemd_wrapper() {
 	mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
-cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-reload.sh"
-#!${FINIT_SHELL}
-svc_name="${svc_name}"
-pidfile="${pidfile}"
-exec_start="${exec_start}"
-exec_reload="${exec_reload}"
-if [[ -n "\${pidfile}" ]] ; then
-	MAINPID=\$(cat "\${pidfile}")
-else
-	exe_name=\$(echo "\${exec_start}" | cut -f 1 -d " ")
-	exe_name=\$(basename "\${exe_name}")
-	MAINPID=\$(pgrep "\${exe_name}")
-fi
-\${exec_reload}
-EOF
-}
+	[[ -z "${exec_start_pres}" ]] && exec_start_pres=":;"
+	[[ -z "${exec_starts}" ]] && exec_starts=":;"
+	[[ -z "${exec_start_posts}" ]] && exec_start_posts=":;"
+	[[ -z "${exec_stop_pres}" ]] && exec_stop_pres=":;"
+	local has_exec_stops=1
+	if [[ -z "${exec_stops}" ]] ; then
+		exec_stops=":;"
+		has_exec_stops=0
+	fi
+	[[ -z "${exec_stop_posts}" ]] && exec_stop_posts=":;"
+	[[ -z "${exec_reloads}" ]] && exec_reloads=":;"
+	local exec_start_exe=""
+	if [[ -n "${exec_start}" ]] ; then
+		exec_start_exe=$(basename $(echo "${exec_start}" | cut -f 1 -d " "))
+	fi
 
-gen_systemd_stop_wrapper() {
-	mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
-cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-stop.sh"
-#!${FINIT_SHELL}
-svc_name="${svc_name}"
-exec_start="${exec_start}"
-exec_stop="${exec_stop}"
-final_kill_signal="${final_kill_signal}"
-kill_signal="${kill_signal}"
-pidfile="${pidfile}"
-timeout_stop_sec="${timeout_stop_sec}"
-if [[ -n "\${pidfile}" ]] ; then
-	MAINPID=\$(cat "\${pidfile}")
-else
-	exe_name=\$(echo "\${exec_start}" | cut -f 1 -d " ")
-	exe_name=\$(basename "\${exe_name}")
-	MAINPID=\$(pgrep "\${exe_name}")
-fi
-if [[ -n "\${exec_stop}" ]] ; then
-	\${exec_stop}
-elif [[ -n "\${kill_signal}" ]] ; then
-	kill -s \${kill_signal} \${MAINPID}
-else
-	kill -s SIGTERM \${MAINPID}
-fi
-now=\$(date +"%s")
-time_final=\$(( \${now} + \${timeout_stop_sec} ))
-while [ \${now} -lt \${time_final} ] ; do
-	[ -e /proc/\${MAINPID} ] || exit 0
-	now=\$(date +"%s")
-done
-if [[ -n "\${final_kill_signal}" ]] ; then
-	kill -s \${final_kill_signal} \${MAINPID}
-else
-	kill -s SIGKILL \${MAINPID}
-fi
-[ -e /proc/\${MAINPID} ] || exit 0
-exit 0
-EOF
-}
+	# Banned for PID kill
+	if [[ "${exec_start_exe}" == "sh" ]] ; then
+		exec_start_exe=""
+	fi
+	if [[ "${exec_start_exe}" =~ ".sh"$ ]] ; then
+		exec_start_exe=""
+	fi
 
-# TODO:  The wrapper is required for systemd capabilities.
-gen_systemd_start_wrapper() {
-cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}-stop.sh"
+cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 #!${FINIT_SHELL}
+. /lib/finit/scripts/lib/lib.sh
+svc_name="${svc_name}"
 ambient_capabilities="${ambient_capabilities}"
 bounding_capabilities="${bounding_capabilities}"
+missing_start_fn=1
 command="${command}"
 command_args="${command_args}"
-missing_start_fn=1
+pidfile="${pidfile}"
+exec_start_exe="${exec_start_exe}"
+kill_signal="${kill_signal}"
 not_ambient_capabilities="${not_ambient_capabilities}"
 not_bounding_capabilities="${not_bounding_capabilities}"
-exit 0
+final_kill_signal="${final_kill_signal}"
+timeout_stop_sec="${timeout_stop_sec}"
+type="${type}"
+
+start_pre() {
+	$(echo -e "${exec_start_pres}")
+}
+
+start() {
+	if [ "\${type}" = "oneshot" ] ; then
+		$(echo -e "${exec_starts}")
+	else
+		default_start
+	fi
+}
+
+start_post() {
+	$(echo -e "${exec_start_posts}")
+}
+
+stop_pre() {
+	$(echo -e "${exec_stop_pres}")
+}
+
+stop() {
+	if [ "\${type}" = "oneshot" ] ; then
+		return 0
+	elif [[ -n "\${pidfile}" ]] ; then
+		MAINPID=\$(cat "\${pidfile}")
+	else
+		MAINPID=\$(pgrep "\${exec_start_exe}")
+	fi
+	if [ ${has_exec_stops} -eq 1 ] ; then
+		$(echo -e "${exec_stops}")
+	elif [ -n "\${kill_signal}" ] ; then
+		kill -s \${kill_signal} \${MAINPID}
+	else
+		kill -s SIGTERM \${MAINPID}
+	fi
+	now=\$(date +"%s")
+	time_final=\$(( \${now} + \${timeout_stop_sec} ))
+	while [ \${now} -lt \${time_final} ] ; do
+		[ -e /proc/\${MAINPID} ] || exit 0
+		now=\$(date +"%s")
+	done
+	if [ -n "\${final_kill_signal}" ] ; then
+		kill -s \${final_kill_signal} \${MAINPID}
+	else
+		kill -s SIGKILL \${MAINPID}
+	fi
+	[ -e /proc/\${MAINPID} ] || exit 0
+	return 0
+)
+
+stop_post() {
+	$(echo -e "${exec_stop_posts}")
+}
+
+reload() {
+	if [ -n "\${pidfile}" ] ; then
+		MAINPID=\$(cat "\${pidfile}")
+	else
+		MAINPID=\$(pgrep "\${exec_start_exe}")
+	fi
+	$(echo -e "${exec_reloads}")
+)
+. /lib/finit/scripts/lib/event.sh
 EOF
 }
 
@@ -586,7 +621,7 @@ convert_systemd() {
 			runlevels="2345"
 		fi
 
-		local type=""
+		local type="simple"
 		if grep -q "^Type=" "${init_path}" ; then
 			type=$(grep "^Type=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
@@ -639,26 +674,57 @@ convert_systemd() {
 			IFS=$' \t\n'
 		fi
 
+		local n_bounding_capabilities=0
+		local bounding_capabilities=""
+		local not_bounding_capabilities=""
 		if grep -q -e "^CapabilityBoundingSet=" "${init_path}" ; then
+			local bc0=() # deny
+			local bc1=() # permit
+			local n_bounding_capabilities=$(grep -q -e "^CapabilityBoundingSet=" "${init_path}" | wc -l)
 			IFS=$'\n'
 			local ROWS=( $(grep -e "^CapabilityBoundingSet" "${init_path}" | cut -f 2- -d "=") ) || die "ERR:  line number - $LINENO"
 			local row
 			for row in ${ROWS[@]} ; do
-				echo "set ${row}" >> "${init_conf}"
+				if [[ "${row}" =~ "~" ]] ; then
+					bc0+=( $(echo "${row}" | sed -e "s|^CapabilityBoundingSet=~||g") )
+				else
+					bc1+=( $(echo "${row}" | sed -e "s|^CapabilityBoundingSet=||g") )
+				fi
 			done
+			bounding_capabilities="${bc1[@]}"
+			not_bounding_capabilities="${bc0[@]}"
 			IFS=$' \t\n'
 		fi
 
+		local n_ambient_capabilities=0
+		local ambient_capabilities=""
+		local not_ambient_capabilities=""
 		if grep -q -e "^AmbientCapabilities=" "${init_path}" ; then
+			local ac0=() # deny
+			local ac1=() # permit
+			local n_ambient_capabilities=$(grep -q -e "^AmbientCapabilities=" "${init_path}" | wc -l)
 			IFS=$'\n'
 			local ROWS=( $(grep -e "^AmbientCapabilities" "${init_path}" | cut -f 2- -d "=") ) || die "ERR:  line number - $LINENO"
 			local row
 			for row in ${ROWS[@]} ; do
-				echo "set ${row}" >> "${init_conf}"
+				if [[ "${row}" =~ "~" ]] ; then
+					ac0+=( $(echo "${row}" | sed -e "s|^AmbientCapabilities=~||g") )
+				else
+					ac1+=( $(echo "${row}" | sed -e "s|^AmbientCapabilities=||g") )
+				fi
 			done
+			ambient_capabilities="${ac1[@]}"
+			not_ambient_capabilities="${ac0[@]}"
 			IFS=$' \t\n'
 		fi
 
+		exec_start_pres=""
+		exec_starts=""
+		exec_start_posts=""
+		exec_stops=""
+		exec_stop_pres=""
+		exec_stop_posts=""
+		exec_reloads=""
 		IFS=$'\n'
 		local row
 		for row in $(grep -E -e "^(ExecStartPre|ExecStart|ExecStartPost|ExecStop|ExecStopPost|ExecReload)=" "${init_path}") ; do
@@ -674,82 +740,92 @@ convert_systemd() {
 				echo "${exec_start_pre}" | grep -q '^[!!]'
 
 				exec_start_pre=$(echo "${exec_start_pre}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+				exec_start_pres="${exec_start_pres}\n${exec_start_pre}"
 			fi
 			local exec_start=""
 			if echo "${row}" | grep -q "^ExecStart=" ; then
 				exec_start=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 				exec_start=$(echo "${exec_start}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+				exec_starts="${exec_starts}\n${exec_start}"
 			fi
 			local exec_start_post=""
 			if echo "${row}" | grep -q "^ExecStartPost=" ; then
 				exec_start_post=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 				exec_start_post=$(echo "${exec_start_post}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+				exec_start_posts="${exec_start_posts}\n${exec_start_post}"
+			fi
+
+			local exec_stop_pre=""
+			if echo "${row}" | grep -q "^ExecStopPre=" ; then
+				exec_stop_pre=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+				exec_stop_pre=$(echo "${exec_stop_pre}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+				exec_stop_pres="${exec_stop_pres}\n${exec_stop_pre}"
 			fi
 
 			local exec_stop=""
 			if echo "${row}" | grep -q "^ExecStop=" ; then
 				exec_stop=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 				exec_stop=$(echo "${exec_stop}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+				exec_stops="${exec_stops}\n${exec_stop}"
 			fi
 
-			# FIXME
 			local exec_stop_post=""
 			if echo "${row}" | grep -q "^ExecStopPost=" ; then
 				exec_stop_post=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 				exec_stop_post=$(echo "${exec_stop_post}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+				exec_stop_posts="${exec_stop_posts}\n${exec_stop_post}"
 			fi
 
 			local exec_reload=""
 			if echo "${row}" | grep -q "^ExecReload=" ; then
 				exec_reload=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 				exec_reload=$(echo "${exec_reload}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
-			fi
-
-			if [[ -n "${exec_start_pre}" ]] ; then
-				echo "run [${runlevels}] name:${pn}-pre-start ${exec_start_pre} -- ${svc_name} pre-start" >> "${CONFS_PATH}/${c}/${pn}/${pn}.conf"
-			fi
-			if [[ -n "${exec_start}" ]] ; then
-				[[ -n "${environment_file}" ]] && environment_file="env:${environment_file}"
-				[[ -n "${cond}" ]] && cond="<${cond}>"
-				local user_group=""
-				if [[ -n "${user}" && -n "${group}" ]] ; then
-					user_group="@${user}:${group}"
-				elif [[ -n "${user}" ]] ; then
-					user_group="@${user}"
-				elif [[ -n "${group}" ]] ; then
-					user_group="@:${group}"
-				fi
-				if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
-					echo "task [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${svc_name} oneshot" >> "${init_conf}"
-				elif [[ "${type}" == "oneshot" ]] ; then
-					# It is unknown if they must be run sequentially if more than 1.
-					echo "run [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${svc_name} oneshot" >> "${init_conf}"
-				else
-					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} ${exec_start} -- ${svc_name} start" >> "${init_conf}"
-				fi
-			fi
-			if [[ -n "${exec_start_post}" ]] ; then
-				echo "run [${runlevels}] name:${svc_name}-post-start ${exec_start_post} -- ${svc_name} post-start" >> "${init_conf}"
-			fi
-			if [[ -n "${exec_stop_pre}" ]] ; then
-				echo "run [0] name:${svc_name}-pre-stop ${exec_stop_pre} -- ${svc_name} pre-stop" >> "${init_conf}"
-			fi
-			if [[ -n "${exec_stop}" ]] ; then
-				echo "task [0] name:${svc_name}-stop ${exec_stop} -- ${svc_name} stop" >> "${init_conf}"
-			fi
-			if [[ -n "${exec_stop_post}" ]] ; then
-				echo "run [0] name:${svc_name}-post-stop /lib/finit/${c}/${pn}/${svc_name}-stop.sh -- ${svc_name} post-stop" >> "${init_conf}"
-				gen_systemd_stop_wrapper
-			fi
-
-			if [[ -n "${exec_reload}" ]] ; then
-				local x="reload"
-				echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-				echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}-reload.sh -- ${svc_name} ${x}" >> "${init_conf}"
-				gen_systemd_reload_wrapper
+				exec_reloads="${exec_reloads}\n${exec_reload}"
 			fi
 		done
 		IFS=$' \t\n'
+		gen_systemd_wrapper
+
+		if (( "${#exec_start_pres}" > 0 )) ; then
+			echo "run [${runlevels}] name:${pn}-pre-start /lib/finit/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre-start" >> "${init_conf}"
+		fi
+		if (( "${#exec_starts}" > 0 )) ; then
+			[[ -n "${environment_file}" ]] && environment_file="env:${environment_file}"
+			[[ -n "${cond}" ]] && cond="<${cond}>"
+			local user_group=""
+			if [[ -n "${user}" && -n "${group}" ]] ; then
+				user_group="@${user}:${group}"
+			elif [[ -n "${user}" ]] ; then
+				user_group="@${user}"
+			elif [[ -n "${group}" ]] ; then
+				user_group="@:${group}"
+			fi
+			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
+				echo "task [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name} start" >> "${init_conf}"
+			elif [[ "${type}" == "oneshot" ]] ; then
+				# It is unknown if they must be run sequentially if more than 1.
+				echo "run [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name} start" >> "${init_conf}"
+			else
+				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name} start" >> "${init_conf}"
+			fi
+		fi
+		if (( "${#exec_start_posts}" > 0 )) ; then
+			echo "run [${runlevels}] name:${svc_name}-post-start /lib/finit/${c}/${pn}/${svc_name}.sh start_post -- ${svc_name} post-start" >> "${init_conf}"
+		fi
+		if (( "${#exec_stop_pres}" > 0 )) ; then
+			echo "run [0] name:${svc_name}-pre-stop /lib/finit/${c}/${pn}/${svc_name}.sh stop_pre -- ${svc_name} pre-stop" >> "${init_conf}"
+		fi
+		if (( "${#exec_stops}" > 0 )) ; then
+			echo "task [0] name:${svc_name}-stop /lib/finit/${c}/${pn}/${svc_name}.sh stop -- ${svc_name} stop" >> "${init_conf}"
+		fi
+		if (( "${#exec_stop_posts}" > 0 )) ; then
+			echo "run [0] name:${svc_name}-post-stop /lib/finit/${c}/${pn}/${svc_name}.sh stop_post -- ${svc_name} post-stop" >> "${init_conf}"
+		fi
+		if (( "${#exec_reloads}" > 0 )) ; then
+			local x="reload"
+			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
+			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}.sh reload -- ${svc_name} ${x}" >> "${init_conf}"
+		fi
 	done
 
 	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  line number - $LINENO"

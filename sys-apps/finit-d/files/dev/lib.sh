@@ -737,6 +737,12 @@ default_start() {
 	if [ -n "${not_bounding_capabilities}" ] && [ "${prefix}" = "-" ] ; then
 		args="--not-bounding-capabilities ${not_bounding_capabilities}"
 	fi
+	if [ -n "${user}" ] ; then
+		args="--user ${user} ${args}"
+	fi
+	if [ -n "${group}" ] ; then
+		args="--group ${group} ${args}"
+	fi
 	start_stop_daemon \
 		--exec "${command}" \
 		${start_stop_daemon_args} \
