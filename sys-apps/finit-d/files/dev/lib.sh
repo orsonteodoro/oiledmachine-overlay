@@ -425,9 +425,6 @@ start_stop_daemon() {
 				set -- $@ $(echo "${x}" | sed -e 's|"||g')
 			done
 
-
-			if [ -n ""
-
 			# Avoid racing bug without altering last PID
 			capsh ${ug_args} --shell="${exec_path}" -- "$@" &
 			capsh_pid=$!
