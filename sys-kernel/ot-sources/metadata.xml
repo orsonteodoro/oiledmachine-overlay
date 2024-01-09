@@ -1739,13 +1739,13 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     Features
 
       init system | supervisor | sandboxing | realtime | use cases | notes
-      dinit            y             n           n              s
+      dinit            y             n           n              p
       epoch            y             n           n           e 
-      finit            y             n           n[1]       d   s
-      openrc           y            full         y          d  ms
-      runit            y         partial[2]      n              s
+      finit            y             n           n[1]       d   p
+      openrc           y            full         y          d  m s
+      runit            y         partial[2]      n              p
       s6               y             n           n           e 
-      systemd          y            full         n         Dd   s    Support for on demand user or on demand socket services
+      systemd          y            full         n         Dd    s    Support for on demand user or on demand socket services
       sysvinit         n             n           n            l
     
     Meaning:
@@ -1761,7 +1761,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
        e - For embedded
        l - For legacy or software museum
        m - For music production
-       s - For LAN server, home server, or SOHO
+       p - For non-sensitive data servers such as dedicate game server
+       s - For sensitive data servers on LAN server, home server, or SOHO
     
       [1] - achieveable with openrc compatibility wrappers but not native
       [2] - via chroot, but not kernel side sandboxing with capabilities
