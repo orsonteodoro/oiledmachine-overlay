@@ -460,10 +460,14 @@ command="${command}"
 command_args="${command_args}"
 exec_start_exe="${exec_start_exe}"
 final_kill_signal="${final_kill_signal}"
+has_exec_stops=${has_exec_stops}
+kill_mode="${kill_mode}"
 kill_signal="${kill_signal}"
 pidfile="${pidfile}"
 not_ambient_capabilities="${not_ambient_capabilities}"
 not_bounding_capabilities="${not_bounding_capabilities}"
+send_sighup="${send_sighup}"
+send_sigkill="${send_sigkill}"
 timeout_stop_sec="${timeout_stop_sec}"
 type="${type}"
 
@@ -487,6 +491,78 @@ stop_pre() {
 	$(echo -e "${exec_stop_pres}")
 }
 
+_stop_control_group() {
+	local sig=""
+	if [ -n "\${kill_signal}" ] ; then
+		sig="\${kill_signal}"
+	else
+		sig="SIGTERM"
+	fi
+	local x
+	for x in \${pids_cgroup_unit} ; do
+		ps \${x} >/dev/null || continue
+		kill -s ${sig} \${x}
+	done
+}
+
+_stop_mixed() {
+	local sig=""
+	if [ -n "\${kill_signal}" ] ; then
+		sig="\${kill_signal}"
+	else
+		sig="SIGTERM"
+	fi
+	kill -s ${sig} \${MAINPID}
+	local x
+	for x in \${pids_cgroup_unit} ; do
+		[ "\${x}" = \${MAINPID} ] && continue
+		ps \${x} >/dev/null || continue
+		kill -s SIGKILL \${x}
+	done
+}
+
+_stop_process() {
+	local sig=""
+	if [ -n "\${kill_signal}" ] ; then
+		sig="\${kill_signal}"
+	else
+		sig="SIGTERM"
+	fi
+	kill -s ${sig} \${MAINPID}
+}
+
+_stop_sighup() {
+	local x
+	for x in \${pids_cgroup_unit} ; do
+		ps \${x} >/dev/null || continue
+		kill -s SIGHUP \${x}
+	done
+}
+
+_stop_final_sigkill() {
+	local sig=""
+	if [ -n "\${final_kill_signal}" ] ; then
+		sig="\${final_kill_signal}"
+	else
+		sig="SIGKILL"
+	fi
+
+	local x
+	for x in \${pids_cgroup_unit} ; do
+		ps \${x} >/dev/null || continue
+		kill -s ${sig} \${x}
+	done
+}
+
+is_cgroup_unit_alive() {
+	local x
+	for x in \${pids_cgroup_unit} ; do
+		ps \${x} >/dev/null && return 0
+		kill -s ${sig} \${x}
+	done
+	return 1
+}
+
 stop() {
 	if [ "\${type}" = "oneshot" ] ; then
 		return 0
@@ -495,25 +571,63 @@ stop() {
 	else
 		MAINPID=\$(pgrep "\${exec_start_exe}")
 	fi
-	if [ ${has_exec_stops} -eq 1 ] ; then
+	local main_cgroup_name=$(ps -p \${MAINPID} -o pid,cgroup \
+		| tail -n 1 \
+		| cut -f 2 -d " ")
+	local pids_cgroup_unit=$(ps -p \${MAINPID} -eo pid,cgroup \
+		| grep "0::/3" \
+		| cut -f 1 -d " ")
+
+	is_cgroup_unit_alive || return 0
+
+	# Let it shut down
+	now=\$(date +"%s")
+	time_final=\$(( \${now} + \${timeout_stop_sec} ))
+	while [ \${now} -lt \${time_final} ] ; do
+		[ -e /proc/\${MAINPID} ] || break
+		now=\$(date +"%s")
+	done
+
+	is_cgroup_unit_alive || return 0
+
+	if [ \${has_exec_stops} -eq 1 ] ; then
 		$(echo -e "${exec_stops}")
-	elif [ -n "\${kill_signal}" ] ; then
-		kill -s \${kill_signal} \${MAINPID}
-	else
-		kill -s SIGTERM \${MAINPID}
 	fi
+
+	local all_pids="\${child_pids} \${MAIN_PID}"
+	if [ "\${kill_mode}" = "control-group" ] ; then
+		_stop_control_group
+	elif [ "\${kill_mode}" = "mixed" ] ; then
+		_stop_mixed
+	elif [ "\${kill_mode}" = "process" ] ; then
+		_stop_process
+	elif [ "\${kill_mode}" = "none" ] ; then
+		:;
+	fi
+
+	is_cgroup_unit_alive || return 0
+
+	if [ "\${send_sighup}" = "yes" ] ; then
+		_stop_sighup
+	fi
+
+	is_cgroup_unit_alive || return 0
+
 	now=\$(date +"%s")
 	time_final=\$(( \${now} + \${timeout_stop_sec} ))
 	while [ \${now} -lt \${time_final} ] ; do
 		[ -e /proc/\${MAINPID} ] || exit 0
 		now=\$(date +"%s")
 	done
-	if [ -n "\${final_kill_signal}" ] ; then
-		kill -s \${final_kill_signal} \${MAINPID}
-	else
-		kill -s SIGKILL \${MAINPID}
+
+	is_cgroup_unit_alive || return 0
+
+	if [ "\${send_sigkill}" = "yes" ] ; then
+		_stop_final_sigkill
 	fi
-	[ -e /proc/\${MAINPID} ] || exit 0
+
+	is_cgroup_unit_alive || return 0
+
 	return 0
 )
 
@@ -581,6 +695,16 @@ convert_systemd() {
 			final_kill_signal=$(grep "^FinalKillSignal=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
+		local send_sighup=""
+		if grep -q "^SendSIGHUP=" "${init_path}" ; then
+			send_sighup=$(grep "^SendSIGHUP=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local send_sigkill=""
+		if grep -q "^SendSIGKILL=" "${init_path}" ; then
+			send_sigkill=$(grep "^SendSIGKILL=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
 		local timeout_stop_sec="90"
 		if grep -q "^TimeoutStopSec=" "${init_path}" ; then
 			timeout_stop_sec=$(grep "^TimeoutStopSec=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
@@ -594,6 +718,11 @@ convert_systemd() {
 		local group=""
 		if grep -q "^Group=" "${init_path}" ; then
 			group=$(grep "^Group=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local kill_mode="control-group"
+		if grep -q "^KillMode=" "${init_path}" ; then
+			kill_mode=$(grep "^KillMode=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		local environment_file=""
