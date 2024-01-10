@@ -13,7 +13,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 
 EBUILD_REV="r6"
 GENPATCHES_VER="live"
-PATCH_PROJC_VER="6.5-r0"
+PATCH_PROJC_VER="6.7-r0"
 PATCH_RT_VER="6.7-rt6"
 
 inherit ot-kernel-v6.7
