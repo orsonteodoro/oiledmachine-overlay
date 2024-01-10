@@ -71,6 +71,8 @@ selinux +server +socks +sound sound-forwarding spng sqlite ssh sshpass +ssl
 systemd +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland
 +webcam webcam-forwarding webp +websockets +X x264 -x265 +xdg +xinput yaml
 zeroconf zlib
+
+r1
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -866,6 +868,14 @@ eerror
 
 python_install_all() {
 	distutils-r1_python_install_all
+	mv \
+		"${ED}/usr/etc" \
+		"${ED}/etc" \
+		|| die
+	mv \
+		"${ED}/usr/share/doc/xpra" \
+		"${ED}/usr/share/doc/${PN}-${PVR}" \
+		|| die
 	if use openrc ; then
 		fperms 0750 /etc/init.d/xpra
 	fi
