@@ -242,6 +242,7 @@ fi
 			#fi
 
 			cat "${init_path}" > "${init_sh}"
+			perl -pe 's/\\\n//' -i "${init_sh}" # Remove hardbreak
 
 			if [[ "${init_path}" =~ "sys-apps/dbus" ]] && echo "${fn}" | grep -q -E -e "dbus.initd.in" ; then
 				sed -i -e "s|@rundir@|/run|g" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -666,6 +667,10 @@ convert_systemd() {
 
 	local init_path
 	for init_path in $(find /lib/systemd/system /usr/lib/systemd/system -name "*.service") ; do
+		local init_path_tmp=$(mktemp)
+		cat "${init_path}" > "${init_path_tmp}"
+		init_path="${init_path_tmp}"
+		perl -pe 's/\\\n//' -i "${init_path}" # Remove hardbreak
 		local svc_name=$(basename "${init_path}" | sed -e "s|\.service$||g") || die "ERR:  line number - $LINENO"
 		[[ "${init_path}" == "./" ]] && continue
 		local pkg=$(grep -l $(realpath "${init_path}") $(realpath "/var/db/pkg/"*"/"*"/CONTENTS") | cut -f 5-6 -d "/")
@@ -953,6 +958,7 @@ convert_systemd() {
 			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
 			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}.sh reload -- ${svc_name} ${x}" >> "${init_conf}"
 		fi
+		rm "${init_path}"
 	done
 
 	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  line number - $LINENO"
