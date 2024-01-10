@@ -575,7 +575,7 @@ stop() {
 		| tail -n 1 \
 		| cut -f 2 -d " ")
 	local pids_cgroup_unit=$(ps -p \${MAINPID} -eo pid,cgroup \
-		| grep "0::/3" \
+		| grep "${main_cgroup_name}" \
 		| cut -f 1 -d " ")
 
 	is_cgroup_unit_alive || return 0
