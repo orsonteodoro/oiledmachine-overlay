@@ -505,8 +505,7 @@ start_stop_daemon() {
 				retry="$1"
 				;;
 			--sched-reset-on-fork)
-				shift
-				sched_reset_on_fork="$1"
+				sched_reset_on_fork=1
 				;;
 			--signal)
 				shift
@@ -783,7 +782,7 @@ start_stop_daemon() {
 			priority=0
 		fi
 		local reset_on_fork=""
-		if [ "${sched_reset_on_fork}" = "true" ] ; then
+		if [ ${sched_reset_on_fork} -eq 1 ] ; then
 			reset_on_fork="-R"
 		fi
 		chrt ${reset_on_fork} --${policy} -p $priority ${service_pid}
