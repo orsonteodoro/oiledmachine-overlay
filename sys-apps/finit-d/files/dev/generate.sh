@@ -558,7 +558,6 @@ is_cgroup_unit_alive() {
 	local x
 	for x in \${pids_cgroup_unit} ; do
 		ps \${x} >/dev/null && return 0
-		kill -s ${sig} \${x}
 	done
 	return 1
 }
