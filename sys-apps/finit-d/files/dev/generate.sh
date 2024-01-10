@@ -457,22 +457,118 @@ cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 svc_name="${svc_name}"
 ambient_capabilities="${ambient_capabilities}"
 bounding_capabilities="${bounding_capabilities}"
+cache_directory="${cache_directory}"
+cache_directory_mode="${cache_directory_mode}"
 command="${command}"
 command_args="${command_args}"
+configuration_directory="${configuration_directory}"
+configuration_directory_mode="${configuration_directory_mode}"
 exec_start_exe="${exec_start_exe}"
 final_kill_signal="${final_kill_signal}"
 has_exec_stops=${has_exec_stops}
 kill_mode="${kill_mode}"
 kill_signal="${kill_signal}"
-pidfile="${pidfile}"
+logs_directory="${logs_directory}"
+logs_directory_mode="${logs_directory_mode}"
 not_ambient_capabilities="${not_ambient_capabilities}"
 not_bounding_capabilities="${not_bounding_capabilities}"
+pidfile="${pidfile}"
+runtime_directory="${runtime_directory}"
+runtime_directory_mode="${runtime_directory_mode}"
+runtime_directory_preserve="${runtime_directory_preserve}"
 send_sighup="${send_sighup}"
 send_sigkill="${send_sigkill}"
+state_directory="${state_directory}"
+state_directory_mode="${state_directory_mode}"
 timeout_stop_sec="${timeout_stop_sec}"
 type="${type}"
 
+start_dirs() {
+	local x
+	if [ -n "\${runtime_directory}" ] ; then
+		set -- \${runtime_directory}
+		for x in \$@ ; do
+			if echo "\${x}" | cut -c 1 | grep "/" ; then
+				mkdir -p "\${x}"
+				if [ -n "\${runtime_directory_mode}" ] ; then
+					chmod "\${runtime_directory_mode}" "\${x}"
+				fi
+			else
+				mkdir -p "/run/\${x}"
+				if [ -n "\${runtime_directory_mode}" ] ; then
+					chmod "\${runtime_directory_mode}" "/run/\${x}"
+				fi
+			fi
+		done
+	fi
+	if [ -n "\${state_directory}" ] ; then
+		set -- \${state_directory}
+		for x in \$@ ; do
+			if echo "\${x}" | cut -c 1 | grep "/" ; then
+				mkdir -p "\${x}"
+				if [ -n "\${state_directory_mode}" ] ; then
+					chmod "\${state_directory_mode}" "\${x}"
+				fi
+			else
+				mkdir -p "/var/lib/\${x}"
+				if [ -n "\${state_directory_mode}" ] ; then
+					chmod "\${state_directory_mode}" "/var/lib/\${x}"
+				fi
+			fi
+		done
+	fi
+	if [ -n "\${cache_directory}" ] ; then
+		set -- \${cache_directory}
+		for x in \$@ ; do
+			if echo "\${x}" | cut -c 1 | grep "/" ; then
+				mkdir -p "\${x}"
+				if [ -n "\${cache_directory_mode}" ] ; then
+					chmod "\${cache_directory_mode}" "\${x}"
+				fi
+			else
+				mkdir -p "/var/cache/\${x}"
+				if [ -n "\${cache_directory_mode}" ] ; then
+					chmod "\${cache_directory_mode}" "/var/cache/\${x}"
+				fi
+			fi
+		done
+	fi
+	if [ -n "\${logs_directory}" ] ; then
+		set -- \${logs_directory}
+		for x in \$@ ; do
+			if echo "\${x}" | cut -c 1 | grep "/" ; then
+				mkdir -p "\${x}"
+				if [ -n "\${logs_directory_mode}" ] ; then
+					chmod "\${logs_directory_mode}" "\${x}"
+				fi
+			else
+				mkdir -p "/var/log/\${x}"
+				if [ -n "\${logs_directory_mode}" ] ; then
+					chmod "\${logs_directory_mode}" "/var/log/\${x}"
+				fi
+			fi
+		done
+	fi
+	if [ -n "\${configuration_directory}" ] ; then
+		set -- \${configuration_directory}
+		for x in \$@ ; do
+			if echo "\${x}" | cut -c 1 | grep "/" ; then
+				mkdir -p "\${x}"
+				if [ -n "\${configuration_directory_mode}" ] ; then
+					chmod "\${configuration_directory_mode}" "\${x}"
+				fi
+			else
+				mkdir -p "/etc/\${x}"
+				if [ -n "\${configuration_directory_mode}" ] ; then
+					chmod "\${configuration_directory_mode}" "/etc/\${x}"
+				fi
+			fi
+		done
+	fi
+}
+
 start_pre() {
+	start_dirs
 	$(echo -e "${exec_start_pres}")
 }
 
@@ -563,6 +659,25 @@ is_cgroup_unit_alive() {
 	return 1
 }
 
+stop_dirs() {
+	local x
+	if [ -n "\${runtime_directory}" ] ; then
+		set -- \${runtime_directory}
+		for x in \$@ ; do
+			if [ "\${runtime_directory_preserve}" = "yes" ] || [ "\${runtime_directory_preserve}" = "restart" ] ; then
+				if echo "\${x}" | cut -c 1 | grep "/" ; then
+					local t=\$(realpath "\${x}")
+					[ "\${t}" = "/" ] && continue
+					[ -z "\${t}" ] && continue
+					rm -rf "\${x}"
+				else
+					rm -rf "/run/\${x}"
+				fi
+			fi
+		done
+	fi
+}
+
 stop() {
 	if [ "\${type}" = "oneshot" ] ; then
 		return 0
@@ -632,6 +747,7 @@ stop() {
 )
 
 stop_post() {
+	stop_dirs
 	$(echo -e "${exec_stop_posts}")
 }
 
@@ -732,6 +848,61 @@ convert_systemd() {
 		local environment_file=""
 		if grep -q "^EnvironmentFile=" "${init_path}" ; then
 			environment_file=$(grep "^EnvironmentFile=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local runtime_directory=""
+		if grep -q "^RuntimeDirectory=" "${init_path}" ; then
+			runtime_directory=$(grep "^RuntimeDirectory=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local runtime_directory_mode=""
+		if grep -q "^RuntimeDirectoryMode=" "${init_path}" ; then
+			runtime_directory_mode=$(grep "^RuntimeDirectoryMode=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local runtime_directory_preserve=""
+		if grep -q "^RuntimeDirectoryPreserve=" "${init_path}" ; then
+			runtime_directory_preserve=$(grep "^RuntimeDirectoryPreserve=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local state_directory=""
+		if grep -q "^StateDirectory=" "${init_path}" ; then
+			state_directory=$(grep "^StateDirectory=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local state_directory_mode=""
+		if grep -q "^StateDirectoryMode=" "${init_path}" ; then
+			state_directory_mode=$(grep "^StateDirectoryMode=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local cache_directory=""
+		if grep -q "^CacheDirectory=" "${init_path}" ; then
+			cache_directory=$(grep "^CacheDirectory=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local cache_directory_mode=""
+		if grep -q "^CacheDirectoryMode=" "${init_path}" ; then
+			cache_directory_mode=$(grep "^CacheDirectoryMode=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local logs_directory=""
+		if grep -q "^LogsDirectory=" "${init_path}" ; then
+			logs_directory=$(grep "^LogsDirectory=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local logs_directory_mode=""
+		if grep -q "^LogsDirectoryMode=" "${init_path}" ; then
+			logs_directory_mode=$(grep "^LogsDirectoryMode=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local configuration_directory=""
+		if grep -q "^ConfigurationDirectory=" "${init_path}" ; then
+			configuration_directory=$(grep "^ConfigurationDirectory=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local configuration_directory_mode=""
+		if grep -q "^ConfigurationDirectoryMode=" "${init_path}" ; then
+			configuration_directory_mode=$(grep "^ConfigurationDirectoryMode=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		# Calls setenv() from c which is assumed literal
