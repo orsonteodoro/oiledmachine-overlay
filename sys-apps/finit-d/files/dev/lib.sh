@@ -364,7 +364,6 @@ start_stop_daemon() {
 	local chdir_path=""
 	local chroot_path=""
 	local chuid=""
-	local chrt_reset_on_fork=0
 	local dirmode=""
 	local exec_path=""
 	local group=""
@@ -380,6 +379,7 @@ start_stop_daemon() {
 	local phase=""
 	local quiet=0
 	local remove_pidfile=0
+	local sched_reset_on_fork=0
 	local service_pid=0
 	local signal=""
 	local status=0
@@ -417,10 +417,6 @@ start_stop_daemon() {
 			--chroot|-r)
 				shift
 				chroot_path="$1"
-				;;
-			--chrt-reset-on-fork)
-				shift
-				chrt_reset_on_fork="$1"
 				;;
 			--chuid|-c)
 				shift
@@ -502,6 +498,10 @@ start_stop_daemon() {
 			--retry|-R)
 				shift
 				retry="$1"
+				;;
+			--sched-reset-on-fork)
+				shift
+				sched_reset_on_fork="$1"
 				;;
 			--signal)
 				shift
@@ -778,7 +778,7 @@ start_stop_daemon() {
 			priority=0
 		fi
 		local reset_on_fork=""
-		if [ "${chrt_reset_on_fork}" = "true" ] ; then
+		if [ "${sched_reset_on_fork}" = "true" ] ; then
 			reset_on_fork="-R"
 		fi
 		chrt ${reset_on_fork} --${policy} -p $priority ${service_pid}
@@ -857,7 +857,7 @@ default_start() {
 	fi
 
 	if [ "${cpu_scheduling_reset_on_fork}" = "true" ] ; then
-		args="${args} --chrt-reset-on-fork"
+		args="${args} --sched-reset-on-fork"
 	fi
 
 	start_stop_daemon \
