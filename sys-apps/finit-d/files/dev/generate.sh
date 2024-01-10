@@ -463,13 +463,38 @@ command="${command}"
 command_args="${command_args}"
 configuration_directory="${configuration_directory}"
 configuration_directory_mode="${configuration_directory_mode}"
+cpu_affinity="${cpu_affinity}"
+cpu_scheduling_policy="${cpu_scheduling_policy}"
+cpu_scheduling_priority="${cpu_scheduling_priority}"
+cpu_scheduling_reset_on_fork="${cpu_scheduling_reset_on_fork}"
 exec_start_exe="${exec_start_exe}"
 final_kill_signal="${final_kill_signal}"
 has_exec_stops=${has_exec_stops}
+io_scheduling_class="${io_scheduling_class}"
+io_scheduling_priority="${io_scheduling_priority}"
 kill_mode="${kill_mode}"
 kill_signal="${kill_signal}"
+limit_as="${limit_as}"
+limit_core="${limit_core}"
+limit_cpu="${limit_cpu}"
+limit_data="${limit_data}"
+limit_fsize="${limit_fsize}"
+limit_locks="${limit_locks}"
+limit_memlock="${limit_memlock}"
+limit_msgqueue="${limit_msgqueue}"
+limit_nice="${limit_nice}"
+limit_nofile="${limit_nofile}"
+limit_nproc="${limit_nproc}"
+limit_rss="${limit_rss}"
+limit_rtprio="${limit_rtprio}"
+limit_rttime="${limit_rttime}"
+limit_sigpending="${limit_sigpending}"
+limit_stack="${limit_stack}"
 logs_directory="${logs_directory}"
 logs_directory_mode="${logs_directory_mode}"
+numa_mask="${numa_mask}"
+numa_policy="${numa_policy}"
+nice="${nice}"
 not_ambient_capabilities="${not_ambient_capabilities}"
 not_bounding_capabilities="${not_bounding_capabilities}"
 pidfile="${pidfile}"
@@ -572,12 +597,88 @@ start_pre() {
 	$(echo -e "${exec_start_pres}")
 }
 
+start_ulimit() {
+	local args=""
+	[ -n "\${limit_as}" ] && args="\${args} -v \${limit_as}"
+	[ -n "\${limit_core}" ] && args="\${args} -c \${limit_core}"
+	[ -n "\${limit_cpu}" ] && args="\${args} -t \${limit_cpu}"
+	[ -n "\${limit_data}" ] && args="\${args} -d \${limit_data}"
+	[ -n "\${limit_fsize}" ] && args="\${args} -f \${limit_fsize}"
+	[ -n "\${limit_locks}" ] && args="\${args} -x \${limit_locks}"
+	[ -n "\${limit_memlock}" ] && args="\${args} -l \${limit_memlock}"
+	[ -n "\${limit_msgqueue}" ] && args="\${args} -q \${limit_msgqueue}"
+	[ -n "\${limit_nice}" ] && args="\${args} -e \${limit_nice}"
+	[ -n "\${limit_nofile}" ] && args="\${args} -n \${limit_nofile}"
+	[ -n "\${limit_nproc}" ] && args="\${args} -u \${limit_nproc}"
+	[ -n "\${limit_rss}" ] && args="\${args} -m \${limit_rss}"
+	[ -n "\${limit_rtprio}" ] && args="\${args} -r \${limit_rtprio}"
+	[ -n "\${limit_rttime}" ] && args="\${args} -R \${limit_rttime}"
+	[ -n "\${limit_sigpending}" ] && args="\${args} -i \${limit_sigpending}"
+	[ -n "\${limit_stack}" ] && args="\${args} -s \${limit_stack}"
+	if [ -n "\${args}" ] ; then
+		ulimit \$@
+	fi
+}
+
+start_scheduler() {
+	if [ "\${type}" = "oneshot" ] ; then
+		return 0
+	elif [[ -n "\${pidfile}" ]] ; then
+		MAINPID=\$(cat "\${pidfile}")
+	else
+		MAINPID=\$(pgrep "\${exec_start_exe}")
+	fi
+	[ -z "\${MAINPID}" ] && return 0
+	if [ -n "\${nice}" ] ; then
+		renice -n \${nice} \${MAINPID}
+	fi
+	if [ -n "\${cpu_affinity}" ] ; then
+		local cpu_list=""
+		if echo "\${cpu_affinity}" | grep -q " " ; then
+			cpu_list=$(echo "\${cpu_affinity}" | tr " " ",")
+		elif echo "\${cpu_affinity}" | grep -q "," ; then
+			cpu_list="\${cpu_affinity}"
+		fi
+		taskset --cpu-list ${cpu_list} -p \${MAINPID}
+	fi
+	if [ -n "\${cpu_scheduling_policy}" ] || [ -n "\${cpu_scheduling_priority}" ] ; then
+		local options=""
+		local priority=""
+		[ -n "\${cpu_scheduling_reset_on_fork}" ] && options="${options} -R"
+		[ -n "\${cpu_scheduling_policy}" ] && options="${options} --\${cpu_scheduling_policy}"
+		chrt \${options} -p \${priority} \${MAINPID}
+	fi
+	if [ -n "\${io_scheduling_class}" ] || [ -n "\${io_scheduling_priority}" ] ; then
+		local level=""
+		if [ -n "\${io_scheduling_priority}" ] ; then
+			level="-n \${io_scheduling_priority}"
+		fi
+		if [ "\${io_scheduling_class}" = "realtime" ] ; then
+			ionice -c 1 \${level} -p \${MAINPID}
+		elif [ "\${io_scheduling_class}" = "best-effort" ] ; then
+			ionice -c 2 \${level} -p \${MAINPID}
+		elif [ "\${io_scheduling_class}" = "idle" ] ; then
+			ionice -c 3 \${level} -p \${MAINPID}
+		elif [ -n "\${io_scheduling_priority}" ] ; then
+			ionice \${level} -p \${MAINPID}
+		fi
+	fi
+	if [ -n "\${numa_mask}" ] ; then
+		:;
+	fi
+	if [ -n "\${numa_policy}" ] ; then
+		:;
+	fi
+}
+
 start() {
+	start_ulimit
 	if [ "\${type}" = "oneshot" ] ; then
 		$(echo -e "${exec_starts}")
 	else
 		default_start
 	fi
+	start_scheduler
 }
 
 start_post() {
@@ -904,6 +1005,139 @@ convert_systemd() {
 		if grep -q "^ConfigurationDirectoryMode=" "${init_path}" ; then
 			configuration_directory_mode=$(grep "^ConfigurationDirectoryMode=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
+
+		local configuration_directory_mode=""
+		if grep -q "^ConfigurationDirectoryMode=" "${init_path}" ; then
+			configuration_directory_mode=$(grep "^ConfigurationDirectoryMode=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_cpu=""
+		if grep -q "^LimitCPU=" "${init_path}" ; then
+			limit_cpu=$(grep "^LimitCPU=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_fsize=""
+		if grep -q "^LimitFSIZE=" "${init_path}" ; then
+			limit_fsize=$(grep "^LimitFSIZE=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_data=""
+		if grep -q "^LimitDATA=" "${init_path}" ; then
+			limit_data=$(grep "^LimitDATA=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_stack=""
+		if grep -q "^LimitSTACK=" "${init_path}" ; then
+			limit_stack=$(grep "^LimitSTACK=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_core=""
+		if grep -q "^LimitCORE=" "${init_path}" ; then
+			limit_core=$(grep "^LimitCORE=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_rss=""
+		if grep -q "^LimitRSS=" "${init_path}" ; then
+			limit_rss=$(grep "^LimitRSS=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_nofile=""
+		if grep -q "^LimitNOFILE=" "${init_path}" ; then
+			limit_nofile=$(grep "^LimitNOFILE=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_as=""
+		if grep -q "^LimitAS=" "${init_path}" ; then
+			limit_as=$(grep "^LimitAS=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_nproc=""
+		if grep -q "^LimitNPROC=" "${init_path}" ; then
+			limit_nproc=$(grep "^LimitNPROC=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_memlock=""
+		if grep -q "^LimitMEMLOCK=" "${init_path}" ; then
+			limit_memlock=$(grep "^LimitMEMLOCK=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_locks=""
+		if grep -q "^LimitLOCKS=" "${init_path}" ; then
+			limit_locks=$(grep "^LimitLOCKS=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_sigpending=""
+		if grep -q "^LimitSIGPENDING=" "${init_path}" ; then
+			limit_sigpending=$(grep "^LimitSIGPENDING=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_msgqueue=""
+		if grep -q "^LimitMSGQUEUE=" "${init_path}" ; then
+			limit_msgqueue=$(grep "^LimitMSGQUEUE=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_nice=""
+		if grep -q "^LimitNICE=" "${init_path}" ; then
+			limit_nice=$(grep "^LimitNICE=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_rtprio=""
+		if grep -q "^LimitRTPRIO=" "${init_path}" ; then
+			limit_rtprio=$(grep "^LimitRTPRIO=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local limit_rttime=""
+		if grep -q "^LimitRTTIME=" "${init_path}" ; then
+			limit_rttime=$(grep "^LimitRTTIME=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+
+		local nice=""
+		if grep -q "^Nice=" "${init_path}" ; then
+			nice=$(grep "^Nice=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local cpu_scheduling_policy=""
+		if grep -q "^CPUSchedulingPolicy=" "${init_path}" ; then
+			cpu_scheduling_policy=$(grep "^CPUSchedulingPolicy=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local cpu_scheduling_priority=""
+		if grep -q "^CPUSchedulingPriority=" "${init_path}" ; then
+			cpu_scheduling_priority=$(grep "^CPUSchedulingPriority=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local cpu_scheduling_reset_on_fork=""
+		if grep -q "^CPUSchedulingResetOnFork=" "${init_path}" ; then
+			cpu_scheduling_reset_on_fork=$(grep "^CPUSchedulingResetOnFork=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local cpu_affinity=""
+		if grep -q "^CPUAffinity=" "${init_path}" ; then
+			cpu_affinity=$(grep "^CPUAffinity=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local numa_policy=""
+		if grep -q "^NUMAPolicy=" "${init_path}" ; then
+			numa_policy=$(grep "^NUMAPolicy=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local numa_mask=""
+		if grep -q "^NUMAMask=" "${init_path}" ; then
+			numa_mask=$(grep "^NUMAMask=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local io_scheduling_class=""
+		if grep -q "^IOSchedulingClass=" "${init_path}" ; then
+			io_scheduling_class=$(grep "^IOSchedulingClass=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+		local io_scheduling_priority=""
+		if grep -q "^IOSchedulingPriority=" "${init_path}" ; then
+			io_scheduling_priority=$(grep "^IOSchedulingPriority=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+		fi
+
+
 
 		# Calls setenv() from c which is assumed literal
 		if [[ "${user}" =~ ("$"|"%") ]] ; then
