@@ -499,7 +499,7 @@ _stop_control_group() {
 		sig="SIGTERM"
 	fi
 	local x
-	for x in \${pids_cgroup_unit} ; do
+	for x in \${cgroup_unit_pids} ; do
 		ps \${x} >/dev/null || continue
 		kill -s \${sig} \${x}
 	done
@@ -514,7 +514,7 @@ _stop_mixed() {
 	fi
 	kill -s \${sig} \${MAINPID}
 	local x
-	for x in \${pids_cgroup_unit} ; do
+	for x in \${cgroup_unit_pids} ; do
 		[ "\${x}" = \${MAINPID} ] && continue
 		ps \${x} >/dev/null || continue
 		kill -s SIGKILL \${x}
@@ -533,7 +533,7 @@ _stop_process() {
 
 _stop_sighup() {
 	local x
-	for x in \${pids_cgroup_unit} ; do
+	for x in \${cgroup_unit_pids} ; do
 		ps \${x} >/dev/null || continue
 		kill -s SIGHUP \${x}
 	done
@@ -548,7 +548,7 @@ _stop_final_sigkill() {
 	fi
 
 	local x
-	for x in \${pids_cgroup_unit} ; do
+	for x in \${cgroup_unit_pids} ; do
 		ps \${x} >/dev/null || continue
 		kill -s \${sig} \${x}
 	done
@@ -556,7 +556,7 @@ _stop_final_sigkill() {
 
 is_cgroup_unit_alive() {
 	local x
-	for x in \${pids_cgroup_unit} ; do
+	for x in \${cgroup_unit_pids} ; do
 		ps \${x} >/dev/null && return 0
 	done
 	return 1
@@ -573,7 +573,7 @@ stop() {
 	local main_cgroup_name=$(ps -p \${MAINPID} -o pid,cgroup \
 		| tail -n 1 \
 		| cut -f 2 -d " ")
-	local pids_cgroup_unit=$(ps -p \${MAINPID} -eo pid,cgroup \
+	local cgroup_unit_pids=$(ps -p \${MAINPID} -eo pid,cgroup \
 		| grep "${main_cgroup_name}" \
 		| cut -f 1 -d " ")
 
