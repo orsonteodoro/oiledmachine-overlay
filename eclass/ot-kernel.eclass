@@ -9204,9 +9204,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 		if [[ "${work_profile}" == "pro-gaming" ]] ; then
-			ot-kernel_optimize_gaming
+			ot-kernel_optimize_gaming "pro-gaming"
 		elif [[ "${work_profile}" == "gaming-tournament" ]] ; then
-			ot-kernel_optimize_gaming_tornament
+			ot-kernel_optimize_gaming "gaming-tournament"
 		fi
 	elif [[ \
 		   "${work_profile}" == "digital-audio-workstation" \
@@ -10483,49 +10483,6 @@ ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
 	fi
 }
 
-# @FUNCTION: ot-kernel_optimize_gaming_tournament
-# @DESCRIPTION:
-# Optimize the kernel for gaming performance for the top 10%.
-ot-kernel_optimize_gaming() {
-ewarn
-ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
-ewarn
-	if [[ "${hardening_level}" =~ "untrusted" ]] ; then
-eerror
-eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
-eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
-eerror
-		die
-	fi
-	if ot-kernel_use uksm ; then
-# Remove the unintended consequences of applying the patch.
-# UKSM also thrashes a lot so lets get rid of that.
-eerror
-eerror "Please remove uksm from OT_KERNEL_USE in"
-eerror "OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
-eerror
-		die
-	fi
-	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-		if ! tc-is-cross-compiler ; then
-			local tpc=$(lscpu \
-				| grep  -e "Thread(s) per core:.*" \
-				| head -n 1 \
-				| grep -E -o "[0-9]+")
-			if (( tpc > 1 )) && ver_test ${KV_MAJOR_MINOR} -ge 4.10 ; then
-				# Already set in ot-kernel_set_kconfig_processor_class
-				# ot-kernel_y_configopt "CONFIG_SMP"
-				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
-				if [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] ; then
-					ot-kernel_y_configopt "CONFIG_SCHED_MC_PRIO"
-				else
-					ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
-				fi
-			fi
-		fi
-	fi
-}
-
 # @FUNCTION: ot-kernel_optimize_gaming_tournament_oflag
 # @DESCRIPTION:
 # Set game-tournament optimizations before main set
@@ -10540,10 +10497,11 @@ ewarn "-O3 requires zen-sauce in both OT_KERNEL_USE and USE."
 	fi
 }
 
-# @FUNCTION: ot-kernel_optimize_gaming_tournament
+# @FUNCTION: ot-kernel_optimize_gaming
 # @DESCRIPTION:
 # Optimize the kernel for gaming performance for the top 1%.
-ot-kernel_optimize_gaming_tornament() {
+ot-kernel_optimize_gaming() {
+	local work_profile="${1}"
 ewarn
 ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
 ewarn
@@ -10554,8 +10512,12 @@ eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
 eerror
 		die
 	fi
-	if [[ "${OT_KERNEL_CPU_MICROCODE}" == "1" ]] ; then
-ewarn "Disabling microcode for OT_KERNEL_WORK_PROFILE=\"${work_profile}\".  If you do not like this, use the pro-gaming profile instead."
+	if [[ "${work_profile}" == "gaming-tournament" \
+		&& "${OT_KERNEL_CPU_MICROCODE}" == "1" ]] ; then
+ewarn
+ewarn "Disabling microcode for OT_KERNEL_WORK_PROFILE=\"${work_profile}\".  If"
+ewarn "you do not like this, use the pro-gaming profile instead."
+ewarn
 # Drops FPS.
 		ot-kernel_unset_configopt "CONFIG_MICROCODE"
 		ot-kernel_unset_configopt "CONFIG_MICROCODE_LATE_LOADING"
@@ -10584,6 +10546,24 @@ eerror
 				else
 					ot-kernel_unset_configopt "CONFIG_SCHED_MC_PRIO"
 				fi
+			fi
+		fi
+	fi
+
+# Avoid huge latency spike or trashing.
+	if has_version "sys-apps/systemd-utils" ; then
+		if has_version "sys-apps/systemd-utils[tmpfiles]" ; then
+			if tc-is-cross-compiler ; then
+ewarn
+ewarn "You need to disable the tmpfiles USE flag in sys-apps/systemd-utils to"
+ewarn "avoid middle of the game lag spike or match/game loss."
+ewarn
+			else
+eerror
+eerror "You need to disable the tmpfiles USE flag in sys-apps/systemd-utils to"
+eerror "avoid middle of the game lag spike or match/game loss."
+eerror
+				die
 			fi
 		fi
 	fi
@@ -10640,6 +10620,24 @@ ewarn "Disabling 16-bit support.  If you do not like this, disable rt from OT_KE
 
 # This may drain the battery faster.
 		ot-kernel_set_kconfig_kernel_cmdline "skew_tick=1"
+
+# Avoid huge latency spike or trashing.
+		if has_version "sys-apps/systemd-utils" ; then
+			if has_version "sys-apps/systemd-utils[tmpfiles]" ; then
+				if tc-is-cross-compiler ; then
+ewarn
+ewarn "You need to disable the tmpfiles USE flag in sys-apps/systemd-utils to"
+ewarn "avoid production quality failure/degration."
+ewarn
+				else
+eerror
+eerror "You need to disable the tmpfiles USE flag in sys-apps/systemd-utils to"
+eerror "avoid production quality failure/degration."
+eerror
+					die
+				fi
+			fi
+		fi
 	else
 # nosmt is resetted in ot-kernel_set_kconfig_hardening_level()
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "skew_tick=(0|1)"
