@@ -1742,10 +1742,10 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       dinit            y             n           n              p
       epoch            y             n           n           e 
       finit            y             n           n[1]       d   p
-      openrc[4]        y           full[3]       y          d  mps
+      openrc           y           full[3]       y          d  mps
       runit            y         partial[2]      n              p
       s6               y             n           n           e 
-      systemd[4]       y            full         y         Dd  mps    Support for on demand user or on demand socket services
+      systemd          y            full         y         Dd  mps    Support for on demand user or on demand socket services
       sysvinit         n             n           n            l
     
     Meaning:
@@ -1769,9 +1769,6 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       [2] - chroot yes, capabilities no
       [3] - there are more capabilities coverage with init files on systemd
             compared to OpenRC
-      [4] - it is mandatory to disable tmpfiles USE flag in systemd-utils
-            for realtime.  The periodic cleanup feature will ruin the
-            production, cause gaming loss, etc.
 
     Notes
 
@@ -1780,13 +1777,16 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       * If init= is provided by the bootloader, it will override this internal
         setting except when lockdown is enabled.
       * It is recommended to set it to auto and remove the init= from boot.
-      * The explicit values are provided for cross compiling.
-      * There are four s6 instructions.  Insane!  The s6 or auto options uses
-        the quckstart.html upstream instructions.
+      * It is *mandatory* to disable tmpfiles USE flag in systemd-utils for
+        realtime.  The periodic cleanup feature will ruin the production, cause
+        gaming loss, disrupt live performance, etc.
       * The speed of the init may vary on each machine based on several factors
         such as the starting order, enabled bit, service support for that init
         system.  It is possible to start the tty login before the blocking
         network service (e.g. NetworkManager, netifrc) start.
+      * The explicit values are provided for cross compiling.
+      * There are four s6 instructions.  Insane!  The s6 or auto options uses
+        the quckstart.html upstream instructions.
 
 
     See also
