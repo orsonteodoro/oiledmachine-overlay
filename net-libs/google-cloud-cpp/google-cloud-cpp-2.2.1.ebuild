@@ -11,6 +11,7 @@ SRC_URI="
 https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
 https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_COMMIT}.tar.gz -> googleapis-${GOOGLEAPIS_COMMIT}.tar.gz
 "
+# 4fc780c - fix: add missing <cstdint> includes
 
 DESCRIPTION="Google Cloud Client Library for C++"
 HOMEPAGE="https://cloud.google.com/"
@@ -43,6 +44,7 @@ DEPEND="
 DOCS=( README.md )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.2.1-no-download.patch"
+	"${FILESDIR}/${PN}-commit-4fc780c-backport-to-2.2.1.patch"
 )
 
 src_unpack() {

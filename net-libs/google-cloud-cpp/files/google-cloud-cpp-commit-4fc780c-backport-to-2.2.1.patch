@@ -1,0 +1,81 @@
+Backport to 2.2.1
+Original patch:  https://github.com/googleapis/google-cloud-cpp/commit/4fc780cb715e6dc7e041d1f6e0cf44ba933c770e
+diff -urp google-cloud-cpp-2.2.1.orig/google/cloud/internal/curl_handle.h google-cloud-cpp-2.2.1/google/cloud/internal/curl_handle.h
+--- google-cloud-cpp-2.2.1.orig/google/cloud/internal/curl_handle.h	2022-09-15 14:52:09.000000000 -0700
++++ google-cloud-cpp-2.2.1/google/cloud/internal/curl_handle.h	2024-01-10 00:16:45.429616401 -0800
+@@ -20,6 +20,7 @@
+ #include "google/cloud/version.h"
+ #include "absl/functional/function_ref.h"
+ #include <curl/curl.h>
++#include <cstdint>
+ #include <string>
+ #include <type_traits>
+ 
+diff -urp google-cloud-cpp-2.2.1.orig/google/cloud/internal/oauth2_credentials.h google-cloud-cpp-2.2.1/google/cloud/internal/oauth2_credentials.h
+--- google-cloud-cpp-2.2.1.orig/google/cloud/internal/oauth2_credentials.h	2022-09-15 14:52:09.000000000 -0700
++++ google-cloud-cpp-2.2.1/google/cloud/internal/oauth2_credentials.h	2024-01-10 00:17:01.393408968 -0800
+@@ -18,6 +18,7 @@
+ #include "google/cloud/status.h"
+ #include "google/cloud/status_or.h"
+ #include "google/cloud/version.h"
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ 
+Only in google-cloud-cpp-2.2.1/google/cloud/internal: oauth2_credentials.h.orig
+Only in google-cloud-cpp-2.2.1/google/cloud/internal: oauth2_credentials.h.rej
+diff -urp google-cloud-cpp-2.2.1.orig/google/cloud/internal/rest_response.h google-cloud-cpp-2.2.1/google/cloud/internal/rest_response.h
+--- google-cloud-cpp-2.2.1.orig/google/cloud/internal/rest_response.h	2022-09-15 14:52:09.000000000 -0700
++++ google-cloud-cpp-2.2.1/google/cloud/internal/rest_response.h	2024-01-10 00:16:45.429616401 -0800
+@@ -19,6 +19,7 @@
+ #include "google/cloud/options.h"
+ #include "google/cloud/status_or.h"
+ #include "google/cloud/version.h"
++#include <cstdint>
+ #include <map>
+ 
+ namespace google {
+diff -urp google-cloud-cpp-2.2.1.orig/google/cloud/pubsub/ack_handler.h google-cloud-cpp-2.2.1/google/cloud/pubsub/ack_handler.h
+--- google-cloud-cpp-2.2.1.orig/google/cloud/pubsub/ack_handler.h	2022-09-15 14:52:09.000000000 -0700
++++ google-cloud-cpp-2.2.1/google/cloud/pubsub/ack_handler.h	2024-01-10 00:16:45.429616401 -0800
+@@ -17,6 +17,7 @@
+ 
+ #include "google/cloud/pubsub/version.h"
+ #include "google/cloud/status.h"
++#include <cstdint>
+ #include <memory>
+ 
+ namespace google {
+diff -urp google-cloud-cpp-2.2.1.orig/google/cloud/storage/iam_policy.h google-cloud-cpp-2.2.1/google/cloud/storage/iam_policy.h
+--- google-cloud-cpp-2.2.1.orig/google/cloud/storage/iam_policy.h	2022-09-15 14:52:09.000000000 -0700
++++ google-cloud-cpp-2.2.1/google/cloud/storage/iam_policy.h	2024-01-10 00:16:45.429616401 -0800
+@@ -17,6 +17,7 @@
+ 
+ #include "google/cloud/storage/version.h"
+ #include "google/cloud/status_or.h"
++#include <cstdint>
+ #include <memory>
+ #include <string>
+ #include <vector>
+diff -urp google-cloud-cpp-2.2.1.orig/google/cloud/storage/internal/hash_function_impl.h google-cloud-cpp-2.2.1/google/cloud/storage/internal/hash_function_impl.h
+--- google-cloud-cpp-2.2.1.orig/google/cloud/storage/internal/hash_function_impl.h	2022-09-15 14:52:09.000000000 -0700
++++ google-cloud-cpp-2.2.1/google/cloud/storage/internal/hash_function_impl.h	2024-01-10 00:16:45.429616401 -0800
+@@ -18,6 +18,7 @@
+ #include "google/cloud/storage/internal/hash_function.h"
+ #include "google/cloud/storage/version.h"
+ #include <openssl/evp.h>
++#include <cstdint>
+ #include <map>
+ #include <memory>
+ #include <string>
+diff -urp google-cloud-cpp-2.2.1.orig/google/cloud/storage/internal/object_read_source.h google-cloud-cpp-2.2.1/google/cloud/storage/internal/object_read_source.h
+--- google-cloud-cpp-2.2.1.orig/google/cloud/storage/internal/object_read_source.h	2022-09-15 14:52:09.000000000 -0700
++++ google-cloud-cpp-2.2.1/google/cloud/storage/internal/object_read_source.h	2024-01-10 00:16:45.433616349 -0800
+@@ -20,6 +20,7 @@
+ #include "google/cloud/storage/version.h"
+ #include "google/cloud/status_or.h"
+ #include "absl/types/optional.h"
++#include <cstdint>
+ 
+ namespace google {
+ namespace cloud {
