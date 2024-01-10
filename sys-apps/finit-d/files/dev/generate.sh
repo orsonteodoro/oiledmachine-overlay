@@ -501,7 +501,7 @@ _stop_control_group() {
 	local x
 	for x in \${pids_cgroup_unit} ; do
 		ps \${x} >/dev/null || continue
-		kill -s ${sig} \${x}
+		kill -s \${sig} \${x}
 	done
 }
 
@@ -512,7 +512,7 @@ _stop_mixed() {
 	else
 		sig="SIGTERM"
 	fi
-	kill -s ${sig} \${MAINPID}
+	kill -s \${sig} \${MAINPID}
 	local x
 	for x in \${pids_cgroup_unit} ; do
 		[ "\${x}" = \${MAINPID} ] && continue
@@ -528,7 +528,7 @@ _stop_process() {
 	else
 		sig="SIGTERM"
 	fi
-	kill -s ${sig} \${MAINPID}
+	kill -s \${sig} \${MAINPID}
 }
 
 _stop_sighup() {
@@ -550,7 +550,7 @@ _stop_final_sigkill() {
 	local x
 	for x in \${pids_cgroup_unit} ; do
 		ps \${x} >/dev/null || continue
-		kill -s ${sig} \${x}
+		kill -s \${sig} \${x}
 	done
 }
 
