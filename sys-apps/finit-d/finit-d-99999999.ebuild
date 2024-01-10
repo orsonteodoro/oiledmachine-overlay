@@ -40,6 +40,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	sys-libs/libcap
+	sys-process/procps
 	dash? (
 		app-shells/dash[libedit]
 	)
