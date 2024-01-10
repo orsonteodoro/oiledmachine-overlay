@@ -1745,7 +1745,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       openrc           y           full[3]       y          d  mps
       runit            y         partial[2]      n              p
       s6               y             n           n           e 
-      systemd          y            full         y         Dd  mps    Support for on demand user or on demand socket services
+      systemd          y            full         y         Dd  mps    Support for on demand services for user or sockets, numa scheduling
       sysvinit         n             n           n            l
     
     Meaning:
