@@ -360,9 +360,11 @@ start_stop_daemon() {
 	local background=0
 	local capabilities=""
 	local daemon=0
+	local capsh_pid=0
 	local chdir_path=""
 	local chroot_path=""
 	local chuid=""
+	local chrt_reset_on_fork=0
 	local dirmode=""
 	local exec_path=""
 	local group=""
@@ -378,14 +380,13 @@ start_stop_daemon() {
 	local phase=""
 	local quiet=0
 	local remove_pidfile=0
+	local service_pid=0
 	local signal=""
 	local status=0
 	local stderr=""
 	local stdout=""
 	local umask=""
 	local user=""
-	local service_pid=0
-	local capsh_pid
 	while [ -n "$1" ] ; do
 		case $1 in
 			--)
@@ -416,6 +417,10 @@ start_stop_daemon() {
 			--chroot|-r)
 				shift
 				chroot_path="$1"
+				;;
+			--chrt-reset-on-fork)
+				shift
+				chrt_reset_on_fork="$1"
 				;;
 			--chuid|-c)
 				shift
@@ -772,7 +777,11 @@ start_stop_daemon() {
 		if [ -z "${priority}" ] ; then
 			priority=0
 		fi
-		chrt --${policy} -p $priority ${service_pid}
+		local reset_on_fork=""
+		if [ "${chrt_reset_on_fork}" = "true" ] ; then
+			reset_on_fork="-R"
+		fi
+		chrt ${reset_on_fork} --${policy} -p $priority ${service_pid}
 	fi
 
 	if [ -n "$nicelevel" ] ; then
@@ -809,28 +818,48 @@ supervise_daemon() {
 default_start() {
 	local args=""
 	if [ "${command_background}" = "true" ] || [ "${command_background}" = "1" ] ; then
-		args="--background"
+		args="${args} --background"
 	fi
 	local prefix=$(echo "${ambient_capabilities}" | cut -c 1)
 	if [ -n "${ambient_capabilities}" ] && [ "${prefix}" != "-" ] ; then
-		args="--ambient-capabilities ${ambient_capabilities}"
+		args="${args} --ambient-capabilities ${ambient_capabilities}"
 	fi
 	if [ -n "${not_ambient_capabilities}" ] && [ "${prefix}" = "-" ] ; then
-		args="--not-ambient-capabilities ${not_ambient_capabilities}"
+		args="${args} --not-ambient-capabilities ${not_ambient_capabilities}"
 	fi
 	local prefix=$(echo "${bounding_capabilities}" | cut -c 1)
 	if [ -n "${bounding_capabilities}" ] && [ "${prefix}" != "-" ] ; then
-		args="--bounding-capabilities ${bounding_capabilities}"
+		args="${args} --bounding-capabilities ${bounding_capabilities}"
 	fi
 	if [ -n "${not_bounding_capabilities}" ] && [ "${prefix}" = "-" ] ; then
-		args="--not-bounding-capabilities ${not_bounding_capabilities}"
+		args="${args} --not-bounding-capabilities ${not_bounding_capabilities}"
 	fi
 	if [ -n "${user}" ] ; then
-		args="--user ${user} ${args}"
+		args="${args} --user ${user} ${args}"
 	fi
 	if [ -n "${group}" ] ; then
-		args="--group ${group} ${args}"
+		args="${args} --group ${group} ${args}"
 	fi
+	if [ -n "${nice}" ] ; then
+		args="${args} --nicelevel ${nice}"
+	fi
+
+	if [ -n "${cpu_scheduling_policy}" ] && [ -z "${cpu_scheduling_priority}" ] ; then
+		args="${args} --procsched ${cpu_scheduling_policy}"
+	elif [ -n "${cpu_scheduling_policy}" ] && [ -n "${cpu_scheduling_priority}" ] ; then
+		args="${args} --procsched ${cpu_scheduling_policy}:${cpu_scheduling_priority}"
+	fi
+
+	if [ -n "${io_scheduling_class}" ] && [ -z "${io_scheduling_priority}" ] ; then
+		args="${args} --iosched ${io_scheduling_class}"
+	elif [ -n "${io_scheduling_class}" ] && [ -n "${io_scheduling_priority}" ] ; then
+		args="${args} --iosched ${io_scheduling_class}:${io_scheduling_priority}"
+	fi
+
+	if [ "${cpu_scheduling_reset_on_fork}" = "true" ] ; then
+		args="${args} --chrt-reset-on-fork"
+	fi
+
 	start_stop_daemon \
 		--exec "${command}" \
 		${start_stop_daemon_args} \

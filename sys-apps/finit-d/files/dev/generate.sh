@@ -629,9 +629,6 @@ start_scheduler() {
 		MAINPID=\$(pgrep "\${exec_start_exe}")
 	fi
 	[ -z "\${MAINPID}" ] && return 0
-	if [ -n "\${nice}" ] ; then
-		renice -n \${nice} \${MAINPID}
-	fi
 	if [ -n "\${cpu_affinity}" ] ; then
 		local cpu_list=""
 		if echo "\${cpu_affinity}" | grep -q " " ; then
@@ -640,28 +637,6 @@ start_scheduler() {
 			cpu_list="\${cpu_affinity}"
 		fi
 		taskset --cpu-list ${cpu_list} -p \${MAINPID}
-	fi
-	if [ -n "\${cpu_scheduling_policy}" ] || [ -n "\${cpu_scheduling_priority}" ] ; then
-		local options=""
-		local priority=""
-		[ -n "\${cpu_scheduling_reset_on_fork}" ] && options="${options} -R"
-		[ -n "\${cpu_scheduling_policy}" ] && options="${options} --\${cpu_scheduling_policy}"
-		chrt \${options} -p \${priority} \${MAINPID}
-	fi
-	if [ -n "\${io_scheduling_class}" ] || [ -n "\${io_scheduling_priority}" ] ; then
-		local level=""
-		if [ -n "\${io_scheduling_priority}" ] ; then
-			level="-n \${io_scheduling_priority}"
-		fi
-		if [ "\${io_scheduling_class}" = "realtime" ] ; then
-			ionice -c 1 \${level} -p \${MAINPID}
-		elif [ "\${io_scheduling_class}" = "best-effort" ] ; then
-			ionice -c 2 \${level} -p \${MAINPID}
-		elif [ "\${io_scheduling_class}" = "idle" ] ; then
-			ionice -c 3 \${level} -p \${MAINPID}
-		elif [ -n "\${io_scheduling_priority}" ] ; then
-			ionice \${level} -p \${MAINPID}
-		fi
 	fi
 	if [ -n "\${numa_mask}" ] ; then
 		:;
