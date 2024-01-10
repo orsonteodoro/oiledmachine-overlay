@@ -1742,10 +1742,10 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       dinit            y             n           n              p
       epoch            y             n           n           e 
       finit            y             n           n[1]       d   p
-      openrc           y           full[3]       y          d  mps
+      openrc[4]        y           full[3]       y          d  mps
       runit            y         partial[2]      n              p
       s6               y             n           n           e 
-      systemd          y            full         n         Dd   ps    Support for on demand user or on demand socket services
+      systemd[4]       y            full         y         Dd  mps    Support for on demand user or on demand socket services
       sysvinit         n             n           n            l
     
     Meaning:
@@ -1760,7 +1760,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
        d - For desktop users
        e - For embedded
        l - For legacy or software museum
-       m - For music production
+       m - For music production[4]
        p - For non-sensitive data servers such as dedicated game server
        s - For sensitive data servers on LAN server, home server, SOHO,
            SSH server
@@ -1769,6 +1769,9 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       [2] - chroot yes, capabilities no
       [3] - there are more capabilities coverage with init files on systemd
             compared to OpenRC
+      [4] - it is mandatory to disable tmpfiles USE flag in systemd-utils
+            for realtime.  The periodic cleanup feature will ruin the
+            production, cause gaming loss, etc.
 
     Notes
 
