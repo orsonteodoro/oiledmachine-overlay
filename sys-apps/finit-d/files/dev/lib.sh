@@ -360,6 +360,7 @@ start_stop_daemon() {
 	local background=0
 	local capabilities=""
 	local daemon=0
+	local cpu_affinity=""
 	local capsh_pid=0
 	local chdir_path=""
 	local chroot_path=""
@@ -421,6 +422,10 @@ start_stop_daemon() {
 			--chuid|-c)
 				shift
 				chuid="$1"
+				;;
+			--cpu-affinity)
+				shift
+				cpu_affinity="$1"
 				;;
 			--daemon)
 				daemon=1
@@ -787,6 +792,12 @@ start_stop_daemon() {
 	if [ -n "$nicelevel" ] ; then
 		renice -n $nicelevel -p ${service_pid}
 	fi
+
+
+	if [ -n "\${cpu_affinity}" ] ; then
+		taskset --cpu-list ${cpu_afinity} -p \${service_pid}
+	fi
+
 	if [ "${phase}" = "start" ] ; then
 		if ! is_pid_alive $service_pid ; then
 			echo "Did not detect pid"
@@ -858,6 +869,10 @@ default_start() {
 
 	if [ "${cpu_scheduling_reset_on_fork}" = "true" ] ; then
 		args="${args} --sched-reset-on-fork"
+	fi
+
+	if [ -n "${cpu_affinity}" ] ; then
+		args="${args} --cpu-affinity ${cpu_affinity}"
 	fi
 
 	start_stop_daemon \

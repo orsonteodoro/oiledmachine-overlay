@@ -451,6 +451,15 @@ gen_systemd_wrapper() {
 		exec_start_exe=""
 	fi
 
+	if [ -n "${cpu_affinity}" ] ; then
+		if echo "${cpu_affinity}" | grep -q " " ; then
+			cpu_affinity=$(echo "${cpu_affinity}" | tr " " ",")
+		elif echo "${cpu_affinity}" | grep -q "," ; then
+			:;
+		fi
+	fi
+
+
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 #!${FINIT_SHELL}
 . /lib/finit/scripts/lib/lib.sh
@@ -629,15 +638,6 @@ start_scheduler() {
 		MAINPID=\$(pgrep "\${exec_start_exe}")
 	fi
 	[ -z "\${MAINPID}" ] && return 0
-	if [ -n "\${cpu_affinity}" ] ; then
-		local cpu_list=""
-		if echo "\${cpu_affinity}" | grep -q " " ; then
-			cpu_list=$(echo "\${cpu_affinity}" | tr " " ",")
-		elif echo "\${cpu_affinity}" | grep -q "," ; then
-			cpu_list="\${cpu_affinity}"
-		fi
-		taskset --cpu-list ${cpu_list} -p \${MAINPID}
-	fi
 	if [ -n "\${numa_mask}" ] ; then
 		:;
 	fi
