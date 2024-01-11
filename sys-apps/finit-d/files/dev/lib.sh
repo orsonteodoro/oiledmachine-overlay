@@ -222,6 +222,7 @@ cat <<EOF >"${chroot_dir}/tmp/run.sh"
 background=${background}
 capabilities="${capabilities}"
 chdir_path="${chdir_path}"
+cpu_affinity="${cpu_affinity}"
 daemon=${daemon}
 exec_path="${exec_path}"
 exec_args="${exec_args}"
@@ -254,11 +255,11 @@ chroot_start() {
 	local ug_args=""
 	if [ -n "\${user}" ] ; then
 		local uid=\$(getent passwd "\${user}" | cut -f 3 -d ":")
-		ug_args="\${ug_args} --uid=\"\${uid}\""
+		ug_args="\${ug_args} --uid=\${uid}"
 	fi
 	if [ -z "\${user}" ] ; then
 		local uid=\$(getent passwd "root" | cut -f 3 -d ":")
-		ug_args="\${ug_args} --uid=\"\${uid}\""
+		ug_args="\${ug_args} --uid=\${uid}"
 	fi
 	if [ -n "\${group}" ] ; then
 		local gid=\$(getent group "\${group}" | cut -f 3 -d ":")
@@ -274,15 +275,15 @@ chroot_start() {
 	done
 
 	if [ -n "${umask}" ] ; then
-		umask ${umask}
+		umask \${umask}
 	fi
 
 	# Avoid racing bug without altering last PID
-	capsh \${ug_args} --shell="\${exec_path}" -- "\$@" &
-	capsh_pid=\$!
+	sudo \${ug_args} -- "\${exec_path}" \$@ &
+	sudo_pid=\$!
 	local c=0
 	while [ \$c -lt 1000000 ] ; do
-		service_pid=\$(pgrep -P \${capsh_pid} 2>/dev/null)
+		service_pid=\$(pgrep -P \${sudo_pid} 2>/dev/null)
 		[ -z "\${service_pid}" ] && continue
 		[ \$service_pid -gt 0 ] && break
 		c=\$(( \${c} + 1 ))
@@ -317,6 +318,10 @@ chroot_start() {
 
 	if [ -n "\$nicelevel" ] ; then
 		renice -n \$nicelevel -p \${service_pid}
+	fi
+
+	if [ -n "\${cpu_affinity}" ] ; then
+		taskset --cpu-list \${cpu_afinity} -p \${service_pid}
 	fi
 
 	if [ "\${phase}" = "start" ] ; then
@@ -361,7 +366,7 @@ start_stop_daemon() {
 	local capabilities=""
 	local daemon=0
 	local cpu_affinity=""
-	local capsh_pid=0
+	local sudo_pid=0
 	local chdir_path=""
 	local chroot_path=""
 	local chuid=""
@@ -555,9 +560,9 @@ start_stop_daemon() {
 		shift
 	done
 
-	if [[ -n "${chuid}" ]] ; then
+	if [ -n "${chuid}" ] ; then
 		user=$(echo "${chuid}" | cut -f 1 -d ":")
-		if [[ -n "${}"
+		group=$(echo "${chuid}" | cut -f 2 -d ":")
 	fi
 
 	local _pid=0
@@ -592,15 +597,15 @@ start_stop_daemon() {
 			local ug_args=""
 			if [ -n "${user}" ] ; then
 				local uid=$(getent passwd "${user}" | cut -f 3 -d ":")
-				ug_args="${ug_args} --uid=\"${uid}\""
+				ug_args="${ug_args} -u ${uid}"
 			fi
 			if [ -z "${user}" ] ; then
 				local uid=$(getent passwd "root" | cut -f 3 -d ":")
-				ug_args="${ug_args} --uid=\"${uid}\""
+				ug_args="${ug_args} -u root"
 			fi
 			if [ -n "${group}" ] ; then
 				local gid=$(getent group "${group}" | cut -f 3 -d ":")
-				 ug_args="${ug_args} --gid=${gid}"
+				 ug_args="${ug_args} -g ${gid}"
 			fi
 
 			# TODO:  capabilities
@@ -616,11 +621,11 @@ start_stop_daemon() {
 			fi
 
 			# Avoid racing bug without altering last PID
-			capsh ${ug_args} --shell="${exec_path}" -- "$@" &
-			capsh_pid=$!
+			sudo ${ug_args} -- "${exec_path}" $@ &
+			sudo_pid=$!
 			local c=0
 			while [ $c -lt 1000000 ] ; do
-				service_pid=$(pgrep -P ${capsh_pid} 2>/dev/null)
+				service_pid=$(pgrep -P ${sudo_pid} 2>/dev/null)
 				[ -z "${service_pid}" ] && continue
 				[ $service_pid -gt 0 ] && break
 				c=$(( ${c} + 1 ))
@@ -793,8 +798,8 @@ start_stop_daemon() {
 	fi
 
 
-	if [ -n "\${cpu_affinity}" ] ; then
-		taskset --cpu-list ${cpu_afinity} -p \${service_pid}
+	if [ -n "${cpu_affinity}" ] ; then
+		taskset --cpu-list ${cpu_afinity} -p ${service_pid}
 	fi
 
 	if [ "${phase}" = "start" ] ; then
@@ -875,6 +880,7 @@ default_start() {
 	fi
 
 	start_stop_daemon \
+		--start \
 		--exec "${command}" \
 		${start_stop_daemon_args} \
 		${args} \

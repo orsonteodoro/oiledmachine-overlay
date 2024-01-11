@@ -39,6 +39,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	app-admin/sudo
 	sys-libs/libcap
 	sys-process/procps
 	dash? (

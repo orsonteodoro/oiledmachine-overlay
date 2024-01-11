@@ -459,9 +459,15 @@ gen_systemd_wrapper() {
 		fi
 	fi
 
+	if [[ "${type}" != "oneshot" ]] && echo -e "${exec_starts}" | sed -e "/^$/d" | wc -l | grep -q "1" ; then
+		command=$(echo -e "${exec_starts}" | sed -e "/^$/d" | head -n 1 | cut -f 1 -d " ")
+		command_args=$(echo -e "${exec_starts}" | sed -e "/^$/d" | head -n 1 | cut -f 2- -d " ")
+		[[ "${command}" == "${command_args}" ]] && command_args=""
+	fi
 
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 #!${FINIT_SHELL}
+FN="\${1}"
 . /lib/finit/scripts/lib/lib.sh
 svc_name="${svc_name}"
 ambient_capabilities="${ambient_capabilities}"
@@ -632,7 +638,7 @@ start_ulimit() {
 start_scheduler() {
 	if [ "\${type}" = "oneshot" ] ; then
 		return 0
-	elif [[ -n "\${pidfile}" ]] ; then
+	elif [ -n "\${pidfile}" ] ; then
 		MAINPID=\$(cat "\${pidfile}")
 	else
 		MAINPID=\$(pgrep "\${exec_start_exe}")
@@ -762,11 +768,11 @@ stop() {
 	else
 		MAINPID=\$(pgrep "\${exec_start_exe}")
 	fi
-	local main_cgroup_name=$(ps -p \${MAINPID} -o pid,cgroup \
+	local main_cgroup_name=\$(ps -p \${MAINPID} -o pid,cgroup \
 		| tail -n 1 \
 		| cut -f 2 -d " ")
-	local cgroup_unit_pids=$(ps -p \${MAINPID} -eo pid,cgroup \
-		| grep "${main_cgroup_name}" \
+	local cgroup_unit_pids=\$(ps -p \${MAINPID} -eo pid,cgroup \
+		| grep "\${main_cgroup_name}" \
 		| cut -f 1 -d " ")
 
 	is_cgroup_unit_alive || return 0
@@ -820,7 +826,7 @@ stop() {
 	is_cgroup_unit_alive || return 0
 
 	return 0
-)
+}
 
 stop_post() {
 	stop_dirs
@@ -834,7 +840,7 @@ reload() {
 		MAINPID=\$(pgrep "\${exec_start_exe}")
 	fi
 	$(echo -e "${exec_reloads}")
-)
+}
 . /lib/finit/scripts/lib/event.sh
 EOF
 }
@@ -858,23 +864,24 @@ convert_systemd() {
 	echo >> "${NEEDS_DBUS_PATH}" || die "ERR:  line number - $LINENO"
 
 	local init_path
-	for init_path in $(find /lib/systemd/system /usr/lib/systemd/system -name "*.service") ; do
+	local init_path_orig
+	for init_path_orig in $(find /lib/systemd/system /usr/lib/systemd/system -name "*.service") ; do
+		[[ "${init_path_orig}" == "./" ]] && continue
 		local init_path_tmp=$(mktemp)
-		cat "${init_path}" > "${init_path_tmp}"
-		init_path="${init_path_tmp}"
-		perl -pe 's/\\\n//' -i "${init_path}" # Remove hardbreak
-		local svc_name=$(basename "${init_path}" | sed -e "s|\.service$||g") || die "ERR:  line number - $LINENO"
-		[[ "${init_path}" == "./" ]] && continue
-		local pkg=$(grep -l $(realpath "${init_path}") $(realpath "/var/db/pkg/"*"/"*"/CONTENTS") | cut -f 5-6 -d "/")
+		cat "${init_path_orig}" > "${init_path_tmp}"
+		local svc_name=$(basename "${init_path_orig}" | sed -e "s|\.service$||g") || die "ERR:  line number - $LINENO"
+		local pkg=$(grep -l $(realpath "${init_path_orig}") $(realpath "/var/db/pkg/"*"/"*"/CONTENTS") | cut -f 5-6 -d "/")
 		if [[ ! -f $(realpath "/var/db/pkg/${pkg}/environment.bz2") ]] ; then
 			local c="unknown"
 			local pn="unknown"
 			pkg="${c}/${pn}"
-			echo "Missing environment.bz2 for pkg:${pkg} for ${init_path}"
+			echo "Missing environment.bz2 for pkg:${pkg} for ${init_path_orig}"
 		else
 			local c=$(bzcat "/var/db/pkg/${pkg}/environment.bz2" | grep "declare -x CATEGORY=" | cut -f 2 -d '"')
 			local pn=$(bzcat "/var/db/pkg/${pkg}/environment.bz2" | grep "declare -x PN=" | cut -f 2 -d '"')
 		fi
+		init_path="${init_path_tmp}"
+		perl -pe 's/\\\n//' -i "${init_path}" # Remove hardbreak
 
 		local pidfile=""
 		if grep -q "^PIDFile" "${init_path}" ; then
