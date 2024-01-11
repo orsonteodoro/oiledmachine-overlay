@@ -1149,8 +1149,9 @@ convert_systemd() {
 			runlevels="2345"
 		fi
 
-		local cond
-		if grep -q -e "^StandardOutput=syslog" "${init_path}" ; then
+		if [[ "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
+			:;
+		elif grep -q -e "^StandardOutput=syslog" "${init_path}" ; then
 			cond="${cond},syslogd"
 		elif grep -q -e "^StandardError=syslog" "${init_path}" ; then
 			cond="${cond},syslogd"
