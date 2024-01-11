@@ -537,7 +537,7 @@ echo "pidfile case Z:  init_path - ${init_path}"
 			fi
 
 			needs_openrc_default_start() {
-				if ! grep -q -e "^start" "${init_path}" && grep -q -e "^command=" "${init_path}" ; then
+				if ! grep -q -e "^start" "${init_path}" && ( grep -q -e "^command=" "${init_path}" || grep -F -e ': ${command=' "${init_path}" ) ; then
 					return 0
 				fi
 				return 1
