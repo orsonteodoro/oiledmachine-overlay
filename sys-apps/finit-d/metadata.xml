@@ -12,6 +12,10 @@
 
   Build time environment variables:
 
+  FINIT_BLACKLIST_PKGS - Space separated category/name to not install.
+
+  FINIT_BLACKLIST_SVCNAMES - Space separated service names to not install.
+
   FINIT_COND_NETWORK - Use a network expression as the event to trigger network
   is up.
 
@@ -32,6 +36,8 @@
 
   Examples:
 
+    FINIT_BLACKLIST_PKGS="net-misc/dropbear net-vpn/openvpn"
+    FINIT_BLACKLIST_SVCNAMES="varnishlog"
     FINIT_COND_NETWORK="net/lo/running"
     FINIT_COND_NETWORK="net/wlan0/running"
     FINIT_COND_LOGGER="rsyslogd"

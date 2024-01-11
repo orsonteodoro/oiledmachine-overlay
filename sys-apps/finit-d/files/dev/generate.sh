@@ -356,7 +356,7 @@ fi
 			echo "Generating ${c}/${pn}/${svc_name}.conf"
 			cat /dev/null > "${init_conf}"
 			if grep -q -e "^start_pre" "${init_path}" ; then
-				echo "run [${runlevels}] name:${svc_name}-pre-start /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre-start" >> "${init_conf}"
+				echo "run [${runlevels}] name:${svc_name}-pre /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre" >> "${init_conf}"
 			fi
 
 			needs_openrc_default_start() {
@@ -377,10 +377,10 @@ fi
 					# Based on https://github.com/troglobit/finit/blob/4.6/src/service.c#L1443
 					user_group="@root:${group}"
 				fi
-				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name} start" >> "${init_conf}"
+				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
-				echo "run [${runlevels}] name:${svc_name}-post-start /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post-start" >> "${init_conf}"
+				echo "run [${runlevels}] name:${svc_name}-post /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_pre" "${init_path}" ; then
 				echo "run [0] name:${svc_name}-pre-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_pre\" -- ${svc_name} pre-stop" >> "${init_conf}"
@@ -1306,7 +1306,7 @@ convert_systemd() {
 		gen_systemd_wrapper
 
 		if (( "${#exec_start_pres}" > 0 )) ; then
-			echo "run [${runlevels}] name:${pn}-pre-start /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre-start" >> "${init_conf}"
+			echo "run [${runlevels}] name:${pn}-pre /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre" >> "${init_conf}"
 		fi
 		if (( "${#exec_starts}" > 0 )) ; then
 			[[ -n "${environment_file}" ]] && environment_file="env:${environment_file}"
@@ -1320,16 +1320,16 @@ convert_systemd() {
 				user_group="@:${group}"
 			fi
 			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
-				echo "task [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name} start" >> "${init_conf}"
+				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif [[ "${type}" == "oneshot" ]] ; then
 				# It is unknown if they must be run sequentially if more than 1.
-				echo "run [${runlevels}] ${cond} ${user_group} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name} start" >> "${init_conf}"
+				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			else
-				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name}-start ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name} start" >> "${init_conf}"
+				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
-			echo "run [${runlevels}] name:${svc_name}-post-start /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_post -- ${svc_name} post-start" >> "${init_conf}"
+			echo "run [${runlevels}] name:${svc_name}-post /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_post -- ${svc_name} post" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_pres}" > 0 )) ; then
 			echo "run [0] name:${svc_name}-pre-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop_pre -- ${svc_name} pre-stop" >> "${init_conf}"

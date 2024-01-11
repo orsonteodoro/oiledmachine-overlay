@@ -282,11 +282,13 @@ chroot_start() {
 	sudo \${ug_args} -- "\${exec_path}" \$@ &
 	sudo_pid=\$!
 	local c=0
-	while [ \$c -lt 1000000 ] ; do
+	while [ \$c -lt 100 ] ; do
 		service_pid=\$(pgrep -P \${sudo_pid} 2>/dev/null)
-		[ -z "\${service_pid}" ] && continue
-		[ \$service_pid -gt 0 ] && break
+		if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
+			break
+		fi
 		c=\$(( \${c} + 1 ))
+		sleep 0.1
 	done
 
 	if [ -z "\${service_pid}" ] ; then
@@ -624,11 +626,13 @@ start_stop_daemon() {
 			sudo ${ug_args} -- "${exec_path}" $@ &
 			sudo_pid=$!
 			local c=0
-			while [ $c -lt 1000000 ] ; do
+			while [ $c -lt 100 ] ; do
 				service_pid=$(pgrep -P ${sudo_pid} 2>/dev/null)
-				[ -z "${service_pid}" ] && continue
-				[ $service_pid -gt 0 ] && break
+				if [ -n "${service_pid}" ] && [ $service_pid -gt 0 ] ; then
+					break
+				fi
 				c=$(( ${c} + 1 ))
+				sleep 0.1
 			done
 
 			if [ -z "${service_pid}" ] ; then
@@ -886,4 +890,21 @@ default_start() {
 		${args} \
 		-- \
 		${command_args}
+}
+
+yesno() {
+	local val="${1}"
+	ret=0
+	case ${val} in
+		Y*|y*)
+			ret=1
+			;;
+		N*|n*)
+			ret=0
+			;;
+		*)
+			ret=0
+			;;
+	esac
+	return ${ret}
 }

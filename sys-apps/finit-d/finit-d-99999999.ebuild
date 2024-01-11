@@ -143,6 +143,28 @@ install_lib() {
 	fperms 0750 "/lib/finit/scripts/lib/${script}"
 }
 
+is_blacklisted_pkg() {
+	local pkg="${1}"
+	local x
+	for x in ${FINIT_BLACKLIST_PKGS} ; do
+		if [[ "${pkg}" == "${x}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+is_blacklisted_svc() {
+	local svc="${1}"
+	local x
+	for x in ${FINIT_BLACKLIST_SVCNAMES} ; do
+		if [[ "${pkg}" == "${x}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 src_install() {
 	local PKGS=( $(cat "${WORKDIR}/pkgs.txt") )
 	local pkgs
@@ -150,10 +172,12 @@ src_install() {
 		# Duplicate, already done by finit
 		[[ "${pkg}" == "sys-apps/dbus" ]] && continue
 		[[ "${pkg}" == "sys-fs/udev-init-scripts" ]] && continue
+		is_blacklisted_pkg "${pkg}" && continue
 
 		insinto "/etc/finit.d/available/${pkg}"
 		pushd "${WORKDIR}/confs/${pkg}" || die
 			for svc in $(ls) ; do
+				is_blacklisted_svc "${svc}" && continue
 				doins "${svc}"
 				dodir "/etc/finit.d/enabled"
 				dosym \
