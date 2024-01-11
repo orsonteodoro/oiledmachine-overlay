@@ -336,7 +336,7 @@ fi
 			local notify=""
 			if grep -q -E -e '^pidfile=["]?[$].*:-' "${init_path}" ; then
 echo "pidfile case A:  init_path - ${init_path}"
-				local path=$(grep -E -e '^pidfile=["]?[$].*:-' "${init_conf}" | cut -f 2 -d "-" | sed -e 's|["]||g' -e 's|}$||g')
+				local path=$(grep -E -e '^pidfile=["]?[$].*:-' "${init_path}" | cut -f 2 -d "-" | sed -e 's|["]||g' -e 's|}$||g')
 				if (( ${create_pid} == 1 )) ; then
 					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
 					# Case:  pidfile="${PIDFILE:-/run/service.pid}"
