@@ -897,13 +897,13 @@ yesno() {
 	local ret=0
 	case ${val} in
 		Y*|y*)
-			ret=1
+			ret=0
 			;;
 		N*|n*)
-			ret=0
+			ret=1
 			;;
 		*)
-			ret=0
+			ret=1
 			;;
 	esac
 	return ${ret}
