@@ -322,24 +322,35 @@ fi
 				# start-stop-daemon ... --make-pidfile
 				pidfile="pid:"$(grep -r -e "^pidfile=[$].*:-" "${init_path}" | cut -f 2 -d "-" | sed -e 's|["{}]||g')
 				notify="notify:pid"
-			elif grep -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" ; then
+			elif grep -q -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" \
+				&& ! grep -q -e "--make-pidfile" "${init_path}" ; then
 				# Case:  pidfile="${PKG_PIDFILE}"
 				# Any value can be used for PKG_PIDFILE if
 				# : ${PKG_PIDFILE:=/run/${svc_name}.pid}
 				local varname=$(grep -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" | sed -E -e "s|pidfile=||g" -e 's|"||g' -e "s|[$][{]||" -e "s|[}]||g")
 				echo "set ${varname}=/run/${svc_name}" >> "${init_conf}"
+				pidfile='pid:!${'${varname}'}'
 				notify="notify:pid"
-			elif grep -q -e "--pidfile" "${init_path}" \
-				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  \
+			elif grep -q -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" \
 				&& grep -q -e "--make-pidfile" "${init_path}" ; then
-				# Case:  start-stop-daemon ... --make-pidfile --pidfile /run/service.pid
-				pidfile="pid:"$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
+				# Case:  pidfile="${PKG_PIDFILE}"
+				# Any value can be used for PKG_PIDFILE if
+				# : ${PKG_PIDFILE:=/run/${svc_name}.pid}
+				local varname=$(grep -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" | sed -E -e "s|pidfile=||g" -e 's|"||g' -e "s|[$][{]||" -e "s|[}]||g")
+				echo "set ${varname}=/run/${svc_name}" >> "${init_conf}"
+				pidfile='pid:${'${varname}'}'
 				notify="notify:pid"
 			elif grep -q -e "--pidfile" "${init_path}" \
 				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  \
 				&& ! grep -q -e "--make-pidfile" "${init_path}" ; then
 				# Case:  start-stop-daemon ... --pidfile /run/service.pid
 				pidfile="pid:!"$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
+				notify="notify:pid"
+			elif grep -q -e "--pidfile" "${init_path}" \
+				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  \
+				&& grep -q -e "--make-pidfile" "${init_path}" ; then
+				# Case:  start-stop-daemon ... --make-pidfile --pidfile /run/service.pid
+				pidfile="pid:"$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
 				notify="notify:pid"
 			elif grep -q -e "^pidfile=\"" "${init_path}" ; then
 				# Case:  pidfile="/run/service.pid"
