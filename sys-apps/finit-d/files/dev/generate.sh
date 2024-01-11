@@ -293,10 +293,14 @@ fi
 			fi
 
 			if grep -q -e "need.*logger" "${init_path}" ; then
-				if [[ -n "${cond}" ]] ; then
-					cond="${cond},${FINIT_LOGGER}"
-				else
+				if [[ -n "${cond}" && "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
 					cond="${cond}"
+				elif [[ -n "${cond}" && -n "${FINIT_LOGGER}" ]] ; then
+					cond="${cond},syslogd"
+				elif [[ -z "${cond}" && "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
+					cond=""
+				elif [[ -z "${cond}" && -n "${FINIT_LOGGER}" ]] ; then
+					cond="syslogd"
 				fi
 			fi
 
@@ -377,7 +381,12 @@ fi
 					# Based on https://github.com/troglobit/finit/blob/4.6/src/service.c#L1443
 					user_group="@root:${group}"
 				fi
-				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+
+				if grep -q -e "provide.*logger" "${init_path}" ; then
+					echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+				else
+					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
 				echo "run [${runlevels}] name:${svc_name}-post /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post" >> "${init_conf}"
@@ -395,21 +404,21 @@ fi
 				local list=$(grep "extra_commands" "${init_path}" | cut -f 2 -d '"')
 				for x in ${list} ; do
 					echo "# Run as:  initctl cond set ${svc_name}-${x}" >> "${init_conf}"
-					echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
+					echo "run [${runlevels}] name:usr/${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
 				done
 			fi
 			if grep -q -e "^extra_started_commands" "${init_path}" ; then
 				local list=$(grep "extra_started_commands" "${init_path}" | cut -f 2 -d '"')
 				for x in ${list} ; do
 					echo "# Run as:  initctl cond set ${svc_name}-${x}  # For started service only" >> "${init_conf}"
-					echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> 	"${init_conf}"
+					echo "run [${runlevels}] name:usr/${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> 	"${init_conf}"
 				done
 			fi
 			if grep -q -e "^extra_stopped_commands" "${init_path}" ; then
 				local list=$(grep "extra_started_commands" "${init_path}" | cut -f 2 -d '"')
 				for x in ${list} ; do
 					echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-					echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
+					echo "run [${runlevels}] name:usr/${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
 				done
 			fi
 		done
@@ -1140,6 +1149,13 @@ convert_systemd() {
 			runlevels="2345"
 		fi
 
+		local cond
+		if grep -q -e "^StandardOutput=syslog" "${init_path}" ; then
+			cond="${cond},syslogd"
+		elif grep -q -e "^StandardError=syslog" "${init_path}" ; then
+			cond="${cond},syslogd"
+		fi
+
 		local type="simple"
 		if grep -q "^Type=" "${init_path}" ; then
 			type=$(grep "^Type=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
@@ -1162,15 +1178,6 @@ convert_systemd() {
 
 		if grep -q -e "^Type=dbus" "${init_path}" ; then
 			echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
-		fi
-
-		if grep -q -E -e "^StandardOutput=syslog" "${init_path}" \
-			|| grep -q -E -e "^StandardError=syslog" "${init_path}" ; then
-			if [[ -n "${cond}" ]] ; then
-				cond="${cond},syslogd"
-			else
-				cond="${cond}"
-			fi
 		fi
 
 		local init_conf="${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
@@ -1324,6 +1331,8 @@ convert_systemd() {
 			elif [[ "${type}" == "oneshot" ]] ; then
 				# It is unknown if they must be run sequentially if more than 1.
 				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+			elif grep -q "Alias=syslog.service" "${init_path}" ; then
+				echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			else
 				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			fi
@@ -1343,7 +1352,7 @@ convert_systemd() {
 		if (( "${#exec_reloads}" > 0 )) ; then
 			local x="reload"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}.sh reload -- ${svc_name} ${x}" >> "${init_conf}"
+			echo "run [${runlevels}] name:usr/${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}.sh reload -- ${svc_name} ${x}" >> "${init_conf}"
 		fi
 		rm "${init_path}"
 	done

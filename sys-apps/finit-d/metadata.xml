@@ -27,7 +27,7 @@
   Valid values:  openrc (default), systemd
 
   FINIT_LOGGER - Name of the logger which services depend on
-  Valid values:  metalog, rsyslog, sysklogd, syslog-ng, unset (auto detect)
+  Valid values:  metalog, rsyslog, sysklogd, syslog-ng, unset (auto detect), disable, none
 
   Valid values:
 

@@ -209,6 +209,21 @@ src_install() {
 	doins "${WORKDIR}/finit.conf"
 	install_lib "lib.sh"
 	install_lib "event.sh"
+
+	local loggers=(
+		metalog
+		rsyslog
+		sysklogd
+		syslog-ng
+	)
+	local logger
+	for logger in ${loggers[@]} ; do
+		if [[ "${logger}" == "${FINIT_LOGGER}" || -z "${FINIT_LOGGER}" ]] ; then
+			:;
+		else
+			rm -f "${ED}/etc/finit.d/enabled/${logger}"
+		fi
+	done
 }
 
 pkg_postinst() {
