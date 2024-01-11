@@ -892,6 +892,22 @@ default_start() {
 		${command_args}
 }
 
+mark_service_inactive() {
+	local svcname="${1}"
+}
+
+mark_service_starting() {
+	:;
+}
+
+mark_service_started() {
+	:;
+}
+
+mark_service_stopped() {
+	:;
+}
+
 yesno() {
 	local val="${1}"
 	local ret=0
