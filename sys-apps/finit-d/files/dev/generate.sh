@@ -483,9 +483,9 @@ echo "pidfile case I:  init_path - ${init_path}"
 				notify="notify:pid"
 			elif [[ "${svc_name}" == "mysql-s6" || "${svc_name}" == "mysql" ]] ; then
 echo "pidfile case J:  init_path - ${init_path}"
-				if bzcat "/var/db/pkg/dev-db/mysql-"*"/environment.bz2" | grep PN=\"mysql\" ; then
+				if bzcat "/var/db/pkg/dev-db/mysql-"*"/environment.bz2" | grep -q PN=\"mysql\" ; then
 					pid_file="pid:!/var/run/mysqld/mysql.pid"
-				elif bzcat "/var/db/pkg/dev-db/mariadb-"*"/environment.bz2" | grep PN=\"mariadb\" ; then
+				elif bzcat "/var/db/pkg/dev-db/mariadb-"*"/environment.bz2" | grep -q PN=\"mariadb\" ; then
 					pid_file="pid:!/var/run/mysqld/mariadb.pid"
 				fi
 				notify="notify:pid"
@@ -493,6 +493,11 @@ echo "pidfile case J:  init_path - ${init_path}"
 echo "pidfile case Z:  init_path - ${init_path}"
 
 				notify="notify:none"
+			fi
+
+			if [[ "${svc_name}" == "actkbd" ]] ; then
+				local _pidfile=$(grep -e "^PIDFILE=")
+				sed -i -e "0i ${_pidfile}" "${init_path}"
 			fi
 
 			if [[ -z "${pid_file}" ]] && grep -q -i "pidfile" "${init_path}" ; then
@@ -537,7 +542,7 @@ echo "pidfile case Z:  init_path - ${init_path}"
 			fi
 
 			needs_openrc_default_start() {
-				if ! grep -q -e "^start" "${init_path}" && ( grep -q -e "^command=" "${init_path}" || grep -F -e ': ${command=' "${init_path}" ) ; then
+				if ! grep -q -e "^start" "${init_path}" && ( grep -q -e "^command=" "${init_path}" || grep -q -F -e ': ${command=' "${init_path}" ) ; then
 					return 0
 				fi
 				return 1
