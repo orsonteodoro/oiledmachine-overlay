@@ -678,7 +678,8 @@ start_stop_daemon() {
 			service_pid=$(cat "${pidfile_path}")
 			kill -s ${_signal} $service_pid
 		elif [ -n "${exec_path}" ] ; then
-			pgrep $(basename "${exec_path}") >/dev/null
+			service_pid=$(pgrep $(basename "${exec_path}") >/dev/null)
+			kill -s ${_signal} $service_pid
 		elif [ -n "${name}" ] ; then
 			service_pid=$(pgrep "${name}")
 			kill -s ${_signal} $service_pid
