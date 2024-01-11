@@ -1320,10 +1320,10 @@ convert_systemd() {
 				user_group="@:${group}"
 			fi
 			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
-				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif [[ "${type}" == "oneshot" ]] ; then
 				# It is unknown if they must be run sequentially if more than 1.
-				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			else
 				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			fi
