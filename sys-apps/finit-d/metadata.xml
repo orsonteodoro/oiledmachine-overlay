@@ -26,6 +26,9 @@
   Only one allowed.
   Valid values:  openrc (default), systemd
 
+  FINIT_LOGGER - Name of the logger which services depend on
+  Valid values:  metalog, rsyslog, sysklogd, syslog-ng, unset (auto detect)
+
   Valid values:
 
     net/route/default       ; requires sys-apps/finit[netlink], not recommended for wireless

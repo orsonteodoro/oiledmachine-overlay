@@ -294,7 +294,7 @@ fi
 
 			if grep -q -e "need.*logger" "${init_path}" ; then
 				if [[ -n "${cond}" ]] ; then
-					cond="${cond},syslogd"
+					cond="${cond},${FINIT_LOGGER}"
 				else
 					cond="${cond}"
 				fi
