@@ -1306,7 +1306,7 @@ convert_systemd() {
 		gen_systemd_wrapper
 
 		if (( "${#exec_start_pres}" > 0 )) ; then
-			echo "run [${runlevels}] name:${pn}-pre-start /lib/finit/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre-start" >> "${init_conf}"
+			echo "run [${runlevels}] name:${pn}-pre-start /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre-start" >> "${init_conf}"
 		fi
 		if (( "${#exec_starts}" > 0 )) ; then
 			[[ -n "${environment_file}" ]] && environment_file="env:${environment_file}"
@@ -1329,21 +1329,21 @@ convert_systemd() {
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
-			echo "run [${runlevels}] name:${svc_name}-post-start /lib/finit/${c}/${pn}/${svc_name}.sh start_post -- ${svc_name} post-start" >> "${init_conf}"
+			echo "run [${runlevels}] name:${svc_name}-post-start /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_post -- ${svc_name} post-start" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_pres}" > 0 )) ; then
-			echo "run [0] name:${svc_name}-pre-stop /lib/finit/${c}/${pn}/${svc_name}.sh stop_pre -- ${svc_name} pre-stop" >> "${init_conf}"
+			echo "run [0] name:${svc_name}-pre-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop_pre -- ${svc_name} pre-stop" >> "${init_conf}"
 		fi
 		if (( "${#exec_stops}" > 0 )) ; then
-			echo "task [0] name:${svc_name}-stop /lib/finit/${c}/${pn}/${svc_name}.sh stop -- ${svc_name} stop" >> "${init_conf}"
+			echo "task [0] name:${svc_name}-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop -- ${svc_name} stop" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_posts}" > 0 )) ; then
-			echo "run [0] name:${svc_name}-post-stop /lib/finit/${c}/${pn}/${svc_name}.sh stop_post -- ${svc_name} post-stop" >> "${init_conf}"
+			echo "run [0] name:${svc_name}-post-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop_post -- ${svc_name} post-stop" >> "${init_conf}"
 		fi
 		if (( "${#exec_reloads}" > 0 )) ; then
 			local x="reload"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/${c}/${pn}/${svc_name}.sh reload -- ${svc_name} ${x}" >> "${init_conf}"
+			echo "run [${runlevels}] <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}.sh reload -- ${svc_name} ${x}" >> "${init_conf}"
 		fi
 		rm "${init_path}"
 	done
