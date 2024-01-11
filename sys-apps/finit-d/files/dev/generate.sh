@@ -311,9 +311,9 @@ fi
 			echo "Generating ${c}/${pn}/${svc_name}.conf"
 			cat /dev/null > "${init_conf}"
 
-			local pidfile=""
+			local pid_file=""
 			if grep -q -e "--make-pidfile" "${init_path}" ; then
-				pidfile="pid:/run/${pn}.pid"
+				pid_file="pid:/run/${pn}.pid"
 			fi
 
 			if grep -q -e "RC_PREFIX" "${init_path}" ; then
@@ -341,13 +341,12 @@ echo "pidfile case A:"
 					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
 					# Case:  pidfile="${PIDFILE:-/run/service.pid}"
 					# start-stop-daemon ... --make-pidfile
-					pidfile="pid:${path}"
+					pid_file="pid:${path}"
 				else
 					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
 					# start-stop-daemon ...
-					pidfile="pid:!${path}"
+					pid_file="pid:!${path}"
 				fi
-				pidfile="pid:!${path}"
 				notify="notify:pid"
 			elif grep -q -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" ; then
 echo "pidfile case B:"
@@ -357,9 +356,9 @@ echo "pidfile case B:"
 				local varname=$(grep -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" | cut -f 2- -d "=" | cut -f 1 -d ":" | sed -e 's|[${}"]||g')
 				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
 				if (( ${create_pid} == 1 )) ; then
-					pidfile='pid:$'${varname}''
+					pid_file='pid:$'${varname}''
 				else
-					pidfile='pid:!$'${varname}''
+					pid_file='pid:!$'${varname}''
 				fi
 				notify="notify:pid"
 			elif grep -q -e '--pidfile="[$].*}"' "${init_path}" \
@@ -370,9 +369,9 @@ echo "pidfile case C:"
 				local varname=$(grep -o -E -e '--pidfile="[$].*}"' "${init_path}" | head -n -1 | cut -f 2 -d '"' | sed -e 's|[${}]||g')
 				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
 				if (( ${create_pid} == 1 )) ; then
-					pidfile='pid:$'${varname}''
+					pid_file='pid:$'${varname}''
 				else
-					pidfile='pid:!$'${varname}''
+					pid_file='pid:!$'${varname}''
 				fi
 				notify="notify:pid"
 			elif grep -q -e "--pidfile" "${init_path}" \
@@ -381,12 +380,11 @@ echo "pidfile case D:"
 				local path=$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
 				if (( ${create_pid} == 1 )) ; then
 					# Case:  start-stop-daemon ... --make-pidfile --pidfile /run/service.pid
-					pidfile="pid:${path}"
+					pid_file="pid:${path}"
 				else
 					# Case:  start-stop-daemon ... --pidfile /run/service.pid
-					pidfile="pid:!${path}"
+					pid_file="pid:!${path}"
 				fi
-				pidfile="pid:!${path}"
 				notify="notify:pid"
 			elif grep -q -e "^pidfile=\"" "${init_path}" ; then
 echo "pidfile case E:"
@@ -395,9 +393,9 @@ echo "pidfile case E:"
 				if [[ "${path:0:1}" == "/" ]] ; then
 				# Case:  pidfile="/run/service.pid"
 					if (( ${create_pid} == 1 )) ; then
-						pidfile="pid:${path}"
+						pid_file="pid:${path}"
 					else
-						pidfile="pid:!${path}"
+						pid_file="pid:!${path}"
 					fi
 					notify="notify:pid"
 				fi
@@ -407,17 +405,17 @@ echo "pidfile case F:"
 				if [[ "${path:0:1}" == "/" ]] ; then
 				# Case:  pidfile=/run/service.pid
 					if (( ${create_pid} == 1 )) ; then
-						pidfile="pid:${path}"
+						pid_file="pid:${path}"
 					else
-						pidfile="pid:!${path}"
+						pid_file="pid:!${path}"
 					fi
 					notify="notify:pid"
 				elif [[ "${path:0:1}" == '$' ]] ; then
 				# Case:  pidfile=${RC_PREFIX}/run/service.pid
 					if (( ${create_pid} == 1 )) ; then
-						pidfile="pid:${path}"
+						pid_file="pid:${path}"
 					else
-						pidfile="pid:!${path}"
+						pid_file="pid:!${path}"
 					fi
 					notify="notify:pid"
 				fi
@@ -428,9 +426,9 @@ echo "pidfile case G:"
 				if [[ "${path:0:1}" == "/" ]] ; then
 					# Case:  --pidfile /run/service.pid
 					if (( ${create_pid} == 1 )) ; then
-						pidfile="pid:${path}"
+						pid_file="pid:${path}"
 					else
-						pidfile="pid:!${path}"
+						pid_file="pid:!${path}"
 					fi
 					notify="notify:pid"
 				elif [[ "${path:0:1}" == "$" ]] && ! ( echo "${path}" | grep -q -E ":" ) ; then
@@ -438,56 +436,56 @@ echo "pidfile case G:"
 					echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
 					# Case:  --pidfile ${PIDFILE}
 					if (( ${create_pid} == 1 )) ; then
-						pidfile="pid:${path}"
+						pid_file="pid:${path}"
 					else
-						pidfile="pid:!${path}"
+						pid_file="pid:!${path}"
 					fi
 					notify="notify:pid"
 				fi
 			elif [[ "${svc_name}" == "squid" ]] ; then
 echo "pidfile case H:"
-				pidfile="pid:!/run/\${RC_SVCNAME}.pid"
+				pid_file="pid:!/run/\${RC_SVCNAME}.pid"
 				notify="notify:pid"
 			elif [[ "${svc_name}" == "vsftpd" ]] ; then
 echo "pidfile case I:"
-				pidfile="pid:!${path}"
+				pid_file="pid:!${path}"
 				notify="notify:pid"
 			elif [[ "${svc_name}" == "display-manager" ]] ; then
 				if grep -q -E -o "DISPLAYMANAGER.*" /etc/conf.d/display-manager ; then
 					local dm=$(grep -E -o "DISPLAYMANAGER.*" "/etc/conf.d/display-manager" | cut -f 2 -d '"')
 					if [[ "${dm}" == "kdm" || "${dm}" == "kde" ]] ; then
-						pidfile="/run/kdm.pid"
+						pid_file="pid:!/run/kdm.pid"
 					elif [[ "${dm}" =~ "entrance" ]] ; then
-						pidfile="/run/entrance.pid"
+						pid_file="pid:!/run/entrance.pid"
 					elif [[ "${dm}" == "gdm" || "${dm}" == "gnome" ]] ; then
 						if [[ -f "/usr/sbin/gdm" ]] ; then
-							pidfile="/run/gdm/gdm.pid"
+							pid_file="pid:!/run/gdm/gdm.pid"
 						else
-							pidfile="/run/gdm.pid"
+							pid_file="pid:!/run/gdm.pid"
 						fi
 					elif [[ "${dm}" == "greetd" ]] ; then
-						pidfile="/run/greetd.pid"
+						pid_file="pid:!/run/greetd.pid"
 					elif [[ "${dm}" == "wdm" ]] ; then
-						pidfile="/usr/bin/wdm"
+						pid_file="pid:!/usr/bin/wdm"
 					elif [[ "${dm}" == "gpe" ]] ; then
-						pidfile="/run/gpe-dm.pid"
+						pid_file="pid:!/run/gpe-dm.pid"
 					elif [[ "${dm}" == "lxdm" ]] ; then
-						pidfile="/run/lxdm.pid"
+						pid_file="pid:!/run/lxdm.pid"
 					elif [[ "${dm}" == "lightdm" ]] ; then
-						pidfile="/run/lightdm.pid"
+						pid_file="pid:!/run/lightdm.pid"
 					elif [[ "${dm}" == "sddm" ]] ; then
-						pidfile="/run/sddm.pid"
+						pid_file="pid:!/run/sddm.pid"
 					else
-						pidfile="/run/${dm}.pid"
+						pid_file="pid:!/run/${dm}.pid"
 					fi
 				fi
 				notify="notify:pid"
 			elif [[ "${svc_name}" == "mysql-s6" || "${svc_name}" == "mysql" ]] ; then
 echo "pidfile case J:"
 				if bzcat "/var/db/pkg/dev-db/mysql-"*"/environment.bz2" | grep PN=\"mysql\" ; then
-					pidfile="/var/run/mysqld/mysql.pid"
+					pid_file="pid:!/var/run/mysqld/mysql.pid"
 				elif bzcat "/var/db/pkg/dev-db/mariadb-"*"/environment.bz2" | grep PN=\"mariadb\" ; then
-					pidfile="/var/run/mysqld/mariadb.pid"
+					pid_file="pid:!/var/run/mysqld/mariadb.pid"
 				fi
 				notify="notify:pid"
 			else
@@ -496,9 +494,9 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				notify="notify:none"
 			fi
 
-			if [[ -z "${pidfile}" ]] && grep -q -i "pidfile" "${init_path}" ; then
+			if [[ -z "${pid_file}" ]] && grep -q -i "pidfile" "${init_path}" ; then
 				echo "[*warn*] Missing pidfile for ${svc_name} (confirmed)"
-			elif [[ -z "${pidfile}" ]] ; then
+			elif [[ -z "${pid_file}" ]] ; then
 				echo "[warn] Missing pidfile for ${svc_name}"
 			fi
 
@@ -557,9 +555,9 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				fi
 
 				if grep -q -e "provide.*logger" "${init_path}" ; then
-					echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+					echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				else
-					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pidfile} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
@@ -695,7 +693,7 @@ numa_policy="${numa_policy}"
 nice="${nice}"
 not_ambient_capabilities="${not_ambient_capabilities}"
 not_bounding_capabilities="${not_bounding_capabilities}"
-pidfile="${pidfile}"
+pidfile="${pid_file}"
 runtime_directory="${runtime_directory}"
 runtime_directory_mode="${runtime_directory_mode}"
 runtime_directory_preserve="${runtime_directory_preserve}"
@@ -1066,9 +1064,9 @@ convert_systemd() {
 		init_path="${init_path_tmp}"
 		perl -pe 's/\\\n//' -i "${init_path}" # Remove hardbreak
 
-		local pidfile=""
+		local pid_file=""
 		if grep -q "^PIDFile" "${init_path}" ; then
-			pidfile=$(grep "^PIDFile" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
+			pid_file=$(grep "^PIDFile" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
 		local kill_signal=""
@@ -1502,20 +1500,20 @@ convert_systemd() {
 				user_group="@:${group}"
 			fi
 			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
-				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif [[ "${type}" == "oneshot" ]] ; then
 				# It is unknown if they must be run sequentially if more than 1.
-				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif grep -q "Alias=syslog.service" "${init_path}" ; then
-				if [[ -z "${pidfile}" ]] ; then
+				if [[ -z "${pid_file}" ]] ; then
 					echo "[warn] Missing pidfile for ${svc_name}"
 				fi
-				echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${environment_file} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			else
-				if [[ -z "${pidfile}" ]] ; then
+				if [[ -z "${pid_file}" ]] ; then
 					echo "[warn] Missing pidfile for ${svc_name}"
 				fi
-				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
