@@ -309,14 +309,29 @@ fi
 				pidfile="pid:/run/${pn}.pid"
 			fi
 
+			# TODO: variable pidfile
 			local notify=""
 			if grep -q -e "^pidfile=\"" "${init_path}" ; then
 				local p=$(grep "^pidfile=\"" "${init_path}" | head -n 1 | cut -f 2 -d '"')
-				pidfile="pid:!${p}"
-				notify="notify:pid"
+				if [[ "${p:0:1}" == "/" ]] ; then
+					pidfile="pid:!${p}"
+					notify="notify:pid"
+				fi
 			elif grep -q -e "^pidfile=" "${init_path}" ; then
 				local p=$(grep "^pidfile=" "${init_path}" | head -n 1 | cut -f 2 -d "=")
-				pidfile="pid:!${p}"
+				if [[ "${p:0:1}" == "/" ]] ; then
+					pidfile="pid:!${p}"
+					notify="notify:pid"
+				fi
+			elif grep -q -e "--pidfile" "${init_path}" \
+				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  \
+				&& grep -q -e "--make-pidfile" "${init_path}" ; then
+				pidfile="pid:"$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
+				notify="notify:pid"
+			elif grep -q -e "--pidfile" "${init_path}" \
+				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  \
+				&& ! grep -q -e "--make-pidfile" "${init_path}" ; then
+				pidfile="pid:!"$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
 				notify="notify:pid"
 			else
 				notify="notify:none"
