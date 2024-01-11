@@ -894,7 +894,7 @@ default_start() {
 
 yesno() {
 	local val="${1}"
-	ret=0
+	local ret=0
 	case ${val} in
 		Y*|y*)
 			ret=1
