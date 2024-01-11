@@ -409,6 +409,10 @@ fi
 				notify="notify:none"
 			fi
 
+			if [[ -z "${pidfile}" ]] ; then
+				echo "[warn] Missing pidfile for ${svc_name}"
+			fi
+
 			if grep -q -e "^supervisor=.*s6" "${init_path}" ; then
 				notify="notify:s6"
 			fi
@@ -1414,8 +1418,14 @@ convert_systemd() {
 				# It is unknown if they must be run sequentially if more than 1.
 				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif grep -q "Alias=syslog.service" "${init_path}" ; then
+				if [[ -z "${pidfile}" ]] ; then
+					echo "[warn] Missing pidfile for ${svc_name}"
+				fi
 				echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			else
+				if [[ -z "${pidfile}" ]] ; then
+					echo "[warn] Missing pidfile for ${svc_name}"
+				fi
 				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pidfile} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			fi
 		fi
