@@ -332,8 +332,10 @@ fi
 				create_pid=1
 			fi
 
+# Most services should have a pidfile except for oneshot equivalent.
 			local notify=""
 			if grep -q -E -e '^pidfile=["]?[$].*:-' "${init_path}" ; then
+#echo "pidfile case A:"
 				local path=$(grep -E -e '^pidfile=["]?[$].*:-' "${init_path}" | cut -f 2 -d "-" | sed -e 's|["{}]||g')
 				if (( ${create_pid} == 1 )) ; then
 					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
@@ -348,11 +350,12 @@ fi
 				pidfile="pid:!${path}"
 				notify="notify:pid"
 			elif grep -q -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" ; then
+#echo "pidfile case B:"
 				# Case:  pidfile="${PKG_PIDFILE}"
 				# Any value can be used for PKG_PIDFILE if
 				# : ${PKG_PIDFILE:=/run/${svc_name}.pid}
 				local varname=$(grep -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" | cut -f 2- -d "=" | cut -f 1 -d ":" | sed -e 's|[${}"]||g')
-				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}"
+				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
 				if (( ${create_pid} == 1 )) ; then
 					pidfile='pid:$'${varname}''
 				else
@@ -361,10 +364,11 @@ fi
 				notify="notify:pid"
 			elif grep -q -e '--pidfile="[$].*}"' "${init_path}" \
 				&& ! grep -q -e '^pidfile=' "${init_path}" ; then
+#echo "pidfile case C:"
 				# DEADCODE
 				# Case: --pidfile="${PKG_PIDFILE}"
 				local varname=$(grep -o -E -e '--pidfile="[$].*}"' "${init_path}" | head -n -1 | cut -f 2 -d '"' | sed -e 's|[${}]||g')
-				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}"
+				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
 				if (( ${create_pid} == 1 )) ; then
 					pidfile='pid:$'${varname}''
 				else
@@ -373,6 +377,7 @@ fi
 				notify="notify:pid"
 			elif grep -q -e "--pidfile" "${init_path}" \
 				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  ; then
+#echo "pidfile case D:"
 				local path=$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
 				if (( ${create_pid} == 1 )) ; then
 					# Case:  start-stop-daemon ... --make-pidfile --pidfile /run/service.pid
@@ -384,9 +389,11 @@ fi
 				pidfile="pid:!${path}"
 				notify="notify:pid"
 			elif grep -q -e "^pidfile=\"" "${init_path}" ; then
-				# Case:  pidfile="/run/service.pid"
+#echo "pidfile case E:"
 				local path=$(grep "^pidfile=\"" "${init_path}" | head -n 1 | cut -f 2 -d '"')
-				if [[ "${p:0:1}" == "/" ]] ; then
+#echo "path: ${path}"
+				if [[ "${path:0:1}" == "/" ]] ; then
+				# Case:  pidfile="/run/service.pid"
 					if (( ${create_pid} == 1 )) ; then
 						pidfile="pid:${path}"
 					else
@@ -395,9 +402,41 @@ fi
 					notify="notify:pid"
 				fi
 			elif grep -q -e "^pidfile=" "${init_path}" ; then
-				# Case:  pidfile=/run/service.pid
+#echo "pidfile case F:"
 				local path=$(grep "^pidfile=" "${init_path}" | head -n 1 | cut -f 2 -d "=")
-				if [[ "${p:0:1}" == "/" ]] ; then
+				if [[ "${path:0:1}" == "/" ]] ; then
+				# Case:  pidfile=/run/service.pid
+					if (( ${create_pid} == 1 )) ; then
+						pidfile="pid:${path}"
+					else
+						pidfile="pid:!${path}"
+					fi
+					notify="notify:pid"
+				elif [[ "${path:0:1}" == '$' ]] ; then
+				# Case:  pidfile=${RC_PREFIX}/run/service.pid
+					if (( ${create_pid} == 1 )) ; then
+						pidfile="pid:${path}"
+					else
+						pidfile="pid:!${path}"
+					fi
+					notify="notify:pid"
+				fi
+			elif grep -q -E -e "--pidfile [^ ]+ " "${init_path}" \
+				&& ! grep -q -E -e "^pidfile=" "${init_path}" ; then
+#echo "pidfile case G:"
+				local path=$(grep -E -o -e "--pidfile [^ ]+ " "${init_path}" | head -n 1 | cut -f 2 -d " " | sed -e 's|"||g')
+				if [[ "${path:0:1}" == "/" ]] ; then
+					# Case:  --pidfile /run/service.pid
+					if (( ${create_pid} == 1 )) ; then
+						pidfile="pid:${path}"
+					else
+						pidfile="pid:!${path}"
+					fi
+					notify="notify:pid"
+				elif [[ "${path:0:1}" == "$" ]] && ! ( echo "${path}" | grep -q -E ":" ) ; then
+					local varname=$(echo "${path}" | sed -e 's|^\${||g' -e 's|}||g')
+					echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
+					# Case:  --pidfile ${PIDFILE}
 					if (( ${create_pid} == 1 )) ; then
 						pidfile="pid:${path}"
 					else
@@ -406,6 +445,7 @@ fi
 					notify="notify:pid"
 				fi
 			else
+#echo "pidfile case H:  init_path - ${init_path}"
 				notify="notify:none"
 			fi
 
