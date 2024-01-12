@@ -127,7 +127,11 @@ checkpath() {
 }
 
 is_debug() {
-	return ${MAINTENANCE_MODE}
+	if [ ${MAINTENANCE_MODE} -eq 1 ] ; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 # Assumes eend called to add either [OK] or [FAILED]
