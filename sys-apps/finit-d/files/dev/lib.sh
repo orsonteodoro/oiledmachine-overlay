@@ -592,7 +592,7 @@ start_stop_daemon() {
 			is_pid_alive $ppid
 		elif [ -e "${pidfile_path}" ] ; then
 			if is_pid_alive $(cat "${pidfile_path}") ; then
-				:;
+				false
 			else
 				rm -f "${pidfile_path}"
 			fi
