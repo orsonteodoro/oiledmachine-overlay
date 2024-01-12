@@ -429,7 +429,10 @@ echo "path: ${path}"
 				&& ! grep -q -E -e "^pidfile=" "${init_path}" ; then
 echo "pidfile case G:  init_path - ${init_path}"
 				local path=$(grep -E -o -e "--pidfile [^ ]+ " "${init_path}" | head -n 1 | cut -f 2 -d " " | sed -e 's|"||g')
-				if [[ "${path:0:1}" == "/" ]] ; then
+				if [[ "${svc_name}" == "actkbd" ]] ; then
+					pid_file=$(grep -e "^PIDFILE=" "/etc/conf.d/actkbd")
+					notify="notify:pid"
+				elif [[ "${path:0:1}" == "/" ]] ; then
 					# Case:  --pidfile /run/service.pid
 					if (( ${create_pid} == 1 )) ; then
 						pid_file="pid:${path}"
@@ -498,11 +501,6 @@ echo "pidfile case J:  init_path - ${init_path}"
 echo "pidfile case Z:  init_path - ${init_path}"
 
 				notify="notify:none"
-			fi
-
-			if [[ "${svc_name}" == "actkbd" ]] ; then
-				local _pidfile=$(grep -e "^PIDFILE=" "/etc/conf.d/actkbd")
-				sed -i -e "1i ${_pidfile}" "${init_conf}"
 			fi
 
 			if [[ -z "${pid_file}" ]] && grep -q -i "pidfile" "${init_path}" ; then
