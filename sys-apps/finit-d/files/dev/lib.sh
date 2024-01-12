@@ -591,7 +591,11 @@ start_stop_daemon() {
 		elif [ $ppid -gt 0 ] ; then
 			is_pid_alive $ppid
 		elif [ -e "${pidfile_path}" ] ; then
-			is_pid_alive $(cat "${pidfile_path}")
+			if is_pid_alive $(cat "${pidfile_path}") ; then
+				:;
+			else
+				rm -f "${pidfile_path}"
+			fi
 		elif [ -n "${exec_path}" ] ; then
 			pgrep $(basename "${exec_path}") >/dev/null 2>&1
 		elif [ -n "${name}" ] ; then
