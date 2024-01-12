@@ -497,8 +497,8 @@ echo "pidfile case Z:  init_path - ${init_path}"
 			fi
 
 			if [[ "${svc_name}" == "actkbd" ]] ; then
-				local _pidfile=$(grep -e "^PIDFILE=")
-				sed -i -e "0i ${_pidfile}" "${init_path}"
+				local _pidfile=$(grep -e "^PIDFILE=" "/etc/conf.d/actkbd")
+				sed -i -e "1i ${_pidfile}" "${init_conf}"
 			fi
 
 			if [[ -z "${pid_file}" ]] && grep -q -i "pidfile" "${init_path}" ; then
@@ -583,21 +583,21 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				local list=$(grep "extra_commands" "${init_path}" | cut -f 2 -d '"')
 				for x in ${list} ; do
 					echo "# Run as:  initctl cond set ${svc_name}-${x}" >> "${init_conf}"
-					echo "run [${runlevels}] name:usr/${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
+					echo "run [${runlevels}] name:${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
 				done
 			fi
 			if grep -q -e "^extra_started_commands" "${init_path}" ; then
 				local list=$(grep "extra_started_commands" "${init_path}" | cut -f 2 -d '"')
 				for x in ${list} ; do
 					echo "# Run as:  initctl cond set ${svc_name}-${x}  # For started service only" >> "${init_conf}"
-					echo "run [${runlevels}] name:usr/${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
+					echo "run [${runlevels}] name:${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
 				done
 			fi
 			if grep -q -e "^extra_stopped_commands" "${init_path}" ; then
 				local list=$(grep "extra_started_commands" "${init_path}" | cut -f 2 -d '"')
 				for x in ${list} ; do
 					echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-					echo "run [${runlevels}] name:usr/${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
+					echo "run [${runlevels}] name:${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
 				done
 			fi
 		done
@@ -1538,7 +1538,7 @@ convert_systemd() {
 		if (( "${#exec_reloads}" > 0 )) ; then
 			local x="reload"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-			echo "run [${runlevels}] name:usr/${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}.sh reload -- ${svc_name} ${x}" >> "${init_conf}"
+			echo "run [${runlevels}] name:${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}.sh reload -- ${svc_name} ${x}" >> "${init_conf}"
 		fi
 		rm "${init_path}"
 	done

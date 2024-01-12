@@ -167,7 +167,7 @@ is_blacklisted_svc() {
 	local svc="${1}"
 	local x
 	for x in ${FINIT_BLACKLIST_SVCNAMES} ; do
-		if [[ "${pkg}" == "${x}" ]] ; then
+		if [[ "${svc}" == "${x}" ]] ; then
 			return 0
 		fi
 	done
@@ -238,6 +238,12 @@ ewarn
 ewarn
 ewarn "You may need to disconnect/reconnect not by automated means in order to"
 ewarn "trigger network up event."
+ewarn
+	fi
+	if has_version "dev-db/mysql-init-scripts" ; then
+ewarn
+ewarn "You must manually disable some of the mysql-init-scripts in"
+ewarn "/etc/finit.d/enabled to prevent blocking init progression."
 ewarn
 	fi
 }
