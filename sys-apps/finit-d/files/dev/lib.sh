@@ -942,7 +942,7 @@ service_set_value() {
 
 service_get_value() {
 	local name="${1}"
-	if [[ -e "/var/cache/finit/kv-database/${SVCNAME}/${name}"
+	if [ -e "/var/cache/finit/kv-database/${SVCNAME}/${name}" ] ; then
 		cat "/var/cache/finit/kv-database/${SVCNAME}/${name}"
 	else
 		echo ""
