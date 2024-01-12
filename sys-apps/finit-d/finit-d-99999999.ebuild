@@ -243,7 +243,8 @@ ewarn
 	if has_version "dev-db/mysql-init-scripts" ; then
 ewarn
 ewarn "You must manually disable some of the mysql-init-scripts in"
-ewarn "/etc/finit.d/enabled to prevent blocking init progression."
+ewarn "/etc/finit.d/enabled to prevent blocking init progression or"
+ewarn "through FINIT_BLACKLIST_SVCNAMES.  See metadata.xml for details."
 ewarn
 	fi
 }
