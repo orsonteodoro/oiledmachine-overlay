@@ -164,7 +164,7 @@ is_blacklisted_pkg() {
 }
 
 is_blacklisted_svc() {
-	local svc="${1}"
+	local svc="${1/.conf}"
 	local x
 	for x in ${FINIT_BLACKLIST_SVCNAMES} ; do
 		if [[ "${svc}" == "${x}" ]] ; then
@@ -176,7 +176,7 @@ is_blacklisted_svc() {
 
 src_install() {
 	local PKGS=( $(cat "${WORKDIR}/pkgs.txt") )
-	local pkgs
+	local pkg
 	for pkg in ${PKGS[@]} ; do
 		# Duplicate, already done by finit
 		[[ "${pkg}" == "sys-apps/dbus" ]] && continue
@@ -185,6 +185,7 @@ src_install() {
 
 		insinto "/etc/finit.d/available/${pkg}"
 		pushd "${WORKDIR}/confs/${pkg}" || die
+			local svc
 			for svc in $(ls) ; do
 				is_blacklisted_svc "${svc}" && continue
 				doins "${svc}"
