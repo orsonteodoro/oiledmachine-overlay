@@ -972,15 +972,7 @@ type() {
 		esac
 		shift
 	done
-
-	local ret=0
-	while [ -n "$1" ] ; do
-		which "$1" 2>/dev/null
-		if [ $? -ne 0 ] ; then
-			ret=1
-		fi
-	done
-	return ${ret}
+	which $@
 }
 
 eoutdent() {
