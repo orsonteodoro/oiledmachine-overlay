@@ -274,6 +274,7 @@ fi
 			sed -i -e "${bottom_ln}a . /lib/finit/scripts/lib/event.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
 
 			sed -i -e "s|#!/sbin/openrc-run|#!${FINIT_SHELL}|g" "${init_sh}" || die "ERR:  line number - $LINENO"
+			sed -i -e "s|rc-service|rc_service|g" "${init_sh}" || die "ERR:  line number - $LINENO"
 			sed -i -e "s|start-stop-daemon|start_stop_daemon|g" "${init_sh}" || die "ERR:  line number - $LINENO"
 			sed -i -e "s|supervise-daemon|supervise_daemon|g" "${init_sh}" || die "ERR:  line number - $LINENO"
 

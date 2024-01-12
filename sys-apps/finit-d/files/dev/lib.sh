@@ -948,7 +948,32 @@ clear_kv_store() {
 
 # A bashism
 type() {
-	return 0
+	while [ -n "$1" ] ; do
+		case $1 in
+			-a)
+				;;
+			-f)
+				;;
+			-P)
+				;;
+			-p)
+				;;
+			-t)
+				;;
+			*)
+				break
+		esac
+		shift
+	done
+
+	local ret=0
+	while [ -n "$1" ] ; do
+		which "$1" 2>/dev/null
+		if [ $? -ne 0 ] ; then
+			ret=1
+		fi
+	done
+	return ${ret}
 }
 
 eoutdent() {
@@ -993,5 +1018,11 @@ veerror() {
 einfon() {
 	local msg="${1}"
 	is_debug && echo "${msg}"
+	return 0
+}
+
+rc_service() {
+	local svcname="${1}"
+	local phase="${2}"
 	return 0
 }
