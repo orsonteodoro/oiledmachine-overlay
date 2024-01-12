@@ -363,6 +363,16 @@ EOF
 
 }
 
+# Fix dash quirk
+check_pgrep() {
+	local v=(pgrep $@ 2>/dev/null)
+	if [ -z "${v}" ] ; then
+		false
+	else
+		true
+	fi
+}
+
 start_stop_daemon() {
 	# systemd
 	local ambient_capabilities=""
@@ -598,59 +608,58 @@ start_stop_daemon() {
 				false
 			fi
 		elif [ -n "${exec_path}" ] ; then
-			local bn=$(basename "${exec_path}")
-			ps -o pid,cmd | grep -E -q "[0-9]+ ${bn}"
+			ps -eo pid,cmd | grep "${exec_path}" | grep -q -v "grep"
 		elif [ -n "${name}" ] ; then
-			ps -o pid,cmd | grep -E -q "[0-9]+ ${name}"
+			ps -eo pid,cmd | grep "${name}" | grep -q -v "grep"
 		elif [ -n "${user}" ] ; then
-			pgrep -U "${user}" >/dev/null 2>&1
+			check_pgrep -U "${user}" >/dev/null 2>&1
 		fi
 
 		if [ $? -eq 0 ] ; then
 			return 1
-		else
-			local ug_args=""
-			if [ -n "${user}" ] ; then
-				local uid=$(getent passwd "${user}" | cut -f 3 -d ":")
-				ug_args="${ug_args} -u ${uid}"
-			fi
-			if [ -z "${user}" ] ; then
-				local uid=$(getent passwd "root" | cut -f 3 -d ":")
-				ug_args="${ug_args} -u root"
-			fi
-			if [ -n "${group}" ] ; then
-				local gid=$(getent group "${group}" | cut -f 3 -d ":")
-				 ug_args="${ug_args} -g ${gid}"
-			fi
+		fi
 
-			# TODO:  capabilities
+		local ug_args=""
+		if [ -n "${user}" ] ; then
+			local uid=$(getent passwd "${user}" | cut -f 3 -d ":")
+			ug_args="${ug_args} -u ${uid}"
+		fi
+		if [ -z "${user}" ] ; then
+			local uid=$(getent passwd "root" | cut -f 3 -d ":")
+			ug_args="${ug_args} -u root"
+		fi
+		if [ -n "${group}" ] ; then
+			local gid=$(getent group "${group}" | cut -f 3 -d ":")
+			 ug_args="${ug_args} -g ${gid}"
+		fi
 
-			local exec_args="$@"
-			set --
-			for x in ${exec_args} ; do
-				set -- $@ $(echo "${x}" | sed -e 's|"||g')
-			done
+		# TODO:  capabilities
 
-			if [ -n "${umask}" ] ; then
-				umask ${umask}
+		local exec_args="$@"
+		set --
+		for x in ${exec_args} ; do
+			set -- $@ $(echo "${x}" | sed -e 's|"||g')
+		done
+
+		if [ -n "${umask}" ] ; then
+			umask ${umask}
+		fi
+
+		# Avoid racing bug without altering last PID
+		sudo ${ug_args} -- "${exec_path}" $@ &
+		sudo_pid=$!
+		local c=0
+		while [ $c -lt 10 ] ; do
+			service_pid=$(pgrep -P ${sudo_pid} 2>/dev/null)
+			if [ -n "${service_pid}" ] && [ $service_pid -gt 0 ] ; then
+				break
 			fi
+			c=$(( ${c} + 1 ))
+			sleep 0.1
+		done
 
-			# Avoid racing bug without altering last PID
-			sudo ${ug_args} -- "${exec_path}" $@ &
-			sudo_pid=$!
-			local c=0
-			while [ $c -lt 10 ] ; do
-				service_pid=$(pgrep -P ${sudo_pid} 2>/dev/null)
-				if [ -n "${service_pid}" ] && [ $service_pid -gt 0 ] ; then
-					break
-				fi
-				c=$(( ${c} + 1 ))
-				sleep 0.1
-			done
-
-			if [ -z "${service_pid}" ] ; then
-				return 1
-			fi
+		if [ -z "${service_pid}" ] ; then
+			return 1
 		fi
 
 		if [ $make_pidfile -eq 1 ] ; then
@@ -664,12 +673,11 @@ start_stop_daemon() {
 		elif [ -e "${pidfile_path}" ] ; then
 			is_pid_alive $(cat "${pidfile_path}")
 		elif [ -n "${exec_path}" ] ; then
-			local bn=$(basename "${exec_path}")
-			ps -o pid,cmd | grep -E -q "[0-9]+ ${bn}"
+			ps -eo pid,cmd | grep "${exec_path}" | grep -q -v "grep"
 		elif [ -n "${name}" ] ; then
-			ps -o pid,cmd | grep -E -q "[0-9]+ ${name}"
+			ps -eo pid,cmd | grep "${name}" | grep -q -v "grep"
 		elif [ -n "${user}" ] ; then
-			pgrep -U "${user}" >/dev/null 2>&1
+			check_pgrep -U "${user}" >/dev/null 2>&1
 		else
 			return 0
 		fi
@@ -693,10 +701,10 @@ start_stop_daemon() {
 			kill -s ${_signal} $service_pid
 		elif [ -n "${exec_path}" ] ; then
 			local bn=$(basename "${exec_path}")
-			service_pid=$(ps -o pid,cmd | grep -E "[0-9]+ ${bn}" | sed -E -e "s|^[ ]+||g" | cut -f 1 -d " ")
+			service_pid=$(pgrep "${bn}")
 			kill -s ${_signal} $service_pid
 		elif [ -n "${name}" ] ; then
-			service_pid=$(ps -o pid,cmd | grep -E "[0-9]+ ${name}" | sed -E -e "s|^[ ]+||g" | cut -f 1 -d " ")
+			service_pid=$(pgrep "${name}")
 			kill -s ${_signal} $service_pid
 		elif [ -n "${user}" ] ; then
 			service_pid=$(pgrep -U "${user}")
@@ -770,14 +778,13 @@ start_stop_daemon() {
 		elif [ $ppid -gt 0 ] ; then
 			is_pid_alive $ppid
 		elif [ -e "${pidfile_path}" ] ; then
-			pgrep $(cat "${pidfile_path}") >/dev/null 2>&1
+			check_pgrep $(cat "${pidfile_path}") >/dev/null 2>&1
 		elif [ -n "${exec_path}" ] ; then
-			local bn=$(basename "${exec_path}")
-			ps -o pid,cmd | grep -E -q "[0-9]+ ${bn}"
+			ps -eo pid,cmd | grep "${exec_path}" | grep -q -v "grep"
 		elif [ -n "${name}" ] ; then
-			ps -o pid,cmd | grep -E -q "[0-9]+ ${name}"
+			ps -eo pid,cmd | grep "${name}" | grep -q -v "grep"
 		elif [ -n "${user}" ] ; then
-			pgrep -U "${user}" >/dev/null 2>&1
+			check_pgrep -U "${user}" >/dev/null 2>&1
 		else
 			false
 		fi
@@ -848,13 +855,13 @@ start_stop_daemon() {
 }
 
 supervise_daemon() {
-	start_stop_daemon "$@"
+	start_stop_daemon $@
 }
 
 default_start() {
 	local args=""
-	if [ "${command_background}" = "true" ] || [ "${command_background}" = "1" ] ; then
-		args="${args} --background"
+	if [ "${command_background}" = "true" ] || [ "${command_background}" = "1" ] || [ "${command_background}" = "yes" ] ; then
+		args="${args} --background --make-pidfile"
 	fi
 	local prefix=$(echo "${ambient_capabilities}" | cut -c 1)
 	if [ -n "${ambient_capabilities}" ] && [ "${prefix}" != "-" ] ; then

@@ -267,7 +267,7 @@ fi
 			sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			sed -i -e "${top_ln}a export FN=\"\$1\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
-				sed -i -e "${top_ln}a export missing_start_fn=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
 			local bottom_ln=$(cat "${init_sh}" | wc -l)
@@ -281,7 +281,9 @@ fi
 			local needs_syslog=0
 			local cond=""
 			local runlevels=""
-			if grep -q -e "need.*net" "${init_path}" ; then
+			if grep -q -e "provide.*logger" "${init_path}" ; then
+				runlevels="S12345"
+			elif grep -q -e "need.*net" "${init_path}" ; then
 				cond="${FINIT_COND_NETWORK}"
 				runlevels="345"
 				echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
@@ -293,8 +295,7 @@ fi
 				echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
 			fi
 
-			if grep -q -e "need.*logger" "${init_path}" \
-				|| grep -q -e "use.*logger" "${init_path}" ; then
+			if grep -q -e "need.*logger" "${init_path}" ; then
 				if [[ -n "${cond}" && "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
 					cond="${cond}"
 				elif [[ -n "${cond}" && -n "${FINIT_LOGGER}" ]] ; then
@@ -566,8 +567,10 @@ echo "pidfile case Z:  init_path - ${init_path}"
 					user_group="@root:${group}"
 				fi
 
-				if grep -q -e "provide.*logger" "${init_path}" ; then
-					echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+				if [[ "${svc_name}" == "sysklogd" ]] ; then
+					echo "service [${runlevels}] ${cond} ${user_group} name:syslogd notify:pid pid:!/run/syslogd.pid /lib/finit/scripts/${svc_name}.sh \"start\" -- ${svc_name}" >> "${init_conf}"
+				elif grep -q -e "provide.*logger" "${init_path}" ; then
+					echo "service [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				else
 					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				fi
@@ -675,6 +678,7 @@ cpu_affinity="${cpu_affinity}"
 cpu_scheduling_policy="${cpu_scheduling_policy}"
 cpu_scheduling_priority="${cpu_scheduling_priority}"
 cpu_scheduling_reset_on_fork="${cpu_scheduling_reset_on_fork}"
+environment_file="${environment_file}"
 exec_start_exe="${exec_start_exe}"
 final_kill_signal="${final_kill_signal}"
 has_exec_stops=${has_exec_stops}
@@ -715,6 +719,10 @@ state_directory="${state_directory}"
 state_directory_mode="${state_directory_mode}"
 timeout_stop_sec="${timeout_stop_sec}"
 type="${type}"
+
+if [ -n "\${environment_file}" ] && [ -e "\${environment_file}" ] ; then
+	. \${environment_file}
+fi
 
 start_dirs() {
 	local x
@@ -1325,7 +1333,9 @@ convert_systemd() {
 		local needs_syslog=0
 		local cond=""
 		local runlevels=""
-		if grep -q -e "^Wants=.*network.target" "${init_path}" ; then
+		if grep -q "Alias=syslog.service" "${init_path}" ; then
+			runlevels="S12345"
+		elif grep -q -e "^Wants=.*network.target" "${init_path}" ; then
 			cond="${FINIT_COND_NETWORK}"
 			runlevels="345"
 			echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
@@ -1501,7 +1511,6 @@ convert_systemd() {
 			echo "run [${runlevels}] name:${pn}-pre /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre" >> "${init_conf}"
 		fi
 		if (( "${#exec_starts}" > 0 )) ; then
-			[[ -n "${environment_file}" ]] && environment_file="env:${environment_file}"
 			[[ -n "${cond}" ]] && cond="<${cond}>"
 			local user_group=""
 			if [[ -n "${user}" && -n "${group}" ]] ; then
@@ -1511,21 +1520,23 @@ convert_systemd() {
 			elif [[ -n "${group}" ]] ; then
 				user_group="@:${group}"
 			fi
-			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
-				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+			if [[ "${svc_name}" == "sysklogd" ]] ; then
+				echo "service [${runlevels}] ${cond} ${user_group} name:syslogd notify:pid pid:!/run/syslogd.pid /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+			elif [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
+				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif [[ "${type}" == "oneshot" ]] ; then
 				# It is unknown if they must be run sequentially if more than 1.
-				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} ${environment_file} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif grep -q "Alias=syslog.service" "${init_path}" ; then
 				if [[ -z "${pid_file}" ]] ; then
 					echo "[warn] Missing pidfile for ${svc_name}"
 				fi
-				echo "service [${runlevels}] ${cond} ${user_group} name:syslogd ${notify} ${environment_file} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "service [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			else
 				if [[ -z "${pid_file}" ]] ; then
 					echo "[warn] Missing pidfile for ${svc_name}"
 				fi
-				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${environment_file} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
