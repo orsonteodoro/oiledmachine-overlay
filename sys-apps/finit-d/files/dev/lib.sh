@@ -6,6 +6,13 @@ if [ -e "/etc/conf.d/${SVCNAME}" ] ; then
 	. "/etc/conf.d/${SVCNAME}"
 fi
 
+MAINTENANCE_MODE=${MAINTENANCE_MODE:-0}
+if cat /proc/cmdline | grep -q -e "finit.systemd=debug" ; then
+	MAINTENANCE_MODE=1
+elif cat /proc/cmdline | grep -q -e "finit.openrc=debug" ; then
+	MAINTENANCE_MODE=1
+fi
+
 _checkpath_once() {
 	local path="$1"
 	path=$(realpath "${path}")
@@ -120,11 +127,7 @@ checkpath() {
 }
 
 is_debug() {
-	if [ "${MAINTENANCE_MODE}" = "1" ] ; then
-		return 0
-	else
-		return 1
-	fi
+	return ${MAINTENANCE_MODE}
 }
 
 # Assumes eend called to add either [OK] or [FAILED]
