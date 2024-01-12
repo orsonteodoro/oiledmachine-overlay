@@ -181,7 +181,7 @@ ewaitfile() {
 				c=$(( ${c} + 1 ))
 			fi
 		done
-		if [ ${c} -eq ${#L[@]} ] ; then
+		if [ ${c} -eq ${#} ] ; then
 			return 0
 		fi
 		local now=$(date +"%s")
