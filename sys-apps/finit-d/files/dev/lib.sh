@@ -925,3 +925,23 @@ yesno() {
 	esac
 	return ${ret}
 }
+
+service_set_value() {
+	local name="${1}"
+	local value="${2}"
+	mkdir -p "/var/cache/finit/kv-database/${SVCNAME}"
+	echo "${value}" > "/var/cache/finit/kv-database/${SVCNAME}/${name}"
+}
+
+service_get_value() {
+	local name="${1}"
+	if [[ -e "/var/cache/finit/kv-database/${SVCNAME}/${name}"
+		cat "/var/cache/finit/kv-database/${SVCNAME}/${name}"
+	else
+		echo ""
+	fi
+}
+
+clear_kv_store() {
+	rm -rf "/var/cache/finit/kv-database/${SVCNAME}"
+}

@@ -7,4 +7,7 @@ elif [ -n "$command" ] && [ "$FN" = "start" ] && [ "${missing_start_fn}" = "1" ]
 	default_start
 elif [ -n "$FN" ] ; then
 	"$FN"
+	if [ "$FN" = "stop" ] ; then
+		clear_kv_store
+	fi
 fi
