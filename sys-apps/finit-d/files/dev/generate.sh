@@ -431,7 +431,7 @@ echo "pidfile case G:  init_path - ${init_path}"
 				local path=$(grep -E -o -e "--pidfile [^ ]+ " "${init_path}" | head -n 1 | cut -f 2 -d " " | sed -e 's|"||g')
 				if [[ "${svc_name}" == "actkbd" ]] ; then
 					local t=$(grep -e "^PIDFILE=" "/etc/conf.d/actkbd")
-					sed -i -e "1i set ${t}" "${init_conf}"
+					echo "set ${t}" >> "${init_conf}"
 					if (( ${create_pid} == 1 )) ; then
 						pid_file="pid:${path}"
 					else
