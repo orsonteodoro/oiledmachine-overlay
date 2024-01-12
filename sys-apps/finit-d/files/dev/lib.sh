@@ -593,11 +593,11 @@ start_stop_daemon() {
 		elif [ -e "${pidfile_path}" ] ; then
 			is_pid_alive $(cat "${pidfile_path}")
 		elif [ -n "${exec_path}" ] ; then
-			pgrep $(basename "${exec_path}") >/dev/null
+			pgrep $(basename "${exec_path}") >/dev/null 2>&1
 		elif [ -n "${name}" ] ; then
-			pgrep "${name}" >/dev/null
+			pgrep "${name}" >/dev/null 2>&1
 		elif [ -n "${user}" ] ; then
-			pgrep -U "${user}" >/dev/null
+			pgrep -U "${user}" >/dev/null 2>&1
 		fi
 
 		if [ $? -ne 0 ] ; then
@@ -658,11 +658,11 @@ start_stop_daemon() {
 		elif [ -e "${pidfile_path}" ] ; then
 			is_pid_alive $(cat "${pidfile_path}")
 		elif [ -n "${exec_path}" ] ; then
-			pgrep $(basename "${exec_path}") >/dev/null
+			pgrep $(basename "${exec_path}") >/dev/null 2>&1
 		elif [ -n "${name}" ] ; then
-			pgrep "${name}" >/dev/null
+			pgrep "${name}" >/dev/null 2>&1
 		elif [ -n "${user}" ] ; then
-			pgrep -U "${user}" >/dev/null
+			pgrep -U "${user}" >/dev/null 2>&1
 		else
 			return 0
 		fi
@@ -685,7 +685,7 @@ start_stop_daemon() {
 			service_pid=$(cat "${pidfile_path}")
 			kill -s ${_signal} $service_pid
 		elif [ -n "${exec_path}" ] ; then
-			service_pid=$(pgrep $(basename "${exec_path}") >/dev/null)
+			service_pid=$(pgrep $(basename "${exec_path}") 2>/dev/null)
 			kill -s ${_signal} $service_pid
 		elif [ -n "${name}" ] ; then
 			service_pid=$(pgrep "${name}")
@@ -762,13 +762,13 @@ start_stop_daemon() {
 		elif [ $ppid -gt 0 ] ; then
 			is_pid_alive $ppid
 		elif [ -e "${pidfile_path}" ] ; then
-			pgrep $(cat "${pidfile_path}") >/dev/null
+			pgrep $(cat "${pidfile_path}") >/dev/null 2>&1
 		elif [ -n "${exec_path}" ] ; then
-			pgrep $(basename "${exec_path}") >/dev/null
+			pgrep $(basename "${exec_path}") >/dev/null 2>&1
 		elif [ -n "${name}" ] ; then
-			pgrep "${name}" >/dev/null
+			pgrep "${name}" >/dev/null 2>&1
 		elif [ -n "${user}" ] ; then
-			pgrep -U "${user}" >/dev/null
+			pgrep -U "${user}" >/dev/null 2>&1
 		else
 			false
 		fi
@@ -972,7 +972,7 @@ type() {
 		esac
 		shift
 	done
-	which $@
+	which $@ >/dev/null 2>&1
 }
 
 eoutdent() {
