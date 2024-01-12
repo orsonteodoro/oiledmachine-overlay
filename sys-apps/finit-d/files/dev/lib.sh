@@ -945,3 +945,53 @@ service_get_value() {
 clear_kv_store() {
 	rm -rf "/var/cache/finit/kv-database/${SVCNAME}"
 }
+
+# A bashism
+type() {
+	return 0
+}
+
+eoutdent() {
+	return 0
+}
+
+eindent() {
+	return 0
+}
+
+vebegin() {
+	local msg="${1}"
+	is_debug && echo "${msg}"
+	return 0
+}
+
+veend() {
+	local ret="${1}"
+	local msg="${2}"
+	is_debug && echo "${msg}"
+	return ${ret}
+}
+
+veinfo() {
+	local msg="${1}"
+	is_debug && echo "${msg}"
+	return 0
+}
+
+vewarn() {
+	local msg="${1}"
+	is_debug && echo "[w] ${msg}"
+	return 0
+}
+
+veerror() {
+	local msg="${1}"
+	is_debug && echo "[e] ${msg}"
+	return 0
+}
+
+einfon() {
+	local msg="${1}"
+	is_debug && echo "${msg}"
+	return 0
+}
