@@ -592,19 +592,21 @@ start_stop_daemon() {
 			is_pid_alive $ppid
 		elif [ -e "${pidfile_path}" ] ; then
 			if is_pid_alive $(cat "${pidfile_path}") ; then
-				false
+				true
 			else
 				rm -f "${pidfile_path}"
+				false
 			fi
 		elif [ -n "${exec_path}" ] ; then
-			pgrep $(basename "${exec_path}") >/dev/null 2>&1
+			local bn=$(basename "${exec_path}")
+			ps -o pid,cmd | grep -E -q "[0-9]+ ${bn}"
 		elif [ -n "${name}" ] ; then
-			pgrep "${name}" >/dev/null 2>&1
+			ps -o pid,cmd | grep -E -q "[0-9]+ ${name}"
 		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null 2>&1
 		fi
 
-		if [ $? -ne 0 ] ; then
+		if [ $? -eq 0 ] ; then
 			return 1
 		else
 			local ug_args=""
@@ -637,7 +639,7 @@ start_stop_daemon() {
 			sudo ${ug_args} -- "${exec_path}" $@ &
 			sudo_pid=$!
 			local c=0
-			while [ $c -lt 100 ] ; do
+			while [ $c -lt 10 ] ; do
 				service_pid=$(pgrep -P ${sudo_pid} 2>/dev/null)
 				if [ -n "${service_pid}" ] && [ $service_pid -gt 0 ] ; then
 					break
@@ -662,9 +664,10 @@ start_stop_daemon() {
 		elif [ -e "${pidfile_path}" ] ; then
 			is_pid_alive $(cat "${pidfile_path}")
 		elif [ -n "${exec_path}" ] ; then
-			pgrep $(basename "${exec_path}") >/dev/null 2>&1
+			local bn=$(basename "${exec_path}")
+			ps -o pid,cmd | grep -E -q "[0-9]+ ${bn}"
 		elif [ -n "${name}" ] ; then
-			pgrep "${name}" >/dev/null 2>&1
+			ps -o pid,cmd | grep -E -q "[0-9]+ ${name}"
 		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null 2>&1
 		else
@@ -689,10 +692,11 @@ start_stop_daemon() {
 			service_pid=$(cat "${pidfile_path}")
 			kill -s ${_signal} $service_pid
 		elif [ -n "${exec_path}" ] ; then
-			service_pid=$(pgrep $(basename "${exec_path}") 2>/dev/null)
+			local bn=$(basename "${exec_path}")
+			service_pid=$(ps -o pid,cmd | grep -E "[0-9]+ ${bn}" | sed -E -e "s|^[ ]+||g" | cut -f 1 -d " ")
 			kill -s ${_signal} $service_pid
 		elif [ -n "${name}" ] ; then
-			service_pid=$(pgrep "${name}")
+			service_pid=$(ps -o pid,cmd | grep -E "[0-9]+ ${name}" | sed -E -e "s|^[ ]+||g" | cut -f 1 -d " ")
 			kill -s ${_signal} $service_pid
 		elif [ -n "${user}" ] ; then
 			service_pid=$(pgrep -U "${user}")
@@ -768,9 +772,10 @@ start_stop_daemon() {
 		elif [ -e "${pidfile_path}" ] ; then
 			pgrep $(cat "${pidfile_path}") >/dev/null 2>&1
 		elif [ -n "${exec_path}" ] ; then
-			pgrep $(basename "${exec_path}") >/dev/null 2>&1
+			local bn=$(basename "${exec_path}")
+			ps -o pid,cmd | grep -E -q "[0-9]+ ${bn}"
 		elif [ -n "${name}" ] ; then
-			pgrep "${name}" >/dev/null 2>&1
+			ps -o pid,cmd | grep -E -q "[0-9]+ ${name}"
 		elif [ -n "${user}" ] ; then
 			pgrep -U "${user}" >/dev/null 2>&1
 		else

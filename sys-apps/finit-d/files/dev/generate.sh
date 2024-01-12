@@ -293,7 +293,8 @@ fi
 				echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
 			fi
 
-			if grep -q -e "need.*logger" "${init_path}" ; then
+			if grep -q -e "need.*logger" "${init_path}" \
+				|| grep -q -e "use.*logger" "${init_path}" ; then
 				if [[ -n "${cond}" && "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
 					cond="${cond}"
 				elif [[ -n "${cond}" && -n "${FINIT_LOGGER}" ]] ; then
@@ -303,12 +304,7 @@ fi
 				elif [[ -z "${cond}" && -n "${FINIT_LOGGER}" ]] ; then
 					cond="syslogd"
 				fi
-			elif [[ -n "${cond}" && "${svc_name}" == "acpid" ]] ; then
-				cond="${cond},syslogd"
-			elif [[ -z "${cond}" && "${svc_name}" == "acpid" ]] ; then
-				cond="syslogd"
 			fi
-
 
 			local basename_fn=$(basename "${init_sh}")
 
