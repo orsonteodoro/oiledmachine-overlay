@@ -251,3 +251,5 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# networkmanager init - passed
+
