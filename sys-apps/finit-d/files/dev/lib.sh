@@ -890,6 +890,17 @@ default_start() {
 	if [ -n "${nice}" ] ; then
 		args="${args} --nicelevel ${nice}"
 	fi
+	if [ -n "${command_user}" ] ; then
+		if echo "${command_user}" && grep ":" ; then
+			local u=$(echo "${command_user}" | cut -f 1 -d ":")
+			local g=$(echo "${command_user}" | cut -f 2 -d ":")
+			args="${args} --user ${u}"
+			args="${args} --group ${g}"
+		else
+			local u=$(echo "${command_user}" | cut -f 1 -d ":")
+			args="${args} --user ${u}"
+		fi
+	fi
 
 	if [ -n "${cpu_scheduling_policy}" ] && [ -z "${cpu_scheduling_priority}" ] ; then
 		args="${args} --procsched ${cpu_scheduling_policy}"
