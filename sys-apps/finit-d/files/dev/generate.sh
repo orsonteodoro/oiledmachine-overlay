@@ -264,11 +264,15 @@ fi
 			if grep -q "RC_SVCNAME" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
-			sed -i -e "${top_ln}a export FN=\"\$1\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+			if [[ "${svc_name}" == "dmcrypt" ]] ; then
+				sed -i -e "${top_ln}a . /lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-cond-start.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
+			else
+				sed -i -e "${top_ln}a export FN=\"\$1\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+			fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
+			sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 
 			local bottom_ln=$(cat "${init_sh}" | wc -l)
 			sed -i -e "${bottom_ln}a . /lib/finit/scripts/lib/event.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -281,7 +285,10 @@ fi
 			local needs_syslog=0
 			local cond=""
 			local runlevels=""
-			if grep -q -e "provide.*logger" "${init_path}" ; then
+			if [[ "${svc_name}" == "dmcrypt" ]] ; then
+				runlevels="S"
+				cond="hook/mount/root"
+			elif grep -q -e "provide.*logger" "${init_path}" ; then
 				runlevels="S12345"
 			elif grep -q -e "need.*net" "${init_path}" ; then
 				cond="${FINIT_COND_NETWORK}"
@@ -650,9 +657,16 @@ gen_systemd_wrapper() {
 		[[ "${command}" == "${command_args}" ]] && command_args=""
 	fi
 
+	local fn_row
+	if [[ "${svc_name}" == "dmcrypt" ]] ; then
+		fn_row='. /lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-cond-start.sh'
+	else
+		fn_row='FN="${1}"'
+	fi
+
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 #!${FINIT_SHELL}
-FN="\${1}"
+${fn_row}
 . /lib/finit/scripts/lib/lib.sh
 svc_name="${svc_name}"
 ambient_capabilities="${ambient_capabilities}"

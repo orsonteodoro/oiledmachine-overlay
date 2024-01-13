@@ -129,6 +129,10 @@ eerror "You need to enable either hook-scripts or netlink USE flag."
 eerror "You need to enable the dbus USE flag."
 		die
 	fi
+	if has_version "sys-fs/cryptsetup" && ! use hook-scripts ; then
+eerror "You need to enable the hook-scripts USE flag."
+		die
+	fi
 }
 
 install_scripts() {
@@ -137,9 +141,21 @@ install_scripts() {
 	[[ -e "${WORKDIR}/scripts/${pkg}" ]] || return
 	pushd "${WORKDIR}/scripts/${pkg}" >/dev/null 2>&1 || die
 		for script in $(ls) ; do
+			is_blacklisted_svc "${script}" && continue
 			doexe "${script}"
 			fowners root:root "/lib/finit/scripts/${pkg}/${script}"
 			fperms 0750 "/lib/finit/scripts/${pkg}/${script}"
+
+			if [[ "${script/.sh}" == "dmcrypt" ]] ; then
+				exeinto "/lib/finit/scripts/sys-fs/cryptsetup"
+				doexe "${WORKDIR}/dmcrypt-cond-start.sh"
+				fowners "root:root" "/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-cond-start.sh"
+				fperms 0750 "/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-cond-start.sh"
+				dodir "/libexec/finit"
+				dosym \
+					"/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt.sh" \
+					"/libexec/finit/hook/mount/root/dmcrypt.sh"
+			fi
 		done
 	popd >/dev/null 2>&1
 }
@@ -164,7 +180,9 @@ is_blacklisted_pkg() {
 }
 
 is_blacklisted_svc() {
-	local svc="${1/.conf}"
+	local svc
+	svc="${1/.conf}"
+	svc="${svc/.sh}"
 	local x
 	for x in ${FINIT_BLACKLIST_SVCNAMES} ; do
 		if [[ "${svc}" == "${x}" ]] ; then
