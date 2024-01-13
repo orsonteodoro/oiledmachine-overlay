@@ -524,12 +524,8 @@ echo "pidfile case Z:  init_path - ${init_path}"
 			local group=""
 			if grep -q -e "^command_user=" "${init_path}" ; then
 				command_user=$(grep -e "^command_user=" "${init_path}" | cut -f 2 -d "=" | sed -e 's|"||g') || die "ERR:  line number - $LINENO"
-				if [[ "${command_user}" =~ "$" ]] ; then
-					command_user="" # Temporary ignore
-				else
-					user=$(echo "${command_user}" | cut -f 1 -d ":")
-					group=$(echo "${command_user}" | cut -f 1 -d ":")
-				fi
+				user=$(echo "${command_user}" | cut -f 1 -d ":")
+				group=$(echo "${command_user}" | cut -f 1 -d ":")
 			else
 				if grep -q -e "^user=" "${init_path}" ; then
 					user=$(grep -e "^user=" "${init_path}" | cut -f 2 -d "=" | sed -e 's|"||g') || die "ERR:  line number - $LINENO"
@@ -537,14 +533,6 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				if grep -q -e "^group=" "${init_path}" ; then
 					group=$(grep -e "^group=" "${init_path}" | cut -f 2 -d "=" | sed -e 's|"||g') || die "ERR:  line number - $LINENO"
 				fi
-			fi
-
-			# Calls setenv() from c which is assumed literal
-			if [[ "${user}" =~ "$" ]] ; then
-				user=""
-			fi
-			if [[ "${group}" =~ "$" ]] ; then
-				group=""
 			fi
 
 			if grep -q -e "^start_pre" "${init_path}" ; then
