@@ -290,7 +290,7 @@ chroot_start() {
 	sudo_pid=\$!
 	local c=0
 	while [ \$c -lt 100 ] ; do
-		service_pid=\$(pgrep -P \${sudo_pid} 2>/dev/null)
+		service_pid=\$(ps -C $(basename "${exec_path}") -o pid | sed /PID/d)
 		if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
 			break
 		fi
@@ -365,13 +365,24 @@ EOF
 
 # Fix dash quirk
 check_pgrep() {
-	local v=(pgrep $@ 2>/dev/null)
+	local v=$(pgrep $@ 2>/dev/null)
 	if [ -z "${v}" ] ; then
 		false
 	else
 		true
 	fi
 }
+
+check_alive_by_name() {
+	local name="${1}"
+	name=$(basename "${name}")
+	if ps -C "${name}" | sed /PID/d | wc -l | grep -q "0" ; then
+		false
+	else
+		true
+	fi
+}
+
 
 start_stop_daemon() {
 	# systemd
@@ -608,9 +619,9 @@ start_stop_daemon() {
 				false
 			fi
 		elif [ -n "${exec_path}" ] ; then
-			ps -eo pid,cmd | grep "${exec_path}" | grep -q -v "grep"
+			check_alive_by_name "${exec_path}"
 		elif [ -n "${name}" ] ; then
-			ps -eo pid,cmd | grep "${name}" | grep -q -v "grep"
+			check_alive_by_name "${name}"
 		elif [ -n "${user}" ] ; then
 			check_pgrep -U "${user}" >/dev/null 2>&1
 		fi
@@ -673,9 +684,9 @@ start_stop_daemon() {
 		elif [ -e "${pidfile_path}" ] ; then
 			is_pid_alive $(cat "${pidfile_path}")
 		elif [ -n "${exec_path}" ] ; then
-			ps -eo pid,cmd | grep "${exec_path}" | grep -q -v "grep"
+			check_alive_by_name "${exec_path}"
 		elif [ -n "${name}" ] ; then
-			ps -eo pid,cmd | grep "${name}" | grep -q -v "grep"
+			check_alive_by_name "${name}"
 		elif [ -n "${user}" ] ; then
 			check_pgrep -U "${user}" >/dev/null 2>&1
 		else
@@ -780,9 +791,9 @@ start_stop_daemon() {
 		elif [ -e "${pidfile_path}" ] ; then
 			check_pgrep $(cat "${pidfile_path}") >/dev/null 2>&1
 		elif [ -n "${exec_path}" ] ; then
-			ps -eo pid,cmd | grep "${exec_path}" | grep -q -v "grep"
+			check_alive_by_name "${exec_path}"
 		elif [ -n "${name}" ] ; then
-			ps -eo pid,cmd | grep "${name}" | grep -q -v "grep"
+			check_alive_by_name "${name}"
 		elif [ -n "${user}" ] ; then
 			check_pgrep -U "${user}" >/dev/null 2>&1
 		else
@@ -837,18 +848,11 @@ start_stop_daemon() {
 		fi
 		echo "service_pid:  $service_pid"
 		if [ $daemon -eq 1 ] || [ $background -eq 1 ] ; then
-			if jobs | wc -l | grep -q "0" ; then
-				return 1
-			# else
 	# Keep as background
-			fi
+			:;
 		else
-			if jobs | wc -l | grep -q "0" ; then
-				return 1
-			else
 	# Bring to foreground
-				fg
-			fi
+			fg 2>/dev/null
 		fi
 	fi
 	return 0
@@ -907,6 +911,9 @@ default_start() {
 		args="${args} --cpu-affinity ${cpu_affinity}"
 	fi
 
+	if [ -n "${pidfile}" ] ;then
+		args="${args} --pidfile ${pidfile}"
+	fi
 	start_stop_daemon \
 		--start \
 		--exec "${command}" \
