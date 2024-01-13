@@ -225,6 +225,9 @@ src_install() {
 			rm -f "${ED}/etc/finit.d/enabled/${logger}"
 		fi
 	done
+
+	# Broken default settings.  Requires METALOG_OPTS+=" -N" for some kernels.
+	rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
 }
 
 pkg_postinst() {
@@ -248,15 +251,6 @@ ewarn "/etc/finit.d/enabled to prevent blocking init progression or"
 ewarn "through FINIT_BLACKLIST_SVCNAMES.  See metadata.xml for details."
 ewarn
 	fi
-ewarn
-ewarn "IMPORTANT"
-ewarn
-ewarn "The logger is not broken, but currently a dependency of the logger is"
-ewarn "breaking in the init."
-ewarn
-ewarn "You need to disable the logger from /etc/finit.d/enabled"
-ewarn "for the init process to unstuck."
-ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

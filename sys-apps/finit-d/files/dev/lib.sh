@@ -235,6 +235,7 @@ exec_args="${exec_args}"
 exec_path="${exec_path}"
 group="${group}"
 iosched_arg="${iosched_arg}"
+make_pidfile=${make_pidfile}
 nicelevel=${nicelevel}
 phase="start"
 pid=${pid}
@@ -285,24 +286,39 @@ chroot_start() {
 		umask \${umask}
 	fi
 
-	# Avoid racing bug without altering last PID
-	sudo \${ug_args} -- "\${exec_path}" \$@ &
-	sudo_pid=\$!
-	local c=0
-	while [ \$c -lt 100 ] ; do
-		service_pid=\$(ps --no-headers -C $(basename "${exec_path}") -o pid)
-		if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
-			break
-		fi
-		c=\$(( \${c} + 1 ))
-		sleep 0.1
-	done
+	if [ \$make_pidfile -eq 1 ] ; then
+		exec "\${exec_path}" \$@ &
+		local c=0
+		while [ \$c -lt 10 ] ; do
+			service_pid=\$(ps --no-headers -C \$(basename "\${exec_path}") -o pid 2>/dev/null)
+			if [ -n "\${service_pid}" ] ; then
+				break
+			fi
+			c=\$(( \${c} + 1 ))
+			sleep 0.1
+		done
+	else
+		sudo \${ug_args} -- "\${exec_path}" \$@ &
+		local c=0
+		while [ \$c -lt 100 ] ; do
+			service_pid=\$(ps --no-headers -C $(basename "\${exec_path}") -o pid 2>/dev/null)
+			if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
+				break
+			fi
+			c=\$(( \${c} + 1 ))
+			sleep 0.1
+		done
+	fi
+
 
 	if [ -z "\${service_pid}" ] ; then
 		return 1
 	fi
 
-	"\${service_pid}" > "\${pidfile_path}"
+	if [ \$make_pidfile -eq 1 ] ; then
+		mkdir -p \$(dirname "\${pidfile_path}")
+		echo "\${service_pid}" > "\${pidfile_path}"
+	fi
 
 	if [ -n "\${iosched_arg}" ] ; then
 		local class="\${iosched_arg%:*}"
@@ -340,18 +356,11 @@ chroot_start() {
 		fi
 		echo "service_pid:  \$service_pid"
 		if [ \$daemon -eq 1 ] || [ \$background -eq 1 ] ; then
-			if jobs | wc -l | grep -q "0" ; then
-				return 1
-			# else
 	# Keep as background
-			fi
+			:;
 		else
-			if jobs | wc -l | grep -q "0" ; then
-				return 1
-			else
 	# Bring to foreground
-				fg
-			fi
+			fg
 		fi
 	fi
 }
@@ -396,7 +405,6 @@ start_stop_daemon() {
 	local capabilities=""
 	local cpu_affinity=""
 	local daemon=0
-	local sudo_pid=0
 	local chdir_path=""
 	local chroot_path=""
 	local chuid=""
@@ -656,24 +664,38 @@ start_stop_daemon() {
 			umask ${umask}
 		fi
 
-		# Avoid racing bug without altering last PID
-		sudo ${ug_args} -- "${exec_path}" $@ &
-		sudo_pid=$!
-		local c=0
-		while [ $c -lt 10 ] ; do
-			service_pid=$(pgrep -P ${sudo_pid} 2>/dev/null)
-			if [ -n "${service_pid}" ] && [ $service_pid -gt 0 ] ; then
-				break
-			fi
-			c=$(( ${c} + 1 ))
-			sleep 0.1
-		done
+		if [ $make_pidfile -eq 1 ] ; then
+			exec "${exec_path}" $@ &
+			echo "ran idiot"
+			# bye bye
+			local c=0
+			while [ $c -lt 10 ] ; do
+				service_pid=$(ps --no-headers -C $(basename "${exec_path}") -o pid 2>/dev/null)
+				if [ -n "${service_pid}" ] ; then
+					break
+				fi
+				c=$(( ${c} + 1 ))
+				sleep 0.1
+			done
+		else
+			sudo ${ug_args} -- "${exec_path}" $@ &
+			local c=0
+			while [ $c -lt 10 ] ; do
+				service_pid=$(ps --no-headers -C $(basename "${exec_path}") -o pid 2>/dev/null)
+				if [ -n "${service_pid}" ] ; then
+					break
+				fi
+				c=$(( ${c} + 1 ))
+				sleep 0.1
+			done
+		fi
 
 		if [ -z "${service_pid}" ] ; then
 			return 1
 		fi
 
 		if [ $make_pidfile -eq 1 ] ; then
+			mkdir -p $(dirname "${pidfile_path}")
 			echo "${service_pid}" > "${pidfile_path}"
 		fi
 	elif [ "${phase}" = "stop" ] ; then
