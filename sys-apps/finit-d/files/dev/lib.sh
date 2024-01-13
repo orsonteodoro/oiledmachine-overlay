@@ -286,7 +286,7 @@ chroot_start() {
 		umask \${umask}
 	fi
 
-	if [ \$do_exec -eq 1 ] ; then
+	if [ "\$do_exec" = "1" ] ; then
 		exec "\${exec_path}" \$@ &
 	else
 		sudo \${ug_args} -- "\${exec_path}" \$@ &
@@ -659,7 +659,7 @@ start_stop_daemon() {
 			umask ${umask}
 		fi
 
-		if [ $do_exec -eq 1 ] ; then
+		if [ "$do_exec" = "1" ] ; then
 			exec "${exec_path}" $@ &
 		else
 			sudo ${ug_args} -- "${exec_path}" $@ &
@@ -678,7 +678,7 @@ start_stop_daemon() {
 			return 1
 		fi
 
-		elif [ $make_pidfile -eq 1 ] || [ "$indirect_make_pidfile" = "1" ] ; then
+		if [ $make_pidfile -eq 1 ] || [ "$indirect_make_pidfile" = "1" ] ; then
 			mkdir -p $(dirname "${pidfile_path}")
 			echo "${service_pid}" > "${pidfile_path}"
 		fi
