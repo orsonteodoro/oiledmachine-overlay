@@ -306,7 +306,7 @@ chroot_start() {
 		return 1
 	fi
 
-	if [ \$make_pidfile -eq 1 ]  || [ "\$indirect_make_pidfile" = "1" ] ; then
+	if [ \$make_pidfile -eq 1 ] || [ "\$indirect_make_pidfile" = "1" ] ; then
 		mkdir -p \$(dirname "\${pidfile_path}")
 		echo "\${service_pid}" > "\${pidfile_path}"
 	fi
@@ -589,6 +589,10 @@ start_stop_daemon() {
 		shift
 	done
 
+	if [ "$indirect_make_pidfile" = "1" ] ; then
+		pidfile_path="${pidfile}"
+	fi
+
 	if [ -n "${chuid}" ] ; then
 		user=$(echo "${chuid}" | cut -f 1 -d ":")
 		group=$(echo "${chuid}" | cut -f 2 -d ":")
@@ -674,7 +678,7 @@ start_stop_daemon() {
 			return 1
 		fi
 
-		if [ $make_pidfile -eq 1 ] || [ "$indirect_make_pidfile" = "1" ] ; then
+		elif [ $make_pidfile -eq 1 ] || [ "$indirect_make_pidfile" = "1" ] ; then
 			mkdir -p $(dirname "${pidfile_path}")
 			echo "${service_pid}" > "${pidfile_path}"
 		fi
