@@ -285,7 +285,6 @@ fi
 			local needs_syslog=0
 			local cond=""
 			local runlevels=""
-			echo "${svc_name}"
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
 				runlevels="S"
 				cond="hook/mount/root"
