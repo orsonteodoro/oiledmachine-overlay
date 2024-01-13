@@ -228,6 +228,12 @@ src_install() {
 
 	# Broken default settings.  Requires METALOG_OPTS+=" -N" for some kernels.
 	rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
+
+	# Temp disabled
+	#rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
+	rm -f "${ED}/etc/finit.d/enabled/sysklogd.conf"
+	rm -f "${ED}/etc/finit.d/enabled/rsyslog.conf"
+	rm -f "${ED}/etc/finit.d/enabled/syslog-ng.conf"
 }
 
 pkg_postinst() {
