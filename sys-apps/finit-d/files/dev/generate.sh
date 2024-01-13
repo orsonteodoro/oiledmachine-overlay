@@ -547,8 +547,14 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				fi
 			fi
 
+			local svc_type
 			if grep -q -e "^start_pre" "${init_path}" ; then
-				echo "run [${runlevels}] name:${svc_name}-pre /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre" >> "${init_conf}"
+				if grep -q "^start()" "${init_sh}" ; then
+					svc_type="run"
+				else
+					svc_type="task"
+				fi
+				echo "${svc_type} [${runlevels}] name:${svc_name}-pre /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre" >> "${init_conf}"
 			fi
 
 			needs_openrc_default_start() {
@@ -574,22 +580,39 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				if grep -q -e "provide.*logger" "${init_path}" ; then
 					echo "service [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				elif [[ "${notify}" == "notify:none" ]] ; then
+					if grep -q "^start_post" "${init_sh}" ; then
+						svc_type="run"
+					else
+						svc_type="task"
+					fi
+					echo "${svc_type} [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+				elif [[ "${notify}" == "notify:none" ]] && grep -q "start_post" "${init_sh}" ; then
 					echo "run [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				else
 					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
-				echo "run [${runlevels}] name:${svc_name}-post /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post" >> "${init_conf}"
+				echo "task [${runlevels}] name:${svc_name}-post /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_pre" "${init_path}" ; then
+				if grep -q "^stop" "${init_sh}" ; then
+					svc_type="run"
+				else
+					svc_type="task"
+				fi
 				echo "run [0] name:${svc_name}-pre-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_pre\" -- ${svc_name} pre-stop" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop" "${init_path}" ; then
-				echo "task [0] name:${svc_name}-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" -- ${svc_name} stop" >> "${init_conf}"
+				if grep -q "^stop_post" "${init_sh}" ; then
+					svc_type="run"
+				else
+					svc_type="task"
+				fi
+				echo "${svc_type} [0] name:${svc_name}-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" -- ${svc_name} stop" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_post" "${init_path}" ; then
-				echo "run [0] name:${svc_name}-post-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_post\" -- ${svc_name} post-stop" >> "${init_conf}"
+				echo "task [0] name:${svc_name}-post-stop /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_post\" -- ${svc_name} post-stop" >> "${init_conf}"
 			fi
 			if grep -q -e "^extra_commands" "${init_path}" ; then
 				local list=$(grep "extra_commands" "${init_path}" | cut -f 2 -d '"')
@@ -1523,8 +1546,14 @@ convert_systemd() {
 		IFS=$' \t\n'
 		gen_systemd_wrapper
 
+		local svc_type
 		if (( "${#exec_start_pres}" > 0 )) ; then
-			echo "run [${runlevels}] name:${pn}-pre /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre" >> "${init_conf}"
+			if (( "${#exec_starts}" > 0 )) ; then
+				svc_type="run"
+			else
+				svc_type="task"
+			fi
+			echo "${svc_type} [${runlevels}] name:${pn}-pre /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre" >> "${init_conf}"
 		fi
 		if (( "${#exec_starts}" > 0 )) ; then
 			[[ -n "${cond}" ]] && cond="<${cond}>"
@@ -1537,10 +1566,12 @@ convert_systemd() {
 				user_group="@:${group}"
 			fi
 			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
-				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
-			elif [[ "${type}" == "oneshot" ]] ; then
-				# It is unknown if they must be run sequentially if more than 1.
-				echo "run [${runlevels}] ${cond} ${user_group} name:${svc_name} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				if (( "${#exec_start_posts}" > 0 )) ; then
+					svc_type="run"
+				else
+					svc_type="task"
+				fi
+				echo "${svc_type} [${runlevels}] ${cond} ${user_group} name:${svc_name} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif grep -q "Alias=syslog.service" "${init_path}" ; then
 				if [[ -z "${pid_file}" ]] ; then
 					echo "[warn] Missing pidfile for ${svc_name}"
@@ -1554,16 +1585,26 @@ convert_systemd() {
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
-			echo "run [${runlevels}] name:${svc_name}-post /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_post -- ${svc_name} post" >> "${init_conf}"
+			echo "task [${runlevels}] name:${svc_name}-post /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_post -- ${svc_name} post" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_pres}" > 0 )) ; then
-			echo "run [0] name:${svc_name}-pre-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop_pre -- ${svc_name} pre-stop" >> "${init_conf}"
+			if (( "${#exec_stops}" > 0 )) ; then
+				svc_type="run"
+			else
+				svc_type="task"
+			fi
+			echo "${svc_type} [0] name:${svc_name}-pre-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop_pre -- ${svc_name} pre-stop" >> "${init_conf}"
 		fi
 		if (( "${#exec_stops}" > 0 )) ; then
-			echo "task [0] name:${svc_name}-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop -- ${svc_name} stop" >> "${init_conf}"
+			if (( "${#exec_stops_posts}" > 0 )) ; then
+				svc_type="run"
+			else
+				svc_type="task"
+			fi
+			echo "${svc_type} [0] name:${svc_name}-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop -- ${svc_name} stop" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_posts}" > 0 )) ; then
-			echo "run [0] name:${svc_name}-post-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop_post -- ${svc_name} post-stop" >> "${init_conf}"
+			echo "task [0] name:${svc_name}-post-stop /lib/finit/scripts/${c}/${pn}/${svc_name}.sh stop_post -- ${svc_name} post-stop" >> "${init_conf}"
 		fi
 		if (( "${#exec_reloads}" > 0 )) ; then
 			local x="reload"
