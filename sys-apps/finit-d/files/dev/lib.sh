@@ -674,7 +674,7 @@ start_stop_daemon() {
 			return 1
 		fi
 
-		if [ $make_pidfile -eq 1 ] ; then
+		if [ $make_pidfile -eq 1 ] || [ "$indirect_make_pidfile" = "1" ] ; then
 			mkdir -p $(dirname "${pidfile_path}")
 			echo "${service_pid}" > "${pidfile_path}"
 		fi

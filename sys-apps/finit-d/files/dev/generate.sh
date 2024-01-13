@@ -330,16 +330,6 @@ fi
 				pid_file="pid:!/run/${pn}.pid"
 			fi
 
-			if grep -q -e "RC_PREFIX" "${init_path}" ; then
-				echo "set RC_PREFIX=" >> "${init_conf}"
-			fi
-			if grep -q -e "SVCNAME" "${init_path}" ; then
-				echo "set SVCNAME=${svc_name}" >> "${init_conf}"
-			fi
-			if grep -q -e "RC_SVCNAME" "${init_path}" ; then
-				echo "set RC_SVCNAME=${svc_name}" >> "${init_conf}"
-			fi
-
 			local create_pid=0
 			if grep -E -q -e '(--make-pidfile|start_stop_daemon.*-m |command_background=["]?true|command_background=["]?1)' "${init_path}" ; then
 				# It means call exec.
@@ -516,6 +506,7 @@ echo "pidfile case J:  init_path - ${init_path}"
 echo "pidfile case K:  init_path - ${init_path}"
 				pid_file="pid:!/run/${svc_name}.pid"
 				notify="notify:pid"
+				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			else
 echo "pidfile case Z:  init_path - ${init_path}"
 
@@ -530,6 +521,16 @@ echo "pidfile case Z:  init_path - ${init_path}"
 
 			if grep -q -e "^supervisor=.*s6" "${init_path}" ; then
 				notify="notify:s6"
+			fi
+
+			if grep -q -e "RC_PREFIX" "${init_path}" ; then
+				echo "set RC_PREFIX=" >> "${init_conf}"
+			fi
+			if grep -q -e "SVCNAME" "${init_path}" ; then
+				echo "set SVCNAME=${svc_name}" >> "${init_conf}"
+			fi
+			if grep -q -e "RC_SVCNAME" "${init_path}" ; then
+				echo "set RC_SVCNAME=${svc_name}" >> "${init_conf}"
 			fi
 
 			local user=""
