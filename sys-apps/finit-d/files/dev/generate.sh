@@ -265,7 +265,7 @@ fi
 				sed -i -e "${top_ln}a export RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
-				sed -i -e "${top_ln}a . /lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-cond-start.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a . /lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-events.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
 			else
 				sed -i -e "${top_ln}a export FN=\"\$1\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
@@ -690,7 +690,7 @@ gen_systemd_wrapper() {
 
 	local fn_row
 	if [[ "${svc_name}" == "dmcrypt" ]] ; then
-		fn_row='. /lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-cond-start.sh'
+		fn_row='. /lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-events.sh'
 	else
 		fn_row='FN="${1}"'
 	fi

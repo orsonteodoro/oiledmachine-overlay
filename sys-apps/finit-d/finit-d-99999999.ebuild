@@ -148,13 +148,15 @@ install_scripts() {
 
 			if [[ "${script/.sh}" == "dmcrypt" ]] ; then
 				exeinto "/lib/finit/scripts/sys-fs/cryptsetup"
-				doexe "${WORKDIR}/dmcrypt-cond-start.sh"
-				fowners "root:root" "/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-cond-start.sh"
-				fperms 0750 "/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-cond-start.sh"
-				dodir "/libexec/finit"
+				doexe "${WORKDIR}/dmcrypt-events.sh"
+				fowners "root:root" "/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-events.sh"
+				fperms 0750 "/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-events.sh"
 				dosym \
 					"/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt.sh" \
 					"/libexec/finit/hook/mount/root/dmcrypt.sh"
+				dosym \
+					"/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt.sh" \
+					"/libexec/finit/hook/svc/down/dmcrypt.sh"
 			fi
 		done
 	popd >/dev/null 2>&1
@@ -207,7 +209,6 @@ src_install() {
 			for svc in $(ls) ; do
 				is_blacklisted_svc "${svc}" && continue
 				doins "${svc}"
-				dodir "/etc/finit.d/enabled"
 				dosym \
 					"/etc/finit.d/available/${pkg}/${svc}" \
 					"/etc/finit.d/enabled/${svc}"
@@ -218,7 +219,6 @@ src_install() {
 
 	insinto "/etc/finit.d/available/${CATEGORY}/${PN}"
 	doins "${WORKDIR}/confs/getty.conf"
-	dodir "/etc/finit.d/enabled"
 	dosym \
 		"/etc/finit.d/available/${CATEGORY}/${PN}/getty.conf" \
 		"/etc/finit.d/enabled/getty.conf"
