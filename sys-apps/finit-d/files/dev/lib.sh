@@ -290,7 +290,7 @@ chroot_start() {
 	sudo_pid=\$!
 	local c=0
 	while [ \$c -lt 100 ] ; do
-		service_pid=\$(ps -C $(basename "${exec_path}") -o pid | sed /PID/d)
+		service_pid=\$(ps --no-headers -C $(basename "${exec_path}") -o pid)
 		if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
 			break
 		fi
@@ -376,7 +376,7 @@ check_pgrep() {
 check_alive_by_name() {
 	local name="${1}"
 	name=$(basename "${name}")
-	if ps -C "${name}" | sed /PID/d | wc -l | grep -q "0" ; then
+	if ps --no-headers -C "${name}" | wc -l | grep -q "0" ; then
 		false
 	else
 		true
