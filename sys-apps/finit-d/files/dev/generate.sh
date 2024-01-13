@@ -596,7 +596,7 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				echo "task [${runlevels}] name:${svc_name}-post /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_pre" "${init_path}" ; then
-				if grep -q "^stop" "${init_sh}" ; then
+				if grep -q "^stop" "${init_sh}" || grep -q "^command=" "${init_sh}" || grep -F ': ${command:=' "${init_sh}" ; then
 					svc_type="run"
 				else
 					svc_type="task"
