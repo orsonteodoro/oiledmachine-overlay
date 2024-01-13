@@ -251,6 +251,11 @@ ewarn "/etc/finit.d/enabled to prevent blocking init progression or"
 ewarn "through FINIT_BLACKLIST_SVCNAMES.  See metadata.xml for details."
 ewarn
 	fi
+ewarn
+ewarn "IMPORTANT"
+ewarn
+ewarn "The loggers should be disabled or use the *.conf from the snapshot instead."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

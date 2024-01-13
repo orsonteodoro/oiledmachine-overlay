@@ -315,8 +315,11 @@ fi
 			cat /dev/null > "${init_conf}"
 
 			local pid_file=""
-			if grep -q -e "--make-pidfile" "${init_path}" ; then
+			if [[ "${svc_name}" == "sysklogd" ]] ; then
 				pid_file="pid:/run/${pn}.pid"
+				sed -i -e "${top_ln}a export do_exec=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif grep -q -e "--make-pidfile" "${init_path}" ; then
+				pid_file="pid:!/run/${pn}.pid"
 			fi
 
 			if grep -q -e "RC_PREFIX" "${init_path}" ; then
@@ -344,7 +347,7 @@ echo "pidfile case A:  init_path - ${init_path}"
 					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
 					# Case:  pidfile="${PIDFILE:-/run/service.pid}"
 					# start-stop-daemon ... --make-pidfile
-					pid_file="pid:${path}"
+					pid_file="pid:!${path}"
 				else
 					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
 					# start-stop-daemon ...
@@ -359,7 +362,7 @@ echo "pidfile case B:  init_path - ${init_path}"
 				local varname=$(grep -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" | cut -f 2- -d "=" | cut -f 1 -d ":" | sed -e 's|[${}"]||g')
 				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
 				if (( ${create_pid} == 1 )) ; then
-					pid_file='pid:${'${varname}'}'
+					pid_file='pid:!${'${varname}'}'
 				else
 					pid_file='pid:!${'${varname}'}'
 				fi
@@ -372,7 +375,7 @@ echo "pidfile case C:  init_path - ${init_path}"
 				local varname=$(grep -o -E -e '--pidfile="[$].*}"' "${init_path}" | head -n -1 | cut -f 2 -d '"' | sed -e 's|[${}]||g')
 				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
 				if (( ${create_pid} == 1 )) ; then
-					pid_file='pid:${'${varname}'}'
+					pid_file='pid:!${'${varname}'}'
 				else
 					pid_file='pid:!${'${varname}'}'
 				fi
@@ -383,7 +386,7 @@ echo "pidfile case D:  init_path - ${init_path}"
 				local path=$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
 				if (( ${create_pid} == 1 )) ; then
 					# Case:  start-stop-daemon ... --make-pidfile --pidfile /run/service.pid
-					pid_file="pid:${path}"
+					pid_file="pid:!${path}"
 				else
 					# Case:  start-stop-daemon ... --pidfile /run/service.pid
 					pid_file="pid:!${path}"
@@ -396,7 +399,7 @@ echo "path: ${path}"
 				if [[ "${path:0:1}" == "/" ]] ; then
 				# Case:  pidfile="/run/service.pid"
 					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:${path}"
+						pid_file="pid:!${path}"
 					else
 						pid_file="pid:!${path}"
 					fi
@@ -409,7 +412,7 @@ echo "path: ${path}"
 				if [[ "${path:0:1}" == "/" ]] ; then
 				# Case:  pidfile=/run/service.pid
 					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:${path}"
+						pid_file="pid:!${path}"
 					else
 						pid_file="pid:!${path}"
 					fi
@@ -417,7 +420,7 @@ echo "path: ${path}"
 				elif [[ "${path:0:1}" == '$' ]] ; then
 				# Case:  pidfile=${RC_PREFIX}/run/service.pid
 					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:${path}"
+						pid_file="pid:!${path}"
 					else
 						pid_file="pid:!${path}"
 					fi
@@ -431,7 +434,7 @@ echo "pidfile case G:  init_path - ${init_path}"
 					local t=$(grep -e "^PIDFILE=" "/etc/conf.d/actkbd")
 					echo "set ${t}" >> "${init_conf}"
 					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:${path}"
+						pid_file="pid:!${path}"
 					else
 						pid_file="pid:!${path}"
 					fi
@@ -439,7 +442,7 @@ echo "pidfile case G:  init_path - ${init_path}"
 				elif [[ "${path:0:1}" == "/" ]] ; then
 					# Case:  --pidfile /run/service.pid
 					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:${path}"
+						pid_file="pid:!${path}"
 					else
 						pid_file="pid:!${path}"
 					fi
@@ -449,7 +452,7 @@ echo "pidfile case G:  init_path - ${init_path}"
 					echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
 					# Case:  --pidfile ${PIDFILE}
 					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:${path}"
+						pid_file="pid:!${path}"
 					else
 						pid_file="pid:!${path}"
 					fi
@@ -1380,6 +1383,11 @@ convert_systemd() {
 		echo "${c}/${pn}" >> "${PKGS_PATH}"
 		echo "${pn}" >> "${SERVICES_PATH}"
 
+		if [[ "${svc_name}" == "sysklogd" ]] ; then
+			pid_file="pid:/run/${pn}.pid"
+			sed -i -e "${top_ln}a export do_exec=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+		fi
+
 		if grep -q -e "^Environment=" "${init_path}" ; then
 			IFS=$'\n'
 			local ROWS=( $(grep -e "^Environment" "${init_path}" | cut -f 2- -d "=") ) || die "ERR:  line number - $LINENO"
@@ -1518,9 +1526,7 @@ convert_systemd() {
 			elif [[ -n "${group}" ]] ; then
 				user_group="@:${group}"
 			fi
-			if [[ "${svc_name}" == "sysklogd" ]] ; then
-				echo "service [${runlevels}] ${cond} ${user_group} name:syslogd notify:pid pid:!/run/syslogd.pid /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
-			elif [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
+			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
 				echo "task [${runlevels}] ${cond} ${user_group} name:${svc_name} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			elif [[ "${type}" == "oneshot" ]] ; then
 				# It is unknown if they must be run sequentially if more than 1.

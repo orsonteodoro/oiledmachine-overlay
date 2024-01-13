@@ -286,29 +286,20 @@ chroot_start() {
 		umask \${umask}
 	fi
 
-	if [ \$make_pidfile -eq 1 ] ; then
+	if [ \$do_exec -eq 1 ] ; then
 		exec "\${exec_path}" \$@ &
-		local c=0
-		while [ \$c -lt 10 ] ; do
-			service_pid=\$(ps --no-headers -C \$(basename "\${exec_path}") -o pid 2>/dev/null)
-			if [ -n "\${service_pid}" ] ; then
-				break
-			fi
-			c=\$(( \${c} + 1 ))
-			sleep 0.1
-		done
 	else
 		sudo \${ug_args} -- "\${exec_path}" \$@ &
-		local c=0
-		while [ \$c -lt 100 ] ; do
-			service_pid=\$(ps --no-headers -C $(basename "\${exec_path}") -o pid 2>/dev/null)
-			if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
-				break
-			fi
-			c=\$(( \${c} + 1 ))
-			sleep 0.1
-		done
 	fi
+	local c=0
+	while [ \$c -lt 100 ] ; do
+		service_pid=\$(ps --no-headers -C $(basename "\${exec_path}") -o pid 2>/dev/null)
+		if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
+			break
+		fi
+		c=\$(( \${c} + 1 ))
+		sleep 0.1
+	done
 
 
 	if [ -z "\${service_pid}" ] ; then
@@ -664,31 +655,20 @@ start_stop_daemon() {
 			umask ${umask}
 		fi
 
-		if [ $make_pidfile -eq 1 ] ; then
+		if [ $do_exec -eq 1 ] ; then
 			exec "${exec_path}" $@ &
-			echo "ran idiot"
-			# bye bye
-			local c=0
-			while [ $c -lt 10 ] ; do
-				service_pid=$(ps --no-headers -C $(basename "${exec_path}") -o pid 2>/dev/null)
-				if [ -n "${service_pid}" ] ; then
-					break
-				fi
-				c=$(( ${c} + 1 ))
-				sleep 0.1
-			done
 		else
 			sudo ${ug_args} -- "${exec_path}" $@ &
-			local c=0
-			while [ $c -lt 10 ] ; do
-				service_pid=$(ps --no-headers -C $(basename "${exec_path}") -o pid 2>/dev/null)
-				if [ -n "${service_pid}" ] ; then
-					break
-				fi
-				c=$(( ${c} + 1 ))
-				sleep 0.1
-			done
 		fi
+		local c=0
+		while [ $c -lt 10 ] ; do
+			service_pid=$(ps --no-headers -C $(basename "${exec_path}") -o pid 2>/dev/null)
+			if [ -n "${service_pid}" ] ; then
+				break
+			fi
+			c=$(( ${c} + 1 ))
+			sleep 0.1
+		done
 
 		if [ -z "${service_pid}" ] ; then
 			return 1
