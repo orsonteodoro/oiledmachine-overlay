@@ -285,6 +285,7 @@ fi
 			local needs_syslog=0
 			local cond=""
 			local runlevels=""
+			echo "${svc_name}"
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
 				runlevels="S"
 				cond="hook/mount/root"
@@ -511,6 +512,10 @@ echo "pidfile case J:  init_path - ${init_path}"
 					pid_file="pid:!/var/run/mysqld/mariadb.pid"
 				fi
 				notify="notify:pid"
+			elif grep -E  -e 'supervisor[:]?=["]?supervise-daemon' "${init_path}" ; then
+echo "pidfile case K:  init_path - ${init_path}"
+				pid_file="pid:!/run/${svc_name}.pid"
+				notify="notify:pid"
 			else
 echo "pidfile case Z:  init_path - ${init_path}"
 
@@ -565,8 +570,11 @@ echo "pidfile case Z:  init_path - ${init_path}"
 					user_group="@root:${group}"
 				fi
 
+
 				if grep -q -e "provide.*logger" "${init_path}" ; then
 					echo "service [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+				elif [[ "${notify}" == "notify:none" ]] ; then
+					echo "run [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				else
 					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				fi
