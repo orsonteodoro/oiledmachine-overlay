@@ -549,7 +549,7 @@ echo "pidfile case Z:  init_path - ${init_path}"
 
 			local svc_type
 			if grep -q -e "^start_pre" "${init_path}" ; then
-				if grep -q "^start()" "${init_sh}" ; then
+				if grep -q "^start()" "${init_sh}" || grep -q "^command=" "${init_sh}" || grep -F ': ${command:=' "${init_sh}" ; then
 					svc_type="run"
 				else
 					svc_type="task"
