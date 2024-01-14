@@ -63,7 +63,7 @@ else
 		echo "Processing ${script_dir}"
 		cd "${script_dir}" || die "ERR:  line number - $LINENO"
 		L=(
-			$(find ./)
+			$(find ./ -type f)
 		)
 fi
 
@@ -602,6 +602,29 @@ echo "pidfile case Z:  init_path - ${init_path}"
 						| sed -E -e "s|^[[:space:]]+||g" -e "s|provide ||")
 				fi
 
+				# Only systemd style of instancing with @ is supported by finit.
+
+				is_instance_svc() {
+					local svc="$1"
+
+					local instance_svcs=(
+						"net.lo" # Try symlink to net@<interface>.service
+					)
+
+					local x
+					for x in ${instance_svcs[@]} ; do
+						[[ "${svc}" == "x" ]] && return 0
+					done
+					return 1
+				}
+
+				local instance=""
+				local instance_desc=""
+				if is_instance_svc ; then
+					instance=":%i"
+					instance_desc=" for %i"
+				if
+
 				if grep -q -e "provide.*logger" "${init_path}" ; then
 					echo "service [${runlevels}] ${user_group} name:logger ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				elif [[ "${notify}" == "notify:none" ]] ; then
@@ -610,14 +633,15 @@ echo "pidfile case Z:  init_path - ${init_path}"
 					else
 						svc_type="task"
 					fi
-					echo "${svc_type} [${runlevels}] ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+					echo "${svc_type} [${runlevels}] ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
 						name="${provide}"
 					else
 						name="${svc_name}"
 					fi
-					echo "service [${runlevels}] ${cond} ${user_group} name:${name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+
+					echo "service [${runlevels}] ${cond} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
@@ -1135,7 +1159,7 @@ convert_systemd() {
 
 	local init_path
 	local init_path_orig
-	for init_path_orig in $(find /lib/systemd/system /usr/lib/systemd/system -name "*.service") ; do
+	for init_path_orig in $(find /lib/systemd/system /usr/lib/systemd/system -name "*.service" -type f) ; do
 		[[ "${init_path_orig}" == "./" ]] && continue
 		local init_path_tmp=$(mktemp)
 		cat "${init_path_orig}" > "${init_path_tmp}"
@@ -1411,9 +1435,7 @@ convert_systemd() {
 			runlevels="2345"
 		fi
 
-		if [[ "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
-			:;
-		elif grep -q -e "^StandardOutput=syslog" "${init_path}" ; then
+		if grep -q -e "^StandardOutput=syslog" "${init_path}" ; then
 			cond="${cond},pid/syslog"
 		elif grep -q -e "^StandardError=syslog" "${init_path}" ; then
 			cond="${cond},pid/syslog"
@@ -1635,13 +1657,20 @@ convert_systemd() {
 			local name=""
 			local alias=$(grep -r -e "Alias" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s/(.service)//g")
 
+			local instance=""
+			local instance_desc=""
+			if [[ "${svc_name}" =~ "@" ]] ; then
+				instance=":%i"
+				instance_desc=" for %i"
+			if
+
 			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
 				if (( "${#exec_start_posts}" > 0 )) ; then
 					svc_type="run"
 				else
 					svc_type="task"
 				fi
-				echo "${svc_type} [${runlevels}] ${cond} ${user_group} name:${svc_name} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "${svc_type} [${runlevels}] ${cond} ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			elif grep -q "Alias=syslog.service" "${init_path}" ; then
 				if [[ -z "${pid_file}" ]] ; then
 					echo "[warn] Missing pidfile for ${svc_name}"
@@ -1661,7 +1690,7 @@ convert_systemd() {
 				else
 					name="${svc_name}"
 				fi
-				echo "service [${runlevels}] ${cond} ${user_group} name:${name} ${notify} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				echo "service [${runlevels}] ${cond} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
