@@ -306,12 +306,12 @@ fi
 			fi
 
 			local svcs=(
-				$(grep -o -E -r "^[[:space:]]+need [ 0-9a-z-]+" "${init_path}" \
+				$(grep -o -E -r "^[[:space:]]+need [ 0-9a-zA-Z_-]+" "${init_path}" \
 					| sed -E -e "s|[[:space:]]+| |g" -e "s| need ||g")
 			)
 			if [[ "${FINIT_SOFT_DEPS_MANDATORY}" == "1" ]] ; then
 				svcs+=(
-					$(grep -o -E -r "^[[:space:]]+use [ 0-9a-z-]+" "${init_path}" \
+					$(grep -o -E -r "^[[:space:]]+use [ 0-9a-zA-Z_-]+" "${init_path}" \
 						| sed -E -e "s|[[:space:]]+| |g" -e "s| use ||g")
 				)
 			fi
@@ -603,16 +603,14 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				fi
 
 				if grep -q -e "provide.*logger" "${init_path}" ; then
-					echo "service [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+					echo "service [${runlevels}] ${user_group} name:logger ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				elif [[ "${notify}" == "notify:none" ]] ; then
 					if grep -q "^start_post" "${init_sh}" ; then
 						svc_type="run"
 					else
 						svc_type="task"
 					fi
-					echo "${svc_type} [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
-				elif [[ "${notify}" == "notify:none" ]] && grep -q "start_post" "${init_sh}" ; then
-					echo "run [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+					echo "${svc_type} [${runlevels}] ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
 						name="${provide}"
