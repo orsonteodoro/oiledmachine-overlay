@@ -316,6 +316,7 @@ fi
 				)
 			fi
 
+			local cond=""
 			local svc
 			for svc in ${svcs[@]} ; do
 				[[ "${svc}" == "dbus" ]] && continue
@@ -625,15 +626,21 @@ fi
 					instance_desc=" for %i"
 				fi
 
+				local envfile=""
+				if [[ -f "/etc/conf.d/${svc_name}" ]] ; then
+					envfile="env:/etc/conf.d/"
+				fi
+
+				# env: is required for variables
 				if grep -q -e "provide.*logger" "${init_path}" ; then
-					echo "service [${runlevels}] ${user_group} name:logger ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+					echo "service [${runlevels}] ${envfile} ${user_group} name:logger ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				elif [[ "${notify}" == "notify:none" ]] ; then
 					if grep -q "^start_post" "${init_sh}" ; then
 						svc_type="run"
 					else
 						svc_type="task"
 					fi
-					echo "${svc_type} [${runlevels}] ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+					echo "${svc_type} [${runlevels}] ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
 						name="${provide}"
@@ -641,7 +648,7 @@ fi
 						name="${svc_name}"
 					fi
 
-					echo "service [${runlevels}] ${cond} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+					echo "service [${runlevels}] ${cond} ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
@@ -1413,14 +1420,38 @@ convert_systemd() {
 			io_scheduling_priority=$(grep "^IOSchedulingPriority=" "${init_path}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 		fi
 
+		local init_conf="${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
+		mkdir -p $(dirname "${init_conf}")
+		echo "Generating ${c}/${pn}/${svc_name}.conf"
+		cat /dev/null > "${init_conf}"
+		echo "${c}/${pn}" >> "${PKGS_PATH}"
+		echo "${pn}" >> "${SERVICES_PATH}"
 
-
-		# Calls setenv() from c which is assumed literal
-		if [[ "${user}" =~ ("$"|"%") ]] ; then
-			user=""
-		fi
-		if [[ "${group}" =~ ("$"|"%") ]] ; then
-			group=""
+		local _env_file="/etc/systemd/system/${svc_name}.service.d/00gentoo.conf"
+		if [[ -f "${_env_file}" ]] ; then
+			if grep -q "^User=" "${_env_file}" ; then
+				user=$(grep -q "^User=" "${_env_file}" | cut -f 2 -d "=")
+			fi
+			if grep -q "^Group=" "${_env_file}" ; then
+				group=$(grep -q "^Group=" "${_env_file}" | cut -f 2 -d "=")
+			fi
+			if grep -q "^Environment=" "${_env_file}" ; then
+				environment=$(grep -q "^Environment=" "${_env_file}" | cut -f 2 -d "=")
+				IFS=$'\n'
+				local rows=(
+					$(grep "^Environment=" "${_env_file}" \
+						| cut -f 2- -d "=" \
+						| sed -e 's|" "|"\n"|g')
+				)
+				local row=""
+				for row in ${rows[@]} ; do
+					row=$(echo "${row}" | cut -f 2 -d '"')
+					local name=$(echo "${row}" | cut -f 1 -d '=')
+					local value=$(echo "${row}" | cut -f 2 -d '=')
+					echo "set ${name}=\"${value}\"" >> "${init_conf}"
+				done
+				IFS=$' \t\n'
+			fi
 		fi
 
 		local needs_syslog=0
@@ -1497,12 +1528,6 @@ convert_systemd() {
 			echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
 		fi
 
-		local init_conf="${CONFS_PATH}/${c}/${pn}/${svc_name}.conf"
-		mkdir -p $(dirname "${init_conf}")
-		echo "Generating ${c}/${pn}/${svc_name}.conf"
-		cat /dev/null > "${init_conf}"
-		echo "${c}/${pn}" >> "${PKGS_PATH}"
-		echo "${pn}" >> "${SERVICES_PATH}"
 
 		if [[ "${svc_name}" == "sysklogd" ]] ; then
 			pid_file="pid:/run/${pn}.pid"
