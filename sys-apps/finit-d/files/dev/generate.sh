@@ -694,6 +694,10 @@ fi
 			if grep -q -e "RC_SVCNAME" "${init_conf}" ; then
 				sed -i -e "1i set RC_SVCNAME=${svc_name}  # This should match the filename without suffix." "${init_conf}"
 			fi
+
+			if ! grep -q -e "[$]" "${init_conf}" ; then
+				sed -i -E -e "s|env:[^ ]+||g" "${init_conf}"
+			fi
 		done
 	done
 
