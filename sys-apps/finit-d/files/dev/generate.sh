@@ -520,7 +520,7 @@ fi
 					pid_file="pid:!/var/run/mysqld/mariadb.pid"
 				fi
 				notify="notify:pid"
-			elif grep -E  -e 'supervisor[:]?=["]?supervise-daemon' "${init_path}" ; then
+			elif grep -q -E  -e 'supervisor[:]?=["]?supervise-daemon' "${init_path}" ; then
 #echo "pidfile case K:  init_path - ${init_path}"
 				pid_file="pid:!/run/${svc_name}.pid"
 				notify="notify:pid"
