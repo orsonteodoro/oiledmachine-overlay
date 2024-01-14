@@ -618,7 +618,7 @@ fi
 
 				local envfile=""
 				if [[ -f "/etc/conf.d/${svc_name}" ]] ; then
-					envfile="env:/etc/conf.d/"
+					envfile="env:/etc/conf.d/${svc_name}"
 				fi
 
 				# env: is required for variables
