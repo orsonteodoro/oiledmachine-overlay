@@ -184,13 +184,13 @@ eend() {
 	local ret=${1}
 	local message="${2}"
 	if [ -n "${message}" ] && [ ${ret} -eq 0 ] ; then
-		is_debug && finit_log "${message} [  OK  ]"
+		is_debug && log "${message} [  OK  ]"
 	elif [ -n "${message}" ] && [ ${ret} -ne 0 ] ; then
-		is_debug && finit_log "${message} [FAILED]"
+		is_debug && log "${message} [FAILED]"
 	elif [ ${ret} -eq 0 ] ; then
-		is_debug && finit_log "[  OK  ]"
+		is_debug && log "[  OK  ]"
 	else
-		is_debug && finit_log "[FAILED]"
+		is_debug && log "[FAILED]"
 	fi
 	return ${ret}
 }
@@ -200,15 +200,15 @@ ewend() {
 }
 
 einfo() {
-	is_debug && finit_log "${1}"
+	is_debug && log "${1}"
 }
 
 ewarn() {
-	is_debug && finit_log "[w] ${1}"
+	is_debug && log "[w] ${1}"
 }
 
 eerror() {
-	is_debug && finit_log "[e] ${1}"
+	is_debug && log "[e] ${1}"
 	exit 1
 }
 
@@ -1066,38 +1066,38 @@ eindent() {
 
 vebegin() {
 	local msg="${1}"
-	is_debug && finit_log "${msg}"
+	is_debug && log "${msg}"
 	return 0
 }
 
 veend() {
 	local ret="${1}"
 	local msg="${2}"
-	is_debug && finit_log "${msg}"
+	is_debug && log "${msg}"
 	return ${ret}
 }
 
 veinfo() {
 	local msg="${1}"
-	is_debug && finit_log "${msg}"
+	is_debug && log "${msg}"
 	return 0
 }
 
 vewarn() {
 	local msg="${1}"
-	is_debug && finit_log "[w] ${msg}"
+	is_debug && log "[w] ${msg}"
 	return 0
 }
 
 veerror() {
 	local msg="${1}"
-	is_debug && finit_log "[e] ${msg}"
+	is_debug && log "[e] ${msg}"
 	return 0
 }
 
 einfon() {
 	local msg="${1}"
-	is_debug && finit_log "${msg}"
+	is_debug && log "${msg}"
 	return 0
 }
 
@@ -1107,7 +1107,7 @@ rc_service() {
 	return 0
 }
 
-finit_log() {
+log() {
 	local msg="${1}"
 	local tag="${SVCNAME}"
 	if [ ${LOGGER_METHOD} -eq 1 ] ; then
