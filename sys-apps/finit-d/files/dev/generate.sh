@@ -325,7 +325,7 @@ fi
 				if [[ "${svc}" == "net" ]] ; then # meta-category
 					cond="${cond},${FINIT_COND_NETWORK}"
 				else
-					cond="${cond},pid/${x}"
+					cond="${cond},pid/${svc}"
 				fi
 			done
 
