@@ -290,7 +290,7 @@ fi
 			local runlevels=""
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
 				runlevels="S"
-			elif grep -r -E -e "before.*net( |$)" "${init_path}" ; then
+			elif grep -q -r -E -e "before.*net( |$)" "${init_path}" ; then
 				runlevels="S"
 			elif grep -q -e "provide.*logger" "${init_path}" ; then
 				runlevels="S12345"
@@ -357,7 +357,7 @@ fi
 # Most services should have a pidfile except for oneshot equivalent.
 			local notify=""
 			if grep -q -E -e '^pidfile=["]?[$].*:-' "${init_path}" ; then
-echo "pidfile case A:  init_path - ${init_path}"
+#echo "pidfile case A:  init_path - ${init_path}"
 				local path=$(grep -E -e '^pidfile=["]?[$].*:-' "${init_path}" | cut -f 2 -d "-" | sed -e 's|["]||g' -e 's|}$||g')
 				if (( ${create_pid} == 1 )) ; then
 					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
@@ -371,7 +371,7 @@ echo "pidfile case A:  init_path - ${init_path}"
 				fi
 				notify="notify:pid"
 			elif grep -q -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" ; then
-echo "pidfile case B:  init_path - ${init_path}"
+#echo "pidfile case B:  init_path - ${init_path}"
 				# Case:  pidfile="${PKG_PIDFILE}"
 				# Any value can be used for PKG_PIDFILE if
 				# : ${PKG_PIDFILE:=/run/${svc_name}.pid}
@@ -385,7 +385,7 @@ echo "pidfile case B:  init_path - ${init_path}"
 				notify="notify:pid"
 			elif grep -q -e '--pidfile="[$].*}"' "${init_path}" \
 				&& ! grep -q -e '^pidfile=' "${init_path}" ; then
-echo "pidfile case C:  init_path - ${init_path}"
+#echo "pidfile case C:  init_path - ${init_path}"
 				# DEADCODE
 				# Case: --pidfile="${PKG_PIDFILE}"
 				local varname=$(grep -o -E -e '--pidfile="[$].*}"' "${init_path}" | head -n -1 | cut -f 2 -d '"' | sed -e 's|[${}]||g')
@@ -398,7 +398,7 @@ echo "pidfile case C:  init_path - ${init_path}"
 				notify="notify:pid"
 			elif grep -q -e "--pidfile" "${init_path}" \
 				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  ; then
-echo "pidfile case D:  init_path - ${init_path}"
+#echo "pidfile case D:  init_path - ${init_path}"
 				local path=$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
 				if (( ${create_pid} == 1 )) ; then
 					# Case:  start-stop-daemon ... --make-pidfile --pidfile /run/service.pid
@@ -409,9 +409,9 @@ echo "pidfile case D:  init_path - ${init_path}"
 				fi
 				notify="notify:pid"
 			elif grep -q -e "^pidfile=\"" "${init_path}" ; then
-echo "pidfile case E:  init_path - ${init_path}"
+#echo "pidfile case E:  init_path - ${init_path}"
 				local path=$(grep "^pidfile=\"" "${init_path}" | head -n 1 | cut -f 2 -d '"')
-echo "path: ${path}"
+#echo "path: ${path}"
 				if [[ "${path:0:1}" == "/" ]] ; then
 				# Case:  pidfile="/run/service.pid"
 					if (( ${create_pid} == 1 )) ; then
@@ -422,9 +422,9 @@ echo "path: ${path}"
 					notify="notify:pid"
 				fi
 			elif grep -q -e "^pidfile=" "${init_path}" ; then
-echo "pidfile case F:  init_path - ${init_path}"
+#echo "pidfile case F:  init_path - ${init_path}"
 				local path=$(grep "^pidfile=" "${init_path}" | head -n 1 | cut -f 2 -d "=")
-echo "path: ${path}"
+#echo "path: ${path}"
 				if [[ "${path:0:1}" == "/" ]] ; then
 				# Case:  pidfile=/run/service.pid
 					if (( ${create_pid} == 1 )) ; then
@@ -444,7 +444,7 @@ echo "path: ${path}"
 				fi
 			elif grep -q -E -e "--pidfile [^ ]+ " "${init_path}" \
 				&& ! grep -q -E -e "^pidfile=" "${init_path}" ; then
-echo "pidfile case G:  init_path - ${init_path}"
+#echo "pidfile case G:  init_path - ${init_path}"
 				local path=$(grep -E -o -e "--pidfile [^ ]+ " "${init_path}" | head -n 1 | cut -f 2 -d " " | sed -e 's|"||g')
 				if [[ "${svc_name}" == "actkbd" ]] ; then
 					local t=$(grep -e "^PIDFILE=" "/etc/conf.d/actkbd")
@@ -475,11 +475,11 @@ echo "pidfile case G:  init_path - ${init_path}"
 					notify="notify:pid"
 				fi
 			elif [[ "${svc_name}" == "squid" ]] ; then
-echo "pidfile case H:  init_path - ${init_path}"
+#echo "pidfile case H:  init_path - ${init_path}"
 				pid_file="pid:!/run/\${RC_SVCNAME}.pid"
 				notify="notify:pid"
 			elif [[ "${svc_name}" == "vsftpd" ]] ; then
-echo "pidfile case I:  init_path - ${init_path}"
+#echo "pidfile case I:  init_path - ${init_path}"
 				pid_file="pid:!${path}"
 				notify="notify:pid"
 			elif [[ "${svc_name}" == "display-manager" ]] ; then
@@ -513,7 +513,7 @@ echo "pidfile case I:  init_path - ${init_path}"
 				fi
 				notify="notify:pid"
 			elif [[ "${svc_name}" == "mysql-s6" || "${svc_name}" == "mysql" ]] ; then
-echo "pidfile case J:  init_path - ${init_path}"
+#echo "pidfile case J:  init_path - ${init_path}"
 				if bzcat "/var/db/pkg/dev-db/mysql-"*"/environment.bz2" | grep -q PN=\"mysql\" ; then
 					pid_file="pid:!/var/run/mysqld/mysql.pid"
 				elif bzcat "/var/db/pkg/dev-db/mariadb-"*"/environment.bz2" | grep -q PN=\"mariadb\" ; then
@@ -521,12 +521,12 @@ echo "pidfile case J:  init_path - ${init_path}"
 				fi
 				notify="notify:pid"
 			elif grep -E  -e 'supervisor[:]?=["]?supervise-daemon' "${init_path}" ; then
-echo "pidfile case K:  init_path - ${init_path}"
+#echo "pidfile case K:  init_path - ${init_path}"
 				pid_file="pid:!/run/${svc_name}.pid"
 				notify="notify:pid"
 				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			else
-echo "pidfile case Z:  init_path - ${init_path}"
+#echo "pidfile case Z:  init_path - ${init_path}"
 
 				notify="notify:none"
 			fi
