@@ -1662,7 +1662,7 @@ convert_systemd() {
 			if [[ "${svc_name}" =~ "@" ]] ; then
 				instance=":%i"
 				instance_desc=" for %i"
-			if
+			fi
 
 			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
 				if (( "${#exec_start_posts}" > 0 )) ; then
