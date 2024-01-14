@@ -287,7 +287,6 @@ fi
 			sed -i -e "s|supervise-daemon|supervise_daemon|g" "${init_sh}" || die "ERR:  line number - $LINENO"
 
 			local needs_syslog=0
-			local cond=""
 			local runlevels=""
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
 				runlevels="S"
@@ -296,7 +295,6 @@ fi
 			elif grep -q -e "provide.*logger" "${init_path}" ; then
 				runlevels="S12345"
 			elif grep -q -e "need.*net" "${init_path}" ; then
-				cond="${FINIT_COND_NETWORK}"
 				runlevels="345"
 				echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
 			else
@@ -307,16 +305,32 @@ fi
 				echo "${c}/${pn}" >> "${NEEDS_DBUS_PATH}"
 			fi
 
-			if grep -q -e "need.*logger" "${init_path}" ; then
-				if [[ -n "${cond}" && "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
-					cond="${cond}"
-				elif [[ -n "${cond}" && -n "${FINIT_LOGGER}" ]] ; then
-					cond="${cond},syslogd"
-				elif [[ -z "${cond}" && "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
-					cond=""
-				elif [[ -z "${cond}" && -n "${FINIT_LOGGER}" ]] ; then
-					cond="syslogd"
+			local svcs=(
+				$(grep -o -E -r "^[[:space:]]+need [ 0-9a-z-]+" "${init_path}" \
+					| sed -E -e "s|[[:space:]]+| |g" -e "s| need ||g")
+			)
+			if [[ "${FINIT_SOFT_DEPS_MANDATORY}" == "1" ]] ; then
+				svcs+=(
+					$(grep -o -E -r "^[[:space:]]+use [ 0-9a-z-]+" "${init_path}" \
+						| sed -E -e "s|[[:space:]]+| |g" -e "s| use ||g")
+				)
+			fi
+
+			local svc
+			for svc in ${svcs[@]} ; do
+				[[ "${svc}" == "dbus" ]] && continue
+				[[ "${svc}" == "hostname" ]] && continue
+				[[ "${svc}" == "localmount" ]] && continue
+				[[ "${svc}" == "udev" ]] && continue
+				if [[ "${svc}" == "net" ]] ; then # meta-category
+					cond="${cond},${FINIT_COND_NETWORK}"
+				else
+					cond="${cond},pid/${x}"
 				fi
+			done
+
+			if [[ "${cond:0:1}" == "," ]] ; then
+				cond="${cond:1}"
 			fi
 
 			local basename_fn=$(basename "${init_sh}")
@@ -581,6 +595,13 @@ echo "pidfile case Z:  init_path - ${init_path}"
 					user_group="@root:${group}"
 				fi
 
+				local name=""
+				local provide=""
+				if grep -q -E -e "^[[:space:]]+provide [ 0-9a-zA-Z-]+" "${init_path}" ; then
+					provide=$(grep -E -e "^[[:space:]]+provide [ 0-9a-zA-Z-]+" "${init_path}" \
+						| sed -E -e "s|^[[:space:]]+||g" -e "s|provide ||")
+				fi
+
 				if grep -q -e "provide.*logger" "${init_path}" ; then
 					echo "service [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				elif [[ "${notify}" == "notify:none" ]] ; then
@@ -593,7 +614,12 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				elif [[ "${notify}" == "notify:none" ]] && grep -q "start_post" "${init_sh}" ; then
 					echo "run [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				else
-					echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
+					if [[ -n "${provide}" ]] ; then
+						name="${provide}"
+					else
+						name="${svc_name}"
+					fi
+					echo "service [${runlevels}] ${cond} ${user_group} name:${name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
@@ -1381,7 +1407,6 @@ convert_systemd() {
 		if grep -q "Alias=syslog.service" "${init_path}" ; then
 			runlevels="S12345"
 		elif grep -q -e "^Wants=.*network.target" "${init_path}" ; then
-			cond="${FINIT_COND_NETWORK}"
 			runlevels="345"
 			echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
 		else
@@ -1391,9 +1416,41 @@ convert_systemd() {
 		if [[ "${FINIT_LOGGER}" =~ ("disable"|"none") ]] ; then
 			:;
 		elif grep -q -e "^StandardOutput=syslog" "${init_path}" ; then
-			cond="${cond},syslogd"
+			cond="${cond},pid/syslog"
 		elif grep -q -e "^StandardError=syslog" "${init_path}" ; then
-			cond="${cond},syslogd"
+			cond="${cond},pid/syslog"
+		fi
+
+		local svcs=(
+			$(grep -r -e "^Requires=" "${init_path}" \
+				| cut -f 2- -d "=" \
+				| sed -E -e "s/(.device|.service|.target)//g")
+		)
+		if [[ "${FINIT_SOFT_DEPS_MANDATORY}" == "1" ]] ; then
+			svcs+=(
+				$(grep -r -e "^Wants=" "${init_path}" \
+					| cut -f 2- -d "=" \
+					| sed -E -e "s/(.device|.service|.target)//g")
+			)
+		fi
+
+		local svc
+		for svc in ${svcs[@]} ; do
+			[[ "${svc}" == "%i" ]] && continue
+			[[ "${svc}" == "local-fs" ]] && continue
+			[[ "${svc}" == "network-pre" ]] && continue
+			[[ "${svc}" == "nss-lookup" ]] && continue # not portable
+			[[ "${svc}" == "systemd-machined" ]] && continue # not portable
+			if [[ "${svc}" == "network" ]] ; then
+				cond="${cond},${FINIT_COND_NETWORK}"
+			elif [[ "${svc}" == "network-online" ]] ; then
+				cond="${cond},${FINIT_COND_NETWORK}"
+			else
+				cond="${cond},pid/${svc}"
+			fi
+		done
+		if [[ "${cond:0:1}" == "," ]] ; then
+			cond="${cond:1}"
 		fi
 
 		local type="simple"
@@ -1576,6 +1633,10 @@ convert_systemd() {
 			elif [[ -n "${group}" ]] ; then
 				user_group="@:${group}"
 			fi
+
+			local name=""
+			local alias=$(grep -r -e "Alias" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s/(.service)//g")
+
 			if [[ "${type}" == "oneshot" ]] && grep -E -e "^ExecStart=" | wc -l "${init_path}" | grep -q "1" ; then
 				if (( "${#exec_start_posts}" > 0 )) ; then
 					svc_type="run"
@@ -1587,12 +1648,22 @@ convert_systemd() {
 				if [[ -z "${pid_file}" ]] ; then
 					echo "[warn] Missing pidfile for ${svc_name}"
 				fi
-				echo "service [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				if [[ -n "${alias}" ]] ; then
+					name="${alias}"
+				else
+					name="${svc_name}"
+				fi
+				echo "service [${runlevels}] ${user_group} name:${name} ${notify} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			else
 				if [[ -z "${pid_file}" ]] ; then
 					echo "[warn] Missing pidfile for ${svc_name}"
 				fi
-				echo "service [${runlevels}] ${cond} ${user_group} name:${svc_name} ${notify} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
+				if [[ -n "${alias}" ]] ; then
+					name="${alias}"
+				else
+					name="${svc_name}"
+				fi
+				echo "service [${runlevels}] ${cond} ${user_group} name:${name} ${notify} ${pid_file} /lib/finit/scripts/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then

@@ -97,15 +97,6 @@ src_compile() {
 	chmod +x generate.sh || die
 	use dash && export FINIT_SHELL="/bin/dash"
 	use dash || export FINIT_SHELL="/bin/sh"
-	if has_version "app-admin/metalog" ; then
-		export FINIT_LOGGER=${FINIT_LOGGER:-"metalog"}
-	elif has_version "app-admin/rsyslog" ; then
-		export FINIT_LOGGER=${FINIT_LOGGER:-"rsyslog"}
-	elif has_version "app-admin/sysklogd" ; then
-		export FINIT_LOGGER=${FINIT_LOGGER:-"sysklogd"}
-	elif has_version "app-admin/syslog-ng" ; then
-		export FINIT_LOGGER=${FINIT_LOGGER:-"syslog-ng"}
-	fi
 	if [ -n "${FINIT_COND_NETWORK}" ] ; then
 einfo "Using ${FINIT_COND_NETWORK} for network up."
 		export FINIT_COND_NETWORK
@@ -259,21 +250,12 @@ src_install() {
 	)
 	local logger
 	for logger in ${loggers[@]} ; do
-		if [[ "${logger}" == "${FINIT_LOGGER}" || -z "${FINIT_LOGGER}" ]] ; then
-			:;
-		else
-			rm -f "${ED}/etc/finit.d/enabled/${logger}"
-		fi
+	# Temp disabled
+		rm -f "${ED}/etc/finit.d/enabled/${logger}.conf"
 	done
 
 	# Broken default settings.  Requires METALOG_OPTS+=" -N" for some kernels.
 	rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
-
-	# Temp disabled
-	#rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
-	rm -f "${ED}/etc/finit.d/enabled/sysklogd.conf"
-	rm -f "${ED}/etc/finit.d/enabled/rsyslog.conf"
-	rm -f "${ED}/etc/finit.d/enabled/syslog-ng.conf"
 }
 
 pkg_postinst() {

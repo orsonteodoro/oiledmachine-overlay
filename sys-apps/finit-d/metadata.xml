@@ -26,8 +26,9 @@
   Only one allowed.
   Valid values:  openrc (default), systemd
 
-  FINIT_LOGGER - Name of the logger which services depend on
-  Valid values:  metalog, rsyslog, sysklogd, syslog-ng, unset (auto detect), disable, none
+  FINIT_SOFT_DEPS_MANDATORY - Make soft service dependencies as hard service
+  dependencies.
+  Valid values:  0 (mark as optional, default), 1 (mark as required)
 
   Valid values:
 
@@ -43,7 +44,6 @@
     FINIT_BLACKLIST_SVCNAMES="varnishlog"
     FINIT_COND_NETWORK="net/lo/running"
     FINIT_COND_NETWORK="net/wlan0/running"
-    FINIT_COND_LOGGER="rsyslogd"
     FINIT_CUSTOM_OVERLAY_LIST="/usr/portage /var/db/repos/guru"
     FINIT_SCRIPT_SOURCE="openrc"
 
