@@ -741,6 +741,8 @@ gen_systemd_wrapper() {
 		fi
 	fi
 
+	local command=""
+	local command_args=""
 	if [[ "${type}" != "oneshot" ]] && echo -e "${exec_starts}" | sed -e "/^$/d" | wc -l | grep -q "1" ; then
 		command=$(echo -e "${exec_starts}" | sed -e "/^$/d" | head -n 1 | cut -f 1 -d " ")
 		command_args=$(echo -e "${exec_starts}" | sed -e "/^$/d" | head -n 1 | cut -f 2- -d " ")
@@ -765,6 +767,8 @@ cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 #!${FINIT_SHELL}
 ${service_fns}
 . /lib/finit/scripts/lib/lib.sh
+svc_name="$0"
+svc_name=$(echo "${svc_name}" | sed -e "s|^./||" -e "s|.sh$||")
 svc_name="${svc_name}"
 ambient_capabilities="${ambient_capabilities}"
 bounding_capabilities="${bounding_capabilities}"
@@ -1436,7 +1440,7 @@ convert_systemd() {
 				group=$(grep -q "^Group=" "${_env_file}" | cut -f 2 -d "=")
 			fi
 			if grep -q "^Environment=" "${_env_file}" ; then
-				environment=$(grep -q "^Environment=" "${_env_file}" | cut -f 2 -d "=")
+				local environment=$(grep -q "^Environment=" "${_env_file}" | cut -f 2 -d "=")
 				IFS=$'\n'
 				local rows=(
 					$(grep "^Environment=" "${_env_file}" \
@@ -1488,6 +1492,7 @@ convert_systemd() {
 		local svc
 		for svc in ${svcs[@]} ; do
 			[[ "${svc}" == "%i" ]] && continue
+			[[ "${svc}" == ".socket" ]] && continue
 			[[ "${svc}" == "local-fs" ]] && continue
 			[[ "${svc}" == "network-pre" ]] && continue
 			[[ "${svc}" == "nss-lookup" ]] && continue # not portable
@@ -1594,10 +1599,13 @@ convert_systemd() {
 		exec_start_pres=""
 		exec_starts=""
 		exec_start_posts=""
-		exec_stops=""
+
 		exec_stop_pres=""
+		exec_stops=""
 		exec_stop_posts=""
+
 		exec_reloads=""
+
 		IFS=$'\n'
 		local row
 		for row in $(grep -E -e "^(ExecStartPre|ExecStart|ExecStartPost|ExecStop|ExecStopPost|ExecReload)=" "${init_path}") ; do
@@ -1666,7 +1674,7 @@ convert_systemd() {
 			else
 				svc_type="task"
 			fi
-			echo "${svc_type} [${runlevels}] name:${pn}-pre /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre" >> "${init_conf}"
+			echo "${svc_type} [${runlevels}] name:${svc_name}-pre /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start_pre -- ${svc_name} pre" >> "${init_conf}"
 		fi
 		if (( "${#exec_starts}" > 0 )) ; then
 			[[ -n "${cond}" ]] && cond="<${cond}>"
