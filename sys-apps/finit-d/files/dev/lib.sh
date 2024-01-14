@@ -46,7 +46,7 @@ if [ -e "/etc/conf.d/${SVCNAME}" ] ; then
 	. "/etc/conf.d/${SVCNAME}"
 fi
 
-LOGGER_METHOD=${LOGGER_METHOD:-1} # 1 = sysklogd, 0 stdout
+LOGGER_METHOD=${LOGGER_METHOD:-1} # 1 = sysklogd, 0 = stdout
 MAINTENANCE_MODE=${MAINTENANCE_MODE:-0}
 if cat /proc/cmdline | grep -q -e "finit.systemd=debug" ; then
 	MAINTENANCE_MODE=1
