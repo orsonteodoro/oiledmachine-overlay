@@ -145,7 +145,7 @@ symlink_hooks() {
 	for row in ${pairs[@]} ; do
 		local hook="${row%:*}"
 		local fragment="${row#*:}"
-		if grep "${hook}" "${ED}/lib/finit/scripts/${pkg}/${script}" ; then
+		if grep -q "${hook}" "${ED}/lib/finit/scripts/${pkg}/${script}" ; then
 			need_hooks=1
 			dosym \
 				"/lib/finit/scripts/${pkg}/${script}" \
@@ -172,7 +172,7 @@ install_scripts() {
 
 			symlink_hooks
 		done
-	popd >/dev/null 2>&1
+	popd >/dev/null 2>&1 || die
 }
 
 install_lib() {
@@ -217,7 +217,7 @@ src_install() {
 		is_blacklisted_pkg "${pkg}" && continue
 
 		insinto "/etc/finit.d/available/${pkg}"
-		pushd "${WORKDIR}/confs/${pkg}" || die
+		pushd "${WORKDIR}/confs/${pkg}" >/dev/null 2>&1 || die
 			local svc
 			for svc in $(ls) ; do
 				is_blacklisted_svc "${svc}" && continue
@@ -226,7 +226,7 @@ src_install() {
 					"/etc/finit.d/available/${pkg}/${svc}" \
 					"/etc/finit.d/enabled/${svc}"
 			done
-		popd
+		popd >/dev/null 2>&1 || die
 		install_scripts "${pkg}"
 	done
 
