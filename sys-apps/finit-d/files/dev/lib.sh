@@ -46,6 +46,7 @@ if [ -e "/etc/conf.d/${SVCNAME}" ] ; then
 	. "/etc/conf.d/${SVCNAME}"
 fi
 
+LOGGER_METHOD=${LOGGER_METHOD:-"logger"} # logger, echo, stdio
 MAINTENANCE_MODE=${MAINTENANCE_MODE:-0}
 if cat /proc/cmdline | grep -q -e "finit.systemd=debug" ; then
 	MAINTENANCE_MODE=1
@@ -183,13 +184,13 @@ eend() {
 	local ret=${1}
 	local message="${2}"
 	if [ -n "${message}" ] && [ ${ret} -eq 0 ] ; then
-		is_debug && echo "${message} [  OK  ]"
+		is_debug && finit_log "${message} [  OK  ]"
 	elif [ -n "${message}" ] && [ ${ret} -ne 0 ] ; then
-		is_debug && echo "${message} [FAILED]"
+		is_debug && finit_log "${message} [FAILED]"
 	elif [ ${ret} -eq 0 ] ; then
-		is_debug && echo "[  OK  ]"
+		is_debug && finit_log "[  OK  ]"
 	else
-		is_debug && echo "[FAILED]"
+		is_debug && finit_log "[FAILED]"
 	fi
 	return ${ret}
 }
@@ -199,15 +200,15 @@ ewend() {
 }
 
 einfo() {
-	is_debug && echo "${1}"
+	is_debug && finit_log "${1}"
 }
 
 ewarn() {
-	is_debug && echo "[w] ${1}"
+	is_debug && finit_log "[w] ${1}"
 }
 
 eerror() {
-	is_debug && echo "[e] ${1}"
+	is_debug && finit_log "[e] ${1}"
 	exit 1
 }
 
@@ -384,10 +385,8 @@ chroot_start() {
 
 	if [ "\${phase}" = "start" ] ; then
 		if ! is_pid_alive \$service_pid ; then
-			echo "Did not detect pid"
 			return 1
 		fi
-		echo "service_pid:  \$service_pid"
 		if [ \$daemon -eq 1 ] || [ \$background -eq 1 ] ; then
 	# Keep as background
 			:;
@@ -893,10 +892,8 @@ start_stop_daemon() {
 
 	if [ "${phase}" = "start" ] ; then
 		if ! is_pid_alive $service_pid ; then
-			echo "Did not detect pid"
 			return 1
 		fi
-		echo "service_pid:  $service_pid"
 		if [ $daemon -eq 1 ] || [ $background -eq 1 ] ; then
 	# Keep as background
 			:;
@@ -1069,38 +1066,38 @@ eindent() {
 
 vebegin() {
 	local msg="${1}"
-	is_debug && echo "${msg}"
+	is_debug && finit_log "${msg}"
 	return 0
 }
 
 veend() {
 	local ret="${1}"
 	local msg="${2}"
-	is_debug && echo "${msg}"
+	is_debug && finit_log "${msg}"
 	return ${ret}
 }
 
 veinfo() {
 	local msg="${1}"
-	is_debug && echo "${msg}"
+	is_debug && finit_log "${msg}"
 	return 0
 }
 
 vewarn() {
 	local msg="${1}"
-	is_debug && echo "[w] ${msg}"
+	is_debug && finit_log "[w] ${msg}"
 	return 0
 }
 
 veerror() {
 	local msg="${1}"
-	is_debug && echo "[e] ${msg}"
+	is_debug && finit_log "[e] ${msg}"
 	return 0
 }
 
 einfon() {
 	local msg="${1}"
-	is_debug && echo "${msg}"
+	is_debug && finit_log "${msg}"
 	return 0
 }
 
@@ -1108,4 +1105,14 @@ rc_service() {
 	local svcname="${1}"
 	local phase="${2}"
 	return 0
+}
+
+finit_log() {
+	local msg="${1}"
+	local tag="${SVCNAME}"
+	if [ "${LOGGER_METHOD}" = "logger" ] ; then
+		logger -t "${tag}" "${msg}"
+	else
+		echo "${tag} ${msg}"
+	fi
 }
