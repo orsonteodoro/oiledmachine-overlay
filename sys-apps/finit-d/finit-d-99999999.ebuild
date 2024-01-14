@@ -242,24 +242,14 @@ src_install() {
 	install_lib "lib.sh"
 	install_lib "event.sh"
 
-	local loggers=(
-		metalog
-		rsyslog
-		sysklogd
-		syslog-ng
-	)
-	local logger
-	for logger in ${loggers[@]} ; do
-	# Temp disabled
-		rm -f "${ED}/etc/finit.d/enabled/${logger}.conf"
-	done
-
 	# Broken default settings.  Requires METALOG_OPTS+=" -N" for some kernels.
 	rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
 
 	# Indefinite pause
 	rm -f "${ED}/libexec/finit/hook/mount/all/iptables.sh"
-	rm -rf "${ED}/etc/finit.d/available/net-firewall/iptables/iptables.conf"
+	rm -rf "${ED}/etc/finit.d/enabled/iptables.conf"
+
+	# TODO copy/edit iptables -> ip6tables
 }
 
 pkg_postinst() {
@@ -276,6 +266,15 @@ ewarn "You may need to disconnect/reconnect not by automated means in order to"
 ewarn "trigger network up event."
 ewarn
 	fi
+	if has_version "app-admin/metalog" ; then
+ewarn
+ewarn "-N may need to be added to METALOG_OPTS in /etc/conf.d/metalog or it"
+ewarn "may cause a indefinite pause."
+ewarn
+ewarn "The /etc/finit.d/enabled/metalog.conf has been disabled to avoid"
+ewarn "indefinite pause on misconfigured metalog."
+ewarn
+	fi
 	if has_version "dev-db/mysql-init-scripts" ; then
 ewarn
 ewarn "You must manually disable some of the mysql-init-scripts in"
@@ -286,7 +285,12 @@ ewarn
 ewarn
 ewarn "IMPORTANT"
 ewarn
-ewarn "The loggers should be disabled or use the *.conf from the snapshot instead."
+ewarn "A rescue cd is required to unstuck the init system."
+ewarn
+ewarn "Any failed in [S] may cause an indefinite pause."
+ewarn
+ewarn "Failed [S] should be moved to runlevels [12345] for rescue, [2345] for"
+ewarn "non-network, or [345] for network or deleted from /etc/finit.d/enabled."
 ewarn
 }
 
