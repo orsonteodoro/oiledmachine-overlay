@@ -623,7 +623,7 @@ echo "pidfile case Z:  init_path - ${init_path}"
 				if is_instance_svc ; then
 					instance=":%i"
 					instance_desc=" for %i"
-				if
+				fi
 
 				if grep -q -e "provide.*logger" "${init_path}" ; then
 					echo "service [${runlevels}] ${user_group} name:logger ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
