@@ -129,7 +129,40 @@ eerror "You need to enable either hook-scripts or netlink USE flag."
 eerror "You need to enable the dbus USE flag."
 		die
 	fi
-	if has_version "sys-fs/cryptsetup" && ! use hook-scripts ; then
+}
+
+symlink_hooks() {
+	local pairs=(
+		"hook_banner_fn:hook/sys/banner"
+		"hook_rootfs_up_fn:hook/mount/root"
+		"hook_mount_error_fn:hook/mount/error"
+		"hook_mount_post_fn:hook/mount/post"
+		"hook_basefs_up_fn:hook/mount/all"
+		"hook_svc_plugin_fn:hook/svc/plugin"
+		"hook_network_up_fn:hook/net/up"
+		"hook_svc_up_fn:hook/svc/up"
+		"hook_system_up_fn:hook/sys/up"
+		# "hook_svc_reconf_fn:"
+		# "hook_runlevel_change_fn:"
+		"hook_network_dn_fn:hook/net/down"
+		"hook_shutdown_fn:hook/sys/shutdown"
+		"hook_svc_dn_fn:hook/svc/down"
+		"hook_system_dn_fn:hook/sys/down"
+	)
+
+	local need_hooks=0
+	for row in ${pairs[@]} ; do
+		local hook="${row%:*}"
+		local fragment="${row#*:}"
+		if grep "${hook}" "/lib/finit/scripts/${pkg}/${script}" ; then
+			need_hooks=1
+			dosym \
+				"/lib/finit/scripts/${pkg}/${script}" \
+				"/libexec/finit/${fragment}/${script}"
+		fi
+	done
+
+	if (( ${need_hooks} == 1 )) && ! use hook-scripts ; then
 eerror "You need to enable the hook-scripts USE flag."
 		die
 	fi
@@ -146,18 +179,7 @@ install_scripts() {
 			fowners root:root "/lib/finit/scripts/${pkg}/${script}"
 			fperms 0750 "/lib/finit/scripts/${pkg}/${script}"
 
-			if [[ "${script/.sh}" == "dmcrypt" ]] ; then
-				exeinto "/lib/finit/scripts/sys-fs/cryptsetup"
-				doexe "${WORKDIR}/dmcrypt-events.sh"
-				fowners "root:root" "/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-events.sh"
-				fperms 0750 "/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-events.sh"
-				dosym \
-					"/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt.sh" \
-					"/libexec/finit/hook/mount/root/dmcrypt.sh"
-				dosym \
-					"/lib/finit/scripts/sys-fs/cryptsetup/dmcrypt.sh" \
-					"/libexec/finit/hook/svc/down/dmcrypt.sh"
-			fi
+			symlink_hooks
 		done
 	popd >/dev/null 2>&1
 }

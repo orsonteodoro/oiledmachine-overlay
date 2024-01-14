@@ -265,10 +265,13 @@ fi
 				sed -i -e "${top_ln}a export RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
-				sed -i -e "${top_ln}a . /lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-events.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
-			else
-				sed -i -e "${top_ln}a export FN=\"\$1\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a hook_rootfs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a hook_system_dn_fn=\"stop\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a uses_hooks=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif grep -E -e "before.net( |$)" "${init_path}" ; then
+				sed -i -e "${top_ln}a hook_basefs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
+
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
@@ -287,7 +290,8 @@ fi
 			local runlevels=""
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
 				runlevels="S"
-				cond="hook/mount/root"
+			elif grep -r -E -e "before.*net( |$)" "${init_path}" ; then
+				runlevels="S"
 			elif grep -q -e "provide.*logger" "${init_path}" ; then
 				runlevels="S12345"
 			elif grep -q -e "need.*net" "${init_path}" ; then
@@ -576,7 +580,6 @@ echo "pidfile case Z:  init_path - ${init_path}"
 					user_group="@root:${group}"
 				fi
 
-
 				if grep -q -e "provide.*logger" "${init_path}" ; then
 					echo "service [${runlevels}] ${user_group} name:syslogd ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				elif [[ "${notify}" == "notify:none" ]] ; then
@@ -688,16 +691,21 @@ gen_systemd_wrapper() {
 		[[ "${command}" == "${command_args}" ]] && command_args=""
 	fi
 
-	local fn_row
+	local service_fns=""
 	if [[ "${svc_name}" == "dmcrypt" ]] ; then
-		fn_row='. /lib/finit/scripts/sys-fs/cryptsetup/dmcrypt-events.sh'
-	else
-		fn_row='FN="${1}"'
+service_init='
+hook_rootfs_up_fn="start"
+hook_system_dn_fn="stop"
+'
+	elif grep "^Before=.*network" "${init_path}" ; then
+service_fns='
+hook_basefs_up_fn="start"
+'
 	fi
 
 cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 #!${FINIT_SHELL}
-${fn_row}
+${service_fns}
 . /lib/finit/scripts/lib/lib.sh
 svc_name="${svc_name}"
 ambient_capabilities="${ambient_capabilities}"
