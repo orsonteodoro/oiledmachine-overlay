@@ -268,8 +268,9 @@ fi
 				sed -i -e "${top_ln}a hook_rootfs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a hook_system_dn_fn=\"stop\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a uses_hooks=1" "${init_sh}" || die "ERR:  line number - $LINENO"
-			elif grep -E -e "before.net( |$)" "${init_path}" ; then
+			elif grep -q -E -e "before.net( |$)" "${init_path}" ; then
 				sed -i -e "${top_ln}a hook_basefs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a uses_hooks=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
@@ -696,10 +697,12 @@ gen_systemd_wrapper() {
 service_init='
 hook_rootfs_up_fn="start"
 hook_system_dn_fn="stop"
+uses_hooks=1
 '
-	elif grep "^Before=.*network" "${init_path}" ; then
+	elif grep -q "^Before=.*network" "${init_path}" ; then
 service_fns='
 hook_basefs_up_fn="start"
+uses_hooks=1
 '
 	fi
 

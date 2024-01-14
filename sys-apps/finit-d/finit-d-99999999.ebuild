@@ -154,7 +154,7 @@ symlink_hooks() {
 	for row in ${pairs[@]} ; do
 		local hook="${row%:*}"
 		local fragment="${row#*:}"
-		if grep "${hook}" "/lib/finit/scripts/${pkg}/${script}" ; then
+		if grep "${hook}" "${ED}/lib/finit/scripts/${pkg}/${script}" ; then
 			need_hooks=1
 			dosym \
 				"/lib/finit/scripts/${pkg}/${script}" \
