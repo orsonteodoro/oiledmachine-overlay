@@ -542,16 +542,6 @@ fi
 				notify="notify:s6"
 			fi
 
-			if grep -q -e "RC_PREFIX" "${init_path}" ; then
-				echo "set RC_PREFIX=" >> "${init_conf}"
-			fi
-			if grep -q -e "SVCNAME" "${init_path}" ; then
-				echo "set SVCNAME=${svc_name}" >> "${init_conf}"
-			fi
-			if grep -q -e "RC_SVCNAME" "${init_path}" ; then
-				echo "set RC_SVCNAME=${svc_name}" >> "${init_conf}"
-			fi
-
 			local user=""
 			local group=""
 			if grep -q -e "^command_user=" "${init_path}" ; then
@@ -694,6 +684,16 @@ fi
 					echo "run [${runlevels}] name:${svc_name}-${x} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}" >> "${init_conf}"
 				done
 			fi
+
+			if grep -q -e "RC_PREFIX" "${init_conf}" ; then
+				sed -i -e "1i set RC_PREFIX=" "${init_conf}"
+			fi
+			if grep -q -E -e "SVCNAME[}]?( |$)" "${init_conf}" ; then
+				sed -i -e "1i set SVCNAME=${svc_name}  # This should match the filename without suffix." "${init_conf}"
+			fi
+			if grep -q -e "RC_SVCNAME" "${init_conf}" ; then
+				sed -i -e "1i set RC_SVCNAME=${svc_name}  # This should match the filename without suffix." "${init_conf}"
+			fi
 		done
 	done
 
@@ -767,9 +767,6 @@ cat <<EOF >"${SCRIPTS_PATH}/${c}/${pn}/${svc_name}.sh"
 #!${FINIT_SHELL}
 ${service_fns}
 . /lib/finit/scripts/lib/lib.sh
-svc_name="$0"
-svc_name=$(echo "${svc_name}" | sed -e "s|^./||" -e "s|.sh$||")
-svc_name="${svc_name}"
 ambient_capabilities="${ambient_capabilities}"
 bounding_capabilities="${bounding_capabilities}"
 cache_directory="${cache_directory}"

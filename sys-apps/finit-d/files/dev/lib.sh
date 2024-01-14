@@ -3,6 +3,10 @@
 # Compatibility lib
 FN="${FN}"
 uses_hooks=${uses_hooks:-0}
+svc_name="$0"
+svc_name=$(basename $(echo "${svc_name}") | sed -e "s|\.sh$||")
+SVCNAME=${SVCNAME:-"${svc_name}"}
+RC_SVCNAME=${RC_SVCNAME:-"${svc_name}"}
 if [ "${uses_hooks}" = "0" ] ; then
 	:;
 elif [ "$HOOK_BANNER" ] && [ -n "${hook_banner_fn}" ; then
