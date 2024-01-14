@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Compatibility lib
-FN="${FN}"
+FN="${1}"
 uses_hooks=${uses_hooks:-0}
 svc_name="$0"
 svc_name=$(basename $(echo "${svc_name}") | sed -e "s|\.sh$||")

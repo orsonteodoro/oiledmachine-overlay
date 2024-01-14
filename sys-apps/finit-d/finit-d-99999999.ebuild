@@ -256,6 +256,10 @@ src_install() {
 
 	# Broken default settings.  Requires METALOG_OPTS+=" -N" for some kernels.
 	rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
+
+	# Indefinite pause
+	rm -f "${ED}/libexec/finit/hook/mount/all/iptables.sh"
+	rm -rf "${ED}/etc/finit.d/available/net-firewall/iptables/iptables.conf"
 }
 
 pkg_postinst() {
