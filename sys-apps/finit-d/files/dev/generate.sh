@@ -1555,12 +1555,24 @@ convert_systemd() {
 			[[ "${svc}" == "local-fs" ]] && continue
 			[[ "${svc}" == "network-pre" ]] && continue
 			[[ "${svc}" == "nss-lookup" ]] && continue # not portable
-			[[ "${svc}" == "sys-subsystem-net-devices-%i" ]] && continue # not portable
 			[[ "${svc}" == "systemd-machined" ]] && continue # not portable
 			if [[ "${svc}" == "network" ]] ; then
 				cond="${cond},${FINIT_COND_NETWORK}"
 			elif [[ "${svc}" == "network-online" ]] ; then
 				cond="${cond},${FINIT_COND_NETWORK}"
+			elif [[ "${svc}" == "sys-subsystem-net-devices-%i" ]] ; then
+				local found=0
+				local x
+				for iface in $(ls /sys/class/net) ; do
+					[[ "${iface}" == "lo" ]] && continue
+					if [[ "${FINIT_COND_NETWORK}" =~ "net/${iface}" ]] ; then
+						cond="${cond},${FINIT_COND_NETWORK}"
+						found=1
+					fi
+				done
+				if (( ${found} == 0 )) ; then
+					continue
+				fi
 			else
 				cond="${cond},pid/${svc}"
 			fi
