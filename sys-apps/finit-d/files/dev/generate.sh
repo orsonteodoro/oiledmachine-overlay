@@ -300,7 +300,8 @@ fi
 			elif grep -q -E -e "provide.* logger( |$)" "${init_path}" ; then
 				start_runlevels="S12345"
 				extra_runlevels="12345"
-			elif grep -q -E -e "need.* net( |$)" "${init_path}" ; then
+			elif grep -q -E -e "need.* net( |$)" "${init_path}" \
+				|| grep -q -E -e "use.* net( |$)" "${init_path}" ; then
 				start_runlevels="345"
 				extra_runlevels="345"
 				echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
@@ -1517,7 +1518,9 @@ convert_systemd() {
 		if grep -q "Alias=syslog.service" "${init_path}" ; then
 			start_runlevels="S12345"
 			extra_runlevels="12345"
-		elif grep -q -e "^Wants=.*network.target" "${init_path}" ; then
+		elif grep -q -E -e "^Requires=.*(network|network-online).target" "${init_path}" \
+			|| grep -q -E -e "^Wants=.*(network|network-online).target" "${init_path}" \
+			; then
 			start_runlevels="345"
 			extra_runlevels="345"
 			echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
