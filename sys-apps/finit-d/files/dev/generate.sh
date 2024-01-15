@@ -270,7 +270,7 @@ fi
 				sed -i -e "${top_ln}a hook_rootfs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a hook_system_dn_fn=\"stop\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a uses_hooks=1" "${init_sh}" || die "ERR:  line number - $LINENO"
-			elif grep -q -E -e "before.net( |$)" "${init_path}" ; then
+			elif grep -q -E -e "before.* net( |$)" "${init_path}" ; then
 				sed -i -e "${top_ln}a hook_basefs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a uses_hooks=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
@@ -294,13 +294,13 @@ fi
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
 				start_runlevels="S"
 				extra_runlevels="12345"
-			elif grep -q -r -E -e "before.*net( |$)" "${init_path}" ; then
+			elif grep -q -r -E -e "before.* net( |$)" "${init_path}" ; then
 				start_runlevels="S"
 				extra_runlevels="345"
-			elif grep -q -e "provide.*logger" "${init_path}" ; then
+			elif grep -q -E -e "provide.* logger( |$)" "${init_path}" ; then
 				start_runlevels="S12345"
 				extra_runlevels="12345"
-			elif grep -q -e "need.*net" "${init_path}" ; then
+			elif grep -q -E -e "need.* net( |$)" "${init_path}" ; then
 				start_runlevels="345"
 				extra_runlevels="345"
 				echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
