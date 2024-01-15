@@ -6,7 +6,7 @@
 FINIT_COND_NETWORK=${FINIT_COND_NETWORK:-"net/route/default"}
 FINIT_SCRIPT_SOURCE=${FINIT_SCRIPT_SOURCE:-"openrc"}
 FINIT_SHELL=${FINIT_SHELL:-"/bin/sh"}
-MAINTAINER_MODE=${MAINTAINER_MODE:-0}
+MAINTAINER_MODE=${MAINTAINER_MODE:-0} # 1 means process all overlays for tarball distribution, 0 means process only /etc/init.d for local installs
 
 die() {
 	echo "${1}"
@@ -745,7 +745,7 @@ fi
 			local p
 			for p in ${ps[@]} ; do
 				[[ "${p}" =~ ^"pid/" ]] || continue
-				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name:%i
+				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
 				local is_daemon=1
 				if grep -E -r -e "(run|task).*name:${s_instanced} " $(find "${CONFS_PATH}" -name "${s_instanced}.conf" -type f) ; then
 					is_daemon=0
@@ -769,12 +769,14 @@ fi
 			local p
 			for p in ${ps[@]} ; do
 				[[ "${p}" =~ ^"pid/" ]] || continue
-				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name:%i
+				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
 				local is_found=0
 				local s="${s_instanced%:*}"
-				if [[ -e "/etc/init.d/${s}" ]] ; then
+				local n_files_conf=$(find "${CONFS_PATH}" -name "${s}.conf" | wc -l)
+				local n_files_scripts=$(grep -l "provide.*${s}" "${SCRIPTS_PATH}" | wc -l)
+				if (( ${n_files_conf} != 0 )) ; then
 					is_found=1
-				elif grep "provide.*${s}" "/etc/init.d" ; then
+				elif (( ${n_files_scripts} != 0 )) ; then
 					is_found=1
 				fi
 				if (( ${is_found} == 0 )) ; then
