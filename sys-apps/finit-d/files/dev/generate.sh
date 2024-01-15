@@ -1564,15 +1564,12 @@ convert_systemd() {
 				local found=0
 				local x
 				for iface in $(ls /sys/class/net) ; do
-					[[ "${iface}" == "lo" ]] && continue
-					if [[ "${FINIT_COND_NETWORK}" =~ "net/${iface}" ]] ; then
+					if [[ "${FINIT_COND_NETWORK}" =~ "net/${iface}/" ]] ; then
 						cond="${cond},${FINIT_COND_NETWORK}"
 						found=1
 					fi
 				done
-				if (( ${found} == 0 )) ; then
-					continue
-				fi
+				(( ${found} == 0 )) && continue
 			else
 				cond="${cond},pid/${svc}"
 			fi
