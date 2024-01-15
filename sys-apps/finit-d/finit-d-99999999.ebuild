@@ -120,6 +120,29 @@ eerror "You need to enable either hook-scripts or netlink USE flag."
 eerror "You need to enable the dbus USE flag."
 		die
 	fi
+
+	if has_version "net-firewall/iptables" ; then
+		einfo "Generating ip6tables .conf and wrapper"
+		cp -a \
+			"confs/net-firewall/iptables/iptables.conf" \
+			"confs/net-firewall/iptables/ip6tables.conf" \
+			|| die
+		sed -i \
+			-e "s|-- iptables|-- ip6tables|g" \
+			-e "s|iptables\.sh|ip6tables.sh|g" \
+			-e "s|name:iptables|name:ip6tables|g" \
+			-e "s|set iptables|set ip6tables|g" \
+			"confs/net-firewall/iptables/ip6tables.conf" \
+			|| die
+		cp -a \
+			"scripts/net-firewall/iptables/iptables.sh" \
+			"scripts/net-firewall/iptables/ip6tables.sh" \
+			|| die
+		sed -i \
+			's|SVCNAME="iptables"|SVCNAME="ip6tables"|' \
+			"scripts/net-firewall/iptables/ip6tables.sh" \
+			|| die
+	fi
 }
 
 symlink_hooks() {
@@ -267,6 +290,12 @@ ewarn "may cause a indefinite pause."
 ewarn
 ewarn "The /etc/finit.d/enabled/metalog.conf has been disabled to avoid"
 ewarn "indefinite pause on misconfigured metalog."
+ewarn
+	fi
+	if has_version "net-misc/netifrc" ; then
+ewarn
+ewarn "net-misc/netifrc is currently not supported/tested.  Use"
+ewarn "net-misc/networkmanager instead."
 ewarn
 	fi
 	if has_version "dev-db/mysql-init-scripts" ; then
