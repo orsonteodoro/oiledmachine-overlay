@@ -305,9 +305,8 @@ fi
 				   grep -q -E -e "after.* net( |$)" "${init_path}" \
 				|| grep -q -E -e "need.* net( |$)" "${init_path}" \
 				|| grep -q -E -e "provide.* net( |$)" "${init_path}" \
-				|| grep -q -E -e "use.* dns( |$)" "${init_path}" \
-				|| grep -q -E -e "use.* net( |$)" "${init_path}" \
-				|| grep -q -E -e "use.* netmount( |$)" "${init_path}" \
+				|| grep -q -E -e "use.* (dns|net)( |$)" "${init_path}" \
+				|| [[ "${svc_name}" == "avahi-daemon" ]] \
 				|| [[ "${svc_name}" == "bitlbee" ]] \
 				|| [[ "${svc_name}" == "cups-browsed" ]] \
 				|| [[ "${svc_name}" == "pppoe-server" ]] \
@@ -335,6 +334,8 @@ fi
 				svcs+=(
 					$(grep -o -E -r "^[[:space:]]+use [ 0-9a-zA-Z_-]+" "${init_path}" \
 						| sed -E -e "s|[[:space:]]+| |g" -e "s| use ||g")
+					$(grep -o -E -r "^[[:space:]]+want [ 0-9a-zA-Z_-]+" "${init_path}" \
+						| sed -E -e "s|[[:space:]]+| |g" -e "s| want ||g")
 				)
 			fi
 
@@ -733,8 +734,9 @@ fi
 
 		done
 
-		echo "Removing non-daemon conditionals"
-		# Delete one shot conditionals which the pids disappear.
+		echo "Removing non-daemon service conditionals"
+
+		# Delete one shot service conditionals which the pids disappear.
 		local x
 		for x in $(grep -l -o -E "<[^>]+" $(find "${CONFS_PATH}" -name "*.conf" -type f)) ; do
 			local ps=(
@@ -743,14 +745,41 @@ fi
 			local p
 			for p in ${ps[@]} ; do
 				[[ "${p}" =~ ^"pid/" ]] || continue
-				local s=$(echo "${p}" | sed -e "s|^pid/||")
+				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name:%i
 				local is_daemon=1
-				if grep -E -r -e "(run|task).*name:${s} " $(find "${CONFS_PATH}" -name "${s}.conf" -type f) ; then
+				if grep -E -r -e "(run|task).*name:${s_instanced} " $(find "${CONFS_PATH}" -name "${s_instanced}.conf" -type f) ; then
 					is_daemon=0
 				fi
 				if (( ${is_daemon} == 0 )) ; then
-					echo "Deleting conditional pid/${s}"
-					sed -i -r -e "s|pid/${s}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+					echo "Deleting conditional pid/${s_instanced}"
+					sed -i -r -e "s|pid/${s_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+					sed -i -r -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+				fi
+			done
+		done
+
+		echo "Removing service conditionals which services don't exist"
+
+		# Delete conditionals with services that are not installed.
+		local x
+		for x in $(grep -l -o -E "<[^>]+" $(find "${CONFS_PATH}" -name "*.conf" -type f)) ; do
+			local ps=(
+				$(grep -o -E "<[^>]+" "${x}" | sed -e "s|<||g" | tr "," " ")
+			)
+			local p
+			for p in ${ps[@]} ; do
+				[[ "${p}" =~ ^"pid/" ]] || continue
+				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name:%i
+				local is_found=0
+				local s="${s_instanced%:*}"
+				if [[ -e "/etc/init.d/${s}" ]] ; then
+					is_found=1
+				elif grep "provide.*${s}" "/etc/init.d" ; then
+					is_found=1
+				fi
+				if (( ${is_found} == 0 )) ; then
+					echo "Deleting conditional pid/${s_instanced}"
+					sed -i -r -e "s|pid/${s_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 					sed -i -r -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 				fi
 			done
