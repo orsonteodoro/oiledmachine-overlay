@@ -308,16 +308,13 @@ chroot_start() {
 
 	local ug_args=""
 	if [ -n "\${user}" ] ; then
-		local uid=\$(getent passwd "\${user}" | cut -f 3 -d ":")
-		ug_args="\${ug_args} -u \${uid}"
+		ug_args="\${ug_args} -u \${user}"
 	fi
 	if [ -z "\${user}" ] ; then
-		local uid=\$(getent passwd "root" | cut -f 3 -d ":")
-		ug_args="\${ug_args} -u \${uid}"
+		ug_args="\${ug_args} -u root"
 	fi
 	if [ -n "\${group}" ] ; then
-		local gid=\$(getent group "\${group}" | cut -f 3 -d ":")
-		ug_args="\${ug_args} -g \${gid}"
+		ug_args="\${ug_args} -g \${group}"
 	fi
 
 	# TODO:  add capabilities
@@ -681,16 +678,13 @@ start_stop_daemon() {
 
 		local ug_args=""
 		if [ -n "${user}" ] ; then
-			local uid=$(getent passwd "${user}" | cut -f 3 -d ":")
-			ug_args="${ug_args} -u ${uid}"
+			ug_args="${ug_args} -u ${user}"
 		fi
 		if [ -z "${user}" ] ; then
-			local uid=$(getent passwd "root" | cut -f 3 -d ":")
 			ug_args="${ug_args} -u root"
 		fi
 		if [ -n "${group}" ] ; then
-			local gid=$(getent group "${group}" | cut -f 3 -d ":")
-			ug_args="${ug_args} -g ${gid}"
+			ug_args="${ug_args} -g ${group}"
 		fi
 
 		# TODO:  capabilities
