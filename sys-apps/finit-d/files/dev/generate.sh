@@ -309,6 +309,8 @@ fi
 				|| grep -q -E -e "use.* net( |$)" "${init_path}" \
 				|| grep -q -E -e "use.* netmount( |$)" "${init_path}" \
 				|| [[ "${svc_name}" == "bitlbee" ]] \
+				|| [[ "${svc_name}" == "cups-browsed" ]] \
+				|| [[ "${svc_name}" == "pppoe-server" ]] \
 				|| [[ "${svc_name}" == "pure-ftpd" ]] \
 				|| [[ "${svc_name}" == "pure-uploadscript" ]] \
 				|| [[ "${svc_name}" =~ "pydoc-" ]] \
