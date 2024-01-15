@@ -338,9 +338,16 @@ chroot_start() {
 	fi
 	local c=0
 	while [ \$c -lt 100 ] ; do
+		# service_pid may capture 2 pids -- blank cmd, real command.
 		service_pid=\$(ps --no-headers -C $(basename "\${exec_path}") -o pid 2>/dev/null)
 		if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
-			break
+			local x
+			for x in \${service_pid} ; do
+				if ps -o pid,cmd \${x} | grep "\${exec_path}" ; then
+					service_pid="\${x}"
+					break 2
+				fi
+			done
 		fi
 		c=\$(( \${c} + 1 ))
 		sleep 0.1
@@ -708,9 +715,16 @@ start_stop_daemon() {
 		fi
 		local c=0
 		while [ $c -lt 10 ] ; do
+			# service_pid may capture 2 pids -- blank cmd, real command.
 			service_pid=$(ps --no-headers -C $(basename "${exec_path}") -o pid 2>/dev/null)
 			if [ -n "${service_pid}" ] ; then
-				break
+				local x
+				for x in ${service_pid} ; do
+					if ps -o pid,cmd ${x} | grep "${exec_path}" ; then
+						service_pid="${x}"
+						break 2
+					fi
+				done
 			fi
 			c=$(( ${c} + 1 ))
 			sleep 0.1
