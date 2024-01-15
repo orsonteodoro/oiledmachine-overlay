@@ -1,4 +1,5 @@
 #!/bin/sh
+# A compatibility footer script that runs some openrc-run(8) commands.
 if [ "$FN" = "zap" ] && [ -e "$pidfile" ] ; then
 	kill -SIGKILL $(cat "$pidfile")
 elif [ "$FN" = "declare" ] ; then

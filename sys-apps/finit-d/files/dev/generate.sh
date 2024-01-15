@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# The comprehensive version for ebuild developers.  Users should use generate-local.sh instead.
+# This script will convert OpenRC service scripts or systemd configs into finit
+# configuration file and wrapper script.
 
 FINIT_COND_NETWORK=${FINIT_COND_NETWORK:-"net/route/default"}
 FINIT_SCRIPT_SOURCE=${FINIT_SCRIPT_SOURCE:-"openrc"}

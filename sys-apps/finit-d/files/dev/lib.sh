@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# Compatibility lib
+# A compatibility lib for both OpenRC and systemd wrapper scripts.
+
 FN="${1}"
 uses_hooks=${uses_hooks:-0}
 svc_name="$0"
