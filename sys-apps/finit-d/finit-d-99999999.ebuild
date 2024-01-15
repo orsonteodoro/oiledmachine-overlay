@@ -281,7 +281,7 @@ ewarn "IMPORTANT"
 ewarn
 ewarn "A rescue cd is required to unstuck the init system."
 ewarn
-ewarn "Any failed in [S] may cause an indefinite pause."
+ewarn "Any failed in [S] runlevel may cause an indefinite pause."
 ewarn
 ewarn "Failed [S] should be moved to runlevels [12345] for rescue, [2345] for"
 ewarn "non-network, or [345] for network or deleted from /etc/finit.d/enabled."
