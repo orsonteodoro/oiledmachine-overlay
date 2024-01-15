@@ -294,14 +294,24 @@ fi
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
 				start_runlevels="S"
 				extra_runlevels="12345"
-			elif grep -q -r -E -e "before.* net( |$)" "${init_path}" ; then
+			elif grep -q -E -e "before.* net( |$)" "${init_path}" ; then
 				start_runlevels="S"
 				extra_runlevels="345"
 			elif grep -q -E -e "provide.* logger( |$)" "${init_path}" ; then
 				start_runlevels="S12345"
 				extra_runlevels="12345"
-			elif grep -q -E -e "need.* net( |$)" "${init_path}" \
-				|| grep -q -E -e "use.* net( |$)" "${init_path}" ; then
+			elif \
+				   grep -q -E -e "after.* net( |$)" "${init_path}" \
+				|| grep -q -E -e "need.* net( |$)" "${init_path}" \
+				|| grep -q -E -e "provide.* net( |$)" "${init_path}" \
+				|| grep -q -E -e "use.* dns( |$)" "${init_path}" \
+				|| grep -q -E -e "use.* net( |$)" "${init_path}" \
+				|| grep -q -E -e "use.* netmount( |$)" "${init_path}" \
+				|| [[ "${svc_name}" == "bitlbee" ]] \
+				|| [[ "${svc_name}" == "pure-ftpd" ]] \
+				|| [[ "${svc_name}" == "pure-uploadscript" ]] \
+				|| [[ "${svc_name}" =~ "pydoc-" ]] \
+			; then
 				start_runlevels="345"
 				extra_runlevels="345"
 				echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
@@ -1518,9 +1528,18 @@ convert_systemd() {
 		if grep -q "Alias=syslog.service" "${init_path}" ; then
 			start_runlevels="S12345"
 			extra_runlevels="12345"
-		elif grep -q -E -e "^Requires=.*(network|network-online).target" "${init_path}" \
-			|| grep -q -E -e "^Wants=.*(network|network-online).target" "${init_path}" \
-			; then
+		elif \
+			   grep -q -E -e "^Before=.*(network|network-online).target( |$)" "${init_path}" \
+			|| grep -q -E -e "^Wants=.*network-pre.target( |$)" "${init_path}" \
+		; then
+			start_runlevels="S"
+			extra_runlevels="345"
+		elif \
+			   grep -q -E -e "^After=.*(network|network-online|nss-lookup|remote-fs).target( |$)" "${init_path}" \
+			|| grep -q -E -e "^Requires=.*(network|network-online).target( |$)" "${init_path}" \
+			|| grep -q -E -e "^Wants=.*(network|network-online).target( |$)" "${init_path}" \
+		; then
+		# After.*nss-lookup is for DNS lookups
 			start_runlevels="345"
 			extra_runlevels="345"
 			echo "${c}/${pn}" >> "${NEEDS_NET_PATH}"
