@@ -1932,9 +1932,9 @@ convert_systemd() {
 		if (( "${#exec_reloads}" > 0 )) ; then
 			local x="reload"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}-on-paused" >> "${init_conf}"
-			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-on-paused ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload on paused -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
+			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-on-paused ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on paused" >> "${init_conf}"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}-on-waiting" >> "${init_conf}"
-			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-on-waiting ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload on waiting -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
+			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-on-waiting ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
 		fi
 		rm "${init_path}"
 	done
