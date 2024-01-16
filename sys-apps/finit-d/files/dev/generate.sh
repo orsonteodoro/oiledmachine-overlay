@@ -57,6 +57,9 @@ convert_openrc() {
 	unset service_types
 	declare -A service_types
 
+	unset service_names
+	declare -A service_names
+
 if [[ "${MAINTAINER_MODE}" != 1 ]] ; then
 	overlays=( "run-once" )
 fi
@@ -683,6 +686,7 @@ fi
 				if [[ "${notify}" == "notify:none" ]] ; then
 					service_types["${svc_name}${instance}"]="${svc_type_start}"
 					svc_type_start="task"
+					service_names["${svc_name}"]="${svc_name}"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
@@ -690,6 +694,8 @@ fi
 					else
 						name="${svc_name}"
 					fi
+
+					service_names["${svc_name}"]="${name}"
 
 					service_types["${name}${instance}"]="${svc_type_start}"
 					svc_type_start="service"
@@ -842,12 +848,14 @@ fi
 					instance=":${svc_instanced#*:}"
 				fi
 
-				local svc_type_start=${service_types["${svc_name}${instance}"]}
+				local name=${service_aliases["${svc_name}"]}
+
+				local svc_type_start=${service_types["${name}${instance}"]}
 				local cond
 				if [[ "${svc_type_start}" =~ ("run"|"task") ]] ; then
-					cond="${svc_type}/${svc_name}${instance}/done"
+					cond="${svc_type}/${name}${instance}/done"
 				elif [[ "${svc_type_start}" == "service" ]] ; then
-					cond="${svc_type}/${svc_name}${instance}/running"
+					cond="${svc_type}/${name}${instance}/running"
 				fi
 
 				sed -i -r -e "s|pid/${svc_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
@@ -1334,6 +1342,9 @@ convert_systemd() {
 
 	unset service_types
 	declare -A service_types
+
+	unset service_aliases
+	declare -A service_aliases
 
 	local init_path
 	local init_path_orig
@@ -1908,6 +1919,7 @@ convert_systemd() {
 			[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/done"
 
 			if [[ "${type}" == "oneshot" ]] ; then
+				service_aliases["${svc_name}"]="${svc_name}"
 				service_types["${svc_name}${instance}"]="${svc_type_start}"
 				svc_type_start="task"
 				echo "${svc_type} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
@@ -1926,6 +1938,7 @@ convert_systemd() {
 				else
 					name="${svc_name}"
 				fi
+				service_aliases["${svc_name}"]="${name}"
 				service_types["${name}${instance}"]="${svc_type_start}"
 				svc_type_start="service"
 				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
@@ -1988,12 +2001,14 @@ convert_systemd() {
 				instance=":${svc_instanced#*:}"
 			fi
 
-			local svc_type_start=${service_types["${svc_name}${instance}"]}
+			local name=${service_aliases["${svc_name}"]}
+
+			local svc_type_start=${service_types["${name}${instance}"]}
 			local cond
 			if [[ "${svc_type_start}" =~ ("run"|"task") ]] ; then
-				cond="${svc_type}/${svc_name}${instance}/done"
+				cond="${svc_type}/${name}${instance}/done"
 			elif [[ "${svc_type_start}" == "service" ]] ; then
-				cond="${svc_type}/${svc_name}${instance}/running"
+				cond="${svc_type}/${name}${instance}/running"
 			fi
 
 			sed -i -r -e "s|pid/${svc_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
