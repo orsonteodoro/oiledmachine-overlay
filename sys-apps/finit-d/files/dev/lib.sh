@@ -6,7 +6,7 @@ FN="${1}"
 uses_hooks=${uses_hooks:-0}
 svc_name="$0"
 svc_name=$(basename $(echo "${svc_name}") | sed -e "s|\.sh$||")
-if [ "${svc_name}" =~ ^"net@" ] && [ "${INIT_SOURCE}" = "openrc" ] ; then
+if echo "${svc_name}" | grep -q "^net@" && [ "${INIT_SOURCE}" = "openrc" ] ; then
 	# For netifrc
 	svc_name="net.${IFACE}"
 fi
