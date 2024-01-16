@@ -297,6 +297,13 @@ ewarn
 ewarn "net-misc/netifrc is currently not supported/tested.  Use"
 ewarn "net-misc/networkmanager instead."
 ewarn
+ewarn "For <iface> do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@<iface>.conf"
+ewarn "For wlan0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@wlan0.conf"
+ewarn "For eth0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@eth0.conf"
+ewarn "For wlp do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@eth0.conf"
+ewarn
+ewarn "For possible <iface>, see /sys/class/net or ifconfig."
+ewarn
 	fi
 	if has_version "dev-db/mysql-init-scripts" ; then
 ewarn

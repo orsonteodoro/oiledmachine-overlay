@@ -387,7 +387,7 @@ fi
 				local svc="$1"
 
 				local instance_svcs=(
-					"net.lo" # Try symlink to net@<interface>.service ; no pidfile instance suffix required since oneshot
+					"net.lo" # Try symlink to net@<interface>.conf ; no pidfile instance suffix required since oneshot
 				)
 
 				local x
