@@ -235,6 +235,7 @@ generate_netifrc_instances() {
 	local
 	for iface in $(ls /sys/class/net) ; do
 		[[ "${iface}" == "lo" ]] && continue
+		is_blacklisted_svc "net@${iface}" && continue
 		einfo "Creating instance net@${iface}.conf"
 		dosym \
 			"/etc/finit.d/available/${pkg}/net@.conf" \
