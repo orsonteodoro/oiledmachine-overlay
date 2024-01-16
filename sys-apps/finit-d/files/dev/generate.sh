@@ -599,6 +599,11 @@ fi
 				pid_file="pid:!/run/${svc_name}.pid"
 				notify="notify:pid"
 				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif grep -q -e "start-stop-daemon" "${init_path}" ; then
+#echo "pidfile case L:  init_path - ${init_path}"
+				pid_file="pid:!/run/${svc_name}.pid"
+				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+				notify="notify:pid"
 			else
 #echo "pidfile case Z:  init_path - ${init_path}"
 
@@ -682,13 +687,31 @@ fi
 				local start_cond_extra=""
 				[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/done"
 
+				is_daemon_without_pidfile() {
+				# Inits that not use start-stop-daemon but run daemons
+					local name=""
+					if [[ -n "${provide}" ]] ; then
+						name="${provide}"
+					else
+						name="${svc_name}"
+					fi
+
+					local L=(
+						"avahi-daemon"
+						"avahi-dnsconfd"
+						"mysql"
+						"mysql-s6"
+						"mysql-supervise"
+					)
+					local x
+					for x in ${L[@]} ; do
+						[[ "${x}" == "${name}" ]] && return 0
+					done
+					return 1
+				}
+
 				# env: is required for variables
-				if [[ "${notify}" == "notify:none" ]] ; then
-					svc_type_start="task"
-					service_names["${svc_name}${instance}"]="${svc_name}"
-					service_types["${svc_name}${instance}"]="${svc_type_start}"
-					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
-				else
+				if [[ "${notify}" == "notify:pid" ]] ; then
 					if [[ -n "${provide}" ]] ; then
 						name="${provide}"
 					else
@@ -699,6 +722,22 @@ fi
 					service_names["${svc_name}"]="${name}"
 					service_types["${name}${instance}"]="${svc_type_start}"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+				elif is_daemon_without_pidfile ; then
+					if [[ -n "${provide}" ]] ; then
+						name="${provide}"
+					else
+						name="${svc_name}"
+					fi
+
+					svc_type_start="service"
+					service_names["${svc_name}"]="${name}"
+					service_types["${name}${instance}"]="${svc_type_start}"
+					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} notify:none /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+				else
+					svc_type_start="task"
+					service_names["${svc_name}${instance}"]="${svc_name}"
+					service_types["${svc_name}${instance}"]="${svc_type_start}"
+					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
@@ -777,6 +816,7 @@ fi
 
 		# The two checks below prevent indefinite pauses from missing pid/services.
 
+if false ; then
 		echo "Removing non-daemon service conditionals"
 
 		# Delete one shot service conditionals which the pids disappear.
@@ -787,18 +827,33 @@ fi
 			)
 			local p
 			for p in ${ps[@]} ; do
-				[[ "${p}" =~ ^"pid/" ]] || continue
-				local svc_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
-				local is_daemon=1
-				if grep -q -E -r -e "(run|task).*name:${svc_instanced} " $(find "${CONFS_PATH}" -name "${svc_instanced}.conf" -type f) ; then
-					is_daemon=0
+				[[ "${p}" =~ "-pre" ]] && continue
+				[[ "${p}" =~ "-post" ]] && continue
+				[[ "${p}" =~ "-stop" ]] && continue
+				[[ "${p}" =~ "/cleanup" ]] && continue
+				[[ "${p}" =~ "/paused" ]] && continue
+				[[ "${p}" =~ "/waiting" ]] && continue
+				[[ "${p}" =~ "hook/" ]] && continue
+				[[ "${p}" =~ "usr/" ]] && continue
+
+				local svc_name_raw=""
+				if [[ "${p}" =~ ^"pid/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -e "s|^pid[/]||") || die "ERR:  line number - $LINENO"
+				elif [[ "${p}" =~ ^"task/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -e "s|^task[/]||" -e "s|[/]done$||") || die "ERR:  line number - $LINENO"
+				elif [[ "${p}" =~ ^"service/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -r -e "s|^service[/]||" -e "s,[/](cleanup|paused|running)$,,") || die "ERR:  line number - $LINENO"
 				fi
-				if (( ${is_daemon} == 0 )) ; then
-					echo "Deleting conditional pid/${svc_instanced}"
-					sed -i -r -e "s|pid/${svc_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+
+				svc_name="${svc_name_raw%:*}"
+
+				if grep -q -E -r -e "^(run|task).*name:${svc_name} " $(find "${CONFS_PATH}" -name "*.conf" -type f) ; then
+					echo "Deleting conditional <...>/${svc_name}"
+					sed -i -r -e "s#^(pid|task|service)/${svc_name}##g" $(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
 				fi
 			done
 		done
+fi
 
 		echo "Removing service conditionals which services don't exist"
 
@@ -810,20 +865,43 @@ fi
 			)
 			local p
 			for p in ${ps[@]} ; do
-				[[ "${p}" =~ ^"pid/" ]] || continue
-				local svc_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
-				local is_found=0
-				local svc_name="${svc_instanced%:*}"
-				local n_files_conf=$(find "${CONFS_PATH}" -name "${svc_name}.conf" | wc -l)
-				local n_files_scripts=$(grep -l -r "provide.*${svc_name}" "${SCRIPTS_PATH}" | wc -l)
-				if (( ${n_files_conf} != 0 )) ; then
-					is_found=1
-				elif (( ${n_files_scripts} != 0 )) ; then
-					is_found=1
+				[[ "${p}" =~ "-pre" ]] && continue
+				[[ "${p}" =~ "-post" ]] && continue
+				[[ "${p}" =~ "-stop" ]] && continue
+				[[ "${p}" =~ "/cleanup" ]] && continue
+				[[ "${p}" =~ "/paused" ]] && continue
+				[[ "${p}" =~ "/waiting" ]] && continue
+				[[ "${p}" =~ "hook/" ]] && continue
+				[[ "${p}" =~ "usr/" ]] && continue
+
+				local svc_name_raw=""
+				if [[ "${p}" =~ ^"pid/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -e "s|^pid[/]||") || die "ERR:  line number - $LINENO"
+				elif [[ "${p}" =~ ^"task/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -e "s|^task[/]||" -e "s|[/]done$||") || die "ERR:  line number - $LINENO"
+				elif [[ "${p}" =~ ^"service/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -r -e "s|^service[/]||" -e "s,[/](cleanup|paused|running)$,,") || die "ERR:  line number - $LINENO"
 				fi
-				if (( ${is_found} == 0 )) ; then
-					echo "Deleting conditional pid/${svc_instanced}"
-					sed -i -r -e "s|pid/${svc_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+
+				svc_name="${svc_name_raw%:*}"
+				local instance=""
+				if [[ "${svc_name_raw}" =~ ":" ]] ; then
+					instance=":${svc_name_raw#*:}"
+				fi
+
+				local n_files_conf=$(find "${CONFS_PATH}" -name "${svc_name}.conf" | wc -l)
+				if (( ${n_files_conf} == 0 )) ; then
+					echo "Deleting conditional <...>/${svc_name} by svc_name"
+					sed -i -r -e "s|pid/${svc_name}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
+				fi
+
+				# name is alias
+				local name=${service_names["${svc_name}"]}
+
+				local n_files_scripts=$(grep -l -r "provide.*${name}" "${SCRIPTS_PATH}" | wc -l)
+				if [[ "${svc_name}" != "${name}" ]] && (( ${n_files_scripts} == 0 )) ; then
+					echo "Deleting conditional <...>/${name} by alias"
+					sed -i -r -e "s|pid/${name}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
 				fi
 			done
 		done
@@ -837,25 +915,47 @@ fi
 			)
 			local p
 			for p in ${ps[@]} ; do
+				[[ "${p}" =~ "-pre" ]] && continue
+				[[ "${p}" =~ "-post" ]] && continue
+				[[ "${p}" =~ "-stop" ]] && continue
+				[[ "${p}" =~ "/cleanup" ]] && continue
+				[[ "${p}" =~ "/paused" ]] && continue
+				[[ "${p}" =~ "/waiting" ]] && continue
+				[[ "${p}" =~ "hook/" ]] && continue
+				[[ "${p}" =~ "usr/" ]] && continue
+
 				[[ "${p}" =~ ^"pid/" ]] || continue
-				local svc_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
-				local svc_name="${svc_instanced%:*}"
-				local instance=""
-				if [[ "${svc_instanced}" =~ ":" ]] ; then
-					instance=":${svc_instanced#*:}"
+
+				local svc_name_raw=""
+				if [[ "${p}" =~ ^"pid/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -e "s|^pid[/]||") || die "ERR:  line number - $LINENO"
+				elif [[ "${p}" =~ ^"task/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -e "s|^task[/]||" -e "s|[/]done$||") || die "ERR:  line number - $LINENO"
+				elif [[ "${p}" =~ ^"service/" ]] ; then
+					svc_name_raw=$(echo "${p}" | sed -r -e "s|^service[/]||" -e "s,[/](cleanup|paused|running)$,,") || die "ERR:  line number - $LINENO"
 				fi
 
-				local name=${service_aliases["${svc_name}"]}
+				svc_name="${svc_name_raw%:*}"
+				local instance=""
+				if [[ "${svc_name_raw}" =~ ":" ]] ; then
+					instance=":${svc_name_raw#*:}"
+				fi
+
+				# name is alias
+				local name=${service_names["${svc_name}"]}
 
 				local svc_type_start=${service_types["${name}${instance}"]}
 				local cond
 				if [[ "${svc_type_start}" =~ ("run"|"task") ]] ; then
-					cond="${svc_type}/${name}${instance}/done"
+					cond="${svc_type_start}/${name}${instance}/done"
 				elif [[ "${svc_type_start}" == "service" ]] ; then
-					cond="${svc_type}/${name}${instance}/running"
+					cond="${svc_type_start}/${name}${instance}/running"
 				fi
 
-				sed -i -r -e "s|pid/${svc_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+				if grep -q "pid/${svc_name}" $(find "${CONFS_PATH}" -name "*.conf" -type f)  ; then
+					echo "Converting pid/${svc_name} -> ${cond}"
+					sed -i -r -e "s|pid/${svc_name}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
+				fi
 			done
 		done
 	done
@@ -1990,25 +2090,48 @@ convert_systemd() {
 		)
 		local p
 		for p in ${ps[@]} ; do
+			[[ "${p}" =~ "-pre" ]] && continue
+			[[ "${p}" =~ "-post" ]] && continue
+			[[ "${p}" =~ "-stop" ]] && continue
+			[[ "${p}" =~ "/cleanup" ]] && continue
+			[[ "${p}" =~ "/paused" ]] && continue
+			[[ "${p}" =~ "/waiting" ]] && continue
+			[[ "${p}" =~ "hook/" ]] && continue
+			[[ "${p}" =~ "usr/" ]] && continue
+
 			[[ "${p}" =~ ^"pid/" ]] || continue
-			local svc_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
-			local svc_name="${svc_instanced%:*}"
+
+			local svc_name=""
+			local svc_name_raw=""
+			if [[ "${p}" =~ ^"pid/" ]] ; then
+				svc_name_raw=$(echo "${p}" | sed -e "s|^pid[/]||") || die "ERR:  line number - $LINENO"
+			elif [[ "${p}" =~ ^"task/" ]] ; then
+				svc_name_raw=$(echo "${p}" | sed -e "s|^task[/]||" -e "s|[/]done$||") || die "ERR:  line number - $LINENO"
+			elif [[ "${p}" =~ ^"service/" ]] ; then
+				svc_name_raw=$(echo "${p}" | sed -r -e "s|^service[/]||" -e "s,[/](cleanup|paused|running)$,,") || die "ERR:  line number - $LINENO"
+			fi
+
+			svc_name="${svc_name_raw%:*}"
 			local instance=""
-			if [[ "${svc_instanced}" =~ ":" ]] ; then
-				instance=":${svc_instanced#*:}"
+			if [[ "${svc_name_raw}" =~ ":" ]] ; then
+				instance=":${svc_name_raw#*:}"
 			fi
 
 			local name=${service_aliases["${svc_name}"]}
 
 			local svc_type_start=${service_types["${name}${instance}"]}
+
 			local cond
 			if [[ "${svc_type_start}" =~ ("run"|"task") ]] ; then
-				cond="${svc_type}/${name}${instance}/done"
+				cond="${svc_type_start}/${name}${instance}/done"
 			elif [[ "${svc_type_start}" == "service" ]] ; then
-				cond="${svc_type}/${name}${instance}/running"
+				cond="${svc_type_start}/${name}${instance}/running"
 			fi
 
-			sed -i -r -e "s|pid/${svc_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+			if grep -q "pid/${svc_name}" $(find "${CONFS_PATH}" -name "*.conf" -type f) ; then
+				echo "Converting pid/${svc_name} -> ${cond}"
+				sed -i -r -e "s|pid/${svc_name}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
+			fi
 		done
 	done
 	sed -i -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf")
