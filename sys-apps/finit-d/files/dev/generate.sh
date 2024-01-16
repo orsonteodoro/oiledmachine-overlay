@@ -1751,6 +1751,7 @@ convert_systemd() {
 			if echo "${row}" | grep -q "^ExecStart=" ; then
 				exec_start=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 				exec_start=$(echo "${exec_start}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+				exec_start=$(echo "${exec_start}" | sed -e "s|%I|%i|g") # For instancing
 				exec_starts="${exec_starts}\n${exec_start}"
 			fi
 			local exec_start_post=""
@@ -1771,6 +1772,7 @@ convert_systemd() {
 			if echo "${row}" | grep -q "^ExecStop=" ; then
 				exec_stop=$(echo "${row}" | cut -f 2 -d "=") || die "ERR:  line number - $LINENO"
 				exec_stop=$(echo "${exec_stop}" | sed -r -e 's#^(@|-|[+]|!!|!)##')
+				exec_stop=$(echo "${exec_stop}" | sed -e "s|%I|%i|g") # For instancing
 				exec_stops="${exec_stops}\n${exec_stop}"
 			fi
 
