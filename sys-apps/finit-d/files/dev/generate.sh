@@ -641,6 +641,7 @@ fi
 
 			local svc_type
 			if grep -q -e "^start_pre" "${init_path}" ; then
+				service_types["${name}-pre${instance}"]="${svc_type_start}"
 				svc_type_start_pre="task"
 				echo "${svc_type_start_pre} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
 			fi
@@ -676,12 +677,12 @@ fi
 				fi
 
 				local start_cond_extra=""
-				[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}${instance}/done"
+				[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/done"
 
 				# env: is required for variables
 				if [[ "${notify}" == "notify:none" ]] ; then
-					svc_type_start="task"
 					service_types["${svc_name}${instance}"]="${svc_type_start}"
+					svc_type_start="task"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
@@ -690,8 +691,8 @@ fi
 						name="${svc_name}"
 					fi
 
-					svc_type_start="service"
 					service_types["${name}${instance}"]="${svc_type_start}"
+					svc_type_start="service"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
@@ -699,23 +700,27 @@ fi
 				local start_post_cond=""
 				[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
 				[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
+				service_types["${name}-post${instance}"]="${svc_type_start}"
 				svc_type_start_post="task"
 				echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_pre" "${init_path}" ; then
+				service_types["${name}-pre-stop${instance}"]="${svc_type_start}"
 				svc_type_stop_pre="task"
 				echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_pre\" -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop" "${init_path}" ; then
 				local stop_cond=""
-				[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}${instance}/done"
+				[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/done"
+				service_types["${name}-stop${instance}"]="${svc_type_start}"
 				svc_type_stop="task"
 				echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_post" "${init_path}" ; then
 				local stop_post_cond=""
-				[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/done"
-				[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/cleanup"
+				[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/done"
+				[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/cleanup"
+				service_types["${name}-post-stop${instance}"]="${svc_type_start}"
 				svc_type_stop_post="task"
 				echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_post\" -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 			fi
@@ -778,14 +783,14 @@ fi
 			local p
 			for p in ${ps[@]} ; do
 				[[ "${p}" =~ ^"pid/" ]] || continue
-				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
+				local svc_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
 				local is_daemon=1
-				if grep -q -E -r -e "(run|task).*name:${s_instanced} " $(find "${CONFS_PATH}" -name "${s_instanced}.conf" -type f) ; then
+				if grep -q -E -r -e "(run|task).*name:${svc_instanced} " $(find "${CONFS_PATH}" -name "${svc_instanced}.conf" -type f) ; then
 					is_daemon=0
 				fi
 				if (( ${is_daemon} == 0 )) ; then
-					echo "Deleting conditional pid/${s_instanced}"
-					sed -i -r -e "s|pid/${s_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+					echo "Deleting conditional pid/${svc_instanced}"
+					sed -i -r -e "s|pid/${svc_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 					sed -i -r -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 				fi
 			done
@@ -802,19 +807,19 @@ fi
 			local p
 			for p in ${ps[@]} ; do
 				[[ "${p}" =~ ^"pid/" ]] || continue
-				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
+				local svc_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
 				local is_found=0
-				local s="${s_instanced%:*}"
-				local n_files_conf=$(find "${CONFS_PATH}" -name "${s}.conf" | wc -l)
-				local n_files_scripts=$(grep -l -r "provide.*${s}" "${SCRIPTS_PATH}" | wc -l)
+				local svc_name="${svc_instanced%:*}"
+				local n_files_conf=$(find "${CONFS_PATH}" -name "${svc_name}.conf" | wc -l)
+				local n_files_scripts=$(grep -l -r "provide.*${svc_name}" "${SCRIPTS_PATH}" | wc -l)
 				if (( ${n_files_conf} != 0 )) ; then
 					is_found=1
 				elif (( ${n_files_scripts} != 0 )) ; then
 					is_found=1
 				fi
 				if (( ${is_found} == 0 )) ; then
-					echo "Deleting conditional pid/${s_instanced}"
-					sed -i -r -e "s|pid/${s_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+					echo "Deleting conditional pid/${svc_instanced}"
+					sed -i -r -e "s|pid/${svc_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 					sed -i -r -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 				fi
 			done
@@ -830,17 +835,22 @@ fi
 			local p
 			for p in ${ps[@]} ; do
 				[[ "${p}" =~ ^"pid/" ]] || continue
-				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
-
-				local svc_type=${service_types["${s_instanced}"]}
-				local cond
-				if [[ "${svc_type}" =~ ("run"|"task") ]] ; then
-					cond="${svc_type}/${s_instanced}/done"
-				else
-					cond="${svc_type}/${s_instanced}/running"
+				local svc_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
+				local svc_name="${svc_instanced%:*}"
+				local instance=""
+				if [[ "${svc_instanced}" =~ ":" ]] ; then
+					instance=":${svc_instanced#*:}"
 				fi
 
-				sed -i -r -e "s|pid/${s_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+				local svc_type_start=${service_types["${svc_name}${instance}"]}
+				local cond
+				if [[ "${svc_type_start}" =~ ("run"|"task") ]] ; then
+					cond="${svc_type}/${svc_name}${instance}/done"
+				elif [[ "${svc_type_start}" == "service" ]] ; then
+					cond="${svc_type}/${svc_name}${instance}/running"
+				fi
+
+				sed -i -r -e "s|pid/${svc_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 			done
 		done
 	done
@@ -1876,6 +1886,7 @@ convert_systemd() {
 
 		local svc_type
 		if (( "${#exec_start_pres}" > 0 )) ; then
+			service_types["${svc_name}-pre${instance}"]="${svc_type_start}"
 			svc_type_start_pre="task"
 			echo "${svc_type_start_pre} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start_pre -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
 		fi
@@ -1894,11 +1905,11 @@ convert_systemd() {
 
 			local request_make_pid=0
 			local start_cond_extra=""
-			[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}${instance}/done"
+			[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/done"
 
 			if [[ "${type}" == "oneshot" ]] ; then
-				svc_type_start="task"
 				service_types["${svc_name}${instance}"]="${svc_type_start}"
+				svc_type_start="task"
 				echo "${svc_type} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			else
 				if [[ -z "${pid_file}" ]] ; then
@@ -1915,12 +1926,13 @@ convert_systemd() {
 				else
 					name="${svc_name}"
 				fi
-				svc_type_start="service"
 				service_types["${name}${instance}"]="${svc_type_start}"
+				svc_type_start="service"
 				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
+			service_types["${svc_name}-post${instance}"]="${svc_type_start}"
 			svc_type_start_post="task"
 			local start_post_cond=""
 			[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
@@ -1928,20 +1940,23 @@ convert_systemd() {
 			echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start_post -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_pres}" > 0 )) ; then
+			service_types["${svc_name}-pre-stop${instance}"]="${svc_type_start}"
 			svc_type_stop_pre="task"
 			echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop_pre -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stops}" > 0 )) ; then
+			service_types["${svc_name}-stop${instance}"]="${svc_type_start}"
 			svc_type_stop="task"
 			local stop_cond=""
-			[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}${instance}/done"
+			[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/done"
 			echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_posts}" > 0 )) ; then
+			service_types["${svc_name}-post-stop${instance}"]="${svc_type_start}"
 			svc_type_stop_post="task"
 			local stop_post_cond=""
-			[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/done"
-			[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/cleanup"
+			[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/done"
+			[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/cleanup"
 			echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop_post -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_reloads}" > 0 )) ; then
@@ -1966,17 +1981,22 @@ convert_systemd() {
 		local p
 		for p in ${ps[@]} ; do
 			[[ "${p}" =~ ^"pid/" ]] || continue
-			local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
-
-			local svc_type=${service_types["${s_instanced}"]}
-			local cond
-			if [[ "${svc_type}" =~ ("run"|"task") ]] ; then
-				cond="${svc_type}/${s_instanced}/done"
-			else
-				cond="${svc_type}/${s_instanced}/running"
+			local svc_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
+			local svc_name="${svc_instanced%:*}"
+			local instance=""
+			if [[ "${svc_instanced}" =~ ":" ]] ; then
+				instance=":${svc_instanced#*:}"
 			fi
 
-			sed -i -r -e "s|pid/${s_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+			local svc_type_start=${service_types["${svc_name}${instance}"]}
+			local cond
+			if [[ "${svc_type_start}" =~ ("run"|"task") ]] ; then
+				cond="${svc_type}/${svc_name}${instance}/done"
+			elif [[ "${svc_type_start}" == "service" ]] ; then
+				cond="${svc_type}/${svc_name}${instance}/running"
+			fi
+
+			sed -i -r -e "s|pid/${svc_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 		done
 	done
 
