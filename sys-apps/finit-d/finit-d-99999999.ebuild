@@ -230,6 +230,21 @@ is_blacklisted_svc() {
 	return 1
 }
 
+generate_netifrc_instances() {
+	local pkg="net-misc/netifrc"
+	local
+	for iface in $(ls /sys/class/net) ; do
+		[[ "${iface}" == "lo" ]] && continue
+		einfo "Creating instance net@${iface}.conf"
+		dosym \
+			"/etc/finit.d/available/${pkg}/net@.conf" \
+			"/etc/finit.d/available/${pkg}/net@${iface}.conf"
+		dosym \
+			"/etc/finit.d/available/${pkg}/net@.conf" \
+			"/etc/finit.d/enabled/net@${iface}.conf"
+	done
+}
+
 src_install() {
 	local PKGS=( $(cat "${WORKDIR}/pkgs.txt") )
 	local pkg
@@ -252,6 +267,12 @@ src_install() {
 		popd >/dev/null 2>&1 || die
 		install_scripts "${pkg}"
 	done
+
+	if is_blacklisted_pkg "net-misc/netifrc" ; then
+		:;
+	elif has_version "net-misc/netifrc" ; then
+		generate_netifrc_instances
+	fi
 
 	insinto "/etc/finit.d/available/${CATEGORY}/${PN}"
 	doins "${WORKDIR}/confs/getty.conf"

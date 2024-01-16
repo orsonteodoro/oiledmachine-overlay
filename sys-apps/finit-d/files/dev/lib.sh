@@ -6,6 +6,10 @@ FN="${1}"
 uses_hooks=${uses_hooks:-0}
 svc_name="$0"
 svc_name=$(basename $(echo "${svc_name}") | sed -e "s|\.sh$||")
+if [ "${svc_name}" =~ ^"net@" ] && [ "${INIT_SOURCE}" = "openrc" ] ; then
+	# For netifrc
+	svc_name="net.${IFACE}"
+fi
 SVCNAME=${SVCNAME:-"${svc_name}"}
 RC_SVCNAME=${RC_SVCNAME:-"${svc_name}"}
 if [ "${uses_hooks}" = "0" ] ; then

@@ -243,6 +243,10 @@ if [[ "${MAINTAINER_MODE}" == 1 ]] ; then
 			fi
 fi
 
+			if [[ "${fn}" == "net.lo" ]] ; then
+				fn="net@"
+			fi
+
 			mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
 			local init_sh="${SCRIPTS_PATH}/${c}/${pn}/${fn}.sh"
 			echo "Converting ${init_path} -> ${init_sh}"
@@ -273,10 +277,11 @@ fi
 			sed -i -e "${top_ln}a . /lib/finit/scripts/lib/lib.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
 			local svc_name=$(basename "${init_path}")
 			svc_name=$(echo "${svc_name}" | sed -e "s|\.sh$||g")
+			[[ "${svc_name}" == "net.lo" ]] && svc_name="net@"
 
-			if grep -q "RC_SVCNAME" "${init_sh}" ; then
-				sed -i -e "${top_ln}a export RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
-			fi
+			#if grep -q "RC_SVCNAME" "${init_sh}" ; then
+			#	sed -i -e "${top_ln}a export RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+			#fi
 
 			# Mostly chronological order...
 			# banner     ; pre [S]
@@ -301,7 +306,7 @@ fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+			#sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 
 			local bottom_ln=$(cat "${init_sh}" | wc -l)
 			sed -i -e "${bottom_ln}a . /lib/finit/scripts/lib/event.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -409,12 +414,12 @@ fi
 				local svc="$1"
 
 				local instance_svcs=(
-					"net.lo" # Try symlink to net@<interface>.conf ; no pidfile instance suffix required since oneshot
+					"net@" # Try symlink to net@<interface>.conf ; no pidfile instance suffix required since oneshot
 				)
 
 				local x
 				for x in ${instance_svcs[@]} ; do
-					[[ "${svc}" == "x" ]] && return 0
+					[[ "${svc}" == "${x}" ]] && return 0
 				done
 				return 1
 			}
@@ -422,7 +427,7 @@ fi
 			local instance=""
 			local instance_desc=""
 			local instance_pid_suffix=""
-			if is_instance_svc ; then
+			if is_instance_svc "${svc_name}" ; then
 				instance_pid_suffix="@%i"
 				instance=":%i"
 				instance_desc=" for %i"
@@ -636,8 +641,15 @@ fi
 			fi
 
 			local basename_fn=$(basename "${init_sh}")
-			if [[ -n "${instance}" ]] ; then
+			if [[ "${svc_name}" == "net@" ]] ; then
+				:;
+			elif [[ -n "${instance}" ]] ; then
 				basename_fn=$(echo "${basename_fn}" | sed -e "s|\.sh$|%i.sh|g")
+			fi
+
+			if [[ "${svc_name}" == "net@" ]] ; then
+				echo "set INIT_SOURCE=\"openrc\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
+				echo "set IFACE=\"%i\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
 			fi
 
 			local svc_type_start_pre=""
