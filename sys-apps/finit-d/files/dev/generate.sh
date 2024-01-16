@@ -835,6 +835,10 @@ if false ; then
 				[[ "${p}" =~ "/waiting" ]] && continue
 				[[ "${p}" =~ "hook/" ]] && continue
 				[[ "${p}" =~ "usr/" ]] && continue
+				[[ "${p}" =~ ^"boot/" ]] && continue
+				[[ "${p}" =~ ^"dev/" ]] && continue
+				[[ "${p}" =~ ^"net/" ]] && continue
+				[[ "${p}" =~ ^"sys/" ]] && continue
 
 				local svc_name_raw=""
 				if [[ "${p}" =~ ^"pid/" ]] ; then
@@ -873,6 +877,10 @@ fi
 				[[ "${p}" =~ "/waiting" ]] && continue
 				[[ "${p}" =~ "hook/" ]] && continue
 				[[ "${p}" =~ "usr/" ]] && continue
+				[[ "${p}" =~ ^"boot/" ]] && continue
+				[[ "${p}" =~ ^"dev/" ]] && continue
+				[[ "${p}" =~ ^"net/" ]] && continue
+				[[ "${p}" =~ ^"sys/" ]] && continue
 
 				local svc_name_raw=""
 				if [[ "${p}" =~ ^"pid/" ]] ; then
@@ -923,6 +931,10 @@ fi
 				[[ "${p}" =~ "/waiting" ]] && continue
 				[[ "${p}" =~ "hook/" ]] && continue
 				[[ "${p}" =~ "usr/" ]] && continue
+				[[ "${p}" =~ ^"boot/" ]] && continue
+				[[ "${p}" =~ ^"dev/" ]] && continue
+				[[ "${p}" =~ ^"net/" ]] && continue
+				[[ "${p}" =~ ^"sys/" ]] && continue
 
 				[[ "${p}" =~ ^"pid/" ]] || continue
 
@@ -2098,6 +2110,10 @@ convert_systemd() {
 			[[ "${p}" =~ "/waiting" ]] && continue
 			[[ "${p}" =~ "hook/" ]] && continue
 			[[ "${p}" =~ "usr/" ]] && continue
+			[[ "${p}" =~ ^"boot/" ]] && continue
+			[[ "${p}" =~ ^"dev/" ]] && continue
+			[[ "${p}" =~ ^"net/" ]] && continue
+			[[ "${p}" =~ ^"sys/" ]] && continue
 
 			[[ "${p}" =~ ^"pid/" ]] || continue
 
