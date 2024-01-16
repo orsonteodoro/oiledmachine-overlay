@@ -271,6 +271,18 @@ fi
 			if grep -q "RC_SVCNAME" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
+
+			# Mostly chronological order...
+			# banner     ; pre [S]
+			# rootfs_up  ; post /
+			# mount_err  ; current/partial mount -a
+			# mount_post ; post mount -a
+			# basefs_up  ; post /swap
+			# svc_plugin ; pre finit.conf
+			# network_up ; post [S]
+			# svc_up     ; post [current]
+			# system_up  ; finit.d/* started
+
 			if [[ "${svc_name}" == "dmcrypt" ]] ; then
 				sed -i -e "${top_ln}a hook_rootfs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a hook_system_dn_fn=\"stop\"" "${init_sh}" || die "ERR:  line number - $LINENO"
