@@ -629,6 +629,8 @@ fi
 				basename_fn=$(echo "${basename_fn}" | sed -e "s|\.sh$|%i.sh|g")
 			fi
 
+			local svc_type_start=""
+
 			local svc_type
 			if grep -q -e "^start_pre" "${init_path}" ; then
 				if grep -q "^start()" "${init_sh}" || grep -q "^command=" "${init_sh}" || grep -F ': ${command:=' "${init_sh}" ; then
@@ -672,6 +674,7 @@ fi
 
 				# env: is required for variables
 				if grep -q -e "provide.*logger" "${init_path}" ; then
+					svc_type_start="service"
 					echo "service [${start_runlevels}] ${envfile} ${user_group} name:logger ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}" >> "${init_conf}"
 				elif [[ "${notify}" == "notify:none" ]] ; then
 					if grep -q "^start_post" "${init_sh}" ; then
@@ -679,6 +682,7 @@ fi
 					else
 						svc_type="task"
 					fi
+					svc_type_start="${svc_type}"
 					echo "${svc_type} [${start_runlevels}] ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
@@ -687,6 +691,7 @@ fi
 						name="${svc_name}"
 					fi
 
+					svc_type_start="service"
 					echo "service [${start_runlevels}] ${cond} ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
@@ -722,8 +727,14 @@ fi
 			if grep -q -e "^extra_started_commands=" "${init_path}" ; then
 				local list=$(grep "^extra_started_commands=" "${init_path}" | cut -f 2 -d '=' | sed -e 's|^"||' -e 's|"$||')
 				for x in ${list} ; do
-					echo "# Run as:  initctl cond set ${svc_name}-${x}  # For started service only" >> "${init_conf}"
-					echo "run [${extra_runlevels}] name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
+					if [[ "${x}" == "reload" ]] ; then
+						# On pause only
+						echo "# Run as:  initctl cond set ${svc_name}-${x}  # For started service only" >> "${init_conf}"
+						echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
+					else
+						echo "# Run as:  initctl cond set ${svc_name}-${x}  # For started service only" >> "${init_conf}"
+						echo "run [${extra_runlevels}] name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
+					fi
 				done
 			fi
 			if grep -q -e "^extra_stopped_commands=" "${init_path}" ; then
@@ -1825,6 +1836,7 @@ convert_systemd() {
 			instance_desc=" for %i"
 		fi
 
+		local svc_type_start=""
 		local svc_type
 		if (( "${#exec_start_pres}" > 0 )) ; then
 			if (( "${#exec_starts}" > 0 )) ; then
@@ -1856,6 +1868,7 @@ convert_systemd() {
 				else
 					svc_type="task"
 				fi
+				svc_type_start="${svc_type}"
 				echo "${svc_type} [${start_runlevels}] ${cond} ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			elif grep -q "Alias=syslog.service" "${init_path}" ; then
 				if [[ -z "${pid_file}" ]] ; then
@@ -1872,6 +1885,7 @@ convert_systemd() {
 				else
 					name="${svc_name}"
 				fi
+				svc_type_start="service"
 				echo "service [${start_runlevels}] ${user_group} name:${name} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}.sh start -- ${svc_name}" >> "${init_conf}"
 			else
 				if [[ -z "${pid_file}" ]] ; then
@@ -1888,6 +1902,7 @@ convert_systemd() {
 				else
 					name="${svc_name}"
 				fi
+				svc_type_start="service"
 				echo "service [${start_runlevels}] ${cond} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			fi
 		fi
@@ -1914,9 +1929,10 @@ convert_systemd() {
 			echo "task [0] name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop_post -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_reloads}" > 0 )) ; then
+			# On pause only
 			local x="reload"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}  # For stopped service only" >> "${init_conf}"
-			echo "run [${extra_runlevels}] name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
+			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
 		fi
 		rm "${init_path}"
 	done
