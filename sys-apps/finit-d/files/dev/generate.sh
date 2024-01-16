@@ -673,7 +673,7 @@ fi
 				fi
 
 				local start_cond_extra=""
-				[[ -n "${svc_type_start_pre}" ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}${instance}/done"
+				[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}${instance}/done"
 
 				# env: is required for variables
 				if [[ "${notify}" == "notify:none" ]] ; then
@@ -692,7 +692,8 @@ fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
 				local start_post_cond=""
-				[[ -n "${svc_type_start}" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
+				[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
+				[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
 				svc_type_start_post="task"
 				echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 			fi
@@ -702,13 +703,14 @@ fi
 			fi
 			if grep -q -e "^stop" "${init_path}" ; then
 				local stop_cond=""
-				[[ -n "${svc_type_stop_pre}" ]] && stop_cond="${svc_type_stop_pre}/${svc_name}${instance}/done"
+				[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}${instance}/done"
 				svc_type_stop="task"
 				echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_post" "${init_path}" ; then
 				local stop_post_cond=""
-				[[ -n "${svc_type_stop}" ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/done"
+				[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/done"
+				[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/cleanup"
 				svc_type_stop_post="task"
 				echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_post\" -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 			fi
@@ -1860,7 +1862,7 @@ convert_systemd() {
 
 			local request_make_pid=0
 			local start_cond_extra=""
-			[[ -n "${svc_type_start_pre}" ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}${instance}/done"
+			[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}${instance}/done"
 
 			if [[ "${type}" == "oneshot" ]] ; then
 				svc_type_start="task"
@@ -1887,7 +1889,8 @@ convert_systemd() {
 		if (( "${#exec_start_posts}" > 0 )) ; then
 			svc_type_start_post="task"
 			local start_post_cond=""
-			[[ -n "${svc_type_start}" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
+			[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
+			[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
 			echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start_post -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_pres}" > 0 )) ; then
@@ -1897,13 +1900,14 @@ convert_systemd() {
 		if (( "${#exec_stops}" > 0 )) ; then
 			svc_type_stop="task"
 			local stop_cond=""
-			[[ -n "${svc_type_stop_pre}" ]] && stop_cond="${svc_type_stop_pre}/${svc_name}${instance}/done"
+			[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}${instance}/done"
 			echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_posts}" > 0 )) ; then
 			svc_type_stop_post="task"
 			local stop_post_cond=""
-			[[ -n "${svc_type_stop}" ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/done"
+			[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/done"
+			[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}${instance}/cleanup"
 			echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop_post -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_reloads}" > 0 )) ; then
