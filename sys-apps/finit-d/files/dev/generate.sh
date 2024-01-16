@@ -644,8 +644,8 @@ fi
 
 			local svc_type
 			if grep -q -e "^start_pre" "${init_path}" ; then
-				service_types["${name}-pre${instance}"]="${svc_type_start}"
 				svc_type_start_pre="task"
+				service_types["${name}-pre${instance}"]="${svc_type_start}"
 				echo "${svc_type_start_pre} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
 			fi
 
@@ -684,9 +684,9 @@ fi
 
 				# env: is required for variables
 				if [[ "${notify}" == "notify:none" ]] ; then
-					service_types["${svc_name}${instance}"]="${svc_type_start}"
 					svc_type_start="task"
-					service_names["${svc_name}"]="${svc_name}"
+					service_types["${svc_name}${instance}"]="${svc_type_start}"
+					service_names["${svc_name}${instance}"]="${svc_name}"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
@@ -695,10 +695,9 @@ fi
 						name="${svc_name}"
 					fi
 
-					service_names["${svc_name}"]="${name}"
-
-					service_types["${name}${instance}"]="${svc_type_start}"
 					svc_type_start="service"
+					service_names["${svc_name}"]="${name}"
+					service_types["${name}${instance}"]="${svc_type_start}"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
@@ -706,28 +705,28 @@ fi
 				local start_post_cond=""
 				[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
 				[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
-				service_types["${name}-post${instance}"]="${svc_type_start}"
 				svc_type_start_post="task"
+				service_types["${name}-post${instance}"]="${svc_type_start}"
 				echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_pre" "${init_path}" ; then
-				service_types["${name}-pre-stop${instance}"]="${svc_type_start}"
 				svc_type_stop_pre="task"
+				service_types["${name}-pre-stop${instance}"]="${svc_type_start}"
 				echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_pre\" -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop" "${init_path}" ; then
 				local stop_cond=""
 				[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/done"
-				service_types["${name}-stop${instance}"]="${svc_type_start}"
 				svc_type_stop="task"
+				service_types["${name}-stop${instance}"]="${svc_type_start}"
 				echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_post" "${init_path}" ; then
 				local stop_post_cond=""
 				[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/done"
 				[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/cleanup"
-				service_types["${name}-post-stop${instance}"]="${svc_type_start}"
 				svc_type_stop_post="task"
+				service_types["${name}-post-stop${instance}"]="${svc_type_start}"
 				echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_post\" -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^extra_commands=" "${init_path}" ; then
@@ -797,7 +796,6 @@ fi
 				if (( ${is_daemon} == 0 )) ; then
 					echo "Deleting conditional pid/${svc_instanced}"
 					sed -i -r -e "s|pid/${svc_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
-					sed -i -r -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 				fi
 			done
 		done
@@ -826,7 +824,6 @@ fi
 				if (( ${is_found} == 0 )) ; then
 					echo "Deleting conditional pid/${svc_instanced}"
 					sed -i -r -e "s|pid/${svc_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
-					sed -i -r -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 				fi
 			done
 		done
@@ -862,6 +859,8 @@ fi
 			done
 		done
 	done
+	sed -i -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf")
+	sed -i -e "s|<,|<|g" $(find "${CONFS_PATH}" -name "*.conf")
 
 	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  line number - $LINENO"
 	mv "${NEEDS_NET_PATH}"{.t,} || die "ERR:  line number - $LINENO"
@@ -1897,8 +1896,8 @@ convert_systemd() {
 
 		local svc_type
 		if (( "${#exec_start_pres}" > 0 )) ; then
-			service_types["${svc_name}-pre${instance}"]="${svc_type_start}"
 			svc_type_start_pre="task"
+			service_types["${svc_name}-pre${instance}"]="${svc_type_start}"
 			echo "${svc_type_start_pre} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start_pre -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_starts}" > 0 )) ; then
@@ -1919,9 +1918,9 @@ convert_systemd() {
 			[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/done"
 
 			if [[ "${type}" == "oneshot" ]] ; then
+				svc_type_start="task"
 				service_aliases["${svc_name}"]="${svc_name}"
 				service_types["${svc_name}${instance}"]="${svc_type_start}"
-				svc_type_start="task"
 				echo "${svc_type} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			else
 				if [[ -z "${pid_file}" ]] ; then
@@ -1938,35 +1937,35 @@ convert_systemd() {
 				else
 					name="${svc_name}"
 				fi
+				svc_type_start="service"
 				service_aliases["${svc_name}"]="${name}"
 				service_types["${name}${instance}"]="${svc_type_start}"
-				svc_type_start="service"
 				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
-			service_types["${svc_name}-post${instance}"]="${svc_type_start}"
 			svc_type_start_post="task"
+			service_types["${svc_name}-post${instance}"]="${svc_type_start}"
 			local start_post_cond=""
 			[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
 			[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
 			echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start_post -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_pres}" > 0 )) ; then
-			service_types["${svc_name}-pre-stop${instance}"]="${svc_type_start}"
 			svc_type_stop_pre="task"
+			service_types["${svc_name}-pre-stop${instance}"]="${svc_type_start}"
 			echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop_pre -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stops}" > 0 )) ; then
-			service_types["${svc_name}-stop${instance}"]="${svc_type_start}"
 			svc_type_stop="task"
+			service_types["${svc_name}-stop${instance}"]="${svc_type_start}"
 			local stop_cond=""
 			[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/done"
 			echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_posts}" > 0 )) ; then
-			service_types["${svc_name}-post-stop${instance}"]="${svc_type_start}"
 			svc_type_stop_post="task"
+			service_types["${svc_name}-post-stop${instance}"]="${svc_type_start}"
 			local stop_post_cond=""
 			[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/done"
 			[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/cleanup"
@@ -1980,8 +1979,6 @@ convert_systemd() {
 			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-on-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
 		fi
 		rm "${init_path}"
-		sed -i -e "s|<>||g" "${init_conf}"
-		sed -i -e "s|<,|<|g" "${init_conf}"
 	done
 
 	echo "Changing pid created state to service/<service_name[:ID]>/running state"
@@ -2014,6 +2011,8 @@ convert_systemd() {
 			sed -i -r -e "s|pid/${svc_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 		done
 	done
+	sed -i -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf")
+	sed -i -e "s|<,|<|g" $(find "${CONFS_PATH}" -name "*.conf")
 
 	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  line number - $LINENO"
 	mv "${NEEDS_NET_PATH}"{.t,} || die "ERR:  line number - $LINENO"
