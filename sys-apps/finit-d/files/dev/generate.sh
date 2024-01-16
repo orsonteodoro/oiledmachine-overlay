@@ -54,6 +54,9 @@ convert_openrc() {
 		)
 	fi
 
+	unset service_types
+	declare -A service_types
+
 if [[ "${MAINTAINER_MODE}" != 1 ]] ; then
 	overlays=( "run-once" )
 fi
@@ -678,6 +681,7 @@ fi
 				# env: is required for variables
 				if [[ "${notify}" == "notify:none" ]] ; then
 					svc_type_start="task"
+					service_types["${svc_name}${instance}"]="${svc_type_start}"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
@@ -687,6 +691,7 @@ fi
 					fi
 
 					svc_type_start="service"
+					service_types["${name}${instance}"]="${svc_type_start}"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
@@ -812,6 +817,30 @@ fi
 					sed -i -r -e "s|pid/${s_instanced}[,]?||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 					sed -i -r -e "s|<>||g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 				fi
+			done
+		done
+
+		echo "Changing pid created state to service/<service_name[:ID]>/running state"
+		echo "Changing pid created state to {task,run}/<service_name[:ID]>/done state"
+		local x
+		for x in $(grep -l -o -E "<[^>]+" $(find "${CONFS_PATH}" -name "*.conf" -type f)) ; do
+			local ps=(
+				$(grep -o -E "<[^>]+" "${x}" | sed -e "s|<||g" | tr "," " ")
+			)
+			local p
+			for p in ${ps[@]} ; do
+				[[ "${p}" =~ ^"pid/" ]] || continue
+				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
+
+				local svc_type=${service_types["${s_instanced}"]}
+				local cond
+				if [[ "${svc_type}" =~ ("run"|"task") ]] ; then
+					cond="${svc_type}/${s_instanced}/done"
+				else
+					cond="${svc_type}/${s_instanced}/running"
+				fi
+
+				sed -i -r -e "s|pid/${s_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
 			done
 		done
 	done
@@ -1292,6 +1321,9 @@ convert_systemd() {
 	echo >> "${SERVICES_PATH}" || die "ERR:  line number - $LINENO"
 	echo >> "${NEEDS_NET_PATH}" || die "ERR:  line number - $LINENO"
 	echo >> "${NEEDS_DBUS_PATH}" || die "ERR:  line number - $LINENO"
+
+	unset service_types
+	declare -A service_types
 
 	local init_path
 	local init_path_orig
@@ -1866,6 +1898,7 @@ convert_systemd() {
 
 			if [[ "${type}" == "oneshot" ]] ; then
 				svc_type_start="task"
+				service_types["${svc_name}${instance}"]="${svc_type_start}"
 				echo "${svc_type} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			else
 				if [[ -z "${pid_file}" ]] ; then
@@ -1883,6 +1916,7 @@ convert_systemd() {
 					name="${svc_name}"
 				fi
 				svc_type_start="service"
+				service_types["${name}${instance}"]="${svc_type_start}"
 				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			fi
 		fi
@@ -1920,6 +1954,30 @@ convert_systemd() {
 		rm "${init_path}"
 		sed -i -e "s|<>||g" "${init_conf}"
 		sed -i -e "s|<,|<|g" "${init_conf}"
+	done
+
+	echo "Changing pid created state to service/<service_name[:ID]>/running state"
+	echo "Changing pid created state to {task,run}/<service_name[:ID]>/done state"
+	local x
+	for x in $(grep -l -o -E "<[^>]+" $(find "${CONFS_PATH}" -name "*.conf" -type f)) ; do
+		local ps=(
+			$(grep -o -E "<[^>]+" "${x}" | sed -e "s|<||g" | tr "," " ")
+		)
+		local p
+		for p in ${ps[@]} ; do
+			[[ "${p}" =~ ^"pid/" ]] || continue
+			local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
+
+			local svc_type=${service_types["${s_instanced}"]}
+			local cond
+			if [[ "${svc_type}" =~ ("run"|"task") ]] ; then
+				cond="${svc_type}/${s_instanced}/done"
+			else
+				cond="${svc_type}/${s_instanced}/running"
+			fi
+
+			sed -i -r -e "s|pid/${s_instanced}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f)
+		done
 	done
 
 	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  line number - $LINENO"
