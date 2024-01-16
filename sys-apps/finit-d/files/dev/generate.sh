@@ -1792,6 +1792,13 @@ convert_systemd() {
 		done
 		IFS=$' \t\n'
 		gen_systemd_wrapper
+		exec_start_pres="${exec_start_pres:2}"
+		exec_starts="${exec_starts:2}"
+		exec_start_posts="${exec_start_posts:2}"
+		exec_stop_pres="${exec_stop_pres:2}"
+		exec_stops="${exec_stops:2}"
+		exec_stop_posts="${exec_stop_posts:2}"
+		exec_reloads="${exec_reloads:2}"
 
 		local instance=""
 		local instance_desc=""
