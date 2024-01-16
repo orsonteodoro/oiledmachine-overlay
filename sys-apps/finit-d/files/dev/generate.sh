@@ -685,8 +685,8 @@ fi
 				# env: is required for variables
 				if [[ "${notify}" == "notify:none" ]] ; then
 					svc_type_start="task"
-					service_types["${svc_name}${instance}"]="${svc_type_start}"
 					service_names["${svc_name}${instance}"]="${svc_name}"
+					service_types["${svc_name}${instance}"]="${svc_type_start}"
 					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					if [[ -n "${provide}" ]] ; then
