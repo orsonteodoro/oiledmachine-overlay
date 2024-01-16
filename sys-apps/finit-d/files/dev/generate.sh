@@ -734,6 +734,8 @@ fi
 
 		done
 
+		# The two checks below prevent indefinite pauses from missing pid/services.
+
 		echo "Removing non-daemon service conditionals"
 
 		# Delete one shot service conditionals which the pids disappear.
@@ -747,7 +749,7 @@ fi
 				[[ "${p}" =~ ^"pid/" ]] || continue
 				local s_instanced=$(echo "${p}" | sed -e "s|^pid/||") # may contain svc_name@%i
 				local is_daemon=1
-				if grep -E -r -e "(run|task).*name:${s_instanced} " $(find "${CONFS_PATH}" -name "${s_instanced}.conf" -type f) ; then
+				if grep -q -E -r -e "(run|task).*name:${s_instanced} " $(find "${CONFS_PATH}" -name "${s_instanced}.conf" -type f) ; then
 					is_daemon=0
 				fi
 				if (( ${is_daemon} == 0 )) ; then
@@ -773,7 +775,7 @@ fi
 				local is_found=0
 				local s="${s_instanced%:*}"
 				local n_files_conf=$(find "${CONFS_PATH}" -name "${s}.conf" | wc -l)
-				local n_files_scripts=$(grep -l "provide.*${s}" "${SCRIPTS_PATH}" | wc -l)
+				local n_files_scripts=$(grep -l -r "provide.*${s}" "${SCRIPTS_PATH}" | wc -l)
 				if (( ${n_files_conf} != 0 )) ; then
 					is_found=1
 				elif (( ${n_files_scripts} != 0 )) ; then
