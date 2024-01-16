@@ -833,12 +833,12 @@ if false ; then
 				[[ "${p}" =~ "/cleanup" ]] && continue
 				[[ "${p}" =~ "/paused" ]] && continue
 				[[ "${p}" =~ "/waiting" ]] && continue
-				[[ "${p}" =~ "hook/" ]] && continue
-				[[ "${p}" =~ "usr/" ]] && continue
 				[[ "${p}" =~ ^"boot/" ]] && continue
 				[[ "${p}" =~ ^"dev/" ]] && continue
+				[[ "${p}" =~ ^"hook/" ]] && continue
 				[[ "${p}" =~ ^"net/" ]] && continue
 				[[ "${p}" =~ ^"sys/" ]] && continue
+				[[ "${p}" =~ ^"usr/" ]] && continue
 
 				local svc_name_raw=""
 				if [[ "${p}" =~ ^"pid/" ]] ; then
@@ -875,12 +875,12 @@ fi
 				[[ "${p}" =~ "/cleanup" ]] && continue
 				[[ "${p}" =~ "/paused" ]] && continue
 				[[ "${p}" =~ "/waiting" ]] && continue
-				[[ "${p}" =~ "hook/" ]] && continue
-				[[ "${p}" =~ "usr/" ]] && continue
 				[[ "${p}" =~ ^"boot/" ]] && continue
 				[[ "${p}" =~ ^"dev/" ]] && continue
+				[[ "${p}" =~ ^"hook/" ]] && continue
 				[[ "${p}" =~ ^"net/" ]] && continue
 				[[ "${p}" =~ ^"sys/" ]] && continue
+				[[ "${p}" =~ ^"usr/" ]] && continue
 
 				local svc_name_raw=""
 				if [[ "${p}" =~ ^"pid/" ]] ; then
@@ -929,12 +929,12 @@ fi
 				[[ "${p}" =~ "/cleanup" ]] && continue
 				[[ "${p}" =~ "/paused" ]] && continue
 				[[ "${p}" =~ "/waiting" ]] && continue
-				[[ "${p}" =~ "hook/" ]] && continue
-				[[ "${p}" =~ "usr/" ]] && continue
 				[[ "${p}" =~ ^"boot/" ]] && continue
 				[[ "${p}" =~ ^"dev/" ]] && continue
+				[[ "${p}" =~ ^"hook/" ]] && continue
 				[[ "${p}" =~ ^"net/" ]] && continue
 				[[ "${p}" =~ ^"sys/" ]] && continue
+				[[ "${p}" =~ ^"usr/" ]] && continue
 
 				[[ "${p}" =~ ^"pid/" ]] || continue
 
@@ -2108,12 +2108,12 @@ convert_systemd() {
 			[[ "${p}" =~ "/cleanup" ]] && continue
 			[[ "${p}" =~ "/paused" ]] && continue
 			[[ "${p}" =~ "/waiting" ]] && continue
-			[[ "${p}" =~ "hook/" ]] && continue
-			[[ "${p}" =~ "usr/" ]] && continue
 			[[ "${p}" =~ ^"boot/" ]] && continue
 			[[ "${p}" =~ ^"dev/" ]] && continue
+			[[ "${p}" =~ ^"hook/" ]] && continue
 			[[ "${p}" =~ ^"net/" ]] && continue
 			[[ "${p}" =~ ^"sys/" ]] && continue
+			[[ "${p}" =~ ^"usr/" ]] && continue
 
 			[[ "${p}" =~ ^"pid/" ]] || continue
 
