@@ -6,7 +6,11 @@
 FINIT_COND_NETWORK=${FINIT_COND_NETWORK:-"net/route/default"}
 FINIT_SCRIPT_SOURCE=${FINIT_SCRIPT_SOURCE:-"openrc"}
 FINIT_SHELL=${FINIT_SHELL:-"/bin/sh"}
-MAINTAINER_MODE=${MAINTAINER_MODE:-0} # 1 means process all overlays for tarball distribution, 0 means process only /etc/init.d for local installs
+
+# 1 means process all overlays for every init discovered for tarball
+# distribution.
+# 0 means process only /etc/init.d for local installs.
+MAINTAINER_MODE=${MAINTAINER_MODE:-0}
 
 die() {
 	echo "${1}"
