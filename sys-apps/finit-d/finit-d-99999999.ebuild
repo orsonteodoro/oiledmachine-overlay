@@ -232,7 +232,7 @@ is_blacklisted_svc() {
 
 generate_netifrc_instances() {
 	local pkg="net-misc/netifrc"
-	local
+	local iface
 	for iface in $(ls /sys/class/net) ; do
 		[[ "${iface}" == "lo" ]] && continue
 		is_blacklisted_svc "net@${iface}" && continue
