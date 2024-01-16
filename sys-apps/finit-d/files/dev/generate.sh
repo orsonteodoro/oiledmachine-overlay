@@ -1643,9 +1643,9 @@ convert_systemd() {
 		fi
 
 		if grep -q -e "^StandardOutput=syslog" "${init_path}" ; then
-			start_cond="${start_cond},pid/syslog"
+			start_cond="${start_cond},service/syslog/running"
 		elif grep -q -e "^StandardError=syslog" "${init_path}" ; then
-			start_cond="${start_cond},pid/syslog"
+			start_cond="${start_cond},service/syslog/running"
 		fi
 
 		local svcs=(
