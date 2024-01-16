@@ -355,7 +355,7 @@ fi
 				)
 			fi
 
-			local cond=""
+			local start_cond=""
 			local svc
 			for svc in ${svcs[@]} ; do
 				[[ "${svc}" == "dbus" ]] && continue
@@ -363,19 +363,19 @@ fi
 				[[ "${svc}" == "localmount" ]] && continue
 				[[ "${svc}" == "s6-svscan" ]] && continue
 				[[ "${svc}" == "udev" ]] && continue
-				if echo "${cond}" | grep -q -E "pid/${svc}(,|$)" ; then
+				if echo "${start_cond}" | grep -q -E "pid/${svc}(,|$)" ; then
 					# Dedupe
 					continue
 				fi
 				if [[ "${svc}" == "net" ]] ; then # meta-category
-					cond="${cond},${FINIT_COND_NETWORK}"
+					start_cond="${start_cond},${FINIT_COND_NETWORK}"
 				else
-					cond="${cond},pid/${svc}"
+					start_cond="${start_cond},pid/${svc}"
 				fi
 			done
 
-			if [[ "${cond:0:1}" == "," ]] ; then
-				cond="${cond:1}"
+			if [[ "${start_cond:0:1}" == "," ]] ; then
+				start_cond="${start_cond:1}"
 			fi
 
 			mkdir -p "${CONFS_PATH}/${c}/${pn}"
@@ -649,7 +649,6 @@ fi
 			}
 
 			if grep -q -e "^start" "${init_path}" || needs_openrc_default_start ; then
-				[[ -n "${cond}" ]] && cond="<${cond}>"
 				local user_group=""
 				if [[ -n "${user}" && -n "${group}" ]] ; then
 					user_group="@${user}:${group}"
@@ -692,7 +691,7 @@ fi
 					fi
 
 					svc_type_start="service"
-					echo "service [${start_runlevels}] ${cond} ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+					echo "service [${start_runlevels}] <${start_cond}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
@@ -759,7 +758,7 @@ fi
 			if ! grep -q -e "[$]" "${init_conf}" ; then
 				sed -i -E -e "s|env:[^ ]+||g" "${init_conf}"
 			fi
-
+			sed -i -e "s|<>||g" "${init_conf}"
 		done
 
 		# The two checks below prevent indefinite pauses from missing pid/services.
@@ -1586,7 +1585,7 @@ convert_systemd() {
 		fi
 
 		local needs_syslog=0
-		local cond=""
+		local start_cond=""
 		local start_runlevels=""
 		local extra_runlevels=""
 		if grep -q "Alias=syslog.service" "${init_path}" ; then
@@ -1613,9 +1612,9 @@ convert_systemd() {
 		fi
 
 		if grep -q -e "^StandardOutput=syslog" "${init_path}" ; then
-			cond="${cond},pid/syslog"
+			start_cond="${start_cond},pid/syslog"
 		elif grep -q -e "^StandardError=syslog" "${init_path}" ; then
-			cond="${cond},pid/syslog"
+			start_cond="${start_cond},pid/syslog"
 		fi
 
 		local svcs=(
@@ -1640,25 +1639,25 @@ convert_systemd() {
 			[[ "${svc}" == "nss-lookup" ]] && continue # not portable
 			[[ "${svc}" == "systemd-machined" ]] && continue # not portable
 			if [[ "${svc}" == "network" ]] ; then
-				cond="${cond},${FINIT_COND_NETWORK}"
+				start_cond="${start_cond},${FINIT_COND_NETWORK}"
 			elif [[ "${svc}" == "network-online" ]] ; then
-				cond="${cond},${FINIT_COND_NETWORK}"
+				start_cond="${start_cond},${FINIT_COND_NETWORK}"
 			elif [[ "${svc}" == "sys-subsystem-net-devices-%i" ]] ; then
 				local found=0
 				local x
 				for iface in $(ls /sys/class/net) ; do
 					if [[ "${FINIT_COND_NETWORK}" =~ "net/${iface}/" ]] ; then
-						cond="${cond},${FINIT_COND_NETWORK}"
+						start_cond="${start_cond},${FINIT_COND_NETWORK}"
 						found=1
 					fi
 				done
 				(( ${found} == 0 )) && continue
 			else
-				cond="${cond},pid/${svc}"
+				start_cond="${start_cond},pid/${svc}"
 			fi
 		done
-		if [[ "${cond:0:1}" == "," ]] ; then
-			cond="${cond:1}"
+		if [[ "${start_cond:0:1}" == "," ]] ; then
+			start_cond="${start_cond:1}"
 		fi
 
 		local type="simple"
@@ -1848,7 +1847,6 @@ convert_systemd() {
 			echo "${svc_type} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start_pre -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_starts}" > 0 )) ; then
-			[[ -n "${cond}" ]] && cond="<${cond}>"
 			local user_group=""
 			if [[ -n "${user}" && -n "${group}" ]] ; then
 				user_group="@${user}:${group}"
@@ -1870,7 +1868,7 @@ convert_systemd() {
 					svc_type="task"
 				fi
 				svc_type_start="${svc_type}"
-				echo "${svc_type} [${start_runlevels}] ${cond} ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
+				echo "${svc_type} [${start_runlevels}] <${start_cond}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			elif grep -q "Alias=syslog.service" "${init_path}" ; then
 				if [[ -z "${pid_file}" ]] ; then
 					#echo "[warn] Missing pidfile for ${svc_name}"
@@ -1904,7 +1902,7 @@ convert_systemd() {
 					name="${svc_name}"
 				fi
 				svc_type_start="service"
-				echo "service [${start_runlevels}] ${cond} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
+				echo "service [${start_runlevels}] <${start_cond}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
@@ -1937,6 +1935,7 @@ convert_systemd() {
 			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-on-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
 		fi
 		rm "${init_path}"
+		sed -i -e "s|<>||g" "${init_conf}"
 	done
 
 	cat "${NEEDS_NET_PATH}" | sort | uniq > "${NEEDS_NET_PATH}".t || die "ERR:  line number - $LINENO"
