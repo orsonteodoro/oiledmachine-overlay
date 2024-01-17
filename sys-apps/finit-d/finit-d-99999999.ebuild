@@ -339,8 +339,8 @@ ewarn
 	fi
 	if has_version "net-misc/netifrc" ; then
 ewarn
-ewarn "net-misc/netifrc is currently not supported/tested.  Use"
-ewarn "net-misc/networkmanager instead."
+ewarn "net-misc/netifrc is currently broken.  Use net-misc/networkmanager"
+ewarn "instead."
 ewarn
 ewarn "For <iface> do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@<iface>.conf"
 ewarn "For eth0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@eth0.conf"
@@ -348,6 +348,9 @@ ewarn "For wlan0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/
 ewarn "For wlp0s18f2u2 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@wlp0s18f2u2.conf"
 ewarn
 ewarn "For possible <iface>, see /sys/class/net or ifconfig."
+ewarn
+ewarn "Autoconnect is broken, you must manually run it by doing"
+ewarn "INIT=openrc IFACE=<iface> /lib/finit/scripts/net-misc/netifrc/net@.sh start"
 ewarn
 	fi
 	if has_version "dev-db/mysql-init-scripts" ; then
@@ -370,5 +373,9 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# networkmanager init - passed
+# networkmanager - fail
+# netifrc (autoconnect) - fail
+# netifrc (manually connect) - passed
+# logger (sysklogd) - passed
+# tty - passed
 
