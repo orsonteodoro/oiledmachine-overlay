@@ -30,6 +30,9 @@
   dependencies.
   Valid values:  0 (mark as optional, default), 1 (mark as required)
 
+  FINIT_PID_OVERRIDE - A space separated key-value pairs with the key
+  the instance or service and the value the pid path.
+
   Valid values:
 
     net/route/default       ; requires sys-apps/finit[netlink], not recommended for wireless
@@ -46,6 +49,9 @@
     FINIT_COND_NETWORK="net/wlan0/running"
     FINIT_CUSTOM_OVERLAY_LIST="/usr/portage /var/db/repos/guru"
     FINIT_SCRIPT_SOURCE="openrc"
+    FINIT_PID_OVERRIDE="openvpn@:/run/openvpn/openvpn.pid"
+    FINIT_PID_OVERRIDE="openvpn@service1:/run/openvpn/service1.pid"
+    FINIT_PID_OVERRIDE="openvpn@service2:/run/openvpn/service2.pid openvpn@service3:/run/service3.pid"
 
 
   /lib/finit/scripts/lib/lib.sh globals

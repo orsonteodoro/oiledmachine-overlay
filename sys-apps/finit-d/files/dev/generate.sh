@@ -721,6 +721,17 @@ echo "pidfile case 17:  init_path - ${init_path}"
 				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			done
 
+			if [[ -n "${FINIT_PID_OVERRIDE}" ]] ; then
+				local x
+				for x in ${FINIT_PID_OVERRIDE} ; do
+					local k="${x#*:}"
+					local v="${x%:*}"
+					if [[ "${k}" == "${svc_name}" ]] ; then
+						pid_file="${v}"
+					fi
+				done
+			fi
+
 			if [[ -n "${pid_file}" ]] && [[ "${pid_file}" =~ "${RC_SVCNAME}" ]] ; then
 				pid_file=$(echo "${pid_file}" | sed -e "s|\${RC_SVCNAME}|${svc_name}|g")
 			fi
