@@ -39,6 +39,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
+	!sys-apps/openrc
 	app-admin/sudo
 	sys-libs/libcap
 	sys-process/procps
@@ -241,6 +242,17 @@ generate_netifrc_instances() {
 	done
 }
 
+gen_start_start_daemon_wrapper() {
+# A response to:  grep -r -e "start-stop-daemon" /lib/netifrc/net
+	dodir /usr/bin
+cat <<EOF > "${ED}/usr/bin/start-stop-daemon"
+#!${FINIT_SHELL}
+. /lib/finit/scripts/lib/lib.sh
+start_stop_daemon \$@
+EOF
+	fperms 0750 /usr/bin/start-stop-daemon
+}
+
 src_install() {
 	local PKGS=( $(cat "${WORKDIR}/pkgs.txt") )
 	local pkg
@@ -298,6 +310,8 @@ src_install() {
 	# Causes indefinite pause
 	rm -f "${ED}/etc/finit.d/enabled/iptables.conf"
 	rm -f "${ED}/etc/finit.d/enabled/ip6tables.conf"
+
+	gen_start_start_daemon_wrapper
 }
 
 pkg_postinst() {

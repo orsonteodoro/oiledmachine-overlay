@@ -279,9 +279,9 @@ fi
 			svc_name=$(echo "${svc_name}" | sed -e "s|\.sh$||g")
 			[[ "${svc_name}" == "net.lo" ]] && svc_name="net@"
 
-			#if grep -q "RC_SVCNAME" "${init_sh}" ; then
-			#	sed -i -e "${top_ln}a export RC_SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
-			#fi
+			if grep -q "RC_SVCNAME" "${init_sh}" ; then
+				sed -i -e "${top_ln}a export RC_SVCNAME=${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			fi
 
 			# Mostly chronological order...
 			# banner     ; pre [S]
@@ -306,7 +306,7 @@ fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			#sed -i -e "${top_ln}a export SVCNAME=\"${svc_name}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+			sed -i -e "${top_ln}a export SVCNAME=${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 
 			local bottom_ln=$(cat "${init_sh}" | wc -l)
 			sed -i -e "${bottom_ln}a . /lib/finit/scripts/lib/event.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -652,7 +652,7 @@ fi
 			fi
 
 			if [[ "${svc_name}" == "net@" ]] ; then
-				echo "set INIT_SOURCE=\"openrc\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
+				echo "set INIT=\"openrc\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
 				echo "set IFACE=\"%i\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
 			fi
 

@@ -6,9 +6,11 @@ FN="${1}"
 uses_hooks=${uses_hooks:-0}
 svc_name="$0"
 svc_name=$(basename $(echo "${svc_name}") | sed -e "s|\.sh$||")
-if echo "${svc_name}" | grep -q "^net@" && [ "${INIT_SOURCE}" = "openrc" ] ; then
+if echo "${svc_name}" | grep -q "^net@" && [ "${INIT}" = "openrc" ] ; then
 	# For netifrc
 	svc_name="net.${IFACE}"
+	SVCNAME="${svc_name}"
+	RC_SVCNAME="${svc_name}"
 fi
 SVCNAME=${SVCNAME:-"${svc_name}"}
 RC_SVCNAME=${RC_SVCNAME:-"${svc_name}"}
@@ -51,10 +53,11 @@ if [ -e "/etc/conf.d/${SVCNAME}" ] ; then
 	. "/etc/conf.d/${SVCNAME}"
 fi
 
+# 1 = sysklogd, 0 = stdout, 2 = /var/log/finit.log
 if which logger >/dev/null 2>&1  ; then
-	LOGGER_METHOD=${LOGGER_METHOD:-1} # 1 = sysklogd, 0 = stdout
+	LOGGER_METHOD=${LOGGER_METHOD:-1}
 else
-	LOGGER_METHOD=${LOGGER_METHOD:-0} # 1 = sysklogd, 0 = stdout
+	LOGGER_METHOD=${LOGGER_METHOD:-0}
 fi
 
 MAINTENANCE_MODE=${MAINTENANCE_MODE:-0}
@@ -185,7 +188,7 @@ is_debug() {
 	fi
 }
 
-# Assumes eend called to add either [OK] or [FAILED]
+# Assumes eend called to add either [OK] or [FAIL]
 ebegin() {
 	is_debug && echo -n "${1}"
 }
@@ -194,13 +197,13 @@ eend() {
 	local ret=${1}
 	local message="${2}"
 	if [ -n "${message}" ] && [ ${ret} -eq 0 ] ; then
-		is_debug && log "${message} [  OK  ]"
+		is_debug && log "${message} - OK"
 	elif [ -n "${message}" ] && [ ${ret} -ne 0 ] ; then
-		is_debug && log "${message} [FAILED]"
+		is_debug && log "${message} - FAIL"
 	elif [ ${ret} -eq 0 ] ; then
-		is_debug && log "[  OK  ]"
+		is_debug && log "- OK"
 	else
-		is_debug && log "[FAILED]"
+		is_debug && log "- FAIL"
 	fi
 	return ${ret}
 }
@@ -214,11 +217,11 @@ einfo() {
 }
 
 ewarn() {
-	is_debug && log "[w] ${1}"
+	is_debug && log "WARN - ${1}"
 }
 
 eerror() {
-	is_debug && log "[e] ${1}"
+	is_debug && log "ERR - ${1}"
 	exit 1
 }
 
@@ -764,29 +767,30 @@ start_stop_daemon() {
 
 		if [ -n "$signal" ] ; then
 			_signal="${signal}"
+			_signal=$(echo "${_signal}" | sed -e "s|^SIG||g")
 		else
-			_signal="SIGTERM"
+			_signal="TERM"
 		fi
 
 		if [ $pid -gt 0 ] ; then
 			service_pid=$pid
-			kill -s ${_signal} $service_pid
+			kill -${_signal} $service_pid
 		elif [ $ppid -gt 0 ] ; then
 			service_pid=$ppid
-			kill -s ${_signal} $service_pid
+			kill -${_signal} $service_pid
 		elif [ -e "${pidfile_path}" ] ; then
 			service_pid=$(cat "${pidfile_path}")
-			kill -s ${_signal} $service_pid
+			kill -${_signal} $service_pid
 		elif [ -n "${exec_path}" ] ; then
 			local bn=$(basename "${exec_path}")
 			service_pid=$(pgrep "${bn}")
-			kill -s ${_signal} $service_pid
+			kill -${_signal} $service_pid
 		elif [ -n "${name}" ] ; then
 			service_pid=$(pgrep "${name}")
-			kill -s ${_signal} $service_pid
+			kill -${_signal} $service_pid
 		elif [ -n "${user}" ] ; then
 			service_pid=$(pgrep -U "${user}")
-			kill -s ${_signal} $service_pid
+			kill -${_signal} $service_pid
 		fi
 
 		is_pid_alive ${service_pid} || return 0
@@ -802,10 +806,11 @@ start_stop_daemon() {
 			local time_finished
 
 			sig="${pair1%/*}"
+			sig=$(echo "${sig}" | sed -e "s|^SIG||g")
 			duration=${pair1#*/}
 			now=$(date +"%s")
 			time_final=$(( ${now} + ${duration} ))
-			kill -s ${sig} ${service_pid}
+			kill -${sig} ${service_pid}
 			while [ $now -lt ${time_final} ] ; do
 				is_pid_alive ${service_pid} || return 0
 				now=$(date +"%s")
@@ -813,10 +818,11 @@ start_stop_daemon() {
 
 			if [ -n "${pair2}" ] ; then
 				sig="${pair2%/*}"
+				sig=$(echo "${sig}" | sed -e "s|^SIG||g")
 				duration=${pair2#*/}
 				now=$(date +"%s")
 				time_final=$(( ${now} + ${duration} ))
-				kill -s ${sig} ${service_pid}
+				kill -${sig} ${service_pid}
 				while [ $now -lt ${time_final} ] ; do
 					is_pid_alive ${service_pid} || return 0
 					now=$(date +"%s")
@@ -827,7 +833,7 @@ start_stop_daemon() {
 			duration=${retry}
 			now=$(date +"%s")
 			time_final=$(( ${now} + ${duration} ))
-			kill -s ${sig} ${service_pid}
+			kill -${sig} ${service_pid}
 			while [ $now -lt ${time_final} ] ; do
 				is_pid_alive ${service_pid} || return 0
 				now=$(date +"%s")
@@ -837,7 +843,7 @@ start_stop_daemon() {
 			duration=5
 			now=$(date +"%s")
 			time_final=$(( ${now} + ${duration} ))
-			kill -s ${sig} ${service_pid}
+			kill -${sig} ${service_pid}
 			while [ $now -lt ${time_final} ] ; do
 				is_pid_alive ${service_pid} || return 0
 				now=$(date +"%s")
@@ -1103,13 +1109,13 @@ veinfo() {
 
 vewarn() {
 	local msg="${1}"
-	is_debug && log "[w] ${msg}"
+	is_debug && log "WARN - ${msg}"
 	return 0
 }
 
 veerror() {
 	local msg="${1}"
-	is_debug && log "[e] ${msg}"
+	is_debug && log "ERR - ${msg}"
 	return 0
 }
 
@@ -1130,7 +1136,20 @@ log() {
 	local tag="${SVCNAME}"
 	if [ ${LOGGER_METHOD} -eq 1 ] ; then
 		logger -t "${tag}" "${msg}"
+	elif [ ${LOGGER_METHOD} -eq 2 ] ; then
+		echo "$(date):  [${tag}] ${msg}" >> /var/log/finit.log
 	else
 		echo "${tag} ${msg}"
 	fi
+}
+
+shell_var() {
+	local value="${1}"
+	echo "${value}"
+}
+
+is_net_fs() {
+	local path="${1}"
+	#TODO: check path is mounted as network filesystem
+	return 1
 }
