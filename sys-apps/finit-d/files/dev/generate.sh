@@ -243,8 +243,15 @@ if [[ "${MAINTAINER_MODE}" == 1 ]] ; then
 			fi
 fi
 
+			# TODO: rtorrent instancing
 			if [[ "${fn}" == "net.lo" ]] ; then
 				fn="net@"
+			elif [[ "${fn}" == "openvpn" ]] ; then
+				fn="openvpn@"
+			elif [[ "${fn}" == "vsftpd" ]] ; then
+				fn="vsftpd@"
+			elif [[ "${fn}" == "wg-quick" ]] ; then
+				fn="wg-quick@"
 			fi
 
 			mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
@@ -277,10 +284,21 @@ fi
 			sed -i -e "${top_ln}a . /lib/finit/scripts/lib/lib.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
 			local svc_name=$(basename "${init_path}")
 			svc_name=$(echo "${svc_name}" | sed -e "s|\.sh$||g")
-			[[ "${svc_name}" == "net.lo" ]] && svc_name="net@"
+			if [[ "${svc_name}" == "net.lo" ]] ; then
+				svc_name="net@"
+			elif [[ "${svc_name}" == "openvpn" ]] ; then
+				svc_name="openvpn@"
+			elif [[ "${svc_name}" == "vsftpd" ]] ; then
+				svc_name="vsftpd@"
+			elif [[ "${svc_name}" == "wg-quick" ]] ; then
+				svc_name="wg-quick@"
+			fi
 
-			if grep -q "RC_SVCNAME" "${init_sh}" ; then
-				sed -i -e "${top_ln}a export RC_SVCNAME=${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			if [[ "${svc_name}" =~ "vsftpd" ]] ; then
+				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif grep -q "RC_SVCNAME" "${init_sh}" ; then
+				sed -i -e "${top_ln}a export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
 			# Mostly chronological order...
@@ -306,7 +324,15 @@ fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			sed -i -e "${top_ln}a export SVCNAME=${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			if [[ "${svc_name}" =~ "openvpn" ]] ; then
+				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif [[ "${svc_name}" =~ "wg-quick" ]] ; then
+				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			else
+				sed -i -e "${top_ln}a export SVCNAME=\${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			fi
 
 			local bottom_ln=$(cat "${init_sh}" | wc -l)
 			sed -i -e "${bottom_ln}a . /lib/finit/scripts/lib/event.sh" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -399,6 +425,7 @@ fi
 			cat /dev/null > "${init_conf}"
 
 			local pid_file=""
+			local pid_file_instanced=""
 			if [[ "${svc_name}" == "sysklogd" ]] ; then
 				pid_file="pid:/run/${pn}.pid"
 				sed -i -e "${top_ln}a export do_exec=1" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -419,6 +446,9 @@ fi
 
 				local instance_svcs=(
 					"net@" # Try symlink to net@<interface>.conf ; no pidfile instance suffix required since oneshot
+					"openvpn@"
+					"vsftpd@"
+					"wg-quick@"
 				)
 
 				local x
@@ -437,134 +467,18 @@ fi
 				instance_desc=" for %i"
 			fi
 
+			# .conf doesn't support variable expansion in pid:
+
 # Most services should have a pidfile except for oneshot equivalent.
 			local notify=""
-			if grep -q -E -e '^pidfile=["]?[$].*:-' "${init_path}" ; then
-#echo "pidfile case A:  init_path - ${init_path}"
-				local path=$(grep -E -e '^pidfile=["]?[$].*:-' "${init_path}" | cut -f 2 -d "-" | sed -e 's|["]||g' -e 's|}$||g')
-				if (( ${create_pid} == 1 )) ; then
-					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
-					# Case:  pidfile="${PIDFILE:-/run/service.pid}"
-					# start-stop-daemon ... --make-pidfile
-					pid_file="pid:!${path}"
-				else
-					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
-					# start-stop-daemon ...
-					pid_file="pid:!${path}"
-				fi
+			if [[ "${svc_name}" == "actkbd" ]] ; then
+				pid_file="pid:!/var/run/actkbd.pid"
 				notify="notify:pid"
-			elif grep -q -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" ; then
-#echo "pidfile case B:  init_path - ${init_path}"
-				# Case:  pidfile="${PKG_PIDFILE}"
-				# Any value can be used for PKG_PIDFILE if
-				# : ${PKG_PIDFILE:=/run/${svc_name}.pid}
-				local varname=$(grep -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" | cut -f 2- -d "=" | cut -f 1 -d ":" | sed -e 's|[${}"]||g')
-				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
-				if (( ${create_pid} == 1 )) ; then
-					pid_file='pid:!${'${varname}'}'
-				else
-					pid_file='pid:!${'${varname}'}'
-				fi
+echo "pidfile case 0:  init_path - ${init_path} ; ${pid_file}"
+			elif [[ "${svc_name}" == "bitcoind" ]] ; then
+				pid_file="pid:!/run/bitcoind/bicoind.pid"
 				notify="notify:pid"
-			elif grep -q -e '--pidfile="[$].*}"' "${init_path}" \
-				&& ! grep -q -e '^pidfile=' "${init_path}" ; then
-#echo "pidfile case C:  init_path - ${init_path}"
-				# DEADCODE
-				# Case: --pidfile="${PKG_PIDFILE}"
-				local varname=$(grep -o -E -e '--pidfile="[$].*}"' "${init_path}" | head -n -1 | cut -f 2 -d '"' | sed -e 's|[${}]||g')
-				echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
-				if (( ${create_pid} == 1 )) ; then
-					pid_file='pid:!${'${varname}'}'
-				else
-					pid_file='pid:!${'${varname}'}'
-				fi
-				notify="notify:pid"
-			elif grep -q -e "--pidfile" "${init_path}" \
-				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  ; then
-#echo "pidfile case D:  init_path - ${init_path}"
-				local path=$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
-				if (( ${create_pid} == 1 )) ; then
-					# Case:  start-stop-daemon ... --make-pidfile --pidfile /run/service.pid
-					pid_file="pid:!${path}"
-				else
-					# Case:  start-stop-daemon ... --pidfile /run/service.pid
-					pid_file="pid:!${path}"
-				fi
-				notify="notify:pid"
-			elif grep -q -e "^pidfile=\"" "${init_path}" ; then
-#echo "pidfile case E:  init_path - ${init_path}"
-				local path=$(grep "^pidfile=\"" "${init_path}" | head -n 1 | cut -f 2 -d '"')
-#echo "path: ${path}"
-				if [[ "${path:0:1}" == "/" ]] ; then
-				# Case:  pidfile="/run/service.pid"
-					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:!${path}"
-					else
-						pid_file="pid:!${path}"
-					fi
-					notify="notify:pid"
-				fi
-			elif grep -q -e "^pidfile=" "${init_path}" ; then
-#echo "pidfile case F:  init_path - ${init_path}"
-				local path=$(grep "^pidfile=" "${init_path}" | head -n 1 | cut -f 2 -d "=")
-#echo "path: ${path}"
-				if [[ "${path:0:1}" == "/" ]] ; then
-				# Case:  pidfile=/run/service.pid
-					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:!${path}"
-					else
-						pid_file="pid:!${path}"
-					fi
-					notify="notify:pid"
-				elif [[ "${path:0:1}" == '$' ]] ; then
-				# Case:  pidfile=${RC_PREFIX}/run/service.pid
-					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:!${path}"
-					else
-						pid_file="pid:!${path}"
-					fi
-					notify="notify:pid"
-				fi
-			elif grep -q -E -e "--pidfile [^ ]+ " "${init_path}" \
-				&& ! grep -q -E -e "^pidfile=" "${init_path}" ; then
-#echo "pidfile case G:  init_path - ${init_path}"
-				local path=$(grep -E -o -e "--pidfile [^ ]+ " "${init_path}" | head -n 1 | cut -f 2 -d " " | sed -e 's|"||g')
-				if [[ "${svc_name}" == "actkbd" ]] ; then
-					local t=$(grep -e "^PIDFILE=" "/etc/conf.d/actkbd")
-					echo "set ${t}" >> "${init_conf}"
-					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:!${path}"
-					else
-						pid_file="pid:!${path}"
-					fi
-					notify="notify:pid"
-				elif [[ "${path:0:1}" == "/" ]] ; then
-					# Case:  --pidfile /run/service.pid
-					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:!${path}"
-					else
-						pid_file="pid:!${path}"
-					fi
-					notify="notify:pid"
-				elif [[ "${path:0:1}" == "$" ]] && ! ( echo "${path}" | grep -q -E ":" ) ; then
-					local varname=$(echo "${path}" | sed -e 's|^\${||g' -e 's|}||g')
-					echo "set ${varname}=/run/${svc_name}.pid" >> "${init_conf}" # Override pidfile path
-					# Case:  --pidfile ${PIDFILE}
-					if (( ${create_pid} == 1 )) ; then
-						pid_file="pid:!${path}"
-					else
-						pid_file="pid:!${path}"
-					fi
-					notify="notify:pid"
-				fi
-			elif [[ "${svc_name}" == "squid" ]] ; then
-#echo "pidfile case H:  init_path - ${init_path}"
-				pid_file="pid:!/run/\${RC_SVCNAME}.pid"
-				notify="notify:pid"
-			elif [[ "${svc_name}" == "vsftpd" ]] ; then
-#echo "pidfile case I:  init_path - ${init_path}"
-				pid_file="pid:!${path}"
-				notify="notify:pid"
+echo "pidfile case 1:  init_path - ${init_path} ; ${pid_file}"
 			elif [[ "${svc_name}" == "display-manager" ]] ; then
 				if grep -q -E -o "DISPLAYMANAGER.*" /etc/conf.d/display-manager ; then
 					local dm=$(grep -E -o "DISPLAYMANAGER.*" "/etc/conf.d/display-manager" | cut -f 2 -d '"')
@@ -595,28 +509,250 @@ fi
 					fi
 				fi
 				notify="notify:pid"
+echo "pidfile case 2:  init_path - ${init_path} ; ${pid_file}"
 			elif [[ "${svc_name}" == "mysql-s6" || "${svc_name}" == "mysql" ]] ; then
-#echo "pidfile case J:  init_path - ${init_path}"
 				if bzcat "/var/db/pkg/dev-db/mysql-"*"/environment.bz2" | grep -q PN=\"mysql\" ; then
 					pid_file="pid:!/var/run/mysqld/mysql.pid"
 				elif bzcat "/var/db/pkg/dev-db/mariadb-"*"/environment.bz2" | grep -q PN=\"mariadb\" ; then
 					pid_file="pid:!/var/run/mysqld/mariadb.pid"
 				fi
 				notify="notify:pid"
-			elif grep -q -E  -e 'supervisor[:]?=["]?supervise-daemon' "${init_path}" ; then
-#echo "pidfile case K:  init_path - ${init_path}"
-				pid_file="pid:!/run/${svc_name}.pid"
+echo "pidfile case 3:  init_path - ${init_path} ; ${pid_file}"
+			elif [[ "${svc_name}" =~ "openvpn" ]] ; then
+				pid_file_instanced="pid:/run/openvpn.%i.pid"
+				pid_file="pid:/run/openvpn.pid"
 				notify="notify:pid"
-				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
-			elif grep -q -e "start-stop-daemon" "${init_path}" ; then
-#echo "pidfile case L:  init_path - ${init_path}"
-				pid_file="pid:!/run/${svc_name}.pid"
-				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+echo "pidfile case 4:  init_path - ${init_path} ; ${pid_file}"
+			elif [[ "${svc_name}" == "squid" ]] ; then
+				pid_file="pid:!/run/squid.pid"
 				notify="notify:pid"
-			else
-#echo "pidfile case Z:  init_path - ${init_path}"
+echo "pidfile case 5:  init_path - ${init_path} ; ${pid_file}"
+			elif [[ "${svc_name}" == "tox-dht-daemon" ]] ; then
+				pid_file="pid:!/run/tox-bootstrapd/tox-bootstrapd.pid"
+				notify="notify:pid"
+echo "pidfile case 6:  init_path - ${init_path} ; ${pid_file}"
+			elif [[ "${svc_name}" =~ "vsftpd" ]] ; then
+				path_instanced="/run/vsftpd.%i.pid"
+				pid_file_instanced="pid:!${path_instanced}"
 
+				path="/run/vsftpd.pid"
+				pid_file="pid:!${path}"
+
+				notify="notify:pid"
+echo "pidfile case 7:  init_path - ${init_path} ; ${pid_file}"
+			elif grep -q -E -e '^pidfile=["]?[$].*:-' "${init_path}" ; then
+				local path=$(grep -E -e '^pidfile=["]?[$].*:-' "${init_path}" | cut -f 2 -d "-" | sed -e 's|["]||g' -e 's|}$||g')
+				if (( ${create_pid} == 1 )) ; then
+					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
+					# Case:  pidfile="${PIDFILE:-/run/service.pid}"
+					# start-stop-daemon ... --make-pidfile
+					pid_file="pid:!${path}"
+				else
+					# Case:  pidfile=${PKG_PIDFILE:-/run/service.pid}
+					# start-stop-daemon ...
+					pid_file="pid:!${path}"
+				fi
+				notify="notify:pid"
+echo "pidfile case 8:  init_path - ${init_path} ; pid_file=${pid_file}"
+			elif grep -q -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" ; then
+				# Case:  pidfile="${PKG_PIDFILE}"
+				# Any value can be used for PKG_PIDFILE if
+				# : ${PKG_PIDFILE:=/run/${svc_name}.pid}
+				local varname=$(grep -E -e '^pidfile=["]?[$][{].*[}]["]?$' "${init_path}" | cut -f 2- -d "=" | cut -f 1 -d ":" | sed -e 's|[${}"]||g')
+
+				local default_value=""
+				if grep -q "${varname}:=" "${init_path}" ; then
+					default_value=$(grep -E "${varname}:=" "${init_path}" | cut -f 2 -d "=" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+				elif grep -q "${varname}:-" "${init_path}" ; then
+					default_value=$(grep -E "${varname}:-" "${init_path}" | cut -f 2 -d "-" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+				elif grep -q "${varname}:=" "/etc/conf.d/${svc_name}" ; then
+					default_value=$(grep -E "${varname}:=" "/etc/conf.d/${svc_name}" | cut -f 2 -d "=" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+				elif grep -q "${varname}:-" "/etc/conf.d/${svc_name}" ; then
+					default_value=$(grep -E "${varname}:-" "/etc/conf.d/${svc_name}" | cut -f 2 -d "-" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+				else
+					default_value="/run/${svc_name}.pid"
+				fi
+
+				echo "set ${varname}=${default_value}" >> "${init_conf}" # Override pidfile path
+				if (( ${create_pid} == 1 )) ; then
+					pid_file="pid:!${default_value}"
+				else
+					pid_file="pid:!${default_value}"
+				fi
+				notify="notify:pid"
+echo "pidfile case 9:  init_path - ${init_path} ; pid_file=${pid_file}"
+			elif grep -q -e '--pidfile="[$].*}"' "${init_path}" \
+				&& ! grep -q -e '^pidfile=' "${init_path}" ; then
+				# DEADCODE
+				# Case: --pidfile="${PKG_PIDFILE}"
+				local varname=$(grep -o -E -e '--pidfile="[$].*}"' "${init_path}" | head -n -1 | cut -f 2 -d '"' | sed -e 's|[${}]||g')
+
+
+				local default_value=""
+				if grep -q "${varname}:=" "${init_path}" ; then
+					default_value=$(grep -E "${varname}:=" "${init_path}" | cut -f 2 -d "=" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+				elif grep -q "${varname}:-" "${init_path}" ; then
+					default_value=$(grep -E "${varname}:-" "${init_path}" | cut -f 2 -d "-" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+				elif grep -q "${varname}:=" "/etc/conf.d/${svc_name}" ; then
+					default_value=$(grep -E "${varname}:=" "/etc/conf.d/${svc_name}" | cut -f 2 -d "=" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+				elif grep -q "${varname}:-" "/etc/conf.d/${svc_name}" ; then
+					default_value=$(grep -E "${varname}:-" "/etc/conf.d/${svc_name}" | cut -f 2 -d "-" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+				else
+					default_value="/run/${svc_name}.pid"
+				fi
+
+				echo "set ${varname}=${default_value}" >> "${init_conf}" # Override pidfile path
+				if (( ${create_pid} == 1 )) ; then
+					pid_file="pid:!${default_value}"
+				else
+					pid_file="pid:!${default_value}"
+				fi
+				notify="notify:pid"
+echo "pidfile case 10:  init_path - ${init_path} ; pid_file=${pid_file}"
+			elif grep -q -e "--pidfile" "${init_path}" \
+				&& grep -E -o -e "--pidfile [^ ]+" "${init_path}" | cut -f 2 -d " " | cut -c 1 | grep -q -e "/"  ; then
+				local path=$(grep -E -o -e "--pidfile [^ ]+" "${init_path}" | head -n 1 | cut -f 2 -d " ")
+				if (( ${create_pid} == 1 )) ; then
+					# Case:  start-stop-daemon ... --make-pidfile --pidfile /run/service.pid
+					pid_file="pid:!${path}"
+				else
+					# Case:  start-stop-daemon ... --pidfile /run/service.pid
+					pid_file="pid:!${path}"
+				fi
+				notify="notify:pid"
+echo "pidfile case 11:  init_path - ${init_path} ; pid_file=${pid_file}"
+			elif grep -q -e "^pidfile=\"" "${init_path}" ; then
+				local path=$(grep "^pidfile=\"" "${init_path}" | head -n 1 | cut -f 2 -d '"')
+				if [[ "${path:0:1}" == "/" ]] ; then
+				# Case:  pidfile="/run/service.pid"
+					if (( ${create_pid} == 1 )) ; then
+						pid_file="pid:!${path}"
+					else
+						pid_file="pid:!${path}"
+					fi
+					notify="notify:pid"
+				fi
+echo "pidfile case 12:  init_path - ${init_path} ; pid_file=${pid_file} ; path=${path}"
+			elif grep -q -e "^pidfile=" "${init_path}" ; then
+				local path=$(grep "^pidfile=" "${init_path}" | head -n 1 | cut -f 2 -d "=")
+				if [[ "${path:0:1}" == "/" ]] ; then
+				# Case:  pidfile=/run/service.pid
+					if (( ${create_pid} == 1 )) ; then
+						pid_file="pid:!${path}"
+					else
+						pid_file="pid:!${path}"
+					fi
+					notify="notify:pid"
+				elif [[ "${path:0:1}" == '$' ]] ; then
+				# Case:  pidfile=${RC_PREFIX}/run/service.pid
+					if (( ${create_pid} == 1 )) ; then
+						pid_file="pid:!${path}"
+					else
+						pid_file="pid:!${path}"
+					fi
+					notify="notify:pid"
+				fi
+echo "pidfile case 13:  init_path - ${init_path} ; pid_file=${pid_file} ; path=${path}"
+			elif grep -q -E -e "--pidfile [^ ]+ " "${init_path}" \
+				&& ! grep -q -E -e "^pidfile=" "${init_path}" ; then
+				local path=$(grep -E -o -e "--pidfile [^ ]+ " "${init_path}" | head -n 1 | cut -f 2 -d " " | sed -e 's|"||g')
+				if [[ "${svc_name}" == "actkbd" ]] ; then
+					local t=$(grep -e "^PIDFILE=" "/etc/conf.d/actkbd")
+					echo "set ${t}" >> "${init_conf}"
+					if (( ${create_pid} == 1 )) ; then
+						pid_file="pid:!${path}"
+					else
+						pid_file="pid:!${path}"
+					fi
+					notify="notify:pid"
+echo "pidfile case 14A:  init_path - ${init_path} ; pid_file=${pid_file}"
+				elif [[ "${path:0:1}" == "/" ]] ; then
+					# Case:  --pidfile /run/service.pid
+					if (( ${create_pid} == 1 )) ; then
+						pid_file="pid:!${path}"
+					else
+						pid_file="pid:!${path}"
+					fi
+					notify="notify:pid"
+echo "pidfile case 14B:  init_path - ${init_path} ; pid_file=${pid_file}"
+				elif [[ "${path:0:1}" == "$" ]] && ! ( echo "${path}" | grep -q -E ":" ) ; then
+					local varname=$(echo "${path}" | sed -e 's|^\${||g' -e 's|}||g')
+					local default_value=""
+					if grep -q "${varname}:=" "${init_path}" ; then
+						default_value=$(grep -E "${varname}:=" "${init_path}" | cut -f 2 -d "=" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+					elif grep -q "${varname}:-" "${init_path}" ; then
+						default_value=$(grep -E "${varname}:-" "${init_path}" | cut -f 2 -d "-" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+					elif grep -q "${varname}:=" "/etc/conf.d/${svc_name}" ; then
+						default_value=$(grep -E "${varname}:=" "/etc/conf.d/${svc_name}" | cut -f 2 -d "=" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+					elif grep -q "${varname}:-" "/etc/conf.d/${svc_name}" ; then
+						default_value=$(grep -E "${varname}:-" "/etc/conf.d/${svc_name}" | cut -f 2 -d "-" | sed -e "s|}$||g" -e 's|^"||g' -e 's|"$||g' -e "s|}$||g")
+					else
+						default_value="/run/${svc_name}.pid"
+					fi
+
+					echo "set ${varname}=${default_value}" >> "${init_conf}" # Override pidfile path
+					# Case:  --pidfile ${PIDFILE}
+					if (( ${create_pid} == 1 )) ; then
+						pid_file="pid:!${default_value}"
+					else
+						pid_file="pid:!${default_value}"
+					fi
+					notify="notify:pid"
+echo "pidfile case 14C:  init_path - ${init_path} ; pid_file=${pid_file}"
+				fi
+			elif grep -q -E  -e 'supervisor[:]?=["]?supervise-daemon' "${init_path}" ; then
+				pid_file="pid:!/run/${svc_name}.pid"
+				notify="notify:pid"
+				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+echo "pidfile case 15:  init_path - ${init_path} ; pid_file=${pid_file}"
+			elif grep -q -e "start-stop-daemon" "${init_path}" ; then
+				pid_file="pid:!/run/${svc_name}.pid"
+				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+				notify="notify:pid"
+echo "pidfile case 16:  init_path - ${init_path} ; pid_file=${pid_file}"
+			else
+echo "pidfile case 17:  init_path - ${init_path}"
 				notify="notify:none"
+			fi
+
+			local force_check_list=(
+				"actkbd"
+			)
+
+			local x
+			for x in ${force_check_lists[@]} ; do
+				sed -i -e "${top_ln}a export indirect_make_pidfile=1" "${init_sh}" || die "ERR:  line number - $LINENO"
+			done
+
+			if [[ -n "${pid_file}" ]] && [[ "${pid_file}" =~ "${RC_SVCNAME}" ]] ; then
+				pid_file=$(echo "${pid_file}" | sed -e "s|\${RC_SVCNAME}|${svc_name}|g")
+			fi
+
+			if [[ -n "${pid_file}" ]] && [[ "${pid_file}" =~ "${SVCNAME}" ]] ; then
+				pid_file=$(echo "${pid_file}" | sed -e "s|\${SVCNAME}|${svc_name}|g")
+			fi
+
+			if [[ -n "${pid_file}" ]] && [[ "${pid_file}" =~ "${RC_PREFIX%/}" ]] ; then
+				pid_file=$(echo "${pid_file}" | sed -e "s|\${RC_PREFIX%/}||g")
+			fi
+			if [[ -n "${pid_file}" ]] && [[ "${pid_file}" =~ "${RC_PREFIX}" ]] ; then
+				pid_file=$(echo "${pid_file}" | sed -e "s|\${RC_PREFIX}||g")
+			fi
+
+			if [[ -n "${pid_file}" ]] && [[ "${pid_file}" =~ "$" ]] ; then
+echo "[*warn*] pid_file=${pid_file} for ${svc_name} should not be a variable"
+			fi
+
+			if [[ "${svc_name}" =~ "vsftpd" ]] ; then
+				:;
+			elif [[ "${svc_name}" =~ "openvpn" ]] ; then
+echo "Adding pidfile=${pid_file_instanced} conditional to ${init_sh}"
+echo "Adding pidfile=${pid_file} conditional to ${init_sh}"
+				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && pidfile=\"${pid_file_instanced}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && pidfile=\"${pid_file}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif [[ -n "${pid_file}" ]] && ! grep -q "^pidfile=" "${init_sh}" ; then
+echo "Adding pidfile=${pid_file} to ${init_sh}"
+				sed -i -e "${top_ln}a pidfile=${pid_file}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
 			if [[ -z "${pid_file}" ]] && grep -q -i "pidfile" "${init_path}" ; then
@@ -645,11 +781,7 @@ fi
 			fi
 
 			local basename_fn=$(basename "${init_sh}")
-			if [[ "${svc_name}" == "net@" ]] ; then
-				:;
-			elif [[ -n "${instance}" ]] ; then
-				basename_fn=$(echo "${basename_fn}" | sed -e "s|\.sh$|%i.sh|g")
-			fi
+			#basename_fn=$(echo "${basename_fn}" | sed -e "s|\.sh$|%i.sh|g")
 
 			if [[ "${svc_name}" == "net@" ]] ; then
 				echo "set INIT=\"openrc\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
@@ -667,7 +799,7 @@ fi
 			if grep -q -e "^start_pre" "${init_path}" ; then
 				svc_type_start_pre="task"
 				service_types["${name}-pre${instance}"]="${svc_type_start}"
-				echo "${svc_type_start_pre} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
+				echo "${svc_type_start_pre} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_pre\" \"%i\" -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
 			fi
 
 			needs_openrc_default_start() {
@@ -737,7 +869,7 @@ fi
 					svc_type_start="service"
 					service_names["${svc_name}"]="${name}"
 					service_types["${name}${instance}"]="${svc_type_start}"
-					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				elif is_daemon_without_pidfile ; then
 					if [[ -n "${provide}" ]] ; then
 						name="${provide}"
@@ -748,12 +880,12 @@ fi
 					svc_type_start="service"
 					service_names["${svc_name}"]="${name}"
 					service_types["${name}${instance}"]="${svc_type_start}"
-					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} notify:none /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} notify:none /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					svc_type_start="task"
 					service_names["${svc_name}${instance}"]="${svc_name}"
 					service_types["${svc_name}${instance}"]="${svc_type_start}"
-					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${svc_name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				fi
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
@@ -762,19 +894,19 @@ fi
 				[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
 				svc_type_start_post="task"
 				service_types["${name}-post${instance}"]="${svc_type_start}"
-				echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" -- ${svc_name} post${instance_desc}" >> "${init_conf}"
+				echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start_post\" \"%i\ -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_pre" "${init_path}" ; then
 				svc_type_stop_pre="task"
 				service_types["${name}-pre-stop${instance}"]="${svc_type_start}"
-				echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_pre\" -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
+				echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_pre\" \"%i\ -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop" "${init_path}" ; then
 				local stop_cond=""
 				[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/done"
 				svc_type_stop="task"
 				service_types["${name}-stop${instance}"]="${svc_type_start}"
-				echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
+				echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" \"%i\" -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_post" "${init_path}" ; then
 				local stop_post_cond=""
@@ -782,13 +914,13 @@ fi
 				[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/cleanup"
 				svc_type_stop_post="task"
 				service_types["${name}-post-stop${instance}"]="${svc_type_start}"
-				echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_post\" -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
+				echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_post\" \"%i\ -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^extra_commands=" "${init_path}" ; then
 				local list=$(grep "^extra_commands=" "${init_path}" | cut -f 2 -d '=' | sed -e 's|^"||' -e 's|"$||')
 				for x in ${list} ; do
 					echo "# Run as:  initctl cond set ${svc_name}-${x}" >> "${init_conf}"
-					echo "run [${extra_runlevels}] name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
+					echo "run [${extra_runlevels}] name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" \"%i\" -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
 				done
 			fi
 			if grep -q -e "^extra_started_commands=" "${init_path}" ; then
@@ -796,12 +928,12 @@ fi
 				for x in ${list} ; do
 					if [[ "${x}" == "reload" ]] ; then
 						echo "# Run as:  initctl cond set ${svc_name}-${x}-paused" >> "${init_conf}"
-						echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-paused ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc} on paused" >> "${init_conf}"
+						echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-paused ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" \"%i\" -- ${svc_name} ${x}${instance_desc} on paused" >> "${init_conf}"
 						echo "# Run as:  initctl cond set ${svc_name}-${x}-waiting" >> "${init_conf}"
-						echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
+						echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" \"%i\ -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
 					else
 						echo "# Run as:  initctl cond set ${svc_name}-${x}  # For started service only" >> "${init_conf}"
-						echo "run [${extra_runlevels}] name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
+						echo "run [${extra_runlevels}] name:${svc_name}-${x} ${instance} <usr/${svc_name}-${x}> /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" \"%i\ -- ${svc_name} ${x}${instance_desc}" >> "${init_conf}"
 					fi
 				done
 			fi
@@ -2029,7 +2161,7 @@ convert_systemd() {
 		if (( "${#exec_start_pres}" > 0 )) ; then
 			svc_type_start_pre="task"
 			service_types["${svc_name}-pre${instance}"]="${svc_type_start}"
-			echo "${svc_type_start_pre} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start_pre -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
+			echo "${svc_type_start_pre} [${start_runlevels}] name:${svc_name}-pre ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"start_pre\" \"%i\ -- ${svc_name} pre${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_starts}" > 0 )) ; then
 			local user_group=""
@@ -2052,7 +2184,7 @@ convert_systemd() {
 				svc_type_start="task"
 				service_aliases["${svc_name}"]="${svc_name}"
 				service_types["${svc_name}${instance}"]="${svc_type_start}"
-				echo "${svc_type} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
+				echo "${svc_type} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"start\" \"%i\ -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			else
 				if [[ -z "${pid_file}" ]] ; then
 					#echo "[warn] Missing pidfile for ${svc_name}"
@@ -2071,7 +2203,7 @@ convert_systemd() {
 				svc_type_start="service"
 				service_aliases["${svc_name}"]="${name}"
 				service_types["${name}${instance}"]="${svc_type_start}"
-				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start -- ${svc_name}${instance_desc}" >> "${init_conf}"
+				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"start\" \"%i\ -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
@@ -2080,19 +2212,19 @@ convert_systemd() {
 			local start_post_cond=""
 			[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
 			[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
-			echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh start_post -- ${svc_name} post${instance_desc}" >> "${init_conf}"
+			echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"start_post\" \"%i\ -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_pres}" > 0 )) ; then
 			svc_type_stop_pre="task"
 			service_types["${svc_name}-pre-stop${instance}"]="${svc_type_start}"
-			echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop_pre -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
+			echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"stop_pre\" \"%i\ -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stops}" > 0 )) ; then
 			svc_type_stop="task"
 			service_types["${svc_name}-stop${instance}"]="${svc_type_start}"
 			local stop_cond=""
 			[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/done"
-			echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
+			echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"stop\" \"%i\ -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_posts}" > 0 )) ; then
 			svc_type_stop_post="task"
@@ -2100,14 +2232,14 @@ convert_systemd() {
 			local stop_post_cond=""
 			[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/done"
 			[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/cleanup"
-			echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh stop_post -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
+			echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"stop_post\" \"%i\ -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_reloads}" > 0 )) ; then
 			local x="reload"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}-paused" >> "${init_conf}"
-			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-paused ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on paused" >> "${init_conf}"
+			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-paused ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"reload\" \"%i\ -- ${svc_name} ${x}${instance_desc} on paused" >> "${init_conf}"
 			echo "# Run as:  initctl cond set ${svc_name}-${x}-waiting" >> "${init_conf}"
-			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
+			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"reload\" \"%i\ -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
 		fi
 		rm "${init_path}"
 	done
