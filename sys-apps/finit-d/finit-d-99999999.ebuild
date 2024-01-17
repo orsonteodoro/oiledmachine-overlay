@@ -374,7 +374,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # networkmanager - fail
-# netifrc (autoconnect) - fail
+# netifrc (autoconnect) - passed
 # netifrc (manually connect) - passed
 # logger (sysklogd) - passed
 # tty - passed
