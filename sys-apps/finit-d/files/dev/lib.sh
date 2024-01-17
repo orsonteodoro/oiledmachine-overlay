@@ -53,7 +53,7 @@ if [ -e "/etc/conf.d/${SVCNAME}" ] ; then
 	. "/etc/conf.d/${SVCNAME}"
 fi
 
-# 1 = sysklogd, 0 = stdout, 2 = /var/log/finit.log
+# 0 = stdout, 1 = sysklogd, 2 = /var/log/finit.log
 if which logger >/dev/null 2>&1  ; then
 	LOGGER_METHOD=${LOGGER_METHOD:-1}
 else

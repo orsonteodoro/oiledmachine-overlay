@@ -47,6 +47,18 @@
     FINIT_CUSTOM_OVERLAY_LIST="/usr/portage /var/db/repos/guru"
     FINIT_SCRIPT_SOURCE="openrc"
 
+
+  /lib/finit/scripts/lib/lib.sh globals
+
+  LOGGER_METHOD - 0 = stdout, 1 = sysklogd, 2 = /var/log/finit.log
+  MAINTENANCE_MODE - 1 = enable logging, 0 = disable logging
+
+
+  Kernel command line:
+  
+  finit.systemd=debug - enable logging for systemd converted config/scripts
+  finit.openrc=debug - enable logging for openrc converted config/scripts
+
   -->
   <use>
     <flag name="acpid">
