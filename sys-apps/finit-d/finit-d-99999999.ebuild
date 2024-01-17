@@ -338,20 +338,17 @@ ewarn "indefinite pause on misconfigured metalog."
 ewarn
 	fi
 	if has_version "net-misc/netifrc" ; then
-ewarn
-ewarn "net-misc/netifrc is currently broken.  Use net-misc/networkmanager"
-ewarn "instead."
-ewarn
-ewarn "For <iface> do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@<iface>.conf"
-ewarn "For eth0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@eth0.conf"
-ewarn "For wlan0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@wlan0.conf"
-ewarn "For wlp0s18f2u2 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@wlp0s18f2u2.conf"
-ewarn
-ewarn "For possible <iface>, see /sys/class/net or ifconfig."
-ewarn
-ewarn "Autoconnect is broken, you must manually run it by doing"
-ewarn "INIT=openrc IFACE=<iface> /lib/finit/scripts/net-misc/netifrc/net@.sh start"
-ewarn
+einfo
+einfo "For <iface> do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@<iface>.conf"
+einfo "For eth0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@eth0.conf"
+einfo "For wlan0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@wlan0.conf"
+einfo "For wlp0s18f2u2 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@wlp0s18f2u2.conf"
+einfo
+einfo "For possible <iface>, see /sys/class/net or ifconfig."
+einfo
+einfo "Autoconnect is broken, you must manually run it by doing"
+einfo "INIT=openrc IFACE=<iface> /lib/finit/scripts/net-misc/netifrc/net@.sh start"
+einfo
 	fi
 	if has_version "dev-db/mysql-init-scripts" ; then
 ewarn
