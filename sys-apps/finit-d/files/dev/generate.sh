@@ -294,7 +294,16 @@ fi
 				svc_name="wg-quick@"
 			fi
 
-			if [[ "${svc_name}" =~ "vsftpd" ]] ; then
+			local instance=""
+			local instance_desc=""
+			local instance_pid_suffix=""
+			if is_instance_svc "${svc_name}" ; then
+				instance_pid_suffix="@%i"
+				instance=":%i"
+				instance_desc=" for %i"
+			fi
+
+			if [[ -n "${instance}" ]] ; then
 				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			elif grep -q "RC_SVCNAME" "${init_sh}" ; then
@@ -324,10 +333,7 @@ fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			if [[ "${svc_name}" =~ "openvpn" ]] ; then
-				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
-				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
-			elif [[ "${svc_name}" =~ "wg-quick" ]] ; then
+			if [[ -n "${instance}" ]] ; then
 				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			else
@@ -457,15 +463,6 @@ fi
 				done
 				return 1
 			}
-
-			local instance=""
-			local instance_desc=""
-			local instance_pid_suffix=""
-			if is_instance_svc "${svc_name}" ; then
-				instance_pid_suffix="@%i"
-				instance=":%i"
-				instance_desc=" for %i"
-			fi
 
 			# .conf doesn't support variable expansion in pid:
 
