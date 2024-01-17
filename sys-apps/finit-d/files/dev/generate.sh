@@ -841,7 +841,7 @@ echo "Adding pidfile=${pid_file} to ${init_sh}"
 				fi
 
 				local start_cond_extra=""
-				[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/done"
+				[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/success"
 
 				is_daemon_without_pidfile() {
 				# Inits that not use start-stop-daemon but run daemons
@@ -898,7 +898,7 @@ echo "Adding pidfile=${pid_file} to ${init_sh}"
 			fi
 			if grep -q -e "^start_post" "${init_path}" ; then
 				local start_post_cond=""
-				[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
+				[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/success"
 				[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
 				svc_type_start_post="task"
 				service_types["${name}-post${instance}"]="${svc_type_start}"
@@ -911,14 +911,14 @@ echo "Adding pidfile=${pid_file} to ${init_sh}"
 			fi
 			if grep -q -e "^stop" "${init_path}" ; then
 				local stop_cond=""
-				[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/done"
+				[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/success"
 				svc_type_stop="task"
 				service_types["${name}-stop${instance}"]="${svc_type_start}"
 				echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop\" \"%i\" -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 			fi
 			if grep -q -e "^stop_post" "${init_path}" ; then
 				local stop_post_cond=""
-				[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/done"
+				[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/success"
 				[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/cleanup"
 				svc_type_stop_post="task"
 				service_types["${name}-post-stop${instance}"]="${svc_type_start}"
@@ -1071,7 +1071,7 @@ fi
 		done
 
 		echo "Changing pid created state to service/<service_name[:ID]>/running state"
-		echo "Changing pid created state to {task,run}/<service_name[:ID]>/done state"
+		echo "Changing pid created state to {task,run}/<service_name[:ID]>/success state"
 		local x
 		for x in $(grep -l -o -E "<[^>]+" $(find "${CONFS_PATH}" -name "*.conf" -type f)) ; do
 			local ps=(
@@ -1115,7 +1115,7 @@ fi
 				local svc_type_start=${service_types["${name}${instance}"]}
 				local cond
 				if [[ "${svc_type_start}" =~ ("run"|"task") ]] ; then
-					cond="${svc_type_start}/${name}${instance}/done"
+					cond="${svc_type_start}/${name}${instance}/success"
 				elif [[ "${svc_type_start}" == "service" ]] ; then
 					cond="${svc_type_start}/${name}${instance}/running"
 				fi
@@ -2186,7 +2186,7 @@ convert_systemd() {
 
 			local request_make_pid=0
 			local start_cond_extra=""
-			[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/done"
+			[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/success"
 
 			if [[ "${type}" == "oneshot" ]] ; then
 				svc_type_start="task"
@@ -2218,7 +2218,7 @@ convert_systemd() {
 			svc_type_start_post="task"
 			service_types["${svc_name}-post${instance}"]="${svc_type_start}"
 			local start_post_cond=""
-			[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/done"
+			[[ "${svc_type_start}" =~ ("run"|"task") ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/success"
 			[[ "${svc_type_start}" == "service" ]] && start_post_cond="${svc_type_start}/${svc_name}${instance}/cleanup"
 			echo "${svc_type_start_post} [${start_runlevels}] <${start_post_cond}> name:${svc_name}-post ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"start_post\" \"%i\ -- ${svc_name} post${instance_desc}" >> "${init_conf}"
 		fi
@@ -2231,14 +2231,14 @@ convert_systemd() {
 			svc_type_stop="task"
 			service_types["${svc_name}-stop${instance}"]="${svc_type_start}"
 			local stop_cond=""
-			[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/done"
+			[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/success"
 			echo "${svc_type_stop} [0] <${stop_cond}> name:${svc_name}-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"stop\" \"%i\ -- ${svc_name} stop${instance_desc}" >> "${init_conf}"
 		fi
 		if (( "${#exec_stop_posts}" > 0 )) ; then
 			svc_type_stop_post="task"
 			service_types["${svc_name}-post-stop${instance}"]="${svc_type_start}"
 			local stop_post_cond=""
-			[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/done"
+			[[ "${svc_type_stop}" =~ ("run"|"task") ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/success"
 			[[ "${svc_type_stop}" == "service" ]] && stop_post_cond="${svc_type_stop}/${svc_name}-stop${instance}/cleanup"
 			echo "${svc_type_stop_post} [0] <${stop_post_cond}> name:${svc_name}-post-stop ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"stop_post\" \"%i\ -- ${svc_name} post-stop${instance_desc}" >> "${init_conf}"
 		fi
@@ -2253,7 +2253,7 @@ convert_systemd() {
 	done
 
 	echo "Changing pid created state to service/<service_name[:ID]>/running state"
-	echo "Changing pid created state to {task,run}/<service_name[:ID]>/done state"
+	echo "Changing pid created state to {task,run}/<service_name[:ID]>/success state"
 	local x
 	for x in $(grep -l -o -E "<[^>]+" $(find "${CONFS_PATH}" -name "*.conf" -type f)) ; do
 		local ps=(
@@ -2298,7 +2298,7 @@ convert_systemd() {
 
 			local cond
 			if [[ "${svc_type_start}" =~ ("run"|"task") ]] ; then
-				cond="${svc_type_start}/${name}${instance}/done"
+				cond="${svc_type_start}/${name}${instance}/success"
 			elif [[ "${svc_type_start}" == "service" ]] ; then
 				cond="${svc_type_start}/${name}${instance}/running"
 			fi
