@@ -346,9 +346,6 @@ einfo "For wlp0s18f2u2 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/en
 einfo
 einfo "For possible <iface>, see /sys/class/net or ifconfig."
 einfo
-einfo "Autoconnect is broken, you must manually run it by doing"
-einfo "INIT=openrc IFACE=<iface> /lib/finit/scripts/net-misc/netifrc/net@.sh start"
-einfo
 	fi
 	if has_version "dev-db/mysql-init-scripts" ; then
 ewarn
