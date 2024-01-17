@@ -1144,12 +1144,21 @@ log() {
 }
 
 shell_var() {
-	local value="${1}"
-	echo "${value}"
+        local out=""
+        for value in $@ ; do
+                value=$(echo "${value}" | sed -e 's|[^a-zA-Z0-9]|_|g')
+                out="${out} ${value}"
+        done
+	out=$(echo "${out}" | cut -c 2-)
+        echo "${out}"
 }
 
 is_net_fs() {
 	local path="${1}"
-	#TODO: check path is mounted as network filesystem
+	local type=$(stat -f -L -c %T "${path}")
+	set -- afs ceph cifs coda davfs fuse fuse.sshfs gfs glusterfs lustre ncpfs nfs nfs4 ocfs2 shfs smbfs
+	for x in $@ ; do
+		[ "${type}" = "${x}" ] && return 0
+	done
 	return 1
 }
