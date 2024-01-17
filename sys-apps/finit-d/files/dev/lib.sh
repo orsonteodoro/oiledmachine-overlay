@@ -348,7 +348,7 @@ chroot_start() {
 		if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
 			local x
 			for x in \${service_pid} ; do
-				if ps -o pid,cmd \${x} | grep "\${exec_path}" ; then
+				if ps -o pid,cmd \${x} | grep -q "\${exec_path}" ; then
 					service_pid="\${x}"
 					break 2
 				fi
@@ -725,7 +725,7 @@ start_stop_daemon() {
 			if [ -n "${service_pid}" ] ; then
 				local x
 				for x in ${service_pid} ; do
-					if ps -o pid,cmd ${x} | grep "${exec_path}" ; then
+					if ps -o pid,cmd ${x} | grep -q "${exec_path}" ; then
 						service_pid="${x}"
 						break 2
 					fi

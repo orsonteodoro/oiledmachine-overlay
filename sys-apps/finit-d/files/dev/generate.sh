@@ -385,6 +385,10 @@ fi
 				fi
 			done
 
+			if [[ "${svc_name}" == "acpid" ]] ; then
+				start_cond="${start_cond},service/logger/running"
+			fi
+
 			if [[ "${start_cond:0:1}" == "," ]] ; then
 				start_cond="${start_cond:1}"
 			fi
@@ -791,9 +795,9 @@ fi
 				local list=$(grep "^extra_started_commands=" "${init_path}" | cut -f 2 -d '=' | sed -e 's|^"||' -e 's|"$||')
 				for x in ${list} ; do
 					if [[ "${x}" == "reload" ]] ; then
-						echo "# Run as:  initctl cond set ${svc_name}-${x}-on-paused" >> "${init_conf}"
+						echo "# Run as:  initctl cond set ${svc_name}-${x}-paused" >> "${init_conf}"
 						echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-paused ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc} on paused" >> "${init_conf}"
-						echo "# Run as:  initctl cond set ${svc_name}-${x}-on-waiting" >> "${init_conf}"
+						echo "# Run as:  initctl cond set ${svc_name}-${x}-waiting" >> "${init_conf}"
 						echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"${x}\" -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
 					else
 						echo "# Run as:  initctl cond set ${svc_name}-${x}  # For started service only" >> "${init_conf}"
@@ -978,7 +982,10 @@ fi
 
 				if grep -q "pid/${svc_name}" $(find "${CONFS_PATH}" -name "*.conf" -type f)  ; then
 					echo "Converting pid/${svc_name} -> ${cond}"
-					sed -i -r -e "s|pid/${svc_name}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
+					sed -i -r \
+						-e "s|pid/${svc_name},|${cond},|g" \
+						-e "s|pid/${svc_name}>|${cond}>|g" \
+						$(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
 				fi
 			done
 		done
@@ -2097,10 +2104,10 @@ convert_systemd() {
 		fi
 		if (( "${#exec_reloads}" > 0 )) ; then
 			local x="reload"
-			echo "# Run as:  initctl cond set ${svc_name}-${x}-on-paused" >> "${init_conf}"
-			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-on-paused ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on paused" >> "${init_conf}"
-			echo "# Run as:  initctl cond set ${svc_name}-${x}-on-waiting" >> "${init_conf}"
-			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-on-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
+			echo "# Run as:  initctl cond set ${svc_name}-${x}-paused" >> "${init_conf}"
+			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/paused> name:${svc_name}-${x}-paused ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on paused" >> "${init_conf}"
+			echo "# Run as:  initctl cond set ${svc_name}-${x}-waiting" >> "${init_conf}"
+			echo "run [${extra_runlevels}] <${svc_type_start}/${svc_name}${instance}/waiting> name:${svc_name}-${x}-waiting ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh reload -- ${svc_name} ${x}${instance_desc} on waiting" >> "${init_conf}"
 		fi
 		rm "${init_path}"
 	done
@@ -2158,7 +2165,10 @@ convert_systemd() {
 
 			if grep -q "pid/${svc_name}" $(find "${CONFS_PATH}" -name "*.conf" -type f) ; then
 				echo "Converting pid/${svc_name} -> ${cond}"
-				sed -i -r -e "s|pid/${svc_name}|${cond}|g" $(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
+				sed -i -r \
+					-e "s|pid/${svc_name},|${cond},|g" \
+					-e "s|pid/${svc_name}>|${cond}>|g" \
+					$(find "${CONFS_PATH}" -name "*.conf" -type f) || die "ERR:  line number - $LINENO"
 			fi
 		done
 	done

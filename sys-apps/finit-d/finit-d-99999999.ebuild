@@ -122,25 +122,20 @@ eerror "You need to enable the dbus USE flag."
 	fi
 
 	if has_version "net-firewall/iptables" ; then
-		einfo "Generating ip6tables .conf and wrapper"
+		einfo "Generating ip6tables .conf"
 		cp -a \
 			"confs/net-firewall/iptables/iptables.conf" \
 			"confs/net-firewall/iptables/ip6tables.conf" \
 			|| die
 		sed -i \
 			-e "s|-- iptables|-- ip6tables|g" \
-			-e "s|iptables\.sh|ip6tables.sh|g" \
 			-e "s|name:iptables|name:ip6tables|g" \
 			-e "s|set iptables|set ip6tables|g" \
+			-e "s|/iptables/|/ip6tables/|g" \
+			-e "s|iptables-|ip6tables-|g" \
+			-e '1i SVCNAME="ip6tables"' \
+			-e '1i RC_SVCNAME="ip6tables"' \
 			"confs/net-firewall/iptables/ip6tables.conf" \
-			|| die
-		cp -a \
-			"scripts/net-firewall/iptables/iptables.sh" \
-			"scripts/net-firewall/iptables/ip6tables.sh" \
-			|| die
-		sed -i \
-			's|SVCNAME="iptables"|SVCNAME="ip6tables"|' \
-			"scripts/net-firewall/iptables/ip6tables.sh" \
 			|| die
 	fi
 }
@@ -287,8 +282,22 @@ src_install() {
 	install_lib "lib.sh"
 	install_lib "event.sh"
 
+	if is_blacklisted_pkg "net-firewall/iptables" ; then
+		:;
+	elif is_blacklisted_svc "ip6tables" ; then
+		:;
+	elif has_version "net-firewall/iptables" ; then
+		dosym \
+			/lib/finit/scripts/net-firewall/iptables/iptables.sh \
+			/lib/finit/scripts/net-firewall/iptables/ip6tables.sh
+	fi
+
 	# Broken default settings.  Requires METALOG_OPTS+=" -N" for some kernels.
 	rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
+
+	# Causes indefinite pause
+	rm -f "${ED}/etc/finit.d/enabled/iptables.conf"
+	rm -f "${ED}/etc/finit.d/enabled/ip6tables.conf"
 }
 
 pkg_postinst() {
