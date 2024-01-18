@@ -800,11 +800,6 @@ echo "Adding pidfile=${pid_file} to ${init_sh}"
 			local basename_fn=$(basename "${init_sh}")
 			#basename_fn=$(echo "${basename_fn}" | sed -e "s|\.sh$|%i.sh|g")
 
-			if [[ "${svc_name}" == "net@" ]] ; then
-				echo "set INIT=\"openrc\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
-				echo "set IFACE=\"%i\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
-			fi
-
 			local svc_type_start_pre=""
 			local svc_type_start=""
 			local svc_type_start_post=""
