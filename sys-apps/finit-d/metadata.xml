@@ -33,6 +33,10 @@
   FINIT_PID_OVERRIDE - A space separated key-value pairs joined with : with the
   key either the the instance or service and the value the pid path.
 
+  FINIT_PRUNE_DEBUG_MESSAGES - Remove debug messages (einfo, ewarn, ebegin, eend, ...)
+  from *.sh files to speed up boot.
+  Valid values:  1 = prune, 0 = don't prune, unset = don't prune
+
   Valid values:
 
     net/route/default       ; requires sys-apps/finit[netlink], not recommended for wireless
@@ -53,6 +57,7 @@
     FINIT_PID_OVERRIDE="openvpn@:/run/openvpn/openvpn.pid"
     FINIT_PID_OVERRIDE="openvpn@service1:/run/openvpn/service1.pid"
     FINIT_PID_OVERRIDE="openvpn@service2:/run/openvpn/service2.pid openvpn@service3:/run/service3.pid"
+    FINIT_PRUNE_DEBUG_MESSAGES=1
 
 
   /lib/finit/scripts/lib/lib.sh globals

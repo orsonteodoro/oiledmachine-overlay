@@ -94,6 +94,21 @@ src_prepare() {
 	default
 }
 
+prune_debug() {
+	for x in $(grep -r -E -l "(ebegin|einfo|eerror|eend|ewarn)" "${WORKDIR}/scripts") ; do
+		[[ "${x}" =~ "lib.sh" ]] && continue
+einfo "Pruning debug in ${x}"
+		sed -i \
+			-e "/ebegin/d" \
+			-e "/einfo/d" \
+			-e "/eerror/d" \
+			-e "/eend/d" \
+			-e "/ewarn/d" \
+			"${x}" \
+			|| die
+	done
+}
+
 src_compile() {
 	chmod +x generate.sh || die
 	use dash && export FINIT_SHELL="/bin/dash"
@@ -138,6 +153,10 @@ eerror "You need to enable the dbus USE flag."
 			-e '1i RC_SVCNAME="ip6tables"' \
 			"confs/net-firewall/iptables/ip6tables.conf" \
 			|| die
+	fi
+
+	if [[ "${FINIT_PRUNE_DEBUG_MESSAGES}" == "1" ]] ; then
+		prune_debug
 	fi
 }
 
