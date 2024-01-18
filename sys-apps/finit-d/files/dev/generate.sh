@@ -320,7 +320,10 @@ fi
 				instance_desc=" for %i"
 			fi
 
-			if [[ -n "${instance}" ]] ; then
+			if [[ "${svc_name}" =~ "net@" ]] ; then
+				sed -i -e "${top_ln}a export RC_SVCNAME=\${RC_SVCNAME:-\"net.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif [[ -n "${instance}" ]] ; then
+			# svc_name may have @
 				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			else
@@ -351,7 +354,10 @@ fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			if [[ -n "${instance}" ]] ; then
+			if [[ "${svc_name}" =~ "net@" ]] ; then
+				sed -i -e "${top_ln}a export SVCNAME=\${SVCNAME:-\"net.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif [[ -n "${instance}" ]] ; then
+			# svc_name may have @
 				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			else
