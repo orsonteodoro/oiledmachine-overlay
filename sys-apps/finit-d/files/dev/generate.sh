@@ -323,7 +323,7 @@ fi
 			if [[ -n "${instance}" ]] ; then
 				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
-			elif grep -q "RC_SVCNAME" "${init_sh}" ; then
+			else
 				sed -i -e "${top_ln}a export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
@@ -351,7 +351,7 @@ fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			if [[ -n "${instance}" ]] ; then
+			elif [[ -n "${instance}" ]] ; then
 				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			else

@@ -4,16 +4,6 @@
 
 FN="${1}"
 uses_hooks=${uses_hooks:-0}
-svc_name="$0"
-svc_name=$(basename $(echo "${svc_name}") | sed -e "s|\.sh$||")
-if echo "${svc_name}" | grep -q "^net@" && [ "${INIT}" = "openrc" ] ; then
-	# For netifrc
-	svc_name="net.${IFACE}"
-	SVCNAME="${svc_name}"
-	RC_SVCNAME="${svc_name}"
-fi
-SVCNAME=${SVCNAME:-"${svc_name}"}
-RC_SVCNAME=${RC_SVCNAME:-"${svc_name}"}
 if [ "${uses_hooks}" = "0" ] ; then
 	:;
 elif [ "${HOOK_BANNER}" ] && [ -n "${hook_banner_fn}" ; then
