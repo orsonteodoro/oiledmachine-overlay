@@ -16,36 +16,36 @@ SVCNAME=${SVCNAME:-"${svc_name}"}
 RC_SVCNAME=${RC_SVCNAME:-"${svc_name}"}
 if [ "${uses_hooks}" = "0" ] ; then
 	:;
-elif [ "$HOOK_BANNER" ] && [ -n "${hook_banner_fn}" ; then
+elif [ "${HOOK_BANNER}" ] && [ -n "${hook_banner_fn}" ; then
 	export FN="${hook_banner_fn}"
-elif [ "$HOOK_ROOTFS_UP" ] && [ -n "${hook_rootfs_up_fn}" ; then
+elif [ "${HOOK_ROOTFS_UP}" ] && [ -n "${hook_rootfs_up_fn}" ; then
 	export FN="${hook_rootfs_up_fn}"
-elif [ "$HOOK_MOUNT_ERROR" ] && [ -n "${hook_mount_error_fn}" ; then
+elif [ "${HOOK_MOUNT_ERROR}" ] && [ -n "${hook_mount_error_fn}" ; then
 	export FN="${hook_mount_error_fn}"
-elif [ "$HOOK_MOUNT_POST" ] && [ -n "${hook_mount_post_fn}" ; then
+elif [ "${HOOK_MOUNT_POST}" ] && [ -n "${hook_mount_post_fn}" ; then
 	export FN="${hook_mount_post_fn}"
-elif [ "$HOOK_BASEFS_UP" ] && [ -n "${hook_basefs_up_fn}" ; then
+elif [ "${HOOK_BASEFS_UP}" ] && [ -n "${hook_basefs_up_fn}" ; then
 	export FN="${hook_basefs_up_fn}"
-elif [ "$HOOK_NETWORK_UP" ] && [ -n "${hook_network_up_fn}" ; then
+elif [ "${HOOK_NETWORK_UP}" ] && [ -n "${hook_network_up_fn}" ; then
 	export FN="${hook_network_up_fn}"
-elif [ "$HOOK_SVC_UP" ] && [ -n "${hook_svc_up_fn}" ; then
+elif [ "${HOOK_SVC_UP}" ] && [ -n "${hook_svc_up_fn}" ; then
 	export FN="${hook_svc_up_fn}"
-elif [ "$HOOK_SYSTEM_UP" ] && [ -n "${hook_system_up_fn}" ; then
+elif [ "${HOOK_SYSTEM_UP}" ] && [ -n "${hook_system_up_fn}" ; then
 	export FN="${hook_system_up_fn}"
 
 # Missing path fragment
-#elif [ "$HOOK_SVC_RECONF" ] && [ -n "${hook_svc_reconf_fn}" ; then
+#elif [ "${HOOK_SVC_RECONF}" ] && [ -n "${hook_svc_reconf_fn}" ; then
 #	export FN="${hook_svc_reconf_fn}"
-#elif [ "$HOOK_RUNLEVEL_CHANGE" ] && [ -n "${hook_runlevel_change_fn}" ; then
+#elif [ "${HOOK_RUNLEVEL_CHANGE}" ] && [ -n "${hook_runlevel_change_fn}" ; then
 #	export FN="${hook_runlevel_change_fn}"
 
-elif [ "$HOOK_NETWORK_DN" ] && [ -n "${hook_network_dn_fn}" ; then
+elif [ "${HOOK_NETWORK_DN}" ] && [ -n "${hook_network_dn_fn}" ; then
 	export FN="${hook_network_dn_fn}"
-elif [ "$HOOK_SHUTDOWN" ] && [ -n "${hook_shutdown_fn}" ; then
+elif [ "${HOOK_SHUTDOWN}" ] && [ -n "${hook_shutdown_fn}" ; then
 	export FN="${hook_shutdown_fn}"
-elif [ "$HOOK_SVC_DN" ] && [ -n "${hook_svc_dn_fn}" ; then
+elif [ "${HOOK_SVC_DN}" ] && [ -n "${hook_svc_dn_fn}" ; then
 	export FN="${hook_svc_dn_fn}"
-elif [ "$HOOK_SYSTEM_DN" ] && [ -n "${hook_system_dn_fn}" ; then
+elif [ "${HOOK_SYSTEM_DN}" ] && [ -n "${hook_system_dn_fn}" ; then
 	export FN="${hook_system_dn_fn}"
 fi
 

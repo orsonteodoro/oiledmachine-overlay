@@ -338,7 +338,8 @@ fi
 			# svc_up     ; post [current]
 			# system_up  ; finit.d/* started
 
-			if [[ "${svc_name}" == "dmcrypt" ]] ; then
+			if grep -q -E -e "before.* (checkfs|fsck)( |$)" "${init_path}" ; then
+			# It includes dmcrypt.
 				sed -i -e "${top_ln}a hook_rootfs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a hook_system_dn_fn=\"stop\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a uses_hooks=1" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -368,7 +369,8 @@ fi
 			local needs_syslog=0
 			local start_runlevels=""
 			local extra_runlevels=""
-			if [[ "${svc_name}" == "dmcrypt" ]] ; then
+			if grep -q -E -e "before.* (checkfs|fsck)( |$)" "${init_path}" ; then
+			# It includes dmcrypt
 				start_runlevels="S"
 				extra_runlevels="12345"
 			elif grep -q -E -e "before.* net( |$)" "${init_path}" ; then
