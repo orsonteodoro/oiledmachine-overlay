@@ -31,7 +31,7 @@ IUSE+="
 	+dbus
 	hook-scripts
 	netlink
-	r1
+	r2
 "
 REQUIRED_USE="
 	?? (
@@ -458,6 +458,18 @@ heal_pruned() {
 	# fi
 			einfo "Healing ${path} : then-fi case"
 			sed -i -r -e ":a;N;\$!ba s#then[[:space:]]*fi#then :;fi#g" "${path}" || die
+		fi
+		if pcre2grep -q -M "then[[:space:]]+elif" "${path}" ; then
+	# Missing nop between then and elif
+	# if true ; then
+	# elif
+	#
+	# or
+	#
+	# elif true ; then
+	# elif
+			einfo "Healing ${path} : then-elif case"
+			sed -i -r -e ":a;N;\$!ba s#then[[:space:]]*elif#then :;elif#g" "${path}" || die
 		fi
 		if pcre2grep -q -M "then[[:space:]]+else" "${path}" ; then
 	# Missing nop between then and else
