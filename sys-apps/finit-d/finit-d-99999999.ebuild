@@ -300,7 +300,7 @@ eerror "You need to enable the dbus USE flag."
 		die
 	fi
 
-	if has_version "net-firewall/iptables" ; then
+	if has_version "net-firewall/iptables" && [[ -e "confs/net-firewall/iptables/iptables.conf" ]] ; then
 		einfo "Generating ip6tables .conf"
 		cp -a \
 			"confs/net-firewall/iptables/iptables.conf" \

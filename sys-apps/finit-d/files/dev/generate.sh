@@ -1305,6 +1305,21 @@ if [ -n "\${environment_file}" ] && [ -e "\${environment_file}" ] ; then
 	. \${environment_file}
 fi
 
+get_service_pid() {
+	# service_pid may capture 2 pids -- blank cmd, real command.
+	local service_pid=\$(ps --no-headers -C "\${exec_start_exe}" -o pid 2>/dev/null)
+	if [ -n "\${service_pid}" ] && [ \$service_pid -gt 0 ] ; then
+		local x
+		for x in \${service_pid} ; do
+			if ps -o pid,cmd \${x} | grep -q "\${exec_path}" ; then
+				service_pid="\${x}"
+				break
+			fi
+		done
+	fi
+	echo "${service_pid}"
+}
+
 start_dirs() {
 	local x
 	if [ -n "\${runtime_directory}" ] ; then
@@ -1423,7 +1438,7 @@ start_scheduler() {
 	elif [ -n "\${pidfile}" ] ; then
 		MAINPID=\$(cat "\${pidfile}")
 	else
-		MAINPID=\$(pgrep "\${exec_start_exe}")
+		MAINPID=\$(get_service_pid)
 	fi
 	[ -z "\${MAINPID}" ] && return 0
 	if [ -n "\${numa_mask}" ] ; then
@@ -1545,10 +1560,10 @@ stop_dirs() {
 stop() {
 	if [ "\${type}" = "oneshot" ] ; then
 		return 0
-	elif [[ -n "\${pidfile}" ]] ; then
+	elif [ -n "\${pidfile}" ] ; then
 		MAINPID=\$(cat "\${pidfile}")
 	else
-		MAINPID=\$(pgrep "\${exec_start_exe}")
+		MAINPID=\$(get_service_pid)
 	fi
 	local main_cgroup_name=\$(ps -p \${MAINPID} -o pid,cgroup \
 		| tail -n 1 \
@@ -1619,7 +1634,7 @@ reload() {
 	if [ -n "\${pidfile}" ] ; then
 		MAINPID=\$(cat "\${pidfile}")
 	else
-		MAINPID=\$(pgrep "\${exec_start_exe}")
+		MAINPID=\$(get_service_pid)
 	fi
 	$(echo -e "${exec_reloads}")
 }
