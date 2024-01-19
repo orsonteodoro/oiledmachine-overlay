@@ -42,6 +42,9 @@ fi
 if [ -e "/etc/conf.d/${SVCNAME}" ] ; then
 	. "/etc/conf.d/${SVCNAME}"
 fi
+if [ -e "${s6_service_path}/env" ] ; then
+	. "${s6_service_path}/env"
+fi
 
 # 0 = stdout, 1 = sysklogd, 2 = /var/log/finit.log
 if which logger >/dev/null 2>&1  ; then
@@ -1004,9 +1007,6 @@ default_start() {
 			-- \
 			${command_args} ${command_args_foreground}
 	elif [ "${supervisor}" = "s6" ] ; then
-		if [ -e "${s6_service_path}/env" ] ; then
-			. "${s6_service_path}/env"
-		fi
 		if file "${s6_service_path}/run" | grep -q "shell script" ; then
 			local command=$(grep "^exec" "${s6_service_path}/run" | cut -f 2 -d " ")
 			local command_args=$(grep "^exec" "${s6_service_path}/run" | cut -f 3- -d " ")
@@ -1064,9 +1064,6 @@ default_stop() {
 			${args} \
 			${start_stop_daemon_args}
 	elif [ "${supervisor}" = "s6" ] && [ -e "${s6_service_path}/finish" ] ; then
-		if [ -e "${s6_service_path}/env" ] ; then
-			. "${s6_service_path}/env"
-		fi
 		if file "${s6_service_path}/run" | grep -q "shell script" ; then
 			local command=$(grep "^exec" "${s6_service_path}/run" | cut -f 2 -d " ")
 			if [ -z "${command}" ] ; then
