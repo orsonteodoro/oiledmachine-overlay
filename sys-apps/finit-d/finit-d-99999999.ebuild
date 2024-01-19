@@ -317,6 +317,11 @@ eerror "You need to enable the dbus USE flag."
 			"confs/net-firewall/iptables/ip6tables.conf" \
 			|| die
 	fi
+
+	if has_version "sys-power/thermald" ; then
+		# Broken
+		sed -i -e "s|--adaptive||g" "scripts/sys-power/thermald/thermald.sh" || die
+	fi
 }
 
 symlink_hooks() {
