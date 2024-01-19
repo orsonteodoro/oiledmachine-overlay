@@ -199,7 +199,7 @@ eend() {
 }
 
 ewend() {
-	eend
+	eend 0
 }
 
 einfo() {

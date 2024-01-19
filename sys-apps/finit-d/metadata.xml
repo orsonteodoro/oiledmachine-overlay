@@ -10,7 +10,7 @@
 
   oiledmachine-overlay notes:
 
-  Build time environment variables:
+  Build time environment variables for per-package env:
 
   FINIT_BLACKLIST_PKGS - Space separated category/name to not install.
 
@@ -37,6 +37,13 @@
   from *.sh files to speed up boot.
   Valid values:  1 = prune, 0 = don't prune, unset = don't prune
 
+  FINIT_MINIFY - Remove comments, whitespace from *.sh files to avoid
+  interpreter parse penalties or reduce load latency.
+  Valid values:  1 = minify, 0 = don't minify, unset = don't minfi
+
+  FINIT_BLACKLISTED_FOR_PRUNING - Space separated list of basenames to skip for
+  pruning or minification.
+
   Valid values:
 
     net/route/default       ; requires sys-apps/finit[netlink], not recommended for wireless
@@ -58,6 +65,7 @@
     FINIT_PID_OVERRIDE="openvpn@service1:/run/openvpn/service1.pid"
     FINIT_PID_OVERRIDE="openvpn@service2:/run/openvpn/service2.pid openvpn@service3:/run/service3.pid"
     FINIT_PRUNE_DEBUG_MESSAGES=1
+    FINIT_MINIFY=1
 
 
   /lib/finit/scripts/lib/lib.sh globals

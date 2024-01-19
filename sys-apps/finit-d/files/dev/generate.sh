@@ -763,13 +763,16 @@ echo "[*warn*] pid_file=${pid_file} for ${svc_name} should not be a variable"
 			if [[ "${svc_name}" =~ "vsftpd" ]] ; then
 				:;
 			elif [[ "${svc_name}" =~ "openvpn" ]] ; then
-echo "Adding pidfile=${pid_file_instanced} conditional to ${init_sh}"
-echo "Adding pidfile=${pid_file} conditional to ${init_sh}"
-				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && pidfile=\"${pid_file_instanced}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
-				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && pidfile=\"${pid_file}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				local _pid_file=$(echo "${pid_file}" | sed -r -e 's|pid:!?||g')
+				local _pid_file_instanced=$(echo "${pid_file_instanced}" | sed -r -e 's|pid:!?||g')
+echo "Adding pidfile=${_pid_file_instanced} conditional to ${init_sh}"
+echo "Adding pidfile=${_pid_file} conditional to ${init_sh}"
+				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && pidfile=\"${_pid_file_instanced}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && pidfile=\"${_pid_file}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			elif [[ -n "${pid_file}" ]] && ! grep -q "^pidfile=" "${init_sh}" ; then
-echo "Adding pidfile=${pid_file} to ${init_sh}"
-				sed -i -e "${top_ln}a pidfile=${pid_file}" "${init_sh}" || die "ERR:  line number - $LINENO"
+				local _pid_file=$(echo "${pid_file}" | sed -r -e "s|pid:!?||g")
+echo "Adding pidfile=${_pid_file} to ${init_sh}"
+				sed -i -e "${top_ln}a pidfile=${_pid_file}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
 			if [[ -z "${pid_file}" ]] && grep -q -i "pidfile" "${init_path}" ; then

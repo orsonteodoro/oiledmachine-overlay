@@ -320,10 +320,13 @@ fi
 				instance_desc=" for %i"
 			fi
 
-			if [[ -n "${instance}" ]] ; then
+			if [[ "${svc_name}" =~ "net@" ]] ; then
+				sed -i -e "${top_ln}a export RC_SVCNAME=\${RC_SVCNAME:-\"net.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif [[ -n "${instance}" ]] ; then
+			# svc_name may have @
 				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
-			elif grep -q "RC_SVCNAME" "${init_sh}" ; then
+			else
 				sed -i -e "${top_ln}a export RC_SVCNAME=\${RC_SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
@@ -338,7 +341,8 @@ fi
 			# svc_up     ; post [current]
 			# system_up  ; finit.d/* started
 
-			if [[ "${svc_name}" == "dmcrypt" ]] ; then
+			if grep -q -E -e "before.* (checkfs|fsck)( |$)" "${init_path}" ; then
+			# It includes dmcrypt.
 				sed -i -e "${top_ln}a hook_rootfs_up_fn=\"start\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a hook_system_dn_fn=\"stop\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a uses_hooks=1" "${init_sh}" || die "ERR:  line number - $LINENO"
@@ -350,7 +354,10 @@ fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			if [[ -n "${instance}" ]] ; then
+			if [[ "${svc_name}" =~ "net@" ]] ; then
+				sed -i -e "${top_ln}a export SVCNAME=\${SVCNAME:-\"net.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
+			elif [[ -n "${instance}" ]] ; then
+			# svc_name may have @
 				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && export SVCNAME=\${SVCNAME:-\"${svc_name}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			else
@@ -368,7 +375,8 @@ fi
 			local needs_syslog=0
 			local start_runlevels=""
 			local extra_runlevels=""
-			if [[ "${svc_name}" == "dmcrypt" ]] ; then
+			if grep -q -E -e "before.* (checkfs|fsck)( |$)" "${init_path}" ; then
+			# It includes dmcrypt
 				start_runlevels="S"
 				extra_runlevels="12345"
 			elif grep -q -E -e "before.* net( |$)" "${init_path}" ; then
@@ -755,13 +763,16 @@ echo "[*warn*] pid_file=${pid_file} for ${svc_name} should not be a variable"
 			if [[ "${svc_name}" =~ "vsftpd" ]] ; then
 				:;
 			elif [[ "${svc_name}" =~ "openvpn" ]] ; then
-echo "Adding pidfile=${pid_file_instanced} conditional to ${init_sh}"
-echo "Adding pidfile=${pid_file} conditional to ${init_sh}"
-				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && pidfile=\"${pid_file_instanced}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
-				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && pidfile=\"${pid_file}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				local _pid_file=$(echo "${pid_file}" | sed -r -e 's|pid:!?||g')
+				local _pid_file_instanced=$(echo "${pid_file_instanced}" | sed -r -e 's|pid:!?||g')
+echo "Adding pidfile=${_pid_file_instanced} conditional to ${init_sh}"
+echo "Adding pidfile=${_pid_file} conditional to ${init_sh}"
+				sed -i -e "${top_ln}a [ -n \"\${2}\" ] && pidfile=\"${_pid_file_instanced}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
+				sed -i -e "${top_ln}a [ -z \"\${2}\" ] && pidfile=\"${_pid_file}\"" "${init_sh}" || die "ERR:  line number - $LINENO"
 			elif [[ -n "${pid_file}" ]] && ! grep -q "^pidfile=" "${init_sh}" ; then
-echo "Adding pidfile=${pid_file} to ${init_sh}"
-				sed -i -e "${top_ln}a pidfile=${pid_file}" "${init_sh}" || die "ERR:  line number - $LINENO"
+				local _pid_file=$(echo "${pid_file}" | sed -r -e "s|pid:!?||g")
+echo "Adding pidfile=${_pid_file} to ${init_sh}"
+				sed -i -e "${top_ln}a pidfile=${_pid_file}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
 
 			if [[ -z "${pid_file}" ]] && grep -q -i "pidfile" "${init_path}" ; then
@@ -791,11 +802,6 @@ echo "Adding pidfile=${pid_file} to ${init_sh}"
 
 			local basename_fn=$(basename "${init_sh}")
 			#basename_fn=$(echo "${basename_fn}" | sed -e "s|\.sh$|%i.sh|g")
-
-			if [[ "${svc_name}" == "net@" ]] ; then
-				echo "set INIT=\"openrc\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
-				echo "set IFACE=\"%i\"" >> "${init_conf}" || die "ERR:  line number - $LINENO"
-			fi
 
 			local svc_type_start_pre=""
 			local svc_type_start=""

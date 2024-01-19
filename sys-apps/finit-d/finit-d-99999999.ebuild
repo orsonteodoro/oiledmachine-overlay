@@ -94,17 +94,177 @@ src_prepare() {
 	default
 }
 
+
+is_file_blacklisted_during_pruning() {
+	[[ -z "${FINIT_BLACKLISTED_FOR_PRUNING}" ]] && return 1
+	local x_path="${1}"
+	local L=(
+		${FINIT_BLACKLISTED_FOR_PRUNING}
+	)
+	for _path in ${L[@]} ; do
+		local path=$(basename "${_path}")
+		[[ "${x_path}" == "${path}" ]] && return 0
+	done
+	return 1
+}
+
+count_left_curly() {
+	local str="${1}"
+	local n=0
+	local i
+	for (( i=0 ; i < ${#str} ; i++ )) ; do
+		local c="${str:${i}:1}"
+		[[ "${c}" == '{' ]] && n=$((${n}+1))
+	done
+	echo "${n}"
+}
+
+count_right_curly() {
+	local str="${1}"
+	local n=0
+	local i
+	for (( i=0 ; i < ${#str} ; i++ )) ; do
+		local c="${str:${i}:1}"
+		[[ "${c}" == '}' ]] && n=$((${n}+1))
+	done
+	echo "${n}"
+}
+
+count_single_quotes() {
+	local str="${1}"
+	local n=0
+	local i
+	for (( i=0 ; i < ${#str} ; i++ )) ; do
+		local c="${str:${i}:1}"
+		[[ "${c}" == "'" ]] && n=$((${n}+1))
+	done
+	echo "${n}"
+}
+
+count_double_quotes() {
+	local str="${1}"
+	local n=0
+	local i
+	for (( i=0 ; i < ${#str} ; i++ )) ; do
+		local c="${str:${i}:1}"
+		[[ "${c}" == '"' ]] && n=$((${n}+1))
+	done
+	echo "${n}"
+}
+
+prune_pound() {
+	local str="${1}"
+	local buffer=""
+	local i
+	for (( i=0 ; i < ${#str} ; i++ )) ; do
+		local c="${str:${i}:1}"
+		if [[ "${c}" == "#" ]] ; then
+			local ns=$(count_single_quotes "${buffer}")
+			local nd=$(count_double_quotes "${buffer}")
+			local nlcurly=$(count_left_curly "${buffer}")
+			local nrcurly=$(count_right_curly "${buffer}")
+			local ns_odd=$((${ns}%2))
+			local nd_odd=$((${nd}%2))
+			if (( ${ns_odd} == 1 )) ; then
+				buffer+="${c}"
+			elif (( ${nd_odd} == 1 )) ; then
+				buffer+="${c}"
+			elif (( ${nlcurly} != ${nrcurly} )) ; then
+				buffer+="${c}"
+			else
+#einfo "After prune:"
+#einfo "B:  ${str}"
+#einfo "A:  ${buffer}"
+				break
+			fi
+		else
+			buffer+="${c}"
+		fi
+	done
+	echo "${buffer}"
+}
+
+# Also perform minification to avoid parse penalties.
+minify() {
+	local script_path
+	for script_path in $(find "${ED}/lib/finit/scripts" -type f) ; do
+		# [[ "${script_path}" =~ "lib.sh" ]] && continue
+		is_file_blacklisted_during_pruning && continue
+einfo "Minifying $(basename ${script_path})"
+		IFS=$'\n'
+
+		local passes
+		for passes in $(seq 1 2) ; do
+			local tpath=$(mktemp -p "${T}")
+			local line=""
+			while read line; do
+				line=$(echo -E "${line}" | sed -r -e "s|^[[:space:]]+||g")
+				line=$(echo -E "${line}" | sed -r -e "s|[[:space:]]+$||g")
+				line=$(echo -E "${line}" | sed -e "/^$/d")
+				if [[ -z "${line}" ]] ; then
+					continue
+				elif [[ "${line,,}" =~ "copyright" ]] ; then
+					echo "${line}" >> "${tpath}" || die
+				elif [[ "${line,,}" =~ "distributed" ]] ; then
+					echo "${line}" >> "${tpath}" || die
+				elif [[ "${line,,}" =~ '#!' ]] ; then
+					echo "${line}" >> "${tpath}" || die
+				elif [[ "${line}" =~ ^[[:space:]]*'#' ]] ; then
+					continue
+				elif [[ "${line}" =~ '#' ]] ; then
+					local t=$(prune_pound "${line}")
+					echo "${t}" >> "${tpath}" || die
+				else
+					echo "${line}" >> "${tpath}" || die
+				fi
+			done < "${script_path}"
+			cat "${tpath}" > "${script_path}" || die
+			rm "${tpath}" || die
+		done
+
+		sed -i -e "/^$/d" "${script_path}" || die
+		sed -i -e "s|^after .*|:;|g" "${script_path}" || die
+		sed -i -e "s|^before .*|:;|g" "${script_path}" || die
+		sed -i -e "s|^keyword .*|:;|g" "${script_path}" || die
+		sed -i -e "s|^need .*|:;|g" "${script_path}" || die
+		sed -i -e "s|^provides .*|:;|g" "${script_path}" || die
+		sed -i -e "s|^use .*|:;|g" "${script_path}" || die
+		sed -i -r -e "s|[[:space:]]+--| --|g" "${script_path}" || die
+		sed -i -r -e "s|[[:space:]]*;[[:space:]]+*then|;then|g" "${script_path}" || die
+		sed -i -r -e "s|[[:space:]]*;[[:space:]]+*do|;do|g" "${script_path}" || die
+
+		sed -i -r -e 's#[[:space:]]*\&\&[[:space:]]*#\&\&#g' "${script_path}" || die
+		sed -i -r -e 's#[[:space:]]*\|\|[[:space:]]*#\|\|#g' "${script_path}" || die
+		sed -i -r -e 's#[[:space:]]*\{[[:space:]]*#\{#g' "${script_path}" || die
+		sed -i -r -e 's#[[:space:]]*\}[[:space:]]+#\} #g' "${script_path}" || die
+		sed -i -r -e 's#[[:space:]]*\|[[:space:]]*#\|#g' "${script_path}" || die
+		sed -i -r -e 's#[[:space:]]*\&[[:space:]]*#\&#g' "${script_path}" || die
+
+		sed -i -r -e 's#\[[[:space:]]*(\^?)[[:space:]]*\[[[:space:]]*:([a-z]+):[[:space:]]*\][[:space:]]*\]#[\1[:\2:]]#g' "${script_path}" || die
+
+		sed -i -r -e ":a;N;\$!ba s|depend\(\)[[:space:]]*\{\n(:;\n)*\}||" "${script_path}" || die
+		sed -i -r -e ":a;N;\$!ba s#(:;)+#:;#g" "${script_path}" || die
+
+		sed -i -r -e '/^$/d' "${script_path}" || die
+		sed -i -r -e 's#[[:space:]]+# #g' "${script_path}" || die
+		sed -i -r -e 's#[[:space:]]+;;#;;#g' "${script_path}" || die
+		IFS=$' \t\n'
+	done
+}
+
 prune_debug() {
-	for x in $(grep -r -E -l "(ebegin|einfo|eerror|eend|ewarn)" "${WORKDIR}/scripts") ; do
-		[[ "${x}" =~ "lib.sh" ]] && continue
-einfo "Pruning debug in ${x}"
+	local script_path
+	for script_path in $(grep -r -E -l "(ebegin|einfo|eerror|eend|ewarn)" "${ED}/lib/finit/scripts") ; do
+		[[ "${script_path}" =~ "lib.sh" ]] && continue
+		is_file_blacklisted_during_pruning && continue
+einfo "Pruning debug in $(basename ${script_path})"
 		sed -i \
-			-e "/ebegin/d" \
-			-e "/einfo/d" \
-			-e "/eerror/d" \
-			-e "/eend/d" \
-			-e "/ewarn/d" \
-			"${x}" \
+			-e "s|.*ebegin.*|:;|g" \
+			-e "s|.*einfo.*|:;|g" \
+			-e "s|.*eerror.*|:;|g" \
+			-e "s|.*eend.*|:;|g" \
+			-e "s|.*ewarn.*|:;|g" \
+			"${script_path}" \
 			|| die
 	done
 }
@@ -153,10 +313,6 @@ eerror "You need to enable the dbus USE flag."
 			-e '1i RC_SVCNAME="ip6tables"' \
 			"confs/net-firewall/iptables/ip6tables.conf" \
 			|| die
-	fi
-
-	if [[ "${FINIT_PRUNE_DEBUG_MESSAGES}" == "1" ]] ; then
-		prune_debug
 	fi
 }
 
@@ -331,6 +487,13 @@ src_install() {
 	rm -f "${ED}/etc/finit.d/enabled/ip6tables.conf"
 
 	gen_start_start_daemon_wrapper
+
+	if [[ "${FINIT_PRUNE_DEBUG_MESSAGES}" == "1" ]] ; then
+		prune_debug
+	fi
+	if [[ "${FINIT_MINIFY}" == "1" ]] ; then
+		minify
+	fi
 }
 
 pkg_postinst() {
