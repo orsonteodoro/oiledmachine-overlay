@@ -42,6 +42,9 @@ fi
 if [ -e "/etc/conf.d/${SVCNAME}" ] ; then
 	. "/etc/conf.d/${SVCNAME}"
 fi
+if [ -e "${s6_service_path}/env" ] ; then
+	. "${s6_service_path}/env"
+fi
 
 # 0 = stdout, 1 = sysklogd, 2 = /var/log/finit.log
 if which logger >/dev/null 2>&1  ; then
@@ -454,7 +457,7 @@ start_stop_daemon() {
 	local make_pidfile=0
 	local mode=""
 	local name=""
-	local nicelevel=0
+	local nicelevel=""
 	local phase=""
 	local pid=0
 	local pidfile_path=""
@@ -678,6 +681,9 @@ start_stop_daemon() {
 		fi
 
 		if [ $? -eq 0 ] ; then
+			if [ -n "${pidfile_path}" ] ; then
+				touch "${pidfile_path}"
+			fi
 			return 1
 		fi
 
@@ -1004,9 +1010,6 @@ default_start() {
 			-- \
 			${command_args} ${command_args_foreground}
 	elif [ "${supervisor}" = "s6" ] ; then
-		if [ -e "${s6_service_path}/env" ] ; then
-			. "${s6_service_path}/env"
-		fi
 		if file "${s6_service_path}/run" | grep -q "shell script" ; then
 			local command=$(grep "^exec" "${s6_service_path}/run" | cut -f 2 -d " ")
 			local command_args=$(grep "^exec" "${s6_service_path}/run" | cut -f 3- -d " ")
@@ -1064,9 +1067,6 @@ default_stop() {
 			${args} \
 			${start_stop_daemon_args}
 	elif [ "${supervisor}" = "s6" ] && [ -e "${s6_service_path}/finish" ] ; then
-		if [ -e "${s6_service_path}/env" ] ; then
-			. "${s6_service_path}/env"
-		fi
 		if file "${s6_service_path}/run" | grep -q "shell script" ; then
 			local command=$(grep "^exec" "${s6_service_path}/run" | cut -f 2 -d " ")
 			if [ -z "${command}" ] ; then

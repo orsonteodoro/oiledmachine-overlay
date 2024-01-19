@@ -681,6 +681,9 @@ start_stop_daemon() {
 		fi
 
 		if [ $? -eq 0 ] ; then
+			if [ -n "${pidfile_path}" ] ; then
+				touch "${pidfile_path}"
+			fi
 			return 1
 		fi
 
