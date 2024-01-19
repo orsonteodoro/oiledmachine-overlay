@@ -19,7 +19,7 @@ LICENSE="
 "
 if [[ "${PV}" =~ "99999999" ]] ; then
 	# No KEYWORDS for live
-	:;
+	:
 else
 	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 fi
@@ -223,12 +223,12 @@ einfo "Minifying $(basename ${script_path})"
 		done
 
 		sed -i -e "/^$/d" "${script_path}" || die
-		sed -i -e "s|^after .*|:;|g" "${script_path}" || die
-		sed -i -e "s|^before .*|:;|g" "${script_path}" || die
-		sed -i -e "s|^keyword .*|:;|g" "${script_path}" || die
-		sed -i -e "s|^need .*|:;|g" "${script_path}" || die
-		sed -i -e "s|^provides .*|:;|g" "${script_path}" || die
-		sed -i -e "s|^use .*|:;|g" "${script_path}" || die
+		sed -i -e "s|^after .*|:|g" "${script_path}" || die
+		sed -i -e "s|^before .*|:|g" "${script_path}" || die
+		sed -i -e "s|^keyword .*|:|g" "${script_path}" || die
+		sed -i -e "s|^need .*|:|g" "${script_path}" || die
+		sed -i -e "s|^provides .*|:|g" "${script_path}" || die
+		sed -i -e "s|^use .*|:|g" "${script_path}" || die
 		sed -i -r -e "s|[[:space:]]+--| --|g" "${script_path}" || die
 		sed -i -r -e "s|[[:space:]]*;[[:space:]]+*then|;then|g" "${script_path}" || die
 		sed -i -r -e "s|[[:space:]]*;[[:space:]]+*do|;do|g" "${script_path}" || die
@@ -242,8 +242,8 @@ einfo "Minifying $(basename ${script_path})"
 
 		sed -i -r -e 's#\[[[:space:]]*(\^?)[[:space:]]*\[[[:space:]]*:([a-z]+):[[:space:]]*\][[:space:]]*\]#[\1[:\2:]]#g' "${script_path}" || die
 
-		sed -i -r -e ":a;N;\$!ba s|depend\(\)[[:space:]]*\{\n(:;\n)*\}||" "${script_path}" || die
-		sed -i -r -e ":a;N;\$!ba s#(:;)+#:;#g" "${script_path}" || die
+		sed -i -r -e ":a;N;\$!ba s|depend\(\)[[:space:]]*\{\n(:\n)*\}||" "${script_path}" || die
+		sed -i -r -e ":a;N;\$!ba s#(:)+#:#g" "${script_path}" || die
 
 		sed -i -r -e '/^$/d' "${script_path}" || die
 		sed -i -r -e 's#[[:space:]]+# #g' "${script_path}" || die
@@ -259,11 +259,11 @@ prune_debug() {
 		is_file_blacklisted_during_pruning && continue
 einfo "Pruning debug in $(basename ${script_path})"
 		sed -i \
-			-e "s|.*ebegin.*|:;|g" \
-			-e "s|.*einfo.*|:;|g" \
-			-e "s|.*eerror.*|:;|g" \
-			-e "s|.*eend.*|:;|g" \
-			-e "s|.*ewarn.*|:;|g" \
+			-e "s|.*ebegin.*|:|g" \
+			-e "s|.*einfo.*|:|g" \
+			-e "s|.*eerror.*|:|g" \
+			-e "s|.*eend.*|:|g" \
+			-e "s|.*ewarn.*|:|g" \
 			"${script_path}" \
 			|| die
 	done
@@ -452,7 +452,7 @@ src_install() {
 	done
 
 	if is_blacklisted_pkg "net-misc/netifrc" ; then
-		:;
+		:
 	elif has_version "net-misc/netifrc" ; then
 		generate_netifrc_instances
 	fi
@@ -470,9 +470,9 @@ src_install() {
 	install_lib "event.sh"
 
 	if is_blacklisted_pkg "net-firewall/iptables" ; then
-		:;
+		:
 	elif is_blacklisted_svc "ip6tables" ; then
-		:;
+		:
 	elif has_version "net-firewall/iptables" ; then
 		dosym \
 			/lib/finit/scripts/net-firewall/iptables/iptables.sh \

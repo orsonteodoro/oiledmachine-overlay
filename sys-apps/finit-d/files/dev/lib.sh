@@ -5,7 +5,7 @@
 FN="${1}"
 uses_hooks=${uses_hooks:-0}
 if [ "${uses_hooks}" = "0" ] ; then
-	:;
+	:
 elif [ "${HOOK_BANNER}" ] && [ -n "${hook_banner_fn}" ; then
 	export FN="${hook_banner_fn}"
 elif [ "${HOOK_ROOTFS_UP}" ] && [ -n "${hook_rootfs_up_fn}" ; then
@@ -396,7 +396,7 @@ chroot_start() {
 		fi
 		if [ \$daemon -eq 1 ] || [ \$background -eq 1 ] ; then
 	# Keep as background
-			:;
+			:
 		else
 	# Bring to foreground
 			fg
@@ -910,7 +910,7 @@ start_stop_daemon() {
 		fi
 		if [ $daemon -eq 1 ] || [ $background -eq 1 ] ; then
 	# Keep as background
-			:;
+			:
 		else
 	# Bring to foreground
 			fg 2>/dev/null
@@ -1000,15 +1000,15 @@ mark_service_inactive() {
 }
 
 mark_service_starting() {
-	:;
+	:
 }
 
 mark_service_started() {
-	:;
+	:
 }
 
 mark_service_stopped() {
-	:;
+	:
 }
 
 yesno() {
