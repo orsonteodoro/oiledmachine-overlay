@@ -354,9 +354,6 @@ fi
 			if ! grep -q -e "^start[(]" "${init_sh}" ; then
 				sed -i -e "${top_ln}a export call_default_start=1" "${init_sh}" || die "ERR:  line number - $LINENO"
 			fi
-			if ! grep -q -e "^stop[(]" "${init_sh}" ; then
-				sed -i -e "${top_ln}a export call_default_stop=1" "${init_sh}" || die "ERR:  line number - $LINENO"
-			fi
 			if [[ "${svc_name}" =~ "net@" ]] ; then
 				sed -i -e "${top_ln}a export SVCNAME=\${SVCNAME:-\"net.\${2}\"}" "${init_sh}" || die "ERR:  line number - $LINENO"
 			elif [[ -n "${instance}" ]] ; then
@@ -825,14 +822,7 @@ echo "Adding pidfile=${_pid_file} to ${init_sh}"
 			fi
 
 			needs_openrc_default_start() {
-				if ! grep -q -e "^start[(]" "${init_path}" && ( grep -q -e "^command=" "${init_path}" || grep -q -F -e ': ${command=' "${init_path}" ) ; then
-					return 0
-				fi
-				return 1
-			}
-
-			needs_openrc_default_stop() {
-				if ! grep -q -e "^stop[(]" "${init_path}" && ( grep -q -e "^command=" "${init_path}" || grep -q -F -e ': ${command=' "${init_path}" ) ; then
+				if ! grep -q -e "^start" "${init_path}" && ( grep -q -e "^command=" "${init_path}" || grep -q -F -e ': ${command=' "${init_path}" ) ; then
 					return 0
 				fi
 				return 1
@@ -930,7 +920,7 @@ echo "Adding pidfile=${_pid_file} to ${init_sh}"
 				service_types["${name}-pre-stop${instance}"]="${svc_type_start}"
 				echo "${svc_type_stop_pre} [0] name:${svc_name}-pre-stop ${instance} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"stop_pre\" \"%i\ -- ${svc_name} pre-stop${instance_desc}" >> "${init_conf}"
 			fi
-			if grep -q -e "^stop" "${init_path}" || needs_openrc_default_stop ; then
+			if grep -q -e "^stop" "${init_path}" ; then
 				local stop_cond=""
 				[[ "${svc_type_stop_pre}" =~ ("run"|"task") ]] && stop_cond="${svc_type_stop_pre}/${svc_name}-pre-stop${instance}/success"
 				svc_type_stop="task"
