@@ -227,12 +227,12 @@ einfo "Minifying $(basename ${script_path})"
 		done
 
 		sed -i -e "/^$/d" "${script_path}" || die
-		sed -i -e "s|^after .*|:|g" "${script_path}" || die
-		sed -i -e "s|^before .*|:|g" "${script_path}" || die
-		sed -i -e "s|^keyword .*|:|g" "${script_path}" || die
-		sed -i -e "s|^need .*|:|g" "${script_path}" || die
-		sed -i -e "s|^provides .*|:|g" "${script_path}" || die
-		sed -i -e "s|^use .*|:|g" "${script_path}" || die
+		sed -i -e "/^after .*/d" "${script_path}" || die
+		sed -i -e "/^before .*/d" "${script_path}" || die
+		sed -i -e "/^keyword .*/d" "${script_path}" || die
+		sed -i -e "/^need .*/d" "${script_path}" || die
+		sed -i -e "/^provides .*/d" "${script_path}" || die
+		sed -i -e "/^use .*/d" "${script_path}" || die
 		sed -i -r -e "s|[[:space:]]+--| --|g" "${script_path}" || die
 		sed -i -r -e "s|[[:space:]]*;[[:space:]]+*then|;then|g" "${script_path}" || die
 		sed -i -r -e "s|[[:space:]]*;[[:space:]]+*do|;do|g" "${script_path}" || die
