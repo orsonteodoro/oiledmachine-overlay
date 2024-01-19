@@ -495,7 +495,7 @@ fi
 				notify="notify:pid"
 echo "pidfile case -2:  init_path - ${init_path} ; ${pid_file}"
 			elif [[ "${svc_name}" == "avahi-daemon" ]] ; then
-				pid_file="pid:!/run/avahi-daemon.pid"
+				pid_file="pid:!/run/avahi-daemon/pid"
 				notify="notify:pid"
 echo "pidfile case -1:  init_path - ${init_path} ; ${pid_file}"
 			elif [[ "${svc_name}" == "avahi-dnsconfd" ]] ; then
