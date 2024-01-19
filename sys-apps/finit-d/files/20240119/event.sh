@@ -6,6 +6,8 @@ elif [ "$FN" = "declare" ] ; then
 	echo "declare() is not supported"
 elif [ -n "$command" ] && [ "$FN" = "start" ] && [ "${call_default_start}" = "1" ] ; then
 	default_start
+elif [ -n "$command" ] && [ "$FN" = "stop" ] && [ "${call_default_stop}" = "1" ] ; then
+	default_stop
 elif [ -n "$FN" ] ; then
 	"$FN"
 	if [ "$FN" = "stop" ] ; then

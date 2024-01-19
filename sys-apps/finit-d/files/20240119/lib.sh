@@ -986,13 +986,49 @@ default_start() {
 	if [ -n "${pidfile}" ] ;then
 		args="${args} --pidfile ${pidfile}"
 	fi
-	start_stop_daemon \
-		--start \
-		--exec "${command}" \
-		${start_stop_daemon_args} \
-		${args} \
-		-- \
-		${command_args}
+	if [ -z "${supervisor}" ] || [ "${supervisor}" = "start-stop-daemon" ] ; then
+		start_stop_daemon \
+			--start \
+			--exec "${command}" \
+			${start_stop_daemon_args} \
+			${args} \
+			-- \
+			${command_args} ${command_args_background}
+	elif [ "${supervisor}" = "supervise-daemon" ] ; then
+		supervise_daemon \
+			--start \
+			--exec "${command}" \
+			${start_stop_daemon_args} \
+			${args} \
+			-- \
+			${command_args} ${command_args_foreground}
+	elif [ "${supervisor}" = "s6" ] ; then
+		"${s6_service_path}/run"
+	fi
+}
+
+default_stop() {
+	local args=""
+
+	if [ -n "${pidfile}" ] ;then
+		args="${args} --pidfile ${pidfile}"
+	fi
+
+	if [ -z "${supervisor}" ] || [ "${supervisor}" = "start-stop-daemon" ] ; then
+		start_stop_daemon \
+			--stop \
+			--exec "${command}" \
+			${start_stop_daemon_args} \
+			${args}
+	elif [ "${supervisor}" = "supervise-daemon" ] ; then
+		supervise_daemon \
+			--stop \
+			--exec "${command}" \
+			${start_stop_daemon_args} \
+			${args}
+	elif [ "${supervisor}" = "s6" ] ; then
+		"${s6_service_path}/finish"
+	fi
 }
 
 mark_service_inactive() {
