@@ -480,6 +480,10 @@ fi
 			if [[ "${svc_name}" == "actkbd" ]] ; then
 				pid_file="pid:!/var/run/actkbd.pid"
 				notify="notify:pid"
+echo "pidfile case -1:  init_path - ${init_path} ; ${pid_file}"
+			elif [[ "${svc_name}" == "avahi-daemon" ]] ; then
+				pid_file="pid:!/run/avahi-dnsconfd.pid"
+				notify="notify:pid"
 echo "pidfile case 0:  init_path - ${init_path} ; ${pid_file}"
 			elif [[ "${svc_name}" == "bitcoind" ]] ; then
 				pid_file="pid:!/run/bitcoind/bicoind.pid"
