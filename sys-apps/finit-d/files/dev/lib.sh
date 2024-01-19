@@ -454,7 +454,7 @@ start_stop_daemon() {
 	local make_pidfile=0
 	local mode=""
 	local name=""
-	local nicelevel=0
+	local nicelevel=""
 	local phase=""
 	local pid=0
 	local pidfile_path=""
