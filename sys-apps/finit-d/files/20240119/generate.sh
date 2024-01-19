@@ -375,6 +375,16 @@ fi
 			sed -i -e "s|start-stop-daemon|start_stop_daemon|g" "${init_sh}" || die "ERR:  line number - $LINENO"
 			sed -i -e "s|supervise-daemon|supervise_daemon|g" "${init_sh}" || die "ERR:  line number - $LINENO"
 
+			# Fixes
+			sed -i \
+				-e "s|supervisor:-start_stop_daemon|supervisor:-start-stop-daemon|g" \
+				-e "s|supervisor:-supervise_daemon|supervisor:-supervise-daemon|g" \
+				-e "s|supervisor:=start_stop_daemon|supervisor:=start-stop-daemon|g" \
+				-e "s|supervisor:=supervise_daemon|supervisor:=supervise-daemon|g" \
+				-e "s|supervisor=start_stop_daemon|supervisor=start-stop-daemon|g" \
+				-e "s|supervisor=supervise_daemon|supervisor=supervise-daemon|g" \
+				"${init_sh}" || die "ERR:  line number - $LINENO"
+
 			local needs_syslog=0
 			local start_runlevels=""
 			local extra_runlevels=""
