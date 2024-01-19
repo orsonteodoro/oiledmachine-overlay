@@ -483,8 +483,12 @@ fi
 			if [[ "${svc_name}" == "actkbd" ]] ; then
 				pid_file="pid:!/var/run/actkbd.pid"
 				notify="notify:pid"
-echo "pidfile case -1:  init_path - ${init_path} ; ${pid_file}"
+echo "pidfile case -2:  init_path - ${init_path} ; ${pid_file}"
 			elif [[ "${svc_name}" == "avahi-daemon" ]] ; then
+				pid_file="pid:!/run/avahi-daemon.pid"
+				notify="notify:pid"
+echo "pidfile case -1:  init_path - ${init_path} ; ${pid_file}"
+			elif [[ "${svc_name}" == "avahi-dnsconfd" ]] ; then
 				pid_file="pid:!/run/avahi-dnsconfd.pid"
 				notify="notify:pid"
 echo "pidfile case 0:  init_path - ${init_path} ; ${pid_file}"
@@ -875,7 +879,7 @@ echo "Adding pidfile=${_pid_file} to ${init_sh}"
 
 					local L=(
 					#	"avahi-daemon"
-						"avahi-dnsconfd"
+					#	"avahi-dnsconfd"
 						"mysql"
 						"mysql-s6"
 						"mysql-supervise"

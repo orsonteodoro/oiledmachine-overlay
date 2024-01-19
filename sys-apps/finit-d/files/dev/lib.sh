@@ -986,6 +986,10 @@ default_start() {
 	if [ -n "${pidfile}" ] ;then
 		args="${args} --pidfile ${pidfile}"
 	fi
+
+	[ "${supervisor}" = "start_stop_daemon" ] && supervisor="start-stop-daemon"
+	[ "${supervisor}" = "supervise_daemon" ] && supervisor="supervise-daemon"
+
 	if [ -z "${supervisor}" ] || [ "${supervisor}" = "start-stop-daemon" ] ; then
 		start_stop_daemon \
 			--start \
@@ -1051,6 +1055,9 @@ default_stop() {
 	if [ -n "${pidfile}" ] ;then
 		args="${args} --pidfile ${pidfile}"
 	fi
+
+	[ "${supervisor}" = "start_stop_daemon" ] && supervisor="start-stop-daemon"
+	[ "${supervisor}" = "supervise_daemon" ] && supervisor="supervise-daemon"
 
 	if [ -z "${supervisor}" ] || [ "${supervisor}" = "start-stop-daemon" ] ; then
 		start_stop_daemon \

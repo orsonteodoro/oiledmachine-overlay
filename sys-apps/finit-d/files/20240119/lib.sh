@@ -986,6 +986,10 @@ default_start() {
 	if [ -n "${pidfile}" ] ;then
 		args="${args} --pidfile ${pidfile}"
 	fi
+
+	[ "${supervisor}" = "start_stop_daemon" ] && supervisor="start-stop-daemon"
+	[ "${supervisor}" = "supervise_daemon" ] && supervisor="supervise-daemon"
+
 	if [ -z "${supervisor}" ] || [ "${supervisor}" = "start-stop-daemon" ] ; then
 		start_stop_daemon \
 			--start \
@@ -1003,7 +1007,33 @@ default_start() {
 			-- \
 			${command_args} ${command_args_foreground}
 	elif [ "${supervisor}" = "s6" ] ; then
-		"${s6_service_path}/run"
+		if [ -e "${s6_service_path}/env" ] ; then
+			. "${s6_service_path}/env"
+		fi
+		if file "${s6_service_path}/run" | grep -q "shell script" ; then
+			local command=$(grep "^exec" "${s6_service_path}/run" | cut -f 2 -d " ")
+			local command_args=$(grep "^exec" "${s6_service_path}/run" | cut -f 3- -d " ")
+			if [ -z "${command}" ] ; then
+				eerror "QA: missing exec"
+				return 1
+			fi
+			start_stop_daemon \
+				--start \
+				--exec "${command}" \
+				${start_stop_daemon_args} \
+				${args} \
+				-- \
+				${command_args}
+		elif file "${s6_service_path}/run" | grep -q "executable" ; then
+			local command="${s6_service_path}/run"
+			start_stop_daemon \
+				--start \
+				--exec "${command}" \
+				${start_stop_daemon_args} \
+				${args} \
+				-- \
+				${command_args}
+		fi
 	fi
 }
 
@@ -1026,6 +1056,9 @@ default_stop() {
 		args="${args} --pidfile ${pidfile}"
 	fi
 
+	[ "${supervisor}" = "start_stop_daemon" ] && supervisor="start-stop-daemon"
+	[ "${supervisor}" = "supervise_daemon" ] && supervisor="supervise-daemon"
+
 	if [ -z "${supervisor}" ] || [ "${supervisor}" = "start-stop-daemon" ] ; then
 		start_stop_daemon \
 			--stop \
@@ -1037,7 +1070,32 @@ default_stop() {
 			${args} \
 			${start_stop_daemon_args}
 	elif [ "${supervisor}" = "s6" ] && [ -e "${s6_service_path}/finish" ] ; then
-		"${s6_service_path}/finish"
+		if [ -e "${s6_service_path}/env" ] ; then
+			. "${s6_service_path}/env"
+		fi
+		if file "${s6_service_path}/run" | grep -q "shell script" ; then
+			local command=$(grep "^exec" "${s6_service_path}/run" | cut -f 2 -d " ")
+			if [ -z "${command}" ] ; then
+				eerror "QA: missing exec"
+				return 1
+			fi
+			start_stop_daemon \
+				--start \
+				--exec "${command}" \
+				${start_stop_daemon_args} \
+				${args} \
+				-- \
+				${command_args}
+		elif file "${s6_service_path}/run" | grep -q "executable" ; then
+			local command="${s6_service_path}/run"
+			start_stop_daemon \
+				--start \
+				--exec "${command}" \
+				${start_stop_daemon_args} \
+				${args} \
+				-- \
+				${command_args}
+		fi
 	fi
 }
 
