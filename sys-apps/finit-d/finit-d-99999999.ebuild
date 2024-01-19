@@ -47,6 +47,9 @@ RDEPEND="
 		app-shells/dash[libedit]
 	)
 "
+BDEPEND="
+	dev-libs/libpcre2
+"
 PDEPEND="
 	sys-apps/finit[dbus?,hook-scripts?,netlink?]
 "
@@ -259,11 +262,11 @@ prune_debug() {
 		is_file_blacklisted_during_pruning && continue
 einfo "Pruning debug in $(basename ${script_path})"
 		sed -i \
-			-e "s|.*ebegin.*|:|g" \
-			-e "s|.*einfo.*|:|g" \
-			-e "s|.*eerror.*|:|g" \
-			-e "s|.*eend.*|:|g" \
-			-e "s|.*ewarn.*|:|g" \
+			-e "/ebegin/d" \
+			-e "/einfo/d" \
+			-e "/eerror/d" \
+			-e "/eend/d" \
+			-e "/ewarn/d" \
 			"${script_path}" \
 			|| die
 	done
@@ -428,6 +431,61 @@ EOF
 	fperms 0750 /usr/bin/start-stop-daemon
 }
 
+heal_pruned() {
+	# This fixes the missing nop in between code blocks.  It's needed when : is pruned.
+
+	# nop is : for non-inline or :; for inline.
+
+	# Add no-op to else case or delete empty else case.
+	local path
+	for path in $(find "${ED}/lib/finit/scripts" -type f) ; do
+		if pcre2grep -q -M "do[[:space:]]+" "${path}" ; then
+	# Missing nop between do and done
+	# while true ; do
+	# done
+	#
+	# or
+	#
+	# for (( i=0 ; i < max ; i++ )) ; do
+	# done
+			einfo "Healing ${path} : do-done case"
+			sed -i -r -e ":a;N;\$!ba s#do[[:space:]]*done#do :;done#g" "${path}" || die
+		fi
+		if pcre2grep -q -M "then[[:space:]]+fi" "${path}" ; then
+	# Missing nop between then and fi
+	# if true ; then
+	# fi
+			einfo "Healing ${path} : then-fi case"
+			sed -i -r -e ":a;N;\$!ba s#then[[:space:]]*fi#then :;fi#g" "${path}" || die
+		fi
+		if pcre2grep -q -M "then[[:space:]]+else" "${path}" ; then
+	# Missing nop between then and else
+	# if true ; then
+	# else
+	# 	true
+	# fi
+			einfo "Healing ${path} : then-else case"
+			sed -i -r -e ":a;N;\$!ba s#then[[:space:]]*else#then :;else#g" "${path}" || die
+		fi
+		if pcre2grep -q -M "else[[:space:]]+fi" "${path}" ; then
+	# Missing nop between else and fi
+	# if true ; then
+	# 	true
+	# else
+	# fi
+			einfo "Healing ${path} : else-fi case"
+			sed -i -r -e ":a;N;\$!ba s#else[[:space:]]*fi#else :;fi#g" "${path}" || die
+		fi
+		if pcre2grep -q -M "\{[[:space:]]+\}" "${path}" ; then
+	# Missing nop between { and }
+	# dummy() {
+	# }
+			einfo "Healing ${path} : {} case"
+			sed -i -r -e ":a;N;\$!ba s#\{[[:space:]]*\}#\{ :;\}#g" "${path}" || die
+		fi
+	done
+}
+
 src_install() {
 	local PKGS=( $(cat "${WORKDIR}/pkgs.txt") )
 	local pkg
@@ -494,6 +552,7 @@ src_install() {
 	if [[ "${FINIT_MINIFY}" == "1" ]] ; then
 		minify
 	fi
+	heal_pruned
 }
 
 pkg_postinst() {

@@ -247,13 +247,13 @@ if [[ "${MAINTAINER_MODE}" == 1 ]] ; then
 			fn=$(echo "${fn}" | sed -r -e "s|^initd\.||g")
 
 			if [[ "${fn}" =~ "iprinit" ]] ; then
-				:;
+				:
 			elif [[ "${fn}" =~ "htbinit" ]] ; then
-				:;
+				:
 			elif [[ "${fn}" =~ "cbqinit" ]] ; then
-				:;
+				:
 			elif [[ "${fn}" =~ "vboxinit" ]] ; then
-				:;
+				:
 			elif [[ "${fn}" =~ "init" ]] ; then
 				echo "${init_path} needs a case.  fn = ${fn}"
 				exit 1
@@ -761,7 +761,7 @@ echo "[*warn*] pid_file=${pid_file} for ${svc_name} should not be a variable"
 			fi
 
 			if [[ "${svc_name}" =~ "vsftpd" ]] ; then
-				:;
+				:
 			elif [[ "${svc_name}" =~ "openvpn" ]] ; then
 				local _pid_file=$(echo "${pid_file}" | sed -r -e 's|pid:!?||g')
 				local _pid_file_instanced=$(echo "${pid_file_instanced}" | sed -r -e 's|pid:!?||g')
@@ -1152,17 +1152,17 @@ fi
 
 gen_systemd_wrapper() {
 	mkdir -p "${SCRIPTS_PATH}/${c}/${pn}"
-	[[ -z "${exec_start_pres}" ]] && exec_start_pres=":;"
-	[[ -z "${exec_starts}" ]] && exec_starts=":;"
-	[[ -z "${exec_start_posts}" ]] && exec_start_posts=":;"
-	[[ -z "${exec_stop_pres}" ]] && exec_stop_pres=":;"
+	[[ -z "${exec_start_pres}" ]] && exec_start_pres=":"
+	[[ -z "${exec_starts}" ]] && exec_starts=":"
+	[[ -z "${exec_start_posts}" ]] && exec_start_posts=":"
+	[[ -z "${exec_stop_pres}" ]] && exec_stop_pres=":"
 	local has_exec_stops=1
 	if [[ -z "${exec_stops}" ]] ; then
-		exec_stops=":;"
+		exec_stops=":"
 		has_exec_stops=0
 	fi
-	[[ -z "${exec_stop_posts}" ]] && exec_stop_posts=":;"
-	[[ -z "${exec_reloads}" ]] && exec_reloads=":;"
+	[[ -z "${exec_stop_posts}" ]] && exec_stop_posts=":"
+	[[ -z "${exec_reloads}" ]] && exec_reloads=":"
 	local exec_start_exe=""
 	if [[ -n "${exec_start}" ]] ; then
 		exec_start_exe=$(basename $(echo "${exec_start}" | cut -f 1 -d " "))
@@ -1180,7 +1180,7 @@ gen_systemd_wrapper() {
 		if echo "${cpu_affinity}" | grep -q " " ; then
 			cpu_affinity=$(echo "${cpu_affinity}" | tr " " ",")
 		elif echo "${cpu_affinity}" | grep -q "," ; then
-			:;
+			:
 		fi
 	fi
 
@@ -1399,10 +1399,10 @@ start_scheduler() {
 	fi
 	[ -z "\${MAINPID}" ] && return 0
 	if [ -n "\${numa_mask}" ] ; then
-		:;
+		:
 	fi
 	if [ -n "\${numa_policy}" ] ; then
-		:;
+		:
 	fi
 }
 
@@ -1553,7 +1553,7 @@ stop() {
 	elif [ "\${kill_mode}" = "process" ] ; then
 		_stop_process
 	elif [ "\${kill_mode}" = "none" ] ; then
-		:;
+		:
 	fi
 
 	is_cgroup_unit_alive || return 0
