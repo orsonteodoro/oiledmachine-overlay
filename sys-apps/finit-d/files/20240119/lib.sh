@@ -1010,6 +1010,18 @@ default_start() {
 default_stop() {
 	local args=""
 
+	if [ -n "${command}" ] ; then
+		:
+	elif [ -n "${pidfile}" ] ; then
+		:
+	else
+		return 0
+	fi
+
+	if [ -n "${command}" ] ;then
+		args="${args} --exec ${command}"
+	fi
+
 	if [ -n "${pidfile}" ] ;then
 		args="${args} --pidfile ${pidfile}"
 	fi
@@ -1017,16 +1029,14 @@ default_stop() {
 	if [ -z "${supervisor}" ] || [ "${supervisor}" = "start-stop-daemon" ] ; then
 		start_stop_daemon \
 			--stop \
-			--exec "${command}" \
-			${start_stop_daemon_args} \
-			${args}
+			${args} \
+			${start_stop_daemon_args}
 	elif [ "${supervisor}" = "supervise-daemon" ] ; then
 		supervise_daemon \
 			--stop \
-			--exec "${command}" \
-			${start_stop_daemon_args} \
-			${args}
-	elif [ "${supervisor}" = "s6" ] ; then
+			${args} \
+			${start_stop_daemon_args}
+	elif [ "${supervisor}" = "s6" ] && [ -e "${s6_service_path}/finish" ] ; then
 		"${s6_service_path}/finish"
 	fi
 }
