@@ -31,7 +31,7 @@ IUSE+="
 	+dbus
 	hook-scripts
 	netlink
-	r2
+	r3
 "
 REQUIRED_USE="
 	?? (
@@ -440,7 +440,7 @@ heal_pruned() {
 	# Add no-op to else case or delete empty else case.
 	local path
 	for path in $(find "${ED}/lib/finit/scripts" -type f) ; do
-		if pcre2grep -q -M "do[[:space:]]+" "${path}" ; then
+		if pcre2grep -q -M "do[[:space:]]+done" "${path}" ; then
 	# Missing nop between do and done
 	# while true ; do
 	# done
