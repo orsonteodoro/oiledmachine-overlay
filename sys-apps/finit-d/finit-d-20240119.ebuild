@@ -629,16 +629,6 @@ ewarn "The /etc/finit.d/enabled/metalog.conf has been disabled to avoid"
 ewarn "indefinite pause on misconfigured metalog."
 ewarn
 	fi
-	if has_version "net-misc/netifrc" ; then
-einfo
-einfo "For <iface> do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@<iface>.conf"
-einfo "For eth0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@eth0.conf"
-einfo "For wlan0 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@wlan0.conf"
-einfo "For wlp0s18f2u2 do:  ln -s /etc/finit.d/enabled/net@.conf /etc/finit.d/enabled/net@wlp0s18f2u2.conf"
-einfo
-einfo "For possible <iface>, see /sys/class/net or ifconfig."
-einfo
-	fi
 	if has_version "dev-db/mysql-init-scripts" ; then
 ewarn
 ewarn "You must manually disable some of the mysql-init-scripts in"
