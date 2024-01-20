@@ -84,6 +84,20 @@ ewarn "Place the following in /etc/portage/package.env:"
 ewarn
 ewarn "  ${CATEGORY}/${PN} finit-d.conf"
 ewarn
+	if [[ "${FINIT_SCRIPT_SOURCE}" =~ "openrc" && "${FINIT_SCRIPT_SOURCE}" =~ "systemd" ]] ; then
+ewarn
+ewarn "You are enabling both openrc and systemd for FINIT_SCRIPT_SOURCE."
+ewarn "The dependency trees in the init files may be incomplete if configs"
+ewarn "clobber."
+ewarn
+	fi
+	if [[ "${FINIT_SCRIPT_SOURCE}" =~ "systemd" ]] ; then
+ewarn
+ewarn "The systemd FINIT_SCRIPT_SOURCE coverage is less than"
+ewarn "FINIT_SCRIPT_SOURCE.  For less bugs, use openrc for FINIT_SCRIPT_SOURCE"
+ewarn "instead."
+ewarn
+	fi
 }
 
 src_unpack() {
