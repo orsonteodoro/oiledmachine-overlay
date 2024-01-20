@@ -25,7 +25,7 @@ RDEPEND="
 pkg_setup() {
 	if use tmpfiles ; then
 ewarn
-ewarn "Using tmpfile USE flag may add realtime irreversable industrial"
+ewarn "Using the tmpfile USE flag may add realtime irreversable industrial"
 ewarn "production defects, poor quality music production, disrupt live"
 ewarn "or movie performance, cause gaming loss or irreversable hardcore mode"
 ewarn "character loss if not opt-out."
