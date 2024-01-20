@@ -13,6 +13,9 @@ RDEPEND="
 		systemd? ( sys-apps/systemd )
 		!systemd? ( sys-apps/systemd-utils[tmpfiles?] )
 	)
+	!tmpfiles? (
+		!sys-apps/systemd
+	)
 "
 # system is still fine with tmpfiles off.
 
