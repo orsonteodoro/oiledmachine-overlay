@@ -22,8 +22,9 @@ RDEPEND="
 pkg_setup() {
 	if use tmpfiles ; then
 ewarn
-ewarn "Using tmpfile USE flag will break realtime production, disrupt live"
-ewarn "performance, cause gaming loss if not opt-out."
+ewarn "Using tmpfile USE flag may add realtime industrial production defects,"
+ewarn "poor quality music production, disrupt live performance, cause gaming"
+ewarn "loss if not opt-out."
 ewarn
 ewarn "To opt-out either disable the tmpfiles USE flag or comment out in"
 ewarn "/etc/cron.daily/systemd-tmpfiles-clean"
