@@ -24,7 +24,8 @@ pkg_setup() {
 ewarn
 ewarn "Using tmpfile USE flag may add realtime irreversable industrial"
 ewarn "production defects, poor quality music production, disrupt live"
-ewarn "or movie performance, cause gaming loss if not opt-out."
+ewarn "or movie performance, cause gaming loss or irreversable hardcore mode"
+ewarn "character loss if not opt-out."
 ewarn
 ewarn "To opt-out either disable the tmpfiles USE flag or comment out in"
 ewarn "/etc/cron.daily/systemd-tmpfiles-clean"
