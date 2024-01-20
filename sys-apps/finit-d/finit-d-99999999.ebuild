@@ -589,6 +589,9 @@ src_install() {
 		# Unstuck netifrc's net.$IFACE
 		rm -rf "${ED}/etc/finit.d/enabled/wpa"*
 		rm -rf "${ED}/libexec/finit/hook/mount/all/wpa"*
+
+		rm -rf "${ED}/libexec/finit/hook/mount/all/ip"*"tables"*
+		rm -f "${ED}/etc/finit.d/enabled/ip"*"tables-"*".conf"
 	fi
 
 	if [[ "${FINIT_SCRIPT_SOURCE}" =~ "openrc" || -z "${FINIT_SCRIPT_SOURCE}" ]] ; then
@@ -660,13 +663,13 @@ ewarn
 # openrc conversion:
 #   networkmanager - passed
 #   netifrc (autoconnect) - passed
-#   netifrc (manually connect) - passed
+#   netifrc (manually connect) - passed.  working secure ssl/tls websites.
 #   logger (sysklogd) - passed
 #   tty - passed
 # systemd conversion:
 #   networkmanager - passed
 #   netifrc (autoconnect) - fail
-#   netifrc (manually connect) - passed (requires killall -9 wpa_supplicant)
+#   netifrc (manually connect) - fail.  connects but broken secure ssl/tls websites.
 #   logger (sysklogd) - passed
 #   tty - passed
 #
