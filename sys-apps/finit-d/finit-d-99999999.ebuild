@@ -87,7 +87,7 @@ ewarn
 ewarn
 ewarn "You are enabling both openrc and systemd for FINIT_SCRIPT_SOURCE."
 ewarn "The dependency trees in the init files may be incomplete if configs"
-ewarn "clobber."
+ewarn "clobber.  Only one source should be used."
 ewarn
 	fi
 	if [[ "${FINIT_SCRIPT_SOURCE}" =~ "systemd" ]] ; then
