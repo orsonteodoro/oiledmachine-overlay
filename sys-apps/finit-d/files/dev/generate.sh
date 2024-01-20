@@ -1998,15 +1998,13 @@ convert_systemd() {
 			|| grep -q -E -e "^Requires=.*(network|network-online).target( |$)" "${init_path}" \
 			|| grep -q -E -e "^Wants=.*(network|network-online).target( |$)" "${init_path}" \
 			|| [[ "${svc_name}" == "avahi-daemon" ]] \
-			|| [[ "${svc_name}" == "avahi-daemon-reload-paused" ]] \
-			|| [[ "${svc_name}" == "avahi-daemon-reload-waiting" ]] \
 			|| [[ "${svc_name}" == "avahi-dnsconfd" ]] \
 			|| [[ "${svc_name}" == "bitlbee" ]] \
-			|| [[ "${svc_name}" == "dbus-org.freedesktop.Avahi" ]] \
 			|| [[ "${svc_name}" == "geoclue" ]] \
 			|| [[ "${svc_name}" == "ip6tables-store" ]] \
 			|| [[ "${svc_name}" == "iptables-store" ]] \
 			|| [[ "${svc_name}" == "net@" ]] \
+			|| [[ "${svc_name}" == "NetworkManager-dispatcher" ]] \
 			|| [[ "${svc_name}" == "ntpd" ]] \
 			|| [[ "${svc_name}" == "proftpd" ]] \
 		; then
