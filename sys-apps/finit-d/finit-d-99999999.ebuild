@@ -322,6 +322,11 @@ eerror "You need to enable the dbus USE flag."
 		# Broken
 		sed -i -e "s|--adaptive||g" "scripts/sys-power/thermald/thermald.sh" || die
 	fi
+
+	if has_version "app-admin/sysklogd" ; then
+		# Avoid missing folder /run/systemd/journal/syslog error
+		sed -i -e "s|-p /run/systemd/journal/syslog||g" "scripts/app-admin/sysklogd/syslogd.sh" || die
+	fi
 }
 
 symlink_hooks() {
@@ -557,9 +562,22 @@ src_install() {
 	# Broken default settings.  Requires METALOG_OPTS+=" -N" for some kernels.
 	rm -f "${ED}/etc/finit.d/enabled/metalog.conf"
 
-	# Causes indefinite pause
-	rm -f "${ED}/etc/finit.d/enabled/iptables.conf"
-	rm -f "${ED}/etc/finit.d/enabled/ip6tables.conf"
+	if [[ "${FINIT_SCRIPT_SOURCE}" =~ "systemd" ]] ; then
+		# Temporary disable, Causes tty reset if not configured properly
+		rm -f "${ED}/etc/finit.d/enabled/greetd.conf"
+
+		# Temporary disable, Prints error on screen
+		#rm -f "${ED}/etc/finit.d/enabled/syslogd.conf"
+
+		# Compiles stuff in the background
+		rm -rf "${ED}/etc/finit.d/enabled/stap-exporter.conf"
+	fi
+
+	if [[ "${FINIT_SCRIPT_SOURCE}" =~ "openrc" || -z "${FINIT_SCRIPT_SOURCE}" ]] ; then
+		# Causes indefinite pause
+		rm -f "${ED}/etc/finit.d/enabled/iptables.conf"
+		rm -f "${ED}/etc/finit.d/enabled/ip6tables.conf"
+	fi
 
 	gen_start_start_daemon_wrapper
 
@@ -570,6 +588,7 @@ src_install() {
 		minify
 	fi
 	heal_pruned
+
 }
 
 pkg_postinst() {
@@ -625,9 +644,15 @@ ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# networkmanager - passed
-# netifrc (autoconnect) - passed
-# netifrc (manually connect) - passed
-# logger (sysklogd) - passed
-# tty - passed
-
+# openrc conversion:
+#   networkmanager - passed
+#   netifrc (autoconnect) - passed
+#   netifrc (manually connect) - passed
+#   logger (sysklogd) - passed
+#   tty - passed
+# systemd conversion:
+#   networkmanager - passed
+#   netifrc (autoconnect) - untested
+#   logger (sysklogd) - passed
+#   tty - passed
+#
