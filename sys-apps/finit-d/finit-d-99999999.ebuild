@@ -585,6 +585,10 @@ src_install() {
 
 		# Compiles stuff in the background
 		rm -rf "${ED}/etc/finit.d/enabled/stap-exporter.conf"
+
+		# Unstuck netifrc's net.$IFACE
+		rm -rf "${ED}/etc/finit.d/enabled/wpa"*
+		rm -rf "${ED}/libexec/finit/hook/mount/all/wpa"*
 	fi
 
 	if [[ "${FINIT_SCRIPT_SOURCE}" =~ "openrc" || -z "${FINIT_SCRIPT_SOURCE}" ]] ; then
@@ -645,6 +649,11 @@ ewarn
 ewarn "Failed [S] should be moved to runlevels [12345] for rescue, [2345] for"
 ewarn "non-network, or [345] for network or deleted from /etc/finit.d/enabled."
 ewarn
+	if has_version "net-misc/netifrc" && [[ "${FINIT_SCRIPT_SOURCE}" =~ "systemd" ]] ; then
+ewarn
+ewarn "You must \`killall -9 wpa_supplicant\` before using netifrc's net.* instances."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
@@ -656,7 +665,8 @@ ewarn
 #   tty - passed
 # systemd conversion:
 #   networkmanager - passed
-#   netifrc (autoconnect) - untested
+#   netifrc (autoconnect) - fail
+#   netifrc (manually connect) - passed (requires killall -9 wpa_supplicant)
 #   logger (sysklogd) - passed
 #   tty - passed
 #
