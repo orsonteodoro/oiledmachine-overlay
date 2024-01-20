@@ -2263,7 +2263,7 @@ convert_systemd() {
 				svc_type_start="task"
 				service_aliases["${svc_name}"]="${svc_name}"
 				service_types["${svc_name}${instance}"]="${svc_type_start}"
-				echo "${svc_type} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${svc_name} ${instance} /lib/finit/scripts/${c}/${pn}/${svc_name}${instance_script_suffix}.sh \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			else
 				if [[ -z "${pid_file}" ]] ; then
 					#echo "[warn] Missing pidfile for ${svc_name}"

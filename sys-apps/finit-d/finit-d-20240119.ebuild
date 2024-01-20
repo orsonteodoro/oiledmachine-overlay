@@ -31,7 +31,7 @@ IUSE+="
 	+dbus
 	hook-scripts
 	netlink
-	r7
+	r8
 "
 REQUIRED_USE="
 	?? (

@@ -434,7 +434,6 @@ check_alive_by_name() {
 	fi
 }
 
-
 start_stop_daemon() {
 	# systemd
 	local ambient_capabilities=""
@@ -763,7 +762,7 @@ start_stop_daemon() {
 
 		if [ -n "$signal" ] ; then
 			_signal="${signal}"
-			_signal=$(echo "${_signal}" | sed -e "s|^SIG||g")
+			_signal="${_signal#*G}"
 		else
 			_signal="TERM"
 		fi
@@ -802,7 +801,7 @@ start_stop_daemon() {
 			local time_finished
 
 			sig="${pair1%/*}"
-			sig=$(echo "${sig}" | sed -e "s|^SIG||g")
+			sig="${sig#*G}"
 			duration=${pair1#*/}
 			now=$(date +"%s")
 			time_final=$(( ${now} + ${duration} ))
@@ -814,7 +813,7 @@ start_stop_daemon() {
 
 			if [ -n "${pair2}" ] ; then
 				sig="${pair2%/*}"
-				sig=$(echo "${sig}" | sed -e "s|^SIG||g")
+				sig="${sig#*G}"
 				duration=${pair2#*/}
 				now=$(date +"%s")
 				time_final=$(( ${now} + ${duration} ))
