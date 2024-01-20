@@ -2005,6 +2005,8 @@ convert_systemd() {
 			|| [[ "${svc_name}" == "iptables-store" ]] \
 			|| [[ "${svc_name}" == "net@" ]] \
 			|| [[ "${svc_name}" == "NetworkManager-dispatcher" ]] \
+			|| [[ "${svc_name}" == "nm-cloud-setup" ]] \
+			|| [[ "${svc_name}" == "nm-priv-helper" ]] \
 			|| [[ "${svc_name}" == "ntpd" ]] \
 			|| [[ "${svc_name}" == "proftpd" ]] \
 		; then
