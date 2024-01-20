@@ -1474,13 +1474,14 @@ _stop_control_group() {
 	local sig=""
 	if [ -n "\${kill_signal}" ] ; then
 		sig="\${kill_signal}"
+		sig=\$("\${sig#*G}")
 	else
-		sig="SIGTERM"
+		sig="TERM"
 	fi
 	local x
 	for x in \${cgroup_unit_pids} ; do
 		ps \${x} >/dev/null || continue
-		kill -s \${sig} \${x}
+		kill -\${sig} \${x}
 	done
 }
 
@@ -1488,15 +1489,16 @@ _stop_mixed() {
 	local sig=""
 	if [ -n "\${kill_signal}" ] ; then
 		sig="\${kill_signal}"
+		sig=\$("\${sig#*G}")
 	else
-		sig="SIGTERM"
+		sig="TERM"
 	fi
-	kill -s \${sig} \${MAINPID}
+	kill -\${sig} \${MAINPID}
 	local x
 	for x in \${cgroup_unit_pids} ; do
 		[ "\${x}" = \${MAINPID} ] && continue
 		ps \${x} >/dev/null || continue
-		kill -s SIGKILL \${x}
+		kill -KILL \${x}
 	done
 }
 
@@ -1504,17 +1506,18 @@ _stop_process() {
 	local sig=""
 	if [ -n "\${kill_signal}" ] ; then
 		sig="\${kill_signal}"
+		sig=\$("\${sig#*G}")
 	else
-		sig="SIGTERM"
+		sig="TERM"
 	fi
-	kill -s \${sig} \${MAINPID}
+	kill -\${sig} \${MAINPID}
 }
 
 _stop_sighup() {
 	local x
 	for x in \${cgroup_unit_pids} ; do
 		ps \${x} >/dev/null || continue
-		kill -s SIGHUP \${x}
+		kill -HUP \${x}
 	done
 }
 
@@ -1522,14 +1525,15 @@ _stop_final_sigkill() {
 	local sig=""
 	if [ -n "\${final_kill_signal}" ] ; then
 		sig="\${final_kill_signal}"
+		sig=\$("\${sig#*G}")
 	else
-		sig="SIGKILL"
+		sig="KILL"
 	fi
 
 	local x
 	for x in \${cgroup_unit_pids} ; do
 		ps \${x} >/dev/null || continue
-		kill -s \${sig} \${x}
+		kill -\${sig} \${x}
 	done
 }
 
