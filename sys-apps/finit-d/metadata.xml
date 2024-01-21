@@ -12,42 +12,43 @@
 
   Build time environment variables for per-package env:
 
-  FINIT_BLACKLIST_PKGS - Space separated category/name to not install.
+    FINIT_BLACKLIST_PKGS - Space separated category/name to not install.
 
-  FINIT_BLACKLIST_SVCNAMES - Space separated service names to not install.
+    FINIT_BLACKLIST_SVCNAMES - Space separated service names to not install.
 
-  FINIT_BLACKLISTED_FOR_PRUNING - Space separated list of basenames to skip for
-  pruning or minification.
+    FINIT_BLACKLISTED_FOR_PRUNING - Space separated list of basenames to skip
+    for pruning or minification.
 
-  FINIT_COND_NETWORK - Use a network expression as the event to trigger network
-  is up.
+    FINIT_COND_NETWORK - Use a network expression as the event to trigger
+    network is up.
 
-  FINIT_CUSTOM_OVERLAY_LIST - Space separated list of absolute paths to the repo
-  folder containing categories.
+    FINIT_CUSTOM_OVERLAY_LIST - Space separated list of absolute paths to the
+    repo folder containing categories. (FOR PACKAGERS ONLY)
 
-  FINIT_MINIFY - Remove comments, whitespace from *.sh files to avoid
-  interpreter parse penalties or reduce load latency.
-  Valid values:  1 = minify, 0 = don't minify, unset = don't minfi
+    FINIT_MINIFY - Remove comments, whitespace from *.sh files to avoid
+    interpreter parse penalties or reduce load latency.
+    Valid values:  1 = minify, 0 = don't minify, unset = don't minfi
 
-  FINIT_PID_OVERRIDE - A space separated key-value pairs joined with : with the
-  key either the the instance or service and the value the pid path.
+    FINIT_PID_OVERRIDE - A space separated key-value pairs joined with : with
+    the key either the the instance or service and the value the pid path.
 
-  FINIT_PRUNE_DEBUG_MESSAGES - Remove debug messages (einfo, ewarn, ebegin, eend, ...)
-  from *.sh files to speed up boot.
-  Valid values:  1 = prune, 0 = don't prune, unset = don't prune
+    FINIT_PRUNE_DEBUG_MESSAGES - Remove debug messages (einfo, ewarn, ebegin,
+    eend, ...) from *.sh files to speed up boot.
+    Valid values:  1 = prune, 0 = don't prune, unset = don't prune
 
-  FINIT_RESPAWNABLE - Space separated list of service names to allow to auto
-  restart.  Otherwise, the service must be manually restarted if it is
-  necessary.  For realtime or music production, it is best to leave this unset.
-  For pro-gaming configurations, do not put any heavy programs.
+    FINIT_RESPAWNABLE - Space separated list of service names to allow to auto
+    restart.  Otherwise, the service must be manually restarted if it is
+    necessary.  For realtime or music production, it is best to leave this
+    unset.  For pro-gaming configurations, do not put any heavy programs.
 
-  FINIT_SOFT_DEPS_MANDATORY - Make soft service dependencies as hard service
-  dependencies.
-  Valid values:  0 (mark as optional, default), 1 (mark as required)
+    FINIT_SOFT_DEPS_MANDATORY - Make soft service dependencies as hard service
+    dependencies.
+    Valid values:  0 (mark as optional, default), 1 (mark as required)
 
-  FINIT_SCRIPT_SOURCE - Which init system to use for sourcing scripts.
-  Only one allowed.
-  Valid values:  openrc (default), systemd
+    FINIT_SCRIPT_SOURCE - Which init system to use for sourcing scripts.
+    Only one allowed.
+    Valid values:  openrc (default), systemd
+
 
   Valid values:
 
@@ -56,6 +57,7 @@
     net/<IFNAME>/up         ; requires sys-apps/finit[netlink]
     net/<IFNAME>/running    ; requires sys-apps/finit[netlink]
     hook/net/up             ; requires sys-apps/finit[hook-scripts]
+
 
   Examples for /etc/portage/env/finit-d.conf:
 
@@ -79,16 +81,17 @@
 
     sys-apps/finit-d finit-d.conf
 
+
   /lib/finit/scripts/lib/lib.sh globals:
 
-  LOGGER_METHOD - 0 = stdout, 1 = sysklogd, 2 = /var/log/finit.log
-  MAINTENANCE_MODE - 1 = enable logging, 0 = disable logging
+    LOGGER_METHOD - 0 = stdout, 1 = sysklogd, 2 = /var/log/finit.log
+    MAINTENANCE_MODE - 1 = enable logging, 0 = disable logging
 
 
   Kernel command line:
   
-  finit.systemd=debug - enable logging for systemd converted config/scripts
-  finit.openrc=debug - enable logging for openrc converted config/scripts
+    finit.systemd=debug - enable logging for systemd converted config/scripts
+    finit.openrc=debug - enable logging for openrc converted config/scripts
 
   -->
   <use>
