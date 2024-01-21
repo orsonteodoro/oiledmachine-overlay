@@ -16,19 +16,18 @@
 
   FINIT_BLACKLIST_SVCNAMES - Space separated service names to not install.
 
+  FINIT_BLACKLISTED_FOR_PRUNING - Space separated list of basenames to skip for
+  pruning or minification.
+
   FINIT_COND_NETWORK - Use a network expression as the event to trigger network
   is up.
 
   FINIT_CUSTOM_OVERLAY_LIST - Space separated list of absolute paths to the repo
   folder containing categories.
 
-  FINIT_SCRIPT_SOURCE - Which init system to use for sourcing scripts.
-  Only one allowed.
-  Valid values:  openrc (default), systemd
-
-  FINIT_SOFT_DEPS_MANDATORY - Make soft service dependencies as hard service
-  dependencies.
-  Valid values:  0 (mark as optional, default), 1 (mark as required)
+  FINIT_MINIFY - Remove comments, whitespace from *.sh files to avoid
+  interpreter parse penalties or reduce load latency.
+  Valid values:  1 = minify, 0 = don't minify, unset = don't minfi
 
   FINIT_PID_OVERRIDE - A space separated key-value pairs joined with : with the
   key either the the instance or service and the value the pid path.
@@ -37,17 +36,18 @@
   from *.sh files to speed up boot.
   Valid values:  1 = prune, 0 = don't prune, unset = don't prune
 
-  FINIT_MINIFY - Remove comments, whitespace from *.sh files to avoid
-  interpreter parse penalties or reduce load latency.
-  Valid values:  1 = minify, 0 = don't minify, unset = don't minfi
-
-  FINIT_BLACKLISTED_FOR_PRUNING - Space separated list of basenames to skip for
-  pruning or minification.
-
   FINIT_RESPAWNABLE - Space separated list of service names to allow to auto
   restart.  Otherwise, the service must be manually restarted if it is
   necessary.  For realtime or music production, it is best to leave this unset.
   For pro-gaming configurations, do not put any heavy programs.
+
+  FINIT_SOFT_DEPS_MANDATORY - Make soft service dependencies as hard service
+  dependencies.
+  Valid values:  0 (mark as optional, default), 1 (mark as required)
+
+  FINIT_SCRIPT_SOURCE - Which init system to use for sourcing scripts.
+  Only one allowed.
+  Valid values:  openrc (default), systemd
 
   Valid values:
 
@@ -64,7 +64,6 @@
     FINIT_COND_NETWORK="net/lo/running"
     FINIT_COND_NETWORK="net/wlan0/running"
     FINIT_CUSTOM_OVERLAY_LIST="/usr/portage /var/db/repos/guru"
-    FINIT_SCRIPT_SOURCE="openrc"
     FINIT_PID_OVERRIDE="apache2:/run/domain.pid"
     FINIT_PID_OVERRIDE="openvpn@:/run/openvpn/openvpn.pid"
     FINIT_PID_OVERRIDE="openvpn@service1:/run/openvpn/service1.pid"
@@ -74,6 +73,7 @@
     FINIT_RESPAWNABLE="apache2 mysql ntpd"                # LAMP server
     FINIT_RESPAWNABLE="actkbd cupsd ntpd NetworkManager"  # Laptop/desktop (systemd converted)
     FINIT_RESPAWNABLE="actkbd cupsd ntpd net@"            # Laptop/desktop (openrc converted with netifrc)
+    FINIT_SCRIPT_SOURCE="openrc"
 
   An example /etc/portage/package.env:
 
