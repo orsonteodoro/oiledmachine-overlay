@@ -7,7 +7,7 @@ EAPI=8
 SRC_URI=""
 S="${WORKDIR}"
 
-DESCRIPTION="finit.d/*.conf files for the finit init system"
+DESCRIPTION="finit.d/*.conf files for the Finit init system"
 HOMEPAGE="
 https://troglobit.com/projects/finit/
 https://github.com/troglobit/finit
@@ -57,7 +57,7 @@ PDEPEND="
 pkg_setup() {
 	if [[ "${PV}" =~ "99999999" ]] ; then
 ewarn
-ewarn "This version of the ebuild is currently being converted to an openrc -> finit init converter and considered pre alpha."
+ewarn "This version of the ebuild is currently being converted to an OpenRC -> Finit init converter and considered pre alpha."
 ewarn "This will increase the package support init files in a less biased way"
 ewarn "Do not use this ebuild this time.  Use the snapshot instead."
 ewarn

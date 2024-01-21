@@ -12,22 +12,22 @@
 
 
   This package converts installed systemd or OpenRC init scripts/configs to
-  finit .conf files or scripts.
+  Finit .conf files or scripts.
 
 
   Features:
 
     - Basic init service dependency tree preservation
     - Blacklisting services/packages
-    - Init script minification and debug call elimination
-    - DASH shell first policy
+    - Init script minification* and debug call elimination*
+    - DASH shell* first policy
     - Early hook support for file systems and pre-network
     - Preserved checkconfig (for avoiding bad config downtime)
     - Preserved extra commands
-    - Preserved I/O priority and priority classes
-    - Preserved nice
-    - Preserved realtime priority classes
-    - Preserved ulimits
+    - Preserved I/O priority* and priority classes
+    - Preserved nice* (CPU scheduler priority for SCHED_OTHER)
+    - Preserved realtime* priority classes
+    - Preserved ulimits*
     - Proper sourcing of dynamically generated/patched init scripts.
     - Proper sourcing of versioned init scripts.
     - Utilization of event based conditionals
@@ -39,11 +39,14 @@
 
   TODO / ON-ICE:
 
-    - Preserved capabilities (aka root/network privilege management)
-    - Preserved chroot (aka file system sandboxing) [start is complete, but
+    - Preserved capabilities* (aka root/network privilege management)
+    - Preserved chroot* (aka file system sandboxing) [start is complete, but
       pre-start/post-start may need to be re-evaluated as they are assumed
       in host context.]
     - netifrc support from systemd converted init.
+
+  * Not a native feature of Finit.
+
 
   Build time environment variables for per-package env:
 
@@ -135,7 +138,7 @@
       [For people that prefer sh (Bash) as the systemwide default but DASH for init.]
     </flag>
     <flag name="dbus">
-      Force D-Bus in finit ebuild.
+      Force D-Bus in the Finit ebuild.
     </flag>
     <flag name="hook-scripts">
       Prefer hook/net/up for the network up event.
