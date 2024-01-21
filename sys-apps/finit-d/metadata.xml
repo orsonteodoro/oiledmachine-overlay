@@ -12,7 +12,7 @@
 
 
   This package converts installed systemd or OpenRC init scripts/configs to
-  finit .conf files or script.
+  finit .conf files or scripts.
 
 
   Features:
