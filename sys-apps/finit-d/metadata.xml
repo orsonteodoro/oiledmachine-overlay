@@ -45,7 +45,9 @@
   pruning or minification.
 
   FINIT_RESPAWNABLE - Space separated list of service names to allow to auto
-  restart.  Otherwise, the service must be manually restarted.
+  restart.  Otherwise, the service must be manually restarted.  For realtime or
+  music production, it is best to leave this unset.  For pro gaming
+  configurations, do not put any heavy programs.
 
   Valid values:
 
