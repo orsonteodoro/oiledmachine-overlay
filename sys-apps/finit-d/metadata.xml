@@ -17,22 +17,23 @@
 
   Features:
 
+    - Automated conversion
     - Basic init service dependency tree preservation
     - Blacklisting services/packages
+    - Correction to inits
     - Init script minification* and debug call elimination*
     - DASH shell* first policy
     - Early hook support for file systems and pre-network
     - Preserved checkconfig (for avoiding bad config downtime)
     - Preserved extra commands
     - Preserved I/O priority* and priority classes
-    - Preserved nice* (CPU scheduler priority for SCHED_OTHER)
+    - Preserved nice* (for non-realtime CPU scheduler priority)
     - Preserved realtime* priority classes
-    - Preserved ulimits
+    - Preserved ulimits (for resource limits)
     - Proper sourcing of dynamically generated/patched init scripts.
     - Proper sourcing of versioned init scripts.
     - Utilization of event based conditionals
     - Utilization of parallel tasks
-    - Correction to inits
 
   Work In Progress (WIP)
 
@@ -40,10 +41,10 @@
 
   TODO / ON-ICE:
 
-    - Preserved capabilities* (aka root/network privilege management)
-    - Preserved chroot* (aka file system sandboxing) [start is complete, but
+    - Preserved capabilities* (for root/network privilege management)
+    - Preserved chroot* (for file system sandboxing.  start is complete, but
       pre-start/post-start may need to be re-evaluated as they are assumed
-      in host context.]
+      in host context.)
     - netifrc support from systemd converted init.
 
   * Not a native feature of Finit.
