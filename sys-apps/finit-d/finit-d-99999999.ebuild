@@ -97,6 +97,13 @@ ewarn "FINIT_SCRIPT_SOURCE.  For less bugs, use openrc for FINIT_SCRIPT_SOURCE"
 ewarn "instead."
 ewarn
 	fi
+	if [[ -z "${FINIT_RESPAWNABLE}" ]] ; then
+ewarn
+ewarn "The FINIT_RESPAWNABLE flag is empty.  It should contain a list of"
+ewarn "essential services needed for your use case.  See metadata.xml"
+ewarn "for details."
+ewarn
+	fi
 }
 
 src_unpack() {

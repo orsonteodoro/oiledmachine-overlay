@@ -31,7 +31,6 @@ IUSE+="
 	+dbus
 	hook-scripts
 	netlink
-	r8
 "
 REQUIRED_USE="
 	?? (
@@ -96,6 +95,13 @@ ewarn
 ewarn "The systemd FINIT_SCRIPT_SOURCE coverage is less than"
 ewarn "FINIT_SCRIPT_SOURCE.  For less bugs, use openrc for FINIT_SCRIPT_SOURCE"
 ewarn "instead."
+ewarn
+	fi
+	if [[ -z "${FINIT_RESPAWNABLE}" ]] ; then
+ewarn
+ewarn "The FINIT_RESPAWNABLE flag is empty.  It should contain a list of"
+ewarn "essential services needed for your use case.  See metadata.xml"
+ewarn "for details."
 ewarn
 	fi
 }
@@ -586,6 +592,13 @@ src_install() {
 
 		# Compiles stuff in the background
 		rm -rf "${ED}/etc/finit.d/enabled/stap-exporter.conf"
+
+		# Unstuck netifrc's net.$IFACE
+		rm -rf "${ED}/etc/finit.d/enabled/wpa"*
+		rm -rf "${ED}/libexec/finit/hook/mount/all/wpa"*
+
+		rm -rf "${ED}/libexec/finit/hook/mount/all/ip"*"tables"*
+		rm -f "${ED}/etc/finit.d/enabled/ip"*"tables-"*".conf"
 	fi
 
 	if [[ "${FINIT_SCRIPT_SOURCE}" =~ "openrc" || -z "${FINIT_SCRIPT_SOURCE}" ]] ; then
@@ -646,18 +659,24 @@ ewarn
 ewarn "Failed [S] should be moved to runlevels [12345] for rescue, [2345] for"
 ewarn "non-network, or [345] for network or deleted from /etc/finit.d/enabled."
 ewarn
+	if has_version "net-misc/netifrc" && [[ "${FINIT_SCRIPT_SOURCE}" =~ "systemd" ]] ; then
+ewarn
+ewarn "You must \`killall -9 wpa_supplicant\` before using netifrc's net.* instances."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # openrc conversion:
 #   networkmanager - passed
 #   netifrc (autoconnect) - passed
-#   netifrc (manually connect) - passed
+#   netifrc (manually connect) - passed.  working secure ssl/tls websites.
 #   logger (sysklogd) - passed
 #   tty - passed
 # systemd conversion:
 #   networkmanager - passed
-#   netifrc (autoconnect) - untested
+#   netifrc (autoconnect) - fail
+#   netifrc (manually connect) - fail.  connects but broken secure ssl/tls websites.
 #   logger (sysklogd) - passed
 #   tty - passed
 #

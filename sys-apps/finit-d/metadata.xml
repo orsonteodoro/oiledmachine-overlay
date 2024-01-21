@@ -44,6 +44,9 @@
   FINIT_BLACKLISTED_FOR_PRUNING - Space separated list of basenames to skip for
   pruning or minification.
 
+  FINIT_RESPAWNABLE - Space separated list of service names to allow to auto
+  restart.  Otherwise, the service must be manually restarted.
+
   Valid values:
 
     net/route/default       ; requires sys-apps/finit[netlink], not recommended for wireless
@@ -52,7 +55,7 @@
     net/<IFNAME>/running    ; requires sys-apps/finit[netlink]
     hook/net/up             ; requires sys-apps/finit[hook-scripts]
 
-  Examples:
+  Examples for /etc/portage/env/finit-d.conf:
 
     FINIT_BLACKLIST_PKGS="net-misc/dropbear net-vpn/openvpn"
     FINIT_BLACKLIST_SVCNAMES="varnishlog"
@@ -66,9 +69,15 @@
     FINIT_PID_OVERRIDE="openvpn@service2:/run/openvpn/service2.pid openvpn@service3:/run/service3.pid"
     FINIT_PRUNE_DEBUG_MESSAGES=1
     FINIT_MINIFY=1
+    FINIT_RESPAWNABLE="apache2 mysql ntpd"                # LAMP server
+    FINIT_RESPAWNABLE="actkbd cupsd ntpd NetworkManager"  # Laptop/desktop (systemd converted)
+    FINIT_RESPAWNABLE="actkbd cupsd ntpd net@"            # Laptop/desktop (openrc converted)
 
+  An example /etc/portage/package.env:
 
-  /lib/finit/scripts/lib/lib.sh globals
+    sys-apps/finit-d finit-d.conf
+
+  /lib/finit/scripts/lib/lib.sh globals:
 
   LOGGER_METHOD - 0 = stdout, 1 = sysklogd, 2 = /var/log/finit.log
   MAINTENANCE_MODE - 1 = enable logging, 0 = disable logging

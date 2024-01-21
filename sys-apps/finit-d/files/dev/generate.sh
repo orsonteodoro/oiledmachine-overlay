@@ -12,6 +12,15 @@ FINIT_SHELL=${FINIT_SHELL:-"/bin/sh"}
 # 0 means process only /etc/init.d for local installs.
 MAINTAINER_MODE=${MAINTAINER_MODE:-0}
 
+is_respawnable() {
+	local svc_name="${1}"
+	local s
+	for s in ${FINIT_RESPAWNABLE} ; do
+		[[ "${s}" == "${svc_name}" ]] && return 0
+	done
+	return 1
+}
+
 die() {
 	echo "${1}"
 	exit 1
@@ -875,6 +884,11 @@ echo "Adding pidfile=${_pid_file} to ${init_sh}"
 					envfile="env:/etc/conf.d/${svc_name}"
 				fi
 
+				local respawn=""
+				if is_respawnable "${svc_name}" ; then
+					respawn="respawn"
+				fi
+
 				local start_cond_extra=""
 				[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/success"
 
@@ -912,7 +926,7 @@ echo "Adding pidfile=${_pid_file} to ${init_sh}"
 					svc_type_start="service"
 					service_names["${svc_name}"]="${name}"
 					service_types["${svc_name}${instance}"]="${svc_type_start}"
-					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} ${notify} ${pid_file} ${respawn} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				elif is_daemon_without_pidfile ; then
 					if [[ -n "${provide}" ]] ; then
 						name="${provide}"
@@ -923,7 +937,7 @@ echo "Adding pidfile=${_pid_file} to ${init_sh}"
 					svc_type_start="service"
 					service_names["${svc_name}"]="${name}"
 					service_types["${svc_name}${instance}"]="${svc_type_start}"
-					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} notify:none /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+					echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${envfile} ${user_group} name:${name} ${instance} notify:none ${respawn} /lib/finit/scripts/${c}/${pn}/${basename_fn} \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 				else
 					svc_type_start="task"
 					service_names["${svc_name}${instance}"]="${svc_name}"
@@ -2290,6 +2304,11 @@ convert_systemd() {
 			local name=""
 			local alias=$(grep -r -e "Alias" "${init_path}" | cut -f 2 -d "=" | sed -E -e "s/(.service)//g")
 
+			local respawn=""
+			if is_respawnable "${svc_name}" ; then
+				respawn="respawn"
+			fi
+
 			local request_make_pid=0
 			local start_cond_extra=""
 			[[ "${svc_type_start_pre}" =~ ("run"|"task") ]] && start_cond_extra=",${svc_type_start_pre}/${svc_name}-pre${instance}/success"
@@ -2317,7 +2336,7 @@ convert_systemd() {
 				svc_type_start="service"
 				service_aliases["${svc_name}"]="${name}"
 				service_types["${svc_name}${instance}"]="${svc_type_start}"
-				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} /lib/finit/scripts/${c}/${pn}/${svc_name}.sh \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
+				echo "${svc_type_start} [${start_runlevels}] <${start_cond}${start_cond_extra}> ${user_group} name:${name} ${instance} ${notify} ${pid_file} ${respawn} /lib/finit/scripts/${c}/${pn}/${svc_name}.sh \"start\" \"%i\" -- ${svc_name}${instance_desc}" >> "${init_conf}"
 			fi
 		fi
 		if (( "${#exec_start_posts}" > 0 )) ; then
