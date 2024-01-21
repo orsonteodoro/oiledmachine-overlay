@@ -15,6 +15,36 @@
   finit .conf files or script.
 
 
+  Features:
+
+    - Basic init service dependency tree preservation
+    - Blacklisting services/packages
+    - Init script minification and debug call elimination
+    - DASH shell first policy
+    - Early hook support for file systems and pre-network
+    - Preserved checkconfig (for avoiding bad config downtime)
+    - Preserved extra commands
+    - Preserved I/O priority and priority classes
+    - Preserved nice
+    - Preserved realtime priority classes
+    - Preserved ulimits
+    - Proper sourcing of dynamically generated/patched init scripts.
+    - Proper sourcing of versioned init scripts.
+    - Utilization of event based conditionals
+    - Utilization of parallel tasks
+
+  Work In Progress (WIP)
+
+    - Elimination of crashed state
+
+  TODO / ON-ICE:
+
+    - Preserved capabilities (aka root/network privilege management)
+    - Preserved chroot (aka file system sandboxing) [start is complete, but
+      pre-start/post-start may need to be re-evaluated as they are assumed
+      in host context.]
+    - netifrc support from systemd converted init.
+
   Build time environment variables for per-package env:
 
     FINIT_BLACKLIST_PKGS - Space separated category/name to not install.
