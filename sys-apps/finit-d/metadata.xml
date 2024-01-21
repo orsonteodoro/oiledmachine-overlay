@@ -71,7 +71,7 @@
     FINIT_MINIFY=1
     FINIT_RESPAWNABLE="apache2 mysql ntpd"                # LAMP server
     FINIT_RESPAWNABLE="actkbd cupsd ntpd NetworkManager"  # Laptop/desktop (systemd converted)
-    FINIT_RESPAWNABLE="actkbd cupsd ntpd net@"            # Laptop/desktop (openrc converted)
+    FINIT_RESPAWNABLE="actkbd cupsd ntpd net@"            # Laptop/desktop (openrc converted with netifrc)
 
   An example /etc/portage/package.env:
 
