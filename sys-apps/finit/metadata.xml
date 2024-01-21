@@ -37,9 +37,9 @@
       Build and install of contrib section
     </flag>
     <flag name="dash">
-      Use DASH (Almquist shell) for a performance boost.  (EXPERIMENTAL)
+      Use dash (Debian Almquist Shell) for a performance boost.  (EXPERIMENTAL)
 
-      [For users that want to keep sh (Bash) as default shell but use DASH for
+      [For users that want to keep sh (Bash) as default shell but use dash for
       the init system]
     </flag>
     <flag name="dbus">

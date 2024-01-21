@@ -22,7 +22,7 @@
     - Blacklisting services/packages
     - Correction to inits
     - Init script minification* and debug call elimination*
-    - DASH shell* first policy
+    - dash shell* first policy
     - Early hook support for file systems and pre-network
     - Preserved checkconfig (for avoiding bad config downtime)
     - Preserved extra commands
@@ -136,8 +136,8 @@
   -->
   <use>
     <flag name="dash">
-      Change the shebang for DASH (Almquist shell)
-      [For people that prefer sh (Bash) as the systemwide default but DASH for init.]
+      Change the shebang for dash (Debian Almquist Shell)
+      [For people that prefer sh (Bash) as the systemwide default but dash for init.]
     </flag>
     <flag name="dbus">
       Force D-Bus in the Finit ebuild.
