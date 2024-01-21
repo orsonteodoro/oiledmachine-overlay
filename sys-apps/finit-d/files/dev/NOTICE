@@ -2,93 +2,10 @@
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# The above copyright notice applies to scripts/configs for:
-# {confs,scripts}/bitcoind*.{.conf,.sh}
-# {confs,scripts}/clamav*.{.conf,.sh}
-# {confs,scripts}/cupsd*.{.conf,.sh}
-# {confs,scripts}/ergo*.{.conf,.sh}
-# {confs,scripts}/fancontrol*.{.conf,.sh}
-# {confs,scripts}/tox*.{.conf,.sh}
-# {confs,scripts}/timidity*.{.conf,.sh}
-
-# The above copyright notice applies to configs for:
-# confs/actkbd.conf
-# confs/apache.conf
-# confs/avahi-dnsconfd.conf
-# confs/bitlbee.conf
-# confs/caddy.conf
-# confs/containerd.conf
-# confs/coolercontrol.conf
-# confs/cups-browsed.conf
-# confs/cupsd.conf
-# confs/cpupower.conf
-# confs/distccd.conf
-# confs/docker.conf
-# confs/git.conf
-# confs/hdparm.conf
-# confs/hostname.conf
-# confs/icecast.conf
-# confs/inspircd.conf
-# confs/iptables.conf
-# confs/ip6tables.conf
-# confs/iperf3.conf
-# confs/iwd.conf
-# confs/keepalived.conf
-# confs/lm_sensors.conf
-# confs/laptop_mode.conf
-# confs/mysql.conf
-# confs/nginx.conf
-# confs/networkmanager.conf
-# confs/openvpn.conf
-# confs/proftpd.conf
-# confs/pure-ftpd.conf
-# confs/pure-uploadscript.conf
-# confs/pydoc.conf
-# confs/redis.conf
-# confs/redis-sentinel.conf
-# confs/rp-pppoe.conf
-# confs/rsyncd.conf
-# confs/rtkit.conf
-# confs/saned.conf
-# confs/seatd.conf
-# confs/spacenavd.conf
-# confs/squid.conf
-# confs/svnserve.conf
-# confs/thermald.conf
-# confs/tor.conf
-# confs/tox-dht-daemon.conf
-# confs/twistd.conf
-# confs/vsftpd.conf
-# confs/varnishd.conf
-# confs/varnishlog.conf
-# confs/varnishncsa.conf
-# confs/wg-quick.conf
+# The above copyright notice applies to scripts/configs converted.
 
 # The MIT license applies for the following files:
-# confs/acpid.conf
-# confs/anacron.conf
-# confs/apparmor.conf
-# confs/avahi-daemon.conf
-# confs/bluez.conf (formerly bluetooth.conf)
-# confs/cron.conf
-# confs/dhcpcd.conf
-# confs/dmeventd.conf
-# confs/dropbear.conf
-# confs/elogind.conf
 # confs/getty.conf
-# confs/keymap.conf
-# confs/lightdm.conf
-# confs/lxdm.conf
-# confs/modules.conf
-# confs/ntpd.conf
-# confs/plymouth.conf (formerly plymouth-quit.conf)
-# confs/rsyslogd.conf
-# confs/sntpd.conf
-# confs/sshd.conf
-# confs/syslogd.conf
-# confs/uuid.conf
-# confs/watchdog.conf
-# confs/xdm.conf
 # finit.conf
 # rc.local
 
