@@ -136,7 +136,7 @@
   -->
   <use>
     <flag name="dash">
-      Change the shebang for dash (Debian Almquist Shell)
+      Change the shebang to dash (Debian Almquist Shell).
       [For people that prefer sh (Bash) as the systemwide default but dash for init.]
     </flag>
     <flag name="dbus">
