@@ -10,6 +10,11 @@
 
   oiledmachine-overlay notes:
 
+
+  This package converts installed systemd or OpenRC init scripts/configs to
+  finit .conf files or script.
+
+
   Build time environment variables for per-package env:
 
     FINIT_BLACKLIST_PKGS - Space separated category/name to not install.
