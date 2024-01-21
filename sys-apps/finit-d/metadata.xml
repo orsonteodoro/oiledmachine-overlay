@@ -27,11 +27,12 @@
     - Preserved I/O priority* and priority classes
     - Preserved nice* (CPU scheduler priority for SCHED_OTHER)
     - Preserved realtime* priority classes
-    - Preserved ulimits*
+    - Preserved ulimits
     - Proper sourcing of dynamically generated/patched init scripts.
     - Proper sourcing of versioned init scripts.
     - Utilization of event based conditionals
     - Utilization of parallel tasks
+    - Correction to inits
 
   Work In Progress (WIP)
 
