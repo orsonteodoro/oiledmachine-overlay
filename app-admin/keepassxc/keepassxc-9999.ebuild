@@ -180,20 +180,6 @@ eerror
 			die
 		fi
 	done
-	pkg_name="qtimageformats"
-	QTPKG_PV=$(best_version "dev-qt/qtimageformats:5" \
-		| sed -e "s|dev-qt/qtimageformats-||g")
-	QTPKG_PV=$(ver_cut 1-3 ${QTPKG_PV})
-	if ver_test ${QTCORE_PV} -ne ${QTPKG_PV} ; then
-eerror
-eerror "Qt${QT_SLOT}Core is not the same version as ${pkg_name}."
-eerror "Make them the same to continue."
-eerror
-eerror "Expected version (QtCore):\t\t${QTCORE_PV}"
-eerror "Actual version (${pkg_name}):\t${QTPKG_PV}"
-eerror
-		die
-	fi
 }
 
 pkg_setup() {
