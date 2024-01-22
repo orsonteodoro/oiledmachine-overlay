@@ -1,0 +1,3036 @@
+# Subject:  Qt6 port
+# Patch Author:  Orson Teodoro
+# Patch Status:  Unfinished / In development
+
+# Time to convert to Qt6
+# start time: 1705819601
+# end time:
+
+# Progress: 139/313
+
+diff -urp keepassxc-2.7.6.orig/CMakeLists.txt keepassxc-2.7.6/CMakeLists.txt
+--- keepassxc-2.7.6.orig/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/CMakeLists.txt	2024-01-21 23:43:45.298723739 -0800
+@@ -489,35 +489,77 @@ endif()
+ 
+ include(CLangFormat)
+ 
+-set(QT_COMPONENTS Core Network Concurrent Gui Svg Widgets Test LinguistTools)
+-if(UNIX AND NOT APPLE)
+-    if(WITH_XC_X11)
+-        list(APPEND QT_COMPONENTS X11Extras)
+-    endif()
+-    find_package(Qt5 COMPONENTS ${QT_COMPONENTS} DBus REQUIRED)
+-elseif(APPLE)
+-    find_package(Qt5 COMPONENTS ${QT_COMPONENTS} REQUIRED HINTS
+-            /usr/local/opt/qt@5/lib/cmake
+-            /usr/local/Cellar/qt@5/*/lib/cmake
+-            /opt/homebrew/opt/qt@5/lib/cmake
+-            ENV PATH)
+-    find_package(Qt5 COMPONENTS MacExtras HINTS
+-            /usr/local/opt/qt@5/lib/cmake
+-            /usr/local/Cellar/qt@5/*/lib/cmake
+-            /opt/homebrew/opt/qt@5/lib/cmake
+-            ENV PATH)
+-else()
+-    find_package(Qt5 COMPONENTS ${QT_COMPONENTS} REQUIRED)
++option(WITH_QT6 "Use Qt6" OFF)
++option(WITH_QT5 "Use Qt5" ON)
++option(WITH_QT5COMPAT "Use Qt5Compat library for KDB 1.1 support" OFF)
++if(WITH_QT6 AND WITH_QT5)
++    message(FATAL_ERROR "WITH_QT5 and WITH_QT6 cannot be used at the same time.")
+ endif()
+-
+-if(Qt5Core_VERSION VERSION_LESS "5.2.0")
+-    message(FATAL_ERROR "Qt version 5.2.0 or higher is required")
++if(WITH_QT5COMPAT AND NOT WITH_QT6)
++    message(FATAL_ERROR "WITH_QT5COMPAT requires WITH_QT6.")
+ endif()
++if(WITH_QT6)
++    set(QT_COMPONENTS Core Network Concurrent Gui Svg Widgets Test LinguistTools)
++    if(UNIX AND NOT APPLE)
++        #if(WITH_XC_X11)
++        #    list(APPEND QT_COMPONENTS X11Extras)
++        #endif()
++        find_package(Qt6 COMPONENTS ${QT_COMPONENTS} DBus REQUIRED)
++    elseif(APPLE)
++        find_package(Qt6 COMPONENTS ${QT_COMPONENTS} REQUIRED HINTS
++                /usr/local/opt/qt@6/lib/cmake
++                /usr/local/Cellar/qt@6/*/lib/cmake
++                /opt/homebrew/opt/qt@6/lib/cmake
++                ENV PATH)
++        find_package(Qt6 COMPONENTS MacExtras HINTS
++                /usr/local/opt/qt@6/lib/cmake
++                /usr/local/Cellar/qt@6/*/lib/cmake
++                /opt/homebrew/opt/qt@6/lib/cmake
++                ENV PATH)
++    else()
++        find_package(Qt6 COMPONENTS ${QT_COMPONENTS} REQUIRED)
++    endif()
++
++    if(Qt6Core_VERSION VERSION_LESS "6.6.1")
++        message(FATAL_ERROR "Qt version 6.6.1 or higher is required")
++    endif()
+ 
+-get_filename_component(Qt5_PREFIX ${Qt5_DIR}/../../.. REALPATH)
+-if(APPLE)
+-    # Add includes under Qt5 Prefix in case Qt6 is also installed
+-    include_directories(SYSTEM ${Qt5_PREFIX}/include)
++    get_filename_component(Qt6_PREFIX ${Qt6_DIR}/../../.. REALPATH)
++    if(APPLE)
++        # Add includes under Qt5 Prefix in case Qt6 is also installed
++        include_directories(SYSTEM ${Qt6_PREFIX}/include)
++    endif()
++elseif(WITH_QT5)
++    set(QT_COMPONENTS Core Network Concurrent Gui Svg Widgets Test LinguistTools)
++    if(UNIX AND NOT APPLE)
++        if(WITH_XC_X11)
++            list(APPEND QT_COMPONENTS X11Extras)
++        endif()
++        find_package(Qt5 COMPONENTS ${QT_COMPONENTS} DBus REQUIRED)
++    elseif(APPLE)
++        find_package(Qt5 COMPONENTS ${QT_COMPONENTS} REQUIRED HINTS
++                /usr/local/opt/qt@5/lib/cmake
++                /usr/local/Cellar/qt@5/*/lib/cmake
++                /opt/homebrew/opt/qt@5/lib/cmake
++                ENV PATH)
++        find_package(Qt5 COMPONENTS MacExtras HINTS
++                /usr/local/opt/qt@5/lib/cmake
++                /usr/local/Cellar/qt@5/*/lib/cmake
++                /opt/homebrew/opt/qt@5/lib/cmake
++                ENV PATH)
++    else()
++        find_package(Qt5 COMPONENTS ${QT_COMPONENTS} REQUIRED)
++    endif()
++
++    if(Qt5Core_VERSION VERSION_LESS "5.2.0")
++        message(FATAL_ERROR "Qt version 5.2.0 or higher is required")
++    endif()
++
++    get_filename_component(Qt5_PREFIX ${Qt5_DIR}/../../.. REALPATH)
++    if(APPLE)
++        # Add includes under Qt5 Prefix in case Qt6 is also installed
++        include_directories(SYSTEM ${Qt5_PREFIX}/include)
++    endif()
+ endif()
+ 
+ # Process moc automatically
+@@ -527,20 +569,38 @@ set(CMAKE_AUTOUIC ON)
+ # Process .qrc files automatically
+ set(CMAKE_AUTORCC ON)
+ 
+-if(APPLE)
+-    set(CMAKE_MACOSX_RPATH TRUE)
+-    find_program(MACDEPLOYQT_EXE macdeployqt HINTS ${Qt5_PREFIX}/bin ${Qt5_PREFIX}/tools/qt5/bin ENV PATH)
+-    if(NOT MACDEPLOYQT_EXE)
+-        message(FATAL_ERROR "macdeployqt is required to build on macOS")
+-    endif()
+-    message(STATUS "Using macdeployqt: ${MACDEPLOYQT_EXE}")
+-    set(MACDEPLOYQT_EXTRA_BINARIES "")
+-elseif(WIN32)
+-    find_program(WINDEPLOYQT_EXE windeployqt HINTS ${Qt5_PREFIX}/bin ${Qt5_PREFIX}/tools/qt5/bin ENV PATH)
+-    if(NOT WINDEPLOYQT_EXE)
+-        message(FATAL_ERROR "windeployqt is required to build on Windows")
++if(WITH_QT6)
++    if(APPLE)
++        set(CMAKE_MACOSX_RPATH TRUE)
++        find_program(MACDEPLOYQT_EXE macdeployqt HINTS ${Qt6_PREFIX}/bin ${Qt6_PREFIX}/tools/qt6/bin ENV PATH)
++        if(NOT MACDEPLOYQT_EXE)
++            message(FATAL_ERROR "macdeployqt is required to build on macOS")
++        endif()
++        message(STATUS "Using macdeployqt: ${MACDEPLOYQT_EXE}")
++        set(MACDEPLOYQT_EXTRA_BINARIES "")
++    elseif(WIN32)
++        find_program(WINDEPLOYQT_EXE windeployqt HINTS ${Qt6_PREFIX}/bin ${Qt6_PREFIX}/tools/qt6/bin ENV PATH)
++        if(NOT WINDEPLOYQT_EXE)
++            message(FATAL_ERROR "windeployqt is required to build on Windows")
++        endif()
++        message(STATUS "Using windeployqt: ${WINDEPLOYQT_EXE}")
++    endif()
++elseif(WITH_QT5)
++    if(APPLE)
++        set(CMAKE_MACOSX_RPATH TRUE)
++        find_program(MACDEPLOYQT_EXE macdeployqt HINTS ${Qt5_PREFIX}/bin ${Qt5_PREFIX}/tools/qt5/bin ENV PATH)
++        if(NOT MACDEPLOYQT_EXE)
++            message(FATAL_ERROR "macdeployqt is required to build on macOS")
++        endif()
++        message(STATUS "Using macdeployqt: ${MACDEPLOYQT_EXE}")
++        set(MACDEPLOYQT_EXTRA_BINARIES "")
++    elseif(WIN32)
++        find_program(WINDEPLOYQT_EXE windeployqt HINTS ${Qt5_PREFIX}/bin ${Qt5_PREFIX}/tools/qt5/bin ENV PATH)
++        if(NOT WINDEPLOYQT_EXE)
++            message(FATAL_ERROR "windeployqt is required to build on Windows")
++        endif()
++        message(STATUS "Using windeployqt: ${WINDEPLOYQT_EXE}")
+     endif()
+-    message(STATUS "Using windeployqt: ${WINDEPLOYQT_EXE}")
+ endif()
+ 
+ # Debian sets the build type to None for package builds.
+diff -urp keepassxc-2.7.6.orig/share/translations/CMakeLists.txt keepassxc-2.7.6/share/translations/CMakeLists.txt
+--- keepassxc-2.7.6.orig/share/translations/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/share/translations/CMakeLists.txt	2024-01-21 21:07:36.756446301 -0800
+@@ -20,7 +20,11 @@ list(REMOVE_ITEM TRANSLATION_FILES keepa
+ list(REMOVE_ITEM TRANSLATION_FILES ${TRANSLATION_EN_ABS})
+ message(STATUS "Including translations...\n")
+ 
+-qt5_add_translation(QM_FILES ${TRANSLATION_FILES})
++if(WITH_QT6)
++    qt6_add_translation(QM_FILES ${TRANSLATION_FILES})
++elseif(WITH_QT5)
++    qt5_add_translation(QM_FILES ${TRANSLATION_FILES})
++endif()
+ 
+ if(WIN32)
+     file(GLOB QTBASE_TRANSLATIONS ${Qt5_PREFIX}/share/qt5/translations/qtbase_*.qm)
+diff -urp keepassxc-2.7.6.orig/src/autotype/AutoType.cpp keepassxc-2.7.6/src/autotype/AutoType.cpp
+--- keepassxc-2.7.6.orig/src/autotype/AutoType.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/AutoType.cpp	2024-01-21 21:07:36.760446263 -0800
+@@ -457,7 +457,13 @@ void AutoType::performGlobalAutoType(con
+             if (hideExpired && entry->isExpired()) {
+                 continue;
+             }
++#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
++            auto autoTypeSequences = entry->autoTypeSequences(m_windowTitleForGlobal);
++            QSet<QString> tempSet(autoTypeSequences.begin(), autoTypeSequences.end());
++            auto sequences = tempSet;
++#else
+             auto sequences = entry->autoTypeSequences(m_windowTitleForGlobal).toSet();
++#endif
+             for (const auto& sequence : sequences) {
+                 matchList << AutoTypeMatch(entry, sequence);
+             }
+diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatch.h keepassxc-2.7.6/src/autotype/AutoTypeMatch.h
+--- keepassxc-2.7.6.orig/src/autotype/AutoTypeMatch.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/AutoTypeMatch.h	2024-01-21 21:07:36.760446263 -0800
+@@ -21,6 +21,8 @@
+ #include <QPair>
+ #include <QPointer>
+ 
++#include "core/Entry.h"
++
+ class Entry;
+ typedef QPair<QPointer<Entry>, QString> AutoTypeMatch;
+ 
+diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatchView.cpp keepassxc-2.7.6/src/autotype/AutoTypeMatchView.cpp
+--- keepassxc-2.7.6.orig/src/autotype/AutoTypeMatchView.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/AutoTypeMatchView.cpp	2024-01-21 21:07:36.760446263 -0800
+@@ -38,9 +38,15 @@ public:
+         auto index1 = sourceModel()->index(sourceRow, 1, sourceParent);
+         auto index2 = sourceModel()->index(sourceRow, 2, sourceParent);
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        return sourceModel()->data(index0).toString().contains(filterRegularExpression())
++               || sourceModel()->data(index1).toString().contains(filterRegularExpression())
++               || sourceModel()->data(index2).toString().contains(filterRegularExpression());
++#else
+         return sourceModel()->data(index0).toString().contains(filterRegExp())
+                || sourceModel()->data(index1).toString().contains(filterRegExp())
+                || sourceModel()->data(index2).toString().contains(filterRegExp());
++#endif
+     }
+ };
+ 
+diff -urp keepassxc-2.7.6.orig/src/autotype/CMakeLists.txt keepassxc-2.7.6/src/autotype/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/autotype/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/CMakeLists.txt	2024-01-21 21:07:36.760446263 -0800
+@@ -1,11 +1,20 @@
+ if(WITH_XC_AUTOTYPE)
+     if(UNIX AND NOT APPLE AND NOT HAIKU)
+         find_package(X11 REQUIRED COMPONENTS Xi XTest)
+-        find_package(Qt5X11Extras 5.2 REQUIRED)
+-        if(PRINT_SUMMARY)
+-            add_feature_info(libXi X11_Xi_FOUND "The X11 Xi Protocol library is required for auto-type")
+-            add_feature_info(libXtst X11_XTest_FOUND "The X11 XTEST Protocol library is required for auto-type")
+-            add_feature_info(Qt5X11Extras Qt5X11Extras_FOUND "The Qt5X11Extras library is required for auto-type")
++        if(WITH_QT6)
++            #find_package(Qt6X11Extras 6.1 REQUIRED)
++            if(PRINT_SUMMARY)
++                add_feature_info(libXi X11_Xi_FOUND "The X11 Xi Protocol library is required for auto-type")
++                add_feature_info(libXtst X11_XTest_FOUND "The X11 XTEST Protocol library is required for auto-type")
++                #add_feature_info(Qt6X11Extras Qt6X11Extras_FOUND "The Qt6X11Extras library is required for auto-type")
++            endif()
++        elseif(WITH_QT5)
++            find_package(Qt5X11Extras 5.2 REQUIRED)
++            if(PRINT_SUMMARY)
++                add_feature_info(libXi X11_Xi_FOUND "The X11 Xi Protocol library is required for auto-type")
++                add_feature_info(libXtst X11_XTest_FOUND "The X11 XTEST Protocol library is required for auto-type")
++                add_feature_info(Qt5X11Extras Qt5X11Extras_FOUND "The Qt5X11Extras library is required for auto-type")
++            endif()
+         endif()
+ 
+         add_subdirectory(xcb)
+diff -urp keepassxc-2.7.6.orig/src/autotype/mac/CMakeLists.txt keepassxc-2.7.6/src/autotype/mac/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/autotype/mac/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/mac/CMakeLists.txt	2024-01-21 21:07:36.760446263 -0800
+@@ -2,7 +2,11 @@ set(autotype_mac_SOURCES AutoTypeMac.cpp
+ 
+ add_library(keepassxc-autotype-cocoa MODULE ${autotype_mac_SOURCES})
+ set_target_properties(keepassxc-autotype-cocoa PROPERTIES LINK_FLAGS "-framework Foundation -framework AppKit -framework Carbon")
+-target_link_libraries(keepassxc-autotype-cocoa ${PROGNAME} Qt5::Core Qt5::Widgets)
++if(WITH_QT6)
++    target_link_libraries(keepassxc-autotype-cocoa ${PROGNAME} Qt6::Core Qt6::Widgets)
++elseif(WITH_QT5)
++    target_link_libraries(keepassxc-autotype-cocoa ${PROGNAME} Qt5::Core Qt5::Widgets)
++endif()
+ 
+ install(TARGETS keepassxc-autotype-cocoa
+         LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
+diff -urp keepassxc-2.7.6.orig/src/autotype/ShortcutWidget.cpp keepassxc-2.7.6/src/autotype/ShortcutWidget.cpp
+--- keepassxc-2.7.6.orig/src/autotype/ShortcutWidget.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/ShortcutWidget.cpp	2024-01-21 21:07:36.760446263 -0800
+@@ -25,7 +25,11 @@
+ ShortcutWidget::ShortcutWidget(QWidget* parent)
+     : QLineEdit(parent)
+     , m_key(static_cast<Qt::Key>(0))
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    , m_modifiers(Qt::NoModifier)
++#else
+     , m_modifiers(nullptr)
++#endif
+     , m_locked(false)
+ {
+     setReadOnly(true);
+@@ -61,7 +65,11 @@ void ShortcutWidget::setShortcut(Qt::Key
+ void ShortcutWidget::resetShortcut()
+ {
+     m_key = static_cast<Qt::Key>(0);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    m_modifiers = Qt::NoModifier;
++#else
+     m_modifiers = nullptr;
++#endif
+     m_locked = false;
+     autoType()->unregisterGlobalShortcut();
+ }
+diff -urp keepassxc-2.7.6.orig/src/autotype/test/CMakeLists.txt keepassxc-2.7.6/src/autotype/test/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/autotype/test/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/test/CMakeLists.txt	2024-01-21 21:07:36.760446263 -0800
+@@ -1,4 +1,8 @@
+ set(autotype_test_SOURCES AutoTypeTest.cpp)
+ 
+ add_library(keepassxc-autotype-test MODULE ${autotype_test_SOURCES})
+-target_link_libraries(keepassxc-autotype-test keepassx_core ${autotype_LIB} Qt5::Core Qt5::Widgets)
++if(WITH_QT6)
++    target_link_libraries(keepassxc-autotype-test keepassx_core ${autotype_LIB} Qt6::Core Qt6::Widgets)
++elseif(WITH_QT5)
++    target_link_libraries(keepassxc-autotype-test keepassx_core ${autotype_LIB} Qt5::Core Qt5::Widgets)
++endif()
+diff -urp keepassxc-2.7.6.orig/src/autotype/windows/CMakeLists.txt keepassxc-2.7.6/src/autotype/windows/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/autotype/windows/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/windows/CMakeLists.txt	2024-01-21 21:07:36.760446263 -0800
+@@ -1,7 +1,11 @@
+ set(autotype_win_SOURCES AutoTypeWindows.cpp)
+ 
+ add_library(keepassxc-autotype-windows MODULE ${autotype_win_SOURCES})
+-target_link_libraries(keepassxc-autotype-windows keepassx_core ${autotype_LIB} Qt5::Core Qt5::Widgets)
++if(WITH_QT6)
++    target_link_libraries(keepassxc-autotype-windows keepassx_core ${autotype_LIB} Qt6::Core Qt6::Widgets)
++elseif(WITH_QT5)
++    target_link_libraries(keepassxc-autotype-windows keepassx_core ${autotype_LIB} Qt5::Core Qt5::Widgets)
++endif()
+ install(TARGETS keepassxc-autotype-windows
+         BUNDLE DESTINATION . COMPONENT Runtime
+         LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
+diff -urp keepassxc-2.7.6.orig/src/autotype/xcb/CMakeLists.txt keepassxc-2.7.6/src/autotype/xcb/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/autotype/xcb/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/autotype/xcb/CMakeLists.txt	2024-01-21 21:07:36.764446226 -0800
+@@ -3,7 +3,11 @@ include_directories(SYSTEM ${X11_X11_INC
+ set(autotype_XCB_SOURCES AutoTypeXCB.cpp)
+ 
+ add_library(keepassxc-autotype-xcb MODULE ${autotype_XCB_SOURCES})
+-target_link_libraries(keepassxc-autotype-xcb keepassx_core Qt5::Core Qt5::Widgets Qt5::X11Extras ${X11_X11_LIB} ${X11_Xi_LIB} ${X11_XTest_LIB})
++if(WITH_QT6)
++    target_link_libraries(keepassxc-autotype-xcb keepassx_core Qt6::Core Qt6::Widgets ${X11_X11_LIB} ${X11_Xi_LIB} ${X11_XTest_LIB})
++elseif(WITH_QT5)
++    target_link_libraries(keepassxc-autotype-xcb keepassx_core Qt5::Core Qt5::Widgets Qt5::X11Extras ${X11_X11_LIB} ${X11_Xi_LIB} ${X11_XTest_LIB})
++endif()
+ install(TARGETS keepassxc-autotype-xcb
+         BUNDLE DESTINATION . COMPONENT Runtime
+         LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
+diff -urp keepassxc-2.7.6.orig/src/browser/CMakeLists.txt keepassxc-2.7.6/src/browser/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/browser/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/browser/CMakeLists.txt	2024-01-21 21:07:36.764446226 -0800
+@@ -33,5 +33,9 @@ if(WITH_XC_BROWSER)
+             )
+ 
+     add_library(keepassxcbrowser STATIC ${keepassxcbrowser_SOURCES})
+-    target_link_libraries(keepassxcbrowser Qt5::Core Qt5::Concurrent Qt5::Widgets Qt5::Network ${BOTAN_LIBRARIES})
++    if(WITH_QT6)
++        target_link_libraries(keepassxcbrowser Qt6::Core Qt6::Concurrent Qt6::Widgets Qt6::Network ${BOTAN_LIBRARIES})
++    elseif(WITH_QT5)
++        target_link_libraries(keepassxcbrowser Qt5::Core Qt5::Concurrent Qt5::Widgets Qt5::Network ${BOTAN_LIBRARIES})
++    endif()
+ endif()
+diff -urp keepassxc-2.7.6.orig/src/cli/Add.cpp keepassxc-2.7.6/src/cli/Add.cpp
+--- keepassxc-2.7.6.orig/src/cli/Add.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Add.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -78,7 +78,7 @@ int Add::executeWithDatabase(QSharedPoin
+ 
+     // Cannot use those 2 options at the same time!
+     if (parser->isSet(Add::GenerateOption) && parser->isSet(Add::PasswordPromptOption)) {
+-        err << QObject::tr("Cannot generate a password and prompt at the same time.") << endl;
++        err << QObject::tr("Cannot generate a password and prompt at the same time.") << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -94,7 +94,7 @@ int Add::executeWithDatabase(QSharedPoin
+ 
+     Entry* entry = database->rootGroup()->addEntryWithPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Could not create entry with path %1.").arg(entryPath) << endl;
++        err << QObject::tr("Could not create entry with path %1.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -112,7 +112,7 @@ int Add::executeWithDatabase(QSharedPoin
+ 
+     if (parser->isSet(Add::PasswordPromptOption)) {
+         if (!parser->isSet(Command::QuietOption)) {
+-            out << QObject::tr("Enter password for new entry: ") << flush;
++            out << QObject::tr("Enter password for new entry: ") << Qt::flush;
+         }
+         QString password = Utils::getPassword(parser->isSet(Command::QuietOption));
+         entry->setPassword(password);
+@@ -123,12 +123,12 @@ int Add::executeWithDatabase(QSharedPoin
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << endl;
++        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (!parser->isSet(Command::QuietOption)) {
+-        out << QObject::tr("Successfully added entry %1.").arg(entry->title()) << endl;
++        out << QObject::tr("Successfully added entry %1.").arg(entry->title()) << Qt::endl;
+     }
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/AddGroup.cpp keepassxc-2.7.6/src/cli/AddGroup.cpp
+--- keepassxc-2.7.6.orig/src/cli/AddGroup.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/AddGroup.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -47,13 +47,13 @@ int AddGroup::executeWithDatabase(QShare
+ 
+     Group* group = database->rootGroup()->findGroupByPath(groupPath);
+     if (group) {
+-        err << QObject::tr("Group %1 already exists!").arg(groupPath) << endl;
++        err << QObject::tr("Group %1 already exists!").arg(groupPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     Group* parentGroup = database->rootGroup()->findGroupByPath(parentGroupPath);
+     if (!parentGroup) {
+-        err << QObject::tr("Group %1 not found.").arg(parentGroupPath) << endl;
++        err << QObject::tr("Group %1 not found.").arg(parentGroupPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -64,12 +64,12 @@ int AddGroup::executeWithDatabase(QShare
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << endl;
++        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (!parser->isSet(Command::QuietOption)) {
+-        out << QObject::tr("Successfully added group %1.").arg(groupName) << endl;
++        out << QObject::tr("Successfully added group %1.").arg(groupName) << Qt::endl;
+     }
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Analyze.cpp keepassxc-2.7.6/src/cli/Analyze.cpp
+--- keepassxc-2.7.6.orig/src/cli/Analyze.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Analyze.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -60,23 +60,23 @@ int Analyze::executeWithDatabase(QShared
+ 
+     auto okon = parser->value(Analyze::OkonOption);
+     if (!okon.isEmpty()) {
+-        out << QObject::tr("Evaluating database entries using okon…") << endl;
++        out << QObject::tr("Evaluating database entries using okon…") << Qt::endl;
+ 
+         if (!HibpOffline::okonReport(database, okon, hibpDatabase, findings, &error)) {
+-            err << error << endl;
++            err << error << Qt::endl;
+             return EXIT_FAILURE;
+         }
+     } else {
+         QFile hibpFile(hibpDatabase);
+         if (!hibpFile.open(QFile::ReadOnly)) {
+-            err << QObject::tr("Failed to open HIBP file %1: %2").arg(hibpDatabase).arg(hibpFile.errorString()) << endl;
++            err << QObject::tr("Failed to open HIBP file %1: %2").arg(hibpDatabase).arg(hibpFile.errorString()) << Qt::endl;
+             return EXIT_FAILURE;
+         }
+ 
+-        out << QObject::tr("Evaluating database entries against HIBP file, this will take a while…") << endl;
++        out << QObject::tr("Evaluating database entries against HIBP file, this will take a while…") << Qt::endl;
+ 
+         if (!HibpOffline::report(database, hibpFile, findings, &error)) {
+-            err << error << endl;
++            err << error << Qt::endl;
+             return EXIT_FAILURE;
+         }
+     }
+@@ -91,9 +91,9 @@ int Analyze::executeWithDatabase(QShared
+         }
+ 
+         if (count > 0) {
+-            out << QObject::tr("Password for '%1' has been leaked %2 time(s)!", "", count).arg(path).arg(count) << endl;
++            out << QObject::tr("Password for '%1' has been leaked %2 time(s)!", "", count).arg(path).arg(count) << Qt::endl;
+         } else {
+-            out << QObject::tr("Password for '%1' has been leaked!").arg(path) << endl;
++            out << QObject::tr("Password for '%1' has been leaked!").arg(path) << Qt::endl;
+         }
+     }
+ 
+diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentExport.cpp keepassxc-2.7.6/src/cli/AttachmentExport.cpp
+--- keepassxc-2.7.6.orig/src/cli/AttachmentExport.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/AttachmentExport.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -49,7 +49,7 @@ int AttachmentExport::executeWithDatabas
+ 
+     auto entry = database->rootGroup()->findEntryByPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << endl;
++        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -57,32 +57,32 @@ int AttachmentExport::executeWithDatabas
+ 
+     auto attachments = entry->attachments();
+     if (!attachments->hasKey(attachmentName)) {
+-        err << QObject::tr("Could not find attachment with name %1.").arg(attachmentName) << endl;
++        err << QObject::tr("Could not find attachment with name %1.").arg(attachmentName) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (parser->isSet(AttachmentExport::StdoutOption)) {
+         // Output to STDOUT even in quiet mode
+-        Utils::STDOUT << attachments->value(attachmentName) << flush;
++        Utils::STDOUT << attachments->value(attachmentName) << Qt::flush;
+         return EXIT_SUCCESS;
+     }
+ 
+     if (args.size() < 4) {
+-        err << QObject::tr("No export target given. Please use '--stdout' or specify an 'export-file'.") << endl;
++        err << QObject::tr("No export target given. Please use '--stdout' or specify an 'export-file'.") << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     auto exportFileName = args.at(3);
+     QFile exportFile(exportFileName);
+     if (!exportFile.open(QIODevice::WriteOnly)) {
+-        err << QObject::tr("Could not open output file %1.").arg(exportFileName) << endl;
++        err << QObject::tr("Could not open output file %1.").arg(exportFileName) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+     exportFile.write(attachments->value(attachmentName));
+ 
+     out << QObject::tr("Successfully exported attachment %1 of entry %2 to %3.")
+                .arg(attachmentName, entryPath, exportFileName)
+-        << endl;
++        << Qt::endl;
+ 
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentImport.cpp keepassxc-2.7.6/src/cli/AttachmentImport.cpp
+--- keepassxc-2.7.6.orig/src/cli/AttachmentImport.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/AttachmentImport.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -50,7 +50,7 @@ int AttachmentImport::executeWithDatabas
+ 
+     auto entry = database->rootGroup()->findEntryByPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << endl;
++        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -58,7 +58,7 @@ int AttachmentImport::executeWithDatabas
+ 
+     auto attachments = entry->attachments();
+     if (attachments->hasKey(attachmentName) && !parser->isSet(AttachmentImport::ForceOption)) {
+-        err << QObject::tr("Attachment %1 already exists for entry %2.").arg(attachmentName, entryPath) << endl;
++        err << QObject::tr("Attachment %1 already exists for entry %2.").arg(attachmentName, entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -66,7 +66,7 @@ int AttachmentImport::executeWithDatabas
+ 
+     QFile importFile(importFileName);
+     if (!importFile.open(QIODevice::ReadOnly)) {
+-        err << QObject::tr("Could not open attachment file %1.").arg(importFileName) << endl;
++        err << QObject::tr("Could not open attachment file %1.").arg(importFileName) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -76,12 +76,12 @@ int AttachmentImport::executeWithDatabas
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << endl;
++        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     out << QObject::tr("Successfully imported attachment %1 as %2 to entry %3.")
+                .arg(importFileName, attachmentName, entryPath)
+-        << endl;
++        << Qt::endl;
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentRemove.cpp keepassxc-2.7.6/src/cli/AttachmentRemove.cpp
+--- keepassxc-2.7.6.orig/src/cli/AttachmentRemove.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/AttachmentRemove.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -41,7 +41,7 @@ int AttachmentRemove::executeWithDatabas
+ 
+     auto entry = database->rootGroup()->findEntryByPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << endl;
++        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -49,7 +49,7 @@ int AttachmentRemove::executeWithDatabas
+ 
+     auto attachments = entry->attachments();
+     if (!attachments->hasKey(attachmentName)) {
+-        err << QObject::tr("Could not find attachment with name %1.").arg(attachmentName) << endl;
++        err << QObject::tr("Could not find attachment with name %1.").arg(attachmentName) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -59,10 +59,10 @@ int AttachmentRemove::executeWithDatabas
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << endl;
++        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+-    out << QObject::tr("Successfully removed attachment %1 from entry %2.").arg(attachmentName, entryPath) << endl;
++    out << QObject::tr("Successfully removed attachment %1 from entry %2.").arg(attachmentName, entryPath) << Qt::endl;
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Clip.cpp keepassxc-2.7.6/src/cli/Clip.cpp
+--- keepassxc-2.7.6.orig/src/cli/Clip.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Clip.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -72,7 +72,7 @@ int Clip::executeWithDatabase(QSharedPoi
+         bool ok;
+         timeout = args.at(2).toInt(&ok);
+         if (!ok) {
+-            err << QObject::tr("Invalid timeout value %1.").arg(args.at(2)) << endl;
++            err << QObject::tr("Invalid timeout value %1.").arg(args.at(2)) << Qt::endl;
+             return EXIT_FAILURE;
+         }
+     }
+@@ -83,14 +83,14 @@ int Clip::executeWithDatabase(QSharedPoi
+         const auto& searchTerm = args.at(1);
+         const auto results = searcher.search(QString("title:%1").arg(searchTerm), database->rootGroup(), true);
+         if (results.count() > 1) {
+-            err << QObject::tr("Multiple entries matching:") << endl;
++            err << QObject::tr("Multiple entries matching:") << Qt::endl;
+             for (const Entry* result : results) {
+-                err << result->path().prepend('/') << endl;
++                err << result->path().prepend('/') << Qt::endl;
+             }
+             return EXIT_FAILURE;
+         } else {
+             entryPath = (results.isEmpty()) ? searchTerm : results[0]->path().prepend('/');
+-            out << QObject::tr("Using matching entry: %1").arg(entryPath) << endl;
++            out << QObject::tr("Using matching entry: %1").arg(entryPath) << Qt::endl;
+         }
+     } else {
+         entryPath = args.at(1);
+@@ -98,12 +98,12 @@ int Clip::executeWithDatabase(QSharedPoi
+ 
+     auto* entry = database->rootGroup()->findEntryByPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Entry %1 not found.").arg(entryPath) << endl;
++        err << QObject::tr("Entry %1 not found.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (parser->isSet(AttributeOption) && parser->isSet(TotpOption)) {
+-        err << QObject::tr("ERROR: Please specify one of --attribute or --totp, not both.") << endl;
++        err << QObject::tr("ERROR: Please specify one of --attribute or --totp, not both.") << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -112,7 +112,7 @@ int Clip::executeWithDatabase(QSharedPoi
+     bool found = false;
+     if (parser->isSet(TotpOption) || selectedAttribute == "totp") {
+         if (!entry->hasTotp()) {
+-            err << QObject::tr("Entry with path %1 has no TOTP set up.").arg(entryPath) << endl;
++            err << QObject::tr("Entry with path %1 has no TOTP set up.").arg(entryPath) << Qt::endl;
+             return EXIT_FAILURE;
+         }
+ 
+@@ -127,7 +127,7 @@ int Clip::executeWithDatabase(QSharedPoi
+         if (attrs.size() > 1) {
+             err << QObject::tr("ERROR: attribute %1 is ambiguous, it matches %2.")
+                        .arg(selectedAttribute, QLocale().createSeparatedList(attrs))
+-                << endl;
++                << Qt::endl;
+             return EXIT_FAILURE;
+         } else if (attrs.size() == 1) {
+             found = true;
+@@ -137,7 +137,7 @@ int Clip::executeWithDatabase(QSharedPoi
+     }
+ 
+     if (!found) {
+-        out << QObject::tr("Attribute \"%1\" not found.").arg(selectedAttribute) << endl;
++        out << QObject::tr("Attribute \"%1\" not found.").arg(selectedAttribute) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -146,7 +146,7 @@ int Clip::executeWithDatabase(QSharedPoi
+         return exitCode;
+     }
+ 
+-    out << QObject::tr("Entry's \"%1\" attribute copied to the clipboard!").arg(selectedAttribute) << endl;
++    out << QObject::tr("Entry's \"%1\" attribute copied to the clipboard!").arg(selectedAttribute) << Qt::endl;
+ 
+     if (timeout <= 0) {
+         return exitCode;
+@@ -156,13 +156,13 @@ int Clip::executeWithDatabase(QSharedPoi
+     while (timeout > 0) {
+         out << '\r' << QString(lastLine.size(), ' ') << '\r';
+         lastLine = QObject::tr("Clearing the clipboard in %1 second(s)...", "", timeout).arg(timeout);
+-        out << lastLine << flush;
++        out << lastLine << Qt::flush;
+         Tools::sleep(1000);
+         --timeout;
+     }
+     Utils::clipText("");
+     out << '\r' << QString(lastLine.size(), ' ') << '\r';
+-    out << QObject::tr("Clipboard cleared!") << endl;
++    out << QObject::tr("Clipboard cleared!") << Qt::endl;
+ 
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/CMakeLists.txt keepassxc-2.7.6/src/cli/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/cli/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/CMakeLists.txt	2024-01-21 23:39:13.109279369 -0800
+@@ -45,7 +45,15 @@ set(cli_SOURCES
+         Show.cpp)
+ 
+ add_library(cli STATIC ${cli_SOURCES})
+-target_link_libraries(cli Qt5::Core)
++if(WITH_QT6 AND WITH_QT5COMPAT)
++    add_definitions(-DUSE_QT5COMPAT)
++    find_package(Qt6 REQUIRED COMPONENTS Core5Compat)
++    target_link_libraries(cli Qt6::Core Qt6::Core5Compat)
++elseif(WITH_QT6)
++    target_link_libraries(cli Qt6::Core)
++elseif(WITH_QT5)
++    target_link_libraries(cli Qt5::Core)
++endif()
+ 
+ find_package(Readline)
+ 
+diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseCreate.cpp keepassxc-2.7.6/src/cli/DatabaseCreate.cpp
+--- keepassxc-2.7.6.orig/src/cli/DatabaseCreate.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/DatabaseCreate.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -70,13 +70,13 @@ QSharedPointer<Database> DatabaseCreate:
+     if (decryptionTimeValue.length() != 0) {
+         decryptionTime = decryptionTimeValue.toInt();
+         if (decryptionTime <= 0) {
+-            err << QObject::tr("Invalid decryption time %1.").arg(decryptionTimeValue) << endl;
++            err << QObject::tr("Invalid decryption time %1.").arg(decryptionTimeValue) << Qt::endl;
+             return {};
+         }
+         if (decryptionTime < Kdf::MIN_ENCRYPTION_TIME || decryptionTime > Kdf::MAX_ENCRYPTION_TIME) {
+             err << QObject::tr("Target decryption time must be between %1 and %2.")
+                        .arg(QString::number(Kdf::MIN_ENCRYPTION_TIME), QString::number(Kdf::MAX_ENCRYPTION_TIME))
+-                << endl;
++                << Qt::endl;
+             return {};
+         }
+     }
+@@ -86,7 +86,7 @@ QSharedPointer<Database> DatabaseCreate:
+     if (parser->isSet(DatabaseCreate::SetPasswordOption)) {
+         auto passwordKey = Utils::getConfirmedPassword();
+         if (passwordKey.isNull()) {
+-            err << QObject::tr("Failed to set database password.") << endl;
++            err << QObject::tr("Failed to set database password.") << Qt::endl;
+             return {};
+         }
+         key->addKey(passwordKey);
+@@ -104,7 +104,7 @@ QSharedPointer<Database> DatabaseCreate:
+         }
+ 
+         if (!Utils::loadFileKey(keyFilePath, fileKey)) {
+-            err << QObject::tr("Loading the key file failed") << endl;
++            err << QObject::tr("Loading the key file failed") << Qt::endl;
+             return {};
+         }
+ 
+@@ -114,7 +114,7 @@ QSharedPointer<Database> DatabaseCreate:
+     }
+ 
+     if (key->isEmpty()) {
+-        err << QObject::tr("No key is set. Aborting database creation.") << endl;
++        err << QObject::tr("No key is set. Aborting database creation.") << Qt::endl;
+         return {};
+     }
+ 
+@@ -125,15 +125,15 @@ QSharedPointer<Database> DatabaseCreate:
+         auto kdf = db->kdf();
+         Q_ASSERT(kdf);
+ 
+-        out << QObject::tr("Benchmarking key derivation function for %1ms delay.").arg(decryptionTimeValue) << endl;
++        out << QObject::tr("Benchmarking key derivation function for %1ms delay.").arg(decryptionTimeValue) << Qt::endl;
+         int rounds = kdf->benchmark(decryptionTime);
+-        out << QObject::tr("Setting %1 rounds for key derivation function.").arg(QString::number(rounds)) << endl;
++        out << QObject::tr("Setting %1 rounds for key derivation function.").arg(QString::number(rounds)) << Qt::endl;
+         kdf->setRounds(rounds);
+ 
+         bool ok = db->changeKdf(kdf);
+ 
+         if (!ok) {
+-            err << QObject::tr("error while setting database key derivation settings.") << endl;
++            err << QObject::tr("error while setting database key derivation settings.") << Qt::endl;
+             return {};
+         }
+     }
+@@ -168,7 +168,7 @@ int DatabaseCreate::execute(const QStrin
+ 
+     const QString& databaseFilename = args.at(0);
+     if (QFileInfo::exists(databaseFilename)) {
+-        err << QObject::tr("File %1 already exists.").arg(databaseFilename) << endl;
++        err << QObject::tr("File %1 already exists.").arg(databaseFilename) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -179,10 +179,10 @@ int DatabaseCreate::execute(const QStrin
+ 
+     QString errorMessage;
+     if (!db->saveAs(databaseFilename, Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Failed to save the database: %1.").arg(errorMessage) << endl;
++        err << QObject::tr("Failed to save the database: %1.").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+-    out << QObject::tr("Successfully created new database.") << endl;
++    out << QObject::tr("Successfully created new database.") << Qt::endl;
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseEdit.cpp keepassxc-2.7.6/src/cli/DatabaseEdit.cpp
+--- keepassxc-2.7.6.orig/src/cli/DatabaseEdit.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/DatabaseEdit.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -53,7 +53,7 @@ int DatabaseEdit::executeWithDatabase(QS
+         err << QObject::tr("Cannot use %1 and %2 at the same time.")
+                    .arg(DatabaseCreate::SetPasswordOption.names().at(0))
+                    .arg(DatabaseEdit::UnsetPasswordOption.names().at(0))
+-            << endl;
++            << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -61,7 +61,7 @@ int DatabaseEdit::executeWithDatabase(QS
+         err << QObject::tr("Cannot use %1 and %2 at the same time.")
+                    .arg(DatabaseCreate::SetKeyFileOption.names().at(0))
+                    .arg(DatabaseEdit::UnsetKeyFileOption.names().at(0))
+-            << endl;
++            << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -76,7 +76,7 @@ int DatabaseEdit::executeWithDatabase(QS
+                                                 parser->value(DatabaseCreate::SetKeyFileOption),
+                                                 parser->isSet(DatabaseEdit::UnsetKeyFileOption));
+         if (newDatabaseKey.isNull()) {
+-            err << QObject::tr("Could not change the database key.") << endl;
++            err << QObject::tr("Could not change the database key.") << Qt::endl;
+             return EXIT_FAILURE;
+         }
+         database->setKey(newDatabaseKey);
+@@ -84,17 +84,17 @@ int DatabaseEdit::executeWithDatabase(QS
+     }
+ 
+     if (!databaseWasChanged) {
+-        out << QObject::tr("Database was not modified.") << endl;
++        out << QObject::tr("Database was not modified.") << Qt::endl;
+         return EXIT_SUCCESS;
+     }
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Writing the database failed: %1").arg(errorMessage) << endl;
++        err << QObject::tr("Writing the database failed: %1").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+-    out << QObject::tr("Successfully edited the database.") << endl;
++    out << QObject::tr("Successfully edited the database.") << Qt::endl;
+     return EXIT_SUCCESS;
+ }
+ 
+@@ -113,19 +113,19 @@ QSharedPointer<CompositeKey> DatabaseEdi
+     auto currentChallengeResponseKey = database->key()->getChallengeResponseKey(ChallengeResponseKey::UUID);
+ 
+     if (removePassword && currentPasswordKey.isNull()) {
+-        err << QObject::tr("Cannot remove password: The database does not have a password.") << endl;
++        err << QObject::tr("Cannot remove password: The database does not have a password.") << Qt::endl;
+         return {};
+     }
+ 
+     if (removeKeyFile && currentFileKey.isNull()) {
+-        err << QObject::tr("Cannot remove file key: The database does not have a file key.") << endl;
++        err << QObject::tr("Cannot remove file key: The database does not have a file key.") << Qt::endl;
+         return {};
+     }
+ 
+     if (updatePassword) {
+         QSharedPointer<PasswordKey> newPasswordKey = Utils::getConfirmedPassword();
+         if (newPasswordKey.isNull()) {
+-            err << QObject::tr("Failed to set database password.") << endl;
++            err << QObject::tr("Failed to set database password.") << Qt::endl;
+             return {};
+         }
+         newDatabaseKey->addKey(newPasswordKey);
+@@ -137,7 +137,7 @@ QSharedPointer<CompositeKey> DatabaseEdi
+         QSharedPointer<FileKey> newFileKey = QSharedPointer<FileKey>::create();
+         QString errorMessage;
+         if (!Utils::loadFileKey(newFileKeyPath, newFileKey)) {
+-            err << QObject::tr("Loading the new key file failed: %1").arg(errorMessage) << endl;
++            err << QObject::tr("Loading the new key file failed: %1").arg(errorMessage) << Qt::endl;
+             return {};
+         }
+         newDatabaseKey->addKey(newFileKey);
+@@ -150,13 +150,13 @@ QSharedPointer<CompositeKey> DatabaseEdi
+     // silently removed from the database.
+     for (const QSharedPointer<Key>& key : database->key()->keys()) {
+         if (key->uuid() != PasswordKey::UUID && key->uuid() != FileKey::UUID) {
+-            err << QObject::tr("Found unexpected Key type %1").arg(key->uuid().toString()) << endl;
++            err << QObject::tr("Found unexpected Key type %1").arg(key->uuid().toString()) << Qt::endl;
+             return {};
+         }
+     }
+     for (const QSharedPointer<ChallengeResponseKey>& key : database->key()->challengeResponseKeys()) {
+         if (key->uuid() != ChallengeResponseKey::UUID) {
+-            err << QObject::tr("Found unexpected Key type %1").arg(key->uuid().toString()) << endl;
++            err << QObject::tr("Found unexpected Key type %1").arg(key->uuid().toString()) << Qt::endl;
+             return {};
+         }
+     }
+@@ -166,7 +166,7 @@ QSharedPointer<CompositeKey> DatabaseEdi
+     }
+ 
+     if (newDatabaseKey->keys().isEmpty() && newDatabaseKey->challengeResponseKeys().isEmpty()) {
+-        err << QObject::tr("Cannot remove all the keys from a database.") << endl;
++        err << QObject::tr("Cannot remove all the keys from a database.") << Qt::endl;
+         return {};
+     }
+ 
+diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseInfo.cpp keepassxc-2.7.6/src/cli/DatabaseInfo.cpp
+--- keepassxc-2.7.6.orig/src/cli/DatabaseInfo.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/DatabaseInfo.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -35,39 +35,45 @@ int DatabaseInfo::executeWithDatabase(QS
+ {
+     auto& out = Utils::STDOUT;
+ 
+-    out << QObject::tr("UUID: ") << database->uuid().toString() << endl;
+-    out << QObject::tr("Name: ") << database->metadata()->name() << endl;
+-    out << QObject::tr("Description: ") << database->metadata()->description() << endl;
++    out << QObject::tr("UUID: ") << database->uuid().toString() << Qt::endl;
++    out << QObject::tr("Name: ") << database->metadata()->name() << Qt::endl;
++    out << QObject::tr("Description: ") << database->metadata()->description() << Qt::endl;
+     for (auto& cipher : asConst(KeePass2::CIPHERS)) {
+         if (cipher == database->cipher()) {
+-            out << QObject::tr("Cipher: ") << KeePass2::cipherToString(cipher) << endl;
++            out << QObject::tr("Cipher: ") << KeePass2::cipherToString(cipher) << Qt::endl;
+         }
+     }
+-    out << QObject::tr("KDF: ") << database->kdf()->toString() << endl;
++    out << QObject::tr("KDF: ") << database->kdf()->toString() << Qt::endl;
+     if (database->metadata()->recycleBinEnabled()) {
+-        out << QObject::tr("Recycle bin is enabled.") << endl;
++        out << QObject::tr("Recycle bin is enabled.") << Qt::endl;
+     } else {
+-        out << QObject::tr("Recycle bin is not enabled.") << endl;
++        out << QObject::tr("Recycle bin is not enabled.") << Qt::endl;
+     }
+ 
+     DatabaseStats stats(database);
+-    out << QObject::tr("Location") << ": " << database->filePath() << endl;
++    out << QObject::tr("Location") << ": " << database->filePath() << Qt::endl;
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+     out << QObject::tr("Database created") << ": "
+-        << database->rootGroup()->timeInfo().creationTime().toString(Qt::DefaultLocaleShortDate) << endl;
+-    out << QObject::tr("Last saved") << ": " << stats.modified.toString(Qt::DefaultLocaleShortDate) << endl;
++        << database->rootGroup()->timeInfo().creationTime().toString(Qt::ISODate) << Qt::endl;
++    out << QObject::tr("Last saved") << ": " << stats.modified.toString(Qt::ISODate) << Qt::endl;
++#else
++    out << QObject::tr("Database created") << ": "
++        << database->rootGroup()->timeInfo().creationTime().toString(Qt::DefaultLocaleShortDate) << Qt::endl;
++    out << QObject::tr("Last saved") << ": " << stats.modified.toString(Qt::DefaultLocaleShortDate) << Qt::endl;
++#endif
+     out << QObject::tr("Unsaved changes") << ": " << (database->isModified() ? QObject::tr("yes") : QObject::tr("no"))
+-        << endl;
+-    out << QObject::tr("Number of groups") << ": " << QString::number(stats.groupCount) << endl;
+-    out << QObject::tr("Number of entries") << ": " << QString::number(stats.entryCount) << endl;
+-    out << QObject::tr("Number of expired entries") << ": " << QString::number(stats.expiredEntries) << endl;
+-    out << QObject::tr("Unique passwords") << ": " << QString::number(stats.uniquePasswords) << endl;
+-    out << QObject::tr("Non-unique passwords") << ": " << QString::number(stats.reusedPasswords) << endl;
+-    out << QObject::tr("Maximum password reuse") << ": " << QString::number(stats.maxPwdReuse()) << endl;
+-    out << QObject::tr("Number of short passwords") << ": " << QString::number(stats.shortPasswords) << endl;
+-    out << QObject::tr("Number of weak passwords") << ": " << QString::number(stats.weakPasswords) << endl;
+-    out << QObject::tr("Entries excluded from reports") << ": " << QString::number(stats.excludedEntries) << endl;
++        << Qt::endl;
++    out << QObject::tr("Number of groups") << ": " << QString::number(stats.groupCount) << Qt::endl;
++    out << QObject::tr("Number of entries") << ": " << QString::number(stats.entryCount) << Qt::endl;
++    out << QObject::tr("Number of expired entries") << ": " << QString::number(stats.expiredEntries) << Qt::endl;
++    out << QObject::tr("Unique passwords") << ": " << QString::number(stats.uniquePasswords) << Qt::endl;
++    out << QObject::tr("Non-unique passwords") << ": " << QString::number(stats.reusedPasswords) << Qt::endl;
++    out << QObject::tr("Maximum password reuse") << ": " << QString::number(stats.maxPwdReuse()) << Qt::endl;
++    out << QObject::tr("Number of short passwords") << ": " << QString::number(stats.shortPasswords) << Qt::endl;
++    out << QObject::tr("Number of weak passwords") << ": " << QString::number(stats.weakPasswords) << Qt::endl;
++    out << QObject::tr("Entries excluded from reports") << ": " << QString::number(stats.excludedEntries) << Qt::endl;
+     out << QObject::tr("Average password length") << ": " << QObject::tr("%1 characters").arg(stats.averagePwdLength())
+-        << endl;
++        << Qt::endl;
+ 
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Diceware.cpp keepassxc-2.7.6/src/cli/Diceware.cpp
+--- keepassxc-2.7.6.orig/src/cli/Diceware.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Diceware.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -58,7 +58,7 @@ int Diceware::execute(const QStringList&
+     if (wordCount.isEmpty()) {
+         dicewareGenerator.setWordCount(PassphraseGenerator::DefaultWordCount);
+     } else if (wordCount.toInt() <= 0) {
+-        err << QObject::tr("Invalid word count %1").arg(wordCount) << endl;
++        err << QObject::tr("Invalid word count %1").arg(wordCount) << Qt::endl;
+         return EXIT_FAILURE;
+     } else {
+         dicewareGenerator.setWordCount(wordCount.toInt());
+@@ -72,12 +72,12 @@ int Diceware::execute(const QStringList&
+     if (!dicewareGenerator.isValid()) {
+         // We already validated the word count input so if the generator is invalid, it
+         // must be because the word list is too small.
+-        err << QObject::tr("The word list is too small (< 1000 items)") << endl;
++        err << QObject::tr("The word list is too small (< 1000 items)") << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     QString password = dicewareGenerator.generatePassphrase();
+-    out << password << endl;
++    out << password << Qt::endl;
+ 
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Edit.cpp keepassxc-2.7.6/src/cli/Edit.cpp
+--- keepassxc-2.7.6.orig/src/cli/Edit.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Edit.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -66,7 +66,7 @@ int Edit::executeWithDatabase(QSharedPoi
+ 
+     // Cannot use those 2 options at the same time!
+     if (parser->isSet(Add::GenerateOption) && parser->isSet(Add::PasswordPromptOption)) {
+-        err << QObject::tr("Cannot generate a password and prompt at the same time.") << endl;
++        err << QObject::tr("Cannot generate a password and prompt at the same time.") << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -83,7 +83,7 @@ int Edit::executeWithDatabase(QSharedPoi
+ 
+     Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << endl;
++        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -93,7 +93,7 @@ int Edit::executeWithDatabase(QSharedPoi
+     QString title = parser->value(Edit::TitleOption);
+     bool prompt = parser->isSet(Add::PasswordPromptOption);
+     if (username.isEmpty() && url.isEmpty() && notes.isEmpty() && title.isEmpty() && !prompt && !generate) {
+-        err << QObject::tr("Not changing any field for entry %1.").arg(entryPath) << endl;
++        err << QObject::tr("Not changing any field for entry %1.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -116,7 +116,7 @@ int Edit::executeWithDatabase(QSharedPoi
+     }
+ 
+     if (prompt) {
+-        out << QObject::tr("Enter new password for entry: ") << flush;
++        out << QObject::tr("Enter new password for entry: ") << Qt::flush;
+         QString password = Utils::getPassword(parser->isSet(Command::QuietOption));
+         entry->setPassword(password);
+     } else if (generate) {
+@@ -128,10 +128,10 @@ int Edit::executeWithDatabase(QSharedPoi
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Writing the database failed: %1").arg(errorMessage) << endl;
++        err << QObject::tr("Writing the database failed: %1").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+-    out << QObject::tr("Successfully edited entry %1.").arg(entry->title()) << endl;
++    out << QObject::tr("Successfully edited entry %1.").arg(entry->title()) << Qt::endl;
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Estimate.cpp keepassxc-2.7.6/src/cli/Estimate.cpp
+--- keepassxc-2.7.6.orig/src/cli/Estimate.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Estimate.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -47,7 +47,7 @@ static void estimate(const char* pwd, bo
+         // clang-format off
+         out << QObject::tr("Length %1").arg(len, 0) << '\t'
+             << QObject::tr("Entropy %1").arg(e, 0, 'f', 3) << '\t'
+-            << QObject::tr("Log10 %1").arg(e * 0.301029996, 0, 'f', 3) << endl;
++            << QObject::tr("Log10 %1").arg(e * 0.301029996, 0, 'f', 3) << Qt::endl;
+         // clang-format on
+     } else {
+         int pwdLen = 0;
+@@ -62,7 +62,7 @@ static void estimate(const char* pwd, bo
+         out << QObject::tr("Length %1").arg(len) << '\t'
+             << QObject::tr("Entropy %1").arg(e, 0, 'f', 3) << '\t'
+             << QObject::tr("Log10 %1").arg(e * 0.301029996, 0, 'f', 3) << "\n  "
+-            << QObject::tr("Multi-word extra bits %1").arg(m, 0, 'f', 1) << endl;
++            << QObject::tr("Multi-word extra bits %1").arg(m, 0, 'f', 1) << Qt::endl;
+         // clang-format on
+         p = info;
+         pwdLen = 0;
+@@ -135,13 +135,13 @@ static void estimate(const char* pwd, bo
+             for (n = 0; n < p->Length; ++n, ++pwd) {
+                 out << *pwd;
+             }
+-            out << endl;
++            out << Qt::endl;
+             p = p->Next;
+         }
+         ZxcvbnFreeInfo(info);
+         if (pwdLen != len) {
+             out << QObject::tr("*** Password length (%1) != sum of length of parts (%2) ***").arg(len).arg(pwdLen)
+-                << endl;
++                << Qt::endl;
+         }
+     }
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Export.cpp keepassxc-2.7.6/src/cli/Export.cpp
+--- keepassxc-2.7.6.orig/src/cli/Export.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Export.cpp	2024-01-21 21:07:36.764446226 -0800
+@@ -46,7 +46,7 @@ int Export::executeWithDatabase(QSharedP
+         QByteArray xmlData;
+         QString errorMessage;
+         if (!database->extract(xmlData, &errorMessage)) {
+-            err << QObject::tr("Unable to export database to XML: %1").arg(errorMessage) << endl;
++            err << QObject::tr("Unable to export database to XML: %1").arg(errorMessage) << Qt::endl;
+             return EXIT_FAILURE;
+         }
+         out.write(xmlData.constData());
+@@ -54,7 +54,7 @@ int Export::executeWithDatabase(QSharedP
+         CsvExporter csvExporter;
+         out << csvExporter.exportDatabase(database);
+     } else {
+-        err << QObject::tr("Unsupported format %1").arg(format) << endl;
++        err << QObject::tr("Unsupported format %1").arg(format) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+diff -urp keepassxc-2.7.6.orig/src/cli/Generate.cpp keepassxc-2.7.6/src/cli/Generate.cpp
+--- keepassxc-2.7.6.orig/src/cli/Generate.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Generate.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -92,13 +92,13 @@ QSharedPointer<PasswordGenerator> Genera
+     if (passwordLength.isEmpty()) {
+         passwordGenerator->setLength(PasswordGenerator::DefaultLength);
+     } else if (passwordLength.toInt() <= 0) {
+-        err << QObject::tr("Invalid password length %1").arg(passwordLength) << endl;
++        err << QObject::tr("Invalid password length %1").arg(passwordLength) << Qt::endl;
+         return QSharedPointer<PasswordGenerator>(nullptr);
+     } else {
+         passwordGenerator->setLength(passwordLength.toInt());
+     }
+ 
+-    PasswordGenerator::CharClasses classes = 0x0;
++    PasswordGenerator::CharClasses classes = PasswordGenerator::CharClass::NoClass;
+ 
+     if (parser->isSet(Generate::LowerCaseOption)) {
+         classes |= PasswordGenerator::LowerLetters;
+@@ -116,7 +116,7 @@ QSharedPointer<PasswordGenerator> Genera
+         classes |= PasswordGenerator::EASCII;
+     }
+ 
+-    PasswordGenerator::GeneratorFlags flags = 0x0;
++    PasswordGenerator::GeneratorFlags flags = PasswordGenerator::GeneratorFlag::NoFlags;
+ 
+     if (parser->isSet(Generate::ExcludeSimilarCharsOption)) {
+         flags |= PasswordGenerator::ExcludeLookAlike;
+@@ -138,7 +138,7 @@ QSharedPointer<PasswordGenerator> Genera
+     passwordGenerator->setExcludedCharacterSet(parser->value(Generate::ExcludeCharsOption));
+ 
+     if (!passwordGenerator->isValid()) {
+-        err << QObject::tr("Invalid password generator after applying all options") << endl;
++        err << QObject::tr("Invalid password generator after applying all options") << Qt::endl;
+         return QSharedPointer<PasswordGenerator>(nullptr);
+     }
+ 
+@@ -159,7 +159,7 @@ int Generate::execute(const QStringList&
+ 
+     auto& out = Utils::STDOUT;
+     QString password = passwordGenerator->generatePassword();
+-    out << password << endl;
++    out << password << Qt::endl;
+ 
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Import.cpp keepassxc-2.7.6/src/cli/Import.cpp
+--- keepassxc-2.7.6.orig/src/cli/Import.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Import.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -61,7 +61,7 @@ int Import::execute(const QStringList& a
+     const QString& dbPath = args.at(1);
+ 
+     if (QFileInfo::exists(dbPath)) {
+-        err << QObject::tr("File %1 already exists.").arg(dbPath) << endl;
++        err << QObject::tr("File %1 already exists.").arg(dbPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -72,15 +72,15 @@ int Import::execute(const QStringList& a
+ 
+     QString errorMessage;
+     if (!db->import(xmlExportPath, &errorMessage)) {
+-        err << QObject::tr("Unable to import XML database: %1").arg(errorMessage) << endl;
++        err << QObject::tr("Unable to import XML database: %1").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (!db->saveAs(dbPath, Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Failed to save the database: %1.").arg(errorMessage) << endl;
++        err << QObject::tr("Failed to save the database: %1.").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+-    out << QObject::tr("Successfully imported database.") << endl;
++    out << QObject::tr("Successfully imported database.") << Qt::endl;
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/keepassxc-cli.cpp keepassxc-2.7.6/src/cli/keepassxc-cli.cpp
+--- keepassxc-2.7.6.orig/src/cli/keepassxc-cli.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/keepassxc-cli.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -153,7 +153,7 @@ int enterInteractiveMode(const QStringLi
+ 
+         auto cmd = Commands::getCommand(args[0]);
+         if (!cmd) {
+-            err << QObject::tr("Unknown command %1").arg(args[0]) << endl;
++            err << QObject::tr("Unknown command %1").arg(args[0]) << Qt::endl;
+             continue;
+         } else if (cmd->name == "quit" || cmd->name == "exit") {
+             break;
+@@ -215,11 +215,11 @@ int main(int argc, char** argv)
+     if (parser.positionalArguments().empty()) {
+         if (parser.isSet("version")) {
+             // Switch to parser.showVersion() when available (QT 5.4).
+-            out << KEEPASSXC_VERSION << endl;
++            out << KEEPASSXC_VERSION << Qt::endl;
+             return EXIT_SUCCESS;
+         } else if (parser.isSet(debugInfoOption)) {
+             QString debugInfo = Tools::debugInfo().append("\n").append(Crypto::debugInfo());
+-            out << debugInfo << endl;
++            out << debugInfo << Qt::endl;
+             return EXIT_SUCCESS;
+         }
+         // showHelp exits the application immediately.
+@@ -233,7 +233,7 @@ int main(int argc, char** argv)
+ 
+     auto command = Commands::getCommand(commandName);
+     if (!command) {
+-        err << QObject::tr("Invalid command %1.").arg(commandName) << endl;
++        err << QObject::tr("Invalid command %1.").arg(commandName) << Qt::endl;
+         err << parser.helpText();
+         return EXIT_FAILURE;
+     }
+diff -urp keepassxc-2.7.6.orig/src/cli/List.cpp keepassxc-2.7.6/src/cli/List.cpp
+--- keepassxc-2.7.6.orig/src/cli/List.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/List.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -52,17 +52,17 @@ int List::executeWithDatabase(QSharedPoi
+ 
+     // No group provided, defaulting to root group.
+     if (args.size() == 1) {
+-        out << database->rootGroup()->print(recursive, flatten) << flush;
++        out << database->rootGroup()->print(recursive, flatten) << Qt::flush;
+         return EXIT_SUCCESS;
+     }
+ 
+     const QString& groupPath = args.at(1);
+     Group* group = database->rootGroup()->findGroupByPath(groupPath);
+     if (!group) {
+-        err << QObject::tr("Cannot find group %1.").arg(groupPath) << endl;
++        err << QObject::tr("Cannot find group %1.").arg(groupPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+-    out << group->print(recursive, flatten) << flush;
++    out << group->print(recursive, flatten) << Qt::flush;
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Merge.cpp keepassxc-2.7.6/src/cli/Merge.cpp
+--- keepassxc-2.7.6.orig/src/cli/Merge.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Merge.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -90,18 +90,18 @@ int Merge::executeWithDatabase(QSharedPo
+     QStringList changeList = merger.merge();
+ 
+     for (auto& mergeChange : changeList) {
+-        out << "\t" << mergeChange << endl;
++        out << "\t" << mergeChange << Qt::endl;
+     }
+ 
+     if (!changeList.isEmpty() && !parser->isSet(Merge::DryRunOption)) {
+         QString errorMessage;
+         if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-            err << QObject::tr("Unable to save database to file : %1").arg(errorMessage) << endl;
++            err << QObject::tr("Unable to save database to file : %1").arg(errorMessage) << Qt::endl;
+             return EXIT_FAILURE;
+         }
+-        out << QObject::tr("Successfully merged %1 into %2.").arg(fromDatabasePath, toDatabasePath) << endl;
++        out << QObject::tr("Successfully merged %1 into %2.").arg(fromDatabasePath, toDatabasePath) << Qt::endl;
+     } else {
+-        out << QObject::tr("Database was not modified by merge operation.") << endl;
++        out << QObject::tr("Database was not modified by merge operation.") << Qt::endl;
+     }
+ 
+     return EXIT_SUCCESS;
+diff -urp keepassxc-2.7.6.orig/src/cli/Move.cpp keepassxc-2.7.6/src/cli/Move.cpp
+--- keepassxc-2.7.6.orig/src/cli/Move.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Move.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -45,18 +45,18 @@ int Move::executeWithDatabase(QSharedPoi
+ 
+     Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << endl;
++        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     Group* destinationGroup = database->rootGroup()->findGroupByPath(destinationPath);
+     if (!destinationGroup) {
+-        err << QObject::tr("Could not find group with path %1.").arg(destinationPath) << endl;
++        err << QObject::tr("Could not find group with path %1.").arg(destinationPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (destinationGroup == entry->parent()) {
+-        err << QObject::tr("Entry is already in group %1.").arg(destinationPath) << endl;
++        err << QObject::tr("Entry is already in group %1.").arg(destinationPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -66,10 +66,10 @@ int Move::executeWithDatabase(QSharedPoi
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << endl;
++        err << QObject::tr("Writing the database failed %1.").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+-    out << QObject::tr("Successfully moved entry %1 to group %2.").arg(entry->title(), destinationPath) << endl;
++    out << QObject::tr("Successfully moved entry %1 to group %2.").arg(entry->title(), destinationPath) << Qt::endl;
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Remove.cpp keepassxc-2.7.6/src/cli/Remove.cpp
+--- keepassxc-2.7.6.orig/src/cli/Remove.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Remove.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -38,7 +38,7 @@ int Remove::executeWithDatabase(QSharedP
+     auto& entryPath = parser->positionalArguments().at(1);
+     QPointer<Entry> entry = database->rootGroup()->findEntryByPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Entry %1 not found.").arg(entryPath) << endl;
++        err << QObject::tr("Entry %1 not found.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -54,14 +54,14 @@ int Remove::executeWithDatabase(QSharedP
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Unable to save database to file: %1").arg(errorMessage) << endl;
++        err << QObject::tr("Unable to save database to file: %1").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (recycled) {
+-        out << QObject::tr("Successfully recycled entry %1.").arg(entryTitle) << endl;
++        out << QObject::tr("Successfully recycled entry %1.").arg(entryTitle) << Qt::endl;
+     } else {
+-        out << QObject::tr("Successfully deleted entry %1.").arg(entryTitle) << endl;
++        out << QObject::tr("Successfully deleted entry %1.").arg(entryTitle) << Qt::endl;
+     }
+ 
+     return EXIT_SUCCESS;
+diff -urp keepassxc-2.7.6.orig/src/cli/RemoveGroup.cpp keepassxc-2.7.6/src/cli/RemoveGroup.cpp
+--- keepassxc-2.7.6.orig/src/cli/RemoveGroup.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/RemoveGroup.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -44,12 +44,12 @@ int RemoveGroup::executeWithDatabase(QSh
+     // Recursive option means were looking for a group to remove.
+     QPointer<Group> group = database->rootGroup()->findGroupByPath(groupPath);
+     if (!group) {
+-        err << QObject::tr("Group %1 not found.").arg(groupPath) << endl;
++        err << QObject::tr("Group %1 not found.").arg(groupPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (group == database->rootGroup()) {
+-        err << QObject::tr("Cannot remove root group from database.") << endl;
++        err << QObject::tr("Cannot remove root group from database.") << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -64,14 +64,14 @@ int RemoveGroup::executeWithDatabase(QSh
+ 
+     QString errorMessage;
+     if (!database->save(Database::Atomic, {}, &errorMessage)) {
+-        err << QObject::tr("Unable to save database to file: %1").arg(errorMessage) << endl;
++        err << QObject::tr("Unable to save database to file: %1").arg(errorMessage) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (recycled) {
+-        out << QObject::tr("Successfully recycled group %1.").arg(groupPath) << endl;
++        out << QObject::tr("Successfully recycled group %1.").arg(groupPath) << Qt::endl;
+     } else {
+-        out << QObject::tr("Successfully deleted group %1.").arg(groupPath) << endl;
++        out << QObject::tr("Successfully deleted group %1.").arg(groupPath) << Qt::endl;
+     }
+ 
+     return EXIT_SUCCESS;
+diff -urp keepassxc-2.7.6.orig/src/cli/Search.cpp keepassxc-2.7.6/src/cli/Search.cpp
+--- keepassxc-2.7.6.orig/src/cli/Search.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Search.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -40,12 +40,12 @@ int Search::executeWithDatabase(QSharedP
+     EntrySearcher searcher;
+     auto results = searcher.search(args.at(1), database->rootGroup(), true);
+     if (results.isEmpty()) {
+-        err << "No results for that search term." << endl;
++        err << "No results for that search term." << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     for (const Entry* result : asConst(results)) {
+-        out << result->path().prepend('/') << endl;
++        out << result->path().prepend('/') << Qt::endl;
+     }
+     return EXIT_SUCCESS;
+ }
+diff -urp keepassxc-2.7.6.orig/src/cli/Show.cpp keepassxc-2.7.6/src/cli/Show.cpp
+--- keepassxc-2.7.6.orig/src/cli/Show.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Show.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -73,12 +73,12 @@ int Show::executeWithDatabase(QSharedPoi
+ 
+     Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
+     if (!entry) {
+-        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << endl;
++        err << QObject::tr("Could not find entry with path %1.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+     if (showTotp && !entry->hasTotp()) {
+-        err << QObject::tr("Entry with path %1 has no TOTP set up.").arg(entryPath) << endl;
++        err << QObject::tr("Entry with path %1 has no TOTP set up.").arg(entryPath) << Qt::endl;
+         return EXIT_FAILURE;
+     }
+ 
+@@ -113,20 +113,20 @@ int Show::executeWithDatabase(QSharedPoi
+             if (!attributesWereSpecified) {
+                 out << attributeName << ": ";
+             }
+-            out << Utils::getTopLevelField(entry, attributeName) << endl;
++            out << Utils::getTopLevelField(entry, attributeName) << Qt::endl;
+             continue;
+         }
+ 
+         QStringList attrs = Utils::findAttributes(*entry->attributes(), attributeName);
+         if (attrs.isEmpty()) {
+             encounteredError = true;
+-            err << QObject::tr("ERROR: unknown attribute %1.").arg(attributeName) << endl;
++            err << QObject::tr("ERROR: unknown attribute %1.").arg(attributeName) << Qt::endl;
+             continue;
+         } else if (attrs.size() > 1) {
+             encounteredError = true;
+             err << QObject::tr("ERROR: attribute %1 is ambiguous, it matches %2.")
+                        .arg(attributeName, QLocale().createSeparatedList(attrs))
+-                << endl;
++                << Qt::endl;
+             continue;
+         }
+         QString canonicalName = attrs[0];
+@@ -134,33 +134,33 @@ int Show::executeWithDatabase(QSharedPoi
+             out << canonicalName << ": ";
+         }
+         if (entry->attributes()->isProtected(canonicalName) && !attributesWereSpecified && !showProtectedAttributes) {
+-            out << "PROTECTED" << endl;
++            out << "PROTECTED" << Qt::endl;
+         } else {
+-            out << entry->resolveMultiplePlaceholders(entry->attributes()->value(canonicalName)) << endl;
++            out << entry->resolveMultiplePlaceholders(entry->attributes()->value(canonicalName)) << Qt::endl;
+         }
+     }
+ 
+     if (parser->isSet(Show::AttachmentsOption)) {
+         // Separate attachment output from attributes output via a newline.
+-        out << endl;
++        out << Qt::endl;
+ 
+         EntryAttachments* attachments = entry->attachments();
+         if (attachments->isEmpty()) {
+-            out << QObject::tr("No attachments present.") << endl;
++            out << QObject::tr("No attachments present.") << Qt::endl;
+         } else {
+-            out << QObject::tr("Attachments:") << endl;
++            out << QObject::tr("Attachments:") << Qt::endl;
+ 
+             // Iterate over the attachments and output their names and size line-by-line, indented.
+             for (const QString& attachmentName : attachments->keys()) {
+                 // TODO: use QLocale::formattedDataSize when >= Qt 5.10
+                 QString attachmentSize = Tools::humanReadableFileSize(attachments->value(attachmentName).size(), 1);
+-                out << "  " << attachmentName << " (" << attachmentSize << ")" << endl;
++                out << "  " << attachmentName << " (" << attachmentSize << ")" << Qt::endl;
+             }
+         }
+     }
+ 
+     if (showTotp) {
+-        out << entry->totp() << endl;
++        out << entry->totp() << Qt::endl;
+     }
+ 
+     return encounteredError ? EXIT_FAILURE : EXIT_SUCCESS;
+diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.cpp keepassxc-2.7.6/src/cli/TextStream.cpp
+--- keepassxc-2.7.6.orig/src/cli/TextStream.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/TextStream.cpp	2024-01-21 23:25:21.340467343 -0800
+@@ -18,7 +18,13 @@
+ #include "TextStream.h"
+ 
+ #include <QProcessEnvironment>
+-#include <QTextCodec>
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && defined(USE_QT5COMPAT)
++#  include <QtCore5Compat/QTextCodec>
++#elif QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++#  include <QStringConverter>
++#else
++#  include <QTextCodec>
++#endif
+ #ifdef Q_OS_WIN
+ #include <windows.h>
+ #endif
+@@ -67,6 +73,59 @@ void TextStream::write(const char* str)
+     *this << QString(str);
+ }
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && !defined(USE_QT5COMPAT)
++#warning TextStream::detectCodec():  Support for Windows-1252 is not supported across platforms.  Enable the Qt5Compat option to add back support.
++void TextStream::detectCodec()
++{
++    QString codecName = "UTF-8";
++    auto env = QProcessEnvironment::systemEnvironment();
++
++#ifdef Q_OS_WIN
++    bool success = false;
++#ifdef CP_UTF8
++    success = SetConsoleOutputCP(CP_UTF8);
++#endif
++    if (!success && !env.contains("SHELL")) {
++        // Fall back to cp850 if this is Windows without CP_UTF8 and we
++        // are running in a native shell (i.e., no Msys or Cygwin).
++        codecName = "Windows-850";
++    }
++#else
++    if (env.contains("LANG") && !env.value("LANG").isEmpty() && env.value("LANG") != "C") {
++        // Only override codec if LANG is set, otherwise Qt will assume
++        // US-ASCII, which is almost always wrong and results in
++        // Unicode passwords being displayed as question marks.
++        codecName = QTextCodec::codecForLocale()->name();
++    }
++#endif
++
++    codecName = env.value("ENCODING_OVERRIDE", codecName);
++
++    QStringConverter codec = QStringConverter::Utf8;
++    if (QString::compare(codecName, "UTF-8") == 0 || QString::compare(codecName, "Utf8") == 0)
++        codec = QStringConverter::Utf8;
++    else if (QString::compare(codecName, "UTF-16") == 0 || QString::compare(codecName, "Utf16") == 0)
++        codec = QStringConverter::Utf16;
++    else if (QString::compare(codecName, "UTF-16BE") == 0 || QString::compare(codecName, "Utf16BE") == 0)
++        codec = QStringConverter::Utf16BE;
++    else if (QString::compare(codecName, "UTF-16LE") == 0 || QString::compare(codecName, "Utf16LE") == 0)
++        codec = QStringConverter::Utf16LE;
++    else if (QString::compare(codecName, "UTF-32") == 0 || QString::compare(codecName, "Utf32") == 0)
++        codec = QStringConverter::Utf32;
++    else if (QString::compare(codecName, "UTF-32BE") == 0 || QString::compare(codecName, "Utf32BE") == 0)
++        codec = QStringConverter::Utf32BE;
++    else if (QString::compare(codecName, "UTF-32LE") == 0 || QString::compare(codecName, "Utf32LE") == 0)
++        codec = QStringConverter::Utf32LE;
++    else if (QString::compare(codecName, "ISO 8859-1") == 0 || QString::compare(codecName, "Latin1") == 0)
++        codec = QStringConverter::Latin1;
++    else if (QString::compare(codecName, "Windows-850") == 0 || QString::compare(codecName, "Windows-1252") == 0 || QString::compare(codecName, "System") == 0)
++        codec = QStringConverter::System;
++    else
++        return;
++
++    setEncoding(codec);
++}
++#else
+ void TextStream::detectCodec()
+ {
+     QString codecName = "UTF-8";
+@@ -97,3 +156,4 @@ void TextStream::detectCodec()
+         setCodec(codec);
+     }
+ }
++#endif
+diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.h keepassxc-2.7.6/src/cli/TextStream.h
+--- keepassxc-2.7.6.orig/src/cli/TextStream.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/TextStream.h	2024-01-21 21:07:36.768446188 -0800
+@@ -38,10 +38,17 @@ class TextStream : public QTextStream
+ public:
+     TextStream();
+     explicit TextStream(QIODevice* device);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    explicit TextStream(FILE* fileHandle, QIODeviceBase::OpenMode openMode = QIODeviceBase::ReadWrite);
++    explicit TextStream(QString* string, QIODeviceBase::OpenMode openMode = QIODeviceBase::ReadWrite);
++    explicit TextStream(QByteArray* array, QIODeviceBase::OpenMode openMode = QIODeviceBase::ReadWrite);
++    explicit TextStream(const QByteArray& array, QIODeviceBase::OpenMode openMode = QIODeviceBase::ReadOnly);
++#else
+     explicit TextStream(FILE* fileHandle, QIODevice::OpenMode openMode = QIODevice::ReadWrite);
+     explicit TextStream(QString* string, QIODevice::OpenMode openMode = QIODevice::ReadWrite);
+     explicit TextStream(QByteArray* array, QIODevice::OpenMode openMode = QIODevice::ReadWrite);
+     explicit TextStream(const QByteArray& array, QIODevice::OpenMode openMode = QIODevice::ReadOnly);
++#endif
+ 
+     void write(const char* str);
+ 
+diff -urp keepassxc-2.7.6.orig/src/cli/Utils.cpp keepassxc-2.7.6/src/cli/Utils.cpp
+--- keepassxc-2.7.6.orig/src/cli/Utils.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Utils.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -111,22 +111,22 @@ namespace Utils
+ 
+         QFileInfo dbFileInfo(databaseFilename);
+         if (dbFileInfo.canonicalFilePath().isEmpty()) {
+-            err << QObject::tr("Failed to open database file %1: not found").arg(databaseFilename) << endl;
++            err << QObject::tr("Failed to open database file %1: not found").arg(databaseFilename) << Qt::endl;
+             return {};
+         }
+ 
+         if (!dbFileInfo.isFile()) {
+-            err << QObject::tr("Failed to open database file %1: not a plain file").arg(databaseFilename) << endl;
++            err << QObject::tr("Failed to open database file %1: not a plain file").arg(databaseFilename) << Qt::endl;
+             return {};
+         }
+ 
+         if (!dbFileInfo.isReadable()) {
+-            err << QObject::tr("Failed to open database file %1: not readable").arg(databaseFilename) << endl;
++            err << QObject::tr("Failed to open database file %1: not readable").arg(databaseFilename) << Qt::endl;
+             return {};
+         }
+ 
+         if (isPasswordProtected) {
+-            err << QObject::tr("Enter password to unlock %1: ").arg(databaseFilename) << flush;
++            err << QObject::tr("Enter password to unlock %1: ").arg(databaseFilename) << Qt::flush;
+             QString line = Utils::getPassword(quiet);
+             auto passwordKey = QSharedPointer<PasswordKey>::create();
+             passwordKey->setPassword(line);
+@@ -138,7 +138,7 @@ namespace Utils
+             QString errorMessage;
+             // LCOV_EXCL_START
+             if (!fileKey->load(keyFilename, &errorMessage)) {
+-                err << QObject::tr("Failed to load key file %1: %2").arg(keyFilename, errorMessage) << endl;
++                err << QObject::tr("Failed to load key file %1: %2").arg(keyFilename, errorMessage) << Qt::endl;
+                 return {};
+             }
+ 
+@@ -146,7 +146,7 @@ namespace Utils
+                 err << QObject::tr("WARNING: You are using an old key file format which KeePassXC may\n"
+                                    "stop supporting in the future.\n\n"
+                                    "Please consider generating a new key file.")
+-                    << endl;
++                    << Qt::endl;
+             }
+             // LCOV_EXCL_STOP
+ 
+@@ -163,20 +163,20 @@ namespace Utils
+             slot = parts[0].toInt(&ok);
+ 
+             if (!ok || (slot != 1 && slot != 2)) {
+-                err << QObject::tr("Invalid YubiKey slot %1").arg(parts[0]) << endl;
++                err << QObject::tr("Invalid YubiKey slot %1").arg(parts[0]) << Qt::endl;
+                 return {};
+             }
+ 
+             if (parts.size() > 1) {
+                 serial = parts[1].toUInt(&ok, 10);
+                 if (!ok) {
+-                    err << QObject::tr("Invalid YubiKey serial %1").arg(parts[1]) << endl;
++                    err << QObject::tr("Invalid YubiKey serial %1").arg(parts[1]) << Qt::endl;
+                     return {};
+                 }
+             }
+ 
+             QObject::connect(YubiKey::instance(), &YubiKey::userInteractionRequest, [&] {
+-                err << QObject::tr("Please present or touch your YubiKey to continue.") << "\n\n" << flush;
++                err << QObject::tr("Please present or touch your YubiKey to continue.") << "\n\n" << Qt::flush;
+             });
+ 
+             auto key = QSharedPointer<ChallengeResponseKey>(new ChallengeResponseKey({serial, slot}));
+@@ -193,7 +193,7 @@ namespace Utils
+         if (db->open(databaseFilename, compositeKey, &error)) {
+             return db;
+         } else {
+-            err << error << endl;
++            err << error << Qt::endl;
+             return {};
+         }
+     }
+@@ -218,7 +218,7 @@ namespace Utils
+         setStdinEcho(false);
+         QString line = in.readLine();
+         setStdinEcho(true);
+-        out << endl;
++        out << Qt::endl;
+ 
+         return line;
+ #endif // __AFL_COMPILER
+@@ -248,7 +248,7 @@ namespace Utils
+             if (ans.toLower().startsWith("y")) {
+                 passwordKey = QSharedPointer<PasswordKey>::create("");
+             }
+-            err << endl;
++            err << Qt::endl;
+         } else {
+             err << QObject::tr("Repeat password: ");
+             err.flush();
+@@ -257,7 +257,7 @@ namespace Utils
+             if (password == repeat) {
+                 passwordKey = QSharedPointer<PasswordKey>::create(password);
+             } else {
+-                err << QObject::tr("Error: Passwords do not match.") << endl;
++                err << QObject::tr("Error: Passwords do not match.") << Qt::endl;
+             }
+         }
+ 
+@@ -425,13 +425,13 @@ namespace Utils
+             fileKey->create(path, &error);
+ 
+             if (!error.isEmpty()) {
+-                err << QObject::tr("Creating KeyFile %1 failed: %2").arg(path, error) << endl;
++                err << QObject::tr("Creating KeyFile %1 failed: %2").arg(path, error) << Qt::endl;
+                 return false;
+             }
+         }
+ 
+         if (!fileKey->load(path, &error)) {
+-            err << QObject::tr("Loading KeyFile %1 failed: %2").arg(path, error) << endl;
++            err << QObject::tr("Loading KeyFile %1 failed: %2").arg(path, error) << Qt::endl;
+             return false;
+         }
+ 
+diff -urp keepassxc-2.7.6.orig/src/CMakeLists.txt keepassxc-2.7.6/src/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/CMakeLists.txt	2024-01-21 23:41:02.932327975 -0800
+@@ -212,10 +212,17 @@ if(UNIX AND NOT APPLE)
+         list(APPEND keepassx_SOURCES
+             gui/osutils/nixutils/X11Funcs.cpp)
+     endif()
+-    qt5_add_dbus_adaptor(keepassx_SOURCES
+-            gui/org.keepassxc.KeePassXC.MainWindow.xml
+-            gui/MainWindow.h
+-            MainWindow)
++    if(WITH_QT6)
++        qt6_add_dbus_adaptor(keepassx_SOURCES
++                gui/org.keepassxc.KeePassXC.MainWindow.xml
++                gui/MainWindow.h
++                MainWindow)
++    elseif(WITH_QT5)
++        qt5_add_dbus_adaptor(keepassx_SOURCES
++                gui/org.keepassxc.KeePassXC.MainWindow.xml
++                gui/MainWindow.h
++                MainWindow)
++    endif()
+ endif()
+ if(WIN32)
+     set(keepassx_SOURCES
+@@ -324,7 +331,19 @@ configure_file(config-keepassx.h.cmake $
+ configure_file(git-info.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/git-info.h)
+ 
+ add_library(autotype STATIC ${autotype_SOURCES})
+-target_link_libraries(autotype Qt5::Core Qt5::Widgets)
++if(WITH_QT6 AND WITH_QT5COMPAT)
++    add_definitions(-DUSE_QT5COMPAT)
++    find_package(Qt6 REQUIRED COMPONENTS Core5Compat)
++    target_link_libraries(autotype Qt6::Core Qt6::Core5Compat Qt6::Widgets)
++    set(QT_LIBS Qt6::Core Qt6::Core5Compat Qt6::Concurrent Qt6::Network Qt6::Widgets)
++elseif(WITH_QT6)
++    target_link_libraries(autotype Qt6::Core Qt6::Widgets)
++    set(QT_LIBS Qt6::Core Qt6::Concurrent Qt6::Network Qt6::Widgets)
++elseif(WITH_QT5)
++    target_link_libraries(autotype Qt5::Core Qt5::Widgets)
++    set(QT_LIBS)
++    set(QT_LIBS Qt5::Core Qt5::Concurrent Qt5::Network Qt5::Widgets)
++endif()
+ 
+ add_library(keepassx_core STATIC ${keepassx_SOURCES})
+ 
+@@ -334,10 +353,7 @@ target_link_libraries(keepassx_core
+         ${keepassxcbrowser_LIB}
+         ${qrcode_LIB}
+         ${fdosecrets_LIB}
+-        Qt5::Core
+-        Qt5::Concurrent
+-        Qt5::Network
+-        Qt5::Widgets
++	${QT_LIBS}
+         ${BOTAN_LIBRARIES}
+         ${PCSC_LIBRARIES}
+         ${ZXCVBN_LIBRARIES}
+@@ -353,7 +369,12 @@ if(WITH_XC_KEESHARE)
+   target_link_libraries(keepassx_core keeshare)
+ endif()
+ 
+-if(APPLE)
++if(APPLE AND WITH_QT6)
++    target_link_libraries(keepassx_core "-framework Foundation -framework AppKit -framework Carbon -framework Security -framework LocalAuthentication")
++    if(Qt6MacExtras_FOUND)
++        target_link_libraries(keepassx_core Qt6::MacExtras)
++    endif()
++elseif(APPLE AND WITH_QT5)
+     target_link_libraries(keepassx_core "-framework Foundation -framework AppKit -framework Carbon -framework Security -framework LocalAuthentication")
+     if(Qt5MacExtras_FOUND)
+         target_link_libraries(keepassx_core Qt5::MacExtras)
+@@ -362,7 +383,13 @@ endif()
+ if(HAIKU)
+     target_link_libraries(keepassx_core network)
+ endif()
+-if(UNIX AND NOT APPLE)
++if(UNIX AND NOT APPLE AND WITH_QT6)
++    target_link_libraries(keepassx_core Qt6::DBus)
++    #if(WITH_XC_X11)
++    #    target_link_libraries(keepassx_core Qt6::X11Extras X11)
++    #endif()
++    include_directories(${Qt6Gui_PRIVATE_INCLUDE_DIRS})
++elseif(UNIX AND NOT APPLE AND WITH_QT5)
+     target_link_libraries(keepassx_core Qt5::DBus)
+     if(WITH_XC_X11)
+         target_link_libraries(keepassx_core Qt5::X11Extras X11)
+@@ -520,7 +547,11 @@ if(WIN32)
+     endif()
+ 
+     # install CA cert chains
+-    find_file(SSL_CA_BUNDLE ca-bundle.crt PATHS "${Qt5_PREFIX}/ssl/certs")
++    if(WITH_QT6)
++        find_file(SSL_CA_BUNDLE ca-bundle.crt PATHS "${Qt6_PREFIX}/ssl/certs")
++    elseif(WITH_QT5)
++        find_file(SSL_CA_BUNDLE ca-bundle.crt PATHS "${Qt5_PREFIX}/ssl/certs")
++    endif()
+     if(SSL_CA_BUNDLE)
+         install(FILES ${SSL_CA_BUNDLE} DESTINATION "ssl/certs")
+     else()
+diff -urp keepassxc-2.7.6.orig/src/core/Clock.cpp keepassxc-2.7.6/src/core/Clock.cpp
+--- keepassxc-2.7.6.orig/src/core/Clock.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/Clock.cpp	2024-01-21 22:08:03.229935578 -0800
+@@ -28,11 +28,17 @@ QDateTime Clock::currentDateTime()
+     return instance().currentDateTimeImpl();
+ }
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++qint64 Clock::currentSecondsSinceEpoch()
++{
++    return instance().currentDateTimeImpl().toSecsSinceEpoch();
++}
++#else
+ uint Clock::currentSecondsSinceEpoch()
+ {
+-    // TODO: change to toSecsSinceEpoch() when min Qt >= 5.8
+     return instance().currentDateTimeImpl().toTime_t();
+ }
++#endif
+ 
+ qint64 Clock::currentMilliSecondsSinceEpoch()
+ {
+diff -urp keepassxc-2.7.6.orig/src/core/Clock.h keepassxc-2.7.6/src/core/Clock.h
+--- keepassxc-2.7.6.orig/src/core/Clock.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/Clock.h	2024-01-21 21:56:10.936732805 -0800
+@@ -27,7 +27,11 @@ public:
+     static QDateTime currentDateTimeUtc();
+     static QDateTime currentDateTime();
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    static qint64 currentSecondsSinceEpoch();
++#else
+     static uint currentSecondsSinceEpoch();
++#endif
+     static qint64 currentMilliSecondsSinceEpoch();
+ 
+     static QDateTime serialized(const QDateTime& dateTime);
+diff -urp keepassxc-2.7.6.orig/src/core/EntryAttachments.h keepassxc-2.7.6/src/core/EntryAttachments.h
+--- keepassxc-2.7.6.orig/src/core/EntryAttachments.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/EntryAttachments.h	2024-01-21 21:07:36.768446188 -0800
+@@ -21,12 +21,18 @@
+ #include "core/FileWatcher.h"
+ #include "core/ModifiableObject.h"
+ 
++#include <QtGlobal>
+ #include <QHash>
+ #include <QMap>
+ #include <QObject>
+ #include <QSharedPointer>
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++#  include <QString>
++#endif
+ 
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+ class QStringList;
++#endif
+ 
+ class EntryAttachments : public ModifiableObject
+ {
+diff -urp keepassxc-2.7.6.orig/src/core/Entry.cpp keepassxc-2.7.6/src/core/Entry.cpp
+--- keepassxc-2.7.6.orig/src/core/Entry.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/Entry.cpp	2024-01-21 21:07:36.768446188 -0800
+@@ -656,7 +656,11 @@ void Entry::setOverrideUrl(const QString
+ 
+ void Entry::setTags(const QString& tags)
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    static QRegularExpression rx("(\\,|\\t|\\;)");
++#else
+     static QRegExp rx("(\\,|\\t|\\;)");
++#endif
+     auto taglist = tags.split(rx, QString::SkipEmptyParts);
+     // Trim whitespace before/after tag text
+     for (auto itr = taglist.begin(); itr != taglist.end(); ++itr) {
+@@ -673,7 +677,11 @@ void Entry::setTags(const QString& tags)
+ void Entry::addTag(const QString& tag)
+ {
+     auto cleanTag = tag.trimmed();
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    cleanTag.remove(QRegularExpression("(\\,|\\t|\\;)"));
++#else
+     cleanTag.remove(QRegExp("(\\,|\\t|\\;)"));
++#endif
+ 
+     auto taglist = m_data.tags;
+     if (!taglist.contains(cleanTag)) {
+@@ -686,7 +694,11 @@ void Entry::addTag(const QString& tag)
+ void Entry::removeTag(const QString& tag)
+ {
+     auto cleanTag = tag.trimmed();
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    cleanTag.remove(QRegularExpression("(\\,|\\t|\\;)"));
++#else
+     cleanTag.remove(QRegExp("(\\,|\\t|\\;)"));
++#endif
+ 
+     auto taglist = m_data.tags;
+     if (taglist.removeAll(tag) > 0) {
+@@ -1305,7 +1317,11 @@ Database* Entry::database()
+ QString Entry::maskPasswordPlaceholders(const QString& str) const
+ {
+     QString result = str;
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    result.replace(QRegularExpression("(\\{PASSWORD\\})", QRegularExpression::CaseInsensitiveOption), "******");
++#else
+     result.replace(QRegExp("(\\{PASSWORD\\})", Qt::CaseInsensitive, QRegExp::RegExp2), "******");
++#endif
+     return result;
+ }
+ 
+@@ -1424,7 +1440,11 @@ QString Entry::resolveUrl(const QString&
+ {
+     QString newUrl = url;
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QRegularExpression fileRegEx("^([a-z]:)?[\\\\/]", QRegularExpression::CaseInsensitiveOption);
++#else
+     QRegExp fileRegEx("^([a-z]:)?[\\\\/]", Qt::CaseInsensitive, QRegExp::RegExp2);
++#endif
+     if (fileRegEx.indexIn(newUrl) != -1) {
+         // Match possible file paths without the scheme and convert it to a file URL
+         newUrl = QDir::fromNativeSeparators(newUrl);
+@@ -1434,7 +1454,11 @@ QString Entry::resolveUrl(const QString&
+         for (int i = 1; i < cmdList.size(); ++i) {
+             // Don't pass arguments to the resolveUrl function (they look like URL's)
+             if (!cmdList[i].startsWith("-") && !cmdList[i].startsWith("/")) {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++                return resolveUrl(cmdList[i].remove(QRegularExpression("'|\"")));
++#else
+                 return resolveUrl(cmdList[i].remove(QRegExp("'|\"")));
++#endif
+             }
+         }
+ 
+diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.cpp keepassxc-2.7.6/src/core/MacPasteboard.cpp
+--- keepassxc-2.7.6.orig/src/core/MacPasteboard.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/MacPasteboard.cpp	2024-01-21 23:27:59.367104262 -0800
+@@ -78,7 +78,12 @@ QVariant MacPasteboard::convertToMime(co
+     } else if (flavor == QLatin1String("org.nspasteboard.ConcealedType")) {
+         ret = QString::fromUtf8(firstData);
+     } else if (flavor == QLatin1String("public.utf16-plain-text")) {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        auto toUtf16 = QStringDecoder(QStringDecoder::Utf16);
++        ret = toUtf16(firstData);
++#else
+         ret = QTextCodec::codecForName("UTF-16")->toUnicode(firstData);
++#endif
+     } else {
+         qWarning("QMime::convertToMime: unhandled mimetype: %s", qPrintable(mimetype));
+     }
+@@ -94,6 +99,12 @@ QList<QByteArray> MacPasteboard::convert
+     else if (flavor == QLatin1String("org.nspasteboard.ConcealedType"))
+         ret.append(string.toUtf8());
+     else if (flavor == QLatin1String("public.utf16-plain-text"))
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        auto toUtf16 = QStringEncoder(QStringDecoder::Utf16);
++        QByteArray baUtf16 = toUtf16(string)
++        ret.append(baUtf16)
++#else
+         ret.append(QTextCodec::codecForName("UTF-16")->fromUnicode(string));
++#endif
+     return ret;
+ }
+diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.h keepassxc-2.7.6/src/core/MacPasteboard.h
+--- keepassxc-2.7.6.orig/src/core/MacPasteboard.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/MacPasteboard.h	2024-01-21 23:20:42.618868308 -0800
+@@ -19,7 +19,11 @@
+ #define KEEPASSXC_MACPASTEBOARD_H
+ 
+ #include <QObject>
+-#include <QTextCodec>
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++#  include <QStringConverter>
++#else
++#  include <QTextCodec>
++#endif
+ #include <QtMacExtras/QMacPasteboardMime>
+ 
+ class MacPasteboard : public QObject, public QMacPasteboardMime
+diff -urp keepassxc-2.7.6.orig/src/core/PassphraseGenerator.cpp keepassxc-2.7.6/src/core/PassphraseGenerator.cpp
+--- keepassxc-2.7.6.orig/src/core/PassphraseGenerator.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/PassphraseGenerator.cpp	2024-01-21 21:07:36.772446151 -0800
+@@ -18,6 +18,9 @@
+ #include "PassphraseGenerator.h"
+ 
+ #include <QFile>
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++#  include <QRegularExpression>
++#endif
+ #include <QTextStream>
+ #include <cmath>
+ 
+@@ -75,7 +78,11 @@ void PassphraseGenerator::setWordList(co
+             line = in.readLine();
+         }
+     }
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QRegularExpression rx("^[0-9]+(-[0-9]+)*\\s+([^\\s]+)$");
++#else
+     QRegExp rx("^[0-9]+(-[0-9]+)*\\s+([^\\s]+)$");
++#endif
+     while (!line.isNull()) {
+         if (isSigned && line.startsWith("-----BEGIN PGP SIGNATURE-----")) {
+             break;
+diff -urp keepassxc-2.7.6.orig/src/core/Tools.cpp keepassxc-2.7.6/src/core/Tools.cpp
+--- keepassxc-2.7.6.orig/src/core/Tools.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/Tools.cpp	2024-01-21 21:07:36.772446151 -0800
+@@ -220,11 +220,19 @@ namespace Tools
+     bool isBase64(const QByteArray& ba)
+     {
+         constexpr auto pattern = R"(^(?:[a-z0-9+/]{4})*(?:[a-z0-9+/]{3}=|[a-z0-9+/]{2}==)?$)";
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
++
++        QString base64 = QString::fromLatin1(ba.constData(), ba.size());
++
++        return regexp.match(base64).hasMatch();
++#else
+         QRegExp regexp(pattern, Qt::CaseInsensitive, QRegExp::RegExp2);
+ 
+         QString base64 = QString::fromLatin1(ba.constData(), ba.size());
+ 
+         return regexp.exactMatch(base64);
++#endif
+     }
+ 
+     void sleep(int ms)
+diff -urp keepassxc-2.7.6.orig/src/fdosecrets/CMakeLists.txt keepassxc-2.7.6/src/fdosecrets/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/fdosecrets/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/fdosecrets/CMakeLists.txt	2024-01-21 23:39:24.677179180 -0800
+@@ -31,5 +31,13 @@ if(WITH_XC_FDOSECRETS)
+         objects/Prompt.cpp
+         dbus/DBusTypes.cpp
+     )
+-    target_link_libraries(fdosecrets Qt5::Core Qt5::Widgets Qt5::DBus ${BOTAN_LIBRARIES})
++    if(WITH_QT6 AND WITH_QT5COMPAT)
++        add_definitions(-DUSE_QT5COMPAT)
++        find_package(Qt6 REQUIRED COMPONENTS Core5Compat)
++        target_link_libraries(fdosecrets Qt6::Core Qt6::Core5Compat Qt6::Widgets Qt6::DBus ${BOTAN_LIBRARIES})
++    elseif(WITH_QT6)
++        target_link_libraries(fdosecrets Qt6::Core Qt6::Widgets Qt6::DBus ${BOTAN_LIBRARIES})
++    elseif(WITH_QT5)
++        target_link_libraries(fdosecrets Qt5::Core Qt5::Widgets Qt5::DBus ${BOTAN_LIBRARIES})
++    endif()
+ endif()
+diff -urp keepassxc-2.7.6.orig/src/fdosecrets/dbus/DBusDispatch.cpp keepassxc-2.7.6/src/fdosecrets/dbus/DBusDispatch.cpp
+--- keepassxc-2.7.6.orig/src/fdosecrets/dbus/DBusDispatch.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-21 21:07:36.772446151 -0800
+@@ -48,15 +48,27 @@ namespace FdoSecrets
+             }
+ 
+             // we need at least one conversion, allocate a slot in auxParams
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++            auxParams.append(QVariant(QMetaType(id), nullptr));
++#else
+             auxParams.append(QVariant(id, nullptr));
++#endif
+             auto& out = auxParams.last();
+             // first handle QDBusArgument to wire types
+             if (arg.userType() == qMetaTypeId<QDBusArgument>()) {
+                 auto wireId = typeToWireType(id).dbusTypeId;
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++                out = QVariant(QMetaType(wireId), nullptr);
++#else
+                 out = QVariant(wireId, nullptr);
++#endif
+ 
+                 const auto& in = arg.value<QDBusArgument>();
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++                if (!QDBusMetaType::demarshall(in, QMetaType(wireId), out.data())) {
++#else
+                 if (!QDBusMetaType::demarshall(in, wireId, out.data())) {
++#endif
+                     qDebug() << "Internal error: failed QDBusArgument conversion from" << arg << "to type"
+                              << QMetaType::typeName(wireId) << wireId;
+                     return false;
+@@ -357,7 +369,11 @@ namespace FdoSecrets
+         // prepare output args
+         outputArgs.reserve(outputArgs.size() + method.outputTypes.size());
+         for (const auto& outputType : asConst(method.outputTypes)) {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++            outputArgs.append(QVariant(QMetaType(outputType), nullptr));
++#else
+             outputArgs.append(QVariant(outputType, nullptr));
++#endif
+             params.append(const_cast<void*>(outputArgs.last().constData()));
+         }
+ 
+diff -urp keepassxc-2.7.6.orig/src/fdosecrets/FdoSecretsSettings.cpp keepassxc-2.7.6/src/fdosecrets/FdoSecretsSettings.cpp
+--- keepassxc-2.7.6.orig/src/fdosecrets/FdoSecretsSettings.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-21 21:07:36.772446151 -0800
+@@ -106,7 +106,7 @@ namespace FdoSecrets
+ 
+     QUuid FdoSecretsSettings::exposedGroup(Database* db) const
+     {
+-        return {db->metadata()->customData()->value(Keys::Db::FdoSecretsExposedGroup)};
++        return QUuid::fromString(QStringView(db->metadata()->customData()->value(Keys::Db::FdoSecretsExposedGroup)));
+     }
+ 
+     void FdoSecretsSettings::setExposedGroup(Database* db, const QUuid& group) // clazy:exclude=function-args-by-value
+diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Collection.cpp keepassxc-2.7.6/src/fdosecrets/objects/Collection.cpp
+--- keepassxc-2.7.6.orig/src/fdosecrets/objects/Collection.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/fdosecrets/objects/Collection.cpp	2024-01-21 21:07:36.772446151 -0800
+@@ -644,7 +644,11 @@ namespace FdoSecrets
+         // groupPath can't be empty here, because otherwise it will match m_exposedGroup and was returned above
+         Q_ASSERT(!groupPath.isEmpty());
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
++        auto groups = groupPath.split('/', Qt::SkipEmptyParts);
++#else
+         auto groups = groupPath.split('/', QString::SkipEmptyParts);
++#endif
+         auto groupName = groups.takeLast();
+ 
+         // create parent group
+diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp keepassxc-2.7.6/src/fdosecrets/objects/Item.cpp
+--- keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/fdosecrets/objects/Item.cpp	2024-01-21 23:21:32.234441218 -0800
+@@ -28,7 +28,13 @@
+ 
+ #include <QMimeDatabase>
+ #include <QSet>
+-#include <QTextCodec>
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && defined(USE_QT5COMPAT)
++#  include <QtCore5Compat/QTextCodec>
++#elif QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++#  include <QStringConverter>
++#else
++#  include <QTextCodec>
++#endif
+ 
+ namespace FdoSecrets
+ {
+@@ -400,7 +406,11 @@ namespace FdoSecrets
+         Q_ASSERT(group);
+ 
+         // root group is represented by a single slash, thus adding an empty component.
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        pathComponents.prepend(QLatin1String(""));
++#else
+         pathComponents.prepend(QLatin1Literal(""));
++#endif
+ 
+         return pathComponents.join('/');
+     }
+@@ -414,6 +424,71 @@ namespace FdoSecrets
+         auto mimeType = db.mimeTypeForName(mimeName);
+ 
+         // find a suitable codec
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && !defined(USE_QT5COMPAT)
++	bool supportedCodec = true;
++        QStringConverter::Encoding codec = QStringConverter::System;
++        static const QRegularExpression charsetPattern(QStringLiteral(R"re(charset=(?<encode>.+)$)re"));
++        auto match = charsetPattern.match(contentType);
++        if (match.hasMatch()) {
++            QString codecName = match.captured(QStringLiteral("encode"));
++            if (QString::compare(codecName, "ascii") == 0)
++                codec = QStringConverter::Latin1;
++            else if (QString::compare(codecName, "cp1252") == 0)
++                codec = QStringConverter::System;
++            else if (QString::compare(codecName, "iso_8859-1") == 0)
++                codec = QStringConverter::Latin1;
++            else if (QString::compare(codecName, "iso-8859-1") == 0)
++                codec = QStringConverter::Latin1;
++            else if (QString::compare(codecName, "iso88591") == 0)
++                codec = QStringConverter::Latin1;
++            else if (QString::compare(codecName, "latin1") == 0)
++                codec = QStringConverter::Latin1;
++            else if (QString::compare(codecName, "utf-8") == 0)
++                codec = QStringConverter::Utf8;
++            else if (QString::compare(codecName, "utf8") == 0)
++                codec = QStringConverter::Utf8;
++            else if (QString::compare(codecName, "utf-16be") == 0)
++                codec = QStringConverter::Utf16BE;
++            else if (QString::compare(codecName, "unicode") == 0)
++                codec = QStringConverter::Utf16LE;
++            else if (QString::compare(codecName, "utf-16") == 0)
++                codec = QStringConverter::Utf16LE;
++            else if (QString::compare(codecName, "utf-16le") == 0)
++                codec = QStringConverter::Utf16LE;
++            else if (QString::compare(codecName, "windows-1252") == 0)
++                codec = QStringConverter::System;
++            else
++                supportedCodec = false;
++// iso-8859-1 < windows-1252 in terms of set size.
++#warning "setEntrySecret():  windows-1252 for charset is not supported for Qt6 across ports.  Enable Qt5Compat for support for windows-1252."
++        } else {
++            codec = QStringConverter::Utf8;
++        }
++
++        if (!mimeType.isValid() || !mimeType.inherits(QStringLiteral("text/plain")) || !supportedCodec) {
++            if (EntryAttributes::matchReference(contentType).hasMatch()) {
++                return QDBusError::InvalidArgs;
++            }
++            // we can't handle this content type, save the data as attachment, and clear the password field
++            entry->setPassword("");
++            entry->attachments()->set(FDO_SECRETS_DATA, data);
++            entry->attributes()->set(FDO_SECRETS_CONTENT_TYPE, contentType);
++        } else {
++            auto toUtf16 = QStringDecoder(codec);
++            auto password = toUtf16(data);
++            if (EntryAttributes::matchReference(password).hasMatch()) {
++                return QDBusError::InvalidArgs;
++            }
++            // save the data to password field
++            entry->setPassword(password);
++            if (entry->attachments()->hasKey(FDO_SECRETS_DATA)) {
++                entry->attachments()->remove(FDO_SECRETS_DATA);
++            }
++            if (entry->attributes()->hasKey(FDO_SECRETS_CONTENT_TYPE)) {
++                entry->attributes()->remove(FDO_SECRETS_CONTENT_TYPE);
++            }
++        }
++#else
+         QTextCodec* codec = nullptr;
+         static const QRegularExpression charsetPattern(QStringLiteral(R"re(charset=(?<encode>.+)$)re"));
+         auto match = charsetPattern.match(contentType);
+@@ -445,6 +520,7 @@ namespace FdoSecrets
+                 entry->attributes()->remove(FDO_SECRETS_CONTENT_TYPE);
+             }
+         }
++#endif
+         return {};
+     }
+ 
+diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.cpp keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.cpp
+--- keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-21 21:07:36.772446151 -0800
+@@ -206,7 +206,11 @@ QHash<Entry*, AuthDecision> AccessContro
+ AccessControlDialog::EntryModel::EntryModel(QList<Entry*> entries, QObject* parent)
+     : QAbstractTableModel(parent)
+     , m_entries(std::move(entries))
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    , m_selected(QSet<Entry*>(m_entries.begin(), m_entries.end()))
++#else
+     , m_selected(QSet<Entry*>::fromList(m_entries))
++#endif
+ {
+ }
+ 
+diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.h keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.h
+--- keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-21 21:07:36.772446151 -0800
+@@ -31,6 +31,11 @@
+ 
+ class Entry;
+ 
++#ifndef OPAQUE_PTR_Entry
++  #define OPAQUE_PTR_Entry
++  Q_DECLARE_OPAQUE_POINTER(Entry*)
++#endif // OPAQUE_PTR_Entry
++
+ namespace Ui
+ {
+     class AccessControlDialog;
+diff -urp keepassxc-2.7.6.orig/src/format/CsvParser.cpp keepassxc-2.7.6/src/format/CsvParser.cpp
+--- keepassxc-2.7.6.orig/src/format/CsvParser.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/format/CsvParser.cpp	2024-01-21 23:30:17.285913602 -0800
+@@ -19,7 +19,11 @@
+ #include "CsvParser.h"
+ 
+ #include <QFile>
+-#include <QTextCodec>
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++#  include <QStringConverter>
++#elif QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
++#  include <QTextCodec>
++#endif
+ 
+ #include "core/Tools.h"
+ 
+@@ -41,7 +45,11 @@ CsvParser::CsvParser()
+     m_csv.setBuffer(&m_array);
+     m_ts.setDevice(&m_csv);
+     m_csv.open(QIODevice::ReadOnly);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    m_ts.setEncoding(QStringConverter::Utf8);
++#else
+     m_ts.setCodec("UTF-8");
++#endif
+ }
+ 
+ CsvParser::~CsvParser()
+@@ -389,7 +397,18 @@ void CsvParser::setComment(const QChar&
+ 
+ void CsvParser::setCodec(const QString& s)
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    if (QString::compare(s, "UTF-8") == 0)
++        m_ts.setEncoding(QStringConverter::Utf8);
++    else if (QString::compare(s, "Windows-1252") == 0)
++        m_ts.setEncoding(QStringConverter::System);
++    else if (QString::compare(s, "UTF-16") == 0)
++        m_ts.setEncoding(QStringConverter::Utf16);
++    else if (QString::compare(s, "UTF-16LE") == 0)
++        m_ts.setEncoding(QStringConverter::Utf16LE);
++#else
+     m_ts.setCodec(QTextCodec::codecForName(s.toLocal8Bit()));
++#endif
+ }
+ 
+ void CsvParser::setFieldSeparator(const QChar& c)
+diff -urp keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp keepassxc-2.7.6/src/format/KeePass1Reader.cpp
+--- keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/format/KeePass1Reader.cpp	2024-01-21 23:34:26.103763243 -0800
+@@ -18,7 +18,15 @@
+ #include "KeePass1Reader.h"
+ 
+ #include <QFile>
+-#include <QTextCodec>
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && defined(USE_QT5COMPAT)
++#  include <QtCore5Compat/QTextCodec>
++#  include <QRegularExpression>
++#elif QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++#  include <QRegularExpression>
++#  include <QStringConverter>
++#else
++#  include <QTextCodec>
++#endif
+ 
+ #include "core/Endian.h"
+ #include "core/Group.h"
+@@ -291,36 +299,54 @@ QString KeePass1Reader::errorString()
+ SymmetricCipherStream*
+ KeePass1Reader::testKeys(const QString& password, const QByteArray& keyfileData, qint64 contentPos)
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && !defined(USE_QT5COMPAT)
++#warning "KeePass1Reader::testKeys():  Windows-1252 is not supported.  Enable the Qt5Compat option to add back support."
++    const QList<PasswordEncoding> encodings = {Latin1, UTF8};
++#else
+     const QList<PasswordEncoding> encodings = {Windows1252, Latin1, UTF8};
++#endif
+ 
+     QScopedPointer<SymmetricCipherStream> cipherStream;
+     QByteArray passwordData;
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || !defined(USE_QT5COMPAT)
+     QTextCodec* codec = QTextCodec::codecForName("Windows-1252");
+     QByteArray passwordDataCorrect = codec->fromUnicode(password);
++#endif
+ 
+     for (PasswordEncoding encoding : encodings) {
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || defined(USE_QT5COMPAT)
+         if (encoding == Windows1252) {
+             passwordData = passwordDataCorrect;
+-        } else if (encoding == Latin1) {
++        } else
++#endif
++        if (encoding == Latin1) {
+             // KeePassX used Latin-1 encoding for passwords until version 0.3.1
+             // but KeePass/Win32 uses Windows Codepage 1252.
+             passwordData = password.toLatin1();
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && !defined(USE_QT5COMPAT)
++            qWarning("Testing password encoded as Latin-1.");
++#else
+             if (passwordData == passwordDataCorrect) {
+                 continue;
+             } else {
+                 qWarning("Testing password encoded as Latin-1.");
+             }
++#endif
+         } else if (encoding == UTF8) {
+             // KeePassX used UTF-8 encoding for passwords until version 0.2.2
+             // but KeePass/Win32 uses Windows Codepage 1252.
+             passwordData = password.toUtf8();
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && !defined(USE_QT5COMPAT)
++            qWarning("Testing password encoded as UTF-8.");
++#else
+             if (passwordData == passwordDataCorrect) {
+                 continue;
+             } else {
+                 qWarning("Testing password encoded as UTF-8.");
+             }
++#endif
+         }
+ 
+         QByteArray finalKey = key(passwordData, keyfileData);
+@@ -696,8 +722,13 @@ Entry* KeePass1Reader::readEntry(QIODevi
+ 
+ void KeePass1Reader::parseNotes(const QString& rawNotes, Entry* entry)
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QRegularExpression sequenceRegexp("Auto-Type(?:-(\\d+))?: (.+)", QRegularExpression::CaseInsensitiveOption);
++    QRegularExpression windowRegexp("Auto-Type-Window(?:-(\\d+))?: (.+)", QRegularExpression::CaseInsensitiveOption);
++#else
+     QRegExp sequenceRegexp("Auto-Type(?:-(\\d+))?: (.+)", Qt::CaseInsensitive, QRegExp::RegExp2);
+     QRegExp windowRegexp("Auto-Type-Window(?:-(\\d+))?: (.+)", Qt::CaseInsensitive, QRegExp::RegExp2);
++#endif
+     QHash<int, QString> sequences;
+     QMap<int, QStringList> windows;
+ 
+diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.cpp
+--- keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-21 21:07:36.772446151 -0800
+@@ -159,7 +159,7 @@ void NixUtils::setLaunchAtStartup(bool e
+                << QStringLiteral("X-GNOME-Autostart-enabled=true") << '\n'
+                << QStringLiteral("X-GNOME-Autostart-Delay=2") << '\n'
+                << QStringLiteral("X-KDE-autostart-after=panel") << '\n'
+-               << QStringLiteral("X-LXQt-Need-Tray=true") << endl;
++               << QStringLiteral("X-LXQt-Need-Tray=true") << Qt::endl;
+         desktopFile.close();
+     } else if (isLaunchAtStartupEnabled()) {
+         QFile::remove(getAutostartDesktopFilename());
+@@ -194,7 +194,11 @@ void NixUtils::registerNativeEventFilter
+     qApp->installNativeEventFilter(this);
+ }
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++bool NixUtils::nativeEventFilter(const QByteArray& eventType, void* message, qintptr *)
++#else
+ bool NixUtils::nativeEventFilter(const QByteArray& eventType, void* message, long*)
++#endif
+ {
+ #ifdef WITH_XC_X11
+     if (eventType != QByteArrayLiteral("xcb_generic_event_t")) {
+diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.h keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.h
+--- keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.h	2024-01-21 21:07:36.772446151 -0800
+@@ -57,7 +57,11 @@ private:
+     explicit NixUtils(QObject* parent = nullptr);
+     ~NixUtils() override;
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    bool nativeEventFilter(const QByteArray& eventType, void* message, qintptr *) override;
++#else
+     bool nativeEventFilter(const QByteArray& eventType, void* message, long*) override;
++#endif
+     QString getAutostartDesktopFilename(bool createDirs = false) const;
+ 
+     bool triggerGlobalShortcut(uint keycode, uint modifiers);
+diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.cpp keepassxc-2.7.6/src/gui/TotpDialog.cpp
+--- keepassxc-2.7.6.orig/src/gui/TotpDialog.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/TotpDialog.cpp	2024-01-21 21:54:12.981859363 -0800
+@@ -84,8 +84,13 @@ void TotpDialog::updateProgressBar()
+ 
+ void TotpDialog::updateSeconds()
+ {
+-    uint epoch = Clock::currentSecondsSinceEpoch() - 1;
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    uint64 epoch = Clock::currentSecondsSinceEpoch() - 1;
+     m_ui->timerLabel->setText(tr("Expires in <b>%n</b> second(s)", "", m_step - (epoch % m_step)));
++#else
++    uint epoch = Clock::currentSecondsSinceEpoch() - 1;
++    m_ui->,timerLabel->setText(tr("Expires in <b>%n</b> second(s)", "", m_step - (epoch % m_step)));
++#endif
+ }
+ 
+ void TotpDialog::updateTotp()
+@@ -98,6 +103,11 @@ void TotpDialog::updateTotp()
+ 
+ void TotpDialog::resetCounter()
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    uint64 epoch = Clock::currentSecondsSinceEpoch();
++    m_counter = static_cast<qint64>(static_cast<double>(epoch % m_step) / m_step * 100);
++#else
+     uint epoch = Clock::currentSecondsSinceEpoch();
+     m_counter = static_cast<int>(static_cast<double>(epoch % m_step) / m_step * 100);
++#endif
+ }
+diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.h keepassxc-2.7.6/src/gui/TotpDialog.h
+--- keepassxc-2.7.6.orig/src/gui/TotpDialog.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/TotpDialog.h	2024-01-21 21:51:04.711658090 -0800
+@@ -47,7 +47,11 @@ private:
+     void resetCounter();
+     Entry* m_entry;
+     int m_counter;
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    qint64 m_step;
++#else
+     uint m_step;
++#endif
+     QTimer m_totpUpdateTimer;
+ };
+ 
+diff -urp keepassxc-2.7.6.orig/src/gui/TotpSetupDialog.cpp keepassxc-2.7.6/src/gui/TotpSetupDialog.cpp
+--- keepassxc-2.7.6.orig/src/gui/TotpSetupDialog.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/TotpSetupDialog.cpp	2024-01-21 22:18:04.396107967 -0800
+@@ -63,8 +63,13 @@ void TotpSetupDialog::saveSettings()
+     }
+ 
+     QString encShortName;
++#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
++    qint64 digits = Totp::DEFAULT_DIGITS;
++    qint64 step = Totp::DEFAULT_STEP;
++#else
+     uint digits = Totp::DEFAULT_DIGITS;
+     uint step = Totp::DEFAULT_STEP;
++#endif
+     Totp::Algorithm algorithm = Totp::DEFAULT_ALGORITHM;
+     Totp::StorageFormat format = Totp::DEFAULT_FORMAT;
+ 
+diff -urp keepassxc-2.7.6.orig/src/keeshare/CMakeLists.txt keepassxc-2.7.6/src/keeshare/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/keeshare/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/keeshare/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
+@@ -16,6 +16,10 @@ if(WITH_XC_KEESHARE)
+     find_package(Minizip REQUIRED)
+ 
+     add_library(keeshare STATIC ${keeshare_SOURCES})
+-    target_link_libraries(keeshare PUBLIC Qt5::Core Qt5::Widgets ${BOTAN_LIBRARIES} ${ZLIB_LIBRARIES} PRIVATE ${MINIZIP_LIBRARIES})
++    if(WITH_QT6)
++        target_link_libraries(keeshare PUBLIC Qt6::Core Qt6::Widgets ${BOTAN_LIBRARIES} ${ZLIB_LIBRARIES} PRIVATE ${MINIZIP_LIBRARIES})
++    elseif(WITH_QT5)
++        target_link_libraries(keeshare PUBLIC Qt5::Core Qt5::Widgets ${BOTAN_LIBRARIES} ${ZLIB_LIBRARIES} PRIVATE ${MINIZIP_LIBRARIES})
++    endif()
+     include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+ endif(WITH_XC_KEESHARE)
+diff -urp keepassxc-2.7.6.orig/src/keeshare/KeeShareSettings.cpp keepassxc-2.7.6/src/keeshare/KeeShareSettings.cpp
+--- keepassxc-2.7.6.orig/src/keeshare/KeeShareSettings.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/keeshare/KeeShareSettings.cpp	2024-01-21 23:34:56.435500911 -0800
+@@ -25,7 +25,9 @@
+ #include "gui/DatabaseIcons.h"
+ 
+ #include <QDataStream>
+-#include <QTextCodec>
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
++#  include <QTextCodec>
++#endif
+ #include <QXmlStreamWriter>
+ 
+ #include <botan/data_src.h>
+@@ -41,7 +43,9 @@ namespace KeeShareSettings
+             QString buffer;
+             QXmlStreamWriter writer(&buffer);
+ 
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+             writer.setCodec(QTextCodec::codecForName("UTF-8"));
++#endif
+             writer.writeStartDocument();
+             writer.writeStartElement("KeeShare");
+             specific(writer);
+@@ -53,7 +57,7 @@ namespace KeeShareSettings
+         void xmlDeserialize(const QString& raw, std::function<void(QXmlStreamReader& reader)> specific)
+         {
+             QXmlStreamReader reader(raw);
+-            if (!reader.readNextStartElement() || reader.qualifiedName() != "KeeShare") {
++            if (!reader.readNextStartElement() || reader.qualifiedName().toString() != "KeeShare") {
+                 return;
+             }
+             specific(reader);
+@@ -106,9 +110,9 @@ namespace KeeShareSettings
+     {
+         Certificate certificate;
+         while (!reader.error() && reader.readNextStartElement()) {
+-            if (reader.name() == "Signer") {
++            if (reader.name().toString() == "Signer") {
+                 certificate.signer = reader.readElementText();
+-            } else if (reader.name() == "Key") {
++            } else if (reader.name().toString() == "Key") {
+                 auto rawKey = QByteArray::fromBase64(reader.readElementText().toLatin1());
+                 if (!rawKey.isEmpty()) {
+                     try {
+@@ -200,12 +204,12 @@ namespace KeeShareSettings
+         Active active;
+         xmlDeserialize(raw, [&](QXmlStreamReader& reader) {
+             while (!reader.error() && reader.readNextStartElement()) {
+-                if (reader.name() == "Active") {
++                if (reader.name().toString() == "Active") {
+                     while (reader.readNextStartElement()) {
+-                        if (reader.name() == "Import") {
++                        if (reader.name().toString() == "Import") {
+                             active.in = true;
+                             reader.skipCurrentElement();
+-                        } else if (reader.name() == "Export") {
++                        } else if (reader.name().toString() == "Export") {
+                             active.out = true;
+                             reader.skipCurrentElement();
+                         } else {
+@@ -248,9 +252,9 @@ namespace KeeShareSettings
+         Own own;
+         xmlDeserialize(raw, [&](QXmlStreamReader& reader) {
+             while (!reader.error() && reader.readNextStartElement()) {
+-                if (reader.name() == "PrivateKey") {
++                if (reader.name().toString() == "PrivateKey") {
+                     own.key = Key::deserialize(reader);
+-                } else if (reader.name() == "PublicKey") {
++                } else if (reader.name().toString() == "PublicKey") {
+                     own.certificate = Certificate::deserialize(reader);
+                 } else {
+                     qWarning("Unknown KeeShareSettings element %s", qPrintable(reader.name().toString()));
+@@ -328,23 +332,23 @@ namespace KeeShareSettings
+         Reference reference;
+         xmlDeserialize(raw, [&](QXmlStreamReader& reader) {
+             while (!reader.error() && reader.readNextStartElement()) {
+-                if (reader.name() == "Type") {
++                if (reader.name().toString() == "Type") {
+                     while (reader.readNextStartElement()) {
+-                        if (reader.name() == "Import") {
++                        if (reader.name().toString() == "Import") {
+                             reference.type |= ImportFrom;
+                             reader.skipCurrentElement();
+-                        } else if (reader.name() == "Export") {
++                        } else if (reader.name().toString() == "Export") {
+                             reference.type |= ExportTo;
+                             reader.skipCurrentElement();
+                         } else {
+                             break;
+                         }
+                     }
+-                } else if (reader.name() == "Group") {
++                } else if (reader.name().toString() == "Group") {
+                     reference.uuid = QUuid::fromRfc4122(QByteArray::fromBase64(reader.readElementText().toLatin1()));
+-                } else if (reader.name() == "Path") {
++                } else if (reader.name().toString() == "Path") {
+                     reference.path = QString::fromUtf8(QByteArray::fromBase64(reader.readElementText().toLatin1()));
+-                } else if (reader.name() == "Password") {
++                } else if (reader.name().toString() == "Password") {
+                     reference.password = QString::fromUtf8(QByteArray::fromBase64(reader.readElementText().toLatin1()));
+                 } else {
+                     qWarning("Unknown Reference element %s", qPrintable(reader.name().toString()));
+diff -urp keepassxc-2.7.6.orig/src/main.cpp keepassxc-2.7.6/src/main.cpp
+--- keepassxc-2.7.6.orig/src/main.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/main.cpp	2024-01-21 21:07:36.776446112 -0800
+@@ -102,7 +102,7 @@ int main(int argc, char** argv)
+     if (parser.isSet(debugInfoOption)) {
+         QTextStream out(stdout, QIODevice::WriteOnly);
+         QString debugInfo = Tools::debugInfo().append("\n").append(Crypto::debugInfo());
+-        out << debugInfo << endl;
++        out << debugInfo << Qt::endl;
+         return EXIT_SUCCESS;
+     }
+ 
+@@ -198,7 +198,7 @@ int main(int argc, char** argv)
+             // we always need consume a line of STDIN if --pw-stdin is set to clear out the
+             // buffer for native messaging, even if the specified file does not exist
+             QTextStream out(stdout, QIODevice::WriteOnly);
+-            out << QObject::tr("Database password: ") << flush;
++            out << QObject::tr("Database password: ") << Qt::flush;
+             password = Utils::getPassword();
+         }
+         mainWindow.openDatabase(filename, password, parser.value(keyfileOption));
+diff -urp keepassxc-2.7.6.orig/src/proxy/CMakeLists.txt keepassxc-2.7.6/src/proxy/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/proxy/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/proxy/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
+@@ -21,10 +21,18 @@ if(WITH_XC_BROWSER)
+ 
+     # Alloc must be defined in a static library to prevent clashing with clang ASAN definitions
+     add_library(proxy_alloc STATIC ../core/Alloc.cpp)
+-    target_link_libraries(proxy_alloc PRIVATE Qt5::Core ${BOTAN_LIBRARIES})
++    if(WITH_QT6)
++        target_link_libraries(proxy_alloc PRIVATE Qt6::Core ${BOTAN_LIBRARIES})
++    elseif(WITH_QT5)
++        target_link_libraries(proxy_alloc PRIVATE Qt5::Core ${BOTAN_LIBRARIES})
++    endif()
+ 
+     add_executable(keepassxc-proxy ${proxy_SOURCES})
+-    target_link_libraries(keepassxc-proxy proxy_alloc Qt5::Core Qt5::Network)
++    if(WITH_QT6)
++        target_link_libraries(keepassxc-proxy proxy_alloc Qt6::Core Qt6::Network)
++    elseif(WITH_QT5)
++        target_link_libraries(keepassxc-proxy proxy_alloc Qt5::Core Qt5::Network)
++    endif()
+     install(TARGETS keepassxc-proxy
+             BUNDLE DESTINATION . COMPONENT Runtime
+             RUNTIME DESTINATION ${PROXY_INSTALL_DIR} COMPONENT Runtime)
+diff -urp keepassxc-2.7.6.orig/src/qrcode/CMakeLists.txt keepassxc-2.7.6/src/qrcode/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/qrcode/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/qrcode/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
+@@ -21,4 +21,8 @@ find_package(QREncode REQUIRED)
+ 
+ add_library(qrcode STATIC ${qrcode_SOURCES})
+ target_include_directories(qrcode PRIVATE ${QRENCODE_INCLUDE_DIR})
+-target_link_libraries(qrcode PUBLIC Qt5::Core Qt5::Svg ${QRENCODE_LIBRARY})
++if(WITH_QT6)
++    target_link_libraries(qrcode PUBLIC Qt6::Core Qt6::Svg ${QRENCODE_LIBRARY})
++elseif(WITH_QT5)
++    target_link_libraries(qrcode PUBLIC Qt5::Core Qt5::Svg ${QRENCODE_LIBRARY})
++endif()
+diff -urp keepassxc-2.7.6.orig/src/sshagent/CMakeLists.txt keepassxc-2.7.6/src/sshagent/CMakeLists.txt
+--- keepassxc-2.7.6.orig/src/sshagent/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/sshagent/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
+@@ -12,5 +12,9 @@ if(WITH_XC_SSHAGENT)
+     )
+ 
+     add_library(sshagent STATIC ${sshagent_SOURCES})
+-    target_link_libraries(sshagent Qt5::Core Qt5::Widgets Qt5::Network)
++    if(WITH_QT6)
++        target_link_libraries(sshagent Qt6::Core Qt6::Widgets Qt6::Network)
++    elseif(WITH_QT5)
++        target_link_libraries(sshagent Qt5::Core Qt5::Widgets Qt5::Network)
++    endif()
+ endif()
+diff -urp keepassxc-2.7.6.orig/src/sshagent/KeeAgentSettings.cpp keepassxc-2.7.6/src/sshagent/KeeAgentSettings.cpp
+--- keepassxc-2.7.6.orig/src/sshagent/KeeAgentSettings.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/sshagent/KeeAgentSettings.cpp	2024-01-21 23:18:19.120102769 -0800
+@@ -27,7 +27,11 @@
+ #include <QDebug>
+ #include <QDir>
+ #include <QProcessEnvironment>
+-#include <QTextCodec>
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++#  include <QStringConverter>
++#else
++#  include <QTextCodec>
++#endif
+ #include <QXmlStreamReader>
+ 
+ KeeAgentSettings::KeeAgentSettings()
+@@ -203,7 +207,7 @@ void KeeAgentSettings::setFileName(const
+ bool KeeAgentSettings::readBool(QXmlStreamReader& reader)
+ {
+     reader.readNext();
+-    bool ret = (reader.text().startsWith("t", Qt::CaseInsensitive));
++    bool ret = (reader.text().toString().startsWith("t", Qt::CaseInsensitive));
+     reader.readNext(); // tag end
+     return ret;
+ }
+@@ -234,37 +238,37 @@ bool KeeAgentSettings::fromXml(const QBy
+         return false;
+     }
+ 
+-    if (reader.qualifiedName() != "EntrySettings") {
++    if (reader.qualifiedName().toString() == "EntrySettings") {
+         m_error = QCoreApplication::translate("KeeAgentSettings", "Invalid KeeAgent settings file structure.");
+         return false;
+     }
+ 
+     while (!reader.error() && reader.readNextStartElement()) {
+-        if (reader.name() == "AllowUseOfSshKey") {
++        if (reader.name().toString() == "AllowUseOfSshKey") {
+             m_allowUseOfSshKey = readBool(reader);
+-        } else if (reader.name() == "AddAtDatabaseOpen") {
++        } else if (reader.name().toString() == "AddAtDatabaseOpen") {
+             m_addAtDatabaseOpen = readBool(reader);
+-        } else if (reader.name() == "RemoveAtDatabaseClose") {
++        } else if (reader.name().toString() == "RemoveAtDatabaseClose") {
+             m_removeAtDatabaseClose = readBool(reader);
+-        } else if (reader.name() == "UseConfirmConstraintWhenAdding") {
++        } else if (reader.name().toString() == "UseConfirmConstraintWhenAdding") {
+             m_useConfirmConstraintWhenAdding = readBool(reader);
+-        } else if (reader.name() == "UseLifetimeConstraintWhenAdding") {
++        } else if (reader.name().toString() == "UseLifetimeConstraintWhenAdding") {
+             m_useLifetimeConstraintWhenAdding = readBool(reader);
+-        } else if (reader.name() == "LifetimeConstraintDuration") {
++        } else if (reader.name().toString() == "LifetimeConstraintDuration") {
+             m_lifetimeConstraintDuration = readInt(reader);
+-        } else if (reader.name() == "Location") {
++        } else if (reader.name().toString() == "Location") {
+             while (!reader.error() && reader.readNextStartElement()) {
+-                if (reader.name() == "SelectedType") {
++                if (reader.name().toString() == "SelectedType") {
+                     reader.readNext();
+                     m_selectedType = reader.text().toString();
+                     reader.readNext();
+-                } else if (reader.name() == "AttachmentName") {
++                } else if (reader.name().toString() == "AttachmentName") {
+                     reader.readNext();
+                     m_attachmentName = reader.text().toString();
+                     reader.readNext();
+-                } else if (reader.name() == "SaveAttachmentToTempFile") {
++                } else if (reader.name().toString() == "SaveAttachmentToTempFile") {
+                     m_saveAttachmentToTempFile = readBool(reader);
+-                } else if (reader.name() == "FileName") {
++                } else if (reader.name().toString() == "FileName") {
+                     reader.readNext();
+                     m_fileName = reader.text().toString();
+                     reader.readNext();
+@@ -293,7 +297,9 @@ QByteArray KeeAgentSettings::toXml() con
+     QXmlStreamWriter writer(&ba);
+ 
+     // real KeeAgent can only read UTF-16
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+     writer.setCodec(QTextCodec::codecForName("UTF-16"));
++#endif
+     writer.setAutoFormatting(true);
+     writer.setAutoFormattingIndent(2);
+ 
+@@ -331,7 +337,15 @@ QByteArray KeeAgentSettings::toXml() con
+     writer.writeEndElement(); // EntrySettings
+     writer.writeEndDocument();
+ 
++#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
++    auto toDecUtf16 = QStringDecoder(QStringConverter::Utf8);
++    QString sUtf16 = toDecUtf16(ba);
++    auto toEncUtf16 = QStringEncoder(QStringEncoder::Utf16);
++    QByteArray baUtf16 = toEncUtf16(sUtf16);
++    return baUtf16;
++#else
+     return ba;
++#endif
+ }
+ 
+ /**
+diff -urp keepassxc-2.7.6.orig/src/sshagent/OpenSSHKey.cpp keepassxc-2.7.6/src/sshagent/OpenSSHKey.cpp
+--- keepassxc-2.7.6.orig/src/sshagent/OpenSSHKey.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/sshagent/OpenSSHKey.cpp	2024-01-21 21:07:36.776446112 -0800
+@@ -160,7 +160,7 @@ void OpenSSHKey::clearPrivate()
+ bool OpenSSHKey::extractPEM(const QByteArray& in, QByteArray& out)
+ {
+     QString pem = QString::fromLatin1(in);
+-    QStringList rows = pem.split(QRegularExpression("(?:\r?\n|\r)"), QString::SkipEmptyParts);
++    QStringList rows = pem.split(QRegularExpression("(?:\r?\n|\r)"), Qt::SkipEmptyParts);
+ 
+     if (rows.length() < 3) {
+         m_error = tr("Invalid key file, expecting an OpenSSH key");
+diff -urp keepassxc-2.7.6.orig/src/totp/totp.h keepassxc-2.7.6/src/totp/totp.h
+--- keepassxc-2.7.6.orig/src/totp/totp.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/totp/totp.h	2024-01-21 22:18:05.932092927 -0800
+@@ -61,9 +61,15 @@ namespace Totp
+         uint step;
+     };
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
++    constexpr qint64 DEFAULT_STEP = 30;
++    constexpr qint64 DEFAULT_DIGITS = 6;
++    constexpr qint64 STEAM_DIGITS = 5;
++#else
+     constexpr uint DEFAULT_STEP = 30u;
+     constexpr uint DEFAULT_DIGITS = 6u;
+     constexpr uint STEAM_DIGITS = 5u;
++#endif
+     constexpr Totp::Algorithm DEFAULT_ALGORITHM = Sha1;
+     constexpr Totp::StorageFormat DEFAULT_FORMAT = OTPURL;
+     static const QString STEAM_SHORTNAME = "S";
+diff -urp keepassxc-2.7.6.orig/src/updatecheck/UpdateChecker.cpp keepassxc-2.7.6/src/updatecheck/UpdateChecker.cpp
+--- keepassxc-2.7.6.orig/src/updatecheck/UpdateChecker.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/updatecheck/UpdateChecker.cpp	2024-01-21 22:08:05.021918489 -0800
+@@ -49,7 +49,11 @@ void UpdateChecker::checkForUpdates(bool
+         return;
+     }
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    auto nextCheck = config()->get(Config::GUI_CheckForUpdatesNextCheck).toLongLong();
++#else
+     auto nextCheck = config()->get(Config::GUI_CheckForUpdatesNextCheck).toULongLong();
++#endif
+     m_isManuallyRequested = manuallyRequested;
+ 
+     if (m_isManuallyRequested || Clock::currentSecondsSinceEpoch() >= nextCheck) {
+@@ -103,8 +107,11 @@ void UpdateChecker::fetchFinished()
+         }
+ 
+         // Check again in 7 days
+-        // TODO: change to toSecsSinceEpoch() when min Qt >= 5.8
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        config()->set(Config::GUI_CheckForUpdatesNextCheck, Clock::currentDateTime().addDays(7).toSecsSinceEpoch());
++#else
+         config()->set(Config::GUI_CheckForUpdatesNextCheck, Clock::currentDateTime().addDays(7).toTime_t());
++#endif
+     } else {
+         version = ErrorVersion;
+     }
+diff -urp keepassxc-2.7.6.orig/tests/CMakeLists.txt keepassxc-2.7.6/tests/CMakeLists.txt
+--- keepassxc-2.7.6.orig/tests/CMakeLists.txt	2024-01-21 21:06:27.177101596 -0800
++++ keepassxc-2.7.6/tests/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
+@@ -88,7 +88,11 @@ macro(add_unit_test)
+     endif()
+ endmacro(add_unit_test)
+ 
+-set(TEST_LIBRARIES keepassx_core Qt5::Test)
++if(WITH_QT6)
++    set(TEST_LIBRARIES keepassx_core Qt6::Test)
++elseif(WITH_QT5)
++    set(TEST_LIBRARIES keepassx_core Qt5::Test)
++endif()
+ 
+ set(testsupport_SOURCES
+         modeltest.cpp
+@@ -96,7 +100,11 @@ set(testsupport_SOURCES
+         mock/MockClock.cpp
+         util/TemporaryFile.cpp)
+ add_library(testsupport STATIC ${testsupport_SOURCES})
+-target_link_libraries(testsupport Qt5::Core Qt5::Concurrent Qt5::Widgets Qt5::Test)
++if(WITH_QT6)
++    target_link_libraries(testsupport Qt6::Core Qt6::Concurrent Qt6::Widgets Qt6::Test)
++elseif(WITH_QT5)
++    target_link_libraries(testsupport Qt5::Core Qt5::Concurrent Qt5::Widgets Qt5::Test)
++endif()
+ 
+ add_unit_test(NAME testgroup SOURCES TestGroup.cpp
+         LIBS testsupport ${TEST_LIBRARIES})
+diff -urp keepassxc-2.7.6.orig/tests/gui/TestGui.cpp keepassxc-2.7.6/tests/gui/TestGui.cpp
+--- keepassxc-2.7.6.orig/tests/gui/TestGui.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/tests/gui/TestGui.cpp	2024-01-21 21:07:36.776446112 -0800
+@@ -1915,7 +1915,7 @@ void TestGui::checkStatusBarText(const Q
+ {
+     QApplication::processEvents();
+     QVERIFY(m_statusBarLabel->isVisible());
+-    QTRY_VERIFY2(m_statusBarLabel->text().startsWith(textFragment),
++    QTRY_VERIFY2(m_statusBarLabel->text().toString().startsWith(textFragment),
+                  qPrintable(QString("'%1' doesn't start with '%2'").arg(m_statusBarLabel->text(), textFragment)));
+ }
+ 
+diff -urp keepassxc-2.7.6.orig/tests/TestSharing.cpp keepassxc-2.7.6/tests/TestSharing.cpp
+--- keepassxc-2.7.6.orig/tests/TestSharing.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/tests/TestSharing.cpp	2024-01-21 21:07:36.776446112 -0800
+@@ -83,7 +83,7 @@ void TestSharing::testKeySerialization()
+     writer.writeEndDocument();
+     QXmlStreamReader reader(buffer);
+     reader.readNextStartElement();
+-    QVERIFY(reader.name() == "Key");
++    QVERIFY(reader.name().toString() == "Key");
+     KeeShareSettings::Key restored = KeeShareSettings::Key::deserialize(reader);
+ 
+     QCOMPARE(restored.key->private_key_bits(), original.key->private_key_bits());
+diff -urp keepassxc-2.7.6.orig/tests/TestTotp.cpp keepassxc-2.7.6/tests/TestTotp.cpp
+--- keepassxc-2.7.6.orig/tests/TestTotp.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/tests/TestTotp.cpp	2024-01-21 22:17:36.860377609 -0800
+@@ -42,8 +42,13 @@ void TestTotp::testParseSecret()
+     QCOMPARE(settings->key, QString("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"));
+     QCOMPARE(settings->custom, false);
+     QCOMPARE(settings->format, Totp::StorageFormat::OTPURL);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QCOMPARE(settings->digits, 6);
++    QCOMPARE(settings->step, 30);
++#else
+     QCOMPARE(settings->digits, 6u);
+     QCOMPARE(settings->step, 30u);
++#endif
+     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha1);
+ 
+     // OTP URL with non-default hash type
+@@ -55,15 +60,24 @@ void TestTotp::testParseSecret()
+     QCOMPARE(settings->key, QString("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"));
+     QCOMPARE(settings->custom, true);
+     QCOMPARE(settings->format, Totp::StorageFormat::OTPURL);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QCOMPARE(settings->digits, 6);
++    QCOMPARE(settings->step, 30);
++#else
+     QCOMPARE(settings->digits, 6u);
+     QCOMPARE(settings->step, 30u);
++#endif
+     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha512);
+ 
+     // Max TOTP step of 24-hours
+     secret.replace("period=30", "period=90000");
+     settings = Totp::parseSettings(secret);
+     QVERIFY(!settings.isNull());
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QCOMPARE(settings->step, 86400);
++#else
+     QCOMPARE(settings->step, 86400u);
++#endif
+ 
+     // KeeOTP Parsing
+     secret = "key=HXDMVJECJJWSRBY%3d&step=25&size=8&otpHashMode=Sha256";
+@@ -72,8 +86,13 @@ void TestTotp::testParseSecret()
+     QCOMPARE(settings->key, QString("HXDMVJECJJWSRBY="));
+     QCOMPARE(settings->custom, true);
+     QCOMPARE(settings->format, Totp::StorageFormat::KEEOTP);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QCOMPARE(settings->digits, 8);
++    QCOMPARE(settings->step, 25);
++#else
+     QCOMPARE(settings->digits, 8u);
+     QCOMPARE(settings->step, 25u);
++#endif
+     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha256);
+ 
+     // Semi-colon delineated "TOTP Settings"
+@@ -83,8 +102,13 @@ void TestTotp::testParseSecret()
+     QCOMPARE(settings->key, QString("gezdgnbvgy3tqojqgezdgnbvgy3tqojq"));
+     QCOMPARE(settings->custom, true);
+     QCOMPARE(settings->format, Totp::StorageFormat::LEGACY);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QCOMPARE(settings->digits, 8);
++    QCOMPARE(settings->step, 30);
++#else
+     QCOMPARE(settings->digits, 8u);
+     QCOMPARE(settings->step, 30u);
++#endif
+     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha1);
+ 
+     // Bare secret (no "TOTP Settings" attribute)
+@@ -94,8 +118,13 @@ void TestTotp::testParseSecret()
+     QCOMPARE(settings->key, QString("gezdgnbvgy3tqojqgezdgnbvgy3tqojq"));
+     QCOMPARE(settings->custom, false);
+     QCOMPARE(settings->format, Totp::StorageFormat::LEGACY);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QCOMPARE(settings->digits, 6);
++    QCOMPARE(settings->step, 30);
++#else
+     QCOMPARE(settings->digits, 6u);
+     QCOMPARE(settings->step, 30u);
++#endif
+     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha1);
+ }
+ 
+@@ -134,7 +163,11 @@ void TestTotp::testSteamTotp()
+     QCOMPARE(settings->encoder.shortName, Totp::STEAM_SHORTNAME);
+     QCOMPARE(settings->format, Totp::StorageFormat::OTPURL);
+     QCOMPARE(settings->digits, Totp::STEAM_DIGITS);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QCOMPARE(settings->step, 30);
++#else
+     QCOMPARE(settings->step, 30u);
++#endif
+ 
+     // These time/value pairs were created by running the Steam Guard function of the
+     // Steam mobile app with a throw-away steam account. The above secret was extracted
+@@ -148,8 +181,13 @@ void TestTotp::testSteamTotp()
+ void TestTotp::testEntryHistory()
+ {
+     Entry entry;
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    qint64 step = 16;
++    qint64 digits = 6;
++#else
+     uint step = 16;
+     uint digits = 6;
++#endif
+     auto settings = Totp::createSettings("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ", digits, step);
+     // Test that entry starts without TOTP
+     QCOMPARE(entry.historyItems().size(), 0);
