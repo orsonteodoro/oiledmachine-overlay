@@ -229,7 +229,7 @@ einfo
 pkg_setup() {
 	check-reqs_pkg_setup
 	use qt5 && verify_qt_consistency 5
-	use qt5 && verify_qt_consistency 6
+	use qt6 && verify_qt_consistency 6
 	verify_cxx20
 }
 

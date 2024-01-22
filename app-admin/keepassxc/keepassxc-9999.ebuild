@@ -188,7 +188,7 @@ eerror
 
 pkg_setup() {
 	use qt5 && verify_qt_consistency 5
-	use qt5 && verify_qt_consistency 6
+	use qt6 && verify_qt_consistency 6
 }
 
 src_prepare() {
