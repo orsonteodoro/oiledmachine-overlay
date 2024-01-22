@@ -5,6 +5,9 @@ EAPI=8
 
 inherit cmake flag-o-matic xdg
 
+QT6_PV="6.6.1"
+QT5_PV="5.2.0"
+
 if [[ "${PV}" != *9999 ]] ; then
 	if [[ "${PV}" == *_beta* ]] ; then
 		SRC_URI="https://github.com/keepassxreboot/${PN}/archive/${PV/_/-}.tar.gz -> ${P}.tar.gz"
@@ -55,22 +58,22 @@ RDEPEND="
 		sys-libs/zlib:=[minizip]
 	)
 	qt5? (
-		dev-qt/qtconcurrent:5
-		dev-qt/qtcore:5
-		dev-qt/qtdbus:5
-		dev-qt/qtgui:5
-		dev-qt/qtnetwork:5
-		dev-qt/qtsvg:5
-		dev-qt/qtwidgets:5
+		dev-qt/qtconcurrent-${QT5_PV}:5
+		dev-qt/qtcore-${QT5_PV}:5
+		dev-qt/qtdbus-${QT5_PV}:5
+		dev-qt/qtgui-${QT5_PV}:5
+		dev-qt/qtnetwork-${QT5_PV}:5
+		dev-qt/qtsvg-${QT5_PV}:5
+		dev-qt/qtwidgets-${QT5_PV}:5
 	)
 	qt6? (
-		dev-qt/qt5compat:6
-		dev-qt/qtbase:6[concurrent,dbus,gui,network,wayland?,X?]
-		dev-qt/qtsvg:6
+		dev-qt/qt5compat-${QT6_PV}:6
+		dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,wayland?,X?]
+		dev-qt/qtsvg-${QT6_PV}:6
 	)
 	X? (
 		qt5? (
-			dev-qt/qtx11extras:5
+			>=dev-qt/qtx11extras-${QT5_PV}:5
 		)
 	)
 	yubikey? (
@@ -81,7 +84,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	qt5? (
-		dev-qt/qttest:5
+		>=dev-qt/qttest-${QT5_PV}:5
 	)
 "
 BDEPEND="
@@ -89,10 +92,10 @@ BDEPEND="
 		dev-ruby/asciidoctor
 	)
 	qt5? (
-		dev-qt/linguist-tools:5
+		>=dev-qt/linguist-tools-${QT5_PV}:5
 	)
 	qt6? (
-		dev-qt/qttools:6[linguist]
+		>=dev-qt/qttools-${QT6_PV}:6[linguist]
 	)
 "
 PATCHES=(
