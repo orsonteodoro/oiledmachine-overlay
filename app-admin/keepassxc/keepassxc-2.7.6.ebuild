@@ -35,7 +35,7 @@ HOMEPAGE="
 "
 LICENSE="LGPL-2.1 GPL-2 GPL-3"
 SLOT="0"
-IUSE="X autotype browser doc keeshare +network qt5 qt6 test wayland yubikey"
+IUSE="X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland yubikey"
 RESTRICT="
 	!test? (
 		test
@@ -44,6 +44,13 @@ RESTRICT="
 REQUIRED_USE="
 	autotype? (
 		X
+	)
+	qt5compat? (
+		qt6
+	)
+	^^ (
+		qt5
+		qt6
 	)
 	^^ (
 		X
@@ -111,6 +118,88 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
 )
 
+verify_qt_consistency() {
+	local QT_SLOT
+	if use qt6 ; then
+		QT_SLOT="6"
+	elif use qt5 ; then
+		QT_SLOT="5"
+	else
+eerror
+eerror "You need to enable qt5 or qt6 USE flag."
+eerror
+		die
+	fi
+	local QTCORE_PV=$(pkg-config --modversion Qt${QT_SLOT}Core)
+
+	local qt_pv_major=$(ver_cut 1 "${QTCORE_PV}")
+	if use qt6 && [[ "${qt_pv_major}" != "6" ]] ; then
+eerror
+eerror "QtCore is not 6.x"
+eerror
+		die
+	elif use qt5 && [[ "${qt_pv_major}" != "5" ]] ; then
+eerror
+eerror "QtCore is not 5.x"
+eerror
+		die
+	fi
+
+	local L=(
+		Qt${QT_SLOT}Concurrent
+		Qt${QT_SLOT}DBus
+		Qt${QT_SLOT}Gui
+		Qt${QT_SLOT}Network
+		Qt${QT_SLOT}Svg
+		Qt${QT_SLOT}Widgets
+	)
+	if [[ "${QT_SLOT}" == "6" ]] ; then
+		L+=(
+			Qt6Core5Compat
+		)
+	elif [[ "${QT_SLOT}" == "5" ]] ; then
+		if use X ; then
+			L+=(
+				Qt5X11Extras
+			)
+		fi
+	fi
+	local QTPKG_PV
+	local pkg_name
+	for pkg_name in ${L[@]} ; do
+		QTPKG_PV=$(pkg-config --modversion ${pkg_name})
+		if ver_test ${QTCORE_PV} -ne ${QTPKG_PV} ; then
+eerror
+eerror "Qt${QT_SLOT}Core is not the same version as ${pkg_name}."
+eerror "Make them the same to continue."
+eerror
+eerror "Expected version (QtCore):\t\t${QTCORE_PV}"
+eerror "Actual version (${pkg_name}):\t${QTPKG_PV}"
+eerror
+			die
+		fi
+	done
+	pkg_name="qtimageformats"
+	QTPKG_PV=$(best_version "dev-qt/qtimageformats:5" \
+		| sed -e "s|dev-qt/qtimageformats-||g")
+	QTPKG_PV=$(ver_cut 1-3 ${QTPKG_PV})
+	if ver_test ${QTCORE_PV} -ne ${QTPKG_PV} ; then
+eerror
+eerror "Qt${QT_SLOT}Core is not the same version as ${pkg_name}."
+eerror "Make them the same to continue."
+eerror
+eerror "Expected version (QtCore):\t\t${QTCORE_PV}"
+eerror "Actual version (${pkg_name}):\t${QTPKG_PV}"
+eerror
+		die
+	fi
+}
+
+pkg_setup() {
+	use qt5 && verify_qt_consistency 5
+	use qt5 && verify_qt_consistency 6
+}
+
 src_prepare() {
 ewarn "This ebuild is in development.  Use the distro ebuild instead."
 	if [[ "${PV}" != *_beta* ]] && [[ "${PV}" != *9999 ]] && [[ ! -f .version ]] ; then
@@ -131,6 +220,7 @@ src_configure() {
 		-DWITH_CCACHE=OFF
 		-DWITH_GUI_TESTS=OFF
 		-DWITH_QT5="$(usex qt5)"
+		-DWITH_QT5COMPAT="$(usex qt5compat)"
 		-DWITH_QT6="$(usex qt6)"
 		-DWITH_TESTS="$(usex test)"
 		-DWITH_XC_AUTOTYPE="$(usex autotype)"
