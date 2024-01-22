@@ -157,7 +157,17 @@ eerror
 		L+=(
 			Qt6Core5Compat
 		)
+		if use test ; then
+			L+=(
+				Qt6Test
+			)
+		fi
 	elif [[ "${QT_SLOT}" == "5" ]] ; then
+		if use test ; then
+			L+=(
+				Qt5Test
+			)
+		fi
 		if use X ; then
 			L+=(
 				Qt5X11Extras

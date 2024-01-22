@@ -65,18 +65,18 @@ RDEPEND="
 		sys-libs/zlib:=[minizip]
 	)
 	qt5? (
-		dev-qt/qtconcurrent-${QT5_PV}:5
-		dev-qt/qtcore-${QT5_PV}:5
-		dev-qt/qtdbus-${QT5_PV}:5
-		dev-qt/qtgui-${QT5_PV}:5
-		dev-qt/qtnetwork-${QT5_PV}:5
-		dev-qt/qtsvg-${QT5_PV}:5
-		dev-qt/qtwidgets-${QT5_PV}:5
+		>=dev-qt/qtconcurrent-${QT5_PV}:5
+		>=dev-qt/qtcore-${QT5_PV}:5
+		>=dev-qt/qtdbus-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5
+		>=dev-qt/qtnetwork-${QT5_PV}:5
+		>=dev-qt/qtsvg-${QT5_PV}:5
+		>=dev-qt/qtwidgets-${QT5_PV}:5
 	)
 	qt6? (
-		dev-qt/qt5compat-${QT6_PV}:6
-		dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,wayland?,X?]
-		dev-qt/qtsvg-${QT6_PV}:6
+		>=dev-qt/qt5compat-${QT6_PV}:6
+		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,wayland?,X?]
+		>=dev-qt/qtsvg-${QT6_PV}:6
 	)
 	X? (
 		qt5? (
@@ -148,7 +148,17 @@ eerror
 		L+=(
 			Qt6Core5Compat
 		)
+		if use test ; then
+			L+=(
+				Qt6Test
+			)
+		fi
 	elif [[ "${QT_SLOT}" == "5" ]] ; then
+		if use test ; then
+			L+=(
+				Qt5Test
+			)
+		fi
 		if use X ; then
 			L+=(
 				Qt5X11Extras
