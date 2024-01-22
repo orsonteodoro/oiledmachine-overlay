@@ -4,11 +4,11 @@
 EAPI=8
 
 GENPATCHES_FALLBACK_COMMIT="20a1a171771baa15abd085ae7edf2861aa258bd6" # 2024-01-12 17:28:44 -0500
-LINUX_SOURCES_FALLBACK_COMMIT="052d534373b7ed33712a63d5e17b2b6cdbce84fd" # 2024-01-12 18:05:56 -0800
-RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
+LINUX_SOURCES_FALLBACK_COMMIT="6613476e225e090cc9aad49be7fa504e290dd33d" # 2024-01-21 14:11:32 -0800
+RC_PV="rc1" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
-# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.7
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.8
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
 EBUILD_REV="r6"
@@ -16,7 +16,7 @@ GENPATCHES_VER="live"
 PATCH_PROJC_VER="6.7-r1"
 PATCH_RT_VER="6.7-rt6"
 
-inherit ot-kernel-v6.7
+inherit ot-kernel-v6.8
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass

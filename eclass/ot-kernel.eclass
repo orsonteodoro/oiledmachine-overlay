@@ -52,6 +52,7 @@
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.1
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.7
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
@@ -104,6 +105,7 @@
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.5...zen-kernel:6.5/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.7...zen-kernel:6.6/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
@@ -510,7 +512,7 @@ GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
 
-KCP_COMMIT_SNAPSHOT="9d14420af9da0dc0715d769232e0bcd8fa16b096" # 20230108
+KCP_COMMIT_SNAPSHOT="759528e10fc7df6b778e7f242733ffd6a127e326" # 20231227
 
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
