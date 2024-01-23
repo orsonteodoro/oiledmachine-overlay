@@ -10,7 +10,7 @@
 
 diff -urp keepassxc-2.7.6.orig/CMakeLists.txt keepassxc-2.7.6/CMakeLists.txt
 --- keepassxc-2.7.6.orig/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/CMakeLists.txt	2024-01-22 22:17:30.966585767 -0800
++++ keepassxc-2.7.6/CMakeLists.txt	2024-01-22 23:31:49.486268093 -0800
 @@ -489,35 +489,77 @@ endif()
  
  include(CLangFormat)
@@ -169,7 +169,7 @@ diff -urp keepassxc-2.7.6.orig/CMakeLists.txt keepassxc-2.7.6/CMakeLists.txt
  # Debian sets the build type to None for package builds.
 diff -urp keepassxc-2.7.6.orig/share/translations/CMakeLists.txt keepassxc-2.7.6/share/translations/CMakeLists.txt
 --- keepassxc-2.7.6.orig/share/translations/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/share/translations/CMakeLists.txt	2024-01-22 22:17:30.966585767 -0800
++++ keepassxc-2.7.6/share/translations/CMakeLists.txt	2024-01-22 23:31:49.486268093 -0800
 @@ -20,7 +20,11 @@ list(REMOVE_ITEM TRANSLATION_FILES keepa
  list(REMOVE_ITEM TRANSLATION_FILES ${TRANSLATION_EN_ABS})
  message(STATUS "Including translations...\n")
@@ -185,7 +185,7 @@ diff -urp keepassxc-2.7.6.orig/share/translations/CMakeLists.txt keepassxc-2.7.6
      file(GLOB QTBASE_TRANSLATIONS ${Qt5_PREFIX}/share/qt5/translations/qtbase_*.qm)
 diff -urp keepassxc-2.7.6.orig/src/autotype/AutoType.cpp keepassxc-2.7.6/src/autotype/AutoType.cpp
 --- keepassxc-2.7.6.orig/src/autotype/AutoType.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/AutoType.cpp	2024-01-22 22:17:30.966585767 -0800
++++ keepassxc-2.7.6/src/autotype/AutoType.cpp	2024-01-22 23:31:49.486268093 -0800
 @@ -457,7 +457,12 @@ void AutoType::performGlobalAutoType(con
              if (hideExpired && entry->isExpired()) {
                  continue;
@@ -201,7 +201,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/AutoType.cpp keepassxc-2.7.6/src/aut
              }
 diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatch.h keepassxc-2.7.6/src/autotype/AutoTypeMatch.h
 --- keepassxc-2.7.6.orig/src/autotype/AutoTypeMatch.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/AutoTypeMatch.h	2024-01-22 22:17:30.966585767 -0800
++++ keepassxc-2.7.6/src/autotype/AutoTypeMatch.h	2024-01-22 23:31:49.486268093 -0800
 @@ -21,6 +21,8 @@
  #include <QPair>
  #include <QPointer>
@@ -213,7 +213,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatch.h keepassxc-2.7.6/src/
  
 diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatchView.cpp keepassxc-2.7.6/src/autotype/AutoTypeMatchView.cpp
 --- keepassxc-2.7.6.orig/src/autotype/AutoTypeMatchView.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/AutoTypeMatchView.cpp	2024-01-22 22:17:30.966585767 -0800
++++ keepassxc-2.7.6/src/autotype/AutoTypeMatchView.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -38,9 +38,15 @@ public:
          auto index1 = sourceModel()->index(sourceRow, 1, sourceParent);
          auto index2 = sourceModel()->index(sourceRow, 2, sourceParent);
@@ -232,7 +232,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatchView.cpp keepassxc-2.7.
  
 diff -urp keepassxc-2.7.6.orig/src/autotype/CMakeLists.txt keepassxc-2.7.6/src/autotype/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/CMakeLists.txt	2024-01-22 22:17:30.966585767 -0800
++++ keepassxc-2.7.6/src/autotype/CMakeLists.txt	2024-01-22 23:31:49.490268055 -0800
 @@ -1,11 +1,20 @@
  if(WITH_XC_AUTOTYPE)
      if(UNIX AND NOT APPLE AND NOT HAIKU)
@@ -261,7 +261,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/CMakeLists.txt keepassxc-2.7.6/src/a
          add_subdirectory(xcb)
 diff -urp keepassxc-2.7.6.orig/src/autotype/mac/CMakeLists.txt keepassxc-2.7.6/src/autotype/mac/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/mac/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/mac/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/autotype/mac/CMakeLists.txt	2024-01-22 23:31:49.490268055 -0800
 @@ -2,7 +2,11 @@ set(autotype_mac_SOURCES AutoTypeMac.cpp
  
  add_library(keepassxc-autotype-cocoa MODULE ${autotype_mac_SOURCES})
@@ -277,7 +277,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/mac/CMakeLists.txt keepassxc-2.7.6/s
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
 diff -urp keepassxc-2.7.6.orig/src/autotype/ShortcutWidget.cpp keepassxc-2.7.6/src/autotype/ShortcutWidget.cpp
 --- keepassxc-2.7.6.orig/src/autotype/ShortcutWidget.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/ShortcutWidget.cpp	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/autotype/ShortcutWidget.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -25,7 +25,11 @@
  ShortcutWidget::ShortcutWidget(QWidget* parent)
      : QLineEdit(parent)
@@ -304,7 +304,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/ShortcutWidget.cpp keepassxc-2.7.6/s
  }
 diff -urp keepassxc-2.7.6.orig/src/autotype/test/CMakeLists.txt keepassxc-2.7.6/src/autotype/test/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/test/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/test/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/autotype/test/CMakeLists.txt	2024-01-22 23:31:49.490268055 -0800
 @@ -1,4 +1,8 @@
  set(autotype_test_SOURCES AutoTypeTest.cpp)
  
@@ -317,7 +317,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/test/CMakeLists.txt keepassxc-2.7.6/
 +endif()
 diff -urp keepassxc-2.7.6.orig/src/autotype/windows/CMakeLists.txt keepassxc-2.7.6/src/autotype/windows/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/windows/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/windows/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/autotype/windows/CMakeLists.txt	2024-01-22 23:31:49.490268055 -0800
 @@ -1,7 +1,11 @@
  set(autotype_win_SOURCES AutoTypeWindows.cpp)
  
@@ -333,7 +333,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/windows/CMakeLists.txt keepassxc-2.7
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
 diff -urp keepassxc-2.7.6.orig/src/autotype/xcb/CMakeLists.txt keepassxc-2.7.6/src/autotype/xcb/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/xcb/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/xcb/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/autotype/xcb/CMakeLists.txt	2024-01-22 23:31:49.490268055 -0800
 @@ -3,7 +3,11 @@ include_directories(SYSTEM ${X11_X11_INC
  set(autotype_XCB_SOURCES AutoTypeXCB.cpp)
  
@@ -349,7 +349,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/xcb/CMakeLists.txt keepassxc-2.7.6/s
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
 diff -urp keepassxc-2.7.6.orig/src/browser/BrowserEntryConfig.cpp keepassxc-2.7.6/src/browser/BrowserEntryConfig.cpp
 --- keepassxc-2.7.6.orig/src/browser/BrowserEntryConfig.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/browser/BrowserEntryConfig.cpp	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/browser/BrowserEntryConfig.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -34,22 +34,38 @@ BrowserEntryConfig::BrowserEntryConfig(Q
  
  QStringList BrowserEntryConfig::allowedHosts() const
@@ -391,7 +391,7 @@ diff -urp keepassxc-2.7.6.orig/src/browser/BrowserEntryConfig.cpp keepassxc-2.7.
  bool BrowserEntryConfig::isAllowed(const QString& host) const
 diff -urp keepassxc-2.7.6.orig/src/browser/CMakeLists.txt keepassxc-2.7.6/src/browser/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/browser/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/browser/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/browser/CMakeLists.txt	2024-01-22 23:31:49.490268055 -0800
 @@ -33,5 +33,9 @@ if(WITH_XC_BROWSER)
              )
  
@@ -405,7 +405,7 @@ diff -urp keepassxc-2.7.6.orig/src/browser/CMakeLists.txt keepassxc-2.7.6/src/br
  endif()
 diff -urp keepassxc-2.7.6.orig/src/cli/Add.cpp keepassxc-2.7.6/src/cli/Add.cpp
 --- keepassxc-2.7.6.orig/src/cli/Add.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Add.cpp	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/cli/Add.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -78,7 +78,7 @@ int Add::executeWithDatabase(QSharedPoin
  
      // Cannot use those 2 options at the same time!
@@ -450,7 +450,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Add.cpp keepassxc-2.7.6/src/cli/Add.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/AddGroup.cpp keepassxc-2.7.6/src/cli/AddGroup.cpp
 --- keepassxc-2.7.6.orig/src/cli/AddGroup.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/AddGroup.cpp	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/cli/AddGroup.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -47,13 +47,13 @@ int AddGroup::executeWithDatabase(QShare
  
      Group* group = database->rootGroup()->findGroupByPath(groupPath);
@@ -484,7 +484,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/AddGroup.cpp keepassxc-2.7.6/src/cli/AddG
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Analyze.cpp keepassxc-2.7.6/src/cli/Analyze.cpp
 --- keepassxc-2.7.6.orig/src/cli/Analyze.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Analyze.cpp	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/cli/Analyze.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -60,23 +60,23 @@ int Analyze::executeWithDatabase(QShared
  
      auto okon = parser->value(Analyze::OkonOption);
@@ -528,7 +528,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Analyze.cpp keepassxc-2.7.6/src/cli/Analy
  
 diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentExport.cpp keepassxc-2.7.6/src/cli/AttachmentExport.cpp
 --- keepassxc-2.7.6.orig/src/cli/AttachmentExport.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/AttachmentExport.cpp	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/cli/AttachmentExport.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -49,7 +49,7 @@ int AttachmentExport::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -578,7 +578,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentExport.cpp keepassxc-2.7.6/src/
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentImport.cpp keepassxc-2.7.6/src/cli/AttachmentImport.cpp
 --- keepassxc-2.7.6.orig/src/cli/AttachmentImport.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/AttachmentImport.cpp	2024-01-22 22:17:30.970585728 -0800
++++ keepassxc-2.7.6/src/cli/AttachmentImport.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -50,7 +50,7 @@ int AttachmentImport::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -623,7 +623,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentImport.cpp keepassxc-2.7.6/src/
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentRemove.cpp keepassxc-2.7.6/src/cli/AttachmentRemove.cpp
 --- keepassxc-2.7.6.orig/src/cli/AttachmentRemove.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/AttachmentRemove.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/AttachmentRemove.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -41,7 +41,7 @@ int AttachmentRemove::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -657,7 +657,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentRemove.cpp keepassxc-2.7.6/src/
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Clip.cpp keepassxc-2.7.6/src/cli/Clip.cpp
 --- keepassxc-2.7.6.orig/src/cli/Clip.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Clip.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Clip.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -72,7 +72,7 @@ int Clip::executeWithDatabase(QSharedPoi
          bool ok;
          timeout = args.at(2).toInt(&ok);
@@ -754,7 +754,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Clip.cpp keepassxc-2.7.6/src/cli/Clip.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/CMakeLists.txt keepassxc-2.7.6/src/cli/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/cli/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/CMakeLists.txt	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/CMakeLists.txt	2024-01-22 23:31:49.490268055 -0800
 @@ -45,7 +45,15 @@ set(cli_SOURCES
          Show.cpp)
  
@@ -774,7 +774,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/CMakeLists.txt keepassxc-2.7.6/src/cli/CM
  
 diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseCreate.cpp keepassxc-2.7.6/src/cli/DatabaseCreate.cpp
 --- keepassxc-2.7.6.orig/src/cli/DatabaseCreate.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/DatabaseCreate.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/DatabaseCreate.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -70,13 +70,13 @@ QSharedPointer<Database> DatabaseCreate:
      if (decryptionTimeValue.length() != 0) {
          decryptionTime = decryptionTimeValue.toInt();
@@ -861,7 +861,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseCreate.cpp keepassxc-2.7.6/src/cl
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseEdit.cpp keepassxc-2.7.6/src/cli/DatabaseEdit.cpp
 --- keepassxc-2.7.6.orig/src/cli/DatabaseEdit.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/DatabaseEdit.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/DatabaseEdit.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -53,7 +53,7 @@ int DatabaseEdit::executeWithDatabase(QS
          err << QObject::tr("Cannot use %1 and %2 at the same time.")
                     .arg(DatabaseCreate::SetPasswordOption.names().at(0))
@@ -969,7 +969,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseEdit.cpp keepassxc-2.7.6/src/cli/
  
 diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseInfo.cpp keepassxc-2.7.6/src/cli/DatabaseInfo.cpp
 --- keepassxc-2.7.6.orig/src/cli/DatabaseInfo.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/DatabaseInfo.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/DatabaseInfo.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -35,39 +35,45 @@ int DatabaseInfo::executeWithDatabase(QS
  {
      auto& out = Utils::STDOUT;
@@ -1039,7 +1039,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseInfo.cpp keepassxc-2.7.6/src/cli/
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Diceware.cpp keepassxc-2.7.6/src/cli/Diceware.cpp
 --- keepassxc-2.7.6.orig/src/cli/Diceware.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Diceware.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Diceware.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -58,7 +58,7 @@ int Diceware::execute(const QStringList&
      if (wordCount.isEmpty()) {
          dicewareGenerator.setWordCount(PassphraseGenerator::DefaultWordCount);
@@ -1066,7 +1066,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Diceware.cpp keepassxc-2.7.6/src/cli/Dice
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Edit.cpp keepassxc-2.7.6/src/cli/Edit.cpp
 --- keepassxc-2.7.6.orig/src/cli/Edit.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Edit.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Edit.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -66,7 +66,7 @@ int Edit::executeWithDatabase(QSharedPoi
  
      // Cannot use those 2 options at the same time!
@@ -1118,7 +1118,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Edit.cpp keepassxc-2.7.6/src/cli/Edit.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Estimate.cpp keepassxc-2.7.6/src/cli/Estimate.cpp
 --- keepassxc-2.7.6.orig/src/cli/Estimate.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Estimate.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Estimate.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -47,7 +47,7 @@ static void estimate(const char* pwd, bo
          // clang-format off
          out << QObject::tr("Length %1").arg(len, 0) << '\t'
@@ -1155,7 +1155,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Estimate.cpp keepassxc-2.7.6/src/cli/Esti
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Export.cpp keepassxc-2.7.6/src/cli/Export.cpp
 --- keepassxc-2.7.6.orig/src/cli/Export.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Export.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Export.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -46,7 +46,7 @@ int Export::executeWithDatabase(QSharedP
          QByteArray xmlData;
          QString errorMessage;
@@ -1176,7 +1176,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Export.cpp keepassxc-2.7.6/src/cli/Export
  
 diff -urp keepassxc-2.7.6.orig/src/cli/Generate.cpp keepassxc-2.7.6/src/cli/Generate.cpp
 --- keepassxc-2.7.6.orig/src/cli/Generate.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Generate.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Generate.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -92,13 +92,13 @@ QSharedPointer<PasswordGenerator> Genera
      if (passwordLength.isEmpty()) {
          passwordGenerator->setLength(PasswordGenerator::DefaultLength);
@@ -1222,7 +1222,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Generate.cpp keepassxc-2.7.6/src/cli/Gene
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Import.cpp keepassxc-2.7.6/src/cli/Import.cpp
 --- keepassxc-2.7.6.orig/src/cli/Import.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Import.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Import.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -61,7 +61,7 @@ int Import::execute(const QStringList& a
      const QString& dbPath = args.at(1);
  
@@ -1253,7 +1253,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Import.cpp keepassxc-2.7.6/src/cli/Import
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/keepassxc-cli.cpp keepassxc-2.7.6/src/cli/keepassxc-cli.cpp
 --- keepassxc-2.7.6.orig/src/cli/keepassxc-cli.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/keepassxc-cli.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/keepassxc-cli.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -153,7 +153,7 @@ int enterInteractiveMode(const QStringLi
  
          auto cmd = Commands::getCommand(args[0]);
@@ -1288,7 +1288,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/keepassxc-cli.cpp keepassxc-2.7.6/src/cli
      }
 diff -urp keepassxc-2.7.6.orig/src/cli/List.cpp keepassxc-2.7.6/src/cli/List.cpp
 --- keepassxc-2.7.6.orig/src/cli/List.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/List.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/List.cpp	2024-01-22 23:31:49.490268055 -0800
 @@ -52,17 +52,17 @@ int List::executeWithDatabase(QSharedPoi
  
      // No group provided, defaulting to root group.
@@ -1312,7 +1312,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/List.cpp keepassxc-2.7.6/src/cli/List.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Merge.cpp keepassxc-2.7.6/src/cli/Merge.cpp
 --- keepassxc-2.7.6.orig/src/cli/Merge.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Merge.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Merge.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -90,18 +90,18 @@ int Merge::executeWithDatabase(QSharedPo
      QStringList changeList = merger.merge();
  
@@ -1338,7 +1338,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Merge.cpp keepassxc-2.7.6/src/cli/Merge.c
      return EXIT_SUCCESS;
 diff -urp keepassxc-2.7.6.orig/src/cli/Move.cpp keepassxc-2.7.6/src/cli/Move.cpp
 --- keepassxc-2.7.6.orig/src/cli/Move.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Move.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Move.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -45,18 +45,18 @@ int Move::executeWithDatabase(QSharedPoi
  
      Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -1376,7 +1376,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Move.cpp keepassxc-2.7.6/src/cli/Move.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Remove.cpp keepassxc-2.7.6/src/cli/Remove.cpp
 --- keepassxc-2.7.6.orig/src/cli/Remove.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Remove.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Remove.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -38,7 +38,7 @@ int Remove::executeWithDatabase(QSharedP
      auto& entryPath = parser->positionalArguments().at(1);
      QPointer<Entry> entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -1406,7 +1406,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Remove.cpp keepassxc-2.7.6/src/cli/Remove
      return EXIT_SUCCESS;
 diff -urp keepassxc-2.7.6.orig/src/cli/RemoveGroup.cpp keepassxc-2.7.6/src/cli/RemoveGroup.cpp
 --- keepassxc-2.7.6.orig/src/cli/RemoveGroup.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/RemoveGroup.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/RemoveGroup.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -44,12 +44,12 @@ int RemoveGroup::executeWithDatabase(QSh
      // Recursive option means were looking for a group to remove.
      QPointer<Group> group = database->rootGroup()->findGroupByPath(groupPath);
@@ -1442,7 +1442,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/RemoveGroup.cpp keepassxc-2.7.6/src/cli/R
      return EXIT_SUCCESS;
 diff -urp keepassxc-2.7.6.orig/src/cli/Search.cpp keepassxc-2.7.6/src/cli/Search.cpp
 --- keepassxc-2.7.6.orig/src/cli/Search.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Search.cpp	2024-01-22 22:17:30.974585688 -0800
++++ keepassxc-2.7.6/src/cli/Search.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -40,12 +40,12 @@ int Search::executeWithDatabase(QSharedP
      EntrySearcher searcher;
      auto results = searcher.search(args.at(1), database->rootGroup(), true);
@@ -1460,7 +1460,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Search.cpp keepassxc-2.7.6/src/cli/Search
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Show.cpp keepassxc-2.7.6/src/cli/Show.cpp
 --- keepassxc-2.7.6.orig/src/cli/Show.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Show.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/cli/Show.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -73,12 +73,12 @@ int Show::executeWithDatabase(QSharedPoi
  
      Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -1543,7 +1543,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Show.cpp keepassxc-2.7.6/src/cli/Show.cpp
      return encounteredError ? EXIT_FAILURE : EXIT_SUCCESS;
 diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.cpp keepassxc-2.7.6/src/cli/TextStream.cpp
 --- keepassxc-2.7.6.orig/src/cli/TextStream.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/TextStream.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/cli/TextStream.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -18,7 +18,13 @@
  #include "TextStream.h"
  
@@ -1626,7 +1626,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.cpp keepassxc-2.7.6/src/cli/Te
 +#endif
 diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.h keepassxc-2.7.6/src/cli/TextStream.h
 --- keepassxc-2.7.6.orig/src/cli/TextStream.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/TextStream.h	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/cli/TextStream.h	2024-01-22 23:31:49.494268014 -0800
 @@ -38,10 +38,17 @@ class TextStream : public QTextStream
  public:
      TextStream();
@@ -1647,7 +1647,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.h keepassxc-2.7.6/src/cli/Text
  
 diff -urp keepassxc-2.7.6.orig/src/cli/Utils.cpp keepassxc-2.7.6/src/cli/Utils.cpp
 --- keepassxc-2.7.6.orig/src/cli/Utils.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Utils.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/cli/Utils.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -111,22 +111,22 @@ namespace Utils
  
          QFileInfo dbFileInfo(databaseFilename);
@@ -1783,7 +1783,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Utils.cpp keepassxc-2.7.6/src/cli/Utils.c
  
 diff -urp keepassxc-2.7.6.orig/src/cli/Utils.h keepassxc-2.7.6/src/cli/Utils.h
 --- keepassxc-2.7.6.orig/src/cli/Utils.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Utils.h	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/cli/Utils.h	2024-01-22 23:31:49.494268014 -0800
 @@ -18,6 +18,9 @@
  #ifndef KEEPASSXC_UTILS_H
  #define KEEPASSXC_UTILS_H
@@ -1796,7 +1796,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Utils.h keepassxc-2.7.6/src/cli/Utils.h
  class CompositeKey;
 diff -urp keepassxc-2.7.6.orig/src/CMakeLists.txt keepassxc-2.7.6/src/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/CMakeLists.txt	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/CMakeLists.txt	2024-01-22 23:31:49.494268014 -0800
 @@ -212,10 +212,17 @@ if(UNIX AND NOT APPLE)
          list(APPEND keepassx_SOURCES
              gui/osutils/nixutils/X11Funcs.cpp)
@@ -1896,7 +1896,7 @@ diff -urp keepassxc-2.7.6.orig/src/CMakeLists.txt keepassxc-2.7.6/src/CMakeLists
      else()
 diff -urp keepassxc-2.7.6.orig/src/core/Clock.cpp keepassxc-2.7.6/src/core/Clock.cpp
 --- keepassxc-2.7.6.orig/src/core/Clock.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Clock.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/Clock.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -30,8 +30,13 @@ QDateTime Clock::currentDateTime()
  
  uint Clock::currentSecondsSinceEpoch()
@@ -1914,7 +1914,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/Clock.cpp keepassxc-2.7.6/src/core/Clock
  qint64 Clock::currentMilliSecondsSinceEpoch()
 diff -urp keepassxc-2.7.6.orig/src/core/Database.cpp keepassxc-2.7.6/src/core/Database.cpp
 --- keepassxc-2.7.6.orig/src/core/Database.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Database.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/Database.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -710,7 +710,11 @@ void Database::updateTagList()
          }
      }
@@ -1929,7 +1929,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/Database.cpp keepassxc-2.7.6/src/core/Da
  }
 diff -urp keepassxc-2.7.6.orig/src/core/EntryAttachments.cpp keepassxc-2.7.6/src/core/EntryAttachments.cpp
 --- keepassxc-2.7.6.orig/src/core/EntryAttachments.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/EntryAttachments.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/EntryAttachments.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -50,7 +50,12 @@ bool EntryAttachments::hasKey(const QStr
  
  QSet<QByteArray> EntryAttachments::values() const
@@ -1945,7 +1945,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/EntryAttachments.cpp keepassxc-2.7.6/src
  QByteArray EntryAttachments::value(const QString& key) const
 diff -urp keepassxc-2.7.6.orig/src/core/EntryAttachments.h keepassxc-2.7.6/src/core/EntryAttachments.h
 --- keepassxc-2.7.6.orig/src/core/EntryAttachments.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/EntryAttachments.h	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/EntryAttachments.h	2024-01-22 23:31:49.494268014 -0800
 @@ -21,12 +21,18 @@
  #include "core/FileWatcher.h"
  #include "core/ModifiableObject.h"
@@ -1967,7 +1967,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/EntryAttachments.h keepassxc-2.7.6/src/c
  {
 diff -urp keepassxc-2.7.6.orig/src/core/EntryAttributes.cpp keepassxc-2.7.6/src/core/EntryAttributes.cpp
 --- keepassxc-2.7.6.orig/src/core/EntryAttributes.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/EntryAttributes.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/EntryAttributes.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -225,7 +225,15 @@ void EntryAttributes::copyCustomKeysFrom
  bool EntryAttributes::areCustomKeysDifferent(const EntryAttributes* other)
  {
@@ -1986,7 +1986,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/EntryAttributes.cpp keepassxc-2.7.6/src/
  
 diff -urp keepassxc-2.7.6.orig/src/core/Entry.cpp keepassxc-2.7.6/src/core/Entry.cpp
 --- keepassxc-2.7.6.orig/src/core/Entry.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Entry.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/Entry.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -435,7 +435,12 @@ int Entry::size() const
      size += this->autoTypeAssociations()->associationsSize();
      size += this->attachments()->attachmentsSize();
@@ -2113,7 +2113,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/Entry.cpp keepassxc-2.7.6/src/core/Entry
  
 diff -urp keepassxc-2.7.6.orig/src/core/EntrySearcher.cpp keepassxc-2.7.6/src/core/EntrySearcher.cpp
 --- keepassxc-2.7.6.orig/src/core/EntrySearcher.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/EntrySearcher.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/EntrySearcher.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -203,7 +203,11 @@ bool EntrySearcher::searchEntryImpl(cons
          case Field::Is:
              if (term.word.startsWith("expired", Qt::CaseInsensitive)) {
@@ -2128,7 +2128,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/EntrySearcher.cpp keepassxc-2.7.6/src/co
                  }
 diff -urp keepassxc-2.7.6.orig/src/core/Group.cpp keepassxc-2.7.6/src/core/Group.cpp
 --- keepassxc-2.7.6.orig/src/core/Group.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Group.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/Group.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -835,7 +835,12 @@ QList<QString> Group::usernamesRecursive
  
      // Take first topN usernames if set
@@ -2144,7 +2144,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/Group.cpp keepassxc-2.7.6/src/core/Group
      }
 diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.cpp keepassxc-2.7.6/src/core/MacPasteboard.cpp
 --- keepassxc-2.7.6.orig/src/core/MacPasteboard.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/MacPasteboard.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/MacPasteboard.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -78,7 +78,12 @@ QVariant MacPasteboard::convertToMime(co
      } else if (flavor == QLatin1String("org.nspasteboard.ConcealedType")) {
          ret = QString::fromUtf8(firstData);
@@ -2173,7 +2173,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.cpp keepassxc-2.7.6/src/co
  }
 diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.h keepassxc-2.7.6/src/core/MacPasteboard.h
 --- keepassxc-2.7.6.orig/src/core/MacPasteboard.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/MacPasteboard.h	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/MacPasteboard.h	2024-01-22 23:31:49.494268014 -0800
 @@ -19,7 +19,11 @@
  #define KEEPASSXC_MACPASTEBOARD_H
  
@@ -2189,7 +2189,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.h keepassxc-2.7.6/src/core
  class MacPasteboard : public QObject, public QMacPasteboardMime
 diff -urp keepassxc-2.7.6.orig/src/core/Merger.cpp keepassxc-2.7.6/src/core/Merger.cpp
 --- keepassxc-2.7.6.orig/src/core/Merger.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Merger.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/Merger.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -568,7 +568,15 @@ Merger::ChangeList Merger::mergeDeletion
  
      while (!groups.isEmpty()) {
@@ -2208,7 +2208,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/Merger.cpp keepassxc-2.7.6/src/core/Merg
              continue;
 diff -urp keepassxc-2.7.6.orig/src/core/PassphraseGenerator.cpp keepassxc-2.7.6/src/core/PassphraseGenerator.cpp
 --- keepassxc-2.7.6.orig/src/core/PassphraseGenerator.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/PassphraseGenerator.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/PassphraseGenerator.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -18,6 +18,9 @@
  #include "PassphraseGenerator.h"
  
@@ -2233,7 +2233,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/PassphraseGenerator.cpp keepassxc-2.7.6/
              break;
 diff -urp keepassxc-2.7.6.orig/src/core/PasswordGenerator.cpp keepassxc-2.7.6/src/core/PasswordGenerator.cpp
 --- keepassxc-2.7.6.orig/src/core/PasswordGenerator.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/PasswordGenerator.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/PasswordGenerator.cpp	2024-01-22 23:31:49.494268014 -0800
 @@ -132,7 +132,7 @@ QVector<PasswordGroup> PasswordGenerator
                  continue;
              }
@@ -2392,7 +2392,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/PasswordGenerator.cpp keepassxc-2.7.6/sr
          passwordGroups.append(group);
 diff -urp keepassxc-2.7.6.orig/src/core/PasswordHealth.cpp keepassxc-2.7.6/src/core/PasswordHealth.cpp
 --- keepassxc-2.7.6.orig/src/core/PasswordHealth.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/PasswordHealth.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/PasswordHealth.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -171,8 +171,13 @@ QSharedPointer<PasswordHealth> HealthChe
      if (entry->isExpired()) {
          health->setScore(0);
@@ -2423,7 +2423,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/PasswordHealth.cpp keepassxc-2.7.6/src/c
              } else if (days <= 10) {
 diff -urp keepassxc-2.7.6.orig/src/core/SignalMultiplexer.cpp keepassxc-2.7.6/src/core/SignalMultiplexer.cpp
 --- keepassxc-2.7.6.orig/src/core/SignalMultiplexer.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/SignalMultiplexer.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/SignalMultiplexer.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -18,6 +18,7 @@
  #include "SignalMultiplexer.h"
  
@@ -2434,7 +2434,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/SignalMultiplexer.cpp keepassxc-2.7.6/sr
  {
 diff -urp keepassxc-2.7.6.orig/src/core/SignalMultiplexer.h keepassxc-2.7.6/src/core/SignalMultiplexer.h
 --- keepassxc-2.7.6.orig/src/core/SignalMultiplexer.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/SignalMultiplexer.h	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/SignalMultiplexer.h	2024-01-22 23:31:49.498267976 -0800
 @@ -18,6 +18,7 @@
  #ifndef KEEPASSX_SIGNALMULTIPLEXER_H
  #define KEEPASSX_SIGNALMULTIPLEXER_H
@@ -2445,7 +2445,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/SignalMultiplexer.h keepassxc-2.7.6/src/
  class SignalMultiplexer
 diff -urp keepassxc-2.7.6.orig/src/core/Tools.cpp keepassxc-2.7.6/src/core/Tools.cpp
 --- keepassxc-2.7.6.orig/src/core/Tools.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Tools.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/core/Tools.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -220,11 +220,19 @@ namespace Tools
      bool isBase64(const QByteArray& ba)
      {
@@ -2468,7 +2468,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/Tools.cpp keepassxc-2.7.6/src/core/Tools
      void sleep(int ms)
 diff -urp keepassxc-2.7.6.orig/src/crypto/Crypto.cpp keepassxc-2.7.6/src/crypto/Crypto.cpp
 --- keepassxc-2.7.6.orig/src/crypto/Crypto.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/crypto/Crypto.cpp	2024-01-22 22:17:30.978585649 -0800
++++ keepassxc-2.7.6/src/crypto/Crypto.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -24,6 +24,7 @@
  #include "crypto/SymmetricCipher.h"
  
@@ -2479,7 +2479,7 @@ diff -urp keepassxc-2.7.6.orig/src/crypto/Crypto.cpp keepassxc-2.7.6/src/crypto/
  {
 diff -urp keepassxc-2.7.6.orig/src/crypto/SymmetricCipher.cpp keepassxc-2.7.6/src/crypto/SymmetricCipher.cpp
 --- keepassxc-2.7.6.orig/src/crypto/SymmetricCipher.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/crypto/SymmetricCipher.cpp	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/crypto/SymmetricCipher.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -61,7 +61,11 @@ bool SymmetricCipher::init(Mode mode, Di
  
  bool SymmetricCipher::isInitalized() const
@@ -2494,7 +2494,7 @@ diff -urp keepassxc-2.7.6.orig/src/crypto/SymmetricCipher.cpp keepassxc-2.7.6/sr
  bool SymmetricCipher::process(char* data, int len)
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/CMakeLists.txt keepassxc-2.7.6/src/fdosecrets/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/fdosecrets/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/CMakeLists.txt	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/fdosecrets/CMakeLists.txt	2024-01-22 23:31:49.498267976 -0800
 @@ -31,5 +31,13 @@ if(WITH_XC_FDOSECRETS)
          objects/Prompt.cpp
          dbus/DBusTypes.cpp
@@ -2512,7 +2512,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/CMakeLists.txt keepassxc-2.7.6/src
  endif()
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/dbus/DBusDispatch.cpp keepassxc-2.7.6/src/fdosecrets/dbus/DBusDispatch.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/dbus/DBusDispatch.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -48,15 +48,27 @@ namespace FdoSecrets
              }
  
@@ -2555,7 +2555,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/dbus/DBusDispatch.cpp keepassxc-2.
  
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/FdoSecretsSettings.cpp keepassxc-2.7.6/src/fdosecrets/FdoSecretsSettings.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/FdoSecretsSettings.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -106,7 +106,7 @@ namespace FdoSecrets
  
      QUuid FdoSecretsSettings::exposedGroup(Database* db) const
@@ -2567,7 +2567,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/FdoSecretsSettings.cpp keepassxc-2
      void FdoSecretsSettings::setExposedGroup(Database* db, const QUuid& group) // clazy:exclude=function-args-by-value
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Collection.cpp keepassxc-2.7.6/src/fdosecrets/objects/Collection.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/objects/Collection.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/objects/Collection.cpp	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/fdosecrets/objects/Collection.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -644,7 +644,11 @@ namespace FdoSecrets
          // groupPath can't be empty here, because otherwise it will match m_exposedGroup and was returned above
          Q_ASSERT(!groupPath.isEmpty());
@@ -2582,7 +2582,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Collection.cpp keepassxc-2
          // create parent group
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp keepassxc-2.7.6/src/fdosecrets/objects/Item.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/objects/Item.cpp	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/fdosecrets/objects/Item.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -28,7 +28,13 @@
  
  #include <QMimeDatabase>
@@ -2692,7 +2692,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp keepassxc-2.7.6/s
  
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.cpp keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -206,7 +206,11 @@ QHash<Entry*, AuthDecision> AccessContro
  AccessControlDialog::EntryModel::EntryModel(QList<Entry*> entries, QObject* parent)
      : QAbstractTableModel(parent)
@@ -2707,7 +2707,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.cpp ke
  
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.h keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.h
 --- keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-22 23:31:49.498267976 -0800
 @@ -31,6 +31,11 @@
  
  class Entry;
@@ -2722,7 +2722,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.h keep
      class AccessControlDialog;
 diff -urp keepassxc-2.7.6.orig/src/format/CsvParser.cpp keepassxc-2.7.6/src/format/CsvParser.cpp
 --- keepassxc-2.7.6.orig/src/format/CsvParser.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/format/CsvParser.cpp	2024-01-22 22:17:30.982585609 -0800
++++ keepassxc-2.7.6/src/format/CsvParser.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -19,7 +19,11 @@
  #include "CsvParser.h"
  
@@ -2791,14 +2791,23 @@ diff -urp keepassxc-2.7.6.orig/src/format/CsvParser.cpp keepassxc-2.7.6/src/form
  }
 diff -urp keepassxc-2.7.6.orig/src/format/KdbxXmlReader.cpp keepassxc-2.7.6/src/format/KdbxXmlReader.cpp
 --- keepassxc-2.7.6.orig/src/format/KdbxXmlReader.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/format/KdbxXmlReader.cpp	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/format/KdbxXmlReader.cpp	2024-01-22 23:37:17.543058751 -0800
+@@ -103,7 +103,7 @@ void KdbxXmlReader::readDatabase(QIODevi
+         return;
+     }
+ 
+-    if (m_xml.readNextStartElement() && m_xml.name() == "KeePassFile") {
++    if (m_xml.readNextStartElement() && m_xml.name().compare(QString("KeePassFile")) == 0) {
+         rootGroupParsed = parseKeePassFile();
+     }
+ 
 @@ -120,8 +120,15 @@ void KdbxXmlReader::readDatabase(QIODevi
          qWarning("KdbxXmlReader::readDatabase: found %d invalid entry reference(s)", m_tmpParent->children().size());
      }
  
 +#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QList<QByteArray> listBinaryPoolKeys = asConst(m_binaryPool).keys();
-+    QList<QPair<Entry*, QString>> listBinaryMapKeys = asConst(m_binaryMap).keys();
++    QList<QString> listBinaryPoolKeys = asConst(m_binaryPool).keys();
++    QList<QString> listBinaryMapKeys = asConst(m_binaryMap).keys();
 +    const QSet<QString> poolKeys = QSet<QString>(listBinaryPoolKeys.begin(), listBinaryPoolKeys.end());
 +    const QSet<QString> entryKeys = QSet<QString>(listBinaryMapKeys.begin(), listBinaryMapKeys.end());
 +#else
@@ -2808,7 +2817,7 @@ diff -urp keepassxc-2.7.6.orig/src/format/KdbxXmlReader.cpp keepassxc-2.7.6/src/
      const QSet<QString> unmappedKeys = entryKeys - poolKeys;
      const QSet<QString> unusedKeys = poolKeys - entryKeys;
  
-@@ -186,7 +193,11 @@ QString KdbxXmlReader::errorString() con
+@@ -186,9 +193,13 @@ QString KdbxXmlReader::errorString() con
      return QString();
  }
  
@@ -2818,11 +2827,684 @@ diff -urp keepassxc-2.7.6.orig/src/format/KdbxXmlReader.cpp keepassxc-2.7.6/src/
  bool KdbxXmlReader::isTrueValue(const QStringRef& value)
 +#endif
  {
-     return value.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0 || value == "1";
+-    return value.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0 || value == "1";
++    return value.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0 || value.toString().compare(String("1"));
  }
+ 
+ void KdbxXmlReader::raiseError(const QString& errorMessage)
+@@ -204,18 +215,18 @@ QByteArray KdbxXmlReader::headerHash() c
+ 
+ bool KdbxXmlReader::parseKeePassFile()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "KeePassFile");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("KeePassFile")) == 0);
+ 
+     bool rootElementFound = false;
+     bool rootParsedSuccessfully = false;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Meta") {
++        if (m_xml.name().compare(QString("Meta")) == 0) {
+             parseMeta();
+             continue;
+         }
+ 
+-        if (m_xml.name() == "Root") {
++        if (m_xml.name().compare(QString("Root")) == 0) {
+             if (rootElementFound) {
+                 rootParsedSuccessfully = false;
+                 qWarning("Multiple root elements");
+@@ -234,72 +245,72 @@ bool KdbxXmlReader::parseKeePassFile()
+ 
+ void KdbxXmlReader::parseMeta()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Meta");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Meta")) == 0);
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Generator") {
++        if (m_xml.name().compare(QString("Generator")) == 0) {
+             m_meta->setGenerator(readString());
+-        } else if (m_xml.name() == "HeaderHash") {
++        } else if (m_xml.name().compare(QString("HeaderHash")) == 0) {
+             m_headerHash = readBinary();
+-        } else if (m_xml.name() == "DatabaseName") {
++        } else if (m_xml.name().compare(QString("DatabaseName")) == 0) {
+             m_meta->setName(readString());
+-        } else if (m_xml.name() == "DatabaseNameChanged") {
++        } else if (m_xml.name().compare(QString("DatabaseNameChanged")) == 0) {
+             m_meta->setNameChanged(readDateTime());
+-        } else if (m_xml.name() == "DatabaseDescription") {
++        } else if (m_xml.name().compare(QString("DatabaseDescription")) == 0) {
+             m_meta->setDescription(readString());
+-        } else if (m_xml.name() == "DatabaseDescriptionChanged") {
++        } else if (m_xml.name().compare(QString("DatabaseDescriptionChanged")) == 0) {
+             m_meta->setDescriptionChanged(readDateTime());
+-        } else if (m_xml.name() == "DefaultUserName") {
++        } else if (m_xml.name().compare(QString("DefaultUserName")) == 0) {
+             m_meta->setDefaultUserName(readString());
+-        } else if (m_xml.name() == "DefaultUserNameChanged") {
++        } else if (m_xml.name().compare(QString("DefaultUserNameChanged")) == 0) {
+             m_meta->setDefaultUserNameChanged(readDateTime());
+-        } else if (m_xml.name() == "MaintenanceHistoryDays") {
++        } else if (m_xml.name().compare(QString("MaintenanceHistoryDays")) == 0) {
+             m_meta->setMaintenanceHistoryDays(readNumber());
+-        } else if (m_xml.name() == "Color") {
++        } else if (m_xml.name().compare(QString("Color")) == 0) {
+             m_meta->setColor(readColor());
+-        } else if (m_xml.name() == "MasterKeyChanged") {
++        } else if (m_xml.name().compare(QString("MasterKeyChanged")) == 0) {
+             m_meta->setDatabaseKeyChanged(readDateTime());
+-        } else if (m_xml.name() == "MasterKeyChangeRec") {
++        } else if (m_xml.name().compare(QString("MasterKeyChangeRec")) == 0) {
+             m_meta->setMasterKeyChangeRec(readNumber());
+-        } else if (m_xml.name() == "MasterKeyChangeForce") {
++        } else if (m_xml.name().compare(QString("MasterKeyChangeForce")) == 0) {
+             m_meta->setMasterKeyChangeForce(readNumber());
+-        } else if (m_xml.name() == "MemoryProtection") {
++        } else if (m_xml.name().compare(QString("MemoryProtection")) == 0) {
+             parseMemoryProtection();
+-        } else if (m_xml.name() == "CustomIcons") {
++        } else if (m_xml.name().compare(QString("CustomIcons")) == 0) {
+             parseCustomIcons();
+-        } else if (m_xml.name() == "RecycleBinEnabled") {
++        } else if (m_xml.name().compare(QString("RecycleBinEnabled")) == 0) {
+             m_meta->setRecycleBinEnabled(readBool());
+-        } else if (m_xml.name() == "RecycleBinUUID") {
++        } else if (m_xml.name().compare(QString("RecycleBinUUID")) == 0) {
+             m_meta->setRecycleBin(getGroup(readUuid()));
+-        } else if (m_xml.name() == "RecycleBinChanged") {
++        } else if (m_xml.name().compare(QString("RecycleBinChanged")) == 0) {
+             m_meta->setRecycleBinChanged(readDateTime());
+-        } else if (m_xml.name() == "EntryTemplatesGroup") {
++        } else if (m_xml.name().compare(QString("EntryTemplatesGroup")) == 0) {
+             m_meta->setEntryTemplatesGroup(getGroup(readUuid()));
+-        } else if (m_xml.name() == "EntryTemplatesGroupChanged") {
++        } else if (m_xml.name().compare(QString("EntryTemplatesGroupChanged")) == 0) {
+             m_meta->setEntryTemplatesGroupChanged(readDateTime());
+-        } else if (m_xml.name() == "LastSelectedGroup") {
++        } else if (m_xml.name().compare(QString("LastSelectedGroup")) == 0) {
+             m_meta->setLastSelectedGroup(getGroup(readUuid()));
+-        } else if (m_xml.name() == "LastTopVisibleGroup") {
++        } else if (m_xml.name().compare(QString("LastTopVisibleGroup")) == 0) {
+             m_meta->setLastTopVisibleGroup(getGroup(readUuid()));
+-        } else if (m_xml.name() == "HistoryMaxItems") {
++        } else if (m_xml.name().compare(QString("HistoryMaxItems")) == 0) {
+             int value = readNumber();
+             if (value >= -1) {
+                 m_meta->setHistoryMaxItems(value);
+             } else {
+                 qWarning("HistoryMaxItems invalid number");
+             }
+-        } else if (m_xml.name() == "HistoryMaxSize") {
++        } else if (m_xml.name().compare(QString("HistoryMaxSize")) == 0) {
+             int value = readNumber();
+             if (value >= -1) {
+                 m_meta->setHistoryMaxSize(value);
+             } else {
+                 qWarning("HistoryMaxSize invalid number");
+             }
+-        } else if (m_xml.name() == "Binaries") {
++        } else if (m_xml.name().compare(QString("Binaries")) == 0) {
+             parseBinaries();
+-        } else if (m_xml.name() == "CustomData") {
++        } else if (m_xml.name().compare(QString("CustomData")) == 0) {
+             parseCustomData(m_meta->customData());
+-        } else if (m_xml.name() == "SettingsChanged") {
++        } else if (m_xml.name().compare(QString("SettingsChanged")) == 0) {
+             m_meta->setSettingsChanged(readDateTime());
+         } else {
+             skipCurrentElement();
+@@ -309,18 +320,18 @@ void KdbxXmlReader::parseMeta()
+ 
+ void KdbxXmlReader::parseMemoryProtection()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "MemoryProtection");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("MemoryProtection")) == 0);
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "ProtectTitle") {
++        if (m_xml.name().compare(QString("ProtectTitle")) == 0) {
+             m_meta->setProtectTitle(readBool());
+-        } else if (m_xml.name() == "ProtectUserName") {
++        } else if (m_xml.name().compare(QString("ProtectUserName")) == 0) {
+             m_meta->setProtectUsername(readBool());
+-        } else if (m_xml.name() == "ProtectPassword") {
++        } else if (m_xml.name().compare(QString("ProtectPassword")) == 0) {
+             m_meta->setProtectPassword(readBool());
+-        } else if (m_xml.name() == "ProtectURL") {
++        } else if (m_xml.name().compare(QString("ProtectURL")) == 0) {
+             m_meta->setProtectUrl(readBool());
+-        } else if (m_xml.name() == "ProtectNotes") {
++        } else if (m_xml.name().compare(QString("ProtectNotes")) == 0) {
+             m_meta->setProtectNotes(readBool());
+         } else {
+             skipCurrentElement();
+@@ -330,10 +341,10 @@ void KdbxXmlReader::parseMemoryProtectio
+ 
+ void KdbxXmlReader::parseCustomIcons()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "CustomIcons");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("CustomIcons")) == 0);
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Icon") {
++        if (m_xml.name().compare(QString("Icon")) == 0) {
+             parseIcon();
+         } else {
+             skipCurrentElement();
+@@ -343,7 +354,7 @@ void KdbxXmlReader::parseCustomIcons()
+ 
+ void KdbxXmlReader::parseIcon()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Icon");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Icon")) == 0);
+ 
+     QUuid uuid;
+     QByteArray iconData;
+@@ -353,15 +364,15 @@ void KdbxXmlReader::parseIcon()
+     bool iconSet = false;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "UUID") {
++        if (m_xml.name().compare(QString("UUID")) == 0) {
+             uuid = readUuid();
+             uuidSet = !uuid.isNull();
+-        } else if (m_xml.name() == "Data") {
++        } else if (m_xml.name().compare(QString("Data")) == 0) {
+             iconData = readBinary();
+             iconSet = true;
+-        } else if (m_xml.name() == "Name") {
++        } else if (m_xml.name().compare(QString("Name")) == 0) {
+             name = readString();
+-        } else if (m_xml.name() == "LastModificationTime") {
++        } else if (m_xml.name().compare(QString("LastModificationTime")) == 0) {
+             lastModified = readDateTime();
+         } else {
+             skipCurrentElement();
+@@ -382,10 +393,10 @@ void KdbxXmlReader::parseIcon()
+ 
+ void KdbxXmlReader::parseBinaries()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Binaries");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Binaries")) == 0);
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() != "Binary") {
++        if (m_xml.name().compare(QString("Binary")) != 0) {
+             skipCurrentElement();
+             continue;
+         }
+@@ -404,10 +415,10 @@ void KdbxXmlReader::parseBinaries()
+ 
+ void KdbxXmlReader::parseCustomData(CustomData* customData)
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "CustomData");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("CustomData")) == 0);
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Item") {
++        if (m_xml.name().compare(QString("Item")) == 0) {
+             parseCustomDataItem(customData);
+             continue;
+         }
+@@ -417,7 +428,7 @@ void KdbxXmlReader::parseCustomData(Cust
+ 
+ void KdbxXmlReader::parseCustomDataItem(CustomData* customData)
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Item");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Item")) == 0);
+ 
+     QString key;
+     CustomData::CustomDataItem item;
+@@ -425,13 +436,13 @@ void KdbxXmlReader::parseCustomDataItem(
+     bool valueSet = false;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Key") {
++        if (m_xml.name().compare(QString("Key")) == 0) {
+             key = readString();
+             keySet = true;
+-        } else if (m_xml.name() == "Value") {
++        } else if (m_xml.name().compare(QString("Value")) == 0) {
+             item.value = readString();
+             valueSet = true;
+-        } else if (m_xml.name() == "LastModificationTime") {
++        } else if (m_xml.name().compare(QString("LastModificationTime")) == 0) {
+             item.lastModified = readDateTime();
+         } else {
+             skipCurrentElement();
+@@ -448,13 +459,13 @@ void KdbxXmlReader::parseCustomDataItem(
+ 
+ bool KdbxXmlReader::parseRoot()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Root");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Root")) == 0);
+ 
+     bool groupElementFound = false;
+     bool groupParsedSuccessfully = false;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Group") {
++        if (m_xml.name().compare(QString("Group")) == 0) {
+             if (groupElementFound) {
+                 groupParsedSuccessfully = false;
+                 raiseError(tr("Multiple group elements"));
+@@ -470,7 +481,7 @@ bool KdbxXmlReader::parseRoot()
+             }
+ 
+             groupElementFound = true;
+-        } else if (m_xml.name() == "DeletedObjects") {
++        } else if (m_xml.name().compare(QString("DeletedObjects")) == 0) {
+             parseDeletedObjects();
+         } else {
+             skipCurrentElement();
+@@ -482,14 +493,14 @@ bool KdbxXmlReader::parseRoot()
+ 
+ Group* KdbxXmlReader::parseGroup()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Group");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Group")) == 0);
+ 
+     auto group = new Group();
+     group->setUpdateTimeinfo(false);
+     QList<Group*> children;
+     QList<Entry*> entries;
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "UUID") {
++        if (m_xml.name().compare(QString("UUID")) == 0) {
+             QUuid uuid = readUuid();
+             if (uuid.isNull()) {
+                 if (m_strictMode) {
+@@ -502,19 +513,19 @@ Group* KdbxXmlReader::parseGroup()
+             }
+             continue;
+         }
+-        if (m_xml.name() == "Name") {
++        if (m_xml.name().compare(QString("Name")) == 0) {
+             group->setName(readString());
+             continue;
+         }
+-        if (m_xml.name() == "Notes") {
++        if (m_xml.name().compare(QString("Notes")) == 0) {
+             group->setNotes(readString());
+             continue;
+         }
+-        if (m_xml.name() == "Tags") {
++        if (m_xml.name().compare(QString("Tags")) == 0) {
+             group->setTags(readString());
+             continue;
+         }
+-        if (m_xml.name() == "IconID") {
++        if (m_xml.name().compare(QString("IconID")) == 0) {
+             int iconId = readNumber();
+             if (iconId < 0) {
+                 if (m_strictMode) {
+@@ -526,26 +537,26 @@ Group* KdbxXmlReader::parseGroup()
+             group->setIcon(iconId);
+             continue;
+         }
+-        if (m_xml.name() == "CustomIconUUID") {
++        if (m_xml.name().compare(QString("CustomIconUUID")) == 0) {
+             QUuid uuid = readUuid();
+             if (!uuid.isNull()) {
+                 group->setIcon(uuid);
+             }
+             continue;
+         }
+-        if (m_xml.name() == "Times") {
++        if (m_xml.name().compare(QString("Times")) == 0) {
+             group->setTimeInfo(parseTimes());
+             continue;
+         }
+-        if (m_xml.name() == "IsExpanded") {
++        if (m_xml.name().compare(QString("IsExpanded")) == 0) {
+             group->setExpanded(readBool());
+             continue;
+         }
+-        if (m_xml.name() == "DefaultAutoTypeSequence") {
++        if (m_xml.name().compare(QString("DefaultAutoTypeSequence")) == 0) {
+             group->setDefaultAutoTypeSequence(readString());
+             continue;
+         }
+-        if (m_xml.name() == "EnableAutoType") {
++        if (m_xml.name().compare(QString("EnableAutoType")) == 0) {
+             QString str = readString();
+ 
+             if (str.compare("null", Qt::CaseInsensitive) == 0) {
+@@ -559,7 +570,7 @@ Group* KdbxXmlReader::parseGroup()
+             }
+             continue;
+         }
+-        if (m_xml.name() == "EnableSearching") {
++        if (m_xml.name().compare(QString("EnableSearching")) == 0) {
+             QString str = readString();
+ 
+             if (str.compare("null", Qt::CaseInsensitive) == 0) {
+@@ -573,29 +584,29 @@ Group* KdbxXmlReader::parseGroup()
+             }
+             continue;
+         }
+-        if (m_xml.name() == "LastTopVisibleEntry") {
++        if (m_xml.name().compare(QString("LastTopVisibleEntry")) == 0) {
+             group->setLastTopVisibleEntry(getEntry(readUuid()));
+             continue;
+         }
+-        if (m_xml.name() == "Group") {
++        if (m_xml.name().compare(QString("Group")) == 0) {
+             Group* newGroup = parseGroup();
+             if (newGroup) {
+                 children.append(newGroup);
+             }
+             continue;
+         }
+-        if (m_xml.name() == "Entry") {
++        if (m_xml.name().compare(QString("Entry")) == 0) {
+             Entry* newEntry = parseEntry(false);
+             if (newEntry) {
+                 entries.append(newEntry);
+             }
+             continue;
+         }
+-        if (m_xml.name() == "CustomData") {
++        if (m_xml.name().compare(QString("CustomData")) == 0) {
+             parseCustomData(group->customData());
+             continue;
+         }
+-        if (m_xml.name() == "PreviousParentGroup") {
++        if (m_xml.name().compare(QString("PreviousParentGroup")) == 0) {
+             group->setPreviousParentGroupUuid(readUuid());
+             continue;
+         }
+@@ -630,10 +641,10 @@ Group* KdbxXmlReader::parseGroup()
+ 
+ void KdbxXmlReader::parseDeletedObjects()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "DeletedObjects");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("DeletedObjects")) == 0);
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "DeletedObject") {
++        if (m_xml.name().compare(QString("DeletedObject")) == 0) {
+             parseDeletedObject();
+         } else {
+             skipCurrentElement();
+@@ -643,12 +654,12 @@ void KdbxXmlReader::parseDeletedObjects(
+ 
+ void KdbxXmlReader::parseDeletedObject()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "DeletedObject");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("DeletedObject")) == 0);
+ 
+     DeletedObject delObj{{}, {}};
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "UUID") {
++        if (m_xml.name().compare(QString("UUID")) == 0) {
+             QUuid uuid = readUuid();
+             if (uuid.isNull()) {
+                 if (m_strictMode) {
+@@ -660,7 +671,7 @@ void KdbxXmlReader::parseDeletedObject()
+             delObj.uuid = uuid;
+             continue;
+         }
+-        if (m_xml.name() == "DeletionTime") {
++        if (m_xml.name().compare(QString("DeletionTime")) == 0) {
+             delObj.deletionTime = readDateTime();
+             continue;
+         }
+@@ -679,7 +690,7 @@ void KdbxXmlReader::parseDeletedObject()
+ 
+ Entry* KdbxXmlReader::parseEntry(bool history)
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Entry");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Entry")) == 0);
+ 
+     auto entry = new Entry();
+     entry->setUpdateTimeinfo(false);
+@@ -687,7 +698,7 @@ Entry* KdbxXmlReader::parseEntry(bool hi
+     QList<StringPair> binaryRefs;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "UUID") {
++        if (m_xml.name().compare(QString("UUID")) == 0) {
+             QUuid uuid = readUuid();
+             if (uuid.isNull()) {
+                 if (m_strictMode) {
+@@ -700,7 +711,7 @@ Entry* KdbxXmlReader::parseEntry(bool hi
+             }
+             continue;
+         }
+-        if (m_xml.name() == "IconID") {
++        if (m_xml.name().compare(QString("IconID")) == 0) {
+             int iconId = readNumber();
+             if (iconId < 0) {
+                 if (m_strictMode) {
+@@ -711,53 +722,53 @@ Entry* KdbxXmlReader::parseEntry(bool hi
+             entry->setIcon(iconId);
+             continue;
+         }
+-        if (m_xml.name() == "CustomIconUUID") {
++        if (m_xml.name().compare(QString("CustomIconUUID")) == 0) {
+             QUuid uuid = readUuid();
+             if (!uuid.isNull()) {
+                 entry->setIcon(uuid);
+             }
+             continue;
+         }
+-        if (m_xml.name() == "ForegroundColor") {
++        if (m_xml.name().compare(QString("ForegroundColor")) == 0) {
+             entry->setForegroundColor(readColor());
+             continue;
+         }
+-        if (m_xml.name() == "BackgroundColor") {
++        if (m_xml.name().compare(QString("BackgroundColor")) == 0) {
+             entry->setBackgroundColor(readColor());
+             continue;
+         }
+-        if (m_xml.name() == "OverrideURL") {
++        if (m_xml.name().compare(QString("OverrideURL")) == 0) {
+             entry->setOverrideUrl(readString());
+             continue;
+         }
+-        if (m_xml.name() == "Tags") {
++        if (m_xml.name().compare(QString("Tags")) == 0) {
+             entry->setTags(readString());
+             continue;
+         }
+-        if (m_xml.name() == "Times") {
++        if (m_xml.name().compare(QString("Times")) == 0) {
+             entry->setTimeInfo(parseTimes());
+             continue;
+         }
+-        if (m_xml.name() == "String") {
++        if (m_xml.name().compare(QString("String")) == 0) {
+             parseEntryString(entry);
+             continue;
+         }
+-        if (m_xml.name() == "QualityCheck") {
++        if (m_xml.name().compare(QString("QualityCheck")) == 0) {
+             entry->setExcludeFromReports(!readBool());
+             continue;
+         }
+-        if (m_xml.name() == "Binary") {
++        if (m_xml.name().compare(QString("Binary")) == 0) {
+             QPair<QString, QString> ref = parseEntryBinary(entry);
+             if (!ref.first.isEmpty() && !ref.second.isEmpty()) {
+                 binaryRefs.append(ref);
+             }
+             continue;
+         }
+-        if (m_xml.name() == "AutoType") {
++        if (m_xml.name().compare(QString("AutoType")) == 0) {
+             parseAutoType(entry);
+             continue;
+         }
+-        if (m_xml.name() == "History") {
++        if (m_xml.name().compare(QString("History")) == 0) {
+             if (history) {
+                 raiseError(tr("History element in history entry"));
+             } else {
+@@ -765,7 +776,7 @@ Entry* KdbxXmlReader::parseEntry(bool hi
+             }
+             continue;
+         }
+-        if (m_xml.name() == "CustomData") {
++        if (m_xml.name().compare(QString("CustomData")) == 0) {
+             parseCustomData(entry->customData());
+ 
+             // Upgrade pre-KDBX-4.1 password report exclude flag
+@@ -776,7 +787,7 @@ Entry* KdbxXmlReader::parseEntry(bool hi
+             }
+             continue;
+         }
+-        if (m_xml.name() == "PreviousParentGroup") {
++        if (m_xml.name().compare(QString("PreviousParentGroup")) == 0) {
+             entry->setPreviousParentGroupUuid(readUuid());
+             continue;
+         }
+@@ -823,7 +834,7 @@ Entry* KdbxXmlReader::parseEntry(bool hi
+ 
+ void KdbxXmlReader::parseEntryString(Entry* entry)
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "String");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("String")) == 0);
+ 
+     QString key;
+     QString value;
+@@ -832,13 +843,13 @@ void KdbxXmlReader::parseEntryString(Ent
+     bool valueSet = false;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Key") {
++        if (m_xml.name().compare(QString("Key")) == 0) {
+             key = readString();
+             keySet = true;
+             continue;
+         }
+ 
+-        if (m_xml.name() == "Value") {
++        if (m_xml.name().compare(QString("Value")) == 0) {
+             QXmlStreamAttributes attr = m_xml.attributes();
+             bool isProtected;
+             bool protectInMemory;
+@@ -866,7 +877,7 @@ void KdbxXmlReader::parseEntryString(Ent
+ 
+ QPair<QString, QString> KdbxXmlReader::parseEntryBinary(Entry* entry)
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Binary");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Binary")) == 0);
+ 
+     QPair<QString, QString> poolRef;
+ 
+@@ -876,12 +887,12 @@ QPair<QString, QString> KdbxXmlReader::p
+     bool valueSet = false;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Key") {
++        if (m_xml.name().compare(QString("Key")) == 0) {
+             key = readString();
+             keySet = true;
+             continue;
+         }
+-        if (m_xml.name() == "Value") {
++        if (m_xml.name().compare(QString("Value")) == 0) {
+             QXmlStreamAttributes attr = m_xml.attributes();
+ 
+             if (attr.hasAttribute("Ref")) {
+@@ -915,16 +926,16 @@ QPair<QString, QString> KdbxXmlReader::p
+ 
+ void KdbxXmlReader::parseAutoType(Entry* entry)
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "AutoType");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("AutoType")) == 0);
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Enabled") {
++        if (m_xml.name().compare(QString("Enabled")) == 0) {
+             entry->setAutoTypeEnabled(readBool());
+-        } else if (m_xml.name() == "DataTransferObfuscation") {
++        } else if (m_xml.name().compare(QString("DataTransferObfuscation")) == 0) {
+             entry->setAutoTypeObfuscation(readNumber());
+-        } else if (m_xml.name() == "DefaultSequence") {
++        } else if (m_xml.name().compare(QString("DefaultSequence")) == 0) {
+             entry->setDefaultAutoTypeSequence(readString());
+-        } else if (m_xml.name() == "Association") {
++        } else if (m_xml.name().compare(QString("Association")) == 0) {
+             parseAutoTypeAssoc(entry);
+         } else {
+             skipCurrentElement();
+@@ -934,17 +945,17 @@ void KdbxXmlReader::parseAutoType(Entry*
+ 
+ void KdbxXmlReader::parseAutoTypeAssoc(Entry* entry)
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Association");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Association")) == 0);
+ 
+     AutoTypeAssociations::Association assoc;
+     bool windowSet = false;
+     bool sequenceSet = false;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Window") {
++        if (m_xml.name().compare(QString("Window")) == 0) {
+             assoc.window = readString();
+             windowSet = true;
+-        } else if (m_xml.name() == "KeystrokeSequence") {
++        } else if (m_xml.name().compare(QString("KeystrokeSequence")) == 0) {
+             assoc.sequence = readString();
+             sequenceSet = true;
+         } else {
+@@ -961,12 +972,12 @@ void KdbxXmlReader::parseAutoTypeAssoc(E
+ 
+ QList<Entry*> KdbxXmlReader::parseEntryHistory()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "History");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("History")) == 0);
+ 
+     QList<Entry*> historyItems;
+ 
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "Entry") {
++        if (m_xml.name().compare(QString("Entry")) == 0) {
+             historyItems.append(parseEntry(true));
+         } else {
+             skipCurrentElement();
+@@ -978,23 +989,23 @@ QList<Entry*> KdbxXmlReader::parseEntryH
+ 
+ TimeInfo KdbxXmlReader::parseTimes()
+ {
+-    Q_ASSERT(m_xml.isStartElement() && m_xml.name() == "Times");
++    Q_ASSERT(m_xml.isStartElement() && m_xml.name().compare(QString("Times")) == 0);
+ 
+     TimeInfo timeInfo;
+     while (!m_xml.hasError() && m_xml.readNextStartElement()) {
+-        if (m_xml.name() == "LastModificationTime") {
++        if (m_xml.name().compare(QString("LastModificationTime")) == 0) {
+             timeInfo.setLastModificationTime(readDateTime());
+-        } else if (m_xml.name() == "CreationTime") {
++        } else if (m_xml.name().compare(QString("CreationTime")) == 0) {
+             timeInfo.setCreationTime(readDateTime());
+-        } else if (m_xml.name() == "LastAccessTime") {
++        } else if (m_xml.name().compare(QString("LastAccessTime")) == 0) {
+             timeInfo.setLastAccessTime(readDateTime());
+-        } else if (m_xml.name() == "ExpiryTime") {
++        } else if (m_xml.name().compare(QString("ExpiryTime")) == 0) {
+             timeInfo.setExpiryTime(readDateTime());
+-        } else if (m_xml.name() == "Expires") {
++        } else if (m_xml.name().compare(QString("Expires")) == 0) {
+             timeInfo.setExpires(readBool());
+-        } else if (m_xml.name() == "UsageCount") {
++        } else if (m_xml.name().compare(QString("UsageCount")) == 0) {
+             timeInfo.setUsageCount(readNumber());
+-        } else if (m_xml.name() == "LocationChanged") {
++        } else if (m_xml.name().compare(QString("LocationChanged")) == 0) {
+             timeInfo.setLocationChanged(readDateTime());
+         } else {
+             skipCurrentElement();
 diff -urp keepassxc-2.7.6.orig/src/format/KdbxXmlReader.h keepassxc-2.7.6/src/format/KdbxXmlReader.h
 --- keepassxc-2.7.6.orig/src/format/KdbxXmlReader.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/format/KdbxXmlReader.h	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/format/KdbxXmlReader.h	2024-01-22 23:31:49.498267976 -0800
 @@ -92,7 +92,11 @@ protected:
      virtual Group* getGroup(const QUuid& uuid);
      virtual Entry* getEntry(const QUuid& uuid);
@@ -2837,7 +3519,7 @@ diff -urp keepassxc-2.7.6.orig/src/format/KdbxXmlReader.h keepassxc-2.7.6/src/fo
      const quint32 m_kdbxVersion;
 diff -urp keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp keepassxc-2.7.6/src/format/KeePass1Reader.cpp
 --- keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/format/KeePass1Reader.cpp	2024-01-22 22:29:05.999681855 -0800
++++ keepassxc-2.7.6/src/format/KeePass1Reader.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -18,7 +18,15 @@
  #include "KeePass1Reader.h"
  
@@ -2961,7 +3643,7 @@ diff -urp keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp keepassxc-2.7.6/src
          } else {
 diff -urp keepassxc-2.7.6.orig/src/gui/csvImport/CsvImportWidget.cpp keepassxc-2.7.6/src/gui/csvImport/CsvImportWidget.cpp
 --- keepassxc-2.7.6.orig/src/gui/csvImport/CsvImportWidget.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/csvImport/CsvImportWidget.cpp	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/gui/csvImport/CsvImportWidget.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -287,7 +287,11 @@ void CsvImportWidget::setRootGroup()
          }
          groupLabel = m_parserModel->data(m_parserModel->index(r, 0)).toString();
@@ -2988,7 +3670,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/csvImport/CsvImportWidget.cpp keepassxc-2
          groupList.removeFirst();
 diff -urp keepassxc-2.7.6.orig/src/gui/entry/EditEntryWidget.cpp keepassxc-2.7.6/src/gui/entry/EditEntryWidget.cpp
 --- keepassxc-2.7.6.orig/src/gui/entry/EditEntryWidget.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/entry/EditEntryWidget.cpp	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/gui/entry/EditEntryWidget.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -1171,7 +1171,15 @@ void EditEntryWidget::updateEntryData(En
      entry->setPassword(m_mainUi->passwordEdit->text());
      entry->setExpires(m_mainUi->expireCheck->isChecked());
@@ -3007,7 +3689,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/entry/EditEntryWidget.cpp keepassxc-2.7.6
  
 diff -urp keepassxc-2.7.6.orig/src/gui/entry/EntryModel.cpp keepassxc-2.7.6/src/gui/entry/EntryModel.cpp
 --- keepassxc-2.7.6.orig/src/gui/entry/EntryModel.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/entry/EntryModel.cpp	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/gui/entry/EntryModel.cpp	2024-01-22 23:31:49.498267976 -0800
 @@ -36,7 +36,11 @@ EntryModel::EntryModel(QObject* parent)
      : QAbstractTableModel(parent)
      , m_group(nullptr)
@@ -3022,7 +3704,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/entry/EntryModel.cpp keepassxc-2.7.6/src/
  }
 diff -urp keepassxc-2.7.6.orig/src/gui/EntryPreviewWidget.cpp keepassxc-2.7.6/src/gui/EntryPreviewWidget.cpp
 --- keepassxc-2.7.6.orig/src/gui/EntryPreviewWidget.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/EntryPreviewWidget.cpp	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/gui/EntryPreviewWidget.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -401,8 +401,13 @@ void EntryPreviewWidget::updateEntryGene
      }
  
@@ -3053,7 +3735,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/EntryPreviewWidget.cpp keepassxc-2.7.6/sr
      if (config()->get(Config::Security_HideNotes).toBool()) {
 diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.cpp
 --- keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -159,7 +159,7 @@ void NixUtils::setLaunchAtStartup(bool e
                 << QStringLiteral("X-GNOME-Autostart-enabled=true") << '\n'
                 << QStringLiteral("X-GNOME-Autostart-Delay=2") << '\n'
@@ -3077,7 +3759,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp keepassxc-2
      if (eventType != QByteArrayLiteral("xcb_generic_event_t")) {
 diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.h keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.h
 --- keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.h	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.h	2024-01-22 23:31:49.502267937 -0800
 @@ -57,7 +57,11 @@ private:
      explicit NixUtils(QObject* parent = nullptr);
      ~NixUtils() override;
@@ -3092,7 +3774,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.h keepassxc-2.7
      bool triggerGlobalShortcut(uint keycode, uint modifiers);
 diff -urp keepassxc-2.7.6.orig/src/gui/PasswordWidget.cpp keepassxc-2.7.6/src/gui/PasswordWidget.cpp
 --- keepassxc-2.7.6.orig/src/gui/PasswordWidget.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/PasswordWidget.cpp	2024-01-22 22:17:30.986585569 -0800
++++ keepassxc-2.7.6/src/gui/PasswordWidget.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -322,4 +322,4 @@ void PasswordWidget::updatePasswordStren
  
          break;
@@ -3102,7 +3784,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/PasswordWidget.cpp keepassxc-2.7.6/src/gu
 +}
 diff -urp keepassxc-2.7.6.orig/src/gui/reports/ReportsWidgetStatistics.cpp keepassxc-2.7.6/src/gui/reports/ReportsWidgetStatistics.cpp
 --- keepassxc-2.7.6.orig/src/gui/reports/ReportsWidgetStatistics.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/reports/ReportsWidgetStatistics.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/gui/reports/ReportsWidgetStatistics.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -88,9 +88,15 @@ void ReportsWidgetStatistics::calculateS
      addStatsRow(tr("Database name"), m_db->metadata()->name());
      addStatsRow(tr("Description"), m_db->metadata()->description());
@@ -3121,7 +3803,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/reports/ReportsWidgetStatistics.cpp keepa
                  m_db->isModified(),
 diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.cpp keepassxc-2.7.6/src/gui/TotpDialog.cpp
 --- keepassxc-2.7.6.orig/src/gui/TotpDialog.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/TotpDialog.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/gui/TotpDialog.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -85,7 +85,7 @@ void TotpDialog::updateProgressBar()
  void TotpDialog::updateSeconds()
  {
@@ -3133,7 +3815,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.cpp keepassxc-2.7.6/src/gui/To
  void TotpDialog::updateTotp()
 diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.h keepassxc-2.7.6/src/gui/TotpDialog.h
 --- keepassxc-2.7.6.orig/src/gui/TotpDialog.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/TotpDialog.h	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/gui/TotpDialog.h	2024-01-22 23:31:49.502267937 -0800
 @@ -47,7 +47,11 @@ private:
      void resetCounter();
      Entry* m_entry;
@@ -3148,7 +3830,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.h keepassxc-2.7.6/src/gui/Totp
  
 diff -urp keepassxc-2.7.6.orig/src/keeshare/CMakeLists.txt keepassxc-2.7.6/src/keeshare/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/keeshare/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/keeshare/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/keeshare/CMakeLists.txt	2024-01-22 23:31:49.502267937 -0800
 @@ -16,6 +16,10 @@ if(WITH_XC_KEESHARE)
      find_package(Minizip REQUIRED)
  
@@ -3163,7 +3845,7 @@ diff -urp keepassxc-2.7.6.orig/src/keeshare/CMakeLists.txt keepassxc-2.7.6/src/k
  endif(WITH_XC_KEESHARE)
 diff -urp keepassxc-2.7.6.orig/src/keeshare/KeeShareSettings.cpp keepassxc-2.7.6/src/keeshare/KeeShareSettings.cpp
 --- keepassxc-2.7.6.orig/src/keeshare/KeeShareSettings.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/keeshare/KeeShareSettings.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/keeshare/KeeShareSettings.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -25,7 +25,9 @@
  #include "gui/DatabaseIcons.h"
  
@@ -3266,7 +3948,7 @@ diff -urp keepassxc-2.7.6.orig/src/keeshare/KeeShareSettings.cpp keepassxc-2.7.6
                      qWarning("Unknown Reference element %s", qPrintable(reader.name().toString()));
 diff -urp keepassxc-2.7.6.orig/src/keys/FileKey.cpp keepassxc-2.7.6/src/keys/FileKey.cpp
 --- keepassxc-2.7.6.orig/src/keys/FileKey.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/keys/FileKey.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/keys/FileKey.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -362,7 +362,12 @@ bool FileKey::loadXml(QIODevice* device,
  
      bool ok = false;
@@ -3308,7 +3990,7 @@ diff -urp keepassxc-2.7.6.orig/src/keys/FileKey.cpp keepassxc-2.7.6/src/keys/Fil
      m_type = Hashed;
 diff -urp keepassxc-2.7.6.orig/src/main.cpp keepassxc-2.7.6/src/main.cpp
 --- keepassxc-2.7.6.orig/src/main.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/main.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/main.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -102,7 +102,7 @@ int main(int argc, char** argv)
      if (parser.isSet(debugInfoOption)) {
          QTextStream out(stdout, QIODevice::WriteOnly);
@@ -3329,7 +4011,7 @@ diff -urp keepassxc-2.7.6.orig/src/main.cpp keepassxc-2.7.6/src/main.cpp
          mainWindow.openDatabase(filename, password, parser.value(keyfileOption));
 diff -urp keepassxc-2.7.6.orig/src/proxy/CMakeLists.txt keepassxc-2.7.6/src/proxy/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/proxy/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/proxy/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/proxy/CMakeLists.txt	2024-01-22 23:31:49.502267937 -0800
 @@ -21,10 +21,18 @@ if(WITH_XC_BROWSER)
  
      # Alloc must be defined in a static library to prevent clashing with clang ASAN definitions
@@ -3353,7 +4035,7 @@ diff -urp keepassxc-2.7.6.orig/src/proxy/CMakeLists.txt keepassxc-2.7.6/src/prox
              RUNTIME DESTINATION ${PROXY_INSTALL_DIR} COMPONENT Runtime)
 diff -urp keepassxc-2.7.6.orig/src/qrcode/CMakeLists.txt keepassxc-2.7.6/src/qrcode/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/qrcode/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/qrcode/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/qrcode/CMakeLists.txt	2024-01-22 23:31:49.502267937 -0800
 @@ -21,4 +21,8 @@ find_package(QREncode REQUIRED)
  
  add_library(qrcode STATIC ${qrcode_SOURCES})
@@ -3366,7 +4048,7 @@ diff -urp keepassxc-2.7.6.orig/src/qrcode/CMakeLists.txt keepassxc-2.7.6/src/qrc
 +endif()
 diff -urp keepassxc-2.7.6.orig/src/sshagent/CMakeLists.txt keepassxc-2.7.6/src/sshagent/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/sshagent/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/sshagent/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/sshagent/CMakeLists.txt	2024-01-22 23:31:49.502267937 -0800
 @@ -12,5 +12,9 @@ if(WITH_XC_SSHAGENT)
      )
  
@@ -3380,7 +4062,7 @@ diff -urp keepassxc-2.7.6.orig/src/sshagent/CMakeLists.txt keepassxc-2.7.6/src/s
  endif()
 diff -urp keepassxc-2.7.6.orig/src/sshagent/KeeAgentSettings.cpp keepassxc-2.7.6/src/sshagent/KeeAgentSettings.cpp
 --- keepassxc-2.7.6.orig/src/sshagent/KeeAgentSettings.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/sshagent/KeeAgentSettings.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/sshagent/KeeAgentSettings.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -27,7 +27,11 @@
  #include <QDebug>
  #include <QDir>
@@ -3481,7 +4163,7 @@ diff -urp keepassxc-2.7.6.orig/src/sshagent/KeeAgentSettings.cpp keepassxc-2.7.6
  /**
 diff -urp keepassxc-2.7.6.orig/src/sshagent/OpenSSHKey.cpp keepassxc-2.7.6/src/sshagent/OpenSSHKey.cpp
 --- keepassxc-2.7.6.orig/src/sshagent/OpenSSHKey.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/sshagent/OpenSSHKey.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/sshagent/OpenSSHKey.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -160,7 +160,7 @@ void OpenSSHKey::clearPrivate()
  bool OpenSSHKey::extractPEM(const QByteArray& in, QByteArray& out)
  {
@@ -3493,7 +4175,7 @@ diff -urp keepassxc-2.7.6.orig/src/sshagent/OpenSSHKey.cpp keepassxc-2.7.6/src/s
          m_error = tr("Invalid key file, expecting an OpenSSH key");
 diff -urp keepassxc-2.7.6.orig/src/updatecheck/UpdateChecker.cpp keepassxc-2.7.6/src/updatecheck/UpdateChecker.cpp
 --- keepassxc-2.7.6.orig/src/updatecheck/UpdateChecker.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/updatecheck/UpdateChecker.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/src/updatecheck/UpdateChecker.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -49,7 +49,11 @@ void UpdateChecker::checkForUpdates(bool
          return;
      }
@@ -3520,8 +4202,8 @@ diff -urp keepassxc-2.7.6.orig/src/updatecheck/UpdateChecker.cpp keepassxc-2.7.6
          version = ErrorVersion;
      }
 diff -urp keepassxc-2.7.6.orig/tests/CMakeLists.txt keepassxc-2.7.6/tests/CMakeLists.txt
---- keepassxc-2.7.6.orig/tests/CMakeLists.txt	2024-01-22 22:17:11.654776904 -0800
-+++ keepassxc-2.7.6/tests/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
+--- keepassxc-2.7.6.orig/tests/CMakeLists.txt	2024-01-22 23:31:34.762412222 -0800
++++ keepassxc-2.7.6/tests/CMakeLists.txt	2024-01-22 23:31:49.502267937 -0800
 @@ -88,7 +88,11 @@ macro(add_unit_test)
      endif()
  endmacro(add_unit_test)
@@ -3550,7 +4232,7 @@ diff -urp keepassxc-2.7.6.orig/tests/CMakeLists.txt keepassxc-2.7.6/tests/CMakeL
          LIBS testsupport ${TEST_LIBRARIES})
 diff -urp keepassxc-2.7.6.orig/tests/gui/TestGui.cpp keepassxc-2.7.6/tests/gui/TestGui.cpp
 --- keepassxc-2.7.6.orig/tests/gui/TestGui.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/tests/gui/TestGui.cpp	2024-01-22 22:17:30.990585530 -0800
++++ keepassxc-2.7.6/tests/gui/TestGui.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -1915,7 +1915,7 @@ void TestGui::checkStatusBarText(const Q
  {
      QApplication::processEvents();
@@ -3562,7 +4244,7 @@ diff -urp keepassxc-2.7.6.orig/tests/gui/TestGui.cpp keepassxc-2.7.6/tests/gui/T
  
 diff -urp keepassxc-2.7.6.orig/tests/gui/TestGuiFdoSecrets.cpp keepassxc-2.7.6/tests/gui/TestGuiFdoSecrets.cpp
 --- keepassxc-2.7.6.orig/tests/gui/TestGuiFdoSecrets.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/tests/gui/TestGuiFdoSecrets.cpp	2024-01-22 22:17:30.994585490 -0800
++++ keepassxc-2.7.6/tests/gui/TestGuiFdoSecrets.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -1248,7 +1248,11 @@ void TestGuiFdoSecrets::testItemReplace(
      {
          DBUS_GET2(unlocked, locked, service->SearchItems({{"application", "fdosecrets-test"}}));
@@ -3614,7 +4296,7 @@ diff -urp keepassxc-2.7.6.orig/tests/gui/TestGuiFdoSecrets.cpp keepassxc-2.7.6/t
  void TestGuiFdoSecrets::testModifyingExposedGroup()
 diff -urp keepassxc-2.7.6.orig/tests/TestSharing.cpp keepassxc-2.7.6/tests/TestSharing.cpp
 --- keepassxc-2.7.6.orig/tests/TestSharing.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/tests/TestSharing.cpp	2024-01-22 22:17:30.994585490 -0800
++++ keepassxc-2.7.6/tests/TestSharing.cpp	2024-01-22 23:31:49.502267937 -0800
 @@ -83,7 +83,7 @@ void TestSharing::testKeySerialization()
      writer.writeEndDocument();
      QXmlStreamReader reader(buffer);
