@@ -208,7 +208,8 @@ ewarn "This ebuild is in development.  Use the distro ebuild instead."
 src_configure() {
 	# https://github.com/keepassxreboot/keepassxc/issues/5801
 	filter-lto
-	replace-flags -O* -O2
+	replace-flags '-O*' '-O2'
+	export MAKEOPTS="-j1"
 
 	local mycmakeargs=(
 		# Gentoo users enable ccache via e.g. FEATURES=ccache or

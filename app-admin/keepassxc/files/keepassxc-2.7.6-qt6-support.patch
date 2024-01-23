@@ -6,11 +6,11 @@
 # start time: 1705819601
 # end time:
 
-# Progress: 139/313
+# Progress: 137/313 with makeopts -j1
 
 diff -urp keepassxc-2.7.6.orig/CMakeLists.txt keepassxc-2.7.6/CMakeLists.txt
 --- keepassxc-2.7.6.orig/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/CMakeLists.txt	2024-01-21 23:43:45.298723739 -0800
++++ keepassxc-2.7.6/CMakeLists.txt	2024-01-22 22:17:30.966585767 -0800
 @@ -489,35 +489,77 @@ endif()
  
  include(CLangFormat)
@@ -169,7 +169,7 @@ diff -urp keepassxc-2.7.6.orig/CMakeLists.txt keepassxc-2.7.6/CMakeLists.txt
  # Debian sets the build type to None for package builds.
 diff -urp keepassxc-2.7.6.orig/share/translations/CMakeLists.txt keepassxc-2.7.6/share/translations/CMakeLists.txt
 --- keepassxc-2.7.6.orig/share/translations/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/share/translations/CMakeLists.txt	2024-01-21 21:07:36.756446301 -0800
++++ keepassxc-2.7.6/share/translations/CMakeLists.txt	2024-01-22 22:17:30.966585767 -0800
 @@ -20,7 +20,11 @@ list(REMOVE_ITEM TRANSLATION_FILES keepa
  list(REMOVE_ITEM TRANSLATION_FILES ${TRANSLATION_EN_ABS})
  message(STATUS "Including translations...\n")
@@ -185,15 +185,14 @@ diff -urp keepassxc-2.7.6.orig/share/translations/CMakeLists.txt keepassxc-2.7.6
      file(GLOB QTBASE_TRANSLATIONS ${Qt5_PREFIX}/share/qt5/translations/qtbase_*.qm)
 diff -urp keepassxc-2.7.6.orig/src/autotype/AutoType.cpp keepassxc-2.7.6/src/autotype/AutoType.cpp
 --- keepassxc-2.7.6.orig/src/autotype/AutoType.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/AutoType.cpp	2024-01-21 21:07:36.760446263 -0800
-@@ -457,7 +457,13 @@ void AutoType::performGlobalAutoType(con
++++ keepassxc-2.7.6/src/autotype/AutoType.cpp	2024-01-22 22:17:30.966585767 -0800
+@@ -457,7 +457,12 @@ void AutoType::performGlobalAutoType(con
              if (hideExpired && entry->isExpired()) {
                  continue;
              }
-+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 +            auto autoTypeSequences = entry->autoTypeSequences(m_windowTitleForGlobal);
-+            QSet<QString> tempSet(autoTypeSequences.begin(), autoTypeSequences.end());
-+            auto sequences = tempSet;
++            auto sequences = QSet<QString>(autoTypeSequences.begin(), autoTypeSequences.end());
 +#else
              auto sequences = entry->autoTypeSequences(m_windowTitleForGlobal).toSet();
 +#endif
@@ -202,7 +201,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/AutoType.cpp keepassxc-2.7.6/src/aut
              }
 diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatch.h keepassxc-2.7.6/src/autotype/AutoTypeMatch.h
 --- keepassxc-2.7.6.orig/src/autotype/AutoTypeMatch.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/AutoTypeMatch.h	2024-01-21 21:07:36.760446263 -0800
++++ keepassxc-2.7.6/src/autotype/AutoTypeMatch.h	2024-01-22 22:17:30.966585767 -0800
 @@ -21,6 +21,8 @@
  #include <QPair>
  #include <QPointer>
@@ -214,7 +213,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatch.h keepassxc-2.7.6/src/
  
 diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatchView.cpp keepassxc-2.7.6/src/autotype/AutoTypeMatchView.cpp
 --- keepassxc-2.7.6.orig/src/autotype/AutoTypeMatchView.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/AutoTypeMatchView.cpp	2024-01-21 21:07:36.760446263 -0800
++++ keepassxc-2.7.6/src/autotype/AutoTypeMatchView.cpp	2024-01-22 22:17:30.966585767 -0800
 @@ -38,9 +38,15 @@ public:
          auto index1 = sourceModel()->index(sourceRow, 1, sourceParent);
          auto index2 = sourceModel()->index(sourceRow, 2, sourceParent);
@@ -233,7 +232,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/AutoTypeMatchView.cpp keepassxc-2.7.
  
 diff -urp keepassxc-2.7.6.orig/src/autotype/CMakeLists.txt keepassxc-2.7.6/src/autotype/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/CMakeLists.txt	2024-01-21 21:07:36.760446263 -0800
++++ keepassxc-2.7.6/src/autotype/CMakeLists.txt	2024-01-22 22:17:30.966585767 -0800
 @@ -1,11 +1,20 @@
  if(WITH_XC_AUTOTYPE)
      if(UNIX AND NOT APPLE AND NOT HAIKU)
@@ -262,7 +261,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/CMakeLists.txt keepassxc-2.7.6/src/a
          add_subdirectory(xcb)
 diff -urp keepassxc-2.7.6.orig/src/autotype/mac/CMakeLists.txt keepassxc-2.7.6/src/autotype/mac/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/mac/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/mac/CMakeLists.txt	2024-01-21 21:07:36.760446263 -0800
++++ keepassxc-2.7.6/src/autotype/mac/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
 @@ -2,7 +2,11 @@ set(autotype_mac_SOURCES AutoTypeMac.cpp
  
  add_library(keepassxc-autotype-cocoa MODULE ${autotype_mac_SOURCES})
@@ -278,7 +277,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/mac/CMakeLists.txt keepassxc-2.7.6/s
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
 diff -urp keepassxc-2.7.6.orig/src/autotype/ShortcutWidget.cpp keepassxc-2.7.6/src/autotype/ShortcutWidget.cpp
 --- keepassxc-2.7.6.orig/src/autotype/ShortcutWidget.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/ShortcutWidget.cpp	2024-01-21 21:07:36.760446263 -0800
++++ keepassxc-2.7.6/src/autotype/ShortcutWidget.cpp	2024-01-22 22:17:30.970585728 -0800
 @@ -25,7 +25,11 @@
  ShortcutWidget::ShortcutWidget(QWidget* parent)
      : QLineEdit(parent)
@@ -305,7 +304,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/ShortcutWidget.cpp keepassxc-2.7.6/s
  }
 diff -urp keepassxc-2.7.6.orig/src/autotype/test/CMakeLists.txt keepassxc-2.7.6/src/autotype/test/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/test/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/test/CMakeLists.txt	2024-01-21 21:07:36.760446263 -0800
++++ keepassxc-2.7.6/src/autotype/test/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
 @@ -1,4 +1,8 @@
  set(autotype_test_SOURCES AutoTypeTest.cpp)
  
@@ -318,7 +317,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/test/CMakeLists.txt keepassxc-2.7.6/
 +endif()
 diff -urp keepassxc-2.7.6.orig/src/autotype/windows/CMakeLists.txt keepassxc-2.7.6/src/autotype/windows/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/windows/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/windows/CMakeLists.txt	2024-01-21 21:07:36.760446263 -0800
++++ keepassxc-2.7.6/src/autotype/windows/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
 @@ -1,7 +1,11 @@
  set(autotype_win_SOURCES AutoTypeWindows.cpp)
  
@@ -334,7 +333,7 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/windows/CMakeLists.txt keepassxc-2.7
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
 diff -urp keepassxc-2.7.6.orig/src/autotype/xcb/CMakeLists.txt keepassxc-2.7.6/src/autotype/xcb/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/autotype/xcb/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/autotype/xcb/CMakeLists.txt	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/autotype/xcb/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
 @@ -3,7 +3,11 @@ include_directories(SYSTEM ${X11_X11_INC
  set(autotype_XCB_SOURCES AutoTypeXCB.cpp)
  
@@ -348,9 +347,51 @@ diff -urp keepassxc-2.7.6.orig/src/autotype/xcb/CMakeLists.txt keepassxc-2.7.6/s
  install(TARGETS keepassxc-autotype-xcb
          BUNDLE DESTINATION . COMPONENT Runtime
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
+diff -urp keepassxc-2.7.6.orig/src/browser/BrowserEntryConfig.cpp keepassxc-2.7.6/src/browser/BrowserEntryConfig.cpp
+--- keepassxc-2.7.6.orig/src/browser/BrowserEntryConfig.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/browser/BrowserEntryConfig.cpp	2024-01-22 22:17:30.970585728 -0800
+@@ -34,22 +34,38 @@ BrowserEntryConfig::BrowserEntryConfig(Q
+ 
+ QStringList BrowserEntryConfig::allowedHosts() const
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    return QStringList(QList<QString>(m_allowedHosts.begin(), m_allowedHosts.end()));
++#else
+     return m_allowedHosts.toList();
++#endif
+ }
+ 
+ void BrowserEntryConfig::setAllowedHosts(const QStringList& allowedHosts)
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    m_allowedHosts = QSet<QString>(allowedHosts.begin(), allowedHosts.end());
++#else
+     m_allowedHosts = allowedHosts.toSet();
++#endif
+ }
+ 
+ QStringList BrowserEntryConfig::deniedHosts() const
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    return QStringList(QList<QString>(m_deniedHosts.begin(), m_deniedHosts.end()));
++#else
+     return m_deniedHosts.toList();
++#endif
+ }
+ 
+ void BrowserEntryConfig::setDeniedHosts(const QStringList& deniedHosts)
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    m_deniedHosts = QSet<QString>(deniedHosts.begin(), deniedHosts.end());
++#else
+     m_deniedHosts = deniedHosts.toSet();
++#endif
+ }
+ 
+ bool BrowserEntryConfig::isAllowed(const QString& host) const
 diff -urp keepassxc-2.7.6.orig/src/browser/CMakeLists.txt keepassxc-2.7.6/src/browser/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/browser/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/browser/CMakeLists.txt	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/browser/CMakeLists.txt	2024-01-22 22:17:30.970585728 -0800
 @@ -33,5 +33,9 @@ if(WITH_XC_BROWSER)
              )
  
@@ -364,7 +405,7 @@ diff -urp keepassxc-2.7.6.orig/src/browser/CMakeLists.txt keepassxc-2.7.6/src/br
  endif()
 diff -urp keepassxc-2.7.6.orig/src/cli/Add.cpp keepassxc-2.7.6/src/cli/Add.cpp
 --- keepassxc-2.7.6.orig/src/cli/Add.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Add.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/Add.cpp	2024-01-22 22:17:30.970585728 -0800
 @@ -78,7 +78,7 @@ int Add::executeWithDatabase(QSharedPoin
  
      // Cannot use those 2 options at the same time!
@@ -409,7 +450,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Add.cpp keepassxc-2.7.6/src/cli/Add.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/AddGroup.cpp keepassxc-2.7.6/src/cli/AddGroup.cpp
 --- keepassxc-2.7.6.orig/src/cli/AddGroup.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/AddGroup.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/AddGroup.cpp	2024-01-22 22:17:30.970585728 -0800
 @@ -47,13 +47,13 @@ int AddGroup::executeWithDatabase(QShare
  
      Group* group = database->rootGroup()->findGroupByPath(groupPath);
@@ -443,7 +484,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/AddGroup.cpp keepassxc-2.7.6/src/cli/AddG
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Analyze.cpp keepassxc-2.7.6/src/cli/Analyze.cpp
 --- keepassxc-2.7.6.orig/src/cli/Analyze.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Analyze.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/Analyze.cpp	2024-01-22 22:17:30.970585728 -0800
 @@ -60,23 +60,23 @@ int Analyze::executeWithDatabase(QShared
  
      auto okon = parser->value(Analyze::OkonOption);
@@ -487,7 +528,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Analyze.cpp keepassxc-2.7.6/src/cli/Analy
  
 diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentExport.cpp keepassxc-2.7.6/src/cli/AttachmentExport.cpp
 --- keepassxc-2.7.6.orig/src/cli/AttachmentExport.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/AttachmentExport.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/AttachmentExport.cpp	2024-01-22 22:17:30.970585728 -0800
 @@ -49,7 +49,7 @@ int AttachmentExport::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -537,7 +578,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentExport.cpp keepassxc-2.7.6/src/
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentImport.cpp keepassxc-2.7.6/src/cli/AttachmentImport.cpp
 --- keepassxc-2.7.6.orig/src/cli/AttachmentImport.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/AttachmentImport.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/AttachmentImport.cpp	2024-01-22 22:17:30.970585728 -0800
 @@ -50,7 +50,7 @@ int AttachmentImport::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -582,7 +623,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentImport.cpp keepassxc-2.7.6/src/
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentRemove.cpp keepassxc-2.7.6/src/cli/AttachmentRemove.cpp
 --- keepassxc-2.7.6.orig/src/cli/AttachmentRemove.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/AttachmentRemove.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/AttachmentRemove.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -41,7 +41,7 @@ int AttachmentRemove::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -616,7 +657,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/AttachmentRemove.cpp keepassxc-2.7.6/src/
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Clip.cpp keepassxc-2.7.6/src/cli/Clip.cpp
 --- keepassxc-2.7.6.orig/src/cli/Clip.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Clip.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/Clip.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -72,7 +72,7 @@ int Clip::executeWithDatabase(QSharedPoi
          bool ok;
          timeout = args.at(2).toInt(&ok);
@@ -713,7 +754,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Clip.cpp keepassxc-2.7.6/src/cli/Clip.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/CMakeLists.txt keepassxc-2.7.6/src/cli/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/cli/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/CMakeLists.txt	2024-01-21 23:39:13.109279369 -0800
++++ keepassxc-2.7.6/src/cli/CMakeLists.txt	2024-01-22 22:17:30.974585688 -0800
 @@ -45,7 +45,15 @@ set(cli_SOURCES
          Show.cpp)
  
@@ -733,7 +774,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/CMakeLists.txt keepassxc-2.7.6/src/cli/CM
  
 diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseCreate.cpp keepassxc-2.7.6/src/cli/DatabaseCreate.cpp
 --- keepassxc-2.7.6.orig/src/cli/DatabaseCreate.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/DatabaseCreate.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/DatabaseCreate.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -70,13 +70,13 @@ QSharedPointer<Database> DatabaseCreate:
      if (decryptionTimeValue.length() != 0) {
          decryptionTime = decryptionTimeValue.toInt();
@@ -820,7 +861,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseCreate.cpp keepassxc-2.7.6/src/cl
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseEdit.cpp keepassxc-2.7.6/src/cli/DatabaseEdit.cpp
 --- keepassxc-2.7.6.orig/src/cli/DatabaseEdit.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/DatabaseEdit.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/DatabaseEdit.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -53,7 +53,7 @@ int DatabaseEdit::executeWithDatabase(QS
          err << QObject::tr("Cannot use %1 and %2 at the same time.")
                     .arg(DatabaseCreate::SetPasswordOption.names().at(0))
@@ -928,7 +969,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseEdit.cpp keepassxc-2.7.6/src/cli/
  
 diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseInfo.cpp keepassxc-2.7.6/src/cli/DatabaseInfo.cpp
 --- keepassxc-2.7.6.orig/src/cli/DatabaseInfo.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/DatabaseInfo.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/DatabaseInfo.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -35,39 +35,45 @@ int DatabaseInfo::executeWithDatabase(QS
  {
      auto& out = Utils::STDOUT;
@@ -998,7 +1039,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/DatabaseInfo.cpp keepassxc-2.7.6/src/cli/
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Diceware.cpp keepassxc-2.7.6/src/cli/Diceware.cpp
 --- keepassxc-2.7.6.orig/src/cli/Diceware.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Diceware.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/Diceware.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -58,7 +58,7 @@ int Diceware::execute(const QStringList&
      if (wordCount.isEmpty()) {
          dicewareGenerator.setWordCount(PassphraseGenerator::DefaultWordCount);
@@ -1025,7 +1066,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Diceware.cpp keepassxc-2.7.6/src/cli/Dice
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Edit.cpp keepassxc-2.7.6/src/cli/Edit.cpp
 --- keepassxc-2.7.6.orig/src/cli/Edit.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Edit.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/Edit.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -66,7 +66,7 @@ int Edit::executeWithDatabase(QSharedPoi
  
      // Cannot use those 2 options at the same time!
@@ -1077,7 +1118,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Edit.cpp keepassxc-2.7.6/src/cli/Edit.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Estimate.cpp keepassxc-2.7.6/src/cli/Estimate.cpp
 --- keepassxc-2.7.6.orig/src/cli/Estimate.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Estimate.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/Estimate.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -47,7 +47,7 @@ static void estimate(const char* pwd, bo
          // clang-format off
          out << QObject::tr("Length %1").arg(len, 0) << '\t'
@@ -1114,7 +1155,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Estimate.cpp keepassxc-2.7.6/src/cli/Esti
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Export.cpp keepassxc-2.7.6/src/cli/Export.cpp
 --- keepassxc-2.7.6.orig/src/cli/Export.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Export.cpp	2024-01-21 21:07:36.764446226 -0800
++++ keepassxc-2.7.6/src/cli/Export.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -46,7 +46,7 @@ int Export::executeWithDatabase(QSharedP
          QByteArray xmlData;
          QString errorMessage;
@@ -1135,7 +1176,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Export.cpp keepassxc-2.7.6/src/cli/Export
  
 diff -urp keepassxc-2.7.6.orig/src/cli/Generate.cpp keepassxc-2.7.6/src/cli/Generate.cpp
 --- keepassxc-2.7.6.orig/src/cli/Generate.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Generate.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/Generate.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -92,13 +92,13 @@ QSharedPointer<PasswordGenerator> Genera
      if (passwordLength.isEmpty()) {
          passwordGenerator->setLength(PasswordGenerator::DefaultLength);
@@ -1181,7 +1222,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Generate.cpp keepassxc-2.7.6/src/cli/Gene
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Import.cpp keepassxc-2.7.6/src/cli/Import.cpp
 --- keepassxc-2.7.6.orig/src/cli/Import.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Import.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/Import.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -61,7 +61,7 @@ int Import::execute(const QStringList& a
      const QString& dbPath = args.at(1);
  
@@ -1212,7 +1253,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Import.cpp keepassxc-2.7.6/src/cli/Import
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/keepassxc-cli.cpp keepassxc-2.7.6/src/cli/keepassxc-cli.cpp
 --- keepassxc-2.7.6.orig/src/cli/keepassxc-cli.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/keepassxc-cli.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/keepassxc-cli.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -153,7 +153,7 @@ int enterInteractiveMode(const QStringLi
  
          auto cmd = Commands::getCommand(args[0]);
@@ -1247,7 +1288,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/keepassxc-cli.cpp keepassxc-2.7.6/src/cli
      }
 diff -urp keepassxc-2.7.6.orig/src/cli/List.cpp keepassxc-2.7.6/src/cli/List.cpp
 --- keepassxc-2.7.6.orig/src/cli/List.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/List.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/List.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -52,17 +52,17 @@ int List::executeWithDatabase(QSharedPoi
  
      // No group provided, defaulting to root group.
@@ -1271,7 +1312,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/List.cpp keepassxc-2.7.6/src/cli/List.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Merge.cpp keepassxc-2.7.6/src/cli/Merge.cpp
 --- keepassxc-2.7.6.orig/src/cli/Merge.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Merge.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/Merge.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -90,18 +90,18 @@ int Merge::executeWithDatabase(QSharedPo
      QStringList changeList = merger.merge();
  
@@ -1297,7 +1338,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Merge.cpp keepassxc-2.7.6/src/cli/Merge.c
      return EXIT_SUCCESS;
 diff -urp keepassxc-2.7.6.orig/src/cli/Move.cpp keepassxc-2.7.6/src/cli/Move.cpp
 --- keepassxc-2.7.6.orig/src/cli/Move.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Move.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/Move.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -45,18 +45,18 @@ int Move::executeWithDatabase(QSharedPoi
  
      Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -1335,7 +1376,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Move.cpp keepassxc-2.7.6/src/cli/Move.cpp
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Remove.cpp keepassxc-2.7.6/src/cli/Remove.cpp
 --- keepassxc-2.7.6.orig/src/cli/Remove.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Remove.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/Remove.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -38,7 +38,7 @@ int Remove::executeWithDatabase(QSharedP
      auto& entryPath = parser->positionalArguments().at(1);
      QPointer<Entry> entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -1365,7 +1406,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Remove.cpp keepassxc-2.7.6/src/cli/Remove
      return EXIT_SUCCESS;
 diff -urp keepassxc-2.7.6.orig/src/cli/RemoveGroup.cpp keepassxc-2.7.6/src/cli/RemoveGroup.cpp
 --- keepassxc-2.7.6.orig/src/cli/RemoveGroup.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/RemoveGroup.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/RemoveGroup.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -44,12 +44,12 @@ int RemoveGroup::executeWithDatabase(QSh
      // Recursive option means were looking for a group to remove.
      QPointer<Group> group = database->rootGroup()->findGroupByPath(groupPath);
@@ -1401,7 +1442,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/RemoveGroup.cpp keepassxc-2.7.6/src/cli/R
      return EXIT_SUCCESS;
 diff -urp keepassxc-2.7.6.orig/src/cli/Search.cpp keepassxc-2.7.6/src/cli/Search.cpp
 --- keepassxc-2.7.6.orig/src/cli/Search.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Search.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/Search.cpp	2024-01-22 22:17:30.974585688 -0800
 @@ -40,12 +40,12 @@ int Search::executeWithDatabase(QSharedP
      EntrySearcher searcher;
      auto results = searcher.search(args.at(1), database->rootGroup(), true);
@@ -1419,7 +1460,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Search.cpp keepassxc-2.7.6/src/cli/Search
  }
 diff -urp keepassxc-2.7.6.orig/src/cli/Show.cpp keepassxc-2.7.6/src/cli/Show.cpp
 --- keepassxc-2.7.6.orig/src/cli/Show.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Show.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/Show.cpp	2024-01-22 22:17:30.978585649 -0800
 @@ -73,12 +73,12 @@ int Show::executeWithDatabase(QSharedPoi
  
      Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -1502,7 +1543,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Show.cpp keepassxc-2.7.6/src/cli/Show.cpp
      return encounteredError ? EXIT_FAILURE : EXIT_SUCCESS;
 diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.cpp keepassxc-2.7.6/src/cli/TextStream.cpp
 --- keepassxc-2.7.6.orig/src/cli/TextStream.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/TextStream.cpp	2024-01-21 23:25:21.340467343 -0800
++++ keepassxc-2.7.6/src/cli/TextStream.cpp	2024-01-22 22:17:30.978585649 -0800
 @@ -18,7 +18,13 @@
  #include "TextStream.h"
  
@@ -1523,7 +1564,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.cpp keepassxc-2.7.6/src/cli/Te
  }
  
 +#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && !defined(USE_QT5COMPAT)
-+#warning TextStream::detectCodec():  Support for Windows-1252 is not supported across platforms.  Enable the Qt5Compat option to add back support.
++#warning TextStream::detectCodec():  Support for Windows-1252 is not supported across platforms.  Enable the WITH_QT5COMPAT cmake option to add back support.
 +void TextStream::detectCodec()
 +{
 +    QString codecName = "UTF-8";
@@ -1544,13 +1585,13 @@ diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.cpp keepassxc-2.7.6/src/cli/Te
 +        // Only override codec if LANG is set, otherwise Qt will assume
 +        // US-ASCII, which is almost always wrong and results in
 +        // Unicode passwords being displayed as question marks.
-+        codecName = QTextCodec::codecForLocale()->name();
++        codecName = "System";
 +    }
 +#endif
 +
 +    codecName = env.value("ENCODING_OVERRIDE", codecName);
 +
-+    QStringConverter codec = QStringConverter::Utf8;
++    QStringConverter::Encoding codec = QStringConverter::Utf8;
 +    if (QString::compare(codecName, "UTF-8") == 0 || QString::compare(codecName, "Utf8") == 0)
 +        codec = QStringConverter::Utf8;
 +    else if (QString::compare(codecName, "UTF-16") == 0 || QString::compare(codecName, "Utf16") == 0)
@@ -1585,7 +1626,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.cpp keepassxc-2.7.6/src/cli/Te
 +#endif
 diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.h keepassxc-2.7.6/src/cli/TextStream.h
 --- keepassxc-2.7.6.orig/src/cli/TextStream.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/TextStream.h	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/TextStream.h	2024-01-22 22:17:30.978585649 -0800
 @@ -38,10 +38,17 @@ class TextStream : public QTextStream
  public:
      TextStream();
@@ -1606,7 +1647,7 @@ diff -urp keepassxc-2.7.6.orig/src/cli/TextStream.h keepassxc-2.7.6/src/cli/Text
  
 diff -urp keepassxc-2.7.6.orig/src/cli/Utils.cpp keepassxc-2.7.6/src/cli/Utils.cpp
 --- keepassxc-2.7.6.orig/src/cli/Utils.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/cli/Utils.cpp	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/cli/Utils.cpp	2024-01-22 22:17:30.978585649 -0800
 @@ -111,22 +111,22 @@ namespace Utils
  
          QFileInfo dbFileInfo(databaseFilename);
@@ -1712,7 +1753,19 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Utils.cpp keepassxc-2.7.6/src/cli/Utils.c
              }
          }
  
-@@ -425,13 +425,13 @@ namespace Utils
+@@ -303,7 +303,11 @@ namespace Utils
+             QScopedPointer<QProcess> clipProcess(new QProcess(nullptr));
+ 
+             // Skip empty parts, otherwise the program may clip the empty string
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++            QStringList progArgs = prog.second.split(" ", Qt::SkipEmptyParts);
++#else
+             QStringList progArgs = prog.second.split(" ", QString::SkipEmptyParts);
++#endif
+ 
+             clipProcess->start(prog.first, progArgs);
+             clipProcess->waitForStarted();
+@@ -425,13 +429,13 @@ namespace Utils
              fileKey->create(path, &error);
  
              if (!error.isEmpty()) {
@@ -1728,9 +1781,22 @@ diff -urp keepassxc-2.7.6.orig/src/cli/Utils.cpp keepassxc-2.7.6/src/cli/Utils.c
              return false;
          }
  
+diff -urp keepassxc-2.7.6.orig/src/cli/Utils.h keepassxc-2.7.6/src/cli/Utils.h
+--- keepassxc-2.7.6.orig/src/cli/Utils.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/cli/Utils.h	2024-01-22 22:17:30.978585649 -0800
+@@ -18,6 +18,9 @@
+ #ifndef KEEPASSXC_UTILS_H
+ #define KEEPASSXC_UTILS_H
+ 
++#include <QList>
++#include <QSharedPointer>
++#include <QString>
+ #include <QTextStream>
+ 
+ class CompositeKey;
 diff -urp keepassxc-2.7.6.orig/src/CMakeLists.txt keepassxc-2.7.6/src/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/CMakeLists.txt	2024-01-21 23:41:02.932327975 -0800
++++ keepassxc-2.7.6/src/CMakeLists.txt	2024-01-22 22:17:30.978585649 -0800
 @@ -212,10 +212,17 @@ if(UNIX AND NOT APPLE)
          list(APPEND keepassx_SOURCES
              gui/osutils/nixutils/X11Funcs.cpp)
@@ -1830,44 +1896,56 @@ diff -urp keepassxc-2.7.6.orig/src/CMakeLists.txt keepassxc-2.7.6/src/CMakeLists
      else()
 diff -urp keepassxc-2.7.6.orig/src/core/Clock.cpp keepassxc-2.7.6/src/core/Clock.cpp
 --- keepassxc-2.7.6.orig/src/core/Clock.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Clock.cpp	2024-01-21 22:08:03.229935578 -0800
-@@ -28,11 +28,17 @@ QDateTime Clock::currentDateTime()
-     return instance().currentDateTimeImpl();
- }
++++ keepassxc-2.7.6/src/core/Clock.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -30,8 +30,13 @@ QDateTime Clock::currentDateTime()
  
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+qint64 Clock::currentSecondsSinceEpoch()
-+{
-+    return instance().currentDateTimeImpl().toSecsSinceEpoch();
-+}
-+#else
  uint Clock::currentSecondsSinceEpoch()
  {
 -    // TODO: change to toSecsSinceEpoch() when min Qt >= 5.8
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    qint64 current_s64 = instance().currentDateTimeImpl().toSecsSinceEpoch();
++    uint current_u32 = static_cast<uint>(current_s64);
++    return current_u32;
++#else
      return instance().currentDateTimeImpl().toTime_t();
- }
 +#endif
+ }
  
  qint64 Clock::currentMilliSecondsSinceEpoch()
- {
-diff -urp keepassxc-2.7.6.orig/src/core/Clock.h keepassxc-2.7.6/src/core/Clock.h
---- keepassxc-2.7.6.orig/src/core/Clock.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Clock.h	2024-01-21 21:56:10.936732805 -0800
-@@ -27,7 +27,11 @@ public:
-     static QDateTime currentDateTimeUtc();
-     static QDateTime currentDateTime();
+diff -urp keepassxc-2.7.6.orig/src/core/Database.cpp keepassxc-2.7.6/src/core/Database.cpp
+--- keepassxc-2.7.6.orig/src/core/Database.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/Database.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -710,7 +710,11 @@ void Database::updateTagList()
+         }
+     }
  
 +#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    static qint64 currentSecondsSinceEpoch();
++    m_tagList = QList<QString>(tagSet.begin(), tagSet.end());
 +#else
-     static uint currentSecondsSinceEpoch();
+     m_tagList = tagSet.toList();
 +#endif
-     static qint64 currentMilliSecondsSinceEpoch();
+     m_tagList.sort();
+     emit tagListUpdated();
+ }
+diff -urp keepassxc-2.7.6.orig/src/core/EntryAttachments.cpp keepassxc-2.7.6/src/core/EntryAttachments.cpp
+--- keepassxc-2.7.6.orig/src/core/EntryAttachments.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/EntryAttachments.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -50,7 +50,12 @@ bool EntryAttachments::hasKey(const QStr
  
-     static QDateTime serialized(const QDateTime& dateTime);
+ QSet<QByteArray> EntryAttachments::values() const
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QList<QByteArray> listAttachmentValues = asConst(m_attachments).values();
++    return QSet<QByteArray>(listAttachmentValues.begin(), listAttachmentValues.end());
++#else
+     return asConst(m_attachments).values().toSet();
++#endif
+ }
+ 
+ QByteArray EntryAttachments::value(const QString& key) const
 diff -urp keepassxc-2.7.6.orig/src/core/EntryAttachments.h keepassxc-2.7.6/src/core/EntryAttachments.h
 --- keepassxc-2.7.6.orig/src/core/EntryAttachments.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/EntryAttachments.h	2024-01-21 21:07:36.768446188 -0800
++++ keepassxc-2.7.6/src/core/EntryAttachments.h	2024-01-22 22:17:30.978585649 -0800
 @@ -21,12 +21,18 @@
  #include "core/FileWatcher.h"
  #include "core/ModifiableObject.h"
@@ -1887,22 +1965,68 @@ diff -urp keepassxc-2.7.6.orig/src/core/EntryAttachments.h keepassxc-2.7.6/src/c
  
  class EntryAttachments : public ModifiableObject
  {
+diff -urp keepassxc-2.7.6.orig/src/core/EntryAttributes.cpp keepassxc-2.7.6/src/core/EntryAttributes.cpp
+--- keepassxc-2.7.6.orig/src/core/EntryAttributes.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/EntryAttributes.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -225,7 +225,15 @@ void EntryAttributes::copyCustomKeysFrom
+ bool EntryAttributes::areCustomKeysDifferent(const EntryAttributes* other)
+ {
+     // check if they are equal ignoring the order of the keys
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QList<QString> listKeys = keys();
++    QList<QString> listOtherKeys = other->keys();
++    QSet<QString> setKeys(listKeys.begin(), listKeys.end());
++    QSet<QString> setOtherKeys(listOtherKeys.begin(), listOtherKeys.end());
++    if (setKeys != setOtherKeys) {
++#else
+     if (keys().toSet() != other->keys().toSet()) {
++#endif
+         return true;
+     }
+ 
 diff -urp keepassxc-2.7.6.orig/src/core/Entry.cpp keepassxc-2.7.6/src/core/Entry.cpp
 --- keepassxc-2.7.6.orig/src/core/Entry.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Entry.cpp	2024-01-21 21:07:36.768446188 -0800
-@@ -656,7 +656,11 @@ void Entry::setOverrideUrl(const QString
++++ keepassxc-2.7.6/src/core/Entry.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -435,7 +435,12 @@ int Entry::size() const
+     size += this->autoTypeAssociations()->associationsSize();
+     size += this->attachments()->attachmentsSize();
+     size += this->customData()->dataSize();
++
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    const QStringList tags = this->tags().split(delimiter, Qt::SkipEmptyParts);
++#else
+     const QStringList tags = this->tags().split(delimiter, QString::SkipEmptyParts);
++#endif
+     for (const QString& tag : tags) {
+         size += tag.toUtf8().size();
+     }
+@@ -656,15 +661,25 @@ void Entry::setOverrideUrl(const QString
  
  void Entry::setTags(const QString& tags)
  {
 +#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 +    static QRegularExpression rx("(\\,|\\t|\\;)");
++    auto taglist = tags.split(rx, Qt::SkipEmptyParts);
 +#else
      static QRegExp rx("(\\,|\\t|\\;)");
-+#endif
      auto taglist = tags.split(rx, QString::SkipEmptyParts);
++#endif
      // Trim whitespace before/after tag text
      for (auto itr = taglist.begin(); itr != taglist.end(); ++itr) {
-@@ -673,7 +677,11 @@ void Entry::setTags(const QString& tags)
+         *itr = itr->trimmed();
+     }
+     // Remove duplicates
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    auto tagSet = QSet<QString>(taglist.begin(), taglist.end());
++    taglist = QList<QString>(tagSet.begin(), tagSet.end());
++#else
+     auto tagSet = QSet<QString>::fromList(taglist);
+     taglist = tagSet.toList();
++#endif
+     // Sort alphabetically
+     taglist.sort();
+     set(m_data.tags, taglist);
+@@ -673,7 +688,11 @@ void Entry::setTags(const QString& tags)
  void Entry::addTag(const QString& tag)
  {
      auto cleanTag = tag.trimmed();
@@ -1914,7 +2038,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/Entry.cpp keepassxc-2.7.6/src/core/Entry
  
      auto taglist = m_data.tags;
      if (!taglist.contains(cleanTag)) {
-@@ -686,7 +694,11 @@ void Entry::addTag(const QString& tag)
+@@ -686,7 +705,11 @@ void Entry::addTag(const QString& tag)
  void Entry::removeTag(const QString& tag)
  {
      auto cleanTag = tag.trimmed();
@@ -1926,7 +2050,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/Entry.cpp keepassxc-2.7.6/src/core/Entry
  
      auto taglist = m_data.tags;
      if (taglist.removeAll(tag) > 0) {
-@@ -1305,7 +1317,11 @@ Database* Entry::database()
+@@ -1305,7 +1328,11 @@ Database* Entry::database()
  QString Entry::maskPasswordPlaceholders(const QString& str) const
  {
      QString result = str;
@@ -1938,19 +2062,44 @@ diff -urp keepassxc-2.7.6.orig/src/core/Entry.cpp keepassxc-2.7.6/src/core/Entry
      return result;
  }
  
-@@ -1424,7 +1440,11 @@ QString Entry::resolveUrl(const QString&
+@@ -1375,12 +1402,21 @@ Entry::PlaceholderType Entry::placeholde
+     if (!placeholder.startsWith(QLatin1Char('{')) || !placeholder.endsWith(QLatin1Char('}'))) {
+         return PlaceholderType::NotPlaceholder;
+     }
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    if (placeholder.startsWith(QLatin1String("{S:"))) {
++        return PlaceholderType::CustomAttribute;
++    }
++    if (placeholder.startsWith(QLatin1String("{REF:"))) {
++        return PlaceholderType::Reference;
++    }
++#else
+     if (placeholder.startsWith(QLatin1Literal("{S:"))) {
+         return PlaceholderType::CustomAttribute;
+     }
+     if (placeholder.startsWith(QLatin1Literal("{REF:"))) {
+         return PlaceholderType::Reference;
+     }
++#endif
+ 
+     static const QMap<QString, PlaceholderType> placeholders{
+         {QStringLiteral("{TITLE}"), PlaceholderType::Title},
+@@ -1424,8 +1460,14 @@ QString Entry::resolveUrl(const QString&
  {
      QString newUrl = url;
  
 +#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 +    QRegularExpression fileRegEx("^([a-z]:)?[\\\\/]", QRegularExpression::CaseInsensitiveOption);
++    QRegularExpressionMatch fileRegMatchResult = fileRegEx.match(newUrl);
++    if (fileRegMatchResult.hasMatch()) {
 +#else
      QRegExp fileRegEx("^([a-z]:)?[\\\\/]", Qt::CaseInsensitive, QRegExp::RegExp2);
-+#endif
      if (fileRegEx.indexIn(newUrl) != -1) {
++#endif
          // Match possible file paths without the scheme and convert it to a file URL
          newUrl = QDir::fromNativeSeparators(newUrl);
-@@ -1434,7 +1454,11 @@ QString Entry::resolveUrl(const QString&
+         newUrl = QUrl::fromLocalFile(newUrl).toString();
+@@ -1434,7 +1476,11 @@ QString Entry::resolveUrl(const QString&
          for (int i = 1; i < cmdList.size(); ++i) {
              // Don't pass arguments to the resolveUrl function (they look like URL's)
              if (!cmdList[i].startsWith("-") && !cmdList[i].startsWith("/")) {
@@ -1962,9 +2111,40 @@ diff -urp keepassxc-2.7.6.orig/src/core/Entry.cpp keepassxc-2.7.6/src/core/Entry
              }
          }
  
+diff -urp keepassxc-2.7.6.orig/src/core/EntrySearcher.cpp keepassxc-2.7.6/src/core/EntrySearcher.cpp
+--- keepassxc-2.7.6.orig/src/core/EntrySearcher.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/EntrySearcher.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -203,7 +203,11 @@ bool EntrySearcher::searchEntryImpl(cons
+         case Field::Is:
+             if (term.word.startsWith("expired", Qt::CaseInsensitive)) {
+                 auto days = 0;
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++                auto parts = term.word.split("-", Qt::SkipEmptyParts);
++#else
+                 auto parts = term.word.split("-", QString::SkipEmptyParts);
++#endif
+                 if (parts.length() >= 2) {
+                     days = parts[1].toInt();
+                 }
+diff -urp keepassxc-2.7.6.orig/src/core/Group.cpp keepassxc-2.7.6/src/core/Group.cpp
+--- keepassxc-2.7.6.orig/src/core/Group.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/Group.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -835,7 +835,12 @@ QList<QString> Group::usernamesRecursive
+ 
+     // Take first topN usernames if set
+     QList<QString> usernames;
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    int sortedUsernamesSize = static_cast<int>(sortedUsernames.size());
++    int actualUsernames = topN < 0 ? sortedUsernames.size() : std::min(topN, sortedUsernamesSize);
++#else
+     int actualUsernames = topN < 0 ? sortedUsernames.size() : std::min(topN, sortedUsernames.size());
++#endif
+     for (int i = 0; i < actualUsernames; i++) {
+         usernames.append(sortedUsernames[i].first);
+     }
 diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.cpp keepassxc-2.7.6/src/core/MacPasteboard.cpp
 --- keepassxc-2.7.6.orig/src/core/MacPasteboard.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/MacPasteboard.cpp	2024-01-21 23:27:59.367104262 -0800
++++ keepassxc-2.7.6/src/core/MacPasteboard.cpp	2024-01-22 22:17:30.978585649 -0800
 @@ -78,7 +78,12 @@ QVariant MacPasteboard::convertToMime(co
      } else if (flavor == QLatin1String("org.nspasteboard.ConcealedType")) {
          ret = QString::fromUtf8(firstData);
@@ -1993,7 +2173,7 @@ diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.cpp keepassxc-2.7.6/src/co
  }
 diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.h keepassxc-2.7.6/src/core/MacPasteboard.h
 --- keepassxc-2.7.6.orig/src/core/MacPasteboard.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/MacPasteboard.h	2024-01-21 23:20:42.618868308 -0800
++++ keepassxc-2.7.6/src/core/MacPasteboard.h	2024-01-22 22:17:30.978585649 -0800
 @@ -19,7 +19,11 @@
  #define KEEPASSXC_MACPASTEBOARD_H
  
@@ -2007,9 +2187,28 @@ diff -urp keepassxc-2.7.6.orig/src/core/MacPasteboard.h keepassxc-2.7.6/src/core
  #include <QtMacExtras/QMacPasteboardMime>
  
  class MacPasteboard : public QObject, public QMacPasteboardMime
+diff -urp keepassxc-2.7.6.orig/src/core/Merger.cpp keepassxc-2.7.6/src/core/Merger.cpp
+--- keepassxc-2.7.6.orig/src/core/Merger.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/Merger.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -568,7 +568,15 @@ Merger::ChangeList Merger::mergeDeletion
+ 
+     while (!groups.isEmpty()) {
+         auto* group = groups.takeFirst();
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        QList<Group*> listChildren = group->children();
++        QList<Group*> listGroups = groups;
++        QSet<Group*> setChildren = QSet<Group*>(listChildren.begin(), listChildren.end());
++        QSet<Group*> setGroups = QSet<Group*>(listGroups.begin(), listGroups.end());
++        if (!(setChildren & setGroups).isEmpty()) {
++#else
+         if (!(group->children().toSet() & groups.toSet()).isEmpty()) {
++#endif
+             // we need to finish all children before we are able to determine if the group can be removed
+             groups << group;
+             continue;
 diff -urp keepassxc-2.7.6.orig/src/core/PassphraseGenerator.cpp keepassxc-2.7.6/src/core/PassphraseGenerator.cpp
 --- keepassxc-2.7.6.orig/src/core/PassphraseGenerator.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/PassphraseGenerator.cpp	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/core/PassphraseGenerator.cpp	2024-01-22 22:17:30.978585649 -0800
 @@ -18,6 +18,9 @@
  #include "PassphraseGenerator.h"
  
@@ -2032,9 +2231,221 @@ diff -urp keepassxc-2.7.6.orig/src/core/PassphraseGenerator.cpp keepassxc-2.7.6/
      while (!line.isNull()) {
          if (isSigned && line.startsWith("-----BEGIN PGP SIGNATURE-----")) {
              break;
+diff -urp keepassxc-2.7.6.orig/src/core/PasswordGenerator.cpp keepassxc-2.7.6/src/core/PasswordGenerator.cpp
+--- keepassxc-2.7.6.orig/src/core/PasswordGenerator.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/PasswordGenerator.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -132,7 +132,7 @@ QVector<PasswordGroup> PasswordGenerator
+                 continue;
+             }
+ 
+-            group.append(i);
++            group.append(QChar(i));
+         }
+ 
+         passwordGroups.append(group);
+@@ -146,7 +146,7 @@ QVector<PasswordGroup> PasswordGenerator
+                 continue;
+             }
+ 
+-            group.append(i);
++            group.append(QChar(i));
+         }
+ 
+         passwordGroups.append(group);
+@@ -159,7 +159,7 @@ QVector<PasswordGroup> PasswordGenerator
+                 continue;
+             }
+ 
+-            group.append(i);
++            group.append(QChar(i));
+         }
+ 
+         passwordGroups.append(group);
+@@ -168,12 +168,12 @@ QVector<PasswordGroup> PasswordGenerator
+         PasswordGroup group;
+ 
+         // ()[]{}
+-        group.append(40);
+-        group.append(41);
+-        group.append(91);
+-        group.append(93);
+-        group.append(123);
+-        group.append(125);
++        group.append(QChar(40));
++        group.append(QChar(41));
++        group.append(QChar(91));
++        group.append(QChar(93));
++        group.append(QChar(123));
++        group.append(QChar(125));
+ 
+         passwordGroups.append(group);
+     }
+@@ -181,10 +181,10 @@ QVector<PasswordGroup> PasswordGenerator
+         PasswordGroup group;
+ 
+         // .,:;
+-        group.append(44);
+-        group.append(46);
+-        group.append(58);
+-        group.append(59);
++        group.append(QChar(44));
++        group.append(QChar(46));
++        group.append(QChar(58));
++        group.append(QChar(59));
+ 
+         passwordGroups.append(group);
+     }
+@@ -192,8 +192,8 @@ QVector<PasswordGroup> PasswordGenerator
+         PasswordGroup group;
+ 
+         // "'
+-        group.append(34);
+-        group.append(39);
++        group.append(QChar(34));
++        group.append(QChar(39));
+ 
+         passwordGroups.append(group);
+     }
+@@ -201,12 +201,12 @@ QVector<PasswordGroup> PasswordGenerator
+         PasswordGroup group;
+ 
+         // -/\_|
+-        group.append(45);
+-        group.append(47);
+-        group.append(92);
+-        group.append(95);
++        group.append(QChar(45));
++        group.append(QChar(47));
++        group.append(QChar(92));
++        group.append(QChar(95));
+         if (!(m_flags & ExcludeLookAlike)) {
+-            group.append(124); // "|"
++            group.append(QChar(124)); // "|"
+         }
+ 
+         passwordGroups.append(group);
+@@ -215,13 +215,13 @@ QVector<PasswordGroup> PasswordGenerator
+         PasswordGroup group;
+ 
+         // !*+<=>?
+-        group.append(33);
+-        group.append(42);
+-        group.append(43);
+-        group.append(60);
+-        group.append(61);
+-        group.append(62);
+-        group.append(63);
++        group.append(QChar(33));
++        group.append(QChar(42));
++        group.append(QChar(43));
++        group.append(QChar(60));
++        group.append(QChar(61));
++        group.append(QChar(62));
++        group.append(QChar(63));
+ 
+         passwordGroups.append(group);
+     }
+@@ -230,13 +230,13 @@ QVector<PasswordGroup> PasswordGenerator
+ 
+         // #$%&
+         for (int i = 35; i <= 38; i++) {
+-            group.append(i);
++            group.append(QChar(i));
+         }
+         // @^`~
+-        group.append(64);
+-        group.append(94);
+-        group.append(96);
+-        group.append(126);
++        group.append(QChar(64));
++        group.append(QChar(94));
++        group.append(QChar(96));
++        group.append(QChar(126));
+ 
+         passwordGroups.append(group);
+     }
+@@ -246,14 +246,14 @@ QVector<PasswordGroup> PasswordGenerator
+         // [U+0080, U+009F] are C1 control characters,
+         // U+00A0 is non-breaking space
+         for (int i = 161; i <= 172; i++) {
+-            group.append(i);
++            group.append(QChar(i));
+         }
+         // U+00AD is soft hyphen (format character)
+         for (int i = 174; i <= 255; i++) {
+             if ((m_flags & ExcludeLookAlike) && (i == 249)) { // "﹒"
+                 continue;
+             }
+-            group.append(i);
++            group.append(QChar(i));
+         }
+ 
+         passwordGroups.append(group);
+@@ -262,7 +262,7 @@ QVector<PasswordGroup> PasswordGenerator
+         PasswordGroup group;
+ 
+         for (auto ch : m_custom) {
+-            group.append(ch);
++            group.append(QChar(ch));
+         }
+ 
+         passwordGroups.append(group);
+diff -urp keepassxc-2.7.6.orig/src/core/PasswordHealth.cpp keepassxc-2.7.6/src/core/PasswordHealth.cpp
+--- keepassxc-2.7.6.orig/src/core/PasswordHealth.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/PasswordHealth.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -171,8 +171,13 @@ QSharedPointer<PasswordHealth> HealthChe
+     if (entry->isExpired()) {
+         health->setScore(0);
+         health->addScoreReason(QObject::tr("Password has expired"));
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        health->addScoreDetails(QObject::tr("Password expiry was %1")
++                                    .arg(entry->timeInfo().expiryTime().toString(Qt::ISODate)));
++#else
+         health->addScoreDetails(QObject::tr("Password expiry was %1")
+                                     .arg(entry->timeInfo().expiryTime().toString(Qt::DefaultLocaleShortDate)));
++#endif
+     } else if (entry->timeInfo().expires()) {
+         const int days = QDateTime::currentDateTime().daysTo(entry->timeInfo().expiryTime());
+         if (days <= 30) {
+@@ -186,8 +191,13 @@ QSharedPointer<PasswordHealth> HealthChe
+             }
+ 
+             health->adjustScore((30 - days) * -2);
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++            health->addScoreDetails(QObject::tr("Password expires on %1")
++                                        .arg(entry->timeInfo().expiryTime().toString(Qt::ISODate)));
++#else
+             health->addScoreDetails(QObject::tr("Password expires on %1")
+                                         .arg(entry->timeInfo().expiryTime().toString(Qt::DefaultLocaleShortDate)));
++#endif
+             if (days <= 2) {
+                 health->addScoreReason(QObject::tr("Password is about to expire"));
+             } else if (days <= 10) {
+diff -urp keepassxc-2.7.6.orig/src/core/SignalMultiplexer.cpp keepassxc-2.7.6/src/core/SignalMultiplexer.cpp
+--- keepassxc-2.7.6.orig/src/core/SignalMultiplexer.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/SignalMultiplexer.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -18,6 +18,7 @@
+ #include "SignalMultiplexer.h"
+ 
+ #include "core/Global.h"
++#include <QObject>
+ 
+ SignalMultiplexer::SignalMultiplexer()
+ {
+diff -urp keepassxc-2.7.6.orig/src/core/SignalMultiplexer.h keepassxc-2.7.6/src/core/SignalMultiplexer.h
+--- keepassxc-2.7.6.orig/src/core/SignalMultiplexer.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/core/SignalMultiplexer.h	2024-01-22 22:17:30.978585649 -0800
+@@ -18,6 +18,7 @@
+ #ifndef KEEPASSX_SIGNALMULTIPLEXER_H
+ #define KEEPASSX_SIGNALMULTIPLEXER_H
+ 
++#include <QObject>
+ #include <QPointer>
+ 
+ class SignalMultiplexer
 diff -urp keepassxc-2.7.6.orig/src/core/Tools.cpp keepassxc-2.7.6/src/core/Tools.cpp
 --- keepassxc-2.7.6.orig/src/core/Tools.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/core/Tools.cpp	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/core/Tools.cpp	2024-01-22 22:17:30.978585649 -0800
 @@ -220,11 +220,19 @@ namespace Tools
      bool isBase64(const QByteArray& ba)
      {
@@ -2055,9 +2466,35 @@ diff -urp keepassxc-2.7.6.orig/src/core/Tools.cpp keepassxc-2.7.6/src/core/Tools
      }
  
      void sleep(int ms)
+diff -urp keepassxc-2.7.6.orig/src/crypto/Crypto.cpp keepassxc-2.7.6/src/crypto/Crypto.cpp
+--- keepassxc-2.7.6.orig/src/crypto/Crypto.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/crypto/Crypto.cpp	2024-01-22 22:17:30.978585649 -0800
+@@ -24,6 +24,7 @@
+ #include "crypto/SymmetricCipher.h"
+ 
+ #include <botan/version.h>
++#include <QObject>
+ 
+ namespace
+ {
+diff -urp keepassxc-2.7.6.orig/src/crypto/SymmetricCipher.cpp keepassxc-2.7.6/src/crypto/SymmetricCipher.cpp
+--- keepassxc-2.7.6.orig/src/crypto/SymmetricCipher.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/crypto/SymmetricCipher.cpp	2024-01-22 22:17:30.982585609 -0800
+@@ -61,7 +61,11 @@ bool SymmetricCipher::init(Mode mode, Di
+ 
+ bool SymmetricCipher::isInitalized() const
+ {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    return !m_cipher.isNull();
++#else
+     return m_cipher;
++#endif
+ }
+ 
+ bool SymmetricCipher::process(char* data, int len)
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/CMakeLists.txt keepassxc-2.7.6/src/fdosecrets/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/fdosecrets/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/CMakeLists.txt	2024-01-21 23:39:24.677179180 -0800
++++ keepassxc-2.7.6/src/fdosecrets/CMakeLists.txt	2024-01-22 22:17:30.982585609 -0800
 @@ -31,5 +31,13 @@ if(WITH_XC_FDOSECRETS)
          objects/Prompt.cpp
          dbus/DBusTypes.cpp
@@ -2075,7 +2512,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/CMakeLists.txt keepassxc-2.7.6/src
  endif()
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/dbus/DBusDispatch.cpp keepassxc-2.7.6/src/fdosecrets/dbus/DBusDispatch.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/dbus/DBusDispatch.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-22 22:17:30.982585609 -0800
 @@ -48,15 +48,27 @@ namespace FdoSecrets
              }
  
@@ -2118,7 +2555,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/dbus/DBusDispatch.cpp keepassxc-2.
  
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/FdoSecretsSettings.cpp keepassxc-2.7.6/src/fdosecrets/FdoSecretsSettings.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/FdoSecretsSettings.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-22 22:17:30.982585609 -0800
 @@ -106,7 +106,7 @@ namespace FdoSecrets
  
      QUuid FdoSecretsSettings::exposedGroup(Database* db) const
@@ -2130,12 +2567,12 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/FdoSecretsSettings.cpp keepassxc-2
      void FdoSecretsSettings::setExposedGroup(Database* db, const QUuid& group) // clazy:exclude=function-args-by-value
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Collection.cpp keepassxc-2.7.6/src/fdosecrets/objects/Collection.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/objects/Collection.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/objects/Collection.cpp	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/fdosecrets/objects/Collection.cpp	2024-01-22 22:17:30.982585609 -0800
 @@ -644,7 +644,11 @@ namespace FdoSecrets
          // groupPath can't be empty here, because otherwise it will match m_exposedGroup and was returned above
          Q_ASSERT(!groupPath.isEmpty());
  
-+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 +        auto groups = groupPath.split('/', Qt::SkipEmptyParts);
 +#else
          auto groups = groupPath.split('/', QString::SkipEmptyParts);
@@ -2145,7 +2582,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Collection.cpp keepassxc-2
          // create parent group
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp keepassxc-2.7.6/src/fdosecrets/objects/Item.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/objects/Item.cpp	2024-01-21 23:21:32.234441218 -0800
++++ keepassxc-2.7.6/src/fdosecrets/objects/Item.cpp	2024-01-22 22:17:30.982585609 -0800
 @@ -28,7 +28,13 @@
  
  #include <QMimeDatabase>
@@ -2213,7 +2650,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp keepassxc-2.7.6/s
 +            else
 +                supportedCodec = false;
 +// iso-8859-1 < windows-1252 in terms of set size.
-+#warning "setEntrySecret():  windows-1252 for charset is not supported for Qt6 across ports.  Enable Qt5Compat for support for windows-1252."
++#warning "FdoSecrets::setEntrySecret():  Windows-1252 for charset is not supported for Qt6 across ports.  Enable WITH_QT5COMPAT cmake option for support for Windows-1252."
 +        } else {
 +            codec = QStringConverter::Utf8;
 +        }
@@ -2255,7 +2692,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/objects/Item.cpp keepassxc-2.7.6/s
  
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.cpp keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.cpp
 --- keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-22 22:17:30.982585609 -0800
 @@ -206,7 +206,11 @@ QHash<Entry*, AuthDecision> AccessContro
  AccessControlDialog::EntryModel::EntryModel(QList<Entry*> entries, QObject* parent)
      : QAbstractTableModel(parent)
@@ -2270,7 +2707,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.cpp ke
  
 diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.h keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.h
 --- keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-22 22:17:30.982585609 -0800
 @@ -31,6 +31,11 @@
  
  class Entry;
@@ -2285,7 +2722,7 @@ diff -urp keepassxc-2.7.6.orig/src/fdosecrets/widgets/AccessControlDialog.h keep
      class AccessControlDialog;
 diff -urp keepassxc-2.7.6.orig/src/format/CsvParser.cpp keepassxc-2.7.6/src/format/CsvParser.cpp
 --- keepassxc-2.7.6.orig/src/format/CsvParser.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/format/CsvParser.cpp	2024-01-21 23:30:17.285913602 -0800
++++ keepassxc-2.7.6/src/format/CsvParser.cpp	2024-01-22 22:17:30.982585609 -0800
 @@ -19,7 +19,11 @@
  #include "CsvParser.h"
  
@@ -2311,6 +2748,15 @@ diff -urp keepassxc-2.7.6.orig/src/format/CsvParser.cpp keepassxc-2.7.6/src/form
  }
  
  CsvParser::~CsvParser()
+@@ -98,7 +106,7 @@ bool CsvParser::readFile(QFile* device)
+ 
+ void CsvParser::reset()
+ {
+-    m_ch = 0;
++    m_ch = QChar(0);
+     m_currCol = 1;
+     m_currRow = 1;
+     m_isEof = false;
 @@ -389,7 +397,18 @@ void CsvParser::setComment(const QChar&
  
  void CsvParser::setCodec(const QString& s)
@@ -2330,9 +2776,68 @@ diff -urp keepassxc-2.7.6.orig/src/format/CsvParser.cpp keepassxc-2.7.6/src/form
  }
  
  void CsvParser::setFieldSeparator(const QChar& c)
+@@ -433,6 +452,12 @@ int CsvParser::getCsvRows() const
+ 
+ void CsvParser::appendStatusMsg(const QString& s, bool isCritical)
+ {
++#if QT_VERSION > QT_VERSION_CHECK(6, 0, 0)
++    QString row = QString::number(m_currRow);
++    QString col = QString::number(m_currCol);
++    m_statusMsg += QObject::tr("%1: (row, col) %2,%3").arg(s, row, col).append("\n");
++#else
+     m_statusMsg += QObject::tr("%1: (row, col) %2,%3").arg(s, m_currRow, m_currCol).append("\n");
++#endif
+     m_isGood = !isCritical;
+ }
+diff -urp keepassxc-2.7.6.orig/src/format/KdbxXmlReader.cpp keepassxc-2.7.6/src/format/KdbxXmlReader.cpp
+--- keepassxc-2.7.6.orig/src/format/KdbxXmlReader.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/format/KdbxXmlReader.cpp	2024-01-22 22:17:30.986585569 -0800
+@@ -120,8 +120,15 @@ void KdbxXmlReader::readDatabase(QIODevi
+         qWarning("KdbxXmlReader::readDatabase: found %d invalid entry reference(s)", m_tmpParent->children().size());
+     }
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QList<QByteArray> listBinaryPoolKeys = asConst(m_binaryPool).keys();
++    QList<QPair<Entry*, QString>> listBinaryMapKeys = asConst(m_binaryMap).keys();
++    const QSet<QString> poolKeys = QSet<QString>(listBinaryPoolKeys.begin(), listBinaryPoolKeys.end());
++    const QSet<QString> entryKeys = QSet<QString>(listBinaryMapKeys.begin(), listBinaryMapKeys.end());
++#else
+     const QSet<QString> poolKeys = asConst(m_binaryPool).keys().toSet();
+     const QSet<QString> entryKeys = asConst(m_binaryMap).keys().toSet();
++#endif
+     const QSet<QString> unmappedKeys = entryKeys - poolKeys;
+     const QSet<QString> unusedKeys = poolKeys - entryKeys;
+ 
+@@ -186,7 +193,11 @@ QString KdbxXmlReader::errorString() con
+     return QString();
+ }
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++bool KdbxXmlReader::isTrueValue(const QStringView& value)
++#else
+ bool KdbxXmlReader::isTrueValue(const QStringRef& value)
++#endif
+ {
+     return value.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0 || value == "1";
+ }
+diff -urp keepassxc-2.7.6.orig/src/format/KdbxXmlReader.h keepassxc-2.7.6/src/format/KdbxXmlReader.h
+--- keepassxc-2.7.6.orig/src/format/KdbxXmlReader.h	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/format/KdbxXmlReader.h	2024-01-22 22:17:30.986585569 -0800
+@@ -92,7 +92,11 @@ protected:
+     virtual Group* getGroup(const QUuid& uuid);
+     virtual Entry* getEntry(const QUuid& uuid);
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    virtual bool isTrueValue(const QStringView& value);
++#else
+     virtual bool isTrueValue(const QStringRef& value);
++#endif
+     virtual void raiseError(const QString& errorMessage);
+ 
+     const quint32 m_kdbxVersion;
 diff -urp keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp keepassxc-2.7.6/src/format/KeePass1Reader.cpp
 --- keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/format/KeePass1Reader.cpp	2024-01-21 23:34:26.103763243 -0800
++++ keepassxc-2.7.6/src/format/KeePass1Reader.cpp	2024-01-22 22:29:05.999681855 -0800
 @@ -18,7 +18,15 @@
  #include "KeePass1Reader.h"
  
@@ -2355,7 +2860,7 @@ diff -urp keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp keepassxc-2.7.6/src
  KeePass1Reader::testKeys(const QString& password, const QByteArray& keyfileData, qint64 contentPos)
  {
 +#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && !defined(USE_QT5COMPAT)
-+#warning "KeePass1Reader::testKeys():  Windows-1252 is not supported.  Enable the Qt5Compat option to add back support."
++#warning "KeePass1Reader::testKeys():  Windows-1252 is not supported.  Enable the WITH_QT5COMPAT cmake option to add back support."
 +    const QList<PasswordEncoding> encodings = {Latin1, UTF8};
 +#else
      const QList<PasswordEncoding> encodings = {Windows1252, Latin1, UTF8};
@@ -2363,7 +2868,7 @@ diff -urp keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp keepassxc-2.7.6/src
  
      QScopedPointer<SymmetricCipherStream> cipherStream;
      QByteArray passwordData;
-+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || !defined(USE_QT5COMPAT)
++#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0) || defined(USE_QT5COMPAT)
      QTextCodec* codec = QTextCodec::codecForName("Windows-1252");
      QByteArray passwordDataCorrect = codec->fromUnicode(password);
 +#endif
@@ -2411,8 +2916,8 @@ diff -urp keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp keepassxc-2.7.6/src
  void KeePass1Reader::parseNotes(const QString& rawNotes, Entry* entry)
  {
 +#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QRegularExpression sequenceRegexp("Auto-Type(?:-(\\d+))?: (.+)", QRegularExpression::CaseInsensitiveOption);
-+    QRegularExpression windowRegexp("Auto-Type-Window(?:-(\\d+))?: (.+)", QRegularExpression::CaseInsensitiveOption);
++    QRegularExpression sequenceRegexp(QRegularExpression::anchoredPattern("Auto-Type(?:-(\\d+))?: (.+)"), QRegularExpression::CaseInsensitiveOption);
++    QRegularExpression windowRegexp(QRegularExpression::anchoredPattern("Auto-Type-Window(?:-(\\d+))?: (.+)"), QRegularExpression::CaseInsensitiveOption);
 +#else
      QRegExp sequenceRegexp("Auto-Type(?:-(\\d+))?: (.+)", Qt::CaseInsensitive, QRegExp::RegExp2);
      QRegExp windowRegexp("Auto-Type-Window(?:-(\\d+))?: (.+)", Qt::CaseInsensitive, QRegExp::RegExp2);
@@ -2420,9 +2925,135 @@ diff -urp keepassxc-2.7.6.orig/src/format/KeePass1Reader.cpp keepassxc-2.7.6/src
      QHash<int, QString> sequences;
      QMap<int, QStringList> windows;
  
+@@ -708,23 +739,25 @@ void KeePass1Reader::parseNotes(const QS
+     for (QString line : rawNotesLines) {
+         line.remove("\r");
+ 
+-        if (sequenceRegexp.exactMatch(line)) {
+-            if (sequenceRegexp.cap(1).isEmpty()) {
+-                entry->setDefaultAutoTypeSequence(sequenceRegexp.cap(2));
++        QRegularExpressionMatch sequenceMatchResults = sequenceRegexp.match(line);
++        QRegularExpressionMatch windowMatchResults = windowRegexp.match(line);
++        if (sequenceMatchResults.hasMatch()) {
++            if (sequenceMatchResults.captured(1).isEmpty()) {
++                entry->setDefaultAutoTypeSequence(sequenceMatchResults.captured(2));
+             } else {
+-                sequences[sequenceRegexp.cap(1).toInt()] = sequenceRegexp.cap(2);
++                sequences[sequenceMatchResults.captured(1).toInt()] = sequenceMatchResults.captured(2);
+             }
+ 
+             lastLineAutoType = true;
+-        } else if (windowRegexp.exactMatch(line)) {
++        } else if (windowMatchResults.hasMatch()) {
+             int nr;
+-            if (windowRegexp.cap(1).isEmpty()) {
++            if (windowMatchResults.captured(1).isEmpty()) {
+                 nr = -1; // special number that matches no other sequence
+             } else {
+-                nr = windowRegexp.cap(1).toInt();
++                nr = windowMatchResults.captured(1).toInt();
+             }
+ 
+-            windows[nr].append(windowRegexp.cap(2));
++            windows[nr].append(windowMatchResults.captured(2));
+ 
+             lastLineAutoType = true;
+         } else {
+diff -urp keepassxc-2.7.6.orig/src/gui/csvImport/CsvImportWidget.cpp keepassxc-2.7.6/src/gui/csvImport/CsvImportWidget.cpp
+--- keepassxc-2.7.6.orig/src/gui/csvImport/CsvImportWidget.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/csvImport/CsvImportWidget.cpp	2024-01-22 22:17:30.986585569 -0800
+@@ -287,7 +287,11 @@ void CsvImportWidget::setRootGroup()
+         }
+         groupLabel = m_parserModel->data(m_parserModel->index(r, 0)).toString();
+         // check if group name is either "root", "" (empty) or some other label
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        groupList = groupLabel.split("/", Qt::SkipEmptyParts);
++#else
+         groupList = groupLabel.split("/", QString::SkipEmptyParts);
++#endif
+         if (groupList.isEmpty()) {
+             is_empty = true;
+         } else if (not groupList.first().compare("Root", Qt::CaseSensitive)) {
+@@ -316,7 +320,11 @@ Group* CsvImportWidget::splitGroups(cons
+         return current;
+     }
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QStringList groupList = label.split("/", Qt::SkipEmptyParts);
++#else
+     QStringList groupList = label.split("/", QString::SkipEmptyParts);
++#endif
+     // avoid the creation of a subgroup with the same name as Root
+     if (m_db->rootGroup()->name() == "Root" && groupList.first() == "Root") {
+         groupList.removeFirst();
+diff -urp keepassxc-2.7.6.orig/src/gui/entry/EditEntryWidget.cpp keepassxc-2.7.6/src/gui/entry/EditEntryWidget.cpp
+--- keepassxc-2.7.6.orig/src/gui/entry/EditEntryWidget.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/entry/EditEntryWidget.cpp	2024-01-22 22:17:30.986585569 -0800
+@@ -1171,7 +1171,15 @@ void EditEntryWidget::updateEntryData(En
+     entry->setPassword(m_mainUi->passwordEdit->text());
+     entry->setExpires(m_mainUi->expireCheck->isChecked());
+     entry->setExpiryTime(m_mainUi->expireDatePicker->dateTime().toUTC());
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    QStringList tags = m_mainUi->tagsList->tags();
++    QSet<QString> setTags = QSet<QString>(tags.begin(), tags.end());
++    QList<QString> listTags = QList<QString>(setTags.begin(), setTags.end());
++    QStringList t = QStringList(tags);
++    entry->setTags(t.join(QChar(';'))); // remove repeated tags
++#else
+     entry->setTags(m_mainUi->tagsList->tags().toSet().toList().join(";")); // remove repeated tags
++#endif
+ 
+     entry->setNotes(m_mainUi->notesEdit->toPlainText());
+ 
+diff -urp keepassxc-2.7.6.orig/src/gui/entry/EntryModel.cpp keepassxc-2.7.6/src/gui/entry/EntryModel.cpp
+--- keepassxc-2.7.6.orig/src/gui/entry/EntryModel.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/entry/EntryModel.cpp	2024-01-22 22:17:30.986585569 -0800
+@@ -36,7 +36,11 @@ EntryModel::EntryModel(QObject* parent)
+     : QAbstractTableModel(parent)
+     , m_group(nullptr)
+     , HiddenContentDisplay(QString("\u25cf").repeated(6))
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    , DateFormat(Qt::ISODate)
++#else
+     , DateFormat(Qt::DefaultLocaleShortDate)
++#endif
+ {
+     connect(config(), &Config::changed, this, &EntryModel::onConfigChanged);
+ }
+diff -urp keepassxc-2.7.6.orig/src/gui/EntryPreviewWidget.cpp keepassxc-2.7.6/src/gui/EntryPreviewWidget.cpp
+--- keepassxc-2.7.6.orig/src/gui/EntryPreviewWidget.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/EntryPreviewWidget.cpp	2024-01-22 22:17:30.986585569 -0800
+@@ -401,8 +401,13 @@ void EntryPreviewWidget::updateEntryGene
+     }
+ 
+     const TimeInfo entryTime = m_currentEntry->timeInfo();
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    const QString expires =
++        entryTime.expires() ? entryTime.expiryTime().toLocalTime().toString(Qt::ISODate) : tr("Never");
++#else
+     const QString expires =
+         entryTime.expires() ? entryTime.expiryTime().toLocalTime().toString(Qt::DefaultLocaleShortDate) : tr("Never");
++#endif
+     m_ui->entryExpirationLabel->setText(expires);
+     m_ui->entryTagsList->tags(m_currentEntry->tagList());
+     m_ui->entryTagsList->setReadOnly(true);
+@@ -511,8 +516,13 @@ void EntryPreviewWidget::updateGroupGene
+     m_ui->groupAutotypeLabel->setText(autotypeText);
+ 
+     const TimeInfo groupTime = m_currentGroup->timeInfo();
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    const QString expiresText =
++        groupTime.expires() ? groupTime.expiryTime().toString(Qt::ISODate) : tr("Never");
++#else
+     const QString expiresText =
+         groupTime.expires() ? groupTime.expiryTime().toString(Qt::DefaultLocaleShortDate) : tr("Never");
++#endif
+     m_ui->groupExpirationLabel->setText(expiresText);
+ 
+     if (config()->get(Config::Security_HideNotes).toBool()) {
 diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.cpp
 --- keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-22 22:17:30.986585569 -0800
 @@ -159,7 +159,7 @@ void NixUtils::setLaunchAtStartup(bool e
                 << QStringLiteral("X-GNOME-Autostart-enabled=true") << '\n'
                 << QStringLiteral("X-GNOME-Autostart-Delay=2") << '\n'
@@ -2446,7 +3077,7 @@ diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp keepassxc-2
      if (eventType != QByteArrayLiteral("xcb_generic_event_t")) {
 diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.h keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.h
 --- keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.h	2024-01-21 21:07:36.772446151 -0800
++++ keepassxc-2.7.6/src/gui/osutils/nixutils/NixUtils.h	2024-01-22 22:17:30.986585569 -0800
 @@ -57,7 +57,11 @@ private:
      explicit NixUtils(QObject* parent = nullptr);
      ~NixUtils() override;
@@ -2459,39 +3090,50 @@ diff -urp keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.h keepassxc-2.7
      QString getAutostartDesktopFilename(bool createDirs = false) const;
  
      bool triggerGlobalShortcut(uint keycode, uint modifiers);
+diff -urp keepassxc-2.7.6.orig/src/gui/PasswordWidget.cpp keepassxc-2.7.6/src/gui/PasswordWidget.cpp
+--- keepassxc-2.7.6.orig/src/gui/PasswordWidget.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/PasswordWidget.cpp	2024-01-22 22:17:30.986585569 -0800
+@@ -322,4 +322,4 @@ void PasswordWidget::updatePasswordStren
+ 
+         break;
+     }
+-}
+\ No newline at end of file
++}
+diff -urp keepassxc-2.7.6.orig/src/gui/reports/ReportsWidgetStatistics.cpp keepassxc-2.7.6/src/gui/reports/ReportsWidgetStatistics.cpp
+--- keepassxc-2.7.6.orig/src/gui/reports/ReportsWidgetStatistics.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/gui/reports/ReportsWidgetStatistics.cpp	2024-01-22 22:17:30.990585530 -0800
+@@ -88,9 +88,15 @@ void ReportsWidgetStatistics::calculateS
+     addStatsRow(tr("Database name"), m_db->metadata()->name());
+     addStatsRow(tr("Description"), m_db->metadata()->description());
+     addStatsRow(tr("Location"), m_db->filePath());
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    addStatsRow(tr("Database created"),
++                m_db->rootGroup()->timeInfo().creationTime().toString(Qt::ISODate));
++    addStatsRow(tr("Last saved"), stats->modified.toString(Qt::ISODate));
++#else
+     addStatsRow(tr("Database created"),
+                 m_db->rootGroup()->timeInfo().creationTime().toString(Qt::DefaultLocaleShortDate));
+     addStatsRow(tr("Last saved"), stats->modified.toString(Qt::DefaultLocaleShortDate));
++#endif
+     addStatsRow(tr("Unsaved changes"),
+                 m_db->isModified() ? tr("yes") : tr("no"),
+                 m_db->isModified(),
 diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.cpp keepassxc-2.7.6/src/gui/TotpDialog.cpp
 --- keepassxc-2.7.6.orig/src/gui/TotpDialog.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/TotpDialog.cpp	2024-01-21 21:54:12.981859363 -0800
-@@ -84,8 +84,13 @@ void TotpDialog::updateProgressBar()
- 
++++ keepassxc-2.7.6/src/gui/TotpDialog.cpp	2024-01-22 22:17:30.990585530 -0800
+@@ -85,7 +85,7 @@ void TotpDialog::updateProgressBar()
  void TotpDialog::updateSeconds()
  {
--    uint epoch = Clock::currentSecondsSinceEpoch() - 1;
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    uint64 epoch = Clock::currentSecondsSinceEpoch() - 1;
-     m_ui->timerLabel->setText(tr("Expires in <b>%n</b> second(s)", "", m_step - (epoch % m_step)));
-+#else
-+    uint epoch = Clock::currentSecondsSinceEpoch() - 1;
+     uint epoch = Clock::currentSecondsSinceEpoch() - 1;
+-    m_ui->timerLabel->setText(tr("Expires in <b>%n</b> second(s)", "", m_step - (epoch % m_step)));
 +    m_ui->,timerLabel->setText(tr("Expires in <b>%n</b> second(s)", "", m_step - (epoch % m_step)));
-+#endif
  }
  
  void TotpDialog::updateTotp()
-@@ -98,6 +103,11 @@ void TotpDialog::updateTotp()
- 
- void TotpDialog::resetCounter()
- {
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    uint64 epoch = Clock::currentSecondsSinceEpoch();
-+    m_counter = static_cast<qint64>(static_cast<double>(epoch % m_step) / m_step * 100);
-+#else
-     uint epoch = Clock::currentSecondsSinceEpoch();
-     m_counter = static_cast<int>(static_cast<double>(epoch % m_step) / m_step * 100);
-+#endif
- }
 diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.h keepassxc-2.7.6/src/gui/TotpDialog.h
 --- keepassxc-2.7.6.orig/src/gui/TotpDialog.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/TotpDialog.h	2024-01-21 21:51:04.711658090 -0800
++++ keepassxc-2.7.6/src/gui/TotpDialog.h	2024-01-22 22:17:30.990585530 -0800
 @@ -47,7 +47,11 @@ private:
      void resetCounter();
      Entry* m_entry;
@@ -2504,26 +3146,9 @@ diff -urp keepassxc-2.7.6.orig/src/gui/TotpDialog.h keepassxc-2.7.6/src/gui/Totp
      QTimer m_totpUpdateTimer;
  };
  
-diff -urp keepassxc-2.7.6.orig/src/gui/TotpSetupDialog.cpp keepassxc-2.7.6/src/gui/TotpSetupDialog.cpp
---- keepassxc-2.7.6.orig/src/gui/TotpSetupDialog.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/gui/TotpSetupDialog.cpp	2024-01-21 22:18:04.396107967 -0800
-@@ -63,8 +63,13 @@ void TotpSetupDialog::saveSettings()
-     }
- 
-     QString encShortName;
-+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-+    qint64 digits = Totp::DEFAULT_DIGITS;
-+    qint64 step = Totp::DEFAULT_STEP;
-+#else
-     uint digits = Totp::DEFAULT_DIGITS;
-     uint step = Totp::DEFAULT_STEP;
-+#endif
-     Totp::Algorithm algorithm = Totp::DEFAULT_ALGORITHM;
-     Totp::StorageFormat format = Totp::DEFAULT_FORMAT;
- 
 diff -urp keepassxc-2.7.6.orig/src/keeshare/CMakeLists.txt keepassxc-2.7.6/src/keeshare/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/keeshare/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/keeshare/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
++++ keepassxc-2.7.6/src/keeshare/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
 @@ -16,6 +16,10 @@ if(WITH_XC_KEESHARE)
      find_package(Minizip REQUIRED)
  
@@ -2538,7 +3163,7 @@ diff -urp keepassxc-2.7.6.orig/src/keeshare/CMakeLists.txt keepassxc-2.7.6/src/k
  endif(WITH_XC_KEESHARE)
 diff -urp keepassxc-2.7.6.orig/src/keeshare/KeeShareSettings.cpp keepassxc-2.7.6/src/keeshare/KeeShareSettings.cpp
 --- keepassxc-2.7.6.orig/src/keeshare/KeeShareSettings.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/keeshare/KeeShareSettings.cpp	2024-01-21 23:34:56.435500911 -0800
++++ keepassxc-2.7.6/src/keeshare/KeeShareSettings.cpp	2024-01-22 22:17:30.990585530 -0800
 @@ -25,7 +25,9 @@
  #include "gui/DatabaseIcons.h"
  
@@ -2639,9 +3264,51 @@ diff -urp keepassxc-2.7.6.orig/src/keeshare/KeeShareSettings.cpp keepassxc-2.7.6
                      reference.password = QString::fromUtf8(QByteArray::fromBase64(reader.readElementText().toLatin1()));
                  } else {
                      qWarning("Unknown Reference element %s", qPrintable(reader.name().toString()));
+diff -urp keepassxc-2.7.6.orig/src/keys/FileKey.cpp keepassxc-2.7.6/src/keys/FileKey.cpp
+--- keepassxc-2.7.6.orig/src/keys/FileKey.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/src/keys/FileKey.cpp	2024-01-22 22:17:30.990585530 -0800
+@@ -362,7 +362,12 @@ bool FileKey::loadXml(QIODevice* device,
+ 
+     bool ok = false;
+     if (!xmlReader.error() && !keyFileData.data.isEmpty()) {
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        int keyFileDataSize = static_cast<int>(keyFileData.data.size());
++        std::memcpy(m_key.data(), keyFileData.data.data(), std::min(SHA256_SIZE, keyFileDataSize));
++#else
+         std::memcpy(m_key.data(), keyFileData.data.data(), std::min(SHA256_SIZE, keyFileData.data.size()));
++#endif
+         ok = true;
+     }
+ 
+@@ -421,7 +426,12 @@ bool FileKey::loadHex(QIODevice* device)
+         return false;
+     }
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    int dataSize = static_cast<int>(data.size());
++    std::memcpy(m_key.data(), data.data(), std::min(SHA256_SIZE, dataSize));
++#else
+     std::memcpy(m_key.data(), data.data(), std::min(SHA256_SIZE, data.size()));
++#endif
+     Botan::secure_scrub_memory(data.data(), static_cast<std::size_t>(data.capacity()));
+ 
+     m_type = FixedBinaryHex;
+@@ -447,7 +457,12 @@ bool FileKey::loadHashed(QIODevice* devi
+     } while (!buffer.isEmpty());
+ 
+     buffer = cryptoHash.result();
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    int bufferSize = static_cast<int>(buffer.size());
++    std::memcpy(m_key.data(), buffer.data(), std::min(SHA256_SIZE, bufferSize));
++#else
+     std::memcpy(m_key.data(), buffer.data(), std::min(SHA256_SIZE, buffer.size()));
++#endif
+     Botan::secure_scrub_memory(buffer.data(), static_cast<std::size_t>(buffer.capacity()));
+ 
+     m_type = Hashed;
 diff -urp keepassxc-2.7.6.orig/src/main.cpp keepassxc-2.7.6/src/main.cpp
 --- keepassxc-2.7.6.orig/src/main.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/main.cpp	2024-01-21 21:07:36.776446112 -0800
++++ keepassxc-2.7.6/src/main.cpp	2024-01-22 22:17:30.990585530 -0800
 @@ -102,7 +102,7 @@ int main(int argc, char** argv)
      if (parser.isSet(debugInfoOption)) {
          QTextStream out(stdout, QIODevice::WriteOnly);
@@ -2662,7 +3329,7 @@ diff -urp keepassxc-2.7.6.orig/src/main.cpp keepassxc-2.7.6/src/main.cpp
          mainWindow.openDatabase(filename, password, parser.value(keyfileOption));
 diff -urp keepassxc-2.7.6.orig/src/proxy/CMakeLists.txt keepassxc-2.7.6/src/proxy/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/proxy/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/proxy/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
++++ keepassxc-2.7.6/src/proxy/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
 @@ -21,10 +21,18 @@ if(WITH_XC_BROWSER)
  
      # Alloc must be defined in a static library to prevent clashing with clang ASAN definitions
@@ -2686,7 +3353,7 @@ diff -urp keepassxc-2.7.6.orig/src/proxy/CMakeLists.txt keepassxc-2.7.6/src/prox
              RUNTIME DESTINATION ${PROXY_INSTALL_DIR} COMPONENT Runtime)
 diff -urp keepassxc-2.7.6.orig/src/qrcode/CMakeLists.txt keepassxc-2.7.6/src/qrcode/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/qrcode/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/qrcode/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
++++ keepassxc-2.7.6/src/qrcode/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
 @@ -21,4 +21,8 @@ find_package(QREncode REQUIRED)
  
  add_library(qrcode STATIC ${qrcode_SOURCES})
@@ -2699,7 +3366,7 @@ diff -urp keepassxc-2.7.6.orig/src/qrcode/CMakeLists.txt keepassxc-2.7.6/src/qrc
 +endif()
 diff -urp keepassxc-2.7.6.orig/src/sshagent/CMakeLists.txt keepassxc-2.7.6/src/sshagent/CMakeLists.txt
 --- keepassxc-2.7.6.orig/src/sshagent/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/sshagent/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
++++ keepassxc-2.7.6/src/sshagent/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
 @@ -12,5 +12,9 @@ if(WITH_XC_SSHAGENT)
      )
  
@@ -2713,7 +3380,7 @@ diff -urp keepassxc-2.7.6.orig/src/sshagent/CMakeLists.txt keepassxc-2.7.6/src/s
  endif()
 diff -urp keepassxc-2.7.6.orig/src/sshagent/KeeAgentSettings.cpp keepassxc-2.7.6/src/sshagent/KeeAgentSettings.cpp
 --- keepassxc-2.7.6.orig/src/sshagent/KeeAgentSettings.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/sshagent/KeeAgentSettings.cpp	2024-01-21 23:18:19.120102769 -0800
++++ keepassxc-2.7.6/src/sshagent/KeeAgentSettings.cpp	2024-01-22 22:17:30.990585530 -0800
 @@ -27,7 +27,11 @@
  #include <QDebug>
  #include <QDir>
@@ -2814,7 +3481,7 @@ diff -urp keepassxc-2.7.6.orig/src/sshagent/KeeAgentSettings.cpp keepassxc-2.7.6
  /**
 diff -urp keepassxc-2.7.6.orig/src/sshagent/OpenSSHKey.cpp keepassxc-2.7.6/src/sshagent/OpenSSHKey.cpp
 --- keepassxc-2.7.6.orig/src/sshagent/OpenSSHKey.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/sshagent/OpenSSHKey.cpp	2024-01-21 21:07:36.776446112 -0800
++++ keepassxc-2.7.6/src/sshagent/OpenSSHKey.cpp	2024-01-22 22:17:30.990585530 -0800
 @@ -160,7 +160,7 @@ void OpenSSHKey::clearPrivate()
  bool OpenSSHKey::extractPEM(const QByteArray& in, QByteArray& out)
  {
@@ -2824,28 +3491,9 @@ diff -urp keepassxc-2.7.6.orig/src/sshagent/OpenSSHKey.cpp keepassxc-2.7.6/src/s
  
      if (rows.length() < 3) {
          m_error = tr("Invalid key file, expecting an OpenSSH key");
-diff -urp keepassxc-2.7.6.orig/src/totp/totp.h keepassxc-2.7.6/src/totp/totp.h
---- keepassxc-2.7.6.orig/src/totp/totp.h	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/totp/totp.h	2024-01-21 22:18:05.932092927 -0800
-@@ -61,9 +61,15 @@ namespace Totp
-         uint step;
-     };
- 
-+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-+    constexpr qint64 DEFAULT_STEP = 30;
-+    constexpr qint64 DEFAULT_DIGITS = 6;
-+    constexpr qint64 STEAM_DIGITS = 5;
-+#else
-     constexpr uint DEFAULT_STEP = 30u;
-     constexpr uint DEFAULT_DIGITS = 6u;
-     constexpr uint STEAM_DIGITS = 5u;
-+#endif
-     constexpr Totp::Algorithm DEFAULT_ALGORITHM = Sha1;
-     constexpr Totp::StorageFormat DEFAULT_FORMAT = OTPURL;
-     static const QString STEAM_SHORTNAME = "S";
 diff -urp keepassxc-2.7.6.orig/src/updatecheck/UpdateChecker.cpp keepassxc-2.7.6/src/updatecheck/UpdateChecker.cpp
 --- keepassxc-2.7.6.orig/src/updatecheck/UpdateChecker.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/src/updatecheck/UpdateChecker.cpp	2024-01-21 22:08:05.021918489 -0800
++++ keepassxc-2.7.6/src/updatecheck/UpdateChecker.cpp	2024-01-22 22:17:30.990585530 -0800
 @@ -49,7 +49,11 @@ void UpdateChecker::checkForUpdates(bool
          return;
      }
@@ -2872,8 +3520,8 @@ diff -urp keepassxc-2.7.6.orig/src/updatecheck/UpdateChecker.cpp keepassxc-2.7.6
          version = ErrorVersion;
      }
 diff -urp keepassxc-2.7.6.orig/tests/CMakeLists.txt keepassxc-2.7.6/tests/CMakeLists.txt
---- keepassxc-2.7.6.orig/tests/CMakeLists.txt	2024-01-21 21:06:27.177101596 -0800
-+++ keepassxc-2.7.6/tests/CMakeLists.txt	2024-01-21 21:07:36.776446112 -0800
+--- keepassxc-2.7.6.orig/tests/CMakeLists.txt	2024-01-22 22:17:11.654776904 -0800
++++ keepassxc-2.7.6/tests/CMakeLists.txt	2024-01-22 22:17:30.990585530 -0800
 @@ -88,7 +88,11 @@ macro(add_unit_test)
      endif()
  endmacro(add_unit_test)
@@ -2902,7 +3550,7 @@ diff -urp keepassxc-2.7.6.orig/tests/CMakeLists.txt keepassxc-2.7.6/tests/CMakeL
          LIBS testsupport ${TEST_LIBRARIES})
 diff -urp keepassxc-2.7.6.orig/tests/gui/TestGui.cpp keepassxc-2.7.6/tests/gui/TestGui.cpp
 --- keepassxc-2.7.6.orig/tests/gui/TestGui.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/tests/gui/TestGui.cpp	2024-01-21 21:07:36.776446112 -0800
++++ keepassxc-2.7.6/tests/gui/TestGui.cpp	2024-01-22 22:17:30.990585530 -0800
 @@ -1915,7 +1915,7 @@ void TestGui::checkStatusBarText(const Q
  {
      QApplication::processEvents();
@@ -2912,9 +3560,61 @@ diff -urp keepassxc-2.7.6.orig/tests/gui/TestGui.cpp keepassxc-2.7.6/tests/gui/T
                   qPrintable(QString("'%1' doesn't start with '%2'").arg(m_statusBarLabel->text(), textFragment)));
  }
  
+diff -urp keepassxc-2.7.6.orig/tests/gui/TestGuiFdoSecrets.cpp keepassxc-2.7.6/tests/gui/TestGuiFdoSecrets.cpp
+--- keepassxc-2.7.6.orig/tests/gui/TestGuiFdoSecrets.cpp	2023-08-15 15:40:34.000000000 -0700
++++ keepassxc-2.7.6/tests/gui/TestGuiFdoSecrets.cpp	2024-01-22 22:17:30.994585490 -0800
+@@ -1248,7 +1248,11 @@ void TestGuiFdoSecrets::testItemReplace(
+     {
+         DBUS_GET2(unlocked, locked, service->SearchItems({{"application", "fdosecrets-test"}}));
+         QSet<QDBusObjectPath> expected{QDBusObjectPath(item1->path()), QDBusObjectPath(item2->path())};
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        COMPARE(QSet<QDBusObjectPath>(unlocked.begin(), unlocked.end()), expected);
++#else
+         COMPARE(QSet<QDBusObjectPath>::fromList(unlocked), expected);
++#endif
+     }
+ 
+     QSignalSpy spyItemCreated(coll.data(), SIGNAL(ItemCreated(QDBusObjectPath)));
+@@ -1265,7 +1269,11 @@ void TestGuiFdoSecrets::testItemReplace(
+         // there are still 2 entries
+         DBUS_GET2(unlocked, locked, service->SearchItems({{"application", "fdosecrets-test"}}));
+         QSet<QDBusObjectPath> expected{QDBusObjectPath(item1->path()), QDBusObjectPath(item2->path())};
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        COMPARE(QSet<QDBusObjectPath>(unlocked.being(), unlocked.end()), expected);
++#else
+         COMPARE(QSet<QDBusObjectPath>::fromList(unlocked), expected);
++#endif
+ 
+         VERIFY(waitForSignal(spyItemCreated, 0));
+         // there may be multiple changed signals, due to each item attribute is set separately
+@@ -1291,7 +1299,11 @@ void TestGuiFdoSecrets::testItemReplace(
+             QDBusObjectPath(item2->path()),
+             QDBusObjectPath(item4->path()),
+         };
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++        COMPARE(QSet<QDBusObjectPath>(unlocked.begin(), unlocked.end()), expected);
++#else
+         COMPARE(QSet<QDBusObjectPath>::fromList(unlocked), expected);
++#endif
+ 
+         VERIFY(waitForSignal(spyItemCreated, 1));
+         {
+@@ -1619,7 +1631,12 @@ void TestGuiFdoSecrets::testExposeSubgro
+     for (const auto& itemPath : itemPaths) {
+         exposedEntries << m_plugin->dbus()->pathToObject<Item>(itemPath)->backend();
+     }
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
++    auto entries = subgroup->entries();
++    COMPARE(exposedEntries, QSet<Entry*>::fromList(entries.begin(), entries.end()));
++#else
+     COMPARE(exposedEntries, QSet<Entry*>::fromList(subgroup->entries()));
++#endif
+ }
+ 
+ void TestGuiFdoSecrets::testModifyingExposedGroup()
 diff -urp keepassxc-2.7.6.orig/tests/TestSharing.cpp keepassxc-2.7.6/tests/TestSharing.cpp
 --- keepassxc-2.7.6.orig/tests/TestSharing.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/tests/TestSharing.cpp	2024-01-21 21:07:36.776446112 -0800
++++ keepassxc-2.7.6/tests/TestSharing.cpp	2024-01-22 22:17:30.994585490 -0800
 @@ -83,7 +83,7 @@ void TestSharing::testKeySerialization()
      writer.writeEndDocument();
      QXmlStreamReader reader(buffer);
@@ -2924,113 +3624,3 @@ diff -urp keepassxc-2.7.6.orig/tests/TestSharing.cpp keepassxc-2.7.6/tests/TestS
      KeeShareSettings::Key restored = KeeShareSettings::Key::deserialize(reader);
  
      QCOMPARE(restored.key->private_key_bits(), original.key->private_key_bits());
-diff -urp keepassxc-2.7.6.orig/tests/TestTotp.cpp keepassxc-2.7.6/tests/TestTotp.cpp
---- keepassxc-2.7.6.orig/tests/TestTotp.cpp	2023-08-15 15:40:34.000000000 -0700
-+++ keepassxc-2.7.6/tests/TestTotp.cpp	2024-01-21 22:17:36.860377609 -0800
-@@ -42,8 +42,13 @@ void TestTotp::testParseSecret()
-     QCOMPARE(settings->key, QString("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"));
-     QCOMPARE(settings->custom, false);
-     QCOMPARE(settings->format, Totp::StorageFormat::OTPURL);
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QCOMPARE(settings->digits, 6);
-+    QCOMPARE(settings->step, 30);
-+#else
-     QCOMPARE(settings->digits, 6u);
-     QCOMPARE(settings->step, 30u);
-+#endif
-     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha1);
- 
-     // OTP URL with non-default hash type
-@@ -55,15 +60,24 @@ void TestTotp::testParseSecret()
-     QCOMPARE(settings->key, QString("HXDMVJECJJWSRB3HWIZR4IFUGFTMXBOZ"));
-     QCOMPARE(settings->custom, true);
-     QCOMPARE(settings->format, Totp::StorageFormat::OTPURL);
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QCOMPARE(settings->digits, 6);
-+    QCOMPARE(settings->step, 30);
-+#else
-     QCOMPARE(settings->digits, 6u);
-     QCOMPARE(settings->step, 30u);
-+#endif
-     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha512);
- 
-     // Max TOTP step of 24-hours
-     secret.replace("period=30", "period=90000");
-     settings = Totp::parseSettings(secret);
-     QVERIFY(!settings.isNull());
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QCOMPARE(settings->step, 86400);
-+#else
-     QCOMPARE(settings->step, 86400u);
-+#endif
- 
-     // KeeOTP Parsing
-     secret = "key=HXDMVJECJJWSRBY%3d&step=25&size=8&otpHashMode=Sha256";
-@@ -72,8 +86,13 @@ void TestTotp::testParseSecret()
-     QCOMPARE(settings->key, QString("HXDMVJECJJWSRBY="));
-     QCOMPARE(settings->custom, true);
-     QCOMPARE(settings->format, Totp::StorageFormat::KEEOTP);
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QCOMPARE(settings->digits, 8);
-+    QCOMPARE(settings->step, 25);
-+#else
-     QCOMPARE(settings->digits, 8u);
-     QCOMPARE(settings->step, 25u);
-+#endif
-     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha256);
- 
-     // Semi-colon delineated "TOTP Settings"
-@@ -83,8 +102,13 @@ void TestTotp::testParseSecret()
-     QCOMPARE(settings->key, QString("gezdgnbvgy3tqojqgezdgnbvgy3tqojq"));
-     QCOMPARE(settings->custom, true);
-     QCOMPARE(settings->format, Totp::StorageFormat::LEGACY);
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QCOMPARE(settings->digits, 8);
-+    QCOMPARE(settings->step, 30);
-+#else
-     QCOMPARE(settings->digits, 8u);
-     QCOMPARE(settings->step, 30u);
-+#endif
-     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha1);
- 
-     // Bare secret (no "TOTP Settings" attribute)
-@@ -94,8 +118,13 @@ void TestTotp::testParseSecret()
-     QCOMPARE(settings->key, QString("gezdgnbvgy3tqojqgezdgnbvgy3tqojq"));
-     QCOMPARE(settings->custom, false);
-     QCOMPARE(settings->format, Totp::StorageFormat::LEGACY);
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QCOMPARE(settings->digits, 6);
-+    QCOMPARE(settings->step, 30);
-+#else
-     QCOMPARE(settings->digits, 6u);
-     QCOMPARE(settings->step, 30u);
-+#endif
-     QCOMPARE(settings->algorithm, Totp::Algorithm::Sha1);
- }
- 
-@@ -134,7 +163,11 @@ void TestTotp::testSteamTotp()
-     QCOMPARE(settings->encoder.shortName, Totp::STEAM_SHORTNAME);
-     QCOMPARE(settings->format, Totp::StorageFormat::OTPURL);
-     QCOMPARE(settings->digits, Totp::STEAM_DIGITS);
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    QCOMPARE(settings->step, 30);
-+#else
-     QCOMPARE(settings->step, 30u);
-+#endif
- 
-     // These time/value pairs were created by running the Steam Guard function of the
-     // Steam mobile app with a throw-away steam account. The above secret was extracted
-@@ -148,8 +181,13 @@ void TestTotp::testSteamTotp()
- void TestTotp::testEntryHistory()
- {
-     Entry entry;
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-+    qint64 step = 16;
-+    qint64 digits = 6;
-+#else
-     uint step = 16;
-     uint digits = 6;
-+#endif
-     auto settings = Totp::createSettings("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ", digits, step);
-     // Test that entry starts without TOTP
-     QCOMPARE(entry.historyItems().size(), 0);
