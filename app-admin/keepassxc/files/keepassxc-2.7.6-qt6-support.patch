@@ -3498,7 +3498,7 @@ diff -urp keepassxc-2.7.6.orig/src/format/KdbxXmlReader.cpp keepassxc-2.7.6/src/
 +#endif
  {
 -    return value.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0 || value == "1";
-+    return value.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0 || value.toString().compare(QString("1"));
++    return value.compare(QLatin1String("true"), Qt::CaseInsensitive) == 0 || value.toUtf8().compare(QByteArray("1")) == 0;
  }
  
  void KdbxXmlReader::raiseError(const QString& errorMessage)
