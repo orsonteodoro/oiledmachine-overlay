@@ -108,6 +108,7 @@ DEPEND="
 		>=dev-qt/qttest-${QT5_PV}:5
 	)
 "
+# dev-qt/qtbase contains qttest
 BDEPEND="
 	doc? (
 		dev-ruby/asciidoctor
