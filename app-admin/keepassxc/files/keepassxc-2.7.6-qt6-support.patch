@@ -8,7 +8,8 @@
 
 # Progress:  313/313 with makeopts -j1
 # GUI - pass
-# unlock/load - fail
+# unlock/load db - fail
+
 
 diff -urp keepassxc-2.7.6.orig/CMakeLists.txt keepassxc-2.7.6/CMakeLists.txt
 --- keepassxc-2.7.6.orig/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
