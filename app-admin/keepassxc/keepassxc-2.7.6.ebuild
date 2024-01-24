@@ -353,3 +353,15 @@ Errors while running CTest
 Output from these tests are in: /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build/Testing/Temporary/LastTest.log
 Use \"--rerun-failed --output-on-failure\" to re-run the failed cases verbosely.
 "
+
+# Errors when opening kdbx file:
+# UI:
+# Error while reading database:  Invalid number value
+
+# Errors in stdout/stderr command line:
+# QGuiApplication::setDesktopFileName: the specified desktop file name ends with .desktop. For compatibility reasons, the .desktop suffix will be removed. Please specify a desktop file name without .desktop suffix
+# qt.core.qobject.connect: QObject::connect: No such signal QButtonGroup::buttonClicked(int)
+# qt.core.qobject.connect: QObject::connect:  (sender name:   'optionButtons')
+# qt.core.qobject.connect: QObject::connect:  (receiver name: 'PasswordGeneratorWidget')
+# KdbxXmlReader::readDatabase: found 4 invalid group reference(s)
+# KdbxXmlReader::readDatabase: found 4 invalid entry reference(s)
