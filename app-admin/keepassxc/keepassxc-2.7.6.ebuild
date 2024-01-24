@@ -11,9 +11,13 @@ QT5_PV="5.2.0"
 # Time to convert to Qt6
 # start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
 # end time:  1706069824 (Tue Jan 23 08:17:04 PM PST 2024)
+# end time (w/o tests):  1706069824 (Tue Jan 23 08:17:04 PM PST 2024)
+# end time w/tests:  
 
-# Progress:  313/313
-# Status:  Testing phase
+# Progress:  313/313 (w/o tests) with makeopts -j1
+# Progress:  316/459 (w/ tests) with makeopts -j1
+
+# Status (for qt6 support):  Unfinished / In-development
 
 if [[ "${PV}" != *9999 ]] ; then
 	if [[ "${PV}" == *_beta* ]] ; then
@@ -126,7 +130,7 @@ BDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/${PN}-2.7.4-tests.patch"
-	"${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
+	"A${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
 )
 
 verify_qt_consistency() {
@@ -254,6 +258,8 @@ src_configure() {
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
 # OILEDMACHINE-OVERLAY-TEST:  fail with qt6
-# gui - pass
-# unlock/load db - fail
+# qt6 - fail
+#   gui - pass
+#   unlock/load db - fail
 # qt5 - untested
+
