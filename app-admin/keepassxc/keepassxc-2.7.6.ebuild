@@ -254,4 +254,5 @@ src_configure() {
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
 # OILEDMACHINE-OVERLAY-TEST:  fail with qt6
 # gui - pass
-# unlock/load -fail
+# unlock/load db - fail
+# qt5 - untested
