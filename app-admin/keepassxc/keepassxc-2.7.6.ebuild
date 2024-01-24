@@ -9,10 +9,11 @@ QT6_PV="6.6.1"
 QT5_PV="5.2.0"
 
 # Time to convert to Qt6
-# start time: 1705819601
-# end time:
+# start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
+# end time:  1706069824 (Tue Jan 23 08:17:04 PM PST 2024)
 
-# Progress: 139/313
+# Progress:  313/313
+# Status:  Testing phase
 
 if [[ "${PV}" != *9999 ]] ; then
 	if [[ "${PV}" == *_beta* ]] ; then
@@ -88,6 +89,12 @@ RDEPEND="
 	X? (
 		qt5? (
 			>=dev-qt/qtx11extras-${QT5_PV}:5
+			x11-libs/libX11
+			x11-libs/libxcb
+		)
+		qt6? (
+			x11-libs/libX11
+			x11-libs/libxcb
 		)
 	)
 	yubikey? (
@@ -110,6 +117,9 @@ BDEPEND="
 	)
 	qt6? (
 		>=dev-qt/qttools-${QT6_PV}:6[linguist]
+		X? (
+			virtual/pkgconfig
+		)
 	)
 "
 
@@ -242,3 +252,6 @@ src_configure() {
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-TEST:  fail with qt6
+# gui - pass
+# unlock/load -fail

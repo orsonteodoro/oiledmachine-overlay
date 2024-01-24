@@ -81,6 +81,12 @@ RDEPEND="
 	X? (
 		qt5? (
 			>=dev-qt/qtx11extras-${QT5_PV}:5
+			x11-libs/libX11
+			x11-libs/libxcb
+		)
+		qt6? (
+			x11-libs/libX11
+			x11-libs/libxcb
 		)
 	)
 	yubikey? (
@@ -103,6 +109,9 @@ BDEPEND="
 	)
 	qt6? (
 		>=dev-qt/qttools-${QT6_PV}:6[linguist]
+		X? (
+			virtual/pkgconfig
+		)
 	)
 "
 PATCHES=(
