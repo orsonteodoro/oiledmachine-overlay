@@ -9,13 +9,13 @@ QT6_PV="6.6.1"
 QT5_PV="5.2.0"
 
 # Time to convert to Qt6
-# start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
-# end time:  1706069824 (Tue Jan 23 08:17:04 PM PST 2024)
-# end time (w/o tests):  1706069824 (Tue Jan 23 08:17:04 PM PST 2024)
-# end time w/tests:  
+# patch start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
+# patch end time:  1706069824 (Tue Jan 23 08:17:04 PM PST 2024)
+# patch end time (w/o tests):  1706069824 (Tue Jan 23 08:17:04 PM PST 2024)
+# patch end time w/tests:  1706076238 (Tue Jan 23 10:03:58 PM PST 2024)
 
 # Progress:  313/313 (w/o tests) with makeopts -j1
-# Progress:  316/459 (w/ tests) with makeopts -j1
+# Progress:  459/459 (w/ tests) with makeopts -j1
 
 # Status (for qt6 support):  Unfinished / In-development
 
@@ -130,7 +130,7 @@ BDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/${PN}-2.7.4-tests.patch"
-	"A${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
+	"${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
 )
 
 verify_qt_consistency() {
