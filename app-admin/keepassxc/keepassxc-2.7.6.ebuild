@@ -301,7 +301,7 @@ Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_bui
       Start 16: testopensshkey
 16/33 Test #16: testopensshkey ...................***Failed    0.03 sec
       Start 17: testsshagent
-17/33 Test #17: testsshagent .....................***Failed    0.07 sec
+17/33 Test #17: testsshagent .....................   Passed    0.07 sec
       Start 18: testentry
 18/33 Test #18: testentry ........................   Passed    0.05 sec
       Start 19: testmerge
@@ -335,13 +335,12 @@ Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_bui
       Start 33: testfdosecrets
 33/33 Test #33: testfdosecrets ...................   Passed    0.05 sec
 
-94% tests passed, 2 tests failed out of 33
+97% tests passed, 1 tests failed out of 33
 
 Total Test time (real) = 671.46 sec
 
 The following tests FAILED:
 	 16 - testopensshkey (Failed)
-	 17 - testsshagent (Failed)
 Errors while running CTest
 Output from these tests are in: /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build/Testing/Temporary/LastTest.log
 Use \"--rerun-failed --output-on-failure\" to re-run the failed cases verbosely.
