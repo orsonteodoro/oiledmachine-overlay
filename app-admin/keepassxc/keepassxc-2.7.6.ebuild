@@ -347,6 +347,24 @@ The following tests FAILED:
 Errors while running CTest
 Output from these tests are in: /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build/Testing/Temporary/LastTest.log
 Use \"--rerun-failed --output-on-failure\" to re-run the failed cases verbosely.
+
+
+
+********* Start testing of TestKdbx4Argon2 *********
+REACTED LINE
+FAIL!  : TestKdbx4Argon2::initTestCase() Error while writing database: Failed to serialize KDF parameters variant map
+   Loc: [/var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6/tests/TestKeePass2Format.cpp(72)]
+PASS   : TestKdbx4Argon2::cleanupTestCase()
+Totals: 1 passed, 1 failed, 0 skipped, 0 blacklisted, 8723ms
+********* Finished testing of TestKdbx4Argon2 *********
+<end of output>
+Test time =   8.76 sec
+----------------------------------------------------------
+Test Failed.
+"testkdbx4" end time: Jan 24 21:28 PST
+"testkdbx4" time elapsed: 00:00:08
+----------------------------------------------------------
+
 "
 
 # Errors when opening kdbx file:
