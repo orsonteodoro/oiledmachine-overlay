@@ -13,8 +13,9 @@
 # GUI - pass
 # unlock/load db - pass
 #
+# qt6 support and test coverage:  USE="X qt5compat qt6 test -autotype -browser -doc -keeshare -network (-qt5) -wayland -yubikey"
 # pure qt6 - done
-# qt6 + qt5compat - testing
+# qt6 + qt5compat - done
 
 diff -urp keepassxc-2.7.6.orig/CMakeLists.txt keepassxc-2.7.6/CMakeLists.txt
 --- keepassxc-2.7.6.orig/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
