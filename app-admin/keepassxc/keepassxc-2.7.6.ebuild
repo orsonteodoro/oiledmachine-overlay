@@ -361,8 +361,8 @@ Totals: 1 passed, 1 failed, 0 skipped, 0 blacklisted, 8723ms
 Test time =   8.76 sec
 ----------------------------------------------------------
 Test Failed.
-"testkdbx4" end time: Jan 24 21:28 PST
-"testkdbx4" time elapsed: 00:00:08
+\"testkdbx4\" end time: Jan 24 21:28 PST
+\"testkdbx4\" time elapsed: 00:00:08
 ----------------------------------------------------------
 
 "
