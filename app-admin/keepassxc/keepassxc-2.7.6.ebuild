@@ -258,9 +258,10 @@ src_configure() {
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
 # OILEDMACHINE-OVERLAY-TEST:  fail with qt6 only, fail with qt6 and qt5compat
-# qt6 - fail
+# qt6 - pass
 #   gui - pass
 #   unlock/load db - fail
+#   wayland - pass (with non-root user), fail (with root)
 # qt5 - untested
 
 # Test results for USE="X -qt5compat qt6 test -autotype -browser -doc -keeshare -network (-qt5) -wayland -yubikey"
@@ -339,15 +340,3 @@ Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_bui
 
 Total Test time (real) = 680.55 sec
 "
-
-# Errors when opening kdbx file:
-# UI:
-# Error while reading database:  Invalid number value
-
-# Errors in stdout/stderr command line:
-# QGuiApplication::setDesktopFileName: the specified desktop file name ends with .desktop. For compatibility reasons, the .desktop suffix will be removed. Please specify a desktop file name without .desktop suffix
-# qt.core.qobject.connect: QObject::connect: No such signal QButtonGroup::buttonClicked(int)
-# qt.core.qobject.connect: QObject::connect:  (sender name:   'optionButtons')
-# qt.core.qobject.connect: QObject::connect:  (receiver name: 'PasswordGeneratorWidget')
-# KdbxXmlReader::readDatabase: found 4 invalid group reference(s)
-# KdbxXmlReader::readDatabase: found 4 invalid entry reference(s)
