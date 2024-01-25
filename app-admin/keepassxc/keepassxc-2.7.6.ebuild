@@ -269,85 +269,82 @@ __TEST_RESULTS="
 ctest -j 1 --test-load 4
 Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build
       Start  1: testgroup
- 1/33 Test  #1: testgroup ........................   Passed    0.04 sec
+ 1/33 Test  #1: testgroup ........................   Passed    0.05 sec
       Start  2: testkdbx2
- 2/33 Test  #2: testkdbx2 ........................   Passed    0.30 sec
+ 2/33 Test  #2: testkdbx2 ........................   Passed    0.31 sec
       Start  3: testkdbx3
- 3/33 Test  #3: testkdbx3 ........................   Passed   66.06 sec
+ 3/33 Test  #3: testkdbx3 ........................   Passed   65.83 sec
       Start  4: testkdbx4
- 4/33 Test  #4: testkdbx4 ........................***Failed    8.76 sec
+ 4/33 Test  #4: testkdbx4 ........................   Passed  206.93 sec
       Start  5: testkeys
- 5/33 Test  #5: testkeys .........................   Passed  105.86 sec
+ 5/33 Test  #5: testkeys .........................   Passed  109.15 sec
       Start  6: testgroupmodel
- 6/33 Test  #6: testgroupmodel ...................   Passed    0.03 sec
+ 6/33 Test  #6: testgroupmodel ...................   Passed    0.04 sec
       Start  7: testentrymodel
- 7/33 Test  #7: testentrymodel ...................   Passed    0.09 sec
+ 7/33 Test  #7: testentrymodel ...................   Passed    0.06 sec
       Start  8: testcryptohash
- 8/33 Test  #8: testcryptohash ...................   Passed    0.02 sec
+ 8/33 Test  #8: testcryptohash ...................   Passed    0.06 sec
       Start  9: testsymmetriccipher
- 9/33 Test  #9: testsymmetriccipher ..............   Passed    0.25 sec
+ 9/33 Test  #9: testsymmetriccipher ..............   Passed    0.37 sec
       Start 10: testhashedblockstream
-10/33 Test #10: testhashedblockstream ............   Passed    0.03 sec
+10/33 Test #10: testhashedblockstream ............   Passed    0.05 sec
       Start 11: testkeepass2randomstream
-11/33 Test #11: testkeepass2randomstream .........   Passed    0.01 sec
+11/33 Test #11: testkeepass2randomstream .........   Passed    0.02 sec
       Start 12: testmodified
-12/33 Test #12: testmodified .....................   Passed   17.80 sec
+12/33 Test #12: testmodified .....................   Passed   18.70 sec
       Start 13: testdeletedobjects
 13/33 Test #13: testdeletedobjects ...............   Passed    0.04 sec
       Start 14: testkeepass1reader
-14/33 Test #14: testkeepass1reader ...............   Passed    5.16 sec
+14/33 Test #14: testkeepass1reader ...............   Passed    5.04 sec
       Start 15: testopvaultreader
-15/33 Test #15: testopvaultreader ................   Passed    6.86 sec
+15/33 Test #15: testopvaultreader ................   Passed    6.14 sec
       Start 16: testopensshkey
-16/33 Test #16: testopensshkey ...................***Failed    0.04 sec
+16/33 Test #16: testopensshkey ...................***Failed    0.03 sec
       Start 17: testsshagent
-17/33 Test #17: testsshagent .....................***Failed    0.10 sec
+17/33 Test #17: testsshagent .....................***Failed    0.07 sec
       Start 18: testentry
-18/33 Test #18: testentry ........................   Passed    0.04 sec
+18/33 Test #18: testentry ........................   Passed    0.05 sec
       Start 19: testmerge
-19/33 Test #19: testmerge ........................   Passed    0.31 sec
+19/33 Test #19: testmerge ........................   Passed    0.32 sec
       Start 20: testpasswordgenerator
-20/33 Test #20: testpasswordgenerator ............   Passed    0.06 sec
+20/33 Test #20: testpasswordgenerator ............   Passed    0.05 sec
       Start 21: testpasswordhealth
 21/33 Test #21: testpasswordhealth ...............   Passed    0.03 sec
       Start 22: testpassphrasegenerator
-22/33 Test #22: testpassphrasegenerator ..........   Passed    0.07 sec
+22/33 Test #22: testpassphrasegenerator ..........   Passed    0.05 sec
       Start 23: testhibp
 23/33 Test #23: testhibp .........................   Passed    0.03 sec
       Start 24: testtotp
 24/33 Test #24: testtotp .........................   Passed    0.03 sec
       Start 25: testbase32
-25/33 Test #25: testbase32 .......................***Failed    0.01 sec
+25/33 Test #25: testbase32 .......................   Passed    0.01 sec
       Start 26: testcsvparser
 26/33 Test #26: testcsvparser ....................   Passed    0.02 sec
       Start 27: testrandomgenerator
-27/33 Test #27: testrandomgenerator ..............   Passed    0.02 sec
+27/33 Test #27: testrandomgenerator ..............   Passed    0.01 sec
       Start 28: testentrysearcher
 28/33 Test #28: testentrysearcher ................   Passed    0.04 sec
       Start 29: testcsvexporter
 29/33 Test #29: testcsvexporter ..................   Passed    0.03 sec
       Start 30: testdatabase
-30/33 Test #30: testdatabase .....................   Passed    5.64 sec
+30/33 Test #30: testdatabase .....................   Passed    5.51 sec
       Start 31: testtools
 31/33 Test #31: testtools ........................   Passed    0.02 sec
       Start 32: testconfig
-32/33 Test #32: testconfig .......................   Passed    0.08 sec
+32/33 Test #32: testconfig .......................   Passed    0.05 sec
       Start 33: testfdosecrets
 33/33 Test #33: testfdosecrets ...................   Passed    0.05 sec
 
-88% tests passed, 4 tests failed out of 33
+94% tests passed, 2 tests failed out of 33
 
-Total Test time (real) = 225.00 sec
+Total Test time (real) = 671.46 sec
 
 The following tests FAILED:
-	  4 - testkdbx4 (Failed)
 	 16 - testopensshkey (Failed)
 	 17 - testsshagent (Failed)
-	 25 - testbase32 (Failed)
 Errors while running CTest
 Output from these tests are in: /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build/Testing/Temporary/LastTest.log
 Use \"--rerun-failed --output-on-failure\" to re-run the failed cases verbosely.
-
 
 
 ********* Start testing of TestKdbx4Argon2 *********
