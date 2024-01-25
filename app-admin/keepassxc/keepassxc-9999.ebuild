@@ -72,11 +72,17 @@ RDEPEND="
 		>=dev-qt/qtnetwork-${QT5_PV}:5
 		>=dev-qt/qtsvg-${QT5_PV}:5
 		>=dev-qt/qtwidgets-${QT5_PV}:5
+		wayland? (
+			>=dev-qt/qtwayland-${QT5_PV}:5
+		)
 	)
 	qt6? (
 		>=dev-qt/qt5compat-${QT6_PV}:6
 		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,wayland?,X?]
 		>=dev-qt/qtsvg-${QT6_PV}:6
+		wayland? (
+			>=dev-qt/qtwayland-${QT6_PV}:6
+		)
 	)
 	X? (
 		qt5? (
