@@ -13,9 +13,8 @@
 # GUI - pass
 # unlock/load db - pass
 #
-#16/33 Test #16: testopensshkey ...................***Failed    0.03 sec
-#      Start 17: testsshagent
-#97% tests passed, 1 tests failed out of 33
+# pure qt6 - done
+# qt6 + qt5compat - testing
 
 diff -urp keepassxc-2.7.6.orig/CMakeLists.txt keepassxc-2.7.6/CMakeLists.txt
 --- keepassxc-2.7.6.orig/CMakeLists.txt	2023-08-15 15:40:34.000000000 -0700
