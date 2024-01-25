@@ -264,7 +264,7 @@ src_configure() {
 # qt5 - untested
 
 # Test results for USE="X -qt5compat qt6 test -autotype -browser -doc -keeshare -network (-qt5) -wayland -yubikey"
-# Note the TestKeePass1Reader::testCP1252Password() was disabled since cp-1252 is not supported on pure qt6 on linux.
+# Note the TestKeePass1Reader::testCP1252Password() was disabled since cp-1252 is not supported on pure qt6 build on linux.
 __TEST_RESULTS="
 ctest -j 1 --test-load 4
 Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build
