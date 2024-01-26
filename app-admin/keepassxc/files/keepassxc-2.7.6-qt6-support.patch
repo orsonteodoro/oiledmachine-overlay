@@ -10,6 +10,7 @@
 #
 # Progress:  313/313 (w/o tests) with makeopts -j1
 # Progress:  459/459 (w/ tests) with makeopts -j1
+# Progress:  550/550 (w/ tests with makeopts -j1 and USE="X autotype browser keeshare network qt6 test yubikey -doc (-qt5) -qt5compat -wayland")
 # GUI - pass
 # unlock/load db - pass
 #
