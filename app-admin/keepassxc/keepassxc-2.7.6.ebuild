@@ -57,12 +57,11 @@ REQUIRED_USE="
 		qt5
 		qt6
 	)
-	^^ (
+	|| (
 		X
 		wayland
 	)
 "
-
 RDEPEND="
 	app-crypt/argon2:=
 	dev-libs/botan:3=

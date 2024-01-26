@@ -46,7 +46,7 @@ REQUIRED_USE="
 		qt5
 		qt6
 	)
-	^^ (
+	|| (
 		X
 		wayland
 	)
