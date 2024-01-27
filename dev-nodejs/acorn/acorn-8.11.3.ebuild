@@ -4,20 +4,19 @@
 
 EAPI=8
 
-DESCRIPTION="Fast, disk space efficient package manager"
+DESCRIPTION="A small, fast, JavaScript-based JavaScript parser Resources"
 HOMEPAGE="
-https://pnpm.io/
-https://github.com/pnpm/pnpm
+https://github.com/acornjs/acorn
 "
 LICENSE="
 	MIT
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SLOT_MAJOR="${PV%%.*}"
-SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" r2"
+SLOT="$(ver_cut 1-2 ${PV})"
+IUSE+=" "
 CDEPEND+="
-	>=net-libs/nodejs-16.18[corepack,ssl]
+	!sys-apps/npm:0
+	sys-apps/npm
 "
 DEPEND+="
 	${CDEPEND}
@@ -33,17 +32,13 @@ S="${WORKDIR}"
 RESTRICT="mirror"
 
 pkg_postinst() {
-	corepack enable
-	mkdir -p "${EROOT}/usr/share/${PN}"
-	corepack prepare "${PN}@${PV}" -o="${EROOT}/usr/share/${PN}/${PN}-${SLOT_MAJOR}.tgz"
+	npm install -g "acorn@${PV}"
 }
 
 pkg_prerm() {
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
-einfo "Removing ${PN}-${SLOT_MAJOR}.tgz"
-		rm -rf "${EROOT}/usr/share/${PN}/${PN}-${SLOT_MAJOR}.tgz"
+		npm uninstall -g "acorn@${PV}"
 	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  passed (8.10.5, 20231219)

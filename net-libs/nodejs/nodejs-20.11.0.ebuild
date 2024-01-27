@@ -121,7 +121,7 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Dec 4, 2023
+# Last deps commit date:  Jan 9, 2024
 ACORN_PV="8.11.2"
 COREPACK_PV="0.23.0"
 NGHTTP2_PV="1.58.0"
@@ -134,7 +134,7 @@ RDEPEND+="
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.2.13
 	system-icu? (
-		>=dev-libs/icu-74.1:=
+		>=dev-libs/icu-73.2:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.12:0=
@@ -180,7 +180,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_PV="10.2.4" # See https://github.com/nodejs/node/blob/v21.4.0/deps/npm/package.json
+NPM_PV="10.2.4" # See https://github.com/nodejs/node/blob/v20.8.1/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
@@ -219,7 +219,7 @@ pkg_setup() {
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-06-01."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-04-30."
 einfo
 
 	# Prevent merge conflicts

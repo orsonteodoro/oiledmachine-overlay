@@ -121,23 +121,23 @@ REQUIRED_USE+="
 RESTRICT="!test? ( test )"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Oct 13, 2023
-ACORN_PV="8.10.0"
-COREPACK_PV="0.20.0"
-NGHTTP2_PV="1.57.0"
+# Last deps commit date:  Jan 2, 2024
+ACORN_PV="8.11.3"
+COREPACK_PV="0.24.0"
+NGHTTP2_PV="1.58.0"
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-1.0.9
+	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.46.0:=
-	>=net-dns/c-ares-1.19.1
+	>=dev-libs/libuv-1.47.0:=
+	>=net-dns/c-ares-1.20.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.2.13
+	>=sys-libs/zlib-1.3
 	system-icu? (
-		>=dev-libs/icu-73.2:=
+		>=dev-libs/icu-74.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.10:0=
+		>=dev-libs/openssl-3.0.12:0=
 	)
 "
 DEPEND+="
@@ -180,7 +180,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 S="${WORKDIR}/node-v${PV}"
-NPM_PV="10.1.0" # See https://github.com/nodejs/node/blob/v20.9.0/deps/npm/package.json
+NPM_PV="10.2.4" # See https://github.com/nodejs/node/blob/v21.5.0/deps/npm/package.json
 
 # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 AUTOCANNON_PV="7.4.0"
@@ -219,7 +219,7 @@ pkg_setup() {
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
 einfo
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-06-01."
 einfo
 
 	# Prevent merge conflicts
