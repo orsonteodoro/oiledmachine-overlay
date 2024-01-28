@@ -261,87 +261,99 @@ src_configure() {
 	cmake_src_configure
 }
 
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
-# OILEDMACHINE-OVERLAY-TEST:  fail with qt6 only, fail with qt6 and qt5compat
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO autotype timer and topLevelDomains() are unfinished
+# OILEDMACHINE-OVERLAY-TEST:  pass with qt6 only, pass with qt6 and qt5compat (20240127)
 # qt6 - pass
 #   gui - pass
-#   unlock/load db - fail
+#   unlock/load db - pass
 #   wayland - pass (with non-root user), fail (with root)
 # qt5 - untested
 
-# Test results for USE="X -qt5compat qt6 test -autotype -browser -doc -keeshare -network (-qt5) -wayland -yubikey"
+# Test results for USE="X* autotype* browser* keeshare* network* qt5compat qt6 test* yubikey* -doc (-qt5) -wayland*"
 # Note the TestKeePass1Reader::testCP1252Password() was disabled since cp-1252 is not supported on pure qt6 build on linux.
 __TEST_RESULTS="
 ctest -j 1 --test-load 4
 Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build
       Start  1: testgroup
- 1/33 Test  #1: testgroup ........................   Passed    0.04 sec
+ 1/39 Test  #1: testgroup ........................   Passed    0.04 sec
       Start  2: testkdbx2
- 2/33 Test  #2: testkdbx2 ........................   Passed    0.28 sec
+ 2/39 Test  #2: testkdbx2 ........................   Passed    0.30 sec
       Start  3: testkdbx3
- 3/33 Test  #3: testkdbx3 ........................   Passed   68.96 sec
+ 3/39 Test  #3: testkdbx3 ........................   Passed   70.25 sec
       Start  4: testkdbx4
- 4/33 Test  #4: testkdbx4 ........................   Passed  210.08 sec
+ 4/39 Test  #4: testkdbx4 ........................   Passed  202.94 sec
       Start  5: testkeys
- 5/33 Test  #5: testkeys .........................   Passed  101.79 sec
+ 5/39 Test  #5: testkeys .........................   Passed  105.51 sec
       Start  6: testgroupmodel
- 6/33 Test  #6: testgroupmodel ...................   Passed    0.03 sec
+ 6/39 Test  #6: testgroupmodel ...................   Passed    0.11 sec
       Start  7: testentrymodel
- 7/33 Test  #7: testentrymodel ...................   Passed    0.09 sec
+ 7/39 Test  #7: testentrymodel ...................   Passed    0.12 sec
       Start  8: testcryptohash
- 8/33 Test  #8: testcryptohash ...................   Passed    0.02 sec
+ 8/39 Test  #8: testcryptohash ...................   Passed    0.05 sec
       Start  9: testsymmetriccipher
- 9/33 Test  #9: testsymmetriccipher ..............   Passed    0.26 sec
+ 9/39 Test  #9: testsymmetriccipher ..............   Passed    0.27 sec
       Start 10: testhashedblockstream
-10/33 Test #10: testhashedblockstream ............   Passed    0.03 sec
+10/39 Test #10: testhashedblockstream ............   Passed    0.03 sec
       Start 11: testkeepass2randomstream
-11/33 Test #11: testkeepass2randomstream .........   Passed    0.03 sec
+11/39 Test #11: testkeepass2randomstream .........   Passed    0.02 sec
       Start 12: testmodified
-12/33 Test #12: testmodified .....................   Passed   17.72 sec
+12/39 Test #12: testmodified .....................   Passed   17.58 sec
       Start 13: testdeletedobjects
-13/33 Test #13: testdeletedobjects ...............   Passed    0.04 sec
+13/39 Test #13: testdeletedobjects ...............   Passed    0.04 sec
       Start 14: testkeepass1reader
-14/33 Test #14: testkeepass1reader ...............   Passed    5.04 sec
+14/39 Test #14: testkeepass1reader ...............   Passed    5.06 sec
       Start 15: testopvaultreader
-15/33 Test #15: testopvaultreader ................   Passed    6.39 sec
-      Start 16: testopensshkey
-16/33 Test #16: testopensshkey ...................   Passed   10.15 sec
-      Start 17: testsshagent
-17/33 Test #17: testsshagent .....................   Passed    1.98 sec
-      Start 18: testentry
-18/33 Test #18: testentry ........................   Passed    0.04 sec
-      Start 19: testmerge
-19/33 Test #19: testmerge ........................   Passed    0.31 sec
-      Start 20: testpasswordgenerator
-20/33 Test #20: testpasswordgenerator ............   Passed    0.07 sec
-      Start 21: testpasswordhealth
-21/33 Test #21: testpasswordhealth ...............   Passed    0.03 sec
-      Start 22: testpassphrasegenerator
-22/33 Test #22: testpassphrasegenerator ..........   Passed    0.05 sec
-      Start 23: testhibp
-23/33 Test #23: testhibp .........................   Passed    0.03 sec
-      Start 24: testtotp
-24/33 Test #24: testtotp .........................   Passed    0.03 sec
-      Start 25: testbase32
-25/33 Test #25: testbase32 .......................   Passed    0.01 sec
-      Start 26: testcsvparser
-26/33 Test #26: testcsvparser ....................   Passed    0.02 sec
-      Start 27: testrandomgenerator
-27/33 Test #27: testrandomgenerator ..............   Passed    0.01 sec
-      Start 28: testentrysearcher
-28/33 Test #28: testentrysearcher ................   Passed    0.03 sec
-      Start 29: testcsvexporter
-29/33 Test #29: testcsvexporter ..................   Passed    0.03 sec
-      Start 30: testdatabase
-30/33 Test #30: testdatabase .....................   Passed    5.56 sec
-      Start 31: testtools
-31/33 Test #31: testtools ........................   Passed    0.02 sec
-      Start 32: testconfig
-32/33 Test #32: testconfig .......................   Passed    0.06 sec
-      Start 33: testfdosecrets
-33/33 Test #33: testfdosecrets ...................   Passed    0.04 sec
+15/39 Test #15: testopvaultreader ................   Passed    6.39 sec
+      Start 16: testupdatecheck
+16/39 Test #16: testupdatecheck ..................   Passed    0.05 sec
+      Start 17: testicondownloader
+17/39 Test #17: testicondownloader ...............   Passed    0.09 sec
+      Start 18: testautotype
+18/39 Test #18: testautotype .....................   Passed   12.33 sec
+      Start 19: testopensshkey
+19/39 Test #19: testopensshkey ...................   Passed   10.52 sec
+      Start 20: testsshagent
+20/39 Test #20: testsshagent .....................   Passed    1.78 sec
+      Start 21: testentry
+21/39 Test #21: testentry ........................   Passed    0.03 sec
+      Start 22: testmerge
+22/39 Test #22: testmerge ........................   Passed    0.31 sec
+      Start 23: testpasswordgenerator
+23/39 Test #23: testpasswordgenerator ............   Passed    0.07 sec
+      Start 24: testpasswordhealth
+24/39 Test #24: testpasswordhealth ...............   Passed    0.03 sec
+      Start 25: testpassphrasegenerator
+25/39 Test #25: testpassphrasegenerator ..........   Passed    0.06 sec
+      Start 26: testhibp
+26/39 Test #26: testhibp .........................   Passed    0.03 sec
+      Start 27: testtotp
+27/39 Test #27: testtotp .........................   Passed    0.03 sec
+      Start 28: testbase32
+28/39 Test #28: testbase32 .......................   Passed    0.02 sec
+      Start 29: testcsvparser
+29/39 Test #29: testcsvparser ....................   Passed    0.02 sec
+      Start 30: testrandomgenerator
+30/39 Test #30: testrandomgenerator ..............   Passed    0.02 sec
+      Start 31: testentrysearcher
+31/39 Test #31: testentrysearcher ................   Passed    0.03 sec
+      Start 32: testcsvexporter
+32/39 Test #32: testcsvexporter ..................   Passed    0.03 sec
+      Start 33: testykchallengeresponsekey
+33/39 Test #33: testykchallengeresponsekey .......   Passed    0.07 sec
+      Start 34: testsharing
+34/39 Test #34: testsharing ......................   Passed    1.29 sec
+      Start 35: testdatabase
+35/39 Test #35: testdatabase .....................   Passed    5.42 sec
+      Start 36: testtools
+36/39 Test #36: testtools ........................   Passed    0.01 sec
+      Start 37: testconfig
+37/39 Test #37: testconfig .......................   Passed    0.09 sec
+      Start 38: testfdosecrets
+38/39 Test #38: testfdosecrets ...................   Passed    0.06 sec
+      Start 39: testbrowser
+39/39 Test #39: testbrowser ......................   Passed    0.15 sec
 
-100% tests passed, 0 tests failed out of 33
+100% tests passed, 0 tests failed out of 39
 
-Total Test time (real) = 680.55 sec
+Total Test time (real) = 816.64 sec
 "
