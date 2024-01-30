@@ -272,64 +272,66 @@ src_configure() {
 # Test results for USE="X* autotype* browser* keeshare* network* qt5compat qt6 test* yubikey* -doc (-qt5) -wayland*"
 # Note the TestKeePass1Reader::testCP1252Password() was disabled since cp-1252 is not supported on pure qt6 build on linux.
 __TEST_RESULTS="
+ * Source directory (CMAKE_USE_DIR): "/var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6"
+ * Build directory  (BUILD_DIR):     "/var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build"
 ctest -j 1 --test-load 4
 Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build
       Start  1: testgroup
  1/39 Test  #1: testgroup ........................   Passed    0.04 sec
       Start  2: testkdbx2
- 2/39 Test  #2: testkdbx2 ........................   Passed    0.30 sec
+ 2/39 Test  #2: testkdbx2 ........................   Passed    0.29 sec
       Start  3: testkdbx3
- 3/39 Test  #3: testkdbx3 ........................   Passed   70.25 sec
+ 3/39 Test  #3: testkdbx3 ........................   Passed   63.85 sec
       Start  4: testkdbx4
- 4/39 Test  #4: testkdbx4 ........................   Passed  202.94 sec
+ 4/39 Test  #4: testkdbx4 ........................   Passed  181.68 sec
       Start  5: testkeys
- 5/39 Test  #5: testkeys .........................   Passed  105.51 sec
+ 5/39 Test  #5: testkeys .........................   Passed  105.92 sec
       Start  6: testgroupmodel
- 6/39 Test  #6: testgroupmodel ...................   Passed    0.11 sec
+ 6/39 Test  #6: testgroupmodel ...................   Passed    0.04 sec
       Start  7: testentrymodel
- 7/39 Test  #7: testentrymodel ...................   Passed    0.12 sec
+ 7/39 Test  #7: testentrymodel ...................   Passed    0.21 sec
       Start  8: testcryptohash
  8/39 Test  #8: testcryptohash ...................   Passed    0.05 sec
       Start  9: testsymmetriccipher
- 9/39 Test  #9: testsymmetriccipher ..............   Passed    0.27 sec
+ 9/39 Test  #9: testsymmetriccipher ..............   Passed    0.30 sec
       Start 10: testhashedblockstream
-10/39 Test #10: testhashedblockstream ............   Passed    0.03 sec
+10/39 Test #10: testhashedblockstream ............   Passed    0.05 sec
       Start 11: testkeepass2randomstream
-11/39 Test #11: testkeepass2randomstream .........   Passed    0.02 sec
+11/39 Test #11: testkeepass2randomstream .........   Passed    0.03 sec
       Start 12: testmodified
-12/39 Test #12: testmodified .....................   Passed   17.58 sec
+12/39 Test #12: testmodified .....................   Passed   17.82 sec
       Start 13: testdeletedobjects
-13/39 Test #13: testdeletedobjects ...............   Passed    0.04 sec
+13/39 Test #13: testdeletedobjects ...............   Passed    0.05 sec
       Start 14: testkeepass1reader
-14/39 Test #14: testkeepass1reader ...............   Passed    5.06 sec
+14/39 Test #14: testkeepass1reader ...............   Passed    5.17 sec
       Start 15: testopvaultreader
-15/39 Test #15: testopvaultreader ................   Passed    6.39 sec
+15/39 Test #15: testopvaultreader ................   Passed    5.83 sec
       Start 16: testupdatecheck
-16/39 Test #16: testupdatecheck ..................   Passed    0.05 sec
+16/39 Test #16: testupdatecheck ..................   Passed    0.03 sec
       Start 17: testicondownloader
-17/39 Test #17: testicondownloader ...............   Passed    0.09 sec
+17/39 Test #17: testicondownloader ...............   Passed    0.04 sec
       Start 18: testautotype
-18/39 Test #18: testautotype .....................   Passed   12.33 sec
+18/39 Test #18: testautotype .....................***Exception: SegFault  2.01 sec
       Start 19: testopensshkey
-19/39 Test #19: testopensshkey ...................   Passed   10.52 sec
+19/39 Test #19: testopensshkey ...................   Passed    9.91 sec
       Start 20: testsshagent
-20/39 Test #20: testsshagent .....................   Passed    1.78 sec
+20/39 Test #20: testsshagent .....................   Passed    1.55 sec
       Start 21: testentry
-21/39 Test #21: testentry ........................   Passed    0.03 sec
+21/39 Test #21: testentry ........................   Passed    0.04 sec
       Start 22: testmerge
-22/39 Test #22: testmerge ........................   Passed    0.31 sec
+22/39 Test #22: testmerge ........................   Passed    0.32 sec
       Start 23: testpasswordgenerator
-23/39 Test #23: testpasswordgenerator ............   Passed    0.07 sec
+23/39 Test #23: testpasswordgenerator ............   Passed    0.05 sec
       Start 24: testpasswordhealth
 24/39 Test #24: testpasswordhealth ...............   Passed    0.03 sec
       Start 25: testpassphrasegenerator
-25/39 Test #25: testpassphrasegenerator ..........   Passed    0.06 sec
+25/39 Test #25: testpassphrasegenerator ..........   Passed    0.05 sec
       Start 26: testhibp
 26/39 Test #26: testhibp .........................   Passed    0.03 sec
       Start 27: testtotp
 27/39 Test #27: testtotp .........................   Passed    0.03 sec
       Start 28: testbase32
-28/39 Test #28: testbase32 .......................   Passed    0.02 sec
+28/39 Test #28: testbase32 .......................   Passed    0.01 sec
       Start 29: testcsvparser
 29/39 Test #29: testcsvparser ....................   Passed    0.02 sec
       Start 30: testrandomgenerator
@@ -339,21 +341,27 @@ Test project /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_bui
       Start 32: testcsvexporter
 32/39 Test #32: testcsvexporter ..................   Passed    0.03 sec
       Start 33: testykchallengeresponsekey
-33/39 Test #33: testykchallengeresponsekey .......   Passed    0.07 sec
+33/39 Test #33: testykchallengeresponsekey .......   Passed    0.06 sec
       Start 34: testsharing
-34/39 Test #34: testsharing ......................   Passed    1.29 sec
+34/39 Test #34: testsharing ......................   Passed    0.91 sec
       Start 35: testdatabase
-35/39 Test #35: testdatabase .....................   Passed    5.42 sec
+35/39 Test #35: testdatabase .....................   Passed    5.78 sec
       Start 36: testtools
-36/39 Test #36: testtools ........................   Passed    0.01 sec
+36/39 Test #36: testtools ........................   Passed    0.02 sec
       Start 37: testconfig
-37/39 Test #37: testconfig .......................   Passed    0.09 sec
+37/39 Test #37: testconfig .......................   Passed    0.06 sec
       Start 38: testfdosecrets
-38/39 Test #38: testfdosecrets ...................   Passed    0.06 sec
+38/39 Test #38: testfdosecrets ...................   Passed    0.05 sec
       Start 39: testbrowser
-39/39 Test #39: testbrowser ......................   Passed    0.15 sec
+39/39 Test #39: testbrowser ......................   Passed    0.20 sec
 
-100% tests passed, 0 tests failed out of 39
+97% tests passed, 1 tests failed out of 39
 
-Total Test time (real) = 816.64 sec
+Total Test time (real) = 447.73 sec
+
+The following tests FAILED:
+	 18 - testautotype (SEGFAULT)
+Errors while running CTest
+Output from these tests are in: /var/tmp/portage/app-admin/keepassxc-2.7.6/work/keepassxc-2.7.6_build/Testing/Temporary/LastTest.log
+Use \"--rerun-failed --output-on-failure\" to re-run the failed cases verbosely.
 "

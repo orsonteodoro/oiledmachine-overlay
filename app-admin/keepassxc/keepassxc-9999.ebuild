@@ -122,7 +122,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
+	"${FILESDIR}/${PN}-442d65a-qt6-support.patch"
 )
 
 verify_qt_consistency() {
@@ -207,7 +207,7 @@ src_prepare() {
 ewarn "This ebuild is in development.  Use the distro ebuild instead."
 	if use qt6 ; then
 eerror "Patch conversion needs to be done.  Use 2.7.x ebuild instead."
-		die
+#		die
 	fi
 	if [[ "${PV}" != *_beta* ]] && [[ "${PV}" != *9999 ]] && [[ ! -f .version ]] ; then
 		printf '%s' "${PV}" > .version || die
@@ -253,3 +253,112 @@ src_configure() {
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-TEST:  pass with qt6 only, pass with qt6 and qt5compat (20240127)
+# qt6 - pass
+#   gui - pass
+#   unlock/load db - pass
+#   wayland - untested
+# qt5 - untested
+
+# Results for USE="X autotype browser keeshare network qt5compat qt6 test yubikey -doc (-qt5) -wayland"
+__TEST_RESULTS="
+ctest -j 1 --test-load 4
+Test project /var/tmp/portage/app-admin/keepassxc-9999/work/keepassxc-9999_build
+      Start  1: testgroup
+ 1/41 Test  #1: testgroup ........................   Passed    0.05 sec
+      Start  2: testkdbx2
+ 2/41 Test  #2: testkdbx2 ........................   Passed    0.30 sec
+      Start  3: testkdbx3
+ 3/41 Test  #3: testkdbx3 ........................   Passed   65.25 sec
+      Start  4: testkdbx4
+ 4/41 Test  #4: testkdbx4 ........................   Passed  184.71 sec
+      Start  5: testkeys
+ 5/41 Test  #5: testkeys .........................   Passed  105.49 sec
+      Start  6: testgroupmodel
+ 6/41 Test  #6: testgroupmodel ...................   Passed    0.03 sec
+      Start  7: testentrymodel
+ 7/41 Test  #7: testentrymodel ...................   Passed    0.07 sec
+      Start  8: testcryptohash
+ 8/41 Test  #8: testcryptohash ...................   Passed    0.02 sec
+      Start  9: testsymmetriccipher
+ 9/41 Test  #9: testsymmetriccipher ..............   Passed    0.23 sec
+      Start 10: testhashedblockstream
+10/41 Test #10: testhashedblockstream ............   Passed    0.02 sec
+      Start 11: testkeepass2randomstream
+11/41 Test #11: testkeepass2randomstream .........   Passed    0.01 sec
+      Start 12: testmodified
+12/41 Test #12: testmodified .....................   Passed   17.90 sec
+      Start 13: testdeletedobjects
+13/41 Test #13: testdeletedobjects ...............   Passed    0.05 sec
+      Start 14: testkeepass1reader
+14/41 Test #14: testkeepass1reader ...............   Passed    5.16 sec
+      Start 15: testopvaultreader
+15/41 Test #15: testopvaultreader ................   Passed    5.40 sec
+      Start 16: testupdatecheck
+16/41 Test #16: testupdatecheck ..................   Passed    0.04 sec
+      Start 17: testicondownloader
+17/41 Test #17: testicondownloader ...............***Failed    0.03 sec
+      Start 18: testautotype
+18/41 Test #18: testautotype .....................***Exception: SegFault  4.00 sec
+      Start 19: testopensshkey
+19/41 Test #19: testopensshkey ...................***Failed   10.45 sec
+      Start 20: testsshagent
+20/41 Test #20: testsshagent .....................   Passed    3.70 sec
+      Start 21: testentry
+21/41 Test #21: testentry ........................   Passed    0.04 sec
+      Start 22: testmerge
+22/41 Test #22: testmerge ........................   Passed    0.24 sec
+      Start 23: testpasswordgenerator
+23/41 Test #23: testpasswordgenerator ............   Passed    0.06 sec
+      Start 24: testpasswordhealth
+24/41 Test #24: testpasswordhealth ...............   Passed    0.03 sec
+      Start 25: testpassphrasegenerator
+25/41 Test #25: testpassphrasegenerator ..........   Passed    0.05 sec
+      Start 26: testhibp
+26/41 Test #26: testhibp .........................   Passed    0.04 sec
+      Start 27: testtotp
+27/41 Test #27: testtotp .........................   Passed    0.04 sec
+      Start 28: testbase32
+28/41 Test #28: testbase32 .......................   Passed    0.02 sec
+      Start 29: testcsvparser
+29/41 Test #29: testcsvparser ....................   Passed    0.03 sec
+      Start 30: testrandomgenerator
+30/41 Test #30: testrandomgenerator ..............   Passed    0.02 sec
+      Start 31: testentrysearcher
+31/41 Test #31: testentrysearcher ................   Passed    0.03 sec
+      Start 32: testcsvexporter
+32/41 Test #32: testcsvexporter ..................   Passed    0.03 sec
+      Start 33: testykchallengeresponsekey
+33/41 Test #33: testykchallengeresponsekey .......   Passed    0.09 sec
+      Start 34: testsharing
+34/41 Test #34: testsharing ......................   Passed    0.78 sec
+      Start 35: testdatabase
+35/41 Test #35: testdatabase .....................   Passed    5.94 sec
+      Start 36: testtools
+36/41 Test #36: testtools ........................   Passed    0.05 sec
+      Start 37: testconfig
+37/41 Test #37: testconfig .......................   Passed    0.08 sec
+      Start 38: testfdosecrets
+38/41 Test #38: testfdosecrets ...................   Passed    0.05 sec
+      Start 39: testbrowser
+39/41 Test #39: testbrowser ......................***Failed    0.15 sec
+      Start 40: testurltools
+40/41 Test #40: testurltools .....................***Failed    0.04 sec
+      Start 41: testcli
+41/41 Test #41: testcli ..........................Subprocess aborted***Exception:   0.04 sec
+
+85% tests passed, 6 tests failed out of 41
+
+Total Test time (real) = 528.93 sec
+
+The following tests FAILED:
+	 17 - testicondownloader (Failed)
+	 18 - testautotype (SEGFAULT)
+	 19 - testopensshkey (Failed)
+	 39 - testbrowser (Failed)
+	 40 - testurltools (Failed)
+	 41 - testcli (Subprocess aborted)
+Errors while running CTest
+Output from these tests are in: /var/tmp/portage/app-admin/keepassxc-9999/work/keepassxc-9999_build/Testing/Temporary/LastTest.log
+Use \"--rerun-failed --output-on-failure\" to re-run the failed cases verbosely.
+"
