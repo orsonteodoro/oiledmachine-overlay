@@ -2796,8 +2796,10 @@ diff -urpN keepassxc-9999.orig/data/2-part-emojis keepassxc-9999/data/2-part-emo
 diff -urpN keepassxc-9999.orig/data/3-part-domains keepassxc-9999/data/3-part-domains
 --- keepassxc-9999.orig/data/3-part-domains	1969-12-31 16:00:00.000000000 -0800
 +++ keepassxc-9999/data/3-part-domains	2024-01-30 02:12:38.464083287 -0800
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,26 @@
 +﻿
++blogspot.com.ar
++
 +gouv.on.ca
 +gouv.pe.ca
 +gouv.qc.ca
@@ -2809,6 +2811,8 @@ diff -urpN keepassxc-9999.orig/data/3-part-domains keepassxc-9999/data/3-part-do
 +
 +comune.palermo.it
 +regione.lazio.it
++
++ide.kyoto.jp
 +
 +ecape.school.za
 +fs.school.za
