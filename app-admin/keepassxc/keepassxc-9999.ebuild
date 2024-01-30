@@ -20,6 +20,7 @@ else
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/keepassxreboot/${PN}"
 	[[ "${PV}" != 9999 ]] && EGIT_BRANCH="master"
+	IUSE+=" fallback-commit"
 fi
 
 DESCRIPTION="KeePassXC - KeePass Cross-platform Community Edition"
@@ -29,7 +30,7 @@ HOMEPAGE="
 "
 LICENSE="LGPL-2.1 GPL-2 GPL-3"
 SLOT="0"
-IUSE="X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland yubikey"
+IUSE+=" X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland yubikey"
 RESTRICT="
 	!test? (
 		test
@@ -214,6 +215,22 @@ eerror "Patch conversion needs to be done.  Use 2.7.x ebuild instead."
 	fi
 
 	cmake_src_prepare
+}
+
+unpack_live() {
+	if use fallback-commit ; then
+		EGIT_COMMIT="442d65a497161d9a6e3dd4bec5ac1fb62de04f46"
+	fi
+	git-r3_fetch
+	git-r3_checkout
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
+	fi
 }
 
 src_configure() {
