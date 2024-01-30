@@ -8695,7 +8695,7 @@ diff -urpN keepassxc-2.7.6.orig/src/gui/osutils/nixutils/NixUtils.cpp keepassxc-
  #include <QTextStream>
  #ifdef WITH_XC_X11
 -#include <QX11Info>
-+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) //xcb xlib
++#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0) && 0 //xcb xlib
 +//#  include <QGuiApplication>
 +#  include <QtGui/private/qtx11extras_p.h> // Short term solution
 +#else //xkb

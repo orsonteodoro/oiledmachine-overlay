@@ -3,7 +3,8 @@
 
 EAPI=8
 
-inherit cmake flag-o-matic xdg
+VIRTUALX_REQUIRED="manual"
+inherit cmake flag-o-matic virtualx xdg
 
 QT6_PV="6.6.1"
 QT5_PV="5.2.0"
@@ -30,7 +31,7 @@ HOMEPAGE="
 "
 LICENSE="LGPL-2.1 GPL-2 GPL-3"
 SLOT="0"
-IUSE+=" X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland yubikey"
+IUSE+=" X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland xclip yubikey"
 RESTRICT="
 	!test? (
 		test
@@ -42,6 +43,11 @@ REQUIRED_USE="
 	)
 	qt5compat? (
 		qt6
+	)
+	test? (
+		X? (
+			xclip
+		)
 	)
 	^^ (
 		qt5
@@ -95,6 +101,9 @@ RDEPEND="
 			x11-libs/libX11
 			x11-libs/libxcb
 		)
+		xclip? (
+			x11-misc/xclip
+		)
 	)
 	yubikey? (
 		dev-libs/libusb:1
@@ -119,6 +128,15 @@ BDEPEND="
 		>=dev-qt/qttools-${QT6_PV}:6[linguist]
 		X? (
 			virtual/pkgconfig
+		)
+	)
+	test? (
+		wayland? (
+			>=gui-libs/wlroots-0.15.1-r1[tinywl]
+			x11-misc/xkeyboard-config
+		)
+		X? (
+			${VIRTUALX_DEPEND}
 		)
 	)
 "
@@ -267,6 +285,39 @@ src_configure() {
 		mycmakeargs+=( -DOVERRIDE_VERSION="${PV/_/-}" )
 	fi
 	cmake_src_configure
+}
+
+virtwl() {
+	debug-print-function ${FUNCNAME} "$@"
+
+        [[ $# -lt 1 ]] && die "${FUNCNAME} needs at least one argument"
+        [[ -n $XDG_RUNTIME_DIR ]] || die "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
+        tinywl -h >/dev/null || die 'tinywl -h failed'
+
+        # TODO: don't run addpredict in utility function. WLR_RENDERER=pixman doesn't work
+        addpredict /dev/dri
+        local VIRTWL VIRTWL_PID
+        coproc VIRTWL { WLR_BACKENDS=headless exec tinywl -s 'echo $WAYLAND_DISPLAY; read _; kill $PPID'; }
+        local -x WAYLAND_DISPLAY
+        read WAYLAND_DISPLAY <&${VIRTWL[0]}
+
+        debug-print "${FUNCNAME}: $@"
+        "$@"
+        local r=$?
+
+        [[ -n $VIRTWL_PID ]] || die "tinywl exited unexpectedly"
+        exec {VIRTWL[0]}<&- {VIRTWL[1]}>&-
+        return $r
+}
+
+src_test() {
+	cd "${BUILD_DIR}" || die
+	if use X ; then
+		virtx ctest -j 1 --test-load 4
+	fi
+	if use wayland ; then
+		virtwl ctest -j 1 --test-load 4
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
