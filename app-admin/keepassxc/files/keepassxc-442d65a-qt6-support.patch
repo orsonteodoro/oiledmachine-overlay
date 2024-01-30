@@ -6140,27 +6140,27 @@ diff -urpN keepassxc-9999.orig/src/core/UrlTools.cpp keepassxc-9999/src/core/Url
 +#if defined(WITH_XC_NSL)
 +    if (TopLevelDomain::isLeftToRight(host)) {
 +        // Support https://s0.s1.s2.
-+#warning "Hebrew support is incomplete"
++#warning "Support for Hebrew domain names are incomplete."
 +        // Remove the top level domain part from the hostname, e.g. https://דוגמא.כולנו.ישראל -> https://דוגמא.כולנו
-+        host.chop(tld.length());
++        host.chop(tld.length() + 1);
 +        // Split the URL and select the last part, e.g. https://another.example -> example
 +        baseDomain = host.split('.').first();
 +
 +        // Append the top level domain back/front to the URL, e.g. example -> example.co.uk
 +        // Append r0 for https://r2.r1 > https://r2.r1.r0
-+        baseDomain.append(tld);
++        baseDomain.append(tld + QString("."));
 +
 +        // Pre-append s0 for https://s1.s2 > https://s0.s1.s2
 +    } else {
 +        // Support https://.r2.r1.r0
 +        // Remove the top level domain part from the hostname, e.g. https://another.example.co.uk -> https://another.example
-+        host.chop(tld.length());
++        host.chop(tld.length() + 1);
 +        // Split the URL and select the last part, e.g. https://another.example -> example
 +        baseDomain = host.split('.').last();
 +
 +        // Append the top level domain back/front to the URL, e.g. example -> example.co.uk
 +        // Append r0 for https://r2.r1 > https://r2.r1.r0
-+        baseDomain.append(tld);
++        baseDomain.append(QString(".") + tld);
 +    }
 +#elif defined(WITH_XC_PSL)
 +    // Support https://.r2.r1.r0
