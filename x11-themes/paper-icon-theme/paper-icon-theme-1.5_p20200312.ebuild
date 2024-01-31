@@ -16,7 +16,7 @@ LICENSE="
 	GPL-3
 "
 BDEPEND+="
-	>=dev-util/meson-0.40
+	>=dev-build/meson-0.40
 "
 SLOT="0"
 SRC_URI="
