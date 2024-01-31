@@ -296,7 +296,7 @@ PLUGINS_RDEPEND="
 		sys-power/acpi
 	)
 	omz_plugins_bazel? (
-		dev-util/bazel
+		dev-build/bazel
 	)
 	omz_plugins_bedtools? (
 		sci-biology/bedtools
