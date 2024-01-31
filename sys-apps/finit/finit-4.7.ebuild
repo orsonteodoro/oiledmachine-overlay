@@ -105,7 +105,7 @@ DEPEND+="
 	sys-kernel/linux-headers
 "
 BDEPEND+="
-	>=sys-devel/autoconf-2.71
+	>=dev-build/autoconf-2.71
 	>=sys-devel/automake-1.16.5
 	>=sys-devel/gcc-11.2.0
 	>=dev-build/make-4.3
