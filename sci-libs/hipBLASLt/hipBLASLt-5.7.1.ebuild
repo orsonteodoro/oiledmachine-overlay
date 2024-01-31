@@ -121,7 +121,7 @@ BDEPEND="
 	>=dev-util/cmake-3.16.8
 	dev-python/pip[${PYTHON_USEDEP}]
 	dev-python/virtualenv[${PYTHON_USEDEP}]
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="test"
 PATCHES=(
