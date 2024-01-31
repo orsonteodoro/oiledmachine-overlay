@@ -92,14 +92,14 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
 	)
 "
 BDEPEND="
 	>=dev-util/cmake-3.10.2
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 
 RESTRICT="
