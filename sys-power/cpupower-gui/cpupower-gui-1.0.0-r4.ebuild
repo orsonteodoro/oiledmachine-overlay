@@ -41,7 +41,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-util/meson-0.50
+	>=dev-build/meson-0.50
 	dev-util/ninja
 	virtual/pkgconfig
 "
