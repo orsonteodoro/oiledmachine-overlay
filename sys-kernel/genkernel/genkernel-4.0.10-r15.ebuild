@@ -207,7 +207,7 @@ RDEPEND+="
 	app-portage/elt-patches
 	sys-apps/sandbox
 	sys-devel/autoconf
-	sys-devel/autoconf-archive
+	dev-build/autoconf-archive
 	sys-devel/automake
 	sys-devel/libtool
 	virtual/pkgconfig
