@@ -112,7 +112,7 @@ BDEPEND="
 	dev-util/intltool
 	dev-vcs/git
 	sys-devel/gettext
-	sys-devel/make
+	dev-build/make
 	virtual/pkgconfig
 	x11-misc/shared-mime-info
 	kernel_Darwin? (
