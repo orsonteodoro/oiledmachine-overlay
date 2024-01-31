@@ -44,7 +44,7 @@ RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	>=dev-util/meson-0.49
+	>=dev-build/meson-0.49
 	>=dev-util/ninja-1.10.2
 	>=sys-devel/binutils-2.35.2
 	>=sys-devel/gcc-11.3.1
