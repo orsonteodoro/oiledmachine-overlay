@@ -46,7 +46,7 @@ BDEPEND+="
 	dev-util/strace
 	sys-apps/file
 	sys-apps/util-linux
-	sys-devel/autoconf
+	dev-build/autoconf
 	sys-devel/automake
 	sys-devel/libtool
 "
