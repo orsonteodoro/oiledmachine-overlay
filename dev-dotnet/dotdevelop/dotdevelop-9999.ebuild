@@ -90,7 +90,7 @@ BDEPEND="
 	>=dev-dotnet/mono-msbuild-bin-16.10.1
 	>=dev-util/cmake-2.8.12.2
 	>=dev-vcs/git-2.25.1
-	>=sys-devel/autoconf-2.53
+	>=dev-build/autoconf-2.53
 	>=sys-devel/automake-1.10
 	>=dev-build/make-4.2.1
 	app-crypt/gnupg
