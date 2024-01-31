@@ -245,7 +245,7 @@ DEPEND+="
 BDEPEND="
 	${CDEPEND}
 	${PYTHON_DEPS}
-	dev-util/scons
+	dev-build/scons
 "
 PATCHES=(
 	"${FILESDIR}/godot-3.4.4-set-ccache-dir.patch"
