@@ -27,7 +27,7 @@ RDEPEND+="
 BDEPEND+="
 	dev-python/scikit-build[${PYTHON_USEDEP}]
 	dev-util/cmake
-	dev-util/ninja
+	dev-build/ninja
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
