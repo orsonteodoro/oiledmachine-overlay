@@ -675,7 +675,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=net-libs/nodejs-14.18.0:${NODE_VERSION}
 	>=sys-devel/gcc-11.2.0
-	>=sys-devel/make-4.3
+	>=dev-build/make-4.3
 	sys-apps/yarn:1
 	virtual/pkgconfig
 "
