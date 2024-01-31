@@ -683,7 +683,7 @@ DEPEND+="
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
-	=dev-util/bazel-$(ver_cut 1 ${BAZEL_PV})*
+	=dev-build/bazel-$(ver_cut 1 ${BAZEL_PV})*
 	dev-java/maven-bin
 	dev-vcs/git
 	virtual/jdk:${JAVA_SLOT}
@@ -911,8 +911,8 @@ setup_bazel_slot() {
 	local has_multislot_bazel=0
 	local slot
 	for slot in 5 ; do
-		if has_version "dev-util/bazel:${slot}" ; then
-einfo "Detected dev-util/bazel:${slot} (multislot)"
+		if has_version "dev-build/bazel:${slot}" ; then
+einfo "Detected dev-build/bazel:${slot} (multislot)"
 			ln -sf \
 				"${ESYSROOT}/usr/bin/bazel-${slot}" \
 				"${WORKDIR}/bin/bazel" \
