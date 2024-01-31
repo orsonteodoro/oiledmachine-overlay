@@ -246,7 +246,7 @@ CDEPEND_GCC="
 BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
-	dev-util/scons
+	dev-build/scons
 	mono? (
 		=dev-games/godot-mono-runtime-mingw32-$(ver_cut 1-2 ${MONO_PV})*
 		dev-games/godot-editor:${SLOT}[mono]
