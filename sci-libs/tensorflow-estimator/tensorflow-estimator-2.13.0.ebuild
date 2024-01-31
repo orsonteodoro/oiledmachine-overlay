@@ -38,7 +38,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/bazel-5.3.0
+	>=dev-build/bazel-5.3.0
 	app-arch/unzip
 	dev-java/java-config
 "
