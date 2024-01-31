@@ -35,7 +35,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-0.29.1[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-vcs/git-2.25.1
 	>=sys-devel/m4-1.4.18
-	>=sys-devel/make-4.2.1
+	>=dev-build/make-4.2.1
 	>=virtual/libelf-3
 	dev-python/future
 "
