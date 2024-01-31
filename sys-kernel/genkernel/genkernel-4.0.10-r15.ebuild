@@ -208,7 +208,7 @@ RDEPEND+="
 	sys-apps/sandbox
 	dev-build/autoconf
 	dev-build/autoconf-archive
-	sys-devel/automake
+	dev-build/automake
 	sys-devel/libtool
 	virtual/pkgconfig
 	cfi? (
