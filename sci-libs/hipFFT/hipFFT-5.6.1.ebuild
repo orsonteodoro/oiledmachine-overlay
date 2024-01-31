@@ -98,7 +98,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="test mirror" # The distro mirrored copy is wrong
 S="${WORKDIR}/hipFFT-rocm-${PV}"
