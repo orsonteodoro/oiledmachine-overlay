@@ -208,7 +208,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-util/gtk-doc-am-1.32
 	>=dev-build/meson-0.61.2
-	>=dev-util/ninja-1.10.1
+	>=dev-build/ninja-1.10.1
 	virtual/pkgconfig
 	doxygen? (
 		>=app-doc/doxygen-1.9.1
