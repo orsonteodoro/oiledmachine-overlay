@@ -401,7 +401,7 @@ BDEPEND+="
 	${CDEPEND}
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-${PKGCONF_PV}[${MULTILIB_USEDEP},pkg-config(+)]
-	dev-util/scons
+	dev-build/scons
 	lld? (
 		sys-devel/lld
 	)
