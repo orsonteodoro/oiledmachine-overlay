@@ -9559,7 +9559,7 @@ diff -urpN keepassxc-2.7.6.orig/src/core/TopLevelDomain.cpp.in keepassxc-2.7.6/s
 +        return r0;
 +    } else if (domainParts.size() == 1) {
 +        // For testing only.  Unrealistic.
-+        return 0
++        return r0;
 +    }
 +    return QString("");
 +}
