@@ -53,7 +53,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-util/cmake-3.22.1
 	>=dev-build/meson-1.0.0
-	>=dev-util/ninja-1.10.1
+	>=dev-build/ninja-1.10.1
 	>=net-misc/curl-7.81.0
 	>=sys-devel/gcc-${GCC_PV}
 	virtual/pkgconfig
