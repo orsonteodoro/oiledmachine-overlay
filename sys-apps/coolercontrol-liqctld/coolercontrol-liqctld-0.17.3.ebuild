@@ -42,7 +42,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/Nuitka-1.8.6[${PYTHON_USEDEP}]
 	>=dev-python/poetry-1.4.2[${PYTHON_USEDEP}]
-	>=sys-devel/make-4.2.1
+	>=dev-build/make-4.2.1
 "
 RESTRICT="mirror"
 
