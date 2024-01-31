@@ -34,7 +34,7 @@ BDEPEND+="
 	sys-apps/file
 	sys-apps/util-linux
 	dev-build/autoconf
-	sys-devel/automake
+	dev-build/automake
 	sys-devel/libtool
 "
 RESTRICT="mirror"
