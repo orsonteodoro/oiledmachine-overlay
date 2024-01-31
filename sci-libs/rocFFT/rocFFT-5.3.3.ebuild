@@ -107,7 +107,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
