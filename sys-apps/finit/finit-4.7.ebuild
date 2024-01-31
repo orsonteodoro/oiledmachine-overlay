@@ -106,7 +106,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-build/autoconf-2.71
-	>=sys-devel/automake-1.16.5
+	>=dev-build/automake-1.16.5
 	>=sys-devel/gcc-11.2.0
 	>=dev-build/make-4.3
 	virtual/pkgconfig
