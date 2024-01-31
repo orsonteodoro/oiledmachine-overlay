@@ -48,7 +48,7 @@ DEPEND="
 	>=dev-util/opencl-headers-2023.02.06
 "
 BDEPEND="
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
 		media-libs/glew
