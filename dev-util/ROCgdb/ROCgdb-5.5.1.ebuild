@@ -57,7 +57,7 @@ BDEPEND="
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-apps/texinfo
 	sys-devel/automake
-	sys-devel/make
+	dev-build/make
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
