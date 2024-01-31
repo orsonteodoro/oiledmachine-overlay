@@ -56,7 +56,7 @@ BDEPEND="
 	app-alternatives/yacc
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-apps/texinfo
-	sys-devel/automake
+	dev-build/automake
 	dev-build/make
 "
 PATCHES=(
