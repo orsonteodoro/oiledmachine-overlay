@@ -602,7 +602,7 @@ BDEPEND="
 	!python? (
 		dev-lang/python
 	)
-	>=dev-util/bazel-5.3.0
+	>=dev-build/bazel-5.3.0
 	app-arch/pigz
 	app-arch/unzip
 	dev-java/java-config
@@ -1346,7 +1346,7 @@ src_compile() {
 
 	local args=()
 
-	if has_version ">=dev-util/bazel-6" ; then
+	if has_version ">=dev-build/bazel-6" ; then
 		# See https://github.com/tensorflow/tensorflow/issues/58825
 		args+=( --incompatible_fix_package_group_reporoot_syntax=false )
 	fi
