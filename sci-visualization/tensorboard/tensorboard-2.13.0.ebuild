@@ -116,8 +116,8 @@ BDEPEND="
 		)
 	')
 	(
-		<dev-util/bazel-7
-		>=dev-util/bazel-4.2.2
+		<dev-build/bazel-7
+		>=dev-build/bazel-4.2.2
 	)
 	app-arch/unzip
 	dev-java/java-config
@@ -285,8 +285,8 @@ src_configure() {
 	local has_multislot_bazel=0
 	local slot
 	for slot in 6 5 4 ; do
-		if has_version "dev-util/bazel:${slot}" ; then
-einfo "Detected dev-util/bazel:${slot} (multislot)"
+		if has_version "dev-build/bazel:${slot}" ; then
+einfo "Detected dev-build/bazel:${slot} (multislot)"
 			ln -sf \
 				"${ESYSROOT}/usr/bin/bazel-${slot}" \
 				"${WORKDIR}/bin/bazel" \
