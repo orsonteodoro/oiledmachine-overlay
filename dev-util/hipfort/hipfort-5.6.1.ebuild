@@ -35,7 +35,7 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-2.8.12
 	>=sys-devel/gcc-7.5.0[fortran]
-	~dev-util/rocm-cmake-${PV}
+	~dev-build/rocm-cmake-${PV}
 "
 RESTRICT="test"
 S="${WORKDIR}/${PN}-rocm-${PV}"
