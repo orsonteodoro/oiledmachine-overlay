@@ -110,7 +110,7 @@ RDEPEND+="
 		dev-util/cmake
 	)
 	make? (
-		sys-devel/make
+		dev-build/make
 	)
 	meson? (
 		dev-util/meson
