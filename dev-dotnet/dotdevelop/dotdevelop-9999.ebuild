@@ -92,7 +92,7 @@ BDEPEND="
 	>=dev-vcs/git-2.25.1
 	>=sys-devel/autoconf-2.53
 	>=sys-devel/automake-1.10
-	>=sys-devel/make-4.2.1
+	>=dev-build/make-4.2.1
 	app-crypt/gnupg
 	app-shells/bash
 	dev-util/intltool
