@@ -31,10 +31,22 @@ HOMEPAGE="
 "
 LICENSE="LGPL-2.1 GPL-2 GPL-3"
 SLOT="0"
-IUSE+=" X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland xclip yubikey"
+IUSE+=" X autotype browser doc keeshare +network nsl +psl qt5 qt5compat qt6 test wayland xclip yubikey"
 RESTRICT="
 	!test? (
 		test
+	)
+	browser? (
+		^^ (
+			nsl
+			psl
+		)
+	)
+	network? (
+		^^ (
+			nsl
+			psl
+		)
 	)
 "
 REQUIRED_USE="
@@ -273,6 +285,8 @@ src_configure() {
 		-DWITH_XC_FDOSECRETS=ON
 		-DWITH_XC_KEESHARE="$(usex keeshare)"
 		-DWITH_XC_NETWORKING="$(usex network)"
+		-DWITH_XC_NSL="$(usex nsl)"
+		-DWITH_XC_PSL="$(usex psl)"
 		-DWITH_XC_SSHAGENT=ON
 		-DWITH_XC_UPDATECHECK=OFF
 		-DWITH_XC_YUBIKEY="$(usex yubikey)"

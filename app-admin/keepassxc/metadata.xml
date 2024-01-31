@@ -34,6 +34,19 @@
     <flag name="network">
       Enable network support
     </flag>
+    <flag name="nsl">
+      Use the New Suffix List (NSL) for icon downloader or browser.
+      Lookup is O(1).  Supports both right-to-left, left-to-right domains.
+      Fewer top level domain suffixes.
+    </flag>
+    <flag name="psl">
+      Use the Public Suffix List (NSL) for icon downloader or browser.
+      Lookup is O(log N).  Supports only right-to-left domains.  More top level
+      domain suffixes.
+    </flag>
+    <flag name="xclip">
+      Support copy-paste for cli in X
+    </flag>
     <flag name="yubikey">
       Enable database unlocking via hardware keys supporting YubiKey-style
       HMAC-SHA1 protocol
