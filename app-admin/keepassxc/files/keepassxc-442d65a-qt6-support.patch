@@ -9291,7 +9291,7 @@ diff -urpN keepassxc-9999.orig/src/core/Tools.cpp keepassxc-9999/src/core/Tools.
 diff -urpN keepassxc-9999.orig/src/core/TopLevelDomain.cpp.in keepassxc-9999/src/core/TopLevelDomain.cpp.in
 --- keepassxc-9999.orig/src/core/TopLevelDomain.cpp.in	1969-12-31 16:00:00.000000000 -0800
 +++ keepassxc-9999/src/core/TopLevelDomain.cpp.in	2024-01-30 17:04:46.033465616 -0800
-@@ -0,0 +1,251 @@
+@@ -0,0 +1,254 @@
 +/*
 + *  Copyright (C) 2024 Orson Teodoro
 + *  Copyright (C) 2019 KeePassXC Team <team@keepassxc.org>
@@ -9538,6 +9538,9 @@ diff -urpN keepassxc-9999.orig/src/core/TopLevelDomain.cpp.in keepassxc-9999/src
 +    } else if (domainParts.size() >= 2) {
 +        // Allow generic top level domains
 +        return r0;
++    } else if (domainParts.size() == 1) {
++        // For testing only.  Unrealistic.
++        return 0
 +    }
 +    return QString("");
 +}
