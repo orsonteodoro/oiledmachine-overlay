@@ -45,7 +45,7 @@ BDEPEND+="
 		>=dev-python/rapidfuzz_capi-1.0.5[${PYTHON_USEDEP}]
 		>=dev-python/scikit-build-0.15.0[${PYTHON_USEDEP}]
 		>=dev-util/cmake-3.22.5
-		>=dev-util/ninja-1.10.2.3
+		>=dev-build/ninja-1.10.2.3
 	)
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
