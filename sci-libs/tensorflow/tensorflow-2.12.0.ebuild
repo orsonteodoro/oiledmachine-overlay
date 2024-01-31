@@ -435,7 +435,7 @@ gen_rocm_rdepend() {
 
 			~dev-libs/rocm-comgr-${pv}:${s}
 			~dev-libs/rocr-runtime-${pv}:${s}
-			~dev-util/rocm-cmake-${pv}:${s}
+			~dev-build/rocm-cmake-${pv}:${s}
 			~dev-util/rocm-smi-${pv}:${s}
 			~dev-util/rocminfo-${pv}:${s}
 			~dev-util/Tensile-${pv}:${s}
