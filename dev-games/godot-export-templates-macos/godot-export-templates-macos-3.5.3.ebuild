@@ -166,7 +166,7 @@ EXPECTED_XCODE_SDK_MIN_VERSION_X86_64="10.12"
 BDEPEND+="
 	${PYTHON_DEPS}
 	app-arch/zip
-	dev-util/scons
+	dev-build/scons
 	mono? (
 		dev-games/godot-editor:${SLOT}[mono]
 		=dev-games/godot-mono-runtime-macos-$(ver_cut 1-2 ${MONO_PV})*
