@@ -19,8 +19,8 @@
 # qt6 + qt5compat - done
 
 diff -urpN keepassxc-9999.orig/CMakeLists.txt keepassxc-9999/CMakeLists.txt
---- keepassxc-9999.orig/CMakeLists.txt	2024-01-31 02:46:30.591811192 -0800
-+++ keepassxc-9999/CMakeLists.txt	2024-01-31 02:49:18.526641751 -0800
+--- keepassxc-9999.orig/CMakeLists.txt	2024-01-31 04:01:17.380364590 -0800
++++ keepassxc-9999/CMakeLists.txt	2024-01-31 04:01:36.564228071 -0800
 @@ -58,6 +58,8 @@ option(WITH_XC_YUBIKEY "Include YubiKey
  option(WITH_XC_SSHAGENT "Include SSH agent support." OFF)
  option(WITH_XC_KEESHARE "Sharing integration with KeeShare" OFF)
@@ -197,7 +197,7 @@ diff -urpN keepassxc-9999.orig/CMakeLists.txt keepassxc-9999/CMakeLists.txt
  # Debian sets the build type to None for package builds.
 diff -urpN keepassxc-9999.orig/data/2-letter-countries keepassxc-9999/data/2-letter-countries
 --- keepassxc-9999.orig/data/2-letter-countries	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/2-letter-countries	2024-01-31 02:49:18.530641722 -0800
++++ keepassxc-9999/data/2-letter-countries	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,249 @@
 +﻿af
 +ax
@@ -450,7 +450,7 @@ diff -urpN keepassxc-9999.orig/data/2-letter-countries keepassxc-9999/data/2-let
 +zw
 diff -urpN keepassxc-9999.orig/data/2-part-domains keepassxc-9999/data/2-part-domains
 --- keepassxc-9999.orig/data/2-part-domains	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/2-part-domains	2024-01-31 02:49:18.530641722 -0800
++++ keepassxc-9999/data/2-part-domains	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,2314 @@
 +﻿
 +
@@ -2768,7 +2768,7 @@ diff -urpN keepassxc-9999.orig/data/2-part-domains keepassxc-9999/data/2-part-do
 +org.zw
 diff -urpN keepassxc-9999.orig/data/2-part-domains-left-to-right keepassxc-9999/data/2-part-domains-left-to-right
 --- keepassxc-9999.orig/data/2-part-domains-left-to-right	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/2-part-domains-left-to-right	2024-01-31 02:49:18.530641722 -0800
++++ keepassxc-9999/data/2-part-domains-left-to-right	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,6 @@
 +﻿
 +
@@ -2778,7 +2778,7 @@ diff -urpN keepassxc-9999.orig/data/2-part-domains-left-to-right keepassxc-9999/
 +ישוב.ישראל
 diff -urpN keepassxc-9999.orig/data/2-part-emojis keepassxc-9999/data/2-part-emojis
 --- keepassxc-9999.orig/data/2-part-emojis	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/2-part-emojis	2024-01-31 02:49:18.530641722 -0800
++++ keepassxc-9999/data/2-part-emojis	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,12 @@
 +﻿
 +cf
@@ -2794,7 +2794,7 @@ diff -urpN keepassxc-9999.orig/data/2-part-emojis keepassxc-9999/data/2-part-emo
 +ws
 diff -urpN keepassxc-9999.orig/data/3-part-domains keepassxc-9999/data/3-part-domains
 --- keepassxc-9999.orig/data/3-part-domains	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/3-part-domains	2024-01-31 02:49:18.530641722 -0800
++++ keepassxc-9999/data/3-part-domains	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,26 @@
 +﻿
 +blogspot.com.ar
@@ -2824,13 +2824,13 @@ diff -urpN keepassxc-9999.orig/data/3-part-domains keepassxc-9999/data/3-part-do
 +wcape.school.za
 diff -urpN keepassxc-9999.orig/data/3-part-domains-left-to-right keepassxc-9999/data/3-part-domains-left-to-right
 --- keepassxc-9999.orig/data/3-part-domains-left-to-right	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/3-part-domains-left-to-right	2024-01-31 02:49:18.530641722 -0800
++++ keepassxc-9999/data/3-part-domains-left-to-right	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1 @@
 +﻿
 \ No newline at end of file
 diff -urpN keepassxc-9999.orig/data/3-part-emojis keepassxc-9999/data/3-part-emojis
 --- keepassxc-9999.orig/data/3-part-emojis	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/3-part-emojis	2024-01-31 02:49:18.534641695 -0800
++++ keepassxc-9999/data/3-part-emojis	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,15 @@
 +﻿
 +radio.am
@@ -2849,7 +2849,7 @@ diff -urpN keepassxc-9999.orig/data/3-part-emojis keepassxc-9999/data/3-part-emo
 +org.ws
 diff -urpN keepassxc-9999.orig/data/cities-jp keepassxc-9999/data/cities-jp
 --- keepassxc-9999.orig/data/cities-jp	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/cities-jp	2024-01-31 02:49:18.534641695 -0800
++++ keepassxc-9999/data/cities-jp	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,1613 @@
 +﻿Abashiri
 +Abiko
@@ -4466,7 +4466,7 @@ diff -urpN keepassxc-9999.orig/data/cities-jp keepassxc-9999/data/cities-jp
 +龍ヶ崎市
 diff -urpN keepassxc-9999.orig/data/subdivisions-jp keepassxc-9999/data/subdivisions-jp
 --- keepassxc-9999.orig/data/subdivisions-jp	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/subdivisions-jp	2024-01-31 02:49:18.534641695 -0800
++++ keepassxc-9999/data/subdivisions-jp	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,71 @@
 +﻿
 +aichi
@@ -4541,7 +4541,7 @@ diff -urpN keepassxc-9999.orig/data/subdivisions-jp keepassxc-9999/data/subdivis
 +yamanasi
 diff -urpN keepassxc-9999.orig/data/subdivisions-us keepassxc-9999/data/subdivisions-us
 --- keepassxc-9999.orig/data/subdivisions-us	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/subdivisions-us	2024-01-31 02:49:18.534641695 -0800
++++ keepassxc-9999/data/subdivisions-us	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,49 @@
 +﻿ak
 +al
@@ -4594,7 +4594,7 @@ diff -urpN keepassxc-9999.orig/data/subdivisions-us keepassxc-9999/data/subdivis
 +wv
 diff -urpN keepassxc-9999.orig/data/towns-jp keepassxc-9999/data/towns-jp
 --- keepassxc-9999.orig/data/towns-jp	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/towns-jp	2024-01-31 02:49:18.566641471 -0800
++++ keepassxc-9999/data/towns-jp	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,1421 @@
 +﻿Abira
 +Abu
@@ -6019,7 +6019,7 @@ diff -urpN keepassxc-9999.orig/data/towns-jp keepassxc-9999/data/towns-jp
 +龍郷町
 diff -urpN keepassxc-9999.orig/data/villages-jp keepassxc-9999/data/villages-jp
 --- keepassxc-9999.orig/data/villages-jp	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/data/villages-jp	2024-01-31 02:49:18.566641471 -0800
++++ keepassxc-9999/data/villages-jp	2024-01-31 04:01:36.564228071 -0800
 @@ -0,0 +1,358 @@
 +﻿Achi
 +Aguni
@@ -6379,9 +6379,713 @@ diff -urpN keepassxc-9999.orig/data/villages-jp keepassxc-9999/data/villages-jp
 +鶴居村
 +麻績村
 +黒滝村
+diff -urpN keepassxc-9999.orig/LICENSE.CC-BY-SA-4.0 keepassxc-9999/LICENSE.CC-BY-SA-4.0
+--- keepassxc-9999.orig/LICENSE.CC-BY-SA-4.0	1969-12-31 16:00:00.000000000 -0800
++++ keepassxc-9999/LICENSE.CC-BY-SA-4.0	2018-06-23 14:39:21.000000000 -0700
+@@ -0,0 +1,427 @@
++Attribution-ShareAlike 4.0 International
++
++=======================================================================
++
++Creative Commons Corporation ("Creative Commons") is not a law firm and
++does not provide legal services or legal advice. Distribution of
++Creative Commons public licenses does not create a lawyer-client or
++other relationship. Creative Commons makes its licenses and related
++information available on an "as-is" basis. Creative Commons gives no
++warranties regarding its licenses, any material licensed under their
++terms and conditions, or any related information. Creative Commons
++disclaims all liability for damages resulting from their use to the
++fullest extent possible.
++
++Using Creative Commons Public Licenses
++
++Creative Commons public licenses provide a standard set of terms and
++conditions that creators and other rights holders may use to share
++original works of authorship and other material subject to copyright
++and certain other rights specified in the public license below. The
++following considerations are for informational purposes only, are not
++exhaustive, and do not form part of our licenses.
++
++     Considerations for licensors: Our public licenses are
++     intended for use by those authorized to give the public
++     permission to use material in ways otherwise restricted by
++     copyright and certain other rights. Our licenses are
++     irrevocable. Licensors should read and understand the terms
++     and conditions of the license they choose before applying it.
++     Licensors should also secure all rights necessary before
++     applying our licenses so that the public can reuse the
++     material as expected. Licensors should clearly mark any
++     material not subject to the license. This includes other CC-
++     licensed material, or material used under an exception or
++     limitation to copyright. More considerations for licensors:
++	wiki.creativecommons.org/Considerations_for_licensors
++
++     Considerations for the public: By using one of our public
++     licenses, a licensor grants the public permission to use the
++     licensed material under specified terms and conditions. If
++     the licensor's permission is not necessary for any reason--for
++     example, because of any applicable exception or limitation to
++     copyright--then that use is not regulated by the license. Our
++     licenses grant only permissions under copyright and certain
++     other rights that a licensor has authority to grant. Use of
++     the licensed material may still be restricted for other
++     reasons, including because others have copyright or other
++     rights in the material. A licensor may make special requests,
++     such as asking that all changes be marked or described.
++     Although not required by our licenses, you are encouraged to
++     respect those requests where reasonable. More considerations
++     for the public:
++	wiki.creativecommons.org/Considerations_for_licensees
++
++=======================================================================
++
++Creative Commons Attribution-ShareAlike 4.0 International Public
++License
++
++By exercising the Licensed Rights (defined below), You accept and agree
++to be bound by the terms and conditions of this Creative Commons
++Attribution-ShareAlike 4.0 International Public License ("Public
++License"). To the extent this Public License may be interpreted as a
++contract, You are granted the Licensed Rights in consideration of Your
++acceptance of these terms and conditions, and the Licensor grants You
++such rights in consideration of benefits the Licensor receives from
++making the Licensed Material available under these terms and
++conditions.
++
++
++Section 1 -- Definitions.
++
++  a. Adapted Material means material subject to Copyright and Similar
++     Rights that is derived from or based upon the Licensed Material
++     and in which the Licensed Material is translated, altered,
++     arranged, transformed, or otherwise modified in a manner requiring
++     permission under the Copyright and Similar Rights held by the
++     Licensor. For purposes of this Public License, where the Licensed
++     Material is a musical work, performance, or sound recording,
++     Adapted Material is always produced where the Licensed Material is
++     synched in timed relation with a moving image.
++
++  b. Adapter's License means the license You apply to Your Copyright
++     and Similar Rights in Your contributions to Adapted Material in
++     accordance with the terms and conditions of this Public License.
++
++  c. BY-SA Compatible License means a license listed at
++     creativecommons.org/compatiblelicenses, approved by Creative
++     Commons as essentially the equivalent of this Public License.
++
++  d. Copyright and Similar Rights means copyright and/or similar rights
++     closely related to copyright including, without limitation,
++     performance, broadcast, sound recording, and Sui Generis Database
++     Rights, without regard to how the rights are labeled or
++     categorized. For purposes of this Public License, the rights
++     specified in Section 2(b)(1)-(2) are not Copyright and Similar
++     Rights.
++
++  e. Effective Technological Measures means those measures that, in the
++     absence of proper authority, may not be circumvented under laws
++     fulfilling obligations under Article 11 of the WIPO Copyright
++     Treaty adopted on December 20, 1996, and/or similar international
++     agreements.
++
++  f. Exceptions and Limitations means fair use, fair dealing, and/or
++     any other exception or limitation to Copyright and Similar Rights
++     that applies to Your use of the Licensed Material.
++
++  g. License Elements means the license attributes listed in the name
++     of a Creative Commons Public License. The License Elements of this
++     Public License are Attribution and ShareAlike.
++
++  h. Licensed Material means the artistic or literary work, database,
++     or other material to which the Licensor applied this Public
++     License.
++
++  i. Licensed Rights means the rights granted to You subject to the
++     terms and conditions of this Public License, which are limited to
++     all Copyright and Similar Rights that apply to Your use of the
++     Licensed Material and that the Licensor has authority to license.
++
++  j. Licensor means the individual(s) or entity(ies) granting rights
++     under this Public License.
++
++  k. Share means to provide material to the public by any means or
++     process that requires permission under the Licensed Rights, such
++     as reproduction, public display, public performance, distribution,
++     dissemination, communication, or importation, and to make material
++     available to the public including in ways that members of the
++     public may access the material from a place and at a time
++     individually chosen by them.
++
++  l. Sui Generis Database Rights means rights other than copyright
++     resulting from Directive 96/9/EC of the European Parliament and of
++     the Council of 11 March 1996 on the legal protection of databases,
++     as amended and/or succeeded, as well as other essentially
++     equivalent rights anywhere in the world.
++
++  m. You means the individual or entity exercising the Licensed Rights
++     under this Public License. Your has a corresponding meaning.
++
++
++Section 2 -- Scope.
++
++  a. License grant.
++
++       1. Subject to the terms and conditions of this Public License,
++          the Licensor hereby grants You a worldwide, royalty-free,
++          non-sublicensable, non-exclusive, irrevocable license to
++          exercise the Licensed Rights in the Licensed Material to:
++
++            a. reproduce and Share the Licensed Material, in whole or
++               in part; and
++
++            b. produce, reproduce, and Share Adapted Material.
++
++       2. Exceptions and Limitations. For the avoidance of doubt, where
++          Exceptions and Limitations apply to Your use, this Public
++          License does not apply, and You do not need to comply with
++          its terms and conditions.
++
++       3. Term. The term of this Public License is specified in Section
++          6(a).
++
++       4. Media and formats; technical modifications allowed. The
++          Licensor authorizes You to exercise the Licensed Rights in
++          all media and formats whether now known or hereafter created,
++          and to make technical modifications necessary to do so. The
++          Licensor waives and/or agrees not to assert any right or
++          authority to forbid You from making technical modifications
++          necessary to exercise the Licensed Rights, including
++          technical modifications necessary to circumvent Effective
++          Technological Measures. For purposes of this Public License,
++          simply making modifications authorized by this Section 2(a)
++          (4) never produces Adapted Material.
++
++       5. Downstream recipients.
++
++            a. Offer from the Licensor -- Licensed Material. Every
++               recipient of the Licensed Material automatically
++               receives an offer from the Licensor to exercise the
++               Licensed Rights under the terms and conditions of this
++               Public License.
++
++            b. Additional offer from the Licensor -- Adapted Material.
++               Every recipient of Adapted Material from You
++               automatically receives an offer from the Licensor to
++               exercise the Licensed Rights in the Adapted Material
++               under the conditions of the Adapter's License You apply.
++
++            c. No downstream restrictions. You may not offer or impose
++               any additional or different terms or conditions on, or
++               apply any Effective Technological Measures to, the
++               Licensed Material if doing so restricts exercise of the
++               Licensed Rights by any recipient of the Licensed
++               Material.
++
++       6. No endorsement. Nothing in this Public License constitutes or
++          may be construed as permission to assert or imply that You
++          are, or that Your use of the Licensed Material is, connected
++          with, or sponsored, endorsed, or granted official status by,
++          the Licensor or others designated to receive attribution as
++          provided in Section 3(a)(1)(A)(i).
++
++  b. Other rights.
++
++       1. Moral rights, such as the right of integrity, are not
++          licensed under this Public License, nor are publicity,
++          privacy, and/or other similar personality rights; however, to
++          the extent possible, the Licensor waives and/or agrees not to
++          assert any such rights held by the Licensor to the limited
++          extent necessary to allow You to exercise the Licensed
++          Rights, but not otherwise.
++
++       2. Patent and trademark rights are not licensed under this
++          Public License.
++
++       3. To the extent possible, the Licensor waives any right to
++          collect royalties from You for the exercise of the Licensed
++          Rights, whether directly or through a collecting society
++          under any voluntary or waivable statutory or compulsory
++          licensing scheme. In all other cases the Licensor expressly
++          reserves any right to collect such royalties.
++
++
++Section 3 -- License Conditions.
++
++Your exercise of the Licensed Rights is expressly made subject to the
++following conditions.
++
++  a. Attribution.
++
++       1. If You Share the Licensed Material (including in modified
++          form), You must:
++
++            a. retain the following if it is supplied by the Licensor
++               with the Licensed Material:
++
++                 i. identification of the creator(s) of the Licensed
++                    Material and any others designated to receive
++                    attribution, in any reasonable manner requested by
++                    the Licensor (including by pseudonym if
++                    designated);
++
++                ii. a copyright notice;
++
++               iii. a notice that refers to this Public License;
++
++                iv. a notice that refers to the disclaimer of
++                    warranties;
++
++                 v. a URI or hyperlink to the Licensed Material to the
++                    extent reasonably practicable;
++
++            b. indicate if You modified the Licensed Material and
++               retain an indication of any previous modifications; and
++
++            c. indicate the Licensed Material is licensed under this
++               Public License, and include the text of, or the URI or
++               hyperlink to, this Public License.
++
++       2. You may satisfy the conditions in Section 3(a)(1) in any
++          reasonable manner based on the medium, means, and context in
++          which You Share the Licensed Material. For example, it may be
++          reasonable to satisfy the conditions by providing a URI or
++          hyperlink to a resource that includes the required
++          information.
++
++       3. If requested by the Licensor, You must remove any of the
++          information required by Section 3(a)(1)(A) to the extent
++          reasonably practicable.
++
++  b. ShareAlike.
++
++     In addition to the conditions in Section 3(a), if You Share
++     Adapted Material You produce, the following conditions also apply.
++
++       1. The Adapter's License You apply must be a Creative Commons
++          license with the same License Elements, this version or
++          later, or a BY-SA Compatible License.
++
++       2. You must include the text of, or the URI or hyperlink to, the
++          Adapter's License You apply. You may satisfy this condition
++          in any reasonable manner based on the medium, means, and
++          context in which You Share Adapted Material.
++
++       3. You may not offer or impose any additional or different terms
++          or conditions on, or apply any Effective Technological
++          Measures to, Adapted Material that restrict exercise of the
++          rights granted under the Adapter's License You apply.
++
++
++Section 4 -- Sui Generis Database Rights.
++
++Where the Licensed Rights include Sui Generis Database Rights that
++apply to Your use of the Licensed Material:
++
++  a. for the avoidance of doubt, Section 2(a)(1) grants You the right
++     to extract, reuse, reproduce, and Share all or a substantial
++     portion of the contents of the database;
++
++  b. if You include all or a substantial portion of the database
++     contents in a database in which You have Sui Generis Database
++     Rights, then the database in which You have Sui Generis Database
++     Rights (but not its individual contents) is Adapted Material,
++     including for purposes of Section 3(b); and
++
++  c. You must comply with the conditions in Section 3(a) if You Share
++     all or a substantial portion of the contents of the database.
++
++For the avoidance of doubt, this Section 4 supplements and does not
++replace Your obligations under this Public License where the Licensed
++Rights include other Copyright and Similar Rights.
++
++
++Section 5 -- Disclaimer of Warranties and Limitation of Liability.
++
++  a. UNLESS OTHERWISE SEPARATELY UNDERTAKEN BY THE LICENSOR, TO THE
++     EXTENT POSSIBLE, THE LICENSOR OFFERS THE LICENSED MATERIAL AS-IS
++     AND AS-AVAILABLE, AND MAKES NO REPRESENTATIONS OR WARRANTIES OF
++     ANY KIND CONCERNING THE LICENSED MATERIAL, WHETHER EXPRESS,
++     IMPLIED, STATUTORY, OR OTHER. THIS INCLUDES, WITHOUT LIMITATION,
++     WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR
++     PURPOSE, NON-INFRINGEMENT, ABSENCE OF LATENT OR OTHER DEFECTS,
++     ACCURACY, OR THE PRESENCE OR ABSENCE OF ERRORS, WHETHER OR NOT
++     KNOWN OR DISCOVERABLE. WHERE DISCLAIMERS OF WARRANTIES ARE NOT
++     ALLOWED IN FULL OR IN PART, THIS DISCLAIMER MAY NOT APPLY TO YOU.
++
++  b. TO THE EXTENT POSSIBLE, IN NO EVENT WILL THE LICENSOR BE LIABLE
++     TO YOU ON ANY LEGAL THEORY (INCLUDING, WITHOUT LIMITATION,
++     NEGLIGENCE) OR OTHERWISE FOR ANY DIRECT, SPECIAL, INDIRECT,
++     INCIDENTAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER LOSSES,
++     COSTS, EXPENSES, OR DAMAGES ARISING OUT OF THIS PUBLIC LICENSE OR
++     USE OF THE LICENSED MATERIAL, EVEN IF THE LICENSOR HAS BEEN
++     ADVISED OF THE POSSIBILITY OF SUCH LOSSES, COSTS, EXPENSES, OR
++     DAMAGES. WHERE A LIMITATION OF LIABILITY IS NOT ALLOWED IN FULL OR
++     IN PART, THIS LIMITATION MAY NOT APPLY TO YOU.
++
++  c. The disclaimer of warranties and limitation of liability provided
++     above shall be interpreted in a manner that, to the extent
++     possible, most closely approximates an absolute disclaimer and
++     waiver of all liability.
++
++
++Section 6 -- Term and Termination.
++
++  a. This Public License applies for the term of the Copyright and
++     Similar Rights licensed here. However, if You fail to comply with
++     this Public License, then Your rights under this Public License
++     terminate automatically.
++
++  b. Where Your right to use the Licensed Material has terminated under
++     Section 6(a), it reinstates:
++
++       1. automatically as of the date the violation is cured, provided
++          it is cured within 30 days of Your discovery of the
++          violation; or
++
++       2. upon express reinstatement by the Licensor.
++
++     For the avoidance of doubt, this Section 6(b) does not affect any
++     right the Licensor may have to seek remedies for Your violations
++     of this Public License.
++
++  c. For the avoidance of doubt, the Licensor may also offer the
++     Licensed Material under separate terms or conditions or stop
++     distributing the Licensed Material at any time; however, doing so
++     will not terminate this Public License.
++
++  d. Sections 1, 5, 6, 7, and 8 survive termination of this Public
++     License.
++
++
++Section 7 -- Other Terms and Conditions.
++
++  a. The Licensor shall not be bound by any additional or different
++     terms or conditions communicated by You unless expressly agreed.
++
++  b. Any arrangements, understandings, or agreements regarding the
++     Licensed Material not stated herein are separate from and
++     independent of the terms and conditions of this Public License.
++
++
++Section 8 -- Interpretation.
++
++  a. For the avoidance of doubt, this Public License does not, and
++     shall not be interpreted to, reduce, limit, restrict, or impose
++     conditions on any use of the Licensed Material that could lawfully
++     be made without permission under this Public License.
++
++  b. To the extent possible, if any provision of this Public License is
++     deemed unenforceable, it shall be automatically reformed to the
++     minimum extent necessary to make it enforceable. If the provision
++     cannot be reformed, it shall be severed from this Public License
++     without affecting the enforceability of the remaining terms and
++     conditions.
++
++  c. No term or condition of this Public License will be waived and no
++     failure to comply consented to unless expressly agreed to by the
++     Licensor.
++
++  d. Nothing in this Public License constitutes or may be interpreted
++     as a limitation upon, or waiver of, any privileges and immunities
++     that apply to the Licensor or You, including from the legal
++     processes of any jurisdiction or authority.
++
++
++=======================================================================
++
++Creative Commons is not a party to its public
++licenses. Notwithstanding, Creative Commons may elect to apply one of
++its public licenses to material it publishes and in those instances
++will be considered the “Licensor.” The text of the Creative Commons
++public licenses is dedicated to the public domain under the CC0 Public
++Domain Dedication. Except for the limited purpose of indicating that
++material is shared under a Creative Commons public license or as
++otherwise permitted by the Creative Commons policies published at
++creativecommons.org/policies, Creative Commons does not authorize the
++use of the trademark "Creative Commons" or any other trademark or logo
++of Creative Commons without its prior written consent including,
++without limitation, in connection with any unauthorized modifications
++to any of its public licenses or any other arrangements,
++understandings, or agreements concerning use of licensed material. For
++the avoidance of doubt, this paragraph does not form part of the
++public licenses.
++
++Creative Commons may be contacted at creativecommons.org.
+diff -urpN keepassxc-9999.orig/NOTICE keepassxc-9999/NOTICE
+--- keepassxc-9999.orig/NOTICE	1969-12-31 16:00:00.000000000 -0800
++++ keepassxc-9999/NOTICE	2024-01-31 04:08:18.533366303 -0800
+@@ -0,0 +1,269 @@
++Data used for TopLevelDomain.cpp.in hash tables (aka NSL [New Suffix List]) and the following files
++data/2-letter-countries
++data/2-part-domains
++data/2-part-domains-left-to-right
++data/2-part-emojis
++data/3-part-domains
++data/3-part-domains-left-to-right
++data/3-part-emojis
++data/cities-jp
++data/subdivisions-jp
++data/subdivisions-us
++data/towns-jp
++data/villages-jp
++License:  CC-BY-SA-4.0 -> GPL-3.0
++# See https://en.wikipedia.org/wiki/Wikipedia:Text_of_the_Creative_Commons_Attribution-ShareAlike_4.0_International_License
++# See https://creativecommons.org/2015/10/08/cc-by-sa-4-0-now-one-way-compatible-with-gplv3/
++# See https://creativecommons.org/share-your-work/licensing-considerations/compatible-licenses/
++https://en.wikipedia.org/wiki/.ac
++https://en.wikipedia.org/wiki/.ad
++https://en.wikipedia.org/wiki/.ae
++https://en.wikipedia.org/wiki/.af
++https://en.wikipedia.org/wiki/.ag
++https://en.wikipedia.org/wiki/.ai
++https://en.wikipedia.org/wiki/.al
++https://en.wikipedia.org/wiki/.am
++https://en.wikipedia.org/wiki/.ao
++https://en.wikipedia.org/wiki/.aq
++https://en.wikipedia.org/wiki/.ar
++https://en.wikipedia.org/wiki/.as
++https://en.wikipedia.org/wiki/.at
++https://en.wikipedia.org/wiki/.au
++https://en.wikipedia.org/wiki/.aw
++https://en.wikipedia.org/wiki/.ax
++https://en.wikipedia.org/wiki/.az
++https://en.wikipedia.org/wiki/.ba
++https://en.wikipedia.org/wiki/.bb
++https://en.wikipedia.org/wiki/.bd
++https://en.wikipedia.org/wiki/.be
++https://en.wikipedia.org/wiki/.bf
++https://en.wikipedia.org/wiki/.bg
++https://en.wikipedia.org/wiki/.bh
++https://en.wikipedia.org/wiki/.bi
++https://en.wikipedia.org/wiki/.bj
++https://en.wikipedia.org/wiki/.bm
++https://en.wikipedia.org/wiki/.bn
++https://en.wikipedia.org/wiki/.bo
++https://en.wikipedia.org/wiki/.br
++https://en.wikipedia.org/wiki/.bs
++https://en.wikipedia.org/wiki/.bt
++https://en.wikipedia.org/wiki/.bw
++https://en.wikipedia.org/wiki/.by
++https://en.wikipedia.org/wiki/.bz
++https://en.wikipedia.org/wiki/.ca
++https://en.wikipedia.org/wiki/.cc
++https://en.wikipedia.org/wiki/.cd
++https://en.wikipedia.org/wiki/.cf
++https://en.wikipedia.org/wiki/.cg
++https://en.wikipedia.org/wiki/.ch
++https://en.wikipedia.org/wiki/.ci
++https://en.wikipedia.org/wiki/.ck
++https://en.wikipedia.org/wiki/.cl
++https://en.wikipedia.org/wiki/.cm
++https://en.wikipedia.org/wiki/.cn
++https://en.wikipedia.org/wiki/.co
++https://en.wikipedia.org/wiki/.cr
++https://en.wikipedia.org/wiki/.cu
++https://en.wikipedia.org/wiki/.cv
++https://en.wikipedia.org/wiki/.cw
++https://en.wikipedia.org/wiki/.cx
++https://en.wikipedia.org/wiki/.cy
++https://en.wikipedia.org/wiki/.cz
++https://en.wikipedia.org/wiki/.de
++https://en.wikipedia.org/wiki/.dj
++https://en.wikipedia.org/wiki/.dk
++https://en.wikipedia.org/wiki/.dm
++https://en.wikipedia.org/wiki/.do
++https://en.wikipedia.org/wiki/.dz
++https://en.wikipedia.org/wiki/.ec
++https://en.wikipedia.org/wiki/.ee
++https://en.wikipedia.org/wiki/.eg
++https://en.wikipedia.org/wiki/.er
++https://en.wikipedia.org/wiki/.es
++https://en.wikipedia.org/wiki/.et
++https://en.wikipedia.org/wiki/.eu
++https://en.wikipedia.org/wiki/.fi
++https://en.wikipedia.org/wiki/.fj
++https://en.wikipedia.org/wiki/.fk
++https://en.wikipedia.org/wiki/.fm
++https://en.wikipedia.org/wiki/.fo
++https://en.wikipedia.org/wiki/.fr
++https://en.wikipedia.org/wiki/.ga
++https://en.wikipedia.org/wiki/.gd
++https://en.wikipedia.org/wiki/.ge
++https://en.wikipedia.org/wiki/.gf
++https://en.wikipedia.org/wiki/.gg
++https://en.wikipedia.org/wiki/.gh
++https://en.wikipedia.org/wiki/.gi
++https://en.wikipedia.org/wiki/.gl
++https://en.wikipedia.org/wiki/.gm
++https://en.wikipedia.org/wiki/.gn
++https://en.wikipedia.org/wiki/.gp
++https://en.wikipedia.org/wiki/.gq
++https://en.wikipedia.org/wiki/.gr
++https://en.wikipedia.org/wiki/.gs
++https://en.wikipedia.org/wiki/.gt
++https://en.wikipedia.org/wiki/.gu
++https://en.wikipedia.org/wiki/.gw
++https://en.wikipedia.org/wiki/.gy
++https://en.wikipedia.org/wiki/.hk
++https://en.wikipedia.org/wiki/.hm
++https://en.wikipedia.org/wiki/.hn
++https://en.wikipedia.org/wiki/.hr
++https://en.wikipedia.org/wiki/.ht
++https://en.wikipedia.org/wiki/.hu
++https://en.wikipedia.org/wiki/.id
++https://en.wikipedia.org/wiki/.ie
++https://en.wikipedia.org/wiki/.il
++https://en.wikipedia.org/wiki/.im
++https://en.wikipedia.org/wiki/.in
++https://en.wikipedia.org/wiki/.io
++https://en.wikipedia.org/wiki/.iq
++https://en.wikipedia.org/wiki/.ir
++https://en.wikipedia.org/wiki/.is
++https://en.wikipedia.org/wiki/.it
++https://en.wikipedia.org/wiki/.je
++https://en.wikipedia.org/wiki/.jm
++https://en.wikipedia.org/wiki/.jo
++https://en.wikipedia.org/wiki/.jp
++https://en.wikipedia.org/wiki/.ke
++https://en.wikipedia.org/wiki/.kg
++https://en.wikipedia.org/wiki/.kh
++https://en.wikipedia.org/wiki/.ki
++https://en.wikipedia.org/wiki/.km
++https://en.wikipedia.org/wiki/.kn
++https://en.wikipedia.org/wiki/.kp
++https://en.wikipedia.org/wiki/.kr
++https://en.wikipedia.org/wiki/.kw
++https://en.wikipedia.org/wiki/.ky
++https://en.wikipedia.org/wiki/.kz
++https://en.wikipedia.org/wiki/.la
++https://en.wikipedia.org/wiki/.lb
++https://en.wikipedia.org/wiki/.lc
++https://en.wikipedia.org/wiki/.li
++https://en.wikipedia.org/wiki/.lk
++https://en.wikipedia.org/wiki/.lr
++https://en.wikipedia.org/wiki/.ls
++https://en.wikipedia.org/wiki/.lt
++https://en.wikipedia.org/wiki/.lu
++https://en.wikipedia.org/wiki/.lv
++https://en.wikipedia.org/wiki/.ly
++https://en.wikipedia.org/wiki/.ma
++https://en.wikipedia.org/wiki/.mc
++https://en.wikipedia.org/wiki/.md
++https://en.wikipedia.org/wiki/.me
++https://en.wikipedia.org/wiki/.mg
++https://en.wikipedia.org/wiki/.mh
++https://en.wikipedia.org/wiki/.mk
++https://en.wikipedia.org/wiki/.ml
++https://en.wikipedia.org/wiki/.mm
++https://en.wikipedia.org/wiki/.mn
++https://en.wikipedia.org/wiki/.mo
++https://en.wikipedia.org/wiki/.mp
++https://en.wikipedia.org/wiki/.mq
++https://en.wikipedia.org/wiki/.mr
++https://en.wikipedia.org/wiki/.ms
++https://en.wikipedia.org/wiki/.mt
++https://en.wikipedia.org/wiki/.mu
++https://en.wikipedia.org/wiki/.mv
++https://en.wikipedia.org/wiki/.mw
++https://en.wikipedia.org/wiki/.mx
++https://en.wikipedia.org/wiki/.my
++https://en.wikipedia.org/wiki/.mz
++https://en.wikipedia.org/wiki/.na
++https://en.wikipedia.org/wiki/.nc
++https://en.wikipedia.org/wiki/.ne
++https://en.wikipedia.org/wiki/.nf
++https://en.wikipedia.org/wiki/.ng
++https://en.wikipedia.org/wiki/.ni
++https://en.wikipedia.org/wiki/.nl
++https://en.wikipedia.org/wiki/.no
++https://en.wikipedia.org/wiki/.np
++https://en.wikipedia.org/wiki/.nr
++https://en.wikipedia.org/wiki/.nu
++https://en.wikipedia.org/wiki/.nz
++https://en.wikipedia.org/wiki/.om
++https://en.wikipedia.org/wiki/.pa
++https://en.wikipedia.org/wiki/.pe
++https://en.wikipedia.org/wiki/.pf
++https://en.wikipedia.org/wiki/.pg
++https://en.wikipedia.org/wiki/.ph
++https://en.wikipedia.org/wiki/.pk
++https://en.wikipedia.org/wiki/.pl
++https://en.wikipedia.org/wiki/.pm
++https://en.wikipedia.org/wiki/.pn
++https://en.wikipedia.org/wiki/.pr
++https://en.wikipedia.org/wiki/.ps
++https://en.wikipedia.org/wiki/.pt
++https://en.wikipedia.org/wiki/.pw
++https://en.wikipedia.org/wiki/.py
++https://en.wikipedia.org/wiki/.qa
++https://en.wikipedia.org/wiki/.re
++https://en.wikipedia.org/wiki/.ro
++https://en.wikipedia.org/wiki/.rs
++https://en.wikipedia.org/wiki/.ru
++https://en.wikipedia.org/wiki/.rw
++https://en.wikipedia.org/wiki/.sa
++https://en.wikipedia.org/wiki/.sb
++https://en.wikipedia.org/wiki/.sc
++https://en.wikipedia.org/wiki/.sd
++https://en.wikipedia.org/wiki/.se
++https://en.wikipedia.org/wiki/.sg
++https://en.wikipedia.org/wiki/.sh
++https://en.wikipedia.org/wiki/.si
++https://en.wikipedia.org/wiki/.sk
++https://en.wikipedia.org/wiki/.sl
++https://en.wikipedia.org/wiki/.sm
++https://en.wikipedia.org/wiki/.sn
++https://en.wikipedia.org/wiki/.so
++https://en.wikipedia.org/wiki/.sr
++https://en.wikipedia.org/wiki/.ss
++https://en.wikipedia.org/wiki/.st
++https://en.wikipedia.org/wiki/.su
++https://en.wikipedia.org/wiki/.sv
++https://en.wikipedia.org/wiki/.sx
++https://en.wikipedia.org/wiki/.sy
++https://en.wikipedia.org/wiki/.sz
++https://en.wikipedia.org/wiki/.tc
++https://en.wikipedia.org/wiki/.td
++https://en.wikipedia.org/wiki/.tf
++https://en.wikipedia.org/wiki/.tg
++https://en.wikipedia.org/wiki/.th
++https://en.wikipedia.org/wiki/.tj
++https://en.wikipedia.org/wiki/.tk
++https://en.wikipedia.org/wiki/.tl
++https://en.wikipedia.org/wiki/.tm
++https://en.wikipedia.org/wiki/.tn
++https://en.wikipedia.org/wiki/.to
++https://en.wikipedia.org/wiki/.tr
++https://en.wikipedia.org/wiki/.tt
++https://en.wikipedia.org/wiki/.tv
++https://en.wikipedia.org/wiki/.tw
++https://en.wikipedia.org/wiki/.tz
++https://en.wikipedia.org/wiki/.ua
++https://en.wikipedia.org/wiki/.ug
++https://en.wikipedia.org/wiki/.uk
++https://en.wikipedia.org/wiki/.us
++https://en.wikipedia.org/wiki/.uy
++https://en.wikipedia.org/wiki/.uz
++https://en.wikipedia.org/wiki/.va
++https://en.wikipedia.org/wiki/.vc
++https://en.wikipedia.org/wiki/.ve
++https://en.wikipedia.org/wiki/.vg
++https://en.wikipedia.org/wiki/.vi
++https://en.wikipedia.org/wiki/.vn
++https://en.wikipedia.org/wiki/.vu
++https://en.wikipedia.org/wiki/.wf
++https://en.wikipedia.org/wiki/.ws
++https://en.wikipedia.org/wiki/.ye
++https://en.wikipedia.org/wiki/.yt
++https://en.wikipedia.org/wiki/.za
++https://en.wikipedia.org/wiki/.zm
++https://en.wikipedia.org/wiki/.zw
++https://en.wikipedia.org/wiki/Emoji_domain
++https://en.wikipedia.org/wiki/ISO_3166-2:JP
++https://en.wikipedia.org/wiki/ISO_3166-2:US
++https://en.wikipedia.org/wiki/List_of_cities_in_Japan
++https://en.wikipedia.org/wiki/List_of_towns_in_Japan
++https://en.wikipedia.org/wiki/List_of_villages_in_Japan
++https://en.wikipedia.org/wiki/Second-level_domain
 diff -urpN keepassxc-9999.orig/share/translations/CMakeLists.txt keepassxc-9999/share/translations/CMakeLists.txt
---- keepassxc-9999.orig/share/translations/CMakeLists.txt	2024-01-31 02:46:30.779809886 -0800
-+++ keepassxc-9999/share/translations/CMakeLists.txt	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/share/translations/CMakeLists.txt	2024-01-31 04:01:17.520363593 -0800
++++ keepassxc-9999/share/translations/CMakeLists.txt	2024-01-31 04:01:36.716226989 -0800
 @@ -20,7 +20,11 @@ list(REMOVE_ITEM TRANSLATION_FILES keepa
  list(REMOVE_ITEM TRANSLATION_FILES ${TRANSLATION_EN_ABS})
  message(STATUS "Including translations...\n")
@@ -6396,8 +7100,8 @@ diff -urpN keepassxc-9999.orig/share/translations/CMakeLists.txt keepassxc-9999/
  if(WIN32)
      file(GLOB QTBASE_TRANSLATIONS ${Qt5_PREFIX}/share/qt5/translations/qtbase_*.qm)
 diff -urpN keepassxc-9999.orig/src/autotype/AutoType.cpp keepassxc-9999/src/autotype/AutoType.cpp
---- keepassxc-9999.orig/src/autotype/AutoType.cpp	2024-01-31 02:46:30.903809023 -0800
-+++ keepassxc-9999/src/autotype/AutoType.cpp	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/AutoType.cpp	2024-01-31 04:01:17.644362711 -0800
++++ keepassxc-9999/src/autotype/AutoType.cpp	2024-01-31 04:01:36.760226677 -0800
 @@ -457,7 +457,12 @@ void AutoType::performGlobalAutoType(con
              if (hideExpired && entry->isExpired()) {
                  continue;
@@ -6412,8 +7116,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/AutoType.cpp keepassxc-9999/src/auto
                  matchList << AutoTypeMatch(entry, sequence);
              }
 diff -urpN keepassxc-9999.orig/src/autotype/AutoTypeMatch.h keepassxc-9999/src/autotype/AutoTypeMatch.h
---- keepassxc-9999.orig/src/autotype/AutoTypeMatch.h	2024-01-31 02:46:30.903809023 -0800
-+++ keepassxc-9999/src/autotype/AutoTypeMatch.h	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/AutoTypeMatch.h	2024-01-31 04:01:17.648362683 -0800
++++ keepassxc-9999/src/autotype/AutoTypeMatch.h	2024-01-31 04:01:36.760226677 -0800
 @@ -21,6 +21,8 @@
  #include <QPair>
  #include <QPointer>
@@ -6424,8 +7128,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/AutoTypeMatch.h keepassxc-9999/src/a
  typedef QPair<QPointer<Entry>, QString> AutoTypeMatch;
  
 diff -urpN keepassxc-9999.orig/src/autotype/AutoTypeMatchView.cpp keepassxc-9999/src/autotype/AutoTypeMatchView.cpp
---- keepassxc-9999.orig/src/autotype/AutoTypeMatchView.cpp	2024-01-31 02:46:30.903809023 -0800
-+++ keepassxc-9999/src/autotype/AutoTypeMatchView.cpp	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/AutoTypeMatchView.cpp	2024-01-31 04:01:17.648362683 -0800
++++ keepassxc-9999/src/autotype/AutoTypeMatchView.cpp	2024-01-31 04:01:36.760226677 -0800
 @@ -38,9 +38,15 @@ public:
          auto index1 = sourceModel()->index(sourceRow, 1, sourceParent);
          auto index2 = sourceModel()->index(sourceRow, 2, sourceParent);
@@ -6443,8 +7147,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/AutoTypeMatchView.cpp keepassxc-9999
  };
  
 diff -urpN keepassxc-9999.orig/src/autotype/AutoTypeSelectDialog.cpp keepassxc-9999/src/autotype/AutoTypeSelectDialog.cpp
---- keepassxc-9999.orig/src/autotype/AutoTypeSelectDialog.cpp	2024-01-31 02:46:30.903809023 -0800
-+++ keepassxc-9999/src/autotype/AutoTypeSelectDialog.cpp	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/AutoTypeSelectDialog.cpp	2024-01-31 04:01:17.648362683 -0800
++++ keepassxc-9999/src/autotype/AutoTypeSelectDialog.cpp	2024-01-31 04:01:36.760226677 -0800
 @@ -300,6 +300,41 @@ void AutoTypeSelectDialog::buildActionMe
      m_actionMenu->addAction(copyPasswordAction);
      m_actionMenu->addAction(copyTotpAction);
@@ -6505,8 +7209,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/AutoTypeSelectDialog.cpp keepassxc-9
  
  #if QT_VERSION >= QT_VERSION_CHECK(5, 10, 0)
 diff -urpN keepassxc-9999.orig/src/autotype/CMakeLists.txt keepassxc-9999/src/autotype/CMakeLists.txt
---- keepassxc-9999.orig/src/autotype/CMakeLists.txt	2024-01-31 02:46:30.907808995 -0800
-+++ keepassxc-9999/src/autotype/CMakeLists.txt	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/CMakeLists.txt	2024-01-31 04:01:17.648362683 -0800
++++ keepassxc-9999/src/autotype/CMakeLists.txt	2024-01-31 04:01:36.760226677 -0800
 @@ -1,11 +1,20 @@
  if(WITH_XC_AUTOTYPE)
      if(UNIX AND NOT APPLE AND NOT HAIKU)
@@ -6534,8 +7238,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/CMakeLists.txt keepassxc-9999/src/au
  
          add_subdirectory(xcb)
 diff -urpN keepassxc-9999.orig/src/autotype/mac/CMakeLists.txt keepassxc-9999/src/autotype/mac/CMakeLists.txt
---- keepassxc-9999.orig/src/autotype/mac/CMakeLists.txt	2024-01-31 02:46:30.907808995 -0800
-+++ keepassxc-9999/src/autotype/mac/CMakeLists.txt	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/mac/CMakeLists.txt	2024-01-31 04:01:17.652362655 -0800
++++ keepassxc-9999/src/autotype/mac/CMakeLists.txt	2024-01-31 04:01:36.844226079 -0800
 @@ -2,7 +2,11 @@ set(autotype_mac_SOURCES AutoTypeMac.cpp
  
  add_library(keepassxc-autotype-cocoa MODULE ${autotype_mac_SOURCES})
@@ -6550,8 +7254,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/mac/CMakeLists.txt keepassxc-9999/sr
  install(TARGETS keepassxc-autotype-cocoa
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
 diff -urpN keepassxc-9999.orig/src/autotype/PickcharsDialog.cpp keepassxc-9999/src/autotype/PickcharsDialog.cpp
---- keepassxc-9999.orig/src/autotype/PickcharsDialog.cpp	2024-01-31 02:46:30.907808995 -0800
-+++ keepassxc-9999/src/autotype/PickcharsDialog.cpp	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/PickcharsDialog.cpp	2024-01-31 04:01:17.648362683 -0800
++++ keepassxc-9999/src/autotype/PickcharsDialog.cpp	2024-01-31 04:01:36.844226079 -0800
 @@ -81,7 +81,11 @@ PickcharsDialog::PickcharsDialog(const Q
          m_ui->selectedChars->setText(text.left(text.size() - 1));
      });
@@ -6565,8 +7269,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/PickcharsDialog.cpp keepassxc-9999/s
  }
  
 diff -urpN keepassxc-9999.orig/src/autotype/ShortcutWidget.cpp keepassxc-9999/src/autotype/ShortcutWidget.cpp
---- keepassxc-9999.orig/src/autotype/ShortcutWidget.cpp	2024-01-31 02:46:30.907808995 -0800
-+++ keepassxc-9999/src/autotype/ShortcutWidget.cpp	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/ShortcutWidget.cpp	2024-01-31 04:01:17.648362683 -0800
++++ keepassxc-9999/src/autotype/ShortcutWidget.cpp	2024-01-31 04:01:36.844226079 -0800
 @@ -25,7 +25,11 @@
  ShortcutWidget::ShortcutWidget(QWidget* parent)
      : QLineEdit(parent)
@@ -6592,8 +7296,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/ShortcutWidget.cpp keepassxc-9999/sr
      autoType()->unregisterGlobalShortcut();
  }
 diff -urpN keepassxc-9999.orig/src/autotype/test/CMakeLists.txt keepassxc-9999/src/autotype/test/CMakeLists.txt
---- keepassxc-9999.orig/src/autotype/test/CMakeLists.txt	2024-01-31 02:46:30.907808995 -0800
-+++ keepassxc-9999/src/autotype/test/CMakeLists.txt	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/test/CMakeLists.txt	2024-01-31 04:01:17.652362655 -0800
++++ keepassxc-9999/src/autotype/test/CMakeLists.txt	2024-01-31 04:01:36.844226079 -0800
 @@ -1,4 +1,8 @@
  set(autotype_test_SOURCES AutoTypeTest.cpp)
  
@@ -6605,8 +7309,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/test/CMakeLists.txt keepassxc-9999/s
 +    target_link_libraries(keepassxc-autotype-test keepassx_core ${autotype_LIB} Qt5::Core Qt5::Widgets)
 +endif()
 diff -urpN keepassxc-9999.orig/src/autotype/windows/CMakeLists.txt keepassxc-9999/src/autotype/windows/CMakeLists.txt
---- keepassxc-9999.orig/src/autotype/windows/CMakeLists.txt	2024-01-31 02:46:30.907808995 -0800
-+++ keepassxc-9999/src/autotype/windows/CMakeLists.txt	2024-01-31 02:49:18.566641471 -0800
+--- keepassxc-9999.orig/src/autotype/windows/CMakeLists.txt	2024-01-31 04:01:17.652362655 -0800
++++ keepassxc-9999/src/autotype/windows/CMakeLists.txt	2024-01-31 04:01:36.844226079 -0800
 @@ -1,7 +1,11 @@
  set(autotype_win_SOURCES AutoTypeWindows.cpp)
  
@@ -6621,8 +7325,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/windows/CMakeLists.txt keepassxc-999
          BUNDLE DESTINATION . COMPONENT Runtime
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
 diff -urpN keepassxc-9999.orig/src/autotype/xcb/AutoTypeXCB.cpp keepassxc-9999/src/autotype/xcb/AutoTypeXCB.cpp
---- keepassxc-9999.orig/src/autotype/xcb/AutoTypeXCB.cpp	2024-01-31 02:46:30.907808995 -0800
-+++ keepassxc-9999/src/autotype/xcb/AutoTypeXCB.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/autotype/xcb/AutoTypeXCB.cpp	2024-01-31 04:01:17.652362655 -0800
++++ keepassxc-9999/src/autotype/xcb/AutoTypeXCB.cpp	2024-01-31 04:01:36.844226079 -0800
 @@ -21,7 +21,12 @@
  #include "core/Tools.h"
  #include "gui/osutils/nixutils/X11Funcs.h"
@@ -6668,8 +7372,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/xcb/AutoTypeXCB.cpp keepassxc-9999/s
      if (activeWindow) {
          event.xclient.data.l[2] = activeWindow->internalWinId();
 diff -urpN keepassxc-9999.orig/src/autotype/xcb/CMakeLists.txt keepassxc-9999/src/autotype/xcb/CMakeLists.txt
---- keepassxc-9999.orig/src/autotype/xcb/CMakeLists.txt	2024-01-31 02:46:30.907808995 -0800
-+++ keepassxc-9999/src/autotype/xcb/CMakeLists.txt	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/autotype/xcb/CMakeLists.txt	2024-01-31 04:01:17.652362655 -0800
++++ keepassxc-9999/src/autotype/xcb/CMakeLists.txt	2024-01-31 04:01:36.844226079 -0800
 @@ -3,7 +3,14 @@ include_directories(SYSTEM ${X11_X11_INC
  set(autotype_XCB_SOURCES AutoTypeXCB.cpp)
  
@@ -6687,8 +7391,8 @@ diff -urpN keepassxc-9999.orig/src/autotype/xcb/CMakeLists.txt keepassxc-9999/sr
          BUNDLE DESTINATION . COMPONENT Runtime
          LIBRARY DESTINATION ${PLUGIN_INSTALL_DIR} COMPONENT Runtime)
 diff -urpN keepassxc-9999.orig/src/browser/BrowserEntryConfig.cpp keepassxc-9999/src/browser/BrowserEntryConfig.cpp
---- keepassxc-9999.orig/src/browser/BrowserEntryConfig.cpp	2024-01-31 02:46:30.911808968 -0800
-+++ keepassxc-9999/src/browser/BrowserEntryConfig.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/browser/BrowserEntryConfig.cpp	2024-01-31 04:01:17.656362626 -0800
++++ keepassxc-9999/src/browser/BrowserEntryConfig.cpp	2024-01-31 04:01:36.848226051 -0800
 @@ -34,22 +34,38 @@ BrowserEntryConfig::BrowserEntryConfig(Q
  
  QStringList BrowserEntryConfig::allowedHosts() const
@@ -6729,8 +7433,8 @@ diff -urpN keepassxc-9999.orig/src/browser/BrowserEntryConfig.cpp keepassxc-9999
  
  bool BrowserEntryConfig::isAllowed(const QString& host) const
 diff -urpN keepassxc-9999.orig/src/browser/BrowserService.cpp keepassxc-9999/src/browser/BrowserService.cpp
---- keepassxc-9999.orig/src/browser/BrowserService.cpp	2024-01-31 02:46:30.911808968 -0800
-+++ keepassxc-9999/src/browser/BrowserService.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/browser/BrowserService.cpp	2024-01-31 04:01:17.660362598 -0800
++++ keepassxc-9999/src/browser/BrowserService.cpp	2024-01-31 04:01:36.848226051 -0800
 @@ -26,6 +26,9 @@
  #include "BrowserSettings.h"
  #include "core/Tools.h"
@@ -6790,8 +7494,8 @@ diff -urpN keepassxc-9999.orig/src/browser/BrowserService.cpp keepassxc-9999/src
      m_browserHost->sendClientMessage(socket, response);
  }
 diff -urpN keepassxc-9999.orig/src/browser/CMakeLists.txt keepassxc-9999/src/browser/CMakeLists.txt
---- keepassxc-9999.orig/src/browser/CMakeLists.txt	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/browser/CMakeLists.txt	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/browser/CMakeLists.txt	2024-01-31 04:01:17.660362598 -0800
++++ keepassxc-9999/src/browser/CMakeLists.txt	2024-01-31 04:01:36.848226051 -0800
 @@ -39,5 +39,9 @@ if(WITH_XC_BROWSER)
      endif()
  
@@ -6804,8 +7508,8 @@ diff -urpN keepassxc-9999.orig/src/browser/CMakeLists.txt keepassxc-9999/src/bro
 +    endif()
  endif()
 diff -urpN keepassxc-9999.orig/src/browser/NativeMessageInstaller.cpp keepassxc-9999/src/browser/NativeMessageInstaller.cpp
---- keepassxc-9999.orig/src/browser/NativeMessageInstaller.cpp	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/browser/NativeMessageInstaller.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/browser/NativeMessageInstaller.cpp	2024-01-31 04:01:17.660362598 -0800
++++ keepassxc-9999/src/browser/NativeMessageInstaller.cpp	2024-01-31 04:01:36.848226051 -0800
 @@ -359,7 +359,11 @@ bool NativeMessageInstaller::createNativ
      QDir().mkpath(QFileInfo(path).absolutePath());
  
@@ -6819,8 +7523,8 @@ diff -urpN keepassxc-9999.orig/src/browser/NativeMessageInstaller.cpp keepassxc-
          qWarning() << scriptFile.errorString();
          return false;
 diff -urpN keepassxc-9999.orig/src/cli/Add.cpp keepassxc-9999/src/cli/Add.cpp
---- keepassxc-9999.orig/src/cli/Add.cpp	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/cli/Add.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/cli/Add.cpp	2024-01-31 04:01:17.660362598 -0800
++++ keepassxc-9999/src/cli/Add.cpp	2024-01-31 04:01:36.848226051 -0800
 @@ -78,7 +78,7 @@ int Add::executeWithDatabase(QSharedPoin
  
      // Cannot use those 2 options at the same time!
@@ -6864,8 +7568,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Add.cpp keepassxc-9999/src/cli/Add.cpp
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/AddGroup.cpp keepassxc-9999/src/cli/AddGroup.cpp
---- keepassxc-9999.orig/src/cli/AddGroup.cpp	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/cli/AddGroup.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/cli/AddGroup.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/AddGroup.cpp	2024-01-31 04:01:36.848226051 -0800
 @@ -45,13 +45,13 @@ int AddGroup::executeWithDatabase(QShare
  
      Group* group = database->rootGroup()->findGroupByPath(groupPath);
@@ -6898,8 +7602,8 @@ diff -urpN keepassxc-9999.orig/src/cli/AddGroup.cpp keepassxc-9999/src/cli/AddGr
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Analyze.cpp keepassxc-9999/src/cli/Analyze.cpp
---- keepassxc-9999.orig/src/cli/Analyze.cpp	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/cli/Analyze.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/cli/Analyze.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/Analyze.cpp	2024-01-31 04:01:36.852226022 -0800
 @@ -60,23 +60,23 @@ int Analyze::executeWithDatabase(QShared
  
      auto okon = parser->value(Analyze::OkonOption);
@@ -6942,8 +7646,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Analyze.cpp keepassxc-9999/src/cli/Analyz
      }
  
 diff -urpN keepassxc-9999.orig/src/cli/AttachmentExport.cpp keepassxc-9999/src/cli/AttachmentExport.cpp
---- keepassxc-9999.orig/src/cli/AttachmentExport.cpp	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/cli/AttachmentExport.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/cli/AttachmentExport.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/AttachmentExport.cpp	2024-01-31 04:01:36.852226022 -0800
 @@ -49,7 +49,7 @@ int AttachmentExport::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -6996,8 +7700,8 @@ diff -urpN keepassxc-9999.orig/src/cli/AttachmentExport.cpp keepassxc-9999/src/c
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/AttachmentImport.cpp keepassxc-9999/src/cli/AttachmentImport.cpp
---- keepassxc-9999.orig/src/cli/AttachmentImport.cpp	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/cli/AttachmentImport.cpp	2024-01-31 02:49:18.570641444 -0800
+--- keepassxc-9999.orig/src/cli/AttachmentImport.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/AttachmentImport.cpp	2024-01-31 04:01:36.852226022 -0800
 @@ -50,7 +50,7 @@ int AttachmentImport::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -7045,8 +7749,8 @@ diff -urpN keepassxc-9999.orig/src/cli/AttachmentImport.cpp keepassxc-9999/src/c
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/AttachmentRemove.cpp keepassxc-9999/src/cli/AttachmentRemove.cpp
---- keepassxc-9999.orig/src/cli/AttachmentRemove.cpp	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/cli/AttachmentRemove.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/AttachmentRemove.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/AttachmentRemove.cpp	2024-01-31 04:01:36.852226022 -0800
 @@ -41,7 +41,7 @@ int AttachmentRemove::executeWithDatabas
  
      auto entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -7079,8 +7783,8 @@ diff -urpN keepassxc-9999.orig/src/cli/AttachmentRemove.cpp keepassxc-9999/src/c
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Clip.cpp keepassxc-9999/src/cli/Clip.cpp
---- keepassxc-9999.orig/src/cli/Clip.cpp	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/cli/Clip.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/Clip.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/Clip.cpp	2024-01-31 04:01:36.852226022 -0800
 @@ -72,7 +72,7 @@ int Clip::executeWithDatabase(QSharedPoi
          bool ok;
          timeout = args.at(2).toInt(&ok);
@@ -7176,8 +7880,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Clip.cpp keepassxc-9999/src/cli/Clip.cpp
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/CMakeLists.txt keepassxc-9999/src/cli/CMakeLists.txt
---- keepassxc-9999.orig/src/cli/CMakeLists.txt	2024-01-31 02:46:30.915808939 -0800
-+++ keepassxc-9999/src/cli/CMakeLists.txt	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/CMakeLists.txt	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/CMakeLists.txt	2024-01-31 04:01:36.852226022 -0800
 @@ -45,7 +45,15 @@ set(cli_SOURCES
          Show.cpp)
  
@@ -7196,8 +7900,8 @@ diff -urpN keepassxc-9999.orig/src/cli/CMakeLists.txt keepassxc-9999/src/cli/CMa
  find_package(Readline)
  
 diff -urpN keepassxc-9999.orig/src/cli/DatabaseCreate.cpp keepassxc-9999/src/cli/DatabaseCreate.cpp
---- keepassxc-9999.orig/src/cli/DatabaseCreate.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/DatabaseCreate.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/DatabaseCreate.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/DatabaseCreate.cpp	2024-01-31 04:01:36.852226022 -0800
 @@ -70,13 +70,13 @@ QSharedPointer<Database> DatabaseCreate:
      if (decryptionTimeValue.length() != 0) {
          decryptionTime = decryptionTimeValue.toInt();
@@ -7283,8 +7987,8 @@ diff -urpN keepassxc-9999.orig/src/cli/DatabaseCreate.cpp keepassxc-9999/src/cli
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/DatabaseEdit.cpp keepassxc-9999/src/cli/DatabaseEdit.cpp
---- keepassxc-9999.orig/src/cli/DatabaseEdit.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/DatabaseEdit.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/DatabaseEdit.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/DatabaseEdit.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -53,7 +53,7 @@ int DatabaseEdit::executeWithDatabase(QS
          err << QObject::tr("Cannot use %1 and %2 at the same time.")
                     .arg(DatabaseCreate::SetPasswordOption.names().at(0))
@@ -7391,8 +8095,8 @@ diff -urpN keepassxc-9999.orig/src/cli/DatabaseEdit.cpp keepassxc-9999/src/cli/D
      }
  
 diff -urpN keepassxc-9999.orig/src/cli/DatabaseInfo.cpp keepassxc-9999/src/cli/DatabaseInfo.cpp
---- keepassxc-9999.orig/src/cli/DatabaseInfo.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/DatabaseInfo.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/DatabaseInfo.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/DatabaseInfo.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -35,39 +35,45 @@ int DatabaseInfo::executeWithDatabase(QS
  {
      auto& out = Utils::STDOUT;
@@ -7461,8 +8165,8 @@ diff -urpN keepassxc-9999.orig/src/cli/DatabaseInfo.cpp keepassxc-9999/src/cli/D
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Diceware.cpp keepassxc-9999/src/cli/Diceware.cpp
---- keepassxc-9999.orig/src/cli/Diceware.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Diceware.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/Diceware.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/Diceware.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -58,7 +58,7 @@ int Diceware::execute(const QStringList&
      if (wordCount.isEmpty()) {
          dicewareGenerator.setWordCount(PassphraseGenerator::DefaultWordCount);
@@ -7488,8 +8192,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Diceware.cpp keepassxc-9999/src/cli/Dicew
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Edit.cpp keepassxc-9999/src/cli/Edit.cpp
---- keepassxc-9999.orig/src/cli/Edit.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Edit.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/Edit.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/Edit.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -66,7 +66,7 @@ int Edit::executeWithDatabase(QSharedPoi
  
      // Cannot use those 2 options at the same time!
@@ -7540,8 +8244,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Edit.cpp keepassxc-9999/src/cli/Edit.cpp
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Estimate.cpp keepassxc-9999/src/cli/Estimate.cpp
---- keepassxc-9999.orig/src/cli/Estimate.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Estimate.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/Estimate.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/Estimate.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -47,7 +47,7 @@ static void estimate(const char* pwd, bo
          // clang-format off
          out << QObject::tr("Length %1").arg(len, 0) << '\t'
@@ -7577,8 +8281,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Estimate.cpp keepassxc-9999/src/cli/Estim
      }
  }
 diff -urpN keepassxc-9999.orig/src/cli/Export.cpp keepassxc-9999/src/cli/Export.cpp
---- keepassxc-9999.orig/src/cli/Export.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Export.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/Export.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/Export.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -46,7 +46,7 @@ int Export::executeWithDatabase(QSharedP
          QByteArray xmlData;
          QString errorMessage;
@@ -7598,8 +8302,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Export.cpp keepassxc-9999/src/cli/Export.
      }
  
 diff -urpN keepassxc-9999.orig/src/cli/Generate.cpp keepassxc-9999/src/cli/Generate.cpp
---- keepassxc-9999.orig/src/cli/Generate.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Generate.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/Generate.cpp	2024-01-31 04:01:17.664362569 -0800
++++ keepassxc-9999/src/cli/Generate.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -92,7 +92,7 @@ QSharedPointer<PasswordGenerator> Genera
      if (passwordLength.isEmpty()) {
          passwordGenerator->setLength(PasswordGenerator::DefaultLength);
@@ -7628,8 +8332,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Generate.cpp keepassxc-9999/src/cli/Gener
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Import.cpp keepassxc-9999/src/cli/Import.cpp
---- keepassxc-9999.orig/src/cli/Import.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Import.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/Import.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/Import.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -61,7 +61,7 @@ int Import::execute(const QStringList& a
      const QString& dbPath = args.at(1);
  
@@ -7659,8 +8363,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Import.cpp keepassxc-9999/src/cli/Import.
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/keepassxc-cli.cpp keepassxc-9999/src/cli/keepassxc-cli.cpp
---- keepassxc-9999.orig/src/cli/keepassxc-cli.cpp	2024-01-31 02:46:30.923808884 -0800
-+++ keepassxc-9999/src/cli/keepassxc-cli.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/keepassxc-cli.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/keepassxc-cli.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -48,12 +48,21 @@ public:
  class SimpleLineReader : public LineReader
  {
@@ -7716,8 +8420,8 @@ diff -urpN keepassxc-9999.orig/src/cli/keepassxc-cli.cpp keepassxc-9999/src/cli/
          return EXIT_FAILURE;
      }
 diff -urpN keepassxc-9999.orig/src/cli/List.cpp keepassxc-9999/src/cli/List.cpp
---- keepassxc-9999.orig/src/cli/List.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/List.cpp	2024-01-31 02:49:18.574641416 -0800
+--- keepassxc-9999.orig/src/cli/List.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/List.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -52,17 +52,17 @@ int List::executeWithDatabase(QSharedPoi
  
      // No group provided, defaulting to root group.
@@ -7740,8 +8444,8 @@ diff -urpN keepassxc-9999.orig/src/cli/List.cpp keepassxc-9999/src/cli/List.cpp
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Merge.cpp keepassxc-9999/src/cli/Merge.cpp
---- keepassxc-9999.orig/src/cli/Merge.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Merge.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/Merge.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/Merge.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -90,18 +90,18 @@ int Merge::executeWithDatabase(QSharedPo
      QStringList changeList = merger.merge();
  
@@ -7766,8 +8470,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Merge.cpp keepassxc-9999/src/cli/Merge.cp
  
      return EXIT_SUCCESS;
 diff -urpN keepassxc-9999.orig/src/cli/Move.cpp keepassxc-9999/src/cli/Move.cpp
---- keepassxc-9999.orig/src/cli/Move.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Move.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/Move.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/Move.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -43,18 +43,18 @@ int Move::executeWithDatabase(QSharedPoi
  
      Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -7804,8 +8508,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Move.cpp keepassxc-9999/src/cli/Move.cpp
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Remove.cpp keepassxc-9999/src/cli/Remove.cpp
---- keepassxc-9999.orig/src/cli/Remove.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Remove.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/Remove.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/Remove.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -38,7 +38,7 @@ int Remove::executeWithDatabase(QSharedP
      auto entryPath = parser->positionalArguments().at(1);
      QPointer<Entry> entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -7834,8 +8538,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Remove.cpp keepassxc-9999/src/cli/Remove.
  
      return EXIT_SUCCESS;
 diff -urpN keepassxc-9999.orig/src/cli/RemoveGroup.cpp keepassxc-9999/src/cli/RemoveGroup.cpp
---- keepassxc-9999.orig/src/cli/RemoveGroup.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/RemoveGroup.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/RemoveGroup.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/RemoveGroup.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -42,12 +42,12 @@ int RemoveGroup::executeWithDatabase(QSh
      // Recursive option means were looking for a group to remove.
      QPointer<Group> group = database->rootGroup()->findGroupByPath(groupPath);
@@ -7870,8 +8574,8 @@ diff -urpN keepassxc-9999.orig/src/cli/RemoveGroup.cpp keepassxc-9999/src/cli/Re
  
      return EXIT_SUCCESS;
 diff -urpN keepassxc-9999.orig/src/cli/Search.cpp keepassxc-9999/src/cli/Search.cpp
---- keepassxc-9999.orig/src/cli/Search.cpp	2024-01-31 02:46:30.919808911 -0800
-+++ keepassxc-9999/src/cli/Search.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/Search.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/Search.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -40,12 +40,12 @@ int Search::executeWithDatabase(QSharedP
      EntrySearcher searcher;
      auto results = searcher.search(args.at(1), database->rootGroup(), true);
@@ -7888,8 +8592,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Search.cpp keepassxc-9999/src/cli/Search.
      return EXIT_SUCCESS;
  }
 diff -urpN keepassxc-9999.orig/src/cli/Show.cpp keepassxc-9999/src/cli/Show.cpp
---- keepassxc-9999.orig/src/cli/Show.cpp	2024-01-31 02:46:30.923808884 -0800
-+++ keepassxc-9999/src/cli/Show.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/Show.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/Show.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -73,12 +73,12 @@ int Show::executeWithDatabase(QSharedPoi
  
      Entry* entry = database->rootGroup()->findEntryByPath(entryPath);
@@ -7971,8 +8675,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Show.cpp keepassxc-9999/src/cli/Show.cpp
  
      return encounteredError ? EXIT_FAILURE : EXIT_SUCCESS;
 diff -urpN keepassxc-9999.orig/src/cli/TextStream.cpp keepassxc-9999/src/cli/TextStream.cpp
---- keepassxc-9999.orig/src/cli/TextStream.cpp	2024-01-31 02:46:30.923808884 -0800
-+++ keepassxc-9999/src/cli/TextStream.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/TextStream.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/TextStream.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -18,7 +18,11 @@
  #include "TextStream.h"
  
@@ -8092,8 +8796,8 @@ diff -urpN keepassxc-9999.orig/src/cli/TextStream.cpp keepassxc-9999/src/cli/Tex
  }
 +#endif
 diff -urpN keepassxc-9999.orig/src/cli/TextStream.h keepassxc-9999/src/cli/TextStream.h
---- keepassxc-9999.orig/src/cli/TextStream.h	2024-01-31 02:46:30.923808884 -0800
-+++ keepassxc-9999/src/cli/TextStream.h	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/TextStream.h	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/TextStream.h	2024-01-31 04:01:36.856225994 -0800
 @@ -38,10 +38,17 @@ class TextStream : public QTextStream
  public:
      TextStream();
@@ -8113,8 +8817,8 @@ diff -urpN keepassxc-9999.orig/src/cli/TextStream.h keepassxc-9999/src/cli/TextS
      void write(const char* str);
  
 diff -urpN keepassxc-9999.orig/src/cli/Utils.cpp keepassxc-9999/src/cli/Utils.cpp
---- keepassxc-9999.orig/src/cli/Utils.cpp	2024-01-31 02:46:30.923808884 -0800
-+++ keepassxc-9999/src/cli/Utils.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/Utils.cpp	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/Utils.cpp	2024-01-31 04:01:36.856225994 -0800
 @@ -42,6 +42,37 @@ namespace Utils
      QTextStream STDIN;
      QTextStream DEVNULL;
@@ -8314,8 +9018,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Utils.cpp keepassxc-9999/src/cli/Utils.cp
          }
  
 diff -urpN keepassxc-9999.orig/src/cli/Utils.h keepassxc-9999/src/cli/Utils.h
---- keepassxc-9999.orig/src/cli/Utils.h	2024-01-31 02:46:30.923808884 -0800
-+++ keepassxc-9999/src/cli/Utils.h	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/cli/Utils.h	2024-01-31 04:01:17.668362541 -0800
++++ keepassxc-9999/src/cli/Utils.h	2024-01-31 04:01:36.856225994 -0800
 @@ -18,6 +18,9 @@
  #ifndef KEEPASSXC_UTILS_H
  #define KEEPASSXC_UTILS_H
@@ -8327,8 +9031,8 @@ diff -urpN keepassxc-9999.orig/src/cli/Utils.h keepassxc-9999/src/cli/Utils.h
  
  class CompositeKey;
 diff -urpN keepassxc-9999.orig/src/CMakeLists.txt keepassxc-9999/src/CMakeLists.txt
---- keepassxc-9999.orig/src/CMakeLists.txt	2024-01-31 02:46:30.903809023 -0800
-+++ keepassxc-9999/src/CMakeLists.txt	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/CMakeLists.txt	2024-01-31 04:01:17.644362711 -0800
++++ keepassxc-9999/src/CMakeLists.txt	2024-01-31 04:01:36.860225965 -0800
 @@ -30,6 +30,151 @@ if(NOT ZXCVBN_LIBRARIES)
      set(ZXCVBN_LIBRARIES zxcvbn)
  endif(NOT ZXCVBN_LIBRARIES)
@@ -8616,8 +9320,8 @@ diff -urpN keepassxc-9999.orig/src/CMakeLists.txt keepassxc-9999/src/CMakeLists.
          install(FILES ${SSL_CA_BUNDLE} DESTINATION "ssl/certs")
      else()
 diff -urpN keepassxc-9999.orig/src/core/Clock.cpp keepassxc-9999/src/core/Clock.cpp
---- keepassxc-9999.orig/src/core/Clock.cpp	2024-01-31 02:46:30.923808884 -0800
-+++ keepassxc-9999/src/core/Clock.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/core/Clock.cpp	2024-01-31 04:01:17.672362512 -0800
++++ keepassxc-9999/src/core/Clock.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -30,8 +30,13 @@ QDateTime Clock::currentDateTime()
  
  uint Clock::currentSecondsSinceEpoch()
@@ -8634,8 +9338,8 @@ diff -urpN keepassxc-9999.orig/src/core/Clock.cpp keepassxc-9999/src/core/Clock.
  
  qint64 Clock::currentMilliSecondsSinceEpoch()
 diff -urpN keepassxc-9999.orig/src/core/Database.cpp keepassxc-9999/src/core/Database.cpp
---- keepassxc-9999.orig/src/core/Database.cpp	2024-01-31 02:46:30.923808884 -0800
-+++ keepassxc-9999/src/core/Database.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/core/Database.cpp	2024-01-31 04:01:17.672362512 -0800
++++ keepassxc-9999/src/core/Database.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -132,12 +132,21 @@ bool Database::open(const QString& fileP
  
      // Don't autodetect read-only mode, as it triggers an upstream bug.
@@ -8719,8 +9423,8 @@ diff -urpN keepassxc-9999.orig/src/core/Database.cpp keepassxc-9999/src/core/Dat
      emit tagListUpdated();
  }
 diff -urpN keepassxc-9999.orig/src/core/EntryAttachments.cpp keepassxc-9999/src/core/EntryAttachments.cpp
---- keepassxc-9999.orig/src/core/EntryAttachments.cpp	2024-01-31 02:46:30.927808855 -0800
-+++ keepassxc-9999/src/core/EntryAttachments.cpp	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/core/EntryAttachments.cpp	2024-01-31 04:01:17.672362512 -0800
++++ keepassxc-9999/src/core/EntryAttachments.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -50,7 +50,12 @@ bool EntryAttachments::hasKey(const QStr
  
  QSet<QByteArray> EntryAttachments::values() const
@@ -8735,8 +9439,8 @@ diff -urpN keepassxc-9999.orig/src/core/EntryAttachments.cpp keepassxc-9999/src/
  
  QByteArray EntryAttachments::value(const QString& key) const
 diff -urpN keepassxc-9999.orig/src/core/EntryAttachments.h keepassxc-9999/src/core/EntryAttachments.h
---- keepassxc-9999.orig/src/core/EntryAttachments.h	2024-01-31 02:46:30.927808855 -0800
-+++ keepassxc-9999/src/core/EntryAttachments.h	2024-01-31 02:49:18.578641387 -0800
+--- keepassxc-9999.orig/src/core/EntryAttachments.h	2024-01-31 04:01:17.672362512 -0800
++++ keepassxc-9999/src/core/EntryAttachments.h	2024-01-31 04:01:36.860225965 -0800
 @@ -21,12 +21,18 @@
  #include "core/FileWatcher.h"
  #include "core/ModifiableObject.h"
@@ -8757,8 +9461,8 @@ diff -urpN keepassxc-9999.orig/src/core/EntryAttachments.h keepassxc-9999/src/co
  class EntryAttachments : public ModifiableObject
  {
 diff -urpN keepassxc-9999.orig/src/core/EntryAttributes.cpp keepassxc-9999/src/core/EntryAttributes.cpp
---- keepassxc-9999.orig/src/core/EntryAttributes.cpp	2024-01-31 02:46:30.927808855 -0800
-+++ keepassxc-9999/src/core/EntryAttributes.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/EntryAttributes.cpp	2024-01-31 04:01:17.672362512 -0800
++++ keepassxc-9999/src/core/EntryAttributes.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -238,7 +238,15 @@ void EntryAttributes::copyCustomKeysFrom
  bool EntryAttributes::areCustomKeysDifferent(const EntryAttributes* other)
  {
@@ -8776,8 +9480,8 @@ diff -urpN keepassxc-9999.orig/src/core/EntryAttributes.cpp keepassxc-9999/src/c
      }
  
 diff -urpN keepassxc-9999.orig/src/core/Entry.cpp keepassxc-9999/src/core/Entry.cpp
---- keepassxc-9999.orig/src/core/Entry.cpp	2024-01-31 02:46:30.927808855 -0800
-+++ keepassxc-9999/src/core/Entry.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/Entry.cpp	2024-01-31 04:01:17.672362512 -0800
++++ keepassxc-9999/src/core/Entry.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -438,7 +438,12 @@ int Entry::size() const
      size += this->autoTypeAssociations()->associationsSize();
      size += this->attachments()->attachmentsSize();
@@ -8903,8 +9607,8 @@ diff -urpN keepassxc-9999.orig/src/core/Entry.cpp keepassxc-9999/src/core/Entry.
          }
  
 diff -urpN keepassxc-9999.orig/src/core/EntrySearcher.cpp keepassxc-9999/src/core/EntrySearcher.cpp
---- keepassxc-9999.orig/src/core/EntrySearcher.cpp	2024-01-31 02:46:30.927808855 -0800
-+++ keepassxc-9999/src/core/EntrySearcher.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/EntrySearcher.cpp	2024-01-31 04:01:17.672362512 -0800
++++ keepassxc-9999/src/core/EntrySearcher.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -203,7 +203,11 @@ bool EntrySearcher::searchEntryImpl(cons
          case Field::Is:
              if (term.word.startsWith("expired", Qt::CaseInsensitive)) {
@@ -8918,8 +9622,8 @@ diff -urpN keepassxc-9999.orig/src/core/EntrySearcher.cpp keepassxc-9999/src/cor
                      days = parts[1].toInt();
                  }
 diff -urpN keepassxc-9999.orig/src/core/Group.cpp keepassxc-9999/src/core/Group.cpp
---- keepassxc-9999.orig/src/core/Group.cpp	2024-01-31 02:46:30.927808855 -0800
-+++ keepassxc-9999/src/core/Group.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/Group.cpp	2024-01-31 04:01:17.676362484 -0800
++++ keepassxc-9999/src/core/Group.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -863,7 +863,12 @@ QList<QString> Group::usernamesRecursive
  
      // Take first topN usernames if set
@@ -8934,8 +9638,8 @@ diff -urpN keepassxc-9999.orig/src/core/Group.cpp keepassxc-9999/src/core/Group.
          usernames.append(sortedUsernames[i].first);
      }
 diff -urpN keepassxc-9999.orig/src/core/HibpDownloader.cpp keepassxc-9999/src/core/HibpDownloader.cpp
---- keepassxc-9999.orig/src/core/HibpDownloader.cpp	2024-01-31 02:46:30.927808855 -0800
-+++ keepassxc-9999/src/core/HibpDownloader.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/HibpDownloader.cpp	2024-01-31 04:01:17.676362484 -0800
++++ keepassxc-9999/src/core/HibpDownloader.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -60,7 +60,13 @@ namespace
          }
  
@@ -8951,8 +9655,8 @@ diff -urpN keepassxc-9999.orig/src/core/HibpDownloader.cpp keepassxc-9999/src/co
  } // namespace
  
 diff -urpN keepassxc-9999.orig/src/core/MacPasteboard.cpp keepassxc-9999/src/core/MacPasteboard.cpp
---- keepassxc-9999.orig/src/core/MacPasteboard.cpp	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/MacPasteboard.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/MacPasteboard.cpp	2024-01-31 04:01:17.676362484 -0800
++++ keepassxc-9999/src/core/MacPasteboard.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -78,7 +78,12 @@ QVariant MacPasteboard::convertToMime(co
      } else if (flavor == QLatin1String("org.nspasteboard.ConcealedType")) {
          ret = QString::fromUtf8(firstData);
@@ -8980,8 +9684,8 @@ diff -urpN keepassxc-9999.orig/src/core/MacPasteboard.cpp keepassxc-9999/src/cor
      return ret;
  }
 diff -urpN keepassxc-9999.orig/src/core/MacPasteboard.h keepassxc-9999/src/core/MacPasteboard.h
---- keepassxc-9999.orig/src/core/MacPasteboard.h	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/MacPasteboard.h	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/MacPasteboard.h	2024-01-31 04:01:17.676362484 -0800
++++ keepassxc-9999/src/core/MacPasteboard.h	2024-01-31 04:01:36.860225965 -0800
 @@ -19,7 +19,11 @@
  #define KEEPASSXC_MACPASTEBOARD_H
  
@@ -8996,8 +9700,8 @@ diff -urpN keepassxc-9999.orig/src/core/MacPasteboard.h keepassxc-9999/src/core/
  
  class MacPasteboard : public QObject, public QMacPasteboardMime
 diff -urpN keepassxc-9999.orig/src/core/Merger.cpp keepassxc-9999/src/core/Merger.cpp
---- keepassxc-9999.orig/src/core/Merger.cpp	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/Merger.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/Merger.cpp	2024-01-31 04:01:17.676362484 -0800
++++ keepassxc-9999/src/core/Merger.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -468,7 +468,15 @@ Merger::ChangeList Merger::mergeDeletion
  
      while (!groups.isEmpty()) {
@@ -9015,8 +9719,8 @@ diff -urpN keepassxc-9999.orig/src/core/Merger.cpp keepassxc-9999/src/core/Merge
              groups << group;
              continue;
 diff -urpN keepassxc-9999.orig/src/core/PassphraseGenerator.cpp keepassxc-9999/src/core/PassphraseGenerator.cpp
---- keepassxc-9999.orig/src/core/PassphraseGenerator.cpp	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/PassphraseGenerator.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/PassphraseGenerator.cpp	2024-01-31 04:01:17.676362484 -0800
++++ keepassxc-9999/src/core/PassphraseGenerator.cpp	2024-01-31 04:01:36.860225965 -0800
 @@ -18,6 +18,9 @@
  #include "PassphraseGenerator.h"
  
@@ -9052,8 +9756,8 @@ diff -urpN keepassxc-9999.orig/src/core/PassphraseGenerator.cpp keepassxc-9999/s
          if (isSigned && line.startsWith("-----BEGIN PGP SIGNATURE-----")) {
              break;
 diff -urpN keepassxc-9999.orig/src/core/PasswordGenerator.cpp keepassxc-9999/src/core/PasswordGenerator.cpp
---- keepassxc-9999.orig/src/core/PasswordGenerator.cpp	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/PasswordGenerator.cpp	2024-01-31 02:49:18.582641360 -0800
+--- keepassxc-9999.orig/src/core/PasswordGenerator.cpp	2024-01-31 04:01:17.676362484 -0800
++++ keepassxc-9999/src/core/PasswordGenerator.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -132,7 +132,7 @@ QVector<PasswordGroup> PasswordGenerator
                  continue;
              }
@@ -9213,8 +9917,8 @@ diff -urpN keepassxc-9999.orig/src/core/PasswordGenerator.cpp keepassxc-9999/src
          }
  
 diff -urpN keepassxc-9999.orig/src/core/PasswordHealth.cpp keepassxc-9999/src/core/PasswordHealth.cpp
---- keepassxc-9999.orig/src/core/PasswordHealth.cpp	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/PasswordHealth.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/core/PasswordHealth.cpp	2024-01-31 04:01:17.680362456 -0800
++++ keepassxc-9999/src/core/PasswordHealth.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -171,8 +171,13 @@ QSharedPointer<PasswordHealth> HealthChe
      if (entry->isExpired()) {
          health->setScore(0);
@@ -9244,8 +9948,8 @@ diff -urpN keepassxc-9999.orig/src/core/PasswordHealth.cpp keepassxc-9999/src/co
                  health->addScoreReason(QObject::tr("Password is about to expire"));
              } else if (days <= 10) {
 diff -urpN keepassxc-9999.orig/src/core/SignalMultiplexer.cpp keepassxc-9999/src/core/SignalMultiplexer.cpp
---- keepassxc-9999.orig/src/core/SignalMultiplexer.cpp	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/SignalMultiplexer.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/core/SignalMultiplexer.cpp	2024-01-31 04:01:17.680362456 -0800
++++ keepassxc-9999/src/core/SignalMultiplexer.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -18,6 +18,7 @@
  #include "SignalMultiplexer.h"
  
@@ -9255,8 +9959,8 @@ diff -urpN keepassxc-9999.orig/src/core/SignalMultiplexer.cpp keepassxc-9999/src
  SignalMultiplexer::SignalMultiplexer() = default;
  
 diff -urpN keepassxc-9999.orig/src/core/SignalMultiplexer.h keepassxc-9999/src/core/SignalMultiplexer.h
---- keepassxc-9999.orig/src/core/SignalMultiplexer.h	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/SignalMultiplexer.h	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/core/SignalMultiplexer.h	2024-01-31 04:01:17.680362456 -0800
++++ keepassxc-9999/src/core/SignalMultiplexer.h	2024-01-31 04:01:36.864225936 -0800
 @@ -18,6 +18,7 @@
  #ifndef KEEPASSX_SIGNALMULTIPLEXER_H
  #define KEEPASSX_SIGNALMULTIPLEXER_H
@@ -9266,8 +9970,8 @@ diff -urpN keepassxc-9999.orig/src/core/SignalMultiplexer.h keepassxc-9999/src/c
  
  class SignalMultiplexer
 diff -urpN keepassxc-9999.orig/src/core/Tools.cpp keepassxc-9999/src/core/Tools.cpp
---- keepassxc-9999.orig/src/core/Tools.cpp	2024-01-31 02:46:30.931808828 -0800
-+++ keepassxc-9999/src/core/Tools.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/core/Tools.cpp	2024-01-31 04:01:17.680362456 -0800
++++ keepassxc-9999/src/core/Tools.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -223,11 +223,19 @@ namespace Tools
      bool isBase64(const QByteArray& ba)
      {
@@ -9290,16 +9994,15 @@ diff -urpN keepassxc-9999.orig/src/core/Tools.cpp keepassxc-9999/src/core/Tools.
      void sleep(int ms)
 diff -urpN keepassxc-9999.orig/src/core/TopLevelDomain.cpp.in keepassxc-9999/src/core/TopLevelDomain.cpp.in
 --- keepassxc-9999.orig/src/core/TopLevelDomain.cpp.in	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/src/core/TopLevelDomain.cpp.in	2024-01-31 02:49:18.586641332 -0800
-@@ -0,0 +1,254 @@
++++ keepassxc-9999/src/core/TopLevelDomain.cpp.in	2024-01-31 04:05:37.062516150 -0800
+@@ -0,0 +1,253 @@
 +/*
 + *  Copyright (C) 2024 Orson Teodoro
 + *  Copyright (C) 2019 KeePassXC Team <team@keepassxc.org>
 + *
 + *  This program is free software: you can redistribute it and/or modify
 + *  it under the terms of the GNU General Public License as published by
-+ *  the Free Software Foundation, either version 2 or (at your option)
-+ *  version 3 of the License.
++ *  the Free Software Foundation, version 3 of the License.
 + *
 + *  This program is distributed in the hope that it will be useful,
 + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -9548,16 +10251,15 @@ diff -urpN keepassxc-9999.orig/src/core/TopLevelDomain.cpp.in keepassxc-9999/src
 +#endif
 diff -urpN keepassxc-9999.orig/src/core/TopLevelDomain.h keepassxc-9999/src/core/TopLevelDomain.h
 --- keepassxc-9999.orig/src/core/TopLevelDomain.h	1969-12-31 16:00:00.000000000 -0800
-+++ keepassxc-9999/src/core/TopLevelDomain.h	2024-01-31 02:49:18.586641332 -0800
-@@ -0,0 +1,59 @@
++++ keepassxc-9999/src/core/TopLevelDomain.h	2024-01-31 04:05:39.062501909 -0800
+@@ -0,0 +1,58 @@
 +/*
 + *  Copyright (C) 2024 Orson Teodoro
 + *  Copyright (C) 2019 KeePassXC Team <team@keepassxc.org>
 + *
 + *  This program is free software: you can redistribute it and/or modify
 + *  it under the terms of the GNU General Public License as published by
-+ *  the Free Software Foundation, either version 2 or (at your option)
-+ *  version 3 of the License.
++ *  the Free Software Foundation, version 3 of the License.
 + *
 + *  This program is distributed in the hope that it will be useful,
 + *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -9610,8 +10312,8 @@ diff -urpN keepassxc-9999.orig/src/core/TopLevelDomain.h keepassxc-9999/src/core
 +
 +#endif // KEEPASSX_TOPLEVELDOMAIN_H
 diff -urpN keepassxc-9999.orig/src/core/UrlTools.cpp keepassxc-9999/src/core/UrlTools.cpp
---- keepassxc-9999.orig/src/core/UrlTools.cpp	2024-01-31 02:46:30.935808800 -0800
-+++ keepassxc-9999/src/core/UrlTools.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/core/UrlTools.cpp	2024-01-31 04:01:17.680362456 -0800
++++ keepassxc-9999/src/core/UrlTools.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -16,6 +16,9 @@
   */
  
@@ -9684,8 +10386,8 @@ diff -urpN keepassxc-9999.orig/src/core/UrlTools.cpp keepassxc-9999/src/core/Url
      return host;
  }
 diff -urpN keepassxc-9999.orig/src/crypto/Crypto.cpp keepassxc-9999/src/crypto/Crypto.cpp
---- keepassxc-9999.orig/src/crypto/Crypto.cpp	2024-01-31 02:46:30.935808800 -0800
-+++ keepassxc-9999/src/crypto/Crypto.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/crypto/Crypto.cpp	2024-01-31 04:01:17.680362456 -0800
++++ keepassxc-9999/src/crypto/Crypto.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -24,6 +24,7 @@
  #include "crypto/SymmetricCipher.h"
  
@@ -9695,8 +10397,8 @@ diff -urpN keepassxc-9999.orig/src/crypto/Crypto.cpp keepassxc-9999/src/crypto/C
  namespace
  {
 diff -urpN keepassxc-9999.orig/src/crypto/SymmetricCipher.cpp keepassxc-9999/src/crypto/SymmetricCipher.cpp
---- keepassxc-9999.orig/src/crypto/SymmetricCipher.cpp	2024-01-31 02:46:30.935808800 -0800
-+++ keepassxc-9999/src/crypto/SymmetricCipher.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/crypto/SymmetricCipher.cpp	2024-01-31 04:01:17.680362456 -0800
++++ keepassxc-9999/src/crypto/SymmetricCipher.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -25,6 +25,9 @@
  
  bool SymmetricCipher::init(Mode mode, Direction direction, const QByteArray& key, const QByteArray& iv)
@@ -9736,8 +10438,8 @@ diff -urpN keepassxc-9999.orig/src/crypto/SymmetricCipher.cpp keepassxc-9999/src
  }
  
 diff -urpN keepassxc-9999.orig/src/crypto/SymmetricCipher.h keepassxc-9999/src/crypto/SymmetricCipher.h
---- keepassxc-9999.orig/src/crypto/SymmetricCipher.h	2024-01-31 02:46:30.935808800 -0800
-+++ keepassxc-9999/src/crypto/SymmetricCipher.h	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/crypto/SymmetricCipher.h	2024-01-31 04:01:17.680362456 -0800
++++ keepassxc-9999/src/crypto/SymmetricCipher.h	2024-01-31 04:01:36.864225936 -0800
 @@ -78,6 +78,9 @@ private:
      QString m_error;
      Mode m_mode;
@@ -9749,8 +10451,8 @@ diff -urpN keepassxc-9999.orig/src/crypto/SymmetricCipher.h keepassxc-9999/src/c
      Q_DISABLE_COPY(SymmetricCipher)
  };
 diff -urpN keepassxc-9999.orig/src/fdosecrets/CMakeLists.txt keepassxc-9999/src/fdosecrets/CMakeLists.txt
---- keepassxc-9999.orig/src/fdosecrets/CMakeLists.txt	2024-01-31 02:46:30.939808773 -0800
-+++ keepassxc-9999/src/fdosecrets/CMakeLists.txt	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/fdosecrets/CMakeLists.txt	2024-01-31 04:01:17.684362426 -0800
++++ keepassxc-9999/src/fdosecrets/CMakeLists.txt	2024-01-31 04:01:36.864225936 -0800
 @@ -31,5 +31,13 @@ if(WITH_XC_FDOSECRETS)
          objects/Prompt.cpp
          dbus/DBusTypes.cpp
@@ -9767,8 +10469,8 @@ diff -urpN keepassxc-9999.orig/src/fdosecrets/CMakeLists.txt keepassxc-9999/src/
 +    endif()
  endif()
 diff -urpN keepassxc-9999.orig/src/fdosecrets/dbus/DBusDispatch.cpp keepassxc-9999/src/fdosecrets/dbus/DBusDispatch.cpp
---- keepassxc-9999.orig/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-31 02:46:30.939808773 -0800
-+++ keepassxc-9999/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-31 04:01:17.684362426 -0800
++++ keepassxc-9999/src/fdosecrets/dbus/DBusDispatch.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -48,15 +48,27 @@ namespace FdoSecrets
              }
  
@@ -9810,8 +10512,8 @@ diff -urpN keepassxc-9999.orig/src/fdosecrets/dbus/DBusDispatch.cpp keepassxc-99
          }
  
 diff -urpN keepassxc-9999.orig/src/fdosecrets/dbus/DBusMgr.cpp keepassxc-9999/src/fdosecrets/dbus/DBusMgr.cpp
---- keepassxc-9999.orig/src/fdosecrets/dbus/DBusMgr.cpp	2024-01-31 02:46:30.939808773 -0800
-+++ keepassxc-9999/src/fdosecrets/dbus/DBusMgr.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/fdosecrets/dbus/DBusMgr.cpp	2024-01-31 04:01:17.684362426 -0800
++++ keepassxc-9999/src/fdosecrets/dbus/DBusMgr.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -202,7 +202,11 @@ namespace FdoSecrets
  
          // /proc/pid/stat gives ppid, name
@@ -9825,8 +10527,8 @@ diff -urpN keepassxc-9999.orig/src/fdosecrets/dbus/DBusMgr.cpp keepassxc-9999/sr
              // find comm field without looking in what's inside as it's user controlled
              auto commStart = line.indexOf('(');
 diff -urpN keepassxc-9999.orig/src/fdosecrets/FdoSecretsSettings.cpp keepassxc-9999/src/fdosecrets/FdoSecretsSettings.cpp
---- keepassxc-9999.orig/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-31 02:46:30.939808773 -0800
-+++ keepassxc-9999/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-31 04:01:17.684362426 -0800
++++ keepassxc-9999/src/fdosecrets/FdoSecretsSettings.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -106,7 +106,7 @@ namespace FdoSecrets
  
      QUuid FdoSecretsSettings::exposedGroup(Database* db) const
@@ -9837,8 +10539,8 @@ diff -urpN keepassxc-9999.orig/src/fdosecrets/FdoSecretsSettings.cpp keepassxc-9
  
      void FdoSecretsSettings::setExposedGroup(Database* db, const QUuid& group) // clazy:exclude=function-args-by-value
 diff -urpN keepassxc-9999.orig/src/fdosecrets/objects/Collection.cpp keepassxc-9999/src/fdosecrets/objects/Collection.cpp
---- keepassxc-9999.orig/src/fdosecrets/objects/Collection.cpp	2024-01-31 02:46:30.943808745 -0800
-+++ keepassxc-9999/src/fdosecrets/objects/Collection.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/fdosecrets/objects/Collection.cpp	2024-01-31 04:01:17.684362426 -0800
++++ keepassxc-9999/src/fdosecrets/objects/Collection.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -648,7 +648,11 @@ namespace FdoSecrets
          // groupPath can't be empty here, because otherwise it will match m_exposedGroup and was returned above
          Q_ASSERT(!groupPath.isEmpty());
@@ -9852,8 +10554,8 @@ diff -urpN keepassxc-9999.orig/src/fdosecrets/objects/Collection.cpp keepassxc-9
  
          // create parent group
 diff -urpN keepassxc-9999.orig/src/fdosecrets/objects/Item.cpp keepassxc-9999/src/fdosecrets/objects/Item.cpp
---- keepassxc-9999.orig/src/fdosecrets/objects/Item.cpp	2024-01-31 02:46:30.943808745 -0800
-+++ keepassxc-9999/src/fdosecrets/objects/Item.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/fdosecrets/objects/Item.cpp	2024-01-31 04:01:17.688362399 -0800
++++ keepassxc-9999/src/fdosecrets/objects/Item.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -28,7 +28,13 @@
  
  #include <QMimeDatabase>
@@ -9962,8 +10664,8 @@ diff -urpN keepassxc-9999.orig/src/fdosecrets/objects/Item.cpp keepassxc-9999/sr
      }
  
 diff -urpN keepassxc-9999.orig/src/fdosecrets/widgets/AccessControlDialog.cpp keepassxc-9999/src/fdosecrets/widgets/AccessControlDialog.cpp
---- keepassxc-9999.orig/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-31 02:46:30.947808716 -0800
-+++ keepassxc-9999/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-31 04:01:17.688362399 -0800
++++ keepassxc-9999/src/fdosecrets/widgets/AccessControlDialog.cpp	2024-01-31 04:01:36.864225936 -0800
 @@ -206,7 +206,11 @@ QHash<Entry*, AuthDecision> AccessContro
  AccessControlDialog::EntryModel::EntryModel(QList<Entry*> entries, QObject* parent)
      : QAbstractTableModel(parent)
@@ -9977,8 +10679,8 @@ diff -urpN keepassxc-9999.orig/src/fdosecrets/widgets/AccessControlDialog.cpp ke
  }
  
 diff -urpN keepassxc-9999.orig/src/fdosecrets/widgets/AccessControlDialog.h keepassxc-9999/src/fdosecrets/widgets/AccessControlDialog.h
---- keepassxc-9999.orig/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-31 02:46:30.947808716 -0800
-+++ keepassxc-9999/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-31 04:01:17.688362399 -0800
++++ keepassxc-9999/src/fdosecrets/widgets/AccessControlDialog.h	2024-01-31 04:01:36.864225936 -0800
 @@ -31,6 +31,11 @@
  
  class Entry;
@@ -9992,8 +10694,8 @@ diff -urpN keepassxc-9999.orig/src/fdosecrets/widgets/AccessControlDialog.h keep
  {
      class AccessControlDialog;
 diff -urpN keepassxc-9999.orig/src/format/CsvExporter.cpp keepassxc-9999/src/format/CsvExporter.cpp
---- keepassxc-9999.orig/src/format/CsvExporter.cpp	2024-01-31 02:46:30.951808689 -0800
-+++ keepassxc-9999/src/format/CsvExporter.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/format/CsvExporter.cpp	2024-01-31 04:01:17.692362369 -0800
++++ keepassxc-9999/src/format/CsvExporter.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -25,7 +25,11 @@
  bool CsvExporter::exportDatabase(const QString& filename, const QSharedPointer<const Database>& db)
  {
@@ -10007,8 +10709,8 @@ diff -urpN keepassxc-9999.orig/src/format/CsvExporter.cpp keepassxc-9999/src/for
          return false;
      }
 diff -urpN keepassxc-9999.orig/src/format/CsvParser.cpp keepassxc-9999/src/format/CsvParser.cpp
---- keepassxc-9999.orig/src/format/CsvParser.cpp	2024-01-31 02:46:30.951808689 -0800
-+++ keepassxc-9999/src/format/CsvParser.cpp	2024-01-31 02:49:18.586641332 -0800
+--- keepassxc-9999.orig/src/format/CsvParser.cpp	2024-01-31 04:01:17.692362369 -0800
++++ keepassxc-9999/src/format/CsvParser.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -19,7 +19,11 @@
  #include "CsvParser.h"
  
@@ -10090,8 +10792,8 @@ diff -urpN keepassxc-9999.orig/src/format/CsvParser.cpp keepassxc-9999/src/forma
      m_isGood = !isCritical;
  }
 diff -urpN keepassxc-9999.orig/src/format/Kdbx3Reader.cpp keepassxc-9999/src/format/Kdbx3Reader.cpp
---- keepassxc-9999.orig/src/format/Kdbx3Reader.cpp	2024-01-31 02:46:30.951808689 -0800
-+++ keepassxc-9999/src/format/Kdbx3Reader.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/Kdbx3Reader.cpp	2024-01-31 04:01:17.692362369 -0800
++++ keepassxc-9999/src/format/Kdbx3Reader.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -70,7 +70,11 @@ bool Kdbx3Reader::readDatabaseImpl(QIODe
          raiseError(cipherStream.errorString());
          return false;
@@ -10129,8 +10831,8 @@ diff -urpN keepassxc-9999.orig/src/format/Kdbx3Reader.cpp keepassxc-9999/src/for
              return false;
          }
 diff -urpN keepassxc-9999.orig/src/format/Kdbx3Writer.cpp keepassxc-9999/src/format/Kdbx3Writer.cpp
---- keepassxc-9999.orig/src/format/Kdbx3Writer.cpp	2024-01-31 02:46:30.955808661 -0800
-+++ keepassxc-9999/src/format/Kdbx3Writer.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/Kdbx3Writer.cpp	2024-01-31 04:01:17.692362369 -0800
++++ keepassxc-9999/src/format/Kdbx3Writer.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -66,7 +66,11 @@ bool Kdbx3Writer::writeDatabase(QIODevic
  
      // write header
@@ -10191,8 +10893,8 @@ diff -urpN keepassxc-9999.orig/src/format/Kdbx3Writer.cpp keepassxc-9999/src/for
          ioCompressor->close();
      }
 diff -urpN keepassxc-9999.orig/src/format/Kdbx4Reader.cpp keepassxc-9999/src/format/Kdbx4Reader.cpp
---- keepassxc-9999.orig/src/format/Kdbx4Reader.cpp	2024-01-31 02:46:30.955808661 -0800
-+++ keepassxc-9999/src/format/Kdbx4Reader.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/Kdbx4Reader.cpp	2024-01-31 04:01:17.692362369 -0800
++++ keepassxc-9999/src/format/Kdbx4Reader.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -80,7 +80,11 @@ bool Kdbx4Reader::readDatabaseImpl(QIODe
          return false;
      }
@@ -10242,8 +10944,8 @@ diff -urpN keepassxc-9999.orig/src/format/Kdbx4Reader.cpp keepassxc-9999/src/for
              return false;
          }
 diff -urpN keepassxc-9999.orig/src/format/Kdbx4Writer.cpp keepassxc-9999/src/format/Kdbx4Writer.cpp
---- keepassxc-9999.orig/src/format/Kdbx4Writer.cpp	2024-01-31 02:46:30.955808661 -0800
-+++ keepassxc-9999/src/format/Kdbx4Writer.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/Kdbx4Writer.cpp	2024-01-31 04:01:17.692362369 -0800
++++ keepassxc-9999/src/format/Kdbx4Writer.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -64,7 +64,11 @@ bool Kdbx4Writer::writeDatabase(QIODevic
      QByteArray headerData;
      {
@@ -10329,8 +11031,8 @@ diff -urpN keepassxc-9999.orig/src/format/Kdbx4Writer.cpp keepassxc-9999/src/for
      }
  
 diff -urpN keepassxc-9999.orig/src/format/KdbxReader.cpp keepassxc-9999/src/format/KdbxReader.cpp
---- keepassxc-9999.orig/src/format/KdbxReader.cpp	2024-01-31 02:46:30.955808661 -0800
-+++ keepassxc-9999/src/format/KdbxReader.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/KdbxReader.cpp	2024-01-31 04:01:17.692362369 -0800
++++ keepassxc-9999/src/format/KdbxReader.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -75,7 +75,11 @@ bool KdbxReader::readDatabase(QIODevice*
      m_protectedStreamKey.clear();
  
@@ -10344,8 +11046,8 @@ diff -urpN keepassxc-9999.orig/src/format/KdbxReader.cpp keepassxc-9999/src/form
      // read KDBX magic numbers
      quint32 sig1, sig2, version;
 diff -urpN keepassxc-9999.orig/src/format/KdbxWriter.cpp keepassxc-9999/src/format/KdbxWriter.cpp
---- keepassxc-9999.orig/src/format/KdbxWriter.cpp	2024-01-31 02:46:30.955808661 -0800
-+++ keepassxc-9999/src/format/KdbxWriter.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/KdbxWriter.cpp	2024-01-31 04:01:17.692362369 -0800
++++ keepassxc-9999/src/format/KdbxWriter.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -70,7 +70,11 @@ void KdbxWriter::extractDatabase(QByteAr
  {
      QBuffer buffer;
@@ -10359,8 +11061,8 @@ diff -urpN keepassxc-9999.orig/src/format/KdbxWriter.cpp keepassxc-9999/src/form
      writer.disableInnerStreamProtection(true);
      writer.writeDatabase(&buffer, db);
 diff -urpN keepassxc-9999.orig/src/format/KdbxXmlReader.cpp keepassxc-9999/src/format/KdbxXmlReader.cpp
---- keepassxc-9999.orig/src/format/KdbxXmlReader.cpp	2024-01-31 02:46:30.955808661 -0800
-+++ keepassxc-9999/src/format/KdbxXmlReader.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/KdbxXmlReader.cpp	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/KdbxXmlReader.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -55,7 +55,11 @@ KdbxXmlReader::KdbxXmlReader(quint32 ver
  QSharedPointer<Database> KdbxXmlReader::readDatabase(const QString& filename)
  {
@@ -11128,8 +11830,8 @@ diff -urpN keepassxc-9999.orig/src/format/KdbxXmlReader.cpp keepassxc-9999/src/f
      QByteArray result;
      if (!Tools::readAllFromDevice(&compressor, result)) {
 diff -urpN keepassxc-9999.orig/src/format/KdbxXmlReader.h keepassxc-9999/src/format/KdbxXmlReader.h
---- keepassxc-9999.orig/src/format/KdbxXmlReader.h	2024-01-31 02:46:30.955808661 -0800
-+++ keepassxc-9999/src/format/KdbxXmlReader.h	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/KdbxXmlReader.h	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/KdbxXmlReader.h	2024-01-31 04:01:36.868225908 -0800
 @@ -22,6 +22,11 @@
  #include "core/Metadata.h"
  
@@ -11167,8 +11869,8 @@ diff -urpN keepassxc-9999.orig/src/format/KdbxXmlReader.h keepassxc-9999/src/for
  
      bool m_error = false;
 diff -urpN keepassxc-9999.orig/src/format/KdbxXmlWriter.cpp keepassxc-9999/src/format/KdbxXmlWriter.cpp
---- keepassxc-9999.orig/src/format/KdbxXmlWriter.cpp	2024-01-31 02:46:30.955808661 -0800
-+++ keepassxc-9999/src/format/KdbxXmlWriter.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/KdbxXmlWriter.cpp	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/KdbxXmlWriter.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -44,7 +44,9 @@ void KdbxXmlWriter::writeDatabase(QIODev
  
      m_xml.setAutoFormatting(true);
@@ -11212,8 +11914,8 @@ diff -urpN keepassxc-9999.orig/src/format/KdbxXmlWriter.cpp keepassxc-9999/src/f
              qint64 bytesWritten = compressor.write(i.key());
              Q_ASSERT(bytesWritten == i.key().size());
 diff -urpN keepassxc-9999.orig/src/format/KeePass1Reader.cpp keepassxc-9999/src/format/KeePass1Reader.cpp
---- keepassxc-9999.orig/src/format/KeePass1Reader.cpp	2024-01-31 02:46:30.959808634 -0800
-+++ keepassxc-9999/src/format/KeePass1Reader.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/KeePass1Reader.cpp	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/KeePass1Reader.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -18,7 +18,15 @@
  #include "KeePass1Reader.h"
  
@@ -11360,8 +12062,8 @@ diff -urpN keepassxc-9999.orig/src/format/KeePass1Reader.cpp keepassxc-9999/src/
              lastLineAutoType = true;
          } else {
 diff -urpN keepassxc-9999.orig/src/format/KeePass2Writer.cpp keepassxc-9999/src/format/KeePass2Writer.cpp
---- keepassxc-9999.orig/src/format/KeePass2Writer.cpp	2024-01-31 02:46:30.959808634 -0800
-+++ keepassxc-9999/src/format/KeePass2Writer.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/KeePass2Writer.cpp	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/KeePass2Writer.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -33,7 +33,11 @@
  bool KeePass2Writer::writeDatabase(const QString& filename, Database* db)
  {
@@ -11375,8 +12077,8 @@ diff -urpN keepassxc-9999.orig/src/format/KeePass2Writer.cpp keepassxc-9999/src/
          return false;
      }
 diff -urpN keepassxc-9999.orig/src/format/OpVaultReaderAttachments.cpp keepassxc-9999/src/format/OpVaultReaderAttachments.cpp
---- keepassxc-9999.orig/src/format/OpVaultReaderAttachments.cpp	2024-01-31 02:46:30.959808634 -0800
-+++ keepassxc-9999/src/format/OpVaultReaderAttachments.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/OpVaultReaderAttachments.cpp	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/OpVaultReaderAttachments.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -37,7 +37,11 @@ bool OpVaultReader::readAttachment(const
                                     QByteArray& payload)
  {
@@ -11390,8 +12092,8 @@ diff -urpN keepassxc-9999.orig/src/format/OpVaultReaderAttachments.cpp keepassxc
          return false;
      }
 diff -urpN keepassxc-9999.orig/src/format/OpVaultReaderBandEntry.cpp keepassxc-9999/src/format/OpVaultReaderBandEntry.cpp
---- keepassxc-9999.orig/src/format/OpVaultReaderBandEntry.cpp	2024-01-31 02:46:30.959808634 -0800
-+++ keepassxc-9999/src/format/OpVaultReaderBandEntry.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/OpVaultReaderBandEntry.cpp	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/OpVaultReaderBandEntry.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -150,12 +150,24 @@ Entry* OpVaultReader::processBandEntry(c
      bool timeInfoOk = false;
      if (bandEntry.contains("created")) {
@@ -11418,8 +12120,8 @@ diff -urpN keepassxc-9999.orig/src/format/OpVaultReaderBandEntry.cpp keepassxc-9
      }
      // "tx" is modified by sync, not by user; maybe a custom attribute?
 diff -urpN keepassxc-9999.orig/src/format/OpVaultReader.cpp keepassxc-9999/src/format/OpVaultReader.cpp
---- keepassxc-9999.orig/src/format/OpVaultReader.cpp	2024-01-31 02:46:30.959808634 -0800
-+++ keepassxc-9999/src/format/OpVaultReader.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/OpVaultReader.cpp	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/OpVaultReader.cpp	2024-01-31 04:01:36.868225908 -0800
 @@ -177,9 +177,18 @@ bool OpVaultReader::processProfileJson(Q
      }
      auto rootGroupTime = rootGroup->timeInfo();
@@ -11484,8 +12186,8 @@ diff -urpN keepassxc-9999.orig/src/format/OpVaultReader.cpp keepassxc-9999/src/f
      }
      filePayload = file.readAll();
 diff -urpN keepassxc-9999.orig/src/format/OpVaultReaderSections.cpp keepassxc-9999/src/format/OpVaultReaderSections.cpp
---- keepassxc-9999.orig/src/format/OpVaultReaderSections.cpp	2024-01-31 02:46:30.963808605 -0800
-+++ keepassxc-9999/src/format/OpVaultReaderSections.cpp	2024-01-31 02:49:18.590641304 -0800
+--- keepassxc-9999.orig/src/format/OpVaultReaderSections.cpp	2024-01-31 04:01:17.696362341 -0800
++++ keepassxc-9999/src/format/OpVaultReaderSections.cpp	2024-01-31 04:01:36.872225879 -0800
 @@ -35,10 +35,21 @@ namespace
              auto dateValue = QString::number(value.toInt());
              date = QDateTime::fromString(dateValue, "yyyyMM");
@@ -11521,8 +12223,8 @@ diff -urpN keepassxc-9999.orig/src/format/OpVaultReaderSections.cpp keepassxc-99
                  qWarning()
                      << QString("[%1] Invalid date attribute found: %2 = %3").arg(entry->title(), attrName, attrValue);
 diff -urpN keepassxc-9999.orig/src/gui/Application.cpp keepassxc-9999/src/gui/Application.cpp
---- keepassxc-9999.orig/src/gui/Application.cpp	2024-01-31 02:46:30.963808605 -0800
-+++ keepassxc-9999/src/gui/Application.cpp	2024-01-31 02:49:18.594641277 -0800
+--- keepassxc-9999.orig/src/gui/Application.cpp	2024-01-31 04:01:17.700362312 -0800
++++ keepassxc-9999/src/gui/Application.cpp	2024-01-31 04:01:36.872225879 -0800
 @@ -198,7 +198,11 @@ void Application::applyTheme()
          m_darkTheme = osUtils->isDarkMode();
  #endif
@@ -11560,8 +12262,8 @@ diff -urpN keepassxc-9999.orig/src/gui/Application.cpp keepassxc-9999/src/gui/Ap
      out << quint32(0); // reserve space for block size
      out << quint32(2); // ID for database lock. TODO: move to enum
 diff -urpN keepassxc-9999.orig/src/gui/csvImport/CsvImportWidget.cpp keepassxc-9999/src/gui/csvImport/CsvImportWidget.cpp
---- keepassxc-9999.orig/src/gui/csvImport/CsvImportWidget.cpp	2024-01-31 02:46:30.991808410 -0800
-+++ keepassxc-9999/src/gui/csvImport/CsvImportWidget.cpp	2024-01-31 02:49:18.594641277 -0800
+--- keepassxc-9999.orig/src/gui/csvImport/CsvImportWidget.cpp	2024-01-31 04:01:17.720362170 -0800
++++ keepassxc-9999/src/gui/csvImport/CsvImportWidget.cpp	2024-01-31 04:01:36.872225879 -0800
 @@ -285,7 +285,11 @@ void CsvImportWidget::setRootGroup()
          }
          groupLabel = m_parserModel->data(m_parserModel->index(r, 0)).toString();
@@ -11587,8 +12289,8 @@ diff -urpN keepassxc-9999.orig/src/gui/csvImport/CsvImportWidget.cpp keepassxc-9
      if (m_db->rootGroup()->name() == "Root" && groupList.first() == "Root") {
          groupList.removeFirst();
 diff -urpN keepassxc-9999.orig/src/gui/DatabaseIcons.h keepassxc-9999/src/gui/DatabaseIcons.h
---- keepassxc-9999.orig/src/gui/DatabaseIcons.h	2024-01-31 02:46:30.967808578 -0800
-+++ keepassxc-9999/src/gui/DatabaseIcons.h	2024-01-31 02:49:18.594641277 -0800
+--- keepassxc-9999.orig/src/gui/DatabaseIcons.h	2024-01-31 04:01:17.704362284 -0800
++++ keepassxc-9999/src/gui/DatabaseIcons.h	2024-01-31 04:01:36.872225879 -0800
 @@ -18,7 +18,9 @@
  #ifndef KEEPASSX_DATABASEICONS_H
  #define KEEPASSX_DATABASEICONS_H
@@ -11600,8 +12302,8 @@ diff -urpN keepassxc-9999.orig/src/gui/DatabaseIcons.h keepassxc-9999/src/gui/Da
  enum IconSize
  {
 diff -urpN keepassxc-9999.orig/src/gui/DatabaseOpenDialog.cpp keepassxc-9999/src/gui/DatabaseOpenDialog.cpp
---- keepassxc-9999.orig/src/gui/DatabaseOpenDialog.cpp	2024-01-31 02:46:30.967808578 -0800
-+++ keepassxc-9999/src/gui/DatabaseOpenDialog.cpp	2024-01-31 02:49:18.594641277 -0800
+--- keepassxc-9999.orig/src/gui/DatabaseOpenDialog.cpp	2024-01-31 04:01:17.704362284 -0800
++++ keepassxc-9999/src/gui/DatabaseOpenDialog.cpp	2024-01-31 04:01:36.872225879 -0800
 @@ -66,6 +66,20 @@ DatabaseOpenDialog::DatabaseOpenDialog(Q
  #ifdef Q_OS_MACOS
      dbTabModifier = Qt::ALT;
@@ -11632,8 +12334,8 @@ diff -urpN keepassxc-9999.orig/src/gui/DatabaseOpenDialog.cpp keepassxc-9999/src
  
  void DatabaseOpenDialog::showEvent(QShowEvent* event)
 diff -urpN keepassxc-9999.orig/src/gui/DatabaseTabWidget.cpp keepassxc-9999/src/gui/DatabaseTabWidget.cpp
---- keepassxc-9999.orig/src/gui/DatabaseTabWidget.cpp	2024-01-31 02:46:30.971808550 -0800
-+++ keepassxc-9999/src/gui/DatabaseTabWidget.cpp	2024-01-31 02:49:18.594641277 -0800
+--- keepassxc-9999.orig/src/gui/DatabaseTabWidget.cpp	2024-01-31 04:01:17.704362284 -0800
++++ keepassxc-9999/src/gui/DatabaseTabWidget.cpp	2024-01-31 04:01:36.872225879 -0800
 @@ -522,7 +522,11 @@ void DatabaseTabWidget::exportToXML()
      }
  
@@ -11647,8 +12349,8 @@ diff -urpN keepassxc-9999.orig/src/gui/DatabaseTabWidget.cpp keepassxc-9999/src/
                             MessageWidget::Error);
      }
 diff -urpN keepassxc-9999.orig/src/gui/DatabaseWidget.cpp keepassxc-9999/src/gui/DatabaseWidget.cpp
---- keepassxc-9999.orig/src/gui/DatabaseWidget.cpp	2024-01-31 02:46:30.971808550 -0800
-+++ keepassxc-9999/src/gui/DatabaseWidget.cpp	2024-01-31 02:49:18.594641277 -0800
+--- keepassxc-9999.orig/src/gui/DatabaseWidget.cpp	2024-01-31 04:01:17.704362284 -0800
++++ keepassxc-9999/src/gui/DatabaseWidget.cpp	2024-01-31 04:01:36.872225879 -0800
 @@ -118,7 +118,11 @@ DatabaseWidget::DatabaseWidget(QSharedPo
      tagsWidget->setLayout(tagsLayout);
      tagsLayout->addWidget(tagsTitle);
@@ -11710,8 +12412,8 @@ diff -urpN keepassxc-9999.orig/src/gui/DatabaseWidget.cpp keepassxc-9999/src/gui
          if (!newFilePath.isEmpty()) {
              // Ensure we don't recurse back into this function
 diff -urpN keepassxc-9999.orig/src/gui/dbsettings/DatabaseSettingsWidgetDatabaseKey.cpp keepassxc-9999/src/gui/dbsettings/DatabaseSettingsWidgetDatabaseKey.cpp
---- keepassxc-9999.orig/src/gui/dbsettings/DatabaseSettingsWidgetDatabaseKey.cpp	2024-01-31 02:46:30.995808383 -0800
-+++ keepassxc-9999/src/gui/dbsettings/DatabaseSettingsWidgetDatabaseKey.cpp	2024-01-31 02:49:18.614641136 -0800
+--- keepassxc-9999.orig/src/gui/dbsettings/DatabaseSettingsWidgetDatabaseKey.cpp	2024-01-31 04:01:17.724362142 -0800
++++ keepassxc-9999/src/gui/dbsettings/DatabaseSettingsWidgetDatabaseKey.cpp	2024-01-31 04:01:37.040224684 -0800
 @@ -54,7 +54,11 @@ DatabaseSettingsWidgetDatabaseKey::Datab
      vbox->addWidget(m_additionalKeyOptions);
      vbox->setSizeConstraint(QLayout::SetMinimumSize);
@@ -11725,8 +12427,8 @@ diff -urpN keepassxc-9999.orig/src/gui/dbsettings/DatabaseSettingsWidgetDatabase
  #ifdef WITH_XC_YUBIKEY
      m_additionalKeyOptions->layout()->addWidget(m_yubiKeyEditWidget);
 diff -urpN keepassxc-9999.orig/src/gui/entry/EditEntryWidget.cpp keepassxc-9999/src/gui/entry/EditEntryWidget.cpp
---- keepassxc-9999.orig/src/gui/entry/EditEntryWidget.cpp	2024-01-31 02:46:30.995808383 -0800
-+++ keepassxc-9999/src/gui/entry/EditEntryWidget.cpp	2024-01-31 02:49:18.614641136 -0800
+--- keepassxc-9999.orig/src/gui/entry/EditEntryWidget.cpp	2024-01-31 04:01:17.724362142 -0800
++++ keepassxc-9999/src/gui/entry/EditEntryWidget.cpp	2024-01-31 04:01:37.044224655 -0800
 @@ -1219,7 +1219,15 @@ void EditEntryWidget::updateEntryData(En
      entry->setPassword(m_mainUi->passwordEdit->text());
      entry->setExpires(m_mainUi->expireCheck->isChecked());
@@ -11744,8 +12446,8 @@ diff -urpN keepassxc-9999.orig/src/gui/entry/EditEntryWidget.cpp keepassxc-9999/
      entry->setNotes(m_mainUi->notesEdit->toPlainText());
  
 diff -urpN keepassxc-9999.orig/src/gui/entry/EntryAttachmentsWidget.cpp keepassxc-9999/src/gui/entry/EntryAttachmentsWidget.cpp
---- keepassxc-9999.orig/src/gui/entry/EntryAttachmentsWidget.cpp	2024-01-31 02:46:30.999808355 -0800
-+++ keepassxc-9999/src/gui/entry/EntryAttachmentsWidget.cpp	2024-01-31 02:49:18.634640998 -0800
+--- keepassxc-9999.orig/src/gui/entry/EntryAttachmentsWidget.cpp	2024-01-31 04:01:17.728362114 -0800
++++ keepassxc-9999/src/gui/entry/EntryAttachmentsWidget.cpp	2024-01-31 04:01:37.252223175 -0800
 @@ -249,8 +249,13 @@ void EntryAttachmentsWidget::saveSelecte
  
          QFile file(attachmentPath);
@@ -11773,8 +12475,8 @@ diff -urpN keepassxc-9999.orig/src/gui/entry/EntryAttachmentsWidget.cpp keepassx
              m_entryAttachments->set(fInfo.fileName(), data);
          } else {
 diff -urpN keepassxc-9999.orig/src/gui/entry/EntryHistoryModel.cpp keepassxc-9999/src/gui/entry/EntryHistoryModel.cpp
---- keepassxc-9999.orig/src/gui/entry/EntryHistoryModel.cpp	2024-01-31 02:46:30.999808355 -0800
-+++ keepassxc-9999/src/gui/entry/EntryHistoryModel.cpp	2024-01-31 02:49:18.634640998 -0800
+--- keepassxc-9999.orig/src/gui/entry/EntryHistoryModel.cpp	2024-01-31 04:01:17.728362114 -0800
++++ keepassxc-9999/src/gui/entry/EntryHistoryModel.cpp	2024-01-31 04:01:37.252223175 -0800
 @@ -67,7 +67,11 @@ QVariant EntryHistoryModel::data(const Q
          switch (index.column()) {
          case 0:
@@ -11788,8 +12490,8 @@ diff -urpN keepassxc-9999.orig/src/gui/entry/EntryHistoryModel.cpp keepassxc-999
                  return lastModified;
              }
 diff -urpN keepassxc-9999.orig/src/gui/entry/EntryModel.cpp keepassxc-9999/src/gui/entry/EntryModel.cpp
---- keepassxc-9999.orig/src/gui/entry/EntryModel.cpp	2024-01-31 02:46:30.999808355 -0800
-+++ keepassxc-9999/src/gui/entry/EntryModel.cpp	2024-01-31 02:49:18.634640998 -0800
+--- keepassxc-9999.orig/src/gui/entry/EntryModel.cpp	2024-01-31 04:01:17.728362114 -0800
++++ keepassxc-9999/src/gui/entry/EntryModel.cpp	2024-01-31 04:01:37.252223175 -0800
 @@ -36,7 +36,11 @@ EntryModel::EntryModel(QObject* parent)
      : QAbstractTableModel(parent)
      , m_group(nullptr)
@@ -11859,8 +12561,8 @@ diff -urpN keepassxc-9999.orig/src/gui/entry/EntryModel.cpp keepassxc-9999/src/g
      QSet<Entry*> seenEntries;
  
 diff -urpN keepassxc-9999.orig/src/gui/entry/EntryModel.h keepassxc-9999/src/gui/entry/EntryModel.h
---- keepassxc-9999.orig/src/gui/entry/EntryModel.h	2024-01-31 02:46:30.999808355 -0800
-+++ keepassxc-9999/src/gui/entry/EntryModel.h	2024-01-31 02:49:18.634640998 -0800
+--- keepassxc-9999.orig/src/gui/entry/EntryModel.h	2024-01-31 04:01:17.728362114 -0800
++++ keepassxc-9999/src/gui/entry/EntryModel.h	2024-01-31 04:01:37.252223175 -0800
 @@ -19,6 +19,7 @@
  #define KEEPASSX_ENTRYMODEL_H
  
@@ -11882,8 +12584,8 @@ diff -urpN keepassxc-9999.orig/src/gui/entry/EntryModel.h keepassxc-9999/src/gui
  
  #endif // KEEPASSX_ENTRYMODEL_H
 diff -urpN keepassxc-9999.orig/src/gui/entry/EntryView.cpp keepassxc-9999/src/gui/entry/EntryView.cpp
---- keepassxc-9999.orig/src/gui/entry/EntryView.cpp	2024-01-31 02:46:30.999808355 -0800
-+++ keepassxc-9999/src/gui/entry/EntryView.cpp	2024-01-31 02:49:18.638640969 -0800
+--- keepassxc-9999.orig/src/gui/entry/EntryView.cpp	2024-01-31 04:01:17.728362114 -0800
++++ keepassxc-9999/src/gui/entry/EntryView.cpp	2024-01-31 04:01:37.252223175 -0800
 @@ -19,6 +19,7 @@
  #include "EntryView.h"
  
@@ -11905,8 +12607,8 @@ diff -urpN keepassxc-9999.orig/src/gui/entry/EntryView.cpp keepassxc-9999/src/gu
      resetViewToDefaults();
  
 diff -urpN keepassxc-9999.orig/src/gui/EntryPreviewWidget.cpp keepassxc-9999/src/gui/EntryPreviewWidget.cpp
---- keepassxc-9999.orig/src/gui/EntryPreviewWidget.cpp	2024-01-31 02:46:30.975808522 -0800
-+++ keepassxc-9999/src/gui/EntryPreviewWidget.cpp	2024-01-31 02:49:18.638640969 -0800
+--- keepassxc-9999.orig/src/gui/EntryPreviewWidget.cpp	2024-01-31 04:01:17.708362256 -0800
++++ keepassxc-9999/src/gui/EntryPreviewWidget.cpp	2024-01-31 04:01:37.256223147 -0800
 @@ -399,8 +399,13 @@ void EntryPreviewWidget::updateEntryGene
      }
  
@@ -11936,8 +12638,8 @@ diff -urpN keepassxc-9999.orig/src/gui/EntryPreviewWidget.cpp keepassxc-9999/src
  
      if (config()->get(Config::Security_HideNotes).toBool()) {
 diff -urpN keepassxc-9999.orig/src/gui/group/GroupModel.cpp keepassxc-9999/src/gui/group/GroupModel.cpp
---- keepassxc-9999.orig/src/gui/group/GroupModel.cpp	2024-01-31 02:46:31.003808327 -0800
-+++ keepassxc-9999/src/gui/group/GroupModel.cpp	2024-01-31 02:49:18.638640969 -0800
+--- keepassxc-9999.orig/src/gui/group/GroupModel.cpp	2024-01-31 04:01:17.732362085 -0800
++++ keepassxc-9999/src/gui/group/GroupModel.cpp	2024-01-31 04:01:37.256223147 -0800
 @@ -225,7 +225,11 @@ bool GroupModel::dropMimeData(const QMim
  
      // decode and insert
@@ -11963,8 +12665,8 @@ diff -urpN keepassxc-9999.orig/src/gui/group/GroupModel.cpp keepassxc-9999/src/g
      QSet<Group*> seenGroups;
  
 diff -urpN keepassxc-9999.orig/src/gui/group/GroupView.cpp keepassxc-9999/src/gui/group/GroupView.cpp
---- keepassxc-9999.orig/src/gui/group/GroupView.cpp	2024-01-31 02:46:31.003808327 -0800
-+++ keepassxc-9999/src/gui/group/GroupView.cpp	2024-01-31 02:49:18.638640969 -0800
+--- keepassxc-9999.orig/src/gui/group/GroupView.cpp	2024-01-31 04:01:17.732362085 -0800
++++ keepassxc-9999/src/gui/group/GroupView.cpp	2024-01-31 04:01:37.256223147 -0800
 @@ -43,6 +43,16 @@ GroupView::GroupView(Database* db, QWidg
      connect(selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), SIGNAL(groupSelectionChanged()));
      // clang-format on
@@ -11991,8 +12693,8 @@ diff -urpN keepassxc-9999.orig/src/gui/group/GroupView.cpp keepassxc-9999/src/gu
      modelReset();
  
 diff -urpN keepassxc-9999.orig/src/gui/HtmlExporter.cpp keepassxc-9999/src/gui/HtmlExporter.cpp
---- keepassxc-9999.orig/src/gui/HtmlExporter.cpp	2024-01-31 02:46:30.979808494 -0800
-+++ keepassxc-9999/src/gui/HtmlExporter.cpp	2024-01-31 02:49:18.638640969 -0800
+--- keepassxc-9999.orig/src/gui/HtmlExporter.cpp	2024-01-31 04:01:17.708362256 -0800
++++ keepassxc-9999/src/gui/HtmlExporter.cpp	2024-01-31 04:01:37.256223147 -0800
 @@ -115,7 +115,11 @@ bool HtmlExporter::exportDatabase(const
                                    bool ascending)
  {
@@ -12006,8 +12708,8 @@ diff -urpN keepassxc-9999.orig/src/gui/HtmlExporter.cpp keepassxc-9999/src/gui/H
          return false;
      }
 diff -urpN keepassxc-9999.orig/src/gui/IconDownloader.cpp keepassxc-9999/src/gui/IconDownloader.cpp
---- keepassxc-9999.orig/src/gui/IconDownloader.cpp	2024-01-31 02:46:30.979808494 -0800
-+++ keepassxc-9999/src/gui/IconDownloader.cpp	2024-01-31 02:49:18.638640969 -0800
+--- keepassxc-9999.orig/src/gui/IconDownloader.cpp	2024-01-31 04:01:17.708362256 -0800
++++ keepassxc-9999/src/gui/IconDownloader.cpp	2024-01-31 04:01:37.256223147 -0800
 @@ -221,7 +221,11 @@ void IconDownloader::fetchFinished()
  QImage IconDownloader::parseImage(QByteArray& imageBytes) const
  {
@@ -12021,8 +12723,8 @@ diff -urpN keepassxc-9999.orig/src/gui/IconDownloader.cpp keepassxc-9999/src/gui
  
      if (reader.imageCount() <= 0) {
 diff -urpN keepassxc-9999.orig/src/gui/IconDownloader.h keepassxc-9999/src/gui/IconDownloader.h
---- keepassxc-9999.orig/src/gui/IconDownloader.h	2024-01-31 02:46:30.979808494 -0800
-+++ keepassxc-9999/src/gui/IconDownloader.h	2024-01-31 02:49:18.642640942 -0800
+--- keepassxc-9999.orig/src/gui/IconDownloader.h	2024-01-31 04:01:17.708362256 -0800
++++ keepassxc-9999/src/gui/IconDownloader.h	2024-01-31 04:01:37.256223147 -0800
 @@ -18,6 +18,8 @@
  #ifndef KEEPASSXC_ICONDOWNLOADER_H
  #define KEEPASSXC_ICONDOWNLOADER_H
@@ -12040,8 +12742,8 @@ diff -urpN keepassxc-9999.orig/src/gui/IconDownloader.h keepassxc-9999/src/gui/I
 \ No newline at end of file
 +#endif // KEEPASSXC_ICONDOWNLOADER_H
 diff -urpN keepassxc-9999.orig/src/gui/Icons.cpp keepassxc-9999/src/gui/Icons.cpp
---- keepassxc-9999.orig/src/gui/Icons.cpp	2024-01-31 02:46:30.979808494 -0800
-+++ keepassxc-9999/src/gui/Icons.cpp	2024-01-31 02:49:18.642640942 -0800
+--- keepassxc-9999.orig/src/gui/Icons.cpp	2024-01-31 04:01:17.712362227 -0800
++++ keepassxc-9999/src/gui/Icons.cpp	2024-01-31 04:01:37.256223147 -0800
 @@ -304,7 +304,11 @@ QByteArray Icons::saveToBytes(const QIma
  {
      QByteArray ba;
@@ -12055,8 +12757,8 @@ diff -urpN keepassxc-9999.orig/src/gui/Icons.cpp keepassxc-9999/src/gui/Icons.cp
      image.save(&buffer, "PNG");
      buffer.close();
 diff -urpN keepassxc-9999.orig/src/gui/KeePass1OpenWidget.cpp keepassxc-9999/src/gui/KeePass1OpenWidget.cpp
---- keepassxc-9999.orig/src/gui/KeePass1OpenWidget.cpp	2024-01-31 02:46:30.983808466 -0800
-+++ keepassxc-9999/src/gui/KeePass1OpenWidget.cpp	2024-01-31 02:49:18.642640942 -0800
+--- keepassxc-9999.orig/src/gui/KeePass1OpenWidget.cpp	2024-01-31 04:01:17.712362227 -0800
++++ keepassxc-9999/src/gui/KeePass1OpenWidget.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -42,7 +42,11 @@ void KeePass1OpenWidget::openDatabase()
      }
  
@@ -12070,8 +12772,8 @@ diff -urpN keepassxc-9999.orig/src/gui/KeePass1OpenWidget.cpp keepassxc-9999/src
                                           MessageWidget::Error);
          return;
 diff -urpN keepassxc-9999.orig/src/gui/KMessageWidget.cpp keepassxc-9999/src/gui/KMessageWidget.cpp
---- keepassxc-9999.orig/src/gui/KMessageWidget.cpp	2024-01-31 02:46:30.983808466 -0800
-+++ keepassxc-9999/src/gui/KMessageWidget.cpp	2024-01-31 02:49:18.642640942 -0800
+--- keepassxc-9999.orig/src/gui/KMessageWidget.cpp	2024-01-31 04:01:17.712362227 -0800
++++ keepassxc-9999/src/gui/KMessageWidget.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -280,7 +280,11 @@ void KMessageWidget::setMessageType(KMes
      auto closeButtonPixmap = d->closeButtonPixmap;
      QPainter painter;
@@ -12085,8 +12787,8 @@ diff -urpN keepassxc-9999.orig/src/gui/KMessageWidget.cpp keepassxc-9999/src/gui
      painter.fillRect(QRect(0, 0, 16, 16), fg);
      painter.end();
 diff -urpN keepassxc-9999.orig/src/gui/MainWindow.cpp keepassxc-9999/src/gui/MainWindow.cpp
---- keepassxc-9999.orig/src/gui/MainWindow.cpp	2024-01-31 02:46:30.983808466 -0800
-+++ keepassxc-9999/src/gui/MainWindow.cpp	2024-01-31 02:49:18.642640942 -0800
+--- keepassxc-9999.orig/src/gui/MainWindow.cpp	2024-01-31 04:01:17.712362227 -0800
++++ keepassxc-9999/src/gui/MainWindow.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -262,6 +262,37 @@ MainWindow::MainWindow()
      connect(m_inactivityTimer, SIGNAL(inactivityDetected()), this, SLOT(lockDatabasesAfterInactivity()));
      applySettingsChanges();
@@ -12176,8 +12878,8 @@ diff -urpN keepassxc-9999.orig/src/gui/MainWindow.cpp keepassxc-9999/src/gui/Mai
      // Tab selection by number, Windows uses Ctrl, macOS uses Command,
      // and Linux uses Alt to emulate a browser-like experience
 diff -urpN keepassxc-9999.orig/src/gui/osutils/nixutils/NixUtils.cpp keepassxc-9999/src/gui/osutils/nixutils/NixUtils.cpp
---- keepassxc-9999.orig/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-31 02:46:31.007808300 -0800
-+++ keepassxc-9999/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-31 02:49:18.658640830 -0800
+--- keepassxc-9999.orig/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-31 04:01:17.732362085 -0800
++++ keepassxc-9999/src/gui/osutils/nixutils/NixUtils.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -28,7 +28,12 @@
  #include <QStyle>
  #include <QTextStream>
@@ -12280,8 +12982,8 @@ diff -urpN keepassxc-9999.orig/src/gui/osutils/nixutils/NixUtils.cpp keepassxc-9
              return tokens[19].toULongLong();
          }
 diff -urpN keepassxc-9999.orig/src/gui/osutils/nixutils/NixUtils.h keepassxc-9999/src/gui/osutils/nixutils/NixUtils.h
---- keepassxc-9999.orig/src/gui/osutils/nixutils/NixUtils.h	2024-01-31 02:46:31.007808300 -0800
-+++ keepassxc-9999/src/gui/osutils/nixutils/NixUtils.h	2024-01-31 02:49:18.658640830 -0800
+--- keepassxc-9999.orig/src/gui/osutils/nixutils/NixUtils.h	2024-01-31 04:01:17.732362085 -0800
++++ keepassxc-9999/src/gui/osutils/nixutils/NixUtils.h	2024-01-31 04:01:37.260223118 -0800
 @@ -59,7 +59,11 @@ private:
      explicit NixUtils(QObject* parent = nullptr);
      ~NixUtils() override;
@@ -12295,8 +12997,8 @@ diff -urpN keepassxc-9999.orig/src/gui/osutils/nixutils/NixUtils.h keepassxc-999
  
      bool triggerGlobalShortcut(uint keycode, uint modifiers);
 diff -urpN keepassxc-9999.orig/src/gui/PasswordGeneratorWidget.cpp keepassxc-9999/src/gui/PasswordGeneratorWidget.cpp
---- keepassxc-9999.orig/src/gui/PasswordGeneratorWidget.cpp	2024-01-31 02:46:30.987808439 -0800
-+++ keepassxc-9999/src/gui/PasswordGeneratorWidget.cpp	2024-01-31 02:49:18.658640830 -0800
+--- keepassxc-9999.orig/src/gui/PasswordGeneratorWidget.cpp	2024-01-31 04:01:17.712362227 -0800
++++ keepassxc-9999/src/gui/PasswordGeneratorWidget.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -50,10 +50,17 @@ PasswordGeneratorWidget::PasswordGenerat
      m_ui->buttonClose->setShortcut(Qt::Key_Escape);
  
@@ -12316,8 +13018,8 @@ diff -urpN keepassxc-9999.orig/src/gui/PasswordGeneratorWidget.cpp keepassxc-999
      connect(m_ui->editNewPassword, SIGNAL(textChanged(QString)), SLOT(updateButtonsEnabled(QString)));
      connect(m_ui->editNewPassword, SIGNAL(textChanged(QString)), SLOT(updatePasswordStrength()));
 diff -urpN keepassxc-9999.orig/src/gui/PasswordWidget.cpp keepassxc-9999/src/gui/PasswordWidget.cpp
---- keepassxc-9999.orig/src/gui/PasswordWidget.cpp	2024-01-31 02:46:30.987808439 -0800
-+++ keepassxc-9999/src/gui/PasswordWidget.cpp	2024-01-31 02:49:18.658640830 -0800
+--- keepassxc-9999.orig/src/gui/PasswordWidget.cpp	2024-01-31 04:01:17.716362199 -0800
++++ keepassxc-9999/src/gui/PasswordWidget.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -322,4 +322,4 @@ void PasswordWidget::updatePasswordStren
  
          break;
@@ -12326,8 +13028,8 @@ diff -urpN keepassxc-9999.orig/src/gui/PasswordWidget.cpp keepassxc-9999/src/gui
 \ No newline at end of file
 +}
 diff -urpN keepassxc-9999.orig/src/gui/reports/ReportsWidgetHibp.cpp keepassxc-9999/src/gui/reports/ReportsWidgetHibp.cpp
---- keepassxc-9999.orig/src/gui/reports/ReportsWidgetHibp.cpp	2024-01-31 02:46:31.015808244 -0800
-+++ keepassxc-9999/src/gui/reports/ReportsWidgetHibp.cpp	2024-01-31 02:49:18.658640830 -0800
+--- keepassxc-9999.orig/src/gui/reports/ReportsWidgetHibp.cpp	2024-01-31 04:01:17.740362028 -0800
++++ keepassxc-9999/src/gui/reports/ReportsWidgetHibp.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -132,9 +132,15 @@ void ReportsWidgetHibp::makeHibpTable()
      }
  
@@ -12345,8 +13047,8 @@ diff -urpN keepassxc-9999.orig/src/gui/reports/ReportsWidgetHibp.cpp keepassxc-9
      // Display entries that are marked as "known bad"?
      const auto showExcluded = m_ui->showKnownBadCheckBox->isChecked();
 diff -urpN keepassxc-9999.orig/src/gui/reports/ReportsWidgetStatistics.cpp keepassxc-9999/src/gui/reports/ReportsWidgetStatistics.cpp
---- keepassxc-9999.orig/src/gui/reports/ReportsWidgetStatistics.cpp	2024-01-31 02:46:31.019808216 -0800
-+++ keepassxc-9999/src/gui/reports/ReportsWidgetStatistics.cpp	2024-01-31 02:49:18.658640830 -0800
+--- keepassxc-9999.orig/src/gui/reports/ReportsWidgetStatistics.cpp	2024-01-31 04:01:17.740362028 -0800
++++ keepassxc-9999/src/gui/reports/ReportsWidgetStatistics.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -86,9 +86,15 @@ void ReportsWidgetStatistics::calculateS
      addStatsRow(tr("Database name"), m_db->metadata()->name());
      addStatsRow(tr("Description"), m_db->metadata()->description());
@@ -12364,8 +13066,8 @@ diff -urpN keepassxc-9999.orig/src/gui/reports/ReportsWidgetStatistics.cpp keepa
                  m_db->isModified() ? tr("yes") : tr("no"),
                  m_db->isModified(),
 diff -urpN keepassxc-9999.orig/src/gui/styles/base/BaseStyle.cpp keepassxc-9999/src/gui/styles/base/BaseStyle.cpp
---- keepassxc-9999.orig/src/gui/styles/base/BaseStyle.cpp	2024-01-31 02:46:31.023808189 -0800
-+++ keepassxc-9999/src/gui/styles/base/BaseStyle.cpp	2024-01-31 02:49:18.658640830 -0800
+--- keepassxc-9999.orig/src/gui/styles/base/BaseStyle.cpp	2024-01-31 04:01:17.744362000 -0800
++++ keepassxc-9999/src/gui/styles/base/BaseStyle.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -882,7 +882,11 @@ namespace Phantom
          {
              QRect ra = bar->rect;
@@ -12534,8 +13236,8 @@ diff -urpN keepassxc-9999.orig/src/gui/styles/base/BaseStyle.cpp keepassxc-9999/
          baseStylesheetFile.close();
      } else {
 diff -urpN keepassxc-9999.orig/src/gui/styles/dark/DarkStyle.cpp keepassxc-9999/src/gui/styles/dark/DarkStyle.cpp
---- keepassxc-9999.orig/src/gui/styles/dark/DarkStyle.cpp	2024-01-31 02:46:31.023808189 -0800
-+++ keepassxc-9999/src/gui/styles/dark/DarkStyle.cpp	2024-01-31 02:49:18.670640747 -0800
+--- keepassxc-9999.orig/src/gui/styles/dark/DarkStyle.cpp	2024-01-31 04:01:17.744362000 -0800
++++ keepassxc-9999/src/gui/styles/dark/DarkStyle.cpp	2024-01-31 04:01:37.260223118 -0800
 @@ -105,7 +105,11 @@ QPalette DarkStyle::standardPalette() co
  QString DarkStyle::getAppStyleSheet() const
  {
@@ -12549,8 +13251,8 @@ diff -urpN keepassxc-9999.orig/src/gui/styles/dark/DarkStyle.cpp keepassxc-9999/
      }
      qWarning("Failed to load dark theme stylesheet.");
 diff -urpN keepassxc-9999.orig/src/gui/styles/light/LightStyle.cpp keepassxc-9999/src/gui/styles/light/LightStyle.cpp
---- keepassxc-9999.orig/src/gui/styles/light/LightStyle.cpp	2024-01-31 02:46:31.023808189 -0800
-+++ keepassxc-9999/src/gui/styles/light/LightStyle.cpp	2024-01-31 02:49:18.670640747 -0800
+--- keepassxc-9999.orig/src/gui/styles/light/LightStyle.cpp	2024-01-31 04:01:17.744362000 -0800
++++ keepassxc-9999/src/gui/styles/light/LightStyle.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -105,7 +105,11 @@ QPalette LightStyle::standardPalette() c
  QString LightStyle::getAppStyleSheet() const
  {
@@ -12564,8 +13266,8 @@ diff -urpN keepassxc-9999.orig/src/gui/styles/light/LightStyle.cpp keepassxc-999
      }
      qWarning("Failed to load light theme stylesheet.");
 diff -urpN keepassxc-9999.orig/src/keeshare/CMakeLists.txt keepassxc-9999/src/keeshare/CMakeLists.txt
---- keepassxc-9999.orig/src/keeshare/CMakeLists.txt	2024-01-31 02:46:31.027808160 -0800
-+++ keepassxc-9999/src/keeshare/CMakeLists.txt	2024-01-31 02:49:18.674640718 -0800
+--- keepassxc-9999.orig/src/keeshare/CMakeLists.txt	2024-01-31 04:01:17.752361943 -0800
++++ keepassxc-9999/src/keeshare/CMakeLists.txt	2024-01-31 04:01:37.264223090 -0800
 @@ -16,6 +16,10 @@ if(WITH_XC_KEESHARE)
      find_package(Minizip REQUIRED)
  
@@ -12579,8 +13281,8 @@ diff -urpN keepassxc-9999.orig/src/keeshare/CMakeLists.txt keepassxc-9999/src/ke
      include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
  endif(WITH_XC_KEESHARE)
 diff -urpN keepassxc-9999.orig/src/keeshare/KeeShareSettings.cpp keepassxc-9999/src/keeshare/KeeShareSettings.cpp
---- keepassxc-9999.orig/src/keeshare/KeeShareSettings.cpp	2024-01-31 02:46:31.031808132 -0800
-+++ keepassxc-9999/src/keeshare/KeeShareSettings.cpp	2024-01-31 02:49:18.674640718 -0800
+--- keepassxc-9999.orig/src/keeshare/KeeShareSettings.cpp	2024-01-31 04:01:17.752361943 -0800
++++ keepassxc-9999/src/keeshare/KeeShareSettings.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -25,7 +25,9 @@
  #include "gui/DatabaseIcons.h"
  
@@ -12694,8 +13396,8 @@ diff -urpN keepassxc-9999.orig/src/keeshare/KeeShareSettings.cpp keepassxc-9999/
          stream.writeBytes(reinterpret_cast<const char*>(rsaE.data()), rsaE.size());
          stream.writeBytes(reinterpret_cast<const char*>(rsaN.data()), rsaN.size());
 diff -urpN keepassxc-9999.orig/src/keeshare/ShareExport.cpp keepassxc-9999/src/keeshare/ShareExport.cpp
---- keepassxc-9999.orig/src/keeshare/ShareExport.cpp	2024-01-31 02:46:31.031808132 -0800
-+++ keepassxc-9999/src/keeshare/ShareExport.cpp	2024-01-31 02:49:18.674640718 -0800
+--- keepassxc-9999.orig/src/keeshare/ShareExport.cpp	2024-01-31 04:01:17.756361915 -0800
++++ keepassxc-9999/src/keeshare/ShareExport.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -169,7 +169,11 @@ ShareObserver::Result ShareExport::intoC
          QBuffer buffer;
  
@@ -12709,8 +13411,8 @@ diff -urpN keepassxc-9999.orig/src/keeshare/ShareExport.cpp keepassxc-9999/src/k
          KeePass2Writer writer;
          if (!writer.writeDatabase(&buffer, targetDb.data())) {
 diff -urpN keepassxc-9999.orig/src/keeshare/ShareImport.cpp keepassxc-9999/src/keeshare/ShareImport.cpp
---- keepassxc-9999.orig/src/keeshare/ShareImport.cpp	2024-01-31 02:46:31.031808132 -0800
-+++ keepassxc-9999/src/keeshare/ShareImport.cpp	2024-01-31 02:49:18.674640718 -0800
+--- keepassxc-9999.orig/src/keeshare/ShareImport.cpp	2024-01-31 04:01:17.756361915 -0800
++++ keepassxc-9999/src/keeshare/ShareImport.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -65,7 +65,11 @@ ShareObserver::Result ShareImport::conta
      } else {
          // Open KDBX file directly
@@ -12736,8 +13438,8 @@ diff -urpN keepassxc-9999.orig/src/keeshare/ShareImport.cpp keepassxc-9999/src/k
      KeePass2Reader reader;
      auto key = QSharedPointer<CompositeKey>::create();
 diff -urpN keepassxc-9999.orig/src/keys/ChallengeResponseKey.cpp keepassxc-9999/src/keys/ChallengeResponseKey.cpp
---- keepassxc-9999.orig/src/keys/ChallengeResponseKey.cpp	2024-01-31 02:46:31.031808132 -0800
-+++ keepassxc-9999/src/keys/ChallengeResponseKey.cpp	2024-01-31 02:49:18.674640718 -0800
+--- keepassxc-9999.orig/src/keys/ChallengeResponseKey.cpp	2024-01-31 04:01:17.756361915 -0800
++++ keepassxc-9999/src/keys/ChallengeResponseKey.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -66,7 +66,11 @@ bool ChallengeResponseKey::challenge(con
  QByteArray ChallengeResponseKey::serialize() const
  {
@@ -12751,8 +13453,8 @@ diff -urpN keepassxc-9999.orig/src/keys/ChallengeResponseKey.cpp keepassxc-9999/
      return data;
  }
 diff -urpN keepassxc-9999.orig/src/keys/CompositeKey.cpp keepassxc-9999/src/keys/CompositeKey.cpp
---- keepassxc-9999.orig/src/keys/CompositeKey.cpp	2024-01-31 02:46:31.031808132 -0800
-+++ keepassxc-9999/src/keys/CompositeKey.cpp	2024-01-31 02:49:18.674640718 -0800
+--- keepassxc-9999.orig/src/keys/CompositeKey.cpp	2024-01-31 04:01:17.756361915 -0800
++++ keepassxc-9999/src/keys/CompositeKey.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -230,7 +230,11 @@ const QList<QSharedPointer<ChallengeResp
  QByteArray CompositeKey::serialize() const
  {
@@ -12766,8 +13468,8 @@ diff -urpN keepassxc-9999.orig/src/keys/CompositeKey.cpp keepassxc-9999/src/keys
      stream << uuid().toRfc4122();
      for (auto const& key : m_keys) {
 diff -urpN keepassxc-9999.orig/src/keys/CompositeKey.h keepassxc-9999/src/keys/CompositeKey.h
---- keepassxc-9999.orig/src/keys/CompositeKey.h	2024-01-31 02:46:31.031808132 -0800
-+++ keepassxc-9999/src/keys/CompositeKey.h	2024-01-31 02:49:18.674640718 -0800
+--- keepassxc-9999.orig/src/keys/CompositeKey.h	2024-01-31 04:01:17.760361886 -0800
++++ keepassxc-9999/src/keys/CompositeKey.h	2024-01-31 04:01:37.264223090 -0800
 @@ -19,6 +19,7 @@
  #ifndef KEEPASSX_COMPOSITEKEY_H
  #define KEEPASSX_COMPOSITEKEY_H
@@ -12777,8 +13479,8 @@ diff -urpN keepassxc-9999.orig/src/keys/CompositeKey.h keepassxc-9999/src/keys/C
  
  #include "keys/Key.h"
 diff -urpN keepassxc-9999.orig/src/keys/drivers/YubiKey.cpp keepassxc-9999/src/keys/drivers/YubiKey.cpp
---- keepassxc-9999.orig/src/keys/drivers/YubiKey.cpp	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/keys/drivers/YubiKey.cpp	2024-01-31 02:49:18.674640718 -0800
+--- keepassxc-9999.orig/src/keys/drivers/YubiKey.cpp	2024-01-31 04:01:17.760361886 -0800
++++ keepassxc-9999/src/keys/drivers/YubiKey.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -23,7 +23,11 @@
  #include <QtConcurrent>
  
@@ -12792,8 +13494,8 @@ diff -urpN keepassxc-9999.orig/src/keys/drivers/YubiKey.cpp keepassxc-9999/src/k
      int num_interfaces = 0;
  
 diff -urpN keepassxc-9999.orig/src/keys/drivers/YubiKey.h keepassxc-9999/src/keys/drivers/YubiKey.h
---- keepassxc-9999.orig/src/keys/drivers/YubiKey.h	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/keys/drivers/YubiKey.h	2024-01-31 02:49:18.678640691 -0800
+--- keepassxc-9999.orig/src/keys/drivers/YubiKey.h	2024-01-31 04:01:17.760361886 -0800
++++ keepassxc-9999/src/keys/drivers/YubiKey.h	2024-01-31 04:01:37.264223090 -0800
 @@ -20,8 +20,12 @@
  #define KEEPASSX_YUBIKEY_H
  
@@ -12821,8 +13523,8 @@ diff -urpN keepassxc-9999.orig/src/keys/drivers/YubiKey.h keepassxc-9999/src/key
      Q_DISABLE_COPY(YubiKey)
  };
 diff -urpN keepassxc-9999.orig/src/keys/drivers/YubiKeyInterface.cpp keepassxc-9999/src/keys/drivers/YubiKeyInterface.cpp
---- keepassxc-9999.orig/src/keys/drivers/YubiKeyInterface.cpp	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/keys/drivers/YubiKeyInterface.cpp	2024-01-31 02:49:18.678640691 -0800
+--- keepassxc-9999.orig/src/keys/drivers/YubiKeyInterface.cpp	2024-01-31 04:01:17.760361886 -0800
++++ keepassxc-9999/src/keys/drivers/YubiKeyInterface.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -19,7 +19,11 @@
  #include "YubiKeyInterface.h"
  
@@ -12836,8 +13538,8 @@ diff -urpN keepassxc-9999.orig/src/keys/drivers/YubiKeyInterface.cpp keepassxc-9
      m_interactionTimer.setSingleShot(true);
      m_interactionTimer.setInterval(300);
 diff -urpN keepassxc-9999.orig/src/keys/drivers/YubiKeyInterface.h keepassxc-9999/src/keys/drivers/YubiKeyInterface.h
---- keepassxc-9999.orig/src/keys/drivers/YubiKeyInterface.h	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/keys/drivers/YubiKeyInterface.h	2024-01-31 02:49:18.678640691 -0800
+--- keepassxc-9999.orig/src/keys/drivers/YubiKeyInterface.h	2024-01-31 04:01:17.760361886 -0800
++++ keepassxc-9999/src/keys/drivers/YubiKeyInterface.h	2024-01-31 04:01:37.264223090 -0800
 @@ -70,7 +70,11 @@ protected:
  
      QMultiMap<unsigned int, QPair<int, QString>> m_foundKeys;
@@ -12851,8 +13553,8 @@ diff -urpN keepassxc-9999.orig/src/keys/drivers/YubiKeyInterface.h keepassxc-999
      bool m_initialized = false;
      QString m_error;
 diff -urpN keepassxc-9999.orig/src/keys/FileKey.cpp keepassxc-9999/src/keys/FileKey.cpp
---- keepassxc-9999.orig/src/keys/FileKey.cpp	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/keys/FileKey.cpp	2024-01-31 02:49:18.678640691 -0800
+--- keepassxc-9999.orig/src/keys/FileKey.cpp	2024-01-31 04:01:17.760361886 -0800
++++ keepassxc-9999/src/keys/FileKey.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -173,7 +173,11 @@ void FileKey::setRawKey(const QByteArray
  QByteArray FileKey::serialize() const
  {
@@ -12938,8 +13640,8 @@ diff -urpN keepassxc-9999.orig/src/keys/FileKey.cpp keepassxc-9999/src/keys/File
  
      m_type = Hashed;
 diff -urpN keepassxc-9999.orig/src/keys/PasswordKey.cpp keepassxc-9999/src/keys/PasswordKey.cpp
---- keepassxc-9999.orig/src/keys/PasswordKey.cpp	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/keys/PasswordKey.cpp	2024-01-31 02:49:18.678640691 -0800
+--- keepassxc-9999.orig/src/keys/PasswordKey.cpp	2024-01-31 04:01:17.760361886 -0800
++++ keepassxc-9999/src/keys/PasswordKey.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -74,7 +74,11 @@ QSharedPointer<PasswordKey> PasswordKey:
  QByteArray PasswordKey::serialize() const
  {
@@ -12953,8 +13655,8 @@ diff -urpN keepassxc-9999.orig/src/keys/PasswordKey.cpp keepassxc-9999/src/keys/
      return data;
  }
 diff -urpN keepassxc-9999.orig/src/main.cpp keepassxc-9999/src/main.cpp
---- keepassxc-9999.orig/src/main.cpp	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/main.cpp	2024-01-31 02:49:18.678640691 -0800
+--- keepassxc-9999.orig/src/main.cpp	2024-01-31 04:01:17.760361886 -0800
++++ keepassxc-9999/src/main.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -100,9 +100,13 @@ int main(int argc, char** argv)
  
      // Show debug information and then exit
@@ -12985,8 +13687,8 @@ diff -urpN keepassxc-9999.orig/src/main.cpp keepassxc-9999/src/main.cpp
          }
          mainWindow.openDatabase(filename, password, parser.value(keyfileOption));
 diff -urpN keepassxc-9999.orig/src/proxy/CMakeLists.txt keepassxc-9999/src/proxy/CMakeLists.txt
---- keepassxc-9999.orig/src/proxy/CMakeLists.txt	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/proxy/CMakeLists.txt	2024-01-31 02:49:18.678640691 -0800
+--- keepassxc-9999.orig/src/proxy/CMakeLists.txt	2024-01-31 04:01:17.764361858 -0800
++++ keepassxc-9999/src/proxy/CMakeLists.txt	2024-01-31 04:01:37.264223090 -0800
 @@ -21,10 +21,18 @@ if(WITH_XC_BROWSER)
  
      # Alloc must be defined in a static library to prevent clashing with clang ASAN definitions
@@ -13009,8 +13711,8 @@ diff -urpN keepassxc-9999.orig/src/proxy/CMakeLists.txt keepassxc-9999/src/proxy
              BUNDLE DESTINATION . COMPONENT Runtime
              RUNTIME DESTINATION ${PROXY_INSTALL_DIR} COMPONENT Runtime)
 diff -urpN keepassxc-9999.orig/src/proxy/NativeMessagingProxy.cpp keepassxc-9999/src/proxy/NativeMessagingProxy.cpp
---- keepassxc-9999.orig/src/proxy/NativeMessagingProxy.cpp	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/proxy/NativeMessagingProxy.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/proxy/NativeMessagingProxy.cpp	2024-01-31 04:01:17.764361858 -0800
++++ keepassxc-9999/src/proxy/NativeMessagingProxy.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -68,7 +68,7 @@ void NativeMessagingProxy::setupStandard
                  QString msg;
                  msg.reserve(length);
@@ -13021,8 +13723,8 @@ diff -urpN keepassxc-9999.orig/src/proxy/NativeMessagingProxy.cpp keepassxc-9999
  
                  if (msg.length() > 0) {
 diff -urpN keepassxc-9999.orig/src/qrcode/CMakeLists.txt keepassxc-9999/src/qrcode/CMakeLists.txt
---- keepassxc-9999.orig/src/qrcode/CMakeLists.txt	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/qrcode/CMakeLists.txt	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/qrcode/CMakeLists.txt	2024-01-31 04:01:17.764361858 -0800
++++ keepassxc-9999/src/qrcode/CMakeLists.txt	2024-01-31 04:01:37.264223090 -0800
 @@ -21,4 +21,8 @@ find_package(QREncode REQUIRED)
  
  add_library(qrcode STATIC ${qrcode_SOURCES})
@@ -13034,8 +13736,8 @@ diff -urpN keepassxc-9999.orig/src/qrcode/CMakeLists.txt keepassxc-9999/src/qrco
 +    target_link_libraries(qrcode PUBLIC Qt5::Core Qt5::Svg ${QRENCODE_LIBRARY})
 +endif()
 diff -urpN keepassxc-9999.orig/src/quickunlock/Polkit.h keepassxc-9999/src/quickunlock/Polkit.h
---- keepassxc-9999.orig/src/quickunlock/Polkit.h	2024-01-31 02:46:31.035808105 -0800
-+++ keepassxc-9999/src/quickunlock/Polkit.h	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/quickunlock/Polkit.h	2024-01-31 04:01:17.764361858 -0800
++++ keepassxc-9999/src/quickunlock/Polkit.h	2024-01-31 04:01:37.264223090 -0800
 @@ -19,6 +19,7 @@
  #define KEEPASSX_POLKIT_H
  
@@ -13045,8 +13747,8 @@ diff -urpN keepassxc-9999.orig/src/quickunlock/Polkit.h keepassxc-9999/src/quick
  #include <QHash>
  #include <QScopedPointer>
 diff -urpN keepassxc-9999.orig/src/sshagent/BinaryStream.cpp keepassxc-9999/src/sshagent/BinaryStream.cpp
---- keepassxc-9999.orig/src/sshagent/BinaryStream.cpp	2024-01-31 02:46:31.039808077 -0800
-+++ keepassxc-9999/src/sshagent/BinaryStream.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/sshagent/BinaryStream.cpp	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/sshagent/BinaryStream.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -31,7 +31,11 @@ BinaryStream::BinaryStream(QByteArray* b
      , m_timeout(-1)
  {
@@ -13060,8 +13762,8 @@ diff -urpN keepassxc-9999.orig/src/sshagent/BinaryStream.cpp keepassxc-9999/src/
      m_device = m_buffer.data();
  }
 diff -urpN keepassxc-9999.orig/src/sshagent/CMakeLists.txt keepassxc-9999/src/sshagent/CMakeLists.txt
---- keepassxc-9999.orig/src/sshagent/CMakeLists.txt	2024-01-31 02:46:31.039808077 -0800
-+++ keepassxc-9999/src/sshagent/CMakeLists.txt	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/sshagent/CMakeLists.txt	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/sshagent/CMakeLists.txt	2024-01-31 04:01:37.264223090 -0800
 @@ -14,5 +14,9 @@ if(WITH_XC_SSHAGENT)
      )
  
@@ -13074,8 +13776,8 @@ diff -urpN keepassxc-9999.orig/src/sshagent/CMakeLists.txt keepassxc-9999/src/ss
 +    endif()
  endif()
 diff -urpN keepassxc-9999.orig/src/sshagent/KeeAgentSettings.cpp keepassxc-9999/src/sshagent/KeeAgentSettings.cpp
---- keepassxc-9999.orig/src/sshagent/KeeAgentSettings.cpp	2024-01-31 02:46:31.039808077 -0800
-+++ keepassxc-9999/src/sshagent/KeeAgentSettings.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/sshagent/KeeAgentSettings.cpp	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/sshagent/KeeAgentSettings.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -27,7 +27,11 @@
  #include <QDebug>
  #include <QDir>
@@ -13187,8 +13889,8 @@ diff -urpN keepassxc-9999.orig/src/sshagent/KeeAgentSettings.cpp keepassxc-9999/
              return false;
          }
 diff -urpN keepassxc-9999.orig/src/sshagent/OpenSSHKey.cpp keepassxc-9999/src/sshagent/OpenSSHKey.cpp
---- keepassxc-9999.orig/src/sshagent/OpenSSHKey.cpp	2024-01-31 02:46:31.039808077 -0800
-+++ keepassxc-9999/src/sshagent/OpenSSHKey.cpp	2024-01-31 02:51:18.745802811 -0800
+--- keepassxc-9999.orig/src/sshagent/OpenSSHKey.cpp	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/sshagent/OpenSSHKey.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -177,9 +177,17 @@ const QString OpenSSHKey::privateKey()
      QString out;
      out += "-----BEGIN OPENSSH PRIVATE KEY-----\n";
@@ -13231,8 +13933,8 @@ diff -urpN keepassxc-9999.orig/src/sshagent/OpenSSHKey.cpp keepassxc-9999/src/ss
              return false;
          }
 diff -urpN keepassxc-9999.orig/src/streams/LayeredStream.cpp keepassxc-9999/src/streams/LayeredStream.cpp
---- keepassxc-9999.orig/src/streams/LayeredStream.cpp	2024-01-31 02:46:31.043808049 -0800
-+++ keepassxc-9999/src/streams/LayeredStream.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/streams/LayeredStream.cpp	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/streams/LayeredStream.cpp	2024-01-31 04:01:37.264223090 -0800
 @@ -34,15 +34,24 @@ bool LayeredStream::isSequential() const
      return true;
  }
@@ -13292,8 +13994,8 @@ diff -urpN keepassxc-9999.orig/src/streams/LayeredStream.cpp keepassxc-9999/src/
          return QIODevice::open(mode);
      }
 diff -urpN keepassxc-9999.orig/src/streams/LayeredStream.h keepassxc-9999/src/streams/LayeredStream.h
---- keepassxc-9999.orig/src/streams/LayeredStream.h	2024-01-31 02:46:31.043808049 -0800
-+++ keepassxc-9999/src/streams/LayeredStream.h	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/streams/LayeredStream.h	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/streams/LayeredStream.h	2024-01-31 04:01:37.268223061 -0800
 @@ -29,7 +29,11 @@ public:
      ~LayeredStream() override;
  
@@ -13307,8 +14009,8 @@ diff -urpN keepassxc-9999.orig/src/streams/LayeredStream.h keepassxc-9999/src/st
  protected:
      qint64 readData(char* data, qint64 maxSize) override;
 diff -urpN keepassxc-9999.orig/src/streams/qtiocompressor.cpp keepassxc-9999/src/streams/qtiocompressor.cpp
---- keepassxc-9999.orig/src/streams/qtiocompressor.cpp	2024-01-31 02:46:31.043808049 -0800
-+++ keepassxc-9999/src/streams/qtiocompressor.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/streams/qtiocompressor.cpp	2024-01-31 04:01:17.772361800 -0800
++++ keepassxc-9999/src/streams/qtiocompressor.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -205,7 +205,11 @@ void QtIOCompressorPrivate::setZlibError
      \code
          QFile file("foo");
@@ -13334,8 +14036,8 @@ diff -urpN keepassxc-9999.orig/src/streams/qtiocompressor.cpp keepassxc-9999/src
          compressor.close();
      \endcode
 diff -urpN keepassxc-9999.orig/src/streams/StoreDataStream.cpp keepassxc-9999/src/streams/StoreDataStream.cpp
---- keepassxc-9999.orig/src/streams/StoreDataStream.cpp	2024-01-31 02:46:31.043808049 -0800
-+++ keepassxc-9999/src/streams/StoreDataStream.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/streams/StoreDataStream.cpp	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/streams/StoreDataStream.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -22,7 +22,11 @@ StoreDataStream::StoreDataStream(QIODevi
  {
  }
@@ -13349,8 +14051,8 @@ diff -urpN keepassxc-9999.orig/src/streams/StoreDataStream.cpp keepassxc-9999/sr
      bool result = LayeredStream::open(mode);
  
 diff -urpN keepassxc-9999.orig/src/streams/StoreDataStream.h keepassxc-9999/src/streams/StoreDataStream.h
---- keepassxc-9999.orig/src/streams/StoreDataStream.h	2024-01-31 02:46:31.043808049 -0800
-+++ keepassxc-9999/src/streams/StoreDataStream.h	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/streams/StoreDataStream.h	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/streams/StoreDataStream.h	2024-01-31 04:01:37.268223061 -0800
 @@ -26,7 +26,11 @@ class StoreDataStream : public LayeredSt
  
  public:
@@ -13364,8 +14066,8 @@ diff -urpN keepassxc-9999.orig/src/streams/StoreDataStream.h keepassxc-9999/src/
  
  protected:
 diff -urpN keepassxc-9999.orig/src/streams/SymmetricCipherStream.cpp keepassxc-9999/src/streams/SymmetricCipherStream.cpp
---- keepassxc-9999.orig/src/streams/SymmetricCipherStream.cpp	2024-01-31 02:46:31.043808049 -0800
-+++ keepassxc-9999/src/streams/SymmetricCipherStream.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/streams/SymmetricCipherStream.cpp	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/streams/SymmetricCipherStream.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -58,7 +58,11 @@ void SymmetricCipherStream::resetInterna
      m_cipher->reset();
  }
@@ -13379,8 +14081,8 @@ diff -urpN keepassxc-9999.orig/src/streams/SymmetricCipherStream.cpp keepassxc-9
      return m_isInitialized && LayeredStream::open(mode);
  }
 diff -urpN keepassxc-9999.orig/src/streams/SymmetricCipherStream.h keepassxc-9999/src/streams/SymmetricCipherStream.h
---- keepassxc-9999.orig/src/streams/SymmetricCipherStream.h	2024-01-31 02:46:31.043808049 -0800
-+++ keepassxc-9999/src/streams/SymmetricCipherStream.h	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/streams/SymmetricCipherStream.h	2024-01-31 04:01:17.768361829 -0800
++++ keepassxc-9999/src/streams/SymmetricCipherStream.h	2024-01-31 04:01:37.268223061 -0800
 @@ -33,7 +33,11 @@ public:
      ~SymmetricCipherStream() override;
      bool
@@ -13394,8 +14096,8 @@ diff -urpN keepassxc-9999.orig/src/streams/SymmetricCipherStream.h keepassxc-999
      void close() override;
  
 diff -urpN keepassxc-9999.orig/src/updatecheck/UpdateChecker.cpp keepassxc-9999/src/updatecheck/UpdateChecker.cpp
---- keepassxc-9999.orig/src/updatecheck/UpdateChecker.cpp	2024-01-31 02:46:31.047808021 -0800
-+++ keepassxc-9999/src/updatecheck/UpdateChecker.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/src/updatecheck/UpdateChecker.cpp	2024-01-31 04:01:17.772361800 -0800
++++ keepassxc-9999/src/updatecheck/UpdateChecker.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -49,7 +49,11 @@ void UpdateChecker::checkForUpdates(bool
          return;
      }
@@ -13422,8 +14124,8 @@ diff -urpN keepassxc-9999.orig/src/updatecheck/UpdateChecker.cpp keepassxc-9999/
          version = ErrorVersion;
      }
 diff -urpN keepassxc-9999.orig/tests/CMakeLists.txt keepassxc-9999/tests/CMakeLists.txt
---- keepassxc-9999.orig/tests/CMakeLists.txt	2024-01-31 02:46:31.119807521 -0800
-+++ keepassxc-9999/tests/CMakeLists.txt	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/tests/CMakeLists.txt	2024-01-31 04:01:17.836361345 -0800
++++ keepassxc-9999/tests/CMakeLists.txt	2024-01-31 04:01:37.268223061 -0800
 @@ -90,7 +90,11 @@ macro(add_unit_test)
      endif()
  endmacro(add_unit_test)
@@ -13451,8 +14153,8 @@ diff -urpN keepassxc-9999.orig/tests/CMakeLists.txt keepassxc-9999/tests/CMakeLi
  add_unit_test(NAME testgroup SOURCES TestGroup.cpp
          LIBS testsupport ${TEST_LIBRARIES})
 diff -urpN keepassxc-9999.orig/tests/FailDevice.cpp keepassxc-9999/tests/FailDevice.cpp
---- keepassxc-9999.orig/tests/FailDevice.cpp	2024-01-31 02:46:31.119807521 -0800
-+++ keepassxc-9999/tests/FailDevice.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/tests/FailDevice.cpp	2024-01-31 04:01:17.836361345 -0800
++++ keepassxc-9999/tests/FailDevice.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -25,10 +25,17 @@ FailDevice::FailDevice(int failAfter, QO
  {
  }
@@ -13472,8 +14174,8 @@ diff -urpN keepassxc-9999.orig/tests/FailDevice.cpp keepassxc-9999/tests/FailDev
  qint64 FailDevice::readData(char* data, qint64 len)
  {
 diff -urpN keepassxc-9999.orig/tests/FailDevice.h keepassxc-9999/tests/FailDevice.h
---- keepassxc-9999.orig/tests/FailDevice.h	2024-01-31 02:46:31.119807521 -0800
-+++ keepassxc-9999/tests/FailDevice.h	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/tests/FailDevice.h	2024-01-31 04:01:17.836361345 -0800
++++ keepassxc-9999/tests/FailDevice.h	2024-01-31 04:01:37.268223061 -0800
 @@ -26,7 +26,11 @@ class FailDevice : public QBuffer
  
  public:
@@ -13487,8 +14189,8 @@ diff -urpN keepassxc-9999.orig/tests/FailDevice.h keepassxc-9999/tests/FailDevic
  protected:
      qint64 readData(char* data, qint64 len) override;
 diff -urpN keepassxc-9999.orig/tests/gui/TestGui.cpp keepassxc-9999/tests/gui/TestGui.cpp
---- keepassxc-9999.orig/tests/gui/TestGui.cpp	2024-01-31 02:46:31.143807353 -0800
-+++ keepassxc-9999/tests/gui/TestGui.cpp	2024-01-31 02:49:18.682640663 -0800
+--- keepassxc-9999.orig/tests/gui/TestGui.cpp	2024-01-31 04:01:17.860361175 -0800
++++ keepassxc-9999/tests/gui/TestGui.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -1302,7 +1302,11 @@ void TestGui::testDragAndDropEntry()
  
      QMimeData mimeData;
@@ -13523,8 +14225,8 @@ diff -urpN keepassxc-9999.orig/tests/gui/TestGui.cpp keepassxc-9999/tests/gui/Te
      stream << group->database()->uuid() << group->uuid();
      mimeData.setData("application/x-keepassx-group", encoded);
 diff -urpN keepassxc-9999.orig/tests/gui/TestGuiFdoSecrets.cpp keepassxc-9999/tests/gui/TestGuiFdoSecrets.cpp
---- keepassxc-9999.orig/tests/gui/TestGuiFdoSecrets.cpp	2024-01-31 02:46:31.147807326 -0800
-+++ keepassxc-9999/tests/gui/TestGuiFdoSecrets.cpp	2024-01-31 02:49:18.698640551 -0800
+--- keepassxc-9999.orig/tests/gui/TestGuiFdoSecrets.cpp	2024-01-31 04:01:17.860361175 -0800
++++ keepassxc-9999/tests/gui/TestGuiFdoSecrets.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -170,7 +170,11 @@ void TestGuiFdoSecrets::initTestCase()
  
      // Load the NewDatabase.kdbx file into temporary storage
@@ -13599,8 +14301,8 @@ diff -urpN keepassxc-9999.orig/tests/gui/TestGuiFdoSecrets.cpp keepassxc-9999/te
  
  void TestGuiFdoSecrets::testModifyingExposedGroup()
 diff -urpN keepassxc-9999.orig/tests/modeltest.cpp keepassxc-9999/tests/modeltest.cpp
---- keepassxc-9999.orig/tests/modeltest.cpp	2024-01-31 02:46:31.147807326 -0800
-+++ keepassxc-9999/tests/modeltest.cpp	2024-01-31 02:49:18.714640440 -0800
+--- keepassxc-9999.orig/tests/modeltest.cpp	2024-01-31 04:01:17.864361145 -0800
++++ keepassxc-9999/tests/modeltest.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -452,12 +452,20 @@ void ModelTest::data()
      }
  
@@ -13623,8 +14325,8 @@ diff -urpN keepassxc-9999.orig/tests/modeltest.cpp keepassxc-9999/tests/modeltes
          QVERIFY( colorVariant.canConvert<QColor>() );
      }
 diff -urpN keepassxc-9999.orig/tests/TestBase32.cpp keepassxc-9999/tests/TestBase32.cpp
---- keepassxc-9999.orig/tests/TestBase32.cpp	2024-01-31 02:46:31.123807492 -0800
-+++ keepassxc-9999/tests/TestBase32.cpp	2024-01-31 02:49:18.714640440 -0800
+--- keepassxc-9999.orig/tests/TestBase32.cpp	2024-01-31 04:01:17.836361345 -0800
++++ keepassxc-9999/tests/TestBase32.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -304,28 +304,41 @@ void TestBase32::testRemovePadding()
  
  void TestBase32::testSanitizeInput()
@@ -13672,8 +14374,8 @@ diff -urpN keepassxc-9999.orig/tests/TestBase32.cpp keepassxc-9999/tests/TestBas
 +    QCOMPARE(dataTrimmed, QString("Hello world..."));
  }
 diff -urpN keepassxc-9999.orig/tests/TestCli.cpp keepassxc-9999/tests/TestCli.cpp
---- keepassxc-9999.orig/tests/TestCli.cpp	2024-01-31 02:46:31.123807492 -0800
-+++ keepassxc-9999/tests/TestCli.cpp	2024-01-31 02:49:18.714640440 -0800
+--- keepassxc-9999.orig/tests/TestCli.cpp	2024-01-31 04:01:17.836361345 -0800
++++ keepassxc-9999/tests/TestCli.cpp	2024-01-31 04:01:37.268223061 -0800
 @@ -69,10 +69,18 @@ void TestCli::initTestCase()
      Bootstrap::bootstrap();
  
@@ -13805,8 +14507,8 @@ diff -urpN keepassxc-9999.orig/tests/TestCli.cpp keepassxc-9999/tests/TestCli.cp
      xmlOutput.close();
  
 diff -urpN keepassxc-9999.orig/tests/TestCsvExporter.cpp keepassxc-9999/tests/TestCsvExporter.cpp
---- keepassxc-9999.orig/tests/TestCsvExporter.cpp	2024-01-31 02:46:31.123807492 -0800
-+++ keepassxc-9999/tests/TestCsvExporter.cpp	2024-01-31 02:49:18.714640440 -0800
+--- keepassxc-9999.orig/tests/TestCsvExporter.cpp	2024-01-31 04:01:17.840361317 -0800
++++ keepassxc-9999/tests/TestCsvExporter.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -64,7 +64,11 @@ void TestCsvExporter::testExport()
      entry->setIcon(5);
  
@@ -13844,8 +14546,8 @@ diff -urpN keepassxc-9999.orig/tests/TestCsvExporter.cpp keepassxc-9999/tests/Te
      auto exported = QString::fromUtf8(buffer.buffer());
      QVERIFY(exported.startsWith(
 diff -urpN keepassxc-9999.orig/tests/TestCsvParser.cpp keepassxc-9999/tests/TestCsvParser.cpp
---- keepassxc-9999.orig/tests/TestCsvParser.cpp	2024-01-31 02:46:31.123807492 -0800
-+++ keepassxc-9999/tests/TestCsvParser.cpp	2024-01-31 02:49:18.714640440 -0800
+--- keepassxc-9999.orig/tests/TestCsvParser.cpp	2024-01-31 04:01:17.840361317 -0800
++++ keepassxc-9999/tests/TestCsvParser.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -333,7 +333,11 @@ void TestCsvParser::testUnicode()
      // ERROR QChar g("\u20AC");
      parser->setFieldSeparator(QChar('A'));
@@ -13859,8 +14561,8 @@ diff -urpN keepassxc-9999.orig/tests/TestCsvParser.cpp keepassxc-9999/tests/Test
  
      QVERIFY(parser->parse(file.data()));
 diff -urpN keepassxc-9999.orig/tests/TestHashedBlockStream.cpp keepassxc-9999/tests/TestHashedBlockStream.cpp
---- keepassxc-9999.orig/tests/TestHashedBlockStream.cpp	2024-01-31 02:46:31.127807465 -0800
-+++ keepassxc-9999/tests/TestHashedBlockStream.cpp	2024-01-31 02:49:18.714640440 -0800
+--- keepassxc-9999.orig/tests/TestHashedBlockStream.cpp	2024-01-31 04:01:17.840361317 -0800
++++ keepassxc-9999/tests/TestHashedBlockStream.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -35,13 +35,25 @@ void TestHashedBlockStream::testWriteRea
      QByteArray data = QByteArray::fromHex("603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4");
  
@@ -13928,8 +14630,8 @@ diff -urpN keepassxc-9999.orig/tests/TestHashedBlockStream.cpp keepassxc-9999/te
      QCOMPARE(writer.write(input.left(900)), qint64(900));
      writer.write(input.left(900));
 diff -urpN keepassxc-9999.orig/tests/TestHibp.cpp keepassxc-9999/tests/TestHibp.cpp
---- keepassxc-9999.orig/tests/TestHibp.cpp	2024-01-31 02:46:31.127807465 -0800
-+++ keepassxc-9999/tests/TestHibp.cpp	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/TestHibp.cpp	2024-01-31 04:01:17.840361317 -0800
++++ keepassxc-9999/tests/TestHibp.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -47,7 +47,11 @@ void TestHibp::testBadHibpFormat()
  {
      QByteArray hibpContents(TEST_BAD_HIBP_CONTENTS);
@@ -13967,8 +14669,8 @@ diff -urpN keepassxc-9999.orig/tests/TestHibp.cpp keepassxc-9999/tests/TestHibp.
      Group* root = m_db->rootGroup();
  
 diff -urpN keepassxc-9999.orig/tests/TestIconDownloader.cpp keepassxc-9999/tests/TestIconDownloader.cpp
---- keepassxc-9999.orig/tests/TestIconDownloader.cpp	2024-01-31 02:46:31.127807465 -0800
-+++ keepassxc-9999/tests/TestIconDownloader.cpp	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/TestIconDownloader.cpp	2024-01-31 04:01:17.844361288 -0800
++++ keepassxc-9999/tests/TestIconDownloader.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -76,4 +76,14 @@ void TestIconDownloader::testIconDownloa
      QTest::newRow("Relative path should be preserved")
          << "https://test.com/rel-path/"
@@ -13985,8 +14687,8 @@ diff -urpN keepassxc-9999.orig/tests/TestIconDownloader.cpp keepassxc-9999/tests
 +#endif
  }
 diff -urpN keepassxc-9999.orig/tests/TestKeePass1Reader.cpp keepassxc-9999/tests/TestKeePass1Reader.cpp
---- keepassxc-9999.orig/tests/TestKeePass1Reader.cpp	2024-01-31 02:46:31.127807465 -0800
-+++ keepassxc-9999/tests/TestKeePass1Reader.cpp	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/TestKeePass1Reader.cpp	2024-01-31 04:01:17.844361288 -0800
++++ keepassxc-9999/tests/TestKeePass1Reader.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -220,6 +220,7 @@ void TestKeePass1Reader::testTwofish()
      QCOMPARE(db->rootGroup()->children().at(0)->name(), name);
  }
@@ -14016,8 +14718,8 @@ diff -urpN keepassxc-9999.orig/tests/TestKeePass1Reader.cpp keepassxc-9999/tests
      KeePass2Writer writer;
      writer.writeDatabase(&buffer, db.data());
 diff -urpN keepassxc-9999.orig/tests/TestKeePass1Reader.h keepassxc-9999/tests/TestKeePass1Reader.h
---- keepassxc-9999.orig/tests/TestKeePass1Reader.h	2024-01-31 02:46:31.127807465 -0800
-+++ keepassxc-9999/tests/TestKeePass1Reader.h	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/TestKeePass1Reader.h	2024-01-31 04:01:17.844361288 -0800
++++ keepassxc-9999/tests/TestKeePass1Reader.h	2024-01-31 04:01:37.272223033 -0800
 @@ -39,7 +39,9 @@ private slots:
      void testFileKey_data();
      void testCompositeKey();
@@ -14029,8 +14731,8 @@ diff -urpN keepassxc-9999.orig/tests/TestKeePass1Reader.h keepassxc-9999/tests/T
  
  private:
 diff -urpN keepassxc-9999.orig/tests/TestKeePass2Format.cpp keepassxc-9999/tests/TestKeePass2Format.cpp
---- keepassxc-9999.orig/tests/TestKeePass2Format.cpp	2024-01-31 02:46:31.131807437 -0800
-+++ keepassxc-9999/tests/TestKeePass2Format.cpp	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/TestKeePass2Format.cpp	2024-01-31 04:01:17.844361288 -0800
++++ keepassxc-9999/tests/TestKeePass2Format.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -434,7 +434,11 @@ void TestKeePass2Format::testXmlInvalidX
      entry->attributes()->set("SurrogateValid2", strSurrogateValid2);
  
@@ -14056,8 +14758,8 @@ diff -urpN keepassxc-9999.orig/tests/TestKeePass2Format.cpp keepassxc-9999/tests
      QString errorString;
      writeKdbx(&failDevice, db.data(), hasError, errorString);
 diff -urpN keepassxc-9999.orig/tests/TestSharing.cpp keepassxc-9999/tests/TestSharing.cpp
---- keepassxc-9999.orig/tests/TestSharing.cpp	2024-01-31 02:46:31.135807409 -0800
-+++ keepassxc-9999/tests/TestSharing.cpp	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/TestSharing.cpp	2024-01-31 04:01:17.848361260 -0800
++++ keepassxc-9999/tests/TestSharing.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -83,7 +83,11 @@ void TestSharing::testKeySerialization()
      writer.writeEndDocument();
      QXmlStreamReader reader(buffer);
@@ -14071,8 +14773,8 @@ diff -urpN keepassxc-9999.orig/tests/TestSharing.cpp keepassxc-9999/tests/TestSh
  
      QCOMPARE(restored.key->private_key_bits(), original.key->private_key_bits());
 diff -urpN keepassxc-9999.orig/tests/TestSSHAgent.cpp keepassxc-9999/tests/TestSSHAgent.cpp
---- keepassxc-9999.orig/tests/TestSSHAgent.cpp	2024-01-31 02:46:31.131807437 -0800
-+++ keepassxc-9999/tests/TestSSHAgent.cpp	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/TestSSHAgent.cpp	2024-01-31 04:01:17.848361260 -0800
++++ keepassxc-9999/tests/TestSSHAgent.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -57,7 +57,11 @@ void TestSSHAgent::initTestCase()
          QSKIP("ssh-agent could not be started");
      }
@@ -14098,8 +14800,8 @@ diff -urpN keepassxc-9999.orig/tests/TestSSHAgent.cpp keepassxc-9999/tests/TestS
          m_agentProcess.waitForFinished();
      }
 diff -urpN keepassxc-9999.orig/tests/TestSymmetricCipher.cpp keepassxc-9999/tests/TestSymmetricCipher.cpp
---- keepassxc-9999.orig/tests/TestSymmetricCipher.cpp	2024-01-31 02:46:31.135807409 -0800
-+++ keepassxc-9999/tests/TestSymmetricCipher.cpp	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/TestSymmetricCipher.cpp	2024-01-31 04:01:17.848361260 -0800
++++ keepassxc-9999/tests/TestSymmetricCipher.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -121,10 +121,18 @@ void TestSymmetricCipher::testEncryption
      QCOMPARE(data.left(16), cipherText.left(16));
  
@@ -14185,8 +14887,8 @@ diff -urpN keepassxc-9999.orig/tests/TestSymmetricCipher.cpp keepassxc-9999/test
      // test if reset() and close() write only one block
      QVERIFY(writer.reset());
 diff -urpN keepassxc-9999.orig/tests/util/TemporaryFile.cpp keepassxc-9999/tests/util/TemporaryFile.cpp
---- keepassxc-9999.orig/tests/util/TemporaryFile.cpp	2024-01-31 02:46:31.147807326 -0800
-+++ keepassxc-9999/tests/util/TemporaryFile.cpp	2024-01-31 02:49:18.718640412 -0800
+--- keepassxc-9999.orig/tests/util/TemporaryFile.cpp	2024-01-31 04:01:17.864361145 -0800
++++ keepassxc-9999/tests/util/TemporaryFile.cpp	2024-01-31 04:01:37.272223033 -0800
 @@ -52,7 +52,11 @@ TemporaryFile::~TemporaryFile()
  
  bool TemporaryFile::open()
