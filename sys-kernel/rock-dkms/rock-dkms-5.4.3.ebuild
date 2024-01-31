@@ -120,7 +120,7 @@ RDEPEND="
 	!sys-kernel/rock-dkms:0
 	${CDEPEND}
 	sys-apps/kmod[tools]
-	sys-devel/autoconf
+	dev-build/autoconf
 	sys-devel/automake
 	!build? (
 		>=sys-kernel/dkms-1.95
