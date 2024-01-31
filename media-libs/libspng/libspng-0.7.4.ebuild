@@ -57,8 +57,8 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=dev-util/meson-0.54.0
-	dev-util/meson-format-array
+	>=dev-build/meson-0.54.0
+	dev-build/meson-format-array
 	doc? (
 		dev-python/mkdocs
 		dev-python/mkdocs-material
