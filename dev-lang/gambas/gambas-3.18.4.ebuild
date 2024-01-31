@@ -311,7 +311,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=sys-devel/autoconf-2.68
+	>=dev-build/autoconf-2.68
 	>=sys-devel/automake-1.11.1
 	>=sys-devel/libtool-2.4
 "
