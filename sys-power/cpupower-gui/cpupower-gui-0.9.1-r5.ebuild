@@ -40,7 +40,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/meson-0.50
-	dev-util/ninja
+	dev-build/ninja
 	virtual/pkgconfig
 "
 SRC_URI="
