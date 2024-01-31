@@ -47,7 +47,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=dev-util/cmake-3.13
 		dev-cpp/gtest
