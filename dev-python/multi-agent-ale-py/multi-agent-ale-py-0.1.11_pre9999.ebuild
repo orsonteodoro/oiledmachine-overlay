@@ -49,7 +49,7 @@ BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	>=dev-util/cmake-3.14
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-util/ninja
+	dev-build/ninja
 "
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
