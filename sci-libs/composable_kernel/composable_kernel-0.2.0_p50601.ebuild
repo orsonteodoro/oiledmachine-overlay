@@ -73,7 +73,7 @@ BDEPEND="
 			!system-llvm? (
 				~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
 			)
-			~dev-util/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
+			~dev-build/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
 				sys-devel/clang:${LLVM_MAX_SLOT}
 			)
