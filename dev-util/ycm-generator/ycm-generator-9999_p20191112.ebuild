@@ -114,7 +114,7 @@ RDEPEND+="
 	)
 	meson? (
 		dev-build/meson
-		dev-util/ninja
+		dev-build/ninja
 	)
 	qmake? (
 		|| (
