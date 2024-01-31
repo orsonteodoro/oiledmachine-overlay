@@ -945,7 +945,7 @@ BDEPEND+="
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
 	>=app-arch/gzip-1.7
-	>=dev-util/gn-0.2122
+	>=dev-build/gn-0.2122
 	>=dev-util/gperf-3.0.3
 	>=dev-build/ninja-1.7.2
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
