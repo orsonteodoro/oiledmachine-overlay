@@ -206,7 +206,7 @@ RDEPEND+="
 	app-arch/cpio
 	app-portage/elt-patches
 	sys-apps/sandbox
-	sys-devel/autoconf
+	dev-build/autoconf
 	dev-build/autoconf-archive
 	sys-devel/automake
 	sys-devel/libtool
