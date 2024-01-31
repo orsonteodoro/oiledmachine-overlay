@@ -32,7 +32,7 @@ BDEPEND+="
 	>=dev-python/scikit-build-0.13.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-63.1.0[${PYTHON_USEDEP}]
 	>=dev-util/cmake-3.22.5
-	>=dev-util/ninja-1.10.2.3
+	>=dev-build/ninja-1.10.2.3
 	doc? (
 		dev-python/furo[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
