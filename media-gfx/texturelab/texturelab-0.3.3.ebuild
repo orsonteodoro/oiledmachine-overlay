@@ -245,7 +245,7 @@ RDEPEND+="
 NODE_GYP_BDEPENDS="
 	${PYTHON_DEPS}
 	sys-devel/gcc
-	sys-devel/make
+	dev-build/make
 "
 BDEPEND+="
 	${NODE_GYP_BDEPENDS}
