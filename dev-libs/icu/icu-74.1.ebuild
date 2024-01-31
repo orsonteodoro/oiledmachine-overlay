@@ -41,7 +41,7 @@ RESTRICT="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	sys-devel/autoconf-archive
+	dev-build/autoconf-archive
 	doc? (
 		app-doc/doxygen[dot]
 	)
