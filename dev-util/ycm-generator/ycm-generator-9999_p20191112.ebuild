@@ -113,7 +113,7 @@ RDEPEND+="
 		dev-build/make
 	)
 	meson? (
-		dev-util/meson
+		dev-build/meson
 		dev-util/ninja
 	)
 	qmake? (
