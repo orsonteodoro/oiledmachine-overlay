@@ -45,7 +45,7 @@ RDEPEND="
 "
 BDEPEND="
 	>=dev-build/meson-0.49
-	>=dev-util/ninja-1.10.2
+	>=dev-build/ninja-1.10.2
 	>=sys-devel/binutils-2.35.2
 	>=sys-devel/gcc-11.3.1
 	examples? (
