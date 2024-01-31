@@ -40,7 +40,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/meson-0.50.0
+	>=dev-build/meson-0.50.0
 	dev-lang/vala:0.56
 "
 
