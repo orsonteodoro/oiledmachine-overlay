@@ -355,7 +355,7 @@ DEPEND+="
 BDEPEND+="
 	>=virtual/rust-1.71.1
 	>=dev-util/blueprint-compiler-0.10.0
-	>=sys-devel/make-4.3
+	>=dev-build/make-4.3
 	virtual/pkgconfig
 "
 RESTRICT="mirror"
