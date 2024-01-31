@@ -144,7 +144,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-util/ninja
+	dev-build/ninja
 	sys-apps/coreutils
 	virtual/pkgconfig
 	pax-kernel? (
