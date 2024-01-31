@@ -199,7 +199,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	app-arch/zip
-	dev-util/scons
+	dev-build/scons
 	webm-simd? (
 		dev-lang/yasm
 	)
