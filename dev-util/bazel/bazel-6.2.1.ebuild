@@ -16,7 +16,7 @@ KEYWORDS="~amd64"
 IUSE="bash-completion examples tools r4 zsh-completion"
 JAVA_SLOT=11
 RDEPEND="
-	!dev-util/bazel:0
+	!dev-build/bazel:0
 	>=virtual/jre-${JAVA_SLOT}:${JAVA_SLOT}
 	sys-devel/gcc[cxx]
 	sys-libs/glibc
@@ -27,7 +27,7 @@ DEPEND="
 	virtual/jdk:${JAVA_SLOT}
 "
 BDEPEND="
-	!dev-util/bazel:0
+	!dev-build/bazel:0
 "
 # strip corrupts the bazel binary
 # test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
