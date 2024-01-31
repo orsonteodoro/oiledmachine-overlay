@@ -68,7 +68,7 @@ RDEPEND="
 	>=sys-libs/minizip-ng-3.0.7
 	>=sys-libs/zlib-1.2.13
 	dev-libs/tinyxml
-	dev-util/ninja
+	dev-build/ninja
 	opengl? (
 		>=media-libs/openimageio-2.3.12.0-r3:=
 		>=media-libs/lcms-2.2:2
