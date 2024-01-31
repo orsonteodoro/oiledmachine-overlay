@@ -96,7 +96,7 @@ DEPEND="
 "
 BDEPEND="
 	virtual/pkgconfig
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
 		|| (
 			~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}[fat-librockcompiler(+)]
