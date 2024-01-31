@@ -97,7 +97,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	sys-devel/gcc
-	sys-devel/make
+	dev-build/make
 "
 RESTRICT="mirror"
 DOCS=(
