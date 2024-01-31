@@ -317,7 +317,7 @@ RDEPEND+="
 	dev-util/gperf
 	sys-apps/sandbox
 	sys-devel/autoconf
-	sys-devel/autoconf-archive
+	dev-build/autoconf-archive
 	sys-devel/automake
 	sys-devel/bc
 	sys-devel/bison
