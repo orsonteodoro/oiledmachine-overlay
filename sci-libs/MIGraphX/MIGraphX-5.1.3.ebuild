@@ -80,7 +80,7 @@ BDEPEND="
 	)
 	>=dev-util/cmake-3.5
 	sys-devel/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		sys-devel/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	)
