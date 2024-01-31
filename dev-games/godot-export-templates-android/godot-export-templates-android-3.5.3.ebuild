@@ -172,7 +172,7 @@ BDEPEND+="
 	${CDEPEND}
 	${JDK_DEPEND}
 	${PYTHON_DEPS}
-	dev-util/scons
+	dev-build/scons
 	webm-simd? (
 		dev-lang/yasm
 	)
