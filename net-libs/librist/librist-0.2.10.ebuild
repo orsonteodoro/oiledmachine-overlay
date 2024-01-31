@@ -41,7 +41,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/meson-0.51.0
+	>=dev-build/meson-0.51.0
 "
 
 src_configure() {
