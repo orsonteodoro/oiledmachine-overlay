@@ -36,7 +36,7 @@ BDEPEND+="
 	>=dev-lang/mono-4.4
 	sys-devel/gcc
 "
-#	sys-devel/automake:1.11
+#	dev-build/automake:1.11
 SRC_URI="
 https://download.mono-project.com/sources/gtk-sharp212/${P}.tar.gz
 https://github.com/mono/gtk-sharp/commit/a00552ad68ae349e89e440dca21b86dbd6bccd30.patch
