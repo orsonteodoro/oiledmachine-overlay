@@ -69,7 +69,7 @@ DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 BDEPEND="
-	>=dev-util/bazel-5.4.0
+	>=dev-build/bazel-5.4.0
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
