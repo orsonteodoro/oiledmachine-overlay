@@ -202,7 +202,7 @@ gen_llvm_test_bdepend()
 GCC_PV="11.3.0"
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-util/gtk-doc-am-1.32
+	>=dev-build/gtk-doc-am-1.32
 	>=dev-build/meson-0.61.2
 	>=dev-build/ninja-1.10.1
 	virtual/pkgconfig
