@@ -42,7 +42,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-util/meson
+	dev-build/meson
 	dev-util/strace
 	sys-apps/file
 	sys-apps/util-linux
