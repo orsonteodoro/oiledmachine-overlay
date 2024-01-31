@@ -61,7 +61,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.16.8
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
 	"${FILESDIR}/atmi-5.3.3-path-changes.patch"
