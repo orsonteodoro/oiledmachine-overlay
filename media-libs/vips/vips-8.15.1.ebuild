@@ -207,7 +207,7 @@ GCC_PV="11.3.0"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-util/gtk-doc-am-1.32
-	>=dev-util/meson-0.61.2
+	>=dev-build/meson-0.61.2
 	>=dev-util/ninja-1.10.1
 	virtual/pkgconfig
 	doxygen? (
