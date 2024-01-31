@@ -30,9 +30,9 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.0
 	|| (
-		~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
-		=dev-util/rocm-cmake-5.5*:0/5.5
-		=dev-util/rocm-cmake-5.6*:0/5.6
+		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+		=dev-build/rocm-cmake-5.5*:0/5.5
+		=dev-build/rocm-cmake-5.6*:0/5.6
 	)
 "
 PATCHES=(
