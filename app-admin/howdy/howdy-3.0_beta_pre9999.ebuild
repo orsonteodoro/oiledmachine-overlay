@@ -110,7 +110,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-util/meson
+	dev-build/meson
 	|| (
 		>=sys-devel/gcc-5
 		>=sys-devel/clang-3.4
