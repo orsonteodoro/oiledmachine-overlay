@@ -30,7 +30,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-util/bazel
+	dev-build/bazel
 "
 SRC_URI="
 https://github.com/tensorflow/io/archive/refs/tags/v${PV}.tar.gz
