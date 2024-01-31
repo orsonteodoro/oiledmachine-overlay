@@ -29,7 +29,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-util/cmake-3.0
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-v5.3.3-gentoo-rocm-overlay-fixes.patch"
