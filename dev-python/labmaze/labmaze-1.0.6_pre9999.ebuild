@@ -54,7 +54,7 @@ DEPEND+="
 	${JDK_DEPEND}
 "
 BDEPEND+="
-	dev-util/bazel
+	dev-build/bazel
 "
 
 S="${WORKDIR}/${P}"
