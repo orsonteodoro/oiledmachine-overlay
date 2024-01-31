@@ -137,7 +137,7 @@ BDEPEND+="
 		>=sys-devel/gcc-${GCC_PV_MIN}[cxx]
 		>=sys-devel/clang-${CLANG_PV_MIN}
 	)
-	>=dev-util/meson-0.45
+	>=dev-build/meson-0.45
 	virtual/pkgconfig
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
