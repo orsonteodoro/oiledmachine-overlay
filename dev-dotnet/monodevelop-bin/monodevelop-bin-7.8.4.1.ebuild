@@ -107,7 +107,7 @@ BDEPEND="
 	>=dev-dotnet/mono-msbuild-bin-16.10.1
 	>=dev-util/cmake-2.8.12.2
 	>=dev-build/autoconf-2.53
-	>=sys-devel/automake-1.10
+	>=dev-build/automake-1.10
 	app-shells/bash
 	dev-util/intltool
 	dev-vcs/git
