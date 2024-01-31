@@ -125,7 +125,7 @@ BDEPEND="
 	')
 	${PYTHON_DEPS}
 	sys-devel/clang:${LLVM_MAX_SLOT}
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		$(python_gen_cond_dep '
 			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'[${PYTHON_USEDEP},client]
