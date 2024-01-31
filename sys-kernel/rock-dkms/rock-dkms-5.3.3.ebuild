@@ -119,7 +119,7 @@ RDEPEND="
 	${CDEPEND}
 	sys-apps/kmod[tools]
 	dev-build/autoconf
-	sys-devel/automake
+	dev-build/automake
 	!build? (
 		>=sys-kernel/dkms-1.95
 	)
