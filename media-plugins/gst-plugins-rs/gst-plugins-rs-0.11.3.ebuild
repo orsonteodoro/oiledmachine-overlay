@@ -790,7 +790,7 @@ BDEPEND+="
 		$(gen_llvm_bdepend)
 	)
 	>=dev-util/cargo-c-0.9.21
-	>=dev-util/meson-1.1.1
+	>=dev-build/meson-1.1.1
 	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	>=sys-devel/gcc-12.2.0
 	>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
