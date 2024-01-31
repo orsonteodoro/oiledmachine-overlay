@@ -32,7 +32,7 @@ BDEPEND+="
 	cpp? (
 		>=dev-util/cmake-3.12
 		>=sys-devel/gcc-10.2.1
-		dev-util/ninja
+		dev-build/ninja
 	)
 "
 RESTRICT="mirror"
