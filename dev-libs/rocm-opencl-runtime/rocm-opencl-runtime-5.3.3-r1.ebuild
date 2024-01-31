@@ -43,7 +43,7 @@ DEPEND="
 "
 BDEPEND="
 	>=media-libs/glew-2.2.0
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		>=x11-apps/mesa-progs-8.5.0[X]
 	)
