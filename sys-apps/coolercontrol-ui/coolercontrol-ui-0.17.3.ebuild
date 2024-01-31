@@ -1056,7 +1056,7 @@ BDEPEND+="
 	${COOLERCONTROL_UI_BDEPEND}
 	${RUST_BINDINGS_BDEPEND}
 	${VUE_DEPEND}
-	>=sys-devel/make-4.2.1
+	>=dev-build/make-4.2.1
 "
 RESTRICT="mirror"
 
