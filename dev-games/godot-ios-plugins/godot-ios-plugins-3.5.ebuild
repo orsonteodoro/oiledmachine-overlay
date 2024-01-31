@@ -125,7 +125,7 @@ EXPECTED_IOS_SDK_MIN_VERSION="10"
 # Optional
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-util/scons
+	dev-build/scons
 	!pregenerated-headers? (
 		net-misc/rsync
 	)
