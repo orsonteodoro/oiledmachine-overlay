@@ -174,12 +174,12 @@ DEPEND="${RDEPEND}
 	)
 "
 BDEPEND="
-	>=dev-util/meson-1.0.0
+	>=dev-build/meson-1.0.0
 	${PYTHON_DEPS}
 	opencl? (
 		>=virtual/rust-1.62.0
 		>=dev-util/bindgen-0.58.0
-		>=dev-util/meson-1.2.0
+		>=dev-build/meson-1.2.0
 	)
 	sys-devel/bison
 	sys-devel/flex
