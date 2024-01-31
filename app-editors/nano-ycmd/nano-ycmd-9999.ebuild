@@ -106,7 +106,7 @@ RDEPEND+="
 		dev-libs/libgcrypt
 	)
 	ninja? (
-		dev-util/ninja
+		dev-build/ninja
 	)
 	nettle? (
 		dev-libs/nettle
