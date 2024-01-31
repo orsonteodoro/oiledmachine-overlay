@@ -40,7 +40,7 @@ RDEPEND="
 	  dev-lang/perl
 	>=dev-util/android-sdk-update-manager-10
 	  sys-devel/gcc
-	>=sys-devel/make-3.81
+	>=dev-build/make-3.81
 	  sys-libs/glibc
 	  sys-libs/libxcrypt
 	  sys-libs/ncurses-compat:5[abi_x86_32(-),tinfo]
