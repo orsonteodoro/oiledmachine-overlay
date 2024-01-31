@@ -1333,7 +1333,7 @@ DEPEND+="
 
 # += for verify-sig above
 BDEPEND+="
-	>=sys-devel/make-3.81
+	>=dev-build/make-3.81
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	cpu_flags_x86_mmx? (
 		|| (
