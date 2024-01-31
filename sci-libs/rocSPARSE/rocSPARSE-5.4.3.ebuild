@@ -113,7 +113,7 @@ BDEPEND="
 	benchmark? (
 		app-admin/chrpath
 	)
-	~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="
 	!test? (
