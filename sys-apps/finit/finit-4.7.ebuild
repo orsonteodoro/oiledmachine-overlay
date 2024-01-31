@@ -108,7 +108,7 @@ BDEPEND+="
 	>=sys-devel/autoconf-2.71
 	>=sys-devel/automake-1.16.5
 	>=sys-devel/gcc-11.2.0
-	>=sys-devel/make-4.3
+	>=dev-build/make-4.3
 	virtual/pkgconfig
 	test? (
 		>=app-misc/jq-1.6
