@@ -929,7 +929,7 @@ VUE_DEPEND="
 "
 BDEPEND+="
 	${VUE_DEPEND}
-	>=sys-devel/make-4.2.1
+	>=dev-build/make-4.2.1
 	virtual/pkgconfig
 	virtual/rust
 "
