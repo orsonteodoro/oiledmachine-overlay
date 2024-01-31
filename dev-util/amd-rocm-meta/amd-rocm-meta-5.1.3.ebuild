@@ -69,7 +69,7 @@ RDEPEND="
 
 		~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 		~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
-		~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 		~dev-util/rocprofiler-${PV}:${ROCM_SLOT}[aqlprofile?]
 		~dev-util/roctracer-${PV}:${ROCM_SLOT}[aqlprofile?]
@@ -102,7 +102,7 @@ RDEPEND="
 		~sci-libs/rocThrust-${PV}:${ROCM_SLOT}
 	)
 	rocm-utils? (
-		~dev-util/rocm-cmake-${PV}:${ROCM_SLOT}
+		~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 	)
 "
