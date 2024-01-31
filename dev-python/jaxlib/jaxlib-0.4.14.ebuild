@@ -311,7 +311,7 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
-	>=dev-util/bazel-6.1.2
+	>=dev-build/bazel-6.1.2
 	clang? (
 		|| (
 			$(gen_llvm_bdepend)
