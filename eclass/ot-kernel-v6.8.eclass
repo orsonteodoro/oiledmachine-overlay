@@ -199,7 +199,7 @@ d29d596279f9ce7a33c7cc68277886e49381ea05
 cf9b1dacabb1ef62481a452f7f169e1679e2da49
 a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 ) # newest
-RUST_PV="1.71.1"
+RUST_PV="1.74.1"
 
 BBRV3_KV="6.4.0" # According to Makefile, but the net folder has tagged net-6.5-rc1 commit
 BBRV3_VERSION="6e321d1" # Latest commit in the branch
