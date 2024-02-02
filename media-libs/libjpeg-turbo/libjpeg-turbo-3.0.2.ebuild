@@ -177,16 +177,26 @@ BDEPEND+="
 
 DEPEND="
 	${COMMON_DEPEND}
-	java? ( >=virtual/jdk-1.8:*[-headless-awt] )
+	java? (
+		>=virtual/jdk-1.8:*[-headless-awt]
+	)
 "
 
 RDEPEND="
 	${COMMON_DEPEND}
-	java? ( >=virtual/jre-1.8:* )
+	java? (
+		>=virtual/jre-1.8:*
+	)
 "
-PDEPEND=" pgo? ( media-video/mpv )"
+PDEPEND="
+	pgo? (
+		media-video/mpv
+	)
+"
 
-MULTILIB_WRAPPED_HEADERS=( /usr/include/jconfig.h )
+MULTILIB_WRAPPED_HEADERS=(
+	"/usr/include/jconfig.h"
+)
 
 S="${WORKDIR}/${P}"
 
@@ -195,7 +205,17 @@ is_pgo_ready() {
 	if [[ ! -d "${distdir}/trainer/assets/jpeg" ]] ; then
 		return 1
 	fi
-	if (( $(find "${distdir}/trainer/assets/jpeg" \( -iname "*.jpg" -o -iname "*.jpeg" \) | wc -l) == 0 )); then
+
+	local n_assets=$(\
+		find \
+			"${distdir}/trainer/assets/jpeg" \
+			\( \
+				   -iname "*.jpg" \
+				-o -iname "*.jpeg" \
+			\) \
+		| wc -l \
+	)
+	if (( ${n_assets} == 0 )); then
 		return 1
 	fi
 	return 0
@@ -204,14 +224,17 @@ is_pgo_ready() {
 pkg_setup() {
 	if use pgo && ! is_pgo_ready ; then
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-		ewarn
-		ewarn "Missing PGO assets.  PGO assets should be placed in ${distdir}/trainer/assets/jpeg"
-		ewarn "and relatively the same dimension and quality that you typically USE."
-		ewarn
+ewarn
+ewarn "Missing PGO assets.  PGO assets should be placed in"
+ewarn "${distdir}/trainer/assets/jpeg and relatively the same dimension and"
+ewarn "quality that you typically USE."
+ewarn
 	fi
 	java-pkg-opt-2_pkg_setup
-	ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
-	ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
+ewarn
+ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
+ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
+ewarn
 	uopts_setup
 }
 
