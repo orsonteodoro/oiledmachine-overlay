@@ -10,7 +10,7 @@ EAPI=8
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 LLVM_MAX_SLOT=14
@@ -324,7 +324,7 @@ tr uk vi zh_CN
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 GST_ACODECS_IUSE="
 aac
@@ -358,7 +358,7 @@ MSE_VCODECS_IUSE="
 "
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS="
 +a52
 -aac
@@ -399,12 +399,12 @@ ${DEFAULT_GST_PLUGINS}
 aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2
 dash +dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
 +gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
-+jpeg2k +jpegxl +lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder
++jpegxl +lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder
 -mediastream +minibrowser mold +opengl openmp proprietary-codecs
 proprietary-codecs-disable proprietary-codecs-disable-nc-developer
 proprietary-codecs-disable-nc-user -seccomp speech-synthesis -spell test thunder
 +unified-builds +variation-fonts wayland +webassembly +webassembly-b3-jit
-+webassembly-bbq-jit +webassembly-omg-jit +webcore +webcrypto -webdriver +webgl
++webassembly-bbq-jit +webassembly-omg-jit +webcore -webdriver +webgl
 webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
@@ -635,7 +635,6 @@ REQUIRED_USE+="
 			libwebrtc
 		)
 		mediastream
-		webcrypto
 	)
 	webvtt? (
 		gstreamer
@@ -664,17 +663,17 @@ REQUIRED_USE+="
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.43.3/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.43.4/Tools/glib/dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
@@ -716,7 +715,7 @@ MESA_PV="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.3
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.43.4
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
@@ -778,7 +777,7 @@ RDEPEND+="
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
-	>=dev-libs/libgcrypt-1.6.0:0=[${MULTILIB_USEDEP}]
+	>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
@@ -871,9 +870,6 @@ RDEPEND+="
 			sys-auth/elogind
 		)
 	)
-	jpeg2k? (
-		>=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}]
-	)
 	jpegxl? (
 		>=media-libs/libjxl-0.7.0[${MULTILIB_USEDEP}]
 	)
@@ -937,9 +933,6 @@ RDEPEND+="
 		>=dev-libs/wayland-protocols-1.15[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
 	)
-	webcrypto? (
-		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
-	)
 	webm-eme? (
 		${OCDM_WV}
 	)
@@ -958,7 +951,6 @@ RDEPEND+="
 # see https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L97
 DEPEND+=" ${RDEPEND}"
 # paxctl is needed for bug #407085
-# It needs real bison, not yacc.
 
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -971,7 +963,6 @@ BDEPEND+="
 	>=dev-util/glib-utils-${GLIB_PV}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-util/unifdef-2.10
-	>=sys-devel/bison-3.0.4
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
@@ -2189,7 +2180,6 @@ eerror
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
-		-DENABLE_WEB_CRYPTO=$(usex webcrypto)
 		-DENABLE_WEB_RTC=$(usex webrtc)
 		-DENABLE_WEBCORE=$(usex webcore)
 		-DENABLE_WEBDRIVER=$(usex webdriver)
@@ -2208,7 +2198,6 @@ eerror
 		-DUSE_LCMS=$(usex lcms)
 		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
-		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_SOUP2=OFF
 		-DUSE_WOFF2=$(usex woff2)
