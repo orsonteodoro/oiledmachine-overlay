@@ -1,14 +1,14 @@
 # Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
-VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/madler.asc
-inherit autotools flag-o-matic flag-o-matic-om multilib-minimal toolchain-funcs
-inherit uopts usr-ldscript verify-sig
+VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
+inherit autotools edo flag-o-matic flag-o-matic-om multilib-minimal
+inherit toolchain-funcs uopts usr-ldscript verify-sig
 
 DESCRIPTION="Standard (de)compression library"
 HOMEPAGE="https://zlib.net/"
@@ -16,7 +16,11 @@ SRC_URI="
 	https://zlib.net/${P}.tar.gz
 	https://zlib.net/fossils/${P}.tar.xz
 	https://zlib.net/current/beta/${P}.tar.xz
-	verify-sig? ( https://zlib.net/${P}.tar.xz.asc )
+	https://github.com/madler/zlib/releases/download/v${PV}/${P}.tar.xz
+	verify-sig? (
+		https://zlib.net/${P}.tar.xz.asc
+		https://github.com/madler/zlib/releases/download/v${PV}/${P}.tar.xz.asc
+	)
 "
 
 LICENSE="ZLIB"
@@ -24,7 +28,7 @@ LICENSE="ZLIB"
 # The FAQ does mention GPL-2 but the file is not there but a file with a
 # similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 IUSE="minizip minizip-utils static-libs backup-copy"
 IUSE+="
 	pgo
@@ -55,7 +59,9 @@ IUSE+="
 "
 REQUIRED_USE="
 	pgo? (
-		minizip? ( minizip-utils )
+		minizip? (
+			minizip-utils
+		)
 		|| (
 			trainer-minizip-binary-long
 			trainer-minizip-binary-max-compression
@@ -82,29 +88,83 @@ REQUIRED_USE="
 			trainer-zlib-text-random
 		)
 	)
-	trainer-zlib-binary-all? ( pgo )
-	trainer-zlib-binary-default? ( pgo )
-	trainer-zlib-binary-max? ( pgo )
-	trainer-zlib-binary-min? ( pgo )
-	trainer-zlib-binary-random? ( pgo )
-	trainer-zlib-images-all? ( pgo )
-	trainer-zlib-images-default? ( pgo )
-	trainer-zlib-images-max? ( pgo )
-	trainer-zlib-images-min? ( pgo )
-	trainer-zlib-images-random? ( pgo )
-	trainer-zlib-text-all? ( pgo )
-	trainer-zlib-text-default? ( pgo )
-	trainer-zlib-text-max? ( pgo )
-	trainer-zlib-text-min? ( pgo )
-	trainer-zlib-text-random? ( pgo )
-	trainer-minizip-binary-long? ( pgo minizip )
-	trainer-minizip-binary-max-compression? ( pgo minizip )
-	trainer-minizip-binary-short? ( pgo minizip )
-	trainer-minizip-binary-store? ( pgo minizip )
-	trainer-minizip-text-long? ( pgo minizip )
-	trainer-minizip-text-max-compression? ( pgo minizip )
-	trainer-minizip-text-short? ( pgo minizip )
-	trainer-minizip-text-store? ( pgo minizip )
+	trainer-zlib-binary-all? (
+		pgo
+	)
+	trainer-zlib-binary-default? (
+		pgo
+	)
+	trainer-zlib-binary-max? (
+		pgo
+	)
+	trainer-zlib-binary-min? (
+		pgo
+	)
+	trainer-zlib-binary-random? (
+		pgo
+	)
+	trainer-zlib-images-all? (
+		pgo
+	)
+	trainer-zlib-images-default? (
+		pgo
+	)
+	trainer-zlib-images-max? (
+		pgo
+	)
+	trainer-zlib-images-min? (
+		pgo
+	)
+	trainer-zlib-images-random? (
+		pgo
+	)
+	trainer-zlib-text-all? (
+		pgo
+	)
+	trainer-zlib-text-default? (
+		pgo
+	)
+	trainer-zlib-text-max? (
+		pgo
+	)
+	trainer-zlib-text-min? (
+		pgo
+	)
+	trainer-zlib-text-random? (
+		pgo
+	)
+	trainer-minizip-binary-long? (
+		minizip
+		pgo
+	)
+	trainer-minizip-binary-max-compression? (
+		minizip
+		pgo
+	)
+	trainer-minizip-binary-short? (
+		minizip
+		pgo
+	)
+	trainer-minizip-binary-store? (
+		minizip
+		pgo
+	)
+	trainer-minizip-text-long? (
+		minizip
+		pgo
+	)
+	trainer-minizip-text-max-compression? (
+		minizip
+		pgo
+	)
+	trainer-minizip-text-short? (
+		minizip
+		pgo
+	)
+	trainer-minizip-text-store? (
+		minizip
+		pgo
+	)
 "
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
@@ -145,13 +205,16 @@ BDEPEND="
 PATCHES=(
 	# Don't install unexpected & unused crypt.h header (which would clash with other pkgs)
 	# Pending upstream. bug #658536
-	"${FILESDIR}"/${PN}-1.2.11-minizip-drop-crypt-header.patch
+	"${FILESDIR}/${PN}-1.2.11-minizip-drop-crypt-header.patch"
 
 	# Respect AR, RANLIB, NM during build. Pending upstream. bug #831628
-	"${FILESDIR}"/${PN}-1.2.11-configure-fix-AR-RANLIB-NM-detection.patch
+	"${FILESDIR}/${PN}-1.3.1-configure-fix-AR-RANLIB-NM-detection.patch"
 
 	# Respect LDFLAGS during configure tests. Pending upstream
-	"${FILESDIR}"/${PN}-1.2.13-use-LDFLAGS-in-configure.patch
+	"${FILESDIR}/${PN}-1.3.1-use-LDFLAGS-in-configure.patch"
+
+	# Fix building on sparc with older binutils, we pass it in ebuild instead
+	"${FILESDIR}/${PN}-1.3.1-Revert-Turn-off-RWX-segment-warnings-on-sparc-system.patch"
 )
 
 # The order does matter with USE=pgo
@@ -268,8 +331,6 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-echoit() { echo "$@"; "$@"; }
-
 append_all() {
 	append-flags ${@}
 	append-ldflags ${@}
@@ -322,8 +383,14 @@ eerror
 		fi
 	fi
 
+	# We pass manually instead of relying on the configure script/makefile
+	# because it would pass it even for older binutils.
+	use sparc && append-flags $(test-flags-CCLD -Wl,--no-warn-rwx-segments)
+
+	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
+
 	case ${CHOST} in
-	*-mingw*|mingw*)
+	*-mingw*|mingw*|*-cygwin*)
 		;;
 	*)
 		local uname=$("${EPREFIX}"/usr/share/gnuconfig/config.sub "${CHOST}" | cut -d- -f3) #347167
@@ -345,7 +412,7 @@ eerror
 
 		einfo "Configuring zlib for ${lib_type} for ${ABI}"
 		# not an autoconf script, so can't use econf
-		echoit "${S}"/configure "${myconf[@]}" || die
+		edo "${S}/configure" "${myconf[@]}"
 	esac
 
 	if use minizip ; then
@@ -380,7 +447,7 @@ _src_compile() {
 	cd "${BUILD_DIR}" || die
 	einfo "Building zlib ${lib_type} for ${ABI}"
 	case ${CHOST} in
-	*-mingw*|mingw*)
+	*-mingw*|mingw*|*-cygwin*)
 		emake -f win32/Makefile.gcc STRIP=true PREFIX=${CHOST}- ${lib_type}
 		sed \
 			-e 's|@prefix@|'"${EPREFIX}"'/usr|g' \
@@ -1004,12 +1071,6 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
-sed_macros() {
-	# clean up namespace a little #383179
-	# we do it here so we only have to tweak 2 files
-	sed -i -r 's:\<(O[FN])\>:_Z_\1:g' "$@" || die
-}
-
 _src_pre_train() {
 	einfo "Installing ${lib_type} into sandbox for ${ABI}"
 	_install
@@ -1027,7 +1088,7 @@ _src_post_pgo() {
 
 _install() {
 	case ${CHOST} in
-	*-mingw*|mingw*)
+	*-mingw*|mingw*|*-cygwin*)
 		emake -f win32/Makefile.gcc install \
 			BINARY_PATH="${ED}/usr/bin" \
 			LIBRARY_PATH="${ED}/usr/$(get_libdir)" \
@@ -1043,12 +1104,10 @@ _install() {
 		[[ "${lib_type}" == "shared" ]] && gen_usr_ldscript -a z
 		;;
 	esac
-	sed_macros "${ED}"/usr/include/*.h
 
 	if use minizip ; then
 		einfo "Installing minizip for ${ABI}"
 		emake -C "${S}/contrib/minizip" install DESTDIR="${D}"
-		sed_macros "${ED}"/usr/include/minizip/*.h
 		if use minizip-utils && multilib_is_native_abi ; then
 			# Bugs
 			mkdir -p "${ED}/usr/bin" || die
