@@ -242,6 +242,7 @@ eerror "Missing *.profraw files"
 eerror
 				die
 			fi
+			PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
 			llvm-profdata \
 				merge \
 				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \

@@ -337,6 +337,7 @@ eerror
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		einfo "Setting up PGO"
 		if tc-is-clang ; then
+			PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
 			llvm-profdata \
 				merge \
 				-output="${pgo_data_staging_dir}/pgo-custom.profdata" \

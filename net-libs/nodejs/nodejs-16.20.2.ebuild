@@ -409,6 +409,7 @@ ewarn
 einfo
 einfo "Converting .profraw -> .profdata"
 einfo
+		PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
 		llvm-profdata merge \
 			-output="${PGO_PROFILE_DIR}/pgo-custom.profdata" \
 			"${PGO_PROFILE_DIR}" || die
