@@ -15,7 +15,10 @@
     <remote-id type="github">madler/zlib</remote-id>
     <remote-id type="cpe">cpe:/a:gnu:zlib</remote-id>
   </upstream>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
     This ebuild fork introduces PGO.
 
     PGO instructions
@@ -40,7 +43,9 @@
     500.
 
     At least one
-${PORTAGE_DISTDIR}/trainer/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
+
+      ${PORTAGE_DISTDIR}/trainer/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
+
     folder is required for trainer-zlib-images USE flag.
     Image assets will not be provided but you may provide your own
     or obtain them from the web if they are marked public domain or
@@ -48,7 +53,8 @@ ${PORTAGE_DISTDIR}/trainer/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
     of asset placement.
 
     For custom training see README.md in the overlay.
-  </longdescription>
+
+  -->
   <use>
     <flag name="backup-copy">
       Make a backup copy of the previous libz.so
