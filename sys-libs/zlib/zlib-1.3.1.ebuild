@@ -28,7 +28,11 @@ LICENSE="ZLIB"
 # The FAQ does mention GPL-2 but the file is not there but a file with a
 # similar name exist but under different licensing.
 SLOT="0/1" # subslot = SONAME
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
+~x64-solaris
+"
 IUSE="minizip minizip-utils static-libs backup-copy"
 IUSE+="
 	pgo
