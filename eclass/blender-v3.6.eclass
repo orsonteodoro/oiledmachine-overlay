@@ -803,7 +803,12 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 			=media-libs/mesa-23.2.1[X?]
 			=media-libs/mesa-23.3.0[X?]
 			=media-libs/mesa-23.3.1[X?]
+			=media-libs/mesa-23.3.2[X?]
+			=media-libs/mesa-23.3.3[X?]
+			=media-libs/mesa-23.3.4[X?]
+			=media-libs/mesa-23.3.5[X?]
 			=media-libs/mesa-23.3*[X?]
+			=media-libs/mesa-24.0*[X?]
 			=media-libs/mesa-9999[X?]
 		)
 		sys-libs/libomp:15
