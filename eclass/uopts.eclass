@@ -66,7 +66,7 @@ uopts_setup() {
 
 	if [[ -n "${instr_vars}" ]] ; then
 einfo
-einfo "If the build fails, try \`${instr_vars} emerge -1 =${CATEGORY}/${PN}-${PVR}\`"
+einfo "If the build fails, try \`${instr_vars} emerge -1 =${CATEGORY}/${PN}-${PVR}\` or \`${instr_vars} emerge -1vO =${CATEGORY}/${PN}-${PVR}\`"
 einfo
 	fi
 
