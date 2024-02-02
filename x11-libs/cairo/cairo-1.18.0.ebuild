@@ -100,11 +100,11 @@ check_test_depends() {
 	einfo "The following are required to use ${CATEGORY}/${PN}[test?,pgo?]:"
 	setup_abi() {
 		if ! has_version "app-text/poppler[${MULTILIB_ABI_FLAG}]" ; then
-			ewarn "Re-emerge app-text/poppler[${MULTILIB_ABI_FLAG}]"
+			ewarn "Re-emerge app-text/poppler[${MULTILIB_ABI_FLAG}] to perform PGO training or testing."
 			TEST_READY=0
 		fi
 		if ! has_version "gnome-base/librsvg[${MULTILIB_ABI_FLAG}]" ; then
-			ewarn "Re-emerge gnome-base/librsvg[${MULTILIB_ABI_FLAG}]"
+			ewarn "Re-emerge gnome-base/librsvg[${MULTILIB_ABI_FLAG}] to perform PGO training or testing."
 			TEST_READY=0
 		fi
 	}
