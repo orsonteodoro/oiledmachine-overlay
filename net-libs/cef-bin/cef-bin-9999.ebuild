@@ -4,11 +4,11 @@
 
 EAPI=8
 
-DEPENDS_VERSION="120.0.6099.129"
-# DEPENDS_VER_A="120"
+DEPENDS_VERSION="121.0.6167.86"
+# DEPENDS_VER_A="121"
 # DEPENDS_VER_B="0"
-# DEPENDS_VER_C="6099"
-# DEPENDS_VER_D="129"
+# DEPENDS_VER_C="6167"
+# DEPENDS_VER_D="86"
 
 # Third party licenses:
 #
@@ -58,36 +58,51 @@ REQUIRED_USE+="
 "
 
 # For *DEPENDs see:
-# https://github.com/chromium/chromium/tree/120.0.6099.129/build/linux/sysroot_scripts/generated_package_lists				; 20230612
-# https://github.com/chromium/chromium/blob/120.0.6099.129/build/install-build-deps.py
+# https://github.com/chromium/chromium/tree/121.0.6167.86/build/linux/sysroot_scripts/generated_package_lists				; 20230612
+#   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
+#   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
+#   glibc, gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
+#   libjpeg-turbo [older], libpng [newer], libva, libwebp [older], libxcb,
+#   libxcomposite, libxcursor, libxdamage, libxext, libxfixes, libx11, libxi,
+#   libxkbcommon, libxml2 [older], libxrandr, libxrender, libxshmfence,
+#   libxslt [older], nspr, nss, opus [older], pango, pciutils, pipewire,
+#   libpulse, qt5, qt6, re2 [older], systemd, udev, wayland, zlib [older]
+#
+#   libunistring, libtasn1, libbsd, gmp, fribidi, nettle, graphite2, libidn,
+#   libxau, libXtst, util-linux, pam, libcap, libevdev, sqlite3,
+#   speech-dispatcher
+#
+# https://github.com/chromium/chromium/blob/121.0.6167.86/build/install-build-deps.py
 # https://github.com/chromiumembedded/cef/blob/5993/CMakeLists.txt.in
 
 #
 # Additional *DEPENDs versioning info:
 #
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/libpng/pnglibconf.h
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/node/update_node_binaries#L18
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live)
-# https://github.com/chromium/chromium/blob/120.0.6099.129/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/120.0.6099.129/tools/clang/scripts/update.py#L42
-# https://github.com/chromium/chromium/blob/120.0.6099.129/tools/rust/update_rust.py#L35						; commit
-#   https://github.com/rust-lang/rust/blob/2e4e2a8f288f642cafcc41fff211955ceddc453d/src/version						; live version
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/libpng/pnglibconf.h
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/libxml/linux/config.h#L160					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/node/update_node_binaries#L18
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live)
+# https://github.com/chromium/chromium/blob/121.0.6167.86/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/121.0.6167.86/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/blob/121.0.6167.86/tools/rust/update_rust.py#L35							; commit
+#   https://github.com/rust-lang/rust/blob/df0295f07175acc7325ce3ca4152eb05752af1f2/src/version						; live version
 #
 
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/icu/source/configure		L585	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/openh264/src/meson.build		L2
-# /var/tmp/portage/www-client/chromium-120.0.6099.129/work/chromium-120.0.6099.129/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/icu/source/configure		L585	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/openh264/src/meson.build		L2
+# /var/tmp/portage/www-client/chromium-121.0.6167.86/work/chromium-121.0.6167.86/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
+
+# gnome-keyring, vulkan-loader, gtkglext, libappindicator versioning from U 16.06
 
 # *DEPENDs based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in CEF
@@ -131,7 +146,7 @@ UNLISTED_RDEPEND="
 	>=dev-libs/libunistring-0.9.10
 	>=dev-libs/nettle-3.7.3
 	>=media-gfx/graphite2-1.3.14
-	>=media-libs/harfbuzz-8.2.1
+	>=media-libs/harfbuzz-8.2.2
 	>=media-libs/libglvnd-1.3.2
 	>=media-libs/mesa-${MESA_PV}[egl(+)]
 	>=net-dns/libidn-1.33
@@ -153,9 +168,9 @@ CHROMIUM_RDEPEND="
 	>=dev-libs/wayland-1.18.0
 	>=media-libs/fontconfig-2.14.2
 	>=media-libs/freetype-2.13.2
-	>=media-libs/libpng-1.6.37
+	>=media-libs/libpng-1.6.22
 	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
-	>=sys-libs/zlib-1.2.13
+	>=sys-libs/zlib-1.3
 	>=x11-libs/libX11-1.7.2
 	>=x11-libs/libXau-1.0.9
 	>=x11-libs/libxcb-1.14
