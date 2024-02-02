@@ -1,0 +1,36 @@
+Subject:  Disallow store data races when using Ofast.
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+--- a/build/moz.configure/toolchain.configure.orig	2024-01-18 12:41:20.000000000 -0800
++++ b/build/moz.configure/toolchain.configure	2024-02-01 17:55:53.040526967 -0800
+@@ -2013,6 +2013,19 @@ try_compile(
+     onerror=die_on_old_libstdcxx,
+ )
+ 
++@depends(
++    c_compiler,
++)
++def disable_broken(c_compiler):
++    flags = []
++    if c_compiler.type == "gcc":
++        # Precaution against possible vulnerability
++        flags.append("-fno-allow-store-data-races")
++    return namespace(
++        flags=flags,
++    )
++
++set_config("MOZ_DISABLE_BROKEN_FLAGS", disable_broken.flags)
+ 
+ @depends(c_compiler, target)
+ def default_debug_flags(compiler_info, target):
+--- a/python/mozbuild/mozbuild/frontend/context.py.orig	2024-01-18 12:41:28.000000000 -0800
++++ b/python/mozbuild/mozbuild/frontend/context.py	2024-02-01 17:55:53.056526838 -0800
+@@ -520,7 +520,7 @@ class TargetCompileFlags(BaseCompileFlag
+         if not optimize_flags:
+             # If MOZ_PGO_OPTIMIZE_FLAGS is empty we fall back to
+             # MOZ_OPTIMIZE_FLAGS. Presently this occurs on Windows.
+-            optimize_flags = self._context.config.substs.get("MOZ_OPTIMIZE_FLAGS")
++            optimize_flags = self._context.config.substs.get("MOZ_OPTIMIZE_FLAGS") + self._context.config.substs.get("MOZ_DISABLE_BROKEN_FLAGS")
+         return optimize_flags
+ 
+     def __setitem__(self, key, value):
