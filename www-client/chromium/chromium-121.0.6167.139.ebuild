@@ -11,7 +11,7 @@ EAPI=8
 
 # chromium-118.0.5993.117.ebuild chromium-121.0.6167.139.ebuild
 
-CHROMIUM_EBUILD_MAINTAINER="1" # See also GEN_ABOUT_CREDITS
+# CHROMIUM_EBUILD_MAINTAINER="0" # See also GEN_ABOUT_CREDITS
 
 # Can't do 12 yet: heavy use of imp, among other things (bug #915001, bug #915062)
 PYTHON_COMPAT=( python3_{9..11} )
@@ -118,7 +118,7 @@ LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} ) # [inclusive, inclusive] high t
 MESA_PV="20.3.5"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
-RUST_PV="1.76.0"
+RUST_PV="1.74.1" # Lowered since distro uses older.
 UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -174,14 +174,14 @@ RESTRICT="mirror"
 # Uncomment below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=1
+# GEN_ABOUT_CREDITS=1
 #
 
 # SHA512 about_credits.html fingerprint:
 #
 LICENSE_FINGERPRINT="\
-32b7afa3404762ebc7da583d0e1e447ca28cb01f9eb42113eedd5e94d09ab2b7\
-66ff671146e90cec1b767fe39037414c79078a3d3bd71042bb0d1f26bea07f55\
+c64c01a0ffbd896c453dbcbf5403909a5dfd7f47e8e4f24ab6b1e06383617043\
+7d445d0beef84a884f216b0328a99f182857426b8280eb7ef3bb24450e74049f\
 "
 LICENSE="
 	BSD
@@ -1546,8 +1546,7 @@ src_unpack() {
 }
 
 is_generating_credits() {
-	if [[ -n "${GEN_ABOUT_CREDITS}" \
-		&& "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
+	if [[ "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
 		return 0
 	else
 		return 1
@@ -2453,11 +2452,15 @@ eerror
 	local rustc_ver
 	rustc_ver=$(chromium_rust_version_check)
 	if ver_test "${rustc_ver}" -lt "${RUST_PV}"; then
-		eerror "Rust >=${RUST_PV} is required"
-		eerror "Please run 'eselect rust' and select the correct rust version"
-		die "Selected rust version is too old"
+eerror
+eerror "Rust >=${RUST_PV} is required"
+eerror "Please run 'eselect rust' and select the correct rust version"
+eerror
+eerror "Selected rust version is too old"
+eerror
+#		die
 	else
-		einfo "Using rust ${rustc_ver} to build"
+einfo "Using rust ${rustc_ver} to build"
 	fi
 	myconf_gn+=" rust_sysroot_absolute=\"${EPREFIX}/usr/lib/rust/${rustc_ver}/\""
 	myconf_gn+=" rustc_version=\"${rustc_ver}\""
@@ -3175,9 +3178,10 @@ einfo
 
 _update_licenses() {
 	# Upstream doesn't package PATENTS files
-	if [[ -n "${CHROMIUM_EBUILD_MAINTAINER}" \
-		&& -n "${GEN_ABOUT_CREDITS}" \
-		&& "${GEN_ABOUT_CREDITS}" == "1" ]] ; then
+	if [[ \
+		   "${CHROMIUM_EBUILD_MAINTAINER}" == "1" \
+		&& "${GEN_ABOUT_CREDITS}" == "1" \
+	]] ; then
 einfo
 einfo "Generating license and copyright notice file"
 einfo

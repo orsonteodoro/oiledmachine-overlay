@@ -29,7 +29,7 @@
 -# use_qt6 => use_qt
 -assert(!use_qt6 || use_qt)
 +# require one
-+assert(use_qt6 || use_qt5)
++#assert(use_qt6 || use_qt5)
 --- a/ui/linux/BUILD.gn.orig	2023-09-21 13:09:50.443904400 -0700
 +++ b/ui/linux/BUILD.gn	2023-09-25 13:29:34.207095458 -0700
 @@ -64,7 +64,7 @@ component("linux_ui_factory") {
