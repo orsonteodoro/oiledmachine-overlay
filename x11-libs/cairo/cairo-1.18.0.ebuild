@@ -100,11 +100,19 @@ check_test_depends() {
 	einfo "The following are required to use ${CATEGORY}/${PN}[test?,pgo?]:"
 	setup_abi() {
 		if ! has_version "app-text/poppler[${MULTILIB_ABI_FLAG}]" ; then
-			ewarn "Re-emerge app-text/poppler[${MULTILIB_ABI_FLAG}] to perform PGO training or testing."
+# The qtbase:6 ebuild doesn't support abi_x86_32.
+ewarn
+ewarn "Re-emerge app-text/poppler[${MULTILIB_ABI_FLAG}] to perform PGO training"
+ewarn "or testing on non-native ABIs or disable the ABI on this ebuild."
+ewarn
 			TEST_READY=0
 		fi
 		if ! has_version "gnome-base/librsvg[${MULTILIB_ABI_FLAG}]" ; then
-			ewarn "Re-emerge gnome-base/librsvg[${MULTILIB_ABI_FLAG}] to perform PGO training or testing."
+ewarn
+ewarn "Re-emerge gnome-base/librsvg[${MULTILIB_ABI_FLAG}] to perform PGO"
+ewarn "training or testing with non-native ABIs or disable the ABI on this"
+ewarn "ebuild."
+ewarn
 			TEST_READY=0
 		fi
 	}
