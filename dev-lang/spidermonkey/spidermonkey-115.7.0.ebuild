@@ -383,6 +383,11 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 			--disable-debug-symbols
 			--disable-real-time-tracing
 		")
+		$(use lto && ! use clang && echo "
+			--enable-linker=bfd
+			--enable-lto=full
+
+		")
 		$(use lto && use clang && tc-ld-is-mold && echo "
 			--enable-linker=mold
 			--enable-lto=cross
@@ -390,11 +395,6 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 		$(use lto && use clang && ! tc-ld-is-mold && echo "
 			--enable-linker=lld
 			--enable-lto=cross
-		")
-		$(use lto && ! use clang && echo "
-			--enable-linker=bfd
-			--enable-lto=full
-
 		")
 		$(use_enable debug)
 		$(use_enable jit)

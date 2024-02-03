@@ -332,13 +332,13 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 			--enable-optimize
 			--disable-debug-symbols
 		")
-		$(use lto && use clang && echo "
-			--enable-linker=lld
-			--enable-lto=cross
-		")
 		$(use lto && ! use clang && echo "
 			--enable-linker=bfd
 			--enable-lto=full
+		")
+		$(use lto && use clang && echo "
+			--enable-linker=lld
+			--enable-lto=cross
 		")
 		$(usex simd "--enable-rust-simd" "--disable-rust-simd" )
 		$(use_enable debug)
