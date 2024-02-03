@@ -1,5 +1,5 @@
 # Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -33,12 +33,18 @@ if [ "${PV#9999}" != "${PV}" ] ; then
 elif [ "${PV%_p*}" != "${PV}" ] ; then # Snapshot
 	SRC_URI="mirror://gentoo/${P}.tar.xz"
 else # Release
-	VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}"/usr/share/openpgp-keys/ffmpeg.asc
+	VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/ffmpeg.asc"
 	inherit verify-sig
-	SRC_URI="https://ffmpeg.org/releases/${P/_/-}.tar.xz"
-	SRC_URI+=" verify-sig? ( https://ffmpeg.org/releases/${P/_/-}.tar.xz.asc )"
-
-	BDEPEND+=" verify-sig? ( sec-keys/openpgp-keys-ffmpeg )"
+	SRC_URI="
+		https://ffmpeg.org/releases/${P/_/-}.tar.xz
+		https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-texinfo.patch.xz
+		verify-sig? (
+			https://ffmpeg.org/releases/${P/_/-}.tar.xz.asc
+		)
+	"
+	BDEPEND+="
+		 verify-sig? ( sec-keys/openpgp-keys-ffmpeg )
+	"
 fi
 FFMPEG_REVISION="${PV#*_p}"
 
@@ -99,8 +105,8 @@ LICENSE="
 # The extra licenses are for static-libs.
 if [ "${PV#9999}" = "${PV}" ] ; then
 	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
-~x86 ~amd64-linux ~x86-linux ~x64-macos
+~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc x86
+~amd64-linux ~x86-linux ~x64-macos
 	"
 fi
 
@@ -243,13 +249,17 @@ ARM_CPU_REQUIRED_USE="
 	)
 	cpu_flags_arm_neon? (
 		cpu_flags_arm_thumb2
-		cpu_flags_arm_vfp
+		arm? (
+			cpu_flags_arm_thumb2
+		)
 	)
 	cpu_flags_arm_thumb2? (
 		cpu_flags_arm_v6
 	)
 	cpu_flags_arm_v6? (
-		cpu_flags_arm_thumb
+		arm? (
+			cpu_flags_arm_thumb
+		)
 	)
 	cpu_flags_arm_v8? (
 		cpu_flags_arm_neon
@@ -389,10 +399,10 @@ ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
-jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
+jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo +pic pipewire
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs test v4l wayland r14
++re-codecs sndio sr static-libs test v4l wayland r15
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1011,7 +1021,7 @@ RDEPEND+="
 		>=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}]
 	)
 	amf? (
-		media-video/amdgpu-pro-amf
+		media-video/amdgpu-pro-amf:=
 	)
 	amr? (
 		>=media-libs/opencore-amr-0.1.3-r1[${MULTILIB_USEDEP}]
@@ -1181,6 +1191,9 @@ RDEPEND+="
 	modplug? (
 		>=media-libs/libmodplug-0.8.8.4-r1[${MULTILIB_USEDEP}]
 	)
+	nvenc? (
+		<media-libs/nv-codec-headers-12
+	)
 	openal? (
 		>=media-libs/openal-1.15.1[${MULTILIB_USEDEP}]
 	)
@@ -1317,8 +1330,8 @@ BDEPEND+="
 		sys-devel/mold
 	)
 	test? (
+		app-alternatives/bc
 		net-misc/wget
-		sys-devel/bc
 	)
 	trainer-av-streaming? (
 		vaapi? (
@@ -1370,10 +1383,12 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.4.4-wint-conversion-vulkan.patch"
 	"${FILESDIR}/${PN}-4.4.4-fix-build-svt-av1-1.5.0.patch"
 	"${FILESDIR}/${PN}-5.1.3-binutils-2.41.patch"
+	"${WORKDIR}/${PN}-4.4.4-texinfo.patch"
 	"${DISTDIR}/${PN}-c6fdbe2.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"				# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"		# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
+
 )
 
 MULTILIB_WRAPPED_HEADERS=(
@@ -1770,6 +1785,15 @@ eerror
 	fi
 }
 
+src_unpack() {
+	if use verify-sig ; then
+		# Needed for downloaded patch (which is unsigned, which is fine)
+		verify-sig_verify_detached "${DISTDIR}/${P/_/-}.tar.xz"{,.asc}
+	fi
+
+	default
+}
+
 src_prepare() {
 	verify_subslot
 	if [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
@@ -2157,7 +2181,7 @@ eerror
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
 	# LTO support, bug #566282, bug #754654, bug #772854
-	#[[ ${ABI} != x86 ]] && is-flagq "-flto*" && myconf+=( "--enable-lto" )
+	#[[ ${ABI} != x86 ]] && tc-is-lto && myconf+=( "--enable-lto" )
 	#filter-lto
 
 	# Mandatory configuration
@@ -2182,9 +2206,6 @@ eerror
 			--host-cc="$(tc-getBUILD_CC)"
 		)
 		case ${CHOST} in
-			*freebsd*)
-				myconf+=( --target-os=freebsd )
-				;;
 			*mingw32*)
 				myconf+=( --target-os=mingw32 )
 				;;
@@ -4088,7 +4109,7 @@ ${BUILD_DIR}/libavfilter:\
 ${BUILD_DIR}/libavformat:\
 ${BUILD_DIR}/libavutil:\
 ${BUILD_DIR}/libavresample" \
-			emake V=1 fate
+			emake V=1 fate -k
 		done
 	}
 	multilib_foreach_abi test_abi
@@ -4172,7 +4193,7 @@ multilib_src_install_all() {
 	dodoc Changelog README.md CREDITS doc/*.txt doc/APIchanges
 	[ -f "RELEASE_NOTES" ] && dodoc "RELEASE_NOTES"
 
-	use amf && doenvd "${FILESDIR}"/amf-env-vulkan-override
+	use amf && newenvd "${FILESDIR}/amf-env-vulkan-override" "99amf-env-vulkan-override"
 }
 
 pkg_postinst() {

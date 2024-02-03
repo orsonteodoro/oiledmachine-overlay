@@ -1,5 +1,5 @@
 # Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -392,10 +392,10 @@ ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
-jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
+jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo +pic pipewire
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs test v4l wayland r14
++re-codecs sndio sr static-libs test v4l wayland r15
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1144,7 +1144,7 @@ RDEPEND+="
 		>=media-libs/openjpeg-2:2[${MULTILIB_USEDEP}]
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.7.0[$MULTILIB_USEDEP]
+		>=media-libs/libjxl-0.7.0:=[$MULTILIB_USEDEP]
 	)
 	lcms? (
 		>=media-libs/lcms-2.13:2[$MULTILIB_USEDEP]
@@ -1340,7 +1340,8 @@ BDEPEND+="
 		sys-devel/mold
 	)
 	test? (
-		net-misc/wget sys-devel/bc
+		app-alternatives/bc
+		net-misc/wget
 	)
 	trainer-av-streaming? (
 		vaapi? (
@@ -2177,7 +2178,7 @@ eerror
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
 	# LTO support, bug #566282, bug #754654, bug #772854
-	#[[ ${ABI} != x86 ]] && is-flagq "-flto*" && myconf+=( "--enable-lto" )
+	#[[ ${ABI} != x86 ]] && tc-is-lto && myconf+=( "--enable-lto" )
 	#filter-lto
 
 	# Mandatory configuration
@@ -4199,7 +4200,7 @@ multilib_src_install_all() {
 	dodoc Changelog README.md CREDITS doc/*.txt doc/APIchanges
 	[ -f "RELEASE_NOTES" ] && dodoc "RELEASE_NOTES"
 
-	use amf && doenvd "${FILESDIR}"/amf-env-vulkan-override
+	use amf && elog "To use AMF, prefix the ffmpeg call with the 'vk_pro' wrapper script, e.g. `vk_pro ffmpeg -vcodec h264_amf [...]`"
 }
 
 pkg_postinst() {

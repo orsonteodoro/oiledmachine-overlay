@@ -99,8 +99,8 @@ LICENSE="
 # The extra licenses are for static-libs.
 if [ "${PV#9999}" = "${PV}" ] ; then
 	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
-~x86 ~amd64-linux ~x86-linux ~x64-macos
+~alpha amd64 arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv sparc ~x86
+~amd64-linux ~x86-linux ~arm64-macos ~x64-macos
 	"
 fi
 
@@ -393,7 +393,7 @@ alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs test v4l wayland r13
++re-codecs sndio sr static-libs test v4l wayland r15
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1324,7 +1324,8 @@ BDEPEND+="
 		sys-devel/mold
 	)
 	test? (
-		net-misc/wget sys-devel/bc
+		app-alternatives/bc
+		net-misc/wget
 	)
 	trainer-av-streaming? (
 		vaapi? (
@@ -1363,6 +1364,7 @@ N_SAMPLES=1
 PATCHES=(
 	"${FILESDIR}/chromium-r1.patch"
 	"${FILESDIR}/${PN}-6.0-libplacebo-remove-deprecated-field.patch"
+	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
@@ -2160,7 +2162,7 @@ eerror
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
 	# LTO support, bug #566282, bug #754654, bug #772854
-	#[[ ${ABI} != x86 ]] && is-flagq "-flto*" && myconf+=( "--enable-lto" )
+	#[[ ${ABI} != x86 ]] && tc-is-lto && myconf+=( "--enable-lto" )
 	#filter-lto
 
 	# Mandatory configuration
@@ -4182,7 +4184,7 @@ multilib_src_install_all() {
 	dodoc Changelog README.md CREDITS doc/*.txt doc/APIchanges
 	[ -f "RELEASE_NOTES" ] && dodoc "RELEASE_NOTES"
 
-	use amf && doenvd "${FILESDIR}"/amf-env-vulkan-override
+	use amf && elog "To use AMF, prefix the ffmpeg call with the 'vk_pro' wrapper script, e.g. `vk_pro ffmpeg -vcodec h264_amf [...]`"
 }
 
 pkg_postinst() {

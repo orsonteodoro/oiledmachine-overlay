@@ -1,5 +1,5 @@
 # Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -240,6 +240,8 @@ ARM_CPU_FEATURES=(
 	cpu_flags_arm_vfp:vfp
 	cpu_flags_arm_vfpv3:vfpv3
 	cpu_flags_arm_v8:armv8
+	cpu_flags_arm_asimddp:dotprod
+	cpu_flags_arm_i8mm:i8mm
 )
 ARM_CPU_REQUIRED_USE="
 	arm64? (
@@ -393,10 +395,10 @@ ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
-jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo pic pipewire
+jack-audio-connection-kit jack2 mold opencl-icd-loader oss pgo +pic pipewire
 proprietary-codecs proprietary-codecs-disable
 proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+re-codecs sndio sr static-libs test v4l wayland r13
++re-codecs sndio sr static-libs test v4l wayland r15
 
 trainer-audio-cbr
 trainer-audio-lossless
@@ -1148,7 +1150,7 @@ RDEPEND+="
 		>=media-libs/openjpeg-2.1:2[${MULTILIB_USEDEP}]
 	)
 	jpegxl? (
-		>=media-libs/libjxl-0.7.0[$MULTILIB_USEDEP]
+		>=media-libs/libjxl-0.7.0:=[$MULTILIB_USEDEP]
 	)
 	lcms? (
 		>=media-libs/lcms-2.13:2[$MULTILIB_USEDEP]
@@ -1351,7 +1353,8 @@ BDEPEND+="
 		sys-devel/mold
 	)
 	test? (
-		net-misc/wget sys-devel/bc
+		app-alternatives/bc
+		net-misc/wget
 	)
 	trainer-av-streaming? (
 		vaapi? (
@@ -1390,12 +1393,7 @@ N_SAMPLES=1
 PATCHES=(
 	"${FILESDIR}/chromium-r2.patch"
 	"${FILESDIR}/${PN}-6.1-wint-conversion.patch"
-	"${FILESDIR}/${PN}-6.1-0001-avcodec-fft-Use-av_mallocz-to-avoid-invalid-free-uni.patch"
-	"${FILESDIR}/${PN}-6.1-0002-avcoded-fft-Fix-memory-leak-if-ctx2-is-used.patch"
-	"${FILESDIR}/${PN}-6.1-0003-avcodec-decode-validate-hw_frames_ctx-when-AVHWAccel.patch"
-	"${FILESDIR}/${PN}-6.1-0004-lavc-dvdsubenc-only-check-canvas-size-when-it-is-act.patch"
-	"${FILESDIR}/${PN}-6.1-0005-lavc-Makefile-build-vulkan-decode-code-if-vulkan_av1.patch"
-	"${FILESDIR}/${PN}-6.1-0006-hwcontext_vulkan-guard-unistd.h-include.patch"
+	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
@@ -1818,7 +1816,7 @@ src_prepare() {
 	# will ignore user's preference.
 	sed -i -e '/check_cflags -fdiagnostics-color=auto/d' configure || die
 
-	ln -snf "${FILESDIR}"/chromium.c chromium.c || die
+	ln -snf "${FILESDIR}/chromium.c" chromium.c || die
 	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> Makefile || die
 
 einfo "Copying sources, please wait"
@@ -4192,7 +4190,7 @@ multilib_src_install_all() {
 	dodoc Changelog README.md CREDITS doc/*.txt doc/APIchanges
 	[ -f "RELEASE_NOTES" ] && dodoc "RELEASE_NOTES"
 
-	use amf && doenvd "${FILESDIR}"/amf-env-vulkan-override
+	use amf && elog "To use AMF, prefix the ffmpeg call with the 'vk_pro' wrapper script, e.g. `vk_pro ffmpeg -vcodec h264_amf [...]`"
 }
 
 pkg_postinst() {
