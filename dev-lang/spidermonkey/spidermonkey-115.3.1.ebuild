@@ -3,50 +3,43 @@
 
 EAPI="8"
 
+LLVM_MAX_SLOT=17
+LLVM_SLOTS=( 17 16 15 )
+
+MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
 MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 
-MY_MAJOR=$(ver_cut 1)
-
 MOZ_ESR="yes"
-
-MOZ_PV=${PV}
+MOZ_PN="firefox"
+MOZ_PV="${PV}"
 MOZ_PV_SUFFIX=
-if [[ ${PV} =~ (_(alpha|beta|rc).*)$ ]] ; then
+if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
 	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
 	# Convert the ebuild version to the upstream Mozilla version
 	MOZ_PV="${MOZ_PV/_alpha/a}" # Handle alpha for SRC_URI
 	MOZ_PV="${MOZ_PV/_beta/b}"  # Handle beta for SRC_URI
 	MOZ_PV="${MOZ_PV%%_rc*}"    # Handle rc for SRC_URI
 fi
-
-if [[ -n ${MOZ_ESR} ]] ; then
+if [[ -n "${MOZ_ESR}" ]] ; then
 	# ESR releases have slightly different version numbers
 	MOZ_PV="${MOZ_PV}esr"
 fi
-
-MOZ_PN="firefox"
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
-
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
-
-if [[ ${PV} == *_rc* ]] ; then
+if [[ "${PV}" == *_rc* ]] ; then
 	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*_rc}"
 fi
 
 # Patch version
 FIREFOX_PATCHSET="firefox-115esr-patches-06.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-01.tar.xz"
-
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
 )
-
-LLVM_MAX_SLOT=17
-LLVM_SLOTS=(17 16 15)
 
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
@@ -59,6 +52,7 @@ SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
 "
+S="${WORKDIR}/firefox-${MY_PV}/js/src"
 
 DESCRIPTION="SpiderMonkey is Mozilla's JavaScript engine written in C and C++"
 HOMEPAGE="https://spidermonkey.dev https://firefox-source-docs.mozilla.org/js/index.html "
@@ -73,16 +67,17 @@ RESTRICT="
 	)
 "
 gen_clang_bdepend() {
+	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-			(
-				sys-devel/llvm:${s}
-				clang? (
-					sys-devel/lld:${s}
-					sys-devel/clang:${s}
-					virtual/rust:0/llvm-${s}
-				)
+		(
+			sys-devel/llvm:${s}
+			clang? (
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				virtual/rust:0/llvm-${s}
 			)
+		)
 		"
 	done
 }
@@ -110,8 +105,6 @@ DEPEND="
 RDEPEND="
 	${DEPEND}
 "
-
-S="${WORKDIR}/firefox-${MY_PV}/js/src"
 
 llvm_check_deps() {
 	if ! has_version -b "sys-devel/llvm:${LLVM_SLOT}" ; then
@@ -153,13 +146,11 @@ python_check_deps() {
 # https://github.com/gentoo/gentoo/pull/28366 ||
 # https://github.com/gentoo/gentoo/pull/28355
 tc-ld-is-mold() {
-	local out
-
 	# Ensure ld output is in English.
 	local -x LC_ALL=C
 
 	# First check the linker directly.
-	out=$($(tc-getLD "$@") --version 2>&1)
+	local out=$($(tc-getLD "$@") --version 2>&1)
 	if [[ ${out} == *"mold"* ]] ; then
 		return 0
 	fi
@@ -206,21 +197,23 @@ pkg_setup() {
 		if use clang && use lto && tc-ld-is-lld ; then
 			local version_lld=$(ld.lld --version 2>/dev/null \
 				| awk '{ print $2 }')
-			if [[ -n ${version_lld} ]] ; then
+			if [[ -n "${version_lld}" ]] ; then
 				version_lld=$(ver_cut 1 "${version_lld}")
 			fi
-			if [[ -z ${version_lld} ]] ; then
-				die "Failed to read ld.lld version!"
+			if [[ -z "${version_lld}" ]] ; then
+eerror "Failed to read ld.lld version!"
+				die
 			fi
 
 			local version_llvm_rust=$(rustc -Vv 2>/dev/null \
 				| grep -F -- 'LLVM version:' \
 				| awk '{ print $3 }')
-			if [[ -n ${version_llvm_rust} ]] ; then
+			if [[ -n "${version_llvm_rust}" ]] ; then
 				version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
 			fi
-			if [[ -z ${version_llvm_rust} ]] ; then
-				die "Failed to read used LLVM version from rustc!"
+			if [[ -z "${version_llvm_rust}" ]] ; then
+eerror "Failed to read used LLVM version from rustc!"
+				die
 			fi
 
 			if ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
@@ -231,8 +224,10 @@ eerror
 eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the"
 eerror "following options:"
 eerror
-eerror "  - Manually switch rust version using 'eselect rust' to match used LLVM version"
-eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee matching version"
+eerror "  - Manually switch rust version using 'eselect rust' to match used"
+eerror "    LLVM version"
+eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee matching"
+eerror "    version"
 eerror "  - Build ${CATEGORY}/${PN} without USE=lto"
 eerror "  - Rebuild lld with llvm that was used to build rust (may need to"
 eerror "    rebuild the whole llvm/clang/lld/rust chain depending on your"
@@ -248,7 +243,7 @@ eerror
 		python-any-r1_pkg_setup
 
 		# Build system is using /proc/self/oom_score_adj, bug #604394
-		addpredict /proc/self/oom_score_adj
+		addpredict "/proc/self/oom_score_adj"
 
 		if ! mountpoint -q /dev/shm ; then
 	# If /dev/shm is not available, configure is known to fail with
@@ -263,7 +258,7 @@ ewarn "/dev/shm is not mounted -- expect build failures!"
 }
 
 src_prepare() {
-	pushd ../.. &>/dev/null || die
+	pushd "../.." &>/dev/null || die
 
 	use lto && rm -v "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
 
@@ -282,11 +277,11 @@ src_prepare() {
 	# sed-in toolchain prefix
 	sed -i \
 		-e "s/objdump/${CHOST}-objdump/" \
-		python/mozbuild/mozbuild/configure/check_debug_ranges.py \
+		"python/mozbuild/mozbuild/configure/check_debug_ranges.py" \
 		|| die "sed failed to set toolchain prefix"
 
 	# Use prefix shell in wrapper linker scripts, bug #789660
-	hprefixify "${S}"/../../build/cargo-{,host-}linker
+	hprefixify "${S}/../../build/cargo-"{,host-}"linker"
 
 einfo "Removing pre-built binaries ..."
 	find third_party \
@@ -320,10 +315,10 @@ einfo "Enforcing the use of clang due to USE=clang ..."
 		local version_clang=$(clang --version 2>/dev/null \
 			| grep -F -- 'clang version' \
 			| awk '{ print $3 }')
-		if [[ -n ${version_clang} ]] ; then
+		if [[ -n "${version_clang}" ]] ; then
 			version_clang=$(ver_cut 1 "${version_clang}")
 		fi
-		if [[ -z ${version_clang} ]] ; then
+		if [[ -z "${version_clang}" ]] ; then
 			die "Failed to read clang version!"
 		fi
 
@@ -365,7 +360,42 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 	# ../python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
 
+	# Modifications to better support ARM, bug 717344
+	# Tell build system that we want to use LTO
+	# Thumb options aren't supported when using clang, bug 666966
 	local -a myeconfargs=(
+		$(! use x86 && [[ ${CHOST} != armv*h* ]] && echo "
+			$(usex simd "--enable-rust-simd" "--disable-rust-simd" )
+		")
+		$(use cpu_flags_arm_neon && echo "
+			--with-fpu=neon
+		")
+		$(use cpu_flags_arm_neon && ! tc-is-clang && echo "
+			--with-thumb=yes
+			--with-thumb-interwork=no
+		")
+		$(use debug && echo "
+			--disable-optimize
+			--enable-debug-symbols
+			--enable-real-time-tracing
+		")
+		$(use debug || echo "
+			--enable-optimize
+			--disable-debug-symbols
+			--disable-real-time-tracing
+		")
+		$(use lto && use clang && tc-ld-is-mold && echo "
+			--enable-linker=mold
+			--enable-lto=cross
+		")
+		$(use lto && use clang && ! tc-ld-is-mold && echo "
+			--enable-linker=lld
+			--enable-lto=cross
+		")
+		$(use lto && ! use clang && echo "
+			--enable-linker=bfd
+			--enable-lto=full
+		")
 		$(use_enable debug)
 		$(use_enable jit)
 		$(use_enable test tests)
@@ -385,47 +415,6 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 		--with-system-zlib
 		--with-toolchain-prefix="${CHOST}-"
 	)
-
-	if use debug; then
-		myeconfargs+=( --disable-optimize )
-		myeconfargs+=( --enable-debug-symbols )
-		myeconfargs+=( --enable-real-time-tracing )
-	else
-		myeconfargs+=( --enable-optimize )
-		myeconfargs+=( --disable-debug-symbols )
-		myeconfargs+=( --disable-real-time-tracing )
-	fi
-
-	if ! use x86 && [[ ${CHOST} != armv*h* ]] ; then
-		myeconfargs+=( $(usex simd "--enable-rust-simd" "--disable-rust-simd" ) )
-	fi
-
-	# Modifications to better support ARM, bug 717344
-	if use cpu_flags_arm_neon ; then
-		myeconfargs+=( --with-fpu=neon )
-
-		if ! tc-is-clang ; then
-	# Thumb options aren't supported when using clang, bug 666966
-			myeconfargs+=( --with-thumb=yes )
-			myeconfargs+=( --with-thumb-interwork=no )
-		fi
-	fi
-
-	# Tell build system that we want to use LTO
-	if use lto ; then
-		if use clang ; then
-			if tc-ld-is-mold ; then
-				myeconfargs+=( --enable-linker=mold )
-			else
-				myeconfargs+=( --enable-linker=lld )
-			fi
-			myeconfargs+=( --enable-lto=cross )
-
-		else
-			myeconfargs+=( --enable-linker=bfd )
-			myeconfargs+=( --enable-lto=full )
-		fi
-	fi
 
 	# LTO flag was handled via configure
 	filter-lto
@@ -461,7 +450,10 @@ eerror "Smoke-test failed: did interpreter initialization fail?"
 		die
 	fi
 
-	cp "${FILESDIR}/spidermonkey-${SLOT}-known-test-failures.txt" "${T}/known_failures.list" || die
+	cp \
+		"${FILESDIR}/spidermonkey-${SLOT}-known-test-failures.txt" \
+		"${T}/known_failures.list" \
+		|| die
 
 	if use x86 ; then
 		echo "non262/Date/timeclip.js" >> "${T}/known_failures.list"
@@ -470,7 +462,8 @@ eerror "Smoke-test failed: did interpreter initialization fail?"
 		echo "test262/language/types/number/S8.5_A2.2.js" >> "${T}/known_failures.list"
 	fi
 
-	${EPYTHON} "${S}/tests/jstests.py" \
+	${EPYTHON} \
+		"${S}/tests/jstests.py" \
 		-d \
 		-s \
 		-t 1800 \
@@ -481,7 +474,8 @@ eerror "Smoke-test failed: did interpreter initialization fail?"
 		|| die
 
 	use jit && \
-	${EPYTHON} "${S}/tests/jstests.py" \
+	${EPYTHON} \
+		"${S}/tests/jstests.py" \
 		-d \
 		-s \
 		-t 1800 \
@@ -499,9 +493,9 @@ src_install() {
 
 	# Fix soname links
 	pushd "${ED}/usr/$(get_libdir)" &>/dev/null || die
-		mv lib${MY_PN}-${MY_MAJOR}.so lib${MY_PN}-${MY_MAJOR}.so.0.0.0 || die
-		ln -s lib${MY_PN}-${MY_MAJOR}.so.0.0.0 lib${MY_PN}-${MY_MAJOR}.so.0 || die
-		ln -s lib${MY_PN}-${MY_MAJOR}.so.0 lib${MY_PN}-${MY_MAJOR}.so || die
+		mv "lib${MY_PN}-${MY_MAJOR}.so" "lib${MY_PN}-${MY_MAJOR}.so.0.0.0" || die
+		ln -s "lib${MY_PN}-${MY_MAJOR}.so.0.0.0" "lib${MY_PN}-${MY_MAJOR}.so.0" || die
+		ln -s "lib${MY_PN}-${MY_MAJOR}.so.0" "lib${MY_PN}-${MY_MAJOR}.so" || die
 	popd &>/dev/null || die
 
 	# Remove unneeded files
