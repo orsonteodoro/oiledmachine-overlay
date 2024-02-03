@@ -1,7 +1,7 @@
 {
   "name": "upscayl",
   "private": true,
-  "version": "2.9.5",
+  "version": "2.9.8",
   "productName": "Upscayl",
   "author": {
     "name": "Nayam Amarshe",
@@ -166,9 +166,6 @@
       ]
     },
     "linux": {
-      "publish": [
-        "github"
-      ],
       "target": [
         "AppImage",
         "zip",
@@ -183,11 +180,9 @@
     },
     "win": {
       "publisherName": "Upscayl Team",
-      "publish": [
-        "github"
-      ],
       "target": [
-        "nsis"
+        "nsis",
+        "zip"
       ],
       "icon": "build/icon.png"
     },
@@ -200,7 +195,10 @@
     "files": [
       "export",
       "renderer/out"
-    ]
+    ],
+    "publish": {
+      "provider": "github"
+    }
   },
   "devDependencies": {
     "@electron/notarize": "^2.1.0",
