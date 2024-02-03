@@ -145,7 +145,7 @@ BDEPEND="
 
 PATCHES=(
 	"${FILESDIR}/${PN}-2.7.4-tests.patch"
-	"${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
+	"A${FILESDIR}/${PN}-2.7.6-qt6-support.patch"
 )
 
 verify_qt_consistency() {
