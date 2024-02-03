@@ -48,16 +48,19 @@ WANT_AUTOCONF="2.1"
 
 inherit autotools check-reqs flag-o-matic llvm multiprocessing prefix python-any-r1 toolchain-funcs
 
+KEYWORDS="amd64 arm arm64 ~loong ~mips ~ppc ppc64 ~riscv ~sparc x86"
+S="${WORKDIR}/firefox-${MY_PV}/js/src"
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
 "
-S="${WORKDIR}/firefox-${MY_PV}/js/src"
 
 DESCRIPTION="SpiderMonkey is Mozilla's JavaScript engine written in C and C++"
-HOMEPAGE="https://spidermonkey.dev https://firefox-source-docs.mozilla.org/js/index.html "
+HOMEPAGE="
+	https://spidermonkey.dev
+	https://firefox-source-docs.mozilla.org/js/index.html
+"
 LICENSE="MPL-2.0"
-KEYWORDS="amd64 arm arm64 ~loong ~mips ~ppc ppc64 ~riscv ~sparc x86"
 SLOT="$(ver_cut 1)"
 IUSE="clang cpu_flags_arm_neon debug +jit lto -simd test"
 #RESTRICT="test"
