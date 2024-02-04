@@ -448,7 +448,7 @@ ot-kernel_apply_tresor_fixes() {
 	local fuzz_factor=0
 	[[ "${path}" =~ "${TRESOR_AESNI_FN}" ]] && fuzz_factor=3
         _dpatch "${PATCH_OPTS} -F ${fuzz_factor}" \
-		"${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
+		"FIXME:${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \

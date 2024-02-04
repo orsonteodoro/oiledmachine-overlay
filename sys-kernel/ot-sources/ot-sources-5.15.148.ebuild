@@ -80,3 +80,4 @@ inherit ot-kernel-v5.15
 # OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 # OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
+# tresor patching - fail

@@ -17,3 +17,5 @@ inherit ot-kernel-v4.19
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  signed-kexec-kernel, signed-kernels
+
+# tresor patching - fail
