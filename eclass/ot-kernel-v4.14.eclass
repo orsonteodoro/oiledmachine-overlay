@@ -388,9 +388,9 @@ ot-kernel_pkg_setup_cb() {
 	# version.
 ewarn
 ewarn "This ot-sources ${MY_PV} release is only for research purposes or to access"
-ewarn "TRESOR devices.  This ${KV_MAJOR_MINOR}.x series is EOL for this repo but"
-ewarn "not for upstream.  It will be removed immediately once TRESOR has been"
-ewarn "fixed for mainline / stable for >= 5.x."
+ewarn "TRESOR devices.  This ${KV_MAJOR_MINOR}.x series is EOL for both this repo and"
+ewarn "for upstream.  It will be removed immediately once TRESOR has been"
+ewarn "fixed for 4.19.x or 5.4."
 ewarn
 
 	if use tresor ; then
