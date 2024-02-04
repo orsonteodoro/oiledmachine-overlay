@@ -700,8 +700,8 @@ ewarn
 			:
 		else
 ewarn
-# Need to fix linking problem
-ewarn "TRESOR for ${KV_MAJOR_MINOR} is in development."
+ewarn "TRESOR for ${KV_MAJOR_MINOR} is in development and may not work."
+ewarn "Use either 4.19.x, 5.4.x, 5.10.x for working TRESOR."
 ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
@@ -713,12 +713,6 @@ ewarn
 			die
 		fi
 	fi
-
-#	if use tresor ; then
-#ewarn
-#ewarn "TRESOR for ${MY_PV} is tested working.  See dmesg for details on correctness."
-#ewarn
-#	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes

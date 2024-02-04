@@ -542,8 +542,6 @@ fi
 ot-kernel_pkg_setup_cb() {
 	if use tresor ; then
 ewarn
-ewarn "TRESOR for ${MY_PV} is tested working.  See dmesg for details on correctness."
-ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
 ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"

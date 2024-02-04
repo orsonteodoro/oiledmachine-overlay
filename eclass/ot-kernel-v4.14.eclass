@@ -388,16 +388,10 @@ ot-kernel_pkg_setup_cb() {
 	# version.
 ewarn
 ewarn "This ot-sources ${MY_PV} release is only for research purposes or to"
-ewarn "access TRESOR devices.  This ${KV_MAJOR_MINOR}.x series is EOL for both"
-ewarn "this repo and for upstream.  It will be removed soon.  For TRESOR"
-ewarn "support, use either 4.19.x, 5.4.x, or 5.10.x instead."
+ewarn "access TRESOR devices."
 ewarn
-
-	if use tresor ; then
+ewarn "For TRESOR support, use either 4.19.x, 5.4.x, or 5.10.x instead."
 ewarn
-ewarn "TRESOR for ${MY_PV} is stable.  See dmesg for details on correctness."
-ewarn
-	fi
 
 	if use genpatches ; then
 ewarn

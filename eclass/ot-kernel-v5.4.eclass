@@ -489,8 +489,6 @@ ewarn
 	fi
 	if use tresor ; then
 ewarn
-ewarn "TRESOR for ${MY_PV} is tested working.  See dmesg for details on correctness."
-ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to a"
 ewarn "specific commit before upcoming XTS(tresor) key changes.  Checkout repo"
