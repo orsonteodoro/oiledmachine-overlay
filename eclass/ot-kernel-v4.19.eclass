@@ -435,7 +435,7 @@ ewarn
 ot-kernel_apply_tresor_fixes() {
 	# for 4.20 series and 5.x use tresor-testmgr-ciphers-update.patch instead
 	_dpatch "${PATCH_OPTS}" \
-		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
+		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
@@ -444,18 +444,22 @@ ot-kernel_apply_tresor_fixes() {
 			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 
+	# for 5.x series uncomment below
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
+
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
 	local fuzz_factor=0
 	[[ "${path}" =~ "${TRESOR_AESNI_FN}" ]] && fuzz_factor=3
         _dpatch "${PATCH_OPTS} -F ${fuzz_factor}" \
-		"FIXME:${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
+		"${FILESDIR}/tresor-testmgr-linux-4.19.306.patch"
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-prompt-wait-fix-for-4.14-i686.patch"
+"${FILESDIR}/tresor-prompt-wait-fix-for-4.19-i686.patch"
 	else
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-prompt-wait-fix-for-4.14-aesni.patch"
+"${FILESDIR}/tresor-prompt-wait-fix-for-4.19-aesni.patch"
 	fi
 
 	_dpatch "${PATCH_OPTS}" \

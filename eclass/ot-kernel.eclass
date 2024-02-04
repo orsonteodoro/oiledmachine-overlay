@@ -1185,7 +1185,7 @@ eerror "tresor_x86_64 requires MMX CPU support"
 			elif use tresor_aesni ; then
 				if ! grep -F -q "aes" /proc/cpuinfo ; then
 eerror "tresor_aesni requires AES-NI CPU support"
-					die
+#					die
 				fi
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
 eerror "tresor_aesni requires SSE2 CPU support"
