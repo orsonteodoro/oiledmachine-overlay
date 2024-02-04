@@ -387,10 +387,10 @@ ot-kernel_pkg_setup_cb() {
 	# TRESOR for x86_64 generic was known to pass crypto testmgr on this
 	# version.
 ewarn
-ewarn "This ot-sources ${MY_PV} release is only for research purposes or to access"
-ewarn "TRESOR devices.  This ${KV_MAJOR_MINOR}.x series is EOL for both this repo and"
-ewarn "for upstream.  It will be removed soon.  Use 5.4.x, 5.10.x instead for TRESOR"
-ewarn "support."
+ewarn "This ot-sources ${MY_PV} release is only for research purposes or to"
+ewarn "access TRESOR devices.  This ${KV_MAJOR_MINOR}.x series is EOL for both"
+ewarn "this repo and for upstream.  It will be removed soon.  For TRESOR"
+ewarn "support, use either 4.19.x, 5.4.x, or 5.10.x instead."
 ewarn
 
 	if use tresor ; then

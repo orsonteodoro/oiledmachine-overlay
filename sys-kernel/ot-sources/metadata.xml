@@ -87,9 +87,9 @@
 		    kernel_compiler_patch 		N
 		    O3 [5]				N
 		    PDS					N
-		    TRESOR (AES-NI) [3,4,5]		D
-		    TRESOR (x86) [3,4,5]		D
-		    TRESOR (x86-64) [3,5]		D
+		    TRESOR (AES-NI) [3,4,5]		?
+		    TRESOR (x86) [3,4,5]		?
+		    TRESOR (x86-64) [3,5]		Y
 		    UKSM				R
 
     5.4	(LTS)						Y
@@ -149,7 +149,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				N
 
-    6.6 (Stable)					A
+    6.6 (LTS)						A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    Clear Linux patchset		A
@@ -164,11 +164,24 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
-    6.7 (Master / Live / Mainline)			A
+    6.7 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
 		    genpatches				A
 		    kernel_compiler_patch		X
+		    Project C				D
+		    TCP BBR v2 [5]			D
+		    TCP BBR v3 [5]			D
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				D
+
+    6.8 (Master / Live / Mainline)			A
+		    -rt	(RT_PREEMPT)			A
+		    Clang PGO				D
+		    genpatches				D
+		    kernel_compiler_patch		D
 		    Project C				D
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
