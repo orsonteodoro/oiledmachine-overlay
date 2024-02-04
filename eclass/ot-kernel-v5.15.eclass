@@ -710,7 +710,7 @@ ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
 ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
 ewarn "change will not be backwards compatible."
 ewarn
-			die
+#			die
 		fi
 	fi
 }
@@ -719,6 +719,13 @@ ewarn
 # @DESCRIPTION:
 # Applies specific TRESOR fixes for this kernel major version
 ot-kernel_apply_tresor_fixes() {
+# FIXME:
+# arch/x86/crypto/tresor_glue.c:45:10: fatal error: asm/crypto/glue_helper.h: No such file or directory
+#    45 | #include <asm/crypto/glue_helper.h>
+#       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+# compilation terminated.
+
+
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
 
