@@ -89,6 +89,7 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.7/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.8/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -105,7 +106,7 @@
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.5...zen-kernel:6.5/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
-#	https://github.com/torvalds/linux/compare/v6.7...zen-kernel:6.6/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.7...zen-kernel:6.7/zen-sauce
 
 case ${EAPI:-0} in
 	[78]) ;;
