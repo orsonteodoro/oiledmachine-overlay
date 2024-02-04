@@ -1,0 +1,50 @@
+--- a/crypto/testmgr.c.orig	2024-02-04 12:04:46.493699000 -0800
++++ b/crypto/testmgr.c	2024-02-04 13:01:52.025731631 -0800
+@@ -1206,11 +1206,6 @@ static int __test_skcipher(struct crypto
+ 
+ 		data = xbuf[0];
+ 		data += align_offset;
+-#ifdef CONFIG_CRYPTO_TRESOR
+-			if (strstr(algo, "tresor"))
+-				tresor_setkey(template[i].key);
+-#endif
+-
+ 		memcpy(data, input, template[i].len);
+ 
+ 		crypto_skcipher_clear_flags(tfm, ~0);
+@@ -1218,6 +1213,11 @@ static int __test_skcipher(struct crypto
+ 			crypto_skcipher_set_flags(tfm,
+ 						  CRYPTO_TFM_REQ_WEAK_KEY);
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++			if (strstr(algo, "tresor"))
++				tresor_setkey(template[i].key);
++#endif
++
+ 		ret = crypto_skcipher_setkey(tfm, template[i].key,
+ 					     template[i].klen);
+ 		if (template[i].fail == !ret) {
+@@ -1275,11 +1275,6 @@ static int __test_skcipher(struct crypto
+ 
+ 		if (fips_enabled && template[i].fips_skip)
+ 			continue;
+-#ifdef CONFIG_CRYPTO_TRESOR
+-			if (strstr(algo, "tresor"))
+-				tresor_setkey(template[i].key);
+-#endif
+-
+ 
+ 		if (template[i].iv && !(template[i].generates_iv && enc))
+ 			memcpy(iv, template[i].iv, ivsize);
+@@ -1294,6 +1289,11 @@ static int __test_skcipher(struct crypto
+ 			crypto_skcipher_set_flags(tfm,
+ 						  CRYPTO_TFM_REQ_WEAK_KEY);
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++			if (strstr(algo, "tresor"))
++				tresor_setkey(template[i].key);
++#endif
++
+ 		ret = crypto_skcipher_setkey(tfm, template[i].key,
+ 					     template[i].klen);
+ 		if (template[i].fail == !ret) {
