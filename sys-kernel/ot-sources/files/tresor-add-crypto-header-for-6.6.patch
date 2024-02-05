@@ -1,0 +1,10 @@
+--- a/init/Makefile.orig	2024-02-05 08:28:21.318032372 -0800
++++ b/init/Makefile	2024-02-05 08:27:33.062521978 -0800
+@@ -6,6 +6,7 @@
+ ccflags-y := -fno-function-sections -fno-data-sections
+ 
+ obj-y                          := main.o version.o mounts.o
++CFLAGS_main.o := -include crypto/internal.h
+ ifneq ($(CONFIG_BLK_DEV_INITRD),y)
+ obj-y                          += noinitramfs.o
+ else

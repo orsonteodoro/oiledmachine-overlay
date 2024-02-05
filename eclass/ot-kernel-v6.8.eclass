@@ -859,6 +859,8 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-linux-stdarg-for-6.1.patch"
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-add-crypto-header-for-6.6.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
