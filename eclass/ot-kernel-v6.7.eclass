@@ -854,6 +854,10 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-6.1_aesni.patch"
 	fi
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-rename-to-freezer_active-for-6.1.patch"
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-linux-stdarg-for-6.1.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

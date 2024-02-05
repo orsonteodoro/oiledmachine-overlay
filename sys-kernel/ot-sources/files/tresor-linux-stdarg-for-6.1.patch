@@ -1,0 +1,15 @@
+--- a/arch/x86/crypto/tresor_key.c.orig	2024-02-04 23:15:05.196108093 -0800
++++ b/arch/x86/crypto/tresor_key.c	2024-02-04 23:33:39.241961576 -0800
+@@ -28,11 +28,11 @@
+ #include <linux/kobject.h>
+ #include <linux/module.h>
+ #include <linux/oom.h>
++#include <linux/stdarg.h>
+ #include <linux/string.h>
+ #include <linux/syscalls.h>
+ #include <linux/sysfs.h>
+ #include <linux/tty.h>
+-#include <stdarg.h>
+ 
+ static struct file *term_file;
+ static unsigned char key_hash[32];
