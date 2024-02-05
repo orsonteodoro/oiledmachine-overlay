@@ -735,7 +735,7 @@ ewarn
 ewarn
 # Need to fix linking problem
 ewarn "TRESOR for ${KV_MAJOR_MINOR} is in development and not working."
-ewarn "Use either 4.19.x, 5.4.x, 5.10.x, 5.15.x for working TRESOR."
+ewarn "Use either 4.19.x, 5.4.x, 5.10.x, 5.15.x, 6.1.x for working TRESOR."
 ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"

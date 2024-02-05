@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-05 09:59:18.267722437 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-05 10:16:37.065803908 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-05 13:40:42.468242253 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-05 13:44:24.189941338 -0800
 @@ -35,7 +35,6 @@
   */
  
@@ -18,33 +18,39 @@
  
  /*
   * Assembly functions implemented in tresor-intel_asm.S
-@@ -98,7 +99,7 @@ static inline void tresor_epilog(unsigne
- /*
-  * Encrypt one block
-  */
--void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
-+void __tresor_encrypt(const void *ctx, u8 *dst, const u8 *src)
- {
- 	unsigned long irq_flags;
- 
-@@ -111,7 +112,7 @@ void tresor_encrypt(struct crypto_tfm *t
- /*
-  * Decrypt one block
-  */
--void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
-+void __tresor_decrypt(const void *ctx, u8 *dst, const u8 *src)
- {
- 	unsigned long irq_flags;
- 
-@@ -120,7 +121,6 @@ void tresor_decrypt(struct crypto_tfm *t
+@@ -107,7 +108,6 @@ void tresor_encrypt(struct crypto_tfm *t
  	tresor_epilog(&irq_flags);
  }
  
 -
  /*
-  * Set AES key (the real function this time, not dummy as above)
+  * Decrypt one block
   */
-@@ -142,160 +142,35 @@ static int tresor_skcipher_setkey(struct
+@@ -120,6 +120,23 @@ void tresor_decrypt(struct crypto_tfm *t
+ 	tresor_epilog(&irq_flags);
+ }
+ 
++void __tresor_encrypt(const void *ctx, u8 *dst, const u8 *src)
++{
++	unsigned long irq_flags;
++
++	tresor_prolog(&irq_flags);
++	tresor_encblk_128(dst, src);
++	tresor_epilog(&irq_flags);
++}
++
++void __tresor_decrypt(const void *ctx, u8 *dst, const u8 *src)
++{
++	unsigned long irq_flags;
++
++	tresor_prolog(&irq_flags);
++	tresor_decblk_128(dst, src);
++	tresor_epilog(&irq_flags);
++}
+ 
+ /*
+  * Set AES key (the real function this time, not dummy as above)
+@@ -142,160 +159,35 @@ static int tresor_skcipher_setkey(struct
  	return 0;
  }
  
