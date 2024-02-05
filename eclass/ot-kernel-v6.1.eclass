@@ -692,10 +692,10 @@ ot-kernel_apply_tresor_fixes() {
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-prompt-update-for-5.15-v4_i686.patch"
+			"${FILESDIR}/tresor-prompt-update-for-6.1-v4_i686.patch"
 	else
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-prompt-update-for-5.15-v4_aesni.patch"
+			"${FILESDIR}/tresor-prompt-update-for-6.1-v4_aesni.patch"
 	fi
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
@@ -744,11 +744,16 @@ ot-kernel_apply_tresor_fixes() {
 		fi
 	fi
 
-	_dpatch "${PATCH_OPTS}" \
-		"${FILESDIR}/tresor-drop-glue_helper-for-5.15.patch"
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-drop-glue_helper-for-5.15.patch"
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15.patch"
+	else
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-6.1_aesni.patch"
+	fi
 
-	_dpatch "${PATCH_OPTS}" \
-		"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
