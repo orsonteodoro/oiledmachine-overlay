@@ -1,0 +1,311 @@
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-04 18:14:01.353552603 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-04 18:18:19.346700433 -0800
+@@ -5,7 +5,7 @@
+  * Copyright (C) 2012	Hans Spath <tresor@hans-spath.de>
+  * Copyright (C) 2012	Johannes Goetzfried <johannes@jgoetzfried.de>
+  *
+- * Portions use skcipher cbc_, ecb_, ctr_ code from crypto/cast5_avx_glue.c by:
++ * Portions use skcipher cbc_, ecb_ code from crypto/cast5_avx_glue.c by:
+  *   Copyright (C) 2012 Johannes Goetzfried
+  *       <Johannes.Goetzfried@informatik.stud.uni-erlangen.de>
+  *   Copyright © 2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
+@@ -14,17 +14,9 @@
+  *   Copyright (C) 2008, Intel Corp.
+  *      Author: Huang Ying <ying.huang@intel.com>
+  *
+- * Portions use xts glue code from crypto/cast6_avx_glue.c
+- *   Copyright (C) 2012 Johannes Goetzfried
+- *       <Johannes.Goetzfried@informatik.stud.uni-erlangen.de>
+- *   Copyright © 2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
+- *
+  * CBC & ECB parts based on code (crypto/cbc.c,ecb.c) by:
+  *   Copyright (c) 2006 Herbert Xu <herbert@gondor.apana.org.au>
+  *
+- * CTR part based on code (crypto/ctr.c) by:
+- *   (C) Copyright IBM Corp. 2007 - Joy Latten <latten@us.ibm.com>
+- *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -45,8 +37,9 @@
+ #include <crypto/algapi.h>
+ #include <crypto/b128ops.h>
+ #include <crypto/internal/simd.h>
++#include <crypto/internal/skcipher.h>
++#include <crypto/skcipher.h>
+ #include <crypto/tresor.h>
+-#include <crypto/xts.h>
+ #include <linux/module.h>
+ #include <crypto/aes.h>
+ #include <linux/smp.h>
+@@ -56,10 +49,8 @@
+  * Assembly functions implemented in tresor-intel_asm.S
+  */
+ asmlinkage void tresor_set_key(const u8 *in_key);
+-asmlinkage void tresor_set_key_xts_tweak_128(const u8 *in_key);
+ asmlinkage void tresor_encblk_128(u8 *out, const u8 *in);
+ asmlinkage void tresor_decblk_128(u8 *out, const u8 *in);
+-asmlinkage void tresor_encblk_128_xts_tweak(u8 *out, const u8 *in);
+ 
+ 
+ 
+@@ -145,21 +136,6 @@ void tresor_setkey(const u8 *in_key)
+ 	on_each_cpu(tresor_setkey_current_cpu, (void *)in_key, 1);
+ }
+ 
+-/*
+- * Set XTS tweak key
+- */
+-static void tresor_setkey_xts_tweak_current_cpu(void *data)
+-{
+-	printk(KERN_DEBUG "TRESOR: %s running on cpu %d\n",
+-		__func__, smp_processor_id());
+-	tresor_set_key_xts_tweak_128((const u8 *)data);
+-}
+-
+-void tresor_setkey_xts_tweak(const u8 *in_key)
+-{
+-	on_each_cpu(tresor_setkey_xts_tweak_current_cpu, (void *)in_key, 1);
+-}
+-
+ static int tresor_skcipher_setkey(struct crypto_skcipher *tfm, const u8 *key, unsigned int keylen)
+ {
+ 	tresor_setdummykey(crypto_skcipher_tfm(tfm), key, keylen);
+@@ -298,38 +274,6 @@ static int cbc_decrypt(struct skcipher_r
+ 	return err;
+ }
+ 
+-static void tresor_crypt_ctr(const void *ctx, u8 *d, const u8 *s, le128 *iv)
+-{
+-	be128 ctrblk;
+-	u128 *dst = (u128 *)d;
+-	const u128 *src = (const u128 *)s;
+-	unsigned long irq_flags;
+-
+-	le128_to_be128(&ctrblk, iv);
+-	le128_inc(iv);
+-
+-	tresor_prolog(&irq_flags);
+-	tresor_encblk_128((u8 *)&ctrblk, (u8 *)&ctrblk);
+-	tresor_epilog(&irq_flags);
+-
+-	u128_xor((u128 *)dst, (u128 *)src, (u128 *)&ctrblk);
+-}
+-
+-static const struct common_glue_ctx tresor_ctr = {
+-	.num_funcs = 1,
+-	.fpu_blocks_limit = 1,
+-
+-	.funcs = { {
+-		.num_blocks = 1,
+-		.fn_u = { .ctr = tresor_crypt_ctr }
+-	} }
+-};
+-
+-static int ctr_crypt(struct skcipher_request *req)
+-{
+-	return glue_ctr_req_128bit(&tresor_ctr, req);
+-}
+-
+ #ifdef CONFIG_X86_64
+ /* 32-bit doesn't support 64-bit hardware breakpoint addresses */
+ void __tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+@@ -350,94 +294,6 @@ void __tresor_decrypt(const void *ctx, u
+ 	tresor_epilog(&irq_flags);
+ }
+ 
+-void __xts_tweak_tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+-	unsigned long irq_flags;
+-
+-	/* encrypt using the tweak key */
+-	tresor_prolog(&irq_flags);
+-	tresor_encblk_128_xts_tweak(dst, src);
+-	tresor_epilog(&irq_flags);
+-}
+-
+-struct tresor_xts_ctx {
+-	struct tresor_ctx crypt_ctx;
+-	struct tresor_ctx tweak_ctx;
+-};
+-
+-static int xts_tresor_setkey(struct crypto_skcipher *tfm, const u8 *key,
+-			    unsigned int keylen)
+-{
+-	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+-	int err;
+-
+-	keylen /= 2;
+-
+-	if (keylen != AES_KEYSIZE_128)
+-		return -EINVAL;
+-
+-
+-	err = xts_verify_key(tfm, key, keylen*2);
+-	if (err)
+-		return err;
+-
+-	ctx->crypt_ctx.key_length = keylen;
+-	ctx->tweak_ctx.key_length = keylen;
+-
+-	/* Same reason explained in tresor_setdummykey comment */
+-	return 0;
+-}
+-
+-static void tresor_xts_enc(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+-{
+-	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  __tresor_encrypt);
+-}
+-
+-static void tresor_xts_dec(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+-{
+-	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  __tresor_decrypt);
+-}
+-
+-static const struct common_glue_ctx tresor_enc_xts = {
+-	.num_funcs = 1,
+-	.fpu_blocks_limit = 1,
+-
+-	.funcs = { {
+-		.num_blocks = 1,
+-		.fn_u = { .xts = tresor_xts_enc }
+-	} }
+-};
+-
+-static const struct common_glue_ctx tresor_dec_xts = {
+-	.num_funcs = 1,
+-	.fpu_blocks_limit = 1,
+-
+-	.funcs = { {
+-		.num_blocks = 1,
+-		.fn_u = { .xts = tresor_xts_dec }
+-	} }
+-};
+-
+-static int xts_encrypt(struct skcipher_request *req)
+-{
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+-	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+-
+-	return glue_xts_req_128bit(&tresor_enc_xts, req,
+-				   __xts_tweak_tresor_encrypt,
+-				   &ctx->tweak_ctx, &ctx->crypt_ctx, false);
+-}
+-
+-static int xts_decrypt(struct skcipher_request *req)
+-{
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+-	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+-
+-	return glue_xts_req_128bit(&tresor_dec_xts, req,
+-				   __xts_tweak_tresor_encrypt,
+-				   &ctx->tweak_ctx, &ctx->crypt_ctx, true);
+-}
+ #endif
+ 
+ /*
+@@ -496,41 +352,6 @@ static struct skcipher_alg tresor_skciph
+ 		.setkey		= tresor_skcipher_setkey,
+ 		.encrypt	= cbc_encrypt,
+ 		.decrypt	= cbc_decrypt,
+-#ifdef CONFIG_X86_64
+-	}, {
+-		.base = {
+-			.cra_name		= "__ctr(tresor)",
+-			.cra_driver_name	= "__ctr-tresor-sse2",
+-			.cra_priority		= 400,
+-			.cra_flags		= CRYPTO_ALG_INTERNAL,
+-			.cra_blocksize		= 1,
+-			.cra_ctxsize		= sizeof(struct tresor_ctx),
+-			.cra_module		= THIS_MODULE,
+-		},
+-		.min_keysize	= AES_MIN_KEY_SIZE,
+-		.max_keysize	= AES_MIN_KEY_SIZE,
+-		.ivsize		= AES_BLOCK_SIZE,
+-		.chunksize	= AES_BLOCK_SIZE,
+-		.setkey		= tresor_skcipher_setkey,
+-		.encrypt	= ctr_crypt,
+-		.decrypt	= ctr_crypt,
+-	}, {
+-		.base = {
+-			.cra_name		= "__xts(tresor)",
+-			.cra_driver_name	= "__xts-tresor-sse2",
+-			.cra_priority		= 401,
+-			.cra_flags		= CRYPTO_ALG_INTERNAL,
+-			.cra_blocksize		= AES_BLOCK_SIZE,
+-			.cra_ctxsize		= sizeof(struct tresor_xts_ctx),
+-			.cra_module		= THIS_MODULE,
+-		},
+-		.min_keysize	= 2 * AES_MIN_KEY_SIZE,
+-		.max_keysize	= 2 * AES_MIN_KEY_SIZE,
+-		.ivsize		= AES_BLOCK_SIZE,
+-		.setkey		= xts_tresor_setkey,
+-		.encrypt	= xts_encrypt,
+-		.decrypt	= xts_decrypt,
+-#endif
+ 	}
+ };
+ 
+--- a/crypto/Kconfig.orig	2024-02-04 18:14:00.953557024 -0800
++++ b/crypto/Kconfig	2024-02-04 18:18:19.350700389 -0800
+@@ -1144,6 +1144,7 @@ config CRYPTO_TRESOR
+ 	select CRYPTO_ALGAPI
+ 	select CRYPTO_MANAGER
+ 	select CRYPTO_MANAGER2
++	# imply CRYPTO_CTR # broken? selftest     : unknown
+ 	default n
+ 	help
+ 	  TRESOR Runs Encryption Securely Outside RAM
+--- a/crypto/testmgr.c.orig	2024-02-04 18:14:01.281553400 -0800
++++ b/crypto/testmgr.c	2024-02-04 18:21:24.996646980 -0800
+@@ -2750,22 +2750,9 @@ static int test_skcipher_vec_cfg(int enc
+ 					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
+ #ifdef CONFIG_CRYPTO_TRESOR
+ 	if (strstr(driver, "tresor")) {
+-		/* continue tests so we can see breakage */
+-		if (strstr(driver, "xts") && vec->klen > 32) {
+-			pr_info("alg: skcipher: vec->klen=%d for %s is skipped and unsupported.", vec->klen, driver);
+-			return 0;
+-		}
+-
+-		if (!strstr(driver, "xts") && vec->klen != 16) {
+-			pr_info("alg: skcipher: vec->klen=%d for %s is skipped and unsupported.", vec->klen, driver);
+-			return 0;
+-		}
+-
+ 		pr_info("alg: skcipher: testing: vec->klen=%d for %s.  enc=%d.", vec->klen, driver, enc);
+ 
+ 		tresor_setkey(vec->key);
+-		if (strstr(driver, "xts"))
+-			tresor_setkey_xts_tweak(vec->key + vec->klen/2);
+ 	}
+ #endif
+ 	err = do_setkey(crypto_skcipher_setkey, tfm, vec->key, vec->klen,
+@@ -5566,16 +5553,6 @@ static const struct alg_test_desc alg_te
+ 			.cipher = __VECS(serpent_xts_tv_template)
+ 		}
+ 	}, {
+-#ifdef CONFIG_CRYPTO_TRESOR
+-		.alg = "xts(tresor)",
+-		.generic_driver = "xts(ecb(aes-generic))",
+-		.test = alg_test_skcipher,
+-		.fips_allowed = 1,
+-		.suite = {
+-			.cipher = __VECS(aes_xts_tv_template)
+-		}
+-	}, {
+-#endif
+ 		.alg = "xts(twofish)",
+ 		.generic_driver = "xts(ecb(twofish-generic))",
+ 		.test = alg_test_skcipher,
+--- a/include/crypto/tresor.h.orig	2024-02-04 18:14:01.189554416 -0800
++++ b/include/crypto/tresor.h	2024-02-04 18:20:16.369406156 -0800
+@@ -18,7 +18,6 @@ struct tresor_ctx {
+ void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
+ void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
+ void tresor_setkey(const u8 *in_key);
+-void tresor_setkey_xts_tweak(const u8 *in_key);
+ bool tresor_capable(void);
+ 
+ #ifdef CONFIG_CRYPTO_TRESOR_PROMPT

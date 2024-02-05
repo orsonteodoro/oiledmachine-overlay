@@ -1,0 +1,10 @@
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-04 15:40:11.240871607 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-04 15:56:39.883425405 -0800
+@@ -42,7 +42,6 @@
+  * Herbert Xu <herbert@gondor.apana.org.au>.
+  */
+ 
+-#include <asm/crypto/glue_helper.h>
+ #include <crypto/algapi.h>
+ #include <crypto/b128ops.h>
+ #include <crypto/internal/simd.h>

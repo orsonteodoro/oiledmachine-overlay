@@ -751,7 +751,9 @@ ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
 ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
 ewarn "change will not be backwards compatible."
 ewarn
-			die
+ewarn "XTS support for TRESOR has been dropped for the ${KV_MAJOR_MINOR} series."
+ewarn
+#			die
 		fi
 	fi
 
@@ -848,6 +850,12 @@ ot-kernel_apply_tresor_fixes() {
 "${FILESDIR}/tresor-glue-helper-removed-i686-128-v1.patch"
 		fi
 	fi
+
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-drop-glue_helper-for-5.15.patch"
+
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

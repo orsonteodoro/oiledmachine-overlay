@@ -130,9 +130,9 @@
 		    Nest				R
 		    Project C				N
 		    TCP BBR v2 [5]			E
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
+		    TRESOR (AES-NI) [5]			?
+		    TRESOR (x86) [5]			?
+		    TRESOR (x86-64) [5]			Y
 		    UKSM				R
 		    zen-multigen_lru			N
 		    zen-sauce				N
