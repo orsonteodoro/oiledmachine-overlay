@@ -1,0 +1,11 @@
+--- a/kernel/power/process.c.orig	2024-02-04 23:05:15.089445484 -0800
++++ b/kernel/power/process.c	2024-02-04 23:09:16.299267301 -0800
+@@ -244,7 +244,7 @@ static void thaw_kernel_tasks(void)
+ 	struct task_struct *g, *p;
+ 
+ 	if (pm_freezing)
+-		atomic_dec(&system_freezing_cnt);
++		static_branch_dec(&freezer_active);
+ 	pm_freezing = false;
+ 	pm_nosig_freezing = false;
+ 
