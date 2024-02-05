@@ -863,6 +863,11 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-add-crypto-header-for-6.6.patch"
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-change-to-for_each_process_thread-for-6.6.patch"
+#	if ot-kernel_use tresor_x86_64-256-bit-key-support ; then
+#	else
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-use-ecb-cbc-helpers-128-for-6.6.patch"
+#	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

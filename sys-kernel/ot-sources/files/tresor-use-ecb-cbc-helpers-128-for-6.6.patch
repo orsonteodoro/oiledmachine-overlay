@@ -1,0 +1,219 @@
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-05 09:59:18.267722437 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-05 10:16:37.065803908 -0800
+@@ -35,7 +35,6 @@
+  */
+ 
+ #include <crypto/algapi.h>
+-#include <crypto/b128ops.h>
+ #include <crypto/internal/simd.h>
+ #include <crypto/internal/skcipher.h>
+ #include <crypto/skcipher.h>
+@@ -43,7 +42,9 @@
+ #include <linux/module.h>
+ #include <crypto/aes.h>
+ #include <linux/smp.h>
++#include "ecb_cbc_helpers.h"
+ 
++#define TRESOR_PARALLEL_BLOCKS 1
+ 
+ /*
+  * Assembly functions implemented in tresor-intel_asm.S
+@@ -98,7 +99,7 @@ static inline void tresor_epilog(unsigne
+ /*
+  * Encrypt one block
+  */
+-void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
++void __tresor_encrypt(const void *ctx, u8 *dst, const u8 *src)
+ {
+ 	unsigned long irq_flags;
+ 
+@@ -111,7 +112,7 @@ void tresor_encrypt(struct crypto_tfm *t
+ /*
+  * Decrypt one block
+  */
+-void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
++void __tresor_decrypt(const void *ctx, u8 *dst, const u8 *src)
+ {
+ 	unsigned long irq_flags;
+ 
+@@ -120,7 +121,6 @@ void tresor_decrypt(struct crypto_tfm *t
+ 	tresor_epilog(&irq_flags);
+ }
+ 
+-
+ /*
+  * Set AES key (the real function this time, not dummy as above)
+  */
+@@ -142,160 +142,35 @@ static int tresor_skcipher_setkey(struct
+ 	return 0;
+ }
+ 
+-static int ecb_crypt(struct skcipher_request *req, bool enc)
+-{
+-	struct skcipher_walk walk;
+-	const unsigned int bsize = AES_BLOCK_SIZE;
+-	unsigned int nbytes;
+-	void (*f)(u8 *dst, const u8 *src);
+-	int err;
+-	unsigned long irq_flags;
+-
+-	err = skcipher_walk_virt(&walk, req, true);
+-
+-	f = (enc) ? tresor_encblk_128 : tresor_decblk_128;
+-
+-	while ((nbytes = walk.nbytes)) {
+-		u8 *wsrc = walk.src.virt.addr;
+-		u8 *wdst = walk.dst.virt.addr;
+-
+-		/* Handle leftovers */
+-		do {
+-			tresor_prolog(&irq_flags);
+-			f(wdst, wsrc);
+-			tresor_epilog(&irq_flags);
+-
+-			wsrc += bsize;
+-			wdst += bsize;
+-			nbytes -= bsize;
+-		} while (nbytes >= bsize);
+-
+-		err = skcipher_walk_done(&walk, nbytes);
+-	}
+-
+-	return err;
+-}
+-
+ static int ecb_encrypt(struct skcipher_request *req)
+ {
+-	return ecb_crypt(req, true);
++	ECB_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
++	ECB_BLOCK(1, __tresor_encrypt);
++	ECB_WALK_END();
+ }
+ 
+ static int ecb_decrypt(struct skcipher_request *req)
+ {
+-	return ecb_crypt(req, false);
++	ECB_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
++	ECB_BLOCK(1, __tresor_decrypt);
++	ECB_WALK_END();
+ }
+ 
+ 
+ static int cbc_encrypt(struct skcipher_request *req)
+ {
+-	const unsigned int bsize = AES_BLOCK_SIZE;
+-	struct skcipher_walk walk;
+-	unsigned int nbytes;
+-	int err;
+-	unsigned long irq_flags;
+-
+-	err = skcipher_walk_virt(&walk, req, false);
+-
+-	while ((nbytes = walk.nbytes)) {
+-		u128 *src = (u128 *)walk.src.virt.addr;
+-		u128 *dst = (u128 *)walk.dst.virt.addr;
+-		u128 *iv = (u128 *)walk.iv;
+-
+-		do {
+-			u128_xor(dst, src, iv);
+-			tresor_prolog(&irq_flags);
+-			tresor_encblk_128((u8 *)dst, (u8 *)dst);
+-			tresor_epilog(&irq_flags);
+-			iv = dst;
+-			src++;
+-			dst++;
+-			nbytes -= bsize;
+-		} while (nbytes >= bsize);
+-
+-		*(u128 *)walk.iv = *iv;
+-		err = skcipher_walk_done(&walk, nbytes);
+-	}
+-
+-	return err;
+-}
+-
+-static unsigned int __cbc_decrypt(struct tresor_ctx *ctx,
+-				  struct skcipher_walk *walk)
+-{
+-	const unsigned int bsize = AES_BLOCK_SIZE;
+-	unsigned int nbytes = walk->nbytes;
+-	u128 *src = (u128 *)walk->src.virt.addr;
+-	u128 *dst = (u128 *)walk->dst.virt.addr;
+-	u128 last_iv;
+-	unsigned long irq_flags;
+-
+-	/* Start of the last block. */
+-	src += nbytes / bsize - 1;
+-	dst += nbytes / bsize - 1;
+-
+-	last_iv = *src;
+-
+-	/* Handle leftovers */
+-	for (;;) {
+-		tresor_prolog(&irq_flags);
+-		tresor_decblk_128((u8 *)dst, (u8 *)src);
+-		tresor_epilog(&irq_flags);
+-
+-		nbytes -= bsize;
+-		if (nbytes < bsize)
+-			break;
+-
+-		u128_xor(dst, dst, (src-1));
+-		src -= 1;
+-		dst -= 1;
+-	}
+-
+-	u128_xor(dst, dst, walk->iv);
+-	*(u128 *)walk->iv = last_iv;
+-
+-	return nbytes;
++	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
++	CBC_ENC_BLOCK(__tresor_encrypt);
++	CBC_WALK_END();
+ }
+ 
+ static int cbc_decrypt(struct skcipher_request *req)
+ {
+-	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+-	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
+-	struct skcipher_walk walk;
+-	unsigned int nbytes;
+-	int err;
+-
+-	err = skcipher_walk_virt(&walk, req, false);
+-
+-	while ((nbytes = walk.nbytes)) {
+-		nbytes = __cbc_decrypt(ctx, &walk);
+-		err = skcipher_walk_done(&walk, nbytes);
+-	}
+-	return err;
+-}
+-
+-#ifdef CONFIG_X86_64
+-/* 32-bit doesn't support 64-bit hardware breakpoint addresses */
+-void __tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+-	unsigned long irq_flags;
+-
+-	/* encrypt using the cipher key */
+-	tresor_prolog(&irq_flags);
+-	tresor_encblk_128(dst, src);
+-	tresor_epilog(&irq_flags);
++	CBC_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
++	CBC_DEC_BLOCK(1, __tresor_decrypt);
++	CBC_WALK_END();
+ }
+ 
+-void __tresor_decrypt(const void *ctx, u8 *dst, const u8 *src) {
+-	unsigned long irq_flags;
+-
+-	/* decrypt using the cipher key */
+-	tresor_prolog(&irq_flags);
+-	tresor_decblk_128(dst, src);
+-	tresor_epilog(&irq_flags);
+-}
+-
+-#endif
+-
+ /*
+  * Crypto API algorithm
+  */
