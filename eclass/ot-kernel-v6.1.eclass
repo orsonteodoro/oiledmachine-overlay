@@ -753,6 +753,8 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-linux-stdarg-for-6.1.patch"
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-kconfig-crypto-simd-for-6.1.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

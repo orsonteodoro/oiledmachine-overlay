@@ -1,0 +1,10 @@
+--- a/crypto/Kconfig.orig	2024-02-05 10:22:25.734427537 -0800
++++ b/crypto/Kconfig	2024-02-05 11:12:23.633415775 -0800
+@@ -382,6 +382,7 @@ config CRYPTO_TRESOR
+ 	select CRYPTO_ALGAPI
+ 	select CRYPTO_MANAGER
+ 	select CRYPTO_MANAGER2
++        select CRYPTO_SIMD
+ 	# imply CRYPTO_CTR # broken? selftest     : unknown
+ 	default n
+ 	help

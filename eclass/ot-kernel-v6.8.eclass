@@ -868,6 +868,8 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-use-ecb-cbc-helpers-128-for-6.6.patch"
 #	fi
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-kconfig-crypto-simd-for-6.1.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
