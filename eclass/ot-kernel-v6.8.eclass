@@ -924,7 +924,7 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
-		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
+		_tpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}" 1 0 ""
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
