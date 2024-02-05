@@ -1,0 +1,11 @@
+--- a/drivers/tty/vt/vt.c.orig	2024-02-04 23:37:59.831577521 -0800
++++ b/drivers/tty/vt/vt.c	2024-02-04 23:57:29.144841604 -0800
+@@ -241,7 +241,7 @@ enum {
+ /* Dont allow to switch console while reading TRESOR key on wakeup */
+ static int dont_switch_console;
+ 
+-void tresor_dont_switch_console(dont_switch)
++void tresor_dont_switch_console(int dont_switch)
+ {
+ 	dont_switch_console = dont_switch;
+ }

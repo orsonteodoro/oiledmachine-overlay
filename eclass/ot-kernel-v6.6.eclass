@@ -853,6 +853,8 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-rename-to-freezer_active-for-6.1.patch"
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-linux-stdarg-for-6.1.patch"
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
