@@ -144,9 +144,9 @@
 		    kernel_compiler_patch		A
 		    Project C				A
 		    TCP BBR v2 [5]			E
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
+		    TRESOR (AES-NI) [5]			?
+		    TRESOR (x86) [5]			?
+		    TRESOR (x86-64) [5]			Y
 		    zen-sauce				N
 
     6.6 (LTS)						A

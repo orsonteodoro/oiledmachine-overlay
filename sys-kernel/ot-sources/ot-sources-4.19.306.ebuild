@@ -29,4 +29,4 @@ inherit ot-kernel-v4.19
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
 # OILEDMACHINE-OVERLAY-TEST:  passed (4.19.306, 20240204)
 # tresor prompt - passed
-# tresor self test from /proc/crypto - passed
+# tresor self test from /proc/crypto (128 bit key size) - passed

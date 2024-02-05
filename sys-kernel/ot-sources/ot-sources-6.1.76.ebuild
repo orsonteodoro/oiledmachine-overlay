@@ -80,3 +80,21 @@ inherit ot-kernel-v6.1
 # boot:       passed
 # show logo:  passed
 # network:    passed
+
+
+# USE="build cfs disable_debug genpatches linux-firmware ncurses openssl
+# symlink tresor tresor_prompt tresor_sysfs tresor_x86_64 zen-sauce zstd -bbrv2
+# -bzip2 (-c2tcp) -clang (-deepcc) -exfat -genpatches_1510 -graphicsmagick -gtk
+# -gzip -imagemagick -intel-microcode -kcfi -kpgo-utils -lto -lz4 -lzma -lzo
+# (-orca) -pcc -pgo -prjc (-qt5) -reiserfs -rt -rust -shadowcallstack
+# -tresor_aesni -tresor_i686 -tresor_x86_64-256-bit-key-support -xz"
+# CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
+# OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
+# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
+# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
+# PYTHON_TARGETS="python3_10 -python3_11" 0 KiB
+# OILEDMACHINE-OVERLAY-TEST:  passed (6.1.76, 20240205)
+# tresor prompt - passed
+# tresor self test from /proc/crypto for tresor-cbc (128 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ecb (128 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ctr (128 bit key size) - unknown (unsupported until pass)

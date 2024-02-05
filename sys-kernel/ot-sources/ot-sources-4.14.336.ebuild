@@ -31,4 +31,4 @@ inherit ot-kernel-v4.14
 # PYTHON_TARGETS="python3_10 -python3_11" 0 KiB
 # OILEDMACHINE-OVERLAY-TEST:  passed (4.14.336, 20240204)
 # tresor prompt - passed
-# tresor self test from /proc/crypto - passed
+# tresor self test from /proc/crypto (128 bit key size) - passed

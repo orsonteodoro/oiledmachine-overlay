@@ -95,6 +95,6 @@ inherit ot-kernel-v5.15
 # PYTHON_TARGETS="python3_10 -python3_11" 0 KiB
 # OILEDMACHINE-OVERLAY-TEST:  passed (5.15.148, 20240204)
 # tresor prompt - passed
-# tresor self test from /proc/crypto for tresor-cbc - passed
-# tresor self test from /proc/crypto for tresor-ecb - passed
-# tresor self test from /proc/crypto for tresor-ctr - unknown (unsupported until pass)
+# tresor self test from /proc/crypto for tresor-cbc (128 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ecb (128 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ctr (128 bit key size) - unknown (unsupported until pass)
