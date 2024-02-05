@@ -1,0 +1,15 @@
+--- a/kernel/power/process.c.orig	2024-02-05 08:31:06.364360127 -0800
++++ b/kernel/power/process.c	2024-02-05 08:41:24.910297229 -0800
+@@ -249,10 +249,10 @@ static void thaw_kernel_tasks(void)
+ 	pm_nosig_freezing = false;
+ 
+ 	read_lock(&tasklist_lock);
+-	do_each_thread(g, p) {
++	for_each_process_thread(g, p) {
+ 		if (p->flags & PF_KTHREAD)
+ 			__thaw_task(p);
+-	} while_each_thread(g, p);
++	}
+ 	read_unlock(&tasklist_lock);
+ }
+ 

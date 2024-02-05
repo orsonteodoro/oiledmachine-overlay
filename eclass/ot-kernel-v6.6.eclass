@@ -857,6 +857,8 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-add-crypto-header-for-6.6.patch"
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-change-to-for_each_process_thread-for-6.6.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
