@@ -700,9 +700,6 @@ ewarn
 			:
 		else
 ewarn
-ewarn "TRESOR for ${KV_MAJOR_MINOR} is in development and may not work."
-ewarn "Use either 4.19.x, 5.4.x, 5.10.x for working TRESOR."
-ewarn
 ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
 ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
 ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"
@@ -713,9 +710,8 @@ ewarn
 ewarn "XTS support for TRESOR has been dropped for the ${KV_MAJOR_MINOR} series."
 ewarn
 ewarn "CTR support for TRESOR is currently on hold for the ${KV_MAJOR_MINOR} series."
-ewarn "Use older versions 4.19.x, 5.4.x, 5.10.x for working cbc(tresor)."
+ewarn "Use older versions 4.19.x, 5.4.x, 5.10.x for working ctr(tresor)."
 ewarn
-#			die
 		fi
 	fi
 }
