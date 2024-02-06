@@ -12974,8 +12974,9 @@ ewarn "Modes of operation status with TRESOR:"
 ewarn
 ewarn "ECB:  stable (DO NOT USE, for testing purposes only)"
 ewarn "CBC:  stable (recommended for production, used upstream)"
-ewarn "CTR:  stable"
-ewarn "XTS:  experimental (256 XTS only with 128-bit key; 64-bit ABI only)"
+ewarn "CTR:  stable (4.14, 4.19, 5.4, 5.10 only)"
+ewarn "XTS:  deprecated (256 XTS only with 128-bit key; 64-bit ABI only)"
+ewarn "      (reason:  xts glue helper [glue_helper.c] removed upstream.)"
 ewarn
 ewarn "Support for TRESOR may require modding in the kernel source code level."
 ewarn
