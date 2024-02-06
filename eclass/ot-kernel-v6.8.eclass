@@ -843,15 +843,17 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-glue_helper-for-5.15.patch"
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15.patch"
+			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_i686.patch"
 	else
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-6.1_aesni.patch"
 	fi
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-rename-to-freezer_active-for-6.1.patch"
-	_dpatch "${PATCH_OPTS}" \
-		"${FILESDIR}/tresor-linux-stdarg-for-6.1.patch"
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-linux-stdarg-for-6.1.patch"
+	fi
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
 	_dpatch "${PATCH_OPTS}" \
@@ -860,13 +862,24 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-change-to-for_each_process_thread-for-6.6.patch"
 #	if ot-kernel_use tresor_x86_64-256-bit-key-support ; then
 #	else
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-use-ecb-cbc-helpers-128-for-6.6.patch"
+		if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+			_dpatch "${PATCH_OPTS}" \
+				"${FILESDIR}/tresor-use-ecb-cbc-helpers-128-for-6.6_i686.patch"
+		else
+			_dpatch "${PATCH_OPTS}" \
+				"${FILESDIR}/tresor-use-ecb-cbc-helpers-128-for-6.6_aesni.patch"
+		fi
 #	fi
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-kconfig-crypto-simd-for-6.1.patch"
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-access_ok-for-6.6.patch"
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+		:;
+	else
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-add-crypto-header-to-tresor_glue-for-6.6_aesni.patch"
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

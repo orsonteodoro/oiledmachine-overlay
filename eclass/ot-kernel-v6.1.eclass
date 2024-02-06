@@ -733,7 +733,7 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-glue_helper-for-5.15.patch"
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15.patch"
+			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_i686.patch"
 	else
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-6.1_aesni.patch"
@@ -741,8 +741,10 @@ ot-kernel_apply_tresor_fixes() {
 
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-rename-to-freezer_active-for-6.1.patch"
-	_dpatch "${PATCH_OPTS}" \
-		"${FILESDIR}/tresor-linux-stdarg-for-6.1.patch"
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-linux-stdarg-for-6.1_i686.patch"
+	fi
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
 	_dpatch "${PATCH_OPTS}" \

@@ -1,0 +1,10 @@
+--- a/arch/x86/crypto/tresor_key.c.orig	2024-02-06 06:53:35.717801934 -0800
++++ b/arch/x86/crypto/tresor_key.c	2024-02-06 06:55:34.216675062 -0800
+@@ -29,6 +29,7 @@
+ #include <linux/kobject.h>
+ #include <linux/module.h>
+ #include <linux/oom.h>
++#include <linux/stdarg.h>
+ #include <linux/string.h>
+ #include <linux/syscalls.h>
+ #include <linux/sysfs.h>

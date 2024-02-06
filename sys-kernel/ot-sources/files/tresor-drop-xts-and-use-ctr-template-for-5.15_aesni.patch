@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-06 08:10:05.437015033 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-06 08:12:30.699641811 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-06 05:30:46.077979411 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-06 05:42:14.879165887 -0800
 @@ -9,11 +9,6 @@
   *   Copyright (C) 2008, Intel Corp.
   *      Author: Huang Ying <ying.huang@intel.com>
@@ -371,20 +371,20 @@
  	}
  };
  
---- a/crypto/Kconfig.orig	2024-02-06 08:10:05.437015033 -0800
-+++ b/crypto/Kconfig	2024-02-06 08:11:57.679954046 -0800
-@@ -381,7 +381,7 @@ config CRYPTO_TRESOR
+--- a/crypto/Kconfig.orig	2024-02-06 05:40:23.848262303 -0800
++++ b/crypto/Kconfig	2024-02-06 05:42:53.486784802 -0800
+@@ -1143,7 +1143,7 @@ config CRYPTO_TRESOR
  	select CRYPTO_ALGAPI
  	select CRYPTO_MANAGER
  	select CRYPTO_MANAGER2
 -	imply CRYPTO_CTR
-+	# imply CRYPTO_CTR # broken? selftest     : unknown
++	imply CRYPTO_CTR # broken? selftest     : unknown
  	default n
  	help
  	  TRESOR Runs Encryption Securely Outside RAM
---- a/crypto/testmgr.c.orig	2024-02-06 08:10:05.389015486 -0800
-+++ b/crypto/testmgr.c	2024-02-06 08:11:57.683954007 -0800
-@@ -2864,17 +2864,9 @@ static int test_skcipher_vec_cfg(int enc
+--- a/crypto/testmgr.c.orig	2024-02-06 05:30:46.017980006 -0800
++++ b/crypto/testmgr.c	2024-02-06 05:43:39.494330784 -0800
+@@ -2750,17 +2750,9 @@ static int test_skcipher_vec_cfg(int enc
  					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
  #ifdef CONFIG_CRYPTO_TRESOR
  	if (strstr(driver, "tresor")) {
@@ -402,7 +402,7 @@
  	}
  #endif
  	err = do_setkey(crypto_skcipher_setkey, tfm, vec->key, vec->klen,
-@@ -5798,16 +5790,6 @@ static const struct alg_test_desc alg_te
+@@ -5561,16 +5553,6 @@ static const struct alg_test_desc alg_te
  			.cipher = __VECS(serpent_xts_tv_template)
  		}
  	}, {
@@ -419,8 +419,8 @@
  		.alg = "xts(twofish)",
  		.generic_driver = "xts(ecb(twofish-generic))",
  		.test = alg_test_skcipher,
---- a/include/crypto/tresor.h.orig	2024-02-06 08:10:05.261016695 -0800
-+++ b/include/crypto/tresor.h	2024-02-06 08:11:57.683954007 -0800
+--- a/include/crypto/tresor.h.orig	2024-02-06 05:56:41.110668881 -0800
++++ b/include/crypto/tresor.h	2024-02-06 05:57:30.514185880 -0800
 @@ -18,7 +18,6 @@ struct tresor_ctx {
  void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
  void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
