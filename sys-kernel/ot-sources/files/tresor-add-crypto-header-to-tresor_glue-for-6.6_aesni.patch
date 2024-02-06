@@ -1,10 +1,10 @@
---- a/arch/x86/crypto/tresor_key.c.orig	2024-02-06 12:40:07.194351638 -0800
-+++ b/arch/x86/crypto/tresor_key.c	2024-02-06 12:57:10.580964001 -0800
-@@ -19,6 +19,7 @@
-  * Place - Suite 330, Boston, MA 02111-1307 USA.
-  */
+--- a/arch/x86/crypto/Makefile.orig	2024-02-06 13:01:13.370683079 -0800
++++ b/arch/x86/crypto/Makefile	2024-02-06 13:13:14.219896080 -0800
+@@ -81,6 +81,7 @@ crc32-pclmul-y := crc32-pclmul_asm.o crc
+ obj-$(CONFIG_CRYPTO_CRCT10DIF_PCLMUL) += crct10dif-pclmul.o
+ crct10dif-pclmul-y := crct10dif-pcl-asm_64.o crct10dif-pclmul_glue.o
+ tresor-y := tresor_asm.o tresor_glue.o tresor_key.o
++CFLAGS_tresor_key.o := -include crypto/internal.h
  
-+#include <crypto/internal.h>
- #include <crypto/tresor.h>
- #include <linux/crypto.h>
- #include <linux/fd.h>
+ obj-$(CONFIG_CRYPTO_POLY1305_X86_64) += poly1305-x86_64.o
+ poly1305-x86_64-y := poly1305-x86_64-cryptogams.o poly1305_glue.o
