@@ -142,7 +142,7 @@
 		    Clang PGO				?
 		    genpatches				A
 		    kernel_compiler_patch		A
-		    Project C				A
+		    Project C				N
 		    TCP BBR v2 [5]			E
 		    TRESOR (AES-NI) [5]			?
 		    TRESOR (x86) [5]			?
@@ -155,7 +155,7 @@
 		    Clear Linux patchset		A
 		    genpatches				A
 		    kernel_compiler_patch		X
-		    Project C				D
+		    Project C				N
 		    Nest				R
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
@@ -169,7 +169,7 @@
 		    Clang PGO				D
 		    genpatches				A
 		    kernel_compiler_patch		X
-		    Project C				D
+		    Project C				A
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
 		    TRESOR (AES-NI) [5]			?
@@ -185,9 +185,9 @@
 		    Project C				D
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
+		    TRESOR (AES-NI) [5]			?
+		    TRESOR (x86) [5]			?
+		    TRESOR (x86-64) [5]			E
 		    zen-sauce				D
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
