@@ -630,17 +630,13 @@ ewarn
 			:
 		else
 ewarn
-ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
-ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
-ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"
-ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
-ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
-ewarn "change will not be backwards compatible."
+ewarn "XTS support for TRESOR has been dropped for the ${KV_MAJOR_MINOR}"
+ewarn "series.  Use the older versions 4.19.x, 5.4.x, 5.10.x to convert"
+ewarn "xts(tresor) -> cbc(tresor)."
 ewarn
-ewarn "XTS support for TRESOR has been dropped for the ${KV_MAJOR_MINOR} series."
-ewarn
-ewarn "CTR support for TRESOR is currently on hold for the ${KV_MAJOR_MINOR} series."
-ewarn "Use older versions 4.19.x, 5.4.x, 5.10.x for working ctr(tresor)."
+ewarn "CTR support for TRESOR is currently on hold for the ${KV_MAJOR_MINOR}"
+ewarn "series.  Use the older versions 4.19.x, 5.4.x, 5.10.x for working"
+ewarn "ctr(tresor)."
 ewarn
 		fi
 	fi

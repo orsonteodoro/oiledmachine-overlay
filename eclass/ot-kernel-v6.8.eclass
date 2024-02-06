@@ -740,18 +740,19 @@ ewarn
 			:
 		else
 ewarn
-# Need to fix linking problem
+# Still need to verify correctness.
 ewarn "TRESOR for ${KV_MAJOR_MINOR} is in development and not working."
-ewarn "Use either 4.19.x, 5.4.x, 5.10.x, 5.15.x, 6.1.x for working TRESOR."
 ewarn
-ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
-ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
-ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"
-ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
-ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
-ewarn "change will not be backwards compatible."
+ewarn "Use either 4.19.x, 5.4.x, 5.10.x, 5.15.x, 6.1.x, 6.6.x for working"
+ewarn "TRESOR."
 ewarn
-ewarn "XTS support for TRESOR has been dropped for the ${KV_MAJOR_MINOR} series."
+ewarn "XTS support for TRESOR has been dropped for the ${KV_MAJOR_MINOR}"
+ewarn "series.  Use the older versions 4.19.x, 5.4.x, 5.10.x to convert"
+ewarn "xts(tresor) -> cbc(tresor)."
+ewarn
+ewarn "CTR support for TRESOR is currently on hold for the ${KV_MAJOR_MINOR}"
+ewarn "series.  Use the older versions 4.19.x, 5.4.x, 5.10.x for working"
+ewarn "ctr(tresor)."
 ewarn
 		fi
 	fi
@@ -870,6 +871,8 @@ ot-kernel_apply_tresor_fixes() {
 #	fi
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-kconfig-crypto-simd-for-6.1.patch"
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-access_ok-for-6.6.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

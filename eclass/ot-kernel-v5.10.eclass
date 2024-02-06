@@ -542,12 +542,12 @@ fi
 ot-kernel_pkg_setup_cb() {
 	if use tresor ; then
 ewarn
-ewarn "Please migrate your data outside the XTS(tresor) partition(s) into a different"
-ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
-ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"
-ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
-ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
-ewarn "change will not be backwards compatible."
+ewarn "Please migrate your data outside the xts(tresor) partition(s) into a"
+ewarn "different partition.  Keep the commit frozen, or checkout kept rewinded"
+ewarn "to commit 20a1c90 before the xts(tresor) key changes to backup and"
+ewarn "restore from it.  Checkout repo as HEAD when you have migrated the data"
+ewarn "are ready to use the updated xts(tresor) with setkey() changes.  This"
+ewarn "new XTS setkey() change will not be backwards compatible."
 ewarn
 	fi
 }

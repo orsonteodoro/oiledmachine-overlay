@@ -1,0 +1,18 @@
+--- a/include/asm-generic/access_ok.h.orig	2023-10-29 19:31:08.000000000 -0700
++++ b/include/asm-generic/access_ok.h	2024-02-05 15:19:43.877648720 -0800
+@@ -42,7 +42,15 @@ static inline int __access_ok(const void
+ #endif
+ 
+ #ifndef access_ok
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++#define access_ok(addr, size)					\
++({								\
++	(likely(__access_ok(addr, size))			\
++		|| unlikely(tresor_prompt_active()));		\
++})
++#else
+ #define access_ok(addr, size) likely(__access_ok(addr, size))
+ #endif
++#endif
+ 
+ #endif
