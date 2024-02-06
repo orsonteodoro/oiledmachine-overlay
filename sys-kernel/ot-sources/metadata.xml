@@ -172,9 +172,9 @@
 		    Project C				D
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
+		    TRESOR (AES-NI) [5]			?
+		    TRESOR (x86) [5]			?
+		    TRESOR (x86-64) [5]			E
 		    zen-sauce				A
 
     6.8 (Master / Live / Mainline)			A

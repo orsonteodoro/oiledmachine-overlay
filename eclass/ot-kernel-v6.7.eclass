@@ -738,12 +738,6 @@ ewarn
 			:
 		else
 ewarn
-# Still need to verify correctness.
-ewarn "TRESOR for ${KV_MAJOR_MINOR} is in development and not working."
-ewarn
-ewarn "Use either 4.19.x, 5.4.x, 5.10.x, 5.15.x, 6.1.x, 6.6.x for working"
-ewarn "TRESOR."
-ewarn
 ewarn "XTS support for TRESOR has been dropped for the ${KV_MAJOR_MINOR}"
 ewarn "series.  Use the older versions 4.19.x, 5.4.x, 5.10.x to convert"
 ewarn "xts(tresor) -> cbc(tresor)."
