@@ -14,7 +14,7 @@ Date:  Fri Mar  4 01:11:26 AM PST 2022 (Unix time: 1646385086)
 +	//err = xts_verify_key(tfm, key, keylen*2);
 +	//if (err)
 +	//	return err;
-+	tresor_skcipher_setkey(key + keylen);
++	tresor_setkey_xts_tweak(key + keylen); // testing.  originally:  tresor_skcipher_setkey(key + keylen);
  
  	ctx->crypt_ctx.key_length = keylen;
  	ctx->tweak_ctx.key_length = keylen;
