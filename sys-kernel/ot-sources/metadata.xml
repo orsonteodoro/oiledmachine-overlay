@@ -77,7 +77,7 @@
 		    PDS					N
 		    TRESOR (AES-NI) [3,4,5]		t
 		    TRESOR (x86) [3,4,5]		t
-		    TRESOR (x86-64) [3,5]		Y
+		    TRESOR (x86-64) [3,5]		E
 		    UKSM				R
 
     4.19 (LTS)						Y
@@ -89,7 +89,7 @@
 		    PDS					N
 		    TRESOR (AES-NI) [3,4,5]		?
 		    TRESOR (x86) [3,4,5]		?
-		    TRESOR (x86-64) [3,5]		Y
+		    TRESOR (x86-64) [3,5]		E
 		    UKSM				R
 
     5.4	(LTS)						Y
@@ -100,7 +100,7 @@
 		    kernel_compiler_patch		N
 		    TRESOR (AES-NI) [5]			t
 		    TRESOR (x86) [5]			t
-		    TRESOR (x86-64) [5]			Y
+		    TRESOR (x86-64) [5]			E
 		    UKSM				R
 		    zen-muqss				N
 		    zen-sauce				N
@@ -115,7 +115,7 @@
 		    TCP BBR v2				N
 		    TRESOR (AES-NI) [5]			t
 		    TRESOR (x86) [5]			t
-		    TRESOR (x86-64) [5]			Y
+		    TRESOR (x86-64) [5]			E
 		    UKSM				R
 		    zen-muqss				N
 		    zen-sauce				N
@@ -132,7 +132,7 @@
 		    TCP BBR v2 [5]			E
 		    TRESOR (AES-NI) [5]			?
 		    TRESOR (x86) [5]			?
-		    TRESOR (x86-64) [5]			Y
+		    TRESOR (x86-64) [5]			E
 		    UKSM				R
 		    zen-multigen_lru			N
 		    zen-sauce				N
@@ -146,7 +146,7 @@
 		    TCP BBR v2 [5]			E
 		    TRESOR (AES-NI) [5]			?
 		    TRESOR (x86) [5]			?
-		    TRESOR (x86-64) [5]			Y
+		    TRESOR (x86-64) [5]			E
 		    zen-sauce				N
 
     6.6 (LTS)						A
@@ -161,7 +161,7 @@
 		    TCP BBR v3 [5]			E
 		    TRESOR (AES-NI) [5]			?
 		    TRESOR (x86) [5]			?
-		    TRESOR (x86-64) [5]			Y
+		    TRESOR (x86-64) [5]			E
 		    zen-sauce				A
 
     6.7 (Stable)					A
@@ -211,13 +211,15 @@
         EOL for that version which means that bug fixes and security updates
         will not be provided.  This indicates a feature freeze, but
         build time failures will be fixed by the ebuild maintainer.
-    E - No upstream release for this major minor version but maintained by
-        ebuild maintainer or third party
+    E - No upstream release for this major minor version but fully maintained or
+        supported by the ebuild maintainer or third party.  It means the same as
+        third party Yes supported.
     I - Inactive due to changing API, but future support depends on motivation
     S - Upstream indicated support
     T - Patch is undergoing testing
     t - Only patch/building testing but without correctness verification
     X - Patch provided by alternative or multiple independent forks.
+    Y - Patch is LTS supported upstream.
     ? - Unknown status
 
     EOL (End Of Life) stable kernels get dropped next update cycle which is
