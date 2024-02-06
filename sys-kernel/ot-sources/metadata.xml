@@ -162,7 +162,7 @@
 		    TRESOR (AES-NI) [5]			?
 		    TRESOR (x86) [5]			?
 		    TRESOR (x86-64) [5]			E
-		    zen-sauce				A
+		    zen-sauce				N
 
     6.7 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
@@ -175,7 +175,7 @@
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				D
+		    zen-sauce				A
 
     6.8 (Master / Live / Mainline)			A
 		    -rt	(RT_PREEMPT)			A
