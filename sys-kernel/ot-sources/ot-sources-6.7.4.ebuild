@@ -12,7 +12,7 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
 EBUILD_REV="r6"
-GENPATCHES_VER="5"
+GENPATCHES_VER="8"
 PATCH_PROJC_VER="6.7-r2"
 PATCH_RT_VER="6.7-rt6"
 
