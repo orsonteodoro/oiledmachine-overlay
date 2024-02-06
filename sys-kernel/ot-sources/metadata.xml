@@ -159,9 +159,9 @@
 		    Nest				R
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
+		    TRESOR (AES-NI) [5]			?
+		    TRESOR (x86) [5]			?
+		    TRESOR (x86-64) [5]			Y
 		    zen-sauce				A
 
     6.7 (Stable)					A
