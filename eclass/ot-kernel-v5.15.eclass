@@ -806,11 +806,17 @@ ot-kernel_apply_tresor_fixes() {
 		fi
 	fi
 
-	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+	if ot-kernel_use tresor_x86_64 ; then
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-drop-glue_helper-for-5.15_i686.patch"
+			"${FILESDIR}/tresor-drop-glue_helper-for-5.15_x86_64.patch"
+	fi
+
+	if ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_i686.patch"
+	elif ot-kernel_use tresor_x86_64 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_x86_64.patch"
 	else
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_aesni.patch"
