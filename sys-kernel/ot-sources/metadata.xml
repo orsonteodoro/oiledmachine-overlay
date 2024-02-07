@@ -152,7 +152,7 @@
     6.6 (LTS)						A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
-		    Clear Linux patchset		A
+		    Clear Linux patchset		N
 		    genpatches				A
 		    kernel_compiler_patch		X
 		    Project C				N
@@ -167,6 +167,7 @@
     6.7 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
+		    Clear Linux patchset		A
 		    genpatches				A
 		    kernel_compiler_patch		X
 		    Project C				A

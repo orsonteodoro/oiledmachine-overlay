@@ -238,7 +238,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 fi
 IUSE+="
-bbrv2 bbrv3 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
+bbrv2 bbrv3 build c2tcp +cfs clang clear deepcc disable_debug -exfat +genpatches
 -genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rt -rust shadowcallstack
 symlink tresor tresor_aesni tresor_i686 tresor_prompt tresor_sysfs tresor_x86_64
 tresor_x86_64-256-bit-key-support zen-sauce
@@ -347,6 +347,7 @@ LICENSE+="
 # A gcc pgo patch in 2014 exists but not listed for license reasons.
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 	# third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" clear? ( GPL-2 )"
 LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" kcfi? ( GPL-2 )"
@@ -673,6 +674,9 @@ else
 		)
 		c2tcp? (
 			${C2TCP_URIS}
+		)
+		clear? (
+			${CLEAR_LINUX_PATCHES_URI}
 		)
 		deepcc? (
 			${C2TCP_URIS}
