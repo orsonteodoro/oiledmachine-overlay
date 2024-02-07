@@ -87,7 +87,7 @@
 		    kernel_compiler_patch 		N
 		    O3 [5]				N
 		    PDS					N
-		    TRESOR (AES-NI) [3,4,5]		?
+		    TRESOR (AES-NI) [3,4,5]		b
 		    TRESOR (x86) [3,4,5]		?
 		    TRESOR (x86-64) [3,5]		E
 		    UKSM				R
@@ -130,7 +130,7 @@
 		    Nest				R
 		    Project C				N
 		    TCP BBR v2 [5]			E
-		    TRESOR (AES-NI) [5]			?
+		    TRESOR (AES-NI) [5]			b
 		    TRESOR (x86) [5]			?
 		    TRESOR (x86-64) [5]			E
 		    UKSM				R
@@ -144,7 +144,7 @@
 		    kernel_compiler_patch		A
 		    Project C				N
 		    TCP BBR v2 [5]			E
-		    TRESOR (AES-NI) [5]			?
+		    TRESOR (AES-NI) [5]			b
 		    TRESOR (x86) [5]			?
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				N
