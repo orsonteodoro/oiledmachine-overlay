@@ -217,7 +217,7 @@
     I - Inactive due to changing API, but future support depends on motivation
     S - Upstream indicated support
     T - Patch is undergoing testing
-    b - Building tested but without correctness verification
+    b - Build tested but without correctness verification due to lack of hardware
     X - Patch provided by alternative or multiple independent forks.
     Y - Patch is LTS supported upstream.
     ? - Unknown status
