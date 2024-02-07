@@ -88,7 +88,7 @@
 		    O3 [5]				N
 		    PDS					N
 		    TRESOR (AES-NI) [3,4,5]		b
-		    TRESOR (x86) [3,4,5]		?
+		    TRESOR (x86) [3,4,5]		b
 		    TRESOR (x86-64) [3,5]		E
 		    UKSM				R
 
@@ -131,7 +131,7 @@
 		    Project C				N
 		    TCP BBR v2 [5]			E
 		    TRESOR (AES-NI) [5]			b
-		    TRESOR (x86) [5]			?
+		    TRESOR (x86) [5]			b
 		    TRESOR (x86-64) [5]			E
 		    UKSM				R
 		    zen-multigen_lru			N
