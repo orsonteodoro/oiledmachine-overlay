@@ -731,7 +731,7 @@ ot-kernel_apply_tresor_fixes() {
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-drop-glue_helper-for-5.15.patch"
+			"${FILESDIR}/tresor-drop-glue_helper-for-5.15_i686.patch"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_i686.patch"
 	else
@@ -749,6 +749,13 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-kconfig-crypto-simd-for-6.1.patch"
+
+	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+		:;
+	else
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-enc-dec-blk-for-6.1_aesni.patch"
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

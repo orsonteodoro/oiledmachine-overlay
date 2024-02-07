@@ -815,7 +815,6 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_aesni.patch"
 	fi
-
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
