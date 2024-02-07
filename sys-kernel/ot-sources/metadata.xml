@@ -75,8 +75,8 @@
 		    kernel_compiler_patch 		N
 		    O3 [5]				N
 		    PDS					N
-		    TRESOR (AES-NI) [3,4,5]		t
-		    TRESOR (x86) [3,4,5]		t
+		    TRESOR (AES-NI) [3,4,5]		b
+		    TRESOR (x86) [3,4,5]		b
 		    TRESOR (x86-64) [3,5]		E
 		    UKSM				R
 
@@ -98,8 +98,8 @@
 		    BMQ					N
 		    genpatches				N
 		    kernel_compiler_patch		N
-		    TRESOR (AES-NI) [5]			t
-		    TRESOR (x86) [5]			t
+		    TRESOR (AES-NI) [5]			b
+		    TRESOR (x86) [5]			b
 		    TRESOR (x86-64) [5]			E
 		    UKSM				R
 		    zen-muqss				N
@@ -113,8 +113,8 @@
 		    kernel_compiler_patch		N
 		    Project C				N
 		    TCP BBR v2				N
-		    TRESOR (AES-NI) [5]			t
-		    TRESOR (x86) [5]			t
+		    TRESOR (AES-NI) [5]			b
+		    TRESOR (x86) [5]			b
 		    TRESOR (x86-64) [5]			E
 		    UKSM				R
 		    zen-muqss				N
@@ -159,7 +159,7 @@
 		    Nest				R
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
-		    TRESOR (AES-NI) [5]			t
+		    TRESOR (AES-NI) [5]			b
 		    TRESOR (x86) [5]			?
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				N
@@ -172,7 +172,7 @@
 		    Project C				A
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			t
+		    TRESOR (AES-NI) [5]			b
 		    TRESOR (x86) [5]			?
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				A
@@ -217,7 +217,7 @@
     I - Inactive due to changing API, but future support depends on motivation
     S - Upstream indicated support
     T - Patch is undergoing testing
-    t - Only patch/building testing but without correctness verification
+    b - Building tested but without correctness verification
     X - Patch provided by alternative or multiple independent forks.
     Y - Patch is LTS supported upstream.
     ? - Unknown status
