@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-07 17:28:40.191414525 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-07 17:37:12.103134985 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-07 18:00:05.191537153 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-07 18:01:38.362741901 -0800
 @@ -9,11 +9,6 @@
   *   Copyright (C) 2008, Intel Corp.
   *      Author: Huang Ying <ying.huang@intel.com>
@@ -39,6 +39,15 @@
  
  
  
+@@ -120,7 +114,7 @@ static inline void tresor_epilog(unsigne
+ 	preempt_enable();
+ }
+ 
+-void __tresor_encrypt(int key_length, u8 *dst, const u8 *src)
++void __tresor_encrypt_blk(int key_length, u8 *dst, const u8 *src)
+ {
+ 	unsigned long irq_flags;
+ 	tresor_prolog(&irq_flags);
 @@ -140,7 +134,7 @@ void __tresor_encrypt(int key_length, u8
  	tresor_epilog(&irq_flags);
  }
@@ -447,8 +456,8 @@
  	}
  };
  
---- a/crypto/Kconfig.orig	2024-02-07 17:29:35.106956012 -0800
-+++ b/crypto/Kconfig	2024-02-07 17:30:58.510259370 -0800
+--- a/crypto/Kconfig.orig	2024-02-07 18:00:05.191537153 -0800
++++ b/crypto/Kconfig	2024-02-07 18:01:12.114965938 -0800
 @@ -1144,7 +1144,7 @@ config CRYPTO_TRESOR
  	select CRYPTO_ALGAPI
  	select CRYPTO_MANAGER
@@ -458,8 +467,8 @@
  	default n
  	help
  	  TRESOR Runs Encryption Securely Outside RAM
---- a/crypto/testmgr.c.orig	2024-02-07 17:28:40.143414925 -0800
-+++ b/crypto/testmgr.c	2024-02-07 17:31:27.042020979 -0800
+--- a/crypto/testmgr.c.orig	2024-02-07 18:00:05.143537564 -0800
++++ b/crypto/testmgr.c	2024-02-07 18:01:12.114965938 -0800
 @@ -2750,17 +2750,9 @@ static int test_skcipher_vec_cfg(int enc
  					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
  #ifdef CONFIG_CRYPTO_TRESOR
@@ -495,8 +504,8 @@
  		.alg = "xts(twofish)",
  		.generic_driver = "xts(ecb(twofish-generic))",
  		.test = alg_test_skcipher,
---- a/include/crypto/tresor.h.orig	2024-02-07 17:28:40.051415694 -0800
-+++ b/include/crypto/tresor.h	2024-02-07 17:29:35.110955980 -0800
+--- a/include/crypto/tresor.h.orig	2024-02-07 18:00:05.051538349 -0800
++++ b/include/crypto/tresor.h	2024-02-07 18:01:12.118965903 -0800
 @@ -18,7 +18,6 @@ struct tresor_ctx {
  void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
  void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
