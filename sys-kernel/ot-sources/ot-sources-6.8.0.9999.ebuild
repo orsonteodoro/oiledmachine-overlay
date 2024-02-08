@@ -123,3 +123,6 @@ inherit ot-kernel-v6.8
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
+
+# USE="tresor_aesni"
+# tresor prompt - failed

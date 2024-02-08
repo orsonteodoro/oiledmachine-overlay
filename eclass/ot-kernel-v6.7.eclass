@@ -817,19 +817,15 @@ ot-kernel_apply_tresor_fixes() {
 	fi
 
 	# tresor-xts-setkey update applied in these below
-	if ot-kernel_use tresor_x86_64-256-bit-key-support ; then
-		if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
-			_dpatch "${PATCH_OPTS}" \
-				"${FILESDIR}/tresor-glue-helper-removed-i686-256-v1.patch"
-		fi
-	else
-		if ot-kernel_use tresor_aesni ; then
-			_dpatch "${PATCH_OPTS}" \
-				"${FILESDIR}/tresor-glue-helper-removed-aesni-v1.patch"
-		elif ot-kernel_use tresor_i686 ; then
-			_dpatch "${PATCH_OPTS}" \
-				"${FILESDIR}/tresor-glue-helper-removed-i686-128-v1.patch"
-		fi
+	if ot-kernel_use tresor_x86_64-256-bit-key-support && ot-kernel_use tresor_x86_64 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-glue-helper-removed-i686-256-v1.patch"
+	elif ot-kernel_use tresor_aesni ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-glue-helper-removed-aesni-v1.patch"
+	elif ot-kernel_use tresor_i686 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-glue-helper-removed-i686-128-v1.patch"
 	fi
 
 	if ot-kernel_use tresor_x86_64 && ! ot-kernel_use tresor_x86_64-256-bit-key-support ; then
@@ -893,6 +889,7 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-add-crypto-header-to-tresor_glue-for-6.6_aesni.patch"
 	fi
+	die
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
