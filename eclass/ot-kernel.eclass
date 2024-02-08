@@ -13007,13 +13007,6 @@ ewarn "Add LLVM_IAS=0 to make all to build it with Clang/LLVM."
 ewarn
 		fi
 	fi
-ewarn
-ewarn "Please migrate your data outside the XTS(tresor) partitions into a different"
-ewarn "partition.  Keep the commit frozen, or checkout kept rewinded to commit"
-ewarn "20a1c90 before the XTS(tresor) key changes to backup and restore from"
-ewarn "it. Checkout repo as HEAD when you have migrated the data are ready to"
-ewarn "use the updated XTS(tresor) with setkey changes.  This new XTS setkey"
-ewarn "change will not be backwards compatible."
 }
 
 # @FUNCTION: ot-kernel_postinst_exfat

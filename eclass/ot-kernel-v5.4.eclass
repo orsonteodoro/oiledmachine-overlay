@@ -487,16 +487,6 @@ ewarn
 ewarn "genpatches is EOL (End of Life) for the ${KV_MAJOR_MINOR} series."
 ewarn
 	fi
-	if use tresor ; then
-ewarn
-ewarn "Please migrate your data outside the xts(tresor) partition(s) into a"
-ewarn "different partition.  Keep the commit frozen, or checkout kept rewinded"
-ewarn "to commit 20a1c90 before the xts(tresor) key changes to backup and"
-ewarn "restore from it.  Checkout repo as HEAD when you have migrated the data"
-ewarn "are ready to use the updated xts(tresor) with setkey() changes.  This"
-ewarn "new XTS setkey() change will not be backwards compatible."
-ewarn
-	fi
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
