@@ -568,11 +568,12 @@ ot-kernel_apply_tresor_fixes() {
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS} -F 3" \
-"${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-i686.patch"
+			"${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-i686.patch"
 	else
 		_dpatch "${PATCH_OPTS} -F 3" \
-"${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-aesni.patch"
+			"${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-aesni.patch"
 	fi
+
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
@@ -586,41 +587,44 @@ ot-kernel_apply_tresor_fixes() {
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.5.patch"
+			"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.5.patch"
 	else
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.5.patch"
+			"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.5.patch"
 	fi
 
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-5.10.patch"
+
 	if ot-kernel_use tresor_x86_64-256-bit-key-support ; then
 		if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 			_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-256-bit-aes-support-i686-v3.1-for-5.10.patch"
+				"${FILESDIR}/tresor-256-bit-aes-support-i686-v3.1-for-5.10.patch"
 		fi
 	fi
 
 	if ! ot-kernel_use tresor_x86_64-256-bit-key-support ; then
 		if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 			_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-5.10.patch"
+				"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-5.10.patch"
 		else
 			_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
+				"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
 		fi
 	else
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
+			"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
 	fi
+
 	_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
+		"${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
+
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-xts-setkey-5.4-i686.patch"
+			"${FILESDIR}/tresor-xts-setkey-5.4-i686.patch"
 	else
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-xts-setkey-5.4-aesni.patch"
+			"${FILESDIR}/tresor-xts-setkey-5.4-aesni.patch"
 	fi
 }
 
