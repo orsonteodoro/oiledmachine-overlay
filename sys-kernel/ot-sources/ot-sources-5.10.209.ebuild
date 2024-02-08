@@ -70,3 +70,22 @@ inherit ot-kernel-v5.10
 # OILEDMACHINE-OVERLAY-TEST:  passed (5.10.209, 20240204)
 # tresor prompt - passed
 # tresor self test from /proc/crypto (128 bit key size) - passed
+
+# USE="build disable_debug genpatches linux-firmware lz4 muqss ncurses openssl
+# tresor tresor_prompt tresor_sysfs tresor_x86_64
+# tresor_x86_64-256-bit-key-support zen-sauce -bbrv2 -bzip2 (-c2tcp) -cfs -clang
+# (-deepcc) -exfat -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick
+# -intel-microcode -kpgo-utils -lzma -lzo (-orca) -pcc -pgo -prjc (-qt5)
+# -reiserfs -rt -symlink -tresor_aesni -tresor_i686 -uksm -xz -zen-muqss -zstd"
+# CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
+# OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
+# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
+# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
+# PYTHON_TARGETS="python3_10 -python3_11"
+# OILEDMACHINE-OVERLAY-TEST:  passed (5.10.209, 20240208)
+# tresor prompt - passed
+# tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-xts skcipher (256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
