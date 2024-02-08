@@ -1,0 +1,42 @@
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-07 20:17:13.943992419 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-07 20:34:43.685703132 -0800
+@@ -33,7 +33,6 @@
+  */
+ 
+ #include <crypto/algapi.h>
+-#include <crypto/b128ops.h>
+ #include <crypto/internal/simd.h>
+ #include <crypto/tresor.h>
+ #include <linux/module.h>
+@@ -42,7 +41,6 @@
+ 
+ // Some from glue_helper.c
+ #include <linux/module.h>
+-#include <crypto/b128ops.h>
+ #include <crypto/gf128mul.h>
+ #include <crypto/internal/skcipher.h>
+ #include <crypto/scatterwalk.h>
+@@ -163,7 +161,6 @@ void tresor_encrypt(struct crypto_tfm *t
+ 	__tresor_encrypt_blk(ctx->key_length, dst, src);
+ }
+ 
+-
+ /*
+  * Decrypt one block
+  */
+@@ -186,7 +183,6 @@ void __tresor_decrypt(void *_ctx, u8 *ds
+ 	__tresor_decrypt_blk(ctx->key_length, dst, src);
+ }
+ 
+-
+ /*
+  * Set AES key (the real function this time, not dummy as above)
+  */
+@@ -222,7 +218,6 @@ static int ecb_decrypt(struct skcipher_r
+ 	ECB_WALK_END();
+ }
+ 
+-
+ static int cbc_encrypt(struct skcipher_request *req)
+ {
+ 	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);

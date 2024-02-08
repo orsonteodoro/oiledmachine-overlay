@@ -864,7 +864,10 @@ ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-change-to-for_each_process_thread-for-6.6.patch"
 
-	if ot-kernel_use tresor_x86_64 ; then
+	if ot-kernel_use tresor_x86_64 && ot-kernel_use tresor_x86_64-256-bit-key-support ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-use-ecb-cbc-helpers-256-for-6.6_x86_64.patch"
+	elif ot-kernel_use tresor_x86_64 && ! ot-kernel_use tresor_x86_64-256-bit-key-support ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-use-ecb-cbc-helpers-128-for-6.6_x86_64.patch"
 	elif ot-kernel_use tresor_i686 ; then
