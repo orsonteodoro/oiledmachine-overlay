@@ -1,6 +1,15 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-06 18:57:30.209512795 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-06 19:03:41.006057580 -0800
-@@ -112,7 +112,7 @@ static inline void tresor_epilog(unsigne
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-09 07:53:36.476484812 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-09 07:55:44.602978309 -0800
+@@ -52,6 +52,8 @@
+ 
+ #include "ecb_cbc_helpers.h"
+ 
++#define TRESOR_PARALLEL_BLOCKS 1
++
+ /*
+  * Assembly functions implemented in tresor-intel_asm.S
+  */
+@@ -112,7 +114,7 @@ static inline void tresor_epilog(unsigne
  	preempt_enable();
  }
  
@@ -9,7 +18,7 @@
  {
  	unsigned long irq_flags;
  	tresor_prolog(&irq_flags);
-@@ -127,7 +127,7 @@ void __tresor_encrypt(int key_length, u8
+@@ -127,7 +129,7 @@ void __tresor_encrypt(int key_length, u8
  		tresor_encblk_256(dst, src);
  		break;
  	}
@@ -18,7 +27,7 @@
  
  }
  
-@@ -156,7 +156,7 @@ void __tresor_decrypt(int key_length, u8
+@@ -156,7 +158,7 @@ void __tresor_decrypt(int key_length, u8
  void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
  {
  	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
@@ -27,7 +36,7 @@
  }
  
  /*
-@@ -165,7 +165,19 @@ void tresor_encrypt(struct crypto_tfm *t
+@@ -165,7 +167,19 @@ void tresor_encrypt(struct crypto_tfm *t
  void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
  {
  	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
@@ -48,24 +57,27 @@
  }
  
  /*
-@@ -192,14 +204,14 @@ static int tresor_skcipher_setkey(struct
+@@ -191,15 +205,15 @@ static int tresor_skcipher_setkey(struct
+ 
  static int ecb_encrypt(struct skcipher_request *req)
  {
- 	ECB_WALK_START(req, AES_BLOCK_SIZE, -1);
+-	ECB_WALK_START(req, AES_BLOCK_SIZE, -1);
 -	ECB_BLOCK(1, tresor_encrypt);
++	ECB_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
 +	ECB_BLOCK(1, __tresor_encrypt);
  	ECB_WALK_END();
  }
  
  static int ecb_decrypt(struct skcipher_request *req)
  {
- 	ECB_WALK_START(req, AES_BLOCK_SIZE, -1);
+-	ECB_WALK_START(req, AES_BLOCK_SIZE, -1);
 -	ECB_BLOCK(1, tresor_decrypt);
++	ECB_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
 +	ECB_BLOCK(1, __tresor_decrypt);
  	ECB_WALK_END();
  }
  
-@@ -207,14 +219,14 @@ static int ecb_decrypt(struct skcipher_r
+@@ -207,14 +221,14 @@ static int ecb_decrypt(struct skcipher_r
  static int cbc_encrypt(struct skcipher_request *req)
  {
  	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
@@ -76,8 +88,9 @@
  
  static int cbc_decrypt(struct skcipher_request *req)
  {
- 	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
+-	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
 -	CBC_DEC_BLOCK(1, tresor_decrypt);
++	CBC_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
 +	CBC_DEC_BLOCK(1, __tresor_decrypt);
  	CBC_WALK_END();
  }

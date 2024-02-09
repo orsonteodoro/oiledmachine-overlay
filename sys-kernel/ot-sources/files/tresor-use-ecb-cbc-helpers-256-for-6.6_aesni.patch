@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-06 10:52:18.406312611 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-06 10:57:49.127136209 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-09 10:51:07.847447570 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-09 10:51:51.414948423 -0800
 @@ -33,7 +33,6 @@
   */
  
@@ -106,8 +106,9 @@
  
  static int cbc_decrypt(struct skcipher_request *req)
  {
- 	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
+-	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
 -	CBC_DEC_BLOCK(1, tresor_decrypt);
++	CBC_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
 +	CBC_DEC_BLOCK(1, __tresor_decrypt);
  	CBC_WALK_END();
  }

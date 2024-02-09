@@ -870,7 +870,7 @@ ot-kernel_apply_tresor_fixes() {
 		:;
 	elif ot-kernel_use tresor_aesni ; then
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-use-ecb-cbc-helpers-128-for-6.6_aesni.patch"
+			"${FILESDIR}/tresor-use-ecb-cbc-helpers-256-for-6.6_aesni.patch"
 	fi
 
 	_dpatch "${PATCH_OPTS}" \
@@ -883,6 +883,11 @@ ot-kernel_apply_tresor_fixes() {
 	elif ot-kernel_use tresor_aesni ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-add-crypto-header-to-tresor_glue-for-6.6_aesni.patch"
+	fi
+
+	if ot-kernel_use tresor_aesni ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-cpuid-aesni-check-for-6.1.patch"
 	fi
 }
 

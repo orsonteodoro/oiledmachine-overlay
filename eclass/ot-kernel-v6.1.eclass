@@ -759,7 +759,12 @@ ot-kernel_apply_tresor_fixes() {
 		:;
 	elif ot-kernel_use tresor_aesni ; then
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-enc-dec-blk-for-6.1_aesni.patch"
+			"A${FILESDIR}/tresor-enc-dec-blk-for-6.1_aesni.patch"
+	fi
+
+	if ot-kernel_use tresor_aesni ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-cpuid-aesni-check-for-6.1.patch"
 	fi
 }
 
