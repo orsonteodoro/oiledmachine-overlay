@@ -1,0 +1,23 @@
+--- a/arch/x86/include/asm/uaccess.h.orig	2024-02-08 17:26:01.938156830 -0800
++++ b/arch/x86/include/asm/uaccess.h	2024-02-08 17:30:53.083382374 -0800
+@@ -95,11 +95,20 @@ static inline bool __chk_range_not_ok(un
+  * checks that the pointer is in the user space range - after calling
+  * this function, memory access functions may still return -EFAULT.
+  */
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++#define access_ok(type, addr, size)					\
++({									\
++	WARN_ON_IN_IRQ();						\
++	(likely(!__range_not_ok(addr, size, user_addr_max()))		\
++		|| unlikely(tresor_prompt_active()));			\
++})
++#else
+ #define access_ok(type, addr, size)					\
+ ({									\
+ 	WARN_ON_IN_IRQ();						\
+ 	likely(!__range_not_ok(addr, size, user_addr_max()));		\
+ })
++#endif
+ 
+ /*
+  * These are the main single-value transfer routines.  They automatically

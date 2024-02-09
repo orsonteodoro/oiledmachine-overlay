@@ -895,7 +895,7 @@ ot-kernel_apply_tresor_fixes() {
 
 	if ot-kernel_use tresor_aesni ; then
 		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/tresor-cpuid-aesni-check.patch"
+			"${FILESDIR}/tresor-cpuid-aesni-check-for-6.8.patch"
 	fi
 }
 

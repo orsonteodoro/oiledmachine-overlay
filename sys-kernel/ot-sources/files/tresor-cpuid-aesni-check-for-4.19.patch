@@ -1,0 +1,49 @@
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-08 18:27:40.507407190 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-08 18:31:30.178413576 -0800
+@@ -35,6 +35,7 @@
+  * Herbert Xu <herbert@gondor.apana.org.au>.
+  */
+ 
++#include <asm/processor.h>
+ #include <asm/crypto/glue_helper.h>
+ #include <crypto/algapi.h>
+ #include <crypto/b128ops.h>
+@@ -189,6 +190,12 @@ static int ecb_crypt(struct skcipher_req
+ 	unsigned int nbytes;
+ 	int err;
+ 
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	err = skcipher_walk_virt(&walk, req, true);
+ 
+ 	while ((nbytes = walk.nbytes)) {
+@@ -231,6 +238,12 @@ static int cbc_encrypt(struct skcipher_r
+ 	unsigned int nbytes;
+ 	int err;
+ 
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+ 	while ((nbytes = walk.nbytes)) {
+@@ -296,6 +309,12 @@ static int cbc_decrypt(struct skcipher_r
+ 	unsigned int nbytes;
+ 	int err;
+ 
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+ 	while ((nbytes = walk.nbytes)) {

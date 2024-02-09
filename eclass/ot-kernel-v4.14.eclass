@@ -450,6 +450,13 @@ ot-kernel_apply_tresor_fixes() {
 
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
+
+	if ot-kernel_use tresor_aesni ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-access_ok-4.19_aesni.patch"
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-cpuid-aesni-check-for-4.19.patch"
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
