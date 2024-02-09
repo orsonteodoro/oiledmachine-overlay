@@ -1,0 +1,88 @@
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-08 21:19:16.024819777 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-08 21:25:20.056644163 -0800
+@@ -42,6 +42,7 @@
+  * Herbert Xu <herbert@gondor.apana.org.au>.
+  */
+ 
++#include <asm/processor.h>
+ #include <asm/crypto/glue_helper.h>
+ #include <crypto/algapi.h>
+ #include <crypto/b128ops.h>
+@@ -213,6 +214,12 @@ static int ecb_crypt(struct skcipher_req
+ 	int err;
+ 	unsigned long irq_flags;
+ 
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	err = skcipher_walk_virt(&walk, req, true);
+ 
+ 	switch (ctx->key_length) {
+@@ -269,6 +276,12 @@ static int cbc_encrypt(struct skcipher_r
+ 	void (*f)(u8 *dst, const u8 *src);
+ 	unsigned long irq_flags;
+ 
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+ 	switch (ctx->key_length) {
+@@ -364,6 +377,12 @@ static int cbc_decrypt(struct skcipher_r
+ 	unsigned int nbytes;
+ 	int err;
+ 
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+ 	while ((nbytes = walk.nbytes)) {
+@@ -410,6 +429,12 @@ static const struct common_glue_ctx tres
+ 
+ static int ctr_crypt(struct skcipher_request *req)
+ {
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	return glue_ctr_req_128bit(&tresor_ctr, req);
+ }
+ 
+@@ -507,6 +532,12 @@ static int xts_encrypt(struct skcipher_r
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	return glue_xts_req_128bit(&tresor_enc_xts, req,
+ 				   __xts_tweak_tresor_encrypt,
+ 				   &ctx->tweak_ctx, &ctx->crypt_ctx, false);
+@@ -517,6 +548,12 @@ static int xts_decrypt(struct skcipher_r
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
+ 	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return -ENOTSUPP;
++
+ 	return glue_xts_req_128bit(&tresor_dec_xts, req,
+ 				   __xts_tweak_tresor_encrypt,
+ 				   &ctx->tweak_ctx, &ctx->crypt_ctx, true);

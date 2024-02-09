@@ -1,0 +1,24 @@
+--- a/arch/x86/include/asm/uaccess.h.orig	2024-02-08 21:03:16.592224652 -0800
++++ b/arch/x86/include/asm/uaccess.h	2024-02-08 21:05:16.459063066 -0800
+@@ -90,11 +90,20 @@ static inline bool pagefault_disabled(vo
+  * Return: true (nonzero) if the memory block may be valid, false (zero)
+  * if it is definitely invalid.
+  */
+-#define access_ok(addr, size)					\
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++#define access_ok(addr, size)						\
++({									\
++	WARN_ON_IN_IRQ();						\
++	(likely(!__range_not_ok(addr, size, user_addr_max()))		\
++		|| unlikely(tresor_prompt_active()));			\
++})
++#else
++#define access_ok(addr, size)						\
+ ({									\
+ 	WARN_ON_IN_IRQ();						\
+ 	likely(!__range_not_ok(addr, size, user_addr_max()));		\
+ })
++#endif
+ 
+ /*
+  * These are the main single-value transfer routines.  They automatically
