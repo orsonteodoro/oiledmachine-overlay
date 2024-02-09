@@ -443,10 +443,10 @@ ot-kernel_apply_tresor_fixes() {
 
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-prompt-wait-fix-for-4.19-i686.patch"
-	else
+			"${FILESDIR}/tresor-prompt-wait-fix-for-4.19-i686.patch"
+	elif ot-kernel_use tresor_aesni ; then
 		_dpatch "${PATCH_OPTS}" \
-"${FILESDIR}/tresor-prompt-wait-fix-for-4.19-aesni.patch"
+			"${FILESDIR}/tresor-prompt-wait-fix-for-4.19-aesni.patch"
 	fi
 
 	_dpatch "${PATCH_OPTS}" \
@@ -455,7 +455,7 @@ ot-kernel_apply_tresor_fixes() {
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-i686-v2.patch"
-	else
+	elif ot-kernel_use tresor_aesni ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-aesni-v2.patch"
 	fi
@@ -463,7 +463,7 @@ ot-kernel_apply_tresor_fixes() {
 	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-4.14.patch"
-	else
+	elif ot-kernel_use tresor_aesni ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-testmgr-show-passed-for-linux-4.14.patch"
 	fi
