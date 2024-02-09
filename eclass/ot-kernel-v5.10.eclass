@@ -622,6 +622,11 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-xts-setkey-5.4-aesni.patch"
 	fi
+
+	if ot-kernel_use tresor_aesni ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-cpuid-aesni-check-for-5.4.patch"
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

@@ -811,6 +811,11 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_aesni.patch"
 	fi
+
+	if ot-kernel_use tresor_aesni ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-cpuid-aesni-check-for-5.15.patch"
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
