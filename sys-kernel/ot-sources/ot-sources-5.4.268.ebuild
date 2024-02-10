@@ -48,6 +48,25 @@ inherit ot-kernel-v5.4
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
 # PYTHON_TARGETS="python3_10 -python3_11"
 # OILEDMACHINE-OVERLAY-TEST:  passed (5.4.268, 20240208)
+# tresor prompt - passed
+# tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-xts skcipher (256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
+
+# USE="build cfs genpatches linux-firmware lz4 ncurses openssl rock-dkms tresor
+# tresor_aesni tresor_prompt tresor_sysfs zen-sauce -bmq -bzip2 (-c2tcp) -clang
+# (-deepcc) -disable_debug -genpatches_1510 -graphicsmagick -gtk -gzip
+# -imagemagick -intel-microcode -kpgo-utils -lzma -lzo -muqss (-orca) -pcc -pgo
+# (-qt5) -r4 -reiserfs -rt -symlink -tresor_i686 -tresor_x86_64
+# -tresor_x86_64-256-bit-key-support -uksm -xz -zen-muqss -zstd"
+# CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
+# OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
+# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
+# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
+# OILEDMACHINE-OVERLAY-TEST:  (5.4.268, 20240210)
+# PYTHON_TARGETS="python3_10 -python3_11"
 # tresor prompt - passed (missing press any key message)
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
