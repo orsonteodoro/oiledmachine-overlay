@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-08 23:34:54.312593627 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-08 23:36:52.995230481 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-09 22:16:26.308083862 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-09 22:30:17.688463137 -0800
 @@ -32,6 +32,7 @@
   * Copyright © 2012-2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
   */
@@ -60,3 +60,31 @@
  	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
  	CBC_DEC_BLOCK(1, tresor_decrypt);
  	CBC_WALK_END();
+--- a/crypto/ctr.c.orig	2021-10-31 13:53:10.000000000 -0700
++++ b/crypto/ctr.c	2024-02-09 22:43:34.716062559 -0800
+@@ -5,6 +5,7 @@
+  * (C) Copyright IBM Corp. 2007 - Joy Latten <latten@us.ibm.com>
+  */
+ 
++#include <asm/processor.h>
+ #include <crypto/algapi.h>
+ #include <crypto/ctr.h>
+ #include <crypto/internal/cipher.h>
+@@ -105,6 +106,17 @@ static int crypto_ctr_crypt(struct skcip
+ 	unsigned int nbytes;
+ 	int err;
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++	const char *algo = crypto_tfm_alg_driver_name(crypto_cipher_tfm(tfm));
++	if (strstr(algo, "tresor")) {
++		unsigned int ecx = cpuid_ecx(0x00000001);
++		if (ecx & (1 << 25))
++			; // aes-ni: true
++		else
++			return -ENOTSUPP;
++	}
++#endif
++
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+ 	while (walk.nbytes >= bsize) {
