@@ -904,3 +904,4 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.7.5 with runtime black empty preview bug.
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 2.8.6 missing tsc, electron-builder.
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.9.9 quality issues.  Skipped release.
