@@ -75,7 +75,7 @@
  	int err;
  
 +#ifdef CONFIG_CRYPTO_TRESOR
-+	const char *algo = crypto_tfm_alg_driver_name(crypto_cipher_tfm(tfm));
++	const char *algo = crypto_tfm_alg_driver_name(crypto_skcipher_tfm(tfm));
 +	if (strstr(algo, "tresor")) {
 +		unsigned int ecx = cpuid_ecx(0x00000001);
 +		if (ecx & (1 << 25))
