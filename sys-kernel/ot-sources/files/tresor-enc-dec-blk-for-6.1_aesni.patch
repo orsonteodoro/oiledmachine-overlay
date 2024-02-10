@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-09 07:53:36.476484812 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-09 07:55:44.602978309 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-10 08:19:28.905954512 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-10 08:20:54.885053082 -0800
 @@ -52,6 +52,8 @@
  
  #include "ecb_cbc_helpers.h"
@@ -18,15 +18,15 @@
  {
  	unsigned long irq_flags;
  	tresor_prolog(&irq_flags);
-@@ -127,7 +129,7 @@ void __tresor_encrypt(int key_length, u8
- 		tresor_encblk_256(dst, src);
- 		break;
- 	}
--	tresor_epilog(&irq_flags);
-+	tresor_epilog(&irq_flags);
+@@ -131,7 +133,7 @@ void __tresor_encrypt(int key_length, u8
  
  }
  
+-void __tresor_decrypt(int key_length, u8 *dst, const u8 *src)
++void __tresor_decrypt_blk(int key_length, u8 *dst, const u8 *src)
+ {
+ 	unsigned long irq_flags;
+ 	tresor_prolog(&irq_flags);
 @@ -156,7 +158,7 @@ void __tresor_decrypt(int key_length, u8
  void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
  {
