@@ -117,3 +117,7 @@ inherit ot-kernel-v5.15
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
+
+# USE="tresor tresor_prompt tresor_sysfs tresor_aesni -tresor_x86_64 -tresor_x86_64-256-bit-key-support"
+# OILEDMACHINE-OVERLAY-TEST:  fail (5.15.148, 20240209)
+# tresor prompt - fail

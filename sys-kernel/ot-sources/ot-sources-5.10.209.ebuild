@@ -89,3 +89,12 @@ inherit ot-kernel-v5.10
 # tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-xts skcipher (256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
+# tresor boot init from /var/log/kern.log (expected fail, need aesni tester):
+# alg: skcipher: testing: vec->klen=16 for ecb(tresor).  enc=1.
+# alg: skcipher: ecb(tresor) encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place"
+# alg: skcipher: testing: vec->klen=16 for cbc(tresor).  enc=1.
+# alg: skcipher: cbc(tresor) encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place"
+# alg: skcipher: testing: vec->klen=16 for ctr(tresor).  enc=1.
+# alg: skcipher: ctr(tresor) encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place"
+# alg: skcipher: testing: vec->klen=32 for xts(tresor).  enc=1.
+# alg: skcipher: xts(tresor) encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place"

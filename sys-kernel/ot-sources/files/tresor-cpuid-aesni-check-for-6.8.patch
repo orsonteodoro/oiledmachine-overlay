@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-09 12:55:35.883677504 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-09 12:58:03.217997603 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-09 18:16:31.681713867 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-09 18:27:31.482083292 -0800
 @@ -32,6 +32,7 @@
   * Copyright © 2012-2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
   */
@@ -8,7 +8,33 @@
  #include <crypto/algapi.h>
  #include <crypto/internal/simd.h>
  #include <crypto/internal/skcipher.h>
-@@ -203,6 +204,12 @@ void __tresor_decrypt(const void *_ctx,
+@@ -155,6 +156,12 @@ void __tresor_decrypt_blk(int key_length
+  */
+ void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
+ {
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return;
++
+ 	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
+ 	__tresor_encrypt_blk(ctx->key_length, dst, src);
+ }
+@@ -164,6 +171,12 @@ void tresor_encrypt(struct crypto_tfm *t
+  */
+ void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
+ {
++	unsigned int ecx = cpuid_ecx(0x00000001);
++	if (ecx & (1 << 25))
++		; // aes-ni: true
++	else
++		return;
++
+ 	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
+ 	__tresor_decrypt_blk(ctx->key_length, dst, src);
+ }
+@@ -203,6 +216,12 @@ void __tresor_decrypt(const void *_ctx,
  
  static int ecb_encrypt(struct skcipher_request *req)
  {
@@ -21,7 +47,7 @@
  	ECB_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
  	ECB_BLOCK(1, __tresor_encrypt);
  	ECB_WALK_END();
-@@ -210,6 +217,12 @@ static int ecb_encrypt(struct skcipher_r
+@@ -210,6 +229,12 @@ static int ecb_encrypt(struct skcipher_r
  
  static int ecb_decrypt(struct skcipher_request *req)
  {
@@ -34,7 +60,7 @@
  	ECB_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
  	ECB_BLOCK(1, __tresor_decrypt);
  	ECB_WALK_END();
-@@ -217,6 +230,12 @@ static int ecb_decrypt(struct skcipher_r
+@@ -217,6 +242,12 @@ static int ecb_decrypt(struct skcipher_r
  
  static int cbc_encrypt(struct skcipher_request *req)
  {
@@ -47,7 +73,7 @@
  	CBC_WALK_START(req, AES_BLOCK_SIZE, -1);
  	CBC_ENC_BLOCK(__tresor_encrypt);
  	CBC_WALK_END();
-@@ -224,6 +243,12 @@ static int cbc_encrypt(struct skcipher_r
+@@ -224,6 +255,12 @@ static int cbc_encrypt(struct skcipher_r
  
  static int cbc_decrypt(struct skcipher_request *req)
  {

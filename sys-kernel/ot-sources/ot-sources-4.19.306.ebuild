@@ -50,7 +50,7 @@ inherit ot-kernel-v4.19
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor crypto (128-256 bit key size) - passed
-# tresor boot init (expected fail, need aesni tester):
+# tresor boot init from /var/log/kern.log (expected fail, need aesni tester):
 # alg: skcipher: testing 1 on encryption: klen=16 for ecb-tresor-aesni.
 # alg: skcipher: encryption failed on test 1 for ecb-tresor-aesni: ret=524
 # alg: skcipher: testing 1 on encryption: klen=16 for cbc-tresor-aesni.

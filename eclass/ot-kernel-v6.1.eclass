@@ -759,7 +759,7 @@ ot-kernel_apply_tresor_fixes() {
 		:;
 	elif ot-kernel_use tresor_aesni ; then
 		_dpatch "${PATCH_OPTS}" \
-			"A${FILESDIR}/tresor-enc-dec-blk-for-6.1_aesni.patch"
+			"${FILESDIR}/tresor-enc-dec-blk-for-6.1_aesni.patch"
 	fi
 
 	if ot-kernel_use tresor_aesni ; then

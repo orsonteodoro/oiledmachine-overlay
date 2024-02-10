@@ -120,3 +120,7 @@ inherit ot-kernel-v6.6
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
+
+# USE="tresor tresor_prompt tresor_sysfs tresor_aesni -tresor_x86_64 -tresor_x86_64-256-bit-key-support"
+# OILEDMACHINE-OVERLAY-TEST:  fail (6.6.16, 20240209)
+# tresor prompt - fail
