@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-09 08:39:46.948580775 -0800
-+++ b/arch/x86/crypto/tresor_glue.c	2024-02-09 08:51:20.584733412 -0800
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-10 01:35:21.847705887 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-10 01:36:16.363081251 -0800
 @@ -32,6 +32,7 @@
   * Copyright © 2012-2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
   */
@@ -60,3 +60,23 @@
  	CBC_WALK_START(req, AES_BLOCK_SIZE, TRESOR_PARALLEL_BLOCKS);
  	CBC_DEC_BLOCK(1, __tresor_decrypt);
  	CBC_WALK_END();
+--- a/crypto/ctr.c.orig	2022-12-11 14:15:18.000000000 -0800
++++ b/crypto/ctr.c	2024-02-10 01:37:52.725010027 -0800
+@@ -105,6 +105,17 @@ static int crypto_ctr_crypt(struct skcip
+ 	unsigned int nbytes;
+ 	int err;
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++	const char *algo = crypto_tfm_alg_driver_name(crypto_skcipher_tfm(tfm));
++	if (strstr(algo, "tresor")) {
++		unsigned int ecx = cpuid_ecx(0x00000001);
++		if (ecx & (1 << 25))
++			; // aes-ni: true
++		else
++			return -ENOTSUPP;
++	}
++#endif
++
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+ 	while (walk.nbytes >= bsize) {
