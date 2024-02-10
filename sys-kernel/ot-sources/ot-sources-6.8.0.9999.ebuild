@@ -136,7 +136,7 @@ inherit ot-kernel-v6.8
 # -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
 # PYTHON_TARGETS="python3_10 -python3_11"
-# OILEDMACHINE-OVERLAY-TEST:  (6.8.0.9999, 20240210)
+# OILEDMACHINE-OVERLAY-TEST:  (6.8.0.9999 commit 4a7bbe7, 20240210)
 # tresor prompt - passed (missing press any key message)
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
