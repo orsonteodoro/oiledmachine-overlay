@@ -23,7 +23,7 @@
  		break;
  	}
 -	tresor_epilog(&irq_flags);
-+	tresor_epilog_blk(&irq_flags);
++	tresor_epilog(&irq_flags);
  
  }
  
