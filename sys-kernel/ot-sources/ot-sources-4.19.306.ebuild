@@ -46,7 +46,7 @@ inherit ot-kernel-v4.19
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
 # PYTHON_TARGETS="python3_10 -python3_11"
 # OILEDMACHINE-OVERLAY-TEST:  (4.19.306, 20240208)
-# tresor prompt - passed
+# tresor prompt - passed (missing press any key message)
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor crypto (128-256 bit key size) - passed

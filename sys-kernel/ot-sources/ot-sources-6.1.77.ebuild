@@ -118,6 +118,38 @@ inherit ot-kernel-v6.1
 # tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
 
-# USE="tresor tresor_prompt tresor_sysfs tresor_aesni -tresor_x86_64 -tresor_x86_64-256-bit-key-support"
-# OILEDMACHINE-OVERLAY-TEST:  fail (6.1.77, 20240209)
-# tresor prompt - fail
+# USE="build cfs genpatches linux-firmware ncurses openssl symlink tresor
+# tresor_aesni tresor_prompt tresor_sysfs zen-sauce zstd -bbrv2 -bzip2 (-c2tcp)
+# -clang (-deepcc) -disable_debug -exfat -genpatches_1510 -graphicsmagick -gtk
+# -gzip -imagemagick -intel-microcode -kcfi -kpgo-utils -lto -lz4 -lzma -lzo
+# (-orca) -pcc -pgo -prjc (-qt5) -reiserfs -rt -rust -shadowcallstack
+# -tresor_i686 -tresor_x86_64 -tresor_x86_64-256-bit-key-support -xz"
+# CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
+# OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
+# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
+# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
+# PYTHON_TARGETS="python3_10 -python3_11"
+# OILEDMACHINE-OVERLAY-TEST:  (6.1.77, 20240210)
+# tresor prompt - passed (missing press any key message)
+# tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
+# tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
+# tresor boot init from /var/log/kern.log (expected fail, need aesni tester):
+# alg: skcipher: testing: vec->klen=16 for ecb-tresor-aesni.  enc=1.
+# alg: skcipher: ecb-tresor-aesni encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place (one sglist)"
+# alg: self-tests for ecb(tresor) using ecb(tresor) failed (rc=-524)
+# Call Trace:
+# <redacted>
+# alg: skcipher: testing: vec->klen=16 for cbc-tresor-aesni.  enc=1.
+# alg: skcipher: cbc-tresor-aesni encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place (one sglist)"
+# alg: self-tests for cbc(tresor) using cbc(tresor) failed (rc=-524)
+# Call Trace:
+# <redacted>
+# alg: skcipher: testing: vec->klen=16 for ctr(tresor-driver).  enc=1.
+# alg: skcipher: ctr(tresor-driver) encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place (one sglist)"
+# alg: self-tests for ctr(tresor) using ctr(tresor-driver) failed (rc=-524)
+# Call Trace:
+# <redacted>
+# alg: skcipher: failed to allocate transform for ctr(tresor): -2
+# alg: self-tests for ctr(tresor) using ctr(tresor) failed (rc=-2)
+# alg: No test for xts(tresor) (xts(tresor))

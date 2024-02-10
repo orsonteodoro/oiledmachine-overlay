@@ -131,7 +131,7 @@ inherit ot-kernel-v5.15
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
 # PYTHON_TARGETS="python3_10 -python3_11"
 # OILEDMACHINE-OVERLAY-TEST:  (5.15.148, 20240210)
-# tresor prompt - passed
+# tresor prompt - passed (missing press any key message)
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - unknown
@@ -139,13 +139,16 @@ inherit ot-kernel-v5.15
 # tresor boot init from /var/log/kern.log (expected fail, need aesni tester):
 # alg: skcipher: testing: vec->klen=16 for ecb-tresor-aesni.  enc=1.
 # alg: skcipher: ecb-tresor-aesni encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place"
+# alg: self-tests for ecb(tresor) using ecb(tresor) failed (rc=-524)
 # Call Trace:
 # <redacted>
 # alg: skcipher: testing: vec->klen=16 for cbc-tresor-aesni.  enc=1.
 # alg: skcipher: cbc-tresor-aesni encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place"
+# alg: self-tests for cbc(tresor) using cbc(tresor) failed (rc=-524)
 # Call Trace:
 # <redacted>
 # alg: skcipher: testing: vec->klen=16 for ctr(tresor-driver).  enc=1.
 # alg: skcipher: ctr(tresor-driver) encryption failed on test vector 0; expected_error=0, actual_error=-524, cfg="in-place"
+# alg: self-tests for ctr(tresor) using ctr(tresor-driver) failed (rc=-524)
 # Call Trace:
 # <redacted>
