@@ -798,7 +798,7 @@ SLOT="0"
 IUSE+=" r4"
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
-	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,jpeg,png]
+	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,lcms,jpeg,png,webp]
 	media-libs/vulkan-loader
 "
 DEPEND+="
