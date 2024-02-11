@@ -1,7 +1,7 @@
 {
   "name": "upscayl",
   "private": true,
-  "version": "2.9.8",
+  "version": "2.9.9",
   "productName": "Upscayl",
   "author": {
     "name": "Nayam Amarshe",
@@ -54,7 +54,7 @@
     "dist:pkg": "tsc && npm run build && cross-env DEBUG=* electron-builder build -m pkg",
     "dist:mac": "tsc && npm run build && electron-builder --mac --universal",
     "dist:mac-arm64": "tsc && npm run build && electron-builder --mac --arm64",
-    "dist:mas": "tsc && npm run build && electron-builder --mac mas --universal -c mas.json",
+    "dist:mas": "npm run enable-store && tsc && npm run build && electron-builder --mac mas --universal -c mas.json && npm run disable-store",
     "dist:mas-dev": "tsc && npm run build && electron-builder --mac mas-dev --universal -c mas-dev.json",
     "dist:win": "tsc && npm run build && electron-builder --win",
     "dist:linux": "tsc && npm run build && electron-builder --linux",
@@ -64,7 +64,9 @@
     "publish-mac-universal-app": "tsc && npm run build && electron-builder --mac --universal --publish always",
     "publish-mac-app": "tsc && npm run build && electron-builder --mac --x64 --publish always",
     "publish-mac-arm-app": "tsc && npm run build && electron-builder --mac --arm64 --publish always",
-    "dist:appstore": "CSC_KEY_PASSWORD=$PASSWORD CSC_LINK=$(openssl base64 -in $CERTIFICATE_PATH) npm run dist:mac-mas"
+    "dist:appstore": "CSC_KEY_PASSWORD=$PASSWORD CSC_LINK=$(openssl base64 -in $CERTIFICATE_PATH) npm run dist:mac-mas",
+    "enable-store": "sed -i '' -e 's/APP_STORE_BUILD: false,/APP_STORE_BUILD: true,/' common/feature-flags.ts",
+    "disable-store": "sed -i '' -e 's/APP_STORE_BUILD: true,/APP_STORE_BUILD: false,/' common/feature-flags.ts"
   },
   "build": {
     "productName": "Upscayl",
@@ -131,6 +133,7 @@
       "gatekeeperAssess": false,
       "mergeASARs": false,
       "x64ArchFiles": "*",
+      "minimumSystemVersion": "12.0.0",
       "category": "public.app-category.photography",
       "entitlements": "resources/entitlements.mac.plist",
       "entitlementsInherit": "resources/entitlements.mac.plist",
@@ -176,7 +179,7 @@
       "category": "Graphics;2DGraphics;RasterGraphics;ImageProcessing;",
       "synopsis": "AI Image Upscaler",
       "description": "Free and Open Source AI Image Upscaler",
-      "icon": "resources/icons/512x512.png"
+      "icon": "resources/icons/"
     },
     "win": {
       "publisherName": "Upscayl Team",
@@ -208,12 +211,12 @@
     "@types/react-dom": "^18.0.11",
     "autoprefixer": "^10.4.16",
     "cross-env": "^7.0.3",
-    "daisyui": "^3.9.3",
-    "electron": "^27.0.2",
-    "electron-builder": "^24.6.4",
+    "daisyui": "^3.9.4",
+    "electron": "^27.2.4",
+    "electron-builder": "^24.9.1",
     "next": "^13.5.6",
     "postcss": "^8.4.31",
-    "prettier": "^3.0.0",
+    "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -230,7 +233,7 @@
     "firebase": "^10.3.0",
     "gray-matter": "^4.0.3",
     "jotai": "^2.2.2",
-    "react-compare-slider": "^2.2.0",
+    "react-compare-slider": "^3.0.1",
     "react-markdown": "^9.0.1",
     "react-select": "^5.7.4",
     "react-tooltip": "^5.18.1",
