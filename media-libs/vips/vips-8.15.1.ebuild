@@ -528,7 +528,7 @@ eerror
 		$(meson_feature zlib)
 		$(meson_native_use_bool doxygen)
 		$(meson_native_use_bool gtk-doc gtk_doc)
-		$(meson_native_use_bool introspection)
+		$(meson_native_use_feature introspection)
 		$(meson_use analyze)
 		$(meson_use cxx cplusplus)
 		$(meson_use debug)
