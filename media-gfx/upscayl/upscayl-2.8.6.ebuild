@@ -750,7 +750,7 @@ libvulkan.so.1
 resources/app.asar.unpacked/node_modules/sharp/build/Release/sharp-linux-x64.node
 resources/app.asar.unpacked/node_modules/sharp/node_modules/node-addon-api/tools/conversion.js
 resources/app.asar.unpacked/node_modules/sharp/node_modules/semver/bin/semver.js
-resources/bin/upscayl-bin
+resources/bin/upscayl-realesrgan
 upscayl
 	)
 	for f in ${L[@]} ; do
