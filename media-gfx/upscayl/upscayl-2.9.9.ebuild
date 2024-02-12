@@ -830,21 +830,8 @@ npm_update_lock_install_post() {
 	enpm uninstall "@types/electron"
 }
 
-check_cairo() {
-	# Avoid artifacts and missing tiles.
-	if has_version "x11-libs/cairo[pgo]" ; then
-eerror "The pgo USE flag must be disabled in x11-libs/cairo."
-		die
-	fi
-	if has_version "x11-libs/cairo[epgo]" ; then
-eerror "The epgo USE flag must be disabled in x11-libs/cairo."
-		die
-	fi
-ewarn "Using pgo with x11-libs/cairo with produce artifacts or missing tiles."
-}
-
 src_compile() {
-	check_cairo
+ewarn "Using pgo with x11-libs/cairo with an old pgo profile may produce artifacts or missing tiles."
 	electron-app_set_sharp_env
 	export NEXT_TELEMETRY_DISABLED=1
 	export PATH="${S}/node_modules/.bin:${PATH}"

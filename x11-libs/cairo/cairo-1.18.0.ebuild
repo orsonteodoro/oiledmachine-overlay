@@ -117,6 +117,7 @@ ewarn
 		fi
 	}
 	multilib_foreach_abi setup_abi
+ewarn "The pgo profile may need to be deleted if it produces artifacts or missing tiles."
 }
 
 pkg_setup() {

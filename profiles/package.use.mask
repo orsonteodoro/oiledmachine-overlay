@@ -83,6 +83,3 @@ app-admin/howdy ffmpeg pyv4l2
 
 # Crash
 x11-misc/sddm wayland
-
-# It produces round artifacts and missing tiles with upscayl
-x11-libs/cairo pgo epgo
