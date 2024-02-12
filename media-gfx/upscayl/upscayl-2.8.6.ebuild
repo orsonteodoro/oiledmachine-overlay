@@ -708,7 +708,21 @@ npm_update_lock_install_post() {
 	enpm uninstall "@types/electron"
 }
 
+check_cairo() {
+	# Avoid artifacts and missing tiles.
+	if has_version "x11-libs/cairo[pgo]" ; then
+eerror "The pgo USE flag must be disabled in x11-libs/cairo."
+		die
+	fi
+	if has_version "x11-libs/cairo[epgo]" ; then
+eerror "The epgo USE flag must be disabled in x11-libs/cairo."
+		die
+	fi
+ewarn "Using pgo with x11-libs/cairo with produce artifacts or missing tiles."
+}
+
 src_compile() {
+	check_cairo
 	electron-app_set_sharp_env
 	export NEXT_TELEMETRY_DISABLED=1
 	export PATH="${S}/node_modules/.bin:${PATH}"
@@ -786,5 +800,5 @@ ewarn
 # notes:  the jpg with preview is broken for 2.9.1
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.7.5 with runtime black empty preview bug.
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.8.6 missing tsc, electron-builder.
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 2.9.9 visual circle artifacts, black square blocks.
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.8.6 (20240211)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.9.9 (20240211)
