@@ -51,7 +51,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
  .set	rk5,	%xmm6		/* round key  5 */
  .set	rk10,	%xmm7		/* round key 10 */
 -
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +/* Additional 128-bit SSE registers only on X86_64 */
 +.set	rk6,	%xmm8		/* round key 6 */
 +.set	rk7,	%xmm9		/* round key 7 */
@@ -108,7 +108,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
  	pxor		%xmm5,%xmm5
  	pxor		%xmm6,%xmm6
  	pxor		%xmm7,%xmm7
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	pxor		%xmm8,%xmm8
 +	pxor		%xmm9,%xmm9
 +	pxor		%xmm10,%xmm10
@@ -130,7 +130,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
  	pxor		%mm7,%mm7
 +#endif
  	/* leave */
- #ifdef __x86_64__
+ #ifdef CONFIG_X86_64
  #else
 @@ -229,81 +255,86 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  
@@ -160,7 +160,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
  
 -/* copy four 32-bit values from debug registers into one 128-bit sse register */
 -.macro	dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
- #ifdef __x86_64__
+ #ifdef CONFIG_X86_64
 -	movq		\dbg0,rax
 -	movd		eax,\sse
 -	movq		\dbg1,rax
@@ -210,7 +210,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
  
 -/* copy four 32-bit values from debug registers into one 128-bit sse register */
 -.macro	xts_dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
--#ifdef __x86_64__
+-#ifdef CONFIG_X86_64
 -	movq		\dbg0,rax
 -	rorq		$32,rax
 -	movd		eax,\sse
@@ -260,7 +260,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 -	pslldq		$12,rhelp
 -	pxor		rhelp,\sse
 +
- #ifdef __x86_64__
+ #ifdef CONFIG_X86_64
 -	xorq		rax,rax
 -#else
 -	xorl		eax,eax
@@ -500,7 +500,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 +	pxor4_w		edx,\r1 /* r1 = w7 w6 w5 w4 */
 +.endm
 +
- #ifdef __x86_64__
+ #ifdef CONFIG_X86_64
 -	xorl		rc_tab(,rcx,4),edx
 -#else
 -	xorl		rc_tab(,ecx,4),edx
@@ -878,7 +878,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 -	generate_rk	rk4,rk5
 -	/* Generate rk6 to rk9 */
 -	generate_rk	rk5,rk10
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +.macro key_schedule64_10
 +	/* Generate round keys from rk1 to rk10 for AES-128 */
 +	generate_rk_10	rk0,rk1,$0x1
@@ -917,7 +917,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 +.endm
 +#endif
 +
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +#else
 +.macro key_schedule32_10
 +	/* Generate round keys from rk1 to rk10 for AES-128 */
@@ -946,7 +946,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
  .endm
 +#endif
  
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +/* copy secret key from dbg regs into xmm regs */
 +.macro read_key r0 r1
 +	dbg_to_sse	db0,db1,\r0
@@ -957,7 +957,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 -/***************************************************************************
 - *	  			CODE SEGMENT
 - **************************************************************************/
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +.macro tresor_encblk64_10
 +/* Nr=10 rounds i_nround, i_lround.  See page 14 of FIPS 197 for Nr. */
 +	prolog
@@ -1058,7 +1058,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 -tresor_decblk_128:
 +#endif
 +
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +.macro tresor_decblk64_10
 +/* Nr=10 rounds counting i_nround, i_lround */
 +	prolog
@@ -1153,7 +1153,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 +	.global		tresor_set_key
 +	.global		tresor_encblk_128
 +	.global		tresor_decblk_128
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	.global		tresor_encblk_192
 +	.global		tresor_decblk_192
 +	.global		tresor_encblk_256
@@ -1168,42 +1168,42 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 +
 +/* void tresor_encblk_128(u8 *out, const u8 *in) */
 +tresor_encblk_128:
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	tresor_encblk64_10
 +#else
 +	tresor_encblk32_10
 +#endif
 +/* void tresor_decblk_128(u8 *out, const u8 *in) */
 +tresor_decblk_128:
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	tresor_decblk64_10
 +#else
 +	tresor_decblk32_10
 +#endif
 +/* void tresor_encblk_192(u8 *out, const u8 *in) */
 +tresor_encblk_192:
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	tresor_encblk64_12
 +#else
 +	ret
 +#endif
 +/* void tresor_decblk_192(u8 *out, const u8 *in) */
 +tresor_decblk_192:
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	tresor_decblk64_12
 +#else
 +	ret
 +#endif
 +/* void tresor_encblk_256(u8 *out, const u8 *in) */
 +tresor_encblk_256:
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	tresor_encblk64_14
 +#else
 +	ret
 +#endif
 +/* void tresor_decblk_256(u8 *out, const u8 *in) */
 +tresor_decblk_256:
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	tresor_decblk64_14
 +#else
 +	ret
@@ -1215,7 +1215,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 -	xts_dbg_to_sse	db0,db1,db2,db3,rk1
 -	pxor		rk1,rstate
 -	key_schedule
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	prolog
 +	xts_dbg_to_sse	rk0
 +	pxor		rk0,rstate
@@ -1241,7 +1241,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
  
  /* void tresor_set_key(const u8 *in_key) */
  tresor_set_key:
- #ifdef __x86_64__
+ #ifdef CONFIG_X86_64
 +	/*
 +	1  0   : index/address
 +	w1 w0 -> db0 in
@@ -1317,7 +1317,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
 @@ -637,46 +1460,35 @@ tresor_set_key:
  /* void tresor_set_key_xts_tweak_128(const u8 *in_key) */
  tresor_set_key_xts_tweak_128:
- #ifdef __x86_64__
+ #ifdef CONFIG_X86_64
 -	pushq		rcx
 +/*
 +	rdi[0] = tweak_key[0]:tk0 = in
@@ -1391,7 +1391,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
  asmlinkage void tresor_set_key_xts_tweak_128(const u8 *in_key);
  asmlinkage void tresor_encblk_128(u8 *out, const u8 *in);
  asmlinkage void tresor_decblk_128(u8 *out, const u8 *in);
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +asmlinkage void tresor_encblk_192(u8 *out, const u8 *in);
 +asmlinkage void tresor_decblk_192(u8 *out, const u8 *in);
 +asmlinkage void tresor_encblk_256(u8 *out, const u8 *in);
@@ -1404,7 +1404,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
  {
  	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
  
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	if( key_len != AES_KEYSIZE_128
 +		&& key_len != AES_KEYSIZE_192
 +		&& key_len != AES_KEYSIZE_256 )
@@ -1428,7 +1428,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
 +		case AES_KEYSIZE_128:
 +			tresor_encblk_128(dst, src);
 +			break;
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +		case AES_KEYSIZE_192:
 +			tresor_encblk_192(dst, src);
 +			break;
@@ -1448,7 +1448,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
 +		case AES_KEYSIZE_128:
 +			tresor_decblk_128(dst, src);
 +			break;
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +		case AES_KEYSIZE_192:
 +			tresor_decblk_192(dst, src);
 +			break;
@@ -1629,7 +1629,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
  	.cra_u	= {
  		.cipher	= {
  			.cia_min_keysize	= AES_MIN_KEY_SIZE,
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +			.cia_max_keysize	= AES_MAX_KEY_SIZE,
 +#else
  			.cia_max_keysize	= AES_MIN_KEY_SIZE,
@@ -1641,7 +1641,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
  			.cra_module		= THIS_MODULE,
  		},
  		.min_keysize	= AES_MIN_KEY_SIZE,
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +		.max_keysize	= AES_MAX_KEY_SIZE,
 +#else
  		.max_keysize	= AES_MIN_KEY_SIZE,
@@ -1653,7 +1653,7 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
  			.cra_module		= THIS_MODULE,
  		},
  		.min_keysize	= AES_MIN_KEY_SIZE,
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +		.max_keysize	= AES_MAX_KEY_SIZE,
 +#else
  		.max_keysize	= AES_MIN_KEY_SIZE,

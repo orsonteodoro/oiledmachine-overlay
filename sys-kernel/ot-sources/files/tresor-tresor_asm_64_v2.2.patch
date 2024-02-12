@@ -33,7 +33,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  .set	esp,	%esp
  .set	ebp,	%ebp
  
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +/* 64-bit GPR registers */
 +.set	rax,	%rax
 +.set	rbx,	%rbx
@@ -51,7 +51,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  
  /* function prologue */ 
  .macro prolog
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	/* enter */
 +	pushq		rbp
 +	movq		rsp,rbp
@@ -77,7 +77,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  /* function epilogue */
  .macro epilog
  	/* write output */
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	popq		rsi
 +	popq		rdi
 +	popq		rdx
@@ -97,7 +97,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	pxor		%mm6,%mm6
  	pxor		%mm7,%mm7
  	/* leave */
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +#else
  	popa
  	pop		ebp
@@ -112,7 +112,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
 -/* copy four 32-bit debug registers into one 128-bit sse register */
 +/* copy four 32-bit values from debug registers into one 128-bit sse register */
  .macro	dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	movq		\dbg0,rax
 +	movd		eax,\sse
 +	movq		\dbg1,rax
@@ -140,7 +140,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	psrldq		$\index,rhelp	
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	.if \init
 +		movzx	ft_tab+1(,rax,4),edx
 +	.else
@@ -160,7 +160,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	ks_box		14,\rk,0
  	shl		$8,edx
  	ks_box		13,\rk,0
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	xorl		rc_tab(,rcx,4),edx
 +#else
  	xorl		rc_tab(,ecx,4),edx
@@ -172,7 +172,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	psrldq		$\r,rhelp
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	movl		gfbd9e(,rax,4),eax
 +#else
  	movl		gfbd9e(,eax,4),eax
@@ -184,7 +184,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	psrldq		$\r,rhelp
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	.if \init
 +		movl	\tab+\off(,rax,4),\reg
 +	.else
@@ -204,7 +204,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  
  /* void tresor_set_key(const u8 *in_key) */
  tresor_set_key:
-+#ifdef __x86_64__
++#ifdef CONFIG_X86_64
 +	pushq		rax
 +	movl		0(rdi),eax
 +	movq		rax,db0
