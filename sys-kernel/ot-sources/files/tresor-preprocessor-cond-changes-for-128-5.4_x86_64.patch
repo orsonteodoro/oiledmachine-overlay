@@ -1,0 +1,191 @@
+--- a/arch/x86/crypto/tresor_glue.c.orig	2024-02-12 19:39:01.026108239 -0800
++++ b/arch/x86/crypto/tresor_glue.c	2024-02-12 19:41:53.832217143 -0800
+@@ -57,10 +57,14 @@
+  * Assembly functions implemented in tresor-intel_asm.S
+  */
+ asmlinkage void tresor_set_key(const u8 *in_key);
++#ifdef CONFIG_X86_64
+ asmlinkage void tresor_set_key_xts_tweak_128(const u8 *in_key);
++#endif
+ asmlinkage void tresor_encblk_128(u8 *out, const u8 *in);
+ asmlinkage void tresor_decblk_128(u8 *out, const u8 *in);
++#ifdef CONFIG_X86_64
+ asmlinkage void tresor_encblk_128_xts_tweak(u8 *out, const u8 *in);
++#endif
+ 
+ 
+ 
+@@ -146,6 +150,7 @@ void tresor_setkey(const u8 *in_key)
+ 	on_each_cpu(tresor_setkey_current_cpu, (void *)in_key, 1);
+ }
+ 
++#ifdef CONFIG_X86_64
+ /*
+  * Set XTS tweak key
+  */
+@@ -160,6 +165,7 @@ void tresor_setkey_xts_tweak(const u8 *i
+ {
+ 	on_each_cpu(tresor_setkey_xts_tweak_current_cpu, (void *)in_key, 1);
+ }
++#endif
+ 
+ static int tresor_skcipher_setkey(struct crypto_skcipher *tfm, const u8 *key, unsigned int keylen)
+ {
+@@ -496,7 +502,6 @@ static struct skcipher_alg tresor_skciph
+ 		.setkey		= tresor_skcipher_setkey,
+ 		.encrypt	= cbc_encrypt,
+ 		.decrypt	= cbc_decrypt,
+-#ifdef CONFIG_X86_64
+ 	}, {
+ 		.base = {
+ 			.cra_name		= "__ctr(tresor)",
+@@ -514,6 +519,7 @@ static struct skcipher_alg tresor_skciph
+ 		.setkey		= tresor_skcipher_setkey,
+ 		.encrypt	= ctr_crypt,
+ 		.decrypt	= ctr_crypt,
++#ifdef CONFIG_X86_64
+ 	}, {
+ 		.base = {
+ 			.cra_name		= "__xts(tresor)",
+--- a/arch/x86/crypto/tresor_asm.S.orig	2024-02-12 19:39:00.906109556 -0800
++++ b/arch/x86/crypto/tresor_asm.S	2024-02-12 19:43:55.810722058 -0800
+@@ -219,8 +219,7 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	pxor		%mm6,%mm6
+ 	pxor		%mm7,%mm7
+ 	/* leave */
+-#ifdef CONFIG_X86_64
+-#else
++#ifdef CONFIG_X86_32
+ 	popa
+ 	pop		ebp
+ #endif
+@@ -275,9 +274,9 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	pxor		rhelp,\sse
+ .endm
+ 
++#ifdef CONFIG_X86_64
+ /* copy four 32-bit values from debug registers into one 128-bit sse register */
+ .macro	xts_dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
+-#ifdef CONFIG_X86_64
+ 	movq		\dbg0,rax
+ 	rorq		$32,rax
+ 	movd		eax,\sse
+@@ -293,17 +292,12 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	pxor		rhelp,\sse
+ 	movq		\dbg3,rax
+ 	rorq		$32,rax
+-#else
+-#endif
+ 	movd		eax,rhelp
+ 	pslldq		$12,rhelp
+ 	pxor		rhelp,\sse
+-#ifdef CONFIG_X86_64
+ 	xorq		rax,rax
+-#else
+-	xorl		eax,eax
+-#endif
+ .endm
++#endif
+ 
+ /* copy four 32-bit general purpose registers into one 128-bit sse register */
+ .macro	gpr_to_sse gpr0 gpr1 gpr2 gpr3 sse
+@@ -545,8 +539,10 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	.global		tresor_set_key
+ 	.global		tresor_encblk_128
+ 	.global		tresor_decblk_128
++#ifdef CONFIG_X86_64
+ 	.global		tresor_set_key_xts_tweak_128
+ 	.global		tresor_encblk_128_xts_tweak
++#endif
+ 	.extern		crypto_ft_tab
+ 	.extern		crypto_fl_tab
+ 	.extern		crypto_it_tab
+@@ -589,6 +585,7 @@ tresor_decblk_128:
+ 	i_lround	rk1
+ 	epilog
+ 
++#ifdef CONFIG_X86_64
+ /* void tresor_encblk_128_xts_tweak(u8 *out, const u8 *in) */
+ tresor_encblk_128_xts_tweak:
+ 	prolog 
+@@ -606,6 +603,7 @@ tresor_encblk_128_xts_tweak:
+ 	f_nround_	rk9a,rk9b,rk5
+ 	f_lround	rk10
+ 	epilog
++#endif
+ 
+ /* void tresor_set_key(const u8 *in_key) */
+ tresor_set_key:
+@@ -634,9 +632,9 @@ tresor_set_key:
+ #endif
+ 	ret
+ 
++#ifdef CONFIG_X86_64
+ /* void tresor_set_key_xts_tweak_128(const u8 *in_key) */
+ tresor_set_key_xts_tweak_128:
+-#ifdef CONFIG_X86_64
+ 	pushq		rcx
+ 	pushq		rbx
+ 	pushq		rax
+@@ -677,6 +675,5 @@ tresor_set_key_xts_tweak_128:
+ 	popq		rax
+ 	popq		rbx
+ 	popq		rcx
+-#else
+-#endif
+ 	ret
++#endif
+--- a/init/main.c.orig	2024-02-12 20:49:36.803710700 -0800
++++ b/init/main.c	2024-02-12 20:53:36.381207312 -0800
+@@ -1537,7 +1537,9 @@ static noinline void __init kernel_init_
+ 	alg_test("ecb(tresor)", "ecb(tresor)", 0, 0);
+ 	alg_test("cbc(tresor)", "cbc(tresor)", 0, 0);
+ 	alg_test("ctr(tresor)", "ctr(tresor)", 0, 0);
++#ifdef CONFIG_X86_64
+ 	alg_test("xts(tresor)", "xts(tresor)", 0, 0);
++#endif
+ 	tresor_lock_tests();
+ #endif
+ 
+--- a/crypto/testmgr.c.orig	2024-02-12 20:49:36.911709572 -0800
++++ b/crypto/testmgr.c	2024-02-12 20:55:58.271724071 -0800
+@@ -2762,6 +2762,7 @@ static int test_skcipher_vec_cfg(const c
+ 					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
+ #ifdef CONFIG_CRYPTO_TRESOR
+ 	if (strstr(driver, "tresor")) {
++#ifdef CONFIG_X86_64
+ 		/* continue tests so we can see breakage */
+ 		if (strstr(driver, "xts") && vec->klen > 32) {
+ 			pr_info("alg: skcipher: vec->klen=%d for %s is skipped and unsupported.", vec->klen, driver);
+@@ -2772,12 +2773,15 @@ static int test_skcipher_vec_cfg(const c
+ 			pr_info("alg: skcipher: vec->klen=%d for %s is skipped and unsupported.", vec->klen, driver);
+ 			return 0;
+ 		}
++#endif
+ 
+ 		pr_info("alg: skcipher: testing: vec->klen=%d for %s.  enc=%d.", vec->klen, driver, enc);
+ 
+ 		tresor_setkey(vec->key);
++#ifdef CONFIG_X86_64
+ 		if (strstr(driver, "xts"))
+ 			tresor_setkey_xts_tweak(vec->key + vec->klen/2);
++#endif
+ 	}
+ #endif
+ 	err = do_setkey(crypto_skcipher_setkey, tfm, vec->key, vec->klen,
+@@ -5597,6 +5601,7 @@ static const struct alg_test_desc alg_te
+ 		}
+ 	}, {
+ #ifdef CONFIG_CRYPTO_TRESOR
++#ifdef CONFIG_X86_64
+ 		.alg = "xts(tresor)",
+ 		.generic_driver = "xts(ecb(aes-generic))",
+ 		.test = alg_test_skcipher,
+@@ -5606,6 +5611,7 @@ static const struct alg_test_desc alg_te
+ 		}
+ 	}, {
+ #endif
++#endif
+ 		.alg = "xts(twofish)",
+ 		.generic_driver = "xts(ecb(twofish-generic))",
+ 		.test = alg_test_skcipher,

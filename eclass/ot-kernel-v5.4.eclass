@@ -575,6 +575,20 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-cpuid-aesni-check-for-5.4.patch"
 	fi
+
+
+	if ot-kernel_use tresor_x86_64-256-bit-key-support && ot-kernel_use tresor_x86_64 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-preprocessor-cond-changes-for-256-5.4_x86_64.patch"
+	elif ! ot-kernel_use tresor_x86_64-256-bit-key-support && ot-kernel_use tresor_x86_64 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-preprocessor-cond-changes-for-128-5.4_x86_64.patch"
+	elif ot-kernel_use tresor_i686 ; then
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/tresor-preprocessor-cond-changes-for-128-5.4_x86_64.patch"
+	else
+		:;
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
