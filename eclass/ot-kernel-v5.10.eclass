@@ -635,10 +635,11 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-preprocessor-cond-changes-for-128-5.4_x86_64.patch"
 	elif ot-kernel_use tresor_i686 ; then
+	# Patch reuse was tested okay.
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-preprocessor-cond-changes-for-128-5.4_x86_64.patch"
-	else
-		:;
+	#elif ot-kernel_use tresor_aesni ; then
+	#	Only 64-bit X86 supported.
 	fi
 }
 
