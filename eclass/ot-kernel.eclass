@@ -1920,14 +1920,30 @@ apply_tresor() {
 	cd "${BUILD_DIR}" || die
 	local platform
 
-	if [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${TRESOR_TARGET_OVERRIDE}" == "x86_64_aesni_256" ]] ; then
+		# For development
+einfo "Applying TRESOR for x86_64 with AES-NI"
+		platform="aesni"
+	elif [[ "${TRESOR_TARGET_OVERRIDE}" == "x86_64_generic_256" ]] ; then
+		# For development
+einfo "Applying TRESOR for x86_64"
+		platform="i686"
+	elif [[ "${TRESOR_TARGET_OVERRIDE}" == "x86_64_generic_128" ]] ; then
+		# For development
+einfo "Applying TRESOR for x86_64"
+		platform="i686"
+	elif [[ "${TRESOR_TARGET_OVERRIDE}" == "x86_generic_128" ]] ; then
+		# For development
+einfo "Applying TRESOR for x86"
+		platform="i686"
+	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
 einfo "Applying TRESOR for x86_64 with AES-NI"
 		platform="aesni"
 	elif [[ "${arch}" == "x86_64" ]] ; then
 einfo "Applying TRESOR for x86_64"
 		platform="i686"
 	elif [[ "${arch}" == "x86" ]] ; then
-einfo "Applying TRESOR for x86_32"
+einfo "Applying TRESOR for x86"
 		platform="i686"
 	fi
 
@@ -3430,6 +3446,7 @@ ot-kernel_clear_env() {
 	unset SQUASHFS_ZLIB
 	unset STD_PC_SPEAKER
 	unset TRESOR_MAX_KEY_SIZE
+	unset TRESOR_TARGET_OVERRIDE
 	unset TTY_DRIVER
 	unset QEMU_GUEST_LINUX
 	unset QEMU_HOST

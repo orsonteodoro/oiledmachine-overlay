@@ -529,10 +529,25 @@ ot-kernel_apply_tresor_fixes() {
 			TRESOR_MAX_KEY_SIZE="128"
 		fi
 	fi
+
+	local tresor_patch_target # <arch>_<type>_<max_key_size>
+	if [[ -n "${TRESOR_TARGET_OVERRIDE}" ]] ; then
+		# For development
+		tresor_patch_target="${TRESOR_TARGET_OVERRIDE}"
+	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+		tresor_patch_target="x86_64_aesni_256"
+	elif [[ "${arch}" == "x86_64" ]] && [[ "${TRESOR_MAX_KEY_SIZE}" == "192" || "${TRESOR_MAX_KEY_SIZE}" == "256" ]] ; then
+		tresor_patch_target="x86_64_generic_256"
+	elif [[ "${arch}" == "x86_64" ]] && [[ "${TRESOR_MAX_KEY_SIZE}" == "128" ]]  ; then
+		tresor_patch_target="x86_64_generic_128"
+	elif [[ "${arch}" == "x86" ]] ; then
+		tresor_patch_target="x86_generic_128"
+	fi
+
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
 
-	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_generic_256" || "${tresor_patch_target}" == "x86_64_generic_128" || "${tresor_patch_target}" == "x86_generic_128" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-tresor_asm_64_v2.2.patch"
 		_dpatch "${PATCH_OPTS}" \
@@ -546,10 +561,10 @@ ot-kernel_apply_tresor_fixes() {
 
         _dpatch "${PATCH_OPTS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 
-	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_generic_256" || "${tresor_patch_target}" == "x86_64_generic_128" || "${tresor_patch_target}" == "x86_generic_128" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" \
 			"${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-i686.patch"
-	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" \
 			"${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-aesni.patch"
 	fi
@@ -557,18 +572,18 @@ ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
-	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_generic_256" || "${tresor_patch_target}" == "x86_64_generic_128" || "${tresor_patch_target}" == "x86_generic_128" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_i686.patch"
-	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_aesni.patch"
 	fi
 
-	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_generic_256" || "${tresor_patch_target}" == "x86_64_generic_128" || "${tresor_patch_target}" == "x86_generic_128" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.6.patch"
-	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.5.patch"
 	fi
@@ -576,18 +591,18 @@ ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-5.10.patch"
 
-	if [[ "${TRESOR_MAX_KEY_SIZE}" == "192" || "${TRESOR_MAX_KEY_SIZE}" == "256" ]] && [[ "${arch}" == "x86_64" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_generic_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-256-bit-aes-support-i686-v3.1-for-5.10.patch"
 	fi
 
-	if [[ "${TRESOR_MAX_KEY_SIZE}" == "192" || "${TRESOR_MAX_KEY_SIZE}" == "256" ]] && [[ "${arch}" == "x86_64" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_generic_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
-	elif [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${tresor_patch_target}" == "x86_64_generic_256" || "${tresor_patch_target}" == "x86_64_generic_128" || "${tresor_patch_target}" == "x86_generic_128" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-5.10.patch"
-	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
 	fi
@@ -595,30 +610,30 @@ ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
 
-	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_generic_256" || "${tresor_patch_target}" == "x86_64_generic_128" || "${tresor_patch_target}" == "x86_generic_128" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-xts-setkey-5.4-i686.patch"
-	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-xts-setkey-5.4-aesni.patch"
 	fi
 
-	if [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-cpuid-aesni-check-for-5.4.patch"
 	fi
 
-	if [[ "${TRESOR_MAX_KEY_SIZE}" == "192" || "${TRESOR_MAX_KEY_SIZE}" == "256" ]] && [[ "${arch}" == "x86_64" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	if [[ "${tresor_patch_target}" == "x86_64_generic_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-preprocessor-cond-changes-for-256-5.4_x86_64.patch"
-	elif [[ "${TRESOR_MAX_KEY_SIZE}" == "128" ]] && [[ "${arch}" == "x86_64" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
+	elif [[ "${tresor_patch_target}" == "x86_64_generic_128" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-preprocessor-cond-changes-for-128-5.4_x86_64.patch"
-	elif [[ "${arch}" == "x86" ]] ; then
+	elif [[ "${tresor_patch_target}" == "x86_generic_128" ]] ; then
 	# Patch reuse was tested okay.
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-preprocessor-cond-changes-for-128-5.4_x86_64.patch"
-	#elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+	#elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 	#	Only 64-bit X86 supported.
 	fi
 }
