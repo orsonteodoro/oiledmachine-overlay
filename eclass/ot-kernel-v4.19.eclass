@@ -312,7 +312,7 @@ BDEPEND+="
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	:;
+	:
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
@@ -541,6 +541,23 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "ck-0.162-${CK_KV}-24da54e.patch" ]] ; then
 		# -N is used to skip the duplicate hunks
 		_tpatch "${PATCH_OPTS} -N" "${path}" 0 1 ""
+	elif [[ "${path}" =~ "ck-0.180-4.19.0-dc988b5.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.180-4.19.0-dc988b5-fixes-for-4.19.294.patch"
+	elif [[ "${path}" =~ "ck-0.180-4.19.0-ba77544.patch" ]] ; then
+		# Single hunk
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.180-4.19.0-ba77544-fixes-for-4.19.294.patch"
+	elif [[ "${path}" =~ "ck-0.180-4.19.0-8a679ba.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.180-4.19.0-8a679ba-fix-for-4.19.294.patch"
+	elif [[ "${path}" =~ "ck-0.180-4.19.0-befdee7.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/ck-0.180-4.19.0-befdee7-fix-for-4.19.294.patch"
+
 	elif [[ "${path}" =~ "0179-mm-memcontrol-Replace-local_irq_disable-with-local-l.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
@@ -559,51 +576,35 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "0481-futex-Make-the-futex_hash_bucket-spinlock_t-again-an.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+
 	elif [[ "${path}" =~ "v4.19_pds099h.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 3 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/v4.19_pds099h-fixes-for-4.19.294.patch"
+
 	elif [[ "${path}" =~ "${O3_CO_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/O3-config-option-7d0295d-fix-for-4.14.patch"
+
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 		ot-kernel_apply_tresor_fixes
+
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 "" # 2 hunk failure without fuzz
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/uksm-4.14-rebase-for-4.14.246.patch"
+
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/c2tcp-0521-fix-for-4.14.305.patch"
 
-	elif [[ "${path}" =~ "ck-0.180-4.19.0-dc988b5.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/ck-0.180-4.19.0-dc988b5-fixes-for-4.19.294.patch"
-
-	elif [[ "${path}" =~ "ck-0.180-4.19.0-ba77544.patch" ]] ; then
-		# Single hunk
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/ck-0.180-4.19.0-ba77544-fixes-for-4.19.294.patch"
-
-	elif [[ "${path}" =~ "ck-0.180-4.19.0-8a679ba.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/ck-0.180-4.19.0-8a679ba-fix-for-4.19.294.patch"
-
-	elif [[ "${path}" =~ "ck-0.180-4.19.0-befdee7.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/ck-0.180-4.19.0-befdee7-fix-for-4.19.294.patch"
-
 	elif [[ "${path}" =~ "zen-sauce-4.19.0-7ab867e.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-4.19.0-7ab867e-fix-for-4.19.294.patch"
-
 	elif [[ "${path}" =~ "zen-sauce-4.19.0-7d0295d.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \

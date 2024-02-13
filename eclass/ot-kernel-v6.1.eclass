@@ -515,7 +515,7 @@ PDEPEND+="
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	:;
+	:
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
@@ -747,7 +747,7 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-kconfig-crypto-simd-for-6.1.patch"
 
 	if [[ "${tresor_patch_target}" == "x86_64_generic_256" || "${tresor_patch_target}" == "x86_64_generic_128" || "${tresor_patch_target}" == "x86_generic_128" ]] ; then
-		:;
+		:
 	elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-enc-dec-blk-for-6.1_aesni.patch"
@@ -824,6 +824,7 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS}" "${path}"
 		_dpatch "${PATCH_OPTS}" \
 "${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
+
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
@@ -832,6 +833,68 @@ einfo "Already applied ${path} upstream"
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+	elif [[ "${path}" =~ "0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		filterdiff \
+			-x "*/net/core/devlink.c" \
+			"${path}" \
+			> \
+			"${T}/0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch" \
+			|| die
+		_dpatch "${PATCH_OPTS}" "${T}/0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch"
+	elif [[ "${path}" =~ "0012-Linux-6.1.46-rt14-rc1.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Skipped patch.
+		:
+	elif [[ "${path}" =~ "0053-io-mapping-don-t-disable-preempt-on-RT-in-io_mapping.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0054-locking-rwbase-Mitigate-indefinite-writer-starvation.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0055-revert-softirq-Let-ksoftirqd-do-its-job.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0056-kernel-fork-beware-of-__put_task_struct-calling-cont.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0057-debugobjects-locking-Annotate-debug_object_fill_pool.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0058-sched-avoid-false-lockdep-splat-in-put_task_struct.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0059-seqlock-Do-the-lockdep-annotation-before-locking-in-.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0060-mm-page_alloc-Use-write_seqlock_irqsave-instead-writ.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0061-bpf-Remove-in_atomic-from-bpf_link_put.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0062-posix-timers-Ensure-timer-ID-search-loop-limit-is-va.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "0063-drm-i915-Do-not-disable-preemption-for-resets.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Already applied
+		:
+	elif [[ "${path}" =~ "/series"$ ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Skipped.  Not a patch.
+		:
+
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
@@ -860,99 +923,24 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
-
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 5 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.1.patch"
+
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-1-52-orca-c2tcp-0521.patch"
-
-	elif [[ "${path}" =~ "0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		filterdiff \
-			-x "*/net/core/devlink.c" \
-			"${path}" \
-			> \
-			"${T}/0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch" \
-			|| die
-		_dpatch "${PATCH_OPTS}" "${T}/0006-net-Remove-the-obsolte-u64_stats_fetch_-_irq-users-n.patch"
-
-	elif [[ "${path}" =~ "0012-Linux-6.1.46-rt14-rc1.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Skipped patch.
-		:;
-
-	elif [[ "${path}" =~ "0053-io-mapping-don-t-disable-preempt-on-RT-in-io_mapping.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0054-locking-rwbase-Mitigate-indefinite-writer-starvation.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0055-revert-softirq-Let-ksoftirqd-do-its-job.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0056-kernel-fork-beware-of-__put_task_struct-calling-cont.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0057-debugobjects-locking-Annotate-debug_object_fill_pool.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0058-sched-avoid-false-lockdep-splat-in-put_task_struct.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0059-seqlock-Do-the-lockdep-annotation-before-locking-in-.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0060-mm-page_alloc-Use-write_seqlock_irqsave-instead-writ.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0061-bpf-Remove-in_atomic-from-bpf_link_put.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0062-posix-timers-Ensure-timer-ID-search-loop-limit-is-va.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "0063-drm-i915-Do-not-disable-preemption-for-resets.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Already applied
-		:;
-
-	elif [[ "${path}" =~ "/series"$ ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Skipped.  Not a patch.
-		:;
-
-	elif [[ "${path}" =~ "zen-sauce-6.1.0-0a22064.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.1.0-0a22064-fix-for-6.1.52.patch"
 
 	elif [[ "${path}" =~ "prjc_v6.1-r4.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v6.4-r0-fix-for-6.4.15.patch" # Same hunks
 
+	elif [[ "${path}" =~ "zen-sauce-6.1.0-0a22064.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.1.0-0a22064-fix-for-6.1.52.patch"
 	elif [[ "${path}" =~ "zen-sauce-6.1.0-f22bc56.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.1.0-f22bc56-fix-for-6.1.57.patch"
+
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

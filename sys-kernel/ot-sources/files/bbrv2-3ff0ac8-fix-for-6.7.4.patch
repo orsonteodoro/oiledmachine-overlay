@@ -1,0 +1,81 @@
+License identified in net/ipv4/tcp_bbr.c:
+Dual BSD/GPL
+
+License identified in net/ipv4/tcp_output.c:
+// SPDX-License-Identifier: GPL-2.0-only
+
+--- a/net/ipv4/tcp_bbr.c.orig	2024-02-13 11:42:27.494724336 -0800
++++ b/net/ipv4/tcp_bbr.c	2024-02-13 11:45:26.368787924 -0800
+@@ -295,26 +295,39 @@ static void bbr_set_pacing_rate(struct s
+ 		WRITE_ONCE(sk->sk_pacing_rate, rate);
+ }
+ 
+-/* override sysctl_tcp_min_tso_segs */
+ __bpf_kfunc static u32 bbr_min_tso_segs(struct sock *sk)
+ {
+ 	return READ_ONCE(sk->sk_pacing_rate) < (bbr_min_tso_rate >> 3) ? 1 : 2;
+ }
+ 
+-static u32 bbr_tso_segs_goal(struct sock *sk)
++/* Return the number of segments BBR would like in a TSO/GSO skb, given
++ * a particular max gso size as a constraint.
++ */
++static u32 bbr_tso_segs_generic(struct sock *sk, unsigned int mss_now,
++				u32 gso_max_size)
+ {
+-	struct tcp_sock *tp = tcp_sk(sk);
+-	u32 segs, bytes;
++	u32 segs;
++	u64 bytes;
++
++	/* Budget a TSO/GSO burst size allowance based on bw (pacing_rate). */
++	bytes = sk->sk_pacing_rate >> sk->sk_pacing_shift;
++
++	bytes = min_t(u32, bytes, gso_max_size - 1 - MAX_TCP_HEADER);
++	segs = max_t(u32, bytes / mss_now, bbr_min_tso_segs(sk));
++	return segs;
++}
+ 
+-	/* Sort of tcp_tso_autosize() but ignoring
+-	 * driver provided sk_gso_max_size.
+-	 */
+-	bytes = min_t(unsigned long,
+-		      READ_ONCE(sk->sk_pacing_rate) >> READ_ONCE(sk->sk_pacing_shift),
+-		      GSO_LEGACY_MAX_SIZE - 1 - MAX_TCP_HEADER);
+-	segs = max_t(u32, bytes / tp->mss_cache, bbr_min_tso_segs(sk));
++/* Custom tcp_tso_autosize() for BBR, used at transmit time to cap skb size. */
++static u32  bbr_tso_segs(struct sock *sk, unsigned int mss_now)
++{
++	return bbr_tso_segs_generic(sk, mss_now, sk->sk_gso_max_size);
++}
+ 
+-	return min(segs, 0x7FU);
++/* Like bbr_tso_segs(), using mss_cache, ignoring driver's sk_gso_max_size. */
++static u32 bbr_tso_segs_goal(struct sock *sk)
++{
++	struct tcp_sock *tp = tcp_sk(sk);
++	return  bbr_tso_segs_generic(sk, tp->mss_cache, GSO_MAX_SIZE);
+ }
+ 
+ /* Save "last known good" cwnd so we can restore it after losses or PROBE_RTT */
+--- a/net/ipv4/tcp_output.c.orig	2024-02-13 11:40:50.375776831 -0800
++++ b/net/ipv4/tcp_output.c	2024-02-13 11:43:59.265730532 -0800
+@@ -2034,13 +2034,12 @@ static u32 tcp_tso_autosize(const struct
+ static u32 tcp_tso_segs(struct sock *sk, unsigned int mss_now)
+ {
+ 	const struct tcp_congestion_ops *ca_ops = inet_csk(sk)->icsk_ca_ops;
+-	u32 min_tso, tso_segs;
++	u32 tso_segs;
+ 
+-	min_tso = ca_ops->min_tso_segs ?
+-			ca_ops->min_tso_segs(sk) :
+-			READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_min_tso_segs);
+-
+-	tso_segs = tcp_tso_autosize(sk, mss_now, min_tso);
++	tso_segs = ca_ops->tso_segs ?
++		ca_ops->tso_segs(sk, mss_now) :
++		tcp_tso_autosize(sk, mss_now,
++				 sock_net(sk)->ipv4.sysctl_tcp_min_tso_segs);
+ 	return min_t(u32, tso_segs, sk->sk_gso_max_segs);
+ }
+ 

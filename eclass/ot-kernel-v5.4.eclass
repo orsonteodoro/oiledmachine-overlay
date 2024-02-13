@@ -378,7 +378,7 @@ PDEPEND+="
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	:;
+	:
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
@@ -636,24 +636,34 @@ ot-kernel_filter_patch_cb() {
 	if [[ "${path}" =~ "${BMQ_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bmq_v5.4-r2-fix-for-5.4.256.patch"
+
 	elif [[ "${path}" =~ "ck-0.196-5.4-7acac2e.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "ck-0.196-5.4-33b744f.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+
 	elif [[ "${path}" =~ "0148-rtmutex-Handle-the-various-new-futex-race-conditions.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+	elif [[ "${path}" =~ "0059-locking-percpu-rwsem-Remove-the-embedded-rwsem.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
+		# Skipping 1 already applied hunk.
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+
 	elif [[ "${path}" =~ "${O3_ALLOW_FN}" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
+
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/uksm-5.4-rebase-for-5.4.147.patch"
+
 	elif [[ "${path}" =~ "zen-muqss-${ZEN_KV}-7acac2e.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
 	elif [[ "${path}" =~ "zen-muqss-${ZEN_KV}-c181de6.patch" ]] ; then
@@ -663,35 +673,26 @@ ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "zen-sauce-${ZEN_KV}-4edc805.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.4-4edc805-fix.patch"
+	elif [[ "${path}" =~ "zen-muqss-5.4.0-50955ef.patch" ]] ; then
+		: # Skipped already applied
+
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/c2tcp-0521-fix-for-5.4.231.patch"
 
-	elif [[ "${path}" =~ "zen-muqss-5.4.0-50955ef.patch" ]] ; then
-		:; # Skipped already applied
-
-	elif [[ "${path}" =~ "0059-locking-percpu-rwsem-Remove-the-embedded-rwsem.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		# Skipping 1 already applied hunk.
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-
 	elif [[ "${path}" =~ "zen-sauce-5.4.0-e4afee6.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-4.19.0-7ab867e-fix-for-4.19.294.patch"
-
 	elif [[ "${path}" =~ "zen-sauce-5.4.0-376d7ed.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.4.0-376d7ed-fix-for-5.4.256.patch"
-
 	elif [[ "${path}" =~ "zen-muqss-5.4.0-86df8be.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-muqss-5.4.0-86df8be-fix-for-5.4.256.patch"
-
-
 	elif [[ "${path}" =~ "zen-sauce-5.4.0-3e05ad8.patch" ]] ; then
 		if ot-kernel_use bmq ; then
 			_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
@@ -702,10 +703,11 @@ ot-kernel_filter_patch_cb() {
 		fi
 	elif [[ "${path}" =~ "zen-sauce-5.4.0-7e92cd4.patch" ]] ; then
 		if ot-kernel_use bmq ; then
-			:; # Patch for MuQSS only
+			: # Patch for MuQSS only
 		else
 			_dpatch "${PATCH_OPTS}" "${path}"
 		fi
+
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

@@ -561,7 +561,7 @@ PDEPEND+="
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	:;
+	:
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
@@ -882,21 +882,25 @@ einfo "Already applied ${path} upstream"
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+
 	elif [[ "${path}" =~ "prjc_v5.15-r1.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v5.15-r1-fix-for-5.15.131.patch"
 		#_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc-5.15-sched_post_fork-change.patch" # Review
+
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
+
 	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 3 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-v9-fix-for-5.15.131.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-__no_profile-for-6.5.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"
+
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-94af063.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-40bc606-fix-for-5.15.53.patch"
@@ -927,8 +931,7 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-aa4fb87-fix-for-5.15.69.patch"
 #	elif [[ "${path}" =~ "cfi-${CFI_KV}-5140d56.patch" ]] ; then
 #		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-5140d56-moved-for-5.13.patch"
-#
-#		# Add this to the end of the cfi commit list
+#	# Add this to the end of the cfi commit list
 #		_dpatch "${PATCH_OPTS}" "${FILESDIR}/cfi-x86-cfi_init-ifdef-module-unload.patch"
 
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then

@@ -10703,7 +10703,7 @@ _ot-kernel_set_io_uring() {
 		   "${hardening_level}" =~ "custom" \
 		|| "${hardening_level}" =~ "manual" \
 	]] ; then
-		:;
+		:
 	elif [[ \
 		   "${hardening_level}" == "untrusted" \
 		|| "${hardening_level}" == "untrusted-distant" \
@@ -10873,7 +10873,7 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 				|| grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" \
 			; then
 	# Real time cannot be stopped or dropped.
-				:;
+				:
 			else
 	# Promote/demote
 				if [[ "${preempt_option}" == "CONFIG_PREEMPT" ]] ; then
@@ -10927,7 +10927,7 @@ ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NON
 					   "${work_profile}" == "custom" \
 					|| "${work_profile}" == "manual" \
 				]] ; then
-					:;
+					:
 				elif [[ -n "${key}" ]] ; then
 	# Downgrade latency based on user hint
 					local setting="${WORK_PROFILE_LATENCY_BIAS_SETTING[${key}]}"

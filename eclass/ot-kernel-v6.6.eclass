@@ -580,7 +580,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 fi
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	:;
+	:
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
@@ -863,7 +863,7 @@ ot-kernel_apply_tresor_fixes() {
 			"${FILESDIR}/tresor-use-ecb-cbc-helpers-128-for-6.6_x86_64.patch"
 	elif [[ "${tresor_patch_target}" == "x86_generic_128" ]] ; then
 		# Already applied in tresor-drop-xts-and-use-ctr-template-for-5.15_i686.patch
-		:;
+		:
 	elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-use-ecb-cbc-helpers-256-for-6.6_aesni.patch"
@@ -875,7 +875,7 @@ ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-access_ok-for-6.6.patch"
 
 	if [[ "${tresor_patch_target}" == "x86_64_generic_256" || "${tresor_patch_target}" == "x86_64_generic_128" || "${tresor_patch_target}" == "x86_generic_128" ]] ; then
-		:;
+		:
 	elif [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-add-crypto-header-to-tresor_glue-for-6.6_aesni.patch"
@@ -952,6 +952,7 @@ ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPTS}" "${path}"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/ck-patchset-5.12-ck1-fix-cpufreq-gov-performance.patch"
+
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
@@ -960,11 +961,13 @@ einfo "Already applied ${path} upstream"
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
+
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
+
 	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-3bc6889-a15058e-fixes-for-5.17.patch"
@@ -988,23 +991,16 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-c6ef88b.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-fix-for-5.14.patch"
-
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-c6ef88b-use-get_random_u32_below-for-6.2.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.3.patch"
-	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-4-15-orca-c2tcp-0521.patch"
-
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-1e924b1.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-1e924b1-fix-for-6.5.2.patch"
 
 	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-ba2274d.patch" ]] ; then
 		# Already added upstream
-		:;
-	elif [[ "${path}" =~ "zen-sauce-6.6.0-369ef2b.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.6.0-369ef2b-fix-for-6.6.0-git-6bc986a.patch"
+		:
 	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-9cb2d74.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-9cb2d74-fix-for-6.6.0-git-6bc986a.patch"
@@ -1027,18 +1023,23 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a1d32ad-fix-for-6.6.0-git-6bc986a.patch"
 
+	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-4-15-orca-c2tcp-0521.patch"
+
+	elif [[ "${path}" =~ "zen-sauce-6.6.0-369ef2b.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.6.0-369ef2b-fix-for-6.6.0-git-6bc986a.patch"
 	elif [[ "${path}" =~ "zen-sauce-6.6.0-1554998.patch" ]] ; then
 		if ot-kernel_use clear ; then
 			# Duplicate of 0133-novector.patch
-			:;
+			:
 		else
 			_dpatch "${PATCH_OPTS}" "${path}"
 		fi
-
 	elif [[ "${path}" =~ "zen-sauce-6.6.0-a1b7aab.patch" ]] ; then
 		if ot-kernel_use clear ; then
 			# Duplicate of 0162-extra-optmization-flags.patch
-			:;
+			:
 		else
 			_dpatch "${PATCH_OPTS}" "${path}"
 		fi
@@ -1046,6 +1047,7 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "Nest_v6.6.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/nest-6.6-fix-for-6.6.7.patch"
+
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
 	fi

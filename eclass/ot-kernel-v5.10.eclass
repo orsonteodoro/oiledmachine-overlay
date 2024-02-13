@@ -432,7 +432,7 @@ PDEPEND+="
 "
 
 if [[ "${PV}" =~ "9999" ]] ; then
-	:;
+	:
 else
 	KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 	SRC_URI+="
@@ -515,7 +515,7 @@ fi
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 ot-kernel_pkg_setup_cb() {
-	:;
+	:
 }
 
 # @FUNCTION: ot-kernel_apply_tresor_fixes
@@ -696,6 +696,10 @@ ot-kernel_filter_patch_cb() {
 	if [[ "${path}" =~ "prjc_v5.10-r2.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${path}"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/5022_BMQ-and-PDS-compilation-fix.patch"
+	elif [[ "${path}" =~ "prjc_v5.10-lts-r3.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v5.10-lts-r3-fix-for-5.10.194.patch"
+
 	elif [[ "${path}" =~ "0001-z3fold-simplify-freeing-slots.patch" ]] \
 		&& ver_test $(ver_cut 1-3 "${MY_PV}") -ge "5.10.4" ; then
 einfo "Already applied ${path} upstream"
@@ -704,14 +708,18 @@ einfo "Already applied ${path} upstream"
 einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
 		_dpatch "${PATCH_OPTS} -F 3" "${path}"
-	elif [[ "${path}" =~ "prjc_v5.10-lts-r3.patch" ]] ; then
+	elif [[ "${path}" =~ "0255-cpuset-Convert-callback_lock-to-raw_spinlock_t.patch" ]] ; then
+		# This patch belongs to the -rt patchset.
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v5.10-lts-r3-fix-for-5.10.194.patch"
+		_dpatch "${PATCH_OPTS}" \
+			"${FILESDIR}/rt-patchset-0255-cpuset-Convert-callback_lock-to-raw_spinlock_t-fix-for-5.10.194.patch"
+
 	elif [[ "${path}" =~ ("${TRESOR_AESNI_FN}"|"${TRESOR_I686_FN}") ]] ; then
 		local fuzz_factor=3
 		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
 		_dpatch "${PATCH_OPTS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
+
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-f6da35c.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-f6da35c-fix-for-5.10.129.patch"
@@ -721,47 +729,38 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-cd58ed7.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cd58ed7-fix-for-5.10.129.patch"
-
 	elif [[ "${path}" =~ "bbrv2-${BBRV2_VERSION}-${BBRV2_KV}-b8d3909.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-b8d3909-fix-for-5.10.160.patch"
+
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-5-10-194-orca-c2tcp-0521.patch"
+
 	elif [[ "${path}" =~ "ck-0.205-5.10.0-35f6640.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/ck-0.205-5.10.0-35f6640-fix-for-5.10.194.patch"
-
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/ck-0.205-5.10.0-35f6640-fix-header-section-for-5.10.203.patch"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/ck-0.205-5.10.0-35f6640-fix-renames-for-5.10.203.patch"
-
 	elif [[ "${path}" =~ "ck-0.205-5.10.0-04468a7.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/ck-0.205-5.10.0-04468a7-fix-for-5.10.194.patch"
 
-	elif [[ "${path}" =~ "0255-cpuset-Convert-callback_lock-to-raw_spinlock_t.patch" ]] ; then
-		# This patch belongs to the -rt patchset.
-		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/rt-patchset-0255-cpuset-Convert-callback_lock-to-raw_spinlock_t-fix-for-5.10.194.patch"
-
 	elif [[ "${path}" =~ "zen-sauce-5.10.0-28eaff6.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.10.0-28eaff6-fix-for-5.10.203.patch"
-
 	elif [[ "${path}" =~ "zen-sauce-5.10.0-e1b127a.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/zen-sauce-5.10.0-e1b127a-fix-for-5.10.194.patch"
-
 	elif [[ "${path}" =~ "zen-sauce-5.10.0-973d42f.patch" ]] ; then
 		if ot-kernel_use zen-sauce ; then
 			# Already applied
-			:;
+			:
 		else
 			_dpatch "${PATCH_OPTS}" "${path}"
 		fi

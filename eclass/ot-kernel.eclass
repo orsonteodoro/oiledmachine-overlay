@@ -958,7 +958,7 @@ check_zen_tune_deps() {
 					|| "${!v}" =~ "*" \
 					|| "${!v}" =~ "all" \
 				]] ; then
-					:;
+					:
 				else
 eerror
 eerror "zen-tune requires one of the following..."
@@ -983,7 +983,7 @@ eerror
 # @DESCRIPTION:
 # Checks zen-tune's dependency on zen-sauce at pkg_setup
 zen_tune_setup() {
-	:;
+	:
 }
 
 # @FUNCTION: zen_sauce_setup
@@ -2815,7 +2815,7 @@ ot-kernel_src_prepare() {
 		if (( ${moved} == 0 )) ; then
 einfo "Renaming for -${extraversion}"
 			if [[ "${extraversion}" == "${K_EXTRAVERSION}" ]] ; then
-				:; # Avoid copy into self error
+				: # Avoid copy into self error
 			else
 				mv "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
 			fi
@@ -2884,7 +2884,7 @@ einfo "Copying private/shared signing keys"
 				|| die "Cannot copy shared key"
 		fi
 		if ot-kernel_is_full_sources_required ; then
-			:;
+			:
 		elif [[ "${OT_KERNEL_PRUNE_EXTRA_ARCHES}" == "1" ]] \
 			&& ! [[ "${OT_KERNEL_INSTALL_SOURCE_CODE:-1}" =~ ("1"|"y") ]] ; then
 			# This is allowed if no external modules.
@@ -3618,7 +3618,7 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		   "${work_profile}" == "custom" \
 		|| "${work_profile}" == "manual" \
 	]] ; then
-		:;
+		:
 	elif [[ \
 		   "${work_profile}" == "realtime-hpc" \
 	]] ; then
@@ -4263,7 +4263,7 @@ ot-kernel_set_kconfig_cfi() {
 			|| "${hardening_level}" == "manual" \
 		]] \
 	; then
-		:;
+		:
 	elif \
 		[[ \
 			   "${hardening_level}" == "default" \
@@ -4334,7 +4334,7 @@ ot-kernel_set_kconfig_kcfi() {
 			|| "${hardening_level}" == "manual" \
 		]] \
 	; then
-		:;
+		:
 	elif \
 		[[ \
 			   "${hardening_level}" == "default" \
@@ -4816,7 +4816,7 @@ einfo "Using the ${boot_decomp} boot decompressor settings"
 # Set muqss kernel config flags
 _ot-kernel_set_kconfig_muqss() {
 	if has muqss ${IUSE_EFFECTIVE} && ot-kernel_use muqss ; then
-		:;
+		:
 	else
 		return
 	fi
@@ -4829,7 +4829,7 @@ _ot-kernel_set_kconfig_muqss() {
 		|| "${arch}" == "x86" \
 		|| "${arch}" == "x86_64" \
 	]] ; then
-		:;
+		:
 	else
 eerror
 eerror "MuQSS is not supported on ARCH=${arch}.  Remove muqss from"
@@ -5080,7 +5080,7 @@ einfo "Changed .config to use MuQSS"
 # Set prjc kernel config flags
 _ot-kernel_set_kconfig_prjc() {
 	if has prjc ${IUSE_EFFECTIVE} && ot-kernel_use prjc ; then
-		:;
+		:
 	else
 		return
 	fi
@@ -5148,7 +5148,7 @@ einfo "Changed .config to use PDS"
 # Set cfs kernel config flags
 _ot-kernel_set_kconfig_cfs() {
 	if has cfs ${IUSE_EFFECTIVE} && ot-kernel_use cfs ; then
-		:;
+		:
 	else
 		return
 	fi
@@ -5425,7 +5425,7 @@ einfo "Using ${hardening_level} hardening level"
 		   "${hardening_level}" == "custom" \
 		|| "${hardening_level}" == "manual" \
 	]] ; then
-		:;
+		:
 	else
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "mitigations=(off|auto|auto,nosmt)" # no mitigations=full?
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "gather_data_sampling=(force|off)"
@@ -5492,7 +5492,7 @@ eerror
 		   "${hardening_level}" == "custom" \
 		|| "${hardening_level}" == "manual" \
 	]] ; then
-		:;
+		:
 	elif [[ \
 		   "${hardening_level}" == "performance" \
 		|| "${hardening_level}" == "trusted" \
@@ -5761,7 +5761,7 @@ eerror
 			if [[ "${arch}" == "arm64" ]] ; then
 	# KPTI:  This assumes unforced default
 	# SSBD:  Rely on automagic
-				:;
+				:
 			fi
 
 			if [[ "${arch}" == "powerpc" ]] ; then
@@ -7126,7 +7126,7 @@ einfo "Page size:  16 KB"
 			ot-kernel_unset_configopt "CONFIG_PPC_256K_PAGES"
 			if grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
 			|| grep -q -E -e "^CONFIG_PPC_8xx=y" "${path_config}" ; then
-				:;
+				:
 			else
 eerror
 eerror "16 KB pages not supported and it requires CONFIG_44x=y or CONFIG_PPC_8xx=y"
@@ -7145,7 +7145,7 @@ einfo "Page size:  64 KB"
 			ot-kernel_unset_configopt "CONFIG_PPC_256K_PAGES"
 			if grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
 			|| grep -q -E -e "^CONFIG_PPC_BOOK3S_64=y" "${path_config}" ; then
-				:;
+				:
 			else
 eerror
 eerror "64 KB pages not supported and it requires CONFIG_44x=y or CONFIG_PPC_BOOK3S_64=y"
@@ -7168,7 +7168,7 @@ ewarn
 			ot-kernel_y_configopt "CONFIG_PPC_256K_PAGES"
 			if   grep -q -E -e "^CONFIG_44x=y" "${path_config}" \
 			&& ! grep -q -E -e "^CONFIG_PPC_47x=y" "${path_config}" ; then
-				:;
+				:
 			else
 eerror
 eerror "256 KB pages not supported and it requires CONFIG_44x=y and CONFIG_PPC_47x=n"
@@ -7673,7 +7673,7 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
 ot-kernel_set_kconfig_pgo() {
 	if use pgo ; then
-		:;
+		:
 	else
 		return
 	fi
@@ -7803,7 +7803,7 @@ eerror
 		|| "${hardening_level}" == "untrusted-distant" \
 		|| "${hardening_level}" == "trusted" \
 	]] ; then
-		:;
+		:
 	else
 eerror
 eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
@@ -7826,7 +7826,7 @@ ot-kernel_set_kconfig_scs() {
 			|| "${hardening_level}" == "manual" \
 		]] \
 	; then
-		:;
+		:
 	elif \
 		[[ \
 			   "${hardening_level}" == "default" \
@@ -8772,7 +8772,7 @@ ot-kernel_set_iosched() {
 		elif [[ "${s}" == "noop" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
 		elif [[ "${s}" == "none" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5 ; then
-			:;
+			:
 		else
 			continue
 		fi
@@ -8973,7 +8973,7 @@ einfo "Using the ${work_profile} work profile"
 		   "${work_profile}" == "custom" \
 		|| "${work_profile}" == "manual" \
 	]] ; then
-		:;
+		:
 	else
 einfo "Changed .config to use the ${work_profile} work profile"
 		ot-kernel_set_kconfig_work_profile_init
@@ -9005,7 +9005,7 @@ ewarn
 			|| "${work_profile}" == "ros" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
-			:;
+			:
 		else
 ewarn "rt should be removed from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} and for OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
 		fi
@@ -9607,7 +9607,7 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		|| "${work_profile}" == "custom" \
 		|| "${work_profile}" == "manual" \
 	]] ; then
-		:;
+		:
 	elif \
 		   grep -q -E -e "^CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y" "${path_config}" \
 		; then
@@ -9977,7 +9977,7 @@ ot-kernel_menuconfig() {
 				|| "${menuconfig_ui,,}" == "nconfig"  \
 				|| "${menuconfig_ui,,}" == "xconfig"  \
 			]] ; then
-				:;
+				:
 			else
 eerror
 eerror "Detected OT_KERNEL_MENUCONFIG_UI as invalid value."
@@ -10054,7 +10054,7 @@ ot-kernel_set_kconfig_logo() {
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
 einfo "Using boot logo from ${OT_KERNEL_LOGO_URI}"
 		if _ot-kernel_is_upstream_logo ; then
-			:;
+			:
 		elif [[ "${OT_KERNEL_LOGO_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
 			_check_network_sandbox
 			wget -O "${T}/boot.logo" "${OT_KERNEL_LOGO_URI}" || die
@@ -10332,7 +10332,7 @@ ewarn
 
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "fbcon=logo-count:[-]?[0-9]*"
 		if [[ "${OT_KERNEL_LOGO_COUNT:-auto}" == "auto" ]] ; then
-			:;
+			:
 		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ [0-9][0-9]* ]] ; then
 			if ver_test ${KV_MAJOR_MINOR} -ge 5.6 ; then
 				ot-kernel_set_kconfig_kernel_cmdline "fbcon=logo-count:${OT_KERNEL_LOGO_COUNT}"
@@ -10341,7 +10341,7 @@ ewarn
 					"${BUILD_DIR}/drivers/video/fbdev/core/fbmem.c" || die
 			fi
 		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ "-" ]] ; then
-			:;
+			:
 		else
 eerror
 eerror "OT_KERNEL_LOGO_COUNT must be auto or an integer."
@@ -10870,7 +10870,7 @@ _ot-kernel_check_versions() {
 	local _p="${_catpn}-${_pv}"
 	local path_config="${BUILD_DIR}/.config"
 	if has_version ">=${_p}" ; then
-		:;
+		:
 	elif has_version "<${_p}" && [[ -n "${_kconfig_symbol}" ]] ; then
 ewarn ">=${_p} is required for ${_kconfig_symbol} support."
 	elif has_version "<${_p}" && [[ -z "${_kconfig_symbol}" ]] ; then
@@ -10925,7 +10925,7 @@ ot-kernel_src_configure() {
 		[[ -z "${kernel_dir}" ]] && die "OT_KERNEL_KERNEL_DIR cannot be empty"
 		if [[ "${OT_KERNEL_BUILD_CHECK_MOUNTED}" == "1" && "${OT_KERNEL_BUILD}" == "1" ]] ; then
 			if mount | grep "${kernel_dir}" ; then
-				:;
+				:
 			else
 eerror
 eerror "OT_KERNEL_KERNEL_DIR=${OT_KERNEL_KERNEL_DIR}"
@@ -12849,7 +12849,7 @@ ot-kernel_src_install() {
 
 		if ot-kernel_is_full_sources_required ; then
 	# Everything will be installed
-			:;
+			:
 		else
 			ot-kernel_strink_install
 		fi

@@ -101,7 +101,7 @@ ot-kernel_set_configopt() {
 ot-kernel_unset_configopt() {
 	local opt="${1}"
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
-		:;
+		:
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
 		sed -r -i -e "s@^${opt}=.*@# ${opt} is not set@g" "${path_config}" || die
 	else
@@ -129,7 +129,7 @@ ot-kernel_y_configopt() {
 ot-kernel_n_configopt() {
 	local opt="${1}"
 	if grep -q -E -e "# ${opt} is not set" "${path_config}" ; then
-		:;
+		:
 	elif grep -q -E -e "^${opt}=" "${path_config}" ; then
 		sed -r -i -e "s@^${opt}=.*@# ${opt} is not set@g" "${path_config}" || die
 	else
