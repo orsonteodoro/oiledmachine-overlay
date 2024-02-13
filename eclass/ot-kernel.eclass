@@ -20,7 +20,7 @@
 #		that corresponds to the same version for that tag
 # BBR v3:
 #       https://github.com/google/bbr/tree/v3
-#       https://github.com/google/bbr/compare/ba2274dcfda859b8a27193e68ad37bfe4da28ddc..v3
+#       https://github.com/google/bbr/compare/ba2274dcfda859b8a27193e68ad37bfe4da28ddc...v3					# 6.4 to v3 tip
 # BMQ CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/BMQ
 #	https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE

@@ -202,9 +202,11 @@ a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361
 RUST_PV="1.74.1"
 
 BBRV3_KV="6.4.0" # According to Makefile, but the net folder has tagged net-6.5-rc1 commit
-BBRV3_VERSION="6e321d1" # Latest commit in the branch
+BBRV3_VERSION="7542cc7" # Latest commit in the branch
 BBRV3_COMMITS=( # oldest
-ba2274dcfda859b8a27193e68ad37bfe4da28ddc
+# wget -q -O - https://github.com/google/bbr/compare/ba2274dcfda859b8a27193e68ad37bfe4da28ddc^..7542cc7c41c0492a0cdbeb77e295cbfdcd9f5e11.patch \
+#	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
+#ba2274dcfda859b8a27193e68ad37bfe4da28ddc # Already applied
 f601c9f8eee1585892530f6e4d847c6801b3bd2d
 9cb2d74a55ce4d621666a93c59f8635a91c03975
 767930979dacb584aa07b9f492f521d1f06a9bc3
@@ -225,13 +227,16 @@ aa27c22a2ebe5696b5b42002337425e2a53b2f79
 a1d32ad82d426f29c71dd837393b3d7ea8501b5e
 #a7743a2757fae9b06613c201cce6416a95d5f345 # Don't need kernel config
 04ed1b49454dd2ce5d19a877b34612039a069a69
-e7db8639c6a6a71785028c0804bc8b2b5942f57c
-f60d60e24fc60335d3a5b40f89536e24dd4a1748
-#c931462c3a1a08e025f2bdcd3bd863d55b1a61dd # Don't need kernel config
-118c5d9d8e9c374ab8c73fcd5413474c22e64e49
-2dec5d0ee507c98b5efca591a93a960c8bf1a062
-aaf932736a4748b18196ecdf86471bc3c5576d11
-6e321d1c986a88e21dcbb46005668cd874de01da
+7ce213b7ed213c55a5f71b1b85bbdbb6d664f4b4
+d0d8043bc8e63e445224ac29085b694b01980fff
+#fea8e5afef8fee4ec491a8841b08854d8e87e503 # Don't need kernel config
+c27c87b3b097705828db63a23c79a8e83f39c809
+#ca7f11ebc4d4a99ccfd44be8555d505b26996c12 # Comment junk
+cc97916dc4f073730d747c9a5fdfc081460ca7e1
+#537b1b761e1d0036923adba7a80d3655cfff095d # Comment junk
+a59d131c35ce04e7be84c3cf3fe3a7c7a4cf8457
+#107339d7f48c95ae8a7461150e143fc53b08fea9 # Comment junk
+7542cc7c41c0492a0cdbeb77e295cbfdcd9f5e11
 )
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
@@ -1006,33 +1011,35 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-1e924b1-fix-for-6.5.2.patch"
 
-	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-ba2274d.patch" ]] ; then
-		# Already added upstream
-		:;
-	elif [[ "${path}" =~ "zen-sauce-6.6.0-369ef2b.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.6.0-369ef2b-fix-for-6.6.0-git-6bc986a.patch"
-	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-9cb2d74.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+
+	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-9cb2d74.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-9cb2d74-fix-for-6.6.0-git-6bc986a.patch"
-	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-c20e56d.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+
+	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-c20e56d.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-c20e56d-fix-for-6.6.0-git-6bc986a.patch"
-	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-a5cc006.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+
+	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-4fef7ac.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a5cc006-fix-for-6.6.0-git-6bc986a.patch"
-	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-4fef7ac.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-7542cc7-6.4.0-4fef7ac-fix-for-6.7.0-git-7e90b5c.patch"
+
+	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-a5cc006.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-4fef7ac-fix-for-6.6.0-git-6bc986a.patch"
-	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-40f1ce9.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-7542cc7-6.4.0-a5cc006-fix-for-6.7.0-git-7e90b5c.patch"
+
+	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-40f1ce9.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-40f1ce9-fix-for-6.6.0-git-6bc986a.patch"
-	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-aa27c22.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+
+	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-aa27c22.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-aa27c22-fix-for-6.6.0-git-6bc986a.patch"
-	elif [[ "${path}" =~ "bbrv3-6e321d1-6.4.0-a1d32ad.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
+
+	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-a1d32ad.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a1d32ad-fix-for-6.6.0-git-6bc986a.patch"
+
 
 	else
 		_dpatch "${PATCH_OPTS}" "${path}"
