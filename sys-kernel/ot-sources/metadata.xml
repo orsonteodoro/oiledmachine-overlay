@@ -171,7 +171,7 @@
 		    genpatches				A
 		    kernel_compiler_patch		X
 		    Project C				A
-		    TCP BBR v2 [5]			D
+		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
 		    TRESOR (AES-NI) [5]			b
 		    TRESOR (x86) [5]			b
@@ -184,7 +184,7 @@
 		    genpatches				D
 		    kernel_compiler_patch		D
 		    Project C				D
-		    TCP BBR v2 [5]			D
+		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
 		    TRESOR (AES-NI) [5]			b
 		    TRESOR (x86) [5]			b
