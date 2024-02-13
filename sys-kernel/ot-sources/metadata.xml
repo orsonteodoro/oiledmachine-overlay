@@ -3697,6 +3697,13 @@ unset OT_KERNEL_PRIVATE_KEY
     auto will judge based on threads per core (TPC) inspection.
     Use manual selection when porting to other machines.
 
+    TRESOR_MAX_KEY_SIZE - The maximum key size for the cipher.
+    Valid values:
+    256 - acceptable on x86_64 arch only
+    192 - acceptable on x86_64 arch only
+    128 - acceptable on x86 or x86_64 arches
+    unset - uses 256 key size on x86_64 or 128 key size on x86
+
     TTY_DRIVER - Add a video driver as a TTY driver fallback for binary GPU drivers
     Valid values:
       efi - newer systems
@@ -4122,27 +4129,11 @@ unset OT_KERNEL_PRIVATE_KEY
       keys are stored in registers instead of RAM.  It only supports one device
       at a time but supports 128-, 192-, 256- bit keys.
     </flag>
-    <flag name="tresor_aesni">
-      Patches the kernel with cold boot resistant AES hardware accelerated
-      AES-NI support.
-    </flag>
-    <flag name="tresor_i686">
-      Patches the kernel with cold boot resistant AES using SSE for 32 bit
-      systems.
-    </flag>
     <flag name="tresor_prompt">
-      Enables the TRESOR prompt in the kernel config.
+      Enables the boot time TRESOR prompt in the kernel config.
     </flag>
     <flag name="tresor_sysfs">
       Builds the external key setting program.
-    </flag>
-    <flag name="tresor_x86_64">
-      Patches the kernel with cold boot resistant AES using SSE for 64 bit
-      systems.
-    </flag>
-    <flag name="tresor_x86_64-256-bit-key-support">
-      Adds 192- and 256-bit AES key support to the 64-bit sse2 version of
-      TRESOR.
     </flag>
     <flag name="uksm">
       Patches the kernel with the Ultra Kernel Samepage Merging, a type of

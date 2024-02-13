@@ -2271,10 +2271,10 @@ _ot-kernel-pkgflags_camellia() {
 	local modes="${@}"
 	[[ -z "${modes}" ]] && modes="ECB CBC"
 	if [[ "${arch}" == "x86_64" ]] ; then
-		if ot-kernel_use cpu_flags_x86_avx2 && ot-kernel_use cpu_flags_x86_aesni && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
+		if ot-kernel_use cpu_flags_x86_avx2 && ot-kernel_use cpu_flags_x86_aes && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX2_X86_64"
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
-		elif ot-kernel_use cpu_flags_x86_avx && ot-kernel_use cpu_flags_x86_aesni && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
+		elif ot-kernel_use cpu_flags_x86_avx && ot-kernel_use cpu_flags_x86_aes && [[ "${modes}" =~ ("CBC"|"ECB"|"XTS") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_AESNI_AVX_X86_64"
 		elif [[ "${modes}" =~ ("CBC"|"CTR"|"ECB") ]] ; then
 			ot-kernel_y_configopt "CONFIG_CRYPTO_CAMELLIA_X86_64"

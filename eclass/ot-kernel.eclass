@@ -1176,30 +1176,30 @@ ewarn
 		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor && ! tc-is-cross-compiler ; then
 			if use tresor_i686 && ! grep -F -q "sse2" /proc/cpuinfo ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-eerror "tresor_i686 requires SSE2 CPU support"
-					die
+ewarn "tresor_i686 requires SSE2 CPU support"
+#					die
 				fi
 				if ! grep -F -q "mmx" /proc/cpuinfo ; then
-eerror "tresor_i686 requires MMX CPU support"
-					die
+ewarn "tresor_i686 requires MMX CPU support"
+#					die
 				fi
 			elif use tresor_x86_64 && ! grep -F -q "sse2" /proc/cpuinfo ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-eerror "tresor_x86_64 requires SSE2 CPU support"
-					die
+ewarn "tresor_x86_64 requires SSE2 CPU support"
+#					die
 				fi
 				if ! grep -F -q "mmx" /proc/cpuinfo ; then
-eerror "tresor_x86_64 requires MMX CPU support"
-					die
+ewarn "tresor_x86_64 requires MMX CPU support"
+#					die
 				fi
 			elif use tresor_aesni ; then
 				if ! grep -F -q "aes" /proc/cpuinfo ; then
-eerror "tresor_aesni requires AES-NI CPU support"
+ewarn "tresor_aesni requires AES-NI CPU support"
 #					die
 				fi
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-eerror "tresor_aesni requires SSE2 CPU support"
-					die
+ewarn "tresor_aesni requires SSE2 CPU support"
+#					die
 				fi
 			fi
 		fi
@@ -1916,13 +1916,18 @@ einfo "Applying Project C"
 # ot-kernel_apply_tresor_fixes - callback to apply tresor fixes
 #
 apply_tresor() {
+	[[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] || return
 	cd "${BUILD_DIR}" || die
-einfo "Applying TRESOR"
 	local platform
-	if ot-kernel_use tresor_aesni ; then
+
+	if [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
+einfo "Applying TRESOR for x86_64 with AES-NI"
 		platform="aesni"
-	fi
-	if ot-kernel_use tresor_i686 || ot-kernel_use tresor_x86_64 ; then
+	elif [[ "${arch}" == "x86_64" ]] ; then
+einfo "Applying TRESOR for x86_64"
+		platform="i686"
+	elif [[ "${arch}" == "x86" ]] ; then
+einfo "Applying TRESOR for x86_32"
 		platform="i686"
 	fi
 
@@ -3424,6 +3429,7 @@ ot-kernel_clear_env() {
 	unset SQUASHFS_XATTR
 	unset SQUASHFS_ZLIB
 	unset STD_PC_SPEAKER
+	unset TRESOR_MAX_KEY_SIZE
 	unset TTY_DRIVER
 	unset QEMU_GUEST_LINUX
 	unset QEMU_HOST

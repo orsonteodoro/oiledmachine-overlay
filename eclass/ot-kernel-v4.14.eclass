@@ -140,8 +140,8 @@ ${CK_COMMITS_BL_RQSHARE_SPLIT[@]}
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 IUSE+="
 bfq-mq build c2tcp +cfs deepcc disable_debug +genpatches -genpatches_1510
-kpgo-utils muqss orca pds pgo rt symlink tresor tresor_aesni tresor_i686
-tresor_prompt tresor_sysfs tresor_x86_64 uksm
+kpgo-utils muqss orca pds pgo rt symlink tresor tresor_prompt tresor_sysfs
+uksm
 "
 REQUIRED_USE+="
 	bfq-mq? (
@@ -150,30 +150,10 @@ REQUIRED_USE+="
 	genpatches_1510? (
 		genpatches
 	)
-	tresor? (
-		^^ (
-			tresor_aesni
-			tresor_i686
-			tresor_x86_64
-		)
-	)
 	tresor_prompt? (
 		tresor
 	)
-	tresor_aesni? (
-		tresor
-	)
-	tresor_i686? (
-		tresor
-	)
 	tresor_sysfs? (
-		|| (
-			tresor_aesni
-			tresor_i686
-			tresor_x86_64
-		)
-	)
-	tresor_x86_64? (
 		tresor
 	)
 "
@@ -404,27 +384,33 @@ ewarn
 # @DESCRIPTION:
 # Applies specific TRESOR fixes for this kernel major version
 ot-kernel_apply_tresor_fixes() {
-	# for 4.20 series and 5.x use tresor-testmgr-ciphers-update.patch instead
+	if [[ -z "${TRESOR_MAX_KEY_SIZE}" ]] ; then
+		if [[ "${arch}" == "x86_64" ]] ; then
+			TRESOR_MAX_KEY_SIZE="256"
+		else
+			TRESOR_MAX_KEY_SIZE="128"
+		fi
+	fi
+
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
 
-	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-tresor_asm_64_v2.2.patch"
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 
-	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
 	local fuzz_factor=0
 	[[ "${path}" =~ "${TRESOR_AESNI_FN}" ]] && fuzz_factor=3
         _dpatch "${PATCH_OPTS} -F ${fuzz_factor}" \
 		"${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
 
-	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-prompt-wait-fix-for-4.14-i686.patch"
-	elif ot-kernel_use tresor_aesni ; then
+	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-prompt-wait-fix-for-4.14-aesni.patch"
 	fi
@@ -432,18 +418,18 @@ ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-4.14.patch"
 
-	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-i686-v2.patch"
-	elif ot-kernel_use tresor_aesni ; then
+	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-aesni-v2.patch"
 	fi
 
-	if ot-kernel_use tresor_x86_64 || ot-kernel_use tresor_i686 ; then
+	if [[ "${arch}" == "x86_64" || "${arch}" == "x86" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-4.14.patch"
-	elif ot-kernel_use tresor_aesni ; then
+	elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-testmgr-show-passed-for-linux-4.14.patch"
 	fi
@@ -451,7 +437,7 @@ ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
 
-	if ot-kernel_use tresor_aesni ; then
+	if [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-access_ok-4.19_aesni.patch"
 		_dpatch "${PATCH_OPTS}" \
