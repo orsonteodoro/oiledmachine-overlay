@@ -1174,31 +1174,31 @@ ewarn
 
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor && ! tc-is-cross-compiler ; then
-			if use tresor_i686 && ! grep -F -q "sse2" /proc/cpuinfo ; then
+			if [[ "${arch}" == "x86" ]] ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-ewarn "tresor_i686 requires SSE2 CPU support"
+ewarn "Tresor for i686 requires SSE2 CPU support."
 #					die
 				fi
 				if ! grep -F -q "mmx" /proc/cpuinfo ; then
-ewarn "tresor_i686 requires MMX CPU support"
+ewarn "Tresor for i686 requires MMX CPU support."
 #					die
 				fi
-			elif use tresor_x86_64 && ! grep -F -q "sse2" /proc/cpuinfo ; then
+			elif [[ "${arch}" == "x86_64" ]] && ! ot-kernel_use cpu_flags_x86_aes ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-ewarn "tresor_x86_64 requires SSE2 CPU support"
+ewarn "Tresor for x86_64 requires SSE2 CPU support."
 #					die
 				fi
 				if ! grep -F -q "mmx" /proc/cpuinfo ; then
-ewarn "tresor_x86_64 requires MMX CPU support"
+ewarn "Tresor for x86_64 requires MMX CPU support."
 #					die
 				fi
-			elif use tresor_aesni ; then
+			elif [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
 				if ! grep -F -q "aes" /proc/cpuinfo ; then
-ewarn "tresor_aesni requires AES-NI CPU support"
+ewarn "Tresor for x86_64 with aesni requires AES-NI CPU support."
 #					die
 				fi
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
-ewarn "tresor_aesni requires SSE2 CPU support"
+ewarn "Tresor for x86_64 with aesni requires SSE2 CPU support."
 #					die
 				fi
 			fi
@@ -7908,7 +7908,7 @@ einfo "Using manual swap settings"
 # @DESCRIPTION:
 # Sets the kernel config for TRESOR
 ot-kernel_set_kconfig_tresor() {
-	if has tresor_i686 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_i686 && [[ "${arch}" == "x86" ]] ; then
+	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86" ]] ; then
 einfo "Changed .config to use TRESOR (i686)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -7926,7 +7926,7 @@ einfo "Disabling boot output for TRESOR early prompt."
 		fi
 	fi
 
-	if has tresor_x86_64 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
+	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86_64" ]] ; then
 einfo "Changed .config to use TRESOR (x86_64)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -7940,7 +7940,7 @@ einfo "Changed .config to use TRESOR (x86_64)"
 		fi
 	fi
 
-	if has tresor_aesni ${IUSE_EFFECTIVE} && ot-kernel_use tresor_aesni && [[ "${arch}" == "x86_64" ]] ; then
+	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86_64" ]] && ot-kernel_use cpu_flags_x86_aes ; then
 einfo "Changed .config to use TRESOR (AES-NI)"
 		ot-kernel_y_configopt "CONFIG_CRYPTO"
 		ot-kernel_y_configopt "CONFIG_CRYPTO_CBC"
@@ -7965,7 +7965,7 @@ ewarn
 		ot-kernel_n_configopt "CONFIG_HIBERNATION"
 	fi
 
-	if has tresor_x86_64 ${IUSE_EFFECTIVE} && ot-kernel_use tresor_x86_64 && [[ "${arch}" == "x86_64" ]] ; then
+	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86_64" ]] ; then
 		if ot-kernel_use tresor_prompt ; then
 			einfo "Disabling boot output for TRESOR early prompt."
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
@@ -12998,12 +12998,10 @@ ewarn
 ewarn "Using TRESOR with fscrypt is currently not supported."
 ewarn
 		fi
-		if use tresor_aesni ; then
 ewarn
 ewarn "TRESOR for AES-NI has not been tested.  It's left for users to test and"
 ewarn "fix."
 ewarn
-		fi
 	fi
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then

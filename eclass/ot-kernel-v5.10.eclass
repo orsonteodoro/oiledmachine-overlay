@@ -248,19 +248,6 @@ REQUIRED_USE+="
 	genpatches_1510? (
 		genpatches
 	)
-	tresor? (
-		^^ (
-			tresor_aesni
-			tresor_i686
-			tresor_x86_64
-		)
-	)
-	tresor_aesni? (
-		tresor
-	)
-	tresor_i686? (
-		tresor
-	)
 	tresor_prompt? (
 		tresor
 	)

@@ -230,35 +230,11 @@ REQUIRED_USE+="
 	shadowcallstack? (
 		cfi
 	)
-	tresor? (
-		^^ (
-			tresor_aesni
-			tresor_i686
-			tresor_x86_64
-		)
-	)
-	tresor_aesni? (
-		tresor
-	)
-	tresor_i686? (
-		tresor
-	)
 	tresor_prompt? (
 		tresor
 	)
 	tresor_sysfs? (
-		|| (
-			tresor_aesni
-			tresor_i686
-			tresor_x86_64
-		)
-	)
-	tresor_x86_64? (
 		tresor
-	)
-	tresor_x86_64-256-bit-key-support? (
-		tresor
-		tresor_x86_64
 	)
 	zen-multigen_lru? (
 		!multigen_lru
