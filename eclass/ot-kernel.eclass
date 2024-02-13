@@ -1021,20 +1021,24 @@ NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
 NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
 
 PGO_LLVM_SUPPORTED_VERSIONS=(
-#	"18.0.0.9999"
-#	"18.0.0_pre20230803"
-#	"17.0.0.9999"
-#	"17.0.0"
-#	"17.0.0_rc2"
-#	"17.0.0_rc1"
-	"16.0.6"
+# Search for INSTR_PROF_RAW_VERSION in 
+#	"19.0.0.9999" # profraw v9
+#	"18.0.0.9999" # profraw v9
+	"17.0.6" # profraw v8
+	"17.0.5"
+	"17.0.4"
+	"17.0.3"
+	"17.0.2"
+	"17.0.1"
+	"17.0.0"
+	"16.0.6" # profraw v8
 	"16.0.5"
 	"16.0.4"
 	"16.0.3"
 	"16.0.2"
 	"16.0.1"
 	"16.0.0"
-	"15.0.7"
+	"15.0.7" # profraw v8
 	"15.0.6"
 	"15.0.5"
 	"15.0.4"
@@ -1042,14 +1046,14 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 	"15.0.2"
 	"15.0.1"
 	"15.0.0"
-	"14.0.6"
+	"14.0.6" # profraw v8
 	"14.0.5"
 	"14.0.4"
 	"14.0.3"
 	"14.0.2"
 	"14.0.1"
 	"14.0.0"
-	"13.0.1"
+	"13.0.1" # profraw v7
 	"13.0.0"
 )
 
@@ -1066,7 +1070,7 @@ einfo "Verifying profraw version compatibility"
 
 # This data structure must be kept in sync.
 # https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/tree/kernel/pgo/fs.c?h=for-next/clang/pgo#n63
-# https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/profile/InstrProfData.inc#L130
+# https://github.com/llvm/llvm-project/blob/main/compiler-rt/include/profile/InstrProfData.inc                     # Search for INSTR_PROF_RAW_VERSION
 
 	local found_upstream_version=0 # corresponds to original patch requirements for < llvm 13 (broken)
 	local found_patched_version=0 # corresponds to oiledmachine patches to use >= llvm 13 (fixed)
@@ -1118,9 +1122,8 @@ display_required_clang() {
 einfo
 einfo "For Clang PGO support, if you use a live ebuild, only the latest commit"
 einfo "for one of these live versions (with the 9999 version) is supported."
-einfo "You may also use one of the tag versions listed:"
+einfo "You may also use one of the Clang versions listed for Clang PGO:"
 einfo
-einfo "Clang versions supported:"
 einfo "${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
 einfo
 }
