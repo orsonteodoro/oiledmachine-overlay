@@ -1212,6 +1212,14 @@ ewarn "Tresor for x86_64 with aesni requires SSE2 CPU support."
 		if use clang ; then
 			display_required_clang
 			#verify_profraw_compatibility
+ewarn
+ewarn "If the \"Assumed value of MB_LEN_MAX wrong\" error appears, to fix it do"
+ewarn
+ewarn "  use eselect gcc list"
+ewarn "  use eselect gcc <CHOST>-12"
+ewarn
+ewarn "or whatever gcc version works."
+ewarn
 		fi
 	fi
 
