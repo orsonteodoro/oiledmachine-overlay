@@ -1,0 +1,42 @@
+--- a/Documentation/dev-tools/index.rst.orig	2023-10-29 19:31:08.000000000 -0700
++++ b/Documentation/dev-tools/index.rst	2024-02-13 17:33:12.987050270 -0800
+@@ -34,6 +34,7 @@ Documentation/dev-tools/testing-overview
+    kselftest
+    kunit/index
+    ktap
++   pgo
+ 
+ 
+ .. only::  subproject and html
+--- a/Makefile.orig	2024-02-13 17:32:15.683622015 -0800
++++ b/Makefile	2024-02-13 17:33:35.586824756 -0800
+@@ -754,6 +754,9 @@ endif # KBUILD_EXTMOD
+ # Defaults to vmlinux, but the arch makefile usually adds further targets
+ all: vmlinux
+ 
++CFLAGS_PGO_CLANG := -fprofile-generate
++export CFLAGS_PGO_CLANG
++
+ CFLAGS_GCOV	:=
+ CFLAGS_GCOV_DEFAULT	:= 1
+ 
+--- a/arch/x86/Kconfig.orig	2024-02-13 17:31:36.764010292 -0800
++++ b/arch/x86/Kconfig	2024-02-13 17:33:59.682584305 -0800
+@@ -117,6 +117,7 @@ config X86
+ 	select ARCH_USES_CFI_TRAPS		if X86_64 && CFI_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
++	select ARCH_SUPPORTS_PGO_CLANG		if X86_64
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_MEMTEST
+ 	select ARCH_USE_QUEUED_RWLOCKS
+--- a/kernel/Makefile.orig	2023-10-29 19:31:08.000000000 -0700
++++ b/kernel/Makefile	2024-02-13 17:34:18.782393698 -0800
+@@ -114,6 +114,7 @@ obj-$(CONFIG_SHADOW_CALL_STACK) += scs.o
+ obj-$(CONFIG_HAVE_STATIC_CALL) += static_call.o
+ obj-$(CONFIG_HAVE_STATIC_CALL_INLINE) += static_call_inline.o
+ obj-$(CONFIG_CFI_CLANG) += cfi.o
++obj-$(CONFIG_PGO_CLANG) += pgo/
+ 
+ obj-$(CONFIG_PERF_EVENTS) += events/
+ 
