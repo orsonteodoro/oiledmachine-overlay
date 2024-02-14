@@ -5471,12 +5471,17 @@ einfo "Using ${hardening_level} hardening level"
 		local ready=0
 		if tc-is-gcc && ver_test $(gcc-version) -ge 8.1 ; then
 			ready=1
-		elif tc-is-gcc && ver_test $(clang-version) -ge 7 ; then
+		elif tc-is-clang && ver_test $(clang-version) -ge 7 ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
+			local gcc_version=$(gcc-version)
+			local clang_version=$(clang-version)
 eerror
 eerror "Switch to >=gcc-8.1 or >=clang-7 for retpoline support"
+eerror
+eerror "Actual GCC version:  ${gcc_version}"
+eerror "Actual Clang version:  ${clang_version}"
 eerror
 			die
 		fi
@@ -5487,12 +5492,17 @@ eerror
 		local ready=0
 		if tc-is-gcc && ver_test $(gcc-version) -ge 9 && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
 			ready=1
-		elif tc-is-gcc && ver_test $(clang-version) -ge 14 ; then
+		elif tc-is-clang && ver_test $(clang-version) -ge 14 ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
+			local gcc_version=$(gcc-version)
+			local clang_version=$(clang-version)
 eerror
 eerror "Switch to >=gcc-9 with >=binutils-2.2.9, or >=clang-14 for IBT support"
+eerror
+eerror "Actual GCC version:  ${gcc_version}"
+eerror "Actual Clang version:  ${clang_version}"
 eerror
 			die
 		fi
@@ -6047,8 +6057,13 @@ eerror
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			if ! test-flags "-mfunction-return=thunk-extern" 2>/dev/null 1>/dev/null ; then
 				# For rethunk
+				local gcc_version=$(gcc-version)
+				local clang_version=$(clang-version)
 eerror
 eerror "Please rebuild =clang-15.0.0.9999 or switch to >= gcc-8.1"
+eerror
+eerror "Actual GCC version:  ${gcc_version}"
+eerror "Actual Clang version:  ${clang_version}"
 eerror
 				die
 			fi
