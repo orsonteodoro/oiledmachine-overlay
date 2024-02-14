@@ -85,6 +85,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	~sys-devel/llvm-${PV}
 	ebolt? (
 		>=sys-devel/llvm-14[bolt]
 	)

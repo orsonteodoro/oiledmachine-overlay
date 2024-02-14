@@ -292,7 +292,7 @@ src_install() {
 		doclang_cfg "${abi_chost}"
 	done
 
-	if use kernel_Darwin ; then
+	if use kernel_Darwin; then
 		cat >> "${ED}/etc/clang/gentoo-common.cfg" <<-EOF || die
 			# Gentoo Prefix on Darwin
 			-Wl,-search_paths_first

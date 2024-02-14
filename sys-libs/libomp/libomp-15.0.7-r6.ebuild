@@ -59,7 +59,7 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="
-~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
+amd64 arm arm64 ppc ppc64 ~riscv x86 ~amd64-linux ~x64-macos
 "
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}

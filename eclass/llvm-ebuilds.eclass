@@ -16,8 +16,8 @@ esac
 
 # For deterministic builds and working patches.
 # Commits with green checkmarks used.
-FALLBACK_LLVM18_COMMIT="a13148a8808d1cc50c97cb2c1411694840a5ddc7" # Dec 20, 2023 (28 / 28 green checkmarks)
-FALLBACK_LLVM17_COMMIT="d36324866ee1fb4d1c26552b6b686a463d2b448f" # Jun 28, 2023
+FALLBACK_LLVM19_COMMIT="bd8fcf75df11406527de423daa63e21c3ec8609b" # Feb 14, 2024 (30 / 30 green checkmarks)
+FALLBACK_LLVM18_COMMIT="2b033a32ea1b45c773158f67b48623ceffbb153d" # Feb 14, 2024 (42 / 43 green checkmarks)
 
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs

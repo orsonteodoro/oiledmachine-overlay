@@ -1,5 +1,5 @@
 # Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -19,7 +19,7 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 KEYWORDS="
-amd64 arm arm64 ~ppc ppc64 ~riscv x86
+amd64 arm arm64 ~ppc ppc64 ~riscv x86 ~arm64-macos
 "
 IUSE="
 debug test zstd
@@ -91,6 +91,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	~sys-devel/llvm-${PV}:${LLVM_MAJOR}
 	ebolt? (
 		>=sys-devel/llvm-14[bolt]
 	)
@@ -219,6 +220,8 @@ _src_configure() {
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DBUILD_SHARED_LIBS=ON
 		-DLLVM_INCLUDE_TESTS=$(usex test)
+		-DLLVM_ENABLE_ZLIB=FORCE_ON
+		-DLLVM_ENABLE_ZSTD=$(usex zstd FORCE_ON OFF)
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_BUILD_TESTS=ON

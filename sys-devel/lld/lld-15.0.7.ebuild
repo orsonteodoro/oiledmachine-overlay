@@ -1,5 +1,5 @@
 # Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -88,6 +88,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	~sys-devel/llvm-${PV}:${LLVM_MAJOR}
 	ebolt? (
 		>=sys-devel/llvm-14[bolt]
 	)
@@ -215,6 +216,7 @@ _src_configure() {
 		-DBUILD_SHARED_LIBS=ON
 		-DLLVM_INCLUDE_TESTS=$(usex test)
 		-DLLVM_MAIN_SRC_DIR="${WORKDIR}/llvm"
+		-DLLVM_ENABLE_ZLIB=FORCE_ON
 	)
 	use test && mycmakeargs+=(
 		-DLLVM_BUILD_TESTS=ON

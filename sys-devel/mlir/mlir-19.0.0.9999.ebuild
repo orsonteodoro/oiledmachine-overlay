@@ -14,7 +14,7 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
 einfo "Using fallback commit"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM18_COMMIT}"
 	fi
 }
 _llvm_set_globals
@@ -24,7 +24,8 @@ LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
-inherit python-single-r1 rocm toolchain-funcs
+inherit python-single-r1 toolchain-funcs
+#inherit rocm
 
 DESCRIPTION="Multi Level Intermediate Representation for LLVM"
 HOMEPAGE="https://openmp.llvm.org"
@@ -36,11 +37,8 @@ LICENSE="
 	)
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
-"
 IUSE+="
-	debug rocm_5_7 test
+	debug test
 	r2
 "
 REQUIRED_USE="
@@ -48,9 +46,6 @@ REQUIRED_USE="
 RDEPEND="
 	sys-devel/clang:${SLOT}
 	sys-devel/llvm:${SLOT}
-	rocm_5_7? (
-		dev-libs/rocm-device-libs:5.7
-	)
 "
 DEPEND="
 	${RDEPEND}
@@ -80,24 +75,24 @@ pkg_setup() {
 	if use test; then
 		python-single-r1_pkg_setup
 	fi
-	if use rocm_5_7 ; then
-		export ROCM_SLOT="5.7"
-	fi
-	rocm_pkg_setup
+	#if use rocm_5_7 ; then
+	#	export ROCM_SLOT="5.7"
+	#fi
+	#rocm_pkg_setup
 }
 
 src_prepare() {
 	cmake_src_prepare
 	pushd "${WORKDIR}" || die
-		eapply "${FILESDIR}/mlir-17.0.0.9999-path-changes.patch"
+		eapply "${FILESDIR}/mlir-18.0.0.9999-path-changes.patch"
 	popd || die
-	PATCH_PATHS=(
-		"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
-		"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
-	)
-	rocm_src_prepare
+	#PATCH_PATHS=(
+	#	"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
+	#	"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+	#	"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
+	#	"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
+	#)
+	#rocm_src_prepare
 }
 
 multilib_src_configure() {
