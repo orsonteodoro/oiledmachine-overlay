@@ -180,7 +180,7 @@
 
     6.8 (Master / Live / Mainline)			A
 		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				D
+		    Clang PGO				E
 		    genpatches				D
 		    kernel_compiler_patch		D
 		    Project C				D

@@ -157,3 +157,5 @@ inherit ot-kernel-v6.6
 # alg: skcipher: failed to allocate transform for ctr(tresor): -2
 # alg: self-tests for ctr(tresor) using ctr(tresor) failed (rc=-2)
 # alg: No test for xts(tresor) (xts(tresor))
+
+# shows Press or hold any key for tresor
