@@ -3,16 +3,16 @@
 
 EAPI=8
 
-if [[ ${PV} =~ 9999 ]] ; then
-IUSE+="
-	fallback-commit
-"
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
 fi
 
 inherit llvm-ebuilds
 
 _llvm_set_globals() {
-	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 einfo "Using fallback commit"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM18_COMMIT}"
 	fi
@@ -92,8 +92,8 @@ multilib_src_configure() {
 	filter-lto
 
 	if use clang; then
-		local -x CC=${CHOST}-clang
-		local -x CXX=${CHOST}-clang++
+		local -x CC="${CHOST}-clang"
+		local -x CXX="${CHOST}-clang++"
 		strip-unsupported-flags
 	fi
 
@@ -115,7 +115,7 @@ multilib_src_configure() {
 		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-DLLVM_ENABLE_RUNTIMES="libunwind"
-		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
+		-DLLVM_LIBDIR_SUFFIX="${libdir#lib}"
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLIBUNWIND_ENABLE_ASSERTIONS=$(usex debug)
 		-DLIBUNWIND_ENABLE_STATIC=$(usex static-libs)
@@ -163,5 +163,6 @@ multilib_src_test() {
 }
 
 multilib_src_install() {
-	DESTDIR=${D} cmake_build install-unwind
+	DESTDIR="${D}" \
+	cmake_build install-unwind
 }
