@@ -7468,8 +7468,20 @@ _ot-kernel_set_kconfig_pgo_clang() {
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V6"
 		ot-kernel_n_configopt "CONFIG_PROFRAW_V5"
 		# See grep -r -e "INSTR_PROF_RAW_VERSION" /usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc
-		if (( ${llvm_slot} >= 15 && ${clang_pv_major} >= 15 )) ; then
-einfo "Using profraw v8 for >= LLVM 15"
+		if (( ${llvm_slot} == 19 && ${clang_pv_major} == 19 )) ; then
+einfo "Using profraw v9 for LLVM 19"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V9"
+		elif (( ${llvm_slot} == 18 && ${clang_pv_major} == 18 )) ; then
+einfo "Using profraw v9 for LLVM 18"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V9"
+		elif (( ${llvm_slot} == 17 && ${clang_pv_major} == 17 )) ; then
+einfo "Using profraw v8 for == LLVM 17"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+		elif (( ${llvm_slot} == 16 && ${clang_pv_major} == 16 )) ; then
+einfo "Using profraw v8 for == LLVM 16"
+			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
+		elif (( ${llvm_slot} == 15 && ${clang_pv_major} == 15 )) ; then
+einfo "Using profraw v8 for == LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
 		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.6" ; then
 einfo "Using profraw v8 for LLVM 14"
