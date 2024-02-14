@@ -1151,6 +1151,13 @@ verify_gcc_header_compat_with_clang() {
 	local GCC_SLOT_PGO_MAX="12"
 	if ver_test "${GCC_SLOT_PGO_MAX}" -ne "${gcc_current_profile_slot}" ; then
 ewarn
+ewarn "Detected possible header incompability between GCC and Clang."
+ewarn
+ewarn "Actual GCC slot:  ${gcc_current_profile_slot}"
+ewarn "Expected GCC slot:  ${GCC_SLOT_PGO_MAX}"
+ewarn
+	fi
+ewarn
 ewarn "The \"Assumed value of MB_LEN_MAX wrong\" error appears, you must switch"
 ewarn "switch to == GCC ${GCC_SLOT_PGO_MAX}.  Do"
 ewarn
@@ -1163,7 +1170,6 @@ ewarn
 ewarn "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
 ewarn "to the default immediately after this package has been merged."
 ewarn
-	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_setup
