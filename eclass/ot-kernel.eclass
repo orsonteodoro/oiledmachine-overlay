@@ -1142,6 +1142,30 @@ ot-kernel_use() {
 	return 1
 }
 
+# @FUNCTION: verify_gcc_header_compat_with_clang
+# @DESCRIPTION:
+# Check and avoid header incompatibility
+verify_gcc_header_compat_with_clang() {
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+	local GCC_SLOT_PGO_MAX="12"
+	if ver_test "${GCC_SLOT_PGO_MAX}" -ne "${gcc_current_profile_slot}" ; then
+ewarn
+ewarn "The \"Assumed value of MB_LEN_MAX wrong\" error appears, you must switch"
+ewarn "switch to == GCC ${GCC_SLOT_PGO_MAX}.  Do"
+ewarn
+ewarn "  eselect gcc list"
+ewarn "  eselect gcc set <CHOST>-${GCC_SLOT_PGO_MAX}"
+ewarn "  source /etc/profile"
+ewarn
+ewarn "or whatever gcc version works."
+ewarn
+ewarn "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+ewarn "to the default immediately after this package has been merged."
+ewarn
+	fi
+}
+
 # @FUNCTION: ot-kernel_pkg_setup
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
@@ -1212,14 +1236,7 @@ ewarn "Tresor for x86_64 with aesni requires SSE2 CPU support."
 		if use clang ; then
 			display_required_clang
 			#verify_profraw_compatibility
-ewarn
-ewarn "If the \"Assumed value of MB_LEN_MAX wrong\" error appears, to fix it do"
-ewarn
-ewarn "  use eselect gcc list"
-ewarn "  use eselect gcc <CHOST>-12"
-ewarn
-ewarn "or whatever gcc version works."
-ewarn
+			verify_gcc_header_compat_with_clang
 		fi
 	fi
 
