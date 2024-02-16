@@ -111,7 +111,7 @@ src_install() {
 	if [[ -e "${ED}/usr/share/doc/yazc" ]] ; then
 		mv \
 			"${ED}/usr/share/doc/yazc" \
-			"${ED}/usr/share/doc/yazc-${PV}" \
+			"${ED}/usr/share/doc/${P}" \
 			|| die
 	fi
 	uopts_src_install
