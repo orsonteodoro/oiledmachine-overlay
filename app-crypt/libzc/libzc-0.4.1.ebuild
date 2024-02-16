@@ -71,7 +71,7 @@ src_configure() { :; }
 _src_configure() {
 	uopts_src_configure
 	if use pgo || use bolt ; then
-		# Force use the performant one
+		# Force use of the performant one.
 		export CC="${CHOST}-clang"
 	fi
 	tc-is-gcc && replace-flags '-O*' '-O1' # >= -O2 breaks with instrumented PGO by gcc.
