@@ -87,6 +87,10 @@ _src_compile() {
 	emake V=1
 }
 
+train_meets_requirements() {
+	return 0
+}
+
 train_trainer_custom() {
 	if use trainer-all ; then
 		emake -C tests check
@@ -99,6 +103,7 @@ train_trainer_custom() {
 }
 
 src_compile() {
+	BUILD_DIR="${S}"
 	uopts_src_compile
 }
 
@@ -107,6 +112,7 @@ src_test() {
 }
 
 src_install() {
+	BUILD_DIR="${S}"
 	emake DESTDIR="${D}" install
 	if [[ -e "${ED}/usr/share/doc/yazc" ]] ; then
 		mv \
