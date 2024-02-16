@@ -127,6 +127,23 @@ src_install() {
 
 pkg_postinst() {
 	uopts_pkg_postinst
+ewarn
+ewarn "The brute force time cost is possibly quadratic."
+ewarn
+ewarn "For a 4 core machine, the following may be true to scan the entire"
+ewarn "key space:"
+ewarn
+ewarn "If password length is 6, it will take 4 hours to solve."
+ewarn "If password length is 10, it will take ~2 days to solve."
+ewarn "If password length is 15, it will take ~15 days to solve."
+ewarn "If password length is 20, it will take ~20 days to solve."
+ewarn "If password length is 50, it will take ~157 days to solve."
+ewarn
+
+ewarn
+ewarn "The charset option -c is possibly broken.  It doesn't work with upper"
+ewarn "case."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.4.1, 20240215)
