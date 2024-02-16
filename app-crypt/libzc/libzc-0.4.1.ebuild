@@ -77,7 +77,9 @@ _src_configure() {
 	tc-is-gcc && replace-flags '-O*' '-O1' # >= -O2 breaks with instrumented PGO by gcc.
 	tc-is-clang && replace-flags '-O*' '-O3'
 	strip-unsupported-flags
-	sed -i -e "s|ZC_PW_MAXLEN	  16|ZC_PW_MAXLEN	  ${ZC_PW_MAXLEN:-16}|g" lib/libzc.h || die
+	local len=${ZC_PW_MAXLEN:-16}
+	einfo "ZC_PW_MAXLEN:  ${len}"
+	sed -i -e "s|ZC_PW_MAXLEN 16|ZC_PW_MAXLEN ${len}|g" lib/libzc.h || die
 	eautoreconf
 	./configure \
 		--libdir="${EPREFIX}/usr/$(get_libdir)"
