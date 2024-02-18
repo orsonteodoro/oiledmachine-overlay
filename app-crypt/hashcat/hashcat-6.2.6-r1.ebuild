@@ -56,7 +56,7 @@ rocm_gen_rocm_required_use1() {
 		local s_mm=$(ver_cut 1-2 ${s})
 		echo "
 			rocm_${s_mm/./_}? (
-				video_cards_amdgpu
+				rocm
 			)
 		"
 	done
