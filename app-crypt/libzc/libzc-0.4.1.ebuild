@@ -141,9 +141,9 @@ ewarn "If password length is 50, it will take ~157 days to solve."
 ewarn
 
 ewarn
-ewarn "This package is still good for smaller passwords but only uses CPU and"
-ewarn "may not have resume, but for longer passwords, consider GPU methods"
-ewarn "instead."
+ewarn "This package is still good for smaller passwords or smaller key search"
+ewarn "spaces but only uses CPU and may not have resume, but for longer"
+ewarn "passwords, consider GPU methods instead."
 ewarn
 }
 
