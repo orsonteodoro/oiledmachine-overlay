@@ -156,7 +156,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	if use video_cards_amdgpu ; then
+	if use rocm ; then
 		python-single-r1_pkg_setup
 		if use rocm_5_1 ; then
 			LLVM_MAX_SLOT=14
@@ -185,7 +185,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	if use video_cards_amdgpu ; then
+	if use rocm ; then
 		rocm_src_prepare
 	fi
 	# Remove bundled stuff
