@@ -314,7 +314,7 @@ LICENSE="
 # BSD-2 IJG MIT - third_party/libavif/src/LICENSE
 # BSD-2 - third_party/libaom/source/libaom/LICENSE
 # base64 - third_party/webrtc/rtc_base/third_party/base64/LICENSE
-# custom - out/Release/gen/components/resources/about_credits.html [Same as chromium-111.0.5563.x file]
+# custom - out/Release/gen/components/resources/about_credits.html [Same as chromium-121.0.6167.x.html license file]
 #   keyword search: "venue in the state and federal courts"
 # custom - third_party/llvm/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
 # custom - third_party/llvm/clang-tools-extra/clang-tidy/hicpp/LICENSE.TXT
