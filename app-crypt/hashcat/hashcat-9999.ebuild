@@ -62,7 +62,8 @@ rocm_gen_rocm_required_use1() {
 rocm_gen_rocm_required_use2() {
 	echo "
 		video_cards_amdgpu? (
-			|| (
+			rocm? (
+				|| (
 	"
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -72,6 +73,7 @@ rocm_gen_rocm_required_use2() {
 		"
 	done
 	echo "
+				)
 			)
 		)
 	"
