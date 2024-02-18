@@ -17,12 +17,12 @@
       Use the closed source OpenCL™ CPU Runtime driver for Intel® Core™ and
       Intel® Xeon®.
     </flag>
+    <flag name="orca">
+      Use the closed source OpenCL™ driver for pre Vega.
+    </flag>
     <flag name="pocl">
       Use the open source and portable OpenCL™ driver for x86, ARM, RISC-V,
       CUDA®.
-    </flag>
-    <flag name="orca">
-      Use the closed source OpenCL™ driver for pre Vega.
     </flag>
     <flag name="rocm">
       Use the open source OpenCL™ driver.
