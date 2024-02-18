@@ -65,7 +65,7 @@ ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
 ${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:-"0"}
 
 # Use the following example to extract the license.
-# unzip -p /var/cache/distfiles/electron-v23.3.13-linux-x64.zip LICENSES.chromium.html > electron-23.3.13-chromium
+# unzip -p /var/cache/distfiles/electron-v23.3.13-linux-x64.zip LICENSES.chromium.html > electron-23.3.13-chromium.html
 
 # For Electron 18.2.2 from electron-builder
 # See comments below for details.

@@ -65,6 +65,7 @@ LICENSE="
 	GDevelop
 	MIT
 	${THIRD_PARTY_LICENSES}
+	electron-18.2.2-chromium.html
 	${ELECTRON_APP_LICENSES}
 "
 
@@ -4177,6 +4178,8 @@ einfo
 
 src_compile() {
 	npm_hydrate
+	export PATH="${WORKDIR}/${MY_PN}-${MY_PV}/newIDE/app/node_modules/react-scripts/bin:${PATH}"
+einfo "PATH:  ${PATH}"
 	build_gdevelop_js
 	build_gdevelop_ide
 	build_gdevelop_ide_electron
