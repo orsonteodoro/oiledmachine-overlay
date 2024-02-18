@@ -10,7 +10,7 @@
       Enable the hashcat brain
     </flag>
     <flag name="orca">
-      Use the closed source OpenCL driver.
+      Use the closed source OpenCL driver for pre Vega.
     </flag>
     <flag name="rocm">
       Use the open source OpenCL driver.
