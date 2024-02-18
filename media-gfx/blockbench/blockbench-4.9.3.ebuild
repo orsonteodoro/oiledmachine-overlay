@@ -38,7 +38,7 @@ THIRD_PARTY_LICENSES="
 # || assumes that user chooses outside of computer.
 LICENSE="
 	(
-		electron-26.6.1-chromium
+		electron-26.6.1-chromium.html
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
 	)

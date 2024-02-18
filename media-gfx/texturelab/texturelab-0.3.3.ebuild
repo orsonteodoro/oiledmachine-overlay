@@ -94,7 +94,7 @@ ELECTRON_CHROMEDRIVER_LICENSES="
 
 
 THIRD_PARTY_LICENSES="
-	electron-13.6.9-chromium
+	electron-13.6.9-chromium.html
 	${ELECTRON_APP_LICENSES}
 	${ELECTRON_CHROMEDRIVER_LICENSES}
 	( Apache-2.0 all-rights-reserved )

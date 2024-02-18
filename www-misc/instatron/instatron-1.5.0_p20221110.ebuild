@@ -18,7 +18,7 @@ electron.Mobile Instagram on desktop!"
 HOMEPAGE="https://github.com/alexdevero/instatron"
 LICENSE="
 	MIT
-	electron-18.3.15-chromium
+	electron-18.3.15-chromium.html
 	${ELECTRON_APP_LICENSES}
 "
 

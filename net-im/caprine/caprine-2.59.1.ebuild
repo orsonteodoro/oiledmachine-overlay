@@ -23,7 +23,7 @@ DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
 LICENSE="
 	MIT
-	electron-24.8.6-chromium
+	electron-24.8.6-chromium.html
 	${ELECTRON_APP_LICENSES}
 "
 
