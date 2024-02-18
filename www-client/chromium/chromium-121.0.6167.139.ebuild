@@ -185,7 +185,7 @@ c64c01a0ffbd896c453dbcbf5403909a5dfd7f47e8e4f24ab6b1e06383617043\
 "
 LICENSE="
 	BSD
-	chromium-$(ver_cut 1-3 ${PV}).x
+	chromium-$(ver_cut 1-3 ${PV}).x.html
 	custom
 	(
 		all-rights-reserved

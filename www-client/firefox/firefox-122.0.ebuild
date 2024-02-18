@@ -105,7 +105,7 @@ MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 # FF-XX.YY-THIRD-PARTY-LICENSES should be updated per new feature or if the \
 # fingerprint changes.
 # Update the license version also.
-LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES"
+LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE+="
 	${LICENSE_FILE_NAME}
 	(
