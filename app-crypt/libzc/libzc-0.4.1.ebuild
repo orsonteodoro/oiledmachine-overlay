@@ -141,8 +141,9 @@ ewarn "If password length is 50, it will take ~157 days to solve."
 ewarn
 
 ewarn
-ewarn "The charset option -c is possibly broken.  It doesn't work with upper"
-ewarn "case."
+ewarn "This package is still good for smaller passwords but only uses CPU and"
+ewarn "may not have resume, but for longer passwords, consider GPU methods"
+ewarn "instead."
 ewarn
 }
 
