@@ -83,7 +83,7 @@ gen_depend_rocm() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
 		echo "
-			~dev-util/hip-${s}:$(ver_cut 1-2 ${s})[rocm]
+			~dev-util/hip-${s}:$(ver_cut 1-2 ${s})[hsa,lc,rocm]
 		"
 	done
 }
