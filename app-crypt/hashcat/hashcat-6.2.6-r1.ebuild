@@ -42,7 +42,7 @@ rocm_gen_iuse() {
 IUSE="
 $(rocm_gen_iuse)
 brain
-intel-cpu-ocl
+intel-opencl-cpu-runtime
 orca
 pocl
 rocm
@@ -104,7 +104,7 @@ REQUIRED_USE="
 		)
 	)
 	^^ (
-		intel-cpu-ocl
+		intel-opencl-cpu-runtime
 		pocl
 		video_cards_amdgpu
 		video_cards_intel
@@ -123,7 +123,7 @@ DEPEND="
 	brain? (
 		dev-libs/xxhash
 	)
-	intel-cpu-ocl? (
+	intel-opencl-cpu-runtime? (
 		>=dev-util/intel-ocl-sdk-16.1.1
 	)
 	pocl? (
