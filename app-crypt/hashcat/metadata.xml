@@ -18,7 +18,8 @@
       Intel® Xeon®.
     </flag>
     <flag name="pocl">
-      Use the portable OpenCL™ driver for x86, ARM, RISC-V, CUDA®.
+      Use the open source and portable OpenCL™ driver for x86, ARM, RISC-V,
+      CUDA®.
     </flag>
     <flag name="orca">
       Use the closed source OpenCL™ driver for pre Vega.
