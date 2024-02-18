@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>zerochaos@gentoo.org</email>
+    <name>Rick Farina</name>
+  </maintainer>
+  <use>
+    <flag name="brain">
+      Enable the hashcat brain
+    </flag>
+    <flag name="orca">
+      Use the closed source OpenCL driver.
+    </flag>
+    <flag name="rocm">
+      Use the open source OpenCL driver.
+
+      PCIe Atomics required.
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">hashcat/hashcat</remote-id>
+  </upstream>
+</pkgmetadata>
