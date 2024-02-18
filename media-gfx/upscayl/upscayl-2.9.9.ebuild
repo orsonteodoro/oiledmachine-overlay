@@ -731,6 +731,7 @@ S="${WORKDIR}/${P}"
 DESCRIPTION="Upscayl - Free and Open Source AI Image Upscaler for Linux, MacOS and Windows built with Linux-First philosophy."
 HOMEPAGE="https://upscayl.github.io/"
 THIRD_PARTY_LICENSES="
+	electron-27.3.2-chromium
 	(
 		all-rights-reserved
 		Apache-2.0
