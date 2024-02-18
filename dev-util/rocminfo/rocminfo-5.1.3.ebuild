@@ -4,9 +4,10 @@
 EAPI=8
 
 LLVM_MAX_SLOT=14
+PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit cmake python-single-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocminfo/"
@@ -40,6 +41,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }
 
@@ -58,6 +60,7 @@ src_prepare() {
 		|| die
 	cmake_src_prepare
 	rocm_src_prepare
+	python_fix_shebang ./
 }
 
 src_configure() {
