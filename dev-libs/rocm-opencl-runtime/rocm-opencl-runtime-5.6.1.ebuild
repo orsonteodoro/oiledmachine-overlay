@@ -185,4 +185,8 @@ eerror
 	edob ./ocltst -m $(realpath liboclperf.so) -A oclperf.exclude
 }
 
+pkg_postinst() {
+ewarn "This package requires PCIe atomics."
+}
+
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
