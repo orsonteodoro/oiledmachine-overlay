@@ -124,7 +124,7 @@ DEPEND="
 		dev-libs/xxhash
 	)
 	intel-cpu-ocl? (
-		dev-util/intel-ocl-sdk
+		>=dev-util/intel-ocl-sdk-16.1.1
 	)
 	pocl? (
 		dev-libs/pocl
@@ -142,8 +142,8 @@ DEPEND="
 		dev-libs/intel-compute-runtime
 	)
 	video_cards_nvidia? (
+		>=dev-util/nvidia-cuda-toolkit-9
 		>x11-drivers/nvidia-drivers-440.64
-		dev-util/nvidia-cuda-toolkit
 		virtual/opencl
 	)
 "

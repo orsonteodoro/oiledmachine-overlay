@@ -2,6 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild originator -->
     <email>zerochaos@gentoo.org</email>
     <name>Rick Farina</name>
   </maintainer>
@@ -9,13 +10,22 @@
     <flag name="brain">
       Enable the hashcat brain
     </flag>
+    <flag name="cuda">
+      Use CUDA® directly.
+    </flag>
+    <flag name="intel-cpu-ocl">
+      Use the OpenCL™ Runtime CPU driver for Intel® Core™ and Intel® Xeon®.
+    </flag>
+    <flag name="pocl">
+      Use the portable OpenCL™ driver for x86, ARM, RISC-V, CUDA®.
+    </flag>
     <flag name="orca">
-      Use the closed source OpenCL driver for pre Vega.
+      Use the closed source OpenCL™ driver for pre Vega.
     </flag>
     <flag name="rocm">
-      Use the open source OpenCL driver.
+      Use the open source OpenCL™ driver.
 
-      PCIe Atomics required.
+      PCIe atomics required.
     </flag>
   </use>
   <upstream>
