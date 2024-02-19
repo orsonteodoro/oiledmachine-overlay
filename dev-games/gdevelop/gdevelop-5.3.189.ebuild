@@ -4188,6 +4188,7 @@ einfo "PATH:  ${PATH}"
 	grep -q -e "npm ERR! Invalid Version" "${T}/build.log" && die "Detected error.  Retry." # Indeterministic or random failure bug
 	grep -q -e "Failed to compile." "${T}/build.log" && die "Detected error.  Retry."
 	grep -q -e "Compiled successfully." "${T}/build.log" || die "Detected error.  Retry."
+	grep -q -e "react-scripts: command not found" "${T}/build.log" || die "Detected error.  Retry."
 }
 
 src_install() {
