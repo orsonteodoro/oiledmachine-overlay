@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originator -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Build time environment variables:
+
+    BRAIN_ADDRESS - 127.0.0.1
+    BRAIN_PORT - 13743
+    CELERY_BROKER_URL - redis://localhost:6379 (default)
+    CELERY_RESULT_BACKEND - redis://localhost:6379 (default)
+    CELERY_TZ_OVERRIDE - override the tzinfo value for local timezones in task messages. (optional, autodetected)
+    HASHCATNODE_HASHES_PATH - /var/lib/hashcatnode/hashes/ (default)
+    HASHCATNODE_MASK_PATH - /var/lib/hashcatnode/mask/ (default)
+    HASHCATNODE_PORT - 9999 (default)
+    HASHCATNODE_RULE_PATH - /var/lib/hashcatnode/rule/ (default)
+    HASHCATNODE_WORDLIST_PATH - /var/lib/hashcatnode/wordlist/ (default)
+    WEBHASHCAT_ALLOWED_HOSTS - a space delimited list of ip or hostnames, 127.0.0.1 (default)
+    WEBHASHCAT_TZ_OVERRIDE - override the tzinfo value for localization. (optional, autodetected)
+    WEBHASHCAT_LANGUAGE_CODE_OVERRIDE - override the django language code for localization. (optional, autodetected)
+
+  Examples:
+
+    Contents of /etc/portage/env/webhashcat.conf:
+
+    BRAIN_ADDRESS="127.0.0.1"
+    BRAIN_PORT=13743
+    CELERY_BROKER_URL="redis://localhost:6379"
+    CELERY_RESULT_BACKEND="redis://localhost:6379"
+    CELERY_TZ_OVERRIDE="America/Los_Angeles"
+    HASHCATNODE_HASHES_PATH="/var/lib/hashcatnode/hashes/"
+    HASHCATNODE_MASK_PATH="/var/lib/hashcatnode/mask/"
+    HASHCATNODE_PORT=9999
+    HASHCATNODE_RULE_PATH="/var/lib/hashcatnode/rule/"
+    HASHCATNODE_WORDLIST_PATH="/var/lib/hashcatnode/wordlist/"
+    WEBHASHCAT_ALLOWED_HOSTS="127.0.0.1 192.168.1.225"
+    WEBHASHCAT_TZ_OVERRIDE="America/Los_Angeles"
+    WEBHASHCAT_LANGUAGE_CODE_OVERRIDE="en-us"
+
+    Contents of /etc/portage/package.env:
+
+    app-crypt/webhashcat webhashcat.conf
+
+  -->
+  <use>
+    <flag name="brain">
+      Use to skip over already processed keys.
+    </flag>
+    <flag name="hashcatnode">
+      A server for distributed cracking sessions to be placed on remote servers.
+    </flag>
+    <flag name="web-interface">
+      Install the graphical user interface.
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">hegusung/WebHashcat</remote-id>
+  </upstream>
+</pkgmetadata>
