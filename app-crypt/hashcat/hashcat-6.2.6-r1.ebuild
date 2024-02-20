@@ -283,3 +283,10 @@ src_install() {
 		VERSION_PURE="${PV}" \
 		install
 }
+
+pkg_postinst() {
+ewarn
+ewarn "Using a single GPU alone is still slow.  For longer passwords,"
+ewarn "consider using distributed multi machine hashcat methods instead."
+ewarn
+}
