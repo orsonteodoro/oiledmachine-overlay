@@ -299,6 +299,16 @@ ewarn "Run \`emerge =hashtopolis-server-0.14.1 --config\` to complete installati
 
 # See https://www.gentoo.org/glep/glep-0011.html
 pkg_config() {
+	if ! pgrep mysqld >/dev/null 2>&1 && ! pgrep mariadbd >/dev/null 2>&1 ; then
+eerror
+eerror "A SQL server has not been started!  Start it first!"
+eerror
+eerror "For OpenRC:  /etc/init.d/mysql restart"
+eerror "For systemd:  systemctl restart mysqld.service"
+eerror
+		die
+	fi
+
 	if [[ ! -e "/etc/hashtopolis/server/salt" ]] ; then
 		mkdir -p "/etc/hashtopolis/server"
 		local password_salt=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | sha256sum | base64 -w 0)
@@ -311,10 +321,10 @@ einfo "Enter a new password for the user hastopolis for SQL access:"
 	local hashtopolis_password_=$(echo -n "${hashtopolis_password}:$(cat /etc/hashtopolis/server/salt)" | sha256sum | cut -f 1 -d " ")
 	hashtopolis_password=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
 
-einfo "Do a fresh install and create Hashtopolis database? [Y/n]"
+einfo "Clean install hashtopolis database and user? [Y/n]"
 	read
 	if [[ "${REPLY^^}" == "Y" || -z "${REPLY}" ]] ; then
-		einfo "Creating database and user hashtopolis with SQL server with user root..."
+einfo "Creating database and non-root user hashtopolis with SQL server and database user root..."
 mysql -h "127.0.0.1" -u root -p <<EOF
 DROP DATABASE IF EXISTS hashtopolis;
 DROP USER IF EXISTS 'hashtopolis'@'localhost';
@@ -350,7 +360,7 @@ einfo "Protecting sensitive config"
 	chown apache:apache "${MY_ETCDIR}/backend/php/inc/conf.php"
 	chmod 0600 "${MY_ETCDIR}/backend/php/inc/conf.php"
 
-einfo "Running load.php"
+einfo "Running load.php to create user admin and setup database"
 	php -f "${MY_HTDOCSDIR}/hashtopolis-backend/inc/load.php" || die
 
 	hashtopolis_admin_password=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)

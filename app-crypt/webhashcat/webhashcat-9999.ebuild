@@ -1,3 +1,4 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -295,6 +296,16 @@ ewarn "Do \`emerge ${CATEGORY}/${PN}:${SLOT} --config\` to complete installation
 }
 
 pkg_config() {
+	if ! pgrep mysqld >/dev/null 2>&1 && ! pgrep mariadbd >/dev/null 2>&1 ; then
+eerror
+eerror "A SQL server has not been started!  Start it first!"
+eerror
+eerror "For OpenRC:  /etc/init.d/mysql restart"
+eerror "For systemd:  systemctl restart mysqld.service"
+eerror
+		die
+	fi
+
 	if use hashcatnode ; then
 		if [[ ! -e "/etc/webhashcat/HashcatNode/salt" ]] ; then
 			local password_salt=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | sha256sum | base64 -w 0)
@@ -387,19 +398,10 @@ einfo
 			"/etc/webhashcat/WebHashcat/settings.py" \
 			|| die
 
-einfo "Do a fresh install and create WebHashcat database? [Y/n]"
+einfo "Clean install webhashcat database and user? [Y/n]"
 		read
 		if [[ "${REPLY^^}" == "Y" || -z "${REPLY}" ]] ; then
-			if ! pgrep mysqld >/dev/null 2>&1 && ! pgrep mariadbd >/dev/null 2>&1 ; then
-eerror
-eerror "A SQL server has not been started!  Start it first!"
-eerror
-eerror "For OpenRC:  /etc/init.d/mysql restart"
-eerror "For systemd:  systemctl restart mysqld.service"
-eerror
-				die
-			fi
-einfo "Creating database and user webhashcat with SQL server with user root..."
+einfo "Creating database and database non-root user webhashcat with SQL server and database user root..."
 mysql -h "127.0.0.1" -u root -p <<EOF
 DROP DATABASE IF EXISTS webhashcat;
 DROP USER IF EXISTS webhashcat;
