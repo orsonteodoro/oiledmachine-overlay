@@ -60,13 +60,17 @@ LICENSE="
 "
 SLOT="0"
 IUSE="angular"
+REQUIRED_USE="
+	vhosts
+"
 RESTRICT="test"
+# apache optional: apache2_modules_env, apache2_modules_log_config
 RDEPEND="
-	>=www-servers/apache-2.4.57:2
+	>=dev-lang/php-8.3.3:8.3[apache2,curl,filter,gd,mysql,pdo,session,simplexml,ssl,xmlwriter]
+	>=dev-php/composer-2.7.1
 	>=dev-vcs/git-2.43.0
 	>=net-misc/curl-7.88.1
-	>=dev-lang/php-8.3.2:8.3[apache2,curl,filter,gd,mysql,pdo,session,simplexml,ssl,xmlwriter]
-	>=dev-php/composer-2.7.1
+	>=www-servers/apache-2.4.57:2[apache2_modules_env,apache2_modules_log_config]
 	dev-php/pear
 	virtual/mysql
 "
@@ -126,9 +130,9 @@ src_unpack() {
 }
 
 set_server_config() {
-	HASHTOPOLIS_ADDRESS=${HASHTOPOLIS_ADDRESS:-"127.0.0.1"}
-	HASHTOPOLIS_BACKEND_PORT=${HASHTOPOLIS_BACKEND_PORT:-8080}
-	HASHTOPOLIS_FRONTEND_PORT=${HASHTOPOLIS_BACKEND_PORT:-4200}
+	local HASHTOPOLIS_ADDRESS=${HASHTOPOLIS_ADDRESS:-"localhost"}
+	local HASHTOPOLIS_BACKEND_PORT=${HASHTOPOLIS_BACKEND_PORT:-8080}
+	local HASHTOPOLIS_FRONTEND_PORT=${HASHTOPOLIS_FRONTEND_PORT:-4200}
 	if use angular ; then
 		cd "${S_WEBUI}" || die
 		sed -i \
@@ -136,11 +140,16 @@ set_server_config() {
 			src/config/default/app/main.ts \
 			|| die
 
-		keepdir "${MY_ETCDIR}/apache"
-cat <<EOF > "${ED}${MY_ETCDIR}/apache/000-default.conf"
+#  MY_HTDOCSDIR:  /usr/share/webapps//hashtopolis/0.14.1/htdocs
+		insinto "/etc/apache2/vhosts.d"
+cat <<EOF > "${T}/40_hashtopolis-2.4.conf" # Apache 2.4
+Define APACHE_LOG_DIR /var/log/apache2
+
+Listen ${HASHTOPOLIS_BACKEND_PORT}
+Listen ${HASHTOPOLIS_FRONTEND_PORT}
+
 # IMPORTANT, if you don't set the HASHTOPOLIS_APIV2_ENABLE environment variable in the config. The APIv2 will not be enabled!
 <VirtualHost *:${HASHTOPOLIS_BACKEND_PORT}>
-
         ServerAdmin webmaster@localhost
         DocumentRoot ${MY_HTDOCSDIR}/hashtopolis-backend
 
@@ -149,7 +158,7 @@ cat <<EOF > "${ED}${MY_ETCDIR}/apache/000-default.conf"
         ErrorLog \${APACHE_LOG_DIR}/error.log
         CustomLog \${APACHE_LOG_DIR}/access.log combined
 
-        <Directory "/var/www/hashtopolis-backend/">
+        <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/hashtopolis/hashtopolis-backend/">
             AllowOverride All
         </Directory>
 </VirtualHost>
@@ -160,18 +169,32 @@ cat <<EOF > "${ED}${MY_ETCDIR}/apache/000-default.conf"
 
         ErrorLog \${APACHE_LOG_DIR}/error.log
         CustomLog \${APACHE_LOG_DIR}/access.log combined
-
 </VirtualHost>
 EOF
-cat <<EOF > "${ED}${MY_ETCDIR}/frontend/apache/ports.conf"
-Listen ${HASHTOPOLIS_BACKEND_PORT}
-Listen ${HASHTOPOLIS_FRONTEND_PORT}
-EOF
+		doins "${T}/40_hashtopolis-2.4.conf"
 	else
-		keepdir "${MY_ETCDIR}/apache"
-cat <<EOF > "${ED}${MY_ETCDIR}/apache/000-default.conf"
-DocumentRoot ${MY_HTDOCSDIR}/hashtopolis-backend
+		insinto "/etc/apache2/vhosts.d"
+cat <<EOF > "${T}/40_hashtopolis-2.4.conf"
+Define APACHE_LOG_DIR /var/log/apache2
+
+Listen ${HASHTOPOLIS_BACKEND_PORT}
+
+# IMPORTANT, if you don't set the HASHTOPOLIS_APIV2_ENABLE environment variable in the config. The APIv2 will not be enabled!
+<VirtualHost *:${HASHTOPOLIS_BACKEND_PORT}>
+        ServerAdmin webmaster@localhost
+        DocumentRoot ${MY_HTDOCSDIR}/hashtopolis-backend
+
+        SetEnv HASHTOPOLIS_APIV2_ENABLE 1
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/hashtopolis/hashtopolis-backend/">
+            AllowOverride All
+        </Directory>
+</VirtualHost>
 EOF
+		doins "${T}/40_hashtopolis-2.4.conf"
 	fi
 
 #	sed -i -e "30d" "src/inc/confv2.php" || die
@@ -213,15 +236,8 @@ einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 
 	chown -R root:root "${ED}${MY_HTDOCSDIR}/"
 
-	if use angular ; then
-		fowners root:root "${MY_ETCDIR}/apache/000-default.conf"
-		fowners root:root "${MY_ETCDIR}/apache/ports.conf"
-		fperms 0600 "${MY_ETCDIR}/apache/000-default.conf"
-		fperms 0600 "${MY_ETCDIR}/apache/ports.conf"
-	else
-		fowners root:root "${MY_ETCDIR}/apache/000-default.conf"
-		fperms 0600 "${MY_ETCDIR}/apache/000-default.conf"
-	fi
+	fowners apache:apache "/etc/apache2/vhosts.d/40_hashtopolis-2.4.conf"
+	fperms 0600 "/etc/apache2/vhosts.d/40_hashtopolis-2.4.conf"
 
 	keepdir "${MY_HTDOCSDIR}/hashtopolis-backend/files"
 	keepdir "${MY_HTDOCSDIR}/hashtopolis-backend/import"
@@ -250,10 +266,21 @@ einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 }
 
 print_usage() {
+	local HASHTOPOLIS_ADDRESS=${HASHTOPOLIS_ADDRESS:-"localhost"}
+	local HASHTOPOLIS_BACKEND_PORT=${HASHTOPOLIS_BACKEND_PORT:-8080}
+	local HASHTOPOLIS_FRONTEND_PORT=${HASHTOPOLIS_FRONTEND_PORT:-4200}
+	if use angular ; then
 einfo
-einfo "To add an admin, use http[s]://localhost/hashtopolis/hashtopolis-backend/install/index.php"
-einfo "To access, use http[s]://localhost/hashtopolis/hashtopolis-backend"
+einfo "To add an admin, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install/index.php"
+einfo "To access the backend, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
+einfo "To access the frontend, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_FRONTEND_PORT}"
 einfo
+	else
+einfo
+einfo "To add an admin, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install/index.php"
+einfo "To access, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
+einfo
+	fi
 ewarn
 ewarn "When you are done setting up admin(s), delete the install folder."
 ewarn
