@@ -9,4 +9,16 @@ if [[ "${1}" == "install" ]]; then
 	)
 	chgrp -v "${GID}" "${PATHS[@]}"
 	chmod -v 0662 "${PATHS[@]}"
+
+	PATHS=(
+		"${MY_INSTALLDIR}/hashtopolis-backend/"
+		"${MY_INSTALLDIR}/hashtopolis-backend/files"
+		"${MY_INSTALLDIR}/hashtopolis-backend/inc"
+		"${MY_INSTALLDIR}/hashtopolis-backend/inc/Encryption.class.php"
+		"${MY_INSTALLDIR}/hashtopolis-backend/inc/load.php"
+		"${MY_INSTALLDIR}/hashtopolis-backend/install"
+		"${MY_INSTALLDIR}/hashtopolis-backend/lang"
+		"${MY_INSTALLDIR}/hashtopolis-backend/templates"
+	)
+	chgrp -v "${GID}" "${PATHS[@]}"
 fi

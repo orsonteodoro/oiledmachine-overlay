@@ -25,6 +25,9 @@
     <flag name="angular">
       Use the new user interface. (IN DEVELOPMENT)
     </flag>
+    <flag name="vhosts">
+      Disable for localhost install.  Enable for manual install with webapp-config.
+    </flag>
   </use>
   <upstream>
     <remote-id type="github">hashtopolis/server</remote-id>

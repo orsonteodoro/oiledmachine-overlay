@@ -61,7 +61,6 @@ LICENSE="
 SLOT="0"
 IUSE="agent angular"
 REQUIRED_USE="
-	vhosts
 "
 RESTRICT="test"
 # apache optional: apache2_modules_env, apache2_modules_log_config
@@ -138,6 +137,19 @@ set_server_config() {
 	local HASHTOPOLIS_ADDRESS=${HASHTOPOLIS_ADDRESS:-"localhost"}
 	local HASHTOPOLIS_BACKEND_PORT=${HASHTOPOLIS_BACKEND_PORT:-8080}
 	local HASHTOPOLIS_FRONTEND_PORT=${HASHTOPOLIS_FRONTEND_PORT:-4200}
+
+	if use vhosts ; then
+		_VHOST_ROOT="/var/www/${HASHTOPOLIS_ADDRESS}"
+	else
+		_VHOST_ROOT="${VHOST_ROOT}"
+	fi
+	MY_HTDOCSDIR_VHOST="${_VHOST_ROOT}/htdocs/hashtopolis"
+	MY_HTDOCSDIR_VHOST_BACKEND="${_VHOST_ROOT}/htdocs/hashtopolis/hashtopolis-backend"
+	MY_HTDOCSDIR_VHOST_FRONTEND="${_VHOST_ROOT}/htdocs/hashtopolis/hashtopolis-backend"
+einfo "MY_HTDOCSDIR_VHOST:  ${MY_HTDOCSDIR_VHOST}"
+einfo "MY_HTDOCSDIR_VHOST_BACKEND:  ${MY_HTDOCSDIR_VHOST_BACKEND}"
+einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
+
 	if use angular ; then
 		cd "${S_WEBUI}" || die
 		sed -i \
@@ -156,7 +168,7 @@ Listen ${HASHTOPOLIS_FRONTEND_PORT}
 # IMPORTANT, if you don't set the HASHTOPOLIS_APIV2_ENABLE environment variable in the config. The APIv2 will not be enabled!
 <VirtualHost *:${HASHTOPOLIS_BACKEND_PORT}>
         ServerAdmin webmaster@localhost
-        DocumentRoot ${MY_HTDOCSDIR}/hashtopolis-backend
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend"
 
         SetEnv HASHTOPOLIS_APIV2_ENABLE 1
 
@@ -165,12 +177,13 @@ Listen ${HASHTOPOLIS_FRONTEND_PORT}
 
         <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/hashtopolis/hashtopolis-backend/">
             AllowOverride All
+            Require all granted
         </Directory>
 </VirtualHost>
 
 <VirtualHost *:${HASHTOPOLIS_FRONTEND_PORT}>
         ServerAdmin webmaster@localhost
-        DocumentRoot ${MY_HTDOCSDIR}/hashtopolis-frontend
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}/hashtopolis-frontend"
 
         ErrorLog \${APACHE_LOG_DIR}/error.log
         CustomLog \${APACHE_LOG_DIR}/access.log combined
@@ -187,7 +200,7 @@ Listen ${HASHTOPOLIS_BACKEND_PORT}
 # IMPORTANT, if you don't set the HASHTOPOLIS_APIV2_ENABLE environment variable in the config. The APIv2 will not be enabled!
 <VirtualHost *:${HASHTOPOLIS_BACKEND_PORT}>
         ServerAdmin webmaster@localhost
-        DocumentRoot ${MY_HTDOCSDIR}/hashtopolis-backend
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend"
 
         SetEnv HASHTOPOLIS_APIV2_ENABLE 1
 
@@ -196,6 +209,7 @@ Listen ${HASHTOPOLIS_BACKEND_PORT}
 
         <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/hashtopolis/hashtopolis-backend/">
             AllowOverride All
+            Require all granted
         </Directory>
 </VirtualHost>
 EOF
@@ -254,6 +268,16 @@ einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/log"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/config"
 
+	# Ownership apache:apache required for login:
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/inc"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/inc/Encryption.class.php"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/inc/load.php"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/install"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/lang"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/templates"
+
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/files"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/import"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/log"
@@ -287,6 +311,10 @@ einfo "To access, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_POR
 einfo
 	fi
 ewarn
+ewarn "Use user admin and password hashtopolis to enter http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
+ewarn "You must change the password it or delete the account."
+ewarn
+ewarn
 ewarn "When you are done setting up admin(s), delete the install folder."
 ewarn
 }
@@ -308,6 +336,19 @@ eerror "For systemd:  systemctl restart mysqld.service"
 eerror
 		die
 	fi
+	check_php_support_in_apache
+
+	if use vhosts ; then
+		_VHOST_ROOT="/var/www/${HASHTOPOLIS_ADDRESS}"
+	else
+		_VHOST_ROOT="${VHOST_ROOT}"
+	fi
+	MY_HTDOCSDIR_VHOST="${_VHOST_ROOT}/htdocs/hashtopolis"
+	MY_HTDOCSDIR_VHOST_BACKEND="${_VHOST_ROOT}/htdocs/hashtopolis/hashtopolis-backend"
+	MY_HTDOCSDIR_VHOST_FRONTEND="${_VHOST_ROOT}/htdocs/hashtopolis/hashtopolis-backend"
+einfo "MY_HTDOCSDIR_VHOST:  ${MY_HTDOCSDIR_VHOST}"
+einfo "MY_HTDOCSDIR_VHOST_BACKEND:  ${MY_HTDOCSDIR_VHOST_BACKEND}"
+einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
 
 	if [[ ! -e "/etc/hashtopolis/server/salt" ]] ; then
 		mkdir -p "/etc/hashtopolis/server"
@@ -356,12 +397,12 @@ EOF
 #	HASHTOPOLIS_ADMIN_PASSWORD="${hashtopolis_admin_password}"
 
 einfo "Protecting sensitive config"
-	chown apache:apache "${MY_HTDOCSDIR}/hashtopolis-backend/inc/load.php" || die
+	chown apache:apache "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend/inc/load.php" || die
 	chown apache:apache "${MY_ETCDIR}/backend/php/inc/conf.php"
 	chmod 0600 "${MY_ETCDIR}/backend/php/inc/conf.php"
 
 einfo "Running load.php to create user admin and setup database"
-	php -f "${MY_HTDOCSDIR}/hashtopolis-backend/inc/load.php" || die
+	php -f "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend/inc/load.php" || die
 
 	hashtopolis_admin_password=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
 
