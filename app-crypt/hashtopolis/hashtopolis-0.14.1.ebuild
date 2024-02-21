@@ -59,7 +59,7 @@ LICENSE="
 	GPL-3
 "
 SLOT="0"
-IUSE="angular"
+IUSE="angular client"
 REQUIRED_USE="
 	vhosts
 "
@@ -82,6 +82,9 @@ BDEPEND="
 	angular? (
 		>=net-libs/nodejs-18.15:18
 	)
+"
+PDEPEND="
+	>=app-crypt/hashtopolis-python-agent-0.7.1
 "
 PATCHES=(
 )

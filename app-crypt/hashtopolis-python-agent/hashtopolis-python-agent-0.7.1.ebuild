@@ -73,3 +73,7 @@ python /usr/lib/${EPYTHON}/site-packages/hashtopolis
 EOF
 	doexe "${T}/hashtopolis"
 }
+
+pkg_postinst() {
+einfo "Emerge app-crypt/hashtopolis for the server."
+}
