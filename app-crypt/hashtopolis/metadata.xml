@@ -19,6 +19,9 @@
 
   -->
   <use>
+    <flag name="agent">
+      Installs a client for the Hashtopolis server.
+    </flag>
     <flag name="angular">
       Use the new user interface. (IN DEVELOPMENT)
     </flag>
