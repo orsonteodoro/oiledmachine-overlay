@@ -375,7 +375,6 @@ CREATE USER 'hashtopolis'@'localhost' IDENTIFIED BY "${hashtopolis_password_}";
 GRANT ALL PRIVILEGES ON hashtopolis.* TO 'hashtopolis'@'localhost' WITH GRANT OPTION;
 EOF
 	fi
-einfo "Done new db"
 
 einfo "Creating ${MY_ETCDIR}/backend/php/inc/conf.php"
 	mkdir -p "${MY_ETCDIR}/backend/php/inc/"
@@ -401,7 +400,7 @@ einfo "Protecting sensitive config"
 	chown apache:apache "${MY_ETCDIR}/backend/php/inc/conf.php"
 	chmod 0600 "${MY_ETCDIR}/backend/php/inc/conf.php"
 
-einfo "Running load.php to create user admin and setup database"
+einfo "Creating user admin and setuping database"
 	php -f "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend/inc/load.php" || die
 
 	hashtopolis_admin_password=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
