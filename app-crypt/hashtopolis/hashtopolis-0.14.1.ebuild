@@ -84,7 +84,9 @@ BDEPEND="
 	)
 "
 PDEPEND="
-	>=app-crypt/hashtopolis-python-agent-0.7.1
+	client? (
+		>=app-crypt/hashtopolis-python-agent-0.7.1
+	)
 "
 PATCHES=(
 )
