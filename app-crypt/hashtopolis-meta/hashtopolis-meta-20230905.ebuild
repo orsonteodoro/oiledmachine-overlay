@@ -21,7 +21,7 @@ RDEPEND="
 		~app-crypt/hashtopolis-python-agent-0.14.1
 	)
 	server? (
-		~app-crypt/hashtopolis-server-0.7.1
+		~app-crypt/hashtopolis-0.7.1
 	)
 "
 DEPEND="

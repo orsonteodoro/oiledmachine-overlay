@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+if [[ "${1}" == "install" ]]; then
+	PATHS=(
+		"${MY_INSTALLDIR}/hashtopolis-backend/files"
+		"${MY_INSTALLDIR}/hashtopolis-backend/import"
+		"${MY_INSTALLDIR}/hashtopolis-backend/log"
+		"${MY_INSTALLDIR}/hashtopolis-backend/config"
+	)
+	chgrp -v "${GID}" "${PATHS[@]}"
+	chmod -v 0662 "${PATHS[@]}"
+fi

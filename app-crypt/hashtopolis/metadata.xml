@@ -6,4 +6,20 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+  oiledmachine-overlay notes:
+
+  SQL_PORT - 3306
+  HASHTOPOLIS_ADDRESS - 127.0.0.1 (default)
+  HASHTOPOLIS_BACKEND_PORT - 8080 (default)
+  HASHTOPOLIS_FRONTEND_PORT - 4200 (default)
+
+  -->
+  <use>
+    <flag name="">
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">hashtopolis/server</remote-id>
+  </upstream>
 </pkgmetadata>
