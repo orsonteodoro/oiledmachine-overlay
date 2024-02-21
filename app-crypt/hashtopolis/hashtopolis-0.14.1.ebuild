@@ -7,6 +7,7 @@ EAPI=8
 PYTHON_COMPAT=( python3_10 python3_11 )
 HASTOPOLIS_WEBUI_PV="0.14.1"
 MY_ETCDIR="/etc/webapps/${PF}"
+NODE_VERSION=18
 WEBAPP_MANUAL_SLOT="yes"
 
 inherit npm webapp
@@ -29,7 +30,34 @@ S_WEBUI="${WORKDIR}/web-ui-${HASTOPOLIS_WEBUI_PV}"
 
 DESCRIPTION="Hashtopolis - A Hashcat wrapper for distributed password recovery"
 HOMEPAGE="https://github.com/hashtopolis/server"
-LICENSE="GPL-3"
+THIRD_PARTY_LICENSES="
+	(
+		all-rights-reserved
+		GPL-2+
+	)
+	CC-BY-4.0
+	MIT
+	OFL-1.1
+	angular? (
+		(
+			CC-BY-4.0
+			MIT
+		)
+		0BSD
+		Apache-2.0
+		BSD
+		CC0-1.0
+		CC-BY-4.0
+		GPL-3
+		MIT
+		OFL-1.1
+	)
+"
+# static/7zr.bin - All Rights Reserved, GPL-2+
+LICENSE="
+	${THIRD_PARTY_LICENSES}
+	GPL-3
+"
 SLOT="0"
 IUSE="angular"
 RESTRICT="test"
@@ -48,19 +76,37 @@ DEPEND="
 "
 BDEPEND="
 	angular? (
-		>=net-libs/nodejs-18:18
+		>=net-libs/nodejs-18.15:18
 	)
 "
 PATCHES=(
 )
 
-pkg_setup() {
-	if use angular ; then
-		npm_check_network_sandbox
+check_network_sandbox() {
+	# For composer/npm
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download micropackages."
+eerror
+		die
 	fi
-	webapp_pkg_setup
-	if ! grep -q -e "APACHE2_OPTS.*-D PHP" /etc/conf.d/apache2 ; then
+}
+
+check_php_support_in_apache() {
+	if has_version "www-servers/apache" ; then
+		if ! grep -q -e "APACHE2_OPTS.*-D PHP" /etc/conf.d/apache2 ; then
 ewarn "Apache is not configured for PHP.  Add \"-D PHP\" to APACHE2_OPTS in /etc/conf.d/apache2"
+		fi
+	fi
+}
+
+pkg_setup() {
+	check_network_sandbox
+	check_php_support_in_apache
+	webapp_pkg_setup
+	if use angular ; then
+		npm_pkg_setup
 	fi
 }
 
@@ -75,7 +121,7 @@ src_unpack() {
 	if use angular ; then
 		cd "${S_WEBUI}" || die
 		npm_hydrate
-		npm install || die
+		enpm install
 	fi
 }
 
@@ -144,7 +190,8 @@ EOF
 src_compile() {
 	if use angular ; then
 		cd "${S_WEBUI}" || die
-		npm run build
+		npm_hydrate
+		enpm run build
 	fi
 }
 
@@ -262,7 +309,6 @@ cat <<EOF > "${MY_ETCDIR}/backend/php/inc/conf.php"
 EOF
 	hashtopolis_password_=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
 
-#Broken
 #einfo "Enter a new admin password for the Admin GUI:"
 #	read -s hashtopolis_admin_password
 #	HASHTOPOLIS_ADMIN_PASSWORD="${hashtopolis_admin_password}"

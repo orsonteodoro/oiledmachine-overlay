@@ -7,16 +7,20 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <!--
+
   oiledmachine-overlay notes:
 
-  SQL_PORT - 3306
+  Build time environment variables:
+
+  SQL_PORT - 3306 (default)
   HASHTOPOLIS_ADDRESS - 127.0.0.1 (default)
   HASHTOPOLIS_BACKEND_PORT - 8080 (default)
   HASHTOPOLIS_FRONTEND_PORT - 4200 (default)
 
   -->
   <use>
-    <flag name="">
+    <flag name="angular">
+      Use the new user interface. (IN DEVELOPMENT)
     </flag>
   </use>
   <upstream>
