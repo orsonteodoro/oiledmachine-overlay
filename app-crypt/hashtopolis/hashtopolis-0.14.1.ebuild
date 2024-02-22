@@ -1644,8 +1644,13 @@ einfo "package-lock.json -> ${dest}"
 				cp -aT "${FILESDIR}/${PV}" "${S_WEBUI}" || die
 			fi
 			npm_hydrate
-#			enpm install --prefer-offline
-			enpm install --offline
+	                if declare -f npm_transform_uris > /dev/null ; then
+				# For repo
+				npm_transform_uris
+			else
+				npm_transform_uris_default
+			fi
+			enpm install --prefer-offline
 		fi
 	fi
 }
@@ -1749,6 +1754,16 @@ EOF
 src_compile() {
 	if use angular ; then
 		cd "${S_WEBUI}" || die
+
+	# Avoid fatal: not a git repository
+		git init || die
+		touch dummy || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		git add dummy || die
+		git commit -m "Dummy" || die
+		git tag v${PV} || die
+
 		npm_hydrate
 		enpm run build
 	fi
@@ -1765,9 +1780,10 @@ einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 	doins -r src/*
 
 	if use angular ; then
-		cd "${S_WEBUI}" || die
-		insinto "${MY_HTDOCSDIR}/hashtopolis-frontend"
-		doins -r dist/*
+		pushd "${S_WEBUI}" || die
+			insinto "${MY_HTDOCSDIR}/hashtopolis-frontend"
+			doins -r dist/*
+		popd
 	fi
 
 	chown -R root:root "${ED}${MY_HTDOCSDIR}/"
@@ -1781,21 +1797,21 @@ einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 	keepdir "${MY_HTDOCSDIR}/hashtopolis-backend/config"
 
 einfo "Check A"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/import"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/log"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/config"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files/"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/import/"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/log/"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/config/"
 
 einfo "Check B"
 	# Ownership apache:apache required for login:
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/inc"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files/"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/inc/"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/inc/Encryption.class.php"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/inc/load.php"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/install"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/lang"
-	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/templates"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/install/"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/lang/"
+	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/templates/"
 
 einfo "Check C"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/files"
