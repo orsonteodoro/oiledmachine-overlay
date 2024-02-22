@@ -1774,6 +1774,7 @@ src_compile() {
 		npm_hydrate
 		enpm run build
 	fi
+	grep -F -e " ng: command not found" "${T}/build.log" && die "Detected error.  Try again."
 }
 
 src_install() {
