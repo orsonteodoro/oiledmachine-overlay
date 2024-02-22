@@ -1479,7 +1479,7 @@ if [[ "${PV}" == "9999" ]]; then
 	S="${WORKDIR}/server-9999"
 	S_WEBUI="${WORKDIR}/web-ui-9999"
 else
-#	KEYWORDS="~amd64" # Unfinished
+	KEYWORDS="~amd64" # Unfinished
 	SRC_URI="
 https://github.com/hashtopolis/server/archive/v${PV}.tar.gz -> hashtopolis-server-${PV}.tar.gz
 		angular? (
@@ -1576,6 +1576,7 @@ pkg_setup() {
 	check_php_support_in_apache
 	webapp_pkg_setup
 	if use angular ; then
+ewarn "The angular USE flag is currently broken."
 		npm_pkg_setup
 	fi
 }
@@ -1710,6 +1711,11 @@ Listen ${HASHTOPOLIS_FRONTEND_PORT}
 
         ErrorLog \${APACHE_LOG_DIR}/error.log
         CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/hashtopolis/hashtopolis-frontend/">
+            AllowOverride All
+            Require all granted
+        </Directory>
 </VirtualHost>
 EOF
 		doins "${T}/40_hashtopolis-2.4.conf"
