@@ -1569,7 +1569,7 @@ LICENSE="
 	GPL-3
 "
 SLOT="0"
-IUSE+=" agent angular"
+IUSE+=" agent angular ssl"
 RESTRICT="test"
 # apache optional: apache2_modules_env, apache2_modules_log_config
 RDEPEND="
@@ -1577,7 +1577,7 @@ RDEPEND="
 	>=dev-php/composer-2.7.1
 	>=dev-vcs/git-2.43.0
 	>=net-misc/curl-7.88.1
-	>=www-servers/apache-2.4.57:2[apache2_modules_env,apache2_modules_log_config]
+	>=www-servers/apache-2.4.57:2[apache2_modules_env,apache2_modules_log_config,ssl?]
 	dev-php/pear
 	virtual/mysql
 "
@@ -1703,32 +1703,64 @@ einfo "package-lock.json -> ${dest}"
 	fi
 }
 
-set_server_config() {
-	local HASHTOPOLIS_ADDRESS=${HASHTOPOLIS_ADDRESS:-"localhost"}
-	local HASHTOPOLIS_BACKEND_PORT=${HASHTOPOLIS_BACKEND_PORT:-8080}
-	local HASHTOPOLIS_FRONTEND_PORT=${HASHTOPOLIS_FRONTEND_PORT:-4200}
-
-	if use vhosts ; then
-		_VHOST_ROOT="/var/www/${HASHTOPOLIS_ADDRESS}"
-	else
-		_VHOST_ROOT="${VHOST_ROOT}"
-	fi
-	MY_HTDOCSDIR_VHOST="${_VHOST_ROOT}/htdocs/hashtopolis"
-	MY_HTDOCSDIR_VHOST_BACKEND="${_VHOST_ROOT}/htdocs/hashtopolis/hashtopolis-backend"
-	MY_HTDOCSDIR_VHOST_FRONTEND="${_VHOST_ROOT}/htdocs/hashtopolis/hashtopolis-backend"
-einfo "MY_HTDOCSDIR_VHOST:  ${MY_HTDOCSDIR_VHOST}"
-einfo "MY_HTDOCSDIR_VHOST_BACKEND:  ${MY_HTDOCSDIR_VHOST_BACKEND}"
-einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
-
-	if use angular ; then
-		cd "${S_WEBUI}" || die
-		sed -i \
-			-e 's/localhost:8080/${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/g' \
-			src/config/default/app/main.ts \
-			|| die
-
+set_vhost_angular_config_with_ssl() {
 #  MY_HTDOCSDIR:  /usr/share/webapps//hashtopolis/0.14.1/htdocs
-		insinto "/etc/apache2/vhosts.d"
+	insinto "/etc/apache2/vhosts.d"
+cat <<EOF > "${T}/40_hashtopolis-2.4.conf" # Apache 2.4
+Define APACHE_LOG_DIR /var/log/apache2
+
+Listen ${HASHTOPOLIS_BACKEND_PORT}
+Listen ${HASHTOPOLIS_FRONTEND_PORT}
+
+# IMPORTANT, if you don't set the HASHTOPOLIS_APIV2_ENABLE environment variable in the config. The APIv2 will not be enabled!
+<VirtualHost *:${HASHTOPOLIS_BACKEND_PORT}>
+        ServerAdmin webmaster@localhost
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend"
+
+        SetEnv HASHTOPOLIS_APIV2_ENABLE 1
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        SSLEngine on
+        SSLProtocol ALL -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+        SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        SSLHonorCipherOrder Off
+        SSLCertificateFile /etc/ssl/apache2/server.crt
+        SSLCertificateKeyFile /etc/ssl/apache2/server.key
+
+        <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/hashtopolis/hashtopolis-backend/">
+            AllowOverride All
+            Require all granted
+        </Directory>
+</VirtualHost>
+
+<VirtualHost *:${HASHTOPOLIS_FRONTEND_PORT}>
+        ServerAdmin webmaster@localhost
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}/hashtopolis-frontend"
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        SSLEngine on
+        SSLProtocol ALL -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+        SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        SSLHonorCipherOrder Off
+        SSLCertificateFile /etc/ssl/apache2/server.crt
+        SSLCertificateKeyFile /etc/ssl/apache2/server.key
+
+        <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/hashtopolis/hashtopolis-frontend/">
+            AllowOverride All
+            Require all granted
+        </Directory>
+</VirtualHost>
+EOF
+	doins "${T}/40_hashtopolis-2.4.conf"
+}
+
+set_vhost_angular_config_without_ssl() {
+#  MY_HTDOCSDIR:  /usr/share/webapps//hashtopolis/0.14.1/htdocs
+	insinto "/etc/apache2/vhosts.d"
 cat <<EOF > "${T}/40_hashtopolis-2.4.conf" # Apache 2.4
 Define APACHE_LOG_DIR /var/log/apache2
 
@@ -1764,15 +1796,44 @@ Listen ${HASHTOPOLIS_FRONTEND_PORT}
         </Directory>
 </VirtualHost>
 EOF
-		doins "${T}/40_hashtopolis-2.4.conf"
+	doins "${T}/40_hashtopolis-2.4.conf"
+}
 
-		export HASHTOPOLIS_BACKEND_URL="http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/api/v2"
-		envsubst \
-			< "${S_WEBUI}/dist/assets/config.json.example" \
-			> "${S_WEBUI}/dist/assets/config.json" \
-			|| die
-	else
-		insinto "/etc/apache2/vhosts.d"
+set_vhost_angularless_config_with_ssl() {
+	insinto "/etc/apache2/vhosts.d"
+cat <<EOF > "${T}/40_hashtopolis-2.4.conf"
+Define APACHE_LOG_DIR /var/log/apache2
+
+Listen ${HASHTOPOLIS_BACKEND_PORT}
+
+# IMPORTANT, if you don't set the HASHTOPOLIS_APIV2_ENABLE environment variable in the config. The APIv2 will not be enabled!
+<VirtualHost *:${HASHTOPOLIS_BACKEND_PORT}>
+        ServerAdmin webmaster@localhost
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend"
+
+        SetEnv HASHTOPOLIS_APIV2_ENABLE 1
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        SSLEngine on
+        SSLProtocol ALL -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+        SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        SSLHonorCipherOrder Off
+        SSLCertificateFile /etc/ssl/apache2/server.crt
+        SSLCertificateKeyFile /etc/ssl/apache2/server.key
+
+        <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/hashtopolis/hashtopolis-backend/">
+            AllowOverride All
+            Require all granted
+        </Directory>
+</VirtualHost>
+EOF
+	doins "${T}/40_hashtopolis-2.4.conf"
+}
+
+set_vhost_angularless_config_without_ssl() {
+	insinto "/etc/apache2/vhosts.d"
 cat <<EOF > "${T}/40_hashtopolis-2.4.conf"
 Define APACHE_LOG_DIR /var/log/apache2
 
@@ -1794,7 +1855,51 @@ Listen ${HASHTOPOLIS_BACKEND_PORT}
         </Directory>
 </VirtualHost>
 EOF
-		doins "${T}/40_hashtopolis-2.4.conf"
+	doins "${T}/40_hashtopolis-2.4.conf"
+}
+
+
+set_server_config() {
+	local HASHTOPOLIS_ADDRESS=${HASHTOPOLIS_ADDRESS:-"localhost"}
+	local HASHTOPOLIS_BACKEND_PORT=${HASHTOPOLIS_BACKEND_PORT:-8080}
+	local HASHTOPOLIS_FRONTEND_PORT=${HASHTOPOLIS_FRONTEND_PORT:-4200}
+
+	if use vhosts ; then
+		_VHOST_ROOT="/var/www/${HASHTOPOLIS_ADDRESS}"
+	else
+		_VHOST_ROOT="${VHOST_ROOT}"
+	fi
+	MY_HTDOCSDIR_VHOST="${_VHOST_ROOT}/htdocs/hashtopolis"
+	MY_HTDOCSDIR_VHOST_BACKEND="${_VHOST_ROOT}/htdocs/hashtopolis/hashtopolis-backend"
+	MY_HTDOCSDIR_VHOST_FRONTEND="${_VHOST_ROOT}/htdocs/hashtopolis/hashtopolis-backend"
+einfo "MY_HTDOCSDIR_VHOST:  ${MY_HTDOCSDIR_VHOST}"
+einfo "MY_HTDOCSDIR_VHOST_BACKEND:  ${MY_HTDOCSDIR_VHOST_BACKEND}"
+einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
+
+	if use angular ; then
+		cd "${S_WEBUI}" || die
+		sed -i \
+			-e 's/localhost:8080/${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/g' \
+			src/config/default/app/main.ts \
+			|| die
+
+		if use ssl ; then
+			set_vhost_angular_config_with_ssl
+		else
+			set_vhost_angular_config_without_ssl
+		fi
+
+		export HASHTOPOLIS_BACKEND_URL="http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/api/v2"
+		envsubst \
+			< "${S_WEBUI}/dist/assets/config.json.example" \
+			> "${S_WEBUI}/dist/assets/config.json" \
+			|| die
+	else
+		if use ssl ; then
+			set_vhost_angularless_config_with_ssl
+		else
+			set_vhost_angularless_config_without_ssl
+		fi
 	fi
 
 #	sed -i -e "30d" "src/inc/confv2.php" || die
@@ -1895,14 +2000,25 @@ print_usage() {
 	local HASHTOPOLIS_FRONTEND_PORT=${HASHTOPOLIS_FRONTEND_PORT:-4200}
 	if use angular ; then
 einfo
-einfo "To add an admin, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install/index.php"
-einfo "To access the backend, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
-einfo "To access the frontend, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_FRONTEND_PORT}"
+		if use ssl ; then
+einfo "To add an admin, use https://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install/index.php"
+einfo "To access the backend, use https://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
+einfo "To access the frontend, use https://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_FRONTEND_PORT}"
+		else
+einfo "To add an admin, use http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install/index.php"
+einfo "To access the backend, use http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
+einfo "To access the frontend, use http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_FRONTEND_PORT}"
+		fi
 einfo
 	else
 einfo
-einfo "To add an admin, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install/index.php"
-einfo "To access, use http[s]://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
+		if use ssl ; then
+einfo "To add an admin, use https://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install/index.php"
+einfo "To access, use https://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
+		else
+einfo "To add an admin, use http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install/index.php"
+einfo "To access, use http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}"
+		fi
 einfo
 	fi
 ewarn
