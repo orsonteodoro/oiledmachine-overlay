@@ -1475,7 +1475,9 @@ https://registry.npmjs.org/tslib/-/tslib-2.3.0.tgz -> npmpkg-tslib-2.3.0.tgz
 
 if [[ "${PV}" == "9999" ]]; then
 	inherit git-r3
-	EGIT_REPO_URI="https://github.com/hashtopolis/server.git"
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/server-9999"
+	S_WEBUI="${WORKDIR}/web-ui-9999"
 else
 #	KEYWORDS="~amd64" # Unfinished
 	SRC_URI="
@@ -1486,9 +1488,9 @@ https://github.com/hashtopolis/web-ui/archive/refs/tags/v${HASTOPOLIS_WEBUI_PV}.
 	-> hashtopolis-webui-${HASTOPOLIS_WEBUI_PV}.tar.gz
 		)
 	"
+	S="${WORKDIR}/server-${PV}"
+	S_WEBUI="${WORKDIR}/web-ui-${HASTOPOLIS_WEBUI_PV}"
 fi
-S="${WORKDIR}/server-${PV}"
-S_WEBUI="${WORKDIR}/web-ui-${HASTOPOLIS_WEBUI_PV}"
 
 DESCRIPTION="Hashtopolis - A Hashcat wrapper for distributed password recovery"
 HOMEPAGE="https://github.com/hashtopolis/server"
@@ -1521,9 +1523,7 @@ LICENSE="
 	GPL-3
 "
 SLOT="0"
-IUSE="agent angular"
-REQUIRED_USE="
-"
+IUSE+=" agent angular"
 RESTRICT="test"
 # apache optional: apache2_modules_env, apache2_modules_log_config
 RDEPEND="
@@ -1581,7 +1581,24 @@ pkg_setup() {
 }
 
 src_unpack() {
-	unpack ${A}
+	if [[ "${PV}" == "9999" ]]; then
+		EGIT_BRANCH="master"
+		EGIT_CHECKOUT_DIR="${WORKDIR}/server-9999"
+		EGIT_REPO_URI="https://github.com/hashtopolis/server.git"
+		use fallback-commit && EGIT_COMMIT="375f2ce022c4b3e0780abf9dcca1e6af8e966c1a"
+		git-r3_fetch
+		git-r3_checkout
+
+		EGIT_BRANCH="master"
+		EGIT_CHECKOUT_DIR="${WORKDIR}/web-ui-9999"
+		EGIT_REPO_URI="https://github.com/hashtopolis/web-ui.git"
+		use fallback-commit && EGIT_COMMIT="4c9b30888fd1b1e48c469afc4884d0e427e22122"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack "hashtopolis-server-${PV}.tar.gz"
+		use angular && unpack "hashtopolis-webui-${HASTOPOLIS_WEBUI_PV}.tar.gz"
+	fi
 
 	cd "${S}" || die
 	composer install \
@@ -1627,7 +1644,8 @@ einfo "package-lock.json -> ${dest}"
 				cp -aT "${FILESDIR}/${PV}" "${S_WEBUI}" || die
 			fi
 			npm_hydrate
-			enpm install --prefer-offline
+#			enpm install --prefer-offline
+			enpm install --offline
 		fi
 	fi
 }
@@ -1762,11 +1780,13 @@ einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 	keepdir "${MY_HTDOCSDIR}/hashtopolis-backend/log"
 	keepdir "${MY_HTDOCSDIR}/hashtopolis-backend/config"
 
+einfo "Check A"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/import"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/log"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/config"
 
+einfo "Check B"
 	# Ownership apache:apache required for login:
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files"
@@ -1777,6 +1797,7 @@ einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/lang"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/templates"
 
+einfo "Check C"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/files"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/import"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/log"
