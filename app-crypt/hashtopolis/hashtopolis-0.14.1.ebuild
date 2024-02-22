@@ -1650,7 +1650,8 @@ einfo "package-lock.json -> ${dest}"
 			else
 				npm_transform_uris_default
 			fi
-			enpm install --prefer-offline
+#			enpm install --prefer-offline
+			enpm install --offline
 		fi
 	fi
 }
@@ -1773,10 +1774,9 @@ src_install() {
 	webapp_src_preinst
 
 	cd "${S}" || die
-
 	set_server_config
+	cd "${S}" || die
 	insinto "${MY_HTDOCSDIR}/hashtopolis-backend"
-einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 	doins -r src/*
 
 	if use angular ; then
@@ -1796,13 +1796,11 @@ einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
 	keepdir "${MY_HTDOCSDIR}/hashtopolis-backend/log"
 	keepdir "${MY_HTDOCSDIR}/hashtopolis-backend/config"
 
-einfo "Check A"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files/"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/import/"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/log/"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/config/"
 
-einfo "Check B"
 	# Ownership apache:apache required for login:
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/files/"
@@ -1813,7 +1811,6 @@ einfo "Check B"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/lang/"
 	webapp_serverowned "${MY_HTDOCSDIR}/hashtopolis-backend/templates/"
 
-einfo "Check C"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/files"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/import"
 	fperms 0662 "${MY_HTDOCSDIR}/hashtopolis-backend/log"
