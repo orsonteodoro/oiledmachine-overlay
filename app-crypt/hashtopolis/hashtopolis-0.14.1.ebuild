@@ -2111,7 +2111,7 @@ einfo "Protecting sensitive config"
 	chown apache:apache "${MY_ETCDIR}/backend/php/inc/conf.php"
 	chmod 0600 "${MY_ETCDIR}/backend/php/inc/conf.php"
 
-einfo "Creating user admin and setuping database"
+info "Creating user admin and configuring database"
 	php -f "${MY_HTDOCSDIR_VHOST}/hashtopolis-backend/inc/load.php" || die
 
 	hashtopolis_admin_password=$(dd bs=4096 count=1 if=/dev/random of=/dev/stdout 2>/dev/null | base64)
