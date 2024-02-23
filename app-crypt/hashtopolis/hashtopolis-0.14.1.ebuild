@@ -1511,11 +1511,6 @@ WEB_UI_NODE_MODULES_LICENSES="
 	(
 		CC-BY-4.0
 		MIT
-		OFL-1.1
-	)
-	(
-		CC-BY-4.0
-		MIT
 		Unicode-DFS-2016
 		W3C-Community-Final-Specification-Agreement
 		W3C-Software-and-Document-Notice-and-License
