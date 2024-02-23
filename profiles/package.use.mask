@@ -83,3 +83,6 @@ app-admin/howdy ffmpeg pyv4l2
 
 # Crash
 x11-misc/sddm wayland
+
+# Broken with CORS errors
+app-crypt/hashtopolis angular
