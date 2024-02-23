@@ -1494,7 +1494,7 @@ fi
 
 DESCRIPTION="Hashtopolis - A Hashcat wrapper for distributed password recovery"
 HOMEPAGE="https://github.com/hashtopolis/server"
-WEB_UI_NODE_MODULE_LICENSES="
+WEB_UI_NODE_MODULES_LICENSES="
 		(
 			all-rights-reserved
 			Apache-2.0
@@ -1544,11 +1544,11 @@ WEB_UI_NODE_MODULE_LICENSES="
 		Unlicense
 		|| (
 			Apache-2.0
-			MPL-2.0
+			MIT
 		)
 		|| (
 			Apache-2.0
-			MIT
+			MPL-2.0
 		)
 		|| (
 			BSD
@@ -1569,7 +1569,7 @@ THIRD_PARTY_LICENSES="
 	MIT
 	OFL-1.1
 	angular? (
-		${WEB_UI_NODE_MODULE_LICENSES}
+		${WEB_UI_NODE_MODULES_LICENSES}
 		(
 			CC-BY-4.0
 			MIT
@@ -1587,24 +1587,24 @@ THIRD_PARTY_LICENSES="
 # The PSF-2.2 is similar to PSF-2.4 but shorter list
 # static/7zr.bin - All Rights Reserved, GPL-2+
 # web-ui-0.14.1/node_modules/jackspeak/LICENSE.md - custom "Blue Oak Model License" 1.0.0
-# web-ui-0.14.1/node_modules/jszip/lib/license_header.js - || ( MIT GPL-3 )
-# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown  - || ( MIT GPL-3 )
+# web-ui-0.14.1/node_modules/jszip/lib/license_header.js - || ( GPL-3 MIT )
+# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown  - || ( GPL-3 MIT )
 # web-ui-0.14.1/node_modules/typescript/ThirdPartyNoticeText.txt - CC-BY-4.0 MIT Unicode-DFS-2016 W3C-Community-Final-Specification-Agreement W3C-Software-and-Document-Notice-and-License
-# web-ui-0.14.1/node_modules/@angular/localize/node_modules/convert-source-map/LICENSE - MIT all-rights-reserved
-# web-ui-0.14.1/node_modules/atob/LICENSE || ( MIT Apache-2.0 )
+# web-ui-0.14.1/node_modules/@angular/localize/node_modules/convert-source-map/LICENSE - all-rights-reserved MIT
+# web-ui-0.14.1/node_modules/atob/LICENSE || ( Apache-2.0 MIT )
 # web-ui-0.14.1/node_modules/atob/LICENSE.DOCS - CC-BY-3.0
 # web-ui-0.14.1/node_modules/caniuse-lite/LICENSE - CC-BY-4.0
 # web-ui-0.14.1/node_modules/dompurify/LICENSE || ( Apache-2.0 MPL-2.0 )
 # web-ui-0.14.1/node_modules/@fortawesome/fontawesome-common-types/LICENSE.txt - custom
-# web-ui-0.14.1/node_modules/@fortawesome/fontawesome-free-regular/LICENSE.txt - CC-BY-4.0 OFL-1.1 MIT
+# web-ui-0.14.1/node_modules/@fortawesome/fontawesome-free-regular/LICENSE.txt - CC-BY-4.0 MIT OFL-1.1
 # web-ui-0.14.1/node_modules/@fortawesome/fontawesome/LICENSE.txt - custom
 # web-ui-0.14.1/node_modules/fs-monkey/LICENSE - Unlicense
 # web-ui-0.14.1/node_modules/hashtype-detector/LICENSE - GPL-3
 # web-ui-0.14.1/node_modules/jsbn/LICENSE - custom ( MIT + retain copyright notice )
-# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown || ( MIT GPL-3 )
+# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown || ( GPL-3 MIT )
 # web-ui-0.14.1/node_modules/node-forge/LICENSE - || ( BSD GPL-2 )
 # web-ui-0.14.1/node_modules/reflect-metadata/CopyrightNotice.txt - Apache-2.0 all-rights-reserved
-# web-ui-0.14.1/node_modules/thrift/LICENSE - custom public-domain Apache-2.0 BSD
+# web-ui-0.14.1/node_modules/thrift/LICENSE - custom Apache-2.0 BSD public-domain
 LICENSE="
 	${THIRD_PARTY_LICENSES}
 	GPL-3
