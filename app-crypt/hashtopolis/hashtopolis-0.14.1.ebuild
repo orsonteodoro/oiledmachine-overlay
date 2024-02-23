@@ -1843,7 +1843,11 @@ einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
 			set_vhost_angular_config_without_ssl
 		fi
 
-		export HASHTOPOLIS_BACKEND_URL="http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/api/v2"
+		if use ssl ; then
+			export HASHTOPOLIS_BACKEND_URL="https://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/api/v2"
+		else
+			export HASHTOPOLIS_BACKEND_URL="http://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/api/v2"
+		fi
 		envsubst \
 			< "${S_WEBUI}/dist/assets/config.json.example" \
 			> "${S_WEBUI}/dist/assets/config.json" \
@@ -1944,8 +1948,6 @@ src_install() {
 	dosym \
 		"${MY_ETCDIR}/backend/php/inc/conf.php" \
 		"${MY_HTDOCSDIR}/hashtopolis-backend/inc/conf.php"
-
-	webapp_src_install
 }
 
 print_usage() {
