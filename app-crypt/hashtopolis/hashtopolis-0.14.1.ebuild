@@ -2039,6 +2039,8 @@ src_install() {
 	LCNR_SOURCE="${S}/vendor"
 	LCNR_TAG="composer-third-party-licenses"
 	lcnr_install_files
+
+	webapp_src_install
 }
 
 print_usage() {
