@@ -1500,6 +1500,7 @@ THIRD_PARTY_LICENSES="
 		GPL-2+
 	)
 	CC-BY-4.0
+	BSD
 	MIT
 	OFL-1.1
 	angular? (
@@ -2038,6 +2039,10 @@ src_install() {
 		LCNR_TAG="web-ui-node_modules-third-party-licenses"
 		lcnr_install_files
 	fi
+
+	LCNR_SOURCE="${S}/vendor"
+	LCNR_TAG="composer-third-party-licenses"
+	lcnr_install_files
 }
 
 print_usage() {
