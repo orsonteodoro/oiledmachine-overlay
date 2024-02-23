@@ -1495,69 +1495,69 @@ fi
 DESCRIPTION="Hashtopolis - A Hashcat wrapper for distributed password recovery"
 HOMEPAGE="https://github.com/hashtopolis/server"
 WEB_UI_NODE_MODULES_LICENSES="
-		(
-			all-rights-reserved
-			Apache-2.0
-		)
-		(
-			all-rights-reserved
-			MIT
-		)
-		(
-			CC-BY-4.0
-			MIT
-			OFL-1.1
-		)
-		(
-			CC-BY-4.0
-			MIT
-			OFL-1.1
-		)
-		(
-			CC-BY-4.0
-			MIT
-			Unicode-DFS-2016
-			W3C-Community-Final-Specification-Agreement
-			W3C-Software-and-Document-Notice-and-License
-		)
-		(
-			Apache-2.0
-			BSD
-			custom
-			public-domain
-		)
-		(
-			custom
-			MIT
-		)
-		0BSD
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	(
+		CC-BY-4.0
+		MIT
+		OFL-1.1
+	)
+	(
+		CC-BY-4.0
+		MIT
+		OFL-1.1
+	)
+	(
+		CC-BY-4.0
+		MIT
+		Unicode-DFS-2016
+		W3C-Community-Final-Specification-Agreement
+		W3C-Software-and-Document-Notice-and-License
+	)
+	(
 		Apache-2.0
 		BSD
-		BSD-2
-		CC0-1.0
-		CC-BY-4.0
-		CC-BY-3.0
 		custom
-		ISC
+		public-domain
+	)
+	(
+		custom
 		MIT
-		PSF-2.2
-		Unlicense
-		|| (
-			Apache-2.0
-			MIT
-		)
-		|| (
-			Apache-2.0
-			MPL-2.0
-		)
-		|| (
-			BSD
-			GPL-2
-		)
-		|| (
-			GPL-3
-			MIT
-		)
+	)
+	0BSD
+	Apache-2.0
+	BSD
+	BSD-2
+	CC0-1.0
+	CC-BY-4.0
+	CC-BY-3.0
+	custom
+	ISC
+	MIT
+	PSF-2.2
+	Unlicense
+	|| (
+		Apache-2.0
+		MIT
+	)
+	|| (
+		Apache-2.0
+		MPL-2.0
+	)
+	|| (
+		BSD
+		GPL-2
+	)
+	|| (
+		GPL-3
+		MIT
+	)
 "
 THIRD_PARTY_LICENSES="
 	(
