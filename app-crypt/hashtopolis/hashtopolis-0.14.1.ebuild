@@ -11,7 +11,7 @@ NODE_VERSION=18
 NPM_AUDIT_FIX=1
 WEBAPP_MANUAL_SLOT="yes"
 
-inherit npm webapp
+inherit lcnr npm webapp
 
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
@@ -1515,9 +1515,93 @@ THIRD_PARTY_LICENSES="
 		GPL-3
 		MIT
 		OFL-1.1
+
+		(
+			all-rights-reserved
+			Apache-2.0
+		)
+		(
+			all-rights-reserved
+			MIT
+		)
+		(
+			CC-BY-4.0
+			MIT
+			OFL-1.1
+		)
+		(
+			CC-BY-4.0
+			MIT
+			OFL-1.1
+		)
+		(
+			CC-BY-4.0
+			MIT
+			Unicode-DFS-2016
+			W3C-Community-Final-Specification-Agreement
+			W3C-Software-and-Document-Notice-and-License
+		)
+		(
+			custom
+			Apache-2.0
+			BSD
+			public-domain
+		)
+		(
+			custom
+			MIT
+		)
+		0BSD
+		Apache-2.0
+		ISC
+		MIT
+		PSF-2.2
+		BSD
+		BSD-2
+		CC0-1.0
+		CC-BY-4.0
+		CC-BY-3.0
+		custom
+		Unlicense
+		|| (
+			Apache-2.0
+			MPL-2.0
+		)
+		|| (
+			Apache-2.0
+			MIT
+		)
+		|| (
+			BSD
+			GPL-2
+		)
+		|| (
+			MIT
+			GPL-3
+		)
 	)
 "
+# The PSF-2.2 is similar to PSF-2.4 but shorter list
 # static/7zr.bin - All Rights Reserved, GPL-2+
+# web-ui-0.14.1/node_modules/jackspeak/LICENSE.md - custom "Blue Oak Model License" 1.0.0
+# web-ui-0.14.1/node_modules/jszip/lib/license_header.js - || ( MIT GPL-3 )
+# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown  - || ( MIT GPL-3 )
+# web-ui-0.14.1/node_modules/typescript/ThirdPartyNoticeText.txt - CC-BY-4.0 MIT Unicode-DFS-2016 W3C-Community-Final-Specification-Agreement W3C-Software-and-Document-Notice-and-License
+# web-ui-0.14.1/node_modules/@angular/localize/node_modules/convert-source-map/LICENSE - MIT all-rights-reserved
+# web-ui-0.14.1/node_modules/atob/LICENSE || ( MIT Apache-2.0 )
+# web-ui-0.14.1/node_modules/atob/LICENSE.DOCS - CC-BY-3.0
+# web-ui-0.14.1/node_modules/caniuse-lite/LICENSE - CC-BY-4.0
+# web-ui-0.14.1/node_modules/dompurify/LICENSE || ( Apache-2.0 MPL-2.0 )
+# web-ui-0.14.1/node_modules/@fortawesome/fontawesome-common-types/LICENSE.txt - custom
+# web-ui-0.14.1/node_modules/@fortawesome/fontawesome-free-regular/LICENSE.txt - CC-BY-4.0 OFL-1.1 MIT
+# web-ui-0.14.1/node_modules/@fortawesome/fontawesome/LICENSE.txt - custom
+# web-ui-0.14.1/node_modules/fs-monkey/LICENSE - Unlicense
+# web-ui-0.14.1/node_modules/hashtype-detector/LICENSE - GPL-3
+# web-ui-0.14.1/node_modules/jsbn/LICENSE - custom ( MIT + retain copyright notice )
+# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown || ( MIT GPL-3 )
+# web-ui-0.14.1/node_modules/node-forge/LICENSE - || ( BSD GPL-2 )
+# web-ui-0.14.1/node_modules/reflect-metadata/CopyrightNotice.txt - Apache-2.0 all-rights-reserved
+# web-ui-0.14.1/node_modules/thrift/LICENSE - custom public-domain Apache-2.0 BSD
 LICENSE="
 	${THIRD_PARTY_LICENSES}
 	GPL-3
@@ -1948,6 +2032,12 @@ src_install() {
 	dosym \
 		"${MY_ETCDIR}/backend/php/inc/conf.php" \
 		"${MY_HTDOCSDIR}/hashtopolis-backend/inc/conf.php"
+
+	if use angular ; then
+		LCNR_SOURCE="${S_WEBUI}"
+		LCNR_TAG="web-ui-node_modules-third-party-licenses"
+		lcnr_install_files
+	fi
 }
 
 print_usage() {
