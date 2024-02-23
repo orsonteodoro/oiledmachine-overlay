@@ -1521,9 +1521,9 @@ WEB_UI_NODE_MODULES_LICENSES="
 			W3C-Software-and-Document-Notice-and-License
 		)
 		(
-			custom
 			Apache-2.0
 			BSD
+			custom
 			public-domain
 		)
 		(
@@ -1555,8 +1555,8 @@ WEB_UI_NODE_MODULES_LICENSES="
 			GPL-2
 		)
 		|| (
-			MIT
 			GPL-3
+			MIT
 		)
 "
 THIRD_PARTY_LICENSES="
