@@ -1586,10 +1586,6 @@ THIRD_PARTY_LICENSES="
 "
 # The PSF-2.2 is similar to PSF-2.4 but shorter list
 # static/7zr.bin - All Rights Reserved, GPL-2+
-# web-ui-0.14.1/node_modules/jackspeak/LICENSE.md - custom "Blue Oak Model License" 1.0.0
-# web-ui-0.14.1/node_modules/jszip/lib/license_header.js - || ( GPL-3 MIT )
-# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown  - || ( GPL-3 MIT )
-# web-ui-0.14.1/node_modules/typescript/ThirdPartyNoticeText.txt - CC-BY-4.0 MIT Unicode-DFS-2016 W3C-Community-Final-Specification-Agreement W3C-Software-and-Document-Notice-and-License
 # web-ui-0.14.1/node_modules/@angular/localize/node_modules/convert-source-map/LICENSE - all-rights-reserved MIT
 # web-ui-0.14.1/node_modules/atob/LICENSE || ( Apache-2.0 MIT )
 # web-ui-0.14.1/node_modules/atob/LICENSE.DOCS - CC-BY-3.0
@@ -1600,11 +1596,14 @@ THIRD_PARTY_LICENSES="
 # web-ui-0.14.1/node_modules/@fortawesome/fontawesome/LICENSE.txt - custom
 # web-ui-0.14.1/node_modules/fs-monkey/LICENSE - Unlicense
 # web-ui-0.14.1/node_modules/hashtype-detector/LICENSE - GPL-3
+# web-ui-0.14.1/node_modules/jackspeak/LICENSE.md - custom "Blue Oak Model License" 1.0.0
 # web-ui-0.14.1/node_modules/jsbn/LICENSE - custom ( MIT + retain copyright notice )
-# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown || ( GPL-3 MIT )
+# web-ui-0.14.1/node_modules/jszip/lib/license_header.js - || ( GPL-3 MIT )
+# web-ui-0.14.1/node_modules/jszip/LICENSE.markdown - || ( GPL-3 MIT )
 # web-ui-0.14.1/node_modules/node-forge/LICENSE - || ( BSD GPL-2 )
 # web-ui-0.14.1/node_modules/reflect-metadata/CopyrightNotice.txt - Apache-2.0 all-rights-reserved
 # web-ui-0.14.1/node_modules/thrift/LICENSE - custom Apache-2.0 BSD public-domain
+# web-ui-0.14.1/node_modules/typescript/ThirdPartyNoticeText.txt - CC-BY-4.0 MIT Unicode-DFS-2016 W3C-Community-Final-Specification-Agreement W3C-Software-and-Document-Notice-and-License
 LICENSE="
 	${THIRD_PARTY_LICENSES}
 	GPL-3
