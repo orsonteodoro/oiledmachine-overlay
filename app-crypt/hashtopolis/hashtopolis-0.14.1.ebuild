@@ -1494,29 +1494,7 @@ fi
 
 DESCRIPTION="Hashtopolis - A Hashcat wrapper for distributed password recovery"
 HOMEPAGE="https://github.com/hashtopolis/server"
-THIRD_PARTY_LICENSES="
-	(
-		all-rights-reserved
-		GPL-2+
-	)
-	CC-BY-4.0
-	BSD
-	MIT
-	OFL-1.1
-	angular? (
-		(
-			CC-BY-4.0
-			MIT
-		)
-		0BSD
-		Apache-2.0
-		BSD
-		CC0-1.0
-		CC-BY-4.0
-		GPL-3
-		MIT
-		OFL-1.1
-
+WEB_UI_NODE_MODULE_LICENSES="
 		(
 			all-rights-reserved
 			Apache-2.0
@@ -1554,15 +1532,15 @@ THIRD_PARTY_LICENSES="
 		)
 		0BSD
 		Apache-2.0
-		ISC
-		MIT
-		PSF-2.2
 		BSD
 		BSD-2
 		CC0-1.0
 		CC-BY-4.0
 		CC-BY-3.0
 		custom
+		ISC
+		MIT
+		PSF-2.2
 		Unlicense
 		|| (
 			Apache-2.0
@@ -1580,6 +1558,30 @@ THIRD_PARTY_LICENSES="
 			MIT
 			GPL-3
 		)
+"
+THIRD_PARTY_LICENSES="
+	(
+		all-rights-reserved
+		GPL-2+
+	)
+	CC-BY-4.0
+	BSD
+	MIT
+	OFL-1.1
+	angular? (
+		${WEB_UI_NODE_MODULE_LICENSES}
+		(
+			CC-BY-4.0
+			MIT
+		)
+		0BSD
+		Apache-2.0
+		BSD
+		CC0-1.0
+		CC-BY-4.0
+		GPL-3
+		MIT
+		OFL-1.1
 	)
 "
 # The PSF-2.2 is similar to PSF-2.4 but shorter list
