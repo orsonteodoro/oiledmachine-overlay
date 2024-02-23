@@ -17,8 +17,8 @@ LLVM_MAX_SLOT=14
 LLVM_SLOTS=( 14 )
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
-PYTHON_COMPAT=( python3_{8..11} )
-USE_RUBY="ruby26 ruby27 ruby30 ruby31 "
+PYTHON_COMPAT=( python3_{10..12} )
+USE_RUBY=" ruby31 ruby32 ruby33"
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr
