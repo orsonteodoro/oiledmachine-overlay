@@ -220,9 +220,10 @@ main
 
 * Auto bumping:
   (See general principles section above.)
-  - You are prohibited from autobump between different minor versions.  It
-    is better to manually bump by updating *DEPENDs and testing the package,
-    then let it autobump for only patch fixes.
+  - You are prohibited from autobump between different minor versions.  In a
+    simple semver example, 1.2.3 corresponds to major.minor.patch.  It is better
+    to manually bump by updating *DEPENDs and testing the package, then let it
+    autobump for only patch fixes.
   - You may not autobump PYTHON_COMPAT to untested versions unless upstream
     states general versioning (e.g. python3) or the package historically works
     with any version.
