@@ -267,7 +267,7 @@ main
     auto bumping.
   - Autobumping without testing is assumed undeterministic or possibly random
     fail.
-  - It is recommend to provide an autobump support for the ebuild-package.
+  - It is recommend to provide autobump support for the ebuild-package.
     See https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/scripts#autobump-patch-versions
 
 * Versioning:
