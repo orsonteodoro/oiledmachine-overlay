@@ -1,0 +1,4 @@
+CATEGORY="media-gfx"
+PN="autobump"
+AUTOBUMP=1
+BUMP_POLICY="custom"
