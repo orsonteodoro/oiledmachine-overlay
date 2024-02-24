@@ -26,9 +26,9 @@ main() {
 			echo "Package:  ${CATEGORY}/${PN}"
 			[[ "${AUTOBUMP}" == "0" ]] && continue
 			if [[ "${BUMP_POLICY}" == "custom" ]] ; then
-				pushd "${pkg_dir}/autobump"
+				pushd "${pkg_dir}/autobump" >/dev/null 2>&1
 					./custom.sh
-				popd
+				popd >/dev/null 2>&1
 			elif [[ "${BUMP_POLICY}" == "latest-version" ]] ; then
 				local latest_upstream_version=$("${repo_root_dir}/${pkg_dir}/autobump/get_latest_version.sh")
 				local ebuild_versions=(
@@ -50,14 +50,14 @@ main() {
 				if [[ "${latest_ebuild_version_}" != "${latest_upstream_version}" ]] ; then
 					echo "Auto bumping ${PN}-${latest_ebuild_version}.ebuild -> ${PN}-${latest_upstream_version}.ebuild"
 					if [[ "${DRY_RUN}" != "1" ]] ; then
-						pushd "${repo_root_dir}/${pkg_dir}"
+						pushd "${repo_root_dir}/${pkg_dir}" >/dev/null 2>&1
 							cp -a \
 								"${PN}-${latest_ebuild_version}.ebuild" \
 								"${PN}-${latest_upstream_version}.ebuild"
 							ebuild "${PN}-${latest_upstream_version}.ebuild" digest
 							git add *
 							git commit -m "Auto bumped to ${CATEGORY}/${PN}-${latest_upstream_version}.ebuild"
-						popd
+						popd >/dev/null 2>&1
 					fi
 				fi
 
@@ -67,12 +67,12 @@ main() {
 					[[ "${latest_ebuild_version_}" =~ "9999" ]] && continue
 					echo "Auto pruning ${PN}-${ver}.ebuild"
 					if [[ "${DRY_RUN}" != "1" ]] ; then
-						pushd "${repo_root_dir}/${pkg_dir}"
+						pushd "${repo_root_dir}/${pkg_dir}" >/dev/null 2>&1
 							git rm "${PN}-${ver}.ebuild"
 							ebuild $(ls -1 *.ebuild | sort -V | tail -n 1) digest
 							git add *
 							git commit -m "Auto pruned to ${CATEGORY}/${PN}-${ver}.ebuild"
-						popd
+						popd >/dev/null 2>&1
 					fi
 				done
 			elif [[ "${BUMP_POLICY}" == "new-patch-versions-per-minor-major" ]] ; then
@@ -110,14 +110,14 @@ main() {
 					if [[ "${latest_ebuild_version_}" != "${latest_upstream_version}" ]] ; then
 						echo "Auto bumping ${PN}-${latest_ebuild_version}.ebuild -> ${PN}-${latest_upstream_version}.ebuild"
 						if [[ "${DRY_RUN}" != "1" ]] ; then
-							pushd "${repo_root_dir}/${pkg_dir}"
+							pushd "${repo_root_dir}/${pkg_dir}" >/dev/null 2>&1
 								cp -a \
 									"${PN}-${latest_ebuild_version}.ebuild" \
 									"${PN}-${latest_upstream_version}.ebuild"
 								ebuild "${PN}-${latest_upstream_version}.ebuild" digest
 								git add *
 								git commit -m "Auto bumped to ${CATEGORY}/${PN}-${latest_upstream_version}.ebuild"
-							popd
+							popd >/dev/null 2>&1
 						fi
 					fi
 
@@ -127,12 +127,12 @@ main() {
 						[[ "${latest_ebuild_version_}" =~ "9999" ]] && continue
 						echo "Auto pruning ${PN}-${ver}.ebuild"
 						if [[ "${DRY_RUN}" != "1" ]] ; then
-							pushd "${repo_root_dir}/${pkg_dir}"
+							pushd "${repo_root_dir}/${pkg_dir}" >/dev/null 2>&1
 								git rm "${PN}-${ver}.ebuild"
 								ebuild $(ls -1 *.ebuild | sort -V | tail -n 1) digest
 								git add *
 								git commit -m "Auto pruned to ${CATEGORY}/${PN}-${latest_upstream_version}.ebuild"
-							popd
+							popd >/dev/null 2>&1
 						fi
 					done
 				done
