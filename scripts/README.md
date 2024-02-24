@@ -9,6 +9,7 @@
 * lintrepo - Checks if ebuilds have wrong syntax, possible red flags, or security weaknesses
 * use-linter - Checks for malformed metadata.xml
 * optimize.sh - A script found alongside an ebuild to automate or to simplify multiple emerge optimization
+* autobump-patch-versions.sh - A script that auto updates ebuilds.
 
 ## OILEDMACHINE_OVERLAY_ROOT
 
@@ -242,3 +243,72 @@ cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./use-linter
 ```
 
+# autobump-patch-versions
+
+* Purpose:  Simplify ebuild updates
+* Stakeholders:  ebuild developers
+
+The initial motivation of this script is to automate trivial bumping of patch
+versions through a single root script where the *DEPENDs do not change between
+patch versions.
+
+Discussion about if a package should or should not be autobumped.
+### It is okay to make a package support autobump if
+1. No specific version(s) in *DEPENDs are required for BUMP_POLICY="latest-version"
+2. The *DEPENDs do not change in major.minor versions for BUMP_POLICY="new-patch-versions-per-minor-major"
+
+### It is not okay to make a package support autobump if
+1. The package contains only a live 9999 ebuild.
+2. The package requires to manually update the patches all the time for patched versions or any bump.
+3. If the *DEPENDs changes in the third component of a.b.c versioning, it is not recommended to use autobumping.
+
+```
+Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/description:
+# The description file stores information for both custom script and the root script autobump-patch-versions.sh
+CATEGORY - # The ebuild category (REQUIRED)
+PN - # The ebuild name (REQUIRED)
+AUTOBUMP - 0 to disable, 1 to enable [default] (OPTIONAL)
+BUMP_POLICY - custom, latest-version, new-patch-versions-per-minor-major (REQUIRED)
+```
+
+```
+Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/get_latest_patch_version.sh:
+# Code template
+# This file is required if BUMP_POLICY="new-patch-versions-per-minor-major"
+get_latest_patch_version() {
+        local ver="${1}" # ${1} is typically a major and minor version.
+	# You must echo or print a single version string without v prefix.
+	# Place parsed RSS or git tag version here. 
+}
+
+get_latest_patch_version ${1}
+```
+
+```
+Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/custom.sh:
+# This file is required if BUMP_POLICY="custom"
+# This script is responsible for the following:
+# (1) Autobumping patchsets, autobumping lockfiles for micropackages
+# (2) Autobumping ebuilds.
+# (3) Commiting changes to oiledmachine-overlay
+main() {
+	...
+}
+
+main
+```
+
+```
+Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/get_latest_version.sh:
+#!/bin/bash
+# This file is required if BUMP_POLICY="latest-version"
+get_latest_version() {
+	# You must echo or print a single version string without v prefix.
+}
+
+get_latest_version
+```
+
+```
+DRY_RUN=0 ./autobump-patch-versions.sh
+```
