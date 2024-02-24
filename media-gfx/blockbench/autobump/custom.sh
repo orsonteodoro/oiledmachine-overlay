@@ -17,6 +17,7 @@ main() {
 	export PATH="${repo_dir}/scripts:${PATH}"
 	#echo "pkg_dir:  ${pkg_dir}"
 	#echo "repo_dir:  ${repo_dir}"
+	. "${pkg_dir}/autobump/description"
 
 	pushd "${pkg_dir}" >/dev/null 2>&1
 		local ebuild_versions
