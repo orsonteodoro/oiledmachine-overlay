@@ -237,7 +237,7 @@ main
   - Long processing should be -O3 except when unit tests fail or when
     bugs manifest.  If a bug is encountered, the -O* should be downgraded
     until the bug disappears.
-  - -Ofast can only be used in artistic packages but not in financial and
+  - -Ofast can be used in artistic packages but not in financial and
     not in life-support packages.  It should be filtered out in those contexts.
 
 * Auto bumping:
