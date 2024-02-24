@@ -12,6 +12,7 @@ main() {
 			| grep -e "/")
 	)
 
+	local pkg_dir
 	for pkg_dir in ${PKG_DIRS[@]} ; do
 		[[ "${pkg_dir}" =~ ^".git" ]] && continue
 		[[ "${pkg_dir}" =~ ^"profiles/" ]] && continue
@@ -46,7 +47,6 @@ main() {
 						| tail -n 1)
 				)
 				latest_ebuild_version_=$(echo "${latest_ebuild_version}" | sed -r -e "s|-r[0-9]+$||g")
-				local is_bumped=0
 				if [[ "${latest_ebuild_version_}" != "${latest_upstream_version}" ]] ; then
 					echo "Auto bumping ${PN}-${latest_ebuild_version}.ebuild -> ${PN}-${latest_upstream_version}.ebuild"
 					if [[ "${DRY_RUN}" != "1" ]] ; then
@@ -61,6 +61,7 @@ main() {
 					fi
 				fi
 
+				local ver
 				for ver in ${ebuild_versions[@]} ; do
 					[[ "${latest_ebuild_version_}" == "${latest_upstream_version}" ]] && continue
 					[[ "${latest_ebuild_version_}" =~ "9999" ]] && continue
@@ -84,6 +85,7 @@ main() {
 						| sort -V \
 						| uniq)
 				)
+				local slot
 				for slot in ${major_minor_versions[@]} ; do
 					local latest_upstream_version=$("${repo_root_dir}/${pkg_dir}/autobump/get_latest_patch_version.sh" "${slot}")
 					local ebuild_versions=(
@@ -104,7 +106,6 @@ main() {
 					)
 					latest_ebuild_version_=$(echo "${latest_ebuild_version}" \
 						| sed -r -e "s|-r[0-9]+$||g")
-					local is_bumped=0
 					if [[ "${latest_ebuild_version_}" != "${latest_upstream_version}" ]] ; then
 						echo "Auto bumping ${PN}-${latest_ebuild_version}.ebuild -> ${PN}-${latest_upstream_version}.ebuild"
 						if [[ "${DRY_RUN}" != "1" ]] ; then
@@ -119,6 +120,7 @@ main() {
 						fi
 					fi
 
+					local ver
 					for ver in ${ebuild_versions[@]} ; do
 						[[ "${latest_ebuild_version_}" == "${latest_upstream_version}" ]] && continue
 						[[ "${latest_ebuild_version_}" =~ "9999" ]] && continue
