@@ -1,0 +1,4 @@
+AUTOBUMP=0
+CATEGORY="dev-python"
+PN="dm-env"
+BUMP_POLICY="latest-version"
