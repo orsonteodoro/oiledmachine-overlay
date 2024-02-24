@@ -232,7 +232,8 @@ main
   - Studio audio production must never have skips or jitter.
   - Live radio or live audio production should almost never have skips or jitter.
   - Bump -O* flags that dip below movie like performance (24 FPS).
-  - The kernel uptime must be 24 hours or more.
+  - The kernel uptime must be 24 hours or more for desktop use, and 6-7 days for
+    server use.
   - Network servers uptime must be 6-7 days or more.
   - Long processing should be -O3 except when unit tests fail or when
     bugs manifest.  If a bug is encountered, the -O* should be downgraded
