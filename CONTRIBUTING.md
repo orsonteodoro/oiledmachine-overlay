@@ -84,7 +84,7 @@ based on an outdated style guide.
     - Remove doubt of deception.  Why do I see it available on the mainstream OS
       or other distro but not on our distro?
     - Changing tastes.  The user may be pro or anti security over time.  The
-      user may go though minimalist or maximalist changes over time out of
+      user may go through minimalist or maximalist changes over time out of
       bordem.
 
     Reason against parity:
