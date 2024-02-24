@@ -243,7 +243,7 @@ cd "${OILEDMACHINE_OVERLAY_ROOT}"
 ./use-linter
 ```
 
-# autobump-patch-versions
+### autobump-patch-versions
 
 * Purpose:  Simplify ebuild updates
 * Stakeholders:  ebuild developers
@@ -253,11 +253,11 @@ versions through a single root script where the *DEPENDs do not change between
 patch versions.
 
 Discussion about if a package should or should not be autobumped.
-### It is okay to make a package support autobump if
+#### It is okay to make a package support autobump if
 1. No specific version(s) in *DEPENDs are required for BUMP_POLICY="latest-version"
 2. The *DEPENDs do not change in major.minor versions for BUMP_POLICY="new-patch-versions-per-minor-major"
 
-### It is not okay to make a package support autobump if
+#### It is not okay to make a package support autobump if
 1. The package contains only a live 9999 ebuild.
 2. The package requires to manually update the patches all the time for patched versions or any bump.
 3. If the *DEPENDs changes in the third component of a.b.c versioning, it is not recommended to use autobumping.
