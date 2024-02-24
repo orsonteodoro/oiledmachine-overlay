@@ -181,7 +181,6 @@ main() {
 			| tail -n 1 \
 			| sed -e "s|ot-sources-lts-||" -e "s|\.ebuild$||")
 
-		local bumped=0
 		if [[ "${latest_lts_ebuild_timestamp}" != "${current_lts_timestamp}" ]] ; then
 			if [[ "${DRY_RUN}" != "1" ]] ; then
 				cp -a \
