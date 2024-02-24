@@ -64,8 +64,44 @@ All ebuilds must conform to specifically 2023 ebuild style guide only recognized
 by this overlay.  We do not use the distro recommendations because they are
 based on an outdated style guide.
 
+* General principles
+  - Bugless experience almost always
+  - Deterministic (no random failures, no failure over time)
+  - Polished patched releases
+  - Minimal annoyance (e.g. minimal merge conflicts)
+  - Best-effort feature parity between ebuild features (USE flags) and upstream
+    features (configure flags)
+
+    Reason for maintaining parity:
+    - Not everyone is like you.
+    - Ebuild developers are promoters, not gatekeepers, not saboteurs.
+    - Upstream announced it as a major feature for that release.
+    - Users want to try the feature/gimmick unrestricted.
+    - For utilitarian reasons by maximizing happiness.  It works 100% on user A
+      but broken on user B who keeps running into the bug.  Let user A use it.
+      If completely disabled, both users are unhappy.  If user decides via USE
+      flag, user A is happy and user B is unhappy.
+    - Remove doubt of deception.  Why do I see it available on the mainstream OS
+      or other distro but not on our distro?
+    - Changing tastes.  The user may be pro or anti security over time.  The
+      user may go though minimalist or maximalist changes over time out of
+      bordem.
+
+    Reason against parity:
+    - Bloat
+    - Not enough time or energy to fix the feature
+    - Not enough time or energy to package dependencies
+    - Broken features
+    - Security
+    - We did not notice that the feature existed
+    - Lack of mental capacity/capabilities to make the feature available
+    - Unavailable hardware
+    - Convenient excuses
+    - Lazy
+
 * Coding style:
-  - Ebuilds contents must be symmetric/even or ANSI C like code style.
+  - The ebuilds contents must be mostly symmetric/even like code style.
+  - Function definitions should be K&R style.
   - The ~90% of the code must be within 80 characters boundary.
     - Long strings need to be hard wrapped.
     - URIs processed by bazel should not be hard wrapped.
@@ -96,6 +132,12 @@ based on an outdated style guide.
     place at the top of the *DEPENDs lists.
   - User output commands (echo/einfo) should be column 0 and only 80 characters.
     Additional einfos may follow.
+  - echo, einfo, ewarn should be disabled if it causes detrimental performance.
+  - Whitespace padding preferences:
+    - No white padding is preferred for single line messages.
+    - White space padding is required for multiline messages.
+    - Serious warnings should be whitespace padded above and below.
+    - Less serious warnings do not require white space padding.
   - You must put `OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO` in the footer and
     disable the KEYWORDS variable if the ebuild is unfinished.
   - Phase functions must be sorted in chronological order.
@@ -104,6 +146,42 @@ based on an outdated style guide.
   - Comments should be mostly formal and unambiguous.
   - metadata.xml longdescription and flags should be formal.
   - *DEPENDs sources should be documented if not centralized.
+  - OpenRC init scripts should be POSIX compliant and compatible with Dash.
+
+```
+Examples:
+
+# Use the 80 character ruler
+
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+
+# All comments and user output should fit within this width.  Anything longer
+# is considered hard to read:
+
+main() {
+einfo "This is an example of K&R brace style."
+
+einfo "Enabling this feature."
+
+einfo
+einfo "Use instructions:"
+einfo 
+einfo "(1) Do this"
+einfo "(2) Do that"
+einfo
+
+ewarn
+ewarn "Security notice:"
+ewarn
+ewarn "This USE flag setting can increase the attack service."
+ewarn
+
+ewarn "Disabing support for this feature."
+}
+
+main
+
+```
 
 * Security:
   - The uploaded point release is not vulnerable and does not have security
@@ -137,6 +215,35 @@ based on an outdated style guide.
   - JS/Cargo dependency snapshots or SRC_URI lists should be updated monthly or
     weekly.
   - Ebuilds with multiple critical vulnerabilities may be dropped.
+  - Ebuilds that use the webapp eclass or use login for the web app should
+    support ssl for login even though upstream instructions are not provided.
+
+* Auto bumping:
+  (See general principles section above.)
+  - You are prohibited from autobump between different minor versions.  It
+    is better to manually bump by updating *DEPENDs and testing the package,
+    then let it autobump for only patch fixes.
+  - You may not autobump PYTHON_COMPAT to untested versions unless upstream
+    states general versioning (e.g. python3) or the package historically works
+    with any version.
+  - You are prohibited to autobumping PYTHON_COMPAT to the newest untested
+    versions if upstream is active.
+  - You are allowed to autobump PYTHON_COMPAT if upstream activity is inactive
+    and those versions specified are EOL but the package is tested to work on
+    oldest active stable Python ebuild with the test suite (preferred) or
+    tested to work by experience.  This means if upstream states that only
+    Python 3.9 is supported in setup.py but 3.9 is not available, you may bump
+    it to only 3.10 or tested working versions.
+  - You may autobump if those versions have passed the test suite for that
+    version with proof documented in the foot of the ebuild or documented near
+    PYTHON_COMPAT.  Otherwise, the bump will be reverted to known working
+    versions for *DEPENDs.
+  - If the package does not work, remove the autobump from *DEPENDs or
+    PYTHON_COMPAT or limit the maximum supported version.
+  - The package should always work bugfree after auto bumping or disable
+    auto bumping.
+  - Autobumping without testing is assumed undeterministic or possibly random
+    fail.
 
 * Versioning:
   - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
@@ -176,6 +283,7 @@ based on an outdated style guide.
       else recommend the `fallback-commit` USE flag.
 
 * Python ebuilds:
+  (See also the auto bumping section above.)
   - All python dependencies must have either PYTHON_USEDEP or PYTHON_SINGLE_USEDEP.
   - For python pacakages, all dependencies must be listed.
   - If a python package does provide a test suite but not through supported
