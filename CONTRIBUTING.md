@@ -66,7 +66,7 @@ based on an outdated style guide.
 
 * General principles
   - Bugless experience almost always
-  - Deterministic (no random failures, no failure over time)
+  - Deterministic (no random failures, no failure over time, meets or exceeds performance minimums)
   - Polished patched releases
   - Minimal annoyance (e.g. minimal emerge/slot conflicts, deduping)
   - Best-effort feature parity between ebuild features (USE flags) and upstream
@@ -221,6 +221,24 @@ main
   - Ebuilds with multiple critical vulnerabilities may be dropped.
   - Ebuilds that use the webapp eclass or use login for the web app should
     support ssl for login even though upstream instructions are not provided.
+
+* Reproducible performance minimums:
+  - Gaming contexts should be 60 FPS or higher for newer games at 1080p or
+    default game resolution.
+  - Gaming contexts must have no less than 30 FPS for older games at 640x480 or
+    default game resolution.
+  - Movie contexts must never be less than 24 FPS.
+  - Live video or news should be 30 FPS but never less than 24 FPS at 360p.
+  - Studio audio production must never have skips or jitter.
+  - Live radio or live audio production should almost never have skips or jitter.
+  - Bump -O* flags that dip below movie like performance (24 FPS).
+  - The kernel uptime must be 24 hours or more.
+  - Network servers uptime must be 6-7 days or more.
+  - Long processing should be -O3 except when unit tests fail or when
+    bugs manifest.  If a bug is encountered, the -O* should be downgraded
+    until the bug disappears.
+  - -Ofast can only be used in artistic packages but not in financial and
+    not in life-support packages.  It should be filtered out in those contexts.
 
 * Auto bumping:
   - (See also the general principles section above.)
