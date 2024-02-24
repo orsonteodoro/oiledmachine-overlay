@@ -98,6 +98,10 @@ based on an outdated style guide.
     - Unavailable hardware
     - Convenient excuses
     - Lazy
+    - Programmer's block
+    - Fear to confront the problem
+    - Mental health
+    - Technicalities (unavailable ebuilds, distro restrictions)
 
 * Coding style:
   - The ebuilds contents must be mostly symmetric/even like code style.
