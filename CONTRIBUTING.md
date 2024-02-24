@@ -68,7 +68,7 @@ based on an outdated style guide.
   - Bugless experience almost always
   - Deterministic (no random failures, no failure over time)
   - Polished patched releases
-  - Minimal annoyance (e.g. minimal merge conflicts)
+  - Minimal annoyance (e.g. minimal emerge/slot conflicts, deduping)
   - Best-effort feature parity between ebuild features (USE flags) and upstream
     features (configure flags)
 
