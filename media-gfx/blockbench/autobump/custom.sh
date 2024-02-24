@@ -33,7 +33,7 @@ main() {
 			local latest_upstream_version=$(get_latest_patch_version "${slot}")
 
 			if [[ "${latest_ebuild_version_}" != "${latest_upstream_version}" ]] ; then
-				echo "Autobumping to blockbench-${latest_ebuild_version}.ebuild -> blockbench-${latest_upstream_version}.ebuild"
+				echo "Auto bumping to blockbench-${latest_ebuild_version}.ebuild -> blockbench-${latest_upstream_version}.ebuild"
 				if [[ "${DRY_RUN}" != "1" ]] ; then
 					cp -a \
 						"blockbench-${latest_ebuild_version}.ebuild" \
@@ -42,7 +42,7 @@ main() {
 					NPM_UPDATER_VERSIONS="${latest_upstream_version}" npm_updater_update_locks.sh
 					ebuild $(ls -1 *.ebuild | sort -V | tail -n 1) digest
 					git add *
-					git commit -m "Autobumping to blockbench-${latest_upstream_version}.ebuild"
+					git commit -m "Auto bumping to blockbench-${latest_upstream_version}.ebuild"
 				fi
 			fi
 		done
@@ -57,14 +57,14 @@ main() {
 			local latest_upstream_version=$(get_latest_patch_version "${slot}")
 
 			if [[ "${latest_ebuild_version_}" != "${latest_upstream_version}" ]] ; then
-				echo "Autopruning blockbench-${ver}.ebuild"
+				echo "Auto pruning blockbench-${ver}.ebuild and lockfiles"
 				if [[ "${DRY_RUN}" != "1" ]] ; then
 					local ver3=$(echo "${ver}" | cut -f 1-3 -d ".")
 					git rm -rf "${pkg_dir}/files/${ver3}"
 					git rm "blockbench-${ver}.ebuild"
 					ebuild $(ls -1 *.ebuild | sort -V | tail -n 1) digest
 					git add *
-					git commit -m "Autopruning blockbench-${ver}.ebuild and lockfiles"
+					git commit -m "Auto pruning blockbench-${ver}.ebuild and lockfiles"
 				fi
 			fi
 		done
