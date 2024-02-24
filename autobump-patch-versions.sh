@@ -69,7 +69,8 @@ main() {
 					if [[ "${DRY_RUN}" != "1" ]] ; then
 						pushd "${repo_root_dir}/${pkg_dir}"
 							git rm "${PN}-${ver}.ebuild"
-							ebuild $(ls -1 *.ebuild) digest
+							ebuild $(ls -1 *.ebuild | sort -V | tail -n 1) digest
+							git add *
 							git commit -m "Auto pruned to ${CATEGORY}/${PN}-${ver}.ebuild"
 						popd
 					fi
@@ -127,8 +128,9 @@ main() {
 						echo "Auto pruning ${PN}-${ver}.ebuild"
 						if [[ "${DRY_RUN}" != "1" ]] ; then
 							pushd "${repo_root_dir}/${pkg_dir}"
-								git rm ${PN}-${ver}.ebuild
-								ebuild $(ls -1 *.ebuild) digest
+								git rm "${PN}-${ver}.ebuild"
+								ebuild $(ls -1 *.ebuild | sort -V | tail -n 1) digest
+								git add *
 								git commit -m "Auto pruned to ${CATEGORY}/${PN}-${latest_upstream_version}.ebuild"
 							popd
 						fi
