@@ -60,7 +60,7 @@ Difficulty:  Hard for noobs, easy for experienced
 
 #### Ebuild guidelines
 
-All ebuilds must conform to specifically 2023 ebuild style guide only recognized
+All ebuilds must conform to specifically 2024 ebuild style guide only recognized
 by this overlay.  We do not use the distro recommendations because they are
 based on an outdated style guide.
 
