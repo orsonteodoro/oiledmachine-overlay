@@ -138,10 +138,10 @@ based on an outdated style guide.
     Additional einfos may follow.
   - echo, einfo, ewarn should be disabled if it causes detrimental performance.
   - Whitespace padding preferences:
-    - No white padding is preferred for single line messages.
-    - White space padding is required for multiline messages.
+    - No whitespace padding is preferred for single line messages.
+    - Whitespace padding is required for multiline messages.
     - Serious warnings should be whitespace padded above and below.
-    - Less serious warnings do not require white space padding.
+    - Less serious warnings do not require whitespace padding.
   - You must put `OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO` in the footer and
     disable the KEYWORDS variable if the ebuild is unfinished.
   - Phase functions must be sorted in chronological order.
@@ -177,7 +177,7 @@ einfo
 ewarn
 ewarn "Security notice:"
 ewarn
-ewarn "This USE flag setting can increase the attack service."
+ewarn "This USE flag setting can increase the attack surface."
 ewarn
 
 ewarn "Disabing support for this feature."
