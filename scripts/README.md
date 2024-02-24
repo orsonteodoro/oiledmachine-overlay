@@ -261,6 +261,7 @@ Discussion about if a package should or should not be autobumped.
 1. The package contains only a live 9999 ebuild.
 2. The package requires to manually update the patches all the time for patched versions or any bump.
 3. If the *DEPENDs changes in the third component of a.b.c versioning, it is not recommended to use autobumping.
+4. If the upstream code quality is poor as in fails to build all the time or requires patching all the time, do not autobump.
 
 ```
 Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/description:
