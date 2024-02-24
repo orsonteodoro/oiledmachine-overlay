@@ -219,7 +219,7 @@ main
     support ssl for login even though upstream instructions are not provided.
 
 * Auto bumping:
-  (See general principles section above.)
+  - (See also the general principles section above.)
   - You are prohibited from autobump between different minor versions.  In a
     simple semver example, 1.2.3 corresponds to major.minor.patch.  It is better
     to manually bump by updating *DEPENDs and testing the package, then let it
@@ -245,6 +245,8 @@ main
     auto bumping.
   - Autobumping without testing is assumed undeterministic or possibly random
     fail.
+  - It is recommend to provide an autobump support for the ebuild-package.
+    See https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/scripts#autobump-patch-versions
 
 * Versioning:
   - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
@@ -284,7 +286,7 @@ main
       else recommend the `fallback-commit` USE flag.
 
 * Python ebuilds:
-  (See also the auto bumping section above.)
+  - (See also the auto bumping section above.)
   - All python dependencies must have either PYTHON_USEDEP or PYTHON_SINGLE_USEDEP.
   - For python pacakages, all dependencies must be listed.
   - If a python package does provide a test suite but not through supported
