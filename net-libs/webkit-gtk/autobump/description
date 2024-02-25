@@ -1,0 +1,5 @@
+AUTOBUMP=1
+CATEGORY="www-client"
+PN="webkit-gtk"
+BUMP_POLICY="custom"
+SLOT_COMPONENTS="1-2"
