@@ -273,7 +273,7 @@ CATEGORY - # The ebuild category (REQUIRED)
 PN - # The ebuild name (REQUIRED)
 AUTOBUMP - 0 to disable, 1 to enable [default] (OPTIONAL)
 BUMP_POLICY - custom, latest-version, new-patch-versions-per-minor-major (REQUIRED)
-SLOT_COMPONENTS - the range or position from left-to-right considered a slot in the versioning where the *DEPENDs remains unchanged for that slot acceptable by the `cut -f` command. (e.g 1-2 or 1-3 or 3)
+SLOT_COMPONENTS - the range or position from left-to-right considered a slot in the versioning where the *DEPENDs remains unchanged for that slot acceptable by the `cut -f` command. (e.g 1-2 or 1-3 or 3) (OPTIONAL, 1-2 is the default)
 ```
 
 ```
