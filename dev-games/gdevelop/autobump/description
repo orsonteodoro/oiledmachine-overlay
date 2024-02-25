@@ -1,0 +1,4 @@
+CATEGORY="dev-games"
+PN="gdevelop"
+AUTOBUMP=1
+BUMP_POLICY="custom"
