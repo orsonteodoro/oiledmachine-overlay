@@ -1,0 +1,5 @@
+AUTOBUMP=0
+CATEGORY="www-client"
+PN="chromium"
+BUMP_POLICY="new-patch-versions-per-minor-major"
+SLOT_COMPONENTS="1-3"

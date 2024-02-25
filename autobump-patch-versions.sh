@@ -21,6 +21,7 @@ main() {
 		AUTOBUMP=1
 		CATEGORY=""
 		PN=""
+		SLOT_COMPONENTS="1-2"
 		if [[ -e "${pkg_dir}/autobump/description" ]] ; then
 			. "${pkg_dir}/autobump/description"
 			echo "Package:  ${CATEGORY}/${PN}"
@@ -82,7 +83,7 @@ main() {
 						| sort -V \
 						| sed -e "s|\.ebuild||g" -e "s|${PN}-||g" \
 						| grep -E "^[0-9]+\.[0-9]+" \
-						| cut -f 1-2 -d "." \
+						| cut -f ${SLOT_COMPONENTS} -d "." \
 						| sort -V \
 						| uniq)
 				)
