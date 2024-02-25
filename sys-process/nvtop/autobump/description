@@ -1,0 +1,4 @@
+AUTOBUMP=0
+CATEGORY="sys-process"
+PN="nvtop"
+BUMP_POLICY="new-patch-versions-per-minor-major"
