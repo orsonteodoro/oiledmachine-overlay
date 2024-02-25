@@ -1,0 +1,4 @@
+AUTOBUMP=0
+CATEGORY="app-antivirus"
+PN="clamav"
+BUMP_POLICY="new-patch-versions-per-minor-major"
