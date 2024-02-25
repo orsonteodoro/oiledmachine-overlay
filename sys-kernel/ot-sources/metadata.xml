@@ -68,17 +68,6 @@
     LTS series.
 
     Kernel series | Patchset  			     | LTS [1,2]
-    4.14 (LTS)						Y
-		    -ck / MuQSS				N
-		    -rt (RT_PREEMPT)			Y
-		    genpatches				N
-		    kernel_compiler_patch 		N
-		    O3 [5]				N
-		    PDS					N
-		    TRESOR (AES-NI) [3,4,5]		b
-		    TRESOR (x86) [3,4,5]		b
-		    TRESOR (x86-64) [3,5]		E
-		    UKSM				R
 
     4.19 (LTS)						Y
 		    -ck / MuQSS				N

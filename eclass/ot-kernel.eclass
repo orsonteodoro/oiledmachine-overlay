@@ -45,7 +45,6 @@
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # genpatches:
 #	https://gitweb.gentoo.org/proj/linux-patches.git/
-#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.14
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.19
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
@@ -56,7 +55,6 @@
 # kernel_compiler_patch:
 #	https://github.com/graysky2/kernel_compiler_patch
 # MUQSS CPU Scheduler (official, EOL 5.12):
-#	https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #	https://github.com/torvalds/linux/compare/v4.19...ckolivas:4.19-ck
 #	https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #	https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
@@ -81,7 +79,6 @@
 #	https://gitlab.com/alfredchen/PDS-mq/-/tree/master
 # PREEMPT_RT:
 #	https://wiki.linuxfoundation.org/realtime/start
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
