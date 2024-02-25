@@ -1,4 +1,4 @@
-AUTOBUMP=0
+AUTOBUMP=1
 CATEGORY="www-client"
 PN="chromium"
 BUMP_POLICY="new-patch-versions-per-minor-major"
