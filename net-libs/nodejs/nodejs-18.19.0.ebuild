@@ -159,7 +159,7 @@ BDEPEND+="
 		)
 	)
 	systemtap? (
-		dev-util/systemtap
+		dev-debug/systemtap
 	)
 	test? (
 		net-misc/curl
