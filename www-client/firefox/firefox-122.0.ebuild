@@ -629,7 +629,7 @@ CDEPEND="
 		>=media-libs/libwebp-1.3.2:0=[${MULTILIB_USEDEP}]
 	)
 	valgrind? (
-		dev-util/valgrind
+		dev-debug/valgrind
 	)
 	wayland? (
 		>=media-libs/libepoxy-1.5.10-r1[${MULTILIB_USEDEP}]
