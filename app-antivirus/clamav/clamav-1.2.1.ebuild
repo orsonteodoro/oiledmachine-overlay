@@ -315,7 +315,7 @@ BDEPEND="
 		${PYTHON_DEPS}
 		$(python_gen_any_dep ">=dev-python/pytest-${PYTEST_PV}"'[${PYTHON_USEDEP}]')
 		valgrind? (
-			>=dev-util/valgrind-3.15.0
+			>=dev-debug/valgrind-3.15.0
 		)
 	)
 "
