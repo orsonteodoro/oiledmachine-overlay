@@ -24,7 +24,7 @@ HOMEPAGE="https://github.com/hegusung/WebHashcat"
 LICENSE="GPL-3 MIT"
 # static/js contains MIT and GPL license scripts
 SLOT="${PV}"
-IUSE+=" apache -brain hashcatnode +web-interface"
+IUSE+=" apache -brain hashcatnode ssl +web-interface"
 REQUIRED_USE="
 	|| (
 		hashcatnode
@@ -36,7 +36,7 @@ RESTRICT="
 "
 RDEPEND="
 	apache? (
-		www-servers/apache:2
+		www-servers/apache:2[apache2_modules_log_config,ssl?]
 		www-apache/mod_wsgi
 	)
 	hashcatnode? (
@@ -74,10 +74,75 @@ PATCHES=(
 
 pkg_setup() {
 	if use apache ; then
-ewarn "The apache USE flag is unimplemented.  Please disable."
+ewarn "The apache USE flag is not fully implemented.  Please disable."
+		die
+	fi
+	if use ssl ; then
+ewarn "The ssl USE flag is not fully implemented.  Please disable."
 		die
 	fi
 	python_setup
+}
+
+set_vhost_config_with_ssl() {
+	WEBHASHCAT_ADDRESS=${WEBHASHCAT_ADDRESS:-"localhost"}
+	WEBHASHCAT_PORT=${WEBHASHCAT_PORT:-8080}
+	insinto "/etc/apache2/vhosts.d"
+cat <<EOF > "${T}/40_webhashcat-2.4.conf" # Apache 2.4
+Define APACHE_LOG_DIR /var/log/apache2
+Listen ${WEBHASHCAT_PORT}
+
+<VirtualHost *:${WEBHASHCAT_PORT}>
+        ServerAdmin webmaster@localhost
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}/webhashcat"
+
+        WSGIScriptAlias / "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/webhashcat/wsgi.py"
+        WSGIPythonPath "/var/www/${HASHTOPOLIS_ADDRESS}"
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        SSLEngine on
+        SSLProtocol ALL -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+        SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        SSLHonorCipherOrder Off
+        SSLCertificateFile /etc/ssl/apache2/server.crt
+        SSLCertificateKeyFile /etc/ssl/apache2/server.key
+
+        <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/webhashcat/">
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+        </Directory>
+</VirtualHost>
+EOF
+}
+
+set_vhost_config_without_ssl() {
+	WEBHASHCAT_ADDRESS=${WEBHASHCAT_ADDRESS:-"localhost"}
+	WEBHASHCAT_PORT=${WEBHASHCAT_PORT:-8080}
+	insinto "/etc/apache2/vhosts.d"
+cat <<EOF > "${T}/40_webhashcat-2.4.conf" # Apache 2.4
+Define APACHE_LOG_DIR /var/log/apache2
+Listen ${WEBHASHCAT_PORT}
+
+<VirtualHost *:${WEBHASHCAT_PORT}>
+        ServerAdmin webmaster@localhost
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}/webhashcat"
+
+        WSGIScriptAlias / "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/webhashcat/wsgi.py"
+        WSGIPythonPath "/var/www/${HASHTOPOLIS_ADDRESS}"
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        <Directory "/var/www/${HASHTOPOLIS_ADDRESS}/htdocs/webhashcat/">
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+        </Directory>
+</VirtualHost>
+EOF
 }
 
 src_configure() {
@@ -192,6 +257,14 @@ einfo "WEBHASHCAT_TZ:  ${WEBHASHCAT_TZ}"
 		sed -i -e "s|enabled = false|enabled = true|g" \
 		"HashcatNode/settings.ini" \
 		|| die
+	fi
+
+	if use apache ; then
+		if use ssl ; then
+			set_vhost_config_with_ssl
+		else
+			set_vhost_config_without_ssl
+		fi
 	fi
 }
 

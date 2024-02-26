@@ -17,14 +17,17 @@
     CELERY_BROKER_URL - redis://localhost:6379 (default)
     CELERY_RESULT_BACKEND - redis://localhost:6379 (default)
     CELERY_TZ_OVERRIDE - override the tzinfo value for local timezones in task messages. (optional, autodetected)
+   
     HASHCATNODE_HASHES_PATH - /var/lib/hashcatnode/hashes/ (default)
     HASHCATNODE_MASK_PATH - /var/lib/hashcatnode/mask/ (default)
     HASHCATNODE_PORT - 9999 (default)
     HASHCATNODE_RULE_PATH - /var/lib/hashcatnode/rule/ (default)
     HASHCATNODE_WORDLIST_PATH - /var/lib/hashcatnode/wordlist/ (default)
+    WEBHASHCAT_ADDRESS - localhost
     WEBHASHCAT_ALLOWED_HOSTS - a space delimited list of ip or hostnames, 127.0.0.1 (default)
     WEBHASHCAT_TZ_OVERRIDE - override the tzinfo value for localization. (optional, autodetected)
     WEBHASHCAT_LANGUAGE_CODE_OVERRIDE - override the django language code for localization. (optional, autodetected)
+    WEBHASHCAT_PORT - 8080
 
   Examples:
 
