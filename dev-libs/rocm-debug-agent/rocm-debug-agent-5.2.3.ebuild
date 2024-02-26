@@ -23,7 +23,7 @@ IUSE="test r2"
 RDEPEND="
 	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
-	dev-util/systemtap
+	dev-debug/systemtap
 	virtual/libelf
 	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
