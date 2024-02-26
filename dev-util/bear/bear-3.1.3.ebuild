@@ -38,7 +38,7 @@ BDEPEND+="
 		${PYTHON_DEPS}
 		$(python_gen_any_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
 		>=dev-cpp/gtest-1.12.1[${MULTILIB_USEDEP}]
-		dev-util/valgrind
+		dev-debug/valgrind
 	)
 "
 SRC_URI="
