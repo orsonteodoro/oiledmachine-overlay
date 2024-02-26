@@ -206,7 +206,7 @@ gen_clang_deps() {
 			sys-devel/lld:${s}
 			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			test? (
-				>=dev-util/lldb-${s}
+				>=dev-debug/lldb-${s}
 			)
 		)
 		"
