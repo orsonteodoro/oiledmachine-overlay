@@ -28,7 +28,7 @@ DEPEND="
 	doc? ( app-doc/doxygen )
 	test? (
 		dev-cpp/gtest
-		dev-util/valgrind
+		dev-debug/valgrind
 	)"
 RDEPEND=""
 
