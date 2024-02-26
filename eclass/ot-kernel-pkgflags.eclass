@@ -1225,7 +1225,7 @@ ot-kernel-pkgflags_bpftool() { # DONE
 # Applies kernel config flags for the bpftrace package
 ot-kernel-pkgflags_bpftrace() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Saa54616]}" == "1" ]] && return
-	if ot-kernel_has_version "dev-util/bpftrace" ; then
+	if ot-kernel_has_version "dev-debug/bpftrace" ; then
 		einfo "Applying kernel config flags for the bpftrace package (id: aa54616)"
 		ot-kernel_y_configopt "CONFIG_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
@@ -8567,7 +8567,7 @@ ot-kernel-pkgflags_systemd_bootchart() { # DONE
 # Applies kernel config flags for the systemtap package
 ot-kernel-pkgflags_systemtap() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S78ae7b9]}" == "1" ]] && return
-	if ot-kernel_has_version "dev-util/systemtap" ; then
+	if ot-kernel_has_version "dev-debug/systemtap" ; then
 		einfo "Applying kernel config flags for systemtap (id: 78ae7b9)"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_RELAY"
