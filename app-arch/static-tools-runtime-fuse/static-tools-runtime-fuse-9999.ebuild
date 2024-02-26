@@ -31,7 +31,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-util/strace
+	dev-debug/strace
 	sys-apps/file
 	sys-apps/util-linux
 	dev-build/autoconf
