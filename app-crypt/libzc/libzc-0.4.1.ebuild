@@ -47,7 +47,7 @@ DEPEND="
 "
 BDEPEND="
 	sys-devel/gcc
-	sys-devel/make
+	dev-build/make
 	bolt? (
 		sys-devel/clang
 	)
