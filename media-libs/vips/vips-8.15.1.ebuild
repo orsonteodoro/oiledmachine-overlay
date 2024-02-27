@@ -211,7 +211,7 @@ BDEPEND+="
 	>=dev-build/ninja-1.10.1
 	virtual/pkgconfig
 	doxygen? (
-		>=app-doc/doxygen-1.9.1
+		>=app-text/doxygen-1.9.1
 	)
 	fuzz-testing? (
 		|| (
