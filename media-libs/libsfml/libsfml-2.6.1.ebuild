@@ -170,7 +170,7 @@ RDEPEND+="
 DEPEND="
 	${RDEPEND}
 	doc? (
-		>=app-doc/doxygen-1.8.17
+		>=app-text/doxygen-1.8.17
 	)
 "
 BDEPEND+="
