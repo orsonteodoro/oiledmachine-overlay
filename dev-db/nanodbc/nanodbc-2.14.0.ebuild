@@ -49,7 +49,7 @@ DEPEND_SPHINX="
 BDEPEND+="
 	>=dev-util/cmake-2.6
 	doxygen? (
-		app-doc/doxygen
+		app-text/doxygen
 	)
 	html? (
 		${DEPEND_SPHINX}
