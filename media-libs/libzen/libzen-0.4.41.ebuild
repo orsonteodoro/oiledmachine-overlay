@@ -17,7 +17,7 @@ IUSE+=" doc static-libs"
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? (
-		app-doc/doxygen
+		app-text/doxygen
 	)
 "
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.bz2"
