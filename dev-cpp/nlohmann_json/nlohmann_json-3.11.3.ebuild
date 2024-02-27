@@ -33,7 +33,7 @@ BDEPEND="
 	>=dev-util/cmake-3.22.1
 	virtual/pkgconfig
 	doc? (
-		>=app-doc/doxygen-1.9.1
+		>=app-text/doxygen-1.9.1
 	)
 "
 DOCS=( ChangeLog.md README.md )
