@@ -41,7 +41,7 @@ DEPEND+="
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	>=dev-util/cmake-3.8
-	doc? ( app-doc/doxygen )
+	doc? ( app-text/doxygen )
 "
 SRC_URI="
 https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
