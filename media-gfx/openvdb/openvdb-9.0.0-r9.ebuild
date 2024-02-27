@@ -156,7 +156,7 @@ BDEPEND+="
 	dev-util/patchelf
 	virtual/pkgconfig
 	doc? (
-		>=app-doc/doxygen-1.8.8
+		>=app-text/doxygen-1.8.8
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
