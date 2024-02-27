@@ -5,7 +5,23 @@
 
 EAPI=8
 
-inherit cmake multilib-minimal git-r3
+STABLE_EXPECTED_FINGERPRINT="\
+d598ee724bf56ae04ed475987d4e8780e302be56a5e98dd284225069bb54caf9\
+c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294\
+"
+STABLE_FALLBACK_COMMIT="eb6e7bb63738e29efd82ea3cf2a115238a89fa51" # Wed Apr 28 15:32:14 2021
+
+MAIN_EXPECTED_FINGERPRINT="\
+8632b4fd615d2ea818cd100afbd6f05428dccc4a63a869a626bbc31e827e4a30\
+68217c5e8e8819294c5b9709a13adb858865f8c88636bd6ea9388e58872550cc\
+"
+MAIN_FALLBACK_COMMIT="a6a2ec654b1be1166b376476a7555c89eca0c275" # Mon Feb 12 19:11:06 2024
+
+inherit cmake git-r3 multilib-minimal
+
+EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
+SRC_URI=""
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="libyuv is an open source project that includes YUV scaling and \
 conversion functionality."
@@ -13,10 +29,9 @@ HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-GIT_BRANCHES="+main stable"
 IUSE+="
-	${GIT_BRANCHES}
-	fallback-commit static system-gflags test
+${GIT_BRANCHES}
+fallback-commit +main stable static system-gflags test
 "
 REQUIRED_USE+="
 	^^ (
@@ -36,17 +51,14 @@ DEPEND+="
 	)
 "
 BDEPEND+="
-	stable? (
-		>=dev-util/cmake-2.8
-	)
 	!stable? (
 		>=dev-util/cmake-2.8.12
 	)
+	stable? (
+		>=dev-util/cmake-2.8
+	)
 	sys-apps/grep[pcre]
 "
-SRC_URI=""
-S="${WORKDIR}/${P}"
-EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 PATCHES=(
 	"${FILESDIR}/${PN}-1741-cmake-libdir.patch"
 )
@@ -64,25 +76,20 @@ get_hash() {
 
 src_unpack() {
 	# clone uses main
+	local expected_fingerprint
 	if use stable ; then
 		EGIT_BRANCH="stable"
-		expected="\
-d598ee724bf56ae04ed475987d4e8780e302be56a5e98dd284225069bb54caf9\
-c4abf7602876c86bf9b75f6b8e2f663dc71c1438e4fa3d0ced829781d395e294\
-"
-		use fallback-commit && export EGIT_COMMIT="eb6e7bb63738e29efd82ea3cf2a115238a89fa51"
+		expected_fingerprint="${STABLE_EXPECTED_FINGERPRINT}"
+		use fallback-commit && export EGIT_COMMIT="${STABLE_FALLBACK_COMMIT}"
 	elif use main ; then
 		EGIT_BRANCH="main"
-		expected="\
-adf02ccbaa212eed8d8ab371c6331378c7936f4004ae25bfb42a5d34d9158f79\
-97e45db859ba2cba4335ceb139bafe74e02064dc09a339fed333b3ced68bd6d0\
-"
-		use fallback-commit && export EGIT_COMMIT="3abd6f36b6e4f5a2e0ce236580a8bc1da3c7cf7e"
+		expected_fingerprint="${MAIN_EXPECTED_FINGERPRINT}"
+		use fallback-commit && export EGIT_COMMIT="${MAIN_FALLBACK_COMMIT}"
 	fi
 	git-r3_fetch
 	git-r3_checkout
-	actual=$(get_hash)
-	if [[ "${expected}" != "${actual}" ]] ; then
+	actual_fingerprint=$(get_hash)
+	if [[ "${expected_fingerprint}" != "${actual_fingerprint}" ]] ; then
 eerror
 eerror "The build files has changed.  This means that either a change in"
 eerror "dependencies, supported arches, ABI, config options, etc."
@@ -90,16 +97,17 @@ eerror
 eerror "This means that the ebuild packager needs to update the *DEPENDS,"
 eerror "IUSE, KEYWORDS.  Send an issue request about this."
 eerror
-eerror "Expected build files fingerprint:\t${expected}"
-eerror "Actual build files fingerprint:\t${actual}"
+eerror "Expected build files fingerprint:\t${expected_fingerprint}"
+eerror "Actual build files fingerprint:\t${actual_fingerprint}"
 eerror
 		die
 	fi
 }
 
 multilib_src_configure() {
-	local mycmakeargs=( )
-	use test && mycmakeargs+=( -DTEST=ON )
+	local mycmakeargs=(
+		-DTEST=$(usex test "ON" "OFF")
+	)
 	cmake_src_configure
 }
 
