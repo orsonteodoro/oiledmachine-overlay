@@ -17,7 +17,7 @@ fi
 DESCRIPTION="Small, safe and fast formatting library"
 HOMEPAGE="https://github.com/fmtlib/fmt"
 LICENSE="MIT"
-SLOT="0/${PV}"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="test"
 RESTRICT="
 	!test? (
