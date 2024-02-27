@@ -9,12 +9,15 @@ MY_P="${MY_PN}-${PV}"
 inherit cmake-multilib
 
 SRC_URI="
-https://github.com/${MY_PN}/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+https://github.com/unittest-cpp/unittest-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
 S="${WORKDIR}/${MY_P}"
 
 DESCRIPTION="A lightweight unit testing framework for C++"
-HOMEPAGE="https://unittest-cpp.github.io/"
+HOMEPAGE="
+	https://unittest-cpp.github.io/
+	https://github.com/unittest-cpp/unittest-cpp
+"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="
