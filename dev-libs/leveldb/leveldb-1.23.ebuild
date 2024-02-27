@@ -5,6 +5,8 @@ EAPI=8
 
 inherit cmake multilib-minimal toolchain-funcs
 
+SRC_URI="https://github.com/google/leveldb/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
+
 DESCRIPTION="a fast key-value storage library written at Google"
 HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
 LICENSE="BSD"
@@ -13,32 +15,43 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86 ~amd64-fbsd ~amd64-linux
 KEYWORDS="amd64 arm arm64 ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux"
 SLOT="0/$(ver_cut 1 ${PV})"
 IUSE+=" +snappy +tcmalloc static-libs test"
-RESTRICT="!test? ( test )"
-# See .travis.yml for details
-SNAPPY_V="0.3.7"
-# Skipped sqlite and kyotocabinet
-CDEPEND=">=sys-devel/gcc-8.4.0"
-DEPEND+="
-	${CDEPEND}
-	dev-libs/crc32c[${MULTILIB_USEDEP}]
-	tcmalloc? ( >=dev-util/google-perftools-2.5[${MULTILIB_USEDEP}] )
-	snappy? (
-		>=app-arch/snappy-${SNAPPY_V}:=[${MULTILIB_USEDEP}]
-		static-libs? ( >=app-arch/snappy-${SNAPPY_V}:=[${MULTILIB_USEDEP}] )
+RESTRICT="
+	!test? (
+		test
 	)
 "
-RDEPEND+=" ${DEPEND}"
+# See .travis.yml for details
+SNAPPY_PV="0.3.7"
+# Skipped sqlite and kyotocabinet
+CDEPEND="
+	>=sys-devel/gcc-8.4.0
+"
+RDEPEND+="
+	${CDEPEND}
+	dev-libs/crc32c[${MULTILIB_USEDEP}]
+	snappy? (
+		>=app-arch/snappy-${SNAPPY_PV}:=[${MULTILIB_USEDEP}]
+		static-libs? (
+			>=app-arch/snappy-${SNAPPY_PV}:=[${MULTILIB_USEDEP}]
+		)
+	)
+	tcmalloc? (
+		>=dev-util/google-perftools-2.5[${MULTILIB_USEDEP}]
+	)
+"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	${CDEPEND}
-	>=dev-util/cmake-3.9
 	>=dev-build/ninja-0.1.3
+	>=dev-util/cmake-3.9
 	>=sys-devel/clang-8
 "
 PATCHES=(
-	"${FILESDIR}"/${PN}-1.23-system-testdeps.patch
-	"${FILESDIR}"/${PN}-1.23-remove-benchmark-dep.patch
+	"${FILESDIR}/${PN}-1.23-system-testdeps.patch"
+	"${FILESDIR}/${PN}-1.23-remove-benchmark-dep.patch"
 )
-SRC_URI="https://github.com/google/${PN}/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
 
 get_lib_type() {

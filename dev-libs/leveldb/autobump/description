@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="dev-libs"
+PN="leveldb"
+BUMP_POLICY="latest-version"
