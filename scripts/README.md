@@ -254,8 +254,9 @@ patch versions.
 
 When you auto-bump, there is still a chance of a mispatch.  You will need to
 shallow test the patching process to make sure that the ebuild works.  A script
-may be used or created to automate the testing process or there may be a special
-BUMP_POLICY to revert or prevent the bump when a mispatch happens.
+may be used or created to automate the testing process after everything has
+been autobumped or there may be a special BUMP_POLICY to revert or prevent the
+bump when a mispatch happens.
 
 The two sections below are a discussion about if a package should or should not be autobumped.
 
