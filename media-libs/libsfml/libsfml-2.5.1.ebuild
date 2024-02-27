@@ -154,7 +154,7 @@ RDEPEND+="
 DEPEND="
 	${RDEPEND}
 	doc? (
-		app-doc/doxygen
+		app-text/doxygen
 	)
 "
 BDEPEND+="
