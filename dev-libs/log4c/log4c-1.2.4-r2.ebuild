@@ -3,7 +3,10 @@
 
 EAPI=8
 DESCRIPTION="Logging FrameWork for C, as Log4j or Log4Cpp"
-HOMEPAGE="http://log4c.sourceforge.net/"
+HOMEPAGE="
+	http://log4c.sourceforge.net/
+	https://sourceforge.net/projects/log4c/
+"
 LICENSE="LGPL-2.1"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
