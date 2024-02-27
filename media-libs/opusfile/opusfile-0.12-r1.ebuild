@@ -22,7 +22,7 @@ RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
 	)"
 
 DEPEND="${RDEPEND}
-	doc? ( app-doc/doxygen )"
+	doc? ( app-text/doxygen )"
 
 REQUIRED_USE="^^ ( fixed-point float )"
 
