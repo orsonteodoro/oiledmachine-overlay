@@ -38,7 +38,7 @@ DEPEND="
 BDEPEND="
 	>=dev-lang/swig-4.0.2
 	doc? (
-		>=app-doc/doxygen-1.9.1
+		>=app-text/doxygen-1.9.1
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
