@@ -27,7 +27,7 @@ RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.10
+	>=dev-build/cmake-3.11
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 "
 PATCHES=(
