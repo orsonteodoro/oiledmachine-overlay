@@ -5,22 +5,27 @@ EAPI=8
 
 inherit cmake-multilib
 
-DESCRIPTION="CRC32C implementation with support for CPU-specific acceleration instructions"
-HOMEPAGE="https://github.com/google/crc32c"
 SRC_URI="https://github.com/google/crc32c/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
+DESCRIPTION="CRC32C implementation with support for CPU-specific acceleration instructions"
+HOMEPAGE="https://github.com/google/crc32c"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 arm arm64 ~mips ppc ppc64 ~riscv ~sparc x86"
 IUSE="test"
-RESTRICT="!test? ( test )"
-
-BDEPEND="test? ( dev-cpp/gtest )"
-
+RESTRICT="
+	!test? (
+		test
+	)
+"
+BDEPEND="
+	test? (
+		dev-cpp/gtest
+	)
+"
 PATCHES=(
 	"${FILESDIR}/${PN}-1.1.1-system-testdeps.patch"
 )
-
 DOCS=( README.md )
 
 src_prepare() {
