@@ -81,7 +81,7 @@ BDEPEND+="
 	>=dev-util/cmake-3.1
 	dev-util/patchelf
 	doc? (
-		app-doc/doxygen[dot]
+		app-text/doxygen[dot]
 	)
 	python? (
 		${PYTHON_DEPS}
