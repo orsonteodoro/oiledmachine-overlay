@@ -5,7 +5,14 @@ EAPI=8
 
 # Building with 5.1 is broken.
 LUA_COMPAT=( lua5-{1..4} )
+
 inherit cmake flag-o-matic lua multilib-minimal
+
+SRC_URI="
+https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/civetweb-${PV}"
 
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb/civetweb"
@@ -15,7 +22,6 @@ KEYWORDS="~amd64 ~ppc ~x86"
 # For some reason, the lua eclass looks broken.
 IUSE+="
 ${LUA_COMPAT[@]/#/lua_targets_}
-
 +asan +c11 c89 c99 cxx98 cxx11 +cxx14 +cgi gnu17 -cxx +caching debug doc
 -duktape +ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
 static-libs -test -websockets -zlib
@@ -104,11 +110,6 @@ BDEPEND+="
 	>=dev-util/cmake-3.3.0
 	virtual/pkgconfig
 "
-SRC_URI="
-https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/civetweb-${PV}"
 DOCS=(
 	docs/Embedding.md
 	docs/OpenSSL.md

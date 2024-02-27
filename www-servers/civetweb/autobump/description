@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="www-servers"
+PN="civetweb"
+BUMP_POLICY="new-patch-versions-per-minor-major"
