@@ -10,6 +10,7 @@ inherit distutils-r1
 
 if [[ ${PV} =~ 9999 ]] ; then
 	inherit git-r3
+	FALLBACK_COMMIT="7fc56edebe9a2e39c94f872edd8dbe325c61b806"
 	IUSE+=" fallback-commit"
 else
 	SRC_URI="
@@ -85,7 +86,7 @@ src_unpack() {
 		EGIT_REPO_URI="https://github.com/datamllab/rlcard.git"
 		EGIT_BRANCH="master"
 		EGIT_COMMIT="HEAD"
-		use fallback-commit && EGIT_COMMIT="72c6fdc90d1fb933b019c1777f765c4083a57ec7"
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 		verify_version
