@@ -140,9 +140,12 @@ PATCHES=(
 # The PATENTS file is required to be distributed with this package bug #682214.
 DOCS=( PATENTS )
 # Don't strip CFI
-RESTRICT="strip test"
-# Tests need more wiring up
-RESTRICT+=" !test? ( test ) test"
+RESTRICT="
+	!test? (
+		test
+	)
+	strip
+"
 N_SAMPLES=1
 
 get_asset_ids() {
