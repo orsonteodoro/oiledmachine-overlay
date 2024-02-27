@@ -58,7 +58,7 @@ BDEPEND+="
 	>=dev-util/cmake-3.12.4
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? (
-		app-doc/doxygen
+		app-text/doxygen
 	)
 	python? (
 		${PYTHON_DEPS}
