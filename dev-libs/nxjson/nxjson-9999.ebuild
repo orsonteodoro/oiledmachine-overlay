@@ -6,6 +6,7 @@ EAPI=8
 
 EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/yarosla/nxjson.git"
+FALLBACK_COMMIT="d2c6fba9d5b0d445722105dd2a64062c1309ac86"
 
 inherit cmake git-r3 multilib-minimal toolchain-funcs
 
@@ -15,10 +16,10 @@ HOMEPAGE="https://github.com/yarosla/nxjson"
 
 # Live ebuilds do not get keyworded
 
-EXPECTED="\
+EXPECTED_FINGERPRINT="\
 cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce\
 47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
-SLOT="0/${EXPECTED}"
+SLOT="0/${EXPECTED_FINGERPRINT}"
 IUSE="debug fallback-commit static-libs test"
 RDEPEND+="
 	virtual/libc
@@ -40,17 +41,18 @@ get_lib_types() {
 }
 
 src_unpack() {
-	use fallback-commit && export EGIT_COMMIT="d2c6fba9d5b0d445722105dd2a64062c1309ac86"
+	use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
 
-	local actual=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" -o "nxjson.h") \
+	local actual_fingerprint=$(cat \
+		$(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" -o "nxjson.h") \
 		| sha512sum \
 		| cut -f 1 -d " ")
-	if [[ "${actual}" != "${EXPECTED}" ]] ; then
+	if [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
 eerror
-eerror "Actual build file(s) fingerprint:  ${actual}"
-eerror "Expected build file(s) fingerprint:  ${EXPECTED}"
+eerror "Actual build file(s) fingerprint:  ${actual_fingerprint}"
+eerror "Expected build file(s) fingerprint:  ${EXPECTED_FINGERPRINT}"
 eerror
 eerror "A change in build files is detected.  This is indicative of a *DEPENDs"
 eerror "IUSE, KEYWORDs, SLOT change."
