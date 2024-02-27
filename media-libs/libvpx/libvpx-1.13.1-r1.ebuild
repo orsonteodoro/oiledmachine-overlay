@@ -105,7 +105,7 @@ BDEPEND="
 		>=dev-lang/nasm-2.14
 	)
 	doc? (
-		app-doc/doxygen
+		app-text/doxygen
 		dev-lang/php
 	)
 "
