@@ -155,7 +155,7 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-util/cmake-3.15
 	doc? (
-		>=app-doc/doxygen-1.8.8
+		>=app-text/doxygen-1.8.8
 	)
 	test? (
 		${DEPEND_GTEST}
