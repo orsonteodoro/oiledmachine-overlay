@@ -5,9 +5,11 @@ get_latest_patch_version() {
 	git ls-remote --tags "https://github.com/JannisX11/blockbench.git" \
 		| grep -e "/v${ver//./\\.}\." \
 		| sed -e "s|.*/||g" \
+		| sed -e "s|^v||g" -e "s|-beta\.|_beta|" \
+		| sed -r -e "s|\.([0-9]+)$|.\1_z|g" \
 		| sort -V \
 		| uniq \
-		| sed -e "s|^v||g" -e "s|-beta\.|_beta|" \
+		| sed -e "s|_z$||g" \
 		| tail -n 1
 }
 
