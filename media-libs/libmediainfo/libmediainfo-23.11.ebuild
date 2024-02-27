@@ -41,7 +41,7 @@ BDEPEND+="
 	>=app-text/tofrodos-1.7.13
 	>=dev-util/pkgconf-1.8.1[${MULTILIB_USEDEP},pkg-config(+)]
 	doc? (
-		>=app-doc/doxygen-1.9.4
+		>=app-text/doxygen-1.9.4
 	)
 "
 
