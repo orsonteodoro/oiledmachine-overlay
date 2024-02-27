@@ -242,7 +242,7 @@ BDEPEND="
 		virtual/pkgconfig
 	)
 	doc? (
-		app-doc/doxygen
+		app-text/doxygen
 		$(python_gen_any_dep '
 			dev-python/sphinx[${PYTHON_USEDEP}]
 		')
