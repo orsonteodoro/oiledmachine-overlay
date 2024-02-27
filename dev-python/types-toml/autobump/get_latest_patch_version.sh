@@ -7,7 +7,7 @@ get_latest_patch_version() {
 		| cut -f 2 -d ">" \
 		| cut -f 1 -d "<" \
 		| sort -V \
-		| grep "^${ver}" \
+		| grep "^${ver}." \
 		| tail -n 1
 }
 
