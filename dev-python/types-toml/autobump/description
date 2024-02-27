@@ -1,4 +1,4 @@
-AUTOBUMP=0
+AUTOBUMP=1
 CATEGORY="dev-python"
 PN="types-toml"
 BUMP_POLICY="latest-version"

@@ -1,4 +1,4 @@
-AUTOBUMP=0
+AUTOBUMP=1
 CATEGORY="dev-python"
 PN="types-aiofiles"
 BUMP_POLICY="latest-version"

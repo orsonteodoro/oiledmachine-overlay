@@ -1,3 +1,4 @@
+AUTOBUMP=1
 CATEGORY="sys-kernel"
 PN="ot-sources"
 BUMP_POLICY="custom"
