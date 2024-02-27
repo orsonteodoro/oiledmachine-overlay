@@ -5,7 +5,7 @@ EAPI=8
 
 inherit cmake
 
-SRC_URI="https://github.com/richgel999/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/richgel999/miniz/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 DESCRIPTION="A lossless, high performance data compression library"
 HOMEPAGE="https://github.com/richgel999/miniz"
