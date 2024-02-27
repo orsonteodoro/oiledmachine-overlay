@@ -35,7 +35,7 @@ BDEPEND="
 	sys-apps/sed
 	doc? (
 		${PYTHON_DEPS}
-		app-doc/doxygen
+		app-text/doxygen
 		sys-apps/help2man
 		sys-apps/texinfo
 	)
