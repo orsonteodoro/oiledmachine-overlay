@@ -117,7 +117,7 @@ BDEPEND+="
 	doc? (
 		>=dev-texlive/texlive-fontsrecommended-2012
 		>=dev-texlive/texlive-latexextra-2012
-		app-doc/doxygen
+		app-text/doxygen
 		dev-texlive/texlive-latexrecommended
 		dev-texlive/texlive-plaingeneric
 		virtual/latex-base
