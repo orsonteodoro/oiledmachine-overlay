@@ -20,7 +20,7 @@ RDEPEND+=" >=media-libs/libogg-1.2.0[${MULTILIB_USEDEP}]"
 DEPEND+=" ${RDEPEND}"
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	doc? ( app-doc/doxygen )
+	doc? ( app-text/doxygen )
 	test? ( app-text/docbook-sgml-utils )"
 
 PATCHES=( "${FILESDIR}/${P}-destdir.patch" )
