@@ -952,8 +952,8 @@ BDEPEND+="
 		>=dev-python/autopep8-1.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pycodestyle-2.8.0[${PYTHON_USEDEP}]
 	')
+	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.7.0
-	>=dev-util/cmake-3.10
 	>=dev-util/meson-0.63.0
 	>=dev-util/vulkan-headers-1.2.198
 	dev-util/patchelf
@@ -977,7 +977,7 @@ BDEPEND+="
 	doc? (
 		>=dev-python/sphinx-3.3.1[latex]
 		>=dev-python/sphinx_rtd_theme-0.5.0
-		app-doc/doxygen[dot]
+		app-text/doxygen[dot]
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils

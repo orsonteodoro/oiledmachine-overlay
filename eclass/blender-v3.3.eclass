@@ -920,8 +920,8 @@ BDEPEND+="
 		>=dev-python/setuptools-63.2.0[${PYTHON_USEDEP}]
 		>=dev-python/cython-0.29.26[${PYTHON_USEDEP}]
 	')
+	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.6.3
-	>=dev-util/cmake-3.10
 	dev-util/patchelf
 	virtual/pkgconfig
 	asan? (
@@ -943,7 +943,7 @@ BDEPEND+="
 	doc? (
 		>=dev-python/sphinx-3.3.1[latex]
 		>=dev-python/sphinx_rtd_theme-0.5.0
-		app-doc/doxygen[dot]
+		app-text/doxygen[dot]
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils

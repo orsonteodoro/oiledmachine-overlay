@@ -264,7 +264,7 @@ BDEPEND="
 	sys-devel/gcc-config
 	virtual/pkgconfig
 	doc? (
-		>=app-doc/doxygen-1.8.14-r1[dot]
+		>=app-text/doxygen-1.8.14-r1[dot]
 	)
 "
 RESTRICT="
