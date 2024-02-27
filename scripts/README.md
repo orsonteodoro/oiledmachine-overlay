@@ -252,6 +252,11 @@ The initial motivation of this script is to automate trivial bumping of patch
 versions through a single root script where the *DEPENDs do not change between
 patch versions.
 
+When you auto-bump, there is still a chance of a mispatch.  You will need to
+shallow test the patching process to make sure that the ebuild works.  A script
+may be used or created to automate the testing process or there may be a special
+BUMP_POLICY to revert or prevent the bump when a mispatch happens.
+
 The two sections below are a discussion about if a package should or should not be autobumped.
 
 #### It is okay to make a package support autobump if
