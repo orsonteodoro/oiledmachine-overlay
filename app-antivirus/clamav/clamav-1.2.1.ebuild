@@ -309,7 +309,7 @@ BDEPEND="
 	>=virtual/rust-1.71.0
 	virtual/pkgconfig
 	doc? (
-		>=app-doc/doxygen-1.9.1
+		>=app-text/doxygen-1.9.1
 	)
 	test? (
 		${PYTHON_DEPS}
