@@ -6,7 +6,7 @@
 
 EAPI=8
 
-LIBVPX_TESTDATA_VER="1.13.1"
+LIBVPX_TESTDATA_VER="1.14.0"
 N_SAMPLES=1
 
 inherit flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
@@ -34,10 +34,10 @@ S_orig="${WORKDIR}/${P}"
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
 LICENSE="BSD"
-SLOT="0/8"
+SLOT="0/9"
 KEYWORDS="
-amd64 arm arm64 ~ia64 ~loong ~ppc ppc64 ~riscv ~s390 ~sparc x86 ~amd64-linux
-~x86-linux
+~amd64 ~arm ~arm64 ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+~amd64-linux ~x86-linux
 "
 PPC_IUSE="
 	cpu_flags_ppc_vsx3
