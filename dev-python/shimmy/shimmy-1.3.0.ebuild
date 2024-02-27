@@ -18,6 +18,9 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" atari bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel test"
 PETTINGZOO_PV="1.23"
+# TODO PACKAGE:
+# dev-python/dm-meltingpot
+# dev-python/bsuite
 RDEPEND+="
 	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 	>=dev-python/gymnasium-0.27.0[${PYTHON_USEDEP}]
@@ -32,6 +35,7 @@ RDEPEND+="
 	)
 	meltingpot? (
 		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_USEDEP}]
+		>=dev-python/dm-meltingpot-2.2.0[${PYTHON_USEDEP}]
 	)
 	dm-control? (
 		>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
