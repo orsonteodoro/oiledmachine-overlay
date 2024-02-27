@@ -312,7 +312,7 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	${CDEPEND}
 	dev-util/patchelf
-	doc? ( app-doc/doxygen[dot] )
+	doc? ( app-text/doxygen[dot] )
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.85-soversion.patch"
