@@ -2,7 +2,7 @@
 get_latest_patch_version() {
 	local ver="${1}"
 	git ls-remote --tags "https://github.com/Cisco-Talos/clamav.git" \
-		| grep -E -e "/(CLAMAV_${ver/./_}|clamav-${ver})" \
+		| grep -E -e "/(CLAMAV_${ver/./_}|clamav-${ver//./\\.}\.)" \
 		| sed -r \
 			-e "s|.*/CLAMAV_||g" \
 			-e "s|.*/clamav-||g" \

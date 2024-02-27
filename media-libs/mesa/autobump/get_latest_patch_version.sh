@@ -3,7 +3,7 @@ get_latest_patch_version() {
 	local ver="${1}"
 	git ls-remote --tags "https://gitlab.freedesktop.org/mesa/mesa.git" \
 		| grep "refs/tags/" \
-		| grep -e "-${ver}" \
+		| grep -e "-${ver//./\\.}\." \
 		| sed -e "s|.*/||g" \
 		| sed -e "s|^v||g" \
 		| grep "^mesa-" \

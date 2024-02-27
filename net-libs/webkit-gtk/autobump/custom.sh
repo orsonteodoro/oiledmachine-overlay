@@ -55,7 +55,7 @@ get_latest_stable_slot() {
 		| tr " " "\n" \
 		| uniq \
 		| sed -r -e "/\.(90|91|92|90.1$)/d" | grep -E "[0-9]+\.${evens}\." \
-		| grep "^${ver}" \
+		| grep "^${ver//./\\.}\." \
 		| tail -n 1
 }
 
@@ -90,7 +90,7 @@ get_latest_unstable_slot() {
 		| tr " " "\n" \
 		| sort -V \
 		| uniq \
-		| grep "^${ver}" \
+		| grep "^${ver//./\\.}\." \
 		| tail -n 1
 }
 

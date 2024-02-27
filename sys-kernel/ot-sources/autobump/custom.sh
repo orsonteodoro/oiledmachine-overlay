@@ -6,7 +6,7 @@ get_latest_clear_version() {
 	git ls-remote --tags \
 		"https://github.com/clearlinux-pkgs/linux.git" \
 		| grep "refs/tags" \
-		| grep -e "/${ver}" \
+		| grep -e "/${ver//./\\.}\." \
 		| sed -e "s|.*/||g" \
 		| sort -V \
 		| tail -n 1
@@ -16,7 +16,7 @@ get_latest_genpatches_version() {
 	local ver="${1}"
 	git ls-remote --tags "https://anongit.gentoo.org/git/proj/linux-patches.git" \
 		| grep "refs/tags" \
-		| grep -e "/${ver}" \
+		| grep -e "/${ver//./\\.}\." \
 		| sed -e "s|.*/||g" \
 		| sort -V \
 		| tail -n 1
@@ -41,7 +41,7 @@ get_latest_major_minor_version() {
 		| grep -E -o -e "[0-9]+\.[0-9]+(-rc[0-9]|.[0-9]+)" \
 		| sort -V \
 		| uniq \
-		| grep -e "^${ver}"
+		| grep -e "^${ver//./\\.}\."
 }
 
 get_ebuild_versions() {

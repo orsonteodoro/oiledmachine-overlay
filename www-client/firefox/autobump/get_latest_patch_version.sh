@@ -3,6 +3,7 @@ get_latest_patch_version() {
 	local ver="${1}"
 
 	if [[ "${ver}" =~ "e" ]] ; then
+		local ver2="${ver/e}"
 		curl -s -q -l "http://ftp.mozilla.org/pub/firefox/releases/" \
 			| cut -f 3 -d ">" \
 			| cut -f 1 -d "<" \
@@ -10,7 +11,7 @@ get_latest_patch_version() {
 			| sed -e "s|/||g" \
 			| grep "^[0-9]" \
 			| sort -V \
-			| grep "^${ver/e}" \
+			| grep "^${ver2//./\\.}\." \
 			| tail -n 1 \
 			| sed -e "s|esr|e|g"
 	else
@@ -22,7 +23,7 @@ get_latest_patch_version() {
 			| sed -e "s|/||g" \
 			| grep "^[0-9]" \
 			| sort -V \
-			| grep "^${ver}" \
+			| grep "^${ver//./\\.}\." \
 			| tail -n 1
 	fi
 }
