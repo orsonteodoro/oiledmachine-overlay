@@ -274,7 +274,7 @@ The two sections below are a discussion about if a package should or should not 
 3. If the *DEPENDs changes in the third component of a.b.c versioning, it is not recommended to use autobumping.
 4. If the upstream code quality is poor as in fails to build all the time or requires patching all the time, do not autobump.
 5. The project is controlled by doubious people or possibly controlled by malicious threat actors.
-6. The license, typically proprietary, disallows it indirectly.
+6. The license, typically proprietary, disallows it directly or indirectly or does similar actions.
 ```
 Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/description:
 # The description file stores information for both custom script and the root script autobump-patch-versions.sh
