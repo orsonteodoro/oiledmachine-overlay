@@ -106,7 +106,7 @@ DEPEND="
 BDEPEND="
 	>=dev-util/cmake-3.12
 	doc? (
-		>=app-doc/doxygen-1.8.4
+		>=app-text/doxygen-1.8.4
 		>=dev-python/docutils-0.9
 	)
 	cuda? (
