@@ -259,7 +259,7 @@ BDEPEND+="
 		${BDEPEND_CLANG}
 	)
 	doc? (
-		app-doc/doxygen
+		app-text/doxygen
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
