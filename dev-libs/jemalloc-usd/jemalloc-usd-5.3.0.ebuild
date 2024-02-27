@@ -14,11 +14,18 @@ EAPI=8
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
+MY_PN="jemalloc"
 TRAIN_TEST_DURATION=1800 # 30 min
+TRAINERS=(
+	"test-trainer"
+	"stress-test-trainer"
+)
+
 inherit autotools multilib-minimal
 inherit uopts
 
-MY_PN="jemalloc"
+SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${MY_PN}-${PV}.tar.bz2"
+
 DESCRIPTION="Jemalloc is a general-purpose scalable concurrent allocator"
 HOMEPAGE="http://jemalloc.net/ https://github.com/jemalloc/jemalloc"
 LICENSE="
@@ -34,24 +41,37 @@ LICENSE="
 # GPL-3+ - build-aux/config.guess
 # HPND - build-aux/install-sh
 SLOT="0/2"
-#KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~ppc ~ppc64"
-#KEYWORDS+" ~riscv ~s390 ~x86 ~amd64-linux ~x86-linux ~x64-macos ~x64-solaris"
 KEYWORDS+=" amd64 arm arm64 hppa ~loong ~m68k ppc ppc64 ~riscv ~s390 ~sparc x86"
-TRAINERS=(
-	"test-trainer"
-	"stress-test-trainer"
-)
-IUSE+=" ${TRAINERS[@]}"
-IUSE+=" custom-cflags debug lazy-lock prof static-libs stats test xmalloc"
-REQUIRED_USE+="
-	!custom-cflags? ( !bolt !ebolt !epgo !pgo )
-	pgo? ( || ( ${TRAINERS[@]} ) custom-cflags )
-	bolt? ( custom-cflags )
-	test-trainer? ( pgo )
-	stress-test-trainer? ( pgo )
+IUSE+="
+${TRAINERS[@]}
+custom-cflags debug lazy-lock prof static-libs stats test xmalloc
 "
-HTML_DOCS=( doc/jemalloc.html )
-SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${MY_PN}-${PV}.tar.bz2"
+REQUIRED_USE+="
+	!custom-cflags? (
+		!bolt
+		!ebolt
+		!epgo
+		!pgo
+	)
+	bolt? (
+		custom-cflags
+	)
+	pgo? (
+		custom-cflags
+		|| (
+			${TRAINERS[@]}
+		)
+	)
+	test-trainer? (
+		pgo
+	)
+	stress-test-trainer? (
+		pgo
+	)
+"
+HTML_DOCS=(
+	"doc/jemalloc.html"
+)
 PATCHES=(
 	"${FILESDIR}/${MY_PN}-5.2.1-mtls-dialect-gnu2-7036e64.patch"
 )
