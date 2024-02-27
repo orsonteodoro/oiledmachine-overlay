@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python3_{8..11} )
 inherit cmake-multilib flag-o-matic multilib-minimal python-single-r1
 
 DESCRIPTION="Drivers and libraries for the Xbox Kinect device"
-HOMEPAGE="https://github.com/OpenKinect/${PN}"
+HOMEPAGE="https://github.com/OpenKinect/libfreenect"
 LICENSE="
 	Apache-2.0
 	GPL-2
@@ -35,7 +35,7 @@ REQUIRED_USE+="
 		c-sync
 	)
 "
-DEPEND+="
+RDEPEND+="
 	virtual/libusb:1[${MULTILIB_USEDEP}]
 	examples? (
 		media-libs/freeglut[${MULTILIB_USEDEP}]
@@ -51,8 +51,8 @@ DEPEND+="
 		$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-util/cmake-3.12.4

@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="dev-libs"
+PN="spdlog"
+BUMP_POLICY="new-patch-versions-per-minor-major"
