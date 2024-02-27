@@ -25,7 +25,7 @@ else
 fi
 
 DEPEND="
-	doc? ( app-doc/doxygen )
+	doc? ( app-text/doxygen )
 	test? (
 		dev-cpp/gtest
 		dev-debug/valgrind
