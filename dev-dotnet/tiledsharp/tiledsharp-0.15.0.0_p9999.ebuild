@@ -24,7 +24,7 @@ REQUIRED_USE+="
 "
 BDEPEND+="
 	dev-dotnet/dotnet-sdk-bin
-	doc? ( app-doc/doxygen )
+	doc? ( app-text/doxygen )
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 #KEYFILE="dotnet-overlay-mono.snk"
