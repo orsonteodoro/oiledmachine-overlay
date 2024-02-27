@@ -20,9 +20,11 @@ get_latest_patch_version() {
 			-e "/dmgxar/d" \
 			-e "/[0-9]{4}/d" \
 			-e "s|([0-9])rc|\1_rc|g" \
-		| sed -e "/_rc/d" -e "/_beta/d" -e "/sf/d" \
+		| sed -e "/sf/d" \
+		| sed -E -e "s|\.([0-9])$|.\1_z|g" \
 		| sort -V \
 		| uniq \
+		| sed -e "s|_z$||g" \
 		| tail -n 1
 }
 
