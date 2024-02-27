@@ -270,6 +270,8 @@ main
     fail.
   - It is recommend to provide autobump support for the ebuild-package.
     See https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/scripts#autobump-patch-versions
+  - Revision or autobumping should still be patch tested with
+    `ebuild ... prepare` for correctness.
 
 * Versioning:
   - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
