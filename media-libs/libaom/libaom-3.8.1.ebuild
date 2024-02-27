@@ -1,4 +1,4 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # TODO:  live streamer trainers will be added after portage secure wipe hooks [aka bash exit/abort traps] are implemented/fixed.
@@ -8,9 +8,9 @@ EAPI=8
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_TBOLT=1
 CMAKE_ECLASS="cmake"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( python3_{8..12} )
 
-inherit cmake-multilib flag-o-matic flag-o-matic-om python-any-r1
+inherit cmake-multilib flag-o-matic flag-o-matic-om multiprocessing python-any-r1
 inherit toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
@@ -30,11 +30,10 @@ else
 	#     cd .. && tar cvaf libaom-3.7.1-testdata.tar.xz libaom-3.7.1-testdata
 	SRC_URI="
 https://storage.googleapis.com/aom-releases/${P}.tar.gz
+		test? (
+https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-testdata.tar.xz
+		)
 	"
-# Fork ebuild and add to SRC_URI if you want testing.
-#		test? (
-#https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-testdata.tar.xz
-#		)
 	S="${WORKDIR}/${P}"
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
@@ -74,7 +73,7 @@ ${ARM_IUSE}
 ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
-+asm big-endian chromium doc +examples lossless pgo static-libs test
++asm big-endian chromium debug doc +examples lossless pgo static-libs test
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
@@ -135,6 +134,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.1.2-cfi-rework.patch"
 	"${FILESDIR}/${PN}-3.4.0-posix-c-source-ftello.patch"
 	"${FILESDIR}/${PN}-3.7.0-allow-fortify-source.patch"
+	"${FILESDIR}/${PN}-3.8.1-tests-parallel.patch"
 )
 
 # The PATENTS file is required to be distributed with this package bug #682214.
@@ -364,6 +364,10 @@ append_all() {
 }
 
 _src_configure() {
+	# Follow upstream recommendations in README (bug #921438) and avoid
+	# asserts during common use (bug #914614).
+	append-cppflags $(usex debug '-UNDEBUG' '-DNDEBUG')
+
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
@@ -405,9 +409,6 @@ _src_configure() {
 		# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
-
-	filter-flags '-DN*DEBUG'
-	append-cppflags -DNDEBUG
 
 	# For fixing segfault with PGO+BOLT
 	append-flags \
@@ -525,6 +526,10 @@ _src_configure() {
 	else
 		mycmakeargs+=( -DAOM_TARGET_CPU=generic )
 	fi
+
+	# LIBAOM_TEST_PROCS is added by our tests-parallel.patch
+	export LIBAOM_TEST_PROCS="$(makeopts_jobs)"
+
 	cmake_src_configure
 }
 
@@ -996,7 +1001,10 @@ src_test() {
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
-			"${BUILD_DIR}"/test_libaom || die
+
+			# We use ninja rather than test_libaom directly so we can run it in parallel
+			# with sharding, see https://aomedia.googlesource.com/aom/#sharded-testing.
+			LIBAOM_TEST_DATA_PATH="${WORKDIR}/${P}-testdata" eninja -C "${BUILD_DIR}" runtests
 		done
 	}
 	multilib_foreach_abi test_abi
