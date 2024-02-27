@@ -48,14 +48,14 @@ REQUIRED_USE+="
 		!epgo
 		!pgo
 	)
+	bolt? (
+		custom-cflags
+	)
 	pgo? (
 		custom-cflags
 		|| (
 			${TRAINERS[@]}
 		)
-	)
-	bolt? (
-		custom-cflags
 	)
 	test-trainer? (
 		pgo
