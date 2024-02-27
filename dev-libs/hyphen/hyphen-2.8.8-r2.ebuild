@@ -10,7 +10,10 @@ mirror://sourceforge/hunspell/${P}.tar.gz
 "
 
 DESCRIPTION="ALTLinux hyphenation library"
-HOMEPAGE="http://hunspell.github.io/"
+HOMEPAGE="
+	http://hunspell.github.io/
+	https://sourceforge.net/projects/hunspell/
+"
 LICENSE="
 	GPL-2
 	LGPL-2.1
