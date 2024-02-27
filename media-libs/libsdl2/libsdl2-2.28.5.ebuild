@@ -274,7 +274,7 @@ BDEPEND="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-build/autoconf-2.71
 	doc? (
-		>=app-doc/doxygen-1.9.1
+		>=app-text/doxygen-1.9.1
 		>=media-gfx/graphviz-2.42.2
 	)
 	wayland? (
