@@ -288,7 +288,9 @@ Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/get_latest_p
 get_latest_patch_version() {
         local ver="${1}" # ${1} is typically a major and minor version.
 	# You must echo or print a single version string without v prefix.
-	# Place parsed RSS or git tag version here. 
+	# Parsed the RSS or git tag version here.
+	# The versioning must be in distro canonical/standard form.
+	# See https://dev.gentoo.org/~ulm/pms/head/pms.html#section-3.2
 }
 
 get_latest_patch_version ${1}
@@ -314,6 +316,8 @@ Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/get_latest_v
 # This file is required if BUMP_POLICY="latest-version"
 get_latest_version() {
 	# You must echo or print a single version string without v prefix.
+	# The versioning must be in distro canonical/standard form.
+	# See https://dev.gentoo.org/~ulm/pms/head/pms.html#section-3.2
 }
 
 get_latest_version
