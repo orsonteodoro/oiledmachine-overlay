@@ -11,7 +11,7 @@ inherit distutils-r1
 DESCRIPTION=""
 HOMEPAGE="https://github.com/breezy-team/setuptools-gettext"
 LICENSE="
-	GPL-2
+	GPL-2+
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
