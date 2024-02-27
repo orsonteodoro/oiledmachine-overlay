@@ -6,8 +6,14 @@ EAPI=8
 
 inherit cmake-multilib git-r3
 
+FALLBACK_COMMIT="4ec9170bcdfaba23c15fbbc90917e6316a99cc86" # Dec 28, 2023
+EGIT_BRANCH="main"
+EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
+EGIT_SUBMODULES=()
+S="${WORKDIR}/utf8_range-9999/third_party/utf8_range"
+
 DESCRIPTION="Fast UTF-8 validation with Range algorithm (NEON+SSE4+AVX2)"
-HOMEPAGE="https://github.com/protocolbuffers/utf8_range"
+HOMEPAGE="https://github.com/protocolbuffers/protobuf/tree/main/third_party/utf8_range"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm64"
 SLOT="0"
@@ -23,14 +29,13 @@ BDEPEND+="
 	)
 "
 DOCS=( README.md )
-EGIT_REPO_URI="https://github.com/protocolbuffers/utf8_range.git"
-EGIT_BRANCH="main"
 PATCHES=(
-	"${FILESDIR}/utf8_range-9999-shared-libs.patch"
+	"${FILESDIR}/utf8_range-9999-396e26b-shared-libs.patch"
 )
 
-pkg_setup() {
-	use fallback-commit && export EGIT_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # Nov 15, 2022
+src_unpack() {
+	use fallback-commit && export EGIT_COMMIT="${EGIT_COMMIT}"
+	git-r3_src_unpack
 }
 
 src_configure() {
