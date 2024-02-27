@@ -10,7 +10,10 @@ S="${WORKDIR}/${PN}-$(ver_cut 1-2 ${PV})"
 
 DESCRIPTION=\
 "Light-weight, simple, and fast XML parser for C++ with XPath support"
-HOMEPAGE="https://pugixml.org/ https://github.com/zeux/pugixml/"
+HOMEPAGE="
+	https://pugixml.org/
+	https://github.com/zeux/pugixml/
+"
 LICENSE="MIT"
 KEYWORDS="
 amd64 ~arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux
