@@ -131,6 +131,8 @@ main() {
 						local ret="$?"
 						if (( ${ret} != 0 )) ; then
 							echo "[WARN] Detected mispatch in ${PN}-${latest_upstream_version}.ebuild"
+							mkdir -p /var/log/autopatch
+							echo "[WARN] Detected mispatch in ${PN}-${latest_upstream_version}.ebuild, $(date)" >> /var/log/autopatch/mispatch.log
 						fi
 					fi
 					git add *

@@ -46,6 +46,8 @@ main() {
 					local ret="$?"
 					if (( ${ret} != 0 )) ; then
 						echo "[WARN] Detected error in ${PN}-${latest_upstream_version}.ebuild"
+						mkdir -p /var/log/autopatch
+						echo "[WARN] Detected error in ${PN}-${latest_upstream_version}.ebuild, $(date)" >> /var/log/autopatch/mispatch.log
 					fi
 					git add *
 					git commit -m "Auto bumping to blockbench-${latest_upstream_version}.ebuild"
