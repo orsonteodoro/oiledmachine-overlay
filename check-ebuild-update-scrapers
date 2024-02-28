@@ -997,11 +997,6 @@ repo_latest_version_get_libmediainfo_pv() {
 https://github.com/MediaArea/MediaInfoLib.git)
 }
 
-repo_latest_version_get_liboggz_pv() {
-	echo $(get_newest_pv \
-https://gitlab.xiph.org/xiph/liboggz.git)
-}
-
 repo_latest_version_get_libomxil-bellagio_pv() {
 	echo $(wget -q -O - \
 https://sourceforge.net/projects/omxil/rss?path=/ \

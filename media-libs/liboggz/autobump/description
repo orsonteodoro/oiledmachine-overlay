@@ -1,4 +1,0 @@
-AUTOBUMP=1
-CATEGORY="media-libs"
-PN="liboggz"
-BUMP_POLICY="new-patch-versions-per-minor-major"
