@@ -1456,16 +1456,6 @@ http://www.ndesk.org/Options \
 		| tail -n 1)
 }
 
-repo_latest_version_get_nestegg_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/mozilla/nestegg/master/configure.ac \
-		| grep -e "AC_INIT" \
-		| grep -E -o -e "[0-9.]+")
-	local suffix=$(get_head_suffix "github.com" \
-			"kinetiknz/nestegg" "master")
-	echo "${pv}_pre${suffix}"
-}
-
 repo_latest_version_get_netbeans-alice_pv() {
 	echo $(wget -q -O - \
 https://www.alice.org/get-alice/alice-3-with-netbeans/ \

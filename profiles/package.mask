@@ -73,7 +73,6 @@ dev-python/soundcloud-python
 media-libs/glfw
 media-libs/libfishsound
 media-libs/liboggz
-media-libs/nestegg
 media-libs/openimageio
 media-libs/opusfile
 media-libs/theorafile

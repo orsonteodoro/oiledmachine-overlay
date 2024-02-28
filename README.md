@@ -603,7 +603,6 @@ should be a bash script.
 | media-libs/libmp4v2 | For multilib tizonia |
 | media-libs/liboggz | For multilib tizonia |
 | media-libs/libyuv | For xpra compression |
-| media-libs/nestegg | TBA |
 | media-libs/openimageio | TBA |
 | media-libs/opusfile | TBA |
 | media-libs/libspng | This is another alternative png library that has been fuzzed to eliminate security holes. |
