@@ -31,33 +31,29 @@ JE_LATERALGM_FN="${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LATERALGM:0:7}.tar.gz"
 JE_LIBMAKER_FN="${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LIBMAKER:0:7}.tar.gz"
 LGMPLUGIN_FN="lgmplugin-${LGMPLUGIN_VER}.tar.gz"
 LIBMAKER_FN="${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER:0:7}.tar.gz"
-BASE_URI_ED="https://github.com/enigma-dev"
-BASE_URI_IA="https://github.com/IsmAvatar"
-BASE_URI_JD="https://github.com/JoshDreamland"
-
 SRC_URI_LATERALGM="
-${BASE_URI_IA}/${MY_PN_LATERALGM}/archive/v${PV}.tar.gz
+https://github.com/IsmAvatar/${MY_PN_LATERALGM}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
-${BASE_URI_JD}/JoshEdit/archive/${EGIT_COMMIT_JE_LATERALGM}.tar.gz
+https://github.com/JoshDreamland/JoshEdit/archive/${EGIT_COMMIT_JE_LATERALGM}.tar.gz
 	-> ${JE_LATERALGM_FN}
 "
 SRC_URI_LIBMAKER="
-${BASE_URI_IA}/${MY_PN_LIBMAKER}/archive/${EGIT_COMMIT_LIBMAKER}.tar.gz
+https://github.com/IsmAvatar/${MY_PN_LIBMAKER}/archive/${EGIT_COMMIT_LIBMAKER}.tar.gz
 	-> ${LIBMAKER_FN}
-${BASE_URI_JD}/${MY_PN_JOSHEDIT}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz
+https://github.com/JoshDreamland/${MY_PN_JOSHEDIT}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz
 	-> ${JE_LIBMAKER_FN}
 "
-
 SRC_URI_LGMPLUGIN="
-${BASE_URI_ED}/lgmplugin/archive/refs/tags/v${LGMPLUGIN_VER}.tar.gz
+https://github.com/enigma-dev/lgmplugin/archive/refs/tags/v${LGMPLUGIN_VER}.tar.gz
 	-> ${LGMPLUGIN_FN}
 "
 SRC_URI="
 	${SRC_URI_LATERALGM}
 	${SRC_URI_LGMPLUGIN}
-	libmaker? ( ${SRC_URI_LIBMAKER} )
+	libmaker? (
+		${SRC_URI_LIBMAKER}
+	)
 "
-
 S_LATERALGM="${WORKDIR}/${MY_PN_LATERALGM}-${PV}"
 S_LIBMAKER="${WORKDIR}/${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER}"
 S_LGMPLUGIN="${WORKDIR}/lgmplugin-${LGMPLUGIN_VER}"
@@ -74,7 +70,10 @@ LICENSE="
 "
 # lgmplugin is GPL-3+
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-HOMEPAGE="http://lateralgm.org/"
+HOMEPAGE="
+	http://lateralgm.org/
+	https://github.com/IsmAvatar/LateralGM
+"
 SLOT="0"
 IUSE+="
 libmaker
