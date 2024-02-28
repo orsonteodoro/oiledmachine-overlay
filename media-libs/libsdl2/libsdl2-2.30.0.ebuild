@@ -168,9 +168,9 @@ REQUIRED_USE="
 		X
 	)
 "
-# See https://github.com/libsdl-org/SDL/blob/release-2.28.0/.github/workflows/main.yml#L38
-# https://github.com/libsdl-org/SDL/blob/release-2.28.0/docs/README-linux.md
-# U 22.04 ; CI tag release-2.28.x
+# See https://github.com/libsdl-org/SDL/blob/release-2.30.0/.github/workflows/main.yml#L47
+# https://github.com/libsdl-org/SDL/blob/release-2.30.0/docs/README-linux.md
+# U 22.04 ; CI tag release-2.30.x
 # libudev version relaxed
 MESA_PV="22.2.5"
 CDEPEND="
