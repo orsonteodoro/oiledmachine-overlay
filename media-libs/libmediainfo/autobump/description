@@ -1,0 +1,5 @@
+AUTOBUMP=1
+CATEGORY="media-libs"
+PN="libmediainfo"
+BUMP_POLICY="new-patch-versions-per-minor-major"
+SLOT_COMPONENTS="1"
