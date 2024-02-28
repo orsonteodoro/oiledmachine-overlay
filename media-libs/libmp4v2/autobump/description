@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="dev-libs"
+PN="libmp4v2"
+BUMP_POLICY="new-patch-versions-per-minor-major"
