@@ -4,87 +4,29 @@
 
 EAPI=8
 
-inherit desktop java-pkg-2
-
-DESCRIPTION="A free game maker source file editor"
-LICENSE="
-	GPL-3+
-	libmaker? (
-		GPL-3+
-	)
-"
-# lgmplugin is GPL-3+
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-HOMEPAGE="http://lateralgm.org/"
-SLOT="0"
-IUSE+="
-libmaker
-r1
-"
-
-JAVA_SLOT="1.8"
-JAVA_SRC_VER="1.7"
-JVM_VER="1.8"
-
 # Merged libmaker and lgmplugin to let others find them easier.
 
+ENIGMA_COMMIT="d18d1c0"
+JAVA_SLOT="1.8"
+JAVA_SRC_VER="1.7"
 JNA_SLOT="4"
-DEPEND_LATERALGM="
-	virtual/jre:${JAVA_SLOT}
-"
-DEPEND_LGMPLUGIN="
-	>=dev-java/jna-5.8:4=[nio-buffers(+)]
-	virtual/jre:${JAVA_SLOT}
-"
-DEPEND_LIBMAKER="
-	virtual/jre:${JAVA_SLOT}
-"
-CDEPEND="
-	${DEPEND_LATERALGM}
-	${DEPEND_LGMPLUGIN}
-	libmaker? (
-		${DEPEND_LIBMAKER}
-	)
-"
-DEPEND+="
-	${CDEPEND}
-	virtual/jdk:${JAVA_SLOT}
-"
-RDEPEND+="
-	${CDEPEND}
-	dev-games/enigma:0/lateralgm-d18d1c0
-"
-BDEPEND_LATERALGM="
-	virtual/jdk:${JAVA_SLOT}
-	dev-java/maven-bin
-"
-BDEPEND_LGMPLUGIN="
-	virtual/jdk:${JAVA_SLOT}
-"
-BDEPEND_LIBMAKER="
-	virtual/jdk:${JAVA_SLOT}
-"
-BDEPEND+="
-	${BDEPEND_LATERALGM}
-	${BDEPEND_LGMPLUGIN}
-	libmaker? (
-		${BDEPEND_LIBMAKER}
-	)
-"
+JVM_VER="1.8"
+JNA_PATH="/usr/share/jna-${JNA_SLOT}/lib/jna.jar"
+LGMPLUGIN_VER="1.8.227r3" # \
+# lgmplugin updates can be found at: \
+# https://github.com/enigma-dev/lgmplugin/tags
+MY_PN_LATERALGM="LateralGM"
+MY_PN_LIBMAKER="LibMaker"
+MY_PN_LGMPLUGIN="LateralGM Plugin"
+MY_PN_JOSHEDIT="JoshEdit"
+
+inherit desktop java-pkg-2
 
 EGIT_COMMIT_LIBMAKER="072e3eda2f0c4495838f94ad3cd5a376b1fc7ff5"
 EGIT_COMMIT_JE_LATERALGM="487ddbe470032124dcb50ebee01a24b600ae900e"
 EGIT_COMMIT_JE_LIBMAKER="5844d7f047eac15408f7ccf8a9183d2015b962e0" # \
 # dated 20120417, this is required because of namespace changes, KeywordSet \
 # changes, fails to build
-LGMPLUGIN_VER="1.8.227r3" # \
-# lgmplugin updates can be found at: \
-# https://github.com/enigma-dev/lgmplugin/tags
-
-MY_PN_LATERALGM="LateralGM"
-MY_PN_LIBMAKER="LibMaker"
-MY_PN_LGMPLUGIN="LateralGM Plugin"
-MY_PN_JOSHEDIT="JoshEdit"
 JE_LATERALGM_FN="${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LATERALGM:0:7}.tar.gz"
 JE_LIBMAKER_FN="${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LIBMAKER:0:7}.tar.gz"
 LGMPLUGIN_FN="lgmplugin-${LGMPLUGIN_VER}.tar.gz"
@@ -110,20 +52,77 @@ SRC_URI_LGMPLUGIN="
 ${BASE_URI_ED}/lgmplugin/archive/refs/tags/v${LGMPLUGIN_VER}.tar.gz
 	-> ${LGMPLUGIN_FN}
 "
-
 SRC_URI="
 	${SRC_URI_LATERALGM}
 	${SRC_URI_LGMPLUGIN}
 	libmaker? ( ${SRC_URI_LIBMAKER} )
 "
-RESTRICT="mirror"
+
 S_LATERALGM="${WORKDIR}/${MY_PN_LATERALGM}-${PV}"
 S_LIBMAKER="${WORKDIR}/${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER}"
 S_LGMPLUGIN="${WORKDIR}/lgmplugin-${LGMPLUGIN_VER}"
 S_JOSHEDIT_FOR_LIBMAKER="${WORKDIR}/${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LIBMAKER}"
 S_JOSHEDIT_FOR_LATERALGM="${WORKDIR}/${MY_PN_JOSHEDIT}-${EGIT_COMMIT_JE_LATERALGM}"
 S="${S_LATERALGM}"
-JNA_PATH="/usr/share/jna-${JNA_SLOT}/lib/jna.jar"
+
+DESCRIPTION="A free game maker source file editor"
+LICENSE="
+	GPL-3+
+	libmaker? (
+		GPL-3+
+	)
+"
+# lgmplugin is GPL-3+
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+HOMEPAGE="http://lateralgm.org/"
+SLOT="0"
+IUSE+="
+libmaker
+r1
+"
+DEPEND_LATERALGM="
+	virtual/jre:${JAVA_SLOT}
+"
+DEPEND_LGMPLUGIN="
+	>=dev-java/jna-5.8:4=[nio-buffers(+)]
+	virtual/jre:${JAVA_SLOT}
+"
+DEPEND_LIBMAKER="
+	virtual/jre:${JAVA_SLOT}
+"
+CDEPEND="
+	${DEPEND_LATERALGM}
+	${DEPEND_LGMPLUGIN}
+	libmaker? (
+		${DEPEND_LIBMAKER}
+	)
+"
+DEPEND+="
+	${CDEPEND}
+	virtual/jdk:${JAVA_SLOT}
+"
+RDEPEND+="
+	${CDEPEND}
+	dev-games/enigma:0/lateralgm-${ENIGMA_COMMIT}
+"
+BDEPEND_LATERALGM="
+	virtual/jdk:${JAVA_SLOT}
+	dev-java/maven-bin
+"
+BDEPEND_LGMPLUGIN="
+	virtual/jdk:${JAVA_SLOT}
+"
+BDEPEND_LIBMAKER="
+	virtual/jdk:${JAVA_SLOT}
+"
+BDEPEND+="
+	${BDEPEND_LATERALGM}
+	${BDEPEND_LGMPLUGIN}
+	libmaker? (
+		${BDEPEND_LIBMAKER}
+	)
+"
+RESTRICT="mirror"
 
 pkg_setup()
 {
