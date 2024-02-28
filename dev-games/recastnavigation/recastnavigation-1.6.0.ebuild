@@ -3,12 +3,27 @@
 
 EAPI=8
 
-inherit cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
-
-EXPECTED="\
+EXPECTED_FINGERPRINT="\
 a8713189737e6d885b7e9badbd494d495a460cd47b0eaac9424dbc72d133e49a\
 fc8fd1891a1255b4347c0fbabbd5fc841dc0d3c622137e494a454a312ba5e483\
 "
+
+inherit cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
+
+if [[ ${PV} =~ 99999999 ]] ; then
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/recastnavigation/recastnavigation.git"
+	FALLBACK_COMMIT="b51925bb8720e78a65c77339a532459b96ddfc7e" # Dec 22, 2022
+	S="${WORKDIR}/${P}"
+	IUSE+=" fallback-commit"
+else
+	SRC_URI="
+https://github.com/recastnavigation/recastnavigation/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+	S="${WORKDIR}/${P}"
+	KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+fi
 
 DESCRIPTION="Navigation-mesh Toolset for Games"
 LICENSE="ZLIB"
@@ -48,17 +63,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-util/cmake-3.22.1
 "
-if [[ ${PV} =~ 99999999 ]] ; then
-	SRC_URI=""
-	IUSE+=" fallback-commit"
-else
-	SRC_URI="
-https://github.com/recastnavigation/recastnavigation/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-	"
-	KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-fi
-S="${WORKDIR}/${P}"
 
 pkg_setup() {
 	export CC=$(tc-getCC)
@@ -80,20 +84,16 @@ get_lib_type() {
 }
 
 _unpack_live() {
-	EGIT_BRANCH="main"
-	EGIT_REPO_URI="https://github.com/recastnavigation/recastnavigation.git"
-	if use fallback-commit ; then
-		export EGIT_COMMIT="b51925bb8720e78a65c77339a532459b96ddfc7e" # Dec 22, 2022
-	fi
+	use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
-	local actual=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake") \
+	local actual_fingerprint=$(cat $(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake") \
 		| sha512sum \
 		| cut -f 1 -d " ")
-	if [[ "${actual}" != "${EXPECTED}" ]] ; then
+	if [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
 eerror
-eerror "Actual build files fingerprint:\t${actual}"
-eerror "Expected build files fingerprint:\t${EXPECTED}"
+eerror "Actual build files fingerprint:\t${actual_fingerprint}"
+eerror "Expected build files fingerprint:\t${EXPECTED_FINGERPRINT}"
 eerror
 eerror "Detected a change in build files that is indicative of a new option,"
 eerror "*DEPENDs, IUSE, KEYWORDS."
@@ -105,7 +105,7 @@ eerror
 }
 
 src_unpack() {
-	if [[ ${PV} =~ 99999999 ]] ; then
+	if [[ "${PV}" =~ "99999999" ]] ; then
 		_unpack_live
 	else
 		unpack ${A}
@@ -119,13 +119,14 @@ src_prepare() {
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_type) ; do
-			cp -a "${S}" "${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" || die
+			cp -a \
+				"${S}" \
+				"${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}" \
+				|| die
 		done
 	}
 	multilib_foreach_abi prepare_abi
 }
-
-
 
 src_configure() {
 	configure_abi() {
@@ -134,7 +135,7 @@ src_configure() {
 			CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${CMAKE_USE_DIR}" || die
-			mycmakeargs=(
+			local mycmakeargs=(
 				-DRECASTNAVIGATION_DEMO=$(usex demo)
 				-DRECASTNAVIGATION_DT_POLYREF64=$(usex dt-polyref64)
 				-DRECASTNAVIGATION_DT_VIRTUAL_QUERYFILTER=$(usex dt-virtual-queryfilter)
@@ -148,7 +149,7 @@ src_configure() {
 						"${CMAKE_USE_DIR}/${lib}/CMakeLists.txt" || die
 				done
 			else
-				:;
+				:
 			fi
 			cmake_src_configure
 		done
