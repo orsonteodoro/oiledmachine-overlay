@@ -4,14 +4,29 @@
 
 EAPI=8
 
+EXPECTED_FINGERPRINT="\
+5f8072cbe37f8e80d1f49942d984537caf369734bd97f307f98f25842ef1e1ee\
+234e75cee7e731ef2ab9433f190fa732d74b45aef12e7d1c499d0e981a7644aa\
+"
+
 inherit cmake git-r3
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/icculus/mojoshader.git"
+	EGIT_COMMIT="HEAD"
+	FALLBACK_COMMIT="dbc721c1436657b1c5e8e7e7fd17e6a0b99bf28f"
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+else
+	SRC_URI=""
+	S="${WORKDIR}/${P}"
+	die "FIXME"
+fi
 
 DESCRIPTION="Use Direct3D shaders with other 3D rendering APIs."
 HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
-
 # No KEYWORDS for LIVE ebuilds (or LIVE snapshots)
-
 # profile_metal support is default ON upstream
 PROFILES="
 +profile_arb1 +profile_arb1_nv +profile_bytecode +profile_d3d +profile_glsl120
@@ -20,15 +35,24 @@ PROFILES="
 "
 _PROFILES="${PROFILES//-/}"
 _PROFILES="${_PROFILES//+/}"
-IUSE+=" ${PROFILES}"
-IUSE+=" +compiler-support debug -depth-clipping +profile-glspirv"
-IUSE+=" +effect-support -flip-viewport static-libs sdl2-stdlib"
-IUSE+=" -xna-vertextexture"
-REQUIRED_USE=" || ( ${_PROFILES} )
-	profile_hlsl? ( || ( elibc_mingw ) )
-	profile_metal? ( kernel_Darwin )
+IUSE+="
+${PROFILES}
++compiler-support debug -depth-clipping +profile-glspirv +effect-support
+-flip-viewport static-libs sdl2-stdlib -xna-vertextexture
 "
-SLOT="0/$(ver_cut 1-2 ${PV})"
+REQUIRED_USE="
+	profile_hlsl? (
+		elibc_mingw
+	)
+	profile_metal? (
+		kernel_Darwin
+	)
+	|| (
+		${_PROFILES}
+	)
+"
+#SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/9999"
 RDEPEND+="
 	>=dev-util/re2c-1.2.1
 	media-libs/libsdl2
@@ -42,37 +66,37 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-util/cmake-2.6
 "
-SRC_URI=""
 RESTRICT="mirror"
-S="${WORKDIR}/${P}"
-EGIT_REPO_URI="https://github.com/icculus/mojoshader.git"
-EGIT_COMMIT="HEAD"
 PATCHES=(
-	"${FILESDIR}/${PN}-1310-cmake-fixes.patch"
+	"${FILESDIR}/${PN}-dbc721c-1310-cmake-fixes.patch"
 	"${FILESDIR}/${PN}-1240-cmake-build-both-static-and-shared.patch"
-	"${FILESDIR}/${PN}-9999-sdl2-multilib.patch"
-	"${FILESDIR}/${PN}-9999-sdl2-link.patch"
+	"${FILESDIR}/${PN}-dbc721c-sdl2-link.patch"
 )
-EXPECTED_BUILD_FILES="\
-cd8b409ec4913dc36be25ea2313f0c1457f1441e0ecd896e836a8368554a07c7\
-d70460d65b1eb3bd7da3d8b7e25203e19014a9bc64831c61b46982db705d2ccd\
-"
 
-src_unpack() {
+unpack_live() {
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
-	local actual_build_files=$(cat \
+	local actual_fingerprint=$(cat \
 		$(find "${S}" -name "CMakeLists.txt" -o -name "*.cmake" | sort) \
 		| sha512sum \
 		| cut -f 1 -d " ")
-	if [[ "${actual_build_files}" != "${EXPECTED_BUILD_FILES}" ]] ; then
+	if [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
 eerror
 eerror "Change in build files detected"
 eerror
-eerror "Actual:  ${actual_build_files}"
-eerror "Expected:  ${EXPECTED_BUILD_FILES}"
+eerror "Actual build files fingerprint:  ${actual_fingerprint}"
+eerror "Expected build files fingerprint:  ${EXPECTED_FINGERPRINT}"
 eerror
 		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
 	fi
 }
 
@@ -90,7 +114,10 @@ src_configure() {
 	fi
 
         local mycmakeargs=(
+		-DBUILD_SHARED_LIBS="ON"
+		-DBUILD_STATIC_LIBS=$(usex static-libs "ON" "OFF")
 		-DCMAKE_INSTALL_LIBDIR="${EPREFIX}/usr/$(get_libdir)"
+		-DCMAKE_SKIP_RPATH="ON"
                 -DCOMPILER_SUPPORT=$(usex compiler-support)
                 -DDEPTH_CLIPPING=$(usex depth-clipping)
                 -DEFFECT_SUPPORT=$(usex effect-support)
@@ -99,17 +126,14 @@ src_configure() {
                 -DPROFILE_ARB1_NV=$(usex profile_arb1_nv)
                 -DPROFILE_BYTECODE=$(usex profile_bytecode)
                 -DPROFILE_D3D=$(usex profile_d3d)
-                -DPROFILE_GLSL120=$(usex profile_glsl120)
                 -DPROFILE_GLSL=$(usex profile_glsl)
+                -DPROFILE_GLSL120=$(usex profile_glsl120)
                 -DPROFILE_GLSLES=$(usex profile_glsles)
+                -DPROFILE_GLSPIRV=$(usex profile_glspirv)
                 -DPROFILE_HLSL=$(usex profile_hlsl)
                 -DPROFILE_METAL=$(usex profile_metal)
                 -DPROFILE_SPIRV=$(usex profile_spirv)
-                -DPROFILE_GLSPIRV=$(usex profile_glspirv)
                 -DXNA4_VERTEXTEXTURE=$(usex xna-vertextexture)
-		-DBUILD_SHARED_LIBS="ON"
-		-DBUILD_STATIC_LIBS=$(usex static-libs "ON" "OFF")
-		-DCMAKE_SKIP_RPATH=ON
         )
 
 	cmake_src_configure
@@ -117,7 +141,7 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
-	dodoc LICENSE.txt
+	dodoc "LICENSE.txt"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
