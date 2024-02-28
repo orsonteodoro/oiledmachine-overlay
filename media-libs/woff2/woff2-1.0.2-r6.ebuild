@@ -16,7 +16,7 @@ KEYWORDS="
 ~x86-linux ~x64-macos ~x86-macos ~x64-solaris
 "
 RDEPEND+="
-	app-arch/brotli[${MULTILIB_USEDEP}]
+	>=app-arch/brotli-1.0.1[${MULTILIB_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
@@ -27,8 +27,8 @@ BDEPEND+="
 
 src_configure() {
 	local mycmakeargs=(
-		-DCMAKE_SKIP_RPATH=ON # needed, causes QA warnings otherwise
 		-DCANONICAL_PREFIXES=ON #661942
+		-DCMAKE_SKIP_RPATH=ON # needed, causes QA warnings otherwise
 	)
 	cmake-multilib_src_configure
 }
