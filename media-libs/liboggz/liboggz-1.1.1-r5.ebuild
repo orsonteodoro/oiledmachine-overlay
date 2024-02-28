@@ -5,25 +5,38 @@ EAPI=8
 
 inherit autotools multilib-minimal
 
+SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.gz"
+
 DESCRIPTION="Oggz provides a simple programming interface for reading and \
 writing Ogg files and streams"
 HOMEPAGE="https://www.xiph.org/oggz/"
-SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.gz"
-
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="alpha amd64 arm arm64 hppa ia64 ppc ppc64 sparc x86"
 IUSE+=" doc static-libs test"
-RESTRICT="!test? ( test )"
-
-RDEPEND+=" >=media-libs/libogg-1.2.0[${MULTILIB_USEDEP}]"
-DEPEND+=" ${RDEPEND}"
+RESTRICT="
+	!test? (
+		test
+	)
+"
+RDEPEND+="
+	>=media-libs/libogg-1.2.0[${MULTILIB_USEDEP}]
+"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	doc? ( app-text/doxygen )
-	test? ( app-text/docbook-sgml-utils )"
-
-PATCHES=( "${FILESDIR}/${P}-destdir.patch" )
+	doc? (
+		app-text/doxygen
+	)
+	test? (
+		app-text/docbook-sgml-utils
+	)
+"
+PATCHES=(
+	"${FILESDIR}/${P}-destdir.patch"
+)
 
 src_prepare() {
 	default
@@ -33,7 +46,8 @@ src_prepare() {
 			configure.ac || die
 	fi
 
-	AT_M4DIR="m4" eautoreconf
+	AT_M4DIR="m4" \
+	eautoreconf
 	multilib_copy_sources
 }
 
@@ -41,10 +55,11 @@ multilib_src_configure() {
 	econf \
 		$(use_enable static-libs static)
 	if ! multilib_is_native_abi ; then
-		sed -i -e "s|bin_PROGRAMS|#bin_PROGRAMS|" \
-			src/tools/Makefile.am || die
-		sed -i -e "s|install-exec-local|noinstall-exec-local|" \
-			src/tools/Makefile.am || die
+		sed -i \
+			-e "s|bin_PROGRAMS|#bin_PROGRAMS|" \
+			-e "s|install-exec-local|noinstall-exec-local|" \
+			"src/tools/Makefile.am" \
+			|| die
 	fi
 }
 
