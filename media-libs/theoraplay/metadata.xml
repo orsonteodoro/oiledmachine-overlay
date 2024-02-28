@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<!-- For only this ebuild on the oiledmachine-overlay -->
-		<email>orsonteodoro@hotmail.com</email>
-		<name>Orson Teodoro</name>
-	</maintainer>
-	<upstream>
-		<bugs-to>https://github.com/icculus/theoraplay/issues</bugs-to>
-		<remote-id type="github">icculus/theoraplay</remote-id>
-	</upstream>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/icculus/theoraplay/issues</bugs-to>
+    <remote-id type="github">icculus/theoraplay</remote-id>
+  </upstream>
 </pkgmetadata>

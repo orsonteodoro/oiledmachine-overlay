@@ -25,7 +25,7 @@ videos easier."
 HOMEPAGE="https://icculus.org/theoraplay/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
-SLOT="0/9999"
+SLOT="0/${FALLBACK_COMMIT:0:7}"
 IUSE+=" debug static-libs"
 RDEPEND+="
 	media-libs/libtheora:=[static-libs?,${MULTILIB_USEDEP}]
