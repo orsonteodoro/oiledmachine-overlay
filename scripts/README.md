@@ -339,5 +339,7 @@ get_latest_version
 ```
 
 ```
-DRY_RUN=0 ./autobump-patch-versions.sh
+# TEST_MISPATCH - 1 to enable testing patches or 0 to disable testing patches.  Enabling will increase time cost.
+# DRY_RUN - 0 for reporting version bump but no commit or changes; 1 for actual bumping and commiting changes.
+TEST_MISPATCH=0 DRY_RUN=0 ./autobump-patch-versions.sh
 ```

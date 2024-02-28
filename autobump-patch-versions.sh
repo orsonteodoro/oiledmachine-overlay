@@ -3,6 +3,7 @@
 # Perform recursive autobump for supported packages
 
 export DRY_RUN=${DRY_RUN:-1}
+export TEST_MISPATCH=${TEST_MISPATCH:-0}
 
 main() {
 	local repo_root_dir=$(pwd)
@@ -56,7 +57,7 @@ main() {
 								"${PN}-${latest_ebuild_version}.ebuild" \
 								"${PN}-${latest_upstream_version}.ebuild"
 							ebuild "${PN}-${latest_upstream_version}.ebuild" digest
-							if [[ "${TEST_MISPATCH:-0}" == "1" ]] ; then
+							if [[ "${TEST_MISPATCH}" == "1" ]] ; then
 								ebuild "${PN}-${latest_upstream_version}.ebuild" digest clean unpack prepare
 								local ret="$?"
 								if (( ${ret} != 0 )) ; then
@@ -123,7 +124,7 @@ main() {
 									"${PN}-${latest_ebuild_version}.ebuild" \
 									"${PN}-${latest_upstream_version}.ebuild"
 								ebuild "${PN}-${latest_upstream_version}.ebuild" digest
-								if [[ "${TEST_MISPATCH:-0}" == "1" ]] ; then
+								if [[ "${TEST_MISPATCH}" == "1" ]] ; then
 									ebuild "${PN}-${latest_upstream_version}.ebuild" digest clean unpack prepare
 									local ret="$?"
 									if (( ${ret} != 0 )) ; then

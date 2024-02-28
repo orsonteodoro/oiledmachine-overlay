@@ -1,5 +1,6 @@
 #!/bin/bash
 DRY_RUN=${DRY_RUN:-1}
+TEST_MISPATCH=${TEST_MISPATCH:-0}
 
 get_latest_clear_version() {
 	local ver="${1}"
@@ -125,7 +126,7 @@ main() {
 
 				if [[ "${DRY_RUN}" != "1" ]] ; then
 					ebuild "ot-sources-${latest_upstream_version}.ebuild" digest
-					if [[ "${TEST_MISPATCH:-0}" == "1" ]] ; then
+					if [[ "${TEST_MISPATCH}" == "1" ]] ; then
 						ebuild "ot-sources-${latest_upstream_version}.ebuild" digest clean unpack prepare
 						local ret="$?"
 						if (( ${ret} != 0 )) ; then
