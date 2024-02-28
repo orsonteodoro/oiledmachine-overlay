@@ -3,55 +3,66 @@
 
 EAPI=8
 
-EGIT_BRANCH="main"
-EGIT_REPO_URI="https://github.com/icculus/theoraplay.git"
+EXPECTED_FINGERPRINT="\
+663a214a40467616454a1d33947088beba518913a81e84b5dcb73282e80bdf37\
+8e1ea4325d982f902f7c9e093c78752cd9a4f5aa893faf0deb7af0791cd96a04\
+"
 
 inherit multilib-build git-r3
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="main"
+	EGIT_REPO_URI="https://github.com/icculus/theoraplay.git"
+	FALLBACK_COMMIT="925f9598b5706694889b8e7accd5d9c2bf658912"
+	IUSE+=" fallback-commit"
+else
+	SRC_URI=""
+	die "FIXME"
+fi
 
 DESCRIPTION="TheoraPlay is a simple library to make decoding of Ogg Theora \
 videos easier."
 HOMEPAGE="https://icculus.org/theoraplay/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
-EXPECTED="\
-f45d14bf8a3cd4816dba29e0fab9fe0efcf26628d681491090bfe2dc20a46540\
-377e07984e42a17c77476616cfb10d85376f655a53adf6f63ccee92e9e4a04ec\
-"
-SLOT="0/${EXPECTED}"
-IUSE="debug static-libs"
-REQUIRED_USE+=""
+SLOT="0/9999"
+IUSE+=" debug static-libs"
 RDEPEND+="
 	media-libs/libtheora:=[static-libs?,${MULTILIB_USEDEP}]
-        media-libs/libogg:=[static-libs?,${MULTILIB_USEDEP}]
-        media-libs/libvorbis:=[static-libs?,${MULTILIB_USEDEP}]
+	media-libs/libogg:=[static-libs?,${MULTILIB_USEDEP}]
+	media-libs/libvorbis:=[static-libs?,${MULTILIB_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-        dev-util/premake:5
+	dev-util/premake:5
 "
-SRC_URI=""
 S="${WORKDIR}/${P}"
 
-src_unpack() {
+unpack_live() {
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
-
 	[[ -e "${S}/.github/workflows/main.yml" ]] || die "missing file"
-	local actual=$(cat "${S}/.github/workflows/main.yml" \
+	local actual_fingerprint=$(cat "${S}/.github/workflows/main.yml" \
 		| sha512sum \
 		| cut -f 1 -d " ")
-
-	if [[ "${actual}" != "${EXPECTED}" ]] ; then
+	if [[ "${actual_fingerprint}" != "${EXPECTED_FINGERPRINT}" ]] ; then
 eerror
-eerror "Expected fingerprint:  ${EXPECTED}"
-eerror "Actual fingerprint:  ${actual}"
+eerror "Expected fingerprint:  ${EXPECTED_FINGERPRINT}"
+eerror "Actual fingerprint:  ${actual_fingerprint}"
 eerror
 eerror "A change to the CI settings was detected."
 eerror "This indicates that possibly the *DEPENDs has changed"
 eerror
 		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
 	fi
 }
 
