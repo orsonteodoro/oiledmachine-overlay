@@ -3,7 +3,7 @@ get_latest_patch_version() {
 	local ver="${1}"
 	git ls-remote --tags "https://github.com/zeux/pugixml.git" \
 		| grep "refs/tags/" \
-		| grep -e "/v${ver//./\\.}\." \
+		| grep -E -e "/v${ver//./\\.}(\\.|$)" \
 		| sed -e "s|.*/||g" \
 		| sed -r -e "s|^v||g" -e "s|[\^]\{\}||g" \
 		| sort -V \
