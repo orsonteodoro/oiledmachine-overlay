@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="media-libs"
+PN="assimp"
+BUMP_POLICY="new-patch-versions-per-minor-major"
