@@ -257,11 +257,14 @@ because the commit has been backported and the same backport commit patch is
 applied again, or a dev copies a patch from the repo and integrates it in that
 release, or the context where the patching takes place has changed.  You will
 need to shallow test the patching process to make sure that the ebuild works.
-A script may be used or created to automate the testing process after everything
-has been autobumped or there may be a special BUMP_POLICY to revert or prevent
-the bump when a mispatch happens.
+This can be done by manually running `ebuild ... clean unpack prepare` or
+running `autobump-patch-versions.sh` with TEST_MISPATCH=1 environment variable.
 
-The two sections below are a discussion about if a package should or should not be autobumped.
+If TEST_MISPATCH=1, then mispatches will be logged in
+/var/log/autobump/mispatch.log.
+
+The two sections below are a discussion about if a package should or should not
+be autobumped.
 
 #### It is okay to make a package support autobump if
 1. No specific version(s) in *DEPENDs are required for BUMP_POLICY="latest-version".
