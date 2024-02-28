@@ -4,23 +4,27 @@
 
 EAPI=8
 
-MY_PN="${PN}"
-MY_P="${MY_PN}-${PV}"
 
 PYTHON_COMPAT=( python3_11 ) # CI does not list 3.10 for this package.
 inherit cmake python-single-r1
-if [[ ${PV} =~ 9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
+	MY_PN="${PN}"
+	MY_P="${MY_PN}-${PV}"
 	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${MY_P}"
 else
-	EGIT_GLFW_COMMIT="e130e55a990998c78fd323f21076e798e0efe8a4"
+	MY_PN="MaterialX"
+	MY_P="${MY_PN}-${PV}"
 	EGIT_IMGUI_COMMIT="9aae45eb4a05a5a1f96be1ef37eb503a12ceb889"
 	EGIT_IMGUI_NODE_EDITOR_COMMIT="2f99b2d613a400f6579762bd7e7c343a0d844158"
-	EGIT_NANOBIND_COMMIT="07b4e1fc9e94eeaf5e9c2f4a63bdb275a25c82c6"
 	EGIT_NANOGUI_COMMIT="f5020e2f3e5114d517642e67afbb21cb88cf04c0"
-	EGIT_NANOVG_COMMIT="bf2320d1175122374a9b806d91e9e666c9336375"
-	EGIT_NANOVG_METAL_COMMIT="075b04f16c579728c693b46a2ce408f2325968cf"
-	EGIT_ROBIN_MAP_COMMIT="a603419b9a0687c9148e02c8bd5e3db180bb9ac0"
+		EGIT_GLFW_COMMIT="e130e55a990998c78fd323f21076e798e0efe8a4"
+		EGIT_NANOBIND_COMMIT="07b4e1fc9e94eeaf5e9c2f4a63bdb275a25c82c6"
+			EGIT_ROBIN_MAP_COMMIT="a603419b9a0687c9148e02c8bd5e3db180bb9ac0"
+		EGIT_NANOVG_COMMIT="bf2320d1175122374a9b806d91e9e666c9336375"
+		EGIT_NANOVG_METAL_COMMIT="075b04f16c579728c693b46a2ce408f2325968cf"
+	S="${WORKDIR}/${MY_P}"
 	SRC_URI="
 https://github.com/AcademySoftwareFoundation/MaterialX/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -98,9 +102,8 @@ BDEPEND+="
 		>=sys-devel/clang-6
 	)
 "
-S="${WORKDIR}/${MY_P}"
 PATCHES=(
-	"${FILESDIR}/materialx-1.38.8_pre9999-setup.py-fix-sandbox-violation.patch"
+	"${FILESDIR}/materialx-1.38.9-setup.py-fix-sandbox-violation.patch"
 )
 DOCS=( )
 
@@ -135,7 +138,7 @@ eerror
 }
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="3e838e2f4b4bcc434bd0e99f0e382c8d475b322a"
 		EGIT_BRANCH="main"
 		EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/MaterialX.git"
