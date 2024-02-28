@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only in this ebuild fork on the oiledmachine-overlay -->
   <maintainer type="project">
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- originator -->
   <maintainer type="project">
+    <!-- Ebuild originator -->
     <email>sound@gentoo.org</email>
     <name>Gentoo Sound project</name>
   </maintainer>
@@ -16,14 +16,11 @@
     applications.
   </longdescription>
   <use>
-    <flag name="dumb">Enable <pkg>media-libs/dumb</pkg> module library
-      support</flag>
-    <flag name="fluidsynth">Enables Fluidsynth MIDI software synthesis</flag>
+    <flag name="dumb">
+      Enable <pkg>media-libs/dumb</pkg> module library support
+    </flag>
+    <flag name="fluidsynth">
+      Enables Fluidsynth MIDI software synthesis
+    </flag>
   </use>
-  <upstream>
-    <maintainer status="active">
-    <email>chris.kcat(a)gmail.com</email>
-      <name>Chris Robinsons</name>
-    </maintainer>
-  </upstream>
 </pkgmetadata>
