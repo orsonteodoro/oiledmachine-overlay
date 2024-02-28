@@ -56,6 +56,10 @@ main() {
 								"${PN}-${latest_ebuild_version}.ebuild" \
 								"${PN}-${latest_upstream_version}.ebuild"
 							ebuild "${PN}-${latest_upstream_version}.ebuild" digest
+							local ret="$?"
+							if (( ${ret} != 0 )) ; then
+								echo "[WARN] Detected possible mispatch in ${PN}-${latest_upstream_version}.ebuild"
+							fi
 							git add *
 							git commit -m "Auto bumped to ${CATEGORY}/${PN}-${latest_upstream_version}.ebuild"
 						popd >/dev/null 2>&1
@@ -116,6 +120,10 @@ main() {
 									"${PN}-${latest_ebuild_version}.ebuild" \
 									"${PN}-${latest_upstream_version}.ebuild"
 								ebuild "${PN}-${latest_upstream_version}.ebuild" digest
+								local ret="$?"
+								if (( ${ret} != 0 )) ; then
+									echo "[WARN] Detected possible mispatch in ${PN}-${latest_upstream_version}.ebuild"
+								fi
 								git add *
 								git commit -m "Auto bumped to ${CATEGORY}/${PN}-${latest_upstream_version}.ebuild"
 							popd >/dev/null 2>&1
