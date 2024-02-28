@@ -31,7 +31,6 @@
 # prune list:
 # farseer-physics-engine needs to be pruned?
 # gwen-dotnet needs to be pruned?
-# libmp4v2 no official active repo.  dead project?
 # protobuild is eol
 # taoframework may be pruned
 # msbuild prune?

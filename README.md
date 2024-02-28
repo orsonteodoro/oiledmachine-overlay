@@ -600,8 +600,6 @@ should be a bash script.
 | media-libs/libcaca | This library contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated GIFs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better. |
 | media-libs/libfishsound | For multilib tizonia. |
 | media-libs/embree | For amd-radeon-prorender-blender plugin. |
-| media-libs/libmp4v2 | For multilib tizonia |
-| media-libs/liboggz | For multilib tizonia |
 | media-libs/libyuv | For xpra compression |
 | media-libs/openimageio | TBA |
 | media-libs/opusfile | TBA |
