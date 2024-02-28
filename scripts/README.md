@@ -278,6 +278,7 @@ be autobumped.
 4. If the upstream code quality is poor as in fails to build all the time or requires patching all the time, do not autobump.
 5. The project is controlled by doubious people or possibly controlled by malicious threat actors.
 6. The license, typically proprietary, disallows it directly, indirectly, or lists similar actions.
+7. The package contains .gitmodules that may change *DEPENDs if bumping the patch component of the version string.
 ```
 Contents of ${OILEDMACHINE_OVERLAY_ROOT}/${CATEGORY}/${PN}/autobump/description:
 # The description file stores information for both custom script and the root script autobump-patch-versions.sh
