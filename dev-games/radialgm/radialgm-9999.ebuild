@@ -4,11 +4,25 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
+ENIGMA_COMMIT="f30646f"
 MY_PN="RadialGM"
-EGIT_BRANCH="master"
-EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
+QT_PV="5.15.2"
 
 inherit cmake desktop git-r3 toolchain-funcs xdg
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
+	FALLBACK_COMMIT="5a41a5164759450714f6b859450a6586ccdf1650" # Jul 8, 2023
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${PN}-${PV}"
+	S_ENIGMA="${S}/Submodules/enigma-dev"
+else
+	SRC_URI=""
+	S="${WORKDIR}/${PN}-${PV}"
+	die "FIXME"
+fi
 
 DESCRIPTION="A native IDE for ENIGMA written in C++ using the Qt Framework."
 LICENSE="GPL-3+"
@@ -16,18 +30,17 @@ LICENSE="GPL-3+"
 HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-doc fallback-commit
+doc
 r1
 "
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
 # Upstream uses protobuf 3.17.3
 CDEPEND="
+	>=dev-libs/protobuf-3.17.3:0/3.21
 	>=net-libs/grpc-1.39.1
 	>=sys-devel/gcc-11.1.0
-	>=dev-libs/protobuf-3.17.3:0/3.21
 "
-QT_PV="5.15.2"
 # Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.
 # pcre2 not listed in CI.
 DEPEND+="
@@ -47,7 +60,7 @@ DEPEND+="
 	>=media-libs/harfbuzz-2.9.1
 	>=net-dns/c-ares-1.17.2
 	>=x11-libs/qscintilla-2.13.0
-	dev-games/enigma:0/radialgm-f30646f
+	dev-games/enigma:0/radialgm-${ENIGMA_COMMIT}
 	virtual/jpeg
 "
 RDEPEND+="
@@ -59,10 +72,8 @@ BDEPEND+="
 	dev-util/patchelf
 	media-gfx/imagemagick[png]
 "
-S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( README.md )
-CMAKE_BUILD_TYPE="Release"
 PATCHES=(
 	"${FILESDIR}/${PN}-9999-external-enigma.patch"
 )
@@ -71,36 +82,44 @@ pkg_setup() {
 	export ENIGMA_INSTALL_DIR="/usr/$(get_libdir)/enigma"
 }
 
-S_ENIGMA="${S}/Submodules/enigma-dev"
-
 src_unpack() {
-	EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
-	EGIT_BRANCH="master"
-	use fallback-commit && EGIT_COMMIT="5a41a5164759450714f6b859450a6586ccdf1650" # Jul 8, 2023
-	git-r3_fetch
-	git-r3_checkout
+	if [[ "${PV}" =~ "9999" ]] ; then
+		EGIT_REPO_URI="https://github.com/enigma-dev/RadialGM.git"
+		EGIT_BRANCH="master"
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_prepare() {
 	cmake_src_prepare
 	rm -rf "${S}/Submodules/enigma-dev" || die
-	cp -a "${ENIGMA_INSTALL_DIR}" "${S}/Submodules" || die
-	mv "${S}/Submodules/enigma" "${S}/Submodules/enigma-dev" || die
+	cp -a \
+		"${ENIGMA_INSTALL_DIR}" \
+		"${S}/Submodules" \
+		|| die
+	mv \
+		"${S}/Submodules/enigma" \
+		"${S}/Submodules/enigma-dev" \
+		|| die
 }
 
 src_configure() {
-	pushd "${ENIGMA_INSTALL_DIR}" 2>/dev/null 1>/dev/null || die
-	LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
-		| grep -q -F -e "--server"
-	if [[ "$?" != "0" ]] ; then
+	pushd "${ENIGMA_INSTALL_DIR}" >/dev/null 2>&1 || die
+		LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help \
+			| grep -q -F -e "--server"
+		if [[ "$?" != "0" ]] ; then
 eerror
 eerror "Your enigma is not built with --server.  Re-emerge with the radialgm"
 eerror "USE flag.  Enigma must be built against the same abseil-cpp version"
 eerror "installed."
 eerror
-		die
-	fi
-	popd 2>/dev/null 1>/dev/null || die
+			die
+		fi
+	popd >/dev/null 2>&1 || die
 
 	local dirs=$(find /usr/lib/gcc/ -name "libstdc++fs.a" -print0 \
 		| xargs -0 dirname \
@@ -121,22 +140,49 @@ src_compile() {
 src_install() {
 	export STRIP="true"
 	cmake_src_install
-	cat "${FILESDIR}/${MY_PN}" > "${T}/${MY_PN}" || die
-	sed -i -e "s|LIBDIR|$(get_libdir)|g" "${T}/${MY_PN}" || die
+	cat \
+		"${FILESDIR}/${MY_PN}" \
+		> \
+		"${T}/${MY_PN}" \
+		|| die
+	sed -i \
+		-e "s|LIBDIR|$(get_libdir)|g" \
+		"${T}/${MY_PN}" \
+		|| die
 	exeinto /usr/bin
 	doexe "${T}/${MY_PN}"
-	pushd Images || die
-		convert -verbose "icon.ico[0]" "icon-32x32.png" || die
-		convert -verbose "icon.ico[2]" "icon-16x16.png" || die
-	popd
-	newicon -s 32 "Images/icon-32x32.png" "${MY_PN}.png"
-	newicon -s 16 "Images/icon-16x16.png" "${MY_PN}.png"
-	make_desktop_entry "/usr/$(get_libdir)/${MY_PN}" "Development;IDE"
+	pushd Images >/dev/null 2>&1 || die
+		convert \
+			-verbose \
+			"icon.ico[0]" \
+			"icon-32x32.png" \
+			|| die
+		convert \
+			-verbose \
+			"icon.ico[2]" \
+			"icon-16x16.png" \
+		|| die
+	popd >/dev/null 2>&1 || die
+	newicon \
+		-s 32 \
+		"Images/icon-32x32.png" \
+		"${MY_PN}.png"
+	newicon \
+		-s 16 \
+		"Images/icon-16x16.png" \
+		"${MY_PN}.png"
+	make_desktop_entry \
+		"/usr/$(get_libdir)/${MY_PN}" \
+		"Development;IDE"
 	dosym "${ENIGMA_INSTALL_DIR}" \
 		"/usr/$(get_libdir)/${MY_PN}/enigma-dev"
-	patchelf --remove-rpath "${ED}/usr/$(get_libdir)/${MY_PN}/${MY_PN}" || die
-	patchelf --set-rpath "/usr/$(get_libdir)/enigma" \
-		"${ED}/usr/$(get_libdir)/${MY_PN}/${MY_PN}" || die
+	patchelf \
+		--remove-rpath "${ED}/usr/$(get_libdir)/${MY_PN}/${MY_PN}" \
+		|| die
+	patchelf \
+		--set-rpath "/usr/$(get_libdir)/enigma" \
+		"${ED}/usr/$(get_libdir)/${MY_PN}/${MY_PN}" \
+		|| die
 }
 
 pkg_postinst() {
