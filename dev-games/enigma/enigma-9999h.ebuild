@@ -5,24 +5,28 @@
 EAPI=7
 
 CXX_STANDARD="-std=c++17"
-EGIT_BRANCH="master"
-EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
 
-inherit desktop flag-o-matic git-r3 multilib-minimal \
-toolchain-funcs
+inherit desktop flag-o-matic git-r3 multilib-minimal toolchain-funcs
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="master"
+	EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
+	FALLBACK_COMMIT="3918af3dc40734465b355a7d52cb9f9f93f5a8d6" # Oct 10, 2023
+	IUSE+=" fallback-commit"
+else
+	SRC_URI=""
+	die "FIXME"
+fi
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, \
 is an open source cross-platform game development environment."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
-
-SLOT="0/head" # Required because of the grpc/protobuf.
+SLOT="0/9999" # Required because of the grpc/protobuf.
 IUSE+="
 android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network +openal
 +opengl +png sdl2 sound test threads vulkan widgets wine +X xrandr xtest
-
-fallback-commit
 "
 REQUIRED_USE_PLATFORMS="
 	|| (
@@ -33,13 +37,11 @@ REQUIRED_USE_PLATFORMS="
 		X
 	)
 "
-
 # Required to build but sometimes not required as an extension
 REQUIRED_BUILD="
 	freetype
 	png
 "
-
 REQUIRED_USE+="
 	${REQUIRED_BUILD}
 	${REQUIRED_USE_PLATFORMS}
@@ -631,28 +633,40 @@ src_prepare() {
 }
 
 src_unpack() {
-	use fallback-commit && export EGIT_COMMIT="3918af3dc40734465b355a7d52cb9f9f93f5a8d6" # Oct 10, 2023
-	git-r3_fetch
-	git-r3_checkout
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 src_configure() {
 	if [[ -n "${ANDROID_CTARGET}" ]] ; then
-		sed -i -e "s|gcc|${ANDROID_CTARGET}-gcc|g" \
+		sed -i \
+			-e "s|gcc|${ANDROID_CTARGET}-gcc|g" \
 			-e "s|g\+\+|${ANDROID_CTARGET}-g++|g"
-			"Compilers/Linux/Android.ey" || die
+			"Compilers/Linux/Android.ey" \
+			|| die
 	fi
 	if [[ -n "${MINGW32_CTARGET}" ]] ; then
-		sed -i -e "s|i686-w64-mingw32|${MINGW32_CTARGET}|g" \
-			"Compilers/Linux/MinGW32.ey" || die
+		sed -i \
+			-e "s|i686-w64-mingw32|${MINGW32_CTARGET}|g" \
+			"Compilers/Linux/MinGW32.ey" \
+			|| die
 	fi
 	if [[ -n "${MINGW64_CTARGET}" ]] ; then
-		sed -i -e "s|x86_64-w64-mingw32|${MINGW64_CTARGET}|g" \
-			"Compilers/Linux/MinGW64.ey" || die
+		sed -i \
+			-e "s|x86_64-w64-mingw32|${MINGW64_CTARGET}|g" \
+			"Compilers/Linux/MinGW64.ey" \
+			|| die
 	fi
 	if [[ -n "${MACOS_CTARGET}" ]] ; then
-		sed -i -e "s|x86_64-apple-darwin13|${MACOS_CTARGET}|g" \
-			"Compilers/Linux/AppleCross64.ey" || die
+		sed -i \
+			-e "s|x86_64-apple-darwin13|${MACOS_CTARGET}|g" \
+			"Compilers/Linux/AppleCross64.ey" \
+			|| die
 	fi
 }
 
