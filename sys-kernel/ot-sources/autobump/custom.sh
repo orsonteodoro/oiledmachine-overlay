@@ -125,6 +125,13 @@ main() {
 
 				if [[ "${DRY_RUN}" != "1" ]] ; then
 					ebuild "ot-sources-${latest_upstream_version}.ebuild" digest
+					if [[ "${TEST_MISPATCH:-0}" == "1" ]] ; then
+						ebuild "ot-sources-${latest_upstream_version}.ebuild" digest clean unpack prepare
+						local ret="$?"
+						if (( ${ret} != 0 )) ; then
+							echo "[WARN] Detected mispatch in ${PN}-${latest_upstream_version}.ebuild"
+						fi
+					fi
 					git add *
 					git commit -m "Autobumped ot-sources-${latest_upstream_version}.ebuild"
 				fi

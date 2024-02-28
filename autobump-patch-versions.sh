@@ -56,9 +56,12 @@ main() {
 								"${PN}-${latest_ebuild_version}.ebuild" \
 								"${PN}-${latest_upstream_version}.ebuild"
 							ebuild "${PN}-${latest_upstream_version}.ebuild" digest
-							local ret="$?"
-							if (( ${ret} != 0 )) ; then
-								echo "[WARN] Detected possible mispatch in ${PN}-${latest_upstream_version}.ebuild"
+							if [[ "${TEST_MISPATCH:-0}" == "1" ]] ; then
+								ebuild "${PN}-${latest_upstream_version}.ebuild" digest clean unpack prepare
+								local ret="$?"
+								if (( ${ret} != 0 )) ; then
+									echo "[WARN] Detected possible mispatch in ${PN}-${latest_upstream_version}.ebuild"
+								fi
 							fi
 							git add *
 							git commit -m "Auto bumped to ${CATEGORY}/${PN}-${latest_upstream_version}.ebuild"
@@ -120,9 +123,12 @@ main() {
 									"${PN}-${latest_ebuild_version}.ebuild" \
 									"${PN}-${latest_upstream_version}.ebuild"
 								ebuild "${PN}-${latest_upstream_version}.ebuild" digest
-								local ret="$?"
-								if (( ${ret} != 0 )) ; then
-									echo "[WARN] Detected possible mispatch in ${PN}-${latest_upstream_version}.ebuild"
+								if [[ "${TEST_MISPATCH:-0}" == "1" ]] ; then
+									ebuild "${PN}-${latest_upstream_version}.ebuild" digest clean unpack prepare
+									local ret="$?"
+									if (( ${ret} != 0 )) ; then
+										echo "[WARN] Detected possible mispatch in ${PN}-${latest_upstream_version}.ebuild"
+									fi
 								fi
 								git add *
 								git commit -m "Auto bumped to ${CATEGORY}/${PN}-${latest_upstream_version}.ebuild"

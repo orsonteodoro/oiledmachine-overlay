@@ -43,6 +43,10 @@ main() {
 					echo "Auto generating lockfiles"
 					NPM_UPDATER_VERSIONS="${latest_upstream_version}" npm_updater_update_locks.sh
 					ebuild $(ls -1 *.ebuild | sort -V | tail -n 1) digest
+					local ret="$?"
+					if (( ${ret} != 0 )) ; then
+						echo "[WARN] Detected error in ${PN}-${latest_upstream_version}.ebuild"
+					fi
 					git add *
 					git commit -m "Auto bumping to gdevelop-${latest_upstream_version}.ebuild"
 				fi
