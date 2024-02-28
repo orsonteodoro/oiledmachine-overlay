@@ -5,26 +5,37 @@ EAPI=8
 
 inherit multilib-minimal
 
-DESCRIPTION="A high-level decoding and seeking API for .opus files"
-HOMEPAGE="https://www.opus-codec.org/"
 SRC_URI="https://downloads.xiph.org/releases/opus/${P}.tar.gz"
 
+DESCRIPTION="A high-level decoding and seeking API for .opus files"
+HOMEPAGE="https://www.opus-codec.org/"
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE="doc fixed-point +float +http libressl static-libs"
-
 RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
 	media-libs/opus[${MULTILIB_USEDEP}]
 	http? (
-		!libressl? ( dev-libs/openssl:0=[${MULTILIB_USEDEP}] )
-		libressl? ( dev-libs/libressl:0=[${MULTILIB_USEDEP}] )
-	)"
-
-DEPEND="${RDEPEND}
-	doc? ( app-text/doxygen )"
-
-REQUIRED_USE="^^ ( fixed-point float )"
+		!libressl? (
+			dev-libs/openssl:0=[${MULTILIB_USEDEP}]
+		)
+		libressl? (
+			dev-libs/libressl:0=[${MULTILIB_USEDEP}]
+		)
+	)
+"
+DEPEND="
+	${RDEPEND}
+	doc? (
+		app-text/doxygen
+	)
+"
+REQUIRED_USE="
+	^^ (
+		fixed-point
+		float
+	)
+"
 
 src_prepare() {
 	default
