@@ -44,7 +44,7 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
-	>=dev-util/cmake-2.8.12
+	>=dev-build/cmake-2.8.12
 	sys-devel/gcc:11
 	test? (
 		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
