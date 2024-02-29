@@ -51,7 +51,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.9.0
+	>=dev-build/cmake-3.9.0
 	sys-devel/gcc-config
 	doc? (
 		app-text/doxygen
