@@ -131,7 +131,7 @@ BDEPEND="
 	)
 	>=dev-libs/boost-1.71.0
 	>=dev-libs/rapidjson-1.1.0
-	>=dev-util/cmake-3.16.3
+	>=dev-build/cmake-3.16.3
 	>=sys-devel/gcc-9.4.0
 	virtual/pkgconfig
 "
