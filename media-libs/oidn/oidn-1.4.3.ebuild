@@ -71,7 +71,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-lang/ispc-1.20.0
-	>=dev-util/cmake-3.1
+	>=dev-build/cmake-3.1
 	|| (
 		clang? (
 			$(gen_clang_depends)
