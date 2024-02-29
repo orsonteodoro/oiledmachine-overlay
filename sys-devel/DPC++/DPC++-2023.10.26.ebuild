@@ -15,7 +15,7 @@ UR_COMMIT="cf26de283a1233e6c93feb085acc10c566888b59" # \
 # See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/plugins/unified_runtime/CMakeLists.txt#L63C27-L63C67
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit cmake python-any-r1 rocm
+inherit cmake python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
