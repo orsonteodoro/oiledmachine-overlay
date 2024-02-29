@@ -106,7 +106,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.16.8
+	>=dev-build/cmake-3.16.8
 	test? (
 		rocm? (
 			~dev-util/rocminfo-${PV}:${ROCM_SLOT}
