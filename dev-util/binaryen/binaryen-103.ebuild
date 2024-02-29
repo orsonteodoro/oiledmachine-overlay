@@ -35,7 +35,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	${CDEPEND}
-	>=dev-util/cmake-3.10.2
+	>=dev-build/cmake-3.10.2
 	dev-util/patchelf
 "
 SRC_URI="
