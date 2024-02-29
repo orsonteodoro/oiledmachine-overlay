@@ -52,7 +52,7 @@ RESTRICT="
 	)
 "
 BDEPEND="
-	>=dev-util/cmake-3.13.4
+	>=dev-build/cmake-3.13.4
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 PATCHES=(
