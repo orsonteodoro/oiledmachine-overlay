@@ -4,7 +4,7 @@
 EAPI=8
 
 # LLVM 17
-# U22.04
+# U22.04 ; See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L292
 
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
@@ -21,12 +21,12 @@ DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
 DOCS_CONFIG_NAME="doxygen.cfg"
 DOCS_DEPEND="
-	media-gfx/graphviz
+	>=media-gfx/graphviz-2.42.2
 	virtual/latex-base
 	$(python_gen_any_dep '
-		dev-python/myst-parser[${PYTHON_USEDEP}]
-		dev-python/sphinx[${PYTHON_USEDEP}]
-		dev-python/recommonmark[${PYTHON_USEDEP}]
+		>=dev-python/myst-parser-0.16.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
+		>=dev-python/recommonmark-0.6.0[${PYTHON_USEDEP}]
 	')
 "
 
@@ -139,7 +139,12 @@ RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
+	>=dev-build/cmake-3.22.1
 	virtual/pkgconfig
+	|| (
+		>=sys-devel/gcc-7.1.0[cxx]
+		>=sys-devel/clang-5
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2023.04.17-system-libs.patch"
@@ -147,6 +152,17 @@ PATCHES=(
 )
 
 pkg_setup() {
+	if tc-is-gcc ; then
+		if ver_test $(gcc-version) -lt "7.1" ; then
+eerror "Switch to >=sys-devel/gcc-7.1"
+			die
+		fi
+	elif tc-is-clang ; then
+		if ver_test $(clang-version) -lt "5.0" ; then
+eerror "Switch to >=sys-devel/clang-5.0"
+			die
+		fi
+	fi
 	python_setup
 	if use rocm ; then
 		if use rocm_4_3 ; then
