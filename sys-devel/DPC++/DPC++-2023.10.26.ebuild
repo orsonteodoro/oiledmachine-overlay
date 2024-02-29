@@ -202,6 +202,7 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	export PATCH_PATHS=(
+		"${S_UR}/source/adapters/hip/CMakeLists.txt"
 		"${S}/clang/tools/amdgpu-arch/CMakeLists.txt"
 		"${S}/libc/src/math/gpu/vendor/CMakeLists.txt"
 		"${S}/libc/utils/gpu/loader/CMakeLists.txt"
@@ -212,7 +213,6 @@ src_prepare() {
 		"${S}/opencl/opencl-aot/CMakeLists.txt"
 		"${S}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
 		"${S}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${S_UR}/source/adapters/hip/CMakeLists.txt"
 		"${S}/sycl/CMakeLists.txt"
 		"${S}/sycl/cmake/modules/AddSYCL.cmake"
 		"${S}/sycl/cmake/modules/AddSYCLUnitTest.cmake"
@@ -241,12 +241,12 @@ src_configure() {
 		-DCLANG_INCLUDE_TESTS="$(usex test)"
 		# The sycl part of the build system insists on installing during compiling
 		# Install it to some temporary directory
-		-DCMAKE_INSTALL_PREFIX="${BUILD_DIR}/install"
-		-DCMAKE_INSTALL_MANDIR="${BUILD_DIR}/install/share/man"
-		-DCMAKE_INSTALL_INFODIR="${BUILD_DIR}/install/share/info"
 		-DCMAKE_INSTALL_DOCDIR="${BUILD_DIR}/install/share/doc/${PF}"
-		-DLEVEL_ZERO_LIBRARY="${ESYSROOT}/usr/lib64/libze_loader.so"
+		-DCMAKE_INSTALL_INFODIR="${BUILD_DIR}/install/share/info"
+		-DCMAKE_INSTALL_MANDIR="${BUILD_DIR}/install/share/man"
+		-DCMAKE_INSTALL_PREFIX="${BUILD_DIR}/install"
 		-DLEVEL_ZERO_INCLUDE_DIR="${ESYSROOT}/usr/include/level_zero"
+		-DLEVEL_ZERO_LIBRARY="${ESYSROOT}/usr/lib64/libze_loader.so"
 		-DLLVM_BUILD_DOCS="$(usex doc)"
 		-DLLVM_BUILD_TOOLS="ON"
 		-DLLVM_ENABLE_ASSERTIONS="ON"
@@ -254,27 +254,27 @@ src_configure() {
 		-DLLVM_ENABLE_LLD="OFF"
 		-DLLVM_ENABLE_PROJECTS="clang;sycl;llvm-spirv;opencl;libdevice;xpti;xptifw;"$(usex rocm "libclc" "")";"$(usex cuda "libclc" "")";"$(usex rocm "lld" "")
 		-DLLVM_ENABLE_SPHINX="$(usex doc)"
-		-DLLVM_EXTERNAL_XPTIFW_SOURCE_DIR="${S}/xptifw"
 		-DLLVM_EXTERNAL_LIBDEVICE_SOURCE_DIR="${S}/libdevice"
 		-DLLVM_EXTERNAL_LLVM_SPIRV_SOURCE_DIR="${S}/llvm-spirv"
 		-DLLVM_EXTERNAL_PROJECTS="sycl;llvm-spirv;opencl;libdevice;xpti;xptifw"
 		-DLLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR="${ESYSROOT}/usr"
 		-DLLVM_EXTERNAL_SYCL_SOURCE_DIR="${S}/sycl"
 		-DLLVM_EXTERNAL_XPTI_SOURCE_DIR="${S}/xpti"
+		-DLLVM_EXTERNAL_XPTIFW_SOURCE_DIR="${S}/xptifw"
 		-DLLVM_INCLUDE_TESTS="$(usex test)"
 		-DLLVM_SPIRV_INCLUDE_TESTS="$(usex test)"
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 		-DLLVMGenXIntrinsics_SOURCE_DIR="${WORKDIR}/vc-intrinsics-${VC_INTR_COMMIT}"
 		-DSYCL_CLANG_EXTRA_FLAGS="${CXXFLAGS}"
-		-DSYCL_ENABLE_WERROR="OFF"
 		-DSYCL_ENABLE_PLUGINS="level_zero;opencl;"$(usev esimd_emulator)";"$(usex rocm "hip" "")";"$(usev cuda)
+		-DSYCL_ENABLE_WERROR="OFF"
 		-DSYCL_ENABLE_XPTI_TRACING="ON"
 		-DSYCL_INCLUDE_TESTS="$(usex test)"
-		-DSYCL_PI_UR_USE_FETCH_CONTENT="OFF"
 		-DSYCL_PI_UR_SOURCE_DIR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
+		-DSYCL_PI_UR_USE_FETCH_CONTENT="OFF"
 		-DUNIFIED_RUNTIME_SOURCE_DIR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
-		-DXPTI_SOURCE_DIR="${S}/xpti"
 		-DXPTI_ENABLE_WERROR="OFF"
+		-DXPTI_SOURCE_DIR="${S}/xpti"
 	)
 
 	if use cuda ; then
