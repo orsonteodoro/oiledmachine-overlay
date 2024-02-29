@@ -47,7 +47,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	>=dev-util/cmake-3.14
+	>=dev-build/cmake-3.14
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-build/ninja
 "
