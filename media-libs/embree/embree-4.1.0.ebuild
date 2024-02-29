@@ -192,7 +192,7 @@ BDEPEND+="
 		x11-apps/xhost
 	)
 	sycl? (
-		~sys-devel/DPC++-2023-04-17
+		>=sys-devel/DPC++-2023-04-17:0/6
 	)
 	test? (
 		>=dev-cpp/benchmark-1.5.0
@@ -229,7 +229,13 @@ pkg_setup() {
 	fi
 
 	# This resolves multiple installed compilers or multiple version scenario.
-	if use clang ; then
+	if use sycl ; then
+		local LLVM_INTEL_DIR="/usr/lib/llvm/intel"
+		export PATH="${EPREFIX}${LLVM_INTEL_DIR}/bin"
+		export ROOTPATH="${EPREFIX}${LLVM_INTEL_DIR}/bin"
+		export MANPATH="${EPREFIX}${LLVM_INTEL_DIR}/share/man"
+		export LDPATH="${EPREFIX}${LLVM_INTEL_DIR}/lib:${EPREFIX}${LLVM_INTEL_DIR}/lib64"
+	elif use clang ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
 		local cc_pv=$(clang-fullversion)
