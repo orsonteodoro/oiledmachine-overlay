@@ -66,7 +66,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.16.8
+	>=dev-build/cmake-3.16.8
 	doc? (
 		>=app-text/doxygen-1.8.11
 		dev-texlive/texlive-latexextra
