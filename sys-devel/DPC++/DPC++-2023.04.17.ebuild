@@ -235,6 +235,8 @@ src_configure() {
 		-DSYCL_ENABLE_PLUGINS="level_zero;opencl;"$(usev esimd_emulator)";"$(usex rocm "hip" "")";"$(usev cuda)
 		-DSYCL_ENABLE_XPTI_TRACING="ON"
 		-DSYCL_INCLUDE_TESTS="$(usex test)"
+		-DSYCL_PI_UR_USE_FETCH_CONTENT="OFF"
+		-DSYCL_PI_UR_SOURCE_DIR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
 		-DUNIFIED_RUNTIME_SOURCE_DIR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
 		-DXPTI_SOURCE_DIR="${S}/xpti"
 		-DXPTI_ENABLE_WERROR="OFF"
