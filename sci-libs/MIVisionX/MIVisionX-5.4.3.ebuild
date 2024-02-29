@@ -114,7 +114,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.5
+	>=dev-build/cmake-3.5
 	dev-util/patchelf
 	virtual/pkgconfig
 "
