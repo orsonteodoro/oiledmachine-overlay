@@ -61,7 +61,7 @@ DEPEND+="
 	)
 "
 BDEPEND+="
-	>=dev-util/cmake-3.22.1
+	>=dev-build/cmake-3.22.1
 "
 
 pkg_setup() {
