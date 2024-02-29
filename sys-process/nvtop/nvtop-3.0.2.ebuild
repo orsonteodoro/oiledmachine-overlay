@@ -116,7 +116,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.10
+	>=dev-build/cmake-3.10
 	>=sys-devel/gcc-7.4.0
 	virtual/pkgconfig
 "
