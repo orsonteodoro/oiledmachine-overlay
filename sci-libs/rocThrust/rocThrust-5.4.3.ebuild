@@ -52,7 +52,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.15
+	>=dev-build/cmake-3.15
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="
