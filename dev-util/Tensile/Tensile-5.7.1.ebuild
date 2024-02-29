@@ -78,7 +78,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.13
+	>=dev-build/cmake-3.13
 "
 # Not compatible with recent versions of pytest
 RESTRICT="test"
