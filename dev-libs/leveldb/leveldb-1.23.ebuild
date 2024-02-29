@@ -45,7 +45,7 @@ DEPEND+="
 BDEPEND+="
 	${CDEPEND}
 	>=dev-build/ninja-0.1.3
-	>=dev-util/cmake-3.9
+	>=dev-build/cmake-3.9
 	>=sys-devel/clang-8
 "
 PATCHES=(
