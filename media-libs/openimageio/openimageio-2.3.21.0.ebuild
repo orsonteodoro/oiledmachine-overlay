@@ -254,7 +254,7 @@ BDEPEND_ICC="
 	>=sys-devel/icc-13
 "
 BDEPEND+="
-	>=dev-util/cmake-3.12
+	>=dev-build/cmake-3.12
 	clang? (
 		${BDEPEND_CLANG}
 	)
