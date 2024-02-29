@@ -42,7 +42,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.5
+	>=dev-build/cmake-3.5
 	~dev-util/HIPIFY-${PV}:${ROCM_SLOT}
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
