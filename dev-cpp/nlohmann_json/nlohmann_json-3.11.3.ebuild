@@ -30,7 +30,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="doc test"
 # U 22.04
 BDEPEND="
-	>=dev-util/cmake-3.22.1
+	>=dev-build/cmake-3.22.1
 	virtual/pkgconfig
 	doc? (
 		>=app-text/doxygen-1.9.1
