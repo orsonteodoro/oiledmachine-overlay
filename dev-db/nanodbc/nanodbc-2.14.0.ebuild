@@ -47,7 +47,7 @@ DEPEND_SPHINX="
 	')
 "
 BDEPEND+="
-	>=dev-util/cmake-2.6
+	>=dev-build/cmake-2.6
 	doxygen? (
 		app-text/doxygen
 	)
