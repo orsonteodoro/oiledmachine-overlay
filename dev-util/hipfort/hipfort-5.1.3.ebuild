@@ -33,7 +33,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-2.8.12
+	>=dev-build/cmake-2.8.12
 	>=sys-devel/gcc-7.5.0[fortran]
 	~dev-build/rocm-cmake-${PV}
 "
