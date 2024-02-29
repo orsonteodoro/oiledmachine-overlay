@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~x86"
 DEPEND+=" virtual/opengl[${MULTILIB_USEDEP}]
 	  media-libs/freeglut[${MULTILIB_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-util/cmake-2.8.11"
+BDEPEND+=" >=dev-build/cmake-2.8.11"
 EGIT_COMMIT="093edc777c02118282910bdee59f8db1bd46a84d"
 SRC_URI="
 https://github.com/libglui/glui/archive/${EGIT_COMMIT}.tar.gz
