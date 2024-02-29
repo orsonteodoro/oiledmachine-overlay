@@ -121,8 +121,8 @@ ${OPENVDB_ABIS[@]}
 -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +hydra +jack
 +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
-+openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile +tbb
-test +tiff +usd -valgrind +wayland
++openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
++tbb test +tiff +usd -valgrind +wayland
 r2
 "
 # hip is default ON upstream.
@@ -903,6 +903,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		flac? (
 			>=media-libs/libsndfile-${LIBSNDFILE_PV}[-minimal]
 		)
+	)
+	sycl? (
+		>=sys-devel/DPC++-2022.12:0/6
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]

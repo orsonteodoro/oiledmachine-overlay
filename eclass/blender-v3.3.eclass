@@ -119,7 +119,7 @@ ${OPENVDB_ABIS[@]}
 +elbeem +embree +ffmpeg +fftw flac +gmp +hdr +jack +jemalloc +jpeg2k -llvm
 -man +nanovdb +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
-+pulseaudio release -rocm +sdl +sndfile +tbb test +tiff +usd -valgrind
++pulseaudio release -rocm +sdl +sndfile sycl +tbb test +tiff +usd -valgrind
 r2
 "
 
@@ -876,6 +876,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 		flac? (
 			>=media-libs/libsndfile-${LIBSNDFILE_PV}[-minimal]
 		)
+	)
+	sycl? (
+		>=sys-devel/DPC++-2022.08.12:0/5
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]

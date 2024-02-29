@@ -380,6 +380,9 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       The hard USE requirements are to ensure compatibility and render quality
       consistency with render farms.
     </flag>
+    <flag name="sycl">
+      Add support for GPU accelerated raytracing.
+    </flag>
     <flag name="tbb">
       Enables using TBB componenents which also may enable sculpt multithreading,
       Cycles, El'Beem, OpenImageDenoise, OpenVDB.
