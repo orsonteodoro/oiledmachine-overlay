@@ -76,7 +76,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.1
+	>=dev-build/cmake-3.1
 	dev-util/patchelf
 	doc? (
 		app-text/doxygen[dot]
