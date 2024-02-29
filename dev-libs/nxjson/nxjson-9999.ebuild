@@ -33,7 +33,7 @@ RDEPEND+="
 	virtual/libc
 "
 BDEPEND="
-	>=dev-util/cmake-2.8
+	>=dev-build/cmake-2.8
 	|| (
 		sys-devel/gcc
 		sys-devel/clang
