@@ -175,7 +175,7 @@ DEPEND+="
 # acorn not used in CI
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.16.3
+	>=dev-build/cmake-3.16.3
 	>=dev-vcs/git-2.25.1
 	>=media-libs/libicns-0.8.1
 	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}[acorn]
