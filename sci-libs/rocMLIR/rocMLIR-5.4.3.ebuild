@@ -47,7 +47,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.15.1
+	>=dev-build/cmake-3.15.1
 	dev-util/patchelf
 	virtual/pkgconfig
 "
