@@ -124,7 +124,7 @@ BDEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.16.8
+	>=dev-build/cmake-3.16.8
 "
 CLR_PATCHES=(
 	"${FILESDIR}/rocclr-5.1.3-path-changes.patch"
