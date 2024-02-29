@@ -65,7 +65,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.5.1
+	>=dev-build/cmake-3.5.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
 		>=dev-cpp/benchmark-1.6.0
