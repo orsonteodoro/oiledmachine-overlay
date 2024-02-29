@@ -190,7 +190,7 @@ BDEPEND+="
 		x11-apps/xhost
 	)
 	sycl? (
-		~sys-devel/DPC++-2023.09
+		~sys-devel/DPC++-2023.10.26
 	)
 	test? (
 		>=dev-cpp/benchmark-1.6.1
