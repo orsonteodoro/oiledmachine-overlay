@@ -79,7 +79,7 @@ BDEPEND="
 		sys-devel/llvm-roc:=
 		~sys-devel/llvm-roc-${PV}
 	)
-	>=dev-util/cmake-3.5
+	>=dev-build/cmake-3.5
 	sys-devel/hip-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
