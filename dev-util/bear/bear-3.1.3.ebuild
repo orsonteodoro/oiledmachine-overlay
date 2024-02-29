@@ -32,7 +32,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${CDEPEND}
-	>=dev-util/cmake-3.12
+	>=dev-build/cmake-3.12
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
 		${PYTHON_DEPS}
