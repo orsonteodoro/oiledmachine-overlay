@@ -69,7 +69,7 @@ ${CPU_FLAGS[@]%:*}
 -allow-auto-vectorization -allow-strict-aliasing backface-culling clang
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
-static-libs +tbb test tutorials
+static-libs sycl +tbb test tutorials
 r1
 "
 REQUIRED_USE+="
@@ -188,6 +188,9 @@ BDEPEND+="
 	pgo? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
+	)
+	sycl? (
+		~sys-devel/DPC++-2023.09
 	)
 	test? (
 		>=dev-cpp/benchmark-1.6.1
@@ -609,6 +612,9 @@ EOF
 	docinto licenses
 	dodoc \
 		"LICENSE.txt" \
+		"third-party-programs-DPCPP.txt" \
+		"third-party-programs-OIDN.txt" \
+		"third-party-programs-oneAPI-DPCPP.txt" \
 		"third-party-programs-TBB.txt" \
 		"third-party-programs.txt"
 	if ! use tbb ; then

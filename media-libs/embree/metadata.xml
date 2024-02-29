@@ -109,6 +109,9 @@
     <flag name="static-libs">
       Builds as static-libs
     </flag>
+    <flag name="sycl">
+      Add support for GPU ray tracing acceleration.
+    </flag>
     <flag name="tbb">
       Use the Threading TBB Building Blocks over the internal as the tasking
       system.

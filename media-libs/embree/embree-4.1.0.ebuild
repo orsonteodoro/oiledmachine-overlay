@@ -69,7 +69,7 @@ ${CPU_FLAGS[@]%:*}
 -allow-auto-vectorization -allow-strict-aliasing backface-culling clang
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +filter-function gcc +hardened ispc -level-zero
-raymask -ssp static-libs +tbb test tutorials
+raymask -ssp static-libs sycl +tbb test tutorials
 r1
 "
 REQUIRED_USE+="
@@ -133,7 +133,7 @@ REQUIRED_USE+="
 RDEPEND+="
 	>=media-libs/glfw-3.3.2
 	virtual/opengl
-	level-zero? (
+	sycl? (
 		dev-libs/level-zero
 	)
 	tbb? (
@@ -190,6 +190,9 @@ BDEPEND+="
 	pgo? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
+	)
+	sycl? (
+		~sys-devel/DPC++-2023.04
 	)
 	test? (
 		>=dev-cpp/benchmark-1.5.0
@@ -376,7 +379,7 @@ eerror
 		-DEMBREE_ISA_SSE2=$(usex cpu_flags_x86_sse2)
 		-DEMBREE_ISA_SSE42=$(usex cpu_flags_x86_sse4_2)
 		-DEMBREE_ISPC_SUPPORT=$(usex ispc)
-		-DEMBREE_LEVEL_ZERO=$(usex level-zero)
+		-DEMBREE_LEVEL_ZERO=$(usex sycl)
 		-DEMBREE_RAY_MASK=$(usex raymask)
 		-DEMBREE_RAY_PACKETS=ON				# default
 		-DEMBREE_STACK_PROTECTOR=$(usex ssp)
@@ -612,6 +615,9 @@ EOF
 	docinto licenses
 	dodoc \
 		"LICENSE.txt" \
+		"third-party-programs-DPCPP.txt" \
+		"third-party-programs-OIDN.txt" \
+		"third-party-programs-oneAPI-DPCPP.txt" \
 		"third-party-programs-TBB.txt" \
 		"third-party-programs.txt"
 	if ! use tbb ; then
