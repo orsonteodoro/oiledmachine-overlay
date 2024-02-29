@@ -48,7 +48,7 @@ BDEPEND="
 		sys-devel/llvm-roc:=
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
-	>=dev-util/cmake-3.7
+	>=dev-build/cmake-3.7
 	>=app-editors/vim-core-9.0.1378
 	virtual/pkgconfig
 	system-llvm? (
