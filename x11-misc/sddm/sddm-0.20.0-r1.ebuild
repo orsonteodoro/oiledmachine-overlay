@@ -114,7 +114,7 @@ RDEPEND="
 	>=x11-base/xorg-server-21.1.7
 "
 BDEPEND="
-	>=dev-util/cmake-3.4
+	>=dev-build/cmake-3.4
 	>=kde-frameworks/extra-cmake-modules-1.4.0:5
 	>=dev-python/docutils-0.19
 	virtual/pkgconfig
