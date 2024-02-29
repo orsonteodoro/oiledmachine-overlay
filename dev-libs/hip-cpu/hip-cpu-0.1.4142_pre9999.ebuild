@@ -22,7 +22,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.12
+	>=dev-build/cmake-3.12
 "
 CMAKE_BUILD_TYPE="Release"
 PATCHES=(
