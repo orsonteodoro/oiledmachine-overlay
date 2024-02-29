@@ -107,7 +107,7 @@ REQUIRED_USE="
 	)
 "
 BDEPEND+="
-	>=dev-util/cmake-3.7
+	>=dev-build/cmake-3.7
 	abi_x86_32? (
 		dev-lang/yasm
 	)
