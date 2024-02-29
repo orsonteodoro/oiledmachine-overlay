@@ -30,7 +30,7 @@ RDEPEND="
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 "
 BDEPEND="
-	>=dev-util/cmake-3.5
+	>=dev-build/cmake-3.5
 "
 RESTRICT="test"
 PATCHES=(
