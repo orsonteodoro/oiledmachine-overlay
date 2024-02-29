@@ -38,7 +38,7 @@ DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND="
-	>=dev-util/cmake-3.16
+	>=dev-build/cmake-3.16
 	clang? ( sys-devel/clang )
 	test? (
 		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
