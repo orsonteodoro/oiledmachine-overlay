@@ -48,7 +48,7 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}"
 BDEPEND="
-	>=dev-util/cmake-3.4
+	>=dev-build/cmake-3.4
 	dev-util/desktop-file-utils
 	dev-util/xxd
 	dev-vcs/git
