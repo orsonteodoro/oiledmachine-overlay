@@ -80,7 +80,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.13
+	>=dev-build/cmake-3.13
 	python? (
 		$(python_gen_cond_dep '
 			dev-python/setuptools
