@@ -45,7 +45,7 @@ BDEPEND="
 		sys-devel/llvm-roc:=
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
-	>=dev-util/cmake-3.13.4
+	>=dev-build/cmake-3.13.4
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	system-llvm? (
 		sys-devel/clang:${LLVM_MAX_SLOT}
