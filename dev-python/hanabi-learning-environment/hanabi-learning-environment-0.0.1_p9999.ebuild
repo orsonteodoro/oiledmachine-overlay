@@ -26,7 +26,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	dev-python/scikit-build[${PYTHON_USEDEP}]
-	dev-util/cmake
+	dev-build/cmake
 	dev-build/ninja
 "
 S="${WORKDIR}/${P}"
