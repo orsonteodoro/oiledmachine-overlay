@@ -105,7 +105,7 @@ DEPEND="
 	>=dev-libs/half-1.12.0:=
 "
 BDEPEND="
-	>=dev-util/cmake-3.5
+	>=dev-build/cmake-3.5
 	test? (
 		>=media-libs/opencv-3.4.0[jpeg]
 		>=media-libs/libjpeg-turbo-2.0.6.1
