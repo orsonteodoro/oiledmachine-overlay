@@ -33,7 +33,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.6.3
+	>=dev-build/cmake-3.6.3
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
