@@ -62,7 +62,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.14
+	>=dev-build/cmake-3.14
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
