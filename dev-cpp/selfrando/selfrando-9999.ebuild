@@ -31,7 +31,7 @@ RDEPEND+="
 BDEPEND+="
 	${CDEPEND}
 	>=dev-libs/elfutils-0.176[static-libs,${MULTILIB_USEDEP}]
-	>=dev-util/cmake-3.3
+	>=dev-build/cmake-3.3
 	>=dev-util/pkgconf-0.29.1[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-vcs/git-2.25.1
 	>=sys-devel/m4-1.4.18
