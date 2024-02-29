@@ -100,7 +100,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.5
+	>=dev-build/cmake-3.5
 	sys-devel/gcc[fortran]
 	test? (
 		$(python_gen_any_dep '
