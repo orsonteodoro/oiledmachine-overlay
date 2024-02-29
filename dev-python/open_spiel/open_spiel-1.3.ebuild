@@ -87,7 +87,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=dev-python/pip-20.0.2[${PYTHON_USEDEP}]
-	>=dev-util/cmake-3.17
+	>=dev-build/cmake-3.17
 	>=sys-devel/clang-7
 	doc? (
 		dev-python/recommonmark[${PYTHON_USEDEP}]
