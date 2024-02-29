@@ -143,7 +143,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.16
+	>=dev-build/cmake-3.16
 	doc? (
 		$(python_gen_cond_dep '
 			dev-python/recommonmark[${PYTHON_USEDEP}]
