@@ -108,7 +108,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.16
+	>=dev-build/cmake-3.16
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 S="${WORKDIR}/hipCUB-rocm-${PV}"
