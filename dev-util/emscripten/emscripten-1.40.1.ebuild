@@ -195,7 +195,7 @@ DEPEND+="
 "
 BDEPEND+="
 	virtual/jdk:${JAVA_SLOT}
-	>=dev-util/cmake-3.4.3
+	>=dev-build/cmake-3.4.3
 "
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
