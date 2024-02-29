@@ -31,7 +31,7 @@ DEPEND="
 "
 # U 22.04
 BDEPEND+="
-	>=dev-util/cmake-3.7.2
+	>=dev-build/cmake-3.7.2
 	>=sys-devel/gcc-11.2.0
 "
 DOCS=( readme.txt )
