@@ -902,7 +902,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		)
 	)
 	sycl? (
-		>=sys-devel/DPC++-2022-12:0/6
+		>=sys-devel/DPC++-2022.12:0/6
 	)
 	tbb? (
 		>=dev-cpp/tbb-2021:${ONETBB_SLOT}[tbbmalloc]
