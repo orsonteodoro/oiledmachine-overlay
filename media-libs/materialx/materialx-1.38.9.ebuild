@@ -96,7 +96,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.1
+	>=dev-build/cmake-3.1
 	|| (
 		>=sys-devel/gcc-6
 		>=sys-devel/clang-6
