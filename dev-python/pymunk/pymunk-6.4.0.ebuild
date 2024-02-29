@@ -42,7 +42,7 @@ RDEPEND+="
 BDEPEND+="
 	dev-python/isort[${PYTHON_USEDEP}]
 	dev-python/mypy[${PYTHON_USEDEP}]
-	dev-util/cmake
+	dev-build/cmake
 	doc? (
 		dev-python/aafigure[${PYTHON_USEDEP}]
 		dev-python/alabaster[${PYTHON_USEDEP}]
