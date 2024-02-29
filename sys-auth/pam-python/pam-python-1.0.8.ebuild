@@ -36,7 +36,7 @@ BDEPEND+=" ${PYTHON_DEPS}
 	)
 	test? (
 		$(python_gen_cond_dep 'dev-python/pypam[${PYTHON_USEDEP}]')
-		dev-util/cmake
+		dev-build/cmake
 		sys-devel/gcc
 	)
 "
