@@ -1,0 +1,21 @@
+diff -urp unified-runtime-cf26de283a1233e6c93feb085acc10c566888b59.orig/source/adapters/hip/CMakeLists.txt unified-runtime-cf26de283a1233e6c93feb085acc10c566888b59/source/adapters/hip/CMakeLists.txt
+--- unified-runtime-cf26de283a1233e6c93feb085acc10c566888b59.orig/source/adapters/hip/CMakeLists.txt	2023-10-25 02:36:48.000000000 -0700
++++ unified-runtime-cf26de283a1233e6c93feb085acc10c566888b59/source/adapters/hip/CMakeLists.txt	2024-02-29 01:47:46.079713056 -0800
+@@ -11,14 +11,14 @@ set(TARGET_NAME ur_adapter_hip)
+ set(UR_HIP_PLATFORM "AMD" CACHE STRING "UR HIP platform, AMD or NVIDIA")
+ 
+ # Set default ROCm installation directory
+-set(UR_HIP_ROCM_DIR "/opt/rocm" CACHE STRING "ROCm installation dir")
++set(UR_HIP_ROCM_DIR "@ESYSROOT_ROCM_PATH@" CACHE STRING "ROCm installation dir")
+ 
+ set(UR_HIP_INCLUDE_DIR "${UR_HIP_ROCM_DIR}/include")
+ 
+-set(UR_HIP_HSA_INCLUDE_DIR "${UR_HIP_ROCM_DIR}/hsa/include")
++set(UR_HIP_HSA_INCLUDE_DIR "${UR_HIP_ROCM_DIR}/include/hsa")
+ 
+ # Set HIP lib dir
+-set(UR_HIP_LIB_DIR "${UR_HIP_ROCM_DIR}/lib")
++set(UR_HIP_LIB_DIR "${UR_HIP_ROCM_DIR}/@LIBDIR@")
+ 
+ # Check if HIP library path exists (AMD platform only)
+ if("${UR_HIP_PLATFORM}" STREQUAL "AMD")
