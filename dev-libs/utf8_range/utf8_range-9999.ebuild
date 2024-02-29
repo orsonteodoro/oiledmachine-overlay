@@ -23,7 +23,7 @@ RDEPEND+="
 	>=dev-cpp/abseil-cpp-20220623.0:0/20220623
 "
 BDEPEND+="
-	>=dev-util/cmake-3.5
+	>=dev-build/cmake-3.5
 	test? (
 		>=dev-cpp/gtest-1.12.1
 	)
