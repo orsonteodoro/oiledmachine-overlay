@@ -32,7 +32,7 @@ RDEPEND+="
 # cibuildwheel
 BDEPEND+="
 	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
-	>=dev-util/cmake-3.22
+	>=dev-build/cmake-3.22
 	dev-build/ninja
 	cibuildwheel? (
 		dev-python/cibuildwheel[${PYTHON_USEDEP}]
