@@ -138,7 +138,7 @@ RDEPEND+="
 # sphinx-toolbox
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.16
+	>=dev-build/cmake-3.16
 	doc? (
 		>=dev-python/furo-2022.9.29[${PYTHON_USEDEP}]
 		>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
