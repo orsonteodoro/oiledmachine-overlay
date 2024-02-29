@@ -34,7 +34,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.16
+	>=dev-build/cmake-3.16
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-fix-linker-flags.patch"
