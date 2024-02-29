@@ -64,7 +64,7 @@ RDEPEND+="
 	)
 "
 BDEPEND+="
-	>=dev-util/cmake-2.6
+	>=dev-build/cmake-2.6
 "
 RESTRICT="mirror"
 PATCHES=(
