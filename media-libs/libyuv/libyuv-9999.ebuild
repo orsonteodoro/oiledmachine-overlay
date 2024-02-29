@@ -52,10 +52,10 @@ DEPEND+="
 "
 BDEPEND+="
 	!stable? (
-		>=dev-util/cmake-2.8.12
+		>=dev-build/cmake-2.8.12
 	)
 	stable? (
-		>=dev-util/cmake-2.8
+		>=dev-build/cmake-2.8
 	)
 	sys-apps/grep[pcre]
 "
