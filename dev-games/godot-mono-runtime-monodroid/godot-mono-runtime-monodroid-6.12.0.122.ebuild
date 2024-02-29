@@ -134,7 +134,7 @@ REQUIRED_USE+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-util/android-ndk-21
-	>=dev-util/cmake-3.18.1
+	>=dev-build/cmake-3.18.1
 	dev-util/android-sdk-update-manager
 "
 PROPERTIES="live"
