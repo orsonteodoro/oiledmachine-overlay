@@ -169,7 +169,7 @@ SWIG_PV="4.0.2"
 # deps/obs-scripting/obspython/CMakeLists.txt
 BDEPEND+="
 	>=app-misc/jq-1.6
-	>=dev-util/cmake-3.22.1
+	>=dev-build/cmake-3.22.1
 	>=dev-util/pkgconf-1.8.0[pkg-config(+)]
 	lua? (
 		>=dev-lang/swig-${SWIG_PV}
