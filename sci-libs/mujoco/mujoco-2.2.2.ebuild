@@ -140,7 +140,7 @@ RDEPEND+="
 # sphinx-reredirects
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.15
+	>=dev-build/cmake-3.15
 	doc? (
 		>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
 		>=dev-python/jq-1.2.2[${PYTHON_USEDEP}]
