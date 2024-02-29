@@ -50,7 +50,7 @@ DEPEND="
 BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
-		>=dev-util/cmake-3.13
+		>=dev-build/cmake-3.13
 		dev-cpp/gtest
 		virtual/blas
 	)
