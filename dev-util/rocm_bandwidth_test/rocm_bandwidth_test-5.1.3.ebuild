@@ -26,7 +26,7 @@ DEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.6.3
+	>=dev-build/cmake-3.6.3
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
