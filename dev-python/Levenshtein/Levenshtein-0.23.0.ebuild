@@ -31,7 +31,7 @@ BDEPEND+="
 	>=dev-python/packaging-21.3[${PYTHON_USEDEP}]
 	>=dev-python/scikit-build-0.13.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-63.1.0[${PYTHON_USEDEP}]
-	>=dev-util/cmake-3.22.5
+	>=dev-build/cmake-3.22.5
 	>=dev-build/ninja-1.10.2.3
 	doc? (
 		dev-python/furo[${PYTHON_USEDEP}]
