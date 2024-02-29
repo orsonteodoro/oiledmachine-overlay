@@ -41,7 +41,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.6
+	>=dev-build/cmake-3.6
 	>=dev-libs/protobuf-3.12.4:0/3.21
 "
 RESTRICT="mirror"
