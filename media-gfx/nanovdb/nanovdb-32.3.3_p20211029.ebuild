@@ -153,7 +153,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.15
+	>=dev-build/cmake-3.15
 	doc? (
 		>=app-text/doxygen-1.8.8
 	)
