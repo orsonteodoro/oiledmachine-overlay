@@ -40,7 +40,7 @@ DEPEND+="
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
-	>=dev-util/cmake-3.8
+	>=dev-build/cmake-3.8
 	doc? ( app-text/doxygen )
 "
 SRC_URI="
