@@ -653,7 +653,7 @@ RDEPEND+="
 		>=media-libs/embree-4.1.0:=\
 [-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
 cpu_flags_x86_sse4_2?,\
-cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tbb?]
+cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
 		<media-libs/embree-5
 	)
 	ffmpeg? (
