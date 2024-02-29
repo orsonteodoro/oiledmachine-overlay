@@ -38,7 +38,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.6.3
+	>=dev-build/cmake-3.6.3
 	>=x11-libs/libdrm-2.4.114[video_cards_amdgpu]
 	dev-util/patchelf
 "
