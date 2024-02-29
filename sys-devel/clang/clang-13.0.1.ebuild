@@ -133,7 +133,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.16
+	>=dev-build/cmake-3.16
 	doc? ( dev-python/sphinx )
 	xml? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
