@@ -4,17 +4,17 @@
 
 EAPI=8
 
-# U20.04
+# U22.04
 CMAKE_BUILD_TYPE="Release"
 CXXABI_V=11
-IMAGEMAGICK_PV="6.9.10.23"
+IMAGEMAGICK_PV="6.9.11.60"
 LEGACY_TBB_SLOT="2"
 MIN_CLANG_PV="3.3" # for c++11
 MIN_CLANG_PV_AVX512SKX="3.6" # for -march=skx
 MIN_GCC_PV="4.8.1" # for c++11
 MIN_GCC_PV_AVX512SKX="5.1.0" # for -mavx512vl
 ONETBB_SLOT="0"
-PANDOC_PV="2.5"
+PANDOC_PV="2.9.2.1"
 PYTHON_COMPAT=( python3_{10..12} )
 TRAIN_USE_X=1
 TRAIN_TEST_DURATION=120
@@ -68,8 +68,8 @@ IUSE+="
 ${CPU_FLAGS[@]%:*}
 -allow-auto-vectorization -allow-strict-aliasing backface-culling clang
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
-doc-html doc-images doc-man +filter-function gcc +hardened ispc -level-zero
-raymask -ssp static-libs +tbb test tutorials
+doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
+static-libs +tbb test tutorials
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -130,7 +130,7 @@ REQUIRED_USE+="
 # https://github.com/embree/embree/blob/v3.13.4/common/cmake/check_isa.cpp
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
 RDEPEND+="
-	>=media-libs/glfw-3.3.2
+	>=media-libs/glfw-3.3.6
 	virtual/opengl
 	tbb? (
 		|| (
@@ -152,9 +152,10 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-build/cmake-3.25.0
-	>=dev-python/numpy-1.16.5[${PYTHON_USEDEP}]
-	>=dev-python/sympy-1.5.1[${PYTHON_USEDEP}]
+	>=dev-build/cmake-3.19.0
+	>=dev-python/sympy-1.9[${PYTHON_USEDEP}]
+	dev-libs/level-zero
+	dev-python/numpy[${PYTHON_USEDEP}]
 	virtual/pkgconfig
 	clang? (
 		>=sys-devel/clang-${MIN_CLANG_PV}
@@ -164,7 +165,7 @@ BDEPEND+="
 	)
 	doc? (
 		>=app-text/pandoc-${PANDOC_PV}
-		>=dev-texlive/texlive-xetex-2019
+		>=dev-texlive/texlive-xetex-2021
 	)
 	doc-html? (
 		>=app-text/pandoc-${PANDOC_PV}
@@ -172,7 +173,7 @@ BDEPEND+="
 	)
 	doc-images? (
 		>=media-gfx/imagemagick-${IMAGEMAGICK_PV}[jpeg]
-		>=media-gfx/xfig-3.2.7
+		>=media-gfx/xfig-3.2.8
 	)
 	gcc? (
 		>=sys-devel/gcc-${MIN_GCC_PV}
@@ -183,15 +184,12 @@ BDEPEND+="
 	ispc? (
 		>=dev-lang/ispc-1.17.0
 	)
-	level-zero? (
-		dev-libs/level-zero
-	)
 	pgo? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
 	)
 	test? (
-		>=dev-cpp/benchmark-1.5.0
+		>=dev-cpp/benchmark-1.6.1
 	)
 "
 DOCS=( CHANGELOG.md README.md readme.pdf )
@@ -375,7 +373,6 @@ eerror
 		-DEMBREE_ISA_SSE2=$(usex cpu_flags_x86_sse2)
 		-DEMBREE_ISA_SSE42=$(usex cpu_flags_x86_sse4_2)
 		-DEMBREE_ISPC_SUPPORT=$(usex ispc)
-		-DEMBREE_LEVEL_ZERO=$(usex level-zero)
 		-DEMBREE_RAY_MASK=$(usex raymask)
 		-DEMBREE_RAY_PACKETS=ON				# default
 		-DEMBREE_STACK_PROTECTOR=$(usex ssp)

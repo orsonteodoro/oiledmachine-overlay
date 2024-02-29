@@ -4,10 +4,28 @@
 
 EAPI=8
 
+# U20.04
+CMAKE_BUILD_TYPE="Release"
 CXXABI_V=11
+IMAGEMAGICK_PV="6.9.10.23"
+LEGACY_TBB_SLOT="2"
+MIN_CLANG_PV="3.3" # for c++11
+MIN_CLANG_PV_AVX512SKX="3.6" # for -march=skx
+MIN_GCC_PV="4.8.1" # for c++11
+MIN_GCC_PV_AVX512SKX="5.1.0" # for -mavx512vl
+ONETBB_SLOT="0"
+PANDOC_PV="2.5"
+PYTHON_COMPAT=( python3_{10..12} )
 TRAIN_USE_X=1
 TRAIN_TEST_DURATION=120
-inherit cmake flag-o-matic linux-info toolchain-funcs uopts
+# 15.0.1 -xCOMMON-AVX512
+
+inherit cmake flag-o-matic linux-info python-r1 toolchain-funcs uopts
+
+SRC_URI="
+https://github.com/embree/embree/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
@@ -27,7 +45,6 @@ LICENSE="
 KEYWORDS="~amd64 ~arm64 ~x86"
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
-
 X86_CPU_FLAGS=(
 	avx:avx
 	avx2:avx2
@@ -47,7 +64,6 @@ CPU_FLAGS=(
 	${ARM_CPU_FLAGS[@]/#/cpu_flags_arm_}
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 )
-
 IUSE+="
 ${CPU_FLAGS[@]%:*}
 -allow-auto-vectorization -allow-strict-aliasing backface-culling clang
@@ -56,6 +72,7 @@ doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs +tbb test tutorials
 "
 REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
 	^^ ( clang gcc )
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
@@ -111,48 +128,9 @@ REQUIRED_USE+="
 # For ISAs, see https://github.com/embree/embree/blob/v3.13.4/common/sys/sysinfo.h#L153
 # All flags required for proper reporting in
 # https://github.com/embree/embree/blob/v3.13.4/common/cmake/check_isa.cpp
-
-MIN_CLANG_V="3.3" # for c++11
-MIN_CLANG_V_AVX512SKX="3.6" # for -march=skx
-MIN_GCC_V="4.8.1" # for c++11
-MIN_GCC_V_AVX512SKX="5.1.0" # for -mavx512vl
-ONETBB_SLOT="0"
-LEGACY_TBB_SLOT="2"
-# 15.0.1 -xCOMMON-AVX512
-BDEPEND+="
-	>=dev-util/cmake-3.2.0
-	virtual/pkgconfig
-	clang? (
-		>=sys-devel/clang-${MIN_CLANG_V}
-		cpu_flags_x86_avx512dq? (
-			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
-		)
-	)
-	doc? (
-		app-text/pandoc
-		dev-texlive/texlive-xetex
-	)
-	doc-html? (
-		app-text/pandoc
-		media-gfx/imagemagick[jpeg]
-	)
-	doc-images? (
-		media-gfx/imagemagick[jpeg]
-		media-gfx/xfig
-	)
-	gcc? (
-		>=sys-devel/gcc-${MIN_GCC_V}
-		cpu_flags_x86_avx512dq? (
-			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
-		)
-	)
-	ispc? (
-		>=dev-lang/ispc-1.17.0
-	)
-"
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
-DEPEND+="
-	media-libs/glfw
+RDEPEND+="
+	>=media-libs/glfw-3.3.2
 	virtual/opengl
 	tbb? (
 		|| (
@@ -165,25 +143,55 @@ DEPEND+="
 	)
 	tutorials? (
 		<media-libs/openimageio-2.3.5.0[-cxx17(-),-abi8-compat,-abi9-compat]
-		media-libs/libpng:0=
+		>=media-libs/libpng-1.6.37:0=
 		virtual/jpeg:0
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
+	${PYTHON_DEPS}
+	>=dev-build/cmake-3.11.0
+	>=dev-python/numpy-1.16.5[${PYTHON_USEDEP}]
+	>=dev-python/sympy-1.5.1[${PYTHON_USEDEP}]
+	virtual/pkgconfig
+	clang? (
+		>=sys-devel/clang-${MIN_CLANG_PV}
+		cpu_flags_x86_avx512dq? (
+			>=sys-devel/clang-${MIN_CLANG_PV_AVX512SKX}
+		)
+	)
+	doc? (
+		>=app-text/pandoc-${PANDOC_PV}
+		>=dev-texlive/texlive-xetex-2019
+	)
+	doc-html? (
+		>=app-text/pandoc-${PANDOC_PV}
+		>=media-gfx/imagemagick-${IMAGEMAGICK_PV}[jpeg]
+	)
+	doc-images? (
+		>=media-gfx/imagemagick-${IMAGEMAGICK_PV}[jpeg]
+		>=media-gfx/xfig-3.2.7
+	)
+	gcc? (
+		>=sys-devel/gcc-${MIN_GCC_PV}
+		cpu_flags_x86_avx512dq? (
+			>=sys-devel/gcc-${MIN_GCC_PV_AVX512SKX}
+		)
+	)
+	ispc? (
+		>=dev-lang/ispc-1.17.0
+	)
 	pgo? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
 	)
-"
-SRC_URI="
-https://github.com/embree/embree/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
+	test? (
+		>=dev-cpp/benchmark-1.5.0
+	)
 "
 DOCS=( CHANGELOG.md README.md readme.pdf )
-CMAKE_BUILD_TYPE=Release
 PATCHES=(
 	"${FILESDIR}/${PN}-3.13.0-findtbb-more-debug-messages.patch"
 	"${FILESDIR}/${PN}-3.13.0-findtbb-alt-lib-path.patch"
@@ -207,10 +215,9 @@ pkg_setup() {
 "Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will impact "\
 "rendering performance."
 		linux-info_pkg_setup
-
-		if ! ( cat "${BROOT}/proc/cpuinfo" \
-				| grep sse2 > "${BROOT}/dev/null" ) ; then
-			die "You need a CPU with at least sse2 support."
+		if tc-is-cross-compiler \
+			&& ! grep -q "sse2" "${BROOT}/proc/cpuinfo" ; then
+			ewarn "You need a CPU with at least sse2 support."
 		fi
 	fi
 
@@ -218,25 +225,25 @@ pkg_setup() {
 	if use clang ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
-		local cc_v=$(clang-fullversion)
-		if ver_test ${cc_v} -lt ${MIN_CLANG_V} ; then
-			chcxx "Clang" "${MIN_CLANG_V}" "c++11"
+		local cc_pv=$(clang-fullversion)
+		if ver_test ${cc_pv} -lt ${MIN_CLANG_PV} ; then
+			chcxx "Clang" "${MIN_CLANG_PV}" "c++11"
 		fi
-		if ver_test ${cc_v} -lt ${MIN_CLANG_V_AVX512SKX} \
+		if ver_test ${cc_pv} -lt ${MIN_CLANG_PV_AVX512SKX} \
 			&& use cpu_flags_x86_avx512dq ; then
-			chcxx "Clang" "${MIN_CLANG_V_AVX512SKX}" "AVX512-SKX"
+			chcxx "Clang" "${MIN_CLANG_PV_AVX512SKX}" "AVX512-SKX"
 		fi
 	else
 		export CC="${CC_ALT:-${CHOST}-gcc}"
 		export CXX="${CXX_ALT:-${CHOST}-g++}"
 		if tc-is-gcc ; then
-			local cc_v=$(gcc-fullversion)
-			if ver_test ${cc_v} -lt ${MIN_GCC_V} ; then
-				chcxx "GCC" "${MIN_GCC_V}" "c++11"
+			local cc_pv=$(gcc-fullversion)
+			if ver_test ${cc_pv} -lt ${MIN_GCC_PV} ; then
+				chcxx "GCC" "${MIN_GCC_PV}" "c++11"
 			fi
-			if ver_test ${cc_v} -lt ${MIN_GCC_V_AVX512SKX} \
+			if ver_test ${cc_pv} -lt ${MIN_GCC_PV_AVX512SKX} \
 				&& use cpu_flags_x86_avx512dq ; then
-				chcxx "GCC" "${MIN_GCC_V_AVX512SKX}" "AVX512-SKX"
+				chcxx "GCC" "${MIN_GCC_PV_AVX512SKX}" "AVX512-SKX"
 			fi
 		else
 ewarn
@@ -262,13 +269,16 @@ ewarn "Emerge and try again."
 ewarn
 	fi
 	uopts_setup
+	python_setup
 }
 
 src_prepare() {
 	cmake_src_prepare
 	# disable RPM package building
-	sed -e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
-		-i CMakeLists.txt || die
+	sed -i \
+		-e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
+		CMakeLists.txt \
+		|| die
 	uopts_src_prepare
 }
 
@@ -421,7 +431,7 @@ eerror
 	fi
 
 	if ! use tbb ; then
-		:;
+		:
 	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
 		mycmakeargs+=(
 			-DTBB_INCLUDE_DIR="${ESYSROOT}/usr/include"
@@ -530,8 +540,14 @@ train_get_trainer_exe() {
 train_get_trainer_args() {
 	local trainer="${1}"
 	local isa="${trainer#*:}"
-	local ncpus=$(lscpu | grep "CPU(s)" | head -n 1 | grep -E -o -e "[0-9]+")
-	local tpc=$(lscpu | grep "Thread(s) per core" | head -n 1 | grep -E -o -e "[0-9]+")
+	local ncpus=$(lscpu \
+		| grep "CPU(s)" \
+		| head -n 1 \
+		| grep -E -o -e "[0-9]+")
+	local tpc=$(lscpu \
+		| grep "Thread(s) per core" \
+		| head -n 1 \
+		| grep -E -o -e "[0-9]+")
 	local threads=$(( ${ncpus} * ${tpc} ))
 #	einfo "Threads Per Core (TPC):  ${tpc}"
 #	einfo "nCPUS:  ${ncpus}"
@@ -570,7 +586,7 @@ ewarn
 
 src_install() {
 	cmake_src_install
-	cat <<EOF > "${T}/99${PN}${SLOT_MAJ}"
+cat <<EOF > "${T}/99${PN}${SLOT_MAJ}"
 CPATH="${EPREFIX}/usr/include/embree${SLOT_MAJ}"
 PATH="${EPREFIX}/usr/bin/embree${SLOT_MAJ}"
 EOF
@@ -589,12 +605,14 @@ EOF
 		doins -r tutorials/*
 	fi
 	docinto licenses
-	dodoc LICENSE.txt third-party-programs-TBB.txt \
-		third-party-programs.txt
+	dodoc \
+		"LICENSE.txt" \
+		"third-party-programs-TBB.txt" \
+		"third-party-programs.txt"
 	if ! use tbb ; then
-		:;
+		:
 	elif has_version ">=dev-cpp/tbb-2021:${ONETBB_SLOT}" ; then
-		:;
+		:
 	elif has_version "<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}" ; then
 		for f in $(find "${ED}") ; do
 			test -L "${f}" && continue
@@ -602,8 +620,10 @@ EOF
 				einfo "Old rpath for ${f}:"
 				patchelf --print-rpath "${f}" || die
 				einfo "Setting rpath for ${f}"
-				patchelf --set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
-					"${f}" || die
+				patchelf \
+					--set-rpath "/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}" \
+					"${f}" \
+					|| die
 			fi
 		done
 	fi
