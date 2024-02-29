@@ -45,7 +45,7 @@ DEPEND+="
 	)
 "
 RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-util/cmake-2.6"
+BDEPEND+=" >=dev-build/cmake-2.6"
 SRC_URI="
 https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
