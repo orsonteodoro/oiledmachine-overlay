@@ -22,7 +22,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-2.8
+	>=dev-build/cmake-2.8
 	virtual/pkgconfig
 	test? (
 		$(python_gen_any_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]')
