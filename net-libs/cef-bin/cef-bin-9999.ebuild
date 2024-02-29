@@ -208,7 +208,7 @@ INTEGRITY_CHECK_BDEPEND="
 " # From ebuild dev
 BDEPEND+="
 	${INTEGRITY_CHECK_BDEPEND}
-	>=dev-util/cmake-3.21
+	>=dev-build/cmake-3.21
 	test? (
 		x11-base/xorg-server[xvfb]
 		x11-apps/xhost
