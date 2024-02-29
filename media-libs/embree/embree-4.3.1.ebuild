@@ -70,6 +70,7 @@ ${CPU_FLAGS[@]%:*}
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs +tbb test tutorials
+r1
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -131,6 +132,7 @@ REQUIRED_USE+="
 # See .gitlab-ci.yml (track: release-linux-x64-Release)
 RDEPEND+="
 	>=media-libs/glfw-3.3.6
+	dev-libs/level-zero
 	virtual/opengl
 	tbb? (
 		|| (
@@ -154,7 +156,6 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.19.0
 	>=dev-python/sympy-1.9[${PYTHON_USEDEP}]
-	dev-libs/level-zero
 	dev-python/numpy[${PYTHON_USEDEP}]
 	virtual/pkgconfig
 	clang? (

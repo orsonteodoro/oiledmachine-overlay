@@ -70,6 +70,7 @@ ${CPU_FLAGS[@]%:*}
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +filter-function gcc +hardened ispc -level-zero
 raymask -ssp static-libs +tbb test tutorials
+r1
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -132,6 +133,9 @@ REQUIRED_USE+="
 RDEPEND+="
 	>=media-libs/glfw-3.3.2
 	virtual/opengl
+	level-zero? (
+		dev-libs/level-zero
+	)
 	tbb? (
 		|| (
 			(
@@ -182,9 +186,6 @@ BDEPEND+="
 	)
 	ispc? (
 		>=dev-lang/ispc-1.17.0
-	)
-	level-zero? (
-		dev-libs/level-zero
 	)
 	pgo? (
 		x11-base/xorg-server[xvfb]
