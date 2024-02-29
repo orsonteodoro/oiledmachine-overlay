@@ -472,7 +472,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-${CMAKE_PV}
+	>=dev-build/cmake-${CMAKE_PV}
 	javascript? (
 		${BDEPEND_NODEJS}
 	)
