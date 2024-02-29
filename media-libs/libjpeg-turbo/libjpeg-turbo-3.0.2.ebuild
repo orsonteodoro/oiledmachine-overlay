@@ -157,7 +157,7 @@ COMMON_DEPEND="
 "
 
 BDEPEND+="
-	>=dev-util/cmake-3.16.5
+	>=dev-build/cmake-3.16.5
 	amd64? (
 		${ASM_DEPEND}
 	)
