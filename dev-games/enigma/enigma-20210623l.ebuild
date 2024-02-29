@@ -336,7 +336,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${CDEPEND}
-	>=dev-util/cmake-3.21.2
+	>=dev-build/cmake-3.21.2
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-util/patchelf
 	clang? (
