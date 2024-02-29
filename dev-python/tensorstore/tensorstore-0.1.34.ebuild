@@ -62,7 +62,7 @@ gen_llvm_depends() {
 # Bazel needs --host_per_file_copt in 7.0.0*
 BDEPEND+="
 	>=dev-build/bazel-6.1.0
-	>=dev-util/cmake-3.24
+	>=dev-build/cmake-3.24
 	dev-python/setuptools-scm[${PYTHON_USEDEP}]
 	dev-util/patchutils
 	dev-lang/nasm
