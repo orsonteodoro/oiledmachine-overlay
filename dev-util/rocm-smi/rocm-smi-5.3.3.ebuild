@@ -38,7 +38,7 @@ RDEPEND="
 	sys-apps/hwdata
 "
 BDEPEND="
-	>=dev-util/cmake-3.16.8
+	>=dev-build/cmake-3.16.8
 	virtual/pkgconfig
 "
 PATCHES=(
