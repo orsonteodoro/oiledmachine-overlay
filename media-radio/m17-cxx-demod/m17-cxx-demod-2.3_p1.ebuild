@@ -26,7 +26,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.9
+	>=dev-build/cmake-3.9
 	dev-cpp/blaze
 	test? (
 		dev-cpp/gtest
