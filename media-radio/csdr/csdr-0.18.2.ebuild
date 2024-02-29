@@ -24,7 +24,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.0
+	>=dev-build/cmake-3.0
 "
 RESTRICT="mirror"
 DOCS=( README.md )
