@@ -88,7 +88,7 @@ BDEPEND="
 	${CDEPEND}
 	>=dev-dotnet/dotnet-sdk-bin-6.0.416:6.0
 	>=dev-dotnet/mono-msbuild-bin-16.10.1
-	>=dev-util/cmake-2.8.12.2
+	>=dev-build/cmake-2.8.12.2
 	>=dev-vcs/git-2.25.1
 	>=dev-build/autoconf-2.53
 	>=dev-build/automake-1.10
