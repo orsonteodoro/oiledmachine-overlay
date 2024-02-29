@@ -32,7 +32,7 @@ BDEPEND+="
 		>=sys-devel/clang-14.0
 		>=sys-devel/gcc-11.2.0
 	)
-	>=dev-util/cmake-3.5
+	>=dev-build/cmake-3.5
 "
 RESTRICT="mirror"
 DOCS=( docs readme.txt )
