@@ -48,7 +48,7 @@ BDEPEND="
 		sys-devel/llvm-roc:=
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
-	>=dev-util/cmake-3.7
+	>=dev-build/cmake-3.7
 	app-editors/vim-core
 	system-llvm? (
 		=sys-devel/lld-${LLVM_MAX_SLOT}*
