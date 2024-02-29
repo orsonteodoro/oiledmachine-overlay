@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 IUSE="doc test"
 # U 22.04
 BDEPEND="
-	>=dev-util/cmake-3.22.1
+	>=dev-build/cmake-3.22.1
 	test? (
 		>=dev-cpp/doctest-2.4.9
 	)
