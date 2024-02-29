@@ -43,7 +43,15 @@ https://github.com/oneapi-src/unified-runtime/archive/${UR_COMMIT}.tar.gz
 https://github.com/intel/cm-cpu-emulation/archive/${CPU_EMUL_COMMIT}.tar.gz
 	-> ${P}-cm-cpu-emulation-${CPU_EMUL_COMMIT:0:7}.tar.gz
 	)
+https://github.com/oneapi-src/unified-runtime/commit/4311ed92392cf3a6d5221f3a2e9c7741d1e5d19c.patch
+	-> unified-runtime-commit-4311ed9.patch
 "
+# 4311ed9 - [UR] Escape string for processing by regex
+#   Fixes:
+# CMake Error at /var/tmp/portage/sys-devel/DPC++-2023.04.17/work/unified-runtime-74843ea0800e6fb7ce0f82e0ef991fc258f4b9bd/CMakeLists.txt:152 (list):
+#   list sub-command FILTER, mode REGEX failed to compile regex
+#   "/var/tmp/portage/sys-devel/DPC++-2023.04.17/work/llvm-sycl-nightly-20230417/build/tools/sycl/plugins/unified_runtime/unified-runtime.".
+
 S="${WORKDIR}/llvm-sycl-nightly-${PV//./}"
 S_UR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
 BUILD_DIR="${S}/build"
@@ -180,6 +188,11 @@ eerror "Switch to >=sys-devel/clang-5.0"
 
 src_prepare() {
 	cmake_src_prepare
+
+	pushd "${S_UR}" >/dev/null 2>&1 || die
+		eapply "${DISTDIR}/unified-runtime-commit-4311ed9.patch"
+	popd >/dev/null 2>&1 || die
+
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
