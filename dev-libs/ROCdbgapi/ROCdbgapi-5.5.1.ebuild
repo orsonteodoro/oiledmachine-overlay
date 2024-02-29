@@ -28,7 +28,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-util/cmake-3.8
+	>=dev-build/cmake-3.8
 "
 S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 PATCHES=(
