@@ -4,6 +4,7 @@
 EAPI=8
 
 # LLVM 17
+# U22.04
 
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
@@ -111,16 +112,16 @@ RESTRICT="
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L191 for CUDA
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L247 for ROCm
 DEPEND="
+	>=dev-build/libtool-2.4.6
+	>=dev-libs/boost-1.74.0:=
 	>=dev-libs/level-zero-1.8.8:=
-	dev-build/libtool
-	dev-libs/boost:=
+	>=dev-util/opencl-headers-2022.01.04:=
+	>=dev-util/spirv-headers-1.3.216:=
+	>=dev-util/spirv-tools-1.3.216
+	>=media-libs/libva-2.14.0
 	dev-libs/opencl-icd-loader
-	dev-util/opencl-headers
-	dev-util/spirv-headers
-	dev-util/spirv-tools
-	media-libs/libva
 	esimd_emulator? (
-		dev-libs/libffi:=
+		>=dev-libs/libffi-3.4.2:=
 	)
 	cuda? (
 		|| (
