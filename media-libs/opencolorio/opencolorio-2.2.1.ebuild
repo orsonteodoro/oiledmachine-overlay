@@ -95,7 +95,7 @@ DEPEND="
 # prettymethods - delete references?
 # sphinx-press-theme
 BDEPEND="
-	>=dev-util/cmake-3.13
+	>=dev-build/cmake-3.13
 	virtual/pkgconfig
 	doc? (
 		$(python_gen_cond_dep '
