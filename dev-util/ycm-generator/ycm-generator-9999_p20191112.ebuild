@@ -107,7 +107,7 @@ REQUIRED_USE+="
 RDEPEND+="
 	sys-devel/clang
 	cmake? (
-		dev-util/cmake
+		dev-build/cmake
 	)
 	make? (
 		dev-build/make
@@ -166,7 +166,7 @@ BDEPEND+="
 			>=media-libs/gexiv2-0.14.0
 			>=net-libs/libcloudproviders-0.3.1
 			>=x11-libs/gdk-pixbuf-2.30.0
-			dev-util/cmake
+			dev-build/cmake
 			gui-libs/gtk:4
 			media-libs/gstreamer:1.0
 			media-libs/gst-plugins-base:1.0
