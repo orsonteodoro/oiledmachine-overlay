@@ -52,7 +52,7 @@ BDEPEND="
 	$(python_gen_any_dep '
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 	')
-	>=dev-util/cmake-2.8.12
+	>=dev-build/cmake-2.8.12
 	test? (
 		!system-llvm? (
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
