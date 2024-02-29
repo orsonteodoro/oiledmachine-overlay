@@ -168,7 +168,7 @@ DEPEND="
 	)
 "
 BDEPEND+="
-	>=dev-util/cmake-3.24
+	>=dev-build/cmake-3.24
 	>=sys-devel/gcc-11.2.0
 "
 DOCS=( changelog.md readme.md )
