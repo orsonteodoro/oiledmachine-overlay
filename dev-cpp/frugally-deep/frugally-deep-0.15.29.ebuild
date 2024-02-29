@@ -29,7 +29,7 @@ RDEPEND="
 	>=dev-cpp/nlohmann_json-3.10.5
 "
 BDEPEND="
-	>=dev-util/cmake-3.22.1
+	>=dev-build/cmake-3.22.1
 	>=sys-devel/gcc-11.2.0
 	test? (
 		>=dev-cpp/doctest-2.4.11
