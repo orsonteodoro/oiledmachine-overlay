@@ -68,7 +68,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	${CDEPEND}
-	>=dev-util/cmake-3.23.2
+	>=dev-build/cmake-3.23.2
 	dev-util/patchelf
 	media-gfx/imagemagick[png]
 "
