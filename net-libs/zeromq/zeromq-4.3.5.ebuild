@@ -67,7 +67,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
-	>=dev-util/cmake-3.22.1
+	>=dev-build/cmake-3.22.1
 	doc? (
 		>=app-text/asciidoc-10.1.2
 		>=app-text/xmlto-0.0.28
