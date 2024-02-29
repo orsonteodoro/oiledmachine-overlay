@@ -150,7 +150,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-util/cmake-3.16.2-r1
+	>=dev-build/cmake-3.16.2-r1
 	>=sys-devel/bison-3
 	>=sys-devel/flex-2.6
 	dev-util/patchelf
