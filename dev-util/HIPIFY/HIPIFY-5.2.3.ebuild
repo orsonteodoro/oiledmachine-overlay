@@ -82,7 +82,7 @@ BDEPEND="
 	test? (
 		${TEST_BDEPEND}
 	)
-	>=dev-util/cmake-3.16.8
+	>=dev-build/cmake-3.16.8
 "
 RESTRICT="
 	test
