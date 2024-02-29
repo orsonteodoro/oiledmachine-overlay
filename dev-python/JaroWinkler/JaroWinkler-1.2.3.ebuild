@@ -30,7 +30,7 @@ BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 	cpp? (
-		>=dev-util/cmake-3.12
+		>=dev-build/cmake-3.12
 		>=sys-devel/gcc-10.2.1
 		dev-build/ninja
 	)
