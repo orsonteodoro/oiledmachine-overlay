@@ -166,12 +166,12 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-lang/ispc-1.17.0
-	>=dev-util/cmake-3.15
+	>=dev-build/cmake-3.15
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.8
 	)
 	rocm? (
-		>=dev-util/cmake-3.21
+		>=dev-build/cmake-3.21
 		|| (
 			$(gen_hip_depends)
 		)
