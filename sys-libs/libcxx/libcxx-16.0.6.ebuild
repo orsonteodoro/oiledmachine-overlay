@@ -41,7 +41,7 @@ BDEPEND+="
 	dev-util/patchutils
 	test? (
 		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
-		>=dev-util/cmake-3.16
+		>=dev-build/cmake-3.16
 		>=sys-devel/clang-3.9.0
 		dev-debug/gdb[python]
 	)
