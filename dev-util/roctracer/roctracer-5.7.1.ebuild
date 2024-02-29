@@ -43,7 +43,7 @@ BDEPEND="
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	${CDEPEND}
-	>=dev-util/cmake-3.18.0
+	>=dev-build/cmake-3.18.0
 	sys-devel/binutils[gold]
 	test? (
 		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
