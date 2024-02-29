@@ -117,7 +117,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-util/cmake-3.16
+	>=dev-build/cmake-3.16
 	dev-lang/perl
 	sys-devel/gnuconfig
 	bolt? (
