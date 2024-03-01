@@ -81,10 +81,19 @@ LLVM_TARGETS=(
 	NVPTX
 	X86
 )
+SANITIZER_FLAGS=(
+	cfi
+)
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
-bolt +runtime
+${SANITIZER_FLAGS[@]}
+bolt profile +runtime
 r12
+"
+REQUIRED_USE="
+	cfi? (
+		runtime
+	)
 "
 RDEPEND="
 	!sys-devel/llvm-rocm:0
@@ -218,6 +227,8 @@ _src_configure() {
 		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}/llvm"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}${EROCM_PATH}/share/man"
+		-DCOMPILER_RT_BUILD_PROFILE=$(usex profile)
+		-DCOMPILER_RT_BUILD_SANITIZERS="${want_sanitizer}"
 		-DLLVM_BUILD_DOCS=NO
 #		-DLLVM_BUILD_LLVM_DYLIB=ON
 		-DLLVM_ENABLE_ASSERTIONS=ON # For mlir
