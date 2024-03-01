@@ -236,7 +236,7 @@ RDEPEND="
 		rocm_5_4? (
 			=dev-util/hip-5.4*:=[system-llvm=]
 			!system-llvm? (
-				=sys-devel/llvm-roc-5.4*
+				=sys-devel/llvm-roc-5.4*[cfi?]
 			)
 			system-llvm? (
 				sys-devel/clang:15
@@ -250,7 +250,7 @@ RDEPEND="
 		rocm_5_3? (
 			=dev-util/hip-5.3*:=[system-llvm=]
 			!system-llvm? (
-				=sys-devel/llvm-roc-5.3*
+				=sys-devel/llvm-roc-5.3*[cfi?]
 			)
 			system-llvm? (
 				sys-devel/clang:15
@@ -264,7 +264,7 @@ RDEPEND="
 		rocm_4_5? (
 			=dev-util/hip-4.5*:=[system-llvm=]
 			!system-llvm? (
-				=sys-devel/llvm-roc-4.5*
+				=sys-devel/llvm-roc-4.5*[cfi?]
 			)
 			system-llvm? (
 				=sys-devel/clang-13*
@@ -278,7 +278,7 @@ RDEPEND="
 		rocm_4_3? (
 			=dev-util/hip-4.3*:=[system-llvm=]
 			!system-llvm? (
-				=sys-devel/llvm-roc-4.3*
+				=sys-devel/llvm-roc-4.3*[cfi?]
 			)
 			system-llvm? (
 				=sys-devel/clang-13*

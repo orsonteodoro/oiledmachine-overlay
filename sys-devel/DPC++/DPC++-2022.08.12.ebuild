@@ -167,7 +167,7 @@ RDEPEND="
 		rocm_4_3? (
 			=dev-util/hip-4.3*:=[system-llvm=]
 			!system-llvm? (
-				=sys-devel/llvm-roc-4.3*
+				=sys-devel/llvm-roc-4.3*[cfi?]
 			)
 			system-llvm? (
 				=sys-devel/clang-13*
@@ -178,7 +178,7 @@ RDEPEND="
 		rocm_4_2? (
 			=dev-util/hip-4.2*:=[system-llvm=]
 			!system-llvm? (
-				=sys-devel/llvm-roc-4.2*
+				=sys-devel/llvm-roc-4.2*[cfi?]
 			)
 			system-llvm? (
 				=sys-devel/clang-12*
