@@ -357,7 +357,7 @@ src_configure() {
 		-DSYCL_CLANG_EXTRA_FLAGS="${CXXFLAGS}"
 		-DSYCL_ENABLE_KERNEL_FUSION=$(usex sycl-fusion)
 		-DSYCL_ENABLE_MAJOR_RELEASE_PREVIEW_LIB="OFF" # ON upstream
-		-DSYCL_ENABLE_PLUGINS="level_zero;opencl;"$(usev esimd_emulator)";"$(usex rocm "hip" "")";"$(usev cuda)";"$(usev native_cpu)
+		-DSYCL_ENABLE_PLUGINS="level_zero;opencl;"$(usev esimd_emulator)";"$(usex rocm "hip" "")";"$(usev cuda)";"$(usex native-cpu "native_cpu" "")
 		-DSYCL_ENABLE_WERROR="OFF"
 		-DSYCL_ENABLE_XPTI_TRACING="ON"
 		-DSYCL_INCLUDE_TESTS="$(usex test)"
