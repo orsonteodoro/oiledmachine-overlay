@@ -59,7 +59,7 @@ UR_COMMIT="cf26de283a1233e6c93feb085acc10c566888b59" # \
 # See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/plugins/unified_runtime/CMakeLists.txt#L63C27-L63C67
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit cmake python-any-r1 rocm toolchain-funcs
+inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
@@ -136,7 +136,7 @@ IUSE="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_SLOTS[@]}
-cfi cuda esimd_emulator fortify-source native-cpu rocm +sycl-fusion test
+cfi cuda esimd_emulator hardened native-cpu rocm +sycl-fusion test
 "
 gen_cuda_required_use() {
 	local x
@@ -369,10 +369,12 @@ src_configure() {
 	)
 
 	if use cfi ; then
+		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
 		mycmakeargs+=(
 			-DEXTRA_SECURITY_FLAGS="sanitize"
 		)
-	elif use fortify-source ; then
+	elif use hardened ; then
+		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
 		mycmakeargs+=(
 			-DEXTRA_SECURITY_FLAGS="default"
 		)

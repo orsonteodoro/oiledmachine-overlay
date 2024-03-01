@@ -15,11 +15,21 @@
     <remote-id type="github">intel/llvm</remote-id>
   </upstream>
   <use>
+    <flag name="cfi">
+      If enabled with clang, builds with sofware based Control-Flow Integrity.
+      If enabled with gcc, builds with hardware based Control-flow Enforcement
+      Technology (CET) with protection to branches and returns.
+
+      It implies enabling hardened flags.
+    </flag>
     <flag name="cuda">
       Use the CUDA backend
     </flag>
     <flag name="esimd_emulator">
       Enable ESIMD CPU emulation
+    </flag>
+    <flag name="hardened">
+      Builds with FORTIFY_SOURCE=2 and Full RELRO
     </flag>
     <flag name="hip">
       Use the HIP backend
