@@ -61,7 +61,7 @@ LICENSE="
 	Apache-2.0
 	MIT
 "
-SLOT="0/5" # Based on libsycl.so in SYCL_MAJOR_VERSION in \
+SLOT="0/5" # Based on libsycl.so with SYCL_MAJOR_VERSION in \
 # https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/CMakeLists.txt#L35
 #KEYWORDS="~amd64" # Needs install test
 ALL_LLVM_TARGETS=(
