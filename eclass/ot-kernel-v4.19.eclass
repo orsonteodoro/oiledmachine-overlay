@@ -232,7 +232,7 @@ CDEPEND+="
 	>=sys-devel/binutils-2.20
 	>=sys-devel/bison-2.0
 	>=sys-devel/flex-2.5.35
-	>=sys-devel/make-3.81
+	>=dev-build/make-3.81
 	app-arch/cpio
 	app-shells/bash
 	dev-util/pkgconf

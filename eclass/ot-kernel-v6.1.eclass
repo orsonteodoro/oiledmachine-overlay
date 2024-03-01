@@ -393,7 +393,7 @@ CDEPEND+="
 	>=sys-devel/binutils-2.23
 	>=sys-devel/bison-2.0
 	>=sys-devel/flex-2.5.35
-	>=sys-devel/make-3.82
+	>=dev-build/make-3.82
 	app-arch/cpio
 	dev-util/pkgconf
 	sys-apps/grep[pcre]
