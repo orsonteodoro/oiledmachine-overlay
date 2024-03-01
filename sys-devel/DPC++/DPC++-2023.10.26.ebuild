@@ -50,6 +50,8 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
+GCC_SLOTS=( 13 12 11 ) # Should only list non EOL
+LLVM_SLOTS=( 18 17 16 15 ) # Should only list non EOL
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
 CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2023-10-26
@@ -136,7 +138,7 @@ IUSE="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_SLOTS[@]}
-cfi cuda esimd_emulator hardened native-cpu rocm +sycl-fusion test
+cet cfi cuda esimd_emulator hardened native-cpu rocm +sycl-fusion test
 "
 gen_cuda_required_use() {
 	local x
@@ -228,9 +230,31 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+gen_llvm_bdepend() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				sys-devel/lld:${s}
+			)
+		"
+	done
+}
 BDEPEND="
 	>=dev-build/cmake-3.22.1
 	virtual/pkgconfig
+	cet? (
+		>=sys-devel/gcc-7.1.0[cxx]
+	)
+	cfi? (
+		>=sys-devel/clang-3.7
+		sys-devel/lld
+		|| (
+			$(gen_llvm_bdepend)
+		)
+	)
 	|| (
 		>=sys-devel/gcc-7.1.0[cxx]
 		>=sys-devel/clang-5
@@ -245,6 +269,12 @@ pkg_setup() {
 		if ver_test $(gcc-version) -lt "7.1" ; then
 eerror "Switch to >=sys-devel/gcc-7.1"
 			die
+		fi
+		if use cet ; then
+			if ver_test $(gcc-version) -lt "8.1" ; then
+eerror "Switch to >=sys-devel/gcc-8.1"
+				die
+			fi
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-version) -lt "5.0" ; then
@@ -368,8 +398,38 @@ src_configure() {
 		-DXPTI_SOURCE_DIR="${S}/xpti"
 	)
 
-	if use cfi ; then
+	if use cet ; then
+		local s
+		for s in ${GCC_SLOTS[@]} ; do
+			if has_version "sys-devel/gcc:${s}" ; then
+				export CC="${CHOST}-gcc-${s}"
+				export CXX="${CHOST}-g++-${s}"
+				break
+			fi
+		done
+		unset LD
 		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
+		strip-unsupported-flags
+		mycmakeargs+=(
+			-DEXTRA_SECURITY_FLAGS="sanitize"
+		)
+	elif use cfi ; then
+		local s
+		for s in ${LLVM_SLOTS[@]} ; do
+			if \
+				   has_version "sys-devel/clang:${s}" \
+				&& has_version "sys-devel/lld:${s}" \
+				&& has_version "sys-devel/llvm:${s}" \
+			; then
+				export CC="${CHOST}-clang-${s}"
+				export CXX="${CHOST}-clang-${s}"
+				break
+			fi
+		done
+		append-ldflags -fuse-ld=lld
+		unset LD
+		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
+		strip-unsupported-flags
 		mycmakeargs+=(
 			-DEXTRA_SECURITY_FLAGS="sanitize"
 		)

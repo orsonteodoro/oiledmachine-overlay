@@ -15,10 +15,14 @@
     <remote-id type="github">intel/llvm</remote-id>
   </upstream>
   <use>
+    <flag name="cet">
+      Builds with hardware assisted Control-flow Enforcement Technology (CET)
+      with protection to branches and returns.
+
+      It implies enabling hardened flags.
+    </flag>
     <flag name="cfi">
-      If enabled with Clang, builds with sofware based Control-Flow Integrity.
-      If enabled with GCC, builds with hardware assisted Control-flow
-      Enforcement Technology (CET) with protection to branches and returns.
+      Builds with sofware based Control-Flow Integrity.
 
       It implies enabling hardened flags.
     </flag>
