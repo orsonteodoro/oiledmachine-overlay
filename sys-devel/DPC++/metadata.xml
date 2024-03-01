@@ -16,9 +16,9 @@
   </upstream>
   <use>
     <flag name="cfi">
-      If enabled with clang, builds with sofware based Control-Flow Integrity.
-      If enabled with gcc, builds with hardware based Control-flow Enforcement
-      Technology (CET) with protection to branches and returns.
+      If enabled with Clang, builds with sofware based Control-Flow Integrity.
+      If enabled with GCC, builds with hardware assisted Control-flow
+      Enforcement Technology (CET) with protection to branches and returns.
 
       It implies enabling hardened flags.
     </flag>
