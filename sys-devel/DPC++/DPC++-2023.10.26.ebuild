@@ -219,11 +219,11 @@ RDEPEND="
 				=sys-devel/llvm-roc-5.4*
 			)
 			system-llvm? (
-				sys-devel/llvm:15
 				sys-devel/clang:15
+				sys-devel/lld:15
+				sys-devel/llvm:15
 				cfi? (
 					=sys-libs/compiler-rt-sanitizers-15*[cfi]
-					sys-devel/lld:15
 				)
 			)
 		)
@@ -233,11 +233,11 @@ RDEPEND="
 				=sys-devel/llvm-roc-5.3*
 			)
 			system-llvm? (
-				sys-devel/llvm:15
 				sys-devel/clang:15
+				sys-devel/lld:15
+				sys-devel/llvm:15
 				cfi? (
 					=sys-libs/compiler-rt-sanitizers-15*[cfi]
-					sys-devel/lld:15
 				)
 			)
 		)
@@ -247,10 +247,10 @@ RDEPEND="
 				=sys-devel/llvm-roc-4.5*
 			)
 			system-llvm? (
-				=sys-devel/llvm-13*
 				=sys-devel/clang-13*
+				=sys-devel/lld-13*
+				=sys-devel/llvm-13*
 				cfi? (
-					=sys-devel/lld-13*
 					=sys-libs/compiler-rt-sanitizers-13*[cfi]
 				)
 			)
@@ -261,10 +261,10 @@ RDEPEND="
 				=sys-devel/llvm-roc-4.3*
 			)
 			system-llvm? (
-				=sys-devel/llvm-13*
 				=sys-devel/clang-13*
+				=sys-devel/lld-13*
+				=sys-devel/llvm-13*
 				cfi? (
-					=sys-devel/lld-13*
 					=sys-libs/compiler-rt-sanitizers-13*[cfi]
 				)
 			)
@@ -275,10 +275,10 @@ RDEPEND="
 				=sys-devel/llvm-roc-4.2*
 			)
 			system-llvm? (
-				=sys-devel/llvm-12*
 				=sys-devel/clang-12*
+				=sys-devel/lld-12*
+				=sys-devel/llvm-12*
 				cfi? (
-					=sys-devel/lld-12*
 					=sys-libs/compiler-rt-sanitizers-12*[cfi]
 				)
 			)
