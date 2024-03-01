@@ -420,14 +420,23 @@ src_configure() {
 		)
 	fi
 
-	if use rocm && has_version "dev-util/hip[system-llvm]" ; then
+	if use rocm && has_version "=dev-util/hip-${ROCM_SLOT}*[system-llvm]" ; then
 		export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}"
 		which "${CC}" || die "Install =sys-devel/clang-${LLVM_MAX_SLOT}* for ROCm support"
-	elif use rocm && has_version "dev-util/hip" ; then
+	elif use rocm && has_version "=dev-util/hip-${ROCM_SLOT}" ; then
 		export CC="clang"
 		export CXX="clang++"
 		which "${CC}" || die "Install =sys-devel/llvm-roc-${LLVM_MAX_SLOT}* for ROCm support"
+	elif use rocm ; then
+eerror
+eerror "Install =sys-devel/hip-${ROCM_SLOT}* for ROCm support"
+eerror "Install one of the following for ROCm support:"
+eerror
+eerror "  =sys-devel/clang-${LLVM_MAX_SLOT}*"
+eerror "  =sys-devel/llvm-roc-${LLVM_MAX_SLOT}*"
+eerror
+		die
 	fi
 
 	# Extracted from buildbot/configure.py
