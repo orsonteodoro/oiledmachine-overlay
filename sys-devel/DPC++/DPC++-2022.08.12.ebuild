@@ -174,6 +174,7 @@ DEPEND="
 				=sys-devel/clang-13*
 				cfi? (
 					=sys-devel/lld-13*
+					=sys-libs/compiler-rt-sanitizers-13*[cfi]
 				)
 			)
 		)
@@ -187,6 +188,7 @@ DEPEND="
 				=sys-devel/clang-12*
 				cfi? (
 					=sys-devel/lld-12*
+					=sys-libs/compiler-rt-sanitizers-12*[cfi]
 				)
 			)
 		)

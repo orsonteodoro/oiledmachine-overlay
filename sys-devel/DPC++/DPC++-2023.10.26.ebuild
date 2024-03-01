@@ -222,6 +222,7 @@ RDEPEND="
 				sys-devel/llvm:15
 				sys-devel/clang:15
 				cfi? (
+					=sys-libs/compiler-rt-sanitizers-15*[cfi]
 					sys-devel/lld:15
 				)
 			)
@@ -235,6 +236,7 @@ RDEPEND="
 				sys-devel/llvm:15
 				sys-devel/clang:15
 				cfi? (
+					=sys-libs/compiler-rt-sanitizers-15*[cfi]
 					sys-devel/lld:15
 				)
 			)
@@ -249,6 +251,7 @@ RDEPEND="
 				=sys-devel/clang-13*
 				cfi? (
 					=sys-devel/lld-13*
+					=sys-libs/compiler-rt-sanitizers-13*[cfi]
 				)
 			)
 		)
@@ -262,6 +265,7 @@ RDEPEND="
 				=sys-devel/clang-13*
 				cfi? (
 					=sys-devel/lld-13*
+					=sys-libs/compiler-rt-sanitizers-13*[cfi]
 				)
 			)
 		)
@@ -275,6 +279,7 @@ RDEPEND="
 				=sys-devel/clang-12*
 				cfi? (
 					=sys-devel/lld-12*
+					=sys-libs/compiler-rt-sanitizers-12*[cfi]
 				)
 			)
 		)
