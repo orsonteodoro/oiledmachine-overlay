@@ -29,7 +29,7 @@
       Enable ESIMD CPU emulation
     </flag>
     <flag name="hardened">
-      Builds with FORTIFY_SOURCE=2 and Full RELRO
+      Builds with _FORTIFY_SOURCE=2, Full RELRO, strong SSP
     </flag>
     <flag name="hip">
       Use the HIP backend
