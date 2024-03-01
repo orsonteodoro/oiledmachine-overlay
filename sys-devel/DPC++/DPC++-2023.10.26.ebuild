@@ -136,7 +136,7 @@ IUSE="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_SLOTS[@]}
-cuda rocm test esimd_emulator
+cuda esimd_emulator rocm test
 "
 gen_cuda_required_use() {
 	local x
