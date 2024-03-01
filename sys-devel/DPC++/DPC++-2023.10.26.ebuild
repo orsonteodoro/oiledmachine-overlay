@@ -435,7 +435,7 @@ src_configure() {
 				&& has_version "sys-devel/llvm:${s}" \
 			; then
 				export CC="${CHOST}-clang-${s}"
-				export CXX="${CHOST}-clang-${s}"
+				export CXX="${CHOST}-clang++-${s}"
 				break
 			fi
 		done
