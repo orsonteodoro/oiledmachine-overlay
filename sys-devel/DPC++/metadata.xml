@@ -38,6 +38,9 @@
     <flag name="hip">
       Use the HIP backend
     </flag>
+    <flag name="native-cpu">
+      Enable SYCL Native CPU support
+    </flag>
     <flag name="sycl-fusion">
       Enable the JIT kernel fusion compiler
     </flag>
