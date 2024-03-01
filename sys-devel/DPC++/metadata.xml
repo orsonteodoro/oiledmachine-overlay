@@ -22,7 +22,7 @@
       It implies enabling hardened flags.
     </flag>
     <flag name="cfi">
-      Builds with sofware based Control-Flow Integrity.
+      Builds with software based Control-Flow Integrity.
 
       It implies enabling hardened flags.
     </flag>
