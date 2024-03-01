@@ -238,6 +238,16 @@ _src_configure() {
 	if use bolt ; then
 		PROJECTS+=";bolt"
 	fi
+
+	local flag
+	local want_sanitizer="OFF"
+	for flag in "${SANITIZER_FLAGS[@]}" ; do
+		if use "${flag}" ; then
+			want_sanitizer="ON"
+			break
+		fi
+	done
+
 	local libdir=$(get_libdir)
 	mycmakeargs+=(
 #		-DBUILD_SHARED_LIBS=OFF

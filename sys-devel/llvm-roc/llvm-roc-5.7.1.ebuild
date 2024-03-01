@@ -224,10 +224,11 @@ _src_configure() {
 		PROJECTS+=";bolt"
 	fi
 
-	local flag want_sanitizer=OFF
-	for flag in "${SANITIZER_FLAGS[@]}"; do
-		if use "${flag}"; then
-			want_sanitizer=ON
+	local flag
+	local want_sanitizer="OFF"
+	for flag in "${SANITIZER_FLAGS[@]}" ; do
+		if use "${flag}" ; then
+			want_sanitizer="ON"
 			break
 		fi
 	done
