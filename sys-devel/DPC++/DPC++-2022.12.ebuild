@@ -184,7 +184,7 @@ RESTRICT="
 # See https://github.com/intel/llvm/blob/2022-12/clang/include/clang/Basic/Cuda.h
 # See https://github.com/intel/llvm/blob/2022-12/sycl/doc/GetStartedGuide.md?plain=1#L191 for CUDA
 # See https://github.com/intel/llvm/blob/2022-12/sycl/doc/GetStartedGuide.md?plain=1#L247 for ROCm
-DEPEND="
+RDEPEND="
 	>=dev-build/libtool-2.4.6
 	>=dev-libs/boost-1.71.0:=
 	>=dev-util/opencl-headers-2019.08.06:=
@@ -226,8 +226,8 @@ DEPEND="
 		)
 	)
 "
-RDEPEND="
-	${DEPEND}
+DEPEND="
+	${RDEPEND}
 "
 BDEPEND="
 	>=dev-build/cmake-3.16.3

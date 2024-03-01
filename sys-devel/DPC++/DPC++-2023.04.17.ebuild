@@ -166,6 +166,11 @@ gen_rocm_required_use() {
 	done
 }
 REQUIRED_USE="
+	!rocm? (
+		cfi? (
+			system-llvm
+		)
+	)
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	?? (
@@ -196,10 +201,26 @@ RESTRICT="
 		test
 	)
 "
+gen_cfi_rdepend() {
+	local s
+	for s in ${LLVM_SLOTS[@]} ; do
+		echo "
+			system-llvm? (
+				cfi? (
+					=sys-libs/compiler-rt-sanitizers-${s}*[cfi]
+					sys-devel/clang:${s}
+					sys-devel/lld:${s}
+					sys-devel/llvm:${s}
+				)
+			)
+		"
+	done
+}
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/clang/include/clang/Basic/Cuda.h
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L191 for CUDA
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L247 for ROCm
-DEPEND="
+RDEPEND="
+	$(gen_cfi_rdepend)
 	>=dev-build/libtool-2.4.6
 	>=dev-libs/boost-1.74.0:=
 	>=dev-libs/level-zero-1.8.8:=
@@ -247,8 +268,8 @@ DEPEND="
 		)
 	)
 "
-RDEPEND="
-	${DEPEND}
+DEPEND="
+	${RDEPEND}
 "
 gen_gcc_bdepend() {
 	local s
