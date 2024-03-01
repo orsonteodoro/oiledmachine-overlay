@@ -167,6 +167,10 @@ REQUIRED_USE="
 		cuda
 		rocm
 	)
+	?? (
+		cet
+		cfi
+	)
 	cuda? (
 		llvm_targets_NVPTX
 		|| (
