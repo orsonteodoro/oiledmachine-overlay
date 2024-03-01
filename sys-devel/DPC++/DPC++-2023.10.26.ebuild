@@ -386,6 +386,9 @@ src_prepare() {
 src_configure() {
 	local mycmakeargs=()
 
+	# Unbreak clang detection with cmake
+	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/ccache/d" | tr $'\n' ":")
+
 	if use cet ; then
 		local s
 		for s in ${GCC_SLOTS[@]} ; do
@@ -438,13 +441,13 @@ src_configure() {
 	fi
 
 	if use rocm && has_version "dev-util/hip[system-llvm]" ; then
-		export CC="clang"
-		export CXX="clang++"
-		which "${CC}" || die "Install =sys-devel/llvm-roc-${LLVM_MAX_SLOT}* for ROCm support"
-	elif use rocm && has_version "dev-util/hip" ; then
 		export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}"
 		which "${CC}" || die "Install =sys-devel/clang-${LLVM_MAX_SLOT}* for ROCm support"
+	elif use rocm && has_version "dev-util/hip" ; then
+		export CC="clang"
+		export CXX="clang++"
+		which "${CC}" || die "Install =sys-devel/llvm-roc-${LLVM_MAX_SLOT}* for ROCm support"
 	fi
 
 	# Extracted from buildbot/configure.py
