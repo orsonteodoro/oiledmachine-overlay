@@ -201,6 +201,8 @@ eerror "Switch to >=sys-devel/gcc-7.1"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.2*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.2"
 		fi
+# Use the clang compiler in /usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/ if dev-util/hip[-system-llvm]
+# Use the clang compiler in /usr/lib/llvm/${LLVM_SLOT}/bin/ if dev-util/hip[system-llvm]
 		rocm_pkg_setup
 	fi
 }
@@ -311,8 +313,6 @@ src_configure() {
 			-DSYCL_BUILD_PI_HIP_PLATFORM="AMD"
 		)
 	fi
-
-	
 
 	cmake_src_configure
 }

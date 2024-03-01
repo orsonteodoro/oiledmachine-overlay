@@ -61,7 +61,7 @@ UR_COMMIT="74843ea0800e6fb7ce0f82e0ef991fc258f4b9bd" # \
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/plugins/unified_runtime/CMakeLists.txt#L7
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
+inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
@@ -298,7 +298,27 @@ eerror "Switch to >=sys-devel/clang-5.0"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.2*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.2"
 		fi
+# Use the clang compiler in /usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/ if dev-util/hip[-system-llvm]
+# Use the clang compiler in /usr/lib/llvm/${LLVM_SLOT}/bin/ if dev-util/hip[system-llvm]
 		rocm_pkg_setup
+	fi
+	if use cfi ; then
+		if [[ -z "${LLVM_MAX_SLOT}" ]] ; then
+			local s
+			for s in ${LLVM_SLOTS[@]} ; do
+				if \
+					   has_version "sys-devel/clang:${s}" \
+					&& has_version "sys-devel/lld:${s}" \
+					&& has_version "sys-devel/llvm:${s}" \
+				; then
+					LLVM_MAX_SLOT="${s}"
+					break
+				fi
+			done
+		fi
+		if ! use rocm ; then
+			llvm_pkg_setup
+		fi
 	fi
 }
 
@@ -344,8 +364,61 @@ src_prepare() {
 }
 
 src_configure() {
+	local mycmakeargs=()
+
+	if use cet ; then
+		local s
+		for s in ${GCC_SLOTS[@]} ; do
+			if has_version "sys-devel/gcc:${s}" ; then
+				export CC="${CHOST}-gcc-${s}"
+				export CXX="${CHOST}-g++-${s}"
+				break
+			fi
+		done
+		unset LD
+		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
+		strip-unsupported-flags
+		mycmakeargs+=(
+			-DEXTRA_SECURITY_FLAGS="sanitize"
+		)
+	elif use cfi ; then
+		local s
+		for s in ${LLVM_SLOTS[@]} ; do
+			if [[ -n "${LLVM_MAX_SLOT}" ]] ; then
+				if (( ${s} > ${LLVM_MAX_SLOT} )) ; then
+					continue
+				fi
+			fi
+			if \
+				   has_version "sys-devel/clang:${s}" \
+				&& has_version "sys-devel/lld:${s}" \
+				&& has_version "sys-devel/llvm:${s}" \
+			; then
+				export CC="${CHOST}-clang-${s}"
+				export CXX="${CHOST}-clang++-${s}"
+				break
+			fi
+		done
+		append-ldflags -fuse-ld=lld
+		unset LD
+		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
+		strip-unsupported-flags
+		mycmakeargs+=(
+			-DEXTRA_SECURITY_FLAGS="sanitize"
+		)
+	elif use hardened ; then
+		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
+		mycmakeargs+=(
+			-DEXTRA_SECURITY_FLAGS="default"
+		)
+	else
+		mycmakeargs+=(
+			-DEXTRA_SECURITY_FLAGS="none"
+		)
+	fi
+
 	# Extracted from buildbot/configure.py
-	local mycmakeargs=(
+	mycmakeargs+=(
 		-DBOOST_MP11_SOURCE_DIR="${ESYSROOT}/usr "
 		-DBUG_REPORT_URL="https://github.com/intel/llvm/issues"
 #		-DBUILD_SHARED_LIBS # Off by default
@@ -389,52 +462,6 @@ src_configure() {
 		-DXPTI_ENABLE_WERROR="OFF"
 		-DXPTI_SOURCE_DIR="${S}/xpti"
 	)
-
-	if use cet ; then
-		local s
-		for s in ${GCC_SLOTS[@]} ; do
-			if has_version "sys-devel/gcc:${s}" ; then
-				export CC="${CHOST}-gcc-${s}"
-				export CXX="${CHOST}-g++-${s}"
-				break
-			fi
-		done
-		unset LD
-		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
-		strip-unsupported-flags
-		mycmakeargs+=(
-			-DEXTRA_SECURITY_FLAGS="sanitize"
-		)
-	elif use cfi ; then
-		local s
-		for s in ${LLVM_SLOTS[@]} ; do
-			if \
-				   has_version "sys-devel/clang:${s}" \
-				&& has_version "sys-devel/lld:${s}" \
-				&& has_version "sys-devel/llvm:${s}" \
-			; then
-				export CC="${CHOST}-clang-${s}"
-				export CXX="${CHOST}-clang++-${s}"
-				break
-			fi
-		done
-		append-ldflags -fuse-ld=lld
-		unset LD
-		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
-		strip-unsupported-flags
-		mycmakeargs+=(
-			-DEXTRA_SECURITY_FLAGS="sanitize"
-		)
-	elif use hardened ; then
-		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
-		mycmakeargs+=(
-			-DEXTRA_SECURITY_FLAGS="default"
-		)
-	else
-		mycmakeargs+=(
-			-DEXTRA_SECURITY_FLAGS="none"
-		)
-	fi
 
 	if use cuda ; then
 		mycmakeargs+=(
