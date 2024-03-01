@@ -230,6 +230,16 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+gen_gcc_bdepend() {
+	local s
+	for s in ${GCC_SLOTS[@]} ; do
+		echo "
+			(
+				sys-devel/gcc:${s}
+			)
+		"
+	done
+}
 gen_llvm_bdepend() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
@@ -247,6 +257,9 @@ BDEPEND="
 	virtual/pkgconfig
 	cet? (
 		>=sys-devel/gcc-7.1.0[cxx]
+		|| (
+			$(gen_gcc_bdepend)
+		)
 	)
 	cfi? (
 		>=sys-devel/clang-3.7
