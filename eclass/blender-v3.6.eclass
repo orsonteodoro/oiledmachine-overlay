@@ -1118,7 +1118,7 @@ ewarn
 
 	if use rocm ; then
 	# Upstream uses hip 5.5.0 external_libs.cmake which uses llvm 16.
-	# It is not possible because of version_mex is 16 in install_linux_packages.py.
+	# It is not possible because of version_mex excludes 16 in install_linux_packages.py.
 	# It will cause an emerge conflict.
 	# It may also trigger a multiple LLVMs loaded bug.
 		if use llvm-15 && has_version "=dev-util/hip-5.4" ; then
