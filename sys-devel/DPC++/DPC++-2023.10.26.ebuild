@@ -138,7 +138,7 @@ IUSE="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_SLOTS[@]}
-cet cfi cuda esimd_emulator hardened native-cpu rocm +sycl-fusion test
+cet cfi cuda esimd_emulator hardened native-cpu rocm +sycl-fusion system-llvm test
 "
 gen_cuda_required_use() {
 	local x
@@ -178,6 +178,7 @@ REQUIRED_USE="
 		)
 	)
 	rocm? (
+		!cet
 		${ROCM_REQUIRED_USE}
 		llvm_targets_AMDGPU
 		^^ (
@@ -212,21 +213,69 @@ RDEPEND="
 		)
 	)
 	rocm? (
-		|| (
-			rocm_5_4? (
-				=dev-util/hip-5.4*:=
+		rocm_5_4? (
+			=dev-util/hip-5.4*:=
+			!system-llvm? (
+				=sys-devel/llvm-roc-5.4*
 			)
-			rocm_5_3? (
-				=dev-util/hip-5.3*:=
+			system-llvm? (
+				sys-devel/llvm:15
+				sys-devel/clang:15
+				cfi? (
+					sys-devel/lld:15
+				)
 			)
-			rocm_4_5? (
-				=dev-util/hip-4.5*:=
+		)
+		rocm_5_3? (
+			=dev-util/hip-5.3*:=
+			!system-llvm? (
+				=sys-devel/llvm-roc-5.3*
 			)
-			rocm_4_3? (
-				=dev-util/hip-4.3*:=
+			system-llvm? (
+				sys-devel/llvm:15
+				sys-devel/clang:15
+				cfi? (
+					sys-devel/lld:15
+				)
 			)
-			rocm_4_2? (
-				=dev-util/hip-4.2*:=
+		)
+		rocm_4_5? (
+			=dev-util/hip-4.5*:=
+			!system-llvm? (
+				=sys-devel/llvm-roc-4.5*
+			)
+			system-llvm? (
+				=sys-devel/llvm-13*
+				=sys-devel/clang-13*
+				cfi? (
+					=sys-devel/lld-13*
+				)
+			)
+		)
+		rocm_4_3? (
+			=dev-util/hip-4.3*:=
+			!system-llvm? (
+				=sys-devel/llvm-roc-4.3*
+			)
+			system-llvm? (
+				=sys-devel/llvm-13*
+				=sys-devel/clang-13*
+				cfi? (
+					=sys-devel/lld-13*
+				)
+			)
+		)
+		rocm_4_2? (
+			=dev-util/hip-4.2*:=
+			!system-llvm? (
+				=sys-devel/llvm-roc-4.2*
+			)
+			system-llvm? (
+				=sys-devel/llvm-12*
+				=sys-devel/clang-12*
+				cfi? (
+					=sys-devel/lld-12*
+				)
 			)
 		)
 	)
@@ -404,7 +453,6 @@ src_configure() {
 		done
 		unset LD
 		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
-		strip-unsupported-flags
 		mycmakeargs+=(
 			-DEXTRA_SECURITY_FLAGS="sanitize"
 		)
@@ -429,7 +477,6 @@ src_configure() {
 		append-ldflags -fuse-ld=lld
 		unset LD
 		replace-flags "-O0" "-O1" # Promote to fix _FORTIFY_SOURCE=2
-		strip-unsupported-flags
 		mycmakeargs+=(
 			-DEXTRA_SECURITY_FLAGS="sanitize"
 		)
@@ -444,24 +491,14 @@ src_configure() {
 		)
 	fi
 
-	if use rocm && has_version "=dev-util/hip-${ROCM_SLOT}*[system-llvm]" ; then
+	if use rocm && use system-llvm ; then
 		export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}"
-		which "${CC}" || die "Install =sys-devel/clang-${LLVM_MAX_SLOT}* for ROCm support"
-	elif use rocm && has_version "=dev-util/hip-${ROCM_SLOT}*" ; then
+	elif use rocm ; then
 		export CC="clang"
 		export CXX="clang++"
-		which "${CC}" || die "Install =sys-devel/llvm-roc-${LLVM_MAX_SLOT}* for ROCm support"
-	elif use rocm ; then
-eerror
-eerror "Install =dev-util/hip-${ROCM_SLOT}* for ROCm support"
-eerror "Install one of the following for ROCm support:"
-eerror
-eerror "  =sys-devel/clang-${LLVM_MAX_SLOT}*"
-eerror "  =sys-devel/llvm-roc-${LLVM_MAX_SLOT}*"
-eerror
-		die
 	fi
+	strip-unsupported-flags
 
 	# Extracted from buildbot/configure.py
 	mycmakeargs+=(
