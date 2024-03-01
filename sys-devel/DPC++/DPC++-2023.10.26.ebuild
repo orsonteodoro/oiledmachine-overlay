@@ -122,7 +122,7 @@ ALL_LLVM_TARGETS=(
 	XCore
 )
 ALL_LLVM_TARGETS=(
-	"${ALL_LLVM_TARGETS[@]/#/llvm_targets_}"
+	${ALL_LLVM_TARGETS[@]/#/llvm_targets_}
 )
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
 ROCM_SLOTS=(
