@@ -218,7 +218,7 @@ DEPEND="
 	)
 	rocm? (
 		rocm_4_3? (
-			=dev-util/hip-4.3*:=
+			=dev-util/hip-4.3*:=[system-llvm=]
 			!system-llvm? (
 				=sys-devel/llvm-roc-4.3*
 			)
@@ -231,7 +231,7 @@ DEPEND="
 			)
 		)
 		rocm_4_2? (
-			=dev-util/hip-4.2*:=
+			=dev-util/hip-4.2*:=[system-llvm=]
 			!system-llvm? (
 				=sys-devel/llvm-roc-4.2*
 			)

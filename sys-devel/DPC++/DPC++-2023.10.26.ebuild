@@ -214,7 +214,7 @@ RDEPEND="
 	)
 	rocm? (
 		rocm_5_4? (
-			=dev-util/hip-5.4*:=
+			=dev-util/hip-5.4*:=[system-llvm=]
 			!system-llvm? (
 				=sys-devel/llvm-roc-5.4*
 			)
@@ -227,7 +227,7 @@ RDEPEND="
 			)
 		)
 		rocm_5_3? (
-			=dev-util/hip-5.3*:=
+			=dev-util/hip-5.3*:=[system-llvm=]
 			!system-llvm? (
 				=sys-devel/llvm-roc-5.3*
 			)
@@ -240,7 +240,7 @@ RDEPEND="
 			)
 		)
 		rocm_4_5? (
-			=dev-util/hip-4.5*:=
+			=dev-util/hip-4.5*:=[system-llvm=]
 			!system-llvm? (
 				=sys-devel/llvm-roc-4.5*
 			)
@@ -253,7 +253,7 @@ RDEPEND="
 			)
 		)
 		rocm_4_3? (
-			=dev-util/hip-4.3*:=
+			=dev-util/hip-4.3*:=[system-llvm=]
 			!system-llvm? (
 				=sys-devel/llvm-roc-4.3*
 			)
@@ -266,7 +266,7 @@ RDEPEND="
 			)
 		)
 		rocm_4_2? (
-			=dev-util/hip-4.2*:=
+			=dev-util/hip-4.2*:=[system-llvm=]
 			!system-llvm? (
 				=sys-devel/llvm-roc-4.2*
 			)
