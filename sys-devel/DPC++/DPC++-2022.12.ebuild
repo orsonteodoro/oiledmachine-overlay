@@ -31,7 +31,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1030
 	gfx1031
 	gfx1032
-	gfx1034
 )
 CUDA_TARGETS_COMPAT=(
 	sm_50 # Default
