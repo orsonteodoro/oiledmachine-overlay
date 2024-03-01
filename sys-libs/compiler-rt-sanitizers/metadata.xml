@@ -46,8 +46,8 @@
       interpreter code.
     </flag>
     <flag name="profile">
-      Build the profiling runtime which is used during Profile Guided
-      Optimization (PGO).
+      Build the profiling runtime which is required by Clang PGO (Profile
+      Guided Optimization).
     </flag>
     <flag name="sanitize">
       Build the sanitizer runtimes.

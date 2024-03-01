@@ -99,7 +99,7 @@
       provides additional post build optimizations. (EXPERIMENTAL)
     </flag>
     <flag name="profile">
-      Add profile support for PGO.
+      Add profile support required by Clang PGO (Profile Guided Optimization).
     </file>
   </use>
 </pkgmetadata>
