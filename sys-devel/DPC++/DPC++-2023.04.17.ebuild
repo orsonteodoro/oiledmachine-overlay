@@ -3,12 +3,56 @@
 
 EAPI=8
 
-# LLVM 17
+# LLVM 17 ; See https://github.com/intel/llvm/blob/sycl-nightly/20230417/llvm/CMakeLists.txt#L19
 # U22.04 ; See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/GetStartedGuide.md?plain=1#L292
 
+# GPUs were tested/supported upstream.
+# See https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/doc/UsersManual.md?plain=1#L73
+AMDGPU_TARGETS_COMPAT=(
+	gfx700
+	gfx701
+	gfx702
+	gfx801
+	gfx802
+	gfx803
+	gfx805
+	gfx810
+	gfx900
+	gfx902
+	gfx904
+	gfx906 # Tested upstream
+	gfx908 # Tested upstream
+	gfx90a # Tested upstream
+	#gfx940 # Set by libclc
+	gfx1010
+	gfx1011
+	gfx1012
+	gfx1013
+	gfx1030
+	gfx1031
+	gfx1032
+	gfx1034
+)
+CUDA_TARGETS_COMPAT=(
+	sm_50 # Default
+	sm_52
+	sm_53
+	sm_60
+	sm_61
+	sm_62
+	sm_70
+	#sm_71 # Tested upstream
+	sm_72
+	sm_75
+	sm_80
+	sm_86 # Set by libclc
+	sm_87
+	sm_89
+	sm_90
+)
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
-CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Search committer-date:<=2023-04-17
+CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2023-04-17
 VC_INTR_COMMIT="3ac855c9253d608a36d10b8ff87e62aa413bbf23" # Newer versions cause compile failure \
 # See https://github.com/intel/llvm/blob/sycl-nightly/20230417/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
 UR_COMMIT="74843ea0800e6fb7ce0f82e0ef991fc258f4b9bd" # \
@@ -63,7 +107,7 @@ LICENSE="
 	Apache-2.0
 	MIT
 "
-SLOT="0/6" # FIXME: Based on libsycl.so in SYCL_MAJOR_VERSION in \
+SLOT="0/6" # Based on libsycl.so in SYCL_MAJOR_VERSION in \
 # https://github.com/intel/llvm/blob/sycl-nightly/20230417/sycl/CMakeLists.txt#L35
 #KEYWORDS="~amd64" # Needs install test
 ALL_LLVM_TARGETS=(
@@ -93,18 +137,45 @@ ROCM_SLOTS=(
 )
 IUSE="
 ${ALL_LLVM_TARGETS[*]}
+${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_SLOTS[@]}
 cuda rocm test esimd_emulator
 "
+gen_cuda_required_use() {
+	local x
+	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
+		echo "
+			cuda_targets_${x}? (
+				cuda
+			)
+		"
+	done
+}
+gen_rocm_required_use() {
+	local x
+	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+		echo "
+			amdgpu_targets_${x}? (
+				rocm
+			)
+		"
+	done
+}
 REQUIRED_USE="
+	$(gen_cuda_required_use)
+	$(gen_rocm_required_use)
 	?? (
 		cuda
 		rocm
 	)
 	cuda? (
 		llvm_targets_NVPTX
+		|| (
+			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
 	)
 	rocm? (
+		${ROCM_REQUIRED_USE}
 		llvm_targets_AMDGPU
 		^^ (
 			${ROCM_SLOTS[@]}
@@ -197,8 +268,7 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	export PATCH_PATHS=(
-		"${S_UR}/source/adapters/hip/CMakeLists.txt"
-		"${S}/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${S_UR}/clang/tools/amdgpu-arch/CMakeLists.txt"
 		"${S}/libc/src/math/gpu/vendor/CMakeLists.txt"
 		"${S}/libc/utils/gpu/loader/CMakeLists.txt"
 		"${S}/mlir/lib/Dialect/GPU/CMakeLists.txt"
@@ -208,11 +278,11 @@ src_prepare() {
 		"${S}/opencl/opencl-aot/CMakeLists.txt"
 		"${S}/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
 		"${S}/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${S}/source/adapters/hip/CMakeLists.txt"
 		"${S}/sycl/CMakeLists.txt"
 		"${S}/sycl/cmake/modules/AddSYCL.cmake"
 		"${S}/sycl/cmake/modules/AddSYCLUnitTest.cmake"
 		"${S}/sycl/include/sycl/sycl_span.hpp"
-		"${S}/sycl/plugins/cuda/CMakeLists.txt"
 		"${S}/sycl/plugins/esimd_emulator/CMakeLists.txt"
 		"${S}/sycl/plugins/hip/CMakeLists.txt"
 		"${S}/sycl/plugins/level_zero/CMakeLists.txt"
@@ -220,7 +290,6 @@ src_prepare() {
 		"${S}/sycl/plugins/unified_runtime/CMakeLists.txt"
 		"${S}/sycl/source/CMakeLists.txt"
 		"${S}/sycl/tools/CMakeLists.txt"
-		"${S}/sycl/tools/pi-trace/CMakeLists.txt"
 		"${S}/sycl/tools/sycl-ls/CMakeLists.txt"
 		"${S}/sycl/tools/sycl-prof/CMakeLists.txt"
 		"${S}/sycl/tools/sycl-sanitize/CMakeLists.txt"

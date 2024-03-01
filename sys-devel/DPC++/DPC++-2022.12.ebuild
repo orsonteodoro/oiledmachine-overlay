@@ -3,11 +3,11 @@
 
 EAPI=8
 
-# LLVM 18 ; See https://github.com/intel/llvm/blob/nightly-2023-10-26/llvm/CMakeLists.txt#L19
-# U22.04 ; See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L310
+# LLVM 16 ; See https://github.com/intel/llvm/blob/2022-12/llvm/CMakeLists.txt#L12
+# U20.04 ; See https://github.com/intel/llvm/blob/2022-12/sycl/doc/GetStartedGuide.md?plain=1#L292
 
 # GPUs were tested/supported upstream.
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/UsersManual.md?plain=1#L74
+# See https://github.com/intel/llvm/blob/2022-12/sycl/doc/UsersManual.md?plain=1#L60
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
 	gfx701
@@ -22,13 +22,13 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx904
 	gfx906 # Tested upstream
 	gfx908 # Tested upstream
-	gfx90a # Tested upstream
+	gfx90a
 	#gfx940 # Set by libclc
 	gfx1010
 	gfx1011
 	gfx1012
 	gfx1013
-	gfx1030 # Tested upstream
+	gfx1030
 	gfx1031
 	gfx1032
 	gfx1034
@@ -52,11 +52,11 @@ CUDA_TARGETS_COMPAT=(
 )
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
-CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2023-10-26
-VC_INTR_COMMIT="17a53f4304463b8e7e639d57ef17479040a8a2ad" # Newer versions cause compile failure \
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19
-UR_COMMIT="cf26de283a1233e6c93feb085acc10c566888b59" # \
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/plugins/unified_runtime/CMakeLists.txt#L63C27-L63C67
+CPU_EMUL_COMMIT="0c5fc287f34ae38d3184ab70ea5513d9fb1ff338" # Search committer-date:<=2022-12-13
+VC_INTR_COMMIT="782fbf7301dc73acaa049a4324c976ad94f587f7" # Newer versions cause compile failure \
+# See https://github.com/intel/llvm/blob/2022-12/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
+UR_COMMIT="fd711c920acc4434cb52ff18b078c082d9d7f44d" # \
+# See https://github.com/intel/llvm/blob/2022-12/sycl/plugins/unified_runtime/CMakeLists.txt#L7
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake python-any-r1 rocm toolchain-funcs
@@ -68,16 +68,16 @@ DOCS_DEPEND="
 	>=media-gfx/graphviz-2.42.2
 	virtual/latex-base
 	$(python_gen_any_dep '
-		>=dev-python/myst-parser-0.16.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
-		>=dev-python/recommonmark-0.6.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-1.8.5[${PYTHON_USEDEP}]
+		>=dev-python/recommonmark-0.4.0[${PYTHON_USEDEP}]
+		dev-python/myst-parser[${PYTHON_USEDEP}]
 	')
 "
 
 inherit docs
 
 SRC_URI="
-https://github.com/intel/llvm/archive/refs/tags/nightly-${PV//./-}.tar.gz
+https://github.com/intel/llvm/archive/refs/tags/sycl-nightly/${PV//./}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/intel/vc-intrinsics/archive/${VC_INTR_COMMIT}.tar.gz
 	-> ${P}-vc-intrinsics-${VC_INTR_COMMIT:0:7}.tar.gz
@@ -88,7 +88,8 @@ https://github.com/intel/cm-cpu-emulation/archive/${CPU_EMUL_COMMIT}.tar.gz
 	-> ${P}-cm-cpu-emulation-${CPU_EMUL_COMMIT:0:7}.tar.gz
 	)
 "
-S="${WORKDIR}/llvm-nightly-${PV//./-}"
+
+S="${WORKDIR}/llvm-${PV//./-}"
 S_UR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
 BUILD_DIR="${S}/build"
 CMAKE_USE_DIR="${S}/llvm"
@@ -99,8 +100,8 @@ LICENSE="
 	Apache-2.0
 	MIT
 "
-SLOT="0/7" # Based on libsycl.so in SYCL_MAJOR_VERSION in \
-# https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/CMakeLists.txt#L35
+SLOT="0/6" # Based on libsycl.so in SYCL_MAJOR_VERSION in \
+# https://github.com/intel/llvm/blob/2022-12/sycl/CMakeLists.txt#L35
 #KEYWORDS="~amd64" # Needs install test
 ALL_LLVM_TARGETS=(
 	AArch64
@@ -121,14 +122,9 @@ ALL_LLVM_TARGETS=(
 	X86
 	XCore
 )
-ALL_LLVM_TARGETS=(
-	"${ALL_LLVM_TARGETS[@]/#/llvm_targets_}"
-)
+ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
 ROCM_SLOTS=(
-	rocm_5_4
-	rocm_5_3
-	rocm_4_5
 	rocm_4_3
 	rocm_4_2
 )
@@ -184,21 +180,20 @@ RESTRICT="
 		test
 	)
 "
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/clang/include/clang/Basic/Cuda.h#L42
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L194 for CUDA
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L244 for ROCm
-
-RDEPEND="
+# See https://github.com/intel/llvm/blob/2022-12/clang/include/clang/Basic/Cuda.h
+# See https://github.com/intel/llvm/blob/2022-12/sycl/doc/GetStartedGuide.md?plain=1#L191 for CUDA
+# See https://github.com/intel/llvm/blob/2022-12/sycl/doc/GetStartedGuide.md?plain=1#L247 for ROCm
+DEPEND="
 	>=dev-build/libtool-2.4.6
-	>=dev-libs/boost-1.74.0:=
-	>=dev-libs/level-zero-1.11.0:=
-	>=dev-util/opencl-headers-2022.01.04:=
-	>=dev-util/spirv-headers-1.3.216:=
-	>=dev-util/spirv-tools-1.3.216
-	>=media-libs/libva-2.14.0
+	>=dev-libs/boost-1.71.0:=
+	>=dev-util/opencl-headers-2019.08.06:=
+	>=media-libs/libva-2.7.0
+	dev-libs/level-zero:=
+	dev-util/spirv-headers:=
+	dev-util/spirv-tools
 	dev-libs/opencl-icd-loader
 	esimd_emulator? (
-		>=dev-libs/libffi-3.4.2:=
+		>=dev-libs/libffi-3.3:=
 	)
 	cuda? (
 		|| (
@@ -207,37 +202,22 @@ RDEPEND="
 	)
 	rocm? (
 		|| (
-			rocm_5_4? (
-				=dev-util/hip-5.4*:=
-			)
-			rocm_5_3? (
-				=dev-util/hip-5.3*:=
-			)
-			rocm_4_5? (
-				=dev-util/hip-4.5*:=
-			)
-			rocm_4_3? (
-				=dev-util/hip-4.3*:=
-			)
-			rocm_4_2? (
-				=dev-util/hip-4.2*:=
-			)
+			=dev-util/hip-4.3*:=
+			=dev-util/hip-4.2*:=
 		)
 	)
 "
-DEPEND="
-	${RDEPEND}
+RDEPEND="
+	${DEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.22.1
+	>=dev-build/cmake-3.16.3
+	>=sys-devel/gcc-7.1.0[cxx]
 	virtual/pkgconfig
-	|| (
-		>=sys-devel/gcc-7.1.0[cxx]
-		>=sys-devel/clang-5
-	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2023-10-26-system-libs.patch"
+	"${FILESDIR}/${PN}-2022.12-system-libs.patch"
+	"${FILESDIR}/${PN}-2022.12-gcc13.patch"
 )
 
 pkg_setup() {
@@ -246,27 +226,10 @@ pkg_setup() {
 eerror "Switch to >=sys-devel/gcc-7.1"
 			die
 		fi
-	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt "5.0" ; then
-eerror "Switch to >=sys-devel/clang-5.0"
-			die
-		fi
 	fi
 	python_setup
 	if use rocm ; then
-		if use rocm_5_4 ; then
-			export LLVM_MAX_SLOT="15"
-			export ROCM_VERSION=$(best_version "=dev-util/hip-5.4*" | sed -e "s|dev-util/hip-||g")
-			export ROCM_SLOT="5.4"
-		elif use rocm_5_3 ; then
-			export LLVM_MAX_SLOT="15"
-			export ROCM_VERSION=$(best_version "=dev-util/hip-5.3*" | sed -e "s|dev-util/hip-||g")
-			export ROCM_SLOT="5.3"
-		elif use rocm_4_5 ; then
-			export LLVM_MAX_SLOT="13"
-			export ROCM_VERSION=$(best_version "=dev-util/hip-4.5*" | sed -e "s|dev-util/hip-||g")
-			export ROCM_SLOT="4.5"
-		elif use rocm_4_3 ; then
+		if use rocm_4_3 ; then
 			export LLVM_MAX_SLOT="13"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.3*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.3"
@@ -281,10 +244,6 @@ eerror "Switch to >=sys-devel/clang-5.0"
 
 src_prepare() {
 	cmake_src_prepare
-
-	pushd "${S_UR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/unified-runtime-cf26de2-rocm-path.patch"
-	popd >/dev/null 2>&1 || die
 
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:

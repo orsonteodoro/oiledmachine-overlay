@@ -1,6 +1,6 @@
 diff -urp llvm-sycl-nightly-20230417.orig/clang/tools/amdgpu-arch/CMakeLists.txt llvm-sycl-nightly-20230417/clang/tools/amdgpu-arch/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/clang/tools/amdgpu-arch/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/clang/tools/amdgpu-arch/CMakeLists.txt	2024-02-29 09:07:10.224795787 -0800
++++ llvm-sycl-nightly-20230417/clang/tools/amdgpu-arch/CMakeLists.txt	2024-02-29 15:59:00.750616857 -0800
 @@ -11,7 +11,7 @@ set(LLVM_LINK_COMPONENTS Support)
  add_clang_tool(amdgpu-arch AMDGPUArch.cpp)
  
@@ -12,7 +12,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/clang/tools/amdgpu-arch/CMakeLists.txt
    target_link_libraries(amdgpu-arch PRIVATE hsa-runtime64::hsa-runtime64 clangBasic)
 diff -urp llvm-sycl-nightly-20230417.orig/libc/utils/gpu/loader/CMakeLists.txt llvm-sycl-nightly-20230417/libc/utils/gpu/loader/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/libc/utils/gpu/loader/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/libc/utils/gpu/loader/CMakeLists.txt	2024-02-29 09:07:10.292795242 -0800
++++ llvm-sycl-nightly-20230417/libc/utils/gpu/loader/CMakeLists.txt	2024-02-29 15:59:00.750616857 -0800
 @@ -1,7 +1,7 @@
  add_library(gpu_loader OBJECT Main.cpp)
  target_include_directories(gpu_loader PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
@@ -24,7 +24,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/libc/utils/gpu/loader/CMakeLists.txt l
  else()
 diff -urp llvm-sycl-nightly-20230417.orig/mlir/lib/Dialect/GPU/CMakeLists.txt llvm-sycl-nightly-20230417/mlir/lib/Dialect/GPU/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/mlir/lib/Dialect/GPU/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/mlir/lib/Dialect/GPU/CMakeLists.txt	2024-02-29 09:07:10.348794791 -0800
++++ llvm-sycl-nightly-20230417/mlir/lib/Dialect/GPU/CMakeLists.txt	2024-02-29 15:59:00.778616511 -0800
 @@ -133,7 +133,7 @@ if(MLIR_ENABLE_ROCM_CONVERSIONS)
        "Building mlir with ROCm support requires the AMDGPU backend")
    endif()
@@ -36,7 +36,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/mlir/lib/Dialect/GPU/CMakeLists.txt ll
      __DEFAULT_ROCM_PATH__="${DEFAULT_ROCM_PATH}"
 diff -urp llvm-sycl-nightly-20230417.orig/mlir/lib/ExecutionEngine/CMakeLists.txt llvm-sycl-nightly-20230417/mlir/lib/ExecutionEngine/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/mlir/lib/ExecutionEngine/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/mlir/lib/ExecutionEngine/CMakeLists.txt	2024-02-29 09:07:10.380794535 -0800
++++ llvm-sycl-nightly-20230417/mlir/lib/ExecutionEngine/CMakeLists.txt	2024-02-29 16:01:18.676910312 -0800
 @@ -211,7 +211,7 @@ if(LLVM_ENABLE_PIC)
      # Configure ROCm support.
      if (NOT DEFINED ROCM_PATH)
@@ -46,9 +46,18 @@ diff -urp llvm-sycl-nightly-20230417.orig/mlir/lib/ExecutionEngine/CMakeLists.tx
        else()
          set(ROCM_PATH $ENV{ROCM_PATH} CACHE PATH "Path to which ROCm has been installed")
        endif()
+@@ -221,7 +221,7 @@ if(LLVM_ENABLE_PIC)
+     # Therefore, temporarily add the ROCm path to CMAKE_PREFIX_PATH so we can
+     # load HIP, then remove it
+     set(REAL_CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}")
+-    list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/hip")
++    list(APPEND CMAKE_PREFIX_PATH ${ROCM_PATH} "${ROCM_PATH}/@LIBDIR@/cmake/hip")
+     find_package(hip REQUIRED)
+     set(CMAKE_PREFIX_PATH "${REAL_CMAKE_PREFIX_PATH}")
+ 
 diff -urp llvm-sycl-nightly-20230417.orig/opencl/CMakeLists.txt llvm-sycl-nightly-20230417/opencl/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/opencl/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/opencl/CMakeLists.txt	2024-02-29 09:07:10.384794503 -0800
++++ llvm-sycl-nightly-20230417/opencl/CMakeLists.txt	2024-02-29 15:59:00.786616411 -0800
 @@ -23,29 +23,8 @@ set(OCL_LOADER_REPO
  set(OCL_HEADERS_TAG 9ddb236e6eb3cf844f9e2f81677e1045f9bf838e)
  set(OCL_LOADER_TAG 9a3e962f16f5097d2054233ad8b6dad51b6f41b7)
@@ -108,7 +117,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/opencl/CMakeLists.txt llvm-sycl-nightl
  add_subdirectory(opencl-aot)
 diff -urp llvm-sycl-nightly-20230417.orig/opencl/opencl-aot/CMakeLists.txt llvm-sycl-nightly-20230417/opencl/opencl-aot/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/opencl/opencl-aot/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/opencl/opencl-aot/CMakeLists.txt	2024-02-29 09:07:10.384794503 -0800
++++ llvm-sycl-nightly-20230417/opencl/opencl-aot/CMakeLists.txt	2024-02-29 15:59:00.786616411 -0800
 @@ -19,5 +19,5 @@ endif()
  
  target_link_libraries(${OPENCL_AOT_PROJECT_NAME}
@@ -119,7 +128,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/opencl/opencl-aot/CMakeLists.txt llvm-
 +)
 diff -urp llvm-sycl-nightly-20230417.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt llvm-sycl-nightly-20230417/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2024-02-29 09:07:10.388794471 -0800
++++ llvm-sycl-nightly-20230417/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt	2024-02-29 15:59:00.786616411 -0800
 @@ -20,7 +20,7 @@ if (NOT LIBOMPTARGET_BUILD_AMDGPU_PLUGIN
  endif()
  
@@ -131,7 +140,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/openmp/libomptarget/plugins/amdgpu/CMa
    libomptarget_say("Not building AMDGPU plugin: only support AMDGPU in Linux x86_64, ppc64le, or aarch64 hosts")
 diff -urp llvm-sycl-nightly-20230417.orig/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt llvm-sycl-nightly-20230417/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt	2024-02-29 09:07:10.396794406 -0800
++++ llvm-sycl-nightly-20230417/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt	2024-02-29 15:59:00.786616411 -0800
 @@ -20,7 +20,7 @@ if (NOT LIBOMPTARGET_BUILD_AMDGPU_PLUGIN
  endif()
  
@@ -143,7 +152,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/openmp/libomptarget/plugins-nextgen/am
    libomptarget_say("Not building AMDGPU NextGen plugin: only support AMDGPU in Linux x86_64, ppc64le, or aarch64 hosts")
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/cmake/modules/AddSYCL.cmake llvm-sycl-nightly-20230417/sycl/cmake/modules/AddSYCL.cmake
 --- llvm-sycl-nightly-20230417.orig/sycl/cmake/modules/AddSYCL.cmake	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/cmake/modules/AddSYCL.cmake	2024-02-29 09:07:10.400794374 -0800
++++ llvm-sycl-nightly-20230417/sycl/cmake/modules/AddSYCL.cmake	2024-02-29 15:59:00.786616411 -0800
 @@ -50,7 +50,7 @@ function(add_sycl_plugin PLUGIN_NAME)
        ${sycl_inc_dir}
      LIBRARIES
@@ -155,7 +164,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/cmake/modules/AddSYCL.cmake llvm-
    # Install feature test header
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/cmake/modules/AddSYCLUnitTest.cmake llvm-sycl-nightly-20230417/sycl/cmake/modules/AddSYCLUnitTest.cmake
 --- llvm-sycl-nightly-20230417.orig/sycl/cmake/modules/AddSYCLUnitTest.cmake	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/cmake/modules/AddSYCLUnitTest.cmake	2024-02-29 09:07:10.404794342 -0800
++++ llvm-sycl-nightly-20230417/sycl/cmake/modules/AddSYCLUnitTest.cmake	2024-02-29 15:59:00.786616411 -0800
 @@ -53,7 +53,7 @@ macro(add_sycl_unittest test_dirname lin
    target_link_libraries(${test_dirname}
      PRIVATE
@@ -167,7 +176,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/cmake/modules/AddSYCLUnitTest.cma
  
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/CMakeLists.txt	2024-02-29 09:07:10.404794342 -0800
++++ llvm-sycl-nightly-20230417/sycl/CMakeLists.txt	2024-02-29 15:59:00.786616411 -0800
 @@ -142,7 +142,7 @@ file(COPY ${OpenCL_INCLUDE_DIR}/CL
  # Include OpenCL Headers into final bundle.
  install(DIRECTORY ${OpenCL_INCLUDE_DIR}/CL
@@ -199,7 +208,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/CMakeLists.txt llvm-sycl-nightly-
  if("lld" IN_LIST LLVM_ENABLE_PROJECTS)
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/esimd_emulator/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/plugins/esimd_emulator/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/plugins/esimd_emulator/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/plugins/esimd_emulator/CMakeLists.txt	2024-02-29 09:07:10.408794310 -0800
++++ llvm-sycl-nightly-20230417/sycl/plugins/esimd_emulator/CMakeLists.txt	2024-02-29 15:59:00.786616411 -0800
 @@ -58,6 +58,7 @@ if ((DEFINED USE_DEFAULT_CM_EMU_SOURCE)
        INSTALL_DIR       ${CMAKE_CURRENT_BINARY_DIR}/cm-emu_install
        CMAKE_ARGS        -DLIBVA_INSTALL_PATH=/usr
@@ -210,8 +219,8 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/esimd_emulator/CMakeLists
      )
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/hip/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/plugins/hip/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/plugins/hip/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/plugins/hip/CMakeLists.txt	2024-02-29 09:07:10.408794310 -0800
-@@ -5,7 +5,7 @@ set(SYCL_BUILD_PI_HIP_PLATFORM "AMD" CAC
++++ llvm-sycl-nightly-20230417/sycl/plugins/hip/CMakeLists.txt	2024-02-29 15:59:00.790616362 -0800
+@@ -5,20 +5,20 @@ set(SYCL_BUILD_PI_HIP_PLATFORM "AMD" CAC
  message(STATUS "Including the PI API HIP backend for ${SYCL_BUILD_PI_HIP_PLATFORM}.")
  
  # Set default ROCm installation directory
@@ -220,7 +229,13 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/hip/CMakeLists.txt llvm-s
  
  # Set HIP include and lib dirs
  set(SYCL_BUILD_PI_HIP_INCLUDE_DIR "" CACHE STRING "Override HIP include dir path (set to \"\" for default behavior)")
-@@ -18,7 +18,7 @@ else()
+ set(SYCL_BUILD_PI_HIP_HSA_INCLUDE_DIR "" CACHE STRING "Override HSA include dir path (set to \"\" for default behavior)")
+ 
+ if("${SYCL_BUILD_PI_HIP_INCLUDE_DIR}" STREQUAL "")
+-  set(PI_HIP_INCLUDE_DIR "${SYCL_BUILD_PI_HIP_ROCM_DIR}/hip/include")
++  set(PI_HIP_INCLUDE_DIR "${SYCL_BUILD_PI_HIP_ROCM_DIR}/include/hip")
+ else()
+   set(PI_HIP_INCLUDE_DIR "${SYCL_BUILD_PI_HIP_INCLUDE_DIR}")
  endif()
  
  if("${SYCL_BUILD_PI_HIP_HSA_INCLUDE_DIR}" STREQUAL "")
@@ -234,13 +249,13 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/hip/CMakeLists.txt llvm-s
  set(SYCL_BUILD_PI_HIP_LIB_DIR "" CACHE STRING "Override HIP lib dir path (set to \"\" for default behavior)")
  if("${SYCL_BUILD_PI_HIP_LIB_DIR}" STREQUAL "")
 -  set(PI_HIP_LIB_DIR "${SYCL_BUILD_PI_HIP_ROCM_DIR}/hip/lib")
-+  set(PI_HIP_LIB_DIR "${SYCL_BUILD_PI_HIP_ROCM_DIR}/hip/@LIBDIR@")
++  set(PI_HIP_LIB_DIR "${SYCL_BUILD_PI_HIP_ROCM_DIR}/@LIBDIR@")
  else()
    set(PI_HIP_LIB_DIR "${SYCL_BUILD_PI_HIP_LIB_DIR}")
  endif()
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/opencl/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/plugins/opencl/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/plugins/opencl/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/plugins/opencl/CMakeLists.txt	2024-02-29 09:07:10.408794310 -0800
++++ llvm-sycl-nightly-20230417/sycl/plugins/opencl/CMakeLists.txt	2024-02-29 15:59:00.790616362 -0800
 @@ -15,7 +15,7 @@ add_sycl_plugin(opencl
      "${sycl_inc_dir}/sycl/detail/pi.h"
      "pi_opencl.cpp"
@@ -252,7 +267,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/opencl/CMakeLists.txt llv
  set_target_properties(pi_opencl PROPERTIES LINKER_LANGUAGE CXX)
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/unified_runtime/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/plugins/unified_runtime/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/plugins/unified_runtime/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/plugins/unified_runtime/CMakeLists.txt	2024-02-29 09:08:04.156362386 -0800
++++ llvm-sycl-nightly-20230417/sycl/plugins/unified_runtime/CMakeLists.txt	2024-02-29 15:59:00.790616362 -0800
 @@ -1,51 +1,58 @@
  # PI Unified Runtime plugin library
  #
@@ -350,7 +365,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/plugins/unified_runtime/CMakeList
    INTERFACE
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/source/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/source/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/source/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/source/CMakeLists.txt	2024-02-29 09:07:10.412794277 -0800
++++ llvm-sycl-nightly-20230417/sycl/source/CMakeLists.txt	2024-02-29 15:59:00.790616362 -0800
 @@ -113,7 +113,7 @@ function(add_sycl_rt_library LIB_NAME LI
    )
    #TODO: Remove dependency on opencl headers.
@@ -362,7 +377,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/source/CMakeLists.txt llvm-sycl-n
    if(SYCL_ENABLE_KERNEL_FUSION)
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-ls/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/tools/sycl-ls/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-ls/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/tools/sycl-ls/CMakeLists.txt	2024-02-29 09:07:10.412794277 -0800
++++ llvm-sycl-nightly-20230417/sycl/tools/sycl-ls/CMakeLists.txt	2024-02-29 15:59:00.790616362 -0800
 @@ -11,7 +11,7 @@ endif()
  target_link_libraries(sycl-ls
    PRIVATE
@@ -374,7 +389,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-ls/CMakeLists.txt llvm
    RUNTIME DESTINATION "bin" COMPONENT sycl-ls)
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-prof/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/tools/sycl-prof/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-prof/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/tools/sycl-prof/CMakeLists.txt	2024-02-29 09:07:10.412794277 -0800
++++ llvm-sycl-nightly-20230417/sycl/tools/sycl-prof/CMakeLists.txt	2024-02-29 15:59:00.790616362 -0800
 @@ -15,9 +15,7 @@ target_compile_options(sycl-prof PRIVATE
  add_library(sycl_profiler_collector SHARED collector.cpp)
  target_compile_definitions(sycl_profiler_collector PRIVATE XPTI_CALLBACK_API_EXPORTS)
@@ -388,7 +403,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-prof/CMakeLists.txt ll
      "${sycl_src_dir}"
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-sanitize/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/tools/sycl-sanitize/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-sanitize/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/tools/sycl-sanitize/CMakeLists.txt	2024-02-29 09:07:10.412794277 -0800
++++ llvm-sycl-nightly-20230417/sycl/tools/sycl-sanitize/CMakeLists.txt	2024-02-29 15:59:00.790616362 -0800
 @@ -13,9 +13,7 @@ target_compile_options(sycl-sanitize PRI
  add_library(sycl_sanitizer_collector SHARED collector.cpp)
  target_compile_definitions(sycl_sanitizer_collector PRIVATE XPTI_CALLBACK_API_EXPORTS)
@@ -402,7 +417,7 @@ diff -urp llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-sanitize/CMakeLists.tx
      "${CMAKE_CURRENT_SOURCE_DIR}/../xpti_helpers/"
 diff -urp llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-trace/CMakeLists.txt llvm-sycl-nightly-20230417/sycl/tools/sycl-trace/CMakeLists.txt
 --- llvm-sycl-nightly-20230417.orig/sycl/tools/sycl-trace/CMakeLists.txt	2023-04-17 11:25:49.000000000 -0700
-+++ llvm-sycl-nightly-20230417/sycl/tools/sycl-trace/CMakeLists.txt	2024-02-29 09:07:10.412794277 -0800
++++ llvm-sycl-nightly-20230417/sycl/tools/sycl-trace/CMakeLists.txt	2024-02-29 15:59:00.790616362 -0800
 @@ -73,9 +73,7 @@ endif()
  
  target_compile_definitions(sycl_pi_trace_collector PRIVATE XPTI_CALLBACK_API_EXPORTS)

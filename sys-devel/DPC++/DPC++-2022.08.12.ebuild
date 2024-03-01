@@ -3,60 +3,25 @@
 
 EAPI=8
 
-# LLVM 18 ; See https://github.com/intel/llvm/blob/nightly-2023-10-26/llvm/CMakeLists.txt#L19
-# U22.04 ; See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L310
+# LLVM 16 ; See https://github.com/intel/llvm/blob/sycl-nightly/20220812/llvm/CMakeLists.txt#L19
+# U20.04 ; See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md?plain=1#L292
 
 # GPUs were tested/supported upstream.
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/UsersManual.md?plain=1#L74
+# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md
 AMDGPU_TARGETS_COMPAT=(
-	gfx700
-	gfx701
-	gfx702
-	gfx801
-	gfx802
-	gfx803
-	gfx805
-	gfx810
-	gfx900
-	gfx902
-	gfx904
-	gfx906 # Tested upstream
+        gfx906 # Tested upstream
 	gfx908 # Tested upstream
-	gfx90a # Tested upstream
-	#gfx940 # Set by libclc
-	gfx1010
-	gfx1011
-	gfx1012
-	gfx1013
-	gfx1030 # Tested upstream
-	gfx1031
-	gfx1032
-	gfx1034
 )
 CUDA_TARGETS_COMPAT=(
 	sm_50 # Default
-	sm_52
-	sm_53
-	sm_60
-	sm_61
-	sm_62
-	sm_70
-	#sm_71 # Tested upstream
-	sm_72
-	sm_75
-	sm_80
-	sm_86 # Set by libclc
-	sm_87
-	sm_89
-	sm_90
+	sm_71 # Tested upstream
+	#sm_86 # Set by libclc
 )
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
-CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2023-10-26
-VC_INTR_COMMIT="17a53f4304463b8e7e639d57ef17479040a8a2ad" # Newer versions cause compile failure \
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19
-UR_COMMIT="cf26de283a1233e6c93feb085acc10c566888b59" # \
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/plugins/unified_runtime/CMakeLists.txt#L63C27-L63C67
+CPU_EMUL_COMMIT="673f2071ed7b648cd05824cd0ded24f96734e50c" # Same as 1.0.23 ; Search committer-date:<=2022-08-12
+VC_INTR_COMMIT="abce9184b7a3a7fe1b02289b9285610d9dc45465" # Newer versions cause compile failure \
+# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake python-any-r1 rocm toolchain-funcs
@@ -68,28 +33,25 @@ DOCS_DEPEND="
 	>=media-gfx/graphviz-2.42.2
 	virtual/latex-base
 	$(python_gen_any_dep '
-		>=dev-python/myst-parser-0.16.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-4.3.2[${PYTHON_USEDEP}]
-		>=dev-python/recommonmark-0.6.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-1.8.5[${PYTHON_USEDEP}]
+		>=dev-python/recommonmark-0.4.0[${PYTHON_USEDEP}]
+		dev-python/myst-parser[${PYTHON_USEDEP}]
 	')
 "
 
 inherit docs
 
 SRC_URI="
-https://github.com/intel/llvm/archive/refs/tags/nightly-${PV//./-}.tar.gz
+https://github.com/intel/llvm/archive/refs/tags/sycl-nightly/${PV//./}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/intel/vc-intrinsics/archive/${VC_INTR_COMMIT}.tar.gz
 	-> ${P}-vc-intrinsics-${VC_INTR_COMMIT:0:7}.tar.gz
-https://github.com/oneapi-src/unified-runtime/archive/${UR_COMMIT}.tar.gz
-	-> ${P}-unified-runtime-${UR_COMMIT:0:7}.tar.gz
 	esimd_emulator? (
 https://github.com/intel/cm-cpu-emulation/archive/${CPU_EMUL_COMMIT}.tar.gz
 	-> ${P}-cm-cpu-emulation-${CPU_EMUL_COMMIT:0:7}.tar.gz
 	)
 "
-S="${WORKDIR}/llvm-nightly-${PV//./-}"
-S_UR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
+S="${WORKDIR}/llvm-sycl-nightly-${PV//./}"
 BUILD_DIR="${S}/build"
 CMAKE_USE_DIR="${S}/llvm"
 
@@ -99,8 +61,8 @@ LICENSE="
 	Apache-2.0
 	MIT
 "
-SLOT="0/7" # Based on libsycl.so in SYCL_MAJOR_VERSION in \
-# https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/CMakeLists.txt#L35
+SLOT="0/5" # Based on libsycl.so in SYCL_MAJOR_VERSION in \
+# https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/CMakeLists.txt#L35
 #KEYWORDS="~amd64" # Needs install test
 ALL_LLVM_TARGETS=(
 	AArch64
@@ -121,14 +83,9 @@ ALL_LLVM_TARGETS=(
 	X86
 	XCore
 )
-ALL_LLVM_TARGETS=(
-	"${ALL_LLVM_TARGETS[@]/#/llvm_targets_}"
-)
+ALL_LLVM_TARGETS=( "${ALL_LLVM_TARGETS[@]/#/llvm_targets_}" )
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
 ROCM_SLOTS=(
-	rocm_5_4
-	rocm_5_3
-	rocm_4_5
 	rocm_4_3
 	rocm_4_2
 )
@@ -184,21 +141,20 @@ RESTRICT="
 		test
 	)
 "
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/clang/include/clang/Basic/Cuda.h#L42
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L194 for CUDA
-# See https://github.com/intel/llvm/blob/nightly-2023-10-26/sycl/doc/GetStartedGuide.md?plain=1#L244 for ROCm
-
-RDEPEND="
+# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/clang/include/clang/Basic/Cuda.h
+# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md?plain=1#L191 for CUDA
+# See https://github.com/intel/llvm/blob/sycl-nightly/20220812/sycl/doc/GetStartedGuide.md?plain=1#L247 for ROCm
+DEPEND="
 	>=dev-build/libtool-2.4.6
-	>=dev-libs/boost-1.74.0:=
-	>=dev-libs/level-zero-1.11.0:=
-	>=dev-util/opencl-headers-2022.01.04:=
-	>=dev-util/spirv-headers-1.3.216:=
-	>=dev-util/spirv-tools-1.3.216
-	>=media-libs/libva-2.14.0
+	>=dev-libs/boost-1.71.0:=
+	>=dev-util/opencl-headers-2019.08.06:=
+	>=media-libs/libva-2.7.0
+	dev-libs/level-zero:=
+	dev-util/spirv-headers:=
+	dev-util/spirv-tools
 	dev-libs/opencl-icd-loader
 	esimd_emulator? (
-		>=dev-libs/libffi-3.4.2:=
+		>=dev-libs/libffi-3.3:=
 	)
 	cuda? (
 		|| (
@@ -207,37 +163,22 @@ RDEPEND="
 	)
 	rocm? (
 		|| (
-			rocm_5_4? (
-				=dev-util/hip-5.4*:=
-			)
-			rocm_5_3? (
-				=dev-util/hip-5.3*:=
-			)
-			rocm_4_5? (
-				=dev-util/hip-4.5*:=
-			)
-			rocm_4_3? (
-				=dev-util/hip-4.3*:=
-			)
-			rocm_4_2? (
-				=dev-util/hip-4.2*:=
-			)
+			=dev-util/hip-4.3*:=
+			=dev-util/hip-4.2*:=
 		)
 	)
 "
-DEPEND="
-	${RDEPEND}
+RDEPEND="
+	${DEPEND}
 "
 BDEPEND="
-	>=dev-build/cmake-3.22.1
+	>=dev-build/cmake-3.16.3
+	>=sys-devel/gcc-7.1.0[cxx]
 	virtual/pkgconfig
-	|| (
-		>=sys-devel/gcc-7.1.0[cxx]
-		>=sys-devel/clang-5
-	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2023-10-26-system-libs.patch"
+	"${FILESDIR}/${PN}-2022.08.12-system-libs.patch"
+	"${FILESDIR}/${PN}-2022.12-gcc13.patch"
 )
 
 pkg_setup() {
@@ -246,27 +187,10 @@ pkg_setup() {
 eerror "Switch to >=sys-devel/gcc-7.1"
 			die
 		fi
-	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt "5.0" ; then
-eerror "Switch to >=sys-devel/clang-5.0"
-			die
-		fi
 	fi
 	python_setup
 	if use rocm ; then
-		if use rocm_5_4 ; then
-			export LLVM_MAX_SLOT="15"
-			export ROCM_VERSION=$(best_version "=dev-util/hip-5.4*" | sed -e "s|dev-util/hip-||g")
-			export ROCM_SLOT="5.4"
-		elif use rocm_5_3 ; then
-			export LLVM_MAX_SLOT="15"
-			export ROCM_VERSION=$(best_version "=dev-util/hip-5.3*" | sed -e "s|dev-util/hip-||g")
-			export ROCM_SLOT="5.3"
-		elif use rocm_4_5 ; then
-			export LLVM_MAX_SLOT="13"
-			export ROCM_VERSION=$(best_version "=dev-util/hip-4.5*" | sed -e "s|dev-util/hip-||g")
-			export ROCM_SLOT="4.5"
-		elif use rocm_4_3 ; then
+		if use rocm_4_3 ; then
 			export LLVM_MAX_SLOT="13"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.3*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.3"
@@ -282,15 +206,10 @@ eerror "Switch to >=sys-devel/clang-5.0"
 src_prepare() {
 	cmake_src_prepare
 
-	pushd "${S_UR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/unified-runtime-cf26de2-rocm-path.patch"
-	popd >/dev/null 2>&1 || die
-
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	export PATCH_PATHS=(
-		"${S_UR}/clang/tools/amdgpu-arch/CMakeLists.txt"
 		"${S}/libc/src/math/gpu/vendor/CMakeLists.txt"
 		"${S}/libc/utils/gpu/loader/CMakeLists.txt"
 		"${S}/mlir/lib/Dialect/GPU/CMakeLists.txt"
@@ -356,9 +275,6 @@ src_configure() {
 		-DSYCL_ENABLE_WERROR="OFF"
 		-DSYCL_ENABLE_XPTI_TRACING="ON"
 		-DSYCL_INCLUDE_TESTS="$(usex test)"
-		-DSYCL_PI_UR_SOURCE_DIR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
-		-DSYCL_PI_UR_USE_FETCH_CONTENT="OFF"
-		-DUNIFIED_RUNTIME_SOURCE_DIR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
 		-DXPTI_ENABLE_WERROR="OFF"
 		-DXPTI_SOURCE_DIR="${S}/xpti"
 	)
