@@ -24,5 +24,8 @@
     <flag name="hip">
       Use the HIP backend
     </flag>
+    <flag name="sycl-fusion">
+      Enable the JIT kernel fusion compiler
+    </flag>
   </use>
 </pkgmetadata>

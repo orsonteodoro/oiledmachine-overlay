@@ -284,6 +284,7 @@ src_configure() {
 	# Extracted from buildbot/configure.py
 	local mycmakeargs=(
 		-DBOOST_MP11_SOURCE_DIR="${ESYSROOT}/usr "
+#		-DBUILD_SHARED_LIBS # Off by default
 		-DCLANG_INCLUDE_TESTS="$(usex test)"
 		# The sycl part of the build system insists on installing during compiling
 		# Install it to some temporary directory

@@ -245,6 +245,7 @@ src_configure() {
 	# Extracted from buildbot/configure.py
 	local mycmakeargs=(
 		-DBOOST_MP11_SOURCE_DIR="${ESYSROOT}/usr "
+#		-DBUILD_SHARED_LIBS # Off by default
 		-DCLANG_INCLUDE_TESTS="$(usex test)"
 		# The sycl part of the build system insists on installing during compiling
 		# Install it to some temporary directory
@@ -252,8 +253,8 @@ src_configure() {
 		-DCMAKE_INSTALL_INFODIR="${BUILD_DIR}/install/share/info"
 		-DCMAKE_INSTALL_MANDIR="${BUILD_DIR}/install/share/man"
 		-DCMAKE_INSTALL_PREFIX="${BUILD_DIR}/install"
-		-DLEVEL_ZERO_INCLUDE_DIR="${ESYSROOT}/usr/include/level_zero"
-		-DLEVEL_ZERO_LIBRARY="${ESYSROOT}/usr/lib64/libze_loader.so"
+		-DL0_INCLUDE_DIR="${ESYSROOT}/usr/include/level_zero"
+		-DL0_LIBRARY="${ESYSROOT}/usr/lib64/libze_loader.so"
 		-DLLVM_BUILD_DOCS="$(usex doc)"
 		-DLLVM_BUILD_TOOLS="ON"
 		-DLLVM_ENABLE_ASSERTIONS="ON"
@@ -309,6 +310,8 @@ src_configure() {
 			-DSYCL_BUILD_PI_HIP_PLATFORM="AMD"
 		)
 	fi
+
+	
 
 	cmake_src_configure
 }

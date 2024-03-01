@@ -136,7 +136,7 @@ IUSE="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_SLOTS[@]}
-cuda esimd_emulator rocm test
+cfi cuda esimd_emulator fortify-source native-cpu rocm +sycl-fusion test
 "
 gen_cuda_required_use() {
 	local x
@@ -324,6 +324,8 @@ src_configure() {
 	# Extracted from buildbot/configure.py
 	local mycmakeargs=(
 		-DBOOST_MP11_SOURCE_DIR="${ESYSROOT}/usr "
+		-DBUG_REPORT_URL="https://github.com/intel/llvm/issues"
+#		-DBUILD_SHARED_LIBS # Off by default
 		-DCLANG_INCLUDE_TESTS="$(usex test)"
 		# The sycl part of the build system insists on installing during compiling
 		# Install it to some temporary directory
@@ -344,6 +346,7 @@ src_configure() {
 		-DLLVM_EXTERNAL_LLVM_SPIRV_SOURCE_DIR="${S}/llvm-spirv"
 		-DLLVM_EXTERNAL_PROJECTS="sycl;llvm-spirv;opencl;libdevice;xpti;xptifw"
 		-DLLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR="${ESYSROOT}/usr"
+		-DLLVM_EXTERNAL_SYCL_FUSION_SOURCE_DIR="${S}/sycl-fusion"
 		-DLLVM_EXTERNAL_SYCL_SOURCE_DIR="${S}/sycl"
 		-DLLVM_EXTERNAL_XPTI_SOURCE_DIR="${S}/xpti"
 		-DLLVM_EXTERNAL_XPTIFW_SOURCE_DIR="${S}/xptifw"
@@ -352,7 +355,9 @@ src_configure() {
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 		-DLLVMGenXIntrinsics_SOURCE_DIR="${WORKDIR}/vc-intrinsics-${VC_INTR_COMMIT}"
 		-DSYCL_CLANG_EXTRA_FLAGS="${CXXFLAGS}"
-		-DSYCL_ENABLE_PLUGINS="level_zero;opencl;"$(usev esimd_emulator)";"$(usex rocm "hip" "")";"$(usev cuda)
+		-DSYCL_ENABLE_KERNEL_FUSION=$(usex sycl-fusion)
+		-DSYCL_ENABLE_MAJOR_RELEASE_PREVIEW_LIB="OFF" # ON upstream
+		-DSYCL_ENABLE_PLUGINS="level_zero;opencl;"$(usev esimd_emulator)";"$(usex rocm "hip" "")";"$(usev cuda)";"$(usev native_cpu)
 		-DSYCL_ENABLE_WERROR="OFF"
 		-DSYCL_ENABLE_XPTI_TRACING="ON"
 		-DSYCL_INCLUDE_TESTS="$(usex test)"
@@ -362,6 +367,20 @@ src_configure() {
 		-DXPTI_ENABLE_WERROR="OFF"
 		-DXPTI_SOURCE_DIR="${S}/xpti"
 	)
+
+	if use cfi ; then
+		mycmakeargs+=(
+			-DEXTRA_SECURITY_FLAGS="sanitize"
+		)
+	elif use fortify-source ; then
+		mycmakeargs+=(
+			-DEXTRA_SECURITY_FLAGS="default"
+		)
+	else
+		mycmakeargs+=(
+			-DEXTRA_SECURITY_FLAGS="none"
+		)
+	fi
 
 	if use cuda ; then
 		mycmakeargs+=(
@@ -380,6 +399,12 @@ src_configure() {
 		mycmakeargs+=(
 			-DLibFFI_INCLUDE_DIR="${ESYSROOT}/usr/lib64/libffi/include"
 			-DUSE_LOCAL_CM_EMU_SOURCE="${WORKDIR}/cm-cpu-emulation-${CPU_EMUL_COMMIT}"
+		)
+	fi
+
+	if use native-cpu ; then
+		mycmakeargs+=(
+			-DLIBCLC_TARGETS_TO_BUILD=";$(gcc -dumpmachine)"
 		)
 	fi
 
