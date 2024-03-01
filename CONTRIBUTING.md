@@ -80,7 +80,7 @@ based on an outdated style guide.
     - For utilitarian reasons by maximizing happiness.  It works 100% on user A
       but broken on user B who keeps running into the bug.  Let user A use it.
       If completely disabled, both users are unhappy.  If user decides via USE
-      flag, user A is happy and user B is unhappy.
+      flag, user A is happy and user B is unhappy/happy.
     - Remove doubt of deception.  Why do I see it available on the mainstream OS
       or other distro but not on our distro?
     - Changing tastes.  The user may be pro or anti security over time.  The
@@ -95,13 +95,14 @@ based on an outdated style guide.
     - Security
     - We did not notice that the feature existed
     - Lack of mental capacity/capabilities to make the feature available
+    - Did not do enough research to understand the problem
     - Unavailable hardware
     - Convenient excuses
     - Lazy
     - Programmer's block
     - Fear to confront the problem
     - Mental health
-    - Technicalities (unavailable ebuilds, distro restrictions)
+    - Technicalities (unavailable ebuilds, distro restrictions, ISP throttling/quotas)
 
 * Coding style:
   - The ebuilds contents must be mostly symmetric/even like code style.
