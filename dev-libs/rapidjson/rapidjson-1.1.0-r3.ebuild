@@ -7,15 +7,7 @@ EAPI=8
 
 inherit cmake
 
-DESCRIPTION="A fast JSON parser/generator for C++ with both SAX/DOM style API"
-HOMEPAGE="https://rapidjson.org/"
-
-LICENSE="MIT"
-IUSE="doc examples test"
-RESTRICT="!test? ( test )"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-
-if [[ ${PV} == *9999 ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/miloyip/rapidjson.git"
 	inherit git-r3
 else
@@ -24,14 +16,22 @@ else
 	S="${WORKDIR}/rapidjson-${PV}"
 fi
 
+DESCRIPTION="A fast JSON parser/generator for C++ with both SAX/DOM style API"
+HOMEPAGE="https://rapidjson.org/"
+LICENSE="MIT"
+IUSE="doc examples test"
+RESTRICT="!test? ( test )"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND="
-	doc? ( app-text/doxygen )
+	doc? (
+		app-text/doxygen
+	)
 	test? (
 		dev-cpp/gtest
 		dev-debug/valgrind
 	)"
-RDEPEND=""
-
+RDEPEND="
+"
 # Header only use shared folders like glm
 PATCHES=(
 	"${FILESDIR}/${P}-gcc-7.patch"
@@ -40,20 +40,25 @@ PATCHES=(
 
 src_prepare() {
 	cmake_src_prepare
-
-	sed -i -e 's|-Werror||g' CMakeLists.txt || die
-	sed -i -e 's|-Werror||g' example/CMakeLists.txt || die
+	sed -i \
+		-e 's|-Werror||g' \
+		"CMakeLists.txt" \
+		|| die
+	sed -i \
+		-e 's|-Werror||g' \
+		"example/CMakeLists.txt" \
+		|| die
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DDOC_INSTALL_DIR="${EPREFIX}/usr/share/doc/${PF}"
 		-DLIB_INSTALL_DIR="${EPREFIX}/usr/$(get_libdir)"
+		-DRAPIDJSON_BUILD_DOC="$(usex doc)"
+		-DRAPIDJSON_BUILD_EXAMPLES="$(usex examples)"
+		-DRAPIDJSON_BUILD_TESTS="$(usex test)"
+		-DRAPIDJSON_BUILD_THIRDPARTY_GTEST="OFF"
 		-DSHARE_INSTALL_DIR="${EPREFIX}/usr/share"
-		-DRAPIDJSON_BUILD_DOC=$(usex doc)
-		-DRAPIDJSON_BUILD_EXAMPLES=$(usex examples)
-		-DRAPIDJSON_BUILD_TESTS=$(usex test)
-		-DRAPIDJSON_BUILD_THIRDPARTY_GTEST=OFF
 	)
 	cmake_src_configure
 }
