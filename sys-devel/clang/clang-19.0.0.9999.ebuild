@@ -4,10 +4,10 @@
 
 EAPI=8
 
-if [[ ${PV} =~ 9999 ]] ; then
-IUSE+="
-	fallback-commit
-"
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
 fi
 
 inherit llvm-ebuilds
