@@ -3,10 +3,10 @@
 
 EAPI=8
 
-if [[ ${PV} =~ 9999 ]] ; then
-IUSE+="
-	fallback-commit
-"
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
 fi
 
 # For AMDGPUs, see https://github.com/llvm/llvm-project/blob/release/17.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57
@@ -63,7 +63,7 @@ ROCM_SKIP_COMMON_PATHS_PATCHES=1
 inherit llvm-ebuilds
 
 _llvm_set_globals() {
-	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 einfo "Using fallback commit"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
 	fi
