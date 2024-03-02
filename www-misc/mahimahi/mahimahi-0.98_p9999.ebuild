@@ -5,7 +5,20 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
-inherit autotools git-r3
+inherit autotools
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/ravinet/mahimahi.git"
+	EGIT_BRANCH="master"
+	FALLBACK_COMMIT="0bd12164388bc109bbbd8ffa03a09e94adcbec5a" # May 5, 2023
+	inherit git-r3
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+else
+	SRC_URI=""
+	S="${WORKDIR}/${P}"
+	die "FIXME"
+fi
 
 DESCRIPTION="Web performance measurement toolkit"
 HOMEPAGE="
@@ -15,7 +28,7 @@ https://github.com/ravinet/mahimahi
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" alt-ssl fallback-commit gnuplot +sudo +sysctl"
+IUSE+=" alt-ssl gnuplot +sudo +sysctl"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
@@ -57,7 +70,6 @@ BDEPEND+="
 "
 SRC_URI="
 "
-S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 
 PATCHES=(
@@ -65,21 +77,15 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.98-BUFFER_SIZE.patch"
 )
 
-src_unpack() {
-	EGIT_REPO_URI="https://github.com/ravinet/mahimahi.git"
-	EGIT_BRANCH="master"
-	if use fallback-commit ; then
-		EGIT_COMMIT="b493df43ed72901cff6d7e6d3acfed7c10abbff3"
-	else
-		EGIT_COMMIT="HEAD"
-	fi
+unpack_live() {
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
 	local actual_version=$(grep "AC_INIT" "${S}/configure.ac" \
 		| cut -f 2 -d "," \
 		| sed -e "s| \[||" -e "s|\]||")
-	local expected_version=$(ver_cut 1-2 ${PV})
-	if ver_test ${actual_version} -ne ${expected_version} ; then
+	local expected_version=$(ver_cut 1-2 "${PV}")
+	if ver_test "${actual_version}" -ne "${expected_version}" ; then
 eerror
 eerror "A version inconsistency detected which may change DEPENDs."
 eerror
@@ -89,6 +95,14 @@ eerror
 eerror "Use the fallback-commit USE flag to continue."
 eerror
 		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		unpack_live
+	else
+		unpack ${A}
 	fi
 }
 
