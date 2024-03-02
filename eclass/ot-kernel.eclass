@@ -510,7 +510,7 @@ GENPATCHES_MAJOR_MINOR_REVISION="${KV_MAJOR_MINOR}-${GENPATCHES_VER}"
 GENPATCHES_FN="linux-patches-${GENPATCHES_MAJOR_MINOR_REVISION}.tar.bz2"
 GENPATCHES_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_FN}"
 
-KCP_COMMIT_SNAPSHOT="759528e10fc7df6b778e7f242733ffd6a127e326" # 20231227
+KCP_COMMIT_SNAPSHOT="c409515574bd4d69af45ad74d4e7ba7151010516" # 20240221
 
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
@@ -522,7 +522,11 @@ KERNEL_PATCH_0_TO_1_URI=\
 KCP_CORTEX_A72_BN=\
 "build-with-mcpu-for-cortex-a72"
 
-if ver_test ${KV_MAJOR_MINOR} -ge 5.17 ; then
+if ver_test ${KV_MAJOR_MINOR} -ge 6.8 ; then
+	KCP_9_1_BN="more-uarches-for-kernel-6.8-rc4%2B"
+elif ver_test ${KV_MAJOR_MINOR} -ge 6.1 ; then
+	KCP_9_1_BN="more-uarches-for-kernel-6.1.79-6.8-rc3"
+elif ver_test ${KV_MAJOR_MINOR} -ge 5.17 ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.17%2B"
 elif ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.15-5.16"

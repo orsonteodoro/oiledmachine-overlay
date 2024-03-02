@@ -158,7 +158,7 @@
 		    Clang PGO				E
 		    Clear Linux patchset		A
 		    genpatches				A
-		    kernel_compiler_patch		X
+		    kernel_compiler_patch		A
 		    Project C				A
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
@@ -171,7 +171,7 @@
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				E
 		    genpatches				A
-		    kernel_compiler_patch		D
+		    kernel_compiler_patch		A
 		    Project C				D
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
