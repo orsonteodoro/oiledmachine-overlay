@@ -1,0 +1,5 @@
+AUTOBUMP=1
+CATEGORY="www-misc"
+PN="socli"
+BUMP_POLICY="latest-version"
+SLOT_COMPONENTS="1"

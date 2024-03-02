@@ -6,7 +6,14 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit distutils-r1
+
+SRC_URI="
+https://github.com/gautamkrishnar/socli/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="Stack overflow command line client. Search and browse stack \
 overflow without leaving the terminal"
@@ -34,33 +41,40 @@ BDEPEND+="
 		dev-python/pytest-runner[${PYTHON_USEDEP}]
 	)
 "
-SRC_URI="
-https://github.com/gautamkrishnar/socli/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
 RESTRICT="mirror"
-S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
-	sed -i "/setup_requires/d" setup.py || die
-	sed -i "/tests_require/d" setup.py || die
+	sed -i \
+		-e "/setup_requires/d" \
+		-e "/tests_require/d" \
+		"setup.py" \
+		|| die
 	distutils-r1_src_prepare
 }
 
 python_install_all() {
 	distutils-r1_python_install_all
-	rm -rf "${ED}/usr/socli" || die
+	rm -rf \
+		"${ED}/usr/socli" \
+		|| die
 }
 
 src_install() {
 	default
 	distutils-r1_src_install
 	if use man ; then
-		cp "${ED}/usr/man/man1/${PN}.1" "${T}" || die
-		rm -rf "${ED}/usr/man" || die
+		cp \
+			"${ED}/usr/man/man1/${PN}.1" \
+			"${T}" \
+			|| die
+		rm -rf \
+			"${ED}/usr/man" \
+			|| die
 		doman "${T}/${PN}.1"
 	else
-		rm -rf "${ED}/usr/man" || die
+		rm -rf \
+			"${ED}/usr/man" \
+			|| die
 	fi
 }
 
