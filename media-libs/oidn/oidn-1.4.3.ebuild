@@ -3,28 +3,47 @@
 
 EAPI=8
 
+# SSE4.1 hardware was released in 2008.
+# See scripts/build.py for release versioning.
+# Clang is more smoother multitask-wise.
+
 CMAKE_BUILD_TYPE=Release
+LEGACY_TBB_SLOT="2"
+LLVM_SLOTS=( 16 15 14 13 12 11 10 )
+MIN_CLANG_PV="3.3"
+MIN_GCC_PV="4.8.1"
+ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{10..11} )
 
 inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
+
+# MKL_DNN is oneDNN 2.2.4 with additional custom commits.
+MKL_DNN_COMMIT="f53274c9fef211396655fc4340cb838452334089"
+OIDN_WEIGHTS_COMMIT="a34b7641349c5a79e46a617d61709c35df5d6c28"
+ORG_GH="https://github.com/OpenImageDenoise"
+
+if [[ ${PV} = *9999 ]]; then
+	inherit git-r3
+	EGIT_REPO_URI="${ORG_GH}/oidn.git"
+	EGIT_BRANCH="master"
+else
+	SRC_URI="
+${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz
+	-> ${P}.tar.gz
+${ORG_GH}/mkl-dnn/archive/${MKL_DNN_COMMIT}.tar.gz
+	-> ${PN}-mkl-dnn-${MKL_DNN_COMMIT:0:7}.tar.gz
+	built-in-weights? (
+${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz
+	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz
+	)
+	"
+fi
 
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
-# MKL_DNN is oneDNN 2.2.4 with additional custom commits.
-MKL_DNN_COMMIT="f53274c9fef211396655fc4340cb838452334089"
-OIDN_WEIGHTS_COMMIT="a34b7641349c5a79e46a617d61709c35df5d6c28"
-ORG_GH="https://github.com/OpenImageDenoise"
-# SSE4.1 hardware was released in 2008.
-# See scripts/build.py for release versioning.
-# Clang is more smoother multitask-wise.
-MIN_CLANG_PV="3.3"
-MIN_GCC_PV="4.8.1"
-ONETBB_SLOT="0"
-LEGACY_TBB_SLOT="2"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-LLVM_SLOTS=( 16 15 14 13 12 11 10 )
 IUSE+="
 ${LLVM_SLOTS[@]/#/llvm-}
 +apps +built-in-weights +clang doc gcc openimageio
@@ -81,22 +100,6 @@ BDEPEND+="
 		)
 	)
 "
-if [[ ${PV} = *9999 ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="${ORG_GH}/oidn.git"
-	EGIT_BRANCH="master"
-else
-	SRC_URI="
-${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz
-	-> ${P}.tar.gz
-${ORG_GH}/mkl-dnn/archive/${MKL_DNN_COMMIT}.tar.gz
-	-> ${PN}-mkl-dnn-${MKL_DNN_COMMIT:0:7}.tar.gz
-	built-in-weights? (
-${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz
-	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz
-	)
-	"
-fi
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 PATCHES=(
@@ -124,14 +127,16 @@ pkg_setup() {
 	if tc-is-clang || use clang ; then
 		local s
 		for s in ${LLVM_SLOTS[@]} ; do
-			if use llvm-${s} ; then
-				LLVM_MAX_SLOT=${s}
+			if use "llvm-${s}" ; then
+				LLVM_MAX_SLOT="${s}"
 				llvm_pkg_setup
 				break
 			fi
 		done
 	fi
 
+	# This needs to be placed here to avoid this error:
+	# python: no python-exec wrapped executable found in /usr/lib64/rocm/5.5/lib/python-exec.
 	python-single-r1_pkg_setup
 }
 

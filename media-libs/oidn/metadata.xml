@@ -47,7 +47,7 @@
       Builds with GPU denoising support.
     </flag>
     <flag name="icc">
-      Builds with the Intel compiler.
+      Builds with the Intel® compiler.
     </flag>
     <flag name="cuda">
       Builds with GPU denoising support.
@@ -56,7 +56,7 @@
       Use OpenImageIO for saving and loading images in examples and tests.
     </flag>
     <flag name="sycl">
-      Builds with GPU denoising support.
+      Builds support for Intel® GPUs.
     </flag>
     <flag name="test">
       Run tests.

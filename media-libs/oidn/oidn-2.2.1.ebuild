@@ -48,7 +48,7 @@ inherit cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
 COMPOSABLE_KERNEL_COMMIT="e85178b4ca892a78344271ae64103c9d4d1bfc40"
 CUTLASS_COMMIT="66d9cddc832c1cdc2b30a8755274f7f74640cfe6"
 MKL_DNN_COMMIT="9bea36e6b8e341953f922ce5c6f5dbaca9179a86"
-OIDN_WEIGHTS_COMMIT="4322c25e25a05584f65da1a4be5cef40a4b2e90b"
+OIDN_WEIGHTS_COMMIT="44ff866123ffd6c26bbc27e5e48e8cd4ec8a1a66"
 ORG_GH="https://github.com/OpenImageDenoise"
 
 if [[ ${PV} = *9999 ]]; then
@@ -91,7 +91,6 @@ ${ROCM_SLOTS[@]}
 +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
 r1
 "
-
 gen_required_use_cuda_targets() {
 	local x
 	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
@@ -149,6 +148,7 @@ gen_clang_depends() {
 		"
 	done
 }
+
 gen_hip_depends() {
 	local hip_version
 	for hip_version in ${HIP_VERSIONS[@]} ; do
@@ -166,6 +166,7 @@ gen_hip_depends() {
 		"
 	done
 }
+
 # See https://github.com/OpenImageDenoise/oidn/blob/v1.4.3/scripts/build.py
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -180,7 +181,7 @@ RDEPEND+="
 		dev-util/hip:=[rocm]
 	)
 	sycl? (
-		>=sys-devel/DPC++-2022.12.15:0/6
+		>=sys-devel/DPC++-2023.10.26:0/7
 		sys-devel/DPC++:=
 	)
 	|| (
@@ -196,7 +197,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-lang/ispc-1.17.0
+	>=dev-lang/ispc-1.21.0
 	>=dev-build/cmake-3.15
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.8
@@ -220,8 +221,8 @@ RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
-	"${FILESDIR}/${PN}-1.4.1-findtbb-alt-lib-path.patch"
-	"${FILESDIR}/${PN}-2.0.1-hip-buildfiles-changes.patch"
+	"${FILESDIR}/${PN}-2.2.1-findtbb-alt-lib-path.patch"
+	"${FILESDIR}/${PN}-2.2.1-hip-buildfiles-changes.patch"
 	"${FILESDIR}/${PN}-2.0.1-set-rocm-path.patch"
 )
 
