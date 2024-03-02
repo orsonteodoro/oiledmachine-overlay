@@ -6,34 +6,11 @@
 
 EAPI=8
 
-CONFIG_CHECK="~ADVISE_SYSCALLS"
-TPGO_CONFIGURE_DONT_SET_FLAGS=1
-PYTHON_COMPAT=( python3_{8..11} )
-PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
-inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
-inherit xdg-utils
-DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
-LICENSE="
-	Apache-1.1
-	Apache-2.0
-	Artistic-2
-	BSD
-	BSD-2
-	icu-71.1
-	ISC
-	MIT
-	Unicode-DFS-2016
-	ZLIB
-	ssl? (
-		Apache-2.0
-	)
-"
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
-HOMEPAGE="https://nodejs.org/"
-SLOT_MAJOR="$(ver_cut 1 ${PV})"
-SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
+# The following are locked for deterministic builds.  Bump if vulnerability encountered.
+AUTOCANNON_PV="7.4.0"
+WRK_PV="1.2.1"
 
+ACORN_PV="8.11.3"
 BENCHMARK_TYPES=(
 	assert
 	async_hooks
@@ -76,7 +53,43 @@ BENCHMARK_TYPES=(
 	worker
 	zlib
 )
+CONFIG_CHECK="~ADVISE_SYSCALLS"
+COREPACK_PV="0.24.0"
+NGHTTP2_PV="1.58.0"
+NPM_PV="10.2.4" # See https://github.com/nodejs/node/blob/v21.6.2/deps/npm/package.json
+PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_REQ_USE="threads(+)"
+TPGO_CONFIGURE_DONT_SET_FLAGS=1
 
+inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
+inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
+inherit xdg-utils
+
+SRC_URI="
+https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
+"
+S="${WORKDIR}/node-v${PV}"
+
+DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
+LICENSE="
+	Apache-1.1
+	Apache-2.0
+	Artistic-2
+	BSD
+	BSD-2
+	icu-71.1
+	ISC
+	MIT
+	Unicode-DFS-2016
+	ZLIB
+	ssl? (
+		Apache-2.0
+	)
+"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
+HOMEPAGE="https://nodejs.org/"
+SLOT_MAJOR="$(ver_cut 1 ${PV})"
+SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 gen_iuse_pgo() {
 	local t
 	for t in ${BENCHMARK_TYPES[@]} ; do
@@ -118,18 +131,19 @@ REQUIRED_USE+="
 		ssl
 	)
 "
-RESTRICT="!test? ( test )"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Jan 2, 2024
-ACORN_PV="8.11.3"
-COREPACK_PV="0.24.0"
-NGHTTP2_PV="1.58.0"
+# Last deps commit date:  Feb 13, 2024
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.47.0:=
+	>=dev-libs/libuv-1.48.0:=
 	>=net-dns/c-ares-1.20.1
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
@@ -137,7 +151,7 @@ RDEPEND+="
 		>=dev-libs/icu-74.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.12:0=
+		>=dev-libs/openssl-3.0.13:0=
 	)
 "
 DEPEND+="
@@ -169,9 +183,6 @@ PDEPEND+="
 		=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})*
 	)
 "
-SRC_URI="
-https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
-"
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
 	"${FILESDIR}/${PN}-20.2.0-global-npm-config.patch"
@@ -179,12 +190,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
-S="${WORKDIR}/node-v${PV}"
-NPM_PV="10.2.4" # See https://github.com/nodejs/node/blob/v21.5.0/deps/npm/package.json
-
-# The following are locked for deterministic builds.  Bump if vulnerability encountered.
-AUTOCANNON_PV="7.4.0"
-WRK_PV="1.2.1"
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
