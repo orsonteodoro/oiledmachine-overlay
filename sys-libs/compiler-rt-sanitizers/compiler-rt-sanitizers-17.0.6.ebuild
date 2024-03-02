@@ -4,16 +4,16 @@
 
 EAPI=8
 
-if [[ ${PV} =~ 9999 ]] ; then
-IUSE+="
-	fallback-commit
-"
+if [[ "${PV}" =~ "9999" ]] ; then
+	IUSE+="
+		fallback-commit
+	"
 fi
 
 inherit llvm-ebuilds
 
 _llvm_set_globals() {
-	if [[ "${USE}" =~ "fallback-commit" && ${PV} =~ 9999 ]] ; then
+	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 einfo "Using fallback commit"
 		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
 	fi
