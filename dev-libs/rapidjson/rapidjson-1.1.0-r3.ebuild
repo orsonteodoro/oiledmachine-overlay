@@ -34,7 +34,7 @@ RDEPEND="
 "
 # Header only use shared folders like glm
 PATCHES=(
-	"${FILESDIR}/${P}-gcc-7.patch"
+	"${FILESDIR}/${PN}-1.1.0-gcc-7.patch"
 	"${FILESDIR}/${PN}-1.1.0-r2-shared-dest.patch"
 )
 
