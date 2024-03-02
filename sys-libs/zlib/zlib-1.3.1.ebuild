@@ -7,11 +7,10 @@ EAPI=8
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
+
 inherit autotools edo flag-o-matic flag-o-matic-om multilib-minimal
 inherit toolchain-funcs uopts usr-ldscript verify-sig
 
-DESCRIPTION="Standard (de)compression library"
-HOMEPAGE="https://zlib.net/"
 SRC_URI="
 	https://zlib.net/${P}.tar.gz
 	https://zlib.net/fossils/${P}.tar.xz
@@ -22,7 +21,11 @@ SRC_URI="
 		https://github.com/madler/zlib/releases/download/v${PV}/${P}.tar.xz.asc
 	)
 "
+S="${WORKDIR}/${P}"
+S_orig="${WORKDIR}/${P}"
 
+DESCRIPTION="Standard (de)compression library"
+HOMEPAGE="https://zlib.net/"
 LICENSE="ZLIB"
 # pgo? ( GPL-2 ) # unsourced, can't remember why this was added.
 # The FAQ does mention GPL-2 but the file is not there but a file with a
@@ -170,8 +173,6 @@ REQUIRED_USE="
 		pgo
 	)
 "
-S="${WORKDIR}/${P}"
-S_orig="${WORKDIR}/${P}"
 PDEPEND="
 	pgo? (
 		app-arch/pigz[${MULTILIB_USEDEP}]
@@ -181,31 +182,25 @@ PDEPEND="
 		)
 	)
 "
-
-_seq() {
-	local min=${1}
-	local max=${2}
-	local i=${min}
-	while (( ${i} <= ${max} )) ; do
-		echo "${i}"
-		i=$(( ${i} + 1 ))
-	done
-}
-
 BDEPEND+="
-	minizip? ( ${AUTOTOOLS_DEPEND} )
-	verify-sig? ( sec-keys/openpgp-keys-madler )
+	minizip? (
+		${AUTOTOOLS_DEPEND}
+	)
+	verify-sig? (
+		sec-keys/openpgp-keys-madler
+	)
 "
 # See #309623 for libxml2
 RDEPEND+="
 	!<dev-libs/libxml2-2.7.7
 	!sys-libs/zlib-ng[compat]
 "
-DEPEND+="${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 BDEPEND="
 	dev-lang/perl
 "
-
 PATCHES=(
 	# Don't install unexpected & unused crypt.h header (which would clash with other pkgs)
 	# Pending upstream. bug #658536
@@ -220,6 +215,16 @@ PATCHES=(
 	# Fix building on sparc with older binutils, we pass it in ebuild instead
 	"${FILESDIR}/${PN}-1.3.1-Revert-Turn-off-RWX-segment-warnings-on-sparc-system.patch"
 )
+
+_seq() {
+	local min=${1}
+	local max=${2}
+	local i=${min}
+	while (( ${i} <= ${max} )) ; do
+		echo "${i}"
+		i=$(( ${i} + 1 ))
+	done
+}
 
 # The order does matter with USE=pgo
 # Shared comes first so that static can reuse the shared-lib PGO profile if
