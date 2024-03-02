@@ -9,7 +9,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	"
 fi
 
-LLVM_MAX_SLOT=19
+LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..11} )
 
 inherit llvm-ebuilds

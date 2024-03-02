@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..11} )
 
 inherit cmake llvm.org python-any-r1
