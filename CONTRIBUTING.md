@@ -102,6 +102,7 @@ based on an outdated style guide.
     - Programmer's block
     - Fear to confront the problem
     - Mental health
+    - Negative reputation(s) or negative experience of developer of that package
     - Technicalities (unavailable ebuilds, distro restrictions, ISP throttling/quotas)
 
 * Coding style:
