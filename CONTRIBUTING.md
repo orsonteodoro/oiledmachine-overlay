@@ -102,7 +102,7 @@ based on an outdated style guide.
     - Programmer's block
     - Fear to confront the problem
     - Mental health
-    - Negative reputation(s) or negative experience of developer of that package
+    - Negatives related to person(s) or experience(s) of that package/license
     - Technicalities (unavailable ebuilds, distro restrictions, ISP throttling/quotas)
 
 * Coding style:
