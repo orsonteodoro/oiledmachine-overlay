@@ -8,13 +8,14 @@ inherit autotools git-r3 multilib-minimal
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
+	FALLBACK_COMMIT="36cfdc18ed1fea1132cc4145e32b3645fcfb132b" # Feb 29, 2024
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/ianlancetaylor/libbacktrace.git"
 else
 	EGIT_COMMIT="14818b7783eeb9a56c3f0fca78cefd3143f8c5f6"
 	SRC_URI="
 https://github.com/ianlancetaylor/libbacktrace/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz
+	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
 	"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
@@ -66,7 +67,7 @@ DOCS=( README.md )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="14818b7783eeb9a56c3f0fca78cefd3143f8c5f6"
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 		grep -q -r -e "This is version 1.0." "${S}/README.md" || die "Bump version"
