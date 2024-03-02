@@ -1,24 +1,7 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-
-if [[ "${PV}" =~ "9999" ]] ; then
-	IUSE+="
-		fallback-commit
-	"
-fi
-
-inherit llvm-ebuilds
-
-_llvm_set_globals() {
-	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-einfo "Using fallback commit"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM19_COMMIT}"
-	fi
-}
-_llvm_set_globals
-unset -f _llvm_set_globals
 
 inherit elisp-common llvm.org
 
@@ -29,6 +12,9 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="0"
+KEYWORDS="
+amd64 arm arm64 ~ppc ppc64 ~riscv sparc x86 ~amd64-linux ~ppc-macos ~x64-macos
+"
 IUSE="emacs"
 RDEPEND="
 	!sys-devel/llvm:0
@@ -39,7 +25,7 @@ BDEPEND="
 	)
 "
 LLVM_COMPONENTS=(
-	"llvm/utils/vim"
+	"llvm/utils"
 )
 llvm.org_set_globals
 SITEFILE="50llvm-gentoo.el"
@@ -57,8 +43,8 @@ src_install() {
 	newdoc "vim/README" "README.vim"
 	dodoc "vim/vimrc"
 	if use emacs ; then
-		elisp-install llvm emacs/*.{el,elc}
-		elisp-make-site-file "${SITEFILE}" "llvm"
+		elisp-install "llvm" "emacs/"*"."{"el","elc"}
+		elisp-make-site-file "${SITEFILE}" llvm
 	fi
 }
 

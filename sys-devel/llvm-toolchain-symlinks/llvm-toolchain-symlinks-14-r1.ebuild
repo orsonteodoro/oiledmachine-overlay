@@ -5,7 +5,6 @@ EAPI=8
 
 inherit multilib
 
-SRC_URI=""
 S="${WORKDIR}"
 
 DESCRIPTION="Symlinks to use LLVM on binutils-free system"

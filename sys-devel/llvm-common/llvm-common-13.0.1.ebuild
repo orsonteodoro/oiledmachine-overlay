@@ -12,7 +12,9 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos"
+KEYWORDS="
+amd64 arm arm64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos
+"
 IUSE=""
 RDEPEND="
 	!sys-devel/llvm:0
@@ -23,9 +25,9 @@ LLVM_COMPONENTS=(
 llvm.org_set_globals
 
 src_install() {
-	insinto /usr/share/vim/vimfiles
-	doins -r */
+	insinto "/usr/share/vim/vimfiles"
+	doins -r *"/"
 	# some users may find it useful
-	newdoc README README.vim
-	dodoc vimrc
+	newdoc "README" "README.vim"
+	dodoc "vimrc"
 }

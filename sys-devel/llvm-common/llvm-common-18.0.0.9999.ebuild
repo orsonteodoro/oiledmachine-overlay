@@ -48,20 +48,18 @@ BYTECOMPFLAGS="-L emacs"
 
 src_compile() {
 	default
-
-	use emacs && elisp-compile emacs/*.el
+	use emacs && elisp-compile "emacs/"*".el"
 }
 
 src_install() {
-	insinto /usr/share/vim/vimfiles
-	doins -r vim/*/
+	insinto "/usr/share/vim/vimfiles"
+	doins -r "vim/"*"/"
 	# some users may find it useful
-	newdoc vim/README README.vim
-	dodoc vim/vimrc
-
+	newdoc "vim/README" "README.vim"
+	dodoc "vim/vimrc"
 	if use emacs ; then
-		elisp-install llvm emacs/*.{el,elc}
-		elisp-make-site-file "${SITEFILE}" llvm
+		elisp-install "llvm" "emacs/"*"."{"el","elc"}
+		elisp-make-site-file "${SITEFILE}" "llvm"
 	fi
 }
 
