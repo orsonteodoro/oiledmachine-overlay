@@ -5,23 +5,33 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit python-single-r1
+
+SRC_URI="
+https://github.com/jarun/ddgr/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="DuckDuckGo from the terminal"
 HOMEPAGE="https://github.com/jarun/ddgr"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SRC_URI="
-https://github.com/jarun/ddgr/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
 SLOT="0"
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
-RDEPEND+=" ${PYTHON_DEPS}"
-DEPEND+=" ${RDEPEND}"
-BDEPEND+=" ${PYTHON_DEPS}"
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+"
+RDEPEND+="
+	${PYTHON_DEPS}
+"
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+	${PYTHON_DEPS}
+"
 RESTRICT="mirror"
-S="${WORKDIR}/${P}"
 
 pkg_setup() {
 	python-single-r1_pkg_setup

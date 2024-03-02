@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="www-misc"
+PN="ddgr"
+BUMP_POLICY="latest-version"
