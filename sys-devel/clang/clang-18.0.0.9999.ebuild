@@ -359,7 +359,7 @@ ewarn
 	if use default-stack-clash-protection ; then
 		if use x86 || use amd64 ; then
 			patches_hardened+=(
-				"${FILESDIR}/clang-12.0.1-enable-SCP-by-default.patch"
+				"${FILESDIR}/clang-18.0.0.9999-2b033a3-enable-SCP-by-default.patch"
 			)
 			hardened_features+="SCP, "
 		elif use arm64 ; then
