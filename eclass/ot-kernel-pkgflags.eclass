@@ -371,6 +371,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_fwknop
 	ot-kernel-pkgflags_g15daemon
 	ot-kernel-pkgflags_gambas
+	ot-kernel-pkgflags_game_device_udev_rules
 	ot-kernel-pkgflags_gcc
 	ot-kernel-pkgflags_gdm
 	ot-kernel-pkgflags_gerbera
@@ -434,6 +435,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_libcxx
 	ot-kernel-pkgflags_libcxxabi
 	ot-kernel-pkgflags_libfido2
+	ot-kernel-pkgflags_libgpiod
 	ot-kernel-pkgflags_libmtp
 	ot-kernel-pkgflags_libnetfilter_acct
 	ot-kernel-pkgflags_libnetfilter_cthelper
@@ -458,6 +460,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_linux_smaps
 	ot-kernel-pkgflags_linuxptp
 	ot-kernel-pkgflags_lirc
+	ot-kernel-pkgflags_livecd_tools
 	ot-kernel-pkgflags_lkrg
 	ot-kernel-pkgflags_lksctp_tools
 	ot-kernel-pkgflags_llvm
@@ -474,6 +477,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_lxqt_sudo
 	ot-kernel-pkgflags_madwimax
 	ot-kernel-pkgflags_mahimahi
+	ot-kernel-pkgflags_makemkv
 	ot-kernel-pkgflags_mariadb
 	ot-kernel-pkgflags_mbpfan
 	ot-kernel-pkgflags_mcelog
@@ -581,6 +585,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_sanlock
 	ot-kernel-pkgflags_sbsigntools
 	ot-kernel-pkgflags_sc_controller
+	ot-kernel-pkgflags_scap_driver
 	ot-kernel-pkgflags_sddm
 	ot-kernel-pkgflags_shadow
 	ot-kernel-pkgflags_simplevirt
@@ -639,6 +644,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_v4l2loopback
 	ot-kernel-pkgflags_vala
 	ot-kernel-pkgflags_vbox
+	ot-kernel-pkgflags_vbox_guest_additions
 	ot-kernel-pkgflags_vcrypt
 	ot-kernel-pkgflags_vendor_reset
 	ot-kernel-pkgflags_vhba
@@ -3922,6 +3928,17 @@ ot-kernel-pkgflags_gambas() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_game_device_udev_rules
+# @DESCRIPTION:
+# Applies kernel config flags for the game-device-udev-rules package
+ot-kernel-pkgflags_game_device_udev_rules() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S73d78cc]}" == "1" ]] && return
+	if ot-kernel_has_version "games-util/game-device-udev-rules" ; then
+		einfo "Applying kernel config flags for the game-device-udev-rules package (id: 73d78cc)"
+		ot-kernel_y_configopt "CONFIG_HIDRAW"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_gcc
 # @DESCRIPTION:
 # Applies kernel config flags for the gcc package
@@ -4508,6 +4525,17 @@ ot-kernel-pkgflags_iucode() {
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_livecd_tools
+# @DESCRIPTION:
+# Applies kernel config flags for the livecd-tools package
+ot-kernel-pkgflags_livecd_tools() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sb95206a]}" == "1" ]] && return
+	if ot-kernel_has_version "app-misc/livecd-tools" ; then
+		einfo "Applying kernel config flags for the livecd-tools package (id: b95206a)"
+		ot-kernel_y_configopt "CONFIG_SND_PROC_FS"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_lkrg
 # @DESCRIPTION:
 # Applies kernel config flags for the lkrg package
@@ -5023,26 +5051,18 @@ ot-kernel-pkgflags_ksmbd_tools() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_libfido2
+# @FUNCTION: ot-kernel-pkgflags_libcgroup
 # @DESCRIPTION:
-# Applies kernel config flags for the libfido2 package
-ot-kernel-pkgflags_libfido2() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4130caa]}" == "1" ]] && return
-	if ot-kernel_has_version "dev-libs/libfido2" ; then
-		einfo "Applying kernel config flags for the libfido2 package (id: 4130caa)"
-		ot-kernel_y_configopt "CONFIG_USB_HID"
-		ot-kernel_y_configopt "CONFIG_HIDRAW"
-	fi
-}
-
-# @FUNCTION: ot-kernel-pkgflags_libmtp
-# @DESCRIPTION:
-# Applies kernel config flags for the libmtp package
-ot-kernel-pkgflags_libmtp() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sca6ee71]}" == "1" ]] && return
-	if ot-kernel_has_version "media-libs/libmtp" ; then
-		einfo "Applying kernel config flags for the libmtp package (id: ca6ee71)"
-		ot-kernel_y_configopt "CONFIG_FUSE_FS"
+# Applies kernel config flags for the libcgroup package
+ot-kernel-pkgflags_libcgroup() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sffc7ab8]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-libs/libcgroup" ; then
+		einfo "Applying kernel config flags for the libcgroup package (id: ffc7ab8)"
+		ot-kernel_y_configopt "CONFIG_CGROUPS"
+		if ot-kernel_has_version "dev-libs/libcgroup[daemon]" ; then
+			ot-kernel_y_configopt "CONFIG_CONNECTOR"
+			ot-kernel_y_configopt "CONFIG_PROC_EVENTS"
+		fi
 	fi
 }
 
@@ -5070,18 +5090,37 @@ ot-kernel-pkgflags_libcxxabi() { # DONE
 	fi
 }
 
-# @FUNCTION: ot-kernel-pkgflags_libcgroup
+# @FUNCTION: ot-kernel-pkgflags_libfido2
 # @DESCRIPTION:
-# Applies kernel config flags for the libcgroup package
-ot-kernel-pkgflags_libcgroup() { # DONE
-	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sfe830d2]}" == "1" ]] && return
-	if ot-kernel_has_version "media-libs/libcgroup" ; then
-		einfo "Applying kernel config flags for the libcgroup package (id: fe830d2)"
-		ot-kernel_y_configopt "CONFIG_CGROUPS"
-		if ot-kernel_has_version "media-libs/libcgroup[daemon]" ; then
-			ot-kernel_y_configopt "CONFIG_CONNECTOR"
-			ot-kernel_y_configopt "CONFIG_PROC_EVENTS"
-		fi
+# Applies kernel config flags for the libfido2 package
+ot-kernel-pkgflags_libfido2() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S4130caa]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-libs/libfido2" ; then
+		einfo "Applying kernel config flags for the libfido2 package (id: 4130caa)"
+		ot-kernel_y_configopt "CONFIG_USB_HID"
+		ot-kernel_y_configopt "CONFIG_HIDRAW"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libgpiod
+# @DESCRIPTION:
+# Applies kernel config flags for the libgpiod package
+ot-kernel-pkgflags_libgpiod() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sc9d177f]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-libs/libgpiod" ; then
+		einfo "Applying kernel config flags for the libmtp package (id: c9d177f)"
+		ot-kernel_y_configopt "CONFIG_GPIO_CDEV_V1"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_libmtp
+# @DESCRIPTION:
+# Applies kernel config flags for the libmtp package
+ot-kernel-pkgflags_libmtp() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[Sca6ee71]}" == "1" ]] && return
+	if ot-kernel_has_version "media-libs/libmtp" ; then
+		einfo "Applying kernel config flags for the libmtp package (id: ca6ee71)"
+		ot-kernel_y_configopt "CONFIG_FUSE_FS"
 	fi
 }
 
@@ -5812,6 +5851,17 @@ ot-kernel-pkgflags_mahimahi() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_makemkv
+# @DESCRIPTION:
+# Applies kernel config flags for the makemkv package
+ot-kernel-pkgflags_makemkv() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S067ee55]}" == "1" ]] && return
+	if ot-kernel_has_version "media-video/makemkv" ; then
+		einfo "Applying kernel config flags for the makemkv package (id: 067ee55)"
+		ot-kernel_y_configopt "CONFIG_CHR_DEV_SG"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_mariadb
 # @DESCRIPTION:
 # Applies kernel config flags for the mariadb package
@@ -6124,6 +6174,7 @@ ot-kernel-pkgflags_msr_tools() { # DONE
 	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S222a4a5]}" == "1" ]] && return
 	if ot-kernel_has_version "sys-apps/msr-tools" ; then
 		einfo "Applying kernel config flags for the msr-tools package (id: 222a4a5)"
+		ot-kernel_y_configopt "CONFIG_X86_CPUID"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
 	fi
 }
@@ -7749,6 +7800,7 @@ ot-kernel-pkgflags_rasdaemon() { # DONE
 		einfo "Applying kernel config flags for rasdaemon (id: 86fee76)"
 		ban_disable_debug "86fee76"
 		ot-kernel_y_configopt "CONFIG_ACPI_EXTLOG"
+		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 	fi
 }
 
@@ -8251,6 +8303,18 @@ ot-kernel-pkgflags_sc_controller() { # DONE
 	if ot-kernel_has_version "games-util/sc-controller" ; then
 		einfo "Applying kernel config flags for the sc-controller package (id: b573d49)"
 		ot-kernel_y_configopt "CONFIG_INPUT_UINPUT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_scap_driver
+# @DESCRIPTION:
+# Applies kernel config flags for the scap-driver package
+ot-kernel-pkgflags_scap_driver() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S9c6f645]}" == "1" ]] && return
+	if ot-kernel_has_version "dev-debug/scap-driver" ; then
+		einfo "Applying kernel config flags for the scap-driver package (id: 9c6f645)"
+		ot-kernel_y_configopt "CONFIG_HAVE_SYSCALL_TRACEPOINTS"
+		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 	fi
 }
 
@@ -9060,6 +9124,19 @@ ot-kernel-pkgflags_vbox() { # DONE
 			ot-kernel_y_configopt "CONFIG_USB_XHCI_HCD"
 			ot-kernel_y_configopt "CONFIG_USB_EHCI_HCD"
 		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_vbox_guest_additions
+# @DESCRIPTION:
+# Applies kernel config flags for the vbox-guest-additions package
+ot-kernel-pkgflags_vbox_guest_additions() { # DONE
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S08481fb]}" == "1" ]] && return
+	if ot-kernel_has_version "app-emulation/virtualbox-guest-additions" ; then
+		einfo "Applying kernel config flags for the vbox-guest-additions package (id: 08481fb)"
+		ot-kernel_y_configopt "CONFIG_DRM"
+		ot-kernel_y_configopt "CONFIG_MMU"
+		ot-kernel_y_configopt "CONFIG_DRM_TTM"
 	fi
 }
 
