@@ -68,14 +68,15 @@ IUSE+="
 # @DESCRIPTION:
 # Put warning that debugfs is used as a potential vulnerability dependency.
 needs_debugfs() {
-	local pkgname="${1}"
-	local id="${2}"
+	local pkg_raw="${1}"
+	local pkg=$(echo "${pkgname}" | sed -e "s|\[.*\]||g")
+	local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 ewarn
-ewarn "${pkgname} uses debugfs and is a developer only config option.  It"
+ewarn "${pkg_raw} uses debugfs and is a developer only config option.  It"
 ewarn "should be disabled to prevent abuse and a possible prerequisite for"
 ewarn "attacks."
 ewarn
-ewarn "To remove this warning disable the relevant USE flag or add ${id}"
+ewarn "To remove this warning disable the relevant USE flag or add ${pkgid}"
 ewarn "to OT_KERNEL_PKGFLAGS_REJECT.  In addition, edit the CONFIG_DEBUG_FS"
 ewarn "to unset or use the disable_debug USE flag."
 ewarn
@@ -86,7 +87,8 @@ ewarn
 # @DESCRIPTION:
 # Shows a warning or halts if security is lowered.
 warn_lowered_security() {
-	local pkgid="${1}"
+	local pkg="${1}"
+	local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 	if [[ "${OT_KERNEL_HALT_ON_LOWERED_SECURITY}" == "1" ]] ; then
 eerror
 eerror "Lowered security was detected for id = ${pkgid}."
@@ -111,7 +113,8 @@ ewarn
 # @DESCRIPTION:
 # Warn of the use of kernel options that may used for DMA attacks.
 ban_dma_attack() {
-	local pkgid="${1}"
+	local pkg="${1}"
+	local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 	local kopt="${2}"
 	local ot_kernel_dma_attack_mitigations=${OT_KERNEL_DMA_ATTACK_MITIGATIONS:-1}
 	[[ -n "${ot_kernel_dma_attack_mitigations}" ]] \
@@ -139,7 +142,8 @@ eerror
 # PERMIT_NETFILTER_SYMBOL_REMOVAL and to prevent more code creep.
 #
 ban_disable_debug() {
-	local pkgid="${1}"
+	local pkg="${1}"
+	local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 	local types="${2}" # can be unset or NETFILTER
 
 # pkgid is produced from the following:
@@ -870,7 +874,7 @@ ot-kernel-pkgflags_aqtion() { # DONE
 # Applies kernel config flags for the arcconf package
 ot-kernel-pkgflags_arcconf() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-block/arcconf" ; then
-		warn_lowered_security "5b48d6a"
+		warn_lowered_security "sys-block/arcconf"
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY_PAGESPAN"
 		ot-kernel_unset_configopt "CONFIG_LEGACY_VSYSCALL_NONE"
 	fi
@@ -966,11 +970,11 @@ ot-kernel-pkgflags_bcc() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET_ACT_BPF"
 		ot-kernel_y_configopt "CONFIG_HAVE_EBPF_JIT"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
-		ban_disable_debug "9e67059"
+		ban_disable_debug "dev-util/bcc"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
-		ban_dma_attack "9e67059" "CONFIG_KALLSYMS"
+		ban_dma_attack "dev-util/bcc" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
@@ -1104,7 +1108,7 @@ ot-kernel-pkgflags_blink1() { # DONE
 # Applies kernel config flags for the blktrace package
 ot-kernel-pkgflags_blktrace() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-block/blktrace" ; then
-		ban_disable_debug "029d340"
+		ban_disable_debug "sys-block/blktrace"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_IO_TRACE"
 	fi
 }
@@ -1194,7 +1198,7 @@ ot-kernel-pkgflags_bluez() { # DONE
 # Applies kernel config flags for the bpftool package
 ot-kernel-pkgflags_bpftool() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-util/bpftool" ; then
-		ban_disable_debug "17f8f06"
+		ban_disable_debug "dev-util/bpftool"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_BTF"
 	fi
 }
@@ -1208,7 +1212,7 @@ ot-kernel-pkgflags_bpftrace() { # DONE
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
 		ot-kernel_y_configopt "CONFIG_BPF_JIT"
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
-		ban_disable_debug "aa54616"
+		ban_disable_debug "dev-debug/bpftrace"
 		ot-kernel_y_configopt "CONFIG_FTRACE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_HAVE_EBPF_JIT"
 	fi
@@ -1224,7 +1228,7 @@ ot-kernel-pkgflags_boinc() { # TESTING
 			if [[ "${VSYSCALL_MODE}" == "full" ]] ; then
 				# Full emulation is recommended by ebuild
 				ewarn "Re-assigning vsyscall table:  none -> full emulation"
-				warn_lowered_security "e9d3694"
+				warn_lowered_security "sci-misc/boinc"
 				ot-kernel_y_configopt "CONFIG_LEGACY_VSYSCALL_EMULATE" # no mitigation
 			elif [[ "${VSYSCALL_MODE}" == "emulate" ]] ; then
 				ewarn "Re-assigning vsyscall table:  none -> emulate execution only"
@@ -3095,7 +3099,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_BLOCK"
 		ot-kernel_y_configopt "CONFIG_BLK_CGROUP"
 		if ver_test "${KV_MAJOR_MINOR}" -le "5.2" ; then
-			ban_disable_debug "05309e2"
+			ban_disable_debug "app-containers/docker"
 			ot-kernel_y_configopt "CONFIG_DEBUG_BLK_CGROUP"
 		fi
 		ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
@@ -3317,7 +3321,7 @@ ot-kernel-pkgflags_doas() { # DONE
 ot-kernel-pkgflags_dosemu() { # DONE
 	if ot-kernel_has_version_pkgflags "app-emulation/dosemu" ; then
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
-		warn_lowered_security "4e97be4"
+		warn_lowered_security "app-emulation/dosemu"
 		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
 	fi
 }
@@ -3693,7 +3697,7 @@ ot-kernel-pkgflags_firewalld() { # DONE
 		ot-kernel_y_configopt "CONFIG_NFT_FIB_IPV6"
 		ot-kernel_y_configopt "CONFIG_NFT_HASH"
 		ot-kernel_y_configopt "CONFIG_NFT_LIMIT"
-		ban_disable_debug "6c85b82" "NETFILTER"
+		ban_disable_debug "net-firewall/firewalld" "NETFILTER"
 		ot-kernel_y_configopt "CONFIG_NFT_LOG"
 		ot-kernel_y_configopt "CONFIG_NFT_MASQ"
 		ot-kernel_y_configopt "CONFIG_NFT_NAT"
@@ -4329,7 +4333,7 @@ ot-kernel-pkgflags_lkrg() { # DONE
 	if ot-kernel_has_version_pkgflags "app-antivirus/lkrg" ; then
 		ot-kernel_y_configopt "CONFIG_HAVE_KRETPROBES"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
-		ban_dma_attack "70df33c" "CONFIG_KALLSYMS"
+		ban_dma_attack "app-antivirus/lkrg" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
@@ -4337,7 +4341,7 @@ ot-kernel-pkgflags_lkrg() { # DONE
 		ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
 ewarn "app-antivirus/lkrg does not like PREEMPT_RT"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_AUTOMAGIC"
-		ban_disable_debug "70df33c"
+		ban_disable_debug "app-antivirus/lkrg"
 		ot-kernel_y_configopt "CONFIG_STACKTRACE"
 	fi
 }
@@ -4433,9 +4437,9 @@ ot-kernel-pkgflags_ipt_netflow() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
 		ot-kernel_y_configopt "CONFIG_VLAN_8021Q"
 		if ot-kernel_has_version "net-firewall/ipt_netflow[debug]" ; then
-			ban_disable_debug "2544e60"
+			ban_disable_debug "net-firewall/ipt_netflow"
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-			needs_debugfs "net-firewall/ipt_netflow[debug]" "2544e60"
+			needs_debugfs "net-firewall/ipt_netflow[debug]"
 		fi
 		if ot-kernel_has_version "net-firewall/ipt_netflow[natevents]" ; then
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_EVENTS"
@@ -4464,7 +4468,7 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 			fi
 			ot-kernel_y_configopt "CONFIG_INET_DIAG"
 			ot-kernel_y_configopt "CONFIG_NETFILTER"
-			ban_disable_debug "351365c" "NETFILTER"
+			ban_disable_debug "net-firewall/iptables" "NETFILTER"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_LOG"
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XTABLES"
@@ -4517,7 +4521,7 @@ ot-kernel-pkgflags_iptables() { # MOSTLY DONE
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_EVENTS"
 
 			ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_QUEUE"
-			ban_disable_debug "351365c" "NETFILTER"
+			ban_disable_debug "net-firewall/iptables" "NETFILTER"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_LOG"
 
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_NFLOG"
@@ -4726,7 +4730,7 @@ ot-kernel-pkgflags_keyutils() { # DONE
 			&& ver_test "${MY_PV}" -ge "2.6.10" \
 			&& ver_test "${KV_MAJOR_MINOR}" -lt "4.0" \
 		; then
-			ban_disable_debug "2082e35"
+			ban_disable_debug "sys-apps/keyutils"
 			ot-kernel_y_configopt "CONFIG_KEYS_DEBUG_PROC_KEYS"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.7" ; then
@@ -4767,13 +4771,13 @@ ot-kernel-pkgflags_kodi() { # DONE
 # Applies kernel config flags for the kpatch package
 ot-kernel-pkgflags_kpatch() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-kernel/kpatch" ; then
-		ban_disable_debug "d26d135"
+		ban_disable_debug "sys-kernel/kpatch"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
 		ot-kernel_y_configopt "CONFIG_HAVE_FENTRY"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
-		ban_dma_attack "d26d135" "CONFIG_KALLSYMS"
+		ban_dma_attack "sys-kernel/kpatch" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 	fi
@@ -5047,7 +5051,7 @@ ot-kernel-pkgflags_libnetfilter_cttimeout() { # DONE
 # Applies kernel config flags for the libnetfilter_log package
 ot-kernel-pkgflags_libnetfilter_log() { # DONE
 	if ot-kernel_has_version_pkgflags "net-libs/libnetfilter_log" ; then
-		ban_disable_debug "0359211" "NETFILTER"
+		ban_disable_debug "net-libs/libnetfilter_log" "NETFILTER"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK_LOG"
 	fi
 }
@@ -5368,10 +5372,10 @@ ot-kernel-pkgflags_loopaes() { # DONE
 ot-kernel-pkgflags_lttng_modules() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-util/lttng-modules" ; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
-		ban_dma_attack "18dd1d9" "CONFIG_KALLSYMS"
+		ban_dma_attack "dev-util/lttng-modules" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
-		ban_disable_debug "18dd1d9"
+		ban_disable_debug "dev-util/lttng-modules"
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_HAVE_SYSCALL_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
@@ -5555,7 +5559,7 @@ ot-kernel-pkgflags_mcelog() { # DONE
 	if ot-kernel_has_version_pkgflags "app-admin/mcelog" ; then
 		ot-kernel_y_configopt "CONFIG_X86_MCE"
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.12" ; then
-			ban_disable_debug "3683419"
+			ban_disable_debug "app-admin/mcelog"
 			ot-kernel_y_configopt "CONFIG_X86_MCELOG_LEGACY"
 		fi
 	fi
@@ -5891,7 +5895,7 @@ ot-kernel-pkgflags_mysql() { # DONE
 # Applies kernel config flags for the nbfc package
 ot-kernel-pkgflags_nbfc() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-power/nbfc-linux" ; then
-		ban_disable_debug "0ff68ed"
+		ban_disable_debug "sys-power/nbfc-linux"
 		ot-kernel_y_configopt "CONFIG_ACPI_EC_DEBUGFS"
 		ot-kernel_y_configopt "CONFIG_HWMON"
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
@@ -6127,14 +6131,14 @@ ot-kernel-pkgflags_nv() { # DONE
 			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-470.161*" \
 			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-390.157*" \
 		; then
-			warn_lowered_security "f314ac3"
+			warn_lowered_security "x11-drivers/nvidia-drivers"
 			ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
 		fi
 		if \
 			   ot-kernel_has_version "=x11-drivers/nvidia-drivers-470.161*" \
 			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-390.157*" \
 		; then
-			warn_lowered_security "f314ac3"
+			warn_lowered_security "x11-drivers/nvidia-drivers"
 			ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
 		fi
 
@@ -6204,7 +6208,7 @@ ot-kernel-pkgflags_opal_utils() { # DONE
 		ot-kernel_y_configopt "CONFIG_MTD_POWERNV_FLASH"
 		ot-kernel_y_configopt "CONFIG_OPAL_PRD"
 		ot-kernel_y_configopt "CONFIG_PPC_DT_CPU_FTRS"
-		ban_disable_debug "de97c50"
+		ban_disable_debug "sys-apps/opal-utils"
 		ot-kernel_y_configopt "CONFIG_SCOM_DEBUGFS"
 	fi
 }
@@ -6782,7 +6786,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 		fi
 		if ot-kernel_has_version "app-emulation/qemu[python]" ; then
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-			needs_debugfs "app-emulation/qemu[python]" "00f70b8"
+			needs_debugfs "app-emulation/qemu[python]"
 		fi
 
 		ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -6956,7 +6960,7 @@ ot-kernel-pkgflags_perf() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-util/perf" ; then
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 		_ot-kernel-pkgflags_cpu_pmu_events_perf
-		ban_dma_attack "ef529b7" "CONFIG_KALLSYMS"
+		ban_dma_attack "dev-util/perf" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 
 		if [[ "${arch}" =~ ("arm"|"sh"|"mips") ]] ; then
@@ -7215,9 +7219,9 @@ ot-kernel-pkgflags_procps() { # DONE
 ot-kernel-pkgflags_powertop() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-power/powertop" ; then
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
-		ban_disable_debug "87ebe78" # Applies to DEBUG, FTRACE, TRACING, TRACEPOINTS keywords in this function
+		ban_disable_debug "sys-power/powertop" # Applies to DEBUG, FTRACE, TRACING, TRACEPOINTS keywords in this function
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-		needs_debugfs "sys-power/powertop" "87ebe78"
+		needs_debugfs "sys-power/powertop"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 
 		ot-kernel_y_configopt "CONFIG_TRACING"
@@ -7302,7 +7306,7 @@ ot-kernel-pkgflags_r8168() { # DONE
 # Applies kernel config flags for the rasdaemon package
 ot-kernel-pkgflags_rasdaemon() { # DONE
 	if ot-kernel_has_version_pkgflags "app-admin/rasdaemon" ; then
-		ban_disable_debug "86fee76"
+		ban_disable_debug "app-admin/rasdaemon"
 		ot-kernel_y_configopt "CONFIG_ACPI_EXTLOG"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 	fi
@@ -7528,7 +7532,7 @@ ot-kernel-pkgflags_sanewall() { # DONE
 		ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
 		ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_REJECT"
-		ban_disable_debug "745f3ee" "NETFILTER"
+		ban_disable_debug "net-firewall/sanewall" "NETFILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_LOG"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_ULOG"
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_MASQUERADE"
@@ -7957,7 +7961,7 @@ ot-kernel-pkgflags_suricata() { # DONE
 # Applies kernel config flags for the sysdig-kmod package
 ot-kernel-pkgflags_sysdig_kmod() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-util/sysdig-kmod" ; then
-		ban_disable_debug "0e9fdcf"
+		ban_disable_debug "dev-util/sysdig-kmod"
 		ot-kernel_y_configopt "CONFIG_HAVE_SYSCALL_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 	fi
@@ -7998,7 +8002,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		_ot-kernel-pkgflags_sha256
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH"
-		warn_lowered_security "297eb15"
+		warn_lowered_security "sys-apps/systemd"
 		ot-kernel_unset_configopt "CONFIG_GRKERNSEC_PROC"
 		ot-kernel_unset_configopt "CONFIG_IDE"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
@@ -8049,7 +8053,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 ot-kernel-pkgflags_systemd_bootchart() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-apps/systemd-bootchart" ; then
 		ot-kernel_y_configopt "CONFIG_SCHEDSTATS"
-		ban_disable_debug "11dfb63"
+		ban_disable_debug "sys-apps/systemd-bootchart"
 		ot-kernel_y_configopt "CONFIG_SCHED_DEBUG"
 	fi
 }
@@ -8061,9 +8065,9 @@ ot-kernel-pkgflags_systemtap() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-debug/systemtap" ; then
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_RELAY"
-		ban_disable_debug "78ae7b9"
+		ban_disable_debug "dev-debug/systemtap"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-		needs_debugfs "dev-util/systemtap" "78ae7b9"
+		needs_debugfs "dev-util/systemtap"
 	fi
 }
 
@@ -8176,7 +8180,7 @@ ot-kernel-pkgflags_tpm2_tss() { # DONE
 # Applies kernel config flags for the trace-cmd package
 ot-kernel-pkgflags_trace_cmd() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-util/trace-cmd" ; then
-		ban_disable_debug "bb847a6"
+		ban_disable_debug "dev-util/trace-cmd"
 		ot-kernel_y_configopt "CONFIG_TRACING"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_IO_TRACE"
@@ -8309,7 +8313,7 @@ ot-kernel-pkgflags_ufw() { # DONE
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_MATCH_ADDRTYPE"
 		fi
-		ban_disable_debug "18d6a56" "NETFILTER"
+		ban_disable_debug "net-firewall/ufw" "NETFILTER"
 		if ver_test "${MY_PV}" -ge "3.4" ; then
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_LOG"
 		else
@@ -8407,9 +8411,9 @@ ot-kernel-pkgflags_usbtop() { # DONE
 # Applies kernel config flags for the usbview package
 ot-kernel-pkgflags_usbview() { # DONE
 	if ot-kernel_has_version_pkgflags "app-admin/usbview" ; then
-		ban_disable_debug "3e735de"
+		ban_disable_debug "app-admin/usbview"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-		needs_debugfs "app-admin/usbview" "3e735de"
+		needs_debugfs "app-admin/usbview"
 	fi
 }
 
@@ -8531,11 +8535,11 @@ ot-kernel-pkgflags_vcrypt() { # DONE
 # Applies kernel config flags for the vendor-reset package
 ot-kernel-pkgflags_vendor_reset() { # DONE
 	if ot-kernel_has_version_pkgflags "app-emulation/vendor-reset" ; then
-		ban_disable_debug "3bae162"
+		ban_disable_debug "app-emulation/vendor-reset"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_PCI_QUIRKS"
-		ban_dma_attack "3bae162" "CONFIG_KALLSYMS"
+		ban_dma_attack "app-emulation/vendor-reset" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
 	fi
@@ -8823,7 +8827,7 @@ ot-kernel-pkgflags_wireplumber() { # DONE
 		ot-kernel_y_configopt "CONFIG_SND"
 		ot-kernel_unset_configopt "CONFIG_UML"
 		ot-kernel_y_configopt "CONFIG_SND_PROC_FS"
-		ban_disable_debug "f9df425"
+		ban_disable_debug "media-video/wireplumber"
 		ot-kernel_y_configopt "CONFIG_SND_VERBOSE_PROCFS"
 	fi
 }
@@ -8934,7 +8938,7 @@ ot-kernel-pkgflags_xen() { # DONE
 			ot-kernel_y_configopt "CONFIG_XEN_PV_DOM0"
 			ot-kernel_y_configopt "CONFIG_XEN_ACPI_PROCESSOR"
 			ot-kernel_y_configopt "CONFIG_XEN_SYMS"
-			ban_disable_debug "c729ba1"
+			ban_disable_debug "app-emulation/xen"
 			ot-kernel_y_configopt "CONFIG_XEN_MCE_LOG"
 		fi
 		if [[ "${ZEN_DOMU:-0}" == "1" ]] ; then # unpriveleged, frontend, guest
@@ -8976,7 +8980,7 @@ ot-kernel-pkgflags_xen() { # DONE
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 			ot-kernel_y_configopt "CONFIG_XEN_PV_DOM0"
 			ot-kernel_y_configopt "CONFIG_XEN_ACPI_PROCESSOR"
-			ban_disable_debug "c729ba1"
+			ban_disable_debug "app-emulation/xen"
 			ot-kernel_y_configopt "CONFIG_XEN_MCE_LOG"
 		fi
 
@@ -9222,7 +9226,7 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_I915_USERPTR"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
-			warn_lowered_security "bc32011"
+			warn_lowered_security "x11-drivers/xf86-video-intel"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_CAPTURE_ERROR" # Debug
 			ot-kernel_y_configopt "CONFIG_DRM_I915_COMPRESS_ERROR"
 		fi
@@ -9399,7 +9403,7 @@ ot-kernel-pkgflags_zfs() { # DONE
 # Applies kernel config flags for the zfs-kmod package
 ot-kernel-pkgflags_zfs_kmod() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-fs/zfs-kmod" ; then
-		ban_disable_debug "c0bec20"
+		ban_disable_debug "sys-fs/zfs-kmod"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_LOCK_ALLOC"
 		ot-kernel_y_configopt "CONFIG_PARTITION_ADVANCED"
 		ot-kernel_y_configopt "CONFIG_EFI_PARTITION"
@@ -9996,9 +10000,27 @@ einfo "Enabling futex2 in .config"
 _ot-kernel_set_ldt() {
 	if [[ "${EMU_16BIT:-0}" == "1" ]] ; then
 einfo "Enabling 16-bit emulation support"
-		warn_lowered_security "4e97be4"
+ewarn ""
+		if [[ "${OT_KERNEL_HALT_ON_LOWERED_SECURITY}" == "1" ]] ; then
+eerror
+eerror "Lowered security was detected for EMU_16BIT=1."
+eerror
+eerror "To permit security lowering set OT_KERNEL_HALT_ON_LOWERED_SECURITY=0."
+eerror "Search for _ot-kernel_set_ldt in the ot-kernel-pkgflags.eclass in the"
+eerror "eclass folder for details."
+eerror
+			die
+		else
+ewarn
+ewarn "Security is lowered for EMU_16BIT=1."
+eerror
+ewarn "To halt on lowered security, set OT_KERNEL_HALT_ON_LOWERED_SECURITY=1."
+ewarn "Search FOR _ot-kernel_set_ldt in the ot-kernel-pkgflags.eclass in the"
+ewarn "eclass folder for details."
+ewarn
+		fi
 		ot-kernel_y_configopt "CONFIG_X86_16BIT"
-		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
+		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL" # Lowered security
 	fi
 }
 
