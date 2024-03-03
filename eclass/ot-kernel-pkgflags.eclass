@@ -859,11 +859,12 @@ ot-kernel-pkgflags_apptainer() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the aqtion package
 ot-kernel-pkgflags_aqtion() { # DONE
-	if ot-kernel_has_version_pkgflags "net-misc/AQtion" ; then
+	local pkg="net-misc/AQtion"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_unset_configopt "CONFIG_AQTION"
 		ot-kernel_y_configopt "CONFIG_PTP_1588_CLOCK"
 		ot-kernel_y_configopt "CONFIG_CRC_ITU_T"
-		if ot-kernel_has_version "net-misc/AQtion[lro]" ; then
+		if ot-kernel_has_version "${pkg}[lro]" ; then
 			ot-kernel_unset_configopt "CONFIG_BRIDGE"
 		fi
 	fi
@@ -873,8 +874,9 @@ ot-kernel-pkgflags_aqtion() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the arcconf package
 ot-kernel-pkgflags_arcconf() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-block/arcconf" ; then
-		warn_lowered_security "sys-block/arcconf"
+	local pkg="sys-block/arcconf"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		warn_lowered_security "${pkg}"
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY_PAGESPAN"
 		ot-kernel_unset_configopt "CONFIG_LEGACY_VSYSCALL_NONE"
 	fi
@@ -963,18 +965,19 @@ ot-kernel-pkgflags_bcache_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the bcc
 ot-kernel-pkgflags_bcc() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-util/bcc" ; then
+	local pkg="dev-util/bcc"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 		ot-kernel_y_configopt "CONFIG_NET_CLS_BPF"
 		ot-kernel_y_configopt "CONFIG_NET_ACT_BPF"
 		ot-kernel_y_configopt "CONFIG_HAVE_EBPF_JIT"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
-		ban_disable_debug "dev-util/bcc"
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
-		ban_dma_attack "dev-util/bcc" "CONFIG_KALLSYMS"
+		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
@@ -1222,13 +1225,14 @@ ot-kernel-pkgflags_bpftrace() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the boinc package
 ot-kernel-pkgflags_boinc() { # TESTING
-	if ot-kernel_has_version_pkgflags "sci-misc/boinc" ; then
+	local pkg="sci-misc/boinc"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		if grep -q -E -e "^CONFIG_LEGACY_VSYSCALL_NONE=y" "${path_config}" ; then
 			VSYSCALL_MODE="${VSYSCALL_MODE:-emulate}" # kernel default
 			if [[ "${VSYSCALL_MODE}" == "full" ]] ; then
 				# Full emulation is recommended by ebuild
 				ewarn "Re-assigning vsyscall table:  none -> full emulation"
-				warn_lowered_security "sci-misc/boinc"
+				warn_lowered_security "${pkg}"
 				ot-kernel_y_configopt "CONFIG_LEGACY_VSYSCALL_EMULATE" # no mitigation
 			elif [[ "${VSYSCALL_MODE}" == "emulate" ]] ; then
 				ewarn "Re-assigning vsyscall table:  none -> emulate execution only"
@@ -1700,21 +1704,22 @@ ot-kernel-pkgflags_clang() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the clsync package
 ot-kernel-pkgflags_clsync() { # DONE
+	local pkg="app-admin/clsync"
 	if \
-		   ot-kernel_has_version_pkgflags "app-admin/clsync" \
-		&& ot-kernel_has_version "app-admin/clsync[clsync]" \
+		   ot-kernel_has_version_pkgflags "${pkg}" \
+		&& ot-kernel_has_version "${pkg}[clsync]" \
 	; then
-		if ot-kernel_has_version "app-admin/clsync[inotify]" ; then
+		if ot-kernel_has_version "${pkg}[inotify]" ; then
 			ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		fi
-		if ot-kernel_has_version "app-admin/clsync[namespaces]" ; then
+		if ot-kernel_has_version "${pkg}[namespaces]" ; then
 			_ot-kernel_set_ipc_ns
 			_ot-kernel_set_net_ns
 			_ot-kernel_set_pid_ns
 			_ot-kernel_set_user_ns
 			_ot-kernel_set_uts_ns
 		fi
-		if ot-kernel_has_version "app-admin/clsync[seccomp]" ; then
+		if ot-kernel_has_version "${pkg}[seccomp]" ; then
 			ot-kernel_y_configopt "CONFIG_SECCOMP"
 		fi
 	fi
@@ -1733,32 +1738,33 @@ ot-kernel-pkgflags_cni_plugins() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the collectd package
 ot-kernel-pkgflags_collectd() { # DONE
-	if ot-kernel_has_version_pkgflags "app-metrics/collectd" ; then
+	local pkg="app-metrics/collectd"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_battery]" && ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_cgroups]" && ot-kernel_y_configopt "CONFIG_CGROUPS"
-		if ot-kernel_has_version "app-metrics/collectd[collectd_plugins_cpufreq]" ; then
+		ot-kernel_has_version "${pkg}[collectd_plugins_battery]" && ot-kernel_y_configopt "CONFIG_ACPI_BATTERY"
+		ot-kernel_has_version "${pkg}[collectd_plugins_cgroups]" && ot-kernel_y_configopt "CONFIG_CGROUPS"
+		if ot-kernel_has_version "${pkg}[collectd_plugins_cpufreq]" ; then
 			ot-kernel_y_configopt "CONFIG_SYSFS"
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_STAT"
 		fi
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_drbd]" && ot-kernel_y_configopt "CONFIG_BLK_DEV_DRBD"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_conntrack]" && ot-kernel_y_configopt "CONFIG_NETFILTER"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_fscache]" && ot-kernel_y_configopt "CONFIG_FSCACHE"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_nfs]" && ot-kernel_y_configopt "CONFIG_NFS_COMMON"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_serial]" && ot-kernel_y_configopt "CONFIG_SERIAL_CORE"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_swap]" && ot-kernel_y_configopt "CONFIG_SWAP"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_thermal]" && ot-kernel_y_configopt "CONFIG_ACPI_THERMAL"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_turbostat]" && ot-kernel_y_configopt "CONFIG_X86_MSR"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_vmem]" && ot-kernel_y_configopt "CONFIG_VM_EVENT_COUNTERS"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_vserver]" && ot-kernel_y_configopt "CONFIG_VSERVER"
-		ot-kernel_has_version "app-metrics/collectd[collectd_plugins_uuid]" && ot-kernel_y_configopt "CONFIG_SYSFS"
-		if ot-kernel_has_version "app-metrics/collectd[collectd_plugins_wireless]" ; then
+		ot-kernel_has_version "${pkg}[collectd_plugins_drbd]" && ot-kernel_y_configopt "CONFIG_BLK_DEV_DRBD"
+		ot-kernel_has_version "${pkg}[collectd_plugins_conntrack]" && ot-kernel_y_configopt "CONFIG_NETFILTER"
+		ot-kernel_has_version "${pkg}[collectd_plugins_fscache]" && ot-kernel_y_configopt "CONFIG_FSCACHE"
+		ot-kernel_has_version "${pkg}[collectd_plugins_nfs]" && ot-kernel_y_configopt "CONFIG_NFS_COMMON"
+		ot-kernel_has_version "${pkg}[collectd_plugins_serial]" && ot-kernel_y_configopt "CONFIG_SERIAL_CORE"
+		ot-kernel_has_version "${pkg}[collectd_plugins_swap]" && ot-kernel_y_configopt "CONFIG_SWAP"
+		ot-kernel_has_version "${pkg}[collectd_plugins_thermal]" && ot-kernel_y_configopt "CONFIG_ACPI_THERMAL"
+		ot-kernel_has_version "${pkg}[collectd_plugins_turbostat]" && ot-kernel_y_configopt "CONFIG_X86_MSR"
+		ot-kernel_has_version "${pkg}[collectd_plugins_vmem]" && ot-kernel_y_configopt "CONFIG_VM_EVENT_COUNTERS"
+		ot-kernel_has_version "${pkg}[collectd_plugins_vserver]" && ot-kernel_y_configopt "CONFIG_VSERVER"
+		ot-kernel_has_version "${pkg}[collectd_plugins_uuid]" && ot-kernel_y_configopt "CONFIG_SYSFS"
+		if ot-kernel_has_version "${pkg}[collectd_plugins_wireless]" ; then
 			ot-kernel_y_configopt "CONFIG_WIRELESS"
 			ot-kernel_y_configopt "CONFIG_MAC80211"
 			ot-kernel_y_configopt "CONFIG_IEEE80211"
 		fi
-		if ot-kernel_has_version "app-metrics/collectd[collectd_plugins_zfs_arc]" ; then
+		if ot-kernel_has_version "${pkg}[collectd_plugins_zfs_arc]" ; then
 			ot-kernel_y_configopt "CONFIG_SPL"
 			ot-kernel_y_configopt "CONFIG_ZFS"
 		fi
@@ -1769,9 +1775,10 @@ ot-kernel-pkgflags_collectd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the compiler-rt-sanitizers package
 ot-kernel-pkgflags_compiler_rt_sanitizers() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-libs/compiler-rt-sanitizers" ; then
+	local pkg="sys-libs/compiler-rt-sanitizers"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 	        ot-kernel_y_configopt "CONFIG_SYSVIPC"
-		if ot-kernel_has_version "sys-libs/compiler-rt-sanitizers[test]" ; then
+		if ot-kernel_has_version "${pkg}[test]" ; then
 			ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 		fi
 		ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -2881,11 +2888,12 @@ ot-kernel-pkgflags_cvmfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dahdi package
 ot-kernel-pkgflags_dahdi() { # DONE
-	if ot-kernel_has_version_pkgflags "net-misc/dahdi" ; then
+	local pkg="net-misc/dahdi"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_PCI"
 		ot-kernel_y_configopt "CONFIG_CRC_CCITT"
-		if ot-kernel_has_version "net-misc/dahdi[oslec]" ; then
+		if ot-kernel_has_version "${pkg}[oslec]" ; then
 			ot-kernel_y_configopt "CONFIG_ECHO"
 		fi
 	fi
@@ -2928,9 +2936,10 @@ ot-kernel-pkgflags_dbus() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dccutil package
 ot-kernel-pkgflags_dccutil() { # DONE
-	if ot-kernel_has_version_pkgflags "app-misc/ddcutil" ; then
+	local pkg="app-misc/ddcutil"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_I2C_CHARDEV"
-		if ot-kernel_has_version "app-misc/ddcutil[usb-monitor]" ; then
+		if ot-kernel_has_version "${pkg}[usb-monitor]" ; then
 			ot-kernel_y_configopt "CONFIG_INPUT"
 			ot-kernel_y_configopt "CONFIG_HID"
 			ot-kernel_y_configopt "CONFIG_HIDRAW"
@@ -3075,9 +3084,10 @@ ot-kernel-pkgflags_latencytop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libcec package
 ot-kernel-pkgflags_libcec() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-libs/libcec" ; then
+	local pkg="dev-libs/libcec"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_USB_ACM"
-		if ot-kernel_has_version "dev-libs/libcec[-udev]" ; then
+		if ot-kernel_has_version "${pkg}[-udev]" ; then
 			ot-kernel_y_configopt "CONFIG_SYSFS"
 		fi
 	fi
@@ -3319,9 +3329,10 @@ ot-kernel-pkgflags_doas() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the dosemu package
 ot-kernel-pkgflags_dosemu() { # DONE
-	if ot-kernel_has_version_pkgflags "app-emulation/dosemu" ; then
+	local pkg="app-emulation/dosemu"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
-		warn_lowered_security "app-emulation/dosemu"
+		warn_lowered_security "${pkg}"
 		ot-kernel_y_configopt "CONFIG_MODIFY_LDT_SYSCALL"
 	fi
 }
@@ -3756,9 +3767,10 @@ ot-kernel-pkgflags_fuse() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the fwknop package
 ot-kernel-pkgflags_fwknop() { # DONE
-	if ot-kernel_has_version_pkgflags "net-firewall/fwknop" ; then
+	local pkg="net-firewall/fwknop"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_COMMENT"
-		if ot-kernel_has_version "net-firewall/fwknop[nfqueue]" ; then
+		if ot-kernel_has_version "${pkg}[nfqueue]" ; then
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_NFQUEUE"
 		fi
 	fi
@@ -3856,9 +3868,10 @@ ot-kernel-pkgflags_glances() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the glib package
 ot-kernel-pkgflags_glib() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-libs/glib" ; then
+	local pkg="dev-libs/glib"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		if ot-kernel_has_version "dev-libs/glib[test]" ; then
+		if ot-kernel_has_version "${pkg}[test]" ; then
 		        _ot-kernel-pkgflags_tcpip
 		        ot-kernel_y_configopt "CONFIG_IPV6"
 		fi
@@ -4079,13 +4092,14 @@ ot-kernel-pkgflags_hid_nin() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the hbtinit package
 ot-kernel-pkgflags_htbinit() { # DONE
-	if ot-kernel_has_version_pkgflags "net-misc/htbinit" ; then
+	local pkg="net-misc/htbinit"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NET_SCH_HTB"
 		ot-kernel_y_configopt "CONFIG_NET_SCH_SFQ"
 		ot-kernel_y_configopt "CONFIG_NET_CLS_FW"
 		ot-kernel_y_configopt "CONFIG_NET_CLS_U32"
 		ot-kernel_y_configopt "CONFIG_NET_CLS_ROUTE4"
-		if ot-kernel_has_version "net-misc/htbinit[esfq]" ; then
+		if ot-kernel_has_version "${pkg}[esfq]" ; then
 			ot-kernel_y_configopt "CONFIG_NET_SCH_ESFQ"
 		fi
 	fi
@@ -4107,12 +4121,13 @@ ot-kernel-pkgflags_htop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the hplip package
 ot-kernel-pkgflags_hplip() { # DONE
-	if ot-kernel_has_version_pkgflags "net-print/hplip" ; then
+	local pkg="net-print/hplip"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		# The ebuild pulls in virtual/libusb unconditionally
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB_PRINTER"
-		if ot-kernel_has_version "net-print/hplip[parport]" ; then
+		if ot-kernel_has_version "${pkg}[parport]" ; then
 			ot-kernel_y_configopt "CONFIG_PARPORT"
 			ot-kernel_y_configopt "CONFIG_PPDEV"
 			ot-kernel_y_configopt "CONFIG_PARPORT_1284"
@@ -4330,10 +4345,11 @@ ot-kernel-pkgflags_livecd_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lkrg package
 ot-kernel-pkgflags_lkrg() { # DONE
-	if ot-kernel_has_version_pkgflags "app-antivirus/lkrg" ; then
+	local pkg="app-antivirus/lkrg"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_HAVE_KRETPROBES"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
-		ban_dma_attack "app-antivirus/lkrg" "CONFIG_KALLSYMS"
+		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
@@ -4341,7 +4357,7 @@ ot-kernel-pkgflags_lkrg() { # DONE
 		ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
 ewarn "app-antivirus/lkrg does not like PREEMPT_RT"
 		ot-kernel_set_preempt "CONFIG_PREEMPT_AUTOMAGIC"
-		ban_disable_debug "app-antivirus/lkrg"
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_STACKTRACE"
 	fi
 }
@@ -4350,9 +4366,10 @@ ewarn "app-antivirus/lkrg does not like PREEMPT_RT"
 # @DESCRIPTION:
 # Applies kernel config flags for the llvm package
 ot-kernel-pkgflags_llvm() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-devel/llvm" ; then
+	local pkg="sys-devel/llvm"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
-		if ot-kernel_has_version "sys-devel/llvm[bolt]" ; then
+		if ot-kernel_has_version "${pkg}[bolt]" ; then
 			_ot-kernel_y_thp # for bolt --hugify
 		fi
 	fi
@@ -4417,11 +4434,12 @@ ot-kernel-pkgflags_iproute2() {
 # @DESCRIPTION:
 # Applies kernel config flags for the ipset package
 ot-kernel-pkgflags_ipset() { # DONE
-	if ot-kernel_has_version_pkgflags "net-firewall/ipset" ; then
+	local pkg="net-firewall/ipset"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NETFILTER"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_NETLINK"
 		ot-kernel_unset_configopt "CONFIG_PAX_CONSTIFY_PLUGIN" # old
-		if ot-kernel_has_version "net-firewall/ipset[modules]" ; then
+		if ot-kernel_has_version "${pkg}[modules]" ; then
 			ot-kernel_unset_configopt "CONFIG_IP_NF_SET"
 			ot-kernel_unset_configopt "CONFIG_IP_SET"
 		fi
@@ -4432,16 +4450,17 @@ ot-kernel-pkgflags_ipset() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ipt-netflow package
 ot-kernel-pkgflags_ipt_netflow() { # DONE
-	if ot-kernel_has_version_pkgflags "net-firewall/ipt_netflow" ; then
+	local pkg="net-firewall/ipt_netflow"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_BRIDGE_NETFILTER"
 		ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
 		ot-kernel_y_configopt "CONFIG_VLAN_8021Q"
-		if ot-kernel_has_version "net-firewall/ipt_netflow[debug]" ; then
-			ban_disable_debug "net-firewall/ipt_netflow"
+		if ot-kernel_has_version "${pkg}[debug]" ; then
+			ban_disable_debug "${pkg}"
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-			needs_debugfs "net-firewall/ipt_netflow[debug]"
+			needs_debugfs "${pkg}[debug]"
 		fi
-		if ot-kernel_has_version "net-firewall/ipt_netflow[natevents]" ; then
+		if ot-kernel_has_version "${pkg}[natevents]" ; then
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_EVENTS"
 			if ver_test "${KV_MAJOR_MINOR}" -lt "5.2" ; then
 				ot-kernel_y_configopt "CONFIG_NF_NAT_NEEDED"
@@ -4647,7 +4666,8 @@ ot-kernel-pkgflags_iscan_plugin() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the iwd package
 ot-kernel-pkgflags_iwd() { # DONE
-	if ot-kernel_has_version_pkgflags "net-wireless/iwd" ; then
+	local pkg="net-wireless/iwd"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_KEYS"
 		ot-kernel_y_configopt "CONFIG_ASYMMETRIC_KEY_TYPE"
 		ot-kernel_y_configopt "CONFIG_ASYMMETRIC_PUBLIC_KEY_SUBTYPE"
@@ -4682,13 +4702,13 @@ ot-kernel-pkgflags_iwd() { # DONE
 		ot-kernel_y_configopt "CONFIG_PKCS7_MESSAGE_PARSER"
 		ot-kernel_set_configopt "CONFIG_PKCS8_PRIVATE_KEY_PARSER" "m"
 
-		if ot-kernel_has_version "net-wireless/iwd[crda]" ; then
+		if ot-kernel_has_version "${pkg}[crda]" ; then
 			: # See ot-kernel-pkgflags_crda
 			ot-kernel_has_version "net-wireless/crda" || die "Install net-wireless/crda first"
 		fi
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.20" ; then
-			# Implied ot-kernel_has_version "net-wireless/iwd[linux_kernel]"
+			# Implied ot-kernel_has_version "${pkg}[linux_kernel]"
 			ot-kernel_y_configopt "CONFIG_PKCS8_PRIVATE_KEY_PARSER"
 		fi
 	fi
@@ -4770,14 +4790,15 @@ ot-kernel-pkgflags_kodi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the kpatch package
 ot-kernel-pkgflags_kpatch() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-kernel/kpatch" ; then
-		ban_disable_debug "sys-kernel/kpatch"
+	local pkg="sys-kernel/kpatch"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
 		ot-kernel_y_configopt "CONFIG_HAVE_FENTRY"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_SYSFS"
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
-		ban_dma_attack "sys-kernel/kpatch" "CONFIG_KALLSYMS"
+		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS_ALL"
 	fi
@@ -4796,9 +4817,10 @@ ot-kernel-pkgflags_ksmbd_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libcgroup package
 ot-kernel-pkgflags_libcgroup() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-libs/libcgroup" ; then
+	local pkg="dev-libs/libcgroup"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
-		if ot-kernel_has_version "dev-libs/libcgroup[daemon]" ; then
+		if ot-kernel_has_version "${pkg}[daemon]" ; then
 			ot-kernel_y_configopt "CONFIG_CONNECTOR"
 			ot-kernel_y_configopt "CONFIG_PROC_EVENTS"
 		fi
@@ -5153,15 +5175,16 @@ ot-kernel-pkgflags_libv4l() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libvirt package
 ot-kernel-pkgflags_libvirt() { # DONE
-	if ot-kernel_has_version_pkgflags "app-emulation/libvirt" ; then
+	local pkg="app-emulation/libvirt"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 
-		if ot-kernel_has_version "app-emulation/libvirt[lvm]" ; then
+		if ot-kernel_has_version "${pkg}[lvm]" ; then
 			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 			ot-kernel_y_configopt "CONFIG_DM_MULTIPATH"
 			ot-kernel_y_configopt "CONFIG_DM_SNAPSHOT"
 		fi
 
-		if ot-kernel_has_version "app-emulation/libvirt[lxc]" ; then
+		if ot-kernel_has_version "${pkg}[lxc]" ; then
 			# See also ot-kernel-pkgflags_lxc
 			ot-kernel_y_configopt "CONFIG_CGROUPS"
 			ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -5178,7 +5201,7 @@ ot-kernel-pkgflags_libvirt() { # DONE
 		fi
 
 
-		if ot-kernel_has_version "app-emulation/libvirt[virt-network]" ; then
+		if ot-kernel_has_version "${pkg}[virt-network]" ; then
 			ot-kernel_y_configopt "CONFIG_NET"
 			ot-kernel_y_configopt "CONFIG_INET"
 
@@ -5370,12 +5393,13 @@ ot-kernel-pkgflags_loopaes() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lttng-modules package
 ot-kernel-pkgflags_lttng_modules() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-util/lttng-modules" ; then
+	local pkg="dev-util/lttng-modules"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
-		ban_dma_attack "dev-util/lttng-modules" "CONFIG_KALLSYMS"
+		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_HIGH_RES_TIMERS"
-		ban_disable_debug "dev-util/lttng-modules"
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_HAVE_SYSCALL_TRACEPOINTS"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
@@ -5400,10 +5424,11 @@ ot-kernel-pkgflags_lttng_ust() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the lvm2 package
 ot-kernel-pkgflags_lvm2() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-fs/lvm2" ; then
+	local pkg="sys-fs/lvm2"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 
-		if ot-kernel_has_version "sys-fs/lvm2[udev]" ; then
+		if ot-kernel_has_version "${pkg}[udev]" ; then
 			ot-kernel_set_configopt "CONFIG_UEVENT_HELPER_PATH" "\"\""
 		fi
 
@@ -5654,7 +5679,8 @@ ot-kernel-pkgflags_midi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mesa package
 ot-kernel-pkgflags_mesa() { # DONE
-	if ot-kernel_has_version_pkgflags "media-libs/mesa" ; then
+	local pkg="media-libs/mesa"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5" ; then
 			ot-kernel_y_configopt "CONFIG_KCMP"
 			ot-kernel_y_configopt "CONFIG_CHECKPOINT_RESTORE"
@@ -5665,10 +5691,10 @@ ot-kernel-pkgflags_mesa() { # DONE
 
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
-		if ot-kernel_has_version "media-libs/mesa[vulkan,video_cards_radeonsi]" ; then
+		if ot-kernel_has_version "${pkg}[vulkan,video_cards_radeonsi]" ; then
 			ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		fi
-		if ot-kernel_has_version "media-libs/mesa[video_cards_vmware]" ; then
+		if ot-kernel_has_version "${pkg}[video_cards_vmware]" ; then
 			ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 			_ot-kernel_y_thp # See 8afe12b2
 		fi
@@ -5729,19 +5755,20 @@ ot-kernel-pkgflags_mono() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mpd package
 ot-kernel-pkgflags_mpd() { # DONE
+	local pkg="media-sound/mpd"
 	if \
-		   ot-kernel_has_version_pkgflags "media-sound/mpd" \
-		&& ot-kernel_has_version "media-sound/mpd[eventfd]" \
+		   ot-kernel_has_version_pkgflags "${pkg}" \
+		&& ot-kernel_has_version "${pkg}[eventfd]" \
 	; then
-		if ot-kernel_has_version "media-sound/mpd[eventfd]" ; then
+		if ot-kernel_has_version "${pkg}[eventfd]" ; then
 			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_EVENTFD"
 		fi
-		if ot-kernel_has_version "media-sound/mpd[signalfd]" ; then
+		if ot-kernel_has_version "${pkg}[signalfd]" ; then
 			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_SIGNALFD"
 		fi
-		if ot-kernel_has_version "media-sound/mpd[inotify]" ; then
+		if ot-kernel_has_version "${pkg}[inotify]" ; then
 			ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		fi
 	fi
@@ -5828,8 +5855,9 @@ ot-kernel-pkgflags_multipath_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the networkmanager package
 ot-kernel-pkgflags_networkmanager() { # DONE
-	if ot-kernel_has_version_pkgflags "net-misc/networkmanager" ; then
-		if ot-kernel_has_version "net-misc/networkmanager[connection-sharing]" ; then
+	local pkg="net-misc/networkmanager"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		if ot-kernel_has_version "${pkg}[connection-sharing]" ; then
 			if ver_test "${KV_MAJOR_MINOR}" -lt "5.1" ; then
 				ot-kernel_y_configopt "CONFIG_NF_NAT_IPV4"
 				ot-kernel_y_configopt "CONFIG_NF_NAT_MASQUERADE_IPV4"
@@ -5872,7 +5900,8 @@ ot-kernel-pkgflags_musl() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the mysql package
 ot-kernel-pkgflags_mysql() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-db/mysql" ; then
+	local pkg="dev-db/mysql"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 
 		ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -5884,7 +5913,7 @@ ot-kernel-pkgflags_mysql() { # DONE
 		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
-		if ot-kernel_has_version "dev-db/mysql[numa]" ; then
+		if ot-kernel_has_version "${pkg}[numa]" ; then
 			ot-kernel_y_configopt "CONFIG_NUMA"
 		fi
 	fi
@@ -5925,8 +5954,9 @@ ot-kernel-pkgflags_nfacct() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nfs-utils package
 ot-kernel-pkgflags_nfs_utils() { # DONE
-	if ot-kernel_has_version_pkgflags "net-fs/nfs-utils" ; then
-		if ot-kernel_has_version "net-fs/nfs-utils[nfsv4,-nfsdcld]" ; then
+	local pkg="net-fs/nfs-utils"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		if ot-kernel_has_version "${pkg}[nfsv4,-nfsdcld]" ; then
 			_ot-kernel-pkgflags_md5
 		fi
 		NFS_CLIENT="${NFS_CLIENT:-1}"
@@ -5978,12 +6008,13 @@ ot-kernel-pkgflags_nilfs_utils() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the nodejs package
 ot-kernel-pkgflags_nodejs() { # DONE
-	if ot-kernel_has_version_pkgflags "net-libs/nodejs" ; then
+	local pkg="net-libs/nodejs"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 
 		_ot-kernel_y_thp # See issue 16198
-		if ot-kernel_has_version "net-libs/nodejs[-system-ssl]" ; then
+		if ot-kernel_has_version "${pkg}[-system-ssl]" ; then
 			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_AIO"
 		fi
@@ -6092,7 +6123,8 @@ eerror
 # @DESCRIPTION:
 # Applies kernel config flags for the nv driver
 ot-kernel-pkgflags_nv() { # DONE
-	if ot-kernel_has_version_pkgflags "x11-drivers/nvidia-drivers" ; then
+	local pkg="x11-drivers/nvidia-drivers"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_MTRR"
 		ot-kernel_y_configopt "CONFIG_PCI"
@@ -6117,32 +6149,32 @@ ot-kernel-pkgflags_nv() { # DONE
 		# Workaround mentioned in the ebuild
 		# It's better to modify the Kconfig.
 
-		if ot-kernel_has_version ">=x11-drivers/nvidia-drivers-515.86[kernel-open]" ; then
+		if ot-kernel_has_version ">=${pkg}-515.86[kernel-open]" ; then
 			ot-kernel_y_configopt "CONFIG_MMU_NOTIFIER"
 		fi
 
-		if ot-kernel_has_version ">=x11-drivers/nvidia-drivers-470.161" ; then
+		if ot-kernel_has_version ">=${pkg}-470.161" ; then
 			ot-kernel_unset_configopt "CONFIG_SLUB_DEBUG_ON"
 		fi
 
 		if \
-			   ot-kernel_has_version "=x11-drivers/nvidia-drivers-515.86*" \
-			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-510.108*" \
-			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-470.161*" \
-			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-390.157*" \
+			   ot-kernel_has_version "=${pkg}-515.86*" \
+			|| ot-kernel_has_version "=${pkg}-510.108*" \
+			|| ot-kernel_has_version "=${pkg}-470.161*" \
+			|| ot-kernel_has_version "=${pkg}-390.157*" \
 		; then
-			warn_lowered_security "x11-drivers/nvidia-drivers"
+			warn_lowered_security "${pkg}"
 			ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
 		fi
 		if \
-			   ot-kernel_has_version "=x11-drivers/nvidia-drivers-470.161*" \
-			|| ot-kernel_has_version "=x11-drivers/nvidia-drivers-390.157*" \
+			   ot-kernel_has_version "=${pkg}-470.161*" \
+			|| ot-kernel_has_version "=${pkg}-390.157*" \
 		; then
-			warn_lowered_security "x11-drivers/nvidia-drivers"
+			warn_lowered_security "${pkg}"
 			ot-kernel_unset_configopt "CONFIG_AMD_MEM_ENCRYPT_ACTIVE_BY_DEFAULT"
 		fi
 
-		local message="# Broken with the x11-drivers/nvidia-drivers package for >= 5.18.13"
+		local message="# Broken with the ${pkg} package for >= 5.18.13"
 		_ot-kernel-pkgflags_tty_fallback
 	fi
 }
@@ -6151,10 +6183,11 @@ ot-kernel-pkgflags_nv() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for nvtop
 ot-kernel-pkgflags_nvtop() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-process/nvtop" ; then
+	local pkg="sys-process/nvtop"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
-		if ot-kernel_has_version "sys-process/nvtop[video_cards_amdgpu]" ; then
+		if ot-kernel_has_version "${pkg}[video_cards_amdgpu]" ; then
 			if \
 					! has rock-dkms ${IUSE_EFFECTIVE} \
 			; then
@@ -6177,10 +6210,10 @@ ot-kernel-pkgflags_nvtop() { # DONE
 			fi
 			ot-kernel_y_configopt "CONFIG_SYSFS"
 		fi
-		if ot-kernel_has_version "sys-process/nvtop[video_cards_intel]" ; then
+		if ot-kernel_has_version "${pkg}[video_cards_intel]" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_I915"
 		fi
-		if ot-kernel_has_version "sys-process/nvtop[video_cards_freedreno]" ; then
+		if ot-kernel_has_version "${pkg}[video_cards_freedreno]" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_MSM"
 		fi
 	fi
@@ -6424,17 +6457,18 @@ ot-kernel-pkgflags_osmo_fl2k() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the open-iscsi package
 ot-kernel-pkgflags_open_iscsi() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-block/open-iscsi" ; then
-		if ot-kernel_has_version "sys-block/open-iscsi[tcp]" ; then
+	local pkg="sys-block/open-iscsi"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		if ot-kernel_has_version "${pkg}[tcp]" ; then
 			ot-kernel_y_configopt "CONFIG_SCSI_ISCSI_ATTRS"
 			ot-kernel_y_configopt "CONFIG_ISCSI_TCP"
 		fi
-		if ot-kernel_has_version "sys-block/open-iscsi[infiniband]" ; then
+		if ot-kernel_has_version "${pkg}[infiniband]" ; then
 			ot-kernel_y_configopt "CONFIG_INFINIBAND_IPOIB"
 			ot-kernel_y_configopt "CONFIG_INIBAND_USER_MAD"
 			ot-kernel_y_configopt "CONFIG_INFINIBAND_USER_ACCESS"
 		fi
-		if ot-kernel_has_version "sys-block/open-iscsi[rdma]" ; then
+		if ot-kernel_has_version "${pkg}[rdma]" ; then
 			ot-kernel_y_configopt "CONFIG_INFINIBAND_ISER"
 		fi
 	fi
@@ -6444,11 +6478,12 @@ ot-kernel-pkgflags_open_iscsi() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the open-vm-tools package
 ot-kernel-pkgflags_open_vm_tools() { # DONE
-	if ot-kernel_has_version_pkgflags "app-emulation/open-vm-tools" ; then
+	local pkg="app-emulation/open-vm-tools"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_VMWARE_BALLOON"
 		ot-kernel_y_configopt "CONFIG_VMWARE_PVSCSI"
 		ot-kernel_y_configopt "CONFIG_VMXNET3"
-		if ot-kernel_has_version "app-emulation/open-vm-tools[X]" ; then
+		if ot-kernel_has_version "${pkg}[X]" ; then
 			ot-kernel_y_configopt "CONFIG_DRM_VMWGFX"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "3.9" ; then
@@ -6468,9 +6503,10 @@ ot-kernel-pkgflags_open_vm_tools() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openafs
 ot-kernel-pkgflags_openafs() { # DONE
-	if ot-kernel_has_version_pkgflags "net-fs/openafs" ; then
+	local pkg="net-fs/openafs"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		if ver_test "${KV_MAJOR_MINOR}" -lt "5.17" ; then
-			if ot-kernel_has_version "net-fs/openafs[modules]" ; then
+			if ot-kernel_has_version "${pkg}[modules]" ; then
 				ot-kernel_unset_configopt "CONFIG_AFS_FS"
 			else
 				ot-kernel_y_configopt "CONFIG_AFS_FS"
@@ -6570,7 +6606,8 @@ ot-kernel-pkgflags_openvpn() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the openvswitch package
 ot-kernel-pkgflags_openvswitch() { # DONE
-	if ot-kernel_has_version_pkgflags "net-misc/openvswitch" ; then
+	local pkg="net-misc/openvswitch"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NET_CLS_ACT"
 		ot-kernel_y_configopt "CONFIG_NET_CLS_U32"
 		ot-kernel_y_configopt "CONFIG_NET_SCH_INGRESS"
@@ -6578,7 +6615,7 @@ ot-kernel-pkgflags_openvswitch() { # DONE
 	        _ot-kernel-pkgflags_tcpip
 	        ot-kernel_y_configopt "CONFIG_IPV6"
 		_ot-kernel-pkgflags_tun
-		if ot-kernel_has_version "net-misc/openvswitch[modules]" ; then
+		if ot-kernel_has_version "${pkg}[modules]" ; then
 		        ot-kernel_unset_configopt "CONFIG_OPENVSWITCH"
 		else
 		        ot-kernel_y_configopt "CONFIG_OPENVSWITCH"
@@ -6749,13 +6786,14 @@ ot-kernel-pkgflags_qingy() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the QEMU package.
 ot-kernel-pkgflags_qemu() { # DONE
-	if ot-kernel_has_version_pkgflags "app-emulation/qemu" ; then
+	local pkg="app-emulation/qemu"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		if [[ "${QEMU_HOST:-1}" == "1" ]] ; then
 			ot-kernel-pkgflags_kvm_host_required
 			ot-kernel-pkgflags_kvm_host_extras
 		fi
-		if ot-kernel_has_version "app-emulation/qemu[vhost-net]" ; then
+		if ot-kernel_has_version "${pkg}[vhost-net]" ; then
 			ot-kernel_y_configopt "CONFIG_EXPERT"
 			ot-kernel_y_configopt "CONFIG_EVENTFD"
 			ot-kernel_y_configopt "CONFIG_VHOST_MENU"
@@ -6784,9 +6822,9 @@ ot-kernel-pkgflags_qemu() { # DONE
 			ot-kernel_y_configopt "CONFIG_HW_RANDOM_VIRTIO"
 			ot-kernel-pkgflags_kvm_guest_extras
 		fi
-		if ot-kernel_has_version "app-emulation/qemu[python]" ; then
+		if ot-kernel_has_version "${pkg}[python]" ; then
 			ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-			needs_debugfs "app-emulation/qemu[python]"
+			needs_debugfs "${pkg}[python]"
 		fi
 
 		ot-kernel_y_configopt "CONFIG_EXPERT"
@@ -6798,7 +6836,7 @@ ot-kernel-pkgflags_qemu() { # DONE
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 		ot-kernel_y_configopt "CONFIG_DNOTIFY"
 
-		if ot-kernel_has_version "app-emulation/qemu[test]" ; then
+		if ot-kernel_has_version "${pkg}[test]" ; then
 			ot-kernel_y_configopt "CONFIG_SHMEM"
 		fi
 
@@ -6957,10 +6995,11 @@ _ot-kernel-pkgflags_cpu_pmu_events_perf() {
 # @DESCRIPTION:
 # Applies kernel config flags for the perf package
 ot-kernel-pkgflags_perf() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-util/perf" ; then
+	local pkg="dev-util/perf"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 		_ot-kernel-pkgflags_cpu_pmu_events_perf
-		ban_dma_attack "dev-util/perf" "CONFIG_KALLSYMS"
+		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 
 		if [[ "${arch}" =~ ("arm"|"sh"|"mips") ]] ; then
@@ -7149,11 +7188,12 @@ ot-kernel-pkgflags_pv() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the python package
 ot-kernel-pkgflags_python() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-lang/python" ; then
+	local pkg="dev-lang/python"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SHMEM"
 		ot-kernel_y_configopt "CONFIG_DNOTIFY"
-		if ot-kernel_has_version ">=dev-lang/python-3.8" ; then
+		if ot-kernel_has_version ">=${pkg}-3.8" ; then
 			_ot-kernel_y_thp # Has symbol but not used
 		fi
 	fi
@@ -7184,11 +7224,12 @@ ot-kernel-pkgflags_powernowd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ppp package
 ot-kernel-pkgflags_ppp() { # DONE
-	if ot-kernel_has_version_pkgflags "net-dialup/ppp" ; then
+	local pkg="net-dialup/ppp"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_PPP"
 		ot-kernel_y_configopt "CONFIG_PPP_ASYNC"
 		ot-kernel_y_configopt "CONFIG_PPP_SYNC_TTY"
-		if ot-kernel_has_version "net-dialup/ppp[activefilter]" ; then
+		if ot-kernel_has_version "${pkg}[activefilter]" ; then
 			ot-kernel_y_configopt "CONFIG_PPP_FILTER"
 		fi
 		ot-kernel_y_configopt "CONFIG_PPP_DEFLATE"
@@ -7196,7 +7237,7 @@ ot-kernel-pkgflags_ppp() { # DONE
 		ot-kernel_y_configopt "CONFIG_PPP_MPPE"
 		ot-kernel_y_configopt "CONFIG_PPPOE"
 		ot-kernel_y_configopt "CONFIG_PACKET"
-		if ot-kernel_has_version "net-dialup/ppp[atm]" ; then
+		if ot-kernel_has_version "${pkg}[atm]" ; then
 			ot-kernel_y_configopt "CONFIG_PPPOATM"
 		fi
 	fi
@@ -7217,11 +7258,12 @@ ot-kernel-pkgflags_procps() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the powertop package
 ot-kernel-pkgflags_powertop() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-power/powertop" ; then
+	local pkg="sys-power/powertop"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_X86_MSR"
-		ban_disable_debug "sys-power/powertop" # Applies to DEBUG, FTRACE, TRACING, TRACEPOINTS keywords in this function
+		ban_disable_debug "${pkg}" # Applies to DEBUG, FTRACE, TRACING, TRACEPOINTS keywords in this function
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-		needs_debugfs "sys-power/powertop"
+		needs_debugfs "${pkg}"
 		ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 
 		ot-kernel_y_configopt "CONFIG_TRACING"
@@ -7367,10 +7409,11 @@ ot-kernel-pkgflags_roct() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for rocksdb
 ot-kernel-pkgflags_rocksdb() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-libs/rocksdb" ; then
+	local pkg="dev-libs/rocksdb"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		_ot-kernel_set_io_uring
-		if ot-kernel_has_version "<dev-libs/rocksdb-7" ; then
+		if ot-kernel_has_version "<${pkg}-7" ; then
 			ot-kernel_y_configopt "CONFIG_FUTEX"
 		fi
 	fi
@@ -7500,7 +7543,8 @@ ot-kernel-pkgflags_sandbox() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the sane package
 ot-kernel-pkgflags_sane() { # DONE
-	if ot-kernel_has_version_pkgflags "media-gfx/sane-backends" ; then
+	local pkg="media-gfx/sane-backends"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		SANE_SCSI="${SANE_SCSI:-0}"
 		if [[ "${SANE_SCSI}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -7509,8 +7553,8 @@ ot-kernel-pkgflags_sane() { # DONE
 		SANE_USB="${SANE_USB:-1}"
 		if [[ "${SANE_USB}" == "1" ]] ; then
 			# See ot-kernel-pkgflags_usb
-			if ot-kernel_has_version "media-gfx/sane-backends[-usb]" ; then
-ewarn "Re-emerge media-gfx/sane-backends[usb] and ${PN} for USB scanner support."
+			if ot-kernel_has_version "${pkg}[-usb]" ; then
+ewarn "Re-emerge ${pkg}[usb] and ${PN} for USB scanner support."
 			fi
 			if ver_test "${KV_MAJOR_MINOR}" -le "3.4" ; then
 				ot-kernel_y_configopt "CONFIG_USB_DEVICEFS"
@@ -7596,7 +7640,8 @@ ot-kernel-pkgflags_slim() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the snapd package
 ot-kernel-pkgflags_snapd() { # DONE
-	if ot-kernel_has_version_pkgflags "app-containers/snapd" ; then
+	local pkg="app-containers/snapd"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_CGROUP_DEVICE"
 		ot-kernel_y_configopt "CONFIG_CGROUP_FREEZER"
@@ -7608,7 +7653,7 @@ ot-kernel-pkgflags_snapd() { # DONE
 		ot-kernel_y_configopt "CONFIG_BLK_DEV_LOOP"
 		ot-kernel_y_configopt "CONFIG_SECCOMP"
 		ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
-		if ot-kernel_has_version "app-containers/snapd[apparmord]" ; then
+		if ot-kernel_has_version "${pkg}[apparmord]" ; then
 			ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
 		fi
 	fi
@@ -7618,12 +7663,13 @@ ot-kernel-pkgflags_snapd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the souper package
 ot-kernel-pkgflags_souper() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-devel/souper" ; then
-		if ot-kernel_has_version "sys-devel/souper[external-cache,tcp]" ; then
+	local pkg="sys-devel/souper"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		if ot-kernel_has_version "${pkg}[external-cache,tcp]" ; then
 		        _ot-kernel-pkgflags_tcpip
 		        ot-kernel_y_configopt "CONFIG_IPV6"
 		fi
-		if ot-kernel_has_version "sys-devel/souper[external-cache,usockets]" ; then
+		if ot-kernel_has_version "${pkg}[external-cache,usockets]" ; then
 			ot-kernel_y_configopt "CONFIG_NET"
 			ot-kernel_y_configopt "CONFIG_UNIX"
 		fi
@@ -7710,19 +7756,20 @@ _ot-kernel-pkgflags_squashfs() {
 			einfo "SquashFS 2-step intermediate copy applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_FILE_CACHE"
 		fi
-		if ot-kernel_has_version "sys-fs/squashfs-tools[lz4]" ; then
+		local pkg="sys-fs/squashfs-tools"
+		if ot-kernel_has_version "${pkg}[lz4]" ; then
 			einfo "Added SquashFS LZ4 decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_LZ4"
 		fi
-		if ot-kernel_has_version "sys-fs/squashfs-tools[lzo]" ; then
+		if ot-kernel_has_version "${pkg}[lzo]" ; then
 			einfo "Added SquashFS LZO decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_LZO"
 		fi
-		if ot-kernel_has_version "sys-fs/squashfs-tools[lzma]" ; then
+		if ot-kernel_has_version "${pkg}[lzma]" ; then
 			einfo "Added SquashFS XZ decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_XZ"
 		fi
-		if ot-kernel_has_version "sys-fs/squashfs-tools[zstd]" ; then
+		if ot-kernel_has_version "${pkg}[zstd]" ; then
 			einfo "Added SquashFS ZSTD decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_ZSTD"
 		fi
@@ -7853,14 +7900,15 @@ ot-kernel-pkgflags_sshuttle() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the shorewall package
 ot-kernel-pkgflags_shorewall() { # DONE
-	if ot-kernel_has_version_pkgflags "net-firewall/shorewall" ; then
+	local pkg="net-firewall/shorewall"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 		if ver_test "${KV_MAJOR_MINOR}" -lt "4.19" ; then
-			if ot-kernel_has_version "net-firewall/shorewall[ipv4]" ; then
+			if ot-kernel_has_version "${pkg}[ipv4]" ; then
 				_ot-kernel-pkgflags_tcpip
 				ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV4"
 			fi
-			if ot-kernel_has_version "net-firewall/shorewall[ipv6]" ; then
+			if ot-kernel_has_version "${pkg}[ipv6]" ; then
 			        _ot-kernel-pkgflags_tcpip
 			        ot-kernel_y_configopt "CONFIG_IPV6"
 				ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_IPV6"
@@ -7975,7 +8023,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 	local hash=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 	hash="${hash:0:7}"
 	[[ "${OT_KERNEL_APKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return
-	if has_version "sys-apps/systemd" ; then
+	if has_version "${pkg}" ; then
 		einfo "Applying kernel config flags for the ${pkg} package (id: ${hash})"
 		ot-kernel_y_configopt "CONFIG_AUTOFS4_FS"
 		ot-kernel_y_configopt "CONFIG_BINFMT_MISC"
@@ -8002,16 +8050,16 @@ ot-kernel-pkgflags_systemd() { # DONE
 		ot-kernel_y_configopt "CONFIG_CRYPTO_HMAC"
 		_ot-kernel-pkgflags_sha256
 		ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_HASH"
-		warn_lowered_security "sys-apps/systemd"
+		warn_lowered_security "${pkg}"
 		ot-kernel_unset_configopt "CONFIG_GRKERNSEC_PROC"
 		ot-kernel_unset_configopt "CONFIG_IDE"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED"
 		ot-kernel_unset_configopt "CONFIG_SYSFS_DEPRECATED_V2"
 
-		if ot-kernel_has_version "sys-apps/systemd[acl]" ; then
+		if ot-kernel_has_version "${pkg}[acl]" ; then
 			ot-kernel_y_configopt "CONFIG_TMPFS_POSIX_ACL"
 		fi
-		if ot-kernel_has_version "sys-apps/systemd[seccomp]" ; then
+		if ot-kernel_has_version "${pkg}[seccomp]" ; then
 			ot-kernel_y_configopt "CONFIG_SECCOMP"
 			ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		fi
@@ -8062,12 +8110,13 @@ ot-kernel-pkgflags_systemd_bootchart() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the systemtap package
 ot-kernel-pkgflags_systemtap() { # DONE
-	if ot-kernel_has_version_pkgflags "dev-debug/systemtap" ; then
+	local pkg="dev-debug/systemtap"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_RELAY"
-		ban_disable_debug "dev-debug/systemtap"
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-		needs_debugfs "dev-util/systemtap"
+		needs_debugfs "${pkg}"
 	fi
 }
 
@@ -8300,7 +8349,8 @@ ot-kernel-pkgflags_udisks() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the ufw package
 ot-kernel-pkgflags_ufw() { # DONE
-	if ot-kernel_has_version_pkgflags "net-firewall/ufw" ; then
+	local pkg="net-firewall/ufw"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_COMMENT"
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_HL"
@@ -8313,17 +8363,17 @@ ot-kernel-pkgflags_ufw() { # DONE
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_MATCH_ADDRTYPE"
 		fi
-		ban_disable_debug "net-firewall/ufw" "NETFILTER"
+		ban_disable_debug "${pkg}" "NETFILTER"
 		if ver_test "${MY_PV}" -ge "3.4" ; then
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_LOG"
 		else
 			ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_LOG"
-			if ot-kernel_has_version "net-firewall/ufw[ipv6]" ; then
+			if ot-kernel_has_version "${pkg}[ipv6]" ; then
 				ot-kernel_y_configopt "CONFIG_IP6_NF_TARGET_LOG"
 			fi
 		fi
 		ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_REJECT"
-		if ot-kernel_has_version "net-firewall/ufw[ipv6]" ; then
+		if ot-kernel_has_version "${pkg}[ipv6]" ; then
 			ot-kernel_y_configopt "CONFIG_IP6_NF_TARGET_REJECT"
 		fi
 		ot-kernel_y_configopt "CONFIG_NF_NAT_FTP"
@@ -8410,10 +8460,11 @@ ot-kernel-pkgflags_usbtop() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the usbview package
 ot-kernel-pkgflags_usbview() { # DONE
-	if ot-kernel_has_version_pkgflags "app-admin/usbview" ; then
-		ban_disable_debug "app-admin/usbview"
+	local pkg="app-admin/usbview"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}"
+		needs_debugfs "${pkg}"
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
-		needs_debugfs "app-admin/usbview"
 	fi
 }
 
@@ -8534,12 +8585,13 @@ ot-kernel-pkgflags_vcrypt() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the vendor-reset package
 ot-kernel-pkgflags_vendor_reset() { # DONE
-	if ot-kernel_has_version_pkgflags "app-emulation/vendor-reset" ; then
-		ban_disable_debug "app-emulation/vendor-reset"
+	local pkg="app-emulation/vendor-reset"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_FTRACE"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_PCI_QUIRKS"
-		ban_dma_attack "app-emulation/vendor-reset" "CONFIG_KALLSYMS"
+		ban_dma_attack "${pkg}" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_FUNCTION_TRACER"
 	fi
@@ -8668,10 +8720,11 @@ ot-kernel-pkgflags_wlgreet() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wavemon package
 ot-kernel-pkgflags_wavemon() { # DONE
-	if ot-kernel_has_version_pkgflags "net-wireless/wavemon" ; then
-		if ot-kernel_has_version "~net-wireless/wavemon-0.9.3" ; then
+	local pkg="net-wireless/wavemon"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		if ot-kernel_has_version "~${pkg}-0.9.3" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211_WEXT"
-		elif ot-kernel_has_version ">=net-wireless/wavemon-0.9.4" ; then
+		elif ot-kernel_has_version ">=${pkg}-0.9.4" ; then
 			ot-kernel_y_configopt "CONFIG_CFG80211"
 		fi
 	fi
@@ -8763,8 +8816,9 @@ ot-kernel-pkgflags_wireguard_modules() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the wireguard-tools package
 ot-kernel-pkgflags_wireguard_tools() { # DONE
-	if ot-kernel_has_version_pkgflags "net-vpn/wireguard-tools" ; then
-		if ot-kernel_has_version "net-vpn/wireguard-tools[wg-quick]" ; then
+	local pkg="net-vpn/wireguard-tools"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		if ot-kernel_has_version "${pkg}[wg-quick]" ; then
 			ot-kernel_y_configopt "CONFIG_IP_ADVANCED_ROUTER"
 			ot-kernel_y_configopt "CONFIG_IP_MULTIPLE_TABLES"
 			ot-kernel_y_configopt "CONFIG_IPV6_MULTIPLE_TABLES"
@@ -9208,7 +9262,8 @@ ot-kernel-pkgflags_xf86_video_ati() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the xf86-video-intel package
 ot-kernel-pkgflags_xf86_video_intel() { # DONE
-	if ot-kernel_has_version_pkgflags "x11-drivers/xf86-video-intel" ; then
+	local pkg="x11-drivers/xf86-video-intel"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		ot-kernel_y_configopt "CONFIG_MTRR"
 		ot-kernel_y_configopt "CONFIG_AGP"
 		ot-kernel_y_configopt "CONFIG_AGP_INTEL"
@@ -9226,7 +9281,7 @@ ot-kernel-pkgflags_xf86_video_intel() { # DONE
 			ot-kernel_y_configopt "CONFIG_DRM_I915_USERPTR"
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
-			warn_lowered_security "x11-drivers/xf86-video-intel"
+			warn_lowered_security "${pkg}"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_CAPTURE_ERROR" # Debug
 			ot-kernel_y_configopt "CONFIG_DRM_I915_COMPRESS_ERROR"
 		fi
@@ -9402,8 +9457,9 @@ ot-kernel-pkgflags_zfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the zfs-kmod package
 ot-kernel-pkgflags_zfs_kmod() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-fs/zfs-kmod" ; then
-		ban_disable_debug "sys-fs/zfs-kmod"
+	local pkg="sys-fs/zfs-kmod"
+	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		ban_disable_debug "${pkg}"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_LOCK_ALLOC"
 		ot-kernel_y_configopt "CONFIG_PARTITION_ADVANCED"
 		ot-kernel_y_configopt "CONFIG_EFI_PARTITION"
@@ -9412,12 +9468,12 @@ ot-kernel-pkgflags_zfs_kmod() { # DONE
 		ot-kernel_unset_configopt "CONFIG_TRIM_UNUSED_KSYMS"
 		ot-kernel_y_configopt "CONFIG_ZLIB_DEFLATE"
 		ot-kernel_y_configopt "CONFIG_ZLIB_INFLATE"
-		if ot-kernel_has_version "sys-fs/zfs-kmod[debug]" ; then
+		if ot-kernel_has_version "${pkg}[debug]" ; then
 			ot-kernel_y_configopt "CONFIG_FRAME_POINTER"
 			ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 			ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_REDUCED"
 		fi
-		if ot-kernel_has_version "sys-fs/zfs-kmod[rootfs]" ; then
+		if ot-kernel_has_version "${pkg}[rootfs]" ; then
 			ot-kernel_y_configopt "CONFIG_BLK_DEV_INITRD"
 			ot-kernel_y_configopt "CONFIG_DEVTMPFS"
 		fi
