@@ -11100,7 +11100,6 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/libsoundio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
-		_ot-kernel_realtime_pkg "media-sound/alsaplayer" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/bluez-alsa" "SCHED_RR" # It requires bluealsa.service changes.
 		_ot-kernel_realtime_pkg "media-sound/jacktrip" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
@@ -11131,6 +11130,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/carla" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/chuck" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/csound" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/din" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/drumstick" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/fluidsynth" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/guitarix" "SCHED_FIFO"
@@ -11183,14 +11183,19 @@ _ot-kernel_realtime_packages() {
 		# _ot-kernel_realtime_pkg "net-voip/twinkle" "SCHED_FIFO" # It's present but disabled in source code.
 	fi
 
-	# Live music
+	# Live music or presentation by same artist
 	if [[ "${work_profile}" == "jukebox" || "${work_profile}" == "musical-live-performance" ]] ; then
+		_ot-kernel_realtime_pkg "media-sound/alsaplayer" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/aqualung" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/cmus" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/gogglesmm" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/mikmod" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/mpd" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "media-sound/mpg123" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/mpg123-base" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/sndpeek" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/squeezelite" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/strawberry[gstreamer]" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/wavplay" "SCHED_FIFO"
 	fi
 
 	# Radio
