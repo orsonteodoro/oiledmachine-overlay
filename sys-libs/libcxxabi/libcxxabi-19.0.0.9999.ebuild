@@ -322,9 +322,11 @@ einfo
 		-DLIBCXXABI_INCLUDE_TESTS=$(usex test)
 		-DLIBCXXABI_USE_COMPILER_RT=${use_compiler_rt}
 
-		# upstream is omitting standard search path for this
+		# Upstream is omitting standard search path for this
 		# probably because gcc & clang are bundling their own unwind.h
 		-DLIBCXXABI_LIBUNWIND_INCLUDES="${EPREFIX}"/usr/include
+		# This is broken with standalone builds, and also meaningless
+		-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
 
 		-DLIBCXX_LIBDIR_SUFFIX=
 		#
