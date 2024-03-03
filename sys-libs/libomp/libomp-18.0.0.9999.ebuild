@@ -9,9 +9,9 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	"
 fi
 
-# For AMDGPUs, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L41
+# For AMDGPUs, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/release/18.x/clang/include/clang/Basic/Cuda.h
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
 	gfx701
