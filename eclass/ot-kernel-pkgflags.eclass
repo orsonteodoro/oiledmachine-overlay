@@ -11230,9 +11230,10 @@ _ot-kernel_realtime_packages() {
 	]] ; then
 		# Assumes PREEMPT=y
 		_ot-kernel_realtime_pkg "app-emulation/basiliskii" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "app-emulation/wine-staging" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "app-emulation/wine-proton" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "app-emulation/wine-staging" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "app-emulation/wine-vanilla" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "games-emulation/desmume" "SCHED_RR"
 		_ot-kernel_realtime_pkg "games-emulation/dosbox-x" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "games-emulation/fceux" "SCHED_FIFO|SCHED_RR"
 		_ot-kernel_realtime_pkg "gui-wm/gamescope" "SCHED_RR"
