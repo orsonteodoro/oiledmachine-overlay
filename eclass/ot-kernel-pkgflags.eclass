@@ -11100,6 +11100,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/libsoundio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
+		_ot-kernel_realtime_pkg "media-sound/alsaplayer" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/bluez-alsa" "SCHED_RR" # It requires bluealsa.service changes.
 		_ot-kernel_realtime_pkg "media-sound/jacktrip" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
