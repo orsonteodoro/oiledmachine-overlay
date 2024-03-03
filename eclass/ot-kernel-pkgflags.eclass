@@ -11150,6 +11150,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-sound/supercollider" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/terminatorx" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/timidity++[alsa]" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/xwax" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/yoshimi" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/zynaddsubfx[alsa]" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "sys-apps/das_watchdog" "SCHED_RR" # Used in audio overlay
