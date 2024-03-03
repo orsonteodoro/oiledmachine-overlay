@@ -21,7 +21,6 @@ einfo "Using fallback commit"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-CMAKE_ECLASS="cmake"
 PYTHON_COMPAT=( python3_{10..12} )
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
 LLVM_MAX_SLOT=${LLVM_MAJOR}
