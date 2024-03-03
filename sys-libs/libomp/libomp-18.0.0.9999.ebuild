@@ -295,6 +295,7 @@ llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
 	"${FILESDIR}/${PN}-18.0.0.9999-path-changes.patch"
+	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
 )
 
 kernel_pds_check() {
