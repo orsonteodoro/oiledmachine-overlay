@@ -263,7 +263,7 @@ ot-kernel_has_version_pkgflags() {
 	local pkg="${1}"
 	local hash=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 	hash="${hash:0:7}"
-	[[ "${OT_KERNEL_APKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return
+	[[ "${OT_KERNEL_APKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return 1
 	if ot-kernel_has_version "${pkg}" ; then
 		einfo "Applying kernel config flags for the ${pkg} package (id: ${hash})"
 		return 0
