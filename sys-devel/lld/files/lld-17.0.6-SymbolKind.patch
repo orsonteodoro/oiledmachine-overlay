@@ -1,0 +1,10 @@
+--- a/lld/MachO/InputFiles.cpp.orig	2023-11-28 00:52:28.000000000 -0800
++++ b/lld/MachO/InputFiles.cpp	2024-03-03 16:02:20.614650191 -0800
+@@ -72,6 +72,7 @@
+ #include "llvm/Support/TimeProfiler.h"
+ #include "llvm/TextAPI/Architecture.h"
+ #include "llvm/TextAPI/InterfaceFile.h"
++#include "llvm/TextAPI/Symbol.h"
+ 
+ #include <optional>
+ #include <type_traits>
