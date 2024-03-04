@@ -9496,10 +9496,15 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_set_highest_timer_hz # Reduce studder
 		fi
 		if [[ \
-			   "${work_profile}" == "mainstream-desktop" \
-			|| "${work_profile}" == "pi-web-browser" \
+			   "${work_profile}" == "dvr" \
+			|| "${work_profile}" == "jukebox" \
+			|| "${work_profile}" == "pi-audio-player" \
+			|| "${work_profile}" == "pi-video-player" \
+			|| "${work_profile}" == "sdr" \
 		]] ; then
 			_OT_KERNEL_FORCE_SWAP_OFF="1"
+		#else
+		#	Allow to use more browswer tabs with swap.
 		fi
 		ot-kernel_y_configopt "CONFIG_NO_HZ_IDLE" # Save power
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
