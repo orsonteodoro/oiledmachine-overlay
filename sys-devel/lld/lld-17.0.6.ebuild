@@ -214,6 +214,8 @@ src_prepare() {
 	uopts_src_prepare
 }
 
+src_configure() { :; }
+
 _src_configure() {
 	llvm-ebuilds_fix_toolchain
 	uopts_src_configure

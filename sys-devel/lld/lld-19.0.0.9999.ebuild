@@ -211,6 +211,8 @@ src_prepare() {
 	uopts_src_prepare
 }
 
+src_configure() { :; }
+
 _src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
 	llvm-ebuilds_fix_toolchain

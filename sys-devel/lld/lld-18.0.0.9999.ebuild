@@ -131,9 +131,6 @@ LLVM_COMPONENTS=(
 )
 LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
-PATCHES=(
-	"${FILESDIR}/lld-18.0.0.9999-2b033a3-SymbolKind.patch"
-)
 
 gen_rdepend() {
 	local f
@@ -213,6 +210,8 @@ src_prepare() {
 	eapply_hardened
 	uopts_src_prepare
 }
+
+src_configure() { :; }
 
 _src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
