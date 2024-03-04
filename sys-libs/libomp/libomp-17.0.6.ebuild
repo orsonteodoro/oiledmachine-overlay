@@ -64,8 +64,9 @@ inherit llvm-ebuilds
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-einfo "Using fallback commit"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM17_COMMIT}"
+llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -95,6 +96,7 @@ ${ROCM_IUSE}
 debug gdb-plugin hwloc offload ompt test llvm_targets_AMDGPU llvm_targets_NVPTX
 rocm_5_7 rpc
 r5
+${LLVM_EBUILDS_LLVM17_REVISION}
 "
 gen_cuda_required_use() {
 	local x

@@ -14,8 +14,9 @@ inherit llvm-ebuilds
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-einfo "Using fallback commit"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${FALLBACK_LLVM19_COMMIT}"
+llvm_ebuilds_messages "${PV%%.*}" "_llvm_set_globals"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -40,6 +41,7 @@ IUSE+="
 
 default-full-relro +default-partial-relro default-no-relro
 hardened hardened-compat r1
+${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE+="
 	^^ (

@@ -16,11 +16,26 @@ esac
 
 # For deterministic builds and working patches.
 # Commits with green checkmarks used.
-FALLBACK_LLVM19_COMMIT="ed0aa344a8aaab4d8eedbe800750b8dcd36b0bcd" # Mar 1, 2024 (53 / 53 green checkmarks)
-FALLBACK_LLVM18_COMMIT="2b033a32ea1b45c773158f67b48623ceffbb153d" # Feb 14, 2024 (42 / 43 green checkmarks)
+LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT="ed0aa344a8aaab4d8eedbe800750b8dcd36b0bcd" # Mar 1, 2024 (53 / 53 green checkmarks)
+LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT="2b033a32ea1b45c773158f67b48623ceffbb153d" # Feb 14, 2024 (42 / 43 green checkmarks)
+LLVM_EBUILDS_LLVM19_BRANCH="main"
+LLVM_EBUILDS_LLVM18_BRANCH="release/18.x"
+LLVM_EBUILDS_LLVM17_BRANCH="release/17.x"
 
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
+
+llvm_ebuilds_message() {
+einfo "Using fallback commit"
+	if [[ "${PV%%.*}" == "19" || "${PV%%.*}" == "18" ]] ; then
+ewarn
+ewarn "Do the following to increase download chances of live ebuilds:"
+ewarn
+ewarn "1. Emerge net-misc/curl[-http2]"
+ewarn "2. Turn off all downloads except git."
+ewarn
+	fi
+}
 
 _fix_linker() {
 	if ld.lld --help | grep -q -e "symbol lookup error:" \
