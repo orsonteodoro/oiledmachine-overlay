@@ -1849,11 +1849,6 @@ repo_latest_version_get_qb64_pv() {
 https://github.com/Galleondragon/qb64.git)
 }
 
-repo_latest_version_get_quart_pv() {
-	echo $(get_newest_pv \
-https://github.com/pgjones/quart.git)
-}
-
 repo_latest_version_get_radialgm_pv() {
 	local pv="9999"
 	local suffix=$(get_head_suffix "github.com" \
