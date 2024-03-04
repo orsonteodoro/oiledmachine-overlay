@@ -26,8 +26,10 @@ _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
 
 llvm_ebuilds_messages() {
+	local slot="${1}"
+	local fn="${2}"
+	if [[ "${PV}" =~ "9999" && "${fn}" == "_llvm_set_globals" ]]  ; then
 einfo "Using fallback commit"
-	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
 ewarn "Do the following to increase download chances of live ebuilds:"
 ewarn
