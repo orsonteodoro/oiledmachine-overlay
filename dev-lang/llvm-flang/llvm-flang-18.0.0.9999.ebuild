@@ -3,6 +3,23 @@
 
 EAPI=8
 
+#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::ErrIfLHSAndRHSSymbolsMatch(const Fortran::parser::Variable&, const Fortran::parser::Expr&)':
+#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1777:19: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
+# 1777 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
+#      |                   ^~~~~~~~~
+#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1777:67: note: the temporary was destroyed at the end of the full expression '(& Fortran::evaluate::GetSymbolVector(const A&) [with A = Expr<SomeType>; SymbolVector = std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >]().std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >::front())->Fortran::common::Reference<const Fortran::semantics::Symbol>::operator std::conditional_t<true, const Fortran::semantics::Symbol&, void>()'
+# 1777 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
+#      |                                                                   ^
+#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::CheckAtomicUpdateStmt(const Fortran::parser::AssignmentStmt&)':
+#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1923:19: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
+# 1923 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
+#      |                   ^~~~~~~~~
+#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1923:67: note: the temporary was destroyed at the end of the full expression '(& Fortran::evaluate::GetSymbolVector(const A&) [with A = Expr<SomeType>; SymbolVector = std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >]().std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >::front())->Fortran::common::Reference<const Fortran::semantics::Symbol>::operator std::conditional_t<true, const Fortran::semantics::Symbol&, void>()'
+# 1923 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
+#      |                                                                   ^
+#cc1plus: all warnings being treated as errors
+
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
