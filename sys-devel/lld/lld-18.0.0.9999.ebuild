@@ -129,6 +129,9 @@ LLVM_COMPONENTS=(
 )
 LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
+PATCHES=(
+	"${FILESDIR}/lld-18.0.0.9999-2b033a3-SymbolKind.patch"
+)
 
 gen_rdepend() {
 	local f
