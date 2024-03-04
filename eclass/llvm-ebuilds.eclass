@@ -25,7 +25,7 @@ LLVM_EBUILDS_LLVM17_BRANCH="release/17.x"
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
 
-llvm_ebuilds_messages() {
+llvm_ebuilds_message() {
 	local slot="${1}"
 	local fn="${2}"
 	if [[ "${PV}" =~ "9999" && "${fn}" == "_llvm_set_globals" ]]  ; then
