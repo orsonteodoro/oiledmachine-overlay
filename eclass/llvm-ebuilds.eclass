@@ -27,7 +27,7 @@ inherit flag-o-matic toolchain-funcs
 
 llvm_ebuilds_messages() {
 einfo "Using fallback commit"
-	if [[ "${PV%%.*}" == "19" || "${PV%%.*}" == "18" ]] ; then
+	if [[ "${PV}" =~ "9999" ]] ; then
 ewarn
 ewarn "Do the following to increase download chances of live ebuilds:"
 ewarn
