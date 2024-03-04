@@ -42,7 +42,7 @@ ${LLVM_EBUILDS_LLVM17_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	>=sys-libs/openmp-${LLVM_MAJOR}[offload?]
+	>=sys-libs/libomp-${LLVM_MAJOR}[offload?]
 	sys-devel/clang:${LLVM_MAJOR}
 	sys-devel/llvm:${LLVM_MAJOR}
 	sys-devel/mlir:${LLVM_MAJOR}
