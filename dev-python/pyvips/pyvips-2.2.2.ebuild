@@ -32,8 +32,6 @@ BDEPEND+="
 	test? (
 		dev-python/pyperf[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-flake8[${PYTHON_USEDEP}]
-		dev-python/pytest-runner[${PYTHON_USEDEP}]
 	)
 "
 PDEPEND+="
