@@ -25,7 +25,7 @@ LLVM_EBUILDS_LLVM17_BRANCH="release/17.x"
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
 
-llvm_ebuilds_message() {
+llvm_ebuilds_messages() {
 einfo "Using fallback commit"
 	if [[ "${PV%%.*}" == "19" || "${PV%%.*}" == "18" ]] ; then
 ewarn
