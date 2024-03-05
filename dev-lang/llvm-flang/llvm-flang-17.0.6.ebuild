@@ -3,6 +3,16 @@
 
 EAPI=8
 
+#/var/tmp/portage/dev-lang/llvm-flang-17.0.6/work/flang/lib/Lower/ConvertCall.cpp: In member function 'bool {anonymous}::ElementalUserCallBuilder::canLoadActualArgumentBeforeLoop(unsigned int) const':
+#/var/tmp/portage/dev-lang/llvm-flang-17.0.6/work/flang/lib/Lower/ConvertCall.cpp:1700:17: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
+# 1700 |     const auto &arg = caller.getPassedArguments()[argIdx];
+#      |                 ^~~
+#/var/tmp/portage/dev-lang/llvm-flang-17.0.6/work/flang/lib/Lower/ConvertCall.cpp:1700:57: note: the temporary was destroyed at the end of the full expression '(&((const {anonymous}::ElementalUserCallBuilder*)this)->{anonymous}::ElementalUserCallBuilder::caller)->Fortran::lower::CallerInterface::<anonymous>.Fortran::lower::CallInterface<Fortran::lower::CallerInterface>::getPassedArguments().llvm::ArrayRef<Fortran::lower::CallInterface<Fortran::lower::CallerInterface>::PassedEntity>::operator[](((size_t)argIdx))'
+# 1700 |     const auto &arg = caller.getPassedArguments()[argIdx];
+#      |                                                         ^
+#cc1plus: all warnings being treated as errors
+#ninja: build stopped: subcommand failed.
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
