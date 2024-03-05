@@ -3,20 +3,6 @@
 
 EAPI=8
 
-# FIXME (build time error):
-#FAILED: lib/Lower/CMakeFiles/obj.FortranLower.dir/ConvertCall.cpp.o 
-#/usr/lib/ccache/bin/x86_64-pc-linux-gnu-g++ -DFLANG_LITTLE_ENDIAN=1 -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/include -I/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang_build/include -isystem /usr/lib/llvm/16/include  -O0 -pipe -fPIC -fno-semantic-interposition -fvisibility-inlines-hidden -Werror=date-time -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wno-missing-field-initializers -pedantic -Wno-long-long -Wimplicit-fallthrough -Wno-maybe-uninitialized -Wno-class-memaccess -Wno-redundant-move -Wno-pessimizing-move -Wno-noexcept-type -Wdelete-non-virtual-dtor -Wsuggest-override -Wno-comment -Wno-misleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -ffunction-sections -fdata-sections -Werror -Wno-deprecated-copy -Wno-ctad-maybe-unsupported -fno-strict-aliasing -fno-semantic-interposition -std=c++17   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -MD -MT lib/Lower/CMakeFiles/obj.FortranLower.dir/ConvertCall.cpp.o -MF lib/Lower/CMakeFiles/obj.FortranLower.dir/ConvertCall.cpp.o.d -o lib/Lower/CMakeFiles/obj.FortranLower.dir/ConvertCall.cpp.o -c /var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/lib/Lower/ConvertCall.cpp
-#/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/lib/Lower/ConvertCall.cpp: In member function 'bool {anonymous}::ElementalUserCallBuilder::canLoadActualArgumentBeforeLoop(unsigned int) const':
-#/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/lib/Lower/ConvertCall.cpp:902:17: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
-#  902 |     const auto &arg = caller.getPassedArguments()[argIdx];
-#      |                 ^~~
-#/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/lib/Lower/ConvertCall.cpp:902:57: note: the temporary was destroyed at the end of the full expression '(&((const {anonymous}::ElementalUserCallBuilder*)this)->{anonymous}::ElementalUserCallBuilder::caller)->Fortran::lower::CallerInterface::<anonymous>.Fortran::lower::CallInterface<Fortran::lower::CallerInterface>::getPassedArguments().llvm::ArrayRef<Fortran::lower::CallInterface<Fortran::lower::CallerInterface>::PassedEntity>::operator[](((size_t)argIdx))'
-#  902 |     const auto &arg = caller.getPassedArguments()[argIdx];
-#      |                                                         ^
-#cc1plus: all warnings being treated as errors
-#ninja: build stopped: subcommand failed.
-
-
 LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..11} )
 
@@ -66,6 +52,19 @@ llvm.org_set_globals
 
 src_configure() {
 	if tc-is-gcc && ver_test $(gcc-version) -ge "13.1" ; then
+#FAILED: lib/Lower/CMakeFiles/obj.FortranLower.dir/ConvertCall.cpp.o
+#/usr/lib/ccache/bin/x86_64-pc-linux-gnu-g++ -DFLANG_LITTLE_ENDIAN=1 -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -I/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/include -I/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang_build/include -isystem /usr/lib/llvm/16/include  -O0 -pipe -fPIC -fno-semantic-interposition -fvisibility-inlines-hidden -Werror=date-time -Wall -Wextra -Wno-unused-parameter -Wwrite-strings -Wcast-qual -Wno-missing-field-initializers -pedantic -Wno-long-long -Wimplicit-fallthrough -Wno-maybe-uninitialized -Wno-class-memaccess -Wno-redundant-move -Wno-pessimizing-move -Wno-noexcept-type -Wdelete-non-virtual-dtor -Wsuggest-override -Wno-comment -Wno-misleading-indentation -Wctad-maybe-unsupported -fdiagnostics-color -ffunction-sections -fdata-sections -Werror -Wno-deprecated-copy -Wno-ctad-maybe-unsupported -fno-strict-aliasing -fno-semantic-interposition -std=c++17   -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -MD -MT lib/Lower/CMakeFiles/obj.FortranLower.dir/ConvertCall.cpp.o -MF lib/Lower/CMakeFiles/obj.FortranLower.dir/ConvertCall.cpp.o.d -o lib/Lower/CMakeFiles/obj.FortranLower.dir/ConvertCall.cpp.o -c /var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/lib/Lower/ConvertCall.cpp
+#/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/lib/Lower/ConvertCall.cpp: In member function 'bool {anonymous}::ElementalUserCallBuilder::canLoadActualArgumentBeforeLoop(unsigned int) const':
+#/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/lib/Lower/ConvertCall.cpp:902:17: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
+#  902 |     const auto &arg = caller.getPassedArguments()[argIdx];
+#      |                 ^~~
+#/var/tmp/portage/dev-lang/llvm-flang-16.0.6/work/flang/lib/Lower/ConvertCall.cpp:902:57: note: the temporary was destroyed at the end of the full expression '(&((const {anonymous}::ElementalUserCallBuilder*)this)->{anonymous}::ElementalUserCallBuilder::caller)->Fortran::lower::CallerInterface::<anonymous>.Fortran::lower::CallInterface<Fortran::lower::CallerInterface>::getPassedArguments().llvm::ArrayRef<Fortran::lower::CallInterface<Fortran::lower::CallerInterface>::PassedEntity>::operator[](((size_t)argIdx))'
+#  902 |     const auto &arg = caller.getPassedArguments()[argIdx];
+#      |                                                         ^
+#cc1plus: all warnings being treated as errors
+#ninja: build stopped: subcommand failed.
+
+# Use gcc 12 behavior
 		append-flags -Wno-error=dangling-reference
 	fi
 	local user_choice=$(echo "${MAKEOPTS}" \
