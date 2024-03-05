@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="net-im"
+PN="chatterino"
+BUMP_POLICY="new-patch-versions-per-minor-major"
