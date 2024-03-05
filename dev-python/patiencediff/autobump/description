@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="dev-python"
+PN="patiencediff"
+BUMP_POLICY="new-patch-versions-per-minor-major"
