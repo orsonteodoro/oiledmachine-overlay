@@ -71,10 +71,10 @@ src_configure() {
 	local user_choice=$(echo "${MAKEOPTS}" \
 		| grep -E -e "-j[ ]*[0-9]+" \
 		| grep -E -o "[0-9]+")
-	local half_ncpus=$(python -c "print(int($(nproc)/2))")
-	(( ${half_ncpus} == 0 )) && half_ncpus=1
+	local quarter_ncpus=$(python -c "print(int($(nproc)/4))")
+	(( ${quarter_ncpus} == 0 )) && quarter_ncpus=1
 	if [[ "${user_choice}" != "1" ]] ; then
-		MAKEOPTS="-j${half_ncpus}" # Heavy swap
+		MAKEOPTS="-j${quarter_ncpus}" # Heavy swap
 	fi
 	local mycmakeargs=(
 		-DCLANG_DIR="${ESYSROOT}/usr/lib/llvm/${LLVM_MAJOR}/$(get_libdir)/cmake/clang"
