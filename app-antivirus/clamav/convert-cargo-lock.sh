@@ -11,6 +11,7 @@ MY_PV="${1}" # right version in ${S}
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
+	[onenote_parser]="onenote.rs-%commit%"
 )
 
 main() {
@@ -45,7 +46,7 @@ main() {
 			| cut -f 2 -d '"' \
 			| sed -r \
 				-e "s|git[+]||g" \
-				-e "s|[?]branch=[a-zA-Z0-9.]+||" \
+				-e "s|[?]branch=[a-zA-Z0-9.-]+||" \
 				-e "s|#|;|g" \
 				-e "s|[?]rev=[a-zA-Z0-9]{0,40}||" \
 				-e "s|\.git||")

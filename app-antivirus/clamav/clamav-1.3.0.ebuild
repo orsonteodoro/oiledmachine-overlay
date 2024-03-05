@@ -18,143 +18,145 @@ PYTHON_COMPAT=( python3_{10..12} ) # CI uses 3.8
 # LLVM 15 support is a Work In Progress (WIP)
 # LLVM 16 support is a Work In Progress (WIP)
 
-# From "./convert-cargo-lock.sh 1.2.1 1.2.1"
+declare -A GIT_CRATES=(
+[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
+)
+
+# From "./convert-cargo-lock.sh 1.3.0 1.3.0"
 CRATES="
 adler-1.0.2
-aho-corasick-1.0.5
+aho-corasick-1.1.2
 autocfg-1.1.0
-base64-0.21.3
+base64-0.21.5
 bindgen-0.65.1
 bit_field-0.10.2
 bitflags-1.3.2
-bitflags-2.4.0
+bitflags-2.4.1
 block-buffer-0.10.4
-bumpalo-3.13.0
 bytemuck-1.14.0
-byteorder-1.4.3
+byteorder-1.5.0
+bytes-1.5.0
 cbindgen-0.25.0
-cc-1.0.83
 cexpr-0.6.0
 cfg-if-1.0.0
 clang-sys-1.6.1
 color_quant-1.1.0
-cpufeatures-0.2.9
+cpufeatures-0.2.11
 crc32fast-1.3.2
-crossbeam-channel-0.5.8
-crossbeam-deque-0.8.3
-crossbeam-epoch-0.9.15
-crossbeam-utils-0.8.16
+crossbeam-deque-0.8.4
+crossbeam-epoch-0.9.16
+crossbeam-utils-0.8.17
 crunchy-0.2.2
 crypto-common-0.1.6
 digest-0.10.7
 either-1.9.0
-errno-0.3.3
-errno-dragonfly-0.1.2
-exr-1.7.0
-fastrand-2.0.0
-fdeflate-0.3.0
-flate2-1.0.27
-flume-0.10.14
-futures-core-0.3.28
-futures-sink-0.3.28
+encoding_rs-0.8.33
+enum-primitive-derive-0.2.2
+errno-0.3.8
+exr-1.71.0
+fastrand-2.0.1
+fdeflate-0.3.1
+flate2-1.0.28
+flume-0.11.0
 generic-array-0.14.7
-getrandom-0.2.10
 gif-0.12.0
 glob-0.3.1
 half-2.2.1
 hashbrown-0.12.3
 heck-0.4.1
-hermit-abi-0.3.2
 hex-0.4.3
+hex-literal-0.4.1
 home-0.5.5
 image-0.24.7
 indexmap-1.9.3
-itoa-1.0.9
+itertools-0.10.5
+itoa-1.0.10
 jpeg-decoder-0.3.0
-js-sys-0.3.64
 lazycell-1.3.0
 lazy_static-1.4.0
 lebe-0.5.2
-libc-0.2.147
+libc-0.2.151
 libloading-0.7.4
-linux-raw-sys-0.4.5
-lock_api-0.4.10
+linux-raw-sys-0.4.12
+lock_api-0.4.11
 log-0.4.20
-memchr-2.6.3
+memchr-2.6.4
 memoffset-0.9.0
 minimal-lexical-0.2.1
 miniz_oxide-0.7.1
-nanorand-0.7.0
 nom-7.1.3
 num-complex-0.4.4
-num_cpus-1.16.0
 num-integer-0.1.45
 num-rational-0.4.1
-num-traits-0.2.16
-once_cell-1.18.0
+num-traits-0.2.17
+once_cell-1.19.0
+paste-1.0.14
 peeking_take_while-0.1.2
-pin-project-1.1.3
-pin-project-internal-1.1.3
 png-0.17.10
 prettyplease-0.2.15
 primal-check-0.3.3
-proc-macro2-1.0.66
+proc-macro2-1.0.70
 qoi-0.4.1
 quote-1.0.33
-rayon-1.7.0
-rayon-core-1.11.0
-redox_syscall-0.3.5
-regex-1.9.5
-regex-automata-0.3.8
-regex-syntax-0.7.5
+rayon-1.8.0
+rayon-core-1.12.0
+redox_syscall-0.4.1
+regex-1.10.2
+regex-automata-0.4.3
+regex-syntax-0.8.2
 rustc-hash-1.1.0
 rustdct-0.7.1
 rustfft-6.1.0
-rustix-0.38.11
-ryu-1.0.15
+rustix-0.38.28
+ryu-1.0.16
 scopeguard-1.2.0
-serde-1.0.188
-serde_derive-1.0.188
-serde_json-1.0.105
-sha1-0.10.5
-sha2-0.10.7
-shlex-1.2.0
+serde-1.0.193
+serde_derive-1.0.193
+serde_json-1.0.108
+sha1-0.10.6
+sha2-0.10.8
+shlex-1.3.0
 simd-adler32-0.3.7
-smallvec-1.11.0
+smallvec-1.11.2
 spin-0.9.8
 strength_reduce-0.2.4
 syn-1.0.109
-syn-2.0.31
-tempfile-3.8.0
-thiserror-1.0.48
-thiserror-impl-1.0.48
+syn-2.0.41
+tempfile-3.8.1
+thiserror-1.0.50
+thiserror-impl-1.0.50
 tiff-0.9.0
 toml-0.5.11
 transpose-0.2.2
-typenum-1.16.0
-unicode-ident-1.0.11
+typenum-1.17.0
+unicode-ident-1.0.12
 unicode-segmentation-1.10.1
+uuid-1.6.1
 version_check-0.9.4
-wasi-0.11.0+wasi-snapshot-preview1
-wasm-bindgen-0.2.87
-wasm-bindgen-backend-0.2.87
-wasm-bindgen-macro-0.2.87
-wasm-bindgen-macro-support-0.2.87
-wasm-bindgen-shared-0.2.87
 weezl-0.1.7
 which-4.4.2
+widestring-1.0.2
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-x86_64-pc-windows-gnu-0.4.0
 windows_aarch64_gnullvm-0.48.5
+windows_aarch64_gnullvm-0.52.0
 windows_aarch64_msvc-0.48.5
+windows_aarch64_msvc-0.52.0
 windows_i686_gnu-0.48.5
+windows_i686_gnu-0.52.0
 windows_i686_msvc-0.48.5
+windows_i686_msvc-0.52.0
 windows-sys-0.48.0
+windows-sys-0.52.0
 windows-targets-0.48.5
+windows-targets-0.52.0
 windows_x86_64_gnu-0.48.5
+windows_x86_64_gnu-0.52.0
 windows_x86_64_gnullvm-0.48.5
+windows_x86_64_gnullvm-0.52.0
 windows_x86_64_msvc-0.48.5
+windows_x86_64_msvc-0.52.0
 zune-inflate-0.2.54
 "
 
@@ -267,7 +269,7 @@ CDEPEND="
 	)
 	>=app-arch/bzip2-1.0.8
 	>=dev-libs/openssl-1.1.1f:=
-	>=dev-libs/json-c-0.13.1:=
+	>=dev-libs/json-c-0.15:=
 	>=dev-libs/libltdl-2.4.6
 	>=dev-libs/libpcre2-8.39:=
 	>=dev-libs/libxml2-2.9.10
@@ -390,6 +392,11 @@ einfo "Replacing with updated Cargo.lock"
 
 src_unpack() {
 	default
+
+	# Uncomment before running convert-cargo-lock.sh
+	# Readd comment when done generating cargo list.
+	#die
+
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		_lockfile_gen_unpack
 	else
@@ -667,21 +674,24 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  LICENSE-variable-changes, update-jit-for-llvm-14-to-15
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.1.0 (20230610)
-# USE="clamapp jit test -clamonacc -custom-cflags (-debug) -doc -experimental
-# -libclamav-only -man -milter -r1 -rar (-selinux) -systemd -valgrind"
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.3.0 (20240305)
+
+#ctest -j 4 --test-load 4
+#Test project /var/tmp/portage/app-antivirus/clamav-1.3.0/work/clamav-clamav-1.3.0_build
 #    Start 1: libclamav
+#1/6 Test #1: libclamav ........................   Passed   23.50 sec
 #    Start 2: libclamav_rust
+#2/6 Test #2: libclamav_rust ...................   Passed   37.19 sec
 #    Start 3: clamscan
+#3/6 Test #3: clamscan .........................   Passed   13.88 sec
 #    Start 4: clamd
-#1/6 Test #3: clamscan .........................   Passed   28.09 sec
+#4/6 Test #4: clamd ............................   Passed   16.29 sec
 #    Start 5: freshclam
-#2/6 Test #4: clamd ............................   Passed   30.49 sec
+#5/6 Test #5: freshclam ........................   Passed   44.84 sec
 #    Start 6: sigtool
-#3/6 Test #6: sigtool ..........................   Passed    4.70 sec
-#4/6 Test #1: libclamav ........................   Passed   38.91 sec
-#5/6 Test #2: libclamav_rust ...................   Passed   48.10 sec
-#6/6 Test #5: freshclam ........................   Passed   37.72 sec
+#6/6 Test #6: sigtool ..........................   Passed    2.49 sec
 #
 #100% tests passed, 0 tests failed out of 6
 #
-#Total Test time (real) =  65.85 sec
+#Total Test time (real) = 267.33 sec
+# * Tests succeeded.

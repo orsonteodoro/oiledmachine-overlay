@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- Ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -15,6 +15,13 @@
     <!-- For the LTS 0.103.x branch only -->
     <email>mjo@gentoo.org</email>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild fork fixes JIT support for some LLVM slots.
+
+  -->
   <use>
     <flag name="clamapp">
       Build applications (clamscan, clamd, clamdscan, clamonacc (also has its
@@ -47,9 +54,18 @@
     <flag name="rar">
       RAR support
     </flag>
-    </use>
-    <upstream>
-      <remote-id type="github">Cisco-Talos/clamav</remote-id>
-      <remote-id type="sourceforge">clamav</remote-id>
-    </upstream>
+  </use>
+  <upstream>
+    <remote-id type="github">Cisco-Talos/clamav</remote-id>
+    <remote-id type="sourceforge">clamav</remote-id>
+  </upstream>
+  <slots>
+    <slot name="0">
+      Unislotted
+    </slot>
+    <subslots>
+      sts - stable
+      lts - long term support
+    </subslots>
+  </slots>
 </pkgmetadata>

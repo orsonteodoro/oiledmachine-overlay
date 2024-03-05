@@ -1,8 +1,0 @@
-[workspace]
-
-members = [
-    "libclamav_rust",
-]
-
-[profile.dev.package."*"]
-opt-level = 2
