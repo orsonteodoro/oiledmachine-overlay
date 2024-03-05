@@ -33,7 +33,7 @@ https://github.com/llvm/llvm-project/tree/main/flang
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 "
-#KEYWORDS="~amd64"
+KEYWORDS="~amd64"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 offload test
