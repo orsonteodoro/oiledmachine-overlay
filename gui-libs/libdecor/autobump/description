@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="gui-libs"
+PN="libdecor"
+BUMP_POLICY="new-patch-versions-per-minor-major"
