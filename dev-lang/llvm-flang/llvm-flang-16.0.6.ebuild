@@ -107,4 +107,14 @@ einfo "Switching ${EROOT}/usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new -> ${ER
 		|| die
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  passed (16.0.6; 20240305)
+# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
+
+# Testing:
+#cat <<EOF > "hello.f90"
+#program hello
+#  print *, "hello world"
+#end program
+#EOF
+#/usr/lib/llvm-flang/16/bin/flang-new hello.f90 -L/usr/lib/llvm-flang/16/lib64 -o hello.exe
+#LD_LIBRARY_PATH="/usr/lib/llvm-flang/16/lib64" ./hello.exe
