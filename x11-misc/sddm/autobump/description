@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="x11-misc"
+PN="sddm"
+BUMP_POLICY="new-patch-versions-per-minor-major"
