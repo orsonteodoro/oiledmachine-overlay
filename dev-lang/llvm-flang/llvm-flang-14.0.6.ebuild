@@ -6,7 +6,7 @@ EAPI=8
 LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake llvm.org python-any-r1
+inherit cmake flag-o-matic llvm.org python-any-r1 toolchain-funcs
 
 DESCRIPTION="LLVM Flang is a continuation of F18 to replace Classic Flang"
 HOMEPAGE="
@@ -23,7 +23,7 @@ offload test
 REQUIRED_USE="
 "
 RDEPEND="
-	>=sys-libs/libomp-${LLVM_MAJOR}[offload?]
+	sys-libs/libomp:${LLVM_MAJOR}[offload?]
 	sys-devel/clang:${LLVM_MAJOR}
 	sys-devel/llvm:${LLVM_MAJOR}
 	sys-devel/mlir:${LLVM_MAJOR}
@@ -51,6 +51,9 @@ LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
 
 src_configure() {
+	if tc-is-gcc && ver_test $(gcc-version) -ge "13.1" ; then
+		append-flags -Wno-error=dangling-reference
+	fi
 	local user_choice=$(echo "${MAKEOPTS}" \
 		| grep -E -e "-j[ ]*[0-9]+" \
 		| grep -E -o "[0-9]+")
