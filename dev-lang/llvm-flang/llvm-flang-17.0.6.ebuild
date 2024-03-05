@@ -3,6 +3,7 @@
 
 EAPI=8
 
+# FIXME (build time error):
 #/var/tmp/portage/dev-lang/llvm-flang-17.0.6/work/flang/lib/Lower/ConvertCall.cpp: In member function 'bool {anonymous}::ElementalUserCallBuilder::canLoadActualArgumentBeforeLoop(unsigned int) const':
 #/var/tmp/portage/dev-lang/llvm-flang-17.0.6/work/flang/lib/Lower/ConvertCall.cpp:1700:17: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
 # 1700 |     const auto &arg = caller.getPassedArguments()[argIdx];
@@ -43,7 +44,7 @@ https://github.com/llvm/llvm-project/tree/main/flang
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 "
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 offload test

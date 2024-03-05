@@ -3,6 +3,7 @@
 
 EAPI=8
 
+# FIXME (build time error):
 #/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::ErrIfLHSAndRHSSymbolsMatch(const Fortran::parser::Variable&, const Fortran::parser::Expr&)':
 #/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1777:19: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
 # 1777 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
