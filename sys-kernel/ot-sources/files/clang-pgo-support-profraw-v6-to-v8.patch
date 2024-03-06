@@ -129,12 +129,14 @@ License identified for kernel/pgo/pgo.h:
  #define LLVM_INSTR_PROF_DATA_ALIGNMENT		8
  #define LLVM_INSTR_PROF_IPVK_FIRST		0
  #define LLVM_INSTR_PROF_IPVK_LAST		1
-@@ -72,6 +90,10 @@
+@@ -72,6 +90,12 @@
  struct llvm_prf_header {
  	u64 magic;
  	u64 version;
-+#if LLVM_INSTR_PROF_RAW_VERSION == 7 \
-+	|| LLVM_INSTR_PROF_RAW_VERSION == 8
++#if \
++	   LLVM_INSTR_PROF_RAW_VERSION == 9 \
++	|| LLVM_INSTR_PROF_RAW_VERSION == 8 \
++	|| LLVM_INSTR_PROF_RAW_VERSION == 7
 +	u64 binary_id_size;
 +#endif
  	u64 data_size;
