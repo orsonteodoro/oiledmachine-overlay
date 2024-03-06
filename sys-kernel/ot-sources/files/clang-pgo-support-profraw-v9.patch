@@ -36,7 +36,7 @@ Patch status:  testing
  	header->counters_delta = (u64)__llvm_prf_cnts_start;
  #endif
 +#if LLVM_INSTR_PROF_RAW_VERSION >= 9
-+	header->bitmap_delta = (u64)__llvm_prf_bitmap_start - (u64)__llvm_prf_data_start;
++	header->bitmap_delta = (u64)__llvm_prf_bits_start - (u64)__llvm_prf_data_start;
 +#endif
  	header->names_delta = (u64)__llvm_prf_names_start;
  	header->value_kind_last = LLVM_INSTR_PROF_IPVK_LAST;
