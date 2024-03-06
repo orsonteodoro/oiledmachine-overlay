@@ -564,6 +564,9 @@ ot-kernel_apply_tresor_fixes() {
 			"${FILESDIR}/tresor-xts-setkey-5.4-aesni.patch"
 	fi
 
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
+
 	if [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-access_ok-5.4_aesni.patch"

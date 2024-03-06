@@ -1754,15 +1754,22 @@ ot-kernel_get_kcp_provider() {
 _filter_genpatches() {
 	P_GENPATCHES_BLACKLIST=""
 	if ! ot-kernel_use genpatches_1510 ; then
-		# Possibly locks up computer during OOM tests
+	# Possibly locks up computer during OOM tests
 		P_GENPATCHES_BLACKLIST+=" 1510"
 	fi
 	# Already applied since 5.13.14
 	P_GENPATCHES_BLACKLIST+=" 2700"
 	local kcp_provider=$(ot-kernel_get_kcp_provider)
 	if ! [[ "${kcp_provider}" =~ "genpatches" ]] ; then
-		# Already applied 5010-5013 GraySky2's kernel_compiler_patches
+	# Already applied 5010-5013 GraySky2's kernel_compiler_patches
 		P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
+	fi
+	if [[ "${KV_MAJOR_MINOR}" == "4.19" ]] ; then
+	# Patch failures
+		P_GENPATCHES_BLACKLIST+=" 2600"
+	elif [[ "${KV_MAJOR_MINOR}" == "5.4" ]] ; then
+	# Patch failures
+		P_GENPATCHES_BLACKLIST+=" 2600"
 	fi
 	# Already applied 5000-5007 ZSTD patches
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
@@ -1771,7 +1778,7 @@ _filter_genpatches() {
 	# Already applied the pelt.h patch conditionally.
 	P_GENPATCHES_BLACKLIST+=" 5022"
 	if declare -f ot-kernel_filter_genpatches_blacklist_cb > /dev/null ; then
-		# Disable failing patches
+	# Disable failing patches
 		P_GENPATCHES_BLACKLIST+=$(ot-kernel_filter_genpatches_blacklist_cb)
 	fi
 

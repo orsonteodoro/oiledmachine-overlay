@@ -468,6 +468,8 @@ ot-kernel_apply_tresor_fixes() {
 
 	_dpatch "${PATCH_OPTS}" \
 		"${FILESDIR}/tresor-glue-helper-in-kconfig.patch"
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
 
 	if [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \

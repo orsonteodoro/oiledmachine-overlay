@@ -27,7 +27,7 @@ KERNEL_RELEASE_DATE="20211031" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.15/tools/build/feature/Makefile#L318
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
-LLVM_MAX_SLOT=15
+LLVM_MAX_SLOT=18
 LLVM_MIN_SLOT=10
 CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
@@ -806,6 +806,9 @@ ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPTS}" \
 			"${FILESDIR}/tresor-drop-xts-and-use-ctr-template-for-5.15_aesni.patch"
 	fi
+
+	_dpatch "${PATCH_OPTS}" \
+		"${FILESDIR}/tresor-explicit-int-dont_switch-arg-for-6.1.patch"
 
 	if [[ "${tresor_patch_target}" == "x86_64_aesni_256" ]] ; then
 		_dpatch "${PATCH_OPTS}" \

@@ -29,7 +29,7 @@ KERNEL_RELEASE_DATE="20231029" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.6/tools/build/feature/Makefile#L331
 GCC_MAX_SLOT=13
 GCC_MIN_SLOT=6
-LLVM_MAX_SLOT=16
+LLVM_MAX_SLOT=18
 LLVM_MIN_SLOT=11
 CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
