@@ -7,7 +7,7 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit cmake-multilib python-r1
+inherit cmake-multilib python-r1 toolchain-funcs
 
 SRC_URI="
 https://github.com/nghttp2/nghttp2/releases/download/v${PV}/${P}.tar.xz
@@ -28,7 +28,13 @@ RESTRICT="
 SO_CURRENT="41"
 SO_AGE="27"
 SLOT="0/$((${SO_CURRENT} - ${SO_AGE}))"
-IUSE="bpf debug doc hpack-tools http3 jemalloc static-libs systemd test utils xml"
+# bpf is default ON if clang and http3
+# doc is default on upstream
+# hpack-tools is enabled on CI
+# jemalloc is enabled on CI
+# utils is enabled on CI
+# xml is enabled on CI
+IUSE="-bpf debug doc +hpack-tools -http3 +jemalloc -static-libs systemd test +threads +utils +xml"
 REQUIRED_USE="
 	doc? (
 		${PYTHON_REQUIRED_USE}
@@ -97,6 +103,9 @@ BDEPEND="
 
 pkg_setup() {
 	use doc && python_setup
+	if tc-is-clang && use http3 && ! use bpf ; then
+ewarn "bpf is default ON upstream if clang ON, http3 ON"
+	fi
 }
 
 multilib_src_configure() {
@@ -130,7 +139,7 @@ eerror
 		-DENABLE_FAILMALLOC=OFF
 		-DENABLE_HPACK_TOOLS=$(multilib_native_usex hpack-tools)
 		-DENABLE_STATIC_LIB=$(usex static-libs)
-		-DENABLE_THREADS=ON
+		-DENABLE_THREADS=$(usex threads)
 		-DENABLE_WERROR=OFF
 		-DWITH_JEMALLOC=$(multilib_native_usex jemalloc)
 		-DWITH_LIBBPF=$(multilib_native_usex bpf)
