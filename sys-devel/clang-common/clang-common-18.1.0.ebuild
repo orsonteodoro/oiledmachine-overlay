@@ -23,6 +23,11 @@ unset -f _llvm_set_globals
 
 inherit bash-completion-r1 llvm.org
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+~arm64-macos ~ppc-macos ~x64-macos
+"
+
 DESCRIPTION="Common files shared between multiple slots of clang"
 HOMEPAGE="https://llvm.org/"
 LICENSE="

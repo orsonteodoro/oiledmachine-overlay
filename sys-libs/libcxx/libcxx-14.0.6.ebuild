@@ -6,8 +6,11 @@ EAPI=8
 
 CMAKE_ECLASS="cmake"
 PYTHON_COMPAT=( python3_{9..11} )
+
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
+
 LLVM_MAX_SLOT=${LLVM_MAJOR}
+KEYWORDS="amd64 arm arm64 ~riscv sparc x86 ~x64-macos"
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
 HOMEPAGE="https://libcxx.llvm.org/"
@@ -19,7 +22,6 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~riscv sparc x86 ~x64-macos"
 IUSE="
 +libcxxabi +libunwind +static-libs test
 

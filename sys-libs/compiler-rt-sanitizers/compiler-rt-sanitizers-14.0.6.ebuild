@@ -5,9 +5,12 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{9..11} )
+
 inherit check-reqs cmake flag-o-matic llvm llvm.org python-any-r1
 inherit llvm-ebuilds
+
 LLVM_MAX_SLOT=${LLVM_MAJOR}
+KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
 HOMEPAGE="https://llvm.org/"
@@ -19,8 +22,6 @@ LICENSE="
 	)
 "
 SLOT="$(ver_cut 1-3)"
-KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
-# base targets
 IUSE="
 +abi_x86_32 abi_x86_64 +clang debug hexagon test
 

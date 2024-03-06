@@ -5,6 +5,10 @@ EAPI=7
 
 inherit llvm.org
 
+KEYWORDS="
+amd64 arm arm64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos
+"
+
 DESCRIPTION="Common files shared between multiple slots of LLVM"
 HOMEPAGE="https://llvm.org/"
 LICENSE="
@@ -12,9 +16,6 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="0"
-KEYWORDS="
-amd64 arm arm64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos
-"
 IUSE=""
 RDEPEND="
 	!sys-devel/llvm:0

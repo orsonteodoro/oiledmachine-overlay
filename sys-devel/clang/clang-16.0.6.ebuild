@@ -8,10 +8,16 @@ PYTHON_COMPAT=( python3_{10..12} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
+
 inherit cmake llvm llvm.org multilib multilib-minimal prefix python-single-r1
 inherit toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils uopts
 inherit llvm-ebuilds
+
+KEYWORDS="
+amd64 arm arm64 ~loong ppc ppc64 ~riscv sparc x86 ~amd64-linux ~arm64-macos
+~x64-macos
+"
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -23,10 +29,6 @@ LICENSE="
 # MSVCSetupApi.h: MIT
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS="
-amd64 arm arm64 ~loong ppc ppc64 ~riscv sparc x86 ~amd64-linux ~arm64-macos
-~x64-macos
-"
 IUSE="
 debug doc +extra ieee-long-double +pie rocm_5_5 rocm_5_6 +static-analyzer test
 xml

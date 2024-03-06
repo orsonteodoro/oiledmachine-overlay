@@ -22,6 +22,7 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 PYTHON_COMPAT=( python3_{10..12} )
+
 inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"

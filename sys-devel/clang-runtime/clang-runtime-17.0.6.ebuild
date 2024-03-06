@@ -5,16 +5,21 @@ EAPI=8
 
 inherit multilib-build toolchain-funcs
 
-DESCRIPTION="Meta-ebuild for clang runtime libraries"
-HOMEPAGE="https://clang.llvm.org/"
-LICENSE="metapackage"
-SLOT="${PV%%.*}"
 KEYWORDS="
 amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc x86 ~amd64-linux ~arm64-macos
 ~ppc-macos ~x64-macos
 "
+
+DESCRIPTION="Meta-ebuild for clang runtime libraries"
+HOMEPAGE="https://clang.llvm.org/"
+LICENSE="metapackage"
+SLOT="${PV%%.*}"
 IUSE="+compiler-rt libcxx openmp +sanitize"
-REQUIRED_USE="sanitize? ( compiler-rt )"
+REQUIRED_USE="
+	sanitize? (
+		compiler-rt
+	)
+"
 RDEPEND="
 	compiler-rt? (
 		~sys-libs/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]

@@ -28,6 +28,10 @@ inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
 inherit python-single-r1 toolchain-funcs
 #inherit rocm
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
+"
+
 DESCRIPTION="Multi Level Intermediate Representation for LLVM"
 HOMEPAGE="https://openmp.llvm.org"
 LICENSE="

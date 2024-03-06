@@ -6,6 +6,9 @@ EAPI=7
 inherit bash-completion-r1 llvm.org
 
 S="${WORKDIR}/clang/utils"
+KEYWORDS="
+amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos
+"
 
 DESCRIPTION="Common files shared between multiple slots of clang"
 HOMEPAGE="https://llvm.org/"
@@ -14,9 +17,6 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="0"
-KEYWORDS="
-amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos
-"
 IUSE=""
 PDEPEND="sys-devel/clang:*"
 LLVM_COMPONENTS=(

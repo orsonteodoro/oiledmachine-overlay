@@ -26,7 +26,12 @@ PYTHON_COMPAT=( python3_{10..12} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
+
 inherit cmake flag-o-matic llvm.org llvm-utils python-any-r1 uopts
+
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos
+"
 
 DESCRIPTION="The LLVM linker (link editor)"
 HOMEPAGE="https://llvm.org/"
@@ -35,7 +40,6 @@ LICENSE="
 	UoI-NCSA
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS=""
 IUSE+="
 +debug test zstd
 

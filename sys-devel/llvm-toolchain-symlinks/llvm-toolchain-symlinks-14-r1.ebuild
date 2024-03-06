@@ -6,15 +6,15 @@ EAPI=8
 inherit multilib
 
 S="${WORKDIR}"
+KEYWORDS="
+~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos
+~x64-macos
+"
 
 DESCRIPTION="Symlinks to use LLVM on binutils-free system"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:LLVM"
 LICENSE="public-domain"
 SLOT="${PV}"
-KEYWORDS="
-~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~ppc-macos
-~x64-macos
-"
 IUSE="multilib-symlinks +native-symlinks"
 RDEPEND="
 	sys-devel/llvm:${SLOT}

@@ -10,7 +10,11 @@ HOMEPAGE="https://clang.llvm.org/"
 LICENSE="metapackage"
 SLOT="${PV%%.*}"
 IUSE="+compiler-rt libcxx openmp +sanitize"
-REQUIRED_USE="sanitize? ( compiler-rt )"
+REQUIRED_USE="
+	sanitize? (
+		compiler-rt
+	)
+"
 RDEPEND="
 	compiler-rt? (
 		~sys-libs/compiler-rt-${PV}:${SLOT}[abi_x86_32(+)?,abi_x86_64(+)?]

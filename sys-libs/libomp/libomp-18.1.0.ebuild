@@ -79,6 +79,10 @@ PYTHON_COMPAT=( python3_{10..12} )
 inherit flag-o-matic cmake-multilib linux-info llvm.org llvm-utils python-single-r1
 inherit rocm toolchain-funcs
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
+"
+
 DESCRIPTION="OpenMP runtime library for LLVM/clang compiler"
 HOMEPAGE="https://openmp.llvm.org"
 LICENSE="

@@ -23,7 +23,9 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 PYTHON_COMPAT=( python3_{10..12} )
+
 inherit check-reqs cmake flag-o-matic llvm.org llvm-utils python-any-r1
+
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
@@ -36,7 +38,6 @@ LICENSE="
 	)
 "
 SLOT="${LLVM_MAJOR}"
-# base targets
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang +debug hexagon test
 

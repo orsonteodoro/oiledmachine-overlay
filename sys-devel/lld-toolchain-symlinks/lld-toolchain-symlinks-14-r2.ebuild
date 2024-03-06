@@ -5,7 +5,6 @@ EAPI=8
 
 inherit multilib
 
-SRC_URI=""
 S="${WORKDIR}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 

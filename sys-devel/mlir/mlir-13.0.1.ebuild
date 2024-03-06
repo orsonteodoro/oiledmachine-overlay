@@ -8,6 +8,10 @@ PYTHON_COMPAT=( python3_{9..10} )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1 rocm
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
+"
+
 DESCRIPTION="Multi Level Intermediate Representation for LLVM"
 HOMEPAGE="https://openmp.llvm.org"
 LICENSE="
@@ -18,9 +22,6 @@ LICENSE="
 	)
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-KEYWORDS="
-~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
-"
 IUSE="
 	debug rocm_4_3 rocm_4_5 test
 	r2

@@ -5,9 +5,12 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{9..11} )
+
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
+
 # llvm-6 for new lit options
 LLVM_MAX_SLOT=${LLVM_MAJOR}
+KEYWORDS="amd64 arm arm64 ~riscv sparc x86 ~x64-macos"
 
 DESCRIPTION="Low level support for a standard C++ library"
 HOMEPAGE="https://libcxxabi.llvm.org/"
@@ -19,7 +22,6 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~riscv sparc x86 ~x64-macos"
 IUSE="
 +libunwind +static-libs test
 

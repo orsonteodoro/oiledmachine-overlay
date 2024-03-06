@@ -8,6 +8,8 @@ PYTHON_COMPAT=( python3_{10..11} )
 
 inherit cmake flag-o-matic llvm.org python-any-r1 toolchain-funcs
 
+KEYWORDS="~amd64"
+
 DESCRIPTION="LLVM Flang is a continuation of F18 to replace Classic Flang"
 HOMEPAGE="
 https://github.com/llvm/llvm-project/tree/main/flang
@@ -15,7 +17,6 @@ https://github.com/llvm/llvm-project/tree/main/flang
 LICENSE="
 	Apache-2.0-with-LLVM-exceptions
 "
-KEYWORDS="~amd64"
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE="
 offload test
