@@ -12,8 +12,14 @@
     <name>Gentoo Antivirus Project</name>
   </maintainer>
   <maintainer type="person">
+    <!-- Ebuild originator(s) -->
     <!-- For the LTS 0.103.x branch only -->
     <email>mjo@gentoo.org</email>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Distro ebuild -->
+    <email>kangie@gentoo.org</email>
+    <name>Matt Jolly</name>
   </maintainer>
   <!--
 
@@ -28,12 +34,12 @@
       own USE flag), sigtool, clambc, clamav-milter (also requires milter USE
       flag), clamdtop, clamsubmit, clamconf).
     </flag>
-    <flag name="clamonacc">
-      Build the clamonacc on-access scanner
-    </flag>
     <flag name="clamdtop">
       A Top like tool which shows what clamd is currently scanning amongst other
       things
+    </flag>
+    <flag name="clamonacc">
+      Build the clamonacc on-access scanner
     </flag>
     <flag name="clamsubmit">
       A tool to submit false positives / negatives
@@ -48,16 +54,19 @@
       Enables collection of file property metadata using ClamAV API for analysis
       by ClamAV bytecode programs.
     </flag>
-    <flag name="xml">
-      DMG and XAR support
-    </flag>
     <flag name="rar">
       RAR support
+    </flag>
+    <flag name="system-mspack">
+      Use <pkg>dev-libs/libmspack</pkg> instead of the version bundled with
+      ClamAV
+    </flag>
+    <flag name="xml">
+      DMG and XAR support
     </flag>
   </use>
   <upstream>
     <remote-id type="github">Cisco-Talos/clamav</remote-id>
-    <remote-id type="sourceforge">clamav</remote-id>
   </upstream>
   <slots>
     <slot name="0">
