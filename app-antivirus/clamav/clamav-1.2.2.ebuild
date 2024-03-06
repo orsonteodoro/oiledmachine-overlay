@@ -1,5 +1,5 @@
 # Copyright 2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -286,8 +286,9 @@ CDEPEND="
 		sys-libs/fts-standalone
 	)
 	jit? (
-		<sys-devel/llvm-$((${LLVM_MAX_SLOT} + 1)):=
-		>=sys-devel/llvm-14:=
+		|| (
+			sys-devel/llvm:14
+		)
 	)
 	milter? (
 		>=mail-filter/libmilter-8.15.2:=
