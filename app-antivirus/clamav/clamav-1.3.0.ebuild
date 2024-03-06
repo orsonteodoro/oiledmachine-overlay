@@ -674,7 +674,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  LICENSE-variable-changes, update-jit-for-llvm-14-to-15
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.1.0 (20230610)
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.3.0 (20240305)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.3.0 (20240305) USE="clamapp jit test -clamonacc -custom-cflags (-debug) -doc -experimental -libclamav-only -man -milter -r1 -rar (-selinux) -system-mspack -systemd -valgrind"
 
 #ctest -j 4 --test-load 4
 #Test project /var/tmp/portage/app-antivirus/clamav-1.3.0/work/clamav-clamav-1.3.0_build
