@@ -9,7 +9,14 @@ TRAIN_TEST_DURATION=20
 PYTHON_COMPAT=( python3_{8..11} )
 UOPTS_BOLT_EXCLUDE_BINS+="libOpenGLWindow.so" # \
 # examples/OpenGLWindow/opengl_fontstashcallbacks.cpp:93: virtual void InternalOpenGL2RenderCallbacks::updateTexture(sth_texture*, sth_glyph*, int, int): Assertion `glGetError() == GL_NO_ERROR' failed.
+
 inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs uopts
+
+SRC_URI="
+https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${PN}3-${PV}"
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
@@ -28,17 +35,29 @@ LICENSE="ZLIB" # The default license
 # src/Bullet3OpenCL/NarrowphaseCollision/kernels/mprKernels.h
 LICENSE+="
 	BSD
-	examples? ( BSD )
-	extras? ( BSD )
+	examples? (
+		BSD
+	)
+	extras? (
+		BSD
+	)
 "
 
 # The ^^ ( LGPL-2.1+ BSD ) conditional was subsituted with BSD.
-LICENSE+=" BSD ZLIB" # src/BulletDynamics/MLCPSolvers
+# src/BulletDynamics/MLCPSolvers
+LICENSE+="
+	BSD
+	ZLIB
+"
 
 # data/MPL, test/OpenCL/RadixSortBenchmark/
 LICENSE+="
-	demos? ( Apache-2.0 )
-	test? ( Apache-2.0 )
+	demos? (
+		Apache-2.0
+	)
+	test? (
+		Apache-2.0
+	)
 "
 
 # data/MPL/mpl2.xml ; the Apache-2.0 does not have all rights reserved but
@@ -53,30 +72,44 @@ LICENSE+="
 # data/quadruped
 # examples/ThirdPartyLibs/Wavefront
 LICENSE+="
-	demos? ( BSD-2 )
-	examples? ( BSD-2 )
+	demos? (
+		BSD-2
+	)
+	examples? (
+		BSD-2
+	)
 "
 
 # data/dinnerware (It actually says "CC-SA")
 LICENSE+="
-	demos? ( CC-BY-SA-4.0 )
+	demos? (
+		CC-BY-SA-4.0
+	)
 "
 
 # data/kuka_lwr/meshes_arm
 LICENSE+="
-	demos? ( CC-BY-3.0 )
+	demos? (
+		CC-BY-3.0
+	)
 "
 
 # data/duck.dae
 # examples/pybullet/gym/data/duck.dae # SCEA
 LICENSE+="
-	demos? ( SCEA )
-	examples? ( SCEA )
+	demos? (
+		SCEA
+	)
+	examples? (
+		SCEA
+	)
 "
 
 # data/kitchens https://blog.turbosquid.com/royalty-free-license/
 LICENSE+="
-	demos? ( TurboSquid-Royalty-Free-License )
+	demos? (
+		TurboSquid-Royalty-Free-License
+	)
 "
 
 # docs/pybullet_quickstart_guide/WordpressPreview/markdeep.min.js
@@ -102,12 +135,16 @@ LICENSE+="
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_capi.h
 #  just contains all-rights-reserved but no mention of other license
 LICENSE+="
-	examples? ( all-rights-reserved )
+	examples? (
+		all-rights-reserved
+	)
 "
 
 # In the root folder (examples/ThirdPartyLibs/openvr) it is BSD
 LICENSE+="
-	examples? ( BSD )
+	examples? (
+		BSD
+	)
 "
 
 # examples/ThirdPartyLibs/Glew/CustomGL/wglew.h
@@ -120,39 +157,53 @@ LICENSE+="
 
 # examples/ThirdPartyLibs/clsocket/src/ActiveSocket.h
 LICENSE+="
-	examples? ( BSD-4 )
+	examples? (
+		BSD-4
+	)
 "
 
 # examples/Importers/ImportBsp/BspLoader.cpp,
 LICENSE+="
-	examples? ( GPL-2+ )
+	examples? (
+		GPL-2+
+	)
 "
 
 # examples/ThirdPartyLibs/minizip/unzip.c
 LICENSE+="
-	examples? ( Info-ZIP )
+	examples? (
+		Info-ZIP
+	)
 "
 
 # The ^^ ( MIT Unlicense ) conditional was subsituted with Unlicense
 # You may fork the ebuild if you want the MIT license instead.
 # examples/ThirdPartyLibs/imgui/stb_truetype.h
 LICENSE+="
-	examples? ( Unlicense )
+	examples? (
+		Unlicense
+	)
 "
 
 # examples/ThirdPartyLibs/imgui/stb_textedit.h
 LICENSE+="
-	examples? ( imgui-public-domain )
+	examples? (
+		imgui-public-domain
+	)
 "
 
 # examples/TinyAudio ; modified MIT
 LICENSE+="
-	examples? ( RtAudio )
+	examples? (
+		RtAudio
+	)
 "
 
 # examples/ThirdPartyLibs/midi ; modified MIT
 LICENSE+="
-	examples? ( RtMidi )
+	examples? (
+		RtMidi
+	)
 "
 
 # examples/ThirdPartyLibs/optionalX11/LICENSE.txt
@@ -170,8 +221,12 @@ LICENSE+="
 # examples/ThirdPartyLibs/openvr/samples/shared/lodepng.h
 # test/GwenOpenGLTest,
 LICENSE+="
-	examples? ( ZLIB )
-	test? ( ZLIB )
+	examples? (
+		ZLIB
+	)
+	test? (
+		ZLIB
+	)
 "
 
 # Extras/Serialize/makesdna/makesdna.cpp (First line says ZLIB for complete
@@ -235,10 +290,6 @@ LICENSE+="
 "
 
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
-SRC_URI="
-https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	+bullet3
@@ -266,25 +317,57 @@ IUSE+="
 	-threads
 "
 REQUIRED_USE+="
-	bullet-robotics? ( extras )
-	bullet-robotics-gui? ( extras )
-	convex-decomposition? ( extras )
-	demos? ( extras )
-	examples? ( bullet-robotics network serialize )
-	gimpactutils? ( extras )
-	hacd? ( extras )
-	inverse-dynamics? ( extras )
-	numpy? ( python )
-	obj2sdf? ( extras )
-	openmp? ( threads )
-	openvr? ( examples )
-	pgo? ( examples )
+	bullet-robotics? (
+		extras
+	)
+	bullet-robotics-gui? (
+		extras
+	)
+	convex-decomposition? (
+		extras
+	)
+	demos? (
+		extras
+	)
+	examples? (
+		bullet-robotics
+		network
+		serialize
+	)
+	gimpactutils? (
+		extras
+	)
+	hacd? (
+		extras
+	)
+	inverse-dynamics? (
+		extras
+	)
+	numpy? (
+		python
+	)
+	obj2sdf? (
+		extras
+	)
+	openmp? (
+		threads
+	)
+	openvr? (
+		examples
+	)
+	pgo? (
+		examples
+	)
 	python? (
 		${PYTHON_REQUIRED_USE}
 		demos
 	)
-	serialize? ( extras )
-	tbb? ( threads )
+	serialize? (
+		extras
+	)
+	tbb? (
+		threads
+	)
 "
 CDEPEND="
 	python? (
@@ -305,14 +388,16 @@ DEPEND+="
 	)
 	tbb? (
 		!<dev-cpp/tbb-2021:0=
-		 <dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
+		<dev-cpp/tbb-2021:${LEGACY_TBB_SLOT}=
 	)
 "
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	${CDEPEND}
 	dev-util/patchelf
-	doc? ( app-text/doxygen[dot] )
+	doc? (
+		app-text/doxygen[dot]
+	)
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.85-soversion.patch"
@@ -321,7 +406,6 @@ PATCHES=(
 DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
 RESTRICT="mirror test"
-S="${WORKDIR}/${PN}3-${PV}"
 
 pkg_setup() {
 	use ebolt && ewarn "The ebolt USE flag may not generate a BOLT profile."
@@ -482,7 +566,7 @@ src_compile() {
 		uopts_src_compile
 	}
 	multilib_foreach_abi compile_abi
-	if use doc; then
+	if use doc ; then
 		doxygen || die
 		HTML_DOCS+=( html/. )
 		DOCS+=( docs/*.pdf )
@@ -526,7 +610,6 @@ fix_tbb_rpath() {
 	if use tbb ; then
 		local found=0
 		local f
-
 		for f in $(find "${ED}") ; do
 			if ldd "${f}" 2>/dev/null | grep -q "tbb.*not found" ; then
 einfo
@@ -552,6 +635,7 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		cmake_src_install
 		if multilib_is_native_abi && use demos ; then
+			local f
 			for f in $(find "${BUILD_DIR}/examples" -type f) ; do
 				local d=$(dirname $(echo "${f}" \
 					| sed -e "s|${BUILD_DIR}||g"))
@@ -582,9 +666,11 @@ multilib_src_install_all() {
 		insinto "/usr/share/${PN}"
 		doins -r "examples"
 echo "This folder contains source code examples.  For compiled demos see" \
-	>> "${ED}/usr/share/${PN}/examples/readme.txt" || die
+	>> "${ED}/usr/share/${PN}/examples/readme.txt" \
+		|| die
 echo "/usr/share/${PN}/demos" \
-	>> "${ED}/usr/share/${PN}/examples/readme.txt" || die
+	>> "${ED}/usr/share/${PN}/examples/readme.txt" \
+		|| die
 	fi
 	einstalldocs
 	LCNR_SOURCE="${WORKDIR}/${PN}$(ver_cut 1 ${PV})-${PV}"

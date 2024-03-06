@@ -1,0 +1,4 @@
+AUTOBUMP=1
+CATEGORY="sci-physics"
+PN="bullet"
+BUMP_POLICY="new-patch-versions-per-minor-major"
