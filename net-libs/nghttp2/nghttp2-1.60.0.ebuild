@@ -25,8 +25,8 @@ RESTRICT="
 		test
 	)
 "
-SO_CURRENT="39"
-SO_AGE="25"
+SO_CURRENT="41"
+SO_AGE="27"
 SLOT="0/$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE="bpf debug doc hpack-tools http3 jemalloc static-libs systemd test utils xml"
 REQUIRED_USE="
@@ -36,33 +36,34 @@ REQUIRED_USE="
 "
 SSL_DEPEND="
 	>=dev-libs/libevent-2.0.8[${MULTILIB_USEDEP},ssl]
-	>=net-libs/ngtcp2-1.0.1[${MULTILIB_USEDEP},openssl]
+	>=net-libs/ngtcp2-1.3.0[${MULTILIB_USEDEP},openssl]
 	|| (
 		(
 			>=dev-libs/openssl-1.1.1w:0[${MULTILIB_USEDEP},-bindist(-)]
 			=dev-libs/openssl-1*:=[${MULTILIB_USEDEP},-bindist(-)]
 		)
 		(
-			>=dev-libs/openssl-3.1.2:0[${MULTILIB_USEDEP},-bindist(-)]
+			>=dev-libs/openssl-3.1.5:0[${MULTILIB_USEDEP},-bindist(-)]
 			=dev-libs/openssl-3*:=[${MULTILIB_USEDEP},-bindist(-)]
 		)
 	)
 "
 RDEPEND="
 	bpf? (
-		>=dev-libs/libbpf-0.4.0
+		>=dev-libs/libbpf-0.7.0
 	)
 	hpack-tools? (
 		>=dev-libs/jansson-2.5:=
 	)
 	http3? (
-		>=net-libs/nghttp3-1.0.0[${MULTILIB_USEDEP}]
+		>=net-libs/nghttp3-1.2.0[${MULTILIB_USEDEP}]
 	)
 	jemalloc? (
 		dev-libs/jemalloc:=[${MULTILIB_USEDEP}]
 	)
 	utils? (
 		${SSL_DEPEND}
+		>=app-arch/brotli-1.0.9[${MULTILIB_USEDEP}]
 		>=dev-libs/libev-4.11[${MULTILIB_USEDEP}]
 		>=net-dns/c-ares-1.7.5:=[${MULTILIB_USEDEP}]
 		>=sys-libs/zlib-1.2.3[${MULTILIB_USEDEP}]
@@ -81,7 +82,7 @@ DEPEND="
 	)
 "
 BDEPEND="
-	>dev-build/cmake-3.0
+	>dev-build/cmake-3.14
 	virtual/pkgconfig
 	doc? (
 		${PYTHON_DEPS}
@@ -90,7 +91,7 @@ BDEPEND="
 	)
 	|| (
 		>=sys-devel/gcc-12
-		>=sys-devel/clang-14
+		>=sys-devel/clang-15
 	)
 "
 
