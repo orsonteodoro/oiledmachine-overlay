@@ -10565,7 +10565,9 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/portaudio" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-libs/roc-toolkit" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/bluez-alsa" "SCHED_RR" # It requires bluealsa.service changes.
+		_ot-kernel_realtime_pkg "media-sound/darkice" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "media-sound/jacktrip" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "media-sound/jamesdsp[pulseaudio]" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-sound/pulseaudio-daemon" "SCHED_RR"
 		_ot-kernel_realtime_pkg "media-video/pipewire" "SCHED_FIFO"
 
@@ -10683,6 +10685,14 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-video/dvgrab" "SCHED_RR"
 	fi
 
+	# TTS
+	if [[ \
+		   "${work_profile}" == "live-video-reporter" \
+		|| "${work_profile}" == "streamer-reporter" \
+	]] ; then
+		_ot-kernel_realtime_pkg "app-accessibility/julius[portaudio]" "SCHED_FIFO"
+	fi
+
 	# General gaming
 	if [[ \
 		   "${work_profile}" == "casual-gaming" \
@@ -10736,6 +10746,7 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "net-fs/samba[ads]" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/chrony" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/ntp" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "net-misc/ntpsec" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "sys-apps/watchdogd" "SCHED_RR"
 		_ot-kernel_realtime_pkg "sys-cluster/keepalived" "SCHED_RR"
 		_ot-kernel_realtime_pkg "www-servers/civetweb" "SCHED_RR"
