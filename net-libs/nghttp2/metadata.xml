@@ -2,6 +2,11 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
     <!-- Ebuild originator -->
     <email>voyageur@gentoo.org</email>
     <name>Bernard Cafarelli</name>
@@ -11,13 +16,14 @@
       Install HPACK (header compression) helper tools
     </flag>
     <flag name="mruby">
-      Enable mruby support for nghttpx
+      Enable mruby support for nghttpx reverse proxy
     </flag>
     <flag name="neverbleed">
-      Protect private keys when using nghttpx
+      Protect private keys when using nghttpx reverse proxy
     </flag>
     <flag name="utils">
-      Install nghttp, nghttpd and nghttpx
+      Install nghttp [HTTP/2 client], nghttpd [HTTP/2 server],
+      nghttpx [reverse proxy]
     </flag>
   </use>
   <upstream>
