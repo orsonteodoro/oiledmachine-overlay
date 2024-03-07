@@ -27,12 +27,13 @@ HOMEPAGE="https://nghttp2.org/"
 LICENSE="
 	MIT
 	mruby? (
-		MIT
-		public-domain
 		(
 			custom
 			all-rights-reserved
 		)
+		BSD-2
+		MIT
+		public-domain
 	)
 	neverbleed? (
 		MIT
@@ -43,6 +44,7 @@ RESTRICT="
 		test
 	)
 "
+# custom all-rights-reserved - https://github.com/mruby/mruby/blob/master/LEGAL
 SO_CURRENT="39"
 SO_AGE="25"
 SLOT="0/$((${SO_CURRENT} - ${SO_AGE}))"

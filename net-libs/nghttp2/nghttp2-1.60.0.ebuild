@@ -40,12 +40,13 @@ HOMEPAGE="https://nghttp2.org/"
 LICENSE="
 	MIT
 	mruby? (
-		MIT
-		public-domain
 		(
 			custom
 			all-rights-reserved
 		)
+		BSD-2
+		MIT
+		public-domain
 	)
 	neverbleed? (
 		MIT
@@ -54,6 +55,7 @@ LICENSE="
 		MIT
 	)
 "
+# custom all-rights-reserved - https://github.com/mruby/mruby/blob/master/LEGAL
 RESTRICT="
 	!test? (
 		test
