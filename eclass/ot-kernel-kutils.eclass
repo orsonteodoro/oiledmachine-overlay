@@ -52,6 +52,17 @@ ot-kernel_has_version() {
 	return 1
 }
 
+# @FUNCTION: ot-kernel_has_version_slow
+# @DESCRIPTION:
+# Alias
+ot-kernel_has_version_slow() {
+	local pkg="${1}"
+	if has_version "${pkg}" ; then
+		return 0
+	fi
+	return 1
+}
+
 # @FUNCTION: ot-kernel_has_version_use
 # @DESCRIPTION:
 # Uses the fewest steps to check for the existence of package USE flags instead
