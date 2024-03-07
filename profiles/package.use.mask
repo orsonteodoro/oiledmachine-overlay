@@ -86,3 +86,6 @@ x11-misc/sddm wayland
 
 # Broken with CORS errors
 app-crypt/hashtopolis angular
+
+# Missing libmruby package
+net-libs/nghttp2 mruby

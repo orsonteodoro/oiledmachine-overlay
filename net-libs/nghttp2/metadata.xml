@@ -10,6 +10,12 @@
     <flag name="hpack-tools">
       Install HPACK (header compression) helper tools
     </flag>
+    <flag name="mruby">
+      Enable mruby support for nghttpx
+    </flag>
+    <flag name="neverbleed">
+      Protect private keys when using nghttpx
+    </flag>
     <flag name="utils">
       Install nghttp, nghttpd and nghttpx
     </flag>

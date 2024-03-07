@@ -6,11 +6,24 @@ EAPI=8
 # U22.04
 
 PYTHON_COMPAT=( python3_{10..12} )
+RUBY_OPTIONAL="yes"
+USE_RUBY="ruby31 ruby32 ruby33"
 
-inherit cmake-multilib python-r1 toolchain-funcs
+inherit cmake-multilib python-r1 ruby-ng toolchain-funcs
+
+MRUBY_COMMIT="87260e7bb1a9edfb2ce9b41549c4142129061ca5"
+NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
 
 SRC_URI="
 https://github.com/nghttp2/nghttp2/releases/download/v${PV}/${P}.tar.xz
+	mruby? (
+https://github.com/mruby/mruby/archive/${MRUBY_COMMIT}.tar.gz
+	-> mruby-${MRUBY_COMMIT:0:7}.tar.gz
+	)
+	neverbleed? (
+https://github.com/tatsuhiro-t/neverbleed/archive/${NEVERBLEED_COMMIT}.tar.gz
+	-> neverbleed-${NEVERBLEED_COMMIT:0:7}.tar.gz
+	)
 "
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
@@ -19,7 +32,20 @@ KEYWORDS="
 
 DESCRIPTION="HTTP/2 C Library"
 HOMEPAGE="https://nghttp2.org/"
-LICENSE="MIT"
+LICENSE="
+	MIT
+	mruby? (
+		MIT
+		public-domain
+		(
+			custom
+			all-rights-reserved
+		)
+	)
+	neverbleed? (
+		MIT
+	)
+"
 RESTRICT="
 	!test? (
 		test
@@ -34,10 +60,18 @@ SLOT="0/$((${SO_CURRENT} - ${SO_AGE}))"
 # jemalloc is enabled on CI
 # utils is enabled on CI
 # xml is enabled on CI
-IUSE="-bpf debug doc +hpack-tools -http3 +jemalloc -static-libs systemd test +threads +utils +xml"
+IUSE="
+-bpf debug doc +hpack-tools -http3 +jemalloc -mruby -neverbleed -static-libs
+systemd test +threads +utils +xml
+"
 REQUIRED_USE="
 	doc? (
 		${PYTHON_REQUIRED_USE}
+	)
+	mruby? (
+		|| (
+			$(ruby_get_use_targets)
+		)
 	)
 "
 SSL_DEPEND="
@@ -94,6 +128,10 @@ BDEPEND="
 		dev-python/sphinx[${PYTHON_USEDEP}]
 		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
+	mruby? (
+		$(ruby_implementations_depend)
+		sys-devel/bison
+	)
 	|| (
 		>=sys-devel/gcc-12
 		>=sys-devel/clang-15
@@ -102,8 +140,27 @@ BDEPEND="
 
 pkg_setup() {
 	use doc && python_setup
+	use mruby && ruby-ng_pkg_setup
 	if tc-is-clang && use http3 && ! use bpf ; then
 ewarn "bpf is default ON upstream if clang ON, http3 ON"
+	fi
+}
+
+src_unpack() {
+	unpack ${A}
+	if use mruby ; then
+		rm -rf "${S}/third-party/mruby"
+		mv \
+			"${WORKDIR}/mruby-${MRUBY_COMMIT}" \
+			"${S}/third-party/mruby" \
+			|| die
+	fi
+	if use neverbleed ; then
+		rm -rf "${S}/third-party/neverbleed"
+		mv \
+			"${WORKDIR}/neverbleed-${NEVERBLEED_COMMIT}" \
+			"${S}/third-party/neverbleed" \
+			|| die
 	fi
 }
 
@@ -143,6 +200,8 @@ eerror
 		-DWITH_JEMALLOC=$(multilib_native_usex jemalloc)
 		-DWITH_LIBBPF=$(multilib_native_usex bpf)
 		-DWITH_LIBXML2=$(multilib_native_usex xml)
+		-DWITH_MRUBY=$(usex mruby)
+		-DWITH_NEVERBLEED=$(usex neverbleed)
 	)
 	cmake_src_configure
 }
