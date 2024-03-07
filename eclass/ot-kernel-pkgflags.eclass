@@ -217,7 +217,7 @@ einfo "init:  runit"
 		elif ot-kernel_has_version "sys-apps/s6-linux-init" ; then
 einfo "init:  s6"
 			__ot-kernel_set_init "/sbin/init"
-		elif has_version "sys-apps/systemd" ; then
+		elif ot-kernel_has_version_slow "sys-apps/systemd" ; then
 einfo "init:  systemd"
 			__ot-kernel_set_init "/lib/systemd/systemd"
 		elif ot-kernel_has_version "sys-apps/sysvinit" ; then
@@ -3349,7 +3349,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_CGROUP_NET_CLASSID"
 
 		ot-kernel_y_configopt "CONFIG_MD"
-		if has_version "app-containers/docker[device-mapper]" ; then
+		if ot-kernel_has_version_slow "app-containers/docker[device-mapper]" ; then
 			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
 			ot-kernel_y_configopt "CONFIG_DM_THIN_PROVISIONING"
 		fi
@@ -3380,7 +3380,7 @@ ot-kernel-pkgflags_docker() { # DONE
 		_ot-kernel_set_io_uring
 		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
 
-		if has_version "app-containers/docker[seccomp]" ; then
+		if ot-kernel_has_version_slow "app-containers/docker[seccomp]" ; then
 			ot-kernel_y_configopt "CONFIG_SECCOMP" # Referenced in file path but not in code ; requested by ebuild
 			ot-kernel_y_configopt "CONFIG_SECCOMP_FILTER"
 		fi
@@ -3427,7 +3427,7 @@ ot-kernel-pkgflags_docker() { # DONE
 			ot-kernel_y_configopt "CONFIG_MEMCG"
 		fi
 
-		if has_version "app-containers/docker[selinux]" ; then
+		if ot-kernel_has_version_slow "app-containers/docker[selinux]" ; then
 			ot-kernel_y_configopt "CONFIG_SECURITY_SELINUX"
 			ot-kernel_y_configopt "CONFIG_SYSFS"
 			ot-kernel_y_configopt "CONFIG_MULTIUSER"
@@ -3438,7 +3438,7 @@ ot-kernel-pkgflags_docker() { # DONE
 			ot-kernel_y_configopt "CONFIG_INET"
 		fi
 
-		if has_version "app-containers/docker[apparmor]" ; then
+		if ot-kernel_has_version_slow "app-containers/docker[apparmor]" ; then
 			ot-kernel_y_configopt "CONFIG_SECURITY_APPARMOR"
 			ot-kernel_y_configopt "CONFIG_SYSFS"
 			ot-kernel_y_configopt "CONFIG_MULTIUSER"
@@ -3476,11 +3476,11 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_NF_NAT_TFTP"
 		ot-kernel_y_configopt "CONFIG_NF_CONNTRACK_TFTP"
 
-		#if has_version "app-containers/docker[aufs]" ; then
+		#if ot-kernel_has_version_slow "app-containers/docker[aufs]" ; then
 		#	ot-kernel_y_configopt "CONFIG_AUFS_FS"
 		#fi
 
-		if has_version "app-containers/docker[btrfs]" ; then
+		if ot-kernel_has_version_slow "app-containers/docker[btrfs]" ; then
 			ot-kernel_y_configopt "CONFIG_BTRFS_FS"
 			ot-kernel_y_configopt "CONFIG_BTRFS_FS_POSIX_ACL"
 		fi
