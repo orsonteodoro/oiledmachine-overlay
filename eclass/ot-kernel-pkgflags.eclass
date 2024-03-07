@@ -6948,6 +6948,7 @@ ot-kernel-pkgflags_opensnitch_ebpf_module() { # DONE
 		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
 		ot-kernel_y_configopt "CONFIG_CGROUP_BPF"
 		ot-kernel_y_configopt "CONFIG_BPF_EVENTS"
+		ban_disable_debug "app-admin/opensnitch-ebpf-module"
 		ot-kernel_y_configopt "CONFIG_FTRACE_SYSCALLS"
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_KPROBES"
