@@ -5623,6 +5623,9 @@ ot-kernel-pkgflags_libv4l() { # DONE
 ot-kernel-pkgflags_libvirt() { # DONE
 	local pkg="app-emulation/libvirt"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
+		if ot-kernel_has_version "${pkg}[fuse]" ; then
+			ot-kernel_y_configopt "CONFIG_FUSE_FS"
+		fi
 
 		if ot-kernel_has_version "${pkg}[lvm]" ; then
 			ot-kernel_y_configopt "CONFIG_BLK_DEV_DM"
@@ -5635,17 +5638,35 @@ ot-kernel-pkgflags_libvirt() { # DONE
 			ot-kernel_y_configopt "CONFIG_CGROUPS"
 			ot-kernel_y_configopt "CONFIG_BLOCK"
 			ot-kernel_y_configopt "CONFIG_BLK_CGROUP"
+			ot-kernel_y_configopt "CONFIG_CGROUP_CPUACCT"
+			ot-kernel_y_configopt "CONFIG_CGROUP_DEVICE"
+			ot-kernel_y_configopt "CONFIG_CGROUP_FREEZER"
 			ot-kernel_y_configopt "CONFIG_CGROUP_NET_PRIO"
 			ot-kernel_y_configopt "CONFIG_PERF_EVENTS"
 			ot-kernel_y_configopt "CONFIG_CGROUP_PERF"
+			ot-kernel_y_configopt "CONFIG_CGROUPS"
+			ot-kernel_y_configopt "CONFIG_CGROUP_SCHED"
+			ot-kernel_y_configopt "CONFIG_CPUSETS"
+			_ot-kernel_set_ipc_ns
+			ot-kernel_y_configopt "CONFIG_MACVLAN"
 			ot-kernel_y_configopt "CONFIG_NET_CLS_CGROUP"
+			_ot-kernel_set_net_ns
+			_ot-kernel_set_pid_ns
+			ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
 			ot-kernel_y_configopt "CONFIG_SECURITYFS"
+			_ot-kernel_set_user_ns
+			_ot-kernel_set_uts_ns
+			ot-kernel_y_configopt "CONFIG_VETH"
+			ot-kernel_unset_configopt "CONFIG_GRKERNSEC_CHROOT_MOUNT"
+			ot-kernel_unset_configopt "CONFIG_GRKERNSEC_CHROOT_DOUBLE"
+			ot-kernel_unset_configopt "CONFIG_GRKERNSEC_CHROOT_PIVOT"
+			ot-kernel_unset_configopt "CONFIG_GRKERNSEC_CHROOT_CHMOD"
+			ot-kernel_unset_configopt "CONFIG_GRKERNSEC_CHROOT_CAPS"
 			if ver_test "${KV_MAJOR_MINOR}" -lt "4.7" ; then
 				ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 				ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
 			fi
 		fi
-
 
 		if ot-kernel_has_version "${pkg}[virt-network]" ; then
 			ot-kernel_y_configopt "CONFIG_NET"
@@ -5654,12 +5675,13 @@ ot-kernel-pkgflags_libvirt() { # DONE
 			ot-kernel_y_configopt "CONFIG_NETFILTER"
 			ot-kernel_y_configopt "CONFIG_IP_NF_IPTABLES"
 			ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_REJECT"
+			ot-kernel_y_configopt "CONFIG_IP_NF_FILTER"
 			ot-kernel_y_configopt "CONFIG_IP_NF_MANGLE"
+			ot-kernel_y_configopt "CONFIG_IP_NF_NAT"
 
 			ot-kernel_y_configopt "CONFIG_IPV6"
 			ot-kernel_y_configopt "CONFIG_IP6_NF_IPTABLES"
 			ot-kernel_y_configopt "CONFIG_IP6_NF_TARGET_REJECT"
-			ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
 			ot-kernel_y_configopt "CONFIG_NF_CONNTRACK"
 
 			ot-kernel_y_configopt "CONFIG_BRIDGE"
@@ -5670,6 +5692,8 @@ ot-kernel-pkgflags_libvirt() { # DONE
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MARK"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MATCH_CONNTRACK"
 			ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_CHECKSUM"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_FILTER"
+			ot-kernel_y_configopt "CONFIG_IP6_NF_MANGLE"
 			ot-kernel_y_configopt "CONFIG_IP6_NF_NAT"
 
 			ot-kernel_y_configopt "CONFIG_BRIDGE_NF_EBTABLES"
@@ -5677,13 +5701,18 @@ ot-kernel-pkgflags_libvirt() { # DONE
 			ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_MARK"
 			ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_MARK_T"
 
-			ot-kernel_y_configopt "CONFIG_BRIDGE_EBT_T_NAT"
 			ot-kernel_y_configopt "CONFIG_NET_ACT_POLICE" # Traffic Policing
 			ot-kernel_y_configopt "CONFIG_NET_CLS_FW"
 			ot-kernel_y_configopt "CONFIG_NET_CLS_U32"
 			ot-kernel_y_configopt "CONFIG_NET_SCH_HTB"
 			ot-kernel_y_configopt "CONFIG_NET_SCH_INGRESS"
 			ot-kernel_y_configopt "CONFIG_NET_SCH_SFQ"
+
+			if ver_test "${KV_MAJOR_MINOR}" -lt "5.2" ; then
+				ot-kernel_y_configopt "CONFIG_IP_NF_TARGET_MASQUERADE"
+			else
+				ot-kernel_y_configopt "CONFIG_NETFILTER_XT_TARGET_MASQUERADE"
+			fi
 		fi
 
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
@@ -9259,6 +9288,9 @@ ot-kernel-pkgflags_vbox() { # DONE
 	if ot-kernel_has_version_pkgflags "app-emulation/virtualbox" ; then
 		ot-kernel_y_configopt "CONFIG_MODULES"
 		ot-kernel_y_configopt "CONFIG_VIRTUALIZATION"
+		if ot-kernel_has_version ">=app-emulation/virtualbox-9999" ; then
+			ot-kernel_unset_configopt "CONFIG_SPINLOCK JUMP_LABEL"
+		fi
 		VIRTUALBOX_GUEST_LINUX="${VIRTUALBOX_GUEST_LINUX:-1}"
 		if [[ "${VIRTUALBOX_LINUX_GUEST}" == "1" ]] ; then
 			ot-kernel_y_configopt "CONFIG_ATA"
