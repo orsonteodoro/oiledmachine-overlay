@@ -2181,7 +2181,7 @@ ot-kernel-pkgflags_cr() { # DONE
 einfo "Applying kernel config flags for cr package (USE_SUID_SANDBOX=${USE_SUID_SANDBOX})"
 			_ot-kernel-pkgflags_apply_cr_kconfig "USE_SUID_SANDBOX=1"
 			break
-		elif ot-kernel_has_version_pkgflags "${pkg}" ; then
+		elif ot-kernel_has_version_pkgflags_slow "${pkg}" ; then
 			_ot-kernel-pkgflags_apply_cr_kconfig "${pkg}"
 		fi
 	done
@@ -3914,45 +3914,44 @@ ot-kernel-pkgflags_fastd() { # DONE
 	fi
 }
 
-# @FUNCTION: _ot-kernel-pkgflags_ff_based
+# @FUNCTION: _ot-kernel-pkgflags_apply_ff_kconfig
 # @DESCRIPTION:
-# Returns 0 if ff based
-_ot-kernel-pkgflags_ff_based() {
-	local pkg
-	for pkg in ${FF_PKGS[@]} ; do
-		ot-kernel_has_version "${pkg}" && return 0
-	done
-	return 1
+# Apply kernel config for ff package
+_ot-kernel-pkgflags_apply_ff_kconfig() {
+	ot-kernel_y_configopt "CONFIG_DNOTIFY"
+	ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	ot-kernel_y_configopt "CONFIG_FANOTIFY"
+
+	ot-kernel_y_configopt "CONFIG_SECCOMP"
+	ot-kernel_y_configopt "CONFIG_SYSVIPC"
+
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+	ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+	ot-kernel_y_configopt "CONFIG_EPOLL"
+	ot-kernel_y_configopt "CONFIG_EVENTFD"
+	ot-kernel_y_configopt "CONFIG_FHANDLE"
+	ot-kernel_y_configopt "CONFIG_FUTEX"
+	_ot-kernel_set_io_uring
+	ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+	ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+	ot-kernel_y_configopt "CONFIG_SHMEM"
+	ot-kernel_y_configopt "CONFIG_SIGNALFD"
+	ot-kernel_y_configopt "CONFIG_TIMERFD"
+
+	# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
 }
 
 # @FUNCTION: ot-kernel-pkgflags_ff
 # @DESCRIPTION:
 # Applies kernel config flags for the ff based packages
 ot-kernel-pkgflags_ff() { # DONE
-	if _ot-kernel-pkgflags_ff_based ; then
-		ot-kernel_y_configopt "CONFIG_DNOTIFY"
-		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		ot-kernel_y_configopt "CONFIG_FANOTIFY"
-
-		ot-kernel_y_configopt "CONFIG_SECCOMP"
-		ot-kernel_y_configopt "CONFIG_SYSVIPC"
-
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
-		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
-		ot-kernel_y_configopt "CONFIG_EPOLL"
-		ot-kernel_y_configopt "CONFIG_EVENTFD"
-		ot-kernel_y_configopt "CONFIG_FHANDLE"
-		ot-kernel_y_configopt "CONFIG_FUTEX"
-		_ot-kernel_set_io_uring
-		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
-		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
-		ot-kernel_y_configopt "CONFIG_SIGNALFD"
-		ot-kernel_y_configopt "CONFIG_TIMERFD"
-
-		# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
-	fi
+	local pkg
+	for pkg in ${FF_PKGS[@]} ; do
+		if ot-kernel_has_version_pkgflags_slow "${pkg}" ; then
+			_ot-kernel-pkgflags_apply_ff_kconfig
+		fi
+	done
 }
 
 # @FUNCTION: ot-kernel-pkgflags_ffmpeg
