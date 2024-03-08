@@ -4197,8 +4197,6 @@ ot-kernel-pkgflags_gdm() { # DONE
 # Applies kernel config flags for the gerbera package
 ot-kernel-pkgflags_gerbera() { # DONE
 	if ot-kernel_has_version_pkgflags "net-misc/gerbera" ; then
-		_ot-kernel-pkgflags_tcpip
-		ot-kernel_y_configopt "IP_MULTICAST"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 	fi
 }
