@@ -101,7 +101,7 @@ eerror
 	else
 ewarn
 ewarn "Security is lowered for id = ${pkgid}."
-eerror
+ewarn
 ewarn "To halt on lowered security, set OT_KERNEL_HALT_ON_LOWERED_SECURITY=1."
 ewarn "Search the id in the ot-kernel-pkgflags.eclass in the eclass folder for"
 ewarn "details."
@@ -251,6 +251,7 @@ einfo "init:  systemd"
 einfo "init:  sysvinit"
 		__ot-kernel_set_init "/sbin/init"
 	elif [[ "${init}" =~ ^"/" ]] ; then
+einfo "init:  ${init}"
 		__ot-kernel_set_init "${init}"
 	else
 ewarn
@@ -270,7 +271,7 @@ ot-kernel_has_version_pkgflags() {
 	hash="${hash:0:7}"
 	[[ "${OT_KERNEL_APKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return 1
 	if ot-kernel_has_version "${pkg}" ; then
-		einfo "Applying kernel config flags for the ${pkg} package (id: ${hash})"
+einfo "Applying kernel config flags for the ${pkg} package (id: ${hash})"
 		return 0
 	fi
 	return 1
@@ -286,7 +287,7 @@ ot-kernel_has_version_pkgflags_slow() {
 	hash="${hash:0:7}"
 	[[ "${OT_KERNEL_APKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return 1
 	if has_version "${pkg}" ; then
-		einfo "Applying kernel config flags for the ${pkg} package (id: ${hash})"
+einfo "Applying kernel config flags for the ${pkg} package (id: ${hash})"
 		return 0
 	fi
 	return 1
@@ -1330,14 +1331,14 @@ ot-kernel-pkgflags_boinc() { # TESTING
 			VSYSCALL_MODE="${VSYSCALL_MODE:-emulate}" # kernel default
 			if [[ "${VSYSCALL_MODE}" == "full" ]] ; then
 				# Full emulation is recommended by ebuild
-				ewarn "Re-assigning vsyscall table:  none -> full emulation"
+ewarn "Re-assigning vsyscall table:  none -> full emulation"
 				warn_lowered_security "${pkg}"
 				ot-kernel_y_configopt "CONFIG_LEGACY_VSYSCALL_EMULATE" # no mitigation
 			elif [[ "${VSYSCALL_MODE}" == "emulate" ]] ; then
-				ewarn "Re-assigning vsyscall table:  none -> emulate execution only"
+ewarn "Re-assigning vsyscall table:  none -> emulate execution only"
 				ot-kernel_y_configopt "CONFIG_LEGACY_VSYSCALL_XONLY" # more mitigation, but no reads
 			else
-				eerror "vsyscall table mode none is not supported"
+eerror "vsyscall table mode none is not supported"
 				die
 			fi
 		fi
@@ -2177,6 +2178,7 @@ ot-kernel-pkgflags_cr() { # DONE
 	local pkg
 	for pkg in ${CR_PKGS[@]} ; do
 		if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
+einfo "Applying kernel config flags for cr package (USE_SUID_SANDBOX=${USE_SUID_SANDBOX})"
 			_ot-kernel-pkgflags_apply_cr_kconfig "USE_SUID_SANDBOX=1"
 			break
 		elif ot-kernel_has_version_pkgflags "${pkg}" ; then
@@ -2193,7 +2195,7 @@ ot-kernel-pkgflags_crda() { # DONE
 		ot-kernel_has_version "net-wireless/wireless-regdb" || die "Install the wireless-regdb package first"
 		ot-kernel_y_configopt "CONFIG_CFG80211_CRDA_SUPPORT"
 
-		einfo "Auto adding wireless-regdb firmware."
+einfo "Auto adding wireless-regdb firmware."
 		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
 		firmware=$(echo "${firmware}" \
 			| tr " " "\n" \
@@ -2207,7 +2209,7 @@ ot-kernel-pkgflags_crda() { # DONE
 				-e 's|[ ]+$||g') # Trim mid/left/right spaces
 		ot-kernel_set_configopt "CONFIG_EXTRA_FIRMWARE" "\"${firmware}\""
 		local firmware=$(grep "CONFIG_EXTRA_FIRMWARE" ".config" | head -n 1 | cut -f 2 -d "\"")
-		einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
+einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_WIRELESS"
@@ -3026,7 +3028,7 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		#[[ "${cryptsetup_integrities}" =~ "cmac" ]] && ot-kernel_y_configopt "CONFIG_CRYPTO_CMAC"	# undocumented combo, missing block cipher for AEAD
 
 		if [[ -n "${cryptsetup_integrities}" ]] ; then
-			ewarn "AEAD cryptsetup support is experimental"
+ewarn "AEAD cryptsetup support is experimental"
 			# CONFIG_BLK_DEV_DM is Added above
 			ot-kernel_y_configopt "CONFIG_DM_INTEGRITY"
 			ot-kernel_y_configopt "CONFIG_NET"
@@ -3218,8 +3220,8 @@ ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild manually in local repo or"
 ewarn "send an issue request at distro ebuild."
 ewarn
-ewarn "Actual discord PV:  ${actual_pv}"
-ewarn "Expected discord PV:  ${expected_pv}"
+ewarn "Actual PV:  ${actual_pv}"
+ewarn "Expected PV:  ${expected_pv}"
 ewarn
 			warn_lowered_security "${pkg}"
 		fi
@@ -3235,8 +3237,8 @@ ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
 ewarn "instead."
 ewarn
-ewarn "Actual discord PV:  ${actual_pv}"
-ewarn "Expected discord PV:  ${expected_pv}"
+ewarn "Actual PV:  ${actual_pv}"
+ewarn "Expected PV:  ${expected_pv}"
 ewarn
 			warn_lowered_security "${pkg}"
 		fi
@@ -3254,8 +3256,8 @@ ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
 ewarn "instead."
 ewarn
-ewarn "Actual discord PV:  ${actual_pv}"
-ewarn "Expected discord PV:  ${expected_pv}"
+ewarn "Actual PV:  ${actual_pv}"
+ewarn "Expected PV:  ${expected_pv}"
 ewarn
 			warn_lowered_security "${pkg}"
 		fi
@@ -3273,8 +3275,8 @@ ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
 ewarn "instead."
 ewarn
-ewarn "Actual discord PV:  ${actual_pv}"
-ewarn "Expected discord PV:  ${expected_pv}"
+ewarn "Actual PV:  ${actual_pv}"
+ewarn "Expected PV:  ${expected_pv}"
 ewarn
 			warn_lowered_security "${pkg}"
 		fi
@@ -4534,7 +4536,7 @@ ot-kernel-pkgflags_i2c_tools() {
 			fi
 		done
 		if (( ${found} == 0 )) ; then
-			ewarn "You may need to have at least one CONFIG_I2C_... for i2c-tools."
+ewarn "You may need to have at least one CONFIG_I2C_... for i2c-tools."
 		fi
 	fi
 }
@@ -4693,11 +4695,14 @@ ewarn "Missing iucode_tool"
 					local m=${signature:8:1}
 					local s=${signature:9:1}
 					local fn="${ef}${f}-${em}${m}-${s}"
-					[[ -e "/lib/firmware/intel-ucode/${fn}" ]] \
-						|| eerror "/lib/firmware/intel-ucode/${fn} is missing"
+					if ! [[ -e "/lib/firmware/intel-ucode/${fn}" ]] ; then
+eerror "/lib/firmware/intel-ucode/${fn} is missing"
+					fi
 					bucket["${fn}"]="intel-ucode/${fn}"
 				done
-				(( ${#signatures[@]} == 0 )) && ewarn "Found no CPU signatures"
+				if (( ${#signatures[@]} == 0 )) ; then
+ewarn "Found no CPU signatures"
+				fi
 			else
 ewarn "Problem encountered with the iucode_tool."
 				return
@@ -5449,9 +5454,9 @@ eerror
 						| head -n 1 \
 						| cut -f 2 -d "\"" \
 					)
-					einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
+einfo "CONFIG_EXTRA_FIRMWARE:  ${firmware}"
 				else
-					ewarn "The CPU microcode needs to be loaded through initramfs instead."
+ewarn "The CPU microcode needs to be loaded through initramfs instead."
 				fi
 			fi
 		fi
@@ -5559,8 +5564,10 @@ ot-kernel-pkgflags_libnetfilter_queue() { # DONE
 ot-kernel-pkgflags_libomp() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-libs/libomp" ; then
 		if [[ "${cpu_sched}" =~ ("pds"|"prjc-pds") ]] ; then
+ewarn
 ewarn "Detected use of the PDS scheduler."
 ewarn "If performance degradion is unacceptable, disable the PDS scheduler."
+ewarn
 		fi
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
@@ -5809,7 +5816,7 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 		fi
 
 		if [[ "${LM_SENSORS_MODULES:-0}" == "1" ]] ; then
-			einfo "Adding referenced modules for the lm-sensors package."
+einfo "Adding referenced modules for the lm-sensors package."
 			# Slice sections of the file and extract options
 			local sidx1=$(grep -n "PC SMBus host controller drivers" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
 			local eidx1=$(grep -n "if ACPI" drivers/i2c/busses/Kconfig | cut -f 1 -d ":")
@@ -5860,8 +5867,9 @@ ot-kernel-pkgflags_lm_sensors() { # DONE
 				break
 			fi
 		done
-		(( ${found} == 0 )) \
-			&& ewarn "You may need to have at least one CONFIG_SENSOR_... for lm-sensors."
+		if (( ${found} == 0 )) ; then
+ewarn "You may need to have at least one CONFIG_SENSOR_... for lm-sensors."
+		fi
 	fi
 }
 
@@ -7005,7 +7013,7 @@ ot-kernel-pkgflags_external_modules() {
 	local external_module=0
 
 	if ot-kernel-pkgflags_has_external_module ; then
-		einfo "Detected external kernel module"
+einfo "Detected external kernel module"
 		external_module=1
 	fi
 	[[ "${OT_KERNEL_EXTERNAL_MODULES}" ]] && external_module=1
@@ -7090,7 +7098,7 @@ ot-kernel-pkgflags_openafs() { # DONE
 			fi
 			ot-kernel_y_configopt "CONFIG_KEYS"
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
-			ewarn "Kernel ${KV_MAJOR_MINOR}.x is not supported for openafs"
+ewarn "Kernel ${KV_MAJOR_MINOR}.x is not supported for openafs"
 		fi
 	fi
 }
@@ -7357,13 +7365,13 @@ ot-kernel-pkgflags_kvm_host_extras() {
 			ot-kernel_y_configopt "CONFIG_DRM_I915"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT"
 			ot-kernel_y_configopt "CONFIG_DRM_I915_GVT_KVMGT"
-			einfo "Adding i915.enable_gvt=1 to kernel command line"
+einfo "Adding i915.enable_gvt=1 to kernel command line"
 			ot-kernel_set_kconfig_kernel_cmdline "i915.enable_gvt=1"
 		fi
 	fi
 
 	if [[ "${KVM_ADD_IGNORE_MSRS_EQ_1:-1}" == "1" ]] ; then
-		einfo "Adding kvm.ignore_msrs=1 to kernel command line"
+einfo "Adding kvm.ignore_msrs=1 to kernel command line"
 		ot-kernel_set_kconfig_kernel_cmdline "kvm.ignore_msrs=1"
 	fi
 }
@@ -8449,14 +8457,14 @@ ot-kernel-pkgflags_spice_vdagent() { # DONE
 _ot-kernel-pkgflags_squashfs() {
 	if grep -q -e "^CONFIG_SQUASHFS=y" "${path_config}" ; then
 		if [[ "${SQUASHFS_ZLIB:-1}" == "1" ]] ; then
-			einfo "Added SquashFS ZLIB decompression support (for fallback and compatibility reasons)"
+einfo "Added SquashFS ZLIB decompression support (for fallback and compatibility reasons)"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_ZLIB"
 		fi
 		if [[ "${SQUASHFS_4K_BLOCK_SIZE:-1}" == "1" ]] ; then
-			einfo "SquashFS 4k block transfer for optimized increased throughput applied"
+einfo "SquashFS 4k block transfer for optimized increased throughput applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_4K_DEVBLK_SIZE"
 		else
-			einfo "SquashFS 1k block transfer for optimized lowered latency applied"
+einfo "SquashFS 1k block transfer for optimized lowered latency applied"
 			ot-kernel_n_configopt "CONFIG_SQUASHFS_4K_DEVBLK_SIZE"
 		fi
 		if [[ "${SQUASHFS_XATTR:-1}" == "1" ]] ; then
@@ -8483,47 +8491,47 @@ _ot-kernel-pkgflags_squashfs() {
 			fi
 		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" =~ ("1uni"|"1up") ]] ; then
 			# 1uni = 1up = uniprocessor = single decompression thread total
-			einfo "SquashFS single thread applied"
+einfo "SquashFS single thread applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_SINGLE"
 		elif [[ "${SQUASHFS_DECOMPRESSORS_PER_CORE}" =~ ([a-z]|[A-Z]) ]] ; then
-			eerror "SQUASHFS_DECOMPRESSORS_PER_CORE must be 1, 2, 1up"
+eerror "SQUASHFS_DECOMPRESSORS_PER_CORE must be 1, 2, 1up"
 			die
 		elif (( ${SQUASHFS_DECOMPRESSORS_PER_CORE} <= 1 )) ; then
-			einfo "SquashFS multicore decompression applied (CPU Cores: ${mc})"
+einfo "SquashFS multicore decompression applied (CPU Cores: ${mc})"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI_PERCPU"
 		elif (( ${SQUASHFS_DECOMPRESSORS_PER_CORE} >= 2 )) ; then
-			einfo "SquashFS multi-threaded decompression applied (Threads Per Core: ${tpc})"
+einfo "SquashFS multi-threaded decompression applied (Threads Per Core: ${tpc})"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_DECOMP_MULTI"
 		fi
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_FILE_CACHE"
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_FILE_DIRECT"
 		if [[ "${SQUASHFS_NSTEP_DECOMPRESS:-1}" == "1" ]] ; then
-			einfo "SquashFS direct 1-step copy applied"
+einfo "SquashFS direct 1-step copy applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_FILE_DIRECT"
 		else
-			einfo "SquashFS 2-step intermediate copy applied"
+einfo "SquashFS 2-step intermediate copy applied"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_FILE_CACHE"
 		fi
 		local pkg="sys-fs/squashfs-tools"
 		if ot-kernel_has_version "${pkg}[lz4]" ; then
-			einfo "Added SquashFS LZ4 decompression support"
+einfo "Added SquashFS LZ4 decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_LZ4"
 		fi
 		if ot-kernel_has_version "${pkg}[lzo]" ; then
-			einfo "Added SquashFS LZO decompression support"
+einfo "Added SquashFS LZO decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_LZO"
 		fi
 		if ot-kernel_has_version "${pkg}[lzma]" ; then
-			einfo "Added SquashFS XZ decompression support"
+einfo "Added SquashFS XZ decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_XZ"
 		fi
 		if ot-kernel_has_version "${pkg}[zstd]" ; then
-			einfo "Added SquashFS ZSTD decompression support"
+einfo "Added SquashFS ZSTD decompression support"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_ZSTD"
 		fi
 		ot-kernel_n_configopt "CONFIG_SQUASHFS_EMBEDDED"
 		if [[ -n "${SQUASHFS_NFRAGS_CACHED}" ]] ; then
-			einfo "Changed SquashFS n-frags cached to ${SQUASHFS_NFRAGS_CACHED}"
+einfo "Changed SquashFS n-frags cached to ${SQUASHFS_NFRAGS_CACHED}"
 			ot-kernel_y_configopt "CONFIG_SQUASHFS_EMBEDDED"
 			ot-kernel_set_configopt "CONFIG_SQUASHFS_FRAGMENT_CACHE_SIZE" "${SQUASHFS_NFRAGS_CACHED}"
 		fi
@@ -9918,7 +9926,7 @@ ot-kernel-pkgflags_xen() { # DONE
 		ot-kernel_y_configopt "CONFIG_DEVTMPFS_MOUNT"
 
 		if [[ "${ZEN_DOM0}" == "1" && "${ZEN_DOMU}" == "1" ]] ; then
-			eerror "Both ZEN_DOM0 or ZEN_DOMU cannot be enabled at the same time."
+eerror "Both ZEN_DOM0 or ZEN_DOMU cannot be enabled at the same time."
 			die
 		fi
 
@@ -10964,7 +10972,6 @@ einfo "Enabling futex2 in .config"
 _ot-kernel_set_ldt() {
 	if [[ "${EMU_16BIT:-0}" == "1" ]] ; then
 einfo "Enabling 16-bit emulation support"
-ewarn ""
 		if [[ "${OT_KERNEL_HALT_ON_LOWERED_SECURITY}" == "1" ]] ; then
 eerror
 eerror "Lowered security was detected for EMU_16BIT=1."
@@ -10977,7 +10984,7 @@ eerror
 		else
 ewarn
 ewarn "Security is lowered for EMU_16BIT=1."
-eerror
+ewarn
 ewarn "To halt on lowered security, set OT_KERNEL_HALT_ON_LOWERED_SECURITY=1."
 ewarn "Search FOR _ot-kernel_set_ldt in the ot-kernel-pkgflags.eclass in the"
 ewarn "eclass folder for details."
@@ -11094,7 +11101,9 @@ _ot-kernel_set_io_uring() {
 eerror
 eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
 eerror
-eerror "Acceptable values:  custom, default, manual, performance, practical, trusted, untrusted, untrusted-distant"
+eerror "Acceptable values:  custom, default, manual, performance, practical,"
+eerror "trusted, untrusted, untrusted-distant"
+eerror
 eerror "Actual value:  ${hardening_level}"
 eerror
 		die
@@ -11236,7 +11245,10 @@ ot-kernel_set_preempt() {
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
 		ot-kernel_unset_configopt "CONFIG_PREEMPT_VOLUNTARY"
 		if ot-kernel_use rt ; then
-ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing PREEMPT_NONE=y.  Remove rt from OT_KERNEL_USE to silence this error."
+ewarn
+ewarn "The rt patchset is not compatible with ARCH=${arch}.  Forcing"
+ewarn "PREEMPT_NONE=y.  Remove rt from OT_KERNEL_USE to silence this error."
+ewarn
 		fi
 	else
 		if ot-kernel_supports_rt && ot-kernel_use rt ; then

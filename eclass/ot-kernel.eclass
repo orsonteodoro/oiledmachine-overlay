@@ -916,7 +916,7 @@ einfo
 einfo
 einfo "This kernel is now End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel"
 einfo "since Jan 2024.  It will be removed as soon as it is delisted from"
-ewarn "The Linux Kernel Archives."
+einfo "The Linux Kernel Archives."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
@@ -971,7 +971,7 @@ eerror "  ${zright}"
 eerror
 eerror "be added to ${v} and also the zen-sauce USE flag to continue."
 eerror
-eerror "!v -> |${!v}|"
+eerror "QA:  !v -> |${!v}|"
 eerror
 					die
 				fi
@@ -1078,13 +1078,13 @@ einfo "Verifying profraw version compatibility"
 	local pv
 	for pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
 		( ! ot-kernel_has_version "~sys-devel/llvm-${pv}" ) && continue
-		einfo "pv=${pv}"
+einfo "pv=${pv}"
 		local instr_prof_raw_v=$(cat \
 "${ESYSROOT}/usr/lib/llvm/$(ver_cut 1 ${found_ver})/include/llvm/ProfileData/InstrProfData.inc" \
 			| grep "INSTR_PROF_RAW_VERSION" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
-		einfo "instr_prof_raw_v=${instr_prof_raw_v}"
+einfo "instr_prof_raw_v=${instr_prof_raw_v}"
 		if (( ${instr_prof_raw_v} == ${IPD_RAW_VER} )) ; then
 			found_upstream_version=1
 		fi
@@ -1097,7 +1097,6 @@ eerror
 eerror "No installed LLVM versions are with compatible."
 eerror "INSTR_PROF_RAW_VERSION == ${IPD_RAW_VER} is required"
 eerror
-		ewarn
 	fi
 	if (( ${found_patched_version} != 1 )) ; then
 eerror
@@ -1297,13 +1296,13 @@ ewarn
 ewarn "ccache is not supported in FEATURES with GCC PGO."
 ewarn "Trying to disable."
 ewarn
-			einfo "PATH=${PATH} (before)"
+einfo "PATH=${PATH} (before)"
 			export PATH=$(echo "${PATH}" \
 				| tr ":" "\n" \
 				| sed -E -e "/ccache/d" \
 				| tr "\n" ":" \
 				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
-			einfo "PATH=${PATH} (after)"
+einfo "PATH=${PATH} (after)"
 		fi
 	fi
 }
@@ -1604,7 +1603,7 @@ apply_zen_sauce() {
 		| uniq \
 		| tr "\n" " ")
 
-	einfo "Applying zen-sauce patches"
+einfo "Applying zen-sauce patches"
 	for c in ${PATCH_ZEN_SAUCE_COMMITS[@]} ; do
 		local is_whitelisted=0
 		local c_wl
@@ -1640,9 +1639,7 @@ ewarn
 			for c_bl in ${blacklisted} ; do
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]]
 				then
-einfo
 einfo "Skipping ${c}"
-einfo
 					is_blacklisted=1
 					break
 				fi
@@ -1789,7 +1786,7 @@ _filter_genpatches() {
 	pushd "${d}" || die
 		local f
 		for f in $(ls -1) ; do
-			#einfo "Processing ${f}"
+#einfo "Processing ${f}"
 			if [[ "${f}" =~ \.patch$ ]] ; then
 				local l=$(echo "${f}" | cut -f 1 -d"_")
 				if (( ${l} < 1500 )) ; then
@@ -1921,11 +1918,11 @@ apply_o3() {
 			"${EDISTDIR}/${O3_CO_FN}" \
 			> "${T}/${O3_CO_FN}" || die
 
-		einfo "Applying O3"
-		einfo "Applying ${O3_CO_FN}"
+einfo "Applying O3"
+einfo "Applying ${O3_CO_FN}"
 		_fpatch "${T}/${O3_CO_FN}"
 
-		einfo "Applying ${O3_RO_FN}"
+einfo "Applying ${O3_RO_FN}"
 		mkdir -p drivers/gpu/drm/amd/display/dc/basics/
 		# trick patch for unattended patching
 		touch drivers/gpu/drm/amd/display/dc/basics/logger.c
@@ -2054,7 +2051,7 @@ einfo "Applying some of the zen-kernel MuQSS patches"
 # @DESCRIPTION:
 # Apply the PGO patch for use with clang
 apply_clang_pgo() {
-	einfo "Applying the Clang PGO patch"
+einfo "Applying the Clang PGO patch"
 	_fpatch "${FILESDIR}/${CLANG_PGO_FN}"
 }
 
@@ -2062,7 +2059,7 @@ apply_clang_pgo() {
 # @DESCRIPTION:
 # Apply the C2TCP / DeepCC / Orca patch
 apply_c2tcp_v2() {
-	einfo "Applying the C2TCP / DeepCC / Orca patch"
+einfo "Applying the C2TCP / DeepCC / Orca patch"
 	_fpatch "${EDISTDIR}/${C2TCP_FN}"
 }
 
@@ -2192,23 +2189,17 @@ einfo
 		   ) \
 			&& test -f "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10.0."
-einfo
 			patches+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
 		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 8.1) ) \
 			&& test -f "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
-einfo
 			patches+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 4.9) ) \
 			&& test -f "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-einfo
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
-einfo
 			patches+=( "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
 ewarn
@@ -2224,9 +2215,7 @@ ewarn
 
 	# KCP-RPI is applied globally
 	if (( ${wants_kcp_rpi} == 1 )) ; then
-einfo
 einfo "Queuing the kernel_compiler_patch for the Cortex A72"
-einfo
 		patches+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
 
@@ -2273,7 +2262,7 @@ eerror "Change OT_KERNEL_PGO_FLAVOR to either GCC_PGO_CFG, GCC_PDO, or"
 eerror "CLANG_PGO or disable the pgo USE flag."
 eerror
 	die
-	einfo "Applying patchset for Full PGO with GCC"
+einfo "Applying patchset for Full PGO with GCC"
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 		eapply "${FILESDIR}/gcc-pgo-6.5.7.patch"
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
@@ -2293,7 +2282,7 @@ eerror
 # @DESCRIPTION:
 # Applies Clear Linux patches
 apply_clear_linux_patches() {
-	einfo "Applying Clear Linux patches"
+einfo "Applying Clear Linux patches"
 	if ver_test ${PV} -eq ${CLEAR_LINUX_PATCHES_VER%-*} ; then
 		mkdir -p "${T}/clear-linux-patches"
 		pushd "${T}/clear-linux-patches" || die
@@ -2386,7 +2375,7 @@ ewarn
 # @DESCRIPTION:
 # Apply the Nest scheduler.
 apply_nest() {
-	einfo "Applying the Nest scheduler patch"
+einfo "Applying the Nest scheduler patch"
 	_fpatch "${DISTDIR}/${NEST_FN}"
 }
 
@@ -2865,8 +2854,10 @@ einfo "Renaming for -${extraversion}"
 			export BUILD_DIR_MASTER="${WORKDIR}/linux-${UPSTREAM_PV}-${extraversion}"
 			moved=1
 		else
+einfo
 einfo "Copying sources for -${extraversion}"
 einfo "${BUILD_DIR_MASTER} -> ${BUILD_DIR}"
+einfo
 			cp -a "${BUILD_DIR_MASTER}" "${BUILD_DIR}" || die
 		fi
 	done
@@ -5269,13 +5260,35 @@ _ot-kernel_set_kconfig_nest() {
 	[[ "${cpu_sched}" =~ "nest" ]] || return
 	if ! grep -q -E -e "^CONFIG_SMP=y" "${path_config}" ; then
 eerror
-eerror "Nest requires SMP.  Remove nest from OT_KERNEL_USE and OT_KERNEL_CPU_SCHED.  Pick another CPU scheduler."
+eerror "Problem:"
+eerror
+eerror "  Nest requires SMP."
+eerror
+eerror
+eerror "Solutions:"
+eerror
+eerror "  Remove nest from OT_KERNEL_USE and OT_KERNEL_CPU_SCHED."
+eerror
+eerror "    or"
+eerror
+eerror "  Pick another CPU scheduler."
 eerror
 		die
 	fi
 	if ! grep -q -E -e "^CONFIG_SCHED_MC=y" "${path_config}" ; then
 eerror
-eerror "Nest requires SCHED_MC.  Remove nest from OT_KERNEL_USE and OT_KERNEL_CPU_SCHED.  Pick another CPU scheduler."
+eerror "Problem:"
+eerror
+eerror "  Nest requires SCHED_MC."
+eerror
+eerror
+eerror "Solutions:"
+eerror
+eerror "  Remove nest from OT_KERNEL_USE and OT_KERNEL_CPU_SCHED."
+eerror
+eerror "    or"
+eerror
+eerror "  Pick another CPU scheduler."
 eerror
 		die
 	fi
@@ -6318,9 +6331,7 @@ ewarn "\`epkginfo -x ${PN}::oiledmachine-overlay\` to optimize."
 ewarn
 				kflag="CONFIG_GENERIC_CPU"
 			else
-				ewarn
-				ewarn "Falling back to ${kflag}"
-				ewarn
+ewarn "Falling back to ${kflag}"
 			fi
 			ot-kernel_y_configopt "${kflag}"
 
@@ -6700,7 +6711,7 @@ einfo "Disabling PKU"
 # Add mem stick support
 ot-kernel_set_kconfig_memstick() {
 	[[ "${MEMSTICK:-0}" == "1" ]] || return
-	einfo "Adding Memory Stick support"
+einfo "Adding Memory Stick support"
 	local hosts=(
 		$(grep -r "config " drivers/memstick/host/Kconfig \
 			| cut -f 2 -d " ")
@@ -6724,9 +6735,15 @@ ot-kernel_set_kconfig_memstick() {
 # Add support for MMC/SD/SDIO support
 ot-kernel_set_kconfig_mmc_sd_sdio() {
 	[[ "${MEMCARD_MMC:-0}" == "1" || "${MEMCARD_SD:-0}" == "1" || "${MEMCARD_SDIO:-0}" == "1" ]] || return
-	[[ "${MEMCARD_MMC}" == "1" ]] && einfo "Adding MMC support"
-	[[ "${MEMCARD_SD}" == "1" ]] && einfo "Adding SD support"
-	[[ "${MEMCARD_SDIO}" == "1" ]] && einfo "Adding SDIO support"
+	if [[ "${MEMCARD_MMC}" == "1" ]] ; then
+einfo "Adding MMC support"
+	fi
+	if [[ "${MEMCARD_SD}" == "1" ]] ; then
+einfo "Adding SD support"
+	fi
+	if [[ "${MEMCARD_SDIO}" == "1" ]] ; then
+einfo "Adding SDIO support"
+	fi
 	local hosts=(
 		$(grep -r "config " drivers/mmc/host/Kconfig \
 			| cut -f 2 -d " ")
@@ -7186,7 +7203,8 @@ einfo "Page size:  16 KB"
 				:
 			else
 eerror
-eerror "16 KB pages not supported and it requires CONFIG_44x=y or CONFIG_PPC_8xx=y"
+eerror "16 KB pages not supported and it requires CONFIG_44x=y or"
+eerror "CONFIG_PPC_8xx=y"
 eerror
 				die
 			fi
@@ -7205,7 +7223,8 @@ einfo "Page size:  64 KB"
 				:
 			else
 eerror
-eerror "64 KB pages not supported and it requires CONFIG_44x=y or CONFIG_PPC_BOOK3S_64=y"
+eerror "64 KB pages not supported and it requires CONFIG_44x=y or"
+eerror "CONFIG_PPC_BOOK3S_64=y"
 eerror
 				die
 			fi
@@ -7228,7 +7247,8 @@ ewarn
 				:
 			else
 eerror
-eerror "256 KB pages not supported and it requires CONFIG_44x=y and CONFIG_PPC_47x=n"
+eerror "256 KB pages not supported and it requires CONFIG_44x=y and"
+eerror "CONFIG_PPC_47x=n"
 eerror
 				die
 			fi
@@ -7309,7 +7329,10 @@ einfo "Page size:  4 KB"
 
 			# Conflict
 			ot-kernel_unset_configopt "CONFIG_CPU_MIPS32_R5_XPA"
-ewarn "Disabling CONFIG_CPU_MIPS32_R5_XPA.  This will affect allocation and indexing."
+ewarn
+ewarn "Disabling CONFIG_CPU_MIPS32_R5_XPA.  This will affect allocation and"
+ewarn "indexing."
+ewarn
 
 			if grep -q -E -e "^CONFIG_CPU_LOONGSON2=y" "${path_config}" ; then
 eerror
@@ -8053,7 +8076,7 @@ ewarn
 
 	if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor && [[ "${arch}" == "x86_64" ]] ; then
 		if ot-kernel_use tresor_prompt ; then
-			einfo "Disabling boot output for TRESOR early prompt."
+einfo "Disabling boot output for TRESOR early prompt."
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_DEFAULT" "2" # 7 is default
 			ot-kernel_set_configopt "CONFIG_CONSOLE_LOGLEVEL_QUIET" "2" # 4 is default
 			ot-kernel_set_configopt "CONFIG_MESSAGE_LOGLEVEL_DEFAULT" "2" # 4 is default
@@ -8551,7 +8574,7 @@ einfo "Added support for alpha"
 einfo "Added support for arm64"
 			ot-kernel_y_configopt "CONFIG_64BIT"
 			if [[ "${OT_KERNEL_ABIS,,}" =~ ("arm "|"arm"$) ]] ; then
-				einfo "Added support for arm"
+einfo "Added support for arm"
 				ot-kernel_y_configopt "CONFIG_COMPAT"
 			fi
 		else
@@ -9007,7 +9030,10 @@ ot-kernel_set_kconfig_fallback_preempt() {
 		if [[ "${FALLBACK_PREEMPT}" == "CONFIG_PREEMPT" && "${FALLBACK_PREEMPT_IS_RT_WORK_PROFILE}" == "1" ]] ; then
 			ot-kernel_set_preempt "${FALLBACK_PREEMPT}"
 			if ot-kernel_use rt ; then
-ewarn "No realtime packages detected.  Consider removing rt from OT_KERNEL_USE from OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
+ewarn
+ewarn "No realtime packages detected.  Consider removing rt from OT_KERNEL_USE"
+ewarn "from OT_KERNEL_EXTRAVERSION=\"${extraversion}\"."
+ewarn
 			fi
 		else
 eerror "ot-kernel_set_kconfig_fallback_preempt():  Add new case"
@@ -9844,7 +9870,7 @@ ot-kernel_convert_tristate_m() {
 einfo "Changing .config from CONFIG...=y to CONFIG...=m"
 	for s in ${symbols[@]} ; do
 		if grep -q -e "^${s}=m" "${conv}" && grep -q -e "^${s}=y" "${bak}" ; then
-			einfo "${s}=m"
+einfo "${s}=m"
 			sed -r -i -e "s/${s}=[ymn]/${s}=m/g" "${orig}" || die
 		fi
 	done
@@ -9924,7 +9950,7 @@ ewarn
 einfo "Fixing config for boot"
 	for s in ${symbols[@]} ; do
 		if grep -q -e "^${s}=m" "${orig}" ; then
-			einfo "${s}=y"
+einfo "${s}=y"
 			sed -r -i -e "s/${s}=[ymn]/${s}=y/g" "${orig}" || die
 		fi
 	done
@@ -10756,7 +10782,7 @@ _OT_KERNEL_FORCE_SWAP_OFF=0
 # @DESCRIPTION:
 # More assisted configuration
 ot-kernel_src_configure_assisted() {
-	einfo "Using assisted config mode"
+einfo "Using assisted config mode"
 	local path_config="${BUILD_DIR}/.config"
 	if [[ -e "${config}" ]] ; then
 einfo "Copying the savedconfig:  ${config} -> ${path_config}"
@@ -11505,19 +11531,19 @@ einfo "Building PGI"
 einfo "Merging PGT profiles"
 				PATH="/usr/lib/llvm/$(clang-major-version)/bin" \
 				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
-				local used_profraw_v=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
-				local expected_profraw_v=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc" \
+				local actual_profraw_ver=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
+				local expected_profraw_ver=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc" \
 					| head -n 1 | cut -f 3 -d " ")
-				[[ -z "${expected_profraw_v}" ]] && die "Missing INSTR_PROF_RAW_VERSION"
-				if (( ${used_profraw_v} != ${expected_profraw_v} )) ; then
+				[[ -z "${expected_profraw_ver}" ]] && die "Missing INSTR_PROF_RAW_VERSION"
+				if (( ${actual_profraw_ver} != ${expected_profraw_ver} )) ; then
 eerror
 eerror "Detected a profraw version inconsistency.  Please remove the"
 eerror "${OT_KERNEL_PGO_DATA_DIR} folder and restart the PGO process again."
 eerror "Make sure that the CHOST/CTARGETs are using the same LLVM version"
 eerror "as the builder machine (CBUILD)."
 eerror
-eerror "used_profraw_v:  ${used_profraw_v}"
-eerror "expected_profraw_v:  ${expected_profraw_v}"
+eerror "Actual profraw version:  ${actual_profraw_ver}"
+eerror "Expected profraw version:  ${expected_profraw_ver}"
 eerror
 					die
 				fi
@@ -13259,7 +13285,7 @@ einfo
 # Send user message about iosched scripts
 ot-kernel_postinst_iosched() {
 	if [[ "${OT_KERNEL_IOSCHED_SYSTEMD:-1}" == "1" ]] ; then
-		einfo "Installing ot-kernel-iosched (systemd)"
+einfo "Installing ot-kernel-iosched (systemd)"
 		# Installed here to avoid merge conflict.
 		mkdir -p "${EROOT}/lib/systemd/system"
 		cat \
@@ -13278,7 +13304,7 @@ ewarn
 	fi
 
 	if [[ "${OT_KERNEL_IOSCHED_OPENRC:-1}" == "1" ]] ; then
-		einfo "Installing ot-kernel-iosched (openrc)"
+einfo "Installing ot-kernel-iosched (OpenRC)"
 		# Installed here to avoid merge conflict.
 		mkdir -p "${EROOT}/etc/init.d"
 		cat \
@@ -13588,8 +13614,6 @@ ewarn "  (4) etc-update"
 ewarn "  (5) Build/update initramfs"
 ewarn "  (6) Reboot into new kernels"
 ewarn
-ewarn
-
 }
 
 # @FUNCTION: ot-kernel_postinst_experimental_kernel

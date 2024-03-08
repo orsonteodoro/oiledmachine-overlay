@@ -213,17 +213,30 @@ Patch status:  testing
  __DEFINE_PRF_SIZE(names);
  __DEFINE_PRF_SIZE(vnds);
  
---- a/include/asm-generic/vmlinux.lds.h.orig	2024-03-07 09:33:34.123106180 -0800
-+++ b/include/asm-generic/vmlinux.lds.h	2024-03-07 09:35:40.122030381 -0800
-@@ -338,6 +338,11 @@
- 		*(__llvm_prf_cnts)					\
- 		__llvm_prf_cnts_end = .;				\
- 	}								\
-+	__llvm_prf_bits : AT(ADDR(__llvm_prf_cnts) - LOAD_OFFSET) {	\
+--- a/include/asm-generic/vmlinux.lds.h.orig	2024-03-06 08:58:11.606623371 -0800
++++ b/include/asm-generic/vmlinux.lds.h	2024-03-06 08:57:32.151037247 -0800
+@@ -326,6 +326,16 @@
+ #endif
+ 
+ #ifdef CONFIG_PGO_CLANG
++# ifdef CONFIG_PROFRAW_V9
++#define PGO_CLANG_DATA_BITS
++	__llvm_prf_bits : AT(ADDR(__llvm_prf_bits) - LOAD_OFFSET) {	\
 +		__llvm_prf_bits_start = .;				\
 +		*(__llvm_prf_bits)					\
 +		__llvm_prf_bits_end = .;				\
-+	}								\
++	}
++# else
++#define PGO_CLANG_DATA_BITS
++# endif
+ #define PGO_CLANG_DATA							\
+ 	__llvm_prf_data : AT(ADDR(__llvm_prf_data) - LOAD_OFFSET) {	\
+ 		__llvm_prf_start = .;					\
+@@ -338,6 +348,7 @@
+ 		*(__llvm_prf_cnts)					\
+ 		__llvm_prf_cnts_end = .;				\
+ 	}								\
++	PGO_CLANG_DATA_BITS						\
  	__llvm_prf_names : AT(ADDR(__llvm_prf_names) - LOAD_OFFSET) {	\
  		__llvm_prf_names_start = .;				\
  		*(__llvm_prf_names)					\
