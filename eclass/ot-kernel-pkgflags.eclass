@@ -5828,13 +5828,7 @@ ot-kernel-pkgflags_mahimahi() { # DONE
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_PROC_SYSCTL"
-		ot-kernel_y_configopt "CONFIG_NET"
-		ot-kernel_y_configopt "CONFIG_INET"
-
-		ot-kernel_y_configopt "CONFIG_NETDEVICES"
-		ot-kernel_y_configopt "CONFIG_NET_CORE"
-		ot-kernel_y_configopt "CONFIG_INET"
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -7551,7 +7545,7 @@ ot-kernel-pkgflags_ponyprog() { # DONE
 # Applies kernel config flags for the popura package
 ot-kernel-pkgflags_popura() { # DONE
 	if ot-kernel_has_version_pkgflags "net-p2p/popura" ; then
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
@@ -9936,7 +9930,7 @@ ot-kernel-pkgflags_xtables_addons() { # DONE
 # Applies kernel config flags for the yggdrasil-go package
 ot-kernel-pkgflags_yggdrasil_go() { # DONE
 	if ot-kernel_has_version_pkgflags "net-p2p/yggdrasil-go" ; then
-		ot-kernel_y_configopt "CONFIG_TUN"
+		_ot-kernel-pkgflags_tun
 	fi
 }
 
