@@ -25,11 +25,24 @@ inherit toolchain-funcs
 # @FUNCTION: ot-kernel_has_version
 # @DESCRIPTION:
 # Use the fewest steps to check for the existence of package instead of
-# using has_version if possible.  There is a big slow down introducted by
-# emerge.
-# BUG:  If the results could ambigous and be fatal, use has_version instead.
-# Example sys-apps/systemd vs sys-apps/systemd-utils and openrc.
-# You may ignore this recommendation if the first case below.
+# using has_version if possible.  There is a big slow down introduced by
+# emerge possibly unpickling the cached data plus extra loops.
+#
+#
+# Intuitive time cost estimate:
+#
+# has_version:  Θ(lookup) = Θ(filesystem) + O(python context switch or load latency) + Θ(python loops) + Θ(cached pickle db access)
+# ot-kernel_has_version:  Θ(lookup) = Θ(filesystem)
+#
+# The estimate just highlights the unintended consequence of platform independence.
+# Θ (theta) is average case Big O measuring time complexity.
+#
+#
+# BUG:  If the results could ambigous and be fatal, use ot-kernel_has_version_slow instead.
+# Example sys-apps/systemd and sys-apps/systemd-utils with OpenRC.
+#
+# You may ignore this recommendation if it meets the first if conditional block
+# case below.
 ot-kernel_has_version() {
 	local pkg="${1}"
 	local ret

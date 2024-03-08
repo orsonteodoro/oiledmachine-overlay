@@ -265,6 +265,10 @@ ewarn
 # @DESCRIPTION:
 # Wrapper for has_version to avoid human error.
 # This version avoids the added time cost penalty.
+#
+# BUG:  If the results could ambigous and be fatal, use ot-kernel_has_version_pkgflags_slow instead.
+# Example sys-apps/systemd and sys-apps/systemd-utils with OpenRC.
+#
 ot-kernel_has_version_pkgflags() {
 	local pkg="${1}"
 	local hash=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
