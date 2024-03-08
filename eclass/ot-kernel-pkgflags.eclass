@@ -6672,8 +6672,10 @@ ot-kernel-pkgflags_nv() { # DONE
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		fi
 
-		if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
-			ot-kernel_y_configopt "CONFIG_X86_PAT"
+		if [[ "${arch}" == "x86_64" ]] ; then
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
+				ot-kernel_y_configopt "CONFIG_X86_PAT"
+			fi
 		fi
 
 		if ot-kernel_has_version ">=${pkg}-515.86[kernel-open]" ; then
