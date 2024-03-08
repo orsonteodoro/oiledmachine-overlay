@@ -6656,19 +6656,30 @@ ot-kernel-pkgflags_nv() { # DONE
 			ot-kernel_y_configopt "CONFIG_AGP_AMD64"
 		fi
 		ot-kernel_y_configopt "CONFIG_PROC_FS"
+
 		ot-kernel_y_configopt "CONFIG_DRM"
+	# Let's try to select MMU_NOTIFIER, DRM_KMS_HELPER directly instead of
+	# suggesting possible increases of the attack surface.
+		if ! grep -q -e "ot-kernel edit 1$" "drivers/gpu/drm/Kconfig" ; then
+			sed -i "11i \\\tselect DRM_KMS_HELPER # ot-kernel edit 1" "drivers/gpu/drm/Kconfig"
+		fi
 		ot-kernel_y_configopt "CONFIG_DRM_KMS_HELPER"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		ot-kernel_unset_configopt "CONFIG_LOCKDEP"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_MUTEXES"
 
+		if ot-kernel_has_version "${pkg}[powerd]" ; then
+			ot-kernel_y_configopt "CONFIG_CPU_FREQ"
+		fi
+
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
 			ot-kernel_y_configopt "CONFIG_X86_PAT"
 		fi
-		# Workaround mentioned in the ebuild
-		# It's better to modify the Kconfig.
 
 		if ot-kernel_has_version ">=${pkg}-515.86[kernel-open]" ; then
+			if ! grep -q -e "ot-kernel edit 2$" "drivers/gpu/drm/Kconfig" ; then
+				sed -i "11i \\\tselect MMU_NOTIFIER # ot-kernel edit 2" "drivers/gpu/drm/Kconfig"
+			fi
 			ot-kernel_y_configopt "CONFIG_MMU_NOTIFIER"
 		fi
 
@@ -7186,10 +7197,11 @@ ot-kernel-pkgflags_openssl() { # DONE
 				&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "4.18" \
 		; then
-		ot-kernel_y_configopt "CONFIG_TLS"
-		ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
-		if ot-kernel_has_version "${pkg}[test]" ; then
-			ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER"
+			ot-kernel_y_configopt "CONFIG_TLS"
+			ot-kernel_y_configopt "CONFIG_TLS_DEVICE"
+			if ot-kernel_has_version "${pkg}[test]" ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_USER_API_SKCIPHER"
+			fi
 		fi
 	fi
 }
