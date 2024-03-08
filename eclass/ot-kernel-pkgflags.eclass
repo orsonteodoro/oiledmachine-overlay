@@ -698,6 +698,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_tb_us
 	ot-kernel-pkgflags_tbb
 	ot-kernel-pkgflags_tboot
+	ot-kernel-pkgflags_thermald
 	ot-kernel-pkgflags_thinkfinger
 	ot-kernel-pkgflags_throttled
 	ot-kernel-pkgflags_tiny_dfr
@@ -3370,8 +3371,10 @@ ot-kernel-pkgflags_docker() { # DONE
 		ot-kernel_y_configopt "CONFIG_NET"
 		ot-kernel_y_configopt "CONFIG_CGROUPS"
 		ot-kernel_y_configopt "CONFIG_MEMCG"
-		if ver_test "${KV_MAJOR_MINOR}" -le "5.7" ; then
+		if ver_test "${KV_MAJOR_MINOR}" -lt "6.1" ; then
 			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP"
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -le "5.8" ; then
 			ot-kernel_y_configopt "CONFIG_MEMCG_SWAP_ENABLED"
 		fi
 		ot-kernel_y_configopt "CONFIG_BLOCK"
@@ -3484,7 +3487,7 @@ ot-kernel-pkgflags_docker() { # DONE
 #		# _ot-kernel_y_thp # References it but no madvise/fadvise
 		# LDT referenced
 
-		if ver_test "${KV_MAJOR_MINOR}" -le "4.8" ; then
+		if ver_test "${KV_MAJOR_MINOR}" -lt "4.8" ; then
 			ot-kernel_y_configopt "CONFIG_DEVPTS_MULTIPLE_INSTANCES"
 			ot-kernel_y_configopt "CONFIG_UNIX98_PTYS"
 		fi
@@ -5650,7 +5653,7 @@ ot-kernel-pkgflags_libvirt() { # DONE
 			ot-kernel_y_configopt "CONFIG_NET_CLS_CGROUP"
 			_ot-kernel_set_net_ns
 			_ot-kernel_set_pid_ns
-			ot-kernel_y_configopt "CONFIG_POSIX_MQUEUE"
+			_ot-kernel_set_posix_mqueue
 			ot-kernel_y_configopt "CONFIG_SECURITYFS"
 			_ot-kernel_set_user_ns
 			_ot-kernel_set_uts_ns
@@ -8905,6 +8908,20 @@ ot-kernel-pkgflags_tbb() { # DONE
 ot-kernel-pkgflags_tboot() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-boot/tboot" ; then
 		ot-kernel_y_configopt "CONFIG_INTEL_TXT"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_thermald
+# @DESCRIPTION:
+# Applies kernel config flags for the thermald package
+ot-kernel-pkgflags_thermald() { # DONE
+	if ot-kernel_has_version_pkgflags "sys-power/thermald" ; then
+		ot-kernel_y_configopt "CONFIG_PERF_EVENTS_INTEL_RAPL"
+		ot-kernel_y_configopt "CONFIG_X86_INTEL_PSTATE"
+		ot-kernel_y_configopt "CONFIG_INTEL_POWERCLAMP"
+		ot-kernel_y_configopt "CONFIG_INT340X_THERMAL"
+		ot-kernel_y_configopt "CONFIG_ACPI_THERMAL_REL"
+		ot-kernel_y_configopt "CONFIG_INT3406_THERMAL"
 	fi
 }
 
