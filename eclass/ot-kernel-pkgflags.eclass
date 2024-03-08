@@ -8088,9 +8088,26 @@ ot-kernel-pkgflags_rtirq() { # DONE
 # @FUNCTION: ot-kernel-pkgflags_rtkit
 # @DESCRIPTION:
 # Applies kernel config flags for the rtkit package
-ot-kernel-pkgflags_rtkit() { # DONE, TODO: NEEDS REVIEW
+ot-kernel-pkgflags_rtkit() { # DONE
 	if ot-kernel_has_version_pkgflags "sys-auth/rtkit" ; then
-		ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
+		if [[ \
+			   "${hardening_level}" == "custom" \
+			|| "${hardening_level}" == "manual" \
+		]] ; then
+			:
+		elif [[ \
+			   "${hardening_level}" == "default" \
+			|| "${hardening_level}" == "practical" \
+		]] ; then
+			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
+		elif [[ \
+			   "${hardening_level}" == "performance" \
+			|| "${hardening_level}" == "trusted" \
+		]] ; then
+			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
+		else
+			ot-kernel_y_configopt "CONFIG_RT_GROUP_SCHED"
+		fi
 	fi
 }
 
