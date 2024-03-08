@@ -5341,6 +5341,7 @@ ot-kernel-pkgflags_linux_enable_ir_emitter() {
 		ot-kernel_y_configopt "CONFIG_MEDIA_USB_SUPPORT"
 		ot-kernel_y_configopt "CONFIG_USB"
 		ot-kernel_y_configopt "CONFIG_MEDIA_CAMERA_SUPPORT"
+		ot-kernel_y_configopt "CONFIG_USB_VIDEO_CLASS"
 		ot-kernel_y_configopt "CONFIG_VIDEO_DEV"
 	fi
 }
