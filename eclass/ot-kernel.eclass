@@ -11096,6 +11096,10 @@ einfo "Setting up the build toolchain"
 			"CROSS_COMPILE=${target_triple}-"
 		)
 	fi
+
+	# tresor is broken with clang?  puts missing.
+	# ld.lld: error: undefined symbol: puts
+
 	if \
 		( \
 			   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
@@ -11104,6 +11108,7 @@ einfo "Setting up the build toolchain"
 			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
+		&& ! has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor \
 		&& is_clang_ready \
 	; then
 einfo "Using Clang ${llvm_slot}"
@@ -11128,6 +11133,13 @@ einfo "Using Clang ${llvm_slot}"
 		CC="${CHOST}-clang-${llvm_slot}"
 		CXX="${CHOST}-clang++-${llvm_slot}"
 		LD="ld.lld"
+einfo "PATH=${PATH} (before)"
+			export PATH=$(echo "${PATH}" \
+				| tr ":" "\n" \
+				| sed -e "/llvm/d" \
+				| tr "\n" ":" \
+				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${llvm_slot}/bin:${PWD}/install/bin|g")
+einfo "PATH=${PATH} (after)"
 	else
 #		if has_version "sys-devel/gcc-kpgo" && use pgo ; then
 #einfo "Detected sys-devel/gcc-kpgo"
@@ -11161,6 +11173,11 @@ einfo "Using Clang ${llvm_slot}"
 
 	#filter-flags '-march=*' '-mtune=*' '-flto*' '-fuse-ld=*' '-f*inline*'
 	strip-unsupported-flags
+einfo "PATH=${PATH}"
+einfo "CC:  ${CC}"
+${CC} --version || die
+einfo "LD:  ${LD}"
+${LD} --version || die
 einfo
 einfo "Kernel CFLAGS:"
 einfo

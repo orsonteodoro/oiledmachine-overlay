@@ -1,4 +1,5 @@
 Patch status:  testing
+MCDC associated with llvm_prf_bits is disabled.
 --- a/kernel/pgo/fs.c.orig	2024-02-13 21:35:28.758279564 -0800
 +++ b/kernel/pgo/fs.c	2024-02-13 22:06:51.506410113 -0800
 @@ -39,6 +39,7 @@ struct prf_private_data {
@@ -25,7 +26,7 @@ Patch status:  testing
  	header->padding_bytes_after_counters = 0;
 +
 +#if LLVM_INSTR_PROF_RAW_VERSION == 9
-+	header->num_bitmap_bytes = prf_bits_count();
++	header->num_bitmap_bytes = 0/*prf_bits_count()*/;
 +	header->padding_bytes_after_bitmap_bytes = 0;
 +#endif
 +
@@ -36,7 +37,7 @@ Patch status:  testing
  	header->counters_delta = (u64)__llvm_prf_cnts_start;
  #endif
 +#if LLVM_INSTR_PROF_RAW_VERSION >= 9
-+	header->bitmap_delta = (u64)__llvm_prf_bits_start - (u64)__llvm_prf_data_start;
++	header->bitmap_delta = 0/*(u64)__llvm_prf_bits_start - (u64)__llvm_prf_data_start*/;
 +#endif
  	header->names_delta = (u64)__llvm_prf_names_start;
  	header->value_kind_last = LLVM_INSTR_PROF_IPVK_LAST;
@@ -45,7 +46,7 @@ Patch status:  testing
  	return sizeof(struct llvm_prf_header) +
  			prf_data_size()	+
  			prf_cnts_size() +
-+#if LLVM_INSTR_PROF_RAW_VERSION >= 9
++#if LLVM_INSTR_PROF_RAW_VERSION >= 9 && 0
 +			prf_bits_size() +
 +#endif
  			prf_names_size() +
@@ -59,7 +60,7 @@ Patch status:  testing
  	prf_fill_header(&buffer);
  	prf_copy_to_buffer(&buffer, __llvm_prf_data_start,  prf_data_size());
  	prf_copy_to_buffer(&buffer, __llvm_prf_cnts_start,  prf_cnts_size());
-+#if LLVM_INSTR_PROF_RAW_VERSION >= 9
++#if LLVM_INSTR_PROF_RAW_VERSION >= 9 && 0
 +	prf_copy_to_buffer(&buffer, __llvm_prf_bits_start,  prf_bits_size());
 +#endif
  	prf_copy_to_buffer(&buffer, __llvm_prf_names_start, prf_names_size());
@@ -69,7 +70,7 @@ Patch status:  testing
  	struct llvm_prf_data *data;
  
  	memset(__llvm_prf_cnts_start, 0, prf_cnts_size());
-+#if LLVM_INSTR_PROF_RAW_VERSION == 9
++#if LLVM_INSTR_PROF_RAW_VERSION == 9 && 0
 +	memset(__llvm_prf_bits_start, 0, prf_bits_size());
 +#endif
  
@@ -195,7 +196,7 @@ Patch status:  testing
  extern u64 __llvm_prf_cnts_start[];
  extern u64 __llvm_prf_cnts_end[];
  
-+#if LLVM_INSTR_PROF_RAW_VERSION == 9
++#if LLVM_INSTR_PROF_RAW_VERSION == 9 && 0
 +extern char __llvm_prf_bits_start[];
 +extern char __llvm_prf_bits_end[];
 +#endif
@@ -207,7 +208,7 @@ Patch status:  testing
  
  __DEFINE_PRF_SIZE(data);
  __DEFINE_PRF_SIZE(cnts);
-+#if LLVM_INSTR_PROF_RAW_VERSION == 9
++#if LLVM_INSTR_PROF_RAW_VERSION == 9 && 0
 +__DEFINE_PRF_SIZE(bits);
 +#endif
  __DEFINE_PRF_SIZE(names);
@@ -219,7 +220,7 @@ Patch status:  testing
  #endif
  
  #ifdef CONFIG_PGO_CLANG
-+# ifdef CONFIG_PROFRAW_V9
++# if defined(CONFIG_PROFRAW_V9) && 0
 +#define PGO_CLANG_DATA_BITS
 +	__llvm_prf_bits : AT(ADDR(__llvm_prf_bits) - LOAD_OFFSET) {	\
 +		__llvm_prf_bits_start = .;				\
