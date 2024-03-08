@@ -31,8 +31,9 @@ inherit toolchain-funcs
 #
 # Intuitive time cost estimate:
 #
-# has_version:  Θ(lookup) = Θ(filesystem) + O(python context switch or load latency) + Θ(python loops) + Θ(cached pickle db access)
-# ot-kernel_has_version:  Θ(lookup) = Θ(filesystem)
+# has_version:  Θ(lookup) = Θ(filesystem) + Θ(python context switch or load latency) + Θ(python loops) + Θ(cached pickle database access)
+# ot-kernel_has_version without USE flags:  Θ(lookup) = Θ(filesystem)
+# ot-kernel_has_version with USE flags:  Θ(lookup) = Θ(filesystem) + Θ(Boyer-Moore)
 #
 # The estimate just highlights the unintended consequence of platform independence.
 # Θ (theta) is average case Big O measuring time complexity.
