@@ -2057,6 +2057,7 @@ _ot-kernel-pkgflags_cr_suid_sandbox_settings() { # DONE
 		local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 eerror
 eerror "Lowered security detected:"
+eerror
 eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
 		if [[ "${pkg}" =~ "/" ]] ; then
 eerror "Either set OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1 or disable CONFIG_GRKERNSEC."
