@@ -308,6 +308,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_acpi_call
 	ot-kernel-pkgflags_acpid
 	ot-kernel-pkgflags_actkbd
+	ot-kernel-pkgflags_aic8800
 	ot-kernel-pkgflags_alsa
 	ot-kernel-pkgflags_amt_check
 	ot-kernel-pkgflags_apache
@@ -394,6 +395,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_e2fsprogs
 	ot-kernel-pkgflags_ec_access
 	ot-kernel-pkgflags_ecryptfs
+	ot-kernel-pkgflags_eduvpn_common
 	ot-kernel-pkgflags_efibootmgr
 	ot-kernel-pkgflags_ekeyd
 	ot-kernel-pkgflags_ell
@@ -594,6 +596,7 @@ ot-kernel-pkgflags_apply() {
 	ot-kernel-pkgflags_orca
 	ot-kernel-pkgflags_osmo_fl2k
 	ot-kernel-pkgflags_oss
+	ot-kernel-pkgflags_ovpn_dco
 	ot-kernel-pkgflags_pam_u2f
 	ot-kernel-pkgflags_pcmciautils
 	ot-kernel-pkgflags_pesign
@@ -822,6 +825,16 @@ ot-kernel-pkgflags_acpid() { # DONE
 ot-kernel-pkgflags_actkbd() { # DONE
 	if ot-kernel_has_version_pkgflags "app-misc/actkbd" ; then
 		ot-kernel_y_configopt "CONFIG_INPUT_EVDEV"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_aic8800
+# @DESCRIPTION:
+# Applies kernel config flags for the aic8800 package
+ot-kernel-pkgflags_aic8800() { # DONE
+	if ot-kernel_has_version_pkgflags "net-wireless/aic8800" ; then
+		ot-kernel_y_configopt "CONFIG_MAC80211"
+		ot-kernel_y_configopt "CONFIG_BT_HCIBTUSB"
 	fi
 }
 
@@ -3583,6 +3596,18 @@ ot-kernel-pkgflags_ecryptfs() { # DONE
 		ot-kernel_y_configopt "CONFIG_MISC_FILESYSTEMS"
 		ot-kernel_y_configopt "CONFIG_ECRYPT_FS"
 		ot-kernel_y_configopt "CONFIG_KEYS"
+	fi
+}
+
+# @FUNCTION: ot-kernel-pkgflags_eduvpn_common
+# @DESCRIPTION:
+# Applies kernel config flags for the eduvpn-common package
+ot-kernel-pkgflags_eduvpn_common() { # DONE
+	if \
+		ot-kernel_has_version_pkgflags "net-vpn/eduvpn-common" \
+		&& ot-kernel_has_version "net-vpn/eduvpn-common[wireguard]" \
+	; then
+		ot-kernel_y_configopt "CONFIG_WIREGUARD"
 	fi
 }
 
@@ -6641,6 +6666,21 @@ ot-kernel-pkgflags_oss() { # DONE
 	fi
 }
 
+# @FUNCTION: ot-kernel-pkgflags_ovpn_dco
+# @DESCRIPTION:
+# Applies kernel config flags for the ovpn-dco package
+ot-kernel-pkgflags_ovpn_dco() { # DONE
+	if ot-kernel_has_version_pkgflags "net-vpn/ovpn-dco" ; then
+		ot-kernel_y_configopt "CONFIG_INET"
+		ot-kernel_y_configopt "CONFIG_NET"
+		ot-kernel_y_configopt "CONFIG_NET_UDP_TUNNEL"
+		ot-kernel_y_configopt "CONFIG_DST_CACHE"
+		ot-kernel_y_configopt "CONFIG_CRYPTO"
+		_ot-kernel-pkgflags_aes CCM
+		ot-kernel_y_configopt "CONFIG_CRYPTO_CHACHA20POLY1305"
+	fi
+}
+
 # @FUNCTION: ot-kernel-pkgflags_has_external_module
 # @DESCRIPTION:
 # Check for external modules
@@ -7949,8 +7989,8 @@ ot-kernel-pkgflags_rust() { # DONE
 # Applies kernel config flags for the safeclib package
 ot-kernel-pkgflags_safeclib() { # DONE
 	if \
-		ot-kernel_has_version_pkgflags "sys-libs/safeclib" \
-		ot-kernel_has_version "sys-libs/safeclib[modules]" \
+		   ot-kernel_has_version_pkgflags "sys-libs/safeclib" \
+		&& ot-kernel_has_version "sys-libs/safeclib[modules]" \
 	; then
 		ot-kernel_y_configopt "CONFIG_COMPAT_32BIT_TIME"
 	fi
