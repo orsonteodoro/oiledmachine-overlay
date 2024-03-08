@@ -1096,7 +1096,13 @@ ot-kernel-pkgflags_bcm_sta() { # DONE
 			_s1
 			_s2
 			ot-kernel_y_configopt "CONFIG_CFG80211"
-			ewarn "Cannot use PREEMPT_RCU OR PREEMPT with ${pkg}"
+			local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
+ewarn
+ewarn "Cannot use PREEMPT_RCU OR PREEMPT* with ${pkg}."
+ewarn "Disabling PREEMPT* and disabling PREEMPT_RT."
+ewarn
+ewarn "If you need to use PREEMPT_RT, add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1"
+ewarn
 			ot-kernel_unset_configopt "CONFIG_PREEMPT_RCU"
 			# This package does not like PREEMPT*
 			ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
@@ -2039,6 +2045,7 @@ ot-kernel-pkgflags_corosync() { # DONE
 # @DESCRIPTION:
 # Add config settings for suid sandbox support
 _ot-kernel-pkgflags_cr_suid_sandbox_settings() { # DONE
+	local pkg="${1}"
 	_ot-kernel_set_net_ns
 	_ot-kernel_set_pid_ns
 	_ot-kernel_set_user_ns
@@ -2047,10 +2054,15 @@ _ot-kernel-pkgflags_cr_suid_sandbox_settings() { # DONE
 	ot-kernel_unset_configopt "CONFIG_COMPAT_VDSO"
 	if grep -q -e "^CONFIG_GRKERNSEC=y" "${path_config}" ; then
 		# Still added because user may add patch via /etc/portage/patches
+		local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 eerror
 eerror "Lowered security detected:"
 eerror "The CONFIG_GRKERNSEC flag will break the suid sandbox."
-eerror "Either set OT_KERNEL_PKGFLAGS_REJECT[S4aa6a9f]=1 or disable CONFIG_GRKERNSEC."
+		if [[ "${pkg}" =~ "/" ]] ; then
+eerror "Either set OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1 or disable CONFIG_GRKERNSEC."
+		else
+eerror "Either set USE_SUID_SANDBOX=0 or disable CONFIG_GRKERNSEC."
+		fi
 eerror
 		die
 	fi
@@ -2131,46 +2143,45 @@ www-client/vivaldi
 www-misc/instatron
 )
 
-# @FUNCTION: _ot-kernel-pkgflags_cr_based
+# @FUNCTION: _ot-kernel-pkgflags_apply_cr_kconfig
 # @DESCRIPTION:
-# Returns 0 if it is a cr based package.
-_ot-kernel-pkgflags_cr_based() {
-	local pkg
-	for pkg in ${CR_PKGS[@]} ; do
-		ot-kernel_has_version "${pkg}" && return 0
-	done
-	return 1
+# Applies kconfig flags for cr based apps
+_ot-kernel-pkgflags_apply_cr_kconfig() {
+	local pkg="${1}"
+	_ot-kernel-pkgflags_cr_suid_sandbox_settings "${pkg}"
+	ot-kernel_y_configopt "CONFIG_SYSVIPC"
+	ot-kernel_y_configopt "CONFIG_EXPERT"
+	ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
+	ot-kernel_y_configopt "CONFIG_AIO"
+	ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
+	ot-kernel_y_configopt "CONFIG_EPOLL"
+	ot-kernel_y_configopt "CONFIG_EVENTFD"
+	ot-kernel_y_configopt "CONFIG_FUTEX"
+	ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
+	_ot-kernel_set_io_uring
+	ot-kernel_y_configopt "CONFIG_MEMBARRIER"
+	ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
+	ot-kernel_y_configopt "CONFIG_SHMEM"
+	ot-kernel_y_configopt "CONFIG_SIGNALFD"
+	ot-kernel_y_configopt "CONFIG_TIMERFD"
+
+	# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
+	# LDT referenced
 }
 
 # @FUNCTION: ot-kernel-pkgflags_cr
 # @DESCRIPTION:
 # Applies kernel config flags for the cr based packages
 ot-kernel-pkgflags_cr() { # DONE
-	if \
-		_ot-kernel-pkgflags_cr_based \
-			|| \
-		[[ "${USE_SUID_SANDBOX:-0}" == "1" ]] \
-	; then
-		_ot-kernel-pkgflags_cr_suid_sandbox_settings
-		ot-kernel_y_configopt "CONFIG_SYSVIPC"
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_ADVISE_SYSCALLS"
-		ot-kernel_y_configopt "CONFIG_AIO"
-		ot-kernel_y_configopt "CONFIG_BPF_SYSCALL"
-		ot-kernel_y_configopt "CONFIG_EPOLL"
-		ot-kernel_y_configopt "CONFIG_EVENTFD"
-		ot-kernel_y_configopt "CONFIG_FUTEX"
-		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
-		_ot-kernel_set_io_uring
-		ot-kernel_y_configopt "CONFIG_MEMBARRIER"
-		ot-kernel_y_configopt "CONFIG_POSIX_TIMERS"
-		ot-kernel_y_configopt "CONFIG_SHMEM"
-		ot-kernel_y_configopt "CONFIG_SIGNALFD"
-		ot-kernel_y_configopt "CONFIG_TIMERFD"
-
-		# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
-		# LDT referenced
-	fi
+	local pkg
+	for pkg in ${CR_PKGS[@]} ; do
+		if [[ "${USE_SUID_SANDBOX:-0}" == "1" ]] ; then
+			_ot-kernel-pkgflags_apply_cr_kconfig "USE_SUID_SANDBOX=1"
+			break
+		elif ot-kernel_has_version_pkgflags "${pkg}" ; then
+			_ot-kernel-pkgflags_apply_cr_kconfig "${pkg}"
+		fi
+	done
 }
 
 # @FUNCTION: ot-kernel-pkgflags_crda
@@ -4743,8 +4754,14 @@ ot-kernel-pkgflags_lkrg() { # DONE
 		ot-kernel_y_configopt "CONFIG_KPROBES"
 		ot-kernel_y_configopt "CONFIG_JUMP_LABEL"
 		ot-kernel_y_configopt "CONFIG_MODULE_UNLOAD"
-ewarn "app-antivirus/lkrg does not like PREEMPT_RT"
-		ot-kernel_set_preempt "CONFIG_PREEMPT_AUTOMAGIC"
+		local pkgid=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
+ewarn
+ewarn "Cannot use PREEMPT_RCU OR PREEMPT* with ${pkg}."
+ewarn "Disabling PREEMPT* and disabling PREEMPT_RT."
+ewarn
+ewarn "If you need to use PREEMPT_RT, add OT_KERNEL_PKGFLAGS_REJECT[S${pkgid}]=1"
+ewarn
+		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
 		ban_disable_debug "${pkg}"
 		ot-kernel_y_configopt "CONFIG_STACKTRACE"
 	fi
