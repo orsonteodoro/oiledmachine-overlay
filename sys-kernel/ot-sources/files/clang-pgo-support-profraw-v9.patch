@@ -114,20 +114,6 @@ MCDC associated with llvm_prf_bits is disabled.
  
  	for (data = __llvm_prf_data_start; data < __llvm_prf_data_end; data++) {
  		struct llvm_prf_value_node **vnodes;
-@@ -339,6 +376,13 @@ static ssize_t reset_write(struct file *
- 		if (!data->values)
- 			continue;
- 
-+		data->counter_ptr = NULL;
-+		data->function_ptr = NULL;
-+#if LLVM_INSTR_PROF_RAW_VERSION == 9
-+		data->bitmap_ptr = NULL;
-+		data->num_bitmap_bytes = 0;
-+#endif
-+
- 		current_vsite_count = 0;
- 		vnodes = (struct llvm_prf_value_node **)data->values;
- 
 --- a/kernel/pgo/Kconfig.orig	2024-03-08 19:24:19.468590604 -0800
 +++ b/kernel/pgo/Kconfig	2024-03-09 04:57:22.062376661 -0800
 @@ -10,7 +10,7 @@ config PGO_CLANG
