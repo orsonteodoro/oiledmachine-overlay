@@ -11113,8 +11113,12 @@ einfo "Setting up the build toolchain"
 		if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor ; then
 # Ask to disable to remove clang patches or force GCC PGO.
 eerror
-eerror "TRESOR is not compatable with clang.  Please disable clang in"
-eerror "OT_KERNEL_USE."
+eerror "TRESOR is not compatable with clang."
+eerror
+eerror "To resolve, do of the following below"
+eerror
+eerror "1.Change OT_KERNEL_USE=\"... -clang\" in /etc/portage/ot-sources/${KV_MAJOR_MINOR}/<extraversion>/<arch>/env"
+eerror "2.Change OT_KERNEL_USE=\"... -tresor\" in /etc/portage/ot-sources/${KV_MAJOR_MINOR}/<extraversion>/<arch>/env"
 eerror
 			die
 		fi
