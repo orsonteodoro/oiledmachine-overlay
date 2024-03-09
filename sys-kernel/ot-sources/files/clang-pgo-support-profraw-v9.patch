@@ -171,7 +171,7 @@ MCDC associated with llvm_prf_bits is disabled.
  
  config PROFRAW_V7
  	bool "profraw v7 (13.x)"
-@@ -58,13 +66,15 @@ config PROFRAW_V7
+@@ -58,13 +66,16 @@ config PROFRAW_V7
  	    * LLVM 13.x branch with the latest commit
  	    * LLVM 13.0.1
  	    * LLVM 13.0.0
@@ -185,6 +185,7 @@ MCDC associated with llvm_prf_bits is disabled.
 -	  The following are compatible:
 -	    * LLVM 14 init
 +	bool "profraw v6 (13.0.0-rc1, 14-init)"
++	help
 +	    * LLVM 14.0.0 init
  	    * LLVM 13.x branch with profraw v6
 +	    * LLVM 13.0.0 rc1
