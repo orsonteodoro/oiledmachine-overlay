@@ -11108,9 +11108,17 @@ einfo "Setting up the build toolchain"
 			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 		) \
 		&& ! tc-is-cross-compiler \
-		&& ! has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor \
 		&& is_clang_ready \
 	; then
+		if has tresor ${IUSE_EFFECTIVE} && ot-kernel_use tresor ; then
+# Ask to disable to remove clang patches or force GCC PGO.
+eerror
+eerror "TRESOR is not compatable with clang.  Please disable clang in"
+eerror "OT_KERNEL_USE."
+eerror
+			die
+		fi
+
 einfo "Using Clang ${llvm_slot}"
 		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
 		# Assumes we are not cross-compiling or we are only building on CBUILD=CHOST.
