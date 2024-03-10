@@ -1762,11 +1762,12 @@ _filter_genpatches() {
 		P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
 	fi
 
-	if ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo )  ; then
+	if ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) && ! [[ "${GENPATCHES_BLACKLIST}" =~ "1500" ]] ; then
 ewarn
-ewarn "Clang PGO is not compatible with Genpatches 1500"
-ewarn "Disable clang pgo in OT_KERNEL_USE or add 1500 to P_GENPATCHES_BLACKLIST"
+ewarn "Clang PGO is not compatible with Genpatches 1500 and cause boot failure."
+ewarn "Disable clang pgo in OT_KERNEL_USE or add 1500 to GENPATCHES_BLACKLIST"
 ewarn
+		die
 	fi
 
 	if [[ "${KV_MAJOR_MINOR}" == "4.19" ]] ; then
