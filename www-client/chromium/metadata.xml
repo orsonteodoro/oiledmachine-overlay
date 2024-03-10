@@ -2,17 +2,25 @@
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="person">
-    <!-- only for this ebuild fork on the oiledmachine-overlay -->
+    <!-- Ebuild on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <maintainer type="project">
-    <!-- ebuild originator -->
+    <!-- Ebuild originator -->
     <email>chromium@gentoo.org</email>
     <name>Chromium in Gentoo Project</name>
   </maintainer>
-  <longdescription>
-    Chromium is a open-source web browser
+  <maintainer type="person">
+    <!-- Distro ebuild contributor -->
+    <email>kangie@gentoo.org</email>
+    <name>Matt Jolly</name>
+  </maintainer>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    Chromium is a open-source web browser.
 
     For this ebuild fork, you can build 32 bit Chromium on 64 bit.  Multiple ABI
     installation is in testing.  This will allow to use binary only plugins that
@@ -164,9 +172,11 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       https://github.com/chromium/chromium/blob/master/build/config/sanitizers/BUILD.gn#L204
       [1] https://github.com/chromium/chromium/tree/master/tools/perf/benchmarks
       [2] https://chromium.googlesource.com/catapult/+/HEAD/telemetry/README.md
-  </longdescription>
+  -->
   <upstream>
     <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
+    <remote-id type="github">chromium/chromium</remote-id>
+    <remote-id type="gitlab">Matt.Jolly/chromium-patches</remote-id>
   </upstream>
   <use>
     <flag name="bluetooth">
@@ -259,6 +269,9 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
       CFI and PGO) and uses the internal bundled hardened and PGOed version of
       those libraries with static linkage.  Implies default features and
       proprietary-codecs.
+    </flag>
+    <flag name="pax-kernel">
+      Allow building on a PaX-enabled kernel
     </flag>
     <flag name="pic">
       Disable optimized assembly code that is not PIC friendly
@@ -520,6 +533,11 @@ sudo emerge --config "chromium[epgo,ebolt]" # PGO + bolt_pgo
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
       (w/o Clang CFI).
+    </flag>
+    <flag name="system-toolchain">
+      Use the system toolchain instead of the bundled one (if possible).
+
+      If disabled, it will build with a snapshot build of Clang and Rust.
     </flag>
     <flag name="system-zlib">
       Use system zlib instead of the bundled one

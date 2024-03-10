@@ -11,7 +11,9 @@
   <email>mozilla@gentoo.org</email>
   <name>Gentoo Mozilla Team</name>
 </maintainer>
-<longdescription>
+<!--
+
+  oiledmachine-overlay notes:
 
   Firefox is an HTML5 compatible web browser.
 
@@ -39,7 +41,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   Updates for these ebuilds fork are planned when security updates or
   advisories are announced.
 
-</longdescription>
+-->
 <upstream>
   <changelog>
     https://www.mozilla.org/en-US/firefox/releases/

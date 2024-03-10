@@ -9,3 +9,6 @@ www-client/chromium -abi_x86_64 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
 
 # Build time failure
 dev-libs/libappimage system-boost
+
+# Broken?
+www-client/chromium system-toolchain
