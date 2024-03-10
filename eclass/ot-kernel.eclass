@@ -1761,6 +1761,14 @@ _filter_genpatches() {
 	# Already applied 5010-5013 GraySky2's kernel_compiler_patches
 		P_GENPATCHES_BLACKLIST+=" 5010 5011 5012 5013"
 	fi
+
+	if ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo )  ; then
+ewarn
+ewarn "Clang PGO is not compatible with Genpatches 1500"
+ewarn "Disable clang pgo in OT_KERNEL_USE or add 1500 to P_GENPATCHES_BLACKLIST"
+ewarn
+	fi
+
 	if [[ "${KV_MAJOR_MINOR}" == "4.19" ]] ; then
 	# Patch failures
 		P_GENPATCHES_BLACKLIST+=" 2600"
@@ -4621,7 +4629,7 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 		   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
 		|| ( has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ) \
 		|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
-		|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
+		|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
@@ -11100,12 +11108,13 @@ einfo "Setting up the build toolchain"
 	# tresor is broken with clang?  puts missing.
 	# ld.lld: error: undefined symbol: puts
 
+#			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
 	if \
 		( \
 			   ( has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ) \
 			|| ( has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ) \
 			|| ( has lto ${IUSE_EFFECTIVE} && ot-kernel_use lto ) \
-			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang && ot-kernel_use pgo ) \
+			|| ( has clang ${IUSE_EFFECTIVE} && ot-kernel_use clang ) \
 		) \
 		&& ! tc-is-cross-compiler \
 		&& is_clang_ready \
