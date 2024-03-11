@@ -50,8 +50,8 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
-GCC_SLOTS=( 13 12 11 ) # Should only list non EOL
-LLVM_SLOTS=( 18 17 16 15 ) # Should only list non EOL
+GCC_COMPAT=( {13..11} ) # Should only list non EOL
+LLVM_COMPAT=( 18 15 13 12 ) # Should only list non EOL
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
 CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2023-10-26
@@ -134,9 +134,10 @@ ROCM_SLOTS=(
 	rocm_4_3
 	rocm_4_2
 )
-IUSE="
+IUSE+="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 cet cfi cuda esimd_emulator hardened native-cpu rocm +sycl-fusion system-llvm test
 "
@@ -198,14 +199,16 @@ RESTRICT="
 "
 gen_cfi_rdepend() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			system-llvm? (
-				cfi? (
-					=sys-libs/compiler-rt-sanitizers-${s}*[cfi]
-					sys-devel/clang:${s}
-					sys-devel/lld:${s}
-					sys-devel/llvm:${s}
+			llvm_slot_${s}? (
+				system-llvm? (
+					cfi? (
+						=sys-libs/compiler-rt-sanitizers-${s}*[cfi]
+						sys-devel/clang:${s}
+						sys-devel/lld:${s}
+						sys-devel/llvm:${s}
+					)
 				)
 			)
 		"
@@ -310,7 +313,7 @@ DEPEND="
 "
 gen_gcc_bdepend() {
 	local s
-	for s in ${GCC_SLOTS[@]} ; do
+	for s in ${GCC_COMPAT[@]} ; do
 		echo "
 			(
 				sys-devel/gcc:${s}
@@ -320,7 +323,7 @@ gen_gcc_bdepend() {
 }
 gen_llvm_bdepend() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
 				sys-devel/clang:${s}
@@ -403,7 +406,7 @@ eerror "Switch to >=sys-devel/clang-5.0"
 	if use cfi ; then
 		if [[ -z "${LLVM_MAX_SLOT}" ]] ; then
 			local s
-			for s in ${LLVM_SLOTS[@]} ; do
+			for s in ${LLVM_COMPAT[@]} ; do
 				if \
 					   has_version "sys-devel/clang:${s}" \
 					&& has_version "sys-devel/lld:${s}" \
@@ -469,7 +472,7 @@ src_configure() {
 
 	if use cet ; then
 		local s
-		for s in ${GCC_SLOTS[@]} ; do
+		for s in ${GCC_COMPAT[@]} ; do
 			if has_version "sys-devel/gcc:${s}" ; then
 				export CC="${CHOST}-gcc-${s}"
 				export CXX="${CHOST}-g++-${s}"
@@ -483,7 +486,7 @@ src_configure() {
 		)
 	elif use cfi ; then
 		local s
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			if [[ -n "${LLVM_MAX_SLOT}" ]] ; then
 				if (( ${s} > ${LLVM_MAX_SLOT} )) ; then
 					continue

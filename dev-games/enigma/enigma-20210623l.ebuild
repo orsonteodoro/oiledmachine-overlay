@@ -5,6 +5,50 @@
 EAPI=7
 
 CXX_STANDARD="-std=c++17"
+LLVM_COMPAT=( {16..12} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+#
+# For some list of dependencies, see
+# https://github.com/enigma-dev/enigma-dev/blob/master/CI/install_emake_deps.sh
+# https://github.com/enigma-dev/enigma-dev/blob/master/CI/solve_engine_deps.sh
+# https://github.com/enigma-dev/enigma-dev/blob/master/CI/build_sdl.sh
+# grep -r -F -e "find_library(" -e "find_package("
+#
+# See CI for *DEPENDs
+# Fallback U 20.04.3
+ALURE_PV="1.2" # missing in CI
+BOX2D_PV_EMAX="2.4" # missing in CI
+CLANG_PV="12.0.1"
+BOOST_PV="1.76.0"
+BULLET_PV="2.88" # missing in CI
+CURL_PV="7.79.0"
+FLAC_PV="1.3.3"
+FREETYPE_PV="2.11.0"
+GCC_PV="11.1.0"
+GLEW_PV="2.1.0" # missing in CI
+GLM_PV="0.9.9.7" # missing in CI
+GME_PV="0.6.2" # missing in CI
+GTEST_PV="1.10.0" # missing in CI
+GTK2_PV="2.24.32" # missing in CI
+LIBFFI_PV="3.3" # missing in CI
+LIBMODPLUG_PV="0.8.9.0"
+LIBOGG_PV="1.3.5"
+LIBPNG_PV="1.6.37"
+LIBSDL2_PV="2.0.16"
+LIBSNDFILE_PV="1.0.31"
+LIBVORBIS_PV="1.3.7"
+LIBX11_PV="1.7.2"
+MESA_PV="21.2.1"
+MPG123_PV="1.25.13" # missing in CI
+OPENAL_PV="1.21.1"
+OPUS_PV="1.3.1"
+PULSEAUDIO_PV="15.0"
+SDL2_MIXER_PV="2.0.4" # missing in CI
+VIRTUAL_WINE_PV="0"
+WINE_PV="5.0" # missing in CI
+WINE_STAGING_PV="${WINE_PV}"
+WINE_VANILLA_PV="${WINE_PV}"
+ZLIB_PV="1.2.11"
 
 inherit desktop flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
@@ -24,6 +68,7 @@ HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 SLOT="0/lateralgm-${EGIT_COMMIT:0:7}" # Required because of the grpc/protobuf.
 IUSE+="
+${LLVM_COMPAT[@]/#/llvm_slot_}
 android box2d bullet clang d3d ds doc externalfuncs +freetype gles2 gles3 gme
 gnome gtk2 gtest headless joystick kde macos mingw32 mingw64 network +openal
 +opengl +png sdl2 sound test threads vulkan widgets wine +X xrandr xtest
@@ -51,6 +96,11 @@ REQUIRED_USE+="
 			gles3
 		)
 		sdl2
+	)
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	ds? (
 		wine
@@ -140,48 +190,6 @@ REQUIRED_USE+="
 		X
 	)
 "
-#
-# For some list of dependencies, see
-# https://github.com/enigma-dev/enigma-dev/blob/master/CI/install_emake_deps.sh
-# https://github.com/enigma-dev/enigma-dev/blob/master/CI/solve_engine_deps.sh
-# https://github.com/enigma-dev/enigma-dev/blob/master/CI/build_sdl.sh
-# grep -r -F -e "find_library(" -e "find_package("
-#
-# See CI for *DEPENDs
-# Fallback U 20.04.3
-ALURE_PV="1.2" # missing in CI
-BOX2D_PV_EMAX="2.4" # missing in CI
-CLANG_PV="12.0.1"
-BOOST_PV="1.76.0"
-BULLET_PV="2.88" # missing in CI
-CURL_PV="7.79.0"
-FLAC_PV="1.3.3"
-FREETYPE_PV="2.11.0"
-GCC_PV="11.1.0"
-GLEW_PV="2.1.0" # missing in CI
-GLM_PV="0.9.9.7" # missing in CI
-GME_PV="0.6.2" # missing in CI
-GTEST_PV="1.10.0" # missing in CI
-GTK2_PV="2.24.32" # missing in CI
-LIBFFI_PV="3.3" # missing in CI
-LIBMODPLUG_PV="0.8.9.0"
-LIBOGG_PV="1.3.5"
-LIBPNG_PV="1.6.37"
-LIBSDL2_PV="2.0.16"
-LIBSNDFILE_PV="1.0.31"
-LIBVORBIS_PV="1.3.7"
-LIBX11_PV="1.7.2"
-MESA_PV="21.2.1"
-MPG123_PV="1.25.13" # missing in CI
-OPENAL_PV="1.21.1"
-OPUS_PV="1.3.1"
-PULSEAUDIO_PV="15.0"
-SDL2_MIXER_PV="2.0.4" # missing in CI
-VIRTUAL_WINE_PV="0"
-WINE_PV="5.0" # missing in CI
-WINE_STAGING_PV="${WINE_PV}"
-WINE_VANILLA_PV="${WINE_PV}"
-ZLIB_PV="1.2.11"
 CDEPEND="
 	>=sys-devel/gcc-${GCC_PV}
 	>=net-libs/grpc-1.39.1[${MULTILIB_USEDEP}]
@@ -199,20 +207,19 @@ OPENGL_DEPEND="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP}]
 "
 
-LLVM_SLOTS=( 16 15 14 13 12 )
 gen_clang_deps() {
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		(
-			>=sys-libs/libcxx-${s}[${MULTILIB_USEDEP}]
-			>=sys-libs/libcxxabi-${s}[${MULTILIB_USEDEP}]
-			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-			test? (
-				>=dev-debug/lldb-${s}
+			llvm_slot_${s}? (
+				>=sys-libs/libcxx-${s}[${MULTILIB_USEDEP}]
+				>=sys-libs/libcxxabi-${s}[${MULTILIB_USEDEP}]
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				test? (
+					>=dev-debug/lldb-${s}
+				)
 			)
-		)
 		"
 	done
 }
@@ -340,9 +347,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-util/patchelf
 	clang? (
-		|| (
-			$(gen_clang_deps)
-		)
+		$(gen_clang_deps)
 	)
 	test? (
 		>=dev-libs/boost-${BOOST_PV}[${MULTILIB_USEDEP}]

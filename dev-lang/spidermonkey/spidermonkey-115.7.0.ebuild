@@ -3,8 +3,7 @@
 
 EAPI="8"
 
-LLVM_MAX_SLOT=17
-LLVM_SLOTS=( 17 16 15 )
+LLVM_COMPAT=( 17 16 15 )
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
@@ -46,7 +45,7 @@ PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
 WANT_AUTOCONF="2.1"
 
-inherit autotools check-reqs flag-o-matic llvm multiprocessing prefix python-any-r1 toolchain-funcs
+inherit autotools check-reqs flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 S="${WORKDIR}/firefox-${MY_PV}/js/src"
@@ -67,7 +66,7 @@ IUSE="clang cpu_flags_arm_neon debug +jit lto -simd test"
 RESTRICT="!test? ( test )"
 gen_clang_bdepend() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo  "
 		(
 			sys-devel/llvm:${s}
@@ -191,7 +190,7 @@ pkg_setup() {
 
 		check-reqs_pkg_setup
 
-		llvm_pkg_setup
+		llvm-r1_pkg_setup
 
 		if use clang && use lto && tc-ld-is-lld ; then
 			local version_lld=$(ld.lld --version 2>/dev/null \

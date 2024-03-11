@@ -4,10 +4,19 @@
 
 EAPI=8
 
+# Wayland error:
+#16:40:31.141 › GDevelop Electron app starting...
+#[1499650:0604/164031.146935:ERROR:ozone_platform_x11.cc(248)] Missing X server or $DISPLAY
+#[1499650:0604/164031.146985:ERROR:env.cc(225)] The platform failed to initialize.  Exiting.
+#The futex facility returned an unexpected error code.
+
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 
+CHECKREQS_DISK_BUILD="2752M"
+CHECKREQS_DISK_USR="2736M"
 CHECKREQS_MEMORY="8192M"
+CMAKE_BUILD_TYPE="Release"
 export NPM_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
@@ -20,177 +29,26 @@ ELECTRON_APP_REACT_PV="16.14.0" # See \
 # https://github.com/facebook/react/blob/v16.14.0/package.json#L100 \
 # https://raw.githubusercontent.com/4ian/GDevelop/v5.3.189/newIDE/app/package-lock.json
 ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  We force it because CI tests passed.
+EMBUILD_DIR="${WORKDIR}/build"
+EMSCRIPTEN_PV="3.1.21" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
+# Emscripten 3.1.21 requires llvm 16 for wasm, 4.1.1 nodejs
+LLVM_COMPAT=( 16 ) # Deleted 9 8 7 because asm.js support was dropped.
+LLVM_SLOT="${LLVM_COMPAT[0]}"
+EMSCRIPTEN_SLOT="${LLVM_SLOT}-${EMSCRIPTEN_PV%.*}"
+GDEVELOP_JS_NODEJS_PV="16.20.0" # Based on CI, For building GDevelop.js.
+# The CI uses Clang 7.
+# Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
 NODE_ENV="development"
 NODE_VERSION=16
 NPM_MULTI_LOCKFILE=1
 NPM_OFFLINE=0 # Offline is broken.  It says that tarballs are corrupt.
 NPM_AUDIT_FIX=0
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
-
-inherit check-reqs desktop electron-app evar_dump flag-o-matic npm
-inherit python-r1 toolchain-funcs xdg
-
-DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
-to be used by everyone."
-HOMEPAGE="
-https://gdevelop-app.com/
-https://github.com/4ian/GDevelop
-"
-THIRD_PARTY_LICENSES="
-	custom
-	all-rights-reserved
-	(
-		all-rights-reserved
-		Apache-2.0
-	)
-	(
-		all-rights-reserved
-		MIT
-	)
-	0BSD
-	Apache-2.0
-	BSD
-	BSD-2
-	ISC
-	MIT
-	CC-BY-4.0
-	Unicode-DFS-2016
-	W3C
-	W3C-Community-Final-Specification-Agreement
-	W3C-Document-License
-	W3C-Software-and-Document-Notice-and-License-2015
-	W3C-Software-Notice-and-License
-"
-LICENSE="
-	GDevelop
-	MIT
-	${THIRD_PARTY_LICENSES}
-	electron-18.2.2-chromium.html
-	${ELECTRON_APP_LICENSES}
-"
-
-# For ELECTRON_APP_LICENSES, see
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
-
-# custom, (MIT all-rights-reserved), MIT, Apache-2.0, \
-#   (W3C [ipr-legal-disclaimer, ipr-trademarks], W3C-Document-License, \
-#   http://www.w3.org/TR/2015/WD-html51-20151008/), \
-#   (Apache-2.0 all-rights-reserved) - \
-#   newIDE/app/node_modules/monaco-editor/ThirdPartyNotices.txt
-# all-rights-reserved - newIDE/app/node_modules/style-dictionary/NOTICE
-# 0BSD - newIDE/app/node_modules/camel-case/node_modules/tslib/CopyrightNotice.txt
-# Apache-2.0 - newIDE/app/node_modules/lazy-universal-dotenv/license
-# Apache-2.0, all-rights-reserved - newIDE/app/node_modules/typescript/CopyrightNotice.txt
-# BSD
-# BSD-2 - newIDE/electron-app/node_modules/configstore/license
-# ISC
-# MIT, Unicode-DFS-2016, W3C-Software-and-Document-Notice-and-License-2015, \
-#   CC-BY-4.0, W3C-Community-Final-Specification-Agreement - \
-#   newIDE/app/node_modules/typescript/ThirdPartyNoticeText.txt
-# MIT
-# W3C-Software-Notice-and-License - newIDE/electron-app/app/node_modules/sax/LICENSE-W3C.html
-
-KEYWORDS="~amd64 ~arm64"
-
-SLOT_MAJOR=$(ver_cut 1 ${PV})
-SLOT="${SLOT_MAJOR}/${PV}"
-IUSE+=" r4"
-REQUIRED_USE+="
-	${PYTHON_REQUIRED_USE}
-	!wayland
-	X
-"
-# Wayland error:
-#16:40:31.141 › GDevelop Electron app starting...
-#[1499650:0604/164031.146935:ERROR:ozone_platform_x11.cc(248)] Missing X server or $DISPLAY
-#[1499650:0604/164031.146985:ERROR:env.cc(225)] The platform failed to initialize.  Exiting.
-#The futex facility returned an unexpected error code.
-
-# Dependency lists:
-# https://github.com/4ian/GDevelop/blob/v5.3.189/.circleci/config.yml#L85
-# https://github.com/4ian/GDevelop/blob/v5.3.189/.travis.yml
-# https://github.com/4ian/GDevelop/blob/v5.3.189/ExtLibs/installDeps.sh
-# https://app.travis-ci.com/github/4ian/GDevelop (raw log)
-# U 20.04.6 LTS
-# Dependencies for the native build are not installed in CI
-
-LLVM_SLOT=16
-LLVM_SLOTS=( ${LLVM_SLOT} ) # Deleted 9 8 7 because asm.js support was dropped.
-# The CI uses Clang 7.
-# Emscripten expects either LLVM 10 for wasm, or LLVM 6 for asm.js.
-
-EMSCRIPTEN_PV="3.1.21" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
-GDEVELOP_JS_NODEJS_PV="16.20.0" # Based on CI, For building GDevelop.js.
-# emscripten 3.1.21 requires llvm 16 for wasm, 4.1.1 nodejs
-EMSCRIPTEN_SLOT="${LLVM_SLOT}-${EMSCRIPTEN_PV%.*}"
 UDEV_PV="245.4"
 
-gen_llvm_depends() {
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-		(
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
-		)
-		"
-	done
-}
+inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm-r1 npm
+inherit python-r1 toolchain-funcs xdg
 
-# Some from ExtLibs/installDeps.sh
-DEPEND_NOT_USED_IN_CI="
-	>=media-libs/freetype-2.10.1
-	>=media-libs/glew-2.1.0
-	>=media-libs/libsndfile-1.0.28
-	>=media-libs/mesa-20.0.4
-	>=media-libs/openal-1.19.1
-	>=virtual/jpeg-80
-	>=x11-apps/xrandr-1.5.2
-	virtual/opengl
-	virtual/udev
-	x11-misc/xdg-utils
-"
-DEPEND_UDEV_NOT_USED_IN_CI="
-	>=sys-fs/eudev-3.1.5
-	>=sys-fs/udev-${UDEV_PV}
-"
-RDEPEND+="
-	${PYTHON_DEPS}
-	${DEPEND_NOT_USED_IN_CI}
-	>=app-arch/p7zip-16.02
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}
-	|| (
-		${DEPEND_UDEV_NOT_USED_IN_CI}
-		>=sys-apps/systemd-${UDEV_PV}
-	)
-"
-DEPEND+="
-	${DEPEND}
-"
-#
-# The package actually uses two nodejs, but the current multislot nodejs
-# package cannot switch in the middle of emerge.  From experience, the
-# highest nodejs works.
-#
-# acorn not used in CI
-BDEPEND+="
-	${PYTHON_DEPS}
-	>=dev-build/cmake-3.16.3
-	>=dev-vcs/git-2.25.1
-	>=media-libs/libicns-0.8.1
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}[acorn]
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
-	>=sys-devel/gcc-9.3.0
-	dev-util/emscripten:${EMSCRIPTEN_SLOT}[wasm(+)]
-	|| (
-		$(gen_llvm_depends)
-	)
-	|| (
-		>=media-gfx/graphicsmagick-1.4[png]
-		>=media-gfx/imagemagick-6.9.10.23[png]
-	)
-"
-# Emscripten 3.1.3 used because of node 14.
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
 https://registry.npmjs.org/@ampproject/remapping/-/remapping-2.2.1.tgz -> npmpkg-@ampproject-remapping-2.2.1.tgz
@@ -3789,11 +3647,151 @@ https://github.com/4ian/${MY_PN}/archive/v${MY_PV}.tar.gz
 "
 S="${WORKDIR}/${MY_PN}-${MY_PV}"
 S_BAK="${WORKDIR}/${MY_PN}-${MY_PV}"
+
+DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
+to be used by everyone."
+HOMEPAGE="
+https://gdevelop-app.com/
+https://github.com/4ian/GDevelop
+"
+THIRD_PARTY_LICENSES="
+	custom
+	all-rights-reserved
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		all-rights-reserved
+		MIT
+	)
+	0BSD
+	Apache-2.0
+	BSD
+	BSD-2
+	ISC
+	MIT
+	CC-BY-4.0
+	Unicode-DFS-2016
+	W3C
+	W3C-Community-Final-Specification-Agreement
+	W3C-Document-License
+	W3C-Software-and-Document-Notice-and-License-2015
+	W3C-Software-Notice-and-License
+"
+LICENSE="
+	GDevelop
+	MIT
+	${THIRD_PARTY_LICENSES}
+	electron-18.2.2-chromium.html
+	${ELECTRON_APP_LICENSES}
+"
+
+# For ELECTRON_APP_LICENSES, see
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
+
+# custom, (MIT all-rights-reserved), MIT, Apache-2.0, \
+#   (W3C [ipr-legal-disclaimer, ipr-trademarks], W3C-Document-License, \
+#   http://www.w3.org/TR/2015/WD-html51-20151008/), \
+#   (Apache-2.0 all-rights-reserved) - \
+#   newIDE/app/node_modules/monaco-editor/ThirdPartyNotices.txt
+# all-rights-reserved - newIDE/app/node_modules/style-dictionary/NOTICE
+# 0BSD - newIDE/app/node_modules/camel-case/node_modules/tslib/CopyrightNotice.txt
+# Apache-2.0 - newIDE/app/node_modules/lazy-universal-dotenv/license
+# Apache-2.0, all-rights-reserved - newIDE/app/node_modules/typescript/CopyrightNotice.txt
+# BSD
+# BSD-2 - newIDE/electron-app/node_modules/configstore/license
+# ISC
+# MIT, Unicode-DFS-2016, W3C-Software-and-Document-Notice-and-License-2015, \
+#   CC-BY-4.0, W3C-Community-Final-Specification-Agreement - \
+#   newIDE/app/node_modules/typescript/ThirdPartyNoticeText.txt
+# MIT
+# W3C-Software-Notice-and-License - newIDE/electron-app/app/node_modules/sax/LICENSE-W3C.html
+
+KEYWORDS="~amd64 ~arm64"
+SLOT_MAJOR=$(ver_cut 1 ${PV})
+SLOT="${SLOT_MAJOR}/${PV}"
+IUSE+="
+	${LLVM_COMPAT[@]/#/llvm_slot_}
+	r4
+"
+REQUIRED_USE+="
+	!wayland
+	${LLVM_COMPAT[@]/#/llvm_slot_}
+	${PYTHON_REQUIRED_USE}
+	X
+"
+# Dependency lists:
+# https://github.com/4ian/GDevelop/blob/v5.3.189/.circleci/config.yml#L85
+# https://github.com/4ian/GDevelop/blob/v5.3.189/.travis.yml
+# https://github.com/4ian/GDevelop/blob/v5.3.189/ExtLibs/installDeps.sh
+# https://app.travis-ci.com/github/4ian/GDevelop (raw log)
+# U 20.04.6 LTS
+# Dependencies for the native build are not installed in CI
+gen_llvm_depends() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}
+			)
+		"
+	done
+}
+# Some from ExtLibs/installDeps.sh
+DEPEND_NOT_USED_IN_CI="
+	>=media-libs/freetype-2.10.1
+	>=media-libs/glew-2.1.0
+	>=media-libs/libsndfile-1.0.28
+	>=media-libs/mesa-20.0.4
+	>=media-libs/openal-1.19.1
+	>=virtual/jpeg-80
+	>=x11-apps/xrandr-1.5.2
+	virtual/opengl
+	virtual/udev
+	x11-misc/xdg-utils
+"
+DEPEND_UDEV_NOT_USED_IN_CI="
+	>=sys-fs/eudev-3.1.5
+	>=sys-fs/udev-${UDEV_PV}
+"
+RDEPEND+="
+	${PYTHON_DEPS}
+	${DEPEND_NOT_USED_IN_CI}
+	>=app-arch/p7zip-16.02
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}
+	|| (
+		${DEPEND_UDEV_NOT_USED_IN_CI}
+		>=sys-apps/systemd-${UDEV_PV}
+	)
+"
+DEPEND+="
+	${DEPEND}
+"
+#
+# The package actually uses two nodejs, but the current multislot nodejs
+# package cannot switch in the middle of emerge.  From experience, the
+# highest nodejs works.
+#
+# acorn not used in CI
+BDEPEND+="
+	${PYTHON_DEPS}
+	>=dev-build/cmake-3.16.3
+	>=dev-vcs/git-2.25.1
+	>=media-libs/libicns-0.8.1
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}[acorn]
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}[npm]
+	>=sys-devel/gcc-9.3.0
+	dev-util/emscripten:${EMSCRIPTEN_SLOT}[wasm(+)]
+	$(gen_llvm_depends)
+	|| (
+		>=media-gfx/graphicsmagick-1.4[png]
+		>=media-gfx/imagemagick-6.9.10.23[png]
+	)
+"
 RESTRICT="mirror"
-CHECKREQS_DISK_BUILD="2752M"
-CHECKREQS_DISK_USR="2736M"
-CMAKE_BUILD_TYPE="Release"
-EMBUILD_DIR="${WORKDIR}/build"
 
 check_network_sandbox() {
 	if has network-sandbox $FEATURES ; then
@@ -3859,6 +3857,7 @@ pkg_setup() {
 	# It still breaks when NPM_OFFLINE=1.
 	check_network_sandbox
 
+	llvm-r1_pkg_setup
 
 # Addresses:
 # FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory

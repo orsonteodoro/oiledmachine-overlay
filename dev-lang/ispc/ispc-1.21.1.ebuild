@@ -8,12 +8,13 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 PYTHON_COMPAT=( python3_{10..11} )
-LLVM_MAX_SLOT=18
-LLVM_SLOTS=( 18 17 16 15 14 13 ) # See https://github.com/ispc/ispc/blob/v1.21.1/src/ispc_version.h
+LLVM_COMPAT=( {18..13} ) # See https://github.com/ispc/ispc/blob/v1.21.1/src/ispc_version.h
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+
 inherit cmake flag-o-matic python-any-r1 llvm toolchain-funcs uopts
 
 if [[ ${PV} =~ 9999 ]]; then
@@ -50,7 +51,7 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-${LLVM_SLOTS[@]/#/llvm-}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 +cpu +examples -fast-math lto +openmp pthread tbb test +video_cards_intel -xe
 r1
 "
@@ -71,11 +72,11 @@ REQUIRED_USE+="
 	)
 	lto? (
 		|| (
-			${LLVM_SLOTS[@]/#/llvm-}
+			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
 	^^ (
-		${LLVM_SLOTS[@]/#/llvm-}
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	|| (
 		cpu
@@ -91,15 +92,18 @@ RESTRICT="
 
 gen_llvm_depends() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		llvm-${s}? (
+		llvm_slot_${s}? (
 			sys-devel/clang:${s}=
 			lto? (
 				sys-devel/lld:${s}
 			)
 			openmp? (
 				sys-libs/libomp:${s}
+			)
+			video_cards_intel? (
+				>=dev-util/spirv-llvm-translator-${s}
 			)
 		)
 		"
@@ -108,7 +112,7 @@ gen_llvm_depends() {
 
 gen_omp_depends() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		(
 			sys-devel/clang:${s}=
@@ -161,8 +165,8 @@ CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		if use llvm-${s} ; then
+	for s in ${LLVM_COMPAT[@]} ; do
+		if use "llvm_slot_${s}" ; then
 			export LLVM_MAX_SLOT=${s}
 			break
 		fi
@@ -232,7 +236,7 @@ src_configure() { :; }
 _src_configure() {
 	local wants_llvm=0
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		if use llvm-${s} ; then
 			wants_llvm=1
 			break

@@ -41,7 +41,7 @@ FFMPEG_IUSE+="
 
 LLVM_MAX_UPSTREAM=15 # (inclusive)
 
-LLVM_SLOTS=( 15 14 13 12 )
+LLVM_COMPAT=( {15..12} )
 
 # Platform defaults based on CMakeList.txt
 OPENVDB_ABIS_MAJOR_VERS=10
@@ -105,8 +105,8 @@ AMDGPU_TARGETS_COMPAT=(
 gen_llvm_iuse()
 {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo " llvm-${s}"
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo " llvm_slot_${s}"
 	done
 }
 
@@ -180,7 +180,7 @@ REQUIRED_USE+="
 		!openvdb
 	)
 	^^ (
-		${LLVM_SLOTS[@]/#/llvm-}
+		${LLVM_SLOTS[@]/#/llvm_slot_}
 	)
 	^^ (
 		${OPENVDB_ABIS[@]}
@@ -373,7 +373,7 @@ gen_asan_bdepend() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-			llvm-${s}? (
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[asan]
 				sys-devel/clang:${s}
@@ -387,7 +387,7 @@ gen_llvm_depends()
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-			llvm-${s}? (
+			llvm_slot_${s}? (
 				>=sys-devel/llvm-${s}:${s}=
 			)
 		"
@@ -398,9 +398,9 @@ gen_oidn_depends() {
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-		llvm-${s}? (
-			<media-libs/oidn-1.5[llvm-${s}]
-			>=media-libs/oidn-1.4.3[llvm-${s}]
+		llvm_slot_${s}? (
+			<media-libs/oidn-1.5[llvm_slot_${s}]
+			>=media-libs/oidn-1.4.3[llvm_slot_${s}]
 		)
 		"
 	done
@@ -446,9 +446,9 @@ gen_osl_depends()
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
 		echo "
-			llvm-${s}? (
-				<media-libs/osl-2:=[llvm-${s},static-libs]
-				>=media-libs/osl-${OSL_PV}:=[llvm-${s},static-libs]
+			llvm_slot_${s}? (
+				<media-libs/osl-2:=[llvm_slot_${s},static-libs]
+				>=media-libs/osl-${OSL_PV}:=[llvm_slot_${s},static-libs]
 			)
 		"
 	done
@@ -1018,7 +1018,7 @@ check_multiple_llvm_versions_in_native_libs() {
 	local llvm_slot
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
-		use "llvm-${s}" && llvm_slot=${s}
+		use "llvm_slot_${s}" && llvm_slot=${s}
 	done
 
 	if ldd "${ESYSROOT}/usr/$(get_libdir)/dri/"*".so" 2>/dev/null 1>/dev/null ; then
@@ -1095,7 +1095,7 @@ ewarn
 	local found=0
 	for s in ${LLVM_SLOTS[@]} ; do
 		if (( "${s}" > ${LLVM_MAX_UPSTREAM} )) ; then
-			use "llvm-${s}" && found=${s}
+			use "llvm_slot_${s}" && found=${s}
 		fi
 	done
 
@@ -1124,13 +1124,13 @@ ewarn
 	# It will cause an emerge conflict.
 	# It may also trigger a multiple LLVMs loaded bug.
 		if use llvm-15 && has_version "=dev-util/hip-5.4" ; then
-			export LLVM_MAX_SLOT=15
+			export LLVM_SLOT=15
 		elif use llvm-15 && has_version "=dev-util/hip-5.3" ; then
-			export LLVM_MAX_SLOT=15
+			export LLVM_SLOT=15
 		elif use llvm-14 && has_version "=dev-util/hip-5.2" ; then
-			export LLVM_MAX_SLOT=14
+			export LLVM_SLOT=14
 		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
-			export LLVM_MAX_SLOT=14
+			export LLVM_SLOT=14
 		elif use llvm-13 || use llvm-12 ; then
 eerror
 eerror "ROCm < 5.1 is not supported on the distro."
@@ -1351,21 +1351,21 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 	local llvm_slot
 	local s
 	for s in ${LLVM_SLOTS[@]} ; do
-		use "llvm-${s}" && llvm_slot=${s}
+		use "llvm_slot_${s}" && llvm_slot=${s}
 	done
 
 	if use openmp && tc-is-clang ; then
 		local llvm_slot
 		local s
 		for s in ${LLVM_SLOTS[@]} ; do
-			use "llvm-${s}" && llvm_slot=${s}
+			use "llvm_slot_${s}" && llvm_slot=${s}
 		done
 		mycmakeargs+=(
 			-DOPENMP_CUSTOM=ON
 			-DOPENMP_FOUND=ON
 			-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
 			-DOpenMP_C_LIB_NAMES="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include -fopenmp=libomp"
-			-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			-DOpenMP_LINKER_FLAGS="${ESYSROOT}/usr/lib/llvm/${llvm_slot}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 		)
 	fi
 

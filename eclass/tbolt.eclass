@@ -30,6 +30,7 @@ if [[ "${UOPTS_BOLT_DISABLE_BDEPEND}" != "1" ]] ; then
 BDEPEND+="
 	bolt? (
 		|| (
+			>=sys-devel/llvm-19:19[bolt]
 			>=sys-devel/llvm-18:18[bolt]
 			>=sys-devel/llvm-17:17[bolt]
 			>=sys-devel/llvm-16:16[bolt]
@@ -117,9 +118,7 @@ _UOPTS_BOLT_PATH="" # Set in tbolt_setup
 _tbolt_check_bolt() {
 	if use bolt ; then
 		if ! use kernel_linux ; then
-ewarn
 ewarn "The ebuilds only support BOLT for Linux at the moment."
-ewarn
 		fi
 	fi
 }
@@ -152,7 +151,23 @@ _setup_llvm() {
 		_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${UOPTS_BOLT_SLOT}/bin"
 	elif [[ -n "${LLVM_SLOT}" ]] ; then
 		# uopts_pkg_setup called after llvm_pkg_setup
-		for s in $(seq 14 ${LLVM_SLOT} | tac) ; do
+		s="${LLVM_SLOT}"
+		if has_version "sys-devel/llvm:${s}[bolt]" ; then
+			_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+		fi
+	elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -gt ${LLVM_COMPAT[-1]} ]] ; then
+		# 17 16 15 14 order
+		# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
+		for s in $(seq 14 ${LLVM_COMPAT[0]} | tac) ; do
+			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+				break
+			fi
+		done
+	elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -le ${LLVM_COMPAT[-1]} ]] ; then
+		# 14 15 16 17 order
+		# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
+		for s in $(seq 14 ${LLVM_COMPAT[-1]} | tac) ; do
 			if has_version "sys-devel/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 				break
@@ -165,7 +180,7 @@ _setup_llvm() {
 				break
 			fi
 		done
-	elif [[ -z "${LLVM_MAX_SLOT}" ]] ; then
+	elif [[ -z "${LLVM_MAX_SLOT}" && -z "${LLVM_SLOT}" ]] ; then
 		for s in ${_UOPTS_LLVM_SLOTS[@]} ; do
 			if has_version "sys-devel/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
@@ -191,8 +206,10 @@ tbolt_setup() {
 	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
+eerror
 eerror "tbolt.eclass must be used with uopts.eclass.  Do not inherit tbolt"
 eerror "directly."
+eerror
 		die
 	fi
 }
@@ -275,9 +292,7 @@ _tbolt_is_profile_reusable() {
 			|| die "You must call uopts_src_prepare before calling tbolt_get_phase"
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
-ewarn
-ewarn "Compiler is not supported."
-ewarn
+ewarn "Compiler is not supported for TBOLT."
 			return 2
 		fi
 
@@ -322,9 +337,7 @@ ewarn
 		if (( ${nlines} > 0 )) ; then
 			:; # pass
 		else
-ewarn
 ewarn "NO BOLT PROFILE"
-ewarn
 			return 1
 		fi
 
@@ -364,11 +377,11 @@ ewarn "Missing .rela.text skipping ${p}"
 		is_abi_same "${p}" || continue
 		if (( ${is_boltable} == 1 )) ; then
 			# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
-			einfo "vanilla -> BOLT instrumented:  ${p}"
+einfo "vanilla -> BOLT instrumented:  ${p}"
 			if [[ ! -e "${p}.orig" ]] ; then
 				mv "${p}"{,.orig} || die
 			else
-				ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
+ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 			fi
 			LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 				"${p}.orig" \
@@ -413,7 +426,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 		fi
 		if (( ${is_boltable} == 1 )) ; then
 			local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
-			einfo "vanilla -> BOLT optimized:  ${p}"
+einfo "vanilla -> BOLT optimized:  ${p}"
 			if [[ "${skip_inst}" == "yes" ]] ; then
 				mv "${p}"{,.orig} || die
 			fi
@@ -447,9 +460,7 @@ tbolt_train_verify_profile_warn() {
 	if use bolt ; then
 		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata" | wc -l)
 		if (( ${nlines} == 0 )) ; then
-ewarn
 ewarn "Failed to generate a BOLT profile."
-ewarn
 		fi
 	fi
 }
@@ -498,7 +509,7 @@ is_abi_same() {
 	elif file "${p}" | grep -q "ELF.*aarch64" && [[ "${ABI}" == "arm64" ]] ; then
 		return 0
 	fi
-	ewarn "Unsupported ABI: ${p}"
+ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
@@ -512,7 +523,7 @@ is_abi_boltable() {
 	elif [[ "${ABI}" == "arm64" ]] ; then
 		return 0
 	fi
-	ewarn "Unsupported ABI: ${p}"
+ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
@@ -527,7 +538,7 @@ is_file_boltable() {
 	elif file "${p}" | grep -q "ELF.*aarch64" ; then
 		return 0
 	fi
-	ewarn "Unsupported ABI: ${p}"
+ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
@@ -643,9 +654,7 @@ tbolt_src_install() {
 # Reinitalizes the BOLT profile immediately after INST built
 _tbolt_wipe_bolt_profile() {
 	if [[ "${BOLT_PHASE}" =~ "INST" ]] ; then
-einfo
 einfo "Wiping previous BOLT profile"
-einfo
 		local bolt_data_dir="${EROOT}${_UOPTS_BOLT_DATA_DIR}"
 		find "${bolt_data_dir}" -type f \
 			-not -name "llvm_bolt_fingerprint" \

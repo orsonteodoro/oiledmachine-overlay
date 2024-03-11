@@ -93,7 +93,7 @@ esac
 if [[ ! ${_ROCM_ECLASS} ]]; then
 _ROCM_ECLASS=1
 
-inherit flag-o-matic llvm toolchain-funcs
+inherit flag-o-matic toolchain-funcs
 
 BDEPEND+="
 	dev-util/patchelf
@@ -241,9 +241,9 @@ unset -f _rocm_set_globals
 # Init paths
 rocm_pkg_setup() {
 	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
-	if [[ "${LLVM_MAX_SLOT+x}" != "x" ]] ; then
+	if [[ -z "${LLVM_SLOT}" ]] ; then
 eerror
-eerror "LLVM_MAX_SLOT must be defined.  \${LLVM_MAX_SLOT+x} != x"
+eerror "LLVM_SLOT must be defined."
 eerror
 		die
 	fi
@@ -252,7 +252,6 @@ eerror
 ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
-	llvm_pkg_setup # Init LLVM_SLOT
 	if [[ "${ROCM_SLOT+x}" == "x" ]] ; then
 		export PATH="${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/bin:${PATH}"
 	fi
@@ -260,7 +259,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	export EROCM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}"
 	export ROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 
-	# LLVM_SLOT must be after llvm_pkg_setup
+	# LLVM_SLOT must be after llvm_pkg_setup or llvm-r1_pkg_setup
 	# The CLANG_SLOT is the folder name.
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		# ls /usr/lib/clang -> 13.0.1  14.0.6  15.0.1  15.0.5  15.0.6  15.0.7  16  17

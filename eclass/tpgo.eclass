@@ -192,9 +192,7 @@ tpgo-check-x() {
 	local pkg
 	for pkg in ${__VIRTX_BDEPENDS[@]} ; do
 		if ! has_version "${pkg}" ; then
-ewarn
 ewarn "${pkg} is required for PGO"
-ewarn
 		fi
 	done
 }
@@ -229,25 +227,43 @@ ewarn
 #		die
 	fi
 	if (( $(declare -f _src_configure | wc -c) == 0 )) ; then
-ewarn
 ewarn "_src_configure should be defined"
-ewarn
 	fi
 	if (( $(declare -f _src_compile | wc -c) == 0 )) ; then
-ewarn
 ewarn "_src_configure should be defined"
-ewarn
 	fi
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
+eerror
 eerror "The tpgo.eclass must be used with uopts.eclass.  Do not inherit tpgo"
 eerror "directly."
+eerror
 		die
 	fi
 
 	if tc-is-clang ; then
 		local s=$(clang-major-version)
-		if [[ -n "${LLVM_MAX_SLOT}" ]] ; then
+		if [[ -n "${LLVM_SLOT}" ]] ; then
+			s="${LLVM_SLOT}"
+		elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -gt ${LLVM_COMPAT[-1]} ]] ; then
+			# 17 16 15 14 order
+			# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
+			for s in $(seq 14 ${LLVM_COMPAT[0]} | tac) ; do
+				if has_version "sys-devel/llvm:${s}[bolt]" ; then
+					s="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+					break
+				fi
+			done
+		elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -le ${LLVM_COMPAT[-1]} ]] ; then
+			# 14 15 16 17 order
+			# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
+			for s in $(seq 14 ${LLVM_COMPAT[-1]} | tac) ; do
+				if has_version "sys-devel/llvm:${s}[bolt]" ; then
+					s="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+					break
+				fi
+			done
+		elif [[ -n "${LLVM_MAX_SLOT}" ]] ; then
 			if (( ${LLVM_MAX_SLOT} < ${s} )) ; then
 				s="${LLVM_MAX_SLOT}"
 			fi
@@ -305,7 +321,7 @@ _tpgo_append_flags() {
 # Sets up PGO flags
 _tpgo_configure() {
 	if use pgo && [[ "${PGO_PHASE}" == "PGI" ]] ; then
-		einfo "Setting up PGI"
+einfo "Setting up PGI"
 		if tc-is-clang ; then
 			local clang_pv=$(clang-fullversion)
 			local use_arg=""
@@ -335,7 +351,7 @@ eerror
 				&& _tpgo_append_flags -fprofile-partial-training
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
-		einfo "Setting up PGO"
+einfo "Setting up PGO"
 		if tc-is-clang ; then
 			PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
 			llvm-profdata \
@@ -472,9 +488,7 @@ einfo "CXX:\t\t${CXX}"
 		_CC="${CC% *}"
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
-ewarn
-ewarn "Compiler is not supported."
-ewarn
+ewarn "Compiler is not supported for TPGO."
 			return 2
 		fi
 
@@ -538,9 +552,7 @@ ewarn
 		elif tc-is-clang && (( ${nlines2} > 0 )) ; then
 			:; # pass
 		else
-ewarn
 ewarn "NO PGO PROFILE"
-ewarn
 			return 1
 		fi
 

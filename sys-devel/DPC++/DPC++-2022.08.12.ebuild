@@ -22,6 +22,7 @@ CUDA_TARGETS_COMPAT=(
 CPU_EMUL_COMMIT="673f2071ed7b648cd05824cd0ded24f96734e50c" # Same as 1.0.23 ; Search committer-date:<=2022-08-12
 VC_INTR_COMMIT="abce9184b7a3a7fe1b02289b9285610d9dc45465" # Newer versions cause compile failure \
 # See https://github.com/intel/llvm/blob/sycl-nightly/20220812/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
+LLVM_COMPAT=( {16 13 12} ) # Upstream tested versions
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake python-any-r1 rocm toolchain-funcs
@@ -91,9 +92,10 @@ ROCM_SLOTS=(
 	rocm_4_3
 	rocm_4_2
 )
-IUSE="
+IUSE+="
 ${ALL_LLVM_TARGETS[*]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 cuda esimd_emulator rocm system-llvm test
 "

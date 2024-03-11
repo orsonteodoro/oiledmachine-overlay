@@ -25,7 +25,12 @@ unset -f _blender_set_globals
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
 
-inherit cuda check-reqs cmake flag-o-matic llvm pax-utils python-single-r1 rocm toolchain-funcs xdg uopts
+inherit cuda check-reqs cmake flag-o-matic pax-utils python-single-r1 rocm toolchain-funcs xdg uopts
+if [[ "${PV}" =~ ^"3.3" ]] ; then
+	inherit llvm
+else
+	inherit llvm-r1
+fi
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
@@ -376,7 +381,11 @@ eerror
 }
 
 blender_pkg_setup() {
-	llvm_pkg_setup
+	if [[ "${PV}" =~ ^"3.3" ]] ; then
+		llvm_pkg_setup
+	else
+		llvm-r1_pkg_setup
+	fi
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	check_cpu

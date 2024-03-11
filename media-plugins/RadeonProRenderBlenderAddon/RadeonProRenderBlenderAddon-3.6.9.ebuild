@@ -3,8 +3,8 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=15
-LLVM_SLOTS=( 15 14 13 12 11 )
+LLVM_SLOTS=( {15..11} )
+LLVM_MAX_SLOT="${LLVM_SLOTS[0]}"
 # =media-gfx/blender-9999 (4.0.1) :: 15 14 13 12 11
 # =media-gfx/blender-3.4* :: 15 14 13 12 11
 # =media-gfx/blender-3.6* :: 15 14 13 12 11

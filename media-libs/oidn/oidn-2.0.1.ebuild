@@ -36,14 +36,14 @@ ROCM_SLOTS=(
 	rocm_5_6
 )
 LEGACY_TBB_SLOT="2"
-LLVM_SLOTS=( 16 15 14 13 12 11 10 )
+LLVM_COMPAT=( {16..10} )
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_VERSION="5.5.1"
 
-inherit cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
+inherit cmake cuda flag-o-matic llvm-r1 python-single-r1 rocm toolchain-funcs
 
 COMPOSABLE_KERNEL_COMMIT="e85178b4ca892a78344271ae64103c9d4d1bfc40"
 CUTLASS_COMMIT="66d9cddc832c1cdc2b30a8755274f7f74640cfe6"
@@ -86,7 +86,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${LLVM_SLOTS[@]/#/llvm-}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
 r1
@@ -123,13 +123,13 @@ REQUIRED_USE+="
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
-		llvm-16
+		llvm_slot_16
 		|| (
 			${ROCM_SLOTS[@]}
 		)
 	)
 	^^ (
-		${LLVM_SLOTS[@]/#/llvm-}
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	^^ (
 		clang
@@ -138,9 +138,9 @@ REQUIRED_USE+="
 "
 gen_clang_depends() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			llvm-${s}? (
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}*
 				sys-devel/clang:${s}
 				sys-devel/llvm:${s}
@@ -243,14 +243,7 @@ pkg_setup() {
 	fi
 
 	if tc-is-clang || use clang ; then
-		local s
-		for s in ${LLVM_SLOTS[@]} ; do
-			if use "llvm-${s}" ; then
-				LLVM_MAX_SLOT="${s}"
-				llvm_pkg_setup
-				break
-			fi
-		done
+		llvm-r1_pkg_setup
 	fi
 
 	if use rocm_5_6 ; then

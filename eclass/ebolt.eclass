@@ -30,6 +30,7 @@ if [[ "${UOPTS_BOLT_DISABLE_BDEPEND}" != "1" ]] ; then
 BDEPEND+="
 	ebolt? (
 		|| (
+			>=sys-devel/llvm-19:19[bolt]
 			>=sys-devel/llvm-18:18[bolt]
 			>=sys-devel/llvm-17:17[bolt]
 			>=sys-devel/llvm-16:16[bolt]
@@ -129,9 +130,7 @@ eerror
 		fi
 
 		if ! use kernel_linux ; then
-ewarn
 ewarn "The ebuilds only support BOLT for Linux at the moment."
-ewarn
 		fi
 	fi
 }
@@ -163,8 +162,23 @@ _setup_llvm() {
 	elif [[ -n "${UOPTS_BOLT_SLOT}" ]] ; then
 		_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${UOPTS_BOLT_SLOT}/bin"
 	elif [[ -n "${LLVM_SLOT}" ]] ; then
-		# uopts_pkg_setup called after llvm_pkg_setup
-		for s in $(seq 14 ${LLVM_SLOT} | tac) ; do
+		s="${LLVM_SLOT}"
+		if has_version "sys-devel/llvm:${s}[bolt]" ; then
+			_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+		fi
+	elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -gt ${LLVM_COMPAT[-1]} ]] ; then
+		# 17 16 15 14 order
+		# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
+		for s in $(seq 14 ${LLVM_COMPAT[0]} | tac) ; do
+			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+				break
+			fi
+		done
+	elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -le ${LLVM_COMPAT[-1]} ]] ; then
+		# 14 15 16 17 order
+		# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
+		for s in $(seq 14 ${LLVM_COMPAT[-1]} | tac) ; do
 			if has_version "sys-devel/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 				break
@@ -177,7 +191,7 @@ _setup_llvm() {
 				break
 			fi
 		done
-	elif [[ -z "${LLVM_MAX_SLOT}" ]] ; then
+	elif [[ -z "${LLVM_MAX_SLOT}" && -z "${LLVM_SLOT}" ]] ; then
 		for s in ${_UOPTS_LLVM_SLOTS[@]} ; do
 			if has_version "sys-devel/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
@@ -191,9 +205,7 @@ _setup_llvm() {
 # @DESCRIPTION:
 # You must call this in pkg_setup
 ebolt_setup() {
-ewarn
 ewarn "The ebolt USE flag is still Work In Progress (WIP)."
-ewarn
 	_ebolt_check_bolt
 	_setup_malloc
 	_setup_llvm
@@ -203,8 +215,10 @@ ewarn
 	export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=ext-tsp -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
+eerror
 eerror "The ebolt.eclass must be used with uopts.eclass.  Do not inherit ebolt"
 eerror "directly."
+eerror
 		die
 	fi
 }
@@ -289,9 +303,7 @@ _ebolt_meets_bolt_requirements() {
 			|| die "You must call uopts_src_prepare before calling ebolt_get_phase"
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
-ewarn
-ewarn "Compiler is not supported."
-ewarn
+ewarn "Compiler is not supported for EBOLT."
 			return 2
 		fi
 
@@ -336,9 +348,7 @@ ewarn
 		if (( ${nlines} > 0 )) ; then
 			:; # pass
 		else
-ewarn
 ewarn "NO BOLT PROFILE"
-ewarn
 			return 1
 		fi
 
@@ -399,7 +409,7 @@ is_abi_same() {
 	elif file "${p}" | grep -q "ELF.*aarch64" && [[ "${ABI}" == "arm64" ]] ; then
 		return 0
 	fi
-	ewarn "Unsupported ABI: ${p}"
+ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
@@ -413,7 +423,7 @@ is_abi_boltable() {
 	elif [[ "${ABI}" == "arm64" ]] ; then
 		return 0
 	fi
-	ewarn "Unsupported ABI: ${p}"
+ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
@@ -428,7 +438,7 @@ is_file_boltable() {
 	elif file "${p}" | grep -q "ELF.*aarch64" ; then
 		return 0
 	fi
-	ewarn "Unsupported ABI: ${p}"
+ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
@@ -479,7 +489,7 @@ ewarn "Missing .rela.text.  Skipping ${p}"
 			fi
 			if (( ${is_boltable} == 1 )) ; then
 				# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
-				einfo "vanilla -> BOLT instrumented:  ${p}"
+einfo "vanilla -> BOLT instrumented:  ${p}"
 				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 					"${p}" \
 					-instrument \
@@ -525,7 +535,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 			if (( ${is_boltable} == 1 )) ; then
 				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 				local bn=$(basename "${p}")
-				einfo "vanilla -> BOLT optimized:  ${p}"
+einfo "vanilla -> BOLT optimized:  ${p}"
 				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 					"${p}" \
 					-o "${p}.bolt" \
@@ -599,9 +609,7 @@ ebolt_src_install() {
 # Reinitalizes the BOLT profile immediately after INST built
 _ebolt_wipe_bolt_profile() {
 	if [[ "${BOLT_PHASE}" =~ "INST" ]] ; then
-einfo
 einfo "Wiping previous BOLT profile"
-einfo
 		local bolt_data_dir="${EROOT}${_UOPTS_BOLT_DATA_DIR}"
 		find "${bolt_data_dir}" -type f \
 			-not -name "llvm_bolt_fingerprint" \
@@ -679,7 +687,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 				if [[ ! -e "${p}.orig" ]] ; then
 					cp -a "${p}" "${p}.orig" || true
 				fi
-				einfo "BOLT instrumented -> optimized:  ${p}"
+einfo "BOLT instrumented -> optimized:  ${p}"
 				if ! LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
 					"${p}" \
 					-o "${p}.bolt" \
@@ -695,13 +703,13 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
 		| cut -f 2 -d " ") ; do
 		if [[ -e "${p}.bolt_failed" ]] ; then
-			einfo "Undoing BOLT failure for ${p}"
+einfo "Undoing BOLT failure for ${p}"
 			mv "${p}.orig" "${p}"
 			rm -rf "${p}.bolt" \
 				"${p}.bolt_failed"
 		fi
 		if [[ -e "${p}.bolt" ]] ; then
-			einfo "Replacing with BOLT optimized for ${p}"
+einfo "Replacing with BOLT optimized for ${p}"
 			mv "${p}.bolt" "${p}"
 			rm -rf "${p}.orig"
 		fi

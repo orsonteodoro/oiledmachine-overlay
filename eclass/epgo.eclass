@@ -135,7 +135,27 @@ eerror "directly."
 
 	if tc-is-clang ; then
 		local s=$(clang-major-version)
-		if [[ -n "${LLVM_MAX_SLOT}" ]] ; then
+		if [[ -n "${LLVM_SLOT}" ]] ; then
+			s="${LLVM_SLOT}"
+		elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -gt ${LLVM_COMPAT[-1]} ]] ; then
+			# 17 16 15 14 order
+			# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
+			for s in $(seq 14 ${LLVM_COMPAT[0]} | tac) ; do
+				if has_version "sys-devel/llvm:${s}[bolt]" ; then
+					s="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+					break
+				fi
+			done
+		elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -le ${LLVM_COMPAT[-1]} ]] ; then
+			# 14 15 16 17 order
+			# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
+			for s in $(seq 14 ${LLVM_COMPAT[-1]} | tac) ; do
+				if has_version "sys-devel/llvm:${s}[bolt]" ; then
+					s="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+					break
+				fi
+			done
+		elif [[ -n "${LLVM_MAX_SLOT}" ]] ; then
 			if (( ${LLVM_MAX_SLOT} < ${s} )) ; then
 				s="${LLVM_MAX_SLOT}"
 			fi
@@ -233,9 +253,7 @@ eerror
 		fi
 	elif [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		if tc-is-clang ; then
-einfo
 einfo "Merging PGO data to generate a PGO profile"
-einfo
 			if ! ls "${pgo_data_staging_dir}/"*".profraw" 2>/dev/null 1>/dev/null ; then
 eerror
 eerror "Missing *.profraw files"
@@ -299,9 +317,7 @@ einfo "CXX:\t\t${CXX}"
 		_CC="${CC% *}"
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
-ewarn
 ewarn "Compiler is not supported."
-ewarn
 			return 2
 		fi
 
@@ -365,9 +381,7 @@ ewarn
 		elif tc-is-clang && (( ${nlines2} > 0 ))  ; then
 			:; # pass
 		else
-ewarn
 ewarn "NO PGO PROFILE"
-ewarn
 			return 1
 		fi
 
@@ -471,9 +485,7 @@ epgo_src_install() {
 # Reinitalizes the PGO profile immediately after PGI built
 _epgo_wipe_pgo_profile() {
 	if [[ "${PGO_PHASE}" =~ "PGI" ]] ; then
-einfo
 einfo "Wiping previous PGO profile"
-einfo
 		local pgo_data_dir="${EROOT}${_UOPTS_PGO_DATA_DIR}"
 		find "${pgo_data_dir}" -type f \
 			-not -name "compiler_fingerprint" \

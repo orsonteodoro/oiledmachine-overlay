@@ -9,13 +9,13 @@ EAPI=8
 
 CMAKE_BUILD_TYPE=Release
 LEGACY_TBB_SLOT="2"
-LLVM_SLOTS=( 16 15 14 13 12 11 10 )
+LLVM_COMPAT=( {16..10} )
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
+inherit cmake flag-o-matic llvm-r1 python-single-r1 toolchain-funcs
 
 # MKL_DNN is oneDNN 2.2.4 with additional custom commits.
 MKL_DNN_COMMIT="f53274c9fef211396655fc4340cb838452334089"
@@ -45,13 +45,13 @@ KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-${LLVM_SLOTS[@]/#/llvm-}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 +apps +built-in-weights +clang doc gcc openimageio
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	^^ (
-		${LLVM_SLOTS[@]/#/llvm-}
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	^^ (
 		clang
@@ -60,9 +60,9 @@ REQUIRED_USE+="
 "
 gen_clang_depends() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			llvm-${s}? (
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}*
 				sys-devel/clang:${s}
 				sys-devel/llvm:${s}
@@ -125,14 +125,7 @@ pkg_setup() {
 	fi
 
 	if tc-is-clang || use clang ; then
-		local s
-		for s in ${LLVM_SLOTS[@]} ; do
-			if use "llvm-${s}" ; then
-				LLVM_MAX_SLOT="${s}"
-				llvm_pkg_setup
-				break
-			fi
-		done
+		llvm-r1_pkg_setup
 	fi
 
 	# This needs to be placed here to avoid this error:

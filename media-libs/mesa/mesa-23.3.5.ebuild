@@ -3,9 +3,10 @@
 
 EAPI=8
 
+LLVM_COMPAT=( {17..15} )
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit flag-o-matic llvm meson-multilib python-any-r1 linux-info
+inherit flag-o-matic llvm-r1 meson-multilib python-any-r1 linux-info
 
 MY_P="${P/_/-}"
 
@@ -30,14 +31,13 @@ for card in ${VIDEO_CARDS}; do
 	IUSE_VIDEO_CARDS+=" video_cards_${card}"
 done
 
-LLVM_SLOTS=( 17 16 15 )
 IUSE="${IUSE_VIDEO_CARDS}
 	cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm
 	lm-sensors opencl osmesa +proprietary-codecs selinux
 	test unwind vaapi valgrind vdpau vulkan
 	vulkan-overlay wayland +X xa zink +zstd
 
-	${LLVM_SLOTS[@]/#/llvm-}
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
 
 REQUIRED_USE="
@@ -61,7 +61,7 @@ REQUIRED_USE="
 	xa? ( X )
 	zink? ( vulkan )
 	^^ (
-		${LLVM_SLOTS[@]/#/llvm-}
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
 
@@ -120,33 +120,32 @@ RDEPEND="${RDEPEND}
 # Please keep the LLVM dependency block separate. Since LLVM is slotted,
 # we need to *really* make sure we're not pulling one than more slot
 # simultaneously.
-#
-# How to use it:
-# 1. Specify LLVM_MAX_SLOT (inclusive), e.g. 17.
-# 2. Specify LLVM_MIN_SLOT (inclusive), e.g. 15.
-LLVM_MAX_SLOT="17"
-LLVM_MIN_SLOT="15"
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
-PER_SLOT_DEPSTR="
-	(
-		!opencl? ( sys-devel/llvm:@SLOT@[${LLVM_USE_DEPS}] )
-		opencl? ( sys-devel/clang:@SLOT@[${LLVM_USE_DEPS}] )
-		opencl? ( dev-util/spirv-llvm-translator:@SLOT@ )
-	)
-"
+gen_llvm_depstr() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				!opencl? (
+					sys-devel/llvm:${s}[${LLVM_USE_DEPS}]
+				)
+				opencl? (
+					sys-devel/clang:${s}[${LLVM_USE_DEPS}]
+					dev-util/spirv-llvm-translator:${s}
+				)
+			)
+		"
+	done
+}
 LLVM_DEPSTR="
-	|| (
-		$(for ((slot=LLVM_MAX_SLOT; slot>=LLVM_MIN_SLOT; slot--)); do
-			echo "${PER_SLOT_DEPSTR//@SLOT@/${slot}}"
-		done)
-	)
-	!opencl? ( <sys-devel/llvm-$((LLVM_MAX_SLOT + 1)):=[${LLVM_USE_DEPS}] )
-	opencl? ( <sys-devel/clang-$((LLVM_MAX_SLOT + 1)):=[${LLVM_USE_DEPS}] )
+	$(gen_llvm_depstr)
+	!opencl? ( sys-devel/llvm:=[${LLVM_USE_DEPS}] )
+	opencl? ( sys-devel/clang:=[${LLVM_USE_DEPS}] )
 "
 RDEPEND="${RDEPEND}
 	llvm? ( ${LLVM_DEPSTR} )
 "
-unset LLVM_MIN_SLOT {LLVM,PER_SLOT}_DEPSTR
+unset {LLVM,PER_SLOT}_DEPSTR
 
 DEPEND="${RDEPEND}
 	video_cards_d3d12? ( >=dev-util/directx-headers-1.610.0[${MULTILIB_USEDEP}] )
@@ -276,14 +275,7 @@ pkg_setup() {
 	fi
 
 	if use llvm; then
-		local llvm_slot
-		for llvm_slot in ${LLVM_SLOTS[@]} ; do
-			if use llvm-${llvm_slot} ; then
-				LLVM_MAX_SLOT="${llvm_slot}"
-				break
-			fi
-		done
-		llvm_pkg_setup
+		llvm-r1_pkg_setup
 		einfo "PATH=${PATH} (before)"
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
@@ -306,8 +298,8 @@ multilib_src_configure() {
 
 	if use llvm ; then
 		local llvm_slot
-		for llvm_slot in ${LLVM_SLOTS[@]} ; do
-			use llvm-${llvm_slot} && break
+		for llvm_slot in ${LLVM_COMPAT[@]} ; do
+			use "llvm_slot_${llvm_slot}" && break
 		done
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
@@ -399,7 +391,7 @@ multilib_src_configure() {
 	fi
 
 	if use llvm && use opencl; then
-		PKG_CONFIG_PATH="$(get_llvm_prefix "${LLVM_MAX_SLOT}")/$(get_libdir)/pkgconfig"
+		PKG_CONFIG_PATH="$(get_llvm_prefix)/$(get_libdir)/pkgconfig"
 		# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/docs/rusticl.rst
 		emesonargs+=(
 			$(meson_native_true gallium-rusticl)

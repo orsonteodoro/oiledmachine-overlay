@@ -3,7 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 STATUS="stable"
-LLVM_SLOTS=(14 13) # See https://github.com/godotengine/godot/blob/3.5-stable/misc/hooks/pre-commit-clang-format#L79
+LLVM_COMPAT=( 14 13 ) # See https://github.com/godotengine/godot/blob/3.5-stable/misc/hooks/pre-commit-clang-format#L79
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{8..11} )
 
 BULLET_PV="3.24"

@@ -25,10 +25,10 @@ esac
 MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20191124" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.4/tools/build/feature/Makefile#L318
-GCC_MAX_SLOT_ALT=12 # Without kernel-compiler-patch
-GCC_MAX_SLOT=12 # With kernel-compiler-patch
-LLVM_MAX_SLOT=15
-LLVM_MIN_SLOT=10
+GCC_COMPAT=( {13..4} )
+LLVM_COMPAT=( {17..10} )
+GCC_SLOT_NOT_KCP=( ${GCC_COMPAT[@]} ) # Without kernel-compiler-patch
+GCC_SLOT_KCP=${GCC_COMPAT[0]} # With kernel-compiler-patch
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
@@ -267,12 +267,12 @@ gen_clang_llvm_pair() {
 KCP_RDEPEND="
 	clang? (
 		|| (
-			$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
+			$(gen_clang_llvm_pair 10 ${LLVM_COMPAT[0]})
 		)
 	)
 	|| (
 		>=sys-devel/gcc-6.5.0
-		$(gen_clang_llvm_pair 10 ${LLVM_MAX_SLOT})
+		$(gen_clang_llvm_pair 10 ${LLVM_COMPAT[0]})
 	)
 "
 

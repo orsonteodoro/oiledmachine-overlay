@@ -25,9 +25,8 @@ esac
 MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20220731" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v5.19/tools/build/feature/Makefile#L318
-GCC_MAX_SLOT_ALT=13 # Without kernel-compiler-patch
-GCC_MAX_SLOT=10 # With kernel-compiler-patch
-GCC_MIN_SLOT=6
+GCC_COMPAT=( {13..4} )
+LLVM_COMPAT=( {17..10} )
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"

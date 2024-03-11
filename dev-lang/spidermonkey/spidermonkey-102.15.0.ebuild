@@ -3,8 +3,8 @@
 
 EAPI="8"
 
-LLVM_MAX_SLOT=16
-LLVM_SLOTS=( 16 15 14 )
+LLVM_COMPAT=( 16 15 14 )
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
@@ -68,7 +68,7 @@ RESTRICT="
 "
 gen_clang_bdepend() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		(
 			sys-devel/llvm:${s}

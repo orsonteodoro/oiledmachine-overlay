@@ -11,31 +11,6 @@ EAPI=8
 
 # chromium-121.0.6167.139.ebuild -> chromium-122.0.6261.111.ebuild
 
-CHROMIUM_EBUILD_MAINTAINER="0" # See also GEN_ABOUT_CREDITS
-
-# Can't do 12 yet: heavy use of imp, among other things (bug #915001, bug #915062)
-PYTHON_COMPAT=( python3_{9..11} )
-
-PYTHON_REQ_USE="xml(+)"
-
-# LANGS obtainable from:
-# src="./build/config/locales.gni"
-# s=$(grep -n "all_chrome_locales =" "${src}" | cut -f 1 -d ":") ; \
-# f=$(grep -F -n "+ pseudolocales" "${src}" | cut -f 1 -d ":") ; \
-# sed -ne "${s},${f}p" "${src}" \
-#	| grep "\"" \
-#	| cut -f 2 -d "\"" \
-#	| tr "\n" " " \
-#	| sed -E -e "s/(as|az|be|bs|cy|eu|fr-CA|gl|hy|is|ka|kk|km|ky|lo|mk|mn|my|ne|or|pa|si|sq|sr-Latn|uz|zh-HK|zu)[ ]?//g" \
-#	| fold -s -w 80 \
-#	| sed -e "s| $||g"
-
-CHROMIUM_LANGS="
-af am ar bg bn ca cs da de el en-GB en-US es es-419 et fa fi fil fr gu he hi hr
-hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
-te th tr uk ur vi zh-CN zh-TW
-"
-
 # For depends see:
 # https://github.com/chromium/chromium/tree/122.0.6261.111/build/linux/sysroot_scripts/generated_package_lists				; Last update 20231117
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
@@ -77,6 +52,33 @@ te th tr uk ur vi zh-CN zh-TW
 #   https://github.com/facebook/zstd/blob/050fec5c378d676fede8b2171ec5e84f6afa1504/lib/zstd.h#L107					; version
 #
 
+CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
+
+#
+# Set to 1 below to generate an about_credits.html including bundled internal
+# dependencies.
+#
+GEN_ABOUT_CREDITS=0
+#
+
+# LANGS obtainable from:
+# src="./build/config/locales.gni"
+# s=$(grep -n "all_chrome_locales =" "${src}" | cut -f 1 -d ":") ; \
+# f=$(grep -F -n "+ pseudolocales" "${src}" | cut -f 1 -d ":") ; \
+# sed -ne "${s},${f}p" "${src}" \
+#	| grep "\"" \
+#	| cut -f 2 -d "\"" \
+#	| tr "\n" " " \
+#	| sed -E -e "s/(as|az|be|bs|cy|eu|fr-CA|gl|hy|is|ka|kk|km|ky|lo|mk|mn|my|ne|or|pa|si|sq|sr-Latn|uz|zh-HK|zu)[ ]?//g" \
+#	| fold -s -w 80 \
+#	| sed -e "s| $||g"
+
+CHROMIUM_LANGS="
+af am ar bg bn ca cs da de el en-GB en-US es es-419 et fa fi fil fr gu he hi hr
+hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
+te th tr uk ur vi zh-CN zh-TW
+"
+
 # About PGO version compatibility
 #
 # The answer to the profdata compatibility is answered in
@@ -106,16 +108,25 @@ FFMPEG_LIBAVFORMAT_SOVER="60.17.100" # third_party/ffmpeg/libavformat/version*.h
 FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
 FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
 GCC_PV="10.2.1" # Minimum
-GCC_SLOTS=( 14 13 12 11 10 )
+GCC_SLOTS=( {14..10} )
 GN_PV="0.2143"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
-LLVM_MAX_SLOT=18 # Same slot listed in https://github.com/chromium/chromium/blob/122.0.6261.111/tools/clang/scripts/update.py#L42
-LLVM_MIN_SLOT=17 # The pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 10 for profdata file format.
-PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT=17
-LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} ) # [inclusive, inclusive] high to low
+# SHA512 about_credits.html fingerprint: \
+LICENSE_FINGERPRINT="\
+0c45d7e19735efbe3d92b7e2dc14e7123cfd53d6b5c39c7a4b98d802dca5f8fe\
+5b87c8a570a673a33dde5316febb377e02dfee972307f7314864c7ba2d5b3c8e\
+"
+# Compat is + or 1 official slot
+LLVM_COMPAT=( {18..17} ) # [inclusive, inclusive] high to low
+# LLVM_MAX_SLOT is the same slot listed in https://github.com/chromium/chromium/blob/122.0.6261.111/tools/clang/scripts/update.py#L42
+# LLVM_MIN_SLOT is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 10 for profdata file format.
 MESA_PV="20.3.5"
+PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_COMPAT[-1]}"
+# Can't do Python 12 yet: heavy use of imp, among other things (bug #915001, bug #915062)
+PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
 RUST_PV="1.74.1" # Lowered since distro uses older.
@@ -130,7 +141,7 @@ ZLIB_PV="1.3"
 
 # LLVM compatibility is based on libcxx which is
 # 1 +- CR_CLANG_SLOT_OFFICIAL
-CR_CLANG_SLOT_OFFICIAL=${LLVM_MAX_SLOT}
+CR_CLANG_SLOT_OFFICIAL=${LLVM_COMPAT[0]}
 
 # For PGO
 PGO_LLVM_SUPPORTED_VERSIONS=(
@@ -146,12 +157,10 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 	"17.0.0"
 )
 
-inherit check-reqs chromium-2 desktop flag-o-matic ninja-utils pax-utils
-inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs xdg-utils
-
-# Added by the oiledmachine-overlay
-inherit check-linker flag-o-matic-om lcnr llvm multilib multilib-minimal uopts
-inherit cflags-depends
+inherit cflags-depends check-linker check-reqs chromium-2 desktop flag-o-matic
+inherit flag-o-matic-om lcnr llvm multilib-minimal ninja-utils pax-utils
+inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs uopts
+inherit xdg-utils
 
 DESCRIPTION="The open-source version of the Chrome web browser"
 HOMEPAGE="https://www.chromium.org/"
@@ -182,19 +191,6 @@ RESTRICT="mirror"
 # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
 
-#
-# Uncomment below to generate an about_credits.html including bundled internal
-# dependencies.
-#
-GEN_ABOUT_CREDITS=0
-#
-
-# SHA512 about_credits.html fingerprint:
-#
-LICENSE_FINGERPRINT="\
-0c45d7e19735efbe3d92b7e2dc14e7123cfd53d6b5c39c7a4b98d802dca5f8fe\
-5b87c8a570a673a33dde5316febb377e02dfee972307f7314864c7ba2d5b3c8e\
-"
 LICENSE="
 	BSD
 	chromium-$(ver_cut 1-3 ${PV}).x.html
@@ -696,7 +692,7 @@ gen_depend_llvm() {
 	local t=""
 	local o_official=""
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		t="
 			!official? (
 				cfi? (
@@ -1116,7 +1112,7 @@ eerror
 			if use official ; then
 				clang_min="${CR_CLANG_SLOT_OFFICIAL}"
 			else
-				clang_min="${LLVM_MIN_SLOT}"
+				clang_min="${LLVM_COMPAT[-1]}"
 			fi
 			if ver_test "${slot}" -lt "${clang_min}" ; then
 eerror
@@ -1373,7 +1369,7 @@ request_clang_switch_message() {
 eerror
 eerror "You must switch to the proper Clang slot."
 eerror
-eerror "Supported clang slots:\t${LLVM_SLOTS[@]}"
+eerror "Supported clang slots:\t${LLVM_COMPAT[@]}"
 eerror "Supported clang versions:\t${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
 eerror
 eerror "To switch add a per-profile config file create the following files:"
@@ -2309,7 +2305,7 @@ einfo "Switching to clang."
 			slot="$(clang-major-version)"
 		else
 			local s
-			for s in ${LLVM_SLOTS[@]} ; do
+			for s in ${LLVM_COMPAT[@]} ; do
 				if has_version "sys-devel/clang:${s}" ; then
 					slot="${s}"
 					break
@@ -3592,7 +3588,7 @@ einfo
 # Update the llvm commit details
 #  Update CR_CLANG_USED
 #  Update CR_CLANG_USED_UNIX_TIMESTAMP
-#  Update LLVM_MAX_SLOT, LLVM_MIN_SLOT, LLVM_SLOTS
+#  Update LLVM_COMPAT
 # Sync update keeplibs, gn_system_libraries
 # Sync update CHROMIUM_LANGS in every major version
 # Bump chromium-launcher-rX.sh if changed

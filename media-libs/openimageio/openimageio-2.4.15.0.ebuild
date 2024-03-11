@@ -4,20 +4,13 @@
 EAPI=8
 
 CXX_STD_MIN="14"
-LLVM_MAX_SLOT=16
-LLVM_SLOTS=( 16 15 14 13 )
-FONT_PN=OpenImageIO
+FONT_PN="OpenImageIO"
+LEGACY_TBB_SLOT="2"
+LLVM_COMPAT=( {16..13} )
+ONETBB_SLOT="0"
+OPENEXR_V2_PV="2.5.8"
+OPENEXR_V3_PV="3.1.7 3.1.6 3.1.5 3.1.4"
 PYTHON_COMPAT=( python3_{10..11} )
-inherit cmake font llvm python-single-r1
-
-DESCRIPTION="A library for reading and writing images"
-HOMEPAGE="
-https://sites.google.com/site/openimageio/
-https://github.com/OpenImageIO
-"
-LICENSE="BSD"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~ppc64 ~x86"
 X86_CPU_FEATURES=(
 	avx:avx
 	avx2:avx2
@@ -33,10 +26,30 @@ CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 OPENVDB_APIS=( 10 9 8 7 6 5 )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
+QT5_PV="5.6"
+QT6_PV="6"
+
+inherit cmake font llvm-r1 python-single-r1
+
+SRC_URI="
+https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/oiio-${PV}"
+
+DESCRIPTION="A library for reading and writing images"
+HOMEPAGE="
+https://sites.google.com/site/openimageio/
+https://github.com/OpenImageIO
+"
+LICENSE="BSD"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+KEYWORDS="~amd64 ~ppc64 ~x86"
 # font install is enabled upstream
 # building test enabled upstream
 IUSE+="
 ${CPU_FEATURES[@]%:*}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_APIS_[@]}
 aom avif clang color-management cxx17 dds dicom +doc ffmpeg field3d gif heif icc
 jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw rav1e tbb +truetype
@@ -45,19 +58,29 @@ wayland webp X
 r4
 "
 gen_abi_compat_required_use() {
-	local o
 	local s
 	for s in ${OPENVDB_APIS[@]} ; do
-		o+="
+		echo "
 			abi${s}-compat? (
 				openvdb
 			)
 		"
 	done
-	echo "${o}"
+}
+gen_llvm_required_use() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				clang
+			)
+		"
+	done
 }
 REQUIRED_USE="
 	$(gen_abi_compat_required_use)
+	$(gen_llvm_required_use)
+	${LLVM_REQUIRED_USE}
 	aom? (
 		avif
 	)
@@ -65,6 +88,11 @@ REQUIRED_USE="
 		|| (
 			aom
 			rav1e
+		)
+	)
+	clang? (
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
 		)
 	)
 	opengl? (
@@ -96,25 +124,17 @@ REQUIRED_USE="
 	)
 "
 # See https://github.com/OpenImageIO/oiio/blob/v2.4.12.0/INSTALL.md
-QT5_PV="5.6"
-QT6_PV="6"
-ONETBB_SLOT="0"
-LEGACY_TBB_SLOT="2"
 gen_openvdb_depends() {
-	local o
 	local s
 	for s in ${OPENVDB_APIS[@]} ; do
-		o+="
+		echo "
 			abi${s}-compat? (
 				>=media-gfx/openvdb-${s}[abi${s}-compat]
 			)
 		"
 	done
-	echo "${o}"
 }
 
-OPENEXR_V2_PV="2.5.8"
-OPENEXR_V3_PV="3.1.7 3.1.6 3.1.5 3.1.4"
 gen_openexr_pairs() {
 	local pv
 	for pv in ${OPENEXR_V3_PV} ; do
@@ -254,18 +274,16 @@ DEPEND+="
 	${RDEPEND}
 "
 gen_bdepend_clang() {
-	local o=""
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-		(
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
-		)
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}
+			)
 		"
 	done
-	echo "${o}"
 }
 BDEPEND_CLANG="
 	$(gen_bdepend_clang)
@@ -295,14 +313,9 @@ BDEPEND+="
 		>=sys-devel/gcc-8.5
 	)
 "
-SRC_URI="
-https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz"
-
-DOCS=( CHANGES.md CREDITS.md README.md )
 RESTRICT="test" # bug 431412
 RESTRICT+=" mirror"
-S="${WORKDIR}/oiio-${PV}"
+DOCS=( CHANGES.md CREDITS.md README.md )
 
 pkg_setup() {
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
@@ -322,7 +335,7 @@ pkg_setup() {
 	fi
 
 	if use clang ; then
-		llvm_pkg_setup
+		llvm-r1_pkg_setup
 	fi
 	export CC CXX
 }

@@ -3,14 +3,10 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10..11} )
-inherit cmake flag-o-matic llvm multilib-minimal python-single-r1 toolchain-funcs
+# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/INSTALL.md
+# For optix requirements, see
+#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/src/cmake/externalpackages.cmake
 
-DESCRIPTION="Advanced shading language for production GI renderers"
-HOMEPAGE="http://opensource.imageworks.com/?p=osl"
-LICENSE="BSD"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="amd64 ~x86"
 CUDA_TARGETS_COMPAT=(
 	sm_60
 )
@@ -25,27 +21,31 @@ X86_CPU_FEATURES=(
 	sse4_2:sse4.2
 	ssse3:ssse3
 )
-# See https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/INSTALL.md
-# For optix requirements, see
-#   https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/blob/v1.12.12.0/src/cmake/externalpackages.cmake
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-LLVM_SLOTS=( 15 14 13 )
+LLVM_COMPAT=( {15..13} )
+PYTHON_COMPAT=( python3_{10..11} )
 OPENEXR_V2_PV="2.5.8 2.5.7"
 OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
 QT5_MIN="5.6"
 QT6_MIN="6"
+TEST_MODE="distro" # Can be upstream or distro
+
+inherit cmake flag-o-matic llvm-r1 multilib-minimal python-single-r1 toolchain-funcs
+
+DESCRIPTION="Advanced shading language for production GI renderers"
+HOMEPAGE="http://opensource.imageworks.com/?p=osl"
+LICENSE="BSD"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+KEYWORDS="amd64 ~x86"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FEATURES[@]%:*}
-${LLVM_SLOTS[@]/#/llvm-}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc optix partio python qt5 qt6 static-libs test wayland X
-
 r3
 "
 REQUIRED_USE+="
-	^^ (
-		${LLVM_SLOTS[@]/#/llvm-}
-	)
+	${LLVM_REQUIRED_USE}
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -77,14 +77,13 @@ PATCHES=(
 	"${FILESDIR}/osl-1.12.13.0-change-ci-test.bash.patch"
 	"${FILESDIR}/osl-1.12.13.0-cuda-noinline-fix.patch"
 )
-TEST_MODE="distro" # Can be upstream or distro
 
 gen_llvm_depend()
 {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		llvm-${s}? (
+		llvm_slot_${s}? (
 			!cuda? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
@@ -100,9 +99,9 @@ gen_llvm_depend()
 
 gen_opx_llvm_rdepend() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		llvm-${s}? (
+		llvm_slot_${s}? (
 			(
 				sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 				sys-devel/lld:${s}
@@ -115,9 +114,9 @@ gen_opx_llvm_rdepend() {
 
 gen_llvm_bdepend() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		llvm-${s}? (
+		llvm_slot_${s}? (
 			(
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
@@ -250,14 +249,6 @@ get_lib_type() {
 pkg_setup() {
 	# See https://github.com/imageworks/OpenShadingLanguage/blob/master/INSTALL.md
 	# Supports LLVM-{7..13} but should be the same throughout the system.
-	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		if use llvm-${s} ; then
-			einfo "Linking with LLVM-${s}"
-			export LLVM_MAX_SLOT=${s}
-			break
-		fi
-	done
 
 	if use qt5 ; then
 ewarn
@@ -277,7 +268,7 @@ ewarn
 		python-single-r1_pkg_setup
 	fi
 
-	llvm_pkg_setup
+	llvm-r1_pkg_setup
 }
 
 src_prepare() {
@@ -293,9 +284,9 @@ src_prepare() {
 src_configure() {
 	configure_abi() {
 		local llvm_slot
-		for llvm_slot in ${LLVM_SLOTS[@]} ; do
-			if use llvm-${llvm_slot} ; then
-				einfo "Linking with LLVM-${llvm_slot}"
+		for llvm_slot in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${llvm_slot}" ; then
+				einfo "Linking with LLVM ${llvm_slot}"
 				break
 			fi
 		done
@@ -454,7 +445,7 @@ src_install() {
 # OILEDMACHINE-OVERLAY-TEST:  FAILED 1.12.12.0 (20230713)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.13.13.0 (~20230714)
 # OILEDMACHINE-OVERLAY-TEST:  FAILED 1.13.13.0 (~20230719) ; fails on python-oslquery
-# USE="llvm-13 static-libs test -X -doc -llvm-14 -llvm-15 -llvm-16 -optix
+# USE="llvm_slot_13 static-libs test -X -doc -llvm_slot_14 -llvm_slot_15 -llvm_slot_16 -optix
 # -partio -python (-qt5) (-qt6) -r3 -wayland"
 
 # Test results corresponding to PASSED 1.13.13.0 (~20230714)

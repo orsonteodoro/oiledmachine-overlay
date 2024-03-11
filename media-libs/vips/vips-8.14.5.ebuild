@@ -3,21 +3,27 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=14
-LLVM_SLOTS=( 14 ) # CI uses 14
+LIBJPEG_TURBO_V="2.1.2"
+LLVM_COMPAT=( 14 ) # CI uses 14
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{8..11} )
+SO_C=58
+SO_R=3
+SO_A=16
+SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit flag-o-matic llvm meson-multilib multilib-minimal vala
 inherit python-r1 toolchain-funcs
+
+SRC_URI="
+https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz
+"
+S="${WORKDIR}/libvips-${PV}"
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
-SO_C=58
-SO_R=3
-SO_A=16
-SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 SLOT="1/${SO_MAJOR}"
 # Auto defaults based on CI, but distro assumes auto means disabled.
 # Going with the CI tested interpretation.
@@ -49,7 +55,6 @@ REQUIRED_USE="
 "
 # Assumed U 22.04.1
 # See also https://github.com/libvips/libvips/blob/v8.14.5/.github/workflows/ci.yml
-LIBJPEG_TURBO_V="2.1.2"
 # See CI for versioning
 RDEPEND+="
 	${PYTHON_DEPS}
@@ -162,9 +167,9 @@ get_configurations() {
 
 gen_llvm_bdepend()
 {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
 			(
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
@@ -173,30 +178,29 @@ gen_llvm_bdepend()
 			)
 		"
 	done
-	echo "${o}"
 }
 
 gen_llvm_test_bdepend()
 {
 	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
 			(
-	!fuzz-testing? (
-		=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
-	)
-	sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-	sys-devel/lld:${s}
-	sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-	sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
-	fuzz-testing? (
-		=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-		=sys-libs/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
-	)
+				!fuzz-testing? (
+					=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
+				)
+				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
+				fuzz-testing? (
+					=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+					=sys-libs/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
+				)
 			)
 		"
 	done
-	echo "${o}"
 }
 
 GCC_PV="11.3.0"
@@ -244,10 +248,6 @@ PDEPEND+="
 	)
 "
 RESTRICT="mirror"
-SRC_URI="
-https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz
-"
-S="${WORKDIR}/libvips-${PV}"
 DOCS=( ChangeLog README.md )
 
 pkg_setup() {
@@ -444,7 +444,8 @@ src_configure_abi() {
 		_clear_env
 
 		LLVM_MAX_SLOT=
-		for s in ${LLVM_SLOTS[@]} ; do
+		local s
+		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version  "sys-devel/clang:${s}" \
 			&& has_version "=sys-devel/clang-runtime-${s}*" \
 			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*" \
@@ -452,7 +453,8 @@ src_configure_abi() {
 einfo
 einfo "Using clang:${s}"
 einfo
-				LLVM_MAX_SLOT=${s}
+				LLVM_MAX_SLOT="${s}"
+				LLVM_SLOT="${s}"
 				llvm_pkg_setup
 				break
 			fi
@@ -671,7 +673,7 @@ einfo "Inside src_install_abi ${ABI}"
 		local EXAMPLES=(
 			$(find "${BUILD_DIR}/examples" -maxdepth 1 -executable -type f)
 		)
-		exeinto /usr/share/${PN}/examples/bin
+		exeinto "/usr/share/${PN}/examples/bin"
 		local path
 		for path in ${EXAMPLES[@]} ; do
 			doexe "${path}"
@@ -697,7 +699,7 @@ multilib_src_install_all() {
 	docinto licenses
 	dodoc LICENSE
 	if use examples ; then
-		insinto /usr/share/${PN}
+		insinto "/usr/share/${PN}"
 		doins -r "${S}/examples"
 	fi
 }

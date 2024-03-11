@@ -13,6 +13,11 @@
 
 EAPI=8
 
+LLVM_COMPAT=( 11 12 13 14 )
+LLVM_LTO_SLOTS=( 11 12 13 14 )
+LLVM_CFI_ARM64_SLOTS=( 12 13 14 )
+LLVM_CFI_X86_SLOTS=( 13 14 )
+
 inherit bash-completion-r1
 
 # Whenever you bump a GKPKG, check if you have to move
@@ -77,7 +82,7 @@ COMMON_URI="
 	https://github.com/facebook/zstd/archive/v${VERSION_ZSTD}.tar.gz -> zstd-${VERSION_ZSTD}.tar.gz
 "
 
-if [[ ${PV} == 9999* ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://anongit.gentoo.org/git/proj/${PN}.git"
 	inherit git-r3
 	S="${WORKDIR}/${P}"
@@ -91,8 +96,9 @@ fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Genkernel https://gitweb.gentoo.org/proj/genkernel.git/"
-
-LICENSE="GPL-2"
+LICENSE="
+	GPL-2
+"
 SLOT="0"
 RESTRICT=""
 IUSE+=" ibm +firmware"
@@ -136,13 +142,8 @@ gen_scs_exclusion() {
 REQUIRED_USE+=" "$(gen_scs_exclusion)
 
 
-LLVM_SLOTS=(11 12 13 14)
-LLVM_LTO_SLOTS=(11 12 13 14)
-LLVM_CFI_ARM64_SLOTS=(12 13 14)
-LLVM_CFI_X86_SLOTS=(13 14)
-
 gen_llvm_rdepends() {
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
 				sys-devel/clang:${s}

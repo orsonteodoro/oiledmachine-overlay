@@ -13,14 +13,14 @@ EAPI=8
 # See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
-LLVM_MAX_SLOT=14
-LLVM_SLOTS=( 14 )
-
+LLVM_COMPAT=( 14 )
+LLVM_MAX_SLOT="${LLVM_COMPAT[-1]}"
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{10..12} )
 USE_RUBY=" ruby31 ruby32 ruby33"
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
+
 inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr
 inherit linux-info llvm multilib-minimal pax-utils python-any-r1 ruby-single
 inherit toolchain-funcs uopts
@@ -757,7 +757,7 @@ RDEPEND_PROPRIETARY_CODECS_DISABLE="
 
 gen_depend_llvm() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
 				sys-devel/clang:${s}

@@ -21,7 +21,7 @@ esac
 _UOPTS_ECLASS=1
 
 # Bump every major version.  Also bump the BDEPENDs in *bolt eclasses.
-_UOPTS_LLVM_SLOTS=(18 17 16 15 14)
+_UOPTS_LLVM_SLOTS=( 19 18 17 16 15 14 )
 
 UOPTS_SUPPORT_EPGO=${UOPTS_SUPPORT_EPGO:-1}
 UOPTS_SUPPORT_EBOLT=${UOPTS_SUPPORT_EBOLT:-1}
@@ -65,9 +65,7 @@ uopts_setup() {
 	fi
 
 	if [[ -n "${instr_vars}" ]] ; then
-einfo
 einfo "If the build fails, try \`${instr_vars} emerge -1 =${CATEGORY}/${PN}-${PVR}\` or \`${instr_vars} emerge -1vO =${CATEGORY}/${PN}-${PVR}\`"
-einfo
 	fi
 
 	if \

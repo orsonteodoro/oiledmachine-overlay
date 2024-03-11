@@ -4,6 +4,8 @@
 
 EAPI=8
 
+LLVM_COMPAT=( {16..13} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{9..11} )
 
 inherit llvm meson-multilib python-any-r1 linux-info
@@ -31,14 +33,13 @@ for card in ${VIDEO_CARDS}; do
 	IUSE_VIDEO_CARDS+=" video_cards_${card}"
 done
 
-LLVM_SLOTS=( 16 15 14 13 )
 IUSE="${IUSE_VIDEO_CARDS}
 	cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm
 	lm-sensors opencl osmesa +proprietary-codecs selinux
 	test unwind vaapi valgrind vdpau vulkan
 	vulkan-overlay wayland +X xa zink +zstd
 
-	${LLVM_SLOTS[@]/#/llvm-} r1
+	${LLVM_COMPAT[@]/#/llvm_slot_} r1
 "
 
 REQUIRED_USE="
@@ -51,7 +52,7 @@ REQUIRED_USE="
 	xa? ( X )
 	zink? ( vulkan )
 	^^ (
-		${LLVM_SLOTS[@]/#/llvm-}
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
 
@@ -108,21 +109,35 @@ RDEPEND="${RDEPEND}
 # Please keep the LLVM dependency block separate. Since LLVM is slotted,
 # we need to *really* make sure we're not pulling one than more slot
 # simultaneously.
-#
-# How to use it:
-# 1. List all the working slots (with min versions) in ||, newest first.
-# 2. Update the := to specify *max* version, e.g. < 10.
-# 3. Specify LLVM_MAX_SLOT, e.g. 9.
-LLVM_MAX_SLOT="16"
+LLVM_USE_DEPS="${MULTILIB_USEDEP}"
+gen_llvm_depstr() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/llvm:${s}[${LLVM_USE_DEPS}]
+			)
+		"
+	done
+}
+gen_clang_depstr() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}[${LLVM_USE_DEPS}]
+			)
+		"
+	done
+}
 LLVM_DEPSTR="
-	|| (
-		sys-devel/llvm:16[${MULTILIB_USEDEP}]
-		sys-devel/llvm:15[${MULTILIB_USEDEP}]
-	)
-	<sys-devel/llvm-$((LLVM_MAX_SLOT + 1)):=[${MULTILIB_USEDEP}]
+	$(gen_llvm_depstr)
+	sys-devel/llvm:=[${MULTILIB_USEDEP}]
 "
 LLVM_DEPSTR_AMDGPU=${LLVM_DEPSTR//]/,llvm_targets_AMDGPU(-)]}
-CLANG_DEPSTR=${LLVM_DEPSTR//llvm/clang}
+CLANG_DEPSTR="
+	$(gen_clang_depstr)
+"
 CLANG_DEPSTR_AMDGPU=${CLANG_DEPSTR//]/,llvm_targets_AMDGPU(-)]}
 RDEPEND="${RDEPEND}
 	llvm? (
@@ -306,13 +321,6 @@ pkg_setup() {
 	fi
 
 	if use llvm; then
-		local llvm_slot
-		for llvm_slot in ${LLVM_SLOTS[@]} ; do
-			if use llvm-${llvm_slot} ; then
-				LLVM_MAX_SLOT="${llvm_slot}"
-				break
-			fi
-		done
 		llvm_pkg_setup
 		einfo "PATH=${PATH} (before)"
 		export PATH=$(echo "${PATH}" \
@@ -330,8 +338,8 @@ multilib_src_configure() {
 
 	if use llvm ; then
 		local llvm_slot
-		for llvm_slot in ${LLVM_SLOTS[@]} ; do
-			use llvm-${llvm_slot} && break
+		for llvm_slot in ${LLVM_COMPAT[@]} ; do
+			use "llvm_slot_${llvm_slot}" && break
 		done
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"

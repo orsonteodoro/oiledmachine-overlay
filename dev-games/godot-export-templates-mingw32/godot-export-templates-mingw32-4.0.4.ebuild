@@ -101,6 +101,7 @@ IUSE+="
 	${IUSE_LIBS}
 	${IUSE_NET}
 	${IUSE_SCRIPTING}
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -110,6 +111,11 @@ REQUIRED_USE+="
 	!clang
 	!lld
 	portable
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	denoise? (
 		lightmapper_rd
 	)
@@ -122,6 +128,11 @@ REQUIRED_USE+="
 	)
 	lsan? (
 		asan
+	)
+	lto? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	msdfgen? (
 		freetype
@@ -142,17 +153,16 @@ REQUIRED_USE+="
 "
 
 gen_cdepend_lto_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
 	done
-	echo -e "${o}"
 }
 
 CDEPEND_GCC_SANITIZER="
@@ -163,10 +173,9 @@ CDEPEND_GCC_SANITIZER="
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},${san_type}]
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
@@ -174,20 +183,15 @@ gen_clang_sanitizer() {
 			)
 		"
 	done
-	echo "${o}"
 }
 gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS[@]} ; do
 		echo "
 	${a}? (
-		|| (
-			${CDEPEND_GCC_SANITIZER}
-			clang? (
-				|| (
-					$(gen_clang_sanitizer ${a})
-				)
-			)
+		${CDEPEND_GCC_SANITIZER}
+		clang? (
+			$(gen_clang_sanitizer ${a})
 		)
 	)
 
@@ -231,9 +235,7 @@ CDEPEND_CLANG="
 			sys-devel/clang[${MULTILIB_USEDEP}]
 		)
 		lto? (
-			|| (
-				$(gen_cdepend_lto_llvm)
-			)
+			$(gen_cdepend_lto_llvm)
 		)
 	)
 "
@@ -305,7 +307,7 @@ ewarn
 	if use lto && use clang ; then
 		LLVM_MAX_SLOT="not_found"
 		local s
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version "sys-devel/clang:${s}" \
 				&& has_version "sys-devel/llvm:${s}" ; then
 				LLVM_MAX_SLOT=${s}

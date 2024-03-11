@@ -24,6 +24,11 @@
 
 EAPI=8
 
+LLVM_COMPAT=( 11 12 13 14 )
+LLVM_LTO_SLOTS=( 11 12 13 14 )
+LLVM_CFI_ARM64_SLOTS=( 12 13 14 )
+LLVM_CFI_X86_SLOTS=( 13 14 )
+LLVM_PGO_SLOTS=( 13 14 )
 PYTHON_COMPAT=( python3_{10..11} )
 
 inherit bash-completion-r1 python-single-r1
@@ -110,7 +115,7 @@ COMMON_URI="
 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/keyutils.git/snapshot/keyutils-${VERSION_KEYUTILS}.tar.gz
 "
 
-if [[ ${PV} == 9999* ]] ; then
+if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://anongit.gentoo.org/git/proj/${PN}.git"
 	inherit git-r3
 	S="${WORKDIR}/${P}"
@@ -123,8 +128,9 @@ fi
 
 DESCRIPTION="Gentoo automatic kernel building scripts"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Genkernel https://gitweb.gentoo.org/proj/genkernel.git/"
-
-LICENSE="GPL-2"
+LICENSE="
+	GPL-2
+"
 SLOT="0"
 RESTRICT=""
 IUSE+=" ibm +firmware"
@@ -221,12 +227,6 @@ gen_scs_exclusion() {
 }
 REQUIRED_USE+=" "$(gen_scs_exclusion)
 
-LLVM_SLOTS=(11 12 13 14)
-LLVM_LTO_SLOTS=(11 12 13 14)
-LLVM_CFI_ARM64_SLOTS=(12 13 14)
-LLVM_CFI_X86_SLOTS=(13 14)
-LLVM_PGO_SLOTS=(13 14)
-
 gen_clang_pgo_rdepends() {
 	for s in ${LLVM_PGO_SLOTS[@]} ; do
 		echo "
@@ -239,7 +239,7 @@ gen_clang_pgo_rdepends() {
 }
 
 gen_llvm_rdepends() {
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
 				sys-devel/clang:${s}

@@ -3,8 +3,8 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=15
-LLVM_SLOTS=( 15 14 13 12 11 )
+LLVM_COMPAT=( {15..11} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 # =media-gfx/blender-9999 (4.0.1) :: 15 14 13 12 11
 # =media-gfx/blender-3.4* :: 15 14 13 12 11
 # =media-gfx/blender-3.6* :: 15 14 13 12 11
@@ -186,7 +186,7 @@ PIP_DOWNLOADED="
 LEGACY_TBB_SLOT="2" # https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/blob/master/OpenVDB/include/tbb/tbb_stddef.h
 gen_omp_depends() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
 				media-gfx/blender[llvm-${s}]
@@ -330,7 +330,7 @@ pkg_pretend() {
 
 check_iomp5() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		if use denoiser \
 			&& has_version "media-gfx/blender[llvm-${s}]" \
 			&& [[ ! -e "${EROOT}/usr/lib/llvm/${s}/$(get_libdir)/libiomp5.so" ]] \

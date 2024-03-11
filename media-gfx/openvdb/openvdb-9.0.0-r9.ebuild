@@ -5,18 +5,30 @@
 
 EAPI=8
 
+LEGACY_TBB_SLOT="2"
+LLVM_COMPAT=( 14 13 ) # Not official, same as openvdb 10
+LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+ONETBB_SLOT="0"
+OPENEXR_V2_PV="2.5.8 2.5.7"
+OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
+OPENVDB_ABIS=( 10 9 8 7 6 )
+OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
+OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 PYTHON_COMPAT=( python3_{8..11} )
-inherit cmake flag-o-matic python-single-r1
+X86_CPU_FLAGS=( avx sse4_2 )
+
+inherit cmake flag-o-matic llvm python-single-r1
+
+SRC_URI="
+https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 LICENSE="MPL-2.0"
 HOMEPAGE="https://www.openvdb.org"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
-OPENVDB_ABIS=( 10 9 8 7 6 )
-OPENVDB_ABIS_=( ${OPENVDB_ABIS[@]/#/abi} )
-OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
-X86_CPU_FLAGS=( avx sse4_2 )
 IUSE+="
 ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
@@ -57,10 +69,6 @@ REQUIRED_USE+="
 # See
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/doc/dependencies.txt
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v9.0.0/ci/install.sh
-LEGACY_TBB_SLOT="2"
-OPENEXR_V2_PV="2.5.8 2.5.7"
-OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
-ONETBB_SLOT="0"
 
 gen_openexr_pairs() {
 	local pv
@@ -181,17 +189,17 @@ PDEPEND="
 		~media-gfx/nanovdb-32.3.3_p20211029[cuda?,openvdb]
 	)
 "
-SRC_URI="
-https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
 PATCHES=(
 	"${FILESDIR}/${PN}-8.1.0-glfw-libdir.patch"
 	"${FILESDIR}/${PN}-9.0.0-fix-atomic.patch"
 	"${FILESDIR}/${PN}-9.0.0-numpy.patch"
 	"${FILESDIR}/${PN}-9.0.0-unconditionally-search-Python-interpreter.patch"
 )
-RESTRICT="!test? ( test )"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 is_crosscompile() {
 	[[ ${CHOST} != ${CTARGET} ]]
@@ -220,7 +228,7 @@ src_prepare() {
 check_clang() {
 	local found=0
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		if has_version "sys-devel/clang:${s}" ; then
 			found=1
 			export CC="${CHOST}-clang-${s}"
@@ -230,7 +238,7 @@ check_clang() {
 	done
 	if (( ${found} == 0 )) ; then
 eerror
-eerror "${PN} requires either clang ${LLVM_SLOTS[@]}"
+eerror "${PN} requires either clang ${LLVM_COMPAT[@]}"
 eerror
 eerror "Either use GCC or install and use one of those clang slots."
 eerror

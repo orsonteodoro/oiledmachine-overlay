@@ -12,26 +12,26 @@ DESCRIPTION="Godot crossdev dependencies for iOS"
 #KEYWORDS="" # Ebuild not finished
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
+IUSE+="
+	${LLVM_COMPAT[@]/#/llvm_slot_}
+"
 
 gen_depend_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-		(
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
-		)
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}
+			)
 		"
 	done
-	echo -e "${o}"
 }
 
 RDEPEND="
 	sys-devel/osxcross
-	|| (
-		$(gen_depend_llvm)
-	)
+	$(gen_depend_llvm)
 "
 
 test_path() {

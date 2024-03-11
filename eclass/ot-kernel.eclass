@@ -1301,7 +1301,7 @@ einfo "PATH=${PATH} (before)"
 				| tr ":" "\n" \
 				| sed -E -e "/ccache/d" \
 				| tr "\n" ":" \
-				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_MAX_SLOT}/bin:${PWD}/install/bin|g")
+				| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${LLVM_COMPAT[0]}/bin:${PWD}/install/bin|g")
 einfo "PATH=${PATH} (after)"
 		fi
 	fi
@@ -2080,13 +2080,13 @@ ot-kernel_compiler_not_found() {
 eerror
 eerror "These are the required slot ranges.  Either choose..."
 eerror
-eerror "GCC_MIN_SLOT: ${GCC_MIN_SLOT}"
-eerror "GCC_MAX_SLOT: ${GCC_MAX_SLOT}"
+eerror "GCC_MIN_SLOT: ${GCC_COMPAT[-1]}"
+eerror "GCC_MAX_SLOT: ${GCC_COMPAT[0]}"
 eerror
 eerror "  or"
 eerror
-eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
-eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
+eerror "LLVM_MIN_SLOT: ${LLVM_COMPAT[-1]}"
+eerror "LLVM_MAX_SLOT: ${LLVM_COMPAT[0]}"
 eerror
 eerror "You should re-emerge the one of the allowed compiler slots."
 eerror
@@ -2191,6 +2191,8 @@ einfo
 		fi
 	fi
 
+	tc-is-clang && LLVM_SLOT="${clang_pv%%.*}"
+
 	# KCP is applied globally
 	if (( ${wants_kcp} == 1 )) ; then
 		if (  (				 $(ver_test ${gcc_pv}   -ge 9.1) ) \
@@ -2200,16 +2202,22 @@ einfo
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10.0."
 			patches+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
+			export GCC_COMPAT_KPC=( $(seq ${gcc_pv%%.*} -1 9 ) )
+			export LLVM_COMPAT_KPC=( $(seq ${clang_pv%%.*} -1 9 ) )
 		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 8.1) ) \
 			&& test -f "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
 			patches+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+			export GCC_COMPAT_KPC=( $(seq ${gcc_pv%%.*} -1 8 ) )
+			export LLVM_COMPAT_KPC=( $(seq ${clang_pv%%.*} -1 9 ) ) # Undefined for this release
 		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 4.9) ) \
 			&& test -f "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
 			patches+=( "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
+			export GCC_COMPAT_KPC=( $(seq ${gcc_pv%%.*} -1 4 ) )
+			export LLVM_COMPAT_KPC=( $(seq ${clang_pv%%.*} -1 9 ) ) # Undefined for this release
 		else
 ewarn
 ewarn "Cannot find a compatible kernel_compiler_patch for gcc_pv = ${gcc_pv}"
@@ -2217,9 +2225,8 @@ ewarn "and kernel ${KV_MAJOR_MINOR}.  Skipping the kernel_compiler_patch."
 ewarn
 		fi
 	else
-		if [[ -n "${GCC_MAX_SLOT_ALT}" ]] ; then
-			export GCC_MAX_SLOT="${GCC_MAX_SLOT_ALT}"
-		fi
+		export GCC_COMPAT_KPC=( )
+		export LLVM_COMPAT_KPC=( )
 	fi
 
 	# KCP-RPI is applied globally
@@ -6612,8 +6619,8 @@ ot-kernel_show_llvm_requirement() {
 eerror
 eerror "Make sure the following valid slots is installed:"
 eerror
-eerror "LLVM_MIN_SLOT: ${LLVM_MIN_SLOT}"
-eerror "LLVM_MAX_SLOT: ${LLVM_MAX_SLOT}"
+eerror "LLVM_MIN_SLOT: ${LLVM_COMPAT[-1]}"
+eerror "LLVM_MAX_SLOT: ${LLVM_COMPAT[0]}"
 eerror
 eerror "Reason:  ${msg}"
 eerror
@@ -11069,7 +11076,7 @@ eerror
 # Gets a ready to use clang compiler
 get_llvm_slot() {
 	local llvm_slot
-	for llvm_slot in $(seq ${LLVM_MAX_SLOT:-15} -1 ${LLVM_MIN_SLOT:-10}) ; do
+	for llvm_slot in $(seq ${LLVM_COMPAT[0]} -1 ${LLVM_COMPAT[-1]}) ; do
 		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
 	done
 	echo "${llvm_slot}"
@@ -11080,7 +11087,7 @@ get_llvm_slot() {
 # Gets a ready to use gcc compiler
 get_gcc_slot() {
 	local gcc_slot
-	for gcc_slot in $(seq ${GCC_MAX_SLOT:-13} -1 ${GCC_MIN_SLOT:-6}) ; do
+	for gcc_slot in $(seq ${GCC_COMPAT[0]} -1 ${GCC_COMPAT[-1]}) ; do
 		ot-kernel_has_version "${GCC_PKG}:${gcc_slot}" && is_gcc_ready && break
 	done
 	echo "${gcc_slot}"
