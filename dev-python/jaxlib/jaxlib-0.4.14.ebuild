@@ -25,13 +25,13 @@ CUDA_TARGETS_COMPAT=(
 )
 DISTUTILS_USE_PEP517="standalone"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
-GCC_SLOTS=( 12 11 10 9 )
+GCC_COMPAT=( {12..9} )
 JAVA_SLOT="11"
-LLVM_MAX_SLOT=16
-LLVM_SLOTS=( 16 ) # Limited by rocm
+LLVM_COMPAT=( 16 ) # Limited by rocm
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit bazel cuda distutils-r1 flag-o-matic git-r3 java-pkg-opt-2 llvm rocm
+inherit bazel cuda distutils-r1 flag-o-matic git-r3 java-pkg-opt-2 llvm-r1 rocm
 inherit toolchain-funcs
 
 # DO NOT HARD WRAP
@@ -182,12 +182,29 @@ gen_rocm_required_use() {
 	done
 }
 
+gen_llvm_slot_required_use() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				clang
+			)
+		"
+	done
+}
+
 REQUIRED_USE+="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	$(gen_llvm_slot_required_use)
 	^^ (
 		python_targets_python3_10
 		python_targets_python3_11
+	)
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	cuda? (
 		!clang
@@ -290,32 +307,20 @@ DEPEND+="
 	virtual/jdk:${JAVA_SLOT}
 "
 gen_llvm_bdepend() {
-	for s in ${LLVM_SLOTS[@]} ; do
-		if (( ${s} >= 10 && ${s} < 13 )) ; then
-			echo "
-				(
-					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
-					>=sys-devel/lld-10
-				)
-			"
-		else
-			echo "
-				(
-					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
-					sys-devel/lld:${s}
-				)
-			"
-		fi
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				sys-devel/lld:${s}
+			)
+		"
 	done
 }
 BDEPEND+="
 	>=dev-build/bazel-6.1.2
 	clang? (
-		|| (
-			$(gen_llvm_bdepend)
-		)
+		$(gen_llvm_bdepend)
 	)
 	|| (
 		>=sys-devel/gcc-12:12
@@ -476,7 +481,7 @@ use_gcc() {
 einfo "PATH:\t${PATH}"
 	local found=0
 	local s
-	for s in ${GCC_SLOTS[@]} ; do
+	for s in ${GCC_COMPAT[@]} ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
 		export CC="${CHOST}-gcc-${symlink_ver}"
 		export CXX="${CHOST}-g++-${symlink_ver}"
@@ -488,7 +493,7 @@ einfo "Switched to gcc:${s}"
 		fi
 	done
 	if (( ${found} != 1 )) ; then
-		local slots_desc=$(echo "${GCC_SLOTS[@]}" \
+		local slots_desc=$(echo "${GCC_COMPAT[@]}" \
 			| tr " " "\n" \
 			| tac \
 			| tr "\n" " " \
@@ -533,14 +538,14 @@ eerror
 	fi
 
 einfo "FORCE_LLVM_SLOT may be specified."
-	local _LLVM_SLOTS=(${LLVM_SLOTS[@]})
+	local _LLVM_COMPAT=(${LLVM_COMPAT[@]})
 	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
-		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
+		_LLVM_COMPAT=( ${FORCE_LLVM_SLOT} )
 	fi
 
 	local found=0
 	local s
-	for s in ${_LLVM_SLOTS[@]} ; do
+	for s in ${_LLVM_COMPAT[@]} ; do
 		which "${CHOST}-clang-${s}" || continue
 		export CC="${CHOST}-clang-${s}"
 		export CXX="${CHOST}-clang++-${s}"
@@ -551,19 +556,28 @@ einfo "Switched to clang:${s}"
 			break
 		fi
 	done
+	local found2=0
+	local s_verified
+	for s_verified in ${LLVM_COMPAT[@]} ; do
+		if (( ${s} == ${s_verified} )) ; then
+			found2=1
+			break
+		fi
+	done
+
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "Use only clang slots ${LLVM_SLOTS[@]}"
+eerror "Use only clang slots ${LLVM_COMPAT[@]}"
 eerror
 		die
 	fi
-	if (( ${s} == 10 || ${s} == 11 || ${s} == 14 || ${s} == 15 )) ; then
+	if (( ${found2} == 1 )) ; then
 		:;
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
-	LLVM_MAX_SLOT=${s}
-	llvm_pkg_setup
+	LLVM_SLOT=${s}
+	llvm-r1_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
 }

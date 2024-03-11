@@ -4,13 +4,44 @@
 
 EAPI=8
 
-GCC_SLOTS=(12 11 10 9) # Verified working
-LLVM_MAX_SLOT=14 # Based on CI distro
-LLVM_SLOTS=(14 13 12 11 10) # Upstream supports starting from 8
-
 DISTUTILS_USE_PEP517="setuptools"
+GCC_COMPAT=( {12..9} ) # Verified working
+LLVM_COMPAT=( {14..10} ) # Upstream supports starting from 8
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Based on CI distro
 PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 flag-o-matic toolchain-funcs
+
+inherit distutils-r1 flag-o-matic llvm toolchain-funcs
+
+# All versioning is first found in the console output and confirmed via links below.
+# The links below are shown for faster future updates.
+
+JAVA_SLOT="11"
+LIBJPEG_TURBO_PV="2.1.4"	# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/jpeg/workspace.bzl
+LIBPNG_PV="1.6.37"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/png/workspace.bzl
+EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/org_aomedia_aom/workspace.bzl
+EGIT_BLAKE3_COMMIT="64747d48ffe9d1fbf4b71e94cabeb8a211461081"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/blake3/workspace.bzl
+EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/com_google_boringssl/workspace.bzl
+EGIT_BROTLI_COMMIT="6d03dfbedda1615c4cba1211f8d81735575209c8"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/com_google_brotli/workspace.bzl
+# Different zlib lib
+EGIT_CR_ZLIB_COMMIT="2d44c51ada6d325b85b53427b02dabf44648bca4"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/net_zlib/workspace.bzl
+
+# We may need to prefix with gh so that the fingerprints do not conflict between releases and snapshots.
+bazel_external_uris="
+https://github.com/BLAKE3-team/blake3/archive/${EGIT_BLAKE3_COMMIT}.tar.gz -> blake3-${EGIT_BLAKE3_COMMIT}.tar.gz
+https://github.com/google/boringssl/archive/${EGIT_BORINGSSL_COMMIT}.tar.gz -> boringssl-${EGIT_BORINGSSL_COMMIT}.tar.gz
+https://github.com/google/brotli/archive/${EGIT_BROTLI_COMMIT}.zip -> brotli-${EGIT_BROTLI_COMMIT}.zip
+https://storage.googleapis.com/tensorstore-bazel-mirror/aomedia.googlesource.com/aom/+archive/${EGIT_AOM_COMMIT}.tar.gz -> aom-${EGIT_AOM_COMMIT}.tar.gz
+https://storage.googleapis.com/tensorstore-bazel-mirror/chromium.googlesource.com/chromium/src/third_party/zlib/+archive/${EGIT_CR_ZLIB_COMMIT}.tar.gz -> cr-zlib-${EGIT_CR_ZLIB_COMMIT}.tar.gz
+"
+#https://github.com/glennrp/libpng/archive/v${LIBPNG_PV}.tar.gz -> libpng-${LIBPNG_PV}.tar.gz
+#https://github.com/libjpeg-turbo/libjpeg-turbo/archive/${LIBJPEG_TURBO_PV}.tar.gz -> libjpeg-turbo-2.1.4.tar.gz
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+SRC_URI="
+	${bazel_external_uris}
+https://github.com/google/tensorstore/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="Library for reading and writing large multi-dimensional arrays"
 HOMEPAGE="
@@ -20,10 +51,22 @@ https://github.com/google/tensorstore
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" clang doc"
-JAVA_SLOT="11"
+IUSE+="
+${LLVM_COMPAT[@]/#/llvm_slot_}
+clang doc
+"
+REQUIRED_USE+="
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
+"
 JDK_DEPEND="
 	|| (
 		dev-java/openjdk-bin:${JAVA_SLOT}
@@ -47,9 +90,9 @@ DEPEND+="
 "
 gen_llvm_depends() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}
 				sys-devel/llvm:${s}
 				sys-devel/lld:${s}
@@ -79,36 +122,6 @@ BDEPEND+="
 		>=sys-devel/gcc-10
 	)
 "
-# All versioning is first found in the console output and confirmed via links below.
-# The links below are shown for faster future updates.
-
-LIBJPEG_TURBO_PV="2.1.4"	# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/jpeg/workspace.bzl
-LIBPNG_PV="1.6.37"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/png/workspace.bzl
-
-EGIT_AOM_COMMIT="d730cef03ac754f2b6a233e926cd925d8ce8de81"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/org_aomedia_aom/workspace.bzl
-EGIT_BLAKE3_COMMIT="64747d48ffe9d1fbf4b71e94cabeb8a211461081"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/blake3/workspace.bzl
-EGIT_BORINGSSL_COMMIT="098695591f3a2665fccef83a3732ecfc99acdcdd"	# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/com_google_boringssl/workspace.bzl
-EGIT_BROTLI_COMMIT="6d03dfbedda1615c4cba1211f8d81735575209c8"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/com_google_brotli/workspace.bzl
-# Different zlib lib
-EGIT_CR_ZLIB_COMMIT="2d44c51ada6d325b85b53427b02dabf44648bca4"		# Found in https://github.com/google/tensorstore/blob/v0.1.34/third_party/net_zlib/workspace.bzl
-
-# We may need to prefix with gh so that the fingerprints do not conflict between releases and snapshots.
-bazel_external_uris="
-https://github.com/BLAKE3-team/blake3/archive/${EGIT_BLAKE3_COMMIT}.tar.gz -> blake3-${EGIT_BLAKE3_COMMIT}.tar.gz
-https://github.com/google/boringssl/archive/${EGIT_BORINGSSL_COMMIT}.tar.gz -> boringssl-${EGIT_BORINGSSL_COMMIT}.tar.gz
-https://github.com/google/brotli/archive/${EGIT_BROTLI_COMMIT}.zip -> brotli-${EGIT_BROTLI_COMMIT}.zip
-https://storage.googleapis.com/tensorstore-bazel-mirror/aomedia.googlesource.com/aom/+archive/${EGIT_AOM_COMMIT}.tar.gz -> aom-${EGIT_AOM_COMMIT}.tar.gz
-https://storage.googleapis.com/tensorstore-bazel-mirror/chromium.googlesource.com/chromium/src/third_party/zlib/+archive/${EGIT_CR_ZLIB_COMMIT}.tar.gz -> cr-zlib-${EGIT_CR_ZLIB_COMMIT}.tar.gz
-"
-#https://github.com/glennrp/libpng/archive/v${LIBPNG_PV}.tar.gz -> libpng-${LIBPNG_PV}.tar.gz
-#https://github.com/libjpeg-turbo/libjpeg-turbo/archive/${LIBJPEG_TURBO_PV}.tar.gz -> libjpeg-turbo-2.1.4.tar.gz
-SRC_URI="
-	${bazel_external_uris}
-https://github.com/google/tensorstore/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 DOCS=( README.md )
 PATCHES=(
 	"${FILESDIR}/${PN}-0.1.34-invoke-bazel-directly.patch"
@@ -207,7 +220,7 @@ use_gcc() {
 einfo "PATH:\t${PATH}"
 	local found=0
 	local s
-	for s in ${GCC_SLOTS[@]} ; do
+	for s in ${GCC_COMPAT[@]} ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
 		export CC=${CHOST}-gcc-${symlink_ver}
 		export CXX=${CHOST}-g++-${symlink_ver}
@@ -220,7 +233,7 @@ einfo "Switched to gcc:${s}"
 	done
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "Use only gcc slots ${GCC_SLOTS[@]}"
+eerror "Use only gcc slots ${GCC_COMPAT[@]}"
 eerror
 		die
 	fi
@@ -238,14 +251,14 @@ eerror
 	fi
 
 einfo "FORCE_LLVM_SLOT may be specified."
-	local _LLVM_SLOTS=(${LLVM_SLOTS[@]})
+	local _LLVM_COMPAT=( ${LLVM_COMPAT[@]} )
 	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
-		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
+		_LLVM_COMPAT=( ${FORCE_LLVM_SLOT} )
 	fi
 
 	local found=0
 	local s
-	for s in ${_LLVM_SLOTS[@]} ; do
+	for s in ${_LLVM_COMPAT[@]} ; do
 		which "${CHOST}-clang-${s}" || continue
 		export CC="${CHOST}-clang-${s}"
 		export CXX="${CHOST}-clang++-${s}"
@@ -258,7 +271,7 @@ einfo "Switched to clang:${s}"
 	done
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "Use only clang slots ${LLVM_SLOTS[@]}"
+eerror "Use only clang slots ${LLVM_COMPAT[@]}"
 eerror
 		die
 	fi
