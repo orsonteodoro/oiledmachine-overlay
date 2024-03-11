@@ -84,6 +84,7 @@ LICENSE="
 # MIT - composable_kernel
 # BSD - cutlass
 # MKL_DNN is oneDNN 2.2.4 with additional custom commits.
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -218,7 +219,6 @@ BDEPEND+="
 		)
 	)
 "
-RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
