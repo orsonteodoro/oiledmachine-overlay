@@ -7,6 +7,7 @@ CXX_STD_MIN="14"
 FONT_PN="OpenImageIO"
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..13} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.8"
 OPENEXR_V3_PV="3.1.7 3.1.6 3.1.5 3.1.4"
@@ -23,19 +24,20 @@ X86_CPU_FEATURES=(
 	ssse3:ssse3
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
-OPENVDB_APIS=( 10 9 8 7 6 5 )
+OPENVDB_APIS=( {10..5} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
 QT5_PV="5.6"
 QT6_PV="6"
 
-inherit cmake font llvm-r1 python-single-r1
+inherit cmake font llvm python-single-r1
 
 SRC_URI="
 https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 S="${WORKDIR}/oiio-${PV}"
+KEYWORDS="~amd64 ~ppc64 ~x86"
 
 DESCRIPTION="A library for reading and writing images"
 HOMEPAGE="
@@ -43,8 +45,9 @@ https://sites.google.com/site/openimageio/
 https://github.com/OpenImageIO
 "
 LICENSE="BSD"
+RESTRICT="test" # bug 431412
+RESTRICT+=" mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~ppc64 ~x86"
 # font install is enabled upstream
 # building test enabled upstream
 IUSE+="
@@ -80,7 +83,9 @@ gen_llvm_required_use() {
 REQUIRED_USE="
 	$(gen_abi_compat_required_use)
 	$(gen_llvm_required_use)
-	${LLVM_REQUIRED_USE}
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	aom? (
 		avif
 	)
@@ -313,8 +318,6 @@ BDEPEND+="
 		>=sys-devel/gcc-8.5
 	)
 "
-RESTRICT="test" # bug 431412
-RESTRICT+=" mirror"
 DOCS=( CHANGES.md CREDITS.md README.md )
 
 pkg_setup() {
@@ -335,7 +338,7 @@ pkg_setup() {
 	fi
 
 	if use clang ; then
-		llvm-r1_pkg_setup
+		llvm_pkg_setup
 	fi
 	export CC CXX
 }
