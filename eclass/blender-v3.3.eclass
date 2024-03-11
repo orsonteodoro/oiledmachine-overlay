@@ -37,11 +37,10 @@ FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
 
-LLVM_MAX_UPSTREAM=13 # (inclusive)
-
 # FAIL!  Distro only has >= 14.
 LLVM_COMPAT=( {14..11} ) # Upstream says 13 inclusive is max
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_MAX_UPSTREAM=13 # (inclusive)
 
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v3.3.16/build_files/build_environment/install_deps.sh#L382

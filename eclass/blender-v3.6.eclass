@@ -39,9 +39,9 @@ FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
 
-LLVM_MAX_UPSTREAM=15 # (inclusive)
-
 LLVM_COMPAT=( {15..12} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_MAX_UPSTREAM=15 # (inclusive)
 
 # Platform defaults based on CMakeList.txt
 OPENVDB_ABIS_MAJOR_VERS=10
