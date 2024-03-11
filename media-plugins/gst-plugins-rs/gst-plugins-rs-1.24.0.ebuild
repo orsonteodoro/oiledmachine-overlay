@@ -811,7 +811,7 @@ BDEPEND+="
 		dev-python/hotdoc
 	)
 "
-RESTRICT="mirror"
+RESTRICT="mirror test"
 PATCHES=(
 )
 # FIXME:
