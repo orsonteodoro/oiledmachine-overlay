@@ -711,7 +711,7 @@ REQUIRED_USE+="
 # Assumes D 12
 # Depends same as stage: test and name: meson shared CI job
 GOBJECT_INTROSPECTION_PV="1.74.0"
-GST_PV="1.23.90" # Based on gstreamer1.0-plugins-good
+GST_PV="1.22.3" # Based on gstreamer1.0-plugins-good ; downgraded for distro.  Upstream uses ~1.23.90
 RUST_PV="1.76.0" # Required by bindings
 CARGO_PV="1.76.0"
 # grep -e "requires_private" "${WORKDIR}" for external dependencies
