@@ -4,7 +4,7 @@
 EAPI="8"
 
 LLVM_COMPAT=( {16..14} )
-LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
@@ -15,7 +15,7 @@ MOZ_PN="firefox"
 MOZ_PV="${PV}"
 MOZ_PV_SUFFIX=
 if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
-	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
+	MOZ_PV_SUFFIX="${BASH_REMATCH[1]}"
 	# Convert the ebuild version to the upstream Mozilla version
 	MOZ_PV="${MOZ_PV/_alpha/a}" # Handle alpha for SRC_URI
 	MOZ_PV="${MOZ_PV/_beta/b}"  # Handle beta for SRC_URI
