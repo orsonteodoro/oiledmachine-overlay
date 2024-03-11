@@ -132,6 +132,7 @@ IUSE+="
 	${IUSE_NET}
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -215,31 +216,24 @@ REQUIRED_USE+="
 "
 
 gen_cdepend_lto_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
 			)
 		"
 	done
-	echo -e "${o}"
 }
 
-CDEPEND_GCC_SANITIZER="
-	!clang? (
-		sys-devel/gcc[sanitize]
-	)
-"
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${san_type}]
 				sys-devel/clang:${s}
@@ -247,23 +241,19 @@ gen_clang_sanitizer() {
 			)
 		"
 	done
-	echo "${o}"
 }
 gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS[@]} ; do
 		echo "
-	${a}? (
-		|| (
-			${CDEPEND_GCC_SANITIZER}
-			clang? (
-				|| (
+			${a}? (
+				!clang? (
+					sys-devel/gcc[sanitize]
+				)
+				clang? (
 					$(gen_clang_sanitizer ${a})
 				)
 			)
-		)
-	)
-
 		"
 	done
 }
@@ -298,9 +288,7 @@ CDEPEND_CLANG="
 			sys-devel/clang
 		)
 		lto? (
-			|| (
-				$(gen_cdepend_lto_llvm)
-			)
+			$(gen_cdepend_lto_llvm)
 		)
 	)
 "
@@ -606,20 +594,16 @@ eerror
 }
 
 pkg_setup() {
-ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
-ewarn
 	if use gdscript ; then
-ewarn
 ewarn "The gdscript USE flag is untested."
-ewarn
 	fi
 
 	python-any-r1_pkg_setup
 	if use lto && use clang ; then
 		LLVM_MAX_SLOT="not_found"
 		local s
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version "sys-devel/clang:${s}" \
 				&& has_version "sys-devel/llvm:${s}" ; then
 				LLVM_MAX_SLOT=${s}
@@ -633,20 +617,16 @@ eerror "same slot."
 eerror
 			die
 		fi
-einfo
 einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
-einfo
 		llvm_pkg_setup
 	fi
 
 	if [[ "${LANG}" == "POSIX" ]] ; then
-ewarn
 ewarn "LANG=POSIX not supported"
-ewarn
 	fi
 
 	if use mono ; then
-		einfo "USE=mono is under contruction"
+einfo "USE=mono is under contruction"
 		if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
 			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
 			export PATH="$(dirname ${p}):${PATH}"
@@ -705,11 +685,11 @@ _gen_mono_glue() {
 	export MESA_GLSL_CACHE_DIR="${HOME}/mesa_shader_cache" # Prevent sandbox violation
 	export MESA_SHADER_CACHE_DIR="${HOME}/mesa_shader_cache"
 	for x in $(find /dev/input -name "event*") ; do
-		einfo "Adding \`addwrite ${x}\` sandbox rule"
+einfo "Adding \`addwrite ${x}\` sandbox rule"
 		addwrite "${x}"
 	done
 
-	einfo "Mono support:  Generating glue sources"
+einfo "Mono support:  Generating glue sources"
 	# Generates modules/mono/glue/mono_glue.gen.cpp
 	local f=$(basename bin/godot*x11*)
 	virtx \
@@ -720,7 +700,7 @@ _gen_mono_glue() {
 }
 
 _assemble_datafiles() {
-	einfo "Mono support:  Assembling data files"
+einfo "Mono support:  Assembling data files"
 	if [[ ! -e "bin/GodotSharp" ]] ; then
 eerror
 eerror "Missing export templates data directory.  It is likely caused by a"
@@ -733,7 +713,7 @@ eerror
 	local dest
 	src="${S}/bin/GodotSharp/Mono/lib/mono/${FRAMEWORK}"
 	dest="${WORKDIR}/templates/bcl/net_4_x"
-	einfo "Mono support:  Collecting BCL"
+einfo "Mono support:  Collecting BCL"
 	mkdir -p "${dest}"
 	cp -aT "${src}" "${dest}" || die
 
@@ -743,7 +723,7 @@ eerror
 	if [[ -e "${S}/bin/GodotSharp/Api" ]] ; then
 		src="${S}/bin/GodotSharp/Api"
 		dest="${WORKDIR}/templates/data.mono.x11.64.${configuration}/Api"
-		einfo "Mono support:  Collecting datafiles (Mono/Api)"
+einfo "Mono support:  Collecting datafiles (Mono/Api)"
 		mkdir -p "${dest}"
 		cp -aT "${src}" "${dest}" || die
 	fi
@@ -751,7 +731,7 @@ eerror
 	# Mono/etc
 	src="${S}/bin/GodotSharp/Mono/etc/mono"
 	dest="${WORKDIR}/templates/data.mono.x11.64.${configuration}/Mono/etc/mono"
-	einfo "Mono support:  Collecting datafiles (Mono/etc)"
+einfo "Mono support:  Collecting datafiles (Mono/etc)"
 	mkdir -p "${dest}"
 	cp -aT "${src}" "${dest}" || die
 
@@ -760,7 +740,7 @@ eerror
 	if find "${S}/bin/GodotSharp" -name "libmono" -o -name "libMono" ; then
 		src="${S}/bin/GodotSharp/Mono/etc/mono"
 		dest="${WORKDIR}/templates/data.mono.x11.64.${configuration}/Mono/lib"
-		einfo "Mono support:  Collecting datafiles (Mono/lib)"
+einfo "Mono support:  Collecting datafiles (Mono/lib)"
 		mkdir -p "${dest}"
 		for x in $(find "${S}/bin/GodotSharp" -name "libmono" -o -name "libMono") ; do
 			cp -aT "${src}" "${dest}" || die
@@ -771,7 +751,7 @@ eerror
 	if [[ -e "${S}/bin/GodotSharp/Api" ]] ; then
 		src="${S}/bin/GodotSharp/Tools"
 		dest="${WORKDIR}/templates/data.mono.x11.64.${configuration}/Tools"
-		einfo "Mono support:  Collecting datafiles (Tools)"
+einfo "Mono support:  Collecting datafiles (Tools)"
 		mkdir -p "${dest}"
 		cp -aT "${src}" "${dest}" || die
 	fi
@@ -779,7 +759,7 @@ eerror
 	# FIXME:  libmonosgen-2.0.so needs 32-bit or static linkage
 	if [[ -e "bin/libmonosgen-2.0.so" ]] ; then
 		# Should be copied next to editor or export templates
-		einfo "Collecting monogens runtime library"
+einfo "Collecting monogens runtime library"
 		cp -a "bin/libmonosgen-2.0.so" "${WORKDIR}/templates" || die
 	fi
 }
@@ -815,7 +795,7 @@ add_portable_mono_prefix() {
 }
 
 src_compile_linux_yes_mono() {
-	einfo "Mono support:  Building the Mono glue generator"
+einfo "Mono support:  Building the Mono glue generator"
 	# tools=yes (default)
 	# mono_glue=yes (default)
 	local options_extra=(
@@ -827,7 +807,7 @@ src_compile_linux_yes_mono() {
 	_compile
 	_gen_mono_glue
 	_assemble_datafiles
-	einfo "Mono support:  Building final binary"
+einfo "Mono support:  Building final binary"
 	# CI adds mono_static=yes
 	options_extra=(
 		$(set_production)
@@ -842,7 +822,7 @@ src_compile_linux_yes_mono() {
 }
 
 src_compile_linux_no_mono() {
-	einfo "Creating export template"
+einfo "Creating export template"
 	# tools=yes (default)
 	local options_extra=(
 		$(set_production)
@@ -853,7 +833,7 @@ src_compile_linux_no_mono() {
 
 src_compile_linux() {
 	local configuration="release_debug"
-	einfo "Building Linux editor"
+einfo "Building Linux editor"
 	if use mono ; then
 		src_compile_linux_yes_mono
 	else
@@ -1019,7 +999,7 @@ _install_linux_editor() {
 	f=$(basename bin/godot*tools*)
 	doexe "bin/${f}"
 	dosym "${d_base}/bin/${f}" "/usr/bin/godot${SLOT_MAJ}"
-	einfo "Setting up Linux editor environment"
+einfo "Setting up Linux editor environment"
 	make_desktop_entry \
 		"/usr/bin/godot${SLOT_MAJ}" \
 		"Godot${SLOT_MAJ}" \

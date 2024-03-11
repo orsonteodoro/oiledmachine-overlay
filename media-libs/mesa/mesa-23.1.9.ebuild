@@ -4,10 +4,10 @@
 
 EAPI=8
 
-LLVM_COMPAT=( 16 15 )
+LLVM_COMPAT=( {16..15} )
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit llvm-r1 meson-multilib python-any-r1 linux-info
+inherit llvm-r1 toolchain-funcs meson-multilib python-any-r1 linux-info
 
 MY_P="${P/_/-}"
 
@@ -300,13 +300,20 @@ pkg_setup() {
 	fi
 
 	if use llvm; then
+		local llvm_slot
+		for llvm_slot in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${llvm_slot}" ; then
+				LLVM_SLOT="${llvm_slot}"
+				break
+			fi
+		done
 		llvm-r1_pkg_setup
 		einfo "PATH=${PATH} (before)"
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -E -e "/llvm\/[0-9]+/d" \
 			| tr "\n" ":" \
-			| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${llvm_slot}/bin|g")
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 		einfo "PATH=${PATH} (after)"
 	fi
 	python-any-r1_pkg_setup
@@ -472,7 +479,7 @@ multilib_src_configure() {
 		-Dvideo-codecs=$(usex proprietary-codecs "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
-		--buildtype $(usex debug debug plain)
+		-Dbuildtype=$(usex debug debug plain)
 		-Db_ndebug=$(usex debug false true)
 	)
 	meson_src_configure

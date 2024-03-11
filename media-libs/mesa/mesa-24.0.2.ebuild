@@ -6,7 +6,7 @@ EAPI=8
 LLVM_COMPAT=( {17..15} )
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit llvm-r1 meson-multilib python-any-r1 linux-info
+inherit llvm-r1 toolchain-funcs meson-multilib python-any-r1 linux-info
 
 MY_P="${P/_/-}"
 
@@ -71,9 +71,6 @@ RDEPEND="
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
 	unwind? ( sys-libs/libunwind[${MULTILIB_USEDEP}] )
 	llvm? (
-		video_cards_radeonsi? (
-			virtual/libelf:0=[${MULTILIB_USEDEP}]
-		)
 		video_cards_r600? (
 			virtual/libelf:0=[${MULTILIB_USEDEP}]
 		)
@@ -92,6 +89,7 @@ RDEPEND="
 		>=media-libs/libva-1.7.3:=[${MULTILIB_USEDEP}]
 	)
 	vdpau? ( >=x11-libs/libvdpau-1.1:=[${MULTILIB_USEDEP}] )
+	video_cards_radeonsi? ( virtual/libelf:0=[${MULTILIB_USEDEP}] )
 	selinux? ( sys-libs/libselinux[${MULTILIB_USEDEP}] )
 	wayland? ( >=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}] )
 	${LIBDRM_DEPSTRING}[video_cards_freedreno?,video_cards_intel?,video_cards_nouveau?,video_cards_vc4?,video_cards_vivante?,video_cards_vmware?,${MULTILIB_USEDEP}]
@@ -275,13 +273,20 @@ pkg_setup() {
 	fi
 
 	if use llvm; then
+		local llvm_slot
+		for llvm_slot in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${llvm_slot}" ; then
+				LLVM_SLOT="${llvm_slot}"
+				break
+			fi
+		done
 		llvm-r1_pkg_setup
 		einfo "PATH=${PATH} (before)"
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -E -e "/llvm\/[0-9]+/d" \
 			| tr "\n" ":" \
-			| sed -e "s|/opt/bin|/opt/bin:/usr/lib/llvm/${llvm_slot}/bin|g")
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 		einfo "PATH=${PATH} (after)"
 	fi
 	python-any-r1_pkg_setup
@@ -463,7 +468,7 @@ multilib_src_configure() {
 		-Dvideo-codecs=$(usex proprietary-codecs "all" "all_free")
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
-		--buildtype $(usex debug debug plain)
+		-Dbuildtype=$(usex debug debug plain)
 		-Db_ndebug=$(usex debug false true)
 	)
 	meson_src_configure

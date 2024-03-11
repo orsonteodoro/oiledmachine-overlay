@@ -20,6 +20,7 @@ SANITIZERS=(
 	ubsan
 )
 IUSE+="
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 	${SANITIZERS[@]}
 	+sdk_10_6_or_newer
 	sdk_10_5_or_less
@@ -33,30 +34,28 @@ REQUIRED_USE="
 	!tsan
 "
 
-GODOT_OSX_=(arm64 x86_64)
+GODOT_OSX_=( arm64 x86_64 )
 GODOT_OSX="${GODOT_OSX_[@]/#/godot_osx_}"
 
 gen_depend_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-		(
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
-		)
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}
+			)
 		"
 	done
-	echo -e "${o}"
 }
 
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${san_type}]
 				sys-devel/clang:${s}
@@ -64,18 +63,14 @@ gen_clang_sanitizer() {
 			)
 		"
 	done
-	echo "${o}"
 }
 gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS[@]} ; do
 		echo "
-	${a}? (
-		|| (
-			$(gen_clang_sanitizer ${a})
-		)
-	)
-
+			${a}? (
+				$(gen_clang_sanitizer ${a})
+			)
 		"
 	done
 }
@@ -92,9 +87,7 @@ RDEPEND="
 	sdk_10_6_or_newer? (
 		>=sys-devel/osxcross-1.4
 	)
-	|| (
-		$(gen_depend_llvm)
-	)
+	$(gen_depend_llvm)
 "
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"

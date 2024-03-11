@@ -6,9 +6,11 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
+LLVM_COMPAT=( {16..15} )
 PYTHON_COMPAT=( python3_{10..11} )
 YARN_SLOT="1"
-inherit bazel flag-o-matic llvm distutils-r1 yarn
+
+inherit bazel flag-o-matic llvm-r1 distutils-r1 yarn
 
 DESCRIPTION="TensorFlow's Visualization Toolkit"
 HOMEPAGE="
@@ -32,29 +34,16 @@ PROPERTIES="live"
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 # Requirements for dev-python/protobuf-python modified by this ebuild to avoid multi instance single slot issue.
 PROTOBUF_SLOT="0/3.21"
-LLVM_MAX_SLOT=16
-LLVM_MIN_SLOT=15
-LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} )
 
 gen_llvm_bdepend() {
-	for s in ${LLVM_SLOTS[@]} ; do
-		if (( ${s} >= ${LLVM_MIN_SLOT} && ${s} < ${LLVM_MAX_SLOT} )) ; then
-			echo "
-				(
-					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
-					>=sys-devel/lld-10
-				)
-			"
-		else
-			echo "
-				(
-					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
-					sys-devel/lld:${s}
-				)
-			"
-		fi
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}
+				sys-devel/llvm:${s}
+				sys-devel/lld:${s}
+			)
+		"
 	done
 }
 
@@ -93,6 +82,7 @@ RDEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	$(gen_llvm_bdepend)
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-41[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.26[${PYTHON_USEDEP}]
@@ -119,9 +109,6 @@ BDEPEND="
 	)
 	app-arch/unzip
 	dev-java/java-config
-	|| (
-		$(gen_llvm_bdepend)
-	)
 "
 PDEPEND="
 	$(python_gen_cond_dep '
@@ -159,14 +146,14 @@ eerror
 # Fix linking problems.  gcc+lld cannot be combined.
 use_clang() {
 einfo "FORCE_LLVM_SLOT may be specified."
-	local _LLVM_SLOTS=(${LLVM_SLOTS[@]})
+	local _LLVM_COMPAT=(${LLVM_COMPAT[@]})
 	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
-		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
+		_LLVM_COMPAT=( ${FORCE_LLVM_SLOT} )
 	fi
 
 	local found=0
 	local s
-	for s in ${_LLVM_SLOTS[@]} ; do
+	for s in ${_LLVM_COMPAT[@]} ; do
 		which "${CHOST}-clang-${s}" || continue
 		export CC="${CHOST}-clang-${s}"
 		export CXX="${CHOST}-clang++-${s}"
@@ -179,7 +166,7 @@ einfo "Switched to clang:${s}"
 	done
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "Use only clang slots ${LLVM_SLOTS[@]}"
+eerror "Use only clang slots ${LLVM_COMPAT[@]}"
 eerror
 		die
 	fi
@@ -188,8 +175,8 @@ eerror
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
-	LLVM_MAX_SLOT=${s}
-	llvm_pkg_setup
+	LLVM_SLOT=${s}
+	llvm-r1_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
 }

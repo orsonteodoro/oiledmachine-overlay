@@ -17,7 +17,6 @@ inherit desktop flag-o-matic llvm multilib-build python-any-r1 scons-utils
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
 "
-RESTRICT="mirror"
 S="${WORKDIR}/godot-${PV}-${STATUS}"
 
 DESCRIPTION="Godot export template for Linux (64-bit)"
@@ -73,11 +72,16 @@ MONO_LICENSE="
 # BSD-4 openssl - btls=on
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 # openssl - external/boringssl/crypto/ecdh/ecdh.c (libmono-btls-shared.dll)
-LICENSE+=" mono? ( ${MONO_LICENSE} )"
+LICENSE+="
+	mono? (
+		${MONO_LICENSE}
+	)
+"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 KEYWORDS="~amd64 ~riscv"
 
+RESTRICT="mirror"
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 
@@ -139,12 +143,16 @@ IUSE+="
 	${IUSE_NET}
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
+	clang? (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	denoise? (
 		lightmapper_rd
 	)
@@ -214,29 +222,24 @@ REQUIRED_USE+="
 "
 
 gen_cdepend_lto_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
 	done
-	echo -e "${o}"
 }
 
-CDEPEND_GCC_SANITIZER="
-	!clang? ( sys-devel/gcc[sanitize] )
-"
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},${san_type}]
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
@@ -244,7 +247,6 @@ gen_clang_sanitizer() {
 			)
 		"
 	done
-	echo "${o}"
 }
 
 gen_cdepend_sanitizers() {
@@ -252,13 +254,11 @@ gen_cdepend_sanitizers() {
 	for a in ${SANITIZERS[@]} ; do
 		echo "
 	${a}? (
-		|| (
-			${CDEPEND_GCC_SANITIZER}
-			clang? (
-				|| (
-					$(gen_clang_sanitizer ${a})
-				)
-			)
+		!clang? (
+			sys-devel/gcc[sanitize]
+		)
+		clang? (
+			$(gen_clang_sanitizer ${a})
 		)
 	)
 
@@ -297,9 +297,7 @@ CDEPEND_CLANG="
 			sys-devel/clang[${MULTILIB_USEDEP}]
 		)
 		lto? (
-			|| (
-				$(gen_cdepend_lto_llvm)
-			)
+			$(gen_cdepend_lto_llvm)
 		)
 	)
 "
@@ -605,7 +603,7 @@ ewarn
 	if use lto && use clang ; then
 		LLVM_MAX_SLOT="not_found"
 		local s
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version "sys-devel/clang:${s}" \
 				&& has_version "sys-devel/llvm:${s}" ; then
 				LLVM_MAX_SLOT=${s}

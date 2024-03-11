@@ -34,12 +34,12 @@ CUDA_TARGETS_COMPAT=(
 	compute_80
 )
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
-GCC_MAX_SLOT=12
-GCC_MIN_SLOT=9
-GCC_SLOTS=( ${GCC_MAX_SLOT} 11 10 ${GCC_MIN_SLOT} )
-LLVM_MAX_SLOT=16
-LLVM_MIN_SLOT=15
-LLVM_SLOTS=( ${LLVM_MAX_SLOT} ${LLVM_MIN_SLOT} ) # See https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/toolchains/remote_config/configs.bzl
+GCC_COMPAT=( {12..9} )
+GCC_MAX_SLOT="${GCC_COMPAT[0]}"
+GCC_MIN_SLOT="${GCC_COMPAT[-1]}"
+LLVM_COMPAT=( {16,15} ) # See https://github.com/tensorflow/tensorflow/blob/v2.13.0/tensorflow/tools/toolchains/remote_config/configs.bzl
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}"
 PYTHON_COMPAT=( python3_{10..11} )
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
@@ -65,7 +65,7 @@ gen_seq_inc() {
 	done
 }
 
-inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm prefix
+inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm-r1 prefix
 inherit rocm toolchain-funcs
 
 # For deps versioning, see
@@ -573,7 +573,7 @@ PDEPEND="
 	)
 "
 gen_llvm_bdepend() {
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		if (( ${s} >= ${LLVM_MIN_SLOT} && ${s} < ${LLVM_MAX_SLOT} )) ; then
 			echo "
 				(
@@ -696,9 +696,9 @@ use_gcc() {
 		| tr "\n" ":")
 einfo "PATH:\t${PATH}"
 	local found=0
-	use cuda && GCC_SLOTS=( 11 )
+	use cuda && GCC_COMPAT=( 11 )
 	local s
-	for s in ${GCC_SLOTS[@]} ; do
+	for s in ${GCC_COMPAT[@]} ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
 		export CC=${CHOST}-gcc-${symlink_ver}
 		export CXX=${CHOST}-g++-${symlink_ver}
@@ -711,22 +711,29 @@ einfo "Switched to gcc:${s}"
 	done
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "Use only gcc slots 9, 10, 11, 12"
+eerror "Use only gcc slots ${GCC_COMPAT[@]}"
 eerror
 		die
 	fi
-	if (( ${s} == 9 || ${s} == 11 || ${s} == 12 )) ; then
+	local found2
+	found2=0
+	for s_valid in ${GCC_SLOT[@]} ; do
+		if (( ${s} == ${s_valid} )) ; then
+			found2=1
+			break
+		fi
+	done
+	if (( ${found2} == 1 )) ; then
 		:;
 	else
 ewarn
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 ewarn
-einfo
-einfo "  Build time success on 2.11.0:"
-einfo
-einfo "    =sys-devel/gcc-11.3.1_p20230120-r1 with gold"
-einfo "    =sys-devel/gcc-12.2.1_p20230121-r1 with mold"
-einfo
+ewarn "  Build time success on 2.11.0:"
+ewarn
+ewarn "    =sys-devel/gcc-11.3.1_p20230120-r1 with gold"
+ewarn "    =sys-devel/gcc-12.2.1_p20230121-r1 with mold"
+ewarn
 	fi
 	${CC} --version || die
 	strip-unsupported-flags
@@ -742,21 +749,21 @@ eerror
 	fi
 
 einfo "FORCE_LLVM_SLOT may be specified."
-	local _LLVM_SLOTS=(${LLVM_SLOTS[@]})
+	local _LLVM_COMPAT=(${LLVM_COMPAT[@]})
 	if [[ -n "${FORCE_LLVM_SLOT}" ]] ; then
-		_LLVM_SLOTS=( ${FORCE_LLVM_SLOT} )
+		_LLVM_COMPAT=( ${FORCE_LLVM_SLOT} )
 	fi
 
 	if use rocm ; then
-		has_version "dev-util/hip:0/5.3" && _LLVM_SLOTS=( 15 )
-		has_version "dev-util/hip:0/5.4" && _LLVM_SLOTS=( 15 )
-		has_version "dev-util/hip:0/5.5" && _LLVM_SLOTS=( 16 )
-		has_version "dev-util/hip:0/5.6" && _LLVM_SLOTS=( 16 )
+		has_version "dev-util/hip:0/5.3" && _LLVM_COMPAT=( 15 )
+		has_version "dev-util/hip:0/5.4" && _LLVM_COMPAT=( 15 )
+		has_version "dev-util/hip:0/5.5" && _LLVM_COMPAT=( 16 )
+		has_version "dev-util/hip:0/5.6" && _LLVM_COMPAT=( 16 )
 	fi
 
 	local found=0
 	local s
-	for s in ${_LLVM_SLOTS[@]} ; do
+	for s in ${_LLVM_COMPAT[@]} ; do
 		which "${CHOST}-clang-${s}" || continue
 		export CC="${CHOST}-clang-${s}"
 		export CXX="${CHOST}-clang++-${s}"
@@ -769,7 +776,7 @@ einfo "Switched to clang:${s}"
 	done
 	if (( ${found} != 1 )) ; then
 eerror
-eerror "Use only clang slots ${LLVM_SLOTS[@]}"
+eerror "Use only clang slots ${LLVM_COMPAT[@]}"
 eerror
 		die
 	fi
@@ -778,8 +785,8 @@ eerror
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."
 	fi
-	LLVM_MAX_SLOT=${s}
-	llvm_pkg_setup
+	LLVM_SLOT=${s}
+	llvm-r1_pkg_setup
 	${CC} --version || die
 	strip-unsupported-flags
 }
@@ -817,11 +824,11 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
-		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
-		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
-		llvm_pkg_setup
+		has_version "dev-util/hip:0/5.3" && LLVM_SLOT=15
+		has_version "dev-util/hip:0/5.4" && LLVM_SLOT=15
+		has_version "dev-util/hip:0/5.5" && LLVM_SLOT=16
+		has_version "dev-util/hip:0/5.6" && LLVM_SLOT=16
+		llvm-r1_pkg_setup
 		export LLVM_SLOT
 	elif tc-is-clang || use clang ; then
 		use_clang
@@ -933,8 +940,10 @@ einfo "Using LLD (TESTING)"
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
 	elif has_version "sys-devel/binutils[gold]" ; then
 		# Linking takes 15 hours will the first .so and has linker lag issues.
+ewarn
 ewarn "Using gold.  Expect linking times more than 30 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
+ewarn
 		ld.gold --version || die
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=gold
@@ -960,8 +969,10 @@ ewarn "Link times may worsen if -Wl,--thread-count,${nthreads} is not specified 
 		append-ldflags -Wl,--thread-count,${nthreads}
 		BUILD_LDFLAGS+=" -Wl,--thread-count,${nthreads}"
 	else
+ewarn
 ewarn "Using BFD.  Expect linking times more than 45 hrs on older machines."
 ewarn "Consider using -fuse-ld=mold or -fuse-ld=lld."
+ewarn
 		ld.bfd --version || die
 		append-ldflags -fuse-ld=bfd
 		BUILD_LDFLAGS+=" -fuse-ld=bfd"
@@ -1200,7 +1211,7 @@ einfo
 			# Build with GCC but initialize LLVM_SLOT.
 			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")
-			export TF_ROCM_LLVM_SLOT="${LLVM_MAX_SLOT}"
+			export TF_ROCM_LLVM_SLOT="${LLVM_SLOT}"
 			export HIP_PATH="${EPREFIX}/usr"
 			export ROCM_PATH="${EPREFIX}/usr"
 
@@ -1333,10 +1344,10 @@ add_sandbox_rules() {
 		/usr/lib/${EPYTHON}/site-packages/Cython.3/Tempita
 		/usr/lib/${EPYTHON}/site-packages/Cython.3/Tempita/__pycache__
 	)
-	einfo "Adding sandbox rules"
+einfo "Adding sandbox rules"
 	local path
 	for path in "${L[@]}" ; do
-		einfo "addpredict ${path}" # Recursive
+einfo "addpredict ${path}" # Recursive
 		addpredict "${path}"
 	done
 }
