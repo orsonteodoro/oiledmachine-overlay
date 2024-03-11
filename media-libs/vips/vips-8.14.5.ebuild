@@ -29,6 +29,7 @@ SLOT="1/${SO_MAJOR}"
 # Going with the CI tested interpretation.
 # CI disables deprecated but enabled by default in meson_options.txt
 IUSE+="
+${LLVM_COMPAT[@]/#/llvm_slot_}
 +analyze +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples +exif +fftw
 +fits fuzz-testing +gif -graphicsmagick +gsf -gtk-doc +fontconfig +hdr +heif
 +imagemagick +imagequant +introspection +jpeg +jpeg2k -jxl +lcms +libde265
@@ -37,8 +38,14 @@ IUSE+="
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+	?? (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	cgif? (
 		imagequant
+	)
+	fuzz-testing? (
+		test
 	)
 	imagequant? (
 		png
@@ -49,8 +56,10 @@ REQUIRED_USE="
 	svg? (
 		cairo
 	)
-	fuzz-testing? (
-		test
+	test? (
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 "
 # Assumed U 22.04.1
@@ -170,7 +179,7 @@ gen_llvm_bdepend()
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
@@ -186,7 +195,7 @@ gen_llvm_test_bdepend()
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				!fuzz-testing? (
 					=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
 				)
@@ -224,6 +233,7 @@ BDEPEND+="
 		>=dev-util/gtk-doc-1.33.2
 	)
 	test? (
+		$(gen_llvm_test_bdepend)
 		$(python_gen_any_dep '
 			>=dev-python/pip-22.0.2[${PYTHON_USEDEP}]
 			>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
@@ -231,15 +241,10 @@ BDEPEND+="
 			>=dev-python/wheel-0.37.1[${PYTHON_USEDEP}]
 			dev-python/pyvips[${PYTHON_USEDEP}]
 		')
-		|| (
-			$(gen_llvm_test_bdepend)
-		)
 	)
 	|| (
+		$(gen_llvm_bdepend)
 		>=sys-devel/gcc-${GCC_PV}
-		|| (
-			$(gen_llvm_bdepend)
-		)
 	)
 "
 PDEPEND+="
