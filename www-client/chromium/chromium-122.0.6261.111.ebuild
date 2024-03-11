@@ -119,8 +119,8 @@ LICENSE_FINGERPRINT="\
 5b87c8a570a673a33dde5316febb377e02dfee972307f7314864c7ba2d5b3c8e\
 "
 LLVM_COMPAT=( {18..17} ) # [inclusive, inclusive] high to low
-LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 10 for profdata file format.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/122.0.6261.111/tools/clang/scripts/update.py#L42
+LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 10 for profdata file format.
 LLVM_OFFICIAL_SLOT="${LLVM_MAX_SLOT}" # Cr official slot
 MESA_PV="20.3.5"
 PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_MIN_SLOT}"
