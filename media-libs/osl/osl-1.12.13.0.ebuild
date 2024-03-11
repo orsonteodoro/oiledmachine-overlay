@@ -86,16 +86,16 @@ gen_llvm_depend()
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		llvm_slot_${s}? (
-			!cuda? (
-				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			llvm_slot_${s}? (
+				!cuda? (
+					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+					sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				)
+				cuda? (
+					sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+					sys-devel/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+				)
 			)
-			cuda? (
-				sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
-				sys-devel/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
-			)
-		)
 		"
 	done
 }
@@ -104,13 +104,11 @@ gen_opx_llvm_rdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		llvm_slot_${s}? (
-			(
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 			)
-		)
 		"
 	done
 }
@@ -119,13 +117,11 @@ gen_llvm_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		llvm_slot_${s}? (
-			(
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
-		)
 		"
 	done
 }
@@ -207,8 +203,6 @@ DEPEND+="
 "
 BDEPEND+="
 	$(gen_llvm_depend)
-"
-BDEPEND+="
 	test? (
 		$(python_gen_cond_dep '
 			media-libs/openimageio[truetype]
