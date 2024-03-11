@@ -963,7 +963,8 @@ src_unpack() {
 
 src_prepare() {
 	default
-	sed -i -e "s|csound64|csound|g" \
+	sed -i \
+		-e "s|csound64|csound|g" \
 		"meson.build" \
 		|| die
 }
@@ -976,7 +977,7 @@ multilib_src_compile() {
 multilib_src_install() {
 	meson_src_install
 
-	if [[ "${MY_PV}" =~ 9999 ]] ; then
+	if [[ "${MY_PV}" =~ "9999" ]] ; then
 		LCNR_SOURCE="${HOME}/.cargo"
 		LCNR_TAG="third_party_cargo"
 		lcnr_install_files
