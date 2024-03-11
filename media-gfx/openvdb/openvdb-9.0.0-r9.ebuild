@@ -6,8 +6,9 @@
 EAPI=8
 
 LEGACY_TBB_SLOT="2"
-LLVM_COMPAT=( 14 13 ) # Not official, same as openvdb 10
-LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
+LLVM_COMPAT=( {15..3} ) # Max limit for Blender
+LLVM_COMPAT_AX=( {14..5} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.8 2.5.7"
 OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
@@ -17,7 +18,7 @@ OPENVDB_ABIS_=( ${OPENVDB_ABIS_[@]/%/-compat} )
 PYTHON_COMPAT=( python3_{8..11} )
 X86_CPU_FLAGS=( avx sse4_2 )
 
-inherit cmake flag-o-matic llvm python-single-r1
+inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz
@@ -30,8 +31,9 @@ HOMEPAGE="https://www.openvdb.org"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
 IUSE+="
-${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS_[@]} +abi$(ver_cut 1 ${PV})-compat
+${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 ax +blosc cuda doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
 -tbbmalloc nanovdb -no-concurrent-malloc -openexr test -vdb_lod +vdb_print
 -vdb_render -vdb_view
@@ -51,6 +53,11 @@ REQUIRED_USE+="
 		jemalloc
 		tbbmalloc
 		no-concurrent-malloc
+	)
+	ax? (
+		^^ (
+			${LLVM_COMPAT_AX[@]/#/llvm_slot_}
+		)
 	)
 	jemalloc? (
 		|| (
@@ -98,7 +105,29 @@ gen_openexr_pairs() {
 	done
 }
 
-DEPEND+="
+gen_ax_depend() {
+	local s
+	for s in ${LLVM_COMPAT_AX[@]} ; do
+		if [[ "${s}" == "3" ]] ; then
+			echo "
+				llvm_slot_${s}? (
+					=sys-devel/clang-${s}*
+					=sys-devel/llvm-${s}*
+					>=sys-devel/clang-3.8
+				)
+			"
+		else
+			echo "
+				llvm_slot_${s}? (
+					=sys-devel/clang-${s}*
+					=sys-devel/llvm-${s}*
+				)
+			"
+		fi
+	done
+}
+
+RDEPEND+="
 	|| (
                 $(gen_openexr_pairs)
                 !openexr? (
@@ -120,7 +149,7 @@ DEPEND+="
 	>=dev-libs/boost-1.66:=
 	>=sys-libs/zlib-1.2.7:=
 	ax? (
-		<sys-devel/llvm-15:=
+		$(gen_ax_depend)
 	)
 	blosc? (
 		>=dev-libs/c-blosc-1.17:=
@@ -154,9 +183,30 @@ DEPEND+="
 		x11-libs/libXxf86vm
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
+gen_llvm_bdepend() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		if [[ "${s}" == "3" ]] ; then
+			echo "
+				llvm_slot_${s}? (
+					=sys-devel/clang-${s}*
+					=sys-devel/llvm-${s}*
+					>=sys-devel/clang-3.8
+				)
+			"
+		else
+			echo "
+				llvm_slot_${s}? (
+					=sys-devel/clang-${s}*
+					=sys-devel/llvm-${s}*
+				)
+			"
+		fi
+	done
+}
 BDEPEND+="
 	>=dev-build/cmake-3.16.2-r1
 	>=sys-devel/bison-3
@@ -176,11 +226,8 @@ BDEPEND+="
 		>=dev-util/cppunit-1.10
 	)
 	|| (
+		$(gen_llvm_bdepend)
 		>=sys-devel/gcc-6.3.1
-		(
-			<sys-devel/clang-15
-			>=sys-devel/clang-3.8
-		)
 		>=dev-lang/icc-17
 	)
 "
