@@ -122,7 +122,7 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	CPPFLAGS="-DU_STATIC_IMPLEMENTATION" \
 	LDFLAGS="-static -L'${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb' ${LIBSTDCXX_LIBS} ${LIBCXX_LIBS}" \
 	meson setup build \
-		--buildtype=release \
+		-Dbuildtype=release \
 		--default-library=static \
 		--prefix="/prefix" \
 		--strip \

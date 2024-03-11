@@ -117,7 +117,7 @@ _src_configure() {
 		$(meson_use test dev_build)
 		$(tpgo_meson_src_configure)
 		-Duse_miniz=$(usex zlib "false" "true")
-		--buildtype release
+		-Dbuildtype=release
 	)
 	if [[ "${lib_type}" == "shared" ]] ; then
 		emesonargs+=(
