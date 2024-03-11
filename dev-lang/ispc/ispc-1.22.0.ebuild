@@ -17,9 +17,10 @@ UOPTS_SUPPORT_TPGO=1
 
 inherit cmake flag-o-matic python-any-r1 llvm toolchain-funcs uopts
 
-if [[ ${PV} =~ 9999 ]]; then
+if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/ispc/ispc.git"
+	FALLBACK_COMMIT="bd2c42d42e0cc3da1baf92160b82d4dc820a02ee" # Nov 16, 2023
 	IUSE+=" fallback-commit"
 else
 	BENCHMARK_COMMIT="e991355c02b93fe17713efe04cbc2e278e00fdbd"
@@ -176,12 +177,12 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 ]]; then
-		use fallback-commit && export EGIT_COMMIT="14bd04aa7e68cd33eb1d96b33058cb64d7ef76f4" # May 5, 2023
+	if [[ "${PV}" =~ "9999" ]]; then
+		use fallback-commit && export EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 		cd "${S}" || die
-		local actual_pv=$(grep -r -e "ISPC_VERSION " common/version.h \
+		local actual_pv=$(grep -r -e "ISPC_VERSION " "common/version.h" \
 			| sed -e "s|dev||g" \
 			| cut -f 2 -d '"')
 		local expected_pv=$(ver_cut 1-3 ${PV})
@@ -206,12 +207,21 @@ eerror
 
 			d="${S}/benchmarks/vendor/google/benchmark"
 			mkdir -p "${d}" || die
-			mv "benchmark-${BENCHMARK_COMMIT}/"* "${d}" || die
-			ln -s "${S}/benchmarks" "${S}/benchmarks/benchmarks" || die
+			mv \
+				"benchmark-${BENCHMARK_COMMIT}/"* \
+				"${d}" \
+				|| die
+			ln -s \
+				"${S}/benchmarks" \
+				"${S}/benchmarks/benchmarks" \
+				|| die
 
 			d="${S}/ispcrt/tests/vendor/google/googletest"
 			mkdir -p "${d}" || die
-			mv "googletest-${GTEST_COMMIT}/"* "${d}" || die
+			mv \
+				"googletest-${GTEST_COMMIT}/"* \
+				"${d}" \
+				|| die
 		fi
 	fi
 }
@@ -222,7 +232,10 @@ src_prepare() {
 		# This ebuild doesn't even have multilib support, nor need it.
 		# https://bugs.gentoo.org/730062
 		ewarn "Removing auto-x86 build on amd64"
-		sed -i -e 's:set(target_arch "i686"):return():' cmake/GenerateBuiltins.cmake || die
+		sed -i \
+			-e 's:set(target_arch "i686"):return():' \
+			"cmake/GenerateBuiltins.cmake" \
+			|| die
 	fi
 
 	cmake_src_prepare
@@ -353,8 +366,10 @@ train_trainer_custom() {
 }
 
 src_test() {
-	# Inject path to prevent using system ispc
-	PATH="${BUILD_DIR}/bin:${PATH}" ${EPYTHON} ./run_tests.py || die "Testing failed under ${EPYTHON}"
+	# Set the path to prevent using the already installed ispc.
+	PATH="${BUILD_DIR}/bin:${PATH}" \
+	${EPYTHON} ./run_tests.py \
+		|| die "Testing failed under ${EPYTHON}"
 }
 
 src_install() {
