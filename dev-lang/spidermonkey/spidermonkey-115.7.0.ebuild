@@ -3,7 +3,7 @@
 
 EAPI="8"
 
-LLVM_COMPAT=( 17 16 15 )
+LLVM_COMPAT=( {17..15} )
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
@@ -60,26 +60,39 @@ HOMEPAGE="
 	https://firefox-source-docs.mozilla.org/js/index.html
 "
 LICENSE="MPL-2.0"
+#RESTRICT="test"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="$(ver_cut 1)"
 IUSE="clang cpu_flags_arm_neon debug +jit lto -simd test"
-#RESTRICT="test"
-RESTRICT="!test? ( test )"
 gen_clang_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
-		echo  "
-		(
-			sys-devel/llvm:${s}
-			clang? (
-				sys-devel/lld:${s}
-				sys-devel/clang:${s}
-				virtual/rust:0/llvm-${s}
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/llvm:${s}
+				clang? (
+					sys-devel/clang:${s}
+					sys-devel/lld:${s}
+					virtual/rust:0/llvm-${s}
+				)
 			)
-		)
 		"
 	done
 
 }
+RDEPEND="
+	>=dev-libs/icu-73.1:=
+	dev-libs/nspr
+	sys-libs/readline:0=
+	sys-libs/zlib
+"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	${PYTHON_DEPS}
 	!clang? (
@@ -95,14 +108,6 @@ BDEPEND="
 		$(gen_clang_bdepend)
 	)
 "
-DEPEND="
-	>=dev-libs/icu-73.1:=
-	dev-libs/nspr
-	sys-libs/readline:0=
-	sys-libs/zlib
-"
-RDEPEND="${DEPEND}"
-
 
 llvm_check_deps() {
 	if ! has_version -b "sys-devel/llvm:${LLVM_SLOT}" ; then

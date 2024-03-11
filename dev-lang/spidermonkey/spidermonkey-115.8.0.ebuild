@@ -1,4 +1,4 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="8"
@@ -33,7 +33,7 @@ if [[ "${PV}" == *_rc* ]] ; then
 fi
 
 # Patch version
-FIREFOX_PATCHSET="firefox-115esr-patches-06.tar.xz"
+FIREFOX_PATCHSET="firefox-115esr-patches-09.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-01.tar.xz"
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
@@ -47,7 +47,7 @@ WANT_AUTOCONF="2.1"
 
 inherit autotools check-reqs flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 toolchain-funcs
 
-KEYWORDS="amd64 arm arm64 ~loong ~mips ~ppc ppc64 ~riscv ~sparc x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 S="${WORKDIR}/firefox-${MY_PV}/js/src"
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
@@ -82,12 +82,22 @@ gen_clang_bdepend() {
 			)
 		"
 	done
+
 }
+RDEPEND="
+	>=dev-libs/icu-73.1:=
+	dev-libs/nspr
+	sys-libs/readline:0=
+	sys-libs/zlib
+"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
+	${PYTHON_DEPS}
 	!clang? (
 		virtual/rust
 	)
-	${PYTHON_DEPS}
 	virtual/pkgconfig
 	test? (
 		$(python_gen_any_dep '
@@ -98,42 +108,33 @@ BDEPEND="
 		$(gen_clang_bdepend)
 	)
 "
-RDEPEND="
-	>=dev-libs/icu-73.1:=
-	dev-libs/nspr
-	sys-libs/readline:0=
-	sys-libs/zlib
-"
-DEPEND="
-	${RDEPEND}
-"
 
 llvm_check_deps() {
 	if ! has_version -b "sys-devel/llvm:${LLVM_SLOT}" ; then
-einfo "sys-devel/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		einfo "sys-devel/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 		return 1
 	fi
 
 	if use clang ; then
 		if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
-einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+			einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
 		if ! has_version -b "virtual/rust:0/llvm-${LLVM_SLOT}" ; then
-einfo "virtual/rust:0/llvm-${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+			einfo "virtual/rust:0/llvm-${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
 		if ! tc-ld-is-mold ; then
 			if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
-einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+				einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 				return 1
 			fi
 		fi
 	fi
 
-einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
+	einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
 python_check_deps() {
@@ -248,8 +249,8 @@ eerror
 		addpredict "/proc/self/oom_score_adj"
 
 		if ! mountpoint -q /dev/shm ; then
-	# If /dev/shm is not available, configure is known to fail with
-	# a traceback report referencing
+	# If /dev/shm is not available, configure is known to fail with a
+	# traceback report referencing
 	# /usr/lib/pythonN.N/multiprocessing/synchronize.py
 ewarn "/dev/shm is not mounted -- expect build failures!"
 		fi
@@ -282,7 +283,7 @@ src_prepare() {
 		"python/mozbuild/mozbuild/configure/check_debug_ranges.py" \
 		|| die "sed failed to set toolchain prefix"
 
-	# Use prefix shell in wrapper linker scripts, bug #789660
+	# use prefix shell in wrapper linker scripts, bug #789660
 	hprefixify "${S}/../../build/cargo-"{,host-}"linker"
 
 einfo "Removing pre-built binaries ..."
@@ -325,7 +326,7 @@ einfo "Enforcing the use of clang due to USE=clang ..."
 		fi
 
 		if tc-is-gcc; then
-			have_switched_compiler="yes"
+			have_switched_compiler=yes
 		fi
 		AR="llvm-ar"
 		CC="${CHOST}-clang-${version_clang}"
@@ -389,6 +390,7 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 		$(use lto && ! use clang && echo "
 			--enable-linker=bfd
 			--enable-lto=full
+
 		")
 		$(use lto && use clang && tc-ld-is-mold && echo "
 			--enable-linker=mold
@@ -423,7 +425,7 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 
 	# Use system's Python environment
 	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
-	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS="mach"
+	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS=mach
 
 	# Show flags we will use
 einfo "Build CFLAGS:    ${CFLAGS}"
@@ -434,7 +436,7 @@ einfo "Build RUSTFLAGS: ${RUSTFLAGS}"
 	# Forcing system-icu allows us to skip patching bundled ICU for PPC
 	# and other minor arches
 	ECONF_SOURCE="${S}" \
-	econf \
+		econf \
 		${myeconfargs[@]} \
 		XARGS="${EPREFIX}/usr/bin/xargs"
 }

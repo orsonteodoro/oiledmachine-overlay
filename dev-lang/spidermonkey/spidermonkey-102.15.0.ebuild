@@ -3,7 +3,7 @@
 
 EAPI="8"
 
-LLVM_COMPAT=( 16 15 14 )
+LLVM_COMPAT=( {16..14} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 
 MY_MAJOR=$(ver_cut 1)
@@ -58,29 +58,41 @@ SRC_URI="
 DESCRIPTION="SpiderMonkey is Mozilla's JavaScript engine written in C and C++"
 HOMEPAGE="https://spidermonkey.dev https://firefox-source-docs.mozilla.org/js/index.html "
 LICENSE="MPL-2.0"
-SLOT="$(ver_cut 1)"
-IUSE="clang cpu_flags_arm_neon debug +jit lto -simd test"
 #RESTRICT="test"
 RESTRICT="
 	!test? (
 		test
 	)
 "
+SLOT="$(ver_cut 1)"
+IUSE="
+${LLVM_COMPAT[@]/#/llvm_slot_}
+clang cpu_flags_arm_neon debug +jit lto -simd test
+"
 gen_clang_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		(
-			sys-devel/llvm:${s}
-			clang? (
-				sys-devel/clang:${s}
-				sys-devel/lld:${s}
-				virtual/rust:0/llvm-${s}
+			llvm_slot_${s}? (
+				sys-devel/llvm:${s}
+				clang? (
+					sys-devel/clang:${s}
+					sys-devel/lld:${s}
+					virtual/rust:0/llvm-${s}
+				)
 			)
-		)
 		"
 	done
 }
+RDEPEND="
+	>=dev-libs/icu-71.1:=
+	dev-libs/nspr
+	sys-libs/readline:0=
+	sys-libs/zlib
+"
+DEPEND="
+	${RDEPEND}
+"
 BDEPEND="
 	!clang? (
 		virtual/rust
@@ -95,15 +107,6 @@ BDEPEND="
 	|| (
 		$(gen_clang_bdepend)
 	)
-"
-DEPEND="
-	>=dev-libs/icu-71.1:=
-	dev-libs/nspr
-	sys-libs/readline:0=
-	sys-libs/zlib
-"
-RDEPEND="
-	${DEPEND}
 "
 
 llvm_check_deps() {
