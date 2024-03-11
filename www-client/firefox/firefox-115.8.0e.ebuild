@@ -722,12 +722,14 @@ gen_llvm_bdepend() {
 	local LLVM_SLOT
 	for LLVM_SLOT in ${LLVM_COMPAT[@]} ; do
 		echo "
-			sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-			sys-devel/lld:${LLVM_SLOT}
-			sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-			virtual/rust:0/llvm-${LLVM_SLOT}
-			pgo? (
-				=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
+			llvm_slot_${LLVM_SLOT}? (
+				sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+				sys-devel/lld:${LLVM_SLOT}
+				sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+				virtual/rust:0/llvm-${LLVM_SLOT}
+				pgo? (
+					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
+				)
 			)
 		"
 	done
