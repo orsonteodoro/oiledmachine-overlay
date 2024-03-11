@@ -240,7 +240,14 @@ pkg_setup() {
 			ewarn "jemalloc may need rebuild if vdb_print -version stalls."
 		fi
 	fi
-	use ax && llvm_pkg_setup
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		if use "llvm_slot_${s}" ; then
+			LLVM_MAX_SLOT="${s}"
+			llvm_pkg_setup
+			break
+		fi
+	done
 }
 
 src_prepare() {
