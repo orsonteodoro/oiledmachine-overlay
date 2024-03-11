@@ -189,7 +189,7 @@ gen_omp_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				media-gfx/blender[llvm-${s}]
+				media-gfx/blender[llvm_slot_${s}]
 				sys-libs/libomp:${s}
 			)
 		"
@@ -332,7 +332,7 @@ check_iomp5() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		if use denoiser \
-			&& has_version "media-gfx/blender[llvm-${s}]" \
+			&& has_version "media-gfx/blender[llvm_slot_${s}]" \
 			&& [[ ! -e "${EROOT}/usr/lib/llvm/${s}/$(get_libdir)/libiomp5.so" ]] \
 	; then
 ewarn
