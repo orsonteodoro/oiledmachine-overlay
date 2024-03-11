@@ -108,7 +108,7 @@ CAIRO_PV="1.16.0"
 CLANG_PV="17"
 FFMPEG_SLOT="0/58.60.60" # Same as 5.1 in chromium tarball [do not use] ; 0/libavutil_major.libavcodec_major.libavformat_major
 FONTCONFIG_PV="2.14.2" # Use vendored list for versioning
-FREETYPE_PV="2.13.1" # Use vendored list for versioning
+FREETYPE_PV="2.13.2" # Use vendored list for versioning
 GCC_PV="10.2.1"
 GLIB_PV="2.66.8"
 GLIBC_PV="2.31"
@@ -202,7 +202,7 @@ UNLISTED_RDEPEND="
 	>=dev-libs/libtasn1-4.16.0
 	>=dev-libs/libunistring-0.9.10
 	>=dev-libs/nettle-3.7.3
-	>=media-libs/harfbuzz-7.3.0
+	>=media-libs/harfbuzz-8.2.2
 	>=media-libs/libglvnd-1.3.2
 "
 # For harfbuzz use vendored list for versioning
