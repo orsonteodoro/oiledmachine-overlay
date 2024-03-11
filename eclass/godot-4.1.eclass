@@ -3,9 +3,6 @@
 # Distributed under the terms of the GNU General Public License v2
 
 STATUS="stable"
-LLVM_COMPAT=( {15..13} ) # See https://github.com/godotengine/godot/blob/4.1-stable/misc/hooks/pre-commit-clang-format#L79
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( python3_{8..11} )
 
 BROTLI_PV="1.0.9"
 CA_CERTIFICATES_PV="20230602"
@@ -21,6 +18,8 @@ LIBSQUISH_PV="1.15"
 LIBTHEORA_PV="1.2.0_pre9999"
 LIBVORBIS_PV="1.3.7"
 LIBWEBP_PV="1.3.2"
+LLVM_COMPAT=( {15..13} ) # See https://github.com/godotengine/godot/blob/4.1-stable/misc/hooks/pre-commit-clang-format#L79
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MBEDTLS_PV="2.28.4"
 MINIUPNPC_PV="2.2.5"
 MONO_PV="6.12.0.182" # same as godot-export-templates-bin # todo
@@ -28,6 +27,7 @@ MONO_PV_MIN="6.0.0.176" # todo
 MSDFGEN_PV="1.10"
 OPENXR_PV="1.0.28"
 PKGCONF_PV="1.3.7" # skip
+PYTHON_COMPAT=( python3_{8..11} )
 RECASTNAVIGATION_PV="1.6.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1" # From past experience.  speech-dispatcher team noted a bug. # skip
 SPEECH_DISPATCHER_PV_MIN="0.8.8" # skip
