@@ -23,6 +23,7 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 LLVM_COMPAT=( {15..13} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..11} )
 OPENEXR_V2_PV="2.5.8 2.5.7"
 OPENEXR_V3_PV="3.1.7 3.1.5 3.1.4"
@@ -30,7 +31,7 @@ QT5_MIN="5.6"
 QT6_MIN="6"
 TEST_MODE="distro" # Can be upstream or distro
 
-inherit cmake flag-o-matic llvm-r1 multilib-minimal python-single-r1 toolchain-funcs
+inherit cmake flag-o-matic llvm multilib-minimal python-single-r1 toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
@@ -45,7 +46,9 @@ cuda doc optix partio python qt5 qt6 static-libs test wayland X
 r3
 "
 REQUIRED_USE+="
-	${LLVM_REQUIRED_USE}
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -268,7 +271,7 @@ ewarn
 		python-single-r1_pkg_setup
 	fi
 
-	llvm-r1_pkg_setup
+	llvm_pkg_setup
 }
 
 src_prepare() {
