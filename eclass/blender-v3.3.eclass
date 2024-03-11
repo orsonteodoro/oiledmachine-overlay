@@ -99,17 +99,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 
-# gen_llvm_iuse is same as Mesa and LLVM latest stable keyword.
-gen_llvm_iuse()
-{
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		echo " llvm_slot_${s}"
-	done
-}
-
 IUSE+="
-$(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
