@@ -9,11 +9,11 @@ EAPI=8
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# CEF_DEPENDS_VERSION="119.0.6045.199"
-# CEF_DEPENDS_VERSION_A="119"
+# CEF_DEPENDS_VERSION="121.0.6167.139"
+# CEF_DEPENDS_VERSION_A="121"
 # CEF_DEPENDS_VERSION_B="0"
-# CEF_DEPENDS_VERSION_C="6045"
-# CEF_DEPENDS_VERSION_D="119"
+# CEF_DEPENDS_VERSION_C="6167"
+# CEF_DEPENDS_VERSION_D="139"
 #
 # Third party licenses:
 #
@@ -43,23 +43,23 @@ EAPI=8
 #
 # For Chromium *DEPENDs and versioning see:
 #
-# https://github.com/chromium/chromium/tree/119.0.6045.199/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/119.0.6045.199/build/install-build-deps.py
-# https://github.com/chromium/chromium/blob/119.0.6045.199/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/121.0.6167.139/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/121.0.6167.139/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/121.0.6167.139/tools/clang/scripts/update.py#L42
 #
 # For vendored Chromium third party *DEPENDs versioning see:
 #
-# https://github.com/chromium/chromium/blob/119.0.6045.199/third_party/fontconfig/include/config.h#L290
-# https://github.com/chromium/chromium/blob/119.0.6045.199/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/121.0.6167.139/third_party/fontconfig/include/config.h#L290
+# https://github.com/chromium/chromium/blob/121.0.6167.139/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
-# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-119.0.6045.199/work/chromium-119.0.6045.199/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/freetype/src/CMakeLists.txt      L165    ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/harfbuzz-ng/src/configure.ac     L3      ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/libdrm/src/meson.build           L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
 
 inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
@@ -163,7 +163,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
 
 # For details see:
-# https://github.com/chromium/chromium/blob/119.0.6045.199/build/install-build-deps.sh#L237
+# https://github.com/chromium/chromium/blob/121.0.6167.139/build/install-build-deps.sh#L237
 
 # The version is obtained in src_prepare
 
@@ -245,7 +245,7 @@ CHROMIUM_RDEPEND="
 	>=sys-devel/gcc-${GCC_PV}[cxx(+)]
 	>=x11-libs/pango-1.46.2
 	>=x11-libs/pixman-0.40.0
-	>=sys-libs/zlib-1.2.13
+	>=sys-libs/zlib-1.3
 	X? (
 		>=x11-libs/libX11-1.7.2
 		>=x11-libs/libXau-1.0.9
@@ -358,7 +358,7 @@ QA_PREBUILT="
 "
 
 # From first line of https://www.spotify.com/us/download/linux/
-PUBLIC_KEY_ID="7A3A762FAFD4A51F"
+PUBLIC_KEY_ID="6224F9941A8AA6D1"
 PUBLIC_KEY_URI="https://download.spotify.com/debian/pubkey_${PUBLIC_KEY_ID}.gpg"
 
 SRC_URI+="
@@ -368,7 +368,7 @@ SRC_URI+="
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	MY_PV=$(ver_cut 1-4 ${PV})
 	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="g36b715a1" # Change this after every bump
+	BUILD_ID_AMD64="g4d59ad7c" # Change this after every bump
 	if [[ -z "${MY_REV}" ]] ; then
 		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
 	else
@@ -386,20 +386,20 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 fi
 
 # Details of the repo public key itself
-KEY_ID="E27409F51D1B66337F2D2F417A3A762FAFD4A51F" # RSA Key
+KEY_ID="63CBEEC9006602088F9B19326224F9941A8AA6D1" # RSA Key
 EXPECTED_UID="Spotify Public Repository Signing Key <tux@spotify.com>"
 
 # It is possible to fingerprint the public keys using ebuild, but it is only
 # done in the non-live ebuild versions.
 
 PUBKEY_SHA512="\
-18a64ad24bc449b433d728c3409bdef13be1226ee0cf1ae06fc637f384403ef1\
-4322352ae0ce611fd26bbf4a49abe7d4785ef2a4a1c63cb2d14e213fef59485d\
+3daed8da8bf3dca500fd04720617bf7d969c42ef563fb89d0cbd8084c54d6c62\
+d8128e64753367148ae85b00f343ee3ccde9628d789ff749bdb26d8a63cb347d\
 "
 
 PUBKEY_BLAKE2B="\
-8690cf17ba9f06aefe82b5a12684c007a40e20302fe806fa78be4c1d744cc486\
-47232c71b3b3a24caf96ea58e0c1b994fe4618b708b516342e61617e3b53f15a\
+686ae0164cb787fee7d0064d7a770ee5357992aad8651f1207e8b5dc7ba0b490\
+571f52905218a9ec0664906d722069899783c4fed5974c4833252f85a6a8d977\
 "
 
 EXPECTED_DEPENDS_FINGERPRINT="\
