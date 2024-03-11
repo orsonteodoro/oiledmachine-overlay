@@ -117,6 +117,13 @@ REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_hip_targets)
 	${PYTHON_REQUIRED_USE}
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+	^^ (
+		clang
+		gcc
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -128,13 +135,6 @@ REQUIRED_USE+="
 		|| (
 			${ROCM_SLOTS[@]}
 		)
-	)
-	^^ (
-		${LLVM_COMPAT[@]/#/llvm_slot_}
-	)
-	^^ (
-		clang
-		gcc
 	)
 "
 gen_clang_depends() {
