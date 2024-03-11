@@ -7,9 +7,9 @@ EAPI=8
 # https://github.com/ispc/ispc/blob/main/common/version.h
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-PYTHON_COMPAT=( python3_{10..11} )
 LLVM_COMPAT=( {18..13} ) # See https://github.com/ispc/ispc/blob/v1.21.1/src/ispc_version.h
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+PYTHON_COMPAT=( python3_{10..11} )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -49,6 +49,11 @@ LICENSE="
 	BSD-2
 	UoI-NCSA
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -84,28 +89,23 @@ REQUIRED_USE+="
 		xe
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
 
 gen_llvm_depends() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		llvm_slot_${s}? (
-			sys-devel/clang:${s}=
-			lto? (
-				sys-devel/lld:${s}
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}=
+				lto? (
+					sys-devel/lld:${s}
+				)
+				openmp? (
+					sys-libs/libomp:${s}
+				)
+				video_cards_intel? (
+					>=dev-util/spirv-llvm-translator-${s}
+				)
 			)
-			openmp? (
-				sys-libs/libomp:${s}
-			)
-			video_cards_intel? (
-				>=dev-util/spirv-llvm-translator-${s}
-			)
-		)
 		"
 	done
 }
@@ -114,10 +114,10 @@ gen_omp_depends() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-		(
-			sys-devel/clang:${s}=
-			sys-libs/libomp:${s}
-		)
+			llvm_slot_${s}? (
+				sys-devel/clang:${s}=
+				sys-libs/libomp:${s}
+			)
 		"
 	done
 }
@@ -125,6 +125,7 @@ gen_omp_depends() {
 # Some versions obtained from CI.
 # U 22.04
 RDEPEND="
+	$(gen_llvm_depends)
 	>=sys-libs/ncurses-6.3
 	>=sys-libs/zlib-1.2.11
 	openmp? (
@@ -138,9 +139,6 @@ RDEPEND="
 	)
 	video_cards_intel? (
 		>=dev-libs/level-zero-1.10.0
-	)
-	|| (
-		$(gen_llvm_depends)
 	)
 "
 DEPEND="
