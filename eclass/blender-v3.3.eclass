@@ -114,6 +114,7 @@ $(gen_llvm_iuse)
 ${CPU_FLAGS_3_3[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
 +X +abi9-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug doc +draco
@@ -177,8 +178,8 @@ REQUIRED_USE+="
 		!openimagedenoise
 		!openvdb
 	)
-	^^ (
-		${LLVM_SLOTS[@]/#/llvm_slot_}
+	?? (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 	^^ (
 		${OPENVDB_ABIS[@]}
@@ -365,7 +366,7 @@ REQUIRED_USE+="
 
 gen_asan_bdepend() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
@@ -379,7 +380,7 @@ gen_asan_bdepend() {
 gen_llvm_depends()
 {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
 				>=sys-devel/llvm-${s}:${s}=
@@ -390,7 +391,7 @@ gen_llvm_depends()
 
 gen_oidn_depends() {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
 			<media-libs/oidn-1.5[llvm_slot_${s}]
@@ -438,7 +439,7 @@ gen_openvdb_depends() {
 gen_osl_depends()
 {
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
 				<media-libs/osl-2:=[llvm_slot_${s},static-libs]
@@ -982,7 +983,7 @@ check_multiple_llvm_versions_in_native_libs() {
 
 	local llvm_slot
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		use "llvm_slot_${s}" && llvm_slot=${s}
 	done
 
@@ -1059,7 +1060,7 @@ einfo "This version a Long Term Support (LTS) version till Sep 2024."
 einfo
 
 	local found=0
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		if (( "${s}" > ${LLVM_MAX_UPSTREAM} )) ; then
 			use "llvm_slot_${s}" && found=${s}
 		fi
@@ -1284,7 +1285,7 @@ einfo "AMDGPU_TARGETS:  ${targets}"
 	if use openmp && tc-is-clang ; then
 		local llvm_slot
 		local s
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			use "llvm_slot_${s}" && llvm_slot=${s}
 		done
 		mycmakeargs+=(
