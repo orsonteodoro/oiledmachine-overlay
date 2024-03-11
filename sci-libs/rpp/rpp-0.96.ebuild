@@ -113,7 +113,7 @@ BDEPEND="
 "
 RESTRICT="test"
 PATCHES=(
-	"A${FILESDIR}/rpp-0.96-path-changes.patch"
+	"${FILESDIR}/rpp-0.96-path-changes.patch"
 )
 
 pkg_setup() {
