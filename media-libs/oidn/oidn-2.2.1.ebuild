@@ -37,13 +37,14 @@ ROCM_SLOTS=(
 )
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..10} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_VERSION="5.5.1"
 
-inherit cmake cuda flag-o-matic llvm-r1 python-single-r1 rocm toolchain-funcs
+inherit cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
 
 COMPOSABLE_KERNEL_COMMIT="e85178b4ca892a78344271ae64103c9d4d1bfc40"
 CUTLASS_COMMIT="66d9cddc832c1cdc2b30a8755274f7f74640cfe6"
@@ -243,10 +244,6 @@ pkg_setup() {
 		use cpu && check_cpu
 	fi
 
-	if tc-is-clang || use clang ; then
-		llvm-r1_pkg_setup
-	fi
-
 	if use rocm_5_6 ; then
 		ROCM_SLOT="5.6"
 		LLVM_MAX_SLOT=16
@@ -254,6 +251,11 @@ pkg_setup() {
 		ROCM_SLOT="5.5"
 		LLVM_MAX_SLOT=16
 	fi
+
+	if tc-is-clang || use clang ; then
+		llvm_pkg_setup
+	fi
+
 	if use rocm ; then
 		rocm_pkg_setup
 	fi

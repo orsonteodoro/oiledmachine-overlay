@@ -10,12 +10,13 @@ EAPI=8
 CMAKE_BUILD_TYPE=Release
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..10} )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit cmake flag-o-matic llvm-r1 python-single-r1 toolchain-funcs
+inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
 # MKL_DNN is oneDNN 2.2.4 with additional custom commits.
 MKL_DNN_COMMIT="f53274c9fef211396655fc4340cb838452334089"
@@ -125,7 +126,7 @@ pkg_setup() {
 	fi
 
 	if tc-is-clang || use clang ; then
-		llvm-r1_pkg_setup
+		llvm_pkg_setup
 	fi
 
 	# This needs to be placed here to avoid this error:
