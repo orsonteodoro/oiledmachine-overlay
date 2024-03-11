@@ -3231,7 +3231,7 @@ einfo "Generating license and copyright notice file"
 		eninja -C out/Release about_credits
 		# It should be updated when the major.minor.build.x changes
 		# because of new features.
-		local license_file_name="${PN}-"$(ver_cut 1-3 ${PV})".x"
+		local license_file_name="${PN}-"$(ver_cut 1-3 ${PV})".x.html"
 		local fp=$(sha512sum \
 "${s}/out/Release/gen/components/resources/about_credits.html" \
 			| cut -f 1 -d " ")
