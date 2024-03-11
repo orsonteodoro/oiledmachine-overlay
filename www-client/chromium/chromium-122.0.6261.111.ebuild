@@ -100,7 +100,7 @@ CR_CLANG_USED="c414612" # Obtained from \
 CR_CLANG_USED_UNIX_TIMESTAMP="1704300632" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
-# Change also CR_CLANG_SLOT_OFFICIAL
+# Change also LLVM_OFFICIAL_SLOT
 
 FFMPEG_LIBAVUTIL_SOVER="58.32.100" # third_party/ffmpeg/libavutil/version.h
 FFMPEG_LIBAVCODEC_SOVER="60.34.100" # third_party/ffmpeg/libavcodec/version*.h
@@ -108,7 +108,7 @@ FFMPEG_LIBAVFORMAT_SOVER="60.17.100" # third_party/ffmpeg/libavformat/version*.h
 FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
 FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
 GCC_PV="10.2.1" # Minimum
-GCC_SLOTS=( {14..10} )
+GCC_COMPAT=( {14..10} )
 GN_PV="0.2143"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
@@ -118,19 +118,19 @@ LICENSE_FINGERPRINT="\
 0c45d7e19735efbe3d92b7e2dc14e7123cfd53d6b5c39c7a4b98d802dca5f8fe\
 5b87c8a570a673a33dde5316febb377e02dfee972307f7314864c7ba2d5b3c8e\
 "
-# Compat is + or 1 official slot
 LLVM_COMPAT=( {18..17} ) # [inclusive, inclusive] high to low
-# LLVM_MAX_SLOT is the same slot listed in https://github.com/chromium/chromium/blob/122.0.6261.111/tools/clang/scripts/update.py#L42
-# LLVM_MIN_SLOT is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 10 for profdata file format.
+LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 10 for profdata file format.
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/122.0.6261.111/tools/clang/scripts/update.py#L42
+LLVM_OFFICIAL_SLOT="${LLVM_MAX_SLOT}" # Cr official slot
 MESA_PV="20.3.5"
-PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_COMPAT[-1]}"
+PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_MIN_SLOT}"
 # Can't do Python 12 yet: heavy use of imp, among other things (bug #915001, bug #915062)
 PYTHON_COMPAT=( python3_{9..11} )
 PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
 RUST_PV="1.74.1" # Lowered since distro uses older.
-UOPTS_PGO_PV=$(ver_cut 1-3 ${PV})
+UOPTS_PGO_PV=$(ver_cut 1-3 "${PV}")
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
@@ -139,14 +139,10 @@ VENDORED_CLANG_VER="llvmorg-18-init-16072-gc4146121e940-5"
 VENDORED_RUST_VER="df0295f07175acc7325ce3ca4152eb05752af1f2-5"
 ZLIB_PV="1.3"
 
-# LLVM compatibility is based on libcxx which is
-# 1 +- CR_CLANG_SLOT_OFFICIAL
-CR_CLANG_SLOT_OFFICIAL=${LLVM_COMPAT[0]}
-
 # For PGO
 PGO_LLVM_SUPPORTED_VERSIONS=(
-	"${CR_CLANG_SLOT_OFFICIAL}.0.0.9999"
-	"${CR_CLANG_SLOT_OFFICIAL}.0.0"
+	"${LLVM_OFFICIAL_SLOT}.0.0.9999"
+	"${LLVM_OFFICIAL_SLOT}.0.0"
 	"18.1.0_rc1"
 	"17.0.6"
 	"17.0.5"
@@ -718,7 +714,7 @@ gen_depend_llvm() {
 				${t}
 			)
 		"
-		(( ${s} == ${CR_CLANG_SLOT_OFFICIAL} )) && o_official=" ${t} "
+		(( ${s} == ${LLVM_OFFICIAL_SLOT} )) && o_official=" ${t} "
 	done
 	echo -e "
 		official? (
@@ -1110,9 +1106,9 @@ eerror
 			CPP+=" -E"
 			local clang_min
 			if use official ; then
-				clang_min="${CR_CLANG_SLOT_OFFICIAL}"
+				clang_min="${LLVM_OFFICIAL_SLOT}"
 			else
-				clang_min="${LLVM_COMPAT[-1]}"
+				clang_min="${LLVM_MIN_SLOT}"
 			fi
 			if ver_test "${slot}" -lt "${clang_min}" ; then
 eerror
@@ -1375,10 +1371,10 @@ eerror
 eerror "To switch add a per-profile config file create the following files:"
 eerror
 eerror
-eerror "Contents of ${ESYSROOT}/etc/portage/env/clang-${CR_CLANG_SLOT_OFFICIAL}.conf:"
+eerror "Contents of ${ESYSROOT}/etc/portage/env/clang-${LLVM_OFFICIAL_SLOT}.conf:"
 eerror
-eerror "CC=clang-${CR_CLANG_SLOT_OFFICIAL}"
-eerror "CXX=clang++-${CR_CLANG_SLOT_OFFICIAL}"
+eerror "CC=clang-${LLVM_OFFICIAL_SLOT}"
+eerror "CXX=clang++-${LLVM_OFFICIAL_SLOT}"
 eerror "AR=\"llvm-ar\""
 eerror "NM=\"llvm-nm\""
 eerror "OBJCOPY=\"llvm-objcopy\""
@@ -1389,7 +1385,7 @@ eerror
 eerror
 eerror "Contents of ${ESYSROOT}/etc/portage/package.env"
 eerror
-eerror "${CATEGORY}/${PN} clang-${CR_CLANG_SLOT_OFFICIAL}.conf"
+eerror "${CATEGORY}/${PN} clang-${LLVM_OFFICIAL_SLOT}.conf"
 eerror
 }
 
@@ -2300,7 +2296,7 @@ einfo "Switching to clang."
 
 		local slot
 		if use official ; then
-			slot="${CR_CLANG_SLOT_OFFICIAL}"
+			slot="${LLVM_OFFICIAL_SLOT}"
 		elif tc-is-clang ; then
 			slot="$(clang-major-version)"
 		else
@@ -2352,7 +2348,7 @@ ewarn
 ewarn "Only the commit below or newer for the latest live ebuilds having the"
 ewarn "same slot are supported for Clang."
 ewarn
-ewarn "LLVM slot:         ${CR_CLANG_SLOT_OFFICIAL}"
+ewarn "LLVM slot:         ${LLVM_OFFICIAL_SLOT}"
 ewarn "Commit:            ${CR_CLANG_USED}"
 ewarn "Commit timestamp:  >= ${ts}"
 ewarn
@@ -2376,7 +2372,7 @@ ewarn
 einfo "Switching to GCC"
 		unset GCC_SLOT
 		local s
-		for s in ${GCC_SLOTS[@]} ; do
+		for s in ${GCC_COMPAT[@]} ; do
 			if has_version "sys-devel/gcc:${s}" ; then
 				GCC_SLOT="${s}"
 				break
