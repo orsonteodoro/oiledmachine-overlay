@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V16.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V18.md
 
 EAPI=8
 
@@ -10,10 +10,11 @@ EAPI=8
 AUTOCANNON_PV="7.4.0"
 WRK_PV="1.2.1"
 
-ACORN_PV="8.8.0"
+ACORN_PV="8.11.3"
 BENCHMARK_TYPES=(
 	assert
 	async_hooks
+	blob
 	buffers
 	child_process
 	cluster
@@ -53,9 +54,9 @@ BENCHMARK_TYPES=(
 	zlib
 )
 CONFIG_CHECK="~ADVISE_SYSCALLS"
-COREPACK_PV="0.17.0"
-NGHTTP2_PV="1.47.0"
-NPM_PV="8.19.3" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/package.json
+COREPACK_PV="0.25.2"
+NGHTTP2_PV="1.60.0"
+NPM_PV="10.5.0" # See https://github.com/nodejs/node/blob/v21.6.2/deps/npm/package.json
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -64,16 +65,11 @@ inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
 inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
 inherit xdg-utils
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
 SRC_URI="
-https://github.com/nodejs/node/archive/refs/tags/v${PV}.tar.gz
-	-> node-v${PV}.tar.gz
+https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
 "
-if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
-	S="${WORKDIR}/node-v${PV}"
-else
-	S="${WORKDIR}/node-${PV}"
-fi
+S="${WORKDIR}/node-v${PV}"
 
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
@@ -83,13 +79,13 @@ LICENSE="
 	Artistic-2
 	BSD
 	BSD-2
-	icu-70.1
+	icu-71.1
 	ISC
 	MIT
 	Unicode-DFS-2016
 	ZLIB
 	ssl? (
-		openssl
+		Apache-2.0
 	)
 "
 RESTRICT="
@@ -99,7 +95,6 @@ RESTRICT="
 "
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-
 gen_iuse_pgo() {
 	local t
 	for t in ${BENCHMARK_TYPES[@]} ; do
@@ -109,10 +104,10 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu inspector
-npm mold pax-kernel +snapshot +ssl system-icu +system-ssl systemtap test
++npm mold pax-kernel +snapshot +ssl system-icu +system-ssl test
 
 $(gen_iuse_pgo)
-man pgo r9
+man pgo r3
 "
 
 gen_required_use_pgo() {
@@ -143,20 +138,20 @@ REQUIRED_USE+="
 "
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
-# Last deps commit date:  Aug 8, 2023
+# Last deps commit date:  Mar 7, 2024
 RDEPEND+="
 	!net-libs/nodejs:0
-	>=app-arch/brotli-1.0.9
+	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.44.0:=
-	>=net-dns/c-ares-1.19.1
+	>=dev-libs/libuv-1.48.0:=
+	>=net-dns/c-ares-1.27.0
 	>=net-libs/nghttp2-${NGHTTP2_PV}
-	>=sys-libs/zlib-1.2.11
+	>=sys-libs/zlib-1.3
 	system-icu? (
-		>=dev-libs/icu-71.1:=
+		>=dev-libs/icu-74.2:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-1.1.1v:0=
+		>=dev-libs/openssl-3.0.13:0=
 	)
 "
 DEPEND+="
@@ -167,6 +162,9 @@ BDEPEND+="
 	dev-build/ninja
 	sys-apps/coreutils
 	virtual/pkgconfig
+	mold? (
+		sys-devel/mold
+	)
 	pax-kernel? (
 		sys-apps/elfix
 	)
@@ -175,25 +173,21 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
-	systemtap? (
-		dev-debug/systemtap
-	)
 	test? (
 		net-misc/curl
 	)
 "
 PDEPEND+="
-	sys-apps/npm:2
+	sys-apps/npm:3
 	acorn? (
 		=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})*
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-16.12.0-jinja_collections_abc.patch"
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
-	"${FILESDIR}/${PN}-15.2.0-global-npm-config.patch"
+	"${FILESDIR}/${PN}-20.2.0-global-npm-config.patch"
 	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
-	"${FILESDIR}/${PN}-16.13.2-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 
@@ -229,7 +223,7 @@ pkg_setup() {
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2023-09-11."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-06-01."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
@@ -411,9 +405,7 @@ src_configure() { :; }
 
 __pgo_configure() {
 	if [[ "${CC}" =~ "clang" ]] ; then
-ewarn
 ewarn "PGO clang support is experimental"
-ewarn
 	fi
 	export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
 	export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
@@ -438,9 +430,6 @@ _src_configure() {
 	uopts_src_configure
 	xdg_environment_reset
 
-	# Ban only for this slot for license compatibility reasons.
-	filter-flags "-fuse-ld=mold"
-
 	local myconf=(
 		--ninja
 		--shared-brotli
@@ -453,11 +442,20 @@ _src_configure() {
 	[[ "${LTO_TYPE}" =~ "lto" ]] && myconf+=( --enable-lto )
 	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
 	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
+	[[ "${LTO_TYPE}" =~ "moldlto" ]] && myconf+=( --with-moldlto )
+
+	if tc-is-gcc && [[ "${LTO_TYPE}" =~ "moldlto" ]] ; then
+ewarn "If moldlto fails for gcc, try clang."
+	fi
 
 	# LTO compiler flags are handled by configure.py itself
 	filter-flags '-flto*' \
 		'-fuse-ld*' \
 		'-fprofile*'
+
+	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
+		append-ldflags -fuse-ld=mold
+	fi
 
 	filter-flags '-O*'
 	use debug && myconf+=( --debug )
@@ -485,6 +483,7 @@ _src_configure() {
 	local myarch
 	myarch="${ABI/amd64/x64}"
 	myarch="${myarch/x86/ia32}"
+	[[ "${ARCH}:${ABI}" =~ "loong:lp64" ]] && myarch="loong64"
 	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
 
 	GYP_DEFINES="linux_use_gold_flags=0
@@ -493,7 +492,6 @@ _src_configure() {
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}"/usr \
 		--dest-cpu=${myarch} \
-		$(use_with systemtap dtrace) \
 		"${myconf[@]}" || die
 
 	# Prevent double build on install.
@@ -700,13 +698,6 @@ src_install() {
 	rm -rf "${ED}/usr/bin/npx"
 
 	mv "${ED}"/usr/share/doc/node "${ED}"/usr/share/doc/${PF} || die
-
-	if use systemtap ; then
-		# Move tapset to avoid conflict
-		mv "${ED}/usr/share/systemtap/tapset/"node${,${SLOT_MAJOR}}.stp || die
-	else
-		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
-	fi
 
 	# Let eselect-nodejs handle switching corepack
 	dodir /usr/$(get_libdir)/corepack

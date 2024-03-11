@@ -64,12 +64,14 @@ inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
 inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
 inherit xdg-utils
 
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
 SRC_URI="
 https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
 "
 S="${WORKDIR}/node-v${PV}"
 
 DESCRIPTION="A JavaScript runtime built on the V8 JavaScript engine"
+HOMEPAGE="https://nodejs.org/"
 LICENSE="
 	Apache-1.1
 	Apache-2.0
@@ -85,8 +87,11 @@ LICENSE="
 		Apache-2.0
 	)
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos"
-HOMEPAGE="https://nodejs.org/"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 
@@ -129,11 +134,6 @@ REQUIRED_USE+="
 	)
 	system-ssl? (
 		ssl
-	)
-"
-RESTRICT="
-	!test? (
-		test
 	)
 "
 # Keep versions in sync with deps folder
@@ -226,9 +226,7 @@ pkg_setup() {
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo
 einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
-einfo
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
@@ -321,16 +319,22 @@ src_prepare() {
 	if use custom-optimization ; then
 		local oflag="-O3"
 		if is_flagq_last '-O0'; then
-			ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
+ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
 			oflag="-O0"
 		elif is_flagq_last '-Og'; then
-			use pgo && ewarn "Using -Og with PGO is uncommon"
+			if use pgo ; then
+ewarn "Using -Og with PGO is uncommon"
+			fi
 			oflag="-Og"
 		elif is_flagq_last '-O1'; then
-			use pgo && ewarn "Using -O1 with PGO is uncommon"
+			if use pgo ; then
+ewarn "Using -O1 with PGO is uncommon"
+			fi
 			oflag="-O1"
 		elif is_flagq_last '-O2'; then
-			use pgo && ewarn "Using -O2 with PGO is uncommon"
+			if use pgo ; then
+ewarn "Using -O2 with PGO is uncommon"
+			fi
 			oflag="-O2"
 		elif is_flagq_last '-O3'; then
 			oflag="-O3"
@@ -339,10 +343,14 @@ src_prepare() {
 		elif is_flagq_last '-Ofast'; then
 			oflag="-Ofast"
 		elif is_flagq_last '-Os'; then
-			use pgo && ewarn "Using -Os with PGO is uncommon"
+			if use pgo ; then
+ewarn "Using -Os with PGO is uncommon"
+			fi
 			oflag="-Os"
 		elif is_flagq_last '-Oz'; then
-			use pgo && ewarn "Using -Oz with PGO is uncommon"
+			if use pgo ; then
+ewarn "Using -Oz with PGO is uncommon"
+			fi
 			oflag="-Oz"
 		#else
 		#	-O3 is the upstream default
@@ -380,7 +388,7 @@ src_prepare() {
 	if [[ "${NM}" == "llvm-nm" ]] ; then
 		# llvm-nm: error: : --format value should be one of
 		# bsd, posix, sysv, darwin, just-symbols
-		einfo "Detected llvm-nm: -f p -> -f posix"
+einfo "Detected llvm-nm: -f p -> -f posix"
 		sed -i -e "s|nm -gD -f p |nm -gD -f posix |g" \
 			"deps/npm/node_modules/node-gyp/gyp/pylib/gyp/generator/ninja.py" \
 			|| die
@@ -409,9 +417,7 @@ ewarn
 	mkdir -p "${PGO_PROFILE_DIR}" || die
 	if [[ "${PGO_PHASE}" == "PGO" && "${CC}" =~ "clang" ]] ; then
 # The "counter overflow" is either a discared result or a saturated max value.
-einfo
 einfo "Converting .profraw -> .profdata"
-einfo
 		PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
 		llvm-profdata merge \
 			-output="${PGO_PROFILE_DIR}/pgo-custom.profdata" \
@@ -502,7 +508,7 @@ ewarn "If moldlto fails for gcc, try clang."
 # libclang_rt.cfi-*.a(cfi.cpp.o): .preinit_array section is not allowed in DSO
 # failed to set dynamic section sizes: nonrepresentable section on output
 	if [[ -e "${S}/out/Release/obj/test_crypto_engine.ninja" ]] ; then
-		einfo "Removing CFI Cross-DSO from test_crypto_engine"
+einfo "Removing CFI Cross-DSO from test_crypto_engine"
 		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
 			"${S}/out/Release/obj/test_crypto_engine.ninja" || die
 		sed -i -e "s|-fsanitize-cfi-cross-dso||g" \
@@ -575,16 +581,16 @@ train_trainer_custom() {
 
 	use ${PN}_pgo_trainers_module \
 		|| NODEJS_EXCLUDED_BENCHMARKS+=" benchmark/module/module-loader.js"
-	einfo "NODEJS_EXCLUDED_BENCHMARKS=${NODEJS_EXCLUDED_BENCHMARKS}"
+einfo "NODEJS_EXCLUDED_BENCHMARKS=${NODEJS_EXCLUDED_BENCHMARKS}"
 	init_local_npm
 	cd "${S}" || die # Ensure PGO profiles are from this dir.
 	local b
 	for b in $(echo ${accepted[@]} | tr " " "\n" | sort) ; do
 		if [[ "${NODEJS_EXCLUDED_BENCHMARKS}" =~ "${b}" ]] ; then
-			einfo "Skipping ${b}"
+einfo "Skipping ${b}"
 			continue
 		fi
-		einfo "Running benchmark ${b}"
+einfo "Running benchmark ${b}"
 		benchmark_failed_message() {
 eerror
 eerror "A possibly broken or incomplete support for the ${b} script was"
@@ -615,7 +621,7 @@ eerror
 					|| fail=1
 			fi
 			if (( ${fail} == 1 && ${tries} < 3 )) ; then
-				einfo "Benchmark failed.  Trying again."
+einfo "Benchmark failed.  Trying again."
 			fi
 			tries=$(( ${tries} + 1 ))
 		done
@@ -642,7 +648,7 @@ eerror
 }
 
 _src_pre_train() {
-	einfo "Installing sandboxed PGI image"
+einfo "Installing sandboxed PGI image"
 	src_install
 }
 
@@ -741,9 +747,7 @@ ewarn
 
 pkg_postinst() {
 	if has_version ">=net-libs/nodejs-${PV}" ; then
-einfo
 einfo "Found higher slots, manually change the headers with \`eselect nodejs\`."
-einfo
 	else
 		eselect nodejs set node${SLOT_MAJOR}
 	fi
