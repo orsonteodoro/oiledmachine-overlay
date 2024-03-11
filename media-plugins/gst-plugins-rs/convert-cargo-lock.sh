@@ -4,6 +4,7 @@
 # cargo-ebuild is broken
 
 CATEGORY="media-plugins"
+MY_PN="gst-plugins-rs-gstreamer"
 PN="gst-plugins-rs"
 PV="${1}" # left
 MY_PV="${2}" # right
@@ -83,7 +84,7 @@ main() {
 		--quiet \
 		--prefix=gst-plugins-rs-config \
 		--suffix-format=%02d.txt  \
-		/var/tmp/portage/${CATEGORY}/${PN}-${PV}/work/${PN}-${MY_PV}/Cargo.lock \
+		/var/tmp/portage/${CATEGORY}/${PN}-${PV}/work/${MY_PN}-${MY_PV}/Cargo.lock \
 		/^$/ \
 		{*}
 
