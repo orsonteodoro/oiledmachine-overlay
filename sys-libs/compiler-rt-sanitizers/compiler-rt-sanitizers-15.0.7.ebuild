@@ -24,7 +24,7 @@ LICENSE="
 	)
 "
 SLOT="${LLVM_VERSION}"
-IUSE="
+IUSE+="
 +abi_x86_32 abi_x86_64 +clang debug hexagon test
 
 +libfuzzer +memprof +orc +profile +xray r3

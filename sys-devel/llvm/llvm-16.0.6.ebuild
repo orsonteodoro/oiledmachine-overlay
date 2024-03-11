@@ -33,7 +33,7 @@ LICENSE="
 # 3. MD5 code: public-domain.
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-IUSE="
+IUSE+="
 +binutils-plugin debug doc exegesis libedit +libffi ncurses test xar xml z3 zstd
 
 bolt bolt-heatmap -dump jemalloc tcmalloc r6

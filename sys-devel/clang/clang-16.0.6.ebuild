@@ -29,7 +29,7 @@ LICENSE="
 # MSVCSetupApi.h: MIT
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
-IUSE="
+IUSE+="
 debug doc +extra ieee-long-double +pie rocm_5_5 rocm_5_6 +static-analyzer test
 xml
 

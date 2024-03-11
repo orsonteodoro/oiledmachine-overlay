@@ -33,7 +33,7 @@ unset __
 EBUILD_MAINTAINER_MODE=0
 FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
 
-LLVM_COMPAT=( 17 14 )
+LLVM_COMPAT=( 17 ) # Limited based on virtual/rust
 
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -69,10 +69,10 @@ UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info llvm-r1 multiprocessing
-inherit pax-utils python-any-r1 toolchain-funcs virtualx xdg
-inherit check-linker lcnr multilib-minimal rust-toolchain uopts
-inherit cflags-depends
+inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info
+inherit llvm-r1 multiprocessing pax-utils python-any-r1 toolchain-funcs virtualx
+inherit xdg
+inherit check-linker lcnr multilib-minimal rust-toolchain uopts cflags-depends
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -711,8 +711,22 @@ DEPEND+="
 		x11-libs/libSM[${MULTILIB_USEDEP}]
 	)
 "
+gen_llvm_bdepend() {
+	local LLVM_SLOT
+	for LLVM_SLOT in ${LLVM_COMPAT[@]} ; do
+		echo "
+			sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+			sys-devel/lld:${LLVM_SLOT}
+			sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+			virtual/rust:0/llvm-${LLVM_SLOT}
+			pgo? (
+				=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
+			)
+		"
+	done
+}
 RUST_PV="1.75.0"
-ABDEPEND+="
+BDEPEND+="
 	!elibc_glibc? (
 		|| (
 			dev-lang/rust[${MULTILIB_USEDEP}]
@@ -751,16 +765,9 @@ ABDEPEND+="
 	x86? (
 		>=dev-lang/nasm-${NASM_PV}
 	)
-	$(llvm_gen_dep '
-		sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-		sys-devel/lld:${LLVM_SLOT}
-		sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-		virtual/rust:0/llvm-${LLVM_SLOT}
-		pgo? (
-			=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
-		)
-	')
+	$(gen_llvm_bdepend)
 "
+# llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
 PDEPEND+="
 	screencast? (
 		>=media-video/pipewire-0.3.52[${MULTILIB_USEDEP}]

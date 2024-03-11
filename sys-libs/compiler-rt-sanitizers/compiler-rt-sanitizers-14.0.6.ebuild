@@ -22,7 +22,7 @@ LICENSE="
 	)
 "
 SLOT="$(ver_cut 1-3)"
-IUSE="
+IUSE+="
 +abi_x86_32 abi_x86_64 +clang debug hexagon test
 
 +libfuzzer +memprof +orc +profile +xray r3

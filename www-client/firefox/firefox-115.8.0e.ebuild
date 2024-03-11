@@ -32,8 +32,7 @@ unset __
 EBUILD_MAINTAINER_MODE=0
 FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-09.tar.xz"
 
-LLVM_SLOTS=( 16 14 )
-LLVM_MAX_SLOT=16
+LLVM_COMPAT=( 16 ) # Limited based on virtual/rust
 
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
@@ -69,10 +68,10 @@ UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info llvm multiprocessing
-inherit pax-utils python-any-r1 toolchain-funcs virtualx xdg
-inherit check-linker lcnr multilib-minimal rust-toolchain uopts
-inherit cflags-depends
+inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info
+inherit llvm-r1 multiprocessing pax-utils python-any-r1 toolchain-funcs virtualx
+inherit xdg
+inherit check-linker lcnr multilib-minimal rust-toolchain uopts cflags-depends
 
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 
@@ -465,21 +464,6 @@ NASM_PV="2.14.02"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 XKBCOMMON_PV="0.4.1"
 
-gen_llvm_bdepends() {
-	local s
-	for s in ${LLVM_SLOTS[@]} ; do
-		echo "
-		(
-			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
-			pgo? (
-				=sys-libs/compiler-rt-sanitizers-${s}*:=[profile,${MULTILIB_USEDEP}]
-			)
-		)
-		"
-	done
-}
-
 FF_ONLY_DEPEND="
 	!www-client/firefox:0
 	!www-client/firefox:rapid
@@ -734,6 +718,20 @@ DEPEND+="
 	)
 "
 
+gen_llvm_bdepend() {
+	local LLVM_SLOT
+	for LLVM_SLOT in ${LLVM_COMPAT[@]} ; do
+		echo "
+			sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+			sys-devel/lld:${LLVM_SLOT}
+			sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+			virtual/rust:0/llvm-${LLVM_SLOT}
+			pgo? (
+				=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
+			)
+		"
+	done
+}
 RUST_PV="1.69.0"
 BDEPEND+="
 	!elibc_glibc? (
@@ -773,11 +771,9 @@ BDEPEND+="
 	x86? (
 		>=dev-lang/nasm-${NASM_PV}
 	)
-	|| (
-		$(gen_llvm_bdepends)
-	)
+	$(gen_llvm_bdepend)
 "
-
+# llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
 RESTRICT="mirror"
 
 S="${WORKDIR}/${PN}-${PV/e}"
@@ -1155,7 +1151,7 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 
 		check-reqs_pkg_setup
 
-		llvm_pkg_setup
+		llvm-r1_pkg_setup
 
 		if tc-is-clang && is-flagq '-flto*' && tc-ld-is-lld ; then
 			has_version "sys-devel/lld:$(clang-major-version)" \
