@@ -8,7 +8,7 @@ EAPI=8
 
 MY_PV="${PV}"
 
-if [[ "${MY_PV}" =~ 9999 ]] ; then
+if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_COMMIT="HEAD"
 	EGIT_COMMIT_FALLBACK="55b74c9a9af3539ea9cf8acdcd98deaf839898c3" # Feb 26, 2024
@@ -648,7 +648,7 @@ LICENSE="
 "
 # Unicode-DFS-2016 ${HOME}/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE
 
-SLOT="1.0/${MY_PV}" # 1.0 is same as media-libs/gstreamer
+SLOT="1.0/$(ver_cut 1-2 ${MY_PV})" # 1.0 is same as media-libs/gstreamer
 MODULES=(
 	audiofx
 	aws
