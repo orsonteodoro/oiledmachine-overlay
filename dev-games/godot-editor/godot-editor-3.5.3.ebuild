@@ -139,6 +139,11 @@ REQUIRED_USE+="
 	3d
 	advanced-gui
 	freetype
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	csharp-external-editor? (
 		mono
 		|| (
@@ -819,7 +824,9 @@ _install_linux_editor() {
 	local f
 	f=$(basename bin/godot*tools*)
 	doexe "bin/${f}"
-	dosym "${d_base}/bin/${f}" "/usr/bin/godot${SLOT_MAJ}"
+	dosym \
+		"${d_base}/bin/${f}" \
+		"/usr/bin/godot${SLOT_MAJ}"
 einfo "Setting up Linux editor environment"
 	make_desktop_entry \
 		"/usr/bin/godot${SLOT_MAJ}" \

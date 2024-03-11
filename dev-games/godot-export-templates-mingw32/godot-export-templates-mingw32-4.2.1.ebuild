@@ -129,11 +129,6 @@ REQUIRED_USE+="
 	lsan? (
 		asan
 	)
-	lto? (
-		^^ (
-			${LLVM_COMPAT[@]/#/llvm_slot_}
-		)
-	)
 	mp1? (
 		mp3
 	)
@@ -171,11 +166,6 @@ gen_cdepend_lto_llvm() {
 	done
 }
 
-CDEPEND_GCC_SANITIZER="
-	!clang? (
-		sys-devel/gcc[sanitize]
-	)
-"
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
@@ -194,13 +184,14 @@ gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS[@]} ; do
 		echo "
-	${a}? (
-		${CDEPEND_GCC_SANITIZER}
-		clang? (
-			$(gen_clang_sanitizer ${a})
-		)
-	)
-
+			${a}? (
+				!clang? (
+					sys-devel/gcc[sanitize]
+				)
+				clang? (
+					$(gen_clang_sanitizer ${a})
+				)
+			)
 		"
 	done
 }
@@ -296,16 +287,10 @@ check_mingw()
 }
 
 pkg_setup() {
-ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
-ewarn
-ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
-ewarn
 	if use gdscript ; then
-ewarn
 ewarn "The gdscript USE flag is untested."
-ewarn
 	fi
 	check_mingw
 
@@ -327,9 +312,7 @@ eerror "same slot."
 eerror
 			die
 		fi
-einfo
 einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
-einfo
 		llvm_pkg_setup
 	fi
 }
@@ -337,8 +320,10 @@ einfo
 src_prepare() {
 	default
 	if use mono ; then
-		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
-			modules/mono/glue || die
+		cp -aT \
+			"/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			"modules/mono/glue" \
+			|| die
 	fi
 }
 
@@ -353,7 +338,7 @@ src_configure() {
 }
 
 _compile() {
-	einfo "Building for Windows (x86)"
+einfo "Building for Windows (x86)"
 	scons ${options_windows[@]} \
 		${options_modules[@]} \
 		${options_modules_static[@]} \
@@ -381,7 +366,7 @@ get_configuration3() {
 
 # libmonosgen-2.0.so needs 32-bit or static linkage
 src_compile_windows_yes_mono() {
-	einfo "Mono support:  Building final binary"
+einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	local options_extra=(
 		$(set_production)
@@ -407,12 +392,12 @@ src_compile_windows()
 	local bitness=32
 	local configuration
 	for configuration in release release_debug ; do
-		einfo "Creating export template"
+einfo "Creating export template"
 		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
 			continue
 		fi
 		if use mono ; then
-			einfo "USE=mono is under contruction"
+einfo "USE=mono is under contruction"
 			src_compile_windows_yes_mono
 		else
 			src_compile_windows_no_mono
@@ -560,7 +545,7 @@ _install_export_templates() {
 	fi
 	insinto "${prefix}"
 	exeinto "${prefix}"
-	einfo "Installing export templates"
+einfo "Installing export templates"
 
 	local x
 	for x in $(find bin -type f) ; do

@@ -78,7 +78,11 @@ MONO_LICENSE="
 # BSD-4 openssl - btls=on
 # LGPL-2.1 LGPL-2.1-with-linking-exception -- mcs/class/ICSharpCode.SharpZipLib/ICSharpCode.SharpZipLib/BZip2/BZip2.cs (ICSharpCode.SharpZipLib.dll)
 # openssl - external/boringssl/crypto/ecdh/ecdh.c (libmono-btls-shared.dll)
-LICENSE+=" mono? ( ${MONO_LICENSE} )"
+LICENSE+="
+	mono? (
+		${MONO_LICENSE}
+	)
+"
 # See https://github.com/mono/mono/blob/main/LICENSE to resolve license compatibilities.
 
 KEYWORDS="~x86"
@@ -138,12 +142,18 @@ IUSE+="
 	${IUSE_NET}
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	denoise? (
 		lightmapper_cpu
 	)
@@ -196,29 +206,24 @@ REQUIRED_USE+="
 "
 
 gen_cdepend_lto_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
 	done
-	echo -e "${o}"
 }
 
-CDEPEND_GCC_SANITIZER="
-	!clang? ( sys-devel/gcc[sanitize] )
-"
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},${san_type}]
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
@@ -226,23 +231,19 @@ gen_clang_sanitizer() {
 			)
 		"
 	done
-	echo "${o}"
 }
 gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS[@]} ; do
 		echo "
-	${a}? (
-		|| (
-			${CDEPEND_GCC_SANITIZER}
-			clang? (
-				|| (
+			${a}? (
+				!clang? (
+					sys-devel/gcc[sanitize]
+				)
+				clang? (
 					$(gen_clang_sanitizer ${a})
 				)
 			)
-		)
-	)
-
 		"
 	done
 }
@@ -268,9 +269,7 @@ CDEPEND_CLANG="
 			sys-devel/clang[${MULTILIB_USEDEP}]
 		)
 		lto? (
-			|| (
-				$(gen_cdepend_lto_llvm)
-			)
+			$(gen_cdepend_lto_llvm)
 		)
 	)
 "
@@ -423,7 +422,7 @@ ewarn
 	if use lto && use clang ; then
 		LLVM_MAX_SLOT="not_found"
 		local s
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version "sys-devel/clang:${s}" \
 				&& has_version "sys-devel/llvm:${s}" ; then
 				LLVM_MAX_SLOT=${s}
@@ -437,14 +436,12 @@ eerror "same slot."
 eerror
 			die
 		fi
-einfo
 einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
-einfo
 		llvm_pkg_setup
 	fi
 
 	if use mono ; then
-		einfo "USE=mono is under contruction"
+einfo "USE=mono is under contruction"
 		if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
 			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
 			export PATH="$(dirname ${p}):${PATH}"
@@ -469,8 +466,10 @@ eerror
 src_prepare() {
 	default
 	if use mono ; then
-		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
-			modules/mono/glue || die
+		cp -aT \
+			"/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			"modules/mono/glue" \
+			|| die
 	fi
 }
 
@@ -485,14 +484,20 @@ src_configure() {
 		if use system-mono ; then
 			# The code assumes unilib system not multilib.
 			mkdir -p "${WORKDIR}/mono" || die
-			ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
-			ln -s "/usr/include" "${WORKDIR}/mono/include" || die
+			ln -s \
+				"/usr/$(get_libdir)" \
+				"${WORKDIR}/mono/lib" \
+				|| die
+			ln -s \
+				"/usr/include" \
+				"${WORKDIR}/mono/include" \
+				|| die
 		fi
 	fi
 }
 
 _compile() {
-	einfo "Building for 32-bit Linux"
+einfo "Building for 32-bit Linux"
 	scons ${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
@@ -520,7 +525,7 @@ get_configuration3() {
 }
 
 src_compile_linux_yes_mono() {
-	einfo "Mono support:  Building final binary"
+einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	# mono_static=yes ; CI uses this on 64-bit but unknown in 32-bit
 	local options_extra=(
@@ -556,7 +561,7 @@ src_compile_linux() {
 	local bitness=32
 	local configuration
 	for configuration in release release_debug ; do
-		einfo "Creating export template"
+einfo "Creating export template"
 		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
 			continue
 		fi
@@ -732,7 +737,7 @@ _install_export_templates() {
 	fi
 	insinto "${prefix}"
 	exeinto "${prefix}"
-	einfo "Installing export templates"
+einfo "Installing export templates"
 
 	local x
 	for x in $(find bin -maxdepth 1 | sed -e "1d") ; do

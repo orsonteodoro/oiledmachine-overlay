@@ -27,6 +27,9 @@ IUSE+="
 "
 REQUIRED_USE="
 	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+	^^ (
 		sdk_10_5_or_less
 		sdk_10_6_or_newer
 	)
@@ -80,6 +83,7 @@ CDEPEND_SANITIZER="
 "
 
 RDEPEND="
+	$(gen_depend_llvm)
 	${CDEPEND_SANITIZER}
 	sdk_10_5_or_less? (
 		~sys-devel/osxcross-1.1
@@ -87,7 +91,6 @@ RDEPEND="
 	sdk_10_6_or_newer? (
 		>=sys-devel/osxcross-1.4
 	)
-	$(gen_depend_llvm)
 "
 SLOT_MAJ="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
@@ -98,14 +101,13 @@ test_path() {
 eerror
 eerror "${p} is unreachable"
 eerror
+		die
 	fi
 }
 
 pkg_setup() {
-ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
-ewarn
-	export OSXCROSS_ROOT="${OSXCROSS_ROOT:-/opt/osxcross}"
+	export OSXCROSS_ROOT=${OSXCROSS_ROOT:-"/opt/osxcross"}
 	einfo "OSXCROSS_ROOT=${OSXCROSS_ROOT}"
 	einfo "PATH=${PATH}"
 
@@ -114,11 +116,11 @@ ewarn
 	local arch
 	for arch in ${GODOT_OSX_[@]} ; do
 		if use "godot_osx_${arch}" ; then
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-cc"
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-c++"
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-ar"
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-ranlib"
-			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-*-*-as"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-"*"-"*"-cc"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-"*"-"*"-c++"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-"*"-"*"-ar"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-"*"-"*"-ranlib"
+			test_path "${ESYSROOT}/${OSXCROSS_ROOT}/target/bin/${arch}-"*"-"*"-as"
 		fi
 	done
 }

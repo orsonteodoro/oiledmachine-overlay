@@ -15,6 +15,11 @@ SLOT="${SLOT_MAJ}/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
+REQUIRED_USE="
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+"
 
 gen_depend_llvm() {
 	local s
@@ -30,8 +35,8 @@ gen_depend_llvm() {
 }
 
 RDEPEND="
-	sys-devel/osxcross
 	$(gen_depend_llvm)
+	sys-devel/osxcross
 "
 
 test_path() {
@@ -40,6 +45,7 @@ test_path() {
 eerror
 eerror "${p} is unreachable"
 eerror
+		die
 	fi
 }
 
@@ -54,8 +60,8 @@ eerror
 		die
 	fi
 
-	test_path "${ESYSROOT}/${OSXCROSS_IOS}/usr/bin/*-clang"
-	test_path "${ESYSROOT}/${OSXCROSS_IOS}/usr/bin/*-clang++"
+	test_path "${ESYSROOT}/${OSXCROSS_IOS}/usr/bin/"*"-clang"
+	test_path "${ESYSROOT}/${OSXCROSS_IOS}/usr/bin/"*"-clang++"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

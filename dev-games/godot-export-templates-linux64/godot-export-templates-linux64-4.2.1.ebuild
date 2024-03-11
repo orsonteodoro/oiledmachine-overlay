@@ -211,7 +211,9 @@ REQUIRED_USE+="
 		)
 	)
 	riscv? (
-		mono? ( system-mono )
+		mono? (
+			system-mono
+		)
 	)
 	speech? (
 		|| (
@@ -253,15 +255,14 @@ gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS[@]} ; do
 		echo "
-	${a}? (
-		!clang? (
-			sys-devel/gcc[sanitize]
-		)
-		clang? (
-			$(gen_clang_sanitizer ${a})
-		)
-	)
-
+			${a}? (
+				!clang? (
+					sys-devel/gcc[sanitize]
+				)
+				clang? (
+					$(gen_clang_sanitizer ${a})
+				)
+			)
 		"
 	done
 }
@@ -302,7 +303,9 @@ CDEPEND_CLANG="
 	)
 "
 CDEPEND_GCC="
-	!clang? ( sys-devel/gcc[${MULTILIB_USEDEP}] )
+	!clang? (
+		sys-devel/gcc[${MULTILIB_USEDEP}]
+	)
 "
 # All dependencies are in the project.
 DEPEND+="
@@ -590,13 +593,9 @@ eerror
 }
 
 pkg_setup() {
-ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
-ewarn
 	if use gdscript ; then
-ewarn
 ewarn "The gdscript USE flag is untested."
-ewarn
 	fi
 
 	python-any-r1_pkg_setup
@@ -617,14 +616,12 @@ eerror "same slot."
 eerror
 			die
 		fi
-einfo
 einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
-einfo
 		llvm_pkg_setup
 	fi
 
 	if use mono ; then
-		einfo "USE=mono is under contruction"
+einfo "USE=mono is under contruction"
 		if ls /opt/dotnet-sdk-bin-*/dotnet 2>/dev/null 1>/dev/null ; then
 			local p=$(ls /opt/dotnet-sdk-bin-*/dotnet | head -n 1)
 			export PATH="$(dirname ${p}):${PATH}"
@@ -651,8 +648,10 @@ eerror
 src_prepare() {
 	default
 	if use mono ; then
-		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
-			modules/mono/glue || die
+		cp -aT \
+			"/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			"modules/mono/glue" \
+			|| die
 	fi
 }
 
@@ -674,7 +673,7 @@ src_configure() {
 }
 
 _compile() {
-	einfo "Building for 64-bit Linux"
+einfo "Building for 64-bit Linux"
 	scons ${options_x11[@]} \
 		${options_modules[@]} \
 		${options_modules_shared[@]} \
@@ -702,7 +701,7 @@ get_configuration3() {
 }
 
 src_compile_linux_yes_mono() {
-	einfo "Mono support:  Building final binary"
+einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	# mono_static=yes ; CI uses this
 	local options_extra=(
@@ -736,7 +735,7 @@ src_compile_linux() {
 	local bitness=64
 	local configuration
 	for configuration in release release_debug ; do
-		einfo "Creating export template"
+einfo "Creating export template"
 		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
 			continue
 		fi
@@ -932,7 +931,7 @@ _install_export_templates() {
 	fi
 	insinto "${prefix}"
 	exeinto "${prefix}"
-	einfo "Installing export templates"
+einfo "Installing export templates"
 
 	local x
 	for x in $(find bin -maxdepth 1 | sed -e "1d") ; do

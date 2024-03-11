@@ -179,6 +179,7 @@ test_path() {
 eerror
 eerror "${p} is not reachable"
 eerror
+		die
 	fi
 }
 
@@ -206,14 +207,14 @@ einfo
 		if use x86_64 ; then
 			arch="x86_64"
 		fi
-		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-ar"
-		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-as"
-		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-clang"
-		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-clang++"
-		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-ld"
-		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-ranlib"
-		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-cmake"
-		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-darwin${OSXCROSS_SDK}-strip"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-darwin${OSXCROSS_SDK}-ar"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-darwin${OSXCROSS_SDK}-as"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-darwin${OSXCROSS_SDK}-clang"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-darwin${OSXCROSS_SDK}-clang++"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-darwin${OSXCROSS_SDK}-ld"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-darwin${OSXCROSS_SDK}-ranlib"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-darwin${OSXCROSS_SDK}-cmake"
+		test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-darwin${OSXCROSS_SDK}-strip"
 	fi
 }
 

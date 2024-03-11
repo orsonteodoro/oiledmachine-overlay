@@ -106,6 +106,7 @@ IUSE+="
 	${IUSE_SCRIPTING}
 	${IUSE_LIBS}
 	${IUSE_NET}
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -115,6 +116,9 @@ REQUIRED_USE+="
 	!clang
 	!lld
 	portable
+	clang? (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	denoise? (
 		lightmapper_cpu
 	)
@@ -141,31 +145,24 @@ REQUIRED_USE+="
 "
 
 gen_cdepend_lto_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
 	done
-	echo -e "${o}"
 }
 
-CDEPEND_GCC_SANITIZER="
-	!clang? (
-		sys-devel/gcc[sanitize]
-	)
-"
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[${MULTILIB_USEDEP},compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${MULTILIB_USEDEP},${san_type}]
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
@@ -173,20 +170,17 @@ gen_clang_sanitizer() {
 			)
 		"
 	done
-	echo "${o}"
 }
 gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS[@]} ; do
 		echo "
 			${a}? (
-				|| (
-					${CDEPEND_GCC_SANITIZER}
-					clang? (
-						|| (
-							$(gen_clang_sanitizer ${a})
-						)
-					)
+				!clang? (
+					sys-devel/gcc[sanitize]
+				)
+				clang? (
+					$(gen_clang_sanitizer ${a})
 				)
 			)
 
@@ -289,16 +283,10 @@ check_mingw()
 }
 
 pkg_setup() {
-ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
-ewarn
-ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
-ewarn
 	if use gdscript ; then
-ewarn
 ewarn "The gdscript USE flag is untested."
-ewarn
 	fi
 	check_mingw
 
@@ -306,7 +294,7 @@ ewarn
 	if use lto && use clang ; then
 		LLVM_MAX_SLOT="not_found"
 		local s
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version "sys-devel/clang:${s}" \
 				&& has_version "sys-devel/llvm:${s}" ; then
 				LLVM_MAX_SLOT=${s}
@@ -320,9 +308,7 @@ eerror "same slot."
 eerror
 			die
 		fi
-einfo
 einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
-einfo
 		llvm_pkg_setup
 	fi
 }
@@ -346,7 +332,7 @@ src_configure() {
 }
 
 _compile() {
-	einfo "Building for Windows (x86-64)"
+einfo "Building for Windows (x86-64)"
 	scons ${options_windows[@]} \
 		${options_modules[@]} \
 		${options_modules_static[@]} \
@@ -373,7 +359,7 @@ get_configuration3() {
 }
 
 src_compile_windows_yes_mono() {
-	einfo "Mono support:  Building final binary"
+einfo "Mono support:  Building final binary"
 	# mono_glue=yes (default)
 	local options_extra=(
 		$(set_production)
@@ -399,12 +385,12 @@ src_compile_windows()
 	local bitness=64
 	local configuration
 	for configuration in release release_debug ; do
-		einfo "Creating export template"
+einfo "Creating export template"
 		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
 			continue
 		fi
 		if use mono ; then
-			einfo "USE=mono is under contruction"
+einfo "USE=mono is under contruction"
 			src_compile_windows_yes_mono
 		else
 			src_compile_windows_no_mono
@@ -538,7 +524,7 @@ _install_export_templates() {
 	fi
 	insinto "${prefix}"
 	exeinto "${prefix}"
-	einfo "Installing export templates"
+einfo "Installing export templates"
 
 	local x
 	for x in $(find bin -type f) ; do

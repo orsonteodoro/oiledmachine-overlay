@@ -139,6 +139,7 @@ IUSE+="
 	${IUSE_NET}
 	${IUSE_SCRIPTING}
 	${GODOT_JAVASCRIPT}
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
@@ -147,6 +148,9 @@ IUSE+="
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
 	portable
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
 	denoise? (
 		lightmapper_rd
 	)
@@ -173,9 +177,10 @@ REQUIRED_USE+="
 "
 
 gen_cdepend_llvm() {
-	for s in ${LLVM_SLOTS[@]} ; do
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
@@ -187,9 +192,9 @@ gen_cdepend_llvm() {
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
-	for s in ${LLVM_SLOTS[@]} ; do
+	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${san_type}]
 				sys-devel/clang:${s}
@@ -203,26 +208,20 @@ gen_cdepend_sanitizers() {
 	for a in ${SANITIZERS[@]} ; do
 		echo "
 			${a}? (
-				|| (
-					|| (
-						$(gen_clang_sanitizer ${a})
-					)
-				)
+				$(gen_clang_sanitizer ${a})
 			)
 		"
 	done
 }
 
 CDEPEND+="
+	$(gen_cdepend_llvm)
 	$(gen_cdepend_sanitizers)
 	!closure-compiler? (
 		>=dev-util/emscripten-${EMSCRIPTEN_PV}[wasm(+)]
 	)
 	closure-compiler? (
 		>=dev-util/emscripten-${EMSCRIPTEN_PV}[closure-compiler,closure_compiler_nodejs,wasm(+)]
-	)
-	|| (
-		$(gen_cdepend_llvm)
 	)
 "
 
@@ -291,25 +290,17 @@ eerror
 }
 
 pkg_setup() {
-ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
-ewarn
-ewarn
 ewarn "This ebuild is still a Work In Progress (WIP) as of 2022"
-ewarn
 	if use gdscript ; then
-ewarn
 ewarn "The gdscript USE flag is untested."
-ewarn
 	fi
 	check_emscripten
 
 	python-any-r1_pkg_setup
 	if use clang && use godot_javascript_wasm32 ; then
 		LLVM_MAX_SLOT=13
-einfo
 einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for WASM"
-einfo
 		llvm_pkg_setup
 	fi
 }
@@ -319,12 +310,12 @@ _configure_emscripten()
 	filter-flags -march=*
 	filter-ldflags -Wl,--as-needed
 	strip-flags
-	einfo "LDFLAGS=${LDFLAGS}"
+einfo "LDFLAGS=${LDFLAGS}"
 	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
 	local CFG=$(cat "${EM_CONFIG}")
 	BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
-	einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
+einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
 	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
 	export EM_CACHE="${T}/emscripten/cache"
 }
@@ -332,8 +323,10 @@ _configure_emscripten()
 src_prepare() {
 	default
 	if use mono ; then
-		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
-			modules/mono/glue || die
+		cp -aT \
+			"/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			"modules/mono/glue" \
+			|| die
 	fi
 }
 
@@ -348,7 +341,7 @@ src_configure() {
 }
 
 _compile() {
-	einfo "Creating export templates"
+einfo "Creating export templates"
 	_configure_emscripten
 	scons ${options_javascript[@]} \
 		${options_modules[@]} \
@@ -376,7 +369,7 @@ get_configuration3() {
 }
 
 src_compile_javascript_yes_mono() {
-	einfo "Mono support:  Building final binary"
+einfo "Mono support:  Building final binary"
 	# mono_static=yes (default on this platform)
 	# mono_glue=yes (default)
 	# TODO:  apply other targets (runtime-threads runtime-dynamic)
@@ -403,12 +396,12 @@ src_compile_javascript()
 {
 	local configuration
 	for configuration in release release_debug ; do
-		einfo "Creating export template"
+einfo "Creating export template"
 		if ! use debug && [[ "${configuration}" == "release_debug" ]] ; then
 			continue
 		fi
 		if use mono ; then
-			einfo "USE=mono is under contruction"
+einfo "USE=mono is under contruction"
 			src_compile_javascript_yes_mono
 		else
 			src_compile_javascript_no_mono
@@ -579,7 +572,7 @@ _install_export_templates() {
 	fi
 	insinto "${prefix}"
 	exeinto "${prefix}"
-	einfo "Installing export templates"
+einfo "Installing export templates"
 
 	local x
 	for x in $(find bin -type f) ; do

@@ -136,12 +136,18 @@ IUSE+="
 	${IUSE_NET}
 	${IUSE_SCRIPTING}
 	${IUSE_SYSTEM}
+	${LLVM_COMPAT[@]/#/llvm_slot_}
 "
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.4-stable/thirdparty for versioning
 # Some are repeated because they were shown to be in the ldd list
 REQUIRED_USE+="
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
 	denoise? (
 		lightmapper_cpu
 	)
@@ -189,29 +195,24 @@ REQUIRED_USE+="
 "
 
 gen_cdepend_lto_llvm() {
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
 				sys-devel/llvm:${s}
 			)
 		"
 	done
-	echo -e "${o}"
 }
 
-CDEPEND_GCC_SANITIZER="
-	!clang? ( sys-devel/gcc[sanitize] )
-"
 gen_clang_sanitizer() {
 	local san_type="${1}"
 	local s
-	local o=""
-	for s in ${LLVM_SLOTS[@]} ; do
-		o+="
-			(
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${san_type}]
 				sys-devel/clang:${s}
@@ -219,23 +220,19 @@ gen_clang_sanitizer() {
 			)
 		"
 	done
-	echo "${o}"
 }
 gen_cdepend_sanitizers() {
 	local a
 	for a in ${SANITIZERS[@]} ; do
 		echo "
-	${a}? (
-		|| (
-			${CDEPEND_GCC_SANITIZER}
-			clang? (
-				|| (
+			${a}? (
+				!clang? (
+					sys-devel/gcc[sanitize]
+				)
+				clang? (
 					$(gen_clang_sanitizer ${a})
 				)
 			)
-		)
-	)
-
 		"
 	done
 }
@@ -252,14 +249,14 @@ CDEPEND_CLANG="
 			sys-devel/clang
 		)
 		lto? (
-			|| (
-				$(gen_cdepend_lto_llvm)
-			)
+			$(gen_cdepend_lto_llvm)
 		)
 	)
 "
 CDEPEND_GCC="
-	!clang? ( sys-devel/gcc )
+	!clang? (
+		sys-devel/gcc
+	)
 "
 DEPEND+="
 	${PYTHON_DEPS}
@@ -369,20 +366,16 @@ PATCHES=(
 )
 
 pkg_setup() {
-ewarn
 ewarn "Do not emerge this directly use dev-games/godot-meta instead."
-ewarn
 	if use gdscript ; then
-ewarn
 ewarn "The gdscript USE flag is untested."
-ewarn
 	fi
 
 	python-any-r1_pkg_setup
 	if use lto && use clang ; then
 		LLVM_MAX_SLOT="not_found"
 		local s
-		for s in ${LLVM_SLOTS[@]} ; do
+		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version "sys-devel/clang:${s}" \
 				&& has_version "sys-devel/llvm:${s}" ; then
 				LLVM_MAX_SLOT=${s}
@@ -396,9 +389,7 @@ eerror "same slot."
 eerror
 			die
 		fi
-einfo
 einfo "LLVM_MAX_SLOT=${LLVM_MAX_SLOT} for LTO"
-einfo
 		llvm_pkg_setup
 	fi
 }
@@ -406,8 +397,10 @@ einfo
 src_prepare() {
 	default
 	if use mono ; then
-		cp -aT "/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
-			modules/mono/glue || die
+		cp -aT \
+			"/usr/share/${MY_PN}/${SLOT_MAJ}/mono-glue/modules/mono/glue" \
+			"modules/mono/glue" \
+			|| die
 	fi
 }
 
@@ -422,8 +415,14 @@ src_configure() {
 		if use system-mono ; then
 			# The code assumes unilib system not multilib.
 			mkdir -p "${WORKDIR}/mono" || die
-			ln -s "/usr/$(get_libdir)" "${WORKDIR}/mono/lib" || die
-			ln -s "/usr/include" "${WORKDIR}/mono/include" || die
+			ln -s \
+				"/usr/$(get_libdir)" \
+				"${WORKDIR}/mono/lib" \
+				|| die
+			ln -s \
+				"/usr/include" \
+				"${WORKDIR}/mono/include" \
+				|| die
 		fi
 	fi
 }
@@ -489,7 +488,7 @@ src_configure_server_no_mono() {
 src_compile_server()
 {
 	local configuration="release_debug"
-	einfo "Building headless editor server"
+einfo "Building headless editor server"
 	if use mono ; then
 		src_configure_server_yes_mono
 	else
@@ -634,18 +633,20 @@ _install_server() {
 	# NO EXPORT TEMPLATE
 	local d="/usr/$(get_libdir)/godot/${SLOT_MAJ}/bin/headless-server"
 	exeinto "${d}"
-	einfo "Installing export templates"
+einfo "Installing export templates"
 	local x
 	for x in $(find bin -type f) ; do
 		[[ "${x}" =~ "godot_server" ]] || continue
 		local p="${x}"
 		local configuration=$(_get_configuration "${x}")
 		doexe "${p}"
-		dosym "${d}/$(basename ${x})" \
-			/usr/bin/godot-headless-server-${configuration}
+		dosym \
+			"${d}/$(basename ${x})" \
+			"/usr/bin/godot-headless-server-${configuration}"
 		if [[ "${configuration}" =~ "release" ]] ; then
-			dosym "${d}/$(basename ${x})" \
-				/usr/bin/godot-headless-server
+			dosym \
+				"${d}/$(basename ${x})" \
+				"/usr/bin/godot-headless-server"
 		fi
 	done
 }
