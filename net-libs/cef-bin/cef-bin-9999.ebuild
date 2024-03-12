@@ -48,7 +48,10 @@ S="${WORKDIR}" # Dummy
 
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for \
 embedding Chromium-based browsers in other applications."
-LICENSE="BSD"
+LICENSE="
+	BSD
+	chromium-$(ver_cut 1-3 ${DEPENDS_VERSION}).x.html
+"
 HOMEPAGE="
 https://bitbucket.org/chromiumembedded/cef/src/master/
 https://github.com/chromiumembedded/cef
