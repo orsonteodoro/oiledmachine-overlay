@@ -10,6 +10,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 )
+# CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
+CUDA_PV="11.8" # 11.7 minimum required
 CUDA_TARGETS_COMPAT=(
 # Builds for all cards
 	auto
@@ -31,28 +33,33 @@ MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
 ROCM_SLOT="5.4" # To be changed in pkg_setup()
+ROCM_SLOTS=(
+	rocm_5_3
+	rocm_5_4
+)
 
 inherit cmake cuda flag-o-matic rocm python-single-r1
 
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/pytorch/${MYPN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${MYP}.tar.gz
 "
+S="${WORKDIR}/${MYP}"
 
 DESCRIPTION="A deep learning framework"
 HOMEPAGE="https://pytorch.org/"
 LICENSE="BSD"
+RESTRICT="test"
 SLOT="0"
-KEYWORDS="~amd64"
 # cuda and rocm are enabled by default upstream.
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl -opencv +openmp
-rocm +qnnpack +tensorpipe +xnnpack
+${ROCM_SLOTS[@]}
+cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl
+-opencv +openmp rocm +qnnpack +tensorpipe +xnnpack
 r1
-rocm_5_3
-rocm_5_4
 "
 gen_cuda_required_use() {
 	local x
@@ -78,6 +85,10 @@ REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
+	?? (
+		cuda
+		rocm
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -101,8 +112,7 @@ REQUIRED_USE="
 	rocm? (
 		${ROCM_REQUIRED_USE}
 		^^ (
-			rocm_5_4
-			rocm_5_3
+			${ROCM_SLOTS[@]}
 		)
 	)
 "
@@ -142,8 +152,6 @@ gen_rocm_depends() {
 		"
 	done
 }
-# CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
-CUDA_PV="11.8" # 11.7 minimum required
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-cpp/glog-0.5.0
@@ -256,8 +264,6 @@ DEPEND="
 		dev-libs/cutlass
 	)
 "
-RESTRICT="test"
-S="${WORKDIR}/${MYP}"
 PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-gentoo.patch"
 	"${FILESDIR}/${PN}-1.13.0-install-dirs.patch"
@@ -265,6 +271,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
 	"${FILESDIR}/${PN}-2.0.0-gcc13.patch"
 	"${FILESDIR}/${PN}-2.0.0-cudnn_include_fix.patch"
+	"${FILESDIR}/${PN}-2.0.1-cudaExtra.patch"
 )
 
 pkg_setup() {
@@ -291,7 +298,7 @@ src_prepare() {
 		|| die
 	cmake_src_prepare
 	if use rocm ; then
-		eapply "${FILESDIR}/${PN}-2.0.1-hip-cmake.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-2.0.1-hip-cmake.patch"
 	fi
 	pushd torch/csrc/jit/serialization || die
 		flatc \
@@ -464,19 +471,19 @@ src_install() {
 	insinto "/var/lib/${PN}"
 	doins "${BUILD_DIR}/CMakeCache.txt"
 
-	rm -rf python
-	mkdir -p python/torch/include || die
+	rm -rf "python"
+	mkdir -p "python/torch/include" || die
 	mv \
 		"${ED}/usr/lib/python"*"/site-packages/caffe2" \
-		python/ \
+		"python/" \
 		|| die
 	mv \
 		"${ED}/usr/include/torch" \
-		python/torch/include \
+		"python/torch/include" \
 		|| die
 	cp \
-		torch/version.py \
-		python/torch/ \
+		"torch/version.py" \
+		"python/torch/" \
 		|| die
 	rm -rf "${ED}/var/tmp" || die
 	python_domodule python/caffe2

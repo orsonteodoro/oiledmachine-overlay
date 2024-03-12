@@ -1,4 +1,4 @@
-# Copyright 2022-2023 Gentoo Authors
+# Copyright 2022-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -11,7 +11,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908
 )
 # CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
-CUDA_PV="11.8" # 11.6 minimum required
+CUDA_PV="11.8" # 11.7 minimum required
 CUDA_TARGETS_COMPAT=(
 # Builds for all cards
 	auto
@@ -31,10 +31,11 @@ CUDA_TARGETS_COMPAT=(
 LLVM_MAX_SLOT=16
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
-PYTHON_COMPAT=( python3_10 ) # Upstream only allows <=3.10
-ROCM_SLOT="5.2" # To be changed in pkg_setup()
+PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
+ROCM_SLOT="5.4" # To be changed in pkg_setup()
 ROCM_SLOTS=(
-	rocm_5_2
+	rocm_5_3
+	rocm_5_4
 )
 
 inherit cmake cuda flag-o-matic rocm python-single-r1
@@ -56,8 +57,8 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS[@]}
-cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl
--opencv +openmp rocm +qnnpack +tensorpipe +xnnpack
+cuda +distributed +fbgemm -ffmpeg mkl +gloo +magma +mpi +nnpack +numpy onednn
+openblas -opencl -opencv +openmp rocm +qnnpack +tensorpipe +xnnpack
 r1
 "
 gen_cuda_required_use() {
@@ -102,6 +103,9 @@ REQUIRED_USE="
 	tensorpipe? (
 		distributed
 	)
+	distributed? (
+		tensorpipe
+	)
 	gloo? (
 		distributed
 	)
@@ -113,8 +117,9 @@ REQUIRED_USE="
 	)
 "
 ROCM_SLOTS=(
-# https://github.com/pytorch/pytorch/blob/v1.13.1/.github/workflows/periodic.yml#L37
-	"5.2.3" # TODO:  Confirm version completeness.
+# See https://github.com/pytorch/pytorch/blob/v2.0.1/.ci/docker/build.sh#L190
+	"5.4.3"
+	"5.3.3"
 )
 gen_rocm_depends() {
 	local pv
@@ -157,11 +162,11 @@ RDEPEND="
 	dev-libs/libfmt
 	dev-libs/pthreadpool
 	dev-libs/sleef
-	sci-libs/lapack
 	sci-libs/foxi
+	virtual/lapack
 	cuda? (
 		=dev-libs/cudnn-8*
-		dev-libs/cudnn-frontend:0/8
+		>=dev-libs/cudnn-frontend-0.9.2:0/8
 		cuda_targets_auto? (
 			=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*:=
 		)
@@ -195,7 +200,7 @@ RDEPEND="
 		=dev-util/nvidia-cuda-toolkit-${CUDA_PV}*[profiler]
 	)
 	fbgemm? (
-		dev-libs/FBGEMM
+		>=dev-libs/FBGEMM-2023.11.02
 	)
 	ffmpeg? (
 		media-video/ffmpeg:=
@@ -210,8 +215,11 @@ RDEPEND="
 			sci-libs/magma:0
 		)
 	)
+	mkl? (
+		sci-libs/mkl
+	)
 	mpi? (
-		sys-cluster/openmpi
+		virtual/mpi
 	)
 	nnpack? (
 		sci-libs/NNPACK
@@ -220,6 +228,12 @@ RDEPEND="
 		$(python_gen_cond_dep '
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
+	)
+	onednn? (
+		dev-libs/oneDNN
+	)
+	openblas? (
+		sci-libs/openblas
 	)
 	opencl? (
 		virtual/opencl
@@ -236,10 +250,10 @@ RDEPEND="
 		)
 	)
 	tensorpipe? (
-		sci-libs/tensorpipe
+		sci-libs/tensorpipe[cuda?]
 	)
 	xnnpack? (
-		sci-libs/XNNPACK
+		>=sci-libs/XNNPACK-2022.12.22
 	)
 "
 DEPEND="
@@ -249,32 +263,41 @@ DEPEND="
 	')
 	${RDEPEND}
 	>=dev-cpp/eigen-3.4
+	>=sci-libs/kineto-0.4.0_p20231031
 	dev-libs/psimd
 	dev-libs/FP16
 	dev-libs/FXdiv
 	dev-libs/pocketfft
 	dev-libs/flatbuffers
-	sci-libs/kineto
 	cuda? (
-		dev-libs/cutlass
+		>=dev-libs/cutlass-3.1.0
+	)
+	onednn? (
+		sci-libs/ideep
 	)
 "
-BDEPEND="
-	>=dev-build/cmake-3.13
-"
 PATCHES=(
-	"${FILESDIR}/${PN}-1.13.0-gentoo.patch"
+	"${FILESDIR}/${PN}-2.1.1-gentoo.patch"
 	"${FILESDIR}/${PN}-1.13.0-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
-	"${FILESDIR}/${PN}-1.12.0-clang.patch"
 	"${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
+	"${FILESDIR}/${PN}-2.0.0-gcc13.patch"
+	"${FILESDIR}/${PN}-2.0.0-cudnn_include_fix.patch"
+	"${FILESDIR}/${PN}-2.1.1-cudaExtra.patch"
+	"${FILESDIR}/${PN}-2.1.2-fix-rpath.patch"
+	"${FILESDIR}/${PN}-2.1.2-fix-openmp-link.patch"
+	"${FILESDIR}/${PN}-2.1.2-rocm-fix-std-cpp17.patch"
 )
 
 pkg_setup() {
-	if use rocm_5_2 ; then
-		LLVM_MAX_SLOT="14"
+	if use rocm_5_4 ; then
+		LLVM_MAX_SLOT="15"
 		LLVM_SLOT="${LLVM_MAX_SLOT}"
-		ROCM_SLOT="5.2"
+		ROCM_SLOT="5.4"
+	elif use rocm_5_3 ; then
+		LLVM_MAX_SLOT="15"
+		LLVM_SLOT="${LLVM_MAX_SLOT}"
+		ROCM_SLOT="5.3"
 	fi
 	if use rocm ; then
 		rocm_pkg_setup
@@ -307,6 +330,9 @@ src_prepare() {
 		|| die
 	if use rocm ; then
 		rocm_src_prepare
+		ebegin "HIPifying cuda sources"
+			${EPYTHON} "tools/amd_build/build_amd.py" || die
+		eend $?
 	fi
 }
 
@@ -357,7 +383,6 @@ einfo
 
 	local mycmakeargs=(
 	# Avoid the use of MKL, if found on the system
-		-DBLAS="Eigen"
 		-DBUILD_CUSTOM_PROTOBUF=OFF
 		-DBUILD_SHARED_LIBS=ON
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
@@ -366,10 +391,8 @@ einfo
 		-DTORCH_INSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
 		-DUSE_CCACHE=OFF
 		-DUSE_CUDA=$(usex cuda)
-		-DUSE_CUDNN=$(usex cuda)
 		-DUSE_DISTRIBUTED=$(usex distributed)
 		-DUSE_FAKELOWP=OFF
-		-DUSE_FAST_NVCC=$(usex cuda)
 		-DUSE_FBGEMM=$(usex fbgemm)
 		-DUSE_FFMPEG=$(usex ffmpeg)
 		-DUSE_GFLAGS=ON
@@ -379,12 +402,11 @@ einfo
 		-DUSE_KINETO=OFF # TODO
 		-DUSE_LEVELDB=OFF
 		-DUSE_MAGMA=$(usex magma)
-		-DUSE_MKLDNN=OFF
+		-DUSE_METAL=OFF
+		-DUSE_MKLDNN=$(usex onednn)
 		-DUSE_MPI=$(usex mpi)
-		-DUSE_NCCL=OFF # TODO: NVIDIA Collective Communication Library
 		-DUSE_NNPACK=$(usex nnpack)
 		-DUSE_QNNPACK=$(usex qnnpack)
-		-DUSE_SYSTEM_EIGEN_INSTALL=ON
 		-DUSE_SYSTEM_FP16=ON
 		-DUSE_SYSTEM_FXDIV=ON
 		-DUSE_SYSTEM_GLOO=ON
@@ -407,6 +429,21 @@ einfo
 		-Wno-dev
 	)
 
+	if use mkl ; then
+		mycmakeargs+=(
+			-DBLAS=MKL
+		)
+	elif use openblas ; then
+		mycmakeargs+=(
+			-DBLAS=OpenBLAS
+		)
+	else
+		mycmakeargs+=(
+			-DBLAS=Generic
+			-DBLAS_LIBRARIES=
+		)
+	fi
+
 	if use cuda ; then
 		addpredict "/dev/nvidiactl" # bug 867706
 		addpredict "/dev/char"
@@ -426,6 +463,10 @@ einfo
 		mycmakeargs+=(
 			-DCMAKE_CUDA_FLAGS=$(cuda_gccdir -f \
 				| tr -d \")
+			-DBUILD_NVFUSER=ON
+			-DTORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST:-3.5 7.0}"
+			-DUSE_CUDNN=ON
+			-DUSE_NCCL=OFF # TODO: NVIDIA Collective Communication Library
 		)
 	fi
 	if use rocm ; then
@@ -450,10 +491,26 @@ einfo
 		export ROCTHRUST_PATH="${ESYSROOT}${EROCM_PATH}"
 		export THRUST_PATH="${ESYSROOT}${EROCM_PATH}/include"
 		mycmakeargs+=(
+			-DBUILD_NVFUSER=ON
 			-DPYTORCH_ROCM_ARCH=$(get_amdgpu_flags)
+			-DUSE_NCCL=ON
+			-DUSE_SYSTEM_NCCL=ON
 		)
 	fi
+
+	if use onednn; then
+		mycmakeargs+=(
+			-DMKLDNN_FOUND=ON
+			-DMKLDNN_INCLUDE_DIR="${ESYSROOT}/usr/include/oneapi/dnnl"
+			-DMKLDNN_LIBRARIES="dnnl"
+			-DUSE_MKLDNN=ON
+		)
+	fi
+
 	cmake_src_configure
+
+	# Do not rerun cmake and the build process in src_install
+	sed '/RERUN/,+1d' -i "${BUILD_DIR}"/build.ninja || die
 }
 
 src_install() {
@@ -468,10 +525,16 @@ src_install() {
 		"${ED}/usr/lib/python"*"/site-packages/caffe2" \
 		"python/" \
 		|| die
-	mv \
-		"${ED}/usr/include/torch" \
-		"python/torch/include" \
+	if use cuda || use rocm ; then
+		mv \
+			"${ED}${S}/nvfuser" \
+			"python/nvfuser" \
+			|| die
+		mv \
+			"${ED}/usr/$(get_libdir)/nvfuser.so" \
+			"python/nvfuser/_C.so" \
 		|| die
+	fi
 	cp \
 		"torch/version.py" \
 		"python/torch/" \
@@ -479,4 +542,13 @@ src_install() {
 	rm -rf "${ED}/var/tmp" || die
 	python_domodule python/caffe2
 	python_domodule python/torch
+	ln -s \
+		"../../../../../include/torch" \
+		"${D}$(python_get_sitedir)/torch/include/torch" \
+		|| die # bug 923269
+	if use cuda || use rocm ; then
+		python_domodule python/nvfuser
+	fi
+	rm -rf "${ED}${WORKDIR}"
+	find "${ED}" -empty -delete
 }
