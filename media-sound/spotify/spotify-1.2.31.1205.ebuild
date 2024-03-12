@@ -117,8 +117,8 @@ GTK4_PV="4.8.3"
 LIBXI_PV="1.7.10"
 LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
 LIBXTST_PV="1.2.3"
-NSS_PV="3.61"
 MESA_PV="20.3.5"
+NSS_PV="3.61"
 
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
 # <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
