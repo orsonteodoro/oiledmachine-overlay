@@ -342,9 +342,6 @@ BDEPEND+="
 S="${WORKDIR}/jax-jax-v${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md CITATION.bib README.md )
-PATCHES=(
-	"${FILESDIR}/${PN}-0.4.14-rocm-headers.patch"
-)
 
 distutils_enable_tests "pytest"
 
@@ -744,8 +741,15 @@ ewarn "If build failure, use MAKEOPTS=\"-j1\"."
 ewarn "Expect memory use 6-11 GiB per process."
 ewarn
 
+	if use rocm ; then
+		cd "${S}" || die
+		eapply "${FILESDIR}/${PN}-0.4.14-rocm-headers.patch"
+	fi
+
 	cd "${WORKDIR}/xla-${EGIT_XLA_COMMIT}" || die
-	eapply -p1 "${FILESDIR}/xla/"*
+	if use rocm ; then
+		eapply -p1 "${FILESDIR}/xla/"*
+	fi
 
 	# Speed up symbol replacement for @...@ by reducing search space.
 	XLA_S="${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
@@ -776,7 +780,9 @@ ewarn
 		"${XLA_S}/xla/stream_executor/rocm/rocsolver_wrapper.h"
 	)
 
-	rocm_src_prepare
+	if use rocm ; then
+		rocm_src_prepare
+	fi
 
 	cd "${S}" || die
 

@@ -226,6 +226,8 @@ DOCS=( CHANGELOG.md README.md readme.pdf )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.4.1-findtbb-print-paths.patch"
 	"${FILESDIR}/${PN}-2.2.1-findtbb-alt-lib-path.patch"
+)
+HIP_PATCHES=(
 	"${FILESDIR}/${PN}-2.2.1-hip-buildfiles-changes.patch"
 	"${FILESDIR}/${PN}-2.0.1-set-rocm-path.patch"
 )
@@ -296,11 +298,16 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
+	if use rocm ; then
+		eapply ${HIP_PATCHES[@]}
+	fi
 	pushd "${S}/external/composable_kernel" || die
 		eapply "${FILESDIR}/composable_kernel-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
 	popd
 	use cuda && cuda_src_prepare
-	rocm_src_prepare
+	if use rocm ; then
+		rocm_src_prepare
+	fi
 }
 
 get_cuda_targets() {

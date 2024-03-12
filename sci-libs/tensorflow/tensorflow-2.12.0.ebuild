@@ -1060,6 +1060,14 @@ einfo "Preventing stall.  Removing -Os."
 	bazel_setup_bazelrc
 
 	cp -a "${FILESDIR}/${PV}/"*".patch" "${WORKDIR}/patches" || die
+	if ! use rocm ; then
+		pushd "${WORKDIR}/patches" || die
+			rm \
+				*"-rocm-"* \
+				"0050-toolchain-prefix.patch" \
+				|| die
+		popd || die
+	fi
 	rm third_party/gpus/find_rocm_config.py.gz.base64 || die
 	eapply "${WORKDIR}/patches/"*".patch"
 
@@ -1084,12 +1092,14 @@ einfo "Preventing stall.  Removing -Os."
 		"${S}/third_party/gpus/find_rocm_config.py"
 		"${S}/third_party/gpus/rocm_configure.bzl"
 	)
-	rocm_src_prepare
-	pushd third_party/gpus || die
+	if use rocm ; then
+		rocm_src_prepare
+	fi
+	pushd "third_party/gpus" || die
 		pigz -z -k find_rocm_config.py || die
 		mv find_rocm_config.py.zz find_rocm_config.py.gz || die
 		base64 --wrap=0 find_rocm_config.py.gz > find_rocm_config.py.gz.base64 || die
-	popd
+	popd || die
 
 	# Relax version checks in setup.py
 	sed -i "/^    '/s/==/>=/g" tensorflow/tools/pip_package/setup.py || die

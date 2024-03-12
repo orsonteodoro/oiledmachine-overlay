@@ -265,7 +265,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.13.1-tensorpipe.patch"
 	"${FILESDIR}/${PN}-2.0.0-gcc13.patch"
 	"${FILESDIR}/${PN}-2.0.0-cudnn_include_fix.patch"
-	"${FILESDIR}/${PN}-2.0.1-hip-cmake.patch"
 )
 
 pkg_setup() {
@@ -291,6 +290,9 @@ src_prepare() {
 		cmake/Dependencies.cmake \
 		|| die
 	cmake_src_prepare
+	if use rocm ; then
+		eapply "${FILESDIR}/${PN}-2.0.1-hip-cmake.patch"
+	fi
 	pushd torch/csrc/jit/serialization || die
 		flatc \
 			--cpp \
@@ -304,7 +306,9 @@ src_prepare() {
 		-e "s|lib/cmake|$(get_libdir)/cmake|g" \
 		"cmake/public/LoadHIP.cmake" \
 		|| die
-	rocm_src_prepare
+	if use rocm ; then
+		rocm_src_prepare
+	fi
 }
 
 gen_cuda_arch_list() {
