@@ -264,7 +264,10 @@ pkg_setup() {
 		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		ROCM_SLOT="5.2"
 	fi
-	rocm_pkg_setup
+	if use rocm ; then
+		rocm_pkg_setup
+	fi
+	python-single-r1_pkg_setup
 }
 
 src_prepare() {
