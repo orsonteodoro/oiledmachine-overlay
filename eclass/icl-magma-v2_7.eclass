@@ -283,7 +283,9 @@ icl-magma-v2_7_pkg_setup() {
 	fortran-2_pkg_setup
 	python-any-r1_pkg_setup
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		rocm_pkg_setup
+		if use rocm ; then
+			rocm_pkg_setup
+		fi
 	fi
 	tc-check-openmp || die "Need OpenMP to compile ${P}"
 	if use mkl ; then

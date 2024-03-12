@@ -596,13 +596,10 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
-		has_version "dev-util/hip:0/5.3" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.4" && LLVM_MAX_SLOT=15
-		has_version "dev-util/hip:0/5.5" && LLVM_MAX_SLOT=16
-		has_version "dev-util/hip:0/5.6" && LLVM_MAX_SLOT=16
-
-		llvm_pkg_setup
-		export LLVM_SLOT
+		has_version "dev-util/hip:0/5.3" && LLVM_SLOT=15
+		has_version "dev-util/hip:0/5.4" && LLVM_SLOT=15
+		has_version "dev-util/hip:0/5.5" && LLVM_SLOT=16
+		has_version "dev-util/hip:0/5.6" && LLVM_SLOT=16
 	elif tc-is-clang || use clang ; then
 		use_clang
 	elif tc-is-gcc ; then
@@ -614,7 +611,9 @@ einfo "completely installed."
 einfo
 		die
 	fi
-	rocm_pkg_setup
+	if use rocm ; then
+		rocm_pkg_setup
+	fi
 }
 
 pkg_setup() {

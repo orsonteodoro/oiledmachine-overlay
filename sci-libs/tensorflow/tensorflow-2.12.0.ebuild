@@ -815,8 +815,6 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		has_version "dev-util/hip:0/5.4" && LLVM_SLOT=15
 		has_version "dev-util/hip:0/5.5" && LLVM_SLOT=16
 		has_version "dev-util/hip:0/5.6" && LLVM_SLOT=16
-		llvm-r1_pkg_setup
-		export LLVM_SLOT
 	elif tc-is-clang || use clang ; then
 		use_clang
 	elif tc-is-gcc ; then
@@ -829,7 +827,9 @@ einfo
 		die
 	fi
 
-	rocm_pkg_setup
+	if use rocm ; then
+		rocm_pkg_setup
+	fi
 
 	local num_pythons_enabled
 	num_pythons_enabled=0
