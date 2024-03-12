@@ -277,6 +277,13 @@ PATCHES=(
 )
 
 pkg_setup() {
+# error: 'runtime_error' is not a member of 'std'
+ewarn
+ewarn "Switch GCC 12 if build failure."
+ewarn
+ewarn "eselect gcc set ${CHOST}-12"
+ewarn "source /etc/profile"
+ewarn
 	if use rocm_5_2 ; then
 		LLVM_MAX_SLOT="14"
 		LLVM_SLOT="${LLVM_MAX_SLOT}"
