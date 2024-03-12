@@ -502,9 +502,15 @@ icl-magma-v2_7_src_prepare() {
 
 	cmake_src_prepare
 	replace_symbols
+	local applied_rocm_patches=0
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
-		rocm_src_prepare
-	else
+		if use rocm ; then
+			applied_rocm_patches=1
+			rocm_src_prepare
+		fi
+	fi
+	if (( ${applied_rocm_patches} == 0 )) ; then
+		# Placeholders
 		sed -i -e "s|@ESYSROOT_ROCM_PATH@|/opt/rocm|g" \
 			$(grep -r -l -e "@ESYSROOT_ROCM_PATH@" "${WORKDIR}") \
 			|| true
