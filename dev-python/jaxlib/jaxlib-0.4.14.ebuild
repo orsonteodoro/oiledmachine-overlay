@@ -222,6 +222,9 @@ REQUIRED_USE+="
 			rocm_5_5
 		)
 	)
+	rocm_5_5? (
+		llvm_slot_16
+	)
 	|| (
 		cpu
 		cuda

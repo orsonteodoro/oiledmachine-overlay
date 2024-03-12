@@ -394,6 +394,9 @@ REQUIRED_USE="
 			rocm_5_3
 		)
 	)
+	rocm_5_3? (
+		llvm_slot_15
+	)
 	test? (
 		python
 	)
