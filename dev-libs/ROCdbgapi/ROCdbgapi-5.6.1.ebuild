@@ -4,19 +4,21 @@
 EAPI=8
 
 LLVM_MAX_SLOT=16
+LLVM_SLOT="${LLVM_MAX_SLOT}"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
 
+KEYWORDS="~amd64"
 SRC_URI="
 	https://github.com/ROCm-Developer-Tools/ROCdbgapi/archive/rocm-${PV}.tar.gz
 		-> ${P}.tar.gz
 "
+S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 
 DESCRIPTION="AMD Debugger API"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/ROCdbgapi"
 LICENSE="MIT"
-KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE=" r3"
 RDEPEND="
@@ -30,7 +32,6 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.8
 "
-S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-path-changes.patch"
 )

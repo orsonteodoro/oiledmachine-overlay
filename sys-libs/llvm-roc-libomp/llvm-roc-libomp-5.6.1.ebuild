@@ -77,6 +77,7 @@ CUDA_TARGETS_COMPAT=(
 	auto
 )
 LLVM_MAX_SLOT=16
+LLVM_SLOT="${LLVM_MAX_SLOT}"
 PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 

@@ -76,6 +76,7 @@ DOCS_DEPEND="
 
 inherit docs
 
+#KEYWORDS="~amd64" # Needs install test
 SRC_URI="
 https://github.com/intel/llvm/archive/refs/tags/sycl-nightly/${PV//./}.tar.gz
 	-> ${P}.tar.gz
@@ -100,9 +101,13 @@ LICENSE="
 	Apache-2.0
 	MIT
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="0/6" # Based on libsycl.so with SYCL_MAJOR_VERSION in \
 # https://github.com/intel/llvm/blob/2022-12/sycl/CMakeLists.txt#L35
-#KEYWORDS="~amd64" # Needs install test
 ALL_LLVM_TARGETS=(
 	AArch64
 	AMDGPU
@@ -176,11 +181,6 @@ REQUIRED_USE="
 		^^ (
 			${ROCM_SLOTS[@]}
 		)
-	)
-"
-RESTRICT="
-	!test? (
-		test
 	)
 "
 # See https://github.com/intel/llvm/blob/2022-12/clang/include/clang/Basic/Cuda.h
@@ -261,6 +261,7 @@ eerror "Switch to >=sys-devel/gcc-7.1"
 		fi
 # Use the clang compiler in /usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/ if dev-util/hip[-system-llvm]
 # Use the clang compiler in /usr/lib/llvm/${LLVM_SLOT}/bin/ if dev-util/hip[system-llvm]
+		export LLVM_SLOT="${LLVM_MAX_SLOT}"
 		rocm_pkg_setup
 	fi
 }

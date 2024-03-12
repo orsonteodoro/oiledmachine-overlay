@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=15
+LLVM_SLOT="${LLVM_MAX_SLOT}"
 MY_P="${PN}-$(ver_cut 1-3 ${PV})"
 PYTHON_COMPAT=( python3_{9..11} pypy3 )
 ROCM_SLOT="5.3"
@@ -11,16 +12,20 @@ ROCM_VERSION="5.3.3"
 
 inherit python-any-r1 rocm
 
+KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 SRC_URI="https://github.com/projg2/python-exec/releases/download/v${PV}/${MY_P}.tar.bz2"
 S="${WORKDIR}/${MY_P}"
 
 DESCRIPTION="Python script wrapper"
 HOMEPAGE="https://github.com/projg2/python-exec/"
 LICENSE="BSD-2"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="rocm-${ROCM_SLOT}/${ROCM_VERSION}"
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 IUSE="${_PYTHON_ALL_IMPLS[@]/#/python_targets_} +native-symlinks test"
-RESTRICT="!test? ( test )"
 RDEPEND="
 	dev-lang/python-exec-conf
 	!<=dev-lang/python-2.7.18-r3:2.7

@@ -4,6 +4,7 @@
 EAPI=8
 
 LLVM_MAX_SLOT=14
+LLVM_SLOT="${LLVM_MAX_SLOT}"
 PYTHON_COMPAT=( python3_{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 

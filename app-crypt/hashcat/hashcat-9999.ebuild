@@ -169,6 +169,7 @@ pkg_setup() {
 			LLVM_MAX_SLOT=17
 			ROCM_SLOT="5.7"
 		fi
+		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		rocm_pkg_setup
 	fi
 }
