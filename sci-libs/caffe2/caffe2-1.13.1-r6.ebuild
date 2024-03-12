@@ -109,8 +109,8 @@ gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
 		local s=$(ver_cut 1-2 ${pv})
-		local u=$(ver_cut 1-2 ${pv})
-		u=${u/./_}
+		local u="${s}"
+		u="${u/./_}"
 		echo "
 			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}

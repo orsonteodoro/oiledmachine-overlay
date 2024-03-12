@@ -250,8 +250,8 @@ gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
 		local s=$(ver_cut 1-2 ${pv})
-		local u=$(ver_cut 1-2 ${pv})
-		u=${u/./_}
+		local u="${s}"
+		u="${u/./_}"
 		# Direct dependencies
 		echo "
 			rocm_${u}? (
@@ -608,10 +608,10 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
-		#use rocm_5_3 && has_version "dev-util/hip:0/5.3" && LLVM_SLOT=15
-		#use rocm_5_4 && has_version "dev-util/hip:0/5.4" && LLVM_SLOT=15
-		use rocm_5_5 && has_version "dev-util/hip:0/5.5" && LLVM_SLOT=16
-		#use rocm_5_6 && has_version "dev-util/hip:0/5.6" && LLVM_SLOT=16
+		#use rocm_5_3 && has_version "dev-util/hip:5.3" && LLVM_SLOT=15
+		#use rocm_5_4 && has_version "dev-util/hip:5.4" && LLVM_SLOT=15
+		use rocm_5_5 && has_version "dev-util/hip:5.5" && LLVM_SLOT=16
+		#use rocm_5_6 && has_version "dev-util/hip:5.6" && LLVM_SLOT=16
 	elif tc-is-clang || use clang ; then
 		use_clang
 	elif tc-is-gcc ; then

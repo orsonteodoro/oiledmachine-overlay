@@ -161,8 +161,8 @@ gen_hip_depends() {
 	for hip_version in ${HIP_VERSIONS[@]} ; do
 		# Needed because of build failures
 		local s=$(ver_cut 1-2 ${hip_version})
-		local u=$(ver_cut 1-2 ${hip_version})
-		u=${u/./_}
+		local u="${s}"
+		u="${u/./_}"
 		echo "
 			rocm_${u}? (
 				~dev-libs/rocm-comgr-${hip_version}:${s}
