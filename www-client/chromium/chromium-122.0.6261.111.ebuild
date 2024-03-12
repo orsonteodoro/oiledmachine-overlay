@@ -107,8 +107,8 @@ FFMPEG_LIBAVCODEC_SOVER="60.34.100" # third_party/ffmpeg/libavcodec/version*.h
 FFMPEG_LIBAVFORMAT_SOVER="60.17.100" # third_party/ffmpeg/libavformat/version*.h
 FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
 FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
-GCC_PV="10.2.1" # Minimum
 GCC_COMPAT=( {14..10} )
+GCC_PV="10.2.1" # Minimum
 GN_PV="0.2143"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
@@ -143,7 +143,7 @@ ZLIB_PV="1.3"
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"${LLVM_OFFICIAL_SLOT}.0.0.9999"
 	"${LLVM_OFFICIAL_SLOT}.0.0"
-	"18.1.0_rc1"
+	"18.1.0"
 	"17.0.6"
 	"17.0.5"
 	"17.0.4"
@@ -1230,7 +1230,7 @@ get_llvm_profdata_version_info()
 
 	local PKGDB_PATH="${ESYSROOT}/var/db/pkg"
 	for compatible_pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
-		(( $(ver_cut 1 "${compatible_pv}") != ${LLVM_SLOT} )) && continue
+		(( ${compatible_pv%%.*} != ${LLVM_SLOT} )) && continue
 		( ! has_version "~sys-devel/llvm-${compatible_pv}" ) && continue
 		found_ver=${compatible_pv}
 		profdata_index_version=$(cat \
