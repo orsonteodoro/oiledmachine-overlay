@@ -131,10 +131,15 @@ REQUIRED_USE+="
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
-		llvm_slot_16
-		|| (
+		^^ (
 			${ROCM_SLOTS[@]}
 		)
+	)
+	rocm_5_5? (
+		llvm_slot_16
+	)
+	rocm_5_6? (
+		llvm_slot_16
 	)
 "
 gen_clang_depends() {
@@ -156,8 +161,10 @@ gen_hip_depends() {
 	for hip_version in ${HIP_VERSIONS[@]} ; do
 		# Needed because of build failures
 		local s=$(ver_cut 1-2 ${hip_version})
+		local u=$(ver_cut 1-2 ${hip_version})
+		u=${u/./_}
 		echo "
-			(
+			rocm_${u}? (
 				~dev-libs/rocm-comgr-${hip_version}:${s}
 				~dev-libs/rocm-device-libs-${hip_version}${s}
 				~dev-libs/rocr-runtime-${hip_version}:${s}
@@ -177,9 +184,7 @@ RDEPEND+="
 		>=dev-util/nvidia-cuda-toolkit-11.8:=
 	)
 	rocm? (
-		|| (
-			$(gen_hip_depends)
-		)
+		$(gen_hip_depends)
 		dev-util/hip:=[rocm]
 	)
 	sycl? (
@@ -205,10 +210,8 @@ BDEPEND+="
 		>=dev-util/nvidia-cuda-toolkit-11.8
 	)
 	rocm? (
+		$(gen_hip_depends)
 		>=dev-build/cmake-3.21
-		|| (
-			$(gen_hip_depends)
-		)
 	)
 	|| (
 		clang? (
@@ -257,6 +260,7 @@ pkg_setup() {
 	fi
 
 	if use rocm ; then
+		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		rocm_pkg_setup
 	fi
 
