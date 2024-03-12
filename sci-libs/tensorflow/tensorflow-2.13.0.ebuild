@@ -353,6 +353,8 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 alt-ssl clang cuda custom-optimization-level +hardened mpi +python rocm
 system-llvm test xla
 
+rocm_5_3
+
 r1
 "
 gen_required_use_cuda_targets() {
@@ -388,6 +390,9 @@ REQUIRED_USE="
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
+		^^ (
+			rocm_5_3
+		)
 	)
 	test? (
 		python
@@ -429,34 +434,36 @@ gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
 		local s="0/"$(ver_cut 1-2 ${pv})
+		local u=$(ver_cut 1-2 ${pv})
+		u=${u/./_}
 	# Check both the direct top and indirect bottom dependencies
 		echo "
-		(
-			~dev-libs/rccl-${pv}:${s}
-			~dev-libs/rocm-device-libs-${pv}:${s}
-			~dev-util/hip-${pv}:${s}[rocm]
-			~dev-util/roctracer-${pv}:${s}
-			~sci-libs/hipBLAS-${pv}:${s}[rocm]
-			~sci-libs/hipSOLVER-${pv}:${s}[rocm]
-			~sci-libs/hipSPARSE-${pv}:${s}[rocm]
-			~sci-libs/rocBLAS-${pv}:${s}[rocm]
-			~sci-libs/rocFFT-${pv}:${s}[rocm]
-			~sci-libs/rocRAND-${pv}:${s}[rocm]
-			~sci-libs/rocSOLVER-${pv}:${s}[rocm(+)]
-			~sci-libs/miopen-${pv}:${s}[rocm]
+			rocm_${u}? (
+				~dev-libs/rccl-${pv}:${s}
+				~dev-libs/rocm-device-libs-${pv}:${s}
+				~dev-util/hip-${pv}:${s}[rocm]
+				~dev-util/roctracer-${pv}:${s}
+				~sci-libs/hipBLAS-${pv}:${s}[rocm]
+				~sci-libs/hipSOLVER-${pv}:${s}[rocm]
+				~sci-libs/hipSPARSE-${pv}:${s}[rocm]
+				~sci-libs/rocBLAS-${pv}:${s}[rocm]
+				~sci-libs/rocFFT-${pv}:${s}[rocm]
+				~sci-libs/rocRAND-${pv}:${s}[rocm]
+				~sci-libs/rocSOLVER-${pv}:${s}[rocm(+)]
+				~sci-libs/miopen-${pv}:${s}[rocm]
 
-			~dev-libs/rocm-comgr-${pv}:${s}
-			~dev-libs/rocr-runtime-${pv}:${s}
-			~dev-build/rocm-cmake-${pv}:${s}
-			~dev-util/rocm-smi-${pv}:${s}
-			~dev-util/rocminfo-${pv}:${s}
-			~dev-util/Tensile-${pv}:${s}
+				~dev-libs/rocm-comgr-${pv}:${s}
+				~dev-libs/rocr-runtime-${pv}:${s}
+				~dev-build/rocm-cmake-${pv}:${s}
+				~dev-util/rocm-smi-${pv}:${s}
+				~dev-util/rocminfo-${pv}:${s}
+				~dev-util/Tensile-${pv}:${s}
 
-			sys-devel/lld:${LLD_SLOT[${pv}]}
+				sys-devel/lld:${LLD_SLOT[${pv}]}
 
-			dev-util/hip-compiler:${s}[system-llvm=]
-			dev-util/rocm-compiler:${s}[system-llvm=]
-		)
+				dev-util/hip-compiler:${s}[system-llvm=]
+				dev-util/rocm-compiler:${s}[system-llvm=]
+			)
 		"
 	done
 }
@@ -548,9 +555,7 @@ RDEPEND="
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
 	)
 	rocm? (
-		|| (
-			$(gen_rocm_rdepend)
-		)
+		$(gen_rocm_rdepend)
 		dev-util/hip:=
 	)
 "
@@ -709,20 +714,20 @@ einfo "Switched to gcc:${s}"
 			break
 		fi
 	done
+	local found2=0
+	local s_valid
+	for s_valid in ${GCC_COMPAT[@]} ; do
+		if (( ${s} == ${s_valid} )) ; then
+			found2=1
+			break
+		fi
+	done
 	if (( ${found} != 1 )) ; then
 eerror
 eerror "Use only gcc slots ${GCC_COMPAT[@]}"
 eerror
 		die
 	fi
-	local found2
-	found2=0
-	for s_valid in ${GCC_SLOT[@]} ; do
-		if (( ${s} == ${s_valid} )) ; then
-			found2=1
-			break
-		fi
-	done
 	if (( ${found2} == 1 )) ; then
 		:;
 	else
@@ -755,10 +760,10 @@ einfo "FORCE_LLVM_SLOT may be specified."
 	fi
 
 	if use rocm ; then
-		has_version "dev-util/hip:0/5.3" && _LLVM_COMPAT=( 15 )
-		has_version "dev-util/hip:0/5.4" && _LLVM_COMPAT=( 15 )
-		has_version "dev-util/hip:0/5.5" && _LLVM_COMPAT=( 16 )
-		has_version "dev-util/hip:0/5.6" && _LLVM_COMPAT=( 16 )
+		use rocm_5_3 && has_version "dev-util/hip:0/5.3" && _LLVM_COMPAT=( 15 )
+		#use rocm_5_4 && has_version "dev-util/hip:0/5.4" && _LLVM_COMPAT=( 15 )
+		#use rocm_5_5 && has_version "dev-util/hip:0/5.5" && _LLVM_COMPAT=( 16 )
+		#use rocm_5_6 && has_version "dev-util/hip:0/5.6" && _LLVM_COMPAT=( 16 )
 	fi
 
 	local found=0
@@ -774,13 +779,21 @@ einfo "Switched to clang:${s}"
 			break
 		fi
 	done
+	local found2=0
+	local s_valid
+	for s_valid in ${_LLVM_COMPAT[@]} ; do
+		if (( ${s} == ${s_valid} )) ; then
+			found2=1
+			break
+		fi
+	done
 	if (( ${found} != 1 )) ; then
 eerror
 eerror "Use only clang slots ${LLVM_COMPAT[@]}"
 eerror
 		die
 	fi
-	if (( ${s} == 10 || ${s} == 11 || ${s} == 14 )) ; then
+	if (( ${found2} == 1 )) ; then
 		:;
 	else
 ewarn "Using ${s} is not supported upstream.  This compiler slot is in testing."

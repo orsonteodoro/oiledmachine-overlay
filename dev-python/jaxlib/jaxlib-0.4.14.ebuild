@@ -157,6 +157,8 @@ IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 clang custom-optimization-level cpu cuda hardened portable rocm system-llvm r1
+
+rocm_5_5
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -216,6 +218,9 @@ REQUIRED_USE+="
 	rocm? (
 		!cuda
 		${ROCM_REQUIRED_USE}
+		^^ (
+			rocm_5_5
+		)
 	)
 	|| (
 		cpu
@@ -242,9 +247,11 @@ gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
 		local s="0/"$(ver_cut 1-2 ${pv})
+		local u=$(ver_cut 1-2 ${pv})
+		u=${u/./_}
 		# Direct dependencies
 		echo "
-			(
+			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}
 				~dev-libs/rocm-device-libs-${pv}:${s}
 				~dev-util/hip-${pv}:${s}[rocm]
@@ -294,9 +301,7 @@ RDEPEND+="
 		=dev-libs/cudnn-8*
 	)
 	rocm? (
-		|| (
-			$(gen_rocm_depends)
-		)
+		$(gen_rocm_depends)
 		dev-util/hip:=
 	)
 "
@@ -492,6 +497,14 @@ einfo "Switched to gcc:${s}"
 			break
 		fi
 	done
+	local found2=0
+	local s_valid
+	for s_valid in ${GCC_COMPAT[@]} ; do
+		if (( ${s} == ${s_valid} )) ; then
+			found2=1
+			break
+		fi
+	done
 	if (( ${found} != 1 )) ; then
 		local slots_desc=$(echo "${GCC_COMPAT[@]}" \
 			| tr " " "\n" \
@@ -503,7 +516,7 @@ eerror "Use only gcc slots ${slots_desc}"
 eerror
 		die
 	fi
-	if (( ${s} == 9 || ${s} == 11 || ${s} == 12 )) ; then
+	if (( ${found2} == 1 )) ; then
 		:;
 	else
 ewarn
@@ -557,14 +570,13 @@ einfo "Switched to clang:${s}"
 		fi
 	done
 	local found2=0
-	local s_verified
-	for s_verified in ${LLVM_COMPAT[@]} ; do
-		if (( ${s} == ${s_verified} )) ; then
+	local s_valid
+	for s_valid in ${_LLVM_COMPAT[@]} ; do
+		if (( ${s} == ${s_valid} )) ; then
 			found2=1
 			break
 		fi
 	done
-
 	if (( ${found} != 1 )) ; then
 eerror
 eerror "Use only clang slots ${LLVM_COMPAT[@]}"

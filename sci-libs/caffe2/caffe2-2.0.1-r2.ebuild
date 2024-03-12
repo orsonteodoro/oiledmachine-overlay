@@ -51,6 +51,8 @@ ${ROCM_IUSE}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma +mpi +nnpack +numpy -opencl -opencv +openmp
 rocm +qnnpack +tensorpipe +xnnpack
 r1
+rocm_5_3
+rocm_5_4
 "
 gen_cuda_required_use() {
 	local x
@@ -98,6 +100,10 @@ REQUIRED_USE="
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
+		^^ (
+			rocm_5_4
+			rocm_5_3
+		)
 	)
 "
 ROCM_SLOTS=(
@@ -109,8 +115,10 @@ gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
 		local s="0/"$(ver_cut 1-2 ${pv})
+		local u=$(ver_cut 1-2 ${pv})
+		u=${u/./_}
 		echo "
-			(
+			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}
 				~dev-libs/rocm-comgr-${pv}:${s}
 				~dev-libs/rocm-core-${pv}:${s}
@@ -261,11 +269,11 @@ PATCHES=(
 )
 
 pkg_setup() {
-	if has_version "dev-util/hip:5.4" ; then
+	if use rocm_5_4 ; then
 		LLVM_MAX_SLOT="15"
 		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		ROCM_SLOT="5.4"
-	elif has_version "dev-util/hip:5.3" ; then
+	elif use rocm_5_3 ; then
 		LLVM_MAX_SLOT="15"
 		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		ROCM_SLOT="5.3"
