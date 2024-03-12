@@ -30,8 +30,21 @@ DEPENDS_VERSION="122.0.6261.111"
 # Builds also the libcef_dll_wrapper
 # The -bin in ${PN} comes from the prebuilt chromium
 
+CLANG_PV="18"
+CXX_VER="17"
+FFMPEG_SLOT="0/58.60.60" # Same as 6.0
+GLIB_PV="2.66.8"
+GCC_PV="10.2.1" # Minimum
+GTK3_PV="3.24.24"
+GTK4_PV="4.8.3"
+LIBXI_PV="1.7.10"
+MESA_PV="20.3.5"
 VIRTUALX_REQUIRED="manual"
+
 inherit chromium-2 cmake flag-o-matic virtualx
+
+KEYWORDS="~arm ~arm64 ~amd64"
+S="${WORKDIR}" # Dummy
 
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for \
 embedding Chromium-based browsers in other applications."
@@ -41,8 +54,7 @@ https://bitbucket.org/chromiumembedded/cef/src/master/
 https://github.com/chromiumembedded/cef
 https://cef-builds.spotifycdn.com/index.html
 "
-KEYWORDS="~arm ~arm64 ~amd64"
-
+RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" beta cefclient cefsimple debug minimal test"
 REQUIRED_USE+="
@@ -107,14 +119,6 @@ REQUIRED_USE+="
 # *DEPENDs based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in CEF
 # The *DEPENDs below assume U 18.04
-CLANG_PV="18"
-FFMPEG_SLOT="0/58.60.60" # Same as 6.0
-GLIB_PV="2.66.8"
-GCC_PV="10.2.1" # Minimum
-GTK3_PV="3.24.24"
-GTK4_PV="4.8.3"
-LIBXI_PV="1.7.10"
-MESA_PV="20.3.5"
 CHROMIUM_CDEPEND="
 	>=app-accessibility/at-spi2-atk-2.44.1:2
 	>=app-accessibility/speech-dispatcher-0.11.4
@@ -218,11 +222,9 @@ BDEPEND+="
 		>=sys-devel/clang-${CLANG_PV}
 	)
 "
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/cef-bin-105.3.39-visibility-changes.patch"
 )
-S="${WORKDIR}" # Dummy
 
 get_xrid() {
 	if use kernel_linux && use elibc_glibc [[ "${ABI}" == "amd64" ]] ; then
@@ -257,7 +259,6 @@ append_all() {
 }
 
 # See https://bitbucket.org/chromiumembedded/cef/issues/3362/allow-c-17-features-in-cef-binary
-CXX_VER="17"
 check_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
@@ -306,8 +307,7 @@ ewarn "FEATURES as a per package envvar."
 ewarn
 	fi
 
-	if [[ "${PV}" =~ 9999 ]] \
-		&& has "network-sandbox" ${FEATURES} ; then
+	if [[ "${PV}" =~ "9999" ]] && has "network-sandbox" ${FEATURES} ; then
 eerror
 eerror "Network access required to download from a live source."
 eerror
@@ -459,9 +459,7 @@ src_unpack() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	local uri="https://cef-builds.spotifycdn.com/${bn}"
 	if check_tarball_integrity "${bn}" ; then
-einfo
 einfo "Using cached tarball copy"
-einfo
 	else
 		addwrite "${distdir}"
 		wget -O "${distdir}/${bn}.sha1" "${uri}.sha1" || die
@@ -497,7 +495,7 @@ ewarn
 
 src_prepare() {
 	export CMAKE_USE_DIR=$(S_abi)
-	einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
+einfo "CMAKE_USE_DIR=${CMAKE_USE_DIR}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
 	if use minimal ; then
@@ -539,16 +537,14 @@ einfo "DIR="$(pwd)
 einfo "DIR="$(pwd)
 
 	if use test ; then
-ewarn
 ewarn "Adding sandbox exceptions for the GPU."
-ewarn
 		local d
 		for d in /dev/dri/card*; do
-			einfo "addwrite ${d}"
+einfo "addwrite ${d}"
 			addwrite "${d}"
 		done
 		for d in /dev/dri/render*; do
-			einfo "addwrite ${d}"
+einfo "addwrite ${d}"
 			addwrite "${d}"
 		done
 	fi
@@ -570,7 +566,7 @@ src_compile() {
 }
 
 src_test() {
-	ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
+ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
 	export CMAKE_USE_DIR=$(S_abi)
 	export BUILD_DIR=$(S_abi)
 	cd "${BUILD_DIR}" || die
