@@ -93,6 +93,10 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	?? (
+		cuda
+		rocm
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -109,7 +113,7 @@ REQUIRED_USE="
 gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
-		local s="0/"$(ver_cut 1-2 ${pv})
+		local s=$(ver_cut 1-2 ${pv})
 		local u="${s}"
 		u="${u/./_}"
 		echo "

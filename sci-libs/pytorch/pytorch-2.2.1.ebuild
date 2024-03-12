@@ -93,6 +93,10 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
+	?? (
+		cuda
+		rocm
+	)
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
