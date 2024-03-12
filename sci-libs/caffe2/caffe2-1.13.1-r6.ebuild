@@ -261,6 +261,7 @@ PATCHES=(
 pkg_setup() {
 	if has_version "dev-util/hip:5.2" ; then
 		LLVM_MAX_SLOT="14"
+		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		ROCM_SLOT="5.2"
 	fi
 	rocm_pkg_setup
