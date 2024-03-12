@@ -34,9 +34,23 @@ CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}")
 CUDA_TARGETS_USEDEP=("${CUDA_TARGETS_USEDEP[@]/%/?}")
 CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP[@]}"
 CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP// /,}"
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_10 ) # Upstream only allows <= 3.10
-DISTUTILS_SINGLE_IMPL=1
+ROCM_SLOTS=(
+# See https://github.com/pytorch/pytorch/blob/v1.13.1/.github/workflows/trunk.yml
+	"5.2.3"
+	"5.1.3"
+)
+gen_rocm_slots() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		local s="${s%.*}"
+		s="${s/./_}"
+		echo "rocm_${s}"
+	done
+}
+ROCM_SLOTS2=( $(gen_rocm_slots) )
 
 inherit distutils-r1 multibuild rocm
 
@@ -53,6 +67,7 @@ KEYWORDS="~amd64"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
+${ROCM_SLOTS2[@]}
 cuda rocm
 "
 gen_cuda_required_use() {
@@ -85,19 +100,20 @@ REQUIRED_USE="
 	)
 	rocm? (
 		${ROCM_REQUIRED_USE}
+		^^ (
+			${ROCM_SLOTS2[@]}
+		)
 	)
 	${PYTHON_REQUIRED_USE}
 "
-ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v1.13.1/.github/workflows/trunk.yml
-	"5.2.0"
-)
 gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
 		local s="0/"$(ver_cut 1-2 ${pv})
+		local u="${s}"
+		u="${u/./_}"
 		echo "
-			(
+			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}
 				~dev-libs/rocm-comgr-${pv}:${s}
 				~dev-libs/rocm-core-${pv}:${s}

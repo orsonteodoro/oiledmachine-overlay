@@ -32,11 +32,19 @@ LLVM_MAX_SLOT=16
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
-ROCM_SLOT="5.4" # To be changed in pkg_setup()
 ROCM_SLOTS=(
-	rocm_5_3
-	rocm_5_4
+# See https://github.com/pytorch/pytorch/blob/v2.0.1/.ci/docker/build.sh#L190
+	"5.7.1"
 )
+gen_rocm_slots() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		local s="${s%.*}"
+		s="${s/./_}"
+		echo "rocm_${s}"
+	done
+}
+ROCM_SLOTS2=( $(gen_rocm_slots) )
 
 inherit cmake cuda flag-o-matic rocm python-single-r1
 
@@ -56,7 +64,7 @@ SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
-${ROCM_SLOTS[@]}
+${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma mkl +mpi +nnpack +numpy onednn
 openblas -opencl -opencv +openmp rocm +qnnpack +xnnpack
 r1
@@ -106,15 +114,10 @@ REQUIRED_USE="
 	rocm? (
 		${ROCM_REQUIRED_USE}
 		^^ (
-			${ROCM_SLOTS[@]}
+			${ROCM_SLOTS2[@]}
 		)
 	)
 "
-ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.0.1/.ci/docker/build.sh#L190
-	"5.4.3"
-	"5.3.3"
-)
 gen_rocm_depends() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
@@ -282,14 +285,10 @@ PATCHES=(
 )
 
 pkg_setup() {
-	if use rocm_5_4 ; then
-		LLVM_MAX_SLOT="15"
+	if use rocm_5_7 ; then
+		LLVM_MAX_SLOT="17"
 		LLVM_SLOT="${LLVM_MAX_SLOT}"
-		ROCM_SLOT="5.4"
-	elif use rocm_5_3 ; then
-		LLVM_MAX_SLOT="15"
-		LLVM_SLOT="${LLVM_MAX_SLOT}"
-		ROCM_SLOT="5.3"
+		ROCM_SLOT="5.7"
 	fi
 	if use rocm ; then
 		rocm_pkg_setup
