@@ -35,7 +35,7 @@ PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.1.2/.github/workflows/trunk.yml#L178
 	"5.6.1"
-	"5.5.1"
+#	"5.5.1"
 )
 gen_rocm_slots() {
 	local s
@@ -298,10 +298,10 @@ pkg_setup() {
 		LLVM_MAX_SLOT="16"
 		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		ROCM_SLOT="5.6"
-	elif use rocm_5_5 ; then
-		LLVM_MAX_SLOT="16"
-		LLVM_SLOT="${LLVM_MAX_SLOT}"
-		ROCM_SLOT="5.5"
+	#elif use rocm_5_5 ; then
+	#	LLVM_MAX_SLOT="16"
+	#	LLVM_SLOT="${LLVM_MAX_SLOT}"
+	#	ROCM_SLOT="5.5"
 	fi
 	if use rocm ; then
 		rocm_pkg_setup
