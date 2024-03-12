@@ -11,7 +11,7 @@ NPM_INSTALL_PATH="/opt/${PN}"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV}.AppImage"
 #ELECTRON_APP_SNAP="1"
 ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
-ELECTRON_APP_ELECTRON_PV="24.8.6"
+ELECTRON_APP_ELECTRON_PV="29.1.1"
 ELECTRON_APP_TYPESCRIPT_PV="5.4.2"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 NODE_VERSION=20 # Upstream uses 20.11.1
@@ -160,20 +160,20 @@ https://registry.npmjs.org/@types/responselike/-/responselike-1.0.3.tgz -> npmpk
 https://registry.npmjs.org/@types/semver/-/semver-7.5.8.tgz -> npmpkg-@types-semver-7.5.8.tgz
 https://registry.npmjs.org/@types/verror/-/verror-1.10.10.tgz -> npmpkg-@types-verror-1.10.10.tgz
 https://registry.npmjs.org/@types/yauzl/-/yauzl-2.10.3.tgz -> npmpkg-@types-yauzl-2.10.3.tgz
-https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-5.30.7.tgz -> npmpkg-@typescript-eslint-eslint-plugin-5.30.7.tgz
+https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-6.21.0.tgz -> npmpkg-@typescript-eslint-eslint-plugin-6.21.0.tgz
 https://registry.npmjs.org/semver/-/semver-7.6.0.tgz -> npmpkg-semver-7.6.0.tgz
-https://registry.npmjs.org/@typescript-eslint/parser/-/parser-5.30.7.tgz -> npmpkg-@typescript-eslint-parser-5.30.7.tgz
-https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-5.30.7.tgz -> npmpkg-@typescript-eslint-scope-manager-5.30.7.tgz
-https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-5.30.7.tgz -> npmpkg-@typescript-eslint-type-utils-5.30.7.tgz
-https://registry.npmjs.org/@typescript-eslint/types/-/types-5.30.7.tgz -> npmpkg-@typescript-eslint-types-5.30.7.tgz
-https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-5.30.7.tgz -> npmpkg-@typescript-eslint-typescript-estree-5.30.7.tgz
+https://registry.npmjs.org/@typescript-eslint/parser/-/parser-6.21.0.tgz -> npmpkg-@typescript-eslint-parser-6.21.0.tgz
+https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-6.21.0.tgz -> npmpkg-@typescript-eslint-scope-manager-6.21.0.tgz
+https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-6.21.0.tgz -> npmpkg-@typescript-eslint-type-utils-6.21.0.tgz
+https://registry.npmjs.org/@typescript-eslint/types/-/types-6.21.0.tgz -> npmpkg-@typescript-eslint-types-6.21.0.tgz
+https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-6.21.0.tgz -> npmpkg-@typescript-eslint-typescript-estree-6.21.0.tgz
 https://registry.npmjs.org/globby/-/globby-11.1.0.tgz -> npmpkg-globby-11.1.0.tgz
+https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz -> npmpkg-minimatch-9.0.3.tgz
 https://registry.npmjs.org/semver/-/semver-7.6.0.tgz -> npmpkg-semver-7.6.0.tgz
 https://registry.npmjs.org/slash/-/slash-3.0.0.tgz -> npmpkg-slash-3.0.0.tgz
-https://registry.npmjs.org/@typescript-eslint/utils/-/utils-5.30.7.tgz -> npmpkg-@typescript-eslint-utils-5.30.7.tgz
-https://registry.npmjs.org/eslint-scope/-/eslint-scope-5.1.1.tgz -> npmpkg-eslint-scope-5.1.1.tgz
-https://registry.npmjs.org/estraverse/-/estraverse-4.3.0.tgz -> npmpkg-estraverse-4.3.0.tgz
-https://registry.npmjs.org/@typescript-eslint/visitor-keys/-/visitor-keys-5.30.7.tgz -> npmpkg-@typescript-eslint-visitor-keys-5.30.7.tgz
+https://registry.npmjs.org/@typescript-eslint/utils/-/utils-6.21.0.tgz -> npmpkg-@typescript-eslint-utils-6.21.0.tgz
+https://registry.npmjs.org/semver/-/semver-7.6.0.tgz -> npmpkg-semver-7.6.0.tgz
+https://registry.npmjs.org/@typescript-eslint/visitor-keys/-/visitor-keys-6.21.0.tgz -> npmpkg-@typescript-eslint-visitor-keys-6.21.0.tgz
 https://registry.npmjs.org/@ungap/structured-clone/-/structured-clone-1.2.0.tgz -> npmpkg-@ungap-structured-clone-1.2.0.tgz
 https://registry.npmjs.org/@webassemblyjs/ast/-/ast-1.11.6.tgz -> npmpkg-@webassemblyjs-ast-1.11.6.tgz
 https://registry.npmjs.org/@webassemblyjs/floating-point-hex-parser/-/floating-point-hex-parser-1.11.6.tgz -> npmpkg-@webassemblyjs-floating-point-hex-parser-1.11.6.tgz
@@ -406,7 +406,7 @@ https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-5.1.0.tgz -> npmpkg-dot
 https://registry.npmjs.org/duplexer3/-/duplexer3-0.1.5.tgz -> npmpkg-duplexer3-0.1.5.tgz
 https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz -> npmpkg-eastasianwidth-0.2.0.tgz
 https://registry.npmjs.org/ejs/-/ejs-3.1.9.tgz -> npmpkg-ejs-3.1.9.tgz
-https://registry.npmjs.org/electron/-/electron-24.8.6.tgz -> npmpkg-electron-24.8.6.tgz
+https://registry.npmjs.org/electron/-/electron-29.1.1.tgz -> npmpkg-electron-29.1.1.tgz
 https://registry.npmjs.org/electron-better-ipc/-/electron-better-ipc-2.0.1.tgz -> npmpkg-electron-better-ipc-2.0.1.tgz
 https://registry.npmjs.org/electron-builder/-/electron-builder-24.13.3.tgz -> npmpkg-electron-builder-24.13.3.tgz
 https://registry.npmjs.org/electron-builder-squirrel-windows/-/electron-builder-squirrel-windows-24.13.3.tgz -> npmpkg-electron-builder-squirrel-windows-24.13.3.tgz
@@ -437,7 +437,6 @@ https://registry.npmjs.org/semver/-/semver-7.6.0.tgz -> npmpkg-semver-7.6.0.tgz
 https://registry.npmjs.org/universalify/-/universalify-2.0.1.tgz -> npmpkg-universalify-2.0.1.tgz
 https://registry.npmjs.org/electron-util/-/electron-util-0.17.2.tgz -> npmpkg-electron-util-0.17.2.tgz
 https://registry.npmjs.org/electron-is-dev/-/electron-is-dev-1.2.0.tgz -> npmpkg-electron-is-dev-1.2.0.tgz
-https://registry.npmjs.org/@types/node/-/node-18.19.23.tgz -> npmpkg-@types-node-18.19.23.tgz
 https://registry.npmjs.org/elegant-spinner/-/elegant-spinner-1.0.1.tgz -> npmpkg-elegant-spinner-1.0.1.tgz
 https://registry.npmjs.org/element-ready/-/element-ready-5.0.0.tgz -> npmpkg-element-ready-5.0.0.tgz
 https://registry.npmjs.org/emoji-regex/-/emoji-regex-8.0.0.tgz -> npmpkg-emoji-regex-8.0.0.tgz
@@ -465,7 +464,7 @@ https://registry.npmjs.org/eslint/-/eslint-8.57.0.tgz -> npmpkg-eslint-8.57.0.tg
 https://registry.npmjs.org/eslint-compat-utils/-/eslint-compat-utils-0.1.2.tgz -> npmpkg-eslint-compat-utils-0.1.2.tgz
 https://registry.npmjs.org/eslint-config-prettier/-/eslint-config-prettier-9.1.0.tgz -> npmpkg-eslint-config-prettier-9.1.0.tgz
 https://registry.npmjs.org/eslint-config-xo/-/eslint-config-xo-0.44.0.tgz -> npmpkg-eslint-config-xo-0.44.0.tgz
-https://registry.npmjs.org/eslint-config-xo-typescript/-/eslint-config-xo-typescript-0.51.1.tgz -> npmpkg-eslint-config-xo-typescript-0.51.1.tgz
+https://registry.npmjs.org/eslint-config-xo-typescript/-/eslint-config-xo-typescript-2.1.1.tgz -> npmpkg-eslint-config-xo-typescript-2.1.1.tgz
 https://registry.npmjs.org/eslint-formatter-pretty/-/eslint-formatter-pretty-6.0.1.tgz -> npmpkg-eslint-formatter-pretty-6.0.1.tgz
 https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-6.2.0.tgz -> npmpkg-ansi-escapes-6.2.0.tgz
 https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.0.1.tgz -> npmpkg-ansi-regex-6.0.1.tgz
@@ -604,7 +603,6 @@ https://registry.npmjs.org/minipass/-/minipass-7.0.4.tgz -> npmpkg-minipass-7.0.
 https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz -> npmpkg-fs.realpath-1.0.0.tgz
 https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz -> npmpkg-function-bind-1.1.2.tgz
 https://registry.npmjs.org/function.prototype.name/-/function.prototype.name-1.1.6.tgz -> npmpkg-function.prototype.name-1.1.6.tgz
-https://registry.npmjs.org/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz -> npmpkg-functional-red-black-tree-1.0.1.tgz
 https://registry.npmjs.org/functions-have-names/-/functions-have-names-1.2.3.tgz -> npmpkg-functions-have-names-1.2.3.tgz
 https://registry.npmjs.org/gauge/-/gauge-4.0.4.tgz -> npmpkg-gauge-4.0.4.tgz
 https://registry.npmjs.org/get-caller-file/-/get-caller-file-2.0.5.tgz -> npmpkg-get-caller-file-2.0.5.tgz
@@ -1200,7 +1198,6 @@ https://registry.npmjs.org/redent/-/redent-4.0.0.tgz -> npmpkg-redent-4.0.0.tgz
 https://registry.npmjs.org/indent-string/-/indent-string-5.0.0.tgz -> npmpkg-indent-string-5.0.0.tgz
 https://registry.npmjs.org/regexp-tree/-/regexp-tree-0.1.27.tgz -> npmpkg-regexp-tree-0.1.27.tgz
 https://registry.npmjs.org/regexp.prototype.flags/-/regexp.prototype.flags-1.5.2.tgz -> npmpkg-regexp.prototype.flags-1.5.2.tgz
-https://registry.npmjs.org/regexpp/-/regexpp-3.2.0.tgz -> npmpkg-regexpp-3.2.0.tgz
 https://registry.npmjs.org/registry-auth-token/-/registry-auth-token-4.2.2.tgz -> npmpkg-registry-auth-token-4.2.2.tgz
 https://registry.npmjs.org/registry-url/-/registry-url-6.0.1.tgz -> npmpkg-registry-url-6.0.1.tgz
 https://registry.npmjs.org/regjsparser/-/regjsparser-0.10.0.tgz -> npmpkg-regjsparser-0.10.0.tgz
@@ -1362,8 +1359,6 @@ https://registry.npmjs.org/ts-api-utils/-/ts-api-utils-1.3.0.tgz -> npmpkg-ts-ap
 https://registry.npmjs.org/tsconfig-paths/-/tsconfig-paths-3.15.0.tgz -> npmpkg-tsconfig-paths-3.15.0.tgz
 https://registry.npmjs.org/json5/-/json5-1.0.2.tgz -> npmpkg-json5-1.0.2.tgz
 https://registry.npmjs.org/tslib/-/tslib-2.6.2.tgz -> npmpkg-tslib-2.6.2.tgz
-https://registry.npmjs.org/tsutils/-/tsutils-3.21.0.tgz -> npmpkg-tsutils-3.21.0.tgz
-https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz -> npmpkg-tslib-1.14.1.tgz
 https://registry.npmjs.org/tuf-js/-/tuf-js-1.1.7.tgz -> npmpkg-tuf-js-1.1.7.tgz
 https://registry.npmjs.org/type-check/-/type-check-0.4.0.tgz -> npmpkg-type-check-0.4.0.tgz
 https://registry.npmjs.org/type-fest/-/type-fest-2.19.0.tgz -> npmpkg-type-fest-2.19.0.tgz
@@ -1431,22 +1426,10 @@ https://registry.npmjs.org/write-file-atomic/-/write-file-atomic-4.0.2.tgz -> np
 https://registry.npmjs.org/xdg-basedir/-/xdg-basedir-5.1.0.tgz -> npmpkg-xdg-basedir-5.1.0.tgz
 https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-15.1.1.tgz -> npmpkg-xmlbuilder-15.1.1.tgz
 https://registry.npmjs.org/xo/-/xo-0.57.0.tgz -> npmpkg-xo-0.57.0.tgz
-https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-6.21.0.tgz -> npmpkg-@typescript-eslint-eslint-plugin-6.21.0.tgz
-https://registry.npmjs.org/@typescript-eslint/parser/-/parser-6.21.0.tgz -> npmpkg-@typescript-eslint-parser-6.21.0.tgz
-https://registry.npmjs.org/@typescript-eslint/scope-manager/-/scope-manager-6.21.0.tgz -> npmpkg-@typescript-eslint-scope-manager-6.21.0.tgz
-https://registry.npmjs.org/@typescript-eslint/type-utils/-/type-utils-6.21.0.tgz -> npmpkg-@typescript-eslint-type-utils-6.21.0.tgz
-https://registry.npmjs.org/@typescript-eslint/types/-/types-6.21.0.tgz -> npmpkg-@typescript-eslint-types-6.21.0.tgz
-https://registry.npmjs.org/@typescript-eslint/typescript-estree/-/typescript-estree-6.21.0.tgz -> npmpkg-@typescript-eslint-typescript-estree-6.21.0.tgz
-https://registry.npmjs.org/globby/-/globby-11.1.0.tgz -> npmpkg-globby-11.1.0.tgz
-https://registry.npmjs.org/slash/-/slash-3.0.0.tgz -> npmpkg-slash-3.0.0.tgz
-https://registry.npmjs.org/@typescript-eslint/utils/-/utils-6.21.0.tgz -> npmpkg-@typescript-eslint-utils-6.21.0.tgz
-https://registry.npmjs.org/@typescript-eslint/visitor-keys/-/visitor-keys-6.21.0.tgz -> npmpkg-@typescript-eslint-visitor-keys-6.21.0.tgz
 https://registry.npmjs.org/arrify/-/arrify-3.0.0.tgz -> npmpkg-arrify-3.0.0.tgz
-https://registry.npmjs.org/eslint-config-xo-typescript/-/eslint-config-xo-typescript-2.1.1.tgz -> npmpkg-eslint-config-xo-typescript-2.1.1.tgz
 https://registry.npmjs.org/get-stdin/-/get-stdin-9.0.0.tgz -> npmpkg-get-stdin-9.0.0.tgz
 https://registry.npmjs.org/globby/-/globby-14.0.1.tgz -> npmpkg-globby-14.0.1.tgz
 https://registry.npmjs.org/meow/-/meow-13.2.0.tgz -> npmpkg-meow-13.2.0.tgz
-https://registry.npmjs.org/minimatch/-/minimatch-9.0.3.tgz -> npmpkg-minimatch-9.0.3.tgz
 https://registry.npmjs.org/path-type/-/path-type-5.0.0.tgz -> npmpkg-path-type-5.0.0.tgz
 https://registry.npmjs.org/semver/-/semver-7.6.0.tgz -> npmpkg-semver-7.6.0.tgz
 https://registry.npmjs.org/slash/-/slash-5.1.0.tgz -> npmpkg-slash-5.1.0.tgz
@@ -1476,7 +1459,7 @@ DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
 LICENSE="
 	MIT
-	electron-24.8.6-chromium.html
+	electron-29.1.1-chromium.html
 	${ELECTRON_APP_LICENSES}
 "
 # For ELECTRON_APP_LICENSES, see
@@ -1528,15 +1511,15 @@ src_unpack() {
 	# Fix breakage
 
 	# Change to ^0.51.1
-		enpm install "eslint-config-xo-typescript@0.51.1"
+#		enpm install "eslint-config-xo-typescript@0.51.1"
 
 	# Change to ^5.30.7
-		enpm install "@typescript-eslint/eslint-plugin@5.30.7"
+#		enpm install "@typescript-eslint/eslint-plugin@5.30.7"
 
 	# Change to ^5.30.7
-		enpm install "@typescript-eslint/parser@5.30.7"
+#		enpm install "@typescript-eslint/parser@5.30.7"
 
-		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}"
+#		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}"
 
 		die
 	else
