@@ -274,14 +274,14 @@ eerror
 		die
 	fi
 	if tc-is-gcc ; then
-		if ver_test $(gcc-major-version) -lt ${GCC_PV} ; then
+		if ver_test $(gcc-major-version) -lt "${GCC_PV}" ; then
 eerror
 eerror "${PN} requires GCC >=${GCC_PV} for c++${CXX_VER} support"
 eerror
 			die
 		fi
 	elif tc-is-clang ; then
-		if ver_test $(clang-version) -lt ${CLANG_PV} ; then
+		if ver_test $(clang-version) -lt "${CLANG_PV}" ; then
 eerror
 eerror "${PN} requires Clang >=${CLANG_PV} for c++${CXX_VER} support"
 eerror
