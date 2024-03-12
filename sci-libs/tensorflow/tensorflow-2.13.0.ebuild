@@ -433,7 +433,7 @@ declare -A LLD_SLOT=(
 gen_rocm_rdepend() {
 	local pv
 	for pv in ${HIP_SLOTS[@]} ; do
-		local s="0/"$(ver_cut 1-2 ${pv})
+		local s=$(ver_cut 1-2 ${pv})
 		local u=$(ver_cut 1-2 ${pv})
 		u=${u/./_}
 	# Check both the direct top and indirect bottom dependencies
