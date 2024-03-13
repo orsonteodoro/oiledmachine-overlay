@@ -25,8 +25,9 @@ HOMEPAGE="https://www.grpc.io"
 LICENSE="
 	Apache-2.0
 	BSD
-	BSD-2 GPL-2+
+	BSD-2
 	GPL-2
+	GPL-2+
 	MIT
 	MPL-2.0
 	Unlicense
@@ -68,7 +69,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.8
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
-		>=dev-cpp/benchmark-1.7.0
+		>=dev-cpp/benchmark-1.8.2
 	)
 "
 PDEPEND_DISABLE="

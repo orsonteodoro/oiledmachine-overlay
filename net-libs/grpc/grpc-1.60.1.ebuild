@@ -49,15 +49,15 @@ doc examples test
 r3
 "
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/35.158" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20230821
+SLOT="${SLOT_MAJ}/37.160" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20231110
 RDEPEND+="
 	>=dev-cpp/abseil-cpp-20230802.0:0/20230802[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2022.04.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.19.1:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:0/4.23[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:0/4.25[${MULTILIB_USEDEP}]
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT

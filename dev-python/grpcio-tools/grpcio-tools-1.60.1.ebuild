@@ -25,9 +25,9 @@ HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-PROTOBUF_SLOT="0/4.24"
-# See https://github.com/grpc/grpc/blob/v1.59.3/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.59.3/third_party
+PROTOBUF_SLOT="0/4.25"
+# See https://github.com/grpc/grpc/blob/v1.60.1/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.60.1/third_party
 RDEPEND="
 	>=dev-python/cython-0.29.35:0[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]

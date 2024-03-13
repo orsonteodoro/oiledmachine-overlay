@@ -25,8 +25,9 @@ HOMEPAGE="https://www.grpc.io"
 LICENSE="
 	Apache-2.0
 	BSD
-	BSD-2 GPL-2+
+	BSD-2
 	GPL-2
+	GPL-2+
 	MIT
 	MPL-2.0
 	Unlicense
@@ -48,15 +49,15 @@ doc examples test
 r3
 "
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/36.159" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20230927
+SLOT="${SLOT_MAJ}/39.162" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20240207
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20230802.0:0/20230802[${MULTILIB_USEDEP},cxx17(+)]
+	>=dev-cpp/abseil-cpp-20240116.0:0/20240116[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2022.04.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.19.1:=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
-	dev-libs/protobuf:0/4.24[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.3:=[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:0/4.25[${MULTILIB_USEDEP}]
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
@@ -68,7 +69,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.8
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
-		>=dev-cpp/benchmark-1.7.0
+		>=dev-cpp/benchmark-1.8.3
 	)
 "
 PDEPEND_DISABLE="

@@ -49,10 +49,10 @@ doc examples test
 r3
 "
 SLOT_MAJ="0"
-SLOT="${SLOT_MAJ}/35.158" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
-# third_party last update: 20230821
+SLOT="${SLOT_MAJ}/33.156" # 0/$gRPC_CORE_SOVERSION.$(ver_cut 1-2 $PACKAGE_VERSION | sed -e "s|.||g")
+# third_party last update: 20230612
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20230802.0:0/20230802[${MULTILIB_USEDEP},cxx17(+)]
+	>=dev-cpp/abseil-cpp-20230125.3:0/20230125[${MULTILIB_USEDEP},cxx17(+)]
 	>=dev-libs/openssl-1.1.1g:0=[-bindist(-),${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2022.04.01:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.19.1:=[${MULTILIB_USEDEP}]
@@ -69,7 +69,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.8
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	test? (
-		>=dev-cpp/benchmark-1.8.2
+		>=dev-cpp/benchmark-1.7.0
 	)
 "
 PDEPEND_DISABLE="

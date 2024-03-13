@@ -25,8 +25,9 @@ HOMEPAGE="https://www.grpc.io"
 LICENSE="
 	Apache-2.0
 	BSD
-	BSD-2 GPL-2+
+	BSD-2
 	GPL-2
+	GPL-2+
 	MIT
 	MPL-2.0
 	Unlicense

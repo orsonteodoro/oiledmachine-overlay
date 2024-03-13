@@ -4,14 +4,14 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{10..11} )
 
 inherit distutils-r1 multiprocessing prefix
 
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
 MY_PV=$(ver_cut 1-3 "${PV}")
-PROTOBUF_PV="24.3"
+PROTOBUF_PV="21.6"
 SRC_URI+="
 https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz
@@ -25,11 +25,11 @@ HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-PROTOBUF_SLOT="0/4.25"
-# See https://github.com/grpc/grpc/blob/v1.60.0/bazel/grpc_python_deps.bzl#L45
-# See https://github.com/grpc/grpc/tree/v1.60.0/third_party
+PROTOBUF_SLOT="0/3.21"
+# See https://github.com/grpc/grpc/blob/v1.49.4/bazel/grpc_python_deps.bzl#L45
+# See https://github.com/grpc/grpc/tree/v1.49.4/third_party
 RDEPEND="
-	>=dev-python/cython-0.29.35:0[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.26:0[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 "
