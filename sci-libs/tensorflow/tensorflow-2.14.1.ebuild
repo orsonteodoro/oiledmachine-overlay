@@ -509,11 +509,36 @@ RDEPEND="
 		>=dev-libs/openssl-3:0=
 	)
 	|| (
-		=net-libs/grpc-1.53*:=
-		=net-libs/grpc-1.54*:=
-		=net-libs/grpc-1.55*:=
-		=net-libs/grpc-1.56*:=
-		=net-libs/grpc-1.57*:=
+		(
+			=net-libs/grpc-1.53*:=
+			big-endian? (
+				=net-libs/grpc-1.53*:=[-python]
+			)
+		)
+		(
+			=net-libs/grpc-1.54*:=
+			big-endian? (
+				=net-libs/grpc-1.53*:=[-python]
+			)
+		)
+		(
+			=net-libs/grpc-1.55*:=
+			big-endian? (
+				=net-libs/grpc-1.53*:=[-python]
+			)
+		)
+		(
+			=net-libs/grpc-1.56*:=
+			big-endian? (
+				=net-libs/grpc-1.53*:=[-python]
+			)
+		)
+		(
+			=net-libs/grpc-1.57*:=
+			big-endian? (
+				=net-libs/grpc-1.53*:=[-python]
+			)
+		)
 	)
 	>=dev-cpp/abseil-cpp-20230125.2:0/20230125
 	>=dev-db/sqlite-3.40.1
