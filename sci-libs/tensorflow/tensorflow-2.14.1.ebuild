@@ -251,6 +251,7 @@ https://storage.googleapis.com/mirror.tensorflow.org/docs.python.org/2.7/_source
 	)
 "
 
+#KEYWORDS="~amd64" # Ebuild not finished
 SRC_URI="
 ${bazel_external_uris}
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
@@ -342,7 +343,6 @@ LICENSE="
 # || ( CC0-1.0 Apache-2.0 ) - llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/BLAKE3/LICENSE
 
 
-#KEYWORDS="~amd64" # Ebuild not finished
 RESTRICT="" # Tests need GPU access.  Relaxed python deps patches breaks tests.
 SLOT="0"
 CPU_USE_FLAGS_X86=(
@@ -1232,6 +1232,12 @@ get_cuda_targets() {
 }
 
 src_configure() {
+	if [[ $(tc-endian) == "big" ]] && ! use big-endian ; then
+eerror
+eerror "You must enable the big-endian USE flag."
+eerror
+		die
+	fi
 	load_env
 	check_cython
 
