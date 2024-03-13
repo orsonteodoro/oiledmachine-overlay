@@ -477,11 +477,26 @@ gen_rocm_rdepend() {
 
 RDEPEND_GRPCIO_LITTLE_ENDIAN="
 	|| (
-		=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-		=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-		=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
-		=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
-		=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
+		(
+			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
+		)
+		(
+			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
+		)
+		(
+			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.55*:=[${PYTHON_USEDEP}]
+		)
+		(
+			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.56*:=[${PYTHON_USEDEP}]
+		)
+		(
+			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.57*:=[${PYTHON_USEDEP}]
+		)
 	)
 "
 
@@ -636,19 +651,8 @@ BDEPEND="
 		sys-devel/gcc:${GCC_SLOT_WITH_CUDA}
 	)
 	python? (
-		|| (
-			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
-		)
-		|| (
-			=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.55*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.56*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.57*:=[${PYTHON_USEDEP}]
+		!big-endian? (
+			${RDEPEND_GRPCIO_LITTLE_ENDIAN}
 		)
 		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.1[${PYTHON_USEDEP}]
