@@ -37,6 +37,9 @@
     <remote-id type="github">tensorflow/tensorflow</remote-id>
   </upstream>
   <use>
+    <flag name="big-endian">
+      Avoid unbuildable package on big endian machines.
+    </flag>
     <flag name="clang">
       Use of Clang + LLD to build the package
     </flag>
