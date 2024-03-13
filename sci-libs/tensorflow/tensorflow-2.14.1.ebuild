@@ -1414,29 +1414,29 @@ einfo "CCACHE_DIR:\t${CCACHE_DIR}"
 
 add_sandbox_rules() {
 	local L=(
-		/usr/lib/${EPYTHON}/site-packages
-		/usr/lib/${EPYTHON}/site-packages/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython
-		/usr/lib/${EPYTHON}/site-packages/Cython/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython/Compiler
-		/usr/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython/Plex
-		/usr/lib/${EPYTHON}/site-packages/Cython/Plex/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython/Utility
-		/usr/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython/Tempita
-		/usr/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__
+		"/usr/lib/${EPYTHON}/site-packages"
+		"/usr/lib/${EPYTHON}/site-packages/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Compiler/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Plex"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Plex/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Utility"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Utility/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita"
+		"/usr/lib/${EPYTHON}/site-packages/Cython/Tempita/__pycache__"
 
-		/usr/lib/${EPYTHON}/site-packages/Cython.3
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/Compiler
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/Compiler/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/Plex
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/Plex/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/Utility
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/Utility/__pycache__
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/Tempita
-		/usr/lib/${EPYTHON}/site-packages/Cython.3/Tempita/__pycache__
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Compiler"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Compiler/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Plex"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Plex/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Utility"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Utility/__pycache__"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Tempita"
+		"/usr/lib/${EPYTHON}/site-packages/Cython.3/Tempita/__pycache__"
 	)
 einfo "Adding sandbox rules"
 	local path
@@ -1522,8 +1522,10 @@ einfo "Installing ${EPYTHON} files"
 		esetup.py install
 
 		# libtensorflow_framework.so is in /usr/lib already
-		rm -f "${D}/$(python_get_sitedir)"/${PN}/lib${PN}_framework.so* || die
-		rm -f "${D}/$(python_get_sitedir)"/${PN}/lib${PN}_cc.so* || die
+		rm -f \
+			"${D}/$(python_get_sitedir)/${PN}/lib${PN}_framework.so"* \
+			"${D}/$(python_get_sitedir)/${PN}/lib${PN}_cc.so"* \
+			|| die
 		python_optimize
 	}
 
@@ -1531,10 +1533,12 @@ einfo "Installing ${EPYTHON} files"
 		python_foreach_impl run_in_build_dir do_install
 
 		# Symlink to python-exec scripts
-		for i in "${ED}"/usr/lib/python-exec/*/*; do
+		for i in "${ED}/usr/lib/python-exec/"*"/"*; do
 			n="${i##*/}"
 			if ! [[ -e "${ED}/usr/bin/${n}" ]] ; then
-				dosym ../lib/python-exec/python-exec2 "/usr/bin/${n}"
+				dosym \
+					"../lib/python-exec/python-exec2" \
+					"/usr/bin/${n}"
 			fi
 		done
 
