@@ -15,10 +15,10 @@
 
     oiledmachine-overlay notes:
 
-    maintained versions:
-                                         latest release:  2.16.1
-                                       previous release:  2.15.1
-    highest supported dev-util/nvidia-cuda-toolkit-11.8:  2.14.1
+    Maintained versions:
+    2.16.1 - latest release
+    2.15.1 - previous release
+    2.14.1 - Support for 11.8 slot of dev-util/nvidia-cuda-toolkit-11.8
 
 
     Environment variables:

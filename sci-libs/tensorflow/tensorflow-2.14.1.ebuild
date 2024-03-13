@@ -36,6 +36,7 @@ CUDA_TARGETS_COMPAT=(
 GCC_COMPAT=( {12..9} )
 GCC_MAX_SLOT="${GCC_COMPAT[0]}"
 GCC_MIN_SLOT="${GCC_COMPAT[-1]}"
+GCC_SLOT_WITH_CUDA=11
 # See "deps versioning" section above for details.
 HIP_SLOTS=(
 # Upstream supports [5.0-5.3]
@@ -433,7 +434,7 @@ CUDA_CDEPEND="
 	(
 		<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) + 1 )):=[profiler]
 		>=dev-util/nvidia-cuda-toolkit-${CUDA_PV}:=[profiler]
-		sys-devel/gcc:12
+		sys-devel/gcc:11
 	)
 "
 
@@ -633,7 +634,7 @@ BDEPEND="
 	)
 	cuda? (
 		${CUDA_CDEPEND}
-		>=sys-devel/gcc-12:12
+		sys-devel/gcc:${GCC_SLOT_WITH_CUDA}
 	)
 	python? (
 		|| (
@@ -744,7 +745,7 @@ use_gcc() {
 		| tr "\n" ":")
 einfo "PATH:\t${PATH}"
 	local found=0
-	use cuda && GCC_COMPAT=( 11 )
+	use cuda && GCC_COMPAT=( ${GCC_SLOT_WITH_CUDA} )
 	local s
 	for s in ${GCC_COMPAT[@]} ; do
 		symlink_ver=$(gcc_symlink_ver ${s})
