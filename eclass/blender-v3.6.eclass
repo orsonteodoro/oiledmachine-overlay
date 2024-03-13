@@ -100,6 +100,12 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+ROCM_SLOTS=(
+	rocm_5_4
+	rocm_5_3
+	rocm_5_2
+	rocm_5_1
+)
 
 IUSE+="
 ${CPU_FLAGS_3_3[@]%:*}
@@ -107,6 +113,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
+${ROCM_SLOTS[@]}
 +X +abi10-compat +alembic -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +cycles-path-guiding +dds
 -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp +jack
@@ -300,6 +307,21 @@ REQUIRED_USE+="
 		!nanovdb
 		cycles
 		${ROCM_REQUIRED_USE}
+		^^ (
+			${ROCM_SLOTS[@]}
+		)
+	)
+	rocm_5_4? (
+		llvm_slot_15
+	)
+	rocm_5_3? (
+		llvm_slot_15
+	)
+	rocm_5_2? (
+		llvm_slot_14
+	)
+	rocm_5_1? (
+		llvm_slot_14
 	)
 	theora? (
 		ffmpeg
@@ -872,10 +894,16 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 		media-libs/harfbuzz[truetype]
 	)
 	rocm? (
-		|| (
+		rocm_5_4? (
 			~dev-util/hip-5.4.3:5.4[rocm]
+		)
+		rocm_5_3? (
 			~dev-util/hip-5.3.3:5.3[rocm]
+		)
+		rocm_5_2? (
 			~dev-util/hip-5.2.3:5.2[rocm]
+		)
+		rocm_5_1? (
 			~dev-util/hip-5.1.3:5.1[rocm]
 		)
 		dev-util/hip:=
