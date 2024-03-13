@@ -518,25 +518,25 @@ RDEPEND="
 		(
 			=net-libs/grpc-1.54*:=
 			big-endian? (
-				=net-libs/grpc-1.53*:=[-python]
+				=net-libs/grpc-1.54*:=[-python]
 			)
 		)
 		(
 			=net-libs/grpc-1.55*:=
 			big-endian? (
-				=net-libs/grpc-1.53*:=[-python]
+				=net-libs/grpc-1.55*:=[-python]
 			)
 		)
 		(
 			=net-libs/grpc-1.56*:=
 			big-endian? (
-				=net-libs/grpc-1.53*:=[-python]
+				=net-libs/grpc-1.56*:=[-python]
 			)
 		)
 		(
 			=net-libs/grpc-1.57*:=
 			big-endian? (
-				=net-libs/grpc-1.53*:=[-python]
+				=net-libs/grpc-1.57*:=[-python]
 			)
 		)
 	)
