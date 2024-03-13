@@ -21,9 +21,9 @@ AMDGPU_TARGETS_COMPAT=(
         gfx1030
 )
 DISTUTILS_OPTIONAL=1
-CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
+CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
 CUDA_TARGETS_COMPAT=(
 # See https://github.com/tensorflow/tensorflow/blob/v2.15.1/.bazelrc#L242  # Supported upstream
 # See https://github.com/tensorflow/tensorflow/blob/v2.15.1/.bazelrc#L653  # Unsupported upstream
@@ -86,8 +86,8 @@ gen_seq_inc() {
 	done
 }
 
-inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm-r1 multibuild prefix
-inherit rocm toolchain-funcs
+inherit bazel check-reqs cuda distutils-r1 flag-o-matic lcnr llvm-r1 multibuild
+inherit prefix rocm toolchain-funcs
 
 # For deps versioning, see
 # https://www.tensorflow.org/install/source#linux
@@ -241,7 +241,6 @@ https://github.com/Maratyszcza/pthreadpool/archive/${EGIT_COMMIT_PTHREADPOOL}.zi
 https://github.com/Maratyszcza/FP16/archive/${EGIT_COMMIT_FP16}.zip -> FP16-${EGIT_COMMIT_FP16}.zip
 https://github.com/Maratyszcza/FXdiv/archive/${EGIT_COMMIT_FXDIV}.zip -> FXdiv-${EGIT_COMMIT_FXDIV}.zip
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
-
 	cuda? (
 https://github.com/NVIDIA/cudnn-frontend/archive/refs/tags/v${CUDNN_FRONTEND_PV}.zip -> cudnn-frontend-v${CUDNN_FRONTEND_PV}.zip
 https://github.com/NVlabs/cub/archive/${CUB_PV}.zip -> cub-${CUB_PV}.zip
