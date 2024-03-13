@@ -1,7 +1,7 @@
 Forward port of https://gist.github.com/raw/ed891528aacf0c5baf3a789e5e9aaead
 Context:  https://bugs.gentoo.org/705712#c29
---- a/third_party/gpus/rocm_configure.bzl.orig	2023-11-10 13:47:47.000000000 -0800
-+++ b/third_party/gpus/rocm_configure.bzl	2024-03-13 13:23:06.308803972 -0700
+--- a/third_party/gpus/rocm_configure.bzl.orig	2024-03-07 18:19:10.000000000 -0800
++++ b/third_party/gpus/rocm_configure.bzl	2024-03-13 14:49:25.073510853 -0700
 @@ -35,7 +35,7 @@ _ROCM_TOOLKIT_PATH = "ROCM_PATH"
  _TF_ROCM_AMDGPU_TARGETS = "TF_ROCM_AMDGPU_TARGETS"
  _TF_ROCM_CONFIG_REPO = "TF_ROCM_CONFIG_REPO"
@@ -76,7 +76,7 @@ Context:  https://bugs.gentoo.org/705712#c29
          ]
      ]
      if int(rocm_config.rocm_version_number) >= 40500:
-@@ -481,18 +474,19 @@ def _create_dummy_repository(repository_
+@@ -458,18 +451,19 @@ def _create_dummy_repository(repository_
          "rocm:BUILD",
          {
              "%{hip_lib}": _lib_name("hip"),
@@ -102,7 +102,7 @@ Context:  https://bugs.gentoo.org/705712#c29
              "%{copy_rules}": "",
              "%{rocm_headers}": "",
          },
-@@ -584,43 +578,116 @@ def _create_local_rocm_repository(reposi
+@@ -559,43 +553,116 @@ def _create_local_rocm_repository(reposi
      copy_rules = [
          make_copy_dir_rule(
              repository_ctx,
@@ -253,7 +253,7 @@ Context:  https://bugs.gentoo.org/705712#c29
  
      rocm_libs = _find_libs(repository_ctx, rocm_config, hipfft_or_rocfft, miopen_path, rccl_path, bash_bin)
      rocm_lib_srcs = []
-@@ -636,7 +703,7 @@ def _create_local_rocm_repository(reposi
+@@ -611,7 +678,7 @@ def _create_local_rocm_repository(reposi
          outs = rocm_lib_outs,
      ))
  
@@ -262,7 +262,7 @@ Context:  https://bugs.gentoo.org/705712#c29
  
      # copy files mentioned in third_party/gpus/rocm/BUILD
      copy_rules.append(make_copy_files_rule(
-@@ -670,26 +737,39 @@ def _create_local_rocm_repository(reposi
+@@ -645,26 +712,39 @@ def _create_local_rocm_repository(reposi
  
      repository_dict = {
          "%{hip_lib}": rocm_libs["amdhip64"].file_name,
@@ -309,7 +309,7 @@ Context:  https://bugs.gentoo.org/705712#c29
  
      repository_ctx.template(
          "rocm/BUILD",
-@@ -727,7 +807,7 @@ def _create_local_rocm_repository(reposi
+@@ -702,7 +782,7 @@ def _create_local_rocm_repository(reposi
      rocm_defines["%{host_compiler_path}"] = "clang/bin/crosstool_wrapper_driver_is_not_gcc"
  
      rocm_defines["%{cxx_builtin_include_directories}"] = to_list_of_strings(
@@ -318,12 +318,9 @@ Context:  https://bugs.gentoo.org/705712#c29
      )
  
      verify_build_defines(rocm_defines)
-@@ -751,11 +831,11 @@ def _create_local_rocm_repository(reposi
-         tpl_paths["crosstool:clang/bin/crosstool_wrapper_driver_rocm"],
-         {
+@@ -728,9 +808,9 @@ def _create_local_rocm_repository(reposi
              "%{cpu_compiler}": str(cc),
--            "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/hip/bin/hipcc",
-+            "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/bin/hipcc",        # oteodoro:  changed for distro
+             "%{hipcc_path}": rocm_config.rocm_toolkit_path + "/bin/hipcc",
              "%{hipcc_env}": _hipcc_env(repository_ctx),
 -            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/lib",
 +            "%{rocr_runtime_path}": rocm_config.rocm_toolkit_path + "/@LIBDIR@",  # oteodoro:  changed for distro

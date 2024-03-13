@@ -708,7 +708,7 @@ PATCHES=(
 	"${FILESDIR}/2.15.1/tensorflow-2.15.0-0005-systemlib-Updates-for-Abseil-20220623-LTS.patch"
 	"${FILESDIR}/2.15.1/tensorflow-2.15.0-0006-systemlib-Update-targets-for-absl_py.patch"
 	"${FILESDIR}/2.15.1/tensorflow-2.15.0-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
-	"${FILESDIR}/2.15.1/tensorflow-2.15.0-0008-Relax-setup.py-version-requirements.patch"
+	"${FILESDIR}/2.15.1/tensorflow-2.15.1-0008-Relax-setup.py-version-requirements.patch"
 	"${FILESDIR}/2.15.1/tensorflow-2.15.0-0009-systemlib-update-targets-for-absl.patch"
 	"${FILESDIR}/2.15.1/tensorflow-2.15.0-0010-systemlib-fix-missing-osx-in-pybind11.patch"
 	"${FILESDIR}/2.15.1/tensorflow-2.15.0-0011-systemlib-fix-missing-LICENSE-in-flatbuffers.patch"
@@ -717,9 +717,9 @@ PATCHES=(
 )
 ROCM_PATCHES=(
 	"0050-fix-rocm-build-scripts.patch"
-	"0050-fix-rocm-headers.patch"
+#	"0050-fix-rocm-headers.patch" # Enable if >= ROCm 5.6 ; Patch not updated
 	"0050-fix-rocm-source-code.patch"
-	"0050-fix-rocm-support-find_rocm_config.patch"
+#	"0050-fix-rocm-support-find_rocm_config.patch" # Enable if >= ROCm 5.6 ; Patch not updated
 	"0050-fix-rocm-support.patch"
 	"0050-toolchain-prefix.patch"
 )
@@ -1110,6 +1110,55 @@ EOF
 	chmod +x "${T}/gcc-ar.sh" || die
 }
 
+patch_rocm() {
+	mkdir -p "${WORKDIR}/patches" || die
+	cp -a "${FILESDIR}/${PV}/rocm/" "${WORKDIR}/patches" || die
+	if use rocm ; then
+#		rm "third_party/gpus/find_rocm_config.py.gz.base64" || die
+		local f
+		for f in ${ROCM_PATCHES[@]} ; do
+			eapply "${WORKDIR}/patches/rocm/${f}"
+		done
+	fi
+
+	# Speed up symbol replacmenet for @...@ by reducing the search space
+	# Generated from below one liner ran in the same folder as this file:
+	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	PATCH_PATHS=(
+		"${S}/tensorflow/compiler/mlir/tools/kernel_gen/transforms/gpu_kernel_to_blob_pass.cc"
+		"${S}/tensorflow/compiler/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc"
+		"${S}/tensorflow/compiler/xla/stream_executor/gpu/asm_compiler.cc"
+		"${S}/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h"
+		"${S}/tensorflow/compiler/xla/stream_executor/rocm/hipsparse_wrapper.h"
+		"${S}/tensorflow/compiler/xla/stream_executor/rocm/rocm_blas.h"
+		"${S}/tensorflow/compiler/xla/stream_executor/rocm/rocm_fft.h"
+		"${S}/tensorflow/compiler/xla/stream_executor/rocm/rocsolver_wrapper.h"
+		"${S}/tensorflow/core/util/gpu_solvers.h"
+		"${S}/tensorflow/tools/pip_package/setup.py"
+		"${S}/tensorflow/tsl/platform/default/rocm_rocdl_path.cc"
+		"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl"
+		"${S}/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl"
+		"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl"
+		"${S}/third_party/gpus/find_rocm_config.py"
+		"${S}/third_party/gpus/rocm_configure.bzl"
+	)
+	if use rocm ; then
+		rocm_src_prepare
+	fi
+	pushd "third_party/gpus" || die
+		pigz -z -k "find_rocm_config.py" || die
+		mv \
+			"find_rocm_config.py.zz" \
+			"find_rocm_config.py.gz" \
+			|| die
+		base64 --wrap=0 \
+			"find_rocm_config.py.gz" \
+			> \
+			"find_rocm_config.py.gz.base64" \
+			|| die
+	popd || die
+}
+
 src_prepare() {
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export TF_PYTHON_VERSION="${EPYTHON/python/}"
@@ -1164,45 +1213,6 @@ einfo "Preventing stall.  Removing -Os."
 
 	bazel_setup_bazelrc
 
-	mkdir -p "${WORKDIR}/patches" || die
-	cp -a "${FILESDIR}/${PV}/rocm/" "${WORKDIR}/patches" || die
-	if use rocm ; then
-		rm "third_party/gpus/find_rocm_config.py.gz.base64" || die
-		pushd "${WORKDIR}/patches/rocm" || die
-			eapply ${ROCM_PATCHES[@]}
-		popd
-	fi
-
-	# Speed up symbol replacmenet for @...@ by reducing the search space
-	# Generated from below one liner ran in the same folder as this file:
-	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
-	PATCH_PATHS=(
-		"${S}/tensorflow/compiler/mlir/tools/kernel_gen/transforms/gpu_kernel_to_blob_pass.cc"
-		"${S}/tensorflow/compiler/xla/service/gpu/llvm_gpu_backend/gpu_backend_lib.cc"
-		"${S}/tensorflow/compiler/xla/stream_executor/gpu/asm_compiler.cc"
-		"${S}/tensorflow/compiler/xla/stream_executor/rocm/hipsolver_wrapper.h"
-		"${S}/tensorflow/compiler/xla/stream_executor/rocm/hipsparse_wrapper.h"
-		"${S}/tensorflow/compiler/xla/stream_executor/rocm/rocm_blas.h"
-		"${S}/tensorflow/compiler/xla/stream_executor/rocm/rocm_fft.h"
-		"${S}/tensorflow/compiler/xla/stream_executor/rocm/rocsolver_wrapper.h"
-		"${S}/tensorflow/core/util/gpu_solvers.h"
-		"${S}/tensorflow/tools/pip_package/setup.py"
-		"${S}/tensorflow/tsl/platform/default/rocm_rocdl_path.cc"
-		"${S}/third_party/gpus/crosstool/cc_toolchain_config.bzl.tpl"
-		"${S}/third_party/gpus/crosstool/clang/bin/crosstool_wrapper_driver_rocm.tpl"
-		"${S}/third_party/gpus/crosstool/hipcc_cc_toolchain_config.bzl.tpl"
-		"${S}/third_party/gpus/find_rocm_config.py"
-		"${S}/third_party/gpus/rocm_configure.bzl"
-	)
-	if use rocm ; then
-		rocm_src_prepare
-	fi
-	pushd "third_party/gpus" || die
-		pigz -z -k find_rocm_config.py || die
-		mv find_rocm_config.py.zz find_rocm_config.py.gz || die
-		base64 --wrap=0 find_rocm_config.py.gz > find_rocm_config.py.gz.base64 || die
-	popd || die
-
 	# Relax version checks in setup.py
 	sed -i "/^    '/s/==/>=/g" tensorflow/tools/pip_package/setup.py || die
 
@@ -1221,11 +1231,14 @@ einfo "Preventing stall.  Removing -Os."
 
 	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 		sed -i -e "s|LLVM_CCACHE_BUILD OFF|LLVM_CCACHE_BUILD ON|g" \
-			"${S}/tensorflow/compiler/xla/mlir_hlo/CMakeLists.txt" \
+			"${S}/third_party/xla/xla/mlir_hlo/CMakeLists.txt" \
 			|| die
 	fi
 
 	default
+
+	patch_rocm
+
 	use python && python_copy_sources
 
 	use cuda && cuda_add_sandbox
