@@ -316,15 +316,19 @@ REQUIRED_USE+="
 	)
 	rocm_5_4? (
 		llvm_slot_15
+		rocm
 	)
 	rocm_5_3? (
 		llvm_slot_15
+		rocm
 	)
 	rocm_5_2? (
 		llvm_slot_14
+		rocm
 	)
 	rocm_5_1? (
 		llvm_slot_14
+		rocm
 	)
 	theora? (
 		ffmpeg
