@@ -40,22 +40,27 @@ GCC_SLOT_WITH_CUDA=11
 # See "deps versioning" section above for details.
 HIP_SLOTS=(
 # Upstream supports [5.0-5.3]
-#	"5.0.2" # For llvm 14
-#	"5.1.3" # For llvm 14
-#	"5.2.3" # For llvm 14
 	"5.3.3" # For llvm 15
-#	"5.4.3" # For llvm 15
-#	"5.5.1" # For llvm 16
-#	"5.6.0" # For llvm 16
+#	"5.2.3" # For llvm 14
+#	"5.1.3" # For llvm 14
+#	"5.0.2" # For llvm 14
+)
+gen_hip_slots2() {
+	local pv
+	for pv in ${HIP_SLOTS[@]} ; do
+		local u=$(ver_cut 1-2 "${pv}")
+		u="${u/./_}"
+		echo "rocm_${u}"
+	done
+}
+HIP_SLOTS2=(
+	$(gen_hip_slots2)
 )
 declare -A LLD_SLOT=(
-#	["5.0.2"]="14"
-#	["5.1.3"]="14"
-#	["5.2.3"]="14"
 	["5.3.3"]="15"
-#	["5.4.3"]="15"
-#	["5.5.1"]="16"
-#	["5.6.0"]="16"
+#	["5.2.3"]="14"
+#	["5.1.3"]="14"
+#	["5.0.2"]="14"
 )
 LLVM_COMPAT=( {16..15} ) # See https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/tools/toolchains/remote_config/configs.bzl
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
@@ -341,7 +346,6 @@ LICENSE="
 #                  "2. Grant of Patent License."
 # || ( CC0-1.0 Apache-2.0 ) - llvm-project-d8415b02a519f222ecf71b069c96cc85ac635de3/llvm/lib/Support/BLAKE3/LICENSE
 
-
 RESTRICT="" # Tests need GPU access.  Relaxed python deps patches breaks tests.
 SLOT="0"
 CPU_USE_FLAGS_X86=(
@@ -369,11 +373,9 @@ CPU_USE_FLAGS_X86=(
 IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${HIP_SLOTS2[@]}
 alt-ssl -big-endian clang cuda custom-optimization-level +hardened mpi +python
 rocm system-llvm test xla
-
-rocm_5_3
-
 r1
 "
 gen_required_use_cuda_targets() {
@@ -410,7 +412,7 @@ REQUIRED_USE="
 	rocm? (
 		${ROCM_REQUIRED_USE}
 		^^ (
-			rocm_5_3
+			${HIP_SLOTS2[@]}
 		)
 	)
 	rocm_5_3? (
@@ -832,13 +834,18 @@ einfo "FORCE_LLVM_SLOT may be specified."
 
 	if use rocm ; then
 		# Upstream supports [5.0-5.3]
-		#use rocm_5_0 && has_version "dev-util/hip:5.1" && _LLVM_COMPAT=( 14 )
-		#use rocm_5_1 && has_version "dev-util/hip:5.1" && _LLVM_COMPAT=( 14 )
-		#use rocm_5_2 && has_version "dev-util/hip:5.2" && _LLVM_COMPAT=( 14 )
-		use rocm_5_3 && has_version "dev-util/hip:5.3" && _LLVM_COMPAT=( 15 )
-		#use rocm_5_4 && has_version "dev-util/hip:5.4" && _LLVM_COMPAT=( 15 )
-		#use rocm_5_5 && has_version "dev-util/hip:5.5" && _LLVM_COMPAT=( 16 )
-		#use rocm_5_6 && has_version "dev-util/hip:5.6" && _LLVM_COMPAT=( 16 )
+		if has rocm_5_0 $USE && use rocm_5_0 && has_version "dev-util/hip:5.1" ; then
+			_LLVM_COMPAT=( 14 )
+		fi
+		if has rocm_5_1 $USE && use rocm_5_1 && has_version "dev-util/hip:5.1" ; then
+			_LLVM_COMPAT=( 14 )
+		fi
+		if has rocm_5_2 $USE && use rocm_5_2 && has_version "dev-util/hip:5.2" ; then
+			_LLVM_COMPAT=( 14 )
+		fi
+		if has rocm_5_3 $USE && use rocm_5_3 && has_version "dev-util/hip:5.3" ; then
+			_LLVM_COMPAT=( 15 )
+		fi
 	fi
 
 	local found=0
@@ -928,18 +935,6 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		if has rocm_5_3 $USE && use rocm_5_3 && has_version "dev-util/hip:5.3" ; then
 			LLVM_SLOT=15
 			ROCM_SLOT="5.3"
-		fi
-		if has rocm_5_4 $USE && use rocm_5_4 && has_version "dev-util/hip:5.4" ; then
-			LLVM_SLOT=15
-			ROCM_SLOT="5.4"
-		fi
-		if has rocm_5_5 $USE && use rocm_5_5 && has_version "dev-util/hip:5.5" ; then
-			LLVM_SLOT=16
-			ROCM_SLOT="5.5"
-		fi
-		if has rocm_5_6 $USE && use rocm_5_6 && has_version "dev-util/hip:5.6" ; then
-			LLVM_SLOT=16
-			ROCM_SLOT="5.6"
 		fi
 	elif tc-is-clang || use clang ; then
 		use_clang
