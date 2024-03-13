@@ -160,7 +160,7 @@ OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1
 OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl
 PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/5f7d3578b66bda0b83787a069f66c7c02a05128d/third_party/rules_cuda/cuda/dependencies.bzl#L66
 PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl
-PROTOBUF_SLOT="0/3.21"
+PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl
 RULES_APPLE_PV="2.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl
 RULES_FOREIGN_CC_PV="0.7.1"
@@ -198,7 +198,6 @@ EGIT_COMMIT_SOBOL_DATA="835a7d7b1ee3bc83e575e302a985c66ec4b65249"		# From https:
 EGIT_COMMIT_STABLEHLO="b0edcdd6810551bf6aaec7d5aa00451cfe207582"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/stablehlo/workspace.bzl
 EGIT_COMMIT_TF_RUNTIME="5f7d3578b66bda0b83787a069f66c7c02a05128d"		# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/tf_runtime/workspace.bzl
 EGIT_COMMIT_XNNPACK="bbbaa7352a3ea729987d3e654d37be93e8009691"			# From https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl
-
 
 # WARN: DO NOT HARDWRAP
 bazel_external_uris="
