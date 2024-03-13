@@ -5,14 +5,14 @@ EAPI=8
 
 inherit bash-completion-r1 bazel java-pkg-2 multiprocessing
 
+KEYWORDS="~amd64"
+SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.zip"
+S="${WORKDIR}"
+
 DESCRIPTION="Fast and correct automated build system"
 HOMEPAGE="https://bazel.build/"
-
-SRC_URI="https://github.com/bazelbuild/bazel/releases/download/${PV}/${P}-dist.zip"
-
 LICENSE="Apache-2.0"
 SLOT="${PV%%.*}/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64"
 IUSE="bash-completion examples tools r4 zsh-completion"
 JAVA_SLOT=11
 RDEPEND="
@@ -32,8 +32,6 @@ BDEPEND="
 # strip corrupts the bazel binary
 # test fails with network-sandbox: An error occurred during the fetch of repository 'io_bazel_skydoc' (bug 690794)
 RESTRICT="strip test"
-
-S="${WORKDIR}"
 
 pkg_setup() {
 	if has ccache ${FEATURES}; then
