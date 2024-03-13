@@ -11,7 +11,15 @@
     <email>perfinion@gentoo.org</email>
     <name>Jason Zaman</name>
   </maintainer>
-  <longdescription>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    maintained versions:
+                                         latest release:  2.16.1
+                                       previous release:  2.15.1
+    highest supported dev-util/nvidia-cuda-toolkit-11.8:  2.14.1
+
 
     Environment variables:
 
@@ -24,7 +32,7 @@
       BAZEL_LOCAL_RAM_RESOURCES=4096
       FORCE_LLVM_SLOT=11
 
-  </longdescription>
+  -->
   <upstream>
     <remote-id type="github">tensorflow/tensorflow</remote-id>
   </upstream>

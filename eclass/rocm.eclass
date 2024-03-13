@@ -272,20 +272,20 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		fi
 	else
 		# ls /usr/lib64/rocm/*/llvm/lib64/clang -> 16.0.0 17.0.0
-		CLANG_SLOT="${LLVM_MAX_SLOT}.0.0"
+		CLANG_SLOT="${LLVM_SLOT}.0.0"
 	fi
 
 	local clang_selected_desc
 	if has system-llvm ${IUSE} && use system-llvm ; then
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
-		clang_selected_desc="sys-devel/clang:${LLVM_MAX_SLOT}"
+		clang_selected_desc="sys-devel/clang:${LLVM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
-		clang_selected_desc="sys-devel/llvm-roc:${LLVM_MAX_SLOT}"
+		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
 	fi
 
 	if has system-llvm ${IUSE} && use system-llvm ; then
-		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_MAX_SLOT}"
+		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
 	else
 		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 	fi
@@ -302,6 +302,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		|| "${EROCM_SKIP_EXCLUSIVE_CLANG_SLOT_IN_PATH}" == "1" \
 		|| "${EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH}" == "1" \
 	]] ; then
+ewarn "QA:  Ebuild maintainer is responsible for setting PATH to llvm/bin."
 		:;
 	else
 # Disallow newer clangs versions when producing .o files.
@@ -352,6 +353,7 @@ einfo "Eclass variables:"
 einfo
 einfo "  CLANG_SLOT:  ${CLANG_SLOT}"
 einfo "  LLVM_MAX_SLOT:  ${LLVM_MAX_SLOT}"
+einfo "  LLVM_SLOT:  ${LLVM_SLOT}"
 einfo "  EROCM_CLANG_PATH:  ${EROCM_CLANG_PATH}"
 einfo "  EROCM_LLVM_PATH:  ${EROCM_LLVM_PATH}"
 einfo "  EROCM_PATH:  ${EROCM_PATH}"
@@ -380,14 +382,14 @@ einfo
 #     if system-llvm then 13.0.1, 14.0.6, 15.0.1, 15.0.5, 15.0.6, 15.0.7, 16, 17.
 # @EPREFIX@      - /home/<USER>/blah, "", or any path
 # @EPREFIX_CLANG_PATH@  -
-#     if !system-llvm then ${EPREFIX}/usr/lib64/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0
+#     if !system-llvm then ${EPREFIX}/usr/lib64/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_SLOT}.0.0
 #     if system-llvm then ${EPREFIX}/usr/lib/clang/${CLANG_SLOT}
 # @EPREFIX_LLVM_PATH@   -
 #     if !system-llvm then ${EPREFIX}/usr/lib64/rocm/${ROCM_SLOT}/llvm
 #     if system-llvm then ${EPREFIX}/usr/lib/llvm/${LLVM_SLOT}
 # @ESYSROOT@     - /usr/x86_64-pc-linux-gnu, "", or any path.
 # @ESYSROOT_CLANG_PATH@ -
-#     if !system-llvm then ${ESYSROOT}/usr/lib64/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_MAX_SLOT}.0.0
+#     if !system-llvm then ${ESYSROOT}/usr/lib64/rocm/${ROCM_SLOT}/llvm/lib/clang/${LLVM_SLOT}.0.0
 #     if system-llvm then ${ESYSROOT}/usr/lib/clang/${CLANG_SLOT}
 # @ESYSROOT_LLVM_PATH@  -
 #     if !system-llvm then ${ESYSROOT}/usr/lib64/rocm/${ROCM_SLOT}/llvm
@@ -1120,19 +1122,19 @@ rocm_get_libomp_path() {
 	local libomp_path
 	if use system-llvm ; then
 		# Stable API, slotted
-		libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+		libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 	else
 		# The suffix allows us to resolve the ambiguousness.
-		if [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}roc" ]] ; then
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}roc"
-		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}git" ]] ; then
+		if [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}roc" ]] ; then
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}roc"
+		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}git" ]] ; then
 			# May require RPATH
 			# Unstable API, slotted
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}git"
-		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}" ]] ; then
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}git"
+		elif [[ -e "${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}" ]] ; then
 			# Requires RPATH
 			# Stable API, slotted
-			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 		else
 			# Requires RPATH
 			libomp_path="${ESYSROOT}/${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so"
