@@ -48,7 +48,7 @@ EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
-if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
+if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
 	# Normalize versioning
 	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
 else
@@ -115,6 +115,7 @@ ff71f55cc0ce68e1de833837bc19751285c83ea8
 74e8316345477e9e06e70340bc3ef3cf773f4ea2
 85f7ca83ac60f5d1c5fddceb2dfc5714af016772
 01ffb5c93fff64050b2eda359d20f812f62c91c3
+29b5f0819ad75f6a2aa13091cb5f4c7dd9b90a20
 )
 
 # Avoid merge conflict.

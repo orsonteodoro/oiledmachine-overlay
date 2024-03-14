@@ -32,7 +32,7 @@ EXTRAVERSION="-ot"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
-if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
+if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
 	# Normalize versioning
 	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
 else

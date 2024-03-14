@@ -28,14 +28,14 @@ CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.4/tools/b
 GCC_COMPAT=( {13..4} )
 LLVM_COMPAT=( {17..10} )
 GCC_SLOT_NOT_KCP=( ${GCC_COMPAT[@]} ) # Without kernel-compiler-patch
-GCC_SLOT_KCP=${GCC_COMPAT[0]} # With kernel-compiler-patch
+GCC_SLOT_KCP="${GCC_COMPAT[0]}" # With kernel-compiler-patch
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KV_MAJOR=$(ver_cut 1 "${MY_PV}")
 KV_MAJOR_MINOR=$(ver_cut 1-2 "${MY_PV}")
-if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
+if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
 	# Normalize versioning
 	UPSTREAM_PV="${KV_MAJOR_MINOR}.0" # file context
 else
