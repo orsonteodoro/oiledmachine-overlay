@@ -1345,7 +1345,7 @@ ewarn
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0 # $(usex cuda 1 0)
 		if use cuda; then
-			local gcc_slot=11
+			local gcc_slot=${GCC_SLOT_WITH_CUDA}
 			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
 			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
 
