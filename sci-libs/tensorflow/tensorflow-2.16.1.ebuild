@@ -468,7 +468,7 @@ CUDA_CDEPEND="
 	(
 		<dev-util/nvidia-cuda-toolkit-$(( $(ver_cut 1 ${CUDA_PV}) + 1 )):=[profiler]
 		>=dev-util/nvidia-cuda-toolkit-${CUDA_PV}:=[profiler]
-		sys-devel/gcc:12
+		sys-devel/gcc:${GCC_SLOT_WITH_CUDA}
 	)
 "
 
