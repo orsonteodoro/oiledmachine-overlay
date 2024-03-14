@@ -150,7 +150,7 @@ inherit prefix rocm toolchain-funcs
 # https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/pasta/workspace.bzl
 # https://github.com/grpc/grpc/blob/b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd/CMakeLists.txt
 # https://github.com/tensorflow/tensorflow/blob/v2.16.1/ci/official/requirements_updater/requirements.in
-#   For dill, jax, keras, lit, packaging, portpicker, requests, scipy, setuptools, tblib, tensorboard, tensorboard-estimator
+#   For dill, jax, keras, lit, packaging, portpicker, requests, scipy, setuptools, tblib, tensorboard
 
 # distfiles that bazel uses for the workspace, will be copied to basel-distdir
 # pkgcheck complains but do NOT change the .zip to .tar.gz, bazel requires the exact tarball (basename and sha256).
@@ -673,8 +673,7 @@ PDEPEND="
 		$(python_gen_cond_dep '
 			>=dev-python/tensorflow-io-0.23.1[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 		' python3_{10,11})
-		=sci-libs/keras-${DEP_VER}*[${PYTHON_USEDEP}]
-		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
+		>=sci-libs/keras-3.0.0[${PYTHON_USEDEP}]
 	)
 "
 gen_llvm_bdepend() {
