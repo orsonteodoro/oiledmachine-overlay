@@ -649,7 +649,7 @@ DEPEND="
 PDEPEND="
 	python? (
 		$(python_gen_cond_dep '
-			>=dev-python/tensorflow-io-0.23.1[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+			=dev-python/tensorflow-io-0.35.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 		' python3_{10,11})
 		=sci-libs/keras-${DEP_VER}*[${PYTHON_USEDEP}]
 		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
