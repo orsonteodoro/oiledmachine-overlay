@@ -1344,14 +1344,13 @@ ewarn
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0 # $(usex cuda 1 0)
 		if use cuda; then
-			local gcc_slot=${GCC_SLOT_WITH_CUDA}
 			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
 			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
 
-			has_version "sys-devel/gcc:${gcc_slot}" || die "Reinstall gcc:${gcc_slot}"
+			has_version "sys-devel/gcc:${GCC_SLOT_WITH_CUDA}" || die "Reinstall gcc:${GCC_SLOT_WITH_CUDA}"
 			# The original ebuild has the bugged one
 			# where it will output ${EPREFIX}/usr/${CHOST}/gcc-bin/11/${CHOST}-gcc-12
-			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
+			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${GCC_SLOT_WITH_CUDA}/${CHOST}-gcc-${GCC_SLOT_WITH_CUDA}"
 
 			export TF_CUDA_VERSION="$(cuda_toolkit_version)"
 			export TF_CUDNN_VERSION="$(cuda_cudnn_version)"
