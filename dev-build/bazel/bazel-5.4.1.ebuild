@@ -60,6 +60,12 @@ src_prepare() {
 }
 
 src_compile() {
+ewarn
+ewarn "If it fails to build, switch to gcc 12."
+ewarn
+ewarn "eselect gcc set ${CHOST}-12="
+ewarn "source /etc/profile"
+ewarn
 	export JAVA_HOME=$(java-config --jre-home) # so keepwork works
 	export EXTRA_BAZEL_ARGS="--jobs=$(makeopts_jobs) $(bazel_get_flags)
 		--java_runtime_version=local_jdk
