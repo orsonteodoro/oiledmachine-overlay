@@ -39,7 +39,11 @@ GCC_MIN_SLOT="${GCC_COMPAT[-1]}"
 GCC_SLOT_WITH_CUDA=11
 # See "deps versioning" section above for details.
 HIP_SLOTS=(
-# Upstream supports [5.0-5.3]
+# See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
+#	"5.7.1" # For llvm 17 # Disabled based on LLVM_COMPAT
+	"5.6.1" # For llvm 16
+	"5.5.1" # For llvm 16
+	"5.4.3" # For llvm 15
 	"5.3.3" # For llvm 15
 #	"5.2.3" # For llvm 14
 #	"5.1.3" # For llvm 14
@@ -57,6 +61,10 @@ HIP_SLOTS2=(
 	$(gen_hip_slots2)
 )
 declare -A LLD_SLOT=(
+#	["5.7.1"]="17"
+	["5.6.1"]="16"
+	["5.5.1"]="16"
+	["5.4.3"]="15"
 	["5.3.3"]="15"
 #	["5.2.3"]="14"
 #	["5.1.3"]="14"
@@ -414,6 +422,15 @@ REQUIRED_USE="
 		^^ (
 			${HIP_SLOTS2[@]}
 		)
+	)
+	rocm_5_6? (
+		llvm_slot_16
+	)
+	rocm_5_5? (
+		llvm_slot_16
+	)
+	rocm_5_4? (
+		llvm_slot_15
 	)
 	rocm_5_3? (
 		llvm_slot_15
@@ -833,18 +850,22 @@ einfo "FORCE_LLVM_SLOT may be specified."
 	fi
 
 	if use rocm ; then
-		# Upstream supports [5.0-5.3]
-		if has rocm_5_0 $USE && use rocm_5_0 && has_version "dev-util/hip:5.1" ; then
-			_LLVM_COMPAT=( 14 )
-		fi
-		if has rocm_5_1 $USE && use rocm_5_1 && has_version "dev-util/hip:5.1" ; then
-			_LLVM_COMPAT=( 14 )
-		fi
-		if has rocm_5_2 $USE && use rocm_5_2 && has_version "dev-util/hip:5.2" ; then
-			_LLVM_COMPAT=( 14 )
-		fi
-		if has rocm_5_3 $USE && use rocm_5_3 && has_version "dev-util/hip:5.3" ; then
+		if has rocm_5_7 $USE && use rocm_5_7 && has_version "dev-util/hip:5.7" ; then
+			_LLVM_COMPAT=( 17 )
+		elif has rocm_5_6 $USE && use rocm_5_6 && has_version "dev-util/hip:5.6" ; then
+			_LLVM_COMPAT=( 16 )
+		elif has rocm_5_5 $USE && use rocm_5_5 && has_version "dev-util/hip:5.5" ; then
+			_LLVM_COMPAT=( 16 )
+		elif has rocm_5_4 $USE && use rocm_5_4 && has_version "dev-util/hip:5.4" ; then
 			_LLVM_COMPAT=( 15 )
+		elif has rocm_5_3 $USE && use rocm_5_3 && has_version "dev-util/hip:5.3" ; then
+			_LLVM_COMPAT=( 15 )
+		elif has rocm_5_2 $USE && use rocm_5_2 && has_version "dev-util/hip:5.2" ; then
+			_LLVM_COMPAT=( 14 )
+		elif has rocm_5_1 $USE && use rocm_5_1 && has_version "dev-util/hip:5.1" ; then
+			_LLVM_COMPAT=( 14 )
+		elif has rocm_5_0 $USE && use rocm_5_0 && has_version "dev-util/hip:5.1" ; then
+			_LLVM_COMPAT=( 14 )
 		fi
 	fi
 
@@ -919,22 +940,30 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
-		# Upstream supports [5.0-5.3]
-		if has rocm_5_0 $USE && use rocm_5_0 && has_version "dev-util/hip:5.0" ; then
-			LLVM_SLOT=14
-			ROCM_SLOT="5.0"
-		fi
-		if has rocm_5_1 $USE && use rocm_5_1 && has_version "dev-util/hip:5.1" ; then
-			LLVM_SLOT=14
-			ROCM_SLOT="5.1"
-		fi
-		if has rocm_5_2 $USE && use rocm_5_2 && has_version "dev-util/hip:5.2" ; then
-			LLVM_SLOT=14
-			ROCM_SLOT="5.2"
-		fi
-		if has rocm_5_3 $USE && use rocm_5_3 && has_version "dev-util/hip:5.3" ; then
+		if has rocm_5.7 $USE && use rocm_5_7 && has_version "dev-util/hip:5.7" ; then
+			LLVM_SLOT=17
+			ROCM_SLOT="5.7"
+		elif has rocm_5.6 $USE && use rocm_5_6 && has_version "dev-util/hip:5.6" ; then
+			LLVM_SLOT=16
+			ROCM_SLOT="5.6"
+		elif has rocm_5.5 $USE && use rocm_5_5 && has_version "dev-util/hip:5.5" ; then
+			LLVM_SLOT=16
+			ROCM_SLOT="5.5"
+		elif has rocm_5.4 $USE && use rocm_5_4 && has_version "dev-util/hip:5.4" ; then
+			LLVM_SLOT=15
+			ROCM_SLOT="5.4"
+		elif has rocm_5_3 $USE && use rocm_5_3 && has_version "dev-util/hip:5.3" ; then
 			LLVM_SLOT=15
 			ROCM_SLOT="5.3"
+		elif has rocm_5_2 $USE && use rocm_5_2 && has_version "dev-util/hip:5.2" ; then
+			LLVM_SLOT=14
+			ROCM_SLOT="5.2"
+		elif has rocm_5_1 $USE && use rocm_5_1 && has_version "dev-util/hip:5.1" ; then
+			LLVM_SLOT=14
+			ROCM_SLOT="5.1"
+		elif has rocm_5_0 $USE && use rocm_5_0 && has_version "dev-util/hip:5.0" ; then
+			LLVM_SLOT=14
+			ROCM_SLOT="5.0"
 		fi
 	elif tc-is-clang || use clang ; then
 		use_clang
