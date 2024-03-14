@@ -42,14 +42,8 @@ PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 # portpicker
 RDEPEND="
 	(
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.22.0[${PYTHON_USEDEP}]
-		' python3_{9..10})
-	)
-	(
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
-		' python3_11)
+		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
+		<dev-python/numpy-2[${PYTHON_USEDEP}]
 	)
 	=sci-libs/tensorflow-${PV%.*}*[${PYTHON_USEDEP},python]
 	>=dev-python/scipy-1.9.2[${PYTHON_USEDEP}]

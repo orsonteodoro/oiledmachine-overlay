@@ -57,7 +57,7 @@ RDEPEND="
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 		)
 	' python3_12)
-	=sci-libs/tensorflow-2.13*[${PYTHON_USEDEP},python]
+	>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP},python]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
 	dev-libs/protobuf:${PROTOBUF_SLOT}
@@ -93,26 +93,25 @@ BDEPEND="
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 	)
 "
+# Possible circular depends:
 PDEPEND="
 	cpu? (
 		jax? (
 			dev-python/jax[${PYTHON_USEDEP}]
 		)
-
 		pytorch? (
 			$(python_gen_any_dep '
 				>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 			')
 			>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
 		)
-
 		tensorflow? (
 			>=sci-libs/tensorflow-${TENSORFLOW_PV}
 		)
 	)
 	cuda? (
 		jax? (
-			>=dev-python/jax-0.4.23[${PYTHON_USEDEP},cuda?]
+			>=dev-python/jax-0.4.23[${PYTHON_USEDEP},cuda]
 			test? (
 				$(python_gen_any_dep '
 					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
@@ -122,7 +121,7 @@ PDEPEND="
 			)
 		)
 		tensorflow? (
-			>=sci-libs/tensorflow-${TENSORFLOW_PV}[cuda?]
+			>=sci-libs/tensorflow-${TENSORFLOW_PV}[cuda]
 			test? (
 				$(python_gen_any_dep '
 					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
@@ -135,7 +134,7 @@ PDEPEND="
 			$(python_gen_any_dep '
 				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP},cuda?]
 			')
-			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP},cuda?]
+			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP},cuda]
 			test? (
 				>=sci-libs/tensorflow-${TENSORFLOW_PV}
 				dev-python/jax[${PYTHON_USEDEP}]
