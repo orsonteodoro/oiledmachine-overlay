@@ -24,6 +24,9 @@
 
     Added support for multislot
 
+    Multislot reason:
+    Changes to command line arg breaks backwards compatibility.
+
   -->
   <use>
     <flag name="bash-completion">
