@@ -661,20 +661,21 @@ PDEPEND="
 "
 gen_llvm_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
-		if (( ${s} >= ${LLVM_MIN_SLOT} && ${s} < ${LLVM_MAX_SLOT} )) ; then
-			echo "
-				(
-					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
-					>=sys-devel/lld-10
-				)
-			"
-		else
+		if (( ${s} >= 16 )) ; then
 			echo "
 				(
 					sys-devel/clang:${s}
 					sys-devel/llvm:${s}
 					sys-devel/lld:${s}
+				)
+			"
+		else
+			# Monoslotted at < lld-15.0.3
+			echo "
+				(
+					sys-devel/clang:${s}
+					sys-devel/llvm:${s}
+					>=sys-devel/lld-${s}
 				)
 			"
 		fi
