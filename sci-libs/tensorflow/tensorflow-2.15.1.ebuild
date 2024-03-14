@@ -1360,6 +1360,7 @@ ewarn
 		export TF_CUDA_CLANG=0
 		export TF_NEED_TENSORRT=0 # $(usex cuda 1 0)
 		if use cuda; then
+			export TF_NEED_CLANG=0
 			export TF_CUDA_COMPUTE_CAPABILITIES=$(get_cuda_targets)
 			export TF_CUDA_PATHS="${EPREFIX}/opt/cuda"
 
@@ -1394,6 +1395,7 @@ einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
 einfo
 		fi
 		if use rocm ; then
+			export TF_NEED_CLANG=0
 			# Build with GCC but initialize LLVM_SLOT.
 			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")
