@@ -897,7 +897,7 @@ einfo "FORCE_LLVM_SLOT may be specified."
 			_LLVM_COMPAT=( 14 )
 		elif has rocm_5_1 $USE && use rocm_5_1 && has_version "dev-util/hip:5.1" ; then
 			_LLVM_COMPAT=( 14 )
-		elif has rocm_5_0 $USE && use rocm_5_0 && has_version "dev-util/hip:5.1" ; then
+		elif has rocm_5_0 $USE && use rocm_5_0 && has_version "dev-util/hip:5.0" ; then
 			_LLVM_COMPAT=( 14 )
 		fi
 	fi
