@@ -35,7 +35,7 @@ REQUIRED_USE="
 # https://github.com/keras-team/keras/blob/v3.1.0/requirements.txt
 # https://github.com/keras-team/keras/blob/v3.1.0/WORKSPACE
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
-PROTOBUF_SLOT="0/3.21"
+PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 # TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
 # These have moved in this package.
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
