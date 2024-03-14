@@ -3,6 +3,8 @@
 
 EAPI=8
 
+JAVA_SLOT=11
+
 inherit bash-completion-r1 bazel java-pkg-2 multiprocessing
 
 KEYWORDS="~amd64"
@@ -14,7 +16,6 @@ HOMEPAGE="https://bazel.build/"
 LICENSE="Apache-2.0"
 SLOT="${PV%%.*}/$(ver_cut 1-2 ${PV})"
 IUSE="bash-completion examples tools r4 zsh-completion"
-JAVA_SLOT=11
 RDEPEND="
 	!dev-build/bazel:0
 	>=virtual/jre-${JAVA_SLOT}:${JAVA_SLOT}
