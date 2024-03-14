@@ -6,11 +6,22 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
-LLVM_COMPAT=( {16..15} )
+LLVM_COMPAT=( {17..15} )
+PROTOBUF_SLOT="0/3.21"
 PYTHON_COMPAT=( python3_{10..11} )
 YARN_SLOT="1"
 
 inherit bazel flag-o-matic llvm-r1 distutils-r1 yarn
+
+KEYWORDS="~amd64"
+bazel_external_uris="
+"
+#${bazel_external_uris}
+SRC_URI="
+https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${P}"
 
 DESCRIPTION="TensorFlow's Visualization Toolkit"
 HOMEPAGE="
@@ -21,19 +32,19 @@ https://github.com/tensorflow/tensorboard
 LICENSE="
 	all-rights-reserved
 	Apache-2.0
-" # The distro Apache-2.0 template doesn't have all-rights-reserved
+"
+# The distro Apache-2.0 template doesn't have all-rights-reserved
+PROPERTIES="live"
 SLOT="0"
-KEYWORDS="~amd64"
 IUSE+=" test r3"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
-PROPERTIES="live"
-# See https://github.com/tensorflow/tensorboard/blob/2.12.3/tensorboard/pip_package/requirements.txt
+
+# See https://github.com/tensorflow/tensorboard/blob/2.13.0/tensorboard/pip_package/requirements.txt
 # Not used:
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 # Requirements for dev-python/protobuf-python modified by this ebuild to avoid multi instance single slot issue.
-PROTOBUF_SLOT="0/3.21"
 
 gen_llvm_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
@@ -50,62 +61,51 @@ gen_llvm_bdepend() {
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
-		(
-			<dev-python/google-auth-3[${PYTHON_USEDEP}]
-			>=dev-python/google-auth-1.6.3[${PYTHON_USEDEP}]
-		)
-		(
-			<dev-python/google-auth-oauthlib-1.1[${PYTHON_USEDEP}]
-			>=dev-python/google-auth-oauthlib-0.5[${PYTHON_USEDEP}]
-		)
-		(
-			<dev-python/requests-3[${PYTHON_USEDEP}]
-			>=dev-python/requests-2.21.0[${PYTHON_USEDEP}]
-		)
 		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 		>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
+		>dev-python/six-1.9[${PYTHON_USEDEP}]
 		dev-python/bleach[${PYTHON_USEDEP}]
 		dev-python/html5lib[${PYTHON_USEDEP}]
 		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
-		dev-python/six[${PYTHON_USEDEP}]
 		|| (
-			=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.50*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.51*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
+			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
 		)
 	')
-	=sci-visualization/tensorboard-data-server-0.8*[${PYTHON_SINGLE_USEDEP}]
+	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_SINGLE_USEDEP}]
 "
 BDEPEND="
 	${PYTHON_DEPS}
 	$(gen_llvm_bdepend)
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-41[${PYTHON_USEDEP}]
-		>=dev-python/wheel-0.26[${PYTHON_USEDEP}]
 		>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
 		>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
 		>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
 		test? (
 			>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
-			>=dev-python/fsspec-0.7.4[${PYTHON_USEDEP}]
+			>=dev-python/fsspec-2021.06.0[${PYTHON_USEDEP}]
 			>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 			>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
 			|| (
-				=dev-python/grpcio-testing-1.49*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.50*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.51*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.54*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.55*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.56*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-1.57*:=[${PYTHON_USEDEP}]
 			)
 		)
 	')
-	(
-		<dev-build/bazel-7
-		>=dev-build/bazel-4.2.2
+	|| (
+		dev-build/bazel:6
+		dev-build/bazel:5
 	)
 	app-arch/unzip
 	dev-java/java-config
@@ -115,16 +115,6 @@ PDEPEND="
 		=sci-libs/tensorflow-'$(ver_cut 1-2 ${PV})'*[${PYTHON_USEDEP},python]
 	')
 "
-bazel_external_uris="
-https://mirror.bazel.build/cdn.azul.com/zulu/bin/zulu11.56.19-ca-jdk11.0.15-linux_x64.tar.gz
-https://mirror.bazel.build/bazel_java_tools/releases/java/v11.9/java_tools-v11.9.zip
-"
-SRC_URI="
-${bazel_external_uris}
-https://github.com/tensorflow/tensorboard/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${P}"
 PATCHES=(
 	"${FILESDIR}/tensorboard-2.12.0-regex_edit_dialog_component-window-settimeout.patch"
 	"${FILESDIR}/tensorboard-2.12.0-vz_projector-BUILD-add-types-three.patch"
@@ -196,6 +186,14 @@ einfo "PATH:\t${PATH}"
 src_unpack() {
 	YARN_OFFLINE=0
 	yarn_hydrate
+
+	mkdir -p "${WORKDIR}/bin" || die
+	export PATH="${WORKDIR}/bin:${PATH}"
+	if has_version "dev-build/bazel:6" ; then
+		ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
+	elif has_version "dev-build/bazel:5" ; then
+		ln -s "/usr/bin/bazel-5" "${WORKDIR}/bin/bazel" || die
+	fi
 
 	unpack ${P}.tar.gz
 	bazel_load_distfiles "${bazel_external_uris}"
