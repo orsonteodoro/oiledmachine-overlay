@@ -8,7 +8,15 @@ MY_PN="io"
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} )
+
 inherit distutils-r1
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+SRC_URI="
+https://github.com/tensorflow/io/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="Dataset, streaming, and file system extensions maintained by \
 TensorFlow SIG-IO"
@@ -18,7 +26,7 @@ https://github.com/tensorflow/io
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc tensorflow-io-gcs-filesystem test"
 # See https://github.com/tensorflow/io/blob/v0.36.0/README.md#tensorflow-version-compatibility
@@ -31,12 +39,6 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-build/bazel-6.1.0:0
 "
-SRC_URI="
-https://github.com/tensorflow/io/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="mirror test"
 DOCS=( README.md RELEASE.md )
 HTML_DOCS=( docs )
 

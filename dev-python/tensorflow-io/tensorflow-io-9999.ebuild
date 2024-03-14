@@ -8,14 +8,20 @@ MY_PN="io"
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} )
-
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/tensorflow/io.git"
+	EGIT_BRANCH="master"
+	inherit git-r3
+	FALLBACK_COMMIT="4d70341df05ddce09c257d4ecaaaba1873594105"
+else
+	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	SRC_URI="
 https://github.com/tensorflow/io/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-"
+	"
+fi
 S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="Dataset, streaming, and file system extensions maintained by \
@@ -29,15 +35,15 @@ LICENSE="
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc tensorflow-io-gcs-filesystem test"
-# See https://github.com/tensorflow/io/blob/v0.35.0/README.md#tensorflow-version-compatibility
+# See https://github.com/tensorflow/io/blob/master/README.md#tensorflow-version-compatibility
 DEPEND+="
-	=sci-libs/tensorflow-2.14*[${PYTHON_USEDEP}]
+	>=sci-libs/tensorflow-2.15[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-build/bazel-6.1.0:6
+	>=dev-build/bazel-6.1.0:0
 "
 DOCS=( README.md RELEASE.md )
 HTML_DOCS=( docs )
@@ -46,7 +52,14 @@ src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
 	export PATH="${WORKDIR}/bin:${PATH}"
 	ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
-	unpack ${A}
+
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
 }
 
 python_compile() {
