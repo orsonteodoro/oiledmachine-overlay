@@ -6,12 +6,11 @@ EAPI=8
 inherit cmake
 
 # From cmake/GoogleapisConfig.cmake
-GOOGLEAPIS_COMMIT="343f52cd370556819da24df078308f3f709ff24b"
+GOOGLEAPIS_COMMIT="c0b5730937e56047dc11900463ff87be7c80e8cc"
 SRC_URI="
 https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
 https://github.com/googleapis/googleapis/archive/${GOOGLEAPIS_COMMIT}.tar.gz -> googleapis-${GOOGLEAPIS_COMMIT}.tar.gz
 "
-# 4fc780c - fix: add missing <cstdint> includes
 
 DESCRIPTION="Google Cloud Client Library for C++"
 HOMEPAGE="https://cloud.google.com/"
@@ -22,29 +21,28 @@ IUSE=" test r2"
 # Tests need a GCP account
 RESTRICT="test"
 # U 18.04
-# See https://github.com/googleapis/google-cloud-cpp/blob/v2.2.1/bazel/google_cloud_cpp_deps.bzl
+# See https://github.com/googleapis/google-cloud-cpp/blob/v2.9.1/bazel/google_cloud_cpp_deps.bzl
 RDEPEND="
-	>=dev-cpp/abseil-cpp-20220623.1:0/20220623
+	>=dev-cpp/abseil-cpp-20230125.2:0/20230125
 	>=dev-cpp/nlohmann_json-3.11.2
 	>=dev-libs/crc32c-1.1.2
 	>=dev-libs/openssl-1.1.1:=
-	>=dev-libs/re2-0.2022.06.01:=
-	>=net-libs/grpc-1.48.1:=
+	>=dev-libs/re2-0.2023.03.01:=
+	>=net-libs/grpc-1.49.3:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11
 	dev-libs/protobuf:0/3.21
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-cpp/gtest-1.11.0
+	>=dev-cpp/gtest-1.13.0
 	test? (
 		>=dev-cpp/benchmark-1.7.0
 	)
 "
 DOCS=( README.md )
 PATCHES=(
-	"${FILESDIR}/${PN}-2.2.1-no-download.patch"
-	"${FILESDIR}/${PN}-commit-4fc780c-backport-to-2.2.1.patch"
+	"${FILESDIR}/${PN}-2.9.0-no-download.patch"
 )
 
 src_unpack() {

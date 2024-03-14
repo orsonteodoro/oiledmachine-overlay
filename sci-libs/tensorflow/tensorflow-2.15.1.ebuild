@@ -128,6 +128,8 @@ inherit prefix rocm toolchain-funcs
 # libpng, nsync, protobuf, pybind11, snappy, sqlite, tblib,
 # zlib:
 # https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L567
+# google-cloud-cpp:
+# https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L294
 
 # https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/workspace2.bzl#L542			# openmp
 # https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/absl/workspace.bzl			# abseil-cpp ; provides commit
@@ -533,6 +535,11 @@ RDEPEND_GRPCIO_LITTLE_ENDIAN="
 # The grpcio slots below are limited by protobuf:0/32.
 # TODO package
 # dev-python/portpicker
+#
+# google-cloud-cpp acceptable range: [2.9.0-2.10.1] based on same major
+# abseil-cpp version and same major-minor of protobuf without multiple
+# slot conflict.
+#
 RDEPEND="
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -612,7 +619,6 @@ RDEPEND="
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
 			<dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 		)
-		=net-libs/google-cloud-cpp-2.9*
 		>=dev-libs/flatbuffers-23.1.21:=
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
@@ -634,6 +640,11 @@ RDEPEND="
 		>=dev-python/dill-0.3.6[${PYTHON_USEDEP}]
 		>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
+		|| (
+			=net-libs/google-cloud-cpp-2.10*
+			=net-libs/google-cloud-cpp-2.9*
+		)
+		net-libs/google-cloud-cpp:=
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
