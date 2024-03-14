@@ -1377,6 +1377,7 @@ ewarn
 			# The original ebuild has the bugged one
 			# where it will output ${EPREFIX}/usr/${CHOST}/gcc-bin/11/${CHOST}-gcc-12
 			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${GCC_SLOT_WITH_CUDA}/${CHOST}-gcc-${GCC_SLOT_WITH_CUDA}"
+			export CLANG_COMPILER_PATH="/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
 
 			export TF_CUDA_VERSION="$(cuda_toolkit_version)"
 			export TF_CUDNN_VERSION="$(cuda_cudnn_version)"
@@ -1404,16 +1405,18 @@ einfo "  /opt/cuda/extras/demo_suite/deviceQuery | grep 'CUDA Capability'"
 einfo
 		fi
 		if use rocm ; then
-			export TF_NEED_CLANG=0
-			# Build with GCC but initialize LLVM_SLOT.
+			export TF_NEED_CLANG=1
 			export TF_ROCM_AMDGPU_TARGETS=$(get_amdgpu_flags \
 				| tr ";" ",")
 			export TF_ROCM_LLVM_SLOT="${LLVM_SLOT}"
 			export HIP_PATH="${EPREFIX}/usr"
 			export ROCM_PATH="${EPREFIX}/usr"
 
+# See https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/.bazelrc#L296
 			local gcc_slot=$(gcc-major-version)
+			export CLANG_COMPILER_PATH="/usr/lib/llvm/${LLVM_SLOT}/bin/clang"
 			export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${gcc_slot}"
+			export TF_ROCM_CLANG=1
 
 			export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
 			export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
