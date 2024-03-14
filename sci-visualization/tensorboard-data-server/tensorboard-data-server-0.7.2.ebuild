@@ -277,7 +277,14 @@ LICENSE="
 # it appears in the LICENSE file.
 RESTRICT="mirror"
 SLOT="0/"$(ver_cut 1-2 "${PV}")
-IUSE+=" test r2"
+IUSE+="
+	test r2
+"
+REQUIRED_USE="
+	^^ (
+		${PYTHON_REQUIRED_USE}
+	)
+"
 RDEPEND="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
@@ -376,9 +383,9 @@ python_compile() {
 	local wheel_path=$(realpath "${T}/pip_package/"*".whl")
 	local d
 	if [[ "${TARBALL_TYPE}" == "tensorboard" ]] ; then
-		d="${WORKDIR}/tensorboard-${TENSORBOARD_TARBALL_PV}_${EPYTHON}/install"
+		d="${WORKDIR}/${PN}-v${TENSORBOARD_TARBALL_PV}_${EPYTHON}/install"
 	else
-		d="${WORKDIR}/tensorboard-$(ver_cut 1-3 ${PV})_${EPYTHON}/install"
+		d="${WORKDIR}/${PN}-v$(ver_cut 1-3 ${PV})_${EPYTHON}/install"
 	fi
 	distutils_wheel_install "${d}" \
 		"${wheel_path}"
@@ -395,6 +402,7 @@ src_install() {
 	docinto licenses
 	cd "${S_PROJ}" || die
 	dodoc LICENSE
+
 	BUILD_DIR="${S_PROJ}"
 	distutils-r1_src_install
 }
