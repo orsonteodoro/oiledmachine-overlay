@@ -1767,6 +1767,9 @@ ewarn
 ewarn "Clang PGO is not compatible with Genpatches 1500 and cause boot failure."
 ewarn "Disable clang pgo in OT_KERNEL_USE or add 1500 to GENPATCHES_BLACKLIST"
 ewarn
+ewarn "Adding 1500 GENPATCHES_BLACKLIST is not recommended for secure"
+ewarn "configurations."
+ewarn
 		die
 	fi
 
