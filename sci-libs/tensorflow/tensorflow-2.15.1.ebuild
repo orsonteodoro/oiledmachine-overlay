@@ -1028,6 +1028,9 @@ ewarn "ccache support for this package is in TESTING.  Disable ccache if problem
 src_unpack() {
 	# Only unpack the main distfile
 	unpack "${P}.tar.gz"
+	mkdir -p "${WORKDIR}/bin" || die
+	export PATH="${WORKDIR}/bin:${PATH}"
+	ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
 	bazel_load_distfiles "${bazel_external_uris}"
 }
 
