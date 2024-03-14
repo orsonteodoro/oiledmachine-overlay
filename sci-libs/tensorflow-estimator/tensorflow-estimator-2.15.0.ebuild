@@ -49,7 +49,7 @@ DOCS=( CONTRIBUTING.md README.md )
 
 src_unpack() {
 	mkdir -p "${WORKDIR}/bin" || die
-	PATH="${WORKDIR}/bin:${PATH}"
+	export PATH="${WORKDIR}/bin:${PATH}"
 	ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
 	unpack "${P}.tar.gz"
 	bazel_load_distfiles "${bazel_external_uris}"
