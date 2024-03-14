@@ -8,10 +8,6 @@ TENSORFLOW_PV="2.16.1"
 
 inherit distutils-r1
 
-# Versions and hashes are obtained by console and removing items below.
-# They do not appear in the tarball.
-RULES_CC_PV="0.0.2"
-EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
 SRC_URI="
 https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
@@ -146,28 +142,15 @@ PDEPEND="
 RESTRICT=""
 DOCS=( CONTRIBUTING.md README.md )
 PATCHES=(
-	"${FILESDIR}/keras-2.12.0-0001-bazel-Use-system-protobuf.patch"
 )
 
 src_unpack() {
 	unpack "${P}.tar.gz"
-	bazel_load_distfiles "${bazel_external_uris}"
 }
 
 src_prepare() {
-	bazel_setup_bazelrc
 	default
 	python_copy_sources
-}
-
-python_compile() {
-	pushd "${BUILD_DIR}" >/dev/null || die
-		ebazel build //keras/tools/pip_package:build_pip_package
-		ebazel shutdown
-		local srcdir="${T}/src-${EPYTHON/./_}"
-		mkdir -p "${srcdir}" || die
-		bazel-bin/keras/tools/pip_package/build_pip_package --src "${srcdir}" || die
-	popd || die
 }
 
 src_compile() {

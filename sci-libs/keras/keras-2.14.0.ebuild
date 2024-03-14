@@ -9,10 +9,10 @@ inherit bazel distutils-r1
 
 # Versions and hashes are obtained by console and removing items below.
 # They do not appear in the tarball.
-RULES_CC_PV="0.0.2"
+RULES_CC_COMMIT="b1c40e1de81913a3c40e5948f78719c28152486d"
 EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
 bazel_external_uris="
-	https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz
+	https://github.com/bazelbuild/rules_cc/archive/${RULES_CC_COMMIT}.zip -> rules_cc-${RULES_CC_COMMIT}.zip
 	https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> bazelbuild-rules_java-${EGIT_RULES_JAVA_COMMIT}.zip
 "
 SRC_URI="
@@ -84,6 +84,9 @@ PATCHES=(
 )
 
 src_unpack() {
+	mkdir -p "${WORKDIR}/bin" || die
+	export PATH="${WORKDIR}/bin:${PATH}"
+	ln -s "/usr/bin/bazel-5" "${WORKDIR}/bin/bazel" || die
 	unpack "${P}.tar.gz"
 	bazel_load_distfiles "${bazel_external_uris}"
 }
