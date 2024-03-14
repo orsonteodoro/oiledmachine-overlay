@@ -495,6 +495,10 @@ gen_rocm_rdepend() {
 
 				dev-util/hip-compiler:${s}[system-llvm=]
 				dev-util/rocm-compiler:${s}[system-llvm=]
+
+				amdgpu_targets_gfx90a? (
+					~sci-libs/hipBLASLt-${pv}:${s}[rocm]
+				)
 			)
 		"
 	done
