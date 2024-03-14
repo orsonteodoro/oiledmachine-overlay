@@ -1,6 +1,6 @@
-diff -urp tensorflow-2.16.1.orig/tensorflow/BUILD tensorflow-2.16.1/tensorflow/BUILD
---- tensorflow-2.16.1.orig/tensorflow/BUILD	2024-03-13 15:39:56.432506405 -0700
-+++ tensorflow-2.16.1/tensorflow/BUILD	2024-03-13 15:40:44.884180846 -0700
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/BUILD tensorflow-2.16.1/tensorflow/BUILD
+--- tensorflow-2.16.1.orig/tensorflow/BUILD	2024-03-14 12:32:39.727625609 -0700
++++ tensorflow-2.16.1/tensorflow/BUILD	2024-03-14 12:44:56.252681181 -0700
 @@ -1730,8 +1730,6 @@ py_library(
          "//tensorflow/lite/python:lite",
          "//tensorflow/lite/python/authoring",
@@ -10,10 +10,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/BUILD tensorflow-2.16.1/tensorflow/B
      ],
  )
  # copybara:comment_end
-Only in tensorflow-2.16.1/tensorflow: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/compiler/mlir/glob_lit_test.bzl tensorflow-2.16.1/tensorflow/compiler/mlir/glob_lit_test.bzl
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/compiler/mlir/glob_lit_test.bzl tensorflow-2.16.1/tensorflow/compiler/mlir/glob_lit_test.bzl
 --- tensorflow-2.16.1.orig/tensorflow/compiler/mlir/glob_lit_test.bzl	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/compiler/mlir/glob_lit_test.bzl	2024-03-13 15:40:44.888180819 -0700
++++ tensorflow-2.16.1/tensorflow/compiler/mlir/glob_lit_test.bzl	2024-03-14 12:44:56.256681143 -0700
 @@ -58,7 +58,6 @@ def _run_lit_test(name, data, size, tags
              "@llvm-project//llvm:count",
              "@llvm-project//llvm:not",
@@ -22,9 +21,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/compiler/mlir/glob_lit_test.bzl tens
          size = size,
          main = "lit.py",
          exec_properties = exec_properties,
-diff -urp tensorflow-2.16.1.orig/tensorflow/compiler/mlir/tfr/BUILD tensorflow-2.16.1/tensorflow/compiler/mlir/tfr/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/compiler/mlir/tfr/BUILD tensorflow-2.16.1/tensorflow/compiler/mlir/tfr/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/compiler/mlir/tfr/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/compiler/mlir/tfr/BUILD	2024-03-13 15:40:44.888180819 -0700
++++ tensorflow-2.16.1/tensorflow/compiler/mlir/tfr/BUILD	2024-03-14 12:44:56.256681143 -0700
 @@ -387,7 +387,6 @@ py_strict_library(
          "//tensorflow/python/framework:op_def_registry",
          "//tensorflow/python/platform:tf_logging",
@@ -41,9 +40,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/compiler/mlir/tfr/BUILD tensorflow-2
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/dtensor/python/tests/BUILD tensorflow-2.16.1/tensorflow/dtensor/python/tests/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/dtensor/python/tests/BUILD tensorflow-2.16.1/tensorflow/dtensor/python/tests/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/dtensor/python/tests/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/dtensor/python/tests/BUILD	2024-03-13 15:40:44.888180819 -0700
++++ tensorflow-2.16.1/tensorflow/dtensor/python/tests/BUILD	2024-03-14 12:44:56.256681143 -0700
 @@ -489,7 +489,6 @@ pytype_strict_library(
          ":test_util",
          "//tensorflow/python/platform:client_testlib",
@@ -52,10 +51,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/dtensor/python/tests/BUILD tensorflo
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/dtensor/python/tests: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/lite/python/BUILD tensorflow-2.16.1/tensorflow/lite/python/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/lite/python/BUILD tensorflow-2.16.1/tensorflow/lite/python/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/lite/python/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/lite/python/BUILD	2024-03-13 15:44:36.242623303 -0700
++++ tensorflow-2.16.1/tensorflow/lite/python/BUILD	2024-03-14 12:44:56.256681143 -0700
 @@ -315,7 +315,6 @@ py_strict_test(
          "//tensorflow/python/saved_model:save_options",
          "//tensorflow/python/trackable:autotrackable",
@@ -64,10 +62,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/lite/python/BUILD tensorflow-2.16.1/
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/lite/python: BUILD.rej
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/converters/BUILD tensorflow-2.16.1/tensorflow/python/autograph/converters/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/autograph/converters/BUILD tensorflow-2.16.1/tensorflow/python/autograph/converters/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/autograph/converters/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/autograph/converters/BUILD	2024-03-13 15:40:46.264171570 -0700
++++ tensorflow-2.16.1/tensorflow/python/autograph/converters/BUILD	2024-03-14 12:44:56.256681143 -0700
 @@ -13,7 +13,6 @@ py_strict_library(
          "//tensorflow/python/autograph/core:converter",
          "//tensorflow/python/autograph/lang:directives",
@@ -156,9 +153,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/converters/BUILD te
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/core/BUILD tensorflow-2.16.1/tensorflow/python/autograph/core/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/autograph/core/BUILD tensorflow-2.16.1/tensorflow/python/autograph/core/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/autograph/core/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/autograph/core/BUILD	2024-03-13 15:40:46.264171570 -0700
++++ tensorflow-2.16.1/tensorflow/python/autograph/core/BUILD	2024-03-14 12:44:56.256681143 -0700
 @@ -37,7 +37,6 @@ py_strict_library(
      visibility = ["//tensorflow:__subpackages__"],
      deps = [
@@ -167,9 +164,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/core/BUILD tensorfl
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/BUILD tensorflow-2.16.1/tensorflow/python/autograph/pyct/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/BUILD tensorflow-2.16.1/tensorflow/python/autograph/pyct/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/autograph/pyct/BUILD	2024-03-13 15:45:24.930294911 -0700
++++ tensorflow-2.16.1/tensorflow/python/autograph/pyct/BUILD	2024-03-14 12:44:56.256681143 -0700
 @@ -14,7 +14,6 @@ py_strict_library(
          ":ast_util",
          ":parser",
@@ -319,11 +316,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/BUILD tensorfl
          #internal proto upb dep
          "//tensorflow/python/platform:client_testlib",
      ],
-Only in tensorflow-2.16.1/tensorflow/python/autograph/pyct: BUILD.orig
-Only in tensorflow-2.16.1/tensorflow/python/autograph/pyct: BUILD.rej
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/common_transformers/BUILD tensorflow-2.16.1/tensorflow/python/autograph/pyct/common_transformers/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/common_transformers/BUILD tensorflow-2.16.1/tensorflow/python/autograph/pyct/common_transformers/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/common_transformers/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/autograph/pyct/common_transformers/BUILD	2024-03-13 15:45:52.754107149 -0700
++++ tensorflow-2.16.1/tensorflow/python/autograph/pyct/common_transformers/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -16,7 +16,6 @@ py_strict_library(
          "//tensorflow/python/autograph/pyct:gast_util",
          "//tensorflow/python/autograph/pyct:templates",
@@ -340,11 +335,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/common_transfo
          #internal proto upb dep
          "//tensorflow/python/autograph/pyct:loader",
          "//tensorflow/python/autograph/pyct:parser",
-Only in tensorflow-2.16.1/tensorflow/python/autograph/pyct/common_transformers: BUILD.orig
-Only in tensorflow-2.16.1/tensorflow/python/autograph/pyct/common_transformers: BUILD.rej
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/static_analysis/BUILD tensorflow-2.16.1/tensorflow/python/autograph/pyct/static_analysis/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/static_analysis/BUILD tensorflow-2.16.1/tensorflow/python/autograph/pyct/static_analysis/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/static_analysis/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/autograph/pyct/static_analysis/BUILD	2024-03-13 15:46:11.185982727 -0700
++++ tensorflow-2.16.1/tensorflow/python/autograph/pyct/static_analysis/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -14,7 +14,6 @@ py_strict_library(
          "//tensorflow/python/autograph/pyct:anno",
          "//tensorflow/python/autograph/pyct:cfg",
@@ -393,11 +386,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/static_analysi
          #internal proto upb dep
          "//tensorflow/python/autograph/pyct:anno",
          "//tensorflow/python/autograph/pyct:naming",
-Only in tensorflow-2.16.1/tensorflow/python/autograph/pyct/static_analysis: BUILD.orig
-Only in tensorflow-2.16.1/tensorflow/python/autograph/pyct/static_analysis: BUILD.rej
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/testing/BUILD tensorflow-2.16.1/tensorflow/python/autograph/pyct/testing/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/testing/BUILD tensorflow-2.16.1/tensorflow/python/autograph/pyct/testing/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/testing/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/autograph/pyct/testing/BUILD	2024-03-13 15:40:46.264171570 -0700
++++ tensorflow-2.16.1/tensorflow/python/autograph/pyct/testing/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -15,7 +15,6 @@ py_strict_library(
      deps = [
          "//tensorflow/python/autograph/pyct:templates",
@@ -406,9 +397,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/autograph/pyct/testing/BUILD 
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/BUILD tensorflow-2.16.1/tensorflow/python/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/BUILD tensorflow-2.16.1/tensorflow/python/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/BUILD	2024-03-13 15:40:46.260171597 -0700
++++ tensorflow-2.16.1/tensorflow/python/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -593,7 +593,6 @@ py_strict_library(
      deps = [
          ":keras_lib",
@@ -417,10 +408,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/BUILD tensorflow-2.16.1/tenso
          "@six_archive//:six",
      ],
  )
-Only in tensorflow-2.16.1/tensorflow/python: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/client/BUILD tensorflow-2.16.1/tensorflow/python/client/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/client/BUILD tensorflow-2.16.1/tensorflow/python/client/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/client/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/client/BUILD	2024-03-13 15:40:46.264171570 -0700
++++ tensorflow-2.16.1/tensorflow/python/client/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -299,7 +299,6 @@ py_strict_library(
          "//tensorflow/python/util:nest",
          "//tensorflow/python/util:tf_export",
@@ -429,10 +419,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/client/BUILD tensorflow-2.16.
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/client: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/compiler/tensorrt/BUILD tensorflow-2.16.1/tensorflow/python/compiler/tensorrt/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/compiler/tensorrt/BUILD tensorflow-2.16.1/tensorflow/python/compiler/tensorrt/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/compiler/tensorrt/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/compiler/tensorrt/BUILD	2024-03-13 15:46:29.489859141 -0700
++++ tensorflow-2.16.1/tensorflow/python/compiler/tensorrt/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -78,7 +78,6 @@ py_strict_library(
          "//tensorflow/compiler/tf2tensorrt:_pywrap_py_utils",
          "//tensorflow/core:protos_all_py",
@@ -441,10 +430,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/compiler/tensorrt/BUILD tenso
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/compiler/tensorrt: BUILD.rej
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/data/experimental/kernel_tests/service/BUILD tensorflow-2.16.1/tensorflow/python/data/experimental/kernel_tests/service/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/data/experimental/kernel_tests/service/BUILD tensorflow-2.16.1/tensorflow/python/data/experimental/kernel_tests/service/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/data/experimental/kernel_tests/service/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/data/experimental/kernel_tests/service/BUILD	2024-03-13 15:40:47.188165359 -0700
++++ tensorflow-2.16.1/tensorflow/python/data/experimental/kernel_tests/service/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -143,7 +143,6 @@ tf_py_strict_test(
          "//tensorflow/python/ops:array_ops",
          "//tensorflow/python/platform:client_testlib",
@@ -453,9 +441,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/data/experimental/kernel_test
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/data/util/BUILD tensorflow-2.16.1/tensorflow/python/data/util/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/data/util/BUILD tensorflow-2.16.1/tensorflow/python/data/util/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/data/util/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/data/util/BUILD	2024-03-13 15:40:47.188165359 -0700
++++ tensorflow-2.16.1/tensorflow/python/data/util/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -94,7 +94,6 @@ py_strict_library(
          "//tensorflow/python/util:deprecation",
          "//tensorflow/python/util:nest_util",
@@ -472,9 +460,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/data/util/BUILD tensorflow-2.
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/debug/lib/BUILD tensorflow-2.16.1/tensorflow/python/debug/lib/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/debug/lib/BUILD tensorflow-2.16.1/tensorflow/python/debug/lib/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/debug/lib/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/debug/lib/BUILD	2024-03-13 15:40:47.192165333 -0700
++++ tensorflow-2.16.1/tensorflow/python/debug/lib/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -598,7 +598,6 @@ py_strict_library(
          "//tensorflow/python/lib/io:file_io",
          "//tensorflow/python/ops:variables",
@@ -483,10 +471,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/debug/lib/BUILD tensorflow-2.
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/debug/lib: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/distribute/BUILD tensorflow-2.16.1/tensorflow/python/distribute/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/distribute/BUILD tensorflow-2.16.1/tensorflow/python/distribute/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/distribute/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/distribute/BUILD	2024-03-13 15:40:47.192165333 -0700
++++ tensorflow-2.16.1/tensorflow/python/distribute/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -523,7 +523,6 @@ cuda_py_strict_test(
          "//tensorflow/python/ops:variable_scope",
          "//third_party/py/numpy",
@@ -520,10 +507,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/distribute/BUILD tensorflow-2
          "@six_archive//:six",
      ],
  )
-Only in tensorflow-2.16.1/tensorflow/python/distribute: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/distribute/experimental/rpc/BUILD tensorflow-2.16.1/tensorflow/python/distribute/experimental/rpc/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/distribute/experimental/rpc/BUILD tensorflow-2.16.1/tensorflow/python/distribute/experimental/rpc/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/distribute/experimental/rpc/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/distribute/experimental/rpc/BUILD	2024-03-13 15:40:47.192165333 -0700
++++ tensorflow-2.16.1/tensorflow/python/distribute/experimental/rpc/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -60,6 +60,5 @@ tf_py_strict_test(
          "//tensorflow/python/ops:variables",
          "//tensorflow/python/platform:client_testlib",
@@ -531,9 +517,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/distribute/experimental/rpc/B
 -        "@pypi_portpicker//:pkg",
      ],
  )
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/distribute/failure_handling/BUILD tensorflow-2.16.1/tensorflow/python/distribute/failure_handling/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/distribute/failure_handling/BUILD tensorflow-2.16.1/tensorflow/python/distribute/failure_handling/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/distribute/failure_handling/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/distribute/failure_handling/BUILD	2024-03-13 15:40:47.192165333 -0700
++++ tensorflow-2.16.1/tensorflow/python/distribute/failure_handling/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -47,7 +47,6 @@ py_strict_library(
      deps = [
          "//tensorflow/python/eager:context",
@@ -550,9 +536,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/distribute/failure_handling/B
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/eager/BUILD tensorflow-2.16.1/tensorflow/python/eager/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/eager/BUILD tensorflow-2.16.1/tensorflow/python/eager/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/eager/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/eager/BUILD	2024-03-13 15:40:47.192165333 -0700
++++ tensorflow-2.16.1/tensorflow/python/eager/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -1238,7 +1238,6 @@ cuda_py_strict_test(
          "//tensorflow/python/training:server_lib",
          "//tensorflow/python/util:compat",
@@ -569,10 +555,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/eager/BUILD tensorflow-2.16.1
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/eager: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/framework/BUILD tensorflow-2.16.1/tensorflow/python/framework/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/framework/BUILD tensorflow-2.16.1/tensorflow/python/framework/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/framework/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/framework/BUILD	2024-03-13 15:47:09.109591532 -0700
++++ tensorflow-2.16.1/tensorflow/python/framework/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -285,7 +285,6 @@ py_strict_library(
          "//tensorflow/python/eager:execute",
          "//tensorflow/security/fuzzing/py:annotation_types",
@@ -621,11 +606,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/framework/BUILD tensorflow-2.
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/framework: BUILD.orig
-Only in tensorflow-2.16.1/tensorflow/python/framework: BUILD.rej
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/keras/BUILD tensorflow-2.16.1/tensorflow/python/keras/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/keras/BUILD tensorflow-2.16.1/tensorflow/python/keras/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/keras/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/keras/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/keras/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -44,7 +44,6 @@ py_library(
          "//tensorflow/python/saved_model",
          "//tensorflow/python/training",
@@ -634,9 +617,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/keras/BUILD tensorflow-2.16.1
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/keras/engine/BUILD tensorflow-2.16.1/tensorflow/python/keras/engine/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/keras/engine/BUILD tensorflow-2.16.1/tensorflow/python/keras/engine/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/keras/engine/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/keras/engine/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/keras/engine/BUILD	2024-03-14 12:44:56.260681106 -0700
 @@ -95,7 +95,6 @@ py_library(
          "//tensorflow/python/util:tf_decorator_py",
          "//tensorflow/python/util:tf_export",
@@ -645,10 +628,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/keras/engine/BUILD tensorflow
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/keras/engine: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/keras/saving/BUILD tensorflow-2.16.1/tensorflow/python/keras/saving/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/keras/saving/BUILD tensorflow-2.16.1/tensorflow/python/keras/saving/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/keras/saving/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/keras/saving/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/keras/saving/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -55,6 +55,5 @@ py_library(
          "//tensorflow/python/platform:tf_logging",
          "//tensorflow/python/saved_model",
@@ -656,9 +638,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/keras/saving/BUILD tensorflow
 -        "@pypi_h5py//:pkg",
      ],
  )
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/ops/BUILD tensorflow-2.16.1/tensorflow/python/ops/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/ops/BUILD tensorflow-2.16.1/tensorflow/python/ops/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/ops/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/ops/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/ops/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -2773,7 +2773,6 @@ py_strict_library(
          "//tensorflow/python/util:dispatch",
          "//tensorflow/python/util:tf_export",
@@ -675,10 +657,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/ops/BUILD tensorflow-2.16.1/t
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/ops: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/profiler/BUILD tensorflow-2.16.1/tensorflow/python/profiler/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/profiler/BUILD tensorflow-2.16.1/tensorflow/python/profiler/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/profiler/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/profiler/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/profiler/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -43,7 +43,6 @@ cuda_py_strict_test(
          "//tensorflow/python/eager:test",
          "//tensorflow/python/framework:errors",
@@ -687,9 +668,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/profiler/BUILD tensorflow-2.1
      ],
  )
  
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/profiler/integration_test/BUILD tensorflow-2.16.1/tensorflow/python/profiler/integration_test/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/profiler/integration_test/BUILD tensorflow-2.16.1/tensorflow/python/profiler/integration_test/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/profiler/integration_test/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/profiler/integration_test/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/profiler/integration_test/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -35,6 +35,5 @@ cuda_py_strict_test(
          "//tensorflow/python/platform:tf_logging",
          "//tensorflow/python/profiler:profiler_client",
@@ -697,9 +678,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/profiler/integration_test/BUI
 -        "@pypi_portpicker//:pkg",
      ],
  )
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/summary/BUILD tensorflow-2.16.1/tensorflow/python/summary/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/summary/BUILD tensorflow-2.16.1/tensorflow/python/summary/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/summary/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/summary/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/summary/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -122,7 +122,6 @@ tf_py_strict_test(
          "//tensorflow/python/ops:summary_ops_v2",
          "//tensorflow/python/platform:client_testlib",
@@ -708,10 +689,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/summary/BUILD tensorflow-2.16
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/summary: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/trackable/BUILD tensorflow-2.16.1/tensorflow/python/trackable/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/trackable/BUILD tensorflow-2.16.1/tensorflow/python/trackable/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/trackable/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/trackable/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/trackable/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -226,7 +226,6 @@ py_strict_library(
          "//tensorflow/python/ops:variables",
          "//tensorflow/python/util:compat",
@@ -720,10 +700,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/trackable/BUILD tensorflow-2.
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/trackable: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/types/BUILD tensorflow-2.16.1/tensorflow/python/types/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/types/BUILD tensorflow-2.16.1/tensorflow/python/types/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/types/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/types/BUILD	2024-03-13 15:40:47.196165306 -0700
++++ tensorflow-2.16.1/tensorflow/python/types/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -23,7 +23,6 @@ pytype_strict_library(
          "//tensorflow/python:pywrap_tensorflow",
          "//tensorflow/python/util:tf_export",
@@ -740,10 +719,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/types/BUILD tensorflow-2.16.1
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/types: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/tensorflow/python/util/BUILD tensorflow-2.16.1/tensorflow/python/util/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/python/util/BUILD tensorflow-2.16.1/tensorflow/python/util/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/python/util/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/python/util/BUILD	2024-03-13 15:47:39.425386676 -0700
++++ tensorflow-2.16.1/tensorflow/python/util/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -747,7 +747,6 @@ py_strict_library(
          # library. It isn't possible to add these test dependencies via tensorflow.bzl's
          # py_test because not all tensorflow tests use tensorflow.bzl's py_test.
@@ -760,11 +738,9 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/python/util/BUILD tensorflow-2.16.1/
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/python/util: BUILD.orig
-Only in tensorflow-2.16.1/tensorflow/python/util: BUILD.rej
-diff -urp tensorflow-2.16.1.orig/tensorflow/tools/docs/BUILD tensorflow-2.16.1/tensorflow/tools/docs/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/tools/docs/BUILD tensorflow-2.16.1/tensorflow/tools/docs/BUILD
 --- tensorflow-2.16.1.orig/tensorflow/tools/docs/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/tensorflow/tools/docs/BUILD	2024-03-13 15:40:47.200165278 -0700
++++ tensorflow-2.16.1/tensorflow/tools/docs/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -137,7 +137,6 @@ py_strict_library(
      srcs = ["fenced_doctest_lib.py"],
      deps = [
@@ -789,10 +765,21 @@ diff -urp tensorflow-2.16.1.orig/tensorflow/tools/docs/BUILD tensorflow-2.16.1/t
      ],
  )
  
-Only in tensorflow-2.16.1/tensorflow/tools/docs: BUILD.orig
-diff -urp tensorflow-2.16.1.orig/third_party/xla/xla/mlir_hlo/tests/BUILD tensorflow-2.16.1/third_party/xla/xla/mlir_hlo/tests/BUILD
+diff -Nurp tensorflow-2.16.1.orig/tensorflow/tools/pip_package/v2/BUILD tensorflow-2.16.1/tensorflow/tools/pip_package/v2/BUILD
+--- tensorflow-2.16.1.orig/tensorflow/tools/pip_package/v2/BUILD	2024-03-05 16:30:15.000000000 -0800
++++ tensorflow-2.16.1/tensorflow/tools/pip_package/v2/BUILD	2024-03-14 12:45:04.876600089 -0700
+@@ -239,8 +239,6 @@ py_binary(
+     main = "build_pip_package.py",
+     deps = [
+         "//tensorflow/tools/pip_package/v2/utils:py_utils",
+-        "@pypi_setuptools//:pkg",
+-        "@pypi_wheel//:pkg",
+     ],
+ )
+ 
+diff -Nurp tensorflow-2.16.1.orig/third_party/xla/xla/mlir_hlo/tests/BUILD tensorflow-2.16.1/third_party/xla/xla/mlir_hlo/tests/BUILD
 --- tensorflow-2.16.1.orig/third_party/xla/xla/mlir_hlo/tests/BUILD	2024-03-05 16:30:15.000000000 -0800
-+++ tensorflow-2.16.1/third_party/xla/xla/mlir_hlo/tests/BUILD	2024-03-13 15:40:47.200165278 -0700
++++ tensorflow-2.16.1/third_party/xla/xla/mlir_hlo/tests/BUILD	2024-03-14 12:44:56.264681069 -0700
 @@ -27,7 +27,6 @@ package(
          tags = [
              "nomsan",  # The execution engine doesn't work with msan, see b/248097619.
@@ -801,9 +788,9 @@ diff -urp tensorflow-2.16.1.orig/third_party/xla/xla/mlir_hlo/tests/BUILD tensor
      )
      for src in glob(["**/*.mlir"])
  ]
-diff -urp tensorflow-2.16.1.orig/WORKSPACE tensorflow-2.16.1/WORKSPACE
---- tensorflow-2.16.1.orig/WORKSPACE	2024-03-13 15:39:56.316507184 -0700
-+++ tensorflow-2.16.1/WORKSPACE	2024-03-13 15:44:04.866834817 -0700
+diff -Nurp tensorflow-2.16.1.orig/WORKSPACE tensorflow-2.16.1/WORKSPACE
+--- tensorflow-2.16.1.orig/WORKSPACE	2024-03-14 12:32:39.695625912 -0700
++++ tensorflow-2.16.1/WORKSPACE	2024-03-14 12:44:56.264681069 -0700
 @@ -11,75 +11,6 @@ http_archive(
      ],
  )
@@ -880,4 +867,3 @@ diff -urp tensorflow-2.16.1.orig/WORKSPACE tensorflow-2.16.1/WORKSPACE
  # Initialize the TensorFlow repository and all dependencies.
  #
  # The cascade of load() statements and tf_workspace?() calls works around the
-Only in tensorflow-2.16.1: WORKSPACE.rej
