@@ -4,19 +4,15 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{9..11} )
+TENSORFLOW_PV="2.16.1"
 
-inherit bazel distutils-r1
+inherit distutils-r1
 
 # Versions and hashes are obtained by console and removing items below.
 # They do not appear in the tarball.
 RULES_CC_PV="0.0.2"
 EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
-bazel_external_uris="
-	https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz
-	https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> bazelbuild-rules_java-${EGIT_RULES_JAVA_COMMIT}.zip
-"
 SRC_URI="
-	${bazel_external_uris}
 https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
 
@@ -28,10 +24,16 @@ https://github.com/keras-team/keras
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=" test r2"
-# https://github.com/keras-team/keras/blob/v2.12.0/requirements.txt
-# https://github.com/keras-team/keras/blob/v2.12.0/WORKSPACE
-# https://github.com/keras-team/keras/blob/v2.12.0/.bazelversion
+IUSE=" cpu cuda jax pytorch tensorflow test r2"
+REQUIRED_USE="
+	cpu? (
+		jax
+		pytorch
+		tensorflow
+	)
+"
+# https://github.com/keras-team/keras/blob/v3.1.0/requirements.txt
+# https://github.com/keras-team/keras/blob/v3.1.0/WORKSPACE
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 PROTOBUF_SLOT="0/3.21"
 # TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
@@ -39,45 +41,106 @@ PROTOBUF_SLOT="0/3.21"
 #	>=sci-libs/keras-applications-1.0.8[${PYTHON_USEDEP}]
 #	>=sci-libs/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 # TODO: package
+# namex
 # portpicker
+# tensorboard-plugin-profile
 RDEPEND="
-	(
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.22.0[${PYTHON_USEDEP}]
-		' python3_{9..10})
-	)
-	(
-		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
-		' python3_11)
-	)
-	=sci-libs/tensorflow-2.12*[${PYTHON_USEDEP},python]
-	>=dev-python/scipy-1.7.2[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
+			<dev-python/numpy-2[${PYTHON_USEDEP}]
+		)
+	' python3_{10,11})
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
+			<dev-python/numpy-2[${PYTHON_USEDEP}]
+		)
+	' python3_12)
+	=sci-libs/tensorflow-2.13*[${PYTHON_USEDEP},python]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
 	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
+	dev-python/ml-dtypes[${PYTHON_USEDEP}]
+	dev-python/namex[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	dev-python/pillow[${PYTHON_USEDEP}]
 	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/pydot[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/requests[${PYTHON_USEDEP}]
+	dev-python/rich[${PYTHON_USEDEP}]
+	dev-python/scipy[${PYTHON_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 BDEPEND="
-	>=dev-build/bazel-5.4.0
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
+	dev-python/dm-tree[${PYTHON_USEDEP}]
+	dev-python/build[${PYTHON_USEDEP}]
 	test? (
-		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
-		>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
-		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
+		>=dev-python/black-22[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/isort[${PYTHON_USEDEP}]
 		dev-python/portpicker[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-cov[${PYTHON_USEDEP}]
+	)
+"
+PDEPEND="
+	cpu? (
+		jax? (
+			dev-python/jax[${PYTHON_USEDEP}]
+		)
+
+		pytorch? (
+			$(python_gen_any_dep '
+				>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+			')
+			>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
+		)
+
+		tensorflow? (
+			>=sci-libs/tensorflow-${TENSORFLOW_PV}
+		)
+	)
+	cuda? (
+		jax? (
+			>=dev-python/jax-0.4.23[${PYTHON_USEDEP},cuda?]
+			test? (
+				$(python_gen_any_dep '
+					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+				')
+				>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
+				>=sci-libs/tensorflow-${TENSORFLOW_PV}
+			)
+		)
+		tensorflow? (
+			>=sci-libs/tensorflow-${TENSORFLOW_PV}[cuda?]
+			test? (
+				$(python_gen_any_dep '
+					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+				')
+				>=sci-libs/pytorch-2.1.0[${PYTHON_USEDEP}]
+				dev-python/jax[${PYTHON_USEDEP}]
+			)
+		)
+		pytorch? (
+			$(python_gen_any_dep '
+				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP},cuda?]
+			')
+			>=sci-libs/pytorch-2.2.1[${PYTHON_USEDEP},cuda?]
+			test? (
+				>=sci-libs/tensorflow-${TENSORFLOW_PV}
+				dev-python/jax[${PYTHON_USEDEP}]
+			)
+		)
 	)
 "
 # Bazel tests not pytest, also want GPU access

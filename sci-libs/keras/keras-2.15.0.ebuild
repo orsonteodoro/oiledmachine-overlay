@@ -29,9 +29,9 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=" test r2"
-# https://github.com/keras-team/keras/blob/v2.13.1/requirements.txt
-# https://github.com/keras-team/keras/blob/v2.13.1/WORKSPACE
-# https://github.com/keras-team/keras/blob/v2.13.1/.bazelversion
+# https://github.com/keras-team/keras/blob/v2.15.0/requirements.txt
+# https://github.com/keras-team/keras/blob/v2.15.0/WORKSPACE
+# https://github.com/keras-team/keras/blob/v2.15.0/.bazelversion
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 PROTOBUF_SLOT="0/3.21"
 # TODO: Fix sci-libs/keras-applications, sci-libs/keras-preprocessing
@@ -51,8 +51,8 @@ RDEPEND="
 			>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
 		' python3_11)
 	)
-	=sci-libs/tensorflow-2.13*[${PYTHON_USEDEP},python]
-	>=dev-python/scipy-1.7.2[${PYTHON_USEDEP}]
+	=sci-libs/tensorflow-${PV%.*}*[${PYTHON_USEDEP},python]
+	>=dev-python/scipy-1.9.2[${PYTHON_USEDEP}]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
 	dev-libs/protobuf:${PROTOBUF_SLOT}
@@ -69,7 +69,7 @@ DEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 BDEPEND="
-	>=dev-build/bazel-5.4.0
+	>=dev-build/bazel-5.4.0:5
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
