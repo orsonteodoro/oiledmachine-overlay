@@ -21,16 +21,15 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc tensorflow-io-gcs-filesystem test"
-#IUSE+=" doc tensorflow-io-gcs-filesystem test"
-# See https://github.com/tensorflow/io/blob/v0.33.0/README.md#tensorflow-version-compatibility
+# See https://github.com/tensorflow/io/blob/v0.35.0/README.md#tensorflow-version-compatibility
 DEPEND+="
-	=sci-libs/tensorflow-2.13*[${PYTHON_USEDEP}]
+	=sci-libs/tensorflow-2.14*[${PYTHON_USEDEP}]
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-build/bazel
+	>=dev-build/bazel-6.1.0:6
 "
 SRC_URI="
 https://github.com/tensorflow/io/archive/refs/tags/v${PV}.tar.gz
@@ -40,6 +39,13 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror test"
 DOCS=( README.md RELEASE.md )
 HTML_DOCS=( docs )
+
+src_unpack() {
+	mkdir -p "${WORKDIR}/bin" || die
+	export PATH="${WORKDIR}/bin:${PATH}"
+	ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
+	unpack ${A}
+}
 
 python_compile() {
 	distutils-r1_python_compile
