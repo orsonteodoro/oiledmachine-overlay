@@ -13,10 +13,10 @@ inherit bazel distutils-r1
 
 # Version and commits obtained from console and temporary removal of items below.
 RULES_CC_PV="0.0.2"
-EGIT_RULES_JAVA_COMMIT="7cf3cefd652008d0a64a419c34c13bdca6c8f178"
+EGIT_RULES_JAVA_PV="5.5.1"
 bazel_external_uris="
 https://github.com/bazelbuild/rules_cc/releases/download/${RULES_CC_PV}/rules_cc-${RULES_CC_PV}.tar.gz
-https://github.com/bazelbuild/rules_java/archive/${EGIT_RULES_JAVA_COMMIT}.zip -> bazelbuild-rules_java-${EGIT_RULES_JAVA_COMMIT}.zip
+https://github.com/bazelbuild/rules_java/releases/download/${EGIT_RULES_JAVA_PV}/rules_java-${EGIT_RULES_JAVA_PV}.tar.gz -> bazelbuild-rules_java-${EGIT_RULES_JAVA_PV}.zip
 "
 SRC_URI="
 	${bazel_external_uris}
@@ -38,7 +38,7 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-build/bazel-5.3.0
+	>=dev-build/bazel-6.1.0:6
 	app-arch/unzip
 	dev-java/java-config
 "
@@ -48,6 +48,9 @@ PATCHES=(
 DOCS=( CONTRIBUTING.md README.md )
 
 src_unpack() {
+	mkdir -p "${WORKDIR}/bin" || die
+	PATH="${WORKDIR}/bin:${PATH}"
+	ln -s "/usr/bin/bazel-6" "${WORKDIR}/bin/bazel" || die
 	unpack "${P}.tar.gz"
 	bazel_load_distfiles "${bazel_external_uris}"
 }
