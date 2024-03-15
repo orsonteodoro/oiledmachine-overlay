@@ -199,6 +199,13 @@
     <flag name="qsv">
       Enable use of the Quick Sync Video hardware accelerated encoder for h264,
       h265, av1.
+
+      It requires one additional package:
+
+                 CPUs - <pkg>media-libs/oneVPL-cpu</pkg>
+           2020+ GPUs - <pkg>media-libs/oneVPL-intel-gpu</pkg>
+        Pre 2020 GPUs - <pkg>media-libs/intel-mediasdk</pkg>
+
     </flag>
     <flag name="sndio">
       Enable sndio support.
