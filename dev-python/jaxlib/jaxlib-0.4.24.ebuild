@@ -8,13 +8,16 @@ MAINTAINER_MODE=0
 MY_PN="jax"
 
 AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/google/jax/blob/jaxlib-v0.4.24/build/rocm/Dockerfile.ms#L7C53-L7C89
 	gfx900
 	gfx906
 	gfx908
 	gfx90a
-	gfx90a_xnack_minus
-	gfx90a_xnack_plus
+	gfx940
+	gfx941
+	gfx942
 	gfx1030
+	gfx1100
 )
 CUDA_TARGETS_COMPAT=(
 	sm_52
