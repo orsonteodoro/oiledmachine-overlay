@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay:
+
+  ebuild obtained from the bgo-overlay
+
+  -->
+  <upstream>
+    <remote-id type="github">paullouisageneau/libdatachannel</remote-id>
+  </upstream>
+  <use>
+    <flag name="media-transport">
+      Enable media transport support.
+    </flag>
+    <flag name="nice">
+      Use libnice instead of libjuice for ICE (Interactive Connectivity Establishment).
+    </flag>
+    <flag name="system-json">
+      Use the system's nlohmann-json headers.
+    </flag>
+    <flag name="system-juice">
+      Use the system's libjuice package.
+    </flag>
+    <flag name="system-plog">
+      Use the system's plog package.
+    </flag>
+    <flag name="system-srtp">
+      Use the system's srtp package.
+    </flag>
+    <flag name="system-usrsctp">
+      Use the system's usrsctp package.
+    </flag>
+    <flag name="websocket">
+      Enable WebSocket support.
+    </flag>
+  </use>
+</pkgmetadata>
