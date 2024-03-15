@@ -43,7 +43,7 @@ src_configure() {
 		| sed -e "s|a|_alpha|g" \
 		| sed -e "s|b|_beta|g" \
 		| sed -e "s|rc|_rc|g")
-	local expected_cython_pv="3.0.0_alpha10"
+	local expected_cython_pv="3.0.0_alpha11"
 	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
 	if ver_test ${actual_cython_pv} -lt ${required_cython_major} && use cpp ; then
 eerror
