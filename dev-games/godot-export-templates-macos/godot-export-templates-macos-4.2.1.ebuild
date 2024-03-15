@@ -190,6 +190,7 @@ test_path() {
 eerror
 eerror "${p} is unreachable"
 eerror
+		die
 	fi
 }
 
@@ -217,11 +218,11 @@ eerror
 	if use godot_osx_x86_64 ; then
 		arch="x86_64"
 	fi
-	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-cc"
-	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-c++"
-	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-ar"
-	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-ranlib"
-	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-*-as"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-cc"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-c++"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-ar"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-ranlib"
+	test_path "${OSXCROSS_ROOT}/target/bin/${arch}-"*"-as"
 }
 
 test_prefixed_toolchain() {
