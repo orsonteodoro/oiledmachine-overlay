@@ -392,7 +392,7 @@ DEPEND_PLUGINS_WEBRTC="
 	webrtc? (
 		${DEPEND_CURL}
 		${DEPEND_LIBOBS}
-		dev-libs/libdatachannel[nice,websocket]
+		dev-libs/libdatachannel[nice,media-transport,websocket]
 	)
 "
 

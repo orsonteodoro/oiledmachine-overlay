@@ -18,7 +18,7 @@
   </upstream>
   <use>
     <flag name="media-transport">
-      Enable media transport support.
+      Enable WebRTC media transport support.
     </flag>
     <flag name="nice">
       Use libnice instead of libjuice for ICE (Interactive Connectivity Establishment).
