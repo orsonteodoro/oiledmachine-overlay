@@ -147,10 +147,10 @@ REQUIRED_USE+="
 # done
 #
 
-# 103 is EOL.  The current Cr version is 113.
+# 103 is EOL.  The current Cr version is 122.
 CEF_PV="103"
 # See also
-# https://github.com/obsproject/obs-studio/blob/30.0.0/build-aux/modules/99-cef.json
+# https://github.com/obsproject/obs-studio/blob/30.0.2/build-aux/modules/99-cef.json
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 
