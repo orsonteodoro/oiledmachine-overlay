@@ -107,7 +107,6 @@ https://github.com/llvm/llvm-project/archive/${EGIT_LLVM_COMMIT}.tar.gz -> llvm-
 https://github.com/oneapi-src/oneDNN/archive/refs/tags/v3.2.tar.gz -> oneDNN-${ONEDNN_PV}.tar.gz
 https://github.com/open-source-parsers/jsoncpp/archive/${JSONCPP_PV}.tar.gz -> jsoncpp-${JSONCPP_PV}.tar.gz
 https://github.com/openxla/stablehlo/archive/${EGIT_STABLEHLO_COMMIT}.zip -> stablehlo-${EGIT_STABLEHLO_COMMIT}.zip
-https://github.com/openxla/triton/archive/refs/tags/${TRITON_TAG}.zip -> triton-${TRITON_TAG}.zip
 https://github.com/openxla/xla/archive/${EGIT_XLA_COMMIT}.tar.gz -> openxla-xla-${EGIT_XLA_COMMIT}.tar.gz
 https://github.com/pybind/pybind11/archive/v${PYBIND11_PV}.tar.gz -> pybind11-${PYBIND11_PV}.tar.gz
 https://github.com/pybind/pybind11_abseil/archive/${EGIT_PYBIND11_ABSEIL_COMMIT}.tar.gz -> pybind11_abseil-${EGIT_PYBIND11_ABSEIL_COMMIT}.tar.gz
@@ -130,9 +129,6 @@ https://github.com/nvidia/nccl/archive/v${NCCL_PV}.tar.gz -> nccl-${NCCL_PV}.tar
 # Has .gitmodules:
 # triton
 
-# xla timestamp Jul 27, 2023 (9f26b9390f5a5c565a13925731de749be8a760be) found in https://github.com/google/jax/blob/jaxlib-v0.4.24/WORKSPACE#L13C49-L13C89
-# rocm fork of xla should be >= to that one above.
-EGIT_ROCM_TENSORFLOW_UPSTREAM_COMMIT="abc5674e36a61f2ad9fb59929f14c2762f96ca07" # Jul 28, 2023
 SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
@@ -662,12 +658,6 @@ src_unpack() {
 	unpack "openxla-xla-${EGIT_XLA_COMMIT}.zip"
 	mkdir -p "${WORKDIR}/tarballs" || die
 	mkdir -p "${WORKDIR}/patches" || die
-	if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
-		cp -a \
-			$(realpath "${DISTDIR}/tensorflow-${EGIT_TENSORFLOW_COMMIT}.tar.gz") \
-			"${WORKDIR}/tarballs" \
-			|| die
-	fi
 	bazel_load_distfiles "${bazel_external_uris}"
 }
 

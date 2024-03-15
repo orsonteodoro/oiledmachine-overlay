@@ -129,9 +129,6 @@ https://github.com/nvidia/nccl/archive/v${NCCL_PV}.tar.gz -> nccl-${NCCL_PV}.tar
 # Has .gitmodules:
 # triton
 
-# xla timestamp Jul 27, 2023 (9f26b9390f5a5c565a13925731de749be8a760be) found in https://github.com/google/jax/blob/jaxlib-v0.4.25/WORKSPACE#L13C49-L13C89
-# rocm fork of xla should be >= to that one above.
-EGIT_ROCM_TENSORFLOW_UPSTREAM_COMMIT="abc5674e36a61f2ad9fb59929f14c2762f96ca07" # Jul 28, 2023
 SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
@@ -661,12 +658,6 @@ src_unpack() {
 	unpack "openxla-xla-${EGIT_XLA_COMMIT}.zip"
 	mkdir -p "${WORKDIR}/tarballs" || die
 	mkdir -p "${WORKDIR}/patches" || die
-	if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
-		cp -a \
-			$(realpath "${DISTDIR}/tensorflow-${EGIT_TENSORFLOW_COMMIT}.tar.gz") \
-			"${WORKDIR}/tarballs" \
-			|| die
-	fi
 	bazel_load_distfiles "${bazel_external_uris}"
 }
 
