@@ -582,7 +582,7 @@ RDEPEND="
 	>=dev-libs/icu-69.1:=
 	>=dev-libs/jsoncpp-1.9.5:=
 	>=dev-libs/nsync-1.25.0
-	>=dev-libs/re2-0.2023.06.01:=
+	>=dev-libs/re2-0.2023.06.01:0/11
 	>=media-libs/giflib-5.2.1
 	>=media-libs/libjpeg-turbo-2.1.4
 	>=media-libs/libpng-1.6.39:0

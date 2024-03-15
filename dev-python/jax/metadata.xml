@@ -10,6 +10,16 @@
     <remote-id type="github">google/jax</remote-id>
     <bugs-to>https://github.com/google/jax/issues</bugs-to>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Maintained versions:
+
+  0.4.25 - Latest version
+  0.4.24 - Previous version
+
+  -->
   <use>
     <flag name="australis">
       Add dependencies for Australis support
