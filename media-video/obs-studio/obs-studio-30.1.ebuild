@@ -6,7 +6,7 @@ EAPI=8
 
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 LUA_COMPAT=( luajit )
-PYTHON_COMPAT=( python3_{8..10} )
+PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
 
@@ -392,7 +392,7 @@ DEPEND_PLUGINS_WEBRTC="
 	webrtc? (
 		${DEPEND_CURL}
 		${DEPEND_LIBOBS}
-		dev-libs/libdatachannel
+		>=dev-libs/libdatachannel-0.20
 	)
 "
 
