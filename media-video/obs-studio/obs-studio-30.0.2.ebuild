@@ -88,7 +88,6 @@ REQUIRED_USE+="
 	!nvafx
 	!nvvfx
 	!oss
-	!qsv
 	!win-dshow
 	!win-mf
 	!kernel_Darwin? (
@@ -348,11 +347,16 @@ DEPEND_PLUGINS_OBS_BROWSER="
 	)
 "
 
-# The media-libs/intel-mediasdk is not prefix ready
-#		>=media-libs/intel-mediasdk-21.1
 DEPEND_PLUGINS_QSV="
 	qsv? (
-		>=media-libs/oneVPL-2022.1.0
+		elibc_glibc? (
+			>=media-libs/libvpl-2.10.1
+			|| (
+				media-libs/oneVPL-cpu
+				>=media-libs/oneVPL-intel-gpu-23.4.3
+				>=media-libs/intel-mediasdk-23.2.2
+			)
+		)
 		elibc_mingw? (
 			dev-util/mingw64-runtime
 		)
