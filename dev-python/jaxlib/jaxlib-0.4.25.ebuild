@@ -8,6 +8,7 @@ MAINTAINER_MODE=0
 MY_PN="jax"
 
 AMDGPU_TARGETS_COMPAT=(
+# See https://github.com/google/jax/blob/jaxlib-v0.4.25/.bazelrc#L119
 # See https://github.com/google/jax/blob/jaxlib-v0.4.25/build/rocm/Dockerfile.ms#L7C53-L7C89
 	gfx900
 	gfx906
@@ -20,6 +21,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 )
 CUDA_TARGETS_COMPAT=(
+# See https://github.com/google/jax/blob/jaxlib-v0.4.25/.bazelrc#L68
 	sm_52
 	sm_60
 	sm_70

@@ -28,19 +28,33 @@ LICENSE="
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-australis doc experimental test
+australis cuda doc experimental test
 r2
 "
 # flax and tensorstore are missing in setup.py *_require sections but referenced
 # in experimental but not in tests folder.
 DEPEND+="
-	>=dev-python/jaxlib-${PV}
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
+		>=dev-python/scipy-1.9[${PYTHON_USEDEP}]
+	' python3_10)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
+		>=dev-python/scipy-1.9[${PYTHON_USEDEP}]
+	' python3_11)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
+		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
+	' python3_12)
+	>=dev-python/jaxlib-${PV}[cuda?]
 	>=dev-python/ml_dtypes-0.2.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
-	>=dev-python/scipy-1.7[${PYTHON_USEDEP}]
 	dev-python/opt-einsum[${PYTHON_USEDEP}]
 	australis? (
 		dev-libs/protobuf:0/3.21
+	)
+	cuda? (
+		=dev-libs/cudnn-8.6*
+		=dev-util/nvidia-cuda-toolkit-11.8*
 	)
 	experimental? (
 		dev-python/tensorstore[${PYTHON_USEDEP}]

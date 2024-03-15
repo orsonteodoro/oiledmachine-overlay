@@ -8,20 +8,15 @@ MAINTAINER_MODE=0
 MY_PN="jax"
 
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.24/.bazelrc#L119
-# See https://github.com/google/jax/blob/jaxlib-v0.4.24/build/rocm/Dockerfile.ms#L7C53-L7C89
+# See https://github.com/google/jax/blob/jaxlib-v0.4.23/.bazelrc#L112
 	gfx900
 	gfx906
 	gfx908
 	gfx90a
-	gfx940
-	gfx941
-	gfx942
 	gfx1030
-	gfx1100
 )
 CUDA_TARGETS_COMPAT=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.24/.bazelrc#L68
+# See https://github.com/google/jax/blob/jaxlib-v0.4.23/.bazelrc#L68
 	sm_50
 	sm_60
 	sm_70
@@ -32,7 +27,10 @@ DISTUTILS_USE_PEP517="standalone"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
 GCC_COMPAT=( {12..9} )
 JAVA_SLOT="11"
-LLVM_COMPAT=( 17 ) # From .bazelrc
+LLVM_COMPAT=(
+	17 # From .bazelrc
+	16 # For ROCm 5.6
+)
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..11} ) # Limited by Flax CI
 
@@ -45,47 +43,47 @@ inherit toolchain-funcs
 # All hashes and URIs obtained with MAINTAINER_MODE=1 and from console logs with
 # FEATURES=-network-sandbox.
 
-APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L569
-BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace3.bzl#L26
-CUDNN_FRONTEND_PV="1.0.0"	# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/workspace2.bzl#L39
-CURL_PV="8.4.0"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L361
-FLATBUFFERS_PV="23.5.26"	# From https://github.com/google/jax/blob/jaxlib-v0.4.24/third_party/flatbuffers/workspace.bzl
-JSONCPP_PV="1.9.5"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L403
-NCCL_PV="2.19.3-1"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L431
-ONEDNN_PV="3.2"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L166
+APPLE_SUPPORT_PV="1.1.0"	# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L569
+BAZEL_SKYLIB_PV="1.3.0"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace3.bzl#L26
+CUDNN_FRONTEND_PV="0.9"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/workspace2.bzl#L39
+CURL_PV="8.4.0"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L361
+FLATBUFFERS_PV="23.5.26"	# From https://github.com/google/jax/blob/jaxlib-v0.4.23/third_party/flatbuffers/workspace.bzl
+JSONCPP_PV="1.9.5"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L403
+NCCL_PV="2.18.5-1"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L431
+ONEDNN_PV="3.2"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L166
 PLATFORMS_PV="0.0.6"
-PROTOBUF_PV="3.21.9"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L322
-PYBIND11_PV="2.10.0"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L598
-ROBIN_MAP_PV="1.2.1"		# From https://github.com/google/jax/blob/jaxlib-v0.4.24/third_party/robin_map/workspace.bzl#L24
-RULES_ANDROID_PV="0.1.1"	# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L540
-RULES_APPLE_PV="1.0.1"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L555
+PROTOBUF_PV="3.21.9"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L322
+PYBIND11_PV="2.10.0"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L598
+ROBIN_MAP_PV="1.2.1"		# From https://github.com/google/jax/blob/jaxlib-v0.4.23/third_party/robin_map/workspace.bzl#L24
+RULES_ANDROID_PV="0.1.1"	# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L540
+RULES_APPLE_PV="1.0.1"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L555
 RULES_CC_PV="0.0.2"
 RULES_JAVA_PV="5.5.1"
-RULES_PKG_PV="0.7.1"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace3.bzl#L34
-RULES_PYTHON_PV="0.0.1"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L540
-RULES_SWIFT_PV="1.0.0"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L562
-NANOBIND_PV="1.5.2"		# From https://github.com/google/jax/blob/jaxlib-v0.4.24/third_party/nanobind/workspace.bzl#L24
-TRITON_TAG="cl601105910"	# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/triton/workspace.bzl
+RULES_PKG_PV="0.7.1"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace3.bzl#L34
+RULES_PYTHON_PV="0.0.1"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L540
+RULES_SWIFT_PV="1.0.0"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L562
+NANOBIND_PV="1.5.2"		# From https://github.com/google/jax/blob/jaxlib-v0.4.23/third_party/nanobind/workspace.bzl#L24
+TRITON_TAG="cl588045313"	# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/triton/workspace.bzl
 
-EGIT_ABSEIL_CPP_COMMIT="fb3621f4f897824c0dbe0615fa94543df6192f30"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/third_party/absl/workspace.bzl
-EGIT_BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace1.bzl#L26
-EGIT_BORINGSSL_COMMIT="c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/workspace2.bzl#L55
-EGIT_DLPACK_COMMIT="2a7e9f1256ddc48186c86dff7a00e189b47e5310"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/dlpack/workspace.bzl
-EGIT_DUCC_COMMIT="3d28aadfd8bb0219e3df188613dbbcdfffccc3cd"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/third_party/ducc/workspace.bzl
-EGIT_EIGEN_COMMIT="aa6964bf3a34fd607837dd8123bc42465185c4f8"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/third_party/eigen3/workspace.bzl
-EGIT_FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/third_party/farmhash/workspace.bzl
-EGIT_GLOO_COMMIT="5354032ea08eadd7fc4456477f7f7c6308818509"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/gloo/workspace.bzl
-EGIT_LLVM_COMMIT="cca9f9b78fc657c280f7e4024a552af43a315bdb"			# llvm 19 ; From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/llvm/workspace.bzl
-EGIT_ML_DTYPES_COMMIT="2ca30a2b3c0744625ae3d6988f5596740080bbd0"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/py/ml_dtypes/workspace.bzl
-EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/third_party/pybind11_abseil/workspace.bzl
-EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/third_party/pybind11_bazel/workspace.bzl
-EGIT_RE2_COMMIT="03da4fc0857c285e3a26782f6bc8931c4c950df4"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L235
+EGIT_ABSEIL_CPP_COMMIT="fb3621f4f897824c0dbe0615fa94543df6192f30"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/third_party/absl/workspace.bzl
+EGIT_BAZEL_TOOLCHAINS_COMMIT="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace1.bzl#L26
+EGIT_BORINGSSL_COMMIT="c00d7ca810e93780bd0c8ee4eea28f4f2ea4bcdc"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/workspace2.bzl#L55
+EGIT_DLPACK_COMMIT="9351cf542ab478499294864ff3acfdab5c8c5f3d"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/dlpack/workspace.bzl
+EGIT_DUCC_COMMIT="3d28aadfd8bb0219e3df188613dbbcdfffccc3cd"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/third_party/ducc/workspace.bzl
+EGIT_EIGEN_COMMIT="aa6964bf3a34fd607837dd8123bc42465185c4f8"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/third_party/eigen3/workspace.bzl
+EGIT_FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/third_party/farmhash/workspace.bzl
+EGIT_GLOO_COMMIT="5354032ea08eadd7fc4456477f7f7c6308818509"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/gloo/workspace.bzl
+EGIT_LLVM_COMMIT="cd9a641613eddf25d4b25eaa96b2c393d401d42c"			# llvm 18 ; From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/llvm/workspace.bzl
+EGIT_ML_DTYPES_COMMIT="2ca30a2b3c0744625ae3d6988f5596740080bbd0"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/py/ml_dtypes/workspace.bzl
+EGIT_PYBIND11_ABSEIL_COMMIT="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/third_party/pybind11_abseil/workspace.bzl
+EGIT_PYBIND11_BAZEL_COMMIT="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/third_party/pybind11_bazel/workspace.bzl
+EGIT_RE2_COMMIT="03da4fc0857c285e3a26782f6bc8931c4c950df4"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L235
 EGIT_RULES_CLOSURE_COMMIT="308b05b2419edb5c8ee0471b67a40403df940149"
 EGIT_RULES_PROTO_COMMIT="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"
-EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/workspace2.bzl#L399
-EGIT_STABLEHLO_COMMIT="d50b6fc2d9ab6fc97be8548beceba2db2e6b15d9"		# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/stablehlo/workspace.bzl#L7
-EGIT_TENSORFLOW_RUNTIME_COMMIT="4665f7483063a16b6113a05eb45f98103cc1d611"	# From https://github.com/openxla/xla/blob/12eee889e1f2ad41e27d7b0e970cb92d282d3ec5/third_party/tsl/third_party/tf_runtime/workspace.bzl
-EGIT_XLA_COMMIT="12eee889e1f2ad41e27d7b0e970cb92d282d3ec5"			# From https://github.com/google/jax/blob/jaxlib-v0.4.24/third_party/xla/workspace.bzl
+EGIT_SNAPPY_COMMIT="984b191f0fefdeb17050b42a90b7625999c13b8d"			# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/workspace2.bzl#L399
+EGIT_STABLEHLO_COMMIT="ab709fe48de88c67717abfbd7ef17425eb95ddaf"		# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/stablehlo/workspace.bzl#L7
+EGIT_TENSORFLOW_RUNTIME_COMMIT="46ea805916905c7e20225f9f3eb20608fd34482c"	# From https://github.com/openxla/xla/blob/a487d8ba5da8d0dec056972270e50de6748a1035/third_party/tsl/third_party/tf_runtime/workspace.bzl
+EGIT_XLA_COMMIT="a487d8ba5da8d0dec056972270e50de6748a1035"			# From https://github.com/google/jax/blob/jaxlib-v0.4.23/third_party/xla/workspace.bzl
 
 bazel_external_uris="
 https://curl.haxx.se/download/curl-${CURL_PV}.tar.gz
@@ -157,13 +155,13 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.24/build/rocm/ci_build.sh#L52
+# ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.23/build/rocm/ci_build.sh#L52
 IUSE+="
 ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 clang custom-optimization-level cpu cuda hardened portable rocm system-llvm r1
 
-rocm_6_0
+rocm_5_6
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -224,11 +222,11 @@ REQUIRED_USE+="
 		!cuda
 		${ROCM_REQUIRED_USE}
 		^^ (
-			rocm_6_0
+			rocm_5_6
 		)
 	)
-	rocm_6_0? (
-		llvm_slot_17
+	rocm_5_6? (
+		llvm_slot_16
 	)
 	|| (
 		cpu
@@ -240,12 +238,12 @@ REQUIRED_USE+="
 # hipsolver
 
 ROCM_SLOTS=(
-# See https://github.com/google/jax/blob/jaxlib-v0.4.24/build/rocm/Dockerfile.ms
-	"6.0.0" # For llvm 17
+# See https://github.com/google/jax/blob/jaxlib-v0.4.23/build/rocm/Dockerfile.ms
+	"5.6.0" # For llvm 16
 )
 
 declare -A LLD_SLOT=(
-	["6.0.0"]="17"
+	["5.6.0"]="16"
 )
 
 gen_rocm_depends() {
@@ -610,8 +608,8 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 && has_version "dev-util/hip:6.0" ; then
-			LLVM_SLOT=17
+		if has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 && has_version "dev-util/hip:5.6" ; then
+			LLVM_SLOT=16
 		fi
 	elif tc-is-clang || use clang ; then
 		use_clang
@@ -1026,7 +1024,7 @@ einfo "TF_ROCM_AMDGPU_TARGETS:  ${TF_ROCM_AMDGPU_TARGETS}"
 
 	# See
 	# https://jax.readthedocs.io/en/latest/developer.html#additional-notes-for-building-a-rocm-jaxlib-for-amd-gpus
-	# https://github.com/google/jax/blob/jaxlib-v0.4.24/build/rocm/build_rocm.sh
+	# https://github.com/google/jax/blob/jaxlib-v0.4.23/build/rocm/build_rocm.sh
 		args+=(
 			--bazel_options="--override_repository=xla=${WORKDIR}/xla-${EGIT_XLA_COMMIT}"
 			--enable_rocm
@@ -1094,7 +1092,7 @@ einfo "Building wheel for EPYTHON=${EPYTHON} PYTHON=${PYTHON}"
 		|| die
 
 	# Keep in sync with
-	# https://github.com/google/jax/blob/jaxlib-v0.4.24/build/build.py#L546
+	# https://github.com/google/jax/blob/jaxlib-v0.4.23/build/build.py#L546
 	_ebazel run \
 		--verbose_failures=true \
 		-s \
