@@ -90,26 +90,36 @@ src_unpack() {
 	unpack ${A}
 	rm -rf "${S}/deps" || die
 	mkdir -p "${S}/deps" || die
-	mv -v \
-		"${WORKDIR}/json-${NLOHMANN_JSON_COMMIT}" \
-		"${S}/deps/json" \
-		|| die
-	mv -v \
-		"${WORKDIR}/libjuice-${LIBJUICE_COMMIT}" \
-		"${S}/deps/libjuice" \
-		|| die
-	mv -v \
-		"${WORKDIR}/libsrtp-${LIBSRTP_COMMIT}" \
-		"${S}/deps/libsrtp" \
-		|| die
-	mv -v \
-		"${WORKDIR}/plog-${PLOG_COMMIT}" \
-		"${S}/deps/plog" \
-		|| die
-	mv -v \
-		"${WORKDIR}/usrsctp-${USRSCTP_COMMIT}" \
-		"${S}/deps/usrsctp" \
-		|| die
+	if use system-json ; then
+		mv -v \
+			"${WORKDIR}/json-${NLOHMANN_JSON_COMMIT}" \
+			"${S}/deps/json" \
+			|| die
+	fi
+	if use system-juice ; then
+		mv -v \
+			"${WORKDIR}/libjuice-${LIBJUICE_COMMIT}" \
+			"${S}/deps/libjuice" \
+			|| die
+	fi
+	if use system-srtp ; then
+		mv -v \
+			"${WORKDIR}/libsrtp-${LIBSRTP_COMMIT}" \
+			"${S}/deps/libsrtp" \
+			|| die
+	fi
+	if use system-plog ; then
+		mv -v \
+			"${WORKDIR}/plog-${PLOG_COMMIT}" \
+			"${S}/deps/plog" \
+			|| die
+	fi
+	if use system-usrsctp ; then
+		mv -v \
+			"${WORKDIR}/usrsctp-${USRSCTP_COMMIT}" \
+			"${S}/deps/usrsctp" \
+			|| die
+	fi
 }
 
 src_configure() {
