@@ -404,7 +404,7 @@ IUSE="
 ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
-alt-ssl -big-endian clang cuda custom-optimization-level +hardened mpi +python
+alt-ssl -big-endian +clang cuda custom-optimization-level +hardened mpi +python
 rocm system-llvm test xla
 r1
 "
