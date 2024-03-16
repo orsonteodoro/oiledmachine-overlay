@@ -3657,8 +3657,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     SEV - Add or remove support for SEV (Secure Encrypted Virtualization).
     Valid values:  0 (default), 1
-    Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is either
-    untrusted, untrusted-distant both of which enable full hardening.
+    Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is secure-af
+    which enables full hardening.
 
     STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker
     driver.
