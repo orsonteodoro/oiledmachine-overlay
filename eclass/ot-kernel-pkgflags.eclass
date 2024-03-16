@@ -7497,11 +7497,6 @@ ot-kernel-pkgflags_qemu() { # DONE
 
 		# _ot-kernel_y_thp # slower but supported
 
-		local is_host=1
-		if lscpu | grep -q -e "Virtualization type:.*full" ; then
-			is_host=0
-		fi
-
 		# Encrypt virtual machine memory (SEV) and registers (SEV-ES)
 		if [[ \
 			   "${hardening_level}" == "default" \
@@ -7541,7 +7536,7 @@ einfo "SEV is disabled for KVM host"
 					sev=1
 				fi
 			done
-			if [[ ${SEV:-1} =~ "1" ]] && (( ${sev} == 1 )) && (( ${is_host} == 1 )) ; then
+			if [[ ${SEV:-1} =~ "1" ]] && (( ${sev} == 1 )) ; then
 				if has_version "sys-kernel/linux-firmware" ; then
 eerror
 eerror "Install sys-kernel/linux-firmware first to install SEV firmware."
@@ -7554,15 +7549,9 @@ einfo "SEV is enabled for KVM host"
 				ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=on"
 				ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=1"
 			else
-				if (( ${is_host} == 1 )) ; then
-einfo "SEV is disabled for KVM host"
-					ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
-					ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
-				else
-einfo "SEV is using defaults for KVM guest"
-					ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
-					ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
-				fi
+einfo "SEV is disabled for KVM host/guest"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
+				ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
 			fi
 		fi
 	fi
