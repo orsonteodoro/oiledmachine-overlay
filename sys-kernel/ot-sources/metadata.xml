@@ -3555,7 +3555,7 @@ unset OT_KERNEL_PRIVATE_KEY
     (Auto detection would be nice, but may be counter productive if hardware
     already fixed or feature disabled.  This is why it is a manual setting.)
     Notes:  This is a manually setting so that you can build a kernel from a
-    PC to a laptop with HT support.
+    PC without HT to a laptop with HT support.
 
     I915_GEN9_HWACCEL_LOW_POWER_VIDEO_ENCODING - Enable hardware accelerated low
     power video encoding for Gen9/Gen9.5 where it is not the default ON.
