@@ -1557,13 +1557,16 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
       secure-af - (Aka secure as fuck), full hardening.  Increases mitigation
       against theoretical attacks, difficult to achieve attacks,
-      physical exfiltration.
+      data exfiltration.
 
       unset - same as custom.
 
     See also:
 
       HT
+      OT_KERNEL_SME
+      OT_KERNEL_SME_DEFAULT_ON
+      SEV
 
     External sources:
 

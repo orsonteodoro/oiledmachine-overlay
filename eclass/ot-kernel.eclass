@@ -7972,7 +7972,7 @@ eerror "  default     - Upstream defaults, practically secure"
 eerror "  manual      - Alias for custom"
 eerror "  performance - All mitigations disabled"
 eerror "  practical   - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
-eerror "  secure-af   - Mitigation against theoretical attacks, difficult to achieve attacks, physical exfiltration"
+eerror "  secure-af   - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
 eerror
 eerror "Actual value:"
 eerror
