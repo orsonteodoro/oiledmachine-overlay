@@ -7527,7 +7527,6 @@ einfo "SEV is disabled for KVM ${machine_type}"
 			# Increase security
 			local sev=0
 			for o in $(cat "${path}" | sed -e "s|^$|;|") ; do
-				# Support multiple sockets / NUMA
 				echo "${o}" \
 					| grep -q -e "AuthenticAMD" \
 					|| continue
