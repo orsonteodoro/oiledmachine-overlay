@@ -5509,6 +5509,8 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "mds=(full|full,nosmt|off)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "mmio_stale_data=(full|full,nosmt|off)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nobp=(0|1)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt=force"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nopti"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospec_store_bypass_disable" # Same as spec_store_bypass_disable=off
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospectre_bhb"
@@ -5518,6 +5520,7 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "reg_file_data_sampling=(on|off)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|auto,nosmt|ibpb|ibpb,nosmt|unret|unret,nosmt)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "smt=(-1|[0-9]+)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "srbds=off"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "spec_store_bypass_disable=(on|off|auto|prctl|seccomp)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "spectre_v2=(on|off|auto)"
@@ -6078,8 +6081,19 @@ eerror
 		if tc-is-gcc ; then
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
-		if [[ "${cpu_sched}" =~ "cfs" && "${HT}" =~ ("1"|"2") ]] ; then
+		if [[ "${cpu_sched}" =~ "cfs" && "${HT:-1}" =~ ("1"|"2") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
+			if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("1") ]] && [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
+			elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
+			elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${HT}" =~ ("1"|"2") ]] && [[ "${arch}" == "mips" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
+			elif ver_test ${KV_MAJOR_MINOR} -ge 4.10 && [[ "${HT}" =~ ("1"|"2") ]] && [[ "${arch}" == "s390" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
+			elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
+			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
 			if [[ "${arch}" == "arm64" ]] ; then
@@ -10784,6 +10798,9 @@ ot-kernel_optimize_realtime() {
 		|| grep -q -e "^CONFIG_PREEMPT_RT_FULL=y" "${path_config}" \
 	; then
 		_OT_KERNEL_FORCE_SWAP_OFF=1
+
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt=force"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "nosmt"
 
 # Avoid lock contention penalty
 ewarn "Disabling smt for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."

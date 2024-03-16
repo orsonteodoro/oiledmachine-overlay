@@ -3542,16 +3542,16 @@ unset OT_KERNEL_PRIVATE_KEY
     EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
 
-    HT - Add mitigations against HT (for building cross kernels) side-channel
-    attacks.
+    HT - Add mitigations against HT side-channel attacks.
     Valid values: 0, 1, 2, unset.
-    0 - manual setting
-    1 - weak mitigations
-    2 - strongest available mitigations (HT off; not implemented in the eclass
-        yet)
-    Unset means custom.
+    0     - manual setting
+    1     - weak mitigations (SMT may be still allowed if other vulnerabilities do not apply.)
+    2     - strongest available mitigations (SMT is forced off)
+    Unset - alias for custom.
     (Auto detection would be nice, but may be counter productive if hardware
     already fixed or feature disabled.  This is why it is a manual setting.)
+    Notes:  This is a manually setting so that you can build a kernel from a
+    PC to a laptop with HT support.
 
     I915_GEN9_HWACCEL_LOW_POWER_VIDEO_ENCODING - Enable hardware accelerated low
     power video encoding for Gen9/Gen9.5 where it is not the default ON.
