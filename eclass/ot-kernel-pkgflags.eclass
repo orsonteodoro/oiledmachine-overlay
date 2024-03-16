@@ -7546,6 +7546,7 @@ einfo "SEV is disabled for KVM host"
 eerror
 eerror "Install sys-kernel/linux-firmware first to install SEV firmware."
 eerror
+					die
 				fi
 einfo "SEV is enabled for KVM host"
 				ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
