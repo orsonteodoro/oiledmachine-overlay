@@ -6081,17 +6081,18 @@ eerror
 		if tc-is-gcc ; then
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
-		if [[ "${cpu_sched}" =~ "cfs" && "${HT:-1}" =~ ("1"|"2") ]] ; then
+		if [[ "${cpu_sched}" =~ "cfs" && "${HT:-3}" =~ ("1"|"2"|"3") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
-			if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("1") ]] && [[ "${arch}" == "powerpc" ]] ; then
+ewarn "The behavior the HT environment variable has changed.  See metadata.xml for details."
+			if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
+			elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "powerpc" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
-			elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${HT}" =~ ("1"|"2") ]] && [[ "${arch}" == "mips" ]] ; then
+			elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "mips" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test ${KV_MAJOR_MINOR} -ge 4.10 && [[ "${HT}" =~ ("1"|"2") ]] && [[ "${arch}" == "s390" ]] ; then
+			elif ver_test ${KV_MAJOR_MINOR} -ge 4.10 && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "s390" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 			fi
 		fi
