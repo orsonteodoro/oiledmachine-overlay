@@ -3658,8 +3658,7 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0, 1 (default).
 
     SEV - Add or remove support for SEV (Secure Encrypted Virtualization).
-    Valid values:  0 (default), 1
-    which enables full hardening.
+    Valid values:  0 (default), 1 (enables full hardening)
     See also:  OT_KERNEL_SME
     Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is secure-af.
     It requires AMD CPU family 17h (2017) or 19h (2021).
