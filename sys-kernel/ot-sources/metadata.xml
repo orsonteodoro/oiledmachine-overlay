@@ -1557,7 +1557,10 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
       secure-af - (Aka secure as fuck), full hardening.  Increases mitigation
       against theoretical attacks, difficult to achieve attacks,
-      data exfiltration.
+      data exfiltration.  The "see also" tunables below allow to apply
+      potentially problematic mitigations conditionally based on experiental
+      trial-and-error observations.  Idealistically, they should be ON by
+      default but are disabled by default due to compatibility issues.
 
       unset - same as custom.
 
