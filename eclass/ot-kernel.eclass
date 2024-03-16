@@ -13685,6 +13685,14 @@ ewarn "For an overview about affected processors, see"
 ewarn
 ewarn "  https://en.wikipedia.org/wiki/Transient_execution_CPU_vulnerability"
 ewarn
+ewarn "Mitigation techniques:"
+ewarn
+ewarn "  Kernel source code:  Supported by the kernel development team"
+ewarn "  CPU microcode:       Supported by the firmware packages"
+ewarn "  BIOS update:         Supported by the motherboard manufacturer, which may require dual booting"
+ewarn
+ewarn "The mitigation fix may sometimes only be available in one of the rows above."
+ewarn
 ewarn "Requirements to mitigate:"
 ewarn
 ewarn "  (1) AMD CPUs:    USE=\"linux-firmware\""
