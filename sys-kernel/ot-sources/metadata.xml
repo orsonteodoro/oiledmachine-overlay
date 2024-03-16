@@ -3659,10 +3659,10 @@ unset OT_KERNEL_PRIVATE_KEY
 
     SEV - Add or remove support for SEV (Secure Encrypted Virtualization).
     Valid values:  0 (default), 1
-    Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is secure-af
     which enables full hardening.
     See also:  OT_KERNEL_SME
-    Note:  It requires AMD CPU family 17h (2017) or 19h (2021)
+    Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is secure-af.
+    It requires AMD CPU family 17h (2017) or 19h (2021).
 
     STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker
     driver.
