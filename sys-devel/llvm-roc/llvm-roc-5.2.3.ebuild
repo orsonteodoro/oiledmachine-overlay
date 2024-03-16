@@ -124,6 +124,12 @@ S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
+ewarn
+ewarn "You may need to switch to GCC 12.  If the build fails, do"
+ewarn
+ewarn "eselect gcc set <CHOST>-12"
+ewarn "source /etc/profile"
+ewarn
 	rocm_pkg_setup
 	uopts_setup
 	if use epgo || use ebolt ; then
