@@ -1531,8 +1531,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     trust.  In these ebuilds and eclasses -- security hardening flags, CFI,
     KCFI, and SCS (ShadowCallStack) -- get enabled when set to secure-af.
 
-    Setting to trusted also allows to use io_uring for more performance at the
-    expense of security.
+    Setting to performance also allows to use io_uring for more performance at
+    the expense of security.
 
     Acceptable values:
 
