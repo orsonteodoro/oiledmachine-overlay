@@ -7519,7 +7519,6 @@ einfo "SEV is using defaults for KVM ${machine_type}"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
 		elif [[ \
 			   "${hardening_level}" == "performance" \
-			|| "${hardening_level}" == "trusted" \
 		]] ; then
 einfo "SEV is disabled for KVM ${machine_type}"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
@@ -7527,10 +7526,8 @@ einfo "SEV is disabled for KVM ${machine_type}"
 			ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=off"
 			ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
 		elif [[ \
-			   "${hardening_level}" == "untrusted" \
-			|| "${hardening_level}" == "untrusted-distant" \
+			   "${hardening_level}" == "secure-af" \
 		]] ; then
-			# Increase security
 			local sev=0
 			for o in $(cat "${path}" | sed -e "s|^$|;|") ; do
 				echo "${o}" \
@@ -8257,7 +8254,6 @@ ot-kernel-pkgflags_rtkit() { # DONE
 			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
 		elif [[ \
 			   "${hardening_level}" == "performance" \
-			|| "${hardening_level}" == "trusted" \
 		]] ; then
 			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
 		else
@@ -11170,27 +11166,35 @@ _ot-kernel_set_io_uring() {
 	]] ; then
 		:
 	elif [[ \
-		   "${hardening_level}" == "untrusted" \
-		|| "${hardening_level}" == "untrusted-distant" \
+		   "${hardening_level}" == "secure-af" \
 	]] ; then
 	# Increased security
 		ot-kernel_unset_configopt "CONFIG_IO_URING"
 	elif [[ \
-		   "${hardening_level}" == "default" \
+		   "${hardening_level}" == "custom" \
+		|| "${hardening_level}" == "default" \
+		|| "${hardening_level}" == "manual" \
 		|| "${hardening_level}" == "performance" \
 		|| "${hardening_level}" == "practical" \
-		|| "${hardening_level}" == "trusted" \
+		|| "${hardening_level}" == "secure-af" \
 	]] ; then
-		ot-kernel_y_configopt "CONFIG_EXPERT"
-		ot-kernel_y_configopt "CONFIG_IO_URING"
+		:
 	else
 eerror
 eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
 eerror
-eerror "Acceptable values:  custom, default, manual, performance, practical,"
-eerror "trusted, untrusted, untrusted-distant"
+eerror "Acceptable values:"
 eerror
-eerror "Actual value:  ${hardening_level}"
+eerror "  custom       - User defined setting"
+eerror "  default      - Upstream defaults, practically secure"
+eerror "  manual       - Alias for custom"
+eerror "  performance  - All mitigations disabled"
+eerror "  practical    - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
+eerror "  secure-af    - Mitigation against theoretical attacks, difficult to achieve attacks, physical exfiltration"
+eerror
+eerror "Actual value:"
+eerror
+eerror "  ${hardening_level}"
 eerror
 		die
 	fi

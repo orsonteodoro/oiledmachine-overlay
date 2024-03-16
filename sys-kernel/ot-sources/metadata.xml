@@ -1538,26 +1538,29 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
     Acceptable values:
 
-      trusted, untrusted, untrusted-distant, custom, manual, unset.
+      custom
+      default
+      manual
+      performance
+      secure-af
+      unset
 
     Meanings:
 
-      custom - customize hardening.  (same as manual and unset)
+      custom - Customize hardening.  (same as manual and unset)
 
-      performance - disables hardening.  It is the same as trusted.
+      default - Uses upstream default security settings, practically secure,
+      balanced performance-security.
 
-      trusted - no hardening applied.  Used for single user presentation,
-        LAN tournaments, pure performance like in house renderfarm setups.
+      performance - Disables all hardening.
+
+      practical -  Alias for default.
+
+      secure-af - (Aka secure as fuck), full hardening.  Increases mitigation
+      against theoretical attacks, difficult to achieve attacks,
+      physical exfiltration.
 
       unset - same as custom.
-
-      practical - reset back to the practical secure defaults.
-
-      untrusted - full hardening.  Used for multiuser computer not in locked room
-        such as on the road or traveling. 
-
-      untrusted-distant - some hardening except physical access mitigation.
-        Used for multiuser computer in locked room or www setups.
 
     See also:
 
@@ -3653,7 +3656,9 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0, 1 (default).
 
     SEV - Add or remove support for SEV (Secure Encrypted Virtualization).
-    Valid values:  0, 1 (default if CPU family is 17h or 19h)
+    Valid values:  0 (default), 1
+    Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is either
+    untrusted, untrusted-distant both of which enable full hardening.
 
     STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker
     driver.

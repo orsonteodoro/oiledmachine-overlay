@@ -4329,8 +4329,7 @@ ot-kernel_set_kconfig_cfi() {
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	elif \
 		[[ \
-			   "${hardening_level}" == "untrusted" \
-			|| "${hardening_level}" == "untrusted-distant" \
+			   "${hardening_level}" == "secure-af" \
 		]] \
 			&&
 		has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
@@ -4360,7 +4359,6 @@ einfo "Enabling CFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 	elif [[ \
 		   "${hardening_level}" == "performance" \
-		|| "${hardening_level}" == "trusted" \
 	]] ; then
 einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
@@ -4368,8 +4366,7 @@ einfo "Disabling CFI support in the in the .config."
 
 	if \
 		[[ \
-			   "${hardening_level}" == "untrusted" \
-			|| "${hardening_level}" == "untrusted-distant" \
+			   "${hardening_level}" == "secure-af" \
 		]] \
 		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "arm64" ]] \
@@ -4400,8 +4397,7 @@ ot-kernel_set_kconfig_kcfi() {
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	elif \
 		[[ \
-			   "${hardening_level}" == "untrusted" \
-			|| "${hardening_level}" == "untrusted-distant" \
+			   "${hardening_level}" == "secure-af" \
 		]] \
 			&& \
 		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
@@ -4439,7 +4435,6 @@ einfo "Enabling KCFI support in the in the .config."
 	elif \
 		[[ \
 			   "${hardening_level}" == "performance" \
-			|| "${hardening_level}" == "trusted" \
 		]] \
 	; then
 einfo "Disabling KCFI support in the in the .config."
@@ -4448,8 +4443,7 @@ einfo "Disabling KCFI support in the in the .config."
 
 	if \
 		[[ \
-			   "${hardening_level}" == "untrusted" \
-			|| "${hardening_level}" == "untrusted-distant" \
+			   "${hardening_level}" == "secure-af" \
 		]] \
 			&& \
 		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
@@ -5029,7 +5023,6 @@ einfo "Changed .config to use MuQSS"
 	# Low latency
 		if [[ \
 			   "${hardening_level}" == "performance" \
-			|| "${hardening_level}" == "trusted" \
 		]] ; then
 			if \
 				[[ \
@@ -5092,7 +5085,6 @@ einfo "Changed .config to use MuQSS"
 				[[ \
 					( \
 						   "${hardening_level}" == "performance" \
-						|| "${hardening_level}" == "trusted" \
 					) \
 						&& \
 					( \
@@ -5587,7 +5579,6 @@ eerror
 		:
 	elif [[ \
 		   "${hardening_level}" == "performance" \
-		|| "${hardening_level}" == "trusted" \
 	]] ; then
 	# Disable all hardening
 	# All randomization is disabled because it increases instruction latency
@@ -5938,8 +5929,7 @@ eerror
 			ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 		fi
 	elif [[ \
-		   "${hardening_level}" == "untrusted" \
-		|| "${hardening_level}" == "untrusted-distant" \
+		   "${hardening_level}" == "secure-af" \
 	]] ; then
 	# CFI and SCS handled later
 
@@ -7968,17 +7958,25 @@ eerror
 		|| "${hardening_level}" == "manual" \
 		|| "${hardening_level}" == "performance" \
 		|| "${hardening_level}" == "practical" \
-		|| "${hardening_level}" == "untrusted" \
-		|| "${hardening_level}" == "untrusted-distant" \
-		|| "${hardening_level}" == "trusted" \
+		|| "${hardening_level}" == "secure-af" \
 	]] ; then
 		:
 	else
 eerror
 eerror "OT_KERNEL_HARDENING_LEVEL is invalid."
 eerror
-eerror "Acceptable values:  custom, default, manual, performance, practical, trusted, untrusted, untrusted-distant"
-eerror "Actual value:  ${hardening_level}"
+eerror "Acceptable values:"
+eerror
+eerror "  custom      - User defined setting"
+eerror "  default     - Upstream defaults, practically secure"
+eerror "  manual      - Alias for custom"
+eerror "  performance - All mitigations disabled"
+eerror "  practical   - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
+eerror "  secure-af   - Mitigation against theoretical attacks, difficult to achieve attacks, physical exfiltration"
+eerror
+eerror "Actual value:"
+eerror
+eerror "  ${hardening_level}"
 eerror
 		die
 	fi
@@ -8005,8 +8003,7 @@ ot-kernel_set_kconfig_scs() {
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 	elif \
 		[[ \
-			   "${hardening_level}" == "untrusted" \
-			|| "${hardening_level}" == "untrusted-distant" \
+			   "${hardening_level}" == "secure-af" \
 		]] \
 			&& \
 		has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack \
@@ -8025,7 +8022,6 @@ einfo "Enabling SCS support in the in the .config."
 	elif \
 		[[ \
 			   "${hardening_level}" == "performance" \
-			|| "${hardening_level}" == "trusted" \
 		]] \
 	; then
 einfo "Disabling SCS support in the in the .config."
@@ -10714,7 +10710,7 @@ ot-kernel_optimize_gaming() {
 ewarn
 ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
 ewarn
-	if [[ "${hardening_level}" =~ "untrusted" ]] ; then
+	if [[ "${hardening_level}" =~ "secure-af" ]] ; then
 eerror
 eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
 eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
@@ -10893,13 +10889,6 @@ einfo "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-over
 einfo
 	fi
 
-	#
-	# hardening_level meanings:
-	#
-	#   trusted - no hardening applied
-	#   untrusted - full hardening applied
-	#   untrusted-distant - some hardening applied except for physical access mitigation
-	#
 	local hardening_level="${OT_KERNEL_HARDENING_LEVEL:-manual}"
 
 	local llvm_slot=$(get_llvm_slot)
@@ -13692,9 +13681,6 @@ ewarn
 ewarn "For full L1TF mitigation for HT processors, read the Wikipedia article."
 ewarn "https://en.wikipedia.org/wiki/Foreshadow"
 ewarn "https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/core-scheduling.html"
-ewarn
-ewarn "Partial mitgation is enabled for OT_KERNEL_HARDENING_LEVEL=\"untrusted\""
-ewarn "OT_KERNEL_HARDENING_LEVEL=\"untrusted-distant\""
 ewarn
 
 ewarn
