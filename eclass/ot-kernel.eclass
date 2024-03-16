@@ -5510,6 +5510,7 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "kpti=(1|0)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm-intel.vmentry_l1d_flush=(always|cond|never)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm.nx_huge_pages=(force|off|auto)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "l1d_flush=on"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "l1tf=(full|full,force|flush|flush,nosmt|flush,nowarn|off)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "no_entry_flush"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "no_uaccess_flush"
@@ -5521,6 +5522,7 @@ einfo "Using ${hardening_level} hardening level"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospectre_bhb"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospectre_v1"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "nospectre_v2"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "reg_file_data_sampling=(on|off)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto|auto,nosmt|ibpb|ibpb,nosmt|unret|unret,nosmt)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "retbleed=(off|auto)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "spec_store_bypass_disable=(on|off|auto|prctl|seccomp)"
@@ -5735,6 +5737,10 @@ eerror
 			fi
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.1 ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=off"
+				ot-kernel_unset_configopt "CONFIG_MITIGATION_RFDS"
+			fi
 			if [[ "${arch}" == "arm64" ]] ; then
 				ot-kernel_unset_configopt "nospectre_bhb"
 			fi
@@ -5910,6 +5916,13 @@ eerror
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				_y_ibt
 			fi
+		fi
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.1 \
+			&& [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] \
+			&& [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] \
+		; then
+			ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
+			ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
@@ -6152,6 +6165,7 @@ eerror
 			ot-kernel_set_kconfig_l1tf_mitigations "1"
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+			ot-kernel_set_kconfig_kernel_cmdline "l1d_flush=on"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
@@ -6164,6 +6178,13 @@ eerror
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				_y_ibt
 			fi
+		fi
+		if ver_test ${KV_MAJOR_MINOR} -ge 6.1 \
+			&& [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] \
+			&& [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] \
+		; then
+			ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
+			ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
 		fi
 		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
