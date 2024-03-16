@@ -3545,14 +3545,15 @@ unset OT_KERNEL_PRIVATE_KEY
     EXT4_ENCRYPTION - Add support for ext4 encryption
     Valid values:  0, 1 (default).
 
-    HT - Add mitigations against HT/SMT side-channel attacks.
+    HT - Control mitigations against HT/SMT side-channel attacks when hardened
+    level is secure-af.
     Valid values: 1, 2, 3, custom, manual, unset.
     1      - SMT is conditionally on, but may be off if vulnerability found
     2      - SMT is unconditionally off but can be enabled via sysfs
     3      - SMT is unconditionally off but irreversable until set to different HT setting (default if secure-af)
     custom - Manual setting
     manual - Alias for custom
-    unset  - Alias for custom
+    unset  - Alias for 3 if secure-af
     (Auto detection would be nice, but may be counter productive if hardware
     already fixed or feature disabled.  This is why it is a manual setting.)
     Notes:  This is a manually setting so that you can build a kernel from a
