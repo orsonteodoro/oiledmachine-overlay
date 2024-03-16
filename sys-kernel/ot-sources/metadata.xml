@@ -3418,6 +3418,21 @@ unset OT_KERNEL_PRIVATE_KEY
     THIS ECLASS VARIABLE IS EXPERIMENTAL.
     Valid values:  0, 1, unset (default).
 
+    AMDGPU_VM_FRAGMENT_SIZE - Sets the large page size with the amdgpu driver.
+    It uses the formula PAGE_SIZE = 4KB * 2^X.  Cryptominers typically suggest
+    using 9.  9 is also documented by upstream as a way to enable large page
+    support.
+    Valid values:
+      -1 [default, autodetect]
+      4 [64 KB]
+      5 [128 KB]
+      6 [256 KB]
+      7 [512 KB]
+      8 [1024 KB, 1 MB]
+      9 [2048 KB, 2 MB]
+      clear [delete from kernel command line; same as -1 if amdgpu present]
+      unset [same as clear]
+
     ALSA_PC_SPEAKER - Use the ALSA speaker driver for PC speaker.
     Valid values:  0 (default), 1
 
