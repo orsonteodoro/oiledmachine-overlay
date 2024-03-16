@@ -17,6 +17,20 @@
                          the xpra-html5 frontend.  Use localhost for this
                          computer.
 
+    Example:
+
+    Contents of /etc/portage/env/xpra.conf:
+    XPRA_HTML5_BROWSER="firefox"
+    XPRA_HTML5_PORT="4443"
+    XPRA_HTML5_PROTO="https"
+    XPRA_HTML5_SERVER="localhost"
+
+    Contents of /etc/portage/package.env:
+    www-apps/xpra-html5 xpra.conf
+
+    You access the service as:
+    https://localhost:4443
+
   </longdescription>
   <upstream>
     <bugs-to>
@@ -27,15 +41,15 @@
     </doc>
   </upstream>
   <use>
+    <flag name="apache">
+      Installs the client for http server use.  XPRA_HTML5_BROWSER,
+      XPRA_HTML5_PROTO, XPRA_HTML5_SERVER, XPRA_HTML5_PORT must all be set.
+    </flag>
     <flag name="brotli">
       Enables brotli compression for clipboard.
     </flag>
     <flag name="gzip">
       Enables accepting gzip compressed files.
-    </flag>
-    <flag name="httpd">
-      Installs the client for http server use.  XPRA_HTML5_BROWSER,
-      XPRA_HTML5_PROTO, XPRA_HTML5_SERVER, XPRA_HTML5_PORT must all be set.
     </flag>
     <flag name="local">
       Installs the client for local use.
@@ -46,6 +60,12 @@
     </flag>
     <flag name="minify">
       Enables minifying the client.
+    </flag>
+    <flag name="ssl">
+      Setup ssl support
+    </flag>
+    <flag name="vhosts">
+      Disable for localhost install.  Enable for manual install with webapp-config.
     </flag>
   </use>
 </pkgmetadata>

@@ -5,7 +5,15 @@
 EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
+WEBAPP_MANUAL_SLOT="yes"
+
 inherit desktop python-any-r1 webapp xdg
+
+KEYWORDS="~amd64 ~x86"
+SRC_URI="
+https://github.com/Xpra-org/xpra-html5/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="HTML5 client for Xpra"
 HOMEPAGE="https://github.com/Xpra-org/xpra-html5"
@@ -30,11 +38,12 @@ LICENSE="
 # *Contains a modified MIT license with all rights reserved.
 # The plain MIT license does not come with all rights reserved.
 
-KEYWORDS="~amd64 ~x86"
-IUSE+=" +brotli +gzip httpd menu-only local minify"
+RESTRICT="mirror"
+SLOT="0"
+IUSE+=" apache +brotli +gzip local menu-only minify ssl"
 REQUIRED_USE+="
 	^^ (
-		httpd
+		apache
 		local
 		menu-only
 	)
@@ -42,7 +51,8 @@ REQUIRED_USE+="
 RDEPEND+="
 	${PYTHON_DEPS}
 	x11-themes/gnome-backgrounds
-	httpd? (
+	apache? (
+		>=www-servers/apache-2.4.57:2[apache2_modules_env,apache2_modules_log_config,ssl?]
 		virtual/httpd-basic
 	)
 "
@@ -64,11 +74,6 @@ BDEPEND+="
 PDEPEND+="
 	>=x11-wm/xpra-5
 "
-SRC_URI="
-https://github.com/Xpra-org/xpra-html5/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
-"
-RESTRICT="mirror"
 LOCAL_INSTALL_URI="file:///usr/share/xpra/www/index.html"
 
 pkg_setup()
@@ -76,7 +81,7 @@ pkg_setup()
 	webapp_pkg_setup
 	python-any-r1_pkg_setup
 
-	if ( use menu-only || use httpd ) \
+	if ( use menu-only || use apache ) \
 	&& [[ -z "${XPRA_HTML5_BROWSER}" && -z "${XPRA_HTML5_PROTO}" \
 		&& -z "${XPRA_HTML5_SERVER}" && -z "${XPRA_HTML5_PORT}" ]] ; then
 eerror
@@ -98,34 +103,119 @@ ewarn
 	fi
 }
 
+gen_apache_conf_with_ssl() {
+einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
+einfo "MY_HTDOCSDIR_VHOST:  ${MY_HTDOCSDIR_VHOST}"
+#  MY_HTDOCSDIR:  /usr/share/webapps//xpra/11.2/htdocs
+	insinto "/etc/apache2/vhosts.d"
+cat <<EOF > "${T}/40_xpra-2.4.conf" # Apache 2.4
+Define APACHE_LOG_DIR /var/log/apache2
+
+Listen ${XPRA_HTML5_PORT}
+
+<VirtualHost *:${XPRA_HTML5_PORT}>
+        ServerAdmin webmaster@localhost
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}"
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        SSLEngine on
+        SSLProtocol ALL -SSLv2 -SSLv3 -TLSv1 -TLSv1.1
+        SSLCipherSuite ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384
+        SSLHonorCipherOrder Off
+        SSLCertificateFile /etc/ssl/apache2/server.crt
+        SSLCertificateKeyFile /etc/ssl/apache2/server.key
+
+        <Directory "/var/www/${XPRA_HTML5_SERVER}/htdocs/xpra-html5/">
+            AllowOverride All
+            Require all granted
+        </Directory>
+</VirtualHost>
+EOF
+	doins "${T}/40_xpra-2.4.conf"
+}
+
+gen_apache_conf_without_ssl() {
+einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
+einfo "MY_HTDOCSDIR_VHOST:  ${MY_HTDOCSDIR_VHOST}"
+#  MY_HTDOCSDIR:  /usr/share/webapps//xpra/11.2/htdocs
+	insinto "/etc/apache2/vhosts.d"
+cat <<EOF > "${T}/40_xpra-2.4.conf" # Apache 2.4
+Define APACHE_LOG_DIR /var/log/apache2
+
+Listen ${XPRA_HTML5_PORT}
+
+<VirtualHost *:${XPRA_HTML5_PORT}>
+        ServerAdmin webmaster@localhost
+        DocumentRoot "${MY_HTDOCSDIR_VHOST}"
+
+        ErrorLog \${APACHE_LOG_DIR}/error.log
+        CustomLog \${APACHE_LOG_DIR}/access.log combined
+
+        <Directory "/var/www/${XPRA_HTML5_SERVER}/htdocs/xpra-html5/">
+            AllowOverride All
+            Require all granted
+        </Directory>
+</VirtualHost>
+EOF
+	doins "${T}/40_xpra-2.4.conf"
+}
+
 src_install() {
 	local minifier=""
 	if use minify ; then
 		minifier="uglifyjs"
 	fi
 
-	if use httpd ; then
+	if use apache ; then
 		webapp_src_preinst
 
 		if [[ -z "${MY_HTDOCSDIR}" ]] ; then
 			die "MY_HTDOCSDIR must be set"
 		fi
 
-		einfo "${EPYTHON} ./setup.py install \"${D}/${MY_HTDOCSDIR}\" ${minifier}"
-		${EPYTHON} ./setup.py install "${D}/${MY_HTDOCSDIR}" ${minifier}
+		# See https://github.com/Xpra-org/xpra-html5/blob/v11.2/setup.py#L551
+einfo
+einfo "D: ${D}"
+einfo "MY_HTDOCSDIR:  ${MY_HTDOCSDIR}"
+einfo "Minifier:  ${minifier}"
+einfo
+einfo "${EPYTHON} ./setup.py install \"${D}/${MY_HTDOCSDIR}\" \"${D}/${MY_HTDOCSDIR}\" ${minifier}"
+		${EPYTHON} ./setup.py install \
+			"${D}" \
+			"${MY_HTDOCSDIR}" \
+			${minifier}
 
 		webapp_serverowned -R "${MY_HTDOCSDIR}"
+
+		if use vhosts ; then
+			_VHOST_ROOT="/var/www/${HASHTOPOLIS_ADDRESS}"
+		else
+			_VHOST_ROOT="${VHOST_ROOT}"
+		fi
+		MY_HTDOCSDIR_VHOST="${_VHOST_ROOT}/htdocs/xpra-html5"
+
+		if use ssl ; then
+			gen_apache_conf_with_ssl
+		else
+			gen_apache_conf_without_ssl
+		fi
+
+		fowners apache:apache "/etc/apache2/vhosts.d/40_xpra-2.4.conf"
+		fperms 0600 "/etc/apache2/vhosts.d/40_xpra-2.4.conf"
+
 		webapp_src_install
 	elif use local ; then
 		dodir /usr/share/xpra/html5
-#		einfo "${EPYTHON} ./setup.py install \"${D}/usr/share/xpra/html5\" ${minifier}"
+#einfo "${EPYTHON} ./setup.py install \"${D}/usr/share/xpra/html5\" ${minifier}"
 #		${EPYTHON} ./setup.py install "${D}/usr/share/xpra/html5" ${minifier}
 
-		einfo "${EPYTHON} ./setup.py install \"${D}\" ${minifier}"
+einfo "${EPYTHON} ./setup.py install \"${D}\" ${minifier}"
 		${EPYTHON} ./setup.py install "${D}" ${minifier}
 	fi
 
-	if ( use httpd || use menu-only ) \
+	if ( use apache || use menu-only ) \
 	&& [[ -n "${XPRA_HTML5_BROWSER}" && -n "${XPRA_HTML5_PROTO}" \
 		&& -n "${XPRA_HTML5_SERVER}" && -n "${XPRA_HTML5_PORT}" ]] ; then
 		local iconp="${MY_HTDOCSDIR}/favicon.png"
@@ -144,7 +234,7 @@ einfo
 			"${iconp}" \
 			"Network;VideoConference"
 	elif use local && [[ -n "${XPRA_HTML5_BROWSER}" ]] ; then
-		einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER}"
+einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER}"
 		make_desktop_entry \
 			"${XPRA_HTML5_BROWSER} ${LOCAL_INSTALL_URI}" \
 			"${PN}" \
@@ -154,14 +244,19 @@ einfo
 }
 
 pkg_postinst() {
+	if use apache ; then
+		webapp_pkg_postinst
+ewarn "The apache2 server must be restarted."
+	fi
 	xdg_pkg_postinst
 einfo
 einfo "${PN} requires xpra to be installed."
 einfo
 einfo "To configure, see:"
-einfo "See https://github.com/Xpra-org/xpra-html5/tree/v4.1.2#configuration"
 einfo
-	if use httpd || use menu-only ; then
+einfo "  https://github.com/Xpra-org/xpra-html5/tree/v4.1.2#configuration"
+einfo
+	if use apache || use menu-only ; then
 einfo
 einfo "To use the browser only client, you enter for the URI:"
 einfo "${XPRA_HTML5_PROTO}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
@@ -175,3 +270,7 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERAY-TEST:  PASSED (11.2, 20240315)
+# USE="apache ssl -local" - passed
+# USE="apache -ssl -local" - passed
+# USE="-apache -ssl local" - passed
