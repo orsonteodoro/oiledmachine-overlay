@@ -7505,6 +7505,12 @@ ot-kernel-pkgflags_qemu() { # DONE
 
 		# Encrypt virtual machine memory (SEV) and registers (SEV-ES)
 		if [[ \
+			   "${hardening_level}" == "custom" \
+			|| "${hardening_level}" == "manual" \
+		]] ; then
+einfo "SEV is using custom settings for KVM ${machine_type}"
+			:
+		elif [[ \
 			   "${hardening_level}" == "default" \
 			|| "${hardening_level}" == "practical" \
 		]] ; then
