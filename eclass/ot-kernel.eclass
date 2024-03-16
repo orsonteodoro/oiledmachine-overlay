@@ -13689,7 +13689,10 @@ ewarn "Mitigation techniques:"
 ewarn
 ewarn "  Kernel source code:  Supported by the kernel development team"
 ewarn "  CPU microcode:       Supported by the firmware packages"
-ewarn "  BIOS update:         Supported by the motherboard manufacturer, which may require dual booting"
+ewarn "  BIOS update:         Supported by the motherboard manufacturer, which"
+ewarn "                       may require dual booting.  (It may be hinted by"
+ewarn "                       the motherboard support download page under the"
+ewarn "                       words AGESA™)"
 ewarn
 ewarn "The mitigation fix may sometimes only be available in one of the rows above."
 ewarn
