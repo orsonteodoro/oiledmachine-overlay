@@ -7515,14 +7515,14 @@ einfo "SEV is using custom settings for KVM ${machine_type}"
 			|| "${hardening_level}" == "practical" \
 		]] ; then
 einfo "SEV is using defaults for KVM ${machine_type}"
-			ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
-			ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm_amd.sev=[01]"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "mem_encrypt=(on|off)"
 		elif [[ \
 			   "${hardening_level}" == "performance" \
 		]] ; then
 einfo "SEV is disabled for KVM ${machine_type}"
-			ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
-			ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm_amd.sev=[01]"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "mem_encrypt=(on|off)"
 			ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=off"
 			ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
 		elif [[ \
@@ -7564,13 +7564,13 @@ eerror
 					die
 				fi
 einfo "SEV is enabled for KVM ${machine_type}"
-				ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
-				ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm_amd.sev=[01]"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "mem_encrypt=(on|off)"
 				ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=on"
 				ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=1"
 			else
 einfo "SEV is disabled for KVM ${machine_type}"
-				ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm_amd.sev=[01]"
 				ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
 			fi
 		fi
