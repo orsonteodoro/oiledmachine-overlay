@@ -273,7 +273,7 @@ ot-kernel_has_version_pkgflags() {
 	local pkg="${1}"
 	local hash=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 	hash="${hash:0:7}"
-	[[ "${OT_KERNEL_APKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return 1
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return 1
 	if ot-kernel_has_version "${pkg}" ; then
 einfo "Applying kernel config flags for the ${pkg} package (id: ${hash})"
 		return 0
@@ -289,7 +289,7 @@ ot-kernel_has_version_pkgflags_slow() {
 	local pkg="${1}"
 	local hash=$(echo -n "${pkg}" | sha512sum | cut -f 1 -d " " | cut -c 1-7)
 	hash="${hash:0:7}"
-	[[ "${OT_KERNEL_APKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return 1
+	[[ "${OT_KERNEL_PKGFLAGS_REJECT[S${hash}]}" == "1" ]] && return 1
 	if has_version "${pkg}" ; then
 einfo "Applying kernel config flags for the ${pkg} package (id: ${hash})"
 		return 0
@@ -7545,6 +7545,18 @@ einfo "SEV is disabled for KVM ${machine_type}"
 				if ! has_version "sys-kernel/linux-firmware" ; then
 eerror
 eerror "Install sys-kernel/linux-firmware first to install SEV firmware."
+eerror
+					die
+				fi
+				local cmd=$(grep "CONFIG_CMDLINE=" "${BUILD_DIR}/.config" | sed -e "s|CONFIG_CMDLINE=\"||g" -e "s|\"$||g")
+				if ! [[ "${cmd}" =~ "amd/amd_sev_fam" ]] ; then
+					local hash=$(echo -n "sys-kernel/linux-firmware" \
+						| sha512sum \
+						| cut -f 1 -d " " \
+						| cut -c 1-7)
+eerror
+eerror "You must add the sev firmware to CONFIG_CMDLINE or remove ${hash} from"
+eerror "OT_KERNEL_PKGFLAGS_REJECT."
 eerror
 					die
 				fi
