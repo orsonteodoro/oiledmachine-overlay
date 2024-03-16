@@ -3637,6 +3637,9 @@ unset OT_KERNEL_PRIVATE_KEY
     SANE_USB - Add support for USB scanners.
     Valid values:  0, 1 (default).
 
+    SEV - Add or remove support for SEV (Secure Encrypted Virtualization).
+    Valid values:  0, 1 (default if CPU family is 17h or 19h)
+
     STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker
     driver.
     Valid values:  0, 1 (default).

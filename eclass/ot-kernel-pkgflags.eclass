@@ -7496,6 +7496,74 @@ ot-kernel-pkgflags_qemu() { # DONE
 		fi
 
 		# _ot-kernel_y_thp # slower but supported
+
+		local is_host=1
+		if lscpu | grep -q -e "Virtualization type:.*full" ; then
+			is_host=0
+		fi
+
+		# Encrypt virtual machine memory (SEV) and registers (SEV-ES)
+		if [[ \
+			   "${hardening_level}" == "default" \
+			|| "${hardening_level}" == "practical" \
+		]] ; then
+einfo "SEV is using defaults for KVM host"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
+		elif [[ \
+			   "${hardening_level}" == "performance" \
+			|| "${hardening_level}" == "trusted" \
+		]] ; then
+einfo "SEV is disabled for KVM host"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
+			ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=off"
+			ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
+		elif [[ \
+			   "${hardening_level}" == "untrusted" \
+			|| "${hardening_level}" == "untrusted-distant" \
+		]] ; then
+			# Increase security
+			local sev=0
+			for o in $(cat "${path}" | sed -e "s|^$|;|") ; do
+				# Support multiple sockets / NUMA
+				echo "${o}" \
+					| grep -q -e "AuthenticAMD" \
+					|| continue
+				local cpu_family=$(echo "${o}" \
+					| grep "cpu family" \
+					| grep -o -E -e "[0-9]+")
+				local cpu_model_name=$(echo "${o}" \
+					| grep "model name" \
+					| cut -f 2 -d ":" \
+					| sed -e "s|^ ||g")
+				if [[ "${cpu_family}" =~ ("17"|"19") ]] ; then
+					sev=1
+				fi
+			done
+			if [[ ${SEV:-1} =~ "1" ]] && (( ${sev} == 1 )) && (( ${is_host} == 1 )) ; then
+				if has_version "sys-kernel/linux-firmware" ; then
+eerror
+eerror "Install sys-kernel/linux-firmware first to install SEV firmware."
+eerror
+				fi
+einfo "SEV is enabled for KVM host"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
+				ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=on"
+				ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=1"
+			else
+				if (( ${is_host} == 1 )) ; then
+einfo "SEV is disabled for KVM host"
+					ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
+					ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
+				else
+einfo "SEV is using defaults for KVM guest"
+					ot-kernel_unset_pat_kconfig_kernel_cmdline="kvm_amd.sev=[01]"
+					ot-kernel_unset_pat_kconfig_kernel_cmdline="mem_encrypt=(on|off)"
+				fi
+			fi
+		fi
 	fi
 }
 
@@ -9956,6 +10024,8 @@ eerror "Both ZEN_DOM0 or ZEN_DOMU cannot be enabled at the same time."
 		# _ot-kernel_y_thp # References it but unknown apparent performance gain/loss
 
 		# LDT referenced
+
+		# SEV is not supported yet.
 	fi
 }
 

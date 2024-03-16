@@ -199,9 +199,11 @@ fi
 
 # For firmware security update availability, see
 # https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
+# SEV firmware mitigations needs to be bumped also.
+# Search "SEV FW" version and "μcode" for patch number to bump versions below.
 LINUX_FIRMWARE_PV="20230625_p20230724" # Based on latest available patch level cross referenced to the μcode column.
 LINUX_FIRMWARE_TIMESTAMP="2023-07-24 08:29:07 -0400" # Same as above from the git log.
-INTEL_MICROCODE_PV="20231114_p20231114"
+INTEL_MICROCODE_PV="20240312_p20240312"
 RDEPEND+="
 	intel-microcode? (
 		>=sys-firmware/intel-microcode-${INTEL_MICROCODE_PV}
@@ -3503,6 +3505,7 @@ ot-kernel_clear_env() {
 	unset QEMU_GUEST_LINUX
 	unset QEMU_HOST
 	unset QEMU_KVMGT
+	unset SEV
 	unset USB_FLASH_EXT2
 	unset USB_FLASH_EXT4
 	unset USB_FLASH_F2FS
