@@ -7514,35 +7514,35 @@ einfo "Page size:  4 KB" # 32-bit
 einfo "Page size:  4 KB"
 	fi
 	if [[ -n "${AMDGPU_VM_FRAGMENT_SIZE}" ]] ; then
-		ot-kernel_unset_pat_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=(-1|4|5|6|7|8|9)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=(-1|4|5|6|7|8|9)"
 		if [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "clear" ]] ; then
 einfo "amdgpu.vm_fragment_size:   (autodetect, cleared)"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "-1" ]] ; then
 einfo "amdgpu.vm_fragment_size:  -1 (autodetect)"
-			ot-kernel_set_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=-1"
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=-1"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "4" ]] ; then
 einfo "amdgpu.vm_fragment_size:  4 (4 KB)"
-			ot-kernel_set_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=4"
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=4"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "5" ]] ; then
 einfo "amdgpu.vm_fragment_size:  5 (128 KB)"
-			ot-kernel_set_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=5"
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=5"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "6" ]] ; then
 einfo "amdgpu.vm_fragment_size:  6 (256 KB)"
-			ot-kernel_set_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=6"
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=6"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "7" ]] ; then
 einfo "amdgpu.vm_fragment_size:  7 (512 KB)"
-			ot-kernel_set_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=7"
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=7"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "8" ]] ; then
 einfo "amdgpu.vm_fragment_size:  8 (1 MB)"
-			ot-kernel_set_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=8"
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=8"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "9" ]] ; then
 einfo "amdgpu.vm_fragment_size:  9 (2 MB)"
-			ot-kernel_set_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=9"
+			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=9"
 		else
 einfo "amdgpu.vm_fragment_size:   (autodetect, default)"
 		fi
 	else
-		ot-kernel_unset_pat_kconfig_kernel_cmdline="amdgpu.vm_fragment_size=(-1|4|5|6|7|8|9)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=(-1|4|5|6|7|8|9)"
 	fi
 }
 
