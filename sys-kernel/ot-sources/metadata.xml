@@ -1529,9 +1529,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
     OT_KERNEL_HARDENING_LEVEL - sets the hardening level based on the level of
     trust.  In these ebuilds and eclasses -- security hardening flags, CFI,
-    KCFI, and SCS (ShadowCallStack) -- get enabled when set to untrusted or
-    untrusted-distant.  To disable them, it is set to trusted.  Trusted is
-    synonymous for performance.
+    KCFI, and SCS (ShadowCallStack) -- get enabled when set to secure-af.
 
     Setting to trusted also allows to use io_uring for more performance at the
     expense of security.
