@@ -7537,7 +7537,7 @@ einfo "SEV is disabled for KVM host"
 					| grep "model name" \
 					| cut -f 2 -d ":" \
 					| sed -e "s|^ ||g")
-				if [[ "${cpu_family}" =~ ("17"|"19") ]] ; then
+				if [[ "${cpu_family}" =~ ("23"|"25") ]] ; then
 					sev=1
 				fi
 			done
