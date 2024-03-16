@@ -9,14 +9,15 @@ MY_PN="OpenXR-SDK-Source"
 NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( python3_{8..11} )
 XORG_SERVER_PV="21.1.4"
-ORG_GH="https://github.com/KhronosGroup"
 
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
 
+KEYWORDS="~amd64"
 SRC_URI="
-${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
+https://github.com/KhronosGroup/${MY_PN}/archive/release-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
+S="${WORKDIR}/${MY_PN}-release-${PV}"
 
 DESCRIPTION="Generated headers and sources for OpenXR loader."
 LICENSE="
@@ -26,7 +27,6 @@ LICENSE="
 	MIT
 "
 # See also https://github.com/KhronosGroup/OpenXR-SDK-Source/blob/release-1.0.18/.reuse/dep5
-KEYWORDS="~amd64"
 HOMEPAGE="https://khronos.org/openxr"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -104,7 +104,6 @@ BDEPEND+="
 		>=sys-devel/gcc-11.2.0
 	)
 "
-S="${WORKDIR}/${MY_PN}-release-${PV}"
 
 src_configure() {
 	export CC=$(tc-getCC)
