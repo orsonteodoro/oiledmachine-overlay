@@ -3661,6 +3661,7 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0 (default), 1
     Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is secure-af
     which enables full hardening.
+    See also:  OT_KERNEL_SME
 
     STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker
     driver.
