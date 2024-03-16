@@ -4,6 +4,7 @@
 
 EAPI=8
 
+LOCAL_INSTALL_URI="file:///usr/share/xpra/www/index.html"
 PYTHON_COMPAT=( python3_{8..11} )
 WEBAPP_MANUAL_SLOT="yes"
 
@@ -74,7 +75,6 @@ BDEPEND+="
 PDEPEND+="
 	>=x11-wm/xpra-5
 "
-LOCAL_INSTALL_URI="file:///usr/share/xpra/www/index.html"
 
 pkg_setup()
 {
