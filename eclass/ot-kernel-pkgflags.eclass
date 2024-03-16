@@ -7544,7 +7544,7 @@ einfo "SEV is disabled for KVM ${machine_type}"
 					sev=1
 				fi
 			done
-			if [[ ${SEV:-1} =~ "1" ]] && (( ${sev} == 1 )) ; then
+			if [[ ${SEV:-0} =~ "1" ]] && (( ${sev} == 1 )) ; then
 				if ! has_version "sys-kernel/linux-firmware" ; then
 eerror
 eerror "Install sys-kernel/linux-firmware first to install SEV firmware."

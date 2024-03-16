@@ -3663,6 +3663,7 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:  OT_KERNEL_SME
     Notes:  Value valid only when OT_KERNEL_HARDENING_LEVEL is secure-af.
     It requires AMD CPU family 17h (2017) or 19h (2021).
+    Before you use SEV, please test OT_KERNEL_SME first because SME can break boot.
 
     STD_PC_SPEAKER - Add support for the PC speaker with the standard PC speaker
     driver.
