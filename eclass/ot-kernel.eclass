@@ -6081,10 +6081,12 @@ eerror
 		if tc-is-gcc ; then
 			ot-kernel_y_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
-		if [[ "${cpu_sched}" =~ "cfs" && "${HT:-3}" =~ ("1"|"2"|"3") ]] ; then
+		if [[ "${cpu_sched}" =~ "cfs" && "${HT:-3}" =~ ("1"|"2"|"3"|"custom"|"manual") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
 ewarn "The behavior the HT environment variable has changed.  See metadata.xml for details."
-			if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
+			if [[ "${HT}" =~ ("custom"|"manual") ]] ; then
+				:
+			elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
 			elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "powerpc" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
