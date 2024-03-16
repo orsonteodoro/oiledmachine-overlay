@@ -6,4 +6,16 @@
     <email>perfinion@gentoo.org</email>
     <name>Jason Zaman</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild package is not eagerly bumped.  Bumps depend on TensorFlow having
+  the same abseil-cpp and protobuf dependency slot/subslot.  This is to avoid
+  the multiple packages message below:
+
+!!! Multiple package instances within a single package slot have been pulled
+!!! into the dependency graph, resulting in a slot conflict:
+
+  -->
 </pkgmetadata>
