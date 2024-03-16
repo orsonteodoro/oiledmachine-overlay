@@ -82,13 +82,16 @@ pkg_setup()
 	python-any-r1_pkg_setup
 
 	if ( use menu-only || use apache ) \
-	&& [[ -z "${XPRA_HTML5_BROWSER}" && -z "${XPRA_HTML5_PROTO}" \
-		&& -z "${XPRA_HTML5_SERVER}" && -z "${XPRA_HTML5_PORT}" ]] ; then
+		&& \
+	[[ \
+		   -z "${XPRA_HTML5_BROWSER}" \
+		&& -z "${XPRA_HTML5_SERVER}" \
+		&& -z "${XPRA_HTML5_PORT}" \
+	]] ; then
 eerror
-eerror "You must set XPRA_HTML5_BROWSER, XPRA_HTML5_PROTO, XPRA_HTML5_SERVER,"
-eerror "XPRA_HTML5_PORT to able to be able to set the browser path for a"
-eerror "desktop menu entry.  See \`epkginfo -x www-apps/xpra-html5\` for"
-eerror "details."
+eerror "You must set XPRA_HTML5_BROWSER, XPRA_HTML5_SERVER, XPRA_HTML5_PORT to"
+eerror "able to be able to set the browser path for a desktop menu entry.  See"
+eerror "\`epkginfo -x www-apps/xpra-html5\` for details."
 eerror
 		die
 	fi
@@ -216,20 +219,22 @@ einfo "${EPYTHON} ./setup.py install \"${D}\" ${minifier}"
 	fi
 
 	if ( use apache || use menu-only ) \
-	&& [[ -n "${XPRA_HTML5_BROWSER}" && -n "${XPRA_HTML5_PROTO}" \
-		&& -n "${XPRA_HTML5_SERVER}" && -n "${XPRA_HTML5_PORT}" ]] ; then
+	&& [[ \
+		   -n "${XPRA_HTML5_BROWSER}" \
+		&& -n "${XPRA_HTML5_SERVER}" \
+		&& -n "${XPRA_HTML5_PORT}" \
+	]] ; then
 		local iconp="${MY_HTDOCSDIR}/favicon.png"
 		if use menu-only ; then
 			iconp=""
 		fi
-
 einfo
 einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER} with"
 einfo "http://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
 einfo
-
+		local proto=$(usex ssl "https" "http")
 		make_desktop_entry \
-			"${XPRA_HTML5_BROWSER} ${XPRA_HTML5_PROTO}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}" \
+			"${XPRA_HTML5_BROWSER} ${proto}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}" \
 			"${PN}" \
 			"${iconp}" \
 			"Network;VideoConference"
@@ -244,6 +249,7 @@ einfo "Adding menu for ${PN} using ${XPRA_HTML5_BROWSER}"
 }
 
 pkg_postinst() {
+	local proto=$(usex ssl "https" "http")
 	if use apache ; then
 		webapp_pkg_postinst
 ewarn "The apache2 server must be restarted."
@@ -259,7 +265,7 @@ einfo
 	if use apache || use menu-only ; then
 einfo
 einfo "To use the browser only client, you enter for the URI:"
-einfo "${XPRA_HTML5_PROTO}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
+einfo "${proto}://${XPRA_HTML5_SERVER}:${XPRA_HTML5_PORT}"
 einfo
 	elif use local ; then
 einfo

@@ -12,7 +12,6 @@
 
     XPRA_HTML5_BROWSER - sets the browser for the menu item
     XPRA_HTML5_PORT    - sets the port to access the xpra-html5 frontend
-    XPRA_HTML5_PROTO   - set to either "http" or "https"
     XPRA_HTML5_SERVER  - sets the hostname or IP address of the server to access
                          the xpra-html5 frontend.  Use localhost for this
                          computer.
@@ -22,7 +21,6 @@
     Contents of /etc/portage/env/xpra.conf:
     XPRA_HTML5_BROWSER="firefox"
     XPRA_HTML5_PORT="4443"
-    XPRA_HTML5_PROTO="https"
     XPRA_HTML5_SERVER="localhost"
 
     Contents of /etc/portage/package.env:
@@ -62,7 +60,7 @@
       Enables minifying the client.
     </flag>
     <flag name="ssl">
-      Setup ssl support
+      Setup ssl support or set https in menu-only link.
     </flag>
     <flag name="vhosts">
       Disable for localhost install.  Enable for manual install with webapp-config.
