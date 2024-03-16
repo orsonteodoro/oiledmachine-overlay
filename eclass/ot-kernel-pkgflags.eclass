@@ -4682,7 +4682,7 @@ ot-kernel-pkgflags_iucode() {
 
 			if ! which iucode_tool 2>/dev/null 1>/dev/null ; then
 ewarn "Missing iucode_tool"
-			elif iucode_tool ${args[@]} -l /lib/firmware/intel-ucode/* ; then
+			elif iucode_tool ${args[@]} -l "/lib/firmware/intel-ucode/"* ; then
 				local signatures=( \
 					$(iucode_tool ${args[@]} -l "/lib/firmware/intel-ucode/"* \
 						| grep -o -E -e "0x[0-9a-f]+") \
@@ -4692,11 +4692,11 @@ ewarn "Missing iucode_tool"
 					#    fm fms # initials lo
 					#0123456789 # bash string index
 					#0x000306c3 # processor signature
-					local ef=${signature:4:1}
-					local f=${signature:7:1}
-					local em=${signature:5:1}
-					local m=${signature:8:1}
-					local s=${signature:9:1}
+					local ef="${signature:4:1}"
+					local f="${signature:7:1}"
+					local em="${signature:5:1}"
+					local m="${signature:8:1}"
+					local s="${signature:9:1}"
 					local fn="${ef}${f}-${em}${m}-${s}"
 					if ! [[ -e "/lib/firmware/intel-ucode/${fn}" ]] ; then
 eerror "/lib/firmware/intel-ucode/${fn} is missing"
@@ -5406,21 +5406,21 @@ eerror
 					| grep "model name" \
 					| cut -f 2 -d ":" \
 					| sed -e "s|^ ||g")
-				if [[ "${cpu_family}" =~ (16|17|18|20) ]] ; then
+				  if [[ "${cpu_family}" =~ ("16"|"17"|"18"|"20") ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd.bin"
-				elif [[ "${cpu_family}" =~ 21 ]] ; then
+				elif [[ "${cpu_family}" =~ "21" ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd_fam15h.bin"
-				elif [[ "${cpu_family}" =~ 22 ]] ; then
+				elif [[ "${cpu_family}" =~ "22" ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd_fam16h.bin"
-				elif [[ "${cpu_family}" =~ 23 && "${cpu_model_name}" =~ "zen" ]] ; then
+				elif [[ "${cpu_family}" =~ "23" && "${cpu_model_name}" =~ "zen" ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd_fam17h.bin"
-				elif [[ "${cpu_family}" =~ "EPYC 7"..1 ]] ; then
+				elif [[ "${cpu_family}" =~ "23" && "${cpu_model_name}" =~ "EPYC 7".."1" ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd/amd_sev_fam17h_model0xh.sbin"
-				elif [[ "${cpu_family}" =~ "EPYC 7"..2 ]] ; then
+				elif [[ "${cpu_family}" =~ "23" && "${cpu_model_name}" =~ "EPYC 7".."2" ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd/amd_sev_fam17h_model3xh.sbin"
-				elif [[ "${cpu_family}" =~ 25 && "${cpu_model_name}" =~ "zen" ]] ; then
+				elif [[ "${cpu_family}" =~ "25" && "${cpu_model_name}" =~ "zen" ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd-ucode/microcode_amd_fam19h.bin"
-				elif [[ "${cpu_family}" =~ "EPYC 7"..3 ]] ; then
+				elif [[ "${cpu_family}" =~ "25" && "${cpu_model_name}" =~ "EPYC 7".."3" ]] ; then
 					bucket["${cpu_family}:${cpu_model_name}"]="amd/amd_sev_fam19h_model0xh.sbin"
 				fi
 			done
