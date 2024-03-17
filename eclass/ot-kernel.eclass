@@ -7572,6 +7572,20 @@ ot-kernel_set_kconfig_pcie_mps() {
 	fi
 }
 
+# @FUNCTION: _ot-kernel_disable_clang_pgi
+# @DESCRIPTION:
+# Disable clang -fprofile-generate
+_ot-kernel_disable_clang_pgi() {
+	if [[ "${NEEDS_DEBUGFS}" == "1" ]] ; then
+ewarn "debugfs disabled failed.  Unfortunately, a package still requires it."
+	else
+einfo "debugfs disabled success"
+		ot-kernel_unset_configopt "CONFIG_DEBUG_FS"
+	fi
+
+	ot-kernel_unset_configopt "CONFIG_PGO_CLANG"
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_clang
 # @DESCRIPTION:
 # Sets the kernel config for Profile Guided Optimizations (PGO) for the configure phase.
@@ -7722,15 +7736,7 @@ ewarn
 			echo "${fingerprint}" > "${pgo_compiler_fingerprint_file}"
 		elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_PGT}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
 einfo "Forcing PGO flags and config"
-
-			if [[ "${NEEDS_DEBUGFS}" == "1" ]] ; then
-ewarn "debugfs disabled failed.  Unfortunately, a package still requires it."
-			else
-einfo "debugfs disabled success"
-				ot-kernel_n_configopt "CONFIG_DEBUG_FS"
-			fi
-
-			ot-kernel_n_configopt "CONFIG_PGO_CLANG"
+			_ot-kernel_disable_clang_pgi
 		fi
 	fi
 }
@@ -11677,11 +11683,13 @@ eerror
 					"${profraw_dpath}" || die "PGO profile merging failed"
 				pgo_phase="${PGO_PHASE_PGO}"
 				echo "${pgo_phase}" > "${pgo_phase_statefile}" || die
+				_ot-kernel_disable_clang_pgi
 einfo "Building PGO"
 				args+=(
 					"KCFLAGS=-fprofile-use=${profdata_dpath}"
 				)
 			elif [[ "${pgo_phase}" =~ ("${PGO_PHASE_PGO}"|"${PGO_PHASE_DONE}") && -e "${profdata_dpath}" ]] ; then
+				_ot-kernel_disable_clang_pgi
 # For resuming or rebuilding as PGO phase
 einfo "Building PGO"
 				args+=(
