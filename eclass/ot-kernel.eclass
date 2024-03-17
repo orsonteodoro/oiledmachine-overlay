@@ -1326,10 +1326,7 @@ dump_profraw() {
 	if ! [[ -e "${profraw_spath}" ]] ; then
 		profraw_spath="/sys/kernel/debug/pgo/profraw" # old patch
 	fi
-	if ! [[ -e "${profraw_spath}" ]] ; then
-ewarn "Could not find Clang PGO profile data.  Dump skipped."
-		return
-	fi
+	[[ -e "${profraw_spath}" ]] || return
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
@@ -1367,10 +1364,7 @@ dump_gcda() {
 #/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-6.5.2/work/linux-6.5.2-builder/sound/usb/clock.gcda ; profile data
 	local workdir
 	local s
-	if ! [[ -e "/sys/kernel/debug/gcov/var" ]] ; then
-ewarn "Could not find GCC PGO profile data.  Dump skipped."
-		return
-	fi
+	[[ -e "/sys/kernel/debug/gcov/var" ]] || return
 	cd "/sys/kernel/debug/gcov" || die
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
