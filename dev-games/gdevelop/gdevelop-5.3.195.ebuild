@@ -694,7 +694,7 @@ https://registry.npmjs.org/find-up/-/find-up-4.1.0.tgz -> npmpkg-find-up-4.1.0.t
 https://registry.npmjs.org/path-exists/-/path-exists-4.0.0.tgz -> npmpkg-path-exists-4.0.0.tgz
 https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.1.2.tgz -> npmpkg-prelude-ls-1.1.2.tgz
 https://registry.npmjs.org/preserve/-/preserve-0.2.0.tgz -> npmpkg-preserve-0.2.0.tgz
-https://registry.npmjs.org/prettier/-/prettier-2.1.2.tgz -> npmpkg-prettier-2.1.2.tgz
+https://registry.npmjs.org/prettier/-/prettier-3.2.2.tgz -> npmpkg-prettier-3.2.2.tgz
 https://registry.npmjs.org/pretty-bytes/-/pretty-bytes-4.0.2.tgz -> npmpkg-pretty-bytes-4.0.2.tgz
 https://registry.npmjs.org/pretty-format/-/pretty-format-29.7.0.tgz -> npmpkg-pretty-format-29.7.0.tgz
 https://registry.npmjs.org/ansi-styles/-/ansi-styles-5.2.0.tgz -> npmpkg-ansi-styles-5.2.0.tgz
