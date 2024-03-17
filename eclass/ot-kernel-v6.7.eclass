@@ -975,7 +975,7 @@ einfo "Already applied ${path} upstream"
 
 	elif [[ "${path}" =~ "${CLANG_PGO_FN}" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 5 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-v9-fixes-for-6.7.4.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-v9-fixes-for-6.7.10.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-__no_profile-for-6.5.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-kconfig-depends-not-ARCH_WANTS_NO_INSTR-or-CC_HAS_NO_PROFILE_FN_ATTR.patch"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/clang-pgo-support-profraw-v6-to-v8.patch"

@@ -1,0 +1,49 @@
+--- a/Documentation/dev-tools/index.rst.orig	2024-03-10 13:38:09.000000000 -0700
++++ b/Documentation/dev-tools/index.rst	2024-03-16 17:06:27.025759630 -0700
+@@ -32,6 +32,7 @@ Documentation/dev-tools/testing-overview
+    kunit/index
+    ktap
+    checkuapi
++   pgo
+ 
+ 
+ .. only::  subproject and html
+--- a/Makefile.orig	2024-03-16 17:04:27.262782304 -0700
++++ b/Makefile	2024-03-16 17:07:08.901401896 -0700
+@@ -746,6 +746,9 @@ endif # KBUILD_EXTMOD
+ # Defaults to vmlinux, but the arch makefile usually adds further targets
+ all: vmlinux
+ 
++CFLAGS_PGO_CLANG := -fprofile-generate
++export CFLAGS_PGO_CLANG
++
+ CFLAGS_GCOV	:=
+ CFLAGS_GCOV_DEFAULT	:= 1
+ 
+--- a/arch/x86/Kconfig.orig	2024-03-16 17:04:17.766863363 -0700
++++ b/arch/x86/Kconfig	2024-03-16 17:07:38.837146113 -0700
+@@ -119,6 +119,7 @@ config X86
+ 	select ARCH_USES_CFI_TRAPS		if X86_64 && CFI_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
++	select ARCH_SUPPORTS_PGO_CLANG		if X86_64
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF		if X86_CMPXCHG64
+ 	select ARCH_USE_MEMTEST
+--- a/arch/x86/um/vdso/Makefile.orig	2024-03-10 13:38:09.000000000 -0700
++++ b/arch/x86/um/vdso/Makefile	2024-03-16 17:07:58.384979067 -0700
+@@ -67,3 +67,4 @@ quiet_cmd_vdso = VDSO    $@
+ 
+ VDSO_LDFLAGS = -fPIC -shared -Wl,--hash-style=sysv -z noexecstack
+ GCOV_PROFILE := n
++PGO_PROFILE := n
+--- a/kernel/Makefile.orig	2024-03-10 13:38:09.000000000 -0700
++++ b/kernel/Makefile	2024-03-16 17:08:18.928803491 -0700
+@@ -115,6 +115,7 @@ obj-$(CONFIG_HAVE_STATIC_CALL) += static
+ obj-$(CONFIG_HAVE_STATIC_CALL_INLINE) += static_call_inline.o
+ obj-$(CONFIG_CFI_CLANG) += cfi.o
+ obj-$(CONFIG_NUMA) += numa.o
++obj-$(CONFIG_PGO_CLANG) += pgo/
+ 
+ obj-$(CONFIG_PERF_EVENTS) += events/
+ 
