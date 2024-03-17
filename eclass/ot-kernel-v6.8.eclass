@@ -1015,7 +1015,7 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-2bab755-fix-for-6.7.4.patch"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-5ab6f73.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-5ab6f73-fix-for-6.8.0_rc4-7e90b5c.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-v2alpha-2022-08-28-5.13.12-5ab6f73-fix-for-6.8.1.patch"
 
 	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-9cb2d74.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
