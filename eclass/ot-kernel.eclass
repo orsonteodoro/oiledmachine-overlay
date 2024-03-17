@@ -11653,7 +11653,8 @@ ot-kernel_build_kernel() {
 einfo "Building PGI"
 			elif [[ "${pgo_phase}" == "${PGO_PHASE_PGT}" && -e "${profraw_dpath}" ]] ; then
 einfo "Merging PGT profiles"
-				PATH="/usr/lib/llvm/$(clang-major-version)/bin" \
+einfo "DEBUG:  clang-major-version=$(clang-major-version)"
+				PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
 				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
 				local actual_profraw_ver=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
 				local expected_profraw_ver=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc" \
