@@ -6,11 +6,11 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (6.0)
+# ab = WEBKITGTK_API_VERSION version (4.1)
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 LLVM_COMPAT=( 14 )
@@ -26,7 +26,7 @@ inherit linux-info llvm multilib-minimal pax-utils python-any-r1 ruby-single
 inherit toolchain-funcs uopts
 inherit cflags-depends
 
-DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -292,20 +292,20 @@ LICENSE="
 # || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) Source/WTF/wtf/DateMath.h
 # * The public-domain is not presented in LICENSE variable to not give
 #   the wrong impression that the entire package is released in the public domain.
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
+#KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="6.0"
+API_VERSION="4.1"
 UOPTS_IMPLS="_${API_VERSION}"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 6.0
-CURRENT="8"
+# WEBKITGTK_API_VERSION is 4.1
+CURRENT="13"
 #REVISION=""
-AGE="4"
+AGE="13"
 SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${API_VERSION%.*}/${SOVERSION}"
+SLOT="${API_VERSION}/${SOVERSION}"
 # SLOT=6/4    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
@@ -324,7 +324,7 @@ tr uk vi zh_CN
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 GST_ACODECS_IUSE="
 aac
@@ -358,7 +358,7 @@ MSE_VCODECS_IUSE="
 "
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS="
 +a52
 -aac
@@ -385,6 +385,7 @@ DEFAULT_GST_PLUGINS="
 # alsa is disabled on D11, enabled on A/L, enabled in F/L
 # D11, A/L, F/L are currently not distributing stateless vaapi decoding.
 # Using dav1d because aom is slow for decoding.
+# libbacktrace is enabled upstream but disabled for security reasons.
 
 IUSE+="
 ${LANGS[@]/#/l10n_}
@@ -398,13 +399,13 @@ ${DEFAULT_GST_PLUGINS}
 aqua +avif +bmalloc -cache-partitioning cpu_flags_arm_thumb2
 dash +dfg-jit +doc -eme +ftl-jit -gamepad +gbm +geolocation gles2 gnome-keyring
 +gstreamer gstwebrtc hardened +introspection +javascriptcore +jit +journald
-+jpeg2k +jpegxl +lcms +libhyphen -libwebrtc -mediarecorder -mediastream
-+minibrowser mold +opengl openmp proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
--seccomp speech-synthesis -spell test thunder +unified-builds +variation-fonts
-wayland +webassembly +webassembly-b3-jit +webassembly-bbq-jit +webcore
-+webcrypto -webdriver +webgl webm-eme -webrtc webvtt -webxr +woff2 +X
-+yarr-jit
++jpegxl +lcms -libbacktrace +libhyphen -libwebrtc -mediarecorder
+-mediastream +minibrowser mold +opengl openmp proprietary-codecs
+proprietary-codecs-disable proprietary-codecs-disable-nc-developer
+proprietary-codecs-disable-nc-user -seccomp speech-synthesis -spell test thunder
++unified-builds +variation-fonts wayland +webassembly +webassembly-b3-jit
++webassembly-bbq-jit +webassembly-omg-jit +webcore -webdriver +webgl
+webm-eme -webrtc webvtt -webxr +woff2 +X +yarr-jit
 "
 
 gen_gst_plugins_duse() {
@@ -605,8 +606,13 @@ REQUIRED_USE+="
 	webassembly-b3-jit? (
 		ftl-jit
 		webassembly
+		webassembly-omg-jit
 	)
 	webassembly-bbq-jit? (
+		webassembly
+		webassembly-b3-jit
+	)
+	webassembly-omg-jit? (
 		webassembly
 		webassembly-b3-jit
 	)
@@ -628,7 +634,6 @@ REQUIRED_USE+="
 			libwebrtc
 		)
 		mediastream
-		webcrypto
 	)
 	webvtt? (
 		gstreamer
@@ -657,17 +662,17 @@ REQUIRED_USE+="
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.42.5/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.44.0/Tools/glib/dependencies
 #   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
 #   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
 
@@ -691,11 +696,6 @@ REQUIRED_USE+="
 #
 # >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE
 #  [Media Source Extensions])
-# gstreamer requires >=libwpe-1.9.0 but gtk wpe renderer requires >=1.3.0
-WPE_DEPEND="
-	>=gui-libs/libwpe-1.9.0:1.0[${MULTILIB_USEDEP}]
-	>=gui-libs/wpebackend-fdo-1.6.0:1.0[${MULTILIB_USEDEP}]
-"
 # TODO: gst-plugins-base[X] is only needed when build configuration ends up with
 #   GLX set, but that's a bit automagic too to fix
 # Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
@@ -705,7 +705,7 @@ CAIRO_PV="1.16.0"
 CLANG_PV="13"
 CXX_STD="20"
 GCC_PV="10.2.0"
-GLIB_PV="2.70.0"
+GLIB_PV="2.56.4"
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
@@ -714,7 +714,7 @@ MESA_PV="18.0.0_rc5"
 # xdg-dbus-proxy is using U 20.04 version
 OCDM_WV="virtual/libc" # Placeholder
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.42.5
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
@@ -776,21 +776,21 @@ RDEPEND+="
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
-	>=dev-libs/libgcrypt-1.6.0:0=[${MULTILIB_USEDEP}]
+	>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
-	>=gui-libs/gtk-4.4.0:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
 	>=media-libs/lcms-2.9[${MULTILIB_USEDEP}]
-	>=media-libs/libepoxy-1.4.0[${MULTILIB_USEDEP}]
+	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
 	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
+	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	alsa? (
 		!media-plugins/gst-plugins-pulse
@@ -869,11 +869,11 @@ RDEPEND+="
 			sys-auth/elogind
 		)
 	)
-	jpeg2k? (
-		>=media-libs/openjpeg-2.2.0:2=[${MULTILIB_USEDEP}]
-	)
 	jpegxl? (
 		>=media-libs/libjxl-0.7.0[${MULTILIB_USEDEP}]
+	)
+	libbacktrace? (
+		sys-libs/libbacktrace[${MULTILIB_USEDEP}]
 	)
 	libhyphen? (
 		>=dev-libs/hyphen-2.8.8[${MULTILIB_USEDEP}]
@@ -928,13 +928,9 @@ RDEPEND+="
 		>=x11-libs/cairo-1.16:=[${MULTILIB_USEDEP},X?]
 	)
 	wayland? (
-		${WPE_DEPEND}
 		>=dev-libs/wayland-1.15.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+)]
-	)
-	webcrypto? (
-		>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
 	)
 	webm-eme? (
 		${OCDM_WV}
@@ -947,19 +943,13 @@ RDEPEND+="
 	)
 	X? (
 		>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
-		>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
-		>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrender-0.9.10[${MULTILIB_USEDEP}]
-		>=x11-libs/libXt-1.1.5[${MULTILIB_USEDEP}]
 	)
 "
 # For ${OCDM_WV}, \
 #   You need a license, the proprietary SDK, and OCDM plugin.
 # see https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L97
-unset WPE_DEPEND
 DEPEND+=" ${RDEPEND}"
 # paxctl is needed for bug #407085
-# It needs real bison, not yacc.
 
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -972,7 +962,6 @@ BDEPEND+="
 	>=dev-util/glib-utils-${GLIB_PV}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-util/unifdef-2.10
-	>=sys-devel/bison-3.0.4
 	>=sys-devel/gettext-0.19.8.1[${MULTILIB_USEDEP}]
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
@@ -993,11 +982,11 @@ BDEPEND+="
 		>=dev-util/gperf-3.0.1
 	)
 	|| (
-		$(gen_depend_llvm)
 		>=sys-devel/gcc-12.2.0:12
 		>=sys-devel/gcc-11.2:11
 	)
 "
+#		$(gen_depend_llvm)
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
 #		>=x11-themes/hicolor-icon-theme-0.17
@@ -1033,6 +1022,7 @@ RESTRICT="test"
 S="${WORKDIR}/webkitgtk-${PV}"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 _PATCHES=(
+	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
 )
 
@@ -1042,7 +1032,7 @@ _set_cxx() {
 	# Based on D 11, D 12, U 22.04
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
-		if tc-is-gcc ; then
+		if true || tc-is-gcc ; then
 			if has_version "sys-devel/gcc:12" ; then
 				export CC="${CHOST}-gcc-12"
 				export CXX="${CHOST}-g++-12"
@@ -1051,7 +1041,8 @@ _set_cxx() {
 				export CXX="${CHOST}-g++-11"
 			fi
 		fi
-		if tc-is-clang && has_version "sys-devel/clang:14" ; then
+		if false && tc-is-clang && has_version "sys-devel/clang:14" ; then
+ewarn "Building for clang may be broken.  Use gcc instead by changing CC=gcc CXX=g++."
 			export CC="${CHOST}-clang-14"
 			export CXX="${CHOST}-clang++-14"
 		fi
@@ -1926,10 +1917,6 @@ ewarn
 }
 
 pkg_setup() {
-ewarn
-ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
-ewarn "It is currently not recommended due to rendering bug(s)."
-ewarn
 einfo
 einfo "This is the stable branch."
 einfo
@@ -2180,6 +2167,7 @@ eerror
 		-DENABLE_MEDIA_STREAM=$(usex mediastream)
 		-DENABLE_MINIBROWSER=$(usex minibrowser)
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
+		-DENABLE_RELEASE_LOG=ON
 		-DENABLE_SPEECH_SYNTHESIS=$(usex speech-synthesis)
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_THUNDER=$(usex thunder)
@@ -2187,7 +2175,6 @@ eerror
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
-		-DENABLE_WEB_CRYPTO=$(usex webcrypto)
 		-DENABLE_WEB_RTC=$(usex webrtc)
 		-DENABLE_WEBCORE=$(usex webcore)
 		-DENABLE_WEBDRIVER=$(usex webdriver)
@@ -2199,14 +2186,13 @@ eerror
 		-DUSE_GBM=$(usex gbm)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=ON
+		-DUSE_GTK4=OFF
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
 		-DUSE_LCMS=$(usex lcms)
-		-DUSE_LIBBACKTRACE=OFF
+		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
-		-DUSE_OPENJPEG=$(usex jpeg2k)
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_SOUP2=OFF
 		-DUSE_WOFF2=$(usex woff2)
@@ -2221,16 +2207,6 @@ eerror
 	else
 		mycmakeargs+=(
 			-DCMAKE_DISABLE_FIND_PACKAGE_EGL=ON
-		)
-	fi
-
-	if use opengl || use gles2 ; then
-		mycmakeargs+=(
-			-DUSE_OPENGL_OR_ES=ON
-		)
-	else
-		mycmakeargs+=(
-			-DUSE_OPENGL_OR_ES=OFF
 		)
 	fi
 
@@ -2253,6 +2229,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_FTL_JIT=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=ON
 		)
 		if [[ "${ABI}" == "arm64" ]] && (( ${WK_PAGE_SIZE} == 64 )) ; then
@@ -2283,6 +2260,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ABI}" == "arm" ]] && use cpu_flags_arm_thumb2 ; then
@@ -2294,6 +2272,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_SAMPLING_PROFILER=$(usex jit)
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ARCH}" == "mips" || "${ARCH}" == "mipsel" || "${ARCH}" == "mips64" || "${ARCH}" == "mips64el" ]] \
@@ -2307,6 +2286,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=OFF
 			-DENABLE_WEBASSEMBLY_BBQJIT=OFF
+			-DENABLE_WEBASSEMBLY_OMGJIT=OFF
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	elif [[ "${ARCH}" == "riscv" ]] && (( ${pointer_size} == 8 )) ; then
@@ -2318,6 +2298,7 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 			-DENABLE_SAMPLING_PROFILER=OFF
 			-DENABLE_WEBASSEMBLY_B3JIT=$(usex webassembly-b3-jit)
 			-DENABLE_WEBASSEMBLY_BBQJIT=$(usex webassembly-bbq-jit)
+			-DENABLE_WEBASSEMBLY_OMGJIT=$(usex webassembly-omg-jit)
 			-DUSE_SYSTEM_MALLOC=$(usex !bmalloc)
 		)
 	else
@@ -2599,7 +2580,7 @@ multilib_src_install() {
 	cmake_src_install
 
 	# Prevent crashes on PaX systems, bug #522808
-	local d="${ED}/usr/$(get_libdir)/misc/webkitgtk-${API_VERSION}"
+	local d="${ED}/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
 	# usr/libexec is not multilib this is why it is changed.
 	pax-mark m "${d}/WebKitPluginProcess"
 	pax-mark m "${d}/WebKitWebProcess"
@@ -2607,7 +2588,7 @@ multilib_src_install() {
 
 	if use minibrowser ; then
 		make_desktop_entry \
-			/usr/$(get_libdir)/misc/webkitgtk-${API_VERSION}/MiniBrowser \
+			/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
 			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" \
 			"Network;WebBrowser"
@@ -2647,7 +2628,7 @@ pkg_postinst() {
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
 			ln -sf \
-"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkitgtk-${API_VERSION}/MiniBrowser" \
+"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser" \
 				"${EROOT}/usr/bin/minibrowser" || die
 		}
 		multilib_foreach_abi create_minibrowser_symlink_abi
@@ -2656,8 +2637,8 @@ einfo "The symlink for the minibrowser may need to change manually to select"
 einfo "the preferred ABI and/or API version which can be 4.0, 4.1, 5.0."
 einfo "Examples,"
 einfo
-einfo "\`ln -sf /usr/lib64/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
-einfo "\`ln -sf /usr/lib/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
 einfo
 	fi
 	check_geolocation
@@ -2698,36 +2679,20 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
 
 # OILEDMACHINE-OVERLAY-TEST:
-# with -O1, clang 15.0.7 (2.42.2, 20231202):
-#   minibrowser:  passed
-#   search engine(s):  passed
-#   video site(s):  fail (minibrowser), passed (surf)
-#   wiki(s):  passed
-
-# with -O2, gcc 12.3.1 (2.42.2, 20231203):
+# with -O2, clang 15.0.7 (2.43.1, 20231203):
 #   minibrowser:  passed
 #   search engine(s):  passed
 #   video site(s):  fail (minibrowser), passed (surf)
 #     vpx (streaming):  passed
-#     vpx (on demand):  passed (25 fps, 60 fps)
-#     opus:  passed
+#     vpx (on demand):  passed
+#     opus:  TBA
 #   wiki(s):  passed
-#   audio:  pass (alsa), pass (pulseaudio)
-#   stability:  less crashy overall
-#     freeze with coolercontrold, coolercontrol-ui
+#   audio:  TBA
+#   stability:  crashy within a few minutes
 
-# with -O3, clang 15.0.7 (2.42.2, 20231203):
-#   minibrowser:  passed
-#   search engine(s):  passed
-#   video site(s):  fail (minibrowser), passed (surf)
-#     vpx (streaming):  passed
-#     vpx (on demand):  passed (25 fps, 60 fps)
-#     av1/dav1d (on demand):  passed (30 fps)
-#     opus:  passed
-#     aac-lc:  passed
-#   wiki(s):  passed
-#   audio:  TBA (alsa), pass (pulseaudio)
-#   stability:  less crashy overall
-#   canvasmark 2013:  passed but slow (10-35 FPS, surf), passed but slow (17-41 FPS, minibrowser)
-#   gpu shader experiments:  passed (surf, 60 FPS), passed (minibrowser, 60 FPS)
-#   webgl aquarium:  passed (surf, 60 FPS), passed (minibrowser, 60 FPS)
+# with -O3 -jit* -gstreamer, gcc 12.3.1 (2.43.2, 20231207): pass
+# with -O3 -jit* +gstreamer, gcc 12.3.1 (2.43.2, 20231207): pass
+#   startup:  pass
+#   performance:  slow
+#   wiki:  pass
+#   video sites(s):  slow
