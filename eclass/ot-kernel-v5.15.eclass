@@ -26,8 +26,7 @@ MY_PV="${PV}" # ver_test context
 KERNEL_RELEASE_DATE="20211031" # of first stable release
 CXX_STD="-std=gnu++11" # See https://github.com/torvalds/linux/blob/v5.15/tools/build/feature/Makefile#L318
 GCC_COMPAT=( {13..5} )
-# clang pgo broken for profraw v9 (>=clang-18)
-LLVM_COMPAT=( {17..10} )
+LLVM_COMPAT=( {18..10} )
 CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
