@@ -1025,10 +1025,10 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-c20e56d-fix-for-6.6.0-git-6bc986a.patch"
 	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-4fef7ac.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-7542cc7-6.4.0-4fef7ac-fix-for-6.7.0-git-7e90b5c.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-7542cc7-6.4.0-4fef7ac-fix-for-6.8.1.patch"
 	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-a5cc006.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-7542cc7-6.4.0-a5cc006-fix-for-6.7.0-git-7e90b5c.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-7542cc7-6.4.0-a5cc006-fix-for-6.8.1.patch"
 	elif [[ "${path}" =~ "bbrv3-7542cc7-6.4.0-40f1ce9.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-40f1ce9-fix-for-6.6.0-git-6bc986a.patch"
