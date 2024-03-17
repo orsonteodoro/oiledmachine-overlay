@@ -735,8 +735,11 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-b8d3909-fix-for-5.10.160.patch"
 
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-5-10-194-orca-c2tcp-0521.patch"
-
+		if use bbrv2 ; then
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-5-10-213-orca-c2tcp-0521-bbr2-compat.patch"
+		else
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-5-10-213-orca-c2tcp-0521.patch"
+		fi
 	elif [[ "${path}" =~ "ck-0.205-5.10.0-35f6640.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \

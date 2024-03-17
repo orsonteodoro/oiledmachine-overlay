@@ -598,9 +598,7 @@ ot-kernel_filter_patch_cb() {
 			"${FILESDIR}/uksm-4.14-rebase-for-4.14.246.patch"
 
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/c2tcp-0521-fix-for-4.14.305.patch"
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-4-19-310-orca-c2tcp-0521.patch"
 
 	elif [[ "${path}" =~ "zen-sauce-4.19.0-7ab867e.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""

@@ -1,254 +1,7 @@
 Patch status:  Testing / WIP / In development
-diff -urpN linux-5.15.131-builder.orig/include/linux/tcp.h linux-5.15.131-builder/include/linux/tcp.h
---- linux-5.15.131-builder.orig/include/linux/tcp.h	2023-09-10 00:18:32.944875659 -0700
-+++ linux-5.15.131-builder/include/linux/tcp.h	2023-09-10 00:22:14.224882533 -0700
-@@ -137,6 +137,7 @@ struct tcp_request_sock {
- 	u8				syn_tos;
- };
- 
-+
- static inline struct tcp_request_sock *tcp_rsk(const struct request_sock *req)
- {
- 	return (struct tcp_request_sock *)req;
-@@ -412,6 +413,41 @@ struct tcp_sock {
- 	 * socket. Used to retransmit SYNACKs etc.
- 	 */
- 	struct request_sock __rcu *fastopen_rsk;
-+
-+	/* DeepCC Params*/
-+	u8	deepcc_enable;		/*1 => Only enable periodic reports and setting cwnd. */
-+							/*2 => (above) + enable deepcc pacing rate calculation*/
-+	struct {
-+		u32 min_urtt;
-+		u32 avg_urtt;
-+		u32 cnt;
-+		u64	avg_thr;		/* average throughput */
-+		u32	thr_cnt;		/* Number of sampled throughput for averaging it*/
-+		u32 pre_lost;		/* Total Number of Previously lost packets*/
-+	} deepcc_api;
-+
-+	/* Orca: min. cwnd*/
-+	u32  cwnd_min;
-+
-+	/* C2TCP Parameters */
-+	u32 first_above_time;
-+	u32 next_time;
-+	u32 cnt_rtt;
-+	u16 rec_inv_sqrt;
-+	u32 c2tcp_min_urtt;
-+	u32 c2tcp_avg_urtt;
-+	u32 c2tcp_cnt;
-+	u64	c2tcp_avg_thr;		/* average throughput */
-+	u32	c2tcp_thr_cnt;		/* Number of sampled throughput for averaging it*/
-+	/**
-+	 * Accessible settings (to Applications):
-+	 */
-+	u8  c2tcp_enable;
-+	u32 c2tcp_alpha;
-+//	u32 c2tcp_setpoint;
-+//	u32 c2tcp_interval;
-+	/*END of C2TCP*/
-+
- 	struct saved_syn *saved_syn;
- 
- /* Rerouting information */
-diff -urpN linux-5.15.131-builder.orig/include/net/tcp.h linux-5.15.131-builder/include/net/tcp.h
---- linux-5.15.131-builder.orig/include/net/tcp.h	2023-09-10 00:18:32.944875659 -0700
-+++ linux-5.15.131-builder/include/net/tcp.h	2023-09-10 00:22:14.256882534 -0700
-@@ -252,6 +252,37 @@ extern long sysctl_tcp_mem[3];
- #define TCP_RACK_STATIC_REO_WND  0x2 /* Use static RACK reo wnd */
- #define TCP_RACK_NO_DUPTHRESH    0x4 /* Do not use DUPACK threshold in RACK */
- 
-+/*
-+* Custom variables for sysctl Params
-+*/
-+extern unsigned int sysctl_tcp_bbr_enable_app_limited;
-+extern unsigned int sysctl_tcp_bbr_enable_lt_bw;
-+extern unsigned int sysctl_tcp_bbr_cwnd_rv_gain;
-+extern unsigned int sysctl_tcp_bbr_enable_maxdelay;
-+extern unsigned int sysctl_tcp_bbr_enable_probertt;
-+extern unsigned int sysctl_tcp_bbr_targetdelay;
-+extern unsigned int sysctl_bbr_min_rtt_win_sec;
-+extern unsigned int sysctl_bbr_probe_rtt_mode_ms;
-+extern unsigned int sysctl_tcp_bbr_bw_auto;
-+extern unsigned int sysctl_tcp_bbr_bw;
-+extern unsigned int sysctl_tcp_bbr_debug;
-+extern unsigned int sysctl_tcp_bbr_init_cwnd;
-+
-+/*
-+ * DeepCC
-+ *
-+ */
-+extern int sysctl_tcp_deepcc_enable;
-+#define CWND_GAIN_SCALE  100;
-+
-+/* C2TCP */
-+extern int sysctl_tcp_c2tcp_enable;
-+/**End*/
-+
-+/*
-+* End of custom variables
-+*/
-+
- extern atomic_long_t tcp_memory_allocated;
- extern struct percpu_counter tcp_sockets_allocated;
- extern unsigned long tcp_memory_pressure;
-@@ -1100,6 +1131,14 @@ struct tcp_congestion_ops {
- 	/* get info for inet_diag (optional) */
- 	size_t (*get_info)(struct sock *sk, u32 ext, int *attr,
- 			   union tcp_cc_info *info);
-+	/*NATCP*/
-+	void (*update_by_app)(struct sock *sk);
-+
-+	/*C2TCP*/
-+	void (*enable_c2tcp)(struct sock *sk, int enable);
-+
-+	/*RL-C2TCP*/
-+	void (*get_rate_sample)(struct sock *sk, const struct rate_sample *rs);
- 
- 	char 			name[TCP_CA_NAME_MAX];
- 	struct module		*owner;
-@@ -1178,6 +1217,14 @@ static inline void tcp_ca_event(struct s
- 		icsk->icsk_ca_ops->cwnd_event(sk, event);
- }
- 
-+/* From tcp_deepcc.c */
-+void deepcc_init(struct sock * sk);
-+size_t deepcc_get_info(struct sock *sk, u32 ext, int *attr,union tcp_cc_info *info);
-+void deepcc_get_rate_sample(struct sock *sk, const struct rate_sample *rs);
-+void deepcc_update_cwnd(struct sock *sk);
-+void deepcc_pkts_acked(struct sock *sk, const struct ack_sample *sample);
-+
-+
- /* From tcp_rate.c */
- void tcp_set_tx_in_flight(struct sock *sk, struct sk_buff *skb);
- void tcp_rate_skb_sent(struct sock *sk, struct sk_buff *skb);
-diff -urpN linux-5.15.131-builder.orig/include/uapi/linux/inet_diag.h linux-5.15.131-builder/include/uapi/linux/inet_diag.h
---- linux-5.15.131-builder.orig/include/uapi/linux/inet_diag.h	2023-09-10 00:18:32.664875650 -0700
-+++ linux-5.15.131-builder/include/uapi/linux/inet_diag.h	2023-09-10 00:22:14.268882535 -0700
-@@ -161,6 +161,8 @@ enum {
- 	INET_DIAG_SK_BPF_STORAGES,
- 	INET_DIAG_CGROUP_ID,
- 	INET_DIAG_SOCKOPT,
-+	INET_DIAG_C2TCPINFO,
-+	INET_DIAG_DEEPCCINFO,
- 	__INET_DIAG_MAX,
- };
- 
-@@ -229,6 +231,35 @@ struct tcp_bbr_info {
- 	__u32	bbr_min_rtt;		/* min-filtered RTT in uSec */
- 	__u32	bbr_pacing_gain;	/* pacing gain shifted left 8 bits */
- 	__u32	bbr_cwnd_gain;		/* cwnd gain shifted left 8 bits */
-+	__u32	bbr_inflight;
-+};
-+
-+/* INET_DIAG_C2TCPINFO */
-+
-+struct tcp_c2tcp_info {
-+	__u32	c2tcp_min_rtt;		/* min-filtered RTT in uSec */
-+	__u32	c2tcp_avg_urtt;		/* averaged RTT in uSec from the previous info request till now*/
-+	__u32	c2tcp_cnt;		/* number of RTT samples used for averaging */
-+	__u64	c2tcp_avg_thr;		/* average throughput Bytes per Sec*/
-+	__u32	c2tcp_thr_cnt;		/* Number of sampled throughput for averaging it*/
-+};
-+
-+/* INET_DIAG_DEEPCCINFO */
-+struct tcp_deepcc_info {
-+	__u32	min_rtt;		/* min-filtered RTT in uSec */
-+	__u32	avg_urtt;		/* averaged RTT in uSec from the previous info request till now*/
-+	__u32	cnt;		/* number of RTT samples used for averaging */
-+	__u64	avg_thr;		/* average throughput Bytes per Sec*/
-+	__u32	thr_cnt;		/* Number of sampled throughput for averaging it*/
-+	__u32	cwnd;
-+	__u32	pacing_rate;
-+	__u32	lost_bytes;			/* Number of lost Bytes (from the last monitored phase to now!)*/
-+	__u32	srtt_us;	/* smoothed round trip time << 3 in usecs */
-+	__u32	snd_ssthresh;	/* Slow start size threshold		*/
-+	__u32	packets_out;	/* Packets which are "in flight"	*/
-+	__u32	retrans_out;	/* Retransmitted packets out		*/
-+	__u32	max_packets_out;  /* max packets_out in last window */
-+	__u32 	mss_cache;
- };
- 
- /* Phase as reported in netlink/ss stats. */
-@@ -268,5 +299,7 @@ union tcp_cc_info {
- 	struct tcp_dctcp_info	dctcp;
- 	struct tcp_bbr_info	bbr;
- 	struct tcp_bbr2_info	bbr2;
-+	struct tcp_c2tcp_info	c2tcp;
-+	struct tcp_deepcc_info	deepcc;
- };
- #endif /* _UAPI_INET_DIAG_H_ */
-diff -urpN linux-5.15.131-builder.orig/include/uapi/linux/sysctl.h linux-5.15.131-builder/include/uapi/linux/sysctl.h
---- linux-5.15.131-builder.orig/include/uapi/linux/sysctl.h	2021-10-31 13:53:10.000000000 -0700
-+++ linux-5.15.131-builder/include/uapi/linux/sysctl.h	2023-09-10 00:22:14.288882535 -0700
-@@ -426,6 +426,25 @@ enum
- 	NET_TCP_ALLOWED_CONG_CONTROL=123,
- 	NET_TCP_MAX_SSTHRESH=124,
- 	NET_TCP_FRTO_RESPONSE=125,
-+	/* Variable for TCP BBR Target Delay */
-+	NET_TCP_BBR_ENABLE_MAXDELAY=126,
-+	NET_TCP_BBR_ENABLE_PROBERTT=127,
-+	NET_TCP_BBR_TARGETDELAY=128,
-+	NET_TCP_BBR_MINRTTWINSEC=129,
-+	NET_TCP_BBR_PROBERTTMODEMS=130,
-+	NET_TCP_BBR_BW_AUTO=131,
-+	NET_TCP_BBR_BW=132,
-+	NET_TCP_BBR_DEBUG=133,
-+	NET_TCP_BBR_CWND_RV_GAIN=134,
-+	NET_TCP_BBR_ENABLE_LT_BW=135,
-+	NET_TCP_BBR_ENABLE_APP_LIMITED=136,
-+	NET_TCP_BBR_INIT_CWND=136,
-+
-+	/* Variables for C2TCP*/
-+	 NET_TCP_C2TCP_ENABLE=150,
-+	/* Variables for DeepCC*/
-+	 NET_TCP_DEEPCC=161,
-+
- };
- 
- enum {
-diff -urpN linux-5.15.131-builder.orig/include/uapi/linux/tcp.h linux-5.15.131-builder/include/uapi/linux/tcp.h
---- linux-5.15.131-builder.orig/include/uapi/linux/tcp.h	2021-10-31 13:53:10.000000000 -0700
-+++ linux-5.15.131-builder/include/uapi/linux/tcp.h	2023-09-10 00:22:14.288882535 -0700
-@@ -134,6 +134,34 @@ enum {
- #define TCP_REPAIR_OFF		0
- #define TCP_REPAIR_OFF_NO_WP	-1	/* Turn off without window probes */
- 
-+/*
-+ * Defining custom Socket TCP Options
-+*/
-+#define TCP_BBR_EN_MAXDEL 33
-+#define TCP_BBR_EN_PRBRTT 34
-+#define TCP_BBR_TRGTDEL_US 35
-+#define TCP_BBR_MINRTTWIN_SEC 36
-+#define TCP_BBR_PRBERTTMDE_MS 37
-+#define TCP_BBR_BWAUTO 38
-+#define TCP_BBR_BWVAL 39
-+#define TCP_BBR_CWNDRVGAIN 40
-+#define TCP_BBR_DEBUG 41
-+#define TCP_CWND_CLAMP 42
-+#define TCP_CWND 43
-+#define TCP_DEEPCC_ENABLE 44
-+#define TCP_CWND_CAP 45
-+
-+#define TCP_DEEPCC_INFO		46	/* Get Congestion Control (optional) DeepCC info */
-+#define TCP_CWND_MIN		47
-+
-+/*C2TCP*/
-+#define  TCP_C2TCP_ENABLE 50
-+#define  TCP_C2TCP_ALPHA 51
-+
-+/*
-+ * End of Custom Socket Defines
-+*/
-+
- struct tcp_repair_opt {
- 	__u32	opt_code;
- 	__u32	opt_val;
-diff -urpN linux-5.15.131-builder.orig/net/ipv4/Makefile linux-5.15.131-builder/net/ipv4/Makefile
---- linux-5.15.131-builder.orig/net/ipv4/Makefile	2023-09-10 00:18:32.944875659 -0700
-+++ linux-5.15.131-builder/net/ipv4/Makefile	2023-09-10 00:22:44.652883479 -0700
+diff -urpN a/net/ipv4/Makefile b/net/ipv4/Makefile
+--- a/net/ipv4/Makefile	2023-10-29 19:31:08.000000000 -0700
++++ b/net/ipv4/Makefile	2024-03-17 10:21:13.717988832 -0700
 @@ -10,6 +10,7 @@ obj-y     := route.o inetpeer.o protocol
  	     tcp.o tcp_input.o tcp_output.o tcp_timer.o tcp_ipv4.o \
  	     tcp_minisocks.o tcp_cong.o tcp_metrics.o tcp_fastopen.o \
@@ -257,10 +10,10 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/Makefile linux-5.15.131-builder/
  	     tcp_offload.o tcp_plb.o datagram.o raw.o udp.o udplite.o \
  	     udp_offload.o arp.o icmp.o devinet.o af_inet.o igmp.o \
  	     fib_frontend.o fib_semantics.o fib_trie.o fib_notifier.o \
-diff -urpN linux-5.15.131-builder.orig/net/ipv4/sysctl_net_ipv4.c linux-5.15.131-builder/net/ipv4/sysctl_net_ipv4.c
---- linux-5.15.131-builder.orig/net/ipv4/sysctl_net_ipv4.c	2023-09-10 00:18:32.960875660 -0700
-+++ linux-5.15.131-builder/net/ipv4/sysctl_net_ipv4.c	2023-09-10 00:22:14.292882536 -0700
-@@ -510,6 +510,97 @@ static struct ctl_table ipv4_table[] = {
+diff -urpN a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
+--- a/net/ipv4/sysctl_net_ipv4.c	2023-10-29 19:31:08.000000000 -0700
++++ b/net/ipv4/sysctl_net_ipv4.c	2024-03-17 10:21:13.717988832 -0700
+@@ -547,6 +547,97 @@ static struct ctl_table ipv4_table[] = {
  		.mode		= 0444,
  		.proc_handler   = proc_tcp_available_ulp,
  	},
@@ -358,7 +111,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/sysctl_net_ipv4.c linux-5.15.131
  	{
  		.procname	= "icmp_msgs_per_sec",
  		.data		= &sysctl_icmp_msgs_per_sec,
-@@ -1241,14 +1332,22 @@ static struct ctl_table ipv4_net_table[]
+@@ -1270,14 +1361,22 @@ static struct ctl_table ipv4_net_table[]
  		.mode		= 0644,
  		.proc_handler	= proc_dointvec
  	},
@@ -387,12 +140,12 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/sysctl_net_ipv4.c linux-5.15.131
 +	 },
 +	 /* End of */
  	{
- 		.procname	= "tcp_min_rtt_wlen",
- 		.data		= &init_net.ipv4.sysctl_tcp_min_rtt_wlen,
-diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp.c linux-5.15.131-builder/net/ipv4/tcp.c
---- linux-5.15.131-builder.orig/net/ipv4/tcp.c	2023-09-10 00:18:32.588875648 -0700
-+++ linux-5.15.131-builder/net/ipv4/tcp.c	2023-09-10 00:22:14.308882536 -0700
-@@ -301,6 +301,59 @@ DEFINE_STATIC_KEY_FALSE(tcp_have_smc);
+ 		.procname	= "tcp_tso_rtt_log",
+ 		.data		= &init_net.ipv4.sysctl_tcp_tso_rtt_log,
+diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+--- a/net/ipv4/tcp.c	2024-03-17 10:20:16.930470863 -0700
++++ b/net/ipv4/tcp.c	2024-03-17 10:21:13.721988797 -0700
+@@ -302,6 +302,59 @@ DEFINE_STATIC_KEY_FALSE(tcp_have_smc);
  EXPORT_SYMBOL(tcp_have_smc);
  #endif
  
@@ -452,7 +205,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp.c linux-5.15.131-builder/net
  /*
   * Current number of TCP sockets.
   */
-@@ -448,6 +501,11 @@ void tcp_init_sock(struct sock *sk)
+@@ -444,6 +497,11 @@ void tcp_init_sock(struct sock *sk)
  	tp->snd_cwnd_clamp = ~0;
  	tp->mss_cache = TCP_MSS_DEFAULT;
  
@@ -472,7 +225,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp.c linux-5.15.131-builder/net
  	default:
  		return -ENOIOCTLCMD;
  	}
-@@ -3456,6 +3515,7 @@ static int do_tcp_setsockopt(struct sock
+@@ -3472,6 +3531,7 @@ int do_tcp_setsockopt(struct sock *sk, i
  
  		return tcp_fastopen_reset_cipher(net, sk, key, backup_key);
  	}
@@ -480,7 +233,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp.c linux-5.15.131-builder/net
  	default:
  		/* fallthru */
  		break;
-@@ -3684,6 +3744,116 @@ static int do_tcp_setsockopt(struct sock
+@@ -3681,6 +3741,116 @@ int do_tcp_setsockopt(struct sock *sk, i
  			tcp_enable_tx_delay();
  		WRITE_ONCE(tp->tcp_tx_delay, val);
  		break;
@@ -597,7 +350,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp.c linux-5.15.131-builder/net
  	default:
  		err = -ENOPROTOOPT;
  		break;
-@@ -4023,6 +4193,27 @@ static int do_tcp_getsockopt(struct sock
+@@ -4028,6 +4198,27 @@ int do_tcp_getsockopt(struct sock *sk, i
  			return -EFAULT;
  		return 0;
  	}
@@ -625,7 +378,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp.c linux-5.15.131-builder/net
  	case TCP_CC_INFO: {
  		const struct tcp_congestion_ops *ca_ops;
  		union tcp_cc_info info;
-@@ -4269,6 +4460,41 @@ zerocopy_rcv_out:
+@@ -4275,6 +4466,41 @@ zerocopy_rcv_out:
  		return err;
  	}
  #endif
@@ -667,10 +420,10 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp.c linux-5.15.131-builder/net
  	default:
  		return -ENOPROTOOPT;
  	}
-diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cong.c linux-5.15.131-builder/net/ipv4/tcp_cong.c
---- linux-5.15.131-builder.orig/net/ipv4/tcp_cong.c	2023-09-10 00:18:32.588875648 -0700
-+++ linux-5.15.131-builder/net/ipv4/tcp_cong.c	2023-09-10 00:22:14.324882537 -0700
-@@ -178,6 +178,9 @@ void tcp_init_congestion_control(struct
+diff -urpN a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
+--- a/net/ipv4/tcp_cong.c	2023-10-29 19:31:08.000000000 -0700
++++ b/net/ipv4/tcp_cong.c	2024-03-17 10:21:13.721988797 -0700
+@@ -240,6 +240,9 @@ void tcp_init_congestion_control(struct
  {
  	struct inet_connection_sock *icsk = inet_csk(sk);
  
@@ -678,12 +431,12 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cong.c linux-5.15.131-builde
 +	tcp_sk(sk)->deepcc_enable = 0;
 +
  	tcp_sk(sk)->prior_ssthresh = 0;
- 	tcp_sk(sk)->fast_ack_mode = 0;
  	if (icsk->icsk_ca_ops->init)
-diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c linux-5.15.131-builder/net/ipv4/tcp_cubic.c
---- linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c	2023-09-10 00:17:49.668874315 -0700
-+++ linux-5.15.131-builder/net/ipv4/tcp_cubic.c	2023-09-10 00:27:15.020891878 -0700
-@@ -24,10 +24,39 @@
+ 		icsk->icsk_ca_ops->init(sk);
+diff -urpN a/net/ipv4/tcp_cubic.c b/net/ipv4/tcp_cubic.c
+--- a/net/ipv4/tcp_cubic.c	2023-10-29 19:31:08.000000000 -0700
++++ b/net/ipv4/tcp_cubic.c	2024-03-17 10:21:13.725988764 -0700
+@@ -24,12 +24,41 @@
   * this behaves the same as the original Reno.
   */
  
@@ -712,6 +465,8 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c linux-5.15.131-build
 + */
 +
  #include <linux/mm.h>
+ #include <linux/btf.h>
+ #include <linux/btf_ids.h>
  #include <linux/module.h>
  #include <linux/math64.h>
  #include <net/tcp.h>
@@ -723,7 +478,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c linux-5.15.131-build
  
  #define BICTCP_BETA_SCALE    1024	/* Scale factor beta calculation
  					 * max_cwnd = snd_cwnd * beta
-@@ -59,6 +88,13 @@ static u32 cube_rtt_scale __read_mostly;
+@@ -61,6 +90,13 @@ static u32 cube_rtt_scale __read_mostly;
  static u32 beta_scale __read_mostly;
  static u64 cube_factor __read_mostly;
  
@@ -737,7 +492,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c linux-5.15.131-build
  /* Note parameters that are used for precomputing scale factors are read-only */
  module_param(fast_convergence, int, 0644);
  MODULE_PARM_DESC(fast_convergence, "turn on/off fast convergence");
-@@ -102,6 +138,63 @@ struct bictcp {
+@@ -104,6 +140,63 @@ struct bictcp {
  	u32	curr_rtt;	/* the minimum rtt of current round */
  };
  
@@ -801,15 +556,15 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c linux-5.15.131-build
  static inline void bictcp_reset(struct bictcp *ca)
  {
  	memset(ca, 0, offsetof(struct bictcp, unused));
-@@ -127,6 +220,7 @@ static inline void bictcp_hystart_reset(
- static void cubictcp_init(struct sock *sk)
+@@ -129,6 +222,7 @@ static inline void bictcp_hystart_reset(
+ __bpf_kfunc static void cubictcp_init(struct sock *sk)
  {
  	struct bictcp *ca = inet_csk_ca(sk);
 +	struct tcp_sock *tp = tcp_sk(sk);
  
  	bictcp_reset(ca);
  
-@@ -135,8 +229,93 @@ static void cubictcp_init(struct sock *s
+@@ -137,8 +231,93 @@ __bpf_kfunc static void cubictcp_init(st
  
  	if (!hystart && initial_ssthresh)
  		tcp_sk(sk)->snd_ssthresh = initial_ssthresh;
@@ -900,10 +655,10 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c linux-5.15.131-build
 +}
 +/* End of ... */
 +
- static void cubictcp_cwnd_event(struct sock *sk, enum tcp_ca_event event)
+ __bpf_kfunc static void cubictcp_cwnd_event(struct sock *sk, enum tcp_ca_event event)
  {
  	if (event == CA_EVENT_TX_START) {
-@@ -469,6 +648,76 @@ static void cubictcp_acked(struct sock *
+@@ -471,6 +650,76 @@ __bpf_kfunc static void cubictcp_acked(s
  	if (!ca->found && tcp_in_slow_start(tp) && hystart &&
  	    tcp_snd_cwnd(tp) >= hystart_low_window)
  		hystart_update(sk, delay);
@@ -980,7 +735,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c linux-5.15.131-build
  }
  
  static struct tcp_congestion_ops cubictcp __read_mostly = {
-@@ -478,8 +727,13 @@ static struct tcp_congestion_ops cubictc
+@@ -480,8 +729,13 @@ static struct tcp_congestion_ops cubictc
  	.set_state	= cubictcp_state,
  	.undo_cwnd	= tcp_reno_undo_cwnd,
  	.cwnd_event	= cubictcp_cwnd_event,
@@ -994,9 +749,9 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_cubic.c linux-5.15.131-build
  	.name		= "cubic",
  };
  
-diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_deepcc.c linux-5.15.131-builder/net/ipv4/tcp_deepcc.c
---- linux-5.15.131-builder.orig/net/ipv4/tcp_deepcc.c	1969-12-31 16:00:00.000000000 -0800
-+++ linux-5.15.131-builder/net/ipv4/tcp_deepcc.c	2023-09-10 00:22:14.340882537 -0700
+diff -urpN a/net/ipv4/tcp_deepcc.c b/net/ipv4/tcp_deepcc.c
+--- a/net/ipv4/tcp_deepcc.c	1969-12-31 16:00:00.000000000 -0800
++++ b/net/ipv4/tcp_deepcc.c	2024-03-17 10:21:13.729988729 -0700
 @@ -0,0 +1,136 @@
 +/* Monitoring and Action Enforcer Blocks of DeepCC and Orca
 + *
@@ -1134,10 +889,10 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_deepcc.c linux-5.15.131-buil
 +	}
 +}
 +//END
-diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_fastopen.c linux-5.15.131-builder/net/ipv4/tcp_fastopen.c
---- linux-5.15.131-builder.orig/net/ipv4/tcp_fastopen.c	2023-09-10 00:18:24.780875405 -0700
-+++ linux-5.15.131-builder/net/ipv4/tcp_fastopen.c	2023-09-10 00:22:14.356882538 -0700
-@@ -285,6 +285,8 @@ static struct sock *tcp_fastopen_create_
+diff -urpN a/net/ipv4/tcp_fastopen.c b/net/ipv4/tcp_fastopen.c
+--- a/net/ipv4/tcp_fastopen.c	2023-10-29 19:31:08.000000000 -0700
++++ b/net/ipv4/tcp_fastopen.c	2024-03-17 10:21:13.725988764 -0700
+@@ -280,6 +280,8 @@ static struct sock *tcp_fastopen_create_
  
  	/* Now finish processing the fastopen child socket. */
  	tcp_init_transfer(child, BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB, skb);
@@ -1146,9 +901,9 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_fastopen.c linux-5.15.131-bu
  
  	tp->rcv_nxt = TCP_SKB_CB(skb)->seq + 1;
  
-diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_input.c linux-5.15.131-builder/net/ipv4/tcp_input.c
---- linux-5.15.131-builder.orig/net/ipv4/tcp_input.c	2023-09-10 00:18:32.588875648 -0700
-+++ linux-5.15.131-builder/net/ipv4/tcp_input.c	2023-09-10 00:22:14.376882538 -0700
+diff -urpN a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
+--- a/net/ipv4/tcp_input.c	2024-03-17 10:19:54.282663074 -0700
++++ b/net/ipv4/tcp_input.c	2024-03-17 10:21:40.585760732 -0700
 @@ -81,6 +81,11 @@
  #include <net/busy_poll.h>
  #include <net/mptcp.h>
@@ -1161,7 +916,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_input.c linux-5.15.131-build
  int sysctl_tcp_max_orphans __read_mostly = NR_FILE;
  
  #define FLAG_DATA		0x01 /* Incoming frame contained data.		*/
-@@ -3415,15 +3420,26 @@ static int tcp_clean_rtx_queue(struct so
+@@ -3424,15 +3429,26 @@ static int tcp_clean_rtx_queue(struct so
  		flag |= FLAG_SET_XMIT_TIMER;  /* set TLP or RTO timer */
  	}
  
@@ -1189,7 +944,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_input.c linux-5.15.131-build
  #if FASTRETRANS_DEBUG > 0
  	WARN_ON((int)tp->sacked_out < 0);
  	WARN_ON((int)tp->lost_out < 0);
-@@ -3505,6 +3521,18 @@ static void tcp_cong_control(struct sock
+@@ -3514,6 +3530,18 @@ static void tcp_cong_control(struct sock
  			     int flag, const struct rate_sample *rs)
  {
  	const struct inet_connection_sock *icsk = inet_csk(sk);
@@ -1208,7 +963,7 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_input.c linux-5.15.131-build
  
  	if (icsk->icsk_ca_ops->cong_control) {
  		icsk->icsk_ca_ops->cong_control(sk, rs);
-@@ -3518,6 +3546,14 @@ static void tcp_cong_control(struct sock
+@@ -3527,6 +3555,14 @@ static void tcp_cong_control(struct sock
  		/* Advance cwnd if state allows */
  		tcp_cong_avoid(sk, ack, acked_sacked);
  	}
@@ -1223,21 +978,258 @@ diff -urpN linux-5.15.131-builder.orig/net/ipv4/tcp_input.c linux-5.15.131-build
  	tcp_update_pacing_rate(sk);
  }
  
-@@ -6044,6 +6080,8 @@ void tcp_finish_connect(struct sock *sk,
- 	}
+@@ -6094,6 +6130,8 @@ void tcp_init_transfer(struct sock *sk,
+ 	tp->snd_cwnd_stamp = tcp_jiffies32;
  
- 	tcp_init_transfer(sk, BPF_SOCK_OPS_ACTIVE_ESTABLISHED_CB, skb);
+ 	bpf_skops_established(sk, bpf_op, skb);
 +	/*DeepCC Initialization*/
 +	deepcc_init(sk);
+ 	/* Initialize congestion control unless BPF initialized it already: */
+ 	if (!icsk->icsk_ca_initialized)
+ 		tcp_init_congestion_control(sk);
+diff -urpN a/include/linux/tcp.h b/include/linux/tcp.h
+--- a/include/linux/tcp.h	2023-10-29 19:31:08.000000000 -0700
++++ b/include/linux/tcp.h	2024-03-17 10:21:13.725988764 -0700
+@@ -167,6 +167,7 @@ struct tcp_request_sock {
+ 	u8				syn_tos;
+ };
  
- 	/* Prevent spurious tcp_cwnd_restart() on first data
- 	 * packet.
-@@ -6515,6 +6553,8 @@ int tcp_rcv_state_process(struct sock *s
- 			tp->retrans_stamp = 0;
- 			tcp_init_transfer(sk, BPF_SOCK_OPS_PASSIVE_ESTABLISHED_CB,
- 					  skb);
-+			/*DeepCC Initialization*/
-+			deepcc_init(sk);
- 			WRITE_ONCE(tp->copied_seq, tp->rcv_nxt);
- 		}
- 		smp_mb();
++
+ static inline struct tcp_request_sock *tcp_rsk(const struct request_sock *req)
+ {
+ 	return (struct tcp_request_sock *)req;
+@@ -451,6 +452,41 @@ struct tcp_sock {
+ 	 * socket. Used to retransmit SYNACKs etc.
+ 	 */
+ 	struct request_sock __rcu *fastopen_rsk;
++
++	/* DeepCC Params*/
++	u8	deepcc_enable;		/*1 => Only enable periodic reports and setting cwnd. */
++							/*2 => (above) + enable deepcc pacing rate calculation*/
++	struct {
++		u32 min_urtt;
++		u32 avg_urtt;
++		u32 cnt;
++		u64	avg_thr;		/* average throughput */
++		u32	thr_cnt;		/* Number of sampled throughput for averaging it*/
++		u32 pre_lost;		/* Total Number of Previously lost packets*/
++	} deepcc_api;
++
++	/* Orca: min. cwnd*/
++	u32  cwnd_min;
++
++	/* C2TCP Parameters */
++	u32 first_above_time;
++	u32 next_time;
++	u32 cnt_rtt;
++	u16 rec_inv_sqrt;
++	u32 c2tcp_min_urtt;
++	u32 c2tcp_avg_urtt;
++	u32 c2tcp_cnt;
++	u64	c2tcp_avg_thr;		/* average throughput */
++	u32	c2tcp_thr_cnt;		/* Number of sampled throughput for averaging it*/
++	/**
++	 * Accessible settings (to Applications):
++	 */
++	u8  c2tcp_enable;
++	u32 c2tcp_alpha;
++//	u32 c2tcp_setpoint;
++//	u32 c2tcp_interval;
++	/*END of C2TCP*/
++
+ 	struct saved_syn *saved_syn;
+ };
+ 
+diff -urpN a/include/net/tcp.h b/include/net/tcp.h
+--- a/include/net/tcp.h	2024-03-17 10:20:19.674447573 -0700
++++ b/include/net/tcp.h	2024-03-17 10:21:13.725988764 -0700
+@@ -253,6 +253,37 @@ extern long sysctl_tcp_mem[3];
+ #define TCP_RACK_STATIC_REO_WND  0x2 /* Use static RACK reo wnd */
+ #define TCP_RACK_NO_DUPTHRESH    0x4 /* Do not use DUPACK threshold in RACK */
+ 
++/*
++* Custom variables for sysctl Params
++*/
++extern unsigned int sysctl_tcp_bbr_enable_app_limited;
++extern unsigned int sysctl_tcp_bbr_enable_lt_bw;
++extern unsigned int sysctl_tcp_bbr_cwnd_rv_gain;
++extern unsigned int sysctl_tcp_bbr_enable_maxdelay;
++extern unsigned int sysctl_tcp_bbr_enable_probertt;
++extern unsigned int sysctl_tcp_bbr_targetdelay;
++extern unsigned int sysctl_bbr_min_rtt_win_sec;
++extern unsigned int sysctl_bbr_probe_rtt_mode_ms;
++extern unsigned int sysctl_tcp_bbr_bw_auto;
++extern unsigned int sysctl_tcp_bbr_bw;
++extern unsigned int sysctl_tcp_bbr_debug;
++extern unsigned int sysctl_tcp_bbr_init_cwnd;
++
++/*
++ * DeepCC
++ *
++ */
++extern int sysctl_tcp_deepcc_enable;
++#define CWND_GAIN_SCALE  100;
++
++/* C2TCP */
++extern int sysctl_tcp_c2tcp_enable;
++/**End*/
++
++/*
++* End of custom variables
++*/
++
+ extern atomic_long_t tcp_memory_allocated;
+ DECLARE_PER_CPU(int, tcp_memory_per_cpu_fw_alloc);
+ 
+@@ -1100,6 +1131,14 @@ struct tcp_congestion_ops {
+ 	/* get info for inet_diag (optional) */
+ 	size_t (*get_info)(struct sock *sk, u32 ext, int *attr,
+ 			   union tcp_cc_info *info);
++	/*NATCP*/
++	void (*update_by_app)(struct sock *sk);
++
++	/*C2TCP*/
++	void (*enable_c2tcp)(struct sock *sk, int enable);
++
++	/*RL-C2TCP*/
++	void (*get_rate_sample)(struct sock *sk, const struct rate_sample *rs);
+ 
+ 	char 			name[TCP_CA_NAME_MAX];
+ 	struct module		*owner;
+@@ -1167,6 +1206,14 @@ static inline void tcp_ca_event(struct s
+ /* From tcp_cong.c */
+ void tcp_set_ca_state(struct sock *sk, const u8 ca_state);
+ 
++/* From tcp_deepcc.c */
++void deepcc_init(struct sock * sk);
++size_t deepcc_get_info(struct sock *sk, u32 ext, int *attr,union tcp_cc_info *info);
++void deepcc_get_rate_sample(struct sock *sk, const struct rate_sample *rs);
++void deepcc_update_cwnd(struct sock *sk);
++void deepcc_pkts_acked(struct sock *sk, const struct ack_sample *sample);
++
++
+ /* From tcp_rate.c */
+ void tcp_rate_skb_sent(struct sock *sk, struct sk_buff *skb);
+ void tcp_rate_skb_delivered(struct sock *sk, struct sk_buff *skb,
+diff -urpN a/include/uapi/linux/inet_diag.h b/include/uapi/linux/inet_diag.h
+--- a/include/uapi/linux/inet_diag.h	2023-10-29 19:31:08.000000000 -0700
++++ b/include/uapi/linux/inet_diag.h	2024-03-17 10:21:13.725988764 -0700
+@@ -161,6 +161,8 @@ enum {
+ 	INET_DIAG_SK_BPF_STORAGES,
+ 	INET_DIAG_CGROUP_ID,
+ 	INET_DIAG_SOCKOPT,
++	INET_DIAG_C2TCPINFO,
++	INET_DIAG_DEEPCCINFO,
+ 	__INET_DIAG_MAX,
+ };
+ 
+@@ -229,11 +231,42 @@ struct tcp_bbr_info {
+ 	__u32	bbr_min_rtt;		/* min-filtered RTT in uSec */
+ 	__u32	bbr_pacing_gain;	/* pacing gain shifted left 8 bits */
+ 	__u32	bbr_cwnd_gain;		/* cwnd gain shifted left 8 bits */
++	__u32	bbr_inflight;
++};
++
++/* INET_DIAG_C2TCPINFO */
++
++struct tcp_c2tcp_info {
++	__u32	c2tcp_min_rtt;		/* min-filtered RTT in uSec */
++	__u32	c2tcp_avg_urtt;		/* averaged RTT in uSec from the previous info request till now*/
++	__u32	c2tcp_cnt;		/* number of RTT samples used for averaging */
++	__u64	c2tcp_avg_thr;		/* average throughput Bytes per Sec*/
++	__u32	c2tcp_thr_cnt;		/* Number of sampled throughput for averaging it*/
++};
++
++/* INET_DIAG_DEEPCCINFO */
++struct tcp_deepcc_info {
++	__u32	min_rtt;		/* min-filtered RTT in uSec */
++	__u32	avg_urtt;		/* averaged RTT in uSec from the previous info request till now*/
++	__u32	cnt;		/* number of RTT samples used for averaging */
++	__u64	avg_thr;		/* average throughput Bytes per Sec*/
++	__u32	thr_cnt;		/* Number of sampled throughput for averaging it*/
++	__u32	cwnd;
++	__u32	pacing_rate;
++	__u32	lost_bytes;			/* Number of lost Bytes (from the last monitored phase to now!)*/
++	__u32	srtt_us;	/* smoothed round trip time << 3 in usecs */
++	__u32	snd_ssthresh;	/* Slow start size threshold		*/
++	__u32	packets_out;	/* Packets which are "in flight"	*/
++	__u32	retrans_out;	/* Retransmitted packets out		*/
++	__u32	max_packets_out;  /* max packets_out in last window */
++	__u32 	mss_cache;
+ };
+ 
+ union tcp_cc_info {
+ 	struct tcpvegas_info	vegas;
+ 	struct tcp_dctcp_info	dctcp;
+ 	struct tcp_bbr_info	bbr;
++	struct tcp_c2tcp_info	c2tcp;
++	struct tcp_deepcc_info	deepcc;
+ };
+ #endif /* _UAPI_INET_DIAG_H_ */
+diff -urpN a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
+--- a/include/uapi/linux/sysctl.h	2023-10-29 19:31:08.000000000 -0700
++++ b/include/uapi/linux/sysctl.h	2024-03-17 10:21:13.725988764 -0700
+@@ -426,6 +426,25 @@ enum
+ 	NET_TCP_ALLOWED_CONG_CONTROL=123,
+ 	NET_TCP_MAX_SSTHRESH=124,
+ 	NET_TCP_FRTO_RESPONSE=125,
++	/* Variable for TCP BBR Target Delay */
++	NET_TCP_BBR_ENABLE_MAXDELAY=126,
++	NET_TCP_BBR_ENABLE_PROBERTT=127,
++	NET_TCP_BBR_TARGETDELAY=128,
++	NET_TCP_BBR_MINRTTWINSEC=129,
++	NET_TCP_BBR_PROBERTTMODEMS=130,
++	NET_TCP_BBR_BW_AUTO=131,
++	NET_TCP_BBR_BW=132,
++	NET_TCP_BBR_DEBUG=133,
++	NET_TCP_BBR_CWND_RV_GAIN=134,
++	NET_TCP_BBR_ENABLE_LT_BW=135,
++	NET_TCP_BBR_ENABLE_APP_LIMITED=136,
++	NET_TCP_BBR_INIT_CWND=136,
++
++	/* Variables for C2TCP*/
++	 NET_TCP_C2TCP_ENABLE=150,
++	/* Variables for DeepCC*/
++	 NET_TCP_DEEPCC=161,
++
+ };
+ 
+ enum {
+diff -urpN a/include/uapi/linux/tcp.h b/include/uapi/linux/tcp.h
+--- a/include/uapi/linux/tcp.h	2023-10-29 19:31:08.000000000 -0700
++++ b/include/uapi/linux/tcp.h	2024-03-17 10:21:13.725988764 -0700
+@@ -134,6 +134,34 @@ enum {
+ #define TCP_REPAIR_OFF		0
+ #define TCP_REPAIR_OFF_NO_WP	-1	/* Turn off without window probes */
+ 
++/*
++ * Defining custom Socket TCP Options
++*/
++#define TCP_BBR_EN_MAXDEL 33
++#define TCP_BBR_EN_PRBRTT 34
++#define TCP_BBR_TRGTDEL_US 35
++#define TCP_BBR_MINRTTWIN_SEC 36
++#define TCP_BBR_PRBERTTMDE_MS 37
++#define TCP_BBR_BWAUTO 38
++#define TCP_BBR_BWVAL 39
++#define TCP_BBR_CWNDRVGAIN 40
++#define TCP_BBR_DEBUG 41
++#define TCP_CWND_CLAMP 42
++#define TCP_CWND 43
++#define TCP_DEEPCC_ENABLE 44
++#define TCP_CWND_CAP 45
++
++#define TCP_DEEPCC_INFO		46	/* Get Congestion Control (optional) DeepCC info */
++#define TCP_CWND_MIN		47
++
++/*C2TCP*/
++#define  TCP_C2TCP_ENABLE 50
++#define  TCP_C2TCP_ALPHA 51
++
++/*
++ * End of Custom Socket Defines
++*/
++
+ struct tcp_repair_opt {
+ 	__u32	opt_code;
+ 	__u32	opt_val;

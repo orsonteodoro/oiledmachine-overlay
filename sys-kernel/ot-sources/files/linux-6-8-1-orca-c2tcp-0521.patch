@@ -1,19 +1,19 @@
 Patch status:  Testing / WIP / In development
 diff -urpN a/net/ipv4/Makefile b/net/ipv4/Makefile
---- a/net/ipv4/Makefile	2022-12-11 14:15:18.000000000 -0800
-+++ b/net/ipv4/Makefile	2024-03-17 10:29:38.369672812 -0700
+--- a/net/ipv4/Makefile	2024-03-10 13:38:09.000000000 -0700
++++ b/net/ipv4/Makefile	2024-03-17 10:04:25.330530928 -0700
 @@ -10,6 +10,7 @@ obj-y     := route.o inetpeer.o protocol
  	     tcp.o tcp_input.o tcp_output.o tcp_timer.o tcp_ipv4.o \
  	     tcp_minisocks.o tcp_cong.o tcp_metrics.o tcp_fastopen.o \
  	     tcp_rate.o tcp_recovery.o tcp_ulp.o \
 +	     tcp_deepcc.o \
- 	     tcp_offload.o datagram.o raw.o udp.o udplite.o \
+ 	     tcp_offload.o tcp_plb.o datagram.o raw.o udp.o udplite.o \
  	     udp_offload.o arp.o icmp.o devinet.o af_inet.o igmp.o \
  	     fib_frontend.o fib_semantics.o fib_trie.o fib_notifier.o \
 diff -urpN a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
---- a/net/ipv4/sysctl_net_ipv4.c	2024-03-17 10:28:51.046100869 -0700
-+++ b/net/ipv4/sysctl_net_ipv4.c	2024-03-17 10:29:38.369672812 -0700
-@@ -519,6 +519,97 @@ static struct ctl_table ipv4_table[] = {
+--- a/net/ipv4/sysctl_net_ipv4.c	2024-03-10 13:38:09.000000000 -0700
++++ b/net/ipv4/sysctl_net_ipv4.c	2024-03-17 10:04:25.330530928 -0700
+@@ -543,6 +543,97 @@ static struct ctl_table ipv4_table[] = {
  		.mode		= 0444,
  		.proc_handler   = proc_tcp_available_ulp,
  	},
@@ -111,7 +111,7 @@ diff -urpN a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
  	{
  		.procname	= "icmp_msgs_per_sec",
  		.data		= &sysctl_icmp_msgs_per_sec,
-@@ -1242,14 +1333,22 @@ static struct ctl_table ipv4_net_table[]
+@@ -1266,14 +1357,22 @@ static struct ctl_table ipv4_net_table[]
  		.mode		= 0644,
  		.proc_handler	= proc_dointvec
  	},
@@ -143,8 +143,8 @@ diff -urpN a/net/ipv4/sysctl_net_ipv4.c b/net/ipv4/sysctl_net_ipv4.c
  		.procname	= "tcp_tso_rtt_log",
  		.data		= &init_net.ipv4.sysctl_tcp_tso_rtt_log,
 diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
---- a/net/ipv4/tcp.c	2024-03-17 10:29:00.410016109 -0700
-+++ b/net/ipv4/tcp.c	2024-03-17 10:29:38.373672776 -0700
+--- a/net/ipv4/tcp.c	2024-03-10 13:38:09.000000000 -0700
++++ b/net/ipv4/tcp.c	2024-03-17 10:04:25.334530894 -0700
 @@ -302,6 +302,59 @@ DEFINE_STATIC_KEY_FALSE(tcp_have_smc);
  EXPORT_SYMBOL(tcp_have_smc);
  #endif
@@ -217,7 +217,7 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
  	tp->reordering = READ_ONCE(sock_net(sk)->ipv4.sysctl_tcp_reordering);
  	tcp_assign_congestion_control(sk);
  
-@@ -636,6 +694,7 @@ int tcp_ioctl(struct sock *sk, int cmd,
+@@ -639,6 +697,7 @@ int tcp_ioctl(struct sock *sk, int cmd,
  			answ = READ_ONCE(tp->write_seq) -
  			       READ_ONCE(tp->snd_nxt);
  		break;
@@ -225,7 +225,7 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
  	default:
  		return -ENOIOCTLCMD;
  	}
-@@ -3593,6 +3652,7 @@ int do_tcp_setsockopt(struct sock *sk, i
+@@ -3471,6 +3530,7 @@ int do_tcp_setsockopt(struct sock *sk, i
  
  		return tcp_fastopen_reset_cipher(net, sk, key, backup_key);
  	}
@@ -233,7 +233,7 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
  	default:
  		/* fallthru */
  		break;
-@@ -3821,6 +3881,116 @@ int do_tcp_setsockopt(struct sock *sk, i
+@@ -3715,6 +3775,116 @@ ao_parse:
  			tcp_enable_tx_delay();
  		WRITE_ONCE(tp->tcp_tx_delay, val);
  		break;
@@ -350,7 +350,7 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
  	default:
  		err = -ENOPROTOOPT;
  		break;
-@@ -4163,6 +4333,27 @@ int do_tcp_getsockopt(struct sock *sk, i
+@@ -4071,6 +4241,27 @@ int do_tcp_getsockopt(struct sock *sk, i
  			return -EFAULT;
  		return 0;
  	}
@@ -378,10 +378,10 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
  	case TCP_CC_INFO: {
  		const struct tcp_congestion_ops *ca_ops;
  		union tcp_cc_info info;
-@@ -4410,6 +4601,41 @@ zerocopy_rcv_out:
+@@ -4339,6 +4530,41 @@ zerocopy_rcv_out:
+ 
  		return err;
  	}
- #endif
 +	/*
 +         * Raw implementation of sockets.
 +         * Basically hacked the current code to set variables.
@@ -421,9 +421,9 @@ diff -urpN a/net/ipv4/tcp.c b/net/ipv4/tcp.c
  		return -ENOPROTOOPT;
  	}
 diff -urpN a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
---- a/net/ipv4/tcp_cong.c	2022-12-11 14:15:18.000000000 -0800
-+++ b/net/ipv4/tcp_cong.c	2024-03-17 10:29:38.373672776 -0700
-@@ -188,6 +188,9 @@ void tcp_init_congestion_control(struct
+--- a/net/ipv4/tcp_cong.c	2024-03-10 13:38:09.000000000 -0700
++++ b/net/ipv4/tcp_cong.c	2024-03-17 10:04:25.334530894 -0700
+@@ -240,6 +240,9 @@ void tcp_init_congestion_control(struct
  {
  	struct inet_connection_sock *icsk = inet_csk(sk);
  
@@ -434,8 +434,8 @@ diff -urpN a/net/ipv4/tcp_cong.c b/net/ipv4/tcp_cong.c
  	if (icsk->icsk_ca_ops->init)
  		icsk->icsk_ca_ops->init(sk);
 diff -urpN a/net/ipv4/tcp_cubic.c b/net/ipv4/tcp_cubic.c
---- a/net/ipv4/tcp_cubic.c	2022-12-11 14:15:18.000000000 -0800
-+++ b/net/ipv4/tcp_cubic.c	2024-03-17 10:29:38.373672776 -0700
+--- a/net/ipv4/tcp_cubic.c	2024-03-10 13:38:09.000000000 -0700
++++ b/net/ipv4/tcp_cubic.c	2024-03-17 10:04:25.338530860 -0700
 @@ -24,12 +24,41 @@
   * this behaves the same as the original Reno.
   */
@@ -557,14 +557,14 @@ diff -urpN a/net/ipv4/tcp_cubic.c b/net/ipv4/tcp_cubic.c
  {
  	memset(ca, 0, offsetof(struct bictcp, unused));
 @@ -129,6 +222,7 @@ static inline void bictcp_hystart_reset(
- static void cubictcp_init(struct sock *sk)
+ __bpf_kfunc static void cubictcp_init(struct sock *sk)
  {
  	struct bictcp *ca = inet_csk_ca(sk);
 +	struct tcp_sock *tp = tcp_sk(sk);
  
  	bictcp_reset(ca);
  
-@@ -137,8 +231,93 @@ static void cubictcp_init(struct sock *s
+@@ -137,8 +231,93 @@ __bpf_kfunc static void cubictcp_init(st
  
  	if (!hystart && initial_ssthresh)
  		tcp_sk(sk)->snd_ssthresh = initial_ssthresh;
@@ -655,10 +655,10 @@ diff -urpN a/net/ipv4/tcp_cubic.c b/net/ipv4/tcp_cubic.c
 +}
 +/* End of ... */
 +
- static void cubictcp_cwnd_event(struct sock *sk, enum tcp_ca_event event)
+ __bpf_kfunc static void cubictcp_cwnd_event(struct sock *sk, enum tcp_ca_event event)
  {
  	if (event == CA_EVENT_TX_START) {
-@@ -471,6 +650,76 @@ static void cubictcp_acked(struct sock *
+@@ -471,6 +650,76 @@ __bpf_kfunc static void cubictcp_acked(s
  	if (!ca->found && tcp_in_slow_start(tp) && hystart &&
  	    tcp_snd_cwnd(tp) >= hystart_low_window)
  		hystart_update(sk, delay);
@@ -751,7 +751,7 @@ diff -urpN a/net/ipv4/tcp_cubic.c b/net/ipv4/tcp_cubic.c
  
 diff -urpN a/net/ipv4/tcp_deepcc.c b/net/ipv4/tcp_deepcc.c
 --- a/net/ipv4/tcp_deepcc.c	1969-12-31 16:00:00.000000000 -0800
-+++ b/net/ipv4/tcp_deepcc.c	2024-03-17 10:29:38.381672703 -0700
++++ b/net/ipv4/tcp_deepcc.c	2024-03-17 10:04:25.338530860 -0700
 @@ -0,0 +1,136 @@
 +/* Monitoring and Action Enforcer Blocks of DeepCC and Orca
 + *
@@ -890,8 +890,8 @@ diff -urpN a/net/ipv4/tcp_deepcc.c b/net/ipv4/tcp_deepcc.c
 +}
 +//END
 diff -urpN a/net/ipv4/tcp_fastopen.c b/net/ipv4/tcp_fastopen.c
---- a/net/ipv4/tcp_fastopen.c	2024-03-17 10:28:40.278194663 -0700
-+++ b/net/ipv4/tcp_fastopen.c	2024-03-17 10:29:38.373672776 -0700
+--- a/net/ipv4/tcp_fastopen.c	2024-03-10 13:38:09.000000000 -0700
++++ b/net/ipv4/tcp_fastopen.c	2024-03-17 10:04:25.338530860 -0700
 @@ -280,6 +280,8 @@ static struct sock *tcp_fastopen_create_
  
  	/* Now finish processing the fastopen child socket. */
@@ -902,8 +902,8 @@ diff -urpN a/net/ipv4/tcp_fastopen.c b/net/ipv4/tcp_fastopen.c
  	tp->rcv_nxt = TCP_SKB_CB(skb)->seq + 1;
  
 diff -urpN a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
---- a/net/ipv4/tcp_input.c	2024-03-17 10:28:55.682058904 -0700
-+++ b/net/ipv4/tcp_input.c	2024-03-17 10:30:17.361320344 -0700
+--- a/net/ipv4/tcp_input.c	2024-03-10 13:38:09.000000000 -0700
++++ b/net/ipv4/tcp_input.c	2024-03-17 10:07:17.009079414 -0700
 @@ -81,6 +81,11 @@
  #include <net/busy_poll.h>
  #include <net/mptcp.h>
@@ -916,7 +916,7 @@ diff -urpN a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
  int sysctl_tcp_max_orphans __read_mostly = NR_FILE;
  
  #define FLAG_DATA		0x01 /* Incoming frame contained data.		*/
-@@ -3419,15 +3424,26 @@ static int tcp_clean_rtx_queue(struct so
+@@ -3447,15 +3452,26 @@ static int tcp_clean_rtx_queue(struct so
  		flag |= FLAG_SET_XMIT_TIMER;  /* set TLP or RTO timer */
  	}
  
@@ -944,7 +944,7 @@ diff -urpN a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
  #if FASTRETRANS_DEBUG > 0
  	WARN_ON((int)tp->sacked_out < 0);
  	WARN_ON((int)tp->lost_out < 0);
-@@ -3509,6 +3525,18 @@ static void tcp_cong_control(struct sock
+@@ -3537,6 +3553,18 @@ static void tcp_cong_control(struct sock
  			     int flag, const struct rate_sample *rs)
  {
  	const struct inet_connection_sock *icsk = inet_csk(sk);
@@ -963,7 +963,7 @@ diff -urpN a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
  
  	if (icsk->icsk_ca_ops->cong_control) {
  		icsk->icsk_ca_ops->cong_control(sk, rs);
-@@ -3522,6 +3550,14 @@ static void tcp_cong_control(struct sock
+@@ -3550,6 +3578,14 @@ static void tcp_cong_control(struct sock
  		/* Advance cwnd if state allows */
  		tcp_cong_avoid(sk, ack, acked_sacked);
  	}
@@ -978,7 +978,7 @@ diff -urpN a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
  	tcp_update_pacing_rate(sk);
  }
  
-@@ -6064,6 +6100,8 @@ void tcp_init_transfer(struct sock *sk,
+@@ -6206,6 +6242,8 @@ void tcp_init_transfer(struct sock *sk,
  	tp->snd_cwnd_stamp = tcp_jiffies32;
  
  	bpf_skops_established(sk, bpf_op, skb);
@@ -988,17 +988,17 @@ diff -urpN a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
  	if (!icsk->icsk_ca_initialized)
  		tcp_init_congestion_control(sk);
 diff -urpN a/include/linux/tcp.h b/include/linux/tcp.h
---- a/include/linux/tcp.h	2024-03-17 10:28:40.258194833 -0700
-+++ b/include/linux/tcp.h	2024-03-17 10:29:38.381672703 -0700
-@@ -167,6 +167,7 @@ struct tcp_request_sock {
- 	u8				syn_tos;
+--- a/include/linux/tcp.h	2024-03-10 13:38:09.000000000 -0700
++++ b/include/linux/tcp.h	2024-03-17 10:04:25.326530961 -0700
+@@ -173,6 +173,7 @@ struct tcp_request_sock {
+ #endif
  };
  
 +
  static inline struct tcp_request_sock *tcp_rsk(const struct request_sock *req)
  {
  	return (struct tcp_request_sock *)req;
-@@ -448,6 +449,41 @@ struct tcp_sock {
+@@ -500,6 +501,41 @@ struct tcp_sock {
  	 * socket. Used to retransmit SYNACKs etc.
  	 */
  	struct request_sock __rcu *fastopen_rsk;
@@ -1041,9 +1041,9 @@ diff -urpN a/include/linux/tcp.h b/include/linux/tcp.h
  };
  
 diff -urpN a/include/net/tcp.h b/include/net/tcp.h
---- a/include/net/tcp.h	2024-03-17 10:29:01.962002060 -0700
-+++ b/include/net/tcp.h	2024-03-17 10:29:38.381672703 -0700
-@@ -255,6 +255,37 @@ extern long sysctl_tcp_mem[3];
+--- a/include/net/tcp.h	2024-03-10 13:38:09.000000000 -0700
++++ b/include/net/tcp.h	2024-03-17 10:04:25.326530961 -0700
+@@ -262,6 +262,37 @@ extern long sysctl_tcp_mem[3];
  #define TCP_RACK_STATIC_REO_WND  0x2 /* Use static RACK reo wnd */
  #define TCP_RACK_NO_DUPTHRESH    0x4 /* Do not use DUPACK threshold in RACK */
  
@@ -1081,7 +1081,7 @@ diff -urpN a/include/net/tcp.h b/include/net/tcp.h
  extern atomic_long_t tcp_memory_allocated;
  DECLARE_PER_CPU(int, tcp_memory_per_cpu_fw_alloc);
  
-@@ -1108,6 +1139,14 @@ struct tcp_congestion_ops {
+@@ -1134,6 +1165,14 @@ struct tcp_congestion_ops {
  	/* get info for inet_diag (optional) */
  	size_t (*get_info)(struct sock *sk, u32 ext, int *attr,
  			   union tcp_cc_info *info);
@@ -1096,7 +1096,7 @@ diff -urpN a/include/net/tcp.h b/include/net/tcp.h
  
  	char 			name[TCP_CA_NAME_MAX];
  	struct module		*owner;
-@@ -1172,6 +1211,14 @@ static inline void tcp_ca_event(struct s
+@@ -1201,6 +1240,14 @@ static inline void tcp_ca_event(struct s
  /* From tcp_cong.c */
  void tcp_set_ca_state(struct sock *sk, const u8 ca_state);
  
@@ -1112,8 +1112,8 @@ diff -urpN a/include/net/tcp.h b/include/net/tcp.h
  void tcp_rate_skb_sent(struct sock *sk, struct sk_buff *skb);
  void tcp_rate_skb_delivered(struct sock *sk, struct sk_buff *skb,
 diff -urpN a/include/uapi/linux/inet_diag.h b/include/uapi/linux/inet_diag.h
---- a/include/uapi/linux/inet_diag.h	2022-12-11 14:15:18.000000000 -0800
-+++ b/include/uapi/linux/inet_diag.h	2024-03-17 10:29:38.381672703 -0700
+--- a/include/uapi/linux/inet_diag.h	2024-03-10 13:38:09.000000000 -0700
++++ b/include/uapi/linux/inet_diag.h	2024-03-17 10:04:25.330530928 -0700
 @@ -161,6 +161,8 @@ enum {
  	INET_DIAG_SK_BPF_STORAGES,
  	INET_DIAG_CGROUP_ID,
@@ -1167,8 +1167,8 @@ diff -urpN a/include/uapi/linux/inet_diag.h b/include/uapi/linux/inet_diag.h
  };
  #endif /* _UAPI_INET_DIAG_H_ */
 diff -urpN a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
---- a/include/uapi/linux/sysctl.h	2022-12-11 14:15:18.000000000 -0800
-+++ b/include/uapi/linux/sysctl.h	2024-03-17 10:29:38.381672703 -0700
+--- a/include/uapi/linux/sysctl.h	2024-03-10 13:38:09.000000000 -0700
++++ b/include/uapi/linux/sysctl.h	2024-03-17 10:04:25.330530928 -0700
 @@ -426,6 +426,25 @@ enum
  	NET_TCP_ALLOWED_CONG_CONTROL=123,
  	NET_TCP_MAX_SSTHRESH=124,
@@ -1196,9 +1196,9 @@ diff -urpN a/include/uapi/linux/sysctl.h b/include/uapi/linux/sysctl.h
  
  enum {
 diff -urpN a/include/uapi/linux/tcp.h b/include/uapi/linux/tcp.h
---- a/include/uapi/linux/tcp.h	2022-12-11 14:15:18.000000000 -0800
-+++ b/include/uapi/linux/tcp.h	2024-03-17 10:29:38.381672703 -0700
-@@ -134,6 +134,34 @@ enum {
+--- a/include/uapi/linux/tcp.h	2024-03-10 13:38:09.000000000 -0700
++++ b/include/uapi/linux/tcp.h	2024-03-17 10:04:25.330530928 -0700
+@@ -139,6 +139,34 @@ enum {
  #define TCP_REPAIR_OFF		0
  #define TCP_REPAIR_OFF_NO_WP	-1	/* Turn off without window probes */
  

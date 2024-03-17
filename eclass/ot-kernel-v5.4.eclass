@@ -680,10 +680,7 @@ ot-kernel_filter_patch_cb() {
 		: # Skipped already applied
 
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		_tpatch "${PATCH_OPTS}" "${path}" 10 0 ""
-		_dpatch "${PATCH_OPTS}" \
-			"${FILESDIR}/c2tcp-0521-fix-for-5.4.231.patch"
-
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-5-4-272-orca-c2tcp-0521.patch"
 	elif [[ "${path}" =~ "zen-sauce-5.4.0-e4afee6.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \

@@ -927,8 +927,11 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.1.patch"
 
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-1-52-orca-c2tcp-0521.patch"
-
+		if use bbrv2 ; then
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-1-52-orca-c2tcp-0521-bbr2-compat.patch"
+		else
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-1-52-orca-c2tcp-0521.patch"
+		fi
 	elif [[ "${path}" =~ "prjc_v6.1-r4.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/prjc_v6.4-r0-fix-for-6.4.15.patch" # Same hunks

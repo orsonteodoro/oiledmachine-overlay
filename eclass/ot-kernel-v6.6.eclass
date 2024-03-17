@@ -1023,8 +1023,11 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a1d32ad-fix-for-6.6.0-git-6bc986a.patch"
 
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-4-15-orca-c2tcp-0521.patch"
-
+		if use bbrv2 ; then
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-6-22-orca-c2tcp-0521-bbr2-compat.patch"
+		else
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-6-22-orca-c2tcp-0521.patch"
+		fi
 	elif [[ "${path}" =~ "zen-sauce-6.6.0-369ef2b.patch" ]] && [[ "${PV}" =~ "9999" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.6.0-369ef2b-fix-for-6.6.0-git-6bc986a.patch"

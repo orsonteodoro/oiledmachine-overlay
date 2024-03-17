@@ -940,8 +940,11 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-5.15.84.patch"
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-5-15-131-orca-c2tcp-0521.patch"
-
+		if use bbrv2 ; then
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-5-15-152-orca-c2tcp-0521-bbr2-compat.patch"
+		else
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-5-15-152-orca-c2tcp-0521.patch"
+		fi
 	elif [[ "${path}" =~ "zen-sauce-5.15.0-e6e6ceb.patch" ]] ; then
 		_tpatch "${PATCH_OPTS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPTS}" \
