@@ -7513,6 +7513,7 @@ einfo "SEV is using custom settings for KVM ${machine_type}"
 		elif [[ \
 			   "${hardening_level}" == "default" \
 			|| "${hardening_level}" == "practical" \
+			|| "${hardening_level}" == "secure" \
 		]] ; then
 einfo "SEV is using defaults for KVM ${machine_type}"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "kvm_amd.sev=[01]"
@@ -7529,8 +7530,7 @@ einfo "SEV is disabled for KVM ${machine_type}"
 			ot-kernel_set_kconfig_kernel_cmdline "mem_encrypt=off"
 			ot-kernel_set_kconfig_kernel_cmdline "kvm_amd.sev=0"
 		elif [[ \
-			   "${hardening_level}" == "secure" \
-			|| "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure-af" \
 			|| "${hardening_level}" == "secure-as-fuck" \
 		]] ; then
 			local sev=0
@@ -8255,6 +8255,7 @@ ot-kernel-pkgflags_rtkit() { # DONE
 		elif [[ \
 			   "${hardening_level}" == "default" \
 			|| "${hardening_level}" == "practical" \
+			|| "${hardening_level}" == "secure" \
 		]] ; then
 			ot-kernel_unset_configopt "CONFIG_RT_GROUP_SCHED"
 		elif [[ \
@@ -11174,8 +11175,7 @@ _ot-kernel_set_io_uring() {
 	]] ; then
 		:
 	elif [[ \
-		   "${hardening_level}" == "secure" \
-		|| "${hardening_level}" == "secure-af" \
+		   "${hardening_level}" == "secure-af" \
 		|| "${hardening_level}" == "secure-as-fuck" \
 	]] ; then
 	# Increased security
@@ -11205,7 +11205,7 @@ eerror "  default      - Upstream defaults, practically secure"
 eerror "  manual       - Alias for custom"
 eerror "  performance  - All mitigations disabled"
 eerror "  practical    - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
-eerror "  secure       - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
+eerror "  secure-af    - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
 eerror
 eerror "Actual value:"
 eerror

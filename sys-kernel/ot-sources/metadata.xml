@@ -1562,8 +1562,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
       practical -  Alias for default.
 
-      secure - Mature alias for secure-af, but discouraged due to ambiguous
-      interpretation or presents itself as weakly secure or softy.
+      secure - Alias for default.
 
       secure-af - (Aka secure as fuck), full hardening.  Increases mitigation
       against theoretical attacks, difficult to achieve attacks,

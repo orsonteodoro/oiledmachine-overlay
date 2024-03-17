@@ -3298,6 +3298,8 @@ eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER has been rena
 	if [[ -n "${OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT}" ]] ; then
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW.  Please rename to continue."
 	fi
+
+ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed.  See metadata.xml for details."
 }
 
 # @FUNCTION: ot-kernel_clear_env
@@ -4332,13 +4334,13 @@ ot-kernel_set_kconfig_cfi() {
 		[[ \
 			   "${hardening_level}" == "default" \
 			|| "${hardening_level}" == "practical" \
+			|| "${hardening_level}" == "secure" \
 		]] \
 	; then
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	elif \
 		[[ \
-			   "${hardening_level}" == "secure" \
-			|| "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure-af" \
 			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 			&&
@@ -4379,8 +4381,7 @@ einfo "Disabling CFI support in the in the .config."
 
 	if \
 		[[ \
-			   "${hardening_level}" == "secure" \
-			|| "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure-af" \
 			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
@@ -4407,13 +4408,13 @@ ot-kernel_set_kconfig_kcfi() {
 		[[ \
 			   "${hardening_level}" == "default" \
 			|| "${hardening_level}" == "practical" \
+			|| "${hardening_level}" == "secure" \
 		]] \
 	; then
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	elif \
 		[[ \
-			   "${hardening_level}" == "secure" \
-			|| "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure-af" \
 			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 			&& \
@@ -4463,8 +4464,7 @@ einfo "Disabling KCFI support in the in the .config."
 
 	if \
 		[[ \
-			   "${hardening_level}" == "secure" \
-			|| "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure-af" \
 			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 			&& \
@@ -5786,6 +5786,7 @@ eerror
 	elif [[ \
 		   "${hardening_level}" == "default" \
 		|| "${hardening_level}" == "practical" \
+		|| "${hardening_level}" == "secure" \
 	]] ; then
 	# Resets back to upstream defaults.
 
@@ -5963,8 +5964,7 @@ eerror
 			ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 		fi
 	elif [[ \
-		   "${hardening_level}" == "secure" \
-		|| "${hardening_level}" == "secure-af" \
+		   "${hardening_level}" == "secure-af" \
 		|| "${hardening_level}" == "secure-as-fuck" \
 	]] ; then
 	# CFI and SCS handled later
@@ -8033,7 +8033,7 @@ eerror "  default     - Upstream defaults, practically secure"
 eerror "  manual      - Alias for custom"
 eerror "  performance - All mitigations disabled"
 eerror "  practical   - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
-eerror "  secure      - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
+eerror "  secure-af   - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
 eerror
 eerror "Actual value:"
 eerror
@@ -8059,6 +8059,7 @@ ot-kernel_set_kconfig_scs() {
 		[[ \
 			   "${hardening_level}" == "default" \
 			|| "${hardening_level}" == "practical" \
+			|| "${hardening_level}" == "secure" \
 		]] \
 	; then
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
@@ -10776,7 +10777,7 @@ ot-kernel_optimize_gaming() {
 ewarn
 ewarn "OT_KERNEL_WORK_PROFILE=\"${work_profile}\" is still in development."
 ewarn
-	if [[ "${hardening_level}" =~ "secure-af" ]] ; then
+	if [[ "${hardening_level}" =~ ("default"|"practical"|"secure"|"secure-af"|"secure-as-fuck") ]] ; then
 eerror
 eerror "Please change to OT_KERNEL_HARDENING_LEVEL=\"performance\" and remove"
 eerror "all hardening flags from OT_KERNEL_EXTRAVERSION=\"${extraversion}\""
