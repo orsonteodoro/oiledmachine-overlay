@@ -4337,7 +4337,9 @@ ot-kernel_set_kconfig_cfi() {
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	elif \
 		[[ \
-			   "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure" \
+			|| "${hardening_level}" == "secure-af" \
+			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 			&&
 		has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
@@ -4366,7 +4368,10 @@ einfo "Enabling CFI support in the in the .config."
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 	elif [[ \
-		   "${hardening_level}" == "performance" \
+		   "${hardening_level}" == "fast" \
+		|| "${hardening_level}" == "fast-af" \
+		|| "${hardening_level}" == "fast-as-fuck" \
+		|| "${hardening_level}" == "performance" \
 	]] ; then
 einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
@@ -4374,7 +4379,9 @@ einfo "Disabling CFI support in the in the .config."
 
 	if \
 		[[ \
-			   "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure" \
+			|| "${hardening_level}" == "secure-af" \
+			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
 		&& [[ "${arch}" == "arm64" ]] \
@@ -4405,7 +4412,9 @@ ot-kernel_set_kconfig_kcfi() {
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	elif \
 		[[ \
-			   "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure" \
+			|| "${hardening_level}" == "secure-af" \
+			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 			&& \
 		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
@@ -4442,7 +4451,10 @@ einfo "Enabling KCFI support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
 	elif \
 		[[ \
-			   "${hardening_level}" == "performance" \
+			   "${hardening_level}" == "fast" \
+			|| "${hardening_level}" == "fast-af" \
+			|| "${hardening_level}" == "fast-as-fuck" \
+			|| "${hardening_level}" == "performance" \
 		]] \
 	; then
 einfo "Disabling KCFI support in the in the .config."
@@ -4451,7 +4463,9 @@ einfo "Disabling KCFI support in the in the .config."
 
 	if \
 		[[ \
-			   "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure" \
+			|| "${hardening_level}" == "secure-af" \
+			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 			&& \
 		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
@@ -5030,7 +5044,10 @@ einfo "Changed .config to use MuQSS"
 	]] ; then
 	# Low latency
 		if [[ \
-			   "${hardening_level}" == "performance" \
+			   "${hardening_level}" == "fast" \
+			|| "${hardening_level}" == "fast-af" \
+			|| "${hardening_level}" == "fast-as-fuck" \
+			|| "${hardening_level}" == "performance" \
 		]] ; then
 			if \
 				[[ \
@@ -5092,7 +5109,10 @@ einfo "Changed .config to use MuQSS"
 			elif \
 				[[ \
 					( \
-						   "${hardening_level}" == "performance" \
+						   "${hardening_level}" == "fast" \
+						|| "${hardening_level}" == "fast-af" \
+						|| "${hardening_level}" == "fast-as-fuck" \
+						|| "${hardening_level}" == "performance" \
 					) \
 						&& \
 					( \
@@ -5589,7 +5609,10 @@ eerror
 	]] ; then
 		:
 	elif [[ \
-		   "${hardening_level}" == "performance" \
+		   "${hardening_level}" == "fast" \
+		|| "${hardening_level}" == "fast-af" \
+		|| "${hardening_level}" == "fast-as-fuck" \
+		|| "${hardening_level}" == "performance" \
 	]] ; then
 	# Disable all hardening
 	# All randomization is disabled because it increases instruction latency
@@ -5940,7 +5963,9 @@ eerror
 			ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 		fi
 	elif [[ \
-		   "${hardening_level}" == "secure-af" \
+		   "${hardening_level}" == "secure" \
+		|| "${hardening_level}" == "secure-af" \
+		|| "${hardening_level}" == "secure-as-fuck" \
 	]] ; then
 	# CFI and SCS handled later
 
@@ -7986,10 +8011,15 @@ eerror
 	if [[ \
 		   "${hardening_level}" == "custom" \
 		|| "${hardening_level}" == "default" \
+		|| "${hardening_level}" == "fast" \
+		|| "${hardening_level}" == "fast-af" \
+		|| "${hardening_level}" == "fast-as-fuck" \
 		|| "${hardening_level}" == "manual" \
 		|| "${hardening_level}" == "performance" \
 		|| "${hardening_level}" == "practical" \
+		|| "${hardening_level}" == "secure" \
 		|| "${hardening_level}" == "secure-af" \
+		|| "${hardening_level}" == "secure-as-fuck" \
 	]] ; then
 		:
 	else
@@ -8003,7 +8033,7 @@ eerror "  default     - Upstream defaults, practically secure"
 eerror "  manual      - Alias for custom"
 eerror "  performance - All mitigations disabled"
 eerror "  practical   - Practically secure or balanced security-performance (same as upstream defaults, alias for default)"
-eerror "  secure-af   - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
+eerror "  secure      - Mitigation against theoretical attacks, difficult to achieve attacks, data exfiltration"
 eerror
 eerror "Actual value:"
 eerror
@@ -8034,7 +8064,9 @@ ot-kernel_set_kconfig_scs() {
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 	elif \
 		[[ \
-			   "${hardening_level}" == "secure-af" \
+			   "${hardening_level}" == "secure" \
+			|| "${hardening_level}" == "secure-af" \
+			|| "${hardening_level}" == "secure-as-fuck" \
 		]] \
 			&& \
 		has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack \
@@ -8052,7 +8084,10 @@ einfo "Enabling SCS support in the in the .config."
 		ot-kernel_y_configopt "CONFIG_MODULES"
 	elif \
 		[[ \
-			   "${hardening_level}" == "performance" \
+			   "${hardening_level}" == "fast" \
+			|| "${hardening_level}" == "fast-af" \
+			|| "${hardening_level}" == "fast-as-fuck" \
+			|| "${hardening_level}" == "performance" \
 		]] \
 	; then
 einfo "Disabling SCS support in the in the .config."

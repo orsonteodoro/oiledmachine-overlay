@@ -1539,9 +1539,14 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       custom
       default
       manual
+      fast
+      fast-af
+      fast-as-fuck
       practical
       performance
+      secure
       secure-af
+      secure-as-fuck
       unset
 
     Meanings:
@@ -1551,9 +1556,14 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       default - Uses upstream default security settings, practically secure,
       balanced performance-security.
 
+      fast-af - Trendy alias for performance.
+
       performance - Disables all hardening.
 
       practical -  Alias for default.
+
+      secure - Mature alias for secure-af, but discouraged due to ambiguous
+      interpretation or presents itself as weakly secure or softy.
 
       secure-af - (Aka secure as fuck), full hardening.  Increases mitigation
       against theoretical attacks, difficult to achieve attacks,
@@ -1561,6 +1571,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       potentially problematic mitigations conditionally based on experiental
       trial-and-error observations.  Idealistically, they should be ON by
       default but are disabled by default due to compatibility issues.
+      The -af is intentional because it emphasizes extreme security measures.
 
       unset - same as custom.
 
