@@ -21,13 +21,13 @@ export NPM_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
 ELECTRON_APP_ELECTRON_PV="18.2.2" # See \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.3.194/newIDE/electron-app/package-lock.json \
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.3.195/newIDE/electron-app/package-lock.json \
 # and \
-# strings /var/tmp/portage/dev-games/gdevelop-5.3.194/work/GDevelop-5.3.194/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+# strings /var/tmp/portage/dev-games/gdevelop-5.3.195/work/GDevelop-5.3.195/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
 ELECTRON_APP_REACT_PV="16.14.0" # See \
 # The last supported for react 16.14.0 is node 14.0. \
 # https://github.com/facebook/react/blob/v16.14.0/package.json#L100 \
-# https://raw.githubusercontent.com/4ian/GDevelop/v5.3.194/newIDE/app/package-lock.json
+# https://raw.githubusercontent.com/4ian/GDevelop/v5.3.195/newIDE/app/package-lock.json
 ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  We force it because CI tests passed.
 EMBUILD_DIR="${WORKDIR}/build"
 EMSCRIPTEN_PV="3.1.21" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
@@ -3557,9 +3557,9 @@ REQUIRED_USE+="
 	X
 "
 # Dependency lists:
-# https://github.com/4ian/GDevelop/blob/v5.3.194/.circleci/config.yml#L85
-# https://github.com/4ian/GDevelop/blob/v5.3.194/.travis.yml
-# https://github.com/4ian/GDevelop/blob/v5.3.194/ExtLibs/installDeps.sh
+# https://github.com/4ian/GDevelop/blob/v5.3.195/.circleci/config.yml#L85
+# https://github.com/4ian/GDevelop/blob/v5.3.195/.travis.yml
+# https://github.com/4ian/GDevelop/blob/v5.3.195/ExtLibs/installDeps.sh
 # https://app.travis-ci.com/github/4ian/GDevelop (raw log)
 # U 20.04.6 LTS
 # Dependencies for the native build are not installed in CI
@@ -3967,7 +3967,7 @@ build_gdevelop_js() {
 einfo
 einfo "Compiling ${MY_PN}.js"
 einfo
-# In https://github.com/4ian/GDevelop/blob/v5.3.194/GDevelop.js/Gruntfile.js#L88
+# In https://github.com/4ian/GDevelop/blob/v5.3.195/GDevelop.js/Gruntfile.js#L88
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js"
 		enpm run build -- --force --dev
 	popd
