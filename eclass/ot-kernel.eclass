@@ -1024,9 +1024,10 @@ NO_INSTRUMENT_FUNCTION="a63d4f6cbab133b0f1ce9afb562546fcc5bb2680"
 NO_INSTRUMENT_FUNCTION_TIMESTAMP="1624300463" # Mon Jun 21 06:34:23 PM UTC 2021
 
 PGO_LLVM_SUPPORTED_VERSIONS=(
+# Bump also IPD_RAW_VER_MAX when profraw version bumped
 # Search for INSTR_PROF_RAW_VERSION in
 #	"19.0.0.9999" # profraw v9
-#	"18.1.0" # profraw v9
+	"18.1.0" # profraw v9
 	"17.0.6" # profraw v8
 	"17.0.5"
 	"17.0.4"
@@ -1063,7 +1064,7 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 # IPD_RAW_VER* is the same as INSTR_PROF_RAW_VERSION.
 IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
-IPD_RAW_VER_MAX=8
+IPD_RAW_VER_MAX=9
 verify_profraw_compatibility() {
 einfo "Verifying profraw version compatibility"
 	# The profiling data format is very version sensitive.
@@ -1081,19 +1082,22 @@ einfo "Verifying profraw version compatibility"
 	for pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
 		( ! ot-kernel_has_version "~sys-devel/llvm-${pv}" ) && continue
 einfo "pv=${pv}"
-		local instr_prof_raw_v=$(cat \
+		local instr_prof_raw_ver=$(cat \
 "${ESYSROOT}/usr/lib/llvm/$(ver_cut 1 ${found_ver})/include/llvm/ProfileData/InstrProfData.inc" \
 			| grep "INSTR_PROF_RAW_VERSION" \
 			| head -n 1 \
 			| grep -E -o -e "[0-9]+")
-einfo "instr_prof_raw_v=${instr_prof_raw_v}"
-		if (( ${instr_prof_raw_v} == ${IPD_RAW_VER} )) ; then
+einfo "instr_prof_raw_ver=${instr_prof_raw_ver}"
+		if (( ${instr_prof_raw_ver} == ${IPD_RAW_VER} )) ; then
 			found_upstream_version=1
 		fi
-		if (( ${instr_prof_raw_v} >= ${IPD_RAW_VER_MIN} && ${instr_prof_raw_v} <= ${IPD_RAW_VER_MAX} )) ; then
+		if (( ${instr_prof_raw_ver} >= ${IPD_RAW_VER_MIN} && ${instr_prof_raw_ver} <= ${IPD_RAW_VER_MAX} )) ; then
 			found_patched_version=1
 		fi
 	done
+einfo "DEBUG:  instr_prof_raw_ver=${instr_prof_raw_ver}"
+einfo "DEBUG:  IPD_RAW_VER_MIN=${IPD_RAW_VER_MIN}"
+einfo "DEBUG:  IPD_RAW_VER_MAX=${IPD_RAW_VER_MAX}"
 	if (( ${found_upstream_version} != 1 )) ; then
 eerror
 eerror "No installed LLVM versions are with compatible."
@@ -1317,8 +1321,15 @@ dump_profraw() {
 	if [[ "${FORCE_PGO_PHASE}" =~ ("PGI"|"PGO"|"PG0") ]] ; then
 		return
 	fi
-	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw"
-	[[ -e "${profraw_spath}" ]] || return
+	local profraw_spath
+	local profraw_spath="/sys/kernel/debug/pgo/vmlinux.profraw" # new patch
+	if ! [[ -e "${profraw_spath}" ]] ; then
+		profraw_spath="/sys/kernel/debug/pgo/profraw" # old patch
+	fi
+	if ! [[ -e "${profraw_spath}" ]] ; then
+ewarn "Could not find Clang PGO profile data.  Dump skipped."
+		return
+	fi
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"
 	local extraversion=$(cat /proc/version | cut -f 3 -d " " | sed -e "s|-${arch}||g" | cut -f 2- -d "-")
@@ -1356,7 +1367,10 @@ dump_gcda() {
 #/sys/kernel/debug/gcov/var/tmp/portage/sys-kernel/ot-sources-6.5.2/work/linux-6.5.2-builder/sound/usb/clock.gcda ; profile data
 	local workdir
 	local s
-	[[ -e "/sys/kernel/debug/gcov/var" ]] || return
+	if ! [[ -e "/sys/kernel/debug/gcov/var" ]] ; then
+ewarn "Could not find GCC PGO profile data.  Dump skipped."
+		return
+	fi
 	cd "/sys/kernel/debug/gcov" || die
 	local arch=$(cat /proc/version | cut -f 3 -d " ")
 	arch="${arch##*-}"

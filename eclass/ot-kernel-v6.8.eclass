@@ -42,7 +42,7 @@ KERNEL_RELEASE_DATE="99999999" # of first stable release
 CXX_STD="-std=gnu++14" # See https://github.com/torvalds/linux/blob/v6.8/tools/build/feature/Makefile#L331
 GCC_COMPAT=( {13..5} )
 # llvm slot originally 16, testing 18
-LLVM_COMPAT=( {17..10} )
+LLVM_COMPAT=( {18..10} )
 CLANG_PGO_SUPPORTED=1
 DISABLE_DEBUG_PV="1.4.1"
 EXTRAVERSION="-ot"
