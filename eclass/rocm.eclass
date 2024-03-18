@@ -282,6 +282,9 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	elif has system-llvm ${IUSE} && ! use system-llvm ; then
 		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
+	elif has_version "dev-util/hip-compiler:${ROCM_SLOT}[-system-llvm]" ; then
+		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
+		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/clang:${LLVM_SLOT}"
@@ -290,6 +293,8 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	if [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
 		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 	elif has system-llvm ${IUSE} && ! use system-llvm ; then
+		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
+	elif has_version "dev-util/hip-compiler:${ROCM_SLOT}[-system-llvm]" ; then
 		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
 	else
 		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
