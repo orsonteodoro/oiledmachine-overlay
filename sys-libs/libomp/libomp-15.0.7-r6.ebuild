@@ -318,7 +318,9 @@ src_prepare() {
 		"${WORKDIR}/openmp/runtime/src/CMakeLists.txt"
 		"${WORKDIR}/openmp/tools/archer/CMakeLists.txt"
 	)
-	rocm_src_prepare
+	if use rocm_5_3 || use rocm_5_4 ; then
+		rocm_src_prepare
+	fi
 }
 
 gen_nvptx_list() {
