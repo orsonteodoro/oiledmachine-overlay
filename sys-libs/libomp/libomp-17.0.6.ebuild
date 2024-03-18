@@ -59,28 +59,25 @@ CUDA_TARGETS_COMPAT=(
 	sm_90
 )
 LLVM_SLOT="${PV%%.*}"
+PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
 inherit llvm-ebuilds
 
-_llvm_set_globals() {
-	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM17_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM17_BRANCH}"
-	fi
-}
-_llvm_set_globals
-unset -f _llvm_set_globals
-
-PYTHON_COMPAT=( python3_{10..12} )
-
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-single-r1
 inherit rocm toolchain-funcs
 
-KEYWORDS="
+if [[ "${PV}" =~ "9999" ]] ; then
+llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
+	EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+	if [[ "${USE}" =~ "fallback-commit" ]] ; then
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
+	fi
+else
+	KEYWORDS="
 amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv x86 ~amd64-linux ~x64-macos
-"
+	"
+fi
 
 DESCRIPTION="OpenMP runtime library for LLVM/clang compiler"
 HOMEPAGE="https://openmp.llvm.org"
