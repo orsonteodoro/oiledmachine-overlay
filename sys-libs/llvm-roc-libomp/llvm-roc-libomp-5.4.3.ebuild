@@ -54,6 +54,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1035
 	gfx1036
 )
+CMAKE_BUILD_TYPE="RelWithDebInfo"
 CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_37
@@ -70,13 +71,13 @@ CUDA_TARGETS_COMPAT=(
 	sm_86
 	auto
 )
-LLVM_MAX_SLOT=15
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+LLVM_SLOT=15
 PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic python-single-r1 rocm
 
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
@@ -86,6 +87,9 @@ https://github.com/RadeonOpenCompute/llvm-project/commit/056b229c2c479171ff7bd63
 	-> llvm-roc-commit-056b229.patch
 "
 # 056b229 - [openmp] - Fix DP issue in amdgpu plugin.
+S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
+S_DEVICELIBS="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
+S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
 
 DESCRIPTION="The ROCm™ fork of LLVM's libomp"
 HOMEPAGE="
@@ -102,7 +106,6 @@ LICENSE="
 "
 # Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.6.0/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
-KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 LLVM_TARGETS=(
 	AMDGPU
@@ -254,16 +257,12 @@ BDEPEND="
 		virtual/pkgconfig
 	)
 	|| (
-		sys-devel/lld:${LLVM_MAX_SLOT}
+		sys-devel/lld:${LLVM_SLOT}
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
 	)
 "
 PATCHES=(
 )
-S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
-S_DEVICELIBS="${WORKDIR}/ROCm-Device-Libs-rocm-${PV}"
-S_ROOT="${WORKDIR}/llvm-project-rocm-${PV}"
-CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 gen_nvptx_list() {
 	if use cuda_targets_auto ; then
