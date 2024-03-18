@@ -134,15 +134,6 @@ BDEPEND+="
 # DEPEND="sci-libs/rocBLAS[${ROCM_USEDEP}]"
 # @CODE
 
-# @ECLASS_VARIABLE: ROCM_SKIP_COMMON_PATHS_PATCHES
-# @DESCRIPTION:
-# Prevent replacing @...@ symbols that other build tools may reference.
-#
-# Acceptable values:
-# =1    - do not replace @...@
-# =0    - auto replace @...@
-# unset - auto replace @...@
-
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
@@ -240,7 +231,6 @@ unset -f _rocm_set_globals
 # @DESCRIPTION:
 # Init paths
 rocm_pkg_setup() {
-	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
 	if [[ -z "${LLVM_SLOT}" ]] ; then
 eerror
 eerror "LLVM_SLOT must be defined."
@@ -400,7 +390,6 @@ einfo
 #
 
 _rocm_change_common_paths() {
-	[[ "${ROCM_SKIP_COMMON_PATHS_PATCHES}" == "1" ]] && return
 	IFS=$'\n'
 
 	local _patch_paths=(

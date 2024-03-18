@@ -16,7 +16,6 @@ if [[ "${PV##*.}" == "0" ]] ; then
 else
 	MY_PV="${PV}"
 fi
-ROCM_SKIP_COMMON_PATHS_PATCHES=1
 ROCM_SLOT="5.4"
 ROCM_VERSION="${PV}"
 
