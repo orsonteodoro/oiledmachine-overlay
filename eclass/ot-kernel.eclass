@@ -655,11 +655,19 @@ fi
 LINUX_REPO_URI=\
 "https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
-NEST_FN="Nest_v${KV_MAJOR_MINOR}.patch"
-if [[ "${KV_MAJOR_MINOR}" == "5.15" ]] ; then
-NEST_URI="https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v${KV_MAJOR_MINOR}_patch?inline=false -> ${NEST_FN}"
-elif [[ "${KV_MAJOR_MINOR}" == "6.6" ]] ; then
-NEST_URI="https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v${KV_MAJOR_MINOR}.patch?inline=false -> ${NEST_FN}"
+if ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
+NEST_FN="nest_patch_with_spinning_6.7" # Similar to 6.6 behavior
+NEST_FN_ALT="nest_patch_nospin_6.7" # New change
+NEST_URI="
+https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/nest_patch_with_spinning_6.7?inline=false -> ${NEST_FN}
+https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/nest_patch_nospin_6.7?inline=false -> ${NEST_FN_ALT}
+"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+NEST_FN="Nest_v6.6.patch"
+NEST_URI="https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v6.6.patch?inline=false -> ${NEST_FN}"
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+NEST_FN="Nest_v5.15.patch"
+NEST_URI="https://gitlab.inria.fr/nest-public/nest-artifact/-/raw/main/extras/Nest_v5.15_patch?inline=false -> ${NEST_FN}"
 fi
 
 O3_SRC_URI="https://github.com/torvalds/linux/commit/"
@@ -780,7 +788,7 @@ _fpatch() {
 	local path="${1}"
 	local msg_extra="${2}"
 	if declare -f ot-kernel_filter_patch_cb > /dev/null ; then
-		ot-kernel_filter_patch_cb "${path}"
+		ot-kernel_filter_patch_cb "${path}" "${msg_extra}"
 	else
 		_dpatch "${PATCH_OPTS}" "${path}" "${msg_extra}"
 	fi
@@ -793,7 +801,7 @@ _dpatch() {
 	local opts="${1}"
 	local path="${2}"
 	local msg_extra="${3}"
-einfo "Applying ${path}${msg_extra}"
+einfo "Applying ${path} ${msg_extra}"
 	patch ${opts} -i "${path}" || die
 }
 
@@ -810,7 +818,7 @@ _tpatch() {
 	local n_reversed_expected="${4}" # must be the same as n_reversed_actual (Part 2)
 	local msg_extra="${5}"
 einfo
-einfo "Applying ${path}${msg_extra}"
+einfo "Applying ${path} ${msg_extra}"
 einfo "  with ${n_failures_expected} expected hunk(s) failed and"
 einfo "  with ${n_reversed_expected} expected reversed / previous-patch detected"
 einfo "which will be resolved or patched immediately."
@@ -1412,9 +1420,9 @@ einfo
 # Gets the tag name at HEAD
 get_current_tag_for_k_major_minor_branch() {
 	d="${EDISTDIR}/ot-sources-src/linux"
-	pushd "${d}" 2>/dev/null 1>/dev/null || die
+	pushd "${d}" >/dev/null 2>&1 || die
 		echo $(git --no-pager tag --points-at HEAD)
-	popd 2>/dev/null 1>/dev/null
+	popd >/dev/null 2>&1 || die
 }
 
 # @FUNCTION: get_current_commit_for_k_major_minor_branch
@@ -1422,9 +1430,9 @@ get_current_tag_for_k_major_minor_branch() {
 # Gets the commit ID at HEAD
 get_current_commit_for_k_major_minor_branch() {
 	d="${EDISTDIR}/ot-sources-src/linux"
-	pushd "${d}" 2>/dev/null 1>/dev/null || die
+	pushd "${d}" >/dev/null 2>&1 || die
 		echo $(git rev-parse HEAD)
-	popd 2>/dev/null 1>/dev/null
+	popd >/dev/null 2>&1 || die
 }
 
 # @FUNCTION: ot-kernel_unpack_live
@@ -1482,13 +1490,13 @@ einfo "Skipping PREEMPT_RT patches which is not supported for ARCH=${arch}"
 		return
 	fi
 	mkdir -p "${T}/rt" || die
-	pushd "${T}/rt" || die
+	pushd "${T}/rt" >/dev/null 2>&1 || die
 		if [[ -e "${EDISTDIR}/${RT_FN}" ]] ; then
 			unpack "${EDISTDIR}/${RT_FN}"
 		elif [[ -e "${EDISTDIR}/${RT_ALT_FN}" ]] ; then
 			unpack "${EDISTDIR}/${RT_ALT_FN}"
 		fi
-	popd
+	popd >/dev/null 2>&1 || die
 	local p
 	for p in $(cat "${T}/rt/patches/series" | grep -E -e "^[^#]") ; do
 		_fpatch "${T}/rt/patches/${p}"
@@ -1614,7 +1622,11 @@ apply_zen_sauce() {
 		| tr "\n" " ")
 
 einfo "Applying zen-sauce patches"
+	local has_use_flag_patch=0
 	for c in ${PATCH_ZEN_SAUCE_COMMITS[@]} ; do
+		local subject=$(grep -e "^Subject:" "${EDISTDIR}/zen-sauce-${ZEN_KV}-${c:0:7}.patch" \
+			| head -n 1 \
+			| sed -e "s|^Subject: ||")
 		local is_whitelisted=0
 		local c_wl
 		for c_wl in ${whitelisted[@]} ; do
@@ -1630,12 +1642,8 @@ einfo "Applying zen-sauce patches"
 			local c_bl
 			for c_bl in ${use_blacklisted} ; do
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]] ; then
-ewarn
-ewarn "${c} is already applied via USE flag.  Please remove it from the"
-ewarn "ZEN_SAUCE_WHITELIST and use the USE flag instead."
-ewarn "This is to ensure the BDEPENDS/RDEPENDS/DEPENDs are met."
-ewarn "Skipping ${c} for now."
-ewarn
+ewarn "Skipping zen-sauce ${c} -- ${subject} -- Use the USE flag instead."
+					has_use_flag_patch=1
 					is_blacklisted=1
 					break
 				fi
@@ -1647,9 +1655,8 @@ ewarn
 		if [[ -n "${#blacklisted}" ]] ; then
 			local c_bl
 			for c_bl in ${blacklisted} ; do
-				if [[ "${c:0:7}" == "${c_bl:0:7}" ]]
-				then
-einfo "Skipping ${c}"
+				if [[ "${c:0:7}" == "${c_bl:0:7}" ]] ; then
+einfo "Skipping zen-sauce ${c} -- ${subject}"
 					is_blacklisted=1
 					break
 				fi
@@ -1657,8 +1664,16 @@ einfo "Skipping ${c}"
 		fi
 		(( ${is_blacklisted} == 1 )) && continue
 
-		_fpatch "${EDISTDIR}/zen-sauce-${ZEN_KV}-${c:0:7}.patch"
+		_fpatch "${EDISTDIR}/zen-sauce-${ZEN_KV}-${c:0:7}.patch" "-- ${subject}"
 	done
+	if (( ${has_use_flag_patch} == 1 )) ; then
+ewarn
+ewarn "Rows marked \"USE flag\" should be applied with both the USE flag"
+ewarn "and OT_KERNEL_USE instead.  Please remove these IDs from the"
+ewarn "ZEN_SAUCE_WHITELIST.  This is to ensure the BDEPENDS/RDEPENDS/DEPENDs"
+ewarn "are met."
+ewarn
+	fi
 }
 
 # @FUNCTION: apply_cfi
@@ -1805,7 +1820,7 @@ ewarn
 		P_GENPATCHES_BLACKLIST+=" 1500" # fail to patch
 	fi
 
-	pushd "${d}" || die
+	pushd "${d}" >/dev/null 2>&1 || die
 		local f
 		for f in $(ls -1) ; do
 #einfo "Processing ${f}"
@@ -1826,7 +1841,7 @@ ewarn
 					fi
 				done
 				if [[ "${is_blacklisted}" == "1" ]] ; then
-einfo "Skipping genpatches ${l}"
+einfo "Skipping genpatches ${f}"
 					continue
 				fi
 
@@ -1838,16 +1853,16 @@ einfo "Skipping genpatches ${l}"
 					fi
 				done
 				if [[ "${is_blacklisted}" == "1" ]] ; then
-einfo "Skipping genpatches ${l}"
+einfo "Skipping genpatches ${f}"
 					continue
 				fi
 
-				pushd "${BUILD_DIR}" || die
+				pushd "${BUILD_DIR}" >/dev/null 2>&1 || die
 					_fpatch "${d}/${f}"
-				popd
+				popd >/dev/null 2>&1 || die
 			fi
 		done
-	popd
+	popd >/dev/null 2>&1 || die
 }
 
 # @FUNCTION: apply_bmq
@@ -2314,9 +2329,9 @@ apply_clear_linux_patches() {
 einfo "Applying Clear Linux patches"
 	if ver_test ${PV} -eq ${CLEAR_LINUX_PATCHES_VER%-*} ; then
 		mkdir -p "${T}/clear-linux-patches"
-		pushd "${T}/clear-linux-patches" || die
+		pushd "${T}/clear-linux-patches" >/dev/null 2>&1 || die
 			unpack "${CLEAR_LINUX_PATCHES_FN}"
-		popd
+		popd >/dev/null 2>&1 || die
 		local P=(
 			$(grep -E -e "^Patch[0-9]+:" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/linux.spec" \
 				| cut -f 2 -d ":" \
@@ -2366,13 +2381,17 @@ ewarn "${p} is blacklisted.  Skipping..."
 			"${OT_KERNEL_CLEAR_LINUX_PATCHSET_EXTRA}"
 		)
 		for p in ${P[@]} ; do
+			local subject=$(grep -e "^Subject:" "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}" \
+				| head -n 1 \
+				| sed -e "s|^Subject: ||")
 			local bl=""
 			for bl in ${blacklisted} ; do
 				if [[ "${p}" == "${bl}" ]] ; then
+ewarn "Skipping clear linux patchset ${p} -- ${subject}"
 					continue
 				fi
 			done
-			_fpatch "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}"
+			_fpatch "${T}/clear-linux-patches/linux-${CLEAR_LINUX_PATCHES_VER}/${p}" "-- ${subject}"
 		done
 
 		if [[ "${CFLAGS}" =~ "-march=westmere" ]] ; then
@@ -2392,8 +2411,8 @@ ewarn "Removing -O3 from Clear Linux patch.  Set CFLAGS with -O3 to keep it."
 ewarn
 ewarn "The Clear Linux patches version mismatch.  Skipping."
 ewarn
-ewarn "Expected version:  ${CLEAR_LINUX_PATCHES_VER%-*}"
 ewarn "Actual version:  ${PV}"
+ewarn "Expected version:  ${CLEAR_LINUX_PATCHES_VER%-*}"
 ewarn
 ewarn "The patchset estimated bump is 2-7 days after the point release."
 ewarn
@@ -2405,7 +2424,11 @@ ewarn
 # Apply the Nest scheduler.
 apply_nest() {
 einfo "Applying the Nest scheduler patch"
-	_fpatch "${DISTDIR}/${NEST_FN}"
+	if [[ "${NEST_SPINNING:-1}" == "0" ]] ; then
+		_fpatch "${DISTDIR}/${NEST_FN_ALT}"
+	else
+		_fpatch "${DISTDIR}/${NEST_FN}"
+	fi
 }
 
 # @FUNCTION: apply_all_patchsets
@@ -2545,11 +2568,6 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	[[ "${IUSE_EFFECTIVE}" =~ "c2tcp" ]] && einfo "yes IUSE"
-	[[ "${OT_KERNEL_USE}" =~ "c2tcp" ]] && einfo "yes OT_KERNEL_USE"
-	has c2tcp ${IUSE_EFFECTIVE} && einfo "has c2tcp YES"
-	ot-kernel_use c2tcp && einfo "ot-kernel-use c2tcp YES"
-	use "c2tcp" && einfo "use c2tcp YES"
 	if \
 		   ( has c2tcp ${IUSE_EFFECTIVE}  && ot-kernel_use c2tcp ) \
 		|| ( has deepcc ${IUSE_EFFECTIVE} && ot-kernel_use deepcc ) \
@@ -3035,7 +3053,7 @@ PGO_PHASE_DONE="DONE" # DONE
 # @DESCRIPTION:
 # Checks if the compiler has no problems
 is_clang_ready() {
-	which clang-${llvm_slot} 2>/dev/null 1>/dev/null || return 1
+	which clang-${llvm_slot} >/dev/null 2>&1 || return 1
 	local has_error=0
 	if clang-${llvm_slot} --help | grep -q -F -e "symbol lookup error" ; then
 ewarn "Found clang error"
@@ -3045,7 +3063,7 @@ ewarn "Found clang error"
 ewarn "Found library error"
 		has_error=1
 	fi
-	if CXX=clang-${llvm_slot} test-flags-CXX ${CXX_STD} 2>/dev/null 1>/dev/null ; then
+	if CXX=clang-${llvm_slot} test-flags-CXX ${CXX_STD} >/dev/null 2>&1 ; then
 		:
 	else
 ewarn "Found unsupported ${CXX_STD} with clang++-${llvm_slot}"
@@ -3069,7 +3087,7 @@ ewarn
 # Checks if the compiler has no problems
 is_gcc_ready() {
 einfo "Testing gcc slot ${gcc_slot}"
-	which gcc-${gcc_slot} 2>/dev/null 1>/dev/null || return 1
+	which gcc-${gcc_slot} >/dev/null 2>&1 || return 1
 	local has_error=0
 	if gcc-${gcc_slot} --help | grep -q -F -e "symbol lookup error" ; then
 ewarn "Found gcc error"
@@ -3079,7 +3097,7 @@ ewarn "Found gcc error"
 ewarn "Found library error"
 		has_error=1
 	fi
-	if CXX=g++-${gcc_slot} test-flags-CXX ${CXX_STD} 2>/dev/null 1>/dev/null ; then
+	if CXX=g++-${gcc_slot} test-flags-CXX ${CXX_STD} >/dev/null 2>&1 ; then
 		:
 	else
 ewarn "Found unsupported ${CXX_STD} with g++-${gcc_slot}"
@@ -3172,7 +3190,7 @@ ot-kernel_set_kconfig_firmware() {
 ewarn "sys-kernel/linux-firmware should be installed first"
 		fi
 einfo "Adding firmware"
-		pushd /lib/firmware 2>/dev/null 1>/dev/null || die "Missing firmware"
+		pushd /lib/firmware >/dev/null 2>&1 || die "Missing firmware"
 			for l in $(echo ${ot_kernel_firmware} | tr " " "\n") ; do
 				firmware+=(
 					$(find . -path "*${l}*" \
@@ -3180,7 +3198,7 @@ einfo "Adding firmware"
 						| sed -e "s|^\./||g")
 				)
 			done
-		popd 2>/dev/null 1>/dev/null
+		popd >/dev/null 2>&1 || die
 		firmware=($(echo "${firmware[@]}" | tr " " "\n" | sort))
 		firmware="${firmware[@]}" # bash problems
 		firmware=$(echo "${firmware}" \
@@ -3499,6 +3517,7 @@ ot-kernel_clear_env() {
 	unset MICROCODE_BLACKLIST
 	unset MOBO_AUDIO
 	unset MOBO_AUDIO_LEGACY
+	unset NEST_SPINNING
 	unset NFS_CLIENT
 	unset NFS_SERVER
 	unset OSS
@@ -3547,7 +3566,7 @@ ot-kernel_clear_env() {
 ot-kernel_load_config() {
 	source "${env_path}"
 
-	if declare -p OT_KERNEL_PKGFLAGS_ACCEPT 2>/dev/null 1>/dev/null \
+	if declare -p OT_KERNEL_PKGFLAGS_ACCEPT >/dev/null 2>&1 \
 		&& [[ "${!OT_KERNEL_PKGFLAGS_ACCEPT[@]}" == "0" ]] ; then
 eerror
 eerror "The OT_KERNEL_PKGFLAGS_ACCEPT has been changed from a string to an"
@@ -3559,7 +3578,7 @@ eerror
 		die
 	fi
 
-	if declare -p OT_KERNEL_PKGFLAGS_REJECT 2>/dev/null 1>/dev/null \
+	if declare -p OT_KERNEL_PKGFLAGS_REJECT >/dev/null 2>&1 \
 		&& [[ "${!OT_KERNEL_PKGFLAGS_REJECT[@]}" == "0" ]] ; then
 eerror
 eerror "The OT_KERNEL_PKGFLAGS_REJECT has been changed from a string to an"
@@ -4437,7 +4456,7 @@ eerror "CFI requires LLVM >= 15 on x86_64"
 eerror
 			die
 		fi
-		if ! test-flags -fsanitize=kcfi 2>/dev/null 1>/dev/null ; then
+		if ! test-flags -fsanitize=kcfi >/dev/null 2>&1 ; then
 eerror
 eerror "Both >=sys-devel/clang-15 and >=sys-devel/llvm-15 must be patched for"
 eerror "-fsanitize=kcfi support."
@@ -6180,7 +6199,7 @@ ewarn "The behavior the HT environment variable has changed.  See metadata.xml f
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			fi
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
-			if ! test-flags "-mfunction-return=thunk-extern" 2>/dev/null 1>/dev/null ; then
+			if ! test-flags "-mfunction-return=thunk-extern" >/dev/null 2>&1 ; then
 				# For rethunk
 				local gcc_version=$(gcc-version)
 				local clang_version=$(clang-version)
@@ -6431,7 +6450,7 @@ ewarn "Falling back to ${kflag}"
 				| grep -e "${kflag}" \
 				| grep -E -o -e "(-march=|-mtune=)[a-z0-9_.-]+"))
 			for x in ${march_flags[@]} ; do
-				if ! test-flags "${x}" 2>/dev/null 1>/dev/null ; then
+				if ! test-flags "${x}" >/dev/null 2>&1 ; then
 					# This test is for kernel_compiler_patch.
 eerror
 eerror "Failed compiler flag test for ${x}."
@@ -10494,11 +10513,11 @@ eerror
 eerror
 eerror "Detected failed integrity with logo preprocess script"
 eerror
-eerror "Expected sha512:\t${OT_KERNEL_LOGO_PREPROCESS_SHA512}"
 eerror "Actual sha512:\t${preprocess_script_sha512}"
+eerror "Expected sha512:\t${OT_KERNEL_LOGO_PREPROCESS_SHA512}"
 eerror
-eerror "Expected blake2b:\t${OT_KERNEL_LOGO_PREPROCESS_BLAKE2B}"
 eerror "Actual blake2b:\t${preprocess_script_blake2b}"
+eerror "Expected blake2b:\t${OT_KERNEL_LOGO_PREPROCESS_BLAKE2B}"
 eerror
 						die
 					fi
@@ -11370,7 +11389,7 @@ einfo
 	local march_flags=($(echo "${CFLAGS}" \
 		| grep -E -e "(-march=[^[:space:]]+|-mcpu=[^[:space:]]+)"))
 	for x in ${march_flags[@]} ; do
-		if ! test-flags "${x}" 2>/dev/null 1>/dev/null ; then
+		if ! test-flags "${x}" >/dev/null 2>&1 ; then
 			# This test is for kernel_compiler_patch.
 eerror
 eerror "Failed compiler flag test for ${x}."
@@ -11700,7 +11719,7 @@ einfo "Building PGI"
 einfo "Merging PGT profiles"
 einfo "DEBUG:  clang-major-version=$(clang-major-version)"
 				PATH="/usr/lib/llvm/$(clang-major-version)/bin:${PATH}" \
-				which llvm-profdata 2>/dev/null 1>/dev/null || die "Cannot find llvm-profdata"
+				which llvm-profdata >/dev/null 2>&1 || die "Cannot find llvm-profdata"
 				local actual_profraw_ver=$(od -An -j 8 -N 1 -t d1 "${profraw_dpath}" | grep -E -o -e "[0-9]+")
 				local expected_profraw_ver=$(grep -r -e "INSTR_PROF_RAW_VERSION" "/usr/lib/llvm/${llvm_slot}/include/llvm/ProfileData/InstrProfData.inc" \
 					| head -n 1 | cut -f 3 -d " ")
@@ -11850,12 +11869,12 @@ eerror "beginning or disable PGO."
 eerror
 					fi
 					cp -a "/usr/$(get_libdir)/kpgo-utils" "${WORKDIR}" || die
-					pushd "${WORKDIR}/kpgo-utils" || die
+					pushd "${WORKDIR}/kpgo-utils" >/dev/null 2>&1 || die
 einfo "Gathering initial PGO profile"
 						./gather.sh profile.tar.gz || die
 einfo "Generating counter summary and histogram and adding to the PGO profile"
 						./process.sh profile.tar.gz || die
-					popd || die
+					popd >/dev/null 2>&1 || die
 				elif [[ "${OT_KERNEL_PGO_FLAVOR}" == "GCC_PGO_CFG" ]] ; then
 					makefile_pgo_phase="GCC_PGO_CFG"
 				fi
@@ -12886,11 +12905,11 @@ ot-kernel_install_genkernel_required() {
 
 	# Required for building external modules
 	insinto "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/certs"
-	ls "certs/"*".pem" 2>/dev/null 1>/dev/null \
+	ls "certs/"*".pem" >/dev/null 2>&1 \
 		&& doins "certs/"*".pem"
-	ls "certs/"*".x509" 2>/dev/null 1>/dev/null \
+	ls "certs/"*".x509" >/dev/null 2>&1 \
 		&& doins "certs/"*".x509"
-	ls "certs/"*".genkey" 2>/dev/null 1>/dev/null \
+	ls "certs/"*".genkey" >/dev/null 2>&1 \
 		&& doins "certs/"*".genkey"
 
 	# Add files to pass version and kernel config checks for linux-info.eclass.
@@ -12978,11 +12997,11 @@ ewarn "Preserving copyright notices (cached)."
 ewarn "Preserving copyright notices.  This may take hours."
 			cat "${FILESDIR}/header-preserve-kernel" \
 				> "${BUILD_DIR}/header-preserve-kernel" || die
-			pushd "${BUILD_DIR}" || die
+			pushd "${BUILD_DIR}" >/dev/null 2>&1 || die
 				export MULTI_HEADER_DEST_PATH="${ED}/${license_preserve_path_dest}"
 				chmod +x header-preserve-kernel || die
 				./header-preserve-kernel || die
-			popd
+			popd >/dev/null 2>&1 || die
 		fi
 	fi
 }

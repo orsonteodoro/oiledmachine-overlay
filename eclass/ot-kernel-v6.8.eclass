@@ -244,7 +244,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 fi
 IUSE+="
 bbrv2 bbrv3 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rt -rust shadowcallstack
+-genpatches_1510 kcfi kpgo-utils lto nest orca pgo prjc rt -rust shadowcallstack
 symlink tresor tresor_prompt tresor_sysfs zen-sauce
 "
 
@@ -330,6 +330,7 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" kcfi? ( GPL-2 )"
+LICENSE+=" nest? ( GPL-2 )"
 LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
@@ -660,6 +661,9 @@ else
 		genpatches? (
 			${GENPATCHES_URI}
 		)
+		nest? (
+			${NEST_URI}
+		)
 		orca? (
 			${C2TCP_URIS}
 		)
@@ -953,6 +957,7 @@ ot-kernel_pkg_postinst_cb() {
 #
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
+	local msg_extra="${2}"
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
@@ -1046,7 +1051,7 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a1d32ad-fix-for-6.6.0-git-6bc986a.patch"
 
 	else
-		_dpatch "${PATCH_OPTS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${path}" "${msg_extra}"
 	fi
 }
 

@@ -116,7 +116,7 @@ ff71f55cc0ce68e1de833837bc19751285c83ea8
 85f7ca83ac60f5d1c5fddceb2dfc5714af016772
 01ffb5c93fff64050b2eda359d20f812f62c91c3
 29b5f0819ad75f6a2aa13091cb5f4c7dd9b90a20
-c09f6c5f08411af017cd3bcb70054f2a4ac05a29
+#c09f6c5f08411af017cd3bcb70054f2a4ac05a29 # Applied upstream
 7cf7be28a2b0655918b7533205012566b4e8ed80
 )
 
@@ -245,7 +245,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 fi
 IUSE+="
 bbrv2 bbrv3 build c2tcp +cfs clang clear deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rt -rust shadowcallstack
+-genpatches_1510 kcfi kpgo-utils lto nest orca pgo prjc rt -rust shadowcallstack
 symlink tresor tresor_prompt tresor_sysfs zen-sauce
 "
 
@@ -332,6 +332,7 @@ LICENSE+=" clear? ( GPL-2 )"
 LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" kcfi? ( GPL-2 )"
+LICENSE+=" nest? ( GPL-2 )"
 LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
@@ -665,6 +666,9 @@ else
 		genpatches? (
 			${GENPATCHES_URI}
 		)
+		nest? (
+			${NEST_URI}
+		)
 		orca? (
 			${C2TCP_URIS}
 		)
@@ -948,6 +952,7 @@ ot-kernel_pkg_postinst_cb() {
 #
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
+	local msg_extra="${2}"
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
@@ -1041,7 +1046,7 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv3-6e321d1-6.4.0-a1d32ad-fix-for-6.6.0-git-6bc986a.patch"
 
 	else
-		_dpatch "${PATCH_OPTS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${path}" "${msg_extra}"
 	fi
 }
 

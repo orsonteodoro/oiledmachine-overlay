@@ -131,6 +131,7 @@
 		    Clang PGO				E
 		    genpatches				A
 		    kernel_compiler_patch		A
+		    Nest				E
 		    Project C				N
 		    TCP BBR v2 [5]			E
 		    TRESOR (AES-NI) [5]			b
@@ -144,8 +145,8 @@
 		    Clear Linux patchset		N
 		    genpatches				A
 		    kernel_compiler_patch		X
-		    Project C				N
 		    Nest				R
+		    Project C				N
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
 		    TRESOR (AES-NI) [5]			b
@@ -159,6 +160,7 @@
 		    Clear Linux patchset		A
 		    genpatches				A
 		    kernel_compiler_patch		A
+		    Nest				R
 		    Project C				A
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
@@ -172,6 +174,7 @@
 		    Clang PGO				E
 		    genpatches				A
 		    kernel_compiler_patch		A
+		    Nest				E
 		    Project C				D
 		    TCP BBR v2 [5]			E
 		    TCP BBR v3 [5]			E
@@ -1014,8 +1017,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
       6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
-      6.7: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
-      6.8: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.7: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
+      6.8: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
@@ -1044,6 +1047,9 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
         - muqss-latency configures the runqueue for low latency.
         - muqss-latency and muqss-throughput only apply as a fallback for
           work profiles not matching or custom/manual work profiles.
+        - Nest 6.7 has 2 releases of the same patch, with and without
+          spinning.  By default, the old behavior is used.  To access the
+          experimental new behavior without spinning set NEST_SPINNING=0.
 
       The following is discussed in great detail because it affects use of
       scheduling apps that only discuss or assume CFS.  These small details
@@ -3978,6 +3984,8 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="clear">
       Add the Clear Linux patchset containing optimizations, tweaks,
       workarounds, fixes, corrections.
+
+      This patchset is only applied when the versions are exactly the same.
     </flag>
     <flag name="deepcc">
       (WORK IN PROGRESS / DRAFT)
@@ -4029,8 +4037,15 @@ unset OT_KERNEL_PRIVATE_KEY
     </flag>
     <flag name="nest">
       Adds the per-core Nest task scheduler for 10% to 2x the benefit.
-      It uses autogrouped CFS and as a fallback for secondary nest expansion.
-      This may only apply to CPUs with independent frequences per core.
+      It uses autogrouped CFS and CFS as a fallback for secondary nest
+      expansion.  This may only apply to CPUs with independent frequences per
+      core.
+
+      For 6.7 and later:
+
+        NEST_SPINNING=1 - Old behavior with spinning
+        NEST_SPINNING=0 - New behavior without spinning (experimental)
+
     </flag>
     <flag name="kpgo-utils">
       Adds support for Full PGO for GCC compilers.

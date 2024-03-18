@@ -870,7 +870,8 @@ ot-kernel_pkg_postinst_cb() {
 #
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
-einfo "${path}"
+	local msg_extra="${2}"
+
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
 	# Using patch with fuzz factor is disallowed with define parts or syscall_*.tbl of futex
@@ -960,7 +961,7 @@ einfo "Already applied ${path} upstream"
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/nest-5.15-fix-for-5.15.143.patch"
 
 	else
-		_dpatch "${PATCH_OPTS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${path}" "${msg_extra}"
 	fi
 }
 

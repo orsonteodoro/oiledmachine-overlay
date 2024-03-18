@@ -59,7 +59,7 @@ ot-kernel_has_version() {
 		# Upstream uses EROOT for pickled merged package database not ESYSROOT.
 		# No guarantee of atomic tree but very fast.
 		# The find command is slow.  Don't use it.
-		if ls "${ESYSROOT}/var/db/pkg/${pkg}"*"/CONTENTS" 2>/dev/null 1>/dev/null ; then
+		if ls "${ESYSROOT}/var/db/pkg/${pkg}"*"/CONTENTS" >/dev/null 2>&1 ; then
 			return 0
 		fi
 	fi

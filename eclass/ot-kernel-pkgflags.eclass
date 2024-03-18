@@ -1140,7 +1140,7 @@ _ot-kernel-pkgflags_has_beep_udev_rules() {
 	# Check if upstream security restrictions applied
 	local f="/dev/input/by-path/platform-pcspkr-event-spkr"
 	[[ -e "${f}" ]] || return 1
-	if which getfacl "${f}" 2>/dev/null 1>/dev/null ; then
+	if which getfacl "${f}" >/dev/null 2>&1 ; then
 		if ! getfacl "${f}" "group:beep:-w-" ; then
 			grep -q -e "^beep:" /etc/group > /dev/null || return 1
 			ls -lH "${f}" | grep -q -e " root beep " || return 1
@@ -4680,7 +4680,7 @@ ot-kernel-pkgflags_iucode() {
 				)
 			fi
 
-			if ! which iucode_tool 2>/dev/null 1>/dev/null ; then
+			if ! which iucode_tool >/dev/null 2>&1 ; then
 ewarn "Missing iucode_tool"
 			elif iucode_tool ${args[@]} -l "/lib/firmware/intel-ucode/"* ; then
 				local signatures=( \

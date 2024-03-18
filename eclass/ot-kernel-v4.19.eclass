@@ -527,6 +527,7 @@ ot-kernel_pkg_postinst_cb() {
 #
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
+	local msg_extra="${2}"
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
@@ -610,7 +611,7 @@ ot-kernel_filter_patch_cb() {
 			"${FILESDIR}/zen-sauce-4.19.0-7d0295d-fix-for-4.19.294.patch"
 
 	else
-		_dpatch "${PATCH_OPTS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${path}" "${msg_extra}"
 	fi
 }
 

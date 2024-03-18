@@ -192,7 +192,7 @@ RUST_PV="1.62.0"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE+="
 bbrv2 build c2tcp +cfs clang deepcc disable_debug -exfat +genpatches
--genpatches_1510 kcfi kpgo-utils lto orca pgo prjc rt -rust shadowcallstack
+-genpatches_1510 kcfi kpgo-utils lto nest orca pgo prjc rt -rust shadowcallstack
 symlink tresor tresor_prompt tresor_sysfs zen-sauce
 "
 
@@ -270,6 +270,7 @@ LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
 LICENSE+=" deepcc? ( MIT )"
 LICENSE+=" exfat? ( GPL-2+ OIN )" # See https://en.wikipedia.org/wiki/ExFAT#Legal_status
 LICENSE+=" kcfi? ( GPL-2 )"
+LICENSE+=" nest? ( GPL-2 )"
 LICENSE+=" prjc? ( GPL-3 )" # see \
 	# https://gitlab.com/alfredchen/projectc/-/blob/master/LICENSE
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
@@ -562,6 +563,9 @@ else
 		genpatches? (
 			${GENPATCHES_URI}
 		)
+		nest? (
+			${NEST_URI}
+		)
 		orca? (
 			${C2TCP_URIS}
 		)
@@ -813,6 +817,7 @@ ot-kernel_pkg_postinst_cb() {
 #
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
+	local msg_extra="${2}"
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
@@ -943,8 +948,12 @@ einfo "Already applied ${path} upstream"
 		_tpatch "${PATCH_OPTS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/zen-sauce-6.1.0-f22bc56-fix-for-6.1.57.patch"
 
+	elif [[ "${path}" =~ "Nest_v6.6.patch" ]] ; then
+		_tpatch "${PATCH_OPTS}" "${path}" 4 0 ""
+		_dpatch "${PATCH_OPTS}" "${FILESDIR}/nest-6.6-fix-for-6.1.82.patch"
+
 	else
-		_dpatch "${PATCH_OPTS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${path}" "${msg_extra}"
 	fi
 }
 

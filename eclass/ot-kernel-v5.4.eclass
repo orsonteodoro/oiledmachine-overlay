@@ -631,6 +631,7 @@ ewarn
 #
 ot-kernel_filter_patch_cb() {
 	local path="${1}"
+	local msg_extra="${2}"
 
 	# WARNING: Fuzz matching is not intelligent enough to distiniguish syscall
 	#          number overlap.  Always inspect each and every hunk.
@@ -709,7 +710,7 @@ ot-kernel_filter_patch_cb() {
 		fi
 
 	else
-		_dpatch "${PATCH_OPTS}" "${path}"
+		_dpatch "${PATCH_OPTS}" "${path}" "${msg_extra}"
 	fi
 }
 

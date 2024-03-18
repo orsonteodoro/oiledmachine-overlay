@@ -1,0 +1,45 @@
+--- a/kernel/sched/core.c.orig	2024-03-18 08:56:44.411929890 -0700
++++ b/kernel/sched/core.c	2024-03-18 09:04:22.048089229 -0700
+@@ -2586,6 +2586,7 @@ __do_set_cpus_allowed(struct task_struct
+ 
+ void do_set_cpus_allowed(struct task_struct *p, const struct cpumask *new_mask)
+ {
++	p->use_expand_mask = 0;
+ 	__do_set_cpus_allowed(p, new_mask, 0);
+ }
+ 
+@@ -4229,6 +4230,8 @@ try_to_wake_up(struct task_struct *p, un
+ #endif /* CONFIG_SMP */
+ 
+ 	ttwu_queue(p, cpu, wake_flags);
++	if (p->use_expand_mask)
++		atomic_set(&cpu_rq(cpu)->taken,0);
+ unlock:
+ 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
+ out:
+@@ -5548,6 +5551,11 @@ void scheduler_tick(void)
+ 	perf_event_task_tick();
+ 
+ #ifdef CONFIG_SMP
++	smp_mb__before_atomic();
++	atomic_dec_if_positive(&rq->should_spin);
++	if (atomic_fetch_add_unless(&rq->drop_expand_ctr,-1,0) == 1)
++		rq->drop_expand = 1;
++	smp_mb__after_atomic();
+ 	rq->idle_balance = idle_cpu(cpu);
+ 	trigger_load_balance(rq);
+ #endif
+--- a/kernel/sched/fair.c.orig	2024-03-18 08:56:44.411929890 -0700
++++ b/kernel/sched/fair.c	2024-03-18 09:06:08.115198286 -0700
+@@ -6895,8 +6895,10 @@ static int select_idle_cpu(struct task_s
+ 				return i;
+ 
+ 		} else {
+-			if (!--nr)
++			if (!--nr) {
++				set_left_off(target, cpu);
+ 				return -1;
++			}
+ 			idle_cpu = __select_idle_cpu(cpu, p);
+ 			if ((unsigned int)idle_cpu < nr_cpumask_bits)
+ 				break;
