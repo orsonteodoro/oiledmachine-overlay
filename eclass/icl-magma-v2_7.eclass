@@ -51,6 +51,8 @@ PYTHON_COMPAT=( python3_{10..11} )
 inherit cmake flag-o-matic fortran-2 python-any-r1 toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	inherit rocm
+else
+	inherit llvm
 fi
 
 SRC_URI="https://icl.cs.utk.edu/projectsfiles/${PN}/downloads/${PN}-${MY_PV}.tar.gz"
@@ -65,6 +67,16 @@ KEYWORDS="~amd64"
 IUSE="
 doc examples -ilp64 mkl openblas tbb openmp test
 "
+if ! [[ "${MAGMA_ROCM}" == "1" ]] ; then
+	IUSE+="
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	"
+	REQUIRED_USE+="
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	"
+fi
 
 GPU_FRAMEWORKS=""
 if [[ "${MAGMA_CUDA}" == "1" ]] ; then
@@ -286,6 +298,15 @@ icl-magma-v2_7_pkg_setup() {
 		if use rocm ; then
 			rocm_pkg_setup
 		fi
+	else
+		local s
+		for s in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${s}" ; then
+				LLVM_MAX_SLOT="${LLVM_SLOT}"
+				break
+			fi
+		done
+		llvm_pkg_setup
 	fi
 	tc-check-openmp || die "Need OpenMP to compile ${P}"
 	if use mkl ; then

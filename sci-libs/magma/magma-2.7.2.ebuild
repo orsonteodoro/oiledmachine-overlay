@@ -3,8 +3,8 @@
 
 EAPI=8
 
+LLVM_COMPAT=( {17..14} )
 MAGMA_CUDA=1
-LLVM_SLOT=17
 SLOT="0/${PV}"
 
 inherit icl-magma-v2_7
