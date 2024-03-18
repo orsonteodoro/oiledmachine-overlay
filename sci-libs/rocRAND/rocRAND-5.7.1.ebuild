@@ -25,11 +25,11 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
-LLVM_MAX_SLOT=17
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic llvm rocm
+inherit cmake flag-o-matic rocm
 
 HIPRAND_COMMIT_HASH="b7b91006d19c84cb742c75f19157ece72ab8f9ca"
 SRC_URI="
@@ -92,7 +92,7 @@ RDEPEND="
 	)
 	hip-cpu? (
 		dev-libs/hip-cpu
-		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-devel/clang:${LLVM_SLOT}
 	)
 "
 DEPEND="
@@ -118,7 +118,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
 }
 
@@ -219,7 +218,7 @@ src_configure() {
 			-DBUILD_HIPRAND=OFF
 			-Dhip_cpu_rt_DIR="${ESYSROOT}/usr/lib/hip-cpu/share/hip_cpu_rt/cmake"
 		)
-		HIP_CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}"
+		HIP_CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	elif use rocm ; then
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(

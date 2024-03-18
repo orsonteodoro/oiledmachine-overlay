@@ -7,7 +7,7 @@ EAPI=8
 #/usr/lib/gcc/@CHOST@/12/include/omp.h:308:45: error: '__malloc__' attribute takes no arguments
 #  __GOMP_NOTHROW __attribute__((__malloc__, __malloc__ (omp_free),
 #                                            ^
-# Still happens when USE=opemp CC=hipcc CXX=hipcc OR USE=openmp CC=${CHOST}-clang-${LLVM_MAX_SLOT} CXX=hipcc
+# Still happens when USE=opemp CC=hipcc CXX=hipcc OR USE=openmp CC=${CHOST}-clang-${LLVM_SLOT} CXX=hipcc
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
@@ -25,11 +25,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=17
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake llvm rocm
+inherit cmake rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocALUTION/archive/rocm-${PV}.tar.gz
@@ -76,8 +76,8 @@ RDEPEND="
 			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		)
 		system-llvm? (
-			sys-devel/clang:${LLVM_MAX_SLOT}
-			sys-libs/libomp:${LLVM_MAX_SLOT}
+			sys-devel/clang:${LLVM_SLOT}
+			sys-libs/libomp:${LLVM_SLOT}
 		)
 	)
 	rocm? (
@@ -159,7 +159,7 @@ eerror
 		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 		)
 	fi
 

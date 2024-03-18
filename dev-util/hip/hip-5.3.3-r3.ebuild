@@ -6,11 +6,11 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_DEPEND="media-gfx/graphviz"
-LLVM_MAX_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.3.3/llvm/CMakeLists.txt
+LLVM_SLOT=15 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.3.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake docs llvm prefix python-any-r1 rocm
+inherit cmake docs prefix python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/hipamd/archive/rocm-${PV}.tar.gz
@@ -93,9 +93,9 @@ RDEPEND="
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
 		system-llvm? (
-			=sys-devel/clang-${LLVM_MAX_SLOT}*:=
-			=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*:=
-			=sys-libs/compiler-rt-${LLVM_MAX_SLOT}*:=
+			=sys-devel/clang-${LLVM_SLOT}*:=
+			=sys-devel/clang-runtime-${LLVM_SLOT}*:=
+			=sys-libs/compiler-rt-${LLVM_SLOT}*:=
 		)
 	)
 "
@@ -143,7 +143,6 @@ DOCS_CONFIG_NAME="doxy.cfg"
 pkg_setup() {
 	# Ignore QA FLAGS check for library compiled from assembly sources
 	QA_FLAGS_IGNORED="/usr/$(get_libdir)/libhiprtc-builtins.so.$(ver_cut 1-2)"
-	llvm_pkg_setup
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 }
@@ -224,7 +223,7 @@ src_configure() {
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda"
 		)
-		if ! has_version "sys-devel/clang:${LLVM_MAX_SLOT}" ; then
+		if ! has_version "sys-devel/clang:${LLVM_SLOT}" ; then
 			mycmakeargs+=(
 				-D__HIP_ENABLE_PCH=OFF
 			)

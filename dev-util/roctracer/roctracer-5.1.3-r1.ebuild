@@ -3,12 +3,12 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=14
+LLVM_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic llvm prefix python-any-r1 rocm
+inherit cmake flag-o-matic prefix python-any-r1 rocm
 
 HSA_CLASS_COMMIT="f8b387043b9f510afdf2e72e38a011900360d6ab"
 SRC_URI="
@@ -70,7 +70,6 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 }

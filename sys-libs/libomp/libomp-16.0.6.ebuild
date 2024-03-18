@@ -49,6 +49,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
+LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
@@ -306,13 +307,6 @@ pkg_pretend() {
 
 pkg_setup() {
 ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
-	if use offload ; then
-		LLVM_MAX_SLOT="${PV%%.*}"
-		llvm_pkg_setup
-	else
-		LLVM_MAX_SLOT=$((${PV%%.*} + 1))
-		llvm_pkg_setup
-	fi
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
 	fi
@@ -325,10 +319,14 @@ einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/pac
 einfo
 	if use rocm_5_5 ; then
 		ROCM_SLOT="5.5"
-	else
+		rocm_pkg_setup
+	elif use rocm_5_6 ; then
 		ROCM_SLOT="5.6"
+		rocm_pkg_setup
+	else
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
+		llvm_pkg_setup
 	fi
-	rocm_pkg_setup
 }
 
 src_prepare() {

@@ -23,11 +23,11 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
-LLVM_MAX_SLOT=14
+LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake llvm rocm
+inherit cmake rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipCUB/archive/rocm-${PV}.tar.gz
@@ -115,7 +115,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 

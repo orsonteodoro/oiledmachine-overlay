@@ -276,18 +276,23 @@ ewarn "QA:  ROCM_SLOT should be defined."
 	fi
 
 	local clang_selected_desc
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
-		clang_selected_desc="sys-devel/clang:${LLVM_SLOT}"
-	else
+	if [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
 		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
 		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
+	elif has system-llvm ${IUSE} && ! use system-llvm ; then
+		EROCM_CLANG_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm/$(get_libdir)/clang/${CLANG_SLOT}"
+		clang_selected_desc="sys-devel/llvm-roc:${LLVM_SLOT}"
+	else
+		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
+		clang_selected_desc="sys-devel/clang:${LLVM_SLOT}"
 	fi
 
-	if has system-llvm ${IUSE} && use system-llvm ; then
-		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
-	else
+	if [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
 		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
+	elif has system-llvm ${IUSE} && ! use system-llvm ; then
+		EROCM_LLVM_PATH="/usr/$(get_libdir)/rocm/${ROCM_SLOT}/llvm"
+	else
+		EROCM_LLVM_PATH="/usr/lib/llvm/${LLVM_SLOT}"
 	fi
 
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
@@ -296,23 +301,11 @@ ewarn "QA:  ROCM_SLOT should be defined."
 
 	export HIP_CLANG_PATH="${ESYSROOT}/${EROCM_LLVM_PATH}/bin"
 
-	if [[ \
-		   "${EROCM_ALLOW_MULTIPLE_CLANG_SLOTS}" == "1" \
-		|| "${EROCM_ALLOW_MULTIPLE_LLVM_SLOTS}" == "1" \
-		|| "${EROCM_SKIP_EXCLUSIVE_CLANG_SLOT_IN_PATH}" == "1" \
-		|| "${EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH}" == "1" \
-	]] ; then
-ewarn "QA:  Ebuild maintainer is responsible for setting PATH to llvm/bin."
-		:;
-	else
-# Disallow newer clangs versions when producing .o files.
-einfo "Removing all clangs except for ${clang_selected_desc} from PATH..."
-		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -E -e "/llvm\/[0-9]+/d" \
-			| tr "\n" ":" \
-			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
-	fi
+	export PATH=$(echo "${PATH}" \
+		| tr ":" "\n" \
+		| sed -E -e "/llvm\/[0-9]+/d" \
+		| tr "\n" ":" \
+		| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 
 #	if has system-llvm ${IUSE} && use system-llvm ; then
 #		:;

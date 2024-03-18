@@ -3,11 +3,11 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake edo flag-o-matic llvm rocm toolchain-funcs
+inherit cmake edo flag-o-matic rocm toolchain-funcs
 
 # Some test datasets are shared with rocSPARSE.
 SRC_URI="
@@ -62,7 +62,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
 }
 

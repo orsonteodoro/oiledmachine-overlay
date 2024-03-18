@@ -36,6 +36,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_86
 )
+LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( python3_{9..10} )
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
@@ -280,13 +281,6 @@ pkg_pretend() {
 
 pkg_setup() {
 ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
-	if use offload ; then
-		LLVM_MAX_SLOT="${PV%%.*}"
-		llvm_pkg_setup
-	else
-		LLVM_MAX_SLOT=$((${PV%%.*} + 1))
-		llvm_pkg_setup
-	fi
 	use test && python-any-r1_pkg_setup
 einfo
 einfo "The hardmask for llvm_targets_AMDGPU in ${CATEGORY}/${PN} can be removed by doing..."
@@ -297,10 +291,14 @@ einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/pac
 einfo
 	if use rocm_5_1 ; then
 		ROCM_SLOT="5.1"
-	else
+		rocm_pkg_setup
+	elif use rocm_5_2 ; then
 		ROCM_SLOT="5.2"
+		rocm_pkg_setup
+	else
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
+		llvm_pkg_setup
 	fi
-	rocm_pkg_setup
 }
 
 src_prepare() {

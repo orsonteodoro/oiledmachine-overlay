@@ -37,7 +37,7 @@ ROCM_SLOTS=(
 )
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..10} )
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_SLOT="${LLVM_COMPAT[0]}"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
@@ -251,19 +251,17 @@ pkg_setup() {
 
 	if use rocm_5_6 ; then
 		ROCM_SLOT="5.6"
-		LLVM_MAX_SLOT=16
+		LLVM_SLOT=16
 	elif use rocm_5_5 ; then
 		ROCM_SLOT="5.5"
-		LLVM_MAX_SLOT=16
-	fi
-
-	if tc-is-clang || use clang ; then
-		llvm_pkg_setup
+		LLVM_SLOT=16
 	fi
 
 	if use rocm ; then
-		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		rocm_pkg_setup
+	else
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
+		llvm_pkg_setup
 	fi
 
 	# This needs to be placed here to avoid this error:
@@ -378,10 +376,10 @@ ewarn
 ewarn "All APU + GPU HIP targets on the device must be built/installed to avoid"
 ewarn "a crash."
 ewarn
-		einfo "${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}"
+		einfo "${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}"
 		if has_version "dev-util/hip[system-llvm]" ; then
-			export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
-			export CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}"
+			export CC="${CHOST}-clang-${LLVM_SLOT}"
+			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 		else
 			export CC="clang"
 			export CXX="clang++"

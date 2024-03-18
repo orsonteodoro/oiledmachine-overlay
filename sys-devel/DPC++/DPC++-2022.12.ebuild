@@ -56,7 +56,7 @@ VC_INTR_COMMIT="782fbf7301dc73acaa049a4324c976ad94f587f7" # Newer versions cause
 # See https://github.com/intel/llvm/blob/2022-12/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19C36-L19C76
 UR_COMMIT="fd711c920acc4434cb52ff18b078c082d9d7f44d" # \
 # See https://github.com/intel/llvm/blob/2022-12/sycl/plugins/unified_runtime/CMakeLists.txt#L7
-LLVM_COMPAT=( 16 13 12} ) # Upstream tested versions
+LLVM_COMPAT=( 16 13 12 ) # Upstream tested versions
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake python-any-r1 rocm toolchain-funcs
@@ -251,18 +251,26 @@ eerror "Switch to >=sys-devel/gcc-7.1"
 	python_setup
 	if use rocm ; then
 		if use rocm_4_3 ; then
-			export LLVM_MAX_SLOT="13"
+			export LLVM_SLOT="13"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.3*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.3"
 		elif use rocm_4_2 ; then
-			export LLVM_MAX_SLOT="12"
+			export LLVM_SLOT="12"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.2*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.2"
 		fi
 # Use the clang compiler in /usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/ if dev-util/hip[-system-llvm]
 # Use the clang compiler in /usr/lib/llvm/${LLVM_SLOT}/bin/ if dev-util/hip[system-llvm]
-		export LLVM_SLOT="${LLVM_MAX_SLOT}"
 		rocm_pkg_setup
+	else
+		if use llvm_slot_16 ; then
+			export LLVM_MAX_SLOT="16"
+		elif use llvm_slot_13 ; then
+			export LLVM_MAX_SLOT="13"
+		elif use llvm_slot_12 ; then
+			export LLVM_MAX_SLOT="12"
+		fi
+		llvm_pkg_setup
 	fi
 }
 
@@ -308,8 +316,8 @@ src_configure() {
 	export PATH=$(echo "${PATH}" | tr ":" $'\n' | sed -e "/ccache/d" | tr $'\n' ":")
 
 	if use rocm && use system-llvm ; then
-		export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}"
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	elif use rocm ; then
 		export CC="clang"
 		export CXX="clang++"

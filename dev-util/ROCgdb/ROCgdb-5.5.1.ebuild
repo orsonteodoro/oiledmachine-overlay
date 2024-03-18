@@ -3,11 +3,11 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit llvm python-single-r1 rocm
+inherit python-single-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCgdb/"
@@ -65,7 +65,6 @@ PATCHES=(
 DOCS=( README-ROCM.md )
 
 pkg_setup() {
-	llvm_pkg_setup
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }

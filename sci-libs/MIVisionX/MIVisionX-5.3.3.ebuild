@@ -3,11 +3,11 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=15
+LLVM_SLOT=15
 PYTHON_COMPAT=( python3_10 ) # U 20/22
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake llvm python-single-r1 rocm toolchain-funcs
+inherit cmake python-single-r1 rocm toolchain-funcs
 
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 if [[ ${PV} == *9999 ]] ; then
@@ -89,7 +89,7 @@ RDEPEND="
 			>=dev-libs/boost-${BOOST_PV}:=
 		)
 		system-llvm? (
-			sys-libs/libomp:${LLVM_MAX_SLOT}
+			sys-libs/libomp:${LLVM_SLOT}
 		)
 	)
 	rocm? (
@@ -99,7 +99,7 @@ RDEPEND="
 		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 		system-llvm? (
-			sys-libs/libomp:${LLVM_MAX_SLOT}
+			sys-libs/libomp:${LLVM_SLOT}
 		)
 	)
 	rpp? (
@@ -125,7 +125,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }
@@ -153,8 +152,8 @@ src_configure() {
 		-DROCAL=$(usex rocal ON OFF)
 	)
 
-	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
-	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
+	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
+	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
 
 	if use opencl ; then
 		mycmakeargs+=(
@@ -219,7 +218,7 @@ eerror
 			mycmakeargs+=(
 				-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp"
 				-DOpenMP_CXX_LIB_NAMES="libomp"
-				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+				-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 			)
 		fi
 		IFS=$'\n'

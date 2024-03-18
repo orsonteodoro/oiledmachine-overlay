@@ -3,10 +3,10 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake llvm rocm
+inherit cmake rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCR-Runtime/"
@@ -51,8 +51,8 @@ BDEPEND="
 	>=dev-build/cmake-3.7
 	app-editors/vim-core
 	system-llvm? (
-		=sys-devel/lld-${LLVM_MAX_SLOT}*
-		sys-devel/clang:${LLVM_MAX_SLOT}
+		=sys-devel/lld-${LLVM_SLOT}*
+		sys-devel/clang:${LLVM_SLOT}
 	)
 "
 PATCHES=(

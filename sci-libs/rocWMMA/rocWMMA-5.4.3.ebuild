@@ -8,10 +8,10 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
 )
-LLVM_MAX_SLOT=15
+LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
-inherit cmake llvm rocm
+inherit cmake rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocWMMA/archive/refs/tags/rocm-${PV}.tar.gz
@@ -36,7 +36,7 @@ RDEPEND="
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	system-llvm? (
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_SLOT}
 	)
 "
 DEPEND="
@@ -58,7 +58,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 

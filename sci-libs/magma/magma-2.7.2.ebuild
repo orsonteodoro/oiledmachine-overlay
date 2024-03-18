@@ -4,8 +4,7 @@
 EAPI=8
 
 MAGMA_CUDA=1
-LLVM_MAX_SLOT=17
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+LLVM_SLOT=17
 SLOT="0/${PV}"
 
 inherit icl-magma-v2_7

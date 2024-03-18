@@ -25,12 +25,12 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
+LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{9..11} )
-LLVM_MAX_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.5.1/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake edo flag-o-matic llvm python-any-r1 toolchain-funcs rocm
+inherit cmake edo flag-o-matic python-any-r1 toolchain-funcs rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSPARSE/archive/rocm-${PV}.tar.gz
@@ -106,7 +106,7 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[rocm(+)]
 	system-llvm? (
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_SLOT}
 	)
 "
 DEPEND="
@@ -146,7 +146,6 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 }

@@ -10,7 +10,7 @@ EAPI=8
 CMAKE_BUILD_TYPE=Release
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..10} )
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_SLOT="${LLVM_COMPAT[0]}"
 MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
@@ -125,9 +125,8 @@ pkg_setup() {
 		check_cpu
 	fi
 
-	if tc-is-clang || use clang ; then
-		llvm_pkg_setup
-	fi
+	LLVM_MAX_SLOT="${LLVM_SLOT}"
+	llvm_pkg_setup
 
 	# This needs to be placed here to avoid this error:
 	# python: no python-exec wrapped executable found in /usr/lib64/rocm/5.5/lib/python-exec.

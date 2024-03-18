@@ -3,10 +3,10 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic llvm rocm
+inherit cmake flag-o-matic rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipBLAS/archive/rocm-${PV}.tar.gz
@@ -47,7 +47,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 

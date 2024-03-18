@@ -23,11 +23,11 @@ CUDA_TARGETS_COMPAT=(
 	compute_70
 	compute_75
 )
-LLVM_MAX_SLOT=15
+LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic llvm rocm
+inherit cmake flag-o-matic rocm
 
 HIPRAND_COMMIT_HASH="12e2f070337945318295c330bf69c6c060928b9e"
 SRC_URI="
@@ -111,7 +111,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
 }
 

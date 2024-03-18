@@ -1112,6 +1112,8 @@ eerror
 			die
 		fi
 		rocm_pkg_setup
+	#else
+		# See blender_pkg_setup for llvm_pkg_setup
 	fi
 }
 

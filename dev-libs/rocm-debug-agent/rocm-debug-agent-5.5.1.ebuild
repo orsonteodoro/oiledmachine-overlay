@@ -4,8 +4,7 @@
 EAPI=8
 
 CONFIG_CHECK="~HSA_AMD"
-LLVM_MAX_SLOT=16
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake linux-info rocm

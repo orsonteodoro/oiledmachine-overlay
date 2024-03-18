@@ -16,11 +16,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CHECKREQS_MEMORY=25G # Tested with 34.3G total memory
-LLVM_MAX_SLOT=17
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit check-reqs cmake edo flag-o-matic llvm rocm
+inherit check-reqs cmake edo flag-o-matic rocm
 
 DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"

@@ -11,11 +11,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx90a
 )
 
-LLVM_MAX_SLOT=15
+LLVM_SLOT=15
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic llvm python-any-r1 rocm
+inherit cmake flag-o-matic python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
@@ -59,7 +59,7 @@ BDEPEND="
 		)
 		sys-devel/gcc[sanitize]
 		system-llvm? (
-			sys-devel/clang:${LLVM_MAX_SLOT}
+			sys-devel/clang:${LLVM_SLOT}
 		)
 	)
 "
@@ -75,7 +75,6 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	llvm_pkg_setup
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 }
@@ -118,8 +117,8 @@ src_configure() {
 		-DUSE_PROF_API=1
 	)
 	if use system-llvm ; then
-		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
-		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
+		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
+		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
 	else
 		export CC="${HIP_CC:-clang}"
 		export CXX="${HIP_CXX:-clang++}"

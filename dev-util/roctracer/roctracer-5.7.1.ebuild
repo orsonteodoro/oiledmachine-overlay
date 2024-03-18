@@ -3,12 +3,12 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=17
+LLVM_SLOT=17
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic llvm prefix python-any-r1 rocm
+inherit cmake flag-o-matic prefix python-any-r1 rocm
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/roctracer/archive/rocm-${PV}.tar.gz
@@ -22,9 +22,9 @@ SLOT="${ROCM_SLOT}/${PV}"
 KEYWORDS="~amd64"
 IUSE=" system-llvm test r4"
 CDEPEND="
-	sys-devel/clang:${LLVM_MAX_SLOT}
+	sys-devel/clang:${LLVM_SLOT}
 	sys-devel/gcc:12
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	sys-devel/llvm:${LLVM_SLOT}
 "
 RDEPEND="
 	!dev-util/roctracer:0
@@ -68,7 +68,6 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 }

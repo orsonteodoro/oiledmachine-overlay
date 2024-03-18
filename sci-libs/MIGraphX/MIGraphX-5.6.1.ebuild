@@ -12,11 +12,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908
 	gfx1030
 )
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic llvm python-r1 rocm
+inherit cmake flag-o-matic python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/"
@@ -60,7 +60,7 @@ RDEPEND="
 	dev-libs/msgpack
 	cpu? (
 		dev-libs/oneDNN
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_SLOT}
 	)
 	rocm? (
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}
@@ -92,7 +92,7 @@ BDEPEND="
 		sys-devel/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	)
 	system-llvm? (
-		sys-devel/clang:${LLVM_MAX_SLOT}[extra]
+		sys-devel/clang:${LLVM_SLOT}[extra]
 	)
 "
 PATCHES=(
@@ -100,7 +100,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python_setup
 	rocm_pkg_setup
 }

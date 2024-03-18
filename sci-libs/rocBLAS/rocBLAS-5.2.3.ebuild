@@ -31,11 +31,11 @@ DOCS_DIR="docs"
 DOCS_DEPEND="
 	media-gfx/graphviz
 "
-LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.2.3/llvm/CMakeLists.txt
+LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.2.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
-inherit cmake docs edo flag-o-matic multiprocessing llvm python-single-r1 rocm
+inherit cmake docs edo flag-o-matic multiprocessing python-single-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
@@ -98,7 +98,7 @@ RDEPEND="
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_SLOT}
 		virtual/blas
 	)
 	cuda? (
@@ -109,7 +109,7 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_SLOT}
 		virtual/blas
 	)
 "
@@ -121,7 +121,7 @@ BDEPEND="
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
 	${PYTHON_DEPS}
-	sys-devel/clang:${LLVM_MAX_SLOT}
+	sys-devel/clang:${LLVM_SLOT}
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		$(python_gen_cond_dep '
@@ -146,7 +146,6 @@ PATCHES=(
 QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }

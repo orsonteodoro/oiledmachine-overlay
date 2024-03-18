@@ -11,11 +11,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx941
 	gfx942
 )
-LLVM_MAX_SLOT=17
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic llvm rocm
+inherit cmake flag-o-matic rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/hipTensor/archive/refs/tags/rocm-${PV}.tar.gz
@@ -71,7 +71,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 

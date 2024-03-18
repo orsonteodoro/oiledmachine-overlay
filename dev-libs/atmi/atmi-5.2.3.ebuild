@@ -15,8 +15,7 @@ AMDGPU_TARGETS_COMPAT=(
         gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=14
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2)"
 VERBOSE=1
 
@@ -47,13 +46,13 @@ RDEPEND="
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	)
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	sys-devel/llvm:${LLVM_SLOT}
 	virtual/libelf
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	system-llvm? (
-		>=sys-devel/llvm-${LLVM_MAX_SLOT}:${LLVM_MAX_SLOT}
+		>=sys-devel/llvm-${LLVM_SLOT}:${LLVM_SLOT}
 		sys-devel/llvm:=
 	)
 "

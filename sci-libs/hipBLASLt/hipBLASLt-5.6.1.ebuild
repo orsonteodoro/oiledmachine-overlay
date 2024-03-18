@@ -18,11 +18,11 @@ CUDA_TARGETS_COMPAT=(
         compute_75
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic llvm python-r1 rocm
+inherit cmake flag-o-matic python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/hipBLASLt/"
@@ -102,8 +102,8 @@ RDEPEND="
 		~sci-libs/hipBLAS-${PV}:${ROCM_SLOT}[rocm]
 	)
 	system-llvm? (
-		sys-devel/clang:${LLVM_MAX_SLOT}
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		sys-devel/clang:${LLVM_SLOT}
+		sys-libs/libomp:${LLVM_SLOT}
 	)
 	tensile? (
 		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
@@ -127,7 +127,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python_setup
 	rocm_pkg_setup
 }

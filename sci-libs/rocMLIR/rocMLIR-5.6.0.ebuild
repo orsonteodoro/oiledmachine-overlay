@@ -4,11 +4,11 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="ninja"
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake llvm python-r1 rocm
+inherit cmake python-r1 rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCmSoftwarePlatform/rocMLIR/"
@@ -203,8 +203,8 @@ build_rocmlir() {
 	)
 
 	if use system-llvm ; then
-		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
-		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
+		export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
+		export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
 	else
 		export CC="${HIP_CC:-clang}"
 		export CXX="${HIP_CXX:-clang++}"

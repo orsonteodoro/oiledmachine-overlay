@@ -376,6 +376,13 @@ eerror
 }
 
 blender_pkg_setup() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		if use "llvm_slot_${s}" ; then
+			export LLVM_MAX_SLOT="${s}"
+			break
+		fi
+	done
 	llvm_pkg_setup
 	blender_check_requirements
 	python-single-r1_pkg_setup

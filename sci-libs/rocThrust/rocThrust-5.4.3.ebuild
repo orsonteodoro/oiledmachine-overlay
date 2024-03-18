@@ -15,11 +15,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CUB_COMMIT="cdaa9558a85e45d849016e5fe7b6e4ee79113f95"
-LLVM_MAX_SLOT=15
+LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake llvm rocm
+inherit cmake rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocThrust/archive/rocm-${PV}.tar.gz
@@ -67,7 +67,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 

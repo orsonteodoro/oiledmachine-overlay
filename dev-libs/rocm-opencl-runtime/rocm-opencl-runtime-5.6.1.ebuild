@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake edo flag-o-matic rocm
@@ -38,7 +38,7 @@ r1
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
 	!dev-libs/rocm-opencl-runtime:0
-	=sys-libs/compiler-rt-${LLVM_MAX_SLOT}*:=
+	=sys-libs/compiler-rt-${LLVM_SLOT}*:=
 	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}

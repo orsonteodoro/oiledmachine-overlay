@@ -3,10 +3,10 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
+LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake llvm prefix rocm
+inherit cmake prefix rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
@@ -35,11 +35,11 @@ RDEPEND="
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	system-llvm? (
-		=sys-devel/clang-runtime-${LLVM_MAX_SLOT}*
-		sys-devel/clang:${LLVM_MAX_SLOT}
+		=sys-devel/clang-runtime-${LLVM_SLOT}*
+		sys-devel/clang:${LLVM_SLOT}
 		sys-devel/clang:=
 		sys-devel/clang-runtime:=
-		sys-devel/lld:${LLVM_MAX_SLOT}
+		sys-devel/lld:${LLVM_SLOT}
 		sys-devel/lld:=
 	)
 "

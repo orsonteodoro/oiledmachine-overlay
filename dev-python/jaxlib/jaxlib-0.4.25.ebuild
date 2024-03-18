@@ -626,6 +626,8 @@ einfo
 	fi
 	if use rocm ; then
 		rocm_pkg_setup
+	#else
+	#	llvm_pkg_setup is called in use_clang
 	fi
 }
 

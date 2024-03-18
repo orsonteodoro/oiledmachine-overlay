@@ -16,11 +16,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake edo llvm rocm
+inherit cmake edo rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSOLVER/archive/rocm-${PV}.tar.gz
@@ -68,7 +68,6 @@ RESTRICT="
 S="${WORKDIR}/${PN}-rocm-${PV}"
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
 }
 

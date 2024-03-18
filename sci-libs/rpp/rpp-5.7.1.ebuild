@@ -16,9 +16,10 @@ AMDGPU_TARGETS_COMPAT=(
 )
 # See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/rocm-5.7.0/docs/release.md?plain=1#L18C22-L18C25
 LLVM_COMPAT=( 17 )
+LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic llvm-r1 rocm toolchain-funcs
+inherit cmake flag-o-matic rocm toolchain-funcs
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
@@ -39,6 +40,7 @@ HOMEPAGE="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
+${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm system-llvm test
 r1
@@ -116,7 +118,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm-r1_pkg_setup
 	rocm_pkg_setup
 }
 

@@ -15,13 +15,13 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 ROCM_SLOT="5.6"
 ROCM_VERSION="5.6.1"
 COMPOSABLE_KERNEL_COMMIT="0a8dac4ef1a232abd8f6896a5b016f9e76192ddd" # Same as MIOpen's requirements.txt
 MY_PV=$(ver_cut 1-2)
 
-inherit cmake flag-o-matic llvm rocm
+inherit cmake flag-o-matic rocm
 
 if [[ ${PV} =~ 9999 ]] ; then
 	EGIT_BRANCH="develop"
@@ -55,7 +55,7 @@ RDEPEND="
 			)
 			~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
-				sys-libs/libomp:${LLVM_MAX_SLOT}
+				sys-libs/libomp:${LLVM_SLOT}
 			)
 		)
 	)
@@ -75,7 +75,7 @@ BDEPEND="
 			)
 			~dev-build/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
 			system-llvm? (
-				sys-devel/clang:${LLVM_MAX_SLOT}
+				sys-devel/clang:${LLVM_SLOT}
 			)
 		)
 	)
@@ -98,7 +98,6 @@ else
 fi
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
 }
 
@@ -126,7 +125,7 @@ src_prepare() {
 }
 
 src_configure() {
-	local llvm_slot="${LLVM_MAX_SLOT}"
+	local llvm_slot="${LLVM_SLOT}"
 
 	if use system-llvm ; then
 		export CC="${CHOST}-clang-${llvm_slot}"

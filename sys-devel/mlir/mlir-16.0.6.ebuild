@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=${PV%%.*}
+LLVM_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
@@ -72,16 +72,19 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	llvm_pkg_setup # Init LLVM_SLOT
 	if use test; then
 		python-single-r1_pkg_setup
 	fi
 	if use rocm_5_5 ; then
 		export ROCM_SLOT="5.5"
+		rocm_pkg_setup
 	elif use rocm_5_6 ; then
 		export ROCM_SLOT="5.6"
+		rocm_pkg_setup
+	else
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
+		llvm_pkg_setup
 	fi
-	rocm_pkg_setup
 }
 
 src_prepare() {

@@ -11,8 +11,7 @@ EAPI=8
 # See commit 52a3463 for details
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=15
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm

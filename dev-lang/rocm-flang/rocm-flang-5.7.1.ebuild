@@ -5,11 +5,11 @@ EAPI=8
 
 AOCC_SLOT=16
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_MAX_SLOT=17 # Same as llvm-roc
+LLVM_SLOT=17 # Same as llvm-roc
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic llvm python-any-r1 rocm toolchain-funcs
+inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.gz
@@ -181,7 +181,6 @@ eerror
 }
 
 pkg_setup() {
-	llvm_pkg_setup
 	python_setup
 	rocm_pkg_setup
 }

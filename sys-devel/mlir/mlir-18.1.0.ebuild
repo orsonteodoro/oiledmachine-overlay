@@ -21,7 +21,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-LLVM_MAX_SLOT=${PV%%.*}
+LLVM_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
@@ -77,14 +77,18 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	llvm_pkg_setup # Init LLVM_SLOT
 	if use test; then
 		python-single-r1_pkg_setup
 	fi
-	#if use rocm_5_7 ; then
-	#	export ROCM_SLOT="5.7"
+	#if use rocm_6_1 ; then
+	#	export ROCM_SLOT="6.1"
+	#	rocm_pkg_setup
+	#elif use rocm_6_2 ; then
+	#	export ROCM_SLOT="6.2"
+	#	rocm_pkg_setup
+	#else
+		llvm_pkg_setup
 	#fi
-	#rocm_pkg_setup
 }
 
 src_prepare() {

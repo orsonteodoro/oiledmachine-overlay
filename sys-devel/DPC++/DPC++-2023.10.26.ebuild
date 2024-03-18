@@ -379,33 +379,43 @@ eerror "Switch to >=sys-devel/clang-5.0"
 	python_setup
 	if use rocm ; then
 		if use rocm_5_4 ; then
-			export LLVM_MAX_SLOT="15"
+			export LLVM_SLOT="15"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-5.4*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="5.4"
 		elif use rocm_5_3 ; then
-			export LLVM_MAX_SLOT="15"
+			export LLVM_SLOT="15"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-5.3*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="5.3"
 		elif use rocm_4_5 ; then
-			export LLVM_MAX_SLOT="13"
+			export LLVM_SLOT="13"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.5*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.5"
 		elif use rocm_4_3 ; then
-			export LLVM_MAX_SLOT="13"
+			export LLVM_SLOT="13"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.3*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.3"
 		elif use rocm_4_2 ; then
-			export LLVM_MAX_SLOT="12"
+			export LLVM_SLOT="12"
 			export ROCM_VERSION=$(best_version "=dev-util/hip-4.2*" | sed -e "s|dev-util/hip-||g")
 			export ROCM_SLOT="4.2"
 		fi
 # Use the clang compiler in /usr/lib64/rocm/${ROCM_SLOT}/llvm/bin/ if dev-util/hip[-system-llvm]
 # Use the clang compiler in /usr/lib/llvm/${LLVM_SLOT}/bin/ if dev-util/hip[system-llvm]
-		export LLVM_SLOT="${LLVM_MAX_SLOT}"
 		rocm_pkg_setup
+	else
+		if use llvm_slot_18 ; then
+			export LLVM_MAX_SLOT="18"
+		elif use llvm_slot_16 ; then
+			export LLVM_MAX_SLOT="16"
+		elif use llvm_slot_13 ; then
+			export LLVM_MAX_SLOT="13"
+		elif use llvm_slot_12 ; then
+			export LLVM_MAX_SLOT="12"
+		fi
+		llvm_pkg_setup
 	fi
 	if use cfi ; then
-		if [[ -z "${LLVM_MAX_SLOT}" ]] ; then
+		if [[ -z "${LLVM_SLOT}" ]] ; then
 			local s
 			for s in ${LLVM_COMPAT[@]} ; do
 				if \
@@ -413,7 +423,7 @@ eerror "Switch to >=sys-devel/clang-5.0"
 					&& has_version "sys-devel/lld:${s}" \
 					&& has_version "sys-devel/llvm:${s}" \
 				; then
-					LLVM_MAX_SLOT="${s}"
+					LLVM_SLOT="${s}"
 					break
 				fi
 			done
@@ -488,8 +498,8 @@ src_configure() {
 	elif use cfi ; then
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
-			if [[ -n "${LLVM_MAX_SLOT}" ]] ; then
-				if (( ${s} > ${LLVM_MAX_SLOT} )) ; then
+			if [[ -n "${LLVM_SLOT}" ]] ; then
+				if (( ${s} > ${LLVM_SLOT} )) ; then
 					continue
 				fi
 			fi
@@ -521,8 +531,8 @@ src_configure() {
 	fi
 
 	if use rocm && use system-llvm ; then
-		export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_MAX_SLOT}"
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	elif use rocm ; then
 		export CC="clang"
 		export CXX="clang++"

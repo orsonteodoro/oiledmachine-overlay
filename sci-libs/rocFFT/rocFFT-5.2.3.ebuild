@@ -21,12 +21,12 @@ CUDA_TARGETS_COMPAT=(
 	compute_75
 )
 CHECKREQS_DISK_BUILD="7G"
-LLVM_MAX_SLOT=14
+LLVM_SLOT=14
 PYTHON_COMPAT=( python3_{9..10} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake check-reqs edo flag-o-matic llvm multiprocessing python-r1 rocm
+inherit cmake check-reqs edo flag-o-matic multiprocessing python-r1 rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocFFT/archive/rocm-${PV}.tar.gz
@@ -112,7 +112,7 @@ BDEPEND="
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
 		dev-libs/boost
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		sys-libs/libomp:${LLVM_SLOT}
 	)
 "
 RESTRICT="
@@ -158,7 +158,6 @@ pkg_setup() {
 	export CHECKREQS_MEMORY=$(required_mem)
 	check-reqs_pkg_setup
 	python_setup
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
 }
 

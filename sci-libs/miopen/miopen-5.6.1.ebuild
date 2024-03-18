@@ -24,8 +24,8 @@ AMDGPU_TARGETS_COMPAT=(
 FIN_COMMIT="55c154d374cef086daeddc18226910b90555bf18"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
-LLVM_MAX_SLOT=16
-inherit cmake flag-o-matic llvm rocm
+LLVM_SLOT=16
+inherit cmake flag-o-matic rocm
 
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/MIOpen/archive/rocm-${PV}.tar.gz
@@ -125,7 +125,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	rocm_pkg_setup
 }
 
@@ -325,8 +324,8 @@ src_configure() {
 	replace-flags '-O0' '-O1'
 
 	if use system-llvm ; then
-		export CC="${CHOST}-clang-${LLVM_MAX_SLOT}"
-		export CXX="${CHOST}-clang++${LLVM_MAX_SLOT}"
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++${LLVM_SLOT}"
 	else
 		export CC="clang"
 		export CXX="clang++"

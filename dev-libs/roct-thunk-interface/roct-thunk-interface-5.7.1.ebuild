@@ -3,8 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=17
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake linux-info rocm

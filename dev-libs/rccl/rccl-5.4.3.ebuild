@@ -15,11 +15,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-LLVM_MAX_SLOT=15
+LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake edo flag-o-matic llvm rocm
+inherit cmake edo flag-o-matic rocm
 
 DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"

@@ -60,6 +60,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
+LLVM_SLOT="${PV%%.*}"
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
 inherit llvm-ebuilds
@@ -321,18 +322,19 @@ pkg_pretend() {
 
 pkg_setup() {
 ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
-#	if use offload ; then
-#		LLVM_MAX_SLOT="${PV%%.*}"
-#		llvm_pkg_setup
-#	else
-#		LLVM_MAX_SLOT=$((${PV%%.*} + 1))
-#		llvm_pkg_setup
-#	fi
 	if use gdb-plugin || use test; then
 		python-single-r1_pkg_setup
 	fi
-	ROCM_SLOT="5.7" # Placeholder
-	rocm_pkg_setup
+	#if use rocm_6_3 ; then
+	#	ROCM_SLOT="6.3"
+	#	rocm_pkg_setup
+	#elif use rocm_6_4 ; then
+	#	ROCM_SLOT="6.4"
+	#	rocm_pkg_setup
+	#else
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
+		llvm_pkg_setup
+	#fi
 }
 
 src_prepare() {

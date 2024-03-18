@@ -16,10 +16,10 @@ AMDGPU_TARGETS_COMPAT=(
 )
 # See https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/blob/1.2.0/docs/release.md?plain=1#L18C22-L18C25
 LLVM_COMPAT=( 14 )
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="5.1"
 
-inherit cmake flag-o-matic llvm rocm toolchain-funcs
+inherit cmake flag-o-matic rocm toolchain-funcs
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
@@ -117,7 +117,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 

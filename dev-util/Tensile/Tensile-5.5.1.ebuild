@@ -21,13 +21,13 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-PYTHON_COMPAT=( python3_{10..11} )
 DISTUTILS_USE_PEP517="setuptools"
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
+PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake distutils-r1 llvm prefix rocm toolchain-funcs
+inherit cmake distutils-r1 prefix rocm toolchain-funcs
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
@@ -62,11 +62,11 @@ RDEPEND="
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 	)
 	openmp? (
-		sys-devel/lld:${LLVM_MAX_SLOT}
-		sys-libs/libomp:${LLVM_MAX_SLOT}
+		sys-devel/lld:${LLVM_SLOT}
+		sys-libs/libomp:${LLVM_SLOT}
 	)
 	system-llvm? (
-		sys-devel/clang:${LLVM_MAX_SLOT}
+		sys-devel/clang:${LLVM_SLOT}
 	)
 "
 DEPEND="
@@ -89,7 +89,6 @@ _PATCHES=(
 CMAKE_USE_DIR="${S}/${PN}/Source"
 
 pkg_setup() {
-	llvm_pkg_setup # For LLVM_SLOT init.  Must be explicitly called or it is blank.
 	python_setup
 	rocm_pkg_setup
 }

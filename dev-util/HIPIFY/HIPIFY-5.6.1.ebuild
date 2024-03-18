@@ -3,10 +3,10 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake llvm rocm
+inherit cmake rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/HIPIFY/"
@@ -90,8 +90,8 @@ RDEPEND="
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 		system-llvm? (
-			sys-devel/llvm:${LLVM_MAX_SLOT}
-			sys-devel/clang:${LLVM_MAX_SLOT}
+			sys-devel/llvm:${LLVM_SLOT}
+			sys-devel/clang:${LLVM_SLOT}
 		)
 	)
 "
@@ -104,8 +104,8 @@ BDEPEND="
 			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 		system-llvm? (
-			sys-devel/llvm:${LLVM_MAX_SLOT}
-			sys-devel/clang:${LLVM_MAX_SLOT}
+			sys-devel/llvm:${LLVM_SLOT}
+			sys-devel/clang:${LLVM_SLOT}
 		)
 	)
 	test? (
@@ -126,19 +126,18 @@ pkg_setup() {
 	if ! use test ; then
 		:;
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.1*" && has_version "=sys-devel/clang-17*" && has_version "=sys-devel/llvm-17*" ; then
-		LLVM_MAX_VERSION=17
+		LLVM_SLOT=17
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.1*" && has_version "=sys-devel/clang-16*" && has_version "=sys-devel/llvm-16*" ; then
-		LLVM_MAX_VERSION=16
+		LLVM_SLOT=16
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-15*" && has_version "=sys-devel/llvm-15*" ; then
-		LLVM_MAX_VERSION=15
+		LLVM_SLOT=15
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
-		LLVM_MAX_VERSION=14
+		LLVM_SLOT=14
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
-		LLVM_MAX_VERSION=14
+		LLVM_SLOT=14
 	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=sys-devel/llvm-13*" ; then
-		LLVM_MAX_VERSION=13
+		LLVM_SLOT=13
 	fi
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 

@@ -4,8 +4,7 @@
 EAPI=8
 
 CONFIG_CHECK="~HSA_AMD"
-LLVM_MAX_SLOT=17
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic linux-info rocm
