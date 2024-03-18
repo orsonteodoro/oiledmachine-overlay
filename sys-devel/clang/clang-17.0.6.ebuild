@@ -426,6 +426,15 @@ fix_rocm_paths() {
 			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
 			"lib/Driver/ToolChains/AMDGPU.cpp" \
 			|| die
+	elif has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
+		local rocm_slot="6.0"
+		sed \
+			-i \
+			-e "s|@ROCM_PATH@|/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			-e "s|@EPREFIX_ROCM_PATH@|${EPREFIX}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			-e "s|@ESYSROOT_ROCM_PATH@|${ESYSROOT}/usr/$(get_libdir)/rocm/${rocm_slot}|g" \
+			"lib/Driver/ToolChains/AMDGPU.cpp" \
+			|| die
 	fi
 	sed \
 		-i \
