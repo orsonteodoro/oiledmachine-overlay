@@ -45,6 +45,10 @@ CUDA_TARGETS_COMPAT=(
 )
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( python3_{9..11} )
+ROCM_SLOTS=(
+	"5.4.3"
+	"5.3.3"
+)
 ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1 rocm
@@ -60,6 +64,11 @@ LICENSE="
 	|| (
 		UoI-NCSA
 		MIT
+	)
+"
+RESTRICT="
+	!test? (
+		test
 	)
 "
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
@@ -115,15 +124,6 @@ REQUIRED_USE="
 		offload
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-ROCM_SLOTS=(
-	"5.4.3"
-	"5.3.3"
-)
 gen_amdgpu_rdepend() {
 	local pv
 	for pv in ${ROCM_SLOTS[@]} ; do
