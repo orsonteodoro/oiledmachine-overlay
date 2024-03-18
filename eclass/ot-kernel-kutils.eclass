@@ -235,7 +235,8 @@ ot-kernel_get_cpu_mfg_id() {
 	fi
 	if tc-is-cross-compiler ; then
 eerror
-eerror "You must set CPU_MFG to the vendor name.  See metadata.xml for details."
+eerror "You must set CPU_MFG to the vendor name.  See metadata.xml"
+eerror "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for details."
 eerror
 		die
 	fi

@@ -5388,7 +5388,8 @@ ot-kernel-pkgflags_linux_firmware() {
 				path="/proc/cpuinfo"
 				if tc-is-cross-compiler ; then
 eerror
-eerror "You must set OT_KERNEL_CPU_MICROCODE.  See metadata.xml for details."
+eerror "You must set OT_KERNEL_CPU_MICROCODE.  See metadata.xml"
+eerror "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for details."
 eerror
 					die
 				fi

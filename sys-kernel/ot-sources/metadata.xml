@@ -381,7 +381,7 @@
     PGO support summary table:
 
     Implementation        | Complete?                    | Buggy / Broken                           | Estimated avg benefit | Notes 
-    ----------------------+------------------------------+------------------------------------------+-----------------------+-----------------------------------------------------------------------------------------
+    ======================+==============================+==========================================+=======================+============================================================================
     Clang PGO             | Yes (upstream abandoned)     | Maybe if ABI/API changes for newer LLVMs | ~10%                  | See also https://github.com/ClangBuiltLinux/linux/issues/1074
                           |                              | or code generation differences between   |                       |
                           |                              | compilers that create bugs               |                       |
@@ -1534,8 +1534,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
 
     OT_KERNEL_HARDENING_LEVEL - sets the hardening level based on the level of
-    trust.  In these ebuilds and eclasses -- security hardening flags, CFI,
-    KCFI, and SCS (ShadowCallStack) -- get enabled when set to secure-af.
+    trust.  In these ebuilds and eclasses - security hardening flags, CFI,
+    KCFI, and SCS (ShadowCallStack) - get enabled when set to secure-af.
 
     Setting to performance also allows to use io_uring for more performance at
     the expense of security.
@@ -2986,7 +2986,7 @@ unset OT_KERNEL_PRIVATE_KEY
     Acceptable values:
 
       Algorithm | Benefit (first row) / Cost (second row)
-      ----------+---------------------------------------------------------------------------------
+      ==========+===================================================================================================================
       bic       | RPC goodput for MiB+ payloads
       bbr       | Latency, streaming, production code quality
                 | Greedy, deprecated, high latency for small RPC payloads

@@ -1004,9 +1004,11 @@ zen_sauce_setup() {
 	if use zen-sauce ; then
 		if [[ -z "${ZEN_SAUCE_WHITELIST}" ]] ; then
 ewarn
-ewarn "Detected empty ZEN_SAUCE_WHITELIST.  Some zen-sauce commits will not be added."
+ewarn "Detected empty ZEN_SAUCE_WHITELIST.  Some zen-sauce commits will not be"
+ewarn "added."
 ewarn
-ewarn "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+ewarn "For details, see metadata.xml"
+ewarn "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`)"
 ewarn
 		fi
 	fi
@@ -1195,10 +1197,10 @@ ewarn "The defaults use cfs (or the stock CPU scheduler) per build"
 ewarn "configuration."
 ewarn
 ewarn "The build configuration scheme has changed.  Please see"
-ewarn "\`epkginfo -x ot-sources\` or the metadata.xml in how to customize"
-ewarn "the per environment build variable and patching process to build"
-ewarn "more secure and higher performant configurations and to override the"
-ewarn "scheduler default."
+ewarn "metadata.xml (or \`epkginfo -x ot-sources::oiledmachine-overlay\`) for"
+ewarn "documentation to customize the per environment build variable and"
+ewarn "patching process to build more secure and higher performant"
+ewarn "configurations and to override the scheduler default."
 ewarn
 	_report_eol
 
@@ -1273,8 +1275,8 @@ einfo "Auto adding key in MOK"
 	if (( $(find "/etc/portage/ot-sources/${KV_MAJOR_MINOR}/" -type f -name "env" | wc -l) == 0 )) ; then
 eerror
 eerror "Missing per extraconfig env file."
-eerror "See the 'The config file-directory structure' section metadata.xml or"
-eerror "the \`epkginfo ${PN}::oiledmachine-overlay\` for instructions for"
+eerror "See the 'The config file-directory structure' section metadata.xml"
+eerror "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for instructions for"
 eerror "creating per extraconfig env files."
 eerror
 		die
@@ -2300,7 +2302,8 @@ einfo "Done unpacking."
 # Applies a patchset for Full PGO with GCC.
 apply_gcc_full_pgo() {
 eerror
-eerror "GCC full pgo is on hold indefinitely.  See metadata.xml."
+eerror "GCC full pgo is on hold indefinitely.  See metadata.xml"
+eerror "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`)."
 eerror
 eerror "Change OT_KERNEL_PGO_FLAVOR to either GCC_PGO_CFG, GCC_PDO, or"
 eerror "CLANG_PGO or disable the pgo USE flag."
@@ -3266,7 +3269,8 @@ eerror "WEBCAMS_UVC_SNAPSHOT_BUTTON new name is now CAMERAS_SNAPSHOT_BUTTON.  Pl
 eerror
 eerror "ZENSAUCE_BLACKLIST new name is now ZEN_SAUCE_BLACKLIST.  Please rename to continue."
 eerror "ZENSAUCE_WHITELIST new name is now ZEN_SAUCE_WHITELIST.  Please rename to continue."
-eerror "See metadata.xml for details."
+eerror "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
+eerror "details."
 eerror
 		die
 	fi
@@ -3320,7 +3324,11 @@ eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_THROUGHPUT_SERVER has been rena
 eerror "OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW_CLIENT has been renamed to OT_KERNEL_TCP_CONGESTION_CONTROLS_SCRIPT_WWW.  Please rename to continue."
 	fi
 
-ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed.  See metadata.xml for details."
+ewarn
+ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed."
+ewarn "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
+ewarn "details."
+ewarn
 }
 
 # @FUNCTION: ot-kernel_clear_env
@@ -3572,8 +3580,8 @@ eerror
 eerror "The OT_KERNEL_PKGFLAGS_ACCEPT has been changed from a string to an"
 eerror "associative array (for faster O(1) lookups)."
 eerror
-eerror "See metadata.xml or"
-eerror "\`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
+eerror "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
+eerror "details."
 eerror
 		die
 	fi
@@ -3584,8 +3592,8 @@ eerror
 eerror "The OT_KERNEL_PKGFLAGS_REJECT has been changed from a string to an"
 eerror "associative array (for faster O(1) lookups)."
 eerror
-eerror "See metadata.xml or"
-eerror "\`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
+eerror "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
+eerror "details."
 eerror
 		die
 	fi
@@ -4574,8 +4582,11 @@ einfo "Adding IOMMU support (Vi)"
 			fi
 			if (( ${found} == 0 )) ; then
 eerror
-eerror "Failed to set IOMMU for DMA mitigation.  Set CPU_MFG environment variable."
-eerror "See metadata.xml or or \`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
+eerror "Failed to set IOMMU for DMA mitigation.  Set the CPU_MFG environment"
+eerror "variable."
+eerror
+eerror "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
+eerror "details."
 eerror
 				die
 			fi
@@ -6138,7 +6149,10 @@ eerror
 		fi
 		if [[ "${cpu_sched}" =~ "cfs" && "${HT:-3}" =~ ("1"|"2"|"3"|"custom"|"manual") ]] ; then
 			ot-kernel_y_configopt "CONFIG_SCHED_CORE"
-ewarn "The behavior the HT environment variable has changed.  See metadata.xml for details."
+ewarn
+ewarn "The behavior the HT environment variable has changed.  See metadata.xml"
+ewarn "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for details."
+ewarn
 			if [[ "${HT}" =~ ("custom"|"manual") ]] ; then
 				:
 			elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
@@ -6434,8 +6448,8 @@ einfo "Setting .config with -march=native"
 ewarn
 ewarn "Setting .config with -march=generic"
 ewarn
-ewarn "See X86_MICROARCH_OVERRIDE in metadata.xml or"
-ewarn "\`epkginfo -x ${PN}::oiledmachine-overlay\` to optimize."
+ewarn "See X86_MICROARCH_OVERRIDE in metadata.xml"
+ewarn "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`) to optimize."
 ewarn
 				kflag="CONFIG_GENERIC_CPU"
 			else
@@ -10271,7 +10285,8 @@ eerror "Set OT_KERNEL_MENUCONFIG_UI=\"disabled\" when done."
 eerror
 eerror "To use the menu run:  ${BUILD_DIR}/menuconfig.sh"
 eerror
-eerror "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+eerror "For more info, see metadata.xml"
+eerror "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`)."
 eerror
 			chmod +x "${BUILD_DIR}/menuconfig.sh"
 			die
@@ -10466,8 +10481,9 @@ eerror
 			if [[ -n "${OT_KERNEL_LOGO_MAGICK_ARGS}" ]] ; then
 				if [[ -z "${OT_KERNEL_LOGO_MAGICK_ARGS}" ]] ; then
 eerror
-eerror "OT_KERNEL_LOGO_MAGICK_ARGS must be define."
-eerror "See metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\` for details."
+eerror "OT_KERNEL_LOGO_MAGICK_ARGS must be defined."
+eerror "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
+eerror "details."
 eerror
 					die
 				fi
@@ -10977,7 +10993,8 @@ einfo
 einfo "The CPU vendor is set to ${mfg}.  If it is wrong, please manually change"
 einfo "it with the CPU_MFG envvar."
 einfo
-einfo "For more info, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+einfo "For more info, see metadata.xml"
+einfo "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`)."
 einfo
 	fi
 
@@ -12101,7 +12118,7 @@ eerror
 
 ################################################################################
 	cat <<EOF > "${T}/etc/ot-sources/iosched/conf/${UPSTREAM_PV}-${extraversion}-${arch}" || die
-# See metadata.xml or epkginfo -x ${PN}::oiledmachine-overlay for details
+# See metadata.xml (or epkginfo -x ${PN}::oiledmachine-overlay) for details
 IOSCHED_OVERRIDES="${OT_KERNEL_IOSCHED_OVERRIDE}"
 
 # Produced from:
@@ -13422,7 +13439,8 @@ einfo "    2.  Build and install the initramfs per each kernel."
 einfo "    3.  Update the bootloader with the new entries"
 einfo "    4.  Reboot with the new kernel"
 einfo
-einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+einfo "For details, see metadata.xml"
+einfo "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`)"
 einfo
 	fi
 }
@@ -13446,7 +13464,8 @@ einfo "    6.  Train the kernel with benchmarks or the typical uses"
 einfo "    7.  Re-emerging the package"
 einfo "    8.  Reboot with optimized kernel"
 einfo
-einfo "For details, see metadata.xml or \`epkginfo -x ${PN}::oiledmachine-overlay\`"
+einfo "For details, see metadata.xml"
+einfo "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`)"
 einfo
 	fi
 	if use pgo ; then
@@ -13724,7 +13743,8 @@ elog "Please run shred -f on every file listed as a precaution."
 	if [[ "${OT_KERNEL_SME}" == "1" && "${OT_KERNEL_SME_DEFAULT_ON}" != "1" ]] ; then
 ewarn
 ewarn "SME is allowed but requires testing before permanent setting on."
-ewarn "See metadata.xml for details or \`epkginfo -x ${PN}::oiledmachine-overlay\`."
+ewarn "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
+ewarn "details."
 ewarn
 	fi
 	if [[ "${_OT_KERNEL_IMA_USED}" == "1" ]] ; then
