@@ -3,9 +3,8 @@
 
 EAPI=8
 
+LLVM_SLOT=16
 PYTHON_COMPAT=( python3_{10..11} )
-LLVM_MAX_SLOT=16
-LLVM_SLOT="${LLVM_MAX_SLOT}"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
@@ -40,7 +39,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 

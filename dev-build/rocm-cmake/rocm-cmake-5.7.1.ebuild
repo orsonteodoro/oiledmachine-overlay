@@ -4,9 +4,8 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
+LLVM_SLOT=17
 PYTHON_COMPAT=( python3_{10..11} )
-LLVM_MAX_SLOT=17
-LLVM_SLOT="${LLVM_MAX_SLOT}"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm
@@ -41,7 +40,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-	llvm_pkg_setup
 	rocm_pkg_setup
 }
 
