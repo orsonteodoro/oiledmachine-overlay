@@ -97,7 +97,6 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[-1]}"
 MESA_PV="18.0.0_rc5"
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( python3_{10..12} )
-UOPTS_IMPLS="_${API_VERSION}"
 SELECTED_LTO="" # global var not const
 SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
@@ -107,10 +106,11 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 SO_CURRENT="9"
 #SO_REVISION=""
 SO_AGE="5"
-SO_VERSION=$((${SO_CURRENT} - ${SO_AGE}))
-USE_RUBY=" ruby31 ruby32 ruby33"
+SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
+UOPTS_IMPLS="_${API_VERSION}"
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
+USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
 inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr
