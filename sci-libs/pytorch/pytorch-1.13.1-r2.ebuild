@@ -40,7 +40,6 @@ PYTHON_COMPAT=( python3_10 ) # Upstream only allows <= 3.10
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v1.13.1/.github/workflows/trunk.yml
 	"5.2.3"
-#	"5.1.3"
 )
 gen_rocm_slots() {
 	local s
