@@ -1138,11 +1138,11 @@ einfo
 # @DESCRIPTION:
 # Analog of use keyword but in the context of per build env
 ot-kernel_use() {
-	local u
 	for u in ${OT_KERNEL_USE} ; do
 		[[ "${u}" =~ ^"-" ]] && continue
 		[[ "${u}" =~ ^"+" ]] && u="${u:1}"
 		has ${u} ${IUSE_EFFECTIVE} || continue
+	# IUSE will say false if hard mask
 		use ${u} && [[ "${1}" == "${u}" ]] && return 0
 	done
 	return 1
@@ -2545,15 +2545,18 @@ apply_all_patchsets() {
 		fi
 	fi
 
-	if has c2tcp ${IUSE_EFFECTIVE} \
-		|| has deepcc ${IUSE_EFFECTIVE} \
-		|| has orca ${IUSE_EFFECTIVE} ; then
-		if ot-kernel_use c2tcp \
-			|| ot-kernel_use deepcc \
-			|| ot-kernel_use orca ; then
-			if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
-				apply_c2tcp_v2
-			fi
+	[[ "${IUSE_EFFECTIVE}" =~ "c2tcp" ]] && einfo "yes IUSE"
+	[[ "${OT_KERNEL_USE}" =~ "c2tcp" ]] && einfo "yes OT_KERNEL_USE"
+	has c2tcp ${IUSE_EFFECTIVE} && einfo "has c2tcp YES"
+	ot-kernel_use c2tcp && einfo "ot-kernel-use c2tcp YES"
+	use "c2tcp" && einfo "use c2tcp YES"
+	if \
+		   ( has c2tcp ${IUSE_EFFECTIVE}  && ot-kernel_use c2tcp ) \
+		|| ( has deepcc ${IUSE_EFFECTIVE} && ot-kernel_use deepcc ) \
+		|| ( has orca ${IUSE_EFFECTIVE}   && ot-kernel_use orca ) \
+	; then
+		if [[ "${C2TCP_MAJOR_VER}" == "2" ]] ; then
+			apply_c2tcp_v2
 		fi
 	fi
 

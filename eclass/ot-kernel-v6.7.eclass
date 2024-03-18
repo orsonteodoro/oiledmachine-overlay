@@ -1001,7 +1001,9 @@ einfo "Already applied ${path} upstream"
 	elif [[ "${path}" =~ "bbrv2-v2alpha-2022-08-28-5.13.12-cf9b1da.patch" ]] ; then
 		_dpatch "${PATCH_OPTS}" "${FILESDIR}/bbrv2-cf9b1da-fix-for-6.3.patch"
 	elif [[ "${path}" =~ "linux-4-13-1-orca-c2tcp-0521.patch" ]] ; then
-		if use bbrv2 ; then
+		if use bbrv3 ; then
+			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-8-1-orca-c2tcp-0521-bbr3-compat.patch"
+		elif use bbrv2 ; then
 			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-8-1-orca-c2tcp-0521-bbr2-compat.patch"
 		else
 			_dpatch "${PATCH_OPTS}" "${FILESDIR}/linux-6-8-1-orca-c2tcp-0521.patch"
