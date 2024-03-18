@@ -13,18 +13,128 @@ EAPI=8
 # See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
+# libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
+
+# Introspection for 32 webkit on 64 bit cannot be used because it requires 32 bit
+# libs/build for python from gobject-introspection.  It produces this error:
+#
+# pyport.h:686:2: error: #error "LONG_BIT definition appears wrong for platform
+#   (bad gcc/glibc config?)."
+#
+# This means also you cannot use the geolocation feature.
+
+# For dependencies, see:
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.44.0/Tools/glib/dependencies
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+
+#
+# To compare changes, Use:
+#
+# C="Source/cmake/WebKitCommon.cmake" D1="${S_OLD}" ; D2="${S_NEW}" ; diff  -urp "${D1}/${C}" "${D2}/${C}" # For individual comparisons
+# D1="${S_OLD}" ; D2="${S_NEW}" ; diff  -urp "${D1}" "${D2}" # For tree comparisons
+#
+
+# Upstream tests with U 18.04 LTS and U 20.04
+# Ebuild target is 18.04 based on the lowest LTS builder-bot
+
+# *DEPENDs versions based on placing find_package as a higher priority
+# than U toolchain image unless general major is only provided
+# which is converted to full versioning.
+
+# Aqua support in gtk3 is untested.
+# Dependencies are found at Source/cmake/OptionsGTK.cmake.
+# Various compile-time optionals for gtk+.
+#
+# >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE
+#  [Media Source Extensions])
+# TODO: gst-plugins-base[X] is only needed when build configuration ends up with
+#   GLX set, but that's a bit automagic too to fix
+# Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
+#   It is removed to only allow native ABI to use it.
+# Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
+# xdg-dbus-proxy is using U 20.04 version
+# Dependencies last updated from
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0
+# Do not use trunk!
+# media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
+
+API_VERSION="4.1"
+CAIRO_PV="1.16.0"
+# One of the major sources of lag comes from dependencies
+# These are strict to match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
+)
+CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
+CLANG_PV="13"
+CMAKE_MAKEFILE_GENERATOR="ninja"
+CXX_STD="20"
+FONTCONFIG_PV="2.13.0"
+FREETYPE_PV="2.9.0"
+GCC_PV="10.2.0"
+GLIB_PV="2.56.4"
+GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
+HARFBUZZ_PV="1.4.2"
+LANGS=(
+ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
+ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te
+tr uk vi zh_CN
+)
 LLVM_COMPAT=( 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[-1]}"
-CMAKE_MAKEFILE_GENERATOR="ninja"
+MESA_PV="18.0.0_rc5"
+OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( python3_{10..12} )
+UOPTS_IMPLS="_${API_VERSION}"
+SELECTED_LTO="" # global var not const
+SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
+# See Source/cmake/OptionsGTK.cmake
+# CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
+# SO_VERSION = C - A
+# WEBKITGTK_API_VERSION is 4.1
+SO_CURRENT="13"
+#SO_REVISION=""
+SO_AGE="13"
+SO_VERSION=$((${SO_CURRENT} - ${SO_AGE}))
 USE_RUBY=" ruby31 ruby32 ruby33"
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
+WK_PAGE_SIZE=64 # global var not const
 
 inherit check-linker check-reqs cmake desktop flag-o-matic git-r3 gnome2 lcnr
 inherit linux-info llvm multilib-minimal pax-utils python-any-r1 ruby-single
 inherit toolchain-funcs uopts
 inherit cflags-depends
+
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
+#
+# Revisions and commit hashes provided since no tags specifically for the
+# webkit-gtk project.
+# Revisions can be found at:
+# https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
+# https://trac.webkit.org/browser/webkit/releases/WebKitGTK
+# Commits can be found at:
+# https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
+# Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
+#
+SRC_URI="
+	!libwebrtc? (
+		https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
+	)
+"
+S="${WORKDIR}/webkitgtk-${PV}"
 
 DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
@@ -292,29 +402,21 @@ LICENSE="
 # || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) Source/WTF/wtf/DateMath.h
 # * The public-domain is not presented in LICENSE variable to not give
 #   the wrong impression that the entire package is released in the public domain.
-#KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
 
-API_VERSION="4.1"
-UOPTS_IMPLS="_${API_VERSION}"
-SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
-# See Source/cmake/OptionsGTK.cmake
-# CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
-# SOVERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-CURRENT="13"
-#REVISION=""
-AGE="13"
-SOVERSION=$((${CURRENT} - ${AGE}))
-SLOT="${API_VERSION}/${SOVERSION}"
+#
+# Tests fail to link for inexplicable reasons
+# https://bugs.webkit.org/show_bug.cgi?id=148210
+#
+# Fetch restrict was due to Unicode data files contained in
+# Source/JavaScriptCore/ucd/ but it is relaxed because Gentoo distributes
+# firefox and webkit's tarball with unicode data.  Most distros
+# distributes these browsers with unicode licensed data without
+# restrictions.
+RESTRICT="test"
+SLOT="${API_VERSION}/${SO_VERSION}"
 # SLOT=6/4    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
-
-LANGS=(
-ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
-ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te
-tr uk vi zh_CN
-)
 
 # aqua (quartz) is enabled upstream but disabled
 # systemd is enabled upstream but gentoo uses openrc by default
@@ -651,73 +753,6 @@ REQUIRED_USE+="
 	)
 "
 
-# libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
-
-# Introspection for 32 webkit on 64 bit cannot be used because it requires 32 bit
-# libs/build for python from gobject-introspection.  It produces this error:
-#
-# pyport.h:686:2: error: #error "LONG_BIT definition appears wrong for platform
-#   (bad gcc/glibc config?)."
-#
-# This means also you cannot use the geolocation feature.
-
-# For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.44.0/Tools/glib/dependencies
-#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
-#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
-
-#
-# To compare changes, Use:
-#
-# C="Source/cmake/WebKitCommon.cmake" D1="${S_OLD}" ; D2="${S_NEW}" ; diff  -urp "${D1}/${C}" "${D2}/${C}" # For individual comparisons
-# D1="${S_OLD}" ; D2="${S_NEW}" ; diff  -urp "${D1}" "${D2}" # For tree comparisons
-#
-
-# Upstream tests with U 18.04 LTS and U 20.04
-# Ebuild target is 18.04 based on the lowest LTS builder-bot
-
-# *DEPENDs versions based on placing find_package as a higher priority
-# than U toolchain image unless general major is only provided
-# which is converted to full versioning.
-
-# Aqua support in gtk3 is untested.
-# Dependencies are found at Source/cmake/OptionsGTK.cmake.
-# Various compile-time optionals for gtk+.
-#
-# >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE
-#  [Media Source Extensions])
-# TODO: gst-plugins-base[X] is only needed when build configuration ends up with
-#   GLX set, but that's a bit automagic too to fix
-# Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].
-#   It is removed to only allow native ABI to use it.
-# Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
-CAIRO_PV="1.16.0"
-CLANG_PV="13"
-CXX_STD="20"
-GCC_PV="10.2.0"
-GLIB_PV="2.56.4"
-GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
-FONTCONFIG_PV="2.13.0"
-FREETYPE_PV="2.9.0"
-HARFBUZZ_PV="1.4.2"
-MESA_PV="18.0.0_rc5"
-# xdg-dbus-proxy is using U 20.04 version
-OCDM_WV="virtual/libc" # Placeholder
-# Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.44.0
-# Do not use trunk!
-# media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
-
 RDEPEND_PROPRIETARY_CODECS_DISABLE="
 	!media-plugins/gst-plugins-dash
 	!media-plugins/gst-plugins-hls
@@ -948,7 +983,9 @@ RDEPEND+="
 # For ${OCDM_WV}, \
 #   You need a license, the proprietary SDK, and OCDM plugin.
 # see https://github.com/WebKit/WebKit/blob/9467df8e0134156fa95c4e654e956d8166a54a13/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L97
-DEPEND+=" ${RDEPEND}"
+DEPEND+="
+	${RDEPEND}
+"
 # paxctl is needed for bug #407085
 
 BDEPEND+="
@@ -994,33 +1031,6 @@ BDEPEND+="
 #			>=sys-apps/paxctl-0.9
 #		)
 #	)
-#
-# Revisions and commit hashes provided since no tags specifically for the
-# webkit-gtk project.
-# Revisions can be found at:
-# https://trac.webkit.org/log/webkit/trunk/Source/WebKit/gtk/NEWS
-# https://trac.webkit.org/browser/webkit/releases/WebKitGTK
-# Commits can be found at:
-# https://github.com/WebKit/WebKit/commits/main/Source/WebKit/gtk/NEWS
-# Or https://trac.webkit.org/browser/webkit/releases/WebKitGTK
-SRC_URI="
-	!libwebrtc? (
-		https://webkitgtk.org/releases/webkitgtk-${PV}.tar.xz
-	)
-"
-
-#
-# Tests fail to link for inexplicable reasons
-# https://bugs.webkit.org/show_bug.cgi?id=148210
-#
-# Fetch restrict was due to Unicode data files contained in
-# Source/JavaScriptCore/ucd/ but it is relaxed because Gentoo distributes
-# firefox and webkit's tarball with unicode data.  Most distros
-# distributes these browsers with unicode licensed data without
-# restrictions.
-RESTRICT="test"
-S="${WORKDIR}/webkitgtk-${PV}"
-CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 _PATCHES=(
 	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
 	"${FILESDIR}/webkit-gtk-2.43.2-custom-page-size.patch"
@@ -1068,13 +1078,6 @@ ewarn "really really should be enabling OpenGL!"
 ewarn
 	fi
 }
-
-# One of the major sources of lag comes from dependencies
-# These are strict to match performance to competition or normal builds.
-declare -A CFLAGS_RDEPEND=(
-	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
-	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
-)
 
 check_geolocation() {
 	if has_version "app-misc/geoclue" ; then
@@ -1171,7 +1174,6 @@ ewarn
 	fi
 }
 
-WK_PAGE_SIZE=64
 _check_page_size_known_set() {
 	if use arm64 ; then
 		known=1
@@ -1917,9 +1919,7 @@ ewarn
 }
 
 pkg_setup() {
-einfo
 einfo "This is the stable branch."
-einfo
 	_set_cxx
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
@@ -1932,9 +1932,7 @@ einfo
 	cflags-depends_check
 
 	if ( use arm || use arm64 ) && ! use gles2 ; then
-ewarn
 ewarn "gles2 is the default on upstream."
-ewarn
 	fi
 
 	if use openmp ; then
@@ -1949,9 +1947,7 @@ einfo "CXX:  ${CXX}"
 	tc-is-clang && llvm_pkg_setup
 
 	if ! use pulseaudio ; then
-ewarn
 ewarn "Microphone support requires pulseaudio USE flag enabled."
-ewarn
 	fi
 
 	if use v4l ; then
@@ -1970,9 +1966,7 @@ ewarn
 	fi
 
 	if use webrtc ; then
-ewarn
 ewarn "WebRTC support is currently in development and feature incomplete."
-ewarn
 	fi
 
 	if ! use webcore ; then
@@ -2076,7 +2070,6 @@ append_all() {
 	append-ldflags ${@}
 }
 
-SELECTED_LTO=""
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
@@ -2330,9 +2323,7 @@ ewarn
 	fi
 
 	if (( ${system_malloc} == 1 )) ; then
-ewarn
 ewarn "Disabling bmalloc for ABI=${ABI} may lower security."
-ewarn
 	fi
 
 	if (( ${jit_enabled} == 1 )) || use yarr-jit ; then
@@ -2652,9 +2643,7 @@ einfo
 
 	if ! use alsa && use pulseaudio \
 		&& has_version "media-sound/pulseaudio-daemon[-alsa]" ; then
-ewarn
 ewarn "You may need media-sound/pulseaudio-daemon[alsa] to hear sound."
-ewarn
 	fi
 
 # See https://bugs.webkit.org/show_bug.cgi?id=174458
