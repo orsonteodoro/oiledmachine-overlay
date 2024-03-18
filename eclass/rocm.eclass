@@ -340,7 +340,6 @@ einfo
 einfo "Eclass variables:"
 einfo
 einfo "  CLANG_SLOT:  ${CLANG_SLOT}"
-einfo "  LLVM_MAX_SLOT:  ${LLVM_MAX_SLOT}"
 einfo "  LLVM_SLOT:  ${LLVM_SLOT}"
 einfo "  EROCM_CLANG_PATH:  ${EROCM_CLANG_PATH}"
 einfo "  EROCM_LLVM_PATH:  ${EROCM_LLVM_PATH}"
