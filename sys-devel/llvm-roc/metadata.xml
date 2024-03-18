@@ -87,7 +87,7 @@
     </flag>
     <flag name="cfi">
       Add Control Flow Integrity support.
-    </file>
+    </flag>
     <flag name="epgo">
       Build an optimized Clang toolchain using Profile Guided Optimization (PGO)
       to decrease build times by maybe 20%.
@@ -100,6 +100,6 @@
     </flag>
     <flag name="profile">
       Add profile support required by Clang PGO (Profile Guided Optimization).
-    </file>
+    </flag>
   </use>
 </pkgmetadata>

@@ -31,7 +31,7 @@
 
     Build time environment variables:
 
-    CUSTOM_PAGE_SIZE -- Sets the page size for JavaScriptCore (JSC).
+    CUSTOM_PAGE_SIZE - Sets the page size for JavaScriptCore (JSC).
 
       Valid values:
 
@@ -188,7 +188,8 @@ emerge -vuDN "webkit-gtk[epgo,-ebolt]" # PGI
 # Run trainer in limited user
 emerge -1vO "webkit-gtk[epgo,ebolt]" # PGO, bolt_pgi
 # Run trainer in limited user
-emerge --config "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
+## DH means double hyphen... bug in html comments
+emerge DHconfig "webkit-gtk[epgo,ebolt]" # PGO + bolt_pgo
 ## DONE
 
 

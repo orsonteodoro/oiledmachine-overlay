@@ -24,8 +24,8 @@
 
     Environment variables:
 
-      BAZEL_LOCAL_RAM_RESOURCES -- Limit the amount of RAM in MiB for Bazel.
-      FORCE_LLVM_SLOT -- Force to build with a particular llvm slot.
+      BAZEL_LOCAL_RAM_RESOURCES - Limit the amount of RAM in MiB for Bazel.
+      FORCE_LLVM_SLOT - Force to build with a particular llvm slot.
 
     Examples:
 

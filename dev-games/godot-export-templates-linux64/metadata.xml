@@ -174,7 +174,7 @@ https://docs.godotengine.org/en/stable/about/release_policy.html#release-support
       Enables LSAN for reporting but not necessarily preventing memory leaks.
     </flag>
     <flag name="lto">
-      Enables link time optimization with ThinLTO that</flag> enables faster
+      Enables link time optimization with ThinLTO that enables faster
       multicore linking and reduction in generated binary.
     </flag>
     <flag name="mbedtls">

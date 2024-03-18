@@ -11,7 +11,8 @@
   oiledmachine-overlay notes:
 
   This ebuild is temporarily added to this overlay.  It will be fixed once
-  the --enable-rust-simd or the dependencies are fixed.  See bug 917632.
+  the enable-rust-simd config option or the dependencies are fixed.
+  See bug 917632.
 
   -->
   <use>

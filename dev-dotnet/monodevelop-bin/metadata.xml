@@ -19,5 +19,5 @@
     <flag name="versioncontrol">
       Adds the VersionControl addin.
     </flag>
-  <use>
+  </use>
 </pkgmetadata>
