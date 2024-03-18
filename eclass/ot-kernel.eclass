@@ -1656,7 +1656,7 @@ ewarn "Skipping zen-sauce ${c} -- ${subject} -- Use the USE flag instead."
 			local c_bl
 			for c_bl in ${blacklisted} ; do
 				if [[ "${c:0:7}" == "${c_bl:0:7}" ]] ; then
-einfo "Skipping zen-sauce ${c} -- ${subject}"
+ewarn "Skipping zen-sauce ${c} -- ${subject}"
 					is_blacklisted=1
 					break
 				fi
@@ -1841,7 +1841,7 @@ ewarn
 					fi
 				done
 				if [[ "${is_blacklisted}" == "1" ]] ; then
-einfo "Skipping genpatches ${f}"
+ewarn "Skipping genpatches ${f}"
 					continue
 				fi
 
@@ -1853,7 +1853,7 @@ einfo "Skipping genpatches ${f}"
 					fi
 				done
 				if [[ "${is_blacklisted}" == "1" ]] ; then
-einfo "Skipping genpatches ${f}"
+ewarn "Skipping genpatches ${f}"
 					continue
 				fi
 
