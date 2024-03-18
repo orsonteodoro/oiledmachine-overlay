@@ -301,7 +301,6 @@ LLVM_COMPONENTS=(
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
-	"${FILESDIR}/${PN}-18.0.0.9999-path-changes.patch"
 	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
 )
 
@@ -350,6 +349,7 @@ src_prepare() {
 		"${WORKDIR}/openmp/runtime/src/CMakeLists.txt"
 		"${WORKDIR}/openmp/tools/archer/CMakeLists.txt"
 	)
+	#eapply "${FILESDIR}/${PN}-18.0.0.9999-path-changes.patch"
 	#rocm_src_prepare
 }
 

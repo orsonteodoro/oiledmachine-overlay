@@ -283,7 +283,6 @@ LLVM_COMPONENTS=(
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
-	"${FILESDIR}/${PN}-17.0.0.9999-path-changes.patch"
 )
 
 kernel_pds_check() {
@@ -339,6 +338,7 @@ src_prepare() {
 		"${WORKDIR}/openmp/tools/archer/CMakeLists.txt"
 	)
 	if use rocm_5_5 || use rocm_5_6 ; then
+		eapply "${FILESDIR}/${PN}-17.0.0.9999-path-changes.patch"
 		rocm_src_prepare
 	fi
 }

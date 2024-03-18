@@ -247,7 +247,6 @@ LLVM_PATCHSET="${PV/_/-}"
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-13.0.1-sover-suffix.patch"
-	"${FILESDIR}/${PN}-15.0.7-path-changes.patch"
 )
 
 python_check_deps() {
@@ -305,6 +304,7 @@ src_prepare() {
 		"${WORKDIR}/openmp/tools/archer/CMakeLists.txt"
 	)
 	if use rocm_4_3 || use rocm_4_5 ; then
+		eapply "${FILESDIR}/${PN}-15.0.7-path-changes.patch"
 		rocm_src_prepare
 	fi
 }
