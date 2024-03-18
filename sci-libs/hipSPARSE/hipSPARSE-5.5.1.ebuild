@@ -167,6 +167,11 @@ src_configure() {
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
+		if ! use system-llvm ; then
+			# Fix configure time check for -lamdhip
+			append-ldflags \
+				-Wl,-L/usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)
+		fi
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
