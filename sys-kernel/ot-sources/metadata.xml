@@ -1533,8 +1533,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
 
 
-    OT_KERNEL_HARDENING_LEVEL - sets the hardening level based on the level of
-    trust.  In these ebuilds and eclasses - security hardening flags, CFI,
+    OT_KERNEL_HARDENING_LEVEL - sets the security mitigation level of the
+    kernel.  In these ebuilds and eclasses - security hardening flags, CFI,
     KCFI, and SCS (ShadowCallStack) - get enabled when set to secure-af.
 
     Setting to performance also allows to use io_uring for more performance at
@@ -1560,9 +1560,11 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       custom - Customize hardening.  (same as manual and unset)
 
       default - Uses upstream default security settings, practically secure,
-      balanced performance-security.
+      balanced performance-security.  However, it does have unintended benefits
+      such as being less crashy and longer uptimes TBH.
 
-      fast-af - Trendy alias for performance.
+      fast-af - Trendy alias for performance but dangerous-af.  From
+      experience, it does crash more.
 
       performance - Disables all hardening.
 
