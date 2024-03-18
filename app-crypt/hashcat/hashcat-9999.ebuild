@@ -3,7 +3,7 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_10 python3_11 )
+PYTHON_COMPAT=( python3_{10..11} )
 
 inherit pax-utils python-single-r1 rocm toolchain-funcs
 
@@ -20,18 +20,17 @@ HOMEPAGE="https://github.com/hashcat/hashcat"
 LICENSE="MIT"
 SLOT="0"
 
-LLVM_MAX_SLOT=14
 ROCM_SLOTS=(
-	5.3.3
-	5.4.3
-	5.5.1
-	5.6.1
-	5.7.1
+	"5.3.3"
+	"5.4.3"
+	"5.5.1"
+	"5.6.1"
+	"5.7.1"
 )
 rocm_gen_iuse() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
-		local s_mm=$(ver_cut 1-2 ${s})
+		local s_mm=$(ver_cut 1-2 "${s}")
 		echo "
 			rocm_${s_mm/./_}
 		"
@@ -51,7 +50,7 @@ video_cards_nvidia
 rocm_gen_rocm_required_use1() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
-		local s_mm=$(ver_cut 1-2 ${s})
+		local s_mm=$(ver_cut 1-2 "${s}")
 		echo "
 			rocm_${s_mm/./_}? (
 				rocm
@@ -67,7 +66,7 @@ rocm_gen_rocm_required_use2() {
 	"
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
-		local s_mm=$(ver_cut 1-2 ${s})
+		local s_mm=$(ver_cut 1-2 "${s}")
 		echo "
 			rocm_${s_mm/./_}
 		"
@@ -154,22 +153,21 @@ pkg_setup() {
 	if use rocm ; then
 		python-single-r1_pkg_setup
 		if use rocm_5_3 ; then
-			LLVM_MAX_SLOT=15
+			LLVM_SLOT=15
 			ROCM_SLOT="5.3"
 		elif use rocm_5_4 ; then
-			LLVM_MAX_SLOT=15
+			LLVM_SLOT=15
 			ROCM_SLOT="5.4"
 		elif use rocm_5_5 ; then
-			LLVM_MAX_SLOT=16
+			LLVM_SLOT=16
 			ROCM_SLOT="5.5"
 		elif use rocm_5_6 ; then
-			LLVM_MAX_SLOT=16
+			LLVM_SLOT=16
 			ROCM_SLOT="5.6"
 		elif use rocm_5_7 ; then
-			LLVM_MAX_SLOT=17
+			LLVM_SLOT=17
 			ROCM_SLOT="5.7"
 		fi
-		LLVM_SLOT="${LLVM_MAX_SLOT}"
 		rocm_pkg_setup
 	fi
 }
