@@ -465,7 +465,9 @@ src_prepare() {
 			|| die
 	fi
 
-	fix_rocm_paths
+	if use rocm_5_5 || use rocm_5_6 ; then
+		fix_rocm_paths
+	fi
 
 	prepare_abi() {
 		uopts_src_prepare
