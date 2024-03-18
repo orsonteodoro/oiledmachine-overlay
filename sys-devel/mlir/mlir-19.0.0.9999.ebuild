@@ -77,26 +77,34 @@ pkg_setup() {
 	if use test; then
 		python-single-r1_pkg_setup
 	fi
-	#if use rocm_6_3 ; then
-	#	export ROCM_SLOT="6.3"
-	#	rocm_pkg_setup
-	#else
+	if has rocm_6_3 ${IUSE_EFFECTIVE} && use rocm_6_3 ; then
+		export ROCM_SLOT="6.3"
+		rocm_pkg_setup
+	elif has rocm_6_4 ${IUSE_EFFECTIVE} && use rocm_6_4 ; then
+		export ROCM_SLOT="6.4"
+		rocm_pkg_setup
+	else
 		llvm_pkg_setup
-	#fi
+	fi
 }
 
 src_prepare() {
 	cmake_src_prepare
-	pushd "${WORKDIR}" || die
-		eapply "${FILESDIR}/mlir-18.0.0.9999-path-changes.patch"
-	popd || die
-	#PATCH_PATHS=(
-	#	"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-	#	"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
-	#	"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-	#	"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
-	#)
-	#rocm_src_prepare
+	if false \
+		|| ( has rocm_6_3 ${IUSE_EFFECTIVE} && use rocm_6_3 ) \
+		|| ( has rocm_6_4 ${IUSE_EFFECTIVE} && use rocm_6_4 ) \
+	; then
+		pushd "${WORKDIR}" || die
+			eapply "${FILESDIR}/mlir-18.0.0.9999-path-changes.patch"
+		popd || die
+		PATCH_PATHS=(
+			"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
+			"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+			"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
+			"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
+		)
+		rocm_src_prepare
+	fi
 }
 
 multilib_src_configure() {

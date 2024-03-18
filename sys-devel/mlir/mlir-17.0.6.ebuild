@@ -85,9 +85,9 @@ pkg_setup() {
 	if use rocm_5_7 ; then
 		export ROCM_SLOT="5.7"
 		rocm_pkg_setup
-	#elif use rocm_6_0 ; then
-	#	export ROCM_SLOT="6.0"
-	#	rocm_pkg_setup
+	elif has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
+		export ROCM_SLOT="6.0"
+		rocm_pkg_setup
 	else
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		llvm_pkg_setup
@@ -96,16 +96,18 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	pushd "${WORKDIR}" || die
-		eapply "${FILESDIR}/mlir-17.0.0.9999-path-changes.patch"
-	popd || die
-	PATCH_PATHS=(
-		"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
-		"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
-	)
-	rocm_src_prepare
+	if use rocm_5_7 || ( has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ) ; then
+		pushd "${WORKDIR}" || die
+			eapply "${FILESDIR}/mlir-17.0.0.9999-path-changes.patch"
+		popd || die
+		PATCH_PATHS=(
+			"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
+			"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+			"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
+			"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
+		)
+		rocm_src_prepare
+	fi
 }
 
 multilib_src_configure() {

@@ -87,16 +87,18 @@ pkg_setup() {
 
 src_prepare() {
 	cmake_src_prepare
-	pushd "${WORKDIR}" || die
-		eapply "${FILESDIR}/mlir-15.0.7-path-changes.patch"
-	popd || die
-	PATCH_PATHS=(
-		"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
-		"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
-	)
-	rocm_src_prepare
+	if use rocm_5_3 || use rocm_5_4 ; then
+		pushd "${WORKDIR}" || die
+			eapply "${FILESDIR}/mlir-15.0.7-path-changes.patch"
+		popd || die
+		PATCH_PATHS=(
+			"${WORKDIR}/mlir/lib/Dialect/GPU/CMakeLists.txt"
+			"${WORKDIR}/mlir/lib/Dialect/GPU/Transforms/SerializeToHsaco.cpp"
+			"${WORKDIR}/mlir/lib/ExecutionEngine/CMakeLists.txt"
+			"${WORKDIR}/mlir/lib/Target/LLVM/ROCDL/Target.cpp"
+		)
+		rocm_src_prepare
+	fi
 }
 
 multilib_src_configure() {
