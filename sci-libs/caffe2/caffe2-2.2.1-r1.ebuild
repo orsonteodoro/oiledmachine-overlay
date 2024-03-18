@@ -66,6 +66,7 @@ SLOT="0"
 # cuda and rocm are enabled by default upstream.
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda +distributed +fbgemm -ffmpeg +gloo +magma mkl +mpi +nnpack +numpy onednn
@@ -119,6 +120,9 @@ REQUIRED_USE="
 		^^ (
 			${ROCM_SLOTS2[@]}
 		)
+	)
+	rocm_5_7? (
+		llvm_slot_17
 	)
 "
 gen_rocm_depends() {
