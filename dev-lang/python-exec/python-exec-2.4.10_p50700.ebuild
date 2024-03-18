@@ -3,8 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=17
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+LLVM_SLOT=17
 MY_P="${PN}-$(ver_cut 1-3 ${PV})"
 PYTHON_COMPAT=( python3_{9..11} pypy3 )
 ROCM_SLOT="5.7"
@@ -27,12 +26,14 @@ RESTRICT="
 SLOT="rocm-${ROCM_SLOT}/${ROCM_VERSION}"
 IUSE="${_PYTHON_ALL_IMPLS[@]/#/python_targets_} +native-symlinks test"
 RDEPEND="
-	dev-lang/python-exec-conf
 	!<=dev-lang/python-2.7.18-r3:2.7
+	dev-lang/python-exec-conf
 "
 BDEPEND="
 	test? (
-		$(python_gen_any_dep 'dev-python/pytest[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			dev-python/pytest[${PYTHON_USEDEP}]
+		')
 	)
 "
 
