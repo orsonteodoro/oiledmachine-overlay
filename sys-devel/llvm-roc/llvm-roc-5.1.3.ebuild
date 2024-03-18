@@ -4,8 +4,8 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=14
-LLVM_SLOT="${LLVM_MAX_SLOT}"
+CMAKE_BUILD_TYPE="RelWithDebInfo"
+LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_TBOLT=0
@@ -13,10 +13,12 @@ UOPTS_SUPPORT_TPGO=0
 
 inherit cmake flag-o-matic rocm uopts
 
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
 "
+S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 
 DESCRIPTION="The ROCm™ fork of the LLVM project"
 HOMEPAGE="
@@ -72,7 +74,6 @@ LICENSE="
 # ISC - llvm-project-rocm-5.6.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # MIT - llvm-project-rocm-5.6.0/polly/lib/External/isl/LICENSE
 # ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
-KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 LLVM_TARGETS=(
 	AMDGPU
@@ -108,8 +109,6 @@ BDEPEND="
 "
 PATCHES=(
 )
-S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
-CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
 ewarn
