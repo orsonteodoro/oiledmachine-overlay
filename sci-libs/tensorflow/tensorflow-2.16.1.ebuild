@@ -79,8 +79,6 @@ declare -A LLD_SLOT=(
 #	["5.0.2"]="14"
 )
 LLVM_COMPAT=( {17..15} ) # See https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/tools/toolchains/remote_config/configs.bzl
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}"
 PYTHON_COMPAT=( python3_{10..12} )
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
@@ -1039,6 +1037,8 @@ einfo
 
 	if use rocm ; then
 		rocm_pkg_setup
+	#else
+	#	llvm_pkg_setup called in use_clang
 	fi
 
 	local num_pythons_enabled
