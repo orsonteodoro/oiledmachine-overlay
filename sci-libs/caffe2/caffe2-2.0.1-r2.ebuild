@@ -28,14 +28,17 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_86
 )
-LLVM_MAX_SLOT=16
+LLVM_COMPAT=(
+	15 # ROCm slot
+	12 10 9 8 7 # Upstream build.sh, pull.yml
+)
+LLVM_SLOT=16
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.0.1/.github/workflows/trunk.yml#L270
 	"5.4.3"
-#	"5.3.3"
 )
 gen_rocm_slots() {
 	local s
@@ -280,16 +283,24 @@ PATCHES=(
 
 pkg_setup() {
 	if use rocm_5_4 ; then
-		LLVM_MAX_SLOT="15"
-		LLVM_SLOT="${LLVM_MAX_SLOT}"
+		LLVM_SLOT="15"
+		LLVM_SLOT="${LLVM_SLOT}"
 		ROCM_SLOT="5.4"
-	#elif use rocm_5_3 ; then
-	#	LLVM_MAX_SLOT="15"
-	#	LLVM_SLOT="${LLVM_MAX_SLOT}"
-	#	ROCM_SLOT="5.3"
-	fi
-	if use rocm ; then
 		rocm_pkg_setup
+	#elif use rocm_5_3 ; then
+	#	LLVM_SLOT="15"
+	#	LLVM_SLOT="${LLVM_SLOT}"
+	#	ROCM_SLOT="5.3"
+	#	rocm_pkg_setup
+	else
+		local s
+		for s in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${s}" ; then
+				LLVM_MAX_SLOT="${s}"
+				break
+			fi
+		done
+		llvm_pkg_setup
 	fi
 	python-single-r1_pkg_setup
 }
