@@ -38,7 +38,7 @@ ROCM_SLOTS=(
 	"4.5.2"
 	"4.3.1"
 )
-ROCM_SKIP_COMMON_PATHS_PATCHES=1
+#ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1 rocm
 

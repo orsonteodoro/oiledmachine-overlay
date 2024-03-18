@@ -66,7 +66,7 @@ ROCM_SLOTS=(
 #	"6.1.0"
 #	"6.2.0"
 )
-ROCM_SKIP_COMMON_PATHS_PATCHES=1
+#ROCM_SKIP_COMMON_PATHS_PATCHES=1
 
 inherit llvm-ebuilds
 
