@@ -32,7 +32,6 @@ LLVM_COMPAT=(
 	14 # ROCm slot
 	12 10 9 8 7 5 # Upstream build.sh
 )
-LLVM_SLOT=16
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_10 ) # Upstream only allows <=3.10
@@ -50,7 +49,7 @@ gen_rocm_slots() {
 }
 ROCM_SLOTS2=( $(gen_rocm_slots) )
 
-inherit cmake cuda flag-o-matic rocm python-single-r1
+inherit cmake cuda flag-o-matic llvm rocm python-single-r1
 
 KEYWORDS="~amd64"
 SRC_URI="
