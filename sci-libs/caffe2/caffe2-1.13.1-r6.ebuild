@@ -30,7 +30,7 @@ CUDA_TARGETS_COMPAT=(
 )
 LLVM_COMPAT=(
 	14 # ROCm slot
-	12 10 9 8 7 5 # Upstream build.sh
+	12 10 9 8 7 5 # Upstream build.sh, pull.yml
 )
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
