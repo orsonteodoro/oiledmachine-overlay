@@ -167,7 +167,7 @@
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				A
 
-    6.8 (Master / Live / Mainline)			A
+    6.8 (Live / Master / Stable)			A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				E
 		    genpatches				A
@@ -3894,6 +3894,18 @@ unset OT_KERNEL_PRIVATE_KEY
     For 6.1, see:
 
       https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
+
+    For 6.6, see:
+
+      https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
+
+    For 6.7, see:
+
+      https://github.com/torvalds/linux/compare/v6.7...zen-kernel:6.7/zen-sauce
+
+    For 6.8, see:
+
+      https://github.com/torvalds/linux/compare/v6.8...zen-kernel:6.8/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
