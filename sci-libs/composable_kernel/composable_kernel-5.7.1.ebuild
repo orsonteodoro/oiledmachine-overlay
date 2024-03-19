@@ -18,7 +18,7 @@ AMDGPU_TARGETS_COMPAT=(
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=17
 ROCM_SLOT="5.7"
-ROCM_VERSION="5.7.1"
+ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm
 

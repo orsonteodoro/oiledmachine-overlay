@@ -34,9 +34,10 @@ CUDA_TARGETS_COMPAT=(
 )
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( python3_{9..10} )
+inherit hip-versions
 ROCM_SLOTS=(
-	"4.5.2"
-	"4.3.1"
+	"${HIP_4_5_VERSION}"
+	"${HIP_4_3_VERSION}"
 )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org python-any-r1 rocm
@@ -284,9 +285,11 @@ einfo "echo \"sys-libs/libomp -llvm_targets_AMDGPU\" >> /etc/portage/profile/pac
 einfo
 	if use rocm_4_3 ; then
 		ROCM_SLOT="4.3"
+		ROCM_VERSION="${HIP_4_3_VERSION}"
 		rocm_pkg_setup
 	elif use rocm_4_5 ; then
 		ROCM_SLOT="4.5"
+		ROCM_VERSION="${HIP_4_5_VERSION}"
 		rocm_pkg_setup
 	else
 		LLVM_MAX_SLOT="${LLVM_SLOT}"

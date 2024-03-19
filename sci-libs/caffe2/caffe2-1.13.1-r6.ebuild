@@ -35,9 +35,10 @@ LLVM_COMPAT=(
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_10 ) # Upstream only allows <=3.10
+inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v1.13.1/.github/workflows/trunk.yml
-	"5.2.3"
+	"${HIP_5_2_VERSION}"
 )
 gen_rocm_slots() {
 	local s

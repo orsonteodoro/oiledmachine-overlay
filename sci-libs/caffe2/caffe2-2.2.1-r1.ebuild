@@ -35,9 +35,10 @@ LLVM_COMPAT=(
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
+inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.0.1/.ci/docker/build.sh#L190
-	"5.7.1"
+	"${HIP_5_7_VERSION}"
 )
 gen_rocm_slots() {
 	local s

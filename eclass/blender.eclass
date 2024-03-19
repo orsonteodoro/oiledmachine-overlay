@@ -25,7 +25,8 @@ unset -f _blender_set_globals
 UOPTS_SUPPORT_TPGO=0
 UOPTS_SUPPORT_TBOLT=0
 
-inherit cuda check-reqs cmake flag-o-matic llvm pax-utils python-single-r1 rocm toolchain-funcs xdg uopts
+inherit cuda check-reqs cmake flag-o-matic hip-versions llvm pax-utils
+inherit python-single-r1 rocm toolchain-funcs xdg uopts
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"

@@ -37,9 +37,10 @@ CUDA_TARGETS_USEDEP="${CUDA_TARGETS_USEDEP// /,}"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_10 ) # Upstream only allows <= 3.10
+inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v1.13.1/.github/workflows/trunk.yml
-	"5.2.3"
+	"${HIP_5_2_VERSION}"
 )
 gen_rocm_slots() {
 	local s

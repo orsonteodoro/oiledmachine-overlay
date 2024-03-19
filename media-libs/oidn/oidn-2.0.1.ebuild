@@ -27,9 +27,10 @@ CUDA_TARGETS_COMPAT=(
 	sm_80
 	sm_90
 )
+inherit hip-versions
 HIP_VERSIONS=(
-	"5.5.1"
-	"5.6.1"
+	"${HIP_5_5_VERSION}"
+	"${HIP_5_6_VERSION}"
 ) # 5.3.0 fails
 ROCM_SLOTS=(
 	rocm_5_5
@@ -42,7 +43,6 @@ MIN_CLANG_PV="3.3"
 MIN_GCC_PV="4.8.1"
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{10..11} )
-ROCM_VERSION="5.5.1"
 
 inherit cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
 
@@ -137,10 +137,10 @@ REQUIRED_USE+="
 		)
 	)
 	rocm_5_5? (
-		llvm_slot_16
+		llvm_slot_${HIP_5_5_LLVM_SLOT}
 	)
 	rocm_5_6? (
-		llvm_slot_16
+		llvm_slot_${HIP_5_6_LLVM_SLOT}
 	)
 "
 gen_clang_depends() {
@@ -249,11 +249,13 @@ pkg_setup() {
 	fi
 
 	if use rocm_5_6 ; then
+		ROCM_VERSION="${HIP_5_6_VERSION}"
 		ROCM_SLOT="5.6"
-		LLVM_SLOT=16
+		LLVM_SLOT=${HIP_5_6_LLVM_SLOT}
 	elif use rocm_5_5 ; then
+		ROCM_VERSION="${HIP_5_5_VERSION}"
 		ROCM_SLOT="5.5"
-		LLVM_SLOT=16
+		LLVM_SLOT=${HIP_5_5_LLVM_SLOT}
 	fi
 
 	if use rocm ; then

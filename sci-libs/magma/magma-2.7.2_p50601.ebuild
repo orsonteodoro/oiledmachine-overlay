@@ -3,14 +3,16 @@
 
 EAPI=8
 
+inherit hip-versions
+
 LLVM_SLOT=16
 MAGMA_ROCM=1
 ROCM_SLOT="5.6"
 ROCM_SLOTS=(
-	"5.6.1"
+	"${HIP_5_6_VERSION}"
 )
 declare -A ROCM_PV_TO_LLVM_SLOT=(
-	["5.6.1"]="16"
+	["${HIP_5_6_VERSION}"]="16"
 )
 SLOT="${ROCM_SLOT}/${PV}"
 

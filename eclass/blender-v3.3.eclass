@@ -876,17 +876,17 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tb
 	)
 	rocm? (
 		rocm_5_2? (
-			~dev-util/hip-5.2.3:5.2[rocm,system-llvm=]
+			~dev-util/hip-${HIP_5_2_VERSION}:5.2[rocm,system-llvm=]
 			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-5.2.3:5.2
-				~sys-libs/llvm-roc-libomp-5.2.3:5.2
+				~dev-libs/rocm-opencl-runtime-${HIP_5_2_VERSION}:5.2
+				~sys-libs/llvm-roc-libomp-${HIP_5_2_VERSION}:5.2
 			)
 		)
 		rocm_5_1? (
-			~dev-util/hip-5.1.3:5.1[rocm,system-llvm=]
+			~dev-util/hip-${HIP_5_1_VERSION}:5.1[rocm,system-llvm=]
 			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-5.1.3:5.1
-				~sys-libs/llvm-roc-libomp-5.1.3:5.1
+				~dev-libs/rocm-opencl-runtime-${HIP_5_1_VERSION}:5.1
+				~sys-libs/llvm-roc-libomp-${HIP_5_1_VERSION}:5.1
 			)
 		)
 		dev-util/hip:=
@@ -1110,10 +1110,14 @@ ewarn
 	fi
 
 	if use rocm ; then
-		if use llvm-14 && has_version "=dev-util/hip-5.2" ; then
+		if use rocm_5_2 ; then
 			export LLVM_SLOT=14
-		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
+			export ROCM_SLOT="5.2"
+			export ROCM_VERSION="${HIP_5_2_VERSION}"
+		elif use rocm_5_1 ; then
 			export LLVM_SLOT=14
+			export ROCM_SLOT="5.1"
+			export ROCM_VERSION="${HIP_5_1_VERSION}"
 		elif use llvm-13 || use llvm-12 || use llvm-11 ; then
 eerror
 eerror "ROCm < 5.1 is not supported on the distro."

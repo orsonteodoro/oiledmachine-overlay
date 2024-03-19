@@ -5,6 +5,8 @@ EAPI=8
 
 # TODO:  review the install prefix
 
+inherit hip-versions
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900
@@ -18,6 +20,7 @@ AMDGPU_TARGETS_COMPAT=(
 LLVM_COMPAT=( 15 )
 LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="5.3"
+ROCM_VERSION="${HIP_5_3_VERSION}"
 
 inherit cmake flag-o-matic rocm toolchain-funcs
 

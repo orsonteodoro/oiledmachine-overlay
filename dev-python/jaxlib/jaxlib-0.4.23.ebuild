@@ -34,8 +34,8 @@ LLVM_COMPAT=(
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..11} ) # Limited by Flax CI
 
-inherit bazel cuda distutils-r1 flag-o-matic git-r3 java-pkg-opt-2 llvm-r1 rocm
-inherit toolchain-funcs
+inherit bazel cuda distutils-r1 flag-o-matic git-r3 hip-versions java-pkg-opt-2
+inherit llvm-r1 rocm toolchain-funcs
 
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
@@ -239,11 +239,11 @@ REQUIRED_USE+="
 
 ROCM_SLOTS=(
 # See https://github.com/google/jax/blob/jaxlib-v0.4.23/build/rocm/Dockerfile.ms
-	"5.6.0" # For llvm 16
+	"${HIP_5_6_VERSION}" # For llvm 16, relaxed, upstream uses 5.6.0
 )
 
 declare -A LLD_SLOT=(
-	["5.6.0"]="16"
+	["${HIP_5_6_VERSION}"]="${HIP_5_6_LLVM_SLOT}"
 )
 
 gen_rocm_depends() {
@@ -380,21 +380,24 @@ einfo "Using mold (TESTING)"
 		BUILD_LDFLAGS+=" -fuse-ld=mold"
 	elif \
 		tc-is-clang \
-		&& ( \
-			   ! is-flagq '-fuse-ld=gold' \
-			&& ! is-flagq '-fuse-ld=bfd' \
+			&& \
+		( \
+			! is-flagq '-fuse-ld=gold' \
+				&& \
+			! is-flagq '-fuse-ld=bfd' \
 		) \
-		&& \
+			&& \
 		( \
 			( \
 				has_version "sys_devel/lld:$(clang-major-version)" \
 			) \
-			|| \
+				|| \
 			( \
-				ver_test $(clang-major-version) -lt 13 \
-				&& ver_test ${lld_pv} -ge $(clang-major-version) \
+				ver_test $(clang-major-version) -lt "13" \
+					&& \
+				ver_test "${lld_pv}" -ge $(clang-major-version) \
 			) \
-			|| \
+				|| \
 			( \
 				has_version "sys-devel/clang-common[default-lld]" \
 			) \
@@ -456,26 +459,26 @@ gcc_symlink_ver() {
 		return
 	fi
 
-	if ver_test ${pv} -lt 10 ; then
+	if ver_test "${pv}" -lt "10" ; then
 		ncomponents=3
-	elif [[ ${slot} -eq 10 ]] && ver_test ${pv} -ge 10.4.1_p20220929 ; then
+	elif [[ "${slot}" -eq "10" ]] && ver_test "${pv}" -ge "10.4.1_p20220929" ; then
 		ncomponents=1
-	elif [[ ${slot} -eq 11 ]] && ver_test ${pv} -ge 11.3.1_p20220930 ; then
+	elif [[ "${slot}" -eq "11" ]] && ver_test "${pv}" -ge "11.3.1_p20220930" ; then
 		ncomponents=1
-	elif [[ ${slot} -eq 12 ]] && ver_test ${pv} -ge 12.2.1_p20221001 ; then
+	elif [[ "${slot}" -eq "12" ]] && ver_test "${pv}" -ge "12.2.1_p20221001" ; then
 		ncomponents=1
-	elif [[ ${slot} -eq 13 ]] && ver_test ${pv} -ge 13.0.0_pre20221002 ; then
+	elif [[ "${slot}" -eq "13" ]] && ver_test "${pv}" -ge "13.0.0_pre20221002" ; then
 		ncomponents=1
-	elif [[ ${slot} -gt 13 ]] ; then
+	elif [[ "${slot}" -gt "13" ]] ; then
 		ncomponents=1
 	fi
 
-	if [[ ${ncomponents} -eq 1 ]] ; then
-		ver_cut 1 ${pv}
+	if (( ${ncomponents} == 1 )) ; then
+		ver_cut 1 "${pv}"
 		return
 	fi
 
-	ver_cut 1-3 ${pv}
+	ver_cut 1-3 "${pv}"
 }
 
 use_gcc() {

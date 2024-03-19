@@ -43,18 +43,18 @@ GCC_COMPAT=( {12..9} )
 GCC_MAX_SLOT="${GCC_COMPAT[0]}"
 GCC_MIN_SLOT="${GCC_COMPAT[-1]}"
 GCC_SLOT_WITH_CUDA=12
-# See "deps versioning" section above for details.
+inherit hip-versions
 HIP_SLOTS=(
 # See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
-	"6.0.2" # For llvm 17
-	"5.7.1" # For llvm 17
-	"5.6.1" # For llvm 16
-	"5.5.1" # For llvm 16
-	"5.4.3" # For llvm 15
-	"5.3.3" # For llvm 15
-#	"5.2.3" # For llvm 14
-#	"5.1.3" # For llvm 14
-#	"5.0.2" # For llvm 14
+	"${HIP_6_0_VERSION}" # For llvm 17
+	"${HIP_5_7_VERSION}" # For llvm 17
+	"${HIP_5_6_VERSION}" # For llvm 16
+	"${HIP_5_5_VERSION}" # For llvm 16
+	"${HIP_5_4_VERSION}" # For llvm 15
+	"${HIP_5_3_VERSION}" # For llvm 15
+#	"${HIP_5_2_VERSION}" # For llvm 14
+#	"${HIP_5_1_VERSION}" # For llvm 14
+#	"${HIP_5_0_VERSION}" # For llvm 14
 )
 gen_hip_slots2() {
 	local pv
@@ -68,16 +68,18 @@ HIP_SLOTS2=(
 	$(gen_hip_slots2)
 )
 declare -A LLD_SLOT=(
-	["6.0.2"]="17"
-	["5.7.1"]="17"
-	["5.6.1"]="16"
-	["5.5.1"]="16"
-	["5.4.3"]="15"
-	["5.3.3"]="15"
-#	["5.2.3"]="14"
-#	["5.1.3"]="14"
-#	["5.0.2"]="14"
+	["${HIP_6_0_VERSION}"]="${HIP_6_0_LLVM_SLOT}"
+	["${HIP_5_7_VERSION}"]="${HIP_5_7_LLVM_SLOT}"
+	["${HIP_5_6_VERSION}"]="${HIP_5_6_LLVM_SLOT}"
+	["${HIP_5_5_VERSION}"]="${HIP_5_5_LLVM_SLOT}"
+	["${HIP_5_4_VERSION}"]="${HIP_5_4_LLVM_SLOT}"
+	["${HIP_5_3_VERSION}"]="${HIP_5_3_LLVM_SLOT}"
+#	["${HIP_5_2_VERSION}"]="${HIP_5_2_LLVM_SLOT}"
+#	["${HIP_5_1_VERSION}"]="${HIP_5_1_LLVM_SLOT}"
+#	["${HIP_5_0_VERSION}"]="${HIP_5_0_LLVM_SLOT}"
 )
+
+# See "deps versioning" section above for details.
 LLVM_COMPAT=( {17..15} ) # See https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/tools/toolchains/remote_config/configs.bzl
 PYTHON_COMPAT=( python3_{10..12} )
 # Limited by jax/flax

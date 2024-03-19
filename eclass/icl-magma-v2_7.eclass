@@ -342,8 +342,10 @@ replace_symbols() {
 	IFS=$'\n'
 
 	local llvm_slot
-	if [[ "${ROCM_SLOT}" == "5.7" ]] ; then
-		llvm_slot=16
+	if [[ "${ROCM_SLOT}" == "6.0" ]] ; then
+		llvm_slot=17
+	elif [[ "${ROCM_SLOT}" == "5.7" ]] ; then
+		llvm_slot=17
 	elif [[ "${ROCM_SLOT}" == "5.6" ]] ; then
 		llvm_slot=16
 	elif [[ "${ROCM_SLOT}" == "5.5" ]] ; then
@@ -364,9 +366,7 @@ replace_symbols() {
 	# For GPU
 	# /opt/aomp/@AOMP_SLOT@/ for multislotted aomp
 	local aomp_slot # If 0, then unislot.
-	if has_version "=sys-devel/aomp-16*:16" && [[ "${ROCM_SLOT}" == "5.7" ]] ; then
-		aomp_slot=16
-	elif has_version "=sys-devel/aomp-16*:16" && [[ "${ROCM_SLOT}" == "5.6" ]] ; then
+	if has_version "=sys-devel/aomp-16*:16" && [[ "${ROCM_SLOT}" == "5.6" ]] ; then
 		aomp_slot=16
 	elif has_version "=sys-devel/aomp-16*:16" && [[ "${ROCM_SLOT}" == "5.5" ]] ; then
 		aomp_slot=16
@@ -377,6 +377,8 @@ replace_symbols() {
 	elif has_version "=sys-devel/aomp-14*:14" && [[ "${ROCM_SLOT}" == "5.2" ]] ; then
 		aomp_slot=14
 	elif has_version "=sys-devel/aomp-14*:14" && [[ "${ROCM_SLOT}" == "5.1" ]] ; then
+		aomp_slot=14
+	elif has_version "=sys-devel/aomp-14*:14" && [[ "${ROCM_SLOT}" == "5.0" ]] ; then
 		aomp_slot=14
 	elif has_version "=sys-devel/aomp-16*:0" && [[ "${ROCM_SLOT}" == "5.7" ]] ; then
 		aomp_slot=0
@@ -391,6 +393,8 @@ replace_symbols() {
 	elif has_version "=sys-devel/aomp-15*:0" && [[ "${ROCM_SLOT}" == "5.2" ]] ; then
 		aomp_slot=0
 	elif has_version "=sys-devel/aomp-14*:0" && [[ "${ROCM_SLOT}" == "5.1" ]] ; then
+		aomp_slot=0
+	elif has_version "=sys-devel/aomp-14*:0" && [[ "${ROCM_SLOT}" == "5.0" ]] ; then
 		aomp_slot=0
 	else
 		# Not installed or disable

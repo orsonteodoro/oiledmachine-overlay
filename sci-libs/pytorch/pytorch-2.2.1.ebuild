@@ -38,9 +38,10 @@ DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <= 3.11
+inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.2.1/.github/workflows/trunk.yml#L180
-	"5.7.1"
+	"${HIP_5_7_VERSION}"
 )
 gen_rocm_slots() {
 	local s

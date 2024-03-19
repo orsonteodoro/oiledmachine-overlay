@@ -18,6 +18,7 @@ AMDGPU_TARGETS_COMPAT=(
 LLVM_COMPAT=( 17 )
 LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_VERSION="${PV}"
 
 inherit cmake flag-o-matic rocm toolchain-funcs
 

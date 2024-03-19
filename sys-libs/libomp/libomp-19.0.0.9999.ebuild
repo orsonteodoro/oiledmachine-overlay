@@ -62,6 +62,7 @@ CUDA_TARGETS_COMPAT=(
 )
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( python3_{10..12} )
+inherit hip-versions
 ROCM_SLOTS=(
 #	"6.3.0"
 #	"6.4.0"
@@ -328,9 +329,11 @@ ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
 	fi
 	#if use rocm_6_3 ; then
 	#	ROCM_SLOT="6.3"
+	#	ROCM_VERSION="${HIP_6_3_VERSION}"
 	#	rocm_pkg_setup
 	#elif use rocm_6_4 ; then
 	#	ROCM_SLOT="6.4"
+	#	ROCM_VERSION="${HIP_6_4_VERSION}"
 	#	rocm_pkg_setup
 	#else
 		LLVM_MAX_SLOT="${LLVM_SLOT}"

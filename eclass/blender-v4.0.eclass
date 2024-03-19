@@ -910,31 +910,31 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	)
 	rocm? (
 		rocm_5_4? (
-			~dev-util/hip-5.4.3:5.4[rocm,system-llvm=]
+			~dev-util/hip-${HIP_5_4_VERSION}:5.4[rocm,system-llvm=]
 			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-5.4.3:5.4
-				~sys-libs/llvm-roc-libomp-5.4.3:5.4
+				~dev-libs/rocm-opencl-runtime-${HIP_5_4_VERSION}:5.4
+				~sys-libs/llvm-roc-libomp-${HIP_5_4_VERSION}:5.4
 			)
 		)
 		rocm_5_3? (
-			~dev-util/hip-5.3.3:5.3[rocm,system-llvm=]
+			~dev-util/hip-${HIP_5_3_VERSION}:5.3[rocm,system-llvm=]
 			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-5.3.3:5.3
-				~sys-libs/llvm-roc-libomp-5.3.3:5.3
+				~dev-libs/rocm-opencl-runtime-${HIP_5_3_VERSION}:5.3
+				~sys-libs/llvm-roc-libomp-${HIP_5_3_VERSION}:5.3
 			)
 		)
 		rocm_5_2? (
-			~dev-util/hip-5.2.3:5.2[rocm,system-llvm=]
+			~dev-util/hip-${HIP_5_2_VERSION}:5.2[rocm,system-llvm=]
 			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-5.2.3:5.2
-				~sys-libs/llvm-roc-libomp-5.2.3:5.2
+				~dev-libs/rocm-opencl-runtime-${HIP_5_2_VERSION}:5.2
+				~sys-libs/llvm-roc-libomp-${HIP_5_2_VERSION}:5.2
 			)
 		)
 		rocm_5_1? (
-			~dev-util/hip-5.1.3:5.1[rocm,system-llvm=]
+			~dev-util/hip-${HIP_5_1_VERSION}:5.1[rocm,system-llvm=]
 			!system-llvm? (
-				~dev-libs/rocm-opencl-runtime-5.1.3:5.1
-				~sys-libs/llvm-roc-libomp-5.1.3:5.1
+				~dev-libs/rocm-opencl-runtime-${HIP_5_1_VERSION}:5.1
+				~sys-libs/llvm-roc-libomp-${HIP_5_1_VERSION}:5.1
 			)
 		)
 		dev-util/hip:=
@@ -1170,14 +1170,22 @@ ewarn
 	# It is not possible because of version_mex excludes 16 in install_linux_packages.py.
 	# It will cause an emerge conflict.
 	# It may also trigger a multiple LLVMs loaded bug.
-		if use llvm-15 && has_version "=dev-util/hip-5.4" ; then
+		if use rocm_5_4 ; then
 			export LLVM_SLOT=15
-		elif use llvm-15 && has_version "=dev-util/hip-5.3" ; then
+			export ROCM_SLOT="5.4"
+			export ROCM_VERSION="${HIP_5_4_VERSION}"
+		elif use rocm_5_3 ; then
 			export LLVM_SLOT=15
-		elif use llvm-14 && has_version "=dev-util/hip-5.2" ; then
+			export ROCM_SLOT="5.3"
+			export ROCM_VERSION="${HIP_5_3_VERSION}"
+		elif use rocm_5_2 ; then
 			export LLVM_SLOT=14
-		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
+			export ROCM_SLOT="5.2"
+			export ROCM_VERSION="${HIP_5_2_VERSION}"
+		elif use rocm_5_1 ; then
 			export LLVM_SLOT=14
+			export ROCM_SLOT="5.1"
+			export ROCM_VERSION="${HIP_5_1_VERSION}"
 		elif use llvm-13 || use llvm-12 ; then
 eerror
 eerror "ROCm < 5.1 is not supported on the distro."
