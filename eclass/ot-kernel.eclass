@@ -8196,6 +8196,7 @@ ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KER
 	ot-kernel_unset_configopt "CONFIG_SLAB" # For cache benefits, < ~2% CPU usage and >= ~10% network throughput compared to slub
 	ot-kernel_unset_configopt "CONFIG_SLAB_DEPRECATED"
 	ot-kernel_unset_configopt "CONFIG_SLUB" # For mainframes
+	ot-kernel_unset_configopt "CONFIG_SLUB_STATS"
 	ot-kernel_unset_configopt "CONFIG_SLOB" # For embedded
 	ot-kernel_unset_configopt "CONFIG_SLOB_DEPRECATED"
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" && (( ${slub_tiny} == 1 )) ; then
@@ -8204,6 +8205,7 @@ ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KER
 		ot-kernel_y_configopt "CONFIG_SLUB_TINY"
 ewarn "Using slub-tiny lowers security."
 	fi
+
 
 	ot-kernel_y_configopt "CONFIG_${alloc_name}"
 einfo "Using ${alloc_name}"
