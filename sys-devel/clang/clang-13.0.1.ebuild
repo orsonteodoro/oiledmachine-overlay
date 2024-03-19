@@ -40,6 +40,10 @@ r8
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 
+	?? (
+		rocm_4_3
+		rocm_4_5
+	)
 	amd64? (
 		llvm_targets_X86
 	)
@@ -101,12 +105,6 @@ REQUIRED_USE="
 	)
 	pie? (
 		!test
-	)
-	rocm_4_3? (
-		!rocm_4_5
-	)
-	rocm_4_5? (
-		!rocm_4_3
 	)
 	ssp? (
 		!test

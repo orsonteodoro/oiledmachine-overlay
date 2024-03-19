@@ -40,6 +40,10 @@ r7
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 
+	?? (
+		rocm_5_3
+		rocm_5_4
+	)
 	amd64? (
 		llvm_targets_X86
 	)
@@ -101,12 +105,6 @@ REQUIRED_USE="
 		default-stack-clash-protection
 		pie
 		ssp
-	)
-	rocm_5_3? (
-		!rocm_5_4
-	)
-	rocm_5_4? (
-		!rocm_5_3
 	)
 	ssp? (
 		!test
