@@ -115,10 +115,18 @@ LICENSE="
 "
 RESTRICT="mirror strip"
 SLOT="0/${CONFIGURATION}"
+ROCM_SLOTS=(
+	rocm_5_4
+	rocm_5_3
+	rocm_5_2
+	rocm_5_1
+)
 IUSE+="
 ${BLENDER_SLOTS}
+${LLVM_COMPAT[@]/#/llvm_slot_}
+${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
-denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca -systemwide +vulkan
+denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca system-llvm -systemwide +vulkan
 "
 # Systemwide is preferred but currently doesn't work but did in the past in <2.0
 REQUIRED_USE+="
@@ -134,10 +142,14 @@ REQUIRED_USE+="
 		python_targets_python3_11
 	)
 	opencl_orca? (
+		system-llvm
 		video_cards_amdgpu
 	)
 	opencl_rocr? (
 		video_cards_amdgpu
+		^^ (
+			${ROCM_SLOTS[@]}
+		)
 	)
 	video_cards_amdgpu? (
 		!video_cards_radeonsi
@@ -188,9 +200,11 @@ gen_omp_depends() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				media-gfx/blender[llvm_slot_${s}]
-				sys-libs/libomp:${s}
+				system-llvm? (
+					sys-libs/libomp:${s}
+				)
 			)
 		"
 	done
@@ -266,11 +280,26 @@ RDEPEND+="
 					dev-libs/amdgpu-pro-opencl
 				)
 				opencl_rocr? (
-					dev-libs/rocm-opencl-runtime
+					rocm_5_4? (
+						dev-libs/rocm-opencl-runtime:5.4
+						sys-libs/llvm-roc-libomp:5.4
+					)
+					rocm_5_3? (
+						dev-libs/rocm-opencl-runtime:5.3
+						sys-libs/llvm-roc-libomp:5.3
+					)
+					rocm_5_2? (
+						dev-libs/rocm-opencl-runtime:5.2
+						sys-libs/llvm-roc-libomp:5.2
+					)
+					rocm_5_1? (
+						dev-libs/rocm-opencl-runtime:5.1
+						sys-libs/llvm-roc-libomp:5.1
+					)
 				)
 			)
 			video_cards_intel? (
-				dev-libs/intel-neo
+				dev-libs/intel-compute-runtime
 			)
 			video_cards_nvidia? (
 				>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
