@@ -68,7 +68,7 @@ gen_rdepend_llvm() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				sys-devel/clang:${s}
 				sys-devel/llvm:${s}
 				sys-libs/libomp:${s}
@@ -76,11 +76,12 @@ gen_rdepend_llvm() {
 		"
 	done
 }
-#		>=dev-util/hip-5.4.3:= # originally
 RDEPEND="
 	!sci-libs/rpp:0
 	!system-llvm? (
+		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
 		sys-devel/llvm-roc:${ROCM_SLOT}
+		sys-libs/llvm-roc-libomp:=
 		sys-devel/llvm-roc:=
 	)
 	>=dev-libs/boost-1.72:=
@@ -89,16 +90,14 @@ RDEPEND="
 		virtual/opencl
 	)
 	rocm? (
-		~dev-util/hip-5.7.0:${ROCM_SLOT}
-		~dev-libs/rocm-device-libs-5.7.0:${ROCM_SLOT}
-		~dev-util/hip-5.7.0:=
+		dev-util/hip:${ROCM_SLOT}[rocm]
+		dev-libs/rocm-device-libs:${ROCM_SLOT}
+		dev-util/hip:=
 	)
 	system-llvm? (
+		$(gen_rdepend_llvm)
 		sys-devel/clang:=
 		sys-devel/llvm:=
-	)
-	|| (
-		$(gen_rdepend_llvm)
 	)
 "
 DEPEND="
