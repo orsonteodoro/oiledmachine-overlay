@@ -48,6 +48,9 @@ RDEPEND="
 	!system-llvm? (
 		sys-devel/llvm-roc:=
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		openmp? (
+			sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+		)
 	)
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
@@ -63,10 +66,13 @@ RDEPEND="
 	)
 	openmp? (
 		sys-devel/lld:${LLVM_SLOT}
-		sys-libs/libomp:${LLVM_SLOT}
 	)
 	system-llvm? (
 		sys-devel/clang:${LLVM_SLOT}
+		openmp? (
+			sys-devel/lld:${LLVM_SLOT}
+			sys-libs/libomp:${LLVM_SLOT}
+		)
 	)
 "
 DEPEND="
