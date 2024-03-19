@@ -7604,7 +7604,7 @@ einfo "amdgpu.vm_fragment_size:   (autodetect, cleared)"
 einfo "amdgpu.vm_fragment_size:  -1 (autodetect)"
 			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=-1"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "4" ]] ; then
-einfo "amdgpu.vm_fragment_size:  4 (4 KB)"
+einfo "amdgpu.vm_fragment_size:  4 (64 KB)"
 			ot-kernel_set_kconfig_kernel_cmdline "amdgpu.vm_fragment_size=4"
 		elif [[ "${AMDGPU_VM_FRAGMENT_SIZE}" == "5" ]] ; then
 einfo "amdgpu.vm_fragment_size:  5 (128 KB)"
