@@ -101,8 +101,13 @@ RDEPEND="
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
 	benchmark? (
-		sys-libs/libomp:${LLVM_SLOT}
 		virtual/blas
+		!system-llvm? (
+			sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+		)
+		system-llvm? (
+			sys-libs/libomp:${LLVM_SLOT}
+		)
 	)
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -112,8 +117,13 @@ DEPEND="
 	${RDEPEND}
 	test? (
 		dev-cpp/gtest
-		sys-libs/libomp:${LLVM_SLOT}
 		virtual/blas
+		!system-llvm? (
+			sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+		)
+		system-llvm? (
+			sys-libs/libomp:${LLVM_SLOT}
+		)
 	)
 "
 BDEPEND="
