@@ -33,10 +33,13 @@ DOCS_DEPEND="
 "
 LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.1.3/llvm/CMakeLists.txt
 PYTHON_COMPAT=( python3_{10..11} )
+QA_FLAGS_IGNORED="/usr/lib64/rocblas/library/.*"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
+
 inherit cmake docs edo flag-o-matic multiprocessing prefix python-single-r1 rocm
 
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
 	-> rocm-${P}.tar.gz
@@ -44,11 +47,16 @@ https://github.com/ROCmSoftwarePlatform/rocBLAS/archive/rocm-${PV}.tar.gz
 https://media.githubusercontent.com/media/littlewu2508/littlewu2508.github.io/main/gentoo-distfiles/${PN}-5.0.2-Tensile-asm_full-navi22.tar.gz
 	)
 "
+S="${WORKDIR}/${PN}-rocm-${PV}"
 
 DESCRIPTION="AMD's library for BLAS on ROCm"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocBLAS"
 LICENSE="BSD"
-KEYWORDS="~amd64"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -130,12 +138,6 @@ BDEPEND="
 		)
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-4.3.0-fix-glibc-2.32-and-above.patch"
 	"${FILESDIR}/${PN}-5.0.2-cpp_lib_filesystem.patch"
