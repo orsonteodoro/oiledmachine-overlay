@@ -101,7 +101,7 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-libs/msgpack-3.0.1
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
 	benchmark? (
 		virtual/blas
 		!system-llvm? (
