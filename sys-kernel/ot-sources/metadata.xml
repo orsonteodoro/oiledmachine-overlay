@@ -2804,7 +2804,7 @@ unset OT_KERNEL_PRIVATE_KEY
       slub - Use allocator for super computers and upstream default with SMP
         systems.  It has lower GiB overhead compared to slab in 1000+ processor
         systems.
-      slub-tiny - Use slub optimized for embedded.
+      slub-tiny - Use slub optimized for embedded but lowers security.
       unset - It uses auto
 
     See also:

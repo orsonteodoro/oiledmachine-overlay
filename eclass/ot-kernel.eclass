@@ -6138,6 +6138,20 @@ eerror
 			ot-kernel_y_configopt "CONFIG_RANDOMIZE_MEMORY"
 			_y_retpoline
 		fi
+
+		if grep -q -E -e "^CONFIG_SLUB=y" "${path_config}" \
+			&& grep -q -E -e "^CONFIG_SLUB_TINY=y" "${path_config}" ; then
+#
+# In the documentation they said they sacrified features.  This also may likely
+# mean security as well.
+#
+eerror
+eerror "Using slub-tiny is disallowed for OT_KERNEL_HARDENING_LEVEL=\"hard-af\"."
+eerror "Use OT_KERNEL_SLAB_ALLOCATOR=\"slub\" instead."
+eerror
+			die
+		fi
+
 		ot-kernel_y_configopt "CONFIG_SHUFFLE_PAGE_ALLOCATOR"
 		ot-kernel_y_configopt "CONFIG_SLAB_FREELIST_HARDENED"
 		ot-kernel_unset_configopt "CONFIG_SLAB_MERGE_DEFAULT"
@@ -8186,13 +8200,18 @@ ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KER
 	ot-kernel_unset_configopt "CONFIG_SLOB_DEPRECATED"
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" && (( ${slub_tiny} == 1 )) ; then
 		alloc_name="SLUB"
+		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_SLUB_TINY"
+ewarn "Using slub-tiny lowers security."
 	fi
 
 	ot-kernel_y_configopt "CONFIG_${alloc_name}"
 einfo "Using ${alloc_name}"
-	if [[ "${alloc_name}" == "SLUB" ]] ; then
-		ot-kernel_y_configopt "CONFIG_SLUB_CPU_PARTIAL"
+	if [[ "${alloc_name}" == "SLUB" ]] \
+		&& (( ${sub_tiny} != 1 )) \
+		&& grep -q -E -e "^CONFIG_SMP=y" "${path_config}" \
+	; then
+		ot-kernel_y_configopt "CONFIG_SLUB_CPU_PARTIAL" # Implies security
 	fi
 }
 
