@@ -21,21 +21,28 @@ ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic rocm
 
-DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
-HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rccl/archive/rocm-${PV}.tar.gz
 	-> rccl-${PV}.tar.gz
 "
+S="${WORKDIR}/rccl-rocm-${PV}"
+
+DESCRIPTION="ROCm Communication Collectives Library (RCCL)"
+HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rccl"
 LICENSE="BSD"
-KEYWORDS="~amd64"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="system-llvm test r2"
 RDEPEND="
 	!dev-libs/rccl:0
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm,system-llvm=]
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
 "
 DEPEND="
@@ -49,12 +56,6 @@ BDEPEND="
 		>=dev-cpp/gtest-1.11
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/rccl-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.1-remove-chrpath.patch"
 	"${FILESDIR}/${PN}-5.5.1-path-changes.patch"

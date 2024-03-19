@@ -72,7 +72,7 @@ RDEPEND="
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
 	)
 	test? (
-		~dev-util/hip-${PV}:${ROCM_SLOT}
+		~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 	)
 "
 DEPEND="

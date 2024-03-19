@@ -31,13 +31,14 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSOLVER"
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test benchmark r1"
+IUSE="test benchmark system-llvm r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
 	=dev-libs/libfmt-8*
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm,system-llvm=]
 	~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}[${ROCM_USEDEP},rocm]
 	benchmark? (
 		virtual/blas

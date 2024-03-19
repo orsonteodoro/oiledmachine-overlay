@@ -28,9 +28,10 @@ KEYWORDS="~amd64"
 IUSE=" system-llvm test r3"
 RDEPEND="
 	!dev-util/roctracer:0
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-devel/gcc:12
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 "
 DEPEND="
 	${RDEPEND}

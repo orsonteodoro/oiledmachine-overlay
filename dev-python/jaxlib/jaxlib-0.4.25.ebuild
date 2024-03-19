@@ -259,7 +259,7 @@ gen_rocm_depends() {
 			rocm_${u}? (
 				~dev-libs/rccl-${pv}:${s}
 				~dev-libs/rocm-device-libs-${pv}:${s}
-				~dev-util/hip-${pv}:${s}[rocm]
+				~dev-util/hip-${pv}:${s}[rocm,system-llvm=]
 				~dev-util/roctracer-${pv}:${s}
 				~sci-libs/hipBLAS-${pv}:${s}[rocm]
 				~sci-libs/hipFFT-${pv}:${s}[rocm]

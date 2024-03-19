@@ -47,7 +47,7 @@ system-llvm test r4
 REQUIRED_USE="
 "
 RDEPEND="
-	~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
+	~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}[system-llvm=]
 	!system-llvm? (
 		~dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${ROCM_SLOT}
 		~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}

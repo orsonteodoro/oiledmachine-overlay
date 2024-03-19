@@ -28,9 +28,10 @@ KEYWORDS="~amd64"
 IUSE=" +aqlprofile system-llvm test r3"
 RDEPEND="
 	!dev-util/roctracer:0
-	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-devel/gcc:11
+	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 	aqlprofile? (
 		~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}
 		~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}

@@ -55,7 +55,7 @@ RESTRICT="
 "
 RDEPEND="
 	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm,system-llvm=]
 	~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}
 "
 DEPEND="

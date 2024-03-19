@@ -44,7 +44,7 @@ RDEPEND="
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 	~dev-util/roctracer-${PV}:${ROCM_SLOT}
 	aqlprofile? (
 		~dev-libs/hsa-amd-aqlprofile-${PV}:${ROCM_SLOT}

@@ -35,7 +35,7 @@ RESTRICT="
 "
 RDEPEND="
 	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)

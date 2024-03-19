@@ -206,7 +206,7 @@ if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 			local slot="0/${pv%.*}"
 			echo "
 				(
-					~dev-util/hip-${pv}:${slot}
+					~dev-util/hip-${pv}:${slot}[system-llvm=]
 					~sci-libs/hipBLAS-${pv}:${slot}
 					~sci-libs/hipSPARSE-${pv}:${slot}
 				)

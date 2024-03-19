@@ -65,7 +65,7 @@ RDEPEND="
 		>=dev-python/pybind11-2.4[${PYTHON_USEDEP}]
 	')
 	dev-libs/openssl
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 	ffmpeg? (
 		>=media-video/ffmpeg-4.0.4[fdk,gpl,libass,x264,x265,nonfree]
 	)

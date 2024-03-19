@@ -39,7 +39,7 @@ RDEPEND="
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	media-libs/vulkan-loader
 	virtual/libc
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 "
 DEPEND="
 	${RDEPEND}

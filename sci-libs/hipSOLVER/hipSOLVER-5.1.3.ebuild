@@ -20,7 +20,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipSOLVER"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test cuda +rocm r1"
+IUSE="test cuda +rocm system-llvm r1"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
@@ -34,7 +34,8 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)

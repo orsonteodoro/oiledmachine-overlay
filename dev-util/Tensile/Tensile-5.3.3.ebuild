@@ -52,7 +52,7 @@ RDEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 	!system-llvm? (
 		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 		sys-devel/llvm-roc:=

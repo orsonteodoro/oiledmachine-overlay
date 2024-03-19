@@ -33,14 +33,14 @@ LICENSE="Apache-2.0"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark test r2
+benchmark system-llvm test r2
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 #[${ROCM_USEDEP}]
 RDEPEND="
-	~dev-util/hip-${PV}:${ROCM_SLOT}
+	~dev-util/hip-${PV}:${ROCM_SLOT}[system-llvm=]
 	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
