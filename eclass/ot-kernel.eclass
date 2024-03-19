@@ -8138,43 +8138,57 @@ einfo "Disabling SCS support in the in the .config."
 ot-kernel_set_kconfig_slab_allocator() {
 	local alloc_name="${1^^}"
 	ot-kernel_y_configopt "CONFIG_EXPERT"
+	local slub_tiny=0
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
 		alloc_name="SLUB"
 		if [[ "${alloc_name}" == "SLAB" ]] ; then
-ewarn "Changing SLAB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+ewarn "Changing SLAB -> SLUB.  SLAB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
 			alloc_name="SLUB"
-		else
-ewarn "Changing SLOB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+		elif [[ "${alloc_name}" == "SLOB" ]] ; then
+ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
 			alloc_name="SLUB"
+			slub_tiny=1
 		fi
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
 		if [[ "${alloc_name}" == "SLAB" ]] ; then
 			alloc_name="SLAB_DEPRECATED"
-		else
-ewarn "Changing SLOB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+		elif [[ "${alloc_name}" == "SLOB" ]] ; then
+ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
 			alloc_name="SLUB"
+			slub_tiny=1
 		fi
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
 		if [[ "${alloc_name}" == "SLAB" ]] ; then
 			alloc_name="SLAB_DEPRECATED"
 		elif [[ "${alloc_name}" == "SLOB" ]] ; then
-ewarn "Changing SLOB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
 			alloc_name="SLUB"
+			slub_tiny=1
 		fi
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 		if [[ "${alloc_name}" == "SLOB" ]] ; then
-ewarn "Changing SLOB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+ewarn "Changing SLOB -> SLUB_TINY.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
 			alloc_name="SLUB"
+			slub_tiny=1
 		fi
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
 		if [[ "${alloc_name}" == "SLOB" ]] ; then
 			alloc_name="SLOB_DEPRECATED"
 		fi
 	fi
+	[[ "${alloc_name}" == "SLUB-TINY" ]] && slub_tiny=1
 	ot-kernel_unset_configopt "CONFIG_SLUB_CPU_PARTIAL"
+	ot-kernel_unset_configopt "CONFIG_SLUB_TINY"
 	ot-kernel_unset_configopt "CONFIG_SLAB" # For cache benefits, < ~2% CPU usage and >= ~10% network throughput compared to slub
+	ot-kernel_unset_configopt "CONFIG_SLAB_DEPRECATED"
 	ot-kernel_unset_configopt "CONFIG_SLUB" # For mainframes
 	ot-kernel_unset_configopt "CONFIG_SLOB" # For embedded
+	ot-kernel_unset_configopt "CONFIG_SLOB_DEPRECATED"
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" && (( ${slub_tiny} == 1 )) ; then
+		alloc_name="SLUB"
+		ot-kernel_y_configopt "CONFIG_SLUB_TINY"
+	fi
+
 	ot-kernel_y_configopt "CONFIG_${alloc_name}"
 einfo "Using ${alloc_name}"
 	if [[ "${alloc_name}" == "SLUB" ]] ; then
@@ -8188,7 +8202,7 @@ einfo "Using ${alloc_name}"
 ot-kernel_set_kconfig_auto_set_slab_allocator() {
 	local slab_allocator="${OT_KERNEL_SLAB_ALLOCATOR:-auto}"
 	if [[ "${slab_allocator}" =~ ("custom"|"manual") ]] ; then
-		local x=$(grep -E -e "CONFIG_(SLAB|SLOB|SLUB)=y" "${BUILD_DIR}/.config" \
+		local x=$(grep -E -e "CONFIG_(SLAB|SLOB|SLUB|SLAB_DEPRECATED|SLOB_DEPRECATED)=y" "${BUILD_DIR}/.config" \
 			| cut -f 2 -d "_" \
 			| cut -f "1" -d "=")
 einfo "Using ${x}"
@@ -8205,7 +8219,12 @@ einfo "Using ${x}"
 		else
 			ot-kernel_set_kconfig_slab_allocator "slub"
 		fi
-	elif [[ "${slab_allocator}" =~ ("slab"|"slob"|"slub") ]] ; then
+	elif [[ \
+		   "${slab_allocator}" == "slab" \
+		|| "${slab_allocator}" == "slob" \
+		|| "${slab_allocator}" == "slub" \
+		|| "${slab_allocator}" == "slub-tiny" \
+	]] ; then
 		ot-kernel_set_kconfig_slab_allocator "${slab_allocator}"
 	fi
 }
@@ -10914,6 +10933,7 @@ eerror
 			fi
 		fi
 	fi
+	ot-kernel_unset_configopt "CONFIG_SLUB_CPU_PARTIAL"
 }
 
 # @FUNCTION: ot-kernel_optimize_realtime
@@ -10992,6 +11012,7 @@ eerror
 # nosmt is resetted in ot-kernel_set_kconfig_hardening_level()
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "skew_tick=(0|1)"
 	fi
+	ot-kernel_unset_configopt "CONFIG_SLUB_CPU_PARTIAL"
 }
 
 _OT_KERNEL_FORCE_SWAP_OFF=0
