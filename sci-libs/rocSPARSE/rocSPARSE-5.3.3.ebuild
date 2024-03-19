@@ -19,6 +19,8 @@ ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic python-any-r1 toolchain-funcs rocm
 
+KEYWORDS="~amd64"
+S="${WORKDIR}/rocSPARSE-rocm-${PV}"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocSPARSE/archive/rocm-${PV}.tar.gz
 	-> rocSPARSE-${PV}.tar.gz
@@ -77,10 +79,14 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
 LICENSE="MIT"
-KEYWORDS="~amd64"
 IUSE="benchmark system-llvm test r3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
+"
+RESTRICT="
+	!test? (
+		test
+	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
@@ -113,12 +119,6 @@ BDEPEND="
 	)
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
-S="${WORKDIR}/rocSPARSE-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.3.3-remove-matrices-unpacking.patch"
 	"${FILESDIR}/${PN}-5.6.0-includes.patch"
