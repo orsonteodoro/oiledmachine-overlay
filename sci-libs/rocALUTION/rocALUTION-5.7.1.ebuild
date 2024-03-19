@@ -104,7 +104,7 @@ PATCHES=(
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
-	llvm_pkg_setup
+	rocm_pkg_setup
 }
 
 src_prepare() {

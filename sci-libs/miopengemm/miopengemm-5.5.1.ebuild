@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_MAX_SLOT=16
+LLVM_SLOT=16
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm

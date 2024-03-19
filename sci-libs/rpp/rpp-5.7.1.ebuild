@@ -158,8 +158,8 @@ src_configure() {
 		-DROCM_PATH="${ESYSROOT}${EROCM_PATH}"
 	)
 
-#	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_MAX_SLOT}}"
-#	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_MAX_SLOT}}"
+#	export CC="${HIP_CC:-${CHOST}-clang-${LLVM_SLOT}}"
+#	export CXX="${HIP_CXX:-${CHOST}-clang++-${LLVM_SLOT}}"
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
 
@@ -227,7 +227,7 @@ einfo "Using libomp"
 		mycmakeargs+=(
 			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}${EROCM_LLVM_PATH}/include -fopenmp=libomp -Wno-unused-command-line-argument"
 			-DOpenMP_CXX_LIB_NAMES="libomp"
-			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}${EROCM_LLVM_PATH}/$(get_libdir)/libomp.so.${LLVM_SLOT}"
 		)
 	fi
 
