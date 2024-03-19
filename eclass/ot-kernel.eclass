@@ -524,19 +524,19 @@ KERNEL_PATCH_0_TO_1_URI=\
 KCP_CORTEX_A72_BN=\
 "build-with-mcpu-for-cortex-a72"
 
-if ver_test ${KV_MAJOR_MINOR} -ge 6.8 ; then
+if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
 	KCP_9_1_BN="more-uarches-for-kernel-6.8-rc4%2B"
-elif ver_test ${KV_MAJOR_MINOR} -ge 6.1 ; then
+elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
 	KCP_9_1_BN="more-uarches-for-kernel-6.1.79-6.8-rc3"
-elif ver_test ${KV_MAJOR_MINOR} -ge 5.17 ; then
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.17%2B"
-elif ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.15-5.16"
-elif ver_test ${KV_MAJOR_MINOR} -ge 5.8 ; then
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.8" ; then
 	KCP_9_1_BN="more-uarches-for-kernel-5.8-5.14"
-elif ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 	KCP_9_1_BN="more-uarches-for-kernel-4.19-5.4"
-elif ver_test ${KV_MAJOR_MINOR} -ge 4.13 ; then
+elif ver_test "${KV_MAJOR_MINOR}" -ge "4.13" ; then
 	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
 	KCP_4_9_BN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 fi
@@ -723,9 +723,9 @@ if [[ -n "${ZEN_KV}" ]] ; then
 	ZEN_SAUCE_URIS=$(gen_zen_sauce_uris "${PATCH_ZEN_SAUCE_COMMITS[@]}")
 fi
 
-if ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR} ; then
+if ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}" ; then
 	KERNEL_NO_POINT_RELEASE="1"
-elif ver_test ${MY_PV} -eq ${KV_MAJOR_MINOR}.1 ; then
+elif ver_test "${MY_PV}" -eq "${KV_MAJOR_MINOR}.1" ; then
 	KERNEL_0_TO_1_ONLY="1"
 fi
 
@@ -955,7 +955,7 @@ einfo
 check_zen_tune_deps() {
 	local zen_tune_commit="${1}" # c in C, where C is all zen tune commits.
 	local v="ZEN_SAUCE_WHITELIST"
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 		local p
 		for p in ${PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE[@]} ; do
 			local zleft=$(echo "${p}" | cut -f 1 -d ":") # Left
@@ -1532,7 +1532,7 @@ apply_zen_sauce() {
 	done
 
 	if [[ "${CFLAGS}" =~ "-O3" ]] ; then
-		if ver_test ${KV_MAJOR_MINOR} -eq 4.19 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -eq "4.19" ; then
 			whitelisted+=" ${PATCH_O3_CO_COMMIT:0:7}"
 			whitelisted+=" ${PATCH_O3_RO_COMMIT:0:7}"
 		else
@@ -1693,9 +1693,9 @@ apply_cfi() {
 # Adds custom logo patch
 apply_custom_logo() {
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.2 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.2" ; then
 			_fpatch "${FILESDIR}/custom-logo-for-6.1.patch"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" ; then
 			_fpatch "${FILESDIR}/custom-logo-for-4.19.patch"
 		else
 			_fpatch "${FILESDIR}/custom-logo-for-4.14.patch"
@@ -1889,7 +1889,7 @@ apply_ck() {
 				blacklisted=1
 				break
 			fi
-			if ver_test ${KV_MAJOR_MINOR} -eq 4.14 ; then
+			if ver_test "${KV_MAJOR_MINOR}" -eq "4.14" ; then
 				if ! ot-kernel_use bfq-mq ; then
 					local b2
 					for b2 in ${CK_BFQ_MQ[@]} ; do
@@ -1951,7 +1951,7 @@ einfo "Applying the genpatches"
 #
 apply_o3() {
 	cd "${BUILD_DIR}" || die
-	if ver_test "${KV_MAJOR_MINOR}" -eq 4.14 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -eq "4.14" ; then
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
 			"${EDISTDIR}/${O3_CO_FN}" \
@@ -2225,8 +2225,8 @@ einfo
 
 	# KCP is applied globally
 	if (( ${wants_kcp} == 1 )) ; then
-		if (  (				 $(ver_test ${gcc_pv}   -ge 9.1) ) \
-		   || ( [[ -n "${clang_pv}" ]] && $(ver_test ${clang_pv} -ge 10.0) ) \
+		if (  (				  $(ver_test "${gcc_pv}"   -ge "9.1") ) \
+		   || ( [[ -n "${clang_pv}" ]] && $(ver_test "${clang_pv}" -ge "10.0") ) \
 		   ) \
 			&& test -f "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
@@ -2234,14 +2234,14 @@ einfo "Queuing the kernel_compiler_patch for use under gcc >= 9.1 or clang >= 10
 			patches+=( "${EDISTDIR}/${KCP_9_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch")
 			export GCC_COMPAT_KPC=( $(seq ${gcc_pv%%.*} -1 9 ) )
 			export LLVM_COMPAT_KPC=( $(seq ${clang_pv%%.*} -1 9 ) )
-		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 8.1) ) \
+		elif ( tc-is-gcc && $(ver_test "${gcc_pv}" -ge "8.1") ) \
 			&& test -f "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 8.1"
 			patches+=( "${EDISTDIR}/${KCP_8_1_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 			export GCC_COMPAT_KPC=( $(seq ${gcc_pv%%.*} -1 8 ) )
 			export LLVM_COMPAT_KPC=( $(seq ${clang_pv%%.*} -1 9 ) ) # Undefined for this release
-		elif ( tc-is-gcc && $(ver_test ${gcc_pv} -ge 4.9) ) \
+		elif ( tc-is-gcc && $(ver_test "${gcc_pv}" -ge "4.9") ) \
 			&& test -f "${EDISTDIR}/${KCP_4_9_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
 einfo "Queuing the kernel_compiler_patch for use under gcc >= 4.9"
@@ -2265,11 +2265,11 @@ einfo "Queuing the kernel_compiler_patch for the Cortex A72"
 		patches+=( "${EDISTDIR}/${KCP_CORTEX_A72_BN}-${KCP_COMMIT_SNAPSHOT:0:7}.patch" )
 	fi
 
-#	if ver_test "${KV_MAJOR_MINOR}" -eq 5.15 ; then
+#	if ver_test "${KV_MAJOR_MINOR}" -eq "5.15" ; then
 #		eapply "${FILESDIR}/external-modules-linking-changes-for-5.15.138.patch"
-#	elif ver_test "${KV_MAJOR_MINOR}" -eq 5.10 ; then
+#	elif ver_test "${KV_MAJOR_MINOR}" -eq "5.10" ; then
 #		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
-#	elif ver_test "${KV_MAJOR_MINOR}" -eq 5.4 ; then
+#	elif ver_test "${KV_MAJOR_MINOR}" -eq "5.4" ; then
 #		eapply "${FILESDIR}/external-modules-linking-changes-for-5.4.260.patch"
 #	fi
 
@@ -2330,7 +2330,7 @@ einfo "Applying patchset for Full PGO with GCC"
 # Applies Clear Linux patches
 apply_clear_linux_patches() {
 einfo "Applying Clear Linux patches"
-	if ver_test ${PV} -eq ${CLEAR_LINUX_PATCHES_VER%-*} ; then
+	if ver_test "${PV}" -eq "${CLEAR_LINUX_PATCHES_VER%-*}" ; then
 		mkdir -p "${T}/clear-linux-patches"
 		pushd "${T}/clear-linux-patches" >/dev/null 2>&1 || die
 			unpack "${CLEAR_LINUX_PATCHES_FN}"
@@ -2647,7 +2647,7 @@ einfo "Canceling ReiserFS"
 	sed -i -e "/Reiserfs/d" \
 		"scripts/ver_linux" || die
 
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.3" ; then
 		sed -i -e "/reiserfs/d" \
 			"Documentation/kbuild/makefiles.rst" || die
 	else
@@ -2660,7 +2660,7 @@ einfo "Canceling ReiserFS"
 		-e "s| \(borrowed from reiserfs\)||g" \
 		"fs/ubifs/key.h" || die
 
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.3" ; then
 		sed -i \
 			-e "s|/reiserfs||" \
 			-e "s|or ReiserFS filesystems||" \
@@ -2683,7 +2683,7 @@ einfo "Canceling ReiserFS"
 		| sed -e "/1Reiserfsprogs/,/reiserfsck/d" -e "/2Reiserfsprogs/,/reiserfs/d" \
 		> "Documentation/process/changes.rst.t" || die
 	mv "Documentation/process/changes.rst"{.t,} || die
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.1 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.1" ; then
 		cat "Documentation/translations/it_IT/process/changes.rst" \
 			| sed -e "/reiserfsprogs/d" \
 			| sed -e "0,/^Reiserfsprogs/ s|^Reiserfsprogs|1Reiserfsprogs|" \
@@ -2701,7 +2701,7 @@ einfo "Canceling ReiserFS"
 		-e "/reiserfs/d" \
 		"fs/buffer.c" || die
 
-	if ver_test ${KV_MAJOR_MINOR} -ge 4.17 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "4.17" ; then
 		sed -i -e "s|reiserfs_||g" \
 			"Documentation/trace/ftrace.rst" \
 			|| die
@@ -2711,15 +2711,15 @@ einfo "Canceling ReiserFS"
 			|| die
 	fi
 
-	if ver_test ${KV_MAJOR_MINOR} -ge 6.7 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
 		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
 			"Documentation/arch/powerpc/eeh-pci-error-recovery.rst" \
 			|| die
-	elif ver_test ${KV_MAJOR_MINOR} -ge 6.0 && [[ "${PV}" =~ "9999" ]] ; then
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.0" && [[ "${PV}" =~ "9999" ]] ; then
 		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
 			"Documentation/arch/powerpc/eeh-pci-error-recovery.rst" \
 			|| die
-	elif ver_test ${KV_MAJOR_MINOR} -ge 5.3 ; then
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.3" ; then
 		sed -i -e "s|Reiserfs does not tolerate errors returned from the block device.||g" \
 			"Documentation/powerpc/eeh-pci-error-recovery.rst" \
 			|| die
@@ -2728,25 +2728,25 @@ einfo "Canceling ReiserFS"
 			"Documentation/powerpc/eeh-pci-error-recovery.txt" \
 			|| die
 	fi
-	if ver_test ${KV_MAJOR_MINOR} -ge 4.20 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "4.20" ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/admin-guide/ext4.rst" \
 			|| die
-	elif ver_test ${KV_MAJOR_MINOR} -eq 4.19 ; then
+	elif ver_test "${KV_MAJOR_MINOR}" -eq "4.19" ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/filesystems/ext4/ext4.rst" \
 			|| die
-	elif ver_test ${KV_MAJOR_MINOR} -le 4.18 ; then
+	elif ver_test "${KV_MAJOR_MINOR}" -le "4.18" ; then
 		sed -i -e "s|, JFS, and ReiserFS| and JFS|g" \
 			"Documentation/filesystems/ext4.txt" \
 			|| die
 	fi
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.5 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.5" ; then
 		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
 			"Documentation/userspace-api/ioctl/ioctl-number.rst" \
 			|| die
-	elif ver_test ${KV_MAJOR_MINOR} -ge 5.3 \
-		&& ver_test ${KV_MAJOR_MINOR} -le 5.4 ; then
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.3" \
+		&& ver_test "${KV_MAJOR_MINOR}" -le "5.4" ; then
 		sed -i -e "s|linux/reiserfs_fs.h|Reserved|g" \
 			"Documentation/ioctl/ioctl-number.rst" \
 			|| die
@@ -2779,15 +2779,15 @@ einfo "Canceling Reiser4"
 		"scripts/ver_linux" || die
 	sed -i -e "/The Reiser4/,/kernel\./d" \
 		"Documentation/process/3.Early-stage.rst" || die
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.0 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.0" ; then
 		sed -i -e "/Il filesystem Reiser4/,/kernel./d" \
 			"Documentation/translations/it_IT/process/3.Early-stage.rst" || die
 	fi
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 		sed -i -e "/Reiser4文/,/Reiser4置/d" \
 			"Documentation/translations/zh_TW/process/3.Early-stage.rst" || die
 	fi
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.2 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.2" ; then
 		sed -i -e "/Reiser4文/,/Reiser4置/d" \
 			"Documentation/translations/zh_CN/process/3.Early-stage.rst" || die
 	fi
@@ -2833,7 +2833,7 @@ ot-kernel_src_prepare() {
 	sed -i -e "s|select FB_CMDLINE|select FB_CMDLINE\n\tselect DRM_KMS_HELPER|" \
 		"drivers/gpu/drm/Kconfig" || die
 
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.7 \
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.7" \
 		&& [[ "${IUSE_EFFECTIVE}" =~ "exfat" ]] \
 		&& ! use exfat ; then
 		ot-kernel_rm_exfat
@@ -2850,7 +2850,7 @@ ot-kernel_src_prepare() {
 	#	cp -a "/lib/firmware/regulatory.db.p7s" "${BUILD_DIR}/"
 	#fi
 
-	if ver_test ${KV_MAJOR_MINOR} -ge 5.18 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
 		eapply "${FILESDIR}/ep800/add-ep800-to-build-for-5.18.patch"
 	else
 		eapply "${FILESDIR}/ep800/add-ep800-to-build.patch"
@@ -4671,7 +4671,7 @@ ewarn "Hibernation is going to be disabled."
 		ot-kernel_unset_configopt "CONFIG_HIBERNATION"
 
 ewarn "Enabling memory sanitation for faster clearing of sensitive data and keys"
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.9 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
@@ -4748,7 +4748,7 @@ ot-kernel_set_kconfig_compressors() {
 		for alg in ${mod_comp_algs[@]} ; do
 			ot-kernel_n_configopt "CONFIG_MODULE_COMPRESS_${alg}" # Reset
 		done
-		if ver_test ${KV_MAJOR_MINOR} -le 5.10 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -le "5.10" ; then
 			if [[ "${ot_kernel_modules_compressor^^}" == "ZSTD" ]] ; then
 eerror "ZSTD is not supported for ${KV_MAJOR_MINOR} in OT_KERNEL_MODULES_COMPRESSOR."
 				die
@@ -4779,7 +4779,7 @@ einfo "Using manual setting for compressed modules"
 		XZ
 		ZSTD
 	)
-	if ver_test ${KV_MAJOR_MINOR} -lt 5.10 && [[ "${boot_decomp^^}" == "ZSTD" ]] ; then
+	if ver_test "${KV_MAJOR_MINOR}" -lt "5.10" && [[ "${boot_decomp^^}" == "ZSTD" ]] ; then
 eerror "ZSTD is only supported in 5.10+"
 		die
 	fi
@@ -5596,9 +5596,9 @@ einfo "Using ${hardening_level} hardening level"
 	_y_retpoline() {
 		ot-kernel_y_configopt "CONFIG_RETPOLINE"
 		local ready=0
-		if tc-is-gcc && ver_test $(gcc-version) -ge 8.1 ; then
+		if tc-is-gcc && ver_test $(gcc-version) -ge "8.1" ; then
 			ready=1
-		elif tc-is-clang && ver_test $(clang-version) -ge 7 ; then
+		elif tc-is-clang && ver_test $(clang-version) -ge "7" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
@@ -5617,9 +5617,9 @@ eerror
 	_y_ibt() {
 		ot-kernel_y_configopt "CONFIG_X86_KERNEL_IBT"
 		local ready=0
-		if tc-is-gcc && ver_test $(gcc-version) -ge 9 && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
+		if tc-is-gcc && ver_test $(gcc-version) -ge "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
 			ready=1
-		elif tc-is-clang && ver_test $(clang-version) -ge 14 ; then
+		elif tc-is-clang && ver_test $(clang-version) -ge "14" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
@@ -5660,7 +5660,7 @@ eerror
 
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
@@ -5668,7 +5668,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 5.9 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
@@ -5676,7 +5676,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
 			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
@@ -5685,7 +5685,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 		fi
 
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
 			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
@@ -5719,7 +5719,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
-		if ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "arm64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "kpti=0"
 				ot-kernel_set_kconfig_kernel_cmdline "nospectre_v2"
@@ -5769,7 +5769,7 @@ eerror
 				fi
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_unset_configopt "CONFIG_CPU_UNRET_ENTRY"
@@ -5779,24 +5779,24 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_CPU_IBRS_ENTRY"
 			ot-kernel_unset_configopt "CONFIG_SLS"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "0"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
 			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.18 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.1 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=off"
 				ot-kernel_unset_configopt "CONFIG_MITIGATION_RFDS"
@@ -5805,15 +5805,15 @@ eerror
 				ot-kernel_unset_configopt "nospectre_bhb"
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
 			ot-kernel_unset_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
 			ot-kernel_unset_configopt "CONFIG_CPU_SRSO"
 		fi
 	elif [[ \
@@ -5844,7 +5844,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 		fi
 
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
@@ -5862,7 +5862,7 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
 			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 5.9 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_ZERO"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STACKLEAK"
@@ -5870,7 +5870,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 			ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL"
 			ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK"
@@ -5878,7 +5878,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
 			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
@@ -5912,7 +5912,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_ZERO_CALL_USED_REGS"
 		fi
 		ot-kernel_unset_configopt "CONFIG_SCHED_CORE"
-		if ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "arm64" ]] ; then
 	# KPTI:  This assumes unforced default
 	# SSBD:  Rely on automagic
@@ -5951,7 +5951,7 @@ eerror
 				fi
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 				ot-kernel_y_configopt "CONFIG_CPU_UNRET_ENTRY"
@@ -5961,39 +5961,39 @@ eerror
 			ot-kernel_y_configopt "CONFIG_CPU_IBRS_ENTRY"
 			ot-kernel_unset_configopt "CONFIG_SLS"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "0.5"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.18 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				_y_ibt
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.1 \
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
 			&& [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] \
 			&& [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] \
 		; then
 			ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
 			ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 		fi
 	elif [[ \
@@ -6023,7 +6023,7 @@ eerror
 			ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
 		fi
 
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_ZERO=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
@@ -6057,7 +6057,7 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
 			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 5.9 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.9" ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT_PATTERN=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_ALL_PATTERN"
 				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL_ZERO"
@@ -6083,7 +6083,7 @@ eerror
 				ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_STRUCTLEAK_USER"
 				ot-kernel_y_configopt "CONFIG_INIT_STACK_NONE"
 			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 			if grep -q -E -e "^CONFIG_CC_HAS_AUTO_VAR_INIT=y" "${path_config}" ; then
 				ot-kernel_y_configopt "CONFIG_INIT_STACK_ALL"
 				ot-kernel_unset_configopt "CONFIG_INIT_STACK_NONE"
@@ -6108,7 +6108,7 @@ eerror
 			fi
 		fi
 
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.19 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
 			if tc-is-gcc && grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
@@ -6169,19 +6169,19 @@ ewarn "(or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for details."
 ewarn
 			if [[ "${HT}" =~ ("custom"|"manual") ]] ; then
 				:
-			elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && [[ "${HT}" =~ ("2") ]] && [[ "${arch}" == "powerpc" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "powerpc" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "powerpc" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
-			elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "mips" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "mips" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test ${KV_MAJOR_MINOR} -ge 4.10 && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "s390" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" -ge "4.10" && [[ "${HT}" =~ ("2"|"3") ]] && [[ "${arch}" == "s390" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-			elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" && [[ "${HT}" =~ ("3") ]] && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "arm64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "kpti=1"
 				ot-kernel_set_kconfig_kernel_cmdline "ssbd=force-on"
@@ -6222,7 +6222,7 @@ ewarn
 				fi
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.10 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
 			fi
@@ -6253,40 +6253,40 @@ eerror
 				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.14 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.14" ; then
 			ot-kernel_set_kconfig_l1tf_mitigations "1"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.15 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 			ot-kernel_set_kconfig_kernel_cmdline "l1d_flush=on"
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
-		elif ver_test ${KV_MAJOR_MINOR} -ge 4.14 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 5.18 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				_y_ibt
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.1 \
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
 			&& [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] \
 			&& [[ $(ot-kernel_get_cpu_mfg_id) == "intel" ]] \
 		; then
 			ot-kernel_set_kconfig_kernel_cmdline "reg_file_data_sampling=on"
 			ot-kernel_y_configopt "CONFIG_MITIGATION_RFDS"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.2 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
 			ot-kernel_y_configopt "CONFIG_CALL_DEPTH_TRACKING"
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.4 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_unset_configopt "CONFIG_ADDRESS_MASKING" # SLAM
 			fi
 		fi
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.5 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
 			if [[ "${arch}" == "x86_64" ]] && grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
@@ -7894,7 +7894,7 @@ einfo "Detected compiler mismatch.  Restarting at PGI."
 		ot-kernel_y_configopt "CONFIG_DEBUG_FS"
 		ot-kernel_y_configopt "CONFIG_GCOV_KERNEL"
 		ot-kernel_y_configopt "CONFIG_GCOV_PROFILE_ALL"
-		if ver_test ${KV_MAJOR_MINOR} -le 4.17 ; then
+		if ver_test "${KV_MAJOR_MINOR}" -le "4.17" ; then
 			ot-kernel_y_configopt "CONFIG_GCOV_FORMAT_AUTODETECT"
 		fi
 		ot-kernel_n_configopt "CONFIG_COMPILE_TEST"
@@ -9061,7 +9061,7 @@ ot-kernel_set_iosched() {
 	ot-kernel_unset_configopt "CONFIG_MQ_IOSCHED_KYBER"
 	ot-kernel_unset_configopt "CONFIG_IOSCHED_BFQ"
 	ot-kernel_unset_configopt "CONFIG_BFQ_GROUP_IOSCHED"
-	if ver_test "${KV_MAJOR_MINOR}" -lt 5 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
 		ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
 		ot-kernel_unset_configopt "CONFIG_IOSCHED_DEADLINE"
 		ot-kernel_unset_configopt "CONFIG_IOSCHED_CFQ"
@@ -9070,13 +9070,13 @@ ot-kernel_set_iosched() {
 	fi
 
 	# Translate.  eclass simplifies to 5.x iosched
-	if ver_test ${KV_MAJOR_MINOR} -ge 5 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5" ; then
 		[[ "${ssd_iosched}" == "noop" ]] && ssd_iosched="none"
 		[[ "${hdd_iosched}" == "noop" ]] && hdd_iosched="none"
 	fi
 
 	# Translate to 4.x iosched
-	if ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
 		[[ "${ssd_iosched}" == "none" ]] && ssd_iosched="noop"
 		[[ "${hdd_iosched}" == "none" ]] && hdd_iosched="noop"
 	fi
@@ -9086,7 +9086,7 @@ ot-kernel_set_iosched() {
 
 	local s_first=""
 	local s
-	for s in ${ssd_iosched} ${hdd_iosched} $(ot-kernel_get_iosched_override_values) ; do
+	for s in "${ssd_iosched}" "${hdd_iosched}" $(ot-kernel_get_iosched_override_values) ; do
 		s="${s,,}"
 
 		# Translate:
@@ -9106,32 +9106,32 @@ ot-kernel_set_iosched() {
 		elif [[ "${s}" == "bfq-custom-interactive" ]] ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_BFQ"
 			s="bfq"
-		elif [[ "${s}" == "deadline" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5  ; then
+		elif [[ "${s}" == "deadline" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_DEADLINE"
 		elif [[ "${s}" == "mq-deadline" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_DEADLINE"
-		elif [[ "${s}" == "cfq" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
+		elif [[ "${s}" == "cfq" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_CFQ"
 		elif [[ "${s}" == "kyber" ]] ; then
 			ot-kernel_y_configopt "CONFIG_MQ_IOSCHED_KYBER"
-		elif [[ "${s}" == "noop" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
+		elif [[ "${s}" == "noop" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
 			ot-kernel_y_configopt "CONFIG_IOSCHED_NOOP"
-		elif [[ "${s}" == "none" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5 ; then
+		elif [[ "${s}" == "none" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5" ; then
 			:
 		else
 			continue
 		fi
-		if ver_test "${KV_MAJOR_MINOR}" -lt 5 \
+		if ver_test "${KV_MAJOR_MINOR}" -lt "5" \
 			&& [[ -z "${s_first}" ]] \
 			&& [[ "${s}" =~ ("cfq"|"deadline"|"noop") ]] ; then
 			s_first="${s}"
 		fi
 einfo "Enabled ${s} as an I/O scheduler"
 	done
-	if ver_test "${KV_MAJOR_MINOR}" -lt 5 && [[ -n "${s_first}" ]] ; then
+	if ver_test "${KV_MAJOR_MINOR}" -lt "5" && [[ -n "${s_first}" ]] ; then
 einfo "${s_first} is set as the default I/O scheduler"
 		ot-kernel_set_configopt "CONFIG_DEFAULT_IOSCHED" "\"${s_first}\""
-	elif ver_test "${KV_MAJOR_MINOR}" -lt 5 && [[ -z "${s_first}" ]] ; then
+	elif ver_test "${KV_MAJOR_MINOR}" -lt "5" && [[ -z "${s_first}" ]] ; then
 		#
 		# We need either cfq, deadline, noop or it may result in a null
 		# pointer dereference.
@@ -9249,7 +9249,7 @@ ot-kernel_iosched_max_tps() {
 # @DESCRIPTION:
 # Configures the I/O scheduler with the upstream default
 ot-kernel_iosched_default() {
-	if ver_test ${KV_MAJOR_MINOR} -lt 5 ; then
+	if ver_test "${KV_MAJOR_MINOR}" -lt "5" ; then
 		ot-kernel_set_iosched "cfq" "cfq"
 	else
 		ot-kernel_set_iosched "mq-deadline" "mq-deadline"
@@ -9602,10 +9602,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_set_kconfig_set_highest_timer_hz # For reduced audio studdering
-			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			else
@@ -9741,10 +9741,10 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			   "${work_profile}" == "radio-broadcaster" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
-			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+			if   [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+			elif [[ "${OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS}" != "1" ]] && ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 	# Set blanket policy
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			else
@@ -9901,9 +9901,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
 			ot-kernel_y_configopt "CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE"
-			if   ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+			if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-			elif ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+			elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 				ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 			fi
 			if grep -q -E -e "^CONFIG_PCIEASPM=y" "${path_config}" ; then
@@ -9939,9 +9939,9 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-se
 		ot-kernel_set_kconfig_no_hz_full
 		ot-kernel_set_rt_rcu
 		# ML/DL case for self-driving car/drone
-		if   ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+		if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT"
-		elif ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 			ot-kernel_set_preempt "CONFIG_PREEMPT_RT_FULL"
 		fi
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
@@ -10689,7 +10689,7 @@ ewarn
 		if [[ "${OT_KERNEL_LOGO_COUNT:-auto}" == "auto" ]] ; then
 			:
 		elif [[ "${OT_KERNEL_LOGO_COUNT}" =~ [0-9][0-9]* ]] ; then
-			if ver_test ${KV_MAJOR_MINOR} -ge 5.6 ; then
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.6" ; then
 				ot-kernel_set_kconfig_kernel_cmdline "fbcon=logo-count:${OT_KERNEL_LOGO_COUNT}"
 			else
 				sed -i -e "s|num_online_cpus()|${OT_KERNEL_LOGO_COUNT}|g" \
@@ -10830,7 +10830,7 @@ ot-kernel_set_rust() {
 # Enable or disable the flag to allow for overclocking or voltage changes.
 #
 ot-kernel_set_kconfig_amdgpu_override_mask() {
-	ver_test ${KV_MAJOR_MINOR} -lt 4.18 && return
+	ver_test "${KV_MAJOR_MINOR}" -lt "4.18" && return
 	if [[ "${AMDGPU_OVERDRIVE}" == "1" ]] ; then
 		if [[ -e "/sys/module/amdgpu/parameters/ppfeaturemask" ]] ; then
 ewarn "Enabling overdrive on the amdgpu driver."
@@ -10924,7 +10924,7 @@ eerror
 				| grep  -e "Thread(s) per core:.*" \
 				| head -n 1 \
 				| grep -E -o "[0-9]+")
-			if (( tpc > 1 )) && ver_test ${KV_MAJOR_MINOR} -ge 4.10 ; then
+			if (( ${tpc} > 1 )) && ver_test "${KV_MAJOR_MINOR}" -ge "4.10" ; then
 				# Already set in ot-kernel_set_kconfig_processor_class
 				# ot-kernel_y_configopt "CONFIG_SMP"
 				# ot-kernel_y_configopt "CONFIG_SCHED_MC"
@@ -10973,22 +10973,22 @@ ot-kernel_optimize_realtime() {
 
 # Avoid lock contention penalty
 ewarn "Disabling smt for PREEMPT_RT=y.  If you do not like this, disable rt from OT_KERNEL_USE."
-		if ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "mips" || "${arch}" == "powerpc" || "${arch}" == "s390" ]] ; then
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && [[ "${arch}" == "mips" || "${arch}" == "powerpc" || "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 6.6 && [[ "${arch}" == "x86" || "${arch}" == "x86_64" || "${arch}" == "powerpc" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" || "${arch}" == "powerpc" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
-		elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${arch}" == "mips" || "${arch}" == "s390" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" && [[ "${arch}" == "mips" || "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 6.5 && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
-		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 && [[ "${arch}" == "s390" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" && [[ "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
-		elif ver_test ${KV_MAJOR_MINOR} -ge 4.19 && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.19" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt=force"
 
-		elif ver_test ${KV_MAJOR_MINOR} -eq 4.10 && [[ "${arch}" == "s390" ]] ; then
+		elif ver_test "${KV_MAJOR_MINOR}" -eq "4.10" && [[ "${arch}" == "s390" ]] ; then
 			ot-kernel_set_kconfig_kernel_cmdline "nosmt"
 		fi
 
@@ -13661,9 +13661,9 @@ einfo
 # Send user message about rt patchset
 ot-kernel_postinst_rt_patchset() {
 	local rt_option
-	if   ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+	if   ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 		rt_option="CONFIG_PREEMPT_RT"
-	elif ver_test ${KV_MAJOR_MINOR} -lt 5.4 ; then
+	elif ver_test "${KV_MAJOR_MINOR}" -lt "5.4" ; then
 		rt_option="CONFIG_PREEMPT_RT_FULL"
 	fi
 	if has rt ${FEATURES} ; then
@@ -13759,7 +13759,7 @@ einfo
 # Send message about proton
 ot-kernel_postinst_proton() {
 	if has_version "app-emulation/wine-proton" \
-		&& ver_test ${KV_MAJOR_MINOR} -ge 5.16 ; then
+		&& ver_test "${KV_MAJOR_MINOR}" -ge "5.16" ; then
 einfo
 einfo "You may need to set the environment variable WINEFSYNC=1 for futex2"
 einfo "support for the app-emulation/wine-proton package."

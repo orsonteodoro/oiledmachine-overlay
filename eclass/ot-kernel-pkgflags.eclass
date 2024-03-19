@@ -3219,7 +3219,7 @@ ot-kernel-pkgflags_discord() { # DONE
 	if ot-kernel_has_version_slow "${pkg}" ; then
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
 		local expected_pv="0.0.44" # 20240307 ; yes the distro ebuild is behind
-		if ver_test "${actual_pv}" != "${expected_pv}" ; then
+		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild manually in local repo or"
 ewarn "send an issue request at distro ebuild."
@@ -3236,7 +3236,7 @@ ewarn
 # The ebuild should be deleted.
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
 		local expected_pv="0.0.294" # 20240307
-		if ver_test "${actual_pv}" != "${expected_pv}" ; then
+		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
 ewarn "instead."
@@ -3255,7 +3255,7 @@ ewarn
 # The ebuild should be deleted.
 		local actual_pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
 		local expected_pv="0.0.72" # 20240307
-		if ver_test "${actual_pv}" != "${expected_pv}" ; then
+		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
 ewarn "instead."
@@ -3274,7 +3274,7 @@ ewarn
 # The ebuild should be deleted.
 		local actual_pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
 		local expected_pv="0.0.44" # 20240307
-		if ver_test "${actual_pv}" != "${expected_pv}" ; then
+		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
 ewarn "instead."
@@ -10120,7 +10120,7 @@ ot-kernel-pkgflags_xf86_video_amdgpu() { # DONE
 			ot-kernel_y_configopt "CONFIG_MODULES"
 			ot-kernel_set_configopt "CONFIG_DRM_AMDGPU" "m"
 
-			if ver_test ${KV_MAJOR_MINOR} -le 5.5 ; then
+			if ver_test "${KV_MAJOR_MINOR}" -le "5.5" ; then
 				# Missing DP_UHBR20 in latest 5.4 but appears in 5.19
 				ot-kernel_n_configopt "CONFIG_DRM_AMD_DC_DSC_SUPPORT"
 			fi
@@ -11367,7 +11367,7 @@ ewarn
 			else
 	# Promote/demote
 				if [[ "${preempt_option}" == "CONFIG_PREEMPT" ]] ; then
-					if ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+					if ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 						ot-kernel_y_configopt "CONFIG_PREEMPT"
 						ot-kernel_unset_configopt "CONFIG_PREEMPT__LL"
 					else
@@ -11390,7 +11390,7 @@ ewarn
 					ot-kernel_unset_configopt "CONFIG_PREEMPT"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_NONE"
 					ot-kernel_unset_configopt "CONFIG_PREEMPT_RT_BASE"
-					if ver_test ${KV_MAJOR_MINOR} -ge 5.4 ; then
+					if ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
 						ot-kernel_y_configopt "CONFIG_PREEMPT_RT"
 					else
 						ot-kernel_y_configopt "CONFIG_PREEMPT_RT_FULL"
