@@ -94,24 +94,26 @@ RDEPEND="
 		>=media-libs/opencv-4.6.0[features2d,jpeg]
 	)
 	rocal? (
-		!system-llvm? (
-			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		)
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 		media-libs/libjpeg-turbo
 		!ffmpeg? (
 			>=dev-libs/boost-${BOOST_PV}:=
+		)
+		!system-llvm? (
+			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 		)
 		system-llvm? (
 			sys-libs/libomp:${LLVM_SLOT}
 		)
 	)
 	rocm? (
-		!system-llvm? (
-			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-		)
 		dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 		~sci-libs/rocBLAS-${PV}:${ROCM_SLOT}
+		!system-llvm? (
+			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+			~sys-util/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		)
 		system-llvm? (
 			sys-libs/libomp:${LLVM_SLOT}
 		)

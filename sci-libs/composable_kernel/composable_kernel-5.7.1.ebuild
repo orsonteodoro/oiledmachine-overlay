@@ -47,37 +47,30 @@ system-llvm test r4
 REQUIRED_USE="
 "
 RDEPEND="
-	|| (
-		(
-			!system-llvm? (
-				~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
-			)
-			~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
-			system-llvm? (
-				sys-libs/libomp:${LLVM_SLOT}
-			)
-		)
+	~dev-util/hip-${ROCM_VERSION}:${ROCM_SLOT}
+	!system-llvm? (
+		~dev-libs/rocm-opencl-runtime-${ROCM_VERSION}:${ROCM_SLOT}
+		~sys-libs/llvm-roc-libomp-${ROCM_VERSION}:${ROCM_SLOT}
+	)
+	system-llvm? (
+		sys-libs/libomp:${LLVM_SLOT}
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	test? (
-		dev-cpp/gtest
-	)
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	sys-devel/binutils[gold]
-	|| (
-		(
-			!system-llvm? (
-				~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
-			)
-			~dev-build/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
-			system-llvm? (
-				sys-devel/clang:${LLVM_SLOT}
-			)
-		)
+	~dev-build/rocm-cmake-${ROCM_VERSION}:${ROCM_SLOT}
+	!system-llvm? (
+		~sys-devel/llvm-roc-${ROCM_VERSION}:${ROCM_SLOT}
+	)
+	system-llvm? (
+		sys-devel/clang:${LLVM_SLOT}
+	)
+	test? (
+		dev-cpp/gtest
 	)
 "
 #RESTRICT="test"

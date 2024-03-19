@@ -75,7 +75,7 @@ RESTRICT="
 "
 RDEPEND="
 	dev-util/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
 	)
@@ -91,8 +91,14 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		dev-cpp/gtest
-		sys-libs/libomp:${LLVM_SLOT}
 		~dev-util/rocminfo-${PV}:${ROCM_SLOT}
+		!system-llvm? (
+			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		)
+		system-llvm? (
+			sys-libs/libomp:${LLVM_SLOT}
+		)
 	)
 "
 S="${WORKDIR}/hipSPARSE-rocm-${PV}"

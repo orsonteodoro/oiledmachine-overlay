@@ -29,14 +29,18 @@ ROCM_VERSION="${PV}"
 
 inherit cmake distutils-r1 prefix rocm toolchain-funcs
 
-DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
-HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 	-> rocm-Tensile-${PV}.tar.gz
 "
+S="${WORKDIR}/${PN}-rocm-${PV}"
+
+DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
+HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+# Not compatible with recent versions of pytest \
+RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="client openmp system-llvm r8"
 REQUIRED_USE="
@@ -46,13 +50,6 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	!system-llvm? (
-		sys-devel/llvm-roc:=
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
-		openmp? (
-			sys-libs/llvm-roc-libomp:${ROCM_SLOT}
-		)
-	)
 	${PYTHON_DEPS}
 	>=dev-cpp/msgpack-cxx-6.0.0
 	dev-lang/python-exec:rocm-${ROCM_SLOT}
@@ -61,6 +58,14 @@ RDEPEND="
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
 	~dev-util/hip-${PV}:${ROCM_SLOT}
+	!system-llvm? (
+		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+		sys-devel/llvm-roc:=
+		openmp? (
+			dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
+			sys-libs/llvm-roc-libomp:${ROCM_SLOT}
+		)
+	)
 	client? (
 		dev-libs/boost
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
@@ -82,9 +87,6 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.13
 "
-# Not compatible with recent versions of pytest
-RESTRICT="test"
-S="${WORKDIR}/${PN}-rocm-${PV}"
 _PATCHES=(
 	"${FILESDIR}/${PN}-change-cmake-name-for-msgpack-cxx-6-release.patch"
 	"${FILESDIR}/${PN}-5.6.0-output-commands.patch"

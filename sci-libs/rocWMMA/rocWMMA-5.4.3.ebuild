@@ -11,30 +11,35 @@ AMDGPU_TARGETS_COMPAT=(
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
+
 inherit cmake rocm
 
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocWMMA/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
+S="${WORKDIR}/${PN}-rocm-${PV}"
 
 DESCRIPTION="AMD's C++ library for accelerating mixed-precision matrix \
 multiply-accumulate (MMA) operations leveraging AMD GPU hardware"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocWMMA"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="
+	test
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="system-llvm"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
 RDEPEND="
-	!system-llvm? (
-		sys-libs/llvm-roc-libomp:=
-		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
-	)
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm,system-llvm=]
+	!system-llvm? (
+		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		sys-libs/llvm-roc-libomp:=
+	)
 	system-llvm? (
 		sys-libs/libomp:${LLVM_SLOT}
 	)
@@ -49,10 +54,6 @@ BDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-RESTRICT="
-	test
-"
-S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.4.3-path-changes.patch"
 )

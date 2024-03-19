@@ -19,15 +19,17 @@ ROCM_VERSION="${PV}"
 
 inherit cmake rocm
 
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/ROCmSoftwarePlatform/rocALUTION/archive/rocm-${PV}.tar.gz
 	-> rocALUTION-${PV}.tar.gz
 "
+S="${WORKDIR}/${PN}-rocm-${PV}"
 
 DESCRIPTION="Next generation library for iterative sparse solvers for ROCm platform"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocALUTION"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 rocm samples +openmp mpi system-llvm r1
@@ -83,8 +85,6 @@ BDEPEND="
 	>=dev-build/cmake-3.5
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
-RESTRICT="mirror"
-S="${WORKDIR}/${PN}-rocm-${PV}"
 PATCHES=(
 	"${FILESDIR}/rocALUTION-5.6.0-invalid-operands-fix.patch"
 	"${FILESDIR}/rocALUTION-5.2.3-path-changes.patch"

@@ -120,7 +120,7 @@ ${ROCM_SLOTS[@]}
 +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
 +openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
-+tbb test +tiff +usd -valgrind +wayland
+system-llvm +tbb test +tiff +usd -valgrind +wayland
 r2
 "
 # hip is default ON upstream.
@@ -703,7 +703,7 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	llvm? (
 		$(gen_llvm_depends)
 	)
-	llvm-12? (
+	llvm_slot_12? (
 		|| (
 			~media-libs/mesa-21.1.0[X?]
 			~media-libs/mesa-21.1.1[X?]
@@ -738,9 +738,11 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			~media-libs/mesa-22.1.2[X?]
 			~media-libs/mesa-22.1.3[X?]
 		)
-		sys-libs/libomp:12
+		system-llvm? (
+			sys-libs/libomp:12
+		)
 	)
-	llvm-13? (
+	llvm_slot_13? (
 		|| (
 			~media-libs/mesa-21.2.5[X?]
 			~media-libs/mesa-21.2.6[X?]
@@ -774,9 +776,11 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			~media-libs/mesa-22.3.3[X?]
 			 ~media-libs/mesa-22.3.7[X?]
 		)
-		sys-libs/libomp:13
+		system-llvm? (
+			sys-libs/libomp:13
+		)
 	)
-	llvm-14? (
+	llvm_slot_14? (
 		|| (
 			~media-libs/mesa-22.0.5[X?]
 			~media-libs/mesa-22.1.0[X?]
@@ -795,9 +799,11 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			~media-libs/mesa-22.3.3[X?]
 			 ~media-libs/mesa-22.3.7[X?]
 		)
-		sys-libs/libomp:14
+		system-llvm? (
+			sys-libs/libomp:14
+		)
 	)
-	llvm-15? (
+	llvm_slot_15? (
 		|| (
 			~media-libs/mesa-22.2.0[X?]
 			~media-libs/mesa-22.2.1[X?]
@@ -831,7 +837,9 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 			=media-libs/mesa-24.0*[X?]
 			=media-libs/mesa-9999[X?]
 		)
-		sys-libs/libomp:15
+		system-llvm? (
+			sys-libs/libomp:15
+		)
 	)
 	materialx? (
 		media-libs/materialx[${PYTHON_SINGLE_USEDEP},python]
@@ -902,16 +910,32 @@ cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sy
 	)
 	rocm? (
 		rocm_5_4? (
-			~dev-util/hip-5.4.3:5.4[rocm]
+			~dev-util/hip-5.4.3:5.4[rocm,system-llvm=]
+			!system-llvm? (
+				~dev-libs/rocm-opencl-runtime-5.4.3:5.4
+				~sys-libs/llvm-roc-libomp-5.4.3:5.4
+			)
 		)
 		rocm_5_3? (
-			~dev-util/hip-5.3.3:5.3[rocm]
+			~dev-util/hip-5.3.3:5.3[rocm,system-llvm=]
+			!system-llvm? (
+				~dev-libs/rocm-opencl-runtime-5.3.3:5.3
+				~sys-libs/llvm-roc-libomp-5.3.3:5.3
+			)
 		)
 		rocm_5_2? (
-			~dev-util/hip-5.2.3:5.2[rocm]
+			~dev-util/hip-5.2.3:5.2[rocm,system-llvm=]
+			!system-llvm? (
+				~dev-libs/rocm-opencl-runtime-5.2.3:5.2
+				~sys-libs/llvm-roc-libomp-5.2.3:5.2
+			)
 		)
 		rocm_5_1? (
-			~dev-util/hip-5.1.3:5.1[rocm]
+			~dev-util/hip-5.1.3:5.1[rocm,system-llvm=]
+			!system-llvm? (
+				~dev-libs/rocm-opencl-runtime-5.1.3:5.1
+				~sys-libs/llvm-roc-libomp-5.1.3:5.1
+			)
 		)
 		dev-util/hip:=
 	)

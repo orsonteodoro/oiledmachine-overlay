@@ -79,6 +79,7 @@ gen_rdepend_llvm() {
 RDEPEND="
 	!sci-libs/rpp:0
 	!system-llvm? (
+		dev-libs/rocm-opencl-runtime:${ROCM_SLOT}
 		sys-libs/llvm-roc-libomp:${ROCM_SLOT}
 		sys-devel/llvm-roc:${ROCM_SLOT}
 		sys-libs/llvm-roc-libomp:=

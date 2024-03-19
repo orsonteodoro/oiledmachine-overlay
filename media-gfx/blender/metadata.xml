@@ -383,6 +383,10 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="sycl">
       Add support for GPU accelerated raytracing.
     </flag>
+    <flag name="system-llvm">
+      If enabled, it builds with <pkg>sys-devel/llvm</pkg> and uses <pkg>sys-libs/libomp</pkg>.
+      If disabled, it build with <pkg>sys-devel/llvm-roc</pkg> and uses <pkg>sys-libs/llvm-roc-libomp</pkg>.
+    </flag>
     <flag name="tbb">
       Enables using TBB componenents which also may enable sculpt multithreading,
       Cycles, El'Beem, OpenImageDenoise, OpenVDB.

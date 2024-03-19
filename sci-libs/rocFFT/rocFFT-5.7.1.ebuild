@@ -107,7 +107,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3.36
 	dev-util/rocm-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?,system-llvm=]
 	~sci-libs/rocRAND-${PV}:${ROCM_SLOT}
 	cuda? (
 		dev-util/nvidia-cuda-toolkit:=
@@ -133,7 +133,13 @@ BDEPEND="
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
 		dev-libs/boost
-		sys-libs/libomp:${LLVM_SLOT}
+		!system-llvm? (
+			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		)
+		system-llvm? (
+			sys-libs/libomp:${LLVM_SLOT}
+		)
 	)
 "
 RESTRICT="

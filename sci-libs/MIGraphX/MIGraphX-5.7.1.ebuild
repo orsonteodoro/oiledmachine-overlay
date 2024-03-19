@@ -61,7 +61,13 @@ RDEPEND="
 	dev-libs/msgpack
 	cpu? (
 		dev-libs/oneDNN
-		sys-libs/libomp:${LLVM_SLOT}
+		!system-llvm? (
+			~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
+			~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
+		)
+		system-llvm? (
+			sys-libs/libomp:${LLVM_SLOT}
+		)
 	)
 	rocm? (
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}
@@ -76,13 +82,13 @@ DEPEND="
 	>=dev-cpp/blaze-3.4:=
 "
 BDEPEND="
+	>=dev-build/cmake-3.15
+	sys-devel/hip-compiler:${ROCM_SLOT}[system-llvm=]
+	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	!system-llvm? (
 		sys-devel/llvm-roc:=
 		~sys-devel/llvm-roc-${PV}
 	)
-	>=dev-build/cmake-3.15
-	sys-devel/hip-compiler:${ROCM_SLOT}[system-llvm=]
-	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	mlir? (
 		|| (
 			~sci-libs/rocMLIR-${PV}:${ROCM_SLOT}
