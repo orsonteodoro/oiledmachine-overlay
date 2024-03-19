@@ -122,8 +122,26 @@ ${ROCM_SLOTS[@]}
 ${VIDEO_CARDS}
 denoiser intel-ocl +matlib +opencl opencl_rocr opencl_orca system-llvm -systemwide +vulkan
 "
+declare -A ROCM_TO_LLVM_SLOT=(
+	["rocm_5_4"]="15"
+	["rocm_5_3"]="15"
+	["rocm_5_2"]="14"
+	["rocm_5_1"]="14"
+)
+gen_rocm_required_use() {
+	local s
+	for s in ${ROCM_SLOTS[@]} ; do
+		echo "
+			${s}? (
+				llvm_slot_${ROCM_TO_LLVM_SLOT[${s}]}
+				opencl_rocr
+			)
+		"
+	done
+}
 # Systemwide is preferred but currently doesn't work but did in the past in <2.0
 REQUIRED_USE+="
+	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
 	!systemwide
 	blender-3_3? (
