@@ -5823,7 +5823,7 @@ eerror
 	]] ; then
 	# Resets back to upstream defaults.
 
-		ot-kernel_unset_configopt "CONFIG_COMPAT_BRK"
+		ot-kernel_y_configopt "CONFIG_COMPAT_BRK"
 		ot-kernel_unset_configopt "CONFIG_FORTIFY_SOURCE"
 		ot-kernel_unset_configopt "CONFIG_GENTOO_KERNEL_SELF_PROTECTION" # Disabled for customization
 		ot-kernel_unset_configopt "CONFIG_HARDENED_USERCOPY"
