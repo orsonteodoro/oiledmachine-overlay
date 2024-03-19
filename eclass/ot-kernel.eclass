@@ -8138,6 +8138,39 @@ einfo "Disabling SCS support in the in the .config."
 ot-kernel_set_kconfig_slab_allocator() {
 	local alloc_name="${1^^}"
 	ot-kernel_y_configopt "CONFIG_EXPERT"
+	if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
+		alloc_name="SLUB"
+		if [[ "${alloc_name}" == "SLAB" ]] ; then
+ewarn "Changing SLAB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+			alloc_name="SLUB"
+		else
+ewarn "Changing SLOB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+			alloc_name="SLUB"
+		fi
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.7" ; then
+		if [[ "${alloc_name}" == "SLAB" ]] ; then
+			alloc_name="SLAB_DEPRECATED"
+		else
+ewarn "Changing SLOB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+			alloc_name="SLUB"
+		fi
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
+		if [[ "${alloc_name}" == "SLAB" ]] ; then
+			alloc_name="SLAB_DEPRECATED"
+		elif [[ "${alloc_name}" == "SLOB" ]] ; then
+ewarn "Changing SLOB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+			alloc_name="SLUB"
+		fi
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.4" ; then
+		if [[ "${alloc_name}" == "SLOB" ]] ; then
+ewarn "Changing SLOB -> SLUB.  SLOB has been removed.  Please update OT_KERNEL_SLAB_ALLOCATOR"
+			alloc_name="SLUB"
+		fi
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.2" ; then
+		if [[ "${alloc_name}" == "SLOB" ]] ; then
+			alloc_name="SLOB_DEPRECATED"
+		fi
+	fi
 	ot-kernel_unset_configopt "CONFIG_SLUB_CPU_PARTIAL"
 	ot-kernel_unset_configopt "CONFIG_SLAB" # For cache benefits, < ~2% CPU usage and >= ~10% network throughput compared to slub
 	ot-kernel_unset_configopt "CONFIG_SLUB" # For mainframes
@@ -8161,7 +8194,11 @@ ot-kernel_set_kconfig_auto_set_slab_allocator() {
 einfo "Using ${x}"
 	elif [[ "${slab_allocator}" == "auto" ]] ; then
 		if grep -q -E -e "^CONFIG_EMBEDDED=y" "${path_config}" ; then
-			ot-kernel_set_kconfig_slab_allocator "slob"
+			if ver_test "${KV_MAJOR_MINOR}" -lt 6.4 ; then
+				ot-kernel_set_kconfig_slab_allocator "slob"
+			else
+				ot-kernel_set_kconfig_slab_allocator "slub"
+			fi
 		elif grep -q -E -e "^CONFIG_NUMA=y" "${path_config}" \
 			|| [[ "${processor_class}" =~ "numa" ]] ; then
 			ot-kernel_set_kconfig_slab_allocator "slub"
