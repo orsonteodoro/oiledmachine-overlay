@@ -1443,7 +1443,9 @@ CURRENT_PROFDATA_LLVM_VERSION=
 NABIS=0
 pkg_setup() {
 einfo "Release channel:  ${SLOT#*/}"
+	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security fixes applied:  ${MITIGATION_URI}"
+	fi
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
