@@ -23,16 +23,19 @@ IUSE=" test r2"
 RESTRICT="test"
 # U 18.04
 # See https://github.com/googleapis/google-cloud-cpp/blob/v2.2.1/bazel/google_cloud_cpp_deps.bzl
+# Upstream uses PROTOBUF_SLOT=0/3.19
 RDEPEND="
 	>=dev-cpp/abseil-cpp-20220623.1:0/20220623
 	>=dev-cpp/nlohmann_json-3.11.2
 	>=dev-libs/crc32c-1.1.2
 	>=dev-libs/openssl-1.1.1:=
 	>=dev-libs/re2-0.2022.06.01:=
-	>=net-libs/grpc-1.48.1:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11
 	dev-libs/protobuf:0/3.21
+	|| (
+		=net-libs/grpc-1.48.1:=
+	)
 "
 DEPEND="
 	${RDEPEND}

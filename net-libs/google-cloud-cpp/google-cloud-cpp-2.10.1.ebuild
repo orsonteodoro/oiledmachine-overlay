@@ -28,10 +28,12 @@ RDEPEND="
 	>=dev-libs/crc32c-1.1.2
 	>=dev-libs/openssl-1.1.1:=
 	>=dev-libs/re2-0.2023.03.01:=
-	>=net-libs/grpc-1.54.0:=
 	>=net-misc/curl-7.69.1
 	>=sys-libs/zlib-1.2.11
 	dev-libs/protobuf:0/3.21
+	|| (
+		=net-libs/grpc-1.54*:=
+	)
 "
 DEPEND="
 	${RDEPEND}
