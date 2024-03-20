@@ -62,20 +62,126 @@ EAPI=8
 # /var/tmp/portage/www-client/chromium-121.0.6167.139/work/chromium-121.0.6167.139/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
 
-inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
-
-DESCRIPTION="A social music platform"
-HOMEPAGE="https://www.spotify.com"
-LICENSE="Spotify BSD"
-KEYWORDS="~amd64"
-DEFAULT_CONFIGURATION="stable"
-SLOT="0/${DEFAULT_CONFIGURATION}"
+# Support based on D 11 with U 18.04 LTS as the fallback.
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
 # is already EOL.  Use the web version instead for the secure version.
 
 # Dropped systray USE flag because of license.
 
+# Found in Recommends: section of stable requirements.
+# For ffmpeg:0/x.y.z, y must be <= 59.
+ALSA_LIB="1.2.4"
+ATK_PV="2.38.0"
+CAIRO_PV="1.16.0"
+CLANG_PV="17"
+DEFAULT_CONFIGURATION="stable"
+EXPECTED_DEPENDS_FINGERPRINT="\
+66f65b594d1f2ec6a090d02b1a12178eb92925f9121b59517f8ef9338b0dda1d\
+1833b1792d29d10312a8463597ac2478c744d6555fb32f0bdd617cbdf5687ef0\
+" # Packages fingerprint for client
+EXPECTED_CR_DEPENDS_FINGERPRINT="\
+27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
+89ce438d5e3c3df6230912b1eebf3c45c70bd9def0deb9fb047ed13256019a7c\
+" # Packages fingerprint of internal dependency Chromium for CEF
+FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use] ; 0/libavutil_major.libavcodec_major.libavformat_major
+FONTCONFIG_PV="2.14.2" # Use vendored list for versioning
+FREETYPE_PV="2.13.2" # Use vendored list for versioning
+GCC_PV="10.2.1"
+GLIB_PV="2.66.8"
+GLIBC_PV="2.31"
+# Details of the repo public key itself \
+GPG_KEY_ID="63CBEEC9006602088F9B19326224F9941A8AA6D1" # RSA Key
+GPG_EXPECTED_UID="Spotify Public Repository Signing Key <tux@spotify.com>"
+# It is possible to fingerprint the public keys using ebuild, but it is only
+# done in the non-live ebuild versions.
+#
+# From first line of https://www.spotify.com/us/download/linux/ \
+GPG_PUBLIC_KEY_ID="6224F9941A8AA6D1"
+GPG_PUBLIC_KEY_URI="https://download.spotify.com/debian/pubkey_${GPG_PUBLIC_KEY_ID}.gpg"
+GPG_PUBLIC_KEY_SHA512="\
+3daed8da8bf3dca500fd04720617bf7d969c42ef563fb89d0cbd8084c54d6c62\
+d8128e64753367148ae85b00f343ee3ccde9628d789ff749bdb26d8a63cb347d\
+"
+GPG_PUBLIC_KEY_BLAKE2B="\
+686ae0164cb787fee7d0064d7a770ee5357992aad8651f1207e8b5dc7ba0b490\
+571f52905218a9ec0664906d722069899783c4fed5974c4833252f85a6a8d977\
+"
+GTK3_PV="3.24.24"
+GTK4_PV="4.8.3"
+LIBXI_PV="1.7.10"
+LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
+LIBXTST_PV="1.2.3"
+MESA_PV="20.3.5"
+NSS_PV="3.61"
+PKG_ARCH="amd64" # It can be amd64, i386, all.
+QA_PREBUILT="
+	opt/${PN}/${PN}-client/${PN}
+	opt/${PN}/${PN}-client/libEGL.so
+	opt/${PN}/${PN}-client/libGLESv2.so
+	opt/${PN}/${PN}-client/libcef.so
+	opt/${PN}/${PN}-client/libvk_swiftshader.so
+	opt/${PN}/${PN}-client/libvulkan.so.1
+	opt/${PN}/${PN}-client/swiftshader/libEGL.so
+	opt/${PN}/${PN}-client/swiftshader/libGLESv2.so
+"
+# Before URI redirect.  Not SSL protected.  MITM attack possible.
+# From second line of https://www.spotify.com/us/download/linux/
+#REPO_DOMAIN="http://repository.spotify.com" # Never use this URI to install downloaded debs.
+# After URI redirect of the above domain.  SSL protected.
+REPO_DOMAIN="https://repository-origin.spotify.com/"
+
+unset hash_cmd
+declare -A hash_cmd=(
+	["blake2b"]="rhash --blake2b"
+	["md5"]="md5sum"
+	["sha1"]="sha1sum"
+	["sha256"]="sha256sum"
+	["sha512"]="sha512sum"
+)
+
+unset atabs
+declare -A atabs=(
+	["blake2b"]="\t"
+	["md5"]="\t\t"
+	["sha1"]="\t\t"
+	["sha256"]="\t"
+	["sha512"]="\t"
+)
+
+inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
+
+KEYWORDS="~amd64"
+S="${WORKDIR}"
+SRC_URI+="
+	${GPG_PUBLIC_KEY_URI}
+"
+
+if ! [[ "${PV}" =~ "9999" ]] ; then
+	MY_PV=$(ver_cut 1-4 ${PV})
+	MY_REV=$(ver_cut 6 ${PV})
+	BUILD_ID_AMD64="g4d59ad7c" # Change this after every bump
+	if [[ -z "${MY_REV}" ]] ; then
+		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
+	else
+		_BUILD_ID_AMD64="${BUILD_ID_AMD64}-${MY_REV}"
+	fi
+	CONFIGURATION="${DEFAULT_CONFIGURATION}" # stable or testing
+	FN_CLIENT="${PN}-client_${MY_PV}.${_BUILD_ID_AMD64}_amd64.deb"
+	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${GPG_PUBLIC_KEY_ID}"
+	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
+	SRC_URI+="
+		https://repository-origin.spotify.com/dists/${CONFIGURATION}/InRelease -> ${FN_INRELEASE}
+		https://repository-origin.spotify.com/dists/${CONFIGURATION}/non-free/binary-amd64/Packages -> ${FN_PACKAGES}
+		https://repository-origin.spotify.com/pool/non-free/s/spotify-client/${FN_CLIENT}
+	"
+fi
+
+DESCRIPTION="A social music platform"
+HOMEPAGE="https://www.spotify.com"
+LICENSE="Spotify BSD"
+RESTRICT="mirror strip binchecks"
+SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg libnotify pulseaudio vaapi wayland zenity +X
 "
@@ -96,29 +202,6 @@ REQUIRED_USE+="
 		X
 	)
 "
-RESTRICT="mirror strip binchecks"
-
-# Support based on D 11 with U 18.04 LTS as the fallback.
-
-# Found in Recommends: section of stable requirements.
-# For ffmpeg:0/x.y.z, y must be <= 59.
-ALSA_LIB="1.2.4"
-ATK_PV="2.38.0"
-CAIRO_PV="1.16.0"
-CLANG_PV="17"
-FFMPEG_SLOT="0/58.60.60" # Same as 6.0 in chromium tarball [do not use] ; 0/libavutil_major.libavcodec_major.libavformat_major
-FONTCONFIG_PV="2.14.2" # Use vendored list for versioning
-FREETYPE_PV="2.13.2" # Use vendored list for versioning
-GCC_PV="10.2.1"
-GLIB_PV="2.66.8"
-GLIBC_PV="2.31"
-GTK3_PV="3.24.24"
-GTK4_PV="4.8.3"
-LIBXI_PV="1.7.10"
-LIBXSCRNSAVER_PV="1.2.3" # Same as libxss1
-LIBXTST_PV="1.2.3"
-MESA_PV="20.3.5"
-NSS_PV="3.61"
 
 # media-video/ffmpeg:${FFMPEG_SLOT} # From chromium tarball
 # <media-video/ffmpeg-5 is from http://repository.spotify.com/dists/testing/non-free/binary-amd64/Packages
@@ -344,100 +427,6 @@ else
 	"
 fi
 
-S="${WORKDIR}"
-
-QA_PREBUILT="
-	opt/${PN}/${PN}-client/${PN}
-	opt/${PN}/${PN}-client/libEGL.so
-	opt/${PN}/${PN}-client/libGLESv2.so
-	opt/${PN}/${PN}-client/libcef.so
-	opt/${PN}/${PN}-client/libvk_swiftshader.so
-	opt/${PN}/${PN}-client/libvulkan.so.1
-	opt/${PN}/${PN}-client/swiftshader/libEGL.so
-	opt/${PN}/${PN}-client/swiftshader/libGLESv2.so
-"
-
-# From first line of https://www.spotify.com/us/download/linux/
-PUBLIC_KEY_ID="6224F9941A8AA6D1"
-PUBLIC_KEY_URI="https://download.spotify.com/debian/pubkey_${PUBLIC_KEY_ID}.gpg"
-
-SRC_URI+="
-	${PUBLIC_KEY_URI}
-"
-
-if ! [[ "${PV}" =~ "9999" ]] ; then
-	MY_PV=$(ver_cut 1-4 ${PV})
-	MY_REV=$(ver_cut 6 ${PV})
-	BUILD_ID_AMD64="g4d59ad7c" # Change this after every bump
-	if [[ -z "${MY_REV}" ]] ; then
-		_BUILD_ID_AMD64="${BUILD_ID_AMD64}"
-	else
-		_BUILD_ID_AMD64="${BUILD_ID_AMD64}-${MY_REV}"
-	fi
-	CONFIGURATION="${SLOT#*/}" # stable or testing
-	FN_CLIENT="${PN}-client_${MY_PV}.${_BUILD_ID_AMD64}_amd64.deb"
-	FN_INRELEASE="${PN}-${PV}-${CONFIGURATION}-InRelease-${PUBLIC_KEY_ID}"
-	FN_PACKAGES="${PN}-${PV}-${CONFIGURATION}-Packages"
-	SRC_URI+="
-		https://repository-origin.spotify.com/dists/${CONFIGURATION}/InRelease -> ${FN_INRELEASE}
-		https://repository-origin.spotify.com/dists/${CONFIGURATION}/non-free/binary-amd64/Packages -> ${FN_PACKAGES}
-		https://repository-origin.spotify.com/pool/non-free/s/spotify-client/${FN_CLIENT}
-	"
-fi
-
-# Details of the repo public key itself
-KEY_ID="63CBEEC9006602088F9B19326224F9941A8AA6D1" # RSA Key
-EXPECTED_UID="Spotify Public Repository Signing Key <tux@spotify.com>"
-
-# It is possible to fingerprint the public keys using ebuild, but it is only
-# done in the non-live ebuild versions.
-
-PUBKEY_SHA512="\
-3daed8da8bf3dca500fd04720617bf7d969c42ef563fb89d0cbd8084c54d6c62\
-d8128e64753367148ae85b00f343ee3ccde9628d789ff749bdb26d8a63cb347d\
-"
-
-PUBKEY_BLAKE2B="\
-686ae0164cb787fee7d0064d7a770ee5357992aad8651f1207e8b5dc7ba0b490\
-571f52905218a9ec0664906d722069899783c4fed5974c4833252f85a6a8d977\
-"
-
-EXPECTED_DEPENDS_FINGERPRINT="\
-66f65b594d1f2ec6a090d02b1a12178eb92925f9121b59517f8ef9338b0dda1d\
-1833b1792d29d10312a8463597ac2478c744d6555fb32f0bdd617cbdf5687ef0\
-" # Packages fingerprint for client
-EXPECTED_CR_DEPENDS_FINGERPRINT="\
-27ee98a40fe37c9897bb941d98535b999543c44eae9c2460513379387621ce6e\
-89ce438d5e3c3df6230912b1eebf3c45c70bd9def0deb9fb047ed13256019a7c\
-" # Packages fingerprint of internal dependency Chromium for CEF
-
-PKG_ARCH="amd64" # It can be amd64, i386, all.
-
-# Before URI redirect.  Not SSL protected.  MITM attack possible.
-# From second line of https://www.spotify.com/us/download/linux/
-#REPO_DOMAIN="http://repository.spotify.com" # Never use this URI to install downloaded debs.
-
-# After URI redirect of the above domain.  SSL protected.
-REPO_DOMAIN="https://repository-origin.spotify.com/"
-
-unset hash_cmd
-declare -A hash_cmd=(
-	["md5"]="md5sum"
-	["sha1"]="sha1sum"
-	["sha256"]="sha256sum"
-	["sha512"]="sha512sum"
-	["blake2b"]="rhash --blake2b"
-)
-
-unset atabs
-declare -A atabs=(
-	["md5"]="\t\t"
-	["sha1"]="\t\t"
-	["sha256"]="\t"
-	["sha512"]="\t"
-	["blake2b"]="\t"
-)
-
 pkg_setup() {
 	local configuration_desc
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -507,32 +496,32 @@ eerror
 
 verify_pubkey() {
 	# The keyring is sandboxed so redownload.
-	KEY_FN=$(basename ${PUBLIC_KEY_URI})
+	GPG_PUB_KEY_FN=$(basename "${GPG_PUBLIC_KEY_URI}")
 	if ! [[ "${PV}" =~ "9999" ]] ; then
-		cat "${EDISTDIR}/${KEY_FN}" > "${WORKDIR}/${KEY_FN}" || die
+		cat "${EDISTDIR}/${GPG_PUB_KEY_FN}" > "${WORKDIR}/${GPG_PUB_KEY_FN}" || die
 	elif [[ -z "${EVCS_OFFLINE}" || "${EVCS_OFFLINE}" == "0" ]] ; then
-		wget "${PUBLIC_KEY_URI}" || die
+		wget "${GPG_PUBLIC_KEY_URI}" || die
 	else
-		cat "${EDISTDIR}/${KEY_FN}" > "${WORKDIR}/${KEY_FN}" || die
+		cat "${EDISTDIR}/${GPG_PUB_KEY_FN}" > "${WORKDIR}/${GPG_PUB_KEY_FN}" || die
 	fi
 	local actual_sha512=$(\
-		${hash_cmd["sha512"]} ${KEY_FN} | cut -f 1 -d " "
+		${hash_cmd["sha512"]} "${GPG_PUB_KEY_FN}" | cut -f 1 -d " "
 	)
 	local actual_blake2b=$(\
-		${hash_cmd["blake2b"]} ${KEY_FN} | cut -f 1 -d " "
+		${hash_cmd["blake2b"]} "${GPG_PUB_KEY_FN}" | cut -f 1 -d " "
 	)
 
 einfo
-einfo "${KEY_FN} fingerprints:"
+einfo "${GPG_PUB_KEY_FN} fingerprints:"
 einfo
-einfo "Expected SHA512:\t${PUBKEY_SHA512}"
+einfo "Expected SHA512:\t${GPG_PUBLIC_KEY_SHA512}"
 einfo "Actual SHA512:\t${actual_sha512}"
 einfo
-einfo "Expected BLAKE2B:\t${PUBKEY_BLAKE2B}"
+einfo "Expected BLAKE2B:\t${GPG_PUBLIC_KEY_BLAKE2B}"
 einfo "Actual BLAKE2B:\t${actual_blake2b}"
 einfo
-	if [[ "${actual_sha512}" == "${PUBKEY_SHA512}" \
-		&& "${actual_blake2b}" == "${PUBKEY_BLAKE2B}" ]] ; then
+	if [[ "${actual_sha512}" == "${GPG_PUBLIC_KEY_SHA512}" \
+		&& "${actual_blake2b}" == "${GPG_PUBLIC_KEY_BLAKE2B}" ]] ; then
 		:;
 	else
 eerror
@@ -541,7 +530,7 @@ eerror
 eerror "QA:"
 eerror
 eerror "  Manually inspect public keys for trust"
-eerror "  Update PUBKEY_SHA512 and PUBKEY_BLAKE2B"
+eerror "  Update GPG_PUBLIC_KEY_SHA512 and GPG_PUBLIC_KEY_BLAKE2B"
 eerror
 		die
 	fi
@@ -549,35 +538,35 @@ eerror
 	# Verify validity of key properies.
 
 einfo "Importing GPG key into sandboxed keychain"
-	gpg --import ${KEY_FN} || die # \
+	gpg --import "${GPG_PUB_KEY_FN}" || die # \
 	# Added the public key to the (sandboxed) keychain.
 
 	if ! gpg --list-keys \
-		| grep -q -e "${KEY_ID}" ; then
+		| grep -q -e "${GPG_KEY_ID}" ; then
 eerror
-eerror "KEY_ID needs to be updated or is untrusted."
+eerror "GPG_KEY_ID needs to be updated or is untrusted."
 eerror
 		gpg \
 			--show-keys \
 			--with-fingerprint \
-			$(basename "${PUBLIC_KEY_URI}") || die
+			$(basename "${GPG_PUBLIC_KEY_URI}") || die
 		die
 	fi
 	local ACTUAL_UID=$(\
-		  gpg --list-keys --with-key-data "${KEY_ID}" \
+		  gpg --list-keys --with-key-data "${GPG_KEY_ID}" \
 		| grep -E "^uid:" \
 		| cut -f 10 -d ":")
-	if [[ "${ACTUAL_UID}" != "${EXPECTED_UID}" ]] ; then
+	if [[ "${ACTUAL_UID}" != "${GPG_EXPECTED_UID}" ]] ; then
 eerror
-eerror "UID mismatch.  If key is trusted, EXPECTED_UID needs an update."
+eerror "UID mismatch.  If key is trusted, GPG_EXPECTED_UID needs an update."
 eerror
 eerror
-eerror "Expected UID:\t${EXPECTED_UID}"
+eerror "Expected UID:\t${GPG_EXPECTED_UID}"
 eerror "Actual UID:\t${ACTUAL_UID}"
 eerror
 		die
 	fi
-	local expired_bit=$(gpg --fingerprint "${KEY_ID}" \
+	local expired_bit=$(gpg --fingerprint "${GPG_KEY_ID}" \
 		| grep -o -e "\[ expired\]")
 	if [[ "${expired_bit}" == "[ expired]" ]] ; then
 		expired_bit=1
@@ -585,7 +574,7 @@ eerror
 		expired_bit=0
 	fi
 	local EXPIRE_DATE=$(\
-		  gpg --fingerprint "${KEY_ID}" \
+		  gpg --fingerprint "${GPG_KEY_ID}" \
 		| grep -E -o -e "expires: [0-9]{4}-[0-9]{2}-[0-9]{2}" \
 		| cut -f 2 -d " ")
 	local expire_time=$(date -d "${EXPIRE_DATE}" "+%s")
@@ -621,7 +610,7 @@ eerror
 		--batch \
 		--homedir ${_GNUPGHOME} \
 		--keyserver ${pub_keyserver} \
-		--recv-keys "${KEY_ID}" 2>&1)
+		--recv-keys "${GPG_KEY_ID}" 2>&1)
 	if [[ "${O}" =~ "keyserver search failed" ]] ; then
 eerror
 eerror "The public key server needs to be changed.  Set GPG_PUBLIC_KEYSERVER."
@@ -631,11 +620,11 @@ eerror
 	O=$(gpg \
 		--batch \
 		--homedir ${_GNUPGHOME} \
-		--list-keys "${KEY_ID}" 2>&1)
+		--list-keys "${GPG_KEY_ID}" 2>&1)
 echo "===================="
 echo "${O}"
 echo "===================="
-	if ! [[ "${O}" =~ "${KEY_ID}" && "${O}" =~ "${EXPECTED_UID}" ]] ; then
+	if ! [[ "${O}" =~ "${GPG_KEY_ID}" && "${O}" =~ "${GPG_EXPECTED_UID}" ]] ; then
 eerror
 eerror "The public key's ID was not found."
 eerror
@@ -643,7 +632,7 @@ eerror
 	fi
 	if [[ "${O}" =~ "revoked" ]] ; then
 eerror
-eerror "The public key ${KEY_ID} is untrusted and has been revoked upstream."
+eerror "The public key ${GPG_KEY_ID} is untrusted and has been revoked upstream."
 eerror
 		die
 	fi
