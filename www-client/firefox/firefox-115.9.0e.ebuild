@@ -124,8 +124,8 @@ e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
 " # SHA512
 LLVM_COMPAT=( 16 ) # Limited based on virtual/rust
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_URI=""
 MITIGATION_DATE=""
+MITIGATION_URI=""
 MOZ_ESR="yes"
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
