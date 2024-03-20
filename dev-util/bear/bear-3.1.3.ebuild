@@ -15,8 +15,13 @@ MY_PN="${PN/b/B}"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 CDEPEND="
-	>=net-libs/grpc-1.49.2[${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-3.11:0/3.21[${MULTILIB_USEDEP}]
+	|| (
+		=net-libs/grpc-1.49*[${MULTILIB_USEDEP}]
+		=net-libs/grpc-1.52*[${MULTILIB_USEDEP}]
+		=net-libs/grpc-1.53*[${MULTILIB_USEDEP}]
+		=net-libs/grpc-1.54*[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND+="
 	${CDEPEND}
