@@ -124,6 +124,7 @@ GTK3_PV="3.14.5"
 LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-12/"
+MITIGATION_DATE="Mar 19, 2024"
 MOZ_ESR=
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
@@ -1119,6 +1120,7 @@ pkg_setup() {
 einfo "Release type:  rapid"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
+einfo "Security announcement date:  ${MITIGATION_DATE}"
 	fi
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use pgo ; then
