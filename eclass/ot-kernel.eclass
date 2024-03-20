@@ -201,8 +201,8 @@ fi
 # https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files/blob/main/releasenote.md
 # SEV firmware mitigations needs to be bumped also.
 # Search "SEV FW" version and "μcode" for patch number to bump versions below.
-LINUX_FIRMWARE_PV="20230625_p20230724" # Based on latest available patch level cross referenced to the μcode column.
-LINUX_FIRMWARE_TIMESTAMP="2023-07-24 08:29:07 -0400" # Same as above from the git log.
+LINUX_FIRMWARE_PV="20230809" # Based on latest available patch level cross referenced to the μcode column.
+LINUX_FIRMWARE_TIMESTAMP="2023-08-09 07:59:05 -0400" # Same as above from the git log.
 INTEL_MICROCODE_PV="20240312_p20240312"
 RDEPEND+="
 	intel-microcode? (
