@@ -257,10 +257,18 @@ RDEPEND="
 		virtual/libelf:=
 	)
 	rpc? (
-		>=net-libs/grpc-1.49.3:=[cxx]
 		dev-libs/protobuf:0/3.21
+		|| (
+			=net-libs/grpc-1.49*[cxx]
+			=net-libs/grpc-1.52*[cxx]
+			=net-libs/grpc-1.53*[cxx]
+			=net-libs/grpc-1.54*[cxx]
+		)
+		net-libs/grpc:=
 	)
 "
+# The versions for protobuf and grpc was not disclosed in build files.
+# Originally >=net-libs/grpc-1.49.3:=[cxx]
 DEPEND="
 	${RDEPEND}
 "

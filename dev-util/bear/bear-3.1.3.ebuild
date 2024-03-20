@@ -22,6 +22,7 @@ CDEPEND="
 		=net-libs/grpc-1.53*[${MULTILIB_USEDEP}]
 		=net-libs/grpc-1.54*[${MULTILIB_USEDEP}]
 	)
+	net-libs/grpc:=
 "
 DEPEND+="
 	${CDEPEND}

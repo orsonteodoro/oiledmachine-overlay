@@ -211,10 +211,17 @@ RDEPEND="
 		)
 	)
 	rpc? (
-		>=net-libs/grpc-1.49.3:=[cxx]
 		dev-libs/protobuf:0/3.21
+		|| (
+			=net-libs/grpc-1.49*[cxx]
+			=net-libs/grpc-1.52*[cxx]
+			=net-libs/grpc-1.53*[cxx]
+			=net-libs/grpc-1.54*[cxx]
+		)
+		net-libs/grpc:=
 	)
 "
+# The versions for grpc and protobuf not disclosed in build files.
 # Tests:
 # - dev-python/lit provides the test runner
 # - sys-devel/llvm provide test utils (e.g. FileCheck)

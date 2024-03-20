@@ -32,8 +32,9 @@ RDEPEND="
 	>=sys-libs/zlib-1.2.11
 	dev-libs/protobuf:0/3.21
 	|| (
-		=net-libs/grpc-1.54*:=
+		=net-libs/grpc-1.54*
 	)
+	net-libs/grpc:=
 "
 DEPEND="
 	${RDEPEND}

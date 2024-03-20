@@ -36,10 +36,17 @@ r1
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
 # Upstream uses protobuf 3.17.3
+# Originally >=net-libs/grpc-1.39.1
 CDEPEND="
 	>=dev-libs/protobuf-3.17.3:0/3.21
-	>=net-libs/grpc-1.39.1
 	>=sys-devel/gcc-11.1.0
+	|| (
+		=net-libs/grpc-1.49*
+		=net-libs/grpc-1.52*
+		=net-libs/grpc-1.53*
+		=net-libs/grpc-1.54*
+	)
+	net-libs/grpc:=
 "
 # Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.
 # pcre2 not listed in CI.

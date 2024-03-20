@@ -203,6 +203,7 @@ CDEPEND="
 	|| (
 		=net-libs/grpc-1.59*[${MULTILIB_USEDEP}]
 	)
+	net-libs/grpc:=
 "
 # libepoxy missing in CI
 GLES_DEPEND="

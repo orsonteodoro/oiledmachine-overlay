@@ -296,7 +296,6 @@ RDEPEND+="
 	>=dev-libs/nsync-1.25.0
 	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
-	>=net-libs/grpc-1.27_p9999:=
 	>=sys-libs/zlib-1.2.13
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
@@ -307,7 +306,15 @@ RDEPEND+="
 		$(gen_rocm_depends)
 		dev-util/hip:=
 	)
+	|| (
+		=net-libs/grpc-1.49*
+		=net-libs/grpc-1.52*
+		=net-libs/grpc-1.53*
+		=net-libs/grpc-1.54*
+	)
+	net-libs/grpc:=
 "
+# Originally >=net-libs/grpc-1.27_p9999:=
 # We cannot use cuda 12 (which the project supports) until cudnn ebuild allows
 # for it.
 DEPEND+="

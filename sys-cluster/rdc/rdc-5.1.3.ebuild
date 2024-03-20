@@ -59,8 +59,8 @@ RDEPEND="
 			=net-libs/grpc-1.52*
 			=net-libs/grpc-1.53*
 			=net-libs/grpc-1.54*
-
 		)
+		net-libs/grpc:=
 	)
 	systemd? (
 		sys-apps/systemd

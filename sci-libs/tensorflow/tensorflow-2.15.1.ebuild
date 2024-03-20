@@ -524,18 +524,19 @@ gen_rocm_rdepend() {
 RDEPEND_PROTOBUF_3_21="
 	|| (
 		(
-			=net-libs/grpc-1.53*:=
+			=net-libs/grpc-1.53*
 			big-endian? (
-				=net-libs/grpc-1.53*:=[-python]
+				=net-libs/grpc-1.53*[-python]
 			)
 		)
 		(
-			=net-libs/grpc-1.54*:=
+			=net-libs/grpc-1.54*
 			big-endian? (
-				=net-libs/grpc-1.54*:=[-python]
+				=net-libs/grpc-1.54*[-python]
 			)
 		)
 	)
+	net-libs/grpc:=
 "
 
 RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21="
