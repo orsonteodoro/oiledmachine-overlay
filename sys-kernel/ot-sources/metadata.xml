@@ -1015,7 +1015,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
       4.19: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, pds
       5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, prjc, prjc-bmq, prjc-pds
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
-      6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.7: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.8: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
