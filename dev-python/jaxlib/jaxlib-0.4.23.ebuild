@@ -611,8 +611,10 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 && has_version "dev-util/hip:5.6" ; then
+		if has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
 			LLVM_SLOT=16
+			ROCM_SLOT="5.6"
+			ROCM_VERSION="${HIP_5_6_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
 		use_clang

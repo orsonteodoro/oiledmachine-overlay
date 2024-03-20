@@ -849,21 +849,21 @@ einfo "FORCE_LLVM_SLOT may be specified."
 	fi
 
 	if use rocm ; then
-		if has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 && has_version "dev-util/hip:5.7" ; then
+		if has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
 			_LLVM_COMPAT=( 17 )
-		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 && has_version "dev-util/hip:5.6" ; then
+		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
 			_LLVM_COMPAT=( 16 )
-		elif has rocm_5_5 ${IUSE_EFFECTIVE} && use rocm_5_5 && has_version "dev-util/hip:5.5" ; then
+		elif has rocm_5_5 ${IUSE_EFFECTIVE} && use rocm_5_5 ; then
 			_LLVM_COMPAT=( 16 )
-		elif has rocm_5_4 ${IUSE_EFFECTIVE} && use rocm_5_4 && has_version "dev-util/hip:5.4" ; then
+		elif has rocm_5_4 ${IUSE_EFFECTIVE} && use rocm_5_4 ; then
 			_LLVM_COMPAT=( 15 )
-		elif has rocm_5_3 ${IUSE_EFFECTIVE} && use rocm_5_3 && has_version "dev-util/hip:5.3" ; then
+		elif has rocm_5_3 ${IUSE_EFFECTIVE} && use rocm_5_3 ; then
 			_LLVM_COMPAT=( 15 )
-		elif has rocm_5_2 ${IUSE_EFFECTIVE} && use rocm_5_2 && has_version "dev-util/hip:5.2" ; then
+		elif has rocm_5_2 ${IUSE_EFFECTIVE} && use rocm_5_2 ; then
 			_LLVM_COMPAT=( 14 )
-		elif has rocm_5_1 ${IUSE_EFFECTIVE} && use rocm_5_1 && has_version "dev-util/hip:5.1" ; then
+		elif has rocm_5_1 ${IUSE_EFFECTIVE} && use rocm_5_1 ; then
 			_LLVM_COMPAT=( 14 )
-		elif has rocm_5_0 ${IUSE_EFFECTIVE} && use rocm_5_0 && has_version "dev-util/hip:5.0" ; then
+		elif has rocm_5_0 ${IUSE_EFFECTIVE} && use rocm_5_0 ; then
 			_LLVM_COMPAT=( 14 )
 		fi
 	fi
@@ -940,30 +940,38 @@ ewarn "ROCm support is a Work In Progress (WIP) / UNFINISHED"
 		use_gcc
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 && has_version "dev-util/hip:5.7" ; then
+		if has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
 			LLVM_SLOT=17
 			ROCM_SLOT="5.7"
-		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 && has_version "dev-util/hip:5.6" ; then
+			ROCM_VERSION="${HIP_5_7_VERSION}"
+		elif has rocm_5_6 ${IUSE_EFFECTIVE} && use rocm_5_6 ; then
 			LLVM_SLOT=16
 			ROCM_SLOT="5.6"
-		elif has rocm_5_5 ${IUSE_EFFECTIVE} && use rocm_5_5 && has_version "dev-util/hip:5.5" ; then
+			ROCM_VERSION="${HIP_5_6_VERSION}"
+		elif has rocm_5_5 ${IUSE_EFFECTIVE} && use rocm_5_5 ; then
 			LLVM_SLOT=16
 			ROCM_SLOT="5.5"
-		elif has rocm_5_4 ${IUSE_EFFECTIVE} && use rocm_5_4 && has_version "dev-util/hip:5.4" ; then
+			ROCM_VERSION="${HIP_5_5_VERSION}"
+		elif has rocm_5_4 ${IUSE_EFFECTIVE} && use rocm_5_4 ; then
 			LLVM_SLOT=15
 			ROCM_SLOT="5.4"
-		elif has rocm_5_3 ${IUSE_EFFECTIVE} && use rocm_5_3 && has_version "dev-util/hip:5.3" ; then
+			ROCM_VERSION="${HIP_5_4_VERSION}"
+		elif has rocm_5_3 ${IUSE_EFFECTIVE} && use rocm_5_3 ; then
 			LLVM_SLOT=15
 			ROCM_SLOT="5.3"
-		elif has rocm_5_2 ${IUSE_EFFECTIVE} && use rocm_5_2 && has_version "dev-util/hip:5.2" ; then
+			ROCM_VERSION="${HIP_5_3_VERSION}"
+		elif has rocm_5_2 ${IUSE_EFFECTIVE} && use rocm_5_2 ; then
 			LLVM_SLOT=14
 			ROCM_SLOT="5.2"
-		elif has rocm_5_1 ${IUSE_EFFECTIVE} && use rocm_5_1 && has_version "dev-util/hip:5.1" ; then
+			ROCM_VERSION="${HIP_5_2_VERSION}"
+		elif has rocm_5_1 ${IUSE_EFFECTIVE} && use rocm_5_1 ; then
 			LLVM_SLOT=14
 			ROCM_SLOT="5.1"
-		elif has rocm_5_0 ${IUSE_EFFECTIVE} && use rocm_5_0 && has_version "dev-util/hip:5.0" ; then
+			ROCM_VERSION="${HIP_5_1_VERSION}"
+		elif has rocm_5_0 ${IUSE_EFFECTIVE} && use rocm_5_0 ; then
 			LLVM_SLOT=14
 			ROCM_SLOT="5.0"
+			ROCM_VERSION="${HIP_5_0_VERSION}"
 		fi
 	elif tc-is-clang || use clang ; then
 		use_clang

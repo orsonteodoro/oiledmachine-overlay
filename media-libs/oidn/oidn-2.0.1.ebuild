@@ -137,10 +137,10 @@ REQUIRED_USE+="
 		)
 	)
 	rocm_5_5? (
-		llvm_slot_${HIP_5_5_LLVM_SLOT}
+		llvm_slot_16
 	)
 	rocm_5_6? (
-		llvm_slot_${HIP_5_6_LLVM_SLOT}
+		llvm_slot_16
 	)
 "
 gen_clang_depends() {
@@ -249,13 +249,13 @@ pkg_setup() {
 	fi
 
 	if use rocm_5_6 ; then
-		ROCM_VERSION="${HIP_5_6_VERSION}"
+		LLVM_SLOT=16
 		ROCM_SLOT="5.6"
-		LLVM_SLOT=${HIP_5_6_LLVM_SLOT}
+		ROCM_VERSION="${HIP_5_6_VERSION}"
 	elif use rocm_5_5 ; then
-		ROCM_VERSION="${HIP_5_5_VERSION}"
+		LLVM_SLOT=16
 		ROCM_SLOT="5.5"
-		LLVM_SLOT=${HIP_5_5_LLVM_SLOT}
+		ROCM_VERSION="${HIP_5_5_VERSION}"
 	fi
 
 	if use rocm ; then
