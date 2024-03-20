@@ -44,6 +44,7 @@ REQUIRED_USE="
 	)
 "
 # abseil-cpp needs >=c++14
+# Originally >=net-libs/grpc-1.44.0:= but relaxed
 RDEPEND="
 	sys-libs/libcap
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
@@ -51,8 +52,14 @@ RDEPEND="
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	)
 	standalone? (
-		>=net-libs/grpc-1.44.0:=
 		>=dev-libs/protobuf-3.19.2:0/3.21
+		|| (
+			=net-libs/grpc-1.49*
+			=net-libs/grpc-1.52*
+			=net-libs/grpc-1.53*
+			=net-libs/grpc-1.54*
+
+		)
 	)
 	systemd? (
 		sys-apps/systemd
