@@ -338,9 +338,6 @@ BDEPEND="
 				=dev-python/grpcio-testing-1.52*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-testing-1.54*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.55*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.56*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.57*:=[${PYTHON_USEDEP}]
 			)
 		)
 	')
