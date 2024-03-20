@@ -48,6 +48,7 @@ X86_FLAGS=(
 	avx
 	avx2
 	avx512vl
+	gfni
 	sha
 	sse2
 	sse4_2
@@ -2378,6 +2379,43 @@ _ot-kernel-pkgflags_aes() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO_AES"
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_aria
+# @DESCRIPTION:
+# Wrapper for the aria option.
+_ot-kernel-pkgflags_aria() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_ARIA}" == "1" ]] && continue
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CTR"
+	if [[ "${arch}" == "x86_64" ]] ; then
+		if [[ "${modes}" =~ ("ECB"|"CTR") ]] ; then
+			if ver_test "${KV_MAJOR_MINOR}" -ge "6.3" ; then
+				if \
+					   ot-kernel_use cpu_flags_x86_avx \
+					&& ot-kernel_use cpu_flags_x86_avx2 \
+					&& ot-kernel_use cpu_flags_x86_avx512vl \
+					&& ot-kernel_use cpu_flags_x86_gfni \
+				; then
+					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_GFNI_AVX512_X86_64"
+					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX2_X86_64"
+					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
+				elif ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx2 ; then
+					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX2_X86_64"
+					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
+				elif ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx ; then
+					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
+				fi
+			elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+				if ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx2 ; then
+					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
+				elif ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx ; then
+					ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA_AESNI_AVX_X86_64"
+				fi
+			fi
+		fi
+	fi
+	ot-kernel_y_configopt "CONFIG_CRYPTO_ARIA"
+}
+
 # @FUNCTION: _ot-kernel-pkgflags_anubis
 # @DESCRIPTION:
 # Wrapper for the anubis option.
@@ -2410,6 +2448,7 @@ _ot-kernel-pkgflags_blake2s() {
 		ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2S_ARM"
 	fi
 	if [[ "${arch}" == "x86_64" ]] ; then
+		# Can use avx512vl
 		ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2S_X86"
 	fi
 	ot-kernel_y_configopt "CONFIG_CRYPTO_BLAKE2S"
@@ -2865,6 +2904,26 @@ _ot-kernel-pkgflags_serpent() {
 	ot-kernel_y_configopt "CONFIG_CRYPTO_SERPENT"
 }
 
+# @FUNCTION: _ot-kernel-pkgflags_sm4
+# @DESCRIPTION:
+# Wrapper for the sm4 option.  Adds the simd but implied the generic as well.
+_ot-kernel-pkgflags_sm4() {
+	[[ "${OT_KERNEL_HAVE_CRYPTO_DEV_SM4}" == "1" ]] && continue
+	local modes="${@}"
+	[[ -z "${modes}" ]] && modes="ECB CBC CTR"
+	if [[ "${arch}" == "x86_64" ]] ; then
+		if [[ "${modes}" =~ ("ECB"|"CBC"|"CTR") ]] ; then
+			if ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx2 ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX2_X86_64"
+				ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
+			elif ot-kernel_use cpu_flags_x86_aesni && ot-kernel_use cpu_flags_x86_avx ; then
+				ot-kernel_y_configopt "CONFIG_CRYPTO_SM4_AESNI_AVX_X86_64"
+			fi
+		fi
+	fi
+	ot-kernel_y_configopt "CRYPTO_SM4_GENERIC"
+}
+
 # @FUNCTION: _ot-kernel-pkgflags_twofish
 # @DESCRIPTION:
 # Wrapper for the twofish option.  Adds the simd but implied the generic as well.
@@ -2999,10 +3058,12 @@ ot-kernel-pkgflags_cryptsetup() { # DONE
 		fi
 
 		[[ "${cryptsetup_ciphers}" =~ "aes" ]] && _ot-kernel-pkgflags_aes ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "aria" ]] && _ot-kernel-pkgflags_aria ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "anubis" ]] && _ot-kernel-pkgflags_anubis ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "camellia" ]] && _ot-kernel-pkgflags_camellia ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "cast6" ]] && _ot-kernel-pkgflags_cast6 ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "serpent" ]] && _ot-kernel-pkgflags_serpent ${cryptsetup_modes}
+		[[ "${cryptsetup_ciphers}" =~ "sm4" ]] && _ot-kernel-pkgflags_sm4 ${cryptsetup_modes}
 		[[ "${cryptsetup_ciphers}" =~ "twofish" ]] && _ot-kernel-pkgflags_twofish ${cryptsetup_modes}
 
 		[[ "${cryptsetup_hashes}" =~ "blake2b" ]] && _ot-kernel-pkgflags_blake2b

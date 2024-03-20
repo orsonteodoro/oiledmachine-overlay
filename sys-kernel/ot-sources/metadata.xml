@@ -1596,6 +1596,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
 
 
     OT_KERNEL_HAVE_CRYPTO_DEV_AES
+    OT_KERNEL_HAVE_CRYPTO_DEV_ARIA
     OT_KERNEL_HAVE_CRYPTO_DEV_ANUBIS
     OT_KERNEL_HAVE_CRYPTO_DEV_BLAKE2B
     OT_KERNEL_HAVE_CRYPTO_DEV_BLAKE2S
@@ -1616,6 +1617,7 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
     OT_KERNEL_HAVE_CRYPTO_DEV_SHA3
     OT_KERNEL_HAVE_CRYPTO_DEV_SHA512
     OT_KERNEL_HAVE_CRYPTO_DEV_SERPENT
+    OT_KERNEL_HAVE_CRYPTO_DEV_SM4
     OT_KERNEL_HAVE_CRYPTO_DEV_TWOFISH
 
     Acceptable values:
@@ -4011,6 +4013,9 @@ unset OT_KERNEL_PRIVATE_KEY
     <flag name="disable_debug">
       Installs scripts to disable debugging, tracing, verbose output or related
       code paths.
+    </flag>
+    <flag name="cpu_flags_x86_gfni">
+      Enables support for GFNI support for the ARIA cipher.
     </flag>
     <flag name="exfat">
       Enables or removes exFAT
