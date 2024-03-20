@@ -4,9 +4,10 @@
 
 EAPI=7
 
-CXX_STANDARD="-std=c++17"
-LLVM_COMPAT=( 16 )
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+# This ebuild corresponds to HEAD (aka latest commit).
+
+# U 20.04
+
 #
 # For some list of dependencies, see
 # https://github.com/enigma-dev/enigma-dev/blob/master/CI/install_emake_deps.sh
@@ -19,6 +20,7 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ALURE_PV="1.2" # missing in CI
 BOX2D_PV_EMAX="2.4" # missing in CI
 CLANG_PV="16.0.6"
+CXX_STANDARD="-std=c++17"
 BOOST_PV="1.83.0"
 BULLET_PV="3.06" # missing in CI
 CURL_PV="8.3.0"
@@ -38,6 +40,8 @@ LIBSDL2_PV="2.28.4"
 LIBSNDFILE_PV="1.2.2"
 LIBVORBIS_PV="1.3.7"
 LIBX11_PV="1.8.7"
+LLVM_COMPAT=( 16 )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="23.2.1"
 MPG123_PV="1.32.2"
 OPENAL_PV="1.23.1"
@@ -61,11 +65,13 @@ else
 	SRC_URI=""
 	die "FIXME"
 fi
+S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, \
 is an open source cross-platform game development environment."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
+RESTRICT="mirror"
 SLOT="0/9999" # Required because of the grpc/protobuf.
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -190,10 +196,13 @@ REQUIRED_USE+="
 		X
 	)
 "
+# The GRPC requirement has been relaxed
 CDEPEND="
 	>=sys-devel/gcc-${GCC_PV}
-	>=net-libs/grpc-1.58.1[${MULTILIB_USEDEP}]
 	>=dev-libs/protobuf-24.3:0/4.24[${MULTILIB_USEDEP}]
+	|| (
+		=net-libs/grpc-1.59*[${MULTILIB_USEDEP}]
+	)
 "
 # libepoxy missing in CI
 GLES_DEPEND="
@@ -353,8 +362,6 @@ BDEPEND+="
 		>=x11-libs/libX11-${LIBX11_PV}[${MULTILIB_USEDEP}]
 	)
 "
-S="${WORKDIR}/${PN}-${PV}"
-RESTRICT="mirror"
 DOCS=( "Readme.md" )
 PATCHES=(
 	"${FILESDIR}/enigma-9999-change-sdl2-audio-linking.patch"
