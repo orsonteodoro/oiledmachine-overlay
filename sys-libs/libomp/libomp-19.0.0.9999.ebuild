@@ -64,8 +64,8 @@ LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( python3_{10..12} )
 inherit hip-versions
 ROCM_SLOTS=(
-#	"6.3.0"
-#	"6.4.0"
+#	"${HIP_6_3_VERSION}"
+#	"${HIP_6_4_VERSION}"
 )
 
 inherit llvm-ebuilds

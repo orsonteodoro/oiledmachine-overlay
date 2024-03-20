@@ -1259,14 +1259,14 @@ ewarn
 			|| die
 
 		local rocm_version=""
-		if use llvm-15 && has_version "=dev-util/hip-5.4" ; then
-			rocm_version="5.4.3"
-		elif use llvm-15 && has_version "=dev-util/hip-5.3" ; then
-			rocm_version="5.3.3"
-		elif use llvm-14 && has_version "=dev-util/hip-5.2" ; then
-			rocm_version="5.2.3"
-		elif use llvm-14 && has_version "=dev-util/hip-5.1" ; then
-			rocm_version="5.1.3"
+		if use rocm_5_4 ; then
+			rocm_version="${HIP_5_4_VERSION}"
+		elif use rocm_5_3 ; then
+			rocm_version="${HIP_5_3_VERSION}"
+		elif use rocm_5_2 ; then
+			rocm_version="${HIP_5_2_VERSION}"
+		elif use rocm_5_1 ; then
+			rocm_version="${HIP_5_1_VERSION}"
 		fi
 
 		sed -i "s|HIP 5.5.0|HIP ${rocm_version}|g" \

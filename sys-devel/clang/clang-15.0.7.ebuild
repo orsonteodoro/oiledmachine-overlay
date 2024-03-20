@@ -9,10 +9,10 @@ UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit cmake llvm llvm.org multilib multilib-minimal prefix python-single-r1
-inherit toolchain-funcs
-inherit flag-o-matic git-r3 ninja-utils uopts
 inherit llvm-ebuilds
+inherit cmake flag-o-matic git-r3 hip-versions llvm llvm.org multilib
+inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
+inherit uopts
 
 KEYWORDS="
 amd64 arm arm64 ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x64-macos
@@ -117,12 +117,12 @@ RDEPEND+="
 		~sys-devel/llvm-${PV}:${LLVM_MAJOR}=[${MULTILIB_USEDEP},bolt,debug=]
 	)
 	rocm_5_3? (
-		dev-libs/rocm-device-libs:5.3
-		dev-libs/rocr-runtime:5.3
+		~dev-libs/rocm-device-libs-${HIP_5_3_VERSION}:5.3
+		~dev-libs/rocr-runtime-${HIP_5_3_VERSION}:5.3
 	)
 	rocm_5_4? (
-		dev-libs/rocm-device-libs:5.4
-		dev-libs/rocr-runtime:5.4
+		~dev-libs/rocm-device-libs-${HIP_5_4_VERSION}:5.4
+		~dev-libs/rocr-runtime-${HIP_5_4_VERSION}:5.4
 	)
 	static-analyzer? (
 		dev-lang/perl:*

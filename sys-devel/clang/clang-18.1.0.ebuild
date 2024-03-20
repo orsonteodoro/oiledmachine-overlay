@@ -27,9 +27,9 @@ UOPTS_BOLT_DISABLE_BDEPEND=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
-inherit cmake llvm.org llvm-utils multilib multilib-minimal prefix python-single-r1
-inherit toolchain-funcs
-inherit flag-o-matic git-r3 ninja-utils uopts
+inherit cmake flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
+inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
+inherit uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~arm64-macos ~x64-macos"
 

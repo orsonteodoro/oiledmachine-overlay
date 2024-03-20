@@ -5,29 +5,16 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10..11} )
 
-inherit pax-utils python-single-r1 rocm toolchain-funcs
-
-if [[ "${PV}" == "9999" ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/hashcat/hashcat.git"
-else
-	KEYWORDS="~amd64"
-	SRC_URI="https://github.com/hashcat/hashcat/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-fi
-
-DESCRIPTION="World's fastest and most advanced password recovery utility"
-HOMEPAGE="https://github.com/hashcat/hashcat"
-LICENSE="MIT"
-SLOT="0"
+inherit hip-versions
 
 ROCM_SLOTS=(
-	"5.1.3"
-	"5.2.3"
-	"5.3.3"
-	"5.4.3"
-	"5.5.1"
-	"5.6.1"
-	"5.7.1"
+	"${HIP_5_1_VERSION}"
+	"${HIP_5_2_VERSION}"
+	"${HIP_5_3_VERSION}"
+	"${HIP_5_4_VERSION}"
+	"${HIP_5_5_VERSION}"
+	"${HIP_5_6_VERSION}"
+	"${HIP_5_7_VERSION}"
 )
 rocm_gen_iuse() {
 	local s
@@ -38,17 +25,9 @@ rocm_gen_iuse() {
 		"
 	done
 }
-IUSE="
-$(rocm_gen_iuse)
-brain
-intel-opencl-cpu-runtime
-orca
-pocl
-rocm
-video_cards_amdgpu
-video_cards_intel
-video_cards_nvidia
-"
+
+inherit pax-utils python-single-r1 rocm toolchain-funcs
+
 rocm_gen_rocm_required_use1() {
 	local s
 	for s in ${ROCM_SLOTS[@]} ; do
@@ -89,6 +68,31 @@ gen_depend_rocm() {
 	done
 }
 
+
+if [[ "${PV}" == "9999" ]]; then
+	inherit git-r3
+	EGIT_REPO_URI="https://github.com/hashcat/hashcat.git"
+else
+	KEYWORDS="~amd64"
+	SRC_URI="https://github.com/hashcat/hashcat/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+fi
+
+DESCRIPTION="World's fastest and most advanced password recovery utility"
+HOMEPAGE="https://github.com/hashcat/hashcat"
+LICENSE="MIT"
+RESTRICT="test"
+SLOT="0"
+IUSE="
+$(rocm_gen_iuse)
+brain
+intel-opencl-cpu-runtime
+orca
+pocl
+rocm
+video_cards_amdgpu
+video_cards_intel
+video_cards_nvidia
+"
 REQUIRED_USE="
 	$(rocm_gen_rocm_required_use1)
 	$(rocm_gen_rocm_required_use2)
@@ -112,7 +116,6 @@ REQUIRED_USE="
 		video_cards_nvidia
 	)
 "
-RESTRICT="test"
 DEPEND="
 	!video_cards_nvidia? (
 		virtual/opencl
@@ -155,29 +158,36 @@ PATCHES=(
 )
 
 pkg_setup() {
+	python-single-r1_pkg_setup
 	if use rocm ; then
-		python-single-r1_pkg_setup
 		if use rocm_5_1 ; then
 			LLVM_SLOT=14
 			ROCM_SLOT="5.1"
+			ROCM_VERSION="${HIP_5_1_VERSION}"
 		elif use rocm_5_2 ; then
 			LLVM_SLOT=14
 			ROCM_SLOT="5.2"
+			ROCM_VERSION="${HIP_5_2_VERSION}"
 		elif use rocm_5_3 ; then
 			LLVM_SLOT=15
 			ROCM_SLOT="5.3"
+			ROCM_VERSION="${HIP_5_3_VERSION}"
 		elif use rocm_5_4 ; then
 			LLVM_SLOT=15
 			ROCM_SLOT="5.4"
+			ROCM_VERSION="${HIP_5_4_VERSION}"
 		elif use rocm_5_5 ; then
 			LLVM_SLOT=16
 			ROCM_SLOT="5.5"
+			ROCM_VERSION="${HIP_5_5_VERSION}"
 		elif use rocm_5_6 ; then
 			LLVM_SLOT=16
 			ROCM_SLOT="5.6"
+			ROCM_VERSION="${HIP_5_6_VERSION}"
 		elif use rocm_5_7 ; then
 			LLVM_SLOT=17
 			ROCM_SLOT="5.7"
+			ROCM_VERSION="${HIP_5_7_VERSION}"
 		fi
 		rocm_pkg_setup
 	fi
