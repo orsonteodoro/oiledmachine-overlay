@@ -5614,24 +5614,64 @@ eerror
 		fi
 	}
 
-	_y_ibt() {
+	_y_cet_ibt() {
 		ot-kernel_y_configopt "CONFIG_X86_KERNEL_IBT"
 		local ready=0
-		if tc-is-gcc && ver_test $(gcc-version) -ge "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
+		local gcc_version=$(gcc-version)
+		local clang_version=$(clang-version)
+		if tc-is-gcc && ver_test "${gcc_version}" -ge "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
 			ready=1
-		elif tc-is-clang && ver_test $(clang-version) -ge "14" ; then
+		elif tc-is-clang && ver_test "${clang_version}" -ge "14" && ot-kernel_has_version ">=sys-devel/lld-${clang_version}" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
-			local gcc_version=$(gcc-version)
-			local clang_version=$(clang-version)
 eerror
-eerror "Switch to >=gcc-9 with >=binutils-2.2.9, or >=clang-14 for IBT support"
+eerror "For CET-IBT (Indirect Branch Tracking) support for hardware forward edge CFI, switch to"
+eerror
+eerror "  >=gcc-9 with >=binutils-2.2.9"
+eerror
+eerror "    or"
+eerror
+eerror "  >=clang-14 with >=lld-14"
 eerror
 eerror "Actual GCC version:  ${gcc_version}"
 eerror "Actual Clang version:  ${clang_version}"
 eerror
-			die
+			if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
+				die
+			else
+				:
+			fi
+		fi
+	}
+	_y_cet_ss() {
+		ot-kernel_y_configopt "CONFIG_X86_USER_SHADOW_STACK"
+		local ready=0
+		local gcc_version=$(gcc-version)
+		local clang_version=$(clang-version)
+		if tc-is-gcc && ver_test "${gcc_version}" -ge "8" && ot-kernel_has_version ">=sys-devel/binutils-2.31" ; then
+			ready=1
+		elif tc-is-clang && ver_test "${clang_version}" -ge "6" && ot-kernel_has_version ">=sys-devel/lld-6" ; then
+			ready=1
+		fi
+		if (( ${ready} == 0 )) ; then
+eerror
+eerror "For CET-SS User Shadow Stack support for hardware backward edge CFI, switch to"
+eerror
+eerror "  >=gcc-8 with >=binutils-2.31"
+eerror
+eerror "    or"
+eerror
+eerror "  >=clang-6 with >=lld-6"
+eerror
+eerror "Actual GCC version:  ${gcc_version}"
+eerror "Actual Clang version:  ${clang_version}"
+eerror
+			if has cet ${IUSE_EFFECTIVE} && ot-kernel_use cet ; then
+				die
+			else
+				:
+			fi
 		fi
 	}
 
@@ -5816,6 +5856,13 @@ eerror
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
 			ot-kernel_unset_configopt "CONFIG_CPU_SRSO"
 		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_X86_CET"
+				ot-kernel_unset_configopt "CONFIG_X86_KERNEL_IBT"
+				ot-kernel_unset_configopt "CONFIG_X86_USER_SHADOW_STACK"
+			fi
+		fi
 	elif [[ \
 		   "${hardening_level}" == "default" \
 		|| "${hardening_level}" == "practical" \
@@ -5975,7 +6022,7 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				_y_ibt
+				_y_cet_ibt
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
@@ -5995,6 +6042,13 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.5" ; then
 			ot-kernel_y_configopt "CONFIG_CPU_SRSO"
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_X86_CET"
+				_y_cet_ibt  # Forward-edge CFI
+				_y_cet_ss   # Backward-edge CFI
+			fi
 		fi
 	elif [[ \
 		   "${hardening_level}" == "secure-af" \
@@ -6268,7 +6322,7 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
-				_y_ibt
+				_y_cet_ibt
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
@@ -6291,6 +6345,13 @@ eerror
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_CPU_SRSO"
 				fi
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+			if [[ "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_X86_CET"
+				_y_cet_ibt  # Forward-edge CFI
+				_y_cet_ss   # Backward-edge CFI
 			fi
 		fi
 	# See https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks
