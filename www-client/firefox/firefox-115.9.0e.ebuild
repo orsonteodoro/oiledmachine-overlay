@@ -124,6 +124,7 @@ e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
 " # SHA512
 LLVM_COMPAT=( 16 ) # Limited based on virtual/rust
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
+MITIGATION_URI=""
 MOZ_ESR="yes"
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
@@ -1118,6 +1119,9 @@ ewarn
 NABIS=0
 pkg_setup() {
 einfo "Release type:  ESR (Extended Service Release)"
+	if [[ -n "${MITIGATION_URI}" ]] ; then
+einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
+	fi
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use pgo ; then
 			if ! has userpriv ${FEATURES} ; then
