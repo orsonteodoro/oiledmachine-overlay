@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# firefox-115.7.0e.ebuild -> firefox-115.8.0e.ebuild
+# 115.8.0e -> 115.9.0e
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -13,8 +13,42 @@ EAPI=8
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates it will have an esr suffix.
 # For security advisories, see https://www.mozilla.org/en-US/security/advisories/
 
+# Version announcements can be found here also:
+# https://wiki.mozilla.org/Release_Management/Calendar
+
+#
+# For dependencies versioning, files listed other than moz.configure have a
+# higher weight than the moz.configure file.
+#
+# For dependency versioning, see also
+# https://firefox-source-docs.mozilla.org/setup/linux_build.html
+# https://www.mozilla.org/en-US/firefox/117.0.1/system-requirements/
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/moz.configure
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/media/libaom/config/aom_version.h L7
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/modules/freetype2/include/freetype/freetype.h L4943
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/taskcluster/ci/fetch/toolchains.yml
+#   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/taskcluster/ci/packages/
+#   Keyword search:  gtk
+# /var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0/taskcluster/ci/toolchain/
+#   Keyword search:  nasm, nodejs, zlib
+
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
-# The latest can be found with:
+
+# The latest release version can be found with:
 __='
 curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 	| cut -f 3 -d ">" \
@@ -26,23 +60,78 @@ curl -l http://ftp.mozilla.org/pub/firefox/releases/ \
 '
 unset __
 
-# Version announcements can be found here also:
-# https://wiki.mozilla.org/Release_Management/Calendar
+# To check every minor version or update MOZ_LANGS use the code below:
+__='
+PV="115.9.0"
+wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
+	| grep "href.*linux-x86_64"  \
+	| cut -f 3 -d ">" \
+	| cut -f 1 -d "<" \
+	| sed -e "s|/||g" \
+	| sed -e "s|.xpi$||g" \
+	| sed -e "s|^\.\.$||g" \
+	| tr "\n" " " \
+	| fold -w 80 -s \
+	| sed -e "s|^ ||g" \
+	| sed -e "s| $||g"
+'
+unset __
 
+__='
+# For dependency versions, scan also with:
+SRC="/var/tmp/portage/www-client/firefox-115.9.0e/work/firefox-115.9.0"
+grep -E \
+	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
+	-e "dependency" \
+	-e "find_library" \
+	-e "find_package" \
+	-e "find_program" \
+	-e "ExternalProject" \
+	-e "PKG_CHECK_MODULES" \
+	-e "pkg_check_modules"  \
+	-e "REQUIRED" \
+	$(find "${SRC}" \
+		-name "*.mozbuild" \
+		-o -name "moz.build" \
+		-o -name "moz.configure" \
+	) \
+	| grep -v "MPL" \
+	| grep -i -v "license" \
+	| grep -F -v "/zero/"
+'
+unset __
+#   Keyword search:  aom, dbus, dbus-glib, fontconfig, pango, perl, pixman, xkbcommon
+
+BUILD_OBJ_DIR="" # global var not const
+# One of the major sources of lag comes from dependencies.  These are strict to
+# match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
+)
+DBUS_PV="0.60"
+DBUS_GLIB_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
+FFMPEG_PV="4.4.1" # This corresponds to y in x.y.z from the subslot.
 FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-09.tar.xz"
-
+GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
+GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
+GTK3_PV="3.14.5"
+LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-ESR-THIRD-PARTY-LICENSES.html"
+LICENSE_FINGERPRINT="\
+ed7ef4de89840f20482d43f47149d993b5280de787a017114730e0d296ee5035\
+e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
+" # SHA512
 LLVM_COMPAT=( 16 ) # Limited based on virtual/rust
-
-PYTHON_COMPAT=( python3_{10..11} )
-PYTHON_REQ_USE="ncurses,sqlite,ssl"
-
-WANT_AUTOCONF="2.1"
-
-VIRTUALX_REQUIRED="manual"
-
+MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MOZ_ESR="yes"
-
+MOZ_LANGS=(
+ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
+en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
+gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
+mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sc sco si sk
+sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
+)
 MOZ_PV="${PV/e}"
 MOZ_PV_SUFFIX=
 if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
@@ -53,68 +142,63 @@ if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
 	MOZ_PV="${MOZ_PV/_beta/b}"  # Handle beta for SRC_URI
 	MOZ_PV="${MOZ_PV%%_rc*}"    # Handle rc for SRC_URI
 fi
-
 if [[ -n "${MOZ_ESR}" ]] ; then
 	# ESR releases have slightly different version numbers
 	MOZ_PV="${MOZ_PV}esr"
 fi
-
 MOZ_PN="${PN%-bin}"
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
-
+MOZILLA_FIVE_HOME="" # global var not const
+NASM_PV="2.14.02"
+PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_REQ_USE="ncurses,sqlite,ssl"
+RUST_PV="1.69.0"
+SPEECH_DISPATCHER_PV="0.11.4-r1"
 UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
+WANT_AUTOCONF="2.1"
+XKBCOMMON_PV="0.4.1"
+VIRTUALX_REQUIRED="manual"
 
 inherit autotools check-reqs desktop flag-o-matic gnome2-utils linux-info
 inherit llvm-r1 multiprocessing pax-utils python-any-r1 toolchain-funcs virtualx
 inherit xdg
 inherit check-linker lcnr multilib-minimal rust-toolchain uopts cflags-depends
 
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
-
 if [[ ${PV} == *_rc* ]] ; then
 	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*e}"
 fi
-
 if [[ ${PV} == *e* ]] ; then
 	MOZ_SRC_BASE_URI="http://ftp.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
 fi
-
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 )
-
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
 "
 #https://github.com/mozilla/gecko-dev/commit/d4f5769a01531070eb401fd0b78bbd0ce22c4b1f.patch
 #	-> ${PN}-d4f5769.patch
-
 # d4f5769 - Bug 1746462 - add support for --enable-linker=mold on linux.
+S="${WORKDIR}/${PN}-${PV/e}"
+S_BAK="${WORKDIR}/${PN}-${PV/e}"
 
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
-
-KEYWORDS="amd64 arm64 ~ppc64 ~riscv x86"
-
+# llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
+RESTRICT="mirror"
 SLOT="esr"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 # MPL-2.0 is the mostly used and default
-LICENSE_FINGERPRINT="\
-ed7ef4de89840f20482d43f47149d993b5280de787a017114730e0d296ee5035\
-e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
-" # SHA512
-GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
-GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
-MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 # FF-XX.YY-THIRD-PARTY-LICENSES should be updated per new feature or if the \
 # fingerprint changes.
 # Update the license version also.
-LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-ESR-THIRD-PARTY-LICENSES.html"
 LICENSE+="
 	${LICENSE_FILE_NAME}
 	(
@@ -402,68 +486,6 @@ REQUIRED_USE="
 	)
 "
 
-#
-# For dependencies versioning, files listed other than moz.configure have a
-# higher weight than the moz.configure file.
-#
-# For dependency versioning, see also
-# https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/117.0.1/system-requirements/
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/moz.configure
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/media/libaom/config/aom_version.h L7
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/modules/freetype2/include/freetype/freetype.h L4943
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/taskcluster/ci/fetch/toolchains.yml
-#   Keyword searches:  cbindgen-, llvm-, pkgconf-, rust-
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/taskcluster/ci/packages/
-#   Keyword search:  gtk
-# /var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0/taskcluster/ci/toolchain/
-#   Keyword search:  nasm, nodejs, zlib
-__='
-# Scan with also:
-SRC="/var/tmp/portage/www-client/firefox-115.8.0e/work/firefox-115.8.0"
-grep -E \
-	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
-	-e "dependency" \
-	-e "find_library" \
-	-e "find_package" \
-	-e "find_program" \
-	-e "ExternalProject" \
-	-e "PKG_CHECK_MODULES" \
-	-e "pkg_check_modules"  \
-	-e "REQUIRED" \
-	$(find "${SRC}" \
-		-name "*.mozbuild" \
-		-o -name "moz.build" \
-		-o -name "moz.configure" \
-	) \
-	| grep -v "MPL" \
-	| grep -i -v "license" \
-	| grep -F -v "/zero/"
-'
-unset __
-#   Keyword search:  aom, dbus, dbus-glib, fontconfig, pango, perl, pixman, xkbcommon
-
-DBUS_PV="0.60"
-DBUS_GLIB_PV="0.60"
-FFMPEG_PV="4.4.1" # This corresponds to y in x.y.z from the subslot.
-GTK3_PV="3.14.5"
-NASM_PV="2.14.02"
-SPEECH_DISPATCHER_PV="0.11.4-r1"
-XKBCOMMON_PV="0.4.1"
-
 FF_ONLY_DEPEND="
 	!www-client/firefox:0
 	!www-client/firefox:rapid
@@ -734,7 +756,6 @@ gen_llvm_bdepend() {
 		"
 	done
 }
-RUST_PV="1.69.0"
 BDEPEND+="
 	!elibc_glibc? (
 		|| (
@@ -775,21 +796,6 @@ BDEPEND+="
 	)
 	$(gen_llvm_bdepend)
 "
-# llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
-RESTRICT="mirror"
-
-S="${WORKDIR}/${PN}-${PV/e}"
-S_BAK="${WORKDIR}/${PN}-${PV/e}"
-
-MOZILLA_FIVE_HOME=""
-BUILD_OBJ_DIR=""
-
-# One of the major sources of lag comes from dependencies.  These are strict to
-# match performance to competition or normal builds.
-declare -A CFLAGS_RDEPEND=(
-	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
-	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
-)
 
 # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or overridden in the
 # enviromnent.  (For advanced hackers only)
@@ -822,31 +828,6 @@ einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLV
 
 einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
-
-# Check every minor version
-__='
-PV="115.8.0"
-wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
-	| grep "href.*linux-x86_64"  \
-	| cut -f 3 -d ">" \
-	| cut -f 1 -d "<" \
-	| sed -e "s|/||g" \
-	| sed -e "s|.xpi$||g" \
-	| sed -e "s|^\.\.$||g" \
-	| tr "\n" " " \
-	| fold -w 80 -s \
-	| sed -e "s|^ ||g" \
-	| sed -e "s| $||g"
-'
-unset __
-
-MOZ_LANGS=(
-ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA
-en-GB en-US eo es-AR es-CL es-ES es-MX et eu fa ff fi fr fur fy-NL ga-IE gd gl
-gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
-mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sc sco si sk
-sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
-)
 
 mozilla_set_globals() {
 	# https://bugs.gentoo.org/587334
