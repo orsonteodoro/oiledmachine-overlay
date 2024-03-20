@@ -130,6 +130,7 @@ LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs I
 LLVM_OFFICIAL_SLOT="${LLVM_MAX_SLOT}" # Cr official slot
 MESA_PV="20.3.5"
 MITIGATION_URI="https://chromereleases.googleblog.com/2024/03/stable-channel-update-for-desktop_19.html"
+MITIGATION_DATE="Mar 19, 2024"
 PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_MIN_SLOT}"
 PYTHON_COMPAT=( python3_{9..12} )
 PYTHON_REQ_USE="xml(+)"
@@ -1445,6 +1446,7 @@ pkg_setup() {
 einfo "Release channel:  ${SLOT#*/}"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security fixes applied:  ${MITIGATION_URI}"
+einfo "Security announcement date:  ${MITIGATION_DATE}"
 	fi
 	pre_build_checks
 
