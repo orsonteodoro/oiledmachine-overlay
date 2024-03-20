@@ -314,9 +314,6 @@ RDEPEND="
 			=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
 		)
 	')
 "

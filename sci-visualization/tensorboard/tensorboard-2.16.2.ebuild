@@ -73,9 +73,6 @@ RDEPEND="
 		|| (
 			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
 			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
 		)
 	')
 	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_SINGLE_USEDEP}]
@@ -97,9 +94,6 @@ BDEPEND="
 			|| (
 				=dev-python/grpcio-testing-1.53*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-testing-1.54*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.55*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.56*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.57*:=[${PYTHON_USEDEP}]
 			)
 		)
 	')

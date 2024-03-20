@@ -62,6 +62,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+# Uses PROTOBUF_SLOT=0/3.20
 BDEPEND="
 	test? (
 		<dev-python/cryptography-39[${PYTHON_USEDEP}]

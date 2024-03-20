@@ -506,44 +506,7 @@ gen_rocm_rdepend() {
 	done
 }
 
-RDEPEND_GRPCIO_LITTLE_ENDIAN="
-	|| (
-		(
-			=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
-		)
-		(
-			=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
-		)
-		(
-			=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.55*:=[${PYTHON_USEDEP}]
-		)
-		(
-			=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.56*:=[${PYTHON_USEDEP}]
-		)
-		(
-			=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.57*:=[${PYTHON_USEDEP}]
-		)
-	)
-"
-
-# Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
-# The grpcio slots below are limited by protobuf:0/32.
-# TODO package
-# dev-python/portpicker
-#
-# google-cloud-cpp acceptable range: [2.9.0-2.10.1] based on same major
-# abseil-cpp version and same major-minor of protobuf without multiple
-# slot conflict.
-#
-RDEPEND="
-	!alt-ssl? (
-		>=dev-libs/openssl-3:0=
-	)
+RDEPEND_PROTOBUF_3_21="
 	|| (
 		(
 			=net-libs/grpc-1.53*:=
@@ -557,25 +520,35 @@ RDEPEND="
 				=net-libs/grpc-1.54*:=[-python]
 			)
 		)
-		(
-			=net-libs/grpc-1.55*:=
-			big-endian? (
-				=net-libs/grpc-1.55*:=[-python]
-			)
-		)
-		(
-			=net-libs/grpc-1.56*:=
-			big-endian? (
-				=net-libs/grpc-1.56*:=[-python]
-			)
-		)
-		(
-			=net-libs/grpc-1.57*:=
-			big-endian? (
-				=net-libs/grpc-1.57*:=[-python]
-			)
-		)
 	)
+"
+
+RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21="
+	$(python_gen_cond_dep '
+		|| (
+			(
+				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
+			)
+		)
+	' python3_{10..11})
+"
+
+# Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
+# The grpcio slots below are limited by protobuf:0/32.
+# TODO package
+# dev-python/portpicker
+#
+# google-cloud-cpp acceptable range: [2.9.0-2.10.1] based on same major
+# abseil-cpp version and same major-minor of protobuf without multiple
+# slot conflict.
+#
+RDEPEND="
+	${RDEPEND_PROTOBUF_3_21}
 	>=dev-cpp/abseil-cpp-20230125.2:0/20230125
 	>=dev-db/sqlite-3.40.1
 	>=dev-libs/double-conversion-3.2.0
@@ -590,6 +563,9 @@ RDEPEND="
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
 	dev-libs/protobuf:${PROTOBUF_SLOT}
+	!alt-ssl? (
+		>=dev-libs/openssl-3:0=
+	)
 	cuda? (
 		${CUDA_RDEPEND}
 		=dev-libs/cudnn-8.6*
@@ -630,7 +606,7 @@ RDEPEND="
 
 		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
 		!big-endian? (
-			${RDEPEND_GRPCIO_LITTLE_ENDIAN}
+			${RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21}
 		)
 		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
@@ -698,15 +674,15 @@ gen_llvm_bdepend() {
 # GCC:11 - Based on archlinux
 # gcc-11.3.1_p20221209-p3 does not build
 BDEPEND="
-	!python? (
-		dev-lang/python
-	)
 	>=dev-build/bazel-6.1.0:6
 	app-arch/pigz
 	app-arch/unzip
 	dev-java/java-config
 	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-util/patchelf
+	!python? (
+		dev-lang/python
+	)
 	clang? (
 		|| (
 			$(gen_llvm_bdepend)
@@ -718,7 +694,7 @@ BDEPEND="
 	)
 	python? (
 		!big-endian? (
-			${RDEPEND_GRPCIO_LITTLE_ENDIAN}
+			${RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21}
 		)
 		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.1[${PYTHON_USEDEP}]
