@@ -141,8 +141,7 @@ eerror "directly."
 			# 17 16 15 14 order
 			# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
 			for s in $(seq 14 ${LLVM_COMPAT[0]} | tac) ; do
-				if has_version "sys-devel/llvm:${s}[bolt]" ; then
-					s="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+				if has_version "sys-devel/llvm:${s}" && has_version "sys-devel/clang:${s}" && has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
 					break
 				fi
 			done
@@ -150,13 +149,12 @@ eerror "directly."
 			# 14 15 16 17 order
 			# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
 			for s in $(seq 14 ${LLVM_COMPAT[-1]} | tac) ; do
-				if has_version "sys-devel/llvm:${s}[bolt]" ; then
-					s="${ESYSROOT}/usr/lib/llvm/${s}/bin"
+				if has_version "sys-devel/llvm:${s}" && has_version "sys-devel/clang:${s}" && has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
 					break
 				fi
 			done
 		elif [[ -n "${LLVM_MAX_SLOT}" ]] ; then
-			if (( ${LLVM_MAX_SLOT} < ${s} )) ; then
+			if (( ${s} > ${LLVM_MAX_SLOT} )) ; then
 				s="${LLVM_MAX_SLOT}"
 			fi
 		fi
