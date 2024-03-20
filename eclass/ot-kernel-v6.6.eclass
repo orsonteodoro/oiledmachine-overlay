@@ -458,6 +458,19 @@ CDEPEND+="
 	cet? (
 		!clang? (
 			>=sys-devel/binutils-2.31
+			>=sys-devel/gcc-9
+		)
+	)
+	cpu_flags_x86_gfni? (
+		!clang? (
+			>=sys-devel/binutils-2.30
+			>=sys-devel/gcc-6
+		)
+	)
+	cpu_flags_x86_tpause? (
+		!clang? (
+			>=sys-devel/binutils-2.31.1
+			>=sys-devel/gcc-9
 		)
 	)
 	gtk? (

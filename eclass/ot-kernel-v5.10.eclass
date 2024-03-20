@@ -357,6 +357,12 @@ CDEPEND+="
 	bzip2? (
 		app-arch/bzip2
 	)
+	cpu_flags_x86_tpause? (
+		!clang? (
+			>=sys-devel/binutils-2.31.1
+			>=sys-devel/gcc-9
+		)
+	)
 	gtk? (
 		dev-libs/glib:2
 		gnome-base/libglade:2.0

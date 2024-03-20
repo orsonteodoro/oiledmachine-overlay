@@ -53,6 +53,7 @@ X86_FLAGS=(
 	sse2
 	sse4_2
 	ssse3
+	tpause
 )
 
 ARM_FLAGS=(
