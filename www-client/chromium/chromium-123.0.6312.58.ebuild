@@ -48,8 +48,8 @@ EAPI=8
 # /var/tmp/portage/www-client/chromium-123.0.6312.58/work/chromium-123.0.6312.58/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
 #   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a1											; see tag
 # /var/tmp/portage/www-client/chromium-123.0.6312.58/work/chromium-123.0.6312.58/third_party/zstd/README.chromium			; live version
-#   https://github.com/facebook/zstd/commit/050fec5c378d676fede8b2171ec5e84f6afa1504							; no tag
-#   https://github.com/facebook/zstd/blob/050fec5c378d676fede8b2171ec5e84f6afa1504/lib/zstd.h#L107					; version
+#   https://github.com/facebook/zstd/commit/621a263fb2e6c2175fbd489e5d77ee8038baa2b2							; no tag
+#   https://github.com/facebook/zstd/blob/621a263fb2e6c2175fbd489e5d77ee8038baa2b2/lib/zstd.h#L107					; version
 #
 
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
@@ -60,6 +60,12 @@ CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 #
 GEN_ABOUT_CREDITS=0
 #
+
+# One of the major sources of lag comes from dependencies
+# These are strict to match performance to competition or normal builds.
+declare -A CFLAGS_RDEPEND=(
+	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
+)
 
 # LANGS obtainable from:
 # src="./build/config/locales.gni"
@@ -101,10 +107,10 @@ CR_CLANG_USED_UNIX_TIMESTAMP="1707930042" # Cached.  Use below to obtain this. \
 # TIMESTAMP=$(wget -q -O - https://github.com/llvm/llvm-project/commit/${CR_CLANG_USED}.patch \
 #	| grep -F -e "Date:" | sed -e "s|Date: ||") ; date -u -d "${TIMESTAMP}" +%s
 # Change also LLVM_OFFICIAL_SLOT
-
-FFMPEG_LIBAVUTIL_SOVER="58.32.100" # third_party/ffmpeg/libavutil/version.h
-FFMPEG_LIBAVCODEC_SOVER="60.34.100" # third_party/ffmpeg/libavcodec/version*.h
-FFMPEG_LIBAVFORMAT_SOVER="60.17.100" # third_party/ffmpeg/libavformat/version*.h
+DISABLE_AUTOFORMATTING="yes"
+FFMPEG_LIBAVUTIL_SOVER="58.36.100" # third_party/ffmpeg/libavutil/version.h
+FFMPEG_LIBAVCODEC_SOVER="60.37.100" # third_party/ffmpeg/libavcodec/version*.h
+FFMPEG_LIBAVFORMAT_SOVER="60.20.100" # third_party/ffmpeg/libavformat/version*.h
 FFMPEG_PV="6.0" # It should be 9999 but relaxed.  ; They don't use a tagged version.
 FFMPEG_SUBSLOT="$(ver_cut 1 ${FFMPEG_LIBAVUTIL_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVCODEC_SOVER}).$(ver_cut 1 ${FFMPEG_LIBAVFORMAT_SOVER})"
 GCC_COMPAT=( {14..10} )
@@ -115,14 +121,15 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-0c45d7e19735efbe3d92b7e2dc14e7123cfd53d6b5c39c7a4b98d802dca5f8fe\
-5b87c8a570a673a33dde5316febb377e02dfee972307f7314864c7ba2d5b3c8e\
+a8bca0c91e154395fca8b3b5b9b8fb2470c72d1d5bd26298b76e9135cd57fb2f\
+47e096d29c0e2bc9d3ded79a2c630e7f5e0aaf040d96ae65830f5ab0950afbe5\
 "
 LLVM_COMPAT=( {19..18} ) # [inclusive, inclusive] high to low
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/123.0.6312.58/tools/clang/scripts/update.py#L42
 LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needs INSTR_PROF_INDEX_VERSION version 11 for profdata file format.
 LLVM_OFFICIAL_SLOT="${LLVM_MAX_SLOT}" # Cr official slot
 MESA_PV="20.3.5"
+MITIGATION_URI="https://chromereleases.googleblog.com/2024/03/stable-channel-update-for-desktop_19.html"
 PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_MIN_SLOT}"
 PYTHON_COMPAT=( python3_{9..12} )
 PYTHON_REQ_USE="xml(+)"
@@ -145,18 +152,20 @@ PGO_LLVM_SUPPORTED_VERSIONS=(
 	"18.1.0"
 )
 
+GCC_SLOT="" # variable not const
+LLVM_SLOT="" # variable not const
+LTO_TYPE="" # variable not const
+
 inherit cflags-depends check-linker check-reqs chromium-2 desktop flag-o-matic
 inherit flag-o-matic-om lcnr llvm multilib-minimal ninja-utils pax-utils
 inherit python-any-r1 qmake-utils readme.gentoo-r1 toolchain-funcs uopts
 inherit xdg-utils
 
-DESCRIPTION="The open-source version of the Chrome web browser"
-HOMEPAGE="https://www.chromium.org/"
-
 PATCHSET_PPC64="122.0.6261.57-1raptor0~deb12u1"
 PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 	https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
 	!system-toolchain? (
@@ -173,12 +182,11 @@ SRC_URI="
 		https://deps.gentoo.zip/chromium-ppc64le-gentoo-patches-1.tar.xz
 	)
 "
-RESTRICT="mirror"
 
-#
+DESCRIPTION="The open-source version of the Chrome web browser"
+HOMEPAGE="https://www.chromium.org/"
 # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
-
 LICENSE="
 	BSD
 	chromium-$(ver_cut 1-3 ${PV}).x.html
@@ -412,8 +420,8 @@ LICENSE="
 #   give the wrong impression that the entire software was released in public
 #   domain.
 #
+RESTRICT="mirror"
 SLOT="0/stable"
-KEYWORDS="~amd64 ~arm64"
 #
 # vaapi is enabled by default upstream for some arches \
 # See https://github.com/chromium/chromium/blob/123.0.6312.58/media/gpu/args.gni#L24
@@ -950,7 +958,6 @@ CLANG_BDEPEND="
 	)
 "
 # Upstream uses live rust.  Rust version is relaxed.
-# #923010 - add `profiler` USE to rust-bin
 BDEPEND+="
 	$(python_gen_any_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
@@ -965,7 +972,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=net-libs/nodejs-20.11.0[inspector]
 	>=sys-devel/bison-2.4.3
-	>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP},profiler]
+	>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP},profiler(-)]
 	dev-lang/perl
 	dev-vcs/git
 	app-alternatives/lex
@@ -973,12 +980,6 @@ BDEPEND+="
 		media-video/libva-utils
 	)
 "
-
-# One of the major sources of lag comes from dependencies
-# These are strict to match performance to competition or normal builds.
-declare -A CFLAGS_RDEPEND=(
-	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
-)
 
 # Upstream uses llvm:16
 # When CFI + PGO + official was tested, it didn't work well with LLVM12.  Error noted in
@@ -1016,7 +1017,6 @@ if ! has chromium_pkg_die ${EBUILD_DEATH_HOOKS} ; then
 	EBUILD_DEATH_HOOKS+=" chromium_pkg_die";
 fi
 
-DISABLE_AUTOFORMATTING="yes"
 DOC_CONTENTS="
 
 Some web pages may require additional fonts to display properly.  Try installing
@@ -1066,7 +1066,11 @@ is_using_lld() {
 }
 
 _system_toolchain_checks() {
-	if [[ ${MERGE_TYPE} != binary ]] ; then
+	if [[ "${MERGE_TYPE}" != "binary" ]]; then
+	# The pre_build_checks are all about compilation resources, no need to
+	# run it for a binpkg.
+		pre_build_checks
+
 		local -x CPP="$(tc-getCXX) -E"
 		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge "${GCC_PV}" ; then
 eerror
@@ -1089,7 +1093,7 @@ eerror
 			die
 		fi
 
-		if tc-is-clang ; then
+		if is_using_clang || tc-is-clang ; then
 			local slot=$(clang-major-version)
 			if tc-is-cross-compiler ; then
 				CPP="${CBUILD}-clang++-${slot}"
@@ -1098,17 +1102,26 @@ eerror
 			fi
 			CPP+=" -E"
 			local clang_min
+			local clang_max
 			if use official ; then
 				clang_min="${LLVM_OFFICIAL_SLOT}"
+				clang_max="${LLVM_OFFICIAL_SLOT}"
 			else
 				clang_min="${LLVM_MIN_SLOT}"
+				clang_max="${LLVM_MAX_SLOT}"
 			fi
-			if ver_test "${slot}" -lt "${clang_min}" ; then
+
+	# Ideally we never see this, but it should help prevent bugs like 927154
+			if \
+				ver_test "$(clang-major-version)" -lt ${clang_min} \
+					|| \
+				ver_test "$(clang-major-version)" -gt ${clang_max} \
+			; then
 eerror
 eerror "Your chosen clang does not meet requirements."
 eerror
 eerror "Actual slot:\t${slot}"
-eerror "Expected slot:\t>= ${clang_min}"
+eerror "Expected slots:\t $(seq ${clang_min} ${clang_max})"
 eerror
 				clang --version
 eerror
@@ -1163,7 +1176,11 @@ pre_build_checks() {
 			CHECKREQS_MEMORY="12G"
 			if ! has_zswap ; then
 	# Calculate uncompressed memory requirements
-				tot_mem_without_zswap=$(python -c "import math ; v=${CHECKREQS_MEMORY/G}*2.1875 ; print( math.ceil(v/4) * 4 )")"G"
+local python_script=\
+"import math ; "\
+"v=${CHECKREQS_MEMORY/G}*2.1875 ; "\
+"print( math.ceil(v/4) * 4 )"
+				tot_mem_without_zswap=$(python -c "${python_script}")"G"
 einfo
 einfo "Detected zswap off.  Total memory required:"
 einfo
@@ -1182,6 +1199,11 @@ ewarn "Set CHECKREQS_DONOTHING=1 to bypass build requirements not met check"
 
 pkg_pretend() {
 	pre_build_checks
+	if [[ "${MERGE_TYPE}" != "binary" ]]; then
+	# The pre_build_checks are all about compilation resources, no need to
+	# run it for a binpkg
+		pre_build_checks
+	fi
 
 	if use headless; then
 		local headless_unused_flags=(
@@ -1420,7 +1442,8 @@ CURRENT_PROFDATA_VERSION=
 CURRENT_PROFDATA_LLVM_VERSION=
 NABIS=0
 pkg_setup() {
-einfo "Channel:  ${SLOT#*/}"
+einfo "Release channel:  ${SLOT#*/}"
+einfo "Security fixes applied:  ${MITIGATION_URI}"
 	pre_build_checks
 
 	chromium_suid_sandbox_check_kernel_config
@@ -1675,7 +1698,7 @@ ewarn "Disabling the distro patchset."
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/chromium-111.0.5563.64-zlib-selective-simd.patch"
+		"${FILESDIR}/extra-patches/chromium-123.0.6312.58-zlib-selective-simd.patch"
 		"${FILESDIR}/extra-patches/chromium-115.0.5790.40-qt6-split.patch"
 	)
 
@@ -1708,7 +1731,6 @@ ewarn "Disabling the distro patchset."
 # Did you run "gclient sync"?
 		"${FILESDIR}/extra-patches/chromium-117.0.5938.92-skip-rust-check.patch"
 
-		"${FILESDIR}/extra-patches/chromium-117.0.5938.92-disable-unused-variable-ELOC_PROTO.patch"
 		"${FILESDIR}/extra-patches/chromium-118.0.5993.117-clang-paths.patch"
 	)
 
@@ -2241,7 +2263,7 @@ ewarn
 }
 
 chromium_rust_version_check() {
-	[[ ${MERGE_TYPE} == binary ]] && return
+	[[ "${MERGE_TYPE}" == "binary" ]] && return
 	local rustc_version=(
 		$(eselect --brief rust show 2>/dev/null)
 	)
@@ -2258,9 +2280,6 @@ eerror
 	echo $rustc_version
 }
 
-LLVM_SLOT=""
-GCC_SLOT=""
-LTO_TYPE=""
 _src_configure() {
 	local s
 	s=$(_get_s)
@@ -2791,6 +2810,10 @@ ewarn
 	myconf_gn+=" host_cpu=\"${target_cpu}\""
 	myconf_gn+=" target_cpu=\"${target_cpu}\""
 	myconf_gn+=" v8_current_cpu=\"${target_cpu}\""
+
+	if ! use cpu_flags_arm_neon ; then
+		myconf_gn+=" use_neon=false"
+	fi
 
 	if ! use cpu_flags_x86_sse2 ; then
 		myconf_gn+=" use_sse2=false"
