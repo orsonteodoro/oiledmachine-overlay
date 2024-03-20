@@ -95,6 +95,8 @@ tr uk vi zh_CN
 LLVM_COMPAT=( 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[-1]}"
 MESA_PV="18.0.0_rc5"
+MITIGATION_URI="" # Shown if minor version matches in report.
+MITIGATION_DATE=""
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( python3_{10..12} )
 SELECTED_LTO="" # global var not const
@@ -1920,6 +1922,10 @@ ewarn
 
 pkg_setup() {
 einfo "This is the unstable branch."
+	if [[ -n "${MITIGATION_URI}" ]] ; then
+einfo "Latest security advisory:  ${MITIGATION_URI}"
+einfo "Security advisory date:  ${MITIGATION_DATE}"
+	fi
 	_set_cxx
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
