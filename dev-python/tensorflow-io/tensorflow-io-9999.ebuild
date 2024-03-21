@@ -43,7 +43,7 @@ RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	>=dev-build/bazel-6.1.0:0
+	>=dev-build/bazel-6.1.0:6
 "
 DOCS=( README.md RELEASE.md )
 HTML_DOCS=( docs )
