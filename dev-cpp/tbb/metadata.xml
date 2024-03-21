@@ -47,7 +47,7 @@
     <flag name="examples">
       Builds and installs examples.
     </flag>
-    <flag name="tbbbind">
+    <flag name="numa">
       Builds and installs the NUMA support library (tbbbind).
     </flag>
     <flag name="python">
