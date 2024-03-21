@@ -250,8 +250,8 @@ BDEPEND+="
 		$(gen_clang_bdepend)
 	)
 	test? (
-		>=dev-tcltk/expect-5.45.4
 		>=app-arch/xz-utils-5.2.4
+		>=dev-tcltk/expect-5.45.4
 	)
 	test-x11? (
 		x11-base/xorg-server[xvfb]
