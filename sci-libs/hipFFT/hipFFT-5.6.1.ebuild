@@ -98,6 +98,7 @@ DEPEND="
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
+	dev-util/patchelf
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 "
 RESTRICT="test mirror" # The distro mirrored copy is wrong
@@ -164,9 +165,22 @@ src_configure() {
 	cmake_src_configure
 }
 
+fix_rpath_for_rocfft_rtc_helper() {
+	local path=$(realpath "/usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)/rocfft/"*"/rocfft_rtc_helper")
+	if \
+		[[ -e "${path}" ]] \
+			&&  \
+		ldd "${path}" | grep -q "not found" \
+	; then
+einfo "Fixing rpath for ${path}"
+		patchelf --add-rpath "/usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)" "${path}" || die
+	fi
+}
+
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	fix_rpath_for_rocfft_rtc_helper
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
