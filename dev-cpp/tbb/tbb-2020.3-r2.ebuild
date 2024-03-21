@@ -17,7 +17,7 @@ KEYWORDS="
 ~x86-linux
 "
 SLOT_MAJOR="2" # Same as SONAME_SUFFIX, See https://github.com/oneapi-src/oneTBB/blob/v2020.3/include/tbb/tbb_stddef.h#L30
-SOVER_MINOR=$(ver_cut 2 ${PV}) # The distro messes up on this component.
+SOVER_MINOR="."$(ver_cut 2 ${PV}) # The distro messes up on this component.
 SOVER_TBB="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L114
 SOVER_TBBMALLOC="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L126
 SOVER_TBBBIND="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L119
