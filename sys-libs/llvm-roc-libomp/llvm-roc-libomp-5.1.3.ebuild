@@ -96,6 +96,9 @@ LICENSE="
 "
 # Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-5.6.0/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
+RESTRICT="
+	strip
+"
 SLOT="${ROCM_SLOT}/${PV}"
 LLVM_TARGETS=(
 	AMDGPU
