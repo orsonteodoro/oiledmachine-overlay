@@ -255,6 +255,7 @@ eerror
 		-DCMAKE_INSTALL_PREFIX="${staging_prefix}"
 		-DENABLE_DEVEL_PACKAGE=OFF
 		-DENABLE_RUN_PACKAGE=OFF
+		-DPYTHON_EXECUTABLE="${ESYSROOT}/usr/bin/${EPYTHON}"
 	)
 	if use aocc ; then
 		export PATH="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin:${PATH}"
@@ -346,3 +347,11 @@ einfo "Switching ${EROOT}/usr/bin/rocm-flang -> ${EROOT}/usr/bin/flang"
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# Testing:
+#cat <<EOF > "hello.f90"
+#program hello
+#  print *, "hello world"
+#end program
+#EOF
+#/usr/lib64/rocm/5.5/bin/flang hello.f90 -L/usr/lib64/rocm/5.5/llvm/lib64 -o hello.exe
+#LD_LIBRARY_PATH="/usr/lib64/rocm/5.5/llvm/lib64" ./hello.exe
