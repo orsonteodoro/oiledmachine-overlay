@@ -285,8 +285,9 @@ REQUIRED_USE+="
 "
 
 #	Not required until uncommented
+#	firejail_profiles_blink-common? ( firejail_profiles_blink-common-hardened.inc )
 #	firejail_profiles_chromium-common? ( firejail_profiles_chromium-common-hardened.inc )
-#	firejail_profiles_electron? ( firejail_profiles_chromium-common-hardened.inc )
+#	firejail_profiles_electron-common? ( firejail_profiles_electron-common-hardened.inc )
 #	firejail_profiles_feh? ( firejail_profiles_feh-network.inc )
 #	firejail_profiles_firefox-common? ( firejail_profiles_firefox-common-addons )
 #	firejail_profiles_rtv? ( firejail_profiles_rtv-addons )
@@ -1715,8 +1716,9 @@ einfo
 einfo "The following optional USE flags are required if the disabled included"
 einfo "profiles are uncommented inside:"
 einfo
+einfo "  firejail_profiles_blink-common? ( firejail_profiles_blink-common-hardened.inc )"
 einfo "  firejail_profiles_chromium-common? ( firejail_profiles_chromium-common-hardened.inc )"
-einfo "  firejail_profiles_electron? ( firejail_profiles_chromium-common-hardened.inc )"
+einfo "  firejail_profiles_electron-common? ( firejail_profiles_electron-common-hardened.inc )"
 einfo "  firejail_profiles_feh? ( firejail_profiles_feh-network.inc )"
 einfo "  firejail_profiles_firefox-common? ( firejail_profiles_firefox-common-addons )"
 einfo "  firejail_profiles_rtv? ( firejail_profiles_rtv-addons )"
