@@ -218,11 +218,10 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
 ${FIREJAIL_PROFILES_IUSE[@]}
-X apparmor +chroot contrib +dbusproxy
-+file-transfer +globalcfg +network +private-home selinux +suid test-profiles
-test-x11 +userns vanilla xpra
+apparmor +chroot contrib +dbusproxy +file-transfer +firejail_profiles_default
++firejail_profiles_server +globalcfg +network +private-home selinux +suid
+test-profiles test-x11 +userns vanilla xpra X
 "
-IUSE+=" +firejail_profiles_default +firejail_profiles_server"
 RDEPEND+="
 	!sys-apps/firejail-lts
 	apparmor? (
