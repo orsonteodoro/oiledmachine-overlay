@@ -927,8 +927,16 @@ pkg_setup() {
 	CONFIG_CHECK="~SQUASHFS"
 	local WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
 
+	local config_path=$(linux_config_path)
+	local lsm_list=$(grep -e "CONFIG_LSM" "${config_path}" | cut -f 2 -d '"')
 	if use apparmor ; then
 		CONFIG_CHECK+=" ~SECURITY ~NET ~SECURITY_APPARMOR"
+		if ! [[ "${lsm_list}" =~ "apparmor" ]] ; then
+ewarn
+ewarn "Missing apparmor in kernel .config CONFIG_LSM list."
+ewarn "See also https://github.com/torvalds/linux/blob/v6.6/security/Kconfig#L234"
+ewarn
+		fi
 	fi
 
 	check_extra_config
