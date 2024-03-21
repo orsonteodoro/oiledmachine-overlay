@@ -53,6 +53,9 @@
     <flag name="globalcfg">
       Enable global config file
     </flag>
+    <flag name="landlock">
+      Enable support for the kernel's Landlock Linux Security Module (LSM).
+    </flag>
     <flag name="network">
       Enable networking features
     </flag>

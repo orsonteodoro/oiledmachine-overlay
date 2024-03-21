@@ -926,8 +926,12 @@ eerror
 pkg_setup() {
 	python-single-r1_pkg_setup
 	CONFIG_CHECK="~SQUASHFS"
-	local WARNING_SQUASHFS=\
-"CONFIG_SQUASHFS: required for firejail --appimage mode"
+	local WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
+
+	if use apparmor ; then
+		CONFIG_CHECK+=" ~SECURITY_APPARMOR"
+	fi
+
 	check_extra_config
 	if use test && [[ "${TEST_SET}" == "full" ]] ; then
 		if has userpriv $FEATURES ; then
