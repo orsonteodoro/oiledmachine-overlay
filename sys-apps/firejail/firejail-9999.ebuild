@@ -10,141 +10,152 @@ EAPI=8
 FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512}
 FIREJAIL_PROFILES=(
 0ad 1password 2048-qt 7z 7za 7zr Books Builder Cheese Cryptocat Cyberfox
-Discord DiscordCanary Documents FossaMail Fritzing Gitter JDownloader Logs
-Maelstrom Maps Mathematica Natron PCSX2 PPSSPPQt PPSSPPSDL QMediathekView
-QOwnNotes Screenshot Telegram Thunar Viber VirtualBox XMind Xephyr Xvfb
-ZeGrapher abiword abrowser acat adiff agetpkg akonadi_control akregator
-alacarte alienarena alienarena-wrapper alpine alpinef als amarok amule amuled
-android-studio anki anydesk aosp apack apktool apostrophe ar arch-audit
-archaudit-report archiver-common ardour4 ardour5 arduino arepack aria2c ark arm
-artha assogiate asunder atom atom-beta atool atril atril-previewer
-atril-thumbnailer audacious audacity audio-recorder aunpack authenticator
-authenticator-rs autokey-common autokey-gtk autokey-qt autokey-run
-autokey-shell avidemux avidemux3_cli avidemux3_jobs_qt5 avidemux3_qt5 aweather
-awesome b2sum ballbuster ballbuster-wrapper baloo_file
+Discord DiscordCanary DiscordPTB Documents FBReader FossaMail Fritzing Gitter
+JDownloader Logs Maelstrom Maps Mathematica Natron PCSX2 PPSSPPQt PPSSPPSDL
+Postman QMediathekView QOwnNotes Screenshot Telegram Thunar Viber VirtualBox
+XMind Xephyr Xvfb ZeGrapher abiword abrowser acat adiff agetpkg akonadi_control
+akregator alacarte alienarena alienarena-wrapper alpine alpinef als amarok
+amule amuled android-studio ani-cli anki anydesk aosp apack apktool apostrophe
+ar arch-audit archaudit-report archiver-common ardour4 ardour5 arduino arepack
+aria2c ark arm artha assogiate asunder atom atom-beta atool atril
+atril-previewer atril-thumbnailer audacious audacity audio-recorder aunpack
+authenticator authenticator-rs autokey-common autokey-gtk autokey-qt
+autokey-run autokey-shell avidemux avidemux3_cli avidemux3_jobs_qt5
+avidemux3_qt5 aweather awesome b2sum ballbuster ballbuster-wrapper baloo_file
 baloo_filemetadata_temp_extractor balsa baobab barrier basilisk bcompare beaker
 bibletime bibtex bijiben bitcoin-qt bitlbee bitwarden blackbox bleachbit
-blender blender-2_8 bless blobby blobwars bluefish bnox brackets brasero brave
-brave-browser brave-browser-beta brave-browser-dev brave-browser-nightly
-brave-browser-stable bsdcat bsdcpio bsdtar build-systems-common bundle bunzip2
-bzcat bzflag bzip2 cachy-browser caja calibre calligra calligraauthor
-calligraconverter calligraflow calligragemini calligraplan calligraplanwork
-calligrasheets calligrastage calligrawords cameramonitor cantata cargo catfish
-cawbird celluloid chafa chatterino checkbashisms cheese cherrytree chromium
+blender blender-2.8 blender-3.6 bless blink-common blink-common-hardened.inc
+blobby blobwars bluefish bnox bpftop brackets brasero brave brave-browser
+brave-browser-beta brave-browser-dev brave-browser-nightly brave-browser-stable
+brz bsdcat bsdcpio bsdtar build-systems-common bundle bunzip2 bzcat bzflag
+bzip2 bzr cachy-browser caja calibre calligra calligraauthor calligraconverter
+calligraflow calligragemini calligraplan calligraplanwork calligrasheets
+calligrastage calligrawords cameramonitor cantata cargo catfish cawbird
+celluloid chafa chatterino checkbashisms cheese cherrytree chromium
 chromium-browser chromium-browser-privacy chromium-common
-chromium-common-hardened_inc chromium-freeworld cin cinelerra cinelerra-gg
-cksum clamav clamdscan clamdtop clamscan clamtk claws-mail clawsker clementine
-clion clion-eap clipgrab clipit cliqz clocks cmake cmus code code-oss codium
-cointop cola colorful colorful-wrapper com_github_bleakgrey_tootle
-com_github_dahenson_agenda com_github_johnfactotum_Foliate
-com_github_phase1geo_minder com_github_tchx84_Flatseal com_gitlab_newsflash
-conkeror conky conplay corebird cower coyim cpio crawl crawl-tiles crow
-cryptocat curl cvlc cyberfox d-feet darktable dbus-send dconf dconf-editor ddgr
-ddgtk deadbeef default deluge desktopeditors devhelp devilspie devilspie2
-dex2jar dia dig digikam dillo dino dino-im discord discord-canary
-discord-common display display-im6_q16 dnox dnscrypt-proxy dnsmasq dolphin
+chromium-common-hardened.inc chromium-freeworld cin cinelerra cinelerra-gg
+cksum clac clamav clamdscan clamdtop clamscan clamtk claws-mail clawsker
+clementine clion clion-eap clipgrab clipit cliqz clocks cloneit cmake cmus code
+code-oss codium cointop cola colorful colorful-wrapper
+com_github_bleakgrey_tootle com_github_dahenson_agenda
+com_github_johnfactotum_Foliate com_github_phase1geo_minder
+com_github_tchx84_Flatseal com_gitlab_newsflash conkeror conky conplay corebird
+cower coyim cpio crawl crawl-tiles crow cryptocat curl cvlc cyberfox d-feet
+daisy darktable dbus-send dconf dconf-editor ddgr ddgtk deadbeef deadlink
+default deluge desktopeditors devhelp devilspie devilspie2 dex2jar dexios dia
+dig digikam dillo dino dino-im discord discord-canary discord-common
+discord-ptb display display-im6_q16 dnox dnscrypt-proxy dnsmasq dolphin
 dolphin-emu dooble dooble-qt4 dosbox dragon drawio drill dropbox easystroke
-ebook-convert ebook-edit ebook-meta ebook-polish ebook-viewer electron
-electron-hardened_inc electron-mail electrum element-desktop elinks emacs
-email-common empathy enchant enchant-2 enchant-lsmod enchant-lsmod-2 engrampa
-enox enpass eo-common eog eom ephemeral epiphany equalx et etr etr-wrapper
-evince evince-previewer evince-thumbnailer evolution exfalso exiftool falkon
-fbreader fdns feedreader feh feh-network_inc ferdi fetchmail ffmpeg
-ffmpegthumbnailer ffplay ffprobe file file-manager-common file-roller filezilla
-firedragon firefox firefox-beta firefox-common firefox-common-addons
-firefox-developer-edition firefox-esr firefox-nightly firefox-wayland
-firefox-x11 five-or-more flacsplt flameshot flashpeak-slimjet flowblade fluxbox
-font-manager fontforge fossamail four-in-a-row fractal franz freecad freecadcmd
-freeciv freeciv-gtk3 freeciv-mp-gtk3 freecol freemind freeoffice-planmaker
+ebook-convert ebook-edit ebook-meta ebook-polish ebook-viewer editorconfiger
+electron-cash electron-common electron-common-hardened.inc electron-mail
+electrum element-desktop elinks emacs email-common empathy enchant enchant-2
+enchant-lsmod enchant-lsmod-2 engrampa enox enpass eo-common eog eom ephemeral
+epiphany equalx erd et etr etr-wrapper evince evince-previewer
+evince-thumbnailer evolution exfalso exiftool falkon fbreader fdns feedreader
+feh feh-network.inc ferdi fetchmail ffmpeg ffmpegthumbnailer ffplay ffprobe
+file file-manager-common file-roller filezilla firedragon firefox firefox-beta
+firefox-common firefox-common-addons firefox-developer-edition firefox-esr
+firefox-nightly firefox-wayland firefox-x11 five-or-more fix-qdf flacsplt
+flameshot flashpeak-slimjet floorp flowblade fluffychat fluxbox font-manager
+fontforge fossamail four-in-a-row fractal franz freecad freecadcmd freeciv
+freeciv-gtk3 freeciv-mp-gtk3 freecol freemind freeoffice-planmaker
 freeoffice-presentations freeoffice-textmaker freetube freshclam frogatto
 frozen-bubble ftp funnyboat gajim gajim-history-manager galculator gallery-dl
 gapplication gcalccmd gcloud gconf gconf-editor gconf-merge-schema
 gconf-merge-tree gconfpkg gconftool-2 gdu geany geary gedit geekbench geeqie
 gfeeds gget ghb ghostwriter gimp gimp-2_10 gimp-2_8 gist gist-paste git
 git-cola gitg github-desktop gitter gjs gl-117 gl-117-wrapper glaxium
-glaxium-wrapper globaltime gmpc gnome-2048 gnome-books gnome-builder
-gnome-calculator gnome-calendar gnome-character-map gnome-characters
-gnome-chess gnome-clocks gnome-contacts gnome-documents gnome-font-viewer
-gnome-hexgl gnome-keyring gnome-keyring-3 gnome-klotski gnome-latex gnome-logs
-gnome-mahjongg gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music
-gnome-nettool gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie
-gnome-pomodoro gnome-recipes gnome-ring gnome-robots gnome-schedule
-gnome-screenshot gnome-sound-recorder gnome-sudoku gnome-system-log
-gnome-taquin gnome-tetravex gnome-todo gnome-twitch gnome-weather
-gnome_games-common gnote gnubik godot godot3 goldendict goobox google-chrome
-google-chrome-beta google-chrome-stable google-chrome-unstable google-earth
-google-earth-pro google-play-music-desktop-player googler googler-common gpa
-gpg gpg-agent gpg2 gpicview gpredict gradio gramps
-gravity-beams-and-evaporating-stars gsettings gsettings-data-convert
-gsettings-schema-convert gtar gthumb gtk-lbry-viewer gtk-pipe-viewer
-gtk-straw-viewer gtk-update-icon-cache gtk-youtube-viewer gtk2-youtube-viewer
+glaxium-wrapper globaltime gmpc gnome-2048 gnome-books gnome-boxes
+gnome-builder gnome-calculator gnome-calendar gnome-character-map
+gnome-characters gnome-chess gnome-clocks gnome-contacts gnome-documents
+gnome-font-viewer gnome-hexgl gnome-keyring gnome-keyring-3
+gnome-keyring-daemon gnome-klotski gnome-latex gnome-logs gnome-mahjongg
+gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music gnome-nettool
+gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie gnome-pomodoro
+gnome-recipes gnome-ring gnome-robots gnome-schedule gnome-screenshot
+gnome-sound-recorder gnome-sudoku gnome-system-log gnome-taquin gnome-tetravex
+gnome-todo gnome-twitch gnome-weather gnome_games-common gnote gnubik godot
+godot3 goldendict goobox google-chrome google-chrome-beta google-chrome-stable
+google-chrome-unstable google-earth google-earth-pro
+google-play-music-desktop-player googler googler-common gpa gpg gpg-agent gpg2
+gpicview gpredict gradio gramps gravity-beams-and-evaporating-stars
+green-recoder gsettings gsettings-data-convert gsettings-schema-convert gtar
+gthumb gtk-lbry-viewer gtk-pipe-viewer gtk-straw-viewer gtk-update-icon-cache
+gtk-youtube-viewer gtk-youtube-viewers-common gtk2-youtube-viewer
 gtk3-youtube-viewer guayadeque gucharmap gummi gunzip guvcview gwenview gzexe
 gzip handbrake handbrake-gtk hashcat hasher-common hedgewars hexchat highlight
 hitori homebank host hugin hyperrogue i2prouter i3 iagno icecat icedove
 iceweasel idea ideaIC idea_sh imagej img2txt impressive imv inkscape inkview
 inox io_github_lainsce_Notejot ipcalc ipcalc-ng iridium iridium-browser itch
-jami-gnome jd-gui jdownloader jerry jitsi jitsi-meet-desktop jumpnbump
-jumpnbump-menu k3b kaffeine kalgebra kalgebramobile karbon kate kazam kcalc
-kdeinit4 kdenlive kdiff3 keepass keepass2 keepassx keepassx2 keepassxc
-keepassxc-cli keepassxc-proxy kfind kget kid3 kid3-cli kid3-qt kino
-kiwix-desktop klatexformula klatexformula_cmdl klavaro kmail kmplayer knotes
-kodi konversation kopete krita krunner ktorrent ktouch kube kwin_x11 kwrite
-latex latex-common lbry-viewer lbunzip2 lbzcat lbzip2 leafpad less librecad
-libreoffice librewolf librewolf-nightly lifeograph liferea lightsoff lincity-ng
-links links-common links2 linphone linuxqq lmms lobase localc lodraw loffice
-lofromtemplate loimpress lollypop lomath loweb lowriter lrunzip lrz lrzcat
-lrzip lrztar lrzuntar lsar lugaru luminance-hdr lutris lximage-qt lxmusic lynx
-lyx lzcat lzcmp lzdiff lzegrep lzfgrep lzgrep lzip lzless lzma lzmadec lzmainfo
-lzmore lzop macrofusion magicor make makedeb makepkg man manaplus marker
-masterpdfeditor masterpdfeditor4 masterpdfeditor5 mate-calc mate-calculator
-mate-color-select mate-dictionary mathematica matrix-mirage mattermost-desktop
-mcabber mcomix md5sum mdr mediainfo mediathekview megaglest megaglest_editor
-meld mencoder mendeleydesktop menulibre meson meteo-qt microsoft-edge
-microsoft-edge-beta microsoft-edge-dev midori min mindless minecraft-launcher
-minetest minitube mirage mirrormagic mocp mousepad mp3splt mp3splt-gtk mp3wrap
-mpDris2 mpd mpg123 mpg123-alsa mpg123-id3dump mpg123-jack mpg123-nas
-mpg123-openal mpg123-oss mpg123-portaudio mpg123-pulse mpg123-strip mpg123_bin
-mplayer mpsyt mpv mrrescue ms-excel ms-office ms-onenote ms-outlook
-ms-powerpoint ms-skype ms-word mtpaint multimc multimc5 mumble mupdf mupdf-gl
-mupdf-x11 mupdf-x11-curl mupen64plus muraster musescore musictube musixmatch
-mutool mutt mypaint mypaint-ora-thumbnailer nano natron nautilus ncdu ncdu2
-nemo neochat neomutt netactview nethack nethack-vultures netsurf neverball
-neverball-wrapper neverputt neverputt-wrapper newsbeuter newsboat newsflash
-nextcloud nextcloud-desktop nheko nicotine nitroshare nitroshare-cli
-nitroshare-nmh nitroshare-send nitroshare-ui node node-gyp nodejs-common nomacs
-noprofile notable notify-send npm npx nslookup nuclear nvim nylas nyx obs
-ocenaudio odt2txt oggsplt okular onboard onionshare onionshare-cli
-onionshare-gui ooffice ooviewdoc open-invaders openarena openarena_ded openbox
-opencity openclonk openmw openmw-launcher openoffice_org openshot openshot-qt
-openstego openttd opera opera-beta opera-developer orage
-org_gnome_NautilusPreviewer ostrichriders otter-browser out123 p7zip palemoon
-pandoc parole patch pavucontrol pavucontrol-qt pcmanfm pcsxr pdfchain pdflatex
-pdfmod pdfsam pdftotext peek penguin-command photoflare picard pidgin pinball
-pinball-wrapper ping ping-hardened_inc pingus pinta pioneer pip pipe-viewer
+jami jami-gnome jd-gui jdownloader jerry jitsi jitsi-meet-desktop
+journal-viewer jumpnbump jumpnbump-menu k3b kaffeine kalgebra kalgebramobile
+karbon kate kazam kcalc kdeinit4 kdenlive kdiff3 keepass keepass2 keepassx
+keepassx2 keepassxc keepassxc-cli keepassxc-proxy kfind kget kid3 kid3-cli
+kid3-qt kino kiwix-desktop klatexformula klatexformula_cmdl klavaro kmail
+kmplayer knotes kodi konversation kopete koreader krita krunner ktorrent ktouch
+kube kwin_x11 kwrite latex latex-common lbry-viewer lbry-viewer-gtk lbunzip2
+lbzcat lbzip2 leafpad ledger-live-desktop less lettura librecad libreoffice
+librewolf librewolf-nightly lifeograph liferea lightsoff lincity-ng links
+links-common links2 linphone linuxqq lmms lobase lobster localc localsend_app
+lodraw loffice lofromtemplate loimpress lollypop lomath loweb lowriter lrunzip
+lrz lrzcat lrzip lrztar lrzuntar lsar lugaru luminance-hdr lutris lximage-qt
+lxmusic lynx lyriek lyx lz4 lz4c lz4cat lzcat lzcmp lzdiff lzegrep lzfgrep
+lzgrep lzip lzless lzma lzmadec lzmainfo lzmore lzop macrofusion magicor make
+makedeb makepkg man manaplus marker masterpdfeditor masterpdfeditor4
+masterpdfeditor5 mate-calc mate-calculator mate-color-select mate-dictionary
+mathematica matrix-mirage mattermost-desktop mcabber mcomix md5sum mdr
+mediainfo mediathekview megaglest megaglest_editor meld mencoder
+mendeleydesktop menulibre meson metadata-cleaner meteo-qt microsoft-edge
+microsoft-edge-beta microsoft-edge-dev microsoft-edge-stable midori mimetype
+min mindless minecraft-launcher minetest minitube mirage mirrormagic mocp
+mousepad mov-cli mp3splt mp3splt-gtk mp3wrap mpDris2 mpd mpg123 mpg123-alsa
+mpg123-id3dump mpg123-jack mpg123-nas mpg123-openal mpg123-oss mpg123-portaudio
+mpg123-pulse mpg123-strip mpg123_bin mplayer mpsyt mpv mrrescue ms-excel
+ms-office ms-onenote ms-outlook ms-powerpoint ms-skype ms-word mtpaint
+mullvad-browser multimc multimc5 mumble mupdf mupdf-gl mupdf-x11 mupdf-x11-curl
+mupen64plus muraster musescore musictube musixmatch mutool mutt mypaint
+mypaint-ora-thumbnailer nano natron nautilus ncdu ncdu2 nemo neochat neomutt
+netactview nethack nethack-vultures netsurf neverball neverball-wrapper
+neverputt neverputt-wrapper newsbeuter newsboat newsflash nextcloud
+nextcloud-desktop nheko nicotine nitroshare nitroshare-cli nitroshare-nmh
+nitroshare-send nitroshare-ui node node-gyp nodejs-common nomacs noprofile
+notable notify-send npm npx nslookup nuclear nvim nylas nyx obs ocenaudio
+odt2txt oggsplt okular onboard onionshare onionshare-cli onionshare-gui ooffice
+ooviewdoc open-invaders openarena openarena_ded openbox opencity openclonk
+openmw openmw-launcher openoffice_org openshot openshot-qt openstego openttd
+opera opera-beta opera-developer orage org_gnome_NautilusPreviewer
+ostrichriders otter-browser out123 p7zip palemoon pandoc parole parsecd patch
+pavucontrol pavucontrol-qt pcmanfm pcsxr pdfchain pdflatex pdfmod pdfsam
+pdftotext peek penguin-command photoflare picard pidgin pinball pinball-wrapper
+ping ping-hardened.inc pingus pinta pioneer pip pipe-viewer pipe-viewer-gtk
 pithos pitivi pix pkglog planmaker18 planmaker18free playonlinux pluma plv
-pngquant polari ppsspp pragha presentations18 presentations18free profanity psi
-psi-plus pybitmessage pycharm-community pycharm-professional pzstd qbittorrent
-qcomicbook qemu-launcher qemu-system-x86_64 qgis qlipper qmmp qnapi qpdfview qq
-qrencode qt-faststart qtox quadrapassel quassel quaternion quiterss quodlibet
-qupzilla qutebrowser raincat rambox ranger redeclipse rednotebook redshift
-regextester remmina retroarch rhythmbox rhythmbox-client ricochet riot-desktop
-riot-web ripperx ristretto rnano rocketchat rpcs3 rsync-download_only rtin
-rtorrent rtv rtv-addons runenpass_sh rview rvim sayonara scallion scorched3d
+pngquant pnpm pnpx polari postman ppsspp pragha presentations18
+presentations18free profanity psi psi-plus pybitmessage pycharm-community
+pycharm-professional pzstd qbittorrent qcomicbook qemu-launcher
+qemu-system-x86_64 qgis qlipper qmmp qnapi qpdf qpdfview qq qrencode
+qt-faststart qt5ct qt6ct qtox quadrapassel quassel quaternion quiterss
+quodlibet qupzilla qutebrowser raincat rambox ranger rawtherapee reader
+redeclipse rednotebook redshift regextester remmina retroarch rhythmbox
+rhythmbox-client ricochet riot-desktop riot-web ripperx ristretto rnano
+rocketchat rpcs3 rssguard rsync-download_only rtin rtorrent rtv rtv-addons
+runenpass_sh rview rvim rymdport sayonara scallion scorched3d
 scorched3d-wrapper scorchwentbonkers scp scribus sdat2img seafile-applet
 seahorse seahorse-adventures seahorse-daemon seahorse-tool seamonkey
-seamonkey-bin secret-tool semver server servo sftp sha1sum sha224sum sha256sum
-sha384sum sha512sum shellcheck shortwave shotcut shotwell signal-cli
-signal-desktop silentarmy simple-scan simplescreenrecorder simutrans skanlite
-skypeforlinux slack slashem smplayer smtube smuxi-frontend-gnome snox soffice
-softmaker-common sol songrec sound-juicer soundconverter spectacle spectral
-spectre-meltdown-checker spotify sqlitebrowser ssh ssh-agent ssmtp
-standardnotes-desktop start-tor-browser start-tor-browser_desktop steam
-steam-native steam-runtime stellarium straw-viewer strawberry strings studio_sh
+seamonkey-bin secret-tool semver server servo session-desktop session-messenger
+session-messenger-desktop sftp sha1sum sha224sum sha256sum sha384sum sha512sum
+shellcheck shortwave shotcut shotwell signal-cli signal-desktop silentarmy
+simple-scan simplescreenrecorder simutrans skanlite skypeforlinux slack slashem
+smplayer smtube smuxi-frontend-gnome sniffnet snox soffice softmaker-common sol
+songrec sound-juicer soundconverter spectacle spectral spectre-meltdown-checker
+spotify sqlitebrowser ssh ssh-agent ssmtp standard-notes standardnotes-desktop
+start-tor-browser start-tor-browser_desktop statusof steam steam-native
+steam-runtime stellarium straw-viewer strawberry strings studio_sh
 subdownloader sum supertux2 supertuxkart supertuxkart-wrapper surf sushi sway
-swell-foop sylpheed synfigstudio sysprof sysprof-cli tar tb-starter-wrapper
-tcpdump teams teams-for-linux teamspeak3 teeworlds telegram telegram-desktop
-telnet terasology tesseract tex textmaker18 textmaker18free thunar thunderbird
-thunderbird-beta thunderbird-wayland tilp tin tmux tor tor-browser
+swell-foop sylpheed synfigstudio sysprof sysprof-cli system-log-common tar
+tb-starter-wrapper tcpdump teams teams-for-linux teamspeak3 teeworlds telegram
+telegram-desktop telnet terasology termshark tesseract tex textmaker18
+textmaker18free textroom thunar thunderbird thunderbird-beta
+thunderbird-wayland tidal-hifi tilp tin tiny-rdm tmux tor tor-browser
 tor-browser-ar tor-browser-ca tor-browser-cs tor-browser-da tor-browser-de
 tor-browser-el tor-browser-en tor-browser-en-us tor-browser-es
 tor-browser-es-es tor-browser-fa tor-browser-fr tor-browser-ga-ie
@@ -163,28 +174,29 @@ torbrowser-launcher torcs totem tracker transgui transmission-cli
 transmission-common transmission-create transmission-daemon transmission-edit
 transmission-gtk transmission-qt transmission-remote transmission-remote-cli
 transmission-remote-gtk transmission-show tremulous trojita truecraft
-ts3client_runscript_sh tshark tuir tutanota-desktop tuxguitar tvbrowser twitch
-udiskie uefitool uget-gtk unar unbound uncompress unf unknown-horizons unlzma
-unrar unxz unzip unzstd utox uudeview uzbl-browser viewnior viking vim vimcat
-vimdiff vimpager vimtutor virtualbox vivaldi vivaldi-beta vivaldi-snapshot
-vivaldi-stable vlc vmware vmware-player vmware-view vmware-workstation vscodium
-vulturesclaw vultureseye vym w3m warmux warsow warzone2100 waterfox
-waterfox-classic waterfox-current webstorm webui-aria2 weechat weechat-curses
-wesnoth wget wget2 whalebird whois widelands wine wire-desktop wireshark
-wireshark-gtk wireshark-qt wordwarvi wpp wps wpspdf x-terminal-emulator
-x2goclient xbill xcalc xchat xed xfburn xfce4-dict xfce4-mixer xfce4-notes
-xfce4-screenshooter xiphos xlinks xlinks2 xmms xmr-stak xonotic xonotic-glx
-xonotic-sdl xonotic-sdl-wrapper xournal xournalpp xpdf xplayer
-xplayer-audio-preview xplayer-video-thumbnailer xpra xreader xreader-previewer
-xreader-thumbnailer xviewer xxd xz xzcat xzcmp xzdec xzdiff xzegrep xzfgrep
-xzgrep xzless xzmore yandex-browser yarn yelp youtube youtube-dl youtube-dl-gui
-youtube-viewer youtube-viewers-common youtubemusic-nativefier yt-dlp ytmdesktop
-zaproxy zart zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep zim zless
+ts3client_runscript_sh tshark tuir tutanota-desktop tuxguitar tvbrowser tvnamer
+twitch udiskie uefitool uget-gtk unar unbound uncompress unf unknown-horizons
+unlz4 unlzma unrar unxz unzip unzstd url-eater utox uudeview uzbl-browser
+viewnior viking vim vimcat vimdiff vimpager vimtutor virt-manager virtualbox
+vivaldi vivaldi-beta vivaldi-snapshot vivaldi-stable vlc vmplayer vmware
+vmware-player vmware-view vmware-workstation vscodium vulturesclaw vultureseye
+vym w3m warmux warsow warzone2100 waterfox waterfox-classic waterfox-current
+webstorm webui-aria2 weechat weechat-curses wesnoth wget wget2 whalebird whois
+widelands wine wire-desktop wireshark wireshark-gtk wireshark-qt wordwarvi wpp
+wps wpspdf x-terminal-emulator x2goclient xbill xcalc xchat xed xfburn
+xfce4-dict xfce4-mixer xfce4-notes xfce4-screenshooter xiphos xlinks xlinks2
+xmms xmr-stak xonotic xonotic-glx xonotic-sdl xonotic-sdl-wrapper xournal
+xournalpp xpdf xplayer xplayer-audio-preview xplayer-video-thumbnailer xpra
+xreader xreader-previewer xreader-thumbnailer xviewer xxd xz xzcat xzcmp xzdec
+xzdiff xzegrep xzfgrep xzgrep xzless xzmore yandex-browser yarn yelp youtube
+youtube-dl youtube-dl-gui youtube-viewer youtube-viewer-gtk
+youtube-viewers-common youtubemusic-nativefier yt-dlp ytmdesktop zaproxy zart
+zathura zcat zcmp zdiff zeal zegrep zfgrep zforce zgrep zim zless zlib-flate
 zmore znew zoom zpaq zstd zstdcat zstdgrep zstdless zstdmt zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-# GEN_EBUILD=1 # Uncomment to regen ebuild parts
-LLVM_COMPAT=(14)
+#GEN_EBUILD=1 # Uncomment to regen ebuild parts
+LLVM_COMPAT=( 14 )
 PYTHON_COMPAT=( python3_{9..11} )
 TEST_SET="distro" # distro or full
 
@@ -209,6 +221,7 @@ else
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
 	EGIT_BRANCH="master"
+	FALLBACK_COMMIT="3f4d6df0410f2b6e7ea295b7a3d7a0293f478fa9"
 	IUSE+=" fallback-commit"
 fi
 
@@ -219,7 +232,7 @@ SLOT="0"
 IUSE+="
 ${FIREJAIL_PROFILES_IUSE[@]}
 X apparmor +chroot contrib +dbusproxy
-+file-transfer +globalcfg +network +private-home selinux +suid test-profiles
++file-transfer +globalcfg landlock +network +private-home selinux +suid test-profiles
 test-x11 +userns vanilla xpra
 "
 IUSE+=" +firejail_profiles_default +firejail_profiles_server"
@@ -280,7 +293,7 @@ REQUIRED_USE+="
 #	firejail_profiles_rtv? ( firejail_profiles_rtv-addons )
 
 REQUIRED_USE+="
-	firejail_profiles_1password? ( firejail_profiles_electron )
+	firejail_profiles_1password? ( firejail_profiles_electron-common )
 	firejail_profiles_7z? ( firejail_profiles_archiver-common )
 	firejail_profiles_7za? ( firejail_profiles_7z )
 	firejail_profiles_7zr? ( firejail_profiles_7z )
@@ -290,7 +303,9 @@ REQUIRED_USE+="
 	firejail_profiles_Cyberfox? ( firejail_profiles_cyberfox )
 	firejail_profiles_Discord? ( firejail_profiles_discord )
 	firejail_profiles_DiscordCanary? ( firejail_profiles_discord-canary )
+	firejail_profiles_DiscordPTB? ( firejail_profiles_discord-ptb )
 	firejail_profiles_Documents? ( firejail_profiles_gnome-documents )
+	firejail_profiles_FBReader? ( firejail_profiles_fbreader )
 	firejail_profiles_FossaMail? ( firejail_profiles_fossamail )
 	firejail_profiles_Gitter? ( firejail_profiles_gitter )
 	firejail_profiles_Logs? ( firejail_profiles_gnome-logs )
@@ -298,6 +313,7 @@ REQUIRED_USE+="
 	firejail_profiles_Natron? ( firejail_profiles_natron )
 	firejail_profiles_PPSSPPQt? ( firejail_profiles_ppsspp )
 	firejail_profiles_PPSSPPSDL? ( firejail_profiles_ppsspp )
+	firejail_profiles_Postman? ( firejail_profiles_postman )
 	firejail_profiles_Screenshot? ( firejail_profiles_gnome-screenshot )
 	firejail_profiles_Telegram? ( firejail_profiles_telegram )
 	firejail_profiles_Thunar? ( firejail_profiles_file-manager-common )
@@ -309,11 +325,12 @@ REQUIRED_USE+="
 	firejail_profiles_alpinef? ( firejail_profiles_alpine )
 	firejail_profiles_als? ( firejail_profiles_atool )
 	firejail_profiles_amuled? ( firejail_profiles_amule )
+	firejail_profiles_ani-cli? ( firejail_profiles_mpv )
 	firejail_profiles_apack? ( firejail_profiles_atool )
 	firejail_profiles_ar? ( firejail_profiles_archiver-common )
 	firejail_profiles_ardour4? ( firejail_profiles_ardour5 )
 	firejail_profiles_arepack? ( firejail_profiles_atool )
-	firejail_profiles_atom? ( firejail_profiles_electron )
+	firejail_profiles_atom? ( firejail_profiles_electron-common )
 	firejail_profiles_atom-beta? ( firejail_profiles_atom )
 	firejail_profiles_atool? ( firejail_profiles_archiver-common )
 	firejail_profiles_atril-previewer? ( firejail_profiles_atril )
@@ -331,9 +348,9 @@ REQUIRED_USE+="
 	firejail_profiles_baloo_filemetadata_temp_extractor? ( firejail_profiles_baloo_file )
 	firejail_profiles_balsa? ( firejail_profiles_email-common )
 	firejail_profiles_basilisk? ( firejail_profiles_firefox-common )
-	firejail_profiles_beaker? ( firejail_profiles_electron )
+	firejail_profiles_beaker? ( firejail_profiles_electron-common )
 	firejail_profiles_bibtex? ( firejail_profiles_latex-common )
-	firejail_profiles_bitwarden? ( firejail_profiles_electron )
+	firejail_profiles_bitwarden? ( firejail_profiles_electron-common )
 	firejail_profiles_bnox? ( firejail_profiles_chromium-common )
 	firejail_profiles_brave? ( firejail_profiles_chromium-common )
 	firejail_profiles_brave-browser? ( firejail_profiles_brave )
@@ -341,6 +358,7 @@ REQUIRED_USE+="
 	firejail_profiles_brave-browser-dev? ( firejail_profiles_brave )
 	firejail_profiles_brave-browser-nightly? ( firejail_profiles_brave )
 	firejail_profiles_brave-browser-stable? ( firejail_profiles_brave )
+	firejail_profiles_brz? ( firejail_profiles_git )
 	firejail_profiles_bsdcat? ( firejail_profiles_bsdtar )
 	firejail_profiles_bsdcpio? ( firejail_profiles_bsdtar )
 	firejail_profiles_bsdtar? ( firejail_profiles_archiver-common )
@@ -348,6 +366,7 @@ REQUIRED_USE+="
 	firejail_profiles_bunzip2? ( firejail_profiles_gzip )
 	firejail_profiles_bzcat? ( firejail_profiles_gzip )
 	firejail_profiles_bzip2? ( firejail_profiles_gzip )
+	firejail_profiles_bzr? ( firejail_profiles_brz )
 	firejail_profiles_cachy-browser? ( firejail_profiles_firefox-common )
 	firejail_profiles_caja? ( firejail_profiles_file-manager-common )
 	firejail_profiles_calligraauthor? ( firejail_profiles_calligra )
@@ -363,6 +382,7 @@ REQUIRED_USE+="
 	firejail_profiles_chromium? ( firejail_profiles_chromium-common )
 	firejail_profiles_chromium-browser? ( firejail_profiles_chromium )
 	firejail_profiles_chromium-browser-privacy? ( firejail_profiles_chromium )
+	firejail_profiles_chromium-common? ( firejail_profiles_blink-common )
 	firejail_profiles_chromium-freeworld? ( firejail_profiles_chromium )
 	firejail_profiles_cinelerra? ( firejail_profiles_cin )
 	firejail_profiles_cinelerra-gg? ( firejail_profiles_cin )
@@ -375,7 +395,7 @@ REQUIRED_USE+="
 	firejail_profiles_cliqz? ( firejail_profiles_firefox-common )
 	firejail_profiles_clocks? ( firejail_profiles_gnome-clocks )
 	firejail_profiles_cmake? ( firejail_profiles_build-systems-common )
-	firejail_profiles_code? ( firejail_profiles_electron )
+	firejail_profiles_code? ( firejail_profiles_electron-common )
 	firejail_profiles_code-oss? ( firejail_profiles_code )
 	firejail_profiles_codium? ( firejail_profiles_vscodium )
 	firejail_profiles_cola? ( firejail_profiles_git-cola )
@@ -391,7 +411,8 @@ REQUIRED_USE+="
 	firejail_profiles_dino-im? ( firejail_profiles_dino )
 	firejail_profiles_discord? ( firejail_profiles_discord-common )
 	firejail_profiles_discord-canary? ( firejail_profiles_discord-common )
-	firejail_profiles_discord-common? ( firejail_profiles_electron )
+	firejail_profiles_discord-common? ( firejail_profiles_electron-common )
+	firejail_profiles_discord-ptb? ( firejail_profiles_discord-common )
 	firejail_profiles_dnox? ( firejail_profiles_chromium-common )
 	firejail_profiles_dolphin? ( firejail_profiles_file-manager-common )
 	firejail_profiles_dooble-qt4? ( firejail_profiles_dooble )
@@ -400,12 +421,13 @@ REQUIRED_USE+="
 	firejail_profiles_ebook-meta? ( firejail_profiles_calibre )
 	firejail_profiles_ebook-polish? ( firejail_profiles_calibre )
 	firejail_profiles_ebook-viewer? ( firejail_profiles_calibre )
-	firejail_profiles_electron-mail? ( firejail_profiles_electron )
+	firejail_profiles_electron-common? ( firejail_profiles_blink-common )
+	firejail_profiles_electron-mail? ( firejail_profiles_electron-common )
 	firejail_profiles_element-desktop? ( firejail_profiles_riot-desktop )
 	firejail_profiles_elinks? ( firejail_profiles_links-common )
 	firejail_profiles_enchant-2? ( firejail_profiles_enchant )
 	firejail_profiles_enchant-lsmod? ( firejail_profiles_enchant )
-	firejail_profiles_enchant-lsmod-2? ( firejail_profiles_enchant )
+	firejail_profiles_enchant-lsmod-2? ( firejail_profiles_enchant-2 )
 	firejail_profiles_enox? ( firejail_profiles_chromium-common )
 	firejail_profiles_eog? ( firejail_profiles_eo-common )
 	firejail_profiles_eom? ( firejail_profiles_eo-common )
@@ -426,8 +448,10 @@ REQUIRED_USE+="
 	firejail_profiles_firefox-wayland? ( firejail_profiles_firefox )
 	firejail_profiles_firefox-x11? ( firejail_profiles_firefox )
 	firejail_profiles_five-or-more? ( firejail_profiles_gnome_games-common )
+	firejail_profiles_fix-qdf? ( firejail_profiles_qpdf )
 	firejail_profiles_flacsplt? ( firejail_profiles_mp3splt )
 	firejail_profiles_flashpeak-slimjet? ( firejail_profiles_chromium-common )
+	firejail_profiles_floorp? ( firejail_profiles_firefox-common )
 	firejail_profiles_fossamail? ( firejail_profiles_firefox )
 	firejail_profiles_four-in-a-row? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_freecadcmd? ( firejail_profiles_freecad )
@@ -436,9 +460,9 @@ REQUIRED_USE+="
 	firejail_profiles_freeoffice-planmaker? ( firejail_profiles_softmaker-common )
 	firejail_profiles_freeoffice-presentations? ( firejail_profiles_softmaker-common )
 	firejail_profiles_freeoffice-textmaker? ( firejail_profiles_softmaker-common )
-	firejail_profiles_freetube? ( firejail_profiles_electron )
+	firejail_profiles_freetube? ( firejail_profiles_electron-common )
 	firejail_profiles_gajim-history-manager? ( firejail_profiles_gajim )
-	firejail_profiles_gallery-dl? ( firejail_profiles_youtube-dl )
+	firejail_profiles_gallery-dl? ( firejail_profiles_yt-dlp )
 	firejail_profiles_gcalccmd? ( firejail_profiles_gnome-calculator )
 	firejail_profiles_gconf-editor? ( firejail_profiles_gconf )
 	firejail_profiles_gconf-merge-schema? ( firejail_profiles_gconf )
@@ -447,19 +471,22 @@ REQUIRED_USE+="
 	firejail_profiles_gconftool-2? ( firejail_profiles_gconf )
 	firejail_profiles_ghb? ( firejail_profiles_handbrake )
 	firejail_profiles_gist-paste? ( firejail_profiles_gist )
-	firejail_profiles_github-desktop? ( firejail_profiles_electron )
+	firejail_profiles_github-desktop? ( firejail_profiles_electron-common )
 	firejail_profiles_gl-117-wrapper? ( firejail_profiles_gl-117 )
 	firejail_profiles_glaxium-wrapper? ( firejail_profiles_glaxium )
 	firejail_profiles_gnome-2048? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_gnome-character-map? ( firejail_profiles_gucharmap )
+	firejail_profiles_gnome-keyring? ( firejail_profiles_gnome-keyring-daemon )
 	firejail_profiles_gnome-keyring-3? ( firejail_profiles_gnome-keyring )
 	firejail_profiles_gnome-klotski? ( firejail_profiles_gnome_games-common )
+	firejail_profiles_gnome-logs? ( firejail_profiles_system-log-common )
 	firejail_profiles_gnome-mahjongg? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_gnome-mines? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_gnome-mpv? ( firejail_profiles_celluloid )
 	firejail_profiles_gnome-nibbles? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_gnome-robots? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_gnome-sudoku? ( firejail_profiles_gnome_games-common )
+	firejail_profiles_gnome-system-log? ( firejail_profiles_system-log-common )
 	firejail_profiles_gnome-taquin? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_gnome-tetravex? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_godot3? ( firejail_profiles_godot )
@@ -474,12 +501,18 @@ REQUIRED_USE+="
 	firejail_profiles_gsettings-data-convert? ( firejail_profiles_gconf )
 	firejail_profiles_gsettings-schema-convert? ( firejail_profiles_gconf )
 	firejail_profiles_gtar? ( firejail_profiles_tar )
-	firejail_profiles_gtk-lbry-viewer? ( firejail_profiles_lbry-viewer )
-	firejail_profiles_gtk-pipe-viewer? ( firejail_profiles_pipe-viewer )
-	firejail_profiles_gtk-straw-viewer? ( firejail_profiles_straw-viewer )
-	firejail_profiles_gtk-youtube-viewer? ( firejail_profiles_youtube-viewer )
-	firejail_profiles_gtk2-youtube-viewer? ( firejail_profiles_youtube-viewer )
-	firejail_profiles_gtk3-youtube-viewer? ( firejail_profiles_youtube-viewer )
+	firejail_profiles_gtk-lbry-viewer? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_lbry-viewer )
+	firejail_profiles_gtk-pipe-viewer? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_pipe-viewer )
+	firejail_profiles_gtk-straw-viewer? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_straw-viewer )
+	firejail_profiles_gtk-youtube-viewer? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_youtube-viewer )
+	firejail_profiles_gtk2-youtube-viewer? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_youtube-viewer )
+	firejail_profiles_gtk3-youtube-viewer? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_youtube-viewer )
 	firejail_profiles_gummi? ( firejail_profiles_latex-common )
 	firejail_profiles_gunzip? ( firejail_profiles_gzip )
 	firejail_profiles_gzexe? ( firejail_profiles_gzip )
@@ -496,8 +529,10 @@ REQUIRED_USE+="
 	firejail_profiles_ipcalc-ng? ( firejail_profiles_ipcalc )
 	firejail_profiles_iridium? ( firejail_profiles_chromium-common )
 	firejail_profiles_iridium-browser? ( firejail_profiles_iridium )
+	firejail_profiles_jami? ( firejail_profiles_jami-gnome )
 	firejail_profiles_jdownloader? ( firejail_profiles_JDownloader )
-	firejail_profiles_jitsi-meet-desktop? ( firejail_profiles_electron )
+	firejail_profiles_jitsi-meet-desktop? ( firejail_profiles_electron-common )
+	firejail_profiles_journal-viewer? ( firejail_profiles_system-log-common )
 	firejail_profiles_jumpnbump-menu? ( firejail_profiles_jumpnbump )
 	firejail_profiles_kalgebramobile? ( firejail_profiles_kalgebra )
 	firejail_profiles_karbon? ( firejail_profiles_krita )
@@ -511,6 +546,8 @@ REQUIRED_USE+="
 	firejail_profiles_knotes? ( firejail_profiles_kmail )
 	firejail_profiles_latex? ( firejail_profiles_latex-common )
 	firejail_profiles_lbry-viewer? ( firejail_profiles_youtube-viewers-common )
+	firejail_profiles_lbry-viewer-gtk? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_lbry-viewer )
 	firejail_profiles_lbunzip2? ( firejail_profiles_gzip )
 	firejail_profiles_lbzcat? ( firejail_profiles_gzip )
 	firejail_profiles_lbzip2? ( firejail_profiles_gzip )
@@ -519,8 +556,9 @@ REQUIRED_USE+="
 	firejail_profiles_lightsoff? ( firejail_profiles_gnome_games-common )
 	firejail_profiles_links? ( firejail_profiles_links-common )
 	firejail_profiles_links2? ( firejail_profiles_links-common )
-	firejail_profiles_linuxqq? ( firejail_profiles_electron )
+	firejail_profiles_linuxqq? ( firejail_profiles_electron-common )
 	firejail_profiles_lobase? ( firejail_profiles_libreoffice )
+	firejail_profiles_lobster? ( firejail_profiles_mpv )
 	firejail_profiles_localc? ( firejail_profiles_libreoffice )
 	firejail_profiles_lodraw? ( firejail_profiles_libreoffice )
 	firejail_profiles_loffice? ( firejail_profiles_libreoffice )
@@ -537,6 +575,9 @@ REQUIRED_USE+="
 	firejail_profiles_lrzuntar? ( firejail_profiles_cpio )
 	firejail_profiles_lsar? ( firejail_profiles_ar )
 	firejail_profiles_lyx? ( firejail_profiles_latex-common )
+	firejail_profiles_lz4? ( firejail_profiles_archiver-common )
+	firejail_profiles_lz4c? ( firejail_profiles_lz4 )
+	firejail_profiles_lz4cat? ( firejail_profiles_lz4 )
 	firejail_profiles_lzcat? ( firejail_profiles_cpio )
 	firejail_profiles_lzcmp? ( firejail_profiles_cpio )
 	firejail_profiles_lzdiff? ( firejail_profiles_cpio )
@@ -557,7 +598,7 @@ REQUIRED_USE+="
 	firejail_profiles_mate-calculator? ( firejail_profiles_mate-calc )
 	firejail_profiles_mathematica? ( firejail_profiles_Mathematica )
 	firejail_profiles_matrix-mirage? ( firejail_profiles_mirage )
-	firejail_profiles_mattermost-desktop? ( firejail_profiles_electron )
+	firejail_profiles_mattermost-desktop? ( firejail_profiles_electron-common )
 	firejail_profiles_md5sum? ( firejail_profiles_hasher-common )
 	firejail_profiles_megaglest_editor? ( firejail_profiles_megaglest )
 	firejail_profiles_mencoder? ( firejail_profiles_mplayer )
@@ -565,7 +606,9 @@ REQUIRED_USE+="
 	firejail_profiles_microsoft-edge? ( firejail_profiles_chromium-common )
 	firejail_profiles_microsoft-edge-beta? ( firejail_profiles_chromium-common )
 	firejail_profiles_microsoft-edge-dev? ( firejail_profiles_chromium-common )
+	firejail_profiles_microsoft-edge-stable? ( firejail_profiles_microsoft-edge )
 	firejail_profiles_min? ( firejail_profiles_chromium-common )
+	firejail_profiles_mov-cli? ( firejail_profiles_mpv )
 	firejail_profiles_mp3wrap? ( firejail_profiles_mp3splt )
 	firejail_profiles_mpg123-alsa? ( firejail_profiles_mpg123 )
 	firejail_profiles_mpg123-id3dump? ( firejail_profiles_mpg123 )
@@ -603,10 +646,10 @@ REQUIRED_USE+="
 	firejail_profiles_nitroshare-ui? ( firejail_profiles_nitroshare )
 	firejail_profiles_node? ( firejail_profiles_nodejs-common )
 	firejail_profiles_node-gyp? ( firejail_profiles_nodejs-common )
-	firejail_profiles_notable? ( firejail_profiles_electron )
+	firejail_profiles_notable? ( firejail_profiles_electron-common )
 	firejail_profiles_npm? ( firejail_profiles_nodejs-common )
 	firejail_profiles_npx? ( firejail_profiles_nodejs-common )
-	firejail_profiles_nuclear? ( firejail_profiles_electron )
+	firejail_profiles_nuclear? ( firejail_profiles_electron-common )
 	firejail_profiles_oggsplt? ( firejail_profiles_mp3splt )
 	firejail_profiles_onionshare? ( firejail_profiles_onionshare-gui )
 	firejail_profiles_onionshare-cli? ( firejail_profiles_onionshare-gui )
@@ -627,9 +670,14 @@ REQUIRED_USE+="
 	firejail_profiles_pinball-wrapper? ( firejail_profiles_pinball )
 	firejail_profiles_pip? ( firejail_profiles_build-systems-common )
 	firejail_profiles_pipe-viewer? ( firejail_profiles_youtube-viewers-common )
+	firejail_profiles_pipe-viewer-gtk? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_pipe-viewer )
 	firejail_profiles_planmaker18? ( firejail_profiles_softmaker-common )
 	firejail_profiles_planmaker18free? ( firejail_profiles_softmaker-common )
 	firejail_profiles_playonlinux? ( firejail_profiles_wine )
+	firejail_profiles_pnpm? ( firejail_profiles_nodejs-common )
+	firejail_profiles_pnpx? ( firejail_profiles_nodejs-common )
+	firejail_profiles_postman? ( firejail_profiles_electron-common )
 	firejail_profiles_presentations18? ( firejail_profiles_softmaker-common )
 	firejail_profiles_presentations18free? ( firejail_profiles_softmaker-common )
 	firejail_profiles_pycharm-professional? ( firejail_profiles_pycharm-community )
@@ -641,9 +689,9 @@ REQUIRED_USE+="
 	firejail_profiles_ranger? ( firejail_profiles_file-manager-common )
 	firejail_profiles_rhythmbox-client? ( firejail_profiles_rhythmbox )
 	firejail_profiles_riot-desktop? ( firejail_profiles_riot-web )
-	firejail_profiles_riot-web? ( firejail_profiles_electron )
+	firejail_profiles_riot-web? ( firejail_profiles_electron-common )
 	firejail_profiles_rnano? ( firejail_profiles_nano )
-	firejail_profiles_rocketchat? ( firejail_profiles_electron )
+	firejail_profiles_rocketchat? ( firejail_profiles_electron-common )
 	firejail_profiles_rtin? ( firejail_profiles_tin )
 	firejail_profiles_rview? ( firejail_profiles_vim )
 	firejail_profiles_rvim? ( firejail_profiles_vim )
@@ -654,17 +702,20 @@ REQUIRED_USE+="
 	firejail_profiles_seamonkey-bin? ( firejail_profiles_seamonkey )
 	firejail_profiles_secret-tool? ( firejail_profiles_gnome-keyring )
 	firejail_profiles_semver? ( firejail_profiles_nodejs-common )
+	firejail_profiles_session-messenger? ( firejail_profiles_session-desktop )
+	firejail_profiles_session-messenger-desktop? ( firejail_profiles_session-desktop )
 	firejail_profiles_sftp? ( firejail_profiles_ssh )
 	firejail_profiles_sha1sum? ( firejail_profiles_hasher-common )
 	firejail_profiles_sha224sum? ( firejail_profiles_hasher-common )
 	firejail_profiles_sha256sum? ( firejail_profiles_hasher-common )
 	firejail_profiles_sha384sum? ( firejail_profiles_hasher-common )
 	firejail_profiles_sha512sum? ( firejail_profiles_hasher-common )
-	firejail_profiles_signal-desktop? ( firejail_profiles_electron )
-	firejail_profiles_skypeforlinux? ( firejail_profiles_electron )
-	firejail_profiles_slack? ( firejail_profiles_electron )
+	firejail_profiles_signal-desktop? ( firejail_profiles_electron-common )
+	firejail_profiles_skypeforlinux? ( firejail_profiles_electron-common )
+	firejail_profiles_slack? ( firejail_profiles_electron-common )
 	firejail_profiles_snox? ( firejail_profiles_chromium-common )
 	firejail_profiles_soffice? ( firejail_profiles_libreoffice )
+	firejail_profiles_standard-notes? ( firejail_profiles_standardnotes-desktop )
 	firejail_profiles_start-tor-browser? ( firejail_profiles_start-tor-browser_desktop )
 	firejail_profiles_steam-native? ( firejail_profiles_steam )
 	firejail_profiles_steam-runtime? ( firejail_profiles_steam )
@@ -676,9 +727,10 @@ REQUIRED_USE+="
 	firejail_profiles_sysprof-cli? ( firejail_profiles_sysprof )
 	firejail_profiles_tar? ( firejail_profiles_archiver-common )
 	firejail_profiles_tb-starter-wrapper? ( firejail_profiles_torbrowser-launcher )
-	firejail_profiles_teams? ( firejail_profiles_electron )
-	firejail_profiles_teams-for-linux? ( firejail_profiles_electron )
+	firejail_profiles_teams? ( firejail_profiles_electron-common )
+	firejail_profiles_teams-for-linux? ( firejail_profiles_electron-common )
 	firejail_profiles_telegram-desktop? ( firejail_profiles_telegram )
+	firejail_profiles_termshark? ( firejail_profiles_wireshark )
 	firejail_profiles_tex? ( firejail_profiles_latex-common )
 	firejail_profiles_textmaker18? ( firejail_profiles_softmaker-common )
 	firejail_profiles_textmaker18free? ( firejail_profiles_softmaker-common )
@@ -686,6 +738,7 @@ REQUIRED_USE+="
 	firejail_profiles_thunderbird? ( firejail_profiles_firefox-common )
 	firejail_profiles_thunderbird-beta? ( firejail_profiles_thunderbird )
 	firejail_profiles_thunderbird-wayland? ( firejail_profiles_thunderbird )
+	firejail_profiles_tidal-hifi? ( firejail_profiles_electron-common )
 	firejail_profiles_tor-browser? ( firejail_profiles_torbrowser-launcher )
 	firejail_profiles_tor-browser-ar? ( firejail_profiles_torbrowser-launcher )
 	firejail_profiles_tor-browser-ca? ( firejail_profiles_torbrowser-launcher )
@@ -762,10 +815,11 @@ REQUIRED_USE+="
 	firejail_profiles_transmission-show? ( firejail_profiles_transmission-common )
 	firejail_profiles_tshark? ( firejail_profiles_wireshark )
 	firejail_profiles_tuir? ( firejail_profiles_rtv )
-	firejail_profiles_tutanota-desktop? ( firejail_profiles_electron )
-	firejail_profiles_twitch? ( firejail_profiles_electron )
+	firejail_profiles_tutanota-desktop? ( firejail_profiles_electron-common )
+	firejail_profiles_twitch? ( firejail_profiles_electron-common )
 	firejail_profiles_unar? ( firejail_profiles_ar )
 	firejail_profiles_uncompress? ( firejail_profiles_gzip )
+	firejail_profiles_unlz4? ( firejail_profiles_lz4 )
 	firejail_profiles_unlzma? ( firejail_profiles_cpio )
 	firejail_profiles_unrar? ( firejail_profiles_archiver-common )
 	firejail_profiles_unxz? ( firejail_profiles_cpio )
@@ -779,6 +833,7 @@ REQUIRED_USE+="
 	firejail_profiles_vivaldi-beta? ( firejail_profiles_vivaldi )
 	firejail_profiles_vivaldi-snapshot? ( firejail_profiles_vivaldi )
 	firejail_profiles_vivaldi-stable? ( firejail_profiles_vivaldi )
+	firejail_profiles_vmplayer? ( firejail_profiles_vmware )
 	firejail_profiles_vmware-player? ( firejail_profiles_vmware )
 	firejail_profiles_vmware-workstation? ( firejail_profiles_vmware )
 	firejail_profiles_vscodium? ( firejail_profiles_code )
@@ -789,8 +844,8 @@ REQUIRED_USE+="
 	firejail_profiles_waterfox-current? ( firejail_profiles_waterfox )
 	firejail_profiles_weechat-curses? ( firejail_profiles_weechat )
 	firejail_profiles_wget2? ( firejail_profiles_wget )
-	firejail_profiles_whalebird? ( firejail_profiles_electron )
-	firejail_profiles_wire-desktop? ( firejail_profiles_electron )
+	firejail_profiles_whalebird? ( firejail_profiles_electron-common )
+	firejail_profiles_wire-desktop? ( firejail_profiles_electron-common )
 	firejail_profiles_wireshark-gtk? ( firejail_profiles_wireshark )
 	firejail_profiles_wireshark-qt? ( firejail_profiles_wireshark )
 	firejail_profiles_wpp? ( firejail_profiles_wps )
@@ -818,11 +873,13 @@ REQUIRED_USE+="
 	firejail_profiles_xzmore? ( firejail_profiles_cpio )
 	firejail_profiles_yandex-browser? ( firejail_profiles_chromium-common )
 	firejail_profiles_yarn? ( firejail_profiles_nodejs-common )
-	firejail_profiles_youtube? ( firejail_profiles_electron )
+	firejail_profiles_youtube? ( firejail_profiles_electron-common )
+	firejail_profiles_youtube-dl? ( firejail_profiles_yt-dlp )
 	firejail_profiles_youtube-viewer? ( firejail_profiles_youtube-viewers-common )
-	firejail_profiles_youtubemusic-nativefier? ( firejail_profiles_electron )
-	firejail_profiles_yt-dlp? ( firejail_profiles_youtube-dl )
-	firejail_profiles_ytmdesktop? ( firejail_profiles_electron )
+	firejail_profiles_youtube-viewer-gtk? ( firejail_profiles_gtk-youtube-viewers-common
+firejail_profiles_youtube-viewer )
+	firejail_profiles_youtubemusic-nativefier? ( firejail_profiles_electron-common )
+	firejail_profiles_ytmdesktop? ( firejail_profiles_electron-common )
 	firejail_profiles_zcat? ( firejail_profiles_gzip )
 	firejail_profiles_zcmp? ( firejail_profiles_gzip )
 	firejail_profiles_zdiff? ( firejail_profiles_gzip )
@@ -831,9 +888,10 @@ REQUIRED_USE+="
 	firejail_profiles_zforce? ( firejail_profiles_gzip )
 	firejail_profiles_zgrep? ( firejail_profiles_gzip )
 	firejail_profiles_zless? ( firejail_profiles_gzip )
+	firejail_profiles_zlib-flate? ( firejail_profiles_qpdf )
 	firejail_profiles_zmore? ( firejail_profiles_gzip )
 	firejail_profiles_znew? ( firejail_profiles_gzip )
-	firejail_profiles_zoom? ( firejail_profiles_electron )
+	firejail_profiles_zoom? ( firejail_profiles_electron-common )
 	firejail_profiles_zpaq? ( firejail_profiles_cpio )
 	firejail_profiles_zstd? ( firejail_profiles_archiver-common )
 	firejail_profiles_zstdcat? ( firejail_profiles_zstd )
@@ -843,7 +901,7 @@ REQUIRED_USE+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.9.70-envlimits.patch"
-	"${FILESDIR}/${PN}-0.9.70-firecfg.config.patch"
+	"${FILESDIR}/${PN}-3f4d6df-firecfg.config.patch"
 )
 
 get_impls() {
@@ -979,6 +1037,16 @@ einfo "Editing ${f}:  /usr/share/doc/firejail -> ${ED}/usr/share/doc/firejail-${
 #	done
 }
 
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
 src_prepare() {
 	default
 
@@ -1084,13 +1152,12 @@ _src_configure() {
 	fi
 
 	local myconf=(
-		--disable-firetunnel
-		--disable-lts
 		$(use_enable apparmor)
 		$(use_enable chroot)
 		$(use_enable dbusproxy)
 		$(use_enable file-transfer)
 		$(use_enable globalcfg)
+		$(use_enable landlock)
 		$(use_enable network)
 		$(use_enable private-home)
 		$(use_enable selinux)

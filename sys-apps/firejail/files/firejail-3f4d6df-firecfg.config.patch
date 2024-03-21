@@ -1,0 +1,88 @@
+diff -urp firejail-9999.orig/src/firecfg/firecfg.config firejail-9999/src/firecfg/firecfg.config
+--- firejail-9999.orig/src/firecfg/firecfg.config	2024-03-21 00:32:35.167909646 -0700
++++ firejail-9999/src/firecfg/firecfg.config	2024-03-21 00:35:16.398476942 -0700
+@@ -233,7 +233,8 @@ editorconfiger
+ electron-mail
+ electrum
+ element-desktop
+-elinks
++# Breaks emerge/portage on Gentoo: 'too many environment variables' \
++#elinks
+ empathy
+ enchant
+ enchant-2
+@@ -284,7 +285,8 @@ floorp
+ flowblade
+ fluffychat
+ font-manager
+-fontforge
++# Breaks emerge/portage on Gentoo \
++#fontforge
+ fossamail
+ four-in-a-row
+ fractal
+@@ -530,7 +532,8 @@ lowriter
+ luminance-hdr
+ lximage-qt
+ lxmusic
+-lynx
++# Breaks emerge/portage on Gentoo: 'too many environment variables' \
++#lynx
+ lyriek
+ lyx
+ #lz4 # disable until we fix CLI archivers for makepkg on Arch (see discussion in #3095)
+@@ -538,7 +541,11 @@ lyx
+ #lz4cat # disable until we fix CLI archivers for makepkg on Arch (see discussion in #3095)
+ macrofusion
+ magicor
+-man
++# Breaks: $ man chromium-browser
++# WARNING: terminal is not fully functional
++# Press RETURN to continue 
++# Manual page chromium-browser(1) byte 0/0 (END) (press h for help or q to quit) \
++#man
+ manaplus
+ marker
+ masterpdfeditor
+@@ -620,7 +627,8 @@ musescore
+ musictube
+ musixmatch
+ mutool
+-mutt
++# Breaks when configs are under ~/.mutt/ \
++#mutt
+ mypaint
+ mypaint-ora-thumbnailer
+ natron
+@@ -684,7 +692,8 @@ out123
+ palemoon
+ #pandoc
+ parole
+-patch
++# Breaks emerge/portage on Gentoo: 'too many environment variables', path issues \
++#patch
+ pavucontrol
+ pavucontrol-qt
+ pcsxr
+@@ -829,7 +838,8 @@ steam-runtime
+ stellarium
+ straw-viewer
+ strawberry
+-strings
++# Breaks emerge/portage on Gentoo \
++#strings
+ studio.sh
+ subdownloader
+ sum
+@@ -959,7 +969,8 @@ webstorm
+ weechat
+ weechat-curses
+ wesnoth
+-wget
++# Breaks emerge/portage on Gentoo: 'too many environment variables', path issues \
++#wget
+ wget2
+ whalebird
+ whois
+Only in firejail-9999/src/firecfg: firecfg.config.orig
+Only in firejail-9999/src/firecfg: firecfg.config.rej
