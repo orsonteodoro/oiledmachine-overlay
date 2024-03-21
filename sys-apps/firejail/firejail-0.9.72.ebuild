@@ -929,7 +929,7 @@ pkg_setup() {
 	local WARNING_SQUASHFS="CONFIG_SQUASHFS: required for firejail --appimage mode"
 
 	if use apparmor ; then
-		CONFIG_CHECK+=" ~SECURITY_APPARMOR"
+		CONFIG_CHECK+=" ~SECURITY ~NET ~SECURITY_APPARMOR"
 	fi
 
 	check_extra_config
