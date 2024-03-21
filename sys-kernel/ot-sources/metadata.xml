@@ -1050,8 +1050,8 @@ OT_KERNEL_WORK_PROFILE="gaming-tournament"
         - Nest 6.7 has 2 releases of the same patch, with and without
           spinning.  By default, the old behavior is used.  To access the
           experimental new behavior without spinning set NEST_SPINNING=0.
-          Spinning is a technique used to keep idle cores warm or running at
-          higher frequency.  Nest likely only benefits in certain
+          Spinning is a technique used to keep used previously idle cores warm
+          or running at higher frequency.  Nest likely only benefits in certain
           configurations.
 
       The following is discussed in great detail because it affects use of
@@ -4062,8 +4062,8 @@ unset OT_KERNEL_PRIVATE_KEY
         NEST_SPINNING=1 - Old behavior with spinning
         NEST_SPINNING=0 - New behavior without spinning (experimental)
 
-      Spinning is a technique used to keep idle cores warm and running
-      at a higher frequency.
+      Spinning is a technique used to keep possibly used previously idle cores
+      warm and running at a higher frequency.
     </flag>
     <flag name="kpgo-utils">
       Adds support for Full PGO for GCC compilers.
