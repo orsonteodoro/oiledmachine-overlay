@@ -31,6 +31,10 @@ LICENSE="
 # The Apache-2.0 license template does not have all rights reserved in the distro
 # template but all rights reserved is explicit in Apache-1.0 and BSD licenses.
 KEYWORDS="~amd64"
+RESTRICT="
+	strip
+	test
+"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 aocc doc test r2
@@ -59,9 +63,6 @@ BDEPEND="
 			dev-python/sphinx[${PYTHON_USEDEP}]
 		')
 	)
-"
-RESTRICT="
-	test
 "
 S="${WORKDIR}/flang-rocm-${PV}"
 PATCHES=(
