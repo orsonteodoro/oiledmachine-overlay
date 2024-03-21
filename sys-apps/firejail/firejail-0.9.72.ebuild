@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# FIREJAIL_PROFILES last update 0.9.68
+# U 22.04
 
 # This is done for modular install.
 FIREJAIL_MAX_ENVS=${FIREJAIL_MAX_ENVS:-512}
