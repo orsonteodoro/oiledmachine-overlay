@@ -201,6 +201,7 @@ src_test() {
 src_install() {
 	cmake_src_install
 	rocm_mv_docs
+	rocm_fix_rpath
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
