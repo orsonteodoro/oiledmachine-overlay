@@ -77,6 +77,9 @@ pkg_setup() {
 src_prepare() {
 	cmake_src_prepare
 	rocm_src_prepare
+
+	# Prevent swapping
+	sed -i -r -e "s|-parallel-jobs=[0-9]+||g" CMakeLists.txt || die
 }
 
 src_configure() {
