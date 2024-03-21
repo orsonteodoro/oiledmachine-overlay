@@ -99,7 +99,7 @@ local_src_compile() {
 	cd "${S}"
 
 	local comp arch
-	local bt buildtypes
+	local bt buildtypes=()
 
 	case ${MULTILIB_ABI_FLAG} in
 		abi_x86_64) arch=x86_64 ;;
@@ -116,12 +116,12 @@ local_src_compile() {
 	esac
 
 	if use debug ; then
-		buildtypes="release debug"
+		buildtypes=( "release" "debug" )
 	else
-		buildtypes="release"
+		buildtypes=( "release" )
 	fi
 
-	for bt in ${buildtypes}; do
+	for bt in ${buildtypes[@]}; do
 		CXX="$(tc-getCXX)" \
 		CC="$(tc-getCC)" \
 		AS="$(tc-getAS)" \
@@ -138,12 +138,12 @@ local_src_compile() {
 
 multilib_src_compile() {
 	local targets=(
-		tbb
-		tbbmalloc
-		tbbproxy
+		"tbb"
+		"tbbmalloc"
+		"tbbproxy"
 	)
-	use numa && targets+=( tbbbind )
-	use rml && targets+=( rml )
+	use numa && targets+=( "tbbbind" )
+	use rml && targets+=( "rml" )
 	local_src_compile ${targets[@]}
 }
 
@@ -153,14 +153,14 @@ multilib_src_test() {
 
 multilib_src_install() {
 	local bt
-	local buildtypes
+	local buildtypes=()
 	if use debug ; then
-		buildtypes="release debug"
+		buildtypes=( "release" "debug" )
 	else
-		buildtypes="release"
+		buildtypes=( "release" )
 	fi
 	exeinto /usr/$(get_libdir)/${PN}/${SLOT_MAJOR}
-	for bt in ${buildtypes}; do
+	for bt in ${buildtypes[@]}; do
 		cd "${BUILD_DIR}_${bt}" || die
 		local l
 		for l in $(find . -name lib\*$(get_libname \*)); do
