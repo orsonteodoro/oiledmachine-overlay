@@ -134,7 +134,7 @@ local_src_compile() {
 }
 
 multilib_src_compile() {
-	local_src_compile tbb tbbmalloc ttbbind
+	local_src_compile tbb tbbmalloc tbbbind tbbproxy rml
 }
 
 multilib_src_test() {
