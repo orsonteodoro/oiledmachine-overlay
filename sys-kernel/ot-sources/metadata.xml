@@ -4054,7 +4054,8 @@ unset OT_KERNEL_PRIVATE_KEY
       Adds the per-core Nest task scheduler for 10% to 2x the benefit.  It uses
       autogrouped CFS and CFS as a fallback for secondary nest expansion.  The
       developers used it on multiple socket servers with multicore processors
-      having 2 TPC and DVFS (Dynamic Voltage and Frequency Scaling enabled).
+      having 2 TPC (Threads per Core) and DVFS (Dynamic Voltage and Frequency
+      Scaling enabled).
 
       For 6.7 and later:
 
