@@ -16,8 +16,12 @@ KEYWORDS="
 ~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
 ~x86-linux
 "
-SLOT_MAJOR="2"
-SLOT="${SLOT_MAJOR}/${PV}"
+SLOT_MAJOR="2" # Same as SONAME_SUFFIX, See https://github.com/oneapi-src/oneTBB/blob/v2020.3/include/tbb/tbb_stddef.h#L30
+SOVER_MINOR=$(ver_cut 2 ${PV}) # The distro messes up on this component.
+SOVER_TBB="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L114
+SOVER_TBBMALLOC="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L126
+SOVER_TBBBIND="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L119
+SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
 IUSE+=" debug examples"
 DEPEND+="
 	!<dev-cpp/tbb-2021:0
@@ -130,7 +134,7 @@ local_src_compile() {
 }
 
 multilib_src_compile() {
-	local_src_compile tbb tbbmalloc
+	local_src_compile tbb tbbmalloc ttbbind
 }
 
 multilib_src_test() {

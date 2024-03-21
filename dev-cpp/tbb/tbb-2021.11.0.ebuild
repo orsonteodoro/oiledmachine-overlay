@@ -51,13 +51,19 @@ https://github.com/oneapi-src/${MY_PN}/archive/refs/heads/${EGIT_COMMIT}.tar.gz
 	"
 fi
 
-SLOT_MAJOR="0"
-SLOT="${SLOT_MAJOR}/${PV}"
+SLOT_MAJOR="0" # It should be 12 but kept 0 to maintain compatibility with distro repo ebuilds.
+SOVER_MINOR="."$(ver_cut 2 ${PV}) # The distro messes up on this component and never updated since 2021.5.0.
+SOVER_TBB="12" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/include/oneapi/tbb/version.h#L51
+SOVER_TBBMALLOC="2" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/CMakeLists.txt#L54
+SOVER_TBBBIND="3" # See https://github.com/oneapi-src/oneTBB/blob/v2021.11.0/CMakeLists.txt#L55
+SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
 # Upstream enables tests by default.
 IUSE+=" -X debug doc -examples -python +tbbmalloc -test"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	X? ( examples )
+	X? (
+		examples
+	)
 "
 RDEPEND+="
 	sys-apps/hwloc:=
@@ -97,13 +103,10 @@ elif [[ "${VER_SCH}" == "live-snapshot" ]] ; then
 	S_BAK="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 fi
 
-DOCS=( README.md )
 RESTRICT="mirror"
+DOCS=( README.md )
 PATCHES=(
-	# Should be in.. 2022?
-	"${FILESDIR}"/${PN}-2021.5.0-musl-deepbind.patch
-	# Need to verify this is in master
-	"${FILESDIR}"/${PN}-2021.5.0-musl-mallinfo.patch
+	"${FILESDIR}/${PN}-2021.8.0-gcc-13.patch"
 )
 
 pkg_setup()
