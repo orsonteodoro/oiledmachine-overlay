@@ -129,6 +129,10 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.16
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
+	sys-devel/binutils[gold,plugins]
+	system-llvm? (
+		>=sys-devel/llvmgold-${LLVM_SLOT}
+	)
 	test? (
 		>=dev-cpp/gtest-1.11.0
 		>=sci-libs/fftw-3
@@ -210,6 +214,9 @@ src_configure() {
 	# Fix errror for
 # local memory (23068672) exceeds limit (65536) in function '_Z17transpose_kernel2I15HIP_vector_typeIfLj2EE6planarIS1_E11interleavedIS1_ELm64ELm16ELb1ELi0ELi1ELb0ELb0ELb0EL12CallbackType1EEvT0_T1_PKT_PmSC_SC_PvSD_jSD_SD_'
 	replace-flags '-O0' '-O1'
+
+	# Breaks with lld
+	append-flags -fuse-ld=gold
 
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_RIDER=$(usex benchmark ON OFF)
