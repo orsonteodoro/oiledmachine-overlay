@@ -22,7 +22,7 @@ SOVER_TBB="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linu
 SOVER_TBBMALLOC="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L126
 SOVER_TBBBIND="2" # See https://github.com/oneapi-src/oneTBB/blob/v2020.3/build/linux.inc#L119
 SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
-IUSE+=" debug examples"
+IUSE+=" debug examples numa rml"
 DEPEND+="
 	!<dev-cpp/tbb-2021:0
 "
@@ -134,7 +134,14 @@ local_src_compile() {
 }
 
 multilib_src_compile() {
-	local_src_compile tbb tbbmalloc tbbbind tbbproxy rml
+	local targets=(
+		tbb
+		tbbmalloc
+		tbbproxy
+	)
+	use numa && targets+=( tbbbind )
+	use rml && targets+=( rml )
+	local_src_compile ${targets[@]}
 }
 
 multilib_src_test() {

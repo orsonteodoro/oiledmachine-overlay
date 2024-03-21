@@ -47,9 +47,15 @@
     <flag name="examples">
       Builds and installs examples.
     </flag>
+    <flag name="tbbbind">
+      Builds and installs the NUMA support library (tbbbind).
+    </flag>
     <flag name="python">
       Builds Python bindings for efficient composable threading and a
       replacement of Python's ThreadPool.
+    </flag>
+    <flag name="rml">
+      Builds and installs Resource Management Layer (RML).
     </flag>
     <flag name="test">
       Builds and runs test suite.
