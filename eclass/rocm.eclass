@@ -742,6 +742,7 @@ rocm_fix_rpath() {
 	IFS=$'\n'
 	local rocm_libs=(
 		"libamdhip64.so"
+		"libhiprtc.so"
 		"libhsa-runtime64.so"
 		"libhsakmt.so"
 		"librdc_bootstrap.so"
@@ -918,6 +919,7 @@ rocm_verify_rpath_correctness() {
 	IFS=$'\n'
 	local rocm_libs=(
 		"libamdhip64.so"
+		"libhiprtc.so"
 		"libhsa-runtime64.so"
 		"libhsakmt.so"
 		"librdc_bootstrap.so"
