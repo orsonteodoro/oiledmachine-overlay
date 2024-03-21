@@ -28,6 +28,9 @@ DEPEND+="
 "
 RDEPEND+="
 	${DEPEND}
+	numa? (
+		sys-apps/hwloc:=
+	)
 "
 SRC_URI="
 https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz
