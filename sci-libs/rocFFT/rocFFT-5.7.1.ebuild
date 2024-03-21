@@ -215,7 +215,7 @@ src_configure() {
 # local memory (23068672) exceeds limit (65536) in function '_Z17transpose_kernel2I15HIP_vector_typeIfLj2EE6planarIS1_E11interleavedIS1_ELm64ELm16ELb1ELi0ELi1ELb0ELb0ELb0EL12CallbackType1EEvT0_T1_PKT_PmSC_SC_PvSD_jSD_SD_'
 	replace-flags '-O0' '-O1'
 
-	# Breaks with lld
+	# Breaks with lld and bfd
 	append-flags -fuse-ld=gold
 
 	local mycmakeargs=(
