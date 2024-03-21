@@ -6,6 +6,10 @@ EAPI=8
 LLVM_MAX_SLOT=14 # Based on sover
 PYTHON_COMPAT=( python3_{10..12} )
 
+KEYWORDS="
+~amd64 ~x86
+"
+S="${WORKDIR}/${PN}-compiler-${PV}"
 SRC_URI="
 	${PN}-compiler-${PV}.tar
 "
@@ -18,10 +22,12 @@ LICENSE="
 	BSD-2
 	UoI-NCSA
 "
-SLOT="${LLVM_MAX_SLOT}/${PV}"
-KEYWORDS="
-~amd64 ~x86
+RESTRICT="
+	binchecks
+	fetch
+	strip
 "
+SLOT="${LLVM_MAX_SLOT}/${PV}"
 IUSE="
 	r2
 "
@@ -44,12 +50,6 @@ DEPEND="
 "
 BDEPEND="
 "
-RESTRICT="
-	binchecks
-	fetch
-	strip
-"
-S="${WORKDIR}/${PN}-compiler-${PV}"
 
 pkg_nofetch() {
 	# EULA restricted
