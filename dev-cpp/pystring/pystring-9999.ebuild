@@ -27,7 +27,7 @@ BDEPEND+="
 		sys-devel/clang
 	)
 	sys-apps/grep
-	sys-devel/libtool
+	dev-build/libtool
 "
 RESTRICT="mirror"
 S="${WORKDIR}/${P}"
