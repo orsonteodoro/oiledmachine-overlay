@@ -741,10 +741,10 @@ rocm_mv_docs() {
 rocm_get_libdir() {
 	if [[ "${_ABI}" == "amd64" ]] ; then
 		echo "lib64"
-	elif [[ "${_ABI}" == "x86" ]] ; then
-		echo "lib"
+	#elif [[ "${_ABI}" == "x86" ]] ; then
+# Not supported
+	#	echo "lib"
 	else
-eerror "TODO:  Add port for ARCH=${ARCH}"
 eerror "ABI=${ABI} is not supported."
 		die
 	fi

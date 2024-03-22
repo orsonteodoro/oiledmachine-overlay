@@ -157,7 +157,6 @@ aocc_get_libdir() {
 	elif [[ "${_ABI}" == "x86" ]] ; then
 		echo "lib32"
 	else
-eerror "TODO:  Add port for ARCH=${ARCH}"
 eerror "ABI=${ABI} is not supported."
 		die
 	fi
