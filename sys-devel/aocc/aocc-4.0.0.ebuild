@@ -39,7 +39,7 @@ RDEPEND="
 	dev-libs/libxml2
 	sys-apps/texinfo
 	sys-devel/gcc
-	sys-devel/libtool
+	dev-build/libtool
 	sys-libs/glibc
 	sys-libs/ncurses
 	sys-libs/zlib
