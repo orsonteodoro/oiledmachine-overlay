@@ -1,0 +1,14 @@
+diff -urp libvpx-1.14.0.orig/build/make/Makefile libvpx-1.14.0/build/make/Makefile
+--- libvpx-1.14.0.orig/build/make/Makefile	2024-03-21 18:00:51.645523817 -0700
++++ libvpx-1.14.0/build/make/Makefile	2024-03-21 18:01:53.892995911 -0700
+@@ -333,7 +333,7 @@ define so_template
+ # This needs further abstraction for dealing with non-GNU linkers.
+ $(1):
+ 	$(if $(quiet),@echo "    [LD] $$@")
+-	$(qexec)$$(LD) -shared $$(LDFLAGS) \
++	$(qexec)$$(LD) -shared $$(LDFLAGS) $$(CXXFLAGS) \
+             $(NO_UNDEFINED) \
+             -Wl,-soname,$$(SONAME) \
+             -Wl,--version-script,$$(EXPORTS_FILE) -o $$@ \
+Only in libvpx-1.14.0/build/make: Makefile.orig
+Only in libvpx-1.14.0/build/make: Makefile.rej

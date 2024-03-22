@@ -53,7 +53,7 @@ TRAINER_IUSE="
 IUSE="
 ${PPC_IUSE}
 ${TRAINER_IUSE}
-chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
+aocc chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
 "
 REQUIRED_USE="
 	pgo? (
@@ -100,6 +100,13 @@ BDEPEND="
 	)
 	abi_x86_x32? (
 		dev-lang/yasm
+	)
+	aocc? (
+		|| (
+			~sys-devel/aocc-4.2.0
+			~sys-devel/aocc-4.1.0
+			~sys-devel/aocc-4.0.0
+		)
 	)
 	chromium? (
 		>=dev-lang/nasm-2.14
@@ -216,7 +223,25 @@ __pgo_setup() {
 
 pkg_setup() {
 	__pgo_setup
-	llvm_pkg_setup
+	if use aocc ; then
+		local llvm_slot
+		if has_version "~sys-devel/aocc-4.2.0" ; then
+			llvm_slot=16
+		elif has_version "~sys-devel/aocc-4.1.0" ; then
+			llvm_slot=16
+		elif has_version "~sys-devel/aocc-4.0.0" ; then
+			llvm_slot=14
+		fi
+einfo "PATH:  ${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr "\n" ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/opt/aocc/${llvm_slot}/bin|g")
+einfo "PATH:  ${PATH} (after)"
+	else
+		llvm_pkg_setup
+	fi
 	uopts_setup
 }
 
@@ -289,7 +314,7 @@ get_lib_types() {
 
 src_prepare() {
 	default
-	if tc-is-clang ; then
+	if tc-is-clang || use aocc ; then
 		eapply "${FILESDIR}/libvpx-1.10.0-cfi-static-link.patch"
 		eapply "${FILESDIR}/libvpx-1.10.0-add-cxxflags-to-linking-libvpx.patch"
 		eapply "${FILESDIR}/libvpx-1.10.0-add-cxxflags-to-linking-examples.patch"
@@ -334,6 +359,35 @@ _src_configure() {
 	[[ -f Makefile ]] && emake clean
 	unset CODECS #357487
 	einfo "PGO_PHASE: ${PGO_PHASE}"
+
+	if use aocc ; then
+		local llvm_slot
+		if has_version "~sys-devel/aocc-4.2.0" ; then
+			llvm_slot=16
+		elif has_version "~sys-devel/aocc-4.1.0" ; then
+			llvm_slot=16
+		elif has_version "~sys-devel/aocc-4.0.0" ; then
+			llvm_slot=14
+		fi
+		AOCC_ROOT="/opt/aocc/${llvm_slot}"
+		if [[ "${ABI}" == "amd64" ]] ; then
+			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${AOCC_ROOT}/lib:${LD_LIBRARY_PATH}"
+		elif [[ "${ABI}" == "x86" ]] ; then
+			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${AOCC_ROOT}/lib32:${LD_LIBRARY_PATH}"
+		else
+eerror "ABI=${ABI} not supported"
+			die
+		fi
+		export CC="clang"
+		export CXX="clang++"
+		export AR="llvm-ar"
+		export NM="llvm-nm"
+		export OBJCOPY="llvm-objcopy"
+		export OBJDUMP="llvm-objdump"
+		export READELF="llvm-readelf"
+		export STRIP="llvm-strip"
+		${CC} --version || die
+	fi
 
 	add_sandbox_exceptions
 
