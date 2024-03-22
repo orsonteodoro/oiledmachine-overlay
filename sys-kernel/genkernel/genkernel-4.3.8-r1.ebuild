@@ -330,7 +330,7 @@ RDEPEND+="
 	sys-devel/bc
 	sys-devel/bison
 	sys-devel/flex
-	sys-devel/libtool
+	dev-build/libtool
 	virtual/pkgconfig
 	elibc_glibc? (
 		sys-libs/glibc[static-libs(+)]
