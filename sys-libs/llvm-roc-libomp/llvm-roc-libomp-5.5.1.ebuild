@@ -78,6 +78,7 @@ CUDA_TARGETS_COMPAT=(
 LLVM_SLOT=16
 PYTHON_COMPAT=( python3_{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_USE_LLVM_ROC=1
 
 inherit cmake flag-o-matic python-single-r1 rocm
 

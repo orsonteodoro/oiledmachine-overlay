@@ -134,6 +134,12 @@ BDEPEND+="
 # DEPEND="sci-libs/rocBLAS[${ROCM_USEDEP}]"
 # @CODE
 
+# @ECLASS_VARIABLE: ROCM_USE_LLVM_ROC
+# @DESCRIPTION:
+# If the system-llvm USE flag is not present in IUSE but use the llvm-roc
+# to build the package, ROCM_USE_LLVM_ROC=1 needs to be set in order
+# for rpaths or @...@ symbol replacement to work work properly.
+
 # @FUNCTION: _rocm_set_globals_default
 # @DESCRIPTION:
 # Allow ebuilds to define IUSE, ROCM_REQUIRED_USE
@@ -823,7 +829,11 @@ rocm_fix_rpath() {
 				fi
 			done
 
-			if [[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] || [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
+			if \
+				[[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] \
+					|| \
+				[[ "${ROCM_USE_LLVM_ROC}" == "1" ]] \
+			; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
@@ -1018,7 +1028,11 @@ rocm_verify_rpath_correctness() {
 				fi
 			done
 
-			if [[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] || [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
+			if \
+				[[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] \
+					|| \
+				[[ "${ROCM_USE_LLVM_ROC}" == "1" ]] \
+			; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
