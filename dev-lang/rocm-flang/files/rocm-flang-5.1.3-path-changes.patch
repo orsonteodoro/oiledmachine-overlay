@@ -15,7 +15,7 @@ diff -urp flang-rocm-5.1.3.orig/CMakeLists.txt flang-rocm-5.1.3/CMakeLists.txt
 +  if(USE_AAOC)
 +    set(_LLVM_CMAKE_PATH "${LLVM_BINARY_DIR}/lib/cmake/llvm")
 +  else()
-+    set(_LLVM_CMAKE_PATH "${LLVM_BINARY_DIR}/@LIBDIR@/cmake/llvm")
++    set(_LLVM_CMAKE_PATH "${LLVM_BINARY_DIR}/lib/cmake/llvm")
 +  endif()
 +
 +  set(LLVM_CMAKE_PATH "${_LLVM_CMAKE_PATH}"
