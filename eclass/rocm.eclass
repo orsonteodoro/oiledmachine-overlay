@@ -735,6 +735,21 @@ rocm_mv_docs() {
 	fi
 }
 
+# @FUNCTION: rocm_get_libdir
+# @DESCRIPTION:
+# Prints out the corresponding lib folder matchin the ABI.
+rocm_get_libdir() {
+	if [[ "${_ABI}" == "amd64" ]] ; then
+		echo "lib64"
+	elif [[ "${_ABI}" == "x86" ]] ; then
+		echo "lib"
+	else
+eerror "TODO:  Add port for ARCH=${ARCH}"
+eerror "ABI=${ABI} is not supported."
+		die
+	fi
+}
+
 # @FUNCTION: rocm_fix_rpath
 # @DESCRIPTION:
 # Fix multislot issues
@@ -778,6 +793,19 @@ rocm_fix_rpath() {
 			is_so=1
 		elif file "${path}" | grep -q "ELF.*executable" ; then
 			is_exe=1
+		elif file "${path}" | grep -q "symbolic link" ; then
+			continue
+		fi
+
+		local _ABI
+		if file "${path}" | grep -q "32-bit" && file "${file}" | grep -q "x86-64" ; then
+			local _ABI="x32"
+		elif file "${path}" | grep -q "x86-64" ; then
+			local _ABI="amd64"
+		elif file "${path}" | grep -q "80386" ; then
+			local _ABI="x86"
+		else
+			continue
 		fi
 
 		local needs_rpath_patch_clang=0
@@ -795,7 +823,7 @@ rocm_fix_rpath() {
 				fi
 			done
 
-			if [[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] ; then
+			if [[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] || [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then
@@ -863,7 +891,7 @@ rocm_fix_rpath() {
 		if (( ${needs_rpath_patch_rocm} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
-				--add-rpath "${EPREFIX}${EROCM_PATH}/$(get_libdir)" \
+				--add-rpath "${EPREFIX}${EROCM_PATH}/$(rocm_get_libdir)" \
 				"${path}" \
 				|| die
 		fi
@@ -871,7 +899,7 @@ einfo "Fixing rpath for ${path}"
 		if (( ${needs_rpath_patch_clang} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
-				--add-rpath "${EPREFIX}${EROCM_CLANG_PATH}/$(get_libdir)" \
+				--add-rpath "${EPREFIX}${EROCM_CLANG_PATH}/$(rocm_get_libdir)" \
 				"${path}" \
 				|| die
 		fi
@@ -879,7 +907,7 @@ einfo "Fixing rpath for ${path}"
 		if (( ${needs_rpath_patch_llvm} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
-				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(get_libdir)" \
+				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(rocm_get_libdir)" \
 				"${path}" \
 				|| die
 		fi
@@ -887,7 +915,7 @@ einfo "Fixing rpath for ${path}"
 		if (( ${needs_rpath_patch_libomp} )) ; then
 einfo "Fixing rpath for ${path}"
 			patchelf \
-				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(get_libdir)" \
+				--add-rpath "${EPREFIX}${EROCM_LLVM_PATH}/$(rocm_get_libdir)" \
 				"${path}" \
 				|| die
 		fi
@@ -955,6 +983,19 @@ rocm_verify_rpath_correctness() {
 			is_so=1
 		elif file "${path}" | grep -q "ELF.*executable" ; then
 			is_exe=1
+		elif file "${path}" | grep -q "symbolic link" ; then
+			continue
+		fi
+
+		local _ABI
+		if file "${path}" | grep -q "32-bit" && file "${file}" | grep -q "x86-64" ; then
+			local _ABI="x32"
+		elif file "${path}" | grep -q "x86-64" ; then
+			local _ABI="amd64"
+		elif file "${path}" | grep -q "80386" ; then
+			local _ABI="x86"
+		else
+			continue
 		fi
 
 		local reason_clang=""
@@ -977,7 +1018,7 @@ rocm_verify_rpath_correctness() {
 				fi
 			done
 
-			if [[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] ; then
+			if [[ "${IUSE}" =~ "system-llvm" && ! "${USE}" =~ "system-llvm" ]] || [[ "${ROCM_USE_LLVM_ROC}" == "1" ]] ; then
 				for l in "${llvm_libs[@]}" ; do
 					if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
 						if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/rocm/" ; then

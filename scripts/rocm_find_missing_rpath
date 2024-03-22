@@ -43,6 +43,8 @@ main() {
 			is_so=1
 		elif file "${path}" | grep -q "ELF.*executable" ; then
 			is_exe=1
+		elif file "${path}" | grep -q "symbolic link" ; then
+			continue
 		fi
 
 		if (( ${is_so} || ${is_exe} )) ; then

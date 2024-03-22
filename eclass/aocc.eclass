@@ -95,6 +95,13 @@ einfo "PATH:  ${PATH} (before)"
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/opt/aocc/${llvm_slot}/bin|g")
 einfo "PATH:  ${PATH} (after)"
+
+		if [[ -z "${AOCC_SLOT}" ]] ; then
+eerror
+eerror "QA:  AOCC_SLOT needs to be defined."
+eerror
+			die
+		fi
 	fi
 }
 
@@ -136,6 +143,317 @@ eerror "ABI=${ABI} is not supported"
 	fi
 }
 
-# TODO:  verify and fix all built .so/.exe linked to libomp has an rpath to /opt/aocc
+# @FUNCTION: aocc_get_libdir
+# @DESCRIPTION:
+# Prints out the corresponding lib folder matchin the ABI.
+aocc_get_libdir() {
+	if [[ "${_ABI}" == "amd64" ]] ; then
+		echo "lib"
+	elif [[ "${_ABI}" == "x86" ]] ; then
+		echo "lib32"
+	else
+eerror "TODO:  Add port for ARCH=${ARCH}"
+eerror "ABI=${ABI} is not supported."
+		die
+	fi
+}
+
+# @FUNCTION: aocc_fix_rpath
+# @DESCRIPTION:
+# Fix issue of selecting the wrong libomp or toolchain libs
+aocc_fix_rpath() {
+	use aocc || return
+	IFS=$'\n'
+	local aocc_libs=(
+	)
+	local llvm_libs=(
+		"libflang.so"
+		"libflangrti.so"
+		"libLLVMCore.so"
+		"libLLVMFrontendOpenMP.so"
+		"libLLVMOption.so"
+		"libLLVMSupport.so"
+	)
+	local clang_libs=(
+		"libclangBasic.so"
+	)
+	local libomp_libs=(
+		"libomp.so"
+	)
+	local l
+	local path
+	for path in $(find "${ED}" -type f) ; do
+		local is_exe=0
+		local is_so=0
+		if file "${path}" | grep -q "shared object" ; then
+			is_so=1
+		elif file "${path}" | grep -q "ELF.*executable" ; then
+			is_exe=1
+		elif file "${path}" | grep -q "symbolic link" ; then
+			continue
+		fi
+
+		local _ABI
+		if file "${path}" | grep -q "32-bit" && file "${file}" | grep -q "x86-64" ; then
+			local _ABI="x32"
+		elif file "${path}" | grep -q "x86-64" ; then
+			local _ABI="amd64"
+		elif file "${path}" | grep -q "80386" ; then
+			local _ABI="x86"
+		else
+			continue
+		fi
+
+		local needs_rpath_patch_aocc=0
+		local needs_rpath_patch_clang=0
+		local needs_rpath_patch_libomp=0
+		local needs_rpath_patch_llvm=0
+		if (( ${is_so} || ${is_exe} )) ; then
+			for l in "${aocc_libs[@]}" ; do
+				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/aocc/" ; then
+						:;
+					else
+						needs_rpath_patch_aocc=1
+					fi
+				fi
+			done
+
+
+			for l in "${llvm_libs[@]}" ; do
+				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/aocc/" ; then
+						:;
+					else
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+			done
+
+			for l in "${clang_libs[@]}" ; do
+			if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/aocc/" ; then
+						:;
+					else
+						needs_rpath_patch_clang=1
+					fi
+				fi
+			done
+
+			for l in "${libomp_libs[@]}" ; do
+				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/aocc/" ; then
+						:;
+					else
+						needs_rpath_patch_libomp=1
+					fi
+				fi
+			done
+		fi
+
+		AOCC_PATH="/opt/aocc/${AOCC_SLOT}"
+		if (( ${needs_rpath_patch_aocc} )) ; then
+einfo "Fixing rpath for ${path}"
+			patchelf \
+				--add-rpath "${EPREFIX}${AOCC_PATH}/$(aocc_get_libdir)" \
+				"${path}" \
+				|| die
+		fi
+
+		if (( ${needs_rpath_patch_clang} )) ; then
+einfo "Fixing rpath for ${path}"
+			patchelf \
+				--add-rpath "${EPREFIX}${AOCC_PATH}/$(aocc_get_libdir)" \
+				"${path}" \
+				|| die
+		fi
+
+		if (( ${needs_rpath_patch_llvm} )) ; then
+einfo "Fixing rpath for ${path}"
+			patchelf \
+				--add-rpath "${EPREFIX}${AOCC_PATH}/$(aocc_get_libdir)" \
+				"${path}" \
+				|| die
+		fi
+
+		if (( ${needs_rpath_patch_libomp} )) ; then
+einfo "Fixing rpath for ${path}"
+			patchelf \
+				--add-rpath "${EPREFIX}${AOCC_PATH}/$(aocc_get_libdir)" \
+				"${path}" \
+				|| die
+		fi
+
+		if (( ${is_so} || ${is_exe} )) && ldd "${path}" 2>/dev/null | grep -q "not found" ; then
+			if [[ "${AOCC_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
+			fi
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+# @FUNCTION: aocc_verify_rpath_correctness
+# @DESCRIPTION:
+# Check if selecting the wrong libomp or toolchain libs
+aocc_verify_rpath_correctness() {
+	use aocc || return
+	local source
+	if [[ -z "${AOCC_RPATH_SCAN_FOLDER}" ]] ; then
+		source="${ED}"
+	else
+		source="${AOCC_RPATH_SCAN_FOLDER}"
+	fi
+	IFS=$'\n'
+	local aocc_libs=(
+	)
+	local llvm_libs=(
+		"libflang.so"
+		"libflangrti.so"
+		"libLLVMCore.so"
+		"libLLVMFrontendOpenMP.so"
+		"libLLVMOption.so"
+		"libLLVMSupport.so"
+	)
+	local clang_libs=(
+		"libclangBasic.so"
+	)
+	local libomp_libs=(
+		"libomp.so"
+	)
+	local l
+	local path
+	for path in $(find "${source}" -type f) ; do
+		local is_exe=0
+		local is_so=0
+		if file "${path}" | grep -q "shared object" ; then
+			is_so=1
+		elif file "${path}" | grep -q "ELF.*executable" ; then
+			is_exe=1
+		elif file "${path}" | grep -q "symbolic link" ; then
+			continue
+		fi
+
+		local _ABI
+		if file "${path}" | grep -q "32-bit" && file "${file}" | grep -q "x86-64" ; then
+			local _ABI="x32"
+		elif file "${path}" | grep -q "x86-64" ; then
+			local _ABI="amd64"
+		elif file "${path}" | grep -q "80386" ; then
+			local _ABI="x86"
+		else
+			continue
+		fi
+
+		local reason_aocc=""
+		local reason_clang=""
+		local reason_libomp=""
+		local reason_llvm=""
+		local needs_rpath_patch_aocc=0
+		local needs_rpath_patch_clang=0
+		local needs_rpath_patch_libomp=0
+		local needs_rpath_patch_llvm=0
+		if (( ${is_so} || ${is_exe} )) ; then
+			for l in "${aocc_libs[@]}" ; do
+				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/aocc/" ; then
+						:;
+					else
+						reason_aocc="${l}"
+						needs_rpath_patch_aocc=1
+					fi
+				fi
+			done
+
+			for l in "${llvm_libs[@]}" ; do
+				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/aocc/" ; then
+						:;
+					else
+						reason_llvm="${l}"
+						needs_rpath_patch_llvm=1
+					fi
+				fi
+			done
+
+			for l in "${clang_libs[@]}" ; do
+				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/aocc/" ; then
+						:;
+					else
+						reason_clang="${l}"
+						needs_rpath_patch_clang=1
+					fi
+				fi
+			done
+
+			for l in "${libomp_libs[@]}" ; do
+				if ldd "${path}" 2>/dev/null | grep -q "${l}" ; then
+					if ldd "${path}" 2>/dev/null | grep "${l}" | grep -q "/aocc/" ; then
+						:;
+					else
+						reason_libomp="${l}"
+						needs_rpath_patch_libomp=1
+					fi
+				fi
+			done
+		fi
+
+		if (( ${needs_rpath_patch_aocc} )) ; then
+			if [[ "${AOCC_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} (aocc)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} (aocc)"
+			fi
+		fi
+
+		if (( ${needs_rpath_patch_llvm} )) ; then
+			if [[ "${AOCC_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} (llvm)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} (llvm)"
+			fi
+		fi
+
+		if (( ${needs_rpath_patch_clang} )) ; then
+			if [[ "${AOCC_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} (clang)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} (clang)"
+			fi
+		fi
+
+		if (( ${needs_rpath_patch_libomp} )) ; then
+			if [[ "${AOCC_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} (libomp)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} (libomp)"
+			fi
+		fi
+
+		if (( ${is_so} || ${is_exe} )) && ldd "${path}" 2>/dev/null | grep -q "not found" ; then
+			if [[ "${AOCC_RPATH_SCAN_FATAL}" == "1" ]] ; then
+				# Use 1 in src_install
+				die "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
+			else
+				# Use 0 or unset in pkg_postinst
+				ewarn "Q/A:  Missing rpath for ${path} ; Reason:  (not found)"
+			fi
+		fi
+	done
+	IFS=$' \t\n'
+}
 
 fi

@@ -38,7 +38,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test r2
+aocc doc test r3
 "
 REQUIRED_USE="
 "
@@ -331,6 +331,7 @@ src_install() {
 		"${EROCM_LLVM_PATH}/bin/flang" \
 		"${EROCM_PATH}/bin/flang"
 	rocm_fix_rpath
+	aocc_fix_rpath
 }
 
 pkg_postinst() {
