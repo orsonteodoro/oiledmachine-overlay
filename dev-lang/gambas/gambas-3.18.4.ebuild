@@ -313,7 +313,7 @@ RDEPEND+="
 BDEPEND+="
 	>=dev-build/autoconf-2.68
 	>=dev-build/automake-1.11.1
-	>=sys-devel/libtool-2.4
+	>=dev-build/libtool-2.4
 "
 DOCS=( AUTHORS ChangeLog README )
 
