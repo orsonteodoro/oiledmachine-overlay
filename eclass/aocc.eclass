@@ -136,4 +136,6 @@ eerror "ABI=${ABI} is not supported"
 	fi
 }
 
+# TODO:  verify and fix all built .so/.exe linked to libomp has an rpath to /opt/aocc
+
 fi
