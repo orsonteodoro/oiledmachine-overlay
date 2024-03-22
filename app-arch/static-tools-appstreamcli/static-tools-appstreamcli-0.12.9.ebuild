@@ -48,7 +48,7 @@ BDEPEND+="
 	sys-apps/util-linux
 	dev-build/autoconf
 	dev-build/automake
-	sys-devel/libtool
+	dev-build/libtool
 "
 RESTRICT="mirror"
 PATCHES=(
