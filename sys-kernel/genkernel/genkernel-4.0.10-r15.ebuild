@@ -210,7 +210,7 @@ RDEPEND+="
 	dev-build/autoconf
 	dev-build/autoconf-archive
 	dev-build/automake
-	sys-devel/libtool
+	dev-build/libtool
 	virtual/pkgconfig
 	cfi? (
 		amd64? (
