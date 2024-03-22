@@ -79,12 +79,17 @@ unset -f _aocc_set_globals
 aocc_pkg_setup() {
 	if use aocc ; then
 		local llvm_slot
-		if has_version "~sys-devel/aocc-4.2.0" ; then
+		if [[ -n "${AOCC_SLOT}" ]] ; then
+			llvm_slot="${AOCC_SLOT}"
+		elif has_version "~sys-devel/aocc-4.2.0" ; then
 			llvm_slot=16
+			AOCC_SLOT=16
 		elif has_version "~sys-devel/aocc-4.1.0" ; then
 			llvm_slot=16
+			AOCC_SLOT=16
 		elif has_version "~sys-devel/aocc-4.0.0" ; then
 			llvm_slot=14
+			AOCC_SLOT=14
 		fi
 
 		# The system llvm path is deleted.
