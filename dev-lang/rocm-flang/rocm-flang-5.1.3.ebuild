@@ -185,6 +185,9 @@ eerror
 
 pkg_setup() {
 	python_setup
+	if ! use aocc ; then
+		ROCM_USE_LLVM_ROC=1
+	fi
 	rocm_pkg_setup
 	aocc_pkg_setup
 }
@@ -215,7 +218,13 @@ src_configure() {
 }
 
 src_compile() {
-	local gcc_slot=$(gcc-major-version)
+	local gcc_slot=$(gcc-major-version) # Wrong when ROCM_USE_LLVM_ROC=1
+	local gcc_slot=$(gcc --version \
+		| cut -f 2 -d ")" \
+		| sed -e "s|^ ||g" \
+		| head -n 1 \
+		| cut -f 1 -d " ")
+	gcc_slot="${gcc_slot%%.*}"
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
 	if [[ "${gcc_current_profile_slot}" != "${gcc_slot}" ]] ; then
