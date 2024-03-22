@@ -10,7 +10,7 @@ LLVM_SLOT=14 # Same as llvm-roc
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic python-any-r1 rocm toolchain-funcs
+inherit aocc cmake flag-o-matic python-any-r1 rocm toolchain-funcs
 
 SRC_URI="
 https://github.com/ROCm-Developer-Tools/flang/archive/refs/tags/rocm-${PV}.tar.gz
