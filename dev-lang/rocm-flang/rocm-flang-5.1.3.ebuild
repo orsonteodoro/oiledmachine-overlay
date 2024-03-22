@@ -3,7 +3,8 @@
 
 EAPI=8
 
-AOCC_SLOT=14
+AOCC_COMPAT=( 14 )
+AOCC_SLOT=${AOCC_COMPAT[0]}
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=14 # Same as llvm-roc
 PYTHON_COMPAT=( python3_{10..11} )
@@ -50,9 +51,6 @@ RDEPEND="
 	sys-devel/gcc
 	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[llvm_targets_AMDGPU,llvm_targets_X86]
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[llvm_targets_AMDGPU,llvm_targets_X86,offload]
-	aocc? (
-		sys-devel/aocc:${AOCC_SLOT}
-	)
 "
 DEPEND="
 	${RDEPEND}
@@ -188,6 +186,7 @@ eerror
 pkg_setup() {
 	python_setup
 	rocm_pkg_setup
+	aocc_pkg_setup
 }
 
 src_prepare() {
@@ -212,21 +211,7 @@ src_prepare() {
 }
 
 src_configure() {
-	# Removed all clangs except for one used for building.
-	local compiler_path=""
-	if use aocc ; then
-		compiler_path="${ESYSROOT}/opt/aocc/${AOCC_SLOT}/bin"
-	else
-		compiler_path="${ESYSROOT}${EROCM_LLVM_PATH}/bin"
-	fi
-	einfo "LLVM_SLOT=${LLVM_SLOT}"
-	einfo "PATH=${PATH} (before)"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -E -e "/llvm\/[0-9]+/d" \
-		| tr "\n" ":" \
-		| sed -e "s|/opt/bin|/opt/bin:${PWD}/install/bin:${compiler_path}|g")
-	einfo "PATH=${PATH} (after)"
+	aocc_src_configure
 }
 
 src_compile() {
