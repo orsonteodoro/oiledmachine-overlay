@@ -113,9 +113,9 @@ aocc_src_configure() {
 		fi
 		AOCC_ROOT="/opt/aocc/${llvm_slot}"
 		if [[ "${ABI}" == "amd64" ]] ; then
-			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${AOCC_ROOT}/lib:${LD_LIBRARY_PATH}"
+			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${LD_LIBRARY_PATH}"
 		elif [[ "${ABI}" == "x86" ]] ; then
-			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${AOCC_ROOT}/lib32:${LD_LIBRARY_PATH}"
+			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib32:${LD_LIBRARY_PATH}"
 		else
 eerror "ABI=${ABI} not supported"
 			die
