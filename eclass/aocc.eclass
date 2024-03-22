@@ -25,6 +25,9 @@ esac
 if [[ -z ${_AOCC_ECLASS} ]]; then
 _AOCC_ECLASS=1
 
+# @FUNCTION: _aocc_is_slot_compat
+# @DESCRIPTION:
+# Finds wanted slot in AOCC_COMPAT
 _aocc_is_slot_compat() {
 	local wanted_slot="${1}"
 	local s
@@ -36,6 +39,9 @@ _aocc_is_slot_compat() {
 	return 1
 }
 
+# @FUNCTION: _aocc_set_globals
+# @DESCRIPTION:
+# Init global variables
 _aocc_set_globals() {
 	if [[ -z "${AOCC_COMPAT[@]}" ]] ; then
 eerror "AOCC_COMPAT must be defined"
