@@ -378,8 +378,11 @@ _src_configure() {
 eerror "ABI=${ABI} not supported"
 			die
 		fi
-		export CC="clang"
-		export CXX="clang++"
+		filter-flags '-m32' '-m64' '-mabi*'
+		local cflags_abi="CFLAGS_${ABI}"
+		export CC="clang ${!cflags_abi}"
+		export CXX="clang++ ${!cflags_abi}"
+		export CPP="${CXX} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
 		export OBJCOPY="llvm-objcopy"

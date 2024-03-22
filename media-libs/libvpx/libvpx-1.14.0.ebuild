@@ -54,6 +54,7 @@ IUSE="
 ${PPC_IUSE}
 ${TRAINER_IUSE}
 aocc chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
+r1
 "
 REQUIRED_USE="
 	pgo? (
@@ -378,8 +379,11 @@ _src_configure() {
 eerror "ABI=${ABI} not supported"
 			die
 		fi
+		filter-flags '-m32' '-m64' '-mabi*'
+		local cflags_abi="CFLAGS_${ABI}"
 		export CC="clang"
 		export CXX="clang++"
+		export CPP="${CXX} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
 		export OBJCOPY="llvm-objcopy"
