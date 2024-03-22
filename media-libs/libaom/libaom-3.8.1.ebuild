@@ -73,7 +73,7 @@ ${ARM_IUSE}
 ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
-+asm big-endian chromium debug doc +examples lossless pgo static-libs test
+aocc +asm big-endian chromium debug doc +examples lossless pgo static-libs test
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
@@ -116,6 +116,13 @@ BDEPEND+="
 	)
 	abi_x86_x32? (
 		dev-lang/yasm
+	)
+	aocc? (
+		|| (
+			~sys-devel/aocc-4.2.0
+			~sys-devel/aocc-4.1.0
+			~sys-devel/aocc-4.0.0
+		)
 	)
 	chromium? (
 		>=dev-lang/nasm-2.14
@@ -234,6 +241,24 @@ check_video() {
 }
 
 pkg_setup() {
+	if use aocc ; then
+		local llvm_slot
+		if has_version "~sys-devel/aocc-4.2.0" ; then
+			llvm_slot=16
+		elif has_version "~sys-devel/aocc-4.1.0" ; then
+			llvm_slot=16
+		elif has_version "~sys-devel/aocc-4.0.0" ; then
+			llvm_slot=14
+		fi
+einfo "PATH:  ${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr "\n" ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/opt/aocc/${llvm_slot}/bin|g")
+einfo "PATH:  ${PATH} (after)"
+	fi
+
 	LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE=${LIBAOM_TRAINING_MAX_ASSETS_PER_TYPE:-100}
 	if use chromium ; then
 		einfo "The chromium USE flag is in testing."
@@ -367,6 +392,41 @@ append_all() {
 }
 
 _src_configure() {
+	if use aocc ; then
+		local llvm_slot
+		if has_version "~sys-devel/aocc-4.2.0" ; then
+			llvm_slot=16
+		elif has_version "~sys-devel/aocc-4.1.0" ; then
+			llvm_slot=16
+		elif has_version "~sys-devel/aocc-4.0.0" ; then
+			llvm_slot=14
+		fi
+		AOCC_ROOT="/opt/aocc/${llvm_slot}"
+		if [[ "${ABI}" == "amd64" ]] ; then
+			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${AOCC_ROOT}/lib:${LD_LIBRARY_PATH}"
+		elif [[ "${ABI}" == "x86" ]] ; then
+			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${AOCC_ROOT}/lib32:${LD_LIBRARY_PATH}"
+		else
+eerror "ABI=${ABI} not supported"
+			die
+		fi
+		# It breaks when doing linking.
+		filter-flags '-m32' '-m64' '-mabi*'
+		local cflags_abi="CFLAGS_${ABI}"
+		export CC="clang ${!cflags_abi}"
+		export CXX="clang++ ${!cflags_abi}"
+		export CPP="${CXX} -E"
+		export AR="llvm-ar"
+		export NM="llvm-nm"
+		export OBJCOPY="llvm-objcopy"
+		export OBJDUMP="llvm-objdump"
+		export READELF="llvm-readelf"
+		export STRIP="llvm-strip"
+		${CC} --version || die
+	fi
+
+einfo "CFLAGS:  ${CFLAGS}"
+
 	# Follow upstream recommendations in README (bug #921438) and avoid
 	# asserts during common use (bug #914614).
 	append-cppflags $(usex debug '-UNDEBUG' '-DNDEBUG')
