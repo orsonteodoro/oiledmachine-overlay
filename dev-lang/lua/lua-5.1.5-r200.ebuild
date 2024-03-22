@@ -41,7 +41,7 @@ COMMON_DEPEND="
 # native binaries.
 DEPEND="
 	${COMMON_DEPEND}
-	sys-devel/libtool
+	dev-build/libtool
 "
 RDEPEND="
 	${COMMON_DEPEND}
