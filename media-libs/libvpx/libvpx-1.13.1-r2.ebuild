@@ -6,10 +6,11 @@
 
 EAPI=8
 
+AOCC_COMPAT=( 14 16 )
 LIBVPX_TESTDATA_VER="1.13.1"
 N_SAMPLES=1
 
-inherit flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
+inherit aocc flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 
 #
 # To create a new testdata tarball:
@@ -53,7 +54,7 @@ TRAINER_IUSE="
 IUSE="
 ${PPC_IUSE}
 ${TRAINER_IUSE}
-aocc chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
+chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
 "
 REQUIRED_USE="
 	pgo? (
@@ -100,13 +101,6 @@ BDEPEND="
 	)
 	abi_x86_x32? (
 		dev-lang/yasm
-	)
-	aocc? (
-		|| (
-			~sys-devel/aocc-4.2.0
-			~sys-devel/aocc-4.1.0
-			~sys-devel/aocc-4.0.0
-		)
 	)
 	chromium? (
 		>=dev-lang/nasm-2.14
@@ -224,21 +218,7 @@ __pgo_setup() {
 pkg_setup() {
 	__pgo_setup
 	if use aocc ; then
-		local llvm_slot
-		if has_version "~sys-devel/aocc-4.2.0" ; then
-			llvm_slot=16
-		elif has_version "~sys-devel/aocc-4.1.0" ; then
-			llvm_slot=16
-		elif has_version "~sys-devel/aocc-4.0.0" ; then
-			llvm_slot=14
-		fi
-einfo "PATH:  ${PATH} (before)"
-		export PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -E -e "/llvm\/[0-9]+/d" \
-			| tr "\n" ":" \
-			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/opt/aocc/${llvm_slot}/bin|g")
-einfo "PATH:  ${PATH} (after)"
+		aocc_pkg_setup
 	else
 		llvm_pkg_setup
 	fi
@@ -361,35 +341,7 @@ _src_configure() {
 	einfo "PGO_PHASE: ${PGO_PHASE}"
 
 	if use aocc ; then
-		local llvm_slot
-		if has_version "~sys-devel/aocc-4.2.0" ; then
-			llvm_slot=16
-		elif has_version "~sys-devel/aocc-4.1.0" ; then
-			llvm_slot=16
-		elif has_version "~sys-devel/aocc-4.0.0" ; then
-			llvm_slot=14
-		fi
-		AOCC_ROOT="/opt/aocc/${llvm_slot}"
-		if [[ "${ABI}" == "amd64" ]] ; then
-			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${AOCC_ROOT}/lib:${LD_LIBRARY_PATH}"
-		elif [[ "${ABI}" == "x86" ]] ; then
-			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib/:${AOCC_ROOT}/lib32:${LD_LIBRARY_PATH}"
-		else
-eerror "ABI=${ABI} not supported"
-			die
-		fi
-		filter-flags '-m32' '-m64' '-mabi*'
-		local cflags_abi="CFLAGS_${ABI}"
-		export CC="clang ${!cflags_abi}"
-		export CXX="clang++ ${!cflags_abi}"
-		export CPP="${CXX} -E"
-		export AR="llvm-ar"
-		export NM="llvm-nm"
-		export OBJCOPY="llvm-objcopy"
-		export OBJDUMP="llvm-objdump"
-		export READELF="llvm-readelf"
-		export STRIP="llvm-strip"
-		${CC} --version || die
+		aocc_src_configure
 	fi
 
 	add_sandbox_exceptions
