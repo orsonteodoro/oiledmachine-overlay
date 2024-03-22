@@ -130,7 +130,7 @@ REQUIRED_USE+=") ${PHP_EXT_OPTIONAL_USE:+ )}"
 PHPDEPEND+=" ${PHP_EXT_OPTIONAL_USE:+ )}"
 TOOLDEPS="
 	sys-devel/m4
-	sys-devel/libtool
+	dev-build/libtool
 "
 
 RDEPEND="${PHPDEPEND}"
