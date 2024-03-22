@@ -51,7 +51,7 @@ KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+aot benchmark cuda perfscripts +rocm system-llvm test r1
++aot benchmark cuda perfscripts +rocm system-llvm test r2
 "
 gen_cuda_required_use() {
 	local x
