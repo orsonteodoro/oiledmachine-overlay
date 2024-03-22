@@ -117,7 +117,7 @@ aocc_src_configure() {
 		elif [[ "${ABI}" == "x86" ]] ; then
 			export LD_LIBRARY_PATH="${AOCC_ROOT}/lib32:${LD_LIBRARY_PATH}"
 		else
-eerror "ABI=${ABI} not supported"
+eerror "ABI=${ABI} is not supported"
 			die
 		fi
 		# It breaks when doing linking.
