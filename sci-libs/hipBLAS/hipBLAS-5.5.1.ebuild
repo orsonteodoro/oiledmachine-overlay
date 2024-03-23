@@ -101,9 +101,11 @@ src_install() {
 	cmake_src_install
 
 	# The build script is bugged.
-	rm "${ED}/usr/include/hipblas/hipblas_module.f90" || die
+	rm -f "${ED}/usr/include/hipblas/hipblas_module.f90"
 	insinto "${EPREFIX}/usr/include/hipblas"
-	doins library/src/hipblas_module.f90
+	if [[ -e "library/src/hipblas_module.f90" ]] ; then
+		doins library/src/hipblas_module.f90
+	fi
 	rocm_mv_docs
 }
 
