@@ -659,7 +659,7 @@ rocm_src_configure() {
 			# Fix cmake configure time check for -lamdhip.
 			# You must call rocm_src_configure not cmake_src_configure
 			append-ldflags \
-				-Wl,-L"/usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)"
+				-Wl,-L"${ESYSROOT}/usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)"
 
 			# Prevent configure test issues
 			append-flags \
