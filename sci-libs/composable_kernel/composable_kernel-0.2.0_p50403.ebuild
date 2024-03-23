@@ -168,7 +168,7 @@ src_configure() {
 		-fno-stack-protector
 #		-mcumode -mno-wavefrontsize64
 
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {

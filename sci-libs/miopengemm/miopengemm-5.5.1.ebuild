@@ -62,7 +62,7 @@ src_configure() {
 			-DAPI_BENCH_MIOGEMM=ON
 		)
 	fi
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {

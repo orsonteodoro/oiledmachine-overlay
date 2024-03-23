@@ -248,7 +248,7 @@ ewarn
 	export VERBOSE=1
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
-	cmake_src_configure
+	rocm_src_configure
 #	deactivate || die
 }
 

@@ -230,7 +230,7 @@ eerror
 		IFS=$' \t\n'
 	fi
 
-	cmake_src_configure
+	rocm_src_configure
 }
 
 build_libjpeg_turbo() {

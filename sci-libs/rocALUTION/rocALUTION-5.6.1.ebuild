@@ -168,7 +168,7 @@ eerror
 		)
 	fi
 
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_install() {
