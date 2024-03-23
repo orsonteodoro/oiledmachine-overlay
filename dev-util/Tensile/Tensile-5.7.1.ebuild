@@ -22,7 +22,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 DISTUTILS_USE_PEP517="setuptools"
-CMAKE_USE_DIR="${S}/${PN}/Source"
 LLVM_SLOT=17
 PYTHON_COMPAT=( python3_{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -36,6 +35,7 @@ https://github.com/ROCmSoftwarePlatform/Tensile/archive/rocm-${PV}.tar.gz
 	-> rocm-Tensile-${PV}.tar.gz
 "
 S="${WORKDIR}/${PN}-rocm-${PV}"
+CMAKE_USE_DIR="${S}/${PN}/Source"
 
 DESCRIPTION="Stretching GPU performance for GEMMs and tensor contractions"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/Tensile"
