@@ -31,7 +31,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSOLVER"
 LICENSE="BSD"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test benchmark system-llvm r1"
+IUSE="test benchmark system-llvm r2"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "

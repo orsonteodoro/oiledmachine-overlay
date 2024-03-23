@@ -5,7 +5,6 @@ EAPI=8
 
 LLVM_SLOT=17
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
-ROCM_USES_GFORTRAN=1
 ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic rocm toolchain-funcs

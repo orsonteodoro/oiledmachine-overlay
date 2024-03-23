@@ -665,7 +665,7 @@ rocm_src_configure() {
 			append-flags \
 				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
 
-			if [[ "${ROCM_USES_GFORTRAN}" == "1" ]] ; then
+			if grep -q -r -e "gfortran" "${WORKDIR}" ; then
 				:
 			else
 				# Prevent configure test issues
