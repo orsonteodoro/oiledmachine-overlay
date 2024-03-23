@@ -139,7 +139,7 @@ einfo
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-DLLVM_INCLUDE_TESTS=OFF
 		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
-		-DPSTL_PARALLEL_BACKEND=$(usex tbb $(usex openmp "omp" "serial"))
+		-DPSTL_PARALLEL_BACKEND=$(usex tbb "tbb" $(usex openmp "omp" "serial"))
 	)
 
 	if use test; then

@@ -8,10 +8,10 @@
   </maintainer>
   <use>
     <flag name="tbb">
-      Support threading via tbb
+      Support threading via tbb with support for only CPU
     </flag>
     <flag name="openmp">
-      Support threading via libomp
+      Support threading via libomp with support for GPU
     </flag>
     <flag name="rN">
       FOR INTERNAL USE ONLY.  Preserve paths for faster CCACHE rebuilds
