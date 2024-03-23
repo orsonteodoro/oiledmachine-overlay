@@ -162,7 +162,7 @@ src_configure() {
 			-DTENSILE_USE_OPENMP=$(usex openmp ON OFF)
 			-DTensile_LIBRARY_FORMAT="msgpack"
 		)
-		cmake_src_configure
+		rocm_src_configure
 	fi
 }
 

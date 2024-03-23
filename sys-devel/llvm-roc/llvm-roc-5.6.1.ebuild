@@ -257,7 +257,7 @@ _src_configure() {
 #		-DLLVM_VERSION_SUFFIX=roc
 		-DOCAMLFIND=NO
 	)
-	cmake_src_configure
+	rocm_src_configure
 }
 
 _src_compile() {
