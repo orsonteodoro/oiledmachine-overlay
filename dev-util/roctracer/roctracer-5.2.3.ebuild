@@ -109,6 +109,7 @@ src_configure() {
 		-DHIP_COMPILER="clang"
 		-DHIP_PLATFORM="amd"
 		-DHIP_RUNTIME="rocclr"
+		-DPython3_EXECUTABLE="/usr/bin/${EPYTHON}"
 	)
 	rocm_src_configure
 }
