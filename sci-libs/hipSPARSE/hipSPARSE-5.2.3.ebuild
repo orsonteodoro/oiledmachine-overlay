@@ -5,6 +5,7 @@ EAPI=8
 
 LLVM_SLOT=14
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_USES_GFORTRAN=1
 ROCM_VERSION="${PV}"
 
 inherit cmake edo flag-o-matic rocm toolchain-funcs
@@ -174,11 +175,6 @@ src_configure() {
 			-DHIP_RUNTIME="cuda"
 		)
 	elif use rocm ; then
-		if ! use system-llvm ; then
-			# Fix configure time check for -lamdhip
-			append-ldflags \
-				-Wl,-L/usr/$(get_libdir)/rocm/${ROCM_SLOT}/$(get_libdir)
-		fi
 		export HIP_PLATFORM="amd"
 		mycmakeargs+=(
 			-DAMDGPU_TARGETS="$(get_amdgpu_flags)"
@@ -189,7 +185,7 @@ src_configure() {
 	fi
 	export CC="${HIP_CC:-hipcc}"
 	export CXX="${HIP_CXX:-hipcc}"
-	cmake_src_configure
+	rocm_src_configure
 }
 
 src_test() {
