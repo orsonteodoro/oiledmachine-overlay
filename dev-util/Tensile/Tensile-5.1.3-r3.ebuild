@@ -18,6 +18,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 DISTUTILS_USE_PEP517="setuptools"
+CMAKE_USE_DIR="${S}/${PN}/Source"
 LLVM_SLOT=14
 PYTHON_COMPAT=( python3_{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -39,7 +40,7 @@ LICENSE="MIT"
 # Not compatible with recent versions of pytest \
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="client openmp system-llvm r8"
+IUSE="client openmp system-llvm r9"
 REQUIRED_USE="
 	client? (
 		${ROCM_REQUIRED_USE}
@@ -90,8 +91,8 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-5.0.2-fix-arch-parse.patch"
 	"${FILESDIR}/${PN}-5.0.2-use-ninja.patch"
 	"${FILESDIR}/${PN}-5.1.3-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.1-avoid-hipcc-bat.patch"
 )
-CMAKE_USE_DIR="${S}/${PN}/Source"
 
 pkg_setup() {
 	python_setup

@@ -123,8 +123,8 @@ LICENSE_FINGERPRINT="\
 GTK3_PV="3.14.5"
 LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Mar 19, 2024"
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-12/"
+MITIGATION_DATE="Mar 2, 2024"
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-15/"
 MOZ_ESR=
 MOZ_LANGS=(
 ach af an ar ast az be bg bn br bs ca-valencia ca cak cs cy da de dsb el en-CA

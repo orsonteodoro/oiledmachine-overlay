@@ -1,0 +1,11 @@
+--- a/Tensile/TensileCreateLibrary.py.orig	2024-03-23 00:57:48.831513690 -0700
++++ b/Tensile/TensileCreateLibrary.py	2024-03-23 00:58:38.763028448 -0700
+@@ -149,7 +149,7 @@ def getAssemblyCodeObjectFiles(kernels,
+     return coFiles
+ 
+ def which(p):
+-    exes = [p+x for x in ['.bat', '', '.exe']]  # bat may be front end for file with no extension
++    exes = [p+x for x in ['', '.bat', '.exe']]  # bat may be front end for file with no extension
+     system_path = os.environ['PATH'].split(os.pathsep)
+     if p == 'hipcc' and 'CMAKE_CXX_COMPILER' in os.environ and os.path.isfile(os.environ['CMAKE_CXX_COMPILER']):
+         return os.environ['CMAKE_CXX_COMPILER']
