@@ -665,7 +665,7 @@ rocm_src_configure() {
 			append-flags \
 				-Wl,-L"${ESYSROOT}${EROCM_PATH}/$(get_libdir)" \
 
-			if grep -q -e "gfortran" $(find "${WORKDIR}" -name "CMakeLists.txt" -o "*.cmake") ; then
+			if grep -q -e "gfortran" $(find "${WORKDIR}" -name "CMakeLists.txt" -o -name "*.cmake") ; then
 				:
 			else
 				# Prevent configure test issues
