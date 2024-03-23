@@ -8,12 +8,13 @@ inherit multilib-build
 KEYWORDS="
 amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~ppc-macos ~x64-macos
 "
+SRC_URI=""
 
 DESCRIPTION="Meta-ebuild for clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
 LICENSE="metapackage"
 SLOT="$(ver_cut 1-3)"
-IUSE+=" +compiler-rt libcxx openmp +sanitize"
+IUSE+=" +compiler-rt libcxx openmp pstl +sanitize"
 REQUIRED_USE="
 	sanitize? (
 		compiler-rt
@@ -32,5 +33,7 @@ RDEPEND="
 	openmp? (
 		sys-libs/libomp:${PV%%.*}[${MULTILIB_USEDEP}]
 	)
+	pstl? (
+		sys-libs/pstl:${PV%%.*}
+	)
 "
-SRC_URI=""

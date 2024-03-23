@@ -1,0 +1,18 @@
+--- a/libcxx/include/functional.orig	2023-06-10 15:58:16.000000000 -0700
++++ b/libcxx/include/functional	2024-03-22 21:42:32.270729727 -0700
+@@ -512,6 +512,7 @@ POLICY:  For non-variadic implementation
+ #include <__functional/bind_front.h>
+ #include <__functional/binder1st.h>
+ #include <__functional/binder2nd.h>
++#include <__functional/not_fn.h>
+ #include <__functional/boyer_moore_searcher.h>
+ #include <__functional/compose.h>
+ #include <__functional/default_searcher.h>
+@@ -521,7 +522,6 @@ POLICY:  For non-variadic implementation
+ #include <__functional/invoke.h>
+ #include <__functional/mem_fn.h> // TODO: deprecate
+ #include <__functional/mem_fun_ref.h>
+-#include <__functional/not_fn.h>
+ #include <__functional/operations.h>
+ #include <__functional/pointer_to_binary_function.h>
+ #include <__functional/pointer_to_unary_function.h>

@@ -5,11 +5,16 @@
 EAPI=8
 
 CMAKE_ECLASS="cmake"
+LLVM_COMPONENTS=(
+	"libcxx"{,"abi"}
+	"llvm/"{"cmake","utils/llvm-lit"}
+)
+LLVM_MAX_SLOT=${PV%%.*}
+LLVM_PATCHSET="${PV/_/-}"
 PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
-LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="amd64 arm arm64 ~riscv x86 ~x64-macos"
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
@@ -21,9 +26,14 @@ LICENSE="
 		MIT
 	)
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="0"
 IUSE="
-+libcxxabi +libunwind +static-libs test
++libcxxabi +libunwind +static-libs test +threads -pstl
 
 hardened r11
 "
@@ -39,54 +49,33 @@ RDEPEND="
 	libcxxabi? (
 		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,libunwind=,static-libs?]
 	)
+	threads? (
+		~sys-libs/pstl-${PV}
+	)
 "
 DEPEND="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAJOR}
+	sys-devel/llvm:${PV%%.*}
 "
 BDEPEND+="
 	test? (
-		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			dev-python/lit[${PYTHON_USEDEP}]
+		')
 		>=dev-build/cmake-3.16
 		>=sys-devel/clang-3.9.0
 		dev-debug/gdb[python]
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
 PATCHES=(
 	"${FILESDIR}/libcxx-13.0.0.9999-hardened.patch"
+	"${FILESDIR}/libcxx-16.0.6-find_package-pstl.patch"
 )
 DOCS=( CREDITS.TXT )
-LLVM_COMPONENTS=(
-	"libcxx"{,"abi"}
-	"llvm/"{"cmake","utils/llvm-lit"}
-)
-LLVM_PATCHSET="${PV/_/-}"
 llvm.org_set_globals
 
 python_check_deps() {
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
-}
-
-pkg_setup() {
-	# Darwin Prefix builds do not have llvm installed yet, so rely on
-	# bootstrap-prefix to set the appropriate path vars to LLVM instead
-	# of using llvm_pkg_setup.
-	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm; then
-		llvm_pkg_setup
-	fi
-	use test && python-any-r1_pkg_setup
-
-	if ! use libcxxabi && ! tc-is-gcc ; then
-		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
-		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
-		eerror "and try again."
-		die
-	fi
 }
 
 test_compiler() {
@@ -199,6 +188,23 @@ _usex_lto() {
 	fi
 }
 
+pkg_setup() {
+	# Darwin Prefix builds do not have llvm installed yet, so rely on
+	# bootstrap-prefix to set the appropriate path vars to LLVM instead
+	# of using llvm_pkg_setup.
+	if [[ ${CHOST} != *-darwin* ]] || has_version "sys-devel/llvm" ; then
+		llvm_pkg_setup
+	fi
+	use test && python-any-r1_pkg_setup
+
+	if ! use libcxxabi && ! tc-is-gcc ; then
+		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
+		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
+		eerror "and try again."
+		die
+	fi
+}
+
 src_configure() {
 	# note: we need to do this before multilib kicks in since it will
 	# alter the CHOST
@@ -261,14 +267,14 @@ _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 
-	if tc-is-clang ; then
-		if ! has_version "sys-devel/clang:${SLOT_MAJOR}" ; then
+	if tc-is-clang || ( use pstl && has_version "sys-libs/pstl[openmp]" ) ; then
+		if ! has_version "sys-devel/clang:${PV%%.*}" ; then
 eerror
-eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
+eerror "You must emerge clang:${PV%%.*} to build with clang."
 eerror
 		fi
-		export CC="${CHOST}-clang-${SLOT_MAJOR}"
-		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+		export CC="${CHOST}-clang-${PV%%.*}"
+		export CXX="${CHOST}-clang++-${PV%%.*}"
 		strip-unsupported-flags
 	fi
 
@@ -299,14 +305,14 @@ einfo
 		'-Wl,-z,now' \
 		'-Wl,-z,relro'
 
-	# we want -lgcc_s for unwinder, and for compiler runtime when using
+	# We want -lgcc_s for unwinder, and for compiler runtime when using
 	# gcc, clang with gcc runtime (or any unknown compiler)
 	local extra_libs=() want_gcc_s=ON want_compiler_rt=OFF
 	if use libunwind; then
-		# work-around missing -lunwind upstream
+	# Workaround missing -lunwind upstream
 		extra_libs+=( -lunwind )
-		# if we're using libunwind and clang with compiler-rt, we want
-		# to link to compiler-rt instead of -lgcc_s
+	# If we're using libunwind and clang with compiler-rt, we want
+	# to link to compiler-rt instead of -lgcc_s
 		if tc-is-clang; then
 			local compiler_rt=$($(tc-getCC) ${CFLAGS} ${CPPFLAGS} \
 			   ${LDFLAGS} -print-libgcc-file-name)
@@ -317,14 +323,14 @@ einfo
 			fi
 		fi
 	elif [[ ${CHOST} == *-darwin* ]] && tc-is-clang; then
-		# clang-based darwin prefix disables libunwind useflag during
-		# bootstrap, because libunwind is not in the prefix yet.
-		# override the default, though, because clang based libcxx
-		# should never use gcc_s on Darwin.
+	# clang-based darwin prefix disables libunwind useflag during
+	# bootstrap, because libunwind is not in the prefix yet.
+	# override the default, though, because clang based libcxx
+	# should never use gcc_s on Darwin.
 		want_gcc_s=OFF
-		# compiler_rt is not available in EPREFIX during bootstrap,
-		# so we cannot link to it yet anyway, so keep the defaults
-		# of want_compiler_rt=OFF and extra_libs=()
+	# compiler_rt is not available in EPREFIX during bootstrap,
+	# so we cannot link to it yet anyway, so keep the defaults
+	# of want_compiler_rt=OFF and extra_libs=()
 	fi
 
 	# bootstrap: cmake is unhappy if compiler can't link to stdlib
@@ -338,29 +344,28 @@ einfo
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
+		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
 		-DLIBCXX_LIBDIR_SUFFIX=${libdir#lib}
-		#
-		#
 		-DLIBCXX_CXX_ABI=${cxxabi}
 		-DLIBCXX_CXX_ABI_INCLUDE_PATHS=${cxxabi_incs}
-		# we're using our own mechanism for generating linker scripts
+	# We're using our own mechanism for generating linker scripts.
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
-		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
+		-DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=$(usex pstl)
+		-DLIBCXX_ENABLE_THREADS=$(usex threads)
+		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
 		-DLIBCXX_HAS_GCC_S_LIB=${want_gcc_s}
+		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
 		-DLIBCXX_USE_COMPILER_RT=${want_compiler_rt}
-		-DLIBCXX_HAS_ATOMIC_LIB=${want_gcc_s}
 		-DLIBCXX_TARGET_TRIPLE="${CHOST}"
-		-DCMAKE_SHARED_LINKER_FLAGS="${extra_libs[*]} ${LDFLAGS}"
-
 		-DLTO=${_lto}
 		-DNOEXECSTACK=$(usex hardened)
 	)
 
 	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		# cfi-icall breaks icu/genrb
+	# The cfi enables all cfi schemes, but the selective tries to balance
+	# performance and security while maintaining a performance limit.
+	# cfi-icall breaks icu/genrb
 		if tc-is-clang && is_cfi_supported ; then
 			mycmakeargs+=(
 				-DCFI=${_cfi}

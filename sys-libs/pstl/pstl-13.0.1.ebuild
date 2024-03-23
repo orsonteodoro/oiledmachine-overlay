@@ -57,7 +57,6 @@ LLVM_COMPONENTS=(
 	"pstl"
 	"cmake"
 )
-LLVM_PATCHSET="${PV/_/-}"
 llvm.org_set_globals
 
 python_check_deps() {

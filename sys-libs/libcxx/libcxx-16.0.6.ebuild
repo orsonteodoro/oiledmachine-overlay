@@ -5,12 +5,23 @@
 EAPI=8
 
 CMAKE_ECLASS="cmake"
+LLVM_COMPONENTS=(
+	"runtimes"
+	"libcxx"{,"abi"}
+	"llvm/"{"cmake","utils/llvm-lit"}
+	"cmake"
+)
+LLVM_MAX_SLOT=${PV%%.*}
+LLVM_PATCHSET="${PV}"
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
-LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="amd64 arm arm64 ~loong ~riscv sparc x86 ~arm64-macos ~x64-macos"
+SRC_URI+="
+https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
+	-> libcxx-commit-ef843c8.patch
+"
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
 HOMEPAGE="https://libcxx.llvm.org/"
@@ -21,9 +32,14 @@ LICENSE="
 		MIT
 	)
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="0"
 IUSE="
-+libcxxabi +static-libs test
++libcxxabi +static-libs test +threads -pstl
 
 hardened r12
 "
@@ -34,61 +50,35 @@ RDEPEND="
 	libcxxabi? (
 		~sys-libs/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,static-libs?]
 	)
+	threads? (
+		~sys-libs/pstl-${PV}
+	)
 "
 DEPEND="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAJOR}
+	sys-devel/llvm:${PV%%.*}
 "
 BDEPEND+="
 	dev-util/patchutils
 	test? (
-		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			dev-python/lit[${PYTHON_USEDEP}]
+		')
 		>=dev-build/cmake-3.16
 		>=sys-devel/clang-3.9.0
 		dev-debug/gdb[python]
 	)
 "
-SRC_URI+="
-https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
-	-> libcxx-commit-ef843c8.patch
-"
-RESTRICT="
-	!test? (
-		test
-	)
-"
 PATCHES=(
 	"${FILESDIR}/libcxx-15.0.0.9999-hardened.patch"
+	"${FILESDIR}/libcxx-16.0.6-find_package-pstl.patch"
+	"${FILESDIR}/libcxx-16.0.6-not_fn-header-move.patch"
 )
-LLVM_COMPONENTS=(
-	"runtimes"
-	"libcxx"{,"abi"}
-	"llvm/"{"cmake","utils/llvm-lit"}
-	"cmake"
-)
-LLVM_PATCHSET="${PV}"
 llvm.org_set_globals
 
 python_check_deps() {
 	use test || return 0
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
-}
-
-pkg_setup() {
-	# Darwin Prefix builds do not have llvm installed yet, so rely on
-	# bootstrap-prefix to set the appropriate path vars to LLVM instead
-	# of using llvm_pkg_setup.
-	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm ; then
-		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
-	fi
-	python-any-r1_pkg_setup
-
-	if ! use libcxxabi && ! tc-is-gcc ; then
-		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
-		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
-		eerror "and try again."
-		die
-	fi
 }
 
 test_compiler() {
@@ -201,6 +191,23 @@ _usex_lto() {
 	fi
 }
 
+pkg_setup() {
+	# Darwin Prefix builds do not have llvm installed yet, so rely on
+	# bootstrap-prefix to set the appropriate path vars to LLVM instead
+	# of using llvm_pkg_setup.
+	if [[ ${CHOST} != *-darwin* ]] || has_version "sys-devel/llvm" ; then
+		LLVM_MAX_SLOT=${PV%%.*} llvm_pkg_setup
+	fi
+	python-any-r1_pkg_setup
+
+	if ! use libcxxabi && ! tc-is-gcc ; then
+		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
+		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
+		eerror "and try again."
+		die
+	fi
+}
+
 src_prepare() {
 	pushd "${WORKDIR}" || die
 		# Retesting
@@ -234,6 +241,8 @@ src_configure() {
 		cxxabi=libsupc++
 		cxxabi_incs="${gcc_inc};${gcc_inc}/${CHOST}"
 	fi
+
+	replace-flags '-O0' '-O1'
 
 	is-flagq '-flto*' && HAVE_FLAG_LTO="1"
 	has_sanitizer_option "cfi-icall" && HAVE_FLAG_CFI_ICALL="1"
@@ -284,14 +293,14 @@ _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 
-	if tc-is-clang ; then
-		if ! has_version "sys-devel/clang:${SLOT_MAJOR}" ; then
+	if tc-is-clang || ( use pstl && has_version "sys-libs/pstl[openmp]" ) ; then
+		if ! has_version "sys-devel/clang:${PV%%.*}" ; then
 eerror
-eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
+eerror "You must emerge clang:${PV%%.*} to build with clang."
 eerror
 		fi
-		export CC="${CHOST}-clang-${SLOT_MAJOR}"
-		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+		export CC="${CHOST}-clang-${PV%%.*}"
+		export CXX="${CHOST}-clang++-${PV%%.*}"
 		strip-unsupported-flags
 	fi
 
@@ -338,31 +347,32 @@ einfo
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
 		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
-		-DPython3_EXECUTABLE="${PYTHON}"
-		-DLLVM_ENABLE_RUNTIMES=libcxx
-		-DLLVM_INCLUDE_TESTS=OFF
-		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
-
-		#
-		#
+		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 		-DLIBCXX_CXX_ABI=${cxxabi}
 		-DLIBCXX_CXX_ABI_INCLUDE_PATHS=${cxxabi_incs}
-		# we're using our own mechanism for generating linker scripts
+	# We're using our own mechanism for generating linker scripts.
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
+		-DLIBCXX_ENABLE_PARALLEL_ALGORITHMS=$(usex pstl)
+		-DLIBCXX_ENABLE_THREADS=$(usex threads)
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
 		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
-		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
-
+		-DLLVM_ENABLE_RUNTIMES=libcxx
+		-DLLVM_INCLUDE_TESTS=OFF
+		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
 		-DLTO=${_lto}
 		-DNOEXECSTACK=$(usex hardened)
+		-DPython3_EXECUTABLE="${PYTHON}"
+		$(use pstl && echo "
+			-DParallelSTL_DIR=/usr/lib/llvm/${PV%%.*}/lib/cmake/ParallelSTL
+		")
 	)
 
 	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		# cfi-icall breaks icu/genrb
+	# The cfi enables all cfi schemes, but the selective tries to balance
+	# performance and security while maintaining a performance limit.
+	# cfi-icall breaks icu/genrb
 		if tc-is-clang && is_cfi_supported ; then
 			mycmakeargs+=(
 				-DCFI=${_cfi}

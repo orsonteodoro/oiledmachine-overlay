@@ -1,0 +1,10 @@
+--- a/libcxx/src/CMakeLists.txt.orig	2023-06-10 15:58:16.000000000 -0700
++++ b/libcxx/src/CMakeLists.txt	2024-03-22 14:14:29.017487529 -0700
+@@ -182,6 +182,7 @@ if (APPLE AND LLVM_USE_SANITIZER)
+   endif()
+ endif()
+ 
++find_package(ParallelSTL)
+ if (LIBCXX_ENABLE_PARALLEL_ALGORITHMS AND NOT TARGET pstl::ParallelSTL)
+   message(FATAL_ERROR "Could not find ParallelSTL")
+ endif()

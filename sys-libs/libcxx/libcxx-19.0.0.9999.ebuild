@@ -24,11 +24,21 @@ unset -f _llvm_set_globals
 
 GCC_SLOT=13
 CMAKE_ECLASS="cmake"
+LLVM_COMPONENTS=(
+	"runtimes"
+	"libcxx"{,"abi"}
+	"llvm/"{"cmake","utils/llvm-lit"}
+	"cmake"
+)
+LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
-LLVM_MAX_SLOT=${LLVM_MAJOR}
+SRC_URI+="
+https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
+	-> libcxx-commit-ef843c8.patch
+"
 
 DESCRIPTION="New implementation of the C++ standard library, targeting C++11"
 HOMEPAGE="https://libcxx.llvm.org/"
@@ -39,9 +49,14 @@ LICENSE="
 		MIT
 	)
 "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="0"
 IUSE+="
-+libcxxabi +static-libs test
++libcxxabi +static-libs test +threads
 
 hardened r12
 ${LLVM_EBUILDS_LLVM19_REVISION}
@@ -56,35 +71,22 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAJOR}
+	sys-devel/llvm:${PV%%.*}
 "
 BDEPEND+="
 	>=sys-devel/gcc-${GCC_SLOT}
 	dev-util/patchutils
 	test? (
-		$(python_gen_any_dep 'dev-python/lit[${PYTHON_USEDEP}]')
+		$(python_gen_any_dep '
+			dev-python/lit[${PYTHON_USEDEP}]
+		')
 		>=dev-build/cmake-3.16
 		>=sys-devel/clang-3.9.0
 		dev-debug/gdb[python]
 	)
 "
-SRC_URI+="
-https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
-	-> libcxx-commit-ef843c8.patch
-"
-RESTRICT="
-	!test? (
-		test
-	)
-"
 PATCHES=(
 	"${FILESDIR}/libcxx-18.0.0.9999-hardened.patch"
-)
-LLVM_COMPONENTS=(
-	"runtimes"
-	"libcxx"{,"abi"}
-	"llvm/"{"cmake","utils/llvm-lit"}
-	"cmake"
 )
 llvm.org_set_globals
 
@@ -111,18 +113,6 @@ eerror "to the default immediately after this package has been merged."
 eerror
 		die
 	fi
-}
-
-pkg_setup() {
-	python-any-r1_pkg_setup
-
-	if ! use libcxxabi && ! tc-is-gcc ; then
-		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
-		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
-		eerror "and try again."
-		die
-	fi
-	check_libstdcxx
 }
 
 test_compiler() {
@@ -235,6 +225,18 @@ _usex_lto() {
 	fi
 }
 
+pkg_setup() {
+	python-any-r1_pkg_setup
+
+	if ! use libcxxabi && ! tc-is-gcc ; then
+		eerror "To build ${PN} against libsupc++, you have to use gcc. Other"
+		eerror "compilers are not supported. Please set CC=gcc and CXX=g++"
+		eerror "and try again."
+		die
+	fi
+	check_libstdcxx
+}
+
 src_prepare() {
 	pushd "${WORKDIR}" || die
 		# Retesting
@@ -257,7 +259,7 @@ src_prepare() {
 }
 
 src_configure() {
-	llvm_prepend_path "${LLVM_MAJOR}"
+	llvm_prepend_path "${PV%%.*}"
 
 	# note: we need to do this before multilib kicks in since it will
 	# alter the CHOST
@@ -321,13 +323,13 @@ _configure_abi() {
 	export CXX=$(tc-getCXX)
 
 	if tc-is-clang ; then
-		if ! has_version "sys-devel/clang:${SLOT_MAJOR}" ; then
+		if ! has_version "sys-devel/clang:${PV%%.*}" ; then
 eerror
-eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
+eerror "You must emerge clang:${PV%%.*} to build with clang."
 eerror
 		fi
-		export CC="${CHOST}-clang-${SLOT_MAJOR}"
-		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+		export CC="${CHOST}-clang-${PV%%.*}"
+		export CXX="${CHOST}-clang++-${PV%%.*}"
 		strip-unsupported-flags
 	fi
 
@@ -374,31 +376,28 @@ einfo
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
 		-DCMAKE_CXX_COMPILER_TARGET="${CHOST}"
-		-DPython3_EXECUTABLE="${PYTHON}"
-		-DLLVM_ENABLE_RUNTIMES=libcxx
-		-DLLVM_INCLUDE_TESTS=OFF
-		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
-
-		#
-		#
+		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 		-DLIBCXX_CXX_ABI=${cxxabi}
 		-DLIBCXX_CXX_ABI_INCLUDE_PATHS=${cxxabi_incs}
-		# we're using our own mechanism for generating linker scripts
+	# We're using our own mechanism for generating linker scripts.
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
+		-DLIBCXX_ENABLE_THREADS=$(usex threads)
 		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
 		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
-		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
-
+		-DLLVM_ENABLE_RUNTIMES=libcxx
+		-DLLVM_INCLUDE_TESTS=OFF
+		-DLLVM_LIBDIR_SUFFIX=${libdir#lib}
 		-DLTO=${_lto}
 		-DNOEXECSTACK=$(usex hardened)
+		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 
 	set_cfi() {
-		# The cfi enables all cfi schemes, but the selective tries to balance
-		# performance and security while maintaining a performance limit.
-		# cfi-icall breaks icu/genrb
+	# The cfi enables all cfi schemes, but the selective tries to balance
+	# performance and security while maintaining a performance limit.
+	# cfi-icall breaks icu/genrb
 		if tc-is-clang && is_cfi_supported ; then
 			mycmakeargs+=(
 				-DCFI=${_cfi}
