@@ -61,7 +61,7 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
-	app-arch/bzip2
+	app-alternatives/bzip2
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	comgr? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}

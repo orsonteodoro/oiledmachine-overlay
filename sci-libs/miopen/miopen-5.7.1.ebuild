@@ -74,7 +74,7 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-db/sqlite-3.17
 	>=dev-libs/boost-1.72
-	app-arch/bzip2
+	app-alternatives/bzip2
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	comgr? (
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
@@ -125,6 +125,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-include-array.patch"
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
 	"${FILESDIR}/${PN}-5.7.0-path-changes.patch"
+	"${FILESDIR}/${PN}-5.7.1-bunzip2-path.patch"
 )
 
 pkg_setup() {

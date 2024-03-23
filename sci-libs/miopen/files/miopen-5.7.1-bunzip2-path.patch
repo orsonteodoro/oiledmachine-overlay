@@ -1,0 +1,13 @@
+--- a/CMakeLists.txt.orig	2024-03-23 13:44:52.705368790 -0700
++++ b/CMakeLists.txt	2024-03-23 15:14:35.745578604 -0700
+@@ -466,7 +466,9 @@ endif()
+ function(unpack_db db_bzip2_file)
+     set(KERNELS_DIR "${CMAKE_SOURCE_DIR}/src/kernels")
+     STRING(REPLACE ".bz2" "" db_file "${db_bzip2_file}")
+-    find_program(UNZIPPER lbunzip2 bunzip2)
++    find_program(UNZIPPER lbunzip2 bunzip2
++        PATHS /bin/bunzip2
++    )
+     if(EXISTS "${db_file}")
+         message(STATUS "WARNING: ${db_file} already exists and will be overwritten")
+     endif()
