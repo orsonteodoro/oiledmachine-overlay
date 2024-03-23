@@ -18,7 +18,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipBLAS"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" cuda +rocm system-llvm r1"
+IUSE+=" cuda +rocm system-llvm r2"
 REQUIRED_USE="
 	^^ (
 		cuda
@@ -102,7 +102,7 @@ src_install() {
 
 	# The build script is bugged.
 	rm -f "${ED}/usr/include/hipblas/hipblas_module.f90"
-	insinto "${EPREFIX}/usr/include/hipblas"
+	insinto "${EPREFIX}/${EROCM_PATH}/include/hipblas"
 	if [[ -e "library/src/hipblas_module.f90" ]] ; then
 		doins library/src/hipblas_module.f90
 	fi
