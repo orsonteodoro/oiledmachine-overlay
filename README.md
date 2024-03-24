@@ -306,34 +306,40 @@ sandbox.
 These scans are ineffective against physical or side-channel attacks such as
 unencrypted keyboard/input connection capture (e.g. evil maid attack).
 
-## PGO packages
+## PGO/BOLT packages
 
 The following list contains ebuilds modified by this overlay with PGO (Profile
-Guided Optimization) support, with additional patches from others listed in
-the metadata.xml.
+Guided Optimization) support or BOLT, with additional patches from others listed
+in the metadata.xml.
 
-* app-arch/zopfli
-* dev-games/box2d
-* dev-lang/ispc
-* dev-lang/lua
-* dev-lang/mono
-* media-libs/embree
-* media-libs/libjpeg-turbo
-* media-libs/libspng
-* media-libs/libvpx
-* media-video/ffmpeg
-* media-gfx/blender
-* net-libs/nodejs
-* net-libs/webkit-gtk (WIP, in testing with EPGO)
-* sci-physics/bullet
-* sys-devel/clang (WIP)
-* sys-devel/lld (WIP)
-* sys-devel/llvm (WIP)
-* sys-kernel/ot-sources
-* sys-kernel/genkernel
-* sys-libs/zlib
-* www-client/chromium (1 stage PGO yes, in testing with EPGO)
-* x11-libs/cairo
+* app-arch/zopfli (pgo, bolt)
+* app-crypt/libzc (pgo, bolt)
+* dev-db/sqlite (pgo)
+* dev-games/box2d (pgo, bolt)
+* dev-lang/ispc (pgo, bolt)
+* dev-lang/lua (pgo, bolt)
+* dev-lang/mono (pgo)
+* dev-libs/jemalloc (pgo, bolt)
+* media-libs/embree (pgo, bolt?)
+* media-libs/libaom (pgo, bolt?)
+* media-libs/libjpeg-turbo (pgo, bolt)
+* media-libs/libspng (pgo, bolt)
+* media-libs/libvpx (pgo, bolt)
+* media-video/ffmpeg (pgo, bolt)
+* media-gfx/blender (pgo, bolt?)
+* net-libs/nodejs (pgo)
+* net-libs/webkit-gtk (epgo?)
+* sci-physics/bullet (pgo)
+* sys-devel/clang (epgo?, ebolt?)
+* sys-devel/lld (epgo?, ebolt?)
+* sys-devel/llvm (epgo?, ebolt?)
+* sys-kernel/ot-sources (pgo)
+* sys-kernel/genkernel (provides pgo flags and training for kernel)
+* sys-libs/zlib (pgo)
+* www-client/chromium (pgo, epgo?, bolt?)
+* x11-libs/cairo (pgo)
+
+Those suffixed with ? are still in testing or not confirmed yet.
 
 ### EPGO
 
@@ -438,14 +444,23 @@ PGO steps:
 - training (PGT)
 - optimization (PGO)
 
+- testing (usually optional but required if package touches important data and no BOLT steps performed)
+
 BOLT steps:
 - instrument (INST)
 - collection (aka training)
 - optimize (OPT)
 
+- testing (usually optional but required if package touches important data and PGO and BOLT steps performed.)
+
 Follow the 6 steps from top to bottom to properly combine them if using epgo
 and ebolt.  The ebuild has access to `emerge --config package_name` to optimize
 BOLT instrumented ebuilds avoiding long compile-times.
+
+The testing step is often ignored in documentation but there is a chance of
+unintended consequences.  If a BOLT training fails/segfaults, it may indicate
+that the optimized PGO build has a bug or BOLT instrumentation is buggy.  The
+testing step is important to prevent further data loss or data corruption.
 
 For those that prefer three step, the same can be achieved with a shell script.
 Try epgo + ebolt try something like:
