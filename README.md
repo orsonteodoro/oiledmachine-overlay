@@ -348,10 +348,10 @@ pgo and bolt means pre-selected trainer.
 The ot-sources usually train with interactive training but can be performed
 with automated trainer in [files/pgo-trainer.sh](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-kernel/ot-sources/files/pgo-trainer.sh).
 
-The estimated benefits
+#### The estimated benefits
 
-PGO:  compiler(s) ~20% benefit; ~10% on average, ~40% outliers
-BOLT:  compiler(s) ~15% benefit
+*PGO:  compiler(s) ~20% benefit; ~10% on average, ~40% outliers
+*BOLT:  compiler(s) ~15% benefit
 
 ### EPGO
 
