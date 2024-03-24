@@ -350,8 +350,8 @@ with automated trainer in [files/pgo-trainer.sh](https://github.com/orsonteodoro
 
 #### The estimated benefits
 
-*PGO:  compiler(s) ~20% benefit; ~10% on average, ~40% outliers
-*BOLT:  compiler(s) ~15% benefit
+* PGO:  compiler(s) ~20% benefit; ~10% on average, ~40% outliers
+* BOLT:  compiler(s) ~15% benefit
 
 ### EPGO
 
