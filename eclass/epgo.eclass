@@ -251,7 +251,7 @@ eerror
 				_epgo_append_flags -fprofile-partial-training
 			fi
 			# The upstream default uses -fprofile-update=single \
-			local uopts_pgo_threaded="${UOPTS_PGO_THREADED:-1}"
+			local uopts_pgo_threaded="${UOPTS_PGO_THREADED:-auto}"
 			if [[ \
 				   "${uopts_pgo_threaded}" == "2" \
 				|| "${uopts_pgo_threaded}" == "thread-safe" \
@@ -299,7 +299,7 @@ eerror
 				_epgo_append_flags -fprofile-partial-training
 			fi
 			# The upstream default uses -fprofile-update=single \
-			local uopts_pgo_threaded="${UOPTS_PGO_THREADED:-1}"
+			local uopts_pgo_threaded="${UOPTS_PGO_THREADED:-auto}"
 			if [[ \
 				   "${uopts_pgo_threaded}" == "2" \
 				|| "${uopts_pgo_threaded}" == "thread-safe" \
