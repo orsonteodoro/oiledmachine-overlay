@@ -169,6 +169,12 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 # Example:
 # UOPTS_PGO_FORCE_PGI=1 emerge foo
 
+# @ECLASS_VARIABLE: UOPTS_PGO_THREADED
+# @DESCRIPTION:
+# Make PGO proiles thread safe.
+# The upstream default is single, but these eclasses use auto.
+# Valid values:  0 (single), 1 (auto), 2 (forced/thread-safe), auto, thread-safe, single
+
 # @ECLASS_VARIABLE: UOPTS_IMPLS (OPTIONAL)
 # @DESCRIPTION:
 # This sets the suffix for multilib or different implementations.  It should be
@@ -348,8 +354,23 @@ eerror
 			if [[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] ; then
 				_tpgo_append_flags -fprofile-partial-training
 			fi
-			if [[ "${UOPTS_PGO_THREADED:-1}" == "1" ]] ; then
+			# The upstream default uses -fprofile-update=single \
+			local uopts_pgo_threaded="${UOPTS_PGO_THREADED:-auto}"
+			if [[ \
+				   "${uopts_pgo_threaded}" == "2" \
+				|| "${uopts_pgo_threaded}" == "thread-safe" \
+			]] ; then
+				_epgo_append_flags -fprofile-update=atomic
+			elif [[ \
+				   "${uopts_pgo_threaded}" == "1" \
+				|| "${uopts_pgo_threaded}" == "auto" \
+			]] ; then
 				_epgo_append_flags -fprofile-update=prefer-atomic
+			elif [[ \
+				   "${uopts_pgo_threaded}" == "0" \
+				|| "${uopts_pgo_threaded}" == "single" \
+			]] ; then
+				_epgo_append_flags -fprofile-update=single
 			fi
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
@@ -370,8 +391,23 @@ einfo "Setting up PGO"
 			if [[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] ; then
 				_tpgo_append_flags -fprofile-partial-training
 			fi
-			if [[ "${UOPTS_PGO_THREADED:-1}" == "1" ]] ; then
+			# The upstream default uses -fprofile-update=single \
+			local uopts_pgo_threaded="${UOPTS_PGO_THREADED:-1}"
+			if [[ \
+				   "${uopts_pgo_threaded}" == "2" \
+				|| "${uopts_pgo_threaded}" == "thread-safe" \
+			]] ; then
+				_epgo_append_flags -fprofile-update=atomic
+			elif [[ \
+				   "${uopts_pgo_threaded}" == "1" \
+				|| "${uopts_pgo_threaded}" == "auto" \
+			]] ; then
 				_epgo_append_flags -fprofile-update=prefer-atomic
+			elif [[ \
+				   "${uopts_pgo_threaded}" == "0" \
+				|| "${uopts_pgo_threaded}" == "single" \
+			]] ; then
+				_epgo_append_flags -fprofile-update=single
 			fi
 		fi
 	fi
