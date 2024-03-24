@@ -345,8 +345,13 @@ epgo and ebolt means with a custom trainer which is usually interactive.
 
 pgo and bolt means pre-selected trainer.
 
+Typical use case training (aka custom trainer) is preferred to optimize cache
+use and to minimize junk pages.
+
 The ot-sources usually train with interactive training but can be performed
 with automated trainer in [files/pgo-trainer.sh](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/sys-kernel/ot-sources/files/pgo-trainer.sh).
+Training should include user-space apps used in typical use, which the automated
+trainer may miss.
 
 #### The estimated benefits
 
