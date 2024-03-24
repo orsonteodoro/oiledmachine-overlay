@@ -341,12 +341,16 @@ eerror
 			fi
 			_tpgo_append_flags \
 				-fprofile-generate="${pgo_data_staging_dir}"
-		else
+		elif tc-is-gcc ; then
 			_tpgo_append_flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
-				&& _tpgo_append_flags -fprofile-partial-training
+			if [[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] ; then
+				_tpgo_append_flags -fprofile-partial-training
+			fi
+			if [[ "${UOPTS_PGO_THREADED:-1}" == "1" ]] ; then
+				_epgo_append_flags -fprofile-update=prefer-atomic
+			fi
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 einfo "Setting up PGO"
@@ -363,8 +367,12 @@ einfo "Setting up PGO"
 				-fprofile-correction \
 				-fprofile-use \
 				-fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
-				&& _tpgo_append_flags -fprofile-partial-training
+			if [[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] ; then
+				_tpgo_append_flags -fprofile-partial-training
+			fi
+			if [[ "${UOPTS_PGO_THREADED:-1}" == "1" ]] ; then
+				_epgo_append_flags -fprofile-update=prefer-atomic
+			fi
 		fi
 	fi
 }

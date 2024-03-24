@@ -241,8 +241,12 @@ eerror
 			_epgo_append_flags \
 				-fprofile-generate \
 				-fprofile-dir="${pgo_data_suffix_dir}"
-			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
-				&& _epgo_append_flags -fprofile-partial-training
+			if [[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] ; then
+				_epgo_append_flags -fprofile-partial-training
+			fi
+			if [[ "${UOPTS_PGO_THREADED:-1}" == "1" ]] ; then
+				_epgo_append_flags -fprofile-update=prefer-atomic
+			fi
 		else
 eerror
 eerror "Only GCC and Clang are supported for PGO."
@@ -270,8 +274,12 @@ eerror
 				-fprofile-correction \
 				-fprofile-use \
 				-fprofile-dir="${pgo_data_staging_dir}"
-			[[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] \
-				&& _epgo_append_flags -fprofile-partial-training
+			if [[ "${UOPTS_PGO_PORTABLE}" == "1" || "${UOPTS_PGO_EVENT_BASED}" == "1" ]] ; then
+				_epgo_append_flags -fprofile-partial-training
+			fi
+			if [[ "${UOPTS_PGO_THREADED:-1}" == "1" ]] ; then
+				_epgo_append_flags -fprofile-update=prefer-atomic
+			fi
 		fi
 	fi
 }
