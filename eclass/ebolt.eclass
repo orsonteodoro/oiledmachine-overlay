@@ -4,7 +4,6 @@
 
 # @ECLASS: ebolt.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
-# Help wanted!  Requires co-maintainer or testers.
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: event based bolt support
 # @DESCRIPTION:
@@ -138,14 +137,20 @@ ewarn "The ebuilds only support BOLT for Linux at the moment."
 _setup_malloc() {
 	[[ -z "${UOPTS_BOLT_MALLOC}" ]] && UOPTS_BOLT_MALLOC="auto"
 
-	if [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" \
-		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc-minimal") ]] ; then
+	if [[ \
+		-e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so" \
+		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc-minimal") \
+	]] ; then
 		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc_minimal.so"
-	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" \
-		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc") ]] ; then
+	elif [[ \
+		-e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so" \
+		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"jemalloc") \
+	]] ; then
 		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libjemalloc.so"
-	elif [[ -e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" \
-		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"tcmalloc") ]] ; then
+	elif [[ \
+		-e "${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so" \
+		&& "${UOPTS_BOLT_MALLOC}" =~ ("auto"|"tcmalloc") \
+	]] ; then
 		export _UOPTS_BOLT_MALLOC_LIB="${ESYSROOT}/usr/$(get_libdir ${DEFAULT_ABI})/libtcmalloc.so"
 	else
 		export _UOPTS_BOLT_MALLOC_LIB=""

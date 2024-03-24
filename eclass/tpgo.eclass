@@ -360,17 +360,17 @@ eerror
 				   "${uopts_pgo_threaded}" == "2" \
 				|| "${uopts_pgo_threaded}" == "thread-safe" \
 			]] ; then
-				_epgo_append_flags -fprofile-update=atomic
+				_tpgo_append_flags -fprofile-update=atomic
 			elif [[ \
 				   "${uopts_pgo_threaded}" == "1" \
 				|| "${uopts_pgo_threaded}" == "auto" \
 			]] ; then
-				_epgo_append_flags -fprofile-update=prefer-atomic
+				_tpgo_append_flags -fprofile-update=prefer-atomic
 			elif [[ \
 				   "${uopts_pgo_threaded}" == "0" \
 				|| "${uopts_pgo_threaded}" == "single" \
 			]] ; then
-				_epgo_append_flags -fprofile-update=single
+				_tpgo_append_flags -fprofile-update=single
 			fi
 		fi
 	elif use pgo && [[ "${PGO_PHASE}" == "PGO" ]] ; then
@@ -397,17 +397,17 @@ einfo "Setting up PGO"
 				   "${uopts_pgo_threaded}" == "2" \
 				|| "${uopts_pgo_threaded}" == "thread-safe" \
 			]] ; then
-				_epgo_append_flags -fprofile-update=atomic
+				_tpgo_append_flags -fprofile-update=atomic
 			elif [[ \
 				   "${uopts_pgo_threaded}" == "1" \
 				|| "${uopts_pgo_threaded}" == "auto" \
 			]] ; then
-				_epgo_append_flags -fprofile-update=prefer-atomic
+				_tpgo_append_flags -fprofile-update=prefer-atomic
 			elif [[ \
 				   "${uopts_pgo_threaded}" == "0" \
 				|| "${uopts_pgo_threaded}" == "single" \
 			]] ; then
-				_epgo_append_flags -fprofile-update=single
+				_tpgo_append_flags -fprofile-update=single
 			fi
 		fi
 	fi
@@ -426,8 +426,10 @@ _tpgo_cmake_clean() {
 	declare -f _pre_tpgo_set_clean > /dev/null && _pre_tpgo_set_clean
 	[[ -e "${BUILD_DIR}" ]] || return
 
-	if [[ -n "${CMAKE_IN_SOURCE_BUILD}" \
-		|| "${CMAKE_USE_DIR}" == "${BUILD_DIR}" ]] ; then
+	if [[ \
+		-n "${CMAKE_IN_SOURCE_BUILD}" \
+		|| "${CMAKE_USE_DIR}" == "${BUILD_DIR}" ]] \
+	; then
 		# TODO:  test
 		if [[ -e "build.ninja" ]] && grep -q -e "^build clean:" "build.ninja" ; then
 			eninja -t clean

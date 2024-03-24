@@ -183,7 +183,7 @@ _epgo_prepare_pgo() {
 
 	mkdir -p "${pgo_data_staging_dir}" || die
 	if [[ "${UOPTS_PGO_FORCE_PGI}" == "1" ]] ; then
-		:;
+		:
 	elif [[ -e "${pgo_data_suffix_dir}" ]] ; then
 		cp -aT "${pgo_data_suffix_dir}" "${pgo_data_staging_dir}" || die
 	fi
@@ -418,9 +418,9 @@ ewarn
 		# Has profile?
 		local nlines1=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
 		local nlines2=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
-		if tc-is-gcc && (( ${nlines1} > 0 )) ; then
+		if   tc-is-gcc   && (( ${nlines1} > 0 )) ; then
 			:; # pass
-		elif tc-is-clang && (( ${nlines2} > 0 ))  ; then
+		elif tc-is-clang && (( ${nlines2} > 0 )) ; then
 			:; # pass
 		else
 ewarn "NO PGO PROFILE"

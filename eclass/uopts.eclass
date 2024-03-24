@@ -28,8 +28,10 @@ UOPTS_SUPPORT_EBOLT=${UOPTS_SUPPORT_EBOLT:-1}
 UOPTS_SUPPORT_TPGO=${UOPTS_SUPPORT_TPGO:-1}
 UOPTS_SUPPORT_TBOLT=${UOPTS_SUPPORT_TBOLT:-1}
 
-if [[ "${UOPTS_SUPPORT_TPGO}" == "1" \
-	|| "${UOPTS_SUPPORT_TBOLT}" == "1" ]] ; then
+if [[ \
+	   "${UOPTS_SUPPORT_TPGO}" == "1" \
+	|| "${UOPTS_SUPPORT_TBOLT}" == "1" \
+]] ; then
 	inherit train
 fi
 
@@ -69,18 +71,20 @@ einfo "If the build fails, try \`${instr_vars} emerge -1 =${CATEGORY}/${PN}-${PV
 	fi
 
 	if \
-		has epgo ${IUSE} && use epgo \
-		&& has pgo ${IUSE} && use pgo \
-		&& [[ -n "${_EPGO_ECLASS}" && -n "${_TPGO_ECLASS}" ]] ; then
+		   has epgo ${IUSE} && use epgo \
+		&& has pgo ${IUSE}  && use pgo \
+		&& [[ -n "${_EPGO_ECLASS}" && -n "${_TPGO_ECLASS}" ]] \
+	; then
 eerror
 eerror "You cannot use epgo and pgo at the same time."
 eerror
 		die
 	fi
 	if \
-		has ebolt ${IUSE} && use ebolt \
-		&& has bolt ${IUSE} && use bolt \
-		&& [[ -n "${_EBOLT_ECLASS}" && -n "${_TBOLT_ECLASS}" ]] ; then
+		   has ebolt ${IUSE} && use ebolt \
+		&& has bolt ${IUSE}  && use bolt \
+		&& [[ -n "${_EBOLT_ECLASS}" && -n "${_TBOLT_ECLASS}" ]] \
+	; then
 # You are allow to use ebolt and bolt in llvm ebuilds.
 eerror
 eerror "You cannot use ebolt and bolt at the same time."
@@ -264,10 +268,10 @@ uopts_pkg_postinst() {
 	[[ "${UOPTS_SUPPORT_TBOLT}" == "1" ]] && tbolt_pkg_postinst
 
 	if \
-		( has bolt && use bolt ) \
+		   ( has bolt  && use bolt ) \
 		|| ( has ebolt && use ebolt ) \
-		|| ( has epgo && use pgo ) \
-		|| ( has pgo && use pgo ) \
+		|| ( has epgo  && use epgo ) \
+		|| ( has pgo   && use pgo ) \
 	; then
 einfo
 einfo "Further training details can be found in:"
