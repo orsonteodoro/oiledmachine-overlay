@@ -444,14 +444,16 @@ PGO steps:
 - training (PGT)
 - optimization (PGO)
 
-- testing (usually optional but required if package touches important data and no BOLT steps performed)
+- testing (usually optional for temporary data but required if package touches
+saved user data and no BOLT steps performed.)
 
 BOLT steps:
 - instrument (INST)
 - collection (aka training)
 - optimize (OPT)
 
-- testing (usually optional but required if package touches important data and PGO and BOLT steps performed.)
+- testing (usually optional for temporary data but required if package touches
+saved user data and PGO and BOLT steps performed.)
 
 Follow the 6 steps from top to bottom to properly combine them if using epgo
 and ebolt.  The ebuild has access to `emerge --config package_name` to optimize
@@ -461,6 +463,7 @@ The testing step is often ignored in documentation but there is a chance of
 unintended consequences.  If a BOLT training fails/segfaults, it may indicate
 that the optimized PGO build has a bug or BOLT instrumentation is buggy.  The
 testing step is important to prevent further data loss or data corruption.
+Usually the preferred testing is via the test suite or test USE flag.
 
 For those that prefer three step, the same can be achieved with a shell script.
 Try epgo + ebolt try something like:
