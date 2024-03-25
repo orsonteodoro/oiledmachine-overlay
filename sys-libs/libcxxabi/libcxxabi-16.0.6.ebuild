@@ -8,6 +8,7 @@ PYTHON_COMPAT=( python3_{10..12} )
 
 inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
 
+GCC_SLOT=12
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="amd64 arm arm64 ~loong ~riscv sparc x86 ~arm64-macos ~x64-macos"
 
@@ -35,6 +36,7 @@ DEPEND+="
 	sys-devel/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
+	<sys-devel/gcc-13
 	!test? (
 		${PYTHON_DEPS}
 	)
@@ -70,6 +72,24 @@ python_check_deps() {
 	python_has_version "dev-python/lit[${PYTHON_USEDEP}]"
 }
 
+check_libstdcxx() {
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+
+	if ver_test "${gcc_current_profile_slot}" -lt "${GCC_SLOT}" ; then
+eerror
+eerror "You must switch to < GCC 13.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
+eerror "  source /etc/profile"
+eerror
+eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+eerror "to the default immediately after this package has been merged."
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
 	# darwin prefix builds do not have llvm installed yet, so rely on bootstrap-prefix
 	# to set the appropriate path vars to LLVM instead of using llvm_pkg_setup.
@@ -77,6 +97,7 @@ pkg_setup() {
 		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
+	check_libstdcxx
 }
 
 get_lib_types() {
