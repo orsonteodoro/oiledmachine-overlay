@@ -101,7 +101,7 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 # @DESCRIPTION:
 # Make PGO proiles thread safe.
 # The upstream default is single, but these eclasses use auto.
-# Valid values:  0 (single), 1 (auto), 2 (forced/thread-safe), auto, thread-safe, single
+# Valid values:  0 (single), 1 (auto), 2 (forced/thread-safe), auto, thread-safe, single, nop
 
 # @FUNCTION: _epgo_check_pgo
 # @INTERNAL
