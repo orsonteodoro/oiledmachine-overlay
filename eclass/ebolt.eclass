@@ -335,7 +335,7 @@ ewarn "Compiler is not supported for EBOLT."
 			bolt_slot="${raw_pv}"
 		fi
 		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
-		local actual="${bolt_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
+		local actual="llvm-bolt;${bolt_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
@@ -597,7 +597,7 @@ ebolt_src_install() {
 			bolt_slot="${raw_pv}"
 		fi
 		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
-		local fingerprint="${bolt_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
+		local fingerprint="llvm-bolt;${bolt_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 		echo "llvm-bolt ${raw_pv}" \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
 		echo "${fingerprint}" \

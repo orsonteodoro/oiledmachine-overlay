@@ -324,7 +324,15 @@ ewarn "Compiler is not supported for TBOLT."
 			bolt_slot="${raw_pv}"
 		fi
 		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
-		local actual="${bolt_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
+		local cc_type
+		if tc-is-clang ; then
+			cc_type="clang"
+		elif tc-is-gcc ; then
+			cc_type="gcc"
+		else
+			cc_type="${CC}"
+		fi
+		local actual="llvm-bolt;${bolt_slot};${cc_type};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
 # This check is done because of BOLT profile compatibility.
@@ -642,7 +650,15 @@ tbolt_src_install() {
 			bolt_slot="${raw_pv}"
 		fi
 		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
-		local fingerprint="${bolt_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
+		local cc_type
+		if tc-is-clang ; then
+			cc_type="clang"
+		elif tc-is-gcc ; then
+			cc_type="gcc"
+		else
+			cc_type="${CC}"
+		fi
+		local fingerprint="llvm-bolt;${bolt_slot};${cc_type};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 		echo "llvm-bolt ${raw_pv}" \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die
 		echo "${fingerprint}" \

@@ -139,7 +139,7 @@ uopts_src_compile() {
 	local is_pgoable=1
 	local skip_pgi="no"
 	if has pgo ${IUSE} && [[ -n "${_TPGO_ECLASS}" ]] ; then
-		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_PGO_IMPLS}"
+		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 		if declare -f train_meets_requirements > /dev/null ; then
 			if train_meets_requirements ; then
 				is_pgoable=1
@@ -163,7 +163,7 @@ einfo "is_tpgo_profile_reusable=${skip_pgi} "
 	local is_boltable=1
 	local skip_inst="no"
 	if has bolt ${IUSE} && [[ -n "${_TBOLT_ECLASS}" ]] ; then
-		_TBOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_BOLT_IMPLS}"
+		_UOPTS_BOLT_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 		if declare -f train_meets_requirements > /dev/null ; then
 			if train_meets_requirements ; then
 				is_boltable=1
