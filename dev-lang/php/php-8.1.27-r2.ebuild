@@ -662,7 +662,7 @@ _src_configure() {
 		fi
 	fi
 	if ! use clang ; then
-		# Breaks with gcc-12 (libstdcxx)
+		# Breaks with gcc-13 (libstdcxx)
 		export CC="${CHOST}-gcc-${GCC_SLOT}"
 		export CXX="${CHOST}-gcc-${GCC_SLOT}"
 		strip-unsupported-flags
