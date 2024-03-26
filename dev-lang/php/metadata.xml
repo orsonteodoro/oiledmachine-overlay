@@ -133,21 +133,24 @@
       Enable support for <pkg>dev-db/tokyocabinet</pkg> db backend
     </flag>
     <flag name="trainer-all">
-      Perform comprehensive profiling for PGO/BOLT using all trainers.  ~14K unit tests.
+      Perform comprehensive profiling for PGO/BOLT using the test-suite
+      trainers.  ~14K unit tests.
     </flag>
     <flag name="trainer-benchmark">
       Perform basic profiling for PGO/BOLT using
       Zend/bench.php JIT, Symfony Demo 2.2.3 JIT, Wordpress 6.2 JIT.
     </flag>
     <flag name="trainer-basic">
-      Perform basic profiling for PGO/BOLT.  ~688 unit tests.
+      Perform basic profiling with the test suite for PGO/BOLT.  ~688 unit
+      tests.
     </flag>
     <flag name="trainer-ext">
       Perform profiling of extensions for PGO/BOLT on top of trainer-basic.
       The ext training contains mostly regression testing.
     </flag>
     <flag name="trainer-ext-com_dotnet">
-      Perform com_dotnet extension profiling for PGO/BOLT on top of trainer-basic.
+      Perform com_dotnet extension profiling for PGO/BOLT on top of
+      trainer-basic.
     </flag>
     <flag name="trainer-ext-date">
       Perform date extension profiling for PGO/BOLT on top of trainer-basic.
@@ -159,14 +162,15 @@
       Perform random extension profiling for PGO/BOLT on top of trainer-basic.
     </flag>
     <flag name="trainer-ext-reflection">
-      Perform reflection extension profiling for PGO/BOLT on top of trainer-basic.
+      Perform reflection extension profiling for PGO/BOLT on top of
+      trainer-basic.
     </flag>
     <flag name="trainer-ext-spl">
       Perform spl extension profiling for PGO/BOLT on top of trainer-basic.
     </flag>
     <flag name="trainer-ext-standard">
-      Perform profiling of ext/standard folder for PGO/BOLT on top of trainer-basic.
-      It contains many unit tests.
+      Perform profiling of ext/standard folder for PGO/BOLT on top of
+      trainer-basic.  It contains many unit tests.
     </flag>
     <flag name="trainer-zend">
       Perform profiling of Zend for PGO/BOLT on top of trainer-basic.
