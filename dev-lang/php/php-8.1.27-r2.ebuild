@@ -4,6 +4,7 @@
 
 EAPI=8
 
+GCC_SLOT=12
 LLVM_COMPAT=( {19..15} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 PHP_MV="$(ver_cut 1)"
@@ -425,10 +426,11 @@ gen_clang_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				sys-devel/llvm:${s}[bolt?]
-				sys-devel/clang:${s}
-				sys-devel/lld:${s}
 				=sys-libs/compiler-rt-sanitizers-${s}*[profile]
+				sys-devel/clang:${s}
+				sys-devel/gcc:${GCC_SLOT}
+				sys-devel/lld:${s}
+				sys-devel/llvm:${s}[bolt?]
 			)
 		"
 	done
@@ -443,7 +445,7 @@ BDEPEND="
 	pgo? (
 		|| (
 			!clang? (
-				sys-devel/gcc:12
+				sys-devel/gcc:${GCC_SLOT}
 			)
 			clang? (
 				$(gen_clang_bdepend)
@@ -622,46 +624,26 @@ src_prepare() {
 
 src_configure() { :; }
 
-_get_llvm_arch() {
-# See https://github.com/llvm/llvm-project/blob/llvmorg-19-init/compiler-rt/lib/sanitizer_common/sanitizer_common.h#L780
-# See https://github.com/llvm/llvm-project/blob/llvmorg-19-init/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
-	if [[ "${ABI}" == "amd64" ]] ; then
-		echo "x86_64"
-	elif [[ "${ABI}" == "arm64" ]] ; then
-		echo "aarch64"
-	elif [[ "${CHOST}" =~ "armv6j" ]] ; then
-		echo "armv6"
-	elif [[ "${CHOST}" =~ "armv7a" ]] ; then
-		echo "armv7"
-	elif [[ "${CHOST}" =~ "armv7a" ]] ; then
-		echo "armv7"
-	elif [[ "${ABI}" == "hexagon" ]] ; then
-		echo "hexagon"
-	elif [[ "${ABI}" == "loong" ]] ; then
-		echo "loongarch64"
-	elif [[ "${ABI}" == "mips" ]] ; then
-		echo "mips"
-	elif [[ "${ABI}" == "ppc64" ]] ; then
-		echo "powerpc64le"
-	elif [[ "${ABI}" == "ppc" ]] ; then
-		echo "powerpcspe"
-	elif [[ "${ABI}" == "riscv" ]] ; then
-		echo "riscv64"
-	elif [[ "${ABI}" == "riscv" ]] ; then
-		echo "riscv32"
-	elif [[ "${DEFAULT_ABI}" == "sparc64" && "${ABI}" == "sparc64" ]] ; then
-		echo "sparcv9"
-	elif [[ "${DEFAULT_ABI}" == "sparc32" && "${ABI}" == "sparc32" ]] ; then
-		echo "sparc"
-	elif [[ "${ABI}" == "x86" ]] ; then
-		echo "i386"
-	else
-eerror "ABI=${ABI} is not supported."
+check_libstdcxx() {
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+
+	if ver_test "${gcc_current_profile_slot}" -ne "${GCC_SLOT}" ; then
+eerror
+eerror "You must switch to GCC ${GCC_SLOT}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
+eerror "  source /etc/profile"
+eerror
+eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+eerror "to the default immediately after this package has been merged."
+eerror
 		die
 	fi
 }
 
 _src_configure() {
+	check_libstdcxx
 	if use clang ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
@@ -675,28 +657,30 @@ _src_configure() {
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=lld
 		strip-unsupported-flags
-		if [[ "${PGO_PHASE}" == "PGI" || "${PGO_PHASE}" == "PGO" ]] ; then
-			local llvm_arch=$(_get_llvm_arch)
-			# Add directly since bugged through undirect -fprofile-use.
-			# append-libs bugged for abspaths
-			LIBS="${LIBS} ${ESYSROOT}/usr/lib/clang/${LLVM_SLOT}/lib/linux/libclang_rt.profile-${llvm_arch}.a"
-eerror "Bugged linking for clang.  Disable either clang USE flag or both bolt and pgo USE flags."
-			die
-		fi
 		if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 			append-flags -mllvm -vp-counters-per-site=8 # Unbreak test suite
 		fi
 	fi
 	if ! use clang ; then
 		# Breaks with gcc-12 (libstdcxx)
-		export CC="${CHOST}-gcc-12"
-		export CXX="${CHOST}-gcc-12"
+		export CC="${CHOST}-gcc-${GCC_SLOT}"
+		export CXX="${CHOST}-gcc-${GCC_SLOT}"
 		strip-unsupported-flags
-		append-libs -lgcov
+		append-ldflags -lgcov
 		append-flags -Wno-error=coverage-mismatch # Unbreak configure check
 	fi
 	#UOPTS_IMPLS="_${sapi}"
-	uopts_src_configure
+	uopts_src_configure # Wipes -fprofile*
+	if use clang ; then
+		if [[ "${PGO_PHASE}" == "PGI" || "${PGO_PHASE}" == "PGO" ]] ; then
+			# Broken.  It still stalls.
+eerror "Bugged optimized version.  Disable either clang USE flag or both bolt and pgo USE flags."
+			append-flags -fprofile-list="${FILESDIR}/exclude-instr.txt"
+			die
+		fi
+	fi
+	einfo "CFLAGS:  ${CFLAGS}"
+	einfo "CXXFLAGS:  ${CXXFLAGS}"
 	addpredict /usr/share/snmp/mibs/.index #nowarn
 	addpredict /var/lib/net-snmp/mib_indexes #nowarn
 
