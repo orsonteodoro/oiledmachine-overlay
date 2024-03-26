@@ -71,6 +71,7 @@ mhash mssql mysql mysqli nls oci8-instant-client odbc +opcache pcntl pdo +phar
 snmp soap sockets sodium spell sqlite ssl sysvipc systemd test tidy threads
 +tokenizer tokyocabinet truetype unicode webp +xml xmlreader xmlwriter xpm xslt
 zip zlib
+clang
 trainer-all
 trainer-basic
 trainer-ext
@@ -420,7 +421,7 @@ gen_clang_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				sys-devel/llvm:${s}
+				sys-devel/llvm:${s}[bolt?]
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
 				=sys-libs/compiler-rt-sanitizers-${s}*[profile]
@@ -437,7 +438,12 @@ BDEPEND="
 	)
 	pgo? (
 		|| (
-			$(gen_clang_bdepend)
+			!clang? (
+				sys-devel/gcc:12
+			)
+			clang? (
+				$(gen_clang_bdepend)
+			)
 		)
 	)
 "
@@ -601,29 +607,30 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure() {
-	if use pgo || use bolt ; then
-		if false ; then
-			# GCC ICEs during optimization
-			export CC="${CHOST}-clang"
-			export CXX="${CHOST}-clang++"
-			export CPP="${CXX} -E"
-			export AR="llvm-ar"
-			export NM="llvm-nm"
-			export OBJCOPY="llvm-objcopy"
-			export OBJDUMP="llvm-objdump"
-			export READELF="llvm-readelf"
-			export STRIP="llvm-strip"
-			filter-flags '-fuse-ld=*'
-			append-ldflags -fuse-ld=lld
-			strip-unsupported-flags
-			if [[ "${PGO_PHASE}" == "PGI" ]] ; then
-				append-flags -mllvm -vp-counters-per-site=8 # Unbreak test suite
-			fi
+	if use clang ; then
+		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
+		export CPP="${CXX} -E"
+		export AR="llvm-ar"
+		export NM="llvm-nm"
+		export OBJCOPY="llvm-objcopy"
+		export OBJDUMP="llvm-objdump"
+		export READELF="llvm-readelf"
+		export STRIP="llvm-strip"
+		filter-flags '-fuse-ld=*'
+		append-ldflags -fuse-ld=lld
+		strip-unsupported-flags
+		if [[ "${PGO_PHASE}" == "PGI" ]] ; then
+			append-flags -mllvm -vp-counters-per-site=8 # Unbreak test suite
 		fi
-		if tc-is-gcc ; then
-			append-ldflags -lgcov
-			append-flags -Wno-error=coverage-mismatch # Unbreak configure check
-		fi
+	fi
+	if ! use clang ; then
+		# Breaks with gcc-12 (libstdcxx)
+		export CC="${CHOST}-gcc-12"
+		export CXX="${CHOST}-gcc-12"
+		strip-unsupported-flags
+		append-ldflags -lgcov
+		append-flags -Wno-error=coverage-mismatch # Unbreak configure check
 	fi
 	#UOPTS_IMPLS="_${sapi}"
 	uopts_src_configure
