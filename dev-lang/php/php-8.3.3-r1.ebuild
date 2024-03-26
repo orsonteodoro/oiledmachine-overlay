@@ -699,14 +699,14 @@ _src_configure() {
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
 		filter-flags '-fuse-ld=*'
-		append-ldflags -fuse-ld=bfd
+		append-ldflags -fuse-ld=lld
 		strip-unsupported-flags
 		if [[ "${PGO_PHASE}" == "PGI" || "${PGO_PHASE}" == "PGO" ]] ; then
 			local llvm_arch=$(_get_llvm_arch)
 			# Add directly since bugged through undirect -fprofile-use.
 			# append-libs bugged for abspaths
 			LIBS="${LIBS} ${ESYSROOT}/usr/lib/clang/${LLVM_SLOT}/lib/linux/libclang_rt.profile-${llvm_arch}.a"
-eerror "Bugged linking for clang.  Disable the clang USE flag."
+eerror "Bugged linking for clang.  Disable either clang USE flag or both bolt and pgo USE flags."
 			die
 		fi
 		if [[ "${PGO_PHASE}" == "PGI" ]] ; then
