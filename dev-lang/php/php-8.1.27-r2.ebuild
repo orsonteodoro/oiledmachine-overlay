@@ -1480,6 +1480,7 @@ einfo "None of the known-to-fail tests passed, all fine"
 				${test_list[@]}
 		fi
 		if use trainer-benchmark ; then
+ewarn "Downloading test packages.  Please wait..."
 			"${TEST_PHP_EXECUTABLE}" "${WORKDIR}/benchmark/benchmark.php" "true" || die
 		fi
 	fi

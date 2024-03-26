@@ -1526,6 +1526,7 @@ _src_test() {
 				|| die "tests failed"
 		fi
 		if use trainer-benchmark ; then
+ewarn "Downloading test packages.  Please wait..."
 			"${TEST_PHP_EXECUTABLE}" "${WORKDIR}/benchmark/benchmark.php" "true" || die
 		fi
 	fi
