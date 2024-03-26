@@ -135,6 +135,10 @@
     <flag name="trainer-all">
       Perform comprehensive profiling for PGO/BOLT using all trainers.  ~14K unit tests.
     </flag>
+    <flag name="trainer-benchmark">
+      Perform basic profiling for PGO/BOLT using
+      Zend/bench.php JIT, Symfony Demo 2.2.3 JIT, Wordpress 6.2 JIT.
+    </flag>
     <flag name="trainer-basic">
       Perform basic profiling for PGO/BOLT.  ~688 unit tests.
     </flag>

@@ -74,6 +74,7 @@ xpm xslt zip zlib
 clang
 trainer-all
 trainer-basic
+trainer-benchmark
 trainer-ext
 trainer-ext-com_dotnet
 trainer-ext-date
@@ -103,6 +104,7 @@ REQUIRED_USE="
 		^^ (
 			trainer-all
 			trainer-basic
+			trainer-benchmark
 		)
 	)
 	cjk? (
@@ -145,6 +147,7 @@ REQUIRED_USE="
 		^^ (
 			trainer-all
 			trainer-basic
+			trainer-benchmark
 		)
 	)
 	qdbm? (
@@ -539,6 +542,17 @@ use_dba() {
 	fi
 }
 
+check_network_sandbox() {
+# Corepack problems.  Cannot do complete offline install.
+        if has network-sandbox $FEATURES && use trainer-benchmark ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download benchmark packages."
+eerror
+                die
+        fi
+}
+
 pkg_setup() {
 	if use pgo || use bolt ; then
 		llvm_pkg_setup
@@ -552,6 +566,7 @@ einfo "PATH:  ${PATH} (before)"
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 einfo "PATH:  ${PATH} (after)"
 	fi
+	check_network_sandbox
 	uopts_setup
 }
 
@@ -1495,19 +1510,24 @@ _src_test() {
 				"Zend/tests/zend_ini"
 			)
 		fi
-		REPORT_EXIT_STATUS=1 \
-		SKIP_IO_CAPTURE_TESTS=1 \
-		SKIP_PERF_SENSITIVE=1 \
-		SKIP_SLOW_TESTS=1 \
-		"${TEST_PHP_EXECUTABLE}" -n \
-			"${WORKDIR}/sapis-build/cli/run-tests.php" \
-			--offline \
-			-n \
-			-q \
-			-d "session.save_path=${T}" \
-			-d "sendmail_path=echo >/dev/null" \
-			${test_list[@]} \
-			|| die "tests failed"
+		if use trainer-all || use trainer-basic ; then
+			REPORT_EXIT_STATUS=1 \
+			SKIP_IO_CAPTURE_TESTS=1 \
+			SKIP_PERF_SENSITIVE=1 \
+			SKIP_SLOW_TESTS=1 \
+			"${TEST_PHP_EXECUTABLE}" -n \
+				"${WORKDIR}/sapis-build/cli/run-tests.php" \
+				--offline \
+				-n \
+				-q \
+				-d "session.save_path=${T}" \
+				-d "sendmail_path=echo >/dev/null" \
+				${test_list[@]} \
+				|| die "tests failed"
+		fi
+		if use trainer-benchmark ; then
+			"${TEST_PHP_EXECUTABLE}" "${WORKDIR}/benchmark/benchmark.php" "true" || die
+		fi
 	fi
 
 # Prevent error:

@@ -74,6 +74,7 @@ zip zlib
 clang
 trainer-all
 trainer-basic
+trainer-benchmark
 trainer-ext
 trainer-ext-com_dotnet
 trainer-ext-date
@@ -99,9 +100,11 @@ REQUIRED_USE="
 		zlib
 	)
 	bolt? (
+		cli
 		^^ (
 			trainer-all
 			trainer-basic
+			trainer-benchmark
 		)
 	)
 	cjk? (
@@ -144,6 +147,7 @@ REQUIRED_USE="
 		^^ (
 			trainer-all
 			trainer-basic
+			trainer-benchmark
 		)
 	)
 	qdbm? (
@@ -540,6 +544,17 @@ use_dba() {
 	fi
 }
 
+check_network_sandbox() {
+# Corepack problems.  Cannot do complete offline install.
+        if has network-sandbox $FEATURES && use trainer-benchmark ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download benchmark packages."
+eerror
+                die
+        fi
+}
+
 pkg_setup() {
 	if use pgo || use bolt ; then
 		llvm_pkg_setup
@@ -553,6 +568,7 @@ einfo "PATH:  ${PATH} (before)"
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 einfo "PATH:  ${PATH} (after)"
 	fi
+	check_network_sandbox
 	uopts_setup
 }
 
@@ -1453,14 +1469,19 @@ einfo "None of the known-to-fail tests passed, all fine"
 				"Zend/tests/zend_ini"
 			)
 		fi
-		REPORT_EXIT_STATUS=1 \
-		SKIP_ONLINE_TESTS=1 \
-		SKIP_SLOW_TESTS=1 \
-		"${TEST_PHP_EXECUTABLE}" -n -d \
-			"session.save_path=${T}" \
-			"${WORKDIR}/sapis-build/cli/run-tests.php" -n -q -d \
-			"session.save_path=${T}" \
-			${test_list[@]}
+		if use trainer-all || use trainer-basic ; then
+			REPORT_EXIT_STATUS=1 \
+			SKIP_ONLINE_TESTS=1 \
+			SKIP_SLOW_TESTS=1 \
+			"${TEST_PHP_EXECUTABLE}" -n -d \
+				"session.save_path=${T}" \
+				"${WORKDIR}/sapis-build/cli/run-tests.php" -n -q -d \
+				"session.save_path=${T}" \
+				${test_list[@]}
+		fi
+		if use trainer-benchmark ; then
+			"${TEST_PHP_EXECUTABLE}" "${WORKDIR}/benchmark/benchmark.php" "true" || die
+		fi
 	fi
 
 # Prevent error:
