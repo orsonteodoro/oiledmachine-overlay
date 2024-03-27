@@ -379,14 +379,17 @@ _tbolt_inst_tree() {
 	[[ "${BOLT_PHASE}" == "INST" ]] || return
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
-	local n_files=$(find "${tree}" -type f -not -name "*.orig" | wc -l)
+	local file_list=(
+		$(find "${tree}" -type f -not -name "*.orig")
+	)
+	local n_files=${#file_list[@]}
 	local x_files=0
 ewarn "Finding binaries to BOLT.  Please wait..."
-ewarn "Number of files to scan:  "$(find "${tree}" -type f -not -name "*.orig" | wc -l)
+ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${tree}"
-	local nprocs=$(__get_nprocs)
+	local n_procs=$(__get_nprocs)
 	local p
-	for p in $(find "${tree}" -type f -not -name "*.orig" ) ; do
+	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
 		if (( $(($(date +%s) % 15)) == 0 )) ; then
 einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
@@ -394,15 +397,16 @@ einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files
 		(
 			local bn=$(basename "${p}")
 			local is_boltable=0
-			if file "${p}" | grep -q "ELF.*executable" ; then
+			local file_output=$(file "${p}")
+			if [[ "${file_output}" =~ "ELF".*"executable" ]] ; then
 				is_boltable=1
-			elif file "${p}" | grep -q "ELF.*shared object" ; then
+			elif [[ "${file_output}" =~ "ELF".*"shared object" ]] ; then
 				is_boltable=1
 			else
 				is_boltable=0
 			fi
 	# Try to avoid disk access which is a big penalty.
-			if (( ${is_boltable} )) && [[ -L "${p}" ]] ; then
+			if (( ${is_boltable} == 1 )) && [[ -L "${p}" ]] ; then
 				is_boltable=0
 			fi
 			if (( ${is_boltable} == 1 )) && is_bolt_banned "${bn}" ; then
@@ -436,8 +440,8 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
 			fi
 		) &
-		local njobs=$(jobs -r -p | wc -l)
-		[[ ${njobs} -ge ${nprocs} ]] && wait -n
+		local n_jobs=$(jobs -r -p | wc -l)
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 }
@@ -450,45 +454,73 @@ _tbolt_opt_tree() {
 	[[ "${BOLT_PHASE}" == "OPT" ]] || return
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
-	for p in $(find "${tree}" -type f -not -name "*.orig") ; do
-		[[ -L "${p}" ]] && continue
-		local bn=$(basename "${p}")
-		is_bolt_banned "${bn}" && continue
-		local is_boltable=0
-		if file "${p}" | grep -q "ELF.*executable" ; then
-			is_boltable=1
-		elif file "${p}" | grep -q "ELF.*shared object" ; then
-			is_boltable=1
-		else
-			continue
+	local file_list=(
+		$(find "${tree}" -type f -not -name "*.orig")
+	)
+	local n_files=${#file_list[@]}
+	local x_files=0
+ewarn "Finding binaries to BOLT.  Please wait..."
+ewarn "Number of files to scan:  ${n_files}"
+ewarn "Scanning ${tree}"
+	local n_procs=$(__get_nprocs)
+	local p
+	for p in ${file_list[@]} ; do
+		x_files=$((${x_files} + 1))
+		if (( $(($(date +%s) % 15)) == 0 )) ; then
+einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
 		fi
-		is_abi_same "${p}" || continue
-		if is_stripped "${p}" ; then
+		(
+			local bn=$(basename "${p}")
+			local is_boltable=0
+			local file_output=$(file "${p}")
+			if [[ "${file_output}" =~ "ELF".*"executable" ]] ; then
+				is_boltable=1
+			elif [[ "${file_output}" =~ "ELF".*"shared object" ]] ; then
+				is_boltable=1
+			else
+				is_boltable=0
+			fi
+	# Try to avoid disk access which is a big penalty.
+			if (( ${is_boltable} == 1 )) && [[ -L "${p}" ]] ; then
+				is_boltable=0
+			fi
+			if (( ${is_boltable} == 1 )) && is_bolt_banned "${bn}" ; then
+				is_boltable=0
+			fi
+			if (( ${is_boltable} == 1 )) && is_abi_same "${p}" ; then
+				:
+			else
+				is_boltable=0
+			fi
+			if (( ${is_boltable} == 1 )) && is_stripped "${p}" ; then
 ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
-			continue
-		fi
-		local bn=$(basename "${p}")
-		if [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
-			if [[ -e "${p}.orig" ]] ; then
-				mv "${p}"{.orig,} || die
+				is_boltable=0
 			fi
-			continue
-		fi
-		if (( ${is_boltable} == 1 )) ; then
-			local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
+			if (( ${is_boltable} == 1 )) && [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
+				if [[ -e "${p}.orig" ]] ; then
+					mv "${p}"{.orig,} || die
+				fi
+				is_boltable=0
+			fi
+			if (( ${is_boltable} == 1 )) ; then
+				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
 einfo "vanilla -> BOLT optimized:  ${p}"
-			if [[ "${skip_inst}" == "yes" ]] ; then
-				mv "${p}"{,.orig} || die
+				if [[ "${skip_inst}" == "yes" ]] ; then
+					mv "${p}"{,.orig} || die
+				fi
+				rm -rf "${p}" || die
+				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
+					"${p}.orig" \
+					-o "${p}" \
+					-data="${bolt_data_staging_dir}/${bn}.fdata" \
+					${args[@]} || die
+				rm -rf "${p}.orig" || die
 			fi
-			rm -rf "${p}" || die
-			LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
-				"${p}.orig" \
-				-o "${p}" \
-				-data="${bolt_data_staging_dir}/${bn}.fdata" \
-				${args[@]} || die
-			rm -rf "${p}.orig" || die
-		fi
+		) &
+		local n_jobs=$(jobs -r -p | wc -l)
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
+	wait
 }
 
 # @FUNCTION: _tbolt_src_pre_train
@@ -551,12 +583,13 @@ is_bolt_banned() {
 # @FUNCTION: is_abi_same
 # @DESCRIPTION:
 # Check if ABIs are the same and supported
+# Precondition:  file_output=$(file "${p}")
 is_abi_same() {
 	local p="${1}"
 	# Only x86-64 and aarch64 supported supported
-	if file "${p}" | grep -q "ELF.*x86-64" && [[ "${ABI}" == "amd64" ]] ; then
+	if [[ "${file_output}" =~ "ELF".*"x86-64" && "${ABI}" == "amd64" ]] ; then
 		return 0
-	elif file "${p}" | grep -q "ELF.*aarch64" && [[ "${ABI}" == "arm64" ]] ; then
+	elif [[ "${file_output}" =~ "ELF".*"aarch64" && "${ABI}" == "arm64" ]] ; then
 		return 0
 	fi
 #ewarn "Unsupported ABI: ${p}"
@@ -580,12 +613,13 @@ is_abi_boltable() {
 # @FUNCTION: is_file_boltable
 # @DESCRIPTION:
 # Check if files ABI supported
+# Precondition:  file_output=$(file "${p}")
 is_file_boltable() {
 	local p="${1}"
 	# Only x86-64 and aarch64 supported supported
-	if file "${p}" | grep -q "ELF.*x86-64" ; then
+	if [[ "${file_output}" =~ "ELF".*"x86-64" ]] ; then
 		return 0
-	elif file "${p}" | grep -q "ELF.*aarch64" ; then
+	elif [[ "${file_output}" =~ "ELF".*"aarch64" ]] ; then
 		return 0
 	fi
 ewarn "Unsupported ABI: ${p}"

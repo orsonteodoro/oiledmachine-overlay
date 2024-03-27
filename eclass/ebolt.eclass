@@ -406,12 +406,13 @@ is_bolt_banned() {
 # @FUNCTION: is_abi_same
 # @DESCRIPTION:
 # Check if ABIs are the same and supported
+# Precondition:  file_output=$(file "${p}")
 is_abi_same() {
 	local p="${1}"
 	# Only x86-64 and aarch64 supported supported
-	if file "${p}" | grep -q "ELF.*x86-64" && [[ "${ABI}" == "amd64" ]] ; then
+	if [[ "${file_output}" =~ "ELF".*"x86-64" && "${ABI}" == "amd64" ]] ; then
 		return 0
-	elif file "${p}" | grep -q "ELF.*aarch64" && [[ "${ABI}" == "arm64" ]] ; then
+	elif [[ "${file_output}" =~ "ELF".*"aarch64" && "${ABI}" == "arm64" ]] ; then
 		return 0
 	fi
 #ewarn "Unsupported ABI: ${p}"
@@ -435,12 +436,13 @@ is_abi_boltable() {
 # @FUNCTION: is_file_boltable
 # @DESCRIPTION:
 # Check if files ABI supported
+# Precondition:  file_output=$(file "${p}")
 is_file_boltable() {
 	local p="${1}"
 	# Only x86-64 and aarch64 supported supported
-	if file "${p}" | grep -q "ELF.*x86-64" ; then
+	if [[ "${file_output}" =~ "ELF".*"x86-64" ]] ; then
 		return 0
-	elif file "${p}" | grep -q "ELF.*aarch64" ; then
+	elif [[ "${file_output}" =~ "ELF".*"aarch64" ]] ; then
 		return 0
 	fi
 ewarn "Unsupported ABI: ${p}"
@@ -483,14 +485,17 @@ _src_compile_bolt_inst() {
 	# install, it is deterministic but takes too long.
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
-		local n_files=$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
+		local file_list=(
+			$(find "${BUILD_DIR}" -type f -not -name "*.orig")
+		)
+		local n_files=${#file_list[@]}
 		local x_files=0
 ewarn "Finding binaries to BOLT.  Please wait..."
-ewarn "Number of files to scan:  ${nfiles}"
+ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${BUILD_DIR}"
-		local nprocs=$(__get_nprocs)
+		local n_procs=$(__get_nprocs)
 		local p
-		for p in $(find "${BUILD_DIR}" -type f -not -name "*.orig" ) ; do
+		for p in ${file_list[@]} ; do
 			x_files=$((${x_files} + 1))
 			if (( $(($(date +%s) % 15)) == 0 )) ; then
 einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
@@ -498,9 +503,10 @@ einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files
 			(
 				local bn=$(basename "${p}")
 				local is_boltable=0
-				if file "${p}" | grep -q "ELF.*executable" ; then
+				local file_output=$(file "${p}")
+				if [[ "${file_output}" =~ "ELF".*"executable" ]] ; then
 					is_boltable=1
-				elif file "${p}" | grep -q "ELF.*shared object" ; then
+				elif [[ "${file_output}" =~ "ELF".*"shared object" ]] ; then
 					is_boltable=1
 				else
 					is_boltable=0
@@ -537,8 +543,8 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
-			local njobs=$(jobs -r -p | wc -l)
-			[[ ${njobs} -ge ${nprocs} ]] && wait -n
+			local n_jobs=$(jobs -r -p | wc -l)
+			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -550,43 +556,71 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 _src_compile_bolt_opt() {
 	if [[ "${BOLT_PHASE}" == "OPT" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
-		for p in $(find "${BUILD_DIR}" -type f) ; do
-			[[ -L "${p}" ]] && continue
-			local bn=$(basename "${p}")
-			is_bolt_banned "${bn}" && continue
-			local is_boltable=0
-			if file "${p}" | grep -q "ELF.*executable" ; then
-				is_boltable=1
-			elif file "${p}" | grep -q "ELF.*shared object" ; then
-				is_boltable=1
-			else
-				continue
+		local file_list=(
+			$(find "${BUILD_DIR}" -type f -not -name "*.orig")
+		)
+		local n_files=${#file_list[@]}
+		local x_files=0
+ewarn "Finding binaries to BOLT.  Please wait..."
+ewarn "Number of files to scan:  ${n_files}"
+ewarn "Scanning ${BUILD_DIR}"
+		local n_procs=$(__get_nprocs)
+		local p
+		for p in ${file_list[@]} ; do
+			x_files=$((${x_files} + 1))
+			if (( $(($(date +%s) % 15)) == 0 )) ; then
+einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
 			fi
-			is_abi_same "${p}" || continue
-			if is_stripped "${p}" ; then
-ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
-				continue
-			fi
-			local bn=$(basename "${p}")
-			if [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
-				if [[ -e "${p}.orig" ]] ; then
-					mv "${p}"{.orig,} || die
-				fi
-				continue
-			fi
-			if (( ${is_boltable} == 1 )) ; then
-				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
+			(
 				local bn=$(basename "${p}")
+				local is_boltable=0
+				local file_output=$(file "${p}")
+				if [[ "${file_output}" =~ "ELF".*"executable" ]] ; then
+					is_boltable=1
+				elif [[ "${file_output}" =~ "ELF".*"shared object" ]] ; then
+					is_boltable=1
+				else
+					is_boltable=0
+				fi
+	# Try to avoid disk access which is a big penalty.
+				if (( ${is_boltable} == 1 )) && [[ -L "${p}" ]] ; then
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && is_bolt_banned "${bn}" ; then
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && is_abi_same "${p}" ; then
+					:
+				else
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && is_stripped "${p}" ; then
+ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
+					if [[ -e "${p}.orig" ]] ; then
+						mv "${p}"{.orig,} || die
+					fi
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) ; then
+					local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
+					local bn=$(basename "${p}")
 einfo "vanilla -> BOLT optimized:  ${p}"
-				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
-					"${p}" \
-					-o "${p}.bolt" \
-					-data="${bolt_data_staging_dir}/${bn}.fdata" \
-					${args[@]} || die
-				rm "${p}" || die
-				mv "${p}.bolt" "${p}" || die
-			fi
+					LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
+						"${p}" \
+						-o "${p}.bolt" \
+						-data="${bolt_data_staging_dir}/${bn}.fdata" \
+						${args[@]} || die
+					rm "${p}" || die
+					mv "${p}.bolt" "${p}" || die
+				fi
+			) &
+			local n_jobs=$(jobs -r -p | wc -l)
+			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
+		wait
 	fi
 }
 
@@ -695,51 +729,78 @@ _pkg_config_bolt_optimization() {
 	# At this point we assume instrumented already.
 	# The grep is not friendly with Win systems
 	# FIXME:  Specifically, if the path contains a space, it may not work correctly.
+	local file_list=(
+		$(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
+	                | cut -f 2 -d " ")
+	)
+	local n_files=${#file_list[@]}
+	local x_files=0
+ewarn "Finding binaries to BOLT.  Please wait..."
+ewarn "Number of files to scan:  ${n_files}"
+ewarn "Scanning files in file list from ${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS"
+	local n_procs=$(__get_nprocs)
 	local p
-	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
-		| cut -f 2 -d " ") ; do
-		# Always assume optimized or not
-		BOLT_PHASE=$(ebolt_get_phase)
-		if [[ "${BOLT_PHASE}" == "OPT" ]] ; then
-			[[ -L "${p}" ]] && continue
-			local bn=$(basename "${p}")
-			is_bolt_banned "${bn}" && continue
-			local is_boltable=0
-			if file "${p}" | grep -q "ELF.*executable" && is_file_boltable "${p}" ; then
-				is_boltable=1
-			elif file "${p}" | grep -q "ELF.*shared object" && is_file_boltable "${p}" ; then
-				is_boltable=1
-			else
-				continue
-			fi
-			is_abi_same "${p}" || continue
-			if is_stripped "${p}" ; then
-ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
-				continue
-			fi
-			local bn=$(basename "${p}")
-			if [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
-				if [[ -e "${p}.orig" ]] ; then
-					mv "${p}"{.orig,} || die
-				fi
-				continue
-			fi
-			if (( ${is_boltable} == 1 )) ; then
-				local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
-				if [[ ! -e "${p}.orig" ]] ; then
-					cp -a "${p}" "${p}.orig" || true
-				fi
-einfo "BOLT instrumented -> optimized:  ${p}"
-				if ! LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
-					"${p}" \
-					-o "${p}.bolt" \
-					-data="${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \
-					${args[@]} ; then
-					touch "${p}.bolt_failed"
-				fi
-			fi
+	for p in ${file_list[@]} ; do
+		x_files=$((${x_files} + 1))
+		if (( $(($(date +%s) % 15)) == 0 )) ; then
+einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
 		fi
+		(
+			# Always assume optimized or not
+			BOLT_PHASE=$(ebolt_get_phase)
+			if [[ "${BOLT_PHASE}" == "OPT" ]] ; then
+				local bn=$(basename "${p}")
+				local is_boltable=0
+				local file_output=$(file "${p}")
+				if [[ "${file_output}" =~ "ELF".*"executable" ]] && is_file_boltable "${p}" ; then
+					is_boltable=1
+				elif [[ "${file_output}" =~ "ELF".*"shared object" ]] && is_file_boltable "${p}" ; then
+					is_boltable=1
+				else
+					is_boltable=0
+				fi
+	# Try to avoid disk access which is a big penalty.
+				if (( ${is_boltable} == 1 )) && [[ -L "${p}" ]] ; then
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && is_bolt_banned "${bn}" ; then
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && is_abi_same "${p}" ; then
+					:
+				else
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && is_stripped "${p}" ; then
+ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && [[ ! -e "${bolt_data_staging_dir}/${bn}.fdata" ]] ; then
+					if [[ -e "${p}.orig" ]] ; then
+						mv "${p}"{.orig,} || die
+					fi
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) ; then
+					local args=( ${UOPTS_BOLT_OPTIMIZATIONS} )
+					if [[ ! -e "${p}.orig" ]] ; then
+						cp -a "${p}" "${p}.orig" || true
+					fi
+einfo "BOLT instrumented -> optimized:  ${p}"
+					if ! LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
+						"${p}" \
+						-o "${p}.bolt" \
+						-data="${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" \
+						${args[@]} ; then
+						touch "${p}.bolt_failed"
+					fi
+				fi
+			fi
+		) &
+		local n_jobs=$(jobs -r -p | wc -l)
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
+	wait
 
 	# Using best effort to BOLT while undoing failed optimization.
 	for p in $(grep "obj" "${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS" \
