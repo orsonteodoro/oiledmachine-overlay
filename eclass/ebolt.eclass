@@ -543,8 +543,8 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
-			local n_jobs=$(jobs -r -p | wc -l)
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+#			local n_jobs=$(jobs -r -p | wc -l)
+#			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -617,8 +617,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
-			local n_jobs=$(jobs -r -p | wc -l)
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+#			local n_jobs=$(jobs -r -p | wc -l)
+#			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -797,8 +797,8 @@ einfo "BOLT instrumented -> optimized:  ${p}"
 				fi
 			fi
 		) &
-		local n_jobs=$(jobs -r -p | wc -l)
-		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+#		local n_jobs=$(jobs -r -p | wc -l)
+#		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 

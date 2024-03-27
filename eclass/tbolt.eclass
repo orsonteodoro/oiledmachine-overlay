@@ -440,8 +440,8 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
 			fi
 		) &
-		local n_jobs=$(jobs -r -p | wc -l)
-		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+#		local n_jobs=$(jobs -r -p | wc -l)
+#		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 }
@@ -517,8 +517,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 				rm -rf "${p}.orig" || die
 			fi
 		) &
-		local n_jobs=$(jobs -r -p | wc -l)
-		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
+#		local n_jobs=$(jobs -r -p | wc -l)
+#		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 }
