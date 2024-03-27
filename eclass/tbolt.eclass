@@ -398,9 +398,9 @@ einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files
 			local bn=$(basename "${p}")
 			local is_boltable=0
 			local file_output=$(file "${p}")
-			if [[ "${file_output}" =~ "ELF".*"executable" ]] ; then
+			if [[ "${file_output}" =~ "ELF".*"executable" ]] && is_file_boltable "${p}" ; then
 				is_boltable=1
-			elif [[ "${file_output}" =~ "ELF".*"shared object" ]] ; then
+			elif [[ "${file_output}" =~ "ELF".*"shared object" ]] && is_file_boltable "${p}" ; then
 				is_boltable=1
 			else
 				is_boltable=0
@@ -473,9 +473,9 @@ einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files
 			local bn=$(basename "${p}")
 			local is_boltable=0
 			local file_output=$(file "${p}")
-			if [[ "${file_output}" =~ "ELF".*"executable" ]] ; then
+			if [[ "${file_output}" =~ "ELF".*"executable" ]] && is_file_boltable "${p}" ; then
 				is_boltable=1
-			elif [[ "${file_output}" =~ "ELF".*"shared object" ]] ; then
+			elif [[ "${file_output}" =~ "ELF".*"shared object" ]] && is_file_boltable "${p}" ; then
 				is_boltable=1
 			else
 				is_boltable=0
