@@ -369,9 +369,16 @@ _tbolt_inst_tree() {
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  "$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
-ewarn "Scanning ${BUILD_DIR}"
+ewarn "Scanning ${tree}"
+	local n_files=$(find "${tree}" -type f -not -name "*.orig" | wc -l)
+	local x_files=0
 	local p
 	for p in $(find "${tree}" -type f -not -name "*.orig" ) ; do
+		x_files=$((${x_files} + 1))
+		if (( $(($(date +%s) % 15)) == 0 )) ; then
+einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files})")"%)"
+		fi
+
 		[[ -L "${p}" ]] && continue
 		local bn=$(basename "${p}")
 		is_bolt_banned "${bn}" && continue

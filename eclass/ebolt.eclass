@@ -472,10 +472,17 @@ _src_compile_bolt_inst() {
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
 ewarn "Finding binaries to BOLT.  Please wait..."
-ewarn "Number of files to scan:  "$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
+ewarn "Number of files to scan:  ${nfiles}"
 ewarn "Scanning ${BUILD_DIR}"
+		local n_files=$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
+		local x_files=0
 		local p
 		for p in $(find "${BUILD_DIR}" -type f -not -name "*.orig" ) ; do
+			x_files=$((${x_files} + 1))
+			if (( $(($(date +%s) % 15)) == 0 )) ; then
+einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files})")"%)"
+			fi
+
 			[[ -L "${p}" ]] && continue
 			local bn=$(basename "${p}")
 			is_bolt_banned "${bn}" && continue
