@@ -387,6 +387,7 @@ ewarn "Scanning ${tree}"
 	local nprocs=$(__get_nprocs)
 	local p
 	for p in $(find "${tree}" -type f -not -name "*.orig" ) ; do
+		x_files=$((${x_files} + 1))
 		if (( $(($(date +%s) % 15)) == 0 )) ; then
 einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
 		fi
