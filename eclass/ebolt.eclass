@@ -238,7 +238,7 @@ _ebolt_prepare_bolt() {
 
 	mkdir -p "${bolt_data_staging_dir}" || die
 	if [[ "${UOPTS_BOLT_FORCE_INST}" == "1" ]] ; then
-		:;
+		:
 	elif [[ -e "${bolt_data_suffix_dir}" ]] ; then
 		cp -aT "${bolt_data_suffix_dir}" "${bolt_data_staging_dir}" || die
 	fi
@@ -351,7 +351,7 @@ ewarn
 		# Has profile?
 		local nlines=$(find "${bolt_data_staging_dir}" -name "*.fdata" | wc -l)
 		if (( ${nlines} > 0 )) ; then
-			:; # pass
+			: # pass
 		else
 ewarn "NO BOLT PROFILE"
 			return 1
@@ -471,7 +471,11 @@ _src_compile_bolt_inst() {
 	# install, it is deterministic but takes too long.
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
-		for p in $(find "${BUILD_DIR}" -type f) ; do
+ewarn "Finding binaries to BOLT.  Please wait..."
+ewarn "Number of files to scan:  "$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
+ewarn "Scanning ${BUILD_DIR}"
+		local p
+		for p in $(find "${BUILD_DIR}" -type f -not -name "*.orig" ) ; do
 			[[ -L "${p}" ]] && continue
 			local bn=$(basename "${p}")
 			is_bolt_banned "${bn}" && continue

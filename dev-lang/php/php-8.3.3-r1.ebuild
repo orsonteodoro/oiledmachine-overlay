@@ -669,7 +669,7 @@ src_prepare() {
 	rm -v ${deleted_files[@]} || die
 
 	for sapi in ${SAPIS} ; do
-		cp -a "${S}" "${S}_${sapi}" || die
+		cp -av "${S}" "${S}_${sapi}" || die
 		if use cgi ; then
 			if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
 				UOPTS_IMPLS="_${sapi}"
@@ -702,7 +702,6 @@ eerror
 }
 
 _src_configure() {
-einfo "Start _src_configure()"
 	check_libstdcxx
 	if use clang ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
@@ -981,9 +980,7 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 	# the files that autotools creates. This was all originally
 	# based on the autotools-utils eclass.
 	BUILD_DIR="${WORKDIR}/sapis-build/${sapi}"
-einfo "DEBUG:  start copying S_api -> BUILD_DIR"
-	cp -a "${S}_${sapi}" "${BUILD_DIR}" || die
-einfo "DEBUG:  done copying S_api -> BUILD_DIR"
+	cp -av "${S}_${sapi}" "${BUILD_DIR}" || die
 	cd "${BUILD_DIR}" || die
 
 	local sapi_conf=(
@@ -1026,12 +1023,9 @@ einfo "DEBUG:  done copying S_api -> BUILD_DIR"
 einfo "Running econf in ${BUILD_DIR}"
 		econf ${myeconfargs[@]}
 	popd > /dev/null || die
-einfo "Stop _src_configure()"
 }
 
 _src_compile() {
-einfo "Start _src_compile()"
-einfo "Called _src_compile ${sapi}"
 	# snmp seems to run during src_compile, too (bug #324739)
 	addpredict /usr/share/snmp/mibs/.index #nowarn
 	addpredict /var/lib/net-snmp/mib_indexes #nowarn
@@ -1048,7 +1042,6 @@ einfo "Called _src_compile ${sapi}"
 	fi
 
 	emake -C "${WORKDIR}/sapis-build/${sapi}"
-einfo "Stop _src_compile()"
 }
 
 src_compile() {
@@ -1073,18 +1066,12 @@ _tpgo_custom_clean() {
 }
 
 _src_test() {
-einfo "Start _src_test()"
 	local mode="${1}"
 	if [[ "${sapi}" == "cli" ]] ; then
-einfo "Start _src_test_cli()"
 		_src_test_cli "${mode}"
-einfo "Stop _src_test_cli()"
 	elif [[ "${sapi}" == "cgi" ]] ; then
-einfo "Start _src_test_cgi()"
 		_src_test_cgi "${mode}"
-einfo "Stop _src_test_cgi()"
 	fi
-einfo "Stop _src_test()"
 }
 
 _src_test_cgi() {
@@ -1100,6 +1087,7 @@ _src_test_cgi() {
 			"${TEST_PHP_EXECUTABLE}" "${S}/benchmark/benchmark.php" "true" || die
 		fi
 	fi
+einfo "End _src_test_cgi()"
 }
 
 _src_test_cli() {

@@ -291,7 +291,7 @@ _tpgo_prepare_pgo() {
 
 	mkdir -p "${pgo_data_staging_dir}" || die
 	if [[ "${UOPTS_PGO_FORCE_PGI}" == "1" ]] ; then
-		:;
+		:
 	elif [[ -e "${pgo_data_suffix_dir}" ]] ; then
 		cp -aT "${pgo_data_suffix_dir}" "${pgo_data_staging_dir}" || die
 	fi
@@ -592,9 +592,9 @@ ewarn
 		local nlines1=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
 		local nlines2=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
 		if tc-is-gcc && (( ${nlines1} > 0 )) ; then
-			:; # pass
+			: # pass
 		elif tc-is-clang && (( ${nlines2} > 0 )) ; then
-			:; # pass
+			: # pass
 		else
 ewarn "NO PGO PROFILE"
 			return 1
@@ -747,5 +747,5 @@ tpgo_src_install() {
 # NOP for now, but it could be used for QA, linting, fixes, cleanup.
 tpgo_pkg_postinst() {
 	# placeholder
-	:;
+	:
 }

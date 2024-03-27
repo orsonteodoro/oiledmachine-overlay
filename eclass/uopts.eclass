@@ -21,7 +21,7 @@ esac
 _UOPTS_ECLASS=1
 
 # Bump every major version.  Also bump the BDEPENDs in *bolt eclasses.
-_UOPTS_LLVM_SLOTS=( 19 18 17 16 15 14 )
+_UOPTS_LLVM_SLOTS=( {19..14} )
 
 UOPTS_SUPPORT_EPGO=${UOPTS_SUPPORT_EPGO:-1}
 UOPTS_SUPPORT_EBOLT=${UOPTS_SUPPORT_EBOLT:-1}
@@ -152,7 +152,7 @@ einfo "is_pgoable=${is_pgoable}"
 		_tpgo_is_profile_reusable
 		local ret_reuse="$?" # 0 = yes, 1 = no, 2 = unsupported_compiler
 		if [[ "${UOPTS_PGO_FORCE_PGI:-0}" == "1" ]] ; then
-			:;
+			:
 		elif [[ "${ret_reuse}" == "0" ]] ; then
 			skip_pgi="yes"
 		fi
@@ -176,7 +176,7 @@ einfo "is_boltable=${is_boltable}"
 		_tbolt_is_profile_reusable
 		local ret_reuse="$?" # 0 = yes, 1 = no, 2 = unsupported_compiler
 		if [[ "${UOPTS_BOLT_FORCE_INST:-0}" == "1" ]] ; then
-			:;
+			:
 		elif [[ "${ret_reuse}" == "0" ]] ; then
 			skip_inst="yes"
 		fi
@@ -226,7 +226,7 @@ einfo "is_tbolt_profile_reusable=${skip_inst} "
 	fi
 
 	if ! [[ "${ABI}" =~ ("arm64"|"amd64") ]] ; then
-		:; # Skip trainer
+		: # Skip trainer
 	elif has bolt ${IUSE} && use bolt && (( ${is_boltable} == 1 )) && [[ -n "${_TBOLT_ECLASS}" ]] ; then
 		TRAIN_MUX="tbolt"
 		if [[ "${skip_inst}" == "no" ]] ; then

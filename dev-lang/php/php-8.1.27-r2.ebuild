@@ -608,7 +608,7 @@ src_prepare() {
 	rm -v ${deleted_files[@]} || die
 
 	for sapi in ${SAPIS} ; do
-		cp -a "${S}" "${S}_${sapi}" || die
+		cp -av "${S}" "${S}_${sapi}" || die
 		#UOPTS_IMPLS="_${sapi}"
 		uopts_src_prepare
 	done
@@ -887,7 +887,7 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 	# the files that autotools creates. This was all originally
 	# based on the autotools-utils eclass.
 	BUILD_DIR="${WORKDIR}/sapis-build/${sapi}"
-	cp -a "${S}_${sapi}" "${BUILD_DIR}" || die
+	cp -av "${S}_${sapi}" "${BUILD_DIR}" || die
 	cd "${BUILD_DIR}" || die
 
 	local sapi_conf=(

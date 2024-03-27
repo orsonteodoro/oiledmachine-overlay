@@ -419,9 +419,9 @@ ewarn
 		local nlines1=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
 		local nlines2=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
 		if   tc-is-gcc   && (( ${nlines1} > 0 )) ; then
-			:; # pass
+			: # pass
 		elif tc-is-clang && (( ${nlines2} > 0 )) ; then
-			:; # pass
+			: # pass
 		else
 ewarn "NO PGO PROFILE"
 			return 1

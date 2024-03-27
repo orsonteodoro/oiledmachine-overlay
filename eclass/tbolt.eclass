@@ -229,7 +229,7 @@ _tbolt_prepare_bolt() {
 
 	mkdir -p "${bolt_data_staging_dir}" || die
 	if [[ "${UOPTS_BOLT_FORCE_INST}" == "1" ]] ; then
-		:;
+		:
 	elif [[ -e "${bolt_data_suffix_dir}" ]] ; then
 		cp -aT "${bolt_data_suffix_dir}" "${bolt_data_staging_dir}" || die
 	fi
@@ -348,7 +348,7 @@ ewarn
 		# Has profile?
 		local nlines=$(find "${bolt_data_staging_dir}" -name "*.fdata" | wc -l)
 		if (( ${nlines} > 0 )) ; then
-			:; # pass
+			: # pass
 		else
 ewarn "NO BOLT PROFILE"
 			return 1
@@ -367,14 +367,20 @@ _tbolt_inst_tree() {
 	[[ "${BOLT_PHASE}" == "INST" ]] || return
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
-	for p in $(find "${tree}" -type f -not -name "*.orig") ; do
+ewarn "Finding binaries to BOLT.  Please wait..."
+ewarn "Number of files to scan:  "$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
+ewarn "Scanning ${BUILD_DIR}"
+	local p
+	for p in $(find "${tree}" -type f -not -name "*.orig" ) ; do
 		[[ -L "${p}" ]] && continue
 		local bn=$(basename "${p}")
 		is_bolt_banned "${bn}" && continue
 		local is_boltable=0
 		if file "${p}" | grep -q "ELF.*executable" ; then
+einfo "Scanning ${p}"
 			is_boltable=1
 		elif file "${p}" | grep -q "ELF.*shared object" ; then
+einfo "Scanning ${p}"
 			is_boltable=1
 		else
 			continue
@@ -581,9 +587,9 @@ _disallow_instrumented() {
 	local p
 	for p in $(find "${D}" -type f) ; do
 		if file "${p}" | grep -q "ELF.*executable" ; then
-			:;
+			:
 		elif file "${p}" | grep -q "ELF.*shared object" ; then
-			:;
+			:
 		else
 			continue
 		fi

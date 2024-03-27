@@ -464,9 +464,9 @@ eerror
 
 
 	if [[ "${_chown}" == "root:root" ]] ; then
-		:;
+		:
 	elif [[ "${_chown}" == "portage:portage" ]] ; then
-		:;
+		:
 	else
 eerror
 eerror "Expected owner:  root:root or portage:portage"
@@ -538,7 +538,7 @@ eerror
 		if [[ "${esize}" == "${asize}" \
 			&& "${eblake2b}" == "${ablake2b}" \
 			&& "${asha512}" == "${esha512}" ]] ; then
-			:; # pass
+			: # pass
 		else
 eerror
 eerror "Failed file verification"
