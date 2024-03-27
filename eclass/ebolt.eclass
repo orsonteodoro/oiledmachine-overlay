@@ -463,6 +463,18 @@ has_relocs() {
 	readelf -r "${p}" | grep -q ".rela.text"
 }
 
+# @FUNCTION: __get_nprocs
+# @INTERNAL
+# @DESCRIPTION:
+# Gets the number N from -jN defined by MAKEOPTS.
+__get_nprocs() {
+	local nprocs=$(echo "${MAKEOPTS}" \
+		| grep -E -e "-j[ ]*[0-9]+" \
+		| grep -E -o -e "[0-9]+")
+	[[ -z "${nprocs}" ]] && nprocs=1
+	echo "${nprocs}"
+}
+
 # @FUNCTION: _src_compile_bolt_inst
 # @DESCRIPTION:
 # Instrument the build tree
@@ -471,50 +483,50 @@ _src_compile_bolt_inst() {
 	# install, it is deterministic but takes too long.
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
+		local n_files=$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${nfiles}"
 ewarn "Scanning ${BUILD_DIR}"
-		local n_files=$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
-		local x_files=0
+		local nprocs=$(__get_nprocs)
 		local p
 		for p in $(find "${BUILD_DIR}" -type f -not -name "*.orig" ) ; do
-			x_files=$((${x_files} + 1))
-			if (( $(($(date +%s) % 15)) == 0 )) ; then
-einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
-			fi
-
-			[[ -L "${p}" ]] && continue
-			local bn=$(basename "${p}")
-			is_bolt_banned "${bn}" && continue
-			local is_boltable=0
-			if file "${p}" | grep -q "ELF.*executable" ; then
-				is_boltable=1
-			elif file "${p}" | grep -q "ELF.*shared object" ; then
-				is_boltable=1
-			else
-				continue
-			fi
-			is_abi_same "${p}" || continue
-			if is_stripped "${p}" ; then
+			(
+				[[ -L "${p}" ]] && continue
+				local bn=$(basename "${p}")
+				is_bolt_banned "${bn}" && continue
+				local is_boltable=0
+				if file "${p}" | grep -q "ELF.*executable" ; then
+					is_boltable=1
+				elif file "${p}" | grep -q "ELF.*shared object" ; then
+					is_boltable=1
+				else
+					is_boltable=0
+				fi
+				is_abi_same "${p}" || continue
+				if is_stripped "${p}" ; then
 ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
-				continue
-			fi
-			if ! has_relocs "${p}" ; then
+					is_boltable=0
+				fi
+				if ! has_relocs "${p}" ; then
 ewarn "Missing .rela.text.  Skipping ${p}"
-				continue
-			fi
-			if (( ${is_boltable} == 1 )) ; then
-				# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) ; then
+					# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 einfo "vanilla -> BOLT instrumented:  ${p}"
-				LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
-					"${p}" \
-					-instrument \
-					-o "${p}.bolt" \
-					-instrumentation-file "${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" || die
-				mv "${p}" "${p}.orig" || die
-				mv "${p}.bolt" "${p}" || die
-			fi
+					LD_PRELOAD="${_UOPTS_BOLT_MALLOC_LIB}" "${_UOPTS_BOLT_PATH}/llvm-bolt" \
+						"${p}" \
+						-instrument \
+						-o "${p}.bolt" \
+						-instrumentation-file "${EPREFIX}${bolt_data_suffix_dir}/${bn}.fdata" || die
+					mv "${p}" "${p}.orig" || die
+					mv "${p}.bolt" "${p}" || die
+				fi
+			) &
+			local njobs=$(jobs -r -p | wc -l)
+			[[ ${njobs} -ge ${nprocs} ]] && wait -n
 		done
+		wait
 	fi
 }
 
