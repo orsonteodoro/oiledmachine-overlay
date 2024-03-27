@@ -389,24 +389,24 @@ ewarn "Scanning ${tree}"
 		(
 			[[ -L "${p}" ]] && continue
 				local bn=$(basename "${p}")
-			is_bolt_banned "${bn}" && continue
 			local is_boltable=0
 			if file "${p}" | grep -q "ELF.*executable" ; then
 				is_boltable=1
 			elif file "${p}" | grep -q "ELF.*shared object" ; then
 				is_boltable=1
 			else
-				continue
+				is_boltable=0
 			fi
 			if is_stripped "${p}" ; then
 ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
-				continue
+				is_boltable=0
 			fi
 			if ! has_relocs "${p}" ; then
 ewarn "Missing .rela.text skipping ${p}"
-				continue
+				is_boltable=0
 			fi
-			is_abi_same "${p}" || continue
+			is_abi_same "${p}" || is_boltable=0
+			is_bolt_banned "${bn}" && is_boltable=0
 			if (( ${is_boltable} == 1 )) ; then
 				# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 einfo "vanilla -> BOLT instrumented:  ${p}"

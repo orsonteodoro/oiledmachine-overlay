@@ -493,7 +493,6 @@ ewarn "Scanning ${BUILD_DIR}"
 			(
 				[[ -L "${p}" ]] && continue
 				local bn=$(basename "${p}")
-				is_bolt_banned "${bn}" && continue
 				local is_boltable=0
 				if file "${p}" | grep -q "ELF.*executable" ; then
 					is_boltable=1
@@ -502,7 +501,7 @@ ewarn "Scanning ${BUILD_DIR}"
 				else
 					is_boltable=0
 				fi
-				is_abi_same "${p}" || continue
+				is_abi_same "${p}" || is_boltable=0
 				if is_stripped "${p}" ; then
 ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
 					is_boltable=0
@@ -511,6 +510,7 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 ewarn "Missing .rela.text.  Skipping ${p}"
 					is_boltable=0
 				fi
+				is_bolt_banned "${bn}" && is_boltable=0
 				if (( ${is_boltable} == 1 )) ; then
 					# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 einfo "vanilla -> BOLT instrumented:  ${p}"
