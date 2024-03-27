@@ -1084,10 +1084,11 @@ _src_test_cgi() {
 
 	if [[ "${mode}" == "pgo" ]] ; then
 		if use trainer-benchmark ; then
-			"${TEST_PHP_EXECUTABLE}" "${S}/benchmark/benchmark.php" "true" || die
+			"${TEST_PHP_EXECUTABLE}" "${S}/benchmark/benchmark.php" "true" "${TEST_PHP_CGI_EXECUTABLE}" || die
 		fi
 	fi
-einfo "End _src_test_cgi()"
+	unset TEST_PHP_EXECUTABLE
+	unset TEST_PHP_CGI_EXECUTABLE
 }
 
 _src_test_cli() {
