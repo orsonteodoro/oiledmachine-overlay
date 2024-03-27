@@ -48,7 +48,7 @@
       Enable the Character type checking (ctype) extension
     </flag>
     <flag name="embed">
-      Enable running PHP scripts from C/C++ support via embed SAPI
+      Enable support for running PHP scripts from C/C++ via embed SAPI
     </flag>
     <flag name="enchant">
       Enable the Enchant spelling library extension using
@@ -127,7 +127,7 @@
       Enable support for crypto through <pkg>dev-libs/libsodium</pkg>
     </flag>
     <flag name="sysvipc">
-      Enable the PHP System-V semaphore, shared memory and IPC extension
+      Enable the PHP System-V semaphore, shared memory, and IPC extension
     </flag>
     <flag name="tokenizer">
       Add support for the PHP file parser
@@ -140,7 +140,7 @@
       trainers.  ~14K unit tests.
     </flag>
     <flag name="trainer-benchmark">
-      Perform basic profiling for PGO/BOLT using
+      Perform CGI profiling for PGO/BOLT using
       Zend/bench.php JIT, Symfony Demo 2.2.3 JIT, Wordpress 6.2 JIT.
     </flag>
     <flag name="trainer-basic">
