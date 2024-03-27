@@ -380,12 +380,16 @@ _tbolt_inst_tree() {
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	local n_files=$(find "${tree}" -type f -not -name "*.orig" | wc -l)
+	local x_files=0
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  "$(find "${tree}" -type f -not -name "*.orig" | wc -l)
 ewarn "Scanning ${tree}"
 	local nprocs=$(__get_nprocs)
 	local p
 	for p in $(find "${tree}" -type f -not -name "*.orig" ) ; do
+		if (( $(($(date +%s) % 15)) == 0 )) ; then
+einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
+		fi
 		(
 			local bn=$(basename "${p}")
 			local is_boltable=0
@@ -396,8 +400,18 @@ ewarn "Scanning ${tree}"
 			else
 				is_boltable=0
 			fi
-			[[ -L "${p}" ]] && is_boltable=0
-			is_bolt_banned "${bn}" && is_boltable=0
+	# Try to avoid disk access which is a big penalty.
+			if (( ${is_boltable} )) && [[ -L "${p}" ]] ; then
+				is_boltable=0
+			fi
+			if (( ${is_boltable} == 1 )) && is_bolt_banned "${bn}" ; then
+				is_boltable=0
+			fi
+			if (( ${is_boltable} == 1 )) && is_abi_same "${p}" ; then
+				:
+			else
+				is_boltable=0
+			fi
 			if (( ${is_boltable} == 1 )) && is_stripped "${p}" ; then
 ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
 				is_boltable=0
@@ -406,7 +420,6 @@ ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATU
 ewarn "Missing .rela.text skipping ${p}"
 				is_boltable=0
 			fi
-			is_abi_same "${p}" || is_boltable=0
 			if (( ${is_boltable} == 1 )) ; then
 				# See also https://github.com/llvm/llvm-project/blob/main/bolt/lib/Passes/Instrumentation.cpp#L28
 einfo "vanilla -> BOLT instrumented:  ${p}"

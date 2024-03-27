@@ -484,12 +484,16 @@ _src_compile_bolt_inst() {
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
 		local n_files=$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
+		local x_files=0
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${nfiles}"
 ewarn "Scanning ${BUILD_DIR}"
 		local nprocs=$(__get_nprocs)
 		local p
 		for p in $(find "${BUILD_DIR}" -type f -not -name "*.orig" ) ; do
+			if (( $(($(date +%s) % 15)) == 0 )) ; then
+einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files}*100)")"%)"
+			fi
 			(
 				local bn=$(basename "${p}")
 				local is_boltable=0
@@ -500,9 +504,18 @@ ewarn "Scanning ${BUILD_DIR}"
 				else
 					is_boltable=0
 				fi
-				[[ -L "${p}" ]] && is_boltable=0
-				is_bolt_banned "${bn}" && is_boltable=0
-				is_abi_same "${p}" || is_boltable=0
+	# Try to avoid disk access which is a big penalty.
+				if (( ${is_boltable} == 1 )) && [[ -L "${p}" ]] ; then
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && is_bolt_banned "${bn}" ; then
+					is_boltable=0
+				fi
+				if (( ${is_boltable} == 1 )) && is_abi_same "${p}" ; then
+					:
+				else
+					is_boltable=0
+				fi
 				if (( ${is_boltable} == 1 )) && is_stripped "${p}" ; then
 ewarn "The package has prestripped binaries.  Re-emerge with FEATURES=\"\${FEATURES} nostrip\" or patch.  Skipping ${p}"
 					is_boltable=0
