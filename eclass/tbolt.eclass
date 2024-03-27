@@ -384,10 +384,8 @@ einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files
 		is_bolt_banned "${bn}" && continue
 		local is_boltable=0
 		if file "${p}" | grep -q "ELF.*executable" ; then
-einfo "Scanning ${p}"
 			is_boltable=1
 		elif file "${p}" | grep -q "ELF.*shared object" ; then
-einfo "Scanning ${p}"
 			is_boltable=1
 		else
 			continue
