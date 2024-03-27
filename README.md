@@ -319,7 +319,7 @@ in the metadata.xml.
 * dev-lang/ispc (pgo, bolt)
 * dev-lang/lua (pgo, bolt)
 * dev-lang/mono (pgo)
-* dev-lang/php (pgo, bolt?)
+* dev-lang/php (pgo, bolt)
 * dev-libs/jemalloc (pgo, bolt)
 * media-libs/embree (pgo, bolt?)
 * media-libs/libaom (pgo, bolt?)
