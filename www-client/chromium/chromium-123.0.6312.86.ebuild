@@ -465,16 +465,16 @@ ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS}
 ${IUSE_LIBCXX[@]}
-bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode -gtk4
--hangouts -headless +js-type-check +kerberos +official pax-kernel pic +pgo
-+pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
-+pulseaudio qt5 qt6 +screencast selinux -system-dav1d +system-ffmpeg
--system-flac -system-fontconfig -system-freetype -system-harfbuzz -system-icu
--system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
--system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
--system-re2 +system-toolchain -system-zlib +system-zstd +thinlto-opt +vaapi
-+wayland -widevine +X
+bindist bluetooth +bundled-libcxx branch-protection +cfi +cups -debug +encode
+ffmpeg-chromium -gtk4 -hangouts -headless +js-type-check +kerberos +official
+pax-kernel pic +pgo +pre-check-vaapi +proprietary-codecs
+proprietary-codecs-disable proprietary-codecs-disable-nc-developer
+proprietary-codecs-disable-nc-user +pulseaudio qt5 qt6 +screencast selinux
+-system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
+-system-harfbuzz -system-icu -system-libaom -system-libdrm
+-system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
+-system-libxslt -system-openh264 -system-opus -system-re2 +system-toolchain
+-system-zlib +system-zstd +thinlto-opt +vaapi +wayland -widevine +X
 "
 
 # What is considered a proprietary codec can be found at:
@@ -600,6 +600,10 @@ REQUIRED_USE+="
 	)
 	epgo? (
 		!pgo
+	)
+	ffmpeg-chromium? (
+		bindist
+		proprietary-codecs
 	)
 	official? (
 		!amd64? (
@@ -929,6 +933,14 @@ RDEPEND+="
 		>=sys-libs/libselinux-3.1[${MULTILIB_USEDEP}]
 		sec-policy/selinux-chromium
 	)
+	bindist? (
+		!ffmpeg-chromium? (
+			>=media-video/ffmpeg-6.1-r1:0/${FFMPEG_SUBSLOT}[chromium]
+		)
+		ffmpeg-chromium? (
+			media-video/ffmpeg-chromium:${PV%%\.*}
+		)
+	)
 "
 DEPEND+="
 	!headless? (
@@ -1218,9 +1230,12 @@ pkg_pretend() {
 		)
 		for myiuse in ${headless_unused_flags[@]}; do
 			if use ${myiuse} ; then
-ewarn "Ignoring USE=${myiuse} since USE=headless is set."
+ewarn "Ignoring USE=${myiuse}.  USE=headless is set."
 			fi
 		done
+	fi
+	if ! use bindist && use ffmpeg-chromium; then
+ewarn "Ignoring USE=ffmpeg-chromium.  USE=bindist is not set."
 	fi
 }
 
@@ -1595,10 +1610,11 @@ apply_distro_patchset() {
 		$(use system-zlib && echo "${FILESDIR}/chromium-109-system-zlib.patch")
 		"${FILESDIR}/chromium-111-InkDropHost-crash.patch"
 		"${FILESDIR}/chromium-117-system-zstd.patch"
+		"${FILESDIR}/chromium-124-libwebp-shim-sharpyuv.patch"
 	)
 
 	if use system-toolchain ; then
-	# The patchset is really only required if we're not using the
+	# The patchset is really only required if we're using the
 	# system-toolchain.
 		PATCHES+=(
 			"${WORKDIR}/chromium-patches-${PATCH_V}"
@@ -2510,16 +2526,22 @@ eerror
 	rustc_ver=$(chromium_rust_version_check)
 	if ver_test "${rustc_ver}" -lt "${RUST_PV}"; then
 eerror
-eerror "Rust >=${RUST_PV} is required"
-eerror "Please run 'eselect rust' and select the correct rust version"
+eerror "Rust >=${RUST_PV} is required."
+eerror "Please run 'eselect rust' and select the correct rust version."
 eerror
-eerror "Selected rust version is too old"
+eerror "The selected rust version is too old."
 eerror
 #		die
 	else
 einfo "Using rust ${rustc_ver} to build"
 	fi
-	myconf_gn+=" rust_sysroot_absolute=\"${EPREFIX}/usr/lib/rust/${rustc_ver}/\""
+
+	if [[ "$(eselect --brief rust show 2>/dev/null)" == *"bin"* ]]; then
+		myconf_gn+=" rust_sysroot_absolute=\"${EPREFIX}/opt/rust-bin-${rustc_ver}/\""
+	else
+		myconf_gn+=" rust_sysroot_absolute=\"${EPREFIX}/usr/lib/rust/${rustc_ver}/\""
+	fi
+
 	myconf_gn+=" rustc_version=\"${rustc_ver}\""
 else
 einfo "Using the bundled toolchain"
@@ -2704,9 +2726,23 @@ ewarn
 	myconf_gn+=" blink_enable_generated_code_formatting=false"
 
 	# See https://github.com/chromium/chromium/blob/123.0.6312.58/media/media_options.gni#L19
-	local ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
-	myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
-	myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
+
+	if use bindist ; then
+	# The proprietary_codecs USE flag just forces Chromium to say that it
+	# can use h264/aac, the work is still done by ffmpeg.  If this is set to
+	# no, Chromium won't be able to load the codec even if the library can
+	# handle it.
+		myconf_gn+=" proprietary_codecs=true"
+		myconf_gn+=" ffmpeg_branding=\"Chrome\""
+	# Build ffmpeg as an external component (libffmpeg.so) that we can
+	# remove / substitute
+		myconf_gn+=" is_component_ffmpeg=true"
+	else
+		ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
+		myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
+		myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
+	fi
+
 	myconf_gn+=" enable_av1_decoder=$(usex dav1d true false)"
 	myconf_gn+=" enable_dav1d_decoder=$(usex dav1d true false)"
 	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
@@ -3434,6 +3470,24 @@ _src_install() {
 	insinto "${CHROMIUM_HOME}"
 	doins out/Release/*.bin
 	doins out/Release/*.pak
+
+	if use bindist; then
+	# We built libffmpeg as a component library, but we can't distribute it
+	# with proprietary codec support.  Remove it and make a symlink to the
+	# requested system library.
+		if ! rm -f out/Release/libffmpeg.so ; then \
+eerror "Failed to remove bundled libffmpeg.so (with proprietary codecs)"
+			die
+		fi
+	# Symlink the libffmpeg.so from either ffmpeg-chromium or
+	# ffmpeg[chromium].
+	local symlink_loc=$(usex ffmpeg-chromium "ffmpeg-chromium" "ffmpeg[chromium]")
+einfo "Creating symlink to libffmpeg.so from ${symlink_loc}..."
+		dosym \
+			../chromium/libffmpeg.so$(usex ffmpeg-chromium .${PV%%\.*} "") \
+			/usr/$(get_libdir)/chromium-browser/libffmpeg.so
+	fi
+
 	(
 		shopt -s nullglob
 		local files=(
