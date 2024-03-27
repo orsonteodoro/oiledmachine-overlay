@@ -74,6 +74,12 @@ _UOPTS_BOLT_CATPN_DATA_DIR=${_UOPTS_BOLT_CATPN_DATA_DIR:-"${UOPTS_BOLT_PROFILES_
 # The path to the program BOLT profile with version specificity.
 _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_BOLT_PV}"}
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_FORK_MULTIPLIER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# A multiplier m in forks=m*ncpus for parallel loop processing.  Increasing may
+# increase utilization or wasted resources.
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_PATH
 # @DESCRIPTION:
 # The absolute path to the folder containing llvm-bolt.
@@ -217,6 +223,8 @@ eerror "directly."
 eerror
 		die
 	fi
+
+	UOPTS_BOLT_FORK_MULTIPLIER=${UOPTS_BOLT_FORK_MULTIPLIER:-2}
 }
 
 # @FUNCTION: _tbolt_prepare_bolt
@@ -387,7 +395,7 @@ _tbolt_inst_tree() {
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${tree}"
-	local n_procs=$(__get_nprocs)
+	local n_procs=$(( $(__get_nprocs) * ${UOPTS_BOLT_FORK_MULTIPLIER} ))
 	local p
 	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
@@ -440,10 +448,8 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
 			fi
 		) &
-		if (( ${n_files} > 100000 )) ; then
-			local n_jobs=$(jobs -r -p | wc -l)
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
-		fi
+		local n_jobs=$(jobs -r -p | wc -l)
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 }
@@ -464,7 +470,7 @@ _tbolt_opt_tree() {
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${tree}"
-	local n_procs=$(__get_nprocs)
+	local n_procs=$(( $(__get_nprocs) * ${UOPTS_BOLT_FORK_MULTIPLIER} ))
 	local p
 	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
@@ -519,10 +525,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 				rm -rf "${p}.orig" || die
 			fi
 		) &
-		if (( ${n_files} > 100000 )) ; then
-			local n_jobs=$(jobs -r -p | wc -l)
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
-		fi
+		local n_jobs=$(jobs -r -p | wc -l)
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 }

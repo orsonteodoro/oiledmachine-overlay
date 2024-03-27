@@ -74,6 +74,12 @@ _UOPTS_BOLT_CATPN_DATA_DIR=${_UOPTS_BOLT_CATPN_DATA_DIR:-"${UOPTS_BOLT_PROFILES_
 # The path to the program BOLT profile with version specificity.
 _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_BOLT_PV}"}
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_FORK_MULTIPLIER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# A multiplier m in forks=m*ncpus for parallel loop processing.  Increasing may
+# increase utilization or wasted resources.
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_PATH
 # @DESCRIPTION:
 # The absolute path to the folder containing llvm-bolt.
@@ -226,6 +232,8 @@ eerror "directly."
 eerror
 		die
 	fi
+
+	UOPTS_BOLT_FORK_MULTIPLIER=${UOPTS_BOLT_FORK_MULTIPLIER:-2}
 }
 
 # @FUNCTION: _ebolt_prepare_bolt
@@ -493,7 +501,7 @@ _src_compile_bolt_inst() {
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${BUILD_DIR}"
-		local n_procs=$(__get_nprocs)
+		local n_procs=$(( $(__get_nprocs) * ${UOPTS_BOLT_FORK_MULTIPLIER} ))
 		local p
 		for p in ${file_list[@]} ; do
 			x_files=$((${x_files} + 1))
@@ -543,10 +551,8 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
-			if (( ${n_files} > 100000 )) ; then
-				local n_jobs=$(jobs -r -p | wc -l)
-				[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
-			fi
+			local n_jobs=$(jobs -r -p | wc -l)
+			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -566,7 +572,7 @@ _src_compile_bolt_opt() {
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning ${BUILD_DIR}"
-		local n_procs=$(__get_nprocs)
+		local n_procs=$(( $(__get_nprocs) * ${UOPTS_BOLT_FORK_MULTIPLIER} ))
 		local p
 		for p in ${file_list[@]} ; do
 			x_files=$((${x_files} + 1))
@@ -619,10 +625,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
-			if (( ${n_files} > 100000 )) ; then
-				local n_jobs=$(jobs -r -p | wc -l)
-				[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
-			fi
+			local n_jobs=$(jobs -r -p | wc -l)
+			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
 	fi
@@ -742,7 +746,7 @@ _pkg_config_bolt_optimization() {
 ewarn "Finding binaries to BOLT.  Please wait..."
 ewarn "Number of files to scan:  ${n_files}"
 ewarn "Scanning files in file list from ${EROOT}/var/db/pkg/${CATEGORY}/${P}/CONTENTS"
-	local n_procs=$(__get_nprocs)
+	local n_procs=$(( $(__get_nprocs) * ${UOPTS_BOLT_FORK_MULTIPLIER} ))
 	local p
 	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
@@ -801,10 +805,8 @@ einfo "BOLT instrumented -> optimized:  ${p}"
 				fi
 			fi
 		) &
-		if (( ${n_files} > 100000 )) ; then
-			local n_jobs=$(jobs -r -p | wc -l)
-			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
-		fi
+		local n_jobs=$(jobs -r -p | wc -l)
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
 
