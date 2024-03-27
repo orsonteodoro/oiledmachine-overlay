@@ -414,7 +414,7 @@ is_abi_same() {
 	elif file "${p}" | grep -q "ELF.*aarch64" && [[ "${ABI}" == "arm64" ]] ; then
 		return 0
 	fi
-ewarn "Unsupported ABI: ${p}"
+#ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
@@ -428,7 +428,7 @@ is_abi_boltable() {
 	elif [[ "${ABI}" == "arm64" ]] ; then
 		return 0
 	fi
-ewarn "Unsupported ABI: ${p}"
+#ewarn "Unsupported ABI: ${p}"
 	return 1
 }
 
