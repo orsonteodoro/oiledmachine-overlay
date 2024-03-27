@@ -357,8 +357,11 @@ ewarn
 		fi
 
 		# Has profile?
-		local nlines=$(find "${bolt_data_staging_dir}" -name "*.fdata" | wc -l)
-		if (( ${nlines} > 0 )) ; then
+		local list=(
+			$(find "${bolt_data_staging_dir}" -name "*.fdata")
+		)
+		local n_lines=${#list[@]}
+		if (( ${n_lines} > 0 )) ; then
 			: # pass
 		else
 ewarn "NO BOLT PROFILE"
@@ -551,7 +554,8 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
-			local n_jobs=$(jobs -r -p | wc -l)
+			local job_list=$( $(jobs -r -p) )
+			local n_jobs=${#job_list[@]}
 			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
@@ -625,7 +629,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
-			local n_jobs=$(jobs -r -p | wc -l)
+			local job_list=$( $(jobs -r -p) )
+			local n_jobs=${#job_list[@]}
 			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
 		wait
@@ -805,7 +810,8 @@ einfo "BOLT instrumented -> optimized:  ${p}"
 				fi
 			fi
 		) &
-		local n_jobs=$(jobs -r -p | wc -l)
+		local job_list=$( $(jobs -r -p) )
+		local n_jobs=${#job_list[@]}
 		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait

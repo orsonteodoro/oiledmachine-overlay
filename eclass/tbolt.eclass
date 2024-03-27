@@ -354,8 +354,11 @@ ewarn
 		fi
 
 		# Has profile?
-		local nlines=$(find "${bolt_data_staging_dir}" -name "*.fdata" | wc -l)
-		if (( ${nlines} > 0 )) ; then
+		local list=(
+			$(find "${bolt_data_staging_dir}" -name "*.fdata")
+		)
+		local n_lines=${#list[@]}
+		if (( ${n_lines} > 0 )) ; then
 			: # pass
 		else
 ewarn "NO BOLT PROFILE"
@@ -448,7 +451,8 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
 			fi
 		) &
-		local n_jobs=$(jobs -r -p | wc -l)
+		local job_list=$( $(jobs -r -p) )
+		local n_jobs=${#job_list[@]}
 		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
@@ -525,7 +529,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 				rm -rf "${p}.orig" || die
 			fi
 		) &
-		local n_jobs=$(jobs -r -p | wc -l)
+		local job_list=$( $(jobs -r -p) )
+		local n_jobs=${#job_list[@]}
 		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
 	wait
@@ -548,8 +553,11 @@ _tbolt_src_pre_train() {
 tbolt_train_verify_profile_warn() {
 	[[ "${skip_inst}" == "yes" ]] && return
 	if use bolt ; then
-		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata" | wc -l)
-		if (( ${nlines} == 0 )) ; then
+		local list=(
+			$(find "${tbolt_data_staging_dir}" -name "*.fdata")
+		)
+		local n_lines=${#list[@]}
+		if (( ${n_lines} == 0 )) ; then
 ewarn "Failed to generate a BOLT profile."
 		fi
 	fi
@@ -563,8 +571,11 @@ ewarn "Failed to generate a BOLT profile."
 tbolt_train_verify_profile_fatal() {
 	[[ "${skip_inst}" == "yes" ]] && return
 	if use bolt; then
-		local nlines=$(find "${tbolt_data_staging_dir}" -name "*.fdata" | wc -l)
-		if (( ${nlines} == 0 )) ; then
+		local list=(
+			$(find "${tbolt_data_staging_dir}" -name "*.fdata")
+		)
+		local n_lines=${#list[@]}
+		if (( ${n_lines} == 0 )) ; then
 eerror
 eerror "Failed to generate a BOLT profile."
 eerror
