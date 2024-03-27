@@ -368,7 +368,7 @@ _tbolt_inst_tree() {
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 ewarn "Finding binaries to BOLT.  Please wait..."
-ewarn "Number of files to scan:  "$(find "${BUILD_DIR}" -type f -not -name "*.orig" | wc -l)
+ewarn "Number of files to scan:  "$(find "${tree}" -type f -not -name "*.orig" | wc -l)
 ewarn "Scanning ${tree}"
 	local n_files=$(find "${tree}" -type f -not -name "*.orig" | wc -l)
 	local x_files=0
