@@ -1310,7 +1310,7 @@ _src_test_cli() {
 					"ext/opcache/tests"
 				)
 			fi
-			if use opcache && use jit ; then
+			if use opcache ; then
 				test_list+=(
 					"ext/opcache/tests/jit"
 				)

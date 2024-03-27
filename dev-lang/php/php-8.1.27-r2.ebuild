@@ -1187,7 +1187,7 @@ einfo "None of the known-to-fail tests passed, all fine"
 					"ext/opcache/tests"
 				)
 			fi
-			if use opcache && use jit ; then
+			if use opcache ; then
 				test_list+=(
 					"ext/opcache/tests/jit"
 				)
