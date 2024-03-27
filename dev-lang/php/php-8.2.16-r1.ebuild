@@ -20,7 +20,8 @@ QA_CONFIG_IMPL_DECL_SKIP+=(
 	cstoccsid
 )
 # We can build the following SAPIs in the given order
-SAPIS="cli embed cgi fpm apache2 phpdbg" # cli is built first to distribute pgo profile
+SAPIS="cli cgi embed fpm apache2 phpdbg" # cli is built first to distribute pgo profile
+SAPIS_DEFAULTS="+cli +cgi -embed -fpm -apache2 +phpdbg"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -33,10 +34,12 @@ KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
+SRC_URI="
+	https://www.php.net/distributions/${P}.tar.xz
+"
 
 DESCRIPTION="The PHP language runtime engine"
 HOMEPAGE="https://www.php.net/"
-SRC_URI="https://www.php.net/distributions/${P}.tar.xz"
 LICENSE="
 	PHP-3.01
 	BSD
@@ -63,19 +66,19 @@ RESTRICT="
 SLOT="$(ver_cut 1-2)"
 # SAPIs and SAPI-specific USE flags (cli SAPI is default on):
 IUSE+="
-${SAPIS/cli/+cli}
-acl apparmor argon2 avif bcmath berkdb bzip2 calendar cdb cjk +ctype curl debug
-enchant exif ffi +fileinfo +filter firebird +flatfile ftp gd gdbm gmp +iconv
-imap inifile intl iodbc ipv6 +jit kerberos ldap ldap-sasl libedit lmdb mhash
-mssql mysql mysqli nls oci8-instant-client odbc +opcache pcntl pdo +phar +posix
-postgres qdbm readline selinux +session session-mm sharedmem +simplexml snmp
-soap sockets sodium spell sqlite ssl sysvipc systemd test tidy threads
-+tokenizer tokyocabinet truetype unicode valgrind webp +xml xmlreader xmlwriter
-xpm xslt zip zlib
+${SAPIS_DEFAULTS}
+-acl -apparmor -argon2 -avif -bcmath -berkdb -bzip2 -calendar -cdb -cjk +ctype
+-curl debug -enchant -exif -ffi +fileinfo +filter -firebird +flatfile -ftp -gd
+-gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit -kerberos -ldap
+-ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls -oci8-instant-client
+-odbc +opcache -pcntl +pdo +phar +posix -postgres -qdbm -readline selinux
++session session-mm -sharedmem +simplexml -snmp -soap -sockets -sodium -spell
++sqlite -ssl -sysvipc -systemd test -tidy threads +tokenizer -tokyocabinet
+-truetype -unicode valgrind -webp +xml +xmlreader +xmlwriter -xpm -xslt -zip
+-zlib
 clang
 trainer-all
 trainer-basic
-trainer-benchmark
 trainer-ext
 trainer-ext-com_dotnet
 trainer-ext-date
@@ -105,7 +108,6 @@ REQUIRED_USE="
 		^^ (
 			trainer-all
 			trainer-basic
-			trainer-benchmark
 		)
 	)
 	cjk? (
@@ -148,7 +150,6 @@ REQUIRED_USE="
 		^^ (
 			trainer-all
 			trainer-basic
-			trainer-benchmark
 		)
 	)
 	qdbm? (
@@ -549,17 +550,6 @@ use_dba() {
 	fi
 }
 
-check_network_sandbox() {
-# Corepack problems.  Cannot do complete offline install.
-        if has network-sandbox $FEATURES && use trainer-benchmark ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download benchmark packages."
-eerror
-                die
-        fi
-}
-
 pkg_setup() {
 	if use pgo || use bolt ; then
 		llvm_pkg_setup
@@ -573,8 +563,11 @@ einfo "PATH:  ${PATH} (before)"
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 einfo "PATH:  ${PATH} (after)"
 	fi
-	check_network_sandbox
 	uopts_setup
+}
+
+src_unpack() {
+	unpack ${A}
 }
 
 src_prepare() {
@@ -1060,6 +1053,13 @@ _tpgo_custom_clean() {
 
 _src_test() {
 	local mode="${1}"
+	if [[ "${sapi}" == "cli" ]] ; then
+		_src_test_cli "${mode}"
+	fi
+}
+
+_src_test_cli() {
+	local mode="${1}"
 	export TEST_PHP_EXECUTABLE="${WORKDIR}/sapis-build/cli/sapi/cli/php"
 
 	# Sometimes when the sub-php launches a sub-sub-php, it uses these.
@@ -1221,11 +1221,11 @@ _src_test() {
 					"ext/intl/uchar/tests"
 				)
 			fi
-			if use json ; then
+#			if use json ; then
 				test_list+=(
 					"ext/json/tests"
 				)
-			fi
+#			fi
 			if use ldap ; then
 				test_list+=(
 					"ext/ldap/tests"
@@ -1592,10 +1592,6 @@ _src_test() {
 				-d "sendmail_path=echo >/dev/null" \
 				${test_list[@]} \
 				|| die "tests failed"
-		fi
-		if use trainer-benchmark ; then
-ewarn "Downloading test packages.  Please wait..."
-			"${TEST_PHP_EXECUTABLE}" "${WORKDIR}/benchmark/benchmark.php" "true" || die
 		fi
 	fi
 

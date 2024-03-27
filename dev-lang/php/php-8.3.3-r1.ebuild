@@ -20,7 +20,8 @@ QA_CONFIG_IMPL_DECL_SKIP+=(
 	cstoccsid
 )
 # We can build the following SAPIs in the given order
-SAPIS="cli embed cgi fpm apache2 phpdbg" # cli is built first to distribute pgo profile
+SAPIS="cli cgi embed fpm apache2 phpdbg" # cli is built first to distribute pgo profile
+SAPIS_DEFAULTS="+cli +cgi -embed -fpm -apache2 +phpdbg"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -33,10 +34,23 @@ KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
+BENCHMARKING_DATA_COMMIT="abfbebbf1a771df2b925fbb04ef7a3a8e3f55d74"
+BENCHMARKING_SYMFONY_DEMO_2_2_3="7979f0def39dfde24afebbd29ad205f6c32ea795"
+BENCHMARKING_WORDPRESS_6_2="ef263dad5e1e6bbc78885cb6707c0a4d07ad5fc6"
+SRC_URI="
+	https://www.php.net/distributions/${P}.tar.xz
+	trainer-benchmark? (
+https://github.com/php/benchmarking-data/archive/${BENCHMARKING_DATA_COMMIT}.tar.gz
+	-> php-benchmarking-data-${BENCHMARKING_DATA_COMMIT:0:7}.tar.gz
+https://github.com/php/benchmarking-symfony-demo-2.2.3/archive/${BENCHMARKING_SYMFONY_DEMO_2_2_3}.tar.gz
+	-> php-benchmarking-symfony-demo-2_2_3-${BENCHMARKING_SYMFONY_DEMO_2_2_3:0:7}.tar.gz
+https://github.com/php/benchmarking-wordpress-6.2/archive/${BENCHMARKING_WORDPRESS_6_2}.tar.gz
+	-> php-benchmarking-wordpress-6.2-${BENCHMARKING_WORDPRESS_6_2:0:7}.tar.gz
+	)
+"
 
 DESCRIPTION="The PHP language runtime engine"
 HOMEPAGE="https://www.php.net/"
-SRC_URI="https://www.php.net/distributions/${P}.tar.xz"
 LICENSE="
 	PHP-3.01
 	BSD
@@ -63,15 +77,16 @@ RESTRICT="
 SLOT="$(ver_cut 1-2)"
 # SAPIs and SAPI-specific USE flags (cli SAPI is default on):
 IUSE+="
-${SAPIS/cli/+cli}
-acl apparmor argon2 avif bcmath berkdb bzip2 calendar capstone cdb cjk +ctype
-curl debug enchant exif ffi +fileinfo +filter firebird +flatfile ftp gd gdbm gmp
-+iconv imap inifile intl iodbc ipv6 +jit kerberos ldap ldap-sasl libedit lmdb
-mhash mssql mysql mysqli nls oci8-instant-client odbc +opcache pcntl pdo +phar
-+posix postgres qdbm readline selinux +session session-mm sharedmem +simplexml
-snmp soap sockets sodium spell sqlite ssl sysvipc systemd test tidy threads
-+tokenizer tokyocabinet truetype unicode valgrind webp +xml xmlreader xmlwriter
-xpm xslt zip zlib
+${SAPIS_DEFAULTS}
+-acl -apparmor -argon2 -avif -bcmath -berkdb -bzip2 -calendar -capstone -cdb
+-cjk +ctype -curl debug -enchant -exif -ffi +fileinfo +filter -firebird
++flatfile -ftp -gd -gdbm +gmp +iconv imap -inifile -intl -iodbc -ipv6 +jit
+-kerberos -ldap -ldap-sasl -libedit -lmdb -mhash -mssql -mysql -mysqli -nls
+-oci8-instant-client -odbc +opcache -pcntl +pdo +phar +posix -postgres -qdbm
+-readline selinux +session session-mm -sharedmem +simplexml -snmp -soap -sockets
+-sodium -spell +sqlite -ssl -sysvipc -systemd test -tidy threads +tokenizer
+-tokyocabinet -truetype -unicode valgrind -webp +xml +xmlreader +xmlwriter -xpm
+-xslt -zip -zlib
 clang
 trainer-all
 trainer-basic
@@ -166,6 +181,10 @@ REQUIRED_USE="
 	)
 	test? (
 		cli
+	)
+	trainer-benchmark? (
+		cli
+		cgi
 	)
 	trainer-ext? (
 		trainer-basic
@@ -462,6 +481,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/php-iodbc-header-location.patch"
+	"${FILESDIR}/php-8.3.3-benchmark-local.patch"
 )
 
 php_install_ini() {
@@ -544,17 +564,6 @@ use_dba() {
 	fi
 }
 
-check_network_sandbox() {
-# Corepack problems.  Cannot do complete offline install.
-        if has network-sandbox $FEATURES && use trainer-benchmark ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download benchmark packages."
-eerror
-                die
-        fi
-}
-
 pkg_setup() {
 	if use pgo || use bolt ; then
 		llvm_pkg_setup
@@ -568,8 +577,26 @@ einfo "PATH:  ${PATH} (before)"
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 einfo "PATH:  ${PATH} (after)"
 	fi
-	check_network_sandbox
 	uopts_setup
+}
+
+src_unpack() {
+	unpack ${A}
+	if use trainer-benchmark ; then
+		mkdir -p "${S}/benchmark/repos"
+		mv \
+			"${WORKDIR}/benchmarking-data-${BENCHMARKING_DATA_COMMIT}" \
+			"${S}/benchmark/repos/data" \
+			|| die
+		mv \
+			"${WORKDIR}/benchmarking-symfony-demo-2.2.3-${BENCHMARKING_SYMFONY_DEMO_2_2_3}" \
+			"${S}/benchmark/repos/symfony-demo-2.2.3" \
+			|| die
+		mv \
+			"${WORKDIR}/benchmarking-wordpress-6.2-${BENCHMARKING_WORDPRESS_6_2}" \
+			"${S}/benchmark/repos/wordpress-6.2" \
+			|| die
+	fi
 }
 
 src_prepare() {
@@ -643,7 +670,13 @@ src_prepare() {
 
 	for sapi in ${SAPIS} ; do
 		cp -a "${S}" "${S}_${sapi}" || die
-		#UOPTS_IMPLS="_${sapi}"
+		if use cgi ; then
+			if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
+				UOPTS_IMPLS="_${sapi}"
+			else
+				UOPTS_IMPLS="_cgi"
+			fi
+		fi
 		uopts_src_prepare
 	done
 }
@@ -669,6 +702,7 @@ eerror
 }
 
 _src_configure() {
+einfo "Start _src_configure()"
 	check_libstdcxx
 	if use clang ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
@@ -695,7 +729,13 @@ _src_configure() {
 		append-ldflags -lgcov
 		append-flags -Wno-error=coverage-mismatch # Unbreak configure check
 	fi
-	#UOPTS_IMPLS="_${sapi}"
+	if use cgi ; then
+		if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
+			UOPTS_IMPLS="_${sapi}"
+		else
+			UOPTS_IMPLS="_cgi"
+		fi
+	fi
 	uopts_src_configure # Wipes -fprofile*
 	if use clang ; then
 		if [[ "${PGO_PHASE}" == "PGI" || "${PGO_PHASE}" == "PGO" ]] ; then
@@ -941,7 +981,9 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 	# the files that autotools creates. This was all originally
 	# based on the autotools-utils eclass.
 	BUILD_DIR="${WORKDIR}/sapis-build/${sapi}"
+einfo "DEBUG:  start copying S_api -> BUILD_DIR"
 	cp -a "${S}_${sapi}" "${BUILD_DIR}" || die
+einfo "DEBUG:  done copying S_api -> BUILD_DIR"
 	cd "${BUILD_DIR}" || die
 
 	local sapi_conf=(
@@ -984,9 +1026,11 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 einfo "Running econf in ${BUILD_DIR}"
 		econf ${myeconfargs[@]}
 	popd > /dev/null || die
+einfo "Stop _src_configure()"
 }
 
 _src_compile() {
+einfo "Start _src_compile()"
 einfo "Called _src_compile ${sapi}"
 	# snmp seems to run during src_compile, too (bug #324739)
 	addpredict /usr/share/snmp/mibs/.index #nowarn
@@ -1004,13 +1048,20 @@ einfo "Called _src_compile ${sapi}"
 	fi
 
 	emake -C "${WORKDIR}/sapis-build/${sapi}"
+einfo "Stop _src_compile()"
 }
 
 src_compile() {
 	local sapi
 	for sapi in ${SAPIS} ; do
 		if use ${sapi} ; then
-			#UOPTS_IMPLS="_${sapi}"
+			if use cgi ; then
+				if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
+					UOPTS_IMPLS="_${sapi}"
+				else
+					UOPTS_IMPLS="_cgi"
+				fi
+			fi
 			uopts_src_compile
 		fi
 	done
@@ -1022,6 +1073,36 @@ _tpgo_custom_clean() {
 }
 
 _src_test() {
+einfo "Start _src_test()"
+	local mode="${1}"
+	if [[ "${sapi}" == "cli" ]] ; then
+einfo "Start _src_test_cli()"
+		_src_test_cli "${mode}"
+einfo "Stop _src_test_cli()"
+	elif [[ "${sapi}" == "cgi" ]] ; then
+einfo "Start _src_test_cgi()"
+		_src_test_cgi "${mode}"
+einfo "Stop _src_test_cgi()"
+	fi
+einfo "Stop _src_test()"
+}
+
+_src_test_cgi() {
+	local mode="${1}"
+	export TEST_PHP_EXECUTABLE="${WORKDIR}/sapis-build/cli/sapi/cli/php"
+
+	if [[ -x "${WORKDIR}/sapis-build/cgi/sapi/cgi/php-cgi" ]] ; then
+		export TEST_PHP_CGI_EXECUTABLE="${WORKDIR}/sapis-build/cgi/sapi/cgi/php-cgi"
+	fi
+
+	if [[ "${mode}" == "pgo" ]] ; then
+		if use trainer-benchmark ; then
+			"${TEST_PHP_EXECUTABLE}" "${S}/benchmark/benchmark.php" "true" || die
+		fi
+	fi
+}
+
+_src_test_cli() {
 	local mode="${1}"
 	export TEST_PHP_EXECUTABLE="${WORKDIR}/sapis-build/cli/sapi/cli/php"
 
@@ -1184,11 +1265,11 @@ _src_test() {
 					"ext/intl/uchar/tests"
 				)
 			fi
-			if use json ; then
+#			if use json ; then
 				test_list+=(
 					"ext/json/tests"
 				)
-			fi
+#			fi
 			if use ldap ; then
 				test_list+=(
 					"ext/ldap/tests"
@@ -1556,10 +1637,6 @@ _src_test() {
 				${test_list[@]} \
 				|| die "tests failed"
 		fi
-		if use trainer-benchmark ; then
-ewarn "Downloading test packages.  Please wait..."
-			"${TEST_PHP_EXECUTABLE}" "${WORKDIR}/benchmark/benchmark.php" "true" || die
-		fi
 	fi
 
 # Prevent error:
@@ -1704,7 +1781,13 @@ src_install() {
 	fi
 
 	for sapi in ${SAPIS} ; do
-		#UOPTS_IMPLS="_${sapi}"
+		if use cgi ; then
+			if [[ "${sapi}" == "cgi" || "${sapi}" == "cli" ]] ; then
+				UOPTS_IMPLS="_${sapi}"
+			else
+				UOPTS_IMPLS="_cgi"
+			fi
+		fi
 		uopts_src_install
 	done
 }

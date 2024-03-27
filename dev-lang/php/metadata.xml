@@ -30,12 +30,15 @@
     <flag name="bolt">
       Optimize with BOLT.
     </flag>
+    <flag name="cgi">
+      Enable older web server support via the CGI processor
+    </flag>
     <flag name="capstone">
       Support opcache JIT disassembly through
       <pkg>dev-libs/capstone</pkg>
     </flag>
     <flag name="cli">
-      Enable the Command-Line Interface (CLI) SAPI
+      Enable shell scripting support via Command-Line Interface SAPI
     </flag>
     <flag name="coverage">
       Include gcov symbols for test coverage and lcov reports. Only
@@ -45,7 +48,7 @@
       Enable the Character type checking (ctype) extension
     </flag>
     <flag name="embed">
-      Enable embed SAPI
+      Enable running PHP scripts from C/C++ support via embed SAPI
     </flag>
     <flag name="enchant">
       Enable the Enchant spelling library extension using
@@ -65,7 +68,7 @@
       Add dbm support for flat files
     </flag>
     <flag name="fpm">
-      Enable the FastCGI Process Manager SAPI
+      Enable newer web server support via FastCGI Process Manager
     </flag>
     <flag name="gd">
       Enable the Image Processing and GD extension (requires
@@ -106,7 +109,7 @@
       Enables the phar extension to provide phar archive support
     </flag>
     <flag name="phpdbg">
-      Enable the PHP Debug Command Line SAPI (like gdb for php)
+      Enable debugger support similar to gdb via the Interactive PHP Debugger
     </flag>
     <flag name="pgo">
       Optimize with PGO (Profile Guided Optimization)
