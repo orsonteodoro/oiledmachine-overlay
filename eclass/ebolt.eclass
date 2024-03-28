@@ -503,6 +503,7 @@ _src_compile_bolt_inst() {
 		local file_list=(
 			$(find "${BUILD_DIR}" \
 				-executable \
+				-not -type l \
 				${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
 			)
 		)
@@ -530,9 +531,6 @@ einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files
 					is_boltable=0
 				fi
 	# Try to avoid disk access which is a big penalty.
-				if (( ${is_boltable} == 1 )) && [[ -L "${p}" ]] ; then
-					is_boltable=0
-				fi
 				if (( ${is_boltable} == 1 )) && is_bolt_banned "${bn}" ; then
 					is_boltable=0
 				fi
@@ -578,6 +576,7 @@ _src_compile_bolt_opt() {
 		local file_list=(
 			$(find "${BUILD_DIR}" \
 				-executable \
+				-not -type l \
 				${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
 			)
 		)
@@ -605,9 +604,6 @@ einfo "Progress: ${x_files}/${n_files} ("$(python -c "print(${x_files}/${n_files
 					is_boltable=0
 				fi
 	# Try to avoid disk access which is a big penalty.
-				if (( ${is_boltable} == 1 )) && [[ -L "${p}" ]] ; then
-					is_boltable=0
-				fi
 				if (( ${is_boltable} == 1 )) && is_bolt_banned "${bn}" ; then
 					is_boltable=0
 				fi
