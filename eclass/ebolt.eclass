@@ -93,6 +93,10 @@ _UOPTS_BOLT_PATH="" # Set in ebolt_setup
 # @DESCRIPTION:
 # Allow to override the default BOLT optimization setting
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS
+# @DESCRIPTION:
+# Add extra find expressions for instrumentation.
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_SLOT
 # @DESCRIPTION:
 # Force a particular LLVM slot for llvm-slot.  This is for compatiblity for BOLT profiles.
@@ -497,7 +501,10 @@ _src_compile_bolt_inst() {
 	if [[ "${BOLT_PHASE}" == "INST" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
 		local file_list=(
-			$(find "${BUILD_DIR}" -type f -not -name "*.orig")
+			$(find "${BUILD_DIR}" \
+				-executable \
+				${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
+			)
 		)
 		local n_files=${#file_list[@]}
 		local x_files=0
@@ -569,7 +576,10 @@ _src_compile_bolt_opt() {
 	if [[ "${BOLT_PHASE}" == "OPT" ]] ; then
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
 		local file_list=(
-			$(find "${BUILD_DIR}" -type f -not -name "*.orig")
+			$(find "${BUILD_DIR}" \
+				-executable \
+				${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
+			)
 		)
 		local n_files=${#file_list[@]}
 		local x_files=0

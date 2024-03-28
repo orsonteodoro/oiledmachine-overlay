@@ -90,6 +90,10 @@ _UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEG
 # Allow disjointed PATH to llvm-bolt while respecting LLVM_MAX_SLOT
 _UOPTS_BOLT_PATH="" # Set in tbolt_setup
 
+# @ECLASS_VARIABLE: UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS
+# @DESCRIPTION:
+# Add extra find expressions for instrumentation.
+
 # @ECLASS_VARIABLE: UOPTS_BOLT_SLOT
 # @DESCRIPTION:
 # Force a particular LLVM slot for llvm-slot.  This is for compatiblity for BOLT profiles.
@@ -391,7 +395,10 @@ _tbolt_inst_tree() {
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	local file_list=(
-		$(find "${tree}" -type f -not -name "*.orig")
+		$(find "${tree}" \
+			-executable \
+			${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
+		)
 	)
 	local n_files=${#file_list[@]}
 	local x_files=0
@@ -467,7 +474,10 @@ _tbolt_opt_tree() {
 	local tree="${1}"
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	local file_list=(
-		$(find "${tree}" -type f -not -name "*.orig")
+		$(find "${tree}" \
+			-executable \
+			${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
+		)
 	)
 	local n_files=${#file_list[@]}
 	local x_files=0
