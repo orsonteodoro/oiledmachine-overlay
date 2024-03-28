@@ -1287,8 +1287,8 @@ einfo "Initializing ${PN} data directory: ${cmd[@]}"
 		"--basedir='${EROOT}/usr'"
 		"--datadir='${MY_DATADIR}'"
 		"--tmpdir='${MYSQL_TMPDIR}'"
-		--max_allowed_packet=8M
-		--net_buffer_length=16K
+		"--max_allowed_packet=8M"
+		"--net_buffer_length=16K"
 		"--socket='${socket}'"
 		"--pid-file='${pidfile}'"
 		"--log-error='${mysqld_logfile}'"
