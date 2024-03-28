@@ -396,6 +396,7 @@ _tbolt_inst_tree() {
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	local file_list=(
 		$(find "${tree}" \
+			-type f \
 			-executable \
 			-not -type l \
 			${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
@@ -473,6 +474,7 @@ _tbolt_opt_tree() {
 	local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 	local file_list=(
 		$(find "${tree}" \
+			-type f \
 			-executable \
 			-not -type l \
 			${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \

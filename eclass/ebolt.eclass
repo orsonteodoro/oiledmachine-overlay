@@ -502,6 +502,7 @@ _src_compile_bolt_inst() {
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
 		local file_list=(
 			$(find "${BUILD_DIR}" \
+				-type f \
 				-executable \
 				-not -type l \
 				${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
@@ -575,6 +576,7 @@ _src_compile_bolt_opt() {
 		[[ -z "${BUILD_DIR}" ]] && die "BUILD_DIR cannot be empty"
 		local file_list=(
 			$(find "${BUILD_DIR}" \
+				-type f \
 				-executable \
 				-not -type l \
 				${UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS[@]} \
