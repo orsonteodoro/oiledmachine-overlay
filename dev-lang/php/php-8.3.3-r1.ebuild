@@ -104,6 +104,23 @@ trainer-zend
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
 # The Oracle instant client provides its own incompatible ldap library.
+REQUIRED_USE_BENCHMARK_SYMFONY="
+	(
+		ctype
+		iconv
+		pdo
+		sqlite
+		session
+		simplexml
+		tokenizer
+	)
+"
+REQUIRED_USE_BENCHMARK_WORDPRESS="
+	(
+		mysql
+		phar
+	)
+"
 REQUIRED_USE="
 	!cli? (
 		?? (
@@ -183,15 +200,8 @@ REQUIRED_USE="
 		cli
 	)
 	trainer-benchmark? (
-		(
-			ctype
-			iconv
-			pdo
-			sqlite
-			session
-			simplexml
-			tokenizer
-		)
+		${REQUIRED_USE_BENCHMARK_SYMFONY}
+		${REQUIRED_USE_BENCHMARK_WORDPRESS}
 		cli
 		cgi
 		gmp
@@ -589,6 +599,17 @@ einfo "PATH:  ${PATH} (before)"
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 einfo "PATH:  ${PATH} (after)"
+		if use trainer-benchmark ; then
+ewarn
+ewarn "The trainer-benchmark USE flag, may require the following *sql settings"
+ewarn "for benchmarking:"
+ewarn
+ewarn "See:"
+ewarn
+ewarn "  https://github.com/php/php-src/blob/php-8.3.0/.github/workflows/push.yml#L255"
+ewarn "  https://github.com/php/php-src/blob/php-8.3.4/benchmark/docker-compose.yml"
+ewarn
+		fi
 	fi
 	uopts_setup
 }
