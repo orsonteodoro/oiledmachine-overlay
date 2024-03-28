@@ -183,8 +183,18 @@ REQUIRED_USE="
 		cli
 	)
 	trainer-benchmark? (
+		(
+			ctype
+			iconv
+			pdo
+			sqlite
+			session
+			simplexml
+			tokenizer
+		)
 		cli
 		cgi
+		gmp
 	)
 	trainer-ext? (
 		trainer-basic
