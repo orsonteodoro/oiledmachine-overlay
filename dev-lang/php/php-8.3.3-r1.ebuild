@@ -604,8 +604,8 @@ ewarn
 ewarn "The trainer-benchmark USE flag, requires the following *sql settings"
 ewarn "for benchmarking to avoid clobbering www-apps/wordpress installation:"
 ewarn
-ewarn "  mysql -u root -p -e \"CREATE DATABASE IF NOT EXISTS trainer-benchmark\""
-ewarn "  mysql -u root -p -e \"trainer-benchmark'@'localhost' IDENTIFIED BY 'trainer-benchmark'; FLUSH PRIVILEGES;\""
+ewarn "  mysql -u root -p -e \"CREATE DATABASE IF NOT EXISTS trainer_benchmark\""
+ewarn "  mysql -u root -p -e \"CREATE USER trainer-benchmark'@'localhost' IDENTIFIED BY 'trainer-benchmark'; FLUSH PRIVILEGES;\""
 ewarn "  mysql -u root -p -e \"GRANT ALL PRIVILEGES ON *.* TO 'trainer-benchmark'@'localhost' WITH GRANT OPTION;\""
 ewarn
 		fi
@@ -640,7 +640,7 @@ src_unpack() {
 			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
 			|| die
 		sed -i \
-			-e "${loc}i define( 'DB_NAME', 'trainer-benchmark' );" \
+			-e "${loc}i define( 'DB_NAME', 'trainer_benchmark' );" \
 			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
 			|| die
 
