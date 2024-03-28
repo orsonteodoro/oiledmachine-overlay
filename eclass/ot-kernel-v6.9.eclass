@@ -78,7 +78,7 @@ C2TCP_EXTRA="0521"
 C2TCP_KV="4.13.1"
 C2TCP_COMMIT="991bfdadb75a1cea32a8b3ffd6f1c3c49069e1a1" # Jul 20, 2020
 
-ZEN_KV="6.9.0"
+ZEN_KV="6.8.0"
 PATCH_ZEN_SAUCE_COMMITS=(
 # From https://github.com/torvalds/linux/compare/v6.6...zen-kernel:zen-kernel:6.6/zen-sauce
 #
