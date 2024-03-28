@@ -123,3 +123,7 @@ www-misc/rainbowstream
 
 # Old dependencies
 <dev-util/ycmd-45
+
+# Ebuild with bolt/pgo changes in testing
+dev-db/mysql
+dev-db/mariadb

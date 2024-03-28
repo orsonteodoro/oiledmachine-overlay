@@ -315,6 +315,8 @@ in the metadata.xml.
 * app-arch/zopfli (pgo, bolt)
 * app-crypt/libzc (pgo, bolt)
 * dev-db/sqlite (pgo, bolt)
+* dev-db/mariadb (pgo?, bolt?)
+* dev-db/mysql (pgo?, bolt?)
 * dev-games/box2d (pgo, bolt)
 * dev-lang/ispc (pgo, bolt)
 * dev-lang/lua (pgo, bolt)
