@@ -446,6 +446,9 @@ DEPEND="
 	${COMMON_DEPEND}
 	app-arch/xz-utils
 	sys-devel/bison
+	trainer-benchmark? (
+		dev-debug/valgrind
+	)
 "
 gen_clang_bdepend() {
 	local s
