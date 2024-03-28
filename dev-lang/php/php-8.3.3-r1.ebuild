@@ -104,7 +104,7 @@ trainer-zend
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
 # The Oracle instant client provides its own incompatible ldap library.
-REQUIRED_USE_BENCHMARK_SYMFONY="
+REQUIRED_USE_BENCHMARK_SYMFONY_DEMO="
 	(
 		ctype
 		iconv
@@ -200,7 +200,7 @@ REQUIRED_USE="
 		cli
 	)
 	trainer-benchmark? (
-		${REQUIRED_USE_BENCHMARK_SYMFONY}
+		${REQUIRED_USE_BENCHMARK_SYMFONY_DEMO}
 		${REQUIRED_USE_BENCHMARK_WORDPRESS}
 		cli
 		cgi
@@ -601,7 +601,7 @@ einfo "PATH:  ${PATH} (before)"
 einfo "PATH:  ${PATH} (after)"
 		if use trainer-benchmark ; then
 ewarn
-ewarn "The trainer-benchmark USE flag, requires the following *sql settings"
+ewarn "The trainer-benchmark USE flag requires the following *sql settings"
 ewarn "for benchmarking to avoid clobbering www-apps/wordpress installation:"
 ewarn
 ewarn "  mysql -u root -p -e \"CREATE DATABASE IF NOT EXISTS trainer_benchmark\""
