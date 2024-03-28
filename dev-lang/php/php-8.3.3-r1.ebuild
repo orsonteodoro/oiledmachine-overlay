@@ -634,7 +634,6 @@ src_unpack() {
 		loc=$(grep -n -e "DB_NAME" \
 			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
 			| cut -f 1 -d ":")
-		einfo "|${loc}|"
 		sed -i \
 			-e "${loc}d" \
 			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
