@@ -605,7 +605,7 @@ ewarn "The trainer-benchmark USE flag, requires the following *sql settings"
 ewarn "for benchmarking to avoid clobbering www-apps/wordpress installation:"
 ewarn
 ewarn "  mysql -u root -p -e \"CREATE DATABASE IF NOT EXISTS trainer_benchmark\""
-ewarn "  mysql -u root -p -e \"CREATE USER trainer-benchmark'@'localhost' IDENTIFIED BY 'trainer-benchmark'; FLUSH PRIVILEGES;\""
+ewarn "  mysql -u root -p -e \"CREATE USER 'trainer-benchmark'@'localhost' IDENTIFIED BY 'trainer-benchmark'; FLUSH PRIVILEGES;\""
 ewarn "  mysql -u root -p -e \"GRANT ALL PRIVILEGES ON *.* TO 'trainer-benchmark'@'localhost' WITH GRANT OPTION;\""
 ewarn
 		fi
