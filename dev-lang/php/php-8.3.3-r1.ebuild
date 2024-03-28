@@ -601,13 +601,12 @@ einfo "PATH:  ${PATH} (before)"
 einfo "PATH:  ${PATH} (after)"
 		if use trainer-benchmark ; then
 ewarn
-ewarn "The trainer-benchmark USE flag, may require the following *sql settings"
-ewarn "for benchmarking:"
+ewarn "The trainer-benchmark USE flag, requires the following *sql settings"
+ewarn "for benchmarking to avoid clobbering www-apps/wordpress installation:"
 ewarn
-ewarn "See:"
-ewarn
-ewarn "  https://github.com/php/php-src/blob/php-8.3.0/.github/workflows/push.yml#L258"
-ewarn "  https://github.com/php/php-src/blob/php-8.3.4/benchmark/docker-compose.yml"
+ewarn "  mysql -u root -p -e \"CREATE DATABASE IF NOT EXISTS trainer-benchmark\""
+ewarn "  mysql -u root -p -e \"trainer-benchmark'@'localhost' IDENTIFIED BY 'trainer-benchmark'; FLUSH PRIVILEGES;\""
+ewarn "  mysql -u root -p -e \"GRANT ALL PRIVILEGES ON *.* TO 'trainer-benchmark'@'localhost' WITH GRANT OPTION;\""
 ewarn
 		fi
 	fi
@@ -629,6 +628,80 @@ src_unpack() {
 		mv \
 			"${WORKDIR}/benchmarking-wordpress-6.2-${BENCHMARKING_WORDPRESS_6_2}" \
 			"${S}/benchmark/repos/wordpress-6.2" \
+			|| die
+
+		local loc
+		loc=$(grep -n -e "DB_NAME" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			| cut -f 1 -d ":")
+		einfo "|${loc}|"
+		sed -i \
+			-e "${loc}d" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			|| die
+		sed -i \
+			-e "${loc}i define( 'DB_NAME', 'trainer-benchmark' );" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			|| die
+
+		loc=$(grep -n -e "DB_USER" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			| cut -f 1 -d ":")
+		sed -i \
+			-e "${loc}d" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			|| die
+		sed -i \
+			-e "${loc}i define( 'DB_USER', 'trainer-benchmark' );" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			|| die
+
+		loc=$(grep -n -e "DB_PASSWORD" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			| cut -f 1 -d ":")
+		sed -i \
+			-e "${loc}d" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			|| die
+		sed -i \
+			-e "${loc}i define( 'DB_PASSWORD', 'trainer-benchmark' );" \
+			"${S}/benchmark/repos/wordpress-6.2/wp-config.php" \
+			|| die
+
+		loc=$(grep -n -e "--admin_user=wordpress" \
+			"${S}/benchmark/benchmark.php" \
+			| cut -f 1 -d ":")
+		sed -i \
+			-e "${loc}d" \
+			"${S}/benchmark/benchmark.php" \
+			|| die
+		sed -i \
+			-e "${loc}i '--admin_user=trainer-benchmark'," \
+			"${S}/benchmark/benchmark.php" \
+			|| die
+
+		loc=$(grep -n -e "--admin_password=wordpress" \
+			"${S}/benchmark/benchmark.php" \
+			| cut -f 1 -d ":")
+		sed -i \
+			-e "${loc}d" \
+			"${S}/benchmark/benchmark.php" \
+			|| die
+		sed -i \
+			-e "${loc}i '--admin_password=trainer-benchmark'," \
+			"${S}/benchmark/benchmark.php" \
+			|| die
+
+		loc=$(grep -n -e "--admin_email=benchmark@php.net" \
+			"${S}/benchmark/benchmark.php" \
+			| cut -f 1 -d ":")
+		sed -i \
+			-e "${loc}d" \
+			"${S}/benchmark/benchmark.php" \
+			|| die
+		sed -i \
+			-e "${loc}i '--admin_email=trainer-benchmark@trainer-benchmark.net'," \
+			"${S}/benchmark/benchmark.php" \
 			|| die
 	fi
 }
