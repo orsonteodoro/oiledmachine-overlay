@@ -93,6 +93,12 @@ _UOPTS_BOLT_PATH="" # Set in tbolt_setup
 # @ECLASS_VARIABLE: UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS
 # @DESCRIPTION:
 # Add extra find expressions for instrumentation.
+# Example:
+# UOPTS_BOLT_SCAN_EXTRA_EXPRESSIONS=(
+#	-o -name "libfoo.so.1"
+#	-o -name "libbar.so.2"
+#	-o -name "hello_world"
+# )
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_SLOT
 # @DESCRIPTION:
