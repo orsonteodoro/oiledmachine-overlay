@@ -16,8 +16,8 @@
 #
 # Discussion of where to place this code or EAPI design.
 #
-# Q: Could you place this code (along with *pgo and *bolt eclasses) in the
-# sys-apps/portage ebuild/project instead?
+# Q: Could you move BOLT or PGO support [uopts, *pgo, *bolt eclasses] in
+# sys-apps/portage instead?
 # A: No, because support for multilib is not in sys-apps/portage.
 # I already attempted to do that but stopped because of the ABI issue.
 #
