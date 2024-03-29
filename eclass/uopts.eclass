@@ -18,7 +18,7 @@
 #
 # Q: Could you move BOLT or PGO support [uopts, *pgo, *bolt eclasses] in
 # sys-apps/portage instead?
-# A: No, because support for multilib is not in sys-apps/portage.
+# A: Currently no, because support for multilib is not in sys-apps/portage.
 # I already attempted to add BOLT and PGO to portage but stopped because of the
 # ABI issue.
 #
@@ -30,6 +30,9 @@
 # If not using multilib,
 # *bolt and *pgo eclasses sit on top of uopts eclass,
 # uopts sits on top of portage phase functions.
+#
+# To address the ABI issue, it may be possible to add if something similar
+# to reflection where used.
 #
 
 
