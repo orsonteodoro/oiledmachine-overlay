@@ -34,7 +34,7 @@ KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos
 "
-BENCHMARKING_DATA_COMMIT="abfbebbf1a771df2b925fbb04ef7a3a8e3f55d74"
+export BENCHMARKING_DATA_COMMIT="abfbebbf1a771df2b925fbb04ef7a3a8e3f55d74"
 BENCHMARKING_SYMFONY_DEMO_2_2_3="7979f0def39dfde24afebbd29ad205f6c32ea795"
 BENCHMARKING_WORDPRESS_6_2="ef263dad5e1e6bbc78885cb6707c0a4d07ad5fc6"
 SRC_URI="
@@ -609,6 +609,7 @@ ewarn "  mysql -u root -p -e \"CREATE USER 'trainer-benchmark'@'localhost' IDENT
 ewarn "  mysql -u root -p -e \"GRANT ALL PRIVILEGES ON *.* TO 'trainer-benchmark'@'localhost' WITH GRANT OPTION;\""
 ewarn
 		fi
+ewarn "${PN} may need to be temporarly unemerged for PGO training to work."
 	fi
 	uopts_setup
 }

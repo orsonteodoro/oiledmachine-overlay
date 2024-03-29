@@ -10,7 +10,7 @@ diff -urp php-8.3.3.orig/benchmark/benchmark.php php-8.3.3/benchmark/benchmark.p
  
 -    $commitHash = getPhpSrcCommitHash();
 +    //$commitHash = getPhpSrcCommitHash();
-+    $commitHash = $_ENV["BENCHMARKING_DATA_COMMIT"];
++    $commitHash = getenv('BENCHMARKING_DATA_COMMIT');
      $dir = $repo . '/' . substr($commitHash, 0, 2) . '/' . $commitHash;
      $summaryFile = $dir . '/summary.json';
      if (!is_dir($dir)) {

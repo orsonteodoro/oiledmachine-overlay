@@ -591,7 +591,7 @@ src_compile() {
 	uopts_src_compile
 }
 
-_src_test() {
+train_trainer_custom() {
 	__src_test "pgo"
 }
 

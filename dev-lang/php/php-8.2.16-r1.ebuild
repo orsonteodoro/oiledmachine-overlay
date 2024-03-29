@@ -562,6 +562,7 @@ einfo "PATH:  ${PATH} (before)"
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}${EROCM_LLVM_PATH}/bin|g")
 einfo "PATH:  ${PATH} (after)"
+ewarn "${PN} may need to be temporarly unemerged for PGO training to work."
 	fi
 	uopts_setup
 }
