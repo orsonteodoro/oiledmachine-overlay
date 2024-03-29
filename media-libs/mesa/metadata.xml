@@ -21,11 +21,54 @@
   for the dri driver portion.  It is intended for compatibility with the
   blender ebuild.
 
+
+  Discussion about PGO (Profile Guided Optimization)
+
+  Q:  How do you PGO this?
+  A:
+  USE="epgo" emerge -1vO mesa # instrument
+  # Restart X or wayland
+  # Run favorite OpenGL games or apps
+  USE="epgo" emerge -1vO mesa # optimize build
+
+  Q:  Why do you not run unattended PGO?
+  A:  There are different versions of OpenGL and each version needs to be
+      trained independently.  It is more efficient to train off the actively
+      used versions of OpenGL.
+
+  Q:  When should you PGO?
+  A:  - The beginning of the point release cycle to avoid short benefit
+        periods or immediate bumps.
+
+  Q:  What is EPGO?
+  A:  Event based Profile Guided Optimization, using a Finite State Machine
+      (FSM) to deploy a PGO build in the least annoying way.
+
+  Q:  What is the benefit(s) of EPGO?
+  A:  - EPGO allows for custom training instead of preselected trainer(s).
+        (Preselected trainer or unatteneded PGO is similar to as premature
+        optimization.)
+      - EPGO code coverage is the same as the users.
+      - EPGO does the heavy lifting or makes it less complicated to perform
+        PGO for ebuild developers.
+      - EPGO can reuse PGO profiles between patch versions for semver based
+        packages.
+      - EPGO can know when a PGO profile is incompatible based on toolchain
+        fingerprint or PGO profile versioning and reset the process based
+        on incompatibility.
+
+
   -->
   <use>
     <flag name="d3d9">
       Enable Direct 3D9 API through Nine state tracker. Can be used together
       with patched wine.
+    </flag>
+    <flag name="ebolt">
+      Use BOLT (post link optimization) [TESTING, EXPERIMENTAL]
+    </flag>
+    <flag name="epgo">
+      Use Event based PGO (Profile Guided Optimization) [TESTING, EXPERIMENTAL]
     </flag>
     <flag name="gles1">
       Enable GLESv1 support.

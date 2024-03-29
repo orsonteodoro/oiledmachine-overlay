@@ -1,26 +1,59 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.110"
+LIBDRM_USEDEP="\
+video_cards_freedreno?,\
+video_cards_intel?,\
+video_cards_nouveau?,\
+video_cards_vc4?,\
+video_cards_vivante?,\
+video_cards_vmware?,\
+"
 LLVM_COMPAT=( {17..15} )
 MY_P="${P/_/-}"
 PYTHON_COMPAT=( python3_{10..12} )
-RADEON_CARDS="r300 r600 radeon radeonsi"
-VIDEO_CARDS="${RADEON_CARDS} d3d12 freedreno intel lavapipe lima nouveau panfrost v3d vc4 virgl vivante vmware"
+RADEON_CARDS=(
+	r300
+	r600
+	radeon
+	radeonsi
+)
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+VIDEO_CARDS=(
+	${RADEON_CARDS[@]}
+	d3d12
+	freedreno
+	intel
+	lavapipe
+	lima
+	nouveau
+	panfrost
+	v3d
+	vc4
+	virgl
+	vivante
+	vmware
+)
 
 inherit flag-o-matic linux-info llvm-r1 meson-multilib python-any-r1
-inherit toolchain-funcs
+inherit toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
-for card in ${VIDEO_CARDS}; do
+for card in ${VIDEO_CARDS[@]} ; do
 	IUSE_VIDEO_CARDS+="
 		video_cards_${card}
 	"
 done
 
-if [[ ${PV} == 9999 ]]; then
+if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
 	inherit git-r3
 else
@@ -28,7 +61,7 @@ else
 	KEYWORDS="
 ~alpha amd64 ~arm arm64 ~hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc
 ~x86 ~amd64-linux ~x86-linux ~x64-solaris
-"
+	"
 fi
 S="${WORKDIR}/${MY_P}"
 EGIT_CHECKOUT_DIR="${S}"
@@ -104,10 +137,8 @@ REQUIRED_USE="
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
-
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.110"
 RDEPEND="
-	${LIBDRM_DEPSTRING}[video_cards_freedreno?,video_cards_intel?,video_cards_nouveau?,video_cards_vc4?,video_cards_vivante?,video_cards_vmware?,${MULTILIB_USEDEP}]
+	${LIBDRM_DEPSTRING}[${LIBDRM_USEDEP}${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
@@ -162,7 +193,7 @@ RDEPEND="
 		app-arch/zstd:=[${MULTILIB_USEDEP}]
 	)
 "
-for card in ${RADEON_CARDS}; do
+for card in ${RADEON_CARDS[@]} ; do
 	RDEPEND="
 		${RDEPEND}
 		video_cards_${card}? (
@@ -268,81 +299,88 @@ QA_WX_LOAD="
 "
 
 llvm_check_deps() {
-	if use opencl; then
+	if use opencl ; then
 		has_version "sys-devel/clang:${LLVM_SLOT}[${LLVM_USE_DEPS}]" || return 1
 		has_version "dev-util/spirv-llvm-translator:${LLVM_SLOT}" || return 1
 	fi
 	has_version "sys-devel/llvm:${LLVM_SLOT}[${LLVM_USE_DEPS}]"
 }
 
-pkg_pretend() {
-	if use vulkan; then
-		if ! use video_cards_d3d12 &&
-		   ! use video_cards_freedreno &&
-		   ! use video_cards_intel &&
-		   ! use video_cards_radeonsi &&
-		   ! use video_cards_v3d; then
-			ewarn "Ignoring USE=vulkan     since VIDEO_CARDS does not contain d3d12, freedreno, intel, radeonsi, or v3d"
-		fi
+ignore_video_card_use() {
+	local missing=1
+	local flag="${1}"
+	shift
+	local cards=( $@ )
+	if use ${flag} ; then
+		local
+		for name in ${cars[@]} ; do
+			if use "video_cards_${name}" ; then
+				missing=0
+			fi
+		done
 	fi
-
-	if use vaapi; then
-		if ! use video_cards_d3d12 &&
-		   ! use video_cards_r600 &&
-		   ! use video_cards_radeonsi &&
-		   ! use video_cards_nouveau; then
-			ewarn "Ignoring USE=vaapi      since VIDEO_CARDS does not contain d3d12, r600, radeonsi, or nouveau"
-		fi
+	if (( ${missing} == 1 )) ; then
+ewarn "Ignoring USE=${flag} since VIDEO_CARDS does not contain -- ${cards[@]}"
 	fi
+}
 
-	if use vdpau; then
-		if ! use video_cards_d3d12 &&
-		   ! use video_cards_r300 &&
-		   ! use video_cards_r600 &&
-		   ! use video_cards_radeonsi &&
-		   ! use video_cards_nouveau; then
-			ewarn "Ignoring USE=vdpau      since VIDEO_CARDS does not contain d3d12, r300, r600, radeonsi, or nouveau"
-		fi
+# $1 - VIDEO_CARDS flag (check skipped for "--")
+# other args - names of DRI drivers to enable
+gallium_enable() {
+	if [[ $1 == -- ]] || use $1 ; then
+		shift
+		GALLIUM_DRIVERS+=( "$@" )
 	fi
+}
 
-	if use xa; then
-		if ! use video_cards_freedreno &&
-		   ! use video_cards_nouveau &&
-		   ! use video_cards_vmware; then
-			ewarn "Ignoring USE=xa         since VIDEO_CARDS does not contain freedreno, nouveau, or vmware"
-		fi
-	fi
-
-	if ! use llvm; then
-		use opencl     && ewarn "Ignoring USE=opencl     since USE does not contain llvm"
-	fi
-
-	if use osmesa && ! use llvm; then
-		ewarn "OSMesa will be slow without enabling USE=llvm"
+vulkan_enable() {
+	if [[ $1 == -- ]] || use $1 ; then
+		shift
+		VULKAN_DRIVERS+=( "$@" )
 	fi
 }
 
 python_check_deps() {
 	python_has_version -b ">=dev-python/mako-0.8.0[${PYTHON_USEDEP}]" || return 1
-	if use llvm && use vulkan && use video_cards_intel && use amd64; then
+	if use llvm && use vulkan && use video_cards_intel && use amd64 ; then
 		python_has_version -b "dev-python/ply[${PYTHON_USEDEP}]" || return 1
+	fi
+}
+
+pkg_pretend() {
+	ignore_video_card_use "vulkan" "d3d12" "freedreno" "intel" "radeonsi" "v3d"
+	ignore_video_card_use "vaapi" "d3d12" "r600" "radeonsi" "nouveau"
+	ignore_video_card_use "vdpau" "d3d12" "r300" "r600" "radeonsi" "nouveau"
+	ignore_video_card_use "xa" "freedreno" "nouveau" "vmware"
+
+	if ! use llvm ; then
+		if use opencl ; then
+ewarn "Ignoring USE=opencl since USE does not contain llvm"
+		fi
+	fi
+
+	if use osmesa && ! use llvm ; then
+ewarn "OSMesa will be slow without enabling USE=llvm"
 	fi
 }
 
 pkg_setup() {
 	# warning message for bug 459306
-	if use llvm && has_version sys-devel/llvm[!debug=]; then
-		ewarn "Mismatch between debug USE flags in media-libs/mesa and sys-devel/llvm"
-		ewarn "detected! This can cause problems. For details, see bug 459306."
+	if use llvm && has_version "sys-devel/llvm[!debug=]" ; then
+ewarn
+ewarn "Mismatch between debug USE flags in media-libs/mesa and sys-devel/llvm"
+ewarn "detected! This can cause problems. For details, see bug 459306."
+ewarn
 	fi
 
 	if use video_cards_intel ||
-	   use video_cards_radeonsi; then
-		if kernel_is -ge 5 11 3; then
+	   use video_cards_radeonsi \
+	; then
+		if kernel_is -ge 5 11 3 ; then
 			CONFIG_CHECK="~KCMP"
-		elif kernel_is -ge 5 11; then
+		elif kernel_is -ge 5 11 ; then
 			CONFIG_CHECK="~CHECKPOINT_RESTORE"
-		elif kernel_is -ge 5 10 20; then
+		elif kernel_is -ge 5 10 20 ; then
 			CONFIG_CHECK="~KCMP"
 		else
 			CONFIG_CHECK="~CHECKPOINT_RESTORE"
@@ -350,7 +388,7 @@ pkg_setup() {
 		linux-info_pkg_setup
 	fi
 
-	if use llvm; then
+	if use llvm ; then
 		local llvm_slot
 		for llvm_slot in ${LLVM_COMPAT[@]} ; do
 			if use "llvm_slot_${llvm_slot}" ; then
@@ -359,24 +397,31 @@ pkg_setup() {
 			fi
 		done
 		llvm-r1_pkg_setup
-		einfo "PATH=${PATH} (before)"
+einfo "PATH=${PATH} (before)"
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -E -e "/llvm\/[0-9]+/d" \
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
-		einfo "PATH=${PATH} (after)"
+einfo "PATH=${PATH} (after)"
 	fi
 	python-any-r1_pkg_setup
+	uopts_setup
 }
 
 src_prepare() {
 	default
-	sed -i -e "/^PLATFORM_SYMBOLS/a '__gentoo_check_ldflags__'," \
-		bin/symbols-check.py || die # bug #830728
+	sed -i \
+		-e "/^PLATFORM_SYMBOLS/a '__gentoo_check_ldflags__'," \
+		bin/symbols-check.py \
+		|| die # bug #830728
+	prepare_abi() {
+		uopts_src_prepare
+	}
+	multilib_foreach_abi prepare_abi
 }
 
-multilib_src_configure() {
+_src_configure() {
 	local emesonargs=()
 
 	if use llvm ; then
@@ -386,6 +431,7 @@ multilib_src_configure() {
 		done
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
+		export CPP="${CXX} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
 		export OBJCOPY="llvm-objcopy"
@@ -397,49 +443,75 @@ multilib_src_configure() {
 	local platforms
 	use X && platforms+="x11"
 	use wayland && platforms+=",wayland"
-	emesonargs+=(-Dplatforms=${platforms#,})
+	emesonargs+=(
+		-Dplatforms=${platforms#,}
+	)
 
 	if use video_cards_intel ||
 	   use video_cards_r300 ||
 	   use video_cards_r600 ||
 	   use video_cards_radeonsi ||
 	   use video_cards_nouveau ||
-	   use video_cards_vmware; then
-		emesonargs+=($(meson_use d3d9 gallium-nine))
+	   use video_cards_vmware \
+	; then
+		emesonargs+=(
+			$(meson_use d3d9 gallium-nine)
+		)
 	else
-		emesonargs+=(-Dgallium-nine=false)
+		emesonargs+=(
+			-Dgallium-nine=false
+		)
 	fi
 
 	if use video_cards_d3d12 ||
 	   use video_cards_r600 ||
 	   use video_cards_radeonsi ||
-	   use video_cards_nouveau; then
-		emesonargs+=($(meson_feature vaapi gallium-va))
-		use vaapi && emesonargs+=( -Dva-libs-path="${EPREFIX}"/usr/$(get_libdir)/va/drivers )
+	   use video_cards_nouveau \
+	; then
+		emesonargs+=(
+			$(meson_feature vaapi gallium-va)
+		)
+		use vaapi && emesonargs+=(
+			-Dva-libs-path="${EPREFIX}/usr/$(get_libdir)/va/drivers"
+		)
 	else
-		emesonargs+=(-Dgallium-va=disabled)
+		emesonargs+=(
+			-Dgallium-va=disabled
+		)
 	fi
 
-	if use video_cards_d3d12; then
-		emesonargs+=($(meson_feature vaapi gallium-d3d12-video))
+	if use video_cards_d3d12 ; then
+		emesonargs+=(
+			$(meson_feature vaapi gallium-d3d12-video)
+		)
 	fi
 
 	if use video_cards_d3d12 ||
 	   use video_cards_r300 ||
 	   use video_cards_r600 ||
 	   use video_cards_radeonsi ||
-	   use video_cards_nouveau; then
-		emesonargs+=($(meson_feature vdpau gallium-vdpau))
+	   use video_cards_nouveau \
+	; then
+		emesonargs+=(
+			$(meson_feature vdpau gallium-vdpau)
+		)
 	else
-		emesonargs+=(-Dgallium-vdpau=disabled)
+		emesonargs+=(
+			-Dgallium-vdpau=disabled
+		)
 	fi
 
 	if use video_cards_freedreno ||
 	   use video_cards_nouveau ||
-	   use video_cards_vmware; then
-		emesonargs+=($(meson_feature xa gallium-xa))
+	   use video_cards_vmware \
+	; then
+		emesonargs+=(
+			$(meson_feature xa gallium-xa)
+		)
 	else
-		emesonargs+=(-Dgallium-xa=disabled)
+		emesonargs+=(
+			-Dgallium-xa=disabled
+		)
 	fi
 
 	if use video_cards_freedreno ||
@@ -447,17 +519,21 @@ multilib_src_configure() {
 	   use video_cards_panfrost ||
 	   use video_cards_v3d ||
 	   use video_cards_vc4 ||
-	   use video_cards_vivante; then
+	   use video_cards_vivante \
+	; then
 		gallium_enable -- kmsro
 	fi
 
 	gallium_enable -- swrast
+	gallium_enable video_cards_d3d12 d3d12
 	gallium_enable video_cards_freedreno freedreno
 	gallium_enable video_cards_intel crocus i915 iris
 	gallium_enable video_cards_lima lima
-	gallium_enable video_cards_d3d12 d3d12
 	gallium_enable video_cards_nouveau nouveau
 	gallium_enable video_cards_panfrost panfrost
+	gallium_enable video_cards_r300 r300
+	gallium_enable video_cards_r600 r600
+	gallium_enable video_cards_radeonsi radeonsi
 	gallium_enable video_cards_v3d v3d
 	gallium_enable video_cards_vc4 vc4
 	gallium_enable video_cards_virgl virgl
@@ -465,28 +541,27 @@ multilib_src_configure() {
 	gallium_enable video_cards_vmware svga
 	gallium_enable zink zink
 
-	gallium_enable video_cards_r300 r300
-	gallium_enable video_cards_r600 r600
-	gallium_enable video_cards_radeonsi radeonsi
-	if ! use video_cards_r300 && \
-		! use video_cards_r600; then
+	if \
+		! use video_cards_r300 && \
+		! use video_cards_r600 \
+	; then
 		gallium_enable video_cards_radeon r300 r600
 	fi
 
-	if use llvm && use opencl; then
+	if use llvm && use opencl ; then
 		PKG_CONFIG_PATH="$(get_llvm_prefix)/$(get_libdir)/pkgconfig"
-		# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/docs/rusticl.rst
+	# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/docs/rusticl.rst
 		emesonargs+=(
 			$(meson_native_true gallium-rusticl)
 			-Drust_std=2021
 		)
 	fi
 
-	if use vulkan; then
-		vulkan_enable video_cards_lavapipe swrast
+	if use vulkan ; then
+		vulkan_enable video_cards_d3d12 microsoft-experimental
 		vulkan_enable video_cards_freedreno freedreno
 		vulkan_enable video_cards_intel intel intel_hasvk
-		vulkan_enable video_cards_d3d12 microsoft-experimental
+		vulkan_enable video_cards_lavapipe swrast
 		vulkan_enable video_cards_radeonsi amd
 		vulkan_enable video_cards_v3d broadcom
 	fi
@@ -499,61 +574,79 @@ multilib_src_configure() {
 	local vulkan_layers
 	use vulkan && vulkan_layers+="device-select"
 	use vulkan-overlay && vulkan_layers+=",overlay"
-	emesonargs+=(-Dvulkan-layers=${vulkan_layers#,})
+	emesonargs+=(
+		-Dvulkan-layers=${vulkan_layers#,}
+	)
 
-	if use llvm && use vulkan && use video_cards_intel && use amd64; then
-		emesonargs+=(-Dintel-clc=system)
+	if use llvm && use vulkan && use video_cards_intel && use amd64 ; then
+		emesonargs+=(
+			-Dintel-clc=system
+		)
 	else
-		emesonargs+=(-Dintel-clc=disabled)
+		emesonargs+=(
+			-Dintel-clc=disabled
+		)
 	fi
 
 	# Workaround for bug #914905, can drop w/ > 23.3
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
 
 	emesonargs+=(
-		$(meson_use test build-tests)
-		-Dglx=$(usex X dri disabled)
-		-Dshared-glapi=enabled
-		-Ddri3=enabled
-		-Degl=enabled
-		-Dexpat=enabled
-		-Dgbm=enabled
-		-Dglvnd=true
 		$(meson_feature gles1)
 		$(meson_feature gles2)
 		$(meson_feature llvm)
 		$(meson_feature lm-sensors lmsensors)
-		$(meson_use osmesa)
-		$(meson_use selinux)
 		$(meson_feature unwind libunwind)
 		$(meson_feature zstd)
 		$(meson_use cpu_flags_x86_sse2 sse2)
+		$(meson_use osmesa)
+		$(meson_use selinux)
+		$(meson_use test build-tests)
+		-Db_ndebug=$(usex debug false true)
+		-Dbuildtype=$(usex debug debug plain)
+		-Ddri3=enabled
+		-Dglx=$(usex X dri disabled)
+		-Degl=enabled
+		-Dexpat=enabled
+		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
+		-Dgbm=enabled
+		-Dglvnd=true
+		-Dshared-glapi=enabled
 		-Dvalgrind=$(usex valgrind auto disabled)
 		-Dvideo-codecs=$(usex proprietary-codecs "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
-		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
-		-Dbuildtype=$(usex debug debug plain)
-		-Db_ndebug=$(usex debug false true)
 	)
 	meson_src_configure
 }
 
-multilib_src_test() {
+src_compile() {
+	compile_abi() {
+		uopts_src_compile
+	}
+	multilib_foreach_abi compile_abi
+}
+
+_src_test() {
 	meson_src_test -t 100
 }
 
-# $1 - VIDEO_CARDS flag (check skipped for "--")
-# other args - names of DRI drivers to enable
-gallium_enable() {
-	if [[ $1 == -- ]] || use $1; then
-		shift
-		GALLIUM_DRIVERS+=("$@")
-	fi
+src_test() {
+	test_abi() {
+		_src_test
+	}
+	multilib_foreach_abi test_abi
 }
 
-vulkan_enable() {
-	if [[ $1 == -- ]] || use $1; then
-		shift
-		VULKAN_DRIVERS+=("$@")
-	fi
+src_install() {
+	install_abi() {
+		meson_src_install
+	}
+	multilib_foreach_abi install_abi
+	uopts_src_install
 }
+
+pkg_postinst() {
+	uopts_pkg_postinst
+}
+
+# OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, bolt
