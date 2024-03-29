@@ -4,112 +4,174 @@
 
 EAPI=8
 
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.110"
 LLVM_COMPAT=( {16..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( python3_{9..11} )
-
-inherit llvm toolchain-funcs meson-multilib python-any-r1 linux-info
-
 MY_P="${P/_/-}"
+PYTHON_COMPAT=( python3_{9..11} )
+RADEON_CARDS="r300 r600 radeon radeonsi"
+VIDEO_CARDS="${RADEON_CARDS} d3d12 freedreno intel lima nouveau panfrost v3d vc4 virgl vivante vmware"
 
-DESCRIPTION="OpenGL-like graphic library for Linux"
-HOMEPAGE="https://www.mesa3d.org/ https://mesa.freedesktop.org/"
+inherit linux-info llvm meson-multilib python-any-r1 toolchain-funcs
+
+LLVM_USE_DEPS="${MULTILIB_USEDEP}"
+
+for card in ${VIDEO_CARDS}; do
+	IUSE_VIDEO_CARDS+="
+		video_cards_${card}
+	"
+done
 
 if [[ ${PV} == 9999 ]]; then
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
 	inherit git-r3
 else
 	SRC_URI="https://archive.mesa3d.org/${MY_P}.tar.xz"
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux ~x64-solaris"
+	KEYWORDS="
+~alpha amd64 arm arm64 hppa ~ia64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86
+~amd64-linux ~x86-linux ~x64-solaris
+	"
 fi
+S="${WORKDIR}/${MY_P}"
+EGIT_CHECKOUT_DIR=${S}
 
+DESCRIPTION="OpenGL-like graphic library for Linux"
+HOMEPAGE="https://www.mesa3d.org/ https://mesa.freedesktop.org/"
 LICENSE="MIT"
-SLOT="0"
-RESTRICT="!test? ( test )"
-
-RADEON_CARDS="r300 r600 radeon radeonsi"
-VIDEO_CARDS="${RADEON_CARDS} d3d12 freedreno intel lima nouveau panfrost v3d vc4 virgl vivante vmware"
-for card in ${VIDEO_CARDS}; do
-	IUSE_VIDEO_CARDS+=" video_cards_${card}"
-done
-
-IUSE="${IUSE_VIDEO_CARDS}
-	cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm
-	lm-sensors opencl osmesa +proprietary-codecs selinux
-	test unwind vaapi valgrind vdpau vulkan
-	vulkan-overlay wayland +X xa zink +zstd
-
-	${LLVM_COMPAT[@]/#/llvm_slot_} r1
+RESTRICT="
+	!test? (
+		test
+	)
 "
-
+SLOT="0"
+IUSE="
+${IUSE_VIDEO_CARDS}
+${LLVM_COMPAT[@]/#/llvm_slot_}
+cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm lm-sensors opencl osmesa
++proprietary-codecs selinux test unwind vaapi valgrind vdpau vulkan
+vulkan-overlay wayland +X xa zink +zstd
+r1
+"
 REQUIRED_USE="
-	d3d9?   ( || ( video_cards_intel video_cards_r300 video_cards_r600 video_cards_radeonsi video_cards_nouveau video_cards_vmware ) )
-	vulkan? ( video_cards_radeonsi? ( llvm ) )
-	vulkan-overlay? ( vulkan )
-	video_cards_radeon? ( x86? ( llvm ) amd64? ( llvm ) )
-	video_cards_r300?   ( x86? ( llvm ) amd64? ( llvm ) )
-	video_cards_radeonsi?   ( llvm )
-	xa? ( X )
-	zink? ( vulkan )
+	d3d9? (
+		|| (
+			video_cards_intel
+			video_cards_nouveau
+			video_cards_r300
+			video_cards_r600
+			video_cards_radeonsi
+			video_cards_vmware
+		)
+	)
+	video_cards_r300? (
+		amd64? (
+			llvm
+		)
+		x86? (
+			llvm
+		)
+	)
+	video_cards_radeon? (
+		amd64? (
+			llvm
+		)
+		x86? (
+			llvm
+		)
+	)
+	video_cards_radeonsi? (
+		llvm
+	)
+	vulkan? (
+		video_cards_radeonsi? (
+			llvm
+		)
+	)
+	vulkan-overlay? (
+		vulkan
+	)
+	xa? (
+		X
+	)
+	zink? (
+		vulkan
+	)
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
 "
-
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.110"
 RDEPEND="
+	${LIBDRM_DEPSTRING}[video_cards_freedreno?,video_cards_intel?,video_cards_nouveau?,video_cards_vc4?,video_cards_vivante?,video_cards_vmware?,${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
-	unwind? ( sys-libs/libunwind[${MULTILIB_USEDEP}] )
+	unwind? (
+		sys-libs/libunwind[${MULTILIB_USEDEP}]
+	)
 	llvm? (
-		video_cards_radeonsi? (
-			virtual/libelf:0=[${MULTILIB_USEDEP}]
-		)
 		video_cards_r600? (
 			virtual/libelf:0=[${MULTILIB_USEDEP}]
 		)
 		video_cards_radeon? (
 			virtual/libelf:0=[${MULTILIB_USEDEP}]
 		)
+		video_cards_radeonsi? (
+			virtual/libelf:0=[${MULTILIB_USEDEP}]
+		)
 	)
-	lm-sensors? ( sys-apps/lm-sensors:=[${MULTILIB_USEDEP}] )
+	lm-sensors? (
+		sys-apps/lm-sensors:=[${MULTILIB_USEDEP}]
+	)
 	opencl? (
-				>=virtual/opencl-3[${MULTILIB_USEDEP}]
-				dev-libs/libclc
-				virtual/libelf:0=[${MULTILIB_USEDEP}]
-			)
+		>=virtual/opencl-3[${MULTILIB_USEDEP}]
+		dev-libs/libclc
+		virtual/libelf:0=[${MULTILIB_USEDEP}]
+	)
+	selinux? (
+		sys-libs/libselinux[${MULTILIB_USEDEP}]
+	)
 	vaapi? (
 		>=media-libs/libva-1.7.3:=[${MULTILIB_USEDEP}]
 	)
-	vdpau? ( >=x11-libs/libvdpau-1.1:=[${MULTILIB_USEDEP}] )
-	selinux? ( sys-libs/libselinux[${MULTILIB_USEDEP}] )
-	wayland? ( >=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}] )
-	${LIBDRM_DEPSTRING}[video_cards_freedreno?,video_cards_intel?,video_cards_nouveau?,video_cards_vc4?,video_cards_vivante?,video_cards_vmware?,${MULTILIB_USEDEP}]
+	vdpau? (
+		>=x11-libs/libvdpau-1.1:=[${MULTILIB_USEDEP}]
+	)
+	wayland? (
+		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
+	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libxshmfence-1.1[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.13:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libxshmfence-1.1[${MULTILIB_USEDEP}]
+		>=x11-libs/libXxf86vm-1.1.3[${MULTILIB_USEDEP}]
 		x11-libs/libXfixes[${MULTILIB_USEDEP}]
 	)
-	zink? ( media-libs/vulkan-loader:=[${MULTILIB_USEDEP}] )
-	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )
+	zink? (
+		media-libs/vulkan-loader:=[${MULTILIB_USEDEP}]
+	)
+	zstd? (
+		app-arch/zstd:=[${MULTILIB_USEDEP}]
+	)
 "
 for card in ${RADEON_CARDS}; do
-	RDEPEND="${RDEPEND}
-		video_cards_${card}? ( ${LIBDRM_DEPSTRING}[video_cards_radeon] )
+	RDEPEND="
+		${RDEPEND}
+		video_cards_${card}? (
+			${LIBDRM_DEPSTRING}[video_cards_radeon]
+		)
 	"
 done
-RDEPEND="${RDEPEND}
-	video_cards_radeonsi? ( ${LIBDRM_DEPSTRING}[video_cards_amdgpu] )
+RDEPEND="
+	${RDEPEND}
+	video_cards_radeonsi? (
+		${LIBDRM_DEPSTRING}[video_cards_amdgpu]
+	)
 "
 
 # Please keep the LLVM dependency block separate. Since LLVM is slotted,
 # we need to *really* make sure we're not pulling one than more slot
 # simultaneously.
-LLVM_USE_DEPS="${MULTILIB_USEDEP}"
 gen_llvm_depstr() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
@@ -139,32 +201,9 @@ CLANG_DEPSTR="
 	$(gen_clang_depstr)
 "
 CLANG_DEPSTR_AMDGPU=${CLANG_DEPSTR//]/,llvm_targets_AMDGPU(-)]}
-RDEPEND="${RDEPEND}
+RDEPEND="
+	${RDEPEND}
 	llvm? (
-		opencl? (
-			video_cards_r600? (
-				${CLANG_DEPSTR_AMDGPU}
-			)
-			!video_cards_r600? (
-				video_cards_radeonsi? (
-					${CLANG_DEPSTR_AMDGPU}
-				)
-			)
-			!video_cards_r600? (
-				!video_cards_radeonsi? (
-					video_cards_radeon? (
-						${CLANG_DEPSTR_AMDGPU}
-					)
-				)
-			)
-			!video_cards_r600? (
-				!video_cards_radeon? (
-					!video_cards_radeonsi? (
-						${CLANG_DEPSTR}
-					)
-				)
-			)
-		)
 		!opencl? (
 			video_cards_r600? (
 				${LLVM_DEPSTR_AMDGPU}
@@ -189,44 +228,77 @@ RDEPEND="${RDEPEND}
 				)
 			)
 		)
+		opencl? (
+			video_cards_r600? (
+				${CLANG_DEPSTR_AMDGPU}
+			)
+			!video_cards_r600? (
+				video_cards_radeonsi? (
+					${CLANG_DEPSTR_AMDGPU}
+				)
+			)
+			!video_cards_r600? (
+				!video_cards_radeonsi? (
+					video_cards_radeon? (
+						${CLANG_DEPSTR_AMDGPU}
+					)
+				)
+			)
+			!video_cards_r600? (
+				!video_cards_radeon? (
+					!video_cards_radeonsi? (
+						${CLANG_DEPSTR}
+					)
+				)
+			)
+		)
 	)
 "
 unset {LLVM,CLANG}_DEPSTR{,_AMDGPU}
-
-DEPEND="${RDEPEND}
-	video_cards_d3d12? ( dev-util/directx-headers[${MULTILIB_USEDEP}] )
-	valgrind? ( dev-debug/valgrind )
-	wayland? ( >=dev-libs/wayland-protocols-1.24 )
+DEPEND="
+	${RDEPEND}
+	valgrind? (
+		dev-debug/valgrind
+	)
+	video_cards_d3d12? (
+		dev-util/directx-headers[${MULTILIB_USEDEP}]
+	)
+	wayland? (
+		>=dev-libs/wayland-protocols-1.24
+	)
 	X? (
-		x11-libs/libXrandr[${MULTILIB_USEDEP}]
 		x11-base/xorg-proto
+		x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	)
 "
 BDEPEND="
+	$(python_gen_any_dep "
+		>=dev-python/mako-0.8.0[\${PYTHON_USEDEP}]
+	")
 	${PYTHON_DEPS}
-	opencl? (
-		>=sys-devel/gcc-4.6
-	)
 	sys-devel/bison
 	sys-devel/flex
 	virtual/pkgconfig
-	$(python_gen_any_dep ">=dev-python/mako-0.8.0[\${PYTHON_USEDEP}]")
-	vulkan? ( dev-util/glslang )
-	wayland? ( dev-util/wayland-scanner )
+	opencl? (
+		>=sys-devel/gcc-4.6
+	)
+	vulkan? (
+		dev-util/glslang
+	)
+	wayland? (
+		dev-util/wayland-scanner
+	)
 "
-
-S="${WORKDIR}/${MY_P}"
-EGIT_CHECKOUT_DIR=${S}
-
 QA_WX_LOAD="
-x86? (
-	usr/lib*/libglapi.so.0.0.0
-	usr/lib*/libGLESv1_CM.so.1.1.0
-	usr/lib*/libGLESv2.so.2.0.0
-	usr/lib*/libGL.so.1.2.0
-	usr/lib*/libOSMesa.so.8.0.0
-	usr/lib/libGLX_mesa.so.0.0.0
-)"
+	x86? (
+		usr/lib*/libglapi.so.0.0.0
+		usr/lib*/libGL.so.1.2.0
+		usr/lib*/libGLESv1_CM.so.1.1.0
+		usr/lib*/libGLESv2.so.2.0.0
+		usr/lib*/libOSMesa.so.8.0.0
+		usr/lib/libGLX_mesa.so.0.0.0
+	)
+"
 
 llvm_check_deps() {
 	local flags=${MULTILIB_USEDEP}
