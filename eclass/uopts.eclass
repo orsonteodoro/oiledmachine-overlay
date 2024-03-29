@@ -13,6 +13,15 @@
 
 # Flexible for future expansion
 
+#
+# Discussion of where to place this code or EAPI design.
+#
+# Q: Could you place this code (along with *pgo and *bolt eclasses) in the
+# sys-apps/portage ebuild/project instead?
+# A: No, because support for multilib is not in sys-apps/portage.
+# I already attempted to do that but stopped because of the ABI issue.
+#
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
