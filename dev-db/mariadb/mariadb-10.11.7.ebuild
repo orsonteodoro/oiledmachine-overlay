@@ -367,6 +367,7 @@ src_prepare() {
 
 	cmake_src_prepare
 	java-pkg-opt-2_src_prepare
+	uopts_src_prepare
 }
 
 src_configure() { :; }

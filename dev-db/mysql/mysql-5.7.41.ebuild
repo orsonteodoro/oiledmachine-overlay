@@ -301,6 +301,10 @@ src_prepare() {
 	sed -i 's~ADD_SUBDIRECTORY(storage/ndb)~~' CMakeLists.txt || die
 
 	cmake_src_prepare
+	compile_abi() {
+		uopts_src_prepare
+	}
+	multilib_foreach_abi compile_abi
 }
 
 src_configure() { :; }

@@ -231,6 +231,7 @@ src_prepare() {
 		|| die
 
 	cmake_src_prepare
+	uopts_src_prepare
 }
 
 src_configure() { :; }
