@@ -110,6 +110,8 @@ SO_CURRENT="9"
 SO_AGE="5"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 UOPTS_IMPLS="_${API_VERSION}"
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 USE_RUBY=" ruby31 ruby32 ruby33"
@@ -2079,6 +2081,10 @@ ewarn
 append_all() {
 	append-flags ${@}
 	append-ldflags ${@}
+}
+
+_src_configure_compiler() {
+	_set_cxx
 }
 
 _src_configure() {
