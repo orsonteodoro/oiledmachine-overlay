@@ -462,7 +462,6 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure() {
-	uopts_src_configure
 	local emesonargs=()
 
 	if use llvm ; then
@@ -480,6 +479,8 @@ _src_configure() {
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
 	fi
+	uopts_src_configure
+	strip-unsupported-flags
 
 	local platforms
 	use X && platforms+="x11"
