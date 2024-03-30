@@ -6,6 +6,7 @@ EAPI=8
 # For the version, see
 # https://github.com/ispc/ispc/blob/main/common/version.h
 
+CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_COMPAT=( {18..13} ) # See https://github.com/ispc/ispc/blob/v1.21.1/src/ispc_version.h
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
@@ -154,13 +155,10 @@ BDEPEND="
 		>=dev-libs/intel-vc-intrinsics-0.12
 	)
 "
-
 PATCHES=(
 	"${FILESDIR}/${PN}-1.20.0-llvm.patch"
 	"${FILESDIR}/${PN}-1.18.1-curses-cmake.patch"
 )
-
-CMAKE_BUILD_TYPE="RelWithDebInfo"
 
 pkg_setup() {
 	local s
