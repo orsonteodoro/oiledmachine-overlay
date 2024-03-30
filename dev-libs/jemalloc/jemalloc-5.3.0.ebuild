@@ -7,15 +7,23 @@ EAPI=8
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
-TRAIN_TEST_DURATION=1800 # 30 min
+MULTILIB_WRAPPED_HEADERS=(
+	"/usr/include/jemalloc/jemalloc.h"
+)
 TRAINERS=(
 	"test-trainer"
 	"stress-test-trainer"
 )
+TRAIN_TEST_DURATION=1800 # 30 min
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
 
 inherit autotools multilib-minimal
 inherit uopts
 
+KEYWORDS+=" amd64 arm arm64 hppa ~loong ~m68k ppc ppc64 ~riscv ~s390 ~sparc x86"
 SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
 
 DESCRIPTION="Jemalloc is a general-purpose scalable concurrent allocator"
@@ -36,7 +44,6 @@ LICENSE="
 # GPL-3+ - build-aux/config.guess
 # HPND - build-aux/install-sh
 SLOT="0/2"
-KEYWORDS+=" amd64 arm arm64 hppa ~loong ~m68k ppc ppc64 ~riscv ~s390 ~sparc x86"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
@@ -44,8 +51,6 @@ custom-cflags debug lazy-lock prof static-libs stats test xmalloc
 REQUIRED_USE+="
 	!custom-cflags? (
 		!bolt
-		!ebolt
-		!epgo
 		!pgo
 	)
 	bolt? (
@@ -65,7 +70,26 @@ REQUIRED_USE+="
 	)
 "
 HTML_DOCS=( doc/jemalloc.html )
-MULTILIB_WRAPPED_HEADERS=( /usr/include/jemalloc/jemalloc.h )
+
+_add_gcov() {
+	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+	local f
+	for f in Makefile Makefile.in ; do
+einfo "Editing ${f}:  Adding -lgcov"
+		sed -i -e "s|EXTRA_LDFLAGS :=|EXTRA_LDFLAGS := -lgcov|g" \
+			"${d}/${f}" || die
+	done
+}
+
+_remove_gcov() {
+	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
+	local f
+	for f in Makefile Makefile.in ; do
+einfo "Editing ${f}:  Removing -lgcov"
+		sed -i -e "s|EXTRA_LDFLAGS := -lgcov|EXTRA_LDFLAGS :=|g" \
+			"${d}/${f}" || die
+	done
+}
 
 pkg_setup() {
 	uopts_setup
@@ -92,26 +116,6 @@ src_prepare() {
 		uopts_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
-}
-
-_add_gcov() {
-	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
-	local f
-	for f in Makefile Makefile.in ; do
-einfo "Editing ${f}:  Adding -lgcov"
-		sed -i -e "s|EXTRA_LDFLAGS :=|EXTRA_LDFLAGS := -lgcov|g" \
-			"${d}/${f}" || die
-	done
-}
-
-_remove_gcov() {
-	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
-	local f
-	for f in Makefile Makefile.in ; do
-einfo "Editing ${f}:  Removing -lgcov"
-		sed -i -e "s|EXTRA_LDFLAGS := -lgcov|EXTRA_LDFLAGS :=|g" \
-			"${d}/${f}" || die
-	done
 }
 
 src_configure() { :; }
