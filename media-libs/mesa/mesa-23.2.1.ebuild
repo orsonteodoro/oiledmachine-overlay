@@ -686,9 +686,9 @@ src_test() {
 src_install() {
 	install_abi() {
 		meson_src_install
+		uopts_src_install
 	}
 	multilib_foreach_abi install_abi
-	uopts_src_install
 }
 
 pkg_postinst() {
