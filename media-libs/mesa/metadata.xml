@@ -48,6 +48,8 @@
   # Restart X or wayland
   # Run favorite OpenGL games or apps
   USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT optimize
+  # Save the epgo and ebolt USE flags in /etc/portage/package.use/mesa.conf:
+  # media-libs/mesa epgo ebolt
 
   Q:  Why do you not run unattended PGO?
   A:  There are different versions of OpenGL and each version needs to be
