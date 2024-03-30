@@ -601,7 +601,7 @@ ewarn
 		elif tc-is-clang && (( ${#n_lines2[@]} > 0 )) ; then
 			: # pass
 		else
-ewarn "NO PGO PROFILE"
+ewarn "NO PGO PROFILE FOR ABI == ${ABI}"
 			return 1
 		fi
 

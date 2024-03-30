@@ -375,7 +375,7 @@ ewarn
 		if (( ${n_lines} > 0 )) ; then
 			: # pass
 		else
-ewarn "NO BOLT PROFILE"
+ewarn "NO BOLT PROFILE FOR ABI == ${ABI}"
 			return 1
 		fi
 
