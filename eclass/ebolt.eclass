@@ -51,17 +51,17 @@ fi
 # Sets the location to dump BOLT profiles.
 UOPTS_BOLT_PROFILES_DIR=${UOPTS_BOLT_PROFILES_DIR:-"/var/lib/bolt-profiles"}
 
-# @ECLASS_VARIABLE: _UOPTS_BOLT_PV
+# @ECLASS_VARIABLE: _UOPTS_SLOT
 # @INTERNAL
 # @DESCRIPTION:
 # Default PV with breaking changes when bumped.
-_UOPTS_BOLT_PV=$(ver_cut 1-2 ${PV}) # default
+_UOPTS_SLOT=$(ver_cut 1-2 ${PV}) # default
 
-# @ECLASS_VARIABLE: UOPTS_BOLT_PV
+# @ECLASS_VARIABLE: UOPTS_SLOT
 # @DESCRIPTION:
 # Set to the PV range which can cause breakage when bumped.  Excludes non
 # breaking patch versions.
-UOPTS_BOLT_PV=${UOPTS_BOLT_PV:-${_UOPTS_BOLT_PV}}
+UOPTS_SLOT=${UOPTS_SLOT:-${_UOPTS_SLOT}}
 
 # @ECLASS_VARIABLE: _UOPTS_BOLT_CATPN_DATA_DIR
 # @INTERNAL
@@ -73,7 +73,7 @@ _UOPTS_BOLT_CATPN_DATA_DIR=${_UOPTS_BOLT_CATPN_DATA_DIR:-"${UOPTS_BOLT_PROFILES_
 # @INTERNAL
 # @DESCRIPTION:
 # The path to the program BOLT profile with version specificity.
-_UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_BOLT_PV}"}
+_UOPTS_BOLT_DATA_DIR=${_UOPTS_BOLT_DATA_DIR:-"${UOPTS_BOLT_PROFILES_DIR}/${CATEGORY}/${PN}/${UOPTS_SLOT}"}
 
 # @ECLASS_VARIABLE: UOPTS_BOLT_FORK_MULTIPLIER
 # @USER_VARIABLE
