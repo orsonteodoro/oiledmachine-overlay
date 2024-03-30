@@ -441,12 +441,8 @@ epgo_src_install() {
 		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 		local pgo_data_suffix_dir="${_UOPTS_PGO_DATA_DIR}/${_UOPTS_PGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
-		if [[ -n "${UOPTS_USER}" ]] ; then
-	# Root does not have the limited user group.
-			fowners ${UOPTS_USER}:${UOPTS_GROUP} "${pgo_data_suffix_dir}"
-		else
-			fowners root:${UOPTS_GROUP} "${pgo_data_suffix_dir}"
-		fi
+	# Root does not have the limited user group (ex. johndoe).
+		fowners ${UOPTS_USER}:${UOPTS_GROUP} "${pgo_data_suffix_dir}"
 		fperms 0775 "${pgo_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then

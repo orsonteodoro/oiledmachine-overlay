@@ -663,12 +663,8 @@ ebolt_src_install() {
 		local bolt_data_suffix_dir="${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
 		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 		keepdir "${bolt_data_suffix_dir}"
-		if [[ -n "${UOPTS_USER}" ]] ; then
-	# Root does not have the limited user (ex. johndoe) group.
-			fowners ${UOPTS_USER}:${UOPTS_GROUP} "${bolt_data_suffix_dir}"
-		else
-			fowners root:${UOPTS_GROUP} "${bolt_data_suffix_dir}"
-		fi
+	# Root does not have the limited user group (ex. johndoe).
+		fowners ${UOPTS_USER}:${UOPTS_GROUP} "${bolt_data_suffix_dir}"
 		fperms 0775 "${bolt_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then

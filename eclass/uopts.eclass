@@ -81,15 +81,19 @@ fi
 # New groups can be epgo, pgo, etc.
 _uopts_check_group() {
 	if ( has epgo && use epgo ) || ( has ebolt && use ebolt ) ; then
-		if [[ -z "${UOPTS_GROUP}" ]] ; then
+		if [[ -z "${UOPTS_GROUP}" || -z "${UOPTS_USER}" ]] ; then
 eerror
-eerror "The UOPTS_GROUP must be defined either in a per-package env file or in"
-eerror "${EPREFIX}/etc/portage/make.conf.  Users who are not a member of this"
-eerror "group cannot generate PGO profile data with this program."
+eerror "The UOPTS_GROUP and UOPTS_USER must be defined either in a per-package"
+eerror "env file.  Users who are not a member of this group cannot generate"
+eerror "PGO/BOLT profile data with this program."
 eerror
 eerror "Example:"
 eerror
 eerror "  UOPTS_GROUP=\"johndoe\" # A non-root user performing PGO/BOLT training"
+eerror
+eerror "For details see,"
+eerror
+eerror "  https://github.com/orsonteodoro/oiledmachine-overlay?tab=readme-ov-file#epgoebolt-profile-permissions"
 eerror
 			die
 		fi
