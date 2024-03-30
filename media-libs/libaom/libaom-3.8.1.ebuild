@@ -6,10 +6,13 @@
 EAPI=8
 
 AOCC_COMPAT=( 14 16 )
-UOPTS_SUPPORT_EBOLT=1
-UOPTS_SUPPORT_TBOLT=1
 CMAKE_ECLASS="cmake"
+N_SAMPLES=1
 PYTHON_COMPAT=( python3_{8..12} )
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
 
 inherit aocc cmake-multilib flag-o-matic flag-o-matic-om multiprocessing python-any-r1
 inherit toolchain-funcs uopts
@@ -18,6 +21,8 @@ if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
+	S="${WORKDIR}/${P}"
 	# To update test data tarball, follow these steps:
 	# 1.  Clone the upstream repo and check out the relevant tag, or
 	#     download the release tarball
@@ -35,13 +40,18 @@ https://storage.googleapis.com/aom-releases/${P}.tar.gz
 https://dev.gentoo.org/~sam/distfiles/${CATEGORY}/${PN}/${P}-testdata.tar.xz
 		)
 	"
-	S="${WORKDIR}/${P}"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 fi
 
 DESCRIPTION="Alliance for Open Media AV1 Codec SDK"
 HOMEPAGE="https://aomedia.org"
 LICENSE="BSD-2"
+# Don't strip CFI \
+RESTRICT="
+	!test? (
+		test
+	)
+	strip
+"
 SLOT="0/3"
 ARM_IUSE="
 	cpu_flags_arm_crc32
@@ -140,14 +150,6 @@ PATCHES=(
 
 # The PATENTS file is required to be distributed with this package bug #682214.
 DOCS=( PATENTS )
-# Don't strip CFI
-RESTRICT="
-	!test? (
-		test
-	)
-	strip
-"
-N_SAMPLES=1
 
 get_asset_ids() {
 	local types=(
