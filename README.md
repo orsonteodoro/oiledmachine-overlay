@@ -503,6 +503,11 @@ You may use "users" or "uopts" if you do not have a physical multiuser.
 It is only an issue if there is a vulnerability in gcc/clang when reading
 PGO/BOLT profiles because the PGO/BOLT profiles are shared across users.
 
+The permission affects a single folder that stores BOLT/PGO profile files
+which the non-root user must write to.  Specifically, it pertains to the
+folder with defaults
+`/var/lib/pgo-profiles/${CATEGORY}/${PN}/${UOPTS_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}/`
+
 Currently using the limited user for the group is recommended to smooth things
 out, but it may break on multiuser setup.  When doing epgo/ebolt in multiuser
 environment, it should be done ASAP or during maintenance days if the package
