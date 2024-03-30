@@ -36,7 +36,7 @@
   # Relog user johndoe
   UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo" emerge -1vO mesa # PGO instrumentation
   # Restart X or wayland
-  # Run favorite OpenGL games or apps
+  # Run favorite OpenGL games, apps, or WebGL websites
   USE="epgo" emerge -1vO mesa # PGO optimize build
 
   Q:  How do you PGO+BOLT this?
@@ -51,13 +51,16 @@
   # Relog user johndoe
   UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo -ebolt" emerge -1vO mesa # PGO instrumentation only
   # Restart X or wayland
-  # Run favorite OpenGL games or apps
+  # Run favorite OpenGL games, apps, or WebGL websites
   USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT instrument
   # Restart X or wayland
-  # Run favorite OpenGL games or apps
+  # Run favorite OpenGL games, apps, or WebGL websites
   USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT optimize
   # Save the epgo and ebolt USE flags in /etc/portage/package.use/mesa.conf:
   # media-libs/mesa epgo ebolt
+
+  When you do training, be sure to run the apps that represent typical use,
+  OpenGL and EGL versions used, etc.
 
   Q:  Why do you not run unattended PGO?
   A:  There are different versions of OpenGL and each version needs to be
