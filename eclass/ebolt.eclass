@@ -329,8 +329,6 @@ ewarn "Compiler is not supported for EBOLT."
 			export CXX="${CHOST}-g++"
 		fi
 
-		_CC="${CC% *}"
-
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
@@ -346,7 +344,19 @@ ewarn "Compiler is not supported for EBOLT."
 			# Live snapshot with unstable ABI.
 			bolt_slot="${raw_pv}"
 		fi
-		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
+		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
+		if [[ "${triple}" =~ "i386" && "${CC}" =~ "clang" && "${CC}" =~ "x86_64" ]] ; then
+	#
+	# Fix inconsistency between
+	#
+	# `x86_64-pc-linux-gnu-clang -m32 -dumpmachine` outputs i386-pc-linux-gnu
+	#
+	#   and
+	#
+	# `i686-pc-linux-gnu-clang -m32 -dumpmachine` outputs i686-pc-linux-gnu
+	#
+			triple="${triple/i386/i686}"
+		fi
 		local actual="llvm-bolt;${bolt_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 		local expected=$(cat "${bolt_data_staging_dir}/llvm_bolt_fingerprint")
 		if [[ "${actual}" != "${expected}" ]] ; then
@@ -672,8 +682,6 @@ ebolt_src_install() {
 			export CXX="${CHOST}-g++"
 		fi
 
-		_CC="${CC% *}"
-
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
@@ -689,7 +697,19 @@ ebolt_src_install() {
 			# Live snapshot with unstable ABI.
 			bolt_slot="${raw_pv}"
 		fi
-		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
+		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
+		if [[ "${triple}" =~ "i386" && "${CC}" =~ "clang" && "${CC}" =~ "x86_64" ]] ; then
+	#
+	# Fix inconsistency between
+	#
+	# `x86_64-pc-linux-gnu-clang -m32 -dumpmachine` outputs i386-pc-linux-gnu
+	#
+	#   and
+	#
+	# `i686-pc-linux-gnu-clang -m32 -dumpmachine` outputs i686-pc-linux-gnu
+	#
+			triple="${triple/i386/i686}"
+		fi
 		local fingerprint="llvm-bolt;${bolt_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 		echo "llvm-bolt ${raw_pv}" \
 			> "${ED}/${bolt_data_suffix_dir}/llvm_bolt_version" || die

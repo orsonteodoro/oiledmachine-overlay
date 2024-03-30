@@ -329,9 +329,6 @@ _epgo_meets_pgo_requirements() {
 			export CC=$(tc-getCC)
 			export CXX=$(tc-getCXX)
 		fi
-einfo "CC:\t\t${CC}"
-einfo "CXX:\t\t${CXX}"
-		_CC="${CC% *}"
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
 ewarn "Compiler is not supported."
@@ -357,7 +354,7 @@ ewarn "Compiler is not supported."
 			#elif [[ "${raw_pv}" =~ "_p"[0-9]+ ]] ; then
 				# Weekly snapshot of a stable branch.  ABI change unlikely.
 			fi
-			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
+			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 			local actual="gcc;${pgo_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
@@ -376,7 +373,19 @@ ewarn
 				"${ESYSROOT}/usr/lib/llvm/${clang_major_pv}/include/llvm/ProfileData/InstrProfData.inc" \
 	                        | cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}" # For stable ABI.
-			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
+			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
+			if [[ "${triple}" =~ "i386" && "${CC}" =~ "clang" && "${CC}" =~ "x86_64" ]] ; then
+	#
+	# Fix inconsistency between
+	#
+	# `x86_64-pc-linux-gnu-clang -m32 -dumpmachine` outputs i386-pc-linux-gnu
+	#
+	#   and
+	#
+	# `i686-pc-linux-gnu-clang -m32 -dumpmachine` outputs i686-pc-linux-gnu
+	#
+				triple="${triple/i386/i686}"
+			fi
 			local actual="clang;${pgo_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 			local expected=$(cat "${pgo_data_staging_dir}/compiler_fingerprint")
 			if [[ "${actual}" != "${expected}" ]] ; then
@@ -451,8 +460,6 @@ epgo_src_install() {
 			export CXX=$(tc-getCXX)
 		fi
 
-		_CC="${CC% *}"
-
 		if tc-is-gcc ; then
 	# Profile compatibility is based on a byte string.
 	# 1 byte major version in hex
@@ -475,7 +482,7 @@ epgo_src_install() {
 			#elif [[ "${raw_pv}" =~ "_p"[0-9]+ ]] ; then
 				# Weekly snapshot of a stable branch.  ABI change unlikely.
 			fi
-			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
+			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
 			local fingerprint="gcc;${pgo_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 			echo "gcc ${raw_pv}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die
@@ -491,7 +498,19 @@ epgo_src_install() {
 				"${ESYSROOT}/usr/lib/llvm/${clang_major_pv}/include/llvm/ProfileData/InstrProfData.inc" \
 	                        | cut -f 3 -d " ")
 			local pgo_slot="${sys_index_ver}" # For stable ABI.
-			local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
+			local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
+			if [[ "${triple}" =~ "i386" && "${CC}" =~ "clang" && "${CC}" =~ "x86_64" ]] ; then
+	#
+	# Fix inconsistency between
+	#
+	# `x86_64-pc-linux-gnu-clang -m32 -dumpmachine` outputs i386-pc-linux-gnu
+	#
+	#   and
+	#
+	# `i686-pc-linux-gnu-clang -m32 -dumpmachine` outputs i686-pc-linux-gnu
+	#
+				triple="${triple/i386/i686}"
+			fi
 			local fingerprint="clang;${pgo_slot};${MULTILIB_ABI_FLAG}.${ABI};${triple}"
 			echo "clang ${compiler_pv}" \
 				> "${ED}/${pgo_data_suffix_dir}/compiler_version" || die

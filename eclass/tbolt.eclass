@@ -325,8 +325,6 @@ ewarn "Compiler is not supported for TBOLT."
 			export CXX="${CHOST}-g++"
 		fi
 
-		_CC="${CC% *}"
-
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
@@ -342,7 +340,19 @@ ewarn "Compiler is not supported for TBOLT."
 			# Live snapshot with unstable ABI.
 			bolt_slot="${raw_pv}"
 		fi
-		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
+		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
+		if [[ "${triple}" =~ "i386" && "${CC}" =~ "clang" && "${CC}" =~ "x86_64" ]] ; then
+	#
+	# Fix inconsistency between
+	#
+	# `x86_64-pc-linux-gnu-clang -m32 -dumpmachine` outputs i386-pc-linux-gnu
+	#
+	#   and
+	#
+	# `i686-pc-linux-gnu-clang -m32 -dumpmachine` outputs i686-pc-linux-gnu
+	#
+			triple="${triple/i386/i686}"
+		fi
 		local cc_type
 		if tc-is-clang ; then
 			cc_type="clang"
@@ -737,8 +747,6 @@ tbolt_src_install() {
 			export CXX="${CHOST}-g++"
 		fi
 
-		_CC="${CC% *}"
-
 		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
@@ -754,7 +762,19 @@ tbolt_src_install() {
 			# Live snapshot with unstable ABI.
 			bolt_slot="${raw_pv}"
 		fi
-		local triple=$(${_CC} -dumpmachine) # For ABI and LIBC consistency.
+		local triple=$(${CC} -dumpmachine) # For ABI and LIBC consistency.
+		if [[ "${triple}" =~ "i386" && "${CC}" =~ "clang" && "${CC}" =~ "x86_64" ]] ; then
+	#
+	# Fix inconsistency between
+	#
+	# `x86_64-pc-linux-gnu-clang -m32 -dumpmachine` outputs i386-pc-linux-gnu
+	#
+	#   and
+	#
+	# `i686-pc-linux-gnu-clang -m32 -dumpmachine` outputs i686-pc-linux-gnu
+	#
+			triple="${triple/i386/i686}"
+		fi
 		local cc_type
 		if tc-is-clang ; then
 			cc_type="clang"
