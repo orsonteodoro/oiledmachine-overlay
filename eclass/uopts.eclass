@@ -72,10 +72,35 @@ if [[ "${UOPTS_SUPPORT_TBOLT}" == "1" ]] ; then
 	inherit tbolt
 fi
 
+# @FUNCTION: _uopts_check_group
+# @INTERNAL
+# @DESCRIPTION:
+# Checks the preferred trainer group.
+# You can use an existing or completely isolated group.
+# Existing groups can be users, wheel
+# New groups can be epgo, pgo, etc.
+_uopts_check_group() {
+	if ( has epgo && use epgo ) || ( has ebolt && use ebolt ) ; then
+		if [[ -z "${UOPTS_GROUP}" ]] ; then
+eerror
+eerror "The UOPTS_GROUP must be defined either in a per-package env file or in"
+eerror "${EPREFIX}/etc/portage/make.conf.  Users who are not a member of this"
+eerror "group cannot generate PGO profile data with this program."
+eerror
+eerror "Example:"
+eerror
+eerror "  UOPTS_GROUP=\"johndoe\" # A non-root user performing PGO/BOLT training"
+eerror
+			die
+		fi
+	fi
+}
+
 # @FUNCTION: uopts_setup
 # @DESCRIPTION:
 # Preforms checks for optimization compatibility
 uopts_setup() {
+	_uopts_check_group
 	[[ "${UOPTS_SUPPORT_EPGO}" == "1" ]] && epgo_setup
 	[[ "${UOPTS_SUPPORT_EBOLT}" == "1" ]] && ebolt_setup
 	[[ "${UOPTS_SUPPORT_TPGO}" == "1" ]] && tpgo_setup

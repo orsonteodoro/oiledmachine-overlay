@@ -27,19 +27,13 @@
   Q:  How do you PGO this?
   A:
   # Add/change the two lines below in /etc/portage/make.conf:
-  # UOPTS_PGO_GROUP="pgo"
-  # UOPTS_BOLT_GROUP="bolt"
-  # You may use "users" instead if there is no physical multi-user.
-  sudo groupadd pgo
-  sudo groupadd bolt
-  sudo gpasswd -a johndoe pgo
-  sudo gpasswd -a johndoe bolt
+  # UOPTS_GROUP="johndoe"
+  # See README.md in oiledmachine-overlay
   # Relog user johndoe
   USE="-epgo -ebolt" emerge -1ovuDN mesa # Update dependencies
   UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo -ebolt" emerge -1vO mesa # PGO instrumentation
   # Restart X or wayland
   # Run favorite OpenGL games, apps, or WebGL websites
-  # You need to `sudo -g pgo appname` or `sudo -g bolt appname` for training.
   USE="epgo -ebolt" emerge -1vO mesa # PGO optimize build
   # Save the epgo USE flag in /etc/portage/package.use/mesa.conf:
   # media-libs/mesa epgo -ebolt
@@ -47,19 +41,13 @@
   Q:  How do you PGO+BOLT this?
   A:
   # Add/change the two lines below in /etc/portage/make.conf:
-  # UOPTS_PGO_GROUP="pgo"
-  # UOPTS_BOLT_GROUP="bolt"
-  # You may use "users" instead if there is no physical multi-user.
-  sudo groupadd pgo
-  sudo groupadd bolt
-  sudo gpasswd -a johndoe pgo
-  sudo gpasswd -a johndoe bolt
+  # UOPTS_GROUP="johndoe"
+  # See README.md in oiledmachine-overlay
   # Relog user johndoe
   USE="-epgo -ebolt" emerge -1ovuDN mesa # Update dependencies
   UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo -ebolt" emerge -1vO mesa # PGO instrumentation only
   # Restart X or wayland
   # Run favorite OpenGL games, apps, or WebGL websites
-  # You need to `sudo -g pgo appname` or `sudo -g bolt appname` for training.
   USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT instrument
   # Restart X or wayland
   # Run favorite OpenGL games, apps, or WebGL websites

@@ -130,27 +130,20 @@ _UOPTS_BOLT_PATH="" # Set in ebolt_setup
 # Example:
 # UOPTS_BOLT_FORCE_INST=1 emerge foo
 
+# @FUNCTION: _ebolt_check_bolt
+# @DESCRIPTION:
+# Check additional bolt requirements
 _ebolt_check_bolt() {
 	if use ebolt ; then
-		if [[ -z "${UOPTS_BOLT_GROUP}" ]] ; then
-eerror
-eerror "The UOPTS_BOLT_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
-eerror "in a per-package env file.  Users who are not a member of this group"
-eerror "cannot generate a BOLT profile data with this program."
-eerror
-eerror "Example:"
-eerror
-eerror "  UOPTS_BOLT_GROUP=\"ebolt\""
-eerror
-			die
-		fi
-
 		if ! use kernel_linux ; then
 ewarn "The ebuilds only support BOLT for Linux at the moment."
 		fi
 	fi
 }
 
+# @FUNCTION: _setup_malloc
+# @DESCRIPTION:
+# Picks the malloc library
 _setup_malloc() {
 	[[ -z "${UOPTS_BOLT_MALLOC}" ]] && UOPTS_BOLT_MALLOC="auto"
 
@@ -670,7 +663,7 @@ ebolt_src_install() {
 		local bolt_data_suffix_dir="${_UOPTS_BOLT_DATA_DIR}/${_UOPTS_BOLT_SUFFIX}"
 		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 		keepdir "${bolt_data_suffix_dir}"
-		fowners root:${UOPTS_BOLT_GROUP} "${bolt_data_suffix_dir}"
+		fowners root:${UOPTS_GROUP} "${bolt_data_suffix_dir}"
 		fperms 0775 "${bolt_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then

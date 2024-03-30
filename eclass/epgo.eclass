@@ -104,36 +104,10 @@ _UOPTS_PGO_DATA_DIR=${_UOPTS_PGO_DATA_DIR:-"${UOPTS_PGO_PROFILES_DIR}/${CATEGORY
 # The upstream default is single, but these eclasses use auto.
 # Valid values:  0 (single), 1 (auto), 2 (forced/thread-safe), auto, thread-safe, single, nop
 
-# @FUNCTION: _epgo_check_pgo
-# @INTERNAL
-# @DESCRIPTION:
-# Checks the preferred trainer group.
-# You can use an existing or completely isolated group.
-# Existing groups can be users, wheel
-# New groups can be epgo, pgo, etc.
-_epgo_check_pgo() {
-	if use epgo ; then
-		if [[ -z "${UOPTS_PGO_GROUP}" ]] ; then
-eerror
-eerror "The UOPTS_PGO_GROUP must be defined either in ${EPREFIX}/etc/portage/make.conf or"
-eerror "in a per-package env file.  Users who are not a member of this group"
-eerror "cannot generate PGO profile data with this program."
-eerror
-eerror "Example:"
-eerror
-eerror "  UOPTS_PGO_GROUP=\"epgo\""
-eerror
-			die
-		fi
-	fi
-}
-
 # @FUNCTION: epgo_setup
 # @DESCRIPTION:
 # You must call this in pkg_setup
 epgo_setup() {
-	_epgo_check_pgo
-
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
 eerror "The epgo.eclass must be used with uopts.eclass.  Do not inherit epgo"
 eerror "directly."
@@ -467,7 +441,7 @@ epgo_src_install() {
 		_UOPTS_PGO_SUFFIX="${MULTILIB_ABI_FLAG}.${ABI}${UOPTS_IMPLS}"
 		local pgo_data_suffix_dir="${_UOPTS_PGO_DATA_DIR}/${_UOPTS_PGO_SUFFIX}"
 		keepdir "${pgo_data_suffix_dir}"
-		fowners root:${UOPTS_PGO_GROUP} "${pgo_data_suffix_dir}"
+		fowners root:${UOPTS_GROUP} "${pgo_data_suffix_dir}"
 		fperms 0775 "${pgo_data_suffix_dir}"
 
 		if [[ -z "${CC}" ]] ; then
