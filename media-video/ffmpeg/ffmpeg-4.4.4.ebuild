@@ -13,24 +13,28 @@ EAPI=8
 # changes its ABI then this package will be rebuilt needlessly. Hence, such a
 # package is free _not_ to := depend on FFmpeg but I would strongly encourage
 # doing so since such a case is unlikely.
-FFMPEG_SUBSLOT=56.58.58
 
+FFMPEG_REVISION="${PV#*_p}"
+FFMPEG_SUBSLOT="56.58.58"
 SCM=""
-if [ "${PV#9999}" != "${PV}" ] ; then
+TRAIN_SANDBOX_EXCEPTION_VAAPI=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+WANT_LTO=0 # Global variable not const
+
+inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
+inherit flag-o-matic-om llvm uopts
+
+if [[ "${PV#9999}" != "${PV}" ]] ; then
 	SCM="git-r3"
 	EGIT_MIN_CLONE_TYPE="single"
 	EGIT_REPO_URI="https://git.ffmpeg.org/ffmpeg.git"
 fi
-
-TRAIN_SANDBOX_EXCEPTION_VAAPI=1
-inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
-inherit flag-o-matic-om llvm uopts
-
-DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
-HOMEPAGE="https://ffmpeg.org/"
-if [ "${PV#9999}" != "${PV}" ] ; then
+if [[ "${PV#9999}" != "${PV}" ]] ; then
 	SRC_URI=""
-elif [ "${PV%_p*}" != "${PV}" ] ; then # Snapshot
+elif [[ "${PV%_p*}" != "${PV}" ]] ; then # Snapshot
 	SRC_URI="mirror://gentoo/${P}.tar.xz"
 else # Release
 	VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/ffmpeg.asc"
@@ -46,8 +50,9 @@ else # Release
 		 verify-sig? ( sec-keys/openpgp-keys-ffmpeg )
 	"
 fi
-FFMPEG_REVISION="${PV#*_p}"
 
+DESCRIPTION="Complete solution to record/convert/stream audio and video. Includes libavcodec"
+HOMEPAGE="https://ffmpeg.org/"
 SLOT="0/${FFMPEG_SUBSLOT}"
 # The project license is LGPL-2.1+
 # BSD - libavcodec/ilbcdec.c
@@ -1955,7 +1960,11 @@ _is_version3() {
 
 src_configure() { :; }
 
-WANT_LTO=0
+_src_configure_toolchain() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
+
 _src_configure() {
 	local myconf=( )
 	local extra_libs=( )
@@ -2250,8 +2259,6 @@ eerror
 
 
 einfo
-	export CC=$(tc-getCC)
-	export CXX=$(tc-getCC)
 eprintf "CC" "${CC}"
 eprintf "CXX" "${CXX}"
 eprintf "CFLAGS" "${CFLAGS}"
