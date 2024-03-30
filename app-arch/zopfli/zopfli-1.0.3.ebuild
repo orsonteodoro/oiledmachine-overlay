@@ -3,18 +3,42 @@
 
 EAPI=7
 
+NOTO_EMOJI_PV="2.038"
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+
 inherit cmake flag-o-matic uopts
+
+KEYWORDS="
+~alpha amd64 arm arm64 hppa ~ia64 ~loong ppc ppc64 ~riscv ~s390 sparc x86
+~amd64-linux ~x86-linux
+"
+S="${WORKDIR}/${PN}-${P}"
+SRC_URI="
+	https://github.com/google/zopfli/archive/${P}.tar.gz
+	trainer-zopflipng-with-noto-emoji? (
+		https://github.com/googlefonts/noto-emoji/archive/refs/tags/v${NOTO_EMOJI_PV}.tar.gz
+			-> noto-emoji-${NOTO_EMOJI_PV}.tar.gz
+	)
+"
 
 DESCRIPTION="Very good, but slow, deflate or zlib compression"
 HOMEPAGE="https://github.com/google/zopfli/"
 LICENSE="
 	Apache-2.0
 	trainer-zopflipng-with-noto-emoji? (
-		( Apache-2.0 all-rights-reserved )
+		(
+			all-rights-reserved
+			Apache-2.0
+		)
 		OFL-1.1
 	)
 "
 # The Apache-2.0 does not have all rights reserved in the template.
+# The noto-emoji tarball is OFL-1.1, Apache-2.0, public-domain.
+SLOT="0/1"
 IUSE+="
 	bolt-aggressive-optimizations
 	trainer-zopflipng-with-noto-emoji
@@ -23,7 +47,6 @@ REQUIRED_USE+="
 	bolt-aggressive-optimizations? (
 		|| (
 			bolt
-			ebolt
 		)
 	)
 	bolt? (
@@ -33,27 +56,20 @@ REQUIRED_USE+="
 		trainer-zopflipng-with-noto-emoji
 	)
 "
-NOTO_EMOJI_PV="2.038"
-SRC_URI="
-	https://github.com/google/zopfli/archive/${P}.tar.gz
-	trainer-zopflipng-with-noto-emoji? (
-		https://github.com/googlefonts/noto-emoji/archive/refs/tags/v${NOTO_EMOJI_PV}.tar.gz
-			-> noto-emoji-${NOTO_EMOJI_PV}.tar.gz
-	)
-"
-
-S="${WORKDIR}/${PN}-${P}"
-# The noto-emoji tarball is OFL-1.1, Apache-2.0, public-domain.
-SLOT="0/1"
-KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~loong ppc ppc64 ~riscv ~s390 sparc x86 ~amd64-linux ~x86-linux"
 DOCS=( CONTRIBUTORS README README.zopflipng )
 
 pkg_setup() {
 	export ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES:-30}
-	[[ -z "${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_}" ]] && ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=30
-	(( ${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_} > 13739 )) && ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=13739
-	(( ${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_} < 1 )) && ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=1
-	if ( has bolt ${IUSE} && use bolt ) || ( has ebolt ${IUSE} && use ebolt ) ; then
+	if [[ -z "${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_}" ]] ; then
+		ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=30
+	fi
+	if (( ${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_} > 13739 )) ; then
+		ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=13739
+	fi
+	if (( ${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_} < 1 )) ; then
+		ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=1
+	fi
+	if ( has bolt ${IUSE_EFFECTIVE} && use bolt ) || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ; then
 		# For the basic block reorder branch-predictor summary,
 		# see https://github.com/llvm/llvm-project/blob/main/bolt/include/bolt/Passes/BinaryPasses.h#L139
 		local extra_args=""
