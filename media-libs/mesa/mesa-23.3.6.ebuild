@@ -445,6 +445,7 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure() {
+	uopts_src_configure
 	local emesonargs=()
 
 	if use llvm ; then
