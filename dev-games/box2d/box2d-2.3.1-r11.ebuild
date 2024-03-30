@@ -4,16 +4,30 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
+MY_PN="Box2D"
 TRAIN_SIGNAL=6
-TRAIN_USE_X_GPU=1
 TRAIN_TEST_DURATION=15
 #TRAIN_USE_X=1
-inherit cmake multilib-build uopts
+TRAIN_USE_X_GPU=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+
+inherit cmake multilib-build toolchain-funcs uopts
+
+KEYWORDS="~amd64 ~x86"
+S="${WORKDIR}/${P}/Box2D"
+SRC_URI="
+https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
 LICENSE="ZLIB"
-KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})"
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+=" doc examples static-libs test r1"
@@ -44,14 +58,12 @@ DEPEND+="
 		media-fonts/droid
 	)
 "
-RDEPEND+=" ${DEPEND}"
-BDEPEND+=" >=dev-build/cmake-2.6"
-SRC_URI="
-https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
+RDEPEND+="
+	${DEPEND}
 "
-S="${WORKDIR}/${P}/Box2D"
-RESTRICT="mirror"
+BDEPEND+="
+	>=dev-build/cmake-2.6
+"
 PATCHES=(
 	"${FILESDIR}/${PN}-2.3.1-cmake-fixes.patch"
 	"${FILESDIR}/${PN}-2.3.1-change-font.patch"
@@ -59,8 +71,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3.1-testbed-close-handlers.patch"
 	"${FILESDIR}/${PN}-2.3.1-testbed-autoshoot.patch"
 )
-CMAKE_BUILD_TYPE="Release"
-MY_PN="Box2D"
 
 # Order matters when PGOing
 get_lib_types() {
@@ -134,6 +144,11 @@ src_prepare() {
 }
 
 src_configure() { :; }
+
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
 
 _src_configure() {
 	debug-print-function ${FUNCNAME} "${@}"

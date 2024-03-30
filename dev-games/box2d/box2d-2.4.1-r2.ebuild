@@ -3,16 +3,38 @@
 
 EAPI=8
 
+CMAKE_BUILD_TYPE="Release"
+MY_PN="Box2D"
 TRAIN_SIGNAL=6
-TRAIN_USE_X_GPU=1
 TRAIN_TEST_DURATION=15
 #TRAIN_USE_X=1
-inherit cmake multilib-build uopts
+TRAIN_USE_X_GPU=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+
+inherit cmake multilib-build toolchain-funcs uopts
+
+KEYWORDS="~amd64 ~x86"
+S="${WORKDIR}/${P}"
+SRC_URI="
+https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/erincatto/box2d/commit/e76cf2d82792fbf915e42ae253f8a2ae252adbdf.patch
+	-> box2d-commit-e76cf2d.patch
+https://github.com/erincatto/box2d/commit/cd2c28dba83e4f359d08aeb7b70afd9e35e39eda.patch
+	-> box2d-commit-cd2c28d.patch
+"
+# e76cf2d - update doctest for #677
+#   Fixes doctest.h:4021:47: error: size of array 'altStackMem' is not an integral constant-expression
+# cd2c28d - Update doctest version (#682)
+#   Dependency for e76cf2d
 
 DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})" # API change between 2.4.1 breaks 2.4.0
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+=" doc examples static-libs test r1"
@@ -38,27 +60,13 @@ DEPEND+="
 		media-libs/glfw[${MULTILIB_USEDEP}]
 	)
 "
-RDEPEND+=" ${DEPEND}"
+RDEPEND+="
+	${DEPEND}
+"
 BDEPEND+="
 	>=dev-build/cmake-3.8
 	doc? ( app-text/doxygen )
 "
-SRC_URI="
-https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/erincatto/box2d/commit/e76cf2d82792fbf915e42ae253f8a2ae252adbdf.patch
-	-> box2d-commit-e76cf2d.patch
-https://github.com/erincatto/box2d/commit/cd2c28dba83e4f359d08aeb7b70afd9e35e39eda.patch
-	-> box2d-commit-cd2c28d.patch
-"
-# e76cf2d - update doctest for #677
-#   Fixes doctest.h:4021:47: error: size of array 'altStackMem' is not an integral constant-expression
-
-# cd2c28d - Update doctest version (#682)
-#   Dependency for e76cf2d
-
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
 PATCHES=(
 	"${FILESDIR}/${PN}-2.4.1-cmake-fixes.patch"
 	"${DISTDIR}/${PN}-commit-cd2c28d.patch"
@@ -66,8 +74,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.1-testbed-close-handlers.patch"
 	"${FILESDIR}/${PN}-2.4.1-testbed-autoshoot.patch"
 )
-CMAKE_BUILD_TYPE="Release"
-MY_PN="Box2D"
 
 # Order matters when PGOing
 get_lib_types() {
@@ -155,6 +161,11 @@ src_prepare() {
 }
 
 src_configure() { :; }
+
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
 
 _src_configure() {
 	debug-print-function ${FUNCNAME} "${@}"
