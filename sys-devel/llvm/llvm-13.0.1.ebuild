@@ -6,6 +6,8 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{8..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
@@ -458,8 +460,13 @@ get_distribution_components() {
 
 src_configure() { :; }
 
-_src_configure() {
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
 	llvm-ebuilds_fix_toolchain
+}
+
+_src_configure() {
 	uopts_src_configure
 	mkdir -p "${BUILD_DIR}" || die # strange?
 	cd "${BUILD_DIR}" || die
