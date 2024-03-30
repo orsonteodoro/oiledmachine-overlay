@@ -123,6 +123,7 @@ ed7ef4de89840f20482d43f47149d993b5280de787a017114730e0d296ee5035\
 e6ce73d176e405d1dab64151a7787bc3190692df5ba72f552039a61883d0e273\
 " # SHA512
 LLVM_COMPAT=( 16 ) # Limited based on virtual/rust
+LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Mar 22, 2024"
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-16/"
@@ -152,12 +153,14 @@ MOZ_PN="${PN%-bin}"
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
-MOZILLA_FIVE_HOME="" # global var not const
+MOZILLA_FIVE_HOME="" # Global variable
 NASM_PV="2.14.02"
+OFLAG="" # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_PV="1.69.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
+UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -1751,23 +1754,7 @@ eerror
 	fi
 }
 
-OFLAG=""
-LTO_TYPE=""
-_src_configure() {
-	local s=$(_get_s)
-	cd "${s}" || die
-
-	local CDEFAULT=$(get_abi_CHOST "${DEFAULT_ABI}")
-	# Show flags set at the beginning
-einfo
-einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
-einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
-einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
-einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
-einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
-einfo "Cross-compile CHOST:\t\t${CHOST}"
-einfo
-
+_set_cc() {
 	local have_switched_compiler=
 	if tc-is-clang ; then
 	# Force clang
@@ -1814,12 +1801,33 @@ einfo "Switching to gcc"
 		NM="gcc-nm"
 		RANLIB="gcc-ranlib"
 	fi
-
 	if [[ -n "${have_switched_compiler}" ]] ; then
 	# Because we switched active compiler, we have to ensure that no
 	# unsupported flags are set.
 		strip-unsupported-flags
 	fi
+}
+
+_src_configure_compiler() {
+	_set_cc
+}
+
+_src_configure() {
+	local s=$(_get_s)
+	cd "${s}" || die
+
+	local CDEFAULT=$(get_abi_CHOST "${DEFAULT_ABI}")
+	# Show flags set at the beginning
+einfo
+einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
+einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
+einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
+einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
+einfo "Cross-compile CHOST:\t\t${CHOST}"
+einfo
+
+	_set_cc
 
 	uopts_src_configure
 	check_speech_dispatcher

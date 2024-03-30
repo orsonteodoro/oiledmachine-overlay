@@ -115,13 +115,14 @@ FFMPEG_PV="4.4.1" # This corresponds to y in x.y.z from the subslot.
 FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
+GTK3_PV="3.14.5"
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
 6457e41625b32d10f223d5d7a5aeecbc9da75f36242fa6b0a8c1f7aa7b4aef1b\
 8d5e64d046e8ea5a713a349cbcc9f5c0ecbb0f3217f55a0fd3dee0436fe4da3b\
 " # SHA512
-GTK3_PV="3.14.5"
 LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
+LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Mar 2, 2024"
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-15/"
@@ -152,12 +153,14 @@ MOZ_PN="${PN%-bin}"
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
-MOZILLA_FIVE_HOME="" # global var not const
+MOZILLA_FIVE_HOME="" # Global variable
 NASM_PV="2.14.02"
+OFLAG="" # Global varariable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_PV="1.76.0"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
+UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=0 # Recheck if allowed
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
@@ -1733,23 +1736,7 @@ eerror
 	fi
 }
 
-OFLAG=""
-LTO_TYPE=""
-_src_configure() {
-	local s=$(_get_s)
-	cd "${s}" || die
-
-	local CDEFAULT=$(get_abi_CHOST "${DEFAULT_ABI}")
-	# Show flags set at the beginning
-einfo
-einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
-einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
-einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
-einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
-einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
-einfo "Cross-compile CHOST:\t\t${CHOST}"
-einfo
-
+_set_cc() {
 	local have_switched_compiler=
 	if tc-is-clang || use jumbo-build ; then
 	# The logic is inverted in the commit below.
@@ -1800,12 +1787,33 @@ einfo "Switching to gcc"
 		NM="gcc-nm"
 		RANLIB="gcc-ranlib"
 	fi
-
 	if [[ -n "${have_switched_compiler}" ]] ; then
 	# Because we switched active compiler we have to ensure that no
 	# unsupported flags are set
 		strip-unsupported-flags
 	fi
+}
+
+_src_configure_compiler() {
+	_set_cc
+}
+
+_src_configure() {
+	local s=$(_get_s)
+	cd "${s}" || die
+
+	local CDEFAULT=$(get_abi_CHOST "${DEFAULT_ABI}")
+	# Show flags set at the beginning
+einfo
+einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+einfo "Current CFLAGS:\t\t${CFLAGS:-no value set}"
+einfo "Current CXXFLAGS:\t\t${CXXFLAGS:-no value set}"
+einfo "Current LDFLAGS:\t\t${LDFLAGS:-no value set}"
+einfo "Current RUSTFLAGS:\t\t${RUSTFLAGS:-no value set}"
+einfo "Cross-compile CHOST:\t\t${CHOST}"
+einfo
+
+	_set_cc
 
 	uopts_src_configure
 	check_speech_dispatcher
