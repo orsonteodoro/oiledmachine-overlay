@@ -199,10 +199,10 @@ src_configure() { :; }
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	llvm-ebuilds_fix_toolchain
 }
 
 _src_configure() {
-	llvm-ebuilds_fix_toolchain
 	uopts_src_configure
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"

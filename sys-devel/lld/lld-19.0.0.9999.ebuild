@@ -220,11 +220,12 @@ src_configure() { :; }
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	llvm_prepend_path "${LLVM_MAJOR}"
+	llvm-ebuilds_fix_toolchain
 }
 
 _src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
-	llvm-ebuilds_fix_toolchain
 	uopts_src_configure
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
