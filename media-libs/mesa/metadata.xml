@@ -84,6 +84,10 @@
         fingerprint or PGO profile versioning and reset the process based
         on incompatibility.
 
+  Q:  Is it necessary to optimize EPGO/EBOLT?
+  A:  No.  Even during instrumentation, the package is still manages to
+      do 60 FPS for web tests and light games still perform well as the
+      arcade.
 
   -->
   <use>
