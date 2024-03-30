@@ -460,7 +460,7 @@ compatibility with the BOLT profile.
 UOPTS_GROUP - the name of the group allowed to access and edit the
 BOLT profile.
 
-#### EPGO/EBOLT profile permissions
+### EPGO/EBOLT profile permissions
 
 (This section is tentative.  It's still in testing/development.)
 
