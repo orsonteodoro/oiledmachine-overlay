@@ -41,6 +41,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+if [[ -z ${_UOPTS_ECLASS} ]] ; then
 _UOPTS_ECLASS=1
 
 # Bump every major version.  Also bump the BDEPENDs in *bolt eclasses.
@@ -313,3 +314,4 @@ uopts_pkg_config() {
 }
 
 EXPORT_FUNCTIONS pkg_config
+fi

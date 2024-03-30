@@ -25,6 +25,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+if [[ -z ${_EPGO_ECLASS} ]] ; then
 _EPGO_ECLASS=1
 
 # @ECLASS_VARIABLE: UOPTS_PGO_FORCE_PGI
@@ -569,3 +570,5 @@ epgo_pkg_postinst() {
 	use epgo && _epgo_wipe_pgo_profile
 	_epgo_delete_old_pgo_profiles
 }
+
+fi

@@ -26,7 +26,7 @@
 
   Q:  How do you PGO this?
   A:
-  USE="epgo" emerge -1vO mesa # instrument
+  UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo" emerge -1vO mesa # instrument
   # Restart X or wayland
   # Run favorite OpenGL games or apps
   USE="epgo" emerge -1vO mesa # optimize build

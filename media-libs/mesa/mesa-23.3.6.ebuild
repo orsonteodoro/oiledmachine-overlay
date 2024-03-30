@@ -42,8 +42,8 @@ VIDEO_CARDS=(
 	vmware
 )
 
-inherit flag-o-matic linux-info llvm-r1 meson-multilib python-any-r1
-inherit toolchain-funcs uopts
+inherit flag-o-matic linux-info llvm-r1 meson multilib-build toolchain-funcs
+inherit python-any-r1 uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -52,6 +52,7 @@ for card in ${VIDEO_CARDS[@]} ; do
 		video_cards_${card}
 	"
 done
+unset card
 
 if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/mesa/mesa.git"
@@ -75,7 +76,7 @@ RESTRICT="
 	)
 "
 SLOT="0"
-IUSE="
+IUSE+="
 ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm lm-sensors opencl osmesa
@@ -201,6 +202,7 @@ for card in ${RADEON_CARDS[@]} ; do
 		)
 	"
 done
+unset card
 RDEPEND="
 	${RDEPEND}
 	video_cards_radeonsi? (
@@ -312,8 +314,7 @@ ignore_video_card_use() {
 	shift
 	local cards=( $@ )
 	if use ${flag} ; then
-		local
-		for name in ${cars[@]} ; do
+		for name in ${cards[@]} ; do
 			if use "video_cards_${name}" ; then
 				missing=0
 			fi
@@ -420,6 +421,8 @@ src_prepare() {
 	}
 	multilib_foreach_abi prepare_abi
 }
+
+src_configure() { :; }
 
 _src_configure() {
 	local emesonargs=()

@@ -227,7 +227,7 @@ STDCXX_INCDIR=${TOOLCHAIN_STDCXX_INCDIR:-${LIBPATH}/include/g++-v${GCC_BRANCH_VE
 #---->> LICENSE+SLOT+IUSE logic <<----
 
 LICENSE="GPL-3+ LGPL-3+ || ( GPL-3+ libgcc libstdc++ gcc-runtime-library-exception-3.1 ) FDL-1.3+"
-IUSE="test vanilla +nls"
+IUSE+=" test vanilla +nls"
 RESTRICT="!test? ( test )"
 
 TC_FEATURES=()

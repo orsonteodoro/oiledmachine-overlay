@@ -14,6 +14,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+if [[ -z ${_EBOLT_ECLASS} ]] ; then
 _EBOLT_ECLASS=1
 
 inherit flag-o-matic toolchain-funcs
@@ -864,3 +865,4 @@ ebolt_pkg_config() {
 		_pkg_config_bolt_optimization
 	fi
 }
+fi

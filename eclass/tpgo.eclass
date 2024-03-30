@@ -16,6 +16,7 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+if [[ -z ${_TPGO_ECLASS} ]] ; then
 _TPGO_ECLASS=1
 
 # When to use this eclass?
@@ -749,3 +750,4 @@ tpgo_pkg_postinst() {
 	# placeholder
 	:
 }
+fi

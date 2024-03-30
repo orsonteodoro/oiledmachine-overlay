@@ -13,6 +13,9 @@
 # You may, however, use some event handlers such as train_trainer_custom
 # in the ebuild context.
 
+if [[ -z "${_TRAIN_ECLASS}" ]] ; then
+_TRAIN_ECLASS=1
+
 # Only one train instance allowed.
 TRAIN_MUX="none" # It can only be tpgo, tbolt, ebolt, epgo, none.
 
@@ -578,3 +581,4 @@ _train_custom() {
 		popd
 	fi
 }
+fi
