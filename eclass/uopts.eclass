@@ -208,6 +208,13 @@ einfo "is_boltable=${is_boltable}"
 einfo "is_tbolt_profile_reusable=${skip_inst} "
 	fi
 
+	if ! declare -f _src_configure_compiler > /dev/null ; then
+		if ( has ebolt ${IUSE} && use ebolt ) || ( has epgo ${IUSE} && use epgo ) ; then
+eerror "QA:  Missing _src_configure_compiler() required for *_get_phase() functions"
+			die
+		fi
+	fi
+
 	local PGO_PHASE="NO_PGO"
 	local BOLT_PHASE="NO_BOLT"
 	if has ebolt ${IUSE} && use ebolt ; then
