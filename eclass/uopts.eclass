@@ -240,7 +240,7 @@ einfo "is_tbolt_profile_reusable=${skip_inst} "
 	if ! declare -f _src_configure_compiler > /dev/null ; then
 eerror
 eerror "QA:  Missing _src_configure_compiler() required for *_get_phase() functions"
-eerror "and for profile compatibiity check consistency."
+eerror "and for profile compatibility check consistency."
 eerror
 		die
 	fi
