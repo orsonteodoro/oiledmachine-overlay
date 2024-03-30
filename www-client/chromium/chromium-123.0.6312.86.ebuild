@@ -138,6 +138,8 @@ QT5_PV="5.15.2"
 QT6_PV="6.4.2"
 RUST_PV="1.78.0" # Lowered since distro uses older.
 UOPTS_PGO_PV=$(ver_cut 1-3 "${PV}")
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
@@ -2300,18 +2302,7 @@ eerror
 	echo $rustc_version
 }
 
-_src_configure() {
-	local s
-	s=$(_get_s)
-	cd "${s}" || die
-
-	# Calling this here supports resumption via FEATURES=keepwork
-	python_setup
-
-	local myconf_gn=""
-
-if use system-toolchain ; then #################################################
-einfo "Using the system toolchain"
+_set_system_cc() {
 	# Final CC selected
 	LLVM_SLOT=""
 	if tc-is-clang || is_using_clang ; then # Force clang either way
@@ -2441,6 +2432,30 @@ ewarn "Linking times may take longer than usual.  Maybe 1-12+ hour(s)."
 	tc-export AR CC CXX NM READELF STRIP
 
 	strip-unsupported-flags
+}
+
+_src_configure_compiler() {
+	if use system-toolchain ; then
+		_set_system_cc
+	else
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+	fi
+}
+
+_src_configure() {
+	local s
+	s=$(_get_s)
+	cd "${s}" || die
+
+	# Calling this here supports resumption via FEATURES=keepwork
+	python_setup
+
+	local myconf_gn=""
+
+if use system-toolchain ; then #################################################
+einfo "Using the system toolchain"
+	# See _set_system_cc
 
 	# Handled by the build scripts
 	filter-flags \
