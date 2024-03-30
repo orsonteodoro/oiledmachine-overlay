@@ -501,7 +501,8 @@ PGO/BOLT profiles because the PGO/BOLT profiles are shared across users.
 Currently using the limited user for the group is recommended to smooth things
 out, but it may break on multiuser setup.
 
-You make skip the 3 steps below if using johndoe (non-root user).
+You make skip the 3 steps for group changes below if using a non-root user
+(ex. johndoe) when doing PGO/BOLT training in production.
 
 To add both these groups:
 ```
