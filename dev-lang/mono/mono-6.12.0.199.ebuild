@@ -4,22 +4,66 @@
 
 EAPI=7
 
-# Too slow to instrument some bins or libs.
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_EBOLT=0
+# Note: mono works incorrect with older versions of libgdiplus
+# Details on dotnet overlay issue: https://github.com/gentoo/dotnet/issues/429
 
-TRAIN_TEST_DURATION=1800 # 30 min
+# Internal is required because of function prefix to allow both system alloc and
+# Jemalloc to coexist.
+# SECURITY:  Bump jemalloc every time a vulnerability fix is announced.
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=jemalloc&search_type=all
+
+BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
 CHECKREQS_DISK_BUILD="4500M"
+DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
+FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
+JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
+MONO_CORECLR_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
+NABIS=0 # Global variable not constant
+TRAIN_TEST_DURATION=1800 # 30 min
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=1
+XMRNBENCHMARKER_COMMIT="97f618cd585af549dd861b7c142656c496f6a89b"
+
 inherit autotools check-reqs linux-info mono-env pax-utils multilib-minimal
 inherit lcnr toolchain-funcs uopts
 # inherit git-r3
 
+KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv x86 ~amd64-linux"
+SRC_URI="
+https://download.mono-project.com/sources/mono/${P}.tar.xz
+jemalloc? (
+	https://github.com/jemalloc/jemalloc/archive/refs/tags/${JEMALLOC_PV}.tar.gz
+		-> jemalloc-${JEMALLOC_PV}.tar.gz
+)
+acceptance-tests-coreclr-trainer? (
+	https://github.com/mono/coreclr/archive/${MONO_CORECLR_COMMIT}.tar.gz
+		-> mono-coreclr-${MONO_CORECLR_COMMIT:0:7}.tar.gz
+)
+acceptance-tests-microbench-trainer? (
+	https://github.com/alexanderkyte/DebianShootoutMono/archive/${DEBIANSHOOTOUTMONO_COMMIT}.tar.gz
+		-> DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz
+	https://github.com/alexanderkyte/BenchmarkDotNet/archive/${BENCHMARKDOTNET_COMMIT}.tar.gz
+		-> BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT:0:7}.tar.gz
+	https://github.com/brendangregg/FlameGraph/archive/${FLAMEGRAPH_COMMIT}.tar.gz
+		-> FlameGraph-${FLAMEGRAPH_COMMIT:0:7}.tar.gz
+
+)
+"
+
+gen_pgo_trainers_required_use() {
+	local u
+	for u in ${PGO_TRAINERS[@]} ; do
+		echo "${u}? ( pgo )"
+	done
+}
+
 DESCRIPTION="Mono runtime and class libraries, a C# compiler/interpreter"
 HOMEPAGE="https://mono-project.com"
-
-# Extra licenses because it is in source code form and third party external
-# modules.  Also, additional licenses for additional files through git not
-# found in the tarball.
+# Extra licenses are listed because it is in source code form and third party
+# external modules.  Also, additional licenses for additional files through git
+# not found in the tarball.
 LICENSE="
 	MIT
 	(
@@ -136,7 +180,6 @@ LICENSE="
 
 
 SLOT="0"
-KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv x86 ~amd64-linux"
 PGO_TRAINERS="
 	acceptance-tests-coreclr-trainer
 	acceptance-tests-microbench-trainer
@@ -152,12 +195,6 @@ pax-kernel xen
 
 r2
 "
-gen_pgo_trainers_required_use() {
-	local u
-	for u in ${PGO_TRAINERS[@]} ; do
-		echo "${u}? ( pgo )"
-	done
-}
 REQUIRED_USE+="
 	jemalloc-assert? (
 		jemalloc
@@ -175,22 +212,12 @@ REQUIRED_USE+="
 	)
 "
 REQUIRED_USE+=" "$(gen_pgo_trainers_required_use)
-
-# Note: mono works incorrect with older versions of libgdiplus
-# Details on dotnet overlay issue: https://github.com/gentoo/dotnet/issues/429
-
-# Internal is required because of function prefix to allow both system alloc and
-# Jemalloc to coexist.
-JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
-# SECURITY:  Bump every time a vulnerability fix is announced.
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=jemalloc&search_type=all
-
 DEPEND+="
+	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
+	sys-libs/zlib[${MULTILIB_USEDEP}]
 	!minimal? (
 		>=dev-dotnet/libgdiplus-6.0.2
 	)
-	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
-	sys-libs/zlib[${MULTILIB_USEDEP}]
 	ia64? (
 		sys-libs/libunwind
 	)
@@ -212,33 +239,6 @@ BDEPEND+="
 		sys-process/time
 	)
 "
-
-MONO_CORECLR_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
-XMRNBENCHMARKER_COMMIT="97f618cd585af549dd861b7c142656c496f6a89b"
-DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
-BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
-FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
-SRC_URI="
-https://download.mono-project.com/sources/mono/${P}.tar.xz
-jemalloc? (
-	https://github.com/jemalloc/jemalloc/archive/refs/tags/${JEMALLOC_PV}.tar.gz
-		-> jemalloc-${JEMALLOC_PV}.tar.gz
-)
-acceptance-tests-coreclr-trainer? (
-	https://github.com/mono/coreclr/archive/${MONO_CORECLR_COMMIT}.tar.gz
-		-> mono-coreclr-${MONO_CORECLR_COMMIT:0:7}.tar.gz
-)
-acceptance-tests-microbench-trainer? (
-	https://github.com/alexanderkyte/DebianShootoutMono/archive/${DEBIANSHOOTOUTMONO_COMMIT}.tar.gz
-		-> DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz
-	https://github.com/alexanderkyte/BenchmarkDotNet/archive/${BENCHMARKDOTNET_COMMIT}.tar.gz
-		-> BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT:0:7}.tar.gz
-	https://github.com/brendangregg/FlameGraph/archive/${FLAMEGRAPH_COMMIT}.tar.gz
-		-> FlameGraph-${FLAMEGRAPH_COMMIT:0:7}.tar.gz
-
-)
-"
-
 PATCHES=(
 	"${FILESDIR}/${PN}-5.12-try-catch.patch"
 	"${FILESDIR}/${PN}-6.12.0.122-disable-automagic-ccache.patch"
@@ -277,7 +277,6 @@ pkg_pretend() {
 	check-reqs_pkg_pretend
 }
 
-NABIS=0
 pkg_setup() {
 	mono-env_pkg_setup
 	check-reqs_pkg_setup
