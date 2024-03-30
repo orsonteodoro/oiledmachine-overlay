@@ -437,6 +437,9 @@ UOPTS_PGO_EVENT_BASED - 1 to build untouch event handler functions optimized for
 speed, 0 to retain untouched functions as optimized for size.  Do not use unless
 you encounter a performance regression.
 
+UOPTS_PGO_GROUP - the name of the group allowed to access and edit the PGO
+profile.
+
 #### BOLT environment variables
 
 UOPTS_BOLT_FORCE_INST - 1 to reset to INST temporarily.
@@ -453,11 +456,35 @@ UOPTS_BOLT_PROFILES_DIR - Change the default BOLT profile directory.
 UOPTS_BOLT_SLOT - force to use a particular LLVM slot number to maintain
 compatibility with the BOLT profile.
 
+UOPTS_BOLT_GROUP - the name of the group allowed to access and edit the
+BOLT profile.
+
 ### BOLT + PGO
 
 Some packages may allow BOLT and PGO.  Upstream recommends building the PGO
-build to completion first.  Then, do a BOLT optimized build.  Both BOLT and PGO
-each require 3 steps;
+build to completion first.  Then, do a BOLT optimized build.
+
+Before using ebolt or epgo some environment variables and user groups must
+be created for the shared EPGO/EBOLT profile.  For example the following
+could be added to /etc/make.conf:
+
+UOPTS_PGO_GROUP="pgo"
+UOPTS_BOLT_GROUP="bolt"
+
+To add both these groups:
+```
+sudo groupadd pgo
+sudo groupadd bolt
+```
+
+To add users these groups:
+```
+sudo gpasswd -a johndoe pgo
+sudo gpasswd -a johndoe bolt
+```
+Relog for changes to take effect.
+
+Both BOLT and PGO each require 3 steps:
 
 PGO steps:
 - instrumentation (PGI)
