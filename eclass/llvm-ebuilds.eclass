@@ -22,6 +22,8 @@ LLVM_EBUILDS_LLVM19_BRANCH="main"
 LLVM_EBUILDS_LLVM18_BRANCH="release/18.x"
 LLVM_EBUILDS_LLVM17_BRANCH="release/17.x"
 
+if [[ -z "${_LLVM_EBUILDS_ECLASS}" ]] ; then
+
 _LLVM_EBUILDS_ECLASS=1
 inherit flag-o-matic toolchain-funcs
 
@@ -133,3 +135,5 @@ ewarn "Stripping -fuse-ld=*"
 		_fix_linker
 	fi
 }
+
+fi
