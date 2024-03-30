@@ -4,6 +4,7 @@
 
 EAPI=8
 
+GCC_SLOT=12
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.110"
 LIBDRM_USEDEP="\
 video_cards_freedreno?,\
@@ -382,6 +383,24 @@ python_check_deps() {
 	python_has_version -b ">=dev-python/mako-0.8.0[${PYTHON_USEDEP}]"
 }
 
+check_libstdcxx() {
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+
+	if ver_test "${gcc_current_profile_slot}" -ne "${GCC_SLOT}" ; then
+eerror
+eerror "You must switch to GCC ${GCC_SLOT}.  Do"
+eerror
+eerror "  eselect gcc set ${CHOST}-${GCC_SLOT}"
+eerror "  source /etc/profile"
+eerror
+eerror "This is a temporary for ${PN}:${SLOT}.  You must restore it back"
+eerror "to the default immediately after this package has been merged."
+eerror
+#		die
+	fi
+}
+
 pkg_pretend() {
 	ignore_video_card_use "vulkan" "d3d12" "freedreno" "intel" "radeonsi" "v3d"
 	ignore_video_card_use "opencl" "r600" "radeonsi"
@@ -401,7 +420,8 @@ ewarn "OSMesa will be slow without enabling USE=llvm"
 }
 
 pkg_setup() {
-	# warning message for bug 459306
+	check_libstdcxx
+	# Warning message for bug 459306
 	if use llvm && has_version "sys-devel/llvm[!debug=]" ; then
 ewarn
 ewarn "Mismatch between debug USE flags in media-libs/mesa and sys-devel/llvm"
