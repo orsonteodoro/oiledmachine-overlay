@@ -461,11 +461,7 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-src_configure() { :; }
-
-_src_configure() {
-	local emesonargs=()
-
+_update_cc() {
 	if use llvm ; then
 		local llvm_slot
 		for llvm_slot in ${LLVM_COMPAT[@]} ; do
@@ -481,6 +477,17 @@ _src_configure() {
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
 	fi
+	strip-unsupported-flags
+}
+
+src_configure() {
+	_update_cc
+}
+
+_src_configure() {
+	local emesonargs=()
+
+	_update_cc
 	uopts_src_configure
 	strip-unsupported-flags
 

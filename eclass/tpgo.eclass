@@ -590,11 +590,15 @@ ewarn
 		fi
 
 		# Has profile?
-		local nlines1=$(find "${pgo_data_staging_dir}" -name "*.gcda" | wc -l)
-		local nlines2=$(find "${pgo_data_staging_dir}" -name "*.profraw" | wc -l)
-		if tc-is-gcc && (( ${nlines1} > 0 )) ; then
+		local n_lines1=(
+			$(find "${pgo_data_staging_dir}" -name "*.gcda")
+		)
+		local n_lines2=(
+			$(find "${pgo_data_staging_dir}" -name "*.profraw")
+		)
+		if   tc-is-gcc   && (( ${#n_lines1[@]} > 0 )) ; then
 			: # pass
-		elif tc-is-clang && (( ${nlines2} > 0 )) ; then
+		elif tc-is-clang && (( ${#n_lines2[@]} > 0 )) ; then
 			: # pass
 		else
 ewarn "NO PGO PROFILE"
