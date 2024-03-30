@@ -471,6 +471,9 @@ could be added to /etc/portage/make.conf:
 UOPTS_PGO_GROUP="pgo"
 UOPTS_BOLT_GROUP="bolt"
 
+You may use "users" if you do no have multiuser.  It is only an issue if there
+is a vulnerability in gcc/clang when reading pgo/bolt profiles.
+
 To add both these groups:
 ```
 sudo groupadd pgo
@@ -483,6 +486,9 @@ sudo gpasswd -a johndoe pgo
 sudo gpasswd -a johndoe bolt
 ```
 Relog for changes to take effect.
+
+When you are running under pgo or bolt group, you need to use `sudo -g pgo appname`
+`sudo -g bolt appname` instead.
 
 Both BOLT and PGO each require 3 steps:
 
