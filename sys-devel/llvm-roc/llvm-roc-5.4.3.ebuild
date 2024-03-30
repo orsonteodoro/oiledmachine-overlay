@@ -6,13 +6,24 @@ EAPI=8
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 LLVM_SLOT=15
+LLVM_TARGETS=(
+	AMDGPU
+	NVPTX
+	X86
+)
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+SANITIZER_FLAGS=(
+	cfi
+)
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
 inherit cmake flag-o-matic rocm uopts
 
 KEYWORDS="~amd64"
+S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 SRC_URI="
 https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 	-> llvm-project-rocm-${PV}.tar.gz
@@ -25,7 +36,6 @@ https://github.com/RadeonOpenCompute/llvm-project/archive/rocm-${PV}.tar.gz
 			-> llvm-commit-90dcdc4.patch
 	)
 "
-S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
 
 DESCRIPTION="The ROCm™ fork of the LLVM project"
 HOMEPAGE="
@@ -82,14 +92,6 @@ LICENSE="
 # MIT - llvm-project-rocm-5.6.0/polly/lib/External/isl/LICENSE
 # ZLIB, BSD - llvm-project-rocm-5.6.0/llvm/lib/Support/COPYRIGHT.regex
 SLOT="${ROCM_SLOT}/${PV}"
-LLVM_TARGETS=(
-	AMDGPU
-	NVPTX
-	X86
-)
-SANITIZER_FLAGS=(
-	cfi
-)
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
@@ -185,8 +187,7 @@ src_prepare() {
 	uopts_src_prepare
 }
 
-_src_configure() {
-	local mycmakeargs=()
+_src_configure_compiler() {
 	PGO_TOOLCHAIN="${PGO_TOOLCHAIN:-gcc}"
 	if [[ "${PGO_TOOLCHAIN}" == "clang" ]] ; then
 		export CC="${EROCM_PATH}/bin/clang"
@@ -195,6 +196,10 @@ _src_configure() {
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
 	fi
+}
+
+_src_configure() {
+	local mycmakeargs=()
 	mycmakeargs+=(
 		-DCMAKE_C_COMPILER="${CC}"
 		-DCMAKE_CXX_COMPILER="${CXX}"
