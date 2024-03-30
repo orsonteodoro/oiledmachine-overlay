@@ -1273,6 +1273,10 @@ ewarn
 	fi
 }
 
+_src_configure_compiler() {
+	check_optimal_compiler_for_cycles_x86
+}
+
 _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}_${impl}_build"

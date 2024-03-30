@@ -15,15 +15,17 @@ case ${EAPI:-0} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_TPGO=0
+UOPTS_SUPPORT_TBOLT=0
+
 _blender_set_globals() {
 	BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:-latest}
 einfo "BLENDER_MAIN_SYMLINK_MODE:\t${BLENDER_MAIN_SYMLINK_MODE}"
 }
 _blender_set_globals
 unset -f _blender_set_globals
-
-UOPTS_SUPPORT_TPGO=0
-UOPTS_SUPPORT_TBOLT=0
 
 inherit cuda check-reqs cmake flag-o-matic hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg uopts
@@ -664,12 +666,11 @@ check_optimal_compiler_for_cycles_x86() {
 		fi
 	else
 		if [[ ! -n "${CC}" || ! -n "${CXX}" ]] ; then
-			export CC="$(tc-getCC ${CHOST})"
-			export CXX="$(tc-getCXX ${CHOST})"
+			export CC="$(tc-getCC)"
+			export CXX="$(tc-getCXX)"
 		fi
 	fi
 	strip-unsupported-flags
-
 einfo
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
