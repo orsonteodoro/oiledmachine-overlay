@@ -9,6 +9,10 @@ EAPI=8
 AOCC_COMPAT=( 14 16 )
 LIBVPX_TESTDATA_VER="1.14.0"
 N_SAMPLES=1
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
 
 inherit aocc flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 
@@ -23,23 +27,23 @@ inherit aocc flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs 
 # 6. tar -caf libvpx-testdata-${MY_PV}.tar.xz libvpx-testdata
 #
 
+KEYWORDS="
+~amd64 ~arm ~arm64 ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+~amd64-linux ~x86-linux
+"
+S="${WORKDIR}/${P}"
+S_orig="${WORKDIR}/${P}"
 SRC_URI="
 	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
 		https://dev.gentoo.org/~whissi/dist/libvpx/${PN}-testdata-${LIBVPX_TESTDATA_VER}.tar.xz
 	)
 "
-S="${WORKDIR}/${P}"
-S_orig="${WORKDIR}/${P}"
 
 DESCRIPTION="WebM VP8 and VP9 Codec SDK"
 HOMEPAGE="https://www.webmproject.org"
 LICENSE="BSD"
 SLOT="0/9"
-KEYWORDS="
-~amd64 ~arm ~arm64 ~ia64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
-~amd64-linux ~x86-linux
-"
 PPC_IUSE="
 	cpu_flags_ppc_vsx3
 "
@@ -216,16 +220,6 @@ __pgo_setup() {
 	done
 }
 
-pkg_setup() {
-	__pgo_setup
-	if use aocc ; then
-		aocc_pkg_setup
-	else
-		llvm_pkg_setup
-	fi
-	uopts_setup
-}
-
 get_native_abi_use() {
 	for p in $(multilib_get_enabled_abi_pairs) ; do
 		[[ "${p}" =~ "${DEFAULT_ABI}"$ ]] && echo "${p}" | cut -f 1 -d "."
@@ -293,6 +287,148 @@ get_lib_types() {
 	use static-libs && echo "static"
 }
 
+add_sandbox_exceptions() {
+	# https://bugs.gentoo.org/show_bug.cgi?id=384585
+	# https://bugs.gentoo.org/show_bug.cgi?id=465988
+	# copied from php-pear-r1.eclass
+	addpredict /usr/share/snmp/mibs/.index #nowarn
+	addpredict /var/lib/net-snmp/ #nowarn
+	addpredict /var/lib/net-snmp/mib_indexes #nowarn
+	addpredict /session_mm_cli0.sem #nowarn
+}
+
+append_all() {
+	append-flags ${@}
+	append-ldflags ${@}
+}
+
+_vdecode() {
+	local decoding_codec="${1}"
+	local msg="${2}"
+	einfo "Decoding ${msg}"
+	cmd=( "${FFMPEG}" -c:v ${decoding_codec} -i "${T}/traintemp/test.webm" -f null - )
+	einfo "${cmd[@]}"
+	"${cmd[@]}" || die
+}
+
+_get_resolutions_quick() {
+	local L=(
+		# Most videos are 24 FPS.
+		"30;1280;720;sdr"
+	)
+	local e
+	if [[ -n "${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then
+		for e in ${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK} ; do
+			echo "${e}"
+		done
+	else
+		for e in ${L[@]} ; do
+			echo "${e}"
+		done
+	fi
+}
+
+_get_resolutions() {
+	local L=(
+		"30;426;240;sdr"
+		"60;426;240;sdr"
+		"30;640;360;sdr"
+		"60;640;360;sdr"
+		"30;854;480;sdr"
+		"60;854;480;sdr"
+		"30;1280;720;sdr"
+		"60;1280;720;sdr"
+		"30;1920;1080;sdr"
+		"60;1920;1080;sdr"
+		"30;2560;1440;sdr"
+		"60;2560;1440;sdr"
+		"30;3840;2160;sdr"
+		"60;3840;2160;sdr"
+		"30;7680;4320;sdr"
+		"60;7680;4320;sdr"
+
+		"30;1280;720;hdr"
+		"60;1280;720;hdr"
+		"30;1920;1080;hdr"
+		"60;1920;1080;hdr"
+		"30;2560;1440;hdr"
+		"60;2560;1440;hdr"
+		"30;3840;2160;hdr"
+		"60;3840;2160;hdr"
+		"30;7680;4320;hdr"
+		"60;7680;4320;hdr"
+	)
+
+	local e
+	if [[ -n "${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS}" ]] ; then
+		for e in ${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS} ; do
+			echo "${e}"
+		done
+	else
+		for e in ${L[@]} ; do
+			echo "${e}"
+		done
+	fi
+}
+
+# common name for height
+_cheight() {
+	local height="${1}"
+	if [[ "${height}" == "480" ]] ; then
+		echo "SD (480p)"
+	elif [[ "${height}" == "720" ]] ; then
+		echo "HD (720p)"
+	elif [[ "${height}" == "1080" ]] ; then
+		echo "FHD (1080p)"
+	elif [[ "${height}" == "1440" ]] ; then
+		echo "QHD (1440p)"
+	elif [[ "${height}" == "2160" ]] ; then
+		echo "4K"
+	elif [[ "${height}" == "4320" ]] ; then
+		echo "8K"
+	else
+		echo "${height}p"
+	fi
+}
+
+if ! has libvpx_pkg_die ${EBUILD_DEATH_HOOKS} ; then
+        EBUILD_DEATH_HOOKS+=" libvpx_pkg_die";
+fi
+
+libvpx_pkg_die() {
+	_wipe_data
+}
+
+_wipe_data() {
+	# May contain sensitive data
+	local p
+	for p in $(find "${T}/traintemp" -type f) ; do
+		if [[ -e "${p}" ]] ; then
+			einfo "Wiping possibly sensitive training data"
+			shred --remove=wipesync "${p}"
+		fi
+	done
+}
+
+get_arch_enabled_use_flags() {
+	local all_use=()
+	for p in $(multilib_get_enabled_abi_pairs) ; do
+		local u=${p%.*}
+		all_use+=( ${u} )
+	done
+	echo "${all_use[@]}" | tr " " ","
+}
+
+pkg_setup() {
+	__pgo_setup
+	if use aocc ; then
+		aocc_pkg_setup
+	else
+		llvm_pkg_setup
+	fi
+	uopts_setup
+}
+
 src_prepare() {
 	default
 	if tc-is-clang || use aocc ; then
@@ -316,22 +452,7 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-add_sandbox_exceptions() {
-	# https://bugs.gentoo.org/show_bug.cgi?id=384585
-	# https://bugs.gentoo.org/show_bug.cgi?id=465988
-	# copied from php-pear-r1.eclass
-	addpredict /usr/share/snmp/mibs/.index #nowarn
-	addpredict /var/lib/net-snmp/ #nowarn
-	addpredict /var/lib/net-snmp/mib_indexes #nowarn
-	addpredict /session_mm_cli0.sem #nowarn
-}
-
 src_configure() { :; }
-
-append_all() {
-	append-flags ${@}
-	append-ldflags ${@}
-}
 
 _src_configure() {
 	export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
@@ -358,7 +479,7 @@ _src_configure() {
 		append_all $(test-flags -fno-allow-store-data-races)
 	fi
 
-	if tc-is-clang && ( use pgo || use epgo ) ; then
+	if tc-is-clang && ( use pgo || ( has epgo ${IUSE_EFFECTIVE} && use epgo ) ) ; then
 		append-flags -mllvm -vp-counters-per-site=8
 	fi
 
@@ -449,95 +570,6 @@ _src_configure() {
 
 	echo "${S}"/configure "${myconfargs[@]}" >&2
 	"${S}"/configure "${myconfargs[@]}"
-}
-
-_vdecode() {
-	local decoding_codec="${1}"
-	local msg="${2}"
-	einfo "Decoding ${msg}"
-	cmd=( "${FFMPEG}" -c:v ${decoding_codec} -i "${T}/traintemp/test.webm" -f null - )
-	einfo "${cmd[@]}"
-	"${cmd[@]}" || die
-}
-
-_get_resolutions_quick() {
-	local L=(
-		# Most videos are 24 FPS.
-		"30;1280;720;sdr"
-	)
-	local e
-	if [[ -n "${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK}" ]] ; then
-		for e in ${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK} ; do
-			echo "${e}"
-		done
-	else
-		for e in ${L[@]} ; do
-			echo "${e}"
-		done
-	fi
-}
-
-_get_resolutions() {
-	local L=(
-		"30;426;240;sdr"
-		"60;426;240;sdr"
-		"30;640;360;sdr"
-		"60;640;360;sdr"
-		"30;854;480;sdr"
-		"60;854;480;sdr"
-		"30;1280;720;sdr"
-		"60;1280;720;sdr"
-		"30;1920;1080;sdr"
-		"60;1920;1080;sdr"
-		"30;2560;1440;sdr"
-		"60;2560;1440;sdr"
-		"30;3840;2160;sdr"
-		"60;3840;2160;sdr"
-		"30;7680;4320;sdr"
-		"60;7680;4320;sdr"
-
-		"30;1280;720;hdr"
-		"60;1280;720;hdr"
-		"30;1920;1080;hdr"
-		"60;1920;1080;hdr"
-		"30;2560;1440;hdr"
-		"60;2560;1440;hdr"
-		"30;3840;2160;hdr"
-		"60;3840;2160;hdr"
-		"30;7680;4320;hdr"
-		"60;7680;4320;hdr"
-	)
-
-	local e
-	if [[ -n "${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS}" ]] ; then
-		for e in ${LIBVPX_TRAINING_CUSTOM_VOD_RESOLUTIONS} ; do
-			echo "${e}"
-		done
-	else
-		for e in ${L[@]} ; do
-			echo "${e}"
-		done
-	fi
-}
-
-# common name for height
-_cheight() {
-	local height="${1}"
-	if [[ "${height}" == "480" ]] ; then
-		echo "SD (480p)"
-	elif [[ "${height}" == "720" ]] ; then
-		echo "HD (720p)"
-	elif [[ "${height}" == "1080" ]] ; then
-		echo "FHD (1080p)"
-	elif [[ "${height}" == "1440" ]] ; then
-		echo "QHD (1440p)"
-	elif [[ "${height}" == "2160" ]] ; then
-		echo "4K"
-	elif [[ "${height}" == "4320" ]] ; then
-		echo "8K"
-	else
-		echo "${height}p"
-	fi
 }
 
 _trainer_plan_constrained_quality_training_session() {
@@ -919,25 +951,6 @@ _src_post_pgo() {
 	export PGO_RAN=1
 }
 
-if ! has libvpx_pkg_die ${EBUILD_DEATH_HOOKS} ; then
-        EBUILD_DEATH_HOOKS+=" libvpx_pkg_die";
-fi
-
-libvpx_pkg_die() {
-	_wipe_data
-}
-
-_wipe_data() {
-	# May contain sensitive data
-	local p
-	for p in $(find "${T}/traintemp" -type f) ; do
-		if [[ -e "${p}" ]] ; then
-			einfo "Wiping possibly sensitive training data"
-			shred --remove=wipesync "${p}"
-		fi
-	done
-}
-
 src_compile() {
 	mkdir -p "${T}/traintemp" || die
 	compile_abi() {
@@ -986,15 +999,6 @@ src_install() {
 		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
-}
-
-get_arch_enabled_use_flags() {
-	local all_use=()
-	for p in $(multilib_get_enabled_abi_pairs) ; do
-		local u=${p%.*}
-		all_use+=( ${u} )
-	done
-	echo "${all_use[@]}" | tr " " ","
 }
 
 pkg_postinst() {
