@@ -34,10 +34,12 @@
   sudo gpasswd -a johndoe pgo
   sudo gpasswd -a johndoe bolt
   # Relog user johndoe
-  UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo" emerge -1vO mesa # PGO instrumentation
+  UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo -ebolt" emerge -1vO mesa # PGO instrumentation
   # Restart X or wayland
   # Run favorite OpenGL games, apps, or WebGL websites
-  USE="epgo" emerge -1vO mesa # PGO optimize build
+  USE="epgo -ebolt" emerge -1vO mesa # PGO optimize build
+  # Save the epgo USE flag in /etc/portage/package.use/mesa.conf:
+  # media-libs/mesa epgo -ebolt
 
   Q:  How do you PGO+BOLT this?
   A:
