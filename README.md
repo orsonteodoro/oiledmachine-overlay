@@ -471,15 +471,17 @@ files could be added/changes for ebolt/epgo:
 ```
 Contents of /etc/portage/env/uopts_x.conf:
 # For PGO/BOLT training on X
-UOPTS_USER="johndoe" # A non-root user to perform PGO/BOLT training.
-UOPTS_GROUP="johndoe" # A non-root user to perform PGO/BOLT training.
+# Choose a non-root user:group to perform PGO/BOLT training.
+UOPTS_USER="johndoe"
+UOPTS_GROUP="johndoe"
 ```
 
 ```
 Contents of /etc/portage/env/uopts_wayland.conf:
 # For PGO/BOLT training on Wayland
-UOPTS_USER="johndoe" # A non-root user to perform PGO/BOLT training.
-UOPTS_GROUP="johndoe" # A non-root user to perform PGO/BOLT training.
+# Choose a non-root user:group to perform PGO/BOLT training.
+UOPTS_USER="johndoe"
+UOPTS_GROUP="johndoe"
 ```
 
 ```
