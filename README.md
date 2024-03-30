@@ -462,7 +462,7 @@ BOLT profile.
 
 #### EPGO/EBOLT profile permissions
 
-(This section is tentative.  It still in testing/development.)
+(This section is tentative.  It's still in testing/development.)
 
 Before using ebolt or epgo some environment variables and user groups must
 be created for the shared EPGO/EBOLT profile.  For example the following
