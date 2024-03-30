@@ -15,6 +15,11 @@ EAPI=8
 
 TRAIN_USE_X=0
 TRAIN_NO_X_DEPENDS=1
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+
 inherit meson
 inherit flag-o-matic multilib-minimal toolchain-funcs uopts virtualx
 
@@ -23,12 +28,12 @@ if [[ ${PV} == *9999* ]]; then
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/cairo/cairo.git"
 	SRC_URI=""
 else
-	SRC_URI="https://gitlab.freedesktop.org/cairo/cairo/-/archive/${PV}/cairo-${PV}.tar.bz2"
 	KEYWORDS="
 ~alpha ~amd64 arm ~arm64 hppa ~ia64 ~loong ~m68k ~mips ppc ~ppc64 ~riscv ~s390
 ~sparc x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
 ~x64-solaris
 	"
+	SRC_URI="https://gitlab.freedesktop.org/cairo/cairo/-/archive/${PV}/cairo-${PV}.tar.bz2"
 fi
 
 DESCRIPTION="A vector graphics library with cross-device output support"
@@ -39,6 +44,13 @@ LICENSE="
 		MPL-1.1
 	)
 "
+# Requires poppler-glib, which isn't available in multilib \
+#RESTRICT="
+#	!test? (
+#		test
+#	)
+#	test
+#"
 SLOT="0"
 IUSE="X aqua debug gles2-only gles3 +glib gtk-doc opengl test"
 REQUIRED_USE="
@@ -49,8 +61,6 @@ REQUIRED_USE="
 		gles2-only
 	)
 "
-#RESTRICT="!test? ( test ) test" # Requires poppler-glib, which isn't available in multilib
-
 RDEPEND="
 	>=dev-libs/lzo-2.06-r1:2[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.10.92[${MULTILIB_USEDEP}]
@@ -65,10 +75,10 @@ RDEPEND="
 		>=dev-libs/glib-2.34.3:2[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libXrender-0.9.8[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
 		>=x11-libs/libxcb-1.9.1:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrender-0.9.8[${MULTILIB_USEDEP}]
 	)
 "
 TEST_DEPEND="
@@ -89,8 +99,9 @@ PDEPEND="
 		${TEST_DEPEND}
 	)
 "
-BDEPEND="virtual/pkgconfig"
-
+BDEPEND="
+	virtual/pkgconfig
+"
 PATCHES=(
 	"${FILESDIR}/${PN}-respect-fontconfig.patch"
 )
