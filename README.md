@@ -466,7 +466,7 @@ build to completion first.  Then, do a BOLT optimized build.
 
 Before using ebolt or epgo some environment variables and user groups must
 be created for the shared EPGO/EBOLT profile.  For example the following
-could be added to /etc/make.conf:
+could be added to /etc/portage/make.conf:
 
 UOPTS_PGO_GROUP="pgo"
 UOPTS_BOLT_GROUP="bolt"

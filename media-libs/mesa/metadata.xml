@@ -33,7 +33,7 @@
 
   Q:  How do you PGO+BOLT this?
   A:
-  # Add/change the two lines below in /etc/make.conf:
+  # Add/change the two lines below in /etc/portage/make.conf:
   # UOPTS_PGO_GROUP="pgo"
   # UOPTS_BOLT_GROUP="bolt"
   sudo groupadd pgo
