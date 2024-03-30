@@ -54,7 +54,9 @@
   # media-libs/mesa epgo ebolt
 
   When you do training, be sure to run the apps that represent typical use,
-  OpenGL and EGL versions used, etc.
+  OpenGL and EGL versions used, etc.  Use the same training steps for both
+  PGO training and BOLT training to ensure code coverage is consistent for
+  the PGO/BOLT profiles.
 
   Q:  Why do you not run unattended PGO?
   A:  There are different versions of OpenGL and each version needs to be
