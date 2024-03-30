@@ -4,6 +4,13 @@
 
 EAPI=8
 
+PYTHON_COMPAT=( python3_{10..12} )
+UOPTS_BOLT_DISABLE_BDEPEND=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -21,11 +28,6 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
-
-PYTHON_COMPAT=( python3_{10..12} )
-UOPTS_BOLT_DISABLE_BDEPEND=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 
 inherit cmake flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
@@ -598,6 +600,13 @@ src_configure() { :; }
 
 _gcc_fullversion() {
 	gcc --version | head -n 1 | grep -o -E -e "[0-9_p.]+" | head -n 1
+}
+
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	llvm_prepend_path "${LLVM_MAJOR}"
+	llvm-ebuilds_fix_toolchain
 }
 
 _src_configure() {

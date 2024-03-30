@@ -6,6 +6,8 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{10..12} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
@@ -641,6 +643,12 @@ src_configure() { :; }
 
 _gcc_fullversion() {
 	gcc --version | head -n 1 | grep -o -E -e "[0-9_p.]+" | head -n 1
+}
+
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	llvm-ebuilds_fix_toolchain
 }
 
 _src_configure() {
