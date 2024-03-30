@@ -499,7 +499,9 @@ It is only an issue if there is a vulnerability in gcc/clang when reading
 PGO/BOLT profiles because the PGO/BOLT profiles are shared across users.
 
 Currently using the limited user for the group is recommended to smooth things
-out, but it may break on multiuser setup.
+out, but it may break on multiuser setup.  When doing epgo/ebolt in multiuser
+environment, it should be done ASAP or during maintenance days if the package
+is confirmed to break between multiple users.
 
 You make skip the 3 steps for group changes below if using a non-root user
 (ex. johndoe) when doing PGO/BOLT training in production.
