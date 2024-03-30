@@ -43,45 +43,74 @@
   <use>
     <!-- added to ebuild by oiledmachine-overlay -->
     <flag name="asm">Build with SIMD acceleration</flag>
-    <flag name="trainer-70-pct-quality-baseline">Trains with 70% quality
-      baseline for encode and decode for offline</flag>
-    <flag name="trainer-75-pct-quality-baseline">Trains with 75% quality
-      baseline for encode and decode for offline</flag>
-    <flag name="trainer-80-pct-quality-baseline">Trains with 80% quality
-      baseline for encode and decode for offline</flag>
-    <flag name="trainer-90-pct-quality-baseline">Trains with 90% quality
-      baseline for encode and decode for offline</flag>
-    <flag name="trainer-95-pct-quality-baseline">Trains with 95% quality
-      baseline for encode and decode for offline</flag>
-    <flag name="trainer-98-pct-quality-baseline">Trains with 98% quality
-      baseline for encode and decode for offline</flag>
-    <flag name="trainer-99-pct-quality-baseline">Trains with 99% quality
-      baseline for encode and decode for offline</flag>
-    <flag name="trainer-100-pct-quality-baseline">Trains with 100% quality
-      baseline for encode and decode for offline</flag>
-    <flag name="trainer-70-pct-quality-progressive">Trains with 70% quality
-      progressive for encode and decode for web</flag>
-    <flag name="trainer-75-pct-quality-progressive">Trains with 75% quality
-      progressive rendering for encode and decode for web</flag>
-    <flag name="trainer-80-pct-quality-progressive">Trains with 80% quality
-      progressive rendering for encode and decode for web</flag>
-    <flag name="trainer-90-pct-quality-progressive">Trains with 90% quality
-      progressive rendering for encode and decode for web</flag>
-    <flag name="trainer-95-pct-quality-progressive">Trains with 95% quality
-      progressive rendering for encode and decode for web</flag>
-    <flag name="trainer-98-pct-quality-progressive">Trains with 98% quality
-      progressive rendering for encode and decode for web</flag>
-    <flag name="trainer-99-pct-quality-progressive">Trains with 99% quality
-      progressive rendering for encode and decode for web</flag>
-    <flag name="trainer-100-pct-quality-progressive">Train with 100%
-      quality progressive for encode and decode for web</flag>
-    <flag name="trainer-decode">Runs training to simply batch decode
-      assets from the pgo jpeg folder.  You may just provide this and skip
-      the other trainers, but apps may use transformations as well so
-      consider trainer-crop and trainer-transformations USE flags.</flag>
-    <flag name="trainer-crop">Train for slicing images</flag>
-    <flag name="trainer-grayscale">Train for black and white
-      photos</flag>
-    <flag name="trainer-transformations">Train for rotations</flag>
+    <flag name="trainer-70-pct-quality-baseline">
+      Trains with 70% quality baseline for encode and decode for offline
+    </flag>
+    <flag name="trainer-75-pct-quality-baseline">
+      Trains with 75% quality baseline for encode and decode for offline
+    </flag>
+    <flag name="trainer-80-pct-quality-baseline">
+      Trains with 80% quality baseline for encode and decode for offline
+    </flag>
+    <flag name="trainer-90-pct-quality-baseline">
+      Trains with 90% quality baseline for encode and decode for offline
+    </flag>
+    <flag name="trainer-95-pct-quality-baseline">
+      Trains with 95% quality baseline for encode and decode for offline
+    </flag>
+    <flag name="trainer-98-pct-quality-baseline">
+      Trains with 98% quality baseline for encode and decode for offline
+    </flag>
+    <flag name="trainer-99-pct-quality-baseline">
+      Trains with 99% quality baseline for encode and decode for offline
+    </flag>
+    <flag name="trainer-100-pct-quality-baseline">
+      Trains with 100% quality baseline for encode and decode for offline
+    </flag>
+    <flag name="trainer-70-pct-quality-progressive">
+      Trains with 70% quality progressive for encode and decode for web
+    </flag>
+    <flag name="trainer-75-pct-quality-progressive">
+      Trains with 75% quality progressive rendering for encode and decode for
+      web
+    </flag>
+    <flag name="trainer-80-pct-quality-progressive">
+      Trains with 80% quality progressive rendering for encode and decode for
+      web
+    </flag>
+    <flag name="trainer-90-pct-quality-progressive">
+      Trains with 90% quality progressive rendering for encode and decode for
+      web
+    </flag>
+    <flag name="trainer-95-pct-quality-progressive">
+      Trains with 95% quality progressive rendering for encode and decode for
+      web
+    </flag>
+    <flag name="trainer-98-pct-quality-progressive">
+      Trains with 98% quality progressive rendering for encode and decode for
+      web
+    </flag>
+    <flag name="trainer-99-pct-quality-progressive">
+      Trains with 99% quality progressive rendering for encode and decode for
+      web
+    </flag>
+    <flag name="trainer-100-pct-quality-progressive">
+      Train with 100% quality progressive for encode and decode for web
+    </flag>
+    <flag name="trainer-decode">
+      Runs training to simply batch decode assets from the pgo jpeg folder.  You
+      may just provide this and skip the other trainers, but apps may use
+      transformations as well so consider trainer-crop and
+      trainer-transformations USE flags.
+    </flag>
+    <flag name="trainer-crop">
+      Train for slicing images
+    </flag>
+    <flag name="trainer-grayscale">
+      Train for black and white photos
+    </flag>
+    <flag name="trainer-transformations">
+      Train for rotations
+    </flag>
   </use>
 </pkgmetadata>

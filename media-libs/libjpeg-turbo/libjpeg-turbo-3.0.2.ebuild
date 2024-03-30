@@ -3,18 +3,35 @@
 
 EAPI=8
 
-CMAKE_ECLASS=cmake
+CMAKE_ECLASS="cmake"
+MULTILIB_WRAPPED_HEADERS=(
+	"/usr/include/jconfig.h"
+)
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+
 inherit cmake-multilib java-pkg-opt-2 flag-o-matic flag-o-matic-om
 inherit toolchain-funcs uopts
+
+# Unkeyworded for test failures: https://github.com/libjpeg-turbo/libjpeg-turbo/issues/705
+if [[ $(ver_cut 3) -lt 90 ]] ; then
+	KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~x64-macos ~x64-solaris
+	"
+fi
+S="${WORKDIR}/${P}"
+SRC_URI="
+	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz
+	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz
+"
 
 DESCRIPTION="MMX, SSE, and SSE2 SIMD accelerated JPEG library"
 HOMEPAGE="
 	https://libjpeg-turbo.org/
 	https://github.com/libjpeg-turbo/libjpeg-turbo
-"
-SRC_URI="
-	https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/${PV}/${P}.tar.gz
-	mirror://gentoo/libjpeg8_8d-2.debian.tar.gz
 "
 LICENSE="
 	BSD
@@ -25,13 +42,6 @@ LICENSE="
 	)
 "
 SLOT="0/0.2"
-# Unkeyworded for test failures: https://github.com/libjpeg-turbo/libjpeg-turbo/issues/705
-if [[ $(ver_cut 3) -lt 90 ]] ; then
-	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~x64-macos ~x64-solaris
-	"
-fi
 IUSE="
 	+asm cpu_flags_arm_neon java static-libs
 	pgo
@@ -143,19 +153,16 @@ REQUIRED_USE="
 		pgo
 	)
 "
-
 ASM_DEPEND="
 	|| (
 		dev-lang/nasm
 		dev-lang/yasm
 	)
 "
-
 COMMON_DEPEND="
 	!media-libs/jpeg:0
 	!media-libs/jpeg:62
 "
-
 BDEPEND+="
 	>=dev-build/cmake-3.16.5
 	amd64? (
@@ -174,14 +181,12 @@ BDEPEND+="
 		${ASM_DEPEND}
 	)
 "
-
 DEPEND="
 	${COMMON_DEPEND}
 	java? (
 		>=virtual/jdk-1.8:*[-headless-awt]
 	)
 "
-
 RDEPEND="
 	${COMMON_DEPEND}
 	java? (
@@ -194,11 +199,11 @@ PDEPEND="
 	)
 "
 
-MULTILIB_WRAPPED_HEADERS=(
-	"/usr/include/jconfig.h"
-)
-
-S="${WORKDIR}/${P}"
+# The order does matter with PGO.
+get_lib_types() {
+	echo "shared"
+	use static-libs && echo "static"
+}
 
 is_pgo_ready() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -236,12 +241,6 @@ ewarn "Install may fail.  \`emerge -C ${PN}\` then \`emerge -1 =${P}\`."
 ewarn "PGO may randomly fail with CFI.  Disable the pgo USE flag to fix it."
 ewarn
 	uopts_setup
-}
-
-# The order does matter with PGO.
-get_lib_types() {
-	echo "shared"
-	use static-libs && echo "static"
 }
 
 src_prepare() {
