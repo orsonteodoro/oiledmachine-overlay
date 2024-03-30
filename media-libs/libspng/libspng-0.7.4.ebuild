@@ -4,10 +4,17 @@
 
 EAPI=8
 
-inherit flag-o-matic meson multilib-build toolchain-funcs uopts
-
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+
+inherit flag-o-matic meson multilib-build toolchain-funcs uopts
+
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/randy408/libspng/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -20,7 +27,6 @@ https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/large
 	-> libspng-large_palette-${BENCHMARK_IMAGES_COMMIT}.png
 	)
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="libspng is a C library for reading and writing Portable Network \
 Graphics (PNG) format files with a focus on security and ease of use."
@@ -31,7 +37,6 @@ LICENSE="
 		libpng2
 	)
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc examples +opt -static-libs -test -threads zlib"
@@ -41,10 +46,10 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
+	virtual/libc
 	!zlib? (
 		dev-libs/miniz:=[static-libs?]
 	)
-	virtual/libc
 	test? (
 		>=media-libs/libpng-1.6
 	)
@@ -56,8 +61,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-build/meson-0.54.0
+	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	dev-build/meson-format-array
 	doc? (
 		dev-python/mkdocs
