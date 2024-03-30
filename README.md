@@ -482,7 +482,7 @@ UOPTS_GROUP="johndoe" # A non-root user to perform PGO/BOLT training.
 
 ```
 Contents of /etc/portage/env/uopts_portage.conf:
-# For PGO/BOLT training in emerge or portage package manager
+# For PGO/BOLT training within emerge (aka the portage package manager)
 UOPTS_GROUP="portage"
 ```
 
