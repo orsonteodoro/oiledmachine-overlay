@@ -489,7 +489,7 @@ UOPTS_GROUP="portage"
 ```
 Contents of /etc/portage/env/package.env:
 sys-devel/llvm uopts_portage.conf
-sys-devel/mesa uopts_x.conf
+media-libs/mesa uopts_x.conf
 games-fps/foo uopts_x.conf
 games-fps/bar uopts_wayland.conf
 ```
