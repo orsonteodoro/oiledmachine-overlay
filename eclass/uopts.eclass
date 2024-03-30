@@ -238,11 +238,14 @@ einfo "is_tbolt_profile_reusable=${skip_inst} "
 	fi
 
 	if ! declare -f _src_configure_compiler > /dev/null ; then
-		if ( has ebolt ${IUSE} && use ebolt ) || ( has epgo ${IUSE} && use epgo ) ; then
+eerror
 eerror "QA:  Missing _src_configure_compiler() required for *_get_phase() functions"
-			die
-		fi
+eerror "and for profile compatibiity check consistency."
+eerror
+		die
 	fi
+
+	_src_configure_compiler
 
 	local PGO_PHASE="NO_PGO"
 	local BOLT_PHASE="NO_BOLT"
