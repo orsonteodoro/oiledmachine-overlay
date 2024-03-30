@@ -3,6 +3,11 @@
 
 EAPI=7
 
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+
 inherit portability toolchain-funcs uopts
 
 # Tarballs are produced from ${PV} branches in
