@@ -639,6 +639,10 @@ _src_configure() {
 	meson_src_configure
 }
 
+_src_compile() {
+	meson_src_compile
+}
+
 src_compile() {
 	compile_abi() {
 		uopts_src_compile
