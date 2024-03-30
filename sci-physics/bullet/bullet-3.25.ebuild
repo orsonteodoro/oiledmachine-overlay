@@ -4,23 +4,28 @@
 
 EAPI=8
 
-TRAIN_USE_X=1
+LEGACY_TBB_SLOT="2"
 TRAIN_TEST_DURATION=20
+TRAIN_USE_X=1
 PYTHON_COMPAT=( python3_{8..11} )
 UOPTS_BOLT_EXCLUDE_BINS+="libOpenGLWindow.so" # \
 # examples/OpenGLWindow/opengl_fontstashcallbacks.cpp:93: virtual void InternalOpenGL2RenderCallbacks::updateTexture(sth_texture*, sth_glyph*, int, int): Assertion `glGetError() == GL_NO_ERROR' failed.
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=1
 
 inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs uopts
 
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
+S="${WORKDIR}/${PN}3-${PV}"
 SRC_URI="
 https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${PN}3-${PV}"
 
 DESCRIPTION="Continuous Collision Detection and Physics Library"
 HOMEPAGE="http://www.bulletphysics.com/"
-
 LICENSE="ZLIB" # The default license
 # src/BulletCollision/Gimpact (it is really ^^ ( LGPL-2.1+ BSD ZLIB )),
 # src/Bullet3OpenCL/NarrowphaseCollision/b3VoronoiSimplexSolver.cpp
@@ -289,7 +294,7 @@ LICENSE+="
 	)
 "
 
-KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
+RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	+bullet3
@@ -377,7 +382,6 @@ CDEPEND="
 		)
 	)
 "
-LEGACY_TBB_SLOT="2"
 DEPEND+="
 	${CDEPEND}
 	media-libs/freeglut[${MULTILIB_USEDEP}]
@@ -405,11 +409,92 @@ PATCHES=(
 )
 DOCS=( AUTHORS.txt LICENSE.txt README.md )
 # Building / linking of third Party library BussIK does not work out of the box
-RESTRICT="mirror test"
+
+is_benchmark_demo() {
+	local x="${@}"
+	# Typically 3 min runtime required
+	local benchmark_demos=(
+		"3000 boxes"
+		"2000 stack"
+		"1000 stack"
+		"Ragdolls"
+		"Convex stack"
+		"Prim vs Mesh"
+		"Convex vs Mesh"
+		"Raycast"
+		"Convex Pack"
+		"Heightfield"
+	)
+	IFS=$'\n'
+	local y
+	for y in ${benchmark_demos[@]} ; do
+		if [[ "${trainer}" == "${y}" ]] ; then
+			IFS=$' \n\r\t'
+			return 0
+		fi
+	done
+	IFS=$' \n\r\t'
+	return 1
+}
+
+sanitize_rpaths()
+{
+einfo
+einfo "Running sanitize_rpaths()"
+einfo
+	for f in $(find "${ED}" -executable -type f) ; do
+		ldd "${f}" 2>/dev/null 1>/dev/null || continue
+		local old_rpath=$(patchelf --print-rpath "${f}")
+		[[ "${old_rpath}" =~ "/var/tmp" ]] || continue
+		einfo "Found dirty rpath for ${f}"
+		einfo "Old unsanitized rpath for ${f}:"
+		echo -e "${old_rpath}"
+		einfo "New sanitized rpath for ${f}:"
+		local old_rpath=$(echo "${old_rpath}" \
+			| sed -E \
+				-e "s|/var/tmp[^:]+||g" \
+				-e "s|:+|:|g" \
+				-e "s|^:||g" \
+				-e "s|:$||g" \
+				-e "s|^:$||g")
+		patchelf --set-rpath "${old_rpath}" "${f}" || die
+		echo -e "${old_rpath}"
+		if (( ${#old_rpath} == 0 )) ; then
+			patchelf --remove-rpath "${f}" || die
+		else
+			patchelf --set-rpath "${old_rpath}" "${f}" || die
+		fi
+		[[ "${old_rpath}" =~ "tmp" ]] && die "rpath is still unsanitized."
+	done
+	# There's no need to restore rpath for broken_rpaths libs/bins because
+	# they are already installed in system folders.
+}
+
+fix_tbb_rpath() {
+	if use tbb ; then
+		local found=0
+		local f
+		for f in $(find "${ED}") ; do
+			if ldd "${f}" 2>/dev/null | grep -q "tbb.*not found" ; then
+einfo
+einfo "Setting rpath for ${f} for TBB"
+einfo
+				local old_rpath=$(patchelf \
+					--print-rpath \
+					"${f}") || die
+				[[ -n "${old_rpath}" ]] && old_rpath=":${old_rpath}"
+				patchelf \
+					--set-rpath \
+					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}${old_rpath}" \
+					"${f}" || die
+			fi
+		done
+	fi
+}
 
 pkg_setup() {
-	use ebolt && ewarn "The ebolt USE flag may not generate a BOLT profile."
-	use bolt && ewarn "The bolt USE flag may not generate a BOLT profile."
+	#use ebolt && ewarn "The ebolt USE flag may not generate a BOLT profile."
+	#use bolt && ewarn "The bolt USE flag may not generate a BOLT profile."
 einfo
 einfo "To hard unmask the USE=tbb add the following line to"
 einfo "/etc/portage/profile/package.use.mask:"
@@ -482,7 +567,7 @@ eerror
 	fi
 einfo
 einfo "PGO_PHASE=${PGO_PHASE}"
-einfo "BOLT_PHASE=${BOLT_PHASE}"
+#einfo "BOLT_PHASE=${BOLT_PHASE}"
 einfo
 
 	cmake_src_configure
@@ -514,33 +599,6 @@ train_post_trainer() {
 	rm 0_Bullet3Demo.txt
 }
 
-is_benchmark_demo() {
-	local x="${@}"
-	# Typically 3 min runtime required
-	local benchmark_demos=(
-		"3000 boxes"
-		"2000 stack"
-		"1000 stack"
-		"Ragdolls"
-		"Convex stack"
-		"Prim vs Mesh"
-		"Convex vs Mesh"
-		"Raycast"
-		"Convex Pack"
-		"Heightfield"
-	)
-	IFS=$'\n'
-	local y
-	for y in ${benchmark_demos[@]} ; do
-		if [[ "${trainer}" == "${y}" ]] ; then
-			IFS=$' \n\r\t'
-			return 0
-		fi
-	done
-	IFS=$' \n\r\t'
-	return 1
-}
-
 train_trainer_list() {
 	grep "ExampleEntry([01]" \
 		"${S}/examples/ExampleBrowser/ExampleEntries.cpp" \
@@ -570,61 +628,6 @@ src_compile() {
 		doxygen || die
 		HTML_DOCS+=( html/. )
 		DOCS+=( docs/*.pdf )
-	fi
-}
-
-sanitize_rpaths()
-{
-einfo
-einfo "Running sanitize_rpaths()"
-einfo
-	for f in $(find "${ED}" -executable -type f) ; do
-		ldd "${f}" 2>/dev/null 1>/dev/null || continue
-		local old_rpath=$(patchelf --print-rpath "${f}")
-		[[ "${old_rpath}" =~ "/var/tmp" ]] || continue
-		einfo "Found dirty rpath for ${f}"
-		einfo "Old unsanitized rpath for ${f}:"
-		echo -e "${old_rpath}"
-		einfo "New sanitized rpath for ${f}:"
-		local old_rpath=$(echo "${old_rpath}" \
-			| sed -E \
-				-e "s|/var/tmp[^:]+||g" \
-				-e "s|:+|:|g" \
-				-e "s|^:||g" \
-				-e "s|:$||g" \
-				-e "s|^:$||g")
-		patchelf --set-rpath "${old_rpath}" "${f}" || die
-		echo -e "${old_rpath}"
-		if (( ${#old_rpath} == 0 )) ; then
-			patchelf --remove-rpath "${f}" || die
-		else
-			patchelf --set-rpath "${old_rpath}" "${f}" || die
-		fi
-		[[ "${old_rpath}" =~ "tmp" ]] && die "rpath is still unsanitized."
-	done
-	# There's no need to restore rpath for broken_rpaths libs/bins because
-	# they are already installed in system folders.
-}
-
-fix_tbb_rpath() {
-	if use tbb ; then
-		local found=0
-		local f
-		for f in $(find "${ED}") ; do
-			if ldd "${f}" 2>/dev/null | grep -q "tbb.*not found" ; then
-einfo
-einfo "Setting rpath for ${f} for TBB"
-einfo
-				local old_rpath=$(patchelf \
-					--print-rpath \
-					"${f}") || die
-				[[ -n "${old_rpath}" ]] && old_rpath=":${old_rpath}"
-				patchelf \
-					--set-rpath \
-					"/usr/$(get_libdir)/tbb/${LEGACY_TBB_SLOT}${old_rpath}" \
-					"${f}" || die
-			fi
-		done
 	fi
 }
 
