@@ -31,6 +31,16 @@
   # Run favorite OpenGL games or apps
   USE="epgo" emerge -1vO mesa # optimize build
 
+  Q:  How do you PGO+BOLT this?
+  A:
+  UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo -ebolt" emerge -1vO mesa # instrument
+  # Restart X or wayland
+  # Run favorite OpenGL games or apps
+  USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT instrument
+  # Restart X or wayland
+  # Run favorite OpenGL games or apps
+  USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT optimize
+
   Q:  Why do you not run unattended PGO?
   A:  There are different versions of OpenGL and each version needs to be
       trained independently.  It is more efficient to train off the actively
