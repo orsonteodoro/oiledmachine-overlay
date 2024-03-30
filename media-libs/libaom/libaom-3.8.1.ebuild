@@ -247,7 +247,7 @@ pkg_setup() {
 	fi
 	check_video
 
-	if ( has bolt ${IUSE} && use bolt ) || ( has ebolt ${IUSE} && use ebolt ) ; then
+	if ( has bolt ${IUSE_EFFECTIVE} && use bolt ) || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ; then
 		# For the basic block reorder branch-predictor summary,
 		# see https://github.com/llvm/llvm-project/blob/main/bolt/include/bolt/Passes/BinaryPasses.h#L139
 		export UOPTS_BOLT_OPTIMIZATIONS=${UOPTS_BOLT_OPTIMIZATIONS:-"-reorder-blocks=branch-predictor -reorder-functions=hfsort -split-functions -split-all-cold -split-eh -dyno-stats"}
@@ -389,7 +389,7 @@ einfo "CFLAGS:  ${CFLAGS}"
 	cd "${CMAKE_USE_DIR}" || die
 	uopts_src_configure
 
-	if tc-is-clang && ( use pgo || use epgo ) ; then
+	if tc-is-clang && ( use pgo || ( has epgo ${IUSE_EFFECTIVE} && use epgo ) ) ; then
 #
 # Fix for:
 #
@@ -403,7 +403,7 @@ einfo "CFLAGS:  ${CFLAGS}"
 	tc-export CC CXX
 
 	# LTO causes a segfault during BOLT training.
-	if ( has bolt ${IUSE} && use bolt ) || ( has ebolt ${IUSE} && use ebolt ) ; then
+	if ( has bolt ${IUSE_EFFECTIVE} && use bolt ) || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ; then
 		filter-flags \
 			'-flto*' \
 			'-fuse-ld=*'
