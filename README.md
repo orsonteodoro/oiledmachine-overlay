@@ -459,15 +459,39 @@ compatibility with the BOLT profile.
 UOPTS_GROUP - the name of the group allowed to access and edit the
 BOLT profile.
 
-#### PGO/BOLT profile permissions
+#### EPGO/EBOLT profile permissions
 
-(Tentative, still in testing)
+(This section is tentative.  It still in testing/development.)
 
 Before using ebolt or epgo some environment variables and user groups must
 be created for the shared EPGO/EBOLT profile.  For example the following
-could be added to /etc/portage/make.conf:
+files could be added/changes for ebolt/epgo:
 
+```
+Contents of /etc/portage/env/uopts_x.conf:
+# For PGO/BOLT training on X
 UOPTS_GROUP="johndoe" # (non-root user)
+```
+
+```
+Contents of /etc/portage/env/uopts_wayland.conf:
+# For PGO/BOLT training on Wayland
+UOPTS_GROUP="johndoe" # (non-root user)
+```
+
+```
+Contents of /etc/portage/env/uopts_portage.conf:
+# For PGO/BOLT training in emerge or portage package manager
+UOPTS_GROUP="portage" # (non-root user)
+```
+
+```
+Contents of /etc/portage/env/package.env:
+sys-devel/llvm uopts_portage.conf
+sys-devel/mesa uopts_interactive.conf
+games-fps/foo uopts_x.conf
+games-fps/bar uopts_wayland.conf
+```
 
 You may use "users" or "uopts" if you do not have a physical multiuser.
 It is only an issue if there is a vulnerability in gcc/clang when reading
