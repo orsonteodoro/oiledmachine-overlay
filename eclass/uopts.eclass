@@ -211,7 +211,7 @@ einfo "is_tbolt_profile_reusable=${skip_inst} "
 	local PGO_PHASE="NO_PGO"
 	local BOLT_PHASE="NO_BOLT"
 	if has ebolt ${IUSE} && use ebolt ; then
-		BOLT_PHASE=$(epgo_get_phase)
+		BOLT_PHASE=$(ebolt_get_phase)
 	fi
 
 	if has pgo ${IUSE} && use pgo && (( ${is_pgoable} == 1 )) && [[ -n "${_TPGO_ECLASS}" ]] ; then
@@ -242,7 +242,7 @@ einfo "is_tbolt_profile_reusable=${skip_inst} "
 			PGO_PHASE=$(epgo_get_phase)
 		fi
 		if has ebolt ${IUSE} && use ebolt ; then
-			BOLT_PHASE=$(epgo_get_phase)
+			BOLT_PHASE=$(ebolt_get_phase)
 		fi
 		declare -f _src_prepare > /dev/null && _src_prepare
 		declare -f _src_configure > /dev/null && _src_configure
