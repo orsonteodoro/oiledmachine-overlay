@@ -4,10 +4,16 @@
 
 EAPI=8
 
-UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
+
 inherit autotools flag-o-matic toolchain-funcs uopts
 
+KEYWORDS="
+~amd64
+"
 SRC_URI="
 https://github.com/mferland/libzc/archive/v${PV}.tar.gz -> ${P}.tar.gz
 "
@@ -15,10 +21,12 @@ https://github.com/mferland/libzc/archive/v${PV}.tar.gz -> ${P}.tar.gz
 DESCRIPTION="Tool and library for cracking legacy zip files."
 HOMEPAGE="https://github.com/mferland/libzc"
 LICENSE="GPL-3+"
-SLOT="0"
-KEYWORDS="
-~amd64
+RESTRICT="
+	!test? (
+		test
+	)
 "
+SLOT="0"
 IUSE="test trainer-all trainer-bruteforce"
 REQUIRED_USE="
 	bolt? (
@@ -32,11 +40,6 @@ REQUIRED_USE="
 			trainer-all
 			trainer-bruteforce
 		)
-	)
-"
-RESTRICT="
-	!test? (
-		test
 	)
 "
 RDEPEND="
