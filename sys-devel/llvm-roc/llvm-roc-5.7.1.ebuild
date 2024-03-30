@@ -121,7 +121,7 @@ ewarn "source /etc/profile"
 ewarn
 	rocm_pkg_setup
 	uopts_setup
-	if use epgo || use ebolt ; then
+	if use epgo || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ; then
 einfo "See comments of metadata.xml for documentation on ebolt/epgo."
 		local path="/var/lib/pgo-profiles/${CATEGORY}/${PN}/${ROCM_SLOT}/${MULTILIB_ABI_FLAG}.${ABI}"
 		addwrite "${path}"
@@ -135,7 +135,7 @@ src_prepare() {
 	pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 		eapply "${FILESDIR}/llvm-roc-5.7.0-path-changes.patch"
 	popd
-	if use bolt ; then
+	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
 		pushd "${WORKDIR}/llvm-project-rocm-${PV}" || die
 			eapply -p1 "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
 			eapply -p1 "${FILESDIR}/llvm-17.0.0.9999-v2-bolt_rt-RuntimeLibrary.cpp-path.patch"
@@ -220,7 +220,7 @@ _src_configure() {
 		-DCMAKE_MODULE_LINKER_FLAGS="${LDFLAGS}"
 		-DCMAKE_SHARED_LINKER_FLAGS="${LDFLAGS}"
 	)
-	if ( use epgo || use ebolt ) && tc-is-gcc ; then
+	if ( use epgo || ( has ebolt ${IUSE_EFFECTIVE} && use ebolt ) ) && tc-is-gcc ; then
 		local gcc_slot=$(gcc-major-version)
 		mycmakeargs+=(
 			-DCMAKE_STATIC_LINKER_FLAGS="/usr/lib/gcc/${CHOST}/${gcc_slot}/libgcov.a"
@@ -231,7 +231,7 @@ _src_configure() {
 	if use runtime ; then
 		PROJECTS+=";compiler-rt"
 	fi
-	if use bolt ; then
+	if has bolt ${IUSE_EFFECTIVE} && use bolt ; then
 		PROJECTS+=";bolt"
 	fi
 
