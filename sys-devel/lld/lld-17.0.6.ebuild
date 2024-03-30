@@ -4,6 +4,13 @@
 
 EAPI=8
 
+PYTHON_COMPAT=( python3_{10..12} )
+UOPTS_BOLT_DISABLE_BDEPEND=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=0
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -21,11 +28,6 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
-
-PYTHON_COMPAT=( python3_{10..12} )
-UOPTS_BOLT_DISABLE_BDEPEND=1
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=0
 
 inherit cmake flag-o-matic llvm llvm.org python-any-r1 uopts
 
@@ -217,6 +219,11 @@ src_prepare() {
 }
 
 src_configure() { :; }
+
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
 
 _src_configure() {
 	llvm-ebuilds_fix_toolchain

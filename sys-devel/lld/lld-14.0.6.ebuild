@@ -6,6 +6,8 @@ EAPI=8
 
 PYTHON_COMPAT=( python3_{9..11} )
 UOPTS_BOLT_DISABLE_BDEPEND=1
+UOPTS_SUPPORT_EBOLT=1
+UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 
@@ -193,6 +195,11 @@ src_prepare() {
 }
 
 src_configure() { :; }
+
+_src_configure_compiler() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+}
 
 _src_configure() {
 	llvm-ebuilds_fix_toolchain
