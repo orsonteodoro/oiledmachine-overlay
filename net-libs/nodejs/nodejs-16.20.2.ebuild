@@ -59,6 +59,10 @@ NPM_PV="8.19.3" # See https://github.com/nodejs/node/blob/v16.20.2/deps/npm/pack
 PYTHON_COMPAT=( python3_{8..11} )
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TPGO=1
 
 inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info ninja-utils
 inherit pax-utils python-any-r1 check-linker lcnr toolchain-funcs uopts
