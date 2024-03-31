@@ -17,7 +17,7 @@ esac
 if [[ -z ${_EBOLT_ECLASS} ]] ; then
 _EBOLT_ECLASS=1
 
-inherit flag-o-matic linux-check toolchain-funcs
+inherit flag-o-matic linux-info toolchain-funcs
 
 IUSE+=" ebolt"
 RESTRICT+=" strip" # Don't strip at all
@@ -267,7 +267,7 @@ ebolt_setup() {
 	if [[ -n "${BOLTFLAGS}" ]] ; then
 		UOPTS_BOLT_OPTIMIZATIONS="${BOLTFLAGS}"
 	fi
-	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" || "${UOPTS_BOLT_HUGIFY}" == "1" ; then
+	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" || "${UOPTS_BOLT_HUGIFY}" == "1" ]] ; then
 		if ! linux_config_exists ; then
 ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 		else

@@ -17,7 +17,7 @@ esac
 if [[ -z ${_TBOLT_ECLASS} ]] ; then
 _TBOLT_ECLASS=1
 
-inherit flag-o-matic linux-check toolchain-funcs
+inherit flag-o-matic linux-info toolchain-funcs
 
 IUSE+=" bolt"
 RESTRICT+=" strip" # Don't strip at all
@@ -281,7 +281,7 @@ ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 
 	if [[ -z "${_UOPTS_ECLASS}" ]] ; then
 eerror
-eerror "tbolt.eclass must be used with uopts.eclass.  Do not inherit tbolt"
+eerror "The tbolt.eclass must be used with uopts.eclass.  Do not inherit tbolt"
 eerror "directly."
 eerror
 		die
