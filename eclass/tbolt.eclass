@@ -268,6 +268,7 @@ tbolt_setup() {
 		UOPTS_BOLT_OPTIMIZATIONS="${BOLTFLAGS}"
 	fi
 	if [[ "${UOPTS_BOLT_OPTIMIZATIONS}" =~ "-hugify" || "${UOPTS_BOLT_HUGIFY}" == "1" ]] ; then
+		linux-info_pkg_setup
 		if ! linux_config_exists ; then
 ewarn "You must enable CONFIG_TRANSPARENT_HUGEPAGE for BOLT -hugify support."
 		else
