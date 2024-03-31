@@ -11615,7 +11615,7 @@ _ot-kernel_y_thp() {
 	]] ; then
 	# Avoid latency spike case
 		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
-	elif grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" && (( ${is_rt} != 1 )) ; then
+	elif grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" "${path_config}" && (( ${is_rt} != 1 )) ; then
 		ot-kernel_y_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
 	else
 		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
