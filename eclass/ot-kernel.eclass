@@ -11764,6 +11764,8 @@ einfo "Installing unsigned kernel"
 	fi
 	export IFS=$'\n'
 	cd "${ED}" || die
+	local job_list
+	local n_jobs
 	local f
 	for f in $(find boot -type f) ; do
 		(
@@ -11771,10 +11773,13 @@ einfo "Installing unsigned kernel"
 				fperms -x "/${f}"
 			fi
 		) &
-		local njobs=$(jobs -r -p | wc -l)
-		[[ ${njobs} -ge ${nprocs} ]] && wait -n
+		job_list=( $(jobs -r -p) )
+		n_jobs=${#job_list[@]}
+		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
-	wait
+	job_list=( $(jobs -r -p) )
+	n_jobs=${#job_list[@]}
+	[[ ${n_jobs} -ge 1 ]] && wait
 	export IFS=$' \t\n'
 }
 
@@ -11801,6 +11806,8 @@ einfo "Restoring +x bit"
 einfo
 		cd "${ED}/usr/src/linux-${UPSTREAM_PV}-${extraversion}" || die
 		export IFS=$'\n'
+		local job_list
+		local n_jobs
 		local f
 		for f in $(find . -type f) ; do
 			(
@@ -11808,10 +11815,13 @@ einfo
 					fperms 0755 "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/${f#./}"
 				fi
 			) &
-			local njobs=$(jobs -r -p | wc -l)
-			[[ ${njobs} -ge ${nprocs} ]] && wait -n
+			job_list=( $(jobs -r -p) )
+			n_jobs=${#job_list[@]}
+			[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 		done
-		wait
+		job_list=( $(jobs -r -p) )
+		n_jobs=${#job_list[@]}
+		[[ ${n_jobs} -ge 1 ]] && wait
 		export IFS=$' \t\n'
 	fi
 }

@@ -428,6 +428,8 @@ ewarn "Scanning ${tree}"
 	local n_procs
 	n_procs=$(python -c "print(int(${n_cores} * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 	(( "${n_procs}" <= 0 )) && n_procs=1
+	local job_list
+	local n_jobs
 	local p
 	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
@@ -477,11 +479,13 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
 			fi
 		) &
-		local job_list=( $(jobs -r -p) )
-		local n_jobs=${#job_list[@]}
+		job_list=( $(jobs -r -p) )
+		n_jobs=${#job_list[@]}
 		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
-	wait
+	job_list=( $(jobs -r -p) )
+	n_jobs=${#job_list[@]}
+	[[ ${n_jobs} -ge 1 ]] && wait
 }
 
 # @FUNCTION: _tbolt_opt_tree
@@ -509,6 +513,8 @@ ewarn "Scanning ${tree}"
 	local n_procs
 	n_procs=$(python -c "print(int(${n_cores} * ${UOPTS_BOLT_FORK_MULTIPLIER}))")
 	(( "${n_procs}" <= 0 )) && n_procs=1
+	local job_list
+	local n_jobs
 	local p
 	for p in ${file_list[@]} ; do
 		x_files=$((${x_files} + 1))
@@ -560,11 +566,13 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 				rm -rf "${p}.orig" || die
 			fi
 		) &
-		local job_list=( $(jobs -r -p) )
-		local n_jobs=${#job_list[@]}
+		job_list=( $(jobs -r -p) )
+		n_jobs=${#job_list[@]}
 		[[ ${n_jobs} -ge ${n_procs} ]] && wait -n
 	done
-	wait
+	job_list=( $(jobs -r -p) )
+	n_jobs=${#job_list[@]}
+	[[ ${n_jobs} -ge 1 ]] && wait
 }
 
 # @FUNCTION: _tbolt_src_pre_train
