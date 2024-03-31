@@ -395,6 +395,7 @@ ewarn "Tests will probably fail!"
 
 	if use bolt || use pgo ; then
 		mycmakeargs+=(
+			-DWITH_LD=bfd
 			-DWITH_UNIT_TESTS=OFF
 		)
 	fi
