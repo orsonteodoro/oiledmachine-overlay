@@ -3085,6 +3085,7 @@ unset OT_KERNEL_PRIVATE_KEY
       Gaming without VoIP:  vegas
       Live broadcasting:  c2tcp, bbr
       On demand upload:  pcc, any delay based TCC
+      Single player casual games:  cubic
       Social games:  vegas
       Web browsing:  vegas
 
