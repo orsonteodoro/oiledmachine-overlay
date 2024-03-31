@@ -575,6 +575,8 @@ einfo "vanilla -> BOLT instrumented:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
+	# `wait -n` can only be used with unicore or MAKEOPTS="-j1".
+	# busy-wait should be used with multicore or MAKEOPTS="-j2" or higher.
 			job_list=( $(jobs -r -p) )
 			while (( ${#job_list[@]} >= ${n_procs} )) ; do
 				sleep 0.1
@@ -663,6 +665,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 					mv "${p}.bolt" "${p}" || die
 				fi
 			) &
+	# `wait -n` can only be used with unicore or MAKEOPTS="-j1".
+	# busy-wait should be used with multicore or MAKEOPTS="-j2" or higher.
 			job_list=( $(jobs -r -p) )
 			while (( ${#job_list[@]} >= ${n_procs} )) ; do
 				sleep 0.1
@@ -865,6 +869,8 @@ einfo "BOLT instrumented -> optimized:  ${p}"
 				fi
 			fi
 		) &
+	# `wait -n` can only be used with unicore or MAKEOPTS="-j1".
+	# busy-wait should be used with multicore or MAKEOPTS="-j2" or higher.
 		job_list=( $(jobs -r -p) )
 		while (( ${#job_list[@]} >= ${n_procs} )) ; do
 			sleep 0.1

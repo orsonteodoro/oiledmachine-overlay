@@ -11774,6 +11774,8 @@ einfo "Installing unsigned kernel"
 				fperms -x "/${f}"
 			fi
 		) &
+	# `wait -n` can only be used with unicore or MAKEOPTS="-j1".
+	# busy-wait should be used with multicore or MAKEOPTS="-j2" or higher.
 		job_list=( $(jobs -r -p) )
 		while (( ${#job_list[@]} >= ${n_procs} )) ; do
 			sleep 0.1
@@ -11820,6 +11822,8 @@ einfo
 					fperms 0755 "/usr/src/linux-${UPSTREAM_PV}-${extraversion}/${f#./}"
 				fi
 			) &
+	# `wait -n` can only be used with unicore or MAKEOPTS="-j1".
+	# busy-wait should be used with multicore or MAKEOPTS="-j2" or higher.
 			job_list=( $(jobs -r -p) )
 			while (( ${#job_list[@]} >= ${n_procs} )) ; do
 				sleep 0.1

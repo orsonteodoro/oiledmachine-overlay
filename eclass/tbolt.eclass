@@ -479,6 +479,8 @@ ewarn "${p}.orig existed and BUILD_DIR was not completely wiped."
 					-instrumentation-file "${bolt_data_staging_dir}/${bn}.fdata" || die
 			fi
 		) &
+	# `wait -n` can only be used with unicore or MAKEOPTS="-j1".
+	# busy-wait should be used with multicore or MAKEOPTS="-j2" or higher.
 		job_list=( $(jobs -r -p) )
 		while (( ${#job_list[@]} >= ${n_procs} )) ; do
 			sleep 0.1
@@ -570,6 +572,8 @@ einfo "vanilla -> BOLT optimized:  ${p}"
 				rm -rf "${p}.orig" || die
 			fi
 		) &
+	# `wait -n` can only be used with unicore or MAKEOPTS="-j1".
+	# busy-wait should be used with multicore or MAKEOPTS="-j2" or higher.
 		job_list=( $(jobs -r -p) )
 		while (( ${#job_list[@]} >= ${n_procs} )) ; do
 			sleep 0.1
