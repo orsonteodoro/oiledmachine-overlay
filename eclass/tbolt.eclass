@@ -325,7 +325,6 @@ ewarn "Compiler is not supported for TBOLT."
 			export CXX="${CHOST}-g++"
 		fi
 
-		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
 		local bolt_major_pv="${bolt_pv%%.*}"
@@ -747,7 +746,6 @@ tbolt_src_install() {
 			export CXX="${CHOST}-g++"
 		fi
 
-		"${_UOPTS_BOLT_PATH}/llvm-bolt" --version || die
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
 		local bolt_major_pv="${bolt_pv%%.*}"
