@@ -46,7 +46,7 @@
   UOPTS_BOLT_FORCE_INST=1 UOPTS_PGO_FORCE_PGI=1 USE="epgo -ebolt" emerge -1vO mesa # PGO instrumentation only
   # Restart X or wayland
   # Run favorite OpenGL games, apps, or WebGL websites
-  USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT instrument
+  UOPTS_BOLT_FORCE_INST=1 USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT instrument
   # Restart X or wayland
   # Run favorite OpenGL games, apps, or WebGL websites
   USE="epgo ebolt" emerge -1vO mesa # PGO optimize build and BOLT optimize
