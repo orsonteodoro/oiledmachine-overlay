@@ -6340,7 +6340,9 @@ ot-kernel-pkgflags_minijail() { # DONE
 # Applies kernel config flags for the mongodb package
 ot-kernel-pkgflags_mongodb() { # DONE
 	if ot-kernel_has_version_pkgflags "dev-db/mongodb" ; then
-		_ot-kernel_y_thp # Added for performance reasons.  ~15-29% benefit.
+		:
+		# The upstream docs say disable.
+		#_ot-kernel_y_thp # Added for performance reasons.  ~15-29% benefit.
 	fi
 }
 
