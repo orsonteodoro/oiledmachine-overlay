@@ -11607,7 +11607,10 @@ _ot-kernel_y_thp() {
 	fi
 
 	local work_profile="${OT_KERNEL_WORK_PROFILE:-manual}"
-	if [[ "${work_profile}" == "http-server-busy" ]] ; then
+	if [[ \
+		   "${work_profile}" == "http-server-busy" \
+		|| "${work_profile}" == "http-server-relaxed" \
+	]] ; then
 	# Avoid latency spike case
 		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
 	elif grep -q -e "^CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y" && (( ${is_rt} != 1 )) ; then
