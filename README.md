@@ -450,7 +450,8 @@ UOPTS_BOLT_FORCE_INST - 1 to reset to INST temporarily.
 
 UOPTS_BOLT_HUGIFY - 1 to enable hugify to minimize iTLB misses with large
 libraries and executables that are 200 MiB or more, 0 to disable.  Hugify is not
-compatible with CONFIG_PREEMPT_RT.
+compatible with CONFIG_PREEMPT_RT.  The optimization only applies to hot code
+not data sections (e.g. text/art assets).
 
 UOPTS_BOLT_OPTIMIZATIONS - Optimization flags to pass to llvm-bolt, overriding
 the defaults.
