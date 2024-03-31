@@ -4,8 +4,8 @@
 EAPI=8
 
 GENPATCHES_FALLBACK_COMMIT="8c47d4e09a8d4127e428ed961b17408e56d0f7ab" # 2024-03-15 17:58:25 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="7033999ecd7b8cf9ea59265035a0150961e023ee" # 2024-03-26 09:25:57 -0700
-RC_PV="rc1" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
+LINUX_SOURCES_FALLBACK_COMMIT="39cd87c4eb2b893354f3b850f916353f2658ae6f" # 2024-03-31 14:32:39 -0700
+RC_PV="rc2" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.9
